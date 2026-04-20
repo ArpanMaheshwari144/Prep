@@ -20,3 +20,7 @@ build/
 target/
 out/
 node_modules/
+
+# Not needed
+.claude/
+Prep/
