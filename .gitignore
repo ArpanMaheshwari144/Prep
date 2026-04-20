@@ -1,0 +1,22 @@
+# Compiled class files
+*.class
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+
+# Large files
+*.pdf
+*.jar
+build/
+target/
+out/
+node_modules/

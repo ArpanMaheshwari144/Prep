@@ -1,0 +1,39 @@
+# YE KYA HAI: Kubernetes Deployment — "Kitne pods chahiye" bolo
+# KYUN CHAHIYE: Ek container crash ho toh Kubernetes KHUD naya start kare
+# KAB USE: Production mein. docker-compose = dev, Kubernetes = prod.
+#
+# VISUALIZE:
+#   Tu bolta: "3 pods chahiye"
+#   Kubernetes: "theek hai, 3 chalata. 1 crash? Naya start."
+#   Traffic badha? replicas: 3 → 10 karo. Auto scale.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-app
+spec:
+  replicas: 3                    # 3 PODS — 3 copies of app
+  selector:
+    matchLabels:
+      app: student-app           # kaunse pods manage kare
+  template:
+    metadata:
+      labels:
+        app: student-app
+    spec:
+      containers:
+      - name: student-app
+        image: student-app:latest    # Docker image (Dockerfile se bani)
+        ports:
+        - containerPort: 8080        # Spring Boot port
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://mysql-service:3306/student_db
+        - name: SPRING_DATASOURCE_USERNAME
+          value: root
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: root
+        - name: SPRING_DATA_REDIS_HOST
+          value: redis-service
+        - name: SPRING_DATA_REDIS_PORT
+          value: "6379"

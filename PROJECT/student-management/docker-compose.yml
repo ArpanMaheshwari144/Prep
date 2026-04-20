@@ -1,0 +1,52 @@
+# =====================================================
+# YE KYA HAI: Docker Compose — multiple containers ek saath chalao
+# KYUN CHAHIYE: App + MySQL dono ek command se. Team mein sab same setup.
+# KAB USE: docker-compose up — sab start. docker-compose down — sab band.
+# AGAR NAHI HOTA: Pehle MySQL install, phir app start, phir connection set — bahut manual kaam.
+# =====================================================
+
+version: '3.8'   # compose file ka version — features define karta
+
+services:   # kitne containers chalane — har ek "service" hai
+
+  # ---- MySQL Database Container ----
+  mysql:
+    image: mysql:8.0              # Docker Hub se MySQL 8 ki ready image lo
+                                  # Bina iske: Khud MySQL install karna padta
+    container_name: student-db    # container ka naam — identify karne ke liye
+    environment:                  # MySQL ko config pass karo — bina iske default password nahi pata
+      MYSQL_ROOT_PASSWORD: root   # root user ka password set
+      MYSQL_DATABASE: student_db  # ye database auto create hoga — manually banane ki zaroorat nahi
+    ports:
+      - "3306:3306"               # laptop_port:container_port
+                                  # laptop se 3306 pe MySQL access hoga
+                                  # Bina iske: MySQL container ke andar chalega lekin bahar se connect nahi
+
+  # ---- Spring Boot App Container ----
+  app:
+    build: .                      # current folder ka Dockerfile use karke image bana
+                                  # Bina iske: Pehle manually docker build karna padta
+    container_name: student-app   # container ka naam
+    ports:
+      - "8080:8080"               # laptop se 8080 pe app access
+                                  # Bina iske: App chalegi lekin browser se nahi khulegi
+    depends_on:
+      - mysql                     # PEHLE MySQL start ho, PHIR app
+      - redis                     # Redis bhi pehle start ho
+                                  # Bina iske: App start hogi lekin MySQL/Redis nahi mila — connection error
+    environment:                  # App ko batao MySQL kahan hai
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/student_db
+      # "mysql" = upar wale container ka naam — Docker network mein naam se connect hota
+      # localhost NAHI — kyunki dono alag containers hain
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATA_REDIS_HOST: redis    # Redis container ka naam
+      SPRING_DATA_REDIS_PORT: 6379
+
+  # ---- Redis Cache Container ----
+  redis:
+    image: redis:7-alpine             # Redis 7, alpine = chhota image
+                                      # Bina iske: Cache in-memory — app restart = gone
+    container_name: student-redis
+    ports:
+      - "6379:6379"                   # Redis default port

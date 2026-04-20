@@ -1,0 +1,20 @@
+# YE KYA HAI: Kubernetes Service — "Bahar se kaise access kare"
+# KYUN CHAHIYE: 3 pods hain — user kisko request bheje? Service EK address de.
+# KAB USE: Deployment ke saath. Pods bane → Service se expose.
+#
+# VISUALIZE:
+#   3 pods = 3 waiters. Service = ek counter number.
+#   Customer (user) counter pe order de → koi bhi waiter handle kare.
+#   Waiter badla toh counter number SAME — customer ko farak nahi.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: student-app-service
+spec:
+  selector:
+    app: student-app             # kaunse pods se connect
+  ports:
+  - port: 80                     # bahar se ye port use
+    targetPort: 8080             # pod ka actual port
+  type: LoadBalancer             # traffic distribute kare 3 pods mein

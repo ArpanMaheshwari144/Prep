@@ -1,0 +1,175 @@
+/*
+ * BUILD.GRADLE — Gradle build configuration.
+ * Ye file project ke sab dependencies, plugins, aur build settings define karti.
+ *
+ * GRADLE KYA HAI:
+ *   Build tool — code compile, test run, JAR banao, dependencies download.
+ *   Groovy language mein likha (pom.xml = XML, build.gradle = Groovy).
+ *
+ * GRADLE vs MAVEN:
+ *   Maven  = pom.xml (XML — verbose, 3x bada)
+ *   Gradle = build.gradle (Groovy — concise, fast)
+ *   Gradle FAST kyun: incremental build + cache + daemon (background process).
+ *
+ * COMMANDS:
+ *   ./gradlew build     — compile + test + JAR banao
+ *   ./gradlew bootRun   — app start (Spring Boot)
+ *   ./gradlew test      — sirf tests
+ *   ./gradlew clean     — build folder delete
+ *   ./gradlew dependencies — sab dependencies tree dikhao
+ */
+
+plugins {
+	id 'java'                                              // Java project hai
+	id 'org.springframework.boot' version '3.2.5'         // Spring Boot plugin — bootRun, bootJar commands
+	id 'io.spring.dependency-management' version '1.1.7'  // Version management — Spring dependencies ki version auto
+	// io.spring.dependency-management se fayda:
+	// Tu sirf 'spring-boot-starter-web' likho — version Spring Boot ke hisaab se auto milega.
+	// Manually version dene ki zaroorat nahi (compatible versions guarantee).
+}
+
+group = 'com.example'           // Package group — com.example
+version = '0.0.1-SNAPSHOT'     // Project version. SNAPSHOT = development mein hai.
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)  // Java 17 use karo
+		// Spring Boot 3.x MINIMUM Java 17 chahiye. 8 ya 11 pe nahi chalega.
+	}
+}
+
+repositories {
+	mavenCentral()  // Dependencies yahan se download. Maven Central = public repository.
+	// Sab popular libraries yahan hain — Spring, Jackson, Lombok, etc.
+	// Company mein private repo bhi hota: maven { url 'https://nexus.company.com/repo' }
+}
+
+dependencies {
+	// ================================================
+	// SPRING BOOT STARTERS — pre-configured dependency bundles
+	// Starter = related libraries ka bundle. Ek likho, 10 aaye.
+	// ================================================
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// WEB STARTER — REST API ke liye. Ye INCLUDE karta:
+	//   - Embedded Tomcat (server — alag install nahi)
+	//   - Spring MVC (DispatcherServlet, @RestController, @RequestMapping)
+	//   - Jackson (Java ↔ JSON conversion)
+	//   - spring-web, spring-webmvc
+	// BINA ISKE: REST API banegi hi nahi. No Tomcat, no controller mapping.
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// JPA STARTER — Hibernate + DB access. Ye INCLUDE karta:
+	//   - Hibernate (JPA implementation — ORM, SQL auto generate)
+	//   - Spring Data JPA (JpaRepository — CRUD free)
+	//   - HikariCP (connection pool — fast DB connections)
+	//   - Jakarta Persistence API (@Entity, @Id, @Table)
+	// BINA ISKE: @Entity, JpaRepository — kuch nahi chalega.
+	//
+	// HIERARCHY: Spring Data JPA → JPA (spec) → Hibernate (impl) → JDBC → MySQL
+	// Tu sirf JpaRepository likho → Spring Data → Hibernate → JDBC → SQL execute.
+
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// SECURITY STARTER — authentication + authorization. Ye INCLUDE karta:
+	//   - Spring Security (filters, authentication manager)
+	//   - SecurityFilterChain (request level security)
+	//   - BCryptPasswordEncoder (password hashing)
+	// ADD KARTE HI: sab URLs PROTECTED ho jaate. Login page auto aata.
+	// SecurityConfig mein rules define karo — kya open, kya protected.
+
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	// VALIDATION STARTER — input validation. Ye INCLUDE karta:
+	//   - Jakarta Validation API (@NotBlank, @Email, @Min, @Max, @Valid)
+	//   - Hibernate Validator (validation implementation)
+	// BINA ISKE: @NotBlank, @Email lagao — kuch nahi hoga. Annotations exist karenge but dead.
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	// REDIS STARTER — caching with Redis. Ye INCLUDE karta:
+	//   - Lettuce (Redis client — Java se Redis connect)
+	//   - Spring Data Redis (RedisTemplate, cache abstractions)
+	// BINA ISKE: @Cacheable default ConcurrentHashMap use karega (in-memory, app restart = gone)
+	// WITH ISKE: @Cacheable Redis mein store karega (persistent, shared across servers)
+
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+	// SWAGGER — API documentation auto generate.
+	// Add karo → http://localhost:8080/swagger-ui.html pe sab APIs dikhegi.
+	// "Try it out" button se browser mein test (Postman nahi chahiye).
+	// OpenAPI 3.0 spec follow karta — industry standard.
+
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	// JWT (JSON Web Token) library — token create, parse, verify.
+	// 3 parts: api (interfaces), impl (implementation), jackson (JSON serialization).
+	// api = compile time (code mein use), impl + jackson = runtime (internally use hota).
+	//
+	// JWT STRUCTURE: header.payload.signature
+	// eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBcnBhbiJ9.abc123
+	//   Header:    {"alg": "HS256"}
+	//   Payload:   {"sub": "Arpan", "exp": 1234567890}
+	//   Signature: HMAC-SHA256(header + payload, SECRET_KEY)
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	// LOMBOK — boilerplate code reduce.
+	// compileOnly = sirf compile time pe chahiye, JAR mein nahi jaayega.
+	// annotationProcessor = compile time pe annotations process → code generate.
+	//
+	// @Data → getter, setter, toString, equals, hashCode AUTO.
+	// @NoArgsConstructor, @AllArgsConstructor → constructors AUTO.
+	// @Slf4j → logger AUTO.
+	// @Builder → builder pattern AUTO.
+	// 100 lines ka boilerplate → 1 annotation.
+
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	// MYSQL JDBC DRIVER — Java se MySQL connect karne ke liye.
+	// runtimeOnly = compile mein nahi chahiye (code mein directly use nahi karta),
+	//               sirf runtime pe chahiye (Hibernate internally JDBC se MySQL connect karta).
+	//
+	// JDBC CONNECTION FLOW:
+	//   mysql-connector-j driver load → DriverManager → Connection → MySQL server
+	//   Tu ye nahi karta — HikariCP (connection pool) + Hibernate sab handle karta.
+	//   Tujhe sirf application.properties mein URL/username/password dena hai.
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// TEST STARTER — JUnit 5, Mockito, AssertJ, Spring Test.
+	// @SpringBootTest — poora application context load karke test
+	// @MockBean — service/repository mock karo
+	// @WebMvcTest — sirf controller test (lightweight)
+
+	testImplementation 'org.springframework.security:spring-security-test'
+	// Security testing — @WithMockUser, SecurityMockMvc
+
+	testCompileOnly 'org.projectlombok:lombok'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()  // JUnit 5 use karo tests ke liye
+}
+
+/*
+ * DEPENDENCY SCOPES (Gradle):
+ *
+ *   implementation      — compile + runtime. Default use.
+ *                         Code mein import karta, runtime pe bhi chahiye.
+ *
+ *   runtimeOnly         — SIRF runtime. Code mein import nahi karta.
+ *                         MySQL driver — Hibernate internally use karta, tu nahi.
+ *
+ *   compileOnly         — SIRF compile time. JAR mein nahi jaayega.
+ *                         Lombok — compile pe code generate, runtime pe zaroorat nahi.
+ *
+ *   annotationProcessor — Compile time annotation process.
+ *                         Lombok annotations → getter/setter code generate.
+ *
+ *   testImplementation  — Sirf test mein use.
+ *                         JUnit, Mockito — production code mein nahi chahiye.
+ *
+ * MAVEN EQUIVALENTS:
+ *   implementation     = compile scope
+ *   runtimeOnly        = runtime scope
+ *   compileOnly        = provided scope
+ *   testImplementation = test scope
+ */
