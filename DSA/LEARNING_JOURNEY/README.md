@@ -2,8 +2,8 @@
 
 **Started:** 2026-04-19 (fresh reset with new teaching approach)
 **Current Phase:** Phase 1 — Scaffolding (heavy guidance)
-**Progress:** 3 concepts locked (Recursion, Linear Scan, Two Pointer) — 10 problems solved
-**Speed check:** Ahead of schedule. Day 3 completed on Day 2. Sustainable pace.
+**Progress:** 4 concepts locked (Recursion, Linear Scan, Two Pointer, Sliding Window) — 14 problems solved
+**Speed check:** Ahead of schedule. Day 3 completed on Day 2. Day 4 delivered 4 problems in 2 hours.
 **Target:** Apr 30 — strong position on core patterns (~7-8 concepts locked)
 
 ---
@@ -30,6 +30,7 @@
 | 1 | 2026-04-19 | **Recursion** | Fibonacci #509, Power of Two #231, Reverse String #344, Pow(x,n) #50 |
 | 2 | 2026-04-20 | **Linear Scan** | Max Consecutive Ones #485, Buy/Sell Stock #121, Max Subarray #53 (Kadane's) |
 | 3 | 2026-04-20 | **Two Pointer** | Valid Palindrome #125, Remove Duplicates #26, Container Water #11 |
+| 4 | 2026-04-21 | **Sliding Window** | Max Avg #643, Max Vowels #1456, Longest No Repeat #3, Min Subarray Sum #209 |
 
 ---
 
@@ -53,17 +54,30 @@
 
 - [METHODOLOGY.md](./METHODOLOGY.md) — how I learn DSA (my style)
 - [ROADMAP.md](./ROADMAP.md) — 2-month concept plan
-- [day-01-recursion.md](./day-01-recursion.md) — today's full notes (Recursion)
+- [day-01-recursion.md](./day-01-recursion.md) — Recursion deep notes
+- [day-02-linear-scan.md](./day-02-linear-scan.md) — Linear Scan deep notes
+- [day-03-two-pointer.md](./day-03-two-pointer.md) — Two Pointer deep notes
+- [day-04-sliding-window.md](./day-04-sliding-window.md) — Sliding Window deep notes + debug meta-skills
+
+---
+
+## 🧩 META-SKILLS LOCKED (beyond concepts)
+
+**Day 4 (2026-04-21):**
+- **Intent ≠ Execution (Confirmation Bias):** Visualization is superpower for WRITING code, but a trap for DEBUGGING own code. My brain replays intent, not actual code. Cure = literal mechanical trace.
+- **Order Matters:** Same operations, different sequence = different behavior. When stuck, swap order and re-trace.
+- **Adversarial Input:** Don't dry-run with happy-path input. Use input that exposes bugs.
 
 ---
 
 ## 🎯 PIPELINE (coming next)
 
-- **Day 2 (Apr 20):** Arrays / Linear Scan
-- **Day 3:** Two Pointer
-- **Day 4:** Sliding Window
 - **Day 5:** Hashing
-- ...continues 1 concept/day...
+- **Week 2:** Prefix Sum, Binary Search, Stack, Queue
+- **Week 4:** Graphs deep
+- **Week 5:** Dynamic Programming
+- **Week 6:** Backtracking, Trie, Heap
+- **Week 7-8:** Mocks + polish
 
 ---
 

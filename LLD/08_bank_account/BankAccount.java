@@ -133,8 +133,6 @@ class BankAccount {
 
     }
 
-    // TODO: getBalance
-
     // TODO: transfer
     public boolean transfer(BankAccount other, double amount) {
         return this.withdraw(amount) ? other.deposit(amount) : false;

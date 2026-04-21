@@ -1,5 +1,30 @@
 # DSA Progress Tracker
 
+---
+
+## 🆕 POST-RESET JOURNEY (2026-04-19 onwards)
+
+**Approach:** Concept-deep, 1 concept/day, visualize-first. See `C:\DSA_PRACTICE\DSA\LEARNING_JOURNEY\` for deep daily notes.
+
+| Day | Date | Concept | Problems | Status |
+|-----|------|---------|----------|--------|
+| 1 | 2026-04-19 | Recursion | #509, #231, #344, #50 | ✅ LOCKED |
+| 2 | 2026-04-20 | Linear Scan | #485, #121, #53 | ✅ LOCKED |
+| 3 | 2026-04-20 | Two Pointer | #125, #26, #11 | ✅ LOCKED |
+| 4 | 2026-04-21 | Sliding Window | #643, #1456, #3, #209 | ✅ LOCKED |
+
+**Cumulative post-reset: 14 problems, 4 concepts in 3 days.**
+
+**Meta-skills locked:**
+- Intent ≠ Execution (confirmation bias when debugging own code)
+- Order of operations matters
+- Adversarial input for dry runs
+- Visualization: superpower writing, trap when debugging
+
+---
+
+## 📜 PRE-RESET LOG (grinding approach, kept for reference)
+
 ## DONE ✅
 
 ### 1. Linear Scan (9 questions)
