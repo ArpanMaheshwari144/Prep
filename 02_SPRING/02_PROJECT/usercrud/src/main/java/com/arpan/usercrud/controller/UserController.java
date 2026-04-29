@@ -127,4 +127,43 @@ public class UserController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    // ═══════════════════════════════════════════════════════════
+    //  🧪 DEMO ENDPOINT — @Transactional rollback proof
+    // ═══════════════════════════════════════════════════════════
+    /*
+     *  Test sequence (Postman / browser):
+     *
+     *  1. POST /users/demo/rollback
+     *     → Console mein dikhega:
+     *        ✅ Step 1: User saved with ID = 1
+     *        💥 Step 2: Simulating failure...
+     *     → API response: 500 (RuntimeException → GlobalExceptionHandler)
+     *
+     *  2. GET /users
+     *     → Empty list [] (rolled-back user MISSING) ✅ proves rollback
+     *
+     *  3. H2 console (http://localhost:8080/h2-console) → SELECT * FROM users
+     *     → Empty table — DB-level confirmation
+     *
+     *  ─── To prove WITHOUT @Transactional ───
+     *  • UserService.createWithSimulatedFailure() pe se @Transactional hata
+     *  • Same endpoint hit kar
+     *  • GET /users → user DIKHEGA (no rollback, save committed)
+     *  • Wapas @Transactional laga ke verify kar
+     */
+    @PostMapping("/demo/rollback")
+    public ResponseEntity<User> demoRollback() {
+        User dummyUser = new User(
+            null,
+            "RollbackTest",
+            "rollback-test@x.com",
+            "password123",
+            25
+        );
+        // Service throws RuntimeException intentionally
+        // → @Transactional rollback ⏪
+        // → GlobalExceptionHandler converts to 500 response
+        return ResponseEntity.ok(service.createWithSimulatedFailure(dummyUser));
+    }
 }
