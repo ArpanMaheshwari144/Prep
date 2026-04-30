@@ -155,11 +155,12 @@ public class UserController {
     @PostMapping("/demo/rollback")
     public ResponseEntity<User> demoRollback() {
         User dummyUser = new User(
-            null,
-            "RollbackTest",
-            "rollback-test@x.com",
-            "password123",
-            25
+            null,                       // id (auto-generate)
+            "RollbackTest",             // name
+            "rollback-test@x.com",      // email
+            "password123",              // password
+            25,                         // age
+            "USER"                      // role (added in JWT step)
         );
         // Service throws RuntimeException intentionally
         // → @Transactional rollback ⏪

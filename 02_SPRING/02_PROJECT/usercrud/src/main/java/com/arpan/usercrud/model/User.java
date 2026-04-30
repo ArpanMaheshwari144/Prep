@@ -87,4 +87,12 @@ public class User {
     @Min(value = 18, message = "Age must be at least 18")
     @Max(value = 120, message = "Age must be at most 120")
     private int age;
+
+    // ─── ROLE — for authorization (admin/user permissions) ─────
+    // Default = "USER" (normal user)
+    // Spring Security ROLE_ prefix internally use karta —
+    // hum simple "USER" / "ADMIN" rakhte, prefix authority creation
+    // time pe add karenge (CustomUserDetailsService mein)
+    @Column(nullable = false)
+    private String role = "USER";
 }
