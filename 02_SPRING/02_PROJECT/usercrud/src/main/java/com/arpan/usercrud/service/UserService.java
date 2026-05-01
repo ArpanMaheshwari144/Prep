@@ -27,6 +27,40 @@ import com.arpan.usercrud.repository.UserRepository;
  *  ─── DEPENDENCY INJECTION (already covered) ─────────────────────
  *  Constructor injection use ho raha — final field, single constructor,
  *  Spring auto-detect karega (@Autowired implicit).
+ *
+ *  ════════════════════════════════════════════════════════════════
+ *  📐 SOLID PRINCIPLES APPLIED
+ *  ════════════════════════════════════════════════════════════════
+ *
+ *  ✅ SRP (Single Responsibility):
+ *  Yeh class SIRF business logic — user CRUD operations.
+ *    • Data access  → UserRepository ka kaam
+ *    • Auth         → AuthController + JwtService ka kaam
+ *    • Validation   → Bean Validation (@Valid) ka kaam
+ *    • Exception    → GlobalExceptionHandler ka kaam
+ *  Single reason to change — business rules.
+ *
+ *  ✅ DIP (Dependency Inversion):
+ *  Service `UserRepository` INTERFACE pe depend karta —
+ *
+ *      private final UserRepository repository;  ← INTERFACE
+ *      public UserService(UserRepository repo) { ... }
+ *
+ *  Spring runtime pe proxy implementation inject karta. Future mein
+ *  custom impl chahiye? sirf wiring badle, service unchanged.
+ *
+ *  ✅ CONSTRUCTOR INJECTION (over field injection):
+ *  • Field final ban sakta (immutable)
+ *  • NPE impossible bina dependency ke
+ *  • Testing easy (mock pass karke construct)
+ *  • Spring single-constructor mein @Autowired bhi optional
+ *
+ *  🎤 INTERVIEW LINE:
+ *  "UserService SRP follow karta — sirf user business logic, data
+ *   access aur auth alag layers mein. DIP — UserRepository
+ *   interface pe depend, constructor injection use kiya. Spring
+ *   runtime pe proxy inject karta — yeh same DIP pattern jo
+ *   SimpleBankSystem mein manually banaya tha."
  * ════════════════════════════════════════════════════════════════
  */
 @Service

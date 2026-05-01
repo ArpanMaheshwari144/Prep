@@ -148,6 +148,13 @@ import jakarta.servlet.http.HttpServletResponse;
  *     sakta different reasons se. OncePerRequestFilter guarantee
  *     karta — single execution per request, redundant checks bachata."
  *  ════════════════════════════════════════════════════════════════════
+ *  📐 SOLID PRINCIPLES APPLIED
+ *  ════════════════════════════════════════════════════════════════════
+ *  ✅ SRP — Sirf JWT token extraction + validation per request.
+ *  ✅ DIP — JwtService + CustomUserDetailsService inject (interfaces / abstractions).
+ *  ✅ OCP — Naye auth header types (e.g., API key) ke liye doosra filter
+ *           add ho sakta, JwtFilter unchanged.
+ *  ════════════════════════════════════════════════════════════════════
  */
 @Component
 public class JwtFilter extends OncePerRequestFilter {

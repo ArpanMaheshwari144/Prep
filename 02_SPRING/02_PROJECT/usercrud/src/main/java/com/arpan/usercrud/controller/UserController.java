@@ -77,6 +77,13 @@ import jakarta.validation.Valid;
  *  ─── DI through Constructor ─────────────────────────────────────
  *  UserService ko Spring inject karega. final + single-constructor
  *  → @Autowired implicit.
+ *
+ *  ════════════════════════════════════════════════════════════════
+ *  📐 SOLID PRINCIPLES APPLIED
+ *  ════════════════════════════════════════════════════════════════
+ *  ✅ SRP — Sirf HTTP layer (request/response). Business logic nahi.
+ *  ✅ DIP — UserService inject (constructor injection)
+ *  ✅ Constructor Injection — final field, immutable, testable
  * ════════════════════════════════════════════════════════════════
  */
 @RestController

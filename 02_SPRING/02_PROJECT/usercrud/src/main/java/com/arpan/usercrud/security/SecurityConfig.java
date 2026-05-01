@@ -117,6 +117,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *                                        khud apni identity laata
  *
  *  ════════════════════════════════════════════════════════════════════
+ *  📐 SOLID PRINCIPLES APPLIED
+ *  ════════════════════════════════════════════════════════════════════
+ *  ✅ SRP — Sirf security configuration (filter chain, beans wire)
+ *  ✅ DIP — JwtFilter inject (constructor), uses Spring's abstractions
+ *           (AuthenticationManager, PasswordEncoder interfaces)
+ *  ✅ OCP — Naye filters add karne mein existing config extension friendly
+ *           (.addFilterBefore() / .addFilterAfter())
+ *  ════════════════════════════════════════════════════════════════════
  *  🎤 INTERVIEW TALKING POINT — SecurityConfig
  *  ════════════════════════════════════════════════════════════════════
  *

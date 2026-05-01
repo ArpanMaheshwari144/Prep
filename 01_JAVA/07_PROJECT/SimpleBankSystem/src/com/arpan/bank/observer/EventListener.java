@@ -8,6 +8,11 @@ package com.arpan.bank.observer;
 // 📌 JAVA KYA FOLLOW + KYU + KAISE:
 //    • OOPS — Interface (sirf rule, koi logic nahi)
 //    • Concrete classes (EmailListener, AuditListener etc.) implement karenge
+//    • Functional Interface — single method → lambda compatible
+//
+// 🎨 PATTERN: Observer (subscriber side of pub-sub)
+// 📐 SOLID:  ISP — Single-method focused interface (perfect ISP)
+//           OCP — Naye listeners add karne mein existing code unchanged
 // ═══════════════════════════════════════════════════════════════════════
 
 public interface EventListener {

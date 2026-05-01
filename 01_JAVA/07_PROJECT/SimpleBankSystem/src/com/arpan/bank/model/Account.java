@@ -16,6 +16,39 @@ import com.arpan.bank.exception.InsufficientFundsException;
 //                       update kare toh race condition na ho)
 //    • Custom Exception — InsufficientFundsException throw karta withdraw mein
 // ═══════════════════════════════════════════════════════════════════════
+//
+// ╔═══════════════════════════════════════════════════════════════════╗
+// ║  🎨 DESIGN PATTERN: TEMPLATE METHOD (via abstract class)           ║
+// ╠═══════════════════════════════════════════════════════════════════╣
+// ║                                                                   ║
+// ║  Abstract class COMMON workflow define karti, subclasses          ║
+// ║  SPECIFIC steps implement karte.                                  ║
+// ║                                                                   ║
+// ║  Common (concrete methods here):                                  ║
+// ║    • deposit()  — saare accounts mein same                        ║
+// ║    • withdraw() — saare accounts mein same                        ║
+// ║                                                                   ║
+// ║  Subclass-specific (abstract):                                    ║
+// ║    • calculateInterest() — Savings 4%, FD 7%, Current 0%          ║
+// ║                                                                   ║
+// ║  📐 SOLID — OCP (Open/Closed):                                    ║
+// ║  Naye account types add karne ke liye `Account` extend karo —     ║
+// ║  parent class modify NAHI karna. Open for extension.              ║
+// ║                                                                   ║
+// ║  📐 SOLID — LSP (Liskov Substitution):                            ║
+// ║  Sab subclasses (SavingsAccount, FixedDeposit, CurrentAccount)    ║
+// ║  Account ki place pe substitute ho sakte —                        ║
+// ║      Account a = new SavingsAccount(...);  ✅                     ║
+// ║      Account a = new FixedDeposit(...);    ✅                     ║
+// ║  Behavior consistent, no surprising exceptions.                   ║
+// ║                                                                   ║
+// ║  🎤 INTERVIEW LINE:                                                ║
+// ║  "Account abstract class Template Method-style — deposit() aur    ║
+// ║   withdraw() concrete (saare accounts mein same),                 ║
+// ║   calculateInterest() abstract (har subclass apna formula).       ║
+// ║   Common framework + specific behavior. OCP + LSP follow karta."  ║
+// ║                                                                   ║
+// ╚═══════════════════════════════════════════════════════════════════╝
 
 /**
  * Account — Abstract Parent (Domain Model)

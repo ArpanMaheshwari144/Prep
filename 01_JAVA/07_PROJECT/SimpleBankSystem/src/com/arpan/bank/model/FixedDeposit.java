@@ -7,6 +7,9 @@ package com.arpan.bank.model;
 // 📌 JAVA KYA FOLLOW + KYU + KAISE:
 //    • OOPS — Inheritance (extends Account)
 //             Polymorphism (calculateInterest() override — 7% rate)
+//
+// 🎨 PATTERN: Template Method (concrete implementation of abstract step)
+// 📐 SOLID:  LSP — FixedDeposit fully substitutable for Account
 // ═══════════════════════════════════════════════════════════════════════
 
 public class FixedDeposit extends Account {

@@ -91,6 +91,36 @@ import io.jsonwebtoken.security.Keys;
  *      • Claims          → token payload (key-value map)
  *
  *  ════════════════════════════════════════════════════════════════════
+ *  🎨 DESIGN PATTERN: BUILDER (used via Jwts.builder())
+ *  📐 SOLID: SRP
+ *  ════════════════════════════════════════════════════════════════════
+ *
+ *  Yeh class `Jwts.builder()` consume karta — JJWT library ka
+ *  Builder pattern. Step-by-step claims set karte:
+ *
+ *      Jwts.builder()
+ *          .subject(...)
+ *          .claim(...)
+ *          .expiration(...)
+ *          .signWith(...)
+ *          .compact();         ← final build
+ *
+ *  Each setter returns `this` (fluent), `compact()` returns final
+ *  immutable JWT string.
+ *
+ *  📐 SOLID — SRP (Single Responsibility):
+ *  Yeh class SIRF JWT operations — generate, parse, validate.
+ *  User loading (CustomUserDetailsService ka kaam), filtering
+ *  (JwtFilter ka kaam), config (SecurityConfig ka kaam) — sab
+ *  alag responsibilities mein.
+ *
+ *  🎤 INTERVIEW LINE:
+ *  "JwtService Builder pattern use karta JJWT library ke through —
+ *   Jwts.builder() fluent API se claims set karke compact() final
+ *   token string return karta. SRP bhi follow — sirf JWT ops,
+ *   baaki responsibilities alag classes mein."
+ *
+ *  ════════════════════════════════════════════════════════════════════
  *  🎤 INTERVIEW TALKING POINT — JwtService
  *  ════════════════════════════════════════════════════════════════════
  *

@@ -205,6 +205,15 @@ import jakarta.validation.Valid;
  *   scaling, microservices ke liye natural fit. Production mein secret
  *   env variable / AWS Secrets Manager se aata, code mein hardcode nahi."
  *
+ *  ════════════════════════════════════════════════════════════════════
+ *  📐 SOLID PRINCIPLES APPLIED
+ *  ════════════════════════════════════════════════════════════════════
+ *  ✅ SRP — Sirf authentication HTTP endpoints (login/register/refresh/logout)
+ *  ✅ DIP — Multiple dependencies inject via constructor —
+ *           UserRepository, RefreshTokenRepository, JwtService,
+ *           AuthenticationManager, PasswordEncoder.
+ *           Sab interfaces/abstractions, concrete implementations Spring inject karta.
+ *  ✅ OCP — Naye auth methods (e.g., OAuth) add karne mein existing endpoints unchanged
  * ════════════════════════════════════════════════════════════════════
  */
 @RestController

@@ -56,6 +56,10 @@ import com.arpan.usercrud.model.RefreshToken;
  *
  *      Hum yahan method-level @Transactional laga rahe — alternative
  *      to caller (AuthController) pe lagane ka.
+ *
+ *  🎨 PATTERN: Repository (Spring Data JPA — proxy auto-implementation)
+ *  📐 SOLID:  ISP — Sirf refresh-token specific operations
+ *            DIP — Service depends on this interface, not concrete class
  * ════════════════════════════════════════════════════════════════════
  */
 @Repository

@@ -9,13 +9,44 @@ import java.util.Optional;
 //    Storage layer ka CONTRACT (interface). Account save/find/delete ke
 //    rules define karta — actual storage kaisa hoga, koi concrete class
 //    handle karegi.
-//
-// 📌 JAVA KYA FOLLOW + KYU + KAISE:
-//    • OOPS — Interface (sirf rule, body nahi)
-//    • SOLID — DIP applied. Service is interface pe depend, koi specific
-//      DB ya HashMap pe nahi → kal MySQL chahiye? naya impl, service untouched.
-//    • Java 8 — Optional<Account> return (null-safe API)
 // ═══════════════════════════════════════════════════════════════════════
+//
+// ╔═══════════════════════════════════════════════════════════════════╗
+// ║  🎨 DESIGN PATTERN: REPOSITORY                                     ║
+// ╠═══════════════════════════════════════════════════════════════════╣
+// ║                                                                   ║
+// ║  Data access ko ABSTRACT karta — service layer bolta "save",      ║
+// ║  repository decide karta DB / file / in-memory wherever.          ║
+// ║                                                                   ║
+// ║  Yeh INTERFACE hai (contract only) — implementations alag:        ║
+// ║    • InMemoryAccountRepository — HashMap-backed (current)         ║
+// ║    • MySQLAccountRepository    — DB-backed (future)               ║
+// ║    • MongoAccountRepository    — NoSQL-backed (future)            ║
+// ║                                                                   ║
+// ║  Caller code (AccountService) UNCHANGED — sirf wiring badle.      ║
+// ║                                                                   ║
+// ║  📐 SOLID — ISP (Interface Segregation):                          ║
+// ║  Yeh interface FOCUSED hai — sirf account data ops (save,         ║
+// ║  findById, findAll, delete). 20 unrelated methods nahi —          ║
+// ║  cohesive contract.                                               ║
+// ║                                                                   ║
+// ║  📐 SOLID — DIP (Dependency Inversion):                           ║
+// ║  AccountService iss INTERFACE pe depend karta, concrete           ║
+// ║  InMemoryAccountRepository pe nahi. Implementation swap kar       ║
+// ║  sakte without changing service.                                  ║
+// ║                                                                   ║
+// ║  Real-world: Spring Data JPA JpaRepository — same Repository      ║
+// ║  pattern at framework level. Hum manual implement kar rahe.       ║
+// ║                                                                   ║
+// ║  🎤 INTERVIEW LINE:                                                ║
+// ║  "Repository pattern data access abstract karta —                 ║
+// ║   AccountRepository interface, InMemoryAccountRepository          ║
+// ║   implementation. Service layer interface se baat karta — future  ║
+// ║   mein MySQL ya MongoDB switch kare, sirf nayi implementation     ║
+// ║   likhni — service code unchanged. Spring Data JPA same pattern   ║
+// ║   follow karta."                                                  ║
+// ║                                                                   ║
+// ╚═══════════════════════════════════════════════════════════════════╝
 
 public interface AccountRepository {
 

@@ -15,6 +15,9 @@ import java.util.concurrent.Executors;
 //    • Resource management — pool.shutdown() graceful release
 //    • Exception isolation — ek transfer fail toh batch crash nahi
 //    • TransferRequest = static inner class (data carrier — fromId/toId/amount)
+//
+// 📐 SOLID:  SRP — Sirf batch processing handle karta
+//           DIP — AccountService inject (constructor injection)
 // ═══════════════════════════════════════════════════════════════════════
 
 public class BatchTransferService {
@@ -49,19 +52,8 @@ public class BatchTransferService {
     }
 
     // ───────────────────────────────────────────────────────────
-    // 📋 REQUIREMENT (tu likh)
-    // ───────────────────────────────────────────────────────────
-    // "Bhai, ye method kya kare:
-    //   • TransferRequests ki list le
-    //   • Har request pe loop chala
-    //   • Har request ko thread POOL mein submit kar (parallel chalegi)
-    //   • Pool.submit() ke andar:
-    //        accountService.transfer(fromId, toId, amount) call kar
-    //        Exception aaye toh print karo, batch crash mat hone do
-    //
-    // Help:
-    //   pool.submit(() -> {  ...  });   ← lambda Runnable
-    //   try-catch around transfer()      ← ek fail = baki running
+    // executeBatch — list of transfers parallel chalata thread pool se
+    // Exception isolation: ek transfer fail toh batch continue
     // ───────────────────────────────────────────────────────────
     public void executeBatch(List<TransferRequest> requests) {
         for (TransferRequest req : requests) {

@@ -56,6 +56,8 @@ import lombok.NoArgsConstructor;
  *  DTO    = API ke liye data shape (jaise ErrorResponse)
  *  Production mein dono alag rakhte hain — security + flexibility.
  *  Yahaan simple project hai, isliye User dono jagah use hua.
+ *
+ *  📐 SOLID:  SRP — Sirf User domain data + validation rules
  * ════════════════════════════════════════════════════════════════
  */
 @Entity

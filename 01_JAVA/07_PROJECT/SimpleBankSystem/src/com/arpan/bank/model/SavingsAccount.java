@@ -8,6 +8,9 @@ package com.arpan.bank.model;
 //    • OOPS — Inheritance (extends Account → parent ke fields/methods mile)
 //             Polymorphism (calculateInterest() override — apna 4% logic)
 //    • super() call — parent constructor invoke
+//
+// 🎨 PATTERN: Template Method (concrete implementation of abstract step)
+// 📐 SOLID:  LSP — SavingsAccount fully substitutable for Account
 // ═══════════════════════════════════════════════════════════════════════
 
 public class SavingsAccount extends Account {

@@ -8,6 +8,9 @@ package com.arpan.bank.observer;
 // 📌 JAVA KYA FOLLOW + KYU + KAISE:
 //    • OOPS — simple class with private fields + constructor + getters
 //    • Encapsulation — fields private final, only getters (immutable data)
+//
+// 🎨 PATTERN: Observer (event payload — passed to subscribers)
+// 📐 SOLID:  SRP — Sirf event data carry karta, koi behavior nahi
 // ═══════════════════════════════════════════════════════════════════════
 
 public class TransactionEvent {

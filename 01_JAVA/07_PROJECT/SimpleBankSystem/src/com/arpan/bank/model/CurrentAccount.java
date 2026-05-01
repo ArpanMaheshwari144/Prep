@@ -7,6 +7,9 @@ package com.arpan.bank.model;
 // 📌 JAVA KYA FOLLOW + KYU + KAISE:
 //    • OOPS — Inheritance (extends Account)
 //             Polymorphism (calculateInterest() override — return 0)
+//
+// 🎨 PATTERN: Template Method (concrete implementation of abstract step)
+// 📐 SOLID:  LSP — CurrentAccount fully substitutable for Account
 // ═══════════════════════════════════════════════════════════════════════
 
 public class CurrentAccount extends Account {

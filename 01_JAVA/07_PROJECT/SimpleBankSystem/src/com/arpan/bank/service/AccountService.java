@@ -14,16 +14,43 @@ import com.arpan.bank.repository.AccountRepository;
 //    Bank ka business logic — account create, get, transfer karta. Layers
 //    ka beech wala — Controller niche bulayega, ye Repository/Publisher
 //    ko coordinate karta.
-//
-// 📌 JAVA KYA FOLLOW + KYU + KAISE:
-//    • SOLID — SRP (sirf business rules — DB nahi, email nahi)
-//              DIP (Repository + EventPublisher INTERFACES inject)
-//    • Constructor Injection — final fields, test mein mock easy
-//    • Java 8 — Optional (orElseThrow), Streams (map/collect)
-//    • Custom Exception — AccountNotFoundException throw
-//    • Manual Transaction — try-catch + rollback (Spring @Transactional preview)
-//    • Observer — transfer success pe event fire (publish karta)
 // ═══════════════════════════════════════════════════════════════════════
+//
+// ╔═══════════════════════════════════════════════════════════════════╗
+// ║  📐 SOLID PRINCIPLES APPLIED                                       ║
+// ╠═══════════════════════════════════════════════════════════════════╣
+// ║                                                                   ║
+// ║  ✅ SRP (Single Responsibility):                                  ║
+// ║  Yeh class SIRF business logic handle karti — account creation,   ║
+// ║  transfers, balance ops. Data access NAHI (Repository ka kaam),   ║
+// ║  notification NAHI (EventListener ka kaam), creation NAHI         ║
+// ║  (Factory ka kaam). Single reason to change.                      ║
+// ║                                                                   ║
+// ║  ✅ DIP (Dependency Inversion):                                   ║
+// ║  Service `AccountRepository` INTERFACE pe depend karta, concrete  ║
+// ║  `InMemoryAccountRepository` pe nahi.                             ║
+// ║                                                                   ║
+// ║      private final AccountRepository repository;  ← INTERFACE     ║
+// ║                                                                   ║
+// ║      public AccountService(AccountRepository repo) {              ║
+// ║          this.repository = repo;   ← CONSTRUCTOR INJECTION        ║
+// ║      }                                                            ║
+// ║                                                                   ║
+// ║  Future MySQL switch? Sirf wiring badlo — service untouched.      ║
+// ║                                                                   ║
+// ║  ✅ CONSTRUCTOR INJECTION — best practice:                        ║
+// ║  • Field final ban sakta (immutable)                              ║
+// ║  • NPE impossible (object banega hi nahi without dependency)      ║
+// ║  • Testing easy (mock pass karke construct)                       ║
+// ║                                                                   ║
+// ║  🎤 INTERVIEW LINE:                                                ║
+// ║  "AccountService SRP follow karta — sirf business logic, data     ║
+// ║   access aur notification alag classes. DIP bhi — repository      ║
+// ║   interface pe depend, constructor injection use kiya. Spring     ║
+// ║   @Autowired constructor injection same DIP principle automate    ║
+// ║   karta."                                                         ║
+// ║                                                                   ║
+// ╚═══════════════════════════════════════════════════════════════════╝
 
 /**
  * AccountService — Business Logic Layer

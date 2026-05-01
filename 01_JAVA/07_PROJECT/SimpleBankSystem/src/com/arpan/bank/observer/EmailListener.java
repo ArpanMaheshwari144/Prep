@@ -8,6 +8,9 @@ package com.arpan.bank.observer;
 // 📌 JAVA KYA FOLLOW + KYU + KAISE:
 //    • OOPS — implements EventListener (interface contract)
 //             @Override (compile-time safety)
+//
+// 🎨 PATTERN: Observer (concrete subscriber)
+// 📐 SOLID:  SRP — Sirf email notification handle karta, kuch nahi
 // ═══════════════════════════════════════════════════════════════════════
 
 public class EmailListener implements EventListener {

@@ -74,6 +74,8 @@ import lombok.NoArgsConstructor;
  *
  *      Since refresh used 1x per 15 min, DB lookup overhead is fine.
  *      Revocation guarantee zyada important hai security ke liye.
+ *
+ *  📐 SOLID:  SRP — Sirf refresh token data + DB mapping
  * ════════════════════════════════════════════════════════════════════
  */
 @Entity

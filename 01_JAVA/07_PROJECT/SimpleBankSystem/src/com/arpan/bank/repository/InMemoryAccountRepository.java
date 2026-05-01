@@ -13,7 +13,10 @@ import java.util.*;
 //                  — ArrayList (defensive copy in findAll)
 //    • Java 8 — Optional.ofNullable() — null-safe wrap
 //    • OOPS — implements AccountRepository (interface contract)
-//    • SOLID — DIP achieve (service interface pe depend, ye concrete pluggable)
+//
+// 🎨 PATTERN: Repository (concrete implementation)
+// 📐 SOLID:  LSP — Substitutable for any AccountRepository implementation
+//           DIP — Service depends on interface, this concrete pluggable
 // ═══════════════════════════════════════════════════════════════════════
 
 public class InMemoryAccountRepository implements AccountRepository {

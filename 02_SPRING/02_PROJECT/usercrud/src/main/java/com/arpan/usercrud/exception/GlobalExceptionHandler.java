@@ -62,6 +62,13 @@ import com.arpan.usercrud.dto.ErrorResponse;
  *  client ko nahi bhejna chahiye — internal stack trace leak ho
  *  sakti hai. Generic message bhejo + actual exception logger se
  *  log karo. Yahaan brushup ke liye direct rakha hai.
+ *
+ *  ════════════════════════════════════════════════════════════════
+ *  📐 SOLID PRINCIPLES APPLIED
+ *  ════════════════════════════════════════════════════════════════
+ *  ✅ SRP — Sirf exception → HTTP response mapping. Business logic nahi.
+ *  ✅ OCP — Naye exception types ke liye method add karo,
+ *           existing handlers unchanged.
  * ════════════════════════════════════════════════════════════════
  */
 @RestControllerAdvice

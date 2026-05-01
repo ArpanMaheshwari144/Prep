@@ -73,6 +73,39 @@ import com.arpan.usercrud.repository.UserRepository;
  *                  ├─► Match → ✅ Authentication successful
  *                  └─► Mismatch → ❌ BadCredentialsException
  *
+ *  ════════════════════════════════════════════════════════════════════
+ *  🎨 DESIGN PATTERN: BUILDER (used via User.builder())
+ *  📐 SOLID: DIP, SRP
+ *  ════════════════════════════════════════════════════════════════════
+ *
+ *  Yeh class Spring's `User.builder()` use karta UserDetails
+ *  object banane ke liye:
+ *
+ *      User.builder()
+ *          .username(email)
+ *          .password(hash)
+ *          .authorities("ROLE_" + role)
+ *          .build();         ← final immutable UserDetails
+ *
+ *  Step-by-step setters, `build()` final immutable object return.
+ *
+ *  📐 SOLID — DIP (Dependency Inversion):
+ *  Yeh class `UserDetailsService` INTERFACE implement karti —
+ *  Spring Security iss interface pe depend karta, hamari concrete
+ *  class pe nahi. Future mein DB se LDAP switch kare? sirf nayi
+ *  implementation banao — Spring Security untouched.
+ *
+ *  📐 SOLID — SRP (Single Responsibility):
+ *  Yeh class SIRF user load karti DB se — nothing else. Password
+ *  matching Spring Security khud karta, JWT validation JwtFilter,
+ *  business logic UserService.
+ *
+ *  🎤 INTERVIEW LINE:
+ *  "CustomUserDetailsService Builder pattern use karta Spring ke
+ *   User.builder() ke through — UserDetails immutable object
+ *   banata. UserDetailsService interface implement karta — Spring
+ *   Security DIP follow karta, mera concrete class swap-able."
+ *
  *  ─── 🎫 ROLE_ PREFIX KA KHEL ──────────────────────────────────────
  *
  *      DB mein store:        "USER" / "ADMIN"   (clean, simple)
