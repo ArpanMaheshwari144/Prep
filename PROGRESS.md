@@ -38,24 +38,10 @@
 - ✅ Future vs CompletableFuture
 - ✅ Producer-Consumer pattern
 
-### 📂 `01_JAVA/05_BRAIN_TICKLERS/` — 13 interview classics
-- ✅ String intern, equals/hashCode trap, immutable defensive copy
-- ✅ Static method hiding, finally return override, sleep lock
-- ✅ TreeMap sorted order, Diamond problem, Map null rules
-- ✅ final vs finally vs finalize, covariant return type
-- ✅ Access modifier override, compile-time constant folding
-
-### 📂 `01_JAVA/06_SOLID/` — 5 + 1 topics
+### 📂 `01_JAVA/05_SOLID/` — 5 + 1 topics
 - ✅ SOLID intro + S, O, L, I, D principles individually
 
-### 📂 `01_JAVA/07_PROJECT/SimpleBankSystem/` — RUNNABLE PROJECT ✅
-- 16 files (model, repo, service, factory, observer, config, exception, Main)
-- All concepts integrated + inline pattern + SOLID comments
-- Patterns: **Singleton, Factory, Observer, Template Method, Repository**
-- SOLID: SRP, OCP, LSP, ISP, DIP all applied + documented
-- Compile clean, runs successfully
-
-### 📂 `01_JAVA/08_DESIGN_PATTERNS/` — 6 patterns done
+### 📂 `01_JAVA/06_DESIGN_PATTERNS/` — 6 patterns done
 - ✅ Builder (with project usage — Jwts.builder, User.builder)
 - ✅ Singleton (4 implementations, enum-best, Bloch's recommendation)
 - ✅ Factory (with project usage — AccountFactory)
@@ -64,6 +50,20 @@
 - ✅ Strategy (lean format)
 - 🔲 Decorator (paused — low priority)
 - 🔲 Composite (paused — low priority)
+
+### 📂 `01_JAVA/07_BRAIN_TICKLERS/` — 13 interview classics
+- ✅ String intern, equals/hashCode trap, immutable defensive copy
+- ✅ Static method hiding, finally return override, sleep lock
+- ✅ TreeMap sorted order, Diamond problem, Map null rules
+- ✅ final vs finally vs finalize, covariant return type
+- ✅ Access modifier override, compile-time constant folding
+
+### 📂 `01_JAVA/PROJECT/SimpleBankSystem/` — RUNNABLE PROJECT ✅
+- 16 files (model, repo, service, factory, observer, config, exception, Main)
+- All concepts integrated + inline pattern + SOLID comments
+- Patterns: **Singleton, Factory, Observer, Template Method, Repository**
+- SOLID: SRP, OCP, LSP, ISP, DIP all applied + documented
+- Compile clean, runs successfully
 
 ---
 
@@ -74,9 +74,9 @@
 - ✅ Beans + IoC Container deep
 - ✅ Annotations + DI types
 
-### 📂 `02_SPRING/02_PROJECT/usercrud/` — RUNNABLE PROJECT ✅
+### 📂 `02_SPRING/PROJECT/usercrud/` — RUNNABLE PROJECT (UPGRADED 2026-05-05) ✅
 - ✅ Full CRUD (POST/GET/PUT/DELETE)
-- ✅ Spring Data JPA + H2 DB
+- ✅ Spring Data JPA + **MySQL 8 (Docker container)** ⭐ upgraded from H2
 - ✅ Bean Validation (`@Valid`, `@NotBlank`, etc.)
 - ✅ Global Exception Handler (`@RestControllerAdvice`)
 - ✅ DTO pattern (LoginRequest, RegisterRequest, TokenResponse, RefreshRequest, ErrorResponse)
@@ -90,7 +90,16 @@
   - RefreshToken entity + repository (DB-stored)
   - AuthController (login/register/refresh/logout)
 - ✅ Inline pattern + SOLID comments throughout
-- ✅ Compile clean, **end-to-end tested** (login returns access + refresh tokens, security blocks unauthenticated)
+- ✅ Compile clean, **end-to-end tested** with MySQL container
+- ⭐ **Docker integration:**
+  - `Dockerfile` (heavy comments)
+  - `.dockerignore` (heavy comments)
+  - MySQL Connector/J in pom.xml
+  - application.properties → MySQL JDBC (`localhost:3307`)
+  - Hibernate 7 dialect fix (MySQLDialect, not MySQL8Dialect)
+  - **Real MySQL container** running with named volume `mysql_data`
+  - Postman tested: register/login working with MySQL
+  - **Volume persistence PROVEN** — container delete + recreate = data alive
 
 ### 📂 `02_SPRING/03_transactional/` — Deep theory ✅
 - ✅ Propagation (7 types) + Isolation (4 levels) + Rollback rules
@@ -127,55 +136,93 @@
 
 ## 🔄 IN PROGRESS — HLD (Day 1 done)
 
-### 📂 `04_HLD/` — Foundation (5 of ~10)
+### 📂 `04_HLD/` — Foundation (7 of ~10)
 - ✅ 01_hld_kya_hai (HLD intro, vs LLD, 4-question mindset)
 - ✅ 02_capacity_estimation (back-of-envelope math)
 - ✅ 03_load_balancing (Layer 4/7, algorithms, Nginx, AWS ALB/NLB)
 - ✅ 04_caching (strategies, eviction, Redis vs Memcached)
 - ✅ 05_database_replication (sync vs async, master-slave, lag, failover)
-- 🔜 06_database_sharding
-- 🔜 07_message_queues (Kafka, RabbitMQ basics)
+- ✅ 06_database_sharding (Range/Hash/Geo/Directory, Consistent Hashing)
+- ✅ 07_message_queues (Kafka vs RabbitMQ, delivery semantics, DLQ)
 - 🔜 08_cap_theorem
 - 🔜 09_microservices_communication
 - 🔜 10_consistency_models
 
-### System Designs — 🥋 7 DEEP > 15 shallow (Bruce Lee mode)
+### System Designs — 🎯 2 DEEP WFH, baaki Post-Bangalore
 
-> **Strategy locked 2026-05-04:**
-> *"Base mazboot karenge HLD foundations se. Phir URL Shortener — base ka base. Phir thoda level-up — 7 systems lekin har ek aisa ki base ek dum mazboot. Bus, isse zyada nahi. Aur sab subah hi karenge."*
+> **Strategy refined 2026-05-05 (40-day WFH target):**
+> *"Base mazboot ke liye 2 system design WFH mein, baaki Bangalore jaane ke baad — wahan apply mode + design parallel."*
 
-**Foundation system (base ka base):**
-- 🔜 **URL Shortener** — har building block (LB + Cache + DB + Sharding + Hashing) ek hi system mein
+**WFH PHASE — 2 system designs DEEP (~14 days)**
+- 🔜 **1. URL Shortener** — base ka base (LB + Cache + DB + Sharding + Hashing — all building blocks ek hi system mein)
+- 🔜 **2. Rate Limiter** — different paradigm (stateful, concurrent, algorithmic)
+   - Token bucket, sliding window, distributed via Redis
+   - Pairs with URL Shortener for max base coverage
 
-**Level-up systems (6 — strategically picked, each MASTERED):**
-- 🔜 Rate Limiter — token bucket, sliding window, distributed
-- 🔜 Notification System — fan-out, queues, delivery guarantees
-- 🔜 Chat System (WhatsApp) — real-time, WebSockets, message ordering
-- 🔜 Twitter Feed — fan-out on read vs write, timeline generation
-- 🔜 Uber — geospatial (geohash/quadtree), matching engine
-- 🔜 Payment Gateway — idempotency, transactions, consistency
-
-**Why 7, not 15?**
-- Same building blocks repeat across all systems (LB, cache, queue, sharding)
-- 7 deep = base rock solid, 15 shallow = base hollow
-- Interviewer follow-up "what if 10x scale?" → only deep mastery survives
+**Why these 2 specifically?**
+- URL Shortener = **storage paradigm** (stateless, write-heavy, hashing)
+- Rate Limiter = **algorithmic paradigm** (stateful, concurrent, race conditions)
+- 2 different paradigms → base maximally diverse, building blocks deeply locked
 - *Bruce Lee: ONE kick × 10,000 times > 10,000 kicks × ONE time*
 
-**Deferred (post-Bangalore if needed):**
-- Instagram, YouTube/Netflix, BookMyShow, Search Autocomplete, Distributed Cache
+**POST-BANGALORE PHASE (June 15+, apply mode parallel)**
+- 🔜 Notification System (fan-out, queues, delivery guarantees)
+- 🔜 Chat System (WhatsApp — real-time, WebSockets)
+- 🔜 Twitter Feed (fan-out on read vs write)
+- 🔜 Uber (geospatial, matching engine)
+- 🔜 Payment Gateway (idempotency, transactions)
+- 🔜 + Instagram / YouTube / BookMyShow / Search Autocomplete / Distributed Cache (as needed)
 
 ---
 
-## 🔲 PENDING — Will cover during Docker/K8s phase
+## 🔄 IN PROGRESS — Docker (Day 1 done, ~60% locked)
 
-### 0. Hibernate Gotchas (with project context)
+### 📂 `02_SPRING/DOCKER_NOTES.md` — Comprehensive (~1900 lines)
+
+**✅ DONE — Foundation + Volumes (HANDS-ON proven)**
+- ✅ Docker Desktop install (WSL 2 backend)
+- ✅ Image vs Container concept (recipe vs dish — proven)
+- ✅ docker pull / run / ps / logs / exec / rm / stop / start
+- ✅ Port mapping (-p) + port conflict resolution
+- ✅ Environment variables (-e) — MySQL config injection
+- ✅ Detached mode (-d), Container naming (--name)
+- ✅ Container isolation (local MySQL57 vs Docker MySQL — separate worlds)
+- ✅ Spring Boot ↔ Docker MySQL real integration (JDBC)
+- ✅ Hibernate 7 dialect trap fix (MySQL8Dialect → MySQLDialect)
+- ✅ **VOLUMES — DEEP locked with disaster + recovery proof**
+  - Named / Bind / tmpfs types
+  - `docker volume create` / `ls` / `inspect` / `rm` / `prune`
+  - Anonymous volume orphan trap
+  - LIVE PROOF: container delete + recreate + same volume = data alive
+
+**🔜 PENDING (next session, ~3-4 days)**
+- 🔜 Networks (multi-container talk, bridge/host/overlay, container DNS)
+- 🔜 docker-compose (Spring Boot + MySQL + Redis ek YAML mein)
+- 🔜 ENTRYPOINT vs CMD (interview classic)
+- 🔜 Multi-stage builds (production image small)
+- 🔜 ARG vs ENV (build-time vs runtime)
+- 🔜 HEALTHCHECK
+- 🔜 Image push to Docker Hub
+
+---
+
+## 🔲 PENDING — K8s (after Docker complete)
+
+- 🔲 Pod, Deployment, Service (foundation)
+- 🔲 Ingress, ConfigMap, Secret
+- 🔲 HPA (auto-scale), PV/PVC
+- 🔲 Notes: V90 format like Docker
+- ⭐ Docker Desktop has K8s integrated — bonus when time
+
+---
+
+## 🔲 PENDING — Hibernate Gotchas (alongside Docker remaining)
+
 - 🔲 **JPA vs Hibernate** distinction (Hibernate IS used in UserCRUD via Spring Data JPA)
 - 🔲 **N+1 problem** + JOIN FETCH solution
 - 🔲 **LAZY vs EAGER** fetch types
 - 🔲 **Dirty checking** + first-level cache
 - 🔲 Connect to project: yeh sab UserCRUD mein already chal raha hai under hood
-
-→ Will do alongside Docker/K8s integration phase
 
 ---
 
@@ -220,39 +267,37 @@
 
 ---
 
-## 📅 Approach — Depth-First, No Timeline Pressure
+## 📅 Approach — 40-Day WFH Plan (locked 2026-05-05)
+
+> **Target:** 5 May → 15 June (~40 days, base mazboot)
 
 ```
-PHILOSOPHY:
-   Quality > Speed
-   Master each topic deeply (kitne bhi din lage)
-   No rush to "complete" — surface knowledge useless
+WFH PHASE (40 days) — base mazboot karna hai
 
-LOOSE phases (not deadlines):
+   Phase 1 — HLD foundations 3 baki (~6 days)
+      🔜 CAP Theorem, MS Communication, Consistency Models
+      
+   Phase 2 — Docker advanced + K8s theory (~10 days)
+      ENTRYPOINT vs CMD, multi-stage, compose
+      K8s: Pod, Deployment, Service, Ingress
+      (Hands-on deferred — laptop constraint)
+      
+   Phase 3 — 2 SYSTEM DESIGNS DEEP (~14 days)
+      URL Shortener  → storage paradigm (LB+Cache+DB+Shard+Hash)
+      Rate Limiter   → algorithmic paradigm (token/window, distributed)
+      Two paradigms = base maximally diverse
+   
+   Phase 4 — Java/Spring revision (~10 days, parallel)
+      ✅ Tu khud — Claude help nahi (already locked)
+      
+   + Buffer/rest/mocks parallel
 
-   Phase 1 — HLD theory mastery
-      Sharding, Message Queues, CAP, MS Communication
-      → As many days as each needs
-
-   Phase 2 — Docker + K8s deep
-      Hands-on, Dockerfile, Compose, K8s pods/deployments/services
-      → As many days as each needs
-
-   Phase 3 — HLD practical (system designs)
-      URL Shortener first (base ka base — all building blocks)
-      + 6 strategically picked systems (7 total)
-      Each MASTERED, not skimmed
-      Quality > Quantity (7 deep > 15 shallow — Bruce Lee)
-
-   Phase 4 — Mocks + revision
-      Continuous from now till interviews
-
-15 June       → 🚀 BANGALORE ARRIVAL (fixed)
-                 = Apply mode + prep parallel
-                 = Strong topics ready, weak topics still deepening
+15 June  → 🚀 BANGALORE ARRIVAL (fixed)
+            = Apply mode + remaining system designs parallel
+            = Notification, Chat, Twitter, Uber, Payment, etc.
 ```
 
-**End of May tak HLD complete na ho — koi dikkat nahi.** Apply mode Bangalore mein full force, prep deep continue parallel.
+**WFH goal: BASE MAZBOOT.** Sab system designs nahi — sirf 2 deep + foundations + Docker theory. Bangalore mein continue.
 
 ---
 
@@ -261,24 +306,33 @@ LOOSE phases (not deadlines):
 - **70+ Java notes** (V90 format with visualizations)
 - **3 enhanced topical sections** (@Transactional, JWT, Producer-Consumer)
 - **6 Design Pattern notes** with project usage
-- **5 HLD foundation notes** (Day 1 of beast mode)
+- **7 HLD foundation notes** (intro/capacity/LB/cache/replication/sharding/MQ)
 - **2 runnable projects** (SimpleBankSystem + UserCRUD)
 - **End-to-end JWT auth** in UserCRUD (tested, working)
 - **All inline pattern + SOLID comments** in both projects
-- **GitHub clean structure**: Java → Spring → LLD → HLD → Reference
+- **⭐ DOCKER_NOTES.md** (~1900 lines, V90, hands-on captured)
+- **⭐ UserCRUD ↔ Docker MySQL** end-to-end (Postman tested)
+- **⭐ Volumes proven** via live disaster + recovery demo
+- **⭐ Maven manual install** (user-level, no admin)
+- **GitHub clean structure**: Java → Spring (project + Docker) → LLD → HLD → Reference
 
 ---
 
-## 💎 Real Position (May 4)
+## 💎 Real Position (May 5) — Phase-Wise
 
-**Java foundation:** 95% locked (deeply revised + tested via mock)
-**Spring foundation:** 90% locked (theory + project + tested)
-**LLD:** 12 problems done
-**HLD:** 50% (Day 1 — foundations 5/10, system designs 0/7 [strategic])
-**DSA:** Paused
-**Mocks:** 1 pilot done, scheduled post-revision
+**Java foundation:** Theory ✅ + 4yr practice ✅ = ALL DONE
+**Spring foundation:** Theory ✅ + project ✅ + JWT tested ✅ = ALL DONE
+**UserCRUD project:** ⭐ MySQL container integration DONE + Volumes proven
+**LLD:** 12 problems ✅ = DONE
+**HLD foundations:** 7/10 done (Sharding + MQ done 5 May) — ON TRACK
+**HLD system designs:** 0/2 WFH (URL Shortener + Rate Limiter — next phase)
+**Docker:** ⭐ ~60% done — Foundation + Volumes deep+hands-on (proven)
+              Pending: Networks, Compose, ENTRYPOINT, Multi-stage (~3-4 days)
+**K8s:** Pending (~5 days theory, after Docker complete)
+**DSA:** Paused (Arpan's call)
+**Mocks:** Pilot done, articulation drills pending (post-foundations)
 
-**Realistic verdict:** **June 15 Bangalore = strong profile + structured prep.** Apply mode begins from there.
+**Realistic verdict:** **June 15 Bangalore = base mazboot (HLD foundations + 2 deep systems + Docker/K8s theory + Java/Spring revised).** Apply mode + remaining system designs parallel from there.
 
 ---
 
