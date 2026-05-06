@@ -15,15 +15,19 @@
 # LAYER 1: Base image
 # ─────────────────────────────────────────────
 # FROM = "Yeh image se shuru kar"
-#   • openjdk:17-jdk-slim = Official OpenJDK 17 + slim Linux (Debian)
-#   • "slim" = sirf zaruri files (~200 MB), full Debian (~700 MB) nahi
-#   • Java 17 already pre-installed — humein sirf jar daalna
 #
-# Trade-off:
-#   slim       → small + fast deploy, lekin missing utilities (curl, etc.)
-#   full       → bigger but more tools
-#   alpine     → even smaller (~80 MB), but musl libc (sometimes Java issues)
-FROM openjdk:17-jdk-slim
+# IMPORTANT: openjdk:17-jdk-slim DEPRECATED on Docker Hub (2024-25 onwards)
+#   Official "openjdk" image archived — use Eclipse Temurin (industry standard)
+#
+#   • eclipse-temurin:17-jdk-jammy = Eclipse Temurin Java 17 + Ubuntu Jammy
+#   • Eclipse Temurin = OpenJDK build by Eclipse Adoptium (production-grade)
+#   • "jammy" = Ubuntu 22.04 LTS base (~250 MB)
+#
+# Alternatives:
+#   eclipse-temurin:17-jre-jammy   → JRE only (smaller, ~150 MB) — enough for running jar
+#   eclipse-temurin:17-jdk-alpine  → smallest (~80 MB), uses musl libc
+#   amazoncorretto:17               → Amazon's OpenJDK distribution
+FROM eclipse-temurin:17-jdk-jammy
 
 
 # ─────────────────────────────────────────────
