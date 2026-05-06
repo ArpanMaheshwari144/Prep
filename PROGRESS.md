@@ -175,34 +175,47 @@
 
 ---
 
-## 🔄 IN PROGRESS — Docker (Day 1 done, ~60% locked)
+## ✅ DONE — Docker (Day 1 + Day 2, fully WRAPPED)
 
-### 📂 `02_SPRING/DOCKER_NOTES.md` — Comprehensive (~1900 lines)
+### 📂 `02_SPRING/DOCKER/` — 11 organized files (~3500 lines total)
 
-**✅ DONE — Foundation + Volumes (HANDS-ON proven)**
-- ✅ Docker Desktop install (WSL 2 backend)
-- ✅ Image vs Container concept (recipe vs dish — proven)
-- ✅ docker pull / run / ps / logs / exec / rm / stop / start
-- ✅ Port mapping (-p) + port conflict resolution
-- ✅ Environment variables (-e) — MySQL config injection
-- ✅ Detached mode (-d), Container naming (--name)
-- ✅ Container isolation (local MySQL57 vs Docker MySQL — separate worlds)
-- ✅ Spring Boot ↔ Docker MySQL real integration (JDBC)
-- ✅ Hibernate 7 dialect trap fix (MySQL8Dialect → MySQLDialect)
-- ✅ **VOLUMES — DEEP locked with disaster + recovery proof**
-  - Named / Bind / tmpfs types
-  - `docker volume create` / `ls` / `inspect` / `rm` / `prune`
-  - Anonymous volume orphan trap
-  - LIVE PROOF: container delete + recreate + same volume = data alive
+**Folder structure:**
+- `00_README.md` — master index + reading order
+- `01_foundation.md` — basics (Image, Container, run, ps, logs)
+- `02_spring_mysql_host.md` — Day 1: Spring on host + MySQL container
+- `03_volumes.md` — disaster + recovery proof
+- `04_transition.md` — KEY: Day 1 → Day 2 bridge
+- `05_networks.md` — Container DNS magic
+- `06_docker_compose.md` — multi-container orchestration
+- `07_reference.md` — commands + 22 traps + power phrase
+- `08_revision_visual.md` — mega visual recap
+- `09_multistage_builds.md` — 40% size reduction PROVEN
+- `10_arg_vs_env.md` — build-time vs runtime variables
 
-**🔜 PENDING (next session, ~3-4 days)**
-- 🔜 Networks (multi-container talk, bridge/host/overlay, container DNS)
-- 🔜 docker-compose (Spring Boot + MySQL + Redis ek YAML mein)
-- 🔜 ENTRYPOINT vs CMD (interview classic)
-- 🔜 Multi-stage builds (production image small)
-- 🔜 ARG vs ENV (build-time vs runtime)
-- 🔜 HEALTHCHECK
-- 🔜 Image push to Docker Hub
+**✅ Topics LOCKED:**
+- ✅ Image vs Container, docker pull/run/ps/logs/exec/rm
+- ✅ Port mapping + conflict resolution
+- ✅ Environment variables, detached mode, naming
+- ✅ Container isolation (local vs Docker MySQL)
+- ✅ Spring Boot ↔ Docker MySQL integration (Day 1)
+- ✅ Hibernate 7 dialect trap fix
+- ✅ **VOLUMES** — disaster + recovery PROVEN
+- ✅ **NETWORKS** — custom bridge, container DNS by name
+- ✅ **DOCKER COMPOSE** — full stack orchestration
+- ✅ **ENTRYPOINT vs CMD** — production pattern applied
+- ✅ **MULTI-STAGE BUILDS** — 256 MB → 154 MB (40% reduction)
+- ✅ **ARG vs ENV** — build-time vs runtime variables
+
+**🔲 DEFERRED (low priority — cover during Phase 3 project):**
+- 🔲 HEALTHCHECK deepen (already touched in compose)
+- 🔲 Image push to Docker Hub (registry workflow)
+
+**Deliverables:**
+- Dockerfile (single-stage) — current production
+- Dockerfile.multistage — production-grade alternative
+- docker-compose.yml — Spring Boot + MySQL stack
+- application-compose.properties — Spring container profile
+- All hands-on tested with Postman + Workbench
 
 ---
 
@@ -310,10 +323,15 @@ WFH PHASE (40 days) — base mazboot karna hai
 - **2 runnable projects** (SimpleBankSystem + UserCRUD)
 - **End-to-end JWT auth** in UserCRUD (tested, working)
 - **All inline pattern + SOLID comments** in both projects
-- **⭐ DOCKER_NOTES.md** (~1900 lines, V90, hands-on captured)
+- **⭐ DOCKER/ folder** (11 organized files, ~3500 lines, full journey)
+- **⭐ 05_profiles/ folder** (4 organized files — Day 1 + Day 2)
 - **⭐ UserCRUD ↔ Docker MySQL** end-to-end (Postman tested)
+- **⭐ Multi-container stack** working (Spring + MySQL + Compose)
 - **⭐ Volumes proven** via live disaster + recovery demo
+- **⭐ Networks proven** via container DNS hands-on
+- **⭐ Multi-stage build** — 40% image size reduction PROVEN (256 MB → 154 MB)
 - **⭐ Maven manual install** (user-level, no admin)
+- **⭐ Hibernate 7 dialect trap** documented + fixed
 - **GitHub clean structure**: Java → Spring (project + Docker) → LLD → HLD → Reference
 
 ---
@@ -326,9 +344,10 @@ WFH PHASE (40 days) — base mazboot karna hai
 **LLD:** 12 problems ✅ = DONE
 **HLD foundations:** 7/10 done (Sharding + MQ done 5 May) — ON TRACK
 **HLD system designs:** 0/2 WFH (URL Shortener + Rate Limiter — next phase)
-**Docker:** ⭐ ~60% done — Foundation + Volumes deep+hands-on (proven)
-              Pending: Networks, Compose, ENTRYPOINT, Multi-stage (~3-4 days)
-**K8s:** Pending (~5 days theory, after Docker complete)
+**Docker:** ⭐ FULLY WRAPPED ✅ (Foundation + Volumes + Networks + Compose + ENTRYPOINT + Multi-stage + ARG/ENV)
+              Deferred: HEALTHCHECK deepen, Docker Hub push (low priority — Phase 3)
+**Spring Profiles:** ⭐ FULLY DOCUMENTED ✅ (4 files in 05_profiles/, 3 profiles working)
+**K8s:** Pending (~5 days theory, NEXT after Docker)
 **DSA:** Paused (Arpan's call)
 **Mocks:** Pilot done, articulation drills pending (post-foundations)
 

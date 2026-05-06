@@ -48,6 +48,11 @@
                               40% size reduction PROVEN
                               JDK build → JRE runtime pattern
                               [Day 2 — production gold]
+
+11. ⚙️ 10_arg_vs_env.md       ← Build-time vs runtime variables
+                              ARG (build-only) vs ENV (runtime)
+                              Secrets handling, override priority
+                              [Day 2 — interview classic]
 ```
 
 ---
