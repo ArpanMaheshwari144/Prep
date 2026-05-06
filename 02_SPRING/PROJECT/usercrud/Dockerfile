@@ -65,13 +65,32 @@ EXPOSE 8080
 
 
 # ─────────────────────────────────────────────
-# LAYER 5: Container start command
+# LAYER 5: Container start command (PRODUCTION PATTERN)
 # ─────────────────────────────────────────────
-# CMD = "Container start hote hi yeh command chalao"
-#   • Exec form ["a", "b", "c"] preferred over shell form "a b c"
-#   • Reason: Linux signals (SIGTERM) properly handle hote
-#   • java -jar app.jar = Spring Boot up, embedded Tomcat shuru, port 8080 listen
-CMD ["java", "-jar", "app.jar"]
+# ENTRYPOINT vs CMD — interview classic:
+#
+# OLD (CMD only):
+#   CMD ["java", "-jar", "app.jar"]
+#   → Easy override: docker run img echo X (replaces entire CMD)
+#   → Risk: accidental override
+#
+# NEW (ENTRYPOINT — fixed binary):
+#   ENTRYPOINT ["java", "-jar", "app.jar"]
+#   → Always runs java -jar app.jar (immutable)
+#   → docker run img --debug → java -jar app.jar --debug (args APPEND)
+#   → Override needs --entrypoint flag (intentional)
+#
+# Config via ENV VARS (12-factor app style):
+#   docker-compose.yml mein:
+#     environment:
+#       SPRING_PROFILES_ACTIVE: compose
+#   docker run -e flag:
+#     docker run -e SPRING_PROFILES_ACTIVE=docker my-app
+#
+# Form: EXEC ["a", "b"] (JSON array) — PID 1 = java process
+#   → Signals (SIGTERM) directly reach Spring Boot → graceful shutdown ✅
+# Avoid SHELL form (java -jar app.jar) → wraps in /bin/sh, signals broken
+ENTRYPOINT ["java", "-jar", "app.jar"]
 
 
 # ============================================================

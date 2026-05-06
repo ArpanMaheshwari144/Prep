@@ -1,0 +1,146 @@
+# ============================================================
+# 🚀 PRODUCTION-GRADE Dockerfile — Multi-Stage Build
+# ============================================================
+# Compare with Dockerfile (single-stage) to see the difference:
+#
+# SINGLE-STAGE Dockerfile (~300 MB final):
+#   • FROM eclipse-temurin:17-jdk-jammy   (JDK = JRE + javac + tools)
+#   • Includes: Java compile tools, build leftovers, maven cache
+#   • Wasted: tools never used at runtime
+#   • Risk: bigger attack surface, slow deploy
+#
+# MULTI-STAGE Dockerfile (this file, ~130 MB final):
+#   • Stage 1 (builder): JDK + Maven — heavy, build only
+#   • Stage 2 (runtime): JRE only — light, run only
+#   • Final image = ONLY Stage 2 (Stage 1 discarded)
+#   • Result: smaller, faster, more secure
+#
+# Build commands:
+#   Single:  docker build -t usercrud-app:single .
+#   Multi:   docker build -f Dockerfile.multistage -t usercrud-app:multi .
+#
+# Compare:
+#   docker images usercrud-app
+# ============================================================
+
+
+# ════════════════════════════════════════════════════════════
+# STAGE 1: BUILDER (heavy — JDK + Maven)
+# ════════════════════════════════════════════════════════════
+# "AS builder" = name this stage so we can reference later
+# maven:3.9-eclipse-temurin-17 = official Maven image with JDK 17
+#   (Has: JDK + Maven + curl + git — full build environment)
+#   Image size: ~700 MB (heavy, but only used at build time)
+FROM maven:3.9-eclipse-temurin-17 AS builder
+
+WORKDIR /build
+
+
+# ─────────────────────────────────────────────
+# Layer A — Cache deps separately (speed trick)
+# ─────────────────────────────────────────────
+# pom.xml change rarely → this layer cached most builds
+# If pom.xml hasn't changed, Maven won't re-download deps
+# Net result: subsequent builds VERY fast (skip dep download)
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+#                              ↑↑
+#                              -B = batch mode (no interactive prompts)
+#                              go-offline = download all deps once
+
+
+# ─────────────────────────────────────────────
+# Layer B — Copy source + build
+# ─────────────────────────────────────────────
+# Source code COPY karna last — frequently changes
+# Each src change = only THIS layer rebuilds (deps cached)
+COPY src ./src
+
+# Build: skip tests (faster build, run tests separately in CI)
+RUN mvn clean package -DskipTests
+# Output: /build/target/usercrud-0.0.1-SNAPSHOT.jar
+
+# 🚨 EVERYTHING IN STAGE 1 GETS DISCARDED AFTER STAGE 2 STARTS
+# Only what we COPY --from=builder makes it to final image
+
+
+# ════════════════════════════════════════════════════════════
+# STAGE 2: RUNTIME (light — JRE only)
+# ════════════════════════════════════════════════════════════
+# Brand new FROM = completely fresh image, NOT continuation
+# eclipse-temurin:17-jre-jammy = JRE only (no compile tools)
+#   (Has: JRE — Java runtime sufficient to RUN .jar)
+#   Image size: ~150 MB (much lighter than JDK)
+#
+# Why JRE instead of JDK?
+#   • Container ka kaam = run jar (java -jar app.jar)
+#   • Build time only mein JDK chahiye (javac compile)
+#   • Runtime mein JDK = waste
+#   • JRE = perfect for production
+FROM eclipse-temurin:17-jre-jammy
+
+WORKDIR /app
+
+
+# ─────────────────────────────────────────────
+# Copy ONLY the jar from Stage 1
+# ─────────────────────────────────────────────
+# COPY --from=builder = "go to builder stage, get this file"
+# Other files in Stage 1 (Maven cache, source, target/) IGNORED
+# Final image gets ONLY app.jar from Stage 1
+COPY --from=builder /build/target/usercrud-*.jar app.jar
+
+
+# ─────────────────────────────────────────────
+# Production: non-root user (security best practice)
+# ─────────────────────────────────────────────
+# Default container = root user (security risk)
+# Non-root user can't escalate privileges if container compromised
+RUN groupadd -r spring && useradd -r -g spring spring
+USER spring
+
+
+# ─────────────────────────────────────────────
+# Port + Start command
+# ─────────────────────────────────────────────
+EXPOSE 8080
+
+# ENTRYPOINT = fixed binary (production pattern, signals work properly)
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
+
+# ============================================================
+# 🧠 What Final Image Contains:
+# ============================================================
+#   ✅ JRE (Java runtime — ~150 MB)
+#   ✅ /app/app.jar (your Spring Boot jar — ~50 MB)
+#   ✅ Non-root user "spring"
+#   ❌ No JDK (compile tools)
+#   ❌ No Maven
+#   ❌ No source code
+#   ❌ No build leftovers
+#
+#   = ~200 MB total (vs ~300 MB single-stage)
+#   = ~33% smaller, more secure, faster deploy
+# ============================================================
+
+
+# ============================================================
+# 🎯 Comparison Commands:
+# ============================================================
+# After building both:
+#
+#   docker build -t usercrud-app:single .                     (single-stage)
+#   docker build -f Dockerfile.multistage -t usercrud-app:multi .  (multi-stage)
+#
+# Then compare:
+#
+#   docker images usercrud-app
+#
+# Expected output:
+#   REPOSITORY      TAG    IMAGE ID    CREATED    SIZE
+#   usercrud-app   multi    abc123      ...       ~200 MB     ⭐
+#   usercrud-app   single   xyz789      ...       ~300 MB
+#
+# Production: ALWAYS use multi-stage variant.
+# ============================================================
