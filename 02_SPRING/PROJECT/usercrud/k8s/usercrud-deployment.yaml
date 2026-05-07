@@ -1,0 +1,79 @@
+# ════════════════════════════════════════════════════════════
+# 🚀 UserCRUD Spring Boot Deployment
+# ════════════════════════════════════════════════════════════
+# Spring Boot pod manage karta:
+#   • 1 replica (dev)
+#   • Image: usercrud-app:multi (multi-stage built earlier)
+#   • imagePullPolicy: Never (use local image, NOT pull from registry)
+#   • Reads ConfigMap for env vars
+#
+# Apply command:
+#   kubectl apply -f usercrud-deployment.yaml
+#
+# Verify:
+#   kubectl get pods
+#   kubectl logs deployment/usercrud
+# ════════════════════════════════════════════════════════════
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usercrud
+  labels:
+    app: usercrud
+
+spec:
+  replicas: 1                       # ← 1 replica for now (production = 2+)
+
+  selector:
+    matchLabels:
+      app: usercrud
+
+  strategy:
+    type: RollingUpdate              # ← Zero-downtime updates
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+
+  template:
+    metadata:
+      labels:
+        app: usercrud
+    spec:
+      containers:
+      - name: usercrud
+        image: arpanmah/usercrud-app:multi   # ← Docker Hub image (production pattern)
+        imagePullPolicy: IfNotPresent        # ← Pull if not local
+                                              #   K8s pulls from Docker Hub if not cached
+
+        ports:
+        - containerPort: 8080
+
+        # All ConfigMap entries as env vars
+        envFrom:
+        - configMapRef:
+            name: usercrud-config
+
+        # Resource limits
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+
+        # Health checks (production best practice)
+        # Spring Boot has /actuator/health endpoint — but we don't have actuator added
+        # For now, simple TCP check on 8080
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 30    # Spring Boot takes ~30 sec to start
+          periodSeconds: 10
+
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 20

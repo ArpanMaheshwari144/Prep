@@ -1,0 +1,45 @@
+# ════════════════════════════════════════════════════════════
+# 💾 MySQL PVC — Persistent Volume Claim (Data Storage)
+# ════════════════════════════════════════════════════════════
+# Container ephemeral hota — pod delete = data gone.
+# PVC = "Hey K8s, mujhe persistent storage chahiye"
+#
+# Yeh Docker volumes ka K8s equivalent hai.
+#
+# Components:
+#   PV  (Persistent Volume)       = actual storage on disk
+#   PVC (Persistent Volume Claim) = "request" for storage
+#
+#   Pod ─uses─► PVC ─binds─► PV ─is─► actual disk space
+#
+# Apply command:
+#   kubectl apply -f mysql-pvc.yaml
+#
+# Verify:
+#   kubectl get pvc
+#   kubectl get pv
+# ════════════════════════════════════════════════════════════
+
+apiVersion: v1
+kind: PersistentVolumeClaim         # ← Resource type: PVC
+metadata:
+  name: mysql-pvc                    # ← Naam (Deployment isi se reference karega)
+
+spec:
+  accessModes:
+    - ReadWriteOnce                 # ← Single pod read/write at a time
+                                     #   (ReadWriteMany = multiple pods, rare for DBs)
+  resources:
+    requests:
+      storage: 1Gi                   # ← 1 GB storage chahiye
+
+# Storage class (optional — Docker Desktop default class auto-use):
+# storageClassName: standard
+
+# Note:
+# Production mein storageClassName explicit set hota:
+#   • AWS: gp2 / gp3 (EBS volumes)
+#   • GCP: pd-standard / pd-ssd
+#   • Local: standard / hostpath
+#
+# Docker Desktop K8s = default class auto-bind

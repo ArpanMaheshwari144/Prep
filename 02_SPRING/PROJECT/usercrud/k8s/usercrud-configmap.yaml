@@ -1,0 +1,19 @@
+# ════════════════════════════════════════════════════════════
+# 📋 UserCRUD ConfigMap — Non-sensitive Config
+# ════════════════════════════════════════════════════════════
+# Spring Boot ke env variables (non-sensitive)
+# Sensitive values (password) Secret se aate
+# ════════════════════════════════════════════════════════════
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: usercrud-config
+
+data:
+  # Spring profile — compose profile use karenge
+  # (mysql:3306 service name pe connect karega)
+  SPRING_PROFILES_ACTIVE: compose
+
+  # JVM options (optional)
+  JAVA_OPTS: "-Xms256m -Xmx512m"

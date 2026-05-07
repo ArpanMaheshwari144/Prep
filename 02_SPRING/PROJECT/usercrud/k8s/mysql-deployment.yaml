@@ -1,0 +1,84 @@
+# ════════════════════════════════════════════════════════════
+# 🐳 MySQL Deployment — Pod Definition
+# ════════════════════════════════════════════════════════════
+# Deployment = Pod manage karta (production-grade):
+#   • Self-healing (pod crash → auto-replace)
+#   • Rolling updates
+#   • Replica count maintain
+#
+# Yeh file:
+#   1 replica MySQL pod
+#   Image: mysql:8 (Docker Hub se)
+#   Password: from mysql-secret
+#   Storage: from mysql-pvc
+#
+# Apply command:
+#   kubectl apply -f mysql-deployment.yaml
+#
+# Verify:
+#   kubectl get deployments
+#   kubectl get pods
+#   kubectl logs deployment/mysql
+# ════════════════════════════════════════════════════════════
+
+apiVersion: apps/v1                # ← Deployment ka API version
+kind: Deployment
+metadata:
+  name: mysql                       # ← Deployment ka naam
+  labels:
+    app: mysql
+
+spec:
+  replicas: 1                       # ← Sirf 1 pod (DB single instance for now)
+                                     #   Multi-replica DB = stateful complex (StatefulSet)
+
+  selector:
+    matchLabels:
+      app: mysql                    # ← Deployment yeh label wale pods manage karega
+
+  strategy:
+    type: Recreate                  # ← For DB: kill old pod first, then create new
+                                     #   (RollingUpdate doesn't work well for single-replica DB)
+
+  template:                         # ← POD ka template
+    metadata:
+      labels:
+        app: mysql                  # ← MUST MATCH selector.matchLabels above
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8              # ← Same image as docker-compose
+
+        # ENV variables (from Secret)
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:           # ← Reference Secret (NOT hardcoded!)
+              name: mysql-secret
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE       # ← Auto-create userdb on startup
+          value: userdb
+
+        # Container port (internal — Service exposes)
+        ports:
+        - containerPort: 3306
+
+        # Mount PVC for data persistence
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql # ← MySQL ka actual data path
+
+        # Resource limits (production best practice)
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"             # ← 0.25 CPU
+          limits:
+            memory: "512Mi"
+            cpu: "500m"             # ← 0.5 CPU
+
+      # Volumes section (PVC referenced here)
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc      # ← References our PVC file
