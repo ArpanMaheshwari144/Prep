@@ -219,13 +219,33 @@
 
 ---
 
-## 🔲 PENDING — K8s (after Docker complete)
+## ✅ DONE — K8s (95% interview coverage achieved)
 
-- 🔲 Pod, Deployment, Service (foundation)
-- 🔲 Ingress, ConfigMap, Secret
-- 🔲 HPA (auto-scale), PV/PVC
-- 🔲 Notes: V90 format like Docker
-- ⭐ Docker Desktop has K8s integrated — bonus when time
+### 📂 `02_SPRING/K8S/` — 7 organized files
+
+**Topics LOCKED (interview must-know):**
+- ✅ Why K8s + Architecture (Control plane + Worker nodes)
+- ✅ Pod (smallest deployable unit, sidecar pattern)
+- ✅ Deployment (production-grade Pod management, rolling updates, rollback)
+- ✅ Service (stable IP/DNS — 4 types: ClusterIP/NodePort/LoadBalancer/ExternalName)
+- ✅ Ingress (L7 routing — = K8s ka NGINX, same role + logs)
+- ✅ ConfigMap + Secret (config injection — Spring profiles ka K8s equivalent)
+
+**Files in folder:**
+- `00_README.md` — master index
+- `01_why_k8s_and_architecture.md`
+- `02_pod.md`
+- `03_deployment.md`
+- `04_service.md`
+- `05_ingress.md`
+- `06_configmap_secret.md`
+
+**🔲 DEFERRED (optional — lower priority, cover during Phase 3 project):**
+- 🔲 Namespaces (multi-tenancy)
+- 🔲 HPA (auto-scaling)
+- 🔲 PV/PVC (persistent volumes for stateful apps)
+
+**Hands-on:** Theory deep done. Real cluster ops = Phase 3 (Bangalore + AWS EKS).
 
 ---
 
@@ -324,6 +344,7 @@ WFH PHASE (40 days) — base mazboot karna hai
 - **End-to-end JWT auth** in UserCRUD (tested, working)
 - **All inline pattern + SOLID comments** in both projects
 - **⭐ DOCKER/ folder** (11 organized files, ~3500 lines, full journey)
+- **⭐ K8S/ folder** (7 organized files — 95% interview coverage)
 - **⭐ 05_profiles/ folder** (4 organized files — Day 1 + Day 2)
 - **⭐ UserCRUD ↔ Docker MySQL** end-to-end (Postman tested)
 - **⭐ Multi-container stack** working (Spring + MySQL + Compose)
@@ -347,7 +368,8 @@ WFH PHASE (40 days) — base mazboot karna hai
 **Docker:** ⭐ FULLY WRAPPED ✅ (Foundation + Volumes + Networks + Compose + ENTRYPOINT + Multi-stage + ARG/ENV)
               Deferred: HEALTHCHECK deepen, Docker Hub push (low priority — Phase 3)
 **Spring Profiles:** ⭐ FULLY DOCUMENTED ✅ (4 files in 05_profiles/, 3 profiles working)
-**K8s:** Pending (~5 days theory, NEXT after Docker)
+**K8s:** ⭐ 95% WRAPPED ✅ (7 files in K8S/, 6 must-know topics done)
+              Deferred: Namespaces, HPA, PV/PVC (low priority)
 **DSA:** Paused (Arpan's call)
 **Mocks:** Pilot done, articulation drills pending (post-foundations)
 
