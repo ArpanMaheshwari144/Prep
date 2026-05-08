@@ -41,6 +41,16 @@
       07_namespaces.md                 ← Multi-tenancy
       08_hpa.md                        ← Auto-scaling
       09_pv_pvc.md                     ← Persistent volumes
+
+---
+
+## 🚀 Practical (Hands-On Folder)
+
+📂 [PRACTICAL/](PRACTICAL/) — Real deployment journey
+   ├── 01_practical_journey.md   ← Phase 1-6 step-by-step
+                                   (cluster + MySQL + Spring Boot + Docker Hub + ports)
+   = Theory yahan upar (00-09)
+   = Practical alag folder mein (PRACTICAL/)
 ```
 
 ---
