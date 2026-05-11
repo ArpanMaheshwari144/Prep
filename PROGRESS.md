@@ -1,7 +1,7 @@
 # 📊 Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-09 (Day 5 — HLD systems done)
-> **Bangalore arrival:** June 15, 2026 (~37 days)
+> **Last updated:** 2026-05-09 (Day 5 — Spring revision visual mode added)
+> **Bangalore arrival:** June 15, 2026 (~36 days)
 > **Goal:** Strong profile + apply mode in Bangalore
 
 ---
@@ -154,6 +154,24 @@
 
 ---
 
+## ✅ DONE — Spring Visual Revision (5 files)
+
+### 📂 `02_SPRING/REVISION_VISUAL/` ⭐ NEW
+- ✅ **01_spring_basics_visual.md** — IoC, DI, Container, Beans (hotel analogy)
+- ✅ **02_rest_flow_visual.md** — Controller-Service-Repository, DTO, validation, exception handler (pizza restaurant)
+- ✅ **03_transactional_visual.md** — bank transfer, ACID, propagation, isolation, self-invocation pitfall, MySQL→Spring mapping
+- ✅ **04_jwt_security_visual.md** — ATM analogy, JWT structure, filter chain, access+refresh, 7 pitfalls
+- ✅ **05_profiles_visual.md** — wardrobe analogy, profile-specific properties, @Profile annotation
+
+```
+Pattern: Visual revision separate from V90 deep notes.
+Different purpose:
+   V90 (existing) = first-time deep learning
+   VISUAL (new)   = quick recall, image-based
+```
+
+---
+
 ## 🔜 NEXT — System Designs (3 more before Bangalore)
 
 ```
@@ -162,7 +180,7 @@ Strategy: 80% HLD = same components (CDN, LB, Redis, App, DB).
 Each new system teaches DIFFERENT decision domain.
 ```
 
-- 🔜 **Twitter / Insta Feed** — fanout, hot users, sharding strategies
+- 🔜 **Twitter / Insta Feed** — fanout, hot users, sharding strategies (2-3 day topic)
 - 🔜 **WhatsApp / Chat** — real-time, WebSockets, message ordering
 - 🔜 **Uber / Ride** — geospatial, real-time matching, surge
 
@@ -170,11 +188,58 @@ After 3-4 systems → build **Decision Cheat Sheet** (DB choice matrix, Redis us
 
 ---
 
-## 🔜 PENDING — Hibernate Gotchas
+## 🔲 PENDING TOPICS (ek din karna hai)
+
+### Hibernate Gotchas
 - 🔲 JPA vs Hibernate distinction
 - 🔲 N+1 problem + JOIN FETCH
 - 🔲 LAZY vs EAGER fetch types
 - 🔲 Dirty checking + first-level cache
+- 🔲 Cascade types
+- 🔲 @OneToMany / @ManyToOne / @ManyToMany mapping pitfalls
+
+### Java Visual Revision (parallel track shuru kal se)
+- 🔲 Core Java visual revision (OOP, String, Collections)
+- 🔲 Java 8 visual (Lambda, Stream, Optional)
+- 🔲 Multithreading visual
+- 🔲 SOLID visual
+- 🔲 Design Patterns visual
+
+### Design Patterns (paused — low priority)
+- 🔲 Decorator pattern
+- 🔲 Composite pattern
+
+### Docker / K8s Deferred
+- 🔲 HEALTHCHECK deepen
+- 🔲 K8s Namespaces (multi-tenancy)
+- 🔲 K8s HPA (auto-scaling)
+- 🔲 K8s PV/PVC deep (stateful apps)
+
+### HLD Decision Cheat Sheet
+- 🔲 Build after 3-4 system designs done
+- 🔲 DB choice matrix
+- 🔲 Redis usage patterns
+- 🔲 Sharding triggers
+
+### Infrastructure Deep Dive (Next Sunday — 17 May 2026)
+- 🔲 CDN deep (CloudFront/Akamai, edge, cache invalidation)
+- 🔲 ALB / Load Balancer deep (L4 vs L7, sticky sessions, health)
+- 🔲 DNS deep (Route 53, record types, routing policies)
+- 🔲 WAF deep (rules, OWASP, integration with rate limit)
+
+### Rapid-Fire Interview Compares (Next Sunday — 17 May 2026)
+- 🔲 SQL vs NoSQL
+- 🔲 TCP vs UDP
+- 🔲 HTTP vs HTTPS
+- 🔲 Monolith vs Microservices
+- 🔲 Stateful vs Stateless
+- 🔲 Sync vs Async
+- 🔲 Authentication vs Authorization
+- 🔲 Process vs Thread
+- 🔲 Concurrency vs Parallelism
+- 🔲 REST vs GraphQL
+- 🔲 HTTP/1 vs HTTP/2 vs HTTP/3
+- 🔲 WebSockets vs SSE vs Long polling
 
 ---
 
@@ -220,22 +285,42 @@ After 3-4 systems → build **Decision Cheat Sheet** (DB choice matrix, Redis us
 
 ---
 
-## 🎯 Daily Routine — MORNING-ONLY
+## 🎯 Daily Routine — LOCKED 2026-05-10
 
 ```
-🌅 MORNING (deep work — 2-3 hr)
-   → 1 HLD topic mastered DEEPLY
-   → 1 topic DEEP > 3 topics shallow
-
-☀️ Afternoon
-   → Light revision (existing notes)
-   → Rest
-
-🌙 Evening
-   → Apply (Bangalore-targeted roles)
+☀️ SUBAH → New topic (deep work)
+            fresh mind, peak focus
+            HLD system design / new topic
+            
+🌙 SHAAM → Visual revision
+            old visual notes re-skim
+            pattern lock through repetition
+            
++ Apply mode parallel (Bangalore-targeted roles)
 ```
 
+**Rule: Naya + Purana daily. Compound lock.**
 **Rest days when needed. No grinding without break.**
+
+---
+
+## 📅 NEXT DAYS — Locked Plan (2026-05-10, 12 AM)
+
+```
+TODAY (10 May 2026, Sunday):
+   ☀️ Subah → Twitter Feed Day 1 (concept + push/pull model)
+   🌙 Shaam → Java visual revision Day 1 (Core Java basics)
+
+FOLLOWING DAYS:
+   11 May → Twitter Day 2 + Java visual Day 2
+   12 May → Twitter Day 3 (wrap + file) + Java visual Day 3
+   13+ May → WhatsApp / Uber / etc.
+
+PRINCIPLE:
+   Big HLD systems pehle (Twitter, WhatsApp, Uber).
+   Jitna CDN/DNS/WAF system designs mein natural cover ho jaye.
+   Baaki standalone deep dive baad mein.
+```
 
 ---
 
