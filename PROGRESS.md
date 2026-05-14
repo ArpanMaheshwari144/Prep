@@ -1,7 +1,7 @@
 # 📊 Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-13 (Day 9 — Java visual revision 25 files complete)
-> **Bangalore arrival:** June 15, 2026 (~33 days)
+> **Last updated:** 2026-05-14 (Day 11 — Hibernate + SimpleBankSystem revision + folder cleanup)
+> **Bangalore arrival:** June 15, 2026 (~32 days)
 > **Goal:** Strong profile + apply mode in Bangalore
 
 ---
@@ -143,10 +143,7 @@
 ## 🔲 PENDING TOPICS
 
 ### Project Revision (HIGH PRIORITY — lock theory + practice)
-- 🔲 **SimpleBankSystem revision** (Java project — code walkthrough)
-  - Which patterns used (Singleton, Factory, Observer, Template)
-  - SOLID principles in code
-  - Visual mapping: theory ↔ actual code
+- ✅ **SimpleBankSystem revision** ⭐ DONE 14 May (all 17 files deep)
 - 🔲 **UserCRUD revision** (Spring project — code walkthrough)
   - Controller/Service/Repository layers in code
   - @Transactional usage points
@@ -180,13 +177,16 @@
   - Why Java not 100% OOP
   - Why platform independent
 
-### Hibernate Gotchas
-- 🔲 JPA vs Hibernate distinction
-- 🔲 N+1 problem + JOIN FETCH
-- 🔲 LAZY vs EAGER fetch types
-- 🔲 Dirty checking + first-level cache
-- 🔲 Cascade types
-- 🔲 @OneToMany / @ManyToOne / @ManyToMany mapping pitfalls
+### Hibernate Gotchas ✅ DONE 14 May
+- ✅ JPA vs Hibernate distinction
+- ✅ N+1 problem + JOIN FETCH
+- ✅ LAZY vs EAGER fetch types
+- ✅ Dirty checking
+- ✅ First-level cache (L1 session cache)
+- ✅ Cascade types (PERSIST/MERGE/REMOVE/ALL + orphanRemoval)
+- ✅ @OneToMany / @ManyToOne / @ManyToMany mapping pitfalls
+
+Location: `02_SPRING/05_HIBERNATE/` (7 files)
 
 ### HLD System Designs (remaining)
 - 🔲 **Notification System** (Saturday 16 May)
@@ -278,34 +278,37 @@ Days remaining           : 33 (Bangalore June 15)
 
 ---
 
-## 📅 THIS WEEK PLAN — Updated 13 May
+## 📅 THIS WEEK PLAN — Updated 14 May
 
 ```
-   FULL REVISION MODE Wed-Fri — NO NEW TOPICS
-   = Theory + code projects ko CONNECT karna
+   📅 Wed (13 May) ✅ SOLID done
+   📅 Thu (14 May) ✅ SimpleBankSystem revision (17 files) +
+                     Hibernate gotchas (7 files) +
+                     Folder numbering cleanup
 
-   📅 Wed (13 May)  ✅ SOLID done
-      Rest of day: rest / consolidation
-
-   📅 Thu (14 May)
-      ☀️ SimpleBankSystem revision (visual walkthrough)
-      🌙 UserCRUD revision Part 1 (Controller + Service)
-
-   📅 Fri (15 May)
-      ☀️ UserCRUD revision Part 2 (JWT + Docker + K8s)
-      🌙 Spring visual re-skim + Quick Java Q&A (if time)
+   📅 Fri (15 May) — LOCKED
+      ☀️ UserCRUD project revision (Spring code walkthrough)
+         • Controller/Service/Repository layers
+         • @Transactional + JWT filter
+         • DTO pattern + validation
+         • Profile-specific config
+         • Docker + K8s manifests
+      🌙 Light Spring visual re-skim (if energy)
 
    📅 Sat (16 May)
-      Notification System (HLD system design)
+      Notification System (HLD system design — full day topic)
 
    📅 Sun (17 May)
-      ☀️ Infra deep (CDN/ALB/DNS/WAF)
-      🌙 Rapid-fire compares (SQL/NoSQL etc.)
+      ☀️ REST (body listen)
+      🌙 Infra deep (CDN/ALB/DNS/WAF) +
+         Rapid-fire compares (SQL/NoSQL etc.)
 
    📅 Mon+ (18 May)
-      Continue per pace
-      Hibernate Gotchas (TBD)
-      More HLD systems (WhatsApp/Uber)
+      Position: TAGDI
+      • More HLD systems (WhatsApp/Uber — optional)
+      • Quick Java Q&A
+      • Design patterns rest (Observer/Adapter/Strategy)
+      • Apply mode + mocks (jab man)
 ```
 
 ---
