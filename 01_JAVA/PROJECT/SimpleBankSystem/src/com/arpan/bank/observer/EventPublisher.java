@@ -5,43 +5,113 @@ import java.util.List;
 
 // ═══════════════════════════════════════════════════════════════════════
 // 📌 YE FILE KYA HAI:
-//    Observer pattern ka HUB. Subscribers list rakhta. Event aaye toh sab
-//    listeners ko notify karta. Service event publish karti — publisher
-//    distribute karta.
+//    EventPublisher = OBSERVER pattern ka HUB
+//    Subscribers list rakhta
+//    Event aaye → sab listeners ko notify karta
+//    Service event publish karti — publisher distribute karta
 // ═══════════════════════════════════════════════════════════════════════
 //
-// ╔═══════════════════════════════════════════════════════════════════╗
-// ║  🎨 DESIGN PATTERN: OBSERVER (Pub-Sub)                             ║
-// ╠═══════════════════════════════════════════════════════════════════╣
-// ║                                                                   ║
-// ║  Yeh "Hub" hai — events publish karta, multiple listeners         ║
-// ║  subscribe karte. Sender (Publisher) ko receivers (Listeners) ki  ║
-// ║  identity nahi pata — pure DECOUPLING.                            ║
-// ║                                                                   ║
-// ║  Flow:                                                            ║
-// ║    1. Listeners subscribe()  → publisher list mein add            ║
-// ║    2. Event happen           → publisher.publish(event)           ║
-// ║    3. Publisher loops        → har listener.onEvent() call karta  ║
-// ║                                                                   ║
-// ║  📐 SOLID — OCP (Open/Closed):                                    ║
-// ║  Naya listener add karna ho? Sirf naya class banao + subscribe.   ║
-// ║  Publisher code unchanged — extension via plug-in.                ║
-// ║                                                                   ║
-// ║  📐 SOLID — DIP (Dependency Inversion):                           ║
-// ║  Publisher `EventListener` interface pe depend karta — concrete   ║
-// ║  EmailListener / SMSListener pe nahi. Pure abstraction.           ║
-// ║                                                                   ║
-// ║  Real-world: Spring `ApplicationEventPublisher`, RabbitMQ,        ║
-// ║  Kafka — sab same Observer pattern at scale.                      ║
-// ║                                                                   ║
-// ║  🎤 INTERVIEW LINE:                                                ║
-// ║  "Observer pattern transactions ke liye implement kiya —          ║
-// ║   EventPublisher event publish karta, multiple EventListener      ║
-// ║   subscribers register hote (EmailListener, future SMS, audit).   ║
-// ║   Publisher koi listener specific nahi jaanta — pure decoupling.  ║
-// ║   Spring ApplicationEventPublisher same concept use karta."       ║
-// ║                                                                   ║
-// ╚═══════════════════════════════════════════════════════════════════╝
+// 🎨 PATTERN: OBSERVER (Pub-Sub) — HUB ROLE
+//
+// VISUAL — FULL FLOW:
+//    AccountService.transfer()
+//         │
+//         │  publisher.publish(event)
+//         ▼
+//    ┌─────────────────────────────┐
+//    │  EventPublisher              │  ← TU YAHAN (HUB)
+//    │                                │
+//    │  List<EventListener>:          │
+//    │   • EmailListener              │
+//    │   • AuditListener              │
+//    │   • SMSListener                │
+//    │                                │
+//    │  publish(event):               │
+//    │    for each listener:          │
+//    │      listener.onEvent(event)   │
+//    └────────┬─────────────────────┘
+//             │
+//      ┌──────┼──────┐
+//      ▼      ▼      ▼
+//    Email  Audit  SMS
+//    (each receives event independently)
+//
+// FLOW STEPS:
+//    1. App startup:
+//       publisher.subscribe(new EmailListener());
+//       publisher.subscribe(new AuditListener());
+//
+//    2. Transfer happens:
+//       publisher.publish(new TransactionEvent(...));
+//
+//    3. Publisher inside:
+//       for each listener: listener.onEvent(event)
+//
+//    4. Each listener wakes up + processes
+//
+// DECOUPLING POWER:
+//    Publisher ko PATA NAHI:
+//       • Kaun listeners hain
+//       • Kya kar rahe hain
+//
+//    Publisher SIRF interface (EventListener) jaanta
+//    = Pure abstraction
+//    = Sender (publisher) ko receiver ki identity zarurat nahi
+//
+// CONCEPTS:
+//    1. ArrayList<EventListener>
+//       Dynamic list — grow karte runtime
+//
+//    2. subscribe / publish methods
+//       Standard Observer interface
+//
+//    3. for-each loop
+//       Saare listeners iterate, notify each
+//
+// 📐 SOLID:
+//    OCP — Naya listener add? Just naya class + subscribe
+//          Publisher code UNCHANGED
+//          = Open for extension via plug-in
+//
+//    DIP — Publisher EventListener interface pe depend
+//          Concrete EmailListener/SMSListener pe NAHI
+//          = Pure abstraction
+//
+// REAL WORLD (Spring):
+//    Spring's ApplicationEventPublisher = SAME pattern
+//
+//    @Service
+//    class TransferService {
+//        @Autowired ApplicationEventPublisher publisher;
+//
+//        void transfer(...) {
+//            publisher.publishEvent(new TransferEvent(...));
+//        }
+//    }
+//
+//    @Component
+//    class EmailListener {
+//        @EventListener   ← Spring magic
+//        void handle(TransferEvent e) { send email }
+//    }
+//
+//    = Spring auto-registers listeners via reflection
+//    = Manual pattern automated
+//
+// OTHER REAL-WORLD EVENT SYSTEMS:
+//    • Kafka          (distributed pub-sub at scale)
+//    • RabbitMQ       (message broker)
+//    • Redis pub-sub  (in-memory)
+//    • WebSocket events
+//    = All same Observer pattern, scaled differently
+//
+// 🎤 INTERVIEW LINE:
+//    "Observer pattern transactions ke liye implement kiya.
+//     EventPublisher publishes events, multiple EventListener
+//     subscribers register hote. Publisher koi specific listener
+//     NAHI jaanta — pure decoupling via interface.
+//     Spring ApplicationEventPublisher same concept use karta."
+// ═══════════════════════════════════════════════════════════════════════
 
 public class EventPublisher {
 

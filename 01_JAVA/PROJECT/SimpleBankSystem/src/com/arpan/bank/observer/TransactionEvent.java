@@ -2,15 +2,53 @@ package com.arpan.bank.observer;
 
 // ═══════════════════════════════════════════════════════════════════════
 // 📌 YE FILE KYA HAI:
-//    Event data carrier — "transfer hua" ki info hold karti (from, to,
-//    amount, time). Listeners (Email/Audit) ye object receive karte hain.
+//    TransactionEvent = EVENT DATA CARRIER
+//    "Transfer hua" ki info hold karta (from, to, amount, time)
+//    Listeners (Email/Audit/SMS) is object ko receive karte
+// ═══════════════════════════════════════════════════════════════════════
 //
-// 📌 JAVA KYA FOLLOW + KYU + KAISE:
-//    • OOPS — simple class with private fields + constructor + getters
-//    • Encapsulation — fields private final, only getters (immutable data)
+// VISUAL POSITION IN OBSERVER PATTERN:
+//    AccountService.transfer()
+//         │
+//         │  creates event
+//         ▼
+//    ┌─────────────────────────┐
+//    │  TransactionEvent        │  ← TU YAHAN (data)
+//    │  - fromId, toId          │
+//    │  - amount, timestamp     │
+//    └────────────┬─────────────┘
+//                 │ passed to
+//                 ▼
+//    EventPublisher → all listeners
+//
+// CONCEPTS:
+//    1. IMMUTABLE CLASS
+//       private final fields (cannot change)
+//       No setters
+//       Once created, NEVER modified
+//
+//    2. DATA-ONLY CLASS
+//       No business logic
+//       Just carrier — like DTO
+//
+//    3. WHY IMMUTABLE?
+//       Multiple listeners receive SAME event
+//       Agar 1 listener change kare → others ko galat data
+//       = Thread-safe by design
+//       = Defensive — corruption se safe
+//
+//    4. GETTERS ONLY
+//       Sirf padhne ke liye, modify nahi
 //
 // 🎨 PATTERN: Observer (event payload — passed to subscribers)
-// 📐 SOLID:  SRP — Sirf event data carry karta, koi behavior nahi
+//
+// 📐 SOLID:
+//    SRP — Sirf event data carry karta, koi behavior nahi
+//
+// REAL WORLD COMPARISON:
+//    Spring's ApplicationEvent — same pattern
+//    Kafka message — same concept
+//    All event-driven systems: immutable event payload
 // ═══════════════════════════════════════════════════════════════════════
 
 public class TransactionEvent {

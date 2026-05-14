@@ -142,9 +142,22 @@
 
 ## 🔲 PENDING TOPICS
 
-### OOP Design (next: Wed/Thu 13-14 May)
-- 🔲 **SOLID Visual Revision** (5 principles, 1 file)
-- 🔲 **Design Patterns Visual Revision** (6 patterns recap, 1 file)
+### Project Revision (HIGH PRIORITY — lock theory + practice)
+- 🔲 **SimpleBankSystem revision** (Java project — code walkthrough)
+  - Which patterns used (Singleton, Factory, Observer, Template)
+  - SOLID principles in code
+  - Visual mapping: theory ↔ actual code
+- 🔲 **UserCRUD revision** (Spring project — code walkthrough)
+  - Controller/Service/Repository layers in code
+  - @Transactional usage points
+  - JWT filter chain implementation
+  - DTO pattern + validation
+  - Profile-specific config
+  - Docker + K8s manifest understanding
+
+### OOP Design
+- ✅ SOLID Visual (done — file 26)
+- 🔲 **Design Patterns Visual** (deferred — low priority, baad mein)
 
 ### Quick Java Q&A (NEW — small interview traps)
 - 🔲 **Quick Java Q&A Visual** (1 file, ~20 small Q's)
@@ -265,19 +278,22 @@ Days remaining           : 33 (Bangalore June 15)
 
 ---
 
-## 📅 THIS WEEK PLAN — 13-18 May
+## 📅 THIS WEEK PLAN — Updated 13 May
 
 ```
-   📅 Wed (13 May)
-      ☀️ SOLID Visual (5 principles, 1 file)
-      🌙 Design Patterns Visual recap (1 file)
+   FULL REVISION MODE Wed-Fri — NO NEW TOPICS
+   = Theory + code projects ko CONNECT karna
+
+   📅 Wed (13 May)  ✅ SOLID done
+      Rest of day: rest / consolidation
 
    📅 Thu (14 May)
-      ☀️ Quick Java Q&A Visual (rapid-fire small traps)
-      🌙 Hibernate Gotchas (1 file)
+      ☀️ SimpleBankSystem revision (visual walkthrough)
+      🌙 UserCRUD revision Part 1 (Controller + Service)
 
    📅 Fri (15 May)
-      Spring visual re-skim / buffer / rest
+      ☀️ UserCRUD revision Part 2 (JWT + Docker + K8s)
+      🌙 Spring visual re-skim + Quick Java Q&A (if time)
 
    📅 Sat (16 May)
       Notification System (HLD system design)
@@ -286,9 +302,10 @@ Days remaining           : 33 (Bangalore June 15)
       ☀️ Infra deep (CDN/ALB/DNS/WAF)
       🌙 Rapid-fire compares (SQL/NoSQL etc.)
 
-   📅 Mon (18 May)
-      Position: TAGDI
+   📅 Mon+ (18 May)
       Continue per pace
+      Hibernate Gotchas (TBD)
+      More HLD systems (WhatsApp/Uber)
 ```
 
 ---

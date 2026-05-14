@@ -2,14 +2,36 @@ package com.arpan.bank.model;
 
 // ═══════════════════════════════════════════════════════════════════════
 // 📌 YE FILE KYA HAI:
-//    CurrentAccount = business/company ka account. Interest 0% (business rule).
+//    CurrentAccount = Business/Company ka account
+//    0% interest (business rule — current accounts mein interest nahi)
+// ═══════════════════════════════════════════════════════════════════════
 //
-// 📌 JAVA KYA FOLLOW + KYU + KAISE:
-//    • OOPS — Inheritance (extends Account)
-//             Polymorphism (calculateInterest() override — return 0)
+// VISUAL POSITION:
+//    Account (abstract — parent)
+//       │
+//       │ extends
+//       ▼
+//    CurrentAccount  ← TU YAHAN (0% interest)
 //
-// 🎨 PATTERN: Template Method (concrete implementation of abstract step)
-// 📐 SOLID:  LSP — CurrentAccount fully substitutable for Account
+// CONCEPTS IN THIS FILE:
+//    1. INHERITANCE       → extends Account
+//    2. SUPER CONSTRUCTOR → super(id, name, balance)
+//    3. POLYMORPHISM      → @Override returns 0
+//
+// DIFFERENCE FROM SavingsAccount:
+//    SavingsAccount     CurrentAccount
+//       4% interest        0% interest
+//       Same pattern, different value
+//       = Polymorphism in action
+//
+// REAL WORLD WHY 0%?
+//    Current accounts = business owners use
+//    Daily transactions (deposits/withdrawals)
+//    Bank doesn't pay interest — they get usage of money
+//    = Business rule
+//
+// 🎨 PATTERN: Template Method (concrete implementation)
+// 📐 SOLID — LSP: CurrentAccount fully substitutable for Account
 // ═══════════════════════════════════════════════════════════════════════
 
 public class CurrentAccount extends Account {

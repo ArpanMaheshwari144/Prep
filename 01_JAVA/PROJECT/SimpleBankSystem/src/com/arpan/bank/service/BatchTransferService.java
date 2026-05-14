@@ -6,18 +6,82 @@ import java.util.concurrent.Executors;
 
 // ═══════════════════════════════════════════════════════════════════════
 // 📌 YE FILE KYA HAI:
-//    Multiple transfers ek saath PARALLEL chalata. Sequential 1000 transfers
-//    slow honge — pool ke 5 threads se 5x faster.
+//    Multiple transfers ek saath PARALLEL chalata
+//    Sequential 1000 transfers = slow
+//    Pool ke 5 threads = ~5x faster
+// ═══════════════════════════════════════════════════════════════════════
 //
-// 📌 JAVA KYA FOLLOW + KYU + KAISE:
-//    • Multithreading — ExecutorService (newFixedThreadPool — production safe)
-//    • Lambda — pool.submit(() -> { ... }) → Runnable inline
-//    • Resource management — pool.shutdown() graceful release
-//    • Exception isolation — ek transfer fail toh batch crash nahi
-//    • TransferRequest = static inner class (data carrier — fromId/toId/amount)
+// VISUAL — THREAD POOL ACTION:
+//    1000 transfer requests (queue)
+//               │
+//               ▼
+//    ┌─────────────────────────────┐
+//    │   ExecutorService Pool      │
+//    │   (5 threads fixed)         │
+//    │                              │
+//    │   T1: req 1 — transfer       │
+//    │   T2: req 2 — transfer       │
+//    │   T3: req 3 — transfer       │
+//    │   T4: req 4 — transfer       │
+//    │   T5: req 5 — transfer       │
+//    └─────────────────────────────┘
+//            │ when free
+//            ▼
+//    pick next from queue (req 6, 7, ...)
+//    = Parallel processing
 //
-// 📐 SOLID:  SRP — Sirf batch processing handle karta
-//           DIP — AccountService inject (constructor injection)
+// CONCEPTS IN THIS FILE:
+//    1. ExecutorService
+//       newFixedThreadPool(5) — 5 worker threads
+//
+//    2. Lambda Runnable
+//       pool.submit(() -> { ... })
+//       = Inline Runnable, no boilerplate
+//
+//    3. Static Inner Class (TransferRequest)
+//       Data carrier (fromId, toId, amount)
+//       Outer instance NAHI chahiye
+//
+//    4. Exception Isolation
+//       try-catch in lambda
+//       Ek fail = baki chalu rahe
+//
+//    5. Graceful Shutdown
+//       pool.shutdown() — naye tasks reject, current finish
+//
+// WHY FIXED POOL (not Cached)?
+//    Fixed (5 threads):
+//       ✅ Bounded resource
+//       ✅ Predictable
+//       ✅ Production safe
+//
+//    Cached:
+//       ⚠️ Unlimited growth
+//       ⚠️ 1000 requests = 1000 threads
+//       ⚠️ OutOfMemoryError risk
+//
+// EXCEPTION ISOLATION:
+//    Sequential:
+//       for (req : requests) {
+//           transfer(req);   // ek fail = loop crash
+//       }
+//
+//    Parallel + isolated:
+//       pool.submit(() -> {
+//           try { transfer(req); }
+//           catch (Ex e) { log error; }   // isolated
+//       });
+//    = 1 fail, baki 999 chalte
+//
+// REAL PRODUCTION:
+//    Spring Boot:
+//       @Async                  — same pattern automated
+//       ThreadPoolTaskExecutor  — production-grade
+//    = Yeh manual version hai
+//
+// 📐 SOLID:
+//    SRP — Sirf batch processing
+//    DIP — AccountService inject (constructor injection)
 // ═══════════════════════════════════════════════════════════════════════
 
 public class BatchTransferService {
@@ -52,8 +116,8 @@ public class BatchTransferService {
     }
 
     // ───────────────────────────────────────────────────────────
-    // executeBatch — list of transfers parallel chalata thread pool se
-    // Exception isolation: ek transfer fail toh batch continue
+    // executeBatch — list of transfers parallel via thread pool
+    // Exception isolation: ek transfer fail = batch continue
     // ───────────────────────────────────────────────────────────
     public void executeBatch(List<TransferRequest> requests) {
         for (TransferRequest req : requests) {

@@ -2,14 +2,45 @@ package com.arpan.bank.model;
 
 // ═══════════════════════════════════════════════════════════════════════
 // 📌 YE FILE KYA HAI:
-//    FixedDeposit = locked-in deposit account. Highest interest (7%).
+//    FixedDeposit = Locked-in deposit account
+//    7% interest (highest among 3 types)
+//    Money locked for fixed period
+// ═══════════════════════════════════════════════════════════════════════
 //
-// 📌 JAVA KYA FOLLOW + KYU + KAISE:
-//    • OOPS — Inheritance (extends Account)
-//             Polymorphism (calculateInterest() override — 7% rate)
+// VISUAL POSITION:
+//    Account (abstract — parent)
+//       │
+//       │ extends
+//       ▼
+//    FixedDeposit  ← TU YAHAN (7% — highest interest)
 //
-// 🎨 PATTERN: Template Method (concrete implementation of abstract step)
-// 📐 SOLID:  LSP — FixedDeposit fully substitutable for Account
+// 3 ACCOUNT TYPES COMPARE:
+//    ┌────────────────┬──────────────┬─────────────────┐
+//    │  Account Type  │  Interest    │  Use Case        │
+//    ├────────────────┼──────────────┼─────────────────┤
+//    │ Savings        │  4%          │  Daily use       │
+//    │ Current        │  0%          │  Business        │
+//    │ FixedDeposit   │  7%          │  Locked savings  │
+//    └────────────────┴──────────────┴─────────────────┘
+//
+// POLYMORPHISM IN ACTION:
+//    Account[] accounts = {
+//        new SavingsAccount(...),
+//        new CurrentAccount(...),
+//        new FixedDeposit(...)
+//    };
+//
+//    for (Account a : accounts) {
+//        a.calculateInterest();
+//        // SAME method call, DIFFERENT behavior:
+//        //    Savings → 4%
+//        //    Current → 0%
+//        //    FD      → 7%
+//    }
+//    = Runtime polymorphism
+//
+// 🎨 PATTERN: Template Method (concrete implementation)
+// 📐 SOLID — LSP: FixedDeposit fully substitutable for Account
 // ═══════════════════════════════════════════════════════════════════════
 
 public class FixedDeposit extends Account {

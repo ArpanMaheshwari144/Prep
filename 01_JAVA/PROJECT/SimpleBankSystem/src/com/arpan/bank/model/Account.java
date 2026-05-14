@@ -4,72 +4,130 @@ import com.arpan.bank.exception.InsufficientFundsException;
 
 // ═══════════════════════════════════════════════════════════════════════
 // 📌 YE FILE KYA HAI:
-//    Account = bank ke saare account types ka PARENT (abstract).
-//    Direct object nahi ban sakta — sirf SavingsAccount/Current/FD extend karte.
-//
-// 📌 JAVA KYA FOLLOW HO RAHA + KYU + KAISE:
-//    • OOPS — Abstraction (abstract class, direct instantiation block)
-//             Encapsulation (private fields, sirf getters)
-//             Inheritance (parent — child accounts isko extend karte)
-//             Polymorphism (calculateInterest abstract — har child apna logic)
-//    • Multithreading — deposit/withdraw synchronized (2 thread same account
-//                       update kare toh race condition na ho)
-//    • Custom Exception — InsufficientFundsException throw karta withdraw mein
+//    Account = saare account types ka PARENT (abstract).
+//    Direct object nahi banta — Savings/Current/FixedDeposit extend karte.
 // ═══════════════════════════════════════════════════════════════════════
 //
-// ╔═══════════════════════════════════════════════════════════════════╗
-// ║  🎨 DESIGN PATTERN: TEMPLATE METHOD (via abstract class)           ║
-// ╠═══════════════════════════════════════════════════════════════════╣
-// ║                                                                   ║
-// ║  Abstract class COMMON workflow define karti, subclasses          ║
-// ║  SPECIFIC steps implement karte.                                  ║
-// ║                                                                   ║
-// ║  Common (concrete methods here):                                  ║
-// ║    • deposit()  — saare accounts mein same                        ║
-// ║    • withdraw() — saare accounts mein same                        ║
-// ║                                                                   ║
-// ║  Subclass-specific (abstract):                                    ║
-// ║    • calculateInterest() — Savings 4%, FD 7%, Current 0%          ║
-// ║                                                                   ║
-// ║  📐 SOLID — OCP (Open/Closed):                                    ║
-// ║  Naye account types add karne ke liye `Account` extend karo —     ║
-// ║  parent class modify NAHI karna. Open for extension.              ║
-// ║                                                                   ║
-// ║  📐 SOLID — LSP (Liskov Substitution):                            ║
-// ║  Sab subclasses (SavingsAccount, FixedDeposit, CurrentAccount)    ║
-// ║  Account ki place pe substitute ho sakte —                        ║
-// ║      Account a = new SavingsAccount(...);  ✅                     ║
-// ║      Account a = new FixedDeposit(...);    ✅                     ║
-// ║  Behavior consistent, no surprising exceptions.                   ║
-// ║                                                                   ║
-// ║  🎤 INTERVIEW LINE:                                                ║
-// ║  "Account abstract class Template Method-style — deposit() aur    ║
-// ║   withdraw() concrete (saare accounts mein same),                 ║
-// ║   calculateInterest() abstract (har subclass apna formula).       ║
-// ║   Common framework + specific behavior. OCP + LSP follow karta."  ║
-// ║                                                                   ║
-// ╚═══════════════════════════════════════════════════════════════════╝
+// 🎨 PATTERN: TEMPLATE METHOD (via abstract class)
+//
+// VISUAL CLASS HIERARCHY:
+//    ┌────────────────────────────────────┐
+//    │  Account (abstract)                 │
+//    ├────────────────────────────────────┤
+//    │  - accountId, holderName, balance   │
+//    │                                      │
+//    │  + deposit()           ← CONCRETE   │
+//    │  + withdraw()          ← CONCRETE   │
+//    │  + calculateInterest() ← ABSTRACT   │
+//    └──────────┬─────────────────────────┘
+//               │ extends
+//      ┌────────┼────────┐
+//      ▼        ▼        ▼
+//   Savings  Current  FixedDeposit
+//   (4%)     (0%)     (7%)
+//
+// CONCEPTS IN THIS FILE:
+//    1. ABSTRACTION    →  abstract class (direct new nahi)
+//    2. ENCAPSULATION  →  private fields, controlled getters
+//    3. INHERITANCE    →  children extend Account
+//    4. POLYMORPHISM   →  calculateInterest har child alag
+//    5. SYNCHRONIZED   →  thread-safe deposit/withdraw
+//    6. CUSTOM EXCEPTION → InsufficientFundsException
+//
+// TEMPLATE METHOD PATTERN:
+//    Common steps (deposit/withdraw) — parent mein CONCRETE
+//    Specific step (calculateInterest) — child mein ABSTRACT
+//    = "Skeleton + Customizable parts"
+//
+// 📐 SOLID:
+//    OCP — Naya account type chahiye? Just extend Account
+//          (parent modify NAHI karna)
+//    LSP — Account a = new SavingsAccount();  ✅
+//          Account a = new FixedDeposit();    ✅
+//          Sab safely substitute karte
+//
+// 🔑 ACCESS MODIFIERS — Code Mein:
+//    private final accountId   → identity, no change ever
+//    private final holderName  → identity, no change ever
+//    protected double balance  → CHILD ko access chahiye
+//                                (interest calc karne ke liye)
+//
+//    Why protected NOT private?
+//       SavingsAccount: return balance * INTEREST_RATE;
+//                              ↑ parent ka protected field
+//       Agar private hota → child access nahi kar pata
+//
+// 🔒 GETTERS ONLY, NO SETTERS:
+//    Immutable identity:
+//       accountId — account banta TAB assign, ZINDAGI BHAR fixed
+//       holderName — similarly fixed
+//
+//    balance:
+//       Setter hota = anyone "balance = 999999" kar sakta
+//       Instead: deposit() / withdraw() — VALIDATED change
+//       = Business rules enforced (encapsulation power)
+//
+// 💥 IllegalArgumentException (deposit method):
+//    RuntimeException (unchecked) — "method ko galat input diya"
+//    Use when: invalid argument (negative amount, null)
+//    Different from:
+//       • InsufficientFundsException → business rule violation
+//       • NullPointerException       → programmer error
+//
+// 🔒 SYNCHRONIZED — Mutex Lock (DEEP):
+//
+//    RACE CONDITION pehle (without sync):
+//       Thread A:                Thread B:
+//       read balance = 100       read balance = 100
+//       100 + 50 = 150           100 + 30 = 130
+//       write balance = 150      write balance = 130
+//       Final = 130 (NOT 180!)
+//       = Thread A update LOST
+//
+//    WITH synchronized:
+//       Thread A enters → 🔒 LOCK
+//                          update karta
+//                          🔓 release
+//       Thread B waits  → 🔒 acquire
+//                          update karta
+//                          🔓 release
+//       = MUTUAL EXCLUSION (mutex)
+//       = Atomicity + Visibility BOTH solved
+//
+//    SYNCHRONIZED vs VOLATILE:
+//       synchronized:
+//          ✅ Atomicity (multi-step undivided)
+//          ✅ Visibility
+//          Use: multi-step state change (balance update)
+//
+//       volatile:
+//          ❌ NO atomicity
+//          ✅ Visibility only
+//          Use: single boolean flag (isRunning)
+//          ⚠️ volatile count++; → STILL race! (count++ = 3 ops)
+//
+//    Why synchronized HERE (not volatile)?
+//       deposit() has MULTIPLE steps:
+//          1. validate amount
+//          2. read balance
+//          3. balance + amount
+//          4. write balance
+//       = Multi-step = synchronized NEEDED
+//
+// 🎤 INTERVIEW LINE:
+//    "Account abstract class — Template Method pattern.
+//     deposit()/withdraw() concrete (saare accounts same),
+//     calculateInterest() abstract (har subclass apna formula).
+//     OCP + LSP follow karta."
+// ═══════════════════════════════════════════════════════════════════════
 
-/**
- * Account — Abstract Parent (Domain Model)
- *
- * OOP concepts demonstrated:
- *   • Abstraction      — abstract class (direct object nahi banta)
- *   • Encapsulation    — private fields + controlled getters
- *   • Inheritance      — Savings/Current/FixedDeposit extend karte
- *   • Polymorphism     — calculateInterest() har child mein different
- *
- * Multithreading:
- *   • synchronized deposit/withdraw — race condition se bachao
- */
 public abstract class Account {
 
-    // Encapsulation — fields private, bahar se direct access nahi
+    // Encapsulation — fields private
     private final String accountId;
     private final String holderName;
     protected double balance;          // protected — child use kare
 
-    // Constructor — sab fields initialize
     public Account(String accountId, String holderName, double balance) {
         this.accountId = accountId;
         this.holderName = holderName;

@@ -16,18 +16,74 @@ import com.arpan.bank.service.BatchTransferService.TransferRequest;
 
 // ═══════════════════════════════════════════════════════════════════════
 // 📌 YE FILE KYA HAI:
-//    Main.java = ENTRY POINT. Project ko run yahin se hoga.
-//    JVM `public static void main` se shuru karta.
+//    Main.java = ENTRY POINT — JVM yahaan se shuru
+//    public static void main(String[] args) = JVM entry
+//    Project ko run yahin se hoga
+// ═══════════════════════════════════════════════════════════════════════
 //
-//    Demo flow:
-//      1. Singleton config print
-//      2. Wire layers (Repository, EventPublisher, Service)
-//      3. Factory se 3 accounts banao
-//      4. Polymorphism — har account ka interest print
-//      5. Streams — getAccountHolderNames()
-//      6. Transfer (Observer auto-notify)
-//      7. Failed transfer (custom exception)
-//      8. Parallel batch transfers (ExecutorService)
+// VISUAL — MAIN DEMONSTRATES ALL CONCEPTS:
+//    Main.java
+//         │
+//         │  Demo flow:
+//         │
+//         ├── 1. Singleton    → BankConfig.INSTANCE
+//         │
+//         ├── 2. Wiring        → Repository + Publisher + Service
+//         │    (DIP — constructor injection)
+//         │
+//         ├── 3. Factory       → AccountFactory.create() × 3
+//         │
+//         ├── 4. Polymorphism  → calculateInterest() × 3 alag
+//         │
+//         ├── 5. Streams       → getAccountHolderNames()
+//         │
+//         ├── 6. Transfer      → service.transfer() (Observer fires)
+//         │
+//         ├── 7. Exception     → catch InsufficientFundsException
+//         │
+//         └── 8. Threading     → BatchTransferService (ExecutorService)
+//
+// WIRING SECTION (DIP IN ACTION):
+//    AccountRepository repository = new InMemoryAccountRepository();
+//    EventPublisher publisher = new EventPublisher();
+//    publisher.subscribe(new EmailListener());
+//    AccountService service = new AccountService(repository, publisher);
+//
+//    Yeh dependency injection MANUAL kar raha
+//    Spring: @Autowired automatically injects same
+//    = Same DIP principle
+//
+// POLYMORPHISM DEMO:
+//    Account a1 = AccountFactory.create("savings", ...);
+//    Account a2 = AccountFactory.create("current", ...);
+//    Account a3 = AccountFactory.create("fd",      ...);
+//
+//    a1.calculateInterest();   // 200   (Savings 4%)
+//    a2.calculateInterest();   // 0     (Current 0%)
+//    a3.calculateInterest();   // 3500  (FD 7%)
+//
+//    Same method call → different behavior
+//    = Runtime polymorphism
+//
+// THREAD SLEEP TRICK:
+//    bs.executeBatch(tf);
+//    bs.shutdown();
+//    Thread.sleep(2000);   // wait for background threads
+//
+//    Why sleep?
+//       shutdown() = naye tasks reject, current continue
+//       Main thread sleep = background threads ko time
+//
+//    Production better way:
+//       executor.awaitTermination(2, SECONDS);
+//
+// 🎤 INTERVIEW LINE:
+//    "Main demonstrates all patterns end-to-end —
+//     Singleton (BankConfig), Factory (AccountFactory),
+//     Repository (DIP injection), Observer (publisher/listener),
+//     Polymorphism (calculateInterest), Streams, Custom Exceptions,
+//     and ExecutorService threading. Real Spring would automate
+//     wiring via @Autowired, but logic identical."
 // ═══════════════════════════════════════════════════════════════════════
 
 public class Main {
