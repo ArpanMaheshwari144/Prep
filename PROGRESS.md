@@ -295,13 +295,18 @@ Days remaining           : 33 (Bangalore June 15)
          • Docker + K8s manifests
       🌙 Light Spring visual re-skim (if energy)
 
-   📅 Sat (16 May)
-      Notification System (HLD system design — full day topic)
+   📅 Sat (16 May) — FULL DAY ATTACK
+      ☀️ Subah → Notification System (HLD system design)
+               • Fanout, queues, retry, DLQ
+               • Fresh subah energy for big topic
+      🌙 Shaam → Wrap file + light revision
 
-   📅 Sun (17 May)
-      ☀️ REST (body listen)
-      🌙 Infra deep (CDN/ALB/DNS/WAF) +
-         Rapid-fire compares (SQL/NoSQL etc.)
+   📅 Sun (17 May) — HALF DAY (body listen)
+      ☀️ Subah → REST (no prep, 8hr sleep)
+               12-15 hr screen-free
+      🌙 Shaam → Infra deep (CDN/ALB/DNS/WAF)
+               + Rapid-fire compares (SQL/NoSQL etc.)
+               (Reading-heavy = shaam compatible)
 
    📅 Mon+ (18 May)
       Position: TAGDI
