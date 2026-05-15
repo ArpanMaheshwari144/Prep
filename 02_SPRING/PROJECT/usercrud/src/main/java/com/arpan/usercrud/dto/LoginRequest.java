@@ -6,40 +6,44 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/* ════════════════════════════════════════════════════════════════════
- *  📝 LoginRequest — User credentials JSON shape
- * ════════════════════════════════════════════════════════════════════
- *
- *  📦 Yeh DTO POST /auth/login endpoint ka request body shape hai.
- *
- *  ─── 📨 EXPECTED JSON ─────────────────────────────────────────────
- *
- *      POST /auth/login
- *      Content-Type: application/json
- *
- *      {
- *          "email":    "arpan@x.com",
- *          "password": "secret123"
- *      }
- *
- *  ─── 🛡️ VALIDATION (with @Valid in controller) ────────────────────
- *
- *      • email    → @NotBlank + @Email (valid format)
- *      • password → @NotBlank (no length check yahaan — DB mein hash hi compare hota)
- *
- *      Fail hua → MethodArgumentNotValidException → 400 Bad Request
- *
- *  ─── 🎯 WHY DTO not Entity? ───────────────────────────────────────
- *
- *      Entity (User) mein 6 fields hain — id, name, age, role, etc.
- *      Login ke liye sirf email + password chahiye.
- *      DTO clean shape — bina extra fields confusion ke.
- *
- *      Plus security: agar User entity directly accept karte, hacker
- *      "role: ADMIN" inject kar sakta payload mein — DTO yeh attack
- *      surface nahi rakhta.
- * ════════════════════════════════════════════════════════════════════
- */
+// ═══════════════════════════════════════════════════════════════════════
+// 📌 YE FILE KYA HAI:
+//    LoginRequest = INPUT DTO for POST /auth/login
+//    User credentials JSON shape
+// ═══════════════════════════════════════════════════════════════════════
+//
+// EXPECTED JSON:
+//    POST /auth/login
+//    Content-Type: application/json
+//    {
+//        "email":    "arpan@x.com",
+//        "password": "secret123"
+//    }
+//
+// 🔑 WHY DTO (not User entity)?
+//    User has 6 fields (id, name, email, password, age, role)
+//    Login needs ONLY 2 (email + password)
+//    DTO = clean shape, no extra fields confusion
+//
+//    SECURITY:
+//       Without DTO: hacker payload mein "role: ADMIN" inject kar le!
+//       With DTO: only email + password accepted from client
+//
+// VALIDATION (triggers with @Valid in controller):
+//    email    → @NotBlank + @Email (valid format)
+//    password → @NotBlank (no length check — DB hash compare hota)
+//
+// FAIL FLOW:
+//    Invalid input → MethodArgumentNotValidException → 400 Bad Request
+//
+// LOMBOK:
+//    @Data              → getters/setters/toString/equals/hashCode
+//    @AllArgsConstructor → all-fields constructor
+//    @NoArgsConstructor → required for Jackson JSON deserialization
+//
+// 📐 SOLID — SRP: Sirf login input data
+// ═══════════════════════════════════════════════════════════════════════
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

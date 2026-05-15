@@ -7,88 +7,144 @@ import org.springframework.stereotype.Repository;
 
 import com.arpan.usercrud.model.User;
 
-/* ════════════════════════════════════════════════════════════════
- *  📌 REPOSITORY — Data Access Layer
- * ════════════════════════════════════════════════════════════════
- *  Iss layer ka kaam: DB se baat karo. Service layer iske through
- *  CRUD karta hai — direct SQL nahi likhna padta.
- *
- *  ─── INTERFACE KYU? Class kyu nahi? ─────────────────────────────
- *  Spring Data JPA runtime pe automatic implementation generate
- *  karta hai (proxy pattern). Tujhe sirf method signature likhna
- *  hai, body nahi. Magic ke peeche reflection + JPA criteria.
- *
- *  ─── REPOSITORY HIERARCHY (interview favorite) ──────────────────
- *
- *      Repository (marker interface — kuch nahi karta)
- *           ↑
- *      CrudRepository (save, findById, findAll, delete, count)
- *           ↑
- *      PagingAndSortingRepository (findAll(Pageable), findAll(Sort))
- *           ↑
- *      JpaRepository (saveAll, flush, deleteInBatch, findAll(Example))
- *
- *  Hum JpaRepository extend kar rahe hain → poore stack ka access.
- *
- *  ─── @Repository — yeh kyu lagana hai? ─────────────────────────
- *  Strictly speaking, JpaRepository extend karne par yeh OPTIONAL
- *  hai (Spring auto-detect karta hai). Phir bhi lagaate hain kyunki:
- *
- *  • Code intent clear hota hai (yeh DAO layer hai)
- *  • Exception Translation milta hai — DB-specific exceptions
- *    (SQLException, JpaSystemException) Spring ke
- *    DataAccessException family mein translate hote hain
- *
- *  ─── DERIVED QUERY METHODS — Spring ka jadoo ────────────────────
- *  Method ka NAAM hi query ban jata hai. No SQL, no JPQL.
- *
- *  • findByEmail(String email)
- *      → SELECT * FROM users WHERE email = ?
- *  • findByNameAndAge(String n, int a)
- *      → SELECT * FROM users WHERE name=? AND age=?
- *  • findByAgeGreaterThan(int a)
- *      → SELECT * FROM users WHERE age > ?
- *
- *  Custom complex query chahiye? → @Query("SELECT u FROM User u...")
- *
- *  ─── Optional<User> kyu return karte hain? ──────────────────────
- *  Null safety. Jab user mil bhi sakta hai, nahi bhi — Optional
- *  bolta hai "isko handle karna padega". null pointer exceptions
- *  se bachata hai.
- *
- *  ════════════════════════════════════════════════════════════════
- *  🎨 DESIGN PATTERN: REPOSITORY (Spring Data JPA implementation)
- *  📐 SOLID: ISP, DIP
- *  ════════════════════════════════════════════════════════════════
- *
- *  Yeh interface JpaRepository extend karti — Spring Data JPA
- *  AUTOMATIC implementation generate karta runtime pe:
- *    • save(), findById(), findAll(), delete() — inherited
- *    • findByEmail() — derived query (method naam se SQL banta)
- *
- *  Hamne SimpleBankSystem mein MANUAL Repository pattern banaya
- *  tha — yahaan Spring Data JPA WAHI pattern automate karta.
- *
- *  📐 SOLID — ISP (Interface Segregation):
- *  Interface FOCUSED hai — sirf User-related operations. Other
- *  domain operations (Order, Product) alag interfaces mein.
- *
- *  📐 SOLID — DIP (Dependency Inversion):
- *  UserService iss INTERFACE pe depend karta, koi concrete
- *  implementation pe nahi. Spring runtime pe proxy generate karta —
- *  H2 / MySQL / PostgreSQL switch karne pe service code unchanged.
- *
- *  🎤 INTERVIEW LINE:
- *  "UserRepository Spring Data JPA Repository pattern follow karta —
- *   JpaRepository extend karne se basic CRUD inherited, custom
- *   methods derived query syntax se (findByEmail). Manual
- *   AccountRepository jaisa pattern, but Spring automate karta —
- *   ISP + DIP dono follow."
- * ════════════════════════════════════════════════════════════════
- */
+// ═══════════════════════════════════════════════════════════════════════
+// 📌 YE FILE KYA HAI:
+//    DATA ACCESS LAYER — DB se baat karna
+//    Service layer iske through CRUD karta
+//    Direct SQL/JPQL nahi likhna padta = Spring Data JPA magic
+// ═══════════════════════════════════════════════════════════════════════
+//
+// VISUAL — REPOSITORY HIERARCHY:
+//    Repository (marker interface — kuch nahi karta)
+//         ↑
+//    CrudRepository
+//    (save, findById, findAll, delete, count)
+//         ↑
+//    PagingAndSortingRepository
+//    (findAll(Pageable), findAll(Sort))
+//         ↑
+//    JpaRepository                        ← TU YAHAN EXTEND
+//    (saveAll, flush, deleteInBatch, JPA-specific)
+//
+//    Extend kare → POORA stack inherited
+//
+// WHY INTERFACE (Not Class)?
+//    Spring Data JPA MAGIC:
+//       Runtime pe proxy create karta
+//       Tu sirf signature likhe — body Spring generate
+//       Behind scenes: Reflection + JPA Criteria API
+//
+// WHAT YOU GET FREE (Inherited):
+//    save(User)              → INSERT/UPDATE
+//    findById(Long)          → SELECT WHERE id
+//    findAll()               → SELECT *
+//    delete(User)            → DELETE
+//    deleteById(Long)        → DELETE WHERE id
+//    count()                 → SELECT COUNT
+//    existsById(Long)        → SELECT 1 WHERE id
+//    findAll(Sort)           → ORDER BY
+//    findAll(Pageable)       → pagination
+//    saveAll(Iterable)       → batch insert
+//    flush()                 → force write
+//
+// 🔑 DERIVED QUERY METHODS — Spring Magic:
+//    Method NAME hi query ban jata!
+//
+//    findByEmail(String email)
+//       → SELECT * FROM users WHERE email = ?
+//
+//    findByNameAndAge(String name, int age)
+//       → SELECT * FROM users WHERE name=? AND age=?
+//
+//    findByAgeGreaterThan(int age)
+//       → SELECT * FROM users WHERE age > ?
+//
+//    findByNameContainingIgnoreCase(String name)
+//       → SELECT * FROM users WHERE LOWER(name) LIKE LOWER(?)
+//
+//    countByActive(boolean active)
+//       → SELECT COUNT(*) FROM users WHERE active=?
+//
+//    existsByEmail(String email)
+//       → SELECT 1 FROM users WHERE email=?
+//
+// 🔑 CUSTOM COMPLEX QUERIES — @Query:
+//    @Query("SELECT u FROM User u WHERE u.age > :age AND u.role = :role")
+//    List<User> findActiveAdults(@Param("age") int age, @Param("role") String role);
+//
+//    @Query(value = "SELECT * FROM users WHERE created_at > NOW() - INTERVAL 7 DAY",
+//           nativeQuery = true)
+//    List<User> findRecentUsers();
+//
+//    JPQL    = Java Persistence Query Language (default)
+//    Native  = raw SQL (nativeQuery = true)
+//
+// 🔑 WHY @Repository ANNOTATION?
+//    Strictly OPTIONAL with JpaRepository (auto-detected).
+//
+//    But add karte kyun?
+//       1. CODE INTENT — DAO layer marker clear
+//       2. EXCEPTION TRANSLATION — BIG benefit
+//          SQLException/JpaSystemException
+//          → Spring's DataAccessException family
+//          = Database vendor change? Caller code unchanged
+//
+// 🔑 WHY Optional<User>?
+//    Null safety:
+//       User mil sakta hai (Optional.of)
+//       Ya nahi (Optional.empty)
+//
+//    Caller MUST handle:
+//       userRepo.findByEmail("x@y.com")
+//               .orElseThrow(() -> new UserNotFoundException());
+//       = No NullPointerException
+//       = Explicit null handling
+//
+// HOW SPRING IMPLEMENTS AT RUNTIME:
+//    At startup:
+//       Spring sees: UserRepository interface
+//       Scans methods + parents
+//       Creates PROXY class (dynamic):
+//          class UserRepository$Proxy implements UserRepository {
+//              public Optional<User> findByEmail(String email) {
+//                  // Parse "findByEmail" → JPQL
+//                  // Execute via EntityManager
+//              }
+//          }
+//       Bean register
+//
+//    @Autowired UserRepository repo;
+//       = Tu actual interface use karta
+//       = Spring inject karta proxy implementation
+//
+// SimpleBankSystem vs UserCRUD:
+//    SimpleBankSystem (manual):
+//       AccountRepository interface
+//          + InMemoryAccountRepository (HashMap manual)
+//
+//    UserCRUD (Spring Data JPA):
+//       UserRepository extends JpaRepository
+//       = Spring auto-generates implementation
+//       = Same Repository pattern, AUTOMATED
+//
+// 🎨 PATTERN: REPOSITORY (Spring Data JPA implementation)
+//
+// 📐 SOLID:
+//    ISP — Interface focused (only User operations)
+//    DIP — Service depends on INTERFACE, proxy auto-generated
+//          MySQL/Postgres switch = service unchanged
+//
+// 🎤 INTERVIEW LINE:
+//    "UserRepository extends JpaRepository — Spring Data JPA
+//     auto-generates implementation via runtime proxy.
+//     Free CRUD + paging + sorting inherited.
+//     Custom queries via derived methods (findByEmail) or @Query.
+//     @Repository optional but recommended for exception translation."
+// ═══════════════════════════════════════════════════════════════════════
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // Login feature ke liye email-based lookup (future use)
+    // Login feature ke liye email-based lookup
     Optional<User> findByEmail(String email);
 }

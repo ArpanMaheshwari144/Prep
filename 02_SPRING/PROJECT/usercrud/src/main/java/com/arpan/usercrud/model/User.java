@@ -15,51 +15,119 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/* ════════════════════════════════════════════════════════════════
- *  📌 ENTITY — Database Table ka Java Representation
- * ════════════════════════════════════════════════════════════════
- *  Yeh class JPA entity hai — har object = ek row in `users` table.
- *  Spring Data JPA + Hibernate is class ko padhke automatic table
- *  bana deta hai (kyunki application.properties mein
- *  spring.jpa.hibernate.ddl-auto=update set hai).
- *
- *  ─── ANNOTATIONS BREAKDOWN (interview puchega) ──────────────────
- *
- *  ── JPA / Hibernate ──
- *  @Entity          → "Hibernate, yeh class ko table samjho"
- *  @Table(name="..")→ Table ka naam custom (default: class ka naam)
- *                    "user" reserved word hai SQL mein, isliye "users"
- *  @Id              → Primary key field
- *  @GeneratedValue  → Auto-increment ID (DB se generate hoga)
- *    strategy = IDENTITY → DB ka auto-increment use kar
- *    (alternatives: AUTO, SEQUENCE, TABLE)
- *  @Column          → Column-level constraints
- *    nullable=false → NOT NULL constraint
- *    unique=true    → UNIQUE constraint (duplicate email rokega)
- *
- *  ── Bean Validation (jakarta.validation) ──
- *  @NotBlank   → null + empty + whitespace nahi (sirf String ke liye)
- *  @Size       → Length range (String/Collection)
- *  @Email      → Valid email format
- *  @Min/@Max   → Numeric range
- *
- *  Yeh @Valid ke saath controller mein trigger hote hain. Fail hua
- *  toh MethodArgumentNotValidException throw hota hai → 400.
- *
- *  ── Lombok (boilerplate killer) ──
- *  @Data              → getters + setters + toString + equals + hashCode
- *  @NoArgsConstructor → empty constructor (JPA ko CHAHIYE — proxy banane ke liye)
- *  @AllArgsConstructor→ saare fields wala constructor
- *
- *  ─── ENTITY vs DTO (concept clarity) ────────────────────────────
- *  Entity = DB se mapped class (yeh wala)
- *  DTO    = API ke liye data shape (jaise ErrorResponse)
- *  Production mein dono alag rakhte hain — security + flexibility.
- *  Yahaan simple project hai, isliye User dono jagah use hua.
- *
- *  📐 SOLID:  SRP — Sirf User domain data + validation rules
- * ════════════════════════════════════════════════════════════════
- */
+// ═══════════════════════════════════════════════════════════════════════
+// 📌 YE FILE KYA HAI:
+//    JPA ENTITY = Java class jo DB table represent karti
+//    Har User object = ek ROW in 'users' table
+//    Hibernate is class ko padhke table auto-banaye
+// ═══════════════════════════════════════════════════════════════════════
+//
+// VISUAL — ENTITY TO DB MAPPING:
+//    @Entity Java class           DB users table
+//    ┌──────────────────────┐    ┌────────────────────┐
+//    │  class User           │    │ id (PK, AUTO)       │
+//    │   Long id             │ →  │ name (NOT NULL)     │
+//    │   String name         │    │ email (UNIQUE)      │
+//    │   String email        │    │ password (NOT NULL) │
+//    │   String password     │    │ age                 │
+//    │   int age             │    │ role (DEFAULT USER) │
+//    │   String role         │    └────────────────────┘
+//    └──────────────────────┘
+//    Hibernate translates annotations → SQL constraints
+//
+// 3 CATEGORIES OF ANNOTATIONS:
+//    1. JPA / HIBERNATE → DB mapping
+//       @Entity, @Table, @Id, @GeneratedValue, @Column
+//
+//    2. BEAN VALIDATION → input validation
+//       @NotBlank, @Email, @Size, @Min, @Max
+//
+//    3. LOMBOK → boilerplate killer
+//       @Data, @NoArgsConstructor, @AllArgsConstructor
+//
+// 🔑 JPA ANNOTATIONS DEEP:
+//
+//    @Entity
+//       "Hibernate, yeh class ko table samjho"
+//
+//    @Table(name = "users")
+//       Plural convention — "user" is SQL reserved word in some DBs
+//
+//    @Id + @GeneratedValue(strategy = IDENTITY)
+//       Primary key + DB auto-increment (MySQL preferred)
+//       Strategies:
+//          IDENTITY  → DB auto-increment
+//          AUTO      → JPA decides
+//          SEQUENCE  → DB sequence (Postgres)
+//          TABLE     → separate ID table (rare)
+//
+//    @Column(nullable = false, unique = true)
+//       nullable=false → NOT NULL in SQL
+//       unique=true    → UNIQUE constraint (duplicate email blocked at DB)
+//
+// 🔑 BEAN VALIDATION:
+//    @NotBlank   → null + empty + whitespace blocked (Strings)
+//    @NotNull    → just not null (any type)
+//    @NotEmpty   → not null + size > 0
+//    @Size       → length range
+//    @Email      → email format check
+//    @Min/@Max   → numeric range
+//    @Pattern    → regex
+//
+//    Trigger flow:
+//       Controller: @Valid @RequestBody User u
+//       Spring validates BEFORE method entry
+//       Fail → MethodArgumentNotValidException → 400
+//
+// 🔑 LOMBOK — BOILERPLATE KILLER:
+//    @Data
+//       Auto-generate: getters/setters/toString/equals/hashCode
+//       = ~50 lines saved
+//
+//    @NoArgsConstructor
+//       Empty constructor — JPA REQUIRED
+//       Hibernate uses reflection to create object
+//       Without it: runtime exception
+//
+//    @AllArgsConstructor
+//       Constructor with all fields
+//       Manual object creation easy
+//
+//    Compile-time magic:
+//       Source mein nahi dikhte methods
+//       Compile time pe BYTECODE inject hota
+//       .class file mein getters/setters honge
+//
+// WHY JPA NEEDS @NoArgsConstructor?
+//    Hibernate flow when loading entity:
+//       1. SELECT * FROM users WHERE id = ?
+//       2. Hibernate uses REFLECTION to create object
+//       3. Reflection needs EMPTY constructor
+//       4. Then sets fields one by one
+//    Missing → ❌ Hibernate cannot instantiate
+//
+// ENTITY vs DTO:
+//    Entity (this file)      DTO (separate classes)
+//       DB mapped               API request/response shape
+//       Hibernate-managed       Cross API boundary
+//       Inside repo/service     Hide entity internals (password!)
+//
+//    Production: keep separate (UserDTO ≠ User entity)
+//    This project: simple — User used both (educational)
+//
+// 📐 SOLID — SRP:
+//    Sirf User domain data + validation rules
+//    No business logic, no DB access
+//
+// 🎤 INTERVIEW LINE:
+//    "User class is JPA entity — @Entity marks it persistent,
+//     @Table('users') uses plural to avoid SQL reserved word.
+//     ID auto-generated via IDENTITY (MySQL auto-increment).
+//     Bean Validation annotations trigger with @Valid in controller.
+//     Lombok eliminates boilerplate. @NoArgsConstructor required for
+//     JPA's reflection-based instantiation."
+// ═══════════════════════════════════════════════════════════════════════
+
 @Entity
 @Table(name = "users")
 @Data

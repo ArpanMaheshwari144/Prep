@@ -1,45 +1,63 @@
 package com.arpan.usercrud.exception;
 
-/* ════════════════════════════════════════════════════════════════
- *  📌 CUSTOM EXCEPTION — Domain-specific Error Signal
- * ════════════════════════════════════════════════════════════════
- *  Apni custom exception class banane ka point:
- *  • Code padhne wala turant samjhe — yeh "user not found" wala
- *    case hai, generic Exception nahi
- *  • Specific exception ke liye specific HTTP response (404)
- *  • Service layer simple throw karta hai → handler decide karta
- *    hai HTTP response kya bhejna
- *
- *  ─── extends RuntimeException kyu? Exception kyu nahi? ──────────
- *
- *  Java mein 2 type ke exceptions hain:
- *
- *  1. Checked Exception (extends Exception)
- *     • Compiler force karta hai handle karna ya throws declare
- *     • Example: IOException, SQLException
- *     • Method signature mein "throws" likhna padta hai
- *     • Caller MUST handle (try-catch or rethrow)
- *
- *  2. Unchecked Exception (extends RuntimeException)
- *     • Compiler enforce nahi karta
- *     • Example: NullPointerException, IllegalArgumentException
- *     • Method signature clean rehta hai
- *     • Best for "programming errors" or "exceptional conditions"
- *
- *  Spring philosophy: business exceptions = RuntimeException
- *  Reasons:
- *  • Method signatures saaf rehte hain (throws clutter nahi)
- *  • @Transactional default rollback SIRF RuntimeException pe
- *    hota hai (checked exception pe rollback NAHI)
- *  • Functional interfaces (Supplier, Function) checked allow
- *    nahi karte → RuntimeException seamless lambda mein chalti
- *
- *  ─── super(message) — parent constructor call ───────────────────
- *  RuntimeException ka constructor message accept karta hai.
- *  ex.getMessage() iss message ko return karega — handler ne
- *  iska use kiya hai response mein.
- * ════════════════════════════════════════════════════════════════
- */
+// ═══════════════════════════════════════════════════════════════════════
+// 📌 YE FILE KYA HAI:
+//    UserNotFoundException = Custom domain-specific exception
+//    Service throws it when user lookup fails
+//    GlobalExceptionHandler catches it → 404 response
+// ═══════════════════════════════════════════════════════════════════════
+//
+// USED VIA:
+//    repository.findById(id)
+//        .orElseThrow(() -> new UserNotFoundException(id));
+//
+// 🔑 WHY extends RuntimeException (NOT Exception)?
+//
+//    Java 2 types of exceptions:
+//
+//    CHECKED (extends Exception):
+//       • Compiler force karta handle ya throws declare
+//       • Example: IOException, SQLException
+//       • Method signature mein "throws" likhna padta
+//       • Caller MUST handle (try-catch or rethrow)
+//
+//    UNCHECKED (extends RuntimeException):
+//       • Compiler enforce nahi karta
+//       • Example: NullPointerException, IllegalArgumentException
+//       • Method signature clean
+//       • Best for programming errors / business exceptions
+//
+//    SPRING PHILOSOPHY:
+//       Business exceptions = RuntimeException
+//
+//       Reasons:
+//          1. Clean method signatures (no throws clutter)
+//          2. @Transactional default rollback ONLY on RuntimeException
+//             (checked exception pe rollback NAHI hota!)
+//          3. Lambda-friendly (Supplier/Function reject checked exceptions)
+//
+// super(message) — parent constructor call:
+//    RuntimeException constructor accepts message
+//    ex.getMessage() returns it
+//    Handler uses message in response
+//
+// WHY CUSTOM EXCEPTION (vs Generic)?
+//    GENERIC: throw new RuntimeException("User not found");
+//             Catch: catch (RuntimeException e) { ... }  ← catches everything
+//
+//    CUSTOM:  throw new UserNotFoundException(id);
+//             Catch: catch (UserNotFoundException e) { ... }  ← specific
+//
+//    = Self-documenting in stack trace
+//    = Specific handler routing in GlobalExceptionHandler
+//
+// 🎤 INTERVIEW LINE:
+//    "UserNotFoundException extends RuntimeException (unchecked) —
+//     Spring's philosophy for business exceptions. Triggers
+//     @Transactional rollback automatically and keeps signatures clean.
+//     Used with Optional.orElseThrow() for null-safe lookups."
+// ═══════════════════════════════════════════════════════════════════════
+
 public class UserNotFoundException extends RuntimeException {
 
     public UserNotFoundException(Long id) {

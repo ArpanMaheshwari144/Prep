@@ -9,47 +9,47 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/* ════════════════════════════════════════════════════════════════════
- *  📝 RegisterRequest — New user signup JSON shape
- * ════════════════════════════════════════════════════════════════════
- *
- *  📦 Yeh DTO POST /auth/register endpoint ka request body shape hai.
- *
- *  ─── 📨 EXPECTED JSON ─────────────────────────────────────────────
- *
- *      POST /auth/register
- *      Content-Type: application/json
- *
- *      {
- *          "name":     "Arpan",
- *          "email":    "arpan@x.com",
- *          "password": "secret123",
- *          "age":      28
- *      }
- *
- *      Note: "role" field NAHI — security ke liye!
- *      Default "USER" hum server side set karenge AuthController mein.
- *      Agar client se role accept karte → hacker "ADMIN" inject kar leta.
- *
- *  ─── 🛡️ VALIDATION ────────────────────────────────────────────────
- *
- *      • name     → 2-50 chars
- *      • email    → valid format + non-blank
- *      • password → minimum 6 chars
- *      • age      → 18-120 range
- *
- *  ─── 🎯 SECURITY: Why no "role" field? ────────────────────────────
- *
- *      ❌ BAD: Accept role from client
- *          Client → { "name": "X", ..., "role": "ADMIN" }
- *          Hacker self-promote kar leta admin
- *
- *      ✅ GOOD: Server hardcode role on register
- *          AuthController.register() mein:
- *              user.setRole("USER");   // always USER for new signups
- *          Admin manually upgrade kare future mein.
- * ════════════════════════════════════════════════════════════════════
- */
+// ═══════════════════════════════════════════════════════════════════════
+// 📌 YE FILE KYA HAI:
+//    RegisterRequest = INPUT DTO for POST /auth/register
+//    New user signup JSON shape
+// ═══════════════════════════════════════════════════════════════════════
+//
+// EXPECTED JSON:
+//    POST /auth/register
+//    Content-Type: application/json
+//    {
+//        "name":     "Arpan",
+//        "email":    "arpan@x.com",
+//        "password": "secret123",
+//        "age":      28
+//    }
+//
+// 🔑 SECURITY — Why NO "role" field?
+//
+//    ❌ BAD: Accept role from client
+//       Client → { "name": "X", ..., "role": "ADMIN" }
+//       Hacker self-promote kar leta admin
+//
+//    ✅ GOOD: Server hardcode role on register
+//       AuthController.register():
+//          user.setRole("USER");   // always USER for new signups
+//       Admin manually upgrade kare future mein
+//
+//    = Privilege escalation prevention
+//
+// VALIDATION:
+//    name     → 2-50 chars
+//    email    → valid format + non-blank
+//    password → minimum 6 chars
+//    age      → 18-120 range
+//
+// FAIL FLOW:
+//    Invalid input → MethodArgumentNotValidException → 400 Bad Request
+//
+// 📐 SOLID — SRP: Sirf register input data
+// ═══════════════════════════════════════════════════════════════════════
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -7,70 +7,116 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.arpan.usercrud.dto.ErrorResponse;
 
-/* ════════════════════════════════════════════════════════════════
- *  📌 GLOBAL EXCEPTION HANDLER — Centralized Error Handling
- * ════════════════════════════════════════════════════════════════
- *  Yeh class poore application ke saare controllers mein throw
- *  hone wali exceptions ko CENTRALIZED tarike se handle karti hai.
- *
- *  Without this: har controller method mein try-catch likhna padta
- *  With this:    controller saaf rehta, exceptions yahaan flow ho
- *                jati hain, consistent JSON response milta
- *
- *  ─── @RestControllerAdvice — interview gold ─────────────────────
- *
- *  Yeh = @ControllerAdvice + @ResponseBody
- *
- *  • @ControllerAdvice → "Yeh class saare controllers ke liye
- *                         shared advice (cross-cutting concerns)
- *                         provide karti hai"
- *  • @ResponseBody     → "Methods ka return value direct JSON banao"
- *
- *  Bina @ResponseBody (sirf @ControllerAdvice) toh ErrorResponse
- *  ko view-name samjhega Spring → 500 error.
- *
- *  ─── @ExceptionHandler(SomeException.class) ─────────────────────
- *
- *  "Jab koi controller SomeException throw kare → yeh method call
- *  karo response banane ke liye"
- *
- *  Spring sabse SPECIFIC handler dhundhta hai. UserNotFoundException
- *  throw hua → UserNotFoundException ka handler chalega (Exception
- *  ka generic handler ignore hoga). Yeh polymorphism + reflection
- *  ka use hai.
- *
- *  ─── HANDLER PRIORITY ORDER (specific → generic) ────────────────
- *
- *      UserNotFoundException  →  404 (most specific)
- *             │
- *      IllegalArgumentException → 400
- *             │
- *      Exception              →  500 (catch-all fallback)
- *
- *  ─── HTTP STATUS CHEAT SHEET ────────────────────────────────────
- *  200 OK            → success with body
- *  201 Created       → POST success (resource banaya)
- *  204 No Content    → DELETE success
- *  400 Bad Request   → client galti (invalid data)
- *  401 Unauthorized  → login chahiye
- *  403 Forbidden     → login hai par permission nahi
- *  404 Not Found     → resource missing
- *  500 Server Error  → server side bug / unhandled exception
- *
- *  ─── PRODUCTION TIP (interview bonus) ───────────────────────────
- *  Real apps mein generic Exception handler mein ex.getMessage()
- *  client ko nahi bhejna chahiye — internal stack trace leak ho
- *  sakti hai. Generic message bhejo + actual exception logger se
- *  log karo. Yahaan brushup ke liye direct rakha hai.
- *
- *  ════════════════════════════════════════════════════════════════
- *  📐 SOLID PRINCIPLES APPLIED
- *  ════════════════════════════════════════════════════════════════
- *  ✅ SRP — Sirf exception → HTTP response mapping. Business logic nahi.
- *  ✅ OCP — Naye exception types ke liye method add karo,
- *           existing handlers unchanged.
- * ════════════════════════════════════════════════════════════════
- */
+// ═══════════════════════════════════════════════════════════════════════
+// 📌 YE FILE KYA HAI:
+//    GLOBAL EXCEPTION HANDLER — Centralized Error Routing
+//    Saare controllers ki exceptions yahaan flow hoti
+//    Consistent JSON error response milta
+// ═══════════════════════════════════════════════════════════════════════
+//
+// VISUAL — WITHOUT vs WITH:
+//    WITHOUT Handler:
+//       Har controller method mein:
+//          try { service.findById(id); }
+//          catch (UserNotFoundException e) { return 404; }
+//          catch (Exception e) { return 500; }
+//       = Repetitive everywhere
+//
+//    WITH @RestControllerAdvice:
+//       Controller saaf:
+//          return service.findById(id);
+//       Exception thrown → centrally caught here → JSON returned
+//
+// 🔑 @RestControllerAdvice DECODED:
+//    = @ControllerAdvice + @ResponseBody
+//
+//    @ControllerAdvice → "Saare controllers ke liye shared advice
+//                         (cross-cutting concerns)"
+//    @ResponseBody     → "Return value DIRECT JSON banao"
+//
+//    Without @ResponseBody:
+//       Spring soche ErrorResponse view name hai → 500 error
+//
+// 🔑 @ExceptionHandler(SomeException.class):
+//    "Jab koi controller SomeException throw kare →
+//     yeh method call karo response banane ke liye"
+//
+//    Spring sabse SPECIFIC handler dhundhta hai:
+//       UserNotFoundException → use UserNotFound handler
+//       (Exception ka generic handler skip)
+//       = Polymorphism + reflection magic
+//
+// HANDLER PRIORITY (specific → generic):
+//    UserNotFoundException  →  404 (most specific)
+//           │
+//    IllegalArgumentException → 400
+//           │
+//    Exception              →  500 (catch-all fallback)
+//
+// HTTP STATUS CHEAT SHEET:
+//    200 OK            → success with body
+//    201 Created       → POST success (resource banaya)
+//    204 No Content    → DELETE success
+//    400 Bad Request   → client galti (invalid data)
+//    401 Unauthorized  → login chahiye
+//    403 Forbidden     → login hai par permission nahi
+//    404 Not Found     → resource missing
+//    500 Server Error  → server side bug / unhandled
+//
+// RESPONSE FLOW VISUAL:
+//    Service throws UserNotFoundException
+//         │
+//         ▼ bubbles up
+//    Controller (doesn't catch)
+//         │
+//         ▼
+//    Spring DispatcherServlet catches
+//         │
+//         ▼ matches @ExceptionHandler
+//    GlobalExceptionHandler.handleUserNotFoundException()
+//         │
+//         ▼
+//    ResponseEntity<ErrorResponse> with 404
+//         │
+//         ▼
+//    Client:
+//    {
+//      "status": 404,
+//      "message": "User not found with id: 5",
+//      "timestamp": 1706443200000
+//    }
+//
+// ⚠️ PRODUCTION TIP (Interview Gold):
+//    Generic Exception handler:
+//       ❌ DON'T leak ex.getMessage() to client
+//          (stack trace, internal info leak = security risk)
+//       ✅ Log full exception:
+//             logger.error("Unhandled", ex);
+//       ✅ Return GENERIC user message:
+//             "An unexpected error occurred. Please try again."
+//       = Security best practice
+//
+// 📐 SOLID:
+//    SRP — Sirf exception → HTTP response mapping
+//          No business logic here
+//
+//    OCP — Naya exception type aaye?
+//          Just add @ExceptionHandler method
+//          Existing handlers UNCHANGED
+//          = Open for extension
+//
+// 🎤 INTERVIEW LINE:
+//    "@RestControllerAdvice centralizes exception handling — Spring
+//     catches exceptions from any controller and routes to matching
+//     @ExceptionHandler method.
+//
+//     Handler priority: most specific wins (UserNotFound → 404
+//     before generic Exception → 500).
+//
+//     Production caveat: don't leak ex.getMessage() in generic
+//     handler — log it, return safe user message instead."
+// ═══════════════════════════════════════════════════════════════════════
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

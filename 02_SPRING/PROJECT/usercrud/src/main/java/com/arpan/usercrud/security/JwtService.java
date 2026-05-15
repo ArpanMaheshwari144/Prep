@@ -14,155 +14,153 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
-/* ════════════════════════════════════════════════════════════════════
- *  🎫 JwtService — THE ID CARD PRINTING OFFICE
- * ════════════════════════════════════════════════════════════════════
- *
- *  Yeh class ID card factory hai — token banata, padhta, verify karta.
- *  JwtFilter (the guard) aur AuthController (HR jo cards issue karta)
- *  iska use karte hain.
- *
- *  ─── 🏭 ANALOGY: Office ID Card Factory ───────────────────────────
- *
- *      Imagine office ka ID card section:
- *
- *         👨‍💼 HR (AuthController)
- *              │
- *              │  "New employee Arpan ka ID card chahiye"
- *              ▼
- *         🏭 ID Card Factory (JwtService)
- *              │
- *              │  Card pe likhta:
- *              │  ┌──────────────────────────┐
- *              │  │  Name: Arpan             │  ← claim
- *              │  │  Email: arpan@x.com      │  ← claim
- *              │  │  Role: ADMIN             │  ← claim
- *              │  │  Issue: 2026-04-30       │  ← iat
- *              │  │  Expiry: 2026-04-30 +15m │  ← exp
- *              │  │                          │
- *              │  │  [STAMP: Konovo HMAC]    │  ← signature
- *              │  │                          │
- *              │  └──────────────────────────┘
- *              │
- *              ▼
- *         🎫 Final Card (signed JWT)
- *
- *      Stamp ka logic: ek SECRET stamp hai jo sirf factory ke paas
- *      hai. Koi nakli card banaye → stamp fake hoga → verify fail
- *      → guard pakad lega.
- *
- *  ─── 🧰 3 MAIN KAAM (3 public methods) ────────────────────────────
- *
- *      1️⃣  generateToken(user)  → naya card banao (user info se)
- *      2️⃣  isValid(token)       → card asli hai? (stamp check)
- *      3️⃣  extractEmail(token)  → card pe naam padho
- *
- *      + helper: extractUserId, extractRole
- *
- *  ─── 🔐 STAMP (Signature) KAISE KAAM KARTA ────────────────────────
- *
- *      signature = HMAC-SHA256(
- *                       header + "." + payload,
- *                       SECRET
- *                  )
- *
- *      Tampering scenario:
- *
- *         Hacker card mein "role: USER" ko "role: ADMIN" mein change kare
- *              │
- *              ▼
- *         Server scanner stamp recompute kare apne SECRET se
- *              │
- *              ▼
- *         Naya hash = "xyz123"
- *         Card pe stamp = "abc456" ← original
- *              │
- *              ▼
- *         xyz123 ≠ abc456 → 🚫 TAMPERING DETECTED
- *
- *      Hacker SECRET nahi jaanta → wo new stamp generate nahi kar
- *      sakta → tampering possible NAHI.
- *
- *  ─── 📚 LIBRARY: jjwt (io.jsonwebtoken) 0.12.x ────────────────────
- *
- *      • Jwts.builder()  → naya token banao
- *      • Jwts.parser()   → token parse + verify
- *      • SecretKey       → signing key object (256-bit minimum)
- *      • Claims          → token payload (key-value map)
- *
- *  ════════════════════════════════════════════════════════════════════
- *  🎨 DESIGN PATTERN: BUILDER (used via Jwts.builder())
- *  📐 SOLID: SRP
- *  ════════════════════════════════════════════════════════════════════
- *
- *  Yeh class `Jwts.builder()` consume karta — JJWT library ka
- *  Builder pattern. Step-by-step claims set karte:
- *
- *      Jwts.builder()
- *          .subject(...)
- *          .claim(...)
- *          .expiration(...)
- *          .signWith(...)
- *          .compact();         ← final build
- *
- *  Each setter returns `this` (fluent), `compact()` returns final
- *  immutable JWT string.
- *
- *  📐 SOLID — SRP (Single Responsibility):
- *  Yeh class SIRF JWT operations — generate, parse, validate.
- *  User loading (CustomUserDetailsService ka kaam), filtering
- *  (JwtFilter ka kaam), config (SecurityConfig ka kaam) — sab
- *  alag responsibilities mein.
- *
- *  🎤 INTERVIEW LINE:
- *  "JwtService Builder pattern use karta JJWT library ke through —
- *   Jwts.builder() fluent API se claims set karke compact() final
- *   token string return karta. SRP bhi follow — sirf JWT ops,
- *   baaki responsibilities alag classes mein."
- *
- *  ════════════════════════════════════════════════════════════════════
- *  🎤 INTERVIEW TALKING POINT — JwtService
- *  ════════════════════════════════════════════════════════════════════
- *
- *  Q: "JWT generate aur validate kaise karte ho code mein?"
- *
- *  Tu bolega:
- *  "Maine dedicated `JwtService` banaya jo 3 main kaam karta —
- *   token generate, parse, aur validate. Library use ki `jjwt`
- *   (io.jsonwebtoken 0.12.x) — industry standard.
- *
- *   `generateToken(user)` mein `Jwts.builder()` use karke claims
- *   set karta — sub (userId), email, name, role — `signWith()`
- *   se HMAC SHA-256 signature lagata SECRET key se. `compact()`
- *   final string return karta.
- *
- *   Validation `parseSignedClaims()` se hota — agar signature
- *   tampered ya token expired, JwtException throw hoti, hum
- *   false return karte.
- *
- *   SECRET key `application.properties` se `@Value` se inject
- *   hoti. Production mein env variable / AWS Secrets Manager se
- *   load karte hain — code mein hardcode NEVER."
- *
- *  Q: "256-bit secret kyu mandatory?"
- *  → "HMAC SHA-256 minimum 256 bits chahiye — chhota key
- *     'weak key' exception throw karega jjwt mein."
- *
- *  Q: "Symmetric vs Asymmetric — kya use kiya?"
- *  → "HS256 (symmetric) — same SECRET both sides. Single-app
- *     scenarios ke liye fine. Microservices mein RS256
- *     (asymmetric, public/private key) prefer karte."
- *  ════════════════════════════════════════════════════════════════════
- */
+// ═══════════════════════════════════════════════════════════════════════
+// 📌 YE FILE KYA HAI:
+//    JwtService = JWT TOKEN FACTORY
+//    Generate, parse, validate JWT tokens
+//    3 main jobs:
+//       1. generateToken(user) — banao
+//       2. extractEmail/UserId/Role — padho
+//       3. isValid(token) — verify
+// ═══════════════════════════════════════════════════════════════════════
+//
+// ID CARD FACTORY ANALOGY:
+//    AuthController (HR)
+//         │  "User Arpan ka token chahiye"
+//         ▼
+//    ┌────────────────────────────────┐
+//    │  JwtService (Factory)           │
+//    │                                  │
+//    │  Card pe likhta:                 │
+//    │  ┌──────────────────────────┐   │
+//    │  │ sub: "5"     (user id)   │   │
+//    │  │ name: "Arpan"            │   │
+//    │  │ email: "arpan@x.com"     │   │
+//    │  │ role: "ADMIN"            │   │
+//    │  │ iat: 2026-05-15...       │   │
+//    │  │ exp: +15 min             │   │
+//    │  │ [SIGNATURE: HMAC-SHA256] │   │
+//    │  └──────────────────────────┘   │
+//    └────────────────────────────────┘
+//         │
+//         ▼
+//    🎫 Final signed token string
+//
+// JWT STRUCTURE:
+//    eyJhbGc...header... . eyJzdWIi...payload... . sig...signature
+//    ─────────────────── ─────────────────────── ─────────────────
+//         HEADER             PAYLOAD                 SIGNATURE
+//    (algorithm: HS256)   (user claims)        (HMAC of header+payload)
+//
+// 5 METHODS:
+//    1. generateToken(user)  → user → signed JWT string
+//    2. extractUserId(token) → token → "5" (sub)
+//    3. extractEmail(token)  → token → "arpan@x.com"
+//    4. extractRole(token)   → token → "ADMIN"
+//    5. isValid(token)       → token → true/false (signature + expiry)
+//
+//    + Private helpers:
+//       getSigningKey()  → SecretKey object banata
+//       parseClaims()    → parse + verify (DRY for extracts)
+//
+// 🔑 generateToken() — Builder Pattern:
+//    Jwts.builder()
+//        .subject(userId)        ← sub claim
+//        .claim("name", ...)
+//        .claim("email", ...)
+//        .claim("role", ...)
+//        .issuedAt(now)           ← iat
+//        .expiration(now + 15m)   ← exp
+//        .signWith(secret)        ← 🔏 stamp
+//        .compact();              ← final string
+//
+//    = Fluent chain (each returns Builder)
+//    = .compact() = final immutable JWT string
+//
+// 🔑 isValid() — Verification Flow:
+//    parseClaims(token) checks ALL:
+//       ✅ Signature match (tampering detect)
+//       ✅ Expiration date
+//       ✅ Format (3 parts dot-separated)
+//       ✅ Not empty/null
+//
+//    Any fail → JwtException → return false
+//
+// 🔑 parseClaims() — DRY helper:
+//    Jwts.parser()
+//        .verifyWith(getSigningKey())    ← verify with SECRET
+//        .build()
+//        .parseSignedClaims(token)        ← throws if invalid
+//        .getPayload();                   ← claims map
+//
+//    parseSignedClaims = MANDATORY signature check
+//    parseClaims (old) = skip verification (DON'T USE)
+//
+// 🔑 SECRET KEY:
+//    @Value("${jwt.secret}") → from application.properties
+//    String → byte[] → SecretKey
+//    Min 256 bits (32 chars) for HS256 — JJWT enforces
+//
+//    Production:
+//       ❌ NEVER hardcode in code
+//       ✅ Environment variable / AWS Secrets Manager
+//       ✅ application.properties just for dev
+//
+// TAMPERING DETECTION FLOW:
+//    Original: payload = {role: "USER"}
+//              signature = HMAC(payload + secret) = "abc123"
+//
+//    Hacker modifies → role: "ADMIN"
+//    Server verifies:
+//       Recompute signature with secret = "xyz789"
+//       Token has = "abc123"
+//       xyz789 ≠ abc123 → 🚫 SignatureException
+//       = REJECTED
+//
+//    Hacker can't fake signature (no SECRET access)
+//
+// HS256 vs RS256:
+//    HS256 (Symmetric — used here):
+//       Same SECRET for sign + verify
+//       Single app scenario
+//       Simple
+//
+//    RS256 (Asymmetric):
+//       Private key signs, public key verifies
+//       Microservices (one signer, many verifiers)
+//       More complex, more secure
+//       Industry default for distributed systems
+//
+// 🎨 PATTERN: BUILDER (used via Jwts.builder())
+//
+// 📐 SOLID — SRP:
+//    Sirf JWT operations
+//    User loading → CustomUserDetailsService
+//    Filtering → JwtFilter
+//    Config → SecurityConfig
+//    Endpoints → AuthController
+//    = Each class one job
+//
+// 🎤 INTERVIEW LINE:
+//    "JwtService manages 3 core operations:
+//     • Generate — Jwts.builder() Builder pattern with claims,
+//                  expiry, HMAC-SHA256 signature
+//     • Parse + Extract — verifyWith(secret) ensures signature valid
+//     • Validate — true if signature + expiry pass
+//
+//     Uses JJWT 0.12.x library. HS256 (symmetric) — same SECRET both sides.
+//     For microservices, RS256 (asymmetric) preferred — public key verification.
+//
+//     SECRET loaded via @Value — production needs env vars or secrets manager,
+//     never hardcode."
+// ═══════════════════════════════════════════════════════════════════════
+
 @Service
 public class JwtService {
 
-    /*
-     *  🔑 Config injection from application.properties
-     *
-     *  jwt.secret     → "Konovo Stamp" — yeh signing key
-     *  jwt.expiration → 15 min in milliseconds
-     */
+    // 🔑 Config injection from application.properties
+    // jwt.secret     → signing key
+    // jwt.expiration → 15 min in milliseconds
     @Value("${jwt.secret}")
     private String secret;
 
@@ -172,20 +170,15 @@ public class JwtService {
     // ════════════════════════════════════════════════════════════
     //  🛠️ HELPER: String secret → SecretKey object
     // ════════════════════════════════════════════════════════════
-    /*
-     *  jjwt 0.12.x raw String accept nahi karta sign karne ke liye.
-     *  HMAC-SHA algorithms ko proper SecretKey object chahiye.
-     *
-     *  Process:
-     *      "myStringSecret..." (config se)
-     *           ↓ getBytes()
-     *      byte[] keyBytes
-     *           ↓ Keys.hmacShaKeyFor()
-     *      SecretKey object (ready for signing)
-     *
-     *  Note: Agar secret base64-encoded hai → Decoders.BASE64.decode()
-     *        Hum plain string use kar rahe → directly getBytes().
-     */
+    //  jjwt 0.12.x raw String accept nahi karta sign karne ke liye.
+    //  HMAC-SHA algorithms ko proper SecretKey object chahiye.
+    //
+    //  Process:
+    //      "myStringSecret..." (config se)
+    //           ↓ getBytes()
+    //      byte[] keyBytes
+    //           ↓ Keys.hmacShaKeyFor()
+    //      SecretKey object (ready for signing)
     private SecretKey getSigningKey() {
         byte[] keyBytes = secret.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
@@ -194,50 +187,34 @@ public class JwtService {
     // ════════════════════════════════════════════════════════════
     //  1️⃣  GENERATE TOKEN — User → New ID Card
     // ════════════════════════════════════════════════════════════
-    /*
-     *  🎫 Card factory ka main kaam — user info leke signed JWT banao.
-     *
-     *  Called by: AuthController.login() jab credentials match ho.
-     *
-     *  Output structure:
-     *      header  = { alg: "HS256", typ: "JWT" }
-     *      payload = { sub: "5", name: "Arpan", email: "arpan@x.com",
-     *                  role: "ADMIN", iat: ..., exp: ... }
-     *      signature = HMAC-SHA256(header + "." + payload, SECRET)
-     *
-     *      final = base64(header) + "." + base64(payload) + "." + signature
-     */
+    //  Called by: AuthController.login() jab credentials match ho.
+    //
+    //  Output structure:
+    //      header  = { alg: "HS256", typ: "JWT" }
+    //      payload = { sub, name, email, role, iat, exp }
+    //      signature = HMAC-SHA256(header + "." + payload, SECRET)
+    //
+    //      final = base64(header) + "." + base64(payload) + "." + signature
     public String generateToken(User user) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
 
         return Jwts.builder()
-                // 📛 Subject — primary identifier (userId convention)
-                .subject(user.getId().toString())
-
-                // 🏷️ Custom claims — user info embed
+                .subject(user.getId().toString())   // sub claim
                 .claim("name", user.getName())
                 .claim("email", user.getEmail())
-                .claim("role", user.getRole())     // important: authorization ke liye
-
-                // 🕐 Time stamps
-                .issuedAt(now)                      // iat: kab issue hua
-                .expiration(expiryDate)             // exp: kab expire (now + 15 min)
-
-                // 🔏 Stamp lagao — HMAC SHA-256 with our SECRET
-                .signWith(getSigningKey())
-
-                // 📦 Final string banao — header.payload.signature
-                .compact();
+                .claim("role", user.getRole())       // authorization
+                .issuedAt(now)                       // iat
+                .expiration(expiryDate)              // exp
+                .signWith(getSigningKey())           // 🔏 stamp
+                .compact();                          // final string
     }
 
     // ════════════════════════════════════════════════════════════
     //  2️⃣  EXTRACT USER ID — Card pe ID number padho
     // ════════════════════════════════════════════════════════════
-    /*
-     *  Token se sub claim (userId) nikaalta.
-     *  Used when controller mein "current user ka data" fetch karna ho.
-     */
+    //  Token se sub claim (userId) nikaalta.
+    //  Used when controller mein "current user ka data" fetch ho.
     public String extractUserId(String token) {
         Claims claims = parseClaims(token);
         return claims.getSubject();   // sub claim
@@ -246,10 +223,8 @@ public class JwtService {
     // ════════════════════════════════════════════════════════════
     //  3️⃣  EXTRACT EMAIL — Card pe email padho
     // ════════════════════════════════════════════════════════════
-    /*
-     *  JwtFilter use karta — token verify hone ke baad email
-     *  nikaalta CustomUserDetailsService.loadUserByUsername() ko pass karne ke liye.
-     */
+    //  JwtFilter use karta — token verify hone ke baad email nikaalta
+    //  CustomUserDetailsService.loadUserByUsername() ko pass karne ke liye.
     public String extractEmail(String token) {
         Claims claims = parseClaims(token);
         return claims.get("email", String.class);
@@ -266,18 +241,13 @@ public class JwtService {
     // ════════════════════════════════════════════════════════════
     //  5️⃣  IS VALID — Card asli hai? (Signature + Expiry check)
     // ════════════════════════════════════════════════════════════
-    /*
-     *  🔍 Card scanner — yeh karta hai:
-     *
-     *      • Signature recompute → match? (tampering detect)
-     *      • exp claim check    → already expired?
-     *      • Format check       → 3 parts dot-separated?
-     *
-     *  Koi bhi check fail = JwtException throw → false return.
-     *  Sab pass = true.
-     *
-     *  Called by: JwtFilter on every protected request.
-     */
+    //  Checks (all done by parseClaims):
+    //      • Signature recompute → match? (tampering detect)
+    //      • exp claim check    → already expired?
+    //      • Format check       → 3 parts dot-separated?
+    //
+    //  Koi bhi check fail = JwtException → false return
+    //  Called by: JwtFilter on every protected request
     public boolean isValid(String token) {
         try {
             parseClaims(token);   // throws if invalid/expired/tampered
@@ -292,21 +262,19 @@ public class JwtService {
     // ════════════════════════════════════════════════════════════
     //  🔧 PRIVATE HELPER — parseClaims (DRY)
     // ════════════════════════════════════════════════════════════
-    /*
-     *  Common parsing logic — saare extract methods + isValid use karte.
-     *
-     *  Process:
-     *      token string
-     *          ↓ parser with verifyWith(SECRET)
-     *      signature verify hota
-     *          ↓
-     *      tampered? expired? → JwtException throw
-     *          ↓
-     *      claims (payload) return
-     *
-     *  parseSignedClaims() vs parseClaims() — signed version mandatory
-     *  signature check karta. Unsigned tokens reject.
-     */
+    //  Common parsing logic — saare extract methods + isValid use karte.
+    //
+    //  Process:
+    //      token string
+    //          ↓ parser with verifyWith(SECRET)
+    //      signature verify hota
+    //          ↓
+    //      tampered? expired? → JwtException throw
+    //          ↓
+    //      claims (payload) return
+    //
+    //  parseSignedClaims() = MANDATORY signature check
+    //                         Unsigned tokens reject
     private Claims parseClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())   // 🔏 stamp verify with our SECRET

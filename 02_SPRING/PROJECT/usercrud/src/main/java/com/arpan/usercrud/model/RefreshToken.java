@@ -12,72 +12,100 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/* ════════════════════════════════════════════════════════════════════
- *  💾 RefreshToken Entity — DB-stored long-lived token
- * ════════════════════════════════════════════════════════════════════
- *
- *  📦 Yeh JPA entity refresh tokens DB mein persist karta —
- *  taaki logout pe revoke kar sakein.
- *
- *  ─── 🤔 ACCESS vs REFRESH — Why store only refresh? ───────────────
- *
- *      ┌──────────────────────────┬──────────────────────────────┐
- *      │  Access Token (15 min)   │  Refresh Token (7 days)      │
- *      ├──────────────────────────┼──────────────────────────────┤
- *      │  • Server pe NAHI store   │  • Server pe DB mein STORE   │
- *      │  • Stateless              │  • Stateful (for revocation) │
- *      │  • Signature se validate  │  • DB lookup se validate     │
- *      │  • Har request mein bhejta│  • Sirf /refresh pe bhejta   │
- *      │  • Leak window: 15 min    │  • Leak window: until logout │
- *      └──────────────────────────┴──────────────────────────────┘
- *
- *      Stateful trade-off acceptable hai — refresh token rare use
- *      hota (1-2 baar in 15 min cycle), har API call pe nahi.
- *
- *  ─── 📊 TABLE STRUCTURE ───────────────────────────────────────────
- *
- *      refresh_tokens table:
- *      ┌────┬─────────────┬─────────┬──────────────────────────┐
- *      │ id │  token      │ user_id │  expires_at              │
- *      ├────┼─────────────┼─────────┼──────────────────────────┤
- *      │ 1  │ "RRRR-..."  │   5     │ 2026-05-07T10:30:00Z     │
- *      │ 2  │ "XXXX-..."  │   8     │ 2026-05-07T11:15:00Z     │
- *      └────┴─────────────┴─────────┴──────────────────────────┘
- *
- *  ─── 🎬 LIFECYCLE ─────────────────────────────────────────────────
- *
- *      1️⃣  LOGIN:
- *          AuthController generates UUID → save row in DB
- *
- *      2️⃣  REFRESH (every ~15 min):
- *          findByToken(token) → validate exp → return new accessToken
- *
- *      3️⃣  LOGOUT:
- *          deleteByToken(token) → row removed from DB
- *
- *      4️⃣  EXPIRED:
- *          User offline 7+ days → row expired → next refresh fails
- *          (optional cleanup: scheduled job to delete expired rows)
- *
- *  ─── 🔑 WHY UUID for refresh token (not JWT)? ─────────────────────
- *
- *      Production trade-off:
- *
- *      JWT for refresh:
- *          + Self-validating (no DB lookup needed for signature)
- *          - Can't revoke easily (until expiry)
- *
- *      UUID for refresh (humara approach):
- *          + DB lookup mandatory → instant revocation possible
- *          + Logout pe delete = immediate session end
- *          - DB hit on each refresh (rare, acceptable)
- *
- *      Since refresh used 1x per 15 min, DB lookup overhead is fine.
- *      Revocation guarantee zyada important hai security ke liye.
- *
- *  📐 SOLID:  SRP — Sirf refresh token data + DB mapping
- * ════════════════════════════════════════════════════════════════════
- */
+// ═══════════════════════════════════════════════════════════════════════
+// 📌 YE FILE KYA HAI:
+//    RefreshToken Entity — DB-stored long-lived token
+//    Refresh tokens DB mein persist karta
+//    Taaki logout pe REVOKE kar sakein
+// ═══════════════════════════════════════════════════════════════════════
+//
+// WHY ACCESS vs REFRESH SEPARATE?
+//    ┌──────────────────────────┬──────────────────────────────┐
+//    │  Access Token (15 min)   │  Refresh Token (7 days)      │
+//    ├──────────────────────────┼──────────────────────────────┤
+//    │  • Server pe NAHI store  │  • Server pe DB mein STORE   │
+//    │  • Stateless              │  • Stateful (for revocation) │
+//    │  • Signature validate     │  • DB lookup validate        │
+//    │  • Har request mein bheja │  • Sirf /refresh pe bhejta   │
+//    │  • Leak window: 15 min    │  • Leak window: until logout │
+//    └──────────────────────────┴──────────────────────────────┘
+//
+// DB TABLE STRUCTURE:
+//    refresh_tokens table:
+//    ┌────┬─────────────┬─────────┬──────────────────────────┐
+//    │ id │  token      │ user_id │  expires_at              │
+//    ├────┼─────────────┼─────────┼──────────────────────────┤
+//    │ 1  │ "RRRR-..."  │   5     │ 2026-05-07T10:30:00Z     │
+//    │ 2  │ "XXXX-..."  │   8     │ 2026-05-07T11:15:00Z     │
+//    └────┴─────────────┴─────────┴──────────────────────────┘
+//
+// LIFECYCLE:
+//    LOGIN:
+//       AuthController generates UUID → INSERT row
+//
+//    REFRESH (every ~15 min):
+//       findByToken(token) → DB lookup → validate expiry
+//                          → return new access token
+//
+//    LOGOUT:
+//       deleteByToken(token) → row REMOVED
+//       = Refresh dead = session ended
+//
+//    EXPIRED (7+ days offline):
+//       Row stale → next refresh fails
+//       Optional: scheduled cleanup job (@Scheduled)
+//
+// 🔑 WHY UUID (NOT JWT) FOR REFRESH?
+//    TRADE-OFF DECISION:
+//
+//    JWT for refresh:
+//       ✅ Self-validating (no DB lookup)
+//       ❌ Can't revoke easily (until expiry)
+//
+//    UUID for refresh (humara approach):
+//       ✅ DB lookup mandatory → instant revocation
+//       ✅ Logout pe delete = immediate session end
+//       ❌ DB hit per refresh (rare, acceptable)
+//
+//    Decision rationale:
+//       Refresh used 1x per 15 min = DB hit OK
+//       Revocation guarantee critical for security
+//
+// FIELDS BREAKDOWN:
+//    token  — UUID string (unique=true: same token never twice)
+//    userId — owner reference
+//             Simple project: just Long (no FK relationship)
+//             Production: @ManyToOne + @JoinColumn (proper FK)
+//    expiresAt — Instant (modern Java time)
+//                 set: Instant.now().plus(7, ChronoUnit.DAYS)
+//                 check: expiresAt.isBefore(Instant.now()) → expired
+//
+//    Instant vs alternatives:
+//       Instant         = modern Java 8+ (use this)
+//       LocalDateTime   = no timezone
+//       Date            = legacy, avoid
+//
+// PRODUCTION CLEANUP:
+//    Expired tokens slowly accumulate in DB
+//
+//    Solution: scheduled job
+//       @Scheduled(cron = "0 0 2 * * *")  // 2 AM daily
+//       public void cleanupExpired() {
+//           refreshTokenRepo.deleteByExpiresAtBefore(Instant.now());
+//       }
+//
+// 📐 SOLID — SRP:
+//    Sirf refresh token data + DB mapping
+//    No business logic, no validation logic
+//
+// 🎤 INTERVIEW LINE:
+//    "RefreshToken entity stores refresh tokens DB-side enabling
+//     revocation on logout. Trade-off: stateful vs stateless.
+//     Chose UUID over JWT for refresh — revocation guarantee
+//     outweighs DB lookup overhead (refresh is rare, not every request).
+//     Logout calls deleteByToken = immediate session termination."
+// ═══════════════════════════════════════════════════════════════════════
+
 @Entity
 @Table(name = "refresh_tokens")
 @Data
@@ -85,33 +113,25 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RefreshToken {
 
-    /*
-     *  🔢 Primary key — auto-increment
-     */
+    // 🔢 Primary key — auto-increment
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /*
-     *  🎫 Actual refresh token string (UUID)
-     *  unique=true — same token DB mein 2 baar nahi
-     */
+    // 🎫 Actual refresh token string (UUID)
+    // unique=true → same token DB mein 2 baar nahi
     @Column(nullable = false, unique = true)
     private String token;
 
-    /*
-     *  👤 Owner user ID — kis user ke liye yeh token issued hua
-     *  (Foreign key relationship — but simple project mein direct Long)
-     *  Production: @ManyToOne with User entity, @JoinColumn use karte
-     */
+    // 👤 Owner user ID — kis user ke liye yeh token issued hua
+    // (Foreign key relationship — but simple project mein direct Long)
+    // Production: @ManyToOne with User entity, @JoinColumn use karte
     @Column(nullable = false)
     private Long userId;
 
-    /*
-     *  ⏰ Expiration timestamp
-     *  Login pe set: Instant.now().plus(7, ChronoUnit.DAYS)
-     *  Refresh time pe check: expiresAt.isBefore(Instant.now()) → expired
-     */
+    // ⏰ Expiration timestamp
+    // Login pe set: Instant.now().plus(7, ChronoUnit.DAYS)
+    // Refresh time pe check: expiresAt.isBefore(Instant.now()) → expired
     @Column(nullable = false)
     private Instant expiresAt;
 }

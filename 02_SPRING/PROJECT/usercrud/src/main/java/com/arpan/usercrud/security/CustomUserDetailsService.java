@@ -8,157 +8,139 @@ import org.springframework.stereotype.Service;
 import com.arpan.usercrud.model.User;
 import com.arpan.usercrud.repository.UserRepository;
 
-/* ════════════════════════════════════════════════════════════════════
- *  👨‍💼 CustomUserDetailsService — THE HR DEPARTMENT
- * ════════════════════════════════════════════════════════════════════
- *
- *  Yeh class HR department hai — Spring Security puchti "iss email
- *  ka employee hai? permissions kya hain?" — yeh DB se dhundh ke
- *  proper format mein answer deta.
- *
- *  ─── 🏢 ANALOGY: Office HR Department ─────────────────────────────
- *
- *      🛡️ Guard (JwtFilter)         👨‍💼 HR (this class)
- *           │                              │
- *           │  📞 "Arpan naam ka banda     │
- *           │      hai? Permissions kya?"  │
- *           │ ──────────────────────────►  │
- *           │                              │
- *           │                              │  📂 DB mein dhundta
- *           │                              │     (UserRepository)
- *           │                              │     ─────────────────
- *           │                              │     id: 5
- *           │                              │     email: arpan@x.com
- *           │                              │     password: $2a$... (BCrypt)
- *           │                              │     role: ADMIN
- *           │                              │
- *           │  ✅ "Haan, Arpan,            │
- *           │     role: ROLE_ADMIN"        │
- *           │ ◄──────────────────────────  │
- *           │                              │
- *           │  Log book entry banata       │
- *           ▼                              │
- *
- *      Note: HR ne password match nahi kiya — sirf details diye.
- *           Password matching alag step (Spring Security khud karta
- *           BCrypt encoder use karke).
- *
- *  ─── 📜 INTERFACE: UserDetailsService ─────────────────────────────
- *
- *      Spring Security ka contract — sirf 1 method:
- *
- *          UserDetails loadUserByUsername(String username);
- *
- *      Spring bolta: "HR, mujhe sirf yeh ek method chahiye —
- *                    username (ya email) do, mujhe UserDetails do."
- *
- *      Hum apni implementation deenge — UserRepository se fetch karke
- *      Spring's UserDetails object banate.
- *
- *  ─── 🔄 LOGIN FLOW MEIN ROLE ──────────────────────────────────────
- *
- *      Client → POST /auth/login { email, password }
- *                  │
- *                  ▼
- *      AuthenticationManager (Spring Security ka brain)
- *                  │
- *                  ├─► loadUserByUsername("arpan@x.com")  ⭐ THIS CLASS
- *                  │   └─► UserRepository.findByEmail() → DB hit
- *                  │       └─► User entity returned
- *                  │           └─► Convert to UserDetails (ROLE_ prefix)
- *                  │
- *                  ▼
- *      Spring PasswordEncoder.matches(rawPassword, storedHash)
- *                  │
- *                  ├─► Match → ✅ Authentication successful
- *                  └─► Mismatch → ❌ BadCredentialsException
- *
- *  ════════════════════════════════════════════════════════════════════
- *  🎨 DESIGN PATTERN: BUILDER (used via User.builder())
- *  📐 SOLID: DIP, SRP
- *  ════════════════════════════════════════════════════════════════════
- *
- *  Yeh class Spring's `User.builder()` use karta UserDetails
- *  object banane ke liye:
- *
- *      User.builder()
- *          .username(email)
- *          .password(hash)
- *          .authorities("ROLE_" + role)
- *          .build();         ← final immutable UserDetails
- *
- *  Step-by-step setters, `build()` final immutable object return.
- *
- *  📐 SOLID — DIP (Dependency Inversion):
- *  Yeh class `UserDetailsService` INTERFACE implement karti —
- *  Spring Security iss interface pe depend karta, hamari concrete
- *  class pe nahi. Future mein DB se LDAP switch kare? sirf nayi
- *  implementation banao — Spring Security untouched.
- *
- *  📐 SOLID — SRP (Single Responsibility):
- *  Yeh class SIRF user load karti DB se — nothing else. Password
- *  matching Spring Security khud karta, JWT validation JwtFilter,
- *  business logic UserService.
- *
- *  🎤 INTERVIEW LINE:
- *  "CustomUserDetailsService Builder pattern use karta Spring ke
- *   User.builder() ke through — UserDetails immutable object
- *   banata. UserDetailsService interface implement karta — Spring
- *   Security DIP follow karta, mera concrete class swap-able."
- *
- *  ─── 🎫 ROLE_ PREFIX KA KHEL ──────────────────────────────────────
- *
- *      DB mein store:        "USER" / "ADMIN"   (clean, simple)
- *      Spring Security:       ROLE_USER / ROLE_ADMIN  (with prefix)
- *
- *      Why? `hasRole("ADMIN")` Spring internally check karta:
- *           authority == "ROLE_ADMIN" ?
- *
- *      Hum convert kar dete:
- *           "ROLE_" + user.getRole()  →  "ROLE_ADMIN"
- *
- *      Yeh Spring convention hai — mat tod, follow kar.
- *
- *  ════════════════════════════════════════════════════════════════════
- *  🎤 INTERVIEW TALKING POINT — CustomUserDetailsService
- *  ════════════════════════════════════════════════════════════════════
- *
- *  Q: "Spring Security ko apne DB se user kaise load karwate?"
- *
- *  Tu bolega:
- *  "Spring Security ka `UserDetailsService` interface implement
- *   karta hu — sirf ek method hota `loadUserByUsername()`. Mai
- *   email se DB mein user dhundhta `UserRepository.findByEmail()`
- *   se, phir Spring's `UserDetails` object banake return karta
- *   email, BCrypt-hashed password, aur authorities ke saath.
- *
- *   Authority creation time pe `ROLE_` prefix add karta — DB
- *   mein simple 'USER'/'ADMIN' rakhta hu, but Spring internally
- *   `hasRole('ADMIN')` check `ROLE_ADMIN` se karta hai. Toh
- *   prefix yahaan add kar dete.
- *
- *   Yeh service `AuthenticationManager` automatically use karta
- *   login flow mein, aur mera `JwtFilter` bhi har request pe
- *   authenticated user load karne ke liye."
- *
- *  Q: "Username vs email — kya use karte?"
- *  → "Email — kyunki DB mein unique field hai. Method parameter
- *     naam 'username' Spring ka convention hai, but actual
- *     identifier email use karta hu."
- *
- *  Q: "Password match yahaan karte ho?"
- *  → "Nahi — yeh sirf user load karta. Password matching Spring
- *     Security khud karta `PasswordEncoder.matches()` se
- *     login flow ke andar."
- *  ════════════════════════════════════════════════════════════════════
- */
+// ═══════════════════════════════════════════════════════════════════════
+// 📌 YE FILE KYA HAI:
+//    CustomUserDetailsService = HR DEPARTMENT
+//    Guard (JwtFilter) puchta: "Yeh banda DB mein hai ya nahi?"
+//    HR: DB lookup → UserDetails object return
+// ═══════════════════════════════════════════════════════════════════════
+//
+// VISUAL — GUARD ↔ HR FLOW:
+//    🛡️ Guard (JwtFilter)         👨‍💼 HR (this class)
+//         │                              │
+//         │  "Arpan ka info chahiye"     │
+//         │ ──────────────────────────►  │
+//         │                              │
+//         │                              │  📂 DB lookup
+//         │                              │     UserRepository.findByEmail
+//         │                              │     User entity returned
+//         │                              │     id, email, password, role
+//         │                              │
+//         │                              │  🎫 Convert to UserDetails
+//         │                              │     (Spring's standard object)
+//         │                              │     ROLE_ prefix added
+//         │  ✅ UserDetails object       │
+//         │ ◄──────────────────────────  │
+//
+// 🔑 UserDetailsService INTERFACE — Spring's Contract:
+//    public interface UserDetailsService {
+//        UserDetails loadUserByUsername(String username);
+//    }
+//
+//    Sirf 1 method — username (or email) do, UserDetails do
+//
+// 2 USE CASES (where called):
+//
+//    FLOW 1: Initial Login (AuthController)
+//       POST /auth/login { email, password }
+//            │
+//            ▼
+//       AuthenticationManager
+//            │
+//            ├─► loadUserByUsername("arpan@x.com")  ← THIS METHOD
+//            │   └─► UserRepository.findByEmail()
+//            │       └─► User entity → UserDetails
+//            │
+//            ▼
+//       PasswordEncoder.matches(rawPassword, storedHash)
+//            ├─► Match → ✅ generate tokens
+//            └─► Mismatch → ❌ BadCredentialsException
+//
+//    FLOW 2: JWT Filter (Every Request)
+//       JwtFilter validates token
+//            │
+//            ▼
+//       Extract email from token
+//            │
+//            ▼
+//       userDetailsService.loadUserByUsername(email)  ← THIS METHOD
+//            │
+//            ▼
+//       UserDetails returned
+//            │
+//            ▼
+//       Set in SecurityContext
+//
+// 🔑 ROLE_ PREFIX MAGIC:
+//    DB stores:      "USER" / "ADMIN"    (clean)
+//    Spring expects: "ROLE_USER" / "ROLE_ADMIN"  (with prefix)
+//
+//    Convert at authority creation:
+//       "ROLE_" + user.getRole()
+//       → "ROLE_ADMIN"
+//
+//    Why?
+//       Spring's @PreAuthorize("hasRole('ADMIN')")
+//       Internally checks: authority == "ROLE_ADMIN"?
+//       = Convention from Spring — follow karna padta
+//
+// 🔑 SPRING'S BUILDER PATTERN:
+//    org.springframework.security.core.userdetails.User.builder()
+//        .username(user.getEmail())
+//        .password(user.getPassword())
+//        .authorities("ROLE_" + user.getRole())
+//        .build();
+//
+//    Note: Spring's User class ≠ humara User entity
+//          Same naam, alag package — full path use karte confusion bachane ke liye
+//
+// PASSWORD MATCH — NOT HERE!
+//    Yeh class SIRF user load karta
+//    NO password comparison here
+//
+//    Password matching:
+//       PasswordEncoder.matches(rawPassword, storedHash)
+//       Spring Security khud karta login flow mein
+//
+//    Yahan sirf: "User mila + uska hashed password kya"
+//
+// CUSTOM USERNAME NOTE:
+//    Method param "username" = Spring convention
+//    We actually use EMAIL (DB unique)
+//    Spring doesn't care what string — just identifier
+//    Method name STAYS "loadUserByUsername"
+//
+// 🎨 PATTERN: BUILDER (used via User.builder())
+//
+// 📐 SOLID:
+//    DIP — UserDetailsService INTERFACE implement
+//          Spring Security depends on interface, not concrete
+//          Future LDAP swap = new implementation, Spring untouched
+//
+//    SRP — Sirf user load karta from DB
+//          No password matching (Spring's job)
+//          No token (JwtService)
+//          No business logic (UserService)
+//
+// 🎤 INTERVIEW LINE:
+//    "CustomUserDetailsService implements UserDetailsService —
+//     Spring's contract. Sirf 1 method: loadUserByUsername.
+//
+//     Email se DB lookup via UserRepository, then convert User entity
+//     → Spring's UserDetails via Builder pattern.
+//
+//     ROLE_ prefix added at authority creation — Spring convention
+//     (hasRole('ADMIN') checks for 'ROLE_ADMIN' authority).
+//
+//     Password matching NOT here — Spring's PasswordEncoder.matches()
+//     does that automatically in login flow."
+// ═══════════════════════════════════════════════════════════════════════
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    /*
-     *  📂 DB lookup tool — UserRepository
-     *  HR ke paas yeh "directory" hai DB mein dhundhne ke liye.
-     */
+    // 📂 DB lookup tool — UserRepository
+    // HR ke paas yeh "directory" hai DB mein dhundhne ke liye
     private final UserRepository userRepository;
 
     public CustomUserDetailsService(UserRepository userRepository) {
@@ -168,14 +150,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     // ════════════════════════════════════════════════════════════
     //  📞 loadUserByUsername — Spring Security calls this
     // ════════════════════════════════════════════════════════════
-    /*
-     *  Spring puchti: "Iss username ke details do"
-     *  Hum: "Email se dhundhte, mil gaya? UserDetails return.
-     *        Nahi mila? UsernameNotFoundException."
-     *
-     *  Note: Method param naam "username" Spring convention hai,
-     *  but hum actual mein email use kar rahe (DB mein unique).
-     */
+    //  Spring puchti: "Iss username ke details do"
+    //  Hum: "Email se dhundhte, mil gaya? UserDetails return.
+    //        Nahi mila? UsernameNotFoundException."
+    //
+    //  Note: Method param naam "username" Spring convention hai,
+    //        but hum actual mein email use kar rahe (DB unique)
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
@@ -188,20 +168,19 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // 🎫 STEP 2: User entity → Spring's UserDetails object
         //
-        //    Spring ka UserDetails interface hai — kuch fields chahiye:
+        //    Spring ka UserDetails interface — fields chahiye:
         //    • username (identifier)
         //    • password (hashed)
         //    • authorities (roles/permissions)
         //
-        //    Hum Spring ke built-in builder use kar rahe:
+        //    Spring's built-in builder use karte:
         //        org.springframework.security.core.userdetails.User.builder()
         //
-        //    NAUKAR-CHAKAR alert: Yeh Spring ka User class HUMARE User
-        //    entity se ALAG hai. Same naam, different package.
-        //    Confusion bachne ke liye full path use karte hain.
+        //    Spring's User class ≠ humara User entity (alag package)
+        //    Full path = confusion bachane ke liye
         return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())                        // 📛 identifier (email)
-                .password(user.getPassword())                      // 🔒 BCrypt hashed (DB mein already)
+                .username(user.getEmail())                        // 📛 identifier
+                .password(user.getPassword())                      // 🔒 BCrypt hashed
                 .authorities("ROLE_" + user.getRole())             // 🎫 ROLE_USER / ROLE_ADMIN
                 .build();
     }

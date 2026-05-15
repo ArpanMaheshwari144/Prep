@@ -9,60 +9,155 @@ import com.arpan.usercrud.exception.UserNotFoundException;
 import com.arpan.usercrud.model.User;
 import com.arpan.usercrud.repository.UserRepository;
 
-/* ════════════════════════════════════════════════════════════════
- *  📌 SERVICE — Business Logic Layer (with @Transactional)
- * ════════════════════════════════════════════════════════════════
- *  3-Layer architecture ka middle layer:
- *
- *      Controller  →  Service  →  Repository  →  DB
- *      (HTTP)        (Logic)    (Data Access)
- *
- *  ─── @Transactional kahan kahan lagaya ──────────────────────────
- *  • Write operations (create/update/delete) → @Transactional
- *      (atomic — fail hua toh rollback)
- *  • Read operations (getById/getAll) → @Transactional(readOnly=true)
- *      (Hibernate optimization — dirty checking skip)
- *  • createWithSimulatedFailure() → DEMO method to PROVE rollback
- *
- *  ─── DEPENDENCY INJECTION (already covered) ─────────────────────
- *  Constructor injection use ho raha — final field, single constructor,
- *  Spring auto-detect karega (@Autowired implicit).
- *
- *  ════════════════════════════════════════════════════════════════
- *  📐 SOLID PRINCIPLES APPLIED
- *  ════════════════════════════════════════════════════════════════
- *
- *  ✅ SRP (Single Responsibility):
- *  Yeh class SIRF business logic — user CRUD operations.
- *    • Data access  → UserRepository ka kaam
- *    • Auth         → AuthController + JwtService ka kaam
- *    • Validation   → Bean Validation (@Valid) ka kaam
- *    • Exception    → GlobalExceptionHandler ka kaam
- *  Single reason to change — business rules.
- *
- *  ✅ DIP (Dependency Inversion):
- *  Service `UserRepository` INTERFACE pe depend karta —
- *
- *      private final UserRepository repository;  ← INTERFACE
- *      public UserService(UserRepository repo) { ... }
- *
- *  Spring runtime pe proxy implementation inject karta. Future mein
- *  custom impl chahiye? sirf wiring badle, service unchanged.
- *
- *  ✅ CONSTRUCTOR INJECTION (over field injection):
- *  • Field final ban sakta (immutable)
- *  • NPE impossible bina dependency ke
- *  • Testing easy (mock pass karke construct)
- *  • Spring single-constructor mein @Autowired bhi optional
- *
- *  🎤 INTERVIEW LINE:
- *  "UserService SRP follow karta — sirf user business logic, data
- *   access aur auth alag layers mein. DIP — UserRepository
- *   interface pe depend, constructor injection use kiya. Spring
- *   runtime pe proxy inject karta — yeh same DIP pattern jo
- *   SimpleBankSystem mein manually banaya tha."
- * ════════════════════════════════════════════════════════════════
- */
+// ═══════════════════════════════════════════════════════════════════════
+// 📌 YE FILE KYA HAI:
+//    BUSINESS LOGIC LAYER (middle of 3-layer)
+//    Controller → SERVICE → Repository → DB
+//    Sirf business rules — no HTTP handling, no DB connections
+// ═══════════════════════════════════════════════════════════════════════
+//
+// VISUAL — 3-LAYER ARCHITECTURE:
+//    HTTP request
+//         │
+//         ▼
+//    ┌─────────────────────┐
+//    │  Controller          │  ← @RestController
+//    └──────────┬──────────┘
+//               │
+//               ▼
+//    ┌─────────────────────┐
+//    │  Service             │  ← @Service (TU YAHAN)
+//    │  (business logic)    │
+//    │  @Transactional      │
+//    └──────────┬──────────┘
+//               │
+//               ▼
+//    ┌─────────────────────┐
+//    │  Repository          │  ← @Repository
+//    └─────────────────────┘
+//
+// METHODS (6 total):
+//    1. create()                     @Transactional
+//    2. getById()                    @Transactional(readOnly=true)
+//    3. getAll()                     @Transactional(readOnly=true)
+//    4. update()                     @Transactional
+//    5. delete()                     @Transactional
+//    6. createWithSimulatedFailure() @Transactional (DEMO rollback)
+//
+// 🔑 @Transactional PATTERNS:
+//    Write methods:
+//       @Transactional
+//       Atomic transaction (commit/rollback)
+//
+//    Read methods:
+//       @Transactional(readOnly = true)
+//       Hibernate optimization (no dirty checking)
+//       Faster, may route to read replica
+//
+// 🔑 CONSTRUCTOR INJECTION:
+//    private final UserRepository repository;
+//    public UserService(UserRepository repo) { ... }
+//
+//    Benefits:
+//       ✅ final = immutable
+//       ✅ NPE impossible (must pass at construction)
+//       ✅ Testing easy (mock pass)
+//       ✅ Spring single-ctor → @Autowired implicit
+//
+// 🔑 DIRTY CHECKING — repository.save() in update() = REDUNDANT
+//
+//    UPDATE method case:
+//       User user = repository.findById(id)...   ← entity MANAGED
+//       user.setName(...);                        ← modify managed
+//       return repository.save(user);             ← REDUNDANT!
+//
+//       Dirty checking auto-UPDATE karega commit pe!
+//
+//    MINIMAL version (no save):
+//       @Transactional
+//       public User update(Long id, User updatedUser) {
+//           User user = repository.findById(id).orElseThrow(...);
+//           user.setName(updatedUser.getName());
+//           return user;   // Hibernate auto-UPDATE on commit
+//       }
+//
+//    Both versions produce SAME UPDATE SQL!
+//
+//    BUT — CREATE method REQUIRES save():
+//       @Transactional
+//       public User create(User user) {
+//           return repository.save(user);    // MANDATORY
+//       }
+//
+//       Reason:
+//          New User = NOT managed (just Java instance)
+//          save() = "Hibernate, isko nazar mein le, INSERT kar"
+//          Without it: object Java memory mein, DB mein INSERT NAHI
+//
+// MANAGED vs DETACHED:
+//    NEW USER (just created):
+//       User u = new User(...);
+//       = Detached (Hibernate doesn't know)
+//       = save() MANDATORY
+//
+//    FETCHED USER (from DB in same TX):
+//       User u = repository.findById(id).get();
+//       = Managed (Hibernate tracks)
+//       = save() OPTIONAL (dirty checking handles)
+//
+// WHY KEEP save() IN UPDATE (even though redundant)?
+//    1. EXPLICIT INTENT — "yeh save ho raha hai" clear
+//    2. SAFETY HABIT — works even if detached scenario
+//    3. CODE REVIEW — reviewer dekhke samjha
+//    4. CONSISTENT WITH CREATE — uniform pattern
+//
+// @Transactional DEFAULT BEHAVIOR:
+//    • Propagation = REQUIRED (join existing or create new)
+//    • Isolation = READ_COMMITTED (DB default)
+//    • Rollback = RuntimeException + Error
+//
+//    Common customizations:
+//       rollbackFor = Exception.class   ← include checked exceptions
+//       readOnly = true                  ← read-only optimization
+//       timeout = 5                      ← max 5 seconds
+//       propagation = REQUIRES_NEW       ← always new transaction
+//
+// 📐 SOLID:
+//    SRP — Sirf business logic
+//          Data access = UserRepository
+//          Auth        = AuthController + JwtService
+//          Validation  = Bean Validation (@Valid)
+//          Exceptions  = GlobalExceptionHandler
+//
+//    DIP — Depends on UserRepository INTERFACE
+//          Concrete proxy injected by Spring
+//
+// SimpleBankSystem vs UserCRUD Service:
+//    SimpleBankSystem AccountService:
+//       ✅ Constructor injection (manual)
+//       ✅ Manual rollback (try-catch + reverse)
+//       ❌ No @Transactional
+//
+//    UserCRUD UserService:
+//       ✅ Constructor injection (Spring detects)
+//       ✅ @Transactional automatic rollback
+//       ✅ readOnly optimization
+//       = Spring automates what SimpleBankSystem did manually
+//
+// 🎤 INTERVIEW LINE:
+//    "UserService is business logic with @Transactional.
+//     Write methods atomic, read methods readOnly optimized.
+//
+//     Dirty checking: inside @Transactional, fetch + mutate managed
+//     entity → Hibernate auto-fires UPDATE on commit. save() in
+//     update() is redundant but kept for code clarity.
+//
+//     create() needs save() — new entity not managed yet.
+//
+//     Demo method proves @Transactional rollback — save() succeeds,
+//     then throw RuntimeException → entire INSERT rolled back."
+// ═══════════════════════════════════════════════════════════════════════
+
 @Service
 public class UserService {
 
@@ -77,16 +172,15 @@ public class UserService {
     // ═══════════════════════════════════════════════════════════
 
     // ─── CREATE ─────────────────────────────────────────────────
-    // @Transactional → method ek atomic DB transaction mein wrap
-    // Default propagation = REQUIRED, default rollback = RuntimeException
+    // @Transactional → method atomic DB transaction mein wrap
+    // save() MANDATORY here — new entity not managed yet
     @Transactional
     public User create(User user) {
         return repository.save(user);
     }
 
     // ─── READ by ID ─────────────────────────────────────────────
-    // readOnly = true → Hibernate optimization (no dirty checking,
-    // no UPDATE generation). Best practice for SELECT-only methods.
+    // readOnly = true → Hibernate optimization (no dirty checking)
     @Transactional(readOnly = true)
     public User getById(Long id) {
         return repository.findById(id)
@@ -100,8 +194,9 @@ public class UserService {
     }
 
     // ─── UPDATE ─────────────────────────────────────────────────
-    // Pattern: fetch → mutate → save (Hibernate dirty checking
-    // automatic UPDATE generate karta hai)
+    // Pattern: fetch → mutate → save (explicit, but redundant)
+    // Hibernate dirty checking would auto-UPDATE on commit even without save()
+    // Kept for code clarity + safety habit
     @Transactional
     public User update(Long id, User updatedUser) {
         User user = repository.findById(id)
@@ -112,10 +207,11 @@ public class UserService {
         user.setEmail(updatedUser.getEmail());
         user.setPassword(updatedUser.getPassword());
 
-        return repository.save(user);
+        return repository.save(user);   // redundant (dirty checking handles), but explicit
     }
 
     // ─── DELETE ─────────────────────────────────────────────────
+    // existsById check → proper 404 if missing (vs silent ignore by deleteById)
     @Transactional
     public void delete(Long id) {
         if (repository.existsById(id)) {
@@ -128,31 +224,24 @@ public class UserService {
     // ═══════════════════════════════════════════════════════════
     //  🧪 DEMO METHOD — @Transactional rollback proof
     // ═══════════════════════════════════════════════════════════
-    /*
-     *  Yeh method intentionally fail karta hai save() ke BAAD —
-     *  toh tu apni aankhon se dekh sake @Transactional ka jaadu.
-     *
-     *  Flow:
-     *  1. user.save()      → row INSERT ho gayi (TX ke andar)
-     *  2. throw RuntimeEx  → exception
-     *  3. Spring proxy     → ROLLBACK ⏪
-     *  4. Result           → row gayab (jaise insert hua hi nahi)
-     *
-     *  Test karne ke liye:
-     *  • Endpoint hit kar (controller mein add kiya hai):
-     *      POST /users/demo/rollback
-     *  • Phir GET /users — rolled-back user MISSING dikhega
-     *  • H2 console (http://localhost:8080/h2-console) bhi check kar
-     *
-     *  ─── Aur ek experiment (interview understanding ke liye) ───
-     *  • Yeh @Transactional hata de
-     *  • Same endpoint hit kar
-     *  • Ab GET /users — user DIKHEGA (no rollback, save committed)
-     *  • This proves @Transactional ka asli kaam
-     */
+    //  Flow:
+    //  1. user.save()      → row INSERT (TX ke andar)
+    //  2. throw RuntimeEx  → exception
+    //  3. Spring proxy     → ROLLBACK ⏪
+    //  4. Result           → row gayab (jaise insert hua hi nahi)
+    //
+    //  Test:
+    //  • POST /users/demo/rollback (controller endpoint)
+    //  • Then GET /users — rolled-back user MISSING
+    //  • H2 console: http://localhost:8080/h2-console
+    //
+    //  Experiment (proof @Transactional):
+    //  • Remove @Transactional from this method
+    //  • Same endpoint hit → GET /users shows user (no rollback)
+    //  • Adds @Transactional back → rollback works
     @Transactional
     public User createWithSimulatedFailure(User user) {
-        // Step 1: User save (INSERT fire hota hai TX ke andar)
+        // Step 1: User save (INSERT fires TX ke andar)
         User saved = repository.save(user);
         System.out.println("✅ Step 1: User saved with ID = " + saved.getId());
 
@@ -162,7 +251,6 @@ public class UserService {
             "Simulated failure after save() — Spring should ROLLBACK"
         );
 
-        // Step 3: Yeh line kabhi nahi pahunchti
-        // (exception ke baad code execute nahi hota)
+        // Step 3: Yeh line kabhi nahi pahunchti (exception ke baad)
     }
 }
