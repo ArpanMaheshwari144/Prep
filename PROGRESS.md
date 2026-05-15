@@ -308,12 +308,36 @@ Days remaining           : 33 (Bangalore June 15)
                + Rapid-fire compares (SQL/NoSQL etc.)
                (Reading-heavy = shaam compatible)
 
-   📅 Mon+ (18 May)
-      Position: TAGDI
-      • More HLD systems (WhatsApp/Uber — optional)
-      • Quick Java Q&A
-      • Design patterns rest (Observer/Adapter/Strategy)
-      • Apply mode + mocks (jab man)
+   📅 Mon (18 May) onwards — NEW PROJECT PHASE
+      ☀️ Subah → TODO APP project (Spring Boot)
+                 • Simple domain (todo tasks)
+                 • Goal: APPLY concepts, NOT project itself
+                 • Stack: Spring Boot + MySQL + JWT + Docker
+                 • 1 feature/concept per day
+                 • Concepts to apply:
+                    - Spring Security + JWT (revise via use)
+                    - @Transactional (writes)
+                    - Hibernate (relationships — Todo→User)
+                    - Redis caching (@Cacheable)
+                    - Async (@Async for notifications)
+                    - Maybe Kafka (event-driven)
+                    - Pagination + filtering
+                    - Roles (USER/ADMIN)
+                    - Audit logs
+
+      🌙 Shaam → Light revision + apply mode parallel
+                 (Bangalore-targeted roles)
+
+      Rationale (Arpan's logic):
+         Knowledge FRESH right now (peak state)
+         1 month wait = concepts fade
+         Apply NOW while hot = strongest retention
+         Domain (todo) simple = concept focus, not domain-heavy
+
+      Optional later:
+         • More HLD systems (WhatsApp/Uber)
+         • Decorator/Composite patterns
+         • Apply mode + mocks (jab man)
 ```
 
 ---
