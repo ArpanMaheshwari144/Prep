@@ -10,8 +10,11 @@
 Thumbs.db
 .DS_Store
 
-# Logs
+# Logs (NEVER commit production data — tokens, IPs, PII)
 *.log
+logs.md
+*_logs.md
+*.logs
 
 # Large files
 *.pdf
