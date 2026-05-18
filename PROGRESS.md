@@ -1,8 +1,7 @@
 # 📊 Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-16 (Day 13 — Notification System HLD)
-> **Bangalore arrival:** June 15, 2026 (~30 days)
-> **Goal:** Strong profile + apply mode in Bangalore
+> **Last updated:** 2026-05-18 (Day 15 — TODO app Day 1 base done)
+> **Bangalore arrival:** June 15, 2026 (~28 days)
 
 ---
 
@@ -19,475 +18,200 @@
          Karm karo, phal ki chinta mat karo."
 ```
 
-```
-   ROZ DEKHO — ROZ MANIFEST KARO — ROZ EK KADAM
-              ↓
-   "Dream pehle build karo —
-    Mehnat khud easy ho jayegi"
-```
-
 ---
 
-# 🪜 THE TIERS — KAHA JANA HAI
-
-```
-   ⚠️ Yeh LPA TIERS hain — forced sequence NAHI
-   ⚠️ Mauka mile to TIER skip OK (direct JP/GS achievable)
-```
+# 🪜 THE TIERS (opportunistic, not forced)
 
 ```
                                               ✨
                                      ┌─────────────────┐
-                                     │  BLACKROCK      │  ← 💎 DREAM
-                                     │  Aladdin         │     (3-5 saal)
+                                     │  BLACKROCK      │  💎 DREAM
+                                     │  Aladdin         │     3-5 saal
                                      │  Java Backend    │     50+ LPA
                                      └────────▲────────┘
                                               │
                                      ┌────────┴────────┐
-                                     │  JP MORGAN ya   │  ← PRIMARY TARGET
-                                     │  GOLDMAN SACHS  │     (DIRECT mile = grab)
+                                     │  JP MORGAN ya   │  PRIMARY TARGET
+                                     │  GOLDMAN SACHS  │  Direct mile = GRAB
                                      │  30-50 LPA       │
                                      └────────▲────────┘
                                               │
                                      ┌────────┴────────┐
-                                     │  BANGALORE       │  ← PARALLEL OPTION
-                                     │  Product/Fintech │     (fallback OR
-                                     │  18-25 LPA       │      stepping stone)
-                                     └────────▲────────┘     Razorpay/Cred/
-                                              │              Swiggy/PhonePe
+                                     │  BANGALORE       │  PARALLEL OPTION
+                                     │  Product/Fintech │  Razorpay/Cred/
+                                     │  18-25 LPA       │  Swiggy/PhonePe
+                                     └────────▲────────┘
+                                              │
                                      ┌────────┴────────┐
-                                     │  KONOVO          │  ← CURRENT
-                                     │  12 LPA          │     Java Backend
-                                     │  Muzaffarnagar   │     4+ yrs
+                                     │  KONOVO          │  CURRENT
+                                     │  12 LPA          │  Muzaffarnagar
+                                     │  Java Backend    │  4+ yrs
                                      └─────────────────┘
                                               ↑
                                             HUM YAHAN
-                                            (16 May 2026)
-                                            
+                                            (18 May 2026)
+
+   = LPA TIERS — opportunity decides path
    = JP/GS direct possible (skip tier OK)
-   = Tier-1.5 = parallel offer OR fallback
-   = NO forced ladder — opportunity decides
+   = NO forced ladder
 ```
 
 ```
-❌ COMPANIES I REFUSE
-   ❌ TCS  ❌ Infosys  ❌ Wipro  ❌ Cognizant
-   ❌ Capgemini  ❌ KPMG  ❌ Service/consulting
-   
+❌ REFUSED:
+   TCS, Infosys, Wipro, Cognizant, Capgemini, KPMG
    "TCS mein marna pasand karunga"
-   = Self-respect over comfort
-   = Apne dum pe
 ```
 
 ---
 
-# 🛣️ KAISE JANA HAI — ROADMAP (OPPORTUNISTIC)
+# ✅ DONE — FOUNDATION
+
+## 📚 JAVA
+- 22 Core Java topics (OOP, String, GC, Exceptions, Keywords, etc.)
+- 11 Collections topics (HashMap, ArrayList, Comparable, etc.)
+- 5 Java 8 topics (Lambda, Streams, Optional, etc.)
+- 10 Multithreading topics (synchronized, ExecutorService, CompletableFuture, etc.)
+- 13 Brain Tickler interview classics
+- 20 Quick Java Q&A traps
+- SOLID (5 principles split + real Spring example)
+- Design Patterns (Builder, Singleton, Factory)
+- 25 visual revision files
+- SimpleBankSystem runnable project + revision
+
+## 🌱 SPRING
+- Spring basics, REST, @Transactional, JWT theory, Profiles
+- 7 Hibernate Gotcha files (JPA vs Hibernate, N+1, LAZY/EAGER, dirty checking, L1 cache, cascade, relationships)
+- UserCRUD runnable project + 19-file revision walkthrough
+- 5 visual revision files
+
+## 🏗️ LLD (12 problems)
+Parking lot, BookMyShow, TicTacToe, Snake-Ladder, Elevator, ATM, Bank Account, Shopping Cart, Library, Vending Machine, Hotel Booking
+
+## 🏛️ HLD FOUNDATIONS (10/10)
+HLD intro, capacity estimation, load balancing, caching, DB replication, sharding, message queues, CAP theorem, DB types, microservices communication
+
+## 🏗️ HLD SYSTEM DESIGNS (4)
+- URL Shortener
+- Rate Limiter
+- Twitter Feed
+- Notification System
+
+## 🌐 INFRA DEEP (4)
+- CDN (pizza analogy + edge servers + invalidation)
+- Load Balancer (postal analogy for L4 vs L7)
+- DNS (phonebook + Route 53 policies)
+- WAF (bouncer + OWASP + rate limiter integration)
+
+## ⚡ RAPID-FIRE COMPARES (12)
+SQL/NoSQL, TCP/UDP, HTTP/HTTPS, Monolith/MS, Stateful/Stateless, Sync/Async, AuthN/AuthZ, Process/Thread, Concurrency/Parallelism, REST/GraphQL, HTTP versions, WebSockets/SSE/Long Polling
+
+## 🐳 DOCKER (fully wrapped — 11 files)
+Foundation, Volumes, Networks, Compose, ENTRYPOINT, Multi-stage, ARG/ENV; multi-stage proven 256MB → 154MB
+
+## 🚢 K8S (theory + practical)
+6 theory topics (Pod, Deployment, Service, Ingress, ConfigMap/Secret) + end-to-end practical deployment on kind cluster + Docker Hub image published
+
+## 💼 INTERVIEW RESOURCES
+before_interview_ritual.md (amygdala science, 4-7-8 breathing, mid-interview techniques)
+
+## 🌟 KONOVO PRODUCTION EVIDENCE
+- AS6079 RCN cluster fraud pattern detection
+- *2026@outlook.com bot fingerprint (email year = bot signal)
+- Risk-tiered IP assessment workflow
+- WAF/CloudFront diagnosis (clientIp vs X-Forwarded-For misconfig)
+- "Mere ander dum hai" validation — theory → production in 30 min proof
+
+## 🚀 TODO APP — Day 1 BASE DONE
+- Spring Boot 4.0.6 + Java 21 scaffold
+- 8 dependencies (Web, JPA, MySQL, Security, Validation, Lombok, Redis, DevTools)
+- application.properties (MySQL + auto-create DB)
+- model/Todo.java, model/User.java
+- repository/TodoRepository.java, repository/UserRepository.java
+- service/TodoService.java, service/UserService.java
+- controller/TodoController.java, controller/UserController.java
+- App boots in 9.5 sec, tododb + tables auto-create
+- GET /todos = 200 OK verified
+
+---
+
+# 🔄 CONTINUOUS WORK
+
+- **DSA Phase 1 INTUITION** — ongoing
+  - Folder: C:\DSA_PRACTICE\DSA\PHASE1_INTUITION\
+  - Target: 8-9 array/string patterns by June 15
+  - Pace: 1 pattern/week, 4-5 easies before medium
+
+---
+
+# 🎯 PROJECT EXTENSION (NEED-BASED, NOT SCHEDULED)
 
 ```
-📌 CORE RULE — OPPORTUNISTIC APPLY:
+TODO App ka BASE complete hai.
 
-   ❌ Stepping stone MANDATORY nahi
-   ✅ JP/GS direct mauka = grab IMMEDIATELY
-   ✅ Razorpay/Cred/Swiggy = parallel/fallback
-   ✅ Referral ANY company = turant bhejunga
-   ✅ Sab paths same direction (BlackRock)
-   
-   = Forced ladder thinking ❌
-   = Opportunistic execution ✅
+Future additions = TERE genuine need pe:
+   • JWT auth — agar/jab "auth chahiye" feel ho
+   • Redis caching — agar/jab "performance issue" dikhe
+   • Docker — agar/jab "deploy chahiye"
+   • K8s — agar/jab "container orchestration chahiye"
+   • AWS — agar/jab "cloud deploy chahiye"
+   • DTOs / Exception handlers — agar/jab "cleanup chahiye"
+
+= NO pre-decided "Day 2/3/4" schedule
+= Real company way: requirement-driven
+= Tu identify kare gap, tab add
+= Base works = project complete
 ```
 
 ---
 
-```
-PHASE 1: PREP MODE (Aaj → 15 June) — 30 din baki
-═════════════════════════════════════════════════
-   ❌ NO APPLY yet (focus protect)
-   ✅ WFH continue + roz padhna
-   ✅ Foundation strong + system design lock
-   ✅ Muzaffarnagar — pure focus prep
-   
-   ONLY exception: agar referral mile = turant bhej
-   (referral wait nahi karta)
-```
+# 🛬 BANGALORE PHASE (15 June onwards)
 
 ```
-PHASE 2: APPLY MODE OPEN (15 June onwards — Bangalore)
-═════════════════════════════════════════════════
-   ☀️ Settle Bangalore
-   ☀️ APPLY EVERYWHERE simultaneously:
-      
-      🎯 DIRECT TIER-1:
-         • JP Morgan
-         • Goldman Sachs
-         (mauka mile = LET'S GO, no "abhi early hai")
-      
-      🎯 PARALLEL TIER-1.5:
-         • Razorpay, Cred, Swiggy
-         • PhonePe, Flipkart, Groww
-         (these = fallback OR stepping stone if needed)
-      
-   ☀️ Mock interviews jab man
-   ☀️ Real interview = real validator
-   ☀️ Articulation drill (STAR stories)
-   ☀️ Referrals = TURANT bheja
-```
-
-```
-PHASE 3: FIRST OFFER (whenever mauka)
-═════════════════════════════════════════════════
-   Best case 🚀:
-      JP / GS DIRECT (30-50 LPA)
-      = Jump from 12 → 30+ directly
-      = Konovo se 2.5x+
+APPLY MODE OPEN — PARALLEL:
+   🎯 JP/GS direct (referral = turant)
+   🎯 Razorpay/Cred/Swiggy parallel
+   🎯 Mock interviews jab man
+   🎯 Articulation = real-interview phase (4-5 real interviews fix it)
    
-   Realistic case 🎯:
-      Razorpay / Cred type (18-25 LPA)
-      = Stepping stone tier
-      = Konovo se 1.5-2x
-      = Brand + learning → JP/GS later (1-2 yr more)
-   
-   = Dono path SAME destination
-   = Mauka decide karega which one
-```
-
-```
-PHASE 4: BLACKROCK ALADDIN — 💎 DREAM
-═════════════════════════════════════════════════
-   Whenever it happens (3-5 yr horizon realistic)
-   
-   💎 Aladdin platform — Java Backend
-   💎 Outcome universe ka
-   💎 Effort 100% mera
-   💎 Mile = acha, na mile = aur acha
+   = Cricket truth: "Practice mein har koi 6 marta hai,
+                     asli match mein pata chalta"
+   = Real exposure = real validator
 ```
 
 ---
 
-# 📅 IMMEDIATE PATH — NEXT 30 DAYS
+# 💪 DAILY PRINCIPLES
 
 ```
-   📅 Sat (16 May) ✅ Notification System HLD DONE
-
-   📅 Sun (17 May) — HALF DAY (rest morning, evening light)
-      🌙 Shaam:
-         • Infra deep — CDN / ALB / DNS / WAF (4 topics)
-         • Rapid-fire compares — SQL/NoSQL, TCP/UDP,
-           HTTP/HTTPS, Monolith/Microservices, etc.
-
-   📅 Mon (18 May) onwards — TODO APP PROJECT 🚀
-      ☀️ Subah:
-         • Spring Boot project shuru
-         • Stack: Spring Boot + MySQL + JWT + Docker + Redis
-         • 1 feature/concept per day
-         • Simple domain (todo) — concept focus
-         • Apply ALL concepts while knowledge PEAK
-
-      🌙 Shaam:
-         • Visual revision continues
-         • Apply mode parallel (Bangalore-targeted)
-
-   📅 Last week (8-15 June)
-      • Final revision wrap
-      • Resume polish
-      • Bangalore relocation logistics
-      • REST before move
-
-   📅 15 June — BANGALORE LANDING
-```
-
----
-
-# 💪 DAILY PRINCIPLES — ROZ KA KAAM
-
-```
-☀️ SUBAH    → New topic / deep work (peak focus)
+☀️ SUBAH    → New topic / deep work
 🌙 SHAAM    → Visual revision (old notes re-skim)
-🌙 SHAAM    → Apply mode parallel (Bangalore-targeted roles)
+🌙 SHAAM    → Apply mode parallel (Bangalore-targeted)
 
 📌 ROZ      → Ek kadam aage
-📌 NEVER    → 100% perfection ka chase
+📌 NEVER    → 100% perfection chase
 📌 ALWAYS   → Real interview = real validator
 📌 FOCUS    → Effort (control mein), Outcome (universe)
 ```
 
 ---
 
-# ✅ DONE — Java Side (FULL)
-
-### 📂 `01_JAVA/01_CORE_JAVA/` — Foundation (22 topics, V90 deep)
-- ✅ OOP fundamentals (4 pillars)
-- ✅ Abstract Class vs Interface
-- ✅ Method Overloading vs Overriding
-- ✅ Constructor Chaining, Type Casting, instanceof
-- ✅ String (immutable, pool, intern), StringBuilder vs StringBuffer
-- ✅ Keywords: static, final, this, super
-- ✅ JDK vs JRE vs JVM
-- ✅ Access Modifiers, Wrapper Classes & Autoboxing
-- ✅ Garbage Collection, Enum, Pass by Value
-- ✅ Exceptions (Checked vs Unchecked, try-catch-finally)
-
-### 📂 `01_JAVA/02_COLLECTIONS/` — 11 topics (V90 deep)
-- ✅ HashMap Internal, HashMap vs ConcurrentHashMap
-- ✅ ArrayList, LinkedList, Iterator vs ListIterator
-- ✅ HashMap / LinkedHashMap / TreeMap, HashSet
-- ✅ Comparable vs Comparator + thenComparing
-- ✅ fail-fast vs fail-safe, PriorityQueue (Min-Heap)
-
-### 📂 `01_JAVA/03_JAVA_8/` — 5 topics (V90 deep)
-- ✅ Lambda, Functional Interfaces (PFCS), Method References, Streams API, Optional
-
-### 📂 `01_JAVA/04_MULTITHREADING/` — 10 topics (V90 deep)
-- ✅ Thread basics, Lifecycle, synchronized, volatile, Deadlock
-- ✅ wait/sleep, notify, ExecutorService, Future, CompletableFuture, Producer-Consumer
-
-### 📂 `01_JAVA/08_REVISION_VISUAL/05_OOP_DESIGN/` (V90 visual)
-- ✅ SOLID — 7 files (overview + 5 principles + real Spring example)
-- ✅ Design Patterns — 4 files (Builder, Singleton, Factory)
-- 🔲 Decorator, Composite (paused — low priority)
-
-### 📂 `01_JAVA/07_BRAIN_TICKLERS/` — 13 interview classics (V90 deep)
-- ✅ All locked
-
-### 📂 `01_JAVA/08_REVISION_VISUAL/06_QUICK_QA/` — Quick traps
-- ✅ 20 quick Q&A (int vs Integer, length vs size, ==, final, etc.)
-
-### 📂 `01_JAVA/PROJECT/SimpleBankSystem/` — RUNNABLE PROJECT
-- ✅ 16 files, all patterns + SOLID applied, compile clean, runs
-
----
-
-## ✅ DONE — Java Visual Revision (25 files) ⭐
-
-### 📂 `01_JAVA/REVISION_VISUAL/`
-
-**01_CORE/ (12 files):**
-- ✅ OOP pillars, Class/Object/Constructor, Keywords
-- ✅ JDK/JRE/JVM, String internal, Access modifiers
-- ✅ Pass by value, Exceptions, Type casting + instanceof
-- ✅ Wrapper classes + autoboxing, GC, Enum
-
-**02_COLLECTIONS/ (5 files):**
-- ✅ HashMap internal, ArrayList vs LinkedList
-- ✅ Map variants, Comparable vs Comparator, PriorityQueue
-
-**03_JAVA_8/ (3 files):**
-- ✅ Lambda + Functional interfaces, Streams API, Optional
-
-**04_MULTITHREADING/ (5 files):**
-- ✅ Threads basics, wait/notify + Deadlock
-- ✅ ExecutorService + Thread Pool, Future + CompletableFuture, Producer-Consumer
-
-**Java-specific revision = COMPLETE.**
-
----
-
-## ✅ DONE — Spring Side (FULL)
-
-### 📂 `02_SPRING/01_basics/` + `03_transactional/` + `04_jwt_security/` (V90 deep)
-- ✅ All theory locked
-
-### 📂 `02_SPRING/05_HIBERNATE/` — 7 files (Day 11)
-- ✅ JPA vs Hibernate, N+1 problem, LAZY vs EAGER
-- ✅ Dirty checking, L1 cache, Cascade types, Relationship mappings
-
-### 📂 `02_SPRING/PROJECT/usercrud/` — RUNNABLE PROJECT
-- ✅ Full CRUD, JPA + MySQL 8 (Docker), JWT + Spring Security
-- ✅ Docker (multi-stage, compose), K8s manifests, end-to-end tested
-- ✅ Day 12 — All 19 files deep visual walkthrough
-
-### 📂 `02_SPRING/REVISION_VISUAL/` (5 files) ⭐
-- ✅ Spring basics (hotel analogy)
-- ✅ REST flow (pizza restaurant)
-- ✅ @Transactional (bank transfer + MySQL mapping)
-- ✅ JWT + Security (ATM analogy)
-- ✅ Profiles (wardrobe analogy)
-
----
-
-## ✅ DONE — LLD (12 problems)
-- ✅ Parking lot, BookMyShow, TicTacToe, Snake-Ladder, Elevator, ATM,
-  Bank Account, Shopping Cart, Library, Vending Machine, Hotel Booking
-
----
-
-## ✅ DONE — HLD Foundations (10/10)
-
-### 📂 `04_HLD/FOUNDATIONS/`
-- ✅ HLD intro, capacity estimation, load balancing, caching
-- ✅ DB replication, DB sharding, message queues
-- ✅ CAP theorem (with PACELC), DB types (7 types), MS communication
-
----
-
-## ✅ DONE — HLD System Designs (4 done)
-
-### 📂 `04_HLD/SYSTEM_DESIGNS/`
-- ✅ **11_url_shortener** — Base62, sharding, distributed counter (Snowflake)
-- ✅ **12_rate_limiter** — 4 algorithms, distributed (region-sticky), layered defense
-- ✅ **13_twitter_feed** — Push/Pull hybrid, fanout, hot tweet cache, geo sharding
-- ✅ **14_notification_system** — Fanout, Kafka, retry+backoff, DLQ, idempotency, priority
-
----
-
-## ✅ DONE — Docker (FULLY WRAPPED)
-
-### 📂 `02_SPRING/DOCKER/` — 11 files (~3500 lines)
-- ✅ Foundation, Volumes, Networks, Compose, ENTRYPOINT, Multi-stage, ARG/ENV
-- ✅ Multi-stage proven: 256 MB → 154 MB (40% reduction)
-
----
-
-## ✅ DONE — K8s (Theory + Practical)
-
-### 📂 `02_SPRING/K8S/` — Theory (6 topics)
-- ✅ Why K8s, Pod, Deployment, Service, Ingress, ConfigMap/Secret
-
-### 📂 `02_SPRING/K8S/PRACTICAL/`
-- ✅ Phase 1-6 end-to-end deployment (kind cluster + MySQL + Spring Boot)
-- ✅ Docker Hub image published: `arpanmah/usercrud-app:multi`
-
----
-
-## ✅ DONE — Interview Resources
-
-### 📂 `RESOURCES/`
-- ✅ **before_interview_ritual.md** — amygdala science, 4-7-8 breathing, mid-interview techniques
-
----
-
-## 🔲 PENDING (Pre-Bangalore)
-
-### Sunday 17 May — Infra Deep
-- 🔲 CDN deep (CloudFront/Akamai, edge, cache invalidation)
-- 🔲 ALB / Load Balancer deep (L4 vs L7, sticky sessions, health)
-- 🔲 DNS deep (Route 53, record types, routing policies)
-- 🔲 WAF deep (rules, OWASP, integration with rate limit)
-
-### Sunday 17 May — Rapid-Fire Compares
-- 🔲 SQL vs NoSQL, TCP vs UDP, HTTP vs HTTPS
-- 🔲 Monolith vs Microservices, Stateful vs Stateless
-- 🔲 Sync vs Async, Authn vs Authz, Process vs Thread
-- 🔲 Concurrency vs Parallelism, REST vs GraphQL
-- 🔲 HTTP/1 vs 2 vs 3, WebSockets vs SSE vs Long polling
-
-### Monday 18 May onwards — TODO APP PROJECT 🚀
-- 🔲 Spring Boot project shuru
-- 🔲 Stack: Spring Boot + MySQL + JWT + Docker + Redis
-- 🔲 1 feature/concept per day
-- 🔲 Concepts to apply (knowledge HOT abhi):
-   - Spring Security + JWT (revise via use)
-   - @Transactional (writes)
-   - Hibernate (relationships — Todo→User)
-   - Redis caching (@Cacheable)
-   - Async (@Async for notifications)
-   - Maybe Kafka (event-driven)
-   - Pagination + filtering
-   - Roles (USER/ADMIN)
-   - Audit logs
-
-### Optional / Low Priority
-- 🔲 Design Patterns visual (Decorator/Composite — deferred)
-- 🔲 WhatsApp / Uber HLD systems (post-Bangalore OK)
-- 🔲 HEALTHCHECK, K8s Namespaces / HPA / PV-PVC
-
----
-
-## 🔜 POST-BANGALORE (15 June+)
-
-### Phase 3 Project (July/August 2026 — locked)
-- Full Spring microservices project (e-commerce or similar)
-- AWS EKS + Kafka + Redis + CI/CD
-- NO VIBE CODING — every choice reasoned
-
-### Microservices Hands-On
-- Spring Cloud, Eureka, Feign client, Resilience4j
-- API Gateway (Spring Cloud Gateway)
-- Distributed tracing (Sleuth, Zipkin)
-
-### Cloud (AWS — PRIMARY NEW LEARNING)
-- AWS hands-on (EC2, EKS, RDS, S3, ECR, ElastiCache)
-- IAM, VPC, security groups
-- CloudWatch + monitoring + cost management
-
-### DSA
-- Phase 1 intuition continuous (current — array/string/hashing)
-- LeetCode pattern grind post-Bangalore
-- Medium level comfort = ENOUGH for GS/JP
-- (FAANG-tier extreme NOT needed)
-
-### Mocks
-- Jab man ho — Bangalore mein
-- Real interviews = real validation
-
-### Articulation
-- STAR format drills
-- Konovo fraud-detection stories (locked memory)
-- Pending: blank-moment recovery techniques
-
----
-
-## 💎 Real Position (16 May 2026)
-
-```
-✅ Java foundation        : V90 + 4yr practice + 25 visual files
-✅ Spring foundation      : Theory + project + visual revision
-✅ Hibernate              : 7 files (gotchas locked)
-✅ LLD                    : 12 problems
-✅ HLD foundations        : 10/10
-✅ HLD system designs     : 4 done (URL/Rate/Twitter/Notification)
-✅ Docker                 : FULLY WRAPPED
-✅ K8s                    : Theory + Practical end-to-end
-✅ OOP Design (SOLID + Patterns) : Split + visual
-✅ Quick Java Q&A         : 20 traps
-✅ Interview Ritual       : Documented for game-day
-🔄 DSA                    : Phase 1 intuition continuous
-🔲 Infra deep + compares  : 17 May
-🔲 TODO APP project       : 18 May onwards
-🔲 Articulation drill     : Bangalore phase
-
-Days to Bangalore         : ~30 (June 15)
-```
-
-**Verdict:** Theory + System Design + Spring + Project = STRONG.
-DSA Phase 1 grinding. Behavioral polish baki Bangalore mein.
-
-**Tier-1 readiness:** GS/JP scope ke liye foundation YES — apply phase mein parallel grind.
-
----
-
-## 🎯 Daily Routine — LOCKED 2026-05-10
-
-```
-☀️ SUBAH → New topic (deep work)
-            fresh mind, peak focus
-
-🌙 SHAAM → Visual revision
-            old visual notes re-skim
-
-+ Apply mode parallel (Bangalore-targeted roles)
-```
-
-**Rule: Naya + Purana daily. Compound lock.**
-**Rest days when needed. No grinding without break.**
-
----
-
-## 🔥 Mindset Anchors
+# 🔥 MINDSET ANCHORS
 
 - **DEPTH > SPEED** — "kitne bhi din lage, koi dikkat nahi"
 - **Comparison = Poison** — yesterday's self only competition
 - **Pattern recognition** — 80% HLD = same flow, 20% = decisions
-- **Visualization superpower** — diagrams + analogies = auto-image
+- **Visualization superpower** — diagrams + analogies = auto-image brain
 - **Argue when wrong** — senior position ≠ correct
 - **Real interview = real validator** — mocks when feel like
 - **Bruce Lee** — *"ONE kick × 10,000 times > 10,000 kicks × ONE time"*
 - **Effort + direction in control → universe writes outcomes**
 - **Self-made > inherited** — apne dum pe (papa ki kamai bekar)
 - **Prep never 100%** — 80% solid + real interview = validation
+- **YAGNI** — features need-based, not plan-based
 
 ---
 
-## 💎 POWER PHRASES — DAILY READ
+# 💎 POWER PHRASES — DAILY READ
 
 > *"Goal wahi hai. Journey kismat decide karegi.
 >    Roz padhna — phase nahi, habit.
@@ -498,49 +222,33 @@ DSA Phase 1 grinding. Behavioral polish baki Bangalore mein.
 
 > *"Apne dum pe — kyunki khud ka naam apna hi banta hai."*
 
-> *"Dream pehle build karo —
->    Mehnat khud easy ho jayegi."*
+> *"Roz ek kadam. Aaj kal se behtar. Bas yahi mehnat hai."*
 
-> *"Roz ek kadam.
->    Aaj kal se behtar.
->    Bas yahi mehnat hai."*
+> *"Practice mein har koi 6 marta hai. Asli match mein pata chalta hai."*
+
+> *"Dum hai bhai — proved kar diya aaj ka."*
 
 ---
 
-# 🎯 FINAL VISUAL — MERA PATH (OPPORTUNISTIC)
+# 🎯 BANGALORE COUNTDOWN
 
 ```
-┌────────────────────────────────────────────────────┐
-│                                                      │
-│    AAJ (16 May 2026)                                 │
-│    Muzaffarnagar, 12 LPA, PREP MODE                  │
-│           │                                          │
-│           │  30 din — WFH continue                    │
-│           │  (referral mile = turant, baki wait)      │
-│           ▼                                          │
-│    15 JUNE 2026 — Bangalore landing                  │
-│           │                                          │
-│           │  APPLY MODE OPEN — EVERYWHERE             │
-│           ▼                                          │
-│      ┌─────────────────────────────────┐            │
-│      │  PARALLEL APPLY:                 │            │
-│      │                                   │            │
-│      │  🎯 JP / GS (direct, 30-50)      │            │
-│      │  🎯 Razorpay/Cred (18-25)        │            │
-│      │  🎯 Swiggy/PhonePe (18-25)       │            │
-│      │  🎯 Flipkart/Groww (18-25)       │            │
-│      │                                   │            │
-│      │  Jo pehle aaye = lo (referral)   │            │
-│      │  Direct JP/GS preferred           │            │
-│      │  Tier-1.5 = stepping stone OR    │            │
-│      │              parallel offer       │            │
-│      └─────────────────────────────────┘            │
-│           │                                          │
-│           ▼                                          │
-│    💎 BLACKROCK ALADDIN 💎                            │
-│    (3-5 saal horizon — kabhi bhi)                    │
-│                                                      │
-│              "Effort 100% mera                       │
-│               Outcome universe ka"                   │
-└────────────────────────────────────────────────────┘
+   Aaj:      18 May 2026 (Monday)
+   Target:   15 June 2026
+   ────────────────────────────
+   Days:     28 baki
+```
+
+---
+
+# 📌 META
+
+```
+   ✅ Foundation = ROCK SOLID
+   ✅ TODO App base = WORKING
+   🔄 DSA Phase 1 = continuous
+   🎯 Project extensions = need-based
+   🛬 15 June = applying begins
+   
+   = "Effort 100% mera. Outcome universe ka."
 ```
