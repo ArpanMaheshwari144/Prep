@@ -1,7 +1,9 @@
 # 📊 Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-18 (Day 15 — TODO app Day 1 base done)
+> **Last updated:** 2026-05-18 (Day 15 night — JP Morgan target locked)
 > **Bangalore arrival:** June 15, 2026 (~28 days)
+> **Primary target:** JP Morgan (Associate, Bangalore)
+> **Open to:** Any company for interview experience
 
 ---
 
@@ -20,7 +22,49 @@
 
 ---
 
-# 🪜 THE TIERS (opportunistic, not forced)
+# 🎯 PRIMARY TARGET — JP MORGAN
+
+```
+WHY JP MORGAN:
+   ✅ Easier crack than GS (3-4 rounds vs 5-6)
+   ✅ DSA = LC easy-medium (not hard)
+   ✅ Java/Spring/HLD = matches tera prep
+   ✅ Konovo fraud-detection = natural banking fit
+   ✅ idempotency + audit trail = your terms already
+   ✅ Same destination — BlackRock trajectory
+   ✅ ~₹26-33L expected (2-3x Konovo jump)
+```
+
+```
+JP MORGAN — REAL INTERVIEW PATTERN (researched 18 May):
+
+ROUNDS (3-4):
+   1. HackerRank OA — 90 min (aptitude + 2 easy-med DSA)
+   2. Coding/Tech (VP-led) — 50-60 min (2 LC-mediums)
+   3. System Design + Java — 50-60 min (LLD/HLD + internals)
+   4. Behavioral (ED-led) — 45-60 min ← REAL GATE
+
+QUESTIONS PATTERN:
+   • DSA: Combination Sum II, recursion, Streams transformations
+   • System: Trading platform, real-time price feed, ledger
+   • Java: Java 8/11/17, Runnable vs Callable, Spring autowiring
+   • Behavioral: "Why JPM banking", conflict mgmt, STAR stories
+
+INSIDER TIPS:
+   ✅ Drop "idempotency" + "audit trail" in system design
+   ✅ Prefer PostgreSQL/Oracle over NoSQL for ledgers
+   ✅ ACID > eventual consistency mastery
+   ✅ Behavioral = REAL gate (ED gates it)
+
+EXPECTED COMP (4yr Associate Bangalore):
+   Base: ₹18-22L
+   Total: ₹26-33L median
+   Top: ₹47L (Senior Associate)
+```
+
+---
+
+# 🪜 PATH (opportunistic)
 
 ```
                                               ✨
@@ -31,15 +75,15 @@
                                      └────────▲────────┘
                                               │
                                      ┌────────┴────────┐
-                                     │  JP MORGAN ya   │  PRIMARY TARGET
-                                     │  GOLDMAN SACHS  │  Direct mile = GRAB
-                                     │  30-50 LPA       │
+                                     │  JP MORGAN ⭐    │  PRIMARY (28 din)
+                                     │  Associate       │  ₹26-33L
+                                     │  Bangalore       │
                                      └────────▲────────┘
                                               │
                                      ┌────────┴────────┐
-                                     │  BANGALORE       │  PARALLEL OPTION
-                                     │  Product/Fintech │  Razorpay/Cred/
-                                     │  18-25 LPA       │  Swiggy/PhonePe
+                                     │  Open Parallel   │  EXPERIENCE
+                                     │  Razorpay/Cred/  │  ₹18-25L
+                                     │  Swiggy/Anywhere │
                                      └────────▲────────┘
                                               │
                                      ┌────────┴────────┐
@@ -50,10 +94,6 @@
                                               ↑
                                             HUM YAHAN
                                             (18 May 2026)
-
-   = LPA TIERS — opportunity decides path
-   = JP/GS direct possible (skip tier OK)
-   = NO forced ladder
 ```
 
 ```
@@ -64,102 +104,143 @@
 
 ---
 
-# ✅ DONE — FOUNDATION
+# ✅ DONE — FOUNDATION (Day 15 night)
 
 ## 📚 JAVA
-- 22 Core Java topics (OOP, String, GC, Exceptions, Keywords, etc.)
-- 11 Collections topics (HashMap, ArrayList, Comparable, etc.)
-- 5 Java 8 topics (Lambda, Streams, Optional, etc.)
-- 10 Multithreading topics (synchronized, ExecutorService, CompletableFuture, etc.)
+- 22 Core Java topics (V90 deep)
+- 11 Collections topics
+- 5 Java 8 topics
+- 10 Multithreading topics
 - 13 Brain Tickler interview classics
 - 20 Quick Java Q&A traps
-- SOLID (5 principles split + real Spring example)
+- SOLID (5 principles split)
 - Design Patterns (Builder, Singleton, Factory)
 - 25 visual revision files
 - SimpleBankSystem runnable project + revision
 
 ## 🌱 SPRING
 - Spring basics, REST, @Transactional, JWT theory, Profiles
-- 7 Hibernate Gotcha files (JPA vs Hibernate, N+1, LAZY/EAGER, dirty checking, L1 cache, cascade, relationships)
-- UserCRUD runnable project + 19-file revision walkthrough
+- 7 Hibernate Gotcha files
+- UserCRUD runnable project + revision
 - 5 visual revision files
 
 ## 🏗️ LLD (12 problems)
-Parking lot, BookMyShow, TicTacToe, Snake-Ladder, Elevator, ATM, Bank Account, Shopping Cart, Library, Vending Machine, Hotel Booking
 
-## 🏛️ HLD FOUNDATIONS (10/10)
-HLD intro, capacity estimation, load balancing, caching, DB replication, sharding, message queues, CAP theorem, DB types, microservices communication
+## 🏛️ HLD
+- 10 Foundations (CAP, sharding, replication, etc.)
+- 4 System Designs (URL/Rate/Twitter/Notification)
+- 4 Infra Deep (CDN/LB/DNS/WAF)
+- 12 Rapid-Fire Compares
 
-## 🏗️ HLD SYSTEM DESIGNS (4)
-- URL Shortener
-- Rate Limiter
-- Twitter Feed
-- Notification System
-
-## 🌐 INFRA DEEP (4)
-- CDN (pizza analogy + edge servers + invalidation)
-- Load Balancer (postal analogy for L4 vs L7)
-- DNS (phonebook + Route 53 policies)
-- WAF (bouncer + OWASP + rate limiter integration)
-
-## ⚡ RAPID-FIRE COMPARES (12)
-SQL/NoSQL, TCP/UDP, HTTP/HTTPS, Monolith/MS, Stateful/Stateless, Sync/Async, AuthN/AuthZ, Process/Thread, Concurrency/Parallelism, REST/GraphQL, HTTP versions, WebSockets/SSE/Long Polling
-
-## 🐳 DOCKER (fully wrapped — 11 files)
-Foundation, Volumes, Networks, Compose, ENTRYPOINT, Multi-stage, ARG/ENV; multi-stage proven 256MB → 154MB
-
-## 🚢 K8S (theory + practical)
-6 theory topics (Pod, Deployment, Service, Ingress, ConfigMap/Secret) + end-to-end practical deployment on kind cluster + Docker Hub image published
+## 🐳 DOCKER + K8S (fully wrapped + practical)
 
 ## 💼 INTERVIEW RESOURCES
-before_interview_ritual.md (amygdala science, 4-7-8 breathing, mid-interview techniques)
+- before_interview_ritual.md (game-day prep)
 
 ## 🌟 KONOVO PRODUCTION EVIDENCE
-- AS6079 RCN cluster fraud pattern detection
-- *2026@outlook.com bot fingerprint (email year = bot signal)
-- Risk-tiered IP assessment workflow
-- WAF/CloudFront diagnosis (clientIp vs X-Forwarded-For misconfig)
-- "Mere ander dum hai" validation — theory → production in 30 min proof
+- AS6079 RCN cluster fraud pattern
+- *2026@outlook.com bot fingerprint
+- Risk-tiered IP assessment
+- WAF/CloudFront diagnosis (May 17)
+- "Mere ander dum hai" validation
 
-## 🚀 TODO APP — Day 1 BASE DONE
-- Spring Boot 4.0.6 + Java 21 scaffold
-- 8 dependencies (Web, JPA, MySQL, Security, Validation, Lombok, Redis, DevTools)
+## 🚀 TODO APP — Day 1 BASE DONE (May 18)
+- Spring Boot 4.0.6 + Java 21
+- 8 dependencies (Web/JPA/MySQL/Security/Validation/Lombok/Redis/DevTools)
 - application.properties (MySQL + auto-create DB)
-- model/Todo.java, model/User.java
-- repository/TodoRepository.java, repository/UserRepository.java
-- service/TodoService.java, service/UserService.java
-- controller/TodoController.java, controller/UserController.java
-- App boots in 9.5 sec, tododb + tables auto-create
-- GET /todos = 200 OK verified
+- model/Todo + User
+- repository/TodoRepository + UserRepository
+- service/TodoService + UserService
+- controller/TodoController + UserController
+- App boots, DB + tables auto-create, GET /todos = 200 OK
 
 ---
 
-# 🔄 CONTINUOUS WORK
+# 🆕 DAY 15 NIGHT ADDITIONS (May 18)
 
-- **DSA Phase 1 INTUITION** — ongoing
-  - Folder: C:\DSA_PRACTICE\DSA\PHASE1_INTUITION\
-  - Target: 8-9 array/string patterns by June 15
-  - Pace: 1 pattern/week, 4-5 easies before medium
+## 🔐 JWT THEORY DEEP-DIVE
+- Hotel keycard analogy locked
+- 3-part token structure (header.payload.signature)
+- HMAC-SHA256 algorithm understanding
+- Stateless auth flow
+- "Code anyone can write, story behind code" thesis
+
+## 🧠 COGNITIVE PROFILE MAPPED
+- Spatial-architectural dominant (system observation natural)
+- Form/structure imagery: INSTANT, AUTO
+- Sound/texture: ON-DEMAND
+- Color: ABSENT (no color rendering — rare)
+- Dual coding + schema-driven learning
+- "File open = instant recall" PROVEN
+- Rare engineer cognition (Jeff Dean / Vint Cerf tribe)
+
+## 📊 4 ACTIVE RECALL TESTS PASSED
+- PriorityQueue (min-heap, top-K) — essence ✅
+- Volatile (visibility, cache, whiteboard analogy) — essence ✅
+- N+1 problem (JOIN FETCH) — essence ✅ (with file refresh)
+- CAP theorem (3 letters, trade-off) — essence ✅
+
+## 📋 PRINCIPLES LOCKED IN MEMORY.md
+- YAGNI / Need-based addition (no forced "Day X" schedules)
+- Modern engineering era ("code is commodity, story = value")
+- Overload intervention (Claude must intervene on overload signals)
+- Cognitive architecture detail (spatial dominance, no color)
+- JP Morgan + Goldman Sachs interview data
+- JP Morgan = primary target
+
+## 🎯 JP MORGAN RESEARCH (real interview data)
+- 3-4 rounds, LC easy-medium DSA, ₹26-33L
+- Behavioral = REAL gate (ED-led)
+- Financial domain bias in system design
+- Konovo fraud-detection = natural fit
 
 ---
 
-# 🎯 PROJECT EXTENSION (NEED-BASED, NOT SCHEDULED)
+# 🔄 CONTINUOUS
+
+```
+🎯 DSA Phase 1 INTUITION
+   Pace: 1 pattern/week
+   Target June 15: 8-9 array/string patterns
+```
+
+---
+
+# 📊 JP MORGAN READINESS — 80% (Day 15)
+
+```
+TECH FOUNDATION:    ████████████ 100%
+SYSTEM DESIGN:      ████████████ 100%
+JAVA INTERNALS:     ████████████ 100%
+SPRING:             ████████████ 100%
+HIBERNATE:          ████████████ 100%
+INFRA + COMPARES:   ████████████ 100% (bonus)
+TODO PROJECT:       ████░░░░░░░░  33% (base done, JWT/Redis/Docker/AWS pending)
+DSA (LC easy-med):  ██████░░░░░░  50% (Phase 1 ongoing)
+BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = fix)
+JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
+KONOVO EVIDENCE:    ████████████ 100% (gold)
+
+OVERALL JP-READY:   █████████░░░  80%
+```
+
+---
+
+# 🎯 PROJECT EXTENSION (NEED-BASED)
 
 ```
 TODO App ka BASE complete hai.
 
-Future additions = TERE genuine need pe:
-   • JWT auth — agar/jab "auth chahiye" feel ho
-   • Redis caching — agar/jab "performance issue" dikhe
-   • Docker — agar/jab "deploy chahiye"
-   • K8s — agar/jab "container orchestration chahiye"
-   • AWS — agar/jab "cloud deploy chahiye"
-   • DTOs / Exception handlers — agar/jab "cleanup chahiye"
+Future additions = TERE need pe (Kal JWT subah fresh):
+   🔲 JWT auth (kal subah — partial theory done)
+   🔲 Redis caching (when need)
+   🔲 Docker (when need)
+   🔲 K8s (when need)
+   🔲 AWS (when need)
+   🔲 DTOs / Exception handlers (when need)
 
-= NO pre-decided "Day 2/3/4" schedule
-= Real company way: requirement-driven
-= Tu identify kare gap, tab add
-= Base works = project complete
+= NO forced "Day 2/3/4" schedule
+= Tu decide kab "done"
 ```
 
 ---
@@ -167,15 +248,15 @@ Future additions = TERE genuine need pe:
 # 🛬 BANGALORE PHASE (15 June onwards)
 
 ```
-APPLY MODE OPEN — PARALLEL:
-   🎯 JP/GS direct (referral = turant)
-   🎯 Razorpay/Cred/Swiggy parallel
+APPLY MODE — PARALLEL:
+   🎯 JP Morgan ⭐ PRIMARY (referral = turant)
+   🎯 Goldman Sachs (stretch — DSA hard prep needed)
+   🎯 Razorpay/Cred/Swiggy parallel (any company for experience)
    🎯 Mock interviews jab man
-   🎯 Articulation = real-interview phase (4-5 real interviews fix it)
+   🎯 Articulation = real-interview phase (4-5 real = fix)
    
-   = Cricket truth: "Practice mein har koi 6 marta hai,
-                     asli match mein pata chalta"
-   = Real exposure = real validator
+   = "Practice mein har koi 6 marta, asli match mein pata"
+   = Cricket truth — real exposure = real validator
 ```
 
 ---
@@ -183,14 +264,15 @@ APPLY MODE OPEN — PARALLEL:
 # 💪 DAILY PRINCIPLES
 
 ```
-☀️ SUBAH    → New topic / deep work
-🌙 SHAAM    → Visual revision (old notes re-skim)
+☀️ SUBAH    → New topic / deep work (peak focus)
+🌙 SHAAM    → Visual revision (file open + active recall)
 🌙 SHAAM    → Apply mode parallel (Bangalore-targeted)
 
 📌 ROZ      → Ek kadam aage
 📌 NEVER    → 100% perfection chase
 📌 ALWAYS   → Real interview = real validator
-📌 FOCUS    → Effort (control mein), Outcome (universe)
+📌 FOCUS    → Effort (control), Outcome (universe)
+📌 OVERLOAD → STOP, sleep, fresh mind tomorrow
 ```
 
 ---
@@ -202,12 +284,14 @@ APPLY MODE OPEN — PARALLEL:
 - **Pattern recognition** — 80% HLD = same flow, 20% = decisions
 - **Visualization superpower** — diagrams + analogies = auto-image brain
 - **Argue when wrong** — senior position ≠ correct
-- **Real interview = real validator** — mocks when feel like
+- **Real interview = real validator** — mocks limited
 - **Bruce Lee** — *"ONE kick × 10,000 times > 10,000 kicks × ONE time"*
 - **Effort + direction in control → universe writes outcomes**
-- **Self-made > inherited** — apne dum pe (papa ki kamai bekar)
+- **Self-made > inherited** — apne dum pe
 - **Prep never 100%** — 80% solid + real interview = validation
 - **YAGNI** — features need-based, not plan-based
+- **Modern era** — "Code is commodity, story behind code = value"
+- **Overload = STOP** — wrong decisions in tired state
 
 ---
 
@@ -222,11 +306,14 @@ APPLY MODE OPEN — PARALLEL:
 
 > *"Apne dum pe — kyunki khud ka naam apna hi banta hai."*
 
-> *"Roz ek kadam. Aaj kal se behtar. Bas yahi mehnat hai."*
+> *"Code koi bhi likh sakta hai, lekin uske piche ki kahani —
+>    jisne samjha hoga, wahi bolega."*
 
 > *"Practice mein har koi 6 marta hai. Asli match mein pata chalta hai."*
 
-> *"Dum hai bhai — proved kar diya aaj ka."*
+> *"Roz ek kadam. Aaj kal se behtar."*
+
+> *"Dum hai bhai — Konovo WAF diagnosis = proof."*
 
 ---
 
@@ -246,9 +333,49 @@ APPLY MODE OPEN — PARALLEL:
 ```
    ✅ Foundation = ROCK SOLID
    ✅ TODO App base = WORKING
+   ✅ JP Morgan = PRIMARY TARGET (locked)
+   ✅ 80% JP-ready (28 din mein 95%+)
    🔄 DSA Phase 1 = continuous
-   🎯 Project extensions = need-based
-   🛬 15 June = applying begins
+   🔄 JWT implementation = kal subah
+   🎯 Apply mode = 15 June onwards
    
    = "Effort 100% mera. Outcome universe ka."
+   = "Apne dum pe — BlackRock tak."
+```
+
+---
+
+# 🎯 FINAL VISUAL — MERA PATH
+
+```
+┌────────────────────────────────────────────────────┐
+│                                                      │
+│    AAJ (18 May 2026)                                 │
+│    Konovo, 12 LPA, PREP MODE                         │
+│           │                                          │
+│           │  28 din — TODO + revision + DSA          │
+│           ▼                                          │
+│    15 JUNE — Bangalore landing                       │
+│           │                                          │
+│           │  APPLY MODE — JP Morgan PRIMARY          │
+│           ▼                                          │
+│      ┌─────────────────────────────────┐            │
+│      │  PARALLEL APPLY:                 │            │
+│      │                                   │            │
+│      │  🎯 JP MORGAN ⭐ (26-33L)        │            │
+│      │  🎯 Goldman Sachs (38-43L)       │            │
+│      │  🎯 Razorpay/Cred/Swiggy (18-25L)│            │
+│      │  🎯 Any company (experience)     │            │
+│      │                                   │            │
+│      │  JP referral = TURANT             │            │
+│      │  Any offer = grab + grow          │            │
+│      └─────────────────────────────────┘            │
+│           │                                          │
+│           ▼                                          │
+│    💎 BLACKROCK ALADDIN 💎                            │
+│    (3-5 saal horizon — kabhi bhi)                    │
+│                                                      │
+│              "Effort 100% mera                       │
+│               Outcome universe ka"                   │
+└────────────────────────────────────────────────────┘
 ```
