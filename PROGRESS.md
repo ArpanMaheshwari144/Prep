@@ -1,9 +1,10 @@
 # 📊 Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-18 (Day 15 night — JP Morgan target locked)
-> **Bangalore arrival:** June 15, 2026 (~28 days)
+> **Last updated:** 2026-05-19 (Day 16 — TODO App JWT WORKING)
+> **Bangalore arrival:** June 15, 2026 (~27 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
+> **JP-ready:** 85%+
 
 ---
 
@@ -144,7 +145,9 @@ EXPECTED COMP (4yr Associate Bangalore):
 - WAF/CloudFront diagnosis (May 17)
 - "Mere ander dum hai" validation
 
-## 🚀 TODO APP — Day 1 BASE DONE (May 18)
+## 🚀 TODO APP — Day 1 + Day 2 DONE (May 18-19)
+
+### Day 1 BASE (May 18)
 - Spring Boot 4.0.6 + Java 21
 - 8 dependencies (Web/JPA/MySQL/Security/Validation/Lombok/Redis/DevTools)
 - application.properties (MySQL + auto-create DB)
@@ -153,6 +156,30 @@ EXPECTED COMP (4yr Associate Bangalore):
 - service/TodoService + UserService
 - controller/TodoController + UserController
 - App boots, DB + tables auto-create, GET /todos = 200 OK
+
+### Day 2 JWT AUTH LAYER (May 19) ⭐
+- pom.xml: jjwt-api/impl/jackson 0.12.6
+- security/JwtService.java (6 methods)
+- security/CustomUserDetailsService.java (Spring bridge)
+- security/JwtFilter.java (OncePerRequestFilter — request scanner)
+- security/SecurityConfig.java (3 beans: FilterChain/PasswordEncoder/AuthManager)
+- controller/AuthController.java (register/login)
+- dto/LoginRequest, RegisterRequest, TokenResponse
+- service/UserService.java updated (BCrypt password hashing)
+- application.properties: jwt.secret + jwt.expiration
+
+### Verified END-TO-END via Postman:
+- POST /auth/register → user saved with BCrypt hash ($2a$10$...)
+- POST /auth/login → JWT issued (access + refresh)
+- POST /todos with Bearer token → 200 OK
+- DB tables confirmed in MySQL Workbench (users + todos)
+
+### Architecture proven:
+- HMAC-SHA256 signing
+- Stateless session (no server-side session)
+- CSRF disabled (JWT immune)
+- /auth/** permitAll, anything else authenticated
+- BCrypt password hashing (never plain text)
 
 ---
 
@@ -206,7 +233,7 @@ EXPECTED COMP (4yr Associate Bangalore):
 
 ---
 
-# 📊 JP MORGAN READINESS — 80% (Day 15)
+# 📊 JP MORGAN READINESS — 85%+ (Day 16)
 
 ```
 TECH FOUNDATION:    ████████████ 100%
@@ -215,32 +242,52 @@ JAVA INTERNALS:     ████████████ 100%
 SPRING:             ████████████ 100%
 HIBERNATE:          ████████████ 100%
 INFRA + COMPARES:   ████████████ 100% (bonus)
-TODO PROJECT:       ████░░░░░░░░  33% (base done, JWT/Redis/Docker/AWS pending)
-DSA (LC easy-med):  ██████░░░░░░  50% (Phase 1 ongoing)
+TODO PROJECT:       ████████░░░░  66% (CRUD + JWT done, Redis/Docker/K8s/AWS pending)
+DSA (LC easy-med):  ██████░░░░░░  50% (Phase 1 ongoing — separate track)
 BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = fix)
 JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
 KONOVO EVIDENCE:    ████████████ 100% (gold)
 
-OVERALL JP-READY:   █████████░░░  80%
+OVERALL JP-READY:   ██████████░░  85%+
 ```
 
 ---
 
-# 🎯 PROJECT EXTENSION (NEED-BASED)
+# 🎯 PROJECT EXTENSION PATH (NEED-BASED)
 
 ```
-TODO App ka BASE complete hai.
+TODO App = CRUD + JWT WORKING (Day 16 milestone)
 
-Future additions = TERE need pe (Kal JWT subah fresh):
-   🔲 JWT auth (kal subah — partial theory done)
-   🔲 Redis caching (when need)
-   🔲 Docker (when need)
-   🔲 K8s (when need)
-   🔲 AWS (when need)
-   🔲 DTOs / Exception handlers (when need)
+Remaining path (each = need-based, one at a time):
+   ✅ CRUD Base       (Day 15)
+   ✅ JWT Auth        (Day 16) ⭐ aaj
+   
+   🔲 1. REDIS         (caching layer — practical seekh)
+   🔲 2. DOCKER        (containerize app + dependencies)
+   🔲 3. K8S            (kind cluster local deploy)
+   🔲 4. AWS           (cloud deploy — EKS + RDS + ElastiCache)
+                       = PRIMARY NEW LEARNING
 
-= NO forced "Day 2/3/4" schedule
-= Tu decide kab "done"
+Tu identify gap → tabhi add
+NO forced "Day X = topic" schedule
+Bangalore tak (27 din): comfortable margin
+```
+
+# 🎯 DSA — SEPARATE TRACK
+
+```
+DSA = independent track from project work
+Don't mix with this conversation flow
+Tu decide kab DSA day
+
+JP Morgan ke liye:
+   • DSA LC easy-medium expected
+   • Not hard (FAANG level nahi)
+   • Phase 1 INTUITION ongoing
+   • June 15 target: 8-9 patterns
+
+Tu bole "chal DSA" — tab attack
+Otherwise = continuous slow practice
 ```
 
 ---
@@ -320,10 +367,10 @@ APPLY MODE — PARALLEL:
 # 🎯 BANGALORE COUNTDOWN
 
 ```
-   Aaj:      18 May 2026 (Monday)
+   Aaj:      19 May 2026 (Tuesday)
    Target:   15 June 2026
    ────────────────────────────
-   Days:     28 baki
+   Days:     27 baki
 ```
 
 ---
