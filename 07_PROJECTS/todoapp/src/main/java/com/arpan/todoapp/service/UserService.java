@@ -4,17 +4,19 @@ package com.arpan.todoapp.service;
 
 import com.arpan.todoapp.model.User;
 import com.arpan.todoapp.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 // ─── IMPORTS ─────────────────────────────────────────────────
 // User, UserRepository → entity + DAO
+// PasswordEncoder      → BCrypt hashing (SecurityConfig bean)
 // @Service             → Spring stereotype
 
 // ═══════════════════════════════════════════════════════════════════════
 // 📌 YE FILE KYA HAI:
-//    SERVICE LAYER for User
-//    Authentication flow yaha — register + lookup + update
-//    AuthController iske through user create / fetch karta
+//    SERVICE LAYER for User — authentication flow
+//    register + lookup + update
+//    BCrypt password hashing integrated via PasswordEncoder
 // ═══════════════════════════════════════════════════════════════════════
 //
 // VISUAL — AUTH FLOW:
@@ -30,7 +32,7 @@ import org.springframework.stereotype.Service;
 //               ▼
 //    ┌──────────────────────┐
 //    │  UserService          │  ← TU YAHAN
-//    │    .register(user)    │
+//    │    .register(user)    │ ← BCrypt hash karke save
 //    │    .getById(id)       │
 //    │    .getByEmail(email) │
 //    │    .update(id, user)  │
@@ -41,59 +43,51 @@ import org.springframework.stereotype.Service;
 //    │  UserRepository       │
 //    └──────────────────────┘
 //
-// 🔑 METHODS (4):
+// 🔑 DEPENDENCIES (constructor inject — 2):
+//    1. UserRepository  → DB operations
+//    2. PasswordEncoder → BCrypt hashing (from SecurityConfig bean)
 //
-//    register(User user)
-//       → New user save
-//       → ⚠️ Password hashing baad mein add karenge
-//          jab SecurityConfig + PasswordEncoder bean ban jaye
-//       → Abhi raw password save (TEMP — security mein fix)
+// 🔑 BCrypt INTEGRATION:
+//    register(): raw password → encoder.encode() → BCrypt hash → save
+//    update():   same logic — never store raw password
+//    Login flow uses encoder.matches(raw, hash) via AuthManager
 //
-//    getById(Long id)
-//       → Single user fetch
-//       → Optional unwrap with orElseThrow
-//
-//    getByEmail(String email)
-//       → Login flow ke liye
-//       → UserRepository.findByEmail() use karta
-//
-//    update(Long id, User updated)
-//       → Fetch existing, modify fields, save
-//       → Pattern same as TodoService.update()
-//
-// 🔑 CONSTRUCTOR INJECTION (same pattern):
-//    private final UserRepository repo;
-//    public UserService(UserRepository repo) { this.repo = repo; }
-//
-// 🔑 ⚠️ PASSWORD HASHING — TODO:
-//    Abhi register/update raw password save kar raha
-//    SecurityConfig file banayenge → BCryptPasswordEncoder bean
-//    Tab UserService mein:
-//       private final PasswordEncoder encoder;
-//       user.setPassword(encoder.encode(user.getPassword()));
-//    Production-grade banega
+// 🔑 SECURITY GUARANTEE:
+//    DB mein password = "$2a$10$..." (60-char BCrypt hash)
+//    DB leak ho jaaye = passwords cracking nearly impossible (BCrypt strong)
+//    NEVER plain text stored
 //
 // 🎤 INTERVIEW LINE:
 //    "UserService handles user lifecycle for authentication —
 //     register, fetch by id/email, and update. Constructor
-//     injection of UserRepository. Password hashing via Spring
-//     Security's PasswordEncoder will integrate with the security
-//     layer, ensuring BCrypt-hashed credentials before persistence."
+//     injection of UserRepository and BCryptPasswordEncoder.
+//     All password operations go through encoder.encode() before
+//     persistence — never plain text in DB. Login verification
+//     handled by Spring's AuthenticationManager which uses
+//     encoder.matches() internally."
 // ═══════════════════════════════════════════════════════════════════════
 
 @Service
 public class UserService {
 
     private final UserRepository repo;
+    private final PasswordEncoder encoder;
 
-    public UserService(UserRepository repo) {
+    // Constructor injection — Spring auto-wires
+    // PasswordEncoder bean = SecurityConfig.passwordEncoder() (BCrypt)
+    public UserService(UserRepository repo, PasswordEncoder encoder) {
         this.repo = repo;
+        this.encoder = encoder;
     }
 
     // ─── REGISTER ──────────────────────────────────────────────
     // POST /auth/register
-    // ⚠️ Password hashing TODO — SecurityConfig ke baad
+    // 🔑 SECURITY-CRITICAL: BCrypt hash password BEFORE save
     public User register(User user) {
+        // Hash raw password — never store plain text
+        // encoder.encode() = BCrypt + auto-salt + 10 rounds default
+        // Output: "$2a$10$xyz..." (~60 chars)
+        user.setPassword(encoder.encode(user.getPassword()));
         return repo.save(user);
     }
 
@@ -104,7 +98,7 @@ public class UserService {
     }
 
     // ─── GET BY EMAIL ──────────────────────────────────────────
-    // Login flow yahan se start hota
+    // Login flow yahan se start hota (AuthController calls)
     public User getByEmail(String email) {
         return repo.findByEmail(email)
                    .orElseThrow(() -> new RuntimeException("User not found: " + email));
@@ -112,12 +106,13 @@ public class UserService {
 
     // ─── UPDATE ────────────────────────────────────────────────
     // PUT /users/{id} — modify existing
-    // Pattern: fetch → modify fields → save
+    // Pattern: fetch → modify fields → hash password → save
     public User update(Long id, User updated) {
         User existing = getById(id);
         existing.setName(updated.getName());
         existing.setEmail(updated.getEmail());
-        existing.setPassword(updated.getPassword());  // ⚠️ raw — hash later
+        // Hash new password too (same security rule)
+        existing.setPassword(encoder.encode(updated.getPassword()));
         return repo.save(existing);
     }
 }
