@@ -1,4 +1,4 @@
-# 🤝 wait/notify + Deadlock — Visual Revision
+# wait/notify + Deadlock — Visual Revision
 
 ---
 
@@ -53,10 +53,10 @@ synchronized (sharedObj) {
 
 ```
 KEY RULES:
-   ❗ MUST be inside synchronized block
-   ❗ wait() releases the lock while sleeping
-   ❗ notify() doesn't release lock — caller must exit synchronized
-   ❗ Use while loop, not if (spurious wakeups possible)
+   MUST be inside synchronized block
+   wait() releases the lock while sleeping
+   notify() doesn't release lock — caller must exit synchronized
+   Use while loop, not if (spurious wakeups possible)
 ```
 
 ---
@@ -120,7 +120,7 @@ class Buffer {
 ┌──────────────────┬──────────────────┬──────────────────┐
 │  Aspect          │  wait()           │  sleep()         │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Releases lock?   │ ✅ YES            │ ❌ NO            │
+│ Releases lock?   │ YES            │ NO            │
 │ Where called?    │ synchronized block│ Anywhere         │
 │ Defined in?      │ Object class      │ Thread class     │
 │ Wake up by?      │ notify/notifyAll  │ Timeout only     │
@@ -148,7 +148,7 @@ sleep() → "wait for time"    (keeps lock)
 ```
    Thread A                Thread B
    ────────                ────────
-   🔒 Lock 1               🔒 Lock 2
+   Lock 1               Lock 2
    ↓                       ↓
    wants Lock 2            wants Lock 1
    (blocked)               (blocked)
@@ -206,7 +206,7 @@ class Account {
 
 ---
 
-## 🔟 Deadlock Prevention
+## Deadlock Prevention
 
 ### Strategy 1: Lock Ordering
 ```java
@@ -279,7 +279,7 @@ if (ids != null) {
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
 wait()       = release lock + sleep till notified
@@ -302,4 +302,4 @@ PREVENT:
    3. Avoid nested locks if possible
 ```
 
-📚 [← Back to JAVA](../../)
+[← Back to JAVA](../../)

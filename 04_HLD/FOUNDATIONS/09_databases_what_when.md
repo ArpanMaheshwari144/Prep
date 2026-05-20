@@ -1,11 +1,11 @@
-# 🗄️ Databases — Kya Hai, Kab Use, Real-World Connect
+# Databases — Kya Hai, Kab Use, Real-World Connect
 
 > **HLD Reference** — 7 DB types with everyday-life analogies
 > No CAP yet — that connects later
 
 ---
 
-## 🎯 7 Major Types
+## 7 Major Types
 
 ```
 1. RELATIONAL (SQL)
@@ -31,7 +31,7 @@ Kya hai:
    • SQL queries
 ```
 
-### 🌐 Real-world Connect:
+### Real-world Connect:
 ```
 Soch — bank ki passbook
    • Har row = ek transaction
@@ -42,10 +42,10 @@ Soch — bank ki passbook
 Yahi relational DB hai.
 
 Jab use:
-   ✅ Bank account (HDFC, ICICI internal — Postgres/Oracle)
-   ✅ Amazon order tracking (orders table)
-   ✅ Tera UserCRUD project! (MySQL — same pattern)
-   ✅ Anywhere strict structure + transactions chahiye
+   Bank account (HDFC, ICICI internal — Postgres/Oracle)
+   Amazon order tracking (orders table)
+   Tera UserCRUD project! (MySQL — same pattern)
+   Anywhere strict structure + transactions chahiye
 ```
 
 ---
@@ -61,7 +61,7 @@ Kya hai:
    • Tables ki jagah "collections"
 ```
 
-### 🌐 Real-world Connect:
+### Real-world Connect:
 ```
 Soch — Resume PDFs ka folder
    • Mera resume: skills, projects, certifications
@@ -79,10 +79,10 @@ Example:
    Har product alag attributes — DocumentDB perfect.
 
 Jab use:
-   ✅ E-commerce product catalog (Amazon, Flipkart)
-   ✅ Blog/CMS posts (varying structure)
-   ✅ User profiles with flexible fields
-   ✅ Game player stats (game-specific data)
+   E-commerce product catalog (Amazon, Flipkart)
+   Blog/CMS posts (varying structure)
+   User profiles with flexible fields
+   Game player stats (game-specific data)
 ```
 
 ---
@@ -99,7 +99,7 @@ Kya hai:
    • In-memory = SUPER FAST (sub-millisecond)
 ```
 
-### 🌐 Real-world Connect:
+### Real-world Connect:
 ```
 Soch — Phone contacts:
    "Mom"    → "+91-9876543210"
@@ -116,11 +116,11 @@ Real production:
    Same speed: ek line code = milliseconds
 
 Jab use:
-   ✅ Cache (DB ke saamne, fast access)
-   ✅ Login sessions (web apps)
-   ✅ Rate limiting (kitne requests per user)
-   ✅ Gaming leaderboards (Top 10 scores)
-   ✅ Shopping cart (temporary storage)
+   Cache (DB ke saamne, fast access)
+   Login sessions (web apps)
+   Rate limiting (kitne requests per user)
+   Gaming leaderboards (Top 10 scores)
+   Shopping cart (temporary storage)
 
 Real example:
    Twitter feed cache = Redis
@@ -140,7 +140,7 @@ Kya hai:
    • Write throughput = millions per second
 ```
 
-### 🌐 Real-world Connect:
+### Real-world Connect:
 ```
 Soch — Twitter tweets database:
    • Daily 500 million tweets
@@ -157,9 +157,9 @@ Real-world examples:
    • IoT sensor data (millions writes/sec)
    
 Jab use:
-   ✅ Massive write volume (logs, tweets, messages)
-   ✅ Time-series data at scale
-   ✅ Multi-region replication needed
+   Massive write volume (logs, tweets, messages)
+   Time-series data at scale
+   Multi-region replication needed
 ```
 
 ---
@@ -176,7 +176,7 @@ Kya hai:
    • Traversal queries (jump from one to another)
 ```
 
-### 🌐 Real-world Connect (TERA POINT):
+### Real-world Connect (TERA POINT):
 ```
 Soch — LinkedList:
    Node1 → Node2 → Node3 → Node4
@@ -190,7 +190,7 @@ Graph DB exactly yahi:
    Query: "Mere doston mein kaun Google mein hai?"
    = Edges traverse karke find
 
-🔥 PRODUCTION USE — TERA OWN EXPERIENCE:
+PRODUCTION USE — TERA OWN EXPERIENCE:
 
 YouTube "Next video" / "You might like":
    Tu ne video X dekha
@@ -218,11 +218,11 @@ Bank fraud detection:
 
 ```
 Jab use:
-   ✅ Social networks (LinkedIn, Facebook)
-   ✅ Recommendations (Netflix, YouTube, Insta)
-   ✅ Fraud detection (banks)
-   ✅ Knowledge graphs (Wikipedia, Google)
-   ✅ Supply chain optimization
+   Social networks (LinkedIn, Facebook)
+   Recommendations (Netflix, YouTube, Insta)
+   Fraud detection (banks)
+   Knowledge graphs (Wikipedia, Google)
+   Supply chain optimization
 ```
 
 ---
@@ -239,7 +239,7 @@ Kya hai:
    • Filter combinations (faceted search)
 ```
 
-### 🌐 Real-world Connect:
+### Real-world Connect:
 ```
 Soch — Amazon search box:
    Tu type karta "ipone" (typo)
@@ -255,9 +255,9 @@ Real-world:
    • Tera Konovo logs (likely Elasticsearch + Kibana)
 
 Jab use:
-   ✅ Site search (anywhere search box dikha)
-   ✅ Log analytics (debugging production)
-   ✅ Autocomplete (Google search bar)
+   Site search (anywhere search box dikha)
+   Log analytics (debugging production)
+   Autocomplete (Google search bar)
 ```
 
 ---
@@ -273,7 +273,7 @@ Kya hai:
    • Aggregations over windows (avg/min/max)
 ```
 
-### 🌐 Real-world Connect:
+### Real-world Connect:
 ```
 Soch — Fitbit / Apple Watch:
    10:00 AM   85 BPM
@@ -292,15 +292,15 @@ Real-world:
    • Fitness apps (steps, heart rate)
 
 Jab use:
-   ✅ Application metrics (Prometheus + Grafana)
-   ✅ IoT sensor data
-   ✅ Financial market data
-   ✅ Monitoring dashboards
+   Application metrics (Prometheus + Grafana)
+   IoT sensor data
+   Financial market data
+   Monitoring dashboards
 ```
 
 ---
 
-## 💎 Quick Summary
+## Quick Summary
 
 ```
 TYPE              REAL-WORLD ANALOGY            EXAMPLE         FAMOUS USE
@@ -316,7 +316,7 @@ Time-Series       Fitbit / stock chart           InfluxDB        Monitoring, IoT
 
 ---
 
-## 💡 Polyglot Reality (Multiple DBs in 1 App)
+## Polyglot Reality (Multiple DBs in 1 App)
 
 ```
 Real apps = MULTIPLE DBs together (each for what it's best at)
@@ -337,7 +337,7 @@ Tera Amazon shopping experience:
 
 ---
 
-## 🎯 Quick Decision Logic
+## Quick Decision Logic
 
 ```
 "Bank-style transactions chahiye?"
@@ -364,7 +364,7 @@ Tera Amazon shopping experience:
 
 ---
 
-## 🔗 Connect to CAP (baad mein discuss karenge)
+## Connect to CAP (baad mein discuss karenge)
 
 ```
 Har DB ka CAP positioning:

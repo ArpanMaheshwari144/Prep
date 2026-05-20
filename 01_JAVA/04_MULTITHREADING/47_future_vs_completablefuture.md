@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Async Result Chahiye
+## STORY — Async Result Chahiye
 
 → `executor.submit(callable)` ne **`Future`** return kiya
 → `future.get()` call kiya — **block ho gaya** jab tak result na aaye. **Blocking call** — async ka faayda gone
@@ -13,7 +13,7 @@
 
 ---
 
-## 🆚 Future vs CompletableFuture
+## Future vs CompletableFuture
 
 | | `Future` (Java 5) | `CompletableFuture` (Java 8) |
 |--|------------------|-------------------------------|
@@ -25,7 +25,7 @@
 
 ---
 
-## 🧠 Visualization — Chain Operations
+## Visualization — Chain Operations
 
 ```
               Future vs CompletableFuture — Chain Diagram
@@ -43,7 +43,7 @@
        │                                     │
        ├─── future.get() ───────────────────►│
        │                                     │
-       │     🔴 BLOCKED                      │
+       │     BLOCKED                      │
        │     (wait kar raha)                 │
        │                                     │   ...
        │                                     │ task done
@@ -112,9 +112,9 @@
    │   riskyCall()    │
    └────────┬─────────┘
             │
-       ✓ success ──────► thenApply()
+       success ──────► thenApply()
             │
-       ✗ exception ────► exceptionally(ex -> "fallback")
+       exception ────► exceptionally(ex -> "fallback")
                                 │
                                 ▼
                          (catch + recover)
@@ -122,7 +122,7 @@
 
 ---
 
-## 💻 Future — Basic (Blocking)
+## Future — Basic (Blocking)
 
 ```java
 ExecutorService pool = Executors.newFixedThreadPool(2);
@@ -133,13 +133,13 @@ Future<Integer> future = pool.submit(() -> {
 });
 
 System.out.println("Doing other work...");
-Integer result = future.get();        // 🔴 BLOCK — 2 sec wait
+Integer result = future.get();        // BLOCK — 2 sec wait
 System.out.println(result);
 ```
 
 ---
 
-## 💻 CompletableFuture — Non-Blocking + Chain
+## CompletableFuture — Non-Blocking + Chain
 
 ### Async + chain
 ```java
@@ -176,7 +176,7 @@ CompletableFuture
 
 ---
 
-## 🎯 Real Use Case — Parallel API Calls
+## Real Use Case — Parallel API Calls
 
 ```java
 // 3 alag DB calls, parallel
@@ -195,28 +195,28 @@ Profile profile = u.thenCombine(o, (user, orders) -> new Profile(user, orders))
 
 ---
 
-## 🔴 TRAP 1 — `get()` ke `join()` Difference
+## TRAP 1 — `get()` ke `join()` Difference
 
 > **`get()`** throws checked exception (`InterruptedException`, `ExecutionException`)
 > **`join()`** throws unchecked exception (cleaner with streams/lambdas)
 > Modern code mein `join()` zyada use hota lambdas mein.
 
-## 🔴 TRAP 2 — Default Executor
+## TRAP 2 — Default Executor
 
 > **`supplyAsync(supplier)`** = ForkJoinPool.commonPool() use karta — shared
 > Production mein **apna executor pass karo**: `supplyAsync(supplier, myExecutor)`
 
 ```java
-CompletableFuture.supplyAsync(() -> task(), myExecutor);   // ✅ better isolation
+CompletableFuture.supplyAsync(() -> task(), myExecutor);   // better isolation
 ```
 
-## 🔴 TRAP 3 — `Future.cancel()` Best Effort
+## TRAP 3 — `Future.cancel()` Best Effort
 
 > **Cancellation guarantee nahi** — running task interrupt aata hai, but task usse handle karna padta. Abrupt stop nahi hota.
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"`Future` is blocking — `get()` halts the calling thread until the result arrives. `CompletableFuture` is non-blocking and chainable — use `thenApply` to transform, `thenCombine` to merge multiple futures, and `exceptionally` for error handling. It's the standard for async programming in modern Java."*
 

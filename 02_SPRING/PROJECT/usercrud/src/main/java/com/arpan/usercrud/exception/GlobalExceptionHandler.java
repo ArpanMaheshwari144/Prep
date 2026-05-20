@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.arpan.usercrud.dto.ErrorResponse;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    GLOBAL EXCEPTION HANDLER — Centralized Error Routing
 //    Saare controllers ki exceptions yahaan flow hoti
 //    Consistent JSON error response milta
@@ -27,7 +27,7 @@ import com.arpan.usercrud.dto.ErrorResponse;
 //          return service.findById(id);
 //       Exception thrown → centrally caught here → JSON returned
 //
-// 🔑 @RestControllerAdvice DECODED:
+// @RestControllerAdvice DECODED:
 //    = @ControllerAdvice + @ResponseBody
 //
 //    @ControllerAdvice → "Saare controllers ke liye shared advice
@@ -37,7 +37,7 @@ import com.arpan.usercrud.dto.ErrorResponse;
 //    Without @ResponseBody:
 //       Spring soche ErrorResponse view name hai → 500 error
 //
-// 🔑 @ExceptionHandler(SomeException.class):
+// @ExceptionHandler(SomeException.class):
 //    "Jab koi controller SomeException throw kare →
 //     yeh method call karo response banane ke liye"
 //
@@ -86,17 +86,17 @@ import com.arpan.usercrud.dto.ErrorResponse;
 //      "timestamp": 1706443200000
 //    }
 //
-// ⚠️ PRODUCTION TIP (Interview Gold):
+// PRODUCTION TIP (Interview Gold):
 //    Generic Exception handler:
-//       ❌ DON'T leak ex.getMessage() to client
+//       DON'T leak ex.getMessage() to client
 //          (stack trace, internal info leak = security risk)
-//       ✅ Log full exception:
+//       Log full exception:
 //             logger.error("Unhandled", ex);
-//       ✅ Return GENERIC user message:
+//       Return GENERIC user message:
 //             "An unexpected error occurred. Please try again."
 //       = Security best practice
 //
-// 📐 SOLID:
+// SOLID:
 //    SRP — Sirf exception → HTTP response mapping
 //          No business logic here
 //
@@ -105,7 +105,7 @@ import com.arpan.usercrud.dto.ErrorResponse;
 //          Existing handlers UNCHANGED
 //          = Open for extension
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "@RestControllerAdvice centralizes exception handling — Spring
 //     catches exceptions from any controller and routes to matching
 //     @ExceptionHandler method.

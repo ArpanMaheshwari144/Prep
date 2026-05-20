@@ -1,4 +1,4 @@
-# 🔮 Future vs CompletableFuture — Visual Revision
+# Future vs CompletableFuture — Visual Revision
 
 ---
 
@@ -47,11 +47,11 @@ String result = future.get();        // BLOCKS thread
 processResult(result);
 
 // Problems with Future:
-   ❌ get() = blocking
-   ❌ No callback on completion
-   ❌ Can't chain operations
-   ❌ Can't combine multiple futures
-   ❌ Manual exception handling
+   get() = blocking
+   No callback on completion
+   Can't chain operations
+   Can't combine multiple futures
+   Manual exception handling
 ```
 
 ---
@@ -238,18 +238,18 @@ profile.thenAccept(p -> sendResponse(p))
 
 ---
 
-## 🔟 Future vs CompletableFuture Comparison
+## Future vs CompletableFuture Comparison
 
 ```
 ┌──────────────────────┬──────────────┬─────────────────────┐
 │  Aspect              │ Future       │ CompletableFuture   │
 ├──────────────────────┼──────────────┼─────────────────────┤
 │ Get result           │ Blocking .get│ Non-blocking + chain│
-│ Chain operations     │ ❌ Manual     │ ✅ thenApply etc.   │
-│ Combine futures      │ ❌ Manual     │ ✅ thenCombine, allOf│
-│ Callback             │ ❌            │ ✅ thenAccept       │
-│ Exception handling   │ ❌ Try-catch  │ ✅ exceptionally    │
-│ Manual completion    │ ❌            │ ✅ complete(value)  │
+│ Chain operations     │ Manual     │ thenApply etc.   │
+│ Combine futures      │ Manual     │ thenCombine, allOf│
+│ Callback             │            │ thenAccept       │
+│ Exception handling   │ Try-catch  │ exceptionally    │
+│ Manual completion    │            │ complete(value)  │
 └──────────────────────┴──────────────┴─────────────────────┘
 ```
 
@@ -259,24 +259,24 @@ profile.thenAccept(p -> sendResponse(p))
 
 ```
 FUTURE:
-   ✅ Simple async with one result
-   ✅ Legacy code
+   Simple async with one result
+   Legacy code
    
 COMPLETABLEFUTURE:
-   ✅ Multiple async calls to combine
-   ✅ Chained transformations
-   ✅ Need async error handling
-   ✅ Modern production code
+   Multiple async calls to combine
+   Chained transformations
+   Need async error handling
+   Modern production code
    = 99% cases
 ```
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-Future            = 🎫 food coupon (blocking get)
-CompletableFuture = 📱 food delivery app (callback + chain)
+Future            = food coupon (blocking get)
+CompletableFuture = food delivery app (callback + chain)
 
 Create:
    supplyAsync()  → returns value
@@ -298,4 +298,4 @@ Errors:
    handle        → result OR exception
 ```
 
-📚 [← Back to JAVA](../../)
+[← Back to JAVA](../../)

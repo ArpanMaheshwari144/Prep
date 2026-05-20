@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Office Mein Resources
+## STORY — Office Mein Resources
 
 Office banaya — log, computers, printers. Tu khud manage karega? Login pe kaun aaya, kya use kiya?
 
@@ -15,7 +15,7 @@ Office banaya — log, computers, printers. Tu khud manage karega? Login pe kaun
 
 ---
 
-## 🟡 WHY — Bean Aur Container Ka Concept
+## WHY — Bean Aur Container Ka Concept
 
 Pre-Spring:
 ```java
@@ -34,7 +34,7 @@ Spring:
 
 ---
 
-## 🧠 Bean Kya Hai?
+## Bean Kya Hai?
 
 > **Bean = Spring-managed object.**
 
@@ -49,7 +49,7 @@ Plain Java object — **but Spring ne banaya, manage kiya**.
 
 ---
 
-## 🧠 IoC Container Visualization
+## IoC Container Visualization
 
 ```
          ┌──────────────────────────────────────────────┐
@@ -80,7 +80,7 @@ Plain Java object — **but Spring ne banaya, manage kiya**.
 
 ---
 
-## 🎯 ApplicationContext — The Container
+## ApplicationContext — The Container
 
 **`ApplicationContext`** = Spring ka container interface. App start pe instantiate hota.
 
@@ -94,13 +94,13 @@ Tu manually nahi banata.
 
 ---
 
-## 🎯 Bean Scope (Important)
+## Bean Scope (Important)
 
 Container mein bean **kitne instances**?
 
 | Scope | Behavior | Default? |
 |-------|----------|----------|
-| **`singleton`** | 1 instance poori app mein | ✅ DEFAULT |
+| **`singleton`** | 1 instance poori app mein | DEFAULT |
 | **`prototype`** | Har baar NAYA instance | |
 | **`request`** | 1 per HTTP request | (web app) |
 | **`session`** | 1 per user session | (web app) |
@@ -115,12 +115,12 @@ class TempService { }
 
 ---
 
-## ⚠️ Singleton + Mutable State = TRAP
+## Singleton + Mutable State = TRAP
 
 ```java
 @Component
 class UserCache {
-    List<User> cache = new ArrayList<>();   // 🔴 shared mutable state
+    List<User> cache = new ArrayList<>();   // shared mutable state
 }
 ```
 
@@ -130,7 +130,7 @@ class UserCache {
 
 ---
 
-## 📊 Bean Annotations Preview
+## Bean Annotations Preview
 
 | Annotation | Role |
 |-----------|------|
@@ -146,13 +146,13 @@ class UserCache {
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Spring's IoC container manages beans — it instantiates them at startup via component scanning, wires dependencies, and serves them on request. Default scope is singleton — one instance shared across the entire application. Use @Service, @Repository, @Controller for layer-specific semantics."*
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **Bean ≠ special class.**
 > Bean = plain Java object, just **created and managed BY Spring** (vs `new` manually). Class definition mein kuch magic nahi.

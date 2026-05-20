@@ -1,4 +1,4 @@
-# 🚦 Load Balancer Deep
+# Load Balancer Deep
 
 ---
 
@@ -9,19 +9,19 @@
               │   │   │       │
               ▼   ▼   ▼       ▼
             ┌──────────────────┐
-            │  SINGLE SERVER   │ 💥 crashed
+            │  SINGLE SERVER   │ crashed
             └──────────────────┘
             
 Problems:
-   ❌ Single point of failure
-   ❌ Capacity limit (1 server = 1000 req/sec)
-   ❌ No scaling
-   ❌ Maintenance = downtime
+   Single point of failure
+   Capacity limit (1 server = 1000 req/sec)
+   No scaling
+   Maintenance = downtime
 ```
 
 ---
 
-## 2️⃣ Restaurant Host Analogy 🍽️
+## 2️⃣ Restaurant Host Analogy 
 
 ```
 Busy restaurant:
@@ -33,7 +33,7 @@ Busy restaurant:
       → 1 waiter overloaded, others idle
       → Chaos
 
-   With HOST 🧑‍💼:
+   With HOST :
       Knows each waiter's load
       Routes EACH customer to RIGHT waiter
       → Balanced load
@@ -51,7 +51,7 @@ Busy restaurant:
         │
         ▼
    ┌──────────────────┐
-   │   LOAD BALANCER  │ 🚦
+   │   LOAD BALANCER  │ 
    │  (routing brain) │
    └──────┬───────────┘
           │
@@ -68,9 +68,9 @@ Busy restaurant:
 
 ---
 
-# 🌟 L4 vs L7 — THE KEY DISTINCTION
+# L4 vs L7 — THE KEY DISTINCTION
 
-## 📮 POSTAL OFFICE ANALOGY
+## POSTAL OFFICE ANALOGY
 
 ```
 Letter Mumbai → Delhi.
@@ -80,7 +80,7 @@ Postal office sort karta hai.
 
 ---
 
-### 🔵 POSTMAN A — Sirf ENVELOPE dekhta (= L4)
+### POSTMAN A — Sirf ENVELOPE dekhta (= L4)
 
 ```
 Envelope par:
@@ -90,8 +90,8 @@ Envelope par:
 Postman A:
    "Address Delhi → Delhi bus mein daal do"
    
-   ✋ Letter ANDAR nahi padhta
-   ✋ Content kya hai — pata nahi
+   Letter ANDAR nahi padhta
+   Content kya hai — pata nahi
    
 = FAST (just sticker check)
 = SIMPLE (no content read)
@@ -105,13 +105,13 @@ L4 sees:
    • Dest port (443, 80...)
    • Protocol (TCP/UDP)
    
-   ❌ Doesn't open packet
-   ❌ Doesn't read HTTP
+   Doesn't open packet
+   Doesn't read HTTP
 ```
 
 ---
 
-### 🟢 POSTMAN B — Letter KHOL ke padhta (= L7)
+### POSTMAN B — Letter KHOL ke padhta (= L7)
 
 ```
 Postman B:
@@ -122,8 +122,8 @@ Postman B:
    "Subject: Bank cheque" → Priority bag
    "Subject: Promo" → Slow track
    
-   ✅ Content read karta → SMART decision
-   ✅ Content ke basis pe alag route
+   Content read karta → SMART decision
+   Content ke basis pe alag route
    
 = SLOWER (reading takes time)
 = SMARTER (content-aware)
@@ -138,13 +138,13 @@ L7 sees:
    • Headers (User-Agent)
    • Cookies (session)
    
-   ✅ Reads INSIDE HTTP
-   ✅ Routes on CONTENT
+   Reads INSIDE HTTP
+   Routes on CONTENT
 ```
 
 ---
 
-## 🎯 CONCRETE EXAMPLE — Amazon.com
+## CONCRETE EXAMPLE — Amazon.com
 
 ```
 USER REQUEST:
@@ -165,37 +165,37 @@ USER REQUEST:
 ```
 L4 LB decision:
    "TCP to port 443 → koi bhi server"
-   ✋ Path-aware NAHI
-   ✋ Bas connection forward
+   Path-aware NAHI
+   Bas connection forward
 ```
 
 ```
 L7 LB decision:
-   /api/cart → cart-service cluster ✅
-   /api/payment → payment-service cluster ✅
-   /api/search → search-service cluster ✅
-   /images/* → CDN/static servers ✅
-   /admin → admin cluster (restricted) ✅
+   /api/cart → cart-service cluster 
+   /api/payment → payment-service cluster 
+   /api/search → search-service cluster 
+   /images/* → CDN/static servers 
+   /admin → admin cluster (restricted) 
    
-   ✅ CONTENT samjha → SMART routing
-   ✅ Microservices perfect
+   CONTENT samjha → SMART routing
+   Microservices perfect
 ```
 
 ---
 
-## 📊 SIDE-BY-SIDE COMPARE
+## SIDE-BY-SIDE COMPARE
 
 ```
 ┌──────────────────┬──────────────┬─────────────────┐
 │  Feature         │  L4 (Envelope)│ L7 (Content)    │
 ├──────────────────┼──────────────┼─────────────────┤
 │ What it sees     │ IP + Port     │ Full HTTP        │
-│ Speed             │ ⚡ Fast       │ 🐢 Slower        │
-│ Smart routing    │ ❌ No         │ ✅ Yes           │
-│ Path-based route │ ❌ Cannot     │ ✅ Can           │
-│ Hostname route   │ ❌ Cannot     │ ✅ Can           │
-│ Cookie routing   │ ❌ Cannot     │ ✅ Can           │
-│ SSL inspection   │ ❌ No         │ ✅ Yes (decrypt) │
+│ Speed             │ Fast       │ Slower        │
+│ Smart routing    │ No         │ Yes           │
+│ Path-based route │ Cannot     │ Can           │
+│ Hostname route   │ Cannot     │ Can           │
+│ Cookie routing   │ Cannot     │ Can           │
+│ SSL inspection   │ No         │ Yes (decrypt) │
 │ Cost             │ Cheaper       │ Pricier          │
 ├──────────────────┼──────────────┼─────────────────┤
 │ AWS product      │ NLB           │ ALB              │
@@ -206,7 +206,7 @@ L7 LB decision:
 
 ---
 
-## 🧠 1-LINE MEMORY
+## 1-LINE MEMORY
 
 ```
 L4 = "Envelope reader"  
@@ -246,7 +246,7 @@ L7 = "Letter content reader"
 
 ---
 
-## 5️⃣ Health Checks ❤️‍🩹
+## 5️⃣ Health Checks 
 
 ```
 LB ko kaise pata server alive hai ya nahi?
@@ -255,8 +255,8 @@ PERIODIC HEALTH CHECKS:
    LB → /health endpoint hit har 30 sec
    
    Server response:
-      200 OK   ✅ → healthy, keep sending traffic
-      500/timeout ❌ → unhealthy, REMOVE from pool
+      200 OK   → healthy, keep sending traffic
+      500/timeout → unhealthy, REMOVE from pool
    
    Healthy hua wapas (3 consecutive OK) → add back
 ```
@@ -266,13 +266,13 @@ PERIODIC HEALTH CHECKS:
     │                            │
     │ GET /health ─────────────►│
     │                            │
-    │ ◄───────────────── 200 OK │ ✅ keep using
+    │ ◄───────────────── 200 OK │ keep using
     
    ... after 5 minutes ...
    
     │ GET /health ─────────────►│
     │                            │
-    │ ◄───────────── timeout (X) │ ❌ remove from pool
+    │ ◄───────────── timeout (X) │ remove from pool
 ```
 
 ---
@@ -292,23 +292,23 @@ SOLUTION 1: STICKY SESSION
    LB cookie set: "this user → S1 always"
    Same user always lands on S1
    
-   ✅ Simple
-   ❌ S1 crashes = user session lost
-   ❌ Uneven load
+   Simple
+   S1 crashes = user session lost
+   Uneven load
 
 SOLUTION 2: SHARED SESSION STORE
    All servers share Redis for sessions
    Any server can handle any request
    
-   ✅ Stateless servers
-   ✅ S1 crashes = no problem
-   ✅ Modern approach (preferred)
+   Stateless servers
+   S1 crashes = no problem
+   Modern approach (preferred)
 
 SOLUTION 3: JWT (Stateless tokens)
    Token contains user info
    Any server validates and serves
-   ✅ Truly stateless
-   ✅ Tera UserCRUD use karta yeh
+   Truly stateless
+   Tera UserCRUD use karta yeh
 ```
 
 ---
@@ -326,10 +326,10 @@ OPTION A: Termination at LB (common)
    └─────┘            └──────┘          └────────┘
    
    LB decrypts → forwards plain HTTP to backend
-   ✅ Servers don't need SSL cert
-   ✅ CPU offload from servers
-   ✅ Cert management centralized
-   ❌ Internal traffic unencrypted
+   Servers don't need SSL cert
+   CPU offload from servers
+   Cert management centralized
+   Internal traffic unencrypted
 
 OPTION B: Pass-through (end-to-end SSL)
    ┌─────┐    HTTPS   ┌──────┐   HTTPS  ┌────────┐
@@ -337,8 +337,8 @@ OPTION B: Pass-through (end-to-end SSL)
    └─────┘            └──────┘          └────────┘
    
    LB doesn't decrypt — forwards encrypted
-   ✅ End-to-end encryption
-   ❌ LB can't inspect (must be L4)
+   End-to-end encryption
+   LB can't inspect (must be L4)
 ```
 
 ---
@@ -378,9 +378,9 @@ ACTIVE-ACTIVE:
      ▼       ▼
    servers servers
    
-   ✅ Double capacity
-   ✅ No idle resource
-   ❌ More complex
+   Double capacity
+   No idle resource
+   More complex
 
 ACTIVE-PASSIVE:
    ┌────┐  ┌────┐
@@ -391,13 +391,13 @@ ACTIVE-PASSIVE:
    servers   
    
    LB1 crashes → LB2 takes over
-   ✅ Simple
-   ❌ Half capacity unused
+   Simple
+   Half capacity unused
 ```
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "Load balancer distributes traffic across servers.
@@ -415,7 +415,7 @@ ACTIVE-PASSIVE:
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
 LB = Restaurant host (routes customers to waiters)
@@ -425,9 +425,9 @@ L7 = Letter content reader (slow, smart)
 
 5 algos: RR, Least-Conn, Weighted, IP-Hash, Least-Resp
 Health: /health every 30s → remove dead
-Sticky: cookie | Shared: Redis | JWT: stateless ✅
+Sticky: cookie | Shared: Redis | JWT: stateless 
 SSL: terminate at LB (common) | pass-through (L4 only)
 AWS: ALB (L7) | NLB (L4)
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

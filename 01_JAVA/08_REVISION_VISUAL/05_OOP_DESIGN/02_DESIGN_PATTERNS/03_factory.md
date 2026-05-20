@@ -1,4 +1,4 @@
-# 🏭 FACTORY — Type-based Object Creation
+# FACTORY — Type-based Object Creation
 
 ---
 
@@ -28,10 +28,10 @@ public Pizza orderPizza(String type) {
 
 ```
 Problems:
-   ❌ if-else har jagah duplicate
-   ❌ Client ko HAR concrete class ka naam pata
-   ❌ Naya pizza add = sab clients update
-   ❌ Tight coupling
+   if-else har jagah duplicate
+   Client ko HAR concrete class ka naam pata
+   Naya pizza add = sab clients update
+   Tight coupling
 ```
 
 ---
@@ -43,10 +43,10 @@ Tu Dominos jata:
    "Mujhe Margherita pizza chahiye"
    
    Tu CLASS ka naam NAHI bolta:
-      ❌ "MargheritaPizza class banao"
+      "MargheritaPizza class banao"
       
    Tu sirf TYPE bolta:
-      ✅ "Margherita do"
+      "Margherita do"
    
    Shop (factory):
       Type match karta
@@ -145,10 +145,10 @@ p2.bake();
 ## Benefits
 
 ```
-✅ Client doesn't know concrete classes
-✅ Add new pizza? Update Factory ONLY
-✅ Loose coupling (depends on interface)
-✅ Single place for creation logic
+Client doesn't know concrete classes
+Add new pizza? Update Factory ONLY
+Loose coupling (depends on interface)
+Single place for creation logic
 ```
 
 ---
@@ -205,13 +205,13 @@ Connection conn = DriverManager.getConnection(url);
 ## When Use Factory?
 
 ```
-✅ Multiple implementations of an interface
-✅ Type decided at runtime (config, user input)
-✅ Hide concrete classes from client
-✅ Object creation has logic/complexity
+Multiple implementations of an interface
+Type decided at runtime (config, user input)
+Hide concrete classes from client
+Object creation has logic/complexity
 
-❌ Only ONE implementation
-❌ Direct 'new' is fine for simple cases
+Only ONE implementation
+Direct 'new' is fine for simple cases
 ```
 
 ---
@@ -219,7 +219,7 @@ Connection conn = DriverManager.getConnection(url);
 ## Memory Hook
 
 ```
-Factory = 🏭 Pizza shop
+Factory = Pizza shop
 
 Tu TYPE bolta — "Margherita"
 Factory decide karta concrete class
@@ -237,4 +237,4 @@ Real examples:
    Spring's BeanFactory
 ```
 
-📚 [← Back to Design Patterns](00_overview.md)
+[← Back to Design Patterns](00_overview.md)

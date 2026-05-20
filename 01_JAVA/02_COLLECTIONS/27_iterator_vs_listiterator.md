@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Loop Mein Remove
+## STORY — Loop Mein Remove
 
 → Loop mein **expired surveys remove** karne the. forEach mein `list.remove()` call kiya
 → **`ConcurrentModificationException`. Crash.**
@@ -14,24 +14,24 @@
 
 ---
 
-## 💻 Code — Loop Mein Safe Remove
+## Code — Loop Mein Safe Remove
 
-### ❌ GALAT — list.remove() in forEach
+### GALAT — list.remove() in forEach
 ```java
 for (String s : surveys) {
     if (s.equals("S102")) {
-        surveys.remove(s);                    // 🔴 ConcurrentModificationException!
+        surveys.remove(s);                    // ConcurrentModificationException!
     }
 }
 ```
 
-### ✅ SAHI — Iterator.remove()
+### SAHI — Iterator.remove()
 ```java
 Iterator<String> it = surveys.iterator();
 while (it.hasNext()) {
     String s = it.next();
     if (s.equals("S102")) {
-        it.remove();                          // ✅ SAFE — Iterator ka remove
+        it.remove();                          // SAFE — Iterator ka remove
     }
 }
 ```
@@ -40,7 +40,7 @@ while (it.hasNext()) {
 
 ---
 
-## 🧠 Visualization — Pointer Position
+## Visualization — Pointer Position
 
 ```
               Iterator vs ListIterator — Pointer Visualization
@@ -73,7 +73,7 @@ it.remove() →  abhi jo pointer pe hai (S101) hata do — SAFE
               │S100│S102│S103│
               └────┴────┴────┘
 
-  ❌ peeche jaa nahi sakta — sirf forward
+  peeche jaa nahi sakta — sirf forward
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -115,16 +115,16 @@ Iterator banaya → expectedModCount = 3 (snapshot)
 
   list.remove(...)  → modCount badha → 4
                        expectedModCount = 3 (purana)
-                       MISMATCH 💥 → exception
+                       MISMATCH → exception
 
   it.remove()       → modCount badha → 4
                        expectedModCount BHI → 4 (sync)
-                       SAFE ✅
+                       SAFE 
 ```
 
 ---
 
-## 📊 Iterator — 3 Methods
+## Iterator — 3 Methods
 
 | Method | Kya karta? |
 |--------|-----------|
@@ -136,7 +136,7 @@ Iterator banaya → expectedModCount = 3 (snapshot)
 
 ---
 
-## 📊 ListIterator — Iterator ka Bada Bhai
+## ListIterator — Iterator ka Bada Bhai
 
 → Iterator sirf forward ja sakta hai
 → **Suppose** S103 pe ho, wapas S102 pe jaana hai — Iterator se nahi hoga
@@ -151,7 +151,7 @@ Iterator banaya → expectedModCount = 3 (snapshot)
 
 ---
 
-## 📊 Iterator vs ListIterator
+## Iterator vs ListIterator
 
 | Feature | Iterator | ListIterator |
 |---------|----------|--------------|
@@ -162,25 +162,25 @@ Iterator banaya → expectedModCount = 3 (snapshot)
 
 ---
 
-## 🔴 TRAP 1
+## TRAP 1
 
 > **`forEach` loop mein `list.remove()` = ConcurrentModificationException.**
 > **`it.remove()` = SAFE. Ye classic interview question hai.**
 
-## 🔴 TRAP 2
+## TRAP 2
 
 > **`it.next()` bina `hasNext()` check kiye = `NoSuchElementException`.**
 > **HAMESHA `while(it.hasNext())` pehle check karo.**
 
 ---
 
-## ⚡ Shortcut
+## Shortcut
 
 > **Remove only → Iterator kaafi.**
 > **Add/Set bhi chahiye → ListIterator must.**
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Iterator allows safe traversal and removal during iteration — calling `list.remove()` inside a loop throws ConcurrentModificationException, but `it.remove()` is safe. ListIterator extends Iterator with bidirectional traversal, `add()`, and `set()` — but only works with List."*

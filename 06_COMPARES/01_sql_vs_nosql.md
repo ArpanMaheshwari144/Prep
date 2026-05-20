@@ -1,8 +1,8 @@
-# ⚡ SQL vs NoSQL
+# SQL vs NoSQL
 
 ---
 
-## 🎯 1-Line Analogy
+## 1-Line Analogy
 
 ```
 SQL    = EXCEL spreadsheet  (rows + columns, fixed schema)
@@ -11,7 +11,7 @@ NoSQL  = JSON document file (flexible, anything goes)
 
 ---
 
-## 📊 Side by Side
+## Side by Side
 
 ```
 ┌──────────────────┬──────────────────┬──────────────────┐
@@ -27,7 +27,7 @@ NoSQL  = JSON document file (flexible, anything goes)
 │                  │ JOIN, GROUP BY    │ MongoDB query,    │
 │                  │                    │ DynamoDB API     │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ ACID              │ ✅ Strong          │ ⚠️ Often eventual│
+│ ACID              │ Strong          │ Often eventual│
 │                  │ Transactions       │ BASE (newer ones)│
 ├──────────────────┼──────────────────┼──────────────────┤
 │ Scaling          │ VERTICAL (mostly) │ HORIZONTAL native │
@@ -46,10 +46,10 @@ NoSQL  = JSON document file (flexible, anything goes)
 
 ---
 
-## 🎯 When to Use What
+## When to Use What
 
 ```
-✅ SQL CHOOSE KARO when:
+SQL CHOOSE KARO when:
    • Strong relationships (User → Order → Items)
    • Need ACID (banking, finance)
    • Complex queries with JOINs
@@ -59,7 +59,7 @@ NoSQL  = JSON document file (flexible, anything goes)
    
    Examples: UserCRUD, banking, ERP
 
-✅ NoSQL CHOOSE KARO when:
+NoSQL CHOOSE KARO when:
    • Schema changes frequently
    • Massive scale (millions/billions records)
    • Unstructured data (logs, social posts)
@@ -76,7 +76,7 @@ NoSQL  = JSON document file (flexible, anything goes)
 
 ---
 
-## 📊 NoSQL Types Visual
+## NoSQL Types Visual
 
 ```
 ┌──────────────┬──────────────────────┬──────────────────┐
@@ -100,7 +100,7 @@ NoSQL  = JSON document file (flexible, anything goes)
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "SQL when you need relationships, ACID, complex queries.
@@ -117,7 +117,7 @@ NoSQL  = JSON document file (flexible, anything goes)
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
 SQL    = Excel spreadsheet (structured)
@@ -129,4 +129,4 @@ NoSQL = SHARD king
 Real apps: HYBRID (SQL + Redis + Cassandra commonly)
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

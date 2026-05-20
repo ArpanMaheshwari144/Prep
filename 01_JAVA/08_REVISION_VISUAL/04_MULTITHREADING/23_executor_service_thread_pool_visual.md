@@ -1,4 +1,4 @@
-# ⚙️ ExecutorService + Thread Pool — Visual Revision
+# ExecutorService + Thread Pool — Visual Revision
 
 ---
 
@@ -93,7 +93,7 @@ Magic:
 ├──────────────────────────┼───────────────────────────┤
 │ newCachedThreadPool()    │ Threads created as needed  │
 │                          │ Idle threads die in 60s    │
-│                          │ ⚠️ unlimited growth!        │
+│                          │ unlimited growth!        │
 ├──────────────────────────┼───────────────────────────┤
 │ newSingleThreadExecutor()│ 1 thread, sequential       │
 ├──────────────────────────┼───────────────────────────┤
@@ -219,7 +219,7 @@ executor.shutdownNow();
 ```
 
 ```
-❗ WITHOUT shutdown:
+WITHOUT shutdown:
    JVM doesn't exit
    Threads keep running indefinitely
    = Resource leak
@@ -227,7 +227,7 @@ executor.shutdownNow();
 
 ---
 
-## 🔟 Best Practice Pattern
+## Best Practice Pattern
 
 ```java
 ExecutorService pool = Executors.newFixedThreadPool(5);
@@ -296,10 +296,10 @@ Rejection policies:
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-ExecutorService = 🏢 office with fixed employees
+ExecutorService = office with fixed employees
 Thread pool     = reuse threads (vs create new)
 
 Types:
@@ -319,4 +319,4 @@ Future = handle to async work
 ALWAYS shutdown() in finally
 ```
 
-📚 [← Back to JAVA](../../)
+[← Back to JAVA](../../)

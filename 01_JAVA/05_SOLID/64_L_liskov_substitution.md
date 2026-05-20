@@ -4,7 +4,7 @@
 
 ---
 
-## 🎯 Definition
+## Definition
 
 > **Child class ko parent ki jagah use kar pao — bina kuch break.**
 
@@ -12,7 +12,7 @@ Matlab: agar `Account` use ho raha hai, **`SavingsAccount` daalna safe** hona ch
 
 ---
 
-## 📖 STORY — FixedDeposit ki Galti
+## STORY — FixedDeposit ki Galti
 
 → `Account` class banayi — har account ka `withdraw()` method
 → Saare account types extend kiye:
@@ -29,28 +29,28 @@ class Account {
 class FixedDeposit extends Account {
     @Override
     void withdraw(double amount) {
-        throw new RuntimeException("FD se withdraw nahi hota!");  // 🔴 LSP violation
+        throw new RuntimeException("FD se withdraw nahi hota!");  // LSP violation
     }
 }
 ```
 
 → **NotificationService** sab accounts pe `withdraw()` chala raha tha
-→ Jab FD aaya — **CRASH 💥**
+→ Jab FD aaya — **CRASH **
 → **Caller ne `Account` expect kiya — Account ki guarantee thi `withdraw()` chalega**
 → FD ne us guarantee tod di — **LSP violation**
 → **Fix:** Hierarchy galat hai — FD ko Account ka child nahi banana chahiye
 
 ---
 
-## ✅ Fix — Hierarchy Sahi Karo
+## Fix — Hierarchy Sahi Karo
 
 ```java
 interface Withdrawable {
     void withdraw(double amount);
 }
 
-class SavingsAccount implements Withdrawable { /* ✅ withdraw kar sakta */ }
-class CurrentAccount implements Withdrawable { /* ✅ withdraw kar sakta */ }
+class SavingsAccount implements Withdrawable { /* withdraw kar sakta */ }
+class CurrentAccount implements Withdrawable { /* withdraw kar sakta */ }
 
 // FixedDeposit Withdrawable NAHI — alag class
 class FixedDeposit {
@@ -64,10 +64,10 @@ class FixedDeposit {
 
 ---
 
-## 🧠 LSP Visualization
+## LSP Visualization
 
 ```
-              ❌ BAD — Child breaks parent contract
+              BAD — Child breaks parent contract
 
   Account (parent)
     withdraw() — promise: chalega
@@ -76,17 +76,17 @@ class FixedDeposit {
   ┌─────────────┬──────────────┐
   ▼             ▼              ▼
 Savings    Current       FixedDeposit
-withdraw   withdraw      withdraw → throw exception 🔴
-✅ kaam    ✅ kaam        (parent ka contract toot gaya!)
+withdraw   withdraw      withdraw → throw exception 
+kaam    kaam        (parent ka contract toot gaya!)
 
 
   Code:  for (Account a : accounts) a.withdraw(100);
                                             │
                                             ▼
-                                       FD pe crash 💥
+                                       FD pe crash 
 
 
-              ✅ GOOD — sahi hierarchy
+              GOOD — sahi hierarchy
 
   Withdrawable (interface)
     withdraw()
@@ -95,7 +95,7 @@ withdraw   withdraw      withdraw → throw exception 🔴
   ┌─────────┬──────────┐
   ▼         ▼
 Savings    Current
-✅ safe    ✅ safe
+safe    safe
 
   FixedDeposit — alag class, alag contract
                  (Withdrawable implement nahi karta)
@@ -103,7 +103,7 @@ Savings    Current
 
 ---
 
-## 🔴 LSP Trap — Common Violation
+## LSP Trap — Common Violation
 
 > **Child class mein parent ke method ka behavior weaken nahi karna chahiye.**
 
@@ -116,6 +116,6 @@ Examples:
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Liskov Substitution means a child class must be substitutable for its parent without breaking anything. If FixedDeposit throws an exception on `withdraw()` which Account promises to support, that's a design violation — fix the hierarchy, not the caller."*

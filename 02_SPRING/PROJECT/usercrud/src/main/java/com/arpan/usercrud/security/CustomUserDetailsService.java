@@ -9,30 +9,30 @@ import com.arpan.usercrud.model.User;
 import com.arpan.usercrud.repository.UserRepository;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    CustomUserDetailsService = HR DEPARTMENT
 //    Guard (JwtFilter) puchta: "Yeh banda DB mein hai ya nahi?"
 //    HR: DB lookup → UserDetails object return
 // ═══════════════════════════════════════════════════════════════════════
 //
 // VISUAL — GUARD ↔ HR FLOW:
-//    🛡️ Guard (JwtFilter)         👨‍💼 HR (this class)
+//    Guard (JwtFilter)         HR (this class)
 //         │                              │
 //         │  "Arpan ka info chahiye"     │
 //         │ ──────────────────────────►  │
 //         │                              │
-//         │                              │  📂 DB lookup
+//         │                              │  DB lookup
 //         │                              │     UserRepository.findByEmail
 //         │                              │     User entity returned
 //         │                              │     id, email, password, role
 //         │                              │
-//         │                              │  🎫 Convert to UserDetails
+//         │                              │  Convert to UserDetails
 //         │                              │     (Spring's standard object)
 //         │                              │     ROLE_ prefix added
-//         │  ✅ UserDetails object       │
+//         │  UserDetails object       │
 //         │ ◄──────────────────────────  │
 //
-// 🔑 UserDetailsService INTERFACE — Spring's Contract:
+// UserDetailsService INTERFACE — Spring's Contract:
 //    public interface UserDetailsService {
 //        UserDetails loadUserByUsername(String username);
 //    }
@@ -53,8 +53,8 @@ import com.arpan.usercrud.repository.UserRepository;
 //            │
 //            ▼
 //       PasswordEncoder.matches(rawPassword, storedHash)
-//            ├─► Match → ✅ generate tokens
-//            └─► Mismatch → ❌ BadCredentialsException
+//            ├─► Match → generate tokens
+//            └─► Mismatch → BadCredentialsException
 //
 //    FLOW 2: JWT Filter (Every Request)
 //       JwtFilter validates token
@@ -71,7 +71,7 @@ import com.arpan.usercrud.repository.UserRepository;
 //            ▼
 //       Set in SecurityContext
 //
-// 🔑 ROLE_ PREFIX MAGIC:
+// ROLE_ PREFIX MAGIC:
 //    DB stores:      "USER" / "ADMIN"    (clean)
 //    Spring expects: "ROLE_USER" / "ROLE_ADMIN"  (with prefix)
 //
@@ -84,7 +84,7 @@ import com.arpan.usercrud.repository.UserRepository;
 //       Internally checks: authority == "ROLE_ADMIN"?
 //       = Convention from Spring — follow karna padta
 //
-// 🔑 SPRING'S BUILDER PATTERN:
+// SPRING'S BUILDER PATTERN:
 //    org.springframework.security.core.userdetails.User.builder()
 //        .username(user.getEmail())
 //        .password(user.getPassword())
@@ -110,9 +110,9 @@ import com.arpan.usercrud.repository.UserRepository;
 //    Spring doesn't care what string — just identifier
 //    Method name STAYS "loadUserByUsername"
 //
-// 🎨 PATTERN: BUILDER (used via User.builder())
+// PATTERN: BUILDER (used via User.builder())
 //
-// 📐 SOLID:
+// SOLID:
 //    DIP — UserDetailsService INTERFACE implement
 //          Spring Security depends on interface, not concrete
 //          Future LDAP swap = new implementation, Spring untouched
@@ -122,7 +122,7 @@ import com.arpan.usercrud.repository.UserRepository;
 //          No token (JwtService)
 //          No business logic (UserService)
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "CustomUserDetailsService implements UserDetailsService —
 //     Spring's contract. Sirf 1 method: loadUserByUsername.
 //
@@ -139,7 +139,7 @@ import com.arpan.usercrud.repository.UserRepository;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    // 📂 DB lookup tool — UserRepository
+    // DB lookup tool — UserRepository
     // HR ke paas yeh "directory" hai DB mein dhundhne ke liye
     private final UserRepository userRepository;
 
@@ -148,7 +148,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  📞 loadUserByUsername — Spring Security calls this
+    //  loadUserByUsername — Spring Security calls this
     // ════════════════════════════════════════════════════════════
     //  Spring puchti: "Iss username ke details do"
     //  Hum: "Email se dhundhte, mil gaya? UserDetails return.
@@ -159,14 +159,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        // 📂 STEP 1: DB se user dhundo email se
+        // STEP 1: DB se user dhundo email se
         //    findByEmail() returns Optional<User> — present? extract.
         //    Empty? → exception throw.
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
                     new UsernameNotFoundException("User not found with email: " + email));
 
-        // 🎫 STEP 2: User entity → Spring's UserDetails object
+        // STEP 2: User entity → Spring's UserDetails object
         //
         //    Spring ka UserDetails interface — fields chahiye:
         //    • username (identifier)
@@ -179,9 +179,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         //    Spring's User class ≠ humara User entity (alag package)
         //    Full path = confusion bachane ke liye
         return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())                        // 📛 identifier
-                .password(user.getPassword())                      // 🔒 BCrypt hashed
-                .authorities("ROLE_" + user.getRole())             // 🎫 ROLE_USER / ROLE_ADMIN
+                .username(user.getEmail())                        // identifier
+                .password(user.getPassword())                      // BCrypt hashed
+                .authorities("ROLE_" + user.getRole())             // ROLE_USER / ROLE_ADMIN
                 .build();
     }
 }

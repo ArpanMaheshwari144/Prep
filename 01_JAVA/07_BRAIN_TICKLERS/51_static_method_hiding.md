@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY
+## STORY
 
 → `class A` mein **static** `show()` likha — print "A"
 → `class B extends A` mein bhi **static** `show()` likha — print "B"
@@ -23,7 +23,7 @@ obj.show();      // "A" — NOT "B"!
 
 ---
 
-## 🟡 WHY "A" Aaya?
+## WHY "A" Aaya?
 
 → **Static = class se bind hota hai, object se nahi**
 → Compiler **reference type dekhta** = `A`
@@ -33,7 +33,7 @@ obj.show();      // "A" — NOT "B"!
 
 ---
 
-## 🧠 Visualization — Compile vs Runtime Resolution
+## Visualization — Compile vs Runtime Resolution
 
 ```
               Static Method Hiding — Compile vs Runtime
@@ -60,7 +60,7 @@ obj.show();      // "A" — NOT "B"!
   obj.show()  →  reference type kya hai?  →  A
        │
        ▼
-  A.show()  call hua  →  print "A"   ✅
+  A.show()  call hua  →  print "A"   
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -77,7 +77,7 @@ obj.show();      // "A" — NOT "B"!
   obj.show()  →  object type kya hai?  →  B
        │
        ▼
-  B.show()  call hua  →  print "B"   ✅
+  B.show()  call hua  →  print "B"   
                           (overriding works)
 
 
@@ -91,12 +91,12 @@ obj.show();      // "A" — NOT "B"!
   Decided:      Compile time         Runtime
   Looks at:     Reference type       Object type
   Output:       "A"                  "B"
-  Polymorphism: ❌ NO                ✅ YES
+  Polymorphism: NO                YES
 ```
 
 ---
 
-## 🆚 Override vs Hiding
+## Override vs Hiding
 
 | | Method Override | Method Hiding |
 |--|----------------|---------------|
@@ -106,6 +106,6 @@ obj.show();      // "A" — NOT "B"!
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Static methods are bound to the class, not to the object. They can be redeclared in a subclass — but this is method hiding, not overriding. The reference type decides which static method runs at compile time."*

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 // @Service             → Spring stereotype
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    SERVICE LAYER for User — authentication flow
 //    register + lookup + update
 //    BCrypt password hashing integrated via PasswordEncoder
@@ -43,21 +43,21 @@ import org.springframework.stereotype.Service;
 //    │  UserRepository       │
 //    └──────────────────────┘
 //
-// 🔑 DEPENDENCIES (constructor inject — 2):
+// DEPENDENCIES (constructor inject — 2):
 //    1. UserRepository  → DB operations
 //    2. PasswordEncoder → BCrypt hashing (from SecurityConfig bean)
 //
-// 🔑 BCrypt INTEGRATION:
+// BCrypt INTEGRATION:
 //    register(): raw password → encoder.encode() → BCrypt hash → save
 //    update():   same logic — never store raw password
 //    Login flow uses encoder.matches(raw, hash) via AuthManager
 //
-// 🔑 SECURITY GUARANTEE:
+// SECURITY GUARANTEE:
 //    DB mein password = "$2a$10$..." (60-char BCrypt hash)
 //    DB leak ho jaaye = passwords cracking nearly impossible (BCrypt strong)
 //    NEVER plain text stored
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "UserService handles user lifecycle for authentication —
 //     register, fetch by id/email, and update. Constructor
 //     injection of UserRepository and BCryptPasswordEncoder.
@@ -82,7 +82,7 @@ public class UserService {
 
     // ─── REGISTER ──────────────────────────────────────────────
     // POST /auth/register
-    // 🔑 SECURITY-CRITICAL: BCrypt hash password BEFORE save
+    // SECURITY-CRITICAL: BCrypt hash password BEFORE save
     public User register(User user) {
         // Hash raw password — never store plain text
         // encoder.encode() = BCrypt + auto-salt + 10 rounds default

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 // lombok.*              → Boilerplate killers
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    User = ENTITY for AUTHENTICATION + OWNERSHIP
 //    Har User = ek registered user
 //    Login pe yahaan se credentials verify hote
@@ -36,7 +36,7 @@ import lombok.NoArgsConstructor;
 //                                          │ User.id linked to
 //                                          ▼ Todo.user_id (FK)
 //
-// 🔑 KEY ANNOTATIONS (same as Todo + extras):
+// KEY ANNOTATIONS (same as Todo + extras):
 //
 //    @Entity                  → DB table mapped
 //    @Table(name="users")     → plural convention
@@ -50,16 +50,16 @@ import lombok.NoArgsConstructor;
 //                                Duplicate email blocked at INSERT
 //                                → DataIntegrityViolationException
 //
-// 🔑 EMAIL = LOGIN IDENTIFIER:
+// EMAIL = LOGIN IDENTIFIER:
 //    Email unique → login pe use kar sakte
 //    name = display name (e.g., "Arpan Maheshwari")
 //    email = login + identifier (e.g., arpan@gmail.com)
 //
-// 🔑 PASSWORD STORAGE (SECURITY CRITICAL):
-//    ❌ NEVER store plain password
+// PASSWORD STORAGE (SECURITY CRITICAL):
+//    NEVER store plain password
 //       DB leak = all users compromised
 //
-//    ✅ STORE BCRYPT HASH only
+//    STORE BCRYPT HASH only
 //       UserService.register() hash karta:
 //          passwordEncoder.encode(rawPassword)
 //
@@ -75,13 +75,13 @@ import lombok.NoArgsConstructor;
 //       max 255 because hash itself ~60 chars
 //                   + flexibility for longer
 //
-// 🔑 PASSWORD IN RESPONSE — DTO PATTERN:
+// PASSWORD IN RESPONSE — DTO PATTERN:
 //    User entity has password field
 //    BUT API responses mein password NEVER bheja jaye
 //    → DTO use karenge (UserResponse without password)
 //    → Entity = internal only
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "User entity holds authentication credentials and identity.
 //     Email is unique, used as login identifier. Password is
 //     stored as BCrypt hash via Spring Security's PasswordEncoder

@@ -1,8 +1,8 @@
-# ☕ OOP 4 Pillars — Visual Revision
+# OOP 4 Pillars — Visual Revision
 
 ---
 
-## 🎯 4 Pillars Overview
+## 4 Pillars Overview
 
 ```
 1. ENCAPSULATION   → data hide kar (capsule)
@@ -46,9 +46,9 @@ class BankAccount {
 }
 
 // Outside class:
-account.balance = 999;          // ❌ NOT ALLOWED (private)
-account.deposit(100);            // ✅ allowed
-account.getBalance();            // ✅ allowed
+account.balance = 999;          // NOT ALLOWED (private)
+account.deposit(100);            // allowed
+account.getBalance();            // allowed
 ```
 
 ```
@@ -90,9 +90,9 @@ class Dog extends Animal {  // CHILD (sub class)
 }
 
 Dog tommy = new Dog();
-tommy.eat();    // ✅ inherited
-tommy.sleep();  // ✅ inherited
-tommy.bark();   // ✅ own
+tommy.eat();    // inherited
+tommy.sleep();  // inherited
+tommy.bark();   // own
 ```
 
 ### Visual
@@ -118,18 +118,18 @@ tommy.bark();   // ✅ own
 ### Inheritance Types
 ```
 Single:
-   class B extends A           ✅
+   class B extends A           
 
 Multi-level:
    class C extends B
-   class B extends A           ✅ (chain)
+   class B extends A           (chain)
 
 Multiple inheritance (2 parents):
-   class C extends A, B        ❌ NOT ALLOWED
+   class C extends A, B        NOT ALLOWED
                                   (diamond problem)
    
    Solution: Interfaces
-   class C implements A, B     ✅
+   class C implements A, B     
 ```
 
 ### Why Inheritance?
@@ -149,8 +149,8 @@ extends    = inheritance (class)
 implements = inheritance (interface)
 
 Ek class:
-   ✅ extends ONE class
-   ✅ implements MULTIPLE interfaces
+   extends ONE class
+   implements MULTIPLE interfaces
 ```
 
 ---
@@ -215,7 +215,7 @@ based on argument types
 Overloading = same name + DIFFERENT SIGNATURE
    Different = parameter types OR count OR order
 
-❌ NOT overloading: just different return type
+NOT overloading: just different return type
    int add(int, int)
    double add(int, int)  ← compile error!
 ```
@@ -348,10 +348,10 @@ class Dog extends Animal {
 
 ```
 Rules:
-   ✅ 'abstract' keyword required
-   ✅ Can have abstract + concrete methods
-   ✅ Child MUST implement abstract methods
-   ❌ Can't directly instantiate
+   'abstract' keyword required
+   Can have abstract + concrete methods
+   Child MUST implement abstract methods
+   Can't directly instantiate
       new Animal()  ← compile error
 ```
 
@@ -372,9 +372,9 @@ class Car implements Vehicle {
 
 ```
 Rules:
-   ✅ All methods abstract by default (Java 7)
-   ✅ Java 8+ allows default + static methods
-   ✅ Multiple inheritance via interfaces
+   All methods abstract by default (Java 7)
+   Java 8+ allows default + static methods
+   Multiple inheritance via interfaces
 ```
 
 ### Abstract Class vs Interface
@@ -425,7 +425,7 @@ ABSTRACTION:
 
 ---
 
-## 🎯 OOP 4 Pillars — Final Summary
+## OOP 4 Pillars — Final Summary
 
 ```
 1. ENCAPSULATION  → capsule (data hide, access via methods)
@@ -434,4 +434,4 @@ ABSTRACTION:
 4. ABSTRACTION    → car steering (essential dikhao, hide rest)
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

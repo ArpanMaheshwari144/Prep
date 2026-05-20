@@ -1,4 +1,4 @@
-# 🔗 Relationship Mappings — @OneToMany / @ManyToOne / @ManyToMany
+# Relationship Mappings — @OneToMany / @ManyToOne / @ManyToMany
 
 ---
 
@@ -126,7 +126,7 @@ Author author;
 ## 7️⃣ CRITICAL PITFALL #1 — Forget `mappedBy`
 
 ```java
-// ❌ WRONG
+// WRONG
 @Entity
 class Author {
     @OneToMany
@@ -149,7 +149,7 @@ Without mappedBy:
 ```
 
 ```
-✅ FIX:
+FIX:
    @OneToMany(mappedBy = "author")    ← tell Hibernate inverse side
    List<Book> books;
 ```
@@ -172,7 +172,7 @@ authorRepo.save(a);
 ```
 
 ```java
-// ✅ FIX — Helper method:
+// FIX — Helper method:
 class Author {
     public void addBook(Book b) {
         books.add(b);
@@ -180,7 +180,7 @@ class Author {
     }
 }
 
-a.addBook(b);   // ✅ both sides synced
+a.addBook(b);   // both sides synced
 ```
 
 ---
@@ -228,7 +228,7 @@ DB Structure:
 
 ---
 
-## 🔟 Visual — ManyToMany Tables
+## Visual — ManyToMany Tables
 
 ```
    students            courses          student_course (join)
@@ -252,13 +252,13 @@ DB Structure:
 
 ```
 @ManyToMany with collections:
-   ❌ N+1 queries common
-   ❌ Hard to add extra fields to junction table
+   N+1 queries common
+   Hard to add extra fields to junction table
       (e.g., enrolledDate, grade)
 ```
 
 ```
-✅ INDUSTRY PREFERENCE:
+INDUSTRY PREFERENCE:
    Replace @ManyToMany with 2 × @ManyToOne to junction entity:
    
    Student → @OneToMany → Enrollment ← @ManyToOne ← Course
@@ -287,7 +287,7 @@ DB Structure:
 
 ---
 
-## 🎤 Interview Power Phrase
+## Interview Power Phrase
 
 ```
 "4 JPA mappings — @OneToOne, @OneToMany, @ManyToOne, @ManyToMany.
@@ -304,7 +304,7 @@ DB Structure:
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
 Owning side  = has FK column

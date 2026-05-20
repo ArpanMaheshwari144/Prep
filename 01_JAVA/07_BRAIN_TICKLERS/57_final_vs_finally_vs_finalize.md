@@ -4,26 +4,26 @@
 
 ---
 
-## 🎬 STORY — 3 Brothers, Same Naam Confusion
+## STORY — 3 Brothers, Same Naam Confusion
 
 > Imagine **3 brothers** — same family but **completely different roles**:
 >
-> 👨‍🔒 **Final** — *"Lockdown brother"* — kuch bhi lock kar deta (variable/method/class)
+> **Final** — *"Lockdown brother"* — kuch bhi lock kar deta (variable/method/class)
 >
-> 🧹 **Finally** — *"Cleanup brother"* — har scene ke baad safai karta (try-catch baad)
+> **Finally** — *"Cleanup brother"* — har scene ke baad safai karta (try-catch baad)
 >
-> ⚰️ **Finalize** — *"Funeral brother"* — object marne se pehle aata tha (deprecated)
+> **Finalize** — *"Funeral brother"* — object marne se pehle aata tha (deprecated)
 >
 > Interview mein puchne wala **3 ko milake confuse** karta — but tu jaanta hai 3 alag-alag log hain.
 
 ---
 
-## 🎨 VISUAL — 3 Brothers Comparison
+## VISUAL — 3 Brothers Comparison
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                 │
-│   👨‍🔒 final              🧹 finally           ⚰️ finalize()     │
+│   final              finally           finalize()     │
 │   ─────────              ───────────           ──────────────   │
 │                                                                 │
 │   KEYWORD                BLOCK                 METHOD            │
@@ -36,61 +36,61 @@
 │                                                                 │
 │   COMPILE-time check     RUNTIME execution     RUNTIME (rare)   │
 │                                                                 │
-│   ✅ Use daily            ✅ Use daily          ❌ DEPRECATED    │
-│   ✅ Production safe      ✅ Production safe    ❌ Java 9+ avoid │
+│   Use daily            Use daily          DEPRECATED    │
+│   Production safe      Production safe    Java 9+ avoid │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🔒 1. `final` — The Lockdown Keyword
+## 1. `final` — The Lockdown Keyword
 
 ### 3 use cases
 
 ```java
 // 1️⃣ FINAL VARIABLE — reassignment locked
 final int MAX = 100;
-MAX = 200;          // ❌ COMPILE ERROR
+MAX = 200;          // COMPILE ERROR
 
 // 2️⃣ FINAL METHOD — overriding locked
 class Animal {
     public final void breathe() { ... }
 }
 class Dog extends Animal {
-    public void breathe() { ... }   // ❌ COMPILE ERROR
+    public void breathe() { ... }   // COMPILE ERROR
 }
 
 // 3️⃣ FINAL CLASS — inheritance locked
 public final class String { ... }   // String can't be subclassed
-class MyString extends String { }   // ❌ COMPILE ERROR
+class MyString extends String { }   // COMPILE ERROR
 ```
 
-### 🎨 Lock metaphor visual
+### Lock metaphor visual
 
 ```
    Variable           Method             Class
    ────────           ──────             ─────
                                           
-   📦 X = 10          🔧 method()        🏛️ Class
-   🔒                  🔒                  🔒
+   X = 10          method()        Class
+                                     
    "Reassign         "Override            "Extend
     not allowed"      not allowed"        not allowed"
 ```
 
-### 💡 final reference vs final object
+### final reference vs final object
 
 ```java
 final List<String> list = new ArrayList<>();
-list.add("Hello");      // ✅ OK — adding to list, NOT reassigning
-list = new ArrayList(); // ❌ COMPILE ERROR — reassigning reference
+list.add("Hello");      // OK — adding to list, NOT reassigning
+list = new ArrayList(); // COMPILE ERROR — reassigning reference
 ```
 
 **`final` = reference locked, NOT object contents.**
 
 ---
 
-## 🧹 2. `finally` — The Cleanup Block
+## 2. `finally` — The Cleanup Block
 
 ```java
 Connection conn = null;
@@ -100,11 +100,11 @@ try {
 } catch (SQLException e) {
     log.error("DB error", e);
 } finally {
-    if (conn != null) conn.close();   // ✅ HAMESHA chalta
+    if (conn != null) conn.close();   // HAMESHA chalta
 }
 ```
 
-### 🎨 finally execution flow
+### finally execution flow
 
 ```
    try block
@@ -120,25 +120,25 @@ try {
       └──► uncaught exception?
               ▼
            finally runs ──► exception propagates
-           (always runs! ✅)
+           (always runs! )
 ```
 
-### ⚠️ finally Gotchas
+### finally Gotchas
 
 ```java
-// 🪤 Trap 1: return in finally OVERRIDES try return
+// Trap 1: return in finally OVERRIDES try return
 public int test() {
     try { return 1; }
-    finally { return 2; }  // ❌ Returns 2 (try ka 1 lost)
+    finally { return 2; }  // Returns 2 (try ka 1 lost)
 }
 
-// 🪤 Trap 2: System.exit() bypasses finally
+// Trap 2: System.exit() bypasses finally
 public void test() {
     try { System.exit(0); }
-    finally { System.out.println("won't run"); }  // 🚫 SKIPPED
+    finally { System.out.println("won't run"); }  // SKIPPED
 }
 
-// 🪤 Trap 3: Modern Java prefer try-with-resources
+// Trap 3: Modern Java prefer try-with-resources
 try (Connection conn = ds.getConnection()) {
     conn.execute(...);
 }  // close() automatic — no finally needed
@@ -146,10 +146,10 @@ try (Connection conn = ds.getConnection()) {
 
 ---
 
-## ⚰️ 3. `finalize()` — The Funeral Method (DEPRECATED)
+## 3. `finalize()` — The Funeral Method (DEPRECATED)
 
 ```java
-// ❌ DON'T USE — Deprecated since Java 9
+// DON'T USE — Deprecated since Java 9
 @Override
 protected void finalize() throws Throwable {
     // GC se PEHLE call hota tha
@@ -166,14 +166,14 @@ protected void finalize() throws Throwable {
 | **Resurrection bug** | finalize mein `this` reference rakh ke object zinda kar sakte (mess) |
 | **Better alternatives exist** | `try-with-resources`, `Cleaner` API |
 
-### ✅ Modern alternative — `try-with-resources`
+### Modern alternative — `try-with-resources`
 
 ```java
 // Old way (broken)
 public class FileHandler {
     @Override
     protected void finalize() {
-        file.close();  // ⚠️ unreliable
+        file.close();  // unreliable
     }
 }
 
@@ -188,12 +188,12 @@ public class FileHandler implements AutoCloseable {
 // Usage:
 try (FileHandler h = new FileHandler()) {
     h.use();
-}  // ✅ close() guaranteed call
+}  // close() guaranteed call
 ```
 
 ---
 
-## 📊 FULL COMPARISON TABLE
+## FULL COMPARISON TABLE
 
 | Property | `final` | `finally` | `finalize()` |
 |---|---|---|---|
@@ -201,13 +201,13 @@ try (FileHandler h = new FileHandler()) {
 | **Used with** | variable/method/class | try-catch | Object class (override) |
 | **Purpose** | Prevent change | Cleanup code | GC pre-cleanup (legacy) |
 | **When triggered** | Compile-time enforcement | After try-catch (always) | Before GC (maybe never) |
-| **Modern usage** | ✅ Daily | ✅ Daily | ❌ Avoid (Java 9+) |
-| **Reliability** | ✅ Compile-time guarantee | ✅ Always runs (mostly) | ❌ Unreliable timing |
+| **Modern usage** | Daily | Daily | Avoid (Java 9+) |
+| **Reliability** | Compile-time guarantee | Always runs (mostly) | Unreliable timing |
 | **Replacement** | N/A | try-with-resources (modern) | try-with-resources, Cleaner API |
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "final, finally, finalize mein difference bata"**
 
@@ -229,13 +229,13 @@ try (FileHandler h = new FileHandler()) {
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"`final` keyword hai (lockdown), `finally` block hai (cleanup), `finalize()` deprecated method tha (GC pre-call). Naam similar but functionally completely different — interview classic confusion test."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 final     → "Final answer — change NAHI"  (variable/method/class lock)
@@ -243,28 +243,28 @@ finally   → "Finally khatam ho gaya — cleanup karo" (try-catch baad)
 finalize  → "Finalize karo cleanup before GC" (DEPRECATED, mat use karo)
 
 3 brothers analogy:
-   👨‍🔒 final    = lockdown brother
-   🧹 finally  = cleanup brother
-   ⚰️ finalize = funeral brother (deceased — Java 9+ mein gone)
+   final    = lockdown brother
+   finally  = cleanup brother
+   finalize = funeral brother (deceased — Java 9+ mein gone)
 ```
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "final method override ho sakta"
-         ❌ Compile error — final method/class/var lock ho jate
+Trap 1: "final method override ho sakta"
+         Compile error — final method/class/var lock ho jate
 
-🪤 Trap 2: "final List mein add() kaam nahi karta"
-         ❌ Galat — reference locked, contents nahi
-         ✅ list.add() works, list = new ArrayList() doesn't
+Trap 2: "final List mein add() kaam nahi karta"
+         Galat — reference locked, contents nahi
+         list.add() works, list = new ArrayList() doesn't
 
-🪤 Trap 3: "finally hamesha 100% chalta"
-         ❌ System.exit(), JVM crash, infinite loop in try → skip
-         ✅ Mostly always, but corner cases
+Trap 3: "finally hamesha 100% chalta"
+         System.exit(), JVM crash, infinite loop in try → skip
+         Mostly always, but corner cases
 
-🪤 Trap 4: "finalize() reliable cleanup hai"
-         ❌ Unpredictable + deprecated (Java 9+)
-         ✅ try-with-resources / AutoCloseable use karo
+Trap 4: "finalize() reliable cleanup hai"
+         Unpredictable + deprecated (Java 9+)
+         try-with-resources / AutoCloseable use karo
 ```

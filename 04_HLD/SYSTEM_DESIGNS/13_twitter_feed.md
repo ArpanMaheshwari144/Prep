@@ -1,4 +1,4 @@
-# 🐦 Twitter Feed — Visual System Design
+# Twitter Feed — Visual System Design
 
 > **Status:** FULL TOPIC DONE — Day 1 + Day 2 + Day 3 covered.
 
@@ -57,7 +57,7 @@ follow kiye hue logon ne kiye.
 
    Arpan ka ghar:
    ┌─────────────────────────────┐
-   │  📋 NOTICE BOARD            │
+   │  NOTICE BOARD            │
    │                              │
    │  • Suresh: "Lunch good"      │
    │  • Mukesh: "Movie"           │
@@ -82,15 +82,15 @@ Virat tweets: "Match was great!"
         │
         ▼
    ┌──────────────────────────────────┐
-   │   🗣️  TOWN CRIER                │
+   │    TOWN CRIER                │
    │   (Fanout Service)                │
    │                                    │
    │   "Sab followers ke notice"       │
    │   "board pe lagao!"                │
    └──────────────────────────────────┘
         │
-        ├─→ Arpan's notice board    📋 ← updated
-        ├─→ Suresh's notice board   📋 ← updated
+        ├─→ Arpan's notice board    ← updated
+        ├─→ Suresh's notice board   ← updated
         └─→ ... (all followers)
 
 = PUSH MODEL (fanout-on-write)
@@ -106,12 +106,12 @@ He tweets: "Naya gaana!"
         │
         ▼
    ┌──────────────────────────────────┐
-   │   🗣️  TOWN CRIER                │
+   │    TOWN CRIER                │
    │                                    │
    │   "10 CRORE notice boards mein    │
    │    likhne hain??"                  │
    │                                    │
-   │   😵 SYSTEM CHOKED                  │
+   │   SYSTEM CHOKED                  │
    └──────────────────────────────────┘
 ```
 
@@ -121,7 +121,7 @@ SOLUTION: Bieber's tweets DON'T fanout.
          Followers fetch on demand.
 
    ┌────────────────────────────┐
-   │  🏰 PALACE NOTICEBOARD      │
+   │  PALACE NOTICEBOARD      │
    │  (Bieber's tweets here)     │
    │  = DB (Cassandra)           │
    └────────────────────────────┘
@@ -200,7 +200,7 @@ Arpan follows: Virat (celeb) + Suresh (normal)
 
 ---
 
-## 🔟 Write Flow — Tweet Post
+## Write Flow — Tweet Post
 
 ```
    Virat tweets
@@ -335,7 +335,7 @@ FEED INBOX:     Redis cluster
 ```
 Virat tweets → 10 CRORE followers read
 If everyone hits Cassandra = 10 CRORE DB hits
-= DB crash 🔥
+= DB crash 
 ```
 
 ### Library Analogy
@@ -484,23 +484,23 @@ Tu ne 2,500 aur kamaye = 10,500 total:
 
 ### Approach 1: By tweet_id (random)
 ```
-✅ Even distribution
-❌ User's tweets scattered
-❌ Profile = scatter-gather (slow)
+Even distribution
+User's tweets scattered
+Profile = scatter-gather (slow)
 ```
 
 ### Approach 2: By user_id (recommended)
 ```
-✅ User's tweets together = one shard
-✅ Profile load fast
-❌ Hot user problem (Bieber shard hammered)
+User's tweets together = one shard
+Profile load fast
+Hot user problem (Bieber shard hammered)
 ```
 
 ### Approach 3: By user_id + time
 ```
-✅ Distribute hot users across time
-✅ Recent tweets together
-✅ Old tweets archived to cold storage
+Distribute hot users across time
+Recent tweets together
+Old tweets archived to cold storage
 ```
 
 ---
@@ -533,19 +533,19 @@ Tu ne 2,500 aur kamaye = 10,500 total:
 
 ### Benefits
 ```
-✅ LATENCY:
+LATENCY:
    India user → India shard (5ms)
    NOT US shard (200ms)
 
-✅ COMPLIANCE:
+COMPLIANCE:
    GDPR — EU data stays in EU
    Geo shard fits naturally
 
-✅ LOAD distribution:
+LOAD distribution:
    India peak hours ≠ US peak hours
    Each region handles own load
 
-✅ FAILURE isolation:
+FAILURE isolation:
    India outage = EU/US unaffected
 ```
 
@@ -590,28 +590,28 @@ Production uses ALL strategies:
 
 ---
 
-## ✅ FULL TOPIC SUMMARY
+## FULL TOPIC SUMMARY
 
 ```
 Day 1: Concept
-   ✅ PUSH vs PULL
-   ✅ Bieber problem
-   ✅ Hybrid model
+   PUSH vs PULL
+   Bieber problem
+   Hybrid model
 
 Day 2: Architecture
-   ✅ Notice Board (Redis inbox)
-   ✅ Town Crier (Fanout)
-   ✅ Palace Board (Cassandra)
-   ✅ Read flow + Write flow
-   ✅ Full architecture diagram
+   Notice Board (Redis inbox)
+   Town Crier (Fanout)
+   Palace Board (Cassandra)
+   Read flow + Write flow
+   Full architecture diagram
 
 Day 3: Optimization
-   ✅ Hot tweet caching (Library bestseller)
-   ✅ Cache storage strategy (2 caches bounded)
-   ✅ Inactive user TTL cleanup
-   ✅ PUSH→PULL crossover (10K threshold)
-   ✅ Sharding (user_id + time + geo)
-   ✅ Hot user replication
+   Hot tweet caching (Library bestseller)
+   Cache storage strategy (2 caches bounded)
+   Inactive user TTL cleanup
+   PUSH→PULL crossover (10K threshold)
+   Sharding (user_id + time + geo)
+   Hot user replication
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

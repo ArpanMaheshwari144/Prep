@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Production Crash
+## STORY — Production Crash
 
 → Ek din **user profile fetch** karna tha — `getUserById(101)`
 → **User nahi mila — `null` aaya**
@@ -15,7 +15,7 @@
 
 ---
 
-## 🟡 WHY — Optional?
+## WHY — Optional?
 
 → **`Optional` = dabba (container).** Andar value ho bhi sakti, na bhi
 → Kholne se pehle check karo. **`null` ka safe replacement**
@@ -23,12 +23,12 @@
 
 ---
 
-## 💻 Old vs New
+## Old vs New
 
 ```java
 // Purana style — null check bhool gaye = crash
 User user = getUserById(101);     // null aa sakta hai
-user.getName();                    // 🔴 CRASH — NullPointerException
+user.getName();                    // CRASH — NullPointerException
 
 // Optional style — dabba diya, safe access
 Optional<User> user = findById(101);
@@ -42,7 +42,7 @@ User u = user.orElseThrow(() -> new RuntimeException("User nahi mila!"));
 
 ---
 
-## 🧠 Visualization — Optional = Dabba
+## Visualization — Optional = Dabba
 
 ```
                 Optional — Dabba Hai (Value Hold Karta)
@@ -90,7 +90,7 @@ User u = user.orElseThrow(() -> new RuntimeException("User nahi mila!"));
   └─────────┘
        │
        ▼
-  u.get();        🔴 NoSuchElementException — khali dabba kholne ki koshish
+  u.get();        NoSuchElementException — khali dabba kholne ki koshish
 
   Safe:
   u.orElse(default)        ← khali toh default mil jayega
@@ -99,7 +99,7 @@ User u = user.orElseThrow(() -> new RuntimeException("User nahi mila!"));
 
 ---
 
-## 📦 Optional Banane Ke 3 Tarike
+## Optional Banane Ke 3 Tarike
 
 | Method | Use case |
 |--------|----------|
@@ -108,16 +108,16 @@ User u = user.orElseThrow(() -> new RuntimeException("User nahi mila!"));
 | `Optional.empty()` | **KHALI:** jaante hain kuch nahi hai |
 
 ```java
-Optional.of("Arpan");          // ✅ guaranteed value
-Optional.of(null);             // 🔴 NPE — crash
+Optional.of("Arpan");          // guaranteed value
+Optional.of(null);             // NPE — crash
 
-Optional.ofNullable(name);     // ✅ null safe (90% yahi)
-Optional.empty();              // ✅ explicitly empty
+Optional.ofNullable(name);     // null safe (90% yahi)
+Optional.empty();              // explicitly empty
 ```
 
 ---
 
-## 🎯 Important Methods
+## Important Methods
 
 ```java
 optional.isPresent();                       // andar kuch hai? true/false
@@ -125,32 +125,32 @@ optional.orElse("default");                 // khali toh default
 optional.orElseThrow(() -> new RuntimeException("..."));  // khali toh exception
 optional.map(u -> u.getName());             // transform — khali toh skip
 optional.filter(u -> u.isActive());         // condition — false toh empty
-optional.get();                             // 🔴 DANGEROUS — khali toh crash
+optional.get();                             // DANGEROUS — khali toh crash
 ```
 
 ---
 
-## 🔴 TRAP 1 — `optional.get()` Seedha Mat Karo
+## TRAP 1 — `optional.get()` Seedha Mat Karo
 
 > **Khali ho toh `NoSuchElementException`. Hamesha `orElse()` ya `orElseThrow()` use karo.**
 
 ```java
-optional.get();                          // 🔴 crash if empty
-optional.orElse("default");              // ✅ safe
-optional.orElseThrow(() -> new ...);     // ✅ safe with exception
+optional.get();                          // crash if empty
+optional.orElse("default");              // safe
+optional.orElseThrow(() -> new ...);     // safe with exception
 ```
 
-## 🔴 TRAP 2 — Method Parameter Mein Optional Mat Do
+## TRAP 2 — Method Parameter Mein Optional Mat Do
 
 > **Optional sirf RETURN type mein use karo — parameter mein nahi.**
 > ```java
-> void process(Optional<User> u) { ... }    // ❌ bad practice
-> Optional<User> findById(Long id) { ... }  // ✅ sahi use
+> void process(Optional<User> u) { ... }    // bad practice
+> Optional<User> findById(Long id) { ... }  // sahi use
 > ```
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Optional is a container that may or may not hold a value — it replaces null checks with a fluent API. Use `orElse()` for defaults, `orElseThrow()` for exceptions, and `map()` to transform safely. Never call `get()` directly. Use `ofNullable()` when the value might be null, `of()` when guaranteed non-null."*
 

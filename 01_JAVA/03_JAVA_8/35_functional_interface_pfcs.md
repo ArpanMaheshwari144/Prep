@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — Lambda Store Kahan Hota?
+## WHY — Lambda Store Kahan Hota?
 
 → Lambda ko **store karne ke liye special interface** chahiye — jisme **sirf 1 abstract method** ho
 → Isko **Functional Interface** bolte
@@ -13,7 +13,7 @@
 
 ---
 
-## 💻 Custom Functional Interface
+## Custom Functional Interface
 
 ```java
 @FunctionalInterface
@@ -30,7 +30,7 @@ System.out.println(multiply.operate(5, 3));    // 15
 
 ---
 
-## 🎯 Java 8 Ke 4 Built-In FIs — **PFCS** (Memory Trick)
+## Java 8 Ke 4 Built-In FIs — **PFCS** (Memory Trick)
 
 ```
 P  Predicate    →  Filter (haan ya nahi)
@@ -41,7 +41,7 @@ S  Supplier     →  Factory (banao, input nahi)
 
 ---
 
-## 💻 Code — Char FIs
+## Code — Char FIs
 
 ### 1. `Predicate<T>` — le: T, de: boolean (test karo)
 ```java
@@ -70,7 +70,7 @@ greet.get();                // Hello
 
 ---
 
-## 🔴 TRAP — Method Names Mix Mat Karna
+## TRAP — Method Names Mix Mat Karna
 
 > **`Predicate.test()`** — boolean
 > **`Function.apply()`** — transform
@@ -84,7 +84,7 @@ greet.get();                // Hello
 
 ---
 
-## 🧠 PFCS Yaad Rakhne Ka Trick
+## PFCS Yaad Rakhne Ka Trick
 
 ```
 Predicate  → "Filter karo. Le: T → De: boolean"     (haan / nahi)
@@ -95,7 +95,7 @@ Supplier   → "Factory hai. Le: nothing → De: T"     (banao, input nahi)
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"A Functional Interface has exactly one abstract method — it is the target type for lambda expressions. `@FunctionalInterface` is a compiler check that ensures only one abstract method exists. Java 8 provides four core functional interfaces: Predicate for boolean test, Function for transformation, Consumer for side-effect actions with no return, and Supplier for object creation with no input. These are the building blocks used heavily in Streams API."*
 

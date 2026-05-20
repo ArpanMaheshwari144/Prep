@@ -20,14 +20,14 @@ import java.io.IOException;
 // OncePerRequestFilter                  → Spring base class (1x per req)
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    JwtFilter = HTTP request ka SECURITY GUARD
 //    Har request app mein aane se PEHLE iss se guzarti
 //    Token verify karta — valid? Set SecurityContext aur aage bhejo
 //                          Invalid? Bhi aage bhej (controller 401 handle karega)
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🏨 HOTEL KEYCARD ANALOGY:
+// HOTEL KEYCARD ANALOGY:
 //
 //    Guest hotel mein har room/facility access kare:
 //       Door pe SCANNER (= JwtFilter)
@@ -37,14 +37,14 @@ import java.io.IOException;
 //       Every request → check Authorization header
 //       JWT extract → validate → identify user → set context
 //
-// 🔑 OncePerRequestFilter EXTEND:
+// OncePerRequestFilter EXTEND:
 //    Spring's base class
 //    GUARANTEES yeh filter EK REQUEST mein SIRF 1 BAAR chale
 //    (Spring internally complex chain — sometimes filter twice trigger
 //     hota — yeh class wo prevent karta)
 //    Override: doFilterInternal()
 //
-// 🔑 FLOW INSIDE doFilterInternal:
+// FLOW INSIDE doFilterInternal:
 //    1. Authorization header read karo
 //    2. "Bearer xxx" format check
 //    3. Token nikalo (substring 7 = skip "Bearer ")
@@ -59,7 +59,7 @@ import java.io.IOException;
 //       = "Current request mein yeh user authenticated hai"
 //    9. chain.doFilter(...) — next filter / controller
 //
-// 🔑 SecurityContextHolder KYA HAI:
+// SecurityContextHolder KYA HAI:
 //    Spring Security ka THREAD-LOCAL store
 //    Per-request user identity
 //    Controllers iss se current user nikal sakte

@@ -1,18 +1,18 @@
-# 🏗️ HLD — Kya Hai Aur Kyu?
+# HLD — Kya Hai Aur Kyu?
 
 > **HLD Topic 1 — Foundation (Day 1)**
 
 ---
 
-## 🎬 STORY — Ghar Banane ka Plan
+## STORY — Ghar Banane ka Plan
 
 > Tu **ghar banaye** chah raha — kya tu seedha eet rakhne lagega? **Nahi.**
 >
 > Pehle:
-> 1. 🗺️ **Map/Blueprint** — kahan kya hoga (rooms, kitchen, bathroom)
-> 2. 🏗️ **Foundation strength** — kitne floors? earthquake-proof?
-> 3. 🚰 **Plumbing/Wiring** — pani, electricity kahan se aayegi?
-> 4. 🚗 **Future scaling** — 5 saal baad family bade toh extra room?
+> 1. **Map/Blueprint** — kahan kya hoga (rooms, kitchen, bathroom)
+> 2. **Foundation strength** — kitne floors? earthquake-proof?
+> 3. **Plumbing/Wiring** — pani, electricity kahan se aayegi?
+> 4. **Future scaling** — 5 saal baad family bade toh extra room?
 >
 > **Phir** eet rakhne shuru karte.
 >
@@ -20,7 +20,7 @@
 
 ---
 
-## 🆚 HLD vs LLD
+## HLD vs LLD
 
 | | HLD (High-Level Design) | LLD (Low-Level Design) |
 |---|---|---|
@@ -35,7 +35,7 @@
 
 ---
 
-## 🎨 HLD Visual — Typical System
+## HLD Visual — Typical System
 
 ```
    USER (browser/app)
@@ -68,7 +68,7 @@
 
 ---
 
-## 🧠 The 4-Question HLD Mindset
+## The 4-Question HLD Mindset
 
 Har system pe yeh 4 questions:
 
@@ -83,7 +83,7 @@ Har system pe yeh 4 questions:
 
 ---
 
-## 🎯 Why HLD = Senior+ Differentiator
+## Why HLD = Senior+ Differentiator
 
 | Level | Skill |
 |---|---|
@@ -95,7 +95,7 @@ Har system pe yeh 4 questions:
 
 ---
 
-## 📊 What HLD Interview Tests
+## What HLD Interview Tests
 
 | Skill | Interviewer dekhta |
 |---|---|
@@ -107,13 +107,13 @@ Har system pe yeh 4 questions:
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > **"HLD = software ka blueprint. Code se pehle architecture decide karta — components, scale strategy, trade-offs. Junior code likhta, senior system design karta."**
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 HLD = "Ghar ka blueprint" (before construction)
@@ -133,18 +133,18 @@ Components in HLD:
 
 ---
 
-## ⚠️ Trap Box
+## Trap Box
 
 ```
-🪤 Trap 1: "HLD = LLD ka bigger version"
-         ❌ NAHI — different concerns
-         ✅ HLD = architecture, LLD = code structure
+Trap 1: "HLD = LLD ka bigger version"
+         NAHI — different concerns
+         HLD = architecture, LLD = code structure
 
-🪤 Trap 2: "Single server perfect design"
-         ❌ Single point of failure
-         ✅ Always plan for distributed (load balancer + replicas)
+Trap 2: "Single server perfect design"
+         Single point of failure
+         Always plan for distributed (load balancer + replicas)
 
-🪤 Trap 3: "Numbers nahi nikale"
-         ❌ Abstract design = useless
-         ✅ Capacity estimation pehle, design baad mein
+Trap 3: "Numbers nahi nikale"
+         Abstract design = useless
+         Capacity estimation pehle, design baad mein
 ```

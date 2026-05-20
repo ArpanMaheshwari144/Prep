@@ -1,14 +1,14 @@
-# 🚀 Section E — Multi-Stage Builds (Production Gem)
+# Section E — Multi-Stage Builds (Production Gem)
 
 > **Topic:** Production-grade image optimization
 > **Real proof:** UserCRUD image 256 MB → 154 MB (40% smaller)
 > **Day 2 (continued)** — added after ENTRYPOINT vs CMD
 
-📚 [← Back to README](00_README.md) | [← Visual Recap](08_revision_visual.md)
+[← Back to README](00_README.md) | [← Visual Recap](08_revision_visual.md)
 
 ---
 
-## 🤔 The Problem (Single-Stage Dockerfile)
+## The Problem (Single-Stage Dockerfile)
 
 ```dockerfile
 # Current Dockerfile (single-stage):
@@ -35,7 +35,7 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 
 ---
 
-## 💡 The Solution — Multi-Stage Build
+## The Solution — Multi-Stage Build
 
 ```
 Stage 1: BUILD       (heavy — JDK + Maven, build tools)
@@ -49,7 +49,7 @@ Final image = ONLY Stage 2 content
 
 ---
 
-## 🎬 Story — Restaurant Kitchen vs Plate
+## Story — Restaurant Kitchen vs Plate
 
 ```
 TWO ROOMS:
@@ -71,7 +71,7 @@ Yahi multi-stage = build mess discard, runtime clean.
 
 ---
 
-## 🎨 Visual — Single vs Multi-Stage
+## Visual — Single vs Multi-Stage
 
 ```
 SINGLE-STAGE (current):
@@ -104,7 +104,7 @@ MULTI-STAGE:
 
 ---
 
-## 📝 Multi-Stage Dockerfile — Complete
+## Multi-Stage Dockerfile — Complete
 
 ```dockerfile
 # ════════════════════════════════════════════════════════════
@@ -142,7 +142,7 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 
 ---
 
-## 🔍 Decode — Each Magic Line
+## Decode — Each Magic Line
 
 ```
 FROM maven:3.9-eclipse-temurin-17 AS builder
@@ -173,7 +173,7 @@ COPY --from=builder /build/target/*.jar app.jar
 
 ---
 
-## 🧪 Hands-On — Both Built + Compared (REAL output)
+## Hands-On — Both Built + Compared (REAL output)
 
 ### Build commands:
 ```cmd
@@ -193,7 +193,7 @@ docker images usercrud-app
 IMAGE                  DISK USAGE   CONTENT SIZE
 ─────                  ──────────   ────────────
 usercrud-app:latest    758 MB       256 MB        (compose-built)
-usercrud-app:multi     502 MB       154 MB ⭐
+usercrud-app:multi     502 MB       154 MB 
 usercrud-app:single    758 MB       256 MB
 ```
 
@@ -210,7 +210,7 @@ Disk Usage: 758 MB → 502 MB
 
 ---
 
-## 💎 Production Impact (Real Math)
+## Production Impact (Real Math)
 
 ```
 SCENARIO — 100 servers running this image:
@@ -221,16 +221,16 @@ SCENARIO — 100 servers running this image:
    SAVED: 10.2 GB across cluster
    
 PLUS:
-   ✅ CI/CD pipeline 40% faster (image push/pull)
-   ✅ Bandwidth saved per deploy
-   ✅ Container startup faster (less to load)
-   ✅ Smaller attack surface (no compile tools in prod)
-   ✅ Cleaner CVE scans
+   CI/CD pipeline 40% faster (image push/pull)
+   Bandwidth saved per deploy
+   Container startup faster (less to load)
+   Smaller attack surface (no compile tools in prod)
+   Cleaner CVE scans
 ```
 
 ---
 
-## 🎨 Layer Caching — Optimization Trick
+## Layer Caching — Optimization Trick
 
 ```
 Smart Dockerfile order:
@@ -249,15 +249,15 @@ BAD (cache busted every build):
 
 ---
 
-## 📊 Image Size Spectrum (further optimization)
+## Image Size Spectrum (further optimization)
 
 ```
 Variant                              Final Size
 ───────                              ──────────
 Single-stage JDK                     ~256 MB
-Multi-stage JRE-jammy (full ubuntu)  ~154 MB ⭐ (yahi banaya)
-Multi-stage JRE-alpine               ~80 MB  ⭐⭐
-Multi-stage jlink (custom JRE)       ~50 MB  ⭐⭐⭐
+Multi-stage JRE-jammy (full ubuntu)  ~154 MB (yahi banaya)
+Multi-stage JRE-alpine               ~80 MB  
+Multi-stage jlink (custom JRE)       ~50 MB  
 
 Production = JRE-jammy ya alpine usually
 Custom jlink = max optimization for resource-constrained
@@ -265,7 +265,7 @@ Custom jlink = max optimization for resource-constrained
 
 ---
 
-## 🎤 Interview Q&A
+## Interview Q&A
 
 **Q: "Multi-stage builds kya?"**
 
@@ -289,44 +289,44 @@ Custom jlink = max optimization for resource-constrained
 
 ---
 
-## ⚠️ Traps
+## Traps
 
 ```
-🪤 Trap 1: COPY . . in early stage
-         ❌ COPY everything → cache busted on any file change
-         ✅ COPY pom.xml first, then COPY src — split layers
+Trap 1: COPY . . in early stage
+         COPY everything → cache busted on any file change
+         COPY pom.xml first, then COPY src — split layers
 
-🪤 Trap 2: Forgetting --from=stage
-         ❌ COPY /target/jar app.jar (from current stage — empty)
-         ✅ COPY --from=builder /build/target/*.jar app.jar
+Trap 2: Forgetting --from=stage
+         COPY /target/jar app.jar (from current stage — empty)
+         COPY --from=builder /build/target/*.jar app.jar
 
-🪤 Trap 3: Using JDK in runtime stage
-         ❌ FROM eclipse-temurin:17-jdk in Stage 2 (waste)
-         ✅ FROM eclipse-temurin:17-jre (lighter, sufficient)
+Trap 3: Using JDK in runtime stage
+         FROM eclipse-temurin:17-jdk in Stage 2 (waste)
+         FROM eclipse-temurin:17-jre (lighter, sufficient)
 
-🪤 Trap 4: Wildcard mismatch
-         ❌ COPY --from=builder /build/target/usercrud.jar
+Trap 4: Wildcard mismatch
+         COPY --from=builder /build/target/usercrud.jar
             → version suffix mismatch (0.0.1-SNAPSHOT)
-         ✅ COPY --from=builder /build/target/usercrud-*.jar app.jar
+         COPY --from=builder /build/target/usercrud-*.jar app.jar
 
-🪤 Trap 5: Forgetting non-root user
-         ❌ Default root user in production
-         ✅ groupadd + useradd + USER directive
+Trap 5: Forgetting non-root user
+         Default root user in production
+         groupadd + useradd + USER directive
 
-🪤 Trap 6: Building tests in stage
-         ❌ mvn package (runs tests, slow)
-         ✅ mvn package -DskipTests (CI runs tests separately)
+Trap 6: Building tests in stage
+         mvn package (runs tests, slow)
+         mvn package -DskipTests (CI runs tests separately)
 ```
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > *"Multi-stage Dockerfile = multiple FROM statements. Stage 1 (builder) heavy with JDK + Maven, builds jar. Stage 2 (runtime) light with JRE only, COPY --from=builder sirf jar. Final image = Stage 2 only — earlier stages discarded. Real proof: 256 MB → 154 MB (~40% reduction) for Spring Boot. Layer caching trick: pom.xml copy + dependency:go-offline early (cached), source last (changes often). Production: JRE not JDK, non-root USER, multi-stage = security + size + speed."*
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 Multi-stage = "Kitchen + Plate"
@@ -352,17 +352,17 @@ Layer cache:
 
 ---
 
-## ✅ Concept Locked
+## Concept Locked
 
 ```
-✅ Multi-stage syntax (FROM ... AS name)
-✅ COPY --from=stage selective copy
-✅ JDK build → JRE runtime pattern
-✅ Layer caching optimization (pom first, src last)
-✅ Non-root user for security
-✅ Maven base image (maven:3.9-eclipse-temurin-17)
-✅ Real size reduction PROVEN (40% smaller)
-✅ Why production grade vs single-stage
+Multi-stage syntax (FROM ... AS name)
+COPY --from=stage selective copy
+JDK build → JRE runtime pattern
+Layer caching optimization (pom first, src last)
+Non-root user for security
+Maven base image (maven:3.9-eclipse-temurin-17)
+Real size reduction PROVEN (40% smaller)
+Why production grade vs single-stage
 ```
 
-📚 [← Back to README](00_README.md) | [← Visual Recap](08_revision_visual.md)
+[← Back to README](00_README.md) | [← Visual Recap](08_revision_visual.md)

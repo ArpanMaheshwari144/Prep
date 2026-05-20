@@ -1,7 +1,7 @@
 package com.arpan.usercrud.exception;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    UserNotFoundException = Custom domain-specific exception
 //    Service throws it when user lookup fails
 //    GlobalExceptionHandler catches it → 404 response
@@ -11,7 +11,7 @@ package com.arpan.usercrud.exception;
 //    repository.findById(id)
 //        .orElseThrow(() -> new UserNotFoundException(id));
 //
-// 🔑 WHY extends RuntimeException (NOT Exception)?
+// WHY extends RuntimeException (NOT Exception)?
 //
 //    Java 2 types of exceptions:
 //
@@ -51,7 +51,7 @@ package com.arpan.usercrud.exception;
 //    = Self-documenting in stack trace
 //    = Specific handler routing in GlobalExceptionHandler
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "UserNotFoundException extends RuntimeException (unchecked) —
 //     Spring's philosophy for business exceptions. Triggers
 //     @Transactional rollback automatically and keeps signatures clean.

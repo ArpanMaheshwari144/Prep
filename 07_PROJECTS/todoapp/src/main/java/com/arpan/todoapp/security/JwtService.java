@@ -15,13 +15,13 @@ import java.security.Key;
 import java.util.Date;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    JwtService = JWT lifecycle manager
 //    Token generate + verify + extract — sab yahaan
 //    Used by: AuthController (login) + JwtFilter (har request)
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🏨 HOTEL KEYCARD ANALOGY:
+// HOTEL KEYCARD ANALOGY:
 //
 //    Hotel Reception     = AuthController.login()
 //    Keycard issuance    = JwtService.generateToken()
@@ -30,7 +30,7 @@ import java.util.Date;
 //    Hotel secret        = jwt.secret (server only)
 //    Card expiry         = jwt.expiration (e.g., 15 min)
 //
-// 🔑 6 METHODS TOTAL:
+// 6 METHODS TOTAL:
 //    PUBLIC (3):
 //       1. generateToken    → User → JWT
 //       4. extractEmail     → JWT → email
@@ -134,14 +134,14 @@ public class JwtService {
     //
     //    = SAME key BOTH ways (HMAC = symmetric algorithm)
     //
-    // 🔑 WHY 32 CHARS MINIMUM:
+    // WHY 32 CHARS MINIMUM:
     //    HMAC-SHA256 algorithm needs ≥ 256-bit (= 32 bytes = 32 ASCII chars)
     //    Smaller secret = WeakKeyException at runtime
     //
     //    Local dev: any 32+ char string works
     //    Production: random 64+ char from env / secrets manager
     //
-    // 🔑 SAME KEY BOTH WAYS:
+    // SAME KEY BOTH WAYS:
     //    HMAC is SYMMETRIC (server holds the only secret)
     //    Sign + verify use SAME key
     //
@@ -150,7 +150,7 @@ public class JwtService {
     //       Use for distributed scenarios
     //    Hum HMAC use kar rahe (simpler, faster)
     //
-    // 🔑 PRIVATE because:
+    // PRIVATE because:
     //    Internal detail of JwtService
     //    Controller/Filter ko Key object directly nahi chahiye
     //    Sirf JwtService internal methods use karte
@@ -184,7 +184,7 @@ public class JwtService {
     //    isTokenExpired()    — uses Claims.getExpiration()
     //    = DRY — single parsing point (caller specific claim plucks)
     //
-    // 🔑 WHAT parseSignedClaims() DOES INTERNALLY:
+    // WHAT parseSignedClaims() DOES INTERNALLY:
     //    1. Token ko 3 parts mein split (header.payload.signature)
     //    2. Base64-decode header + payload
     //    3. Compute HMAC: HMAC(header.payload, getSigningKey())
@@ -197,7 +197,7 @@ public class JwtService {
     //    6. Return Jws<Claims> wrapper
     //    → .getPayload() unwraps Claims
     //
-    // 🔑 EXCEPTIONS jjwt auto-throws:
+    // EXCEPTIONS jjwt auto-throws:
     //    SignatureException     → tampered token
     //    ExpiredJwtException    → token expired
     //    MalformedJwtException  → broken structure
@@ -207,7 +207,7 @@ public class JwtService {
     //    Sab JwtException ke subclass
     //    JwtFilter mein catch hoga (isTokenValid wrapper)
     //
-    // 🔑 PRIVATE because:
+    // PRIVATE because:
     //    Internal parsing logic
     //    Caller specific claim chahiye (email or expiration)
     //    Helper saari parsing wrap karta — DRY
@@ -241,21 +241,21 @@ public class JwtService {
     //       3. UserDetailsService.loadByUsername(email) → User
     //       4. SecurityContextHolder.set(authentication)
     //
-    // 🔑 1-LINE METHOD KYU:
+    // 1-LINE METHOD KYU:
     //    extractAllClaims = heavy work (parse + verify)
     //    extractEmail = thin wrapper (just pluck subject)
     //
     //    Benefits:
-    //       ✅ Caller-friendly API
+    //       Caller-friendly API
     //          JwtFilter: jwtService.extractEmail(token)
     //          NOT: jwtService.extractAllClaims(token).getSubject()
-    //       ✅ Future flexibility
+    //       Future flexibility
     //          Agar subject change to userId (future)
     //          Sirf yahaan update, callers unchanged
-    //       ✅ Abstraction
+    //       Abstraction
     //          Helper internals (parsing, exceptions) hidden
     //
-    // 🔑 EXCEPTION:
+    // EXCEPTION:
     //    Token invalid/expired → extractAllClaims throws
     //    Hum yahaan catch nahi karte
     //    JwtFilter's isTokenValid wrapper catch karega
@@ -287,7 +287,7 @@ public class JwtService {
     //       ↓
     //    true (expired) / false (valid)
     //
-    // 🔑 NOTE — Double-Layer Protection:
+    // NOTE — Double-Layer Protection:
     //    jjwt's parseSignedClaims() bhi expiration check karta
     //    ExpiredJwtException auto-throws on expired tokens
     //
@@ -296,14 +296,14 @@ public class JwtService {
     //       2. Future flexibility (custom expiration logic)
     //       3. Defensive multi-layer check
     //
-    // 🔑 Date.before(other) LOGIC:
+    // Date.before(other) LOGIC:
     //    Returns true if "this date is BEFORE other date"
     //
     //    expirationDate.before(now)?
     //       expirationDate is in PAST → expired → return true
     //       expirationDate is in FUTURE → valid → return false
     //
-    // 🔑 PRIVATE because:
+    // PRIVATE because:
     //    Internal validation step
     //    isTokenValid wrapper public hai — caller uses that
     private boolean isTokenExpired(String token) {
@@ -345,7 +345,7 @@ public class JwtService {
     //       return false
     //    }
     //
-    // 🔑 EXCEPTION HANDLING — Single catch:
+    // EXCEPTION HANDLING — Single catch:
     //    JwtException = PARENT class
     //    Catches ALL subtypes:
     //       SignatureException     → tampered
@@ -357,10 +357,10 @@ public class JwtService {
     //    Single catch = clean boolean API
     //    JwtFilter gets simple true/false
     //
-    // 🔑 3 SCENARIOS:
+    // 3 SCENARIOS:
     //
     //    SCENARIO 1 — Genuine + active:
-    //       Signature ✅ + Not expired ✅ → true
+    //       Signature + Not expired → true
     //
     //    SCENARIO 2 — Genuine but expired:
     //       parseSignedClaims throws ExpiredJwtException

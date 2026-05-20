@@ -4,21 +4,21 @@
 
 ---
 
-## 🎬 STORY — Compiler ka Darwaan vs Runtime ka Dhoka
+## STORY — Compiler ka Darwaan vs Runtime ka Dhoka
 
 > Imagine **2 alag situations**:
 >
-> 🚪 **Checked Exception (Darwaan analogy):**
+> **Checked Exception (Darwaan analogy):**
 > File read karna chahta — compiler **darwaze pe khada** "Bhai, file na mili toh? Pehle batao kya karega!" — **force karta handle karo.**
 >
-> 💥 **Unchecked Exception (Dhoka analogy):**
+> **Unchecked Exception (Dhoka analogy):**
 > Code chal raha tha smoothly, suddenly `null.length()` call kiya — **runtime pe dhoka** mil gaya. Compiler ne kuch nahi roka pehle.
 >
 > Difference: **Checked = compile-time darwaan, Unchecked = runtime ka surprise.**
 
 ---
 
-## 🎨 EXCEPTION HIERARCHY VISUAL
+## EXCEPTION HIERARCHY VISUAL
 
 ```
                        Throwable
@@ -26,7 +26,7 @@
                    Error       Exception
                    (JVM       /          \
                     issues)  RuntimeEx   (others)
-                   ⚠️         (UNCHECKED) (CHECKED)
+                           (UNCHECKED) (CHECKED)
                               │            │
                 ┌─────────────┼────────┐   ├─ IOException
                 │             │        │   ├─ SQLException
@@ -46,13 +46,13 @@
 
 ---
 
-## 💻 CODE — Side by Side
+## CODE — Side by Side
 
 ### Checked Exception (compile-time enforced)
 
 ```java
 public void readFile() {
-    FileReader fr = new FileReader("test.txt");   // ❌ COMPILE ERROR
+    FileReader fr = new FileReader("test.txt");   // COMPILE ERROR
     // "Unhandled exception type FileNotFoundException"
 }
 
@@ -76,8 +76,8 @@ public void readFile() throws FileNotFoundException {
 ```java
 public void useNull() {
     String s = null;
-    s.length();   // ✅ Compiles fine
-                   // 💥 NullPointerException at runtime
+    s.length();   // Compiles fine
+                   // NullPointerException at runtime
 }
 
 // No compile force — but bug crashes app
@@ -85,7 +85,7 @@ public void useNull() {
 
 ---
 
-## 🪤 THE TRAP — Compiler Behavior
+## THE TRAP — Compiler Behavior
 
 ```
 Checked Exception:                 Unchecked Exception:
@@ -96,7 +96,7 @@ Compiler:                          Compiler:
    — try-catch ya throws!"          mujhe kya pata, runtime
    → COMPILE ERROR                  pe pakda jaayega"
                                    → COMPILE OK
-                                   → RUNTIME 💥
+                                   → RUNTIME 
 ```
 
 **Compiler ka philosophy:**
@@ -105,22 +105,22 @@ Compiler:                          Compiler:
 
 ---
 
-## 📊 FULL COMPARISON TABLE
+## FULL COMPARISON TABLE
 
 | Property | Checked | Unchecked |
 |---|---|---|
 | **Parent class** | `Exception` (not RuntimeException) | `RuntimeException` |
-| **Compile-time check** | ✅ Mandatory | ❌ Not enforced |
-| **Must handle/declare?** | ✅ try-catch OR throws | ❌ Optional |
+| **Compile-time check** | Mandatory | Not enforced |
+| **Must handle/declare?** | try-catch OR throws | Optional |
 | **Source typically** | External (file, DB, network) | Internal bugs (null, index) |
 | **Examples** | `IOException`, `SQLException`, `ClassNotFoundException` | `NullPointerException`, `ArrayIndexOutOfBoundsException`, `ArithmeticException`, `IllegalArgumentException` |
-| **Spring `@Transactional` rollback** | ❌ NO by default | ✅ YES by default |
+| **Spring `@Transactional` rollback** | NO by default | YES by default |
 | **Method signature pollution** | High (`throws` everywhere) | None (clean signatures) |
 | **Modern Java preference** | Reduced — most prefer Unchecked | Preferred for business logic |
 
 ---
 
-## 🔥 SPRING `@Transactional` ROLLBACK RULE
+## SPRING `@Transactional` ROLLBACK RULE
 
 **Critical interview gotcha:**
 
@@ -130,11 +130,11 @@ public void saveUser(User user) {
     userRepo.save(user);
     
     if (badThing) {
-        throw new IOException("error");        // ❌ NO ROLLBACK (Checked)
+        throw new IOException("error");        // NO ROLLBACK (Checked)
     }
     
     if (worseThing) {
-        throw new RuntimeException("error");   // ✅ Rollback happens (Unchecked)
+        throw new RuntimeException("error");   // Rollback happens (Unchecked)
     }
 }
 ```
@@ -160,7 +160,7 @@ public void saveUser(...) {
 **Production rule:** Custom domain exceptions hamesha extend `RuntimeException` — clean signatures + automatic rollback.
 
 ```java
-// ✅ Recommended
+// Recommended
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(Long id) {
         super("User not found: " + id);
@@ -170,18 +170,18 @@ public class UserNotFoundException extends RuntimeException {
 
 ---
 
-## 🎯 WHEN TO THROW WHICH
+## WHEN TO THROW WHICH
 
 ### Use Checked when:
-- ✅ **Recoverable** error from EXTERNAL source (file/network/DB)
-- ✅ Caller can reasonably handle (retry, fallback)
-- ⚠️ Avoid for business logic (signature pollution)
+- **Recoverable** error from EXTERNAL source (file/network/DB)
+- Caller can reasonably handle (retry, fallback)
+- Avoid for business logic (signature pollution)
 
 ### Use Unchecked when:
-- ✅ Programming error (null check fail, invalid argument)
-- ✅ Business rule violation
-- ✅ Caller usually can't recover (bug in code)
-- ✅ Preferred in modern Spring/REST APIs
+- Programming error (null check fail, invalid argument)
+- Business rule violation
+- Caller usually can't recover (bug in code)
+- Preferred in modern Spring/REST APIs
 
 ### Real-world examples
 
@@ -206,7 +206,7 @@ public void setAge(int age) {
 
 ---
 
-## 🪤 INTERVIEW TRAPS
+## INTERVIEW TRAPS
 
 ### Trap 1: Error vs Exception confusion
 
@@ -222,10 +222,10 @@ Throwable
 ### Trap 2: Custom exception choosing parent
 
 ```java
-// ❌ Avoid (Checked) — pollutes signatures
+// Avoid (Checked) — pollutes signatures
 public class BusinessRuleException extends Exception { }
 
-// ✅ Modern preferred (Unchecked) — clean signatures
+// Modern preferred (Unchecked) — clean signatures
 public class BusinessRuleException extends RuntimeException { }
 ```
 
@@ -235,18 +235,18 @@ public class BusinessRuleException extends RuntimeException { }
 try {
     riskyMethod();
 } catch (Exception e) {
-    // ✅ Catches both Checked and Unchecked
-    // ⚠️ Too broad — usually catch specific
+    // Catches both Checked and Unchecked
+    // Too broad — usually catch specific
 }
 ```
 
 ### Trap 4: NullPointerException in throws clause
 
 ```java
-// ❌ Useless — Unchecked, compiler doesn't enforce
+// Useless — Unchecked, compiler doesn't enforce
 public void method() throws NullPointerException { }
 
-// ✅ Just throw it normally
+// Just throw it normally
 public void method() {
     if (something == null) throw new NullPointerException();
 }
@@ -254,7 +254,7 @@ public void method() {
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "Checked vs Unchecked exception kya hai?"**
 
@@ -280,7 +280,7 @@ public void method() {
 
 ---
 
-## 💎 POWER PHRASES
+## POWER PHRASES
 
 > **"Checked = compile-time darwaan jo handle force karta. Unchecked = runtime ka surprise. Modern Java mein business logic Unchecked banao — clean signatures + `@Transactional` default rollback."**
 
@@ -288,7 +288,7 @@ public void method() {
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 Checked          → "Compiler darwaan"     → handle / throws MUST
@@ -298,8 +298,8 @@ Unchecked        → "Runtime ka dhoka"     → optional handling
                                             extends RuntimeException
 
 Spring rollback default:
-   Checked    → ❌ commit (no rollback)
-   Unchecked  → ✅ rollback
+   Checked    → commit (no rollback)
+   Unchecked  → rollback
 
 Custom exceptions:
    Modern preference → extends RuntimeException
@@ -311,26 +311,26 @@ Examples:
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "@Transactional checked exception pe rollback karta"
-         ❌ NAHI — sirf RuntimeException by default
-         ✅ rollbackFor = Exception.class lagao
+Trap 1: "@Transactional checked exception pe rollback karta"
+         NAHI — sirf RuntimeException by default
+         rollbackFor = Exception.class lagao
 
-🪤 Trap 2: "Custom exception Exception extend karu"
-         ❌ Modern practice — RuntimeException extend better
-         ✅ Clean signatures + Spring compatibility
+Trap 2: "Custom exception Exception extend karu"
+         Modern practice — RuntimeException extend better
+         Clean signatures + Spring compatibility
 
-🪤 Trap 3: "throws NullPointerException likhna useful hai"
-         ❌ Unchecked — compiler enforce nahi karta
-         ✅ Just throw it, no declaration needed
+Trap 3: "throws NullPointerException likhna useful hai"
+         Unchecked — compiler enforce nahi karta
+         Just throw it, no declaration needed
 
-🪤 Trap 4: "Error catch kar lo"
-         ❌ Error = JVM-level (OutOfMemory) — fatal
-         ✅ Let app die — recovery rarely possible
+Trap 4: "Error catch kar lo"
+         Error = JVM-level (OutOfMemory) — fatal
+         Let app die — recovery rarely possible
 
-🪤 Trap 5: "catch (Exception e) sab catch karta"
-         ❌ Error subclasses NAHI catch hote
-         ✅ catch (Throwable t) sab catch (rare use)
+Trap 5: "catch (Exception e) sab catch karta"
+         Error subclasses NAHI catch hote
+         catch (Throwable t) sab catch (rare use)
 ```

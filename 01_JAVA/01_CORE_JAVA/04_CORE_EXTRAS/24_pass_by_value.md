@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — Java Reference Pass Kyu Nahi Karta?
+## WHY — Java Reference Pass Kyu Nahi Karta?
 
 → **Safety.**
 → Agar actual reference pass hota toh method andar **`s = null`** kar deta → caller ka variable BHI null! **Dangerous.**
@@ -14,7 +14,7 @@
 
 ---
 
-## 📖 STORY — Method Mein Object Pass
+## STORY — Method Mein Object Pass
 
 → Tune method mein Student object pass kiya — method ne andar `name` badal diya
 → Wapas aaya — **name badal gaya**
@@ -26,7 +26,7 @@
 
 ---
 
-## 🧠 Visualization
+## Visualization
 
 ```
 STACK                          HEAP
@@ -53,7 +53,7 @@ st abhi bhi pehle wale "Arpan" pe → ORIGINAL SAFE
 
 ---
 
-## 💻 3 Cases
+## 3 Cases
 
 ### Case 1 — Primitive (int, boolean, double)
 ```java
@@ -65,7 +65,7 @@ System.out.println(num);              // 10 — nahi badla!
 
 ### Case 2 — Object (reference ki copy pass)
 ```java
-void change(Student s) { s.name = "Rahul"; }   // andar ka data badla ✅
+void change(Student s) { s.name = "Rahul"; }   // andar ka data badla 
 Student st = new Student("Arpan");
 change(st);
 System.out.println(st.name);                    // "Rahul" — badla!
@@ -81,7 +81,7 @@ System.out.println(st.name);                            // "Arpan" — NAHI badl
 
 ---
 
-## 📖 Kahani
+## Kahani
 
 > **Dost ko apni notebook ki photocopy di**
 > → Dost ne photocopy pe kuch likha — **teri original nahi badi**
@@ -90,14 +90,14 @@ System.out.println(st.name);                            // "Arpan" — NAHI badl
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **"Java pass by reference hai" — GALAT.**
 > **Java HAMESHA pass by value. Object pe reference ki COPY pass hoti hai.**
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Java is always pass by value. For primitives, the actual value is copied. For objects, the reference is copied — both point to the same object, so state changes reflect. But reassigning the parameter inside the method does not affect the original reference."*
 

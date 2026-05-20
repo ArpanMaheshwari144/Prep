@@ -1,7 +1,7 @@
 package com.arpan.bank.exception;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    InsufficientFundsException = CUSTOM exception
 //    Withdraw amount > balance hua → ye throw hoti
 // ═══════════════════════════════════════════════════════════════════════

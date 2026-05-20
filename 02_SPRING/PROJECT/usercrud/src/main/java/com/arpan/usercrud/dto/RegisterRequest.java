@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    RegisterRequest = INPUT DTO for POST /auth/register
 //    New user signup JSON shape
 // ═══════════════════════════════════════════════════════════════════════
@@ -25,13 +25,13 @@ import lombok.NoArgsConstructor;
 //        "age":      28
 //    }
 //
-// 🔑 SECURITY — Why NO "role" field?
+// SECURITY — Why NO "role" field?
 //
-//    ❌ BAD: Accept role from client
+//    BAD: Accept role from client
 //       Client → { "name": "X", ..., "role": "ADMIN" }
 //       Hacker self-promote kar leta admin
 //
-//    ✅ GOOD: Server hardcode role on register
+//    GOOD: Server hardcode role on register
 //       AuthController.register():
 //          user.setRole("USER");   // always USER for new signups
 //       Admin manually upgrade kare future mein
@@ -47,7 +47,7 @@ import lombok.NoArgsConstructor;
 // FAIL FLOW:
 //    Invalid input → MethodArgumentNotValidException → 400 Bad Request
 //
-// 📐 SOLID — SRP: Sirf register input data
+// SOLID — SRP: Sirf register input data
 // ═══════════════════════════════════════════════════════════════════════
 
 @Data

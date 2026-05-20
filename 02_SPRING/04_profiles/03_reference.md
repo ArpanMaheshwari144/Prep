@@ -1,12 +1,12 @@
-# 🔵 Section 3 — Reference (Q&A + Traps + Power Phrase)
+# Section 3 — Reference (Q&A + Traps + Power Phrase)
 
 > **Use:** Quick lookup for interview prep
 
-📚 [← Back to README](00_README.md) | [← Compose Integration](02_compose_integration.md)
+[← Back to README](00_README.md) | [← Compose Integration](02_compose_integration.md)
 
 ---
 
-## 🎤 Interview Q&A
+## Interview Q&A
 
 **Q: "Spring Profiles kya hain aur kab use?"**
 
@@ -40,51 +40,51 @@
 
 ---
 
-## ⚠️ Trap Box
+## Trap Box
 
 ```
-🪤 Trap 1: Profile filename typo
-         ❌ application-prod.properties (correct)
+Trap 1: Profile filename typo
+         application-prod.properties (correct)
             application-PROD.properties (case-sensitive!)
-         ✅ Lowercase profile names follow naming exactly
+         Lowercase profile names follow naming exactly
 
-🪤 Trap 2: Common settings duplicate in profile files
-         ❌ Sab profile files mein JWT secret duplicate
-         ✅ Common stuff master file mein, DB-specific profile mein
+Trap 2: Common settings duplicate in profile files
+         Sab profile files mein JWT secret duplicate
+         Common stuff master file mein, DB-specific profile mein
 
-🪤 Trap 3: Profile-specific file load nahi hua
-         ❌ Forgot spring.profiles.active=X
-         ✅ Console verify: "1 profile is active: ..."
+Trap 3: Profile-specific file load nahi hua
+         Forgot spring.profiles.active=X
+         Console verify: "1 profile is active: ..."
 
-🪤 Trap 4: Production secrets profile file mein commit
-         ❌ application-prod.properties mein DB password git mein
-         ✅ Production: env vars / Vault / AWS Secrets Manager
+Trap 4: Production secrets profile file mein commit
+         application-prod.properties mein DB password git mein
+         Production: env vars / Vault / AWS Secrets Manager
             Files mein dummy/placeholder values
 
-🪤 Trap 5: @Profile beans mismatch
-         ❌ @Profile("dev") class but actively prod profile
-         ✅ Bean register nahi hoga, NoSuchBeanDefinitionException
+Trap 5: @Profile beans mismatch
+         @Profile("dev") class but actively prod profile
+         Bean register nahi hoga, NoSuchBeanDefinitionException
 
-🪤 Trap 6: Default profile kabhi mention nahi
-         ❌ No active profile + only profile-specific files
-         ✅ application.properties (no suffix) ALWAYS loads
+Trap 6: Default profile kabhi mention nahi
+         No active profile + only profile-specific files
+         application.properties (no suffix) ALWAYS loads
             Default profile name = "default" (implicit)
 
-🪤 Trap 7: Profile + Docker combo
-         ❌ Hardcode profile in JAR — Docker mein switch nahi
-         ✅ Docker run mein env var:
+Trap 7: Profile + Docker combo
+         Hardcode profile in JAR — Docker mein switch nahi
+         Docker run mein env var:
              docker run -e SPRING_PROFILES_ACTIVE=docker ...
 ```
 
 ---
 
-## 💎 Power Phrase (interview lock)
+## Power Phrase (interview lock)
 
 > *"Spring Profiles = environment-specific configuration. application-{profile}.properties files banao (local, docker, dev, prod). Activate via property/CLI/env var (env var highest priority for production). Master file mein common stuff, profile files mein DB+environment-specific. `@Profile` annotation se Java beans bhi profile-aware. JAR ek hi build karo, runtime pe profile decide — clean, safe, 12-factor app pattern."*
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 Profiles = "Outfits for occasion"
@@ -119,7 +119,7 @@ Production pattern:
 
 ---
 
-## 📋 Quick Reference
+## Quick Reference
 
 ```cmd
 REM File create karna
@@ -147,25 +147,25 @@ REM Verify active profile (console first lines)
 
 ---
 
-## 🎯 Today's UserCRUD Setup (proven)
+## Today's UserCRUD Setup (proven)
 
 ```
-✅ application.properties           — common (JPA, JWT, default profile)
-✅ application-local.properties     — Local MySQL57 (3306, root)
-✅ application-docker.properties    — Docker MySQL (3307, rootpass)
-✅ application-compose.properties   — Both Spring + MySQL containerized 🆕
+application.properties           — common (JPA, JWT, default profile)
+application-local.properties     — Local MySQL57 (3306, root)
+application-docker.properties    — Docker MySQL (3307, rootpass)
+application-compose.properties   — Both Spring + MySQL containerized 
 
 Switch tested:
-✅ --spring.profiles.active=local   → local MySQL pe writes (port 3306)
-✅ --spring.profiles.active=docker  → Docker MySQL pe writes (port 3307)
-✅ SPRING_PROFILES_ACTIVE=compose   → via env var in docker-compose.yml 🆕
+--spring.profiles.active=local   → local MySQL pe writes (port 3306)
+--spring.profiles.active=docker  → Docker MySQL pe writes (port 3307)
+SPRING_PROFILES_ACTIVE=compose   → via env var in docker-compose.yml 
 ```
 
 ---
 
 ---
 
-## 🧠 Updated Memory Hook
+## Updated Memory Hook
 
 ```
 Profiles = "Outfits for occasion"
@@ -196,7 +196,7 @@ Naming for context:
 
 ---
 
-## 📋 Updated Quick Reference
+## Updated Quick Reference
 
 ```cmd
 REM Profile via different mechanisms:
@@ -232,7 +232,7 @@ REM Verify active profile (console first lines):
 
 ---
 
-## ✅ Today's Compose Setup Verified Working
+## Today's Compose Setup Verified Working
 
 ```
 File structure:
@@ -240,17 +240,17 @@ File structure:
    ├── application.properties              (master)
    ├── application-local.properties        (Spring host + Local MySQL)
    ├── application-docker.properties       (Spring host + Docker MySQL)
-   └── application-compose.properties 🆕   (Spring container + MySQL container)
+   └── application-compose.properties   (Spring container + MySQL container)
 
 docker-compose.yml:
    environment:
      SPRING_PROFILES_ACTIVE: compose
 
 Result:
-   ✅ Compose injects env var
-   ✅ Spring auto-loads application-compose.properties
-   ✅ jdbc:mysql://mysql:3306/userdb (service name + internal port)
-   ✅ Spring Boot container connects to MySQL container by NAME
-   ✅ Postman /auth/login → 200 OK + new JWT
-   ✅ Same Arpan from yesterday's volume
+   Compose injects env var
+   Spring auto-loads application-compose.properties
+   jdbc:mysql://mysql:3306/userdb (service name + internal port)
+   Spring Boot container connects to MySQL container by NAME
+   Postman /auth/login → 200 OK + new JWT
+   Same Arpan from yesterday's volume
 ```

@@ -4,13 +4,13 @@
 
 ---
 
-## 🎬 STORY — Family Reference
+## STORY — Family Reference
 
 > Imagine **family conversation**:
 >
-> 🧑 **`this`** = *"Mai khud"* (current speaker)
+> **`this`** = *"Mai khud"* (current speaker)
 >
-> 👨 **`super`** = *"Mere papa"* (parent reference)
+> **`super`** = *"Mere papa"* (parent reference)
 >
 > Tu beta hai jo apne **bare mein bhi baat kar sakta** (`this.age`) **aur apne papa ki cheezein bhi access kar sakta** (`super.familyName`).
 >
@@ -18,7 +18,7 @@
 
 ---
 
-## 🎨 VISUAL — Object Reference Tree
+## VISUAL — Object Reference Tree
 
 ```
    class Animal {
@@ -47,7 +47,7 @@
 
 ---
 
-## 💻 CODE — Full Example
+## CODE — Full Example
 
 ```java
 class Animal {
@@ -105,7 +105,7 @@ Doggy breathing                ← super.breathe() — Animal.name used
 
 ---
 
-## 🎯 5 Use Cases of `this`
+## 5 Use Cases of `this`
 
 ### 1. Disambiguate field vs parameter
 ```java
@@ -168,7 +168,7 @@ public class Outer {
 
 ---
 
-## 🎯 5 Use Cases of `super`
+## 5 Use Cases of `super`
 
 ### 1. Call parent constructor
 ```java
@@ -234,7 +234,7 @@ class Dog extends Animal {
 
 ---
 
-## 📊 this vs super — COMPARISON
+## this vs super — COMPARISON
 
 | Property | `this` | `super` |
 |---|---|---|
@@ -243,24 +243,24 @@ class Dog extends Animal {
 | **Access methods** | `this.method()` | `super.method()` (parent's version) |
 | **Constructor call** | `this(args)` — same class | `super(args)` — parent class |
 | **Position in constructor** | Any (after super, but only one of this()/super() first) | MUST be first line if called |
-| **In static methods?** | ❌ NO (no instance) | ❌ NO (no instance) |
+| **In static methods?** | NO (no instance) | NO (no instance) |
 | **Use case** | Disambiguation, chaining, return self | Override, hidden field, parent constructor |
 
 ---
 
-## ⚠️ CRITICAL RULES
+## CRITICAL RULES
 
 ### Rule 1: `super()` must be FIRST line in constructor
 
 ```java
 class Dog extends Animal {
     Dog() {
-        System.out.println("Hi");   // ❌ COMPILE ERROR
+        System.out.println("Hi");   // COMPILE ERROR
         super();                     // must be first
     }
     
     Dog(int x) {
-        super();                     // ✅ OK
+        super();                     // OK
         System.out.println("Hi");
     }
 }
@@ -272,7 +272,7 @@ class Dog extends Animal {
 class Dog extends Animal {
     Dog() {
         this(0);
-        super();    // ❌ COMPILE ERROR — only one allowed
+        super();    // COMPILE ERROR — only one allowed
     }
     
     Dog(int x) { }
@@ -297,8 +297,8 @@ class Dog extends Animal {
 ```java
 class Dog extends Animal {
     static void info() {
-        this.name;         // ❌ COMPILE ERROR
-        super.name;        // ❌ COMPILE ERROR
+        this.name;         // COMPILE ERROR
+        super.name;        // COMPILE ERROR
     }
 }
 ```
@@ -307,7 +307,7 @@ class Dog extends Animal {
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "`this` aur `super` mein difference?"**
 
@@ -333,13 +333,13 @@ class Dog extends Animal {
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"`this` = current object reference — fields, methods, constructor chain (`this(args)`). `super` = parent class reference — overridden methods, hidden fields, parent constructor (`super(args)`). `super()` constructor mein first line mandatory. Static methods mein dono allowed nahi."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 this   → "Mai khud"          → current object
@@ -360,32 +360,32 @@ Implicit super():
    }
 
 Static methods:
-   ❌ this.field      (no current instance)
-   ❌ super.method()  (no parent instance reference)
+   this.field      (no current instance)
+   super.method()  (no parent instance reference)
 ```
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "super() can be anywhere in constructor"
-         ❌ MUST be FIRST line if explicitly called
-         ✅ Otherwise compile error
+Trap 1: "super() can be anywhere in constructor"
+         MUST be FIRST line if explicitly called
+         Otherwise compile error
 
-🪤 Trap 2: "this() and super() can both be in same constructor"
-         ❌ Only ONE allowed
-         ✅ Mutually exclusive
+Trap 2: "this() and super() can both be in same constructor"
+         Only ONE allowed
+         Mutually exclusive
 
-🪤 Trap 3: "Static method mein this use ho sakta"
-         ❌ NAHI — no instance context
-         ✅ Static methods class-level, not object-level
+Trap 3: "Static method mein this use ho sakta"
+         NAHI — no instance context
+         Static methods class-level, not object-level
 
-🪤 Trap 4: "super.field overridden hota"
-         ❌ Fields HIDDEN hote (shadowing)
-         ✅ Methods overridden hote, fields hidden
+Trap 4: "super.field overridden hota"
+         Fields HIDDEN hote (shadowing)
+         Methods overridden hote, fields hidden
 
-🪤 Trap 5: "Implicit super() always works"
-         ❌ Parent ke pas no-arg constructor MUST ho
-         ✅ Otherwise child mein super(args) explicit
+Trap 5: "Implicit super() always works"
+         Parent ke pas no-arg constructor MUST ho
+         Otherwise child mein super(args) explicit
 ```

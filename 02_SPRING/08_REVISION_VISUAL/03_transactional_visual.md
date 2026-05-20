@@ -1,4 +1,4 @@
-# 💳 @Transactional — Visual Revision
+# @Transactional — Visual Revision
 
 ---
 
@@ -13,8 +13,8 @@
    Both must succeed TOGETHER.
    
    Imagine Step 1 ho gaya, Step 2 ke time SERVER CRASH:
-      ❌ Tera ₹500 gone
-      ❌ Suresh ko mila NAHI
+      Tera ₹500 gone
+      Suresh ko mila NAHI
       = ₹500 vanished into thin air!
 ```
 
@@ -107,7 +107,7 @@ public class TransferService {
 A — ATOMICITY
    "Sab ya kuch nahi"
    ┌───┬───┬───┐         ┌───┬───┬───┐
-   │ ✓ │ ✓ │ ✓ │   OR    │ ✗ │ ✗ │ ✗ │
+   │ │ │ │   OR    │ │ │ │
    └───┴───┴───┘         └───┴───┴───┘
    All commit             All rollback
 
@@ -200,14 +200,14 @@ USE:
 ```
 DEFAULT BEHAVIOR:
    Spring rollback ONLY on:
-      ✅ RuntimeException
-      ✅ Error
-      ❌ Checked Exception (IOException, SQLException)
+      RuntimeException
+      Error
+      Checked Exception (IOException, SQLException)
          = NO ROLLBACK!
 ```
 
 ```java
-// ⚠️ THIS WILL NOT ROLLBACK:
+// THIS WILL NOT ROLLBACK:
 @Transactional
 public void method() throws IOException {
     repo.save(...);
@@ -218,7 +218,7 @@ public void method() throws IOException {
 ```
 
 ```java
-// ✅ FIX:
+// FIX:
 @Transactional(rollbackFor = Exception.class)
 public void method() throws IOException {
     // Now ALL exceptions trigger rollback
@@ -285,7 +285,7 @@ FIX OPTIONS:
 
 ---
 
-## 🔟 Read-Only Optimization
+## Read-Only Optimization
 
 ```java
 @Transactional(readOnly = true)
@@ -296,10 +296,10 @@ public List<User> findAll() {
 
 ```
 WHY readOnly = true?
-   ✅ DB driver knows = no write needed
-   ✅ Hibernate skips dirty checking
-   ✅ Faster for read queries
-   ✅ Some DBs route to read replicas
+   DB driver knows = no write needed
+   Hibernate skips dirty checking
+   Faster for read queries
+   Some DBs route to read replicas
 
 USE: All getter/finder methods
 ```
@@ -350,7 +350,7 @@ public class AuditService {
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
 @Transactional       → "Sab ya kuch nahi"
@@ -369,7 +369,7 @@ readOnly=true        → optimization for finders
 
 ---
 
-## 💎 One-Line Summary
+## One-Line Summary
 
 ```
 "@Transactional = MySQL ka START TRANSACTION + COMMIT/ROLLBACK
@@ -378,4 +378,4 @@ readOnly=true        → optimization for finders
                   Same JDBC under the hood."
 ```
 
-📚 [← Back to SPRING](../)
+[← Back to SPRING](../)

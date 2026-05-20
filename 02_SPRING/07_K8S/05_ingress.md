@@ -1,12 +1,12 @@
-# 🟡 Topic 5 — Ingress (External Traffic Routing)
+# Topic 5 — Ingress (External Traffic Routing)
 
 > **TL;DR:** Ingress = K8s ka NGINX. Same role, same logs, same kaam. Bus K8s context mein.
 
-📚 [← Back to README](00_README.md) | [← Service](04_service.md) | [ConfigMap+Secret →](06_configmap_secret.md)
+[← Back to README](00_README.md) | [← Service](04_service.md) | [ConfigMap+Secret →](06_configmap_secret.md)
 
 ---
 
-## 🎯 ONE-LINE ANSWER (yaad rakh)
+## ONE-LINE ANSWER (yaad rakh)
 
 ```
 Ingress = NGINX (in K8s context)
@@ -20,7 +20,7 @@ Bus or kuch nahi.
 
 ---
 
-## 🤔 The Problem
+## The Problem
 
 ```
 Tu ne 5 microservices banaye:
@@ -35,14 +35,14 @@ Tu ne 5 microservices banaye:
 
 ```
 ALSO:
-   ❌ TLS certs har service pe alag manage
-   ❌ Path routing (/api/users vs /api/orders) impossible
-   ❌ Single domain mein multiple services = headache
+   TLS certs har service pe alag manage
+   Path routing (/api/users vs /api/orders) impossible
+   Single domain mein multiple services = headache
 ```
 
 ---
 
-## 💡 Solution — Ingress (just like nginx in AWS)
+## Solution — Ingress (just like nginx in AWS)
 
 ```
 Ingress = SINGLE entry point + ROUTING RULES
@@ -56,13 +56,13 @@ Ingress = SINGLE entry point + ROUTING RULES
       api.com/orders   → order-service
       api.com/payments → payment-service
       
-   = 1 LB instead of 5 = cost saved ✅
-   = Centralized routing + TLS ✅
+   = 1 LB instead of 5 = cost saved 
+   = Centralized routing + TLS 
 ```
 
 ---
 
-## 🎬 STORY — Office Reception
+## STORY — Office Reception
 
 ```
 Without reception (each Service = LoadBalancer):
@@ -84,7 +84,7 @@ With reception (Ingress = nginx):
 
 ---
 
-## 🎨 Visual
+## Visual
 
 ```
    INTERNET
@@ -109,18 +109,18 @@ With reception (Ingress = nginx):
 
 ---
 
-## 📊 Logs Captured (same as nginx)
+## Logs Captured (same as nginx)
 
 ```
 Ingress level pe log hota:
-   ✅ Source IP (kis user)
-   ✅ Destination URL (kahan hit)
-   ✅ HTTP status (200/500/404)
-   ✅ Response time
-   ✅ User-Agent (browser/app)
-   ✅ Referrer
-   ✅ Request size + response size
-   ✅ Timestamp
+   Source IP (kis user)
+   Destination URL (kahan hit)
+   HTTP status (200/500/404)
+   Response time
+   User-Agent (browser/app)
+   Referrer
+   Request size + response size
+   Timestamp
 
 = Same as AWS nginx access logs
 = Same nginx log format option (combined log format)
@@ -128,7 +128,7 @@ Ingress level pe log hota:
 
 ---
 
-## 🎯 Ingress Provides
+## Ingress Provides
 
 ```
 1. SINGLE ENTRY POINT      → 1 LB instead of N
@@ -142,7 +142,7 @@ Ingress level pe log hota:
 
 ---
 
-## 🏗️ Two Components of Ingress
+## Two Components of Ingress
 
 ```
 1. INGRESS RESOURCE (YAML rules — what tu likhta)
@@ -156,13 +156,13 @@ Ingress level pe log hota:
    • Traefik
    • Kong
    
-   ⚠️ Ingress resource alone = USELESS without controller
+   Ingress resource alone = USELESS without controller
    Controller = the engine that READS rules + ROUTES traffic
 ```
 
 ---
 
-## 📝 Ingress Manifest Example
+## Ingress Manifest Example
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -210,7 +210,7 @@ spec:
 
 ---
 
-## 🎯 Routing Patterns
+## Routing Patterns
 
 ### **Path-based routing** (most common):
 ```
@@ -243,7 +243,7 @@ Path + host together
 
 ---
 
-## 🆚 Service vs Ingress
+## Service vs Ingress
 
 | | **Service (LoadBalancer)** | **Ingress** |
 |---|---|---|
@@ -256,7 +256,7 @@ Path + host together
 
 ---
 
-## 🔥 Production Pattern (AWS EKS example)
+## Production Pattern (AWS EKS example)
 
 ```
    INTERNET
@@ -278,7 +278,7 @@ Path + host together
 
 ---
 
-## 🛠️ kubectl Commands
+## kubectl Commands
 
 ```cmd
 kubectl apply -f ingress.yaml         # create ingress
@@ -295,7 +295,7 @@ kubectl logs -n ingress-nginx <controller-pod-name>
 
 ---
 
-## 🎤 Quick Interview Sense
+## Quick Interview Sense
 
 **Q: "Ingress kya hai?"**
 
@@ -311,39 +311,39 @@ kubectl logs -n ingress-nginx <controller-pod-name>
 
 ---
 
-## ⚠️ Common Traps
+## Common Traps
 
 ```
-🪤 Trap 1: Ingress without Controller
-         ❌ Apply Ingress YAML, expect routing
-         ✅ Install Ingress Controller FIRST (nginx-ingress)
+Trap 1: Ingress without Controller
+         Apply Ingress YAML, expect routing
+         Install Ingress Controller FIRST (nginx-ingress)
 
-🪤 Trap 2: Wrong ingressClassName
-         ❌ Default class but specifying wrong name
-         ✅ Match controller's class (nginx, alb, etc.)
+Trap 2: Wrong ingressClassName
+         Default class but specifying wrong name
+         Match controller's class (nginx, alb, etc.)
 
-🪤 Trap 3: TLS cert in wrong namespace
-         ❌ Secret in default, Ingress in app namespace
-         ✅ TLS Secret + Ingress in SAME namespace
+Trap 3: TLS cert in wrong namespace
+         Secret in default, Ingress in app namespace
+         TLS Secret + Ingress in SAME namespace
 
-🪤 Trap 4: Path conflict
-         ❌ Multiple paths overlap (/users vs /users/profile)
-         ✅ Order matters; specific paths first
+Trap 4: Path conflict
+         Multiple paths overlap (/users vs /users/profile)
+         Order matters; specific paths first
 
-🪤 Trap 5: HTTPS expected without TLS section
-         ❌ rules.host: api.com but no tls: block
-         ✅ Always include tls section for HTTPS
+Trap 5: HTTPS expected without TLS section
+         rules.host: api.com but no tls: block
+         Always include tls section for HTTPS
 ```
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > *"Ingress = K8s ka nginx. L7 HTTP/HTTPS routing layer above Services. Single entry point with path-based + host-based rules. TLS termination centralized. Saves cost — 1 LoadBalancer instead of N. Ingress = Resource (YAML rules) + Controller (nginx-ingress / AWS ALB — actual implementation). Logs same as nginx (IP, URL, status, user-agent). Production microservices use Ingress for centralized routing + TLS."*
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 Ingress = "Same as nginx, just K8s context"
@@ -365,17 +365,17 @@ Two parts:
 
 ---
 
-## ✅ Concept Locked
+## Concept Locked
 
 ```
-✅ Ingress = K8s ka nginx (CORE INSIGHT)
-✅ L7 (HTTP/HTTPS) routing layer
-✅ Path-based + host-based routing
-✅ TLS termination centralized
-✅ Cost effective (1 LB vs N LBs)
-✅ Resource (YAML) + Controller (engine) = both needed
-✅ Logs same as nginx
-✅ AWS production = ALB controller usually
+Ingress = K8s ka nginx (CORE INSIGHT)
+L7 (HTTP/HTTPS) routing layer
+Path-based + host-based routing
+TLS termination centralized
+Cost effective (1 LB vs N LBs)
+Resource (YAML) + Controller (engine) = both needed
+Logs same as nginx
+AWS production = ALB controller usually
 ```
 
-📚 [← Back to README](00_README.md) | [← Service](04_service.md) | [ConfigMap+Secret →](06_configmap_secret.md)
+[← Back to README](00_README.md) | [← Service](04_service.md) | [ConfigMap+Secret →](06_configmap_secret.md)

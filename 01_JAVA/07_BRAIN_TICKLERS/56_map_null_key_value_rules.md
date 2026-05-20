@@ -4,30 +4,30 @@
 
 ---
 
-## 🤔 Common Confusion
+## Common Confusion
 
 > "LinkedHashMap null key allow karta hai ya nahi?"
 > Jawab: **HAAN, allow karta hai** — kyunki LinkedHashMap **HashMap ko extend** karta. Same null rules.
 
 ---
 
-## 📊 Sab Maps — Null Rules
+## Sab Maps — Null Rules
 
 | Map | null key? | null value? | Reason |
 |-----|-----------|-------------|--------|
-| **HashMap** | ✅ 1 allowed | ✅ multiple | hashCode special handle (`null` → bucket 0) |
-| **LinkedHashMap** | ✅ 1 allowed | ✅ multiple | HashMap **extend** karta — same rules |
-| **TreeMap** | ❌ NO | ✅ allowed | sort = `null.compareTo()` = crash |
-| **ConcurrentHashMap** | ❌ NO | ❌ NO | thread safety + ambiguity |
-| **Hashtable** (legacy) | ❌ NO | ❌ NO | thread-safe, null banned |
+| **HashMap** | 1 allowed | multiple | hashCode special handle (`null` → bucket 0) |
+| **LinkedHashMap** | 1 allowed | multiple | HashMap **extend** karta — same rules |
+| **TreeMap** | NO | allowed | sort = `null.compareTo()` = crash |
+| **ConcurrentHashMap** | NO | NO | thread safety + ambiguity |
+| **Hashtable** (legacy) | NO | NO | thread-safe, null banned |
 
 ---
 
-## 💻 Code Proof — LinkedHashMap null key WORKS
+## Code Proof — LinkedHashMap null key WORKS
 
 ```java
 LinkedHashMap<String, Integer> map = new LinkedHashMap<>();
-map.put(null, 100);                    // ✅ kaam karta
+map.put(null, 100);                    // kaam karta
 map.put("Arpan", 200);
 map.put(null, 999);                    // null key 1 hi hota — value REPLACE
 
@@ -37,7 +37,7 @@ System.out.println(map);
 
 ---
 
-## 🔴 TreeMap mein null Banned KYU?
+## TreeMap mein null Banned KYU?
 
 → TreeMap **sort karta** keys ko (Red-Black Tree)
 → Sort karne ke liye `compareTo()` chahiye
@@ -46,7 +46,7 @@ System.out.println(map);
 
 ---
 
-## 🔴 ConcurrentHashMap mein null Banned KYU?
+## ConcurrentHashMap mein null Banned KYU?
 
 → Multi-thread mein `get(key)` ne null return kiya — **kya matlab?**
 → Option 1: Key nahi hai
@@ -57,7 +57,7 @@ System.out.println(map);
 
 ---
 
-## 🎯 1-Line Yaad
+## 1-Line Yaad
 
 > **HashMap, LinkedHashMap → null key 1 allowed (LinkedHashMap = HashMap ka child).**
 > **TreeMap → sort crash, no null key. Null value OK.**
@@ -65,6 +65,6 @@ System.out.println(map);
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"HashMap and LinkedHashMap allow one null key — LinkedHashMap extends HashMap so same rules apply. TreeMap rejects null keys because it cannot compare them. ConcurrentHashMap rejects all nulls to avoid the race condition between `get()` and `containsKey()`."*

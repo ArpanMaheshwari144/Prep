@@ -15,7 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    AuthController = AUTH endpoints (register + login)
 //    Reception desk role — guest entry + keycard issuance
 //
@@ -26,19 +26,19 @@ import org.springframework.web.bind.annotation.*;
 //    Public endpoints (SecurityConfig mein /auth/** permitAll)
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🔑 3 DEPENDENCIES (constructor inject):
+// 3 DEPENDENCIES (constructor inject):
 //    1. UserService            → register user logic
 //    2. AuthenticationManager  → login credential verification
 //    3. JwtService             → generate JWT tokens
 //
-// 🔑 REGISTER FLOW:
+// REGISTER FLOW:
 //    1. Receive RegisterRequest (name, email, password)
 //    2. @Valid auto-validates input
 //    3. Convert to User entity (raw password)
 //    4. UserService.register() = BCrypt hash + save
 //    5. Return saved User (no password in response — DTO ideally)
 //
-// 🔑 LOGIN FLOW:
+// LOGIN FLOW:
 //    1. Receive LoginRequest (email, password)
 //    2. Build UsernamePasswordAuthenticationToken
 //    3. AuthenticationManager.authenticate()
@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.*;
 //    5. Generate JWT via JwtService
 //    6. Return TokenResponse (accessToken + refreshToken)
 //
-// 🔑 NOTE — Refresh Token:
+// NOTE — Refresh Token:
 //    Abhi simplified — accessToken aur refreshToken dono same
 //    (humne ek generateToken method banaya hai)
 //    Future enhancement: alag generateRefreshToken (longer expiry)
@@ -92,7 +92,7 @@ public class AuthController {
     // Email + password verify → JWT return
     //
     // ═══════════════════════════════════════════════════════════
-    //  🔥 authManager.authenticate(...) = ONE LINE FULL AUTH PIPELINE
+    //  authManager.authenticate(...) = ONE LINE FULL AUTH PIPELINE
     // ═══════════════════════════════════════════════════════════
     //
     // 1. UsernamePasswordAuthenticationToken banao
@@ -126,7 +126,7 @@ public class AuthController {
     //    Manually karte to 30+ lines
     //    Return value yahaan use NAHI kar rahe (sirf success/fail matter)
     //
-    // 🔑 EXCEPTIONS (all extend AuthenticationException):
+    // EXCEPTIONS (all extend AuthenticationException):
     //    UsernameNotFoundException → wrong email
     //    BadCredentialsException   → wrong password
     //    LockedException           → account locked

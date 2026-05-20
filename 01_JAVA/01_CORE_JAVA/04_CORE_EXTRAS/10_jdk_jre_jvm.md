@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — JDK vs JRE vs JVM Alag Kyun?
+## WHY — JDK vs JRE vs JVM Alag Kyun?
 
 → **JVM** = bytecode execute kare (**WORA ka foundation**)
 → **JRE** = JVM + libraries (run karne ke liye enough)
@@ -14,7 +14,7 @@
 
 ---
 
-## 🧠 Visualization
+## Visualization
 
 ```
 ┌──────────────────────────────────────────────────────────┐
@@ -48,7 +48,7 @@
 
 ---
 
-## 📖 STORY (V90 ka quick recap)
+## STORY (V90 ka quick recap)
 
 → `HelloWorld.java` → compile → `HelloWorld.class` (bytecode) → **JVM run karta**
 → **JDK** = JRE + compiler + tools
@@ -60,13 +60,13 @@
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **Server pe sirf run karna hai → JRE.**
 > **Develop karna hai → JDK.**
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"JVM executes bytecode. JRE is JVM plus libraries needed to run Java. JDK is JRE plus compiler and dev tools. JDK contains JRE which contains JVM."*

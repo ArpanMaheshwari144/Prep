@@ -1,4 +1,4 @@
-# 📜 String Internal — Visual Revision
+# String Internal — Visual Revision
 
 ---
 
@@ -7,7 +7,7 @@
 ```
 Imagine STONE TABLET:
    ┌────────────────────────┐
-   │  🪨  "Hello"            │
+   │   "Hello"            │
    └────────────────────────┘
    
    Once carved → CANNOT change
@@ -194,8 +194,8 @@ StringBuilder = WHITEBOARD
 │ Mutable?           │ YES              │ YES              │
 │ Thread-safe?       │ NO               │ YES (synchronized│
 │ Performance        │ FASTER            │ SLOWER (locking) │
-│ Single-thread use  │ ✅                │ ❌ (overkill)    │
-│ Multi-thread use   │ ❌                │ ✅               │
+│ Single-thread use  │                │ (overkill)    │
+│ Multi-thread use   │                │               │
 └────────────────────┴──────────────────┴──────────────────┘
 ```
 
@@ -239,12 +239,12 @@ s1.equals(s3);        // true  (content)
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-String           = 🪨 stone (immutable, pool sharing)
-StringBuilder    = 🖍️  whiteboard single-thread
-StringBuffer     = 🖍️  whiteboard multi-thread (locked)
+String           = stone (immutable, pool sharing)
+StringBuilder    =  whiteboard single-thread
+StringBuffer     =  whiteboard multi-thread (locked)
 
 "==" → reference (same memory?)
 ".equals()" → content (same letters?)
@@ -252,4 +252,4 @@ StringBuffer     = 🖍️  whiteboard multi-thread (locked)
 intern() → pool mein force daal
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

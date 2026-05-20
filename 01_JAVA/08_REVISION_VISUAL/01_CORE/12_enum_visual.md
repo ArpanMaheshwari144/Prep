@@ -1,4 +1,4 @@
-# 🎯 Enum — Visual Revision
+# Enum — Visual Revision
 
 ---
 
@@ -7,9 +7,9 @@
 ```
 Imagine traffic light:
    Sirf 3 values possible:
-      🔴 RED
-      🟡 YELLOW
-      🟢 GREEN
+      RED
+      YELLOW
+      GREEN
    
    Koi 4th value nahi hoti
    = FIXED SET
@@ -39,10 +39,10 @@ class TrafficLight {
 int light = TrafficLight.RED;
 
 // Problems:
-//   ❌ Could pass ANY int (light = 99)
-//   ❌ No type safety
-//   ❌ Hard to read in debugger (int 1 = what?)
-//   ❌ Switch errors easy
+//   Could pass ANY int (light = 99)
+//   No type safety
+//   Hard to read in debugger (int 1 = what?)
+//   Switch errors easy
 ```
 
 ---
@@ -56,16 +56,16 @@ enum TrafficLight {
 
 // Usage:
 TrafficLight light = TrafficLight.RED;
-// light = 99 → ❌ compile error
+// light = 99 → compile error
 // = TYPE SAFE
 ```
 
 ```
 Benefits:
-   ✅ Limited to defined values
-   ✅ Type safe
-   ✅ Readable
-   ✅ Switch-friendly
+   Limited to defined values
+   Type safe
+   Readable
+   Switch-friendly
 ```
 
 ---
@@ -196,10 +196,10 @@ DatabaseConnection.INSTANCE.query("SELECT *");
 
 ```
 WHY enum singleton?
-   ✅ Thread-safe by default
-   ✅ Serialization safe
-   ✅ Reflection-attack safe
-   ✅ Concise (one line)
+   Thread-safe by default
+   Serialization safe
+   Reflection-attack safe
+   Concise (one line)
    
    = "Best way to implement Singleton" — Joshua Bloch
 ```
@@ -212,37 +212,37 @@ WHY enum singleton?
 ┌──────────────────┬────────────────┬─────────────────┐
 │  Aspect          │  Constants     │  Enum           │
 ├──────────────────┼────────────────┼─────────────────┤
-│ Type safety      │ ❌             │ ✅              │
-│ Limited values   │ ❌             │ ✅              │
-│ Switch support   │ ⚠️ ints only   │ ✅ proper        │
-│ Built-in methods │ ❌             │ ✅              │
-│ Custom fields    │ ❌             │ ✅              │
-│ Polymorphism     │ ❌             │ ✅              │
-│ Singleton-safe   │ Manual         │ ✅ built-in     │
+│ Type safety      │             │              │
+│ Limited values   │             │              │
+│ Switch support   │ ints only   │ proper        │
+│ Built-in methods │             │              │
+│ Custom fields    │             │              │
+│ Polymorphism     │             │              │
+│ Singleton-safe   │ Manual         │ built-in     │
 └──────────────────┴────────────────┴─────────────────┘
 ```
 
 ---
 
-## 🔟 Common Use Cases
+## Common Use Cases
 
 ```
-✅ Days of week
-✅ Months
-✅ Status states (PENDING, APPROVED, REJECTED)
-✅ HTTP methods (GET, POST, PUT, DELETE)
-✅ User roles (ADMIN, USER, GUEST)
-✅ Card suits (HEARTS, SPADES, ...)
-✅ Singleton implementation
-✅ Strategy pattern (operation enum example)
+Days of week
+Months
+Status states (PENDING, APPROVED, REJECTED)
+HTTP methods (GET, POST, PUT, DELETE)
+User roles (ADMIN, USER, GUEST)
+Card suits (HEARTS, SPADES, ...)
+Singleton implementation
+Strategy pattern (operation enum example)
 ```
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-Enum = 🚦 Traffic light (fixed set, no others)
+Enum = Traffic light (fixed set, no others)
 
 Without Enum: int constants → unsafe
 With Enum   : type-safe, readable, powerful
@@ -259,4 +259,4 @@ Power:
    • Singleton (Bloch's favorite)
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

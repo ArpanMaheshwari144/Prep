@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    RefreshRequest = INPUT DTO for /auth/refresh + /auth/logout
 //    Used by 2 endpoints (both need refresh token in body)
 // ═══════════════════════════════════════════════════════════════════════
@@ -43,7 +43,7 @@ import lombok.NoArgsConstructor;
 //    Sirf @NotBlank — token presence check
 //    Actual format/signature server side validate hota (JwtService)
 //
-// 📐 SOLID — SRP: Sirf refresh token input
+// SOLID — SRP: Sirf refresh token input
 // ═══════════════════════════════════════════════════════════════════════
 
 @Data

@@ -1,4 +1,4 @@
-# 🚀 Java 8 — Lambda + Functional Interfaces
+# Java 8 — Lambda + Functional Interfaces
 
 ---
 
@@ -192,7 +192,7 @@ Memory: PFCS = Predicate, Function, Consumer, Supplier
 
 ---
 
-## 🔟 Method References (::)
+## Method References (::)
 
 ```
 Lambda ka shortest form jab method already exists.
@@ -272,7 +272,7 @@ RULE:
    (not changed after lambda created)
    
    multiplier = 3;     // OK to capture
-   multiplier = 5;     // ❌ compile error if used in lambda
+   multiplier = 5;     // compile error if used in lambda
 ```
 
 ---
@@ -300,7 +300,7 @@ Method Reference:
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
 Lambda      = anonymous function (shortcut)
@@ -323,4 +323,4 @@ Capture = lambda reads enclosing variables
           (must be effectively final)
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

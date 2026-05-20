@@ -1,7 +1,7 @@
 package com.arpan.bank.model;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    FixedDeposit = Locked-in deposit account
 //    7% interest (highest among 3 types)
 //    Money locked for fixed period
@@ -39,8 +39,8 @@ package com.arpan.bank.model;
 //    }
 //    = Runtime polymorphism
 //
-// 🎨 PATTERN: Template Method (concrete implementation)
-// 📐 SOLID — LSP: FixedDeposit fully substitutable for Account
+// PATTERN: Template Method (concrete implementation)
+// SOLID — LSP: FixedDeposit fully substitutable for Account
 // ═══════════════════════════════════════════════════════════════════════
 
 public class FixedDeposit extends Account {

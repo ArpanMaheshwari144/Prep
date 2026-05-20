@@ -1,4 +1,4 @@
-# 🗺️ Map Variants — Visual Revision
+# Map Variants — Visual Revision
 
 ---
 
@@ -18,17 +18,17 @@
 ```
 Imagine 4 types of shelves:
 
-   📦 HashMap     = jumbled box
+   HashMap     = jumbled box
       Tu daala, jab nikalna hai = fast find
       Order? Random
    
-   📚 LinkedHashMap = stack with date sticker
+   LinkedHashMap = stack with date sticker
       Jis order mein daala, same order remembered
    
-   📖 TreeMap     = alphabetically sorted shelf
+   TreeMap     = alphabetically sorted shelf
       Auto-sorted by key name
    
-   📋 HashSet     = guest list (just names)
+   HashSet     = guest list (just names)
       Naam unique, value nahi store
 ```
 
@@ -120,25 +120,25 @@ map.put("Mango", 3);
 
 ```
 HashMap:
-   ✅ Default choice
-   ✅ Need fast K-V lookup
-   ✅ Order doesn't matter
+   Default choice
+   Need fast K-V lookup
+   Order doesn't matter
    = 80% use cases
 
 LinkedHashMap:
-   ✅ Need insertion order remembered
-   ✅ LRU cache implementation
-   ✅ Iteration must follow add order
+   Need insertion order remembered
+   LRU cache implementation
+   Iteration must follow add order
 
 TreeMap:
-   ✅ Need sorted keys
-   ✅ Range queries (subMap, headMap, tailMap)
-   ✅ "First key", "Last key" operations
+   Need sorted keys
+   Range queries (subMap, headMap, tailMap)
+   "First key", "Last key" operations
 
 HashSet:
-   ✅ Just check existence (no value)
-   ✅ Unique items
-   ✅ Remove duplicates
+   Just check existence (no value)
+   Unique items
+   Remove duplicates
 ```
 
 ---
@@ -209,7 +209,7 @@ TreeSet internally uses TreeMap
 
 ---
 
-## 🔟 Full Hierarchy
+## Full Hierarchy
 
 ```
         Map (interface)
@@ -230,16 +230,16 @@ TreeSet internally uses TreeMap
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-HashMap       = 📦 jumbled box  (fast, no order)
-LinkedHashMap = 📚 dated stack  (insertion order)
-TreeMap       = 📖 alphabetical (sorted)
-HashSet       = 📋 guest list  (just keys)
+HashMap       = jumbled box  (fast, no order)
+LinkedHashMap = dated stack  (insertion order)
+TreeMap       = alphabetical (sorted)
+HashSet       = guest list  (just keys)
 
 LRU cache     = LinkedHashMap with accessOrder=true
 TreeSet       = sorted unique items
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

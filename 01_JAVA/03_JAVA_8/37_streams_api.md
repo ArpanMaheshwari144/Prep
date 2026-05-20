@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Active Patients ki List
+## STORY — Active Patients ki List
 
 → Manager ne bola — *"saare panelists mein se sirf **active wale** dhoondho, unke **naam nikalo, alphabetical sort karo, ek list bana do**."*
 → Purana style mein for loop, `if` condition, naya list, `Collections.sort()`
@@ -14,7 +14,7 @@
 
 ---
 
-## 🟡 WHY — Streams Kya Solve Karta?
+## WHY — Streams Kya Solve Karta?
 
 → Loop mein **filter + transform + sort** sab mix ho jaate
 → Streams = **declarative pipeline** — jo karna chahiye wo bolo, kaise nahi
@@ -22,7 +22,7 @@
 
 ---
 
-## ⚡ Streams Ka Core Flow (Yaad Rakh!)
+## Streams Ka Core Flow (Yaad Rakh!)
 
 ```
 1. SOURCE        →  data lao (findAll, list, set, anything)
@@ -60,7 +60,7 @@ repository.findAll()                          // 1. SOURCE
 
 ---
 
-## 🧠 Pipeline Pattern
+## Pipeline Pattern
 
 ```
 SOURCE              INTERMEDIATE (LAZY)            TERMINAL (TRIGGER)
@@ -76,7 +76,7 @@ Source > filter > map > sorted (LAZY) > collect (TERMINAL = trigger)
 
 ---
 
-## 💻 Old vs New
+## Old vs New
 
 ```java
 // Purana style — 5 lines
@@ -98,7 +98,7 @@ List<String> result = panelists.stream()
 
 ---
 
-## 🎯 Important Operations — PFCS Connection
+## Important Operations — PFCS Connection
 
 | Operation | Kya leta | Kya karta |
 |-----------|----------|-----------|
@@ -114,7 +114,7 @@ List<String> result = panelists.stream()
 
 ---
 
-## 💻 Common Patterns
+## Common Patterns
 
 ### filter + map + collect
 ```java
@@ -150,7 +150,7 @@ panelists.stream()
 
 ---
 
-## 📦 Collectors — Result Format
+## Collectors — Result Format
 
 ```java
 .collect(Collectors.toList())                       // List
@@ -162,17 +162,17 @@ panelists.stream()
 
 ---
 
-## 🔴 TRAP 1 — Stream Ek Baar Use
+## TRAP 1 — Stream Ek Baar Use
 
 > **Stream ek baar use ho sakta — dobara `.filter()` ya `.map()` call kiya toh `IllegalStateException`. Naya stream banao.**
 
 ```java
 Stream<Panelist> s = panelists.stream();
-s.filter(p -> p.isActive()).count();    // ✅ first use
-s.map(p -> p.getName());                // 🔴 IllegalStateException — already used
+s.filter(p -> p.isActive()).count();    // first use
+s.map(p -> p.getName());                // IllegalStateException — already used
 ```
 
-## 🔴 TRAP 2 — Lazy Operations
+## TRAP 2 — Lazy Operations
 
 > **Intermediate operations (filter, map, sorted) LAZY hain — jab tak terminal (`collect`, `forEach`, `count`) na aaye, kuch nahi hota.**
 
@@ -186,7 +186,7 @@ panelists.stream().filter(p -> {
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Streams API provides a declarative pipeline for data processing — filter, map, sort, collect in a chain. Intermediate operations are lazy and only execute when a terminal operation like `collect()` or `forEach()` is called. Collectors determine the output format — `toList()`, `toSet()`, `toMap()`, `groupingBy()`, or `joining()`."*
 

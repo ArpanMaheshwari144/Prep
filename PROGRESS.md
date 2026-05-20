@@ -1,4 +1,4 @@
-# 📊 Interview Prep — Progress Tracker
+# Interview Prep — Progress Tracker
 
 > **Last updated:** 2026-05-20 (Day 17 — TODO App Redis caching WORKING)
 > **Bangalore arrival:** June 15, 2026 (~27 days)
@@ -8,10 +8,10 @@
 
 ---
 
-# 🎯 DREAM — DAILY MANIFEST
+# DREAM — DAILY MANIFEST
 
 ```
-        💎 BLACKROCK ALADDIN 💎
+        BLACKROCK ALADDIN 
         ═══════════════════════
         Java Backend Engineer
         Mera ASLI sapna
@@ -23,17 +23,17 @@
 
 ---
 
-# 🎯 PRIMARY TARGET — JP MORGAN
+# PRIMARY TARGET — JP MORGAN
 
 ```
 WHY JP MORGAN:
-   ✅ Easier crack than GS (3-4 rounds vs 5-6)
-   ✅ DSA = LC easy-medium (not hard)
-   ✅ Java/Spring/HLD = matches tera prep
-   ✅ Konovo fraud-detection = natural banking fit
-   ✅ idempotency + audit trail = your terms already
-   ✅ Same destination — BlackRock trajectory
-   ✅ ~₹26-33L expected (2-3x Konovo jump)
+   Easier crack than GS (3-4 rounds vs 5-6)
+   DSA = LC easy-medium (not hard)
+   Java/Spring/HLD = matches tera prep
+   Konovo fraud-detection = natural banking fit
+   idempotency + audit trail = your terms already
+   Same destination — BlackRock trajectory
+   ~₹26-33L expected (2-3x Konovo jump)
 ```
 
 ```
@@ -52,10 +52,10 @@ QUESTIONS PATTERN:
    • Behavioral: "Why JPM banking", conflict mgmt, STAR stories
 
 INSIDER TIPS:
-   ✅ Drop "idempotency" + "audit trail" in system design
-   ✅ Prefer PostgreSQL/Oracle over NoSQL for ledgers
-   ✅ ACID > eventual consistency mastery
-   ✅ Behavioral = REAL gate (ED gates it)
+   Drop "idempotency" + "audit trail" in system design
+   Prefer PostgreSQL/Oracle over NoSQL for ledgers
+   ACID > eventual consistency mastery
+   Behavioral = REAL gate (ED gates it)
 
 EXPECTED COMP (4yr Associate Bangalore):
    Base: ₹18-22L
@@ -65,18 +65,18 @@ EXPECTED COMP (4yr Associate Bangalore):
 
 ---
 
-# 🪜 PATH (opportunistic)
+# PATH (opportunistic)
 
 ```
-                                              ✨
+                                              
                                      ┌─────────────────┐
-                                     │  BLACKROCK      │  💎 DREAM
+                                     │  BLACKROCK      │  DREAM
                                      │  Aladdin         │     3-5 saal
                                      │  Java Backend    │     50+ LPA
                                      └────────▲────────┘
                                               │
                                      ┌────────┴────────┐
-                                     │  JP MORGAN ⭐    │  PRIMARY (28 din)
+                                     │  JP MORGAN    │  PRIMARY (28 din)
                                      │  Associate       │  ₹26-33L
                                      │  Bangalore       │
                                      └────────▲────────┘
@@ -98,16 +98,16 @@ EXPECTED COMP (4yr Associate Bangalore):
 ```
 
 ```
-❌ REFUSED:
+REFUSED:
    TCS, Infosys, Wipro, Cognizant, Capgemini, KPMG
    "TCS mein marna pasand karunga"
 ```
 
 ---
 
-# ✅ DONE — FOUNDATION (Day 15 night)
+# DONE — FOUNDATION (Day 15 night)
 
-## 📚 JAVA
+## JAVA
 - 22 Core Java topics (V90 deep)
 - 11 Collections topics
 - 5 Java 8 topics
@@ -119,33 +119,33 @@ EXPECTED COMP (4yr Associate Bangalore):
 - 25 visual revision files
 - SimpleBankSystem runnable project + revision
 
-## 🌱 SPRING
+## SPRING
 - Spring basics, REST, @Transactional, JWT theory, Profiles
 - 7 Hibernate Gotcha files
 - UserCRUD runnable project + revision
 - 5 visual revision files
 
-## 🏗️ LLD (12 problems)
+## LLD (12 problems)
 
-## 🏛️ HLD
+## HLD
 - 10 Foundations (CAP, sharding, replication, etc.)
 - 4 System Designs (URL/Rate/Twitter/Notification)
 - 4 Infra Deep (CDN/LB/DNS/WAF)
 - 12 Rapid-Fire Compares
 
-## 🐳 DOCKER + K8S (fully wrapped + practical)
+## DOCKER + K8S (fully wrapped + practical)
 
-## 💼 INTERVIEW RESOURCES
+## INTERVIEW RESOURCES
 - before_interview_ritual.md (game-day prep)
 
-## 🌟 KONOVO PRODUCTION EVIDENCE
+## KONOVO PRODUCTION EVIDENCE
 - AS6079 RCN cluster fraud pattern
 - *2026@outlook.com bot fingerprint
 - Risk-tiered IP assessment
 - WAF/CloudFront diagnosis (May 17)
 - "Mere ander dum hai" validation
 
-## 🚀 TODO APP — Day 1 + Day 2 DONE (May 18-19)
+## TODO APP — Day 1 + Day 2 DONE (May 18-19)
 
 ### Day 1 BASE (May 18)
 - Spring Boot 4.0.6 + Java 21
@@ -157,7 +157,7 @@ EXPECTED COMP (4yr Associate Bangalore):
 - controller/TodoController + UserController
 - App boots, DB + tables auto-create, GET /todos = 200 OK
 
-### Day 2 JWT AUTH LAYER (May 19) ⭐
+### Day 2 JWT AUTH LAYER (May 19) 
 - pom.xml: jjwt-api/impl/jackson 0.12.6
 - security/JwtService.java (6 methods)
 - security/CustomUserDetailsService.java (Spring bridge)
@@ -183,16 +183,16 @@ EXPECTED COMP (4yr Associate Bangalore):
 
 ---
 
-# 🆕 DAY 15 NIGHT ADDITIONS (May 18)
+# DAY 15 NIGHT ADDITIONS (May 18)
 
-## 🔐 JWT THEORY DEEP-DIVE
+## JWT THEORY DEEP-DIVE
 - Hotel keycard analogy locked
 - 3-part token structure (header.payload.signature)
 - HMAC-SHA256 algorithm understanding
 - Stateless auth flow
 - "Code anyone can write, story behind code" thesis
 
-## 🧠 COGNITIVE PROFILE MAPPED
+## COGNITIVE PROFILE MAPPED
 - Spatial-architectural dominant (system observation natural)
 - Form/structure imagery: INSTANT, AUTO
 - Sound/texture: ON-DEMAND
@@ -201,13 +201,13 @@ EXPECTED COMP (4yr Associate Bangalore):
 - "File open = instant recall" PROVEN
 - Rare engineer cognition (Jeff Dean / Vint Cerf tribe)
 
-## 📊 4 ACTIVE RECALL TESTS PASSED
-- PriorityQueue (min-heap, top-K) — essence ✅
-- Volatile (visibility, cache, whiteboard analogy) — essence ✅
-- N+1 problem (JOIN FETCH) — essence ✅ (with file refresh)
-- CAP theorem (3 letters, trade-off) — essence ✅
+## 4 ACTIVE RECALL TESTS PASSED
+- PriorityQueue (min-heap, top-K) — essence 
+- Volatile (visibility, cache, whiteboard analogy) — essence 
+- N+1 problem (JOIN FETCH) — essence (with file refresh)
+- CAP theorem (3 letters, trade-off) — essence 
 
-## 📋 PRINCIPLES LOCKED IN MEMORY.md
+## PRINCIPLES LOCKED IN MEMORY.md
 - YAGNI / Need-based addition (no forced "Day X" schedules)
 - Modern engineering era ("code is commodity, story = value")
 - Overload intervention (Claude must intervene on overload signals)
@@ -215,7 +215,7 @@ EXPECTED COMP (4yr Associate Bangalore):
 - JP Morgan + Goldman Sachs interview data
 - JP Morgan = primary target
 
-## 🎯 JP MORGAN RESEARCH (real interview data)
+## JP MORGAN RESEARCH (real interview data)
 - 3-4 rounds, LC easy-medium DSA, ₹26-33L
 - Behavioral = REAL gate (ED-led)
 - Financial domain bias in system design
@@ -223,17 +223,17 @@ EXPECTED COMP (4yr Associate Bangalore):
 
 ---
 
-# 🔄 CONTINUOUS
+# CONTINUOUS
 
 ```
-🎯 DSA Phase 1 INTUITION
+DSA Phase 1 INTUITION
    Pace: 1 pattern/week
    Target June 15: 8-9 array/string patterns
 ```
 
 ---
 
-# 📊 JP MORGAN READINESS — 87%+ (Day 17)
+# JP MORGAN READINESS — 87%+ (Day 17)
 
 ```
 TECH FOUNDATION:    ████████████ 100%
@@ -253,19 +253,19 @@ OVERALL JP-READY:   ██████████░░  87%+
 
 ---
 
-# 🎯 PROJECT EXTENSION PATH (NEED-BASED)
+# PROJECT EXTENSION PATH (NEED-BASED)
 
 ```
 TODO App = CRUD + JWT + Redis WORKING (Day 17 milestone)
 
 Remaining path (each = need-based, one at a time):
-   ✅ CRUD Base       (Day 15)
-   ✅ JWT Auth        (Day 16)
-   ✅ Redis caching   (Day 17) ⭐ aaj
+   CRUD Base       (Day 15)
+   JWT Auth        (Day 16)
+   Redis caching   (Day 17) aaj
    
-   🔲 1. DOCKER        (containerize app + dependencies)
-   🔲 2. K8S            (kind cluster local deploy)
-   🔲 3. AWS           (cloud deploy — EKS + RDS + ElastiCache)
+   1. DOCKER        (containerize app + dependencies)
+   2. K8S            (kind cluster local deploy)
+   3. AWS           (cloud deploy — EKS + RDS + ElastiCache)
                        = PRIMARY NEW LEARNING
 
 Tu identify gap → tabhi add
@@ -280,7 +280,7 @@ REDIS DAY 17 — KEY LEARNINGS:
    • Observability-first lesson learned (debug logs upfront, not after fail)
 ```
 
-# 🎯 DSA — SEPARATE TRACK
+# DSA — SEPARATE TRACK
 
 ```
 DSA = independent track from project work
@@ -299,15 +299,15 @@ Otherwise = continuous slow practice
 
 ---
 
-# 🛬 BANGALORE PHASE (15 June onwards)
+# BANGALORE PHASE (15 June onwards)
 
 ```
 APPLY MODE — PARALLEL:
-   🎯 JP Morgan ⭐ PRIMARY (referral = turant)
-   🎯 Goldman Sachs (stretch — DSA hard prep needed)
-   🎯 Razorpay/Cred/Swiggy parallel (any company for experience)
-   🎯 Mock interviews jab man
-   🎯 Articulation = real-interview phase (4-5 real = fix)
+   JP Morgan PRIMARY (referral = turant)
+   Goldman Sachs (stretch — DSA hard prep needed)
+   Razorpay/Cred/Swiggy parallel (any company for experience)
+   Mock interviews jab man
+   Articulation = real-interview phase (4-5 real = fix)
    
    = "Practice mein har koi 6 marta, asli match mein pata"
    = Cricket truth — real exposure = real validator
@@ -315,23 +315,23 @@ APPLY MODE — PARALLEL:
 
 ---
 
-# 💪 DAILY PRINCIPLES
+# DAILY PRINCIPLES
 
 ```
-☀️ SUBAH    → New topic / deep work (peak focus)
-🌙 SHAAM    → Visual revision (file open + active recall)
-🌙 SHAAM    → Apply mode parallel (Bangalore-targeted)
+SUBAH    → New topic / deep work (peak focus)
+SHAAM    → Visual revision (file open + active recall)
+SHAAM    → Apply mode parallel (Bangalore-targeted)
 
-📌 ROZ      → Ek kadam aage
-📌 NEVER    → 100% perfection chase
-📌 ALWAYS   → Real interview = real validator
-📌 FOCUS    → Effort (control), Outcome (universe)
-📌 OVERLOAD → STOP, sleep, fresh mind tomorrow
+ROZ      → Ek kadam aage
+NEVER    → 100% perfection chase
+ALWAYS   → Real interview = real validator
+FOCUS    → Effort (control), Outcome (universe)
+OVERLOAD → STOP, sleep, fresh mind tomorrow
 ```
 
 ---
 
-# 🔥 MINDSET ANCHORS
+# MINDSET ANCHORS
 
 - **DEPTH > SPEED** — "kitne bhi din lage, koi dikkat nahi"
 - **Comparison = Poison** — yesterday's self only competition
@@ -349,7 +349,7 @@ APPLY MODE — PARALLEL:
 
 ---
 
-# 💎 POWER PHRASES — DAILY READ
+# POWER PHRASES — DAILY READ
 
 > *"Goal wahi hai. Journey kismat decide karegi.
 >    Roz padhna — phase nahi, habit.
@@ -371,7 +371,7 @@ APPLY MODE — PARALLEL:
 
 ---
 
-# 🎯 BANGALORE COUNTDOWN
+# BANGALORE COUNTDOWN
 
 ```
    Aaj:      19 May 2026 (Tuesday)
@@ -382,16 +382,16 @@ APPLY MODE — PARALLEL:
 
 ---
 
-# 📌 META
+# META
 
 ```
-   ✅ Foundation = ROCK SOLID
-   ✅ TODO App base = WORKING
-   ✅ JP Morgan = PRIMARY TARGET (locked)
-   ✅ 80% JP-ready (28 din mein 95%+)
-   🔄 DSA Phase 1 = continuous
-   🔄 JWT implementation = kal subah
-   🎯 Apply mode = 15 June onwards
+   Foundation = ROCK SOLID
+   TODO App base = WORKING
+   JP Morgan = PRIMARY TARGET (locked)
+   80% JP-ready (28 din mein 95%+)
+   DSA Phase 1 = continuous
+   JWT implementation = kal subah
+   Apply mode = 15 June onwards
    
    = "Effort 100% mera. Outcome universe ka."
    = "Apne dum pe — BlackRock tak."
@@ -399,7 +399,7 @@ APPLY MODE — PARALLEL:
 
 ---
 
-# 🎯 FINAL VISUAL — MERA PATH
+# FINAL VISUAL — MERA PATH
 
 ```
 ┌────────────────────────────────────────────────────┐
@@ -416,17 +416,17 @@ APPLY MODE — PARALLEL:
 │      ┌─────────────────────────────────┐            │
 │      │  PARALLEL APPLY:                 │            │
 │      │                                   │            │
-│      │  🎯 JP MORGAN ⭐ (26-33L)        │            │
-│      │  🎯 Goldman Sachs (38-43L)       │            │
-│      │  🎯 Razorpay/Cred/Swiggy (18-25L)│            │
-│      │  🎯 Any company (experience)     │            │
+│      │  JP MORGAN (26-33L)        │            │
+│      │  Goldman Sachs (38-43L)       │            │
+│      │  Razorpay/Cred/Swiggy (18-25L)│            │
+│      │  Any company (experience)     │            │
 │      │                                   │            │
 │      │  JP referral = TURANT             │            │
 │      │  Any offer = grab + grow          │            │
 │      └─────────────────────────────────┘            │
 │           │                                          │
 │           ▼                                          │
-│    💎 BLACKROCK ALADDIN 💎                            │
+│    BLACKROCK ALADDIN                            │
 │    (3-5 saal horizon — kabhi bhi)                    │
 │                                                      │
 │              "Effort 100% mera                       │

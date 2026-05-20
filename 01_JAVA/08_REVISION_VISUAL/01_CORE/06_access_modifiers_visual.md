@@ -1,4 +1,4 @@
-# 🔐 Access Modifiers — Visual Revision
+# Access Modifiers — Visual Revision
 
 ---
 
@@ -88,7 +88,7 @@ public class Account {
     private   String pin;                // class only
     
     public void displayPin() {
-        System.out.println(pin);         // ✅ allowed (same class)
+        System.out.println(pin);         // allowed (same class)
     }
 }
 ```
@@ -98,10 +98,10 @@ package com.bank;
 class Branch {
     void test() {
         Account a = new Account();
-        a.accountNumber;   // ✅ public
-        a.balance;         // ✅ protected (same package)
-        a.branchCode;      // ✅ default (same package)
-        a.pin;             // ❌ private — NO ACCESS
+        a.accountNumber;   // public
+        a.balance;         // protected (same package)
+        a.branchCode;      // default (same package)
+        a.pin;             // private — NO ACCESS
     }
 }
 ```
@@ -111,10 +111,10 @@ package com.other;
 class Outsider {
     void test() {
         Account a = new Account();
-        a.accountNumber;   // ✅ public
-        a.balance;         // ❌ protected (not same package, not subclass)
-        a.branchCode;      // ❌ default (not same package)
-        a.pin;             // ❌ private
+        a.accountNumber;   // public
+        a.balance;         // protected (not same package, not subclass)
+        a.branchCode;      // default (not same package)
+        a.pin;             // private
     }
 }
 ```
@@ -123,10 +123,10 @@ class Outsider {
 package com.other;
 class SavingsAccount extends Account {  // subclass
     void test() {
-        accountNumber;     // ✅ public
-        balance;           // ✅ protected (subclass)
-        branchCode;        // ❌ default (different package)
-        pin;               // ❌ private
+        accountNumber;     // public
+        balance;           // protected (subclass)
+        branchCode;        // default (different package)
+        pin;               // private
     }
 }
 ```
@@ -139,10 +139,10 @@ class SavingsAccount extends Account {  // subclass
 ┌─────────────┬──────────┬──────────┬──────────┬──────────┐
 │ Modifier    │  Class   │ Package  │ Subclass │ World    │
 ├─────────────┼──────────┼──────────┼──────────┼──────────┤
-│ public      │   ✅     │   ✅     │   ✅     │   ✅     │
-│ protected   │   ✅     │   ✅     │   ✅     │   ❌     │
-│ default     │   ✅     │   ✅     │   ❌     │   ❌     │
-│ private     │   ✅     │   ❌     │   ❌     │   ❌     │
+│ public      │       │       │       │       │
+│ protected   │       │       │       │       │
+│ default     │       │       │       │       │
+│ private     │       │       │       │       │
 └─────────────┴──────────┴──────────┴──────────┴──────────┘
 ```
 
@@ -152,23 +152,23 @@ class SavingsAccount extends Account {  // subclass
 
 ```
 PUBLIC:
-   ✅ API endpoints (controllers)
-   ✅ Constants meant for everyone
-   ✅ Public method exposed for use
+   API endpoints (controllers)
+   Constants meant for everyone
+   Public method exposed for use
 
 PROTECTED:
-   ✅ Helper methods for subclasses
-   ✅ Template Method pattern hooks
-   ✅ Internal API for inheritance
+   Helper methods for subclasses
+   Template Method pattern hooks
+   Internal API for inheritance
 
 DEFAULT (package-private):
-   ✅ Same-package internal helpers
-   ✅ Implementation details within module
+   Same-package internal helpers
+   Implementation details within module
 
 PRIVATE:
-   ✅ Internal data (encapsulation)
-   ✅ Helper methods used only inside class
-   ✅ Constants used only by class
+   Internal data (encapsulation)
+   Helper methods used only inside class
+   Constants used only by class
 ```
 
 ---
@@ -192,13 +192,13 @@ A: YES — used for Singleton pattern
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-public     = 🌍 hall (all welcome)
-protected  = 👨‍👩 family room (parents + kids)
-default    = 🏘️ colony (same package)
-private    = 🚪 bedroom (only me)
+public     = hall (all welcome)
+protected  = family room (parents + kids)
+default    = colony (same package)
+private    = bedroom (only me)
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

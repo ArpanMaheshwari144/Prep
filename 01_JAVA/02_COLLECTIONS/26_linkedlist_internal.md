@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Support Ticket Queue
+## STORY — Support Ticket Queue
 
 → Support ticket queue thi — **urgent tickets beech mein insert** karne the
 → ArrayList try kiya — beech mein insert karo toh **saare elements shift hote**. 10,000 tickets? **10,000 shifts**. Slow
@@ -14,7 +14,7 @@
 
 ---
 
-## 🧠 Internal — Doubly Linked Nodes
+## Internal — Doubly Linked Nodes
 
 Har node mein **3 cheezein**:
 
@@ -32,7 +32,7 @@ null ← [101] ↔ [102] ↔ [103] → null
 
 ---
 
-## 📊 ArrayList vs LinkedList — Ek Saath
+## ArrayList vs LinkedList — Ek Saath
 
 | Operation | ArrayList | LinkedList | Kyu? |
 |-----------|-----------|------------|------|
@@ -44,12 +44,12 @@ null ← [101] ↔ [102] ↔ [103] → null
 
 ---
 
-## 🔴 TRAP 1
+## TRAP 1
 
 > **"LinkedList is always faster" — GALAT!**
 > **`get()` mein ArrayList wins. Real world mein READ zyada hota — isliye 90% cases mein ArrayList better.**
 
-## 🔴 TRAP 2
+## TRAP 2
 
 > **LinkedList insert = traverse O(n) + pointer change O(1) = NET O(n)** (target position dhoondhne mein traverse).
 > ArrayList ka shift bhi O(n).
@@ -58,19 +58,19 @@ null ← [101] ↔ [102] ↔ [103] → null
 
 ---
 
-## 💻 Real Use Case
+## Real Use Case
 
 ```java
 LinkedList<Ticket> ticketQueue = new LinkedList<>();
-ticketQueue.addFirst(urgentTicket);    // O(1) ✅
-ticketQueue.addLast(normalTicket);     // O(1) ✅
+ticketQueue.addFirst(urgentTicket);    // O(1) 
+ticketQueue.addLast(normalTicket);     // O(1) 
 ```
 
 **Use:** queue/stack, frequent beech-insert/delete.
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"LinkedList uses doubly linked nodes — each node holds data, prev and next pointers. Insert and delete are O(1) since only pointers change, but `get` is O(n) since traversal is needed. Use when frequent insertion and deletion in the middle is required."*
 

@@ -4,7 +4,7 @@
 
 ---
 
-## 🎯 Definition
+## Definition
 
 > **Ek class ka SIRF EK reason to change hona chahiye.**
 
@@ -12,7 +12,7 @@ Matlab: ek class **ek hi kaam** ke liye responsible — ek hi cheez badle toh cl
 
 ---
 
-## 📖 STORY — ShoppingCart Bug
+## STORY — ShoppingCart Bug
 
 → ShoppingCart class banayi — ek dum smart, **3 kaam** karti thi:
    1. Cart logic (add item, remove item, total)
@@ -23,8 +23,8 @@ Matlab: ek class **ek hi kaam** ke liye responsible — ek hi cheez badle toh cl
 class ShoppingCart {
     void addItem(Item i) { ... }
     void calculateTotal() { ... }
-    void saveToDB() { ... }       // 🔴 DB team ka kaam
-    void sendEmail() { ... }      // 🔴 Marketing ka kaam
+    void saveToDB() { ... }       // DB team ka kaam
+    void sendEmail() { ... }      // Marketing ka kaam
 }
 ```
 
@@ -35,7 +35,7 @@ class ShoppingCart {
 
 ---
 
-## ✅ Fix — Split Karo
+## Fix — Split Karo
 
 ```java
 // Cart logic only
@@ -63,13 +63,13 @@ class EmailService {
 
 ---
 
-## 🔴 SRP TRAP — "One Method Per Class" GALAT
+## SRP TRAP — "One Method Per Class" GALAT
 
 > **SRP ≠ "ek method per class"**
 > **SRP = "ek REASON TO CHANGE"**
 
 ```java
-// ✅ SAHI — multiple methods, ONE reason to change
+// SAHI — multiple methods, ONE reason to change
 class CartService {
     void addItem() { }
     void removeItem() { }
@@ -81,7 +81,7 @@ class CartService {
 
 ---
 
-## 🧠 SRP Spring Boot Mein
+## SRP Spring Boot Mein
 
 ```java
 @Controller   ← HTTP request handle (web layer)
@@ -98,6 +98,6 @@ class OrderRepository { ... }
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Single Responsibility means a class should have only one reason to change. If ShoppingCart handles cart logic, DB saving, and email notifications — three different teams can break it for three different reasons — split them."*

@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — ArrayList Internals
+## WHY — ArrayList Internals
 
 → ArrayList = **internally `Object[]` ARRAY**
 → **Index se access = O(1) FAST**
@@ -14,7 +14,7 @@
 
 ---
 
-## 📖 STORY — Active Survey IDs
+## STORY — Active Survey IDs
 
 → Manager ne bola — **active survey IDs maintain karo**
 → Array liya, size 100 diya. **101st ID aayi — crash**
@@ -26,7 +26,7 @@
 
 ---
 
-## 💻 Internal
+## Internal
 
 ```java
 // Jab tu likhta: new ArrayList<>()
@@ -42,7 +42,7 @@ size = 0;                                   // abhi koi element nahi
 
 ---
 
-## 🧠 Visualization
+## Visualization
 
 ```
                 ArrayList Internal — Andar ka Sach
@@ -73,7 +73,7 @@ Internal Object[] elementData (heap):
 
    size = 3
 
-   list.get(2)  →  index direct access  →  20  →  O(1) ✅
+   list.get(2)  →  index direct access  →  20  →  O(1) 
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -114,7 +114,7 @@ Shift karna padta (saare elements 1 right):
 
 ---
 
-## 📊 Time Complexity
+## Time Complexity
 
 | Operation | Time | Kyu? |
 |-----------|------|------|
@@ -126,13 +126,13 @@ Shift karna padta (saare elements 1 right):
 
 ---
 
-## 🔴 ArrayList Kab Use?
+## ArrayList Kab Use?
 
-> **✅ Zyada READ karna ho. ✅ End pe add/remove. ✅ Index se access.**
-> **❌ Beech mein baar-baar insert/delete — slow.**
+> **Zyada READ karna ho. End pe add/remove. Index se access.**
+> **Beech mein baar-baar insert/delete — slow.**
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"ArrayList internally uses a dynamic array with default capacity 10, growing by 1.5x when full. `get()` is O(1) due to index-based access, but add/remove in the middle is O(n) due to shifting. Best for read-heavy operations."*

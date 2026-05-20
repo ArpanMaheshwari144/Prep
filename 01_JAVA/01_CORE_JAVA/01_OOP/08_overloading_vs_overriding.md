@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — Dono Alag Problems
+## WHY — Dono Alag Problems
 
 | | Solve karta |
 |--|-------------|
@@ -13,7 +13,7 @@
 
 ---
 
-## 📖 STORY
+## STORY
 
 ### Overloading wala
 → NotificationService mein sawaal aaya — `sendNotification` ek rakhun ya alag-alag?
@@ -27,7 +27,7 @@
 
 ---
 
-## 🧠 Visualization
+## Visualization
 
 ```
 OVERLOADING (Compile Time)              OVERRIDING (Runtime)
@@ -50,7 +50,7 @@ OVERLOADING (Compile Time)              OVERRIDING (Runtime)
 
 ---
 
-## 📊 Comparison
+## Comparison
 
 | | Overloading | Overriding |
 |--|-------------|-----------|
@@ -63,14 +63,14 @@ OVERLOADING (Compile Time)              OVERRIDING (Runtime)
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **`@Override` annotation HAMESHA lagao — typo pakdega compiler.**
 > **Private/Static methods OVERRIDE nahi hote.**
 
 ---
 
-## 💬 POWER PHRASES
+## POWER PHRASES
 
 > *"Overloading is compile-time polymorphism — same method name, different parameters in the same class."*
 

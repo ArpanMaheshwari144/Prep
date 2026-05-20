@@ -16,7 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    JPA ENTITY = Java class jo DB table represent karti
 //    Har User object = ek ROW in 'users' table
 //    Hibernate is class ko padhke table auto-banaye
@@ -45,7 +45,7 @@ import lombok.NoArgsConstructor;
 //    3. LOMBOK → boilerplate killer
 //       @Data, @NoArgsConstructor, @AllArgsConstructor
 //
-// 🔑 JPA ANNOTATIONS DEEP:
+// JPA ANNOTATIONS DEEP:
 //
 //    @Entity
 //       "Hibernate, yeh class ko table samjho"
@@ -65,7 +65,7 @@ import lombok.NoArgsConstructor;
 //       nullable=false → NOT NULL in SQL
 //       unique=true    → UNIQUE constraint (duplicate email blocked at DB)
 //
-// 🔑 BEAN VALIDATION:
+// BEAN VALIDATION:
 //    @NotBlank   → null + empty + whitespace blocked (Strings)
 //    @NotNull    → just not null (any type)
 //    @NotEmpty   → not null + size > 0
@@ -79,7 +79,7 @@ import lombok.NoArgsConstructor;
 //       Spring validates BEFORE method entry
 //       Fail → MethodArgumentNotValidException → 400
 //
-// 🔑 LOMBOK — BOILERPLATE KILLER:
+// LOMBOK — BOILERPLATE KILLER:
 //    @Data
 //       Auto-generate: getters/setters/toString/equals/hashCode
 //       = ~50 lines saved
@@ -104,7 +104,7 @@ import lombok.NoArgsConstructor;
 //       2. Hibernate uses REFLECTION to create object
 //       3. Reflection needs EMPTY constructor
 //       4. Then sets fields one by one
-//    Missing → ❌ Hibernate cannot instantiate
+//    Missing → Hibernate cannot instantiate
 //
 // ENTITY vs DTO:
 //    Entity (this file)      DTO (separate classes)
@@ -115,11 +115,11 @@ import lombok.NoArgsConstructor;
 //    Production: keep separate (UserDTO ≠ User entity)
 //    This project: simple — User used both (educational)
 //
-// 📐 SOLID — SRP:
+// SOLID — SRP:
 //    Sirf User domain data + validation rules
 //    No business logic, no DB access
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "User class is JPA entity — @Entity marks it persistent,
 //     @Table('users') uses plural to avoid SQL reserved word.
 //     ID auto-generated via IDENTITY (MySQL auto-increment).

@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — Lambda Ka Shortcut
+## WHY — Lambda Ka Shortcut
 
 → Jab Lambda mein **sirf ek existing method call** ho raha ho — toh **`::` use karo. Aur short.**
 → `name -> System.out.println(name)` = `System.out::println`
@@ -12,7 +12,7 @@
 
 ---
 
-## 💻 Code
+## Code
 
 ### Lambda → Method Reference
 
@@ -26,7 +26,7 @@ list.forEach(System.out::println);
 
 ---
 
-## 📊 3 Common Types
+## 3 Common Types
 
 | Type | Lambda | Method Reference |
 |------|--------|------------------|
@@ -36,7 +36,7 @@ list.forEach(System.out::println);
 
 ---
 
-## 💻 Examples
+## Examples
 
 ### Static method reference
 ```java
@@ -58,21 +58,21 @@ names.stream().map(Patient::new);          // har name se naya Patient
 
 ---
 
-## 🔴 TRAP — Method Reference Sirf Tab Use Karo Jab Existing Method Call Ho
+## TRAP — Method Reference Sirf Tab Use Karo Jab Existing Method Call Ho
 
 > **Agar Lambda mein logic + method call DONO ho, Method Reference NAHI lagega**
 
 ```java
-// ✅ Sirf method call — Method Reference safe
+// Sirf method call — Method Reference safe
 list.forEach(System.out::println);
 
-// 🔴 Logic + method call — Method Reference nahi
+// Logic + method call — Method Reference nahi
 list.forEach(name -> System.out.println("Hello " + name));   // ye Lambda hi rahega
 ```
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Method references are shorthand for lambdas that only call an existing method — `ClassName::methodName` for static, `instance::method` for instance, and `ClassName::new` for constructors."*
 

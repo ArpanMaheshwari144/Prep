@@ -1,4 +1,4 @@
-# 🔌 O — Open/Closed (OCP)
+# O — Open/Closed (OCP)
 
 ---
 
@@ -29,7 +29,7 @@ Charger me USB-C port hai
 
 ## Code
 
-### ❌ VIOLATION (modify every time)
+### VIOLATION (modify every time)
 ```java
 class AreaCalculator {
     double calc(Object shape) {
@@ -41,7 +41,7 @@ class AreaCalculator {
 }
 ```
 
-### ✅ OCP — Extend, Don't Modify
+### OCP — Extend, Don't Modify
 ```java
 interface Shape {
     double area();
@@ -54,7 +54,7 @@ class Triangle implements Shape { ... }
 
 class AreaCalculator {
     double calc(Shape s) {
-        return s.area();   // ✅ never changes
+        return s.area();   // never changes
     }
 }
 ```
@@ -78,9 +78,9 @@ public class SmsSender implements NotificationSender { ... }
 ## Memory Hook
 
 ```
-🔌 charger + adapter
+charger + adapter
    "Naye phone aaye, charger nahi badla — adapter add"
    Extend karo, modify nahi
 ```
 
-📚 [← Back to SOLID](00_overview.md)
+[← Back to SOLID](00_overview.md)

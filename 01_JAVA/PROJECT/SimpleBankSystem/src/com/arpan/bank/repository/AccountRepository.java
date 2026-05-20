@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Optional;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    AccountRepository = STORAGE ka CONTRACT (interface)
 //    Save/find/delete ke rules define karta
 //    Actual storage class (HashMap/DB/Mongo) handle karegi
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🎨 PATTERN: REPOSITORY
+// PATTERN: REPOSITORY
 //
 // VISUAL:
 //    AccountService (caller)
@@ -46,7 +46,7 @@ import java.util.Optional;
 //                       a.ifPresent(acc -> acc.deposit(500));
 //                       = Null-safe by design
 //
-// 📐 SOLID:
+// SOLID:
 //    ISP — Focused interface (account data ops only, not 20 random methods)
 //    DIP — Service depends on INTERFACE, not concrete
 //          Implementation swap without touching service
@@ -55,7 +55,7 @@ import java.util.Optional;
 //    Spring Data JPA's JpaRepository = SAME pattern
 //    Framework-level Repository abstraction
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "Repository pattern data access abstract karta —
 //     interface + implementation. Service interface se baat karta,
 //     future mein MySQL/Mongo switch kare = service code unchanged.

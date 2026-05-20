@@ -4,13 +4,13 @@
 
 ---
 
-## 🎬 STORY — IS-A vs CAN-DO
+## STORY — IS-A vs CAN-DO
 
 > Imagine **2 different conversations** about your dog:
 >
-> 🐕 **"Mera Dog ek ANIMAL hai"** → **IS-A** relationship → **Abstract Class** (`Dog extends Animal`)
+> **"Mera Dog ek ANIMAL hai"** → **IS-A** relationship → **Abstract Class** (`Dog extends Animal`)
 >
-> 🐕 **"Mera Dog DRIVING kar sakta?"** → **CAN-DO** capability → **Interface** (`Dog implements Drivable`?)
+> **"Mera Dog DRIVING kar sakta?"** → **CAN-DO** capability → **Interface** (`Dog implements Drivable`?)
 >
 > *"What it IS"* (identity) → **abstract class**
 > *"What it CAN DO"* (capability) → **interface**
@@ -19,7 +19,7 @@
 
 ---
 
-## 🎨 IS-A vs CAN-DO Visual
+## IS-A vs CAN-DO Visual
 
 ```
    IS-A (Abstract Class)          CAN-DO (Interface)
@@ -41,7 +41,7 @@
 
 ---
 
-## 💻 CODE EXAMPLE — Notification System
+## CODE EXAMPLE — Notification System
 
 ### Problem
 Email, SMS, Push notifications — sab **send** karte but with **shared retry logic**.
@@ -116,24 +116,24 @@ public class WelcomeEmailNotification extends Notification {
 
 ---
 
-## 📊 FULL COMPARISON TABLE
+## FULL COMPARISON TABLE
 
 | Feature | Abstract Class | Interface |
 |---|---|---|
 | **Purpose** | Shared partial implementation | Capability contract |
 | **Relationship** | IS-A (identity) | CAN-DO (behavior) |
 | **Inheritance** | Single (1 parent only) | Multiple (multiple impl OK) |
-| **State (fields)** | ✅ Any type, instance fields | ❌ Only `public static final` (constants) |
-| **Constructor** | ✅ Yes (via `super()`) | ❌ No |
+| **State (fields)** | Any type, instance fields | Only `public static final` (constants) |
+| **Constructor** | Yes (via `super()`) | No |
 | **Methods** | abstract + concrete + static | abstract + default (Java 8+) + static + private (Java 9+) |
 | **Access modifiers** | public/protected/private/default | Public only (effectively) |
-| **`final` allowed?** | ✅ Yes (prevents override) | ❌ Methods can't be final (defeats purpose) |
-| **Object creation** | ❌ Can't instantiate directly | ❌ Can't instantiate |
+| **`final` allowed?** | Yes (prevents override) | Methods can't be final (defeats purpose) |
+| **Object creation** | Can't instantiate directly | Can't instantiate |
 | **Use case** | Animal, Vehicle, Notification | Comparable, Runnable, Iterable |
 
 ---
 
-## 🎯 WHEN TO USE WHICH — Decision Tree
+## WHEN TO USE WHICH — Decision Tree
 
 ```
                     ┌──────────────────────────┐
@@ -157,7 +157,7 @@ public class WelcomeEmailNotification extends Notification {
 
 ---
 
-## 🆕 Java 8+ Interface Features (interview gold)
+## Java 8+ Interface Features (interview gold)
 
 ### Default methods
 ```java
@@ -205,7 +205,7 @@ public interface Logger {
 
 ---
 
-## 🪤 INTERVIEW TRAPS
+## INTERVIEW TRAPS
 
 ### Trap 1: Abstract class can have constructors
 
@@ -213,7 +213,7 @@ public interface Logger {
 public abstract class Animal {
     private String name;
     
-    public Animal(String name) {     // ✅ Yes!
+    public Animal(String name) {     // Yes!
         this.name = name;
     }
 }
@@ -242,7 +242,7 @@ public interface Constants {
 public interface Walkable { void walk(); }
 public interface Swimmable { void swim(); }
 
-public class Duck implements Walkable, Swimmable {  // ✅ Multiple OK
+public class Duck implements Walkable, Swimmable {  // Multiple OK
     public void walk() { /* */ }
     public void swim() { /* */ }
 }
@@ -260,7 +260,7 @@ public interface B {
 }
 
 public class C implements A, B {
-    // ❌ COMPILE ERROR — must override
+    // COMPILE ERROR — must override
     @Override
     public void hello() {
         A.super.hello();   // explicitly choose
@@ -270,7 +270,7 @@ public class C implements A, B {
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "Abstract class vs Interface — kab konsa use karoge?"**
 
@@ -296,13 +296,13 @@ public class C implements A, B {
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"Abstract class IS-A relationship + shared state ke liye (Animal, Vehicle). Interface CAN-DO capability + multiple inheritance ke liye (Comparable, Runnable). Ek class single abstract extend, multiple interface implement. Java 8+ default methods se interface bhi shared behavior de sakti — but state sirf abstract class mein."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 Abstract Class  → "What it IS"      → IS-A relationship
@@ -323,26 +323,26 @@ Decision:
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "Interface mein constructor hota"
-         ❌ NO — interface mein constructor IMPOSSIBLE
-         ✅ Abstract class mein hota
+Trap 1: "Interface mein constructor hota"
+         NO — interface mein constructor IMPOSSIBLE
+         Abstract class mein hota
 
-🪤 Trap 2: "Java multiple class inheritance support karta"
-         ❌ NO — single class only
-         ✅ Multiple interfaces OK
+Trap 2: "Java multiple class inheritance support karta"
+         NO — single class only
+         Multiple interfaces OK
 
-🪤 Trap 3: "Interface mein instance fields rakh sakte"
-         ❌ Sirf public static final (constants)
-         ✅ Abstract class mein any field type
+Trap 3: "Interface mein instance fields rakh sakte"
+         Sirf public static final (constants)
+         Abstract class mein any field type
 
-🪤 Trap 4: "Abstract class instantiate kar sakte"
-         ❌ NO — sirf concrete subclass se
-         ✅ Anonymous class trick available though
+Trap 4: "Abstract class instantiate kar sakte"
+         NO — sirf concrete subclass se
+         Anonymous class trick available though
 
-🪤 Trap 5: "Default method = abstract class"
-         ❌ Different — interface mein state nahi possible
-         ✅ Default methods sirf shared behavior, not state
+Trap 5: "Default method = abstract class"
+         Different — interface mein state nahi possible
+         Default methods sirf shared behavior, not state
 ```

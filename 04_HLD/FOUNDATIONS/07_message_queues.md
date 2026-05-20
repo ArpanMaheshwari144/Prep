@@ -1,10 +1,10 @@
-# 📨 Message Queues
+# Message Queues
 
 > **HLD Topic 7 — Async + Decoupling + Spike absorption**
 
 ---
 
-## 🤔 Why MQ? (Sync vs Async)
+## Why MQ? (Sync vs Async)
 
 ### Without (Sync REST)
 ```
@@ -14,7 +14,7 @@ User → /signup → API
                   ├─ SMS OTP (800ms)
                   └─ Analytics (300ms)
                   
-Total: ~2.8 sec → user waiting 😤
+Total: ~2.8 sec → user waiting 
 Email server down → ENTIRE signup fails
 ```
 
@@ -22,14 +22,14 @@ Email server down → ENTIRE signup fails
 ```
 User → /signup → API
                   ├─ DB save (200ms)
-                  └─ Push to queue → return 200 ✅
+                  └─ Push to queue → return 200 
                                     
                   Background workers (parallel):
                      Email worker  → consume + send
                      SMS worker    → consume + send
                      Analytics     → consume + update
                   
-Total: ~250ms → user happy 😎
+Total: ~250ms → user happy 
 Email down → message waits in queue, retry later
 ```
 
@@ -37,13 +37,13 @@ Email down → message waits in queue, retry later
 
 ---
 
-## 🎬 STORY — Restaurant Kitchen Order Slips
+## STORY — Restaurant Kitchen Order Slips
 
 > Restaurant: waiter (producer) + chef (consumer).
 >
-> 📋 **Without queue:** Waiter chef ke pass jaaye "ye banao" → chef busy → waiter wait → service slow → lunch rush mein chaos.
+> **Without queue:** Waiter chef ke pass jaaye "ye banao" → chef busy → waiter wait → service slow → lunch rush mein chaos.
 >
-> 📋 **With queue (slip board):** Waiter slip lagao → wapas customer ke pass → chef jab free pick kare → process → next.
+> **With queue (slip board):** Waiter slip lagao → wapas customer ke pass → chef jab free pick kare → process → next.
 >
 > **Lunch spike?** Slips pile, chef apne pace pe handle. Customer wait nahi karta.
 >
@@ -53,7 +53,7 @@ Email down → message waits in queue, retry later
 
 ---
 
-## 🎯 4 Big Wins
+## 4 Big Wins
 
 ```
 1. DECOUPLING
@@ -74,7 +74,7 @@ Email down → message waits in queue, retry later
 
 ---
 
-## 🎨 Architecture
+## Architecture
 
 ```
    PRODUCERS              BROKER                CONSUMERS
@@ -87,7 +87,7 @@ Email down → message waits in queue, retry later
 
 ---
 
-## 📊 2 Core Patterns
+## 2 Core Patterns
 
 ### **Point-to-Point (Queue)**
 ```
@@ -107,26 +107,26 @@ Producer → Topic → ALL subscribers receive
 
 ---
 
-## 🎯 Delivery Semantics
+## Delivery Semantics
 
 | Semantic | Guarantee | Speed | Use Case |
 |---|---|---|---|
 | **At-most-once** | May lose | Fast | Metrics, logs |
-| **At-least-once** ⭐ | May duplicate | Medium | Most cases (with idempotency) |
+| **At-least-once** | May duplicate | Medium | Most cases (with idempotency) |
 | **Exactly-once** | No loss, no dup | Slow | Banking, payments |
 
 **Key insight:** At-least-once + idempotent consumer ≈ exactly-once (cheaper).
 
 ---
 
-## 🥊 Kafka vs RabbitMQ
+## Kafka vs RabbitMQ
 
 | | **Kafka** | **RabbitMQ** |
 |---|---|---|
 | Model | Distributed log (append-only) | Traditional broker |
 | Throughput | Millions/sec | ~50K/sec |
 | Storage | Persistent (days/weeks) | Until consumed |
-| Replay | ✅ (re-read history) | ❌ |
+| Replay | (re-read history) | |
 | Consumer | Pull-based | Push-based |
 | Routing | Simple (topics) | Complex (exchanges) |
 | Use case | Event streaming, analytics | Task queues, RPC |
@@ -139,7 +139,7 @@ Producer → Topic → ALL subscribers receive
 
 ---
 
-## 🚀 Kafka Deep (key concepts)
+## Kafka Deep (key concepts)
 
 ```
 TOPIC = logical stream of messages
@@ -163,7 +163,7 @@ OFFSET = position in partition
 
 ---
 
-## 🐰 RabbitMQ Deep (key concepts)
+## RabbitMQ Deep (key concepts)
 
 ```
 EXCHANGE = receives messages from producer
@@ -188,7 +188,7 @@ public void process(EmailEvent event) {
 
 ---
 
-## ⚠️ 4 Hard Problems
+## 4 Hard Problems
 
 ### 1. **Message Ordering**
 ```
@@ -203,8 +203,8 @@ Kafka: Order guaranteed only WITHIN a partition
 At-least-once → duplicate possible
 Consumer must handle:
    "Process payment for order_123" — comes twice
-   ❌ Charge twice
-   ✅ Check if already processed → skip
+   Charge twice
+   Check if already processed → skip
 
 Pattern:
    Unique message_id + processed_messages table
@@ -233,7 +233,7 @@ Fixes:
 
 ---
 
-## 🌍 Real-World Tools
+## Real-World Tools
 
 | Tool | Type | Use |
 |---|---|---|
@@ -247,7 +247,7 @@ Fixes:
 
 ---
 
-## 🎤 Interview Talking Points
+## Interview Talking Points
 
 **Q: "MQ vs REST kab?"**
 
@@ -271,13 +271,13 @@ Fixes:
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > **"MQ = async + decouple + buffer + reliability. Producer publishes, consumer processes — independently. Patterns: P2P (queue) vs Pub-Sub (topic). Delivery: at-least-once + idempotent = practical exactly-once. Kafka (log, millions/sec, replay) vs RabbitMQ (broker, routing). Hard problems: ordering, idempotency, DLQ, backpressure."**
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 MQ = "Restaurant order slips"
@@ -290,7 +290,7 @@ Patterns:
 
 Delivery:
    At-most-once   → fast, lossy (metrics)
-   At-least-once  → ⭐ most common (idempotent consumer)
+   At-least-once  → most common (idempotent consumer)
    Exactly-once   → slowest, banking
 
 Kafka:
@@ -313,34 +313,34 @@ Hard problems:
 
 ---
 
-## ⚠️ Trap Box
+## Trap Box
 
 ```
-🪤 Trap 1: "MQ = always better than REST"
-         ❌ Real-time queries (get user) → REST simpler
-         ✅ Async/heavy/spike-prone work → MQ
+Trap 1: "MQ = always better than REST"
+         Real-time queries (get user) → REST simpler
+         Async/heavy/spike-prone work → MQ
 
-🪤 Trap 2: "Exactly-once is achievable easily"
-         ❌ Distributed exactly-once = hard problem
-         ✅ At-least-once + idempotent consumer
+Trap 2: "Exactly-once is achievable easily"
+         Distributed exactly-once = hard problem
+         At-least-once + idempotent consumer
 
-🪤 Trap 3: "Kafka order guaranteed always"
-         ❌ Only within partition
-         ✅ Use partition key for related messages
+Trap 3: "Kafka order guaranteed always"
+         Only within partition
+         Use partition key for related messages
 
-🪤 Trap 4: "No DLQ needed"
-         ❌ Poison messages stuck retry forever
-         ✅ DLQ mandatory in production
+Trap 4: "No DLQ needed"
+         Poison messages stuck retry forever
+         DLQ mandatory in production
 
-🪤 Trap 5: "Consumer faster than producer always"
-         ❌ Spikes → backpressure → infinite queue
-         ✅ Auto-scale consumers, monitor queue depth
+Trap 5: "Consumer faster than producer always"
+         Spikes → backpressure → infinite queue
+         Auto-scale consumers, monitor queue depth
 
-🪤 Trap 6: "Kafka and RabbitMQ same thing"
-         ❌ Different paradigms (log vs broker)
-         ✅ Kafka = streaming, RabbitMQ = task queues
+Trap 6: "Kafka and RabbitMQ same thing"
+         Different paradigms (log vs broker)
+         Kafka = streaming, RabbitMQ = task queues
 
-🪤 Trap 7: "Async = lost reliability"
-         ❌ MQ persistence + retry = MORE reliable than REST
-         ✅ MQ improves reliability with right config
+Trap 7: "Async = lost reliability"
+         MQ persistence + retry = MORE reliable than REST
+         MQ improves reliability with right config
 ```

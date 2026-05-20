@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    TokenResponse = OUTPUT DTO for login/register/refresh success
 //    Successful authentication ke baad client ko deta
 // ═══════════════════════════════════════════════════════════════════════
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 //        "refreshToken": "RRRR-...long-lived..."
 //    }
 //
-// 🔑 WHY 2 TOKENS?
+// WHY 2 TOKENS?
 //    Access token (15 min)
 //       • Har request mein bhejta
 //       • Leak ho bhi gaya, sirf 15 min ka window
@@ -48,7 +48,7 @@ import lombok.NoArgsConstructor;
 //    POST /auth/register → both tokens
 //    POST /auth/refresh  → new pair (rotation)
 //
-// 📐 SOLID — SRP: Sirf token data carry karta
+// SOLID — SRP: Sirf token data carry karta
 // ═══════════════════════════════════════════════════════════════════════
 
 @Data
@@ -56,11 +56,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TokenResponse {
 
-    // 🎫 Access token — short-lived (15 min)
+    // Access token — short-lived (15 min)
     // Har protected API request mein send karna hai
     private String accessToken;
 
-    // 🔄 Refresh token — long-lived (7 days)
+    // Refresh token — long-lived (7 days)
     // Sirf /auth/refresh pe send karna hai jab access expire ho
     private String refreshToken;
 }

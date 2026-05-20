@@ -1,4 +1,4 @@
-# 🔑 Keywords — static / final / this / super (Visual Revision)
+# Keywords — static / final / this / super (Visual Revision)
 
 ---
 
@@ -8,7 +8,7 @@
 ```
    School noticeboard:
    ┌──────────────────────────┐
-   │  📋 SCHOOL NOTICE         │
+   │  SCHOOL NOTICE         │
    │  "Holiday on Friday"      │
    └──────────────────────────┘
    = Sab students dekhte
@@ -83,12 +83,12 @@ MathUtil.add(2, 3);   // direct call, no object needed
 
 ```
 USE static when:
-   ✅ Shared data (counters, constants)
-   ✅ Utility methods (Math.sqrt, etc.)
-   ✅ Factory methods
+   Shared data (counters, constants)
+   Utility methods (Math.sqrt, etc.)
+   Factory methods
 
 DON'T use static when:
-   ❌ Per-object data (each user's name)
+   Per-object data (each user's name)
 ```
 
 ---
@@ -98,7 +98,7 @@ DON'T use static when:
 ### Analogy — Engraved in Stone
 ```
    ┌────────────────────────────┐
-   │  🪨 STONE TABLET             │
+   │  STONE TABLET             │
    │  "ARPAN MAHESHWARI"         │
    │  (engraved permanently)     │
    └────────────────────────────┘
@@ -109,7 +109,7 @@ DON'T use static when:
 ### final variable
 ```java
 final int MAX_USERS = 100;
-MAX_USERS = 200;        // ❌ COMPILE ERROR
+MAX_USERS = 200;        // COMPILE ERROR
 ```
 
 ### final method
@@ -121,7 +121,7 @@ class Animal {
 }
 
 class Dog extends Animal {
-    void breathe() { ... }        // ❌ COMPILE ERROR
+    void breathe() { ... }        // COMPILE ERROR
 }
 ```
 
@@ -129,14 +129,14 @@ class Dog extends Animal {
 ```java
 final class String { ... }        // cannot extend
 
-class MyString extends String { } // ❌ COMPILE ERROR
+class MyString extends String { } // COMPILE ERROR
 ```
 
 ### Visual
 ```
-   final variable    →  🪨 frozen value (no reassign)
-   final method      →  🔒 child cannot override
-   final class       →  🚫 cannot extend
+   final variable    →  frozen value (no reassign)
+   final method      →  child cannot override
+   final class       →  cannot extend
 ```
 
 ---
@@ -259,7 +259,7 @@ Rule:
 
 ---
 
-## 🆚 this vs super
+## this vs super
 
 ```
 ┌────────────────┬──────────────────┬──────────────────┐
@@ -281,13 +281,13 @@ Constructor first line — ONLY ONE allowed:
 
 ---
 
-## 🎯 All 4 Together — Memory Hook
+## All 4 Together — Memory Hook
 
 ```
-static  → 🏫 school noticeboard (shared, class-level)
-final   → 🪨 engraved in stone (cannot change)
-this    → 👈 "yeh main hu" (current object)
-super   → 👨 "yeh mera papa" (parent reference)
+static  → school noticeboard (shared, class-level)
+final   → engraved in stone (cannot change)
+this    → "yeh main hu" (current object)
+super   → "yeh mera papa" (parent reference)
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

@@ -1,4 +1,4 @@
-# 🏭 Producer-Consumer Pattern — Visual Revision
+# Producer-Consumer Pattern — Visual Revision
 
 ---
 
@@ -7,13 +7,13 @@
 ```
 Imagine restaurant:
    
-   🍳 CHEF (Producer)
+   CHEF (Producer)
         │
         ▼
-   🍽️ COUNTER (Buffer/Queue)
+   COUNTER (Buffer/Queue)
         │
         ▼
-   🤵 WAITER (Consumer)
+   WAITER (Consumer)
         │
         ▼
    Customer
@@ -255,7 +255,7 @@ Resilience:
 
 ---
 
-## 🔟 BlockingQueue Methods
+## BlockingQueue Methods
 
 ```
 ┌─────────────┬──────────────────┬─────────────────┐
@@ -279,10 +279,10 @@ USE:
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-Producer-Consumer = 🍳 chef + 🍽️ counter + 🤵 waiter
+Producer-Consumer = chef + counter + waiter
 
 OLD way: wait/notify + manual queue
    = Boilerplate, error-prone
@@ -304,4 +304,4 @@ USE CASES:
    • Event pipeline
 ```
 
-📚 [← Back to JAVA](../../)
+[← Back to JAVA](../../)

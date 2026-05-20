@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — Exception Throw Kyu Karta?
+## WHY — Exception Throw Kyu Karta?
 
 → Tu list **padh raha** hai (iterator) aur koi beech mein **list badal raha** hai
 → Iterator ko **consistent view** chahiye
@@ -14,7 +14,7 @@
 
 ---
 
-## 📖 STORY
+## STORY
 
 → Scene: List **iterate** kar raha hai
 → Aur saath mein **`list.remove()` andar loop mein** — BOOM!
@@ -27,39 +27,39 @@
 
 ---
 
-## 💻 Code
+## Code
 
-### ❌ fail-fast — Galat Code
+### fail-fast — Galat Code
 ```java
 List<String> list = new ArrayList<>();
 list.add("Rahul");
 list.add("Arpan");
 
 for (String s : list) {
-    list.remove(s);     // 🔴 ConcurrentModificationException!
+    list.remove(s);     // ConcurrentModificationException!
                         // modCount badh gaya — iterator ne pakad liya
 }
 ```
 
-### ✅ fail-fast — Sahi Fix (Iterator.remove())
+### fail-fast — Sahi Fix (Iterator.remove())
 ```java
 Iterator<String> it = list.iterator();
 while (it.hasNext()) {
     String s = it.next();
-    it.remove();        // ✅ Safe — modCount + expectedModCount dono sync
+    it.remove();        // Safe — modCount + expectedModCount dono sync
 }
 ```
 
 ---
 
-## 🔴 TRAP — `list.remove()` ≠ `it.remove()`
+## TRAP — `list.remove()` ≠ `it.remove()`
 
 > **`list.remove()`** = bahar se modify → modCount badha, expectedModCount nahi → **CME**
 > **`it.remove()`** = dono ek saath update → safe
 
 ---
 
-## 💻 fail-safe — CopyOnWriteArrayList
+## fail-safe — CopyOnWriteArrayList
 
 ```java
 CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();
@@ -67,7 +67,7 @@ list.add("Rahul");
 list.add("Arpan");
 
 for (String s : list) {
-    list.remove(s);     // ✅ NO exception — copy pe iterate ho raha
+    list.remove(s);     // NO exception — copy pe iterate ho raha
 }
 ```
 
@@ -76,7 +76,7 @@ for (String s : list) {
 
 ---
 
-## 📊 fail-fast vs fail-safe
+## fail-fast vs fail-safe
 
 | | fail-fast | fail-safe |
 |--|----------|-----------|
@@ -87,7 +87,7 @@ for (String s : list) {
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"fail-fast iterators throw ConcurrentModificationException as soon as they detect a structural modification during iteration. fail-safe iterators work on a copy of the collection — no exception, but may iterate over stale data."*
 
@@ -98,7 +98,7 @@ for (String s : list) {
 
 ---
 
-## 🔬 Deep — Exception Aati Kyun? `modCount` ka Pura Khel
+## Deep — Exception Aati Kyun? `modCount` ka Pura Khel
 
 ### Iterator ka Kaam — Photographer Wala
 
@@ -158,7 +158,7 @@ final void checkForComodification() {
 - "Snapshot meri **5** thi"
 - "Abhi list ka modCount **6** hai"
 - "Beech mein kisi ne **mujhe bina bataye** modify kiya"
-- "BOOM 💥 — exception"
+- "BOOM — exception"
 
 ### `it.remove()` Safe Kyu Hai?
 
@@ -186,16 +186,16 @@ Iterator banaya:
    expectedModCount = 2  (snapshot)
 
 Loop:
-  it.next()              → modCount(2) == expectedModCount(2)  ✅
+  it.next()              → modCount(2) == expectedModCount(2)  
   list.remove("Rahul")   → modCount = 3  (BAHAR SE BADLA)
-  it.next()              → modCount(3) ≠ expectedModCount(2)  ❌ CME 💥
+  it.next()              → modCount(3) ≠ expectedModCount(2)  CME 
 ```
 
 Ab `it.remove()` use kiya:
 
 ```
   it.remove()   → modCount = 3, expectedModCount = 3   (DONO update)
-  it.next()     → modCount(3) == expectedModCount(3)   ✅ pass
+  it.next()     → modCount(3) == expectedModCount(3)   pass
 ```
 
 ### Bottom Line

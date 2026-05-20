@@ -18,12 +18,12 @@ import com.arpan.todoapp.repository.UserRepository;
 // UserDetailsService → interface we implement
 // UsernameNotFoundException → Spring's expected exception
 //
-// ⚠️ NOTE — humara User entity NAHI import kiya
+// NOTE — humara User entity NAHI import kiya
 // Reason: Spring's User import kiya — naming conflict avoid
 // Hum apne User ko 'var' (Java 21) se use karenge
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    CustomUserDetailsService = SPRING SECURITY KA BRIDGE to our DB
 //
 //    Spring Security ko humara User entity ka pata nahi
@@ -31,7 +31,7 @@ import com.arpan.todoapp.repository.UserRepository;
 //    Hum implement karte → Spring se humara DB connect hota
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🏨 HR ANALOGY (hotel context):
+// HR ANALOGY (hotel context):
 //    AuthController = Reception
 //    JwtService    = Keycard machine
 //    UserDetailsService = HR (knows employee records)
@@ -40,7 +40,7 @@ import com.arpan.todoapp.repository.UserRepository;
 //       HR se pucho: "Yeh employee hai? Details do"
 //       HR record check → return UserDetails
 //
-// 🔑 SPRING SECURITY KA CONTRACT:
+// SPRING SECURITY KA CONTRACT:
 //    Implement UserDetailsService interface
 //    Override loadUserByUsername(String username) method
 //    Return UserDetails object
@@ -48,16 +48,16 @@ import com.arpan.todoapp.repository.UserRepository;
 //    "username" = Spring Security's generic term
 //    Hum email use kar rahe (unique identifier)
 //
-// 🔑 UserDetails KYA HAI:
+// UserDetails KYA HAI:
 //    Spring's standard user representation
 //    Fields: username, password, authorities, enabled flags
 //    Hum User.builder() use karke banayenge (Spring's User class)
 //
-// 🔑 WHEN CALLED:
+// WHEN CALLED:
 //    1. Login pe — AuthenticationManager iss se user fetch karta
 //    2. JWT validation — JwtFilter optionally use kar sakta
 //
-// 🔑 'var' KEYWORD (Java 10+, we're on Java 21):
+// 'var' KEYWORD (Java 10+, we're on Java 21):
 //    Type inference — compiler figure out variable type
 //    var user = repo.findByEmail(...) → compiler knows
 //       type = com.arpan.todoapp.model.User
@@ -88,7 +88,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // ─── STEP 2: Build Spring's UserDetails ─────────────
         //
-        // 🎨 DESIGN PATTERN: BUILDER (jo humne padha tha — 01_builder.md)
+        // DESIGN PATTERN: BUILDER (jo humne padha tha — 01_builder.md)
         //    Spring's User class Builder pattern implement karta
         //    Step-by-step construction with fluent chaining
         //

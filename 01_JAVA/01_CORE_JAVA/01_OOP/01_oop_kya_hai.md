@@ -4,23 +4,23 @@
 
 ---
 
-## 🎬 STORY — From Chaos to Order
+## STORY — From Chaos to Order
 
 > Imagine **office mein 2 different filing systems**:
 >
-> 📂 **OLD WAY (C / procedural):**
+> **OLD WAY (C / procedural):**
 > Sab files **alag drawers** mein bikhri — naam alag drawer, age alag, email alag.
 > 100 logon ka data → 300 alag jagah scattered.
 > Koi bhi banda kabhi bhi galat data dal sake — **chaos**.
 >
-> 📁 **NEW WAY (OOP):**
+> **NEW WAY (OOP):**
 > Har banda ka data **ek folder mein** — naam, age, email, behavior — sab ek jagah.
 > Folder pe **lock** lagane ka option — galat ghuse na.
 > **Order, security, reuse.**
 
 ---
 
-## 🎨 PROCEDURAL vs OOP VISUAL
+## PROCEDURAL vs OOP VISUAL
 
 ### Procedural (C-style) — Chaos
 
@@ -35,7 +35,7 @@
    │   void updateUser(int id, String name,   │  ← function alag
    │                   int age, String email) │
    │                                          │
-   │   Anyone can corrupt: userAge1 = -50;    │  ❌ no protection
+   │   Anyone can corrupt: userAge1 = -50;    │  no protection
    │                                          │
    └──────────────────────────────────────────┘
 ```
@@ -46,12 +46,12 @@
    ┌──────────────────────────┐    ┌──────────────────────────┐
    │  User user1              │    │  User user2              │
    │  ─────────               │    │  ─────────               │
-   │  🔒 private name         │    │  🔒 private name         │
-   │  🔒 private age          │    │  🔒 private age          │
-   │  🔒 private email        │    │  🔒 private email        │
+   │  private name         │    │  private name         │
+   │  private age          │    │  private age          │
+   │  private email        │    │  private email        │
    │                          │    │                          │
-   │  ✅ public getName()      │    │  ✅ public getName()      │
-   │  ✅ public setAge()       │    │  ✅ public setAge()       │
+   │  public getName()      │    │  public getName()      │
+   │  public setAge()       │    │  public setAge()       │
    │     (validation)          │    │     (validation)          │
    └──────────────────────────┘    └──────────────────────────┘
    
@@ -60,7 +60,7 @@
 
 ---
 
-## 💻 CODE — Side by Side
+## CODE — Side by Side
 
 ### Procedural (C-style in Java)
 
@@ -71,13 +71,13 @@ public class UserApp {
     static String[] emails = new String[100];
     
     public static void updateAge(int id, int age) {
-        ages[id] = age;   // ❌ Anyone can pass -50
+        ages[id] = age;   // Anyone can pass -50
     }
     
     public static void main(String[] args) {
         names[0] = "Arpan";
         ages[0] = 28;
-        ages[0] = -50;    // ❌ Data corrupted, no protection
+        ages[0] = -50;    // Data corrupted, no protection
     }
 }
 ```
@@ -98,7 +98,7 @@ public class User {
     
     public void setAge(int age) {
         if (age < 0) throw new IllegalArgumentException();
-        this.age = age;             // ✅ validated
+        this.age = age;             // validated
     }
     
     public String getName() { return name; }
@@ -107,12 +107,12 @@ public class User {
 
 // Usage:
 User u = new User("Arpan", 28, "x@y.com");
-u.setAge(-50);   // ❌ Throws exception — protection enforced
+u.setAge(-50);   // Throws exception — protection enforced
 ```
 
 ---
 
-## 🎯 OOP solves 3 main problems
+## OOP solves 3 main problems
 
 | Problem in C | OOP Solution | Mechanism |
 |---|---|---|
@@ -122,12 +122,12 @@ u.setAge(-50);   // ❌ Throws exception — protection enforced
 
 ---
 
-## 🏛️ 4 Pillars Preview
+## 4 Pillars Preview
 
 ```
 ┌─────────────┬──────────────┬─────────────┬─────────────┐
 │ENCAPSULATION│ INHERITANCE  │POLYMORPHISM │ ABSTRACTION │
-│  🔒 Protect  │  🌳 Reuse    │  🎭 Flex    │  🎪 Simplify │
+│  Protect  │  Reuse    │  Flex    │  Simplify │
 └─────────────┴──────────────┴─────────────┴─────────────┘
    private +       extends         same name        abstract /
    getters         keyword         alag work        interface
@@ -137,7 +137,7 @@ u.setAge(-50);   // ❌ Throws exception — protection enforced
 
 ---
 
-## 🌍 REAL-WORLD ANALOGY — Jira Ticket
+## REAL-WORLD ANALOGY — Jira Ticket
 
 ```
 Jira Ticket = Object
@@ -164,7 +164,7 @@ Jira Ticket = Object
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "OOP kya hai aur kyu zaroori?"**
 
@@ -186,13 +186,13 @@ Jira Ticket = Object
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"OOP represents real-world entities as objects — data and behavior bundled together in a class. Solves procedural code's 3 problems: data protection (encapsulation), code reuse (inheritance), and extensibility (polymorphism)."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 OOP = "Object hi sab kuch"
@@ -214,22 +214,22 @@ Real-world entity = ek class:
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "Java pure object-oriented hai"
-         ❌ Primitives (int, long, etc.) objects NAHI
-         ✅ Wrapper classes (Integer, Long) objects
+Trap 1: "Java pure object-oriented hai"
+         Primitives (int, long, etc.) objects NAHI
+         Wrapper classes (Integer, Long) objects
 
-🪤 Trap 2: "OOP slow hota procedural se"
-         ❌ Modern JIT optimizations gap close kar diya
-         ✅ Trade-off: slight overhead for huge maintainability gain
+Trap 2: "OOP slow hota procedural se"
+         Modern JIT optimizations gap close kar diya
+         Trade-off: slight overhead for huge maintainability gain
 
-🪤 Trap 3: "Encapsulation = abstraction"
-         ❌ Different — encap = state hide, abstr = implementation hide
-         ✅ Both hide stuff at different levels
+Trap 3: "Encapsulation = abstraction"
+         Different — encap = state hide, abstr = implementation hide
+         Both hide stuff at different levels
 
-🪤 Trap 4: "OOP same as Java"
-         ❌ Concept hai — Python, C++, C# bhi OOP support karte
-         ✅ Java mostly-OOP language hai
+Trap 4: "OOP same as Java"
+         Concept hai — Python, C++, C# bhi OOP support karte
+         Java mostly-OOP language hai
 ```

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 // @RestController, etc. → REST mapping annotations
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    REST API LAYER for User
 //    HTTP entry — routing only, business logic UserService mein
 //    Auth endpoints (login/register flow) abhi yahin
@@ -28,11 +28,11 @@ import org.springframework.web.bind.annotation.*;
 //    GET    /users/{id}   → READ ONE
 //    PUT    /users/{id}   → UPDATE
 //
-//    ❌ NO delete (tune nahi mangya)
-//    ❌ NO get-all (tune nahi mangya)
-//    ❌ NO login flow yet (JWT layer ke saath aayega)
+//    NO delete (tune nahi mangya)
+//    NO get-all (tune nahi mangya)
+//    NO login flow yet (JWT layer ke saath aayega)
 //
-// 🔑 KEY ANNOTATIONS (same as TodoController):
+// KEY ANNOTATIONS (same as TodoController):
 //
 //    @RestController        → @Controller + @ResponseBody (auto JSON)
 //    @RequestMapping("/users") → class-level base path
@@ -40,12 +40,12 @@ import org.springframework.web.bind.annotation.*;
 //    @PathVariable          → URL part binding
 //    @RequestBody + @Valid  → JSON body + validation trigger
 //
-// 🔑 SERVICE INJECTION (constructor):
+// SERVICE INJECTION (constructor):
 //    private final UserService service;
 //    public UserController(UserService service) { this.service = service; }
 //    → Spring auto-injects single constructor (no @Autowired)
 //
-// 📐 SOLID:
+// SOLID:
 //
 //    SRP (Single Responsibility):
 //       Controller ONE job — HTTP routing
@@ -59,7 +59,7 @@ import org.springframework.web.bind.annotation.*;
 //       Naye endpoint add easy (e.g., login later)
 //       Existing endpoint behavior change = modify service, not here
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "UserController exposes 3 REST endpoints for user lifecycle —
 //     create, get, update. SRP keeps it purely HTTP-focused, with
 //     UserService handling business logic. Constructor injection

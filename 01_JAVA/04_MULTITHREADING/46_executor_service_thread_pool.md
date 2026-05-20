@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — `new Thread()` Ki Problem
+## STORY — `new Thread()` Ki Problem
 
 → API ko **1000 requests** aaye. Tune **har request pe `new Thread()`** banaya
 → **JVM crash** — thread create karna **costly hai**, OS-level resources lagti hain
@@ -14,7 +14,7 @@
 
 ---
 
-## 🟡 WHY — ExecutorService?
+## WHY — ExecutorService?
 
 → **`new Thread()`** har baar — **expensive create + destroy**
 → Pool = **fixed threads** banake rakho, kaam aate hi assign
@@ -23,7 +23,7 @@
 
 ---
 
-## 🧠 Visualization — Pool with Reusable Threads
+## Visualization — Pool with Reusable Threads
 
 ```
               ExecutorService — Thread Pool Visualization
@@ -36,7 +36,7 @@
   Request 2  →  new Thread()  →  task done  →  thread DESTROY
   Request 3  →  new Thread()  →  task done  →  thread DESTROY
    ...
-  1000 reqs  →  1000 threads create + destroy  →  💥 JVM crash
+  1000 reqs  →  1000 threads create + destroy  →  JVM crash
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -79,7 +79,7 @@
                          │  1  │  ← FIFO sequential
                          └─────┘
 
-  ScheduledThreadPool    ┌─────────┐  ⏰
+  ScheduledThreadPool    ┌─────────┐  
                          │ N + cron │  ← delayed/periodic tasks
                          └─────────┘
 
@@ -90,13 +90,13 @@
 
   pool.submit(task)           ──►  task chala
   pool.shutdown()             ──►  naya kaam nahi loga, current finish karega
-  pool.shutdownNow()          ──►  🔴 force kill — running tasks bhi rok dega
+  pool.shutdownNow()          ──►  force kill — running tasks bhi rok dega
   pool.awaitTermination(...)  ──►  wait jab tak sab khatam
 ```
 
 ---
 
-## 💻 Code — 4 Common Pools
+## Code — 4 Common Pools
 
 ```java
 import java.util.concurrent.*;
@@ -131,12 +131,12 @@ Future<Integer> future = pool.submit(() -> {
 System.out.println(future.get());      // 42 (block jab tak result na aaye)
 
 pool.shutdown();                        // graceful shutdown — naya kaam nahi loga
-// pool.shutdownNow();                  // 🔴 force kill — running tasks bhi rok dega
+// pool.shutdownNow();                  // force kill — running tasks bhi rok dega
 ```
 
 ---
 
-## 📊 Pool Types Comparison
+## Pool Types Comparison
 
 | Pool | Threads | Use case |
 |------|---------|----------|
@@ -147,12 +147,12 @@ pool.shutdown();                        // graceful shutdown — naya kaam nahi 
 
 ---
 
-## 🔴 TRAP 1 — `Executors.newCachedThreadPool()` Production Mein Risky
+## TRAP 1 — `Executors.newCachedThreadPool()` Production Mein Risky
 
 > **Cached pool **unlimited** threads bana sakta** under heavy load → **OOM crash**.
 > **Production mein FixedThreadPool ya custom `ThreadPoolExecutor` use karo.**
 
-## 🔴 TRAP 2 — `shutdown()` Bhulna
+## TRAP 2 — `shutdown()` Bhulna
 
 > **Shutdown nahi kiya = JVM exit nahi karega** — pool ke threads alive rehte.
 > **HAMESHA `shutdown()` call karo** finally block mein.
@@ -165,14 +165,14 @@ try {
 }
 ```
 
-## 🔴 TRAP 3 — `submit()` vs `execute()`
+## TRAP 3 — `submit()` vs `execute()`
 
 > **`execute(Runnable)`** = no return, exception **silently swallow** ho sakta hai
 > **`submit(Runnable/Callable)`** = `Future` deta, exception `Future.get()` se milta
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"`ExecutorService` manages a pool of reusable threads — avoiding the cost of creating new threads for every task. Use `FixedThreadPool` for predictable load, `submit()` to get a `Future`, and always call `shutdown()` to release resources."*
 

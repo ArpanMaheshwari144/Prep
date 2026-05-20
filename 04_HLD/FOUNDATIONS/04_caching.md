@@ -1,17 +1,17 @@
-# 💾 Caching
+# Caching
 
 > **HLD Topic 4 — Speed weapon (Day 1)**
 
 ---
 
-## 🎬 STORY — Library Front Desk
+## STORY — Library Front Desk
 
 > Library mein 10,000 books. Tu daily 5-7 popular books padhta — same hi.
 >
-> 📚 **Without caching:**
+> **Without caching:**
 > Har baar warehouse jao → 5 min walk × 7 books = 35 min waste daily.
 >
-> 📋 **With caching (front desk):**
+> **With caching (front desk):**
 > Top-100 popular books **front desk pe** rakho. 10 sec each access.
 >
 > **Cache = front desk** (frequently accessed data, fast storage)
@@ -19,7 +19,7 @@
 
 ---
 
-## 🤔 Why Cache?
+## Why Cache?
 
 ```
 Without cache:
@@ -37,7 +37,7 @@ With cache:
 
 ---
 
-## 🎨 Multi-level Cache Architecture
+## Multi-level Cache Architecture
 
 ```
    USER (browser)
@@ -65,7 +65,7 @@ With cache:
 
 ---
 
-## 📊 4 Cache Strategies
+## 4 Cache Strategies
 
 ### 1. **Cache-Aside (Lazy Loading)** — most common (90%)
 
@@ -111,7 +111,7 @@ Cache PROACTIVELY refresh before expiry
 
 ---
 
-## 📊 Strategy Comparison
+## Strategy Comparison
 
 | | Cache-Aside | Write-Through | Write-Behind | Refresh-Ahead |
 |---|---|---|---|---|
@@ -123,7 +123,7 @@ Cache PROACTIVELY refresh before expiry
 
 ---
 
-## 🗑️ Eviction Policies
+## Eviction Policies
 
 Cache full → kya hatao?
 
@@ -153,7 +153,7 @@ Each entry has expiry → auto-evicted
 
 ---
 
-## 🌍 Real-World Cache Tools
+## Real-World Cache Tools
 
 ### **Redis** (modern choice — 80% market)
 - In-memory key-value
@@ -179,13 +179,13 @@ Each entry has expiry → auto-evicted
 | | Redis | Memcached |
 |---|---|---|
 | Data structures | Many | Key-value only |
-| Persistence | ✅ | ❌ |
-| Pub-Sub | ✅ | ❌ |
-| Modern choice | ✅ | Legacy |
+| Persistence | | |
+| Pub-Sub | | |
+| Modern choice | | Legacy |
 
 ---
 
-## 🪤 The Hard Problem — Cache Invalidation
+## The Hard Problem — Cache Invalidation
 
 > *"Two hard things in CS: cache invalidation and naming things."*
 
@@ -220,7 +220,7 @@ DB write → publish event → caches subscribe → delete entry
 
 ---
 
-## 🎯 Cache Hit Ratio
+## Cache Hit Ratio
 
 ```
 Hit Ratio = (Cache hits) / (Total requests)
@@ -238,7 +238,7 @@ Monitor in production — Spring Boot Actuator + Micrometer.
 
 ---
 
-## 🎤 Interview Talking Points
+## Interview Talking Points
 
 **Q: "Caching kya aur kab use?"**
 
@@ -258,13 +258,13 @@ Monitor in production — Spring Boot Actuator + Micrometer.
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > **"Cache = frequently accessed data fast storage mein. Multi-level (browser/CDN/app/Redis/DB). Cache-Aside + LRU + TTL = production combo. Invalidation hardest — TTL + explicit invalidation combo. Redis 80% market."**
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 Cache = "Library front desk"
@@ -297,26 +297,26 @@ Invalidation:
 
 ---
 
-## ⚠️ Trap Box
+## Trap Box
 
 ```
-🪤 Trap 1: "Cache everything"
-         ❌ Dynamic data (balance, real-time) — fresh chahiye
-         ✅ Read-heavy + stable data only
+Trap 1: "Cache everything"
+         Dynamic data (balance, real-time) — fresh chahiye
+         Read-heavy + stable data only
 
-🪤 Trap 2: "No TTL"
-         ❌ Cache infinite grow → memory leak
-         ✅ Always TTL — force refresh
+Trap 2: "No TTL"
+         Cache infinite grow → memory leak
+         Always TTL — force refresh
 
-🪤 Trap 3: "Cache stampede"
-         ❌ Expire ke baad sab DB hit
-         ✅ Mutex / refresh-ahead / soft TTL
+Trap 3: "Cache stampede"
+         Expire ke baad sab DB hit
+         Mutex / refresh-ahead / soft TTL
 
-🪤 Trap 4: "Stale data not noticed"
-         ❌ DB updated, cache stale, user sees old
-         ✅ TTL + explicit invalidation
+Trap 4: "Stale data not noticed"
+         DB updated, cache stale, user sees old
+         TTL + explicit invalidation
 
-🪤 Trap 5: "Cache as DB replacement"
-         ❌ No persistence — restart = data loss
-         ✅ Cache supplements DB, not replaces
+Trap 5: "Cache as DB replacement"
+         No persistence — restart = data loss
+         Cache supplements DB, not replaces
 ```

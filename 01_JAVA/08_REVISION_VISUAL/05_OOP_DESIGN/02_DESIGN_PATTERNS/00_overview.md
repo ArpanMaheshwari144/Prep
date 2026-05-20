@@ -1,4 +1,4 @@
-# 🎨 Design Patterns — Overview
+# Design Patterns — Overview
 
 ---
 
@@ -26,16 +26,16 @@ Design pattern = code likhne ka tested tareeka
 
 ```
 CREATIONAL:
-   ✅ 01_builder.md      — step by step construction
-   ✅ 02_singleton.md    — only ONE instance
-   ✅ 03_factory.md      — type pe based object
+   01_builder.md      — step by step construction
+   02_singleton.md    — only ONE instance
+   03_factory.md      — type pe based object
 
 STRUCTURAL:
-   🔜 Adapter (pending)
+   Adapter (pending)
 
 BEHAVIORAL:
-   🔜 Observer (pending)
-   🔜 Strategy (pending)
+   Observer (pending)
+   Strategy (pending)
 ```
 
 ---
@@ -43,9 +43,9 @@ BEHAVIORAL:
 ## Quick One-Liners
 
 ```
-Builder   = 🍕 step-by-step (.method().method().build())
-Singleton = 🏛️ only ONE (enum is best)
-Factory   = 🏭 type bolo, shop decide kare
+Builder   = step-by-step (.method().method().build())
+Singleton = only ONE (enum is best)
+Factory   = type bolo, shop decide kare
 ```
 
 ---
@@ -54,9 +54,9 @@ Factory   = 🏭 type bolo, shop decide kare
 
 ```
 ASKED 80% of time:
-   ✅ Singleton (esp. enum approach)
-   ✅ Factory
-   ✅ Builder
+   Singleton (esp. enum approach)
+   Factory
+   Builder
 
 ASKED sometimes:
    • Observer

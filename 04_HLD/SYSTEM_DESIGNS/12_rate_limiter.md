@@ -1,4 +1,4 @@
-# 🛡️ Rate Limiter — Visual System Design
+# Rate Limiter — Visual System Design
 
 ---
 
@@ -7,8 +7,8 @@
 ```
    PUBLIC WATER TAP
         │
-   Normal user: 1 bottle bhar ke gaya         ✅
-   Pagal user: 10 trucks le aaya, hours tak   ❌
+   Normal user: 1 bottle bhar ke gaya         
+   Pagal user: 10 trucks le aaya, hours tak   
                     │
                     ▼
               Saara paani khatam
@@ -24,8 +24,8 @@
 ```
 SAME for APIs:
 
-   Normal user → 2 login attempts → done    ✅
-   Hacker bot → 10K attempts/sec → brute force  ❌
+   Normal user → 2 login attempts → done    
+   Hacker bot → 10K attempts/sec → brute force  
                   │
                   ▼
             Rate limit:
@@ -94,7 +94,7 @@ WHY REDIS (centralized counter):
    Server 3: count = 2
                               Total real = 9
                               Limit = 5
-                              ❌ break ho raha
+                              break ho raha
 
    FIX:
    ┌──────┐  ┌──────┐  ┌──────┐
@@ -112,7 +112,7 @@ WHY REDIS (centralized counter):
 
 ## 5️⃣ Algorithms — 4 Methods
 
-### Token Bucket 🪙
+### Token Bucket 
 
 ```
 Tokens auto-add: 1/sec
@@ -120,7 +120,7 @@ Tokens auto-add: 1/sec
        ▼
    ┌──────────┐
    │  BUCKET  │
-   │ 🪙🪙🪙🪙  │   max 10 tokens
+   │  │   max 10 tokens
    │ (max 10) │
    └────┬─────┘
         │
@@ -132,12 +132,12 @@ Tokens auto-add: 1/sec
    Bucket empty? → REJECT
 ```
 
-### Leaky Bucket 💧
+### Leaky Bucket 
 
 ```
    Reqs aaye ──→ ┌──────────┐
                  │  BUCKET  │
-                 │ 💧💧💧    │
+                 │    │
                  └────┬─────┘
                       │ hole (1/sec)
                       ▼
@@ -146,7 +146,7 @@ Tokens auto-add: 1/sec
    Bucket FULL → overflow → REJECT
 ```
 
-### Fixed Window Counter 🕐
+### Fixed Window Counter 
 
 ```
    Time:  10:00───────10:01───────10:02
@@ -157,12 +157,12 @@ Tokens auto-add: 1/sec
 
 **Edge spike problem:**
 ```
-   10:00:59 → 5 reqs ✅
-   10:01:00 → 5 reqs ✅ (new window)
+   10:00:59 → 5 reqs 
+   10:01:00 → 5 reqs (new window)
    = 10 reqs in 2 seconds!
 ```
 
-### Sliding Window 🌊
+### Sliding Window 
 
 ```
    Time:    │←──── 60 seconds ────→│ NOW
@@ -173,7 +173,7 @@ Tokens auto-add: 1/sec
    Limit = 5? → REJECT
 ```
 
-#### 🚌 Bus Stand Analogy (How Window ACTUALLY Shifts)
+#### Bus Stand Analogy (How Window ACTUALLY Shifts)
 
 ```
 Watchman bus stand pe register rakhta:
@@ -206,11 +206,11 @@ CASE 2: Naya passenger 11:10 pe aaya
 ```
 WINDOW SHIFT KAISE HOTI:
 
-   ❌ NOT timer-based:
+   NOT timer-based:
         "Har second window 1 step slide"
         (background job NAHI hoti)
 
-   ✅ ON-DEMAND (request-driven):
+   ON-DEMAND (request-driven):
         "Naya request aata = watchman ABHI se 60 min peeche dekhta"
         Calculation fresh = window naturally shift
 
@@ -245,8 +245,8 @@ TIME:  10:00 ──────── 10:30 ──────── 11:00 ─�
 ┌──────────────────┬───────────┬─────────┬──────────┬─────────┐
 │  Algorithm       │ Bursts    │ Smooth  │ Memory   │ Common  │
 ├──────────────────┼───────────┼─────────┼──────────┼─────────┤
-│ Token Bucket     │ YES ✅    │ Variable│ Low      │ AWS,Stripe│
-│ Leaky Bucket     │ NO ❌     │ YES     │ Low      │ Throttle │
+│ Token Bucket     │ YES    │ Variable│ Low      │ AWS,Stripe│
+│ Leaky Bucket     │ NO     │ YES     │ Low      │ Throttle │
 │ Fixed Window     │ Edge fail │ NO      │ Lowest   │ GitHub  │
 │ Sliding Window   │ Smooth    │ YES     │ High     │ Cloudflare│
 └──────────────────┴───────────┴─────────┴──────────┴─────────┘
@@ -393,7 +393,7 @@ ATOMIC OPERATION (no race):
 
 ---
 
-## 🔟 Distributed Rate Limiting
+## Distributed Rate Limiting
 
 ### PROBLEM
 ```
@@ -405,7 +405,7 @@ ATOMIC OPERATION (no race):
 
    Each region thinks 50/100 OK
    Total = 150 reqs > limit (100)
-   ❌ Limit broken
+   Limit broken
 ```
 
 ### SOLUTION 1: Centralized Redis
@@ -420,7 +420,7 @@ ATOMIC OPERATION (no race):
               │ GLOBAL REDIS │
               └──────────────┘
 
-   ✅ Accurate    ❌ High latency, SPOF
+   Accurate    High latency, SPOF
 ```
 
 ### SOLUTION 2: Local + Async Sync
@@ -436,16 +436,16 @@ ATOMIC OPERATION (no race):
         │  Aggregator  │
         └──────────────┘
 
-   ✅ Fast    ❌ Slight over-limit possible
+   Fast    Slight over-limit possible
 ```
 
 ### SOLUTION 3: Region-Sticky (BEST)
 ```
    USER (arpan_123, home = INDIA)
        │
-       ├── Bangalore   ──► India Edge ──► INDIA region ✅
-       ├── Berlin      ──► EU Edge    ──► INDIA region ✅
-       └── US VPN      ──► US Edge    ──► INDIA region ✅
+       ├── Bangalore   ──► India Edge ──► INDIA region 
+       ├── Berlin      ──► EU Edge    ──► INDIA region 
+       └── US VPN      ──► US Edge    ──► INDIA region 
 
    ALL paths end at INDIA region
    = Local Redis sees full picture
@@ -538,7 +538,7 @@ REJECTED (429 Too Many Requests):
 
 ---
 
-## ✅ Components Summary
+## Components Summary
 
 ```
 ┌─────────────────┬─────────────────────────────────┐
@@ -558,4 +558,4 @@ REJECTED (429 Too Many Requests):
 └─────────────────┴─────────────────────────────────┘
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

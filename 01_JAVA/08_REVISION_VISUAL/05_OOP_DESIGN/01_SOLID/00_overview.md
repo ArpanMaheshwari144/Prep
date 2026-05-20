@@ -1,4 +1,4 @@
-# 🏗️ SOLID — Overview
+# SOLID — Overview
 
 ---
 
@@ -18,19 +18,19 @@
 
 ```
 S — Single Responsibility
-    🎯 ek class ek kaam
+    ek class ek kaam
 
 O — Open/Closed
-    🔌 charger + adapter (extend, don't change)
+    charger + adapter (extend, don't change)
 
 L — Liskov Substitution
-    🐧 Penguin shouldn't extend FlyingBird
+    Penguin shouldn't extend FlyingBird
 
 I — Interface Segregation
-    👨‍🍳 Chef shouldn't implement cleanFloor()
+    Chef shouldn't implement cleanFloor()
 
 D — Dependency Inversion
-    💡 Switch works on Bulb interface, not Philips concrete
+    Switch works on Bulb interface, not Philips concrete
 ```
 
 ---
@@ -38,11 +38,11 @@ D — Dependency Inversion
 ## Why SOLID Matters
 
 ```
-✅ Maintainable     — change one thing, others stable
-✅ Testable         — easy to mock, swap
-✅ Extensible       — new features without breaking
-✅ Reusable         — small focused units
-✅ Readable         — each class clear purpose
+Maintainable     — change one thing, others stable
+Testable         — easy to mock, swap
+Extensible       — new features without breaking
+Reusable         — small focused units
+Readable         — each class clear purpose
 
 = Foundation for clean OOP code
 = Spring's DI is built on D principle

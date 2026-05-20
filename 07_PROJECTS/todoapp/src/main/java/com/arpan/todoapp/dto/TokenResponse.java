@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    TokenResponse = LOGIN ka HTTP response shape
 //    POST /auth/login → 200 OK body:
 //       {
@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 //    Uses refreshToken to get new accessToken when expired
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🔑 ACCESS TOKEN vs REFRESH TOKEN:
+// ACCESS TOKEN vs REFRESH TOKEN:
 //
 //    ACCESS TOKEN (short-lived):
 //       Validity: 15 min (jwt.expiration in properties)
@@ -38,12 +38,12 @@ import lombok.NoArgsConstructor;
 //       Long refresh token = UX (no re-login every 15 min)
 //       Best of both
 //
-// 🔑 NO VALIDATION (response DTO):
+// NO VALIDATION (response DTO):
 //    @NotBlank etc. are for INCOMING requests
 //    Outgoing response always populated by server
 //    No validation needed
 //
-// 🔑 RESPONSE-ONLY DTO:
+// RESPONSE-ONLY DTO:
 //    No constructor logic, just data shape
 //    Jackson serializes to JSON automatically
 

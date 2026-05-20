@@ -1,18 +1,18 @@
-# ⚡ WebSockets vs SSE vs Long Polling
+# WebSockets vs SSE vs Long Polling
 
 ---
 
-## 🎯 1-Line Analogy
+## 1-Line Analogy
 
 ```
-Long Polling = 🚪 Repeated knocks on door
-SSE          = 📻 Radio broadcast (one-way)
-WebSocket    = 📞 Phone call (two-way always-on)
+Long Polling = Repeated knocks on door
+SSE          = Radio broadcast (one-way)
+WebSocket    = Phone call (two-way always-on)
 ```
 
 ---
 
-## 📊 Side by Side
+## Side by Side
 
 ```
 ┌────────────────┬───────────┬───────────┬──────────────┐
@@ -25,11 +25,11 @@ WebSocket    = 📞 Phone call (two-way always-on)
 │ Connection     │ Closes+    │ Persistent │ Persistent   │
 │                │ reopens    │ HTTP       │ full duplex  │
 ├────────────────┼───────────┼───────────┼──────────────┤
-│ Real-time      │ Near       │ ✅ Yes     │ ✅ Yes        │
+│ Real-time      │ Near       │ Yes     │ Yes        │
 ├────────────────┼───────────┼───────────┼──────────────┤
-│ Auto-reconnect │ Manual     │ ✅ Built-in│ ❌ Manual    │
+│ Auto-reconnect │ Manual     │ Built-in│ Manual    │
 ├────────────────┼───────────┼───────────┼──────────────┤
-│ Proxy friendly │ ✅          │ ✅         │ ⚠️ Sometimes  │
+│ Proxy friendly │          │         │ Sometimes  │
 ├────────────────┼───────────┼───────────┼──────────────┤
 │ Complexity     │ Medium     │ Low        │ Higher        │
 ├────────────────┼───────────┼───────────┼──────────────┤
@@ -39,7 +39,7 @@ WebSocket    = 📞 Phone call (two-way always-on)
 
 ---
 
-## 🚪 LONG POLLING
+## LONG POLLING
 
 ```
 CLIENT                    SERVER
@@ -71,7 +71,7 @@ Logic:
 
 ---
 
-## 📻 SSE (Server-Sent Events)
+## SSE (Server-Sent Events)
 
 ```
 CLIENT                    SERVER
@@ -97,13 +97,13 @@ Browser code:
 
 = ONE-WAY only (server → client)
 = Built on HTTP (firewall friendly)
-= AUTO-RECONNECT included ✨
+= AUTO-RECONNECT included 
 = Lightweight
 ```
 
 ---
 
-## 📞 WEBSOCKET
+## WEBSOCKET
 
 ```
 CLIENT                    SERVER
@@ -138,10 +138,10 @@ Browser code:
 
 ---
 
-## 🎯 WHEN TO USE WHAT
+## WHEN TO USE WHAT
 
 ```
-✅ LONG POLLING — Use when:
+LONG POLLING — Use when:
    • Legacy systems / very old browsers
    • Simple "occasional update" UX
    • Fallback when WS not available
@@ -150,7 +150,7 @@ Browser code:
    • Pre-2010 chat apps
    • Socket.io fallback mode
 
-✅ SSE — Use when:
+SSE — Use when:
    • ONE-WAY server → client push
    • Notifications, alerts
    • Stock tickers, news feeds
@@ -162,7 +162,7 @@ Browser code:
    • Server logs to UI
    • Real-time dashboards
 
-✅ WEBSOCKET — Use when:
+WEBSOCKET — Use when:
    • TRUE bidirectional needed
    • Chat applications
    • Online multiplayer games
@@ -178,7 +178,7 @@ Browser code:
 
 ---
 
-## 💎 OVERHEAD COMPARE
+## OVERHEAD COMPARE
 
 ```
 LONG POLLING per message:
@@ -199,7 +199,7 @@ WEBSOCKET per message:
 
 ---
 
-## 🎬 REAL-WORLD CHOICES
+## REAL-WORLD CHOICES
 
 ```
 WhatsApp Web        → WebSocket (bidirectional chat)
@@ -211,7 +211,7 @@ Older Gmail         → Long polling (HTTP/1.1 era)
 
 ---
 
-## 🚨 WEBSOCKET GOTCHAS
+## WEBSOCKET GOTCHAS
 
 ```
 1. SCALING
@@ -233,7 +233,7 @@ Older Gmail         → Long polling (HTTP/1.1 era)
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "Long polling holds HTTP request open until data,
@@ -254,12 +254,12 @@ Older Gmail         → Long polling (HTTP/1.1 era)
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-Long Polling = 🚪 Knock-and-wait (HTTP repeats)
-SSE          = 📻 Radio broadcast (server→client)
-WebSocket    = 📞 Phone call (both ways)
+Long Polling = Knock-and-wait (HTTP repeats)
+SSE          = Radio broadcast (server→client)
+WebSocket    = Phone call (both ways)
 
 Long Poll: legacy, simple, high overhead
 SSE:       one-way push, auto-reconnect
@@ -271,4 +271,4 @@ Real apps:
    Old/fallback → Long Polling
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

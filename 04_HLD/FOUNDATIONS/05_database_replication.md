@@ -1,17 +1,17 @@
-# 🔄 Database Replication
+# Database Replication
 
 > **HLD Topic 5 — Read scaling + High Availability**
 
 ---
 
-## 🎬 STORY — Library Master Copy + Photocopies
+## STORY — Library Master Copy + Photocopies
 
 > Library mein 1 important book — agar kho gayi, sab kuch gone.
 >
-> 📚 **Without replica:**
+> **Without replica:**
 > 1 master copy. Phati → data gayab. 1 banda padh sakta at a time.
 >
-> 📋 **With replicas:**
+> **With replicas:**
 > Master + 5 photocopies. 5 log simultaneously padh sakte. Master phati → photocopies se restore.
 >
 > **Master = Primary DB**
@@ -19,11 +19,11 @@
 
 ---
 
-## 🤔 Why Replication?
+## Why Replication?
 
 ### Without
 ```
-1M reads/sec → Single DB → 💥 crash
+1M reads/sec → Single DB → crash
    • Single point of failure
    • All reads + writes hit one DB
    • No geographic distribution
@@ -46,7 +46,7 @@
 
 ---
 
-## 🎨 Master-Slave Architecture
+## Master-Slave Architecture
 
 ```
    App Servers
@@ -72,7 +72,7 @@ spring.datasource.read-url=jdbc:mysql://replica:3306/db
 
 ---
 
-## 🎯 2 Replication Modes
+## 2 Replication Modes
 
 ### **Synchronous**
 ```
@@ -105,7 +105,7 @@ Compromise speed + safety.
 
 ---
 
-## 📊 Sync vs Async
+## Sync vs Async
 
 | | Synchronous | Asynchronous |
 |---|---|---|
@@ -117,7 +117,7 @@ Compromise speed + safety.
 
 ---
 
-## 🩺 Failover
+## Failover
 
 ### Automatic (preferred)
 ```
@@ -140,7 +140,7 @@ Downtime: minutes (slow)
 
 ---
 
-## ⚠️ Replication Lag (key challenge)
+## Replication Lag (key challenge)
 
 ```
 T=0:   Primary writes
@@ -148,12 +148,12 @@ T=5ms: Replica-1 catches up
 T=50ms: Replica-2 still updating
 
 User: POST /profile (update name)
-      → Primary ✅
+      → Primary 
       → Returns success
       
 User: GET /profile (read)
       → Hits Replica-2 (lagging)
-      → Returns OLD name ❌
+      → Returns OLD name 
 ```
 
 ### Solutions
@@ -172,7 +172,7 @@ Slower but consistent.
 
 ---
 
-## 🌍 Real-World Tools
+## Real-World Tools
 
 ### **MySQL/PostgreSQL**
 - Built-in master-slave
@@ -195,7 +195,7 @@ Slower but consistent.
 
 ---
 
-## 🎯 Master-Master (Advanced)
+## Master-Master (Advanced)
 
 ```
    ┌────────┐  ◄────►  ┌────────┐
@@ -211,7 +211,7 @@ Slower but consistent.
 
 ---
 
-## 🎤 Interview Talking Points
+## Interview Talking Points
 
 **Q: "DB replication kya?"**
 
@@ -231,13 +231,13 @@ Slower but consistent.
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > **"Replication = Primary + read replicas. Read scaling + HA. Sync (slow, consistent) vs Async (fast, eventual). Replication lag main challenge — read-own-writes or sticky sessions fix. AWS RDS Multi-AZ production default."**
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 Replication = "Library master + photocopies"
@@ -266,26 +266,26 @@ Master-Master:
 
 ---
 
-## ⚠️ Trap Box
+## Trap Box
 
 ```
-🪤 Trap 1: "Reads always from replica"
-         ❌ Replication lag — user might miss own write
-         ✅ Critical reads → primary
+Trap 1: "Reads always from replica"
+         Replication lag — user might miss own write
+         Critical reads → primary
 
-🪤 Trap 2: "Sync = always safe"
-         ❌ All replicas fail = primary blocked
-         ✅ Quorum-based (n/2 + 1) better
+Trap 2: "Sync = always safe"
+         All replicas fail = primary blocked
+         Quorum-based (n/2 + 1) better
 
-🪤 Trap 3: "Master-master > master-slave"
-         ❌ Conflict resolution complex
-         ✅ Master-slave simpler, sufficient
+Trap 3: "Master-master > master-slave"
+         Conflict resolution complex
+         Master-slave simpler, sufficient
 
-🪤 Trap 4: "Replicas = backup"
-         ❌ Replicas LIVE — accidental delete propagates
-         ✅ Replicas + REAL snapshots both needed
+Trap 4: "Replicas = backup"
+         Replicas LIVE — accidental delete propagates
+         Replicas + REAL snapshots both needed
 
-🪤 Trap 5: "Async = data loss certain"
-         ❌ Lag is ms — practically negligible
-         ✅ For non-critical fine; banking use sync
+Trap 5: "Async = data loss certain"
+         Lag is ms — practically negligible
+         For non-critical fine; banking use sync
 ```

@@ -1,12 +1,12 @@
 package com.arpan.bank.config;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    Bank-wide config (bankName, maxTransactionLimit, currency).
 //    Ek hi instance pure app mein — BankConfig.INSTANCE se access.
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🎨 PATTERN: SINGLETON (Enum-based)
+// PATTERN: SINGLETON (Enum-based)
 //
 // VISUAL MAP:
 //    ┌─────────────────────────────────┐
@@ -36,10 +36,10 @@ package com.arpan.bank.config;
 //    │   (SAME object both jagah)    │
 //    └──────────────────────────────┘
 //
-// 📐 SOLID — SRP:
+// SOLID — SRP:
 //    Only configuration provide karta. No business logic.
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "Enum singleton — Joshua Bloch's recommended approach.
 //     Thread-safe + serialization-safe + reflection-safe automatic.
 //     Simpler than manual synchronized getInstance()."

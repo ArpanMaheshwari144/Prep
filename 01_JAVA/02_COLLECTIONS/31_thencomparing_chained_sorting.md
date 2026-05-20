@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Tie-Breaker
+## STORY — Tie-Breaker
 
 → Employees ki list — **age se sort** karna hai
 → 2 panelists ki **age same** ho gayi
@@ -14,7 +14,7 @@
 
 ---
 
-## 🟡 WHY — `thenComparing()` Kyu?
+## WHY — `thenComparing()` Kyu?
 
 → Ek `Comparator` sirf **EK rule** deta hai
 → Multiple rules chahiye → **chain karo**
@@ -23,7 +23,7 @@
 
 ---
 
-## 💻 Code
+## Code
 
 ### Pehle age, tie ho toh name
 ```java
@@ -44,16 +44,16 @@ list.sort(
 
 ---
 
-## 🔴 TRAP — `&&` Use Karna
+## TRAP — `&&` Use Karna
 
 > **`&&` operator `int` pe kaam nahi karta!**
 
 ```java
-// 🔴 GALAT
+// GALAT
 list.sort((a, b) -> Integer.compare(a.age, b.age) && a.name.compareTo(b.name));
 // compile error — && Boolean expects, comparison returns int
 
-// ✅ SAHI
+// SAHI
 list.sort(
     Comparator.comparing((Panelist p) -> p.age)
               .thenComparing(p -> p.name)
@@ -62,7 +62,7 @@ list.sort(
 
 ---
 
-## 🧠 Logic — `thenComparing` Kab Chalta?
+## Logic — `thenComparing` Kab Chalta?
 
 ```
 comparing(age)      ─── Pehla compare
@@ -81,7 +81,7 @@ result       (tiebreaker chala)
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"`Comparator.comparing()` sets the primary sort rule. `thenComparing()` adds a tiebreaker applied only when the previous comparison returns zero. Chain as many as needed."*
 

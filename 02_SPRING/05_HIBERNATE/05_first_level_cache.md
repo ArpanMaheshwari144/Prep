@@ -1,4 +1,4 @@
-# 💾 First-Level Cache (L1) — Session Cache
+# First-Level Cache (L1) — Session Cache
 
 ---
 
@@ -45,7 +45,7 @@ Hibernate Session = Tera desk
    userRepo.findById(1L)
         │
         ├── L1 cache check
-        │   HAAN → cache se return ✅
+        │   HAAN → cache se return 
         │   = NO DB query!
         │
         ▼
@@ -115,8 +115,8 @@ public void demo(Long id) {
         ▼                       ▼
    ┌─────────────┐         ┌─────────────┐
    │  L1 Cache   │         │  L1 Cache   │
-   │  User#1 ✓   │         │  User#1 ✗   │  ← separate
-   │  User#2 ✓   │         │             │     cache
+   │  User#1   │         │  User#1   │  ← separate
+   │  User#2   │         │             │     cache
    └─────────────┘         └─────────────┘
         │                       │
    Session CLOSE           Session CLOSE
@@ -185,7 +185,7 @@ L1 cache = automatic, transaction-level
 
 ---
 
-## 🎤 Interview Power Phrase
+## Interview Power Phrase
 
 ```
 "Session-scoped cache that's automatic and built-in. 
@@ -200,10 +200,10 @@ L1 cache = automatic, transaction-level
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-L1 Cache = 🗄️ desk drawer (per session)
+L1 Cache = desk drawer (per session)
 
 Same query 5 times in transaction = 1 DB hit
 Session end = cache cleared

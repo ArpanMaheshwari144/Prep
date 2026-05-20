@@ -4,7 +4,7 @@
 
 ---
 
-## 🎯 Definition
+## Definition
 
 > **Class extension ke liye OPEN, modification ke liye CLOSED.**
 
@@ -12,7 +12,7 @@ Matlab: naya feature add karo **naya class likh ke** — existing tested code ko
 
 ---
 
-## 📖 STORY — Payment Processor Mess
+## STORY — Payment Processor Mess
 
 → Pehle PayPal payment tha. Code:
 
@@ -39,7 +39,7 @@ else if (type.equals("stripe")) { ... }
 
 ---
 
-## ✅ Fix — Interface + Naya Class Add
+## Fix — Interface + Naya Class Add
 
 ```java
 // 1. Interface define karo
@@ -76,10 +76,10 @@ class RazorpayProcessor implements PaymentProcessor {
 
 ---
 
-## 🧠 OCP Visualization
+## OCP Visualization
 
 ```
-                ❌ BAD — if-else chain
+                BAD — if-else chain
 
                   PaymentService
                 ┌──────────────────┐
@@ -90,7 +90,7 @@ class RazorpayProcessor implements PaymentProcessor {
                 └──────────────────┘
 
 
-                ✅ GOOD — interface + new class
+                GOOD — interface + new class
 
                   PaymentProcessor (interface)
                           │
@@ -104,7 +104,7 @@ class RazorpayProcessor implements PaymentProcessor {
 
 ---
 
-## 🔴 OCP Spring Boot Mein
+## OCP Spring Boot Mein
 
 ```java
 // Interface
@@ -131,6 +131,6 @@ class OrderService {
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Open/Closed means you should add new features by writing new classes — not by editing existing tested code. Use interfaces so new implementations can plug in without touching the existing logic."*

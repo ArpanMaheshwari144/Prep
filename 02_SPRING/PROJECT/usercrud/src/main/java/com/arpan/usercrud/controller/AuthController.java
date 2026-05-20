@@ -29,23 +29,23 @@ import com.arpan.usercrud.security.JwtService;
 import jakarta.validation.Valid;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    AuthController = GATE OFFICE
 //    /register, /login, /refresh, /logout endpoints
 //    Token issue + revoke karta
 // ═══════════════════════════════════════════════════════════════════════
 //
 // VISUAL — GATE OFFICE:
-//    🚶 Client
+//    Client
 //         │
 //         ▼
 //    ┌──────────────────────────────────────────┐
-//    │  🚪 AuthController @ /auth/*              │
+//    │  AuthController @ /auth/*              │
 //    │                                           │
-//    │  📋 /register  → Naya banda signup        │
-//    │  🔑 /login     → Credentials → tokens     │
-//    │  🔄 /refresh   → Naya access token        │
-//    │  🗑️ /logout    → Refresh DB se delete    │
+//    │  /register  → Naya banda signup        │
+//    │  /login     → Credentials → tokens     │
+//    │  /refresh   → Naya access token        │
+//    │  /logout    → Refresh DB se delete    │
 //    └──────────────────────────────────────────┘
 //
 // 5 DEPENDENCIES (constructor inject):
@@ -55,7 +55,7 @@ import jakarta.validation.Valid;
 //    • AuthenticationManager
 //    • PasswordEncoder
 //
-// 🎬 LOGIN END-TO-END FLOW:
+// LOGIN END-TO-END FLOW:
 //
 //    1. Client → POST /auth/login { email, password }
 //
@@ -74,7 +74,7 @@ import jakarta.validation.Valid;
 //
 //    3. Client localStorage mein dono store kar leta
 //
-// 🎬 PROTECTED REQUEST FLOW (after login):
+// PROTECTED REQUEST FLOW (after login):
 //
 //    1. Client → GET /users/me
 //       Header: Authorization: Bearer eyJhbGc...
@@ -90,7 +90,7 @@ import jakarta.validation.Valid;
 //    4. Controller can access user via SecurityContext
 //    5. Response sent back
 //
-// 🎬 TOKEN REFRESH FLOW:
+// TOKEN REFRESH FLOW:
 //    Access expired → Frontend interceptor catches 401
 //
 //    1. Client → POST /auth/refresh { refreshToken }
@@ -103,7 +103,7 @@ import jakarta.validation.Valid;
 //
 //    3. Client retries original request with naya accessToken
 //
-// 🎬 LOGOUT FLOW:
+// LOGOUT FLOW:
 //    1. Client → POST /auth/logout { refreshToken }
 //
 //    2. AuthController.logout():
@@ -115,14 +115,14 @@ import jakarta.validation.Valid;
 //    Result: Refresh token DB se gone → next refresh fail
 //            Access token apne aap 15 min mein expire
 //
-// 🎓 MASTER JWT SUMMARY — 7 COMPONENTS:
+// MASTER JWT SUMMARY — 7 COMPONENTS:
 //    1. User entity                  → email + BCrypt password + role
 //    2. RefreshToken entity          → DB-stored long-lived tokens
-//    3. JwtService                   → 🎫 Token Factory
-//    4. CustomUserDetailsService     → 👨‍💼 HR (DB lookup)
-//    5. JwtFilter                    → 🛡️ Guard (per-request validate)
-//    6. SecurityConfig               → 👮 CSO (filter chain wire)
-//    7. AuthController (THIS FILE)   → 🚪 Gate Office (endpoints)
+//    3. JwtService                   → Token Factory
+//    4. CustomUserDetailsService     → HR (DB lookup)
+//    5. JwtFilter                    → Guard (per-request validate)
+//    6. SecurityConfig               → CSO (filter chain wire)
+//    7. AuthController (THIS FILE)   → Gate Office (endpoints)
 //
 // SECURITY HIGHLIGHTS:
 //    • Email uniqueness check on register
@@ -131,12 +131,12 @@ import jakarta.validation.Valid;
 //    • Refresh token DB-stored (revocation possible on logout)
 //    • Access 15 min, Refresh 7 days
 //
-// 📐 SOLID:
+// SOLID:
 //    SRP — Sirf auth HTTP endpoints
 //    DIP — 5 dependencies via constructor (all Spring abstractions)
 //    OCP — Naye auth methods (OAuth) add easy, existing unchanged
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "AuthController handles authentication — register/login/refresh/logout.
 //     Login uses AuthenticationManager.authenticate() which internally
 //     calls CustomUserDetailsService + PasswordEncoder.
@@ -148,7 +148,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/auth")
 public class AuthController {
 
-    // 🔌 Dependencies — Spring inject karega constructor se
+    // Dependencies — Spring inject karega constructor se
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtService jwtService;
@@ -172,7 +172,7 @@ public class AuthController {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  📋 1. REGISTER — New user signup
+    //  1. REGISTER — New user signup
     // ════════════════════════════════════════════════════════════
     //  POST /auth/register
     //  Body: { name, email, password, age }
@@ -184,15 +184,15 @@ public class AuthController {
     //  4. Save → return saved user
     @PostMapping("/register")
     public ResponseEntity<User> register(@Valid @RequestBody RegisterRequest req) {
-        // 🛡️ Email uniqueness check
+        // Email uniqueness check
         if (userRepository.findByEmail(req.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email already registered: " + req.getEmail());
         }
 
-        // 🔒 Password hash with BCrypt — DB mein hash store, plain NEVER
+        // Password hash with BCrypt — DB mein hash store, plain NEVER
         String hashedPassword = passwordEncoder.encode(req.getPassword());
 
-        // 👤 New User — role hardcoded "USER" (privilege escalation prevent)
+        // New User — role hardcoded "USER" (privilege escalation prevent)
         User user = new User(
             null,                          // id (auto-generate)
             req.getName(),
@@ -204,13 +204,13 @@ public class AuthController {
 
         User saved = userRepository.save(user);
 
-        // ⚠️ Production: password field response mein nahi bhejna chahiye
+        // Production: password field response mein nahi bhejna chahiye
         // Yeh demo simplicity ke liye — properly DTO use karke filter karte
         return ResponseEntity.ok(saved);
     }
 
     // ════════════════════════════════════════════════════════════
-    //  🔑 2. LOGIN — Credentials verify + token issue
+    //  2. LOGIN — Credentials verify + token issue
     // ════════════════════════════════════════════════════════════
     //  POST /auth/login
     //  Body: { email, password }
@@ -226,7 +226,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest req) {
         try {
-            // 🔐 Spring Security ki magic — credentials verify
+            // Spring Security ki magic — credentials verify
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword())
             );
@@ -234,14 +234,14 @@ public class AuthController {
             throw new IllegalArgumentException("Invalid email or password");
         }
 
-        // ✅ Authenticated — fetch full user
+        // Authenticated — fetch full user
         User user = userRepository.findByEmail(req.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(0L));
 
-        // 🎫 Generate access token (JWT, 15 min)
+        // Generate access token (JWT, 15 min)
         String accessToken = jwtService.generateToken(user);
 
-        // 🔄 Generate refresh token (UUID, 7 days, DB stored)
+        // Generate refresh token (UUID, 7 days, DB stored)
         String refreshTokenString = UUID.randomUUID().toString();
         RefreshToken refreshToken = new RefreshToken(
             null,
@@ -255,7 +255,7 @@ public class AuthController {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  🔄 3. REFRESH — Issue new access token
+    //  3. REFRESH — Issue new access token
     // ════════════════════════════════════════════════════════════
     //  POST /auth/refresh
     //  Body: { refreshToken }
@@ -267,21 +267,21 @@ public class AuthController {
     //  4. Return new access (refresh same rakhte)
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponse> refresh(@Valid @RequestBody RefreshRequest req) {
-        // 🔍 DB se refresh token dhundo
+        // DB se refresh token dhundo
         RefreshToken stored = refreshTokenRepository.findByToken(req.getRefreshToken())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid refresh token"));
 
-        // ⏰ Expired check
+        // Expired check
         if (stored.getExpiresAt().isBefore(Instant.now())) {
             refreshTokenRepository.delete(stored);   // cleanup expired row
             throw new IllegalArgumentException("Refresh token expired, please login again");
         }
 
-        // 👤 User fetch
+        // User fetch
         User user = userRepository.findById(stored.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(stored.getUserId()));
 
-        // 🎫 Naya access token
+        // Naya access token
         String newAccessToken = jwtService.generateToken(user);
 
         // Refresh token same rakhte (rotation = optional advanced topic)
@@ -289,7 +289,7 @@ public class AuthController {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  🗑️ 4. LOGOUT — Refresh token DB se delete
+    //  4. LOGOUT — Refresh token DB se delete
     // ════════════════════════════════════════════════════════════
     //  POST /auth/logout
     //  Body: { refreshToken }

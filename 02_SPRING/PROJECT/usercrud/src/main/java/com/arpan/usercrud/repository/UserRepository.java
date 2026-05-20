@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.arpan.usercrud.model.User;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    DATA ACCESS LAYER — DB se baat karna
 //    Service layer iske through CRUD karta
 //    Direct SQL/JPQL nahi likhna padta = Spring Data JPA magic
@@ -47,7 +47,7 @@ import com.arpan.usercrud.model.User;
 //    saveAll(Iterable)       → batch insert
 //    flush()                 → force write
 //
-// 🔑 DERIVED QUERY METHODS — Spring Magic:
+// DERIVED QUERY METHODS — Spring Magic:
 //    Method NAME hi query ban jata!
 //
 //    findByEmail(String email)
@@ -68,7 +68,7 @@ import com.arpan.usercrud.model.User;
 //    existsByEmail(String email)
 //       → SELECT 1 FROM users WHERE email=?
 //
-// 🔑 CUSTOM COMPLEX QUERIES — @Query:
+// CUSTOM COMPLEX QUERIES — @Query:
 //    @Query("SELECT u FROM User u WHERE u.age > :age AND u.role = :role")
 //    List<User> findActiveAdults(@Param("age") int age, @Param("role") String role);
 //
@@ -79,7 +79,7 @@ import com.arpan.usercrud.model.User;
 //    JPQL    = Java Persistence Query Language (default)
 //    Native  = raw SQL (nativeQuery = true)
 //
-// 🔑 WHY @Repository ANNOTATION?
+// WHY @Repository ANNOTATION?
 //    Strictly OPTIONAL with JpaRepository (auto-detected).
 //
 //    But add karte kyun?
@@ -89,7 +89,7 @@ import com.arpan.usercrud.model.User;
 //          → Spring's DataAccessException family
 //          = Database vendor change? Caller code unchanged
 //
-// 🔑 WHY Optional<User>?
+// WHY Optional<User>?
 //    Null safety:
 //       User mil sakta hai (Optional.of)
 //       Ya nahi (Optional.empty)
@@ -127,14 +127,14 @@ import com.arpan.usercrud.model.User;
 //       = Spring auto-generates implementation
 //       = Same Repository pattern, AUTOMATED
 //
-// 🎨 PATTERN: REPOSITORY (Spring Data JPA implementation)
+// PATTERN: REPOSITORY (Spring Data JPA implementation)
 //
-// 📐 SOLID:
+// SOLID:
 //    ISP — Interface focused (only User operations)
 //    DIP — Service depends on INTERFACE, proxy auto-generated
 //          MySQL/Postgres switch = service unchanged
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "UserRepository extends JpaRepository — Spring Data JPA
 //     auto-generates implementation via runtime proxy.
 //     Free CRUD + paging + sorting inherited.

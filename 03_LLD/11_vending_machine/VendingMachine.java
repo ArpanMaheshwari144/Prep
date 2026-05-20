@@ -1,5 +1,5 @@
 // =========================================================
-// 🧪 SOLO LLD TEST #5 — Vending Machine
+// SOLO LLD TEST #5 — Vending Machine
 // Date: 2026-04-20
 // Mock interview — discussion-based
 // =========================================================
@@ -7,7 +7,7 @@
 import java.util.*;
 
 // ==========================
-// 📋 SCOPE (from discussion)
+// SCOPE (from discussion)
 // ==========================
 // - Products have id, name, price, quantity
 // - Users have id, name, insertedAmount (paisa jo abhi dala hai)
@@ -18,7 +18,7 @@ import java.util.*;
 // - Cancel → poora dala hua paisa wapas
 
 // ==========================
-// 🏗️ CLASS DESIGN
+// CLASS DESIGN
 // ==========================
 //
 // class Product
@@ -42,7 +42,7 @@ import java.util.*;
 //   6. int cancel(String userId)                            // refund or -1
 
 // ==========================
-// 📊 METHOD SPECS
+// METHOD SPECS
 // ==========================
 //
 // ┌──────────────────────────────────────────────────────────────────┐
@@ -103,7 +103,7 @@ import java.util.*;
 // └──────────────────────────────────────────────────────────────────┘
 
 // ==========================
-// 🎯 EXAMPLES
+// EXAMPLES
 // ==========================
 //
 // VendingMachine vm = new VendingMachine();
@@ -124,7 +124,7 @@ import java.util.*;
 // vm.refillProduct("P1", 5)                            → true (stock 2+5=7)
 
 // =========================================================
-// 👇 PRODUCT CLASS — PROVIDED AS-IS
+// PRODUCT CLASS — PROVIDED AS-IS
 // =========================================================
 
 class Product {
@@ -158,7 +158,7 @@ class Product {
 }
 
 // =========================================================
-// 👇 USER CLASS — PROVIDED AS-IS
+// USER CLASS — PROVIDED AS-IS
 // =========================================================
 
 class User {
@@ -186,7 +186,7 @@ class User {
 }
 
 // =========================================================
-// 👇 VENDING MACHINE CLASS — YAHAN APNA CODE LIKH
+// VENDING MACHINE CLASS — YAHAN APNA CODE LIKH
 // =========================================================
 
 class VendingMachine {
@@ -331,7 +331,7 @@ class VendingMachine {
 }
 
 // =========================================================
-// 🧪 TEST RUNNER
+// TEST RUNNER
 // =========================================================
 
 class Main {

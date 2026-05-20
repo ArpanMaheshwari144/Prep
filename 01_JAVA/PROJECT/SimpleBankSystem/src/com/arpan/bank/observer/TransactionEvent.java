@@ -1,7 +1,7 @@
 package com.arpan.bank.observer;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    TransactionEvent = EVENT DATA CARRIER
 //    "Transfer hua" ki info hold karta (from, to, amount, time)
 //    Listeners (Email/Audit/SMS) is object ko receive karte
@@ -40,9 +40,9 @@ package com.arpan.bank.observer;
 //    4. GETTERS ONLY
 //       Sirf padhne ke liye, modify nahi
 //
-// 🎨 PATTERN: Observer (event payload — passed to subscribers)
+// PATTERN: Observer (event payload — passed to subscribers)
 //
-// 📐 SOLID:
+// SOLID:
 //    SRP — Sirf event data carry karta, koi behavior nahi
 //
 // REAL WORLD COMPARISON:

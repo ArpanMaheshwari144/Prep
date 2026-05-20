@@ -1,20 +1,20 @@
-# 🟡 Section B1 — Networks (Container DNS Magic) (Day 2)
+# Section B1 — Networks (Container DNS Magic) (Day 2)
 
 > **Goal:** Container-to-container talk via service NAME
 > **Tool:** Custom bridge network
 
-📚 [← Back to README](00_README.md) | [← Transition](04_transition.md) | [Compose →](06_docker_compose.md)
+[← Back to README](00_README.md) | [← Transition](04_transition.md) | [Compose →](06_docker_compose.md)
 
 ---
 
-# 📍 PART 20 — NETWORKS (Container DNS Magic) — Day 2
+# PART 20 — NETWORKS (Container DNS Magic) — Day 2
 
 > **Date:** 2026-05-06
 > **Goal:** Multi-container setup — containers ek doosre se NAME se baat karein
 
 ---
 
-## 🎬 STORY — Apartment Building
+## STORY — Apartment Building
 
 ```
 Tera Docker host = APARTMENT BUILDING
@@ -34,7 +34,7 @@ With network (custom bridge):
 
 ---
 
-## 🎯 3 Network Types
+## 3 Network Types
 
 ```
 1. BRIDGE (default — most common)
@@ -61,23 +61,23 @@ With network (custom bridge):
 
 ---
 
-## ⭐ KEY INSIGHT — Default Bridge vs Custom Bridge
+## KEY INSIGHT — Default Bridge vs Custom Bridge
 
 ```
 DEFAULT bridge (jo abhi tha):
-   ❌ Containers communicate via IP only
-   ❌ DNS by name = NAHI work karta (deprecated --link)
-   ❌ Production mein avoid
+   Containers communicate via IP only
+   DNS by name = NAHI work karta (deprecated --link)
+   Production mein avoid
 
 CUSTOM bridge (jo banaya — app-net):
-   ✅ Containers communicate via NAME (DNS auto)
-   ✅ "mysql-userdb" hostname se reach
-   ✅ Production standard
+   Containers communicate via NAME (DNS auto)
+   "mysql-userdb" hostname se reach
+   Production standard
 ```
 
 ---
 
-## 🎯 Hands-On Sequence (jo kiya step by step)
+## Hands-On Sequence (jo kiya step by step)
 
 ### Step 1 — Existing networks dekho:
 ```cmd
@@ -164,7 +164,7 @@ docker network inspect app-net
 
 ---
 
-### Step 7 — 🎬 THE MAGIC — Container talks to Container BY NAME:
+### Step 7 — THE MAGIC — Container talks to Container BY NAME:
 
 ```cmd
 docker run -it --rm --network app-net mysql:8 mysql -h mysql-userdb -u root -prootpass
@@ -178,7 +178,7 @@ docker run               → naya container
 --network app-net        → SAME network as mysql-userdb (KEY!)
 mysql:8                  → image (reuse)
 mysql                    → command inside (mysql client)
--h mysql-userdb          → HOST = container NAME ⭐ (Docker DNS magic)
+-h mysql-userdb          → HOST = container NAME (Docker DNS magic)
 -u root                  → username
 -prootpass               → password
 ```
@@ -201,7 +201,7 @@ SELECT * FROM users;
 
 ---
 
-### 💡 What just happened (visual):
+### What just happened (visual):
 
 ```
    ┌─────────────────────────────────────────┐
@@ -221,23 +221,23 @@ SELECT * FROM users;
    │       │                                  │
    │       │ "mysql-userdb → 172.18.0.2"     │
    │       ▼                                  │
-   │  Connection established → Login OK ✅    │
+   │  Connection established → Login OK    │
    └─────────────────────────────────────────┘
 ```
 
 ---
 
-## 💎 Networks — Concept Locked
+## Networks — Concept Locked
 
 ```
-✅ docker network create / ls / inspect / rm
-✅ Default vs Custom bridge (DNS difference)
-✅ --network flag (container join network)
-✅ Container name = DNS hostname (in custom bridge)
-✅ Subnet auto-assigned (172.18.0.0/16 etc.)
-✅ Each container gets internal IP
-✅ Multiple containers same network = name-based talk
-✅ Production pattern (microservices baseline)
+docker network create / ls / inspect / rm
+Default vs Custom bridge (DNS difference)
+--network flag (container join network)
+Container name = DNS hostname (in custom bridge)
+Subnet auto-assigned (172.18.0.0/16 etc.)
+Each container gets internal IP
+Multiple containers same network = name-based talk
+Production pattern (microservices baseline)
 ```
 
 ---

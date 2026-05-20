@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    RegisterRequest = REGISTER ka HTTP request shape
 //    POST /auth/register body mein:
 //       { "name": "Arpan", "email": "a@b.com", "password": "secret123" }
@@ -18,14 +18,14 @@ import lombok.NoArgsConstructor;
 //    AuthController @RequestBody mein @Valid → auto 400 on invalid
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🔑 3 FIELDS (sab User ke jaise minus id):
+// 3 FIELDS (sab User ke jaise minus id):
 //    name      → display name
 //    email     → unique identifier (DB constraint matches)
 //    password  → raw password (BCrypt hash before save)
 //
 //    NO id (auto-generated in DB)
 //
-// 🔑 VALIDATION SAME AS User ENTITY:
+// VALIDATION SAME AS User ENTITY:
 //    Consistency — same rules at API + entity level
 //    User entity validation triggers if entity directly validated
 //    DTO validation triggers at request time (caller-facing)

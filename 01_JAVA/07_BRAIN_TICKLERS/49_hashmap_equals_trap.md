@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY
+## STORY
 
 → Custom class ko **HashMap key** banaya. `hashCode()` override kiya, **`equals()` nahi**
 → Same data ke 2 objects daale — **duplicate entry ban gayi!**
@@ -12,20 +12,20 @@
 → `Object.equals()` = **reference check** — alag objects, dono store ho gaye
 
 ```java
-// 🔴 hashCode() override kiya, equals() NAHI
+// hashCode() override kiya, equals() NAHI
 class Employee { String name; int id; }    // sirf hashCode override
 
 map.put(new Employee("Arpan", 101), "Dev");   // bucket 5
 map.put(new Employee("Arpan", 101), "Dev");   // bucket 5 — equals() false (reference) — DONO STORE!
 
-// ✅ FIX — hashCode + equals DONO override
+// FIX — hashCode + equals DONO override
 // hashCode same → same bucket
 // equals true → REPLACE (duplicate rejected)
 ```
 
 ---
 
-## 🧠 Visualization — Bucket Trap
+## Visualization — Bucket Trap
 
 ```
             HashMap equals() Override Nahi Kiya — Trap
@@ -86,7 +86,7 @@ map.put(new Employee("Arpan", 101), "Dev");   // bucket 5 — equals() false (re
        │
        ▼
   ┌────┐
-  │ 5  │ → [e1: "Dev"] → [e2: "Dev"]   🔴 DONO store! Duplicate!
+  │ 5  │ → [e1: "Dev"] → [e2: "Dev"]   DONO store! Duplicate!
   └────┘
 
   map.size() = 2  (chahiye tha 1)
@@ -111,12 +111,12 @@ map.put(new Employee("Arpan", 101), "Dev");   // bucket 5 — equals() false (re
   │ 5  │ → [e1: "Dev"]   ← e2 ne replace kiya
   └────┘
 
-  map.size() = 1  ✅
+  map.size() = 1  
 ```
 
 ---
 
-## 🟡 WHY DONO Chahiye?
+## WHY DONO Chahiye?
 
 → **`hashCode`** = kaunsa bucket (address)
 → **`equals`** = same hai ya nahi (identity)
@@ -126,7 +126,7 @@ map.put(new Employee("Arpan", 101), "Dev");   // bucket 5 — equals() false (re
 
 ---
 
-## 🔬 Deep — "Reference Check" Ka Matlab
+## Deep — "Reference Check" Ka Matlab
 
 ### `Object.equals()` Default Source Code
 
@@ -173,27 +173,27 @@ LEKIN heap mein 2 ALAG objects hain (alag addresses)
 
 ---
 
-### 🔍 REFERENCE CHECK (== aur default equals())
+### REFERENCE CHECK (== aur default equals())
 
 ```
   e1 == e2?
     ↓
   e1 ka address (0x100)  ==  e2 ka address (0x200)?
     ↓
-  0x100 == 0x200?  →  ❌ FALSE
+  0x100 == 0x200?  →  FALSE
 
   "Tu jis object pe point kar raha, mei bhi USI pe point kar raha?"
   Answer: NAHI — alag-alag objects pe.
 ```
 
-### 📦 CONTENT CHECK (overridden equals())
+### CONTENT CHECK (overridden equals())
 
 ```
   e1.equals(e2)?  (assuming equals() override kiya hai)
     ↓
   e1.id == e2.id  AND  e1.name.equals(e2.name)?
     ↓
-  101 == 101  AND  "Arpan".equals("Arpan")?  →  ✅ TRUE
+  101 == 101  AND  "Arpan".equals("Arpan")?  →  TRUE
 
   "Tera content aur mera content same hai?"
   Answer: HAAN — dono Arpan, 101.
@@ -201,7 +201,7 @@ LEKIN heap mein 2 ALAG objects hain (alag addresses)
 
 ---
 
-### 🎯 Asli Confusion
+### Asli Confusion
 
 Log sochte: **"`equals()` matlab content check hota hi hai."** — **GALAT.**
 
@@ -209,10 +209,10 @@ Sahi: **"`equals()` content check TAB karta jab class ne override kiya. Default 
 
 | Class | `equals()` override? | Behavior |
 |-------|---------------------|----------|
-| **String** | ✅ YES | Content check (chars compare) |
-| **Integer / Wrapper** | ✅ YES | Value check |
-| **ArrayList** | ✅ YES | Element-wise content check |
-| **Tera custom Employee** | ❌ NO (default) | Reference check (== ke barabar) |
+| **String** | YES | Content check (chars compare) |
+| **Integer / Wrapper** | YES | Value check |
+| **ArrayList** | YES | Element-wise content check |
+| **Tera custom Employee** | NO (default) | Reference check (== ke barabar) |
 
 ```java
 // Custom class — no override
@@ -224,13 +224,13 @@ e1.equals(e2)  ≡  e1 == e2     // dono FALSE (reference check)
 
 ---
 
-### 🎯 1-Line Yaad
+### 1-Line Yaad
 
 > **Reference check = memory address compare. SAME object pe point kar rahe? Content same ya alag — fark nahi padta.**
 > **Default `Object.equals()` = `==` ke barabar = reference check.**
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"For custom objects used as HashMap keys, both `hashCode()` and `equals()` must be overridden — without `equals()`, two objects in the same bucket are treated as distinct via reference check, causing duplicate entries."*

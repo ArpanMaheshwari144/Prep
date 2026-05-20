@@ -1,33 +1,33 @@
-# ⚡ Stateful vs Stateless
+# Stateful vs Stateless
 
 ---
 
-## 🎯 1-Line Analogy
+## 1-Line Analogy
 
 ```
-Stateful  = 🍽️ Waiter (remembers your order across visits)
-Stateless = 🤖 Vending machine (each transaction fresh)
+Stateful  = Waiter (remembers your order across visits)
+Stateless = Vending machine (each transaction fresh)
 ```
 
 ---
 
-## 📊 Side by Side
+## Side by Side
 
 ```
 ┌──────────────────┬──────────────────┬──────────────────┐
 │  Feature         │  Stateful         │  Stateless        │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Memory of past   │ ✅ Remembers      │ ❌ Forgets        │
+│ Memory of past   │ Remembers      │ Forgets        │
 │                  │ (sessions, state) │ (every req fresh)│
 ├──────────────────┼──────────────────┼──────────────────┤
 │ Request data     │ Partial (server    │ FULL — request    │
 │                  │ fills gaps)         │ carries all info  │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Scaling          │ 🐢 Hard            │ ⚡ Easy (any      │
+│ Scaling          │ Hard            │ Easy (any      │
 │                  │ Same server every  │ server handles    │
 │                  │ time (sticky)      │ any request)      │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Failure recovery │ ❌ State lost     │ ✅ Trivial         │
+│ Failure recovery │ State lost     │ Trivial         │
 │                  │ when server dies   │ (re-route)         │
 ├──────────────────┼──────────────────┼──────────────────┤
 │ Load balancing   │ Sticky sessions    │ Round-robin OK    │
@@ -42,7 +42,7 @@ Stateless = 🤖 Vending machine (each transaction fresh)
 
 ---
 
-## 🍽️ STATEFUL VISUAL (Restaurant)
+## STATEFUL VISUAL (Restaurant)
 
 ```
    USER: "Mera usual lao"
@@ -69,7 +69,7 @@ User dobara aaye:
 
 ---
 
-## 🤖 STATELESS VISUAL (Vending Machine)
+## STATELESS VISUAL (Vending Machine)
 
 ```
    USER: "Coke do, 2 dollar diya, button 5 dabaya"
@@ -78,7 +78,7 @@ User dobara aaye:
    ┌──────────────────────┐
    │   VENDING MACHINE     │
    │                        │
-   │   MEMORY: ❌ NONE      │
+   │   MEMORY: NONE      │
    │                        │
    │   Sees only:           │
    │   • Money $2           │
@@ -95,7 +95,7 @@ Next time:
 
 ---
 
-## 🎯 HTTP IS STATELESS BY DESIGN
+## HTTP IS STATELESS BY DESIGN
 
 ```
 Pure HTTP:
@@ -117,7 +117,7 @@ Pure HTTP:
 
 ---
 
-## 🔐 STATEFUL AUTH vs STATELESS AUTH
+## STATEFUL AUTH vs STATELESS AUTH
 
 ```
 SESSION-BASED (Stateful):
@@ -146,12 +146,12 @@ JWT-BASED (Stateless):
    = Server STATELESS
    = Any server handles any request
    = Easy horizontal scaling
-   = UserCRUD uses this ✅
+   = UserCRUD uses this 
 ```
 
 ---
 
-## 📊 SCALING IMPACT
+## SCALING IMPACT
 
 ```
 STATEFUL — Hard to scale:
@@ -159,20 +159,20 @@ STATEFUL — Hard to scale:
    USER ──► LB ──► Server 1 (has my session)
    USER ──► LB ──► Server 2 (doesn't know me)
    
-   ❌ "Login again"
+   "Login again"
    
    FIX: Sticky sessions (same user → same server)
         Or: Redis session store (shared)
    
-   = LB complexity ⬆
+   = LB complexity 
 ```
 
 ```
 STATELESS — Easy to scale:
 
-   USER ──► LB ──► Server 1 ✅ (handles)
-   USER ──► LB ──► Server 2 ✅ (handles same)
-   USER ──► LB ──► Server 5 ✅ (handles too)
+   USER ──► LB ──► Server 1 (handles)
+   USER ──► LB ──► Server 2 (handles same)
+   USER ──► LB ──► Server 5 (handles too)
    
    = ANY server can handle ANY request
    = Just add more servers
@@ -181,10 +181,10 @@ STATELESS — Easy to scale:
 
 ---
 
-## 🎯 WHEN TO USE WHAT
+## WHEN TO USE WHAT
 
 ```
-✅ STATEFUL CHOOSE WHEN:
+STATEFUL CHOOSE WHEN:
    • Long-lived connections (WebSocket, gaming)
    • Real-time bidirectional (chat, collaboration)
    • Heavy session state hard to serialize
@@ -196,7 +196,7 @@ STATELESS — Easy to scale:
    • Voice/video call signaling
    • Real-time trading platforms
 
-✅ STATELESS CHOOSE WHEN:
+STATELESS CHOOSE WHEN:
    • REST APIs (default)
    • Horizontal scaling needed
    • Microservices communication
@@ -212,7 +212,7 @@ STATELESS — Easy to scale:
 
 ---
 
-## 💡 KEY INSIGHT — Stateless ≠ "no state"
+## KEY INSIGHT — Stateless ≠ "no state"
 
 ```
 "Stateless" doesn't mean NO state in system.
@@ -232,7 +232,7 @@ Server is "stateless" — disposable, replaceable.
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "Stateful servers remember client between requests —
@@ -251,11 +251,11 @@ Server is "stateless" — disposable, replaceable.
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-Stateful  = 🍽️ Waiter remembers you
-Stateless = 🤖 Vending machine forgets
+Stateful  = Waiter remembers you
+Stateless = Vending machine forgets
 
 Stateful = Sessions + sticky LB + memory heavy
 Stateless = JWT + any LB + scale easy
@@ -264,7 +264,7 @@ Rule: Default STATELESS
        Stateful only when bidirectional / real-time
 
 12-factor app: STATELESS is law
-UserCRUD = stateless (JWT) ✅
+UserCRUD = stateless (JWT) 
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

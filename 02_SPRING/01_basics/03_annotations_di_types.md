@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — Annotations Kyu?
+## WHY — Annotations Kyu?
 
 **Pre Spring 2.5:** XML mein bean definitions:
 ```xml
@@ -18,7 +18,7 @@
 
 ---
 
-## 🧠 Component Annotations — Family Tree
+## Component Annotations — Family Tree
 
 ```
                 @Component
@@ -36,7 +36,7 @@
 
 ---
 
-## 📊 Specialization Table
+## Specialization Table
 
 | Annotation | Layer | Extra Behavior |
 |-----------|-------|----------------|
@@ -50,7 +50,7 @@
 
 ---
 
-## 🔍 `@Component` vs `@Bean`
+## `@Component` vs `@Bean`
 
 ### `@Component` — class-level (TUMHARI class)
 ```java
@@ -73,7 +73,7 @@ class AppConfig {
 
 ---
 
-## 🎯 `@Autowired` — 3 Types of DI
+## `@Autowired` — 3 Types of DI
 
 ### 1. Field Injection (DISCOURAGED)
 ```java
@@ -83,9 +83,9 @@ class UserService {
     private UserRepository userRepo;
 }
 ```
-- ❌ `final` field nahi
-- ❌ Test mein mock pass mushkil
-- ❌ Hidden dependencies
+- `final` field nahi
+- Test mein mock pass mushkil
+- Hidden dependencies
 
 ### 2. Setter Injection (Rare)
 ```java
@@ -105,32 +105,32 @@ class UserService {
 ```java
 @Service
 class UserService {
-    private final UserRepository userRepo;     // ✅ final
+    private final UserRepository userRepo;     // final
     
     public UserService(UserRepository userRepo) {
         this.userRepo = userRepo;
     }
 }
 ```
-- ✅ `final` fields
-- ✅ Test easy (`new UserService(mockRepo)`)
-- ✅ Required deps enforced
-- ✅ Spring official recommendation
+- `final` fields
+- Test easy (`new UserService(mockRepo)`)
+- Required deps enforced
+- Spring official recommendation
 
 ---
 
-## 🆚 DI Comparison Table
+## DI Comparison Table
 
 | Feature | Field | Setter | Constructor |
 |---------|-------|--------|-------------|
-| `final` field | ❌ | ❌ | ✅ |
-| Test without Spring | ❌ Mushkil | ⚠️ OK | ✅ Easy |
-| Required deps enforced | ❌ | ❌ | ✅ |
-| Industry standard | ❌ | ❌ | ✅ YES |
+| `final` field | | | |
+| Test without Spring | Mushkil | OK | Easy |
+| Required deps enforced | | | |
+| Industry standard | | | YES |
 
 ---
 
-## 🎯 Multiple Beans Resolution
+## Multiple Beans Resolution
 
 ```java
 @Service class JpaUserRepo implements UserRepository { }
@@ -154,7 +154,7 @@ private UserRepository userRepo;
 
 ---
 
-## 💬 POWER PHRASES
+## POWER PHRASES
 
 > *"`@Component` is the generic Spring-managed bean. `@Service`, `@Repository`, `@Controller` are semantic specializations — only `@Repository` adds real behavior (exception translation to Spring's DataAccessException)."*
 
@@ -162,7 +162,7 @@ private UserRepository userRepo;
 
 ---
 
-## 🔴 TRAPS
+## TRAPS
 
 | Trap | Reality |
 |------|---------|

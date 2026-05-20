@@ -1,4 +1,4 @@
-# 🐧 L — Liskov Substitution (LSP)
+# L — Liskov Substitution (LSP)
 
 ---
 
@@ -20,7 +20,7 @@ GALAT BELIEF:
 ```
 
 ```java
-// ❌ VIOLATES LSP
+// VIOLATES LSP
 class Rectangle {
     int width, height;
     void setWidth(int w) { width = w; }
@@ -44,12 +44,12 @@ class Square extends Rectangle {
 void test(Rectangle r) {
     r.setWidth(5);
     r.setHeight(10);
-    assert r.area() == 50;   // ❌ FAILS with Square (area = 100)
+    assert r.area() == 50;   // FAILS with Square (area = 100)
 }
 ```
 
 ```
-✅ Fix:
+Fix:
    Don't force inheritance where behavior breaks
    Use composition or separate hierarchy
 ```
@@ -61,7 +61,7 @@ void test(Rectangle r) {
 ```
 Parent: Bird (has fly method)
 Child: Penguin extends Bird
-   Penguin.fly() = ???  ❌ can't fly!
+   Penguin.fly() = ???  can't fly!
    
 Fix:
    Bird interface
@@ -74,9 +74,9 @@ Fix:
 ## Memory Hook
 
 ```
-🐧 Penguin shouldn't extend FlyingBird
+Penguin shouldn't extend FlyingBird
    "Child parent ko safely replace nahi kar saka =
     inheritance galat hai"
 ```
 
-📚 [← Back to SOLID](00_overview.md)
+[← Back to SOLID](00_overview.md)

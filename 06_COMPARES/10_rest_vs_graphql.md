@@ -1,17 +1,17 @@
-# ⚡ REST vs GraphQL
+# REST vs GraphQL
 
 ---
 
-## 🎯 1-Line Analogy
+## 1-Line Analogy
 
 ```
-REST    = 🍽️ Fixed menu     (order item A, item B separately)
-GraphQL = 👨‍🍳 Custom chef    ("give me exactly what I ask")
+REST    = Fixed menu     (order item A, item B separately)
+GraphQL = Custom chef    ("give me exactly what I ask")
 ```
 
 ---
 
-## 📊 Side by Side
+## Side by Side
 
 ```
 ┌──────────────────┬──────────────────┬──────────────────┐
@@ -22,22 +22,22 @@ GraphQL = 👨‍🍳 Custom chef    ("give me exactly what I ask")
 ├──────────────────┼──────────────────┼──────────────────┤
 │ HTTP methods     │ GET/POST/PUT/DEL  │ Mostly POST       │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Over-fetching    │ ❌ Yes             │ ✅ No (client      │
+│ Over-fetching    │ Yes             │ No (client      │
 │                  │ (server decides)   │ picks fields)     │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Under-fetching   │ ❌ Yes             │ ✅ No (nested in   │
+│ Under-fetching   │ Yes             │ No (nested in   │
 │                  │ (need multiple req)│ one query)        │
 ├──────────────────┼──────────────────┼──────────────────┤
 │ Schema           │ OpenAPI/Swagger   │ Built-in strong   │
 │                  │ optional           │ typed schema      │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Caching          │ ✅ Easy (URL-based)│ ❌ Hard           │
+│ Caching          │ Easy (URL-based)│ Hard           │
 │                  │ Browser caches      │ (custom logic)    │
 ├──────────────────┼──────────────────┼──────────────────┤
 │ Versioning       │ /v1/users → /v2/ │ Schema evolves    │
 │                  │                     │ (deprecate fields)│
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Learning curve   │ ⚡ Simple          │ 🐢 Steeper        │
+│ Learning curve   │ Simple          │ Steeper        │
 ├──────────────────┼──────────────────┼──────────────────┤
 │ N+1 problem      │ Manageable         │ Common (need      │
 │                  │                     │ DataLoader)       │
@@ -46,7 +46,7 @@ GraphQL = 👨‍🍳 Custom chef    ("give me exactly what I ask")
 
 ---
 
-## 🎯 REST EXAMPLE
+## REST EXAMPLE
 
 ```
 TWITTER-LIKE APP:
@@ -72,7 +72,7 @@ TWITTER-LIKE APP:
 
 ---
 
-## 🎯 GRAPHQL EXAMPLE (Same data)
+## GRAPHQL EXAMPLE (Same data)
 
 ```
 POST /graphql
@@ -108,7 +108,7 @@ Response:
 
 ---
 
-## 📊 Over-Fetching Visual
+## Over-Fetching Visual
 
 ```
 REST:
@@ -136,7 +136,7 @@ GraphQL:
 
 ---
 
-## 📊 Under-Fetching Visual
+## Under-Fetching Visual
 
 ```
 REST:
@@ -162,7 +162,7 @@ GraphQL:
 
 ---
 
-## 💎 GRAPHQL STRONG TYPING
+## GRAPHQL STRONG TYPING
 
 ```
 GraphQL SCHEMA (mandatory):
@@ -194,7 +194,7 @@ GraphQL SCHEMA (mandatory):
 
 ---
 
-## 🚨 GRAPHQL CHALLENGES
+## GRAPHQL CHALLENGES
 
 ```
 1. N+1 PROBLEM (common pitfall)
@@ -231,10 +231,10 @@ GraphQL SCHEMA (mandatory):
 
 ---
 
-## 🎯 WHEN TO USE WHAT
+## WHEN TO USE WHAT
 
 ```
-✅ REST CHOOSE WHEN:
+REST CHOOSE WHEN:
    • Simple CRUD APIs
    • Public APIs (broad reach)
    • Strong HTTP caching needed
@@ -248,7 +248,7 @@ GraphQL SCHEMA (mandatory):
    • Most enterprise APIs
    • UserCRUD
 
-✅ GRAPHQL CHOOSE WHEN:
+GRAPHQL CHOOSE WHEN:
    • Mobile apps (over-fetching costly)
    • Complex nested data
    • Multiple client types (web, mobile, IoT)
@@ -265,7 +265,7 @@ GraphQL SCHEMA (mandatory):
 
 ---
 
-## 🎬 REAL-WORLD STORY
+## REAL-WORLD STORY
 
 ```
 Facebook 2012:
@@ -285,7 +285,7 @@ Facebook 2012:
 
 ---
 
-## 💎 HYBRID — Best of Both
+## HYBRID — Best of Both
 
 ```
 Modern stack often uses BOTH:
@@ -308,7 +308,7 @@ Modern stack often uses BOTH:
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "REST has multiple endpoints, one per resource, with
@@ -330,11 +330,11 @@ Modern stack often uses BOTH:
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-REST    = 🍽️ Fixed menu (multiple endpoints, server decides)
-GraphQL = 👨‍🍳 Custom chef (one endpoint, client decides)
+REST    = Fixed menu (multiple endpoints, server decides)
+GraphQL = Custom chef (one endpoint, client decides)
 
 REST: simple, cacheable, over/under fetching
 GraphQL: efficient, flexible, N+1 risk + cache hard
@@ -346,4 +346,4 @@ Facebook invented GraphQL (mobile pain)
 DataLoader = N+1 fix
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

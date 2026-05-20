@@ -1,4 +1,4 @@
-# 🛡️ WAF — Web Application Firewall
+# WAF — Web Application Firewall
 
 ---
 
@@ -6,28 +6,28 @@
 
 ```
    ATTACKER                  YOUR APP
-       💀                        🖥️
+                              
         │                          │
         │  SQL Injection:           │
         │  ?id=1' OR '1'='1         │
-        │ ─────────────────────────►│ 💥 DB dumped
+        │ ─────────────────────────►│ DB dumped
         │                          │
         │  XSS:                      │
         │  <script>steal()</script>  │
-        │ ─────────────────────────►│ 💥 cookies stolen
+        │ ─────────────────────────►│ cookies stolen
         │                          │
         │  CSRF, brute force, bots   │
-        │ ─────────────────────────►│ 💥 chaos
+        │ ─────────────────────────►│ chaos
 
 Problems:
-   ❌ Direct attacks reach app
-   ❌ Single bug = full compromise
-   ❌ App-level checks not enough
+   Direct attacks reach app
+   Single bug = full compromise
+   App-level checks not enough
 ```
 
 ---
 
-## 2️⃣ Bouncer Analogy 🛡️
+## 2️⃣ Bouncer Analogy 
 
 ```
 Fancy nightclub:
@@ -37,14 +37,14 @@ Fancy nightclub:
       Sab andar — drunks, weapons, troublemakers
       → Chaos inside
    
-   With BOUNCER 🛡️:
+   With BOUNCER :
       Har person scan kare entry pe
       Rules:
-         ❌ No weapons
-         ❌ No fake ID
-         ❌ No drunks
-         ❌ Dress code violators out
-         ✅ VIP list = direct entry
+         No weapons
+         No fake ID
+         No drunks
+         Dress code violators out
+         VIP list = direct entry
       Suspicious behavior → block
    
    = Bouncer = WAF
@@ -61,7 +61,7 @@ Fancy nightclub:
         │
         ▼
    ┌─────────────────┐
-   │     WAF         │ 🛡️ ← Inspects EVERY request
+   │     WAF         │ ← Inspects EVERY request
    │  (rule engine)  │      Blocks malicious
    └────────┬────────┘
             │ clean traffic
@@ -106,7 +106,7 @@ WAF defends against most of these
 ├────┼─────────────────────────────────────────────┤
 │ 3  │ INJECTION (SQL/NoSQL/Command)                 │
 │    │ ?id=1' OR '1'='1                              │
-│    │ WAF: ✅ blocks pattern                         │
+│    │ WAF: blocks pattern                         │
 ├────┼─────────────────────────────────────────────┤
 │ 4  │ Insecure Design                                │
 ├────┼─────────────────────────────────────────────┤
@@ -115,14 +115,14 @@ WAF defends against most of these
 │ 6  │ Vulnerable Components (old libraries)          │
 ├────┼─────────────────────────────────────────────┤
 │ 7  │ Identification + Auth Failures (brute force)   │
-│    │ WAF: ✅ rate limits                            │
+│    │ WAF: rate limits                            │
 ├────┼─────────────────────────────────────────────┤
 │ 8  │ Software + Data Integrity Failures             │
 ├────┼─────────────────────────────────────────────┤
 │ 9  │ Logging + Monitoring Failures                  │
 ├────┼─────────────────────────────────────────────┤
 │ 10 │ Server-Side Request Forgery (SSRF)             │
-│    │ WAF: ✅ detects internal IP calls               │
+│    │ WAF: detects internal IP calls               │
 └────┴─────────────────────────────────────────────┘
 ```
 
@@ -131,35 +131,35 @@ WAF defends against most of these
 ## 5️⃣ Common Attacks WAF Blocks
 
 ```
-🚫 SQL INJECTION
+SQL INJECTION
    Attack: ?id=1' UNION SELECT password FROM users--
    WAF rule: pattern match SQL keywords in URL params
    
-🚫 XSS (Cross-Site Scripting)
+XSS (Cross-Site Scripting)
    Attack: <script>document.cookie</script>
    WAF rule: detect <script> tags in input
    
-🚫 CSRF (Cross-Site Request Forgery)
+CSRF (Cross-Site Request Forgery)
    Attack: Tricks user into action via 3rd party site
    WAF rule: validate origin/referer headers
    
-🚫 PATH TRAVERSAL
+PATH TRAVERSAL
    Attack: /api/file?path=../../etc/passwd
    WAF rule: detect "../" sequences
    
-🚫 COMMAND INJECTION
+COMMAND INJECTION
    Attack: ?cmd=ls;rm -rf /
    WAF rule: shell metacharacters block
    
-🚫 BAD BOTS / SCRAPING
+BAD BOTS / SCRAPING
    Attack: 10,000 requests/min from bot
    WAF rule: rate limit + User-Agent check
    
-🚫 DDoS (Layer 7)
+DDoS (Layer 7)
    Attack: Flood app with valid-looking requests
    WAF rule: rate limit per IP, behavioral analysis
    
-🚫 ZERO-DAY (with managed rules)
+ZERO-DAY (with managed rules)
    New vulnerability discovered → WAF rules updated
    = Defense before app patched
 ```
@@ -180,8 +180,8 @@ WAF defends against most of these
       "If URL contains 'UNION SELECT' → BLOCK"
       "If body contains '<script>' → BLOCK"
    
-   ✅ Fast, catches known attacks
-   ❌ Misses zero-days
+   Fast, catches known attacks
+   Misses zero-days
 ```
 
 ```
@@ -193,8 +193,8 @@ WAF defends against most of these
       Normal: 10 req/min per user
       Anomaly: 1000 req/min from one IP → BLOCK
    
-   ✅ Catches new attacks
-   ❌ False positives possible
+   Catches new attacks
+   False positives possible
 ```
 
 ```
@@ -205,8 +205,8 @@ WAF defends against most of these
       "Block all requests to /admin from non-corporate IPs"
       "Require API key header on /api/*"
    
-   ✅ Tailored security
-   ❌ Manual maintenance
+   Tailored security
+   Manual maintenance
 ```
 
 ---
@@ -304,13 +304,13 @@ Managed RULESETS (pre-built):
    • Bot mitigation
    • DDoS protection
    
-   ✅ Plug-and-play security
-   ✅ Auto-updated as new threats emerge
+   Plug-and-play security
+   Auto-updated as new threats emerge
 ```
 
 ---
 
-## 🔟 False Positives (THE CHALLENGE)
+## False Positives (THE CHALLENGE)
 
 ```
 PROBLEM:
@@ -350,31 +350,31 @@ SOLUTION — Tuning Process:
 1. REVERSE PROXY MODE
    WAF dedicated server in front
    All traffic routes through it
-   ✅ Full control
-   ❌ Additional infrastructure
+   Full control
+   Additional infrastructure
 
 2. CLOUD WAF (most common today)
    Cloudflare / AWS WAF
    DNS points to WAF, WAF forwards to origin
-   ✅ Zero infra
-   ✅ Global edge
-   ❌ Vendor lock-in
+   Zero infra
+   Global edge
+   Vendor lock-in
 
 3. EMBEDDED (in app/web server)
    ModSecurity for Nginx/Apache
    Runs as plugin
-   ✅ Tight integration
-   ❌ Server resources used
+   Tight integration
+   Server resources used
 
 4. HOST-BASED
    On each app server
-   ✅ Distributed
-   ❌ Maintenance overhead
+   Distributed
+   Maintenance overhead
 ```
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "WAF is a Layer 7 firewall sitting in front of web apps.
@@ -398,7 +398,7 @@ SOLUTION — Tuning Process:
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
 WAF = Nightclub bouncer for HTTP requests
@@ -424,4 +424,4 @@ CLOUD WAFs: AWS WAF, Cloudflare, Akamai
 CHALLENGE: False positives → COUNT then BLOCK
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

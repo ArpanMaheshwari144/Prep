@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — PI ki Value
+## STORY — PI ki Value
 
 → Tune `PI` ki value store kiya — `3.14159`
 → Koi aur developer ne **accidentally PI = 3** kar diya. **Bug.**
@@ -18,14 +18,14 @@
 
 ---
 
-## 💻 Code
+## Code
 
 ```java
 final int x = 10;
-x = 20;                              // 🔴 compile error — value change nahi hogi
+x = 20;                              // compile error — value change nahi hogi
 
 final class String { }
-class MyString extends String { }    // 🔴 compile error — extend nahi ho sakti
+class MyString extends String { }    // compile error — extend nahi ho sakti
 
 final void show() { }
 // child override nahi kar sakta
@@ -33,14 +33,14 @@ final void show() { }
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **`final` variable ka matlab sirf `reassign nahi` — object ke ANDAR ke fields change ho sakte hain!**
 
 ```java
 final List<String> list = new ArrayList<>();
-list.add("Arpan");                   // ✅ allowed — andar change kiya
-list = new ArrayList<>();            // 🔴 reference change nahi hoga
+list.add("Arpan");                   // allowed — andar change kiya
+list = new ArrayList<>();            // reference change nahi hoga
 ```
 
 **WHY andar badal sakta? `final` = LABEL lock hai, DABBA nahi.**
@@ -51,7 +51,7 @@ list = new ArrayList<>();            // 🔴 reference change nahi hoga
 
 ---
 
-## 🧠 Visualization
+## Visualization
 
 ```
                    final = LABEL lock, DABBA lock NAHI
@@ -59,14 +59,14 @@ list = new ArrayList<>();            // 🔴 reference change nahi hoga
 STACK                        HEAP
 ┌──────────────┐             ┌─────────────────────────┐
 │ list (final) ├────────────►│ ArrayList               │
-│ 🔒 LOCKED    │             │ ["Arpan"]               │  ← content modify OK
-└──────────────┘             │ list.add("Rahul")  ✅   │
+│ LOCKED    │             │ ["Arpan"]               │  ← content modify OK
+└──────────────┘             │ list.add("Rahul")    │
                              │ ["Arpan", "Rahul"]      │
                              └─────────────────────────┘
 
 ╔════════════════════════════════════════════════════════════╗
-║ list = new ArrayList<>();   →  🔴 BLOCKED — reference lock ║
-║ list.add("Rahul");          →  ✅ ALLOWED — content change ║
+║ list = new ArrayList<>();   →  BLOCKED — reference lock ║
+║ list.add("Rahul");          →  ALLOWED — content change ║
 ╚════════════════════════════════════════════════════════════╝
 
 Ghar ka address final = ghar nahi badlega (reference)
@@ -75,6 +75,6 @@ Ghar ka address final = ghar nahi badlega (reference)
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"`final` on a variable prevents reassignment. `final` on a class prevents inheritance. `final` on a method prevents overriding — String class is final which is part of why it is immutable."*

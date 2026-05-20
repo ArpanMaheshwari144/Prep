@@ -1,24 +1,24 @@
-# 🏭 Factory Pattern — Object Creation Encapsulate
+# Factory Pattern — Object Creation Encapsulate
 
 > **Design Patterns: Topic 3 — Creational Pattern (Interview Classic)**
 
 ---
 
-## 🎬 STORY — Pizza Counter
+## STORY — Pizza Counter
 
 > Imagine **pizza shop pe order karna**:
 >
-> 🍕 **Without Factory:**
+> **Without Factory:**
 > Tu **khud kitchen mein jaake** dough banaye, sauce lagaye, oven start kare, cheese melt kare. **Caller tightly coupled** to internal kitchen process.
 >
-> 🍕 **With Factory:**
+> **With Factory:**
 > Tu counter pe bolta — *"Margherita pizza"*. Counter wala **decide karta** kaunsa chef, kaunsa oven, kya recipe. Tu sirf **"type bola, pizza mila"** — internal kitchen logic hidden.
 >
 > **Factory pattern same kaam karta** — caller bolta "type", factory **decide karta** kaunsa concrete class instantiate karna.
 
 ---
 
-## 🤔 The Problem — Tightly Coupled Object Creation
+## The Problem — Tightly Coupled Object Creation
 
 ```java
 // Without Factory — caller knows ALL concrete classes
@@ -37,14 +37,14 @@ public class BankApp {
 ```
 
 **Problems:**
-1. 🔴 **Caller knows all concrete classes** — coupling everywhere
-2. 🔴 **Naya account type add** = caller modify (OCP violation)
-3. 🔴 **Same logic duplicated** wherever account creation needed
-4. 🔴 **Testing hard** — concrete classes everywhere
+1. **Caller knows all concrete classes** — coupling everywhere
+2. **Naya account type add** = caller modify (OCP violation)
+3. **Same logic duplicated** wherever account creation needed
+4. **Testing hard** — concrete classes everywhere
 
 ---
 
-## ✨ Factory Solution
+## Factory Solution
 
 ```java
 public class AccountFactory {
@@ -64,14 +64,14 @@ Account a = AccountFactory.create("savings", "A101", 5000);
 ```
 
 **Benefits:**
-- ✅ **Caller decoupled** from concrete classes
-- ✅ **Single place** to add new types
-- ✅ **DRY** — creation logic ek jagah
-- ✅ **Easy to test** (mock factory possible)
+- **Caller decoupled** from concrete classes
+- **Single place** to add new types
+- **DRY** — creation logic ek jagah
+- **Easy to test** (mock factory possible)
 
 ---
 
-## 🎨 VISUAL — Factory ka Flow
+## VISUAL — Factory ka Flow
 
 ```
    CALLER                          FACTORY                    CONCRETE
@@ -96,7 +96,7 @@ Account a = AccountFactory.create("savings", "A101", 5000);
 
 ---
 
-## 💻 PART 1: Simple Static Factory (most common)
+## PART 1: Simple Static Factory (most common)
 
 ```java
 public class AccountFactory {
@@ -121,7 +121,7 @@ public class AccountFactory {
 
 ---
 
-## 💻 PART 2: Map-based Registry (extensible)
+## PART 2: Map-based Registry (extensible)
 
 ```java
 public class AccountFactory {
@@ -158,7 +158,7 @@ AccountFactory.register("crypto", p -> new CryptoAccount(p.id, p.balance));
 
 ---
 
-## 🚀 PROJECT USAGE — `AccountFactory.java`
+## PROJECT USAGE — `AccountFactory.java`
 
 **File:** `01_JAVA/07_PROJECT/SimpleBankSystem/src/com/arpan/bank/factory/AccountFactory.java`
 
@@ -193,12 +193,12 @@ Account a3 = AccountFactory.create("fd",      "F301", "Priya", 50000);
 - Sirf type string deta — factory decide karta
 - Naya type add karna ho? Sirf factory mein switch case add → caller untouched
 
-**🎤 Interview line:**
+**Interview line:**
 > *"AccountFactory pattern implement karta SimpleBankSystem mein — caller `new SavingsAccount()` directly nahi karta, factory ke through banata. Naye types add karne mein flexibility — sirf factory mein switch case add karna padta. Real-world Spring BeanFactory same concept use karta automated way mein."*
 
 ---
 
-## 🌍 Real-World Examples
+## Real-World Examples
 
 ### 1. **Java built-in `Calendar.getInstance()`**
 ```java
@@ -232,7 +232,7 @@ Connection conn = DriverManager.getConnection(url, user, pass);
 
 ---
 
-## 📊 3 Factory Variants (interview gold)
+## 3 Factory Variants (interview gold)
 
 ### 1. Simple Factory (humara approach)
 Static method with switch — most common in real code.
@@ -283,7 +283,7 @@ class WindowsUIFactory implements UIFactory {
 
 ---
 
-## 🎯 When to Use Factory?
+## When to Use Factory?
 
 | Use Factory when... | Don't use when... |
 |---|---|
@@ -295,7 +295,7 @@ class WindowsUIFactory implements UIFactory {
 
 ---
 
-## 💡 Key Design Principles
+## Key Design Principles
 
 1. **Static method or instance** — both valid (static common, instance more flexible)
 2. **Return abstract type** — `Account`, not `SavingsAccount` (interface decoupling)
@@ -305,7 +305,7 @@ class WindowsUIFactory implements UIFactory {
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "Factory pattern kya hai aur kab use karte ho?"**
 
@@ -344,13 +344,13 @@ class WindowsUIFactory implements UIFactory {
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"Factory pattern object creation logic encapsulate karta — caller `new` directly nahi karta, factory decide karta kaunsa concrete class. SimpleBankSystem mein AccountFactory implement kiya — OCP + DIP follow. Spring BeanFactory same concept automate karta production mein."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 Factory = "Pizza counter"
@@ -374,44 +374,44 @@ Real-world (already use kiya):
    • Executors.newFixedThreadPool()
    • Spring BeanFactory
    • DriverManager.getConnection()
-   • AccountFactory in SimpleBankSystem ✅
+   • AccountFactory in SimpleBankSystem 
 
 Use when:
-   ✓ Multiple related types
-   ✓ Creation logic complex
-   ✓ Caller decoupling needed
-   ✓ Dynamic type selection
+   Multiple related types
+   Creation logic complex
+   Caller decoupling needed
+   Dynamic type selection
 ```
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "Factory must be static"
-         ❌ Both static and instance valid
-         ✅ Static common, instance more testable
+Trap 1: "Factory must be static"
+         Both static and instance valid
+         Static common, instance more testable
 
-🪤 Trap 2: "Factory and Singleton same"
-         ❌ Different — Factory creates, Singleton ensures one instance
-         ✅ Combined sometimes (single factory instance)
+Trap 2: "Factory and Singleton same"
+         Different — Factory creates, Singleton ensures one instance
+         Combined sometimes (single factory instance)
 
-🪤 Trap 3: "Switch case OCP violation"
-         ❌ Strictly yes — but acceptable trade-off for simplicity
-         ✅ For true OCP — Map registry approach
+Trap 3: "Switch case OCP violation"
+         Strictly yes — but acceptable trade-off for simplicity
+         For true OCP — Map registry approach
 
-🪤 Trap 4: "Factory returns concrete class"
-         ❌ Defeats purpose
-         ✅ Always return abstract / interface type
+Trap 4: "Factory returns concrete class"
+         Defeats purpose
+         Always return abstract / interface type
 
-🪤 Trap 5: "Factory Method = Simple Factory"
-         ❌ Different — Method is GoF pattern with abstract creator
-         ✅ Simple Factory is a static utility method
+Trap 5: "Factory Method = Simple Factory"
+         Different — Method is GoF pattern with abstract creator
+         Simple Factory is a static utility method
 ```
 
 ---
 
-## 🎯 Quick Recall Summary
+## Quick Recall Summary
 
 ```
 WHAT     → Object creation encapsulation

@@ -4,23 +4,23 @@
 
 ---
 
-## 🎬 STORY — The Last Word Wins
+## STORY — The Last Word Wins
 
 > Imagine **interview mein answer dena**:
 >
-> 🗣️ Tu (try): *"Mera answer 1 hai"*
+> Tu (try): *"Mera answer 1 hai"*
 >
-> 🗣️ Tu (catch): *"Ya phir 2 ho sakta"*
+> Tu (catch): *"Ya phir 2 ho sakta"*
 >
-> 🗣️ Tu (finally): *"Actually FINAL answer 3 hai"*
+> Tu (finally): *"Actually FINAL answer 3 hai"*
 >
-> 👨‍💼 **Interviewer:** *"OK, last said wins — answer is 3."*
+> **Interviewer:** *"OK, last said wins — answer is 3."*
 >
 > Same Java mein hota — **`finally` ka `return` LAST WORD ban jata, sab override.**
 
 ---
 
-## 💻 CODE — The Trap
+## CODE — The Trap
 
 ```java
 public int test() {
@@ -29,7 +29,7 @@ public int test() {
     } catch (Exception e) {
         return 2;       // (would be 2 if exception)
     } finally {
-        return 3;       // ⚠️ STEP 2: 3 OVERRIDES — 1 ya 2 LOST
+        return 3;       // STEP 2: 3 OVERRIDES — 1 ya 2 LOST
     }
 }
 
@@ -41,7 +41,7 @@ System.out.println(test());   // Output: 3
 
 ---
 
-## 🎨 EXECUTION FLOW VISUAL
+## EXECUTION FLOW VISUAL
 
 ```
    Method called
@@ -65,12 +65,12 @@ System.out.println(test());   // Output: 3
             ▼
    Returns: 3 (not 1!)
    
-   🔴 Bug source — try ka return silently lost
+   Bug source — try ka return silently lost
 ```
 
 ---
 
-## 🪤 ALL TRAP VARIATIONS
+## ALL TRAP VARIATIONS
 
 ### Trap 1: Simple return override
 
@@ -89,7 +89,7 @@ int x() {
     try {
         throw new RuntimeException("boom");
     } finally {
-        return 99;   // ⚠️ Exception SUPPRESSED!
+        return 99;   // Exception SUPPRESSED!
     }
 }
 // Returns: 99 — exception gone, no trace!
@@ -109,7 +109,7 @@ System.out.println(list);  // [1, 99] — finally ne add kiya
 
 List<Integer> mutate(List<Integer> input) {
     try { return input; }
-    finally { input.add(99); }   // ⚠️ Object modified after "return"
+    finally { input.add(99); }   // Object modified after "return"
 }
 ```
 
@@ -117,36 +117,36 @@ List<Integer> mutate(List<Integer> input) {
 
 ---
 
-## 📊 finally Behavior Reference
+## finally Behavior Reference
 
 | Scenario | finally runs? | Effect |
 |---|---|---|
-| Normal try completion | ✅ Yes | Cleanup code runs |
-| Exception in try (caught) | ✅ Yes | After catch |
-| Exception in try (uncaught) | ✅ Yes | Before propagation |
-| try has `return` | ✅ Yes | Before actual return |
-| try has `return X`, finally has `return Y` | ✅ Yes | Returns Y (overrides X) |
-| try throws, finally has `return` | ✅ Yes | Exception SUPPRESSED |
-| `System.exit(0)` in try | ❌ NO | JVM kill, finally skipped |
-| JVM crash | ❌ NO | Process dies |
-| Infinite loop in try | ❌ NO | Never reaches finally |
+| Normal try completion | Yes | Cleanup code runs |
+| Exception in try (caught) | Yes | After catch |
+| Exception in try (uncaught) | Yes | Before propagation |
+| try has `return` | Yes | Before actual return |
+| try has `return X`, finally has `return Y` | Yes | Returns Y (overrides X) |
+| try throws, finally has `return` | Yes | Exception SUPPRESSED |
+| `System.exit(0)` in try | NO | JVM kill, finally skipped |
+| JVM crash | NO | Process dies |
+| Infinite loop in try | NO | Never reaches finally |
 
 ---
 
-## ✅ CORRECT — finally Best Practice
+## CORRECT — finally Best Practice
 
-### ✅ DO: Cleanup only
+### DO: Cleanup only
 ```java
 Connection conn = null;
 try {
     conn = ds.getConnection();
     return processQuery(conn);
 } finally {
-    if (conn != null) conn.close();   // ✅ cleanup, no return
+    if (conn != null) conn.close();   // cleanup, no return
 }
 ```
 
-### ✅ DO: Modern try-with-resources (preferred)
+### DO: Modern try-with-resources (preferred)
 ```java
 try (Connection conn = ds.getConnection()) {
     return processQuery(conn);
@@ -154,21 +154,21 @@ try (Connection conn = ds.getConnection()) {
 // close() automatic, no finally needed, no override risk
 ```
 
-### ❌ DON'T: Return in finally
+### DON'T: Return in finally
 ```java
 try { return result; }
-finally { return otherResult; }   // ❌ override bug
+finally { return otherResult; }   // override bug
 ```
 
-### ❌ DON'T: Throw in finally
+### DON'T: Throw in finally
 ```java
 try { throw new IOException(); }
-finally { throw new RuntimeException(); }   // ❌ original exception lost
+finally { throw new RuntimeException(); }   // original exception lost
 ```
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "Yeh code kya return karega?" (with finally + return)**
 
@@ -186,13 +186,13 @@ finally { throw new RuntimeException(); }   // ❌ original exception lost
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"`finally` mein `return` likhna anti-pattern hai — try ka return silently override karta + exceptions suppress karta. `finally` sirf cleanup ke liye. Modern Java mein `try-with-resources` use karo — automatic close, no override risk."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 finally ka return = "Last word wins" rule
@@ -211,22 +211,22 @@ finally ka return = "Last word wins" rule
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "try ka return milta hai"
-         ❌ finally ka return wins (last word)
-         ✅ Test mentally: kya finally mein return/throw hai?
+Trap 1: "try ka return milta hai"
+         finally ka return wins (last word)
+         Test mentally: kya finally mein return/throw hai?
 
-🪤 Trap 2: "Exception properly throw hogi"
-         ❌ finally mein return/throw → exception suppress
-         ✅ Cleanup-only finally OR try-with-resources
+Trap 2: "Exception properly throw hogi"
+         finally mein return/throw → exception suppress
+         Cleanup-only finally OR try-with-resources
 
-🪤 Trap 3: "finally hamesha 100% chalta"
-         ❌ System.exit(), JVM crash, infinite loop → skip
-         ✅ Mostly yes, but corner cases exist
+Trap 3: "finally hamesha 100% chalta"
+         System.exit(), JVM crash, infinite loop → skip
+         Mostly yes, but corner cases exist
 
-🪤 Trap 4: "Object reference returned hai, safe hai"
-         ❌ finally object MODIFY kar sakta (mutable types)
-         ✅ Defensive copy ya immutable types use karo
+Trap 4: "Object reference returned hai, safe hai"
+         finally object MODIFY kar sakta (mutable types)
+         Defensive copy ya immutable types use karo
 ```

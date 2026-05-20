@@ -1,4 +1,4 @@
-# 🗂️ HashMap Internal — Visual Revision
+# HashMap Internal — Visual Revision
 
 ---
 
@@ -235,7 +235,7 @@ COST:
 
 ---
 
-## 🔟 hashCode() + equals() Contract
+## hashCode() + equals() Contract
 
 ```
 KEY RULES (Interview Classic):
@@ -257,7 +257,7 @@ PROOF:
        
        @Override
        public boolean equals(Object o) { ... }   // override
-       // ❌ forgot hashCode
+       // forgot hashCode
    }
    
    Map<Person, String> map = new HashMap<>();
@@ -291,11 +291,11 @@ PROOF:
 
 ```
 HashMap:
-   ❌ Not thread-safe
+   Not thread-safe
    Concurrent writes = data corruption
    
 ConcurrentHashMap:
-   ✅ Thread-safe
+   Thread-safe
    Internal segment/bucket-level locking
    Reads usually lock-free
    = Multi-thread use
@@ -303,10 +303,10 @@ ConcurrentHashMap:
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-HashMap = 🗄️ Locker system
+HashMap = Locker system
    16 default buckets
    key → hash → bucket index
 
@@ -324,4 +324,4 @@ hashCode + equals contract:
 Avg: O(1)  |  Worst: O(log n) after treeify
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

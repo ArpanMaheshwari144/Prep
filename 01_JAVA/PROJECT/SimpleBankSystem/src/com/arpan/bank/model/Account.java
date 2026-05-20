@@ -3,12 +3,12 @@ package com.arpan.bank.model;
 import com.arpan.bank.exception.InsufficientFundsException;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    Account = saare account types ka PARENT (abstract).
 //    Direct object nahi banta — Savings/Current/FixedDeposit extend karte.
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🎨 PATTERN: TEMPLATE METHOD (via abstract class)
+// PATTERN: TEMPLATE METHOD (via abstract class)
 //
 // VISUAL CLASS HIERARCHY:
 //    ┌────────────────────────────────────┐
@@ -39,14 +39,14 @@ import com.arpan.bank.exception.InsufficientFundsException;
 //    Specific step (calculateInterest) — child mein ABSTRACT
 //    = "Skeleton + Customizable parts"
 //
-// 📐 SOLID:
+// SOLID:
 //    OCP — Naya account type chahiye? Just extend Account
 //          (parent modify NAHI karna)
-//    LSP — Account a = new SavingsAccount();  ✅
-//          Account a = new FixedDeposit();    ✅
+//    LSP — Account a = new SavingsAccount();  
+//          Account a = new FixedDeposit();    
 //          Sab safely substitute karte
 //
-// 🔑 ACCESS MODIFIERS — Code Mein:
+// ACCESS MODIFIERS — Code Mein:
 //    private final accountId   → identity, no change ever
 //    private final holderName  → identity, no change ever
 //    protected double balance  → CHILD ko access chahiye
@@ -57,7 +57,7 @@ import com.arpan.bank.exception.InsufficientFundsException;
 //                              ↑ parent ka protected field
 //       Agar private hota → child access nahi kar pata
 //
-// 🔒 GETTERS ONLY, NO SETTERS:
+// GETTERS ONLY, NO SETTERS:
 //    Immutable identity:
 //       accountId — account banta TAB assign, ZINDAGI BHAR fixed
 //       holderName — similarly fixed
@@ -67,14 +67,14 @@ import com.arpan.bank.exception.InsufficientFundsException;
 //       Instead: deposit() / withdraw() — VALIDATED change
 //       = Business rules enforced (encapsulation power)
 //
-// 💥 IllegalArgumentException (deposit method):
+// IllegalArgumentException (deposit method):
 //    RuntimeException (unchecked) — "method ko galat input diya"
 //    Use when: invalid argument (negative amount, null)
 //    Different from:
 //       • InsufficientFundsException → business rule violation
 //       • NullPointerException       → programmer error
 //
-// 🔒 SYNCHRONIZED — Mutex Lock (DEEP):
+// SYNCHRONIZED — Mutex Lock (DEEP):
 //
 //    RACE CONDITION pehle (without sync):
 //       Thread A:                Thread B:
@@ -85,26 +85,26 @@ import com.arpan.bank.exception.InsufficientFundsException;
 //       = Thread A update LOST
 //
 //    WITH synchronized:
-//       Thread A enters → 🔒 LOCK
+//       Thread A enters → LOCK
 //                          update karta
-//                          🔓 release
-//       Thread B waits  → 🔒 acquire
+//                          release
+//       Thread B waits  → acquire
 //                          update karta
-//                          🔓 release
+//                          release
 //       = MUTUAL EXCLUSION (mutex)
 //       = Atomicity + Visibility BOTH solved
 //
 //    SYNCHRONIZED vs VOLATILE:
 //       synchronized:
-//          ✅ Atomicity (multi-step undivided)
-//          ✅ Visibility
+//          Atomicity (multi-step undivided)
+//          Visibility
 //          Use: multi-step state change (balance update)
 //
 //       volatile:
-//          ❌ NO atomicity
-//          ✅ Visibility only
+//          NO atomicity
+//          Visibility only
 //          Use: single boolean flag (isRunning)
-//          ⚠️ volatile count++; → STILL race! (count++ = 3 ops)
+//          volatile count++; → STILL race! (count++ = 3 ops)
 //
 //    Why synchronized HERE (not volatile)?
 //       deposit() has MULTIPLE steps:
@@ -114,7 +114,7 @@ import com.arpan.bank.exception.InsufficientFundsException;
 //          4. write balance
 //       = Multi-step = synchronized NEEDED
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "Account abstract class — Template Method pattern.
 //     deposit()/withdraw() concrete (saare accounts same),
 //     calculateInterest() abstract (har subclass apna formula).

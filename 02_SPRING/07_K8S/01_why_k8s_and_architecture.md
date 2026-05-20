@@ -1,13 +1,13 @@
-# ⚓ Topic 1 — Why K8s + Architecture
+# Topic 1 — Why K8s + Architecture
 
 > **Foundation:** Container orchestration big picture
 > **Mode:** Theory + visualizations
 
-📚 [← Back to README](00_README.md) | [Pod →](02_pod.md)
+[← Back to README](00_README.md) | [Pod →](02_pod.md)
 
 ---
 
-## 🤔 Why K8s? Docker Compose Kaafi Nahi?
+## Why K8s? Docker Compose Kaafi Nahi?
 
 ```
 DOCKER alone:
@@ -31,7 +31,7 @@ But REAL PRODUCTION need:
 
 ---
 
-## 🎬 STORY — Restaurant Chain
+## STORY — Restaurant Chain
 
 ```
 Docker             = ek kitchen (ek dish cook karta)
@@ -48,7 +48,7 @@ K8s = orchestration brain for container fleet
 
 ---
 
-## 🎯 What K8s Does (5 superpowers)
+## What K8s Does (5 superpowers)
 
 ```
 1. AUTO-SCALING       → Traffic up? more pods auto. Down? scale down.
@@ -60,7 +60,7 @@ K8s = orchestration brain for container fleet
 
 ---
 
-## 🏗️ K8s Architecture (Visual)
+## K8s Architecture (Visual)
 
 ```
                     KUBERNETES CLUSTER
@@ -94,7 +94,7 @@ K8s = orchestration brain for container fleet
 
 ---
 
-## 🎯 Component Decode
+## Component Decode
 
 ### CONTROL PLANE (Master node)
 
@@ -132,7 +132,7 @@ runtime           K8s ko khud container run nahi karna ata
 
 ---
 
-## 🆚 Docker vs K8s — Same Domain, Different Levels
+## Docker vs K8s — Same Domain, Different Levels
 
 ```
 DOCKER             K8S
@@ -150,7 +150,7 @@ LOW-LEVEL          HIGH-LEVEL
 
 ---
 
-## 💎 They Work TOGETHER
+## They Work TOGETHER
 
 ```
 PRODUCTION SETUP:
@@ -166,7 +166,7 @@ K8s    = construction manager building cities
 
 ---
 
-## 🎨 Layer Visual
+## Layer Visual
 
 ```
    ┌──────────────────────────────────────┐
@@ -191,7 +191,7 @@ K8s    = construction manager building cities
 
 ---
 
-## 🎤 Quick Interview Sense
+## Quick Interview Sense
 
 **Q: "Why K8s when Docker exists?"**
 
@@ -203,13 +203,13 @@ K8s    = construction manager building cities
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > *"K8s = container orchestration platform — manages containers fleet across cluster of machines. Control plane (API Server, Scheduler, Controller, etcd) brain; Worker nodes execute pods. Solves: auto-scaling, self-healing, rolling updates, load balancing, service discovery. Docker = container build/run primitive; K8s sits on top, manages at scale. Production = both together."*
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 K8s = "Restaurant chain manager"
@@ -228,4 +228,4 @@ Architecture:
    Control plane (brain) + Workers (execution)
 ```
 
-📚 [← Back to README](00_README.md) | [Pod →](02_pod.md)
+[← Back to README](00_README.md) | [Pod →](02_pod.md)

@@ -4,14 +4,14 @@
 
 ---
 
-## 🎯 Definition
+## Definition
 
 > **Class ko unneeded methods implement karne pe FORCE mat karo.**
 > Fat interfaces mat banao — **chhoti, focused interfaces** banao.
 
 ---
 
-## 📖 STORY — Fat Repository Interface
+## STORY — Fat Repository Interface
 
 → Ek baar **`Repository` interface** banayi — har class ke liye:
 
@@ -44,7 +44,7 @@ class ReadOnlyRepository implements Repository {
 
 ---
 
-## ✅ Fix — Split Karo
+## Fix — Split Karo
 
 ```java
 interface ReadRepo {
@@ -84,10 +84,10 @@ class ReportExporter implements PDFExporter { /* generatePDF() */ }
 
 ---
 
-## 🧠 ISP Visualization
+## ISP Visualization
 
 ```
-                ❌ BAD — Fat interface
+                BAD — Fat interface
 
                   Repository (fat)
                   ┌──────────────┐
@@ -101,12 +101,12 @@ class ReportExporter implements PDFExporter { /* generatePDF() */ }
               ┌──────────┴──────────┐
               ▼                     ▼
         ReadOnlyRepo            FullRepo
-        🔴 saare 5 likhne       sab kuch
+        saare 5 likhne       sab kuch
            padte (useless +
            dangerous)
 
 
-                ✅ GOOD — Focused interfaces
+                GOOD — Focused interfaces
 
   ReadRepo     WriteRepo     PDFExporter    EmailNotifier
   (find)       (save,        (generatePDF)  (sendEmail)
@@ -124,7 +124,7 @@ class ReportExporter implements PDFExporter { /* generatePDF() */ }
 
 ---
 
-## 🔴 ISP Spring Boot Mein
+## ISP Spring Boot Mein
 
 Spring Data JPA pre-built focused interfaces:
 
@@ -138,6 +138,6 @@ PagingAndSortingRepository  ← pagination + sorting
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Interface Segregation means do not force a class to implement methods it does not need. Split fat interfaces into smaller focused ones. Spring's `CrudRepository`, `JpaRepository`, and `PagingAndSortingRepository` are perfect real-world examples."*

@@ -4,20 +4,20 @@
 
 ---
 
-## 📖 STORY — `==` Compare Mein Trap
+## STORY — `==` Compare Mein Trap
 
 ```java
 String s1 = "Hello";
 String s2 = "Hel" + "lo";       // dono LITERALS
 
-s1 == s2     // ✅ TRUE — kaise?
+s1 == s2     // TRUE — kaise?
 ```
 
 **Reason:** Compiler ne **compile time pe hi** `"Hel" + "lo"` calculate karke **`"Hello"` bana diya** → pool mein same object share. Yehi **compile-time constant folding** hai.
 
 ---
 
-## 🧠 Visualization — Case 1 (Literals + Literals)
+## Visualization — Case 1 (Literals + Literals)
 
 ```java
 String s1 = "Hello";
@@ -35,26 +35,26 @@ s2  ─────────────────────►│  (SHAR
                          └─────────────┘
 
 DONO same pool object pe point kar rahe!
-s1 == s2  →  TRUE  ✅
+s1 == s2  →  TRUE  
 ```
 
 ---
 
-## 🚨 Trap — Variable Beech Mein Aaya?
+## Trap — Variable Beech Mein Aaya?
 
 ```java
 String s1 = "Hello";
 String x = "Hel";
-String s3 = x + "lo";           // 🔴 x VARIABLE hai, literal nahi
+String s3 = x + "lo";           // x VARIABLE hai, literal nahi
 
-s1 == s3     // ❌ FALSE — runtime pe naya object banta
+s1 == s3     // FALSE — runtime pe naya object banta
 ```
 
 **Variable runtime tak unknown** — compiler concat compile-time pe nahi kar sakta.
 
 ---
 
-## 🧠 Visualization — Case 2 (Variable + Literal)
+## Visualization — Case 2 (Variable + Literal)
 
 ```java
 String s1 = "Hello";    // pool
@@ -86,22 +86,22 @@ x   ──────────────►│  "Hel"      │            
 
 ```
 s1 (pool ka "Hello") ≠ s3 (heap ka "Hello")
-s1 == s3       →  FALSE   ❌  (alag objects)
-s1.equals(s3)  →  TRUE    ✅  (content same)
+s1 == s3       →  FALSE    (alag objects)
+s1.equals(s3)  →  TRUE     (content same)
 ```
 
 ---
 
-## 🔑 Bottom Line
+## Bottom Line
 
 | Case | Compiler ka kaam | Result location | `==` ka result |
 |------|------------------|-----------------|----------------|
-| `"Hel" + "lo"` | **Compile-time fold** → "Hello" literal | Pool (shared) | ✅ true |
-| `x + "lo"` | **Cannot fold** (x runtime variable) | Heap (new object) | ❌ false |
+| `"Hel" + "lo"` | **Compile-time fold** → "Hello" literal | Pool (shared) | true |
+| `x + "lo"` | **Cannot fold** (x runtime variable) | Heap (new object) | false |
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **Literals + literals** = compile-time fold = **same pool object** = `==` true
 > **Variable + literal** = runtime concat = **naya heap object** = `==` false
@@ -109,6 +109,6 @@ s1.equals(s3)  →  TRUE    ✅  (content same)
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Java compiler folds compile-time constant expressions into a single pool string — `"Hel" + "lo"` becomes `"Hello"` at compile time. But `variable + literal` is computed at runtime via StringBuilder, creating a new heap object outside the pool. Always use `.equals()` for content comparison."*

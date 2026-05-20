@@ -1,17 +1,17 @@
-# ⚡ Concurrency vs Parallelism
+# Concurrency vs Parallelism
 
 ---
 
-## 🎯 1-Line Analogy
+## 1-Line Analogy
 
 ```
-Concurrency = 👨‍🍳 1 chef cooking 3 dishes (alternating)
-Parallelism = 👨‍🍳👨‍🍳👨‍🍳 3 chefs cooking 3 dishes (truly same time)
+Concurrency = 1 chef cooking 3 dishes (alternating)
+Parallelism = 3 chefs cooking 3 dishes (truly same time)
 ```
 
 ---
 
-## 💎 Rob Pike (Go creator) — KEY QUOTE
+## Rob Pike (Go creator) — KEY QUOTE
 
 ```
 "Concurrency is dealing with lots of things at once.
@@ -23,7 +23,7 @@ Parallelism = 👨‍🍳👨‍🍳👨‍🍳 3 chefs cooking 3 dishes (truly 
 
 ---
 
-## 📊 Side by Side
+## Side by Side
 
 ```
 ┌──────────────────┬──────────────────┬──────────────────┐
@@ -51,7 +51,7 @@ Parallelism = 👨‍🍳👨‍🍳👨‍🍳 3 chefs cooking 3 dishes (truly 
 
 ---
 
-## 🍳 CONCURRENCY VISUAL
+## CONCURRENCY VISUAL
 
 ```
 1 CHEF (1 CPU core):
@@ -74,7 +74,7 @@ Time: ──────────────────►
 
 ---
 
-## 🍳🍳🍳 PARALLELISM VISUAL
+## PARALLELISM VISUAL
 
 ```
 3 CHEFS (3 CPU cores):
@@ -92,13 +92,13 @@ Time: ──────────────────►
 
 ---
 
-## 🤔 SUBTLE — Concurrency can EXIST without Parallelism
+## SUBTLE — Concurrency can EXIST without Parallelism
 
 ```
 SINGLE CORE CPU:
 
-   Concurrent? ✅ YES (rapid switching simulates parallel)
-   Parallel?   ❌ NO  (only 1 thing actually runs at a time)
+   Concurrent? YES (rapid switching simulates parallel)
+   Parallel?   NO  (only 1 thing actually runs at a time)
    
    Examples:
    • Node.js (single-threaded event loop)
@@ -107,8 +107,8 @@ SINGLE CORE CPU:
 
 MULTI-CORE CPU:
 
-   Concurrent? ✅ YES (multiple tasks managed)
-   Parallel?   ✅ YES (actually run together)
+   Concurrent? YES (multiple tasks managed)
+   Parallel?   YES (actually run together)
    
    Examples:
    • Java parallel streams
@@ -118,7 +118,7 @@ MULTI-CORE CPU:
 
 ---
 
-## 💡 KEY INSIGHT
+## KEY INSIGHT
 
 ```
 "Parallelism IMPLIES concurrency,
@@ -141,7 +141,7 @@ Think of it as:
 
 ---
 
-## 💎 JAVA EXAMPLES
+## JAVA EXAMPLES
 
 ```
 CONCURRENT (non-parallel) — single thread:
@@ -174,7 +174,7 @@ CONCURRENT + PARALLEL:
 
 ---
 
-## 🎯 WHEN TO USE WHAT
+## WHEN TO USE WHAT
 
 ```
 CONCURRENCY USEFUL FOR:
@@ -193,7 +193,7 @@ PARALLELISM USEFUL FOR:
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "Concurrency is the structure of handling multiple tasks
@@ -216,11 +216,11 @@ PARALLELISM USEFUL FOR:
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-Concurrency = 👨‍🍳 1 chef juggling 3 dishes (structure)
-Parallelism = 👨‍🍳👨‍🍳👨‍🍳 3 chefs (execution)
+Concurrency = 1 chef juggling 3 dishes (structure)
+Parallelism = 3 chefs (execution)
 
 Rob Pike:
    "Concurrency = dealing with many at once"
@@ -233,4 +233,4 @@ I/O-bound → concurrency wins
 CPU-bound → parallelism wins
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

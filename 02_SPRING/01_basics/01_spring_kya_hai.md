@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Pre-Spring Era Ka Dard
+## STORY — Pre-Spring Era Ka Dard
 
 **2002 ka Java enterprise dev:**
 
@@ -27,7 +27,7 @@ Code maintainable nahi raha — chhota change = 50 jagah update.
 
 ---
 
-## 🟡 WHY — Spring Aaya (2003)
+## WHY — Spring Aaya (2003)
 
 > *"Developer, tu sirf BUSINESS logic likh. Objects banao, inject karo, lifecycle manage karo — ye sab MERA kaam."*
 
@@ -38,7 +38,7 @@ Code maintainable nahi raha — chhota change = 50 jagah update.
 
 ---
 
-## 🧠 IoC — Inversion of Control (Spring Ka Heart)
+## IoC — Inversion of Control (Spring Ka Heart)
 
 **"Inversion"** matlab **REVERSE.**
 
@@ -72,7 +72,7 @@ Code maintainable nahi raha — chhota change = 50 jagah update.
 
 ---
 
-## 🍕 Real-World Analogy
+## Real-World Analogy
 
 | Without IoC (manual) | With IoC (Spring) |
 |----------------------|-------------------|
@@ -85,7 +85,7 @@ Code maintainable nahi raha — chhota change = 50 jagah update.
 
 ---
 
-## 💡 DI — Dependency Injection
+## DI — Dependency Injection
 
 **IoC** = principle (concept).
 **DI** = technique (how to achieve IoC).
@@ -105,7 +105,7 @@ Repository OUTSIDE se inject ki gayi.
 
 ---
 
-## 🎯 Spring Ka 3-Word Summary
+## Spring Ka 3-Word Summary
 
 ```
 1. Container   →  Spring ke andar ek IoC container hai
@@ -115,7 +115,7 @@ Repository OUTSIDE se inject ki gayi.
 
 ---
 
-## 🆚 Spring vs Spring Boot
+## Spring vs Spring Boot
 
 | | Spring | Spring Boot |
 |--|--------|-------------|
@@ -128,7 +128,7 @@ Repository OUTSIDE se inject ki gayi.
 
 ---
 
-## 🧠 Big Picture Visualization
+## Big Picture Visualization
 
 ```
          ┌─────────────────────────────────────────────┐
@@ -150,7 +150,7 @@ Repository OUTSIDE se inject ki gayi.
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **Common confusion:** "DI = Dependency Injection = Spring's feature."
 > **Reality:** DI is a **PATTERN** — exists outside Spring. (Manually bhi DI ho sakta — like Java project mein `new AccountService(repo, publisher)` kiya).
@@ -158,6 +158,6 @@ Repository OUTSIDE se inject ki gayi.
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Spring is an IoC container that manages object creation, dependency wiring, and lifecycle. The developer focuses on business logic — Spring handles the wiring through Dependency Injection. Spring Boot adds auto-configuration and an embedded server, making setup trivial."*

@@ -1,4 +1,4 @@
-# 📦 Pass by Value — Visual Revision (Interview Classic)
+# Pass by Value — Visual Revision (Interview Classic)
 
 ---
 
@@ -258,17 +258,17 @@ A: "Java is ALWAYS pass by value.
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-JAVA = always 📋 PHOTOCOPY (pass by value)
+JAVA = always PHOTOCOPY (pass by value)
 
 Primitive: copy of VALUE          (5 → 5)
 Object:    copy of ADDRESS         (0x1234 → 0x1234)
 
    Both copies → same heap object
-   Modify field = visible outside ✅
-   Reassign reference = local only ❌
+   Modify field = visible outside 
+   Reassign reference = local only 
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

@@ -1,4 +1,4 @@
-# 🚨 Exceptions — Visual Revision
+# Exceptions — Visual Revision
 
 ---
 
@@ -230,7 +230,7 @@ catch (IOException | SQLException e) {
 
 ---
 
-## 🔟 try-with-resources (Java 7+)
+## try-with-resources (Java 7+)
 
 ```
 PROBLEM with manual close:
@@ -310,7 +310,7 @@ public int test() {
 ```java
 try { ... }
 catch (Exception e) { ... }       // ← catches everything
-catch (IOException e) { ... }      // ❌ unreachable!
+catch (IOException e) { ... }      // unreachable!
 
 // FIX: child first, parent last
 try { ... }
@@ -331,7 +331,7 @@ catch (Exception e) {
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
 try     → recipe (risky code)
@@ -347,4 +347,4 @@ throws    = method declaration (noun)
 try-with-resources = auto-close cleanup
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

@@ -1,4 +1,4 @@
-# 🎯 PriorityQueue (Min-Heap) — Visual Revision
+# PriorityQueue (Min-Heap) — Visual Revision
 
 ---
 
@@ -8,13 +8,13 @@
 Normal queue:
    First come, first served
    Heart attack? Wait apni baari ka
-   ❌ Wrong for emergencies
+   Wrong for emergencies
 
 Hospital ER (Priority Queue):
    Severity decides order, NOT arrival
    Heart attack → INSTANT priority
    Minor cut    → wait
-   ✅ Emergency-friendly
+   Emergency-friendly
 ```
 
 ```
@@ -263,7 +263,7 @@ TRICK:
 
 ---
 
-## 🔟 PriorityQueue vs TreeMap
+## PriorityQueue vs TreeMap
 
 ```
 ┌──────────────────┬─────────────────┬─────────────────┐
@@ -307,10 +307,10 @@ while (!pq.isEmpty()) {
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-PriorityQueue = 🏥 Hospital ER
+PriorityQueue = Hospital ER
    Severity-based, not arrival
 
 Min-heap   = smallest at top (Java default)
@@ -331,4 +331,4 @@ USE CASES:
    • Event simulation
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

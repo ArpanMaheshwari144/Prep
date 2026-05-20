@@ -1,4 +1,4 @@
-# ⏱️ LAZY vs EAGER Fetch
+# LAZY vs EAGER Fetch
 
 ---
 
@@ -47,7 +47,7 @@ LAZY:
    │  Author #1          │  ← loaded immediately
    │  id: 1               │
    │  name: "Arpan"       │
-   │  books: ⏸️ NOT LOADED│  ← placeholder
+   │  books: NOT LOADED│  ← placeholder
    └────────────────────┘
    
    Tu .getBooks() call kare → TAB DB query
@@ -99,7 +99,7 @@ public class AuthorService {
         Author a = repo.findById(authorId).orElseThrow();
         // session CLOSE ho gayi yahaan
         
-        return a.getBooks();    // ❌ LazyInitializationException!
+        return a.getBooks();    // LazyInitializationException!
     }
 }
 ```
@@ -120,7 +120,7 @@ Why?
 @Transactional
 public List<Book> getBooks(Long authorId) {
     Author a = repo.findById(authorId).orElseThrow();
-    return a.getBooks();   // ✅ works — session active
+    return a.getBooks();   // works — session active
 }
 ```
 
@@ -181,16 +181,16 @@ Deep tree:
 ## 8️⃣ Best Practice (Industry Standard)
 
 ```
-🔴 RULE 1: ALWAYS use LAZY (override defaults)
+RULE 1: ALWAYS use LAZY (override defaults)
    @ManyToOne(fetch = FetchType.LAZY)
    @OneToOne(fetch = FetchType.LAZY)
    
-🔴 RULE 2: Fetch what you need:
+RULE 2: Fetch what you need:
    • Just author → no fetch hint
    • Author + books → @EntityGraph or JOIN FETCH
    • Specific projection → DTO query
 
-🔴 RULE 3: DTO for REST APIs
+RULE 3: DTO for REST APIs
    Don't return entities directly
 ```
 
@@ -207,13 +207,13 @@ Deep tree:
 │ Risk             │ LazyInitException│ Over-fetching   │
 │ Performance      │ Better tuned    │ Risky default   │
 │ Default          │ Collections     │ Single refs     │
-│ Industry         │ ✅ PREFERRED    │ ❌ avoid        │
+│ Industry         │ PREFERRED    │ avoid        │
 └──────────────────┴─────────────────┴─────────────────┘
 ```
 
 ---
 
-## 🎤 Interview Power Phrase
+## Interview Power Phrase
 
 ```
 "LAZY loads related entities ON ACCESS, EAGER UPFRONT.
@@ -228,11 +228,11 @@ Deep tree:
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-LAZY    = ⏸️ load when needed (on access)
-EAGER   = ⚡ load upfront
+LAZY    = load when needed (on access)
+EAGER   = load upfront
 
 Defaults:
    ToMany → LAZY

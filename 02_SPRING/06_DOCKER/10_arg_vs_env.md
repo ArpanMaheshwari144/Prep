@@ -1,13 +1,13 @@
-# ⚙️ Section F — ARG vs ENV (Build-Time vs Runtime Config)
+# Section F — ARG vs ENV (Build-Time vs Runtime Config)
 
 > **Topic:** Two types of variables in Dockerfile — common interview confusion
 > **Real-world:** Often misused, both look similar but very different scope
 
-📚 [← Back to README](00_README.md) | [← Multi-stage](09_multistage_builds.md)
+[← Back to README](00_README.md) | [← Multi-stage](09_multistage_builds.md)
 
 ---
 
-## 🤔 The Big Question
+## The Big Question
 
 ```
 "Dockerfile mein ARG aur ENV — dono variables hi hain.
@@ -18,7 +18,7 @@
 
 ---
 
-## 🎯 Docker Lifecycle (where each lives)
+## Docker Lifecycle (where each lives)
 
 ```
 SOURCE → docker build → IMAGE → docker run → CONTAINER
@@ -30,7 +30,7 @@ SOURCE → docker build → IMAGE → docker run → CONTAINER
 
 ---
 
-## 🔑 First — Build vs Run Difference (foundation)
+## First — Build vs Run Difference (foundation)
 
 ```
 docker build → READS Dockerfile, compiles into IMAGE
@@ -49,7 +49,7 @@ Key insight: Image ek baar bani, container 100 chala sakte
 
 ---
 
-## 🎬 STORY — Cooking vs Eating
+## STORY — Cooking vs Eating
 
 ```
 ARG = INGREDIENTS in kitchen
@@ -71,7 +71,7 @@ ENV = CONDIMENTS on table
 
 ---
 
-## 🎯 Crisp Definitions
+## Crisp Definitions
 
 ```
 ARG (Build-time):
@@ -89,7 +89,7 @@ ENV (Runtime):
 
 ---
 
-## 📝 Dockerfile Example — Both Together
+## Dockerfile Example — Both Together
 
 ```dockerfile
 # ─────────────────────────────────────
@@ -116,7 +116,7 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 
 ---
 
-## 🚀 Override Examples
+## Override Examples
 
 ### ARG (build-time):
 ```cmd
@@ -148,22 +148,22 @@ services:
 
 ---
 
-## 🆚 Side-by-Side Comparison
+## Side-by-Side Comparison
 
 | | **ARG** | **ENV** |
 |---|---|---|
-| Available during build | ✅ Yes | ✅ Yes |
-| Available at runtime | ❌ No | ✅ Yes |
+| Available during build | Yes | Yes |
+| Available at runtime | No | Yes |
 | Override mechanism | `--build-arg` | `-e` or `environment:` |
-| Inside container env | ❌ Not visible | ✅ Visible |
+| Inside container env | Not visible | Visible |
 | Default in Dockerfile | `ARG KEY=val` | `ENV KEY=val` |
 | Typical use | Build choices | Runtime config |
-| Bake into image | ✅ Yes (during build) | ✅ Default (overridable) |
-| Docker history visible | ✅ Yes (security risk) | ✅ Yes (security risk) |
+| Bake into image | Yes (during build) | Default (overridable) |
+| Docker history visible | Yes (security risk) | Yes (security risk) |
 
 ---
 
-## 🎨 Visual — Where Each Lives
+## Visual — Where Each Lives
 
 ```
 ┌─────────────────────────────────────┐
@@ -185,7 +185,7 @@ services:
 │  • App jar                           │
 │  • ENV vars baked (SPRING_PROFILES,  │
 │    JAVA_OPTS)                         │
-│  • ARG vars NOT here ❌               │
+│  • ARG vars NOT here               │
 └─────────────────────────────────────┘
        │
        │ docker run (or with -e to override)
@@ -202,7 +202,7 @@ services:
 
 ---
 
-## 💡 Common Patterns
+## Common Patterns
 
 ### Pattern 1 — Build-time version pinning (ARG)
 ```dockerfile
@@ -254,61 +254,61 @@ ARG JAVA_VERSION    # MUST RE-DECLARE — ARG scope is per stage
 
 ---
 
-## ⚠️ Common Traps
+## Common Traps
 
 ```
-🪤 Trap 1: ARG mein secret rakhna
-         ❌ ARG DB_PASSWORD=secret123
+Trap 1: ARG mein secret rakhna
+         ARG DB_PASSWORD=secret123
             → Visible in docker history
-         ✅ Use BuildKit secrets (--secret) for build-time secrets
+         Use BuildKit secrets (--secret) for build-time secrets
 
-🪤 Trap 2: ENV mein sensitive data permanently
-         ❌ ENV DB_PASSWORD=secret123
+Trap 2: ENV mein sensitive data permanently
+         ENV DB_PASSWORD=secret123
             → ENV permanently in image, leaks if image shared
-         ✅ ENV mein placeholder; real value via -e at runtime
+         ENV mein placeholder; real value via -e at runtime
             OR via Vault / AWS Secrets Manager
 
-🪤 Trap 3: ARG before FROM not visible after FROM
-         ❌ ARG JAVA_VERSION=17
+Trap 3: ARG before FROM not visible after FROM
+         ARG JAVA_VERSION=17
             FROM eclipse-temurin:${JAVA_VERSION}-jdk
             RUN echo $JAVA_VERSION   ← empty here!
-         ✅ Re-declare ARG after FROM:
+         Re-declare ARG after FROM:
             ARG JAVA_VERSION=17
             FROM eclipse-temurin:${JAVA_VERSION}-jdk
             ARG JAVA_VERSION         ← re-declare to use
             RUN echo $JAVA_VERSION   ← now works
 
-🪤 Trap 4: Multi-stage ARG scope confusion
-         ❌ Stage 1 mein ARG declare, Stage 2 mein use
-         ✅ Each FROM = new stage = re-declare ARG
+Trap 4: Multi-stage ARG scope confusion
+         Stage 1 mein ARG declare, Stage 2 mein use
+         Each FROM = new stage = re-declare ARG
 
-🪤 Trap 5: Confusing ENV override priority
+Trap 5: Confusing ENV override priority
          Docker priority (highest → lowest):
          1. docker run -e               (CLI)
          2. docker-compose environment  (YAML)
          3. Dockerfile ENV              (default)
 
-🪤 Trap 6: ARG visible in docker history
-         ❌ Anyone with image can: docker history myapp
+Trap 6: ARG visible in docker history
+         Anyone with image can: docker history myapp
             → Sees all ARG values used at build time
-         ✅ Don't put secrets in ARG. Use BuildKit secrets:
+         Don't put secrets in ARG. Use BuildKit secrets:
             RUN --mount=type=secret,id=token cat /run/secrets/token
 ```
 
 ---
 
-## 🔐 Security Note — Where to Put Secrets
+## Security Note — Where to Put Secrets
 
 ```
 NEITHER ARG NOR ENV ideally for production secrets!
 
 OPTIONS:
-   ✅ BuildKit secrets (build-time secrets, not in history)
-   ✅ AWS Secrets Manager (runtime fetch)
-   ✅ HashiCorp Vault (runtime fetch)
-   ✅ Kubernetes Secrets (runtime mount)
-   ✅ Docker Secrets (Swarm)
-   ✅ env-file at deploy time (.env, gitignored)
+   BuildKit secrets (build-time secrets, not in history)
+   AWS Secrets Manager (runtime fetch)
+   HashiCorp Vault (runtime fetch)
+   Kubernetes Secrets (runtime mount)
+   Docker Secrets (Swarm)
+   env-file at deploy time (.env, gitignored)
 
 PROD PATTERN:
    spring.datasource.password=${DB_PASSWORD}    ← placeholder
@@ -319,7 +319,7 @@ PROD PATTERN:
 
 ---
 
-## 🎤 Interview Q&A
+## Interview Q&A
 
 **Q1: "ARG vs ENV difference?"**
 
@@ -339,20 +339,20 @@ PROD PATTERN:
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > *"ARG = build-time only (gone after build), ENV = runtime + build (available in running container). ARG for build choices (Java version, --build-arg override). ENV for runtime config (profile, JVM opts, -e override). Secrets in NEITHER — use BuildKit secrets / Vault / Secrets Manager. ARG before FROM = visible only in FROM; re-declare after FROM. ENV baked into image as default, overridable at runtime."*
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
-ARG = "ingredients" 🥕 (cooking only — gone at table)
-ENV = "salt/sauce" 🧂 (table mein hamesha available)
+ARG = "ingredients" (cooking only — gone at table)
+ENV = "salt/sauce" (table mein hamesha available)
 
-Build time:    ARG ✅   ENV ✅
-Runtime:       ARG ❌   ENV ✅
+Build time:    ARG   ENV 
+Runtime:       ARG   ENV 
 
 Override syntax:
    ARG  → docker build --build-arg KEY=value
@@ -367,17 +367,17 @@ Scope rule:
 
 ---
 
-## ✅ Concept Locked
+## Concept Locked
 
 ```
-✅ ARG = build-time only
-✅ ENV = runtime + buildtime
-✅ Override mechanisms (--build-arg vs -e)
-✅ ARG/FROM scope rules
-✅ Secret handling (NEITHER for prod secrets)
-✅ Real patterns (version pinning, ARG→ENV bridge)
-✅ Common traps (history visibility, scope confusion)
-✅ Production secrets handling (BuildKit / Vault / Secrets Manager)
+ARG = build-time only
+ENV = runtime + buildtime
+Override mechanisms (--build-arg vs -e)
+ARG/FROM scope rules
+Secret handling (NEITHER for prod secrets)
+Real patterns (version pinning, ARG→ENV bridge)
+Common traps (history visibility, scope confusion)
+Production secrets handling (BuildKit / Vault / Secrets Manager)
 ```
 
-📚 [← Back to README](00_README.md) | [← Multi-stage](09_multistage_builds.md)
+[← Back to README](00_README.md) | [← Multi-stage](09_multistage_builds.md)

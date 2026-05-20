@@ -1,13 +1,13 @@
-# 🟢 Topic 2 — Pod (Smallest Deployable Unit)
+# Topic 2 — Pod (Smallest Deployable Unit)
 
 > **Foundation:** Container vs Pod difference
 > **Key:** K8s manages PODS, not containers directly
 
-📚 [← Back to README](00_README.md) | [← Why K8s](01_why_k8s_and_architecture.md) | [Deployment →](03_deployment.md)
+[← Back to README](00_README.md) | [← Why K8s](01_why_k8s_and_architecture.md) | [Deployment →](03_deployment.md)
 
 ---
 
-## 🤔 What's a Pod?
+## What's a Pod?
 
 ```
 Container       → Docker se bana ek running app
@@ -22,7 +22,7 @@ Smallest unit:
 
 ---
 
-## 🎬 STORY — Apartment Unit
+## STORY — Apartment Unit
 
 ```
 Container = ek banda (process)
@@ -39,7 +39,7 @@ Pod       = apartment unit
 
 ---
 
-## 🎯 Pod Key Properties
+## Pod Key Properties
 
 ```
 1. SHARED NETWORK
@@ -62,7 +62,7 @@ Pod       = apartment unit
 
 ---
 
-## 🎨 Visual
+## Visual
 
 ```
    ┌─────────────────────────────────────┐
@@ -87,7 +87,7 @@ Pod       = apartment unit
 
 ---
 
-## 📝 Pod Manifest (YAML — declarative)
+## Pod Manifest (YAML — declarative)
 
 ```yaml
 apiVersion: v1
@@ -118,7 +118,7 @@ kubectl delete pod usercrud-pod        # delete
 
 ---
 
-## 🆚 Pod vs Container
+## Pod vs Container
 
 | | **Container** | **Pod** |
 |---|---|---|
@@ -131,7 +131,7 @@ kubectl delete pod usercrud-pod        # delete
 
 ---
 
-## 🤔 Why Wrap Containers in Pods?
+## Why Wrap Containers in Pods?
 
 ```
 Single container = simple
@@ -156,7 +156,7 @@ ADVANCED: sidecar pattern (production patterns)
 
 ---
 
-## 🎬 Sidecar Pattern Visual
+## Sidecar Pattern Visual
 
 ```
    ┌─────────────────────────────────┐
@@ -183,7 +183,7 @@ ADVANCED: sidecar pattern (production patterns)
 
 ---
 
-## 🚨 Pod is EPHEMERAL — Important
+## Pod is EPHEMERAL — Important
 
 ```
 Pod CRASH → simply gone (no auto-replace)
@@ -197,7 +197,7 @@ Use: DEPLOYMENT (next topic) — manages pod lifecycle
 
 ---
 
-## 🎤 Quick Interview Sense
+## Quick Interview Sense
 
 **Q: "Pod kya hai?"**
 
@@ -213,13 +213,13 @@ Use: DEPLOYMENT (next topic) — manages pod lifecycle
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > *"Pod = smallest deployable unit in K8s. Wraps 1+ containers sharing network (1 IP), storage (volumes), lifecycle. K8s schedules pods, not containers. Pods ephemeral by default — production use Deployment to manage pod lifecycle (replicas + auto-restart). Sidecar pattern = multiple containers in 1 pod for tightly coupled helpers (logging, proxy)."*
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 Pod = "Apartment unit"
@@ -239,16 +239,16 @@ Layers:
 
 ---
 
-## ✅ Concept Locked
+## Concept Locked
 
 ```
-✅ Pod = smallest K8s unit
-✅ Wraps 1+ containers (usually 1)
-✅ Shared network (1 IP), storage, lifecycle
-✅ Ephemeral by default
-✅ Sidecar pattern for tightly coupled helpers
-✅ kubectl apply / get / describe / logs / exec / delete
-✅ Production: NEVER raw pods, always via Deployment
+Pod = smallest K8s unit
+Wraps 1+ containers (usually 1)
+Shared network (1 IP), storage, lifecycle
+Ephemeral by default
+Sidecar pattern for tightly coupled helpers
+kubectl apply / get / describe / logs / exec / delete
+Production: NEVER raw pods, always via Deployment
 ```
 
-📚 [← Back to README](00_README.md) | [← Why K8s](01_why_k8s_and_architecture.md) | [Deployment →](03_deployment.md)
+[← Back to README](00_README.md) | [← Why K8s](01_why_k8s_and_architecture.md) | [Deployment →](03_deployment.md)

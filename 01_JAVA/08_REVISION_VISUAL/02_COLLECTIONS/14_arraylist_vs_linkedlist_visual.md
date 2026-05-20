@@ -1,4 +1,4 @@
-# 📋 ArrayList vs LinkedList — Visual Revision
+# ArrayList vs LinkedList — Visual Revision
 
 ---
 
@@ -172,7 +172,7 @@ class Node {
    
    = O(n) traversal + O(1) insertion
    
-   ⚠️ BUT if you ALREADY have a node reference:
+   BUT if you ALREADY have a node reference:
       Just adjust pointers = O(1)
 ```
 
@@ -238,25 +238,25 @@ LinkedList:
 
 ```
 USE ARRAYLIST:
-   ✅ Frequent random access (get by index)
-   ✅ Mostly read-heavy
-   ✅ Append-only (add at end)
-   ✅ Memory matters
-   ✅ Cache-friendly traversal
+   Frequent random access (get by index)
+   Mostly read-heavy
+   Append-only (add at end)
+   Memory matters
+   Cache-friendly traversal
    
    = 90% of use cases
 
 USE LINKEDLIST:
-   ✅ Frequent insert/delete at known positions
-   ✅ Implementing Queue (LinkedList implements Deque)
-   ✅ No random access needed
+   Frequent insert/delete at known positions
+   Implementing Queue (LinkedList implements Deque)
+   No random access needed
    
    = Niche cases
 ```
 
 ---
 
-## 🔟 Real Production Reality
+## Real Production Reality
 
 ```
 Joshua Bloch (Effective Java):
@@ -294,21 +294,21 @@ Modern equivalent of Vector:
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-ArrayList   = 🅿️ Parking lot (indexed slots, direct access)
-LinkedList  = 🔗 Chain of people (sequential, no index)
+ArrayList   = Parking lot (indexed slots, direct access)
+LinkedList  = Chain of people (sequential, no index)
 
 ArrayList:
-   get  = O(1) ⚡
-   middle insert/delete = O(n) 🐌
+   get  = O(1) 
+   middle insert/delete = O(n) 
 
 LinkedList:
-   get  = O(n) 🐌
-   adjust pointers = O(1) ⚡ (if node ref)
+   get  = O(n) 
+   adjust pointers = O(1) (if node ref)
 
 Default choice = ArrayList (90% cases)
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

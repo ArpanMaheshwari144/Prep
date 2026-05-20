@@ -14,17 +14,17 @@ import java.util.Optional;
 // Optional       → null-safe wrapper for findByEmail result
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    DATA ACCESS LAYER for User entity
 //    Authentication flow yaha se DB hits karta
 //    Login pe email se user khojna = findByEmail()
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🔑 FREE METHODS (Inherited from JpaRepository):
+// FREE METHODS (Inherited from JpaRepository):
 //    save(User), findById(Long), findAll(), delete(User),
 //    deleteById(Long), count(), existsById(Long), etc.
 //
-// 🔑 findByEmail KYU CHAHIYE:
+// findByEmail KYU CHAHIYE:
 //
 //    LOGIN FLOW:
 //       1. User POST /auth/login {email, password}
@@ -44,7 +44,7 @@ import java.util.Optional;
 //    = Email = login identifier (unique field)
 //    = findByEmail = ESSENTIAL for auth
 //
-// 🔑 Optional<User> WHY:
+// Optional<User> WHY:
 //    Email DB mein mil sakta → User return
 //    Email nahi mila → Optional.empty()
 //
@@ -55,7 +55,7 @@ import java.util.Optional;
 //    = No NullPointerException
 //    = Explicit "might not exist" semantic
 //
-// 🔑 SPRING DERIVED QUERY MAGIC:
+// SPRING DERIVED QUERY MAGIC:
 //    findByEmail(String email)
 //       Spring parser:
 //          "findBy" prefix → SELECT
@@ -66,7 +66,7 @@ import java.util.Optional;
 //    No SQL written by you!
 //    Just method name = query
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "UserRepository extends JpaRepository providing free CRUD.
 //     Custom findByEmail leverages Spring Data JPA's derived query
 //     mechanism — method name parsed to JPQL automatically.

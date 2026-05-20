@@ -1,13 +1,13 @@
-# 🎨 Section D — Visual Revision (Quick Recap)
+# Section D — Visual Revision (Quick Recap)
 
 > **Use:** Final lock-in recap, interview prep visual reference
 > **Read after:** Sections 1-7 done
 
-📚 [← Back to README](00_README.md) | [← Reference](07_reference.md)
+[← Back to README](00_README.md) | [← Reference](07_reference.md)
 
 ---
 
-# 🎯 DOCKER MEGA VISUAL RECAP
+# DOCKER MEGA VISUAL RECAP
 
 ---
 
@@ -20,7 +20,7 @@
 │   (recipe)     (running)       (storage)      (talk)      (orchestrate)│
 │                                                                    │
 │   ┌─────┐      ┌─────────┐    ┌──────────┐   ◄─── ───►   ┌─────┐  │
-│   │ 📦  │ run  │ 🔄      │    │ 💾       │              │ 🐙  │  │
+│   │  │ run  │      │    │       │              │  │  │
 │   │     │ ───► │ alive   │ ───│ persist  │     bridge    │ YAML│  │
 │   │     │      │ process │ -v │ data     │     network   │ all │  │
 │   └─────┘      └─────────┘    └──────────┘                └─────┘  │
@@ -66,7 +66,7 @@
         │ docker rm -f               │ docker rm
         ▼                            ▼
    ┌──────────┐                  ┌──────────┐
-   │  💀 GONE │                  │  💀 GONE │
+   │  GONE │                  │  GONE │
    └──────────┘                  └──────────┘
 
    (volume mounted? data SAFE — container gone, volume zinda)
@@ -116,15 +116,15 @@
    └──────┬───────┘                 └──────┬───────┘    └──────────────┘
           │ docker rm -f                   │ docker rm -f       │
           ▼                                ▼                    │
-        💀 ALL                          Container               │
+        ALL                          Container               │
         DATA                            GONE                    │
-        GONE                                                   ✅
+        GONE                                                   
                                                           DATA SAFE
                                                                 │
                                         Naya container          │
                                         + same -v ◄─────────────┘
                                                 ▼
-                                          DATA WAHI ✅
+                                          DATA WAHI 
 
    Lesson: Container ephemeral, Volume persistent
 ```
@@ -175,8 +175,8 @@
                                        ▲          ▲
    Talk only by IP                    │   DNS   │
    No name resolution                 └──────────┘
-   ❌ deprecated for app                Container NAME = hostname
-                                        ✅ production pattern
+   deprecated for app                Container NAME = hostname
+                                        production pattern
 ```
 
 ---
@@ -201,7 +201,7 @@
    └─────────────────────────────────────┘
        │
        ▼
-   Stack LIVE ✅
+   Stack LIVE 
 
    docker-compose down → all containers stop + clean
    docker-compose down -v → also volumes (DATA GONE)
@@ -239,7 +239,7 @@
 
 ---
 
-## 🔟 ENTRYPOINT PATTERN (Production)
+## ENTRYPOINT PATTERN (Production)
 
 ```
    CMD (overridable):                ENTRYPOINT (fixed):
@@ -248,7 +248,7 @@
         ↓                                 ↓
    CMD REPLACED                      ENTRYPOINT same
    Runs: echo X                      Runs: java -jar app.jar --debug
-   ❌ accidental risk                 ✅ args APPEND, base safe
+   accidental risk                 args APPEND, base safe
 
    Production:
       ENTRYPOINT ["java", "-jar", "app.jar"]    ← fixed binary
@@ -257,7 +257,7 @@
 
 ---
 
-## 🎯 MENTAL MODEL — Spring Location = URL Pattern
+## MENTAL MODEL — Spring Location = URL Pattern
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
@@ -274,7 +274,7 @@ LOCK THIS — yeh Day 1 vs Day 2 ka asli farak
 
 ---
 
-## 🎤 INTERVIEW POWER PHRASE
+## INTERVIEW POWER PHRASE
 
 ```
 "Docker = Image (template) + Container (instance) + Volume (persist)
@@ -290,16 +290,16 @@ K8s migration easy from here."
 
 ---
 
-## 🧠 ULTIMATE MEMORY HOOK
+## ULTIMATE MEMORY HOOK
 
 ```
-Image       = Recipe  📋 (read-only)
-Container   = Dish    🍽️  (running, ephemeral)
-Volume      = Cabinet 🗄️  (persistent, host disk)
-Network     = Phone   📞 (container talk by name)
-Compose     = Recipe  🐙 (whole meal in one YAML)
-Profile     = Outfit  👔 (env-specific config)
-ENTRYPOINT  = Fixed   🔒 (immutable base command)
+Image       = Recipe  (read-only)
+Container   = Dish     (running, ephemeral)
+Volume      = Cabinet  (persistent, host disk)
+Network     = Phone   (container talk by name)
+Compose     = Recipe  (whole meal in one YAML)
+Profile     = Outfit  (env-specific config)
+ENTRYPOINT  = Fixed   (immutable base command)
 ```
 
-📚 [← Back to README](00_README.md) | [← Reference](07_reference.md)
+[← Back to README](00_README.md) | [← Reference](07_reference.md)

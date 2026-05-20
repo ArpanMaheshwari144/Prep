@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Bank Account Race
+## STORY — Bank Account Race
 
 → **2 threads ek saath bank account update** kar rahe the
 → Thread 1 ne **balance = 1000** padha. Thread 2 ne bhi **1000** padha
@@ -16,7 +16,7 @@
 
 ---
 
-## 🧠 Race Condition Visualization
+## Race Condition Visualization
 
 ```
                 MAIN MEMORY (RAM)
@@ -36,20 +36,20 @@
 
 ---
 
-## 💻 Code — synchronized Fix
+## Code — synchronized Fix
 
-### ❌ Without sync — Race
+### Without sync — Race
 ```java
 class BankAccount {
     private int balance = 1000;
 
     void deposit(int amount) {
-        balance = balance + amount;    // 🔴 race condition
+        balance = balance + amount;    // race condition
     }
 }
 ```
 
-### ✅ Method-level synchronized
+### Method-level synchronized
 ```java
 class BankAccount {
     private int balance = 1000;
@@ -64,7 +64,7 @@ class BankAccount {
 }
 ```
 
-### ✅ Block-level synchronized (BETTER — sirf critical section lock)
+### Block-level synchronized (BETTER — sirf critical section lock)
 ```java
 void deposit(int amount) {
     synchronized(this) {               // sirf zaroori part lock
@@ -75,7 +75,7 @@ void deposit(int amount) {
 
 ---
 
-## 🔴 TRAP 1 — Method-Level vs Block-Level
+## TRAP 1 — Method-Level vs Block-Level
 
 > **Method-level `synchronized` = poori method lock = SLOW**
 > **Block-level = sirf critical section lock = FASTER**
@@ -95,7 +95,7 @@ void deposit(int amount) {
 
 ---
 
-## 🔴 TRAP 2 — `synchronized` = Atomicity + Visibility
+## TRAP 2 — `synchronized` = Atomicity + Visibility
 
 > **`synchronized` 2 cheez fix karta:**
 > 1. **Atomicity** — ek time pe ek thread (race condition gone)
@@ -105,7 +105,7 @@ void deposit(int amount) {
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"`synchronized` ensures only one thread executes the critical section at a time — it acquires a lock on the object, preventing race conditions. Use block-level sync for better performance."*
 

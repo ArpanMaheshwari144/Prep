@@ -1,22 +1,22 @@
-# 🔌 Adapter Pattern — Incompatible Interfaces ko Connect
+# Adapter Pattern — Incompatible Interfaces ko Connect
 
 > **Design Patterns: Topic 5 — Structural Pattern**
 
 ---
 
-## 🎬 STORY — Travel Plug Adapter
+## STORY — Travel Plug Adapter
 
 > Tu USA gaya — laptop charger ka pin **Indian** type hai (round), socket **American** (flat).
 >
-> 🔌 **Direct fit nahi** — interface incompatible.
+> **Direct fit nahi** — interface incompatible.
 >
-> 💡 **Solution:** Travel adapter — ek side Indian pin lene wala, doosri side American socket compatible. Physical wire same, bas **interface translate** karta.
+> **Solution:** Travel adapter — ek side Indian pin lene wala, doosri side American socket compatible. Physical wire same, bas **interface translate** karta.
 >
 > **Adapter pattern same kaam karta** — 2 incompatible interfaces ke beech **bridge** banata.
 
 ---
 
-## 🤔 The Problem
+## The Problem
 
 Imagine **legacy logger** (LegacyLogger) hai — `logMessage(String)` method.
 Naya code **modern logger interface** (Logger) expect karta — `info(String)` method.
@@ -39,7 +39,7 @@ public class UserService {
     private Logger logger;   // expects Logger interface
     
     public void doWork() {
-        logger.info("Working...");   // ❌ LegacyLogger doesn't fit
+        logger.info("Working...");   // LegacyLogger doesn't fit
     }
 }
 ```
@@ -48,7 +48,7 @@ public class UserService {
 
 ---
 
-## ✨ Adapter Solution
+## Adapter Solution
 
 ```java
 // Adapter — wraps Legacy, exposes Modern interface
@@ -75,7 +75,7 @@ userService.setLogger(modern);
 
 ---
 
-## 🎨 VISUAL
+## VISUAL
 
 ```
    CLIENT                  ADAPTER              ADAPTEE (legacy)
@@ -94,7 +94,7 @@ userService.setLogger(modern);
 
 ---
 
-## 🌍 Real-World Examples
+## Real-World Examples
 
 ### 1. **Java I/O — `InputStreamReader`**
 ```java
@@ -113,7 +113,7 @@ List<String> list = Arrays.asList(arr);   // adapter
 
 ---
 
-## 🚀 INTERVIEW USE CASE
+## INTERVIEW USE CASE
 
 **Common scenario:** Third-party library integration.
 
@@ -144,7 +144,7 @@ public class StripeAdapter implements PaymentProcessor {
 
 ---
 
-## 📐 SOLID Connection
+## SOLID Connection
 
 - **OCP** — Adapter naya class hai, existing code unchanged
 - **DIP** — Client adapter ke through abstract interface use karta, concrete legacy class nahi
@@ -152,7 +152,7 @@ public class StripeAdapter implements PaymentProcessor {
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "Adapter pattern kya hai aur kab use karte ho?"**
 
@@ -170,13 +170,13 @@ public class StripeAdapter implements PaymentProcessor {
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"Adapter pattern incompatible interfaces ke beech bridge banata — wraps existing class aur target interface ke according expose karta. Legacy code integration, third-party library wrapping ke liye gold."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 Adapter = "Travel plug"
@@ -199,18 +199,18 @@ Real-world:
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "Adapter = Decorator"
-         ❌ Adapter changes interface, Decorator keeps same
-         ✅ Different intent
+Trap 1: "Adapter = Decorator"
+         Adapter changes interface, Decorator keeps same
+         Different intent
 
-🪤 Trap 2: "Adapter modifies adaptee"
-         ❌ NEVER — adaptee unchanged (composition only)
-         ✅ Adapter wraps + delegates
+Trap 2: "Adapter modifies adaptee"
+         NEVER — adaptee unchanged (composition only)
+         Adapter wraps + delegates
 
-🪤 Trap 3: "Use Adapter for everything"
-         ❌ Only when interface incompatibility exists
-         ✅ Direct call if interfaces match
+Trap 3: "Use Adapter for everything"
+         Only when interface incompatibility exists
+         Direct call if interfaces match
 ```

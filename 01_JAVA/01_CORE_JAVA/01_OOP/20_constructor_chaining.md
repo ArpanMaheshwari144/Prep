@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Student class
+## STORY — Student class
 
 → Tune Student class banayi — **teen constructors**: naam only, naam+age, naam+age+course
 → Teeno mein **same initialization code** — validation, defaults
@@ -16,7 +16,7 @@
 
 ---
 
-## 💻 Code
+## Code
 
 ```java
 class Student {
@@ -38,7 +38,7 @@ class Student {
 }
 
 Student s = new Student("Arpan");
-// "Arpan" → age default 18 → course default "Java" ✅
+// "Arpan" → age default 18 → course default "Java" 
 ```
 
 ```java
@@ -54,13 +54,13 @@ class Dog extends Animal {
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **`this()` ya `super()` HAMESHA constructor ki PEHLI line!**
 
 ```java
 Dog(String name, String breed) {
-    System.out.println("hello");              // 🔴 compile error!
+    System.out.println("hello");              // compile error!
     super(name);                              // pehli line nahi
 }
 ```
@@ -69,6 +69,6 @@ Dog(String name, String breed) {
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Constructor chaining allows one constructor to call another using `this()` for the same class or `super()` for the parent class — must always be the first statement in the constructor."*

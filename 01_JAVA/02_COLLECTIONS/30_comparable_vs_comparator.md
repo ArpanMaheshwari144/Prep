@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Sort Karne Ki Zarurat
+## STORY — Sort Karne Ki Zarurat
 
 → Panelists ki list **age se sort** karni thi. `Collections.sort()` kiya — **error**
 → Panelist class mein `compareTo()` nahi tha
@@ -16,7 +16,7 @@
 
 ---
 
-## 🧠 Visualization
+## Visualization
 
 ```
 COMPARABLE                          COMPARATOR
@@ -36,7 +36,7 @@ Collections.sort(list)               list.sort(new SalaryComp())
 
 ---
 
-## 💻 Code
+## Code
 
 ### 1. Comparable — Class Ke Andar
 ```java
@@ -46,7 +46,7 @@ class Panelist implements Comparable<Panelist> {
 
     @Override
     public int compareTo(Panelist other) {
-        return Integer.compare(this.age, other.age);   // ✅ best practice
+        return Integer.compare(this.age, other.age);   // best practice
     }
 }
 
@@ -74,20 +74,20 @@ Collections.sort(list, byName);
 
 ---
 
-## 🔴 TRAP 1 — `this.age - other.age` ≠ `Integer.compare()`
+## TRAP 1 — `this.age - other.age` ≠ `Integer.compare()`
 
 ```java
-return this.age - other.age;        // 🔴 OVERFLOW risk!
+return this.age - other.age;        // OVERFLOW risk!
 // age = Integer.MAX_VALUE, other = -1 → subtraction overflow
 
-return Integer.compare(this.age, other.age);   // ✅ SAFE — best practice
+return Integer.compare(this.age, other.age);   // SAFE — best practice
 ```
 
 > **HAMESHA `Integer.compare()` use karo. Interview mein yahi best practice.**
 
 ---
 
-## 📊 Comparable vs Comparator
+## Comparable vs Comparator
 
 | Feature | Comparable | Comparator |
 |---------|-----------|-----------|
@@ -99,7 +99,7 @@ return Integer.compare(this.age, other.age);   // ✅ SAFE — best practice
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Comparable defines natural ordering within the class via `compareTo()`. Comparator defines external, flexible ordering via `compare()` — you can have multiple Comparators for the same class. Use `Integer.compare()` instead of subtraction to avoid overflow."*
 
@@ -110,7 +110,7 @@ return Integer.compare(this.age, other.age);   // ✅ SAFE — best practice
 
 ---
 
-## 🤔 Confusion Clear — `compare()` vs `compareTo()` Dono Kyu Aate?
+## Confusion Clear — `compare()` vs `compareTo()` Dono Kyu Aate?
 
 **Pakdi gayi confusion (interview ka classic):**
 
@@ -129,7 +129,7 @@ Comparator<Panelist> byName = (a, b) -> a.name.compareTo(b.name);
 |------|---------|
 | **`Integer.compare(x, y)`** | int compare karna ho — **safest** (overflow nahi) |
 | **`x.compareTo(y)`** | String, Integer, Double pe — kyunki Java ne ye sab pehle se **Comparable** banaye hain |
-| **`x - y`** | ❌ AVOID — overflow risk |
+| **`x - y`** | AVOID — overflow risk |
 
 ### Code Breakdown:
 

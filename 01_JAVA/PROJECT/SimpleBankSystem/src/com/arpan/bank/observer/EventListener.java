@@ -1,7 +1,7 @@
 package com.arpan.bank.observer;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    EventListener = SUBSCRIBER ka CONTRACT (interface)
 //    "Tu listener banna chahta? Yeh method implement kar"
 //    Concrete listeners (EmailListener, AuditListener, SMSListener)
@@ -27,9 +27,9 @@ package com.arpan.bank.observer;
 //       = Lambda compatible:
 //          publisher.subscribe(event -> sout("Email"));
 //
-// 🎨 PATTERN: Observer (subscriber side of pub-sub)
+// PATTERN: Observer (subscriber side of pub-sub)
 //
-// 📐 SOLID:
+// SOLID:
 //    ISP — SINGLE-method focused interface (perfect ISP)
 //          No bloat, easy to implement
 //    OCP — Naye listeners add ho sakte
@@ -37,7 +37,7 @@ package com.arpan.bank.observer;
 //
 // FUTURE EXPANSION:
 //    Same contract follow karke:
-//       EmailListener ✅ (already done)
+//       EmailListener (already done)
 //       SMSListener
 //       AuditListener
 //       PushNotificationListener

@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Comparator Boilerplate
+## STORY — Comparator Boilerplate
 
 → Ek din manager ne bola — **"100 patients ki list age se sort karo."**
 → Purana style mein Comparator likhne baitha
@@ -15,7 +15,7 @@
 
 ---
 
-## 🟡 WHY — Lambda Kyu?
+## WHY — Lambda Kyu?
 
 → Purana style — Comparator likhne mein **10 lines boilerplate**
 → Anonymous inner class, `@Override`, return statement — **sab ek kaam ke liye**
@@ -26,7 +26,7 @@
 
 ---
 
-## 💻 Old vs New
+## Old vs New
 
 ### Java 7 — 10 lines boilerplate
 ```java
@@ -45,7 +45,7 @@ Collections.sort(patients, (a, b) -> a.getName().compareTo(b.getName()));
 
 ---
 
-## 🧠 Lambda Syntax — 4 Forms
+## Lambda Syntax — 4 Forms
 
 ```java
 // 1. Zero parameter
@@ -67,21 +67,21 @@ name -> System.out.println(name)
 
 ---
 
-## 🔴 TRAP — Java mein `=>` NAHI hota
+## TRAP — Java mein `=>` NAHI hota
 
 > **Java = `->` (dash arrow). JavaScript = `=>` (fat arrow). Java mein `=>` EXIST nahi karta.**
 > Sawaal: lambda syntax? `->` chun. `=>` dikhe = **GALAT**.
 
 ---
 
-## 🔴 TRAP — Lambda Ke Bina Streams Nahi
+## TRAP — Lambda Ke Bina Streams Nahi
 
 > **Streams API har jagah Lambda use karti — `filter`, `map`, `forEach` sab Lambdas leti hain.**
 > Pehle Lambda samjho, fir Streams.
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Lambda expressions are anonymous functions that reduce boilerplate by replacing anonymous inner classes with a concise syntax — `(parameters) -> body`. They enable functional programming in Java and are the foundation for Streams API."*
 

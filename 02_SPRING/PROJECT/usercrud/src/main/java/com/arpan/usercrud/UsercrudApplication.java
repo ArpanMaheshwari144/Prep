@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    Spring Boot ka ENTRY POINT (JVM yahaan se shuru)
 //    main() → Spring container boot → app ready on :8080
 // ═══════════════════════════════════════════════════════════════════════
@@ -23,9 +23,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //         ├── 3. @EnableAutoConfiguration — classpath dekh smart wiring
 //         ├── 4. @Autowired wire beans together
 //         ├── 5. Embedded Tomcat start (port 8080)
-//         └── App READY ✅
+//         └── App READY 
 //
-// 🔑 @SpringBootApplication — THE MAGIC ANNOTATION:
+// @SpringBootApplication — THE MAGIC ANNOTATION:
 //    3 annotations ka COMBO:
 //
 //       @Configuration            → "Yeh class beans define karegi"
@@ -54,12 +54,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //    9. App running
 //
 // WHY SO SMALL?
-//    ✅ 1 annotation = 3 features
-//    ✅ 1 method call = entire app boot
-//    ✅ No XML, no web.xml, no manual DispatcherServlet
+//    1 annotation = 3 features
+//    1 method call = entire app boot
+//    No XML, no web.xml, no manual DispatcherServlet
 //    = Convention over Configuration philosophy
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "@SpringBootApplication = @Configuration + @EnableAutoConfiguration
 //     + @ComponentScan. Combined annotation that bootstraps the entire
 //     Spring context, auto-wires beans, configures based on classpath,

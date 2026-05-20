@@ -1,16 +1,16 @@
-# 📡 Observer Pattern — Pub-Sub (Event Notifications)
+# Observer Pattern — Pub-Sub (Event Notifications)
 
 > **Design Patterns: Topic 4 — Behavioral Pattern (Common Interview)**
 
 ---
 
-## 🎬 STORY — YouTube Channel Subscription
+## STORY — YouTube Channel Subscription
 
 > Imagine **YouTube channel pe video upload hua**:
 >
-> 📺 Tu (creator) bolta — *"Naya video upload kiya!"*
+> Tu (creator) bolta — *"Naya video upload kiya!"*
 >
-> 🔔 **YouTube automatically** notify karta saare subscribers ko —
+> **YouTube automatically** notify karta saare subscribers ko —
 > Email, app notification, bell icon, home feed.
 >
 > Tu (creator) **kisi specific subscriber ko personally call nahi karta** —
@@ -23,7 +23,7 @@
 
 ---
 
-## 🤔 The Problem — Tight Coupling
+## The Problem — Tight Coupling
 
 ```java
 // Without Observer — tightly coupled
@@ -36,10 +36,10 @@ public class TransactionService {
     public void transfer(Account from, Account to, double amount) {
         // ... transfer logic ...
         
-        email.send("Transfer of " + amount);     // ❌ hardcoded
-        sms.send("Transfer happened");            // ❌ hardcoded
-        audit.log("Transfer event");              // ❌ hardcoded
-        slack.notify("New transfer");             // ❌ hardcoded
+        email.send("Transfer of " + amount);     // hardcoded
+        sms.send("Transfer happened");            // hardcoded
+        audit.log("Transfer event");              // hardcoded
+        slack.notify("New transfer");             // hardcoded
         
         // Naya notification add karna ho? service code modify
         // pushNotification.send(...);   ← every time code change
@@ -48,14 +48,14 @@ public class TransactionService {
 ```
 
 **Problems:**
-1. 🔴 **Service knows ALL notification types** — tight coupling
-2. 🔴 **Naya notification add** = service code modify (OCP violation)
-3. 🔴 **Hard to test** — multiple dependencies hardcoded
-4. 🔴 **Single Responsibility violated** — service does business + notifications
+1. **Service knows ALL notification types** — tight coupling
+2. **Naya notification add** = service code modify (OCP violation)
+3. **Hard to test** — multiple dependencies hardcoded
+4. **Single Responsibility violated** — service does business + notifications
 
 ---
 
-## ✨ Observer Solution
+## Observer Solution
 
 ```java
 public class TransactionService {
@@ -64,7 +64,7 @@ public class TransactionService {
     public void transfer(Account from, Account to, double amount) {
         // ... transfer logic ...
         
-        publisher.publish(new TransferEvent(...));   // ✅ ONE call
+        publisher.publish(new TransferEvent(...));   // ONE call
         // Publisher automatically notifies all subscribers
     }
 }
@@ -77,14 +77,14 @@ publisher.subscribe(new SlackListener());
 ```
 
 **Benefits:**
-- ✅ **Service decoupled** from listeners
-- ✅ **Naye listeners add** without modifying publisher
-- ✅ **Single Responsibility** — service does business, listeners do notifications
-- ✅ **Easy to test** — mock publisher
+- **Service decoupled** from listeners
+- **Naye listeners add** without modifying publisher
+- **Single Responsibility** — service does business, listeners do notifications
+- **Easy to test** — mock publisher
 
 ---
 
-## 🎨 VISUAL — Pub-Sub Flow
+## VISUAL — Pub-Sub Flow
 
 ```
                     ┌──────────────────┐
@@ -112,14 +112,14 @@ publisher.subscribe(new SlackListener());
    ▼          ▼          ▼          ▼
 EmailListener SMSListener Audit  SlackListener
   .onEvent()  .onEvent() .onEvent() .onEvent()
-   📧          📱         📋        💬
+                           
 ```
 
 **Key insight:** Publisher loops through subscribers, calls `onEvent()` on each. **One-to-many** broadcast.
 
 ---
 
-## 💻 PART 1: Manual Implementation (3 components)
+## PART 1: Manual Implementation (3 components)
 
 ### 1️⃣ Event class — what happened
 ```java
@@ -173,14 +173,14 @@ public class EventPublisher {
 public class EmailListener implements EventListener {
     @Override
     public void onEvent(TransactionEvent event) {
-        System.out.println("📧 Email: ₹" + event.getAmount() + " transferred");
+        System.out.println("Email: ₹" + event.getAmount() + " transferred");
     }
 }
 
 public class SMSListener implements EventListener {
     @Override
     public void onEvent(TransactionEvent event) {
-        System.out.println("📱 SMS: Transfer of ₹" + event.getAmount());
+        System.out.println("SMS: Transfer of ₹" + event.getAmount());
     }
 }
 ```
@@ -193,13 +193,13 @@ publisher.subscribe(new SMSListener());
 
 publisher.publish(new TransactionEvent("A1", "A2", 1000, System.currentTimeMillis()));
 // Output:
-//   📧 Email: ₹1000.0 transferred
-//   📱 SMS: Transfer of ₹1000.0
+//   Email: ₹1000.0 transferred
+//   SMS: Transfer of ₹1000.0
 ```
 
 ---
 
-## 🚀 PROJECT USAGE — `EventPublisher.java` (SimpleBankSystem)
+## PROJECT USAGE — `EventPublisher.java` (SimpleBankSystem)
 
 **Files:** `01_JAVA/07_PROJECT/SimpleBankSystem/src/com/arpan/bank/observer/`
 
@@ -228,7 +228,7 @@ public interface EventListener {
 public class EmailListener implements EventListener {
     @Override
     public void onEvent(TransactionEvent event) {
-        System.out.println("📧 [Email] ₹" + event.getAmount() +
+        System.out.println("[Email] ₹" + event.getAmount() +
             " transferred from " + event.getFromId() + " to " + event.getToId());
     }
 }
@@ -257,15 +257,15 @@ AccountService service = new AccountService(repository, publisher);
 service.transfer("A1", "A2", 1000);
 // → AccountService internally publishes event
 // → EmailListener.onEvent() runs automatically
-// → "📧 [Email] ₹1000 transferred from A1 to A2"
+// → "[Email] ₹1000 transferred from A1 to A2"
 ```
 
-**🎤 Interview line:**
+**Interview line:**
 > *"Observer pattern transactions ke liye implement kiya — `EventPublisher` event publish karta, multiple `EventListener` subscribers register hote (`EmailListener`, future SMS/audit). Publisher koi specific listener nahi jaanta — pure decoupling. Naye listener add karne mein publisher unchanged. Spring's `ApplicationEventPublisher` same concept use karta — RabbitMQ, Kafka at scale."*
 
 ---
 
-## 🌍 Real-World Examples
+## Real-World Examples
 
 ### 1. **Spring `ApplicationEventPublisher`** (built-in observer)
 ```java
@@ -323,7 +323,7 @@ Flux.just(1, 2, 3)
 
 ---
 
-## 📊 Push vs Pull Observer
+## Push vs Pull Observer
 
 ### Push (humara approach)
 ```java
@@ -357,7 +357,7 @@ public void publish() {
 
 ---
 
-## 🎯 When to Use Observer?
+## When to Use Observer?
 
 | Use Observer when... | Don't use when... |
 |---|---|
@@ -369,7 +369,7 @@ public void publish() {
 
 ---
 
-## 💡 Key Design Principles
+## Key Design Principles
 
 1. **Publisher doesn't know listeners** — only interface contract
 2. **Listeners can be added/removed** at runtime
@@ -392,7 +392,7 @@ public void publish(TransactionEvent event) {
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "Observer pattern kya hai aur kab use karte ho?"**
 
@@ -424,13 +424,13 @@ public void publish(TransactionEvent event) {
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"Observer pattern one-to-many notifications enable karta — publisher event publish karta, multiple subscribers automatic notified. Pure decoupling, OCP-friendly (naye listeners add bina publisher modify). Spring's `ApplicationEventPublisher`, Kafka, Java Swing — sab same concept at different scales."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 Observer = "YouTube channel"
@@ -447,13 +447,13 @@ Real-world:
    • Spring ApplicationEventPublisher
    • Java Swing addActionListener
    • Kafka producers/consumers
-   • EventPublisher in SimpleBankSystem ✅
+   • EventPublisher in SimpleBankSystem 
 
 Use when:
-   ✓ One-to-many notifications
-   ✓ Cross-cutting concerns (audit, logging)
-   ✓ Loose coupling needed
-   ✓ Dynamic listener management
+   One-to-many notifications
+   Cross-cutting concerns (audit, logging)
+   Loose coupling needed
+   Dynamic listener management
 
 Push vs Pull:
    Push (default) → publisher sends full data
@@ -462,39 +462,39 @@ Push vs Pull:
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "Observer = Spring @EventListener"
-         ❌ Spring is one implementation
-         ✅ Pattern is concept — Spring/Kafka/Swing all use it
+Trap 1: "Observer = Spring @EventListener"
+         Spring is one implementation
+         Pattern is concept — Spring/Kafka/Swing all use it
 
-🪤 Trap 2: "Listeners run in parallel"
-         ❌ Default sequential — order of subscribe()
-         ✅ Need ExecutorService for parallel
+Trap 2: "Listeners run in parallel"
+         Default sequential — order of subscribe()
+         Need ExecutorService for parallel
 
-🪤 Trap 3: "Publisher must know about listeners"
-         ❌ Anti-pattern — defeats purpose
-         ✅ Publisher knows ONLY interface contract
+Trap 3: "Publisher must know about listeners"
+         Anti-pattern — defeats purpose
+         Publisher knows ONLY interface contract
 
-🪤 Trap 4: "One listener fail = all fail"
-         ❌ Without isolation, yes
-         ✅ Wrap each onEvent() in try-catch
+Trap 4: "One listener fail = all fail"
+         Without isolation, yes
+         Wrap each onEvent() in try-catch
 
-🪤 Trap 5: "Memory leak with listeners"
-         ❌ Forgotten listeners stay in publisher's list
-         ✅ Always provide unsubscribe() — call in cleanup
+Trap 5: "Memory leak with listeners"
+         Forgotten listeners stay in publisher's list
+         Always provide unsubscribe() — call in cleanup
 ```
 
 ---
 
-## 🎯 Quick Recall Summary
+## Quick Recall Summary
 
 ```
 WHAT     → One-to-many event notifications
 WHY      → Decouple publisher from listeners + OCP
 HOW      → Publisher list + listener interface + broadcast loop
-PROJECT  → EventPublisher in SimpleBankSystem ✅
+PROJECT  → EventPublisher in SimpleBankSystem 
 SPRING   → ApplicationEventPublisher + @EventListener
 SCALE    → Kafka, RabbitMQ, message brokers
 TRAP     → Memory leaks (forgotten listeners) + failure isolation

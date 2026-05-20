@@ -1,5 +1,5 @@
 // =========================================================
-// 🧪 SOLO LLD TEST #2 — Shopping Cart
+// SOLO LLD TEST #2 — Shopping Cart
 // Date: 2026-04-20
 // Goal: Method implementation solo, no Claude help during coding
 // =========================================================
@@ -8,7 +8,7 @@ import java.util.*;
 
 
 // ==========================
-// 📋 PROBLEM STATEMENT
+// PROBLEM STATEMENT
 // ==========================
 // Design a simple ShoppingCart system.
 // Users can add items, remove items, get total price, check count,
@@ -16,7 +16,7 @@ import java.util.*;
 
 
 // ==========================
-// 🏗️ CLASS SIGNATURES
+// CLASS SIGNATURES
 // ==========================
 //
 // class Item
@@ -37,7 +37,7 @@ import java.util.*;
 
 
 // ==========================
-// 📊 METHOD SPECS
+// METHOD SPECS
 // ==========================
 //
 // ┌──────────────────────────────────────────────────────────────────┐
@@ -78,7 +78,7 @@ import java.util.*;
 
 
 // ==========================
-// 🎯 EXAMPLES (expected I/O)
+// EXAMPLES (expected I/O)
 // ==========================
 //
 // Cart cart = new Cart();
@@ -96,7 +96,7 @@ import java.util.*;
 
 
 // ==========================
-// ⚙️ CONSTRAINTS
+// CONSTRAINTS
 // ==========================
 // - Price is double; must be > 0
 // - Name is String; case-sensitive match for removal
@@ -104,7 +104,7 @@ import java.util.*;
 
 
 // =========================================================
-// 👇 ITEM CLASS — PROVIDED AS-IS (koi kaam nahi)
+// ITEM CLASS — PROVIDED AS-IS (koi kaam nahi)
 // =========================================================
 
 class Item {
@@ -127,7 +127,7 @@ class Item {
 
 
 // =========================================================
-// 👇 CART CLASS — YAHAN APNA CODE LIKH
+// CART CLASS — YAHAN APNA CODE LIKH
 // =========================================================
 
 class Cart {
@@ -185,7 +185,7 @@ class Cart {
 
 
 // =========================================================
-// 🧪 TEST RUNNER (already ready)
+// TEST RUNNER (already ready)
 // =========================================================
 
 class Main {

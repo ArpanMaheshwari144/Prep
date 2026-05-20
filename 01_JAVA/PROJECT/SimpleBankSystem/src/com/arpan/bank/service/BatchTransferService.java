@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    Multiple transfers ek saath PARALLEL chalata
 //    Sequential 1000 transfers = slow
 //    Pool ke 5 threads = ~5x faster
@@ -51,14 +51,14 @@ import java.util.concurrent.Executors;
 //
 // WHY FIXED POOL (not Cached)?
 //    Fixed (5 threads):
-//       ✅ Bounded resource
-//       ✅ Predictable
-//       ✅ Production safe
+//       Bounded resource
+//       Predictable
+//       Production safe
 //
 //    Cached:
-//       ⚠️ Unlimited growth
-//       ⚠️ 1000 requests = 1000 threads
-//       ⚠️ OutOfMemoryError risk
+//       Unlimited growth
+//       1000 requests = 1000 threads
+//       OutOfMemoryError risk
 //
 // EXCEPTION ISOLATION:
 //    Sequential:
@@ -79,7 +79,7 @@ import java.util.concurrent.Executors;
 //       ThreadPoolTaskExecutor  — production-grade
 //    = Yeh manual version hai
 //
-// 📐 SOLID:
+// SOLID:
 //    SRP — Sirf batch processing
 //    DIP — AccountService inject (constructor injection)
 // ═══════════════════════════════════════════════════════════════════════

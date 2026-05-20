@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — Alag-Alag Maps Kyu?
+## WHY — Alag-Alag Maps Kyu?
 
 → **HashMap** = `O(1)` lookup, **NO order**
 → **LinkedHashMap** = `O(1)` + **INSERTION order** maintain
@@ -13,7 +13,7 @@
 
 ---
 
-## 📖 STORY — User Database
+## STORY — User Database
 
 → **userId se naam fetch** karna tha — HashMap = fastest, no order
 → Ek baar **LRU cache** banana tha — insertion order maintain karni thi → **LinkedHashMap**
@@ -22,7 +22,7 @@
 
 ---
 
-## 💻 Code — Teeno
+## Code — Teeno
 
 ### 1. HashMap — Sabse Fast, NO Order
 ```java
@@ -40,7 +40,7 @@ Map<Integer, String> map = new LinkedHashMap<>();
 map.put(103, "Priya"); map.put(101, "Arpan"); map.put(102, "Rahul");
 
 System.out.println(map);
-// {103=Priya, 101=Arpan, 102=Rahul} — INSERTION ORDER SAME ✅
+// {103=Priya, 101=Arpan, 102=Rahul} — INSERTION ORDER SAME 
 // HashMap + doubly linked list extra
 ```
 
@@ -50,14 +50,14 @@ Map<Integer, String> map = new TreeMap<>();
 map.put(103, "Priya"); map.put(101, "Arpan"); map.put(102, "Rahul");
 
 System.out.println(map);
-// {101=Arpan, 102=Rahul, 103=Priya} — KEY PE SORTED ✅
+// {101=Arpan, 102=Rahul, 103=Priya} — KEY PE SORTED 
 // Red-Black Tree andar — get/put = O(log n)
 // Range queries: firstKey(), lastKey(), subMap()
 ```
 
 ---
 
-## 🧠 Visualization — Andar Ka Structure
+## Visualization — Andar Ka Structure
 
 ```
               3 Map Types — Andar Ka Structure
@@ -101,7 +101,7 @@ Buckets (HashMap jaisa):       Insertion-Order Linked List:
 │ 3  │ → [101: Arpan]
 ├────┤                          Iterate output:
 │ 5  │ → [103: Priya]            {101=Arpan, 103=Priya, 102=Rahul}
-└────┘                            (insertion order maintained ✅)
+└────┘                            (insertion order maintained )
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -125,7 +125,7 @@ Operations:      O(log n)
 
 ---
 
-## 📊 Teeno Ek Saath
+## Teeno Ek Saath
 
 | Feature | HashMap | LinkedHashMap | TreeMap |
 |---------|---------|---------------|---------|
@@ -137,12 +137,12 @@ Operations:      O(log n)
 
 ---
 
-## 🔴 TRAP 1
+## TRAP 1
 
 > **TreeMap null key nahi leta — `NullPointerException`.**
 > Kyu? Sort karta hai → `null.compareTo()` = crash. **HashMap null key allowed hai.**
 
-## 🔴 TRAP 2
+## TRAP 2
 
 > **TreeMap = KEYS sort hoti, VALUES nahi.**
 > ```java
@@ -153,7 +153,7 @@ Operations:      O(log n)
 
 ---
 
-## 💬 POWER PHRASES
+## POWER PHRASES
 
 > *"HashMap gives O(1) performance with no order guarantee. LinkedHashMap maintains insertion order using an additional linked list — same O(1) but slightly more memory. TreeMap keeps keys sorted using a Red-Black Tree — O(log n). TreeMap does not allow null keys since it needs to compare them."*
 

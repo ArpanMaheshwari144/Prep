@@ -1,4 +1,4 @@
-# 🌊 Streams API — Visual Revision
+# Streams API — Visual Revision
 
 ---
 
@@ -7,7 +7,7 @@
 ```
 Imagine factory ka conveyor belt:
 
-   📦 → 🔍 Filter → 🔧 Transform → 📊 Pack
+   → Filter → Transform → Pack
    ↑                                    ↓
    raw items                       finished
    
@@ -254,7 +254,7 @@ KEY:
 
 ---
 
-## 🔟 Parallel Streams (Speed Boost)
+## Parallel Streams (Speed Boost)
 
 ```java
 // Sequential (default)
@@ -277,9 +277,9 @@ parallelStream:
    = Faster for LARGE data + CPU-intensive ops
    
 WARNINGS:
-   ❌ Don't use for small lists (overhead)
-   ❌ Don't use with shared mutable state
-   ❌ Don't assume order (use forEachOrdered)
+   Don't use for small lists (overhead)
+   Don't use with shared mutable state
+   Don't assume order (use forEachOrdered)
 ```
 
 ---
@@ -287,12 +287,12 @@ WARNINGS:
 ## 1️⃣1️⃣ Common Trap
 
 ```java
-// ❌ Can't reuse stream
+// Can't reuse stream
 Stream<Integer> s = list.stream();
 s.toList();         // works
-s.toList();         // ❌ IllegalStateException — stream consumed
+s.toList();         // IllegalStateException — stream consumed
 
-// ✅ Create new stream each time:
+// Create new stream each time:
 list.stream().toList();   // 1st use
 list.stream().toList();   // 2nd use (new stream)
 ```
@@ -322,10 +322,10 @@ flatMap = "flatten nested streams into one"
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-Stream = 🏭 assembly line for collections
+Stream = assembly line for collections
 
 Pipeline:
    source → intermediate → intermediate → terminal
@@ -343,4 +343,4 @@ flatMap = nested → flat
 Stream = one-time use (can't reuse)
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

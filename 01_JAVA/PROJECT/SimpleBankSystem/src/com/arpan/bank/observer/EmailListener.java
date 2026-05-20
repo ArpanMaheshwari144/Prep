@@ -1,7 +1,7 @@
 package com.arpan.bank.observer;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    EmailListener = CONCRETE subscriber (event aaye → email bhejo)
 //    Demo mein print karta, real world mein SMTP/SES integration
 //    Ek listener example — aur bhi ho sakte (SMS, Audit, Push)
@@ -46,9 +46,9 @@ package com.arpan.bank.observer;
 //           }
 //       }
 //
-// 🎨 PATTERN: Observer (concrete subscriber)
+// PATTERN: Observer (concrete subscriber)
 //
-// 📐 SOLID:
+// SOLID:
 //    SRP — Sirf email notification handle karta, kuch nahi
 //          Not business logic, not DB save, not audit
 //
@@ -67,7 +67,7 @@ public class EmailListener implements EventListener {
     public void onEvent(TransactionEvent event) {
         // Real world: emailService.send(...)
         // Demo: console pe print (proof — listener actually run hua)
-        System.out.println("📧 [Email] ₹" + event.getAmount() +
+        System.out.println("[Email] ₹" + event.getAmount() +
             " transferred from " + event.getFromId() + " to " + event.getToId());
     }
 }

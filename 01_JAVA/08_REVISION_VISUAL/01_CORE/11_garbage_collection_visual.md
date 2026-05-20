@@ -1,4 +1,4 @@
-# 🗑️ Garbage Collection — Visual Revision
+# Garbage Collection — Visual Revision
 
 ---
 
@@ -16,9 +16,9 @@ C/C++ mein:
 
 ```
 Java mein:
-   ✅ Tu sirf "new" karke object banata
-   ✅ Java AUTOMATICALLY clean up karta
-   ✅ No manual free
+   Tu sirf "new" karke object banata
+   Java AUTOMATICALLY clean up karta
+   No manual free
    = GARBAGE COLLECTOR
 ```
 
@@ -103,13 +103,13 @@ Phase 1: MARK
    │  Roots (stack, statics)   │
    │       │                    │
    │       ▼                    │
-   │     ✅ obj1 (reachable)    │
+   │     obj1 (reachable)    │
    │       │                    │
    │       ▼                    │
-   │     ✅ obj2 (reachable)    │
+   │     obj2 (reachable)    │
    │                            │
-   │     ❌ obj3 (unreachable)  │  ← garbage
-   │     ❌ obj4 (unreachable)  │  ← garbage
+   │     obj3 (unreachable)  │  ← garbage
+   │     obj4 (unreachable)  │  ← garbage
    └──────────────────────────┘
 
 Phase 2: SWEEP
@@ -117,8 +117,8 @@ Phase 2: SWEEP
    Memory free kar do
    
    ┌──────────────────────────┐
-   │     ✅ obj1                │
-   │     ✅ obj2                │
+   │     obj1                │
+   │     obj2                │
    │     (obj3, obj4 cleared)   │
    └──────────────────────────┘
 ```
@@ -134,7 +134,7 @@ Phase 2: SWEEP
    GC needs to run
         │
         ▼
-   ⏸️  ALL APP THREADS PAUSE
+    ALL APP THREADS PAUSE
         │
         ▼
    GC scans + cleans heap
@@ -216,7 +216,7 @@ SMART DESIGN:
 
 ---
 
-## 🔟 Common Interview Q&A
+## Common Interview Q&A
 
 ```
 Q: Java mein memory leak hota hai?
@@ -261,7 +261,7 @@ Runtime.getRuntime().gc();   // same
 ## 1️⃣2️⃣ Memory Hooks
 
 ```
-GC = 🧹 Maid (auto-cleanup)
+GC = Maid (auto-cleanup)
 
 Young Gen   = bachpan (naya objects, mostly die fast)
 Old Gen     = budhapa (long-lived survivors)
@@ -269,7 +269,7 @@ Old Gen     = budhapa (long-lived survivors)
 Mark        = mark reachable objects
 Sweep       = delete unreachable
 
-Stop-the-world = ⏸️ all threads pause during GC
+Stop-the-world = all threads pause during GC
 Minor GC    = young gen only (fast, frequent)
 Major GC    = full heap (slow, rare)
 
@@ -277,4 +277,4 @@ G1          = modern default (Java 9+)
 ZGC         = ultra-low pause (Java 11+)
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

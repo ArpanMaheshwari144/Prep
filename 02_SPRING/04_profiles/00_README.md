@@ -1,4 +1,4 @@
-# 🎭 Spring Profiles — Complete Notes
+# Spring Profiles — Complete Notes
 
 > **Topic:** Environment-specific configuration in Spring Boot
 > **Hands-on:** UserCRUD project — local + docker + compose profiles
@@ -6,47 +6,47 @@
 
 ---
 
-## 📚 READ ORDER
+## READ ORDER
 
 ```
-1. 📖 00_README.md          ← yeh file (start here)
+1. 00_README.md          ← yeh file (start here)
                               Overview + reading order
 
-2. 🟢 01_basics.md          ← Why profiles, file naming, activation
+2. 01_basics.md          ← Why profiles, file naming, activation
                               3 ways to activate, file load mechanism
                               [Day 1 — locked]
 
-3. 🟡 02_compose_integration.md ← Day 2 update
+3. 02_compose_integration.md ← Day 2 update
                               Docker Compose + Spring profile bridge
                               Env var SPRING_PROFILES_ACTIVE = trigger
                               Spring auto-loads matching file
                               [Day 2 — locked]
 
-4. 🔵 03_reference.md        ← Q&A + Traps + Power Phrase
+4. 03_reference.md        ← Q&A + Traps + Power Phrase
                               Interview-ready quick lookups
 ```
 
 ---
 
-## 🎯 What You'll Learn
+## What You'll Learn
 
 ```
-✅ Why profiles (env-specific config)
-✅ File naming convention (application-{name}.properties)
-✅ 4 activation ways (CLI / env var / properties / Compose YAML)
-✅ Activation precedence (CLI > env > properties)
-✅ Spring auto-load mechanism
-✅ Profile-specific @Profile annotation
-✅ Multi-active profiles
-✅ Compose integration (Day 2)
-✅ Production reality (CI/CD + AWS deployment patterns)
-✅ Secrets handling (Vault / Secrets Manager)
-✅ 12-factor app principle
+Why profiles (env-specific config)
+File naming convention (application-{name}.properties)
+4 activation ways (CLI / env var / properties / Compose YAML)
+Activation precedence (CLI > env > properties)
+Spring auto-load mechanism
+Profile-specific @Profile annotation
+Multi-active profiles
+Compose integration (Day 2)
+Production reality (CI/CD + AWS deployment patterns)
+Secrets handling (Vault / Secrets Manager)
+12-factor app principle
 ```
 
 ---
 
-## 💎 Project Files Created
+## Project Files Created
 
 ```
 src/main/resources/
@@ -63,7 +63,7 @@ Switch via:
 
 ---
 
-## 🎯 Three Profiles — When to Use What
+## Three Profiles — When to Use What
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
@@ -79,7 +79,7 @@ Switch via:
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > *"Spring Profiles = environment-specific configuration. application-{profile}.properties files banao (local, docker, compose, dev, prod). Activate via property/CLI/env var/Compose YAML. Master file mein common stuff, profile files mein env-specific. Docker-Compose se Spring = SPRING_PROFILES_ACTIVE env var bridge — Compose inject karta, Spring auto-loads matching file. Container DNS pattern: profile mein service name use (mysql:3306) NOT localhost. JAR ek hi build, runtime pe profile decide — 12-factor app pattern."*
 

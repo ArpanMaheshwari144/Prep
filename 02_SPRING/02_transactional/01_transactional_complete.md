@@ -1,10 +1,10 @@
-# 🔥 `@Transactional` — Complete Interview Reference
+# `@Transactional` — Complete Interview Reference
 
 > **Most-asked Spring annotation in interviews.** 90% chances yeh kuch na kuch puchega.
 
 ---
 
-## 📌 WHY — Asli zaroorat
+## WHY — Asli zaroorat
 
 Tu apne bhai ko ₹1000 transfer kar raha hai:
 
@@ -14,8 +14,8 @@ Step 2: Bhai ke account mein ₹1000 plus
 ```
 
 **Imagine:**
-- Step 1 successful ✅ (₹1000 cut ho gaye)
-- Step 2 fail ❌ (server crash / network issue)
+- Step 1 successful (₹1000 cut ho gaye)
+- Step 2 fail (server crash / network issue)
 
 **Result:** Tere paise gone, bhai ko mile nahi. **DISASTER.**
 
@@ -23,14 +23,14 @@ Yahan se transaction concept aata hai — **"All or nothing"** group of DB opera
 
 ---
 
-## 🎯 Transaction kya hai?
+## Transaction kya hai?
 
 > Either **saare steps successful** → COMMIT (permanent save)
 > Ya **koi bhi step fail** → ROLLBACK (saare changes revert, jaise kuch hua hi nahi)
 
 Bich-bich mein partial save **NEVER**.
 
-### 🎨 Visual — Bank Transfer (Tu ₹1000 bhej raha)
+### Visual — Bank Transfer (Tu ₹1000 bhej raha)
 
 ```
                   ┌─────────────────────────────────┐
@@ -42,24 +42,24 @@ Bich-bich mein partial save **NEVER**.
                                                                    
   Tu (₹5000)         Bhai (₹2000)        Tu (₹5000)        Bhai (₹2000)
        │                  │                    │                  │
-       │ -1000 ✅         │                    │ -1000 ✅         │
+       │ -1000         │                    │ -1000         │
        │                  │                    │                  │
        ▼                  │                    ▼                  │
    ₹4000              ₹2000                ₹4000              ₹2000
                                                                    
-   💥 CRASH 💥                              💥 CRASH 💥           
+   CRASH                              CRASH           
                                                                    
-       │                  │                    │   ROLLBACK ⏪    │
-       │           +1000 ❌                    │                  │
+       │                  │                    │   ROLLBACK    │
+       │           +1000                    │                  │
        │                  │                    ▼                  │
        ▼                  ▼                ₹5000              ₹2000
    ₹4000              ₹2000                                        
                                           (Original state restored
-   😱 ₹1000 GONE                            jaise kuch hua hi nahi)
-   FOREVER                                  ✅ Safe!
+   ₹1000 GONE                            jaise kuch hua hi nahi)
+   FOREVER                                  Safe!
 ```
 
-### 🔒 ACID — Transaction ke 4 properties (interview bonus)
+### ACID — Transaction ke 4 properties (interview bonus)
 
 ```
      A   ───  ATOMICITY     "All or nothing" — ya saare ya koi nahi
@@ -73,7 +73,7 @@ Bich-bich mein partial save **NEVER**.
 
 ---
 
-## 🔄 Spring se pehle — Manual boilerplate
+## Spring se pehle — Manual boilerplate
 
 ```java
 Connection conn = dataSource.getConnection();
@@ -95,7 +95,7 @@ try {
 
 ---
 
-## ✨ Spring ka magic — `@Transactional`
+## Spring ka magic — `@Transactional`
 
 ```java
 @Transactional
@@ -115,7 +115,7 @@ public void transferMoney(Long fromId, Long toId, double amount) {
 
 ---
 
-## 💎 ASLI SACH — `@Transactional` = MySQL transaction wrapper!
+## ASLI SACH — `@Transactional` = MySQL transaction wrapper!
 
 > **Important realization:** Spring kuch naya magic nahi kar raha. Andar wahi MySQL transaction commands chal rahe hain jo tu manually karta — bas tujhe likhna nahi padta.
 
@@ -137,7 +137,7 @@ ROLLBACK;
 
 **Bilkul same kaam.** Annotation ek shorthand hai.
 
-### 🔍 Andar kya hota hai — JDBC layer
+### Andar kya hota hai — JDBC layer
 
 `@Transactional` ka actual implementation **JDBC `Connection` API** use karta hai:
 
@@ -159,7 +159,7 @@ if (success) {
 conn.close();
 ```
 
-### 📊 3 Layers — Same concept, different syntax
+### 3 Layers — Same concept, different syntax
 
 | Layer | Begin | Commit | Rollback |
 |---|---|---|---|
@@ -169,7 +169,7 @@ conn.close();
 
 **Sab ek hi DB-level concept hai**, alag-alag abstractions. Spring sirf boilerplate kam karta.
 
-### 🎨 Visual — Spring Behind the Curtain
+### Visual — Spring Behind the Curtain
 
 ```
        Tu likhta:
@@ -201,13 +201,13 @@ conn.close();
        }
 ```
 
-### 💎 Power phrase (interview gold)
+### Power phrase (interview gold)
 
 > **"`@Transactional` actually MySQL/JDBC transaction commands ka wrapper hai. Spring AOP proxy `Connection.setAutoCommit(false)` set karta hai shuru mein, queries fire karta, success pe `commit()`, exception pe `rollback()`. Khud raw JDBC ya MySQL mein same kaam karenge — Spring sirf boilerplate bachata hai."**
 
 **Yeh interviewer ko impress karega** kyunki most candidates abstraction ke peeche jhaake nahi dekhte — tu **DB layer tak deep** soch raha hai.
 
-### 🔑 Yaad rakhne ka tarika
+### Yaad rakhne ka tarika
 
 ```
    @Transactional   ≡   START TRANSACTION ... COMMIT/ROLLBACK
@@ -219,7 +219,7 @@ conn.close();
    "Magic" nahi    =   Pure JDBC/SQL ka wrapper
 ```
 
-### 🎨 Visual — Spring Proxy Interception
+### Visual — Spring Proxy Interception
 
 ```
   Client Code (Controller)
@@ -230,7 +230,7 @@ conn.close();
   │       SPRING PROXY (wrapper)          │
   │                                       │
   │   ┌─────────────────────────┐         │
-  │   │ 1. TX BEGIN             │ ⚙️       │
+  │   │ 1. TX BEGIN             │       │
   │   └─────────────────────────┘         │
   │                                       │
   │   ┌─────────────────────────┐         │
@@ -248,25 +248,25 @@ conn.close();
   │             │                         │
   │   ┌─────────▼───────────────┐         │
   │   │ 3. Exception?           │         │
-  │   │    YES → ROLLBACK ⏪    │         │
-  │   │    NO  → COMMIT ✅      │         │
+  │   │    YES → ROLLBACK    │         │
+  │   │    NO  → COMMIT      │         │
   │   └─────────────────────────┘         │
   │                                       │
   └───────────────────────────────────────┘
 
-  💡 Tu sirf @Transactional likhta — Spring proxy
+  Tu sirf @Transactional likhta — Spring proxy
      baaki sab automatic kar deta. Magic AOP se hai.
 ```
 
 ---
 
-## 🔥 PROPAGATION — 7 Types (interview gold)
+## PROPAGATION — 7 Types (interview gold)
 
 **Question:** Jab `serviceA` se `serviceB` call hua, dono `@Transactional` → kya `serviceB` nayi transaction banayega ya same use karega?
 
 **Answer = Propagation type.**
 
-### 🥇 Tier 1 (90% interview yahan se)
+### Tier 1 (90% interview yahan se)
 
 | Type | Meaning | Example use case |
 |---|---|---|
@@ -274,7 +274,7 @@ conn.close();
 | **REQUIRES_NEW** | Hamesha NAYA TX. Parent ko suspend kar do. | Audit logs (independent commit) |
 | **NESTED** | Parent ke andar **savepoint**. Sub-fail → savepoint tak rollback. | Try-and-fallback patterns |
 
-### 🥈 Tier 2 (kabhi-kabhi)
+### Tier 2 (kabhi-kabhi)
 
 | Type | Meaning |
 |---|---|
@@ -283,7 +283,7 @@ conn.close();
 | **MANDATORY** | Parent TX HONA chahiye. Nahi hai → exception. |
 | **NEVER** | Parent TX NAHI hona chahiye. Hai → exception. |
 
-### 🎨 Visual — All 7 Propagation Types Side-by-Side
+### Visual — All 7 Propagation Types Side-by-Side
 
 ```
   Caller has TX?              No TX?
@@ -303,14 +303,14 @@ conn.close();
   NOT_SUPPORTED  Suspend + no TX     Run without TX
                  ────────────────    ──────────────
   
-  MANDATORY      Join existing       💥 Exception
+  MANDATORY      Join existing       Exception
                  ────────────        ────────────
   
-  NEVER          💥 Exception        Run without TX
+  NEVER          Exception        Run without TX
                  ────────────        ──────────────
 ```
 
-### 🌳 Decision Tree — Konsa Propagation Use Karu?
+### Decision Tree — Konsa Propagation Use Karu?
 
 ```
                     ┌──────────────────────────┐
@@ -390,38 +390,38 @@ public class AuditService {
 }
 ```
 
-### 💎 Power phrase
+### Power phrase
 > **"Default REQUIRED hai — 90% cases mein yahi sahi. REQUIRES_NEW use karte hain audit logs jaisi independent operations ke liye, jo main flow fail hone par bhi save honi chahiye."**
 
 ---
 
-## 🔥 ISOLATION — DB Concurrency
+## ISOLATION — DB Concurrency
 
 **Concurrent transactions ek doosre ko kaise dekhte hain.**
 
 ### 3 Concurrency Problems
 
-#### 1. DIRTY READ 🤢
+#### 1. DIRTY READ 
 ```
 Tx-A: UPDATE balance = 9999 (uncommitted)
-Tx-B: SELECT balance → reads 9999  😱
+Tx-B: SELECT balance → reads 9999  
 Tx-A: ROLLBACK
 → Tx-B has WRONG data based on stuff that never existed
 ```
 
-#### 2. NON-REPEATABLE READ 🔁
+#### 2. NON-REPEATABLE READ 
 ```
 Tx-A: SELECT balance WHERE id=5 → 100
 Tx-B: UPDATE balance = 200, COMMIT
-Tx-A: SELECT balance WHERE id=5 → 200  😵
+Tx-A: SELECT balance WHERE id=5 → 200  
 → Same Tx-A ne 2 different values dekhe
 ```
 
-#### 3. PHANTOM READ 👻
+#### 3. PHANTOM READ 
 ```
 Tx-A: SELECT * WHERE age > 18 → 5 rows
 Tx-B: INSERT new user age=25, COMMIT
-Tx-A: SELECT * WHERE age > 18 → 6 rows  👻
+Tx-A: SELECT * WHERE age > 18 → 6 rows  
 → New "phantom" row appear
 ```
 
@@ -429,14 +429,14 @@ Tx-A: SELECT * WHERE age > 18 → 6 rows  👻
 
 | Level | Dirty Read | Non-Repeatable | Phantom | Performance |
 |---|---|---|---|---|
-| **READ_UNCOMMITTED** | ❌ allow | ❌ allow | ❌ allow | 🚀 fastest |
-| **READ_COMMITTED** *(Postgres/Oracle default)* | ✅ block | ❌ allow | ❌ allow | Fast |
-| **REPEATABLE_READ** *(MySQL InnoDB default)* | ✅ block | ✅ block | ❌ allow | Medium |
-| **SERIALIZABLE** | ✅ block | ✅ block | ✅ block | 🐢 slowest |
+| **READ_UNCOMMITTED** | allow | allow | allow | fastest |
+| **READ_COMMITTED** *(Postgres/Oracle default)* | block | allow | allow | Fast |
+| **REPEATABLE_READ** *(MySQL InnoDB default)* | block | block | allow | Medium |
+| **SERIALIZABLE** | block | block | block | slowest |
 
 **Pattern:** Higher level = stronger consistency, slower performance.
 
-### 🎨 Visual — Isolation Ladder (locking + speed trade-off)
+### Visual — Isolation Ladder (locking + speed trade-off)
 
 ```
        Strict (slow)
@@ -460,24 +460,24 @@ Tx-A: SELECT * WHERE age > 18 → 6 rows  👻
        Loose (fast)
 ```
 
-### 🔍 Concurrency Problems — Quick Visual Recap
+### Concurrency Problems — Quick Visual Recap
 
 ```
 DIRTY READ:
   Tx-A:  UPDATE x=99 (uncommitted) ──► Tx-B reads 99 ──► Tx-A rollback
-                                       ❌ B has fake data
+                                       B has fake data
                                        
 NON-REPEATABLE:
   Tx-A: SELECT x ──► 100      Tx-B: UPDATE x=200 COMMIT
                                             │
                                             ▼
-              Tx-A: SELECT x ──► 200  ❌ same TX, different value
+              Tx-A: SELECT x ──► 200  same TX, different value
               
 PHANTOM:
   Tx-A: SELECT WHERE age>18 ──► [5 rows]    Tx-B: INSERT new row
                                                     │
                                                     ▼
-              Tx-A: SELECT WHERE age>18 ──► [6 rows] 👻 new row appeared
+              Tx-A: SELECT WHERE age>18 ──► [6 rows] new row appeared
 ```
 
 ### Spring mein set karna
@@ -489,12 +489,12 @@ public void someMethod() { ... }
 
 **Default = `Isolation.DEFAULT`** → DB ka apna default use karta.
 
-### 💎 Power phrase
+### Power phrase
 > **"99% cases mein default chodna best — DB ka level kaafi hai. SERIALIZABLE sirf banking/financial mein. High level = strong consistency but locking zyada → throughput kam."**
 
 ---
 
-## 🔥 ROLLBACK RULES — Classic Gotcha
+## ROLLBACK RULES — Classic Gotcha
 
 > **Default rule: Spring rollback karta hai SIRF `RuntimeException` (Unchecked) aur `Error` pe. Checked exception pe rollback NAHI.**
 
@@ -513,9 +513,9 @@ public void saveUser(User user) {
 **Kya hua?**
 - `IOException` (Checked) throw hua
 - Spring: "Yeh checked hai, mera rollback rule trigger nahi hoga"
-- **`save(user)` COMMIT** ho gaya 😱
+- **`save(user)` COMMIT** ho gaya 
 
-### 🎨 Visual — Rollback Decision Flow
+### Visual — Rollback Decision Flow
 
 ```
               Method threw an exception?
@@ -525,7 +525,7 @@ public void saveUser(User user) {
             YES                NO
               │                 │
               ▼                 ▼
-         What kind?         COMMIT ✅
+         What kind?         COMMIT 
               │
    ┌──────────┴──────────┐
    │                     │
@@ -536,14 +536,14 @@ public void saveUser(User user) {
   Custom RtException) custom Exception)
    │                     │
    ▼                     ▼
-ROLLBACK ⏪           COMMIT ✅ 😱
+ROLLBACK           COMMIT 
 (automatic)           (DEFAULT — surprising!)
                       
                       Override:
                       @Transactional(
                         rollbackFor = Exception.class
                       )
-                      → ROLLBACK ⏪
+                      → ROLLBACK 
 ```
 
 ### Fix Options
@@ -576,22 +576,22 @@ public void someMethod() {
 }
 ```
 
-### 💎 Power phrase
+### Power phrase
 > **"Default sirf RuntimeException pe rollback. Custom exceptions hamesha RuntimeException extend karne chahiye — Spring philosophy ke saath align, automatic rollback bhi mil jata, signatures clean rehte."**
 
-### ⚠️ TRAP BOX
+### TRAP BOX
 
 ```
-🪤 90% candidates yeh galat sochte:
+90% candidates yeh galat sochte:
    "Saari exceptions pe rollback hota"
    
-   ❌ NAHI — sirf Unchecked (RuntimeException + Error)
-   ✅ Checked exceptions silently commit
+   NAHI — sirf Unchecked (RuntimeException + Error)
+   Checked exceptions silently commit
 ```
 
 ---
 
-## 🔥 SELF-INVOCATION PITFALL — Deepest Gotcha
+## SELF-INVOCATION PITFALL — Deepest Gotcha
 
 > **95% candidates yahin fasate hain. Senior dev filter question.**
 
@@ -615,7 +615,7 @@ public class UserService {
 ```
 
 **Naive expectation:** `@Transactional` hai → rollback hoga
-**Reality:** ❌ **NO rollback. User save ho gaya.**
+**Reality:** **NO rollback. User save ho gaya.**
 
 ### Why?
 
@@ -635,7 +635,7 @@ Self-invocation:
 
 **Reason:** `this.method()` direct invocation hai — proxy ke through nahi jata. Annotation hook trigger nahi hota.
 
-### 🎨 Visual — Self-Invocation Bypass (deepest gotcha)
+### Visual — Self-Invocation Bypass (deepest gotcha)
 
 ```
   EXTERNAL CALL (Controller → Service):
@@ -645,15 +645,15 @@ Self-invocation:
            │
            ▼
    ┌──────────────────────────────┐
-   │  PROXY of UserService 🛡️     │  ← Spring magic
-   │  • TX intercept ✅           │
-   │  • Annotation read ✅        │
+   │  PROXY of UserService     │  ← Spring magic
+   │  • TX intercept           │
+   │  • Annotation read        │
    └──────────┬───────────────────┘
               │
               ▼
    ┌──────────────────────────────┐
    │  REAL UserService            │
-   │  saveUser() { ... }          │  ✅ TRANSACTIONAL
+   │  saveUser() { ... }          │  TRANSACTIONAL
    └──────────────────────────────┘
    
    
@@ -664,8 +664,8 @@ Self-invocation:
            │
            ▼
    ┌──────────────────────────────┐
-   │  PROXY of UserService 🛡️     │
-   │  • Intercept doStuff() ✅    │
+   │  PROXY of UserService     │
+   │  • Intercept doStuff()    │
    └──────────┬───────────────────┘
               │
               ▼
@@ -677,11 +677,11 @@ Self-invocation:
    │  }                       │   │     (proxy is NOT involved)
    │                          │   │
    │  @Transactional          │   │
-   │  saveUser() { ... } ◄────┘   │  ❌ NOT TRANSACTIONAL
+   │  saveUser() { ... } ◄────┘   │  NOT TRANSACTIONAL
    │                              │     (proxy bypass!)
    └──────────────────────────────┘
    
-   💀 Kaaran: this.saveUser() proxy ke through nahi jata
+   Kaaran: this.saveUser() proxy ke through nahi jata
               direct method invocation hai
               Spring ka @Transactional hook trigger nahi hota
 ```
@@ -695,7 +695,7 @@ public class UserService {
     @Autowired private SaveService saveService;
 
     public void doStuff() {
-        saveService.saveUser(new User("Arpan"));   // proxy via injection ✅
+        saveService.saveUser(new User("Arpan"));   // proxy via injection 
     }
 }
 
@@ -713,7 +713,7 @@ public class UserService {
     @Autowired private UserService self;   // ← self-injection
 
     public void doStuff() {
-        self.saveUser(new User("Arpan"));   // through proxy ✅
+        self.saveUser(new User("Arpan"));   // through proxy 
     }
 
     @Transactional
@@ -733,22 +733,22 @@ Bytecode-level injection — self-invocation bhi intercept. Rare in production.
 @Service
 public class UserService {
     @Transactional
-    private void privateMethod() { ... }   // ❌ proxy can't intercept private
+    private void privateMethod() { ... }   // proxy can't intercept private
     
     @Transactional
-    public final void finalMethod() { ... }   // ❌ proxy can't override final
+    public final void finalMethod() { ... }   // proxy can't override final
     
     @Transactional
-    public static void staticMethod() { ... }   // ❌ proxy intercepts non-static
+    public static void staticMethod() { ... }   // proxy intercepts non-static
 }
 ```
 
-### 💎 Power phrase
+### Power phrase
 > **"`@Transactional` self-invocation pe fail hota — proxy bypass ho jata. Always public methods, alag service mein nikal do. Private/final/static pe bhi useless."**
 
 ---
 
-## 🔥 CLASS vs METHOD LEVEL
+## CLASS vs METHOD LEVEL
 
 ### Method-level (most common)
 ```java
@@ -756,7 +756,7 @@ public class UserService {
 public class UserService {
 
     @Transactional
-    public void saveUser(User user) { ... }     // transactional ✅
+    public void saveUser(User user) { ... }     // transactional 
 
     public List<User> getUsers() { ... }         // NOT transactional
 }
@@ -768,8 +768,8 @@ public class UserService {
 @Transactional   // ← class pe lagaya
 public class UserService {
 
-    public void saveUser(User user) { ... }      // transactional ✅
-    public void deleteUser(Long id) { ... }      // transactional ✅
+    public void saveUser(User user) { ... }      // transactional 
+    public void deleteUser(Long id) { ... }      // transactional 
 }
 ```
 
@@ -793,7 +793,7 @@ public class UserService {
 
 ---
 
-## ⚡ BONUS — `readOnly = true`
+## BONUS — `readOnly = true`
 
 ```java
 @Transactional(readOnly = true)
@@ -811,7 +811,7 @@ public List<User> getAllUsers() {
 
 ---
 
-## ⚡ BONUS — `timeout`
+## BONUS — `timeout`
 
 ```java
 @Transactional(timeout = 5)   // 5 seconds
@@ -822,7 +822,7 @@ public void slowOperation() { ... }
 
 ---
 
-## 🎯 PUTTING IT ALL TOGETHER
+## PUTTING IT ALL TOGETHER
 
 ```java
 @Transactional(
@@ -839,7 +839,7 @@ public List<Order> findRecentOrders(Long userId) {
 
 ---
 
-## 📋 INTERVIEW ANSWER TEMPLATES
+## INTERVIEW ANSWER TEMPLATES
 
 ### Q: "`@Transactional` kya karta hai?"
 > "Method ko **atomic database transaction** mein wrap karta hai. Spring AOP proxy automatically transaction begin karta method shuru pe, commit karta successful end pe, aur rollback karta exception pe. Boilerplate `try/catch/commit/rollback` code remove ho jata."
@@ -864,7 +864,7 @@ public List<Order> findRecentOrders(Long userId) {
 
 ---
 
-## 💎 KEY TAKEAWAYS
+## KEY TAKEAWAYS
 
 | # | Lock these |
 |---|---|
@@ -878,25 +878,25 @@ public List<Order> findRecentOrders(Long userId) {
 
 ---
 
-## ⚠️ TRAP SUMMARY
+## TRAP SUMMARY
 
 ```
-🪤 Trap 1: "Saari exceptions pe rollback hota"
-         ❌ Nahi — sirf Unchecked
+Trap 1: "Saari exceptions pe rollback hota"
+         Nahi — sirf Unchecked
          
-🪤 Trap 2: "Same class ke method call mein bhi @Transactional kaam karta"
-         ❌ Nahi — proxy bypass
+Trap 2: "Same class ke method call mein bhi @Transactional kaam karta"
+         Nahi — proxy bypass
          
-🪤 Trap 3: "Private method pe @Transactional kaam karta"
-         ❌ Nahi — proxy override nahi kar sakta
+Trap 3: "Private method pe @Transactional kaam karta"
+         Nahi — proxy override nahi kar sakta
          
-🪤 Trap 4: "MySQL aur Postgres ka isolation default same hai"
-         ❌ Nahi — MySQL = REPEATABLE_READ, Postgres = READ_COMMITTED
+Trap 4: "MySQL aur Postgres ka isolation default same hai"
+         Nahi — MySQL = REPEATABLE_READ, Postgres = READ_COMMITTED
 ```
 
 ---
 
-## 🧠 MEMORY HOOK — One-line per concept
+## MEMORY HOOK — One-line per concept
 
 ```
 @Transactional       =  "Auto try-catch-commit-rollback wrapper"
@@ -905,9 +905,9 @@ REQUIRED             =  "Join karo ya naya banao" (default, 90%)
 REQUIRES_NEW         =  "Hamesha alag, parent ko suspend"
 NESTED               =  "Parent ke andar savepoint"
 
-DIRTY READ           =  "Uncommitted dekh liya" 🤢
-NON-REPEATABLE READ  =  "Same query 2x = different result" 🔁
-PHANTOM READ         =  "New row appeared in range" 👻
+DIRTY READ           =  "Uncommitted dekh liya" 
+NON-REPEATABLE READ  =  "Same query 2x = different result" 
+PHANTOM READ         =  "New row appeared in range" 
 
 READ_UNCOMMITTED     =  "Sab dikha raha hai, even uncommitted"
 READ_COMMITTED       =  "Sirf committed dikhao" (Postgres default)
@@ -922,7 +922,7 @@ readOnly = true      =  "Hibernate optimization for SELECT"
 
 ---
 
-## 🎯 FINAL VISUAL — `@Transactional` ka full flow
+## FINAL VISUAL — `@Transactional` ka full flow
 
 ```
                     @Transactional
@@ -943,8 +943,8 @@ readOnly = true      =  "Hibernate optimization for SELECT"
   Method begin    Method success      Method exception
        │               │                   │
        ▼               ▼                   ▼
-  TX BEGIN         COMMIT ✅         Unchecked? Yes ⏪
-                                     Checked?   No ✅
+  TX BEGIN         COMMIT         Unchecked? Yes 
+                                     Checked?   No 
                                                  │
                                             (use rollbackFor
                                              to override)
@@ -957,7 +957,7 @@ readOnly = true      =  "Hibernate optimization for SELECT"
     • timeout      = seconds
 
   Common pitfalls to avoid:
-    🚫 Self-invocation (this.method())
-    🚫 Private/final/static methods
-    🚫 Default rollback (only Unchecked)
+    Self-invocation (this.method())
+    Private/final/static methods
+    Default rollback (only Unchecked)
 ```

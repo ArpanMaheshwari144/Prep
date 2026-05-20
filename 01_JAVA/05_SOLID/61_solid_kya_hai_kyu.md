@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — OrderService Sab Kuch Kar Rahi Thi
+## STORY — OrderService Sab Kuch Kar Rahi Thi
 
 → Ek baar **OrderService** likhi — order ka **sab kuch** ek hi class mein
 → Order logic + DB mein save + Email bhejo + PDF generate + log + audit
@@ -18,7 +18,7 @@
 
 ---
 
-## 🟡 WHY SOLID — Pehle Yeh Dard Samjho
+## WHY SOLID — Pehle Yeh Dard Samjho
 
 ### Bina SOLID = Spaghetti Code
 
@@ -52,7 +52,7 @@ D — Dependency Inversion    →  abstraction pe depend, concrete nahi
 
 ---
 
-## 🧠 SOLID = Robert C. Martin (Uncle Bob) ka invention
+## SOLID = Robert C. Martin (Uncle Bob) ka invention
 
 → 2000 mein paper publish kiya
 → Industry-standard ban gaya
@@ -64,13 +64,13 @@ D — Dependency Inversion    →  abstraction pe depend, concrete nahi
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"SOLID is five design principles for maintainable and scalable code. Bina SOLID, ek class mein multiple responsibilities ghus jaate, multiple teams se changes aate, code spaghetti ban jata. SOLID solves this with clear separation: one reason to change, extension over modification, substitutability, focused interfaces, and dependency on abstractions. Spring Boot ki entire architecture SOLID-driven hai."*
 
 ---
 
-## 🎯 Bottom Line
+## Bottom Line
 
 > **SOLID = 5 rules jo "ek change = sab kuch toot gaya" wala dard rokta.**
 > Pehle ek-ek principle deeply samjho, fir project mein apply.

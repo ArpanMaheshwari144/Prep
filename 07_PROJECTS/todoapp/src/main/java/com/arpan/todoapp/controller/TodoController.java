@@ -17,7 +17,7 @@ import java.util.List;
 // List                  → return type for getAll
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    REST API LAYER for Todo
 //    HTTP entry point — sirf routing + status codes
 //    Business logic NAHI — TodoService ka kaam
@@ -31,7 +31,7 @@ import java.util.List;
 //    PUT    /todos/{id}   → UPDATE
 //    DELETE /todos/{id}   → DELETE
 //
-// 🔑 KEY ANNOTATIONS:
+// KEY ANNOTATIONS:
 //
 //    @RestController
 //       = @Controller + @ResponseBody combo
@@ -58,26 +58,26 @@ import java.util.List;
 //       @Valid          → trigger validation on @RequestBody
 //                          Invalid input = 400 auto
 //
-// 🔑 ResponseEntity — HTTP RESPONSE CONTROL:
+// ResponseEntity — HTTP RESPONSE CONTROL:
 //    ResponseEntity.ok(data)              → 200 + body
 //    ResponseEntity.status(404).body(...) → 404 + body
 //    ResponseEntity.noContent().build()   → 204 (DELETE)
 //    ResponseEntity.created(uri).build()  → 201 (POST)
 //
-// 🔑 CONSTRUCTOR INJECTION:
+// CONSTRUCTOR INJECTION:
 //    private final TodoService service;
 //    public TodoController(TodoService service) {
 //        this.service = service;
 //    }
 //    Same pattern as service layer
 //
-// 📐 SOLID:
+// SOLID:
 //
 //    SRP (Single Responsibility):
 //       Controller ONE job = HTTP routing
-//       ❌ No business logic here
-//       ❌ No DB calls here
-//       ✅ Receive HTTP → call service → return response
+//       No business logic here
+//       No DB calls here
+//       Receive HTTP → call service → return response
 //
 //    DIP (Dependency Inversion):
 //       Depend on TodoService (interface conceptually)
@@ -88,7 +88,7 @@ import java.util.List;
 //       New endpoints add → existing unchanged
 //       Existing endpoint logic change → modify service, not controller
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "TodoController is the REST API layer — @RestController combines
 //     @Controller + @ResponseBody for automatic JSON serialization.
 //     @Valid triggers Bean Validation on @RequestBody. ResponseEntity

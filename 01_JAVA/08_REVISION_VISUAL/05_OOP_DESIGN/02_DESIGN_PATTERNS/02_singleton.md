@@ -1,4 +1,4 @@
-# 🏛️ SINGLETON — Only ONE Instance
+# SINGLETON — Only ONE Instance
 
 ---
 
@@ -22,10 +22,10 @@ DatabaseConnection db3 = new DatabaseConnection();  // 10 sec
 
 ```
 Problems:
-   ❌ Memory waste
-   ❌ Database connections duplicate
-   ❌ Connection pool exhaust
-   ❌ Inconsistent state
+   Memory waste
+   Database connections duplicate
+   Connection pool exhaust
+   Inconsistent state
 ```
 
 ---
@@ -74,7 +74,7 @@ DatabaseConnection db2 = DatabaseConnection.getInstance();
 db1 == db2;   // TRUE (same object)
 
 // 'new' nahi kar sakte:
-new DatabaseConnection();   // ❌ compile error (private)
+new DatabaseConnection();   // compile error (private)
 ```
 
 ---
@@ -141,11 +141,11 @@ DatabaseConnection.INSTANCE.query("SELECT *");
 
 ```
 Why Enum BEST?
-   ✅ JVM guarantee karta — only ONE instance
-   ✅ Thread-safe AUTOMATIC
-   ✅ Serialization safe (default)
-   ✅ Reflection se bhi break nahi hota
-   ✅ ONE line code
+   JVM guarantee karta — only ONE instance
+   Thread-safe AUTOMATIC
+   Serialization safe (default)
+   Reflection se bhi break nahi hota
+   ONE line code
 ```
 
 ---
@@ -176,14 +176,14 @@ Tu kahin bhi @Autowired UserService karega
 ## When Use Singleton?
 
 ```
-✅ Database connection pool
-✅ Configuration manager
-✅ Logger
-✅ Cache
-✅ Thread pool
+Database connection pool
+Configuration manager
+Logger
+Cache
+Thread pool
 
-❌ Stateless objects
-❌ Multi-instance needed (different configs)
+Stateless objects
+Multi-instance needed (different configs)
 ```
 
 ---
@@ -191,7 +191,7 @@ Tu kahin bhi @Autowired UserService karega
 ## Memory Hook
 
 ```
-Singleton = 🏛️ President (only ONE)
+Singleton = President (only ONE)
 
 3 cheez chahiye:
    1. private constructor
@@ -201,4 +201,4 @@ Singleton = 🏛️ President (only ONE)
 BEST = Enum INSTANCE (one line, all safe)
 ```
 
-📚 [← Back to Design Patterns](00_overview.md)
+[← Back to Design Patterns](00_overview.md)

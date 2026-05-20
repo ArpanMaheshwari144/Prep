@@ -1,29 +1,29 @@
-# 🏗️ Builder Pattern — Step-by-Step Object Construction
+# Builder Pattern — Step-by-Step Object Construction
 
 > **Design Patterns: Topic 1 — Creational Pattern**
 
 ---
 
-## 🎬 STORY — Subway Sandwich vs Pre-made Burger
+## STORY — Subway Sandwich vs Pre-made Burger
 
 > Imagine **lunch order karna**:
 >
-> 🍔 **Pre-made burger (no Builder):**
+> **Pre-made burger (no Builder):**
 > Counter pe sirf 4-5 fixed combos available. *"Aapko Veggie Deluxe chahiye? Bina cheese, extra mayo? Sorry, fixed menu hai."* — limited options.
 >
-> 🥪 **Subway sandwich (Builder pattern):**
+> **Subway sandwich (Builder pattern):**
 > Tu **step-by-step build karta**: bread choose → veggies → sauce → cheese → toast. **Har step optional.** Final mein "build" button daba — sandwich ready.
 >
 > **Builder pattern same kaam karta** — complex object **piece-by-piece** banata, with optional fields.
 
 ---
 
-## 🤔 The Problem — Telescoping Constructor
+## The Problem — Telescoping Constructor
 
 Imagine **User class with 8 fields** (name, age, email, phone, address, role, isActive, createdAt):
 
 ```java
-// 😱 Constructor telescoping nightmare
+// Constructor telescoping nightmare
 public class User {
     public User(String name) { ... }
     public User(String name, int age) { ... }
@@ -40,14 +40,14 @@ User u = new User("Arpan", 28, "x@y.com", null, "Delhi", null, true, null);
 ```
 
 **Problems:**
-1. 🔴 **Too many constructors** — combinatorial explosion
-2. 🔴 **Null parameters confusing** — kya hai kya nahi?
-3. 🔴 **Order matters** — galat order = wrong field set
-4. 🔴 **No validation** between fields
+1. **Too many constructors** — combinatorial explosion
+2. **Null parameters confusing** — kya hai kya nahi?
+3. **Order matters** — galat order = wrong field set
+4. **No validation** between fields
 
 ---
 
-## ✨ Builder Solution
+## Builder Solution
 
 ```java
 User u = User.builder()
@@ -60,14 +60,14 @@ User u = User.builder()
 ```
 
 **Benefits:**
-- ✅ **Readable** — har field ka naam clear
-- ✅ **Optional fields** — sirf jo chahiye woh set
-- ✅ **Order flexible** — kuch bhi pehle, kuch bhi baad
-- ✅ **Immutable result** — `build()` ke baad object lock
+- **Readable** — har field ka naam clear
+- **Optional fields** — sirf jo chahiye woh set
+- **Order flexible** — kuch bhi pehle, kuch bhi baad
+- **Immutable result** — `build()` ke baad object lock
 
 ---
 
-## 🎨 Visual — Builder Workflow
+## Visual — Builder Workflow
 
 ```
    User builder = User.builder()
@@ -105,7 +105,7 @@ User u = User.builder()
 
 ---
 
-## 💻 PART 1: Manual Builder Implementation
+## PART 1: Manual Builder Implementation
 
 ```java
 public class User {
@@ -204,7 +204,7 @@ System.out.println(u.getName());  // Arpan
 
 ---
 
-## 🎨 Visual — How `return this` enables chaining
+## Visual — How `return this` enables chaining
 
 ```
    User.builder()                    ← returns Builder b1
@@ -219,7 +219,7 @@ System.out.println(u.getName());  // Arpan
 
 ---
 
-## ⚡ PART 2: Lombok @Builder (Production Way)
+## PART 2: Lombok @Builder (Production Way)
 
 **Manual builder = 50+ lines of boilerplate.** Lombok ek annotation se sab generate kar deta:
 
@@ -279,20 +279,20 @@ User user2 = u.toBuilder()
 
 ---
 
-## 📊 Manual vs Lombok — Comparison
+## Manual vs Lombok — Comparison
 
 | | Manual Builder | Lombok `@Builder` |
 |---|---|---|
 | **Code size** | ~80 lines for User | ~10 lines |
 | **Maintenance** | Add field → update Builder | Auto-updated |
-| **Custom validation** | ✅ Easy (add in setter/build) | ⚠️ Limited (use `@Builder.toBuilder` + custom build) |
-| **Default values** | ✅ Easy in Builder fields | `@Builder.Default` annotation |
-| **Production preference** | ❌ Avoid (boilerplate) | ✅ Industry standard |
-| **Interview demonstration** | ✅ Good — shows pattern understanding | ✅ "Lombok use karta production" |
+| **Custom validation** | Easy (add in setter/build) | Limited (use `@Builder.toBuilder` + custom build) |
+| **Default values** | Easy in Builder fields | `@Builder.Default` annotation |
+| **Production preference** | Avoid (boilerplate) | Industry standard |
+| **Interview demonstration** | Good — shows pattern understanding | "Lombok use karta production" |
 
 ---
 
-## 🚀 PROJECT USAGE — UserCRUD mein Builder kahan kahan?
+## PROJECT USAGE — UserCRUD mein Builder kahan kahan?
 
 **Tu UserCRUD project mein Builder pattern 2 jagah USE kiya** — 100% live evidence:
 
@@ -354,7 +354,7 @@ public UserDetails loadUserByUsername(String email) {
 
 ---
 
-### 🎯 Interview-ready statement
+### Interview-ready statement
 
 > *"Maine UserCRUD project mein **Builder pattern 2 jagah use kiya**:
 > 1. **JWT generate** karte time `Jwts.builder()` se token banaya — fluent API se claims set kiye, `signWith()` se signature lagaya, `compact()` se final string return.
@@ -364,7 +364,7 @@ public UserDetails loadUserByUsername(String email) {
 
 ---
 
-## 🌍 Real-World Examples (already familiar)
+## Real-World Examples (already familiar)
 
 ### 1. `StringBuilder` (Java built-in)
 ```java
@@ -415,7 +415,7 @@ String jwt = Jwts.builder()
 
 ---
 
-## 🎯 When to Use Builder?
+## When to Use Builder?
 
 | Use Builder when... | Don't use when... |
 |---|---|
@@ -427,7 +427,7 @@ String jwt = Jwts.builder()
 
 ---
 
-## 💡 Key Design Decisions
+## Key Design Decisions
 
 1. **Inner static class** — `User.Builder` accessible without User instance
 2. **Private constructor** — only Builder can construct User (forces builder use)
@@ -437,7 +437,7 @@ String jwt = Jwts.builder()
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "Builder pattern kya hai aur kab use karte ho?"**
 
@@ -464,13 +464,13 @@ String jwt = Jwts.builder()
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"Builder pattern complex objects ko step-by-step construct karta — solves telescoping constructor problem. Inner static Builder class, fluent API (`return this`), immutable target object via private constructor + final fields. Production mein Lombok `@Builder` boilerplate eliminate karta."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 Builder = "Subway sandwich"
@@ -496,40 +496,40 @@ Real-world examples:
    • Lombok @Builder
 
 Use when:
-   ✓ 5+ fields
-   ✓ Optional params common
-   ✓ Immutable object needed
+   5+ fields
+   Optional params common
+   Immutable object needed
 ```
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "Builder = setter pattern"
-         ❌ NAHI — setter mutable, Builder immutable
-         ✅ Builder construct karta, finalize ek baar
+Trap 1: "Builder = setter pattern"
+         NAHI — setter mutable, Builder immutable
+         Builder construct karta, finalize ek baar
 
-🪤 Trap 2: "Builder always thread-safe"
-         ❌ NAHI — Builder itself mutable, NOT thread-safe
-         ✅ Final User object thread-safe (immutable)
+Trap 2: "Builder always thread-safe"
+         NAHI — Builder itself mutable, NOT thread-safe
+         Final User object thread-safe (immutable)
 
-🪤 Trap 3: "Lombok @Builder defaults silent kaam karta"
-         ❌ Field initialization SE NAHI — @Builder.Default chahiye
-         ✅ Without it, default ignored when build() called
+Trap 3: "Lombok @Builder defaults silent kaam karta"
+         Field initialization SE NAHI — @Builder.Default chahiye
+         Without it, default ignored when build() called
 
-🪤 Trap 4: "Builder chain mein order matter karta"
-         ❌ NAHI — independent setters, any order
-         ✅ Validation cross-field hai → build() mein check karo
+Trap 4: "Builder chain mein order matter karta"
+         NAHI — independent setters, any order
+         Validation cross-field hai → build() mein check karo
 
-🪤 Trap 5: "Builder pattern slow hai"
-         ❌ Negligible overhead — JIT optimizes
-         ✅ Readability gain >> performance cost
+Trap 5: "Builder pattern slow hai"
+         Negligible overhead — JIT optimizes
+         Readability gain >> performance cost
 ```
 
 ---
 
-## 🆚 Builder vs Other Creational Patterns
+## Builder vs Other Creational Patterns
 
 | Pattern | Use Case | Complexity |
 |---|---|---|
@@ -541,7 +541,7 @@ Use when:
 
 ---
 
-## 🎯 Quick Recall Summary
+## Quick Recall Summary
 
 ```
 WHAT     → Step-by-step object construction with optional fields

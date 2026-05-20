@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    ErrorResponse = OUTPUT DTO for ALL error responses
 //    Consistent error shape client ko milega when something fails
 // ═══════════════════════════════════════════════════════════════════════
@@ -23,14 +23,14 @@ import lombok.Data;
 //       Validation errors     → 400 + message + timestamp
 //       Generic               → 500 + message + timestamp
 //
-// 🔑 WHY CONSISTENT SHAPE?
+// WHY CONSISTENT SHAPE?
 //    Frontend ko predictable structure milti
 //    Error handling logic ek hi tarah likh sakte:
 //       if (response.status === error) {
 //           showAlert(response.message);
 //       }
 //
-// 📐 SOLID — SRP: Sirf error data carrier
+// SOLID — SRP: Sirf error data carrier
 // ═══════════════════════════════════════════════════════════════════════
 
 @Data

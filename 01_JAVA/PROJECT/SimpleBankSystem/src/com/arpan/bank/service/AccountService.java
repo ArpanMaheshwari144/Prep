@@ -10,7 +10,7 @@ import com.arpan.bank.observer.TransactionEvent;
 import com.arpan.bank.repository.AccountRepository;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    Business logic ka MIDDLE layer
 //    • Controller niche bulayega
 //    • Repository + Publisher ko coordinate kare
@@ -51,16 +51,16 @@ import com.arpan.bank.repository.AccountRepository;
 //                          EventPublisher publisher) { ... }
 //
 //    Benefits:
-//       ✅ final fields (immutable)
-//       ✅ NPE impossible (must pass at construction)
-//       ✅ Easy testing (mock pass karke)
-//       ✅ Spring @Autowired constructor = same pattern
+//       final fields (immutable)
+//       NPE impossible (must pass at construction)
+//       Easy testing (mock pass karke)
+//       Spring @Autowired constructor = same pattern
 //
 // TRANSFER — MANUAL ROLLBACK PATTERN (DEEP):
 //
 //    Without rollback:
-//       Step 1: from.withdraw(500)  ✅ success
-//       Step 2: to.deposit(500)     ❌ fail (DB crash)
+//       Step 1: from.withdraw(500)  success
+//       Step 2: to.deposit(500)     fail (DB crash)
 //
 //       Result: from -500, to nothing → ₹500 VANISH
 //       = DATA INCONSISTENT
@@ -107,7 +107,7 @@ import com.arpan.bank.repository.AccountRepository;
 //      .map(Account::getHolderName)     // INTERMEDIATE (LAZY)
 //      .collect(Collectors.toList())    // TERMINAL (EAGER — triggers!)
 //
-// 🔑 LAZY vs EAGER (Streams):
+// LAZY vs EAGER (Streams):
 //    INTERMEDIATE ops — LAZY (do nothing immediately):
 //       filter(), map(), sorted(), distinct(), limit()
 //       = Pipeline build hota, EXECUTE nahi hota
@@ -123,21 +123,21 @@ import com.arpan.bank.repository.AccountRepository;
 //           .map(n -> { sout("Map"); return n*10; });
 //       // NOTHING PRINTED YET — pipeline lazy
 //
-//       pipeline.toList();   // ★ NOW prints!
+//       pipeline.toList();   // NOW prints!
 //
 //    Why Lazy?
 //       1. EFFICIENCY — filter().limit(5) early stop possible
 //       2. SHORT-CIRCUIT — findFirst() stops on first match
 //
 //    Common trap:
-//       list.stream().map(x -> sout(x));   // ❌ map NEVER runs
+//       list.stream().map(x -> sout(x));   // map NEVER runs
 //                                            // No terminal!
 //
 //    In our code:
 //       .map(Account::getHolderName)   ← LAZY (defers)
-//       .collect(toList())              ← ★ EAGER (triggers map for each)
+//       .collect(toList())              ← EAGER (triggers map for each)
 //
-// 🔑 METHOD REFERENCE (Account::getHolderName):
+// METHOD REFERENCE (Account::getHolderName):
 //    LAMBDA (longer):     .map(account -> account.getHolderName())
 //    METHOD REF (short):  .map(Account::getHolderName)
 //    = SAME thing, less code
@@ -153,7 +153,7 @@ import com.arpan.bank.repository.AccountRepository;
 //       3. Instance on obj:  System.out::println
 //       4. Constructor:      ArrayList::new
 //
-// 🔑 LAMBDA SUPPLIER in orElseThrow:
+// LAMBDA SUPPLIER in orElseThrow:
 //    .orElseThrow(() -> new AccountNotFoundException(accountId));
 //                  ↑
 //                  This lambda = Supplier<AccountNotFoundException>
@@ -164,8 +164,8 @@ import com.arpan.bank.repository.AccountRepository;
 //       }
 //
 //    Why Lambda (not direct exception)?
-//       ❌ .orElseThrow(new Ex(id));   ← EAGER — banti hai ABHI
-//       ✅ .orElseThrow(() -> new Ex(id));  ← LAZY — banti hai when needed
+//       .orElseThrow(new Ex(id));   ← EAGER — banti hai ABHI
+//       .orElseThrow(() -> new Ex(id));  ← LAZY — banti hai when needed
 //
 //    = Resource saving (object create only on need)
 //
@@ -174,7 +174,7 @@ import com.arpan.bank.repository.AccountRepository;
 //        .orElseThrow(() -> new AccountNotFoundException(id));
 //    = Null-safe by design
 //
-// 🔑 Optional.isPresent() in createAccount:
+// Optional.isPresent() in createAccount:
 //    if (repository.findById(id).isPresent()) {
 //        throw new IllegalArgumentException("Account already exists");
 //    }
@@ -193,7 +193,7 @@ import com.arpan.bank.repository.AccountRepository;
 //       = REVERSE check (existence = bad)
 //       = orElse awkward here, isPresent perfect
 //
-// 📐 SOLID:
+// SOLID:
 //    SRP — Only business logic
 //          Data access = repository's job
 //          Notifications = publisher's job
@@ -201,7 +201,7 @@ import com.arpan.bank.repository.AccountRepository;
 //    DIP — Depends on AccountRepository INTERFACE
 //          InMemoryAccountRepository pluggable
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "AccountService SRP follow karta — sirf business logic.
 //     DIP — repository INTERFACE pe depend, constructor injection.
 //     Spring @Autowired constructor injection same DIP principle automate karta."

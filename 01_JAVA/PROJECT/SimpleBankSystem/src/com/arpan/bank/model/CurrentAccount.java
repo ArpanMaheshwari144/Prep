@@ -1,7 +1,7 @@
 package com.arpan.bank.model;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    CurrentAccount = Business/Company ka account
 //    0% interest (business rule — current accounts mein interest nahi)
 // ═══════════════════════════════════════════════════════════════════════
@@ -30,8 +30,8 @@ package com.arpan.bank.model;
 //    Bank doesn't pay interest — they get usage of money
 //    = Business rule
 //
-// 🎨 PATTERN: Template Method (concrete implementation)
-// 📐 SOLID — LSP: CurrentAccount fully substitutable for Account
+// PATTERN: Template Method (concrete implementation)
+// SOLID — LSP: CurrentAccount fully substitutable for Account
 // ═══════════════════════════════════════════════════════════════════════
 
 public class CurrentAccount extends Account {

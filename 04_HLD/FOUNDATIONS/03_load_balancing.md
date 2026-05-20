@@ -1,22 +1,22 @@
-# ⚖️ Load Balancing
+# Load Balancing
 
 > **HLD Topic 3 — Traffic distribution + scaling foundation**
 
 ---
 
-## 🎬 STORY — Airport Security
+## STORY — Airport Security
 
 > Imagine **airport pe security check**:
 >
-> 🛂 **1 counter only:**
+> **1 counter only:**
 > 1000 log line — 3 ghante wait. Counter wala thak gaya, slow.
 >
-> 🛂 **5 counters open:**
+> **5 counters open:**
 > Sab counter parallel — 30 min mein nikal jaate.
 >
 > But agar passengers seedha kisi bhi counter pe jaye → chaos. Koi empty, koi over-crowded.
 >
-> 🚦 **Solution:** **Coordinator** — *"Aap counter 3 pe jaayein"*. **Traffic distribute** karta intelligently.
+> **Solution:** **Coordinator** — *"Aap counter 3 pe jaayein"*. **Traffic distribute** karta intelligently.
 >
 > **Coordinator = Load Balancer**
 > - Counters = Servers
@@ -25,7 +25,7 @@
 
 ---
 
-## 🤔 Why Load Balancer?
+## Why Load Balancer?
 
 ### Without LB
 ```
@@ -34,14 +34,14 @@
         ▼
    ┌─────────┐
    │ Server  │  ← can't handle
-   │   💥    │     CPU 100%, OOM, crash
+   │      │     CPU 100%, OOM, crash
    └─────────┘
 ```
 
 **3 fatal problems:**
-1. 🔴 **Throughput limit** — single server max ~10K-50K RPS
-2. 🔴 **Single Point of Failure** — server down = whole app down
-3. 🔴 **No scaling** — vertical (bigger CPU/RAM) limited + expensive
+1. **Throughput limit** — single server max ~10K-50K RPS
+2. **Single Point of Failure** — server down = whole app down
+3. **No scaling** — vertical (bigger CPU/RAM) limited + expensive
 
 ### With LB
 ```
@@ -62,10 +62,10 @@
 
 ---
 
-## 🎨 LB Position in Architecture
+## LB Position in Architecture
 
 ```
-   USER → DNS → CDN → LOAD BALANCER ⭐ → App Servers → DB/Cache
+   USER → DNS → CDN → LOAD BALANCER → App Servers → DB/Cache
                           │
                   ┌───────┴───────┐
                  App-1   App-2   App-3
@@ -75,7 +75,7 @@
 
 ---
 
-## 🌐 OSI Model Refresher
+## OSI Model Refresher
 
 ```
 Layer 7 — APPLICATION   (HTTP, FTP)
@@ -91,14 +91,14 @@ Layer 1 — Physical
 
 ---
 
-## 🔍 Layer 4 vs Layer 7 — KEY DISTINCTION
+## Layer 4 vs Layer 7 — KEY DISTINCTION
 
 ### Layer 4 LB (TCP-level)
 **Sees:** IP address + port only.
 ```
 Request: Source IP 192.168.1.5 → Port 443
 LB:      "Forward to Server-2" (based on round-robin/least-conn)
-         ❌ HTTP details NOT visible (URL/headers hidden)
+         HTTP details NOT visible (URL/headers hidden)
 ```
 **Speed:** Fast (less inspection). **Examples:** AWS NLB, HAProxy TCP mode.
 
@@ -117,7 +117,7 @@ LB:      "URL has /api → backend pool"
 
 ---
 
-### 🎬 Postal Analogy
+### Postal Analogy
 
 ```
 Layer 4 = Courier at sorting center
@@ -129,15 +129,15 @@ Layer 7 = Office receptionist
    • Opens content, smart routing
 ```
 
-### 📊 Comparison
+### Comparison
 
 | | Layer 4 LB | Layer 7 LB |
 |---|---|---|
 | Sees | IP/port | Full HTTP |
 | Speed | Faster | Slower |
 | Routing | Round-robin only | URL-based, header-based, smart |
-| SSL termination | ❌ | ✅ |
-| Sticky sessions | Limited | ✅ Cookie-based |
+| SSL termination | | |
+| Sticky sessions | Limited | Cookie-based |
 | Use | TCP services, gaming, IoT | Web apps (90% case) |
 | Examples | AWS NLB, HAProxy | AWS ALB, Nginx |
 
@@ -145,7 +145,7 @@ Layer 7 = Office receptionist
 
 ---
 
-## 🎯 LB Algorithms
+## LB Algorithms
 
 ### 1. **Round Robin** (simplest)
 ```
@@ -183,13 +183,13 @@ Track avg response time per server → route to fastest
 
 ---
 
-## 🩺 Health Checks (CRITICAL)
+## Health Checks (CRITICAL)
 
 ```
 Every 30 sec:
-   GET /health → Server-1: 200 ✅ healthy
-   GET /health → Server-2: 503 ❌ mark unhealthy
-   GET /health → Server-3: 200 ✅ healthy
+   GET /health → Server-1: 200 healthy
+   GET /health → Server-2: 503 mark unhealthy
+   GET /health → Server-3: 200 healthy
 
 Server-2 bypassed until recovers
 ```
@@ -198,7 +198,7 @@ Server-2 bypassed until recovers
 
 ---
 
-## 🛠️ Nginx Deep — User's Question
+## Nginx Deep — User's Question
 
 ### **Nginx ≠ AWS** (open-source software, not AWS-specific!)
 
@@ -214,7 +214,7 @@ Nginx run kar sakte: AWS EC2, Azure VM, GCP, laptop, on-premise.
 ```
 1. WEB SERVER         — HTML/CSS/JS serve karta
 2. REVERSE PROXY      — Client → Nginx → Backend app
-3. LOAD BALANCER ⭐   — Layer 4 + 7 both supported
+3. LOAD BALANCER   — Layer 4 + 7 both supported
 4. API GATEWAY        — Routing, rate limiting, caching
 5. SSL TERMINATION    — HTTPS handle
 ```
@@ -243,7 +243,7 @@ server {
 | Cost | Free | Per-request pricing |
 | Maintenance | You handle | AWS handles |
 | Control | Full | Limited |
-| Cross-cloud | ✅ | ❌ AWS only |
+| Cross-cloud | | AWS only |
 | Best for | Custom config, on-prem | AWS-native apps |
 
 ### Network Tracking (Nginx logs)
@@ -270,7 +270,7 @@ server {
 
 ---
 
-## 🌍 Real-World LB Examples
+## Real-World LB Examples
 
 ```
 AWS:
@@ -290,19 +290,19 @@ Cloud-native:
 
 ---
 
-## 💡 Sticky Sessions vs Stateless
+## Sticky Sessions vs Stateless
 
 ```
 Sticky session (Layer 7 + IP Hash):
    User-A → always Server-1 (session stored on Server-1)
-   ⚠️ Server-1 down → session lost
-   ⚠️ Hard to scale, uneven load
+   Server-1 down → session lost
+   Hard to scale, uneven load
 
 Stateless (modern with JWT):
    User-A → ANY server (token has user info)
-   ✅ Any server can handle
-   ✅ Easy to scale
-   ✅ Server crash = no session loss
+   Any server can handle
+   Easy to scale
+   Server crash = no session loss
 ```
 
 **Modern recommendation:** Stateless (JWT) → no sticky sessions needed.
@@ -311,7 +311,7 @@ Stateless (modern with JWT):
 
 ---
 
-## 🎤 Interview Talking Points
+## Interview Talking Points
 
 **Q: "Load Balancer kya karta?"**
 
@@ -327,13 +327,13 @@ Stateless (modern with JWT):
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > **"Load Balancer = traffic coordinator. Layer 4 fast TCP-level, Layer 7 smart HTTP-level. Algorithms: Round Robin / Least Connections (prod). Nginx (self-host) vs AWS ALB (managed). Health checks mandatory. Modern apps stateless + Layer 7 = best combo."**
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 LB = "Airport coordinator"
@@ -362,22 +362,22 @@ Stateless > Sticky (with JWT)
 
 ---
 
-## ⚠️ Trap Box
+## Trap Box
 
 ```
-🪤 Trap 1: "1 LB = single point of failure"
-         ❌ LB can crash
-         ✅ Multi-LB (active-passive) ya managed (AWS ALB)
+Trap 1: "1 LB = single point of failure"
+         LB can crash
+         Multi-LB (active-passive) ya managed (AWS ALB)
 
-🪤 Trap 2: "Sticky sessions for everything"
-         ❌ Causes uneven load + session loss risk
-         ✅ Stateless (JWT) preferred
+Trap 2: "Sticky sessions for everything"
+         Causes uneven load + session loss risk
+         Stateless (JWT) preferred
 
-🪤 Trap 3: "Round Robin best"
-         ❌ Treats all equal — uneven load problems
-         ✅ Least Connections better in production
+Trap 3: "Round Robin best"
+         Treats all equal — uneven load problems
+         Least Connections better in production
 
-🪤 Trap 4: "LB = Nginx = AWS"
-         ❌ Different things
-         ✅ Nginx software, AWS infrastructure, ALB AWS's LB service
+Trap 4: "LB = Nginx = AWS"
+         Different things
+         Nginx software, AWS infrastructure, ALB AWS's LB service
 ```

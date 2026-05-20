@@ -12,20 +12,20 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.time.Duration;
 
 // ═══════════════════════════════════════════════════════════════
-// 📌 RedisConfig — STANDARD BOILERPLATE
+// RedisConfig — STANDARD BOILERPLATE
 //    95% Spring + Redis projects mein yeh same file dikhti
 //    Sirf TTL duration project-wise change hota
 //
-// 🔑 PURPOSE:
+// PURPOSE:
 //    Redis mein data save karte time JSON format use karo
 //    (default JDK serializer = binary gibberish + Serializable
 //     interface mandatory; Todo class implement nahi karta)
 //
-// 🔑 BEAN: RedisCacheManager
+// BEAN: RedisCacheManager
 //    @Cacheable / @CacheEvict annotations ke peeche ka engine
 //    Spring khud yeh use karta jab annotation method execute ho
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "Custom RedisCacheManager with JSON serialization for
 //     cross-language compatibility and Redis CLI readability.
 //     5-minute default TTL as stale-data safety net."

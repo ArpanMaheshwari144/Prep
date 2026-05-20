@@ -17,7 +17,7 @@ import com.arpan.todoapp.repository.TodoRepository;
 // List                  → return type for getAll
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    SERVICE LAYER for Todo
 //    Business logic yaha — Controller iske through DB hit karta
 //    Controller (HTTP) → Service (logic) → Repository (DB)
@@ -47,12 +47,12 @@ import com.arpan.todoapp.repository.TodoRepository;
 //             ▼
 //          MySQL DB
 //
-// 🔑 @Service ANNOTATION:
+// @Service ANNOTATION:
 //    Stereotype annotation = Spring "yeh service layer hai"
 //    Functionally = @Component (bean register hota)
 //    Why separate? CODE INTENT clear (architecture layer marker)
 //
-// 🔑 CONSTRUCTOR INJECTION:
+// CONSTRUCTOR INJECTION:
 //
 //    Yaha TodoRepository inject karte:
 //
@@ -67,12 +67,12 @@ import com.arpan.todoapp.repository.TodoRepository;
 //       (No @Autowired needed since Spring 4.3+)
 //
 //    Why CONSTRUCTOR (not @Autowired field)?
-//       ✅ final field = immutable dependency
-//       ✅ Easy to test (manual injection in tests)
-//       ✅ Fail-fast (NullPointerException at startup, not runtime)
-//       ✅ Modern Spring best practice
+//       final field = immutable dependency
+//       Easy to test (manual injection in tests)
+//       Fail-fast (NullPointerException at startup, not runtime)
+//       Modern Spring best practice
 //
-// 🔑 5 METHODS — CRUD OPERATIONS:
+// 5 METHODS — CRUD OPERATIONS:
 //
 //    create(Todo todo)
 //       → New todo save
@@ -95,7 +95,7 @@ import com.arpan.todoapp.repository.TodoRepository;
 //       → repo.deleteById()
 //       → No return value
 //
-// 🔑 .orElseThrow() — NULL SAFETY:
+// .orElseThrow() — NULL SAFETY:
 //
 //    repo.findById(id) returns Optional<Todo>
 //       (Optional empty if not found, no NPE)
@@ -107,11 +107,11 @@ import com.arpan.todoapp.repository.TodoRepository;
 //    Later: replace RuntimeException with TodoNotFoundException
 //    + GlobalExceptionHandler → 404 response
 //
-// 📐 SOLID:
+// SOLID:
 //    SRP — Service has ONE job (Todo business logic)
 //    DIP — Depends on REPOSITORY interface (proxy auto)
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "TodoService is the business logic layer between
 //     Controller and Repository. @Service marks it as a
 //     Spring-managed bean. Constructor injection ensures

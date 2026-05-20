@@ -1,4 +1,4 @@
-# 🌐 Spring REST Flow — Visual Revision
+# Spring REST Flow — Visual Revision
 
 ---
 
@@ -348,7 +348,7 @@ FLOW:
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
 Receptionist = Controller
@@ -362,4 +362,4 @@ Entity = Raw ingredient (kitchen)
 @RestControllerAdvice = Manager handles ALL complaints
 ```
 
-📚 [← Back to SPRING](../)
+[← Back to SPRING](../)

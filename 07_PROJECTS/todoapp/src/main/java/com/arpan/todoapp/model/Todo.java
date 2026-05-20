@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 // lombok.*              → Boilerplate killers (@Data, constructors)
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    Todo = ENTITY class
 //    = Java class jo "todos" DB table represent karti
 //    = Har Todo object = 1 row in MySQL
@@ -36,7 +36,7 @@ import lombok.NoArgsConstructor;
 //         │                              ▲
 //         └──── Hibernate translates ────┘
 //
-// 🔑 KEY ANNOTATIONS:
+// KEY ANNOTATIONS:
 //
 //    @Entity              → "Yeh class DB table mapped hai"
 //    @Table(name="todos") → DB table name override (plural convention)
@@ -53,13 +53,13 @@ import lombok.NoArgsConstructor;
 //
 //    @Column     → DB column customization (name, nullable, length)
 //
-// 🔑 WHY userId NOT @ManyToOne User?
+// WHY userId NOT @ManyToOne User?
 //    @ManyToOne would map object relation (cleaner OO)
 //    BUT keeping simple: store userId as Long only
 //    = Less complexity, easier serialization
 //    = Trade-off: lose lazy User object fetch
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "Todo is a JPA entity mapping to 'todos' MySQL table.
 //     @Id with @GeneratedValue(IDENTITY) uses MySQL auto-increment.
 //     Validation annotations enforce input constraints when used

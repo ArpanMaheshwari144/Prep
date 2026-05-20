@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — 2 Threads Phans Gaye
+## STORY — 2 Threads Phans Gaye
 
 → **Thread 1** ke paas **Lock A** hai, **Lock B** chahiye
 → **Thread 2** ke paas **Lock B** hai, **Lock A** chahiye
@@ -13,7 +13,7 @@
 
 ---
 
-## 🧠 Visualization
+## Visualization
 
 ```
         ┌───────────┐         ┌───────────┐
@@ -42,10 +42,10 @@
 
 ---
 
-## 💻 Code — Deadlock Banana
+## Code — Deadlock Banana
 
 ```java
-// 🔴 DEADLOCK — alag order mein lock le rahe
+// DEADLOCK — alag order mein lock le rahe
 // Thread 1:
 synchronized(lockA) {
     synchronized(lockB) {     // B chahiye — T2 ke paas hai
@@ -59,15 +59,15 @@ synchronized(lockB) {
         // ...
     }
 }
-// Dono wait — DEADLOCK 💥
+// Dono wait — DEADLOCK 
 ```
 
 ---
 
-## 💻 Fix — Same Order Mein Lock Lo
+## Fix — Same Order Mein Lock Lo
 
 ```java
-// ✅ FIX — dono threads SAME order mein
+// FIX — dono threads SAME order mein
 // Thread 1:
 synchronized(lockA) {
     synchronized(lockB) { /* kaam */ }
@@ -84,19 +84,19 @@ synchronized(lockA) {
 
 ---
 
-## 🔴 TRAP 1 — Deadlock Silent Hai
+## TRAP 1 — Deadlock Silent Hai
 
 > **Deadlock koi exception nahi throw karta — program silently HANG ho jaata.**
 > **Diagnose karna mushkil — production mein detect karne ke liye thread dump dekhna padta.**
 
-## 🔴 TRAP 2 — Nested synchronized = Risk
+## TRAP 2 — Nested synchronized = Risk
 
 > **Multiple `synchronized` blocks nested = deadlock risk.**
 > **Avoid karo jaha tak ho sake.** Single lock se kaam chal jaata, multiple locks zaroori nahi.
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Deadlock occurs when two threads hold one lock each and wait for the other's lock, creating a circular wait. Prevention: always acquire locks in the same order across all threads."*
 

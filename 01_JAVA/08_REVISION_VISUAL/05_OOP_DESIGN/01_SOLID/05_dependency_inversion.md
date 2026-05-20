@@ -1,4 +1,4 @@
-# 💡 D — Dependency Inversion (DIP)
+# D — Dependency Inversion (DIP)
 
 ---
 
@@ -14,12 +14,12 @@ BOTH should depend on ABSTRACTIONS (interfaces).
 ## Light Switch Analogy
 
 ```
-❌ Bad design:
+Bad design:
    Light switch HARDCODED to specific bulb brand
    "Philips bulb only"
    Need new bulb? Rewire entire switch
 
-✅ Good design:
+Good design:
    Light switch works on "Bulb" interface
    Any bulb (Philips, GE, Syska) works
    = Abstraction-based
@@ -29,7 +29,7 @@ BOTH should depend on ABSTRACTIONS (interfaces).
 
 ## Code
 
-### ❌ VIOLATION (hard-coded dependency)
+### VIOLATION (hard-coded dependency)
 ```java
 class UserService {
     MySqlRepository repo = new MySqlRepository();  // concrete!
@@ -41,7 +41,7 @@ class UserService {
 // Change DB? Rewrite UserService.
 ```
 
-### ✅ DIP — Depend on Abstraction
+### DIP — Depend on Abstraction
 ```java
 interface UserRepository {
     void save(User u);
@@ -90,9 +90,9 @@ Spring's entire DI mechanism = DIP principle automated:
 ## Memory Hook
 
 ```
-💡 Switch works on Bulb interface, not Philips concrete
+Switch works on Bulb interface, not Philips concrete
    "Concrete pe nahi, abstraction pe depend"
    Spring DI = DIP automated
 ```
 
-📚 [← Back to SOLID](00_overview.md)
+[← Back to SOLID](00_overview.md)

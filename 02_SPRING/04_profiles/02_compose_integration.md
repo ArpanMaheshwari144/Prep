@@ -1,20 +1,20 @@
-# 🟡 Section 2 — Compose + Profiles Integration (Day 2)
+# Section 2 — Compose + Profiles Integration (Day 2)
 
 > **Topic:** How Docker Compose triggers Spring profile loading
 > **Key:** SPRING_PROFILES_ACTIVE env var bridge
 
-📚 [← Back to README](00_README.md) | [← Basics](01_basics.md) | [Reference →](03_reference.md)
+[← Back to README](00_README.md) | [← Basics](01_basics.md) | [Reference →](03_reference.md)
 
 ---
 
-# 🐙 PART 2 — DOCKER-COMPOSE + Spring Profiles (Day 2)
+# PART 2 — DOCKER-COMPOSE + Spring Profiles (Day 2)
 
 > **Date:** 2026-05-06
 > **Real production-pattern:** Spring Boot bhi container mein, MySQL bhi container mein
 
 ---
 
-## 🤔 Problem (jo hua aaj)
+## Problem (jo hua aaj)
 
 ```
 Pehle 2 profiles the:
@@ -35,7 +35,7 @@ Aaj need:
 
 ---
 
-## 🆕 New Profile File — `application-compose.properties`
+## New Profile File — `application-compose.properties`
 
 ```properties
 spring.datasource.url=jdbc:mysql://mysql:3306/userdb
@@ -53,7 +53,7 @@ spring.datasource.password=rootpass
 │ local       │ HOST            │ HOST (MySQL57)  │ localhost:3306  │
 │ docker      │ HOST            │ Docker container│ localhost:3307  │
 │             │                 │ (port mapping)  │ (mapped port)   │
-│ compose 🆕  │ Container       │ Container       │ mysql:3306      │
+│ compose  │ Container       │ Container       │ mysql:3306      │
 │             │                 │                 │ (service name + │
 │             │                 │                 │  internal port) │
 └──────────────────────────────────────────────────────────────────┘
@@ -61,7 +61,7 @@ spring.datasource.password=rootpass
 
 ---
 
-## 🔥 KEY INSIGHT — Compose & Spring Coordinate via ENV VAR
+## KEY INSIGHT — Compose & Spring Coordinate via ENV VAR
 
 > **Question:** "docker-compose ne file load ki?"
 > **Answer:** **NO. Spring ne ki — Compose ne sirf env var inject ki.**
@@ -105,20 +105,20 @@ spring.datasource.password=rootpass
 
 ---
 
-## 🎯 Two Independent Systems — Their Roles:
+## Two Independent Systems — Their Roles:
 
 ```
 DOCKER-COMPOSE ka role:
-   ❌ Spring config files load karna
-   ✅ Container start pe ENV VAR inject karna
-   ✅ Network/volume setup
-   ✅ Service ordering (depends_on)
-   ✅ Healthcheck monitoring
+   Spring config files load karna
+   Container start pe ENV VAR inject karna
+   Network/volume setup
+   Service ordering (depends_on)
+   Healthcheck monitoring
    
 SPRING ka role:
-   ✅ Env vars + properties read karna
-   ✅ Profile-based file selection (Spring's standard mechanism)
-   ✅ Config merging (master + profile)
+   Env vars + properties read karna
+   Profile-based file selection (Spring's standard mechanism)
+   Config merging (master + profile)
    
 BRIDGE: Single env variable (SPRING_PROFILES_ACTIVE)
         Compose injects → Spring reads → magic
@@ -126,7 +126,7 @@ BRIDGE: Single env variable (SPRING_PROFILES_ACTIVE)
 
 ---
 
-## 📝 Real Setup From Today (working code)
+## Real Setup From Today (working code)
 
 ### docker-compose.yml — relevant section:
 ```yaml
@@ -157,7 +157,7 @@ Tomcat started on port 8080
 
 ---
 
-## 🌍 Production Reality Check (12-factor extension)
+## Production Reality Check (12-factor extension)
 
 ```
 SAME compose YAML file, SAME image, SAME code → multiple environments
@@ -184,7 +184,7 @@ Behavior: DIFFERENT (env var driven)
 
 ---
 
-## 🎯 Activation Methods (Updated 4-way list)
+## Activation Methods (Updated 4-way list)
 
 ```
 1. application.properties        (default profile fallback)
@@ -197,7 +197,7 @@ Behavior: DIFFERENT (env var driven)
    set SPRING_PROFILES_ACTIVE=docker
    java -jar app.jar
 
-4. Docker/Compose env var 🆕     (production deployment)
+4. Docker/Compose env var     (production deployment)
    environment:
      SPRING_PROFILES_ACTIVE: compose
    
@@ -207,7 +207,7 @@ PRECEDENCE (highest → lowest):
 
 ---
 
-## 🎤 Updated Interview Q&A
+## Updated Interview Q&A
 
 **Q: "Docker compose mein Spring profile kaise activate karte?"**
 
@@ -223,35 +223,35 @@ PRECEDENCE (highest → lowest):
 
 ---
 
-## ⚠️ New Trap (Compose-specific)
+## New Trap (Compose-specific)
 
 ```
-🪤 Trap 8: Compose env var typo
-         ❌ SPRING_PROFILES_ACTIVE: compose-profile
+Trap 8: Compose env var typo
+         SPRING_PROFILES_ACTIVE: compose-profile
             (no application-compose-profile.properties exists)
-         ✅ SPRING_PROFILES_ACTIVE: compose
+         SPRING_PROFILES_ACTIVE: compose
             (matches application-compose.properties suffix exactly)
 
-🪤 Trap 9: localhost in compose profile
-         ❌ application-compose.properties:
+Trap 9: localhost in compose profile
+         application-compose.properties:
             url=jdbc:mysql://localhost:3307/userdb
             → Spring container looks for MySQL inside ITSELF
             → connection refused
-         ✅ Use service name from compose YAML:
+         Use service name from compose YAML:
             url=jdbc:mysql://mysql:3306/userdb
             → Container DNS resolves to MySQL container
 
-🪤 Trap 10: Profile file not in JAR
-         ❌ application-compose.properties bahar accidentally
+Trap 10: Profile file not in JAR
+         application-compose.properties bahar accidentally
             (target/classes mein nahi gaya)
-         ✅ src/main/resources/application-compose.properties
+         src/main/resources/application-compose.properties
             (Maven package process auto-include karta)
             Verify: jar tf target/X.jar | grep compose
 ```
 
 ---
 
-## 💎 Updated Power Phrase (Day 1 + Day 2)
+## Updated Power Phrase (Day 1 + Day 2)
 
 > *"Spring Profiles = environment-specific configuration. application-{profile}.properties files banao (local, docker, compose, dev, prod). Activate via property/CLI/env var/Compose YAML — env var highest priority for production. Master file mein common stuff, profile files mein env-specific. Docker-Compose se Spring = `SPRING_PROFILES_ACTIVE` env var bridge — Compose inject karta, Spring auto-loads matching file. Container DNS pattern: profile mein service name use (jdbc:mysql://mysql:3306) NOT localhost. JAR ek hi build, runtime pe profile decide — 12-factor app pattern."*
 

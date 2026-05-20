@@ -10,7 +10,7 @@ import com.arpan.usercrud.model.User;
 import com.arpan.usercrud.repository.UserRepository;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    BUSINESS LOGIC LAYER (middle of 3-layer)
 //    Controller → SERVICE → Repository → DB
 //    Sirf business rules — no HTTP handling, no DB connections
@@ -44,7 +44,7 @@ import com.arpan.usercrud.repository.UserRepository;
 //    5. delete()                     @Transactional
 //    6. createWithSimulatedFailure() @Transactional (DEMO rollback)
 //
-// 🔑 @Transactional PATTERNS:
+// @Transactional PATTERNS:
 //    Write methods:
 //       @Transactional
 //       Atomic transaction (commit/rollback)
@@ -54,17 +54,17 @@ import com.arpan.usercrud.repository.UserRepository;
 //       Hibernate optimization (no dirty checking)
 //       Faster, may route to read replica
 //
-// 🔑 CONSTRUCTOR INJECTION:
+// CONSTRUCTOR INJECTION:
 //    private final UserRepository repository;
 //    public UserService(UserRepository repo) { ... }
 //
 //    Benefits:
-//       ✅ final = immutable
-//       ✅ NPE impossible (must pass at construction)
-//       ✅ Testing easy (mock pass)
-//       ✅ Spring single-ctor → @Autowired implicit
+//       final = immutable
+//       NPE impossible (must pass at construction)
+//       Testing easy (mock pass)
+//       Spring single-ctor → @Autowired implicit
 //
-// 🔑 DIRTY CHECKING — repository.save() in update() = REDUNDANT
+// DIRTY CHECKING — repository.save() in update() = REDUNDANT
 //
 //    UPDATE method case:
 //       User user = repository.findById(id)...   ← entity MANAGED
@@ -122,7 +122,7 @@ import com.arpan.usercrud.repository.UserRepository;
 //       timeout = 5                      ← max 5 seconds
 //       propagation = REQUIRES_NEW       ← always new transaction
 //
-// 📐 SOLID:
+// SOLID:
 //    SRP — Sirf business logic
 //          Data access = UserRepository
 //          Auth        = AuthController + JwtService
@@ -134,17 +134,17 @@ import com.arpan.usercrud.repository.UserRepository;
 //
 // SimpleBankSystem vs UserCRUD Service:
 //    SimpleBankSystem AccountService:
-//       ✅ Constructor injection (manual)
-//       ✅ Manual rollback (try-catch + reverse)
-//       ❌ No @Transactional
+//       Constructor injection (manual)
+//       Manual rollback (try-catch + reverse)
+//       No @Transactional
 //
 //    UserCRUD UserService:
-//       ✅ Constructor injection (Spring detects)
-//       ✅ @Transactional automatic rollback
-//       ✅ readOnly optimization
+//       Constructor injection (Spring detects)
+//       @Transactional automatic rollback
+//       readOnly optimization
 //       = Spring automates what SimpleBankSystem did manually
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "UserService is business logic with @Transactional.
 //     Write methods atomic, read methods readOnly optimized.
 //
@@ -222,12 +222,12 @@ public class UserService {
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  🧪 DEMO METHOD — @Transactional rollback proof
+    //  DEMO METHOD — @Transactional rollback proof
     // ═══════════════════════════════════════════════════════════
     //  Flow:
     //  1. user.save()      → row INSERT (TX ke andar)
     //  2. throw RuntimeEx  → exception
-    //  3. Spring proxy     → ROLLBACK ⏪
+    //  3. Spring proxy     → ROLLBACK 
     //  4. Result           → row gayab (jaise insert hua hi nahi)
     //
     //  Test:
@@ -243,10 +243,10 @@ public class UserService {
     public User createWithSimulatedFailure(User user) {
         // Step 1: User save (INSERT fires TX ke andar)
         User saved = repository.save(user);
-        System.out.println("✅ Step 1: User saved with ID = " + saved.getId());
+        System.out.println("Step 1: User saved with ID = " + saved.getId());
 
         // Step 2: Simulated failure
-        System.out.println("💥 Step 2: Simulating failure (RuntimeException)...");
+        System.out.println("Step 2: Simulating failure (RuntimeException)...");
         throw new RuntimeException(
             "Simulated failure after save() — Spring should ROLLBACK"
         );

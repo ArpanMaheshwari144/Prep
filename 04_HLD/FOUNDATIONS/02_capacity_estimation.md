@@ -1,14 +1,14 @@
-# 📊 Capacity Estimation — Back-of-Envelope Math
+# Capacity Estimation — Back-of-Envelope Math
 
 > **HLD Topic 2 — First Weapon (Day 1)**
 
 ---
 
-## 🎬 STORY — Restaurant Capacity
+## STORY — Restaurant Capacity
 
 > Tu **restaurant kholne** chal raha:
 >
-> 🍽️ Pehla question: *"Kitne customer ek din mein expect karu?"*
+> Pehla question: *"Kitne customer ek din mein expect karu?"*
 > - 100/day → 1 chef, 5 tables
 > - 10,000/day → 10 chefs, 50 tables, 3 kitchens, parking lot
 >
@@ -20,7 +20,7 @@
 
 ---
 
-## 🎯 Why Capacity Estimation?
+## Why Capacity Estimation?
 
 Interview mein **"Design Twitter"** pucha jaye — agla question:
 > *"Kitne users? Kitne tweets per day? Kitna storage? Kitne servers?"*
@@ -32,7 +32,7 @@ Interview mein **"Design Twitter"** pucha jaye — agla question:
 
 ---
 
-## 🧮 5 Magic Numbers — Memorize
+## 5 Magic Numbers — Memorize
 
 ```
 1 day      = 86,400 seconds (~10^5)        ← MOST IMPORTANT
@@ -51,7 +51,7 @@ Storage units:
 
 ---
 
-## 🎨 Example — Twitter Estimation
+## Example — Twitter Estimation
 
 **Step 1: DAU**
 ```
@@ -91,7 +91,7 @@ Convert to Gbps: 3.2 Gbps read bandwidth
 
 ---
 
-## 🎨 Visual — 4 Things to Calculate
+## Visual — 4 Things to Calculate
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -108,7 +108,7 @@ Convert to Gbps: 3.2 Gbps read bandwidth
 
 ---
 
-## 💡 Common Assumptions Cheat Sheet
+## Common Assumptions Cheat Sheet
 
 ```
 Read:Write ratios:
@@ -129,7 +129,7 @@ Per-user activity:
 
 ---
 
-## 🎤 Interview Approach
+## Interview Approach
 
 When asked *"Design X — capacity estimate"*:
 
@@ -147,7 +147,7 @@ When asked *"Design X — capacity estimate"*:
 
 ---
 
-## 🎯 Quick Practice — WhatsApp
+## Quick Practice — WhatsApp
 
 ```
 Total users:           ~2B
@@ -164,13 +164,13 @@ Yearly storage:        ~2.7 PB/year
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > **"Capacity estimation = HLD ka first step. Numbers calculate karo (DAU, RPS, storage, bandwidth) — phir architecture decisions concrete bante. 1 day = 10^5 seconds — most math iss se start."**
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 4 things to calculate:
@@ -191,22 +191,22 @@ Process:
 
 ---
 
-## ⚠️ Trap Box
+## Trap Box
 
 ```
-🪤 Trap 1: "Exact numbers calculate karna"
-         ❌ Calculator nikalna
-         ✅ Round powers of 10 (100K, 1M, 10M)
+Trap 1: "Exact numbers calculate karna"
+         Calculator nikalna
+         Round powers of 10 (100K, 1M, 10M)
 
-🪤 Trap 2: "Sirf write load consider"
-         ❌ Reads ignore
-         ✅ Reads typically 10-100x writes — both calculate
+Trap 2: "Sirf write load consider"
+         Reads ignore
+         Reads typically 10-100x writes — both calculate
 
-🪤 Trap 3: "Year 1 numbers se design"
-         ❌ 3-5 year growth ignore
-         ✅ Future projections plan for
+Trap 3: "Year 1 numbers se design"
+         3-5 year growth ignore
+         Future projections plan for
 
-🪤 Trap 4: "Storage forget metadata + indexes + replication"
-         ❌ Pure data size
-         ✅ +metadata (~3x base data common)
+Trap 4: "Storage forget metadata + indexes + replication"
+         Pure data size
+         +metadata (~3x base data common)
 ```

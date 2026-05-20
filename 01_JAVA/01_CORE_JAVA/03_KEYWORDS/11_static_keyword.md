@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — School ka Naam
+## STORY — School ka Naam
 
 → Tune Student class banayi
 → School ka naam — har student ka same hai **"DPS"**
@@ -18,7 +18,7 @@
 
 ---
 
-## 💻 Code
+## Code
 
 ```java
 class Student {
@@ -26,12 +26,12 @@ class Student {
     String name;                    // student ka — har ek ka apna
 }
 
-Student.school   // ✅ object ki zarurat nahi — directly access
+Student.school   // object ki zarurat nahi — directly access
 ```
 
 ---
 
-## 🧠 Visualization — Class-level vs Instance-level Memory
+## Visualization — Class-level vs Instance-level Memory
 
 ```
               static vs Non-Static — Memory Layout
@@ -77,10 +77,10 @@ Student.school   // ✅ object ki zarurat nahi — directly access
 ║ Access                                                     ║
 ╚════════════════════════════════════════════════════════════╝
 
-  Student.school          ✅  class se direct access (no object needed)
-  arpan.name              ✅  object se access
-  arpan.school            ⚠️ chalega lekin bad practice — object se mat karo
-  Student.name            ❌  static nahi hai, class se access nahi
+  Student.school           class se direct access (no object needed)
+  arpan.name               object se access
+  arpan.school            chalega lekin bad practice — object se mat karo
+  Student.name             static nahi hai, class se access nahi
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -88,7 +88,7 @@ Student.school   // ✅ object ki zarurat nahi — directly access
 ╚════════════════════════════════════════════════════════════╝
 
   static void hello() {
-      this.name;          ← 🔴 'this' = object ka reference
+      this.name;          ← 'this' = object ka reference
                               static method object se nahi juda
                               EXIST hi nahi karta object
   }
@@ -96,13 +96,13 @@ Student.school   // ✅ object ki zarurat nahi — directly access
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **Static method mein `this` use nahi kar sakte — `this` = object ka reference.**
 > **Static method tab exist karta hai jab object bana hi nahi hota!**
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Static members belong to the class, not to any instance — shared across all objects and accessible without creating an object."*

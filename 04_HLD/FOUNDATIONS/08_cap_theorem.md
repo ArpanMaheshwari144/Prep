@@ -1,11 +1,11 @@
-# 🌐 CAP Theorem — The Distributed Systems Classic
+# CAP Theorem — The Distributed Systems Classic
 
 > **HLD Topic 8 — Pick 2 of 3 — interview ka favorite**
 > Real talk: "Perfect kuch nahi hota" — YouTube/Uber/Facebook sab kahin na kahin trade-off karte
 
 ---
 
-## 🎯 The Theorem (Full Form)
+## The Theorem (Full Form)
 
 ```
 DISTRIBUTED SYSTEM mein 3 cheezein chahiye:
@@ -21,7 +21,7 @@ THEOREM SAYS:
 
 ---
 
-## 🎬 Real-World Truth — "Perfect Kuch Nahi Hota"
+## Real-World Truth — "Perfect Kuch Nahi Hota"
 
 ```
 TUNE SAHI BOLA — every big system somewhere trade-off karta:
@@ -36,7 +36,7 @@ Yeh all CAP THEOREM ke real-world examples.
 
 ---
 
-## 🎨 The Triangle (Full Form Visual)
+## The Triangle (Full Form Visual)
 
 ```
                   ┌─────────────────────┐
@@ -61,7 +61,7 @@ Yeh all CAP THEOREM ke real-world examples.
 
 ---
 
-## 🏦 STORY — Bank Branches Example
+## STORY — Bank Branches Example
 
 ### Setup:
 ```
@@ -73,15 +73,15 @@ Customer balance = ₹10,000
    │ Mumbai      │ ◄─────► │ Delhi       │
    │ Bal: 10000  │         │ Bal: 10000  │
    └────────────┘         └────────────┘
-   ✅ Both consistent
-   ✅ Both available
-   ✅ Phone working (no partition)
+   Both consistent
+   Both available
+   Phone working (no partition)
 ```
 
 ### Phone Breaks (PARTITION):
 ```
-   ┌────────────┐    💀    ┌────────────┐
-   │ Mumbai      │ ✗ phone │ Delhi       │
+   ┌────────────┐       ┌────────────┐
+   │ Mumbai      │ phone │ Delhi       │
    │ Bal: 10000  │   dead   │ Bal: 10000  │
    └────────────┘         └────────────┘
    
@@ -97,24 +97,24 @@ Customer balance = ₹10,000
 ```
 OPTION CP (Consistency + Partition Tolerance):
    "Sorry, system down — withdraw nahi kar sakte"
-   ✅ Wrong data nahi serve hua
-   ❌ Customer ko service nahi mili (AVAILABILITY lost)
+   Wrong data nahi serve hua
+   Customer ko service nahi mili (AVAILABILITY lost)
 
 OPTION AP (Availability + Partition Tolerance):
    "Withdraw kar lo" → Mumbai bhi ₹10,000 de deta
-   ✅ Customer ko service mili
-   ❌ Account ne ₹20,000 nikla while balance ₹10,000 (CONSISTENCY lost)
+   Customer ko service mili
+   Account ne ₹20,000 nikla while balance ₹10,000 (CONSISTENCY lost)
 ```
 
 ---
 
-## 🎯 The 3 Combinations Decoded
+## The 3 Combinations Decoded
 
 ### **1) Consistency + Partition Tolerance** (CP)
 ```
 Network fails → System REJECTS requests
-   ✅ Data correct hamesha
-   ❌ During failure, system DOWN
+   Data correct hamesha
+   During failure, system DOWN
 
 Real-world:
    • Banking transactions
@@ -127,8 +127,8 @@ Real-world:
 ### **2) Availability + Partition Tolerance** (AP)
 ```
 Network fails → System keeps responding (might serve stale data)
-   ✅ Always responds
-   ❌ Data might be outdated
+   Always responds
+   Data might be outdated
 
 Real-world:
    • Social media feeds
@@ -149,7 +149,7 @@ NOT REALLY POSSIBLE in distributed system
 
 ---
 
-## 🌐 Big Tech Examples (Real World)
+## Big Tech Examples (Real World)
 
 ```
 SERVICE              CHOICE                       WHY
@@ -180,7 +180,7 @@ Cassandra           AP                            Built for availability + scale
 
 ---
 
-## 💡 The "E" — PACELC Theorem (CAP Extended)
+## The "E" — PACELC Theorem (CAP Extended)
 
 CAP only covers PARTITION time. What about NORMAL operation?
 
@@ -190,7 +190,7 @@ PACELC = full form:
    P  =  PARTITION (network failure)
    A  =  AVAILABILITY
    C  =  CONSISTENCY
-   E  =  ELSE (normal operation, NO partition)  ⭐ NEW
+   E  =  ELSE (normal operation, NO partition)  NEW
    L  =  LATENCY (speed)
    C  =  CONSISTENCY
 ```
@@ -203,7 +203,7 @@ ELSE (normal ops)      — pick LATENCY OR CONSISTENCY
 
 ---
 
-## 🎨 PACELC Visual
+## PACELC Visual
 
 ```
    System lifecycle:
@@ -212,9 +212,9 @@ ELSE (normal ops)      — pick LATENCY OR CONSISTENCY
    │  NORMAL OPERATION (no partition)             │
    │  ────────────────                            │
    │  CHOOSE:                                      │
-   │     ⚡ Low LATENCY (fast response)            │
+   │     Low LATENCY (fast response)            │
    │           OR                                  │
-   │     🎯 Strong CONSISTENCY (latest data)       │
+   │     Strong CONSISTENCY (latest data)       │
    │                                               │
    │  Trade-off because:                           │
    │  Strong consistency = wait for all replicas   │
@@ -223,21 +223,21 @@ ELSE (normal ops)      — pick LATENCY OR CONSISTENCY
    │                       = stale possible        │
    └─────────────────────────────────────────────┘
             │
-            │ network fails 💀
+            │ network fails 
             ▼
    ┌─────────────────────────────────────────────┐
    │  PARTITION (network failure)                 │
    │  ────────────────                            │
    │  CHOOSE:                                      │
-   │     ✅ AVAILABILITY (keep responding)         │
+   │     AVAILABILITY (keep responding)         │
    │           OR                                  │
-   │     🎯 CONSISTENCY (refuse if can't sync)     │
+   │     CONSISTENCY (refuse if can't sync)     │
    └─────────────────────────────────────────────┘
 ```
 
 ---
 
-## 📊 PACELC Real Examples
+## PACELC Real Examples
 
 ```
 CASSANDRA:
@@ -263,12 +263,12 @@ POSTGRES (with sync replication):
 
 ---
 
-## 🎯 Decision Matrix (Real World)
+## Decision Matrix (Real World)
 
 ```
 PICK CONSISTENCY (CP) IF:
-   ✅ Wrong data = serious damage (money, locks, inventory)
-   ✅ "Better to fail than show wrong info"
+   Wrong data = serious damage (money, locks, inventory)
+   "Better to fail than show wrong info"
    Examples:
       • Banking
       • Payment systems
@@ -277,8 +277,8 @@ PICK CONSISTENCY (CP) IF:
       • Config storage (etcd, K8s)
 
 PICK AVAILABILITY (AP) IF:
-   ✅ Stale data acceptable (social, ads, recommendations)
-   ✅ "Better to show old data than error"
+   Stale data acceptable (social, ads, recommendations)
+   "Better to show old data than error"
    Examples:
       • Social media feeds
       • Product catalogs
@@ -289,7 +289,7 @@ PICK AVAILABILITY (AP) IF:
 
 ---
 
-## 🔗 Connect to Existing Knowledge
+## Connect to Existing Knowledge
 
 ```
 REPLICATION (already done):
@@ -305,12 +305,12 @@ MESSAGE QUEUES (already done):
    At-least-once + idempotency = practical CP
    At-most-once = AP (might lose messages)
    
-= CAP TIES ALL FOUNDATIONS TOGETHER ✅
+= CAP TIES ALL FOUNDATIONS TOGETHER 
 ```
 
 ---
 
-## 🎤 Quick Interview Sense
+## Quick Interview Sense
 
 **Q1: "CAP theorem explain karo?"**
 
@@ -334,13 +334,13 @@ MESSAGE QUEUES (already done):
 
 ---
 
-## 💎 Power Phrase (full form)
+## Power Phrase (full form)
 
 > *"CAP theorem: distributed system mein Consistency, Availability, Partition Tolerance — sirf 2. Real distributed = Partition Tolerance required (network failures inevitable), so choice CP ya AP. Banking = CP, social = AP. PACELC extension covers normal operation: Latency vs Consistency trade-off. MongoDB = PC + EC, Cassandra = PA + EL, DynamoDB = PA + EL. No perfect distributed system — engineering = right trade-off for use case. Connects to Replication (sync = CP, async = AP), Sharding (cross-shard txns = CP), MQ (delivery semantics)."*
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 CAP = "Pick 2 of 3"
@@ -365,36 +365,36 @@ Truth bomb (LOCK):
 
 ---
 
-## ⚠️ Trap Box
+## Trap Box
 
 ```
-🪤 Trap 1: "CA system possible"
-         ❌ "I want consistency + availability + no partition"
-         ✅ Distributed = P required (network unreliable)
+Trap 1: "CA system possible"
+         "I want consistency + availability + no partition"
+         Distributed = P required (network unreliable)
             CA = single-machine only
 
-🪤 Trap 2: "CP = always slow"
-         ❌ "CP means bad performance"
-         ✅ CP affects availability during partition only
+Trap 2: "CP = always slow"
+         "CP means bad performance"
+         CP affects availability during partition only
             Normal ops can be fast
 
-🪤 Trap 3: "Eventual consistency = no consistency"
-         ❌ "AP system unreliable"
-         ✅ Eventually converges (seconds usually)
+Trap 3: "Eventual consistency = no consistency"
+         "AP system unreliable"
+         Eventually converges (seconds usually)
             Just not strict instant consistency
 
-🪤 Trap 4: "Database is purely CP or AP"
-         ❌ Black-and-white categorization
-         ✅ Often tunable (DynamoDB consistency level)
+Trap 4: "Database is purely CP or AP"
+         Black-and-white categorization
+         Often tunable (DynamoDB consistency level)
             Per-operation CAP choice possible
 
-🪤 Trap 5: "PACELC ignored"
-         ❌ Only mention CAP in interview
-         ✅ Senior signal: mention PACELC
+Trap 5: "PACELC ignored"
+         Only mention CAP in interview
+         Senior signal: mention PACELC
             (covers normal ops, not just partition)
 
-🪤 Trap 6: "Perfect distributed system exists"
-         ❌ "Some company has solved CAP"
-         ✅ NO ONE HAS — fundamental theorem
+Trap 6: "Perfect distributed system exists"
+         "Some company has solved CAP"
+         NO ONE HAS — fundamental theorem
             Engineering = right trade-off, not avoidance
 ```

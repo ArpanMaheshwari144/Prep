@@ -1,10 +1,10 @@
-# 🔀 Database Sharding
+# Database Sharding
 
 > **HLD Topic 6 — Write scaling + Storage scaling**
 
 ---
 
-## 🚨 Replication vs Sharding (clarify FIRST)
+## Replication vs Sharding (clarify FIRST)
 
 ```
 REPLICATION:                  SHARDING:
@@ -21,13 +21,13 @@ Goal: read scale + HA       Goal: write scale + storage scale
 
 ---
 
-## 🎬 STORY — Phone Directory of India
+## STORY — Phone Directory of India
 
 > India 1.4 billion entries ek hi phone book mein? 50 ton ki book, ghanton ki lookup.
 >
-> 📚 **Without sharding:** Single book → unreadable, unmanageable
+> **Without sharding:** Single book → unreadable, unmanageable
 >
-> 📋 **With sharding:** 28 state directories alag-alag
+> **With sharding:** 28 state directories alag-alag
 > - Maharashtra → Mumbai office
 > - Delhi → Delhi office
 > - Pehle state decide → us state ki directory query
@@ -36,28 +36,28 @@ Goal: read scale + HA       Goal: write scale + storage scale
 
 ---
 
-## 🤔 Why Sharding?
+## Why Sharding?
 
 ### Without
 ```
 1 TB       → ok
-100 TB     → 💥 single disk capacity limit
-1M w/s     → 💥 single disk IOPS limit
+100 TB     → single disk capacity limit
+1M w/s     → single disk IOPS limit
 Backup     → days
 Queries    → table scan slow
 ```
 
 ### With (10 shards)
 ```
-100 TB     → 10 × 10 TB ✅
-1M w/s     → distributed (100K each) ✅
-Backup     → parallel ✅
-Queries    → smaller tables, fast ✅
+100 TB     → 10 × 10 TB 
+1M w/s     → distributed (100K each) 
+Backup     → parallel 
+Queries    → smaller tables, fast 
 ```
 
 ---
 
-## 🎨 Architecture
+## Architecture
 
 ```
                 APP SERVERS
@@ -79,7 +79,7 @@ Queries    → smaller tables, fast ✅
 
 ---
 
-## 🎯 4 Sharding Strategies
+## 4 Sharding Strategies
 
 ### 1. **Range-based**
 ```
@@ -127,7 +127,7 @@ Every query:
 
 ---
 
-## 📊 Strategy Comparison
+## Strategy Comparison
 
 | | Range | Hash | Geo | Directory |
 |---|---|---|---|---|
@@ -140,18 +140,18 @@ Every query:
 
 ---
 
-## ⚠️ 4 Hard Problems
+## 4 Hard Problems
 
 ### 1. **Shard Key choice** — sabse important
 **Bad keys:**
-- ❌ Country (some countries 100x bigger)
-- ❌ Date (only latest shard hot)
-- ❌ Status (skewed distribution)
+- Country (some countries 100x bigger)
+- Date (only latest shard hot)
+- Status (skewed distribution)
 
 **Good keys:**
-- ✅ user_id (uniform, high cardinality)
-- ✅ uuid (random, even)
-- ✅ Composite key (e.g., user_id + region)
+- user_id (uniform, high cardinality)
+- uuid (random, even)
+- Composite key (e.g., user_id + region)
 
 > **Rule:** High cardinality + even distribution + matches query pattern
 
@@ -167,7 +167,7 @@ Add 5th shard:
    shard = hash(x) % 5
 
    hash(x) % 4  ≠  hash(x) % 5
-   ALMOST ALL DATA migrates 💥
+   ALMOST ALL DATA migrates 
 ```
 
 **Solution: Consistent Hashing**
@@ -210,7 +210,7 @@ Cross-shard TRANSACTION
 
 ```
 Celebrity tweet → 1M writes/sec to one user_id
-   → That shard tank 💥
+   → That shard tank 
    
 Fix:
    1. Sub-sharding (split celebrity data further)
@@ -221,7 +221,7 @@ Fix:
 
 ---
 
-## 🌍 Real-World Tools
+## Real-World Tools
 
 ### **MongoDB**
 - Built-in auto-sharding
@@ -249,7 +249,7 @@ Fix:
 
 ---
 
-## 🎤 Interview Talking Points
+## Interview Talking Points
 
 **Q: "Replication vs Sharding?"**
 
@@ -273,13 +273,13 @@ Fix:
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > **"Sharding = different data on different DBs. Write+storage scaling. 4 strategies — Range/Hash/Geo/Directory. Hash most common. Hard problems: shard key choice, resharding (Consistent Hashing fix), cross-shard queries, hot spots. Production: sharding + replication together — each shard has its own replicas."**
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 Sharding = "Phone directory split by state"
@@ -308,34 +308,34 @@ Production:
 
 ---
 
-## ⚠️ Trap Box
+## Trap Box
 
 ```
-🪤 Trap 1: "Sharding = Replication"
-         ❌ Replication = same data, Sharding = different data
-         ✅ Different goals — both used together
+Trap 1: "Sharding = Replication"
+         Replication = same data, Sharding = different data
+         Different goals — both used together
 
-🪤 Trap 2: "Shard by country"
-         ❌ Some countries 100x bigger → uneven
-         ✅ user_id or uuid (uniform distribution)
+Trap 2: "Shard by country"
+         Some countries 100x bigger → uneven
+         user_id or uuid (uniform distribution)
 
-🪤 Trap 3: "Naive hash sharding"
-         ❌ Add shard → almost full migrate
-         ✅ Consistent Hashing
+Trap 3: "Naive hash sharding"
+         Add shard → almost full migrate
+         Consistent Hashing
 
-🪤 Trap 4: "Cross-shard JOIN no problem"
-         ❌ Very expensive, slow
-         ✅ Co-locate related data, denormalize
+Trap 4: "Cross-shard JOIN no problem"
+         Very expensive, slow
+         Co-locate related data, denormalize
 
-🪤 Trap 5: "Sharding solves everything"
-         ❌ Adds complexity — distributed txn, queries hard
-         ✅ Vertical scale first (bigger DB), shard when forced
+Trap 5: "Sharding solves everything"
+         Adds complexity — distributed txn, queries hard
+         Vertical scale first (bigger DB), shard when forced
 
-🪤 Trap 6: "Range = good for analytics"
-         ❌ Hot spot — naye records last shard pe
-         ✅ Hash for writes, separate analytics DB
+Trap 6: "Range = good for analytics"
+         Hot spot — naye records last shard pe
+         Hash for writes, separate analytics DB
 
-🪤 Trap 7: "Resharding rare so ignore"
-         ❌ Growth forces resharding eventually
-         ✅ Pick Consistent Hashing from day 1
+Trap 7: "Resharding rare so ignore"
+         Growth forces resharding eventually
+         Pick Consistent Hashing from day 1
 ```

@@ -1,17 +1,17 @@
-# ⚡ Authentication vs Authorization
+# Authentication vs Authorization
 
 ---
 
-## 🎯 1-Line Analogy
+## 1-Line Analogy
 
 ```
-Authentication = 🪪 "Who are you?"        (verify identity)
-Authorization  = 🔑 "What can you do?"    (verify permissions)
+Authentication = "Who are you?"        (verify identity)
+Authorization  = "What can you do?"    (verify permissions)
 ```
 
 ---
 
-## 🏢 OFFICE BUILDING ANALOGY
+## OFFICE BUILDING ANALOGY
 
 ```
 You enter an office building:
@@ -33,7 +33,7 @@ STEP 2: AUTHORIZATION (at floor doors)
 
 ---
 
-## 📊 Side by Side
+## Side by Side
 
 ```
 ┌──────────────────┬──────────────────┬──────────────────┐
@@ -60,7 +60,7 @@ STEP 2: AUTHORIZATION (at floor doors)
 
 ---
 
-## 🔄 FLOW VISUAL
+## FLOW VISUAL
 
 ```
    USER: "I want to delete user #5"
@@ -73,7 +73,7 @@ STEP 2: AUTHORIZATION (at floor doors)
    │ Verify signature       │
    │ Extract user info       │
    │                        │
-   │ ✅ It's Arpan          │
+   │ It's Arpan          │
    │    (role: USER)         │
    └──────────┬───────────┘
               │
@@ -85,14 +85,14 @@ STEP 2: AUTHORIZATION (at floor doors)
    │ Required: ADMIN         │
    │                        │
    │ User role: USER         │
-   │ ❌ Denied              │
+   │ Denied              │
    │    403 Forbidden        │
    └──────────────────────┘
 ```
 
 ---
 
-## 🔐 AUTHENTICATION METHODS
+## AUTHENTICATION METHODS
 
 ```
 1. PASSWORD-BASED
@@ -121,7 +121,7 @@ STEP 2: AUTHORIZATION (at floor doors)
 
 ---
 
-## 🎯 AUTHORIZATION MODELS
+## AUTHORIZATION MODELS
 
 ```
 ┌──────────────┬──────────────────────────────────────┐
@@ -151,7 +151,7 @@ STEP 2: AUTHORIZATION (at floor doors)
 
 ---
 
-## 💎 SPRING SECURITY ANGLE
+## SPRING SECURITY ANGLE
 
 ```
 UserCRUD mein dono use ho rahe:
@@ -176,7 +176,7 @@ AUTHORIZATION (per endpoint):
 
 ---
 
-## 🚨 HTTP STATUS CODES
+## HTTP STATUS CODES
 
 ```
 401 UNAUTHORIZED:
@@ -198,7 +198,7 @@ AUTHORIZATION (per endpoint):
    • Cross-tenant access
    • Resource not owned
    
-   ⚠️ Common confusion:
+   Common confusion:
       401 ≠ 403
       401 = identity issue
       403 = permission issue
@@ -206,7 +206,7 @@ AUTHORIZATION (per endpoint):
 
 ---
 
-## 🎬 REAL FLOW — UserCRUD
+## REAL FLOW — UserCRUD
 
 ```
 1. User registers (POST /register)
@@ -226,14 +226,14 @@ AUTHORIZATION (per endpoint):
    → Denied? → 403
 
 4. User calls admin API (DELETE /users/5)
-   → JWT verified ✅
+   → JWT verified 
    → Role check: needs ADMIN
    → User is USER → 403 Forbidden
 ```
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "Authentication verifies WHO you are — credentials,
@@ -256,11 +256,11 @@ AUTHORIZATION (per endpoint):
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-Authentication = 🪪 ID Card → WHO are you?
-Authorization  = 🔑 Access Card → WHAT can you do?
+Authentication = ID Card → WHO are you?
+Authorization  = Access Card → WHAT can you do?
 
 401 = Not authenticated (login first)
 403 = Authenticated but forbidden (no permission)
@@ -273,4 +273,4 @@ Models: RBAC most common (roles)
         PBAC for centralized policies
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

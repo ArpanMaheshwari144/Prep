@@ -4,7 +4,7 @@
 
 ---
 
-## 🎯 Definition
+## Definition
 
 > **High-level modules should depend on ABSTRACTIONS, not concrete implementations.**
 
@@ -12,13 +12,13 @@ Matlab: `OrderService` ko **`OrderRepository` interface** pe depend karna chahiy
 
 ---
 
-## 📖 STORY — Tight Coupling Hell
+## STORY — Tight Coupling Hell
 
 → Tune **OrderService** likhi — directly **MySQLOrderRepository** use kiya:
 
 ```java
 class OrderService {
-    MySQLOrderRepository repo = new MySQLOrderRepository();   // 🔴 tight coupling
+    MySQLOrderRepository repo = new MySQLOrderRepository();   // tight coupling
 
     void placeOrder() {
         repo.save(...);
@@ -33,7 +33,7 @@ class OrderService {
 
 ---
 
-## ✅ Fix — Interface Pe Depend Karo
+## Fix — Interface Pe Depend Karo
 
 ```java
 // 1. Interface define karo
@@ -59,7 +59,7 @@ OrderService svc1 = new OrderService(new MySQLOrderRepository());
 OrderService svc2 = new OrderService(new MongoOrderRepository());
 
 // Test mein:
-OrderService svc3 = new OrderService(new MockOrderRepository());   // ✅ easy mock
+OrderService svc3 = new OrderService(new MockOrderRepository());   // easy mock
 ```
 
 → **OrderService ko pata hi nahi kaunsa DB hai** — bas interface pata
@@ -67,10 +67,10 @@ OrderService svc3 = new OrderService(new MockOrderRepository());   // ✅ easy m
 
 ---
 
-## 🧠 DIP Visualization
+## DIP Visualization
 
 ```
-              ❌ BAD — High-level depends on low-level
+              BAD — High-level depends on low-level
 
               OrderService (high-level — business logic)
                     │
@@ -81,7 +81,7 @@ OrderService svc3 = new OrderService(new MockOrderRepository());   // ✅ easy m
    Naya DB? Service rewrite. Test mein? Mock impossible.
 
 
-              ✅ GOOD — Both depend on abstraction
+              GOOD — Both depend on abstraction
 
               OrderService (high-level)
                     │
@@ -102,7 +102,7 @@ OrderService svc3 = new OrderService(new MockOrderRepository());   // ✅ easy m
 
 ---
 
-## 🔴 DIP TRAP — DIP ≠ Dependency Injection
+## DIP TRAP — DIP ≠ Dependency Injection
 
 > **DIP = PRINCIPLE.** Goal — abstraction pe depend karo.
 > **DI = TECHNIQUE** to achieve DIP — dependency outside se pass karo.
@@ -120,6 +120,6 @@ class OrderService {
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Dependency Inversion means high-level modules should depend on abstractions, not on concrete implementations. Spring's `@Autowired` achieves this — the service depends on the repository interface, not on a specific database class. DIP is the principle; DI is one way to achieve it."*

@@ -1,20 +1,20 @@
-# 🟢 Section 1 — Spring Profiles Basics
+# Section 1 — Spring Profiles Basics
 
 > **Topic:** Environment-specific config switching
 > **Setup:** Day 1 — local + docker profile files
 
-📚 [← Back to README](00_README.md) | [Compose Integration →](02_compose_integration.md)
+[← Back to README](00_README.md) | [Compose Integration →](02_compose_integration.md)
 
 ---
 
-# 🎭 Spring Profiles — Environment-Specific Configuration
+# Spring Profiles — Environment-Specific Configuration
 
 > **Spring Boot Topic — clean config switching (dev/prod/local/docker)**
 > Hands-on: UserCRUD project mein local MySQL + Docker MySQL switch
 
 ---
 
-## 🤔 The Problem (Why Profiles?)
+## The Problem (Why Profiles?)
 
 ```
 Same app → DIFFERENT environments mein chalti
@@ -29,18 +29,18 @@ Har environment mein DIFFERENT config:
    • Different log levels
    • Different feature flags
 
-❌ Without Profiles:
+Without Profiles:
    Har deploy se pehle properties EDIT karo manually
    Fragile, error-prone, secrets accidental commit
    
-✅ With Profiles:
+With Profiles:
    Multiple config files, ONE-LINE switch
    Clean, safe, production pattern
 ```
 
 ---
 
-## 🎬 STORY — Clothes for Occasion
+## STORY — Clothes for Occasion
 
 ```
    Ek banda (= App)
@@ -56,7 +56,7 @@ Spring Profiles = different "outfits" (configs) for different environments.
 
 ---
 
-## 🎯 Core Concept (visual)
+## Core Concept (visual)
 
 ```
    Spring Boot App
@@ -80,7 +80,7 @@ Spring Profiles = different "outfits" (configs) for different environments.
 
 ---
 
-## 📁 File Naming Convention
+## File Naming Convention
 
 ```
 src/main/resources/
@@ -99,7 +99,7 @@ src/main/resources/
 
 ---
 
-## 🚀 3 Ways to Activate Profile
+## 3 Ways to Activate Profile
 
 ### 1. **In `application.properties` (default)**
 ```properties
@@ -120,7 +120,7 @@ java -jar app.jar
 ```
 Useful for CI/CD, Docker, K8s deployment.
 
-### 🏆 Precedence (highest → lowest):
+### Precedence (highest → lowest):
 ```
 1. Command line argument          ← strongest
 2. Environment variable
@@ -131,7 +131,7 @@ Useful for CI/CD, Docker, K8s deployment.
 
 ---
 
-## 🎨 Loading Visual (when profile=local)
+## Loading Visual (when profile=local)
 
 ```
    App start
@@ -169,7 +169,7 @@ Useful for CI/CD, Docker, K8s deployment.
 
 ---
 
-## 🧪 UserCRUD Project — Real Setup (jo kiya)
+## UserCRUD Project — Real Setup (jo kiya)
 
 ### File structure:
 ```
@@ -213,7 +213,7 @@ spring.datasource.password=rootpass
 
 ---
 
-## 🎯 Switch Commands (one-liner)
+## Switch Commands (one-liner)
 
 ```cmd
 REM Default (local profile from application.properties)
@@ -237,7 +237,7 @@ HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@xxx
 
 ---
 
-## 🌍 Production Use Cases
+## Production Use Cases
 
 ```
 COMMON PROFILES (industry standard):
@@ -268,7 +268,7 @@ docker       → Inside containerized deployment
 
 ---
 
-## 🔥 Multiple Active Profiles
+## Multiple Active Profiles
 
 ```properties
 # application.properties

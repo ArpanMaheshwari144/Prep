@@ -1,4 +1,4 @@
-# 🔄 Type Casting + instanceof — Visual Revision
+# Type Casting + instanceof — Visual Revision
 
 ---
 
@@ -6,16 +6,16 @@
 
 ```
 Imagine 2 containers:
-   🥃 Small glass (int)        — capacity 4 bytes
-   🪣 Big bucket (long)         — capacity 8 bytes
+   Small glass (int)        — capacity 4 bytes
+   Big bucket (long)         — capacity 8 bytes
 ```
 
 ### Widening (Implicit) — Small → Big
 ```
-   🥃 glass (int = 5)
+   glass (int = 5)
         │
         ▼ pour into big bucket
-   🪣 bucket (long = 5L)
+   bucket (long = 5L)
    
    = NO data loss
    = Java does AUTOMATICALLY
@@ -30,10 +30,10 @@ long big = small;          // automatic widening
 
 ### Narrowing (Explicit) — Big → Small
 ```
-   🪣 bucket (long = 5000000000)
+   bucket (long = 5000000000)
         │
         ▼ squeeze into small glass
-   🥃 glass (int = ???)
+   glass (int = ???)
    
    = May LOSE data (overflow)
    = Java FORCES you to cast (explicit)
@@ -103,7 +103,7 @@ Java FORCES cast because:
 ### DANGER — Wrong Downcast
 ```java
 Employee e = new Manager();    // actually a Manager
-Director d = (Director) e;     // ❌ ClassCastException at runtime!
+Director d = (Director) e;     // ClassCastException at runtime!
 ```
 
 ```
@@ -190,7 +190,7 @@ public void processAnimal(Animal a) {
 
 ```java
 Animal a = new Dog();
-Cat c = (Cat) a;              // ❌ ClassCastException
+Cat c = (Cat) a;              // ClassCastException
 
 // Dog is NOT a Cat (siblings, not parent-child)
 // instanceof would have caught this:
@@ -231,4 +231,4 @@ Type Casting Tree:
           └── Downcasting (explicit + instanceof)
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

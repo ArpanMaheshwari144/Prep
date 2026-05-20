@@ -1,14 +1,14 @@
-# 🎯 Strategy Pattern — Algorithm Switching
+# Strategy Pattern — Algorithm Switching
 
 > **Design Patterns: Topic 6 — Behavioral Pattern (Interview Gold)**
 
 ---
 
-## 🎬 STORY — Payment Counter
+## STORY — Payment Counter
 
 > Tu Amazon checkout pe payment select kar raha:
 >
-> 💳 Credit Card / 📱 UPI / 💰 Wallet / 🏦 NetBanking
+> Credit Card / UPI / Wallet / NetBanking
 >
 > Har payment ka **alag algorithm** — but checkout flow same:
 > ```
@@ -21,7 +21,7 @@
 
 ---
 
-## 🤔 The Problem — If-Else Hell
+## The Problem — If-Else Hell
 
 ```java
 public class PaymentService {
@@ -40,14 +40,14 @@ public class PaymentService {
 ```
 
 **Problems:**
-1. 🔴 **God class** — single class 200+ lines
-2. 🔴 **OCP violation** — naya method add = class modify
-3. 🔴 **Hard to test** each algo independently
-4. 🔴 **Coupling** — payment types hardcoded
+1. **God class** — single class 200+ lines
+2. **OCP violation** — naya method add = class modify
+3. **Hard to test** each algo independently
+4. **Coupling** — payment types hardcoded
 
 ---
 
-## ✨ Strategy Solution
+## Strategy Solution
 
 ```java
 // 1. Strategy interface
@@ -97,14 +97,14 @@ service.checkout(500);
 ```
 
 **Benefits:**
-- ✅ Each algorithm in own class (SRP)
-- ✅ Add new payment type → new class only (OCP)
-- ✅ Runtime switching possible
-- ✅ Each tested independently
+- Each algorithm in own class (SRP)
+- Add new payment type → new class only (OCP)
+- Runtime switching possible
+- Each tested independently
 
 ---
 
-## 🎨 VISUAL
+## VISUAL
 
 ```
    CONTEXT                   STRATEGY (interface)         CONCRETE STRATEGIES
@@ -127,7 +127,7 @@ service.checkout(500);
 
 ---
 
-## 🌍 Real-World Examples
+## Real-World Examples
 
 ### 1. **`Comparator`** (Collections.sort)
 ```java
@@ -152,18 +152,18 @@ public PasswordEncoder passwordEncoder() {
 
 ---
 
-## 📐 SOLID Connection
+## SOLID Connection
 
-- **OCP** — Naya strategy add karne mein context unchanged ✅ (perfect example)
-- **SRP** — Each strategy ek algorithm ka responsibility ✅
-- **DIP** — Context interface pe depend, concrete strategies pe nahi ✅
-- **LSP** — Sab strategies interchangeable ✅
+- **OCP** — Naya strategy add karne mein context unchanged (perfect example)
+- **SRP** — Each strategy ek algorithm ka responsibility 
+- **DIP** — Context interface pe depend, concrete strategies pe nahi 
+- **LSP** — Sab strategies interchangeable 
 
 **4 SOLID principles ek pattern mein** — interview gold.
 
 ---
 
-## 🪤 Strategy vs State (common confusion)
+## Strategy vs State (common confusion)
 
 ```
 Strategy:
@@ -179,7 +179,7 @@ State:
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "Strategy pattern kya hai aur kab use karte ho?"**
 
@@ -197,13 +197,13 @@ State:
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"Strategy pattern algorithms ko separate classes mein encapsulate karta — runtime swap possible. If-else chains eliminate, OCP/SRP/DIP/LSP saare follow. Spring's PasswordEncoder + AuthenticationProvider perfect examples."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 Strategy = "Payment counter — choose your method"
@@ -229,18 +229,18 @@ Interview gold:
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "Strategy = State pattern"
-         ❌ Different — Strategy client-swapped, State self-managed
-         ✅ Strategy = behavior choice, State = lifecycle
+Trap 1: "Strategy = State pattern"
+         Different — Strategy client-swapped, State self-managed
+         Strategy = behavior choice, State = lifecycle
 
-🪤 Trap 2: "Strategy slow due to extra class"
-         ❌ Negligible overhead — JIT optimizes
-         ✅ Maintainability gain >> tiny perf cost
+Trap 2: "Strategy slow due to extra class"
+         Negligible overhead — JIT optimizes
+         Maintainability gain >> tiny perf cost
 
-🪤 Trap 3: "Use Strategy for everything with if-else"
-         ❌ Overkill for 2-3 simple cases
-         ✅ Use when 3+ variants OR future expansion expected
+Trap 3: "Use Strategy for everything with if-else"
+         Overkill for 2-3 simple cases
+         Use when 3+ variants OR future expansion expected
 ```

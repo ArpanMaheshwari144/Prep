@@ -1,23 +1,23 @@
-# ⚡ Sync vs Async
+# Sync vs Async
 
 ---
 
-## 🎯 1-Line Analogy
+## 1-Line Analogy
 
 ```
-Sync  = 📞 Phone call (wait until they answer)
-Async = 💬 WhatsApp message (send, do other stuff, reply aata hai)
+Sync  = Phone call (wait until they answer)
+Async = WhatsApp message (send, do other stuff, reply aata hai)
 ```
 
 ---
 
-## 📊 Side by Side
+## Side by Side
 
 ```
 ┌──────────────────┬──────────────────┬──────────────────┐
 │  Feature         │  Sync             │  Async            │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Caller behavior  │ 🛑 WAITS / blocks │ ⚡ Continues       │
+│ Caller behavior  │ WAITS / blocks │ Continues       │
 ├──────────────────┼──────────────────┼──────────────────┤
 │ Response timing  │ Immediate          │ Later (callback,  │
 │                  │ (in same call)     │ event, polling)   │
@@ -26,7 +26,7 @@ Async = 💬 WhatsApp message (send, do other stuff, reply aata hai)
 │                  │ (caller needs       │ (fire and forget) │
 │                  │  callee alive)      │                    │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Simplicity       │ ⚡ Simple to code  │ 🐢 Complex         │
+│ Simplicity       │ Simple to code  │ Complex         │
 │                  │ Linear flow         │ Callbacks/promises│
 ├──────────────────┼──────────────────┼──────────────────┤
 │ Throughput       │ Limited (blocking)│ High (non-blocking)│
@@ -41,7 +41,7 @@ Async = 💬 WhatsApp message (send, do other stuff, reply aata hai)
 
 ---
 
-## 📞 SYNC VISUAL — Phone Call
+## SYNC VISUAL — Phone Call
 
 ```
 CALLER                        CALLEE
@@ -64,7 +64,7 @@ CALLER                        CALLEE
 
 ---
 
-## 💬 ASYNC VISUAL — WhatsApp
+## ASYNC VISUAL — WhatsApp
 
 ```
 CALLER                        CALLEE
@@ -72,9 +72,9 @@ CALLER                        CALLEE
    │ Message: "Place order"       │
    │ ────────────────────────────►│
    │                              │
-   │ Continue work ✅              │ Order processing
-   │ Do other tasks ✅              │ (eventually)
-   │ Drink chai ✅                 │
+   │ Continue work              │ Order processing
+   │ Do other tasks              │ (eventually)
+   │ Drink chai                 │
    │                              │
    │ ◄────── Notification: "Order #123 placed"
    │                              │
@@ -87,7 +87,7 @@ CALLER                        CALLEE
 
 ---
 
-## 🔧 IMPLEMENTATION PATTERNS
+## IMPLEMENTATION PATTERNS
 
 ```
 SYNC IMPLEMENTATION:
@@ -130,10 +130,10 @@ ASYNC IMPLEMENTATION OPTIONS:
 
 ---
 
-## 🎯 SCENARIOS — KAB KYA USE KARE?
+## SCENARIOS — KAB KYA USE KARE?
 
 ```
-✅ SYNC USE KARO WHEN:
+SYNC USE KARO WHEN:
 
    • User waiting for response (UI form submit)
    • Result needed immediately (price calculation)
@@ -147,7 +147,7 @@ ASYNC IMPLEMENTATION OPTIONS:
    • Payment gateway redirect
    • DB read for user profile
 
-✅ ASYNC USE KARO WHEN:
+ASYNC USE KARO WHEN:
 
    • Long-running tasks (image processing, video encode)
    • Non-blocking required (high throughput)
@@ -166,7 +166,7 @@ ASYNC IMPLEMENTATION OPTIONS:
 
 ---
 
-## 🎬 REAL WORLD — E-Commerce Order
+## REAL WORLD — E-Commerce Order
 
 ```
 User clicks "Place Order":
@@ -194,7 +194,7 @@ User clicks "Place Order":
 
 ---
 
-## 💎 SPRING BOOT ANGLE
+## SPRING BOOT ANGLE
 
 ```
 SYNC (default):
@@ -222,7 +222,7 @@ ASYNC:
 
 ---
 
-## 🚨 ASYNC GOTCHAS
+## ASYNC GOTCHAS
 
 ```
 1. Error handling harder
@@ -251,7 +251,7 @@ ASYNC:
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "Synchronous calls block the caller until response —
@@ -273,11 +273,11 @@ ASYNC:
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-Sync  = 📞 Phone call (blocking, wait)
-Async = 💬 WhatsApp (non-blocking, continue)
+Sync  = Phone call (blocking, wait)
+Async = WhatsApp (non-blocking, continue)
 
 Sync: simple, slow, tight coupling
 Async: complex, fast, loose coupling
@@ -292,4 +292,4 @@ Tools:
           webhooks, message queues
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

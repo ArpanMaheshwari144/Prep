@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — Immutable Class Kyun Banate?
+## WHY — Immutable Class Kyun Banate?
 
 → **Thread safety FREE** (koi modify nahi kar sakta = no sync)
 → **HashMap key safe** (hashCode kabhi nahi badle)
@@ -13,7 +13,7 @@
 
 ---
 
-## 📖 STORY — BankAccount Bug
+## STORY — BankAccount Bug
 
 → Tune BankAccount class banayi
 → Kisi function mein pass kiya — us function ne andar `account.setBalance(0)` kar diya
@@ -25,7 +25,7 @@
 
 ---
 
-## 💻 Code (4 Rules)
+## Code (4 Rules)
 
 ```java
 public final class BankAccount {              // Rule 1 — final class
@@ -43,20 +43,20 @@ public final class BankAccount {              // Rule 1 — final class
 
 // Badlana ho? Naya object banao — purana safe
 BankAccount old = new BankAccount("Arpan", 5000);
-BankAccount updated = new BankAccount("Arpan", 4000);   // old wahi hai ✅
+BankAccount updated = new BankAccount("Arpan", 4000);   // old wahi hai 
 ```
 
 ---
 
-## 🔴 TRAP — List Field Hota Toh?
+## TRAP — List Field Hota Toh?
 
 ```java
-// 🔴 BAD
+// BAD
 public BankAccount(List<String> txns) {
     this.txns = txns;                  // bahar wali list ka REFERENCE!
 }                                       // koi bhi modify kar sakta!
 
-// ✅ FIX — defensive copy in constructor + getter
+// FIX — defensive copy in constructor + getter
 public BankAccount(List<String> txns) {
     this.txns = new ArrayList<>(txns); // apni copy banao
 }
@@ -69,13 +69,13 @@ public List<String> getTxns() {
 
 ---
 
-## 🧠 Visualization — Reference Trap
+## Visualization — Reference Trap
 
 ```
                   Immutable Class — Reference Trap
 
 ╔════════════════════════════════════════════════════════════╗
-║ ❌ BAD — same reference store                              ║
+║ BAD — same reference store                              ║
 ╚════════════════════════════════════════════════════════════╝
 
 STACK              HEAP
@@ -88,7 +88,7 @@ caller list.add("Python") → student ki "immutable" state BHI badli!
 
 
 ╔════════════════════════════════════════════════════════════╗
-║ ✅ FIX — defensive copy                                    ║
+║ FIX — defensive copy                                    ║
 ╚════════════════════════════════════════════════════════════╝
 
 STACK              HEAP
@@ -107,6 +107,6 @@ ALAG objects → caller modify kare, Student safe.
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"An immutable class uses final class, private final fields, no setters, and constructor-only initialization. For mutable fields like List, always use defensive copies — otherwise the reference can be modified externally."*

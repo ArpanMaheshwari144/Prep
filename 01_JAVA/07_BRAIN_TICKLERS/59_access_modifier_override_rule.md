@@ -4,28 +4,28 @@
 
 ---
 
-## 📖 STORY
+## STORY
 
 → Parent class mein method `public` tha. Child ne override karke **`private` kar diya** — **compile error**
 → Rule: **Child mein access modifier SAME ya WIDER ho sakta**, NARROWER nahi
 
 ```java
-// ❌ GALAT — narrower
+// GALAT — narrower
 class Parent { public void show() { } }
 class Child extends Parent {
-    private void show() { }      // 🔴 COMPILE ERROR — public se private = narrow
+    private void show() { }      // COMPILE ERROR — public se private = narrow
 }
 
-// ✅ SAHI — same ya wider
+// SAHI — same ya wider
 class Parent { protected void show() { } }
 class Child extends Parent {
-    public void show() { }       // ✅ protected → public = WIDER, valid
+    public void show() { }       // protected → public = WIDER, valid
 }
 ```
 
 ---
 
-## 🟡 WHY?
+## WHY?
 
 → Caller ne **parent reference se** call kiya:
 ```java
@@ -37,18 +37,18 @@ p.show();      // public expect kiya
 
 ---
 
-## 📊 Allowed Transitions
+## Allowed Transitions
 
 ```
 Parent              Child (allowed)
-private          ❌ override hi nahi hota
-default      →   default, protected, public ✅
-protected    →   protected, public ✅
-public       →   public ONLY ✅
+private          override hi nahi hota
+default      →   default, protected, public 
+protected    →   protected, public 
+public       →   public ONLY 
 ```
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Override mein child ka access modifier SAME ya WIDER hona chahiye — never narrower. Public can only stay public, protected can widen to public, private cannot be overridden at all."*

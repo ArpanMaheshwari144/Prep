@@ -1,7 +1,7 @@
 package com.arpan.bank.exception;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    AccountNotFoundException = CUSTOM exception
 //    Agar accountId se account nahi mila → throw hoti
 // ═══════════════════════════════════════════════════════════════════════

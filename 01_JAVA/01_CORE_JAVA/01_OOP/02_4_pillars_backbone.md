@@ -4,7 +4,7 @@
 
 ---
 
-## 🎬 STORY — Office mein 4 Problems, 4 Solutions
+## STORY — Office mein 4 Problems, 4 Solutions
 
 > Imagine **office mein tu architect hai** — 4 alag problems aati hain, har problem ka solution = ek pillar.
 >
@@ -20,7 +20,7 @@
 
 ---
 
-## 🏛️ THE 4 PILLARS — VISUAL
+## THE 4 PILLARS — VISUAL
 
 ```
                      OOP BUILDING
@@ -38,22 +38,22 @@
      │ private  │   │ extends  │   │ alag work│   │ hide HOW │
      │ + getters│   │          │   │ runtime  │   │          │
      └─────────┘   └─────────┘   └──────────┘   └──────────┘
-        🔒              🌳             🎭              🎪
+                                              
        LOCK          TREE         MASKS            CURTAIN
 ```
 
 ---
 
-## 🔒 1. ENCAPSULATION — Hide Internal State
+## 1. ENCAPSULATION — Hide Internal State
 
 ### Real-world analogy: ATM Machine
 
 ```
    You see:           Inside (hidden):
    ─────────          ─────────────────
-   📱 Touchscreen     🔌 Circuits
-   🔢 Buttons         💾 Memory chips
-   💵 Cash slot       📡 Network calls
+   Touchscreen     Circuits
+   Buttons         Memory chips
+   Cash slot       Network calls
    
    Tu sirf BUTTONS dabata — circuit kaise kaam karta, mat soch.
    ATM ne tujhe SAFE INTERFACE diya.
@@ -63,40 +63,40 @@
 
 ```java
 public class BankAccount {
-    private double balance;          // 🔒 hidden
+    private double balance;          // hidden
     
-    public double getBalance() {     // 🔓 controlled access
+    public double getBalance() {     // controlled access
         return balance;
     }
     
     public void deposit(double amount) {
-        if (amount <= 0) throw new IllegalArgumentException();   // ✅ validation
+        if (amount <= 0) throw new IllegalArgumentException();   // validation
         balance += amount;
     }
     
     public void withdraw(double amount) {
-        if (amount > balance) throw new InsufficientFunds();      // ✅ rule enforced
+        if (amount > balance) throw new InsufficientFunds();      // rule enforced
         balance -= amount;
     }
 }
 
 // Usage:
 BankAccount acc = new BankAccount();
-acc.balance = -5000;      // ❌ COMPILE ERROR (private)
-acc.deposit(-5000);       // ✅ Caught by validation → exception
+acc.balance = -5000;      // COMPILE ERROR (private)
+acc.deposit(-5000);       // Caught by validation → exception
 ```
 
-### 💡 Why Encapsulation Wins
+### Why Encapsulation Wins
 
 | Without | With |
 |---|---|
-| `acc.balance = -5000;` ❌ data corrupt | `setter validation` ✅ rule enforced |
+| `acc.balance = -5000;` data corrupt | `setter validation` rule enforced |
 | Internal state exposed | Internal hidden, controlled access |
 | Class invariant breakable | Invariant guaranteed |
 
 ---
 
-## 🌳 2. INHERITANCE — Code Reuse via Family Tree
+## 2. INHERITANCE — Code Reuse via Family Tree
 
 ### Real-world analogy: Family Tree
 
@@ -125,12 +125,12 @@ public class Dog extends Animal {
 
 // Usage:
 Dog d = new Dog();
-d.eat();      // ✅ inherited from Animal
-d.sleep();    // ✅ inherited
-d.bark();     // ✅ Dog's own
+d.eat();      // inherited from Animal
+d.sleep();    // inherited
+d.bark();     // Dog's own
 ```
 
-### 💡 Inheritance Rules
+### Inheritance Rules
 
 | Rule | Example |
 |---|---|
@@ -142,7 +142,7 @@ d.bark();     // ✅ Dog's own
 
 ---
 
-## 🎭 3. POLYMORPHISM — Same Naam, Alag Kaam
+## 3. POLYMORPHISM — Same Naam, Alag Kaam
 
 ### Real-world analogy: Same Word, Different Meaning
 
@@ -186,7 +186,7 @@ for (Shape s : shapes) {
 }
 ```
 
-### 🎨 Visual — Runtime Dispatch
+### Visual — Runtime Dispatch
 
 ```
    Shape s = new Circle(5);
@@ -212,17 +212,17 @@ for (Shape s : shapes) {
 
 ---
 
-## 🎪 4. ABSTRACTION — Show WHAT, Hide HOW
+## 4. ABSTRACTION — Show WHAT, Hide HOW
 
 ### Real-world analogy: TV Remote
 
 ```
    You press:           TV does (hidden):
    ──────────           ─────────────────
-   🔘 Power button      🔧 Voltage regulation
-                        📡 Signal processing
-                        💡 LED activation
-                        🎨 Pixel rendering
+   Power button      Voltage regulation
+                        Signal processing
+                        LED activation
+                        Pixel rendering
    
    Tu sirf BUTTON dabata — TV ka internal circuit kaise kaam karta, jaane ki zaroorat nahi.
    Remote ne tujhe ABSTRACT interface diya.
@@ -260,7 +260,7 @@ Payment p = new UPIPayment();
 p.process(1000);   // pay() ka actual implementation hidden — caller ko fark nahi
 ```
 
-### 💡 Abstraction vs Encapsulation (interview gotcha)
+### Abstraction vs Encapsulation (interview gotcha)
 
 | | Abstraction | Encapsulation |
 |---|---|---|
@@ -273,7 +273,7 @@ p.process(1000);   // pay() ka actual implementation hidden — caller ko fark n
 
 ---
 
-## 📊 4 PILLARS COMPARISON TABLE
+## 4 PILLARS COMPARISON TABLE
 
 | Pillar | Java mechanism | Solves |
 |---|---|---|
@@ -284,7 +284,7 @@ p.process(1000);   // pay() ka actual implementation hidden — caller ko fark n
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "OOP ke 4 pillars kya hain aur kyu zaroori?"**
 
@@ -304,7 +304,7 @@ p.process(1000);   // pay() ka actual implementation hidden — caller ko fark n
 
 ---
 
-## 💎 POWER PHRASES (1-line per pillar)
+## POWER PHRASES (1-line per pillar)
 
 | Pillar | Phrase |
 |---|---|
@@ -315,13 +315,13 @@ p.process(1000);   // pay() ka actual implementation hidden — caller ko fark n
 
 ---
 
-## 🧠 MEMORY HOOK — One liner each
+## MEMORY HOOK — One liner each
 
 ```
-ENCAPSULATION  🔒  → Private fields + getters/setters     "Andar ki baat andar"
-INHERITANCE    🌳  → extends keyword, parent code reuse   "Child gets parent's stuff"
-POLYMORPHISM   🎭  → Same name, alag behavior runtime    "Same word, different meanings"
-ABSTRACTION    🎪  → abstract class / interface          "Show WHAT, hide HOW"
+ENCAPSULATION   → Private fields + getters/setters     "Andar ki baat andar"
+INHERITANCE     → extends keyword, parent code reuse   "Child gets parent's stuff"
+POLYMORPHISM    → Same name, alag behavior runtime    "Same word, different meanings"
+ABSTRACTION     → abstract class / interface          "Show WHAT, hide HOW"
 
 The 4 problems they solve:
    Encap     → DATA PROTECTION
@@ -332,22 +332,22 @@ The 4 problems they solve:
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "Encapsulation = data hiding only"
-         ❌ Incomplete — also enforces invariants via setters
-         ✅ Hide + protect via controlled access
+Trap 1: "Encapsulation = data hiding only"
+         Incomplete — also enforces invariants via setters
+         Hide + protect via controlled access
 
-🪤 Trap 2: "Java multiple inheritance support karta"
-         ❌ Classes mein NAHI — sirf interfaces multiple
-         ✅ extends 1 class, implements multiple interfaces
+Trap 2: "Java multiple inheritance support karta"
+         Classes mein NAHI — sirf interfaces multiple
+         extends 1 class, implements multiple interfaces
 
-🪤 Trap 3: "Overloading polymorphism nahi hai"
-         ❌ Compile-time polymorphism hai (static)
-         ✅ Overriding = runtime polymorphism (dynamic)
+Trap 3: "Overloading polymorphism nahi hai"
+         Compile-time polymorphism hai (static)
+         Overriding = runtime polymorphism (dynamic)
 
-🪤 Trap 4: "Abstract class = interface"
-         ❌ Different — abstract can have constructors, fields, concrete methods
-         ✅ Interface (Java 8+) can have default/static, but no state
+Trap 4: "Abstract class = interface"
+         Different — abstract can have constructors, fields, concrete methods
+         Interface (Java 8+) can have default/static, but no state
 ```

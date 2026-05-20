@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Background Thread Loop
+## STORY — Background Thread Loop
 
 → Ek **background thread** tha jo **flag check karke** loop chal raha tha
 → Doosre thread ne **flag false kar diya** — lekin **pehla thread band nahi hua**
@@ -15,7 +15,7 @@
 
 ---
 
-## 🧠 Visualization — CPU Cache Problem
+## Visualization — CPU Cache Problem
 
 ```
                    MAIN MEMORY (RAM)
@@ -28,8 +28,8 @@
    L1 Cache: running = true             L1 Cache: running = true
 
   Thread 2 ne main memory mein false kiya:
-   MAIN: running = false ✅
-   T1 cache: running = true ❌  (purana!)
+   MAIN: running = false 
+   T1 cache: running = true  (purana!)
    T2 cache: running = false
 
   Thread 1 ko PATA HI NAHI CHALA — loop chalta raha!
@@ -39,37 +39,37 @@
 
 ---
 
-## 💻 Code
+## Code
 
-### ❌ Without volatile — bug
+### Without volatile — bug
 ```java
 class Worker implements Runnable {
-    private boolean running = true;          // ⚠️ cache risk
+    private boolean running = true;          // cache risk
 
     public void stop() { running = false; }
 
     public void run() {
-        while (running) { /* kaam */ }       // 🔴 cache se padha — false kabhi nahi dikha
+        while (running) { /* kaam */ }       // cache se padha — false kabhi nahi dikha
     }
 }
 ```
 
-### ✅ With volatile — fix
+### With volatile — fix
 ```java
 class Worker implements Runnable {
-    private volatile boolean running = true;  // ✅ cache band, main memory
+    private volatile boolean running = true;  // cache band, main memory
 
     public void stop() { running = false; }
 
     public void run() {
-        while (running) { /* kaam */ }        // ✅ har read main memory se
+        while (running) { /* kaam */ }        // har read main memory se
     }
 }
 ```
 
 ---
 
-## 🔴 TRAP — `volatile` ≠ Atomic
+## TRAP — `volatile` ≠ Atomic
 
 > **`volatile` SIRF visibility fix karta. ATOMICITY nahi.**
 > **`count++` jaisa compound operation `volatile` se SAFE NAHI hota.**
@@ -82,33 +82,33 @@ class Worker implements Runnable {
 `volatile` guarantee karta READ latest value milegi. Lekin **2 threads dono ne `count = 5` padha**, dono ne `6` likha → ek **increment LOST**.
 
 ```java
-// 🔴 GALAT — volatile compound operation safe nahi
+// GALAT — volatile compound operation safe nahi
 volatile int count = 0;
 count++;                         // race condition
 
-// ✅ FIX 1 — synchronized
+// FIX 1 — synchronized
 synchronized void inc() { count++; }
 
-// ✅ FIX 2 — AtomicInteger
+// FIX 2 — AtomicInteger
 AtomicInteger count = new AtomicInteger(0);
 count.incrementAndGet();         // hardware-level atomic
 ```
 
 ---
 
-## 📊 synchronized vs volatile vs AtomicInteger
+## synchronized vs volatile vs AtomicInteger
 
 | | volatile | synchronized | AtomicInteger |
 |--|---------|-------------|---------------|
-| **Visibility** | ✅ | ✅ | ✅ |
-| **Atomicity** | ❌ | ✅ | ✅ |
+| **Visibility** | | | |
+| **Atomicity** | | | |
 | **Lock?** | NO | YES | NO (CAS — hardware) |
 | **Performance** | Fastest | Slowest | Fast (counters ke liye best) |
 | **Use case** | Flag (read-mostly) | Critical sections | Counters/numbers |
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"`volatile` ensures every thread reads the latest value from main memory instead of CPU cache — it solves visibility but NOT atomicity. For compound operations like increment, use `synchronized` or `AtomicInteger`."*
 

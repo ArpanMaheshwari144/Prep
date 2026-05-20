@@ -4,7 +4,7 @@ import com.arpan.bank.model.Account;
 import java.util.*;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    AccountRepository ka CONCRETE implementation
 //    HashMap mein accounts store karta
 //    Production mein → MySQL/Mongo wala class aayega yahaan
@@ -41,11 +41,11 @@ import java.util.*;
 //       Interface contract enforce
 //
 // WHY DEFENSIVE COPY?
-//    WITHOUT: caller.clear() ne internal HashMap empty kar diya ❌
+//    WITHOUT: caller.clear() ne internal HashMap empty kar diya 
 //    WITH:    new ArrayList<>(...) returns NEW list
-//             Caller modify only on copy ✅
+//             Caller modify only on copy 
 //
-// 🔑 HashMap vs TreeMap — WHY HashMap?
+// HashMap vs TreeMap — WHY HashMap?
 //    ┌──────────────┬─────────────┬─────────────┐
 //    │  Operation   │  HashMap    │  TreeMap    │
 //    ├──────────────┼─────────────┼─────────────┤
@@ -76,7 +76,7 @@ import java.util.*;
 //       • NO sorted iteration needed
 //       = HashMap perfect
 //
-// 🔑 Optional.ofNullable() INTERNAL:
+// Optional.ofNullable() INTERNAL:
 //    HashMap.get(key) contract:
 //       Found?    → returns value
 //       Not found? → returns NULL
@@ -92,9 +92,9 @@ import java.util.*;
 //       Not?   → null    → ofNullable → Optional.empty()
 //
 //    of vs ofNullable vs empty:
-//       Optional.of(val)         → ⚠️ NPE if val null
+//       Optional.of(val)         → NPE if val null
 //                                   "SURE hai value hai"
-//       Optional.ofNullable(val) → ✅ safe handles null
+//       Optional.ofNullable(val) → safe handles null
 //                                   "Pata nahi null hai ya nahi"
 //       Optional.empty()         → explicit empty
 //
@@ -108,9 +108,9 @@ import java.util.*;
 //           return value == null ? empty() : of(value);
 //       }
 //
-// 🎨 PATTERN: Repository (concrete implementation)
+// PATTERN: Repository (concrete implementation)
 //
-// 📐 SOLID:
+// SOLID:
 //    LSP — Substitutable for any AccountRepository impl
 //          Replace karke MySQLAccountRepository daal de
 //          AccountService UNCHANGED works

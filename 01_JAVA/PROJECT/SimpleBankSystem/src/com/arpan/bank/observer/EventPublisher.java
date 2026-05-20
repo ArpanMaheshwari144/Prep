@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    EventPublisher = OBSERVER pattern ka HUB
 //    Subscribers list rakhta
 //    Event aaye → sab listeners ko notify karta
 //    Service event publish karti — publisher distribute karta
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🎨 PATTERN: OBSERVER (Pub-Sub) — HUB ROLE
+// PATTERN: OBSERVER (Pub-Sub) — HUB ROLE
 //
 // VISUAL — FULL FLOW:
 //    AccountService.transfer()
@@ -68,7 +68,7 @@ import java.util.List;
 //    3. for-each loop
 //       Saare listeners iterate, notify each
 //
-// 📐 SOLID:
+// SOLID:
 //    OCP — Naya listener add? Just naya class + subscribe
 //          Publisher code UNCHANGED
 //          = Open for extension via plug-in
@@ -105,7 +105,7 @@ import java.util.List;
 //    • WebSocket events
 //    = All same Observer pattern, scaled differently
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "Observer pattern transactions ke liye implement kiya.
 //     EventPublisher publishes events, multiple EventListener
 //     subscribers register hote. Publisher koi specific listener

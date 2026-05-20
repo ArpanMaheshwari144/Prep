@@ -15,14 +15,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    JwtFilter = SECURITY GUARD at building gate
 //    Every request gate pe roke → token check → valid? andar bhej
 //    Invalid? chain continue without auth (401 later)
 // ═══════════════════════════════════════════════════════════════════════
 //
 // VISUAL — OFFICE GUARD ANALOGY:
-//    🚶 You              🛡️ Guard           🏢 Office
+//    You              Guard           Office
 //    (request)          (JwtFilter)        (controller)
 //       │                   │                  │
 //       │   "ID card?"      │                  │
@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpServletResponse;
 //       │                   │ • signature?     │
 //       │                   │ • expired?       │
 //       │                   │                  │
-//       │   ✅ Valid         │ log book entry   │
+//       │   Valid         │ log book entry   │
 //       │ ──────────────►   │ ───────────────►│
 //       │                                       │
 //       │                              "Welcome Arpan"
@@ -57,7 +57,7 @@ import jakarta.servlet.http.HttpServletResponse;
 //         ▼
 //    Controller reaches → knows "current user is Arpan"
 //
-// 🔑 extends OncePerRequestFilter WHY?
+// extends OncePerRequestFilter WHY?
 //    Spring filter chain mein same filter multiple baar add ho sakta
 //       = Same banda 5 baar gate pe rokte (redundant)
 //
@@ -73,7 +73,7 @@ import jakarta.servlet.http.HttpServletResponse;
 //         ↓
 //    CSRF (disabled — JWT stateless)
 //         ↓
-//    JwtFilter ⭐  ← TU YAHAN
+//    JwtFilter  ← TU YAHAN
 //         ↓
 //    UPAuthFilter (Spring built-in)
 //         ↓
@@ -81,7 +81,7 @@ import jakarta.servlet.http.HttpServletResponse;
 //         ↓
 //    Controller
 //
-// 🔑 "Bearer " PREFIX:
+// "Bearer " PREFIX:
 //    RFC 6750 standard:
 //       Authorization: Bearer eyJhbGc...
 //
@@ -90,7 +90,7 @@ import jakarta.servlet.http.HttpServletResponse;
 //
 //    substring(7) = "Bearer " (7 chars) hata ke pure token
 //
-// 🔑 SecurityContextHolder — Thread-local "Log Book":
+// SecurityContextHolder — Thread-local "Log Book":
 //    Imagine office WHITEBOARD:
 //       "Right now logged in: Arpan, role: ADMIN"
 //
@@ -103,7 +103,7 @@ import jakarta.servlet.http.HttpServletResponse;
 //    Without filter: EMPTY (anonymous)
 //    With filter:    FULL (authenticated)
 //
-// 🔑 UsernamePasswordAuthenticationToken — 3 PIECES:
+// UsernamePasswordAuthenticationToken — 3 PIECES:
 //    new UsernamePasswordAuthenticationToken(
 //       PRINCIPAL,      ← WHO (UserDetails object)
 //       CREDENTIALS,    ← password (null after JWT verify — already trusted)
@@ -138,14 +138,14 @@ import jakarta.servlet.http.HttpServletResponse;
 //            ↓
 //       SecurityConfig allows /auth/** without auth
 //
-// 📐 SOLID:
+// SOLID:
 //    SRP — Sirf token extraction + validation per request
 //          No business logic
 //    DIP — JwtService + CustomUserDetailsService injected
 //    OCP — Naya auth type (API key)? Add another filter
 //          JwtFilter unchanged
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "JwtFilter extends OncePerRequestFilter — guarantees single
 //     execution per request.
 //
@@ -164,7 +164,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    // 🛠️ Guard ke 2 tools:
+    // Guard ke 2 tools:
     //   jwtService → "ID card scanner" (token validate karta)
     //   userDetailsService → "HR ko phone karne ka number"
     //                        (employee details fetch karta)
@@ -177,7 +177,7 @@ public class JwtFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
-    // 🎬 doFilterInternal — har request pe call hota
+    // doFilterInternal — har request pe call hota
     // (OncePerRequestFilter ka contract — implement zaroor karna)
     @Override
     protected void doFilterInternal(
@@ -198,13 +198,13 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            // 🚪 Card nahi laya? Theek hai — chain continue karega bina auth.
+            // Card nahi laya? Theek hai — chain continue karega bina auth.
             //    Agar protected endpoint hai → aage Authorization filter 401 dega.
             chain.doFilter(request, response);
             return;
         }
 
-        // ✂️  "Bearer " prefix kaat — sirf token chahiye
+        //  "Bearer " prefix kaat — sirf token chahiye
         //     "Bearer eyJhbGc..."  →  "eyJhbGc..."
         String token = authHeader.substring(7);
 
@@ -216,9 +216,9 @@ public class JwtFilter extends OncePerRequestFilter {
         //      • Card expire to nahi? (exp claim < now?)
         //      • Format theek hai? (3 parts dot-separated)
         //
-        //  Koi bhi check fail = 🚫 reject
+        //  Koi bhi check fail = reject
         if (!jwtService.isValid(token)) {
-            // ❌ Invalid card. SecurityContext set NAHI → downstream 401.
+            // Invalid card. SecurityContext set NAHI → downstream 401.
             chain.doFilter(request, response);
             return;
         }
@@ -249,20 +249,20 @@ public class JwtFilter extends OncePerRequestFilter {
             //  Downstream code (controller, @PreAuthorize) iska use karta
             UsernamePasswordAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(
-                    userDetails,                    // 👤 PRINCIPAL: kaun hai
-                    null,                            // 🔑 CREDENTIALS: already verified
-                    userDetails.getAuthorities()     // 🎫 PERMISSIONS: ROLE_USER / ROLE_ADMIN
+                    userDetails,                    // PRINCIPAL: kaun hai
+                    null,                            // CREDENTIALS: already verified
+                    userDetails.getAuthorities()     // PERMISSIONS: ROLE_USER / ROLE_ADMIN
                 );
 
-            // 📋 Extra info attach (IP, session, etc.) — useful audit logs ke liye
+            // Extra info attach (IP, session, etc.) — useful audit logs ke liye
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            // 📖 Log book mein entry karo (thread-local context)
+            // Log book mein entry karo (thread-local context)
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
         // ════════════════════════════════════════════════════════
-        //  ✅ STEP 6: GATE OPEN — andar jane do!
+        //  STEP 6: GATE OPEN — andar jane do!
         // ════════════════════════════════════════════════════════
         //  Filter chain continue → next filter → eventually controller.
         chain.doFilter(request, response);

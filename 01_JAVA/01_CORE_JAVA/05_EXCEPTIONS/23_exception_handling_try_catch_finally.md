@@ -4,7 +4,7 @@
 
 ---
 
-## 🧠 Throwable Hierarchy
+## Throwable Hierarchy
 
 ```
                  Throwable
@@ -27,7 +27,7 @@ RECOVER NAHI HOTA               /            \
 
 ---
 
-## 📖 STORY — DB se Data Fetch
+## STORY — DB se Data Fetch
 
 → Tune DB se data fetch karna tha
 → Kahin **connection fail**, kahin **query fail**, kahin **result empty**
@@ -39,17 +39,17 @@ RECOVER NAHI HOTA               /            \
 
 ---
 
-## 💻 Code
+## Code
 
 ### Basic Flow
 ```java
 try {
-    int result = 10 / 0;                       // 🔴 ArithmeticException
+    int result = 10 / 0;                       // ArithmeticException
     System.out.println(result);                // skip ho jayega
 } catch (ArithmeticException e) {
-    System.out.println("divide by zero!");     // ✅ pakda
+    System.out.println("divide by zero!");     // pakda
 } finally {
-    System.out.println("finally chala");       // ✅ HAMESHA
+    System.out.println("finally chala");       // HAMESHA
 }
 ```
 
@@ -57,14 +57,14 @@ try {
 ```java
 try {
     // risky code
-} catch (IOException | SQLException e) {       // ✅ multi-catch
+} catch (IOException | SQLException e) {       // multi-catch
     System.out.println(e.getMessage());
 }
 ```
 
 ---
 
-## 🔴 TRAP 1 — `finally` after return
+## TRAP 1 — `finally` after return
 
 ```java
 int test() {
@@ -80,7 +80,7 @@ int test() {
 ```java
 int test2() {
     try { return 1; }
-    finally { return 2; }                      // 🔴 2 return hoga, 1 LOST!
+    finally { return 2; }                      // 2 return hoga, 1 LOST!
 }
 ```
 
@@ -88,25 +88,25 @@ int test2() {
 
 ---
 
-## 🔴 TRAP 2 — Multi-catch order
+## TRAP 2 — Multi-catch order
 
 > **Parent exception pehle likha toh child catch UNREACHABLE = compile error!**
 
 ```java
-catch (Exception e) { ... }              // 🔴 pehle nahi
+catch (Exception e) { ... }              // pehle nahi
 catch (NullPointerException e) { ... }   // unreachable
 ```
 
 ---
 
-## 🔴 TRAP 3 — `catch(Exception e)` sab pakda?
+## TRAP 3 — `catch(Exception e)` sab pakda?
 
 > **Lekin `Error` (OutOfMemoryError) NAHI pakdega.**
 > **Error = JVM level, recover nahi hota.**
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"The `finally` block always executes regardless of whether an exception was thrown or a return statement was hit — the only exception is `System.exit()`. Never put a return statement in `finally` as it will silently override the return from `try`."*
 

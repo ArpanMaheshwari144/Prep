@@ -1,12 +1,12 @@
-# ⚡ Process vs Thread
+# Process vs Thread
 
 ---
 
-## 🎯 1-Line Analogy
+## 1-Line Analogy
 
 ```
-Process = 🏢 Building (separate building, own resources)
-Thread  = 🚪 Room in building (shares building resources)
+Process = Building (separate building, own resources)
+Thread  = Room in building (shares building resources)
 ```
 
 ```
@@ -19,7 +19,7 @@ RULE:
 
 ---
 
-## 📊 Side by Side
+## Side by Side
 
 ```
 ┌──────────────────┬──────────────────┬──────────────────┐
@@ -28,17 +28,17 @@ RULE:
 │ Memory           │ OWN address space │ SHARED with other │
 │                  │ Isolated           │ threads of process│
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Creation cost    │ 🐢 Expensive       │ ⚡ Cheap          │
+│ Creation cost    │ Expensive       │ Cheap          │
 │                  │ (fork, copy memory)│ (just stack)      │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Context switch   │ 🐢 Slow            │ ⚡ Fast            │
+│ Context switch   │ Slow            │ Fast            │
 │                  │ Full state swap     │ Minimal state     │
 ├──────────────────┼──────────────────┼──────────────────┤
 │ Communication    │ IPC required       │ Shared memory     │
 │                  │ (pipes, sockets,    │ (direct access)   │
 │                  │ shared memory)      │                    │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Isolation        │ ✅ Strong          │ ❌ Weak (shared)  │
+│ Isolation        │ Strong          │ Weak (shared)  │
 │                  │ One crash safe     │ One thread crash  │
 │                  │                     │ = whole process    │
 ├──────────────────┼──────────────────┼──────────────────┤
@@ -51,7 +51,7 @@ RULE:
 
 ---
 
-## 🏢 BUILDING ANALOGY VISUAL
+## BUILDING ANALOGY VISUAL
 
 ```
 PROCESS = SEPARATE BUILDINGS
@@ -69,7 +69,7 @@ PROCESS = SEPARATE BUILDINGS
    └─────────────┘    └─────────────┘    └─────────────┘
    
    = Isolated, no shared memory
-   = Chrome crash → VSCode OK ✅
+   = Chrome crash → VSCode OK 
 ```
 
 ```
@@ -98,7 +98,7 @@ THREADS = ROOMS IN SAME BUILDING (Process)
 
 ---
 
-## 🎯 CONCRETE EXAMPLE
+## CONCRETE EXAMPLE
 
 ```
 Chrome browser:
@@ -130,16 +130,16 @@ Spring Boot app:
 
 ---
 
-## 💡 SHARED MEMORY = POWER + DANGER
+## SHARED MEMORY = POWER + DANGER
 
 ```
 THREADS share memory:
 
-   ✅ FAST communication:
+   FAST communication:
       Thread 1: counter = 5
       Thread 2: reads counter → 5 (instant)
    
-   ❌ RACE CONDITIONS:
+   RACE CONDITIONS:
       Both threads do: counter++
       
       Thread 1 reads counter (5)
@@ -156,15 +156,15 @@ THREADS share memory:
 ```
 PROCESSES don't share memory:
 
-   ✅ NO RACE CONDITIONS
-   ❌ Slow communication:
+   NO RACE CONDITIONS
+   Slow communication:
       Need IPC (sockets, pipes, shared memory file)
       Serialization overhead
 ```
 
 ---
 
-## 🔄 CONTEXT SWITCH COST
+## CONTEXT SWITCH COST
 
 ```
 PROCESS SWITCH:
@@ -189,10 +189,10 @@ THREAD SWITCH:
 
 ---
 
-## 🎯 WHEN TO USE WHAT
+## WHEN TO USE WHAT
 
 ```
-✅ USE PROCESSES WHEN:
+USE PROCESSES WHEN:
    • Strong isolation needed (security)
    • One crash shouldn't kill others
    • Different programs (Chrome + VSCode)
@@ -204,7 +204,7 @@ THREAD SWITCH:
    • K8s pods
    • Different microservices
 
-✅ USE THREADS WHEN:
+USE THREADS WHEN:
    • Same program, parallel work
    • Need shared memory (fast)
    • Lightweight concurrency
@@ -219,7 +219,7 @@ THREAD SWITCH:
 
 ---
 
-## 💎 JAVA SPECIFIC
+## JAVA SPECIFIC
 
 ```
 Java JVM = ONE process
@@ -242,7 +242,7 @@ Spring Boot 3.2+ supports virtual threads
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "A process is an instance of a program with its own
@@ -265,11 +265,11 @@ Spring Boot 3.2+ supports virtual threads
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-Process = 🏢 Building (own everything, isolated)
-Thread  = 🚪 Room (shares building stuff)
+Process = Building (own everything, isolated)
+Thread  = Room (shares building stuff)
 
 Process: Slow create, isolated, no race
 Thread:  Fast create, shared, race conditions
@@ -285,4 +285,4 @@ Rule:
 Modern Java: Virtual threads (Project Loom)
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

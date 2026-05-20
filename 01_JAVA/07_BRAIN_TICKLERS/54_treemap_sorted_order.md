@@ -4,21 +4,21 @@
 
 ---
 
-## 🎬 STORY — Library Catalog
+## STORY — Library Catalog
 
 > Imagine **library mein 3 system**:
 >
-> 📦 **HashMap** = *"Books pile up randomly"* — fast pickup, but order pata nahi
+> **HashMap** = *"Books pile up randomly"* — fast pickup, but order pata nahi
 >
-> 📚 **LinkedHashMap** = *"Books shelved jaise rakhi"* — insertion order maintained
+> **LinkedHashMap** = *"Books shelved jaise rakhi"* — insertion order maintained
 >
-> 📖 **TreeMap** = *"Library catalog A-Z"* — alphabetical hamesha, automatic sorting
+> **TreeMap** = *"Library catalog A-Z"* — alphabetical hamesha, automatic sorting
 >
 > Tu jab bhi book "Z" daale ya "A" daale — TreeMap **automatically right place** pe rakh deta. **Self-organizing.**
 
 ---
 
-## 🎨 INSERTION VISUAL
+## INSERTION VISUAL
 
 ```
 INSERT ORDER:        TreeMap (auto-sort):       HashMap (random):
@@ -42,7 +42,7 @@ Iteration:    Apple → Banana → Cherry        Banana → Apple → Cherry
 
 ---
 
-## 💻 CODE EXAMPLE
+## CODE EXAMPLE
 
 ```java
 Map<String, Integer> map = new TreeMap<>();
@@ -64,7 +64,7 @@ for (Map.Entry<String, Integer> e : map.entrySet()) {
 
 ---
 
-## 🌳 INTERNAL — Red-Black Tree
+## INTERNAL — Red-Black Tree
 
 TreeMap **balanced binary search tree** use karta — Red-Black tree.
 
@@ -85,7 +85,7 @@ TreeMap **balanced binary search tree** use karta — Red-Black tree.
 
 ---
 
-## 📊 3 Maps Comparison
+## 3 Maps Comparison
 
 | Property | `HashMap` | `LinkedHashMap` | `TreeMap` |
 |---|---|---|---|
@@ -93,31 +93,31 @@ TreeMap **balanced binary search tree** use karta — Red-Black tree.
 | **Internal** | Array + LinkedList/Tree | HashMap + Doubly-LinkedList | **Red-Black Tree** |
 | **get/put complexity** | O(1) avg | O(1) avg | **O(log n)** |
 | **Iteration order** | Random | Insertion | Sorted |
-| **null key** | ✅ 1 allowed | ✅ 1 allowed | ❌ NPE (compare fails) |
-| **null value** | ✅ Multiple | ✅ Multiple | ✅ Multiple |
+| **null key** | 1 allowed | 1 allowed | NPE (compare fails) |
+| **null value** | Multiple | Multiple | Multiple |
 | **Memory** | Lowest | Higher (linked list overhead) | Higher (tree overhead) |
 | **Use case** | Fastest lookup | LRU cache, ordered iteration | Sorted range queries, leaderboard |
 
 ---
 
-## 🎯 USE CASE GUIDE
+## USE CASE GUIDE
 
 ### Use `HashMap` when:
-- ⚡ Fastest get/put needed
-- ❌ Order doesn't matter
-- 💾 Memory matters
+- Fastest get/put needed
+- Order doesn't matter
+- Memory matters
 
 ### Use `LinkedHashMap` when:
-- 🔄 Insertion order matters
-- 🧠 LRU cache (with `accessOrder=true`)
-- 📊 Order-preserving iteration
+- Insertion order matters
+- LRU cache (with `accessOrder=true`)
+- Order-preserving iteration
 
 ### Use `TreeMap` when:
-- 🔤 Sorted iteration needed
-- 🎯 Range queries (`subMap`, `headMap`, `tailMap`)
-- 📈 Leaderboard / ranked data
-- 📖 Dictionary / glossary
-- 🔍 First/last/floor/ceiling key needed
+- Sorted iteration needed
+- Range queries (`subMap`, `headMap`, `tailMap`)
+- Leaderboard / ranked data
+- Dictionary / glossary
+- First/last/floor/ceiling key needed
 
 ```java
 TreeMap<Integer, String> scores = new TreeMap<>();
@@ -134,7 +134,7 @@ scores.subMap(85, 95);       // {85=Rahul, 92=Priya}
 
 ---
 
-## 🎨 Custom Comparator
+## Custom Comparator
 
 Default = **natural ordering** (alphabetical for String, numeric for Integer).
 
@@ -155,12 +155,12 @@ TreeMap<String, Integer> byLength = new TreeMap<>(
 
 ---
 
-## 🪤 INTERVIEW TRAPS
+## INTERVIEW TRAPS
 
 ### Trap 1: null key in TreeMap
 ```java
 TreeMap<String, Integer> map = new TreeMap<>();
-map.put(null, 1);   // ❌ NullPointerException
+map.put(null, 1);   // NullPointerException
                      // Why? compareTo() called → null.compareTo() → NPE
 ```
 
@@ -174,7 +174,7 @@ class Person {
 }
 
 TreeMap<Person, Integer> map = new TreeMap<>();
-map.put(new Person("Arpan"), 1);   // ❌ ClassCastException
+map.put(new Person("Arpan"), 1);   // ClassCastException
                                     // Person doesn't implement Comparable
 ```
 
@@ -194,7 +194,7 @@ map.put("Apple", 99);
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "HashMap vs TreeMap — kab konsa?"**
 
@@ -216,13 +216,13 @@ map.put("Apple", 99);
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"TreeMap keys ko sorted order mein maintain karta Red-Black Tree se — O(log n) operations. Use karo jab natural ordering, range queries, ya sorted iteration chahiye. Range queries ke liye `subMap`, `floorKey`, `ceilingKey` powerful methods. null key NAHI accept karta."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 HashMap         → "Random pile" — fastest, no order
@@ -235,9 +235,9 @@ Internal:
    TreeMap         = Red-Black Tree
 
 null key:
-   HashMap        ✅
-   LinkedHashMap  ✅
-   TreeMap        ❌ (NPE — compareTo fails)
+   HashMap        
+   LinkedHashMap  
+   TreeMap        (NPE — compareTo fails)
 
 Use case:
    "Fastest"      → HashMap
@@ -247,26 +247,26 @@ Use case:
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "TreeMap mein values sort hoti"
-         ❌ KEYS sort hoti, values nahi
-         ✅ Sort by value? entrySet stream + sorted use karo
+Trap 1: "TreeMap mein values sort hoti"
+         KEYS sort hoti, values nahi
+         Sort by value? entrySet stream + sorted use karo
 
-🪤 Trap 2: "TreeMap mein null key daal sakte"
-         ❌ NPE — compareTo fails
-         ✅ HashMap null key support
+Trap 2: "TreeMap mein null key daal sakte"
+         NPE — compareTo fails
+         HashMap null key support
 
-🪤 Trap 3: "Custom class without Comparable"
-         ❌ ClassCastException
-         ✅ Implement Comparable OR pass Comparator
+Trap 3: "Custom class without Comparable"
+         ClassCastException
+         Implement Comparable OR pass Comparator
 
-🪤 Trap 4: "TreeMap fast hai"
-         ❌ O(log n) — slower than HashMap O(1)
-         ✅ Trade-off: order vs speed
+Trap 4: "TreeMap fast hai"
+         O(log n) — slower than HashMap O(1)
+         Trade-off: order vs speed
 
-🪤 Trap 5: "TreeMap thread-safe"
-         ❌ NOT thread-safe
-         ✅ Use Collections.synchronizedSortedMap() or ConcurrentSkipListMap
+Trap 5: "TreeMap thread-safe"
+         NOT thread-safe
+         Use Collections.synchronizedSortedMap() or ConcurrentSkipListMap
 ```

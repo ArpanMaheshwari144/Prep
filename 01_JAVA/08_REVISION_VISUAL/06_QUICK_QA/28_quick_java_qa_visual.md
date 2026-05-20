@@ -1,4 +1,4 @@
-# ⚡ Quick Java Q&A — Interview Traps Visual
+# Quick Java Q&A — Interview Traps Visual
 
 ---
 
@@ -24,11 +24,11 @@ Memory hook:
    String → length()    (method)
    List   → size()      (method)
    
-   Trap: array.length() ❌ compile error
-         string.length  ❌ compile error
+   Trap: array.length() compile error
+         string.length  compile error
 ```
 
-### 🔍 DEEP — Why `array.length` Field, Not Method?
+### DEEP — Why `array.length` Field, Not Method?
 
 ```
 Array = SPECIAL JVM object
@@ -91,9 +91,9 @@ String contrast:
 ┌──────────────┬────────────┬─────────────┐
 │  Aspect      │  int       │  Integer    │
 ├──────────────┼────────────┼─────────────┤
-│ null         │ ❌ NPE      │ ✅          │
-│ Collections  │ ❌          │ ✅ (List)   │
-│ Methods      │ ❌          │ ✅          │
+│ null         │ NPE      │          │
+│ Collections  │          │ (List)   │
+│ Methods      │          │          │
 │ Default      │ 0          │ null        │
 │ Performance  │ Fast       │ Slower      │
 └──────────────┴────────────┴─────────────┘
@@ -140,7 +140,7 @@ Rule:
 ```
 
 ```java
-final int X = 5;   // X = 10 ❌
+final int X = 5;   // X = 10 
 
 try { ... }
 finally { 
@@ -197,17 +197,17 @@ OVERRIDE (runtime):
 ## 7️⃣ Constructor — Overload vs Override?
 
 ```
-Overload constructor:    ✅ YES (different params)
+Overload constructor:    YES (different params)
    public User() { ... }
    public User(String name) { ... }
    public User(String name, int age) { ... }
 
-Override constructor:    ❌ NEVER POSSIBLE
+Override constructor:    NEVER POSSIBLE
    Constructors NOT inherited
    = Trap question
 ```
 
-### 🔍 DEEP — Why Constructor CANNOT Be Overridden?
+### DEEP — Why Constructor CANNOT Be Overridden?
 
 ```
 OVERRIDE requires:
@@ -246,11 +246,11 @@ Constructor's JOB:
    = Per-class concern
    
 Constructor CAN:
-   ✅ OVERLOAD (multiple in same class)
-   ✅ CHAIN via super() (call parent)
+   OVERLOAD (multiple in same class)
+   CHAIN via super() (call parent)
    
 Constructor CANNOT:
-   ❌ Override
+   Override
 ```
 
 ```
@@ -268,10 +268,10 @@ Side note — Also cannot override:
 ┌────────────────┬──────────────┬──────────────┐
 │  Aspect        │  HashMap     │  Hashtable   │
 ├────────────────┼──────────────┼──────────────┤
-│ Thread-safe    │ ❌            │ ✅ (sync)    │
-│ null key/value │ ✅ allowed   │ ❌           │
+│ Thread-safe    │            │ (sync)    │
+│ null key/value │ allowed   │           │
 │ Speed          │ Fast         │ Slow         │
-│ Modern         │ ✅            │ Legacy       │
+│ Modern         │            │ Legacy       │
 └────────────────┴──────────────┴──────────────┘
 ```
 
@@ -288,7 +288,7 @@ Modern alternative to Hashtable:
 ┌────────────────┬──────────────┬──────────────┐
 │  Aspect        │  Vector      │  ArrayList   │
 ├────────────────┼──────────────┼──────────────┤
-│ Thread-safe    │ ✅ (sync)    │ ❌           │
+│ Thread-safe    │ (sync)    │           │
 │ Growth         │ 2x           │ 1.5x         │
 │ Era            │ Java 1.0     │ Java 1.2+    │
 │ Performance    │ Slow         │ Fast         │
@@ -302,7 +302,7 @@ Modern: ArrayList always
 
 ---
 
-## 🔟 Why String Immutable?
+## Why String Immutable?
 
 ```
 4 reasons:
@@ -432,8 +432,8 @@ Multiple inheritance issue:
 
 ```
 Java solution:
-   Class: ❌ NO multiple class inheritance
-   Interface: ✅ Multiple allowed
+   Class: NO multiple class inheritance
+   Interface: Multiple allowed
               Default methods conflict?
               Child MUST override + specify
 ```
@@ -535,7 +535,7 @@ class Person {
 
 ---
 
-## 🎯 Memory Hook (One-Line Each)
+## Memory Hook (One-Line Each)
 
 ```
 1.  length      → array.length (field), string.length() (method)
@@ -560,4 +560,4 @@ class Person {
 20. equals/hash → contract — override both
 ```
 
-📚 [← Back to JAVA](../../)
+[← Back to JAVA](../../)

@@ -1,4 +1,4 @@
-# 🌊 Cascade Types — Parent → Child Auto Effect
+# Cascade Types — Parent → Child Auto Effect
 
 ---
 
@@ -21,8 +21,8 @@ Author a = new Author("Arpan");
 Book b1 = new Book("Java");
 b1.setAuthor(a);
 
-authorRepo.save(a);          // ✅ author save
-// b1 SAVE NAHI hua!         // ❌ book lost
+authorRepo.save(a);          // author save
+// b1 SAVE NAHI hua!         // book lost
 
 bookRepo.save(b1);           // manually karna padega
 ```
@@ -120,7 +120,7 @@ authorRepo.delete(author)
 ```
 
 ```
-⚠️ DANGER:
+DANGER:
    Accidentally delete parent → kids gone
    Books shared with someone else? — DELETED too
    
@@ -148,8 +148,8 @@ Behaviour:
 ```
 
 ```
-✅ Convenient
-❌ Dangerous (especially REMOVE)
+Convenient
+Dangerous (especially REMOVE)
    Industry: Be SPECIFIC, not ALL
 ```
 
@@ -188,14 +188,14 @@ WITH orphanRemoval:
 
 ```
 parent OWNS children completely:
-   ✅ Use CascadeType.ALL + orphanRemoval
+   Use CascadeType.ALL + orphanRemoval
    Examples:
       • Order → OrderItems (item belongs only to order)
       • Post → Comments
       • User → UserSettings
 
 children SHARED (independent):
-   ❌ NO cascade
+   NO cascade
    Examples:
       • Author → Books (book might be referenced elsewhere)
       • Category → Products
@@ -203,7 +203,7 @@ children SHARED (independent):
 
 ---
 
-## 🔟 Real Example (Order System)
+## Real Example (Order System)
 
 ```java
 @Entity
@@ -255,7 +255,7 @@ Behaviour:
 
 ---
 
-## 🎤 Interview Power Phrase
+## Interview Power Phrase
 
 ```
 "Cascade types control parent-child operation propagation.
@@ -271,7 +271,7 @@ Behaviour:
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
 Cascade = parent action → child auto affect

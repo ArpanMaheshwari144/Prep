@@ -1,7 +1,7 @@
 package com.arpan.bank.model;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    SavingsAccount = Account ka CONCRETE CHILD
 //    "Bank ka savings account" — 4% interest deta
 // ═══════════════════════════════════════════════════════════════════════
@@ -30,7 +30,7 @@ package com.arpan.bank.model;
 //    Account abstract method  →  calculateInterest() ABSTRACT
 //    SavingsAccount extends   →  MUST implement (compiler force)
 //
-// 🔑 STATIC FINAL DEEP — `INTEREST_RATE`:
+// STATIC FINAL DEEP — `INTEREST_RATE`:
 //    private static final double INTEREST_RATE = 0.04;
 //            ↑       ↑       ↑
 //            │       │       constant (cannot change)
@@ -44,7 +44,7 @@ package com.arpan.bank.model;
 //                = 1 copy in memory
 //
 //    Why FINAL?
-//       INTEREST_RATE = 0.05;   // ❌ compile error
+//       INTEREST_RATE = 0.05;   // compile error
 //       Once assigned, never changes = immutability
 //
 //    Why PRIVATE?
@@ -74,10 +74,10 @@ package com.arpan.bank.model;
 //       Integer.MAX_VALUE      = 2147483647
 //       HttpURLConnection.HTTP_OK = 200
 //
-// 🎨 PATTERN: Template Method (concrete step implementation)
+// PATTERN: Template Method (concrete step implementation)
 //
-// 📐 SOLID — LSP (Liskov Substitution):
-//    Account a = new SavingsAccount(...);  ✅
+// SOLID — LSP (Liskov Substitution):
+//    Account a = new SavingsAccount(...);  
 //    a.deposit(500);   ← inherited works
 //    a.withdraw(200);  ← inherited works
 //    a.calculateInterest();  ← Savings's 4% version runs

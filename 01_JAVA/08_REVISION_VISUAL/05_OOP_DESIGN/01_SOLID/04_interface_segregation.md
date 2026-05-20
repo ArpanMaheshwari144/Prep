@@ -1,4 +1,4 @@
-# 👨‍🍳 I — Interface Segregation (ISP)
+# I — Interface Segregation (ISP)
 
 ---
 
@@ -14,7 +14,7 @@ Multiple SMALL interfaces > ONE BIG interface
 ## Restaurant Worker Analogy
 
 ```
-❌ WRONG: "AllInOneWorker" interface
+WRONG: "AllInOneWorker" interface
    • cookFood()
    • cleanFloor()
    • takeOrders()
@@ -28,7 +28,7 @@ Multiple SMALL interfaces > ONE BIG interface
 
 ## Code
 
-### ❌ VIOLATION
+### VIOLATION
 ```java
 interface Worker {
     void cookFood();
@@ -45,7 +45,7 @@ class Chef implements Worker {
 }
 ```
 
-### ✅ ISP — Segregate
+### ISP — Segregate
 ```java
 interface Cook {       void cookFood(); }
 interface Cleaner {    void cleanFloor(); }
@@ -83,9 +83,9 @@ public interface UserWriter {
 ## Memory Hook
 
 ```
-👨‍🍳 Chef shouldn't implement cleanFloor()
+Chef shouldn't implement cleanFloor()
    "Chhote-chhote interfaces banao,
     ek class ko sirf zaruri implement karne do"
 ```
 
-📚 [← Back to SOLID](00_overview.md)
+[← Back to SOLID](00_overview.md)

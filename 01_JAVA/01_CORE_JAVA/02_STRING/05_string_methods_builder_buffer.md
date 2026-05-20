@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — String Methods Original Nahi Badalte
+## WHY — String Methods Original Nahi Badalte
 
 → String **immutable** hai → koi method (concat, toUpperCase, replace) **original nahi badalti**
 → Hamesha **NEW String return** karte hain
@@ -22,17 +22,17 @@ System.out.println(s);   // "Hello World"
 
 ---
 
-## 📊 String vs StringBuilder vs StringBuffer
+## String vs StringBuilder vs StringBuffer
 
 | Class | Detail |
 |-------|--------|
-| **String** | **Immutable**. Har change = naya object. Loop mein = memory waste ❌ |
-| **StringBuilder** | **Mutable**. Thread safe NAHI. **Fast** — mostly yahi use karo ✅ |
+| **String** | **Immutable**. Har change = naya object. Loop mein = memory waste |
+| **StringBuilder** | **Mutable**. Thread safe NAHI. **Fast** — mostly yahi use karo |
 | **StringBuffer** | **Mutable**. Thread safe HAI. Thoda slow — **sirf multithreading** mein |
 
 ---
 
-## 📖 STORY (V90 ka rule)
+## STORY (V90 ka rule)
 
 → **Loop mein concat** karte ho String se → har iteration nayi object → memory waste
 → Use **StringBuilder** for string manipulation in loops — it is mutable and faster
@@ -42,7 +42,7 @@ System.out.println(s);   // "Hello World"
 
 ---
 
-## 💬 POWER PHRASES
+## POWER PHRASES
 
 > *"String methods always return a NEW string — original is never modified because String is immutable."*
 

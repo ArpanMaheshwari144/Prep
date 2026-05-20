@@ -1,4 +1,4 @@
-# 🍕 BUILDER — Step by Step Object Creation
+# BUILDER — Step by Step Object Creation
 
 ---
 
@@ -22,9 +22,9 @@ new User("Arpan", "a@gmail.com", "9999", 27,
 
 ```
 Problems:
-   ❌ 7 params — order yaad rakhna mushkil
-   ❌ Kuch optional hain (phone null bhi ho sakta)
-   ❌ Constructor mein 7 versions banane padenge
+   7 params — order yaad rakhna mushkil
+   Kuch optional hain (phone null bhi ho sakta)
+   Constructor mein 7 versions banane padenge
         new User(name)
         new User(name, email)
         new User(name, email, phone)
@@ -145,7 +145,7 @@ public Builder name(String n) {
     // no return → void
 }
 
-// ❌ Chain TOOT jata:
+// Chain TOOT jata:
 new User.Builder()
         .name("Arpan")      // returns void!
         .email("...")        // compile error
@@ -222,13 +222,13 @@ Stream.builder()
 ## When Use Builder?
 
 ```
-✅ Class mein > 4 parameters
-✅ Some optional fields
-✅ Immutable object banana hai
-✅ Readable construction chahiye
+Class mein > 4 parameters
+Some optional fields
+Immutable object banana hai
+Readable construction chahiye
 
-❌ 2-3 params ki simple class
-❌ Java Record (already concise)
+2-3 params ki simple class
+Java Record (already concise)
 ```
 
 ---
@@ -236,7 +236,7 @@ Stream.builder()
 ## Memory Hook
 
 ```
-Builder = 🍕 Pizza step-by-step
+Builder = Pizza step-by-step
 
 Constructor mein 10 params NAHI
    .field().field().field().build()
@@ -244,4 +244,4 @@ Constructor mein 10 params NAHI
 "return this" = chain ka secret
 ```
 
-📚 [← Back to Design Patterns](00_overview.md)
+[← Back to Design Patterns](00_overview.md)

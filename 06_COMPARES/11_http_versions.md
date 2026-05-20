@@ -1,19 +1,19 @@
-# ⚡ HTTP/1 vs HTTP/2 vs HTTP/3
+# HTTP/1 vs HTTP/2 vs HTTP/3
 
 ---
 
-## 🎯 1-Line Analogy
+## 1-Line Analogy
 
 ```
-HTTP/1.0 = 📞 Call, hang up, call again (per request)
-HTTP/1.1 = 📞 Stay on line, but one-by-one queries
-HTTP/2   = 📱 Multiple WhatsApp chats (multiplexed, parallel)
-HTTP/3   = ⚡ WhatsApp call (UDP, super fast reconnect)
+HTTP/1.0 = Call, hang up, call again (per request)
+HTTP/1.1 = Stay on line, but one-by-one queries
+HTTP/2   = Multiple WhatsApp chats (multiplexed, parallel)
+HTTP/3   = WhatsApp call (UDP, super fast reconnect)
 ```
 
 ---
 
-## 📊 Side by Side
+## Side by Side
 
 ```
 ┌──────────────┬──────────┬──────────┬──────────┬──────────┐
@@ -27,13 +27,13 @@ HTTP/3   = ⚡ WhatsApp call (UDP, super fast reconnect)
 ├──────────────┼──────────┼──────────┼──────────┼──────────┤
 │ Connection   │ Per req  │ Persistent│Persistent│ 0-RTT     │
 ├──────────────┼──────────┼──────────┼──────────┼──────────┤
-│ Multiplexing │ ❌       │ ❌ (pipe)│ ✅       │ ✅ (better)│
+│ Multiplexing │       │ (pipe)│       │ (better)│
 ├──────────────┼──────────┼──────────┼──────────┼──────────┤
-│ Header comp  │ ❌       │ ❌       │ ✅ HPACK │ ✅ QPACK  │
+│ Header comp  │       │       │ HPACK │ QPACK  │
 ├──────────────┼──────────┼──────────┼──────────┼──────────┤
-│ Server push  │ ❌       │ ❌       │ ✅        │ ❌ (drop) │
+│ Server push  │       │       │        │ (drop) │
 ├──────────────┼──────────┼──────────┼──────────┼──────────┤
-│ HoL blocking │ Bad      │ Bad      │ TCP-level│ ✅ NONE   │
+│ HoL blocking │ Bad      │ Bad      │ TCP-level│ NONE   │
 ├──────────────┼──────────┼──────────┼──────────┼──────────┤
 │ Encryption   │ Optional │ Optional │ Practical│ Mandatory │
 └──────────────┴──────────┴──────────┴──────────┴──────────┘
@@ -41,7 +41,7 @@ HTTP/3   = ⚡ WhatsApp call (UDP, super fast reconnect)
 
 ---
 
-## 🐌 HTTP/1.0 — New connection per request
+## HTTP/1.0 — New connection per request
 
 ```
 Browser wants 3 files (HTML + CSS + JS):
@@ -57,7 +57,7 @@ Browser wants 3 files (HTML + CSS + JS):
 
 ---
 
-## 🚶 HTTP/1.1 — Persistent connections (1997 dominant)
+## HTTP/1.1 — Persistent connections (1997 dominant)
 
 ```
 ONE connection, sequential requests:
@@ -70,21 +70,21 @@ ONE connection, sequential requests:
       ↓
    Connection stays open
 
-✅ Better than 1.0
-❌ One-at-a-time still (queued)
-❌ Head-of-line blocking:
+Better than 1.0
+One-at-a-time still (queued)
+Head-of-line blocking:
    If style.css slow, app.js waits
 
 PIPELINING (rare in practice):
    Send all 3 requests at once
    Receive responses in order
-   ❌ Still blocked if response 1 slow
-   ❌ Broken in many proxies
+   Still blocked if response 1 slow
+   Broken in many proxies
 ```
 
 ---
 
-## 🚀 HTTP/2 — Multiplexing (2015 revolution)
+## HTTP/2 — Multiplexing (2015 revolution)
 
 ```
 ONE connection, MULTIPLE streams in parallel:
@@ -98,19 +98,19 @@ ONE connection, MULTIPLE streams in parallel:
    All STREAMS multiplex over ONE TCP connection
    Each frame tagged with stream ID
 
-✅ TRUE parallel requests (within one connection)
-✅ Binary framing (efficient parsing)
-✅ HPACK header compression
-✅ Server push (preempt resources)
+TRUE parallel requests (within one connection)
+Binary framing (efficient parsing)
+HPACK header compression
+Server push (preempt resources)
    "Browser asked for /index.html — I'll also push /style.css"
    
-❌ TCP-level head-of-line blocking
+TCP-level head-of-line blocking
    (one lost packet = all streams stall)
 ```
 
 ---
 
-## ⚡ HTTP/3 — QUIC over UDP (2022 future)
+## HTTP/3 — QUIC over UDP (2022 future)
 
 ```
 QUIC protocol (built on UDP):
@@ -144,7 +144,7 @@ HTTP/3 (QUIC):
 
 ---
 
-## 📊 EVOLUTION VISUAL
+## EVOLUTION VISUAL
 
 ```
 HTTP/1.0:
@@ -173,7 +173,7 @@ HTTP/3 (QUIC):
 
 ---
 
-## 🎯 ADOPTION 2026
+## ADOPTION 2026
 
 ```
 HTTP/1.1 → Still common (legacy support)
@@ -186,7 +186,7 @@ HTTP/3   → Growing fast (~30%+)
 
 ---
 
-## 💎 KEY INSIGHT — HOL Blocking
+## KEY INSIGHT — HOL Blocking
 
 ```
 Head-of-Line Blocking:
@@ -207,7 +207,7 @@ HTTP/3: NO HoL
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "HTTP/1.0 used a new connection per request — very slow.
@@ -229,13 +229,13 @@ HTTP/3: NO HoL
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-HTTP/1.0 = 📞 Call/hangup per request
-HTTP/1.1 = 📞 Stay on line, sequential
-HTTP/2   = 📱 Multiplexed streams (TCP)
-HTTP/3   = ⚡ QUIC over UDP, no HoL
+HTTP/1.0 = Call/hangup per request
+HTTP/1.1 = Stay on line, sequential
+HTTP/2   = Multiplexed streams (TCP)
+HTTP/3   = QUIC over UDP, no HoL
 
 Key innovations per version:
    1.1 → Persistent connections
@@ -250,4 +250,4 @@ TCP = HTTP/1, /2  | QUIC/UDP = HTTP/3
    HTTP/3 = rising fast
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

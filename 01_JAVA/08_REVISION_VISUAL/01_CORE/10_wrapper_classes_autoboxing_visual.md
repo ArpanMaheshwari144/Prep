@@ -1,4 +1,4 @@
-# 📦 Wrapper Classes + Autoboxing — Visual Revision
+# Wrapper Classes + Autoboxing — Visual Revision
 
 ---
 
@@ -9,13 +9,13 @@ PRIMITIVES (raw):
    int, long, double, char, boolean...
    
    Problem hai:
-      ❌ Object nahi hain
-      ❌ Collections mein nahi daal sakte
-         List<int>     ← ❌ compile error
-         List<Integer> ← ✅ works
-      ❌ null nahi ho sakte
-         int x = null;  ← ❌
-      ❌ Methods nahi (toBinaryString, parseInt, etc.)
+      Object nahi hain
+      Collections mein nahi daal sakte
+         List<int>     ← compile error
+         List<Integer> ← works
+      null nahi ho sakte
+         int x = null;  ← 
+      Methods nahi (toBinaryString, parseInt, etc.)
 ```
 
 ---
@@ -31,7 +31,7 @@ Wrapper = item ko BOX mein daal do
 
 ---
 
-## 🎯 8 Primitive → 8 Wrapper Classes
+## 8 Primitive → 8 Wrapper Classes
 
 ```
 ┌──────────┬──────────────┐
@@ -92,7 +92,7 @@ Magic:
 
 ```java
 // Cannot do this:
-List<int> list = ...;            // ❌ compile error
+List<int> list = ...;            // compile error
 
 // Do this:
 List<Integer> list = new ArrayList<>();
@@ -187,7 +187,7 @@ Reason: PERFORMANCE
 
 ```java
 Integer x = null;
-int y = x;            // ❌ NullPointerException!
+int y = x;            // NullPointerException!
 
 // Java tries: int y = x.intValue();
 // x is null → NPE
@@ -201,7 +201,7 @@ RULE:
 
 ---
 
-## 🔟 Performance Trap — Loop
+## Performance Trap — Loop
 
 ```java
 // BAD — autoboxes every iteration
@@ -225,7 +225,7 @@ Lesson:
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
 Primitive = raw item (int, long, etc.)
@@ -238,8 +238,8 @@ Cache range = -128 to 127
    Inside: same object (==)
    Outside: new object (use .equals())
 
-Null unbox = 💥 NPE
-Loop unbox = 🐌 slow (use primitive)
+Null unbox = NPE
+Loop unbox = slow (use primitive)
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

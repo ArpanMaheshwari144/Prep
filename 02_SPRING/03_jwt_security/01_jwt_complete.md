@@ -1,12 +1,12 @@
-# 🔐 JWT + Spring Security — Complete Interview Reference
+# JWT + Spring Security — Complete Interview Reference
 
 > **Most-asked authentication topic.** 80%+ Java backend interviews mein puchte. Theory deep + visualization-heavy.
 
 ---
 
-## 📌 WHY — Asli zaroorat (problem statement)
+## WHY — Asli zaroorat (problem statement)
 
-### 🏨 Real-world analogy — Hotel keycard
+### Real-world analogy — Hotel keycard
 
 ```
 Reception (Login):
@@ -26,7 +26,7 @@ Keycard mein kya hai?
 
 ---
 
-## 🤔 Without JWT — Traditional Session-Based Auth
+## Without JWT — Traditional Session-Based Auth
 
 ```
 1. User login → server username/password verify
@@ -38,7 +38,7 @@ Keycard mein kya hai?
 4. Har request → cookie bhejti → server lookup → user identify
 ```
 
-### 🎨 Visual
+### Visual
 
 ```
    Login                       Each request
@@ -65,7 +65,7 @@ Server STATEFUL — sessions stored in memory/DB
 
 ---
 
-## ✨ With JWT — Token-Based Auth (Modern)
+## With JWT — Token-Based Auth (Modern)
 
 **Core idea:** Token mein user ki info embed (signed). Server stateless.
 
@@ -78,7 +78,7 @@ Server STATEFUL — sessions stored in memory/DB
 6. NO DB lookup, NO session storage
 ```
 
-### 🎨 Visual
+### Visual
 
 ```
    Login                       Each request
@@ -96,7 +96,7 @@ Server STATELESS — har token self-contained
 
 ---
 
-## 🔑 Stateless Magic Visual
+## Stateless Magic Visual
 
 ```
               SERVER (stateless)
@@ -117,7 +117,7 @@ Server STATELESS — har token self-contained
 
 ---
 
-# 🤔 STATELESS DEEP DIVE — Yeh Concept Saaf Karte
+# STATELESS DEEP DIVE — Yeh Concept Saaf Karte
 
 > **Stateless = "Server kuch yaad nahi rakhta"**. Server **previous requests** ke baare mein **kuch information store nahi karta**. Har request **self-contained** — saari info request mein hi aati hai.
 
@@ -125,7 +125,7 @@ Server STATELESS — har token self-contained
 
 ---
 
-## 🏧 Real-world analogy
+## Real-world analogy
 
 ### Stateful — Bank Teller (familiar bank)
 ```
@@ -156,7 +156,7 @@ ATM: "Card daal." ← machine ko TUJHE pehchanne ki memory NAHI hai.
 
 ---
 
-## 🎨 Server Visual — Stateful vs Stateless
+## Server Visual — Stateful vs Stateless
 
 ### Stateful Server (Session-based)
 
@@ -213,7 +213,7 @@ ATM: "Card daal." ← machine ko TUJHE pehchanne ki memory NAHI hai.
 
 ---
 
-## 💡 Asli benefit — Multi-server load-balanced setup
+## Asli benefit — Multi-server load-balanced setup
 
 ### Scenario: 3 server pe load-balanced
 
@@ -238,7 +238,7 @@ Login   → goes to Server 1
 
 Next request → Load balancer randomly Server 2 pe bhej diya
         → Server 2 ko abc123 ka pata NAHI
-        → ❌ "Session not found" — re-login!
+        → "Session not found" — re-login!
 
 Solutions (sab painful):
   1. Sticky sessions (LB user ko same server pe pin kare) — uneven load
@@ -255,7 +255,7 @@ Login   → goes to Server 1
 
 Next request → Load balancer Server 2 pe bhej diya
         → Server 2 token validate kar leta (SECRET hai uss paas)
-        → ✅ user identified from token payload
+        → user identified from token payload
 
 Multi-server "just works" — no session sync, no Redis, no sticky.
 ```
@@ -264,7 +264,7 @@ Multi-server "just works" — no session sync, no Redis, no sticky.
 
 ---
 
-## 🎯 Stateless ke 3 core properties
+## Stateless ke 3 core properties
 
 ```
 1. Server kuch store NAHI karta requests ke beech
@@ -279,7 +279,7 @@ Multi-server "just works" — no session sync, no Redis, no sticky.
 
 ---
 
-## 📊 Stateful vs Stateless Summary
+## Stateful vs Stateless Summary
 
 | Property | Stateful | Stateless |
 |---|---|---|
@@ -293,7 +293,7 @@ Multi-server "just works" — no session sync, no Redis, no sticky.
 
 ---
 
-## 🔑 Spring Security mein `STATELESS` setting
+## Spring Security mein `STATELESS` setting
 
 ```java
 http.sessionManagement(session ->
@@ -305,13 +305,13 @@ Yeh line bolti: **"Spring, koi `HttpSession` mat banao. Har request fresh treat 
 
 ---
 
-## 💎 Power phrase
+## Power phrase
 
 > **"Stateless ka matlab — server ko TUJHE yaad rakhne ki zaroorat nahi. Token har request ke saath khud apni identity laata. Server SECRET se signature verify kar leta — kuch DB lookup nahi, kuch memory store nahi. Yeh distributed systems ke liye natural fit hai."**
 
 ---
 
-## 🧠 Memory hook
+## Memory hook
 
 ```
 Stateful   =  Bank teller (yaad rakhta tujhe)
@@ -323,22 +323,22 @@ JWT = ATM-style auth — token har baar khud identity laata,
 
 ---
 
-## 📊 Session vs JWT Comparison
+## Session vs JWT Comparison
 
 | Feature | Session | JWT |
 |---|---|---|
-| Server state | Stateful | **Stateless** ✅ |
-| Scaling | Hard | Easy ✅ |
-| Microservices | Painful | Native fit ✅ |
-| Mobile apps | Awkward | Natural fit ✅ |
-| Performance | DB hit/request | No DB hit ✅ |
-| Logout | Easy | Hard (token valid till exp) ⚠️ |
-| Token revocation | Easy | Tricky (need blacklist) ⚠️ |
-| XSS risk | Less (httpOnly cookie) | More (localStorage common) ⚠️ |
+| Server state | Stateful | **Stateless** |
+| Scaling | Hard | Easy |
+| Microservices | Painful | Native fit |
+| Mobile apps | Awkward | Natural fit |
+| Performance | DB hit/request | No DB hit |
+| Logout | Easy | Hard (token valid till exp) |
+| Token revocation | Easy | Tricky (need blacklist) |
+| XSS risk | Less (httpOnly cookie) | More (localStorage common) |
 
 ---
 
-# 📦 JWT STRUCTURE — Token Andar Kya Hota?
+# JWT STRUCTURE — Token Andar Kya Hota?
 
 ## Token skeleton
 
@@ -358,7 +358,7 @@ eyJhbGciOiJIUzI1NiIs.eyJzdWIiOiJ1c2VyNSIs.dBjftJeZ4CVP_mw7
 
 ---
 
-## 🎯 Part 1: HEADER — Metadata
+## Part 1: HEADER — Metadata
 
 ```json
 {
@@ -375,7 +375,7 @@ Common algorithms:
 
 ---
 
-## 🎯 Part 2: PAYLOAD — Claims (User Data)
+## Part 2: PAYLOAD — Claims (User Data)
 
 ```json
 {
@@ -403,7 +403,7 @@ Common algorithms:
 
 ---
 
-## 🚨 CRITICAL — Payload READABLE, not encrypted!
+## CRITICAL — Payload READABLE, not encrypted!
 
 ```
 Anyone with token kar sakta:
@@ -413,20 +413,20 @@ Anyone with token kar sakta:
 ```
 
 **Iron rule — Payload mein NEVER:**
-- ❌ Password
-- ❌ Credit card
-- ❌ Sensitive personal data
-- ❌ API keys
+- Password
+- Credit card
+- Sensitive personal data
+- API keys
 
 **Payload mein OK:**
-- ✅ User ID
-- ✅ Username
-- ✅ Role/permissions
-- ✅ Public profile data
+- User ID
+- Username
+- Role/permissions
+- Public profile data
 
 ---
 
-## 🔐 Part 3: SIGNATURE — Verification Magic
+## Part 3: SIGNATURE — Verification Magic
 
 ```
 signature = HMACSHA256(
@@ -435,7 +435,7 @@ signature = HMACSHA256(
 )
 ```
 
-### 🎨 Why tamper-proof?
+### Why tamper-proof?
 
 ```
 Original token:
@@ -449,7 +449,7 @@ Hacker payload modify kare:
                                                 ↓
    New signature = "xyz123"
    Token mein signature = "abc456" ← original
-   xyz123 ≠ abc456  →  TAMPERING DETECTED ❌
+   xyz123 ≠ abc456  →  TAMPERING DETECTED 
    Token rejected.
 ```
 
@@ -457,7 +457,7 @@ Hacker payload modify kare:
 
 ---
 
-## 🎨 Full token assembly visual
+## Full token assembly visual
 
 ```
 ┌──────────────────────────────────────────────────────────┐
@@ -485,7 +485,7 @@ Hacker payload modify kare:
 
 ---
 
-# 🎬 AUTHENTICATION FLOW — Login → Token → Protected → Logout
+# AUTHENTICATION FLOW — Login → Token → Protected → Logout
 
 ## Big picture
 
@@ -513,7 +513,7 @@ Hacker payload modify kare:
 │           Verify signature with SECRET                          │
 │           Check exp not expired                                 │
 │           Extract user info from payload                        │
-│           ✅ valid? → process; ❌ → 401                         │
+│           valid? → process; → 401                         │
 │              ↓                                                  │
 │   Client ← user data                                            │
 │                                                                 │
@@ -522,7 +522,7 @@ Hacker payload modify kare:
 │  STEP 3: LOGOUT                                                 │
 │  ──────────────                                                 │
 │   Client → discards token                                       │
-│           Server: stateless — token still valid till exp ⚠️     │
+│           Server: stateless — token still valid till exp     │
 │           Solution: short access + refresh tokens, OR blacklist │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
@@ -530,7 +530,7 @@ Hacker payload modify kare:
 
 ---
 
-# 🕒 ACCESS + REFRESH TOKEN — Full Lifecycle
+# ACCESS + REFRESH TOKEN — Full Lifecycle
 
 ## T=0 — LOGIN (initial)
 
@@ -544,7 +544,7 @@ Hacker payload modify kare:
 ┌─────────────────────────────────────────────────────────────────┐
 │  Step 2: Server verify + 2 tokens generate                      │
 │   SERVER:                                                       │
-│     ✅ Password match (BCrypt)                                  │
+│     Password match (BCrypt)                                  │
 │     accessToken  = JWT { sub:5, exp: T+15min }  → "AAAA..."     │
 │     refreshToken = random UUID                  → "RRRR..."     │
 │                                                                 │
@@ -571,8 +571,8 @@ Hacker payload modify kare:
    CLIENT                              SERVER
    ──────                              ──────
    GET /users/me                  ──►  Validate "AAAA..."
-   Authorization: Bearer AAAA...        ✅ signature OK
-                                        ✅ exp not passed
+   Authorization: Bearer AAAA...        signature OK
+                                        exp not passed
                                   ◄──   200 OK { user data }
 
    ... (har request access token bhejta) ...
@@ -590,7 +590,7 @@ Server: signature + exp se verify. **NO DB hit** — pure stateless.
 │   CLIENT ──► GET /users/me                                      │
 │              Authorization: Bearer AAAA...                      │
 │   SERVER:                                                       │
-│     ❌ exp = T+15min, current = T+15:01 → EXPIRED               │
+│     exp = T+15min, current = T+15:01 → EXPIRED               │
 │   CLIENT ◄── 401 Unauthorized                                   │
 └────────────────────────────┬────────────────────────────────────┘
                              ▼
@@ -628,7 +628,7 @@ Server: signature + exp se verify. **NO DB hit** — pure stateless.
      POST /auth/refresh { refreshToken: "RRRR..." }
 
    SERVER:
-     ❌ expiresAt < current time
+     expiresAt < current time
      DELETE row from DB
      return 401
 
@@ -653,7 +653,7 @@ Server: signature + exp se verify. **NO DB hit** — pure stateless.
 
 ---
 
-## 🎨 Two tokens lifecycle visual
+## Two tokens lifecycle visual
 
 ```
 T=0          T=5min       T=15min      T=15:01      T=30min      ...    T=7 days     T=7d+1
@@ -662,7 +662,7 @@ T=0          T=5min       T=15min      T=15:01      T=30min      ...    T=7 days
 │  ──────►   │            │ exp        │ ──────►    │ → /refresh        │ → 401      │
 │  ◄── A,R   │            │            │ ◄── B      │                   │            │
 │            │            │            │            │                   │            │
-│ A used     │ A used     │ ❌ A       │ B used     │                   │ Re-login   │
+│ A used     │ A used     │ A       │ B used     │                   │ Re-login   │
 │            │            │            │            │                   │            │
 │            │            │ R sent     │            │ R sent again      │ R deleted  │
 └────────────┴────────────┴────────────┴────────────┴───────────────────┴────────────┘
@@ -676,9 +676,9 @@ Legend:
 
 ---
 
-# 🌱 SPRING SECURITY INTEGRATION
+# SPRING SECURITY INTEGRATION
 
-## 🎨 Spring Filter Chain (where JWT plugs in)
+## Spring Filter Chain (where JWT plugs in)
 
 ```
 HTTP Request
@@ -696,7 +696,7 @@ HTTP Request
  │  └────────────┬───────────────┘      │
  │               │                      │
  │  ┌────────────▼───────────────┐      │
- │  │  JwtFilter (CUSTOM) ⭐     │      │ ← yahan tu JWT validate karta
+ │  │  JwtFilter (CUSTOM)     │      │ ← yahan tu JWT validate karta
  │  │  (extends                  │      │
  │  │   OncePerRequestFilter)    │      │
  │  └────────────┬───────────────┘      │
@@ -718,7 +718,7 @@ HTTP Request
 
 ---
 
-## 🛠️ Components needed (Spring side)
+## Components needed (Spring side)
 
 ```
 1. SecurityConfig         → Filter chain configure
@@ -938,7 +938,7 @@ public class AuthController {
 
 ---
 
-# ⚠️ SECURITY PITFALLS (interview gotchas)
+# SECURITY PITFALLS (interview gotchas)
 
 ### 1. **JWT in localStorage = XSS vulnerable**
 ```
@@ -971,7 +971,7 @@ Header: { "alg": "none" }   ← hacker tries
 
 ---
 
-# 🎯 INTERVIEW ANSWER TEMPLATES
+# INTERVIEW ANSWER TEMPLATES
 
 ### Q: "JWT kya hai aur kyu use karte ho?"
 
@@ -999,7 +999,7 @@ Header: { "alg": "none" }   ← hacker tries
 
 ---
 
-# 💎 KEY TAKEAWAYS
+# KEY TAKEAWAYS
 
 ```
 1. JWT = stateless authentication via signed token
@@ -1014,34 +1014,34 @@ Header: { "alg": "none" }   ← hacker tries
 
 ---
 
-# ⚠️ TRAP BOX
+# TRAP BOX
 
 ```
-🪤 Trap 1: "JWT encrypted hota hai"
-         ❌ NAHI — base64 encoded, ANYONE can read payload
-         ✅ Signature ensures integrity, not confidentiality
+Trap 1: "JWT encrypted hota hai"
+         NAHI — base64 encoded, ANYONE can read payload
+         Signature ensures integrity, not confidentiality
          
-🪤 Trap 2: "Logout instant invalidate karta"
-         ❌ NAHI — token stateless, valid till exp
-         ✅ Use short tokens + refresh + optional blacklist
+Trap 2: "Logout instant invalidate karta"
+         NAHI — token stateless, valid till exp
+         Use short tokens + refresh + optional blacklist
          
-🪤 Trap 3: "Password JWT payload mein store kar du"
-         ❌ NEVER — payload publicly readable
-         ✅ Sirf userId + role + non-sensitive claims
+Trap 3: "Password JWT payload mein store kar du"
+         NEVER — payload publicly readable
+         Sirf userId + role + non-sensitive claims
          
-🪤 Trap 4: "Frontend ko refresh logic likhna padta har component mein"
-         ❌ NAHI — interceptor 1 jagah likho, automatic
+Trap 4: "Frontend ko refresh logic likhna padta har component mein"
+         NAHI — interceptor 1 jagah likho, automatic
          
-🪤 Trap 5: "SECRET code mein hardcode kar du"
-         ❌ NEVER — environment variable / secrets manager
+Trap 5: "SECRET code mein hardcode kar du"
+         NEVER — environment variable / secrets manager
          
-🪤 Trap 6: "Authorization header bina Bearer prefix bhej de"
-         ❌ Standard convention break — "Bearer <token>" mandatory
+Trap 6: "Authorization header bina Bearer prefix bhej de"
+         Standard convention break — "Bearer <token>" mandatory
 ```
 
 ---
 
-# 🧠 MEMORY HOOKS
+# MEMORY HOOKS
 
 ```
 JWT                   =  "Signed token = stateless auth"
@@ -1062,7 +1062,7 @@ Logout                =  "Refresh token DB delete (access expires by itself)"
 
 ---
 
-# 🎨 FINAL VISUAL — JWT full ecosystem
+# FINAL VISUAL — JWT full ecosystem
 
 ```
                     ┌────────────────────────┐
@@ -1098,7 +1098,7 @@ Logout                =  "Refresh token DB delete (access expires by itself)"
                   ┌────────────▼────────────────┐
                   │   Spring Filter Chain       │
                   │   ┌────────────────────┐    │
-                  │   │  JwtFilter ⭐      │    │
+                  │   │  JwtFilter      │    │
                   │   │  - Extract token   │    │
                   │   │  - Validate        │    │
                   │   │  - Set Security    │    │

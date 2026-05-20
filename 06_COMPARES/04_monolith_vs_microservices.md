@@ -1,17 +1,17 @@
-# ⚡ Monolith vs Microservices
+# Monolith vs Microservices
 
 ---
 
-## 🎯 1-Line Analogy
+## 1-Line Analogy
 
 ```
-Monolith       = 🏢 One big building (all teams inside)
-Microservices  = 🏘️ Many small buildings (each team own)
+Monolith       = One big building (all teams inside)
+Microservices  = Many small buildings (each team own)
 ```
 
 ---
 
-## 📊 Visual Architecture
+## Visual Architecture
 
 ```
 MONOLITH:
@@ -25,7 +25,7 @@ MONOLITH:
    │  │Payment  │ │Invent.  │ │Notify  │ │
    │  └────────┘ └────────┘ └────────┘  │
    │                                       │
-   │       ⬇️ ALL share ONE DB           │
+   │       ALL share ONE DB           │
    │       ┌──────────────┐               │
    │       │   DATABASE   │                │
    │       └──────────────┘               │
@@ -54,7 +54,7 @@ MICROSERVICES:
 
 ---
 
-## 📊 Side by Side
+## Side by Side
 
 ```
 ┌──────────────────┬──────────────────┬──────────────────┐
@@ -86,17 +86,17 @@ MICROSERVICES:
 │ Complexity        │ Simple to start   │ Complex orchestra │
 │                  │ Complex at scale   │ DevOps heavy       │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Speed to start   │ ⚡ Fast            │ 🐢 Slow setup     │
-│ Speed to scale   │ 🐢 Slow            │ ⚡ Easy            │
+│ Speed to start   │ Fast            │ Slow setup     │
+│ Speed to scale   │ Slow            │ Easy            │
 └──────────────────┴──────────────────┴──────────────────┘
 ```
 
 ---
 
-## ✅ MONOLITH PROS / CONS
+## MONOLITH PROS / CONS
 
 ```
-✅ PROS:
+PROS:
    • Simple to develop (one codebase)
    • Simple to deploy (one unit)
    • Simple to test (E2E in one place)
@@ -104,7 +104,7 @@ MICROSERVICES:
    • Less infra cost initially
    • Faster to ship MVP
 
-❌ CONS:
+CONS:
    • Single point of failure
    • Hard to scale specific features
    • Tech lock-in (one stack)
@@ -115,10 +115,10 @@ MICROSERVICES:
 
 ---
 
-## ✅ MICROSERVICES PROS / CONS
+## MICROSERVICES PROS / CONS
 
 ```
-✅ PROS:
+PROS:
    • Independent deployment per service
    • Scale only what's hot (e.g., search)
    • Tech freedom (Java, Go, Python mix)
@@ -126,7 +126,7 @@ MICROSERVICES:
    • Isolated failure (one service down ≠ whole app)
    • Database per service (right tool per job)
 
-❌ CONS:
+CONS:
    • Complex deployment (Kubernetes, CI/CD)
    • Network calls = latency + failures
    • Distributed tracing required (Jaeger, Zipkin)
@@ -138,10 +138,10 @@ MICROSERVICES:
 
 ---
 
-## 🎯 WHEN TO USE WHAT
+## WHEN TO USE WHAT
 
 ```
-✅ MONOLITH START WHEN:
+MONOLITH START WHEN:
    • Startup / MVP phase
    • Small team (< 10 devs)
    • Domain not fully understood yet
@@ -154,7 +154,7 @@ MICROSERVICES:
    • New SaaS startup
    • Internal tools
 
-✅ MICROSERVICES WHEN:
+MICROSERVICES WHEN:
    • Multiple teams need to deploy independently
    • Different scale requirements per feature
    • Polyglot tech needs
@@ -170,7 +170,7 @@ MICROSERVICES:
 
 ---
 
-## 🎬 REAL STORY — Netflix Migration
+## REAL STORY — Netflix Migration
 
 ```
 2008: Netflix had MONOLITH
@@ -190,7 +190,7 @@ MICROSERVICES:
 
 ---
 
-## 💡 KEY INSIGHT — Don't Skip Monolith
+## KEY INSIGHT — Don't Skip Monolith
 
 ```
 COMMON MISTAKE:
@@ -214,7 +214,7 @@ CORRECT PATH:
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "Monolith is a single deployable unit — simple to develop
@@ -236,11 +236,11 @@ CORRECT PATH:
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-Monolith      = One big building 🏢 (all teams together)
-Microservices = Many buildings 🏘️ (autonomous teams)
+Monolith      = One big building (all teams together)
+Microservices = Many buildings (autonomous teams)
 
 Monolith: Simple, fast start, hard scale
 Microservices: Complex, slow start, easy scale
@@ -251,4 +251,4 @@ Anti-pattern: Day-1 microservices without need
 Netflix: 700+ services, 1000+ deploys/day
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

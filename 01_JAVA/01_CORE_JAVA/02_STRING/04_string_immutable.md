@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — String Immutable Kyun?
+## WHY — String Immutable Kyun?
 
 3 reasons:
 
@@ -14,7 +14,7 @@
 
 ---
 
-## 📖 STORY — Login Bug
+## STORY — Login Bug
 
 → Ek baar login system mein bug aaya
 → Username validate karne ka function tha — usme pass kiya `"arpan"`
@@ -27,7 +27,7 @@
 
 ---
 
-## 🧠 String Pool Visualization
+## String Pool Visualization
 
 ```
 STACK              HEAP — String Pool          HEAP (outside pool)
@@ -46,7 +46,7 @@ s2 ────────►       │   (shared)     │   s3 ───► �
 
 ---
 
-## 💻 Behaviour
+## Behaviour
 
 ```java
 String s = "Arpan";
@@ -68,14 +68,14 @@ s1.equals(s3)     // true  (value same)
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **`==` = same OBJECT check. `.equals()` = same VALUE check.**
 > **HAMESHA `.equals()` use karo strings compare karne ke liye.**
 
 ---
 
-## 💬 POWER PHRASES
+## POWER PHRASES
 
 > *"String is immutable because it is a shared object — if one reference changes it, all references would be affected. Immutability enables the String Pool, thread safety, and safe use as HashMap keys."*
 

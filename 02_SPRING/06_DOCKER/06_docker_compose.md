@@ -1,20 +1,20 @@
-# 🟡 Section B2 — Docker Compose (Multi-Container Orchestration) (Day 2)
+# Section B2 — Docker Compose (Multi-Container Orchestration) (Day 2)
 
 > **Goal:** Entire stack in one YAML file, one command
 > **Tools:** docker-compose.yml + application-compose.properties
 
-📚 [← Back to README](00_README.md) | [← Networks](05_networks.md) | [Reference →](07_reference.md)
+[← Back to README](00_README.md) | [← Networks](05_networks.md) | [Reference →](07_reference.md)
 
 ---
 
-# 📍 PART 21 — DOCKER-COMPOSE (Multi-Container Orchestration) — Day 2
+# PART 21 — DOCKER-COMPOSE (Multi-Container Orchestration) — Day 2
 
 > **Date:** 2026-05-06
 > **Goal:** Manual `docker run` commands kill — entire stack ek YAML file mein
 
 ---
 
-## 🤔 Why Compose?
+## Why Compose?
 
 ```
 MANUAL approach (jo Phase 1 mein kiya):
@@ -40,7 +40,7 @@ WITH Compose:
 
 ---
 
-## 🎬 STORY — Restaurant Recipe vs Whole Meal
+## STORY — Restaurant Recipe vs Whole Meal
 
 ```
 docker run        = ek dish banao manually (ek-ek command)
@@ -53,7 +53,7 @@ Compose YAML = recipe book khol ke "thali ready"
 
 ---
 
-## 📝 TERA SETUP — 2 Files Banaaye
+## TERA SETUP — 2 Files Banaaye
 
 ### File 1: `application-compose.properties`
 
@@ -131,7 +131,7 @@ volumes:
 
 ---
 
-## 🔥 KEY MECHANISM — Profile Auto-Load (tera question)
+## KEY MECHANISM — Profile Auto-Load (tera question)
 
 > **"Compose ne file load ki?" — NO. Spring ne ki.**
 
@@ -172,16 +172,16 @@ docker-compose.yml
 
 ```
 DOCKER-COMPOSE ka role:
-   ❌ Spring config files load karna
-   ✅ Container start pe ENV VAR inject karna
-   ✅ Network/volume setup
-   ✅ Service ordering (depends_on)
-   ✅ Healthcheck monitoring
+   Spring config files load karna
+   Container start pe ENV VAR inject karna
+   Network/volume setup
+   Service ordering (depends_on)
+   Healthcheck monitoring
    
 SPRING ka role:
-   ✅ Env vars + properties read karna
-   ✅ Profile-based file selection (auto)
-   ✅ Config merging (master + profile)
+   Env vars + properties read karna
+   Profile-based file selection (auto)
+   Config merging (master + profile)
    
 BRIDGE BETWEEN: Environment Variable (SPRING_PROFILES_ACTIVE)
 ```
@@ -197,7 +197,7 @@ Different environments by changing env var:
 
 ---
 
-## 🎯 Hands-On Sequence (step by step jo kiya)
+## Hands-On Sequence (step by step jo kiya)
 
 ### Step 1 — Stop existing container:
 ```cmd
@@ -362,7 +362,7 @@ POST http://localhost:8080/auth/login
 
 ---
 
-## 💎 Full Circle Proof:
+## Full Circle Proof:
 
 ```
 Postman (localhost:8080)
@@ -374,13 +374,13 @@ Postman (localhost:8080)
    ↓ /var/lib/mysql
 [mysql_data volume] (host disk — external: true)
    ↓ Yesterday's Arpan record + new refresh token
-✅ Login authenticated
-✅ Response back through chain
+Login authenticated
+Response back through chain
 ```
 
 ---
 
-## 📋 Compose Commands Reference
+## Compose Commands Reference
 
 ```cmd
 REM Build + Start
@@ -416,7 +416,7 @@ docker-compose build app           # build specific
 
 ---
 
-## 🆚 docker-compose.yml — Key Sections Explained
+## docker-compose.yml — Key Sections Explained
 
 ```yaml
 services:                  # Each service = one container type
@@ -446,7 +446,7 @@ networks:                   # Custom networks (optional — default auto-created
 
 ---
 
-## 🎯 Compose vs Manual — Side by Side
+## Compose vs Manual — Side by Side
 
 | Aspect | Manual `docker run` | `docker-compose` |
 |---|---|---|
@@ -462,64 +462,64 @@ networks:                   # Custom networks (optional — default auto-created
 
 ---
 
-## ⚠️ TRAPS (new — Compose specific)
+## TRAPS (new — Compose specific)
 
 ```
-🪤 Trap 16: openjdk image deprecated
-         ❌ FROM openjdk:17-jdk-slim  → "not found" 2024+
-         ✅ FROM eclipse-temurin:17-jdk-jammy
+Trap 16: openjdk image deprecated
+         FROM openjdk:17-jdk-slim  → "not found" 2024+
+         FROM eclipse-temurin:17-jdk-jammy
 
-🪤 Trap 17: external volume forgot = naya empty
-         ❌ volumes: mysql_data: (no external: true)
+Trap 17: external volume forgot = naya empty
+         volumes: mysql_data: (no external: true)
             → compose creates "<project>_mysql_data" empty
             → Yesterday's Arpan GONE
-         ✅ external: true to reuse pre-created volume
+         external: true to reuse pre-created volume
 
-🪤 Trap 18: depends_on without healthcheck
-         ❌ depends_on: - mysql
+Trap 18: depends_on without healthcheck
+         depends_on: - mysql
             → app starts before MySQL ready
             → connection refused on first try
-         ✅ condition: service_healthy + healthcheck on mysql
+         condition: service_healthy + healthcheck on mysql
 
-🪤 Trap 19: Service name ≠ container name
-         ❌ Confusion: "mysql" service, "mysql-userdb" container
-         ✅ Service name = YAML key (DNS), container_name = actual
+Trap 19: Service name ≠ container name
+         Confusion: "mysql" service, "mysql-userdb" container
+         Service name = YAML key (DNS), container_name = actual
             Both useful, different purposes
 
-🪤 Trap 20: Build without rebuild
-         ❌ docker-compose up after Dockerfile change → uses old image
-         ✅ docker-compose up --build  (force rebuild)
+Trap 20: Build without rebuild
+         docker-compose up after Dockerfile change → uses old image
+         docker-compose up --build  (force rebuild)
 
-🪤 Trap 21: Profile env var typo
-         ❌ SPRING_PROFILES_ACTIVE: compose-profile
-         ✅ SPRING_PROFILES_ACTIVE: compose
+Trap 21: Profile env var typo
+         SPRING_PROFILES_ACTIVE: compose-profile
+         SPRING_PROFILES_ACTIVE: compose
             (must match application-{X}.properties suffix)
 
-🪤 Trap 22: Port conflict with existing
-         ❌ host:3307 already used by another container
-         ✅ Stop old container first, OR change host port
+Trap 22: Port conflict with existing
+         host:3307 already used by another container
+         Stop old container first, OR change host port
 ```
 
 ---
 
-## ✅ Day 2 Concepts LOCKED
+## Day 2 Concepts LOCKED
 
 ```
-✅ Custom bridge networks (vs default)
-✅ Container DNS (service name = hostname)
-✅ docker network create / inspect / connect
-✅ --network flag for container creation
-✅ Internal IP assignment (subnet auto-managed)
-✅ Multi-container talk by name
-✅ docker-compose YAML structure
-✅ services / image / build / environment
-✅ depends_on + healthcheck (proper ordering)
-✅ external volumes (reuse pre-created)
-✅ Auto-generated network (Compose default)
-✅ docker-compose up / down / ps / logs / exec
-✅ Eclipse Temurin migration (openjdk deprecated)
-✅ Profile activation via env var
-✅ Spring auto-loads application-{profile}.properties
-✅ Compose env var = bridge between Compose and Spring
-✅ Production-grade pattern (multi-container stack)
+Custom bridge networks (vs default)
+Container DNS (service name = hostname)
+docker network create / inspect / connect
+--network flag for container creation
+Internal IP assignment (subnet auto-managed)
+Multi-container talk by name
+docker-compose YAML structure
+services / image / build / environment
+depends_on + healthcheck (proper ordering)
+external volumes (reuse pre-created)
+Auto-generated network (Compose default)
+docker-compose up / down / ps / logs / exec
+Eclipse Temurin migration (openjdk deprecated)
+Profile activation via env var
+Spring auto-loads application-{profile}.properties
+Compose env var = bridge between Compose and Spring
+Production-grade pattern (multi-container stack)
 ```

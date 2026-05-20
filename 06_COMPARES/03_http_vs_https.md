@@ -1,44 +1,44 @@
-# ⚡ HTTP vs HTTPS
+# HTTP vs HTTPS
 
 ---
 
-## 🎯 1-Line Analogy
+## 1-Line Analogy
 
 ```
-HTTP  = 📭 Postcard      (anyone in postal chain can read)
-HTTPS = ✉️ Sealed letter (only recipient can open)
+HTTP  = Postcard      (anyone in postal chain can read)
+HTTPS = Sealed letter (only recipient can open)
 ```
 
 ---
 
-## 📊 Side by Side
+## Side by Side
 
 ```
 ┌──────────────────┬──────────────────┬──────────────────┐
 │  Feature         │  HTTP             │  HTTPS            │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Encryption       │ ❌ Plain text     │ ✅ TLS encrypted  │
+│ Encryption       │ Plain text     │ TLS encrypted  │
 ├──────────────────┼──────────────────┼──────────────────┤
 │ Port             │ 80                 │ 443               │
 ├──────────────────┼──────────────────┼──────────────────┤
 │ URL prefix       │ http://            │ https://          │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Certificate      │ ❌ None            │ ✅ SSL cert (CA)  │
+│ Certificate      │ None            │ SSL cert (CA)  │
 ├──────────────────┼──────────────────┼──────────────────┤
 │ Speed            │ Slightly faster   │ Slightly slower   │
 │                  │ No handshake       │ TLS handshake     │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ MITM risk        │ ❌ Vulnerable      │ ✅ Protected      │
+│ MITM risk        │ Vulnerable      │ Protected      │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ SEO ranking      │ ❌ Lower           │ ✅ Higher (Google)│
+│ SEO ranking      │ Lower           │ Higher (Google)│
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Browser warning  │ ⚠️ "Not Secure"   │ 🔒 Lock icon      │
+│ Browser warning  │ "Not Secure"   │ Lock icon      │
 └──────────────────┴──────────────────┴──────────────────┘
 ```
 
 ---
 
-## 🚨 WHY HTTP IS DANGEROUS
+## WHY HTTP IS DANGEROUS
 
 ```
 Scenario: Coffee shop WiFi pe HTTP banking
@@ -47,19 +47,19 @@ Scenario: Coffee shop WiFi pe HTTP banking
     │                                │
     │ Login: user/password           │
     │ ────────────────────►          │
-    │           ◄──── 👁️ READS PLAIN TEXT
+    │           ◄──── READS PLAIN TEXT
     │                                │
     │ Bank: balance, transactions    │
     │ ◄──────────────────            │
-    │           ◄──── 👁️ READS ALL DATA
+    │           ◄──── READS ALL DATA
 
-   ❌ Wifi sniffer reads:
+   Wifi sniffer reads:
       • Login credentials
       • Cookies / session tokens
       • All form data
       • All response data
 
-   ❌ MITM attack:
+   MITM attack:
       • Inject malicious JS
       • Modify response
       • Redirect to phishing
@@ -67,27 +67,27 @@ Scenario: Coffee shop WiFi pe HTTP banking
 
 ---
 
-## ✅ HOW HTTPS PROTECTS
+## HOW HTTPS PROTECTS
 
 ```
    YOU                              ATTACKER (same WiFi)
     │                                │
     │ [encrypted bytes]              │
     │ ────────────────────►          │
-    │           ◄──── 👁️ sees: gibberish
+    │           ◄──── sees: gibberish
     │                                │
     │ [encrypted bytes]              │
     │ ◄──────────────────            │
-    │           ◄──── 👁️ sees: gibberish
+    │           ◄──── sees: gibberish
 
-   ✅ Encryption = symmetric (AES) after handshake
-   ✅ Keys never travel plain
-   ✅ Tampering detectable (HMAC)
+   Encryption = symmetric (AES) after handshake
+   Keys never travel plain
+   Tampering detectable (HMAC)
 ```
 
 ---
 
-## 🤝 TLS HANDSHAKE (HTTPS Setup)
+## TLS HANDSHAKE (HTTPS Setup)
 
 ```
    CLIENT                          SERVER
@@ -101,7 +101,7 @@ Scenario: Coffee shop WiFi pe HTTP banking
       │     (chosen cipher, cert)     │   here's my cert + public key"
       │                                │
       │  3. Verify cert with CA        │  
-      │     ✅ Trusted (or ❌ block)   │
+      │     Trusted (or block)   │
       │                                │
       │  4. Generate session key       │
       │  ───────────────────────────►│  "Encrypted with your public key,
@@ -115,7 +115,7 @@ Scenario: Coffee shop WiFi pe HTTP banking
 
 ---
 
-## 🔑 CERTIFICATE FLOW
+## CERTIFICATE FLOW
 
 ```
    Website (google.com) wants HTTPS
@@ -136,27 +136,27 @@ Scenario: Coffee shop WiFi pe HTTP banking
    Browser checks: "Is this signed by trusted CA?"
         │
         ▼
-   ✅ Yes → trust + connect
-   ❌ No → "Your connection is not private" warning
+   Yes → trust + connect
+   No → "Your connection is not private" warning
 ```
 
 ---
 
-## 🎯 WHEN ABSOLUTELY USE HTTPS
+## WHEN ABSOLUTELY USE HTTPS
 
 ```
 ALWAYS in 2026 — HTTP basically dead:
 
-✅ Banking / finance
-✅ Login pages
-✅ E-commerce (payment)
-✅ Personal info forms
-✅ Admin panels
-✅ APIs (anything sensitive)
-✅ Cookies / sessions
-✅ Public websites (SEO ranking)
+Banking / finance
+Login pages
+E-commerce (payment)
+Personal info forms
+Admin panels
+APIs (anything sensitive)
+Cookies / sessions
+Public websites (SEO ranking)
 
-❌ HTTP ok only for:
+HTTP ok only for:
    • Internal localhost dev
    • Old legacy intranet
    • Specific test environments
@@ -164,24 +164,24 @@ ALWAYS in 2026 — HTTP basically dead:
 
 ---
 
-## 💎 BONUS — HTTPS Versions
+## BONUS — HTTPS Versions
 
 ```
 TLS evolution (HTTPS = HTTP + TLS):
 
-   SSL 2.0  →  ❌ DEAD (insecure)
-   SSL 3.0  →  ❌ DEAD (POODLE attack)
-   TLS 1.0  →  ❌ Deprecated 2020
-   TLS 1.1  →  ❌ Deprecated 2020
-   TLS 1.2  →  ✅ Still common
-   TLS 1.3  →  ✅ Latest, faster, more secure
+   SSL 2.0  →  DEAD (insecure)
+   SSL 3.0  →  DEAD (POODLE attack)
+   TLS 1.0  →  Deprecated 2020
+   TLS 1.1  →  Deprecated 2020
+   TLS 1.2  →  Still common
+   TLS 1.3  →  Latest, faster, more secure
    
    Modern apps target TLS 1.2+
 ```
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "HTTPS is HTTP over TLS — adds encryption, integrity,
@@ -199,11 +199,11 @@ TLS evolution (HTTPS = HTTP + TLS):
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-HTTP  = Postcard 📭 (everyone reads)
-HTTPS = Sealed letter ✉️ (only recipient)
+HTTP  = Postcard (everyone reads)
+HTTPS = Sealed letter (only recipient)
 
 HTTPS = HTTP + TLS (encryption layer)
 Port: 80 (HTTP), 443 (HTTPS)
@@ -215,4 +215,4 @@ CA = Certificate Authority (DigiCert, Let's Encrypt)
 TLS 1.3 = current standard
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

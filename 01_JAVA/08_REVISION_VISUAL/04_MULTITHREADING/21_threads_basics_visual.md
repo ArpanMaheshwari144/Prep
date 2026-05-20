@@ -1,4 +1,4 @@
-# 🧵 Multithreading Basics — Visual Revision
+# Multithreading Basics — Visual Revision
 
 ---
 
@@ -101,9 +101,9 @@ t.start();
 
 ```
 Runnable preferred:
-   ✅ Java single-inheritance — can still extend other class
-   ✅ Decouples task from runner
-   ✅ Lambda-friendly
+   Java single-inheritance — can still extend other class
+   Decouples task from runner
+   Lambda-friendly
 ```
 
 ---
@@ -147,9 +147,9 @@ Runnable preferred:
 ```java
 Thread t = new Thread(() -> System.out.println("Hi"));
 
-t.run();      // ❌ runs in CURRENT thread (no new thread!)
+t.run();      // runs in CURRENT thread (no new thread!)
 
-t.start();    // ✅ creates NEW thread, executes run()
+t.start();    // creates NEW thread, executes run()
 ```
 
 ```
@@ -239,19 +239,19 @@ Thread A:                  Thread B:
 With synchronized:
    
    Thread A:                  Thread B (waits):
-   🔒 acquire lock
+   acquire lock
    read 5 → write 6
-   🔓 release lock
-                              🔒 acquire lock
+   release lock
+                              acquire lock
                               read 6 → write 7
-                              🔓 release lock
+                              release lock
    
    = Atomic, no race
 ```
 
 ---
 
-## 🔟 Synchronized — 3 Forms
+## Synchronized — 3 Forms
 
 ```java
 // 1. Synchronized method (locks the OBJECT 'this')
@@ -304,8 +304,8 @@ volatile = "always read/write from MAIN MEMORY"
 ┌─────────────────┬────────────────────┬─────────────────┐
 │  Aspect         │  volatile           │  synchronized   │
 ├─────────────────┼────────────────────┼─────────────────┤
-│ Visibility      │ ✅                  │ ✅              │
-│ Atomicity       │ ❌                  │ ✅              │
+│ Visibility      │                  │              │
+│ Atomicity       │                  │              │
 │ Use case        │ Flag, single var    │ Multiple steps  │
 │ Performance     │ Fast (no lock)      │ Slower (lock)   │
 └─────────────────┴────────────────────┴─────────────────┘
@@ -313,7 +313,7 @@ volatile = "always read/write from MAIN MEMORY"
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
 Process = restaurant building
@@ -326,12 +326,12 @@ Lifecycle:
    NEW → RUNNABLE → RUNNING → TERMINATED
    (sub: BLOCKED, WAITING, TIMED_WAITING)
 
-synchronized = 🔒 lock (atomicity + visibility)
-volatile     = 👁️  visibility only (no atomicity)
+synchronized = lock (atomicity + visibility)
+volatile     =  visibility only (no atomicity)
 
 Use cases:
    Flag boolean → volatile
    Multi-step update → synchronized
 ```
 
-📚 [← Back to JAVA](../../)
+[← Back to JAVA](../../)

@@ -1,4 +1,4 @@
-# 🌟 Real Spring Example — All 5 SOLID Together
+# Real Spring Example — All 5 SOLID Together
 
 ---
 
@@ -134,4 +134,4 @@ Spring + SOLID = natural fit:
    = Production-grade architecture
 ```
 
-📚 [← Back to SOLID](00_overview.md)
+[← Back to SOLID](00_overview.md)

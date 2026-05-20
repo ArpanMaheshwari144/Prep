@@ -1,4 +1,4 @@
-# 🔐 JWT + Security — Visual Revision
+# JWT + Security — Visual Revision
 
 ---
 
@@ -72,15 +72,15 @@ STATELESS (JWT-based):
    Token verify karte time:
       recalculate signature
       Token mein wala signature == calculated?
-         Yes → genuine ✅
-         No  → tampered ❌
+         Yes → genuine 
+         No  → tampered 
 ```
 
 ```
 Hacker scenario:
    Token mein "role: USER" ko "role: ADMIN" badal diya?
       Payload changed → signature mismatch
-      Server reject kar dega ✅
+      Server reject kar dega 
    = Tamper-proof
 ```
 
@@ -285,7 +285,7 @@ WHY DB-stored refresh tokens?
 
 ---
 
-## 🔟 Full Project Architecture
+## Full Project Architecture
 
 ```
    ┌──────────────────────────────────┐
@@ -335,33 +335,33 @@ WHY DB-stored refresh tokens?
 ## 1️⃣1️⃣ 7 Security Pitfalls
 
 ```
-1. ❌ Storing JWT in cookie WITHOUT httpOnly
+1. Storing JWT in cookie WITHOUT httpOnly
    → XSS attacks read it
-   ✅ Use httpOnly cookie OR localStorage with care
+   Use httpOnly cookie OR localStorage with care
 
-2. ❌ Long-lived access tokens (1 day+)
-   ✅ 15 min access + 7-30 day refresh
+2. Long-lived access tokens (1 day+)
+   15 min access + 7-30 day refresh
 
-3. ❌ No refresh token rotation
-   ✅ Generate NEW refresh on each refresh
+3. No refresh token rotation
+   Generate NEW refresh on each refresh
 
-4. ❌ JWT secret in code
-   ✅ Environment variable / secret manager
+4. JWT secret in code
+   Environment variable / secret manager
 
-5. ❌ Symmetric key (HS256) shared with frontend
-   ✅ Use RS256 (asymmetric) for distributed systems
+5. Symmetric key (HS256) shared with frontend
+   Use RS256 (asymmetric) for distributed systems
 
-6. ❌ Sensitive data in payload
-   ✅ JWT is base64, NOT encrypted — anyone can read
-   ✅ Only put non-sensitive (id, role)
+6. Sensitive data in payload
+   JWT is base64, NOT encrypted — anyone can read
+   Only put non-sensitive (id, role)
 
-7. ❌ No logout mechanism
-   ✅ DB-stored refresh tokens, delete on logout
+7. No logout mechanism
+   DB-stored refresh tokens, delete on logout
 ```
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
 JWT       = ATM card (encoded info, server stateless)
@@ -379,7 +379,7 @@ BCrypt    = password hash (one-way)
 
 ---
 
-## 💎 One-Line Summary
+## One-Line Summary
 
 ```
 "JWT = stateless authentication.
@@ -389,4 +389,4 @@ BCrypt    = password hash (one-way)
  JwtFilter intercepts → validates → sets SecurityContext."
 ```
 
-📚 [← Back to SPRING](../)
+[← Back to SPRING](../)

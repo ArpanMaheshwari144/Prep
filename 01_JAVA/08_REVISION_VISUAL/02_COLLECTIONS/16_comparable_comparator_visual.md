@@ -1,4 +1,4 @@
-# ⚖️ Comparable vs Comparator — Visual Revision
+# Comparable vs Comparator — Visual Revision
 
 ---
 
@@ -211,21 +211,21 @@ Comparator<Student> byAgeDesc =
 
 ```
 COMPARABLE:
-   ✅ Class has ONE natural order
-   ✅ Numbers, Strings (built-in)
-   ✅ Custom class with obvious order
+   Class has ONE natural order
+   Numbers, Strings (built-in)
+   Custom class with obvious order
       (e.g., Date, Money — sorted by amount)
 
 COMPARATOR:
-   ✅ Multiple sort criteria needed
-   ✅ Class is third-party (can't modify)
-   ✅ Sort same class differently in different contexts
-   ✅ Ad-hoc sorting (one-time)
+   Multiple sort criteria needed
+   Class is third-party (can't modify)
+   Sort same class differently in different contexts
+   Ad-hoc sorting (one-time)
 ```
 
 ---
 
-## 🔟 Real Java Built-ins
+## Real Java Built-ins
 
 ```java
 // Numbers — already Comparable
@@ -268,14 +268,14 @@ External override = pass comparator
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-Comparable  = ⭐ class apne aap mein compare-able
+Comparable  = class apne aap mein compare-able
               ONE natural order (compareTo)
               modify class
 
-Comparator  = 👨‍⚖️ external judge
+Comparator  = external judge
               MULTIPLE rules
               don't touch class
               lambda-friendly
@@ -291,11 +291,11 @@ compareTo return:
 ## 1️⃣2️⃣ Common Use Cases
 
 ```
-✅ Sort employees by salary (Comparator)
-✅ Sort products by price then by rating (chain)
-✅ Sort dates chronologically (Comparable built-in)
-✅ PriorityQueue with custom order (Comparator)
-✅ TreeMap with custom key order (Comparator)
+Sort employees by salary (Comparator)
+Sort products by price then by rating (chain)
+Sort dates chronologically (Comparable built-in)
+PriorityQueue with custom order (Comparator)
+TreeMap with custom key order (Comparator)
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

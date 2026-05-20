@@ -1,30 +1,30 @@
-# 🟢 Section A3 — Volumes (Data Persistence)
+# Section A3 — Volumes (Data Persistence)
 
 > **Why:** Container delete = data gone (default). Volumes solve this.
 > **Demo:** Live disaster + recovery proof
 
-📚 [← Back to README](00_README.md) | [← Spring+MySQL](02_spring_mysql_host.md) | [Transition →](04_transition.md)
+[← Back to README](00_README.md) | [← Spring+MySQL](02_spring_mysql_host.md) | [Transition →](04_transition.md)
 
 ---
 
-# 📍 PART 19 — VOLUMES (Data Persistence) — LIVE DEMO PROOF
+# PART 19 — VOLUMES (Data Persistence) — LIVE DEMO PROOF
 
-## 🎬 STORY — Filing Cabinet vs Paper-on-Desk
+## STORY — Filing Cabinet vs Paper-on-Desk
 
 ```
-   ❌ WITHOUT VOLUME                    ✅ WITH VOLUME
+   WITHOUT VOLUME                    WITH VOLUME
    ────────────────────                 ─────────────────────
    Paper on desk                        Filing cabinet (separate)
                                             ↑
    Desk hata diya?                      Desk hata diya?
        ↓                                    ↓
-   Paper bhi gaya 💀                    Cabinet ZINDA
+   Paper bhi gaya                    Cabinet ZINDA
                                             ↓
                                        Naya desk lao
                                             ↓
                                        Cabinet wapas connect
                                             ↓
-                                       Paper SAFE ✅
+                                       Paper SAFE 
 ```
 
 ```
@@ -34,7 +34,7 @@ Volume    = FILING CABINET (permanent, separate)
 
 ---
 
-## 🎯 THE BIG PICTURE — Image vs Container vs Volume
+## THE BIG PICTURE — Image vs Container vs Volume
 
 ```
    ┌────────────────────────────────────────────────────────────┐
@@ -71,9 +71,9 @@ Volume    = FILING CABINET (permanent, separate)
 
 ---
 
-## 🚨 LIVE DEMO — Disaster + Recovery (jo kiya)
+## LIVE DEMO — Disaster + Recovery (jo kiya)
 
-### 🎬 Phase 1: WITHOUT volume — proves data dies
+### Phase 1: WITHOUT volume — proves data dies
 
 ```
    ┌─────────────────────────────┐
@@ -89,7 +89,7 @@ Volume    = FILING CABINET (permanent, separate)
               │  docker rm -f mysql-userdb
               ▼
         ┌──────────┐
-        │  💀💀💀  │
+        │   │
         │ ALL GONE │
         └──────────┘
 ```
@@ -112,7 +112,7 @@ Volume    = FILING CABINET (permanent, separate)
 
 ---
 
-### 🎬 Phase 2: WITH volume — proves data survives
+### Phase 2: WITH volume — proves data survives
 
 ```
                     ┌──────────────────┐
@@ -139,12 +139,12 @@ Volume    = FILING CABINET (permanent, separate)
               ▼
         ┌──────────┐
         │ Container│
-        │  GONE 💀 │
+        │  GONE │
         └──────────┘
                             ┌──────────────────┐
                             │  VOLUME          │
                             │  mysql_data      │
-                            │  ✅ STILL ALIVE  │
+                            │  STILL ALIVE  │
                             │  Data INTACT     │
                             └──────────────────┘
 ```
@@ -156,7 +156,7 @@ Volume    = FILING CABINET (permanent, separate)
                     ┌──────────────────┐
                     │  VOLUME          │
                     │  mysql_data      │
-                    │  ✅ Arpan inside │
+                    │  Arpan inside │
                     └──────────────────┘
                             ▲
                             │ same -v reattach
@@ -168,12 +168,12 @@ Volume    = FILING CABINET (permanent, separate)
    └─────────────────────────────┘
    
    docker exec → SELECT * FROM users;
-      → Arpan (id=1, age=27)   ← VOLUME SAVED THE DAY ✅
+      → Arpan (id=1, age=27)   ← VOLUME SAVED THE DAY 
 ```
 
 ---
 
-## 📋 Volume Commands (sab kuch jo kiya/karenge)
+## Volume Commands (sab kuch jo kiya/karenge)
 
 ```cmd
 REM Create named volume
@@ -214,7 +214,7 @@ Modern syntax (--mount, more verbose):
 
 ---
 
-## 🎨 3 Volume Types (visual)
+## 3 Volume Types (visual)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -254,7 +254,7 @@ Modern syntax (--mount, more verbose):
 
 ---
 
-## 💀 Anonymous Volumes Trap (tu jo dikha)
+## Anonymous Volumes Trap (tu jo dikha)
 
 ```
    docker run mysql:8                    (no -v flag)
@@ -281,7 +281,7 @@ docker volume prune -f       REM Removes all unused (anonymous orphans)
 
 ---
 
-## 🆚 Lifecycle Visual — All 3 Together
+## Lifecycle Visual — All 3 Together
 
 ```
    IMAGE                                                            
@@ -297,7 +297,7 @@ docker volume prune -f       REM Removes all unused (anonymous orphans)
    │                        │                                        
    │ docker rm              │                                        
    ▼                        │                                        
-   GONE 💀                  │ (still alive, container deleted)        
+   GONE                  │ (still alive, container deleted)        
                             │                                        
                             │ docker run -v same_volume ...           
                             ▼                                        
@@ -310,7 +310,7 @@ docker volume prune -f       REM Removes all unused (anonymous orphans)
 
 ---
 
-## 🎤 Interview Q&A — Volumes
+## Interview Q&A — Volumes
 
 **Q: "Container delete pe data preserve kaise?"**
 
@@ -330,83 +330,83 @@ docker volume prune -f       REM Removes all unused (anonymous orphans)
 
 ---
 
-## ⚠️ Volume Traps (4 new)
+## Volume Traps (4 new)
 
 ```
-🪤 Trap 12: Mount path container ke andar mismatch
-         ❌ -v mysql_data:/var/mysql      (wrong path)
-         ✅ -v mysql_data:/var/lib/mysql  (MySQL ka actual data path)
+Trap 12: Mount path container ke andar mismatch
+         -v mysql_data:/var/mysql      (wrong path)
+         -v mysql_data:/var/lib/mysql  (MySQL ka actual data path)
             Image documentation se exact path le
 
-🪤 Trap 13: Volume + container delete cleanup
-         ❌ docker rm container → volume orphan ho jata
-         ✅ docker rm -v container        (volume bhi delete)
+Trap 13: Volume + container delete cleanup
+         docker rm container → volume orphan ho jata
+         docker rm -v container        (volume bhi delete)
             Or: explicit `docker volume rm X` baad mein
 
-🪤 Trap 14: Permissions issue (Linux containers)
-         ❌ Bind mount Windows folder → Linux container 
+Trap 14: Permissions issue (Linux containers)
+         Bind mount Windows folder → Linux container 
             permission errors (UID mismatch)
-         ✅ Named volume preferred (Docker handles permissions)
+         Named volume preferred (Docker handles permissions)
             OR set proper UID in Dockerfile
 
-🪤 Trap 15: Volume stale data trap
-         ❌ Volume mein purana DB schema, naya app version
+Trap 15: Volume stale data trap
+         Volume mein purana DB schema, naya app version
             → migration error
-         ✅ Volume + DB version sync rakho
+         Volume + DB version sync rakho
             Reset: `docker volume rm X` + recreate
 ```
 
 ---
 
-## ✅ Volumes Concepts LOCKED (today)
+## Volumes Concepts LOCKED (today)
 
 ```
-✅ Container ephemeral (data dies with container by default)
-✅ Volume = persistent, container-independent storage
-✅ Named volume vs Bind mount vs tmpfs (3 types)
-✅ Volume lifecycle (create → mount → unmount → rm)
-✅ docker volume create / ls / inspect / rm / prune
-✅ -v volume_name:/container/path mount syntax
-✅ Anonymous volumes auto-created (Dockerfile VOLUME directive)
-✅ Volume orphan cleanup (docker volume prune)
-✅ Same volume → multiple containers (data sharing/migration)
-✅ Production rule: ANY DB / persistent data → ALWAYS volume
-✅ Visual proof: container delete + recreate + same volume = data intact
+Container ephemeral (data dies with container by default)
+Volume = persistent, container-independent storage
+Named volume vs Bind mount vs tmpfs (3 types)
+Volume lifecycle (create → mount → unmount → rm)
+docker volume create / ls / inspect / rm / prune
+-v volume_name:/container/path mount syntax
+Anonymous volumes auto-created (Dockerfile VOLUME directive)
+Volume orphan cleanup (docker volume prune)
+Same volume → multiple containers (data sharing/migration)
+Production rule: ANY DB / persistent data → ALWAYS volume
+Visual proof: container delete + recreate + same volume = data intact
 ```
 
 ---
 
-## 🎯 NEXT (after Volumes — pending Docker concepts)
+## NEXT (after Volumes — pending Docker concepts)
 
 ```
-🔜 NETWORKS
+NETWORKS
    • Multi-container talk
    • Bridge / host / overlay
    • Container name as hostname
 
-🔜 DOCKER-COMPOSE
+DOCKER-COMPOSE
    • Multi-service in one YAML (Spring Boot + MySQL + Redis)
    • One command up/down all
    • Production-like local setup
 
-🔜 ENTRYPOINT vs CMD
+ENTRYPOINT vs CMD
    • Interview classic
    • Difference + when to use which
 
-🔜 MULTI-STAGE BUILDS
+MULTI-STAGE BUILDS
    • Final image small (build deps removed)
    • Production must
 
-🔜 DOCKER REGISTRY (push/pull)
+DOCKER REGISTRY (push/pull)
    • Docker Hub
    • Private registries
 
-🔜 K8s (after Docker fully done)
+K8s (after Docker fully done)
 ```
 
 ---
 
-## 💎 ENHANCED POWER PHRASE (with Volumes)
+## ENHANCED POWER PHRASE (with Volumes)
 
 > *"Docker = Image (read-only template) + Container (running instance) + Volume (persistent storage). Container ephemeral by default — delete = data gone. Volume independent — container lifecycle se alag. Production rule: ANY data persistence MUST go in volume (`-v volume_name:/container/path`). Same volume reuse karke naye container ko same data se chalu kar sakte. Named volume Docker-managed (production), bind mount host folder direct (dev), tmpfs RAM-only (sensitive temp). Anonymous volumes (Dockerfile VOLUME directive) auto-create — orphan trap, prune se cleanup. Containers + volumes together = persistent + portable production stack."*
 

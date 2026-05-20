@@ -13,7 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    RefreshToken Entity — DB-stored long-lived token
 //    Refresh tokens DB mein persist karta
 //    Taaki logout pe REVOKE kar sakein
@@ -55,17 +55,17 @@ import lombok.NoArgsConstructor;
 //       Row stale → next refresh fails
 //       Optional: scheduled cleanup job (@Scheduled)
 //
-// 🔑 WHY UUID (NOT JWT) FOR REFRESH?
+// WHY UUID (NOT JWT) FOR REFRESH?
 //    TRADE-OFF DECISION:
 //
 //    JWT for refresh:
-//       ✅ Self-validating (no DB lookup)
-//       ❌ Can't revoke easily (until expiry)
+//       Self-validating (no DB lookup)
+//       Can't revoke easily (until expiry)
 //
 //    UUID for refresh (humara approach):
-//       ✅ DB lookup mandatory → instant revocation
-//       ✅ Logout pe delete = immediate session end
-//       ❌ DB hit per refresh (rare, acceptable)
+//       DB lookup mandatory → instant revocation
+//       Logout pe delete = immediate session end
+//       DB hit per refresh (rare, acceptable)
 //
 //    Decision rationale:
 //       Refresh used 1x per 15 min = DB hit OK
@@ -94,11 +94,11 @@ import lombok.NoArgsConstructor;
 //           refreshTokenRepo.deleteByExpiresAtBefore(Instant.now());
 //       }
 //
-// 📐 SOLID — SRP:
+// SOLID — SRP:
 //    Sirf refresh token data + DB mapping
 //    No business logic, no validation logic
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "RefreshToken entity stores refresh tokens DB-side enabling
 //     revocation on logout. Trade-off: stateful vs stateless.
 //     Chose UUID over JWT for refresh — revocation guarantee
@@ -113,23 +113,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RefreshToken {
 
-    // 🔢 Primary key — auto-increment
+    // Primary key — auto-increment
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 🎫 Actual refresh token string (UUID)
+    // Actual refresh token string (UUID)
     // unique=true → same token DB mein 2 baar nahi
     @Column(nullable = false, unique = true)
     private String token;
 
-    // 👤 Owner user ID — kis user ke liye yeh token issued hua
+    // Owner user ID — kis user ke liye yeh token issued hua
     // (Foreign key relationship — but simple project mein direct Long)
     // Production: @ManyToOne with User entity, @JoinColumn use karte
     @Column(nullable = false)
     private Long userId;
 
-    // ⏰ Expiration timestamp
+    // Expiration timestamp
     // Login pe set: Instant.now().plus(7, ChronoUnit.DAYS)
     // Refresh time pe check: expiresAt.isBefore(Instant.now()) → expired
     @Column(nullable = false)

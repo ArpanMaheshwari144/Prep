@@ -1,14 +1,14 @@
-# 🚀 K8s Practical Journey — Real Deployment Step By Step
+# K8s Practical Journey — Real Deployment Step By Step
 
 > **Date:** 2026-05-07
 > **What:** Real K8s deployment of UserCRUD (Spring Boot + MySQL)
 > **Mode:** Hands-on, every step explained
 
-📚 [← Back to K8S README](../00_README.md)
+[← Back to K8S README](../00_README.md)
 
 ---
 
-## 🎯 Overall Journey (6 Phases)
+## Overall Journey (6 Phases)
 
 ```
 PHASE 1: Cluster Setup                     ← yahan hai
@@ -21,7 +21,7 @@ PHASE 6: Cleanup                           ← coming
 
 ---
 
-# 🔑 First — kubectl Kya Hai?
+# First — kubectl Kya Hai?
 
 ```
 kubectl = "kube" (Kubernetes) + "ctl" (control)
@@ -97,7 +97,7 @@ kubectl = "kube CONTROL"
 
 ---
 
-# 📍 PHASE 1 — Cluster Setup
+# PHASE 1 — Cluster Setup
 
 ## What We Did:
 
@@ -113,7 +113,7 @@ kubectl = "kube CONTROL"
 
 ---
 
-## 🤔 Why Each Step?
+## Why Each Step?
 
 ### **Steps 1-3: Enable K8s in Docker Desktop**
 ```
@@ -158,7 +158,7 @@ kubectl get nodes          ← node Ready?
 
 ---
 
-## 🔑 Verification Output
+## Verification Output
 
 ```cmd
 > kubectl version
@@ -174,7 +174,7 @@ desktop-control-plane    Ready    control-plane   2m
 
 ---
 
-## 💎 Behind The Scenes
+## Behind The Scenes
 
 ```
 Click "Create Cluster"
@@ -197,7 +197,7 @@ kubectl on host CLI:
 
 ---
 
-## 🧠 Key Concept (Phase 1)
+## Key Concept (Phase 1)
 
 ```
 Cluster = NOT just one thing
@@ -211,18 +211,18 @@ Production = control plane SEPARATE from worker nodes (HA)
 
 ---
 
-## ✅ Phase 1 Complete When:
+## Phase 1 Complete When:
 
 ```
-✅ Docker Desktop K8s enabled
-✅ kubectl version shows client + server
-✅ kubectl get nodes shows Ready
+Docker Desktop K8s enabled
+kubectl version shows client + server
+kubectl get nodes shows Ready
    = Cluster ready to deploy resources
 ```
 
 ---
 
-# 📍 PHASE 2 — MySQL Deploy (4 Manifests)
+# PHASE 2 — MySQL Deploy (4 Manifests)
 
 ## What We Did:
 
@@ -239,7 +239,7 @@ Production = control plane SEPARATE from worker nodes (HA)
 
 ---
 
-## 🤔 Why 4 Files (not 1)?
+## Why 4 Files (not 1)?
 
 ```
 Production pattern = SEPARATION OF CONCERNS:
@@ -256,7 +256,7 @@ Production pattern = SEPARATION OF CONCERNS:
 
 ---
 
-## 📋 File 1: mysql-secret.yaml
+## File 1: mysql-secret.yaml
 
 ### Why?
 ```
@@ -285,7 +285,7 @@ kubectl apply -f mysql-secret.yaml
 
 ---
 
-## 💾 File 2: mysql-pvc.yaml (Persistent Volume Claim)
+## File 2: mysql-pvc.yaml (Persistent Volume Claim)
 
 ### Why?
 ```
@@ -335,7 +335,7 @@ kubectl get pvc
 
 ---
 
-## 🐳 File 3: mysql-deployment.yaml
+## File 3: mysql-deployment.yaml
 
 ### Why?
 ```
@@ -386,7 +386,7 @@ kubectl apply -f mysql-deployment.yaml
 
 ---
 
-## 🌐 File 4: mysql-service.yaml
+## File 4: mysql-service.yaml
 
 ### Why?
 ```
@@ -418,7 +418,7 @@ kubectl apply -f mysql-service.yaml
 
 ---
 
-## 🚀 All 4 Applied — Verify
+## All 4 Applied — Verify
 
 ```cmd
 kubectl get pods
@@ -437,7 +437,7 @@ kubectl get services
 
 ---
 
-## 💎 Connection Chain Inside Cluster
+## Connection Chain Inside Cluster
 
 ```
 Other K8s pods (Spring Boot eventually):
@@ -457,7 +457,7 @@ PVC (mysql-pvc) → PV → actual disk (data persistent)
 
 ---
 
-## 🧠 Concept Lock (Phase 2)
+## Concept Lock (Phase 2)
 
 ```
 4 files = 4 layers:
@@ -473,7 +473,7 @@ Update one without affecting others.
 
 ---
 
-## 🆚 Docker vs K8s Storage Quick Compare
+## Docker vs K8s Storage Quick Compare
 
 ```
 DOCKER:
@@ -492,7 +492,7 @@ K8S:
 
 ```
 For YOUR mental model:
-   PVC ≈ Docker Volume (bird-eye view) ✅
+   PVC ≈ Docker Volume (bird-eye view) 
    PV under the hood (K8s plumbing)
 ```
 
@@ -500,9 +500,9 @@ For YOUR mental model:
 
 ---
 
-# 📍 PHASE 3 — Image Visibility Problem + Docker Hub Fix
+# PHASE 3 — Image Visibility Problem + Docker Hub Fix
 
-## 🤔 The Problem
+## The Problem
 
 ```
 Built local image: usercrud-app:multi (multi-stage)
@@ -510,7 +510,7 @@ Tried K8s deploy with:
    image: usercrud-app:multi
    imagePullPolicy: Never (don't try registry)
 
-Result: ErrImageNeverPull ❌
+Result: ErrImageNeverPull 
 ```
 
 ```cmd
@@ -520,7 +520,7 @@ kubectl get pods
 
 ---
 
-## 🔍 Why It Failed
+## Why It Failed
 
 ```
 Tera laptop pe 2 separate worlds:
@@ -541,7 +541,7 @@ Docker Desktop's K8s = isolated container runtime
 
 ---
 
-## 🎬 Tried 3 Approaches
+## Tried 3 Approaches
 
 ### Attempt 1: Install kind CLI (didn't help)
 ```
@@ -569,7 +569,7 @@ Result:
    = Docker daemon and K8s containerd separate
 ```
 
-### Attempt 3: Docker Hub Push ✅ WORKED
+### Attempt 3: Docker Hub Push WORKED
 
 ```
 Production-realistic path:
@@ -580,14 +580,14 @@ Production-realistic path:
 
 ---
 
-## 🚀 The Working Solution
+## The Working Solution
 
 ### Step 1: Login
 ```cmd
 docker login
    Username: arpanmah
    Password: <Docker Hub password>
-   → Login Succeeded ✅
+   → Login Succeeded 
 ```
 
 ### Step 2: Tag image with namespace
@@ -611,7 +611,7 @@ docker push arpanmah/usercrud-app:multi
 
 ---
 
-## 📝 Update Deployment YAML
+## Update Deployment YAML
 
 ### Before (failed):
 ```yaml
@@ -635,12 +635,12 @@ kubectl apply -f usercrud-deployment.yaml
    → "deployment.apps/usercrud configured"
 
 kubectl get pods
-   → usercrud-7fb44b4c67-wgk87   1/1   Running ✅
+   → usercrud-7fb44b4c67-wgk87   1/1   Running 
 ```
 
 ---
 
-## 💎 Key Insight
+## Key Insight
 
 ```
 Image Docker Hub pe push karo
@@ -651,7 +651,7 @@ K8s Docker Hub se pull karega
      ↓
 Pod chala deta
      ↓
-Boom — kaam khatam ✅
+Boom — kaam khatam 
 ```
 
 **EVERYWHERE same pattern:**
@@ -668,7 +668,7 @@ ALWAYS via registry (Docker Hub / cloud registry).
 
 ---
 
-## 🆚 imagePullPolicy Options
+## imagePullPolicy Options
 
 ```
 Never           → Don't pull, use local only
@@ -685,7 +685,7 @@ Always          → Pull every time (default for "latest" tag)
 
 ---
 
-## 🌐 Production Registry Flow
+## Production Registry Flow
 
 ```
 DEVELOPER:
@@ -705,22 +705,22 @@ K8S CLUSTER:
 
 ---
 
-## ✅ Phase 3 Done When:
+## Phase 3 Done When:
 
 ```
-✅ Image pushed to Docker Hub (arpanmah/usercrud-app:multi)
-✅ Deployment YAML updated (image source + imagePullPolicy)
-✅ Pod successfully Running
-✅ Production registry pattern understood
+Image pushed to Docker Hub (arpanmah/usercrud-app:multi)
+Deployment YAML updated (image source + imagePullPolicy)
+Pod successfully Running
+Production registry pattern understood
 ```
 
 ---
 
 ---
 
-# 📍 PHASE 4 — Spring Boot Deploy (3 Manifests)
+# PHASE 4 — Spring Boot Deploy (3 Manifests)
 
-## 🎯 What We Did
+## What We Did
 
 ```
 3 manifest files banaye for Spring Boot:
@@ -736,7 +736,7 @@ Apply + verify:
 
 ---
 
-## 📋 File 1: usercrud-configmap.yaml
+## File 1: usercrud-configmap.yaml
 
 ### Why?
 ```
@@ -769,7 +769,7 @@ kubectl apply -f usercrud-configmap.yaml
 
 ---
 
-## 🚀 File 2: usercrud-deployment.yaml
+## File 2: usercrud-deployment.yaml
 
 ### Why?
 ```
@@ -821,7 +821,7 @@ kubectl apply -f usercrud-deployment.yaml
 
 ---
 
-## 🌐 File 3: usercrud-service.yaml
+## File 3: usercrud-service.yaml
 
 ### Why?
 ```
@@ -856,7 +856,7 @@ kubectl apply -f usercrud-service.yaml
 
 ---
 
-## 🚀 Verify Pods Running
+## Verify Pods Running
 
 ```cmd
 kubectl get pods
@@ -868,7 +868,7 @@ kubectl get pods
 
 ---
 
-## 💎 What Spring Boot Does Inside Pod (startup)
+## What Spring Boot Does Inside Pod (startup)
 
 ```
 1. Container starts
@@ -889,7 +889,7 @@ kubectl get pods
 
 ---
 
-## 🆚 Docker Compose vs K8s — Same Pattern
+## Docker Compose vs K8s — Same Pattern
 
 ```
 COMPOSE:
@@ -908,14 +908,14 @@ K8S:
 
 ---
 
-## ✅ Phase 4 Done When:
+## Phase 4 Done When:
 
 ```
-✅ ConfigMap applied
-✅ Deployment applied (image from Docker Hub)
-✅ Service applied (NodePort 30080)
-✅ usercrud pod 1/1 Running
-✅ MySQL pod 1/1 Running
+ConfigMap applied
+Deployment applied (image from Docker Hub)
+Service applied (NodePort 30080)
+usercrud pod 1/1 Running
+MySQL pod 1/1 Running
    = Both services up, talking via service names
 ```
 
@@ -923,9 +923,9 @@ K8S:
 
 ---
 
-# 📍 PHASE 5 — External Access (Port-forward fix)
+# PHASE 5 — External Access (Port-forward fix)
 
-## 🤔 The Problem
+## The Problem
 
 ```
 Service banayi NodePort type (30080)
@@ -934,12 +934,12 @@ Soch tha: localhost:30080 se reach kar lega
 Postman se:
    POST http://localhost:30080/auth/register
 
-Result: ECONNREFUSED 127.0.0.1:30080 ❌
+Result: ECONNREFUSED 127.0.0.1:30080 
 ```
 
 ---
 
-## 🔍 Why It Failed
+## Why It Failed
 
 ```
 Docker Desktop ka kind cluster = isolated container network
@@ -949,7 +949,7 @@ Docker Desktop ka kind cluster = isolated container network
    │              │              │                       │
    │  localhost   │              │  NodePort 30080       │
    │  :30080      │              │  (cluster ke andar    │
-   │              │  ✗  REFUSED  │   exposed)             │
+   │              │   REFUSED  │   exposed)             │
    │              │              │                       │
    └──────────────┘              └──────────────────────┘
 
@@ -960,7 +960,7 @@ Tera laptop ka localhost ≠ kind cluster ka network
 
 ---
 
-## 💡 The Solution — Port-Forward
+## The Solution — Port-Forward
 
 ```cmd
 kubectl port-forward service/usercrud-service 8080:8080
@@ -975,7 +975,7 @@ Forwarding from 127.0.0.1:8080 -> 8080
      localhost:8080  ↔  K8s service:8080
 ```
 
-### ⚠️ Important:
+### Important:
 ```
 Yeh terminal BLOCK ho jaata
    = Port-forward chal raha as long as terminal open
@@ -985,7 +985,7 @@ Yeh terminal BLOCK ho jaata
 
 ---
 
-## 🎨 Visual
+## Visual
 
 ```
    POSTMAN
@@ -1021,7 +1021,7 @@ Yeh terminal BLOCK ho jaata
 
 ---
 
-## 🎯 Postman Test Result
+## Postman Test Result
 
 ```
 URL:  http://localhost:8080/auth/login
@@ -1033,16 +1033,16 @@ Body:
 ```
 
 ```
-✅ Status: 200 OK (2.17s)
-✅ accessToken: "eyJhbGci..."
-✅ refreshToken: "92f8d44f-2476-4ab2-..."
+Status: 200 OK (2.17s)
+accessToken: "eyJhbGci..."
+refreshToken: "92f8d44f-2476-4ab2-..."
 
 = End-to-end K8s deployment WORKING
 ```
 
 ---
 
-# 🚨 IMPORTANT — K8s Mein 3 ALAG Ports Hote Hain
+# IMPORTANT — K8s Mein 3 ALAG Ports Hote Hain
 
 ```
 1. containerPort  → Pod ke andar (Spring Boot 8080 pe listen)
@@ -1050,7 +1050,7 @@ Body:
 3. nodePort       → External access port (30000-32767 ONLY)
 ```
 
-## 🎨 Visual
+## Visual
 
 ```
    EXTERNAL                    INTERNAL CLUSTER
@@ -1067,7 +1067,7 @@ Body:
 
 ---
 
-## 🤔 NodePort 30080 KYU? Direct 8080 KYU NAHI?
+## NodePort 30080 KYU? Direct 8080 KYU NAHI?
 
 ```
 K8s rule (security):
@@ -1080,7 +1080,7 @@ K8s rule (security):
 
 ---
 
-## 🔍 Why 30000-32767 Range?
+## Why 30000-32767 Range?
 
 ```
 Port number ranges (worldwide standard):
@@ -1092,15 +1092,15 @@ K8s NodePort range:
    30000   - 32767    = SAFE zone — doesn't conflict
 
 Why?
-   ✅ Far above system ports (no root needed)
-   ✅ Out of way of common apps (8080, 3306, etc.)
-   ✅ Won't clash with ephemeral ports
+   Far above system ports (no root needed)
+   Out of way of common apps (8080, 3306, etc.)
+   Won't clash with ephemeral ports
    = K8s ka cluster-friendly range
 ```
 
 ---
 
-## 🧠 Same Concept, Different Layer
+## Same Concept, Different Layer
 
 ```
 Spring Boot inside pod:
@@ -1118,7 +1118,7 @@ External access (NodePort):
 
 ---
 
-## 💡 If You Try 8080 as nodePort:
+## If You Try 8080 as nodePort:
 
 ```yaml
 spec:
@@ -1131,7 +1131,7 @@ spec:
 
 ---
 
-## 🎯 So Why Did Postman Hit 8080?
+## So Why Did Postman Hit 8080?
 
 ```
 We used:
@@ -1155,36 +1155,36 @@ Yeh nodePort NAHI tha — yeh:
 
 ---
 
-## 🆚 Three Access Methods Compared
+## Three Access Methods Compared
 
 ```
 Method 1: NodePort
    localhost:30080 → cluster node → service → pod
-   ⚠️ Port limit: 30000-32767
-   ⚠️ Docker Desktop kind = doesn't expose to localhost (issue we hit)
+   Port limit: 30000-32767
+   Docker Desktop kind = doesn't expose to localhost (issue we hit)
 
 Method 2: Port-Forward (jo kiya)
    localhost:<any-port> → kubectl tunnel → service → pod
-   ✅ Any port (no restriction)
-   ✅ Works on any cluster including kind
-   ❌ Terminal-bound (not production)
+   Any port (no restriction)
+   Works on any cluster including kind
+   Terminal-bound (not production)
 
 Method 3: LoadBalancer (production)
    Public-IP:80 → cloud LB → service → pod
-   ✅ Production-grade
-   ✅ Any port (cloud LB manages)
-   ❌ Costs money, cloud-only
+   Production-grade
+   Any port (cloud LB manages)
+   Costs money, cloud-only
 
 Method 4: Ingress (production — best)
-   ✅ Single LB for many services
-   ✅ Path/host-based routing
-   ✅ TLS termination
-   ✅ Cost-efficient
+   Single LB for many services
+   Path/host-based routing
+   TLS termination
+   Cost-efficient
 ```
 
 ---
 
-## 💎 Bonus — "Email already registered" Pe Logged In
+## Bonus — "Email already registered" Pe Logged In
 
 ```
 We expected: fresh DB, register naya
@@ -1200,7 +1200,7 @@ Reason:
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
 Pod port      = Spring Boot ka choice (8080)
@@ -1216,24 +1216,24 @@ Port-forward  = bypass nodePort
 
 ---
 
-## ✅ Phase 5 Done When:
+## Phase 5 Done When:
 
 ```
-✅ kubectl port-forward bridge active
-✅ Postman test successful (200 OK)
-✅ End-to-end chain proven
-✅ Understood: NodePort restricted to 30000-32767
-✅ Understood: port-forward bypass = any port
-✅ Understood: Production = LoadBalancer + Ingress
+kubectl port-forward bridge active
+Postman test successful (200 OK)
+End-to-end chain proven
+Understood: NodePort restricted to 30000-32767
+Understood: port-forward bypass = any port
+Understood: Production = LoadBalancer + Ingress
 ```
 
 ---
 
 ---
 
-# 📍 PHASE 6 — Cleanup
+# PHASE 6 — Cleanup
 
-## 🤔 Why Cleanup?
+## Why Cleanup?
 
 ```
 Cluster + pods running = laptop heat + RAM use
@@ -1242,7 +1242,7 @@ Practical done = resources free karo
 
 ---
 
-## 🛠️ Cleanup Methods
+## Cleanup Methods
 
 ### **Option 1: Delete K8s Resources Only (cluster runs)**
 ```cmd
@@ -1275,7 +1275,7 @@ System tray → Quit Docker Desktop
 
 ---
 
-## ⚠️ Kind Cluster ki Nature (jo confuse ki thi)
+## Kind Cluster ki Nature (jo confuse ki thi)
 
 ```
 Docker Desktop ke 2 K8s options:
@@ -1291,11 +1291,11 @@ Docker Desktop ke 2 K8s options:
 
 ---
 
-## 💡 Iska Matlab:
+## Iska Matlab:
 
 ```
-✅ Tera laptop COOL ho gaya (resources free)
-❌ Tera K8s deployment GAYA:
+Tera laptop COOL ho gaya (resources free)
+Tera K8s deployment GAYA:
    • mysql pod
    • usercrud pod
    • All manifests applied state
@@ -1304,9 +1304,9 @@ Docker Desktop ke 2 K8s options:
 
 ```
 Lekin BADA LOSS NAHI:
-   ✅ Files (YAMLs) abhi bhi tere paas
-   ✅ Docker Hub image preserved (arpanmah/usercrud-app:multi)
-   ✅ Notes safe
+   Files (YAMLs) abhi bhi tere paas
+   Docker Hub image preserved (arpanmah/usercrud-app:multi)
+   Notes safe
 
 Future revival:
    1. Docker Desktop → Create cluster (2 min)
@@ -1317,7 +1317,7 @@ Future revival:
 
 ---
 
-## 💎 Production Reality
+## Production Reality
 
 ```
 Kind clusters = development/learning only
@@ -1333,41 +1333,41 @@ Production:
 
 ---
 
-## ✅ Phase 6 Done When:
+## Phase 6 Done When:
 
 ```
-✅ Cluster deleted / stopped
-✅ Laptop resources freed
-✅ Files preserved for future
-✅ Understood: kind = ephemeral, production = persistent
-```
-
----
-
-# 🏆 FULL JOURNEY COMPLETE
-
-```
-Phase 1: ✅ Cluster Setup
-Phase 2: ✅ MySQL Deploy (4 manifests)
-Phase 3: ✅ Image Visibility → Docker Hub Fix
-Phase 4: ✅ Spring Boot Deploy (3 manifests)
-Phase 5: ✅ External Access (port-forward)
-Phase 6: ✅ Cleanup
+Cluster deleted / stopped
+Laptop resources freed
+Files preserved for future
+Understood: kind = ephemeral, production = persistent
 ```
 
 ---
 
-## 💎 What Was Achieved (1 day):
+# FULL JOURNEY COMPLETE
 
 ```
-✅ Real K8s cluster setup (Docker Desktop kind)
-✅ Multi-resource deployment:
+Phase 1: Cluster Setup
+Phase 2: MySQL Deploy (4 manifests)
+Phase 3: Image Visibility → Docker Hub Fix
+Phase 4: Spring Boot Deploy (3 manifests)
+Phase 5: External Access (port-forward)
+Phase 6: Cleanup
+```
+
+---
+
+## What Was Achieved (1 day):
+
+```
+Real K8s cluster setup (Docker Desktop kind)
+Multi-resource deployment:
       • Secret, PVC, ConfigMap, Deployment, Service × 2
-✅ Docker Hub image push (production-grade flow)
-✅ End-to-end production-style stack
-✅ Port-forward for external access
-✅ Postman test succeeded (200 OK)
-✅ Real production patterns understood
+Docker Hub image push (production-grade flow)
+End-to-end production-style stack
+Port-forward for external access
+Postman test succeeded (200 OK)
+Real production patterns understood
 
 = Most devs don't have this hands-on
 = Interview-ready for K8s questions
@@ -1375,7 +1375,7 @@ Phase 6: ✅ Cleanup
 
 ---
 
-## 🎯 Quick Recall (Single-Page Reference)
+## Quick Recall (Single-Page Reference)
 
 ```
 SETUP:
@@ -1414,7 +1414,7 @@ CLEANUP:
 
 ---
 
-## 💎 Top Concepts Locked
+## Top Concepts Locked
 
 ```
 1. kubectl = K8s ka remote control (CLI ↔ API Server)
@@ -1429,4 +1429,4 @@ CLEANUP:
 10. Same Docker Compose pattern, different syntax in K8s
 ```
 
-📚 [← Back to K8S README](../00_README.md)
+[← Back to K8S README](../00_README.md)

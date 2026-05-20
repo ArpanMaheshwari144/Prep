@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    LoginRequest = INPUT DTO for POST /auth/login
 //    User credentials JSON shape
 // ═══════════════════════════════════════════════════════════════════════
@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 //        "password": "secret123"
 //    }
 //
-// 🔑 WHY DTO (not User entity)?
+// WHY DTO (not User entity)?
 //    User has 6 fields (id, name, email, password, age, role)
 //    Login needs ONLY 2 (email + password)
 //    DTO = clean shape, no extra fields confusion
@@ -41,7 +41,7 @@ import lombok.NoArgsConstructor;
 //    @AllArgsConstructor → all-fields constructor
 //    @NoArgsConstructor → required for Jackson JSON deserialization
 //
-// 📐 SOLID — SRP: Sirf login input data
+// SOLID — SRP: Sirf login input data
 // ═══════════════════════════════════════════════════════════════════════
 
 @Data

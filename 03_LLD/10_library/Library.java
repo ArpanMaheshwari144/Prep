@@ -1,5 +1,5 @@
 // =========================================================
-// 🧪 SOLO LLD TEST #4 — Library Management System
+// SOLO LLD TEST #4 — Library Management System
 // Date: 2026-04-20
 // Mock interview — discussion-based
 // =========================================================
@@ -7,7 +7,7 @@
 import java.util.*;
 
 // ==========================
-// 📋 SCOPE (from discussion)
+// SCOPE (from discussion)
 // ==========================
 // - Max 5 copies per book
 // - Max 3 books per member at once
@@ -15,7 +15,7 @@ import java.util.*;
 // - Late return fine: ₹10 per day late
 
 // ==========================
-// 🏗️ CLASS DESIGN (from discussion)
+// CLASS DESIGN (from discussion)
 // ==========================
 //
 // class Book
@@ -37,7 +37,7 @@ import java.util.*;
 //   4. int returnBook(String memberId, String bookId, int daysLate)
 
 // ==========================
-// 📊 METHOD SPECS
+// METHOD SPECS
 // ==========================
 //
 // ┌──────────────────────────────────────────────────────────────────┐
@@ -83,7 +83,7 @@ import java.util.*;
 // └──────────────────────────────────────────────────────────────────┘
 
 // ==========================
-// 🎯 EXAMPLES
+// EXAMPLES
 // ==========================
 //
 // Library lib = new Library();
@@ -98,7 +98,7 @@ import java.util.*;
 // lib.returnBook("M1", "B1", -5)                             → 0 (early return, no fine)
 
 // =========================================================
-// 👇 BOOK CLASS — PROVIDED AS-IS
+// BOOK CLASS — PROVIDED AS-IS
 // =========================================================
 
 class Book {
@@ -130,7 +130,7 @@ class Book {
 }
 
 // =========================================================
-// 👇 MEMBER CLASS — PROVIDED AS-IS
+// MEMBER CLASS — PROVIDED AS-IS
 // =========================================================
 
 class Member {
@@ -158,7 +158,7 @@ class Member {
 }
 
 // =========================================================
-// 👇 LIBRARY CLASS — YAHAN APNA CODE LIKH
+// LIBRARY CLASS — YAHAN APNA CODE LIKH
 // =========================================================
 
 class Library {
@@ -230,7 +230,7 @@ class Library {
 }
 
 // =========================================================
-// 🧪 TEST RUNNER
+// TEST RUNNER
 // =========================================================
 
 class Main {

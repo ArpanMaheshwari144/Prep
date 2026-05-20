@@ -1,21 +1,21 @@
-# 🔄 BRIDGE — Day 1 → Day 2 Transition (READ THIS!)
+# BRIDGE — Day 1 → Day 2 Transition (READ THIS!)
 
 > **Critical insight:** Spring location decides URL pattern
 > **Day 1:** Spring on host → localhost:3307
 > **Day 2:** Spring in container → mysql:3306
 
-📚 [← Back to README](00_README.md) | [← Volumes](03_volumes.md) | [Networks →](05_networks.md)
+[← Back to README](00_README.md) | [← Volumes](03_volumes.md) | [Networks →](05_networks.md)
 
 ---
 
-# 🔄 DAY 1 → DAY 2 TRANSITION (READ THIS FIRST!)
+# DAY 1 → DAY 2 TRANSITION (READ THIS FIRST!)
 
 > **Yeh section sabse pehle padh — Day 1 vs Day 2 ka KEY difference**
 > Spring ki LOCATION badli — wahi reason URL pattern bhi badla
 
 ---
 
-## 🎯 The Big Picture — Spring kahan hai?
+## The Big Picture — Spring kahan hai?
 
 ```
 Spring Boot = APPLICATION
@@ -29,7 +29,7 @@ MySQL = DATABASE
 
 ---
 
-## 📅 DAY 1 (KAL) — Spring on HOST
+## DAY 1 (KAL) — Spring on HOST
 
 ```
 TERA LAPTOP                            DOCKER
@@ -51,7 +51,7 @@ Why localhost:3307 worked?
    1. Spring on HOST → "localhost" = tera laptop
    2. -p 3307:3306 mapping = host:3307 forwards to container:3306
    3. Spring → host:3307 → mapped to → MySQL container:3306
-   4. ✅ Connection successful
+   4. Connection successful
 
 Profile use: docker
 Setup commands (kal):
@@ -61,7 +61,7 @@ Setup commands (kal):
 
 ---
 
-## 📅 DAY 2 (AAJ) — Spring ALSO in CONTAINER
+## DAY 2 (AAJ) — Spring ALSO in CONTAINER
 
 ```
 TERA LAPTOP
@@ -93,7 +93,7 @@ Why "mysql:3306" worked (NOT localhost)?
    3. Solution: MySQL container ko NAME se reach karo
    4. "mysql" = service name from docker-compose.yml
    5. Docker DNS resolves "mysql" → MySQL container's IP
-   6. ✅ Connection container-to-container (no port mapping needed!)
+   6. Connection container-to-container (no port mapping needed!)
 
 Profile use: compose
 Setup commands (aaj):
@@ -102,7 +102,7 @@ Setup commands (aaj):
 
 ---
 
-## 💡 KEY INSIGHT — Spring ki LOCATION = URL Pattern
+## KEY INSIGHT — Spring ki LOCATION = URL Pattern
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -119,7 +119,7 @@ Setup commands (aaj):
 
 ---
 
-## 🤔 Common Confusion CLEARED
+## Common Confusion CLEARED
 
 ### "Spring container ke localhost pe MySQL kyu nahi?"
 
@@ -157,7 +157,7 @@ ALAG         → Connection method:
 
 ---
 
-## 🛠️ Day 2 Mein 3 Cheezein Add Hui
+## Day 2 Mein 3 Cheezein Add Hui
 
 ```
 1. application-compose.properties     (new profile file)
@@ -187,12 +187,12 @@ Both join auto-network
         ↓
 Spring uses "mysql:3306" → MySQL container reached by NAME
         ↓
-✅ Working — Spring in container + MySQL in container
+Working — Spring in container + MySQL in container
 ```
 
 ---
 
-## 🎯 Bottom Line — Mental Model Lock:
+## Bottom Line — Mental Model Lock:
 
 ```
 1. MySQL hamesha container mein tha (Day 1 + Day 2)

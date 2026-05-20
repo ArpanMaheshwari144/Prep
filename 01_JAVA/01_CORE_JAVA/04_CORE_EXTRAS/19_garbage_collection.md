@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — C++ vs Java
+## STORY — C++ vs Java
 
 → **C++** mein tune object banaya, kaam hua, `delete` karna **bhool gaya** — **memory leak**
 → Java mein ye tension nahi
@@ -18,7 +18,7 @@
 
 ---
 
-## 💻 GC Eligible Kab?
+## GC Eligible Kab?
 
 ```java
 // Case 1 — reference null kar diya
@@ -37,7 +37,7 @@ void method() {
 
 ---
 
-## 🧠 Visualization — Reachable vs Unreachable
+## Visualization — Reachable vs Unreachable
 
 ```
               Garbage Collection — Reachable vs Unreachable
@@ -71,10 +71,10 @@ void method() {
        │
        ▼
   ┌─────────┐                  ┌─────────────┐
-  │  s=null │   ✗   ──── ──── │  Student    │  ← orphan
+  │  s=null │     ──── ──── │  Student    │  ← orphan
   └─────────┘                  │ "Arpan"     │   GC eligible
                                └─────────────┘   ↓
-                                              GC clean kar dega 🗑️
+                                              GC clean kar dega 
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -113,7 +113,7 @@ void method() {
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **`System.gc()` sirf request hai — guarantee nahi. JVM decide karta hai kab chalega.**
 > **Production code mein `System.gc()` kabhi mat likho.**
@@ -121,6 +121,6 @@ void method() {
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Garbage Collector automatically frees memory of objects with no live references — you cannot force GC, `System.gc()` is just a hint to the JVM."*

@@ -1,14 +1,14 @@
-# 🟢 Section A2 — Spring Boot ↔ MySQL Container (Day 1)
+# Section A2 — Spring Boot ↔ MySQL Container (Day 1)
 
 > **Setup:** Spring Boot runs on HOST, MySQL in container
 > **Connection:** localhost:3307 (port mapping)
 > **Profile:** docker
 
-📚 [← Back to README](00_README.md) | [← Foundation](01_foundation.md) | [Volumes →](03_volumes.md)
+[← Back to README](00_README.md) | [← Foundation](01_foundation.md) | [Volumes →](03_volumes.md)
 
 ---
 
-# 📍 PART 9 — `pom.xml` Update (MySQL Connector)
+# PART 9 — `pom.xml` Update (MySQL Connector)
 
 ## Added dependency:
 
@@ -20,7 +20,7 @@
 </dependency>
 ```
 
-## 🧠 Why mysql-connector-j (not -java)?
+## Why mysql-connector-j (not -java)?
 ```
 "mysql-connector-java" → DEPRECATED (since 8.0.31)
 "mysql-connector-j"    → NEW official artifact name
@@ -40,9 +40,9 @@ H2 dependency RAKHA hai (scope: runtime)
 
 ---
 
-# 📍 PART 10 — `application.properties` Switch
+# PART 10 — `application.properties` Switch
 
-## 🎯 Concept first — DB switch karne ke liye 4 cheezein:
+## Concept first — DB switch karne ke liye 4 cheezein:
 
 ```
 1. URL          → Database kahaan hai (host:port/dbname)
@@ -78,7 +78,7 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
 # h2.console removed — not used anymore
 ```
 
-## 🔍 Each line decoded:
+## Each line decoded:
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3307/userdb
@@ -104,9 +104,9 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
 
 ---
 
-# 📍 PART 11 — Maven Install (Detour)
+# PART 11 — Maven Install (Detour)
 
-## 🤔 Problem:
+## Problem:
 ```powershell
 mvn clean package -DskipTests
 ```
@@ -114,21 +114,21 @@ mvn clean package -DskipTests
 
 **Root cause:** Maven not in PATH. Java was there but Maven separate.
 
-## 🛠️ 3 Approaches Tried
+## 3 Approaches Tried
 
-### ❌ Approach 1: winget (Windows Package Manager)
+### Approach 1: winget (Windows Package Manager)
 ```powershell
 winget install Apache.Maven
 ```
 **Result:** "No package found" — Apache Maven not in winget repo.
 
-### ❌ Approach 2: Chocolatey
+### Approach 2: Chocolatey
 ```powershell
 choco install maven -y
 ```
 **Result:** "Access denied" — Chocolatey needs admin (current session not elevated).
 
-### ✅ Approach 3: Manual Download (worked, NO ADMIN)
+### Approach 3: Manual Download (worked, NO ADMIN)
 
 ```powershell
 # Step 1 — Download Maven binary zip from Apache archive
@@ -161,7 +161,7 @@ Java version: 26
 OS name: "windows 11"
 ```
 
-## 💡 Concept — User vs System env vars
+## Concept — User vs System env vars
 
 ```
 SYSTEM env vars  → All users on machine, needs ADMIN
@@ -171,7 +171,7 @@ USER env vars    → Only current user, NO ADMIN needed
 We used USER level → Admin nahi padi
 ```
 
-## 🆚 Maven Wrapper alternative
+## Maven Wrapper alternative
 
 Spring Initializr har project mein bundle karta:
 ```powershell
@@ -184,12 +184,12 @@ Spring Initializr har project mein bundle karta:
 
 ---
 
-# 📍 PART 12 — Hibernate 7 Dialect Trap (BIG GOTCHA!)
+# PART 12 — Hibernate 7 Dialect Trap (BIG GOTCHA!)
 
-## 🚨 The Error:
+## The Error:
 
-`mvn clean package` → `BUILD SUCCESS` ✅
-`java -jar target/usercrud-0.0.1-SNAPSHOT.jar` → ❌ ERROR:
+`mvn clean package` → `BUILD SUCCESS` 
+`java -jar target/usercrud-0.0.1-SNAPSHOT.jar` → ERROR:
 
 ```
 WARN HHH100046: Could not obtain connection to query JDBC database metadata
@@ -199,21 +199,21 @@ org.hibernate.boot.registry.selector.spi.StrategySelectionException:
    as strategy [org.hibernate.dialect.Dialect]
 ```
 
-## 🔍 Root Cause:
+## Root Cause:
 
 ```
 Spring Boot 4.0.6 → uses Hibernate 7.2.x
 
 Hibernate dialect timeline:
-   Hibernate 5.x   →  org.hibernate.dialect.MySQL8Dialect ✅ exists
-   Hibernate 6.x   →  MySQL8Dialect DEPRECATED ⚠️
-   Hibernate 7.x   →  MySQL8Dialect REMOVED ❌
+   Hibernate 5.x   →  org.hibernate.dialect.MySQL8Dialect exists
+   Hibernate 6.x   →  MySQL8Dialect DEPRECATED 
+   Hibernate 7.x   →  MySQL8Dialect REMOVED 
 
 Old guides + StackOverflow → MySQL8Dialect bata rahe (5.x era)
 Tu Spring Boot 4 use kar raha → Hibernate 7 → class hi nahi
 ```
 
-## 🛠️ Fix (in `application.properties`):
+## Fix (in `application.properties`):
 
 ```properties
 # Old (Hibernate 5/6 era):
@@ -225,7 +225,7 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
 
 **`MySQLDialect`** = universal MySQL dialect (auto-detects version from JDBC connection).
 
-## 💎 Interview Gold
+## Interview Gold
 
 **Q: "Spring Boot 3 → 4 migration mein kya breaks?"**
 
@@ -233,9 +233,9 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
 
 ---
 
-# 📍 PART 13 — Build + Run
+# PART 13 — Build + Run
 
-## 🔨 Build:
+## Build:
 ```powershell
 cd C:\DSA_PRACTICE\02_SPRING\PROJECT\usercrud
 mvn clean package -DskipTests
@@ -262,7 +262,7 @@ package    → compile + test (skipped) + create jar
 
 **Generated artifact:** `target/usercrud-0.0.1-SNAPSHOT.jar` (~50 MB fat jar)
 
-## 🚀 Run:
+## Run:
 ```powershell
 java -jar target\usercrud-0.0.1-SNAPSHOT.jar
 ```
@@ -271,9 +271,9 @@ Spring Boot startup begins, console output flows.
 
 ---
 
-# 📍 PART 14 — Spring Boot Connection SUCCESS ✅
+# PART 14 — Spring Boot Connection SUCCESS 
 
-## 🎯 Real Output Captured:
+## Real Output Captured:
 
 ```
 Database info:
@@ -311,22 +311,22 @@ Tomcat started on port 8080 (http) with context path '/'
 Started UsercrudApplication in 8.254 seconds
 ```
 
-## ✅ Yeh DEKHA:
+## Yeh DEKHA:
 
 ```
-✅ MySQL container 8.4.9 connected (localhost:3307)
-✅ Schema auto-created (ddl-auto=update)
-✅ engine=InnoDB (MySQL transactional storage)
-✅ Constraints applied:
+MySQL container 8.4.9 connected (localhost:3307)
+Schema auto-created (ddl-auto=update)
+engine=InnoDB (MySQL transactional storage)
+Constraints applied:
       • check (age>=18 AND age<=120) — Bean Validation se aaya
       • unique email
       • unique token
-✅ HikariPool active (Spring Boot's connection pooling)
-✅ Tomcat listening on port 8080
-✅ App started in 8.254 seconds
+HikariPool active (Spring Boot's connection pooling)
+Tomcat listening on port 8080
+App started in 8.254 seconds
 ```
 
-## 🧠 Concept — REPEATABLE_READ Isolation
+## Concept — REPEATABLE_READ Isolation
 
 ```
 MySQL InnoDB default isolation level:
@@ -341,9 +341,9 @@ Trade-off: Higher isolation → more locks → less concurrency
 
 ---
 
-# 📍 PART 15 — Postman Test 1: Register
+# PART 15 — Postman Test 1: Register
 
-## 📤 Request:
+## Request:
 ```http
 POST http://localhost:8080/auth/register
 Content-Type: application/json
@@ -356,7 +356,7 @@ Content-Type: application/json
 }
 ```
 
-## 📥 Response (200 OK):
+## Response (200 OK):
 ```json
 {
   "id": 1,
@@ -368,7 +368,7 @@ Content-Type: application/json
 }
 ```
 
-## 💎 Important Observations:
+## Important Observations:
 
 ```
 1. id: 1 → MySQL auto-increment (DB ne diya, app ne nahi)
@@ -393,9 +393,9 @@ Content-Type: application/json
 
 ---
 
-# 📍 PART 16 — Postman Test 2: Login (JWT + Refresh)
+# PART 16 — Postman Test 2: Login (JWT + Refresh)
 
-## 📤 Request:
+## Request:
 ```http
 POST http://localhost:8080/auth/login
 Content-Type: application/json
@@ -406,7 +406,7 @@ Content-Type: application/json
 }
 ```
 
-## 📥 Response (200 OK, 374ms):
+## Response (200 OK, 374ms):
 ```json
 {
   "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnBhbkB0ZXN0LmNvbSIsImlhdCI6...",
@@ -414,7 +414,7 @@ Content-Type: application/json
 }
 ```
 
-## 💎 Two Token Types — Why?
+## Two Token Types — Why?
 
 ```
 ACCESS TOKEN (JWT format)
@@ -433,7 +433,7 @@ REFRESH TOKEN (UUID format)
    • Trade-off: DB hit needed for refresh
 ```
 
-## 🔄 Token Flow (interview):
+## Token Flow (interview):
 
 ```
 Login           → access (15 min) + refresh (7 days)
@@ -445,7 +445,7 @@ Validate        → DB lookup (token exists + not expired)
 Logout          → DELETE refresh from DB → can't refresh again
 ```
 
-## 🧠 Backend Behind The Scenes:
+## Backend Behind The Scenes:
 
 ```
 1. POST /auth/login received
@@ -463,9 +463,9 @@ Logout          → DELETE refresh from DB → can't refresh again
 
 ---
 
-# 📍 PART 17 — MySQL Verify (Real Data Inside Container)
+# PART 17 — MySQL Verify (Real Data Inside Container)
 
-## 🔍 Command:
+## Command:
 ```powershell
 docker exec -it mysql-userdb mysql -u root -prootpass
 ```
@@ -533,12 +533,12 @@ SELECT id, token, user_id, expires_at FROM refresh_tokens;
 ```
 or `exit`
 
-## 💎 FULL CIRCLE PROOF:
+## FULL CIRCLE PROOF:
 
 ```
 Postman ne dikhaya  → "refreshToken": "9ff5a083-5af3-4b94-..."
 MySQL container mein → token: 9ff5a083-5af3-4b94-...
-                       SAME UUID ✅
+                       SAME UUID 
 
 Spring Boot → MySQL container → SAME data
 End-to-end persistence VERIFIED
@@ -546,9 +546,9 @@ End-to-end persistence VERIFIED
 
 ---
 
-# 📍 PART 18 — Local MySQL vs Docker MySQL (ISOLATION DEMO)
+# PART 18 — Local MySQL vs Docker MySQL (ISOLATION DEMO)
 
-## 🔍 Discovery Command:
+## Discovery Command:
 ```powershell
 Get-Service | Where-Object { $_.Name -match 'MySQL|mysqld' }
 ```
@@ -562,7 +562,7 @@ MySQL57   Running  MySQL57
 
 **Surprise:** Tera laptop pe local MySQL57 service already running thi (kabhi install kiya hoga, password forgot).
 
-## ✅ Concept Lock — Two MySQLs running
+## Concept Lock — Two MySQLs running
 
 ```
 TERA LAPTOP (host)
@@ -572,14 +572,14 @@ TERA LAPTOP (host)
   │ Port: 3306              │  ← purana install
   │ Apna data store         │
   │ Spring Boot ne          │
-  │ CONNECT NAHI KIYA ❌    │
+  │ CONNECT NAHI KIYA    │
   └─────────────────────────┘
   
   ┌─────────────────────────┐
   │ DOCKER CONTAINER        │
   │ MySQL 8 inside          │
   │ Port mapping: 3307→3306 │
-  │ Spring Boot CONNECTED ✅│
+  │ Spring Boot CONNECTED │
   │ userdb + tables yahan   │
   └─────────────────────────┘
   
@@ -610,9 +610,9 @@ Future cleanup options:
 
 ---
 
-# 📋 FULL COMMAND REFERENCE (Aaj Use Hua Sab)
+# FULL COMMAND REFERENCE (Aaj Use Hua Sab)
 
-## 🔧 PowerShell / System Commands
+## PowerShell / System Commands
 
 ```powershell
 # Verify Docker installation
@@ -634,7 +634,7 @@ Expand-Archive -Path $zip -DestinationPath $dir -Force
 mvn --version                             # Verify Maven
 ```
 
-## 🐳 Docker Image Commands
+## Docker Image Commands
 
 ```powershell
 docker pull mysql:8                       # Download image from Docker Hub
@@ -643,7 +643,7 @@ docker rmi mysql:8                        # Delete image (containers must be rem
 docker image prune                        # Remove unused images
 ```
 
-## 🐳 Docker Container Lifecycle
+## Docker Container Lifecycle
 
 ```powershell
 # Create + start (background)
@@ -671,7 +671,7 @@ docker rm    mysql-userdb                 # Delete container (data gone if no vo
 docker rm -f mysql-userdb                 # Force delete (running bhi)
 ```
 
-## 🔍 Docker Debugging
+## Docker Debugging
 
 ```powershell
 docker logs    mysql-userdb               # Show container's stdout/stderr
@@ -682,7 +682,7 @@ docker stats                              # Live CPU/memory usage
 docker top mysql-userdb                   # Processes inside container
 ```
 
-## 🚪 Docker Exec (Container ke Andar)
+## Docker Exec (Container ke Andar)
 
 ```powershell
 # General shell
@@ -702,7 +702,7 @@ SELECT * FROM refresh_tokens;
 \q   or  exit                             # Exit MySQL
 ```
 
-## ☕ Maven + Java Run
+## Maven + Java Run
 
 ```powershell
 # Inside project folder
@@ -729,7 +729,7 @@ java -jar target\usercrud-0.0.1-SNAPSHOT.jar
 java -jar -Dserver.port=8090 target\...   # Override property
 ```
 
-## 🔧 Spring Boot Property Overrides (runtime)
+## Spring Boot Property Overrides (runtime)
 
 ```powershell
 # Command-line override (highest precedence)

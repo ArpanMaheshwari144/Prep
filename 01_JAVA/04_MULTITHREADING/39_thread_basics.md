@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — API Slow Tha
+## STORY — API Slow Tha
 
 → API ke 3 DB calls the — **user fetch, orders fetch, recommendations fetch**
 → Ek ke baad ek — **300ms + 300ms + 300ms = 900ms** response time
@@ -15,7 +15,7 @@
 
 ---
 
-## 🟡 WHY — Thread Kya Hai?
+## WHY — Thread Kya Hai?
 
 → Restaurant mein **ek waiter = ek kaam ek time pe**
 → **Teen waiters = teeno alag customers ek saath**
@@ -33,7 +33,7 @@ Task3 ┘
 
 ---
 
-## 💻 Thread Banane Ke 2 Tarike
+## Thread Banane Ke 2 Tarike
 
 ### Tarika 1 — `Thread` extend karo
 ```java
@@ -61,31 +61,31 @@ t.start();
 
 ---
 
-## 🔴 TRAP 1 — `t.run()` vs `t.start()`
+## TRAP 1 — `t.run()` vs `t.start()`
 
 > **`t.run()` likha toh NAYA thread NAHI banega** — normal method call hoga **same thread mein**.
 > **HAMESHA `t.start()` likho** — JVM naya thread create karta.
 
 ```java
-t.run();      // 🔴 same thread — sequential, no parallel
-t.start();    // ✅ naya thread — parallel
+t.run();      // same thread — sequential, no parallel
+t.start();    // naya thread — parallel
 ```
 
 ---
 
-## 🔴 TRAP 2 — Runnable Prefer Karo
+## TRAP 2 — Runnable Prefer Karo
 
 > **`Thread` extend kiya toh koi aur class extend nahi kar sakte (Java single inheritance).**
 > `Runnable` implement kiya toh class **free** rehti — kuch aur bhi extend kar sakte.
 
 ```java
-class MyTask extends Thread { }              // ❌ ab kuch aur extend nahi
-class MyTask extends BaseClass implements Runnable { }   // ✅ flexibility
+class MyTask extends Thread { }              // ab kuch aur extend nahi
+class MyTask extends BaseClass implements Runnable { }   // flexibility
 ```
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Thread can be created by extending Thread class or implementing Runnable. Runnable is preferred because Java doesn't support multiple inheritance — implementing Runnable keeps the class free to extend others."*
 

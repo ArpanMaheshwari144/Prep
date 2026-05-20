@@ -4,19 +4,19 @@
 
 ---
 
-## 🎬 STORY — Library ki Trick
+## STORY — Library ki Trick
 
 > Imagine **library mein 1000 logon ne "Java Complete Reference"** book maangi.
 >
-> **Without intern():** Library 1000 alag-alag copies banake deti — **memory waste** 💸
+> **Without intern():** Library 1000 alag-alag copies banake deti — **memory waste** 
 >
-> **With intern():** Library bolti — *"Reference shelf pe ek hi copy hai. Sab waha se padho!"* — **memory save** ✅
+> **With intern():** Library bolti — *"Reference shelf pe ek hi copy hai. Sab waha se padho!"* — **memory save** 
 
 `String.intern()` JVM ko bolta — *"Yeh string already pool mein hai? Wahi reference do, naya banane ka kya kaam?"*
 
 ---
 
-## 🎨 MEMORY VISUAL — String Pool vs Heap
+## MEMORY VISUAL — String Pool vs Heap
 
 ```
                 JVM MEMORY
@@ -24,13 +24,13 @@
    │                                        │
    │   STRING POOL (shared, in Heap area)   │
    │   ┌──────────────────────────────┐     │
-   │   │   "Hello"  ◄──── s1 ✓        │     │
+   │   │   "Hello"  ◄──── s1        │     │
    │   │   "World"                    │     │
    │   └──────────────────────────────┘     │
    │                                        │
    │   HEAP (regular objects)               │
    │   ┌──────────────────────────────┐     │
-   │   │   String("Hello") ◄──── s2 ✓ │     │
+   │   │   String("Hello") ◄──── s2 │     │
    │   │   (separate object — fresh)  │     │
    │   └──────────────────────────────┘     │
    │                                        │
@@ -45,18 +45,18 @@ After `s3 = s2.intern()`:
    POOL                            HEAP
    ┌──────────────────┐           ┌──────────────────┐
    │ "Hello" ◄──s1    │           │ String("Hello")  │
-   │         ◄──s3 ✓  │           │            ◄──s2 │
+   │         ◄──s3  │           │            ◄──s2 │
    └──────────────────┘           └──────────────────┘
    
-   s1 == s3 → true  ✅  (same pool reference)
-   s1 == s2 → false ❌  (s2 still in heap)
+   s1 == s3 → true   (same pool reference)
+   s1 == s2 → false  (s2 still in heap)
 ```
 
 **`intern()` doesn't move s2** — it RETURNS the pool reference. s2 still in heap.
 
 ---
 
-## 💻 CODE EXAMPLE (with execution flow)
+## CODE EXAMPLE (with execution flow)
 
 ```java
 String s1 = "Hello";                  // STEP 1: pool mein bana ya already tha
@@ -79,7 +79,7 @@ HEAP: (empty)                  HEAP: "Hello" ← s2             HEAP: "Hello" �
 
 ---
 
-## 🔥 INTERVIEW TRAP — Common gotcha
+## INTERVIEW TRAP — Common gotcha
 
 ```java
 String a = "java";
@@ -93,7 +93,7 @@ System.out.println(a == b);  // ?
 
 ---
 
-## 🎯 WHY `intern()`? — Performance Use Case
+## WHY `intern()`? — Performance Use Case
 
 ### Scenario: Bahut saari duplicate strings
 
@@ -121,25 +121,25 @@ XML parsing, CSV reading, JSON parsing —
 
 ---
 
-## ⚠️ TRAP BOX — Don't overuse!
+## TRAP BOX — Don't overuse!
 
 ```
-🪤 Trap 1: "Sab strings intern karo, memory save hogi"
-         ❌ NAHI — pool memory limited hai
-         ✅ Sirf duplicates pe karo
+Trap 1: "Sab strings intern karo, memory save hogi"
+         NAHI — pool memory limited hai
+         Sirf duplicates pe karo
 
-🪤 Trap 2: "intern() s2 ko pool mein move karta"
-         ❌ NAHI — RETURN karta pool reference
-         ✅ s2 still heap mein, s3 alag variable
+Trap 2: "intern() s2 ko pool mein move karta"
+         NAHI — RETURN karta pool reference
+         s2 still heap mein, s3 alag variable
 
-🪤 Trap 3: "Java mein StringPool unlimited hai"
-         ❌ NAHI — Java 7+ heap mein hai but limited
-         ✅ Pre-Java 7: PermGen mein, OutOfMemoryError aa sakta tha
+Trap 3: "Java mein StringPool unlimited hai"
+         NAHI — Java 7+ heap mein hai but limited
+         Pre-Java 7: PermGen mein, OutOfMemoryError aa sakta tha
 ```
 
 ---
 
-## 📊 String Pool — Java versions
+## String Pool — Java versions
 
 | Version | Pool Location | Issue |
 |---|---|---|
@@ -149,7 +149,7 @@ XML parsing, CSV reading, JSON parsing —
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "`String.intern()` kya karta hai?"**
 
@@ -161,13 +161,13 @@ XML parsing, CSV reading, JSON parsing —
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"`intern()` returns the canonical pool reference of a string — useful for deduplication when many duplicate strings exist (XML/CSV parsing), but overuse risks filling the string pool memory."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 new String("X")    → naya HEAP object (always)

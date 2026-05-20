@@ -1,4 +1,4 @@
-# 🔄 Dirty Checking — Hibernate Hidden Magic
+# Dirty Checking — Hibernate Hidden Magic
 
 ---
 
@@ -23,7 +23,7 @@ User u = userRepo.findById(1L).orElseThrow();
 u.setName("Arpan");
 
 // To save changes:
-userRepo.save(u);   // ❌ ek MANUAL call
+userRepo.save(u);   // ek MANUAL call
 
 // OR explicit JDBC:
 // UPDATE users SET name='Arpan' WHERE id=1;
@@ -132,7 +132,7 @@ public void updateUser(Long id, String newEmail) {
 public class UserService {
     
     public void updateUser(Long id, String name) {
-        // ❌ NO @Transactional!
+        // NO @Transactional!
         User u = userRepo.findById(id).orElseThrow();
         // session band ho gayi
         
@@ -159,14 +159,14 @@ Fix:
 
 ```
 DIRTY CHECKING (within @Transactional):
-   ✅ Modify entity → auto-save on commit
-   ✅ Less code, cleaner
-   ❌ Only works inside session
+   Modify entity → auto-save on commit
+   Less code, cleaner
+   Only works inside session
 
 EXPLICIT save():
-   ✅ Works anywhere (detached too)
-   ✅ Explicit control
-   ❌ Verbose
+   Works anywhere (detached too)
+   Explicit control
+   Verbose
 ```
 
 ---
@@ -198,7 +198,7 @@ class User { ... }
 
 ---
 
-## 🎤 Interview Power Phrase
+## Interview Power Phrase
 
 ```
 "Dirty checking — Hibernate tracks changes to managed entities 
@@ -214,10 +214,10 @@ class User { ... }
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-Dirty Checking = 📝 smart notebook (auto-save changes)
+Dirty Checking = smart notebook (auto-save changes)
 
 Inside @Transactional:
    findById → modify → method end → AUTO UPDATE

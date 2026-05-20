@@ -1,4 +1,4 @@
-# 🌐 DNS — Domain Name System
+# DNS — Domain Name System
 
 ---
 
@@ -12,13 +12,13 @@ Without DNS, har site ke liye IP yaad karna:
    Netflix    → 54.230.123.45
    YouTube    → 142.251.40.46
    
-   ❌ IMPOSSIBLE to remember
-   ❌ Server change ho jaaye IP = sab tut jaaye
+   IMPOSSIBLE to remember
+   Server change ho jaaye IP = sab tut jaaye
 ```
 
 ---
 
-## 2️⃣ Phonebook Analogy 📞
+## 2️⃣ Phonebook Analogy 
 
 ```
 Old days:
@@ -79,10 +79,10 @@ Real example: www.google.com
 User types "www.google.com" in browser
 
 1. Browser cache check
-   ❌ Not found
+   Not found
 
 2. OS cache check
-   ❌ Not found
+   Not found
 
 3. Browser asks LOCAL RESOLVER (ISP DNS)
    "google.com ka IP do"
@@ -101,7 +101,7 @@ User types "www.google.com" in browser
    + CACHES it (TTL)
 
 8. Browser connects to 142.250.190.46
-   Page loads ✅
+   Page loads 
 ```
 
 ```
@@ -122,7 +122,7 @@ Visual:
                        IP: 142.250.190.46
                               │
                               ▼
-                          BROWSER ✅
+                          BROWSER 
 ```
 
 ---
@@ -280,12 +280,12 @@ google.com → A record returns:
 Client picks first (or rotates)
 = Simple load balancing via DNS
 
-❌ Limitations:
+Limitations:
    • No health check at DNS level
    • TTL caching = dead server kept being tried
    • No advanced routing logic
    
-✅ When to use:
+When to use:
    • Geographic distribution
    • Multi-region failover
 ```
@@ -327,7 +327,7 @@ Tip: Before big change, REDUCE TTL to 60 sec
 
 ---
 
-## 🔟 Anycast (Advanced)
+## Anycast (Advanced)
 
 ```
 Same IP advertised from MULTIPLE locations.
@@ -348,7 +348,7 @@ User's request routed to NEAREST one.
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "DNS translates human-readable domains to IP addresses.
@@ -368,7 +368,7 @@ User's request routed to NEAREST one.
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
 DNS = Internet phonebook (name → IP)
@@ -388,4 +388,4 @@ Caching: Browser → OS → Resolver → NS (TTL-based)
 Anycast = Same IP, many locations (auto-nearest)
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

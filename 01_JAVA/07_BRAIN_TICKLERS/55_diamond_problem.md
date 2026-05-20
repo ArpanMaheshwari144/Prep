@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Java 8 Default Methods Ne Naya Issue Diya
+## STORY — Java 8 Default Methods Ne Naya Issue Diya
 
 → Java 8 se interfaces mein **default methods** allowed
 → 2 interfaces ne **same signature ka default method** define kiya
@@ -16,12 +16,12 @@
 interface A { default void show() { System.out.println("A"); } }
 interface B { default void show() { System.out.println("B"); } }
 
-class C implements A, B { }     // 🔴 COMPILE ERROR — kaunsa show()?
+class C implements A, B { }     // COMPILE ERROR — kaunsa show()?
 ```
 
 ---
 
-## 🧠 Visualization — Diamond Shape
+## Visualization — Diamond Shape
 
 ```
               Diamond Problem — 2 Interfaces, Same Default
@@ -55,7 +55,7 @@ class C implements A, B { }     // 🔴 COMPILE ERROR — kaunsa show()?
   Java confused: "A wala use karu ya B wala?"
        │
        ▼
-  🔴 COMPILE ERROR
+  COMPILE ERROR
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -73,12 +73,12 @@ class C implements A, B { }     // 🔴 COMPILE ERROR — kaunsa show()?
     interface A { default void show() { print("A"); } }   ← body hai
     interface B { default void show() { print("B"); } }   ← body hai
     class C implements A, B { }                           ← BOTH bodies?
-                                                            🔴 conflict
+                                                            conflict
 ```
 
 ---
 
-## ✅ Fix — Explicitly Override Karo
+## Fix — Explicitly Override Karo
 
 ```java
 class C implements A, B {
@@ -94,7 +94,7 @@ class C implements A, B {
 
 ---
 
-## 🟡 WHY Java Confused?
+## WHY Java Confused?
 
 → Class extends mein Java ne **single inheritance** rakhi (diamond avoid karne ke liye)
 → Lekin Java 8 mein interface mein default methods aaye → naya **diamond problem**
@@ -102,6 +102,6 @@ class C implements A, B {
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"When a class implements two interfaces with the same default method, the compiler can't decide which to use — Diamond Problem. Resolution: override the method explicitly and call the desired one via `InterfaceName.super.method()`."*

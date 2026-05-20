@@ -1,18 +1,18 @@
 // =========================================================
-// 🧪 SOLO LLD TEST #1 — Bank Account System
+// SOLO LLD TEST #1 — Bank Account System
 // Date: 2026-04-20
 // Goal: Method implementation solo, no Claude help during coding
 // =========================================================
 
 // ==========================
-// 📋 PROBLEM STATEMENT
+// PROBLEM STATEMENT
 // ==========================
 // Design a simple BankAccount class.
 // Create methods to deposit, withdraw, check balance, and transfer money
 // between two accounts.
 
 // ==========================
-// 🏗️ CLASS SIGNATURE
+// CLASS SIGNATURE
 // ==========================
 // class BankAccount
 //   - Fields: owner (String), balance (double)
@@ -25,7 +25,7 @@
 //   4. boolean transfer(BankAccount other, double amount)
 
 // ==========================
-// 📊 METHOD SPECS
+// METHOD SPECS
 // ==========================
 //
 // ┌──────────────────────────────────────────────────────────────────┐
@@ -58,7 +58,7 @@
 // └──────────────────────────────────────────────────────────────────┘
 
 // ==========================
-// 🎯 EXAMPLES (expected I/O)
+// EXAMPLES (expected I/O)
 // ==========================
 //
 // BankAccount arpan = new BankAccount("Arpan", 1000);
@@ -74,14 +74,14 @@
 // arpan.transfer(claude, 5000)   → false (no change — arpan: 1000, claude: 800)
 
 // ==========================
-// ⚙️ CONSTRAINTS
+// CONSTRAINTS
 // ==========================
 // - amount and balance are double
 // - Owner name is String
 // - Negative or zero amounts always rejected
 
 // =========================================================
-// 👇 YAHAN APNA CODE LIKH
+// YAHAN APNA CODE LIKH
 // =========================================================
 
 class BankAccount {
@@ -140,7 +140,7 @@ class BankAccount {
 }
 
 // =========================================================
-// 🧪 TEST RUNNER (already ready — tu bas classes fill kar)
+// TEST RUNNER (already ready — tu bas classes fill kar)
 // =========================================================
 
 class Main {

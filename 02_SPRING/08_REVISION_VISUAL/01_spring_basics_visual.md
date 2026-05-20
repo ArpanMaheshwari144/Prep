@@ -1,4 +1,4 @@
-# 🌱 Spring Basics — Visual Revision
+# Spring Basics — Visual Revision
 
 ---
 
@@ -17,10 +17,10 @@ WITH SPRING (5-star hotel):
    Tu reception pe:
       "Mujhe room chahiye"
       Hotel ne automatically:
-         ✓ Room assign kiya
-         ✓ Chabhi di
-         ✓ Bed ready
-         ✓ Breakfast schedule
+         Room assign kiya
+         Chabhi di
+         Bed ready
+         Breakfast schedule
    = Tu sirf USE kar
 ```
 
@@ -173,9 +173,9 @@ FLOW:
    │     }                           │
    │ }                               │
    └────────────────────────────────┘
-   ✅ final possible (immutable)
-   ✅ Mandatory dependencies
-   ✅ Test friendly
+   final possible (immutable)
+   Mandatory dependencies
+   Test friendly
 
 2. SETTER
    @Autowired
@@ -185,8 +185,8 @@ FLOW:
 3. FIELD
    @Autowired
    private UserRepo repo;
-   ❌ Can't be final
-   ❌ Hard to test
+   Can't be final
+   Hard to test
 ```
 
 ```
@@ -217,7 +217,7 @@ INDUSTRY CHOICE: Constructor (Lombok @RequiredArgsConstructor)
 
 ---
 
-## 🔟 Full App Flow (Visual)
+## Full App Flow (Visual)
 
 ```
    STARTUP
@@ -267,4 +267,4 @@ Manager managing = IoC (control flip)
 Tu USE karta, Spring BANATA + JODTA.
 ```
 
-📚 [← Back to SPRING](../)
+[← Back to SPRING](../)

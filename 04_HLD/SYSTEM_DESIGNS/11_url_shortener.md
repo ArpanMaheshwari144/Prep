@@ -1,4 +1,4 @@
-# 🔗 URL Shortener — Visual System Design
+# URL Shortener — Visual System Design
 
 ---
 
@@ -147,7 +147,7 @@ WRITES (shorten):                READS (redirect):
                        100 : 1
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-         CACHING IS CRITICAL ✅
+         CACHING IS CRITICAL 
 ```
 
 ```
@@ -277,7 +277,7 @@ PROBLEM (multi-server):
        └─────────────┼─────────────┘
                      ▼
               CODE "6" → 3 URLs!
-              ❌ COLLISION
+              COLLISION
 ```
 
 ```
@@ -308,7 +308,7 @@ SNOWFLAKE ID — 64 bit:
 
 ---
 
-## 🔟 Custom Short Codes
+## Custom Short Codes
 
 ```
 USER REQUEST FLOW:
@@ -322,10 +322,10 @@ USER REQUEST FLOW:
                 ▼                   ▼
         ┌───────────────┐    Counter Service
         │ Validations:  │    (Snowflake)
-        │ ✓ Length OK   │           │
-        │ ✓ Not reserved│           │
-        │ ✓ No profanity│           │
-        │ ✓ Unique      │           │
+        │ Length OK   │           │
+        │ Not reserved│           │
+        │ No profanity│           │
+        │ Unique      │           │
         └───────┬───────┘           │
                 │                   │
         Conflict? ──yes──► 409      │
@@ -355,7 +355,7 @@ RACE CONDITION (concurrent custom requests):
    T=0   User A: check "arpan" → available
    T=0   User B: check "arpan" → available
    T=1   User A: save → success
-   T=1   User B: save → ❌ DUPLICATE
+   T=1   User B: save → DUPLICATE
 
    FIX: DB UNIQUE constraint
         INSERT IF NOT EXISTS (atomic)
@@ -363,7 +363,7 @@ RACE CONDITION (concurrent custom requests):
 
 ---
 
-## ✅ Components Summary
+## Components Summary
 
 ```
 ┌─────────────────┬─────────────────────────────┐
@@ -381,4 +381,4 @@ RACE CONDITION (concurrent custom requests):
 └─────────────────┴─────────────────────────────┘
 ```
 
-📚 [← HLD README](README.md)
+[← HLD README](README.md)

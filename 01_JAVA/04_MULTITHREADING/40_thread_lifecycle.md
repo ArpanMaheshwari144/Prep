@@ -4,14 +4,14 @@
 
 ---
 
-## 🟡 WHY — Thread States Kyu?
+## WHY — Thread States Kyu?
 
 → **OS ko thread manage karna hai** — kab CPU de, kab wait karwaye
 → Thread ki **5 states** — har transition OS scheduler decide karta
 
 ---
 
-## 🧠 5 States Visualization
+## 5 States Visualization
 
 ```
                     ┌─────────────┐
@@ -31,7 +31,7 @@
 
 ---
 
-## 📊 State Table
+## State Table
 
 | State | Kaise pahuncho | Matlab |
 |-------|---------------|--------|
@@ -43,7 +43,7 @@
 
 ---
 
-## 💻 Code
+## Code
 
 ```java
 Runnable task = new MyTask();
@@ -56,12 +56,12 @@ t.start();                             // RUNNABLE → RUNNING
 
 ---
 
-## 🔴 TRAP 1 — `start()` Ke Baad Turant RUNNING Nahi
+## TRAP 1 — `start()` Ke Baad Turant RUNNING Nahi
 
 > **`start()` kiya = thread RUNNABLE state mein gaya, RUNNING NAHI.**
 > **JVM/OS scheduler decide karta kab CPU milega.**
 
-## 🔴 TRAP 2 — Ek Baar TERMINATED, Dobara Nahi
+## TRAP 2 — Ek Baar TERMINATED, Dobara Nahi
 
 > **TERMINATED thread `start()` dobara call nahi kar sakte → `IllegalThreadStateException`.**
 > Naya `Thread` object banao.
@@ -70,12 +70,12 @@ t.start();                             // RUNNABLE → RUNNING
 Thread t = new Thread(...);
 t.start();
 // ... thread khatam (TERMINATED)
-t.start();    // 🔴 IllegalThreadStateException
+t.start();    // IllegalThreadStateException
 ```
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"A thread goes through 5 states: NEW when created, RUNNABLE after `start()`, RUNNING when the scheduler gives it CPU time, BLOCKED or WAITING when it needs a lock or waits, and TERMINATED when `run()` completes."*
 

@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — HashMap O(1) KYUN?
+## WHY — HashMap O(1) KYUN?
 
 → Array mein **index se access = O(1)**
 → HashMap = **key ko number mein convert (hashCode)** → number se index nikalo `((n-1) & hash)` → **seedha us index pe jao**
@@ -14,7 +14,7 @@
 
 ---
 
-## 🧠 put(key, value) FLOW
+## put(key, value) FLOW
 
 ```
 put("name", "Arpan")
@@ -48,7 +48,7 @@ Average: O(1)  |  Worst: O(log n) tree, O(n) chain
 
 ---
 
-## 📖 STORY — Library Manage
+## STORY — Library Manage
 
 → Soch tu ek library manage kar raha — **10,000 books**
 → Koi aaya: "Harry Potter chahiye." Ek-ek check karega? **O(n)? Nahi.**
@@ -62,7 +62,7 @@ Average: O(1)  |  Worst: O(log n) tree, O(n) chain
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **HashMap null key ALLOWED. ConcurrentHashMap mein null key/value → NullPointerException!**
 
@@ -74,7 +74,7 @@ Average: O(1)  |  Worst: O(log n) tree, O(n) chain
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"HashMap uses hashCode() to find the bucket index and equals() to resolve collisions in the LinkedList. Java 8 converts the bucket to a Red-Black Tree when it has more than 8 entries — O(n) becomes O(log n)."*
 

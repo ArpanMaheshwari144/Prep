@@ -1,4 +1,4 @@
-# 🎯 S — Single Responsibility (SRP)
+# S — Single Responsibility (SRP)
 
 ---
 
@@ -16,10 +16,10 @@ Ek class ka SIRF ONE reason for change hona chahiye.
 ```
 WRONG (1 person doing all):
    Chef ne:
-      ✅ Khana banaya
-      ❌ Bartan dhoye
-      ❌ Floor pocha
-      ❌ Cash counter handle
+      Khana banaya
+      Bartan dhoye
+      Floor pocha
+      Cash counter handle
    = Chaos, overworked, errors
 
 RIGHT (specialized roles):
@@ -34,7 +34,7 @@ RIGHT (specialized roles):
 ## Code
 
 ```java
-// ❌ VIOLATION
+// VIOLATION
 class User {
     void save() { ... }        // DB
     void sendEmail() { ... }   // Email
@@ -44,7 +44,7 @@ class User {
 ```
 
 ```java
-// ✅ SRP
+// SRP
 class User { ... }              // Just data
 class UserRepository {           // Just DB
     void save(User u) { ... }
@@ -75,8 +75,8 @@ public class UserService {         // Only business logic
 ## Memory Hook
 
 ```
-🎯 ek class ek kaam
+ek class ek kaam
    "Ek class change karne ke liye SIRF EK reason"
 ```
 
-📚 [← Back to SOLID](00_overview.md)
+[← Back to SOLID](00_overview.md)

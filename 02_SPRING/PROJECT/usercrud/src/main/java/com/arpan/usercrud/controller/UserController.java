@@ -18,7 +18,7 @@ import com.arpan.usercrud.service.UserService;
 import jakarta.validation.Valid;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    UserController = REST API LAYER (HTTP Entry Point)
 //    Standard CRUD endpoints for User
 //    Business logic NAHI — sirf HTTP routing
@@ -26,7 +26,7 @@ import jakarta.validation.Valid;
 //
 // VISUAL:
 //    ┌──────────────────────────────────────────┐
-//    │  📂 UserController @ /users/*             │
+//    │  UserController @ /users/*             │
 //    │                                           │
 //    │  POST   /users        → CREATE            │
 //    │  GET    /users/{id}   → READ ONE          │
@@ -39,7 +39,7 @@ import jakarta.validation.Valid;
 //
 //    All protected — JWT mandatory (per SecurityConfig)
 //
-// 🔑 @RestController vs @Controller:
+// @RestController vs @Controller:
 //    @Controller       → Traditional MVC, returns view name
 //                        (Thymeleaf/JSP page render)
 //
@@ -48,12 +48,12 @@ import jakarta.validation.Valid;
 //                        → REST APIs ke liye DEFAULT
 //                        → Modern Spring Boot apps mein yahi
 //
-// 🔑 @RequestMapping("/users"):
+// @RequestMapping("/users"):
 //    Class-level base path
 //    Saare endpoints "/users" se start
 //    Sub-paths method level pe (jaise /{id})
 //
-// 🔑 HTTP METHOD ANNOTATIONS:
+// HTTP METHOD ANNOTATIONS:
 //    @GetMapping     → READ      (idempotent, safe)
 //    @PostMapping    → CREATE    (NOT idempotent)
 //    @PutMapping     → UPDATE    (idempotent — full replace)
@@ -63,7 +63,7 @@ import jakarta.validation.Valid;
 //    Idempotent = same request 100 baar bhejo, result same
 //    POST alag = har baar naya resource banta
 //
-// 🔑 PARAMETER BINDING:
+// PARAMETER BINDING:
 //    @PathVariable   → URL ke part se
 //                      /users/5  →  Long id = 5
 //
@@ -73,14 +73,14 @@ import jakarta.validation.Valid;
 //    @RequestParam   → Query string se
 //                      /users?role=admin  →  String role = "admin"
 //
-// 🔑 @Valid — Request Body Validation:
+// @Valid — Request Body Validation:
 //    @RequestBody ke saath @Valid lagao
 //    → Spring User class ke validation annotations check karega
 //    → Fail? MethodArgumentNotValidException → 400
 //
 //    GET aur DELETE mein @Valid nahi — body nahi hai
 //
-// 🔑 ResponseEntity — HTTP Response Full Control:
+// ResponseEntity — HTTP Response Full Control:
 //    • Status code set kar sakte (200, 201, 204, 404...)
 //    • Headers add kar sakte
 //    • Body set kar sakte
@@ -90,7 +90,7 @@ import jakarta.validation.Valid;
 //    ResponseEntity.noContent().build()   → 204 (DELETE standard)
 //    ResponseEntity.created(uri).build()  → 201 (POST)
 //
-// 📐 SOLID:
+// SOLID:
 //    SRP — Sirf HTTP layer (request/response)
 //          Business logic = UserService ka kaam
 //          Validation = @Valid
@@ -101,7 +101,7 @@ import jakarta.validation.Valid;
 //
 //    OCP — Naye endpoints add easy, existing unchanged
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "UserController is REST API layer — @RestController combines
 //     @Controller + @ResponseBody for auto JSON.
 //     @Valid triggers Bean Validation on @RequestBody.
@@ -159,18 +159,18 @@ public class UserController {
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  🧪 DEMO ENDPOINT — @Transactional rollback proof
+    //  DEMO ENDPOINT — @Transactional rollback proof
     // ═══════════════════════════════════════════════════════════
     //  Test sequence (Postman / browser):
     //
     //  1. POST /users/demo/rollback
     //     → Console mein dikhega:
-    //        ✅ Step 1: User saved with ID = 1
-    //        💥 Step 2: Simulating failure...
+    //        Step 1: User saved with ID = 1
+    //        Step 2: Simulating failure...
     //     → API response: 500 (RuntimeException → GlobalExceptionHandler)
     //
     //  2. GET /users
-    //     → Empty list [] (rolled-back user MISSING) ✅ proves rollback
+    //     → Empty list [] (rolled-back user MISSING) proves rollback
     //
     //  3. H2 console (http://localhost:8080/h2-console) → SELECT * FROM users
     //     → Empty table — DB-level confirmation
@@ -191,7 +191,7 @@ public class UserController {
             "USER"                      // role
         );
         // Service throws RuntimeException intentionally
-        // → @Transactional rollback ⏪
+        // → @Transactional rollback 
         // → GlobalExceptionHandler converts to 500 response
         return ResponseEntity.ok(service.createWithSimulatedFailure(dummyUser));
     }

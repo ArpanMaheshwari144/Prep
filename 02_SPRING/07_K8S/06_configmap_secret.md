@@ -1,12 +1,12 @@
-# 🟡 Topic 6 — ConfigMap + Secret (Config Injection)
+# Topic 6 — ConfigMap + Secret (Config Injection)
 
 > **TL;DR:** ConfigMap + Secret = Spring's `application-{profile}.properties` ka K8s equivalent. Decouple config from image (12-factor app).
 
-📚 [← Back to README](00_README.md) | [← Ingress](05_ingress.md)
+[← Back to README](00_README.md) | [← Ingress](05_ingress.md)
 
 ---
 
-## 🤔 The Problem
+## The Problem
 
 ```
 Tera Spring Boot container:
@@ -28,7 +28,7 @@ environment:
 
 ---
 
-## 🎯 ConfigMap vs Secret — Quick
+## ConfigMap vs Secret — Quick
 
 ```
 ConfigMap     = Non-sensitive config
@@ -44,7 +44,7 @@ DONO inject hote pods mein as:
 
 ---
 
-## 🎬 STORY — Recipe vs Pantry
+## STORY — Recipe vs Pantry
 
 ```
 Container image  = "frozen meal" (sealed package)
@@ -57,7 +57,7 @@ without changing the frozen package itself
 
 ---
 
-## 📝 ConfigMap Manifest
+## ConfigMap Manifest
 
 ```yaml
 apiVersion: v1
@@ -73,7 +73,7 @@ data:
 
 ---
 
-## 📝 Secret Manifest
+## Secret Manifest
 
 ```yaml
 apiVersion: v1
@@ -94,7 +94,7 @@ stringData:
 
 ---
 
-## 🎨 How Pod Uses Them
+## How Pod Uses Them
 
 ### **Method 1: As Environment Variables** (most common)
 
@@ -161,7 +161,7 @@ containers:
 
 ---
 
-## 🆚 ConfigMap vs Secret
+## ConfigMap vs Secret
 
 | | **ConfigMap** | **Secret** |
 |---|---|---|
@@ -169,11 +169,11 @@ containers:
 | Encoding | Plain text | Base64 (NOT encryption!) |
 | Examples | DB URL, profile | DB password, API key |
 | etcd storage | Plain | Base64 (still readable) |
-| Production secrets | OK | ⚠️ Use Vault/AWS Secrets Manager |
+| Production secrets | OK | Use Vault/AWS Secrets Manager |
 
 ---
 
-## ⚠️ CRITICAL — Secret Is NOT Encrypted!
+## CRITICAL — Secret Is NOT Encrypted!
 
 ```
 Secret = base64 ENCODED, not ENCRYPTED
@@ -182,8 +182,8 @@ Secret = base64 ENCODED, not ENCRYPTED
    • etcd stores in base64 (not encrypted by default)
 
 PRODUCTION REALITY:
-   ❌ K8s Secret alone for sensitive prod data
-   ✅ Use external secret managers:
+   K8s Secret alone for sensitive prod data
+   Use external secret managers:
       • AWS Secrets Manager
       • HashiCorp Vault
       • Sealed Secrets
@@ -194,7 +194,7 @@ PRODUCTION REALITY:
 
 ---
 
-## 🔗 Real Spring + ConfigMap + Secret (Production-Pattern)
+## Real Spring + ConfigMap + Secret (Production-Pattern)
 
 ```yaml
 # ConfigMap (non-sensitive)
@@ -241,7 +241,7 @@ spec:
 
 ---
 
-## 🛠️ kubectl Commands
+## kubectl Commands
 
 ```cmd
 # Create from YAML
@@ -267,7 +267,7 @@ kubectl delete secret usercrud-secret
 
 ---
 
-## 💡 Connection to Spring Profiles (your existing knowledge)
+## Connection to Spring Profiles (your existing knowledge)
 
 ```
 DOCKER COMPOSE:
@@ -290,7 +290,7 @@ KUBERNETES:
 
 ---
 
-## 🎤 Quick Interview Sense
+## Quick Interview Sense
 
 **Q: "ConfigMap vs Secret?"**
 
@@ -306,40 +306,40 @@ KUBERNETES:
 
 ---
 
-## ⚠️ Common Traps
+## Common Traps
 
 ```
-🪤 Trap 1: Treating Secret as encrypted
-         ❌ Sensitive prod data in K8s Secret only
-         ✅ Use external secret manager (Vault/AWS)
+Trap 1: Treating Secret as encrypted
+         Sensitive prod data in K8s Secret only
+         Use external secret manager (Vault/AWS)
 
-🪤 Trap 2: ConfigMap update not reflecting
-         ❌ Update ConfigMap, expect immediate pod refresh
-         ✅ Restart pods OR use rollout restart deployment
+Trap 2: ConfigMap update not reflecting
+         Update ConfigMap, expect immediate pod refresh
+         Restart pods OR use rollout restart deployment
 
-🪤 Trap 3: Forgetting base64 in Secret YAML
-         ❌ Plain text in data: section
-         ✅ Use stringData: (auto-encodes)
+Trap 3: Forgetting base64 in Secret YAML
+         Plain text in data: section
+         Use stringData: (auto-encodes)
             OR base64-encode manually
 
-🪤 Trap 4: ConfigMap with too much data
-         ❌ Mounting huge config files
-         ✅ ConfigMap limit is 1MB; large files use volume
+Trap 4: ConfigMap with too much data
+         Mounting huge config files
+         ConfigMap limit is 1MB; large files use volume
 
-🪤 Trap 5: Cross-namespace reference
-         ❌ ConfigMap in default, deployment in app namespace
-         ✅ Same namespace required
+Trap 5: Cross-namespace reference
+         ConfigMap in default, deployment in app namespace
+         Same namespace required
 ```
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > *"ConfigMap + Secret = K8s ka config injection. ConfigMap for non-sensitive (DB URL, profile, log level). Secret for sensitive (passwords, keys) — but base64 encoded NOT encrypted. Both inject as env vars or files. Same Docker image deployed multiple environments — different ConfigMap/Secret per env (12-factor app). Production: external secret managers (Vault, AWS Secrets Manager) for real security."*
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 ConfigMap = "Spring's application-{env}.properties for K8s"
@@ -356,16 +356,16 @@ Pattern same as Compose:
 
 ---
 
-## ✅ Concept Locked
+## Concept Locked
 
 ```
-✅ ConfigMap = non-sensitive injection
-✅ Secret = sensitive (base64, NOT encrypted)
-✅ envFrom + valueFrom usage patterns
-✅ Mount as env vars or files
-✅ Production secrets = external manager
-✅ Same image, different config per env (12-factor)
-✅ Spring Boot reads env vars automatically
+ConfigMap = non-sensitive injection
+Secret = sensitive (base64, NOT encrypted)
+envFrom + valueFrom usage patterns
+Mount as env vars or files
+Production secrets = external manager
+Same image, different config per env (12-factor)
+Spring Boot reads env vars automatically
 ```
 
-📚 [← Back to README](00_README.md) | [← Ingress](05_ingress.md)
+[← Back to README](00_README.md) | [← Ingress](05_ingress.md)

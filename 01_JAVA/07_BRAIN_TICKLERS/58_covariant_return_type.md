@@ -4,13 +4,13 @@
 
 ---
 
-## 🤔 Covariant Return Type Kya Hai?
+## Covariant Return Type Kya Hai?
 
 **Simple line:** Override karte waqt **child class ka return type, parent ke return type ka SUBTYPE ho sakta hai.**
 
 ---
 
-## 📖 Real-World Analogy
+## Real-World Analogy
 
 **Parent ka promise:** "Main tujhe **gaadi** dunga"
 **Child kahta:** "Main tujhe **Honda Car** dunga"
@@ -23,7 +23,7 @@ Same in code:
 
 ---
 
-## 🕰️ Java 5 Se Pehle vs Baad
+## Java 5 Se Pehle vs Baad
 
 ### Before Java 5 — STRICT
 ```java
@@ -33,7 +33,7 @@ class Animal {
 
 class Dog extends Animal {
     @Override
-    Animal create() { return new Dog(); }    // ✅ allowed — return type EXACT same
+    Animal create() { return new Dog(); }    // allowed — return type EXACT same
 }
 ```
 
@@ -43,7 +43,7 @@ Pehle: child ka return type **EXACTLY same** hona chahiye tha — `Animal`.
 ```java
 class Dog extends Animal {
     @Override
-    Dog create() { return new Dog(); }       // ✅ NOW ALLOWED — Dog IS-A Animal
+    Dog create() { return new Dog(); }       // NOW ALLOWED — Dog IS-A Animal
 }
 ```
 
@@ -51,7 +51,7 @@ Java 5 se: child ka return type **subtype** ho sakta hai. `Dog` allowed kyunki D
 
 ---
 
-## 💡 Asli Faayda — No Casting
+## Asli Faayda — No Casting
 
 Bina covariant ke:
 ```java
@@ -61,7 +61,7 @@ class Dog extends Animal {
 
 Dog d = new Dog();
 Animal a = d.create();        // Animal mila
-Dog d2 = (Dog) a;             // ❌ ugly cast karna pada
+Dog d2 = (Dog) a;             // ugly cast karna pada
 ```
 
 **Covariant ke saath:**
@@ -71,14 +71,14 @@ class Dog extends Animal {
 }
 
 Dog d = new Dog();
-Dog d2 = d.create();          // ✅ direct Dog mila — NO CAST
+Dog d2 = d.create();          // direct Dog mila — NO CAST
 ```
 
 **Cleaner code, type-safe** — caller ko cast nahi karna padta.
 
 ---
 
-## 🟡 WHY Allow Hua?
+## WHY Allow Hua?
 
 → Dog **Animal hai** (IS-A relationship)
 → Caller ne `Animal` expect kiya tha — Dog mil gaya, **Dog bhi Animal hi hai**
@@ -87,7 +87,7 @@ Dog d2 = d.create();          // ✅ direct Dog mila — NO CAST
 
 ---
 
-## 🚫 Kya Allowed NAHI?
+## Kya Allowed NAHI?
 
 Return type **unrelated** type nahi ho sakta:
 
@@ -97,8 +97,8 @@ class Animal {
 }
 
 class Dog extends Animal {
-    String create() { return "..."; }    // 🔴 INVALID — String Animal nahi hai
-    Cat create() { return new Cat(); }   // 🔴 INVALID — Cat Animal ka SIBLING, child nahi
+    String create() { return "..."; }    // INVALID — String Animal nahi hai
+    Cat create() { return new Cat(); }   // INVALID — Cat Animal ka SIBLING, child nahi
 }
 ```
 
@@ -106,7 +106,7 @@ class Dog extends Animal {
 
 ---
 
-## 🎯 Asli Use Case — Factory / Clone Methods
+## Asli Use Case — Factory / Clone Methods
 
 ```java
 class Document {
@@ -119,19 +119,19 @@ class PDFDocument extends Document {
 }
 
 PDFDocument pdf = new PDFDocument();
-PDFDocument duplicate = pdf.copy();   // ✅ no cast — clean
+PDFDocument duplicate = pdf.copy();   // no cast — clean
 ```
 
 **Factory patterns** mein bahut common — specific subtype return karna useful.
 
 ---
 
-## 🎯 1-Line Yaad
+## 1-Line Yaad
 
 > **Covariant Return Type = override mein return type child ka subtype ho sakta. Caller ko cast nahi karna padta. Java 5+ feature.**
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Covariant return type allows an overriding method to return a subtype of the parent's return type — Java 5+ supports this for cleaner factory and clone methods, eliminating the need for explicit casting at the call site."*

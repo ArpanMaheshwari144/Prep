@@ -1,13 +1,13 @@
-# 🟢 Topic 4 — Service (Network Access for Pods)
+# Topic 4 — Service (Network Access for Pods)
 
 > **Solves:** Pods are ephemeral (IPs change). Service = stable IP + DNS.
 > **Critical:** Production = ALWAYS reach pods via Service, never pod IP
 
-📚 [← Back to README](00_README.md) | [← Deployment](03_deployment.md) | [Ingress →](05_ingress.md)
+[← Back to README](00_README.md) | [← Deployment](03_deployment.md) | [Ingress →](05_ingress.md)
 
 ---
 
-## 🤔 The Problem K8s Service Solves
+## The Problem K8s Service Solves
 
 ```
 Tu Deployment chalaya — 3 pods running:
@@ -25,7 +25,7 @@ Issue:
 
 ---
 
-## 💡 Solution — Service
+## Solution — Service
 
 ```
 Service = STABLE IP + DNS NAME for a SET of pods
@@ -37,7 +37,7 @@ Traffic auto-routed to healthy pods
 
 ---
 
-## 🎬 STORY — Restaurant Phone Number
+## STORY — Restaurant Phone Number
 
 ```
 PODS              = waiters (shifts change, new waiters daily)
@@ -51,7 +51,7 @@ Service = stable contact point for changing pods
 
 ---
 
-## 🎨 Visual
+## Visual
 
 ```
    ┌─────────────────────────────────────────┐
@@ -76,7 +76,7 @@ Service = stable contact point for changing pods
 
 ---
 
-## 🎯 Service Provides 5 Things
+## Service Provides 5 Things
 
 ```
 1. STABLE IP / DNS         → Service name = DNS, never changes
@@ -88,12 +88,12 @@ Service = stable contact point for changing pods
 
 ---
 
-## 🎯 4 Service Types (interview classic)
+## 4 Service Types (interview classic)
 
 ```
 1. ClusterIP    (default — INTERNAL only)
 2. NodePort     (basic external — dev)
-3. LoadBalancer (cloud external — production ⭐)
+3. LoadBalancer (cloud external — production )
 4. ExternalName (DNS alias)
 ```
 
@@ -121,7 +121,7 @@ Use case:
    • NOT production (use LoadBalancer instead)
 ```
 
-### **3) LoadBalancer — Production External ⭐**
+### **3) LoadBalancer — Production External **
 ```
 Cloud provider provisions external LB (AWS ELB, GCP LB)
    • Public IP assigned
@@ -145,7 +145,7 @@ Use case:
 
 ---
 
-## 📝 Service Manifest — ClusterIP (most common)
+## Service Manifest — ClusterIP (most common)
 
 ```yaml
 apiVersion: v1
@@ -164,7 +164,7 @@ spec:
 
 ---
 
-## 📝 Service Manifest — LoadBalancer (production)
+## Service Manifest — LoadBalancer (production)
 
 ```yaml
 apiVersion: v1
@@ -182,7 +182,7 @@ spec:
 
 ---
 
-## 🌐 Service DNS (Cluster Internal)
+## Service DNS (Cluster Internal)
 
 ```
 K8s automatically creates DNS:
@@ -197,7 +197,7 @@ Pods inside cluster reach service via:
 
 ---
 
-## 🔗 Real Spring App + MySQL Service Example
+## Real Spring App + MySQL Service Example
 
 ```yaml
 # MySQL Deployment
@@ -248,18 +248,18 @@ spring.datasource.url=jdbc:mysql://mysql:3306/userdb
 
 ---
 
-## 🆚 Quick Comparison Table
+## Quick Comparison Table
 
 | Type | Scope | Use Case | Production? |
 |---|---|---|---|
-| ClusterIP | Internal | Microservice talk (default) | ✅ Yes (internal) |
-| NodePort | Basic external | Dev / testing | ❌ No |
-| LoadBalancer | Cloud external | Public APIs ⭐ | ✅ Yes (external) |
-| ExternalName | DNS alias | External mapping | ✅ Yes (specific) |
+| ClusterIP | Internal | Microservice talk (default) | Yes (internal) |
+| NodePort | Basic external | Dev / testing | No |
+| LoadBalancer | Cloud external | Public APIs | Yes (external) |
+| ExternalName | DNS alias | External mapping | Yes (specific) |
 
 ---
 
-## 🛠️ kubectl Commands
+## kubectl Commands
 
 ```cmd
 kubectl apply -f service.yaml         # create
@@ -275,7 +275,7 @@ kubectl get svc usercrud-service
 
 ---
 
-## 🎤 Quick Interview Sense
+## Quick Interview Sense
 
 **Q: "Service kya hai K8s mein?"**
 
@@ -291,44 +291,44 @@ kubectl get svc usercrud-service
 
 ---
 
-## ⚠️ Common Traps
+## Common Traps
 
 ```
-🪤 Trap 1: Pod IP direct use
-         ❌ Hardcode pod IP in app config
-         ✅ Use Service name (stable DNS)
+Trap 1: Pod IP direct use
+         Hardcode pod IP in app config
+         Use Service name (stable DNS)
 
-🪤 Trap 2: Selector mismatch
-         ❌ Service selector ≠ Pod labels
+Trap 2: Selector mismatch
+         Service selector ≠ Pod labels
          → Service routes to ZERO pods
-         ✅ Match exactly:
+         Match exactly:
             Service.spec.selector.app: usercrud
             Pod.metadata.labels.app: usercrud
 
-🪤 Trap 3: NodePort in production
-         ❌ NodePort exposes node IPs (security risk)
-         ✅ LoadBalancer for production
+Trap 3: NodePort in production
+         NodePort exposes node IPs (security risk)
+         LoadBalancer for production
 
-🪤 Trap 4: Port vs targetPort confusion
-         ❌ Mix up service port and pod port
-         ✅ port = service entry, targetPort = pod listen
+Trap 4: Port vs targetPort confusion
+         Mix up service port and pod port
+         port = service entry, targetPort = pod listen
             (often same, but can differ)
 
-🪤 Trap 5: Cross-namespace DNS
-         ❌ Same namespace mein 'mysql' use,
+Trap 5: Cross-namespace DNS
+         Same namespace mein 'mysql' use,
             different namespace fail
-         ✅ Use FQDN: mysql.namespace.svc.cluster.local
+         Use FQDN: mysql.namespace.svc.cluster.local
 ```
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > *"Service = stable network frontend for ephemeral pods. Pods rotate (IPs change), Service IP + DNS stable. Label selector picks matching pods, load balances traffic. 4 types: ClusterIP (internal default), NodePort (basic external), LoadBalancer (cloud production), ExternalName (DNS alias). Service name = DNS hostname inside cluster — same pattern as docker-compose."*
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 Service = "Restaurant phone number"
@@ -339,7 +339,7 @@ Service = "Restaurant phone number"
 Types (memorize):
    ClusterIP     → "Inside the building only" (internal)
    NodePort      → "Side door entry" (dev)
-   LoadBalancer  → "Main reception with security" (prod ⭐)
+   LoadBalancer  → "Main reception with security" (prod )
    ExternalName  → "Forward to another building" (DNS alias)
 
 DNS pattern:
@@ -349,17 +349,17 @@ DNS pattern:
 
 ---
 
-## ✅ Concept Locked
+## Concept Locked
 
 ```
-✅ Pods ephemeral, Service stable (IP + DNS)
-✅ Label selector picks matching pods
-✅ Load balancing automatic
-✅ 4 types (ClusterIP / NodePort / LoadBalancer / ExternalName)
-✅ DNS resolution by service name
-✅ ClusterIP for internal (default)
-✅ LoadBalancer for production external
-✅ Same pattern as docker-compose service names
+Pods ephemeral, Service stable (IP + DNS)
+Label selector picks matching pods
+Load balancing automatic
+4 types (ClusterIP / NodePort / LoadBalancer / ExternalName)
+DNS resolution by service name
+ClusterIP for internal (default)
+LoadBalancer for production external
+Same pattern as docker-compose service names
 ```
 
-📚 [← Back to README](00_README.md) | [← Deployment](03_deployment.md) | [Ingress →](05_ingress.md)
+[← Back to README](00_README.md) | [← Deployment](03_deployment.md) | [Ingress →](05_ingress.md)

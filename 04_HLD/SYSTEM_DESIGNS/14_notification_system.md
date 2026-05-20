@@ -1,4 +1,4 @@
-# 🔔 Notification System — Visual System Design
+# Notification System — Visual System Design
 
 ---
 
@@ -6,7 +6,7 @@
 
 ```
 Amazon order placed:
-   📱 Push  + 📧 Email + 📩 SMS + 📨 In-app
+   Push  + Email + SMS + In-app
    = ONE event → MANY channels + MANY users
 ```
 
@@ -55,12 +55,12 @@ Notification system = wedding planner
 ┌─────────────┬─────────────────────────────┐
 │  Channel    │  Providers                   │
 ├─────────────┼─────────────────────────────┤
-│ 📱 Push     │ FCM (Android), APNS (iOS)   │
-│ 📧 Email    │ SES, SendGrid, Mailgun      │
-│ 📩 SMS      │ Twilio, AWS SNS, MSG91      │
-│ 📨 In-app   │ DB store + WebSocket push   │
-│ 📞 Voice    │ Twilio Voice                │
-│ 💬 Slack    │ Webhook / API               │
+│ Push     │ FCM (Android), APNS (iOS)   │
+│ Email    │ SES, SendGrid, Mailgun      │
+│ SMS      │ Twilio, AWS SNS, MSG91      │
+│ In-app   │ DB store + WebSocket push   │
+│ Voice    │ Twilio Voice                │
+│ Slack    │ Webhook / API               │
 └─────────────┴─────────────────────────────┘
 ```
 
@@ -87,9 +87,9 @@ Notification system = wedding planner
    Order Service ──► Email Server ──► User
 
 Problems:
-   ❌ Order Service WAIT karta (email slow)
-   ❌ Email server down? Order fails
-   ❌ Tight coupling, no retry, single channel
+   Order Service WAIT karta (email slow)
+   Email server down? Order fails
+   Tight coupling, no retry, single channel
 ```
 
 ---
@@ -114,9 +114,9 @@ Problems:
    Email send
 
 Benefits:
-   ✅ Order Service FAST
-   ✅ Email down? Queue mein wait
-   ✅ Decoupled
+   Order Service FAST
+   Email down? Queue mein wait
+   Decoupled
 ```
 
 ---
@@ -174,7 +174,7 @@ Benefits:
       │             │             │
       └─────────────┼─────────────┘
                     ▼
-                  USER 📱
+                  USER 
                     │
                     ▼
             ┌─────────────────┐
@@ -185,7 +185,7 @@ Benefits:
 
 ---
 
-## 🔟 Supporting Stores
+## Supporting Stores
 
 ```
 User Preferences DB:
@@ -270,9 +270,9 @@ Add JITTER:
    Alert ops → investigate
 
 Use cases:
-   ✅ Bad email format (SES rejects)
-   ✅ Invalid phone (Twilio fails)
-   ✅ Permanent provider outage
+   Bad email format (SES rejects)
+   Invalid phone (Twilio fails)
+   Permanent provider outage
 ```
 
 ---
@@ -305,9 +305,9 @@ Implementation:
 
 ```
 Not all notifications equal:
-   🚨 OTP / 2FA    — ms matter
-   🔔 Order confirm — seconds OK
-   📣 Marketing    — minutes/hours OK
+   OTP / 2FA    — ms matter
+   Order confirm — seconds OK
+   Marketing    — minutes/hours OK
 ```
 
 ```
@@ -461,10 +461,10 @@ Real systems using this pattern:
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-Notification System = 💌 Wedding card distribution
+Notification System = Wedding card distribution
 
 CORE:
    Fanout → 1 event → many channels
@@ -484,7 +484,7 @@ SCALING:
    Partition by user_id (ordering)
 
 CHANNELS:
-   📱 FCM (push) | 📧 SES (email) | 📩 Twilio (SMS)
+   FCM (push) | SES (email) | Twilio (SMS)
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)

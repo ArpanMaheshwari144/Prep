@@ -1,20 +1,20 @@
-# 🟢 Topic 3 — Deployment (Production-Grade Pod Management)
+# Topic 3 — Deployment (Production-Grade Pod Management)
 
 > **Critical:** Production K8s = NEVER raw pods, ALWAYS Deployment
 > **Provides:** Self-healing, rolling updates, rollback, scaling
 
-📚 [← Back to README](00_README.md) | [← Pod](02_pod.md)
+[← Back to README](00_README.md) | [← Pod](02_pod.md)
 
 ---
 
-## 🤔 Why Deployment?
+## Why Deployment?
 
 ```
 Pod alone = problem:
-   ❌ Pod crash → gone (no auto-replace)
-   ❌ Need 3 copies? Manually start 3 pods
-   ❌ Update image? Manually delete + recreate
-   ❌ No rollback if bad deploy
+   Pod crash → gone (no auto-replace)
+   Need 3 copies? Manually start 3 pods
+   Update image? Manually delete + recreate
+   No rollback if bad deploy
    
 Solution: DEPLOYMENT
    "Hey K8s, mujhe ALWAYS 3 pods running chahiye
@@ -23,7 +23,7 @@ Solution: DEPLOYMENT
 
 ---
 
-## 🎬 STORY — Property Manager
+## STORY — Property Manager
 
 ```
 Pod              = ek apartment (kabhi bhi destroy ho sakta)
@@ -40,7 +40,7 @@ Deployment       = Building's PROPERTY MANAGER
 
 ---
 
-## 🎯 Deployment ka Job
+## Deployment ka Job
 
 ```
 1. DESIRED STATE          → "3 replicas chahiye"
@@ -52,7 +52,7 @@ Deployment       = Building's PROPERTY MANAGER
 
 ---
 
-## 🎨 Architecture Hierarchy
+## Architecture Hierarchy
 
 ```
    ┌──────────────────────────────────────────┐
@@ -76,7 +76,7 @@ Deployment       = Building's PROPERTY MANAGER
 
 ---
 
-## 📝 Deployment Manifest (YAML)
+## Deployment Manifest (YAML)
 
 ```yaml
 apiVersion: apps/v1
@@ -114,7 +114,7 @@ spec:
 
 ---
 
-## 🛠️ Common kubectl Commands
+## Common kubectl Commands
 
 ```cmd
 # Create / update
@@ -146,31 +146,31 @@ kubectl delete deployment usercrud-deployment
 
 ---
 
-## 🎬 Self-Healing in Action
+## Self-Healing in Action
 
 ```
 1. Deployment created with replicas: 3
    K8s: "OK 3 pods banata"
    ↓
-   Pod1 ✓ Pod2 ✓ Pod3 ✓
+   Pod1 Pod2 Pod3 
    
 2. Pod2 crashes (memory issue)
    ↓
-   Pod1 ✓ Pod2 💀 Pod3 ✓
+   Pod1 Pod2 Pod3 
    
 3. Deployment ke ReplicaSet ne dekha
    "Desired: 3, Actual: 2 → MISMATCH!"
    ↓
    Auto-create naya pod
    ↓
-   Pod1 ✓ Pod4 ✓ Pod3 ✓        ← Pod4 = naya replacement
+   Pod1 Pod4 Pod3        ← Pod4 = naya replacement
    
-   = Self-healing automatic ✅
+   = Self-healing automatic 
 ```
 
 ---
 
-## 🚀 Rolling Update (zero downtime deploy)
+## Rolling Update (zero downtime deploy)
 
 ```
 Initial state: 3 pods running v1.0
@@ -184,23 +184,23 @@ Step 1: New pod with v2 starts
    [v1] [v1] [v1] [v2 starting...]
    
 Step 2: v2 healthy, kill 1 v1
-   [v1] [v1] [v2 ✓]
+   [v1] [v1] [v2 ]
    
 Step 3: New v2 starts
-   [v1] [v1] [v2 ✓] [v2 starting...]
+   [v1] [v1] [v2 ] [v2 starting...]
    
 Step 4: Kill another v1
-   [v1] [v2 ✓] [v2 ✓]
+   [v1] [v2 ] [v2 ]
    
 Step 5: Continue...
-   [v2 ✓] [v2 ✓] [v2 ✓]
+   [v2 ] [v2 ] [v2 ]
    
-   = Zero downtime, gradual replacement ✅
+   = Zero downtime, gradual replacement 
 ```
 
 ---
 
-## 🚀 Rollback (instant safety net)
+## Rollback (instant safety net)
 
 ```
 Production deploy v2 → bug discovered (errors spike)
@@ -211,7 +211,7 @@ K8s instantly reverts to ReplicaSet of v1
    ↓
 v1 pods come back, v2 pods deleted
    ↓
-Users see no disruption ✅
+Users see no disruption 
 
 K8s maintains DEPLOYMENT HISTORY:
    Revision 1: v1.0 (original)
@@ -222,7 +222,7 @@ K8s maintains DEPLOYMENT HISTORY:
 
 ---
 
-## 🎯 Update Strategies
+## Update Strategies
 
 ```yaml
 spec:
@@ -242,21 +242,21 @@ Strategy types:
 
 ---
 
-## 🆚 Pod vs Deployment
+## Pod vs Deployment
 
 | | **Pod (alone)** | **Deployment** |
 |---|---|---|
-| Self-healing | ❌ Manual | ✅ Auto |
+| Self-healing | Manual | Auto |
 | Replicas | 1 | Configurable (1-N) |
 | Update | Recreate | Rolling |
-| Rollback | ❌ | ✅ |
+| Rollback | | |
 | Scale | Manual | `kubectl scale` |
-| Production use | ❌ Never alone | ✅ Standard |
+| Production use | Never alone | Standard |
 | YAML kind | `Pod` | `Deployment` |
 
 ---
 
-## 🎤 Quick Interview Sense
+## Quick Interview Sense
 
 **Q: "Deployment kya?"**
 
@@ -276,42 +276,42 @@ Strategy types:
 
 ---
 
-## ⚠️ Common Traps
+## Common Traps
 
 ```
-🪤 Trap 1: Deploying raw pods in production
-         ❌ kubectl apply -f pod.yaml directly
-         ✅ ALWAYS use Deployment
+Trap 1: Deploying raw pods in production
+         kubectl apply -f pod.yaml directly
+         ALWAYS use Deployment
 
-🪤 Trap 2: Forgetting selector match
-         ❌ Selector labels ≠ pod template labels
+Trap 2: Forgetting selector match
+         Selector labels ≠ pod template labels
          → Deployment can't manage pods
-         ✅ Match exactly:
+         Match exactly:
             selector.matchLabels.app: usercrud
             template.metadata.labels.app: usercrud
 
-🪤 Trap 3: Not setting resource limits
-         ❌ No requests/limits → pod can starve cluster
-         ✅ Always set resources.requests + limits
+Trap 3: Not setting resource limits
+         No requests/limits → pod can starve cluster
+         Always set resources.requests + limits
 
-🪤 Trap 4: Recreate strategy in production
-         ❌ strategy.type: Recreate (causes DOWNTIME)
-         ✅ RollingUpdate (default, zero-downtime)
+Trap 4: Recreate strategy in production
+         strategy.type: Recreate (causes DOWNTIME)
+         RollingUpdate (default, zero-downtime)
 
-🪤 Trap 5: Replicas: 1 in production
-         ❌ Single pod = single point of failure
-         ✅ Min 2-3 replicas for HA
+Trap 5: Replicas: 1 in production
+         Single pod = single point of failure
+         Min 2-3 replicas for HA
 ```
 
 ---
 
-## 💎 Power Phrase
+## Power Phrase
 
 > *"Deployment = K8s resource managing Pods declaratively. Desired state spec (replicas + pod template). Self-healing — pod crash → ReplicaSet creates new. Rolling updates — image change pe gradual pod replacement, zero downtime. Rollback via `kubectl rollout undo`. Hierarchy: Deployment > ReplicaSet > Pod. Production: NEVER deploy raw pods — always via Deployment."*
 
 ---
 
-## 🧠 Memory Hook
+## Memory Hook
 
 ```
 Deployment = "Property manager"
@@ -335,18 +335,18 @@ Update strategy:
 
 ---
 
-## ✅ Concept Locked
+## Concept Locked
 
 ```
-✅ Deployment = production Pod management
-✅ Desired state declarative (replicas + template)
-✅ Self-healing via ReplicaSet
-✅ Rolling updates (maxSurge + maxUnavailable)
-✅ Rollback via rollout undo
-✅ kubectl apply / scale / set image / rollout
-✅ Hierarchy: Deployment > ReplicaSet > Pod
-✅ Resource limits (requests + limits)
-✅ Production: ALWAYS Deployment, NEVER raw Pod
+Deployment = production Pod management
+Desired state declarative (replicas + template)
+Self-healing via ReplicaSet
+Rolling updates (maxSurge + maxUnavailable)
+Rollback via rollout undo
+kubectl apply / scale / set image / rollout
+Hierarchy: Deployment > ReplicaSet > Pod
+Resource limits (requests + limits)
+Production: ALWAYS Deployment, NEVER raw Pod
 ```
 
-📚 [← Back to README](00_README.md) | [← Pod](02_pod.md)
+[← Back to README](00_README.md) | [← Pod](02_pod.md)

@@ -15,7 +15,7 @@ import com.arpan.bank.service.BatchTransferService;
 import com.arpan.bank.service.BatchTransferService.TransferRequest;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    Main.java = ENTRY POINT — JVM yahaan se shuru
 //    public static void main(String[] args) = JVM entry
 //    Project ko run yahin se hoga
@@ -77,7 +77,7 @@ import com.arpan.bank.service.BatchTransferService.TransferRequest;
 //    Production better way:
 //       executor.awaitTermination(2, SECONDS);
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "Main demonstrates all patterns end-to-end —
 //     Singleton (BankConfig), Factory (AccountFactory),
 //     Repository (DIP injection), Observer (publisher/listener),
@@ -145,12 +145,12 @@ public class Main {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// 🚀 RUN INSTRUCTIONS (terminal):
+// RUN INSTRUCTIONS (terminal):
 //
 //   cd C:\DSA_PRACTICE\01_JAVA\07_PROJECT\SimpleBankSystem
 //   javac -d out src/com/arpan/bank/**/*.java src/com/arpan/bank/Main.java
 //   java -cp out com.arpan.bank.Main
 //
-// Expected output: bank info → account interest → 📧 transfer log →
+// Expected output: bank info → account interest → transfer log →
 //                  exception trace → parallel batch logs
 // ═══════════════════════════════════════════════════════════════════════

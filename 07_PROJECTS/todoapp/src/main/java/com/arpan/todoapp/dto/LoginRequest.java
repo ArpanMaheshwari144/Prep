@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    LoginRequest = LOGIN ka HTTP request shape
 //    POST /auth/login body mein yeh JSON aayega:
 //       { "email": "a@b.com", "password": "secret123" }
@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 //    Validation fail = auto 400 Bad Request
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🔑 WHY DTO (separate from User entity):
+// WHY DTO (separate from User entity):
 //    User entity has: id, name, email, password
 //    Login only needs: email + password
 //
@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 //    Plus: entity changes don't break API
 //    DTO = stable contract
 //
-// 🔑 ONLY 2 FIELDS:
+// ONLY 2 FIELDS:
 //    email    → identifier (matches User.email DB unique)
 //    password → raw password (will be BCrypt-checked in service)
 //

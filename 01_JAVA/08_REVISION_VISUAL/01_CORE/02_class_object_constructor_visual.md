@@ -1,11 +1,11 @@
-# 🏗️ Class / Object / Constructor — Visual Revision
+# Class / Object / Constructor — Visual Revision
 
 ---
 
 ## 1️⃣ Class vs Object (Blueprint Analogy)
 
 ```
-   📋 BLUEPRINT (Class)              🏠 HOUSE (Object)
+   BLUEPRINT (Class)              HOUSE (Object)
    ┌──────────────────┐              ┌──────────────────┐
    │  3 BHK design    │              │  My actual house  │
    │  Garden plan      │   →          │  Painted yellow   │
@@ -28,7 +28,7 @@ ek blueprint = MANY houses possible:
 
 ---
 
-## 🎯 Java Translate
+## Java Translate
 
 ```java
 // CLASS = blueprint
@@ -72,7 +72,7 @@ Answer: CONSTRUCTOR = woh "worker" jo object banata
 
 ---
 
-## 🎯 Default Constructor
+## Default Constructor
 
 ```java
 class House {
@@ -97,7 +97,7 @@ Internally:
 
 ---
 
-## 🎯 Custom Constructor
+## Custom Constructor
 
 ```java
 class House {
@@ -236,7 +236,7 @@ new House();
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
 Class       = blueprint (template)
@@ -248,4 +248,4 @@ new keyword = trigger construction
 this()      = call another constructor of same class
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

@@ -13,7 +13,7 @@ import org.springframework.cache.annotation.EnableCaching;
 // @SpringBootApplication   → THE magic annotation (3-in-1 combo)
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    TodoappApplication = ENTRY POINT of the entire app
 //    Spring Initializr auto-generated yeh file
 //    "main" method = JVM start point
@@ -39,9 +39,9 @@ import org.springframework.cache.annotation.EnableCaching;
 //       └─ @ComponentScan (scan com.arpan.todoapp + sub-folders)
 //          │
 //          ▼
-//    Spring Context ready → Tomcat starts on :8080 → APP RUNNING ✅
+//    Spring Context ready → Tomcat starts on :8080 → APP RUNNING 
 //
-// 🔑 @SpringBootApplication — 3-IN-1 SUPERPOWER:
+// @SpringBootApplication — 3-IN-1 SUPERPOWER:
 //
 //    1. @Configuration
 //       "Yeh class @Bean methods declare kar sakti"
@@ -63,7 +63,7 @@ import org.springframework.cache.annotation.EnableCaching;
 //          @Component
 //       SAB beans ban jaate, DI wired automatically
 //
-// 🔑 SpringApplication.run() ke andar kya hota:
+// SpringApplication.run() ke andar kya hota:
 //    1. Banner print (Spring logo)
 //    2. Environment setup (profiles, properties)
 //    3. Auto-config triggered (based on classpath)
@@ -75,14 +75,14 @@ import org.springframework.cache.annotation.EnableCaching;
 //    9. Application ready → listeners notify
 //    10. Console: "Started TodoappApplication in X seconds"
 //
-// 🔑 MAIN METHOD BREAKDOWN:
+// MAIN METHOD BREAKDOWN:
 //    public      → JVM ke liye accessible
 //    static      → object banaye bina call ho sake (JVM rule)
 //    void        → kuch return nahi karna
 //    main        → JAVA RULE — entry method ka naam EXACTLY "main"
 //    String[] args → command-line arguments (--port=9090 etc.)
 //
-// 🔑 TodoappApplication.class:
+// TodoappApplication.class:
 //    "Class reference" — class ka metadata pointer
 //    Spring ko batata "iss class se @ComponentScan shuru karo"
 //    Base package = com.arpan.todoapp
@@ -92,7 +92,7 @@ import org.springframework.cache.annotation.EnableCaching;
 //       • repository/  ← @Repository detect
 //       • model/       ← @Entity detect
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "TodoappApplication is the entry point — standard Java
 //     class with main() method. @SpringBootApplication is a
 //     meta-annotation combining @Configuration,

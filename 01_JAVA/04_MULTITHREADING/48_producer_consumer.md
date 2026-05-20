@@ -1,10 +1,10 @@
-# 🏭 Producer-Consumer Pattern — Complete Interview Reference
+# Producer-Consumer Pattern — Complete Interview Reference
 
 > **Classic multithreading interview question.** Wait/notify ka real-world use case + modern BlockingQueue solution.
 
 ---
 
-## 📌 WHY — Asli zaroorat
+## WHY — Asli zaroorat
 
 **Scenario:** Tu Amazon order processing system bana raha hai.
 
@@ -18,14 +18,14 @@ Order placement (frontend)  →  Order processing (DB + email + inventory)
 **Problem:** Producer (orders) consumer (processor) se zyada **fast** hai — orders pile up.
 
 **Without sync:**
-- Producer: order DB mein daal raha, RAM full ho gayi 💥
-- Consumer: kab order ready? Pata nahi — busy-wait loop spin kar raha CPU 🔥
+- Producer: order DB mein daal raha, RAM full ho gayi 
+- Consumer: kab order ready? Pata nahi — busy-wait loop spin kar raha CPU 
 
 **Solution:** **Shared buffer** + **coordination** between producer/consumer.
 
 ---
 
-## 🎨 Visual — The Pattern
+## Visual — The Pattern
 
 ```
    ┌─────────────┐                                ┌──────────────┐
@@ -42,7 +42,7 @@ Order placement (frontend)  →  Order processing (DB + email + inventory)
 
 ---
 
-## 🤔 The Problem
+## The Problem
 
 Naive implementation:
 
@@ -55,14 +55,14 @@ class Buffer {
         if (items.size() < CAPACITY) {
             items.add(item);
         }
-        // FULL hua to silently drop ❌
+        // FULL hua to silently drop 
     }
     
     int consume() {
         if (!items.isEmpty()) {
             return items.remove(0);
         }
-        return -1;   // empty hua to sentinel ❌
+        return -1;   // empty hua to sentinel 
     }
 }
 ```
@@ -76,7 +76,7 @@ class Buffer {
 
 ---
 
-## 🛠️ Approach 1: `synchronized` + `wait/notify` (CLASSIC)
+## Approach 1: `synchronized` + `wait/notify` (CLASSIC)
 
 ```java
 public class Buffer {
@@ -84,7 +84,7 @@ public class Buffer {
     private final int CAPACITY = 10;
 
     public synchronized void produce(int item) throws InterruptedException {
-        while (items.size() == CAPACITY) {   // ⚠️ while NOT if
+        while (items.size() == CAPACITY) {   // while NOT if
             wait();                          // release lock + suspend
         }
         items.add(item);
@@ -104,7 +104,7 @@ public class Buffer {
 }
 ```
 
-### 🎨 Visual — Flow
+### Visual — Flow
 
 ```
 PRODUCER thread                    CONSUMER thread
@@ -120,19 +120,19 @@ synchronized (this) {              synchronized (this) {
 }                                  }
 ```
 
-### 🪤 Critical gotchas
+### Critical gotchas
 
 #### 1. **`while` NOT `if` for wait condition**
 ```java
-while (items.size() == CAPACITY) wait();   // ✅ defensive
-if (items.size() == CAPACITY) wait();      // ❌ buggy
+while (items.size() == CAPACITY) wait();   // defensive
+if (items.size() == CAPACITY) wait();      // buggy
 ```
 **Why:** **Spurious wakeups** — JVM rare conditions mein `wait()` se return ho jata bina `notify()` ke. `if` use kiya toh stale state mein continue → race condition.
 
 #### 2. **`notifyAll()` not `notify()`**
 ```java
-notifyAll();   // ✅ wake ALL waiting threads
-notify();      // ❌ only wakes ONE — could be wrong type (producer when consumer needed)
+notifyAll();   // wake ALL waiting threads
+notify();      // only wakes ONE — could be wrong type (producer when consumer needed)
 ```
 With single condition variable, **wrong thread wake** ho sakta. Always `notifyAll()`.
 
@@ -147,7 +147,7 @@ catch (InterruptedException e) {
 
 ---
 
-## 🚀 Approach 2: `BlockingQueue` (PRODUCTION GOLD)
+## Approach 2: `BlockingQueue` (PRODUCTION GOLD)
 
 ```java
 import java.util.concurrent.BlockingQueue;
@@ -164,7 +164,7 @@ int item = queue.take();    // blocks if EMPTY until item available
 
 **That's it.** No `synchronized`, no `wait/notify`, no spurious wakeup handling. Library handles everything.
 
-### 💎 BlockingQueue variants
+### BlockingQueue variants
 
 | Implementation | Use case |
 |---|---|
@@ -207,7 +207,7 @@ for (int i = 0; i < 5; i++) {
 
 ---
 
-## 🎯 Approach 3: `ReentrantLock` + `Condition` (GRANULAR)
+## Approach 3: `ReentrantLock` + `Condition` (GRANULAR)
 
 ```java
 import java.util.concurrent.locks.*;
@@ -249,34 +249,34 @@ public class Buffer {
 }
 ```
 
-### 💡 Why this is better than `synchronized + wait/notify`
+### Why this is better than `synchronized + wait/notify`
 
 | Feature | `synchronized + wait/notify` | `ReentrantLock + Condition` |
 |---|---|---|
 | Lock granularity | Full method | Explicit lock/unlock |
-| Multiple wait conditions | ❌ Single `wait()`, shared queue | ✅ Multiple `Condition`s — `notFull`, `notEmpty` |
-| Selective wakeup | ❌ `notifyAll()` wakes everyone | ✅ `notEmpty.signalAll()` wakes only relevant threads |
-| Try-lock / timeout | ❌ Not available | ✅ `tryLock(timeout)` |
-| Interruptibility | Limited | ✅ `lockInterruptibly()` |
+| Multiple wait conditions | Single `wait()`, shared queue | Multiple `Condition`s — `notFull`, `notEmpty` |
+| Selective wakeup | `notifyAll()` wakes everyone | `notEmpty.signalAll()` wakes only relevant threads |
+| Try-lock / timeout | Not available | `tryLock(timeout)` |
+| Interruptibility | Limited | `lockInterruptibly()` |
 | Performance | Lower | Higher under contention |
 
 **`signalAll()` vs `notifyAll()`** — same concept, different API. Granular control = better performance.
 
 ---
 
-## 📊 Comparison Table — Which Approach?
+## Comparison Table — Which Approach?
 
 | Approach | Boilerplate | Flexibility | Performance | When to use |
 |---|---|---|---|---|
 | **synchronized + wait/notify** | High | Low | Medium | Interview classic, simple cases |
-| **BlockingQueue** | None | Low (preset) | High | **99% production** ✅ |
+| **BlockingQueue** | None | Low (preset) | High | **99% production** |
 | **ReentrantLock + Condition** | High | Highest | Highest | Advanced — custom signaling |
 
 **Production rule:** Default to **`BlockingQueue`**. Custom karna ho only — go to `ReentrantLock`.
 
 ---
 
-## 🌍 Real-world Use Cases
+## Real-world Use Cases
 
 ### 1. **Kafka / Message Queues**
 Producer publishes messages, consumer subscribes — distributed producer-consumer at internet scale.
@@ -298,7 +298,7 @@ Tasks task executor mein submit hote — internal blocking queue.
 
 ---
 
-## 🎯 Interview Answer Templates
+## Interview Answer Templates
 
 ### Q: "Producer-Consumer pattern kya hai aur kaise implement karoge?"
 
@@ -322,28 +322,28 @@ Tasks task executor mein submit hote — internal blocking queue.
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "if (FULL) wait()"
-         ❌ Spurious wakeup possible — use while
+Trap 1: "if (FULL) wait()"
+         Spurious wakeup possible — use while
 
-🪤 Trap 2: "notify() instead of notifyAll()"
-         ❌ Wrong thread wake possible — deadlock-like
+Trap 2: "notify() instead of notifyAll()"
+         Wrong thread wake possible — deadlock-like
          
-🪤 Trap 3: "Buffer pe synchronized nahi laga"
-         ❌ Race condition — modCount issues, data corruption
+Trap 3: "Buffer pe synchronized nahi laga"
+         Race condition — modCount issues, data corruption
          
-🪤 Trap 4: "ArrayList use kiya BlockingQueue ke bajaye"
-         ❌ Reinventing wheel + bugs guaranteed
+Trap 4: "ArrayList use kiya BlockingQueue ke bajaye"
+         Reinventing wheel + bugs guaranteed
          
-🪤 Trap 5: "InterruptedException swallow kar diya"
-         ❌ Restore flag: Thread.currentThread().interrupt()
+Trap 5: "InterruptedException swallow kar diya"
+         Restore flag: Thread.currentThread().interrupt()
 ```
 
 ---
 
-## 🧠 MEMORY HOOKS
+## MEMORY HOOKS
 
 ```
 Producer-Consumer    =  "Fast factory, slow worker — buffer mein items"
@@ -363,7 +363,7 @@ ReentrantLock+Cond   =  "Granular — multiple wait queues"
 
 ---
 
-## 🎯 FINAL VISUAL — Choosing the right approach
+## FINAL VISUAL — Choosing the right approach
 
 ```
                   ┌────────────────────────┐

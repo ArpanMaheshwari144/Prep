@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Top 5 Highest Rated
+## STORY — Top 5 Highest Rated
 
 → Scene: **1000 survey responses** aaye — **top 5 highest-rated** dikhane hain
 → List sort karein? **Zyada slow** — pura sort kyu jab top 5 chahiye?
@@ -12,7 +12,7 @@
 
 ---
 
-## 🟡 WHY — PriorityQueue?
+## WHY — PriorityQueue?
 
 → PriorityQueue **andar se min-heap** hai
 → `poll()` **hamesha sabse CHHOTA** element deta
@@ -21,7 +21,7 @@
 
 ---
 
-## 💻 Code — Min-Heap (Default — Chhota Pehle)
+## Code — Min-Heap (Default — Chhota Pehle)
 
 ```java
 PriorityQueue<Integer> pq = new PriorityQueue<>();
@@ -29,12 +29,12 @@ pq.add(30);
 pq.add(10);
 pq.add(20);
 
-pq.poll();    // 10  ← sabse chhota pehle ✅
+pq.poll();    // 10  ← sabse chhota pehle 
 pq.poll();    // 20
 pq.poll();    // 30
 ```
 
-## 💻 Max-Heap (Bada Pehle)
+## Max-Heap (Bada Pehle)
 
 ```java
 PriorityQueue<Integer> maxPQ = new PriorityQueue<>(Comparator.reverseOrder());
@@ -42,12 +42,12 @@ maxPQ.add(30);
 maxPQ.add(10);
 maxPQ.add(20);
 
-maxPQ.poll();    // 30  ← sabse bada pehle ✅
+maxPQ.poll();    // 30  ← sabse bada pehle 
 ```
 
 ---
 
-## 📊 3 Important Methods
+## 3 Important Methods
 
 | Method | Kya karta? |
 |--------|-----------|
@@ -62,7 +62,7 @@ maxPQ.poll();    // 30  ← sabse bada pehle ✅
 
 ---
 
-## 🎯 Konovo Real Use Case — Top-K Pattern
+## Konovo Real Use Case — Top-K Pattern
 
 **Scenario:** 1 lakh survey responses, top 5 highest-rated chahiye.
 
@@ -83,7 +83,7 @@ for (int rating : ratings) {
 
 ---
 
-## 🔴 TRAP
+## TRAP
 
 > **PriorityQueue iterate karoge toh sorted order mein NAHI dega.**
 > **Heap structure hai — sorted nahi.**
@@ -91,7 +91,7 @@ for (int rating : ratings) {
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"PriorityQueue is a min-heap by default — `poll()` always returns the smallest element. Pass `Comparator.reverseOrder()` for max-heap. Best for top-K problems — gives O(n log k) instead of full sort O(n log n)."*
 
@@ -103,7 +103,7 @@ for (int rating : ratings) {
 
 ---
 
-## 🧠 Deep — PQ Internally SORTED Nahi Hai (Important Doubt)
+## Deep — PQ Internally SORTED Nahi Hai (Important Doubt)
 
 PQ andar se ek **binary heap** structure hai — sorted array NAHI. Heap mein **sirf ek rule**:
 
@@ -152,7 +152,7 @@ for (int x : pq) {
 while (!pq.isEmpty()) {
     System.out.print(pq.poll() + " ");
 }
-// Output: 5 10 15 20 30   ← SORTED ✅
+// Output: 5 10 15 20 30   ← SORTED 
 ```
 
 `poll()` har baar:
@@ -174,10 +174,10 @@ while (!pq.isEmpty()) {
 
 | Cheez | State |
 |-------|-------|
-| **PQ ka internal array** | ❌ NOT sorted (heap property only) |
-| **`peek()` / iterate / print** | ❌ Heap order — unsorted |
-| **`poll()` ek-ek karke** | ✅ SORTED (chhota pehle) |
-| **Saare elements poll karo** | ✅ Total O(n log n) — fully sorted output |
+| **PQ ka internal array** | NOT sorted (heap property only) |
+| **`peek()` / iterate / print** | Heap order — unsorted |
+| **`poll()` ek-ek karke** | SORTED (chhota pehle) |
+| **Saare elements poll karo** | Total O(n log n) — fully sorted output |
 
 **Tldr:** PQ **on-demand** sorted deta — jab poll karega tab. Internally storage **lazy-sorted (heap)**, fully sorted NAHI.
 

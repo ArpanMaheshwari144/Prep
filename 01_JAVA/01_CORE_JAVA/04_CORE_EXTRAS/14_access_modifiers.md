@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 Scope (Narrow → Wide)
+## Scope (Narrow → Wide)
 
 ```
 ┌─────────┬─────────┬───────────┬──────────┐
@@ -20,7 +20,7 @@ Rule: MOST RESTRICTIVE possible. private pehle, zarurat pe badhao.
 
 ---
 
-## 📖 STORY — Payment System
+## STORY — Payment System
 
 → Tune payment system banaya
 → **Card number** = koi bhi seedha access na kare → **`private`**
@@ -33,29 +33,29 @@ Rule: MOST RESTRICTIVE possible. private pehle, zarurat pe badhao.
 
 ---
 
-## 📊 Comparison
+## Comparison
 
 | Modifier | Same Class | Same Package | Subclass (alag pkg) | Anywhere |
 |----------|------------|--------------|---------------------|----------|
-| `private` | ✅ | ❌ | ❌ | ❌ |
-| `default` | ✅ | ✅ | ❌ | ❌ |
-| `protected` | ✅ | ✅ | ✅ | ❌ |
-| `public` | ✅ | ✅ | ✅ | ✅ |
+| `private` | | | | |
+| `default` | | | | |
+| `protected` | | | | |
+| `public` | | | | |
 
 ---
 
-## 🔴 TRAP 1
+## TRAP 1
 
 > **`default` matlab koi modifier nahi likha — public NAHI hota!**
 > **Alag package ki subclass bhi access nahi kar sakti.**
 
-## 🔴 TRAP 2
+## TRAP 2
 
 > **`protected` = same package + ALAG package ki subclass bhi.**
 > **Yehi `default` aur `protected` ka fark hai.**
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"`private` is same class only. `default` is package-level. `protected` allows subclass access even across packages. `public` is accessible everywhere — always use the most restrictive modifier possible."*

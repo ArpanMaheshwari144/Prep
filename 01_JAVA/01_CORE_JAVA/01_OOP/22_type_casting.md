@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Animal Reference
+## STORY — Animal Reference
 
 → Tune Animal reference mein **Dog store kiya** — Upcasting (automatic, safe)
 → Ab Dog ke special methods chahiye — `bark()`
@@ -17,35 +17,35 @@
 
 ---
 
-## 💻 Code
+## Code
 
 ### Upcasting — Child → Parent reference. Automatic. Always safe.
 ```java
-Animal a = new Dog();      // ✅ Upcasting — automatic, koi cast nahi
-a.eat();                   // ✅ Animal method — Animal reference se chalega
-a.bark();                  // 🔴 bark() Animal mein nahi hai!
+Animal a = new Dog();      // Upcasting — automatic, koi cast nahi
+a.eat();                   // Animal method — Animal reference se chalega
+a.bark();                  // bark() Animal mein nahi hai!
 ```
 
 ### Downcasting — Parent reference → Child type. Manual. Cast likhna padta.
 ```java
 Animal a = new Dog();
-Dog d = (Dog) a;           // ✅ Downcasting — andar Dog hai, safe
-d.bark();                  // ✅ Dog method ab accessible
+Dog d = (Dog) a;           // Downcasting — andar Dog hai, safe
+d.bark();                  // Dog method ab accessible
 
-// 🔴 TRAP — andar Dog nahi hai
+// TRAP — andar Dog nahi hai
 Animal a = new Animal();
-Dog d = (Dog) a;           // 🔴 ClassCastException — andar Animal hai!
+Dog d = (Dog) a;           // ClassCastException — andar Animal hai!
 
-// ✅ Safe tarika — instanceof pehle
+// Safe tarika — instanceof pehle
 if (a instanceof Dog) {
-    Dog d = (Dog) a;       // ✅ safe — confirm karke cast
+    Dog d = (Dog) a;       // safe — confirm karke cast
     d.bark();
 }
 ```
 
 ---
 
-## 🧠 Visualization
+## Visualization
 
 ```
               Type Casting Visualization
@@ -64,8 +64,8 @@ if (a instanceof Dog) {
    a   ──────────►│   (full)   │     dono SAME object pe point
                    └────────────┘     (sirf reference type alag)
 
-  a.eat()    ✅  (Animal method, accessible)
-  a.bark()   🔴  COMPILE ERROR — Animal mein bark() nahi
+  a.eat()     (Animal method, accessible)
+  a.bark()    COMPILE ERROR — Animal mein bark() nahi
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -82,7 +82,7 @@ if (a instanceof Dog) {
    d ────────────►│            │   ← d ab Dog methods access kar sakta
                    └────────────┘
 
-  d.bark()   ✅  (ab Dog reference, bark accessible)
+  d.bark()    (ab Dog reference, bark accessible)
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -90,7 +90,7 @@ if (a instanceof Dog) {
 ╚════════════════════════════════════════════════════════════╝
 
       Animal a = new Animal();   ← real object Animal
-      Dog d = (Dog) a;           🔴 ClassCastException!
+      Dog d = (Dog) a;           ClassCastException!
                                    (cast to Dog but object Animal hai)
 
    STACK            HEAP
@@ -113,7 +113,7 @@ if (a instanceof Dog) {
 
 ---
 
-## 📊 Summary
+## Summary
 
 | | Upcasting | Downcasting |
 |--|-----------|-------------|
@@ -124,19 +124,19 @@ if (a instanceof Dog) {
 
 ---
 
-## 🔴 TRAP 1
+## TRAP 1
 
 > **Upcasting mein child ke extra methods access nahi hote.**
 > `a.bark()` → compile error even if Dog andar hai!
 
-## 🔴 TRAP 2
+## TRAP 2
 
 > **`ClassCastException` runtime pe aata hai — compiler nahi pakdta.**
 > Isliye `instanceof` check **mandatory** hai.
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Upcasting is automatic and always safe — a child reference can always be assigned to a parent type. Downcasting is manual and requires an `instanceof` check first — without it you risk a ClassCastException at runtime."*
 

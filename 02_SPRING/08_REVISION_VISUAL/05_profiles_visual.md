@@ -1,4 +1,4 @@
-# 🌍 Spring Profiles — Visual Revision
+# Spring Profiles — Visual Revision
 
 ---
 
@@ -211,23 +211,23 @@ Production K8s:
 ## 9️⃣ Common Mistakes
 
 ```
-❌ Hardcoding DB URL in main application.properties
-   ✅ Use profile-specific files
+Hardcoding DB URL in main application.properties
+   Use profile-specific files
 
-❌ Sensitive data (passwords) in git-committed properties
-   ✅ Use environment variables / secret manager
+Sensitive data (passwords) in git-committed properties
+   Use environment variables / secret manager
 
-❌ Forgetting to set profile in production
-   ✅ Always explicit (env var or K8s ConfigMap)
+Forgetting to set profile in production
+   Always explicit (env var or K8s ConfigMap)
 
-❌ Multiple profiles overlapping properties chaos
-   ✅ Common stuff in default application.properties
-   ✅ Profile-specific only overrides
+Multiple profiles overlapping properties chaos
+   Common stuff in default application.properties
+   Profile-specific only overrides
 ```
 
 ---
 
-## 🔟 Profile Hierarchy (Override Chain)
+## Profile Hierarchy (Override Chain)
 
 ```
    1. Command-line args     ← HIGHEST priority
@@ -241,7 +241,7 @@ Production K8s:
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
 Wardrobe = Profile system
@@ -254,7 +254,7 @@ spring.profiles.active = "kya pehnu aaj"
 
 ---
 
-## 💎 One-Line Summary
+## One-Line Summary
 
 ```
 "Profiles = wardrobe for app config.
@@ -264,4 +264,4 @@ spring.profiles.active = "kya pehnu aaj"
  @Profile annotation = beans appear only on matching profile."
 ```
 
-📚 [← Back to SPRING](../)
+[← Back to SPRING](../)

@@ -1,4 +1,4 @@
-# 🛢️ JPA vs Hibernate
+# JPA vs Hibernate
 
 ---
 
@@ -88,22 +88,22 @@ Yeh code:
 ## 5️⃣ Why Use JPA (Not Hibernate Directly)?
 
 ```
-✅ VENDOR INDEPENDENCE
+VENDOR INDEPENDENCE
    Code JPA pe likha → Hibernate ya EclipseLink — koi farak nahi
    = Future swap possible
 
-✅ STANDARDIZATION
+STANDARDIZATION
    Universal API (Java standard)
    = Industry-wide knowledge
 ```
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-JPA        = 📋 Spec (rules)
-Hibernate  = 🔧 Implementation (does the work)
+JPA        = Spec (rules)
+Hibernate  = Implementation (does the work)
 
 Tera code  → JPA interface
 Behind     → Hibernate executes

@@ -4,7 +4,7 @@
 
 ---
 
-## 🧠 `notify()` Internally Kya Karta?
+## `notify()` Internally Kya Karta?
 
 ### Pehle 2 Concepts Clear
 
@@ -20,26 +20,26 @@
 
 ---
 
-## 🎬 Step-by-Step Flow
+## Step-by-Step Flow
 
 ### Scene Set: 2 threads — Producer (P) + Consumer (C). Buffer queue full hai.
 
 ---
 
-### ⏱️ Step 1: Producer enters `produce()`
+### Step 1: Producer enters `produce()`
 
 ```
 P: produce() call
-   → P ne `this` (Buffer) ka LOCK liya 🔒
+   → P ne `this` (Buffer) ka LOCK liya 
    → State: RUNNING
    → Queue check: FULL — `wait()` call
 ```
 
-### ⏱️ Step 2: `wait()` ka 3 kaam
+### Step 2: `wait()` ka 3 kaam
 
 Jab `wait()` call hota, **3 cheez ek saath hoti**:
 
-1. **Lock RELEASE** — Buffer ka lock chhod deta 🔓
+1. **Lock RELEASE** — Buffer ka lock chhod deta 
 2. **WAITING state** mein chala jaata
 3. Buffer ka **Wait Set** mein add ho jaata
 
@@ -51,11 +51,11 @@ P holding lock?     NO (release kar diya)
 
 ---
 
-### ⏱️ Step 3: Consumer enters `consume()`
+### Step 3: Consumer enters `consume()`
 
 ```
 C: consume() call
-   → C ne `this` (Buffer) ka LOCK liya 🔒  (P ne chhod diya tha)
+   → C ne `this` (Buffer) ka LOCK liya  (P ne chhod diya tha)
    → State: RUNNING
    → Queue se item nikaala (poll)
    → ab queue full nahi hai
@@ -63,14 +63,14 @@ C: consume() call
 
 ---
 
-### ⏱️ Step 4: Consumer calls `notify()` ⚡
+### Step 4: Consumer calls `notify()` 
 
 **Yahan asli magic hai. `notify()` exactly ye karta:**
 
 1. Buffer ke **Wait Set** mein dekho — koi thread hai?
 2. Ek thread **pick karo** (ye P hai)
 3. P ko **WAITING → BLOCKED** state mein move karo
-4. **LEKIN — lock abhi BHI Consumer ke paas hai!** ⚠️
+4. **LEKIN — lock abhi BHI Consumer ke paas hai!** 
 
 ```
 Buffer's Wait Set:  []     ← P nikal gaya
@@ -82,20 +82,20 @@ C state:            RUNNING (lock abhi bhi C ke paas)
 
 ---
 
-### ⏱️ Step 5: Consumer exits `synchronized` block
+### Step 5: Consumer exits `synchronized` block
 
 ```
 C: } method end
-   → Lock RELEASE 🔓
+   → Lock RELEASE 
    → State: continue
 ```
 
 ---
 
-### ⏱️ Step 6: Producer (BLOCKED) gets the lock
+### Step 6: Producer (BLOCKED) gets the lock
 
 ```
-P: lock mil gaya 🔒
+P: lock mil gaya 
    → State: BLOCKED → RUNNABLE → RUNNING
    → wait() ke baad continue kar raha
    → while loop re-check: queue full hai abhi? → NAHI
@@ -104,15 +104,15 @@ P: lock mil gaya 🔒
 
 ---
 
-## 🎨 Visual Summary
+## Visual Summary
 
 ```
 WAITING SET                  RUNNING                   LOCK
 
 ┌──────────┐                                         ┌──────┐
-│   P      │  ◄── wait()      C: lock = 🔒          │  C   │
+│   P      │  ◄── wait()      C: lock =          │  C   │
 │ WAITING  │                  C: poll()              └──────┘
-└──────────┘                  C: notify()  ⚡
+└──────────┘                  C: notify()  
 
                    ↓ notify() picks P
 
@@ -129,7 +129,7 @@ WAITING SET                  RUNNING                   LOCK
 
 ---
 
-## 🔑 Key Insights
+## Key Insights
 
 | Confusion | Reality |
 |-----------|---------|
@@ -140,13 +140,13 @@ WAITING SET                  RUNNING                   LOCK
 
 ---
 
-## 💡 1-Line Truth
+## 1-Line Truth
 
 > **`notify()` ka kaam:** *"Wait set se ek thread nikaalo, BLOCKED state mein daalo. Jab notifier sync block exit kare aur lock chhode, tab wo BLOCKED thread lock le ke continue karega."*
 
 ---
 
-## 🤔 `notifyAll()` Kab Better?
+## `notifyAll()` Kab Better?
 
 Producer-consumer mein agar **multiple producers + multiple consumers** hain — `notify()` se **galat thread jag sakta** (e.g., consumer ne `notify()` kiya consumer ko hi jag gaya — useless).
 
@@ -154,6 +154,6 @@ Producer-consumer mein agar **multiple producers + multiple consumers** hain —
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"`notify()` removes one thread from the object's wait set and moves it to BLOCKED state — but the notifier still holds the lock until it exits the synchronized block. Only then can the woken thread reacquire the lock and resume from where `wait()` returned."*

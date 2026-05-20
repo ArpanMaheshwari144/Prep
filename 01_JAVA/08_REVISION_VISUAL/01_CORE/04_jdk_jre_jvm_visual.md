@@ -1,4 +1,4 @@
-# ⚙️ JDK vs JRE vs JVM — Visual Revision
+# JDK vs JRE vs JVM — Visual Revision
 
 ---
 
@@ -34,14 +34,14 @@
 ## 2️⃣ Car Analogy
 
 ```
-JVM     = 🚗 ENGINE only
+JVM     = ENGINE only
             (just runs the bytecode)
 
-JRE     = 🚙 FULL CAR
+JRE     = FULL CAR
             (engine + body + tyres + interior)
             JVM + libraries needed to run
 
-JDK     = 🏭 CAR FACTORY
+JDK     = CAR FACTORY
             (assembles cars + tools to design)
             JRE + dev tools (compiler, debugger)
 ```
@@ -226,15 +226,15 @@ A: Interpreter = line-by-line slow.
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-JVM = 🚗 ENGINE              (runs bytecode)
-JRE = 🚙 FULL CAR             (JVM + libs to run)
-JDK = 🏭 FACTORY              (JRE + dev tools)
+JVM = ENGINE              (runs bytecode)
+JRE = FULL CAR             (JVM + libs to run)
+JDK = FACTORY              (JRE + dev tools)
 
 WORA = bytecode universal, JVM per OS
 JIT  = hot methods → native code (speed boost)
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

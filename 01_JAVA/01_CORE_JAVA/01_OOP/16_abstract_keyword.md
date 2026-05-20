@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Shape Class
+## STORY — Shape Class
 
 → Tune `Shape` class banayi. `area()` method likhna chahta tha
 → Lekin `Shape` abstract hai — **kaunsa formula?**
@@ -18,7 +18,7 @@
 
 ---
 
-## 💻 Code
+## Code
 
 ```java
 abstract class Shape {
@@ -27,17 +27,17 @@ abstract class Shape {
 }
 
 class Circle extends Shape {
-    double area() { return 3.14 * r * r; }   // ✅ implement kiya
+    double area() { return 3.14 * r * r; }   // implement kiya
 }
 
 class Rectangle extends Shape {
-    double area() { return l * b; }          // ✅ implement kiya
+    double area() { return l * b; }          // implement kiya
 }
 ```
 
 ---
 
-## 🔴 TRAP 1 — `static abstract` = ILLEGAL Combo
+## TRAP 1 — `static abstract` = ILLEGAL Combo
 
 → `static` = class ka, override nahi hota
 → `abstract` = child implement kare
@@ -45,13 +45,13 @@ class Rectangle extends Shape {
 
 ```java
 abstract class A {
-    static abstract void show();    // 🔴 COMPILE ERROR
+    static abstract void show();    // COMPILE ERROR
 }
 ```
 
 ---
 
-## 🔴 TRAP 2 — Interface Mein Private Method (Java 9+)
+## TRAP 2 — Interface Mein Private Method (Java 9+)
 
 → Java 9 se interface mein **private methods allowed**
 → Sirf **internal helper** ke liye — default/static methods ke andar use hote hain
@@ -59,14 +59,14 @@ abstract class A {
 
 ```java
 interface A {
-    private void helper() { ... }                    // ✅ Java 9+ valid
+    private void helper() { ... }                    // Java 9+ valid
     default void show() { helper(); }                // sirf andar use karo
 }
 ```
 
 ---
 
-## 🔴 TRAP 3 — Abstract Class ka Object KABHI Nahi Banta
+## TRAP 3 — Abstract Class ka Object KABHI Nahi Banta
 
 → Chahe **ek bhi abstract method na ho**
 → Agar class `abstract` declare ki hai → direct object nahi ban sakta
@@ -74,7 +74,7 @@ interface A {
 
 ```java
 abstract class A { }                  // koi abstract method nahi
-new A();                              // 🔴 COMPILE ERROR
+new A();                              // COMPILE ERROR
 ```
 
 **WHY?**
@@ -84,6 +84,6 @@ new A();                              // 🔴 COMPILE ERROR
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"Abstract class is an incomplete blueprint — it can have both abstract methods with no body and normal methods. Subclasses must implement all abstract methods. You cannot instantiate an abstract class directly."*

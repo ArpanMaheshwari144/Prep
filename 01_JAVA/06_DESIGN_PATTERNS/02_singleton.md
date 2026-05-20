@@ -1,14 +1,14 @@
-# 🏛️ Singleton Pattern — Sirf Ek Instance, Pure App Mein
+# Singleton Pattern — Sirf Ek Instance, Pure App Mein
 
 > **Design Patterns: Topic 2 — Creational Pattern (Most-Asked Interview Classic)**
 
 ---
 
-## 🎬 STORY — President of a Country
+## STORY — President of a Country
 
 > Imagine **ek desh mein "President" pad**:
 >
-> 🇮🇳 **Sirf EK President** ho sakta at any time. Multiple Presidents = chaos.
+> **Sirf EK President** ho sakta at any time. Multiple Presidents = chaos.
 >
 > Koi bhi office bole *"President se baat karni"* — **same one person** se hi connect karayega.
 >
@@ -18,7 +18,7 @@
 
 ---
 
-## 🤔 The Problem — Multiple Instances Disaster
+## The Problem — Multiple Instances Disaster
 
 ```java
 // Without Singleton — bad config management
@@ -38,14 +38,14 @@ Config c3 = new Config();   // disk + network call AGAIN
 ```
 
 **Problems:**
-1. 🔴 **Resource waste** — same expensive init repeated
-2. 🔴 **Inconsistent state** — instance1 ne update kiya, instance2 ko nahi pata
-3. 🔴 **Memory bloat** — multiple copies of same global state
-4. 🔴 **Configuration drift** — different parts of app see different values
+1. **Resource waste** — same expensive init repeated
+2. **Inconsistent state** — instance1 ne update kiya, instance2 ko nahi pata
+3. **Memory bloat** — multiple copies of same global state
+4. **Configuration drift** — different parts of app see different values
 
 ---
 
-## ✨ Singleton Solution
+## Singleton Solution
 
 ```java
 // Constructor PRIVATE — koi external new karna nahi sakta
@@ -72,7 +72,7 @@ c1 == c2 == c3   // true — single instance
 
 ---
 
-## 🎨 VISUAL — Single Instance Guarantee
+## VISUAL — Single Instance Guarantee
 
 ```
    First call:                    Subsequent calls:
@@ -91,13 +91,13 @@ c1 == c2 == c3   // true — single instance
    ┌─────────────┐                      │
    │  Config     │  ◄───────────────────┘
    │  instance   │     SAME object returned
-   │  ✅ created  │
+   │  created  │
    └─────────────┘
 ```
 
 ---
 
-## 🛠️ 4 Implementation Approaches
+## 4 Implementation Approaches
 
 ### 1️⃣ EAGER Initialization (simplest, thread-safe)
 
@@ -128,7 +128,7 @@ public class Config {
     private Config() { }
     
     public static Config getInstance() {
-        if (instance == null) {        // ⚠️ race condition
+        if (instance == null) {        // race condition
             instance = new Config();
         }
         return instance;
@@ -143,11 +143,11 @@ public class Config {
    instance == null? true
                      instance == null? true (A hasn't created yet)
    instance = new Config()
-                     instance = new Config()  ← 2 instances! ❌
+                     instance = new Config()  ← 2 instances! 
 ```
 
 **Pros:** Lazy (created only when needed)
-**Cons:** ❌ NOT thread-safe — DON'T use in multi-threaded code
+**Cons:** NOT thread-safe — DON'T use in multi-threaded code
 
 ---
 
@@ -201,18 +201,18 @@ public enum Config {
 String name = Config.INSTANCE.getBankName();
 ```
 
-**Pros:** ✅✅✅ ALL benefits at once:
-- ✅ **Thread-safe automatic** (JVM enum initialization guarantee)
-- ✅ **Serialization-safe** (no broken singletons via deserialization)
-- ✅ **Reflection-safe** (can't instantiate enum via reflection)
-- ✅ **Lazy initialization** built-in
-- ✅ **Concise** — minimal code
+**Pros:** ALL benefits at once:
+- **Thread-safe automatic** (JVM enum initialization guarantee)
+- **Serialization-safe** (no broken singletons via deserialization)
+- **Reflection-safe** (can't instantiate enum via reflection)
+- **Lazy initialization** built-in
+- **Concise** — minimal code
 
 **Joshua Bloch (Effective Java) Item 3:** *"Enum is the BEST way to implement Singleton."*
 
 ---
 
-## 🚀 PROJECT USAGE — `BankConfig.java`
+## PROJECT USAGE — `BankConfig.java`
 
 **File:** `01_JAVA/07_PROJECT/SimpleBankSystem/src/com/arpan/bank/config/BankConfig.java`
 
@@ -240,23 +240,23 @@ double limit = BankConfig.INSTANCE.getMaxTransactionLimit();
 - Serialization-safe — DB se restore ho ya naya banaye, same instance
 - No `synchronized` boilerplate, no `volatile` worry — JVM handles all
 
-**🎤 Interview line:**
+**Interview line:**
 > *"BankConfig ko enum singleton banaya — Bloch ki Effective Java mein recommended approach. Thread-safe + serialization-safe + reflection-safe automatic. Manual synchronized + getInstance() approach se simpler aur secure — mere project mein use kiya hai."*
 
 ---
 
-## 📊 4 Approaches Comparison
+## 4 Approaches Comparison
 
 | Approach | Thread-safe? | Lazy? | Code complexity | Recommended? |
 |---|---|---|---|---|
-| **Eager** | ✅ Yes | ❌ No | Low | OK for light objects |
-| **Lazy (no sync)** | ❌ NO | ✅ Yes | Low | ❌ NEVER for production |
-| **Double-Checked Locking** | ✅ Yes (with volatile) | ✅ Yes | High | ✅ Industry classic |
-| **Enum** | ✅ Yes | ✅ Yes | LOWEST | ✅✅ BEST (Bloch's recommendation) |
+| **Eager** | Yes | No | Low | OK for light objects |
+| **Lazy (no sync)** | NO | Yes | Low | NEVER for production |
+| **Double-Checked Locking** | Yes (with volatile) | Yes | High | Industry classic |
+| **Enum** | Yes | Yes | LOWEST | BEST (Bloch's recommendation) |
 
 ---
 
-## 🌍 Real-World Examples
+## Real-World Examples
 
 ### 1. `Runtime` (Java built-in)
 ```java
@@ -283,16 +283,16 @@ private static final Logger log = LoggerFactory.getLogger(MyClass.class);
 
 ---
 
-## 🎯 When to Use vs When NOT
+## When to Use vs When NOT
 
-### ✅ Use Singleton when:
+### Use Singleton when:
 - **Configuration** that needs single source of truth
 - **Connection pools** (DB, HTTP client)
 - **Caches** (one cache instance)
 - **Loggers**
 - **Hardware resources** (printer manager, file system)
 
-### ❌ DON'T use Singleton when:
+### DON'T use Singleton when:
 - Plain data class (use POJO)
 - Stateless utility (just static methods)
 - Testing-heavy code (singletons hard to mock)
@@ -300,14 +300,14 @@ private static final Logger log = LoggerFactory.getLogger(MyClass.class);
 
 ---
 
-## ⚠️ Breaking Singleton — 4 attack vectors
+## Breaking Singleton — 4 attack vectors
 
 ### 1. Reflection
 ```java
 // Hacker code:
 Constructor<Config> c = Config.class.getDeclaredConstructor();
 c.setAccessible(true);   // bypass private
-Config rogue = c.newInstance();   // ❌ creates 2nd instance!
+Config rogue = c.newInstance();   // creates 2nd instance!
 ```
 **Defense:** Throw exception in constructor if instance exists. **Enum is reflection-proof automatic.**
 
@@ -316,14 +316,14 @@ Config rogue = c.newInstance();   // ❌ creates 2nd instance!
 // Standard singleton:
 Config c1 = Config.getInstance();
 serialize(c1, "file.dat");
-Config c2 = deserialize("file.dat");   // ❌ different instance!
+Config c2 = deserialize("file.dat");   // different instance!
 ```
 **Defense:** Implement `readResolve()`. **Enum handles this automatically.**
 
 ### 3. Cloning
 ```java
 public class Config implements Cloneable {
-    public Object clone() { return super.clone(); }   // ❌ creates 2nd!
+    public Object clone() { return super.clone(); }   // creates 2nd!
 }
 ```
 **Defense:** Override `clone()` to throw exception. **Enum doesn't support clone.**
@@ -336,7 +336,7 @@ Different classloaders = different `Config.class` = different singletons.
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "Singleton pattern kya hai aur kab use karte ho?"**
 
@@ -358,13 +358,13 @@ Different classloaders = different `Config.class` = different singletons.
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"Singleton pattern application mein single global instance maintain karta — constructor private + static getInstance(). Best implementation Enum (Bloch's recommended) — thread-safe, serialization-safe, reflection-safe automatic. Spring beans default singleton scope use karte — manual implementation rare ho gayi modern code mein."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 Singleton = "One President per country"
@@ -374,9 +374,9 @@ Singleton = "One President per country"
 
 4 implementations:
    1. Eager     → class load pe — simple, not lazy
-   2. Lazy      → on-demand — NOT thread-safe ❌
+   2. Lazy      → on-demand — NOT thread-safe 
    3. DCL       → industry standard — verbose, needs volatile
-   4. Enum      → BEST (Bloch) — auto-everything ✅
+   4. Enum      → BEST (Bloch) — auto-everything 
 
 Key invariant:
    Config.getInstance() == Config.getInstance()  ← always true
@@ -385,7 +385,7 @@ Real-world (already use kar raha):
    • Spring beans (default singleton scope)
    • java.lang.Runtime
    • Loggers
-   • BankConfig in SimpleBankSystem ✅
+   • BankConfig in SimpleBankSystem 
 
 Attack vectors (need defense):
    1. Reflection      → enum proof
@@ -396,50 +396,50 @@ Attack vectors (need defense):
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "Lazy singleton thread-safe hai"
-         ❌ Without sync — race condition
-         ✅ DCL ya enum use karo
+Trap 1: "Lazy singleton thread-safe hai"
+         Without sync — race condition
+         DCL ya enum use karo
 
-🪤 Trap 2: "DCL mein volatile optional hai"
-         ❌ Mandatory — instruction reordering protect karta
-         ✅ private static volatile Config instance
+Trap 2: "DCL mein volatile optional hai"
+         Mandatory — instruction reordering protect karta
+         private static volatile Config instance
 
-🪤 Trap 3: "Singleton hamesha thread-safe behavior deta"
-         ❌ Singleton instance hai, but uska state mutable ho sakta
-         ✅ Internal state synchronized rakho if mutable
+Trap 3: "Singleton hamesha thread-safe behavior deta"
+         Singleton instance hai, but uska state mutable ho sakta
+         Internal state synchronized rakho if mutable
 
-🪤 Trap 4: "Spring bean = classic Singleton"
-         ❌ Spring singleton per ApplicationContext, classic per JVM
-         ✅ Concept similar but scope different
+Trap 4: "Spring bean = classic Singleton"
+         Spring singleton per ApplicationContext, classic per JVM
+         Concept similar but scope different
 
-🪤 Trap 5: "Enum singleton mein constructor nahi"
-         ❌ Enum mein constructor LIKH SAKTE — sirf private (default)
-         ✅ enum INSTANCE; + private constructor + methods OK
+Trap 5: "Enum singleton mein constructor nahi"
+         Enum mein constructor LIKH SAKTE — sirf private (default)
+         enum INSTANCE; + private constructor + methods OK
 
-🪤 Trap 6: "Singleton testing easy hai"
-         ❌ Hard to mock — DI not built-in
-         ✅ Spring's container singletons better — mockable via @MockBean
+Trap 6: "Singleton testing easy hai"
+         Hard to mock — DI not built-in
+         Spring's container singletons better — mockable via @MockBean
 ```
 
 ---
 
-## 🆚 Singleton vs Static Methods
+## Singleton vs Static Methods
 
 | | Singleton | Static class |
 |---|---|---|
 | **State** | Can hold instance state | Only class-level (static) |
-| **Polymorphism** | ✅ Can implement interfaces | ❌ No interfaces |
-| **Lazy init** | ✅ Possible | ❌ Loaded with class |
-| **Mock for testing** | ⚠️ Hard | ❌ Very hard |
-| **Inheritance** | ✅ Possible | ❌ No |
+| **Polymorphism** | Can implement interfaces | No interfaces |
+| **Lazy init** | Possible | Loaded with class |
+| **Mock for testing** | Hard | Very hard |
+| **Inheritance** | Possible | No |
 | **Use case** | Stateful global resource | Pure utility (Math.random()) |
 
 ---
 
-## 🎯 Quick Recall Summary
+## Quick Recall Summary
 
 ```
 WHAT     → Single instance per application

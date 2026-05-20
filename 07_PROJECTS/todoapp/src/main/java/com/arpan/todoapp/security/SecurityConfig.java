@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 // UsernamePasswordAuthenticationFilter → marker for filter ordering
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    SecurityConfig = JWT layer ka CONTROL CENTER
 //
 //    Spring Security ko batao:
@@ -36,7 +36,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //       • AuthenticationManager bean (login flow)
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🏨 SECURITY GUARD ANALOGY:
+// SECURITY GUARD ANALOGY:
 //
 //    AuthenticationManager = RECEPTION DESK (login guard)
 //       • Guest 1st time aaya
@@ -54,7 +54,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //       • Kaun se locked (rooms = /todos, /users)
 //       • Sab guards ka setup
 //
-// 🔑 3 BEANS DEFINED:
+// 3 BEANS DEFINED:
 //
 //    1. SecurityFilterChain
 //       • HTTP rules (which URLs open vs protected)
@@ -71,18 +71,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //       • Spring Boot 3+ requires explicit bean
 //       • Internally calls UserDetailsService + PasswordEncoder
 //
-// 🔑 STATELESS SESSION:
+// STATELESS SESSION:
 //    JWT app = no server session
 //    SessionCreationPolicy.STATELESS = "session NA banao"
 //    Every request = JWT validate → identity
 //    No HttpSession on server side
 //
-// 🔑 CSRF DISABLE:
+// CSRF DISABLE:
 //    CSRF = cookie-based session attack defense
 //    JWT uses Authorization header (not cookies) — immune
 //    Hence: not needed → disable
 //
-// 🔑 FILTER ORDER (addFilterBefore):
+// FILTER ORDER (addFilterBefore):
 //    .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
 //    = JwtFilter PEHLE chale, phir default Spring filter
 //    = JWT first attempt, fallback to form auth (if JWT absent)

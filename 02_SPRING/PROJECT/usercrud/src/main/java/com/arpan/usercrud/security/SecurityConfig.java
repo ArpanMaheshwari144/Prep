@@ -13,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    SecurityConfig = CHIEF SECURITY OFFICER (CSO)
 //    Overall security policy banata
 //    3 beans define karta
@@ -21,20 +21,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 // ═══════════════════════════════════════════════════════════════════════
 //
 // CSO ROLE:
-//    🎯 SecurityConfig
+//    SecurityConfig
 //         │
-//         ├─► 🛡️ Guard hire (JwtFilter)
+//         ├─► Guard hire (JwtFilter)
 //         │   "Gate pe, UPAF se pehle"
 //         │
-//         ├─► 🔐 Locker buy (BCryptPasswordEncoder)
+//         ├─► Locker buy (BCryptPasswordEncoder)
 //         │   "Saare passwords iss locker mein hash karke rakho"
 //         │
-//         ├─► 📋 Rule book (SecurityFilterChain)
+//         ├─► Rule book (SecurityFilterChain)
 //         │   ├─ /auth/** → public
 //         │   ├─ /h2-console → public
 //         │   └─ Baki → JWT mandatory
 //         │
-//         └─► 🔑 Verification tool (AuthenticationManager)
+//         └─► Verification tool (AuthenticationManager)
 //             "Login counter pe yeh use karo"
 //
 // 3 BEANS THIS CLASS DEFINES:
@@ -42,7 +42,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //    2. PasswordEncoder        → BCrypt locker
 //    3. AuthenticationManager  → login verification tool
 //
-// 🔑 SecurityFilterChain SUB-CONFIGS:
+// SecurityFilterChain SUB-CONFIGS:
 //    1. csrf().disable()       → JWT stateless, no cookies, CSRF irrelevant
 //    2. STATELESS sessions     → "Spring, no HttpSession" (multi-server safe)
 //    3. Route rules:
@@ -52,7 +52,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //    4. frameOptions disable   → H2 console iframes work
 //    5. addFilterBefore        → JwtFilter UPAF se PEHLE chale
 //
-// 🔑 WHY CSRF DISABLED?
+// WHY CSRF DISABLED?
 //    CSRF = Cross-Site Request Forgery
 //       Designed for cookie-based sessions
 //
@@ -62,7 +62,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //    = CSRF attack impossible
 //    = Disable safe
 //
-// 🔑 WHY STATELESS?
+// WHY STATELESS?
 //    Stateful (default):     Stateless (humara):
 //       Server: { session }     Server: nothing
 //       Crash = data gone       Crash = no impact
@@ -72,7 +72,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //       "Spring, koi HttpSession mat banao"
 //       Multi-server scaling = essential
 //
-// 🔑 JwtFilter ORDER (CRITICAL):
+// JwtFilter ORDER (CRITICAL):
 //    addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
 //    = "Yeh filter, iss filter ke pehle chalao"
 //
@@ -86,27 +86,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //    HTTP Request
 //         │
 //         ▼
-//    CORS → CSRF(disabled) → JwtFilter ⭐ → UPAF → Authz → Controller
+//    CORS → CSRF(disabled) → JwtFilter → UPAF → Authz → Controller
 //                              │
 //                              └ addFilterBefore() ne yahaan rakha
 //
-// 🔑 BCRYPT vs SHA-256:
-//    ❌ SHA-256:
+// BCRYPT vs SHA-256:
+//    SHA-256:
 //       Fast (designed for speed)
 //       Brute-force vulnerable (millions/sec on GPU)
 //       No built-in salt
 //
-//    ✅ BCrypt:
+//    BCrypt:
 //       Slow BY DESIGN (cost factor — 2^cost iterations)
 //       Brute-force impractical (millions of years)
 //       Built-in salt (rainbow tables blocked)
 //       Industry standard for passwords
 //
-// 🔑 PasswordEncoder Usage:
+// PasswordEncoder Usage:
 //    Register: encoder.encode("plain") → "$2a$..." (hash) → DB store
 //    Login:    encoder.matches("plain", hashFromDB) → true/false
 //
-// 🔑 AuthenticationManager Usage (AuthController will use):
+// AuthenticationManager Usage (AuthController will use):
 //    authManager.authenticate(
 //        new UsernamePasswordAuthenticationToken(email, password)
 //    );
@@ -124,7 +124,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //    @EnableWebSecurity → "Spring Security activate karo"
 //                          Filter chain processing enabled
 //
-// 📐 SOLID:
+// SOLID:
 //    SRP — Sirf security configuration (filter chain, beans wire)
 //          No business logic
 //
@@ -136,7 +136,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //          .addFilterBefore() / .addFilterAfter()
 //          Existing config extension friendly
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "SecurityConfig wires Spring Security with JWT:
 //       • CSRF disabled, STATELESS sessions
 //       • /auth/** public, rest authenticated
@@ -151,7 +151,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // 🛡️ Guard inject kar rahe — Spring auto-wire karega
+    // Guard inject kar rahe — Spring auto-wire karega
     // (JwtFilter @Component hai → bean ban gaya)
     private final JwtFilter jwtFilter;
 
@@ -162,7 +162,7 @@ public class SecurityConfig {
     // ════════════════════════════════════════════════════════════
     //  1️⃣  SecurityFilterChain — MAIN SECURITY CONFIG
     // ════════════════════════════════════════════════════════════
-    //  📋 Yahaan rule book likhte:
+    //  Yahaan rule book likhte:
     //  • CSRF disable
     //  • Sessions stateless
     //  • Routes (public/protected)
@@ -171,32 +171,32 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // 🚫 CSRF DISABLE — JWT stateless, cookies nahi, CSRF irrelevant
+            // CSRF DISABLE — JWT stateless, cookies nahi, CSRF irrelevant
             .csrf(csrf -> csrf.disable())
 
-            // 🌊 STATELESS — "Spring, koi HttpSession mat banao"
+            // STATELESS — "Spring, koi HttpSession mat banao"
             //    Multi-server scaling ke liye essential
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
-            // 🚦 ROUTE RULES
+            // ROUTE RULES
             .authorizeHttpRequests(auth -> auth
-                // 🟢 Login/register/refresh — token chahiye nahi
+                // Login/register/refresh — token chahiye nahi
                 .requestMatchers("/auth/**").permitAll()
-                // 🟢 H2 console — dev only (production mein remove)
+                // H2 console — dev only (production mein remove)
                 .requestMatchers("/h2-console/**").permitAll()
-                // 🔴 Baki sab — JWT mandatory
+                // Baki sab — JWT mandatory
                 .anyRequest().authenticated()
             )
 
-            // 🖼️ H2 console iframe support (dev only)
+            // H2 console iframe support (dev only)
             // Spring default X-Frame-Options DENY — H2 ke liye disable
             .headers(headers ->
                 headers.frameOptions(frame -> frame.disable())
             )
 
-            // 🛡️ JwtFilter UPAF se PEHLE chalao
+            // JwtFilter UPAF se PEHLE chalao
             //    SecurityContext jaldi set ho jaye
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -206,7 +206,7 @@ public class SecurityConfig {
     // ════════════════════════════════════════════════════════════
     //  2️⃣  PasswordEncoder — BCRYPT LOCKER
     // ════════════════════════════════════════════════════════════
-    //  🔐 BCrypt encoder bean — industry standard
+    //  BCrypt encoder bean — industry standard
     //
     //  Usage:
     //     Register pe:  String hash = encoder.encode("plainPassword");
@@ -225,7 +225,7 @@ public class SecurityConfig {
     // ════════════════════════════════════════════════════════════
     //  3️⃣  AuthenticationManager — LOGIN VERIFICATION TOOL
     // ════════════════════════════════════════════════════════════
-    //  🔑 Login counter ka tool — credentials verify karta
+    //  Login counter ka tool — credentials verify karta
     //
     //  AuthController use karega:
     //     authManager.authenticate(

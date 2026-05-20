@@ -14,7 +14,7 @@ import java.util.List;
 // List            → return type for collection queries
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    DATA ACCESS LAYER for Todo entity
 //    Service layer iske through DB operations karta
 //    Direct SQL nahi — Spring Data JPA magic auto-handle
@@ -33,13 +33,13 @@ import java.util.List;
 //    JpaRepository<T,ID>           ← TU YAHAN EXTEND
 //    (saveAll, flush, JPA-specific extras)
 //
-// 🔑 INTERFACE KYU, CLASS NAHI?
+// INTERFACE KYU, CLASS NAHI?
 //    Spring Data JPA MAGIC:
 //       • Tu sirf signature likhe
 //       • Body Spring runtime pe generate (proxy)
 //       • Reflection + JPA Criteria API se SQL banta
 //
-// 🔑 FREE METHODS (Inherited):
+// FREE METHODS (Inherited):
 //    save(Todo)               → INSERT or UPDATE
 //    findById(Long)           → SELECT WHERE id = ?
 //    findAll()                → SELECT *
@@ -50,25 +50,25 @@ import java.util.List;
 //
 //    = Yeh sab tu likhe bina mil jaate
 //
-// 🔑 DERIVED QUERY METHODS — Spring magic:
+// DERIVED QUERY METHODS — Spring magic:
 //    Method NAME hi query ban jata.
 //    findBy + FieldName → SELECT WHERE field = ?
 //
 //    findByUserId(Long userId)
 //       → SELECT * FROM todos WHERE user_id = ?
 //
-// 🔑 WHY findByUserId YAHAN ZAROORI:
+// WHY findByUserId YAHAN ZAROORI:
 //
 //    Multi-user TODO app:
 //       User A ko sirf apne todos chahiye
-//       findAll() = SAB users ke todos return ❌
-//       findByUserId(A's id) = sirf A's todos ✅
+//       findAll() = SAB users ke todos return 
+//       findByUserId(A's id) = sirf A's todos 
 //
 //    Service layer mein:
 //       todoRepo.findByUserId(loggedInUserId)
 //       = ownership enforcement
 //
-// 🔑 @Repository ANNOTATION:
+// @Repository ANNOTATION:
 //    OPTIONAL with JpaRepository (auto-detected)
 //    BUT ADD karte kyu:
 //       1. CODE INTENT — DAO layer marker clear
@@ -77,7 +77,7 @@ import java.util.List;
 //          → Spring's DataAccessException family
 //          = DB vendor switch? Caller code unchanged
 //
-// 🔑 HOW SPRING IMPLEMENTS AT RUNTIME:
+// HOW SPRING IMPLEMENTS AT RUNTIME:
 //    1. Spring scan finds TodoRepository (interface)
 //    2. Method signatures parse
 //    3. Dynamic proxy create:
@@ -93,7 +93,7 @@ import java.util.List;
 //       = Tu interface use karta
 //       = Spring proxy inject karta
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "TodoRepository extends JpaRepository — Spring Data JPA
 //     auto-generates implementation via runtime proxy. Inherited
 //     CRUD from hierarchy. Custom derived methods like

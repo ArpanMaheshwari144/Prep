@@ -1,4 +1,4 @@
-# 🔥 N+1 Problem — Biggest Hibernate Gotcha
+# N+1 Problem — Biggest Hibernate Gotcha
 
 ---
 
@@ -179,7 +179,7 @@ Books fetch IN BATCHES of 10:
 
 ---
 
-## 🔟 Production Impact
+## Production Impact
 
 ```
 Without fix:
@@ -195,7 +195,7 @@ With JOIN FETCH:
 
 ---
 
-## 🎤 Interview Power Phrase
+## Interview Power Phrase
 
 ```
 "Default LAZY fetching causes N+1 queries when accessing 
@@ -209,7 +209,7 @@ With JOIN FETCH:
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
 N+1 = 1 parent query + N child queries

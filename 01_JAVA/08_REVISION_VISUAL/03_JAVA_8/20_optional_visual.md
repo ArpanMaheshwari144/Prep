@@ -1,4 +1,4 @@
-# 📭 Optional — Visual Revision
+# Optional — Visual Revision
 
 ---
 
@@ -8,7 +8,7 @@
 Imagine searching for a user:
 
 User user = userService.findByEmail("xyz@email.com");
-String name = user.getName();   // 💥 NPE if user is null!
+String name = user.getName();   // NPE if user is null!
 
 = Java mein NPE 90% bugs ka root cause
 ```
@@ -25,8 +25,8 @@ Optional = "I might have a value, I might not"
 ```
 Imagine TUJHE 2 envelopes mili:
 
-   📭 EMPTY envelope (no letter)
-   📬 LETTER inside
+   EMPTY envelope (no letter)
+   LETTER inside
    
    Tu envelope KHOLE bina kuch nahi dekh sakta
    = Forced to check before using
@@ -53,7 +53,7 @@ Optional<String> maybe = Optional.ofNullable(possiblyNull);
 ```
 
 ```
-of(value)           → ⚠️ NPE if value null!
+of(value)           → NPE if value null!
 ofNullable(value)   → safe (empty if null)
 empty()             → explicitly empty
 ```
@@ -158,7 +158,7 @@ Use:
       │       → throw if empty
       │
       └── opt.get()
-              → ❌ NoSuchElementException if empty
+              → NoSuchElementException if empty
               (avoid)
 ```
 
@@ -209,7 +209,7 @@ opt.ifPresentOrElse(
 
 ---
 
-## 🔟 Common Use Cases
+## Common Use Cases
 
 ### Repository Returns
 ```java
@@ -236,27 +236,27 @@ String city = userService.find(id)
 
 ### Trap 1: Using get() everywhere
 ```java
-// ❌ Defeats Optional purpose
+// Defeats Optional purpose
 if (opt.isPresent()) {
     return opt.get();
 }
 return "default";
 
-// ✅ Use orElse instead:
+// Use orElse instead:
 return opt.orElse("default");
 ```
 
 ### Trap 2: Optional fields/parameters
 ```java
-// ❌ DON'T
+// DON'T
 class User {
     private Optional<String> name;   // anti-pattern
 }
 
-// ❌ DON'T
+// DON'T
 public void setName(Optional<String> name) { }
 
-// ✅ Use Optional only as RETURN TYPE
+// Use Optional only as RETURN TYPE
 public Optional<String> getName() {
     return Optional.ofNullable(name);
 }
@@ -264,10 +264,10 @@ public Optional<String> getName() {
 
 ### Trap 3: Optional with primitives
 ```java
-// ❌ Boxing overhead
+// Boxing overhead
 Optional<Integer> optInt;
 
-// ✅ Use specialized:
+// Use specialized:
 OptionalInt optInt;
 OptionalLong optLong;
 OptionalDouble optDouble;
@@ -295,13 +295,13 @@ public UserDTO getUser(String email) {
 
 ---
 
-## 🎯 Memory Hooks
+## Memory Hooks
 
 ```
-Optional = 📭 envelope (may have content or empty)
+Optional = envelope (may have content or empty)
 
 Create:
-   of(val)         → ⚠️ NPE if null
+   of(val)         → NPE if null
    ofNullable(val) → safe
    empty()         → explicit empty
 
@@ -309,15 +309,15 @@ Get:
    orElse(x)         → default
    orElseGet(sup)    → lazy default
    orElseThrow(...)  → fail if empty
-   get()             → ❌ avoid
+   get()             → avoid
 
 Chain:
    map() / filter() — stream-like
    ifPresent() / ifPresentOrElse()
 
 Use cases:
-   ✅ Return type (Repository methods)
-   ❌ Fields, parameters
+   Return type (Repository methods)
+   Fields, parameters
 ```
 
-📚 [← Back to JAVA](../)
+[← Back to JAVA](../)

@@ -1,5 +1,5 @@
 // =========================================================
-// 🧪 SOLO LLD TEST #6 — Hotel Booking System
+// SOLO LLD TEST #6 — Hotel Booking System
 // Date: 2026-04-20
 // Mock interview — discussion-based
 // =========================================================
@@ -7,7 +7,7 @@
 import java.util.*;
 
 // ==========================
-// 📋 SCOPE (from discussion)
+// SCOPE (from discussion)
 // ==========================
 // - Hotel mein rooms hain, guests check-in/check-out karte hain
 // - Ek guest ek time pe sirf 1 room mein check-in kar sakta
@@ -16,7 +16,7 @@ import java.util.*;
 // - Rooms aur guests pre-populate through add methods
 
 // ==========================
-// 🏗️ CLASS DESIGN
+// CLASS DESIGN
 // ==========================
 //
 // class Room
@@ -39,7 +39,7 @@ import java.util.*;
 //   5. int getAvailableRooms()
 
 // ==========================
-// 📊 REQUIREMENTS (plain English)
+// REQUIREMENTS (plain English)
 // ==========================
 //
 // ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -91,7 +91,7 @@ import java.util.*;
 // └──────────────────────────────────────────────────────────────────────────────┘
 
 // ==========================
-// 🎯 EXAMPLES
+// EXAMPLES
 // ==========================
 //
 // Hotel hotel = new Hotel();
@@ -109,7 +109,7 @@ import java.util.*;
 // hotel.checkOut("G1", 0)                          → -1 (invalid nights, when checked in)
 
 // =========================================================
-// 👇 ROOM CLASS — PROVIDED AS-IS
+// ROOM CLASS — PROVIDED AS-IS
 // =========================================================
 
 class Room {
@@ -143,7 +143,7 @@ class Room {
 }
 
 // =========================================================
-// 👇 GUEST CLASS — PROVIDED AS-IS
+// GUEST CLASS — PROVIDED AS-IS
 // =========================================================
 
 class Guest {
@@ -171,7 +171,7 @@ class Guest {
 }
 
 // =========================================================
-// 👇 HOTEL CLASS — YAHAN APNA CODE LIKH
+// HOTEL CLASS — YAHAN APNA CODE LIKH
 // =========================================================
 
 class Hotel {
@@ -298,7 +298,7 @@ class Hotel {
 }
 
 // =========================================================
-// 🧪 TEST RUNNER
+// TEST RUNNER
 // =========================================================
 
 class Main {

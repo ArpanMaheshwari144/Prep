@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY
+## STORY
 
 → `final` class banayi, fields `private final` — **immutable smajh ke khush**
 → Andar ek `List<String>` field thi
@@ -14,8 +14,8 @@
 ```java
 final class Student {
     private final List<String> courses;
-    Student(List<String> c) { this.courses = c; }              // 🔴 SAME reference!
-    List<String> getCourses() { return courses; }              // 🔴 SAME reference!
+    Student(List<String> c) { this.courses = c; }              // SAME reference!
+    List<String> getCourses() { return courses; }              // SAME reference!
 }
 
 List<String> list = new ArrayList<>();
@@ -27,7 +27,7 @@ s.getCourses().size();    // 2 — Immutable TOOT GAYI!
 
 ---
 
-## 🧠 Step-by-Step — Memory Mein Kya Hota
+## Step-by-Step — Memory Mein Kya Hota
 
 ### Step 1: List banayi aur "Java" add kiya
 
@@ -54,7 +54,7 @@ Constructor ke andar: `this.courses = c;`
 
 ```java
 Student(List<String> c) {
-    this.courses = c;        // 🔴 SAME reference copy hua
+    this.courses = c;        // SAME reference copy hua
 }
 ```
 
@@ -98,25 +98,25 @@ Student ne **kabhi `add()` nahi call kiya**. Lekin uska andar wala list 2 elemen
 
 ---
 
-## 💡 Asli Galti Kahan Hui?
+## Asli Galti Kahan Hui?
 
 Constructor mein:
 ```java
-this.courses = c;     // ❌ caller ki list ka reference store kar liya
+this.courses = c;     // caller ki list ka reference store kar liya
 ```
 
 Caller ki list aur Student ki list **EK HI OBJECT** hai memory mein. Caller `list.add()` karega → Student's "immutable" state badal jayegi.
 
 ---
 
-## ✅ Fix — Defensive Copy
+## Fix — Defensive Copy
 
 ```java
 Student(List<String> c) {
-    this.courses = new ArrayList<>(c);    // ✅ NAYI list, contents copy
+    this.courses = new ArrayList<>(c);    // NAYI list, contents copy
 }
 List<String> getCourses() {
-    return new ArrayList<>(courses);       // ✅ copy return karo
+    return new ArrayList<>(courses);       // copy return karo
 }
 ```
 
@@ -135,7 +135,7 @@ s ──► [Student]          ┌─────────────┐
 
 ---
 
-## 🔑 Bottom Line
+## Bottom Line
 
 > **`final` = reference reassign nahi hota.**
 > **`final` ≠ object ka content modify nahi hota.**
@@ -146,7 +146,7 @@ Mutable field (List, Set, Map) ka reference share kiya = "immutable" actually mu
 
 ---
 
-## 🟡 WHY String Field Mein Ye Problem Nahi?
+## WHY String Field Mein Ye Problem Nahi?
 
 → String **khud immutable** hai — `s.add()` jaisi koi method nahi
 → Reference share ho bhi gaya, content modify hi nahi hota
@@ -155,6 +155,6 @@ Mutable field (List, Set, Map) ka reference share kiya = "immutable" actually mu
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"For immutable classes with mutable fields like List, you must defensive-copy in both the constructor and getter — otherwise the external reference can mutate the internal state. `final` only prevents reference reassignment, not content modification."*

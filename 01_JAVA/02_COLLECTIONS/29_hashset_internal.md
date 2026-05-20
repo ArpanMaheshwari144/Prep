@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 STORY — Duplicate Emails
+## STORY — Duplicate Emails
 
 → 10,000 panelists — kuch ne **duplicate emails register** kiye
 → ArrayList mein add karo — **duplicate aa jaata**
@@ -14,7 +14,7 @@
 
 ---
 
-## 🟡 WHY — HashMap Reuse Kyu Kiya?
+## WHY — HashMap Reuse Kyu Kiya?
 
 → Duplicate check ke liye **`hashCode()` + `equals()` chahiye**
 → HashMap **already ye karta hai** keys ke liye
@@ -24,7 +24,7 @@
 
 ---
 
-## 💻 Internal — HashSet Source Code
+## Internal — HashSet Source Code
 
 ```java
 // HashSet andar se ye hai:
@@ -43,12 +43,12 @@ emails.add("rahul@gmail.com");
 emails.add("arpan@gmail.com");                        // duplicate!
 
 System.out.println(emails);
-// [arpan@gmail.com, rahul@gmail.com] — duplicate gone ✅
+// [arpan@gmail.com, rahul@gmail.com] — duplicate gone 
 ```
 
 ---
 
-## 🧠 Visualization
+## Visualization
 
 ```
             HashSet = HashMap Ki Keys (Dummy Value)
@@ -69,7 +69,7 @@ System.out.println(emails);
 
   3rd add → "arpan@gmail.com" pehle se hai (key match)
           → HashMap ne REPLACE kiya (naya entry NAHI bana)
-          → Duplicate avoid ✅
+          → Duplicate avoid 
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -85,19 +85,19 @@ System.out.println(emails);
   ├────┤
   │ 8  │ → [obj2: arpan]    ← hashCode = 67890   ← ALAG bucket!
   └────┘
-  size = 2  🔴 (duplicate ghus gayi)
+  size = 2  (duplicate ghus gayi)
 
 
   Sahi — hashCode() + equals() DONO override:
   ┌────┐
   │ 5  │ → [obj1: arpan]    ← hashCode same
   └────┘                       equals true → REPLACE
-  size = 1  ✅
+  size = 1  
 ```
 
 ---
 
-## 📊 Operations
+## Operations
 
 | Method | Time | Kaise? |
 |--------|------|--------|
@@ -108,15 +108,15 @@ System.out.println(emails);
 
 ---
 
-## 🔴 TRAP — Custom Class: hashCode() + equals() DONO Override
+## TRAP — Custom Class: hashCode() + equals() DONO Override
 
 ```java
-// 🔴 GALAT — sirf class likhi, kuch override nahi
+// GALAT — sirf class likhi, kuch override nahi
 set.add(new Panelist("arpan@gmail.com"));
 set.add(new Panelist("arpan@gmail.com"));
 // set.size() = 2 — duplicate aaya! Alag objects, alag hashCode, alag bucket.
 
-// ✅ FIX — DONO override karo
+// FIX — DONO override karo
 @Override
 public int hashCode() { return email.hashCode(); }    // same email = same bucket
 
@@ -125,7 +125,7 @@ public boolean equals(Object o) {
     Panelist p = (Panelist) o;
     return this.email.equals(p.email);                 // same email = equal
 }
-// ab set.size() = 1 ✅
+// ab set.size() = 1 
 ```
 
 > **TRAP 1:** Sirf `equals()` override kiya, `hashCode()` nahi → alag hashCode → alag bucket → `equals()` kabhi call hi nahi hoga → duplicate aa jayega.
@@ -137,7 +137,7 @@ public boolean equals(Object o) {
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"HashSet internally uses a HashMap — each element becomes a key with a dummy value. Duplicates are prevented because HashMap replaces existing keys. For custom objects, both `hashCode()` and `equals()` must be overridden — without `hashCode()`, two equal objects may land in different buckets and both get stored."*
 

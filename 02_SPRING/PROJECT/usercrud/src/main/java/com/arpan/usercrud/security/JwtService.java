@@ -15,7 +15,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    JwtService = JWT TOKEN FACTORY
 //    Generate, parse, validate JWT tokens
 //    3 main jobs:
@@ -44,7 +44,7 @@ import io.jsonwebtoken.security.Keys;
 //    └────────────────────────────────┘
 //         │
 //         ▼
-//    🎫 Final signed token string
+//    Final signed token string
 //
 // JWT STRUCTURE:
 //    eyJhbGc...header... . eyJzdWIi...payload... . sig...signature
@@ -63,7 +63,7 @@ import io.jsonwebtoken.security.Keys;
 //       getSigningKey()  → SecretKey object banata
 //       parseClaims()    → parse + verify (DRY for extracts)
 //
-// 🔑 generateToken() — Builder Pattern:
+// generateToken() — Builder Pattern:
 //    Jwts.builder()
 //        .subject(userId)        ← sub claim
 //        .claim("name", ...)
@@ -71,22 +71,22 @@ import io.jsonwebtoken.security.Keys;
 //        .claim("role", ...)
 //        .issuedAt(now)           ← iat
 //        .expiration(now + 15m)   ← exp
-//        .signWith(secret)        ← 🔏 stamp
+//        .signWith(secret)        ← stamp
 //        .compact();              ← final string
 //
 //    = Fluent chain (each returns Builder)
 //    = .compact() = final immutable JWT string
 //
-// 🔑 isValid() — Verification Flow:
+// isValid() — Verification Flow:
 //    parseClaims(token) checks ALL:
-//       ✅ Signature match (tampering detect)
-//       ✅ Expiration date
-//       ✅ Format (3 parts dot-separated)
-//       ✅ Not empty/null
+//       Signature match (tampering detect)
+//       Expiration date
+//       Format (3 parts dot-separated)
+//       Not empty/null
 //
 //    Any fail → JwtException → return false
 //
-// 🔑 parseClaims() — DRY helper:
+// parseClaims() — DRY helper:
 //    Jwts.parser()
 //        .verifyWith(getSigningKey())    ← verify with SECRET
 //        .build()
@@ -96,15 +96,15 @@ import io.jsonwebtoken.security.Keys;
 //    parseSignedClaims = MANDATORY signature check
 //    parseClaims (old) = skip verification (DON'T USE)
 //
-// 🔑 SECRET KEY:
+// SECRET KEY:
 //    @Value("${jwt.secret}") → from application.properties
 //    String → byte[] → SecretKey
 //    Min 256 bits (32 chars) for HS256 — JJWT enforces
 //
 //    Production:
-//       ❌ NEVER hardcode in code
-//       ✅ Environment variable / AWS Secrets Manager
-//       ✅ application.properties just for dev
+//       NEVER hardcode in code
+//       Environment variable / AWS Secrets Manager
+//       application.properties just for dev
 //
 // TAMPERING DETECTION FLOW:
 //    Original: payload = {role: "USER"}
@@ -114,7 +114,7 @@ import io.jsonwebtoken.security.Keys;
 //    Server verifies:
 //       Recompute signature with secret = "xyz789"
 //       Token has = "abc123"
-//       xyz789 ≠ abc123 → 🚫 SignatureException
+//       xyz789 ≠ abc123 → SignatureException
 //       = REJECTED
 //
 //    Hacker can't fake signature (no SECRET access)
@@ -131,9 +131,9 @@ import io.jsonwebtoken.security.Keys;
 //       More complex, more secure
 //       Industry default for distributed systems
 //
-// 🎨 PATTERN: BUILDER (used via Jwts.builder())
+// PATTERN: BUILDER (used via Jwts.builder())
 //
-// 📐 SOLID — SRP:
+// SOLID — SRP:
 //    Sirf JWT operations
 //    User loading → CustomUserDetailsService
 //    Filtering → JwtFilter
@@ -141,7 +141,7 @@ import io.jsonwebtoken.security.Keys;
 //    Endpoints → AuthController
 //    = Each class one job
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "JwtService manages 3 core operations:
 //     • Generate — Jwts.builder() Builder pattern with claims,
 //                  expiry, HMAC-SHA256 signature
@@ -158,7 +158,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    // 🔑 Config injection from application.properties
+    // Config injection from application.properties
     // jwt.secret     → signing key
     // jwt.expiration → 15 min in milliseconds
     @Value("${jwt.secret}")
@@ -168,7 +168,7 @@ public class JwtService {
     private long expiration;
 
     // ════════════════════════════════════════════════════════════
-    //  🛠️ HELPER: String secret → SecretKey object
+    //  HELPER: String secret → SecretKey object
     // ════════════════════════════════════════════════════════════
     //  jjwt 0.12.x raw String accept nahi karta sign karne ke liye.
     //  HMAC-SHA algorithms ko proper SecretKey object chahiye.
@@ -206,7 +206,7 @@ public class JwtService {
                 .claim("role", user.getRole())       // authorization
                 .issuedAt(now)                       // iat
                 .expiration(expiryDate)              // exp
-                .signWith(getSigningKey())           // 🔏 stamp
+                .signWith(getSigningKey())           // stamp
                 .compact();                          // final string
     }
 
@@ -260,7 +260,7 @@ public class JwtService {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  🔧 PRIVATE HELPER — parseClaims (DRY)
+    //  PRIVATE HELPER — parseClaims (DRY)
     // ════════════════════════════════════════════════════════════
     //  Common parsing logic — saare extract methods + isValid use karte.
     //
@@ -277,7 +277,7 @@ public class JwtService {
     //                         Unsigned tokens reject
     private Claims parseClaims(String token) {
         return Jwts.parser()
-                .verifyWith(getSigningKey())   // 🔏 stamp verify with our SECRET
+                .verifyWith(getSigningKey())   // stamp verify with our SECRET
                 .build()
                 .parseSignedClaims(token)       // throws if invalid
                 .getPayload();                  // claims map return

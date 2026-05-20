@@ -4,7 +4,7 @@
 
 ---
 
-## 🟡 WHY — Dono Thread Rokte Hain Lekin Alag Tareeke Se
+## WHY — Dono Thread Rokte Hain Lekin Alag Tareeke Se
 
 → Dono thread ko **rokne** ke liye hain, **lekin reason ALAG**
 → **`sleep()`** = main **thak gaya, thodi der rest karunga, lock NAHI chhodunga**
@@ -12,19 +12,19 @@
 
 ---
 
-## 🆚 Sabse Bada Fark — Lock Behaviour
+## Sabse Bada Fark — Lock Behaviour
 
 | | `wait()` | `sleep()` |
 |--|---------|-----------|
 | **Class** | `Object` (lock pe call) | `Thread` (thread pe call) |
-| **Lock release?** | ✅ **YES** — chhod deta | ❌ **NO** — pakad ke rakhta |
+| **Lock release?** | **YES** — chhod deta | **NO** — pakad ke rakhta |
 | **Wake up kaise?** | `notify()` / `notifyAll()` / timeout | Time khatam hote hi automatic |
 | **Use case** | **Inter-thread communication** (producer-consumer) | **Just delay** (timer, polling) |
 | **Kahaan call?** | **`synchronized` block ke andar MUST** | Kahin bhi |
 
 ---
 
-## 💻 Code
+## Code
 
 ### sleep() — thread thoda ruk
 ```java
@@ -51,7 +51,7 @@ synchronized(this) {
 
 ---
 
-## 📖 Producer-Consumer Pattern (Real Use Case)
+## Producer-Consumer Pattern (Real Use Case)
 
 ```java
 class Buffer {
@@ -81,32 +81,32 @@ class Buffer {
 
 ---
 
-## 🔴 TRAP 1 — `wait()` Sirf `synchronized` Block Mein
+## TRAP 1 — `wait()` Sirf `synchronized` Block Mein
 
 > **`wait()` aur `notify()` ka use SIRF `synchronized` block ke andar.**
 > **Bahar likhega → `IllegalMonitorStateException`.**
 
-## 🔴 TRAP 2 — Naam Mix Mat Karna
+## TRAP 2 — Naam Mix Mat Karna
 
 > **`wait()` = `Object` class** (lock pe call hota)
 > **`sleep()` = `Thread` class** (static method)
 > **Interview mein specifically poochhte.**
 
-## 🔴 TRAP 3 — `wait()` While Loop Mein
+## TRAP 3 — `wait()` While Loop Mein
 
 > **`wait()` ko `while` mein lapeto, `if` nahi** — "spurious wakeup" bug se bachao.
 
 ```java
-// 🔴 GALAT
+// GALAT
 if (queue.isEmpty()) wait();         // spurious wakeup possible
 
-// ✅ SAHI
+// SAHI
 while (queue.isEmpty()) wait();      // condition recheck after wakeup
 ```
 
 ---
 
-## 💬 POWER PHRASE
+## POWER PHRASE
 
 > *"`wait()` is an Object class method called inside `synchronized` — it releases the lock and waits for `notify()`. `sleep()` is a Thread class static method that pauses the thread but holds the lock. `wait()` is for inter-thread communication; `sleep()` is just a delay."*
 

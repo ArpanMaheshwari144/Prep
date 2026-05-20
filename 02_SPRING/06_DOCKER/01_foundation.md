@@ -1,31 +1,31 @@
-# 🟢 Section A1 — Docker Foundation (Day 1)
+# Section A1 — Docker Foundation (Day 1)
 
 > **Concepts:** Image vs Container, basic commands, first run
 > **Prereq:** None — start here
 > **Next:** [02_spring_mysql_host.md](02_spring_mysql_host.md) — Spring on host + MySQL container
 
-📚 [← Back to README](00_README.md)
+[← Back to README](00_README.md)
 
 ---
 
-# 📍 PART 1 — Docker Install + Verification
+# PART 1 — Docker Install + Verification
 
-## 🔧 Install Configuration (Docker Desktop)
+## Install Configuration (Docker Desktop)
 
 ```
-✅ Use WSL 2 instead of Hyper-V (recommended)
+Use WSL 2 instead of Hyper-V (recommended)
    → Lighter than Hyper-V, better performance
    → Standard for Java/Spring development
 
-☐ Allow Windows Containers (UNCHECKED)
+Allow Windows Containers (UNCHECKED)
    → Sirf legacy .NET apps ke liye
    → Hum Linux containers chalayenge — not needed
 
-✅ Add shortcut to desktop
+Add shortcut to desktop
    → Convenience
 ```
 
-## ✅ Verify Install
+## Verify Install
 
 ```powershell
 docker --version
@@ -45,13 +45,13 @@ docker ps
 CONTAINER ID   IMAGE   COMMAND   CREATED   STATUS   PORTS   NAMES
 ```
 
-> 🧠 **Concept:** `docker ps` = list of RUNNING containers. Empty = koi nahi chal raha abhi.
+> **Concept:** `docker ps` = list of RUNNING containers. Empty = koi nahi chal raha abhi.
 
 ---
 
-# 📍 PART 2 — Image vs Container (THE foundation)
+# PART 2 — Image vs Container (THE foundation)
 
-## 🎬 Story — Recipe vs Dish
+## Story — Recipe vs Dish
 
 ```
 RECIPE (paper)                    DISH (actual cake)
@@ -70,7 +70,7 @@ RECIPE  =  IMAGE       ← read-only template/blueprint
 DISH    =  CONTAINER   ← running instance from image
 ```
 
-## 🎯 Crisp Definitions
+## Crisp Definitions
 
 ```
 IMAGE
@@ -89,7 +89,7 @@ CONTAINER
    • 1 image → unlimited containers (each isolated)
 ```
 
-## 🎨 Visual
+## Visual
 
 ```
    ┌──────────────────┐
@@ -106,7 +106,7 @@ CONTAINER
    3 alag-alag MySQL instances, EK image se
 ```
 
-## ⚡ Lifecycle Commands
+## Lifecycle Commands
 
 ```
 docker run image          → naya container START
@@ -116,9 +116,9 @@ docker rm    container    → DELETED (purr gaya)
 docker rmi   image        → IMAGE delete (containers nahi)
 ```
 
-> 🧠 **Key insight:** Stopped container ≠ deleted. Container has writable layer that persists across stop/start.
+> **Key insight:** Stopped container ≠ deleted. Container has writable layer that persists across stop/start.
 
-## 🆚 Quick Table
+## Quick Table
 
 | | **Image** | **Container** |
 |---|---|---|
@@ -130,7 +130,7 @@ docker rmi   image        → IMAGE delete (containers nahi)
 
 ---
 
-# 📍 PART 3 — `docker pull mysql:8`
+# PART 3 — `docker pull mysql:8`
 
 ## Command:
 ```powershell
@@ -156,7 +156,7 @@ Status: Downloaded newer image for mysql:8
 docker.io/library/mysql:8
 ```
 
-## 🔍 Behind the scenes:
+## Behind the scenes:
 
 ```
 1. Docker → Docker Hub (cloud registry) se baat
@@ -172,7 +172,7 @@ docker.io/library/mysql:8
 6. Local cache mein store
 ```
 
-## 💡 Why layers? (Cache magic)
+## Why layers? (Cache magic)
 
 ```
 Tu next time pull "mysql:8.1" karega:
@@ -182,11 +182,11 @@ Tu next time pull "mysql:8.1" karega:
    • = Fast pull, less bandwidth
 ```
 
-> 🧠 **Concept:** Image = stack of layers. Layer caching = bandwidth + time savings. Layer level pe deduplication.
+> **Concept:** Image = stack of layers. Layer caching = bandwidth + time savings. Layer level pe deduplication.
 
 ---
 
-# 📍 PART 4 — `docker run` (PEHLI ATTEMPT — FAILED)
+# PART 4 — `docker run` (PEHLI ATTEMPT — FAILED)
 
 ## Command (with port 3306):
 ```powershell
@@ -203,21 +203,21 @@ docker: Error response from daemon:
    bind: Only one usage of each socket address... is normally permitted
 ```
 
-## 🔥 Error Decode — PORT CONFLICT
+## Error Decode — PORT CONFLICT
 
 ```
 HOST LAPTOP                                   DOCKER CONTAINER
 ─────────────────                             ─────────────
 Port 3306 → ALREADY TAKEN (local MySQL)      Port 3306 → MySQL chahta
                 ↓
-            CONFLICT 💥
+            CONFLICT 
             (OS rule: 2 services same port pe nahi)
 ```
 
-> 🧠 **Mera laptop pe pehle se MySQL service chal rahi thi (kabhi install kiya hoga).**
+> **Mera laptop pe pehle se MySQL service chal rahi thi (kabhi install kiya hoga).**
 > Docker container 3306 nahi le sakta kyunki **already taken**.
 
-## 🛠️ Fix — Different host port use kar
+## Fix — Different host port use kar
 
 ```
 HOST LAPTOP                                   DOCKER CONTAINER
@@ -232,7 +232,7 @@ Port 3307 → free                              chahta
 
 ---
 
-# 📍 PART 5 — Cleanup + Re-run (SUCCESS)
+# PART 5 — Cleanup + Re-run (SUCCESS)
 
 ## Step A: Failed container delete
 ```powershell
@@ -244,7 +244,7 @@ docker rm mysql-userdb
 mysql-userdb
 ```
 
-> 🧠 Container created tha but started nahi hua port error ki vajah se. `docker rm` se naam free + container record delete.
+> Container created tha but started nahi hua port error ki vajah se. `docker rm` se naam free + container record delete.
 
 ## Step B: Re-run with port 3307
 ```powershell
@@ -268,11 +268,11 @@ CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS        
 86f87cda5d6a   mysql:8   "docker-entrypoint.s…"   7 seconds ago   Up 6 seconds   0.0.0.0:3307->3306/tcp         mysql-userdb
 ```
 
-✅ **Container UP and running**
+**Container UP and running**
 
 ---
 
-# 📍 PART 6 — `docker run` Flags Deep Dive
+# PART 6 — `docker run` Flags Deep Dive
 
 ```powershell
 docker run -d --name mysql-userdb \
@@ -318,10 +318,10 @@ Examples:
    "userdb" naam ka database AUTO create kar dena startup pe
 ```
 
-> 🧠 **Container ko configure karne ka standard way = env vars.**
+> **Container ko configure karne ka standard way = env vars.**
 > Production: secrets, API keys, DB URLs sab env vars se.
 
-### `-p host:container` — PORT MAPPING ⭐ (most important)
+### `-p host:container` — PORT MAPPING (most important)
 ```
 -p 3307:3306
    ↑    ↑
@@ -351,7 +351,7 @@ Default tag if skipped = "latest"
 
 ---
 
-# 📍 PART 7 — `docker ps` Output Decoded
+# PART 7 — `docker ps` Output Decoded
 
 ```
 CONTAINER ID   → Unique ID (first 12 chars dikha — full = 64 chars)
@@ -378,7 +378,7 @@ docker ps -q       → Sirf container IDs (scripting ke liye)
 
 ---
 
-# 📍 PART 8 — `docker logs` (verify readiness)
+# PART 8 — `docker logs` (verify readiness)
 
 ```powershell
 docker logs mysql-userdb
@@ -400,10 +400,10 @@ Tab tak Spring Boot connect karega → connection refused
 ```
 [System] [MY-010931] /usr/sbin/mysqld: ready for connections.
                      ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-                     yeh dikhe = MySQL accepting connections ✅
+                     yeh dikhe = MySQL accepting connections 
 ```
 
-> 🧠 **`docker logs <name>` = container ke andar jo console output ho raha, host pe dikhao.**
+> **`docker logs <name>` = container ke andar jo console output ho raha, host pe dikhao.**
 > Real-time follow: `docker logs -f mysql-userdb`
 
 ---

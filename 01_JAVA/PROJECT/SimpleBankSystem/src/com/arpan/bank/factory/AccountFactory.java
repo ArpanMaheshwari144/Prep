@@ -3,12 +3,12 @@ package com.arpan.bank.factory;
 import com.arpan.bank.model.*;
 
 // ═══════════════════════════════════════════════════════════════════════
-// 📌 YE FILE KYA HAI:
+// YE FILE KYA HAI:
 //    AccountFactory = Object creation ka GATEWAY
 //    Client bolta type ("savings"), factory decide karti class
 // ═══════════════════════════════════════════════════════════════════════
 //
-// 🎨 PATTERN: FACTORY
+// PATTERN: FACTORY
 //
 // VISUAL FLOW:
 //    CLIENT (Main.java / Service)
@@ -45,13 +45,13 @@ import com.arpan.bank.model.*;
 //    • Single point for object creation
 //    • Returns abstract type, hides concrete
 //
-// 📐 SOLID:
+// SOLID:
 //    OCP — Naya account type? Just add case in factory
 //          Caller code UNCHANGED
 //    DIP — Caller depends on Account abstract
 //          Concrete subclasses HIDDEN inside factory
 //
-// 🎤 INTERVIEW LINE:
+// INTERVIEW LINE:
 //    "AccountFactory pattern — caller `new SavingsAccount()` directly
 //     nahi karta, factory ke through. Naye types add karne mein
 //     flexibility — sirf factory mein switch case add karna padta."

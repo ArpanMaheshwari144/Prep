@@ -1,10 +1,10 @@
-# 🔗 Microservices Communication
+# Microservices Communication
 
 > **HLD Topic 10 — How services talk in distributed systems**
 
 ---
 
-## 🤔 Why This Matters?
+## Why This Matters?
 
 ### Monolith
 ```
@@ -30,7 +30,7 @@ Different networks
 
 ---
 
-## 🎬 STORY — Office Communication
+## STORY — Office Communication
 
 > 4-person office, 1 room (monolith):
 >    "Bhai file de" → turn around → done.
@@ -39,15 +39,15 @@ Different networks
 > 50 employees, 5 floors (microservices):
 >    Floor 2 needs data from Floor 4.
 >    Options:
->       📞 **Phone call** → wait for pickup, get answer (SYNC — REST/gRPC)
->       📧 **Email** → drop message, continue work, reply later (ASYNC — Queue)
+>       **Phone call** → wait for pickup, get answer (SYNC — REST/gRPC)
+>       **Email** → drop message, continue work, reply later (ASYNC — Queue)
 >
 > **Critical task?** Phone call (waiting OK).
 > **Non-urgent?** Email (don't block your work).
 
 ---
 
-## 🎯 2 BIG Categories
+## 2 BIG Categories
 
 ```
 1. SYNCHRONOUS  → Caller WAITS for response
@@ -74,13 +74,13 @@ Contract: OpenAPI/Swagger (loose)
 ```
 
 ```
-✅ Pros:
+Pros:
    • Simple, browser-friendly
    • Easy debug (curl, Postman)
    • Universal — every lang supports
    • Human-readable
 
-❌ Cons:
+Cons:
    • JSON heavy (verbose)
    • No strict contract
    • Slower (~5-10x vs gRPC)
@@ -98,13 +98,13 @@ Contract: .proto file (strict, code-generated)
 ```
 
 ```
-✅ Pros:
+Pros:
    • 5-10x faster than REST
    • Strict contract (compile-time errors)
    • Streaming support (bidirectional)
    • Smaller payload (binary)
 
-❌ Cons:
+Cons:
    • Browser unfriendly (needs grpc-web)
    • Hard to debug (binary, not human-readable)
    • Steeper learning curve
@@ -138,37 +138,37 @@ Each consumer processes at own pace
 
 **Use kab:**
 ```
-✅ Order placed → email send (async, non-critical)
-✅ Video uploaded → thumbnail generate (slow)
-✅ Multiple consumers (analytics + email + audit)
-✅ Spike absorption (queue buffers traffic burst)
-✅ Loose coupling (services don't know each other)
+Order placed → email send (async, non-critical)
+Video uploaded → thumbnail generate (slow)
+Multiple consumers (analytics + email + audit)
+Spike absorption (queue buffers traffic burst)
+Loose coupling (services don't know each other)
 ```
 
 > Detail: [07_message_queues.md](07_message_queues.md)
 
 ---
 
-## 🎯 Sync vs Async Decision Matrix
+## Sync vs Async Decision Matrix
 
 ```
 SYNC use karo jab:
-   ✅ Response chaiye immediately
-   ✅ User waiting (login, payment confirm)
-   ✅ Failure ko handle karna hai right now
-   ✅ Strong consistency needed
+   Response chaiye immediately
+   User waiting (login, payment confirm)
+   Failure ko handle karna hai right now
+   Strong consistency needed
 
 ASYNC use karo jab:
-   ✅ Background work (email, notification)
-   ✅ Slow processing (video, ML, reports)
-   ✅ Multiple consumers
-   ✅ Loose coupling chahiye
-   ✅ Spike absorption needed
+   Background work (email, notification)
+   Slow processing (video, ML, reports)
+   Multiple consumers
+   Loose coupling chahiye
+   Spike absorption needed
 ```
 
 ---
 
-## 🛡️ Resilience Patterns (Senior Signal)
+## Resilience Patterns (Senior Signal)
 
 ### 1. Circuit Breaker
 ```
@@ -245,7 +245,7 @@ In MS:
 
 ---
 
-## 🔍 Service Discovery
+## Service Discovery
 
 ### Problem
 ```
@@ -293,7 +293,7 @@ K8s mein Eureka ki zaroorat NAHI:
 
 ---
 
-## 💎 Real Production Pattern
+## Real Production Pattern
 
 ### E-commerce Checkout Flow
 
@@ -333,19 +333,19 @@ User clicks "Buy Now":
 
 ```
 Critical path SYNC:
-   ✅ Must complete before response
-   ✅ Failure = transaction rollback
-   ✅ User experience direct impact
+   Must complete before response
+   Failure = transaction rollback
+   User experience direct impact
 
 Side effects ASYNC:
-   ✅ Eventual processing fine
-   ✅ Failure = retry from queue
-   ✅ Multiple consumers benefit
+   Eventual processing fine
+   Failure = retry from queue
+   Multiple consumers benefit
 ```
 
 ---
 
-## 🎯 API Gateway (Bonus)
+## API Gateway (Bonus)
 
 ```
 Without Gateway:
@@ -368,56 +368,56 @@ Tools: Kong, AWS API Gateway, Spring Cloud Gateway
 
 ---
 
-## ⚠️ TRAP — What NOT To Do
+## TRAP — What NOT To Do
 
 ```
-❌ "Microservices = always async via Kafka"
+"Microservices = always async via Kafka"
    = WRONG. User-facing critical path = sync.
 
-❌ "Use REST everywhere internally"
+"Use REST everywhere internally"
    = Slow at scale. Internal traffic 100K+ rps = gRPC wins.
 
-❌ "Each service has its own DB but call each other directly"
+"Each service has its own DB but call each other directly"
    = Tight coupling reborn. Use events.
 
-❌ "No timeouts because it usually works"
+"No timeouts because it usually works"
    = Production killer. Always timeout.
 
-❌ "Retry forever until success"
+"Retry forever until success"
    = Hammers dying service. Use exponential backoff + max retries.
 
-❌ "Hardcode service IPs"
+"Hardcode service IPs"
    = Restart breaks everything. Use service discovery.
 
-❌ "No circuit breaker — handle errors with try-catch"
+"No circuit breaker — handle errors with try-catch"
    = Try-catch doesn't prevent thread pool exhaustion.
 ```
 
 ---
 
-## 🎯 Interview Power Phrases
+## Interview Power Phrases
 
 ```
-🎯 "External APIs REST for universality, internal gRPC for perf"
+"External APIs REST for universality, internal gRPC for perf"
 
-🎯 "Critical path sync, side effects async via Kafka"
+"Critical path sync, side effects async via Kafka"
 
-🎯 "Circuit breaker (Resilience4j) prevents cascade failures"
+"Circuit breaker (Resilience4j) prevents cascade failures"
 
-🎯 "Exponential backoff + jitter — avoid thundering herd"
+"Exponential backoff + jitter — avoid thundering herd"
 
-🎯 "K8s Service = free service discovery, no Eureka in EKS"
+"K8s Service = free service discovery, no Eureka in EKS"
 
-🎯 "Bulkhead pattern: per-downstream thread pool isolation"
+"Bulkhead pattern: per-downstream thread pool isolation"
 
-🎯 "API Gateway: single entry, auth + rate-limit + routing"
+"API Gateway: single entry, auth + rate-limit + routing"
 
-🎯 "Polyglot communication: right protocol per use case"
+"Polyglot communication: right protocol per use case"
 ```
 
 ---
 
-## 🧠 Memory Hooks
+## Memory Hooks
 
 ```
 Phone call vs Email
@@ -438,7 +438,7 @@ Electrical fuse
 
 ---
 
-## 🚀 Phase 3 Project Application (July/August)
+## Phase 3 Project Application (July/August)
 
 ```
 When building full Spring microservices project:
@@ -466,27 +466,27 @@ When building full Spring microservices project:
 
 ---
 
-## ✅ Status
+## Status
 
 ```
-Topic 10/10 (HLD foundations) — Done ✅
+Topic 10/10 (HLD foundations) — Done 
 
 Foundations complete:
-   01 ✅ HLD basics
-   02 ✅ Capacity estimation
-   03 ✅ Load balancing
-   04 ✅ Caching
-   05 ✅ DB replication
-   06 ✅ DB sharding
-   07 ✅ Message queues
-   08 ✅ CAP theorem
-   09 ✅ DB types (what when)
-   10 ✅ MS Communication ← YOU ARE HERE
+   01 HLD basics
+   02 Capacity estimation
+   03 Load balancing
+   04 Caching
+   05 DB replication
+   06 DB sharding
+   07 Message queues
+   08 CAP theorem
+   09 DB types (what when)
+   10 MS Communication ← YOU ARE HERE
 
 Next phase:
-   🔜 System Design Deep Dives
+   System Design Deep Dives
       • URL Shortener
       • Rate Limiter
 ```
 
-📚 [← HLD README](README.md)
+[← HLD README](README.md)

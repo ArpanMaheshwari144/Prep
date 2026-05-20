@@ -4,30 +4,30 @@
 
 ---
 
-## 🎬 STORY — Bathroom Lock Analogy
+## STORY — Bathroom Lock Analogy
 
 > Imagine **office mein 1 bathroom** + **3 employees** wait kar rahe.
 >
-> 😴 **`sleep()` analogy:**
+> **`sleep()` analogy:**
 > Tu bathroom mein ja ke **darwaza lock kiya, neeche so gaya** — *"5 min nap lunga"*.
 > **Lock nahi chhoda.** Baahar wale 3 wait karte rahenge tere uthne tak.
 > *"Selfish rest"* — apne aap mein lock leke so raha.
 >
-> 🤝 **`wait()` analogy:**
+> **`wait()` analogy:**
 > Tu bathroom mein gaya, dekha kuch nahi mil raha — *"Tu pehle use kar, mai bahar wait karta"*.
 > **Lock release kar diya.** Doosra andar ja ke kaam kare, phir tu use karega.
 > *"Generous wait"* — lock chhoda taaki dusra kaam kar sake.
 
 ---
 
-## 🎨 VISUAL — Bathroom Lock Behavior
+## VISUAL — Bathroom Lock Behavior
 
 ### `sleep()` — Lock Hold Karta
 
 ```
    Thread A (in synchronized method)
         │
-        │ Took the LOCK 🔒
+        │ Took the LOCK 
         │
         ▼
    ┌─────────────────────┐
@@ -42,7 +42,7 @@
                                             (lock still with A)
    Thread C → tries to enter same method → BLOCKED
    
-   ⏳ All wait for A's full 5 sec sleep to complete
+   All wait for A's full 5 sec sleep to complete
 ```
 
 ### `wait()` — Lock Release Karta
@@ -50,7 +50,7 @@
 ```
    Thread A (in synchronized method)
         │
-        │ Took the LOCK 🔒
+        │ Took the LOCK 
         │
         ▼
    ┌─────────────────────┐
@@ -61,28 +61,28 @@
    └─────────────────────┘
 
    Meanwhile:
-   Thread B → tries to enter → ✅ ENTERS (lock free)
+   Thread B → tries to enter → ENTERS (lock free)
    Thread B does work, calls notify() → A wakes up
    Thread A → re-acquires lock → continues
    
-   🤝 Cooperation between threads
+   Cooperation between threads
 ```
 
 ---
 
-## 💻 CODE EXAMPLE
+## CODE EXAMPLE
 
 ```java
 public class Bathroom {
     
-    // ❌ sleep — lock held, others blocked
+    // sleep — lock held, others blocked
     public synchronized void useBathroomSleep() throws InterruptedException {
         System.out.println("In bathroom, taking 5 sec nap");
         Thread.sleep(5000);                  // ← lock HELD during nap
         System.out.println("Done");
     }
     
-    // ✅ wait — lock released, others can enter
+    // wait — lock released, others can enter
     public synchronized void useBathroomWait() throws InterruptedException {
         System.out.println("Waiting for signal");
         wait();                              // ← lock RELEASED
@@ -93,13 +93,13 @@ public class Bathroom {
 
 ---
 
-## 📊 sleep() vs wait() — FULL COMPARE
+## sleep() vs wait() — FULL COMPARE
 
 | Property | `Thread.sleep()` | `Object.wait()` |
 |---|---|---|
 | **Class** | `Thread` (static method) | `Object` (instance method) |
-| **Lock release?** | ❌ NO — holds lock | ✅ YES — releases lock |
-| **Synchronized needed?** | ❌ Not required | ✅ MUST be in synchronized block |
+| **Lock release?** | NO — holds lock | YES — releases lock |
+| **Synchronized needed?** | Not required | MUST be in synchronized block |
 | **Wakeup mechanism** | Time elapsed | `notify()` / `notifyAll()` / interrupt |
 | **Use case** | Pure delay (rate limit, polling) | Inter-thread coordination |
 | **Throws** | `InterruptedException` | `InterruptedException` + `IllegalMonitorStateException` if not synced |
@@ -107,13 +107,13 @@ public class Bathroom {
 
 ---
 
-## 🎯 USE CASE GUIDE
+## USE CASE GUIDE
 
 ### Use `sleep()` when:
-- ⏰ Pure delay needed (e.g., rate limiting between API calls)
-- 🔄 Polling with backoff
-- 🧪 Testing — simulate slow operations
-- 📊 Animation timing in UI
+- Pure delay needed (e.g., rate limiting between API calls)
+- Polling with backoff
+- Testing — simulate slow operations
+- Animation timing in UI
 
 ```java
 // API rate limiter
@@ -124,9 +124,9 @@ for (Request req : requests) {
 ```
 
 ### Use `wait()` when:
-- 🤝 Producer-Consumer pattern
-- 🚦 Conditional thread execution
-- 🔔 Signaling between threads
+- Producer-Consumer pattern
+- Conditional thread execution
+- Signaling between threads
 
 ```java
 // Wait until queue has data
@@ -138,20 +138,20 @@ synchronized (queue) {
 
 ---
 
-## 🪤 INTERVIEW TRAP — Calling wait() outside synchronized
+## INTERVIEW TRAP — Calling wait() outside synchronized
 
 ```java
 public void test() {
-    wait();   // ❌ IllegalMonitorStateException!
+    wait();   // IllegalMonitorStateException!
               // wait() needs lock context
 }
 
-// ✅ Correct
+// Correct
 public synchronized void test() throws InterruptedException {
     wait();   // OK — lock owner can wait
 }
 
-// ✅ Or with explicit object
+// Or with explicit object
 public void test() throws InterruptedException {
     Object lock = new Object();
     synchronized (lock) {
@@ -162,7 +162,7 @@ public void test() throws InterruptedException {
 
 ---
 
-## 🎤 INTERVIEW TALKING POINT
+## INTERVIEW TALKING POINT
 
 **Q: "`sleep()` aur `wait()` mein difference?"**
 
@@ -178,13 +178,13 @@ public void test() throws InterruptedException {
 
 ---
 
-## 💎 POWER PHRASE
+## POWER PHRASE
 
 > **"`sleep()` thread ko pause karta but lock hold rakhta — selfish rest. `wait()` lock release karta + thread block karta — generous wait, inter-thread coordination ke liye. Use `sleep()` for pure delays, `wait()` for thread cooperation."**
 
 ---
 
-## 🧠 MEMORY HOOK
+## MEMORY HOOK
 
 ```
 sleep()    → "Selfish nap"     → Thread class   → Lock HELD
@@ -201,26 +201,26 @@ Synchronized requirement:
 
 ---
 
-## ⚠️ TRAP BOX
+## TRAP BOX
 
 ```
-🪤 Trap 1: "sleep() mein lock release ho jata"
-         ❌ NAHI — lock holds throughout sleep duration
-         ✅ wait() releases lock
+Trap 1: "sleep() mein lock release ho jata"
+         NAHI — lock holds throughout sleep duration
+         wait() releases lock
 
-🪤 Trap 2: "wait() ko anywhere call kar sakte"
-         ❌ IllegalMonitorStateException
-         ✅ MUST inside synchronized block
+Trap 2: "wait() ko anywhere call kar sakte"
+         IllegalMonitorStateException
+         MUST inside synchronized block
 
-🪤 Trap 3: "wait() infinite block"
-         ❌ wait(timeout) overload available
-         ✅ wait(5000) — max 5 sec wait
+Trap 3: "wait() infinite block"
+         wait(timeout) overload available
+         wait(5000) — max 5 sec wait
 
-🪤 Trap 4: "sleep(0) = immediate return"
-         ❌ Hint to scheduler — yield-like behavior
-         ✅ sleep(0) ≈ Thread.yield() approximately
+Trap 4: "sleep(0) = immediate return"
+         Hint to scheduler — yield-like behavior
+         sleep(0) ≈ Thread.yield() approximately
 
-🪤 Trap 5: "InterruptedException ignore karu"
-         ❌ Anti-pattern — restore interrupt flag
-         ✅ Thread.currentThread().interrupt() in catch
+Trap 5: "InterruptedException ignore karu"
+         Anti-pattern — restore interrupt flag
+         Thread.currentThread().interrupt() in catch
 ```

@@ -1,38 +1,38 @@
-# ⚡ TCP vs UDP
+# TCP vs UDP
 
 ---
 
-## 🎯 1-Line Analogy
+## 1-Line Analogy
 
 ```
-TCP = 📞 Phone call    (handshake, "hello?" "yes hi", ordered)
-UDP = 📮 Postcard      (fire & forget, hope it arrives)
+TCP = Phone call    (handshake, "hello?" "yes hi", ordered)
+UDP = Postcard      (fire & forget, hope it arrives)
 ```
 
 ---
 
-## 📊 Side by Side
+## Side by Side
 
 ```
 ┌──────────────────┬──────────────────┬──────────────────┐
 │  Feature         │  TCP              │  UDP              │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Connection       │ ✅ Yes (handshake)│ ❌ No (fire & forget)│
+│ Connection       │ Yes (handshake)│ No (fire & forget)│
 │                  │ SYN→SYN-ACK→ACK   │ Just send         │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Reliability      │ ✅ Guaranteed      │ ❌ Best-effort     │
+│ Reliability      │ Guaranteed      │ Best-effort     │
 │                  │ Lost? Retransmit  │ Lost? Tough luck  │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Ordering         │ ✅ In-order        │ ❌ Out of order OK │
+│ Ordering         │ In-order        │ Out of order OK │
 │                  │ Sequence numbers  │ Packets independent│
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Speed            │ 🐢 Slower         │ ⚡ Fast            │
+│ Speed            │ Slower         │ Fast            │
 │                  │ Overhead high     │ Minimal overhead  │
 ├──────────────────┼──────────────────┼──────────────────┤
 │ Header size      │ 20 bytes          │ 8 bytes           │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Flow control     │ ✅ Yes (windowing)│ ❌ No              │
-│ Congestion ctrl  │ ✅ Yes             │ ❌ No              │
+│ Flow control     │ Yes (windowing)│ No              │
+│ Congestion ctrl  │ Yes             │ No              │
 ├──────────────────┼──────────────────┼──────────────────┤
 │ Use case         │ Accuracy > speed  │ Speed > accuracy  │
 └──────────────────┴──────────────────┴──────────────────┘
@@ -40,7 +40,7 @@ UDP = 📮 Postcard      (fire & forget, hope it arrives)
 
 ---
 
-## 🤝 TCP 3-Way Handshake
+## TCP 3-Way Handshake
 
 ```
    CLIENT                      SERVER
@@ -66,10 +66,10 @@ UDP version:
 
 ---
 
-## 🎯 When to Use What
+## When to Use What
 
 ```
-✅ TCP USE WHEN:
+TCP USE WHEN:
    • Data MUST arrive correctly
    • Order matters
    • File transfer, web pages, email
@@ -81,7 +81,7 @@ UDP version:
    • FTP — file transfer
    • Database connections (MySQL, etc.)
 
-✅ UDP USE WHEN:
+UDP USE WHEN:
    • Speed > perfection
    • Loss tolerable
    • Real-time matters more than accuracy
@@ -96,7 +96,7 @@ UDP version:
 
 ---
 
-## 💡 REAL-WORLD INSIGHT
+## REAL-WORLD INSIGHT
 
 ```
 Video streaming case:
@@ -114,7 +114,7 @@ ON-DEMAND (Netflix):
 
 ---
 
-## 🚀 HTTP/3 PLOT TWIST
+## HTTP/3 PLOT TWIST
 
 ```
 Historically: HTTP runs on TCP
@@ -131,7 +131,7 @@ But HTTP/3 = QUIC over UDP
 
 ---
 
-## 🎤 INTERVIEW LINE
+## INTERVIEW LINE
 
 ```
 "TCP guarantees delivery, ordering, and flow control —
@@ -149,11 +149,11 @@ But HTTP/3 = QUIC over UDP
 
 ---
 
-## 🎯 Memory Hook
+## Memory Hook
 
 ```
-TCP = 📞 Phone call (handshake, reliable)
-UDP = 📮 Postcard   (fire & forget)
+TCP = Phone call (handshake, reliable)
+UDP = Postcard   (fire & forget)
 
 TCP = "Confirm receive" → ACK-based
 UDP = "Just shout it"   → no confirm
@@ -162,4 +162,4 @@ TCP = HTTP, SSH, email
 UDP = Gaming, VoIP, DNS, live streaming
 ```
 
-📚 [← HLD README](../README.md)
+[← HLD README](../README.md)
