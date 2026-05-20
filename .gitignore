@@ -28,3 +28,6 @@ node_modules/
 .claude/
 Prep/
 INTERVIEW/
+
+# Personal — resume, notes, templates (keep private even in public repo)
+RESOURCES/
