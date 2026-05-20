@@ -2,11 +2,15 @@ package com.arpan.todoapp.service;
 // ─── PACKAGE ─────────────────────────────────────────────────
 // File: src/main/java/com/arpan/todoapp/service/TodoService.java
 
-import com.arpan.todoapp.model.Todo;
-import com.arpan.todoapp.repository.TodoRepository;
+import java.util.List;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.arpan.todoapp.model.Todo;
+import com.arpan.todoapp.repository.TodoRepository;
 // ─── IMPORTS ─────────────────────────────────────────────────
 // Todo, TodoRepository → entity + DAO
 // @Service              → Spring stereotype for service layer
@@ -114,7 +118,6 @@ import java.util.List;
 //     immutable dependencies and easy testability.
 //     Uses Optional from repository for null safety."
 // ═══════════════════════════════════════════════════════════════════════
-
 @Service
 public class TodoService {
 
@@ -128,29 +131,44 @@ public class TodoService {
     }
 
     // ─── CREATE ────────────────────────────────────────────────
-    // POST /todos → save new todo
-    // repo.save() returns entity with auto-generated id
+    // Flow:
+    //   1. DB mein naya todo save
+    //   2. "todos" list cache se wipe (purani list ab stale)
+    @CacheEvict(value = "todos", allEntries = true)
     public Todo create(Todo todo) {
         return repo.save(todo);
     }
 
     // ─── GET ONE ───────────────────────────────────────────────
-    // GET /todos/{id}
-    // Optional unwrap karte — not found throws
+    // Flow:
+    //   Pehli call (id=5):  DB hit → Redis mein "todo::5" store
+    //   Agli call (id=5):   Cache hit → Redis se direct (DB skip)
+    //   5 min baad:         TTL expire → next call DB hit again
+    @Cacheable(value = "todo", key = "#id")
     public Todo getById(Long id) {
         return repo.findById(id)
-                   .orElseThrow(() -> new RuntimeException("Todo not found: " + id));
+                .orElseThrow(() -> new RuntimeException("Todo not found: " + id));
     }
 
     // ─── GET ALL ───────────────────────────────────────────────
-    // GET /todos → all todos
+    // Flow:
+    //   Pehli call: DB findAll → "todos" cache mein store
+    //   Agli call:  Cache hit → Redis se direct (DB skip)
+    @Cacheable(value = "todos")
     public List<Todo> getAll() {
         return repo.findAll();
     }
 
     // ─── UPDATE ────────────────────────────────────────────────
-    // PUT /todos/{id} → modify existing
-    // Pattern: fetch → modify fields → save
+    // Flow:
+    //   1. DB mein todo update
+    //   2. "todo::{id}" cache wipe (specific entry stale)
+    //   3. "todos" list cache wipe (list bhi affected)
+    //   4. Agli read = cache miss → DB se fresh fetch
+    @Caching(evict = {
+        @CacheEvict(value = "todo", key = "#id"),
+        @CacheEvict(value = "todos", allEntries = true)
+    })
     public Todo update(Long id, Todo updated) {
         Todo existing = getById(id);  // throws if not found
         existing.setTitle(updated.getTitle());
@@ -160,7 +178,14 @@ public class TodoService {
     }
 
     // ─── DELETE ────────────────────────────────────────────────
-    // DELETE /todos/{id}
+    // Flow:
+    //   1. DB se todo delete
+    //   2. "todo::{id}" cache wipe
+    //   3. "todos" list cache wipe
+    @Caching(evict = {
+        @CacheEvict(value = "todo", key = "#id"),
+        @CacheEvict(value = "todos", allEntries = true)
+    })
     public void delete(Long id) {
         repo.deleteById(id);
     }

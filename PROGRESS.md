@@ -1,6 +1,6 @@
 # 📊 Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-19 (Day 16 — TODO App JWT WORKING)
+> **Last updated:** 2026-05-20 (Day 17 — TODO App Redis caching WORKING)
 > **Bangalore arrival:** June 15, 2026 (~27 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
@@ -233,7 +233,7 @@ EXPECTED COMP (4yr Associate Bangalore):
 
 ---
 
-# 📊 JP MORGAN READINESS — 85%+ (Day 16)
+# 📊 JP MORGAN READINESS — 87%+ (Day 17)
 
 ```
 TECH FOUNDATION:    ████████████ 100%
@@ -242,13 +242,13 @@ JAVA INTERNALS:     ████████████ 100%
 SPRING:             ████████████ 100%
 HIBERNATE:          ████████████ 100%
 INFRA + COMPARES:   ████████████ 100% (bonus)
-TODO PROJECT:       ████████░░░░  66% (CRUD + JWT done, Redis/Docker/K8s/AWS pending)
+TODO PROJECT:       █████████░░░  75% (CRUD + JWT + Redis done, Docker/K8s/AWS pending)
 DSA (LC easy-med):  ██████░░░░░░  50% (Phase 1 ongoing — separate track)
 BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = fix)
 JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
 KONOVO EVIDENCE:    ████████████ 100% (gold)
 
-OVERALL JP-READY:   ██████████░░  85%+
+OVERALL JP-READY:   ██████████░░  87%+
 ```
 
 ---
@@ -256,21 +256,28 @@ OVERALL JP-READY:   ██████████░░  85%+
 # 🎯 PROJECT EXTENSION PATH (NEED-BASED)
 
 ```
-TODO App = CRUD + JWT WORKING (Day 16 milestone)
+TODO App = CRUD + JWT + Redis WORKING (Day 17 milestone)
 
 Remaining path (each = need-based, one at a time):
    ✅ CRUD Base       (Day 15)
-   ✅ JWT Auth        (Day 16) ⭐ aaj
+   ✅ JWT Auth        (Day 16)
+   ✅ Redis caching   (Day 17) ⭐ aaj
    
-   🔲 1. REDIS         (caching layer — practical seekh)
-   🔲 2. DOCKER        (containerize app + dependencies)
-   🔲 3. K8S            (kind cluster local deploy)
-   🔲 4. AWS           (cloud deploy — EKS + RDS + ElastiCache)
+   🔲 1. DOCKER        (containerize app + dependencies)
+   🔲 2. K8S            (kind cluster local deploy)
+   🔲 3. AWS           (cloud deploy — EKS + RDS + ElastiCache)
                        = PRIMARY NEW LEARNING
 
 Tu identify gap → tabhi add
 NO forced "Day X = topic" schedule
-Bangalore tak (27 din): comfortable margin
+Bangalore tak (26 din): comfortable margin
+
+REDIS DAY 17 — KEY LEARNINGS:
+   • Cache-aside pattern (read fill, write invalidate)
+   • RedisCacheManager with JSON serializer (5-min TTL)
+   • @Cacheable / @CacheEvict / @Caching annotation usage
+   • Hidden Windows native Redis = port conflict trap (debugged + removed)
+   • Observability-first lesson learned (debug logs upfront, not after fail)
 ```
 
 # 🎯 DSA — SEPARATE TRACK

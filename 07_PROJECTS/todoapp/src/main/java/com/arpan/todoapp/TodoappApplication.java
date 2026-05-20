@@ -7,6 +7,7 @@ package com.arpan.todoapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 // ─── IMPORTS ─────────────────────────────────────────────────
 // SpringApplication        → Bootstrap class with .run() static method
 // @SpringBootApplication   → THE magic annotation (3-in-1 combo)
@@ -100,17 +101,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //     scans for beans, auto-configures based on classpath,
 //     and starts the embedded Tomcat server."
 // ═══════════════════════════════════════════════════════════════════════
-
 @SpringBootApplication
+@EnableCaching   // enables @Cacheable / @CacheEvict / @CachePut annotations
 public class TodoappApplication {
 
-	public static void main(String[] args) {
-		// ▶ BOOT THE APP:
-		// • Scan beans starting from this package
-		// • Auto-configure based on classpath dependencies
-		// • Start embedded Tomcat
-		// • Wire dependency injection graph
-		SpringApplication.run(TodoappApplication.class, args);
-	}
+    public static void main(String[] args) {
+        // ▶ BOOT THE APP:
+        // • Scan beans starting from this package
+        // • Auto-configure based on classpath dependencies
+        // • Start embedded Tomcat
+        // • Wire dependency injection graph
+        SpringApplication.run(TodoappApplication.class, args);
+    }
 
 }
