@@ -4,7 +4,7 @@
 > **Bangalore arrival:** June 15, 2026 (~25 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
-> **JP-ready:** 89%+
+> **JP-ready:** 82%+ (HLD gap surfaced — interview-followup depth pending)
 
 ---
 
@@ -237,7 +237,7 @@ DSA Phase 1 INTUITION
 
 ```
 TECH FOUNDATION:    ████████████ 100%
-SYSTEM DESIGN:      ████████████ 100%
+SYSTEM DESIGN:      ███████░░░░░  60% (diagrams done, follow-up Q&A gap)
 JAVA INTERNALS:     ████████████ 100%
 SPRING:             ████████████ 100%
 HIBERNATE:          ████████████ 100%
@@ -248,7 +248,7 @@ BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = 
 JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
 KONOVO EVIDENCE:    ████████████ 100% (gold)
 
-OVERALL JP-READY:   ██████████░░  89%+
+OVERALL JP-READY:   █████████░░░  82%+ (HLD gap reality-check applied)
 ```
 
 ---
@@ -269,6 +269,19 @@ Remaining path:
               = PRIMARY NEW LEARNING
 
 Bangalore tak (25 din): comfortable margin
+
+HLD GAP DISCOVERED (Day 18, claude.ai cross-validation):
+   • Diagrams banaye 4 systems ke = visual mastery
+   • BUT follow-up question prep MISSING:
+     - "Add rate limiting" — kahaan, kaise, trade-offs
+     - "Scale to 100M users" — sharding, partitions
+     - "Idempotency strategy" — event ID, dedup
+     - "What if X fails" — circuit breaker, DLQ
+     - "Trade-off articulation" — yeh chuna kyunki X
+   • Real HLD readiness ~50% (not 100% as earlier inflated)
+   • Better caught NOW than in interview
+   • Fix in viraam phase (post-AWS)
+
 
 DOCKER DAY 18 — KEY LEARNINGS:
    • Dockerfile (JRE-only base, COPY jar, ENTRYPOINT pattern)
