@@ -1,0 +1,84 @@
+# docker-compose.yml
+# Multi-container orchestration — App + Redis + MySQL ek saath
+# Command: docker compose up (run), docker compose down (stop)
+
+services:
+
+  # ─── SPRING BOOT APP ──────────────────────────────
+  app:
+    # build = Dockerfile use karke image banao
+    # "." = current directory mein Dockerfile dhundo
+    build: .
+
+    # Container ka naam (default random hai — explicit better)
+    container_name: todoapp
+
+    # Port mapping: host:container
+    # localhost:8080 → container ka 8080
+    ports:
+      - "8080:8080"
+
+    # Container network mein services apne service-name se reachable
+    # mysql container = "mysql:3306" se reach hota
+    # redis container = "redis:6379" se reach hota
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/tododb?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATA_REDIS_HOST=redis
+
+    # MySQL HEALTHY hone tak wait (sirf started nahi)
+    # Redis sirf started enough (Redis fast initialize hota)
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  # ─── MYSQL ────────────────────────────────────────
+  mysql:
+    image: mysql:8
+    container_name: todoapp-mysql
+
+    # Port 3308 host pe (3306 = native MySQL, 3307 = usercrud ka)
+    ports:
+      - "3308:3306"
+
+    # Root password mandatory MySQL container ke liye
+    # MYSQL_DATABASE = auto-create tododb on first startup
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tododb
+
+    # Volume = data persist across container restarts
+    # Container delete bhi ho jaye to data safe
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+    # HEALTHCHECK — MySQL fully ready check
+    # mysqladmin ping = "Tu alive + accepting connections?"
+    # Docker har 10 sec ping karta
+    # Pass = "healthy" status, app then proceeds
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ─── REDIS ────────────────────────────────────────
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+    # command override = Redis start with memory limits
+    # 125MB cap + LRU eviction
+    command: redis-server --maxmemory 125mb --maxmemory-policy allkeys-lru
+
+
+# ─── NAMED VOLUMES ──────────────────────────────────
+# MySQL ka data yahaan rahega
+# docker compose down se delete nahi hoga (until -v flag)
+volumes:
+  mysql-data:

@@ -1,10 +1,10 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-20 (Day 17 — TODO App Redis caching WORKING)
-> **Bangalore arrival:** June 15, 2026 (~27 days)
+> **Last updated:** 2026-05-21 (Day 18 — TODO App Dockerized full stack WORKING)
+> **Bangalore arrival:** June 15, 2026 (~25 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
-> **JP-ready:** 85%+
+> **JP-ready:** 89%+
 
 ---
 
@@ -233,7 +233,7 @@ DSA Phase 1 INTUITION
 
 ---
 
-# JP MORGAN READINESS — 87%+ (Day 17)
+# JP MORGAN READINESS — 89%+ (Day 18)
 
 ```
 TECH FOUNDATION:    ████████████ 100%
@@ -242,13 +242,13 @@ JAVA INTERNALS:     ████████████ 100%
 SPRING:             ████████████ 100%
 HIBERNATE:          ████████████ 100%
 INFRA + COMPARES:   ████████████ 100% (bonus)
-TODO PROJECT:       █████████░░░  75% (CRUD + JWT + Redis done, Docker/K8s/AWS pending)
+TODO PROJECT:       ██████████░░  85% (CRUD + JWT + Redis + Docker done, K8s/AWS pending)
 DSA (LC easy-med):  ██████░░░░░░  50% (Phase 1 ongoing — separate track)
 BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = fix)
 JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
 KONOVO EVIDENCE:    ████████████ 100% (gold)
 
-OVERALL JP-READY:   ██████████░░  87%+
+OVERALL JP-READY:   ██████████░░  89%+
 ```
 
 ---
@@ -256,21 +256,29 @@ OVERALL JP-READY:   ██████████░░  87%+
 # PROJECT EXTENSION PATH (NEED-BASED)
 
 ```
-TODO App = CRUD + JWT + Redis WORKING (Day 17 milestone)
+TODO App = CRUD + JWT + Redis + Docker WORKING (Day 18 milestone)
 
-Remaining path (each = need-based, one at a time):
+Remaining path:
    CRUD Base       (Day 15)
    JWT Auth        (Day 16)
-   Redis caching   (Day 17) aaj
+   Redis caching   (Day 17)
+   Docker stack    (Day 18) aaj
    
-   1. DOCKER        (containerize app + dependencies)
-   2. K8S            (kind cluster local deploy)
-   3. AWS           (cloud deploy — EKS + RDS + ElastiCache)
-                       = PRIMARY NEW LEARNING
+   1. K8S    (kind cluster local deploy)
+   2. AWS    (cloud deploy — EKS + RDS + ElastiCache)
+              = PRIMARY NEW LEARNING
 
-Tu identify gap → tabhi add
-NO forced "Day X = topic" schedule
-Bangalore tak (26 din): comfortable margin
+Bangalore tak (25 din): comfortable margin
+
+DOCKER DAY 18 — KEY LEARNINGS:
+   • Dockerfile (JRE-only base, COPY jar, ENTRYPOINT pattern)
+   • docker-compose.yml — 3-service orchestration (app + mysql + redis)
+   • Named volumes for stateful service data persistence
+   • healthcheck + depends_on:service_healthy (race condition fix)
+   • Service-name DNS in Docker network (mysql/redis as hostnames)
+   • Stack-vs-container distinction (compose grouping, not nesting)
+   • Trap: depends_on alone = start-order only, not ready-status
+   • Stack Overflow validated same pattern = 90% boilerplate confirmed
 
 REDIS DAY 17 — KEY LEARNINGS:
    • Cache-aside pattern (read fill, write invalidate)
