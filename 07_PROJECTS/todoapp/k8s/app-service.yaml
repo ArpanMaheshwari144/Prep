@@ -1,0 +1,17 @@
+# app-service.yaml — Expose app pod externally
+# Type NodePort = bahar se accessible (Postman/browser se)
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: todoapp           # internal DNS name
+spec:
+  selector:
+    app: todoapp          # app-deployment ke pods target
+
+  ports:
+  - port: 8080            # service internal port
+    targetPort: 8080      # container port
+    nodePort: 30080       # EXTERNAL port (30000-32767 range)
+
+  type: NodePort          # external access enable

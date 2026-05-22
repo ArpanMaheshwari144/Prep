@@ -1,10 +1,10 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-21 (Day 18 — TODO App Dockerized full stack WORKING)
-> **Bangalore arrival:** June 15, 2026 (~25 days)
+> **Last updated:** 2026-05-22 (Day 19 — TODO App deployed on local K8s cluster)
+> **Bangalore arrival:** June 15, 2026 (~24 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
-> **JP-ready:** 82%+ (HLD gap surfaced — interview-followup depth pending)
+> **JP-ready:** 84%+ (HLD followup gap still pending; only AWS phase remaining)
 
 ---
 
@@ -233,7 +233,7 @@ DSA Phase 1 INTUITION
 
 ---
 
-# JP MORGAN READINESS — 89%+ (Day 18)
+# JP MORGAN READINESS — 84%+ (Day 19)
 
 ```
 TECH FOUNDATION:    ████████████ 100%
@@ -242,13 +242,13 @@ JAVA INTERNALS:     ████████████ 100%
 SPRING:             ████████████ 100%
 HIBERNATE:          ████████████ 100%
 INFRA + COMPARES:   ████████████ 100% (bonus)
-TODO PROJECT:       ██████████░░  85% (CRUD + JWT + Redis + Docker done, K8s/AWS pending)
+TODO PROJECT:       ███████████░  93% (CRUD + JWT + Redis + Docker + K8s done, AWS pending)
 DSA (LC easy-med):  ██████░░░░░░  50% (Phase 1 ongoing — separate track)
 BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = fix)
 JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
 KONOVO EVIDENCE:    ████████████ 100% (gold)
 
-OVERALL JP-READY:   █████████░░░  82%+ (HLD gap reality-check applied)
+OVERALL JP-READY:   █████████░░░  84%+ (K8s done, HLD followup still pending)
 ```
 
 ---
@@ -256,19 +256,31 @@ OVERALL JP-READY:   █████████░░░  82%+ (HLD gap reality-
 # PROJECT EXTENSION PATH (NEED-BASED)
 
 ```
-TODO App = CRUD + JWT + Redis + Docker WORKING (Day 18 milestone)
+TODO App = CRUD + JWT + Redis + Docker + K8s WORKING (Day 19 milestone)
 
 Remaining path:
    CRUD Base       (Day 15)
    JWT Auth        (Day 16)
    Redis caching   (Day 17)
-   Docker stack    (Day 18) aaj
+   Docker stack    (Day 18)
+   K8s local       (Day 19) aaj
    
-   1. K8S    (kind cluster local deploy)
-   2. AWS    (cloud deploy — EKS + RDS + ElastiCache)
-              = PRIMARY NEW LEARNING
+   1. AWS    (cloud deploy — EKS + RDS + ElastiCache)
+              = PRIMARY NEW LEARNING, last step
 
-Bangalore tak (25 din): comfortable margin
+Bangalore tak (24 din): comfortable margin
+
+K8S DAY 19 — KEY LEARNINGS:
+   • kind = lightweight local K8s (cluster inside Docker container)
+   • kubectl: get pods/svc/nodes, apply, logs, describe, port-forward
+   • Manifest types: Deployment, Service, PersistentVolumeClaim
+   • Service types: ClusterIP (internal), NodePort (external)
+   • imagePullPolicy: Never = use local image (kind load required first)
+   • Service-name DNS within cluster (mysql, redis hostnames)
+   • Race condition: app pod restart 1-2 times before MySQL ready
+   • K8s auto-healing = pod crash → restart automatic
+   • port-forward = test cluster services from localhost
+   • Stack Overflow validated patterns = 95% boilerplate
 
 HLD GAP DISCOVERED (Day 18, claude.ai cross-validation):
    • Diagrams banaye 4 systems ke = visual mastery

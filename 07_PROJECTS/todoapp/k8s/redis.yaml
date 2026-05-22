@@ -1,0 +1,40 @@
+# redis.yaml — Redis stack (Deployment + Service)
+# No PVC — cache ephemeral, data persistence ki zarurat nahi
+
+# ─── DEPLOYMENT ───
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis
+        ports:
+        - containerPort: 6379
+
+        # Same memory limits as docker-compose
+        command: ["redis-server", "--maxmemory", "125mb", "--maxmemory-policy", "allkeys-lru"]
+---
+# ─── SERVICE ───
+# App pod "redis:6379" se reach karega
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  selector:
+    app: redis
+  ports:
+  - port: 6379
+    targetPort: 6379
+  type: ClusterIP
