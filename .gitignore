@@ -31,3 +31,10 @@ INTERVIEW/
 
 # Personal — resume, notes, templates (keep private even in public repo)
 RESOURCES/
+
+# Secrets — SSH keys, AWS keys, credentials (NEVER commit)
+*.pem
+*.ppk
+*.key
+.aws/
+aws-credentials*

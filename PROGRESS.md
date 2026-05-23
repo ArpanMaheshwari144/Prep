@@ -1,10 +1,10 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-22 (Day 19 — TODO App deployed on local K8s cluster)
-> **Bangalore arrival:** June 15, 2026 (~24 days)
+> **Last updated:** 2026-05-23 (Day 20 — TODO App deployed on AWS EC2 + production lesson learned)
+> **Bangalore arrival:** June 15, 2026 (~23 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
-> **JP-ready:** 84%+ (HLD followup gap still pending; only AWS phase remaining)
+> **JP-ready:** 87%+ (project pipeline 100% complete, HLD followup still pending)
 
 ---
 
@@ -233,7 +233,7 @@ DSA Phase 1 INTUITION
 
 ---
 
-# JP MORGAN READINESS — 84%+ (Day 19)
+# JP MORGAN READINESS — 87%+ (Day 20)
 
 ```
 TECH FOUNDATION:    ████████████ 100%
@@ -242,13 +242,13 @@ JAVA INTERNALS:     ████████████ 100%
 SPRING:             ████████████ 100%
 HIBERNATE:          ████████████ 100%
 INFRA + COMPARES:   ████████████ 100% (bonus)
-TODO PROJECT:       ███████████░  93% (CRUD + JWT + Redis + Docker + K8s done, AWS pending)
+TODO PROJECT:       ████████████ 100% (full pipeline CRUD → JWT → Redis → Docker → K8s → AWS)
 DSA (LC easy-med):  ██████░░░░░░  50% (Phase 1 ongoing — separate track)
 BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = fix)
 JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
 KONOVO EVIDENCE:    ████████████ 100% (gold)
 
-OVERALL JP-READY:   █████████░░░  84%+ (K8s done, HLD followup still pending)
+OVERALL JP-READY:   ██████████░░  87%+ (project pipeline complete, HLD followup pending)
 ```
 
 ---
@@ -256,19 +256,31 @@ OVERALL JP-READY:   █████████░░░  84%+ (K8s done, HLD fo
 # PROJECT EXTENSION PATH (NEED-BASED)
 
 ```
-TODO App = CRUD + JWT + Redis + Docker + K8s WORKING (Day 19 milestone)
+TODO App = FULL PIPELINE DONE (Day 20 milestone)
 
-Remaining path:
+Path complete:
    CRUD Base       (Day 15)
    JWT Auth        (Day 16)
    Redis caching   (Day 17)
    Docker stack    (Day 18)
-   K8s local       (Day 19) aaj
-   
-   1. AWS    (cloud deploy — EKS + RDS + ElastiCache)
-              = PRIMARY NEW LEARNING, last step
+   K8s local       (Day 19)
+   AWS EC2 deploy  (Day 20) aaj
 
-Bangalore tak (24 din): comfortable margin
+Bangalore tak (23 din): comfortable margin
+
+AWS DAY 20 — KEY LEARNINGS:
+   • Free tier reality: marketing taste, not production
+   • EC2 t3.micro = 1 GB RAM + 2 vCPU BURSTABLE
+   • Burstable CPU credits: idle accumulate, busy burn, 0 = throttled
+   • SSH key Windows permissions (icacls fix)
+   • Docker + Compose install on Amazon Linux 2023
+   • Docker Hub push/pull for image distribution
+   • Nano paste gotcha (auto-indent + YAML conflict)
+   • CPU starvation diagnosis (HikariPool "thread starvation" log)
+   • OOM vs CPU starvation distinction (free -h proves)
+   • Production: t3.medium+ or RDS/ElastiCache offload
+   • Budget alert + GPay autopay cancel (cost discipline)
+   • Cleanup discipline: terminate, verify $0 billing
 
 K8S DAY 19 — KEY LEARNINGS:
    • kind = lightweight local K8s (cluster inside Docker container)
