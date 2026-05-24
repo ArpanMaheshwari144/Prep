@@ -307,6 +307,22 @@ HLD GAP DISCOVERED (Day 18, claude.ai cross-validation):
    • Fix in viraam phase (post-AWS)
 
 
+HLD ADDITIONS PLANNED (post-AWS, Saturday slots):
+   1. 15_url_browser_journey.md — "Type amazon.com → kya hota?"
+      = Classic interview question (JP, GS, FAANG all ask)
+      = DNS → TCP → TLS → HTTP → CDN → server → response
+   
+   2. 16_aws_services_catalog.md — AWS service breadth
+      = High-level "kya karta" for: Route 53, S3, CloudFront,
+        ElastiCache, RDS, Lambda, IAM, VPC, CloudWatch, etc.
+      = Service knowledge breadth (not deep config)
+      = ~15 core services, 1-2 line each
+   
+   3. 4 systems follow-up depth polish (URL, Rate limit, Twitter, Notification)
+      = 1 Saturday per system
+      = Rate limiting + scale + idempotency + DLQ articulation
+
+
 DOCKER DAY 18 — KEY LEARNINGS:
    • Dockerfile (JRE-only base, COPY jar, ENTRYPOINT pattern)
    • docker-compose.yml — 3-service orchestration (app + mysql + redis)
