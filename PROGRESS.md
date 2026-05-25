@@ -1,10 +1,10 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-23 (Day 20 — TODO App deployed on AWS EC2 + production lesson learned)
-> **Bangalore arrival:** June 15, 2026 (~23 days)
+> **Last updated:** 2026-05-25 (Day 21 — AWS revision reference + DSA Phase 1 intuition started)
+> **Bangalore arrival:** June 15, 2026 (~21 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
-> **JP-ready:** 87%+ (project pipeline 100% complete, HLD followup still pending)
+> **JP-ready:** 87%+ (project pipeline 100% complete, HLD followup + DSA Phase 1 ongoing)
 
 ---
 
@@ -227,28 +227,31 @@ REFUSED:
 
 ```
 DSA Phase 1 INTUITION
+   Folder: C:\DSA_PRACTICE\08_DSA\PHASE1_INTUITION\
    Pace: 1 pattern/week
    Target June 15: 8-9 array/string patterns
+   Difficulty cap: Easy + Medium ONLY (JP/GS/BR = NOT FAANG, no Hard)
+   Phase 1 = intuition + dry runs (no code yet, no LeetCode till Bangalore)
 ```
 
 ---
 
-# JP MORGAN READINESS — 87%+ (Day 20)
+# JP MORGAN READINESS — 87%+ (Day 21)
 
 ```
 TECH FOUNDATION:    ████████████ 100%
-SYSTEM DESIGN:      ███████░░░░░  60% (diagrams done, follow-up Q&A gap)
+SYSTEM DESIGN:      ███████░░░░░  60% (4 diagrams done, follow-up Q&A + 2 new files pending)
 JAVA INTERNALS:     ████████████ 100%
 SPRING:             ████████████ 100%
 HIBERNATE:          ████████████ 100%
-INFRA + COMPARES:   ████████████ 100% (bonus)
+INFRA + COMPARES:   ████████████ 100% (Docker + K8s + AWS revision refs done)
 TODO PROJECT:       ████████████ 100% (full pipeline CRUD → JWT → Redis → Docker → K8s → AWS)
-DSA (LC easy-med):  ██████░░░░░░  50% (Phase 1 ongoing — separate track)
+DSA (LC easy-med):  ██████░░░░░░  50% (Phase 1 INTUITION ongoing — Arrays foundation done Day 21)
 BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = fix)
 JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
 KONOVO EVIDENCE:    ████████████ 100% (gold)
 
-OVERALL JP-READY:   ██████████░░  87%+ (project pipeline complete, HLD followup pending)
+OVERALL JP-READY:   ██████████░░  87%+ (project pipeline complete, HLD followup + DSA Phase 1 ongoing)
 ```
 
 ---
@@ -340,6 +343,37 @@ REDIS DAY 17 — KEY LEARNINGS:
    • Hidden Windows native Redis = port conflict trap (debugged + removed)
    • Observability-first lesson learned (debug logs upfront, not after fail)
 ```
+
+
+DAY 21 — REVISION DOCS + DSA PHASE 1 START:
+
+```
+AWS REVISION REFERENCE (commands.md) saved + pushed:
+   • Path: 05_INFRA_DEEP/AWS/commands.md
+   • What/Why AWS + origin story (Pinkham/Black/Jassy)
+   • 6 categories: Compute, Storage, Database, Network, Security, Monitoring
+   • Free tier reality (taste test, not production)
+   • Account safety (6 layers: budget, dashboard, region, IAM, MFA, delete)
+   • EC2 launch flow (UI walkthrough + post-launch locked/changeable)
+   • Day 20 deployment recap (push image → SSH → install → compose → fail diagnosis)
+   • HikariCP clarification (messenger + JDBC pool manager)
+   • AWS CLI commands (EC2, S3, IAM, billing)
+   • FinOps cost discipline (8 rules)
+
+DSA PHASE 1 INTUITION START (08_DSA folder):
+   • Path: C:\DSA_PRACTICE\08_DSA\PHASE1_INTUITION\01_ARRAYS\
+   • 01_intuition.md created — Arrays foundation from scratch
+   • 13 concepts covered:
+       Fundamentals (1-7): boxes + index, direct access, memory layout,
+                            fixed size, insert/delete cost, search, personality
+       Iteration + operations (8-13): iteration, max, sum, reverse (two pointer),
+                                       count, check sorted (neighbor compare)
+   • Spatial-form analogies throughout (boxes, hands, bucket, champion, do hath)
+   • No code yet — pure intuition + dry runs
+   • DSA teaching pattern locked in memory (one concept + samjha gate + dry run)
+   • Difficulty cap LOCKED: Easy + Medium only (JP/GS/BR ≠ FAANG)
+```
+
 
 # DSA — SEPARATE TRACK
 
@@ -435,10 +469,10 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 # BANGALORE COUNTDOWN
 
 ```
-   Aaj:      19 May 2026 (Tuesday)
+   Aaj:      25 May 2026 (Monday)
    Target:   15 June 2026
    ────────────────────────────
-   Days:     27 baki
+   Days:     21 baki
 ```
 
 ---
@@ -465,10 +499,10 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 ```
 ┌────────────────────────────────────────────────────┐
 │                                                      │
-│    AAJ (18 May 2026)                                 │
+│    AAJ (25 May 2026)                                 │
 │    Konovo, 12 LPA, PREP MODE                         │
 │           │                                          │
-│           │  28 din — TODO + revision + DSA          │
+│           │  21 din — HLD polish + DSA Phase 1       │
 │           ▼                                          │
 │    15 JUNE — Bangalore landing                       │
 │           │                                          │
