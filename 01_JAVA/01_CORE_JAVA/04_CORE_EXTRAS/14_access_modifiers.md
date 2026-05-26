@@ -37,10 +37,10 @@ Rule: MOST RESTRICTIVE possible. private pehle, zarurat pe badhao.
 
 | Modifier | Same Class | Same Package | Subclass (alag pkg) | Anywhere |
 |----------|------------|--------------|---------------------|----------|
-| `private` | | | | |
-| `default` | | | | |
-| `protected` | | | | |
-| `public` | | | | |
+| `private` | Yes | No | No | No |
+| `default` | Yes | Yes | No | No |
+| `protected` | Yes | Yes | Yes | No |
+| `public` | Yes | Yes | Yes | Yes |
 
 ---
 
