@@ -196,8 +196,22 @@ public class SecurityConfig {
                 headers.frameOptions(frame -> frame.disable())
             )
 
-            // JwtFilter UPAF se PEHLE chalao
-            //    SecurityContext jaldi set ho jaye
+            // JwtFilter ko UPAF se PEHLE chain mein
+            //
+            // JWT app mein request aaya — kaun verify kare?
+            //    JwtFilter (naya, JWT-aware)  vs  UPAF (Spring default, form-based)
+            //
+            // Order matters:
+            //
+            //    PEHLE JwtFilter chala:
+            //       Header se token nikala → valid? → SecurityContext mein authentication SET
+            //       → UPAF aaya, dekha "ho gaya" → skip → controller
+            //
+            //    PEHLE UPAF chala hota (galat):
+            //       Form mein username/password chahta → JWT app mein form hota nahi
+            //       → reject 401 → JwtFilter ko mauka hi nahi
+            //
+            // = JWT setup mein JwtFilter MUST be before UPAF.
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
