@@ -377,17 +377,171 @@ KEY INTUITION:
 - Early exit: jaise hi violation = stop (efficient)
 
 
+## 14. MIN FIND — WEAKEST TRACK (MIRROR OF MAX)
+
+```
+Array:    ┌───┬───┬───┬───┬───┐
+         │ 30│ 10│ 50│ 20│ 40│
+         └───┴───┴───┴───┴───┘
+```
+
+LOGIC (mirror of max):
+- min = pehla element
+- Iterate har box pe
+- Current < min? → min update
+- End mein min = answer
+
+```
+DRY RUN:
+   i=0: min=30
+   i=1: 10 < 30?   haan, min=10
+   i=2: 50 < 10?   nahi
+   i=3: 20 < 10?   nahi
+   i=4: 40 < 10?   nahi
+   END: min = 10   ✓
+```
+
+KEY INTUITION:
+- MAX = champion track (bigger replaces)
+- MIN = weakest track (smaller replaces)
+- Same shape, opposite comparison
+
+
+## 15. MOVE ZEROS TO END — SAME-DIRECTION TWO POINTER
+
+Goal: 0s ko end mein push, non-zeros ka order preserve.
+
+```
+Original:  ┌───┬───┬───┬───┬───┐
+          │ 0 │ 1 │ 0 │ 3 │ 12│
+          └───┴───┴───┴───┴───┘
+Want:      ┌───┬───┬───┬───┬───┐
+          │ 1 │ 3 │ 12│ 0 │ 0 │
+          └───┴───┴───┴───┴───┘
+```
+
+LOGIC — DONO POINTER LEFT SE START (new flavor):
+- SLOW: next non-zero kahaan rakhna
+- FAST: scan karta — non-zero dhundta
+- FAST ko 0 mile → skip, aage badh
+- FAST ko non-zero mile → SLOW se swap → slow aage badh
+- FAST hamesha aage badhta
+
+```
+DRY RUN:
+
+   start: slow=0, fast=0
+            ┌───┬───┬───┬───┬───┐
+            │ 0 │ 1 │ 0 │ 3 │ 12│
+            └───┴───┴───┴───┴───┘
+              S/F
+
+   fast=0: 0 → skip, fast++
+            ┌───┬───┬───┬───┬───┐
+            │ 0 │ 1 │ 0 │ 3 │ 12│
+            └───┴───┴───┴───┴───┘
+              S   F
+
+   fast=1: 1 → swap with slow, slow++, fast++
+            ┌───┬───┬───┬───┬───┐
+            │ 1 │ 0 │ 0 │ 3 │ 12│
+            └───┴───┴───┴───┴───┘
+                   S   F
+
+   fast=2: 0 → skip, fast++
+   fast=3: 3 → swap with slow, slow++, fast++
+            ┌───┬───┬───┬───┬───┐
+            │ 1 │ 3 │ 0 │ 0 │ 12│
+            └───┴───┴───┴───┴───┘
+                        S      F
+
+   fast=4: 12 → swap with slow, slow++, fast++
+            ┌───┬───┬───┬───┬───┐
+            │ 1 │ 3 │ 12│ 0 │ 0 │
+            └───┴───┴───┴───┴───┘
+                              S/F+1
+
+   END: [1, 3, 12, 0, 0]   ✓
+```
+
+KEY INTUITION (NEW TWO-POINTER FLAVOR):
+
+REVERSE (opposite direction):
+- Left + right meeting in middle
+- Swap karke andar badhte
+
+MOVE ZEROS (same direction):
+- Dono left se start
+- Different SPEED — fast scans, slow places
+- Fast hamesha aage, slow sirf jab non-zero mile
+
+= Same TOOL (two pointer), alag FLAVOR
+= "Slow + Fast" pattern bahut places mein use
+
+
+## 16. SECOND LARGEST — TWO CHAMPIONS (GOLD + SILVER)
+
+```
+Array:    ┌───┬───┬───┬───┬───┐
+         │ 10│ 50│ 20│ 80│ 40│
+         └───┴───┴───┴───┴───┘
+```
+
+LOGIC — Track 2 medals:
+- max1 = -inf (gold)
+- max2 = -inf (silver)
+- Current > max1?
+  - max2 = max1 (gold demote to silver)
+  - max1 = current (new gold)
+- Else current > max2 AND != max1?
+  - max2 = current
+
+```
+DRY RUN:
+   max1 = -inf, max2 = -inf
+
+   i=0: 10 > -inf?  haan
+        max2 = -inf, max1 = 10
+
+   i=1: 50 > 10?    haan
+        max2 = 10, max1 = 50
+
+   i=2: 20 > 50?    nahi
+        20 > 10?    haan
+        max2 = 20
+
+   i=3: 80 > 50?    haan
+        max2 = 50, max1 = 80
+
+   i=4: 40 > 80?    nahi
+        40 > 50?    nahi
+
+   END: second largest = 50   ✓
+```
+
+KEY INTUITION:
+- Single MAX = 1 variable (1 medal)
+- SECOND MAX = 2 variables (gold + silver)
+- Naya gold aaye = purana gold ko silver mein demote
+- Promotion ladder logic
+= Top-K pattern ka base (k=N generalize)
+
+
 ## SHAPE INSIGHT — ALL OPERATIONS SAME SKELETON
 
 ```
 Iterate + "har step pe kya kaam":
 
-   Max          → champion track     (compare + update)
-   Sum          → bucket fill         (add)
-   Count        → counter increment   (++ if match)
-   Search       → return on match     (== check + exit)
-   Reverse      → two pointer swap    (swap + move both)
-   Check sorted → neighbor compare    (array[i] vs array[i-1])
+   Max            → champion track       (compare + update)
+   Min            → weakest track         (compare + update, flip)
+   Sum            → bucket fill           (add)
+   Count          → counter increment     (++ if match)
+   Search         → return on match       (== check + exit)
+   Reverse        → 2-pointer opposite    (swap + move both inward)
+   Move zeros     → 2-pointer same dir    (slow places, fast scans)
+   Second largest → 2-tracker promote     (gold/silver demote ladder)
+   Check sorted   → neighbor compare      (array[i] vs array[i-1])
 
 = Bunyad fix (iteration), kaam variable
+= Two-pointer 2 flavors: opposite (meeting) + same-direction (slow/fast)
 ```
