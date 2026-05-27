@@ -1,10 +1,10 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-25 (Day 21 — AWS revision reference + DSA Phase 1 intuition started)
-> **Bangalore arrival:** June 15, 2026 (~21 days)
+> **Last updated:** 2026-05-27 (Day 22 — Two Pointer pattern intuition + full Java/Spring revision validated)
+> **Bangalore arrival:** June 15, 2026 (~19 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
-> **JP-ready:** 87%+ (project pipeline 100% complete, HLD followup + DSA Phase 1 ongoing)
+> **JP-ready:** 88%+ (foundation revision smooth, DSA Two Pointer locked, HLD followup pending)
 
 ---
 
@@ -228,10 +228,34 @@ REFUSED:
 ```
 DSA Phase 1 INTUITION
    Folder: C:\DSA_PRACTICE\08_DSA\PHASE1_INTUITION\
-   Pace: 1 pattern/week
-   Target June 15: 8-9 array/string patterns
+   Pace: 1 pattern / 3-4 days (validated by web research)
    Difficulty cap: Easy + Medium ONLY (JP/GS/BR = NOT FAANG, no Hard)
    Phase 1 = intuition + dry runs (no code yet, no LeetCode till Bangalore)
+
+   TIER 1 — MUST-HAVE (web-validated):
+   1. Two Pointer            DONE (Day 22)
+   2. Sliding Window         pending
+   3. Hashing / HashMap      pending
+   4. Prefix Sum             pending
+   5. Sorting + Binary Search pending
+   6. Kadane's (Max Subarray) pending
+   7. String basics (palindrome, reversal) pending
+
+   TIER 2 (Phase 2, Bangalore baad):
+   8. Linked List patterns
+   9. Binary Tree traversals (DFS/BFS)
+   10. BST operations (CRITICAL for BlackRock)
+   11. Recursion + Backtracking
+   12. 1D DP (coin change — confirmed JP question)
+   13. Graph BFS/DFS (clone — confirmed JP question)
+
+   TIER 3 (SKIP for JP/GS/BR primary):
+   - Hard DP, Advanced graphs, Segment trees, Heavy backtracking
+
+REVISION HABIT (locked Day 22):
+   - Daily 1 hr fixed slot (morning recommended)
+   - Random micro-reads anytime/anywhere (git portable)
+   - NOT block-phase — lifestyle, continuous
 ```
 
 ---
@@ -375,6 +399,53 @@ DSA PHASE 1 INTUITION START (08_DSA folder):
 ```
 
 
+DAY 22 — TWO POINTER PATTERN + FULL JAVA/SPRING REVISION:
+
+```
+DSA — TWO POINTER PATTERN (formal pattern #1):
+   • Path: C:\DSA_PRACTICE\08_DSA\PHASE1_INTUITION\02_TWO_POINTER\
+   • 01_intuition.md — pattern formal introduction
+   • Pattern definition + 2 flavors (opposite + same direction)
+   • 5 recognition signals + anti-signals
+   • 5 classic dry runs:
+       - Sorted Pair Sum (opposite, sum comparison)
+       - Remove Duplicates Sorted (same direction, slow places)
+       - Palindrome Check (opposite, symmetry)
+       - Container with Most Water (opposite, greedy move shorter)
+       - 3-Sum (extension — outer loop + two pointer)
+   • Web-validated: 3-Sum is REAL JP Morgan interview question
+   • Folder structure: per-pattern (scales for Sliding Window, Prefix Sum, etc.)
+
+JAVA + SPRING FULL REVISION (solo, "easy peasy"):
+   • Core Java + Collections + Java 8 + Multithreading + SOLID — all smooth
+   • @Transactional (essence: ALL-or-NOTHING DB wrapper)
+   • JWT + Spring Security full pass
+   • Gaps found + fixed inline:
+       - access_modifiers.md table empty → populated Yes/No
+       - SecurityConfig addFilterBefore comment → expanded with order story
+   • Retention property VALIDATED in production:
+       "Once notes done, never forget" = PROVEN today
+   • EAT SLEEP PADHAI REPEAT identity confirmed
+
+DSA SCOPE VALIDATED (web research):
+   • JP Morgan: easy-medium, 3-Sum confirmed real, graph clone, coin change
+   • Goldman Sachs: 63% medium, 13% hard, math + finance flavor
+   • BlackRock: trees heavy (BST priority for Phase 2)
+   • All non-FAANG = Tier 3 (Hard DP, advanced graphs) = SKIP
+
+REVISION HABIT LOCKED (lifelong):
+   • Daily 1 hr fixed slot
+   • Random micro-reads anywhere/anytime (git portable)
+   • Not block-phase — lifestyle continuous
+
+LOCKED MEMORY (Day 22):
+   • REVISION = LIFESTYLE, NOT BLOCK
+   • DSA TIER 1: 7 patterns (must-have for JP)
+   • DSA TIER 2: 6 patterns (Phase 2 post-Bangalore)
+   • DSA TIER 3: SKIP (FAANG-only stuff)
+```
+
+
 # DSA — SEPARATE TRACK
 
 ```
@@ -469,10 +540,10 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 # BANGALORE COUNTDOWN
 
 ```
-   Aaj:      25 May 2026 (Monday)
+   Aaj:      27 May 2026 (Wednesday)
    Target:   15 June 2026
    ────────────────────────────
-   Days:     21 baki
+   Days:     19 baki
 ```
 
 ---
@@ -499,10 +570,10 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 ```
 ┌────────────────────────────────────────────────────┐
 │                                                      │
-│    AAJ (25 May 2026)                                 │
+│    AAJ (27 May 2026)                                 │
 │    Konovo, 12 LPA, PREP MODE                         │
 │           │                                          │
-│           │  21 din — HLD polish + DSA Phase 1       │
+│           │  19 din — HLD polish + DSA Phase 1       │
 │           ▼                                          │
 │    15 JUNE — Bangalore landing                       │
 │           │                                          │
