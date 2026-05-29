@@ -351,6 +351,16 @@ HLD ADDITIONS PLANNED (post-AWS, Saturday slots):
       = 1 Saturday per system
       = Rate limiting + scale + idempotency + DLQ articulation
 
+   4. STOCK BROKER / TRADING PLATFORM (NEW — HIGH PRIORITY for JP/GS)
+      = Finance interview GOLD — JP pattern confirmed (trading/price-feed/ledger)
+      = Real-time price feed (WebSocket, market data fan-out)
+      = Order placement + matching engine
+      = Ledger (ACID, double-entry, audit trail — Arpan's terms)
+      = Idempotency (duplicate order dedup — Arpan's strong point)
+      = Consistency > availability (paisa = no eventual consistency)
+      = Natural bridge from Konovo fraud-detection domain
+      = Tentative: Saturday shaam HLD slot candidate
+
 
 DOCKER DAY 18 — KEY LEARNINGS:
    • Dockerfile (JRE-only base, COPY jar, ENTRYPOINT pattern)
