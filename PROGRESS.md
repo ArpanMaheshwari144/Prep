@@ -1,10 +1,10 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-27 (Day 22 — Two Pointer pattern intuition + full Java/Spring revision validated)
-> **Bangalore arrival:** June 15, 2026 (~19 days)
+> **Last updated:** 2026-05-29 (Day 24 — Hashing pattern intuition, 5 classics)
+> **Bangalore arrival:** June 15, 2026 (~17 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
-> **JP-ready:** 88%+ (foundation revision smooth, DSA Two Pointer locked, HLD followup pending)
+> **JP-ready:** 89%+ (foundation revision smooth, DSA 4 patterns locked, HLD followup pending)
 
 ---
 
@@ -76,7 +76,7 @@ EXPECTED COMP (4yr Associate Bangalore):
                                      └────────▲────────┘
                                               │
                                      ┌────────┴────────┐
-                                     │  JP MORGAN    │  PRIMARY (28 din)
+                                     │  JP MORGAN    │  PRIMARY (17 din)
                                      │  Associate       │  ₹26-33L
                                      │  Bangalore       │
                                      └────────▲────────┘
@@ -94,7 +94,7 @@ EXPECTED COMP (4yr Associate Bangalore):
                                      └─────────────────┘
                                               ↑
                                             HUM YAHAN
-                                            (18 May 2026)
+                                            (29 May 2026)
 ```
 
 ```
@@ -234,12 +234,14 @@ DSA Phase 1 INTUITION
 
    TIER 1 — MUST-HAVE (web-validated):
    1. Two Pointer            DONE (Day 22)
-   2. Sliding Window         pending
-   3. Hashing / HashMap      pending
-   4. Prefix Sum             pending
+   2. Sliding Window         DONE (Day 23)
+   3. Hashing / HashMap      DONE (Day 24)
+   4. Prefix Sum             pending  (← next; Hashing Subarray-Sum already bridged)
    5. Sorting + Binary Search pending
    6. Kadane's (Max Subarray) pending
    7. String basics (palindrome, reversal) pending
+
+   → 4 / 8-9 patterns done. ~half-way. Pace healthy (1 pattern / 1-3 din).
 
    TIER 2 (Phase 2, Bangalore baad):
    8. Linked List patterns
@@ -260,7 +262,7 @@ REVISION HABIT (locked Day 22):
 
 ---
 
-# JP MORGAN READINESS — 87%+ (Day 21)
+# JP MORGAN READINESS — 89%+ (Day 24)
 
 ```
 TECH FOUNDATION:    ████████████ 100%
@@ -270,12 +272,12 @@ SPRING:             ████████████ 100%
 HIBERNATE:          ████████████ 100%
 INFRA + COMPARES:   ████████████ 100% (Docker + K8s + AWS revision refs done)
 TODO PROJECT:       ████████████ 100% (full pipeline CRUD → JWT → Redis → Docker → K8s → AWS)
-DSA (LC easy-med):  ██████░░░░░░  50% (Phase 1 INTUITION ongoing — Arrays foundation done Day 21)
+DSA (LC easy-med):  ███████░░░░░  60% (Phase 1 — 4 patterns: Arrays/TwoPtr/SlidingWin/Hashing)
 BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = fix)
 JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
 KONOVO EVIDENCE:    ████████████ 100% (gold)
 
-OVERALL JP-READY:   ██████████░░  87%+ (project pipeline complete, HLD followup + DSA Phase 1 ongoing)
+OVERALL JP-READY:   ██████████░░  89%+ (project pipeline complete, HLD followup + DSA Phase 1 ongoing)
 ```
 
 ---
@@ -446,6 +448,43 @@ LOCKED MEMORY (Day 22):
 ```
 
 
+DAY 23 — SLIDING WINDOW PATTERN (formal pattern #2):
+
+```
+DSA — SLIDING WINDOW PATTERN:
+   • Path: C:\DSA_PRACTICE\08_DSA\PHASE1_INTUITION\03_SLIDING_WINDOW\
+   • 01_intuition.md — pattern formal introduction
+   • Definition: window maintain karo, slide left→right, property track
+   • 2 flavors:
+       - FIXED SIZE (size k always) — max sum of k, anagram check
+       - VARIABLE SIZE (expand/shrink) — longest substring no-repeat
+   • 5 classic dry runs (spatial box + window-bracket diagrams)
+   • Core intuition: nested O(n²) → single-pass O(n) via window reuse
+   • "Subarray / substring" keyword = primary signal
+```
+
+
+DAY 24 — HASHING PATTERN (formal pattern #3):
+
+```
+DSA — HASHING (HashMap / HashSet) PATTERN:
+   • Path: C:\DSA_PRACTICE\08_DSA\PHASE1_INTUITION\04_HASHING\
+   • 01_intuition.md — pattern formal introduction
+   • O(1) magic: key → hash → index (array direct-access power, any key)
+   • 2 forms: HashMap (key→data) vs HashSet (membership only)
+   • 5 recognition signals + anti-signals (sorted→TwoPtr, contiguous→Window)
+   • 5 classic dry runs:
+       - Two Sum unsorted     → complement check (HashMap)
+       - First non-repeating  → frequency 2-pass (HashMap)
+       - Group Anagrams       → sorted-key → list grouping (HashMap)
+       - Subarray Sum = K     → running sum + "seen before" (HashMap)
+       - Longest Consecutive  → START-filter (num-1 absent) — O(n) HashSet
+   • TRAP box + power phrases included
+   • Confusion point cracked solo: "START = chain ka sabse chhota" — internalized
+   • Subarray-Sum-K = direct bridge to next pattern (Prefix Sum)
+```
+
+
 # DSA — SEPARATE TRACK
 
 ```
@@ -540,10 +579,10 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 # BANGALORE COUNTDOWN
 
 ```
-   Aaj:      27 May 2026 (Wednesday)
+   Aaj:      29 May 2026 (Friday)
    Target:   15 June 2026
    ────────────────────────────
-   Days:     19 baki
+   Days:     17 baki
 ```
 
 ---
@@ -552,11 +591,11 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 
 ```
    Foundation = ROCK SOLID
-   TODO App base = WORKING
+   TODO App = FULL PIPELINE DONE
    JP Morgan = PRIMARY TARGET (locked)
-   80% JP-ready (28 din mein 95%+)
-   DSA Phase 1 = continuous
-   JWT implementation = kal subah
+   89% JP-ready (HLD followup + DSA = remaining)
+   DSA Phase 1 = 4 patterns done, continuous
+   Active scope = DSA + HLD + Revision (roz)
    Apply mode = 15 June onwards
    
    = "Effort 100% mera. Outcome universe ka."
@@ -570,10 +609,10 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 ```
 ┌────────────────────────────────────────────────────┐
 │                                                      │
-│    AAJ (27 May 2026)                                 │
+│    AAJ (29 May 2026)                                 │
 │    Konovo, 12 LPA, PREP MODE                         │
 │           │                                          │
-│           │  19 din — HLD polish + DSA Phase 1       │
+│           │  17 din — HLD polish + DSA Phase 1       │
 │           ▼                                          │
 │    15 JUNE — Bangalore landing                       │
 │           │                                          │
