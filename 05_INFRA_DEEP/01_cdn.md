@@ -2,11 +2,11 @@
 
 ---
 
-## 1️⃣ Problem (1 line)
+## 1 Problem (1 line)
 
 ```
    USER (India)                    SERVER (USA)
-                                    
+
         │                                │
         │   "netflix.com chahiye"        │
         │ ─────────────────────────────►│
@@ -23,16 +23,16 @@
 
 ---
 
-## 2️⃣ Pizza Analogy 
+## 2 Pizza Analogy
 
 ```
 WITHOUT CDN:
    Pizza Hut headquarters (USA) — sirf 1 kitchen
-   India se order → 30 ghante delivery 
+   India se order → 30 ghante delivery
 
 WITH CDN:
    Pizza Hut har city mein BRANCH
-   Apne city ke branch se order → 30 min 
+   Apne city ke branch se order → 30 min
 
 = Same content, closer to user
 = Faster delivery
@@ -41,11 +41,11 @@ WITH CDN:
 
 ---
 
-## 3️⃣ Architecture
+## 3 Architecture
 
 ```
                     ORIGIN SERVER (USA)
-                          
+
                           │
               ┌───────────┼───────────┐
               ▼           ▼           ▼
@@ -55,42 +55,42 @@ WITH CDN:
             ▼             ▼             ▼
         USER India     USER UK       USER Japan
         (latency 50ms) (40ms)        (60ms)
-        
+
    = User → NEAREST edge server
    = Origin sirf jab edge ke paas nahi ho
 ```
 
 ---
 
-## 4️⃣ Cache Hit vs Cache Miss
+## 4 Cache Hit vs Cache Miss
 
 ```
-SCENARIO A: CACHE HIT 
+SCENARIO A: CACHE HIT
    User → Mumbai Edge: "Logo.png chahiye"
    Mumbai Edge: "Mere paas hai!"
-   → 20ms response 
-   
+   → 20ms response
+
    = Origin ko bother nahi kiya
    = FAST
 ```
 
 ```
-SCENARIO B: CACHE MISS 
+SCENARIO B: CACHE MISS
    User → Mumbai Edge: "NewMovie.mp4 chahiye"
    Mumbai Edge: "Mere paas nahi hai"
    Mumbai Edge → Origin (USA): "Bhej do"
    Origin → Mumbai Edge → User
    → 800ms first time
-   
+
    BUT: Mumbai Edge ne YE FILE CACHE KAR LIYA
    Agla user (Mumbai) request kare = 20ms hit
-   
+
    = First user slow, baaki sab fast
 ```
 
 ---
 
-## 5️⃣ Kya Cache Hota Hai?
+## 5 Kya Cache Hota Hai?
 
 ```
 STATIC content (high cache):
@@ -106,21 +106,21 @@ DYNAMIC content (NO cache or short TTL):
    • Real-time prices (stock ticker)
    • Search results (personalized)
    • Cart contents
-   
+
 = STATIC = perfect for CDN
 = DYNAMIC = origin se hi
 ```
 
 ---
 
-## 6️⃣ Cache Invalidation (TRICKY)
+## 6 Cache Invalidation (TRICKY)
 
 ```
 Problem:
    Netflix logo change kiya origin pe
    Lekin Mumbai Edge mein PURANA logo cached
    → User ko purana dikhega
-   
+
    "There are only two hard things in CS:
     cache invalidation and naming things"
 ```
@@ -145,14 +145,14 @@ SOLUTION 3: ACTIVE PURGE
 
 ---
 
-## 7️⃣ Push vs Pull CDN
+## 7 Push vs Pull CDN
 
 ```
 PULL CDN (most common):
    User requests file from edge
    Edge has it? Serve.
    Edge doesn't? Fetch from origin + cache.
-   
+
    = Lazy loading
    = First user pays cost
    = AWS CloudFront default
@@ -160,7 +160,7 @@ PULL CDN (most common):
 PUSH CDN:
    YOU push content to all edges proactively
    Pre-warm cache
-   
+
    = Eager loading
    = High initial bandwidth cost
    = Use for predictable high traffic
@@ -169,7 +169,7 @@ PUSH CDN:
 
 ---
 
-## 8️⃣ Real CDN Providers
+## 8 Real CDN Providers
 
 ```
 ┌────────────┬─────────────────────────────┐
@@ -185,7 +185,7 @@ PUSH CDN:
 
 ---
 
-## 9️⃣ Netflix Open Connect (case study)
+## 9 Netflix Open Connect (case study)
 
 ```
 Netflix didn't use someone else's CDN —
@@ -195,11 +195,11 @@ Open Connect:
    • Netflix servers PHYSICALLY in ISP data centers
    • Direct fiber to ISP
    • Same network = ZERO transit
-   
+
    = Movie loads in 100ms
    = ISP saves bandwidth (no peering cost)
    = Netflix saves money
-   
+
    Win-win architecture
 ```
 
@@ -246,7 +246,7 @@ Open Connect:
 
 ---
 
-## 1️⃣1️⃣ Benefits Summary
+## 11 Benefits Summary
 
 ```
 ┌──────────────────┬─────────────────────────┐
@@ -263,7 +263,7 @@ Open Connect:
 
 ---
 
-## 1️⃣2️⃣ When NOT to use CDN
+## 12 When NOT to use CDN
 
 ```
 Highly dynamic content (user-specific)
@@ -280,12 +280,12 @@ Very low traffic (cost > benefit)
 "CDN is geographically distributed caching.
  Content served from edge nearest to user —
  reduces latency, offloads origin, scales globally.
- 
+
  Static content cached aggressively;
  dynamic content bypasses CDN or uses short TTL.
- 
+
  Cache invalidation via TTL, versioning, or active purge.
- 
+
  Examples: CloudFront, Akamai, Cloudflare;
  Netflix built Open Connect — placed servers
  directly inside ISP data centers."
