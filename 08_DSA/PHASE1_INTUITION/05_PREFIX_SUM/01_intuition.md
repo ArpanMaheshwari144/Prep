@@ -160,6 +160,40 @@ IDEA: left[i] = i se pehle sab ka product; right[i] = i ke baad sab ka product; 
 KEY: prefix concept sum ke alawa PRODUCT pe bhi. Division avoid (zero = crash). Generalize: sum / product / XOR — koi bhi cumulative.
 
 
+## CLASSIC #5: SUBARRAY SUMS DIVISIBLE BY K (prefix + modulo)
+
+```
+   [4, 5, 0, -2, -3]   k=5
+   → kitne contiguous subarrays ka sum k se DIVISIBLE (sum % k == 0)
+```
+
+NAYA IDEA — REMAINDER match:
+```
+   Subarray Sum = K  → "same prefix - k dekha?"
+   Divisible by K    → "same REMAINDER (mod k) dekha?"
+
+   prefix[j]%k == prefix[i]%k
+   → (prefix[j] - prefix[i]) % k == 0
+   → beech ka sum k se divisible
+```
+
+LOGIC: map={0:1}. prefix=0, count=0. Har element: prefix += current; rem = ((prefix%k)+k)%k (negative fix); rem map mein → count += map[rem]; map[rem]++.
+
+```
+   DRY RUN (k=5):  map={0:1} prefix=0 count=0
+   i=0: prefix=4, rem=4 → NAHI → map={0:1, 4:1}
+   i=1: prefix=9, rem=4 → HAAN(1) count=1 → map={0:1, 4:2}   ([5]=5 ✓)
+   i=2: prefix=9, rem=4 → HAAN(2) count=3 → map={0:1, 4:3}
+   i=3: prefix=7, rem=2 → NAHI → map={0:1, 4:3, 2:1}
+   i=4: prefix=4, rem=4 → HAAN(3) count=6 → map={0:1, 4:4, 2:1}
+   count = 7  ✓
+```
+
+KEY: Sum = K → "prefix - k dekha"; Divisible by K → "same remainder dekha". rem same = beech ka divisible (subtract ho jaata). ((prefix%k)+k)%k = negative number ka remainder fix. map = remainder ki frequency.
+
+= Prefix + HashMap ka MODULO-variant: "same group (remainder) = valid pair".
+
+
 ## POWER PHRASES
 
 - "Precompute once, answer many — prefix ka soul."
@@ -167,6 +201,7 @@ KEY: prefix concept sum ke alawa PRODUCT pe bhi. Division avoid (zero = crash). 
 - "Subarray sum = K? Prefix + HashMap. Negative-safe (window fail karta)."
 - "Pivot index = left prefix vs (total - left - current)."
 - "Prefix generalize: sum, product, XOR — koi bhi cumulative property."
+- "Divisible by K? Same remainder = valid pair. ((p%k)+k)%k for negatives."
 
 
 ## TRAP BOX
@@ -187,5 +222,8 @@ KEY: prefix concept sum ke alawa PRODUCT pe bhi. Division avoid (zero = crash). 
 │                                                          │
 │ TRAP 5: Product Except Self mein division use karna      │
 │   → Zero element = crash. left×right (prefix/suffix).    │
+│                                                          │
+│ TRAP 6: Divisible-by-K pe plain prefix%k (negative)      │
+│   → Negative remainder galat. ((prefix%k)+k)%k use karo. │
 └─────────────────────────────────────────────────────────┘
 ```

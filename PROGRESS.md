@@ -1,10 +1,10 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-29 (Day 24 — Hashing pattern intuition, 5 classics)
-> **Bangalore arrival:** June 15, 2026 (~17 days)
+> **Last updated:** 2026-05-30 (Day 25 — Prefix Sum pattern intuition, 5 classics)
+> **Bangalore arrival:** June 15, 2026 (~16 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
-> **JP-ready:** 89%+ (foundation revision smooth, DSA 4 patterns locked, HLD followup pending)
+> **JP-ready:** 90%+ (foundation revision smooth, DSA 5 patterns locked, HLD followup pending)
 
 ---
 
@@ -76,7 +76,7 @@ EXPECTED COMP (4yr Associate Bangalore):
                                      └────────▲────────┘
                                               │
                                      ┌────────┴────────┐
-                                     │  JP MORGAN    │  PRIMARY (17 din)
+                                     │  JP MORGAN    │  PRIMARY (16 din)
                                      │  Associate       │  ₹26-33L
                                      │  Bangalore       │
                                      └────────▲────────┘
@@ -236,12 +236,12 @@ DSA Phase 1 INTUITION
    1. Two Pointer            DONE (Day 22)
    2. Sliding Window         DONE (Day 23)
    3. Hashing / HashMap      DONE (Day 24)
-   4. Prefix Sum             pending  (← next; Hashing Subarray-Sum already bridged)
-   5. Sorting + Binary Search pending
+   4. Prefix Sum             DONE (Day 25)
+   5. Sorting + Binary Search pending  (← next)
    6. Kadane's (Max Subarray) pending
    7. String basics (palindrome, reversal) pending
 
-   → 4 / 8-9 patterns done. ~half-way. Pace healthy (1 pattern / 1-3 din).
+   → 5 / 7-8 patterns done. Tier 1 ~70%. Pace healthy (1 pattern / 1-2 din).
 
    TIER 2 (Phase 2, Bangalore baad):
    8. Linked List patterns
@@ -272,7 +272,7 @@ SPRING:             ████████████ 100%
 HIBERNATE:          ████████████ 100%
 INFRA + COMPARES:   ████████████ 100% (Docker + K8s + AWS revision refs done)
 TODO PROJECT:       ████████████ 100% (full pipeline CRUD → JWT → Redis → Docker → K8s → AWS)
-DSA (LC easy-med):  ███████░░░░░  60% (Phase 1 — 4 patterns: Arrays/TwoPtr/SlidingWin/Hashing)
+DSA (LC easy-med):  ████████░░░░  70% (Phase 1 — 5 patterns: Arrays/TwoPtr/SlidingWin/Hashing/Prefix)
 BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = fix)
 JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
 KONOVO EVIDENCE:    ████████████ 100% (gold)
@@ -495,6 +495,29 @@ DSA — HASHING (HashMap / HashSet) PATTERN:
 ```
 
 
+DAY 25 — PREFIX SUM PATTERN (formal pattern #4):
+
+```
+DSA — PREFIX SUM PATTERN:
+   • Path: C:\DSA_PRACTICE\08_DSA\PHASE1_INTUITION\05_PREFIX_SUM\
+   • 01_intuition.md — pattern formal introduction
+   • Core: precompute running total → range sum O(1)
+   • Formula: sum(i..j) = prefix[j] - prefix[i-1] (bada total - chhota total)
+   • i=0 edge: prefix[-1] = 0
+   • 5 recognition signals + anti-signals (single query→loop, max→Kadane)
+   • 5 classic dry runs:
+       - Range Sum Query      → precompute once, answer many O(1)
+       - Pivot Index          → left prefix vs (total - left - current)
+       - Subarray Sum = K     → prefix + HashMap (negative-safe, window fails)
+       - Product Except Self  → prefix x suffix (sum se aage — product variant)
+       - Subarray Div by K    → prefix + MODULO match (same remainder = pair)
+   • Map-growth confusion cleared: HashMap sirf grow karta, kuch hatta nahi
+   • Pattern overlap mapped: Hashing <-> Prefix (Subarray Sum = K dono mein)
+   • Generalize insight: prefix concept = sum / product / XOR — koi cumulative
+   • TRAP box (5 traps) + power phrases included
+```
+
+
 # DSA — SEPARATE TRACK
 
 ```
@@ -589,10 +612,10 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 # BANGALORE COUNTDOWN
 
 ```
-   Aaj:      29 May 2026 (Friday)
+   Aaj:      30 May 2026 (Saturday)
    Target:   15 June 2026
    ────────────────────────────
-   Days:     17 baki
+   Days:     16 baki
 ```
 
 ---
@@ -603,8 +626,8 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
    Foundation = ROCK SOLID
    TODO App = FULL PIPELINE DONE
    JP Morgan = PRIMARY TARGET (locked)
-   89% JP-ready (HLD followup + DSA = remaining)
-   DSA Phase 1 = 4 patterns done, continuous
+   90% JP-ready (HLD followup + DSA = remaining)
+   DSA Phase 1 = 5 patterns done, continuous
    Active scope = DSA + HLD + Revision (roz)
    Apply mode = 15 June onwards
    
@@ -619,10 +642,10 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 ```
 ┌────────────────────────────────────────────────────┐
 │                                                      │
-│    AAJ (29 May 2026)                                 │
+│    AAJ (30 May 2026)                                 │
 │    Konovo, 12 LPA, PREP MODE                         │
 │           │                                          │
-│           │  17 din — HLD polish + DSA Phase 1       │
+│           │  16 din — HLD polish + DSA Phase 1       │
 │           ▼                                          │
 │    15 JUNE — Bangalore landing                       │
 │           │                                          │
