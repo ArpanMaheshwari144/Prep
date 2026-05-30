@@ -24,14 +24,14 @@
 ```
    IS-A (Abstract Class)          CAN-DO (Interface)
    ─────────────────────          ──────────────────
-   
+
         Animal (abstract)          Swimmable (interface)
        /   |   \                    │
      Dog  Cat  Bird                 │ implements
                                     ▼
    Dog IS-A Animal              Dog        Fish        Duck
    (identity / classification)  Cat        Frog        Penguin
-                                
+
                                 These CAN swim
                                 (capability / behavior)
                                 regardless of identity
@@ -50,12 +50,12 @@ Email, SMS, Push notifications — sab **send** karte but with **shared retry lo
 
 ```java
 public abstract class Notification {
-    
+
     // ─── Shared state ──────────────────
     protected String recipient;
     protected int retryCount = 0;
     protected static final int MAX_RETRIES = 3;
-    
+
     // ─── Shared concrete method ───────
     public final void sendWithRetry(String message) {
         while (retryCount < MAX_RETRIES) {
@@ -69,10 +69,10 @@ public abstract class Notification {
             }
         }
     }
-    
+
     // ─── Subclass MUST implement ──────
     protected abstract void send(String message);
-    
+
     // ─── Shared helper ────────────────
     protected void log(String msg) {
         System.out.println("[" + this.getClass().getSimpleName() + "] " + msg);
@@ -147,7 +147,7 @@ public class WelcomeEmailNotification extends Notification {
                     │                           │
                     ▼                           ▼
             ABSTRACT CLASS                  INTERFACE
-            
+
    Examples:                          Examples:
    • Animal (eat, sleep)              • Comparable (compareTo)
    • Vehicle (start, stop)            • Runnable (run)
@@ -163,7 +163,7 @@ public class WelcomeEmailNotification extends Notification {
 ```java
 public interface Vehicle {
     void start();
-    
+
     // Default method — has implementation
     default void honk() {
         System.out.println("Beep beep!");
@@ -181,7 +181,7 @@ public class Car implements Vehicle {
 ```java
 public interface Calculator {
     int calculate(int a, int b);
-    
+
     static Calculator addition() {
         return (a, b) -> a + b;
     }
@@ -196,7 +196,7 @@ add.calculate(5, 3);   // 8
 public interface Logger {
     default void info(String msg)  { log("INFO", msg); }
     default void error(String msg) { log("ERROR", msg); }
-    
+
     private void log(String level, String msg) {   // private helper
         System.out.println(level + ": " + msg);
     }
@@ -212,7 +212,7 @@ public interface Logger {
 ```java
 public abstract class Animal {
     private String name;
-    
+
     public Animal(String name) {     // Yes!
         this.name = name;
     }

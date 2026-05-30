@@ -2,13 +2,13 @@
 
 ---
 
-## 1️⃣ Problem (Analogy)
+## 1 Problem (Analogy)
 
 ```
    PUBLIC WATER TAP
         │
-   Normal user: 1 bottle bhar ke gaya         
-   Pagal user: 10 trucks le aaya, hours tak   
+   Normal user: 1 bottle bhar ke gaya
+   Pagal user: 10 trucks le aaya, hours tak
                     │
                     ▼
               Saara paani khatam
@@ -24,8 +24,8 @@
 ```
 SAME for APIs:
 
-   Normal user → 2 login attempts → done    
-   Hacker bot → 10K attempts/sec → brute force  
+   Normal user → 2 login attempts → done
+   Hacker bot → 10K attempts/sec → brute force
                   │
                   ▼
             Rate limit:
@@ -34,7 +34,7 @@ SAME for APIs:
 
 ---
 
-## 2️⃣ Real Use Cases
+## 2 Real Use Cases
 
 ```
 ┌─────────────────────────┬──────────────────────────┐
@@ -50,7 +50,7 @@ SAME for APIs:
 
 ---
 
-## 3️⃣ Core Idea — Visual
+## 3 Core Idea — Visual
 
 ```
    USER REQUEST
@@ -72,7 +72,7 @@ SAME for APIs:
 
 ---
 
-## 4️⃣ Where It Sits — 3 Options
+## 4 Where It Sits — 3 Options
 
 ```
 ┌────────────────────┬───────────────────┬─────────────┐
@@ -110,9 +110,9 @@ WHY REDIS (centralized counter):
 
 ---
 
-## 5️⃣ Algorithms — 4 Methods
+## 5 Algorithms — 4 Methods
 
-### Token Bucket 
+### Token Bucket
 
 ```
 Tokens auto-add: 1/sec
@@ -132,7 +132,7 @@ Tokens auto-add: 1/sec
    Bucket empty? → REJECT
 ```
 
-### Leaky Bucket 
+### Leaky Bucket
 
 ```
    Reqs aaye ──→ ┌──────────┐
@@ -146,7 +146,7 @@ Tokens auto-add: 1/sec
    Bucket FULL → overflow → REJECT
 ```
 
-### Fixed Window Counter 
+### Fixed Window Counter
 
 ```
    Time:  10:00───────10:01───────10:02
@@ -157,18 +157,18 @@ Tokens auto-add: 1/sec
 
 **Edge spike problem:**
 ```
-   10:00:59 → 5 reqs 
+   10:00:59 → 5 reqs
    10:01:00 → 5 reqs (new window)
    = 10 reqs in 2 seconds!
 ```
 
-### Sliding Window 
+### Sliding Window
 
 ```
    Time:    │←──── 60 seconds ────→│ NOW
             │                       │
    Reqs:    ▓ ▓ ▓ ▓     ▓     ▓ ▓ ▓
-            
+
    Count last 60 sec = 8
    Limit = 5? → REJECT
 ```
@@ -256,7 +256,7 @@ TIME:  10:00 ──────── 10:30 ──────── 11:00 ─�
 
 ---
 
-## 6️⃣ Architecture — Full Picture
+## 6 Architecture — Full Picture
 
 ```
                   USER
@@ -307,7 +307,7 @@ TIME:  10:00 ──────── 10:30 ──────── 11:00 ─�
 
 ---
 
-## 7️⃣ Request Flow Inside Rate Limiter
+## 7 Request Flow Inside Rate Limiter
 
 ```
 Request: "User X wants /api/login"
@@ -342,7 +342,7 @@ Request: "User X wants /api/login"
 
 ---
 
-## 8️⃣ Redis Keys + Atomic Ops
+## 8 Redis Keys + Atomic Ops
 
 ```
 KEY FORMAT:
@@ -370,7 +370,7 @@ ATOMIC OPERATION (no race):
 
 ---
 
-## 9️⃣ Tiered Limits
+## 9 Tiered Limits
 
 ```
 ┌──────────────┬─────────────────────┐
@@ -443,9 +443,9 @@ ATOMIC OPERATION (no race):
 ```
    USER (arpan_123, home = INDIA)
        │
-       ├── Bangalore   ──► India Edge ──► INDIA region 
-       ├── Berlin      ──► EU Edge    ──► INDIA region 
-       └── US VPN      ──► US Edge    ──► INDIA region 
+       ├── Bangalore   ──► India Edge ──► INDIA region
+       ├── Berlin      ──► EU Edge    ──► INDIA region
+       └── US VPN      ──► US Edge    ──► INDIA region
 
    ALL paths end at INDIA region
    = Local Redis sees full picture
@@ -454,7 +454,7 @@ ATOMIC OPERATION (no race):
 ```
 ROUTING LOGIC:
    hash(user_id) % regions = home_region
-   
+
    hash("arpan_123") % 3 = 0 → INDIA
    hash("john_456") % 3  = 1 → EU
    hash("alex_789") % 3  = 2 → US
@@ -462,7 +462,7 @@ ROUTING LOGIC:
 
 ---
 
-## 1️⃣1️⃣ Layered Defense (Production Reality)
+## 11 Layered Defense (Production Reality)
 
 ```
    USER REQUEST
@@ -507,7 +507,7 @@ Why not block immediately?
 
 ---
 
-## 1️⃣2️⃣ Response Headers
+## 12 Response Headers
 
 ```
 SUCCESS (200 OK):
@@ -524,7 +524,7 @@ REJECTED (429 Too Many Requests):
 
 ---
 
-## 1️⃣3️⃣ Read Flow Line (Memorize)
+## 13 Read Flow Line (Memorize)
 
 ```
 "User request → Route 53 → CloudFront → ALB →

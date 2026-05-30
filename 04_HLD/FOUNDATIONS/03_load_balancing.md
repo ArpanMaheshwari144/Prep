@@ -249,10 +249,10 @@ server {
 ### Network Tracking (Nginx logs)
 
 ```
-192.168.1.5 - - [04/May/2026:10:23:45] 
-"GET /api/users/123 HTTP/1.1" 
-200 1234 
-"https://google.com" 
+192.168.1.5 - - [04/May/2026:10:23:45]
+"GET /api/users/123 HTTP/1.1"
+200 1234
+"https://google.com"
 "Mozilla/5.0..."
 ```
 

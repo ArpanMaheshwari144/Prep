@@ -195,7 +195,7 @@ MICROSERVICES WHEN:
 ```
 COMMON MISTAKE:
    "We'll build microservices from day 1!" (startup)
-   
+
 RESULT:
    • Domain still unknown (wrong service boundaries)
    • Team too small (each service unowned)

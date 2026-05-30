@@ -2,18 +2,18 @@
 
 ---
 
-## 1️⃣ Food Coupon vs Food Delivery Analogy
+## 1 Food Coupon vs Food Delivery Analogy
 
 ```
 FUTURE (food coupon):
    Tu coupon liya restaurant se
    "Tumhare food ka token"
-   
+
    Khaane ke liye:
       Tu khud restaurant jaake counter pe wait kare
       Until food ready
       Sirf TAB tujhe khana milega
-      
+
    = BLOCKING (you wait)
 ```
 
@@ -21,23 +21,23 @@ FUTURE (food coupon):
 COMPLETABLEFUTURE (food delivery app):
    Tu order kiya
    App ne kaha "wait ho jaye toh SMS karunga"
-   
+
    Tu apna kaam karta rahe
    SMS aaya → "Order at door"
    Tu ne lagaya — done
-   
+
    You can:
       Add instructions (extra spicy after step 1)
       Combine with another order
       Cancel
       Handle failure
-   
+
    = NON-BLOCKING + CHAINABLE
 ```
 
 ---
 
-## 2️⃣ Future Limitations
+## 2 Future Limitations
 
 ```java
 Future<String> future = executor.submit(() -> fetch());
@@ -56,7 +56,7 @@ processResult(result);
 
 ---
 
-## 3️⃣ CompletableFuture (Java 8+)
+## 3 CompletableFuture (Java 8+)
 
 ```java
 CompletableFuture<String> cf = CompletableFuture.supplyAsync(
@@ -73,7 +73,7 @@ cf.thenApply(result -> result.toUpperCase())
 
 ---
 
-## 4️⃣ Creating CompletableFuture
+## 4 Creating CompletableFuture
 
 ```java
 // 1. Async with return value
@@ -95,14 +95,14 @@ CompletableFuture.supplyAsync(() -> task(), customPool);
 
 ---
 
-## 5️⃣ Chaining Operations
+## 5 Chaining Operations
 
 ```java
 CompletableFuture.supplyAsync(() -> "Arpan")
     .thenApply(String::toUpperCase)        // transform
     .thenApply(s -> "Hello " + s)           // chain transform
     .thenAccept(System.out::println);       // consume
-                                            
+
 // Output: "Hello ARPAN"
 ```
 
@@ -114,7 +114,7 @@ thenRun()      → just run (Runnable)
 
 ---
 
-## 6️⃣ Visual — Chain Flow
+## 6 Visual — Chain Flow
 
 ```
    supplyAsync(() -> "Arpan")
@@ -134,17 +134,17 @@ thenRun()      → just run (Runnable)
 
 ---
 
-## 7️⃣ Combining Multiple Futures
+## 7 Combining Multiple Futures
 
 ### thenCombine (2 → 1)
 ```java
-CompletableFuture<Integer> price = 
+CompletableFuture<Integer> price =
     CompletableFuture.supplyAsync(() -> fetchPrice());
 
-CompletableFuture<Double> tax = 
+CompletableFuture<Double> tax =
     CompletableFuture.supplyAsync(() -> fetchTax());
 
-CompletableFuture<Double> total = 
+CompletableFuture<Double> total =
     price.thenCombine(tax, (p, t) -> p + (p * t));
 
 total.thenAccept(System.out::println);
@@ -154,7 +154,7 @@ total.thenAccept(System.out::println);
    price ─┐
           ├─→ combine → total
    tax ───┘
-   
+
    Both run in parallel, result merged
 ```
 
@@ -177,7 +177,7 @@ CompletableFuture<Object> first = CompletableFuture.anyOf(
 
 ---
 
-## 8️⃣ Exception Handling
+## 8 Exception Handling
 
 ```java
 CompletableFuture.supplyAsync(() -> {
@@ -204,22 +204,22 @@ cf.handle((result, ex) -> {
 
 ---
 
-## 9️⃣ Real Production Example
+## 9 Real Production Example
 
 ```java
 // Fetch user details from 3 sources in parallel
 
-CompletableFuture<UserBasic> basic = 
+CompletableFuture<UserBasic> basic =
     CompletableFuture.supplyAsync(() -> userService.fetch(id));
 
-CompletableFuture<Orders> orders = 
+CompletableFuture<Orders> orders =
     CompletableFuture.supplyAsync(() -> orderService.fetch(id));
 
-CompletableFuture<Wallet> wallet = 
+CompletableFuture<Wallet> wallet =
     CompletableFuture.supplyAsync(() -> walletService.fetch(id));
 
 // Combine all 3 when ready
-CompletableFuture<UserProfile> profile = 
+CompletableFuture<UserProfile> profile =
     basic.thenCombine(orders, (b, o) -> new UserProfile(b, o))
          .thenCombine(wallet, (p, w) -> p.withWallet(w));
 
@@ -255,13 +255,13 @@ profile.thenAccept(p -> sendResponse(p))
 
 ---
 
-## 1️⃣1️⃣ When to Use Which?
+## 11 When to Use Which?
 
 ```
 FUTURE:
    Simple async with one result
    Legacy code
-   
+
 COMPLETABLEFUTURE:
    Multiple async calls to combine
    Chained transformations

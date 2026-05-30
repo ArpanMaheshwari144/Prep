@@ -21,7 +21,7 @@
 Spring Boot = APPLICATION
    • Kahan chal raha = HOST (laptop pe) ya CONTAINER (Docker)?
    • Yeh decide karta connection URL kaisa hoga
-   
+
 MySQL = DATABASE
    • Kal aur aaj DONO din container mein tha
    • Wo same — bus Spring ki location badli
@@ -132,7 +132,7 @@ SAHI MENTAL MODEL:
    • Spring container = SIRF Java + jar (NO MySQL ever)
    • Each container = isolated world
    • Container ke andar localhost = wo container ka self
-   
+
 Spring container mein MySQL kabhi tha hi nahi.
 Spring container ka localhost = Spring container apna.
 Apne paas MySQL nahi → localhost se connect = connection refused.
@@ -162,11 +162,11 @@ ALAG         → Connection method:
 ```
 1. application-compose.properties     (new profile file)
    → url=mysql:3306 (service name use kara)
-   
+
 2. docker-compose.yml                  (orchestrator)
    → mysql + app dono services define
    → "build: ." Spring ko Dockerfile se image bana
-   
+
 3. Same Dockerfile (kal banayi thi)    (Spring container recipe)
    → Java + jar package
    → ENTRYPOINT to run app

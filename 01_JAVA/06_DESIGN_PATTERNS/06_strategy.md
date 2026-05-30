@@ -77,11 +77,11 @@ public class WalletPayment implements PaymentStrategy {
 // 3. Context — uses strategy
 public class PaymentService {
     private PaymentStrategy strategy;
-    
+
     public void setStrategy(PaymentStrategy s) {
         this.strategy = s;
     }
-    
+
     public void checkout(double amount) {
         strategy.pay(amount);   // delegate to current strategy
     }
@@ -109,7 +109,7 @@ service.checkout(500);
 ```
    CONTEXT                   STRATEGY (interface)         CONCRETE STRATEGIES
    ───────                   ─────────────────────        ───────────────────
-   
+
    PaymentService            PaymentStrategy              ┌──► CardPayment
         │                         │                       │
         │ uses                    │ implements ───────────┼──► UpiPayment
@@ -155,9 +155,9 @@ public PasswordEncoder passwordEncoder() {
 ## SOLID Connection
 
 - **OCP** — Naya strategy add karne mein context unchanged (perfect example)
-- **SRP** — Each strategy ek algorithm ka responsibility 
-- **DIP** — Context interface pe depend, concrete strategies pe nahi 
-- **LSP** — Sab strategies interchangeable 
+- **SRP** — Each strategy ek algorithm ka responsibility
+- **DIP** — Context interface pe depend, concrete strategies pe nahi
+- **LSP** — Sab strategies interchangeable
 
 **4 SOLID principles ek pattern mein** — interview gold.
 
@@ -169,7 +169,7 @@ public PasswordEncoder passwordEncoder() {
 Strategy:
    Client EXPLICITLY swaps strategy
    strategy = new CardPayment();
-   
+
 State:
    State changes INTERNALLY based on logic
    if (count > 10) state = WARNING_STATE;

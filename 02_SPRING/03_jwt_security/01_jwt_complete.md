@@ -12,11 +12,11 @@
 Reception (Login):
    Tu → username + password (ID proof)
    Reception → verify karta + tujhe KEYCARD deta
-  
+
 Tu room ke darwaze pe:
    Keycard tap → darwaza khulta
    Reception ko check nahi karna padta har baar
-  
+
 Keycard mein kya hai?
    Tera naam + room number + checkout date — encoded
    Hotel ki signature (verify ho sake nakli nahi hai)
@@ -43,7 +43,7 @@ Keycard mein kya hai?
 ```
    Login                       Each request
    ─────                       ────────────
-   
+
   User → Server                User → Server
         ↓ verify                     ↓ "Hi I'm sessionId abc123"
         ↓ create session              ↓ Server lookup memory
@@ -83,7 +83,7 @@ Server STATEFUL — sessions stored in memory/DB
 ```
    Login                       Each request
    ─────                       ────────────
-   
+
   User → Server                User → Server
         ↓ verify                     ↓ Header: Bearer eyJ...
         ↓ generate JWT                ↓ Server verifies signature
@@ -440,7 +440,7 @@ signature = HMACSHA256(
 ```
 Original token:
    header.payload.signature
-   
+
 Hacker payload modify kare:
    header.HACKED_payload.signature
                  ↑
@@ -449,7 +449,7 @@ Hacker payload modify kare:
                                                 ↓
    New signature = "xyz123"
    Token mein signature = "abc456" ← original
-   xyz123 ≠ abc456  →  TAMPERING DETECTED 
+   xyz123 ≠ abc456  →  TAMPERING DETECTED
    Token rejected.
 ```
 
@@ -645,7 +645,7 @@ Server: signature + exp se verify. **NO DB hit** — pure stateless.
    CLIENT → POST /auth/logout { refreshToken: "RRRR..." }
    SERVER → refreshTokenRepo.deleteByToken("RRRR")
    CLIENT → localStorage.clear()
-   
+
    Result:
      - Access token: 15 min mein apne aap expire
      - Refresh token: DB mein nahi → next refresh attempt → 401
@@ -731,18 +731,18 @@ HTTP Request
 
 ---
 
-## 1️⃣ `JwtService` — Token generate/parse
+## 1 `JwtService` — Token generate/parse
 
 ```java
 @Service
 public class JwtService {
-    
+
     @Value("${jwt.secret}")
     private String secret;
-    
+
     @Value("${jwt.expiration}")  // 15 min in milliseconds
     private long expiration;
-    
+
     // ─── Generate token ─────────────────────────
     public String generateToken(User user) {
         return Jwts.builder()
@@ -754,7 +754,7 @@ public class JwtService {
             .signWith(SignatureAlgorithm.HS256, secret)
             .compact();
     }
-    
+
     // ─── Extract userId from token ──────────────
     public String extractUserId(String token) {
         return Jwts.parser()
@@ -763,7 +763,7 @@ public class JwtService {
             .getBody()
             .getSubject();
     }
-    
+
     // ─── Validate token ─────────────────────────
     public boolean isValid(String token) {
         try {
@@ -780,53 +780,53 @@ public class JwtService {
 
 ---
 
-## 2️⃣ `JwtFilter` — Per-request token check
+## 2 `JwtFilter` — Per-request token check
 
 ```java
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    
+
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    
+
     public JwtFilter(JwtService jwtService, UserDetailsService uds) {
         this.jwtService = jwtService;
         this.userDetailsService = uds;
     }
-    
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain chain) throws ServletException, IOException {
-        
+
         // 1. Extract token from Authorization header
         String authHeader = request.getHeader("Authorization");
-        
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             chain.doFilter(request, response);   // no token, pass through
             return;
         }
-        
+
         String token = authHeader.substring(7);   // remove "Bearer "
-        
+
         // 2. Validate
         if (!jwtService.isValid(token)) {
             chain.doFilter(request, response);
             return;
         }
-        
+
         // 3. Extract user + load details
         String userId = jwtService.extractUserId(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
-        
+
         // 4. Set SecurityContext (so downstream code knows who's logged in)
         UsernamePasswordAuthenticationToken auth =
             new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities()
             );
         SecurityContextHolder.getContext().setAuthentication(auth);
-        
+
         // 5. Continue filter chain
         chain.doFilter(request, response);
     }
@@ -835,19 +835,19 @@ public class JwtFilter extends OncePerRequestFilter {
 
 ---
 
-## 3️⃣ `SecurityConfig` — Wire it all together
+## 3 `SecurityConfig` — Wire it all together
 
 ```java
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    
+
     private final JwtFilter jwtFilter;
-    
+
     public SecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
-    
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -858,15 +858,15 @@ public class SecurityConfig {
                 .anyRequest().authenticated()                  // baaki sab protected
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        
+
         return http.build();
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
@@ -876,57 +876,57 @@ public class SecurityConfig {
 
 ---
 
-## 4️⃣ `AuthController` — Login + Refresh + Logout
+## 4 `AuthController` — Login + Refresh + Logout
 
 ```java
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    
+
     private final UserRepository userRepo;
     private final RefreshTokenRepository refreshTokenRepo;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
-    
+
     // ─── LOGIN ──────────────────────────────────
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest req) {
         User user = userRepo.findByUsername(req.getUsername())
             .orElseThrow(() -> new RuntimeException("Invalid credentials"));
-        
+
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
-        
+
         String accessToken = jwtService.generateToken(user);
         String refreshTokenStr = UUID.randomUUID().toString();
-        
+
         refreshTokenRepo.save(new RefreshToken(
             refreshTokenStr,
             user.getId(),
             Instant.now().plus(7, ChronoUnit.DAYS)
         ));
-        
+
         return ResponseEntity.ok(new TokenResponse(accessToken, refreshTokenStr));
     }
-    
+
     // ─── REFRESH ────────────────────────────────
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponse> refresh(@RequestBody RefreshRequest req) {
         RefreshToken stored = refreshTokenRepo.findByToken(req.getRefreshToken())
             .orElseThrow(() -> new RuntimeException("Invalid refresh"));
-        
+
         if (stored.getExpiresAt().isBefore(Instant.now())) {
             refreshTokenRepo.delete(stored);
             throw new RuntimeException("Refresh expired, login again");
         }
-        
+
         User user = userRepo.findById(stored.getUserId()).orElseThrow();
         String newAccessToken = jwtService.generateToken(user);
-        
+
         return ResponseEntity.ok(new TokenResponse(newAccessToken, req.getRefreshToken()));
     }
-    
+
     // ─── LOGOUT ─────────────────────────────────
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestBody RefreshRequest req) {
@@ -1020,21 +1020,21 @@ Header: { "alg": "none" }   ← hacker tries
 Trap 1: "JWT encrypted hota hai"
          NAHI — base64 encoded, ANYONE can read payload
          Signature ensures integrity, not confidentiality
-         
+
 Trap 2: "Logout instant invalidate karta"
          NAHI — token stateless, valid till exp
          Use short tokens + refresh + optional blacklist
-         
+
 Trap 3: "Password JWT payload mein store kar du"
          NEVER — payload publicly readable
          Sirf userId + role + non-sensitive claims
-         
+
 Trap 4: "Frontend ko refresh logic likhna padta har component mein"
          NAHI — interceptor 1 jagah likho, automatic
-         
+
 Trap 5: "SECRET code mein hardcode kar du"
          NEVER — environment variable / secrets manager
-         
+
 Trap 6: "Authorization header bina Bearer prefix bhej de"
          Standard convention break — "Bearer <token>" mandatory
 ```
@@ -1088,9 +1088,9 @@ Logout                =  "Refresh token DB delete (access expires by itself)"
                                        ┌──────┴─────┐
                                        │   MySQL    │
                                        └────────────┘
-                                       
+
                         ──── REQUEST FLOW ────
-                                  
+
                     ┌────────────────────────┐
                     │     HTTP Request       │
                     └──────────┬─────────────┘

@@ -62,8 +62,8 @@ null ← [101] ↔ [102] ↔ [103] → null
 
 ```java
 LinkedList<Ticket> ticketQueue = new LinkedList<>();
-ticketQueue.addFirst(urgentTicket);    // O(1) 
-ticketQueue.addLast(normalTicket);     // O(1) 
+ticketQueue.addFirst(urgentTicket);    // O(1)
+ticketQueue.addLast(normalTicket);     // O(1)
 ```
 
 **Use:** queue/stack, frequent beech-insert/delete.

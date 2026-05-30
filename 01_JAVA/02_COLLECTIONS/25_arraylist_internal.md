@@ -73,7 +73,7 @@ Internal Object[] elementData (heap):
 
    size = 3
 
-   list.get(2)  →  index direct access  →  20  →  O(1) 
+   list.get(2)  →  index direct access  →  20  →  O(1)
 
 
 ╔════════════════════════════════════════════════════════════╗

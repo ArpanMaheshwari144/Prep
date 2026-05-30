@@ -188,14 +188,14 @@ Spring Initializr har project mein bundle karta:
 
 ## The Error:
 
-`mvn clean package` → `BUILD SUCCESS` 
+`mvn clean package` → `BUILD SUCCESS`
 `java -jar target/usercrud-0.0.1-SNAPSHOT.jar` → ERROR:
 
 ```
 WARN HHH100046: Could not obtain connection to query JDBC database metadata
 
 org.hibernate.boot.registry.selector.spi.StrategySelectionException:
-   Unable to resolve name [org.hibernate.dialect.MySQL8Dialect] 
+   Unable to resolve name [org.hibernate.dialect.MySQL8Dialect]
    as strategy [org.hibernate.dialect.Dialect]
 ```
 
@@ -206,8 +206,8 @@ Spring Boot 4.0.6 → uses Hibernate 7.2.x
 
 Hibernate dialect timeline:
    Hibernate 5.x   →  org.hibernate.dialect.MySQL8Dialect exists
-   Hibernate 6.x   →  MySQL8Dialect DEPRECATED 
-   Hibernate 7.x   →  MySQL8Dialect REMOVED 
+   Hibernate 6.x   →  MySQL8Dialect DEPRECATED
+   Hibernate 7.x   →  MySQL8Dialect REMOVED
 
 Old guides + StackOverflow → MySQL8Dialect bata rahe (5.x era)
 Tu Spring Boot 4 use kar raha → Hibernate 7 → class hi nahi
@@ -271,7 +271,7 @@ Spring Boot startup begins, console output flows.
 
 ---
 
-# PART 14 — Spring Boot Connection SUCCESS 
+# PART 14 — Spring Boot Connection SUCCESS
 
 ## Real Output Captured:
 
@@ -332,7 +332,7 @@ App started in 8.254 seconds
 MySQL InnoDB default isolation level:
    • Same transaction mein same query → same result (consistent reads)
    • Phantom reads possible
-   
+
 Other levels (lowest → highest isolation):
    READ UNCOMMITTED < READ COMMITTED < REPEATABLE READ < SERIALIZABLE
 
@@ -378,7 +378,7 @@ Content-Type: application/json
        │  │  └─ actual hash
        │  └──── cost factor (10 = 2^10 rounds)
        └─────── BCrypt version
-   
+
    Production-grade security:
    • Plain "test123" NEVER stored
    • Hash one-way (cannot reverse)
@@ -387,7 +387,7 @@ Content-Type: application/json
 3. role: "USER" → default role assigned by Spring Security
 
 4. End-to-end flow:
-      Postman → HTTP → Spring Boot → BCrypt hash 
+      Postman → HTTP → Spring Boot → BCrypt hash
             → JPA save → JDBC INSERT → MySQL container → row stored
 ```
 
@@ -538,7 +538,7 @@ or `exit`
 ```
 Postman ne dikhaya  → "refreshToken": "9ff5a083-5af3-4b94-..."
 MySQL container mein → token: 9ff5a083-5af3-4b94-...
-                       SAME UUID 
+                       SAME UUID
 
 Spring Boot → MySQL container → SAME data
 End-to-end persistence VERIFIED
@@ -574,7 +574,7 @@ TERA LAPTOP (host)
   │ Spring Boot ne          │
   │ CONNECT NAHI KIYA    │
   └─────────────────────────┘
-  
+
   ┌─────────────────────────┐
   │ DOCKER CONTAINER        │
   │ MySQL 8 inside          │
@@ -582,7 +582,7 @@ TERA LAPTOP (host)
   │ Spring Boot CONNECTED │
   │ userdb + tables yahan   │
   └─────────────────────────┘
-  
+
   Yeh DO ALAG MySQL servers hain.
   Inn dono ka kuch lena-dena nahi.
   Yahi Docker ka CORE concept = ISOLATION
@@ -654,11 +654,11 @@ docker run -d --name mysql-userdb \
    mysql:8
 
 # Each flag means:
-#   -d                     → detached (background)
-#   --name X               → friendly name
-#   -e KEY=VALUE           → environment variable
-#   -p host:container      → port mapping (forward host port → container port)
-#   image:tag              → which image to run
+# -d                     → detached (background)
+# --name X               → friendly name
+# -e KEY=VALUE           → environment variable
+# -p host:container      → port mapping (forward host port → container port)
+# image:tag              → which image to run
 
 # Container management
 docker ps                                 # Running containers
@@ -712,12 +712,12 @@ cd C:\DSA_PRACTICE\02_SPRING\PROJECT\usercrud
 mvn clean package -DskipTests
 
 # Phases ki order:
-#   clean        → target/ delete
-#   validate     → project structure OK?
-#   compile      → .java → .class
-#   test         → unit tests run (skip with -DskipTests)
-#   package      → jar/war banao
-#   verify, install, deploy... (later phases)
+# clean        → target/ delete
+# validate     → project structure OK?
+# compile      → .java → .class
+# test         → unit tests run (skip with -DskipTests)
+# package      → jar/war banao
+# verify, install, deploy... (later phases)
 
 # Other useful:
 mvn dependency:tree                       # Dependency graph

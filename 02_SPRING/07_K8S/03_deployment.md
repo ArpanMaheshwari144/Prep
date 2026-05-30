@@ -15,7 +15,7 @@ Pod alone = problem:
    Need 3 copies? Manually start 3 pods
    Update image? Manually delete + recreate
    No rollback if bad deploy
-   
+
 Solution: DEPLOYMENT
    "Hey K8s, mujhe ALWAYS 3 pods running chahiye
     of usercrud-app:multi image. Tu manage kar."
@@ -31,7 +31,7 @@ Deployment       = Building's PROPERTY MANAGER
    "Hey, hamesha 3 apartments OCCUPIED rakho.
     Koi apartment khali ho jaye?
     Naya tenant fauran lao.
-    
+
     Renovation karna? (image update)
     Ek apartment empty karo, naya banao,
     fir doosra, fir teesra — gradual.
@@ -68,7 +68,7 @@ Deployment       = Building's PROPERTY MANAGER
    │   │   └────┘  └────┘  └────┘            │  │
    │   └────────────────────────────────────┘  │
    └──────────────────────────────────────────┘
-   
+
    Layer hierarchy:
       Deployment → manages → ReplicaSet → manages → Pods
       (high-level)           (mid-level)             (execution)
@@ -152,20 +152,20 @@ kubectl delete deployment usercrud-deployment
 1. Deployment created with replicas: 3
    K8s: "OK 3 pods banata"
    ↓
-   Pod1 Pod2 Pod3 
-   
+   Pod1 Pod2 Pod3
+
 2. Pod2 crashes (memory issue)
    ↓
-   Pod1 Pod2 Pod3 
-   
+   Pod1 Pod2 Pod3
+
 3. Deployment ke ReplicaSet ne dekha
    "Desired: 3, Actual: 2 → MISMATCH!"
    ↓
    Auto-create naya pod
    ↓
    Pod1 Pod4 Pod3        ← Pod4 = naya replacement
-   
-   = Self-healing automatic 
+
+   = Self-healing automatic
 ```
 
 ---
@@ -175,27 +175,27 @@ kubectl delete deployment usercrud-deployment
 ```
 Initial state: 3 pods running v1.0
    [v1] [v1] [v1]
-   
+
 kubectl set image deployment/usercrud-deployment usercrud=usercrud-app:v2.0
    ↓
 K8s rolling update strategy:
-   
+
 Step 1: New pod with v2 starts
    [v1] [v1] [v1] [v2 starting...]
-   
+
 Step 2: v2 healthy, kill 1 v1
    [v1] [v1] [v2 ]
-   
+
 Step 3: New v2 starts
    [v1] [v1] [v2 ] [v2 starting...]
-   
+
 Step 4: Kill another v1
    [v1] [v2 ] [v2 ]
-   
+
 Step 5: Continue...
    [v2 ] [v2 ] [v2 ]
-   
-   = Zero downtime, gradual replacement 
+
+   = Zero downtime, gradual replacement
 ```
 
 ---
@@ -211,12 +211,12 @@ K8s instantly reverts to ReplicaSet of v1
    ↓
 v1 pods come back, v2 pods deleted
    ↓
-Users see no disruption 
+Users see no disruption
 
 K8s maintains DEPLOYMENT HISTORY:
    Revision 1: v1.0 (original)
    Revision 2: v2.0 (current — buggy)
-   
+
    Rollback to revision 1 in seconds.
 ```
 
@@ -319,7 +319,7 @@ Deployment = "Property manager"
    • Tenant nikla? naya laao auto (self-healing)
    • Renovation? gradual building (rolling update)
    • Bad renovation? undo command (rollback)
-   
+
 Hierarchy:
    Deployment → ReplicaSet → Pods
    (high-level → mid-level → execution)
@@ -327,7 +327,7 @@ Hierarchy:
 Production rule:
    Pod alone = NEVER (ephemeral)
    Always Deployment (resilient + scalable)
-   
+
 Update strategy:
    RollingUpdate (default, prod) — gradual, zero downtime
    Recreate (rare) — kill all then create (downtime)

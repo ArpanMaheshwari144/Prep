@@ -74,7 +74,7 @@ TreeMap **balanced binary search tree** use karta — Red-Black tree.
          Apple    Cherry
                   /
               Cherry?
-              
+
    Properties:
    • Left subtree < node < right subtree
    • Auto-balanced on insert/delete
@@ -235,8 +235,8 @@ Internal:
    TreeMap         = Red-Black Tree
 
 null key:
-   HashMap        
-   LinkedHashMap  
+   HashMap
+   LinkedHashMap
    TreeMap        (NPE — compareTo fails)
 
 Use case:

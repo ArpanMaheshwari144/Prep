@@ -8,9 +8,9 @@
 
 > Imagine **library mein 1000 logon ne "Java Complete Reference"** book maangi.
 >
-> **Without intern():** Library 1000 alag-alag copies banake deti — **memory waste** 
+> **Without intern():** Library 1000 alag-alag copies banake deti — **memory waste**
 >
-> **With intern():** Library bolti — *"Reference shelf pe ek hi copy hai. Sab waha se padho!"* — **memory save** 
+> **With intern():** Library bolti — *"Reference shelf pe ek hi copy hai. Sab waha se padho!"* — **memory save**
 
 `String.intern()` JVM ko bolta — *"Yeh string already pool mein hai? Wahi reference do, naya banane ka kya kaam?"*
 
@@ -47,7 +47,7 @@ After `s3 = s2.intern()`:
    │ "Hello" ◄──s1    │           │ String("Hello")  │
    │         ◄──s3  │           │            ◄──s2 │
    └──────────────────┘           └──────────────────┘
-   
+
    s1 == s3 → true   (same pool reference)
    s1 == s2 → false  (s2 still in heap)
 ```
@@ -108,7 +108,7 @@ XML parsing, CSV reading, JSON parsing —
    │  "Active" "Active" "Active"    │  ← 1000 alag objects
    │  "Active" ... (1000 copies)    │     1000 × ~40 bytes = 40 KB
    └────────────────────────────────┘
-   
+
    With intern:
    ┌────────────────────────────────┐
    │ POOL                           │

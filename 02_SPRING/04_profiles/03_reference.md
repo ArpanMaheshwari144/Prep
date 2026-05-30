@@ -23,7 +23,7 @@
 > @Component
 > @Profile("docker")
 > public class DockerOnlyService { ... }
-> 
+>
 > @Component
 > @Profile({"prod", "staging"})
 > public class MonitoringService { ... }
@@ -153,12 +153,12 @@ REM Verify active profile (console first lines)
 application.properties           — common (JPA, JWT, default profile)
 application-local.properties     — Local MySQL57 (3306, root)
 application-docker.properties    — Docker MySQL (3307, rootpass)
-application-compose.properties   — Both Spring + MySQL containerized 
+application-compose.properties   — Both Spring + MySQL containerized
 
 Switch tested:
 --spring.profiles.active=local   → local MySQL pe writes (port 3306)
 --spring.profiles.active=docker  → Docker MySQL pe writes (port 3307)
-SPRING_PROFILES_ACTIVE=compose   → via env var in docker-compose.yml 
+SPRING_PROFILES_ACTIVE=compose   → via env var in docker-compose.yml
 ```
 
 ---

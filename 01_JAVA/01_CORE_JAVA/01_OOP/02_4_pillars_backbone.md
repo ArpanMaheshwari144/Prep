@@ -38,7 +38,7 @@
      │ private  │   │ extends  │   │ alag work│   │ hide HOW │
      │ + getters│   │          │   │ runtime  │   │          │
      └─────────┘   └─────────┘   └──────────┘   └──────────┘
-                                              
+
        LOCK          TREE         MASKS            CURTAIN
 ```
 
@@ -54,7 +54,7 @@
    Touchscreen     Circuits
    Buttons         Memory chips
    Cash slot       Network calls
-   
+
    Tu sirf BUTTONS dabata — circuit kaise kaam karta, mat soch.
    ATM ne tujhe SAFE INTERFACE diya.
 ```
@@ -64,16 +64,16 @@
 ```java
 public class BankAccount {
     private double balance;          // hidden
-    
+
     public double getBalance() {     // controlled access
         return balance;
     }
-    
+
     public void deposit(double amount) {
         if (amount <= 0) throw new IllegalArgumentException();   // validation
         balance += amount;
     }
-    
+
     public void withdraw(double amount) {
         if (amount > balance) throw new InsufficientFunds();      // rule enforced
         balance -= amount;
@@ -152,7 +152,7 @@ d.bark();     // Dog's own
    Athlete:     "Run a marathon"     → physically running
    Programmer:  "Run a script"       → executing code
    Politician:  "Run for office"     → campaign for election
-   
+
    Same word, alag context = alag meaning.
    OOP mein same method name, alag class = alag behavior.
 ```
@@ -199,7 +199,7 @@ for (Shape s : shapes) {
    │  Square? → Square.area()│
    │  Triangle? → Triangle.area()│
    └────────────────────────┘
-   
+
    "Late binding" / "Runtime polymorphism"
 ```
 
@@ -223,7 +223,7 @@ for (Shape s : shapes) {
                         Signal processing
                         LED activation
                         Pixel rendering
-   
+
    Tu sirf BUTTON dabata — TV ka internal circuit kaise kaam karta, jaane ki zaroorat nahi.
    Remote ne tujhe ABSTRACT interface diya.
 ```
@@ -233,7 +233,7 @@ for (Shape s : shapes) {
 ```java
 public abstract class Payment {
     public abstract void pay(double amount);   // WHAT (no HOW)
-    
+
     public final void process(double amount) {  // template method
         validate();
         pay(amount);                             // delegated to subclass
@@ -326,7 +326,7 @@ ABSTRACTION     → abstract class / interface          "Show WHAT, hide HOW"
 The 4 problems they solve:
    Encap     → DATA PROTECTION
    Inherit   → CODE REUSE
-   Poly      → EXTENSIBILITY  
+   Poly      → EXTENSIBILITY
    Abstract  → SIMPLICITY
 ```
 

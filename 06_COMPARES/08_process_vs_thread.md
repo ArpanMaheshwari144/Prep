@@ -67,9 +67,9 @@ PROCESS = SEPARATE BUILDINGS
    │  Stack +    │    │  Stack +    │    │  Stack +    │
    │  Files       │    │  Files       │    │  Files       │
    └─────────────┘    └─────────────┘    └─────────────┘
-   
+
    = Isolated, no shared memory
-   = Chrome crash → VSCode OK 
+   = Chrome crash → VSCode OK
 ```
 
 ```
@@ -91,7 +91,7 @@ THREADS = ROOMS IN SAME BUILDING (Process)
    │     • File descriptors                │
    │     • Process resources               │
    └─────────────────────────────────────┘
-   
+
    = Threads share memory (FAST communication)
    = One thread crashes badly → WHOLE process dies
 ```
@@ -109,7 +109,7 @@ Chrome browser:
       - JavaScript thread (V8 engine)
       - GPU thread
       - Compositor thread
-   
+
    Why?
    • One tab crashes → other tabs survive (process isolation)
    • UI smooth → JavaScript in separate thread (no block)
@@ -124,7 +124,7 @@ Spring Boot app:
       - Garbage collector threads
       - @Async pool threads
       - JPA connection pool threads
-   
+
    Each HTTP request → handled by ONE thread from pool
 ```
 
@@ -138,18 +138,18 @@ THREADS share memory:
    FAST communication:
       Thread 1: counter = 5
       Thread 2: reads counter → 5 (instant)
-   
+
    RACE CONDITIONS:
       Both threads do: counter++
-      
+
       Thread 1 reads counter (5)
       Thread 2 reads counter (5)
       Thread 1 increments → 6
       Thread 2 increments → 6
-      
+
       Expected: 7
       Actual: 6 (BUG!)
-      
+
       FIX: synchronized / locks / atomic
 ```
 
@@ -182,7 +182,7 @@ THREAD SWITCH:
    3. Same memory mappings (already there)
    = ~100 ns
    = "CHEAP"
-   
+
 = Threads can switch 10x faster
 = Why thread pools are efficient
 ```
@@ -227,15 +227,15 @@ Inside JVM = many threads
 
    Thread t = new Thread(() -> doWork());
    t.start();
-   
+
    ExecutorService pool = Executors.newFixedThreadPool(10);
    pool.submit(task);
-   
+
 Java 21 brought VIRTUAL THREADS (Project Loom):
    • Millions of threads possible
    • Light weight (managed by JVM)
    • Great for I/O-heavy work
-   
+
 Spring Boot 3.2+ supports virtual threads
    = Tomcat can scale to millions of concurrent users
 ```

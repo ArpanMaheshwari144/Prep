@@ -59,7 +59,7 @@ ARG = INGREDIENTS in kitchen
    │ Once dish ready, GONE     │
    │ Customer ko nahi dikhte    │
    └──────────────────────────┘
-   
+
 ENV = CONDIMENTS on table
    ┌──────────────────────────┐
    │ Salt, sauce, pepper       │
@@ -351,8 +351,8 @@ PROD PATTERN:
 ARG = "ingredients" (cooking only — gone at table)
 ENV = "salt/sauce" (table mein hamesha available)
 
-Build time:    ARG   ENV 
-Runtime:       ARG   ENV 
+Build time:    ARG   ENV
+Runtime:       ARG   ENV
 
 Override syntax:
    ARG  → docker build --build-arg KEY=value

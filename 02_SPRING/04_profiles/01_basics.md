@@ -22,7 +22,7 @@ Same app → DIFFERENT environments mein chalti
    • Staging server
    • Production
    • Docker container
-   
+
 Har environment mein DIFFERENT config:
    • Different DB URLs
    • Different passwords
@@ -32,7 +32,7 @@ Har environment mein DIFFERENT config:
 Without Profiles:
    Har deploy se pehle properties EDIT karo manually
    Fragile, error-prone, secrets accidental commit
-   
+
 With Profiles:
    Multiple config files, ONE-LINE switch
    Clean, safe, production pattern
@@ -48,7 +48,7 @@ With Profiles:
        ├─ Office → Suit            (= Production config)
        ├─ Gym    → Shorts            (= Dev config)
        └─ Home   → Pajamas           (= Local config)
-       
+
 Same banda, different OUTFIT for situation.
 
 Spring Profiles = different "outfits" (configs) for different environments.
@@ -246,21 +246,21 @@ dev          → Developer local environment (laptop)
    • H2 / local DB
    • Verbose logging (DEBUG)
    • Hot reload
-   
+
 staging      → Pre-production (testing environment)
    • Production-like DB
    • Production-like data
    • Some debug logging
-   
+
 prod         → Live production
    • Real production DB
    • ERROR-only logs
    • Optimized JVM, security hardened
-   
+
 test         → Automated tests
    • In-memory DB (H2)
    • Auto-cleanup
-   
+
 docker       → Inside containerized deployment
    • Service hostnames (mysql-userdb)
    • Container-friendly paths

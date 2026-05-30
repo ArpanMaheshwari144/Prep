@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Quick Visual Hierarchy
+## 1 Quick Visual Hierarchy
 
 ```
    ┌──────────────────────────────────────┐
@@ -31,7 +31,7 @@
 
 ---
 
-## 2️⃣ Car Analogy
+## 2 Car Analogy
 
 ```
 JVM     = ENGINE only
@@ -48,7 +48,7 @@ JDK     = CAR FACTORY
 
 ---
 
-## 3️⃣ Java Code Lifecycle
+## 3 Java Code Lifecycle
 
 ### Step 1: Write code
 ```java
@@ -92,7 +92,7 @@ File: `Hello.java`
 
 ---
 
-## 4️⃣ Why Bytecode? (WORA Magic)
+## 4 Why Bytecode? (WORA Magic)
 
 ```
 "WORA" = Write Once, Run Anywhere
@@ -127,7 +127,7 @@ Reason:
 
 ---
 
-## 5️⃣ JDK vs JRE — When To Use
+## 5 JDK vs JRE — When To Use
 
 ```
 ┌─────────────────────┬──────────────────────────────┐
@@ -146,7 +146,7 @@ Modern (Java 11+):
 
 ---
 
-## 6️⃣ JVM Components (Inside)
+## 6 JVM Components (Inside)
 
 ```
    ┌──────────────────────────────────┐
@@ -176,7 +176,7 @@ Modern (Java 11+):
 
 ---
 
-## 7️⃣ JIT Compiler (Performance Trick)
+## 7 JIT Compiler (Performance Trick)
 
 ```
 INTERPRETER:
@@ -200,7 +200,7 @@ JVM = Interpreter + JIT (hybrid)
 
 ---
 
-## 8️⃣ Interview Q&A
+## 8 Interview Q&A
 
 ```
 Q: JDK kya hai?

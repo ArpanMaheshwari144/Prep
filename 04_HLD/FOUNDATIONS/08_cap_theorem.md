@@ -30,7 +30,7 @@ TUNE SAHI BOLA — every big system somewhere trade-off karta:
    Uber surge flicker       → CONSISTENCY trade
    Facebook stale feed       → CONSISTENCY trade
    Bank "system unavailable" → AVAILABILITY lose
-   
+
 Yeh all CAP THEOREM ke real-world examples.
 ```
 
@@ -84,12 +84,12 @@ Customer balance = ₹10,000
    │ Mumbai      │ phone │ Delhi       │
    │ Bal: 10000  │   dead   │ Bal: 10000  │
    └────────────┘         └────────────┘
-   
+
    Customer Delhi mein ₹10,000 withdraw kar leta
    Delhi balance: ₹0
    Mumbai ka balance ABHI BHI 10000 dikha raha
    (sync nahi ho saka)
-   
+
    Customer Mumbai aata, ₹10,000 withdraw karna chahta...
 ```
 
@@ -143,7 +143,7 @@ Real-world:
 NOT REALLY POSSIBLE in distributed system
    • Distributed = network = partitions WILL happen
    • Only achievable in single-machine system
-   
+
    = Theoretical only, no real distributed system
 ```
 
@@ -207,7 +207,7 @@ ELSE (normal ops)      — pick LATENCY OR CONSISTENCY
 
 ```
    System lifecycle:
-   
+
    ┌─────────────────────────────────────────────┐
    │  NORMAL OPERATION (no partition)             │
    │  ────────────────                            │
@@ -223,7 +223,7 @@ ELSE (normal ops)      — pick LATENCY OR CONSISTENCY
    │                       = stale possible        │
    └─────────────────────────────────────────────┘
             │
-            │ network fails 
+            │ network fails
             ▼
    ┌─────────────────────────────────────────────┐
    │  PARTITION (network failure)                 │
@@ -304,8 +304,8 @@ SHARDING (already done):
 MESSAGE QUEUES (already done):
    At-least-once + idempotency = practical CP
    At-most-once = AP (might lose messages)
-   
-= CAP TIES ALL FOUNDATIONS TOGETHER 
+
+= CAP TIES ALL FOUNDATIONS TOGETHER
 ```
 
 ---

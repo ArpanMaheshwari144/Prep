@@ -2,19 +2,19 @@
 
 ---
 
-## 1️⃣ Concept (Family Analogy)
+## 1 Concept (Family Analogy)
 
 ```
 Imagine parent kid:
    Parent ne kuch decide kiya (move to new city)
    Child ko bhi automatically move karna padega
-   
+
    = CASCADE — parent ka action child pe auto effect
 ```
 
 ---
 
-## 2️⃣ Problem Without Cascade
+## 2 Problem Without Cascade
 
 ```java
 Author a = new Author("Arpan");
@@ -35,7 +35,7 @@ bookRepo.save(b1);           // manually karna padega
 
 ---
 
-## 3️⃣ With CASCADE
+## 3 With CASCADE
 
 ```java
 @Entity
@@ -60,7 +60,7 @@ CASCADE = "Parent action child pe automatically apply"
 
 ---
 
-## 4️⃣ 6 Cascade Types
+## 4 6 Cascade Types
 
 ```
 ┌──────────────┬──────────────────────────────────────┐
@@ -77,7 +77,7 @@ CASCADE = "Parent action child pe automatically apply"
 
 ---
 
-## 5️⃣ Visual Flow — PERSIST Example
+## 5 Visual Flow — PERSIST Example
 
 ```
    authorRepo.save(author)
@@ -99,7 +99,7 @@ CASCADE = "Parent action child pe automatically apply"
 
 ---
 
-## 6️⃣ REMOVE Cascade (Dangerous!)
+## 6 REMOVE Cascade (Dangerous!)
 
 ```java
 @OneToMany(cascade = CascadeType.REMOVE)
@@ -115,7 +115,7 @@ authorRepo.delete(author)
         ▼
    DELETE FROM books WHERE author_id = ?
    DELETE FROM authors WHERE id = ?
-   
+
    = Author + all books DELETED
 ```
 
@@ -123,13 +123,13 @@ authorRepo.delete(author)
 DANGER:
    Accidentally delete parent → kids gone
    Books shared with someone else? — DELETED too
-   
+
    Use carefully
 ```
 
 ---
 
-## 7️⃣ Cascade.ALL — Common but Risky
+## 7 Cascade.ALL — Common but Risky
 
 ```java
 @OneToMany(cascade = CascadeType.ALL)
@@ -143,7 +143,7 @@ Behaviour:
    merge author   → merge books
    detach author  → detach books
    refresh author → refresh books
-   
+
    = ALL operations cascade
 ```
 
@@ -155,7 +155,7 @@ Dangerous (especially REMOVE)
 
 ---
 
-## 8️⃣ orphanRemoval (Extra Cascade)
+## 8 orphanRemoval (Extra Cascade)
 
 ```java
 @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -184,7 +184,7 @@ WITH orphanRemoval:
 
 ---
 
-## 9️⃣ Common Use Cases
+## 9 Common Use Cases
 
 ```
 parent OWNS children completely:
@@ -220,7 +220,7 @@ class Order {
 class OrderItem {
     @ManyToOne
     Order order;
-    
+
     String product;
     int quantity;
 }
@@ -231,14 +231,14 @@ Behaviour:
    orderRepo.save(order)        → items also saved
    orderRepo.delete(order)      → items also deleted
    order.getItems().remove(it)  → item auto-deleted (orphan)
-   
+
    = Order owns items completely
    = Lifecycle bound together
 ```
 
 ---
 
-## 1️⃣1️⃣ Decision Tree
+## 11 Decision Tree
 
 ```
    Child entity ki existence parent pe DEPEND?
@@ -261,11 +261,11 @@ Behaviour:
 "Cascade types control parent-child operation propagation.
  PERSIST/MERGE/REMOVE/REFRESH/DETACH/ALL — common ones.
 
- Use cascade when child entity lifecycle bound to parent 
- (e.g., Order-OrderItem). Add orphanRemoval=true to delete 
+ Use cascade when child entity lifecycle bound to parent
+ (e.g., Order-OrderItem). Add orphanRemoval=true to delete
  children automatically when removed from collection.
 
- Don't cascade ALL blindly — REMOVE especially dangerous 
+ Don't cascade ALL blindly — REMOVE especially dangerous
  for shared entities."
 ```
 

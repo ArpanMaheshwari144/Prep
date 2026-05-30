@@ -210,7 +210,7 @@ HOST LAPTOP                                   DOCKER CONTAINER
 ─────────────────                             ─────────────
 Port 3306 → ALREADY TAKEN (local MySQL)      Port 3306 → MySQL chahta
                 ↓
-            CONFLICT 
+            CONFLICT
             (OS rule: 2 services same port pe nahi)
 ```
 
@@ -400,7 +400,7 @@ Tab tak Spring Boot connect karega → connection refused
 ```
 [System] [MY-010931] /usr/sbin/mysqld: ready for connections.
                      ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-                     yeh dikhe = MySQL accepting connections 
+                     yeh dikhe = MySQL accepting connections
 ```
 
 > **`docker logs <name>` = container ke andar jo console output ho raha, host pe dikhao.**

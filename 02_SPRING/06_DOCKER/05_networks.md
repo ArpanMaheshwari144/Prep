@@ -25,7 +25,7 @@ Tera Docker host = APARTMENT BUILDING
 
 Without network:
    Flats sealed — koi flat se baat nahi kar sakta
-   
+
 With network (custom bridge):
    Building intercom system
    Flat 101 → 102 ko call kar sakta BY NAME
@@ -53,7 +53,7 @@ With network (custom bridge):
 2. HOST (no isolation — fast)
    Container directly host network use
    Less secure, fast networking
-   
+
 3. NONE (no network)
    Container fully isolated
    Use case: batch jobs, no internet

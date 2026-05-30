@@ -92,7 +92,7 @@ class UserService {
 @Service
 class UserService {
     private UserRepository userRepo;
-    
+
     @Autowired
     public void setUserRepo(UserRepository userRepo) {
         this.userRepo = userRepo;
@@ -106,7 +106,7 @@ class UserService {
 @Service
 class UserService {
     private final UserRepository userRepo;     // final
-    
+
     public UserService(UserRepository userRepo) {
         this.userRepo = userRepo;
     }

@@ -2,14 +2,14 @@
 
 ---
 
-## 1️⃣ Strings Are IMMUTABLE
+## 1 Strings Are IMMUTABLE
 
 ```
 Imagine STONE TABLET:
    ┌────────────────────────┐
    │   "Hello"            │
    └────────────────────────┘
-   
+
    Once carved → CANNOT change
    Want "Hello World"?
       → Make NEW tablet
@@ -35,7 +35,7 @@ String methods (concat, replace, etc.) NEVER modify original
 
 ---
 
-## 2️⃣ String Pool (Memory Optimization)
+## 2 String Pool (Memory Optimization)
 
 ### Library Analogy
 ```
@@ -73,13 +73,13 @@ s1 == s3;       // true
             ┌──────┴──────┬──────┐
             ▼             ▼      ▼
            s1            s2     s3
-   
+
    3 references, 1 actual string in memory
 ```
 
 ---
 
-## 3️⃣ String Pool vs new Keyword
+## 3 String Pool vs new Keyword
 
 ```java
 String s1 = "Hello";              // POOL
@@ -110,7 +110,7 @@ s1.equals(s3);     // true  (content same)
 
 ---
 
-## 4️⃣ intern() — Force Pool Use
+## 4 intern() — Force Pool Use
 
 ```java
 String s3 = new String("Hello");     // HEAP
@@ -125,7 +125,7 @@ intern() = "Pool mein daal ya match karwa do"
 
 ---
 
-## 5️⃣ Why Strings Immutable?
+## 5 Why Strings Immutable?
 
 ```
 1. SECURITY
@@ -147,7 +147,7 @@ intern() = "Pool mein daal ya match karwa do"
 
 ---
 
-## 6️⃣ String Concatenation — Performance Trap
+## 6 String Concatenation — Performance Trap
 
 ```java
 // BAD — creates 1000 new String objects
@@ -185,7 +185,7 @@ StringBuilder = WHITEBOARD
 
 ---
 
-## 7️⃣ StringBuilder vs StringBuffer
+## 7 StringBuilder vs StringBuffer
 
 ```
 ┌────────────────────┬──────────────────┬──────────────────┐
@@ -206,7 +206,7 @@ Multiple threads sharing? → StringBuffer
 
 ---
 
-## 8️⃣ String vs StringBuilder vs StringBuffer
+## 8 String vs StringBuilder vs StringBuffer
 
 ```
 ┌────────────────────┬──────────┬───────────────┬───────────────┐
@@ -222,7 +222,7 @@ Multiple threads sharing? → StringBuffer
 
 ---
 
-## 9️⃣ Common Trap — String Comparison
+## 9 Common Trap — String Comparison
 
 ```java
 String s1 = "Hello";

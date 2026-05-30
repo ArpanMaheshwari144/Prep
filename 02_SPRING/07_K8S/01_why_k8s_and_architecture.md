@@ -13,11 +13,11 @@
 DOCKER alone:
    • Single container manage
    • Single host (laptop / one server)
-   
+
 DOCKER COMPOSE:
    • Multiple containers, ek host pe
    • Dev / small production OK
-   
+
 But REAL PRODUCTION need:
    • 100s of containers across 50 servers
    • Auto-scale jab traffic spike (Black Friday)
@@ -25,7 +25,7 @@ But REAL PRODUCTION need:
    • Rolling updates (zero downtime deploy)
    • Load balancing across containers
    • Service discovery (sab connect kaise hote)
-   
+
    = K8S kaam karta yahan
 ```
 
@@ -42,7 +42,7 @@ KUBERNETES         = entire restaurant CHAIN
                      • Auto-replace broken kitchens
                      • Customer ko nearest auto-route
                      • Menu update karo → all locations sync
-                     
+
 K8s = orchestration brain for container fleet
 ```
 
@@ -102,14 +102,14 @@ K8s = orchestration brain for container fleet
 API Server      → tu kubectl se baat karta isko
                   Single entry point for all K8s ops
                   REST API exposing
-                  
+
 Scheduler       → "Naya pod kahan deploy karu?"
                   Decides node based on resources, constraints
-                  
+
 Controller      → "Actual state = Desired state?"
                   Continuously checks + reconciles
                   Pod crashed? Re-create (Deployment Controller)
-                  
+
 etcd            → "Cluster ka memory" (key-value store)
                   Stores: cluster config, secrets, state
                   Highly available, distributed
@@ -121,10 +121,10 @@ etcd            → "Cluster ka memory" (key-value store)
 kubelet         → control plane se baat, pods manage
                   Runs on every worker
                   Reports pod status to API Server
-                  
+
 kube-proxy      → networking + load balancing
                   Implements Service routing
-                  
+
 Container       → Docker / containerd
 runtime           K8s ko khud container run nahi karna ata
                   Delegate to runtime
@@ -159,7 +159,7 @@ PRODUCTION SETUP:
    • K8s MONITORS health, replaces if crash
    • K8s AUTO-SCALES based on traffic
    • K8s LOAD BALANCES across containers
-   
+
 Docker = engineer building bricks
 K8s    = construction manager building cities
 ```
@@ -185,7 +185,7 @@ K8s    = construction manager building cities
    │  • Container RUN karta                │
    │  • "Actually runs the container"      │
    └──────────────────────────────────────┘
-   
+
    K8s sits ON TOP of Docker (or similar runtime)
 ```
 

@@ -13,8 +13,8 @@ User → /signup → API
                   ├─ Welcome email (1500ms) ← slow!
                   ├─ SMS OTP (800ms)
                   └─ Analytics (300ms)
-                  
-Total: ~2.8 sec → user waiting 
+
+Total: ~2.8 sec → user waiting
 Email server down → ENTIRE signup fails
 ```
 
@@ -22,14 +22,14 @@ Email server down → ENTIRE signup fails
 ```
 User → /signup → API
                   ├─ DB save (200ms)
-                  └─ Push to queue → return 200 
-                                    
+                  └─ Push to queue → return 200
+
                   Background workers (parallel):
                      Email worker  → consume + send
                      SMS worker    → consume + send
                      Analytics     → consume + update
-                  
-Total: ~250ms → user happy 
+
+Total: ~250ms → user happy
 Email down → message waits in queue, retry later
 ```
 
@@ -78,7 +78,7 @@ Email down → message waits in queue, retry later
 
 ```
    PRODUCERS              BROKER                CONSUMERS
-   
+
    Web Server     ──┐                       ┌── Email Worker
    Mobile App     ──┼──► [m][m][m][m]  ─────┼── SMS Worker
    Admin Panel    ──┘   queue/topic         └── Analytics Worker
@@ -217,7 +217,7 @@ Message fails repeatedly (e.g., 5 retries) → DLQ
    → Doesn't block main queue
    → Manual investigation
    → Fix root cause, replay
-   
+
 Production essential — bina DLQ = poison messages stuck
 ```
 

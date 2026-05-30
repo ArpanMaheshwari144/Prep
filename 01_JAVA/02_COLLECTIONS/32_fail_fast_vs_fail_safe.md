@@ -186,9 +186,9 @@ Iterator banaya:
    expectedModCount = 2  (snapshot)
 
 Loop:
-  it.next()              → modCount(2) == expectedModCount(2)  
+  it.next()              → modCount(2) == expectedModCount(2)
   list.remove("Rahul")   → modCount = 3  (BAHAR SE BADLA)
-  it.next()              → modCount(3) ≠ expectedModCount(2)  CME 
+  it.next()              → modCount(3) ≠ expectedModCount(2)  CME
 ```
 
 Ab `it.remove()` use kiya:

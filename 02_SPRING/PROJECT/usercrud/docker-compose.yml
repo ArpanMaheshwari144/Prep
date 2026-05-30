@@ -1,20 +1,20 @@
 # ═══════════════════════════════════════════════════════════════
-#  🐙 DOCKER COMPOSE — UserCRUD Multi-Container Setup
+# DOCKER COMPOSE — UserCRUD Multi-Container Setup
 # ═══════════════════════════════════════════════════════════════
-#  ONE FILE = entire app stack (MySQL + Spring Boot)
+# ONE FILE = entire app stack (MySQL + Spring Boot)
 #
-#  Commands:
-#    docker-compose up -d --build    # build + start (background)
-#    docker-compose ps                # status
-#    docker-compose logs -f app       # follow app logs
-#    docker-compose stop              # stop containers (data safe)
-#    docker-compose down              # stop + remove containers
-#    docker-compose down -v           # also delete volumes (DATA GONE)
+# Commands:
+# docker-compose up -d --build    # build + start (background)
+# docker-compose ps                # status
+# docker-compose logs -f app       # follow app logs
+# docker-compose stop              # stop containers (data safe)
+# docker-compose down              # stop + remove containers
+# docker-compose down -v           # also delete volumes (DATA GONE)
 #
-#  Network:
-#    Compose auto-creates a default network "<projectname>_default"
-#    Both services join it automatically
-#    Service NAME (mysql, app) = DNS hostname for inter-container talk
+# Network:
+# Compose auto-creates a default network "<projectname>_default"
+# Both services join it automatically
+# Service NAME (mysql, app) = DNS hostname for inter-container talk
 # ═══════════════════════════════════════════════════════════════
 
 services:
@@ -32,8 +32,8 @@ services:
 
     ports:
       - "3307:3306"                # ← host:container (Workbench connect)
-                                    #   Optional — internal traffic doesn't need this
-                                    #   Useful for external tools to inspect
+                                    # Optional — internal traffic doesn't need this
+                                    # Useful for external tools to inspect
 
     volumes:
       - mysql_data:/var/lib/mysql  # ← persist data (named volume)
@@ -52,7 +52,7 @@ services:
   # ─────────────────────────────────────────────
   app:                             # ← service name (= DNS hostname)
     build: .                        # ← build from Dockerfile in current dir
-                                    #   Builds usercrud:latest image
+                                    # Builds usercrud:latest image
     container_name: usercrud-app
 
     ports:
@@ -61,12 +61,12 @@ services:
     depends_on:                    # ← wait for mysql before starting
       mysql:
         condition: service_healthy # ← wait for MySQL HEALTHCHECK = healthy
-                                    #   (not just "container started")
+                                    # (not just "container started")
 
     environment:
       SPRING_PROFILES_ACTIVE: compose   # ← activate compose profile
-                                         #   → uses application-compose.properties
-                                         #   → connects to "mysql:3306" by name
+                                         # → uses application-compose.properties
+                                         # → connects to "mysql:3306" by name
 
     restart: unless-stopped
 
@@ -77,6 +77,6 @@ services:
 volumes:
   mysql_data:
     external: true                 # ← REUSE existing volume (Arpan's data)
-                                    #   Without external: true, compose creates
-                                    #   "usercrud_mysql_data" (NEW empty volume)
-                                    #   external: true = use pre-created mysql_data
+                                    # Without external: true, compose creates
+                                    # "usercrud_mysql_data" (NEW empty volume)
+                                    # external: true = use pre-created mysql_data

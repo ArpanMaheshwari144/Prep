@@ -2,11 +2,11 @@
 
 ---
 
-## 1️⃣ Concept (House Door Analogy)
+## 1 Concept (House Door Analogy)
 
 ```
 Imagine ek HOUSE with different rooms + doors:
-   
+
    ┌──────────────────────────────────────┐
    │  Tera HOUSE                           │
    │                                        │
@@ -35,7 +35,7 @@ Imagine ek HOUSE with different rooms + doors:
 
 ---
 
-## 2️⃣ 4 Modifiers Quick Table
+## 2 4 Modifiers Quick Table
 
 ```
 ┌─────────────┬──────────────┬──────────────────────────┐
@@ -52,7 +52,7 @@ Imagine ek HOUSE with different rooms + doors:
 
 ---
 
-## 3️⃣ Visual Scope Diagram
+## 3 Visual Scope Diagram
 
 ```
                     PUBLIC
@@ -76,7 +76,7 @@ Imagine ek HOUSE with different rooms + doors:
 
 ---
 
-## 4️⃣ Concrete Example
+## 4 Concrete Example
 
 ```java
 package com.bank;
@@ -86,7 +86,7 @@ public class Account {
     protected double balance;            // subclasses + package
     String    branchCode;                // package only (default)
     private   String pin;                // class only
-    
+
     public void displayPin() {
         System.out.println(pin);         // allowed (same class)
     }
@@ -133,7 +133,7 @@ class SavingsAccount extends Account {  // subclass
 
 ---
 
-## 5️⃣ Visibility Cheatsheet
+## 5 Visibility Cheatsheet
 
 ```
 ┌─────────────┬──────────┬──────────┬──────────┬──────────┐
@@ -148,7 +148,7 @@ class SavingsAccount extends Account {  // subclass
 
 ---
 
-## 6️⃣ Common Use Cases
+## 6 Common Use Cases
 
 ```
 PUBLIC:
@@ -173,7 +173,7 @@ PRIVATE:
 
 ---
 
-## 7️⃣ Interview Trap
+## 7 Interview Trap
 
 ```
 Q: protected vs default — kya farak?

@@ -109,14 +109,14 @@ User u = User.builder()
 
 ```java
 public class User {
-    
+
     // ─── Fields (final = immutable after build) ──────
     private final String name;
     private final int age;
     private final String email;
     private final String role;
     private final boolean isActive;
-    
+
     // ─── Private constructor — sirf Builder use karega
     private User(Builder builder) {
         this.name = builder.name;
@@ -125,58 +125,58 @@ public class User {
         this.role = builder.role;
         this.isActive = builder.isActive;
     }
-    
+
     // ─── Static factory method — User.builder() entry point
     public static Builder builder() {
         return new Builder();
     }
-    
+
     // ─── Getters (no setters — immutable!)
     public String getName()    { return name; }
     public int getAge()         { return age; }
     public String getEmail()    { return email; }
     public String getRole()     { return role; }
     public boolean isActive()   { return isActive; }
-    
+
     // ═══════════════════════════════════════════════
     //  INNER STATIC BUILDER CLASS
     // ═══════════════════════════════════════════════
     public static class Builder {
-        
+
         // Mutable fields (to be set step by step)
         private String name;
         private int age;
         private String email;
         private String role = "USER";       // default value!
         private boolean isActive = true;     // default value!
-        
+
         // Each setter returns "this" — fluent API
-        public Builder name(String name)  { 
-            this.name = name; 
-            return this; 
+        public Builder name(String name)  {
+            this.name = name;
+            return this;
         }
-        
+
         public Builder age(int age) {
             if (age < 0) throw new IllegalArgumentException("Age can't be negative");
             this.age = age;
             return this;
         }
-        
+
         public Builder email(String email) {
             this.email = email;
             return this;
         }
-        
+
         public Builder role(String role) {
             this.role = role;
             return this;
         }
-        
+
         public Builder active(boolean active) {
             this.isActive = active;
             return this;
         }
-        
+
         // FINAL build() — returns immutable User
         public User build() {
             // Optional: cross-field validation
@@ -209,10 +209,10 @@ System.out.println(u.getName());  // Arpan
 ```
    User.builder()                    ← returns Builder b1
         .name("Arpan")               ← sets name on b1, returns b1
-        .age(28)                     ← sets age on b1, returns b1  
+        .age(28)                     ← sets age on b1, returns b1
         .email("x@y.com")            ← sets email on b1, returns b1
         .build()                     ← returns User (NEW immutable object)
-   
+
    Each setter returns SAME builder reference → chain ho jata
    Final build() switches from Builder → User
 ```
@@ -263,10 +263,10 @@ User u = User.builder()
 @Builder(toBuilder = true)   // Allow rebuild from existing
 public class User {
     private String name;
-    
+
     @Builder.Default
     private String role = "USER";        // default if not set
-    
+
     @Builder.Default
     private boolean isActive = true;
 }
@@ -296,7 +296,7 @@ User user2 = u.toBuilder()
 
 **Tu UserCRUD project mein Builder pattern 2 jagah USE kiya** — 100% live evidence:
 
-### 1️⃣ `JwtService.java` — Token generate karte time
+### 1 `JwtService.java` — Token generate karte time
 
 **File:** `02_SPRING/02_PROJECT/usercrud/src/main/java/com/arpan/usercrud/security/JwtService.java`
 
@@ -328,7 +328,7 @@ public String generateToken(User user) {
 
 ---
 
-### 2️⃣ `CustomUserDetailsService.java` — Spring UserDetails build karte time
+### 2 `CustomUserDetailsService.java` — Spring UserDetails build karte time
 
 **File:** `02_SPRING/02_PROJECT/usercrud/src/main/java/com/arpan/usercrud/security/CustomUserDetailsService.java`
 
@@ -477,7 +477,7 @@ Builder = "Subway sandwich"
    • Step-by-step build
    • Optional ingredients
    • Final assemble
-   
+
 Manual code:
    1. Inner static Builder class
    2. Builder fields = mutable
@@ -490,7 +490,7 @@ Lombok shortcut:
 
 Real-world examples:
    • StringBuilder
-   • StreamBuilder  
+   • StreamBuilder
    • Jwts.builder()  (JWT mein use kiya)
    • HttpRequest.newBuilder()
    • Lombok @Builder

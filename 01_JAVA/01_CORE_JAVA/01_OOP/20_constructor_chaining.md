@@ -38,7 +38,7 @@ class Student {
 }
 
 Student s = new Student("Arpan");
-// "Arpan" → age default 18 → course default "Java" 
+// "Arpan" → age default 18 → course default "Java"
 ```
 
 ```java

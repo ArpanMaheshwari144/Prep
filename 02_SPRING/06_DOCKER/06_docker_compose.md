@@ -23,7 +23,7 @@ MANUAL approach (jo Phase 1 mein kiya):
    docker run -d --name mysql-userdb --network app-net ... mysql:8
    docker run -d --name spring-app --network app-net ... usercrud
    docker run -d --name redis --network app-net redis     (if needed)
-   
+
    = 5+ commands, har baar yaad rakho exactly
    = order matter karta (mysql pehle, app baad mein)
    = manual healthcheck wait
@@ -31,7 +31,7 @@ MANUAL approach (jo Phase 1 mein kiya):
 
 WITH Compose:
    docker-compose up -d --build
-   
+
    = 1 command — sab kuch start (network + volumes + containers + healthcheck)
    = order automatic (depends_on)
    = declarative (file mein likha kya chahiye)
@@ -83,7 +83,7 @@ application-compose.properties:  ← NEW
    url=jdbc:mysql://mysql:3306/userdb
    ↑↑↑↑↑                       ↑↑↑↑
    Service name (DNS!)          Internal port (NOT mapped)
-   
+
    Why? Because Spring is ALSO in container now.
    Container-to-container = service name + INTERNAL port
    No port mapping needed for internal traffic.
@@ -177,12 +177,12 @@ DOCKER-COMPOSE ka role:
    Network/volume setup
    Service ordering (depends_on)
    Healthcheck monitoring
-   
+
 SPRING ka role:
    Env vars + properties read karna
    Profile-based file selection (auto)
    Config merging (master + profile)
-   
+
 BRIDGE BETWEEN: Environment Variable (SPRING_PROFILES_ACTIVE)
 ```
 
@@ -252,7 +252,7 @@ INDUSTRY MIGRATION:
    • Amazon Corretto (AWS)
    • Liberica (BellSoft)
    • Oracle's GraalVM
-   
+
    "OpenJDK Docker image deprecated" = production reality
 ```
 

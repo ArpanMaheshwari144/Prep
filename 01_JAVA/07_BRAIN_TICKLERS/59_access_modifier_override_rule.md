@@ -42,9 +42,9 @@ p.show();      // public expect kiya
 ```
 Parent              Child (allowed)
 private          override hi nahi hota
-default      →   default, protected, public 
-protected    →   protected, public 
-public       →   public ONLY 
+default      →   default, protected, public
+protected    →   protected, public
+public       →   public ONLY
 ```
 
 ---

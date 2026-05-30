@@ -61,7 +61,7 @@ Different networks
 
 ---
 
-## 1️⃣ SYNCHRONOUS — REST vs gRPC
+## 1 SYNCHRONOUS — REST vs gRPC
 
 ### REST (HTTP + JSON)
 ```
@@ -117,13 +117,13 @@ External APIs (mobile, frontend, public):  REST
 
 Internal MS-to-MS:                          gRPC
                                             (Google, Uber, Netflix)
-                                            
+
 Hybrid (real production):                   REST gateway → gRPC internal
 ```
 
 ---
 
-## 2️⃣ ASYNCHRONOUS — Message Queues
+## 2 ASYNCHRONOUS — Message Queues
 
 ```
 Order Service ──publish event──→ [Kafka/RabbitMQ]
@@ -237,7 +237,7 @@ Spring Boot:
 Concept (ship analogy):
    Ship hull divided into compartments
    One compartment leaks ≠ ship sinks
-   
+
 In MS:
    Separate thread pools for each downstream service
    User Service threads exhausted ≠ Order Service blocked
@@ -279,13 +279,13 @@ K8s Service  → BUILT-IN (free with K8s)
 ```
 K8s mein Eureka ki zaroorat NAHI:
    Service name = DNS hostname automatically
-   
+
    Order Service mein:
       RestTemplate.getForObject(
           "http://user-service:8080/api/users/123",
           User.class
       )
-   
+
    "user-service" = K8s Service name
    K8s DNS resolves to right pod IP
    = Built-in service discovery
@@ -446,20 +446,20 @@ When building full Spring microservices project:
    Service-to-service:
       Internal: gRPC (Spring gRPC)
       External: REST (Spring Web)
-   
+
    Async events:
       Kafka topics for OrderPlaced, PaymentDone
-   
+
    Resilience:
       Resilience4j → Circuit breaker + retry
       Spring Cloud → Timeout config
-   
+
    Discovery:
       K8s Service (since deploying on EKS)
-   
+
    Gateway:
       Spring Cloud Gateway → single entry
-   
+
 = Production-grade architecture
 = Interview-ready talking points
 ```
@@ -469,7 +469,7 @@ When building full Spring microservices project:
 ## Status
 
 ```
-Topic 10/10 (HLD foundations) — Done 
+Topic 10/10 (HLD foundations) — Done
 
 Foundations complete:
    01 HLD basics

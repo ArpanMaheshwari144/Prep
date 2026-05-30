@@ -34,7 +34,7 @@ class Bike extends Vehicle {
 
     Bike(String licensePlate, VehicleType vehicleType) {
         super(licensePlate, vehicleType);
-    }   
+    }
 
 }
 
@@ -44,7 +44,7 @@ class Car extends Vehicle {
         super(licensePlate, vehicleType);
     }
 
-    
+
 
 }
 
@@ -54,7 +54,7 @@ class Truck extends Vehicle {
         super(licensePlate, vehicleType);
     }
 
-   
+
 }
 
 // --- PARKING SPOT ---
@@ -229,7 +229,7 @@ class ParkingLot {
             }
         }
         return null;
-        
+
     }
 
     void unparkVehicle(Ticket t) {

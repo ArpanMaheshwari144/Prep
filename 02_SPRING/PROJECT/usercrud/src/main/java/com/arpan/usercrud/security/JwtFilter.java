@@ -186,7 +186,7 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain chain) throws ServletException, IOException {
 
         // ════════════════════════════════════════════════════════
-        //  1️⃣  STEP 1: ID CARD MAANGO (Authorization header)
+        //  1  STEP 1: ID CARD MAANGO (Authorization header)
         // ════════════════════════════════════════════════════════
         //  Header format expected:
         //     Authorization: Bearer eyJhbGc...
@@ -209,7 +209,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         // ════════════════════════════════════════════════════════
-        //  2️⃣  STEP 2: ID CARD VALID HAI? (Signature + Expiry)
+        //  2  STEP 2: ID CARD VALID HAI? (Signature + Expiry)
         // ════════════════════════════════════════════════════════
         //  Guard scanner se card scan karta:
         //      • Stamp asli hai? (signature match with SECRET)
@@ -224,7 +224,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         // ════════════════════════════════════════════════════════
-        //  3️⃣  STEP 3: CARD PE NAAM PADHO (Extract email)
+        //  3  STEP 3: CARD PE NAAM PADHO (Extract email)
         // ════════════════════════════════════════════════════════
         //  Token signed + verified already (Step 2 mein), payload trust kar sakte.
         String email = jwtService.extractEmail(token);
@@ -235,7 +235,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             // ════════════════════════════════════════════════════
-            //  4️⃣  STEP 4: HR SE EMPLOYEE DETAILS LOAD
+            //  4  STEP 4: HR SE EMPLOYEE DETAILS LOAD
             // ════════════════════════════════════════════════════
             //  CustomUserDetailsService DB mein dhundhta:
             //      "Haan, Arpan, role: ADMIN"
@@ -243,7 +243,7 @@ public class JwtFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
             // ════════════════════════════════════════════════════
-            //  5️⃣  STEP 5: LOG BOOK MEIN ENTRY (SecurityContext)
+            //  5  STEP 5: LOG BOOK MEIN ENTRY (SecurityContext)
             // ════════════════════════════════════════════════════
             //  Yeh log book = SecurityContextHolder
             //  Downstream code (controller, @PreAuthorize) iska use karta

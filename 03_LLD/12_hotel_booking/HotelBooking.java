@@ -292,7 +292,7 @@ class Hotel {
             if(r.isOccupied == false){
                 count++;
             }
-        } 
+        }
         return count;
     }
 }

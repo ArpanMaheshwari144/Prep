@@ -28,7 +28,7 @@
    L1 Cache: running = true             L1 Cache: running = true
 
   Thread 2 ne main memory mein false kiya:
-   MAIN: running = false 
+   MAIN: running = false
    T1 cache: running = true  (purana!)
    T2 cache: running = false
 

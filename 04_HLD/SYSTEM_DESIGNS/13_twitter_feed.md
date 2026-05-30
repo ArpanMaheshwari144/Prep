@@ -4,7 +4,7 @@
 
 ---
 
-## 1️⃣ Problem (1 line)
+## 1 Problem (1 line)
 
 ```
    Tu app KHOLA → Tera home timeline dikhna chahiye
@@ -13,14 +13,14 @@
    │ Sachin: "Watching IPL"               │
    │ Dhoni:  "Practice today"             │
    └─────────────────────────────────────┘
-   
+
    = Tweets from people TU follow karta
    = Latest first
 ```
 
 ---
 
-## 2️⃣ Scale Numbers
+## 2 Scale Numbers
 
 ```
    500 million users
@@ -34,7 +34,7 @@
 
 ---
 
-## 3️⃣ Master Analogy — Royal Kingdom
+## 3 Master Analogy — Royal Kingdom
 
 ```
 Kingdom mein news circulate karna problem.
@@ -48,11 +48,11 @@ Same problem Twitter ke saath.
 
 ---
 
-## 4️⃣ Notice Board (Redis Inbox)
+## 4 Notice Board (Redis Inbox)
 
 ```
 Har user ke ghar mein notice board.
-Yeh notice board pe wo tweets aate jo us user ke 
+Yeh notice board pe wo tweets aate jo us user ke
 follow kiye hue logon ne kiye.
 
    Arpan ka ghar:
@@ -63,9 +63,9 @@ follow kiye hue logon ne kiye.
    │  • Mukesh: "Movie"           │
    │  • Naresh: "Office"          │
    └─────────────────────────────┘
-   
+
    = redis:inbox:arpan_123
-   
+
 Jab Arpan app khole:
    Bus apne notice board ko padh le
    = INSTANT
@@ -73,7 +73,7 @@ Jab Arpan app khole:
 
 ---
 
-## 5️⃣ Town Crier (Fanout)
+## 5 Town Crier (Fanout)
 
 ```
 Notice board pe tweets KAISE pohchti?
@@ -98,7 +98,7 @@ Virat tweets: "Match was great!"
 
 ---
 
-## 6️⃣ Bieber Problem (Hot User)
+## 6 Bieber Problem (Hot User)
 
 ```
 Bieber: 10 CRORE followers
@@ -129,7 +129,7 @@ SOLUTION: Bieber's tweets DON'T fanout.
 
 ---
 
-## 7️⃣ Hybrid Model (Industry Reality)
+## 7 Hybrid Model (Industry Reality)
 
 ```
 ┌────────────────────────┬────────────────────┐
@@ -142,7 +142,7 @@ SOLUTION: Bieber's tweets DON'T fanout.
 
 ---
 
-## 8️⃣ Read Flow — App Open
+## 8 Read Flow — App Open
 
 ```
    Arpan opens app
@@ -181,7 +181,7 @@ SOLUTION: Bieber's tweets DON'T fanout.
 
 ---
 
-## 9️⃣ Read Flow — Concrete Example
+## 9 Read Flow — Concrete Example
 
 ```
 Arpan follows: Virat (celeb) + Suresh (normal)
@@ -224,7 +224,7 @@ Arpan follows: Virat (celeb) + Suresh (normal)
 
 ---
 
-## 1️⃣1️⃣ Full Architecture
+## 11 Full Architecture
 
 ```
                     USER opens app
@@ -278,7 +278,7 @@ Arpan follows: Virat (celeb) + Suresh (normal)
 
 ---
 
-## 1️⃣2️⃣ Components Mapping
+## 12 Components Mapping
 
 ```
 ┌─────────────────────┬──────────────────────────────┐
@@ -296,7 +296,7 @@ Arpan follows: Virat (celeb) + Suresh (normal)
 
 ---
 
-## 1️⃣3️⃣ DB Choices
+## 13 DB Choices
 
 ```
 TWEET STORE:    Cassandra
@@ -314,7 +314,7 @@ FEED INBOX:     Redis cluster
 
 ---
 
-## 1️⃣4️⃣ Read Flow Line (Memorize)
+## 14 Read Flow Line (Memorize)
 
 ```
 "User opens app → Timeline Service →
@@ -329,13 +329,13 @@ FEED INBOX:     Redis cluster
 
 ---
 
-## 1️⃣5️⃣ Hot Tweet Caching (Library Bestseller)
+## 15 Hot Tweet Caching (Library Bestseller)
 
 ### Problem
 ```
 Virat tweets → 10 CRORE followers read
 If everyone hits Cassandra = 10 CRORE DB hits
-= DB crash 
+= DB crash
 ```
 
 ### Library Analogy
@@ -382,14 +382,14 @@ Read flow:
 TTL pattern:
    Recent tweet (< 1 hour) = HOT → cache
    Old tweet                = COLD → direct DB
-   
+
    SETEX virat_tweet_123 3600 "content"
                           ▲ 1 hour TTL
 ```
 
 ---
 
-## 1️⃣6️⃣ 2 Caches — Bounded Separately
+## 16 2 Caches — Bounded Separately
 
 ```
    ┌─────────────────────────────────┐
@@ -403,7 +403,7 @@ TTL pattern:
    │  Limit: LTRIM to 800 per user    │
    │  ~6.4 KB per inbox                │
    └─────────────────────────────────┘
-   
+
    ┌─────────────────────────────────┐
    │  CACHE 2: Hot Tweet Cache        │
    │  (shared, PULL side)             │
@@ -437,17 +437,17 @@ Cassandra (source of truth):
 
 ---
 
-## 1️⃣7️⃣ Inactive Users — TTL Cleanup
+## 17 Inactive Users — TTL Cleanup
 
 ```
 Active users:
    App open frequently
    Inbox cache kept hot
-   
+
 Inactive users (no app open 30 days):
    TTL → inbox deleted from Redis
    Save memory
-   
+
 Reactivate:
    User opens app
    Inbox rebuilt from Cassandra
@@ -456,7 +456,7 @@ Reactivate:
 
 ---
 
-## 1️⃣8️⃣ PUSH → PULL Crossover
+## 18 PUSH → PULL Crossover
 
 ```
 Question: Normal vs celeb — line kahan?
@@ -474,13 +474,13 @@ Tu ne 8,000 followers banaye:
 Tu ne 2,500 aur kamaye = 10,500 total:
    Threshold crossed
    Switch to PULL mode for future tweets
-   
+
    System auto-evaluate karta
 ```
 
 ---
 
-## 1️⃣9️⃣ Sharding Strategies
+## 19 Sharding Strategies
 
 ### Approach 1: By tweet_id (random)
 ```
@@ -505,7 +505,7 @@ Old tweets archived to cold storage
 
 ---
 
-## 2️⃣0️⃣ GEO Sharding (Geographic)
+## 20 GEO Sharding (Geographic)
 
 ### Pattern
 ```
@@ -559,7 +559,7 @@ Indian user follows Bieber (US celeb):
 
 ---
 
-## 2️⃣1️⃣ Hot User Replication
+## 21 Hot User Replication
 
 ```
 Problem:
@@ -575,7 +575,7 @@ Solution:
 
 ---
 
-## 2️⃣2️⃣ Real Twitter — Hybrid
+## 22 Real Twitter — Hybrid
 
 ```
 Production uses ALL strategies:
@@ -583,7 +583,7 @@ Production uses ALL strategies:
    • Time-based sub-sharding
    • Geo replication (regional)
    • Hot data globally cached
-   
+
 = Multi-dimensional sharding
 = No single strategy enough
 ```

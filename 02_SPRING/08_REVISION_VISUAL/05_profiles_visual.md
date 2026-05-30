@@ -2,29 +2,29 @@
 
 ---
 
-## 1️⃣ Problem (Wardrobe Analogy)
+## 1 Problem (Wardrobe Analogy)
 
 ```
    Tu morning office jaata → formals
    Tu evening gym jaata → tracksuit
    Tu shaadi attend → sherwani
-   
+
    SAME TU — different OUTFIT per occasion.
 ```
 
 ```
    App ka same scenario:
-   
+
    Tu DEV machine pe code likh raha → H2 in-memory DB
    Tu STAGING server pe deploy → MySQL on staging
    Tu PRODUCTION pe deploy → MySQL on AWS RDS
-   
+
    SAME APP — different CONFIG per environment.
 ```
 
 ---
 
-## 2️⃣ Without Profiles (Pain)
+## 2 Without Profiles (Pain)
 
 ```
 Manual config swap:
@@ -37,26 +37,26 @@ Manual config swap:
 
 ---
 
-## 3️⃣ With Profiles (Clean)
+## 3 With Profiles (Clean)
 
 ```
    ┌────────────────────────────────────────┐
    │  application.properties (default)       │
    │  spring.profiles.active=dev             │
    └────────────────────────────────────────┘
-   
+
    ┌────────────────────────────────────────┐
    │  application-dev.properties             │
    │  spring.datasource.url=jdbc:h2:mem:...  │
    └────────────────────────────────────────┘
-   
+
    ┌────────────────────────────────────────┐
    │  application-prod.properties            │
    │  spring.datasource.url=jdbc:mysql://prod│
    │  spring.datasource.username=...         │
    │  spring.datasource.password=...         │
    └────────────────────────────────────────┘
-   
+
    ┌────────────────────────────────────────┐
    │  application-compose.properties         │
    │  spring.datasource.url=jdbc:mysql://    │
@@ -71,7 +71,7 @@ Spring AUTO loads matching profile based on:
 
 ---
 
-## 4️⃣ How Spring Picks the File
+## 4 How Spring Picks the File
 
 ```
    App start
@@ -93,7 +93,7 @@ Spring AUTO loads matching profile based on:
 
 ---
 
-## 5️⃣ Activate Profile — 3 Ways
+## 5 Activate Profile — 3 Ways
 
 ```
 1. application.properties:
@@ -112,7 +112,7 @@ Spring AUTO loads matching profile based on:
 
 ---
 
-## 6️⃣ @Profile Annotation (Beans)
+## 6 @Profile Annotation (Beans)
 
 ```java
 @Service
@@ -133,13 +133,13 @@ public class FakeEmailService implements EmailService {
 ```
    Active = dev    → FakeEmailService injected
    Active = prod   → RealEmailService injected
-   
+
    = Same interface, different bean per profile
 ```
 
 ---
 
-## 7️⃣ Real Project Pattern (UserCRUD)
+## 7 Real Project Pattern (UserCRUD)
 
 ```
    ┌───────────────────────────────────────────┐
@@ -172,7 +172,7 @@ public class FakeEmailService implements EmailService {
 
 ---
 
-## 8️⃣ Visual — Profile in Action
+## 8 Visual — Profile in Action
 
 ```
 Local development:
@@ -208,7 +208,7 @@ Production K8s:
 
 ---
 
-## 9️⃣ Common Mistakes
+## 9 Common Mistakes
 
 ```
 Hardcoding DB URL in main application.properties
@@ -235,7 +235,7 @@ Multiple profiles overlapping properties chaos
    3. OS environment vars
    4. application-{profile}.properties
    5. application.properties  ← LOWEST priority
-   
+
    Higher wins on conflict
 ```
 

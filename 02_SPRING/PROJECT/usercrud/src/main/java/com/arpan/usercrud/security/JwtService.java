@@ -185,7 +185,7 @@ public class JwtService {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  1️⃣  GENERATE TOKEN — User → New ID Card
+    //  1  GENERATE TOKEN — User → New ID Card
     // ════════════════════════════════════════════════════════════
     //  Called by: AuthController.login() jab credentials match ho.
     //
@@ -211,7 +211,7 @@ public class JwtService {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  2️⃣  EXTRACT USER ID — Card pe ID number padho
+    //  2  EXTRACT USER ID — Card pe ID number padho
     // ════════════════════════════════════════════════════════════
     //  Token se sub claim (userId) nikaalta.
     //  Used when controller mein "current user ka data" fetch ho.
@@ -221,7 +221,7 @@ public class JwtService {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  3️⃣  EXTRACT EMAIL — Card pe email padho
+    //  3  EXTRACT EMAIL — Card pe email padho
     // ════════════════════════════════════════════════════════════
     //  JwtFilter use karta — token verify hone ke baad email nikaalta
     //  CustomUserDetailsService.loadUserByUsername() ko pass karne ke liye.
@@ -231,7 +231,7 @@ public class JwtService {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  4️⃣  EXTRACT ROLE — Card pe role/permissions padho
+    //  4  EXTRACT ROLE — Card pe role/permissions padho
     // ════════════════════════════════════════════════════════════
     public String extractRole(String token) {
         Claims claims = parseClaims(token);
@@ -239,7 +239,7 @@ public class JwtService {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  5️⃣  IS VALID — Card asli hai? (Signature + Expiry check)
+    //  5  IS VALID — Card asli hai? (Signature + Expiry check)
     // ════════════════════════════════════════════════════════════
     //  Checks (all done by parseClaims):
     //      • Signature recompute → match? (tampering detect)

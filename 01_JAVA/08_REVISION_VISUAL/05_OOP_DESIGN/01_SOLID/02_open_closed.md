@@ -17,10 +17,10 @@ Class CLOSED for modification
 
 ```
 Charger me USB-C port hai
-   
+
    Old phone? Use adapter (extension)
    New iPhone? Use adapter
-   
+
    Charger KHUD nahi badla (closed)
    Adapters extend it (open)
 ```

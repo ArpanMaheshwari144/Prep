@@ -74,7 +74,7 @@ void method() {
   │  s=null │     ──── ──── │  Student    │  ← orphan
   └─────────┘                  │ "Arpan"     │   GC eligible
                                └─────────────┘   ↓
-                                              GC clean kar dega 
+                                              GC clean kar dega
 
 
 ╔════════════════════════════════════════════════════════════╗

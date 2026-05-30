@@ -72,7 +72,7 @@ class Seat {
     public void setBooked(boolean booked) {
         isBooked = booked;
     }
-    
+
 }
 
 

@@ -22,10 +22,10 @@ Pehle 2 profiles the:
    • docker  → Spring on host, MySQL container (localhost:3307)
 
 Aaj need:
-   • Compose mein Spring ALSO container → mysql container ko 
+   • Compose mein Spring ALSO container → mysql container ko
      localhost:3307 se NAHI reach kar sakta
      (localhost = container ka APNA self, not host)
-   
+
    Solution: Compose network mein "mysql" service NAME se reach
      URL: jdbc:mysql://mysql:3306/userdb
                        ↑↑↑↑↑       ↑↑↑↑
@@ -114,12 +114,12 @@ DOCKER-COMPOSE ka role:
    Network/volume setup
    Service ordering (depends_on)
    Healthcheck monitoring
-   
+
 SPRING ka role:
    Env vars + properties read karna
    Profile-based file selection (Spring's standard mechanism)
    Config merging (master + profile)
-   
+
 BRIDGE: Single env variable (SPRING_PROFILES_ACTIVE)
         Compose injects → Spring reads → magic
 ```
@@ -200,7 +200,7 @@ Behavior: DIFFERENT (env var driven)
 4. Docker/Compose env var     (production deployment)
    environment:
      SPRING_PROFILES_ACTIVE: compose
-   
+
 PRECEDENCE (highest → lowest):
    CLI arg > Env var > properties file value > default
 ```

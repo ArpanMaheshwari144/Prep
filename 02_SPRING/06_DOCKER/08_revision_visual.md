@@ -11,7 +11,7 @@
 
 ---
 
-## 1️⃣ THE BIG 5 — Docker Building Blocks
+## 1 THE BIG 5 — Docker Building Blocks
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -31,7 +31,7 @@
 
 ---
 
-## 2️⃣ IMAGE vs CONTAINER (Recipe vs Dish)
+## 2 IMAGE vs CONTAINER (Recipe vs Dish)
 
 ```
    IMAGE (mysql:8)              CONTAINER (mysql-userdb)
@@ -51,7 +51,7 @@
 
 ---
 
-## 3️⃣ CONTAINER LIFECYCLE
+## 3 CONTAINER LIFECYCLE
 
 ```
    IMAGE
@@ -74,7 +74,7 @@
 
 ---
 
-## 4️⃣ DAY 1 — Spring on HOST + MySQL Container
+## 4 DAY 1 — Spring on HOST + MySQL Container
 
 ```
    TERA LAPTOP (host)                        DOCKER
@@ -104,7 +104,7 @@
 
 ---
 
-## 5️⃣ VOLUMES — Disaster + Recovery PROOF
+## 5 VOLUMES — Disaster + Recovery PROOF
 
 ```
    WITHOUT VOLUME:                  WITH VOLUME:
@@ -118,20 +118,20 @@
           ▼                                ▼                    │
         ALL                          Container               │
         DATA                            GONE                    │
-        GONE                                                   
+        GONE
                                                           DATA SAFE
                                                                 │
                                         Naya container          │
                                         + same -v ◄─────────────┘
                                                 ▼
-                                          DATA WAHI 
+                                          DATA WAHI
 
    Lesson: Container ephemeral, Volume persistent
 ```
 
 ---
 
-## 6️⃣ DAY 2 — BOTH Containers (Compose stack)
+## 6 DAY 2 — BOTH Containers (Compose stack)
 
 ```
    TERA LAPTOP
@@ -162,7 +162,7 @@
 
 ---
 
-## 7️⃣ NETWORKS — Apartment Building
+## 7 NETWORKS — Apartment Building
 
 ```
    DOCKER HOST (apartment building)
@@ -181,7 +181,7 @@
 
 ---
 
-## 8️⃣ COMPOSE FLOW (1 command = full stack)
+## 8 COMPOSE FLOW (1 command = full stack)
 
 ```
    docker-compose.yml
@@ -201,7 +201,7 @@
    └─────────────────────────────────────┘
        │
        ▼
-   Stack LIVE 
+   Stack LIVE
 
    docker-compose down → all containers stop + clean
    docker-compose down -v → also volumes (DATA GONE)
@@ -209,7 +209,7 @@
 
 ---
 
-## 9️⃣ PROFILE BRIDGE — Compose ↔ Spring
+## 9 PROFILE BRIDGE — Compose ↔ Spring
 
 ```
    docker-compose.yml

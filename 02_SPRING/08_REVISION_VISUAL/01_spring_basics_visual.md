@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Spring Kya Hai? (Hotel Analogy)
+## 1 Spring Kya Hai? (Hotel Analogy)
 
 ```
 WITHOUT SPRING (DIY hotel):
@@ -12,7 +12,7 @@ WITHOUT SPRING (DIY hotel):
       • Bed lagao
       • Breakfast banao
    = Thakaan
-   
+
 WITH SPRING (5-star hotel):
    Tu reception pe:
       "Mujhe room chahiye"
@@ -30,7 +30,7 @@ SPRING = 5-star hotel for your Java objects.
 
 ---
 
-## 2️⃣ One-Line Truth
+## 2 One-Line Truth
 
 ```
 "Spring tere objects ko BANATA hai
@@ -39,7 +39,7 @@ SPRING = 5-star hotel for your Java objects.
 
 ---
 
-## 3️⃣ Without vs With Spring (Code)
+## 3 Without vs With Spring (Code)
 
 ### Without Spring
 ```java
@@ -65,7 +65,7 @@ public class UserService {
 
 ---
 
-## 4️⃣ IoC + DI = Spring Core
+## 4 IoC + DI = Spring Core
 
 ```
    IoC = Inversion of Control
@@ -88,7 +88,7 @@ public class UserService {
 
 ---
 
-## 5️⃣ Spring Container — Visual
+## 5 Spring Container — Visual
 
 ```
    ┌──────────────────────────────────────┐
@@ -103,14 +103,14 @@ public class UserService {
    │       └────────────┴────────────┘   │
    │           Auto-wired together         │
    └──────────────────────────────────────┘
-   
+
    Container ke andar SAB objects ("beans")
    Container hi banata, jodta, manage karta
 ```
 
 ---
 
-## 6️⃣ Bean Types — Same Magic, Different Names
+## 6 Bean Types — Same Magic, Different Names
 
 ```
 ┌─────────────┬──────────────────────────────────┐
@@ -129,12 +129,12 @@ public class UserService {
 
 ---
 
-## 7️⃣ @Autowired Visual
+## 7 @Autowired Visual
 
 ```java
 @Service
 public class UserService {
-    
+
     @Autowired
     private UserRepository repo;
     //              ▲
@@ -159,7 +159,7 @@ FLOW:
 
 ---
 
-## 8️⃣ DI — 3 Types
+## 8 DI — 3 Types
 
 ```
 1. CONSTRUCTOR (recommended)
@@ -195,7 +195,7 @@ INDUSTRY CHOICE: Constructor (Lombok @RequiredArgsConstructor)
 
 ---
 
-## 9️⃣ Bean Scope — Singleton vs Prototype
+## 9 Bean Scope — Singleton vs Prototype
 
 ```
 ┌──────────────┬──────────────────────────────┐
@@ -241,22 +241,22 @@ INDUSTRY CHOICE: Constructor (Lombok @RequiredArgsConstructor)
 
 ---
 
-## 1️⃣1️⃣ 80% Spring = Yeh Pattern
+## 11 80% Spring = Yeh Pattern
 
 ```
    3 cheezein samjho:
-   
+
    1. CONTAINER  → Spring ka manager
    2. BEAN       → container ke andar managed object
    3. AUTOWIRE   → bean ko inject kar
-   
+
    = 80% Spring code yahi pattern
    = Baki sab variations
 ```
 
 ---
 
-## 1️⃣2️⃣ Memory Hook
+## 12 Memory Hook
 
 ```
 Hotel = Spring Container

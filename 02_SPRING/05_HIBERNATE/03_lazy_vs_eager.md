@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Concept (Menu Analogy)
+## 1 Concept (Menu Analogy)
 
 ```
 Restaurant mein 2 ways menu dekhna:
@@ -11,7 +11,7 @@ LAZY (default for collections):
    Tu sirf menu COVER dekhta (Author)
    Pasta page nahi kholta jab tak NEED
    Items LOAD on demand
-   
+
 EAGER:
    Tu menu uthate hi SAARE pages khol diya
    Pizza, pasta, dessert — sab dikh raha
@@ -20,16 +20,16 @@ EAGER:
 
 ---
 
-## 2️⃣ Code
+## 2 Code
 
 ```java
 class Author {
     @Id Long id;
     String name;
-    
+
     @OneToMany(fetch = FetchType.LAZY)    // ← DEFAULT for collections
     List<Book> books;
-    
+
     @ManyToOne(fetch = FetchType.EAGER)   // ← DEFAULT for single ref
     Publisher publisher;
 }
@@ -37,7 +37,7 @@ class Author {
 
 ---
 
-## 3️⃣ Visual — What Loads When?
+## 3 Visual — What Loads When?
 
 ```
 findById(1L) called:
@@ -49,7 +49,7 @@ LAZY:
    │  name: "Arpan"       │
    │  books: NOT LOADED│  ← placeholder
    └────────────────────┘
-   
+
    Tu .getBooks() call kare → TAB DB query
    = on demand
 
@@ -61,13 +61,13 @@ EAGER:
    │  books: [B1, B2, B3] │  ← ALSO loaded
    │  publisher: {...}    │  ← ALSO loaded
    └────────────────────┘
-   
+
    Sab kuch upfront
 ```
 
 ---
 
-## 4️⃣ Default Behavior (Yaad Rakh)
+## 4 Default Behavior (Yaad Rakh)
 
 ```
 ┌────────────────────┬────────────┐
@@ -89,16 +89,16 @@ Mnemonic:
 
 ---
 
-## 5️⃣ LAZY ka Problem — LazyInitializationException
+## 5 LAZY ka Problem — LazyInitializationException
 
 ```java
 @Service
 public class AuthorService {
-    
+
     public List<Book> getBooks(Long authorId) {
         Author a = repo.findById(authorId).orElseThrow();
         // session CLOSE ho gayi yahaan
-        
+
         return a.getBooks();    // LazyInitializationException!
     }
 }
@@ -113,7 +113,7 @@ Why?
 
 ---
 
-## 6️⃣ LAZY Exception — Fix Options
+## 6 LAZY Exception — Fix Options
 
 ### Option 1: @Transactional (session open rahegi)
 ```java
@@ -153,7 +153,7 @@ public AuthorBooksDTO getAuthor(Long id) {
 
 ---
 
-## 7️⃣ EAGER ka Problem — Over-fetching
+## 7 EAGER ka Problem — Over-fetching
 
 ```java
 @ManyToOne(fetch = FetchType.EAGER)
@@ -163,7 +163,7 @@ Publisher publisher;
 ```
 Tu Author chahta sirf:
    findById(1L)
-   
+
    Hibernate:
       "EAGER hai publisher — load karo"
       SELECT * FROM authors WHERE id = 1;
@@ -178,13 +178,13 @@ Deep tree:
 
 ---
 
-## 8️⃣ Best Practice (Industry Standard)
+## 8 Best Practice (Industry Standard)
 
 ```
 RULE 1: ALWAYS use LAZY (override defaults)
    @ManyToOne(fetch = FetchType.LAZY)
    @OneToOne(fetch = FetchType.LAZY)
-   
+
 RULE 2: Fetch what you need:
    • Just author → no fetch hint
    • Author + books → @EntityGraph or JOIN FETCH
@@ -196,7 +196,7 @@ RULE 3: DTO for REST APIs
 
 ---
 
-## 9️⃣ Comparison
+## 9 Comparison
 
 ```
 ┌──────────────────┬─────────────────┬─────────────────┐
@@ -222,7 +222,7 @@ RULE 3: DTO for REST APIs
  Industry: ALWAYS make all relations LAZY to avoid over-fetching.
  Use @EntityGraph or JOIN FETCH selectively when needed.
 
- LAZY risk: LazyInitializationException if accessed after 
+ LAZY risk: LazyInitializationException if accessed after
  session closes — fix with @Transactional or DTO projection."
 ```
 

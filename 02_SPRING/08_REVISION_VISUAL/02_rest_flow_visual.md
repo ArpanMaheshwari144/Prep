@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Typical Request Flow (Pizza Restaurant)
+## 1 Typical Request Flow (Pizza Restaurant)
 
 ```
 ANALOGY: Tu Domino's app pe pizza order karta
@@ -36,7 +36,7 @@ ANALOGY: Tu Domino's app pe pizza order karta
 
 ---
 
-## 2️⃣ 4 Layers — Visual
+## 2 4 Layers — Visual
 
 ```
    USER REQUEST
@@ -67,21 +67,21 @@ ANALOGY: Tu Domino's app pe pizza order karta
 
 ---
 
-## 3️⃣ Code Reality — User Endpoint
+## 3 Code Reality — User Endpoint
 
 ### Controller Layer
 ```java
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    
+
     @Autowired UserService service;
-    
+
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id) {
         return service.findById(id);
     }
-    
+
     @PostMapping
     public User create(@RequestBody @Valid UserRequest req) {
         return service.create(req);
@@ -93,14 +93,14 @@ public class UserController {
 ```java
 @Service
 public class UserService {
-    
+
     @Autowired UserRepository repo;
-    
+
     public User findById(Long id) {
         return repo.findById(id)
                    .orElseThrow(() -> new UserNotFound(id));
     }
-    
+
     public User create(UserRequest req) {
         // Business logic yahan
         User user = new User(req.name(), req.email());
@@ -112,9 +112,9 @@ public class UserService {
 ### Repository Layer
 ```java
 @Repository
-public interface UserRepository 
+public interface UserRepository
         extends JpaRepository<User, Long> {
-    
+
     Optional<User> findByEmail(String email);
     // Spring Data JPA = auto-implementation
 }
@@ -122,7 +122,7 @@ public interface UserRepository
 
 ---
 
-## 4️⃣ HTTP Annotations Cheat
+## 4 HTTP Annotations Cheat
 
 ```
 ┌─────────────────────┬──────────────────────┐
@@ -138,21 +138,21 @@ public interface UserRepository
 
 ---
 
-## 5️⃣ Path Variable vs Request Param vs Body
+## 5 Path Variable vs Request Param vs Body
 
 ```
 URL:  GET /api/users/123?active=true
 
    /api/users/123       ← @PathVariable
                          (part of URL path)
-   
+
    ?active=true         ← @RequestParam
                          (query string)
 
 
 URL:  POST /api/users
 Body: { "name": "Arpan", "email": "..." }
-   
+
    Body content         ← @RequestBody
                          (JSON in body)
 ```
@@ -170,7 +170,7 @@ public User create(@RequestBody UserRequest req) { ... }
 
 ---
 
-## 6️⃣ DTO Pattern — Why?
+## 6 DTO Pattern — Why?
 
 ```
 PROBLEM:
@@ -214,18 +214,18 @@ ERROR DTOs:
 
 ---
 
-## 7️⃣ Validation — @Valid
+## 7 Validation — @Valid
 
 ```java
 public record UserRequest(
     @NotBlank
     @Size(min=2, max=50)
     String name,
-    
+
     @Email
     @NotBlank
     String email,
-    
+
     @Size(min=8)
     String password
 ) {}
@@ -250,7 +250,7 @@ VALIDATION ANNOTATIONS:
 
 ---
 
-## 8️⃣ Exception Handler — Global
+## 8 Exception Handler — Global
 
 ```
 PROBLEM:
@@ -265,14 +265,14 @@ SOLUTION:
 ```java
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    
+
     @ExceptionHandler(UserNotFound.class)
     public ResponseEntity<ErrorResponse> handle(UserNotFound e) {
         return ResponseEntity
                 .status(404)
                 .body(new ErrorResponse(404, e.getMessage()));
     }
-    
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidation(...) {
         // Validation errors
@@ -297,7 +297,7 @@ FLOW:
 
 ---
 
-## 9️⃣ Full Request Flow (End-to-End)
+## 9 Full Request Flow (End-to-End)
 
 ```
    Postman: POST /api/users

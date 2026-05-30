@@ -2,11 +2,11 @@
 
 ---
 
-## 1️⃣ Concept (Restaurant Analogy)
+## 1 Concept (Restaurant Analogy)
 
 ```
 Imagine restaurant:
-   
+
    CHEF (Producer)
         │
         ▼
@@ -24,18 +24,18 @@ PROBLEM:
    Chef speed ≠ Waiter speed
    Chef tez = counter full
    Waiter tez = counter empty
-   
+
    Solution: COUNTER (buffer)
    = Decouples speeds
 ```
 
 ---
 
-## 2️⃣ The Pattern
+## 2 The Pattern
 
 ```
    PRODUCER  ──put──►  QUEUE (buffer)  ──take──►  CONSUMER
-   
+
    • Producer adds items
    • Consumer removes items
    • Queue bounded (full = producer waits)
@@ -44,20 +44,20 @@ PROBLEM:
 
 ---
 
-## 3️⃣ Two Implementations
+## 3 Two Implementations
 
 ### Old Way (wait/notify) — Covered Earlier
 ```java
 class Buffer {
     Queue<Integer> q = new LinkedList<>();
     int CAPACITY = 10;
-    
+
     synchronized void put(int item) throws InterruptedException {
         while (q.size() == CAPACITY) wait();
         q.add(item);
         notifyAll();
     }
-    
+
     synchronized int take() throws InterruptedException {
         while (q.isEmpty()) wait();
         int item = q.poll();
@@ -85,7 +85,7 @@ int item = q.take();   // blocks if empty, auto-wait
 
 ---
 
-## 4️⃣ BlockingQueue Types
+## 4 BlockingQueue Types
 
 ```
 ┌────────────────────────┬─────────────────────────┐
@@ -101,16 +101,16 @@ int item = q.take();   // blocks if empty, auto-wait
 
 ---
 
-## 5️⃣ Full Working Example
+## 5 Full Working Example
 
 ```java
 public class ProducerConsumerDemo {
-    
-    static BlockingQueue<Integer> q = 
+
+    static BlockingQueue<Integer> q =
         new ArrayBlockingQueue<>(5);
-    
+
     public static void main(String[] args) {
-        
+
         // Producer thread
         new Thread(() -> {
             for (int i = 1; i <= 10; i++) {
@@ -122,7 +122,7 @@ public class ProducerConsumerDemo {
                 }
             }
         }).start();
-        
+
         // Consumer thread
         new Thread(() -> {
             for (int i = 1; i <= 10; i++) {
@@ -150,12 +150,12 @@ Output (interleaved):
 
 ---
 
-## 6️⃣ Visual — Flow
+## 6 Visual — Flow
 
 ```
    PRODUCER             QUEUE             CONSUMER
    ────────             ─────             ────────
-   
+
    produce 1            [1]
                                           take → 1
                         []
@@ -169,13 +169,13 @@ Output (interleaved):
                                           take → 3
                         [4,5,6,7]
                         [4,5,6,7,10]
-                                          
+
    = Auto sync via BlockingQueue
 ```
 
 ---
 
-## 7️⃣ Multiple Producers + Consumers
+## 7 Multiple Producers + Consumers
 
 ```java
 BlockingQueue<Task> q = new LinkedBlockingQueue<>();
@@ -207,7 +207,7 @@ All threads coordinate via queue
 
 ---
 
-## 8️⃣ Real Production Use Cases
+## 8 Real Production Use Cases
 
 ```
 1. EMAIL SERVICE
@@ -236,7 +236,7 @@ All threads coordinate via queue
 
 ---
 
-## 9️⃣ Why Important?
+## 9 Why Important?
 
 ```
 Decoupling:

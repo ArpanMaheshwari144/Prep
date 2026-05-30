@@ -29,7 +29,7 @@ pq.add(30);
 pq.add(10);
 pq.add(20);
 
-pq.poll();    // 10  ← sabse chhota pehle 
+pq.poll();    // 10  ← sabse chhota pehle
 pq.poll();    // 20
 pq.poll();    // 30
 ```
@@ -42,7 +42,7 @@ maxPQ.add(30);
 maxPQ.add(10);
 maxPQ.add(20);
 
-maxPQ.poll();    // 30  ← sabse bada pehle 
+maxPQ.poll();    // 30  ← sabse bada pehle
 ```
 
 ---
@@ -152,7 +152,7 @@ for (int x : pq) {
 while (!pq.isEmpty()) {
     System.out.print(pq.poll() + " ");
 }
-// Output: 5 10 15 20 30   ← SORTED 
+// Output: 5 10 15 20 30   ← SORTED
 ```
 
 `poll()` har baar:

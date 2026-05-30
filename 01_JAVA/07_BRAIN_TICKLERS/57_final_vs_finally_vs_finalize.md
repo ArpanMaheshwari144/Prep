@@ -49,11 +49,11 @@
 ### 3 use cases
 
 ```java
-// 1️⃣ FINAL VARIABLE — reassignment locked
+// 1 FINAL VARIABLE — reassignment locked
 final int MAX = 100;
 MAX = 200;          // COMPILE ERROR
 
-// 2️⃣ FINAL METHOD — overriding locked
+// 2 FINAL METHOD — overriding locked
 class Animal {
     public final void breathe() { ... }
 }
@@ -61,7 +61,7 @@ class Dog extends Animal {
     public void breathe() { ... }   // COMPILE ERROR
 }
 
-// 3️⃣ FINAL CLASS — inheritance locked
+// 3 FINAL CLASS — inheritance locked
 public final class String { ... }   // String can't be subclassed
 class MyString extends String { }   // COMPILE ERROR
 ```
@@ -71,9 +71,9 @@ class MyString extends String { }   // COMPILE ERROR
 ```
    Variable           Method             Class
    ────────           ──────             ─────
-                                          
+
    X = 10          method()        Class
-                                     
+
    "Reassign         "Override            "Extend
     not allowed"      not allowed"        not allowed"
 ```

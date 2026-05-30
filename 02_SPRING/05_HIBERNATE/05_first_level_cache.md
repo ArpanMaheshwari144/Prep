@@ -2,17 +2,17 @@
 
 ---
 
-## 1️⃣ Concept (Office Filing Cabinet Analogy)
+## 1 Concept (Office Filing Cabinet Analogy)
 
 ```
 Imagine office cabinet — sirf TERI desk pe rakhi:
-   
+
    Pehli baar file maange? → Storage room jaake la kar
    Phir desk pe rakhi
-   
+
    Doosri baar same file? → Desk se utha le, no storage trip
    Teesri baar?           → Desk se utha le
-   
+
    Tera shift khatam?     → Desk khali
 ```
 
@@ -25,7 +25,7 @@ Hibernate Session = Tera desk
 
 ---
 
-## 2️⃣ Visual Flow
+## 2 Visual Flow
 
 ```
    @Transactional method shuru → Session OPEN
@@ -45,7 +45,7 @@ Hibernate Session = Tera desk
    userRepo.findById(1L)
         │
         ├── L1 cache check
-        │   HAAN → cache se return 
+        │   HAAN → cache se return
         │   = NO DB query!
         │
         ▼
@@ -58,20 +58,20 @@ Hibernate Session = Tera desk
 
 ---
 
-## 3️⃣ Code Demo
+## 3 Code Demo
 
 ```java
 @Transactional
 public void demo(Long id) {
     User u1 = userRepo.findById(id).orElseThrow();
     // → DB query: SELECT * FROM users WHERE id=?
-    
+
     User u2 = userRepo.findById(id).orElseThrow();
     // → NO DB query — cache se return
-    
+
     User u3 = userRepo.findById(id).orElseThrow();
     // → NO DB query
-    
+
     u1 == u2;     // TRUE (same object reference)
     u2 == u3;     // TRUE
 }
@@ -84,7 +84,7 @@ public void demo(Long id) {
 
 ---
 
-## 4️⃣ Important Properties
+## 4 Important Properties
 
 ```
 1. PER-SESSION (per @Transactional)
@@ -97,19 +97,19 @@ public void demo(Long id) {
 
 3. CANNOT DISABLE
    It's how Hibernate works internally
-   
+
 4. CLEARED on session close
    Transaction end → cache gone
 ```
 
 ---
 
-## 5️⃣ Visual — Per Session Cache
+## 5 Visual — Per Session Cache
 
 ```
    Request 1 — Method A    Request 2 — Method B
    ────────────────────    ─────────────────────
-   
+
    Session 1 OPEN          Session 2 OPEN
         │                       │
         ▼                       ▼
@@ -125,32 +125,32 @@ public void demo(Long id) {
 
 ---
 
-## 6️⃣ Useful Use Case
+## 6 Useful Use Case
 
 ```java
 @Transactional
 public void transfer(Long fromId, Long toId, BigDecimal amt) {
     Account from = accountRepo.findById(fromId).orElseThrow();
-    
+
     // ... business logic, multiple operations
-    
+
     Account fromAgain = accountRepo.findById(fromId).orElseThrow();
     // No DB query! L1 cache return karta
-    
+
     from == fromAgain;   // TRUE (same object)
 }
 ```
 
 ---
 
-## 7️⃣ Common Gotcha — Stale Data
+## 7 Common Gotcha — Stale Data
 
 ```
 Inside same transaction:
    1. findById(1L) → User name "Suresh"
    2. SQL update from elsewhere — name now "Arpan"
    3. findById(1L) → STILL returns "Suresh" (cached!)
-   
+
    = L1 cache doesn't auto-refresh
    = Stale data
 ```
@@ -164,7 +164,7 @@ entityManager.clear();          // empty entire cache
 
 ---
 
-## 8️⃣ L1 vs L2 Cache (Bonus)
+## 8 L1 vs L2 Cache (Bonus)
 
 ```
 ┌──────────────────┬───────────────┬─────────────────┐
@@ -188,8 +188,8 @@ L1 cache = automatic, transaction-level
 ## Interview Power Phrase
 
 ```
-"Session-scoped cache that's automatic and built-in. 
- Same entity fetched twice in same transaction = 1 DB query 
+"Session-scoped cache that's automatic and built-in.
+ Same entity fetched twice in same transaction = 1 DB query
  (second fetch returns from cache, returns SAME Java object).
 
  Cleared on session close (transaction commit/rollback).

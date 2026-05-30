@@ -42,8 +42,8 @@ import com.arpan.bank.exception.InsufficientFundsException;
 // SOLID:
 //    OCP — Naya account type chahiye? Just extend Account
 //          (parent modify NAHI karna)
-//    LSP — Account a = new SavingsAccount();  
-//          Account a = new FixedDeposit();    
+//    LSP — Account a = new SavingsAccount();
+//          Account a = new FixedDeposit();
 //          Sab safely substitute karte
 //
 // ACCESS MODIFIERS — Code Mein:

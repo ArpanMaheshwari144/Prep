@@ -1,5 +1,5 @@
 # ════════════════════════════════════════════════════════════
-# 📋 UserCRUD ConfigMap — Non-sensitive Config
+# UserCRUD ConfigMap — Non-sensitive Config
 # ════════════════════════════════════════════════════════════
 # Spring Boot ke env variables (non-sensitive)
 # Sensitive values (password) Secret se aate

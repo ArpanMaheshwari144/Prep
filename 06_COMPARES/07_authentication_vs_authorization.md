@@ -97,22 +97,22 @@ STEP 2: AUTHORIZATION (at floor doors)
 ```
 1. PASSWORD-BASED
    Username + password → check hash in DB
-   
+
 2. MULTI-FACTOR (MFA)
    Password + OTP / TOTP / SMS code
-   
+
 3. BIOMETRIC
    Fingerprint, face ID, voice
-   
+
 4. TOKEN-BASED
    JWT (stateless)
    Session ID (stateful)
-   
+
 5. SSO (Single Sign-On)
    OAuth 2.0 (Google, Facebook login)
    SAML (enterprise)
    OpenID Connect (modern)
-   
+
 6. PASSWORDLESS
    Magic links (email)
    WebAuthn (FIDO2 hardware keys)
@@ -167,7 +167,7 @@ AUTHORIZATION (per endpoint):
    @PreAuthorize("hasRole('ADMIN')")
    @DeleteMapping("/users/{id}")
    public void delete() { ... }
-   
+
    OR in SecurityConfig:
    .requestMatchers("/admin/**").hasRole("ADMIN")
    .requestMatchers("/users/**").authenticated()
@@ -182,7 +182,7 @@ AUTHORIZATION (per endpoint):
 401 UNAUTHORIZED:
    = "Authentication failed"
    = "Login first / Token invalid"
-   
+
    Triggers:
    • No JWT header
    • JWT expired
@@ -192,12 +192,12 @@ AUTHORIZATION (per endpoint):
 403 FORBIDDEN:
    = "Authentication OK, but not allowed"
    = "Login is valid, but you can't do this"
-   
+
    Triggers:
    • User trying ADMIN endpoint
    • Cross-tenant access
    • Resource not owned
-   
+
    Common confusion:
       401 ≠ 403
       401 = identity issue
@@ -226,7 +226,7 @@ AUTHORIZATION (per endpoint):
    → Denied? → 403
 
 4. User calls admin API (DELETE /users/5)
-   → JWT verified 
+   → JWT verified
    → Role check: needs ADMIN
    → User is USER → 403 Forbidden
 ```

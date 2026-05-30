@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Problem (1 line)
+## 1 Problem (1 line)
 
 ```
    https://amazon.in/dp/B0BLKJSDKFJ934KJSDF/ref=...      (long)
@@ -24,7 +24,7 @@ USE CASES:
 
 ---
 
-## 2️⃣ Core Idea — HashMap Pattern
+## 2 Core Idea — HashMap Pattern
 
 ```
    ┌──────────────┬──────────────────────────┐
@@ -53,7 +53,7 @@ USE CASES:
 
 ---
 
-## 3️⃣ Short Code Generation — 3 Methods
+## 3 Short Code Generation — 3 Methods
 
 ```
 ┌─────────────────┬──────────────┬──────────────┬─────────────┐
@@ -69,7 +69,7 @@ USE CASES:
 
 ---
 
-## 4️⃣ Base62 — Visual
+## 4 Base62 — Visual
 
 ```
 INDEX → CHARACTER MAPPING
@@ -105,7 +105,7 @@ COMPRESSION POWER:
 
 ---
 
-## 5️⃣ Storage Choice
+## 5 Storage Choice
 
 ```
 ACCESS PATTERN:
@@ -127,7 +127,7 @@ ACCESS PATTERN:
 
 ---
 
-## 6️⃣ Capacity Estimation
+## 6 Capacity Estimation
 
 ```
 ASSUMPTIONS:
@@ -147,7 +147,7 @@ WRITES (shorten):                READS (redirect):
                        100 : 1
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-         CACHING IS CRITICAL 
+         CACHING IS CRITICAL
 ```
 
 ```
@@ -157,7 +157,7 @@ STORAGE:
 
 ---
 
-## 7️⃣ API Design — Just 2 Endpoints
+## 7 API Design — Just 2 Endpoints
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -195,7 +195,7 @@ STORAGE:
 
 ---
 
-## 8️⃣ Architecture — Full Picture
+## 8 Architecture — Full Picture
 
 ```
                        USER
@@ -259,7 +259,7 @@ READ FLOW:                   WRITE FLOW:
 
 ---
 
-## 9️⃣ Distributed Counter Problem
+## 9 Distributed Counter Problem
 
 ```
 PROBLEM (multi-server):

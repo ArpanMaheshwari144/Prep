@@ -49,10 +49,10 @@ Queries    → table scan slow
 
 ### With (10 shards)
 ```
-100 TB     → 10 × 10 TB 
-1M w/s     → distributed (100K each) 
-Backup     → parallel 
-Queries    → smaller tables, fast 
+100 TB     → 10 × 10 TB
+1M w/s     → distributed (100K each)
+Backup     → parallel
+Queries    → smaller tables, fast
 ```
 
 ---
@@ -167,7 +167,7 @@ Add 5th shard:
    shard = hash(x) % 5
 
    hash(x) % 4  ≠  hash(x) % 5
-   ALMOST ALL DATA migrates 
+   ALMOST ALL DATA migrates
 ```
 
 **Solution: Consistent Hashing**
@@ -176,7 +176,7 @@ Hash ring (0 to 2^32):
    Servers placed at hash positions
    Keys placed at hash positions
    Each key → next clockwise server
-   
+
    Add server → only K/N keys move (not all)
 ```
 
@@ -210,8 +210,8 @@ Cross-shard TRANSACTION
 
 ```
 Celebrity tweet → 1M writes/sec to one user_id
-   → That shard tank 
-   
+   → That shard tank
+
 Fix:
    1. Sub-sharding (split celebrity data further)
    2. Hash-based key (avoid sequential)

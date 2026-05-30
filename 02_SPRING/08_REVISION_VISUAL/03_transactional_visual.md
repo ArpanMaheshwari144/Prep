@@ -2,16 +2,16 @@
 
 ---
 
-## 1️⃣ Problem (Bank Transfer Story)
+## 1 Problem (Bank Transfer Story)
 
 ```
    Tu ne Suresh ko ₹500 transfer kiya:
-   
+
    Step 1: Tera account → ₹500 debit
    Step 2: Suresh account → ₹500 credit
-   
+
    Both must succeed TOGETHER.
-   
+
    Imagine Step 1 ho gaya, Step 2 ke time SERVER CRASH:
       Tera ₹500 gone
       Suresh ko mila NAHI
@@ -24,7 +24,7 @@ SOLUTION: Atomic operation = "Sab ya kuch nahi"
 
 ---
 
-## 2️⃣ Transaction Concept
+## 2 Transaction Concept
 
 ```
    ┌─────────────────────────────────┐
@@ -41,7 +41,7 @@ SOLUTION: Atomic operation = "Sab ya kuch nahi"
 
 ---
 
-## 3️⃣ Spring = MySQL Wrapper (Reality Check)
+## 3 Spring = MySQL Wrapper (Reality Check)
 
 ### MySQL Manual
 ```sql
@@ -82,12 +82,12 @@ COMMIT;       -- or ROLLBACK on error
 
 ---
 
-## 4️⃣ Code Reality
+## 4 Code Reality
 
 ```java
 @Service
 public class TransferService {
-    
+
     @Transactional
     public void transfer(Long from, Long to, BigDecimal amount) {
         accountRepo.debit(from, amount);    // Step 1
@@ -101,7 +101,7 @@ public class TransferService {
 
 ---
 
-## 5️⃣ ACID Properties
+## 5 ACID Properties
 
 ```
 A — ATOMICITY
@@ -125,7 +125,7 @@ D — DURABILITY
 
 ---
 
-## 6️⃣ Propagation — Sirf 3 Yaad Rakh
+## 6 Propagation — Sirf 3 Yaad Rakh
 
 ```
 ANALOGY: Tu meeting mein hai. Naya kaam aaya — kya karega?
@@ -161,7 +161,7 @@ ANALOGY: Tu meeting mein hai. Naya kaam aaya — kya karega?
 
 ---
 
-## 7️⃣ Isolation Levels
+## 7 Isolation Levels
 
 ```
 PROBLEM: 2 transactions running simultaneously
@@ -195,7 +195,7 @@ USE:
 
 ---
 
-## 8️⃣ Rollback Rules (INTERVIEW TRAP)
+## 8 Rollback Rules (INTERVIEW TRAP)
 
 ```
 DEFAULT BEHAVIOR:
@@ -232,7 +232,7 @@ PRODUCTION RULE:
 
 ---
 
-## 9️⃣ Self-Invocation Pitfall (BIGGEST GOTCHA)
+## 9 Self-Invocation Pitfall (BIGGEST GOTCHA)
 
 ```
 PROBLEM:
@@ -243,11 +243,11 @@ PROBLEM:
 ```java
 @Service
 public class UserService {
-    
+
     public void outer() {
         inner();   // ← @Transactional IGNORED here!
     }
-    
+
     @Transactional
     public void inner() {
         // No transaction wrapped
@@ -306,40 +306,40 @@ USE: All getter/finder methods
 
 ---
 
-## 1️⃣1️⃣ Real Production Pattern
+## 11 Real Production Pattern
 
 ```java
 @Service
 public class TransferService {
-    
+
     @Autowired AccountRepository repo;
     @Autowired AuditService auditService;
-    
+
     @Transactional(rollbackFor = Exception.class)
-    public void transfer(Long from, Long to, BigDecimal amount) 
+    public void transfer(Long from, Long to, BigDecimal amount)
             throws InsufficientFundsException {
-        
+
         Account fromAcc = repo.findById(from).orElseThrow();
         Account toAcc = repo.findById(to).orElseThrow();
-        
+
         if (fromAcc.balance.compareTo(amount) < 0) {
             throw new InsufficientFundsException();
             // → automatic ROLLBACK
         }
-        
+
         fromAcc.debit(amount);
         toAcc.credit(amount);
-        
+
         repo.save(fromAcc);
         repo.save(toAcc);
-        
+
         auditService.logTransfer(from, to, amount);
     }
 }
 
 @Service
 public class AuditService {
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logTransfer(...) {
         // Independent transaction
@@ -355,7 +355,7 @@ public class AuditService {
 ```
 @Transactional       → "Sab ya kuch nahi"
                        JDBC wrapper (BEGIN/COMMIT/ROLLBACK)
-                       
+
 REQUIRED             → 90% default, safe
 
 REQUIRES_NEW         → audit log pattern (independent)

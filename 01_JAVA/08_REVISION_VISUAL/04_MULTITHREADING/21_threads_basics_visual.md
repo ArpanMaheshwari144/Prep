@@ -2,14 +2,14 @@
 
 ---
 
-## 1️⃣ Concept (Restaurant Kitchen Analogy)
+## 1 Concept (Restaurant Kitchen Analogy)
 
 ```
 SINGLE-THREADED (1 chef):
    Order 1 → cut veg → cook → plate → serve
    Order 2 → wait... wait... cut veg → cook → plate
    Order 3 → wait wait wait...
-   
+
    = Slow, sequential
 ```
 
@@ -18,7 +18,7 @@ MULTI-THREADED (5 chefs):
    Order 1 → Chef A handles
    Order 2 → Chef B handles  (parallel)
    Order 3 → Chef C handles  (parallel)
-   
+
    = Fast, parallel
 ```
 
@@ -29,34 +29,34 @@ Thread  = each chef inside
 
 ---
 
-## 2️⃣ Process vs Thread
+## 2 Process vs Thread
 
 ```
    PROCESS                     THREAD
    ───────                     ──────
-   
+
    Restaurant building         Each chef
    Heavy (own memory)          Light (shared memory)
    Isolated                    Shared with siblings
    Slow to create              Fast to create
-   
+
    1 Java app = 1 process
    Multiple threads inside     = many workers
 ```
 
 ---
 
-## 3️⃣ Why Multithreading?
+## 3 Why Multithreading?
 
 ```
 1. PARALLEL WORK
    2-core CPU → 2 threads run truly parallel
    = Speed boost
-   
+
 2. ASYNC OPERATIONS
    Heavy task = background thread
    Main thread = UI/response stays responsive
-   
+
 3. RESOURCE UTILIZATION
    While 1 thread waits for DB
    Other thread can process
@@ -65,7 +65,7 @@ Thread  = each chef inside
 
 ---
 
-## 4️⃣ Creating Threads — 3 Ways
+## 4 Creating Threads — 3 Ways
 
 ### Way 1: Extend Thread
 ```java
@@ -108,7 +108,7 @@ Runnable preferred:
 
 ---
 
-## 5️⃣ Thread Lifecycle (5 States)
+## 5 Thread Lifecycle (5 States)
 
 ```
    NEW (just created, not started)
@@ -142,7 +142,7 @@ Runnable preferred:
 
 ---
 
-## 6️⃣ start() vs run() — CRITICAL
+## 6 start() vs run() — CRITICAL
 
 ```java
 Thread t = new Thread(() -> System.out.println("Hi"));
@@ -156,13 +156,13 @@ t.start();    // creates NEW thread, executes run()
 WHY?
    start() → JVM creates NEW thread, calls run()
    run()   → just a normal method call
-   
+
    Calling run() directly = thread didn't actually start
 ```
 
 ---
 
-## 7️⃣ Basic Operations
+## 7 Basic Operations
 
 ```java
 Thread t = new Thread(() -> {
@@ -180,7 +180,7 @@ t.setPriority(Thread.MAX_PRIORITY);  // priority hint
 
 ---
 
-## 8️⃣ Synchronized (Lock)
+## 8 Synchronized (Lock)
 
 ```
 PROBLEM:
@@ -190,7 +190,7 @@ PROBLEM:
 ```java
 class Counter {
     int count = 0;
-    
+
     void increment() {
         count++;        // NOT atomic — race!
     }
@@ -205,7 +205,7 @@ class Counter {
 ```java
 class Counter {
     int count = 0;
-    
+
     synchronized void increment() {     // mutex lock
         count++;
     }
@@ -222,14 +222,14 @@ synchronized = only ONE thread can execute this at a time
 
 ---
 
-## 9️⃣ Visual — Race Condition
+## 9 Visual — Race Condition
 
 ```
 Thread A:                  Thread B:
    read count = 5             read count = 5
    add 1 → 6                  add 1 → 6
    write count = 6            write count = 6
-   
+
    Expected: 5 → 6 → 7
    Actual:   5 → 6 (one increment lost!)
    = RACE
@@ -237,7 +237,7 @@ Thread A:                  Thread B:
 
 ```
 With synchronized:
-   
+
    Thread A:                  Thread B (waits):
    acquire lock
    read 5 → write 6
@@ -245,7 +245,7 @@ With synchronized:
                               acquire lock
                               read 6 → write 7
                               release lock
-   
+
    = Atomic, no race
 ```
 
@@ -268,7 +268,7 @@ public static synchronized void method() { }
 
 ---
 
-## 1️⃣1️⃣ volatile (Visibility)
+## 11 volatile (Visibility)
 
 ```
 PROBLEM:
@@ -281,9 +281,9 @@ PROBLEM:
 ```java
 class Flag {
     volatile boolean running = true;
-    
+
     void stop() { running = false; }
-    
+
     void run() {
         while (running) { ... }   // sees update IMMEDIATELY
     }
@@ -298,7 +298,7 @@ volatile = "always read/write from MAIN MEMORY"
 
 ---
 
-## 1️⃣2️⃣ volatile vs synchronized
+## 12 volatile vs synchronized
 
 ```
 ┌─────────────────┬────────────────────┬─────────────────┐

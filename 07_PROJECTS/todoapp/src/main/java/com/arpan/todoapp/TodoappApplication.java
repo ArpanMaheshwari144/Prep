@@ -39,7 +39,7 @@ import org.springframework.cache.annotation.EnableCaching;
 //       └─ @ComponentScan (scan com.arpan.todoapp + sub-folders)
 //          │
 //          ▼
-//    Spring Context ready → Tomcat starts on :8080 → APP RUNNING 
+//    Spring Context ready → Tomcat starts on :8080 → APP RUNNING
 //
 // @SpringBootApplication — 3-IN-1 SUPERPOWER:
 //

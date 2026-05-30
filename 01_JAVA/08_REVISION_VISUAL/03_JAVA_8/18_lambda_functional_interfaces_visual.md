@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Problem Before Lambda
+## 1 Problem Before Lambda
 
 ```
 Imagine button click handler:
@@ -14,7 +14,7 @@ OLD Java 7 style:
            System.out.println("Clicked!");
        }
    });
-   
+
    = 5 lines for ONE action
    = Boilerplate kaafi
 ```
@@ -22,13 +22,13 @@ OLD Java 7 style:
 ```
 WITH Lambda (Java 8+):
    button.setOnClick(() -> System.out.println("Clicked!"));
-   
+
    = 1 line same kaam
 ```
 
 ---
 
-## 2️⃣ Lambda Syntax — Visual
+## 2 Lambda Syntax — Visual
 
 ```
    (parameters) -> { body }
@@ -57,7 +57,7 @@ x -> x * 2
 
 ---
 
-## 3️⃣ Functional Interface
+## 3 Functional Interface
 
 ```
 A functional interface = interface with EXACTLY ONE abstract method
@@ -87,11 +87,11 @@ KEY:
 
 ---
 
-## 4️⃣ Built-in Functional Interfaces — PFCS
+## 4 Built-in Functional Interfaces — PFCS
 
 ```
    Java 8 ne 4 famous diye:
-   
+
    P = Predicate   (test something, return boolean)
    F = Function    (transform, take + return)
    C = Consumer    (take, return nothing)
@@ -100,7 +100,7 @@ KEY:
 
 ---
 
-## 5️⃣ Predicate (test → boolean)
+## 5 Predicate (test → boolean)
 
 ```java
 Predicate<Integer> isEven = x -> x % 2 == 0;
@@ -119,7 +119,7 @@ Use case:
 
 ---
 
-## 6️⃣ Function<T, R> (input → output)
+## 6 Function<T, R> (input → output)
 
 ```java
 Function<Integer, Integer> square = x -> x * x;
@@ -139,7 +139,7 @@ Use case:
 
 ---
 
-## 7️⃣ Consumer<T> (take → no return)
+## 7 Consumer<T> (take → no return)
 
 ```java
 Consumer<String> printer = s -> System.out.println(s);
@@ -157,7 +157,7 @@ Use case:
 
 ---
 
-## 8️⃣ Supplier<T> (no input → output)
+## 8 Supplier<T> (no input → output)
 
 ```java
 Supplier<String> greeting = () -> "Hello World";
@@ -175,7 +175,7 @@ Use case:
 
 ---
 
-## 9️⃣ PFCS Summary
+## 9 PFCS Summary
 
 ```
 ┌────────────┬──────────────┬──────────────┐
@@ -230,7 +230,7 @@ Supplier<List<String>> newList = ArrayList::new;
 
 ---
 
-## 1️⃣1️⃣ Real Examples
+## 11 Real Examples
 
 ```java
 // Filter even numbers
@@ -254,7 +254,7 @@ people.sort(Comparator.comparingInt(p -> p.age));
 
 ---
 
-## 1️⃣2️⃣ Lambda Capture (Closure)
+## 12 Lambda Capture (Closure)
 
 ```java
 int multiplier = 3;
@@ -270,14 +270,14 @@ RULE:
    Lambda can read enclosing variables
    They must be EFFECTIVELY FINAL
    (not changed after lambda created)
-   
+
    multiplier = 3;     // OK to capture
    multiplier = 5;     // compile error if used in lambda
 ```
 
 ---
 
-## 1️⃣3️⃣ Visual — Lambda Evolution
+## 13 Visual — Lambda Evolution
 
 ```
 Anonymous class:
@@ -286,12 +286,12 @@ Anonymous class:
            return a - b;
        }
    }
-   
+
    ↓ become
 
 Lambda:
    (a, b) -> a - b
-   
+
    ↓ if pattern matches method...
 
 Method Reference:

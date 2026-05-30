@@ -14,7 +14,7 @@ Ingress = NGINX (in K8s context)
    • Same L7 routing
    • Same access logs (IP, URL, status, user-agent)
    • AWS EC2 mein nginx = K8s mein Ingress
-   
+
 Bus or kuch nahi.
 ```
 
@@ -29,7 +29,7 @@ Tu ne 5 microservices banaye:
    • order-service      (LoadBalancer = 1 cloud LB = $$$)
    • payment-service    (LoadBalancer = 1 cloud LB = $$$)
    • notification       (LoadBalancer = 1 cloud LB = $$$)
-   
+
    = 5 LBs = 5 public IPs = 5x cost
 ```
 
@@ -55,9 +55,9 @@ Ingress = SINGLE entry point + ROUTING RULES
       api.com/users    → user-service
       api.com/orders   → order-service
       api.com/payments → payment-service
-      
-   = 1 LB instead of 5 = cost saved 
-   = Centralized routing + TLS 
+
+   = 1 LB instead of 5 = cost saved
+   = Centralized routing + TLS
 ```
 
 ---
@@ -149,13 +149,13 @@ Ingress level pe log hota:
    • Routing rules: path → service
    • Host configurations
    • TLS settings
-   
+
 2. INGRESS CONTROLLER (actual implementation)
    • nginx-ingress (most common — LITERALLY nginx)
    • AWS Load Balancer Controller (uses ALB)
    • Traefik
    • Kong
-   
+
    Ingress resource alone = USELESS without controller
    Controller = the engine that READS rules + ROUTES traffic
 ```
@@ -173,12 +173,12 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
-  
+
   tls:                                      # ← HTTPS support
   - hosts:
     - api.example.com
     secretName: api-tls-cert
-  
+
   rules:
   - host: api.example.com                   # ← host-based routing
     http:
@@ -190,7 +190,7 @@ spec:
             name: user-service
             port:
               number: 8080
-      
+
       - path: /orders
         pathType: Prefix
         backend:
@@ -198,7 +198,7 @@ spec:
             name: order-service
             port:
               number: 8080
-      
+
       - path: /payments
         pathType: Prefix
         backend:

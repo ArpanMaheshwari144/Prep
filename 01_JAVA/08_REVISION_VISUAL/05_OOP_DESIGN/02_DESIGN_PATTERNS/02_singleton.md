@@ -36,7 +36,7 @@ Problems:
 Country mein PRESIDENT sirf EK
    2 presidents ban nahi sakte
    Sab unhi ko reference karte
-   
+
    = SINGLETON
 ```
 
@@ -46,15 +46,15 @@ Country mein PRESIDENT sirf EK
 
 ```java
 public class DatabaseConnection {
-    
+
     // 1. STATIC instance (class-level)
     private static DatabaseConnection instance;
-    
+
     // 2. PRIVATE constructor (bahar ka 'new' block kare)
     private DatabaseConnection() {
         // costly setup
     }
-    
+
     // 3. Public method to get instance
     public static DatabaseConnection getInstance() {
         if (instance == null) {
@@ -114,7 +114,7 @@ Thread A:                Thread B:
    instance == null?        instance == null?
    YES                      YES                ← BOTH check SAME time!
    create instance          create instance    ← BOTH create
-   
+
    = 2 instances created
    = Singleton BROKEN
 ```
@@ -126,7 +126,7 @@ Thread A:                Thread B:
 ```java
 public enum DatabaseConnection {
     INSTANCE;
-    
+
     public void query(String sql) {
         // ...
     }

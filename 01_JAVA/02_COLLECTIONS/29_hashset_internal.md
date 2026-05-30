@@ -43,7 +43,7 @@ emails.add("rahul@gmail.com");
 emails.add("arpan@gmail.com");                        // duplicate!
 
 System.out.println(emails);
-// [arpan@gmail.com, rahul@gmail.com] — duplicate gone 
+// [arpan@gmail.com, rahul@gmail.com] — duplicate gone
 ```
 
 ---
@@ -69,7 +69,7 @@ System.out.println(emails);
 
   3rd add → "arpan@gmail.com" pehle se hai (key match)
           → HashMap ne REPLACE kiya (naya entry NAHI bana)
-          → Duplicate avoid 
+          → Duplicate avoid
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -92,7 +92,7 @@ System.out.println(emails);
   ┌────┐
   │ 5  │ → [obj1: arpan]    ← hashCode same
   └────┘                       equals true → REPLACE
-  size = 1  
+  size = 1
 ```
 
 ---
@@ -125,7 +125,7 @@ public boolean equals(Object o) {
     Panelist p = (Panelist) o;
     return this.email.equals(p.email);                 // same email = equal
 }
-// ab set.size() = 1 
+// ab set.size() = 1
 ```
 
 > **TRAP 1:** Sirf `equals()` override kiya, `hashCode()` nahi → alag hashCode → alag bucket → `equals()` kabhi call hi nahi hoga → duplicate aa jayega.

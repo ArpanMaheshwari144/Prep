@@ -32,15 +32,15 @@ public class TransactionService {
     private SMSService sms;
     private AuditService audit;
     private SlackService slack;
-    
+
     public void transfer(Account from, Account to, double amount) {
         // ... transfer logic ...
-        
+
         email.send("Transfer of " + amount);     // hardcoded
         sms.send("Transfer happened");            // hardcoded
         audit.log("Transfer event");              // hardcoded
         slack.notify("New transfer");             // hardcoded
-        
+
         // Naya notification add karna ho? service code modify
         // pushNotification.send(...);   ← every time code change
     }
@@ -60,10 +60,10 @@ public class TransactionService {
 ```java
 public class TransactionService {
     private EventPublisher publisher;
-    
+
     public void transfer(Account from, Account to, double amount) {
         // ... transfer logic ...
-        
+
         publisher.publish(new TransferEvent(...));   // ONE call
         // Publisher automatically notifies all subscribers
     }
@@ -112,7 +112,7 @@ publisher.subscribe(new SlackListener());
    ▼          ▼          ▼          ▼
 EmailListener SMSListener Audit  SlackListener
   .onEvent()  .onEvent() .onEvent() .onEvent()
-                           
+
 ```
 
 **Key insight:** Publisher loops through subscribers, calls `onEvent()` on each. **One-to-many** broadcast.
@@ -121,45 +121,45 @@ EmailListener SMSListener Audit  SlackListener
 
 ## PART 1: Manual Implementation (3 components)
 
-### 1️⃣ Event class — what happened
+### 1 Event class — what happened
 ```java
 public class TransactionEvent {
     private final String fromId;
     private final String toId;
     private final double amount;
     private final long timestamp;
-    
+
     public TransactionEvent(String fromId, String toId, double amount, long timestamp) {
         this.fromId = fromId;
         this.toId = toId;
         this.amount = amount;
         this.timestamp = timestamp;
     }
-    
+
     // getters...
 }
 ```
 
-### 2️⃣ Listener interface — who can subscribe
+### 2 Listener interface — who can subscribe
 ```java
 public interface EventListener {
     void onEvent(TransactionEvent event);
 }
 ```
 
-### 3️⃣ Publisher — manages subscribers + broadcasts
+### 3 Publisher — manages subscribers + broadcasts
 ```java
 public class EventPublisher {
     private final List<EventListener> listeners = new ArrayList<>();
-    
+
     public void subscribe(EventListener listener) {
         listeners.add(listener);
     }
-    
+
     public void unsubscribe(EventListener listener) {
         listeners.remove(listener);
     }
-    
+
     public void publish(TransactionEvent event) {
         for (EventListener listener : listeners) {
             listener.onEvent(event);   // notify each
@@ -168,7 +168,7 @@ public class EventPublisher {
 }
 ```
 
-### 4️⃣ Concrete listeners
+### 4 Concrete listeners
 ```java
 public class EmailListener implements EventListener {
     @Override
@@ -207,11 +207,11 @@ publisher.publish(new TransactionEvent("A1", "A2", 1000, System.currentTimeMilli
 // 1. EventPublisher.java
 public class EventPublisher {
     private final List<EventListener> listeners = new ArrayList<>();
-    
+
     public void subscribe(EventListener listener) {
         listeners.add(listener);
     }
-    
+
     public void publish(TransactionEvent event) {
         for (EventListener listener : listeners) {
             listener.onEvent(event);
@@ -236,10 +236,10 @@ public class EmailListener implements EventListener {
 // 4. AccountService — integrates observer
 public class AccountService {
     private final EventPublisher publisher;
-    
+
     public void transfer(String fromId, String toId, double amount) {
         // ... transfer logic ...
-        
+
         // Publish event — listeners auto-notified
         publisher.publish(new TransactionEvent(fromId, toId, amount, System.currentTimeMillis()));
     }
@@ -273,7 +273,7 @@ service.transfer("A1", "A2", 1000);
 public class OrderService {
     @Autowired
     private ApplicationEventPublisher publisher;
-    
+
     public void placeOrder(Order order) {
         // ... save order ...
         publisher.publishEvent(new OrderPlacedEvent(order));   // broadcast
@@ -447,7 +447,7 @@ Real-world:
    • Spring ApplicationEventPublisher
    • Java Swing addActionListener
    • Kafka producers/consumers
-   • EventPublisher in SimpleBankSystem 
+   • EventPublisher in SimpleBankSystem
 
 Use when:
    One-to-many notifications
@@ -494,7 +494,7 @@ Trap 5: "Memory leak with listeners"
 WHAT     → One-to-many event notifications
 WHY      → Decouple publisher from listeners + OCP
 HOW      → Publisher list + listener interface + broadcast loop
-PROJECT  → EventPublisher in SimpleBankSystem 
+PROJECT  → EventPublisher in SimpleBankSystem
 SPRING   → ApplicationEventPublisher + @EventListener
 SCALE    → Kafka, RabbitMQ, message brokers
 TRAP     → Memory leaks (forgotten listeners) + failure isolation

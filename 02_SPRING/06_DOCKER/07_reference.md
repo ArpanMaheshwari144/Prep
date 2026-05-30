@@ -54,13 +54,13 @@ docker run -d --name mysql-userdb ^
    mysql:8
 
 # Each flag means:
-#   -d                     → detached (background)
-#   --name X               → friendly name
-#   --network NAME         → join custom network
-#   -e KEY=VALUE           → environment variable
-#   -p host:container      → port mapping
-#   -v volume:/path        → volume mount
-#   image:tag              → which image
+# -d                     → detached (background)
+# --name X               → friendly name
+# --network NAME         → join custom network
+# -e KEY=VALUE           → environment variable
+# -p host:container      → port mapping
+# -v volume:/path        → volume mount
+# image:tag              → which image
 
 # Container management
 docker ps                            # running containers
@@ -185,11 +185,11 @@ cd C:\DSA_PRACTICE\02_SPRING\PROJECT\usercrud
 mvn clean package -DskipTests
 
 # Phases:
-#   clean        → target/ delete
-#   validate     → project structure OK?
-#   compile      → .java → .class
-#   test         → unit tests run (skip with -DskipTests)
-#   package      → jar/war banao
+# clean        → target/ delete
+# validate     → project structure OK?
+# compile      → .java → .class
+# test         → unit tests run (skip with -DskipTests)
+# package      → jar/war banao
 
 # Run jar (Spring on host)
 java -jar target\usercrud-0.0.1-SNAPSHOT.jar
@@ -399,7 +399,7 @@ DAY 1 — Foundation + Integration + Volumes
 2.  docker pull mysql:8
 3.  docker run with -p 3306 → port conflict (local MySQL57)
 4.  docker rm + retry with -p 3307:3306 → container UP
-5.  docker logs → "ready for connections" 
+5.  docker logs → "ready for connections"
 6.  pom.xml: add mysql-connector-j dependency
 7.  application.properties: H2 → MySQL (4 lines)
 8.  mvn → "mvn not recognized"
@@ -418,7 +418,7 @@ DAY 1 — Foundation + Integration + Volumes
 19. VOLUMES fix:
        docker volume create mysql_data
        docker run -v mysql_data:/var/lib/mysql ... → Arpan re-add
-       docker rm -f → naya container WITH SAME volume → DATA SURVIVES 
+       docker rm -f → naya container WITH SAME volume → DATA SURVIVES
    = VOLUMES LOCKED
 
 
@@ -432,7 +432,7 @@ DAY 2 — Networks + Compose
 25. docker run -it --rm --network app-net mysql:8 mysql -h mysql-userdb
        → Connect by NAME (no IP, no localhost)
        → SELECT * FROM users → Arpan visible
-   = NETWORKS LOCKED 
+   = NETWORKS LOCKED
 
 26. CREATE: application-compose.properties
        url=jdbc:mysql://mysql:3306/userdb (service name + internal port)
@@ -451,7 +451,7 @@ DAY 2 — Networks + Compose
 34. docker-compose logs app → Tomcat started
 35. Postman /auth/login → 200 OK + new refresh token
        → Arpan's data from Day 1 volume + Compose stack working
-   = COMPOSE LOCKED 
+   = COMPOSE LOCKED
 
 36. ENTRYPOINT pattern (Dockerfile updated):
        CMD ["java", "-jar"] → ENTRYPOINT ["java", "-jar"]

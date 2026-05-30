@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ THE Statement
+## 1 THE Statement
 
 ```
    ┌──────────────────────────────────┐
@@ -15,7 +15,7 @@
 
 ---
 
-## 2️⃣ Photocopy Analogy
+## 2 Photocopy Analogy
 
 ```
 Imagine tere paas ek IMPORTANT PAPER hai.
@@ -38,7 +38,7 @@ Option B: PHOTOCOPY de do
 
 ---
 
-## 3️⃣ Primitive Pass by Value (Easy Case)
+## 3 Primitive Pass by Value (Easy Case)
 
 ```java
 void changeNumber(int x) {
@@ -59,7 +59,7 @@ System.out.println("Outside: " + num);   // STILL 5!
                            x = 100  (modified copy)
                               ↓
                            method ends, x destroyed
-   
+
    num is STILL 5
    Original UNCHANGED
 ```
@@ -73,7 +73,7 @@ PRIMITIVE PASS:
 
 ---
 
-## 4️⃣ OBJECT — The Confusion Begins
+## 4 OBJECT — The Confusion Begins
 
 ```java
 class Person {
@@ -100,13 +100,13 @@ NAHI. Read carefully.
 
 ---
 
-## 5️⃣ Reality — Reference VALUE Pass
+## 5 Reality — Reference VALUE Pass
 
 ```
 Java mein object pass karte time —
    OBJECT NAHI bheja jata
    REFERENCE (address) bheja jata
-   
+
    AND woh REFERENCE value-by-value copied hota
 ```
 
@@ -141,7 +141,7 @@ KEY INSIGHT:
 
 ---
 
-## 6️⃣ Proof — Reassignment Test
+## 6 Proof — Reassignment Test
 
 ```java
 void reassign(Person p) {
@@ -159,14 +159,14 @@ System.out.println(arpan.name);   // STILL "Arpan"!
 ### Why?
 ```
    Outside arpan reference: 0x1234 (original)
-   
+
    Inside method:
       p = 0x1234 (copy of address)
       p = new Person() → p NOW points to 0x5678
       p.name = "NewGuy" → modifies 0x5678 (new object)
-      
+
    Method ends, p destroyed
-   
+
    arpan STILL points to 0x1234 (original)
    Original "Arpan" name unchanged
 ```
@@ -179,13 +179,13 @@ System.out.println(arpan.name);   // STILL "Arpan"!
 
 ---
 
-## 7️⃣ THE Trap (Most People Get Wrong)
+## 7 THE Trap (Most People Get Wrong)
 
 ```
 GALAT belief:
    "Primitives = pass by value"
    "Objects = pass by reference"
-   
+
 SAHI:
    "Java is ALWAYS pass by value"
    "For primitives: VALUE copied"
@@ -196,14 +196,14 @@ SAHI:
 Konfusion ki wajah:
    Object modify ho jata method ke andar
    Lage "pass by reference"
-   
+
    Lekin reassignment test = always fails
    = pass by value confirmed
 ```
 
 ---
 
-## 8️⃣ Visual Summary
+## 8 Visual Summary
 
 ```
 PRIMITIVE:
@@ -240,7 +240,7 @@ OBJECT:
 
 ---
 
-## 9️⃣ Interview Power Phrase
+## 9 Interview Power Phrase
 
 ```
 Q: "Is Java pass by value or pass by reference?"
@@ -248,11 +248,11 @@ Q: "Is Java pass by value or pass by reference?"
 A: "Java is ALWAYS pass by value.
     For primitives, the actual value is copied.
     For objects, the REFERENCE value (address) is copied.
-    
-    Both copies point to the same object on heap, so 
+
+    Both copies point to the same object on heap, so
     modifications to the object are visible.
-    
-    However, reassigning the parameter inside the method 
+
+    However, reassigning the parameter inside the method
     does NOT affect the original — proof of pass by value."
 ```
 
@@ -267,8 +267,8 @@ Primitive: copy of VALUE          (5 → 5)
 Object:    copy of ADDRESS         (0x1234 → 0x1234)
 
    Both copies → same heap object
-   Modify field = visible outside 
-   Reassign reference = local only 
+   Modify field = visible outside
+   Reassign reference = local only
 ```
 
 [← Back to JAVA](../)

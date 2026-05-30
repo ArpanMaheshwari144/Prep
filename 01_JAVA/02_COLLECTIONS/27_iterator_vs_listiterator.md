@@ -119,7 +119,7 @@ Iterator banaya → expectedModCount = 3 (snapshot)
 
   it.remove()       → modCount badha → 4
                        expectedModCount BHI → 4 (sync)
-                       SAFE 
+                       SAFE
 ```
 
 ---

@@ -2,20 +2,20 @@
 
 ---
 
-## 1️⃣ Pehle Problem
+## 1 Pehle Problem
 
 ```
 Imagine students ka list:
    [Arpan (age 25), Suresh (age 30), Mukesh (age 20)]
-   
+
 Sort karna hai by age. Java ko kaise pata "age" se compare karein?
-   
+
    Collections.sort(students);   // ??? kis basis pe?
 ```
 
 ---
 
-## 2️⃣ Cricket Analogy
+## 2 Cricket Analogy
 
 ```
 Team selection 2 ways:
@@ -23,19 +23,19 @@ Team selection 2 ways:
    COMPARABLE = "Default rule team ke andar"
       Team Captain set karta: "We sort by jersey number"
       Class hi mein likha = natural order
-      
+
    COMPARATOR = "External judge ka custom rule"
       Selector: "Sort by score"
       Auditor: "Sort by age"
       Coach: "Sort by stamina"
-      
+
       Class touch nahi karte
       External rule banao
 ```
 
 ---
 
-## 3️⃣ Comparable (Natural Order)
+## 3 Comparable (Natural Order)
 
 ### Concept
 ```
@@ -48,7 +48,7 @@ Java automatically samjhega "iss class ka default order kya hai".
 class Student implements Comparable<Student> {
     String name;
     int age;
-    
+
     @Override
     public int compareTo(Student other) {
         return this.age - other.age;   // sort by age
@@ -63,7 +63,7 @@ Collections.sort(students);    // uses compareTo
 ### compareTo Return Values
 ```
    this.age - other.age:
-   
+
    NEGATIVE → this BEFORE other  (this < other)
    ZERO     → equal
    POSITIVE → this AFTER other   (this > other)
@@ -73,14 +73,14 @@ Collections.sort(students);    // uses compareTo
 Example:
    this.age = 25, other.age = 30
    25 - 30 = -5 (negative) → this first
-   
+
    this.age = 30, other.age = 25
    30 - 25 = +5 (positive) → this later
 ```
 
 ---
 
-## 4️⃣ Comparator (External Rule)
+## 4 Comparator (External Rule)
 
 ### Concept
 ```
@@ -115,28 +115,28 @@ Collections.sort(students, (a, b) -> a.age - b.age);
 
 ---
 
-## 5️⃣ Visual Difference
+## 5 Visual Difference
 
 ```
    COMPARABLE                COMPARATOR
    ──────────                ───────────
-   
+
    Inside class              Outside class
    ONE compareTo method      MANY rules possible
    "Natural order"           "Custom order"
-   
+
    Modify class needed       Class touch nahi
 ```
 
 ---
 
-## 6️⃣ Side-by-Side Code
+## 6 Side-by-Side Code
 
 ### Comparable (inside)
 ```java
 class Student implements Comparable<Student> {
     int age;
-    
+
     public int compareTo(Student o) {     // INSIDE
         return this.age - o.age;
     }
@@ -155,9 +155,9 @@ class Student {  // no Comparable
 
 // 3 different comparators:
 Comparator<Student> byAge = (a, b) -> a.age - b.age;
-Comparator<Student> byScore = (a, b) -> 
+Comparator<Student> byScore = (a, b) ->
         Double.compare(a.score, b.score);
-Comparator<Student> byName = (a, b) -> 
+Comparator<Student> byName = (a, b) ->
         a.name.compareTo(b.name);
 
 Collections.sort(list, byAge);     // sort by age
@@ -167,13 +167,13 @@ Collections.sort(list, byName);    // sort by name
 
 ---
 
-## 7️⃣ Comparator Power — thenComparing
+## 7 Comparator Power — thenComparing
 
 ```java
 // Multi-criteria sort:
 // First by age, ties broken by name
 
-Comparator<Student> combo = 
+Comparator<Student> combo =
     Comparator.comparingInt((Student s) -> s.age)
               .thenComparing(s -> s.name);
 
@@ -183,10 +183,10 @@ Collections.sort(list, combo);
 ```
 Example:
    [Arpan (25), Suresh (30), Mukesh (25)]
-   
+
    Sort by age:
       Arpan (25), Mukesh (25), Suresh (30)
-   
+
    Tie? Use thenComparing (name):
       Arpan (25), Mukesh (25), Suresh (30)
       ↑ Arpan < Mukesh alphabetically
@@ -194,20 +194,20 @@ Example:
 
 ---
 
-## 8️⃣ Reverse Order
+## 8 Reverse Order
 
 ```java
 // Reverse natural order:
 Collections.sort(list, Comparator.reverseOrder());
 
 // Reverse custom:
-Comparator<Student> byAgeDesc = 
+Comparator<Student> byAgeDesc =
     Comparator.comparingInt((Student s) -> s.age).reversed();
 ```
 
 ---
 
-## 9️⃣ When To Use Which?
+## 9 When To Use Which?
 
 ```
 COMPARABLE:
@@ -241,13 +241,13 @@ Collections.sort(names);   // alphabetical
 
 ---
 
-## 1️⃣1️⃣ Comparable + Comparator Together
+## 11 Comparable + Comparator Together
 
 ```java
 class Student implements Comparable<Student> {
     int age;
     String name;
-    
+
     public int compareTo(Student o) {
         return this.age - o.age;   // natural = by age
     }
@@ -288,7 +288,7 @@ compareTo return:
 
 ---
 
-## 1️⃣2️⃣ Common Use Cases
+## 12 Common Use Cases
 
 ```
 Sort employees by salary (Comparator)

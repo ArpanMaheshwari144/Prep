@@ -62,7 +62,7 @@ Fix:
 Parent: Bird (has fly method)
 Child: Penguin extends Bird
    Penguin.fly() = ???  can't fly!
-   
+
 Fix:
    Bird interface
    FlyingBird, NonFlyingBird subtypes

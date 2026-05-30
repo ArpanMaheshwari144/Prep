@@ -23,7 +23,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //         ├── 3. @EnableAutoConfiguration — classpath dekh smart wiring
 //         ├── 4. @Autowired wire beans together
 //         ├── 5. Embedded Tomcat start (port 8080)
-//         └── App READY 
+//         └── App READY
 //
 // @SpringBootApplication — THE MAGIC ANNOTATION:
 //    3 annotations ka COMBO:

@@ -227,7 +227,7 @@ public class UserService {
     //  Flow:
     //  1. user.save()      → row INSERT (TX ke andar)
     //  2. throw RuntimeEx  → exception
-    //  3. Spring proxy     → ROLLBACK 
+    //  3. Spring proxy     → ROLLBACK
     //  4. Result           → row gayab (jaise insert hua hi nahi)
     //
     //  Test:

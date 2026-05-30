@@ -19,7 +19,7 @@ WRONG: "AllInOneWorker" interface
    • cleanFloor()
    • takeOrders()
    • managePayments()
-   
+
    Chef? Forced to implement cleanFloor() too
    = Useless empty methods
 ```

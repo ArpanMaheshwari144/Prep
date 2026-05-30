@@ -2,14 +2,14 @@
 
 ---
 
-## 1️⃣ Setup — Relationship
+## 1 Setup — Relationship
 
 ```java
 @Entity
 class Author {
     @Id Long id;
     String name;
-    
+
     @OneToMany(mappedBy = "author")
     List<Book> books;     // 1 author, many books
 }
@@ -18,7 +18,7 @@ class Author {
 class Book {
     @Id Long id;
     String title;
-    
+
     @ManyToOne
     Author author;
 }
@@ -26,7 +26,7 @@ class Book {
 
 ---
 
-## 2️⃣ The Problem
+## 2 The Problem
 
 ```java
 // Get all authors
@@ -56,7 +56,7 @@ Total = 1 + 10 = 11 queries
 
 ---
 
-## 3️⃣ Visual
+## 3 Visual
 
 ```
 Tera code: "saare authors do, fir har author ki books"
@@ -76,20 +76,20 @@ Hibernate dimaag:
 
 ---
 
-## 4️⃣ Why Happens?
+## 4 Why Happens?
 
 ```
 Default: LAZY fetching for @OneToMany
    Books NOT loaded with author initial fetch
    Books load ONLY when accessed
-   
+
    Loop mein .getBooks() → trigger DB query
    = Per author = 1 query
 ```
 
 ---
 
-## 5️⃣ Solution 1 — JOIN FETCH (Most Common)
+## 5 Solution 1 — JOIN FETCH (Most Common)
 
 ```java
 @Query("SELECT a FROM Author a JOIN FETCH a.books")
@@ -111,7 +111,7 @@ JOIN FETCH = "Author lao + uski books bhi same query mein"
 
 ---
 
-## 6️⃣ Solution 2 — @EntityGraph (Spring Data)
+## 6 Solution 2 — @EntityGraph (Spring Data)
 
 ```java
 @EntityGraph(attributePaths = {"books"})
@@ -121,13 +121,13 @@ List<Author> findAll();
 ```
 attributePaths = "konsi fields saath mein load karna"
    "books" = Author class ka books field
-   
+
    Spring annotation magic — same JOIN FETCH effect
 ```
 
 ---
 
-## 7️⃣ Solution 3 — Batch Fetching
+## 7 Solution 3 — Batch Fetching
 
 ```java
 @OneToMany
@@ -146,7 +146,7 @@ Books fetch IN BATCHES of 10:
 
 ---
 
-## 8️⃣ Comparison
+## 8 Comparison
 
 ```
 ┌──────────────────┬──────────────┬──────────────┐
@@ -161,16 +161,16 @@ Books fetch IN BATCHES of 10:
 
 ---
 
-## 9️⃣ Detection
+## 9 Detection
 
 ```
 1. Enable SQL logging:
    spring.jpa.show-sql=true
    spring.jpa.properties.hibernate.format_sql=true
-   
+
 2. Console mein watch:
    Same query template repeating? → N+1
-   
+
 3. Tools:
    • Hibernate Statistics
    • p6spy
@@ -198,10 +198,10 @@ With JOIN FETCH:
 ## Interview Power Phrase
 
 ```
-"Default LAZY fetching causes N+1 queries when accessing 
+"Default LAZY fetching causes N+1 queries when accessing
  related entities in a loop. 1 query for parent, then N for children.
 
- Solutions: JOIN FETCH (JPQL), @EntityGraph annotation, 
+ Solutions: JOIN FETCH (JPQL), @EntityGraph annotation,
  or @BatchSize for batched fetching.
 
  Always enable SQL logging during dev to catch N+1."

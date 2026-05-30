@@ -76,14 +76,14 @@ class FixedDeposit {
   ┌─────────────┬──────────────┐
   ▼             ▼              ▼
 Savings    Current       FixedDeposit
-withdraw   withdraw      withdraw → throw exception 
+withdraw   withdraw      withdraw → throw exception
 kaam    kaam        (parent ka contract toot gaya!)
 
 
   Code:  for (Account a : accounts) a.withdraw(100);
                                             │
                                             ▼
-                                       FD pe crash 
+                                       FD pe crash
 
 
               GOOD — sahi hierarchy

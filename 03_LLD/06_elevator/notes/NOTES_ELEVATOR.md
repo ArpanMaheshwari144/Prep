@@ -307,7 +307,7 @@ class ElevatorController{
     }
 
     Elevator assignElevator(int floor, Direction dircetion){
-        Elevator bestElevator = null; 
+        Elevator bestElevator = null;
         int minDistance = Integer.MAX_VALUE;
         for(Elevator it : elevators){
             if(Math.abs(it.currentFloor - floor) < minDistance){
@@ -339,7 +339,7 @@ class Building{
             floors.add(new Floor(i));
         }
     }
-   
+
 
     public List<Elevator> getElevators() {
         return elevators;

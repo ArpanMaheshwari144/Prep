@@ -30,11 +30,11 @@
    class Dog extends Animal {
        String name = "Dog";      ← child's field (HIDES parent's)
        void bark() { ... }       ← child's own
-       
+
        void show() {
            System.out.println(this.name);    ← "Dog" (current)
            System.out.println(super.name);   ← "Animal" (parent)
-           
+
            this.bark();                       ← own method
            super.eat();                       ← parent's method
        }
@@ -53,16 +53,16 @@
 class Animal {
     String name = "Animal";
     int age = 0;
-    
+
     Animal() {
         System.out.println("Animal constructor");
     }
-    
+
     Animal(String name) {
         this.name = name;
         System.out.println("Animal(name) constructor");
     }
-    
+
     void breathe() {
         System.out.println(this.name + " breathing");
     }
@@ -71,16 +71,16 @@ class Animal {
 class Dog extends Animal {
     String name = "Dog";          // HIDES parent's name
     String breed;
-    
+
     Dog(String breed) {
         super("Doggy");           // calls Animal(name) — must be FIRST line
         this.breed = breed;
     }
-    
+
     void show() {
         System.out.println("this.name = " + this.name);     // Dog
         System.out.println("super.name = " + super.name);   // Doggy (set via super())
-        
+
         this.breathe();           // calls inherited method
         super.breathe();          // same — but explicit parent reference
     }
@@ -111,7 +111,7 @@ Doggy breathing                ← super.breathe() — Animal.name used
 ```java
 public class Person {
     String name;
-    
+
     public Person(String name) {
         this.name = name;     // "this.name" = field, "name" = parameter
     }
@@ -123,11 +123,11 @@ public class Person {
 public class User {
     String name;
     int age;
-    
+
     public User() {
         this("Anonymous", 0);   // ← this(...) calls another constructor
     }
-    
+
     public User(String name, int age) {
         this.name = name;
         this.age = age;
@@ -258,7 +258,7 @@ class Dog extends Animal {
         System.out.println("Hi");   // COMPILE ERROR
         super();                     // must be first
     }
-    
+
     Dog(int x) {
         super();                     // OK
         System.out.println("Hi");
@@ -274,7 +274,7 @@ class Dog extends Animal {
         this(0);
         super();    // COMPILE ERROR — only one allowed
     }
-    
+
     Dog(int x) { }
 }
 ```
@@ -344,7 +344,7 @@ class Dog extends Animal {
 ```
 this   → "Mai khud"          → current object
                                 fields, methods, this(args), return self
-super  → "Mere papa"         → parent class  
+super  → "Mere papa"         → parent class
                                 parent fields, parent methods, super(args)
 
 Constructor rules:

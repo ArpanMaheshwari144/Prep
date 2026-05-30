@@ -150,13 +150,13 @@ Snake & Ladder: Game logic — position update + snake/ladder check
 
 ```
   Arpan ka safar:
-  
+
   Position 0 ──roll 3──→ Position 3 ──LADDER!──→ Position 22
                                                        │
   Position 22 ──roll 5──→ Position 27 (normal)         │
                                                        │
   Position 27 ──roll 6──→ Position 33 (normal)
-  
+
   Position 33 ──roll 3──→ Position 36 ──SNAKE!──→ Position 6
                                                        │
   Wapas neeche! Phir se chadho.                        │
@@ -380,7 +380,7 @@ class Board{
         }
         return position;
     }
-    
+
 }
 
 

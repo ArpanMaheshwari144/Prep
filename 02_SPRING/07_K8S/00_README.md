@@ -62,7 +62,7 @@ Phase 3 (July/August 2026 — locked memory):
    • Build full Spring microservices project
    • Deploy on AWS EKS (Kubernetes managed)
    • K8s = production deployment standard
-   
+
 Yeh notes us project ke liye foundation:
    • Pod, Deployment, Service understanding
    • Manifests likhne ka pattern
@@ -130,7 +130,7 @@ Pods running (3 replicas)
    ↓ Service (LoadBalancer)
    ↓ Ingress (TLS, routing)
    ↓
-Public traffic 
+Public traffic
 ```
 
 ---

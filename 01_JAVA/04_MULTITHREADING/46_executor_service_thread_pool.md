@@ -79,7 +79,7 @@
                          │  1  │  ← FIFO sequential
                          └─────┘
 
-  ScheduledThreadPool    ┌─────────┐  
+  ScheduledThreadPool    ┌─────────┐
                          │ N + cron │  ← delayed/periodic tasks
                          └─────────┘
 

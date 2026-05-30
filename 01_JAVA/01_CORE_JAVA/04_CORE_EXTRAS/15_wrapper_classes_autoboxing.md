@@ -42,10 +42,10 @@
 
 ```java
 // Autoboxing — Java khud suit pehna deta hai
-Integer a = 10;        // tune int diya → Java ne Integer.valueOf(10) kiya 
+Integer a = 10;        // tune int diya → Java ne Integer.valueOf(10) kiya
 
 // Unboxing — Java khud suit utaar deta hai
-int b = a;             // tune Integer diya → Java ne a.intValue() kiya 
+int b = a;             // tune Integer diya → Java ne a.intValue() kiya
 
 // Integer cache: -128 to 127 → SAME object
 Integer x = 127;

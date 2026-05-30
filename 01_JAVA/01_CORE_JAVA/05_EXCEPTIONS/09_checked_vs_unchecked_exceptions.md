@@ -96,7 +96,7 @@ Compiler:                          Compiler:
    — try-catch ya throws!"          mujhe kya pata, runtime
    → COMPILE ERROR                  pe pakda jaayega"
                                    → COMPILE OK
-                                   → RUNTIME 
+                                   → RUNTIME
 ```
 
 **Compiler ka philosophy:**
@@ -128,11 +128,11 @@ Compiler:                          Compiler:
 @Transactional
 public void saveUser(User user) {
     userRepo.save(user);
-    
+
     if (badThing) {
         throw new IOException("error");        // NO ROLLBACK (Checked)
     }
-    
+
     if (worseThing) {
         throw new RuntimeException("error");   // Rollback happens (Unchecked)
     }
@@ -293,7 +293,7 @@ public void method() {
 ```
 Checked          → "Compiler darwaan"     → handle / throws MUST
                                             extends Exception
-                                            
+
 Unchecked        → "Runtime ka dhoka"     → optional handling
                                             extends RuntimeException
 

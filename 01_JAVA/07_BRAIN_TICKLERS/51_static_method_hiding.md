@@ -60,7 +60,7 @@ obj.show();      // "A" — NOT "B"!
   obj.show()  →  reference type kya hai?  →  A
        │
        ▼
-  A.show()  call hua  →  print "A"   
+  A.show()  call hua  →  print "A"
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -77,7 +77,7 @@ obj.show();      // "A" — NOT "B"!
   obj.show()  →  object type kya hai?  →  B
        │
        ▼
-  B.show()  call hua  →  print "B"   
+  B.show()  call hua  →  print "B"
                           (overriding works)
 
 

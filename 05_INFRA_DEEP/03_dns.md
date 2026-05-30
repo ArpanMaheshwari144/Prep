@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Problem Without DNS
+## 1 Problem Without DNS
 
 ```
 Without DNS, har site ke liye IP yaad karna:
@@ -11,14 +11,14 @@ Without DNS, har site ke liye IP yaad karna:
    Facebook   → 157.240.0.35
    Netflix    → 54.230.123.45
    YouTube    → 142.251.40.46
-   
+
    IMPOSSIBLE to remember
    Server change ho jaaye IP = sab tut jaaye
 ```
 
 ---
 
-## 2️⃣ Phonebook Analogy 
+## 2 Phonebook Analogy
 
 ```
 Old days:
@@ -41,7 +41,7 @@ Internet:
 
 ---
 
-## 3️⃣ DNS Hierarchy
+## 3 DNS Hierarchy
 
 ```
    ┌──────────────────────┐
@@ -73,7 +73,7 @@ Real example: www.google.com
 
 ---
 
-## 4️⃣ DNS Resolution Flow (8 STEPS)
+## 4 DNS Resolution Flow (8 STEPS)
 
 ```
 User types "www.google.com" in browser
@@ -101,7 +101,7 @@ User types "www.google.com" in browser
    + CACHES it (TTL)
 
 8. Browser connects to 142.250.190.46
-   Page loads 
+   Page loads
 ```
 
 ```
@@ -122,12 +122,12 @@ Visual:
                        IP: 142.250.190.46
                               │
                               ▼
-                          BROWSER 
+                          BROWSER
 ```
 
 ---
 
-## 5️⃣ DNS Record Types
+## 5 DNS Record Types
 
 ```
 ┌─────────┬──────────────────────────────────────┐
@@ -162,13 +162,13 @@ Visual:
 
 ---
 
-## 6️⃣ TTL + Caching Levels
+## 6 TTL + Caching Levels
 
 ```
 TTL (Time To Live) — kitne der cache valid
 
   CACHING LAYERS:
-  
+
   ┌──────────────────────┐
   │  BROWSER cache       │  TTL: short (seconds)
   └──────────┬───────────┘
@@ -190,7 +190,7 @@ TTL (Time To Live) — kitne der cache valid
 TTL trade-off:
    Short TTL  → Fresh data, more DNS lookups
    Long TTL   → Less load, but slower propagation
-   
+
    Common values:
       300 sec (5 min)   = quick updates
       3600 sec (1 hr)   = balance
@@ -199,7 +199,7 @@ TTL trade-off:
 
 ---
 
-## 7️⃣ Route 53 Routing Policies (AWS)
+## 7 Route 53 Routing Policies (AWS)
 
 ```
 Route 53 = AWS DNS service
@@ -215,10 +215,10 @@ Different routing POLICIES based on need:
 
 ```
 2. WEIGHTED ROUTING
-   google.com → 
+   google.com →
       Server A (70% traffic)
       Server B (30% traffic)
-   
+
    = A/B testing
    = Canary deployments
 ```
@@ -227,7 +227,7 @@ Different routing POLICIES based on need:
 3. LATENCY-BASED ROUTING
    User in India → Mumbai region (low latency)
    User in USA → Virginia region (low latency)
-   
+
    = Multi-region apps
    = Auto-routes to nearest data center
 ```
@@ -236,7 +236,7 @@ Different routing POLICIES based on need:
 4. GEOLOCATION ROUTING
    User from India → Hindi content server
    User from Japan → Japanese content server
-   
+
    = Location-based content
    = Compliance (data residency)
 ```
@@ -245,7 +245,7 @@ Different routing POLICIES based on need:
 5. FAILOVER ROUTING
    PRIMARY healthy → route to primary
    PRIMARY down → route to SECONDARY automatically
-   
+
    = Disaster recovery
    = Active-passive setup
 ```
@@ -254,7 +254,7 @@ Different routing POLICIES based on need:
 6. MULTI-VALUE ROUTING
    google.com → returns multiple IPs
    Client picks one (or rotates)
-   
+
    = Simple DNS-based load balancing
 ```
 
@@ -262,13 +262,13 @@ Different routing POLICIES based on need:
 7. GEOPROXIMITY ROUTING
    Bias traffic by geographic location
    "Send 60% of India traffic to Mumbai, 40% to Singapore"
-   
+
    = Fine-grained geographic control
 ```
 
 ---
 
-## 8️⃣ DNS-Based Load Balancing
+## 8 DNS-Based Load Balancing
 
 ```
 google.com → A record returns:
@@ -284,7 +284,7 @@ Limitations:
    • No health check at DNS level
    • TTL caching = dead server kept being tried
    • No advanced routing logic
-   
+
 When to use:
    • Geographic distribution
    • Multi-region failover
@@ -292,7 +292,7 @@ When to use:
 
 ---
 
-## 9️⃣ DNS Propagation
+## 9 DNS Propagation
 
 ```
 Naya domain register kiya / IP change kiya?
@@ -337,10 +337,10 @@ User's request routed to NEAREST one.
       Mumbai server
       London server
       Tokyo server
-   
+
    User in India → automatically routed to Mumbai
    User in UK → automatically routed to London
-   
+
 = How root DNS servers work (13 IPs, 100s of locations)
 = Cloudflare, Google DNS use this
 = Built-in geographic load balancing

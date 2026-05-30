@@ -41,9 +41,9 @@ import java.util.*;
 //       Interface contract enforce
 //
 // WHY DEFENSIVE COPY?
-//    WITHOUT: caller.clear() ne internal HashMap empty kar diya 
+//    WITHOUT: caller.clear() ne internal HashMap empty kar diya
 //    WITH:    new ArrayList<>(...) returns NEW list
-//             Caller modify only on copy 
+//             Caller modify only on copy
 //
 // HashMap vs TreeMap — WHY HashMap?
 //    ┌──────────────┬─────────────┬─────────────┐

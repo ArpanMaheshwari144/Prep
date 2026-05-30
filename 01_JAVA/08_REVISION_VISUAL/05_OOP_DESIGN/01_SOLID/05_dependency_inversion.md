@@ -33,7 +33,7 @@ Good design:
 ```java
 class UserService {
     MySqlRepository repo = new MySqlRepository();  // concrete!
-    
+
     void save(User u) {
         repo.save(u);
     }
@@ -52,11 +52,11 @@ class PostgresRepository implements UserRepository { ... }
 
 class UserService {
     private final UserRepository repo;
-    
+
     public UserService(UserRepository repo) {  // inject
         this.repo = repo;
     }
-    
+
     void save(User u) {
         repo.save(u);
     }
@@ -75,7 +75,7 @@ Spring's entire DI mechanism = DIP principle automated:
 
    @Service
    public class UserService {
-       
+
        @Autowired              ← inject abstraction
        private UserRepository repository;
    }

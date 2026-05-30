@@ -76,7 +76,7 @@ Account a = AccountFactory.create("savings", "A101", 5000);
 ```
    CALLER                          FACTORY                    CONCRETE
    ───────                          ─────────                  ─────────
-   
+
    AccountFactory.create("savings", "A1", 5000)
         │
         ├──► factory.create() called
@@ -90,7 +90,7 @@ Account a = AccountFactory.create("savings", "A101", 5000);
         │           └──► "fd"      → new FixedDeposit(...)
         │
         ◄──── Account ref returned
-        
+
    Caller gets Account (interface) — concrete class hidden inside factory
 ```
 
@@ -100,7 +100,7 @@ Account a = AccountFactory.create("savings", "A101", 5000);
 
 ```java
 public class AccountFactory {
-    
+
     public static Account create(String type, String id, double balance) {
         switch (type.toLowerCase()) {
             case "savings":
@@ -125,16 +125,16 @@ public class AccountFactory {
 
 ```java
 public class AccountFactory {
-    
+
     // Registry — type → supplier
     private static final Map<String, Function<AccountParams, Account>> REGISTRY = new HashMap<>();
-    
+
     static {
         REGISTRY.put("savings", p -> new SavingsAccount(p.id, p.balance));
         REGISTRY.put("current", p -> new CurrentAccount(p.id, p.balance));
         REGISTRY.put("fd",      p -> new FixedDeposit(p.id, p.balance));
     }
-    
+
     public static Account create(String type, AccountParams params) {
         Function<AccountParams, Account> creator = REGISTRY.get(type.toLowerCase());
         if (creator == null) {
@@ -142,7 +142,7 @@ public class AccountFactory {
         }
         return creator.apply(params);
     }
-    
+
     // Add new type at runtime — true OCP!
     public static void register(String type, Function<AccountParams, Account> creator) {
         REGISTRY.put(type, creator);
@@ -243,7 +243,7 @@ Abstract class with abstract `create()` — subclasses override.
 ```java
 abstract class Dialog {
     abstract Button createButton();   // factory method
-    
+
     void render() {
         Button b = createButton();    // calls subclass's version
         b.draw();
@@ -357,7 +357,7 @@ Factory = "Pizza counter"
    • Caller bolta type ("Margherita")
    • Counter (factory) decide karta — kaunsi recipe, oven, chef
    • Caller ko kitchen ka pata nahi
-   
+
 Code structure:
    1. Caller calls factory.create(type)
    2. Factory switch on type
@@ -374,7 +374,7 @@ Real-world (already use kiya):
    • Executors.newFixedThreadPool()
    • Spring BeanFactory
    • DriverManager.getConnection()
-   • AccountFactory in SimpleBankSystem 
+   • AccountFactory in SimpleBankSystem
 
 Use when:
    Multiple related types

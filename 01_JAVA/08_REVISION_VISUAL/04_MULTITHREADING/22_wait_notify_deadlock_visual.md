@@ -2,20 +2,20 @@
 
 ---
 
-## 1️⃣ wait/notify (Thread Coordination)
+## 1 wait/notify (Thread Coordination)
 
 ```
 PROBLEM:
    Thread A producing items
    Thread B consuming items
-   
+
    B kaise wait kare jab tak A item produce na kare?
    = Need coordination mechanism
 ```
 
 ---
 
-## 2️⃣ Restaurant Analogy
+## 2 Restaurant Analogy
 
 ```
 Chef (producer)               Waiter (consumer)
@@ -36,15 +36,15 @@ Chef (producer)               Waiter (consumer)
 
 ---
 
-## 3️⃣ wait/notify/notifyAll Methods
+## 3 wait/notify/notifyAll Methods
 
 ```java
 synchronized (sharedObj) {
-    
+
     while (queueEmpty()) {
         sharedObj.wait();           // release lock + sleep
     }
-    
+
     // process item
     sharedObj.notify();             // wake ONE waiter
     sharedObj.notifyAll();          // wake ALL waiters
@@ -61,14 +61,14 @@ KEY RULES:
 
 ---
 
-## 4️⃣ Producer-Consumer Example
+## 4 Producer-Consumer Example
 
 ```java
 class Buffer {
     private Queue<Integer> q = new LinkedList<>();
     private final int CAPACITY = 10;
-    
-    public synchronized void produce(int item) 
+
+    public synchronized void produce(int item)
             throws InterruptedException {
         while (q.size() == CAPACITY) {
             wait();          // buffer full, wait
@@ -76,8 +76,8 @@ class Buffer {
         q.add(item);
         notifyAll();         // wake consumers
     }
-    
-    public synchronized int consume() 
+
+    public synchronized int consume()
             throws InterruptedException {
         while (q.isEmpty()) {
             wait();          // buffer empty, wait
@@ -91,12 +91,12 @@ class Buffer {
 
 ---
 
-## 5️⃣ Visual — Producer-Consumer Flow
+## 5 Visual — Producer-Consumer Flow
 
 ```
    PRODUCER                BUFFER              CONSUMER
    ────────                ──────              ────────
-   
+
    produce(1)              [1]                 (waiting)
    notify  ─────────────────────────────────►
                                                 consume → 1
@@ -104,17 +104,17 @@ class Buffer {
                                                           │
                                               ◄──────────┘
    produce(2)              [2]
-   produce(3)              [2,3]               
+   produce(3)              [2,3]
                                                 consume → 2
                             [3]                 consume → 3
                             []                  wait...
-   
+
    = Coordination via wait/notify
 ```
 
 ---
 
-## 6️⃣ wait() vs sleep() — Common Trap
+## 6 wait() vs sleep() — Common Trap
 
 ```
 ┌──────────────────┬──────────────────┬──────────────────┐
@@ -134,12 +134,12 @@ sleep() → "wait for time"    (keeps lock)
 
 ---
 
-## 7️⃣ Deadlock — The Problem
+## 7 Deadlock — The Problem
 
 ```
    Thread A holds Lock 1, wants Lock 2
    Thread B holds Lock 2, wants Lock 1
-   
+
    Both stuck forever waiting!
    = DEADLOCK
 ```
@@ -152,13 +152,13 @@ sleep() → "wait for time"    (keeps lock)
    ↓                       ↓
    wants Lock 2            wants Lock 1
    (blocked)               (blocked)
-   
+
    Neither releases → frozen forever
 ```
 
 ---
 
-## 8️⃣ 4 Conditions for Deadlock
+## 8 4 Conditions for Deadlock
 
 ```
 1. MUTUAL EXCLUSION
@@ -181,12 +181,12 @@ sleep() → "wait for time"    (keeps lock)
 
 ---
 
-## 9️⃣ Code Example — Deadlock
+## 9 Code Example — Deadlock
 
 ```java
 class Account {
     int balance;
-    
+
     void transfer(Account other, int amt) {
         synchronized (this) {           // lock 1
             synchronized (other) {       // lock 2
@@ -213,7 +213,7 @@ class Account {
 void transfer(Account other, int amt) {
     Account first = this.id < other.id ? this : other;
     Account second = this.id < other.id ? other : this;
-    
+
     synchronized (first) {        // always lower ID first
         synchronized (second) {
             // transfer
@@ -246,7 +246,7 @@ if (lock1.tryLock(1, SECONDS)) {
 
 ---
 
-## 1️⃣1️⃣ Detection
+## 11 Detection
 
 ```java
 // Java tool to detect deadlocks:
@@ -262,7 +262,7 @@ if (ids != null) {
 
 ---
 
-## 1️⃣2️⃣ Liveness Issues
+## 12 Liveness Issues
 
 ```
 1. DEADLOCK

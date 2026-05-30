@@ -19,7 +19,7 @@
 
 ---
 
-## 1️⃣ RELATIONAL (SQL) — "Excel Sheet"
+## 1 RELATIONAL (SQL) — "Excel Sheet"
 
 ```
 Examples: PostgreSQL, MySQL, MariaDB, Oracle
@@ -38,7 +38,7 @@ Soch — bank ki passbook
    • Columns fixed: date, type, amount, balance
    • Sab transactions strictly recorded
    • Data ka type pakka (date is date, amount is number)
-   
+
 Yahi relational DB hai.
 
 Jab use:
@@ -50,7 +50,7 @@ Jab use:
 
 ---
 
-## 2️⃣ DOCUMENT (NoSQL) — "JSON Folder"
+## 2 DOCUMENT (NoSQL) — "JSON Folder"
 
 ```
 Examples: MongoDB, CouchDB
@@ -67,7 +67,7 @@ Soch — Resume PDFs ka folder
    • Mera resume: skills, projects, certifications
    • Mohit ka resume: skills, hobbies, awards
    • Different fields, both still resumes
-   
+
 Yahi document DB hai — flexible structure.
 
 Example:
@@ -75,7 +75,7 @@ Example:
       • Laptop:  RAM, processor, screen size
       • T-shirt: size, color, fabric
       • Book:    author, pages, ISBN
-   
+
    Har product alag attributes — DocumentDB perfect.
 
 Jab use:
@@ -87,7 +87,7 @@ Jab use:
 
 ---
 
-## 3️⃣ KEY-VALUE — "HashMap (Java jaise)"
+## 3 KEY-VALUE — "HashMap (Java jaise)"
 
 ```
 Examples: Redis, Memcached, DynamoDB
@@ -104,14 +104,14 @@ Kya hai:
 Soch — Phone contacts:
    "Mom"    → "+91-9876543210"
    "Boss"   → "+91-9876511111"
-   
+
 Naam (key) se number (value) instantly mil jata.
 Yahi Key-Value DB.
 
 Real production:
    Login → Redis: "session:user123" → "active_token_xyz"
    Login check ke time bus key se value mil jata
-   
+
    Same pattern: Java HashMap
    Same speed: ek line code = milliseconds
 
@@ -129,7 +129,7 @@ Real example:
 
 ---
 
-## 4️⃣ WIDE-COLUMN — "Excel Pe Steroids"
+## 4 WIDE-COLUMN — "Excel Pe Steroids"
 
 ```
 Examples: Cassandra, HBase, Bigtable, ScyllaDB
@@ -146,7 +146,7 @@ Soch — Twitter tweets database:
    • Daily 500 million tweets
    • Har tweet ka row
    • Storage scale = petabytes
-   
+
    Relational DB (PostgreSQL) yeh handle nahi kar paayega.
    Cassandra-type DB chahiye = scale-out
 
@@ -155,7 +155,7 @@ Real-world examples:
    • Netflix viewing history (Cassandra)
    • Discord messages (Cassandra)
    • IoT sensor data (millions writes/sec)
-   
+
 Jab use:
    Massive write volume (logs, tweets, messages)
    Time-series data at scale
@@ -164,7 +164,7 @@ Jab use:
 
 ---
 
-## 5️⃣ GRAPH — "LinkedList of Relationships"
+## 5 GRAPH — "LinkedList of Relationships"
 
 ```
 Examples: Neo4j, ArangoDB, Amazon Neptune
@@ -186,7 +186,7 @@ Graph DB exactly yahi:
    Arpan ──"works at"──► Konovo
    Arpan ──"friend of"──► Mohit
    Mohit ──"works at"──► Google
-   
+
    Query: "Mere doston mein kaun Google mein hai?"
    = Edges traverse karke find
 
@@ -227,7 +227,7 @@ Jab use:
 
 ---
 
-## 6️⃣ SEARCH ENGINE — "Google Search Box"
+## 6 SEARCH ENGINE — "Google Search Box"
 
 ```
 Examples: Elasticsearch, Solr, Algolia
@@ -245,7 +245,7 @@ Soch — Amazon search box:
    Tu type karta "ipone" (typo)
    Amazon dikha deta "iPhone" results
    = fuzzy match + autocomplete
-   
+
 Yahi Elasticsearch karta.
 
 Real-world:
@@ -262,7 +262,7 @@ Jab use:
 
 ---
 
-## 7️⃣ TIME-SERIES — "Stock Chart / Fitbit"
+## 7 TIME-SERIES — "Stock Chart / Fitbit"
 
 ```
 Examples: InfluxDB, TimescaleDB, Prometheus
@@ -280,7 +280,7 @@ Soch — Fitbit / Apple Watch:
    10:01 AM   88 BPM
    10:02 AM   90 BPM
    ... continuous stream
-   
+
 Stock chart (Zerodha/Groww):
    Stock price har second update
    = millions of timestamped data points
@@ -329,7 +329,7 @@ Tera Amazon shopping experience:
    • Recommendations → Graph DB (Neo4j-style)
    • User session    → Redis
    • Activity logs   → Cassandra
-   
+
    = 7 DBs in 1 app
    = Each used optimally
    = "Polyglot persistence" pattern
@@ -371,6 +371,6 @@ Har DB ka CAP positioning:
    • Banking-style (PostgreSQL, MongoDB) → CP-leaning
    • Social-scale (Cassandra, DynamoDB) → AP-leaning
    • Cache (Redis) → tunable
-   
+
 [Topic 8: CAP Theorem already done — this connects later]
 ```

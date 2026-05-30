@@ -13,7 +13,7 @@
 Container       → Docker se bana ek running app
 Pod             → K8s mein DEPLOY ki ek smallest unit
                   Wraps 1 or more containers
-                  
+
 Smallest unit:
    K8s containers ko DIRECTLY manage NAHI karta
    K8s manages PODS
@@ -32,7 +32,7 @@ Pod       = apartment unit
    • Same address (1 IP per pod)
    • Same kitchen (shared storage)
    • Same building entrance (shared network)
-   
+
    Same pod ke containers = roommates
    Different pod ke containers = different apartments
 ```
@@ -45,16 +45,16 @@ Pod       = apartment unit
 1. SHARED NETWORK
    All containers in pod = SAME IP, SAME ports namespace
    Container A → localhost:8080 → reach Container B
-   
+
 2. SHARED STORAGE (volumes)
    Pod-level volumes mount to multiple containers
    Sidecar logging agent reads main app's logs
-   
+
 3. SHARED LIFECYCLE
    Pod start → all containers start
    Pod die → all containers die
    Tightly coupled
-   
+
 4. EPHEMERAL by default
    Pod crash → DELETED (no auto-restore alone)
    For resilience → DEPLOYMENT manages pods (next topic)
@@ -141,15 +141,15 @@ EXAMPLES:
    1. Main app + logging sidecar
       App writes logs to volume
       Sidecar (Fluentd) reads logs, ships to ELK
-      
+
    2. Main app + service mesh proxy (Istio)
       Sidecar handles ingress/egress traffic
       App focuses on business logic
-      
+
    3. Main app + OAuth proxy
       Sidecar terminates auth
       App stays simple
-      
+
 COMMON: 1 container per pod (90% cases)
 ADVANCED: sidecar pattern (production patterns)
 ```
@@ -175,7 +175,7 @@ ADVANCED: sidecar pattern (production patterns)
    │  │ ships to ELK  │                │
    │  └──────────────┘                │
    └─────────────────────────────────┘
-   
+
    Main + helper = tightly coupled
    Both in same Pod
    Share network + storage

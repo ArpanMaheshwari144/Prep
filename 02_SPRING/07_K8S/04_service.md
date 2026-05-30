@@ -14,7 +14,7 @@ Tu Deployment chalaya — 3 pods running:
    Pod1: IP 10.244.0.5
    Pod2: IP 10.244.0.7
    Pod3: IP 10.244.0.9
-   
+
 Pod1 crashed → K8s ne naya banaya:
    Pod1 (NEW): IP 10.244.0.12     ← IP BADAL GAYA!
 
@@ -104,7 +104,7 @@ Service = stable contact point for changing pods
 Visible only inside cluster
    • Other pods can reach
    • External traffic = NO
-   
+
 Use case:
    • Microservice-to-microservice talk
    • Spring Boot ↔ Redis (both inside cluster)
@@ -115,7 +115,7 @@ Use case:
 ```
 Service exposed on each NODE's IP at fixed port (30000-32767)
    • External user → Node IP : 30080 → Service → Pod
-   
+
 Use case:
    • Dev / testing only
    • NOT production (use LoadBalancer instead)
@@ -126,7 +126,7 @@ Use case:
 Cloud provider provisions external LB (AWS ELB, GCP LB)
    • Public IP assigned
    • Traffic: Internet → LB → Service → Pods
-   
+
 Use case:
    • Production public APIs
    • Most common for prod external services
@@ -137,7 +137,7 @@ Use case:
 Service maps to external DNS (CNAME)
    • No proxy, no load balancing
    • Just DNS pointer
-   
+
 Use case:
    • Cluster pods need to reach external service
    • my-db.cluster → external.db.aws.com

@@ -140,7 +140,7 @@ SYNC USE KARO WHEN:
    • Simple CRUD operations
    • Database queries
    • Authentication checks
-   
+
    Examples:
    • Login API (sync — user waits)
    • Cart fetch (sync — page rendering)
@@ -154,7 +154,7 @@ ASYNC USE KARO WHEN:
    • Loose coupling needed
    • Different speeds (slow consumer)
    • Retry/DLQ scenarios
-   
+
    Examples:
    • Email sending (Notification System)
    • Order processing (microservices)
@@ -177,7 +177,7 @@ User clicks "Place Order":
       3. Charge payment       → sync (or pending)
       4. Create order record  → sync
       5. Return order ID      → sync
-      
+
       USER SEES: "Order #123 placed!" (within 2 sec)
 
    ASYNC parts (background, no blocking):
@@ -187,7 +187,7 @@ User clicks "Place Order":
       9. Update analytics           → async
       10. Loyalty points              → async
       11. Recommendation engine      → async
-      
+
       = User doesn't wait for these
       = Fail-tolerant (retry from queue)
 ```

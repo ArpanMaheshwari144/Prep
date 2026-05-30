@@ -185,7 +185,7 @@ Magic numbers:
    1 TB  = 10^12 bytes
 
 Process:
-   Total users → DAU (30%) → activity/day → 
+   Total users → DAU (30%) → activity/day →
    /10^5 = TPS → multiply by size = storage/bandwidth
 ```
 

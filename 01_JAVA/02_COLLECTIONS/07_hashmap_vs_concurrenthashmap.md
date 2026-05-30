@@ -27,7 +27,7 @@
 ```
    Thread A                         Thread B
    ─────────                        ─────────
-   put("key1", "A")                 
+   put("key1", "A")
         │ read bucket #5            put("key1", "B")
         │                                │
         │                                │ read bucket #5
@@ -35,7 +35,7 @@
         │                                │ write "B" to bucket #5
         ▼                                ▼
         LOST UPDATE — only "B" remains
-        
+
   Non-deterministic data corruption
   Could be: missing entries, infinite loop, ClassCastException
 ```
@@ -54,7 +54,7 @@
         │ releases lock              │ releases lock
         ▼                            ▼
         Both succeed              No conflict
-        
+
   Different buckets = parallel writes (high throughput)
   Same bucket = lock waits briefly, then safe
 ```
@@ -107,7 +107,7 @@ Pre-Java 7: Segments (16 default) — segment-level lock
 
 Java 8+:    Per-bucket synchronized + CAS operations
             (Number of buckets = parallel threads possible)
-            
+
             Bucket structure:
             ┌─────────────────────┐
             │ bucket[0] → null    │

@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Problem (1 line)
+## 1 Problem (1 line)
 
 ```
 Amazon order placed:
@@ -18,7 +18,7 @@ Notification System ka kaam:
 
 ---
 
-## 2️⃣ Wedding Card Analogy
+## 2 Wedding Card Analogy
 
 ```
 1 shaadi (event) hai
@@ -36,7 +36,7 @@ Notification system = wedding planner
 
 ---
 
-## 3️⃣ Core Requirements
+## 3 Core Requirements
 
 ```
 1. FANOUT     — 1 event → many users + many channels
@@ -49,7 +49,7 @@ Notification system = wedding planner
 
 ---
 
-## 4️⃣ Channels
+## 4 Channels
 
 ```
 ┌─────────────┬─────────────────────────────┐
@@ -66,7 +66,7 @@ Notification system = wedding planner
 
 ---
 
-## 5️⃣ Bird's Eye View
+## 5 Bird's Eye View
 
 ```
    EVENT SOURCES         NOTIFICATION             CHANNELS
@@ -81,7 +81,7 @@ Notification system = wedding planner
 
 ---
 
-## 6️⃣ Naive Design (Won't Work)
+## 6 Naive Design (Won't Work)
 
 ```
    Order Service ──► Email Server ──► User
@@ -94,7 +94,7 @@ Problems:
 
 ---
 
-## 7️⃣ Add Queue (Decouple)
+## 7 Add Queue (Decouple)
 
 ```
    Order Service
@@ -121,7 +121,7 @@ Benefits:
 
 ---
 
-## 8️⃣ Fanout to Channels
+## 8 Fanout to Channels
 
 ```
    Notification Service
@@ -135,7 +135,7 @@ Benefits:
 
 ---
 
-## 9️⃣ Full Architecture
+## 9 Full Architecture
 
 ```
                     EVENT PRODUCERS
@@ -174,7 +174,7 @@ Benefits:
       │             │             │
       └─────────────┼─────────────┘
                     ▼
-                  USER 
+                  USER
                     │
                     ▼
             ┌─────────────────┐
@@ -205,7 +205,7 @@ Tracking/Analytics:
 
 ---
 
-## 1️⃣1️⃣ Full Flow Walkthrough
+## 11 Full Flow Walkthrough
 
 ```
 1. User places order
@@ -226,7 +226,7 @@ Tracking/Analytics:
 
 ---
 
-## 1️⃣2️⃣ Retry + Exponential Backoff
+## 12 Retry + Exponential Backoff
 
 ```
 Naive retry:
@@ -247,7 +247,7 @@ Add JITTER:
 
 ---
 
-## 1️⃣3️⃣ DLQ (Dead Letter Queue)
+## 13 DLQ (Dead Letter Queue)
 
 ```
    ┌───────────────────────┐
@@ -277,7 +277,7 @@ Use cases:
 
 ---
 
-## 1️⃣4️⃣ Idempotency
+## 14 Idempotency
 
 ```
 PROBLEM:
@@ -286,7 +286,7 @@ PROBLEM:
 
 SOLUTION: Idempotency key
    Each notification = unique ID
-   
+
    Worker logic:
       Check Redis: notification:abc123 already processed?
          Yes → skip
@@ -301,7 +301,7 @@ Implementation:
 
 ---
 
-## 1️⃣5️⃣ Priority Queue
+## 15 Priority Queue
 
 ```
 Not all notifications equal:
@@ -325,7 +325,7 @@ Or: PriorityBlockingQueue with priority field
 
 ---
 
-## 1️⃣6️⃣ Rate Limiting (Throttling)
+## 16 Rate Limiting (Throttling)
 
 ```
 Provider limits:
@@ -335,7 +335,7 @@ Provider limits:
 
 Without throttling:
    Burst → provider 429 → all fail
-   
+
 With throttling:
    Workers respect rate limits
    Token bucket / leaky bucket
@@ -343,7 +343,7 @@ With throttling:
 
 ---
 
-## 1️⃣7️⃣ Horizontal Scaling
+## 17 Horizontal Scaling
 
 ```
 1 worker handles ~1000 msg/sec
@@ -364,14 +364,14 @@ Kafka partitioning:
 ```
 Partition by user_id:
    hash(user_id) % numPartitions
-   
+
    Same user → SAME partition
    = Ordering preserved per user
 ```
 
 ---
 
-## 1️⃣8️⃣ Throughput Visual
+## 18 Throughput Visual
 
 ```
 100 orders/sec at peak
@@ -389,7 +389,7 @@ Smooth delivery
 
 ---
 
-## 1️⃣9️⃣ Capacity Estimation
+## 19 Capacity Estimation
 
 ```
 ASSUMPTIONS:
@@ -410,7 +410,7 @@ KAFKA:
 
 ---
 
-## 2️⃣0️⃣ Components Summary
+## 20 Components Summary
 
 ```
 ┌─────────────────┬─────────────────────────────────┐
@@ -432,7 +432,7 @@ KAFKA:
 
 ---
 
-## 2️⃣1️⃣ Read Flow Line (Memorize)
+## 21 Read Flow Line (Memorize)
 
 ```
 "Event in Kafka → Notification Service consumes →
@@ -441,14 +441,14 @@ KAFKA:
  channel workers call providers (FCM/SES/Twilio) →
  success tracked, failures retry with exponential backoff →
  max retries exhausted → DLQ for manual review.
- 
+
  Idempotency via Redis keys to prevent duplicates.
  Kafka partitioning by user_id for ordering + scaling."
 ```
 
 ---
 
-## 2️⃣2️⃣ Production Examples
+## 22 Production Examples
 
 ```
 Real systems using this pattern:

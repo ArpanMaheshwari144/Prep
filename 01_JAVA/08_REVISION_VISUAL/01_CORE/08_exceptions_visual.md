@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Concept (Cooking Analogy)
+## 1 Concept (Cooking Analogy)
 
 ```
 Tu khana bana raha — recipe follow:
@@ -20,14 +20,14 @@ PROBLEM scenarios:
 
 Without "exception handling":
    Program crash → kitchen mein chaos
-   
+
 With exception handling:
    Plan B ready → smoothly handle
 ```
 
 ---
 
-## 2️⃣ try-catch-finally Structure
+## 2 try-catch-finally Structure
 
 ```java
 try {
@@ -56,7 +56,7 @@ finally {
 
 ---
 
-## 3️⃣ Visual Flow
+## 3 Visual Flow
 
 ```
    ┌───────────────────┐
@@ -85,7 +85,7 @@ finally {
 
 ---
 
-## 4️⃣ Real Code Example
+## 4 Real Code Example
 
 ```java
 FileReader reader = null;
@@ -108,7 +108,7 @@ finally {
 
 ---
 
-## 5️⃣ Exception Hierarchy
+## 5 Exception Hierarchy
 
 ```
                 Throwable
@@ -119,7 +119,7 @@ finally {
                 │                         │
             Checked              RuntimeException
             (compile-time)       (Unchecked, runtime)
-            
+
             • IOException        • NullPointerException
             • SQLException       • ArrayIndexOutOfBounds
             • ClassNotFoundEx    • IllegalArgumentException
@@ -128,12 +128,12 @@ finally {
 
 ---
 
-## 6️⃣ Checked vs Unchecked
+## 6 Checked vs Unchecked
 
 ```
 CHECKED (compile-time enforced):
    Java compiler bolega "handle karo ya throws likh"
-   
+
    ┌─────────────────────────────────┐
    │  IOException, SQLException...   │
    │                                  │
@@ -146,7 +146,7 @@ CHECKED (compile-time enforced):
 UNCHECKED (runtime, RuntimeException):
    Compiler chup
    Code chal jata, fail at runtime
-   
+
    ┌─────────────────────────────────┐
    │  NullPointerException           │
    │  ArrayIndexOutOfBounds...        │
@@ -160,14 +160,14 @@ UNCHECKED (runtime, RuntimeException):
 RULE:
    Checked    = bahar ki problem (file, DB, network)
                 = MUST handle
-   
+
    Unchecked  = code mein bug
                 = optional handle (better to fix code)
 ```
 
 ---
 
-## 7️⃣ Code Examples
+## 7 Code Examples
 
 ```java
 // CHECKED (must handle)
@@ -186,7 +186,7 @@ s.length();    // NullPointerException at runtime
 
 ---
 
-## 8️⃣ throw vs throws
+## 8 throw vs throws
 
 ```
 throw  = raise an exception (verb, action)
@@ -209,7 +209,7 @@ public void validate(int age) {
 
 ---
 
-## 9️⃣ Multi-Catch (Java 7+)
+## 9 Multi-Catch (Java 7+)
 
 ```java
 try {
@@ -247,7 +247,7 @@ SOLUTION:
    try (FileReader reader = new FileReader("file.txt")) {
        // use reader
    } catch (IOException e) { ... }
-   
+
    // reader.close() AUTOMATICALLY called
    // (resource implements AutoCloseable)
 ```
@@ -265,7 +265,7 @@ try (FileReader r = new FileReader("a.txt");
 
 ---
 
-## 1️⃣1️⃣ Custom Exception
+## 11 Custom Exception
 
 ```java
 public class InsufficientFundsException extends RuntimeException {
@@ -292,7 +292,7 @@ Custom exceptions = domain-specific errors
 
 ---
 
-## 1️⃣2️⃣ Common Traps
+## 12 Common Traps
 
 ### Trap 1: finally OVERRIDES return
 ```java

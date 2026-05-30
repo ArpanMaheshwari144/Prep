@@ -18,8 +18,8 @@ Order placement (frontend)  →  Order processing (DB + email + inventory)
 **Problem:** Producer (orders) consumer (processor) se zyada **fast** hai — orders pile up.
 
 **Without sync:**
-- Producer: order DB mein daal raha, RAM full ho gayi 
-- Consumer: kab order ready? Pata nahi — busy-wait loop spin kar raha CPU 
+- Producer: order DB mein daal raha, RAM full ho gayi
+- Consumer: kab order ready? Pata nahi — busy-wait loop spin kar raha CPU
 
 **Solution:** **Shared buffer** + **coordination** between producer/consumer.
 
@@ -33,7 +33,7 @@ Order placement (frontend)  →  Order processing (DB + email + inventory)
    │  (Order)    │      [ buffer ] [ buffer ]     │  (Processor) │
    │             │      ↑ FIXED CAPACITY ↑        │              │
    └─────────────┘                                └──────────────┘
-   
+
    Rules:
    • Producer adds to buffer  → if FULL, WAIT
    • Consumer takes from buffer → if EMPTY, WAIT
@@ -50,19 +50,19 @@ Naive implementation:
 class Buffer {
     List<Integer> items = new ArrayList<>();
     int CAPACITY = 10;
-    
+
     void produce(int item) {
         if (items.size() < CAPACITY) {
             items.add(item);
         }
-        // FULL hua to silently drop 
+        // FULL hua to silently drop
     }
-    
+
     int consume() {
         if (!items.isEmpty()) {
             return items.remove(0);
         }
-        return -1;   // empty hua to sentinel 
+        return -1;   // empty hua to sentinel
     }
 }
 ```
@@ -216,7 +216,7 @@ public class Buffer {
     private final Lock lock = new ReentrantLock();
     private final Condition notFull  = lock.newCondition();
     private final Condition notEmpty = lock.newCondition();
-    
+
     private final List<Integer> items = new ArrayList<>();
     private final int CAPACITY = 10;
 
@@ -330,13 +330,13 @@ Trap 1: "if (FULL) wait()"
 
 Trap 2: "notify() instead of notifyAll()"
          Wrong thread wake possible — deadlock-like
-         
+
 Trap 3: "Buffer pe synchronized nahi laga"
          Race condition — modCount issues, data corruption
-         
+
 Trap 4: "ArrayList use kiya BlockingQueue ke bajaye"
          Reinventing wheel + bugs guaranteed
-         
+
 Trap 5: "InterruptedException swallow kar diya"
          Restore flag: Thread.currentThread().interrupt()
 ```

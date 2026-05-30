@@ -64,10 +64,10 @@ Time: ──────────────────►
 
    Chef switches between dishes:
    A (chop) → B (stir) → A (chop) → C (boil) → B (stir)
-   
+
    Sirf 1 task ek time pe actually running
    But MULTIPLE tasks PROGRESS kar rahe
-   
+
    = Concurrent, not parallel
    = Time-slicing
 ```
@@ -99,7 +99,7 @@ SINGLE CORE CPU:
 
    Concurrent? YES (rapid switching simulates parallel)
    Parallel?   NO  (only 1 thing actually runs at a time)
-   
+
    Examples:
    • Node.js (single-threaded event loop)
    • Original Java threads on single-core CPU
@@ -109,7 +109,7 @@ MULTI-CORE CPU:
 
    Concurrent? YES (multiple tasks managed)
    Parallel?   YES (actually run together)
-   
+
    Examples:
    • Java parallel streams
    • Goroutines on 8-core machine
@@ -126,7 +126,7 @@ MULTI-CORE CPU:
 
 Think of it as:
    PARALLELISM = subset of CONCURRENCY
-   
+
    ┌──────────────────────────────┐
    │  CONCURRENCY                   │
    │  (handling multiple tasks)     │
@@ -149,7 +149,7 @@ CONCURRENT (non-parallel) — single thread:
    CompletableFuture.supplyAsync(() -> task1())
        .thenApply(result -> task2(result))
        .thenApply(result -> task3(result));
-   
+
    = Multiple tasks structured concurrently
    = But on 1 thread = no parallelism
 
@@ -158,7 +158,7 @@ PARALLEL — multiple threads:
    data.parallelStream()
        .map(this::heavyComputation)
        .collect(toList());
-   
+
    = JVM splits work across multiple cores
    = TRUE parallel execution
 
@@ -167,7 +167,7 @@ CONCURRENT + PARALLEL:
    pool.submit(task1);
    pool.submit(task2);
    pool.submit(task3);
-   
+
    = Concurrent (handling multiple tasks)
    = Parallel (runs on multiple cores)
 ```

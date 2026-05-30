@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Problem (NullPointerException Hell)
+## 1 Problem (NullPointerException Hell)
 
 ```
 Imagine searching for a user:
@@ -20,14 +20,14 @@ Optional = "I might have a value, I might not"
 
 ---
 
-## 2️⃣ Envelope Analogy
+## 2 Envelope Analogy
 
 ```
 Imagine TUJHE 2 envelopes mili:
 
    EMPTY envelope (no letter)
    LETTER inside
-   
+
    Tu envelope KHOLE bina kuch nahi dekh sakta
    = Forced to check before using
 ```
@@ -39,7 +39,7 @@ Optional<T> = the envelope
 
 ---
 
-## 3️⃣ Creating Optional
+## 3 Creating Optional
 
 ```java
 // Filled
@@ -60,7 +60,7 @@ empty()             → explicitly empty
 
 ---
 
-## 4️⃣ Old NPE Code vs Optional
+## 4 Old NPE Code vs Optional
 
 ### OLD (Null Check)
 ```java
@@ -90,7 +90,7 @@ String city = userService.findByEmail("xyz@email.com")
 
 ---
 
-## 5️⃣ Checking Presence
+## 5 Checking Presence
 
 ```java
 Optional<String> opt = Optional.of("Hi");
@@ -110,7 +110,7 @@ opt.ifPresent(val -> System.out.println(val));
 
 ---
 
-## 6️⃣ Getting Value (4 Ways)
+## 6 Getting Value (4 Ways)
 
 ```java
 Optional<String> opt = ...;
@@ -138,7 +138,7 @@ Use:
 
 ---
 
-## 7️⃣ Visual — 4 Get Patterns
+## 7 Visual — 4 Get Patterns
 
 ```
    Optional<String> name
@@ -164,7 +164,7 @@ Use:
 
 ---
 
-## 8️⃣ Map / Filter on Optional
+## 8 Map / Filter on Optional
 
 ```java
 Optional<String> name = Optional.of("Arpan");
@@ -192,7 +192,7 @@ Stream-like API on Optional
 
 ---
 
-## 9️⃣ ifPresent / ifPresentOrElse
+## 9 ifPresent / ifPresentOrElse
 
 ```java
 Optional<String> opt = Optional.of("Hi");
@@ -232,7 +232,7 @@ String city = userService.find(id)
 
 ---
 
-## 1️⃣1️⃣ Common Traps
+## 11 Common Traps
 
 ### Trap 1: Using get() everywhere
 ```java
@@ -275,7 +275,7 @@ OptionalDouble optDouble;
 
 ---
 
-## 1️⃣2️⃣ Real Production Example
+## 12 Real Production Example
 
 ```java
 // Spring Data JPA repository

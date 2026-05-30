@@ -100,7 +100,7 @@ Scenario: Coffee shop WiFi pe HTTP banking
       │  ◄───────────────────────────│  "Use TLS 1.3,
       │     (chosen cipher, cert)     │   here's my cert + public key"
       │                                │
-      │  3. Verify cert with CA        │  
+      │  3. Verify cert with CA        │
       │     Trusted (or block)   │
       │                                │
       │  4. Generate session key       │
@@ -175,7 +175,7 @@ TLS evolution (HTTPS = HTTP + TLS):
    TLS 1.1  →  Deprecated 2020
    TLS 1.2  →  Still common
    TLS 1.3  →  Latest, faster, more secure
-   
+
    Modern apps target TLS 1.2+
 ```
 

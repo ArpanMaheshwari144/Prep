@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Stateful vs Stateless (ATM Analogy)
+## 1 Stateful vs Stateless (ATM Analogy)
 
 ```
 STATEFUL (old session-based):
@@ -31,7 +31,7 @@ STATELESS (JWT-based):
 
 ---
 
-## 2️⃣ JWT Structure — 3 Parts
+## 2 JWT Structure — 3 Parts
 
 ```
    eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMifQ.SflKxw...
@@ -61,32 +61,32 @@ STATELESS (JWT-based):
 
 ---
 
-## 3️⃣ Signature = Tamper Detection
+## 3 Signature = Tamper Detection
 
 ```
    Server has SECRET KEY (only server knows)
-   
+
    Token banate time:
       signature = HMAC(header + payload, secret)
-   
+
    Token verify karte time:
       recalculate signature
       Token mein wala signature == calculated?
-         Yes → genuine 
-         No  → tampered 
+         Yes → genuine
+         No  → tampered
 ```
 
 ```
 Hacker scenario:
    Token mein "role: USER" ko "role: ADMIN" badal diya?
       Payload changed → signature mismatch
-      Server reject kar dega 
+      Server reject kar dega
    = Tamper-proof
 ```
 
 ---
 
-## 4️⃣ Auth Flow — Login
+## 4 Auth Flow — Login
 
 ```
    USER
@@ -124,7 +124,7 @@ Hacker scenario:
 
 ---
 
-## 5️⃣ Auth Flow — Protected Request
+## 5 Auth Flow — Protected Request
 
 ```
    USER
@@ -165,7 +165,7 @@ Hacker scenario:
 
 ---
 
-## 6️⃣ Spring Security Filter Chain
+## 6 Spring Security Filter Chain
 
 ```
    REQUEST
@@ -203,7 +203,7 @@ SecurityConfig:
 
 ---
 
-## 7️⃣ Access Token vs Refresh Token
+## 7 Access Token vs Refresh Token
 
 ```
    ACCESS TOKEN (short-lived: 15 min)
@@ -211,7 +211,7 @@ SecurityConfig:
       ├── Used for API requests
       ├── Sent every request
       └── Expires fast (security)
-   
+
    REFRESH TOKEN (long-lived: 7-30 days)
       │
       ├── Used to get NEW access token
@@ -229,7 +229,7 @@ WHY 2 TOKENS?
 
 ---
 
-## 8️⃣ Refresh Token Flow
+## 8 Refresh Token Flow
 
 ```
    USER's access token expired (15 min later)
@@ -263,7 +263,7 @@ WHY 2 TOKENS?
 
 ---
 
-## 9️⃣ Logout = Delete Refresh Token
+## 9 Logout = Delete Refresh Token
 
 ```java
 @PostMapping("/logout")
@@ -276,7 +276,7 @@ public ResponseEntity<?> logout(@RequestBody LogoutRequest req) {
 ```
 WHY DB-stored refresh tokens?
    Logout possible (delete from DB)
-   
+
    Pure JWT (no DB)?
    = Can't logout!
    = Token valid till expiry
@@ -322,7 +322,7 @@ WHY DB-stored refresh tokens?
    │  ├── stateless session            │
    │  └── add JwtFilter to chain       │
    └──────────────────────────────────┘
-   
+
    PERSISTENCE:
    ┌──────────────────────────────────┐
    │  RefreshTokenRepository (JPA)     │
@@ -332,7 +332,7 @@ WHY DB-stored refresh tokens?
 
 ---
 
-## 1️⃣1️⃣ 7 Security Pitfalls
+## 11 7 Security Pitfalls
 
 ```
 1. Storing JWT in cookie WITHOUT httpOnly

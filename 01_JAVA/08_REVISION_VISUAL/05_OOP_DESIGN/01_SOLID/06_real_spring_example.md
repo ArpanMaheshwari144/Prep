@@ -22,17 +22,17 @@ Real Spring Boot service mein
 
 @Service
 public class UserService {           // ← only business logic
-    
+
     // ═══════════════════════════════════════════════════
     // D — Dependency Inversion
     // Depends on INTERFACE, not concrete class
     // ═══════════════════════════════════════════════════
     private final UserRepository repo;
-    
+
     public UserService(UserRepository repo) {  // constructor injection
         this.repo = repo;
     }
-    
+
     public User create(User u) {
         return repo.save(u);
     }
@@ -48,12 +48,12 @@ public interface NotificationSender {
     void send(String msg);
 }
 
-public class EmailSender implements NotificationSender { 
-    public void send(String msg) { /* email */ } 
+public class EmailSender implements NotificationSender {
+    public void send(String msg) { /* email */ }
 }
 
-public class SmsSender implements NotificationSender { 
-    public void send(String msg) { /* sms */ } 
+public class SmsSender implements NotificationSender {
+    public void send(String msg) { /* sms */ }
 }
 
 // Add SlackSender? Just implement, no other code changes!
@@ -85,9 +85,9 @@ public interface UserWriter {
 
 @Service
 public class CachedUserService extends UserService {
-    
+
     private final Cache cache;
-    
+
     @Override
     public User create(User u) {
         User saved = super.create(u);
@@ -115,7 +115,7 @@ public class CachedUserService extends UserService {
         ├── NotificationSender — extensible (O)
         │
         └── CachedUserService extends — substitutable (L)
-   
+
    = All 5 SOLID applied in ONE realistic service
 ```
 
@@ -130,7 +130,7 @@ Spring + SOLID = natural fit:
    Multiple impls     → OCP
    Small interfaces   → ISP
    Override safely    → LSP
-   
+
    = Production-grade architecture
 ```
 

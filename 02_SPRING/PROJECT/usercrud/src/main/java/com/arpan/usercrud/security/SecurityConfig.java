@@ -160,7 +160,7 @@ public class SecurityConfig {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  1️⃣  SecurityFilterChain — MAIN SECURITY CONFIG
+    //  1  SecurityFilterChain — MAIN SECURITY CONFIG
     // ════════════════════════════════════════════════════════════
     //  Yahaan rule book likhte:
     //  • CSRF disable
@@ -218,7 +218,7 @@ public class SecurityConfig {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  2️⃣  PasswordEncoder — BCRYPT LOCKER
+    //  2  PasswordEncoder — BCRYPT LOCKER
     // ════════════════════════════════════════════════════════════
     //  BCrypt encoder bean — industry standard
     //
@@ -237,7 +237,7 @@ public class SecurityConfig {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  3️⃣  AuthenticationManager — LOGIN VERIFICATION TOOL
+    //  3  AuthenticationManager — LOGIN VERIFICATION TOOL
     // ════════════════════════════════════════════════════════════
     //  Login counter ka tool — credentials verify karta
     //

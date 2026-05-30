@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ static (Shared by All)
+## 1 static (Shared by All)
 
 ### Analogy — School Noticeboard
 ```
@@ -13,7 +13,7 @@
    └──────────────────────────┘
    = Sab students dekhte
    = School ki property (one copy)
-   
+
    Each student ka apna bag:
    ┌──────┐  ┌──────┐  ┌──────┐
    │ Bag1 │  │ Bag2 │  │ Bag3 │
@@ -32,9 +32,9 @@ BAG (per student) = instance variable
 class Student {
     static String schoolName = "DPS";    // shared by ALL
     String studentName;                   // per object
-    
+
     void greet() {
-        System.out.println("Hi from " + studentName 
+        System.out.println("Hi from " + studentName
                           + " of " + schoolName);
     }
 }
@@ -60,7 +60,7 @@ s2.greet();   // "Hi from Suresh of DAV"
    │                                      │
    │  schoolName = "DAV"  ← ONE copy      │
    └────────────────────────────────────┘
-   
+
    ┌──────────────┐  ┌──────────────┐
    │  Object s1    │  │  Object s2    │
    │  ───────────  │  │  ───────────  │
@@ -93,7 +93,7 @@ DON'T use static when:
 
 ---
 
-## 2️⃣ final (Cannot Change)
+## 2 final (Cannot Change)
 
 ### Analogy — Engraved in Stone
 ```
@@ -102,7 +102,7 @@ DON'T use static when:
    │  "ARPAN MAHESHWARI"         │
    │  (engraved permanently)     │
    └────────────────────────────┘
-   
+
    Once engraved → CANNOT CHANGE
 ```
 
@@ -141,14 +141,14 @@ class MyString extends String { } // COMPILE ERROR
 
 ---
 
-## 3️⃣ this (Current Object Reference)
+## 3 this (Current Object Reference)
 
 ### Analogy
 ```
    Tu apne baare mein bolta:
       "MAIN Arpan hu"   ← MAIN = this
       "MERA naam X"     ← MERA = this
-   
+
    "this" = current object
             = "yeh main hu, mera referencing"
 ```
@@ -158,7 +158,7 @@ class MyString extends String { } // COMPILE ERROR
 class House {
     String color;
     String owner;
-    
+
     // Parameter name == field name
     public House(String color, String owner) {
         this.color = color;       // this.color = field
@@ -184,7 +184,7 @@ class A {
         this.method2();        // explicit current object call
     }
     void method2() { ... }
-    
+
     public A() {
         this("default");       // call other constructor
     }
@@ -194,14 +194,14 @@ class A {
 
 ---
 
-## 4️⃣ super (Parent Object Reference)
+## 4 super (Parent Object Reference)
 
 ### Analogy
 ```
    Tu apne father ke baare mein bolta:
       "MERE PAPA ka naam X"      ← MERE PAPA = super
       "PAPA ne yeh sikhaya"      ← PAPA = super
-   
+
    "super" = parent class reference
             = "ye mera papa, uski cheezein"
 ```
@@ -231,7 +231,7 @@ new Dog().eat();
 ```java
 class Animal {
     String name;
-    
+
     public Animal(String n) {
         name = n;
     }
@@ -239,7 +239,7 @@ class Animal {
 
 class Dog extends Animal {
     String breed;
-    
+
     public Dog(String n, String b) {
         super(n);            // call parent constructor first
         breed = b;

@@ -40,7 +40,7 @@ Map<Integer, String> map = new LinkedHashMap<>();
 map.put(103, "Priya"); map.put(101, "Arpan"); map.put(102, "Rahul");
 
 System.out.println(map);
-// {103=Priya, 101=Arpan, 102=Rahul} — INSERTION ORDER SAME 
+// {103=Priya, 101=Arpan, 102=Rahul} — INSERTION ORDER SAME
 // HashMap + doubly linked list extra
 ```
 
@@ -50,7 +50,7 @@ Map<Integer, String> map = new TreeMap<>();
 map.put(103, "Priya"); map.put(101, "Arpan"); map.put(102, "Rahul");
 
 System.out.println(map);
-// {101=Arpan, 102=Rahul, 103=Priya} — KEY PE SORTED 
+// {101=Arpan, 102=Rahul, 103=Priya} — KEY PE SORTED
 // Red-Black Tree andar — get/put = O(log n)
 // Range queries: firstKey(), lastKey(), subMap()
 ```

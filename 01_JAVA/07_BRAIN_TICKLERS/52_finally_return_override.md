@@ -64,7 +64,7 @@ System.out.println(test());   // Output: 3
             │
             ▼
    Returns: 3 (not 1!)
-   
+
    Bug source — try ka return silently lost
 ```
 
@@ -198,11 +198,11 @@ finally { throw new RuntimeException(); }   // original exception lost
 finally ka return = "Last word wins" rule
    try return X        →   X ready
    finally return Y    →   Y OVERRIDES X
-   
+
    Same with throw:
    try throws E1       →   E1 ready to propagate
    finally throws E2   →   E2 wins, E1 suppressed
-   
+
    GOLDEN RULE:
    finally = sirf cleanup
             no return, no throw

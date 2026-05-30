@@ -37,7 +37,7 @@ public interface Logger {
 // Naya code:
 public class UserService {
     private Logger logger;   // expects Logger interface
-    
+
     public void doWork() {
         logger.info("Working...");   // LegacyLogger doesn't fit
     }
@@ -54,11 +54,11 @@ public class UserService {
 // Adapter — wraps Legacy, exposes Modern interface
 public class LoggerAdapter implements Logger {
     private final LegacyLogger legacy;
-    
+
     public LoggerAdapter(LegacyLogger legacy) {
         this.legacy = legacy;
     }
-    
+
     @Override
     public void info(String message) {
         legacy.logMessage(message);   // delegate to legacy
@@ -80,14 +80,14 @@ userService.setLogger(modern);
 ```
    CLIENT                  ADAPTER              ADAPTEE (legacy)
    ──────                  ──────────           ────────────────
-   
+
    Logger logger;          LoggerAdapter        LegacyLogger
-        │                  implements Logger    
-        │                       │                       
-        │ logger.info(msg)      │ adapts                
-        │ ───────────────────►  │                       
+        │                  implements Logger
+        │                       │
+        │ logger.info(msg)      │ adapts
+        │ ───────────────────►  │
         │                       │ legacy.logMessage(msg)
-        │                       │ ──────────────────►   
+        │                       │ ──────────────────►
         │                       │                       │ prints
         │ ◄────────────────────  │ ◄─────────────────── │
 ```
@@ -131,7 +131,7 @@ public class StripeAPI {
 // Your adapter:
 public class StripeAdapter implements PaymentProcessor {
     private final StripeAPI stripe = new StripeAPI();
-    
+
     @Override
     public boolean charge(double amount) {
         StripeResponse res = stripe.processPayment(amount, "USD");

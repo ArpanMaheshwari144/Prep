@@ -2,17 +2,17 @@
 
 ---
 
-## 1️⃣ Pehle Visualization
+## 1 Pehle Visualization
 
 ### ArrayList (Parking Spots)
 ```
    Imagine parking lot:
-   
+
    Slot 0  Slot 1  Slot 2  Slot 3  Slot 4
    ┌──┐   ┌──┐    ┌──┐    ┌──┐    ┌──┐
    │A │   │B │    │C │    │D │    │E │
    └──┘   └──┘    └──┘    └──┘    └──┘
-   
+
    • Numbered slots
    • Direct access: "Slot 3 mein kya hai?" → instant
    • Fixed-size physical layout
@@ -21,11 +21,11 @@
 ### LinkedList (Chain of People)
 ```
    Imagine people holding hands in a chain:
-   
+
    ┌──┐    ┌──┐    ┌──┐    ┌──┐    ┌──┐
    │A │────│B │────│C │────│D │────│E │
    └──┘    └──┘    └──┘    └──┘    └──┘
-   
+
    • Each person knows next (and previous)
    • To find "D" → start from A → B → C → D
    • No numbered slots
@@ -33,7 +33,7 @@
 
 ---
 
-## 2️⃣ Internal Structure
+## 2 Internal Structure
 
 ### ArrayList — Dynamic Array
 ```java
@@ -49,7 +49,7 @@ class ArrayList {
    │ A│ B│ C│ D│ E│  │  │  │  │  │   capacity 10
    └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
    size = 5
-   
+
    Capacity full? → grow (1.5x by default)
 ```
 
@@ -64,7 +64,7 @@ class Node {
 
 ```
    Each node = separate object in memory:
-   
+
    ┌─────────┐    ┌─────────┐    ┌─────────┐
    │ data: A │    │ data: B │    │ data: C │
    │ prev: -1│←──→│ prev: A │←──→│ prev: B │
@@ -74,7 +74,7 @@ class Node {
 
 ---
 
-## 3️⃣ Access Time — get(index)
+## 3 Access Time — get(index)
 
 ### ArrayList
 ```
@@ -104,15 +104,15 @@ class Node {
 
 ---
 
-## 4️⃣ Insert at END
+## 4 Insert at END
 
 ### ArrayList
 ```
    add("F") at end → place at next slot
-   
+
    Before: [A, B, C, D, E, _, _]
    After:  [A, B, C, D, E, F, _]
-   
+
    = O(1) amortized
    (occasional O(n) when resize needed)
 ```
@@ -120,9 +120,9 @@ class Node {
 ### LinkedList
 ```
    add("F") at end → connect new node to tail
-   
+
    ...E ←──→ F
-   
+
    = O(1) (we have tail pointer)
 ```
 
@@ -135,58 +135,58 @@ class Node {
 
 ---
 
-## 5️⃣ Insert at MIDDLE — BIG Difference
+## 5 Insert at MIDDLE — BIG Difference
 
 ### ArrayList
 ```
    add(2, "X") → insert at index 2
-   
+
    Before:  [A, B, C, D, E]
                      ↑
                      index 2
-   
+
    Step 1: Shift right
    After:   [A, B, _, C, D, E]
                   ↑
                   insert here
    After:   [A, B, X, C, D, E]
-   
+
    = O(n) — all subsequent elements shift!
 ```
 
 ### LinkedList
 ```
    add(2, "X") → insert at index 2
-   
+
    Step 1: Traverse to index 2 (O(n))
    Step 2: Adjust pointers (O(1))
-   
+
    ┌──┐    ┌──┐    ┌──┐    ┌──┐
    │A │────│B │────│C │────│D │
    └──┘    └──┘    └──┘    └──┘
-   
+
    After insert:
    ┌──┐    ┌──┐    ┌──┐    ┌──┐    ┌──┐
    │A │────│B │────│X │────│C │────│D │
    └──┘    └──┘    └──┘    └──┘    └──┘
-   
+
    = O(n) traversal + O(1) insertion
-   
+
    BUT if you ALREADY have a node reference:
       Just adjust pointers = O(1)
 ```
 
 ---
 
-## 6️⃣ Delete at MIDDLE
+## 6 Delete at MIDDLE
 
 ### ArrayList
 ```
    remove(2) → element at index 2
-   
+
    Before: [A, B, C, D, E]
    After:  [A, B, D, E, _]   (shift left)
-   
+
    = O(n) — shifting
 ```
 
@@ -199,7 +199,7 @@ class Node {
 
 ---
 
-## 7️⃣ Time Complexity Summary
+## 7 Time Complexity Summary
 
 ```
 ┌─────────────────┬──────────────┬─────────────────┐
@@ -215,7 +215,7 @@ class Node {
 
 ---
 
-## 8️⃣ Memory Usage
+## 8 Memory Usage
 
 ```
 ArrayList:
@@ -234,7 +234,7 @@ LinkedList:
 
 ---
 
-## 9️⃣ When To Use Which?
+## 9 When To Use Which?
 
 ```
 USE ARRAYLIST:
@@ -243,14 +243,14 @@ USE ARRAYLIST:
    Append-only (add at end)
    Memory matters
    Cache-friendly traversal
-   
+
    = 90% of use cases
 
 USE LINKEDLIST:
    Frequent insert/delete at known positions
    Implementing Queue (LinkedList implements Deque)
    No random access needed
-   
+
    = Niche cases
 ```
 
@@ -275,7 +275,7 @@ Use LinkedList ONLY when:
 
 ---
 
-## 1️⃣1️⃣ Vector vs ArrayList (Legacy)
+## 11 Vector vs ArrayList (Legacy)
 
 ```
 Vector (old, Java 1.0):
@@ -301,11 +301,11 @@ ArrayList   = Parking lot (indexed slots, direct access)
 LinkedList  = Chain of people (sequential, no index)
 
 ArrayList:
-   get  = O(1) 
-   middle insert/delete = O(n) 
+   get  = O(1)
+   middle insert/delete = O(n)
 
 LinkedList:
-   get  = O(n) 
+   get  = O(n)
    adjust pointers = O(1) (if node ref)
 
 Default choice = ArrayList (90% cases)

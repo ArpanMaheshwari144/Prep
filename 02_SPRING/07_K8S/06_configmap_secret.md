@@ -13,7 +13,7 @@ Tera Spring Boot container:
    • DB URL hardcoded mein nahi rakh sakte
    • Different env (dev/staging/prod) = different values
    • Same image, different config NEEDED
-   
+
    = "Config injection" chahiye
 ```
 
@@ -188,7 +188,7 @@ PRODUCTION REALITY:
       • HashiCorp Vault
       • Sealed Secrets
       • External Secrets Operator
-   
+
    These INJECT real secrets at runtime, K8s Secret = pointer
 ```
 
@@ -275,14 +275,14 @@ DOCKER COMPOSE:
      environment:
        SPRING_PROFILES_ACTIVE: compose
        DB_PASSWORD: rootpass
-       
+
    ↓ (same pattern)
 
 KUBERNETES:
    ConfigMap: SPRING_PROFILES_ACTIVE
    Secret:    DB_PASSWORD
    Deployment envFrom: both
-   
+
 = SAME concept, different syntax
 = Spring Boot reads env vars same way
 = Decouples config from image (12-factor app)

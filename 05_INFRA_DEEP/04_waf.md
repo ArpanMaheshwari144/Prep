@@ -2,11 +2,11 @@
 
 ---
 
-## 1️⃣ Problem Without WAF
+## 1 Problem Without WAF
 
 ```
    ATTACKER                  YOUR APP
-                              
+
         │                          │
         │  SQL Injection:           │
         │  ?id=1' OR '1'='1         │
@@ -27,16 +27,16 @@ Problems:
 
 ---
 
-## 2️⃣ Bouncer Analogy 
+## 2 Bouncer Analogy
 
 ```
 Fancy nightclub:
    100 log andar jaana chahte
-   
+
    Without bouncer:
       Sab andar — drunks, weapons, troublemakers
       → Chaos inside
-   
+
    With BOUNCER :
       Har person scan kare entry pe
       Rules:
@@ -46,7 +46,7 @@ Fancy nightclub:
          Dress code violators out
          VIP list = direct entry
       Suspicious behavior → block
-   
+
    = Bouncer = WAF
    = Club = Your app
    = Visitors = HTTP requests
@@ -54,7 +54,7 @@ Fancy nightclub:
 
 ---
 
-## 3️⃣ WAF Placement
+## 3 WAF Placement
 
 ```
    USER / ATTACKER
@@ -74,7 +74,7 @@ Fancy nightclub:
    ┌─────────────────┐
    │   APP SERVERS    │
    └─────────────────┘
-   
+
    = WAF SITS IN FRONT
    = Attack stops here, never reaches app
 ```
@@ -86,7 +86,7 @@ Real deployment order:
 
 ---
 
-## 4️⃣ OWASP Top 10 (KEY KNOWLEDGE)
+## 4 OWASP Top 10 (KEY KNOWLEDGE)
 
 ```
 OWASP = Open Worldwide Application Security Project
@@ -128,37 +128,37 @@ WAF defends against most of these
 
 ---
 
-## 5️⃣ Common Attacks WAF Blocks
+## 5 Common Attacks WAF Blocks
 
 ```
 SQL INJECTION
    Attack: ?id=1' UNION SELECT password FROM users--
    WAF rule: pattern match SQL keywords in URL params
-   
+
 XSS (Cross-Site Scripting)
    Attack: <script>document.cookie</script>
    WAF rule: detect <script> tags in input
-   
+
 CSRF (Cross-Site Request Forgery)
    Attack: Tricks user into action via 3rd party site
    WAF rule: validate origin/referer headers
-   
+
 PATH TRAVERSAL
    Attack: /api/file?path=../../etc/passwd
    WAF rule: detect "../" sequences
-   
+
 COMMAND INJECTION
    Attack: ?cmd=ls;rm -rf /
    WAF rule: shell metacharacters block
-   
+
 BAD BOTS / SCRAPING
    Attack: 10,000 requests/min from bot
    WAF rule: rate limit + User-Agent check
-   
+
 DDoS (Layer 7)
    Attack: Flood app with valid-looking requests
    WAF rule: rate limit per IP, behavioral analysis
-   
+
 ZERO-DAY (with managed rules)
    New vulnerability discovered → WAF rules updated
    = Defense before app patched
@@ -166,7 +166,7 @@ ZERO-DAY (with managed rules)
 
 ---
 
-## 6️⃣ How WAF Detects
+## 6 How WAF Detects
 
 ```
 3 DETECTION TECHNIQUES:
@@ -175,11 +175,11 @@ ZERO-DAY (with managed rules)
 ```
 1. SIGNATURE-BASED (most common)
    Known attack patterns matched
-   
+
    Example rule:
       "If URL contains 'UNION SELECT' → BLOCK"
       "If body contains '<script>' → BLOCK"
-   
+
    Fast, catches known attacks
    Misses zero-days
 ```
@@ -188,11 +188,11 @@ ZERO-DAY (with managed rules)
 2. ANOMALY-BASED (behavior)
    Normal traffic baseline
    Suspicious deviations flagged
-   
+
    Example:
       Normal: 10 req/min per user
       Anomaly: 1000 req/min from one IP → BLOCK
-   
+
    Catches new attacks
    False positives possible
 ```
@@ -200,18 +200,18 @@ ZERO-DAY (with managed rules)
 ```
 3. CUSTOM RULES (your business logic)
    You define rules specific to your app
-   
+
    Example:
       "Block all requests to /admin from non-corporate IPs"
       "Require API key header on /api/*"
-   
+
    Tailored security
    Manual maintenance
 ```
 
 ---
 
-## 7️⃣ Rule Types
+## 7 Rule Types
 
 ```
 ┌──────────────┬──────────────────────────────────┐
@@ -239,7 +239,7 @@ ZERO-DAY (with managed rules)
 
 ---
 
-## 8️⃣ WAF + RATE LIMITER Integration
+## 8 WAF + RATE LIMITER Integration
 
 ```
 WAF mein Rate Limiter INTEGRATED hota hai.
@@ -276,7 +276,7 @@ WAF mein Rate Limiter INTEGRATED hota hai.
 
 ---
 
-## 9️⃣ Cloud WAFs
+## 9 Cloud WAFs
 
 ```
 ┌─────────────────┬──────────────────────────────┐
@@ -303,7 +303,7 @@ Managed RULESETS (pre-built):
    • XSS rules
    • Bot mitigation
    • DDoS protection
-   
+
    Plug-and-play security
    Auto-updated as new threats emerge
 ```
@@ -315,7 +315,7 @@ Managed RULESETS (pre-built):
 ```
 PROBLEM:
    WAF blocks legitimate requests by mistake
-   
+
    Example:
       User comments: "I love your SELECT *FROM products page!"
       WAF detects "SELECT *FROM" → blocks comment
@@ -328,23 +328,23 @@ SOLUTION — Tuning Process:
    1. COUNT mode (audit, not block)
       WAF logs what it WOULD block
       No actual blocking
-   
+
    2. Review false positives
       Are these real attacks or noise?
-   
+
    3. Add exceptions
       "Allow SELECT in /comments endpoint"
-   
+
    4. Switch to BLOCK mode
       Now blocks confidently
-   
+
    5. Continuous monitoring
       New patterns → tune rules
 ```
 
 ---
 
-## 1️⃣1️⃣ WAF Deployment Modes
+## 11 WAF Deployment Modes
 
 ```
 1. REVERSE PROXY MODE

@@ -43,7 +43,7 @@ public final class BankAccount {              // Rule 1 — final class
 
 // Badlana ho? Naya object banao — purana safe
 BankAccount old = new BankAccount("Arpan", 5000);
-BankAccount updated = new BankAccount("Arpan", 4000);   // old wahi hai 
+BankAccount updated = new BankAccount("Arpan", 4000);   // old wahi hai
 ```
 
 ---

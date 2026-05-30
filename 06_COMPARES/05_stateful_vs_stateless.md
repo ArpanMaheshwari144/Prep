@@ -102,11 +102,11 @@ Pure HTTP:
    REQUEST 1: GET /profile
       → Server: "Who are you?"
       → 401 Unauthorized
-      
+
    REQUEST 2: GET /profile + Authorization header
       → Server: "Verified. Here's profile."
       → 200 OK
-      
+
    REQUEST 3: GET /orders + Authorization header
       → Server: "Verified again. Here's orders."
       → 200 OK
@@ -146,7 +146,7 @@ JWT-BASED (Stateless):
    = Server STATELESS
    = Any server handles any request
    = Easy horizontal scaling
-   = UserCRUD uses this 
+   = UserCRUD uses this
 ```
 
 ---
@@ -158,13 +158,13 @@ STATEFUL — Hard to scale:
 
    USER ──► LB ──► Server 1 (has my session)
    USER ──► LB ──► Server 2 (doesn't know me)
-   
+
    "Login again"
-   
+
    FIX: Sticky sessions (same user → same server)
         Or: Redis session store (shared)
-   
-   = LB complexity 
+
+   = LB complexity
 ```
 
 ```
@@ -173,7 +173,7 @@ STATELESS — Easy to scale:
    USER ──► LB ──► Server 1 (handles)
    USER ──► LB ──► Server 2 (handles same)
    USER ──► LB ──► Server 5 (handles too)
-   
+
    = ANY server can handle ANY request
    = Just add more servers
    = Auto-scaling works
@@ -223,7 +223,7 @@ State lives elsewhere:
    • Redis (shared cache)
    • Client (JWT token)
    • S3 (file state)
-   
+
 Server is "stateless" — disposable, replaceable.
 
 = 12-factor app principle
@@ -264,7 +264,7 @@ Rule: Default STATELESS
        Stateful only when bidirectional / real-time
 
 12-factor app: STATELESS is law
-UserCRUD = stateless (JWT) 
+UserCRUD = stateless (JWT)
 ```
 
 [← HLD README](../README.md)

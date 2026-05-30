@@ -2,12 +2,12 @@
 
 ---
 
-## 1️⃣ Problem (Why Thread Pool?)
+## 1 Problem (Why Thread Pool?)
 
 ```
 Without thread pool:
    Har task ke liye NEW thread
-   
+
    Task 1 → new Thread()    (expensive)
    Task 2 → new Thread()    (expensive)
    Task 3 → new Thread()
@@ -22,21 +22,21 @@ With thread pool:
    Pre-create N threads (workers)
    Tasks queue up
    Worker free? → grab task → execute
-   
+
    = Reuse threads
    = Bounded resource usage
 ```
 
 ---
 
-## 2️⃣ Office Analogy
+## 2 Office Analogy
 
 ```
 WITHOUT POOL:
    Customer arrives → COMPANY HIRES new employee
    Employee handles → FIRED after task
    Next customer → HIRE again
-   
+
    = Insane HR cost!
 ```
 
@@ -46,7 +46,7 @@ WITH POOL:
    Customer arrives → queue lagi
    Employee free? → grab customer → serve
    Done? → wait for next
-   
+
    = Sustainable
 ```
 
@@ -58,7 +58,7 @@ Tasks       = customers in queue
 
 ---
 
-## 3️⃣ ExecutorService Basics
+## 3 ExecutorService Basics
 
 ```java
 // Create pool of 5 threads
@@ -82,7 +82,7 @@ Magic:
 
 ---
 
-## 4️⃣ Pool Types
+## 4 Pool Types
 
 ```
 ┌──────────────────────────┬───────────────────────────┐
@@ -103,7 +103,7 @@ Magic:
 
 ---
 
-## 5️⃣ Visual — Fixed Pool
+## 5 Visual — Fixed Pool
 
 ```
                   TASK QUEUE
@@ -129,7 +129,7 @@ Magic:
 
 ---
 
-## 6️⃣ submit vs execute
+## 6 submit vs execute
 
 ```java
 // execute() — Runnable, no return
@@ -155,7 +155,7 @@ Integer result = future.get();   // blocks till done
 
 ---
 
-## 7️⃣ Future Basics
+## 7 Future Basics
 
 ```java
 Future<Integer> future = executor.submit(() -> {
@@ -178,7 +178,7 @@ future.cancel(true);
 
 ---
 
-## 8️⃣ Real Example — Parallel Processing
+## 8 Real Example — Parallel Processing
 
 ```java
 ExecutorService pool = Executors.newFixedThreadPool(5);
@@ -205,7 +205,7 @@ pool.shutdown();
 
 ---
 
-## 9️⃣ Shutdown — IMPORTANT!
+## 9 Shutdown — IMPORTANT!
 
 ```java
 // Graceful: finish ongoing, no new tasks
@@ -252,7 +252,7 @@ try {
 
 ---
 
-## 1️⃣1️⃣ Pool Size — How Many Threads?
+## 11 Pool Size — How Many Threads?
 
 ```
 CPU-BOUND tasks (computation):
@@ -269,7 +269,7 @@ Spring Boot default:
 
 ---
 
-## 1️⃣2️⃣ When To Use Custom ThreadPoolExecutor?
+## 12 When To Use Custom ThreadPoolExecutor?
 
 ```java
 ThreadPoolExecutor pool = new ThreadPoolExecutor(

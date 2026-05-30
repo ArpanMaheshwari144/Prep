@@ -2,13 +2,13 @@
 
 ---
 
-## 1️⃣ Problem (C/C++ Pain)
+## 1 Problem (C/C++ Pain)
 
 ```
 C/C++ mein:
    Tu khud memory allocate kare (malloc)
    Tu khud free kare (free)
-   
+
    Bhul gaye? = MEMORY LEAK
    Free kiya 2 baar? = CRASH
    Use kiya after free? = UNDEFINED BEHAVIOR
@@ -24,17 +24,17 @@ Java mein:
 
 ---
 
-## 2️⃣ Maid Analogy
+## 2 Maid Analogy
 
 ```
 Imagine tera ghar:
    Tu raat ko khaata hai
    Plates, kachra, dustbin bhar gaya
-   
+
    WITHOUT MAID:
       Khud saaf karna padega
       Bhul gaye = bahut kachra
-   
+
    WITH MAID (GC):
       Maid roz aati
       Kachra utha le jati
@@ -43,7 +43,7 @@ Imagine tera ghar:
 
 ---
 
-## 3️⃣ Heap Visual
+## 3 Heap Visual
 
 ```
    ┌──────────────────────────────────────┐
@@ -66,7 +66,7 @@ Imagine tera ghar:
 
 ---
 
-## 4️⃣ Object Lifecycle Flow
+## 4 Object Lifecycle Flow
 
 ```
 1. new Object()
@@ -92,13 +92,13 @@ Imagine tera ghar:
 
 ---
 
-## 5️⃣ Mark-Sweep Algorithm (Core)
+## 5 Mark-Sweep Algorithm (Core)
 
 ```
 Phase 1: MARK
    GC traverses all reachable objects (from roots)
    Marks them as "alive"
-   
+
    ┌──────────────────────────┐
    │  Roots (stack, statics)   │
    │       │                    │
@@ -115,7 +115,7 @@ Phase 1: MARK
 Phase 2: SWEEP
    Unmarked objects = garbage
    Memory free kar do
-   
+
    ┌──────────────────────────┐
    │     obj1                │
    │     obj2                │
@@ -125,7 +125,7 @@ Phase 2: SWEEP
 
 ---
 
-## 6️⃣ Stop-The-World Pause
+## 6 Stop-The-World Pause
 
 ```
    App running normally
@@ -140,7 +140,7 @@ Phase 2: SWEEP
    GC scans + cleans heap
         │
         ▼
-   ▶️  ALL THREADS RESUME
+   ▶  ALL THREADS RESUME
 
    = Brief pause (ms to seconds)
    = Performance impact
@@ -156,13 +156,13 @@ Why pause needed:
 
 ---
 
-## 7️⃣ Why Young + Old Split?
+## 7 Why Young + Old Split?
 
 ```
 OBSERVATION:
    Most objects die YOUNG
    (created → used briefly → discarded)
-   
+
    Few objects survive long
    (caches, singletons, etc.)
 ```
@@ -171,14 +171,14 @@ OBSERVATION:
 SMART DESIGN:
    Young gen mein frequent GC (fast, small)
    Old gen mein rare GC (slow, but full sweep)
-   
+
    = Generational GC
    = Best of both
 ```
 
 ---
 
-## 8️⃣ Minor vs Major GC
+## 8 Minor vs Major GC
 
 ```
 ┌──────────────────┬─────────────────┬──────────────────┐
@@ -191,7 +191,7 @@ SMART DESIGN:
 
 ---
 
-## 9️⃣ GC Algorithms
+## 9 GC Algorithms
 
 ```
 1. SERIAL GC (single thread)
@@ -244,7 +244,7 @@ A: Remove all references:
 
 ---
 
-## 1️⃣1️⃣ Force GC (Don't Do This In Production)
+## 11 Force GC (Don't Do This In Production)
 
 ```java
 System.gc();      // REQUEST, JVM may ignore
@@ -258,7 +258,7 @@ Runtime.getRuntime().gc();   // same
 
 ---
 
-## 1️⃣2️⃣ Memory Hooks
+## 12 Memory Hooks
 
 ```
 GC = Maid (auto-cleanup)

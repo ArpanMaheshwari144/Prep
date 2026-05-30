@@ -30,7 +30,7 @@
 
 ```
 P: produce() call
-   → P ne `this` (Buffer) ka LOCK liya 
+   → P ne `this` (Buffer) ka LOCK liya
    → State: RUNNING
    → Queue check: FULL — `wait()` call
 ```
@@ -39,7 +39,7 @@ P: produce() call
 
 Jab `wait()` call hota, **3 cheez ek saath hoti**:
 
-1. **Lock RELEASE** — Buffer ka lock chhod deta 
+1. **Lock RELEASE** — Buffer ka lock chhod deta
 2. **WAITING state** mein chala jaata
 3. Buffer ka **Wait Set** mein add ho jaata
 
@@ -63,14 +63,14 @@ C: consume() call
 
 ---
 
-### Step 4: Consumer calls `notify()` 
+### Step 4: Consumer calls `notify()`
 
 **Yahan asli magic hai. `notify()` exactly ye karta:**
 
 1. Buffer ke **Wait Set** mein dekho — koi thread hai?
 2. Ek thread **pick karo** (ye P hai)
 3. P ko **WAITING → BLOCKED** state mein move karo
-4. **LEKIN — lock abhi BHI Consumer ke paas hai!** 
+4. **LEKIN — lock abhi BHI Consumer ke paas hai!**
 
 ```
 Buffer's Wait Set:  []     ← P nikal gaya
@@ -86,7 +86,7 @@ C state:            RUNNING (lock abhi bhi C ke paas)
 
 ```
 C: } method end
-   → Lock RELEASE 
+   → Lock RELEASE
    → State: continue
 ```
 
@@ -95,7 +95,7 @@ C: } method end
 ### Step 6: Producer (BLOCKED) gets the lock
 
 ```
-P: lock mil gaya 
+P: lock mil gaya
    → State: BLOCKED → RUNNABLE → RUNNING
    → wait() ke baad continue kar raha
    → while loop re-check: queue full hai abhi? → NAHI
@@ -112,7 +112,7 @@ WAITING SET                  RUNNING                   LOCK
 ┌──────────┐                                         ┌──────┐
 │   P      │  ◄── wait()      C: lock =          │  C   │
 │ WAITING  │                  C: poll()              └──────┘
-└──────────┘                  C: notify()  
+└──────────┘                  C: notify()
 
                    ↓ notify() picks P
 

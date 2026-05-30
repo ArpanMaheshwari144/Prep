@@ -2,25 +2,25 @@
 
 ---
 
-## 1️⃣ Problem (Why Wrappers Exist)
+## 1 Problem (Why Wrappers Exist)
 
 ```
 PRIMITIVES (raw):
    int, long, double, char, boolean...
-   
+
    Problem hai:
       Object nahi hain
       Collections mein nahi daal sakte
          List<int>     ← compile error
          List<Integer> ← works
       null nahi ho sakte
-         int x = null;  ← 
+         int x = null;  ←
       Methods nahi (toBinaryString, parseInt, etc.)
 ```
 
 ---
 
-## 2️⃣ Solution = WRAPPER CLASSES
+## 2 Solution = WRAPPER CLASSES
 
 ```
 Imagine primitives = raw items
@@ -50,7 +50,7 @@ Wrapper = item ko BOX mein daal do
 
 ---
 
-## 3️⃣ Manual Wrapping/Unwrapping (Old Way)
+## 3 Manual Wrapping/Unwrapping (Old Way)
 
 ```java
 // Wrapping (primitive → object)
@@ -68,7 +68,7 @@ Hard to read
 
 ---
 
-## 4️⃣ Autoboxing/Unboxing (Java 5+)
+## 4 Autoboxing/Unboxing (Java 5+)
 
 ```java
 // AUTO-BOXING (primitive → object, automatic)
@@ -88,7 +88,7 @@ Magic:
 
 ---
 
-## 5️⃣ Real Use — Collections
+## 5 Real Use — Collections
 
 ```java
 // Cannot do this:
@@ -102,7 +102,7 @@ int x = list.get(0);             // auto-unbox: Integer → int
 
 ---
 
-## 6️⃣ Useful Methods (Why Wrappers Matter)
+## 6 Useful Methods (Why Wrappers Matter)
 
 ```java
 Integer.parseInt("123")          // String → int (5)
@@ -120,7 +120,7 @@ Character.toUpperCase('a')       // 'A'
 
 ---
 
-## 7️⃣ THE Interview Trap — Integer Cache
+## 7 THE Interview Trap — Integer Cache
 
 ```
 Java mein Integer cache:
@@ -153,7 +153,7 @@ c.equals(d);       // TRUE
             ▼                      ▼
            a = 100                b = 100
            (same object!)
-   
+
    Both a, b POINT to SAME cached Integer
    a == b → true (reference equal)
 ```
@@ -162,7 +162,7 @@ c.equals(d);       // TRUE
    BEYOND CACHE (> 127):
    c = 200 → new Integer(200) at 0x1234
    d = 200 → new Integer(200) at 0x5678
-   
+
    Different objects
    c == d → false
    c.equals(d) → true (content same)
@@ -170,20 +170,20 @@ c.equals(d);       // TRUE
 
 ---
 
-## 8️⃣ Why Cache Exists?
+## 8 Why Cache Exists?
 
 ```
 Reason: PERFORMANCE
    Small numbers used a LOT (-128 to 127)
    Same Integer(5) banana baar baar = waste
-   
+
    Cache mein rakhe = reuse
    = Memory + speed benefit
 ```
 
 ---
 
-## 9️⃣ Common Trap — NullPointerException
+## 9 Common Trap — NullPointerException
 
 ```java
 Integer x = null;

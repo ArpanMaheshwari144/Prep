@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ 4 Variants Quick
+## 1 4 Variants Quick
 
 ```
    HashMap          → fast K-V, no order
@@ -13,7 +13,7 @@
 
 ---
 
-## 2️⃣ Stationary Shop Analogy
+## 2 Stationary Shop Analogy
 
 ```
 Imagine 4 types of shelves:
@@ -21,20 +21,20 @@ Imagine 4 types of shelves:
    HashMap     = jumbled box
       Tu daala, jab nikalna hai = fast find
       Order? Random
-   
+
    LinkedHashMap = stack with date sticker
       Jis order mein daala, same order remembered
-   
+
    TreeMap     = alphabetically sorted shelf
       Auto-sorted by key name
-   
+
    HashSet     = guest list (just names)
       Naam unique, value nahi store
 ```
 
 ---
 
-## 3️⃣ Visual — Internal Differences
+## 3 Visual — Internal Differences
 
 ### HashMap
 ```
@@ -42,14 +42,14 @@ Imagine 4 types of shelves:
    ┌──┬──┬──┬──┐
    │ 0│ 1│ 2│..│   no order
    └──┴──┴──┴──┘
-   
+
    Order on iteration = unpredictable
 ```
 
 ### LinkedHashMap
 ```
    HashMap + doubly linked list of entries
-   
+
    ┌──┬──┬──┬──┐
    │  │  │  │..│
    └──┴──┴──┴──┘
@@ -61,13 +61,13 @@ Imagine 4 types of shelves:
 ### TreeMap
 ```
    Red-Black tree (sorted by key)
-   
+
               50
              /  \
            20    70
           /\     /\
          10 30  60 90
-   
+
    In-order traversal = sorted output
 ```
 
@@ -75,14 +75,14 @@ Imagine 4 types of shelves:
 ```
    Internally uses HashMap!
    Each value stored as KEY (dummy value)
-   
+
    Set<String> → HashMap<String, dummy>
    = Unique keys, no value
 ```
 
 ---
 
-## 4️⃣ Iteration Order Comparison
+## 4 Iteration Order Comparison
 
 ```java
 Map<String, Integer> map = ...;
@@ -102,7 +102,7 @@ map.put("Mango", 3);
 
 ---
 
-## 5️⃣ Time Complexity
+## 5 Time Complexity
 
 ```
 ┌─────────────────┬──────────┬─────────────────┬─────────┐
@@ -116,7 +116,7 @@ map.put("Mango", 3);
 
 ---
 
-## 6️⃣ When To Use Which?
+## 6 When To Use Which?
 
 ```
 HashMap:
@@ -143,17 +143,17 @@ HashSet:
 
 ---
 
-## 7️⃣ LRU Cache via LinkedHashMap (Bonus)
+## 7 LRU Cache via LinkedHashMap (Bonus)
 
 ```java
 class LRUCache extends LinkedHashMap<Integer, Integer> {
     private int capacity;
-    
+
     public LRUCache(int capacity) {
         super(capacity, 0.75f, true);  // accessOrder = true
         this.capacity = capacity;
     }
-    
+
     @Override
     protected boolean removeEldestEntry(Map.Entry<Integer, Integer> e) {
         return size() > capacity;
@@ -168,13 +168,13 @@ class LRUCache extends LinkedHashMap<Integer, Integer> {
 
 ---
 
-## 8️⃣ HashSet Internals
+## 8 HashSet Internals
 
 ```java
 class HashSet<E> {
     HashMap<E, Object> map;
     static final Object PRESENT = new Object();
-    
+
     boolean add(E e) {
         return map.put(e, PRESENT) == null;
     }
@@ -190,7 +190,7 @@ HashSet = HashMap with dummy values
 
 ---
 
-## 9️⃣ TreeSet (Bonus)
+## 9 TreeSet (Bonus)
 
 ```
 Sorted Set (alphabetical/numeric order):
@@ -198,7 +198,7 @@ Sorted Set (alphabetical/numeric order):
    set.add("Zebra");
    set.add("Apple");
    set.add("Mango");
-   
+
    Iteration: Apple, Mango, Zebra (sorted)
 ```
 

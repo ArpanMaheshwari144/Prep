@@ -97,7 +97,7 @@ Browser code:
 
 = ONE-WAY only (server → client)
 = Built on HTTP (firewall friendly)
-= AUTO-RECONNECT included 
+= AUTO-RECONNECT included
 = Lightweight
 ```
 
@@ -145,7 +145,7 @@ LONG POLLING — Use when:
    • Legacy systems / very old browsers
    • Simple "occasional update" UX
    • Fallback when WS not available
-   
+
    Examples:
    • Pre-2010 chat apps
    • Socket.io fallback mode
@@ -155,7 +155,7 @@ SSE — Use when:
    • Notifications, alerts
    • Stock tickers, news feeds
    • Live dashboards, log streaming
-   
+
    Examples:
    • Twitter notifications
    • Stock price updates
@@ -168,7 +168,7 @@ WEBSOCKET — Use when:
    • Online multiplayer games
    • Collaborative editing (Google Docs)
    • Live trading platforms
-   
+
    Examples:
    • WhatsApp Web
    • Slack messaging

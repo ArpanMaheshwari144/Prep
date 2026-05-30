@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Foundation Distinction
+## 1 Foundation Distinction
 
 ```
 JPA (Java Persistence API):
@@ -16,7 +16,7 @@ Hibernate:
 
 ---
 
-## 2️⃣ USB Cable Analogy
+## 2 USB Cable Analogy
 
 ```
 JPA       = USB cable specification
@@ -33,7 +33,7 @@ EclipseLink = another USB cable
 
 ---
 
-## 3️⃣ Visual
+## 3 Visual
 
 ```
    Your code
@@ -65,7 +65,7 @@ EclipseLink = another USB cable
 
 ---
 
-## 4️⃣ Spring Data JPA Mein?
+## 4 Spring Data JPA Mein?
 
 ```java
 @Repository
@@ -79,13 +79,13 @@ Yeh code:
    JpaRepository  = JPA interface
    Spring Data    = thin layer on top
    Underneath     = Hibernate by default
-   
+
    = Tu JPA likhta, Hibernate execute karta
 ```
 
 ---
 
-## 5️⃣ Why Use JPA (Not Hibernate Directly)?
+## 5 Why Use JPA (Not Hibernate Directly)?
 
 ```
 VENDOR INDEPENDENCE

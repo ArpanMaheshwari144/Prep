@@ -111,7 +111,7 @@ map.put(new Employee("Arpan", 101), "Dev");   // bucket 5 — equals() false (re
   │ 5  │ → [e1: "Dev"]   ← e2 ne replace kiya
   └────┘
 
-  map.size() = 1  
+  map.size() = 1
 ```
 
 ---

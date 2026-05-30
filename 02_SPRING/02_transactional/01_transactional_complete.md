@@ -39,21 +39,21 @@ Bich-bich mein partial save **NEVER**.
 
   WITHOUT @Transactional:                WITH @Transactional:
   ─────────────────────────              ─────────────────────────
-                                                                   
+
   Tu (₹5000)         Bhai (₹2000)        Tu (₹5000)        Bhai (₹2000)
        │                  │                    │                  │
        │ -1000         │                    │ -1000         │
        │                  │                    │                  │
        ▼                  │                    ▼                  │
    ₹4000              ₹2000                ₹4000              ₹2000
-                                                                   
-   CRASH                              CRASH           
-                                                                   
+
+   CRASH                              CRASH
+
        │                  │                    │   ROLLBACK    │
        │           +1000                    │                  │
        │                  │                    ▼                  │
        ▼                  ▼                ₹5000              ₹2000
-   ₹4000              ₹2000                                        
+   ₹4000              ₹2000
                                           (Original state restored
    ₹1000 GONE                            jaise kuch hua hi nahi)
    FOREVER                                  Safe!
@@ -211,11 +211,11 @@ conn.close();
 
 ```
    @Transactional   ≡   START TRANSACTION ... COMMIT/ROLLBACK
-   
+
    Spring ka kaam   =   Tujhe `setAutoCommit(false)`,
                         `commit()`, `rollback()` manually
                         nahi likhna padta
-   
+
    "Magic" nahi    =   Pure JDBC/SQL ka wrapper
 ```
 
@@ -290,22 +290,22 @@ conn.close();
 
   REQUIRED       Join existing       Create new
                  ────────────        ───────────
-  
+
   REQUIRES_NEW   Suspend + new       Create new
                  ──────────────      ───────────
-  
+
   NESTED         Savepoint           Create new
                  ─────────           ───────────
-  
+
   SUPPORTS       Join existing       Run without TX
                  ────────────        ──────────────
-  
+
   NOT_SUPPORTED  Suspend + no TX     Run without TX
                  ────────────────    ──────────────
-  
+
   MANDATORY      Join existing       Exception
                  ────────────        ────────────
-  
+
   NEVER          Exception        Run without TX
                  ────────────        ──────────────
 ```
@@ -401,27 +401,27 @@ public class AuditService {
 
 ### 3 Concurrency Problems
 
-#### 1. DIRTY READ 
+#### 1. DIRTY READ
 ```
 Tx-A: UPDATE balance = 9999 (uncommitted)
-Tx-B: SELECT balance → reads 9999  
+Tx-B: SELECT balance → reads 9999
 Tx-A: ROLLBACK
 → Tx-B has WRONG data based on stuff that never existed
 ```
 
-#### 2. NON-REPEATABLE READ 
+#### 2. NON-REPEATABLE READ
 ```
 Tx-A: SELECT balance WHERE id=5 → 100
 Tx-B: UPDATE balance = 200, COMMIT
-Tx-A: SELECT balance WHERE id=5 → 200  
+Tx-A: SELECT balance WHERE id=5 → 200
 → Same Tx-A ne 2 different values dekhe
 ```
 
-#### 3. PHANTOM READ 
+#### 3. PHANTOM READ
 ```
 Tx-A: SELECT * WHERE age > 18 → 5 rows
 Tx-B: INSERT new user age=25, COMMIT
-Tx-A: SELECT * WHERE age > 18 → 6 rows  
+Tx-A: SELECT * WHERE age > 18 → 6 rows
 → New "phantom" row appear
 ```
 
@@ -466,13 +466,13 @@ Tx-A: SELECT * WHERE age > 18 → 6 rows
 DIRTY READ:
   Tx-A:  UPDATE x=99 (uncommitted) ──► Tx-B reads 99 ──► Tx-A rollback
                                        B has fake data
-                                       
+
 NON-REPEATABLE:
   Tx-A: SELECT x ──► 100      Tx-B: UPDATE x=200 COMMIT
                                             │
                                             ▼
               Tx-A: SELECT x ──► 200  same TX, different value
-              
+
 PHANTOM:
   Tx-A: SELECT WHERE age>18 ──► [5 rows]    Tx-B: INSERT new row
                                                     │
@@ -513,7 +513,7 @@ public void saveUser(User user) {
 **Kya hua?**
 - `IOException` (Checked) throw hua
 - Spring: "Yeh checked hai, mera rollback rule trigger nahi hoga"
-- **`save(user)` COMMIT** ho gaya 
+- **`save(user)` COMMIT** ho gaya
 
 ### Visual — Rollback Decision Flow
 
@@ -525,7 +525,7 @@ public void saveUser(User user) {
             YES                NO
               │                 │
               ▼                 ▼
-         What kind?         COMMIT 
+         What kind?         COMMIT
               │
    ┌──────────┴──────────┐
    │                     │
@@ -536,14 +536,14 @@ public void saveUser(User user) {
   Custom RtException) custom Exception)
    │                     │
    ▼                     ▼
-ROLLBACK           COMMIT 
+ROLLBACK           COMMIT
 (automatic)           (DEFAULT — surprising!)
-                      
+
                       Override:
                       @Transactional(
                         rollbackFor = Exception.class
                       )
-                      → ROLLBACK 
+                      → ROLLBACK
 ```
 
 ### Fix Options
@@ -584,7 +584,7 @@ public void someMethod() {
 ```
 90% candidates yeh galat sochte:
    "Saari exceptions pe rollback hota"
-   
+
    NAHI — sirf Unchecked (RuntimeException + Error)
    Checked exceptions silently commit
 ```
@@ -640,7 +640,7 @@ Self-invocation:
 ```
   EXTERNAL CALL (Controller → Service):
   ─────────────────────────────────────
-  
+
        Controller
            │
            ▼
@@ -655,11 +655,11 @@ Self-invocation:
    │  REAL UserService            │
    │  saveUser() { ... }          │  TRANSACTIONAL
    └──────────────────────────────┘
-   
-   
+
+
   SELF-INVOCATION (within same class):
   ────────────────────────────────────
-  
+
        Controller
            │
            ▼
@@ -680,7 +680,7 @@ Self-invocation:
    │  saveUser() { ... } ◄────┘   │  NOT TRANSACTIONAL
    │                              │     (proxy bypass!)
    └──────────────────────────────┘
-   
+
    Kaaran: this.saveUser() proxy ke through nahi jata
               direct method invocation hai
               Spring ka @Transactional hook trigger nahi hota
@@ -695,7 +695,7 @@ public class UserService {
     @Autowired private SaveService saveService;
 
     public void doStuff() {
-        saveService.saveUser(new User("Arpan"));   // proxy via injection 
+        saveService.saveUser(new User("Arpan"));   // proxy via injection
     }
 }
 
@@ -713,7 +713,7 @@ public class UserService {
     @Autowired private UserService self;   // ← self-injection
 
     public void doStuff() {
-        self.saveUser(new User("Arpan"));   // through proxy 
+        self.saveUser(new User("Arpan"));   // through proxy
     }
 
     @Transactional
@@ -734,10 +734,10 @@ Bytecode-level injection — self-invocation bhi intercept. Rare in production.
 public class UserService {
     @Transactional
     private void privateMethod() { ... }   // proxy can't intercept private
-    
+
     @Transactional
     public final void finalMethod() { ... }   // proxy can't override final
-    
+
     @Transactional
     public static void staticMethod() { ... }   // proxy intercepts non-static
 }
@@ -756,7 +756,7 @@ public class UserService {
 public class UserService {
 
     @Transactional
-    public void saveUser(User user) { ... }     // transactional 
+    public void saveUser(User user) { ... }     // transactional
 
     public List<User> getUsers() { ... }         // NOT transactional
 }
@@ -768,8 +768,8 @@ public class UserService {
 @Transactional   // ← class pe lagaya
 public class UserService {
 
-    public void saveUser(User user) { ... }      // transactional 
-    public void deleteUser(Long id) { ... }      // transactional 
+    public void saveUser(User user) { ... }      // transactional
+    public void deleteUser(Long id) { ... }      // transactional
 }
 ```
 
@@ -883,13 +883,13 @@ public List<Order> findRecentOrders(Long userId) {
 ```
 Trap 1: "Saari exceptions pe rollback hota"
          Nahi — sirf Unchecked
-         
+
 Trap 2: "Same class ke method call mein bhi @Transactional kaam karta"
          Nahi — proxy bypass
-         
+
 Trap 3: "Private method pe @Transactional kaam karta"
          Nahi — proxy override nahi kar sakta
-         
+
 Trap 4: "MySQL aur Postgres ka isolation default same hai"
          Nahi — MySQL = REPEATABLE_READ, Postgres = READ_COMMITTED
 ```
@@ -905,9 +905,9 @@ REQUIRED             =  "Join karo ya naya banao" (default, 90%)
 REQUIRES_NEW         =  "Hamesha alag, parent ko suspend"
 NESTED               =  "Parent ke andar savepoint"
 
-DIRTY READ           =  "Uncommitted dekh liya" 
-NON-REPEATABLE READ  =  "Same query 2x = different result" 
-PHANTOM READ         =  "New row appeared in range" 
+DIRTY READ           =  "Uncommitted dekh liya"
+NON-REPEATABLE READ  =  "Same query 2x = different result"
+PHANTOM READ         =  "New row appeared in range"
 
 READ_UNCOMMITTED     =  "Sab dikha raha hai, even uncommitted"
 READ_COMMITTED       =  "Sirf committed dikhao" (Postgres default)
@@ -943,8 +943,8 @@ readOnly = true      =  "Hibernate optimization for SELECT"
   Method begin    Method success      Method exception
        │               │                   │
        ▼               ▼                   ▼
-  TX BEGIN         COMMIT         Unchecked? Yes 
-                                     Checked?   No 
+  TX BEGIN         COMMIT         Unchecked? Yes
+                                     Checked?   No
                                                  │
                                             (use rollbackFor
                                              to override)

@@ -57,7 +57,7 @@ class User {
     String phone;
     int age;
     String role;
-    
+
     // Private constructor — only Builder banae
     private User(Builder b) {
         this.name = b.name;
@@ -66,14 +66,14 @@ class User {
         this.age = b.age;
         this.role = b.role;
     }
-    
+
     public static class Builder {
         String name;
         String email;
         String phone;
         int age;
         String role = "USER";   // default
-        
+
         public Builder name(String n) {
             this.name = n;
             return this;        // ← KEY: return Builder for chain
@@ -94,7 +94,7 @@ class User {
             this.role = r;
             return this;
         }
-        
+
         public User build() {
             return new User(this);   // ← creates actual User
         }
@@ -240,7 +240,7 @@ Builder = Pizza step-by-step
 
 Constructor mein 10 params NAHI
    .field().field().field().build()
-   
+
 "return this" = chain ka secret
 ```
 

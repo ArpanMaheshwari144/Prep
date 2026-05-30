@@ -13,7 +13,7 @@
 
 ---
 
-## 1️⃣ ENCAPSULATION (Capsule Analogy)
+## 1 ENCAPSULATION (Capsule Analogy)
 
 ```
 Imagine ek MEDICINE CAPSULE:
@@ -35,11 +35,11 @@ Tu medicine khaata
 ```java
 class BankAccount {
     private double balance;       // HIDDEN
-    
+
     public void deposit(double x) { // way to access
         balance += x;
     }
-    
+
     public double getBalance() {  // way to read
         return balance;
     }
@@ -62,7 +62,7 @@ Kya expose karte:
 
 ---
 
-## 2️⃣ INHERITANCE (Family Analogy)
+## 2 INHERITANCE (Family Analogy)
 
 ```
    Daadaji  (Grandpa)
@@ -72,7 +72,7 @@ Kya expose karte:
       │
       ▼
    Tu       (Papa's surname, traits)
-   
+
    Tu unique bhi ho
    Lekin parent ki cheezein auto mili
 ```
@@ -118,7 +118,7 @@ tommy.bark();   // own
 ### Inheritance Types
 ```
 Single:
-   class B extends A           
+   class B extends A
 
 Multi-level:
    class C extends B
@@ -127,9 +127,9 @@ Multi-level:
 Multiple inheritance (2 parents):
    class C extends A, B        NOT ALLOWED
                                   (diamond problem)
-   
+
    Solution: Interfaces
-   class C implements A, B     
+   class C implements A, B
 ```
 
 ### Why Inheritance?
@@ -137,7 +137,7 @@ Multiple inheritance (2 parents):
 1. CODE REUSE
    Animal mein eat() likha
    Dog, Cat, Cow sab use karte
-   
+
 2. HIERARCHY natural
    Dog IS-A Animal
    = Real world reflect karta
@@ -155,7 +155,7 @@ Ek class:
 
 ---
 
-## 3️⃣ POLYMORPHISM (Same Word, Many Meanings)
+## 3 POLYMORPHISM (Same Word, Many Meanings)
 
 ```
 "Polymorphism" = poly (many) + morph (forms)
@@ -166,12 +166,12 @@ Ek class:
 ```
 Tu = ek hi insaan
    But different roles:
-   
+
    • Office mein  → Engineer (work)
    • Ghar mein    → Beta (respect parents)
    • Friends mein → Yaar (masti)
    • Cricket mein → Player
-   
+
    SAME tu, DIFFERENT behavior per context
 ```
 
@@ -190,7 +190,7 @@ Calculator ka "add" button:
    add(2.5, 3.7)     → double add  → 6.2
    add("Hi", "Bye")  → string concat → "HiBye"
    add(1, 2, 3)      → 3 numbers add → 6
-   
+
    SAME function name "add"
    DIFFERENT inputs handled
 ```
@@ -296,7 +296,7 @@ feedAnimal(new Lion());  // Roar
 
 ---
 
-## 4️⃣ ABSTRACTION (Show What Matters, Hide The Rest)
+## 4 ABSTRACTION (Show What Matters, Hide The Rest)
 
 ```
 "Abstraction" = essential dikhao, internal details chhupao
@@ -311,13 +311,13 @@ Tu car chala raha:
    │  Accelerator                │
    │  Gear stick                 │
    └────────────────────────────┘
-   
+
    Bhitar kya ho raha:
       • Engine combustion
       • Crankshaft rotation
       • Fuel injection
       • Hydraulic brake pressure
-   
+
    = TUJHE NAHI PATA = TUJHE NAHI CHAHIYE PATA
 ```
 
@@ -330,9 +330,9 @@ Tu car chala raha:
 ### A) Abstract Class
 ```java
 abstract class Animal {
-    
+
     abstract void makeSound();   // no body
-    
+
     void eat() {                  // has body
         System.out.println("Eating...");
     }

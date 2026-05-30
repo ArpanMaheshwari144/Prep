@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Problem Without LB
+## 1 Problem Without LB
 
 ```
         USER 1, 2, 3, ... 10,000
@@ -11,7 +11,7 @@
             ┌──────────────────┐
             │  SINGLE SERVER   │ crashed
             └──────────────────┘
-            
+
 Problems:
    Single point of failure
    Capacity limit (1 server = 1000 req/sec)
@@ -21,13 +21,13 @@ Problems:
 
 ---
 
-## 2️⃣ Restaurant Host Analogy 
+## 2 Restaurant Host Analogy
 
 ```
 Busy restaurant:
    100 customers arrive
    8 waiters available
-   
+
    Without HOST:
       Customers randomly pick waiter
       → 1 waiter overloaded, others idle
@@ -37,21 +37,21 @@ Busy restaurant:
       Knows each waiter's load
       Routes EACH customer to RIGHT waiter
       → Balanced load
-   
+
    = HOST = Load Balancer
    = Waiters = Backend servers
 ```
 
 ---
 
-## 3️⃣ Architecture With LB
+## 3 Architecture With LB
 
 ```
    USERS (10,000)
         │
         ▼
    ┌──────────────────┐
-   │   LOAD BALANCER  │ 
+   │   LOAD BALANCER  │
    │  (routing brain) │
    └──────┬───────────┘
           │
@@ -60,7 +60,7 @@ Busy restaurant:
    S1     S2     S3     S4
    2500   2500   2500   2500
    req    req    req    req
-   
+
    = Load distributed evenly
    = S2 crashes → LB stops sending
    = Demand grows → add S5
@@ -89,10 +89,10 @@ Envelope par:
 
 Postman A:
    "Address Delhi → Delhi bus mein daal do"
-   
+
    Letter ANDAR nahi padhta
    Content kya hai — pata nahi
-   
+
 = FAST (just sticker check)
 = SIMPLE (no content read)
 ```
@@ -104,7 +104,7 @@ L4 sees:
    • Dest IP
    • Dest port (443, 80...)
    • Protocol (TCP/UDP)
-   
+
    Doesn't open packet
    Doesn't read HTTP
 ```
@@ -117,14 +117,14 @@ L4 sees:
 Postman B:
    Envelope dekha
    Letter KHOLA + PADHA:
-   
+
    "Subject: Wedding" → Wedding bag
    "Subject: Bank cheque" → Priority bag
    "Subject: Promo" → Slow track
-   
+
    Content read karta → SMART decision
    Content ke basis pe alag route
-   
+
 = SLOWER (reading takes time)
 = SMARTER (content-aware)
 ```
@@ -137,7 +137,7 @@ L7 sees:
    • HTTP method (GET/POST)
    • Headers (User-Agent)
    • Cookies (session)
-   
+
    Reads INSIDE HTTP
    Routes on CONTENT
 ```
@@ -149,12 +149,12 @@ L7 sees:
 ```
 USER REQUEST:
    "GET amazon.com/api/cart"  (HTTPS, port 443)
-   
+
    Envelope (L4 sees):
       Source: User IP
       Dest: amazon.com:443
       Protocol: TCP
-      
+
    Letter (L7 sees):
       Host: amazon.com
       Path: /api/cart
@@ -171,12 +171,12 @@ L4 LB decision:
 
 ```
 L7 LB decision:
-   /api/cart → cart-service cluster 
-   /api/payment → payment-service cluster 
-   /api/search → search-service cluster 
-   /images/* → CDN/static servers 
-   /admin → admin cluster (restricted) 
-   
+   /api/cart → cart-service cluster
+   /api/payment → payment-service cluster
+   /api/search → search-service cluster
+   /images/* → CDN/static servers
+   /admin → admin cluster (restricted)
+
    CONTENT samjha → SMART routing
    Microservices perfect
 ```
@@ -209,7 +209,7 @@ L7 LB decision:
 ## 1-LINE MEMORY
 
 ```
-L4 = "Envelope reader"  
+L4 = "Envelope reader"
      → Address dekha, koi bhi server bhej do
      → Fast, dumb
 
@@ -220,7 +220,7 @@ L7 = "Letter content reader"
 
 ---
 
-## 4️⃣ Load Balancing Algorithms
+## 4 Load Balancing Algorithms
 
 ```
 ┌──────────────────────┬────────────────────────────────┐
@@ -246,18 +246,18 @@ L7 = "Letter content reader"
 
 ---
 
-## 5️⃣ Health Checks 
+## 5 Health Checks
 
 ```
 LB ko kaise pata server alive hai ya nahi?
 
 PERIODIC HEALTH CHECKS:
    LB → /health endpoint hit har 30 sec
-   
+
    Server response:
       200 OK   → healthy, keep sending traffic
       500/timeout → unhealthy, REMOVE from pool
-   
+
    Healthy hua wapas (3 consecutive OK) → add back
 ```
 
@@ -267,9 +267,9 @@ PERIODIC HEALTH CHECKS:
     │ GET /health ─────────────►│
     │                            │
     │ ◄───────────────── 200 OK │ keep using
-    
+
    ... after 5 minutes ...
-   
+
     │ GET /health ─────────────►│
     │                            │
     │ ◄───────────── timeout (X) │ remove from pool
@@ -277,7 +277,7 @@ PERIODIC HEALTH CHECKS:
 
 ---
 
-## 6️⃣ Sticky Sessions (Session Affinity)
+## 6 Sticky Sessions (Session Affinity)
 
 ```
 PROBLEM:
@@ -291,7 +291,7 @@ PROBLEM:
 SOLUTION 1: STICKY SESSION
    LB cookie set: "this user → S1 always"
    Same user always lands on S1
-   
+
    Simple
    S1 crashes = user session lost
    Uneven load
@@ -299,7 +299,7 @@ SOLUTION 1: STICKY SESSION
 SOLUTION 2: SHARED SESSION STORE
    All servers share Redis for sessions
    Any server can handle any request
-   
+
    Stateless servers
    S1 crashes = no problem
    Modern approach (preferred)
@@ -313,7 +313,7 @@ SOLUTION 3: JWT (Stateless tokens)
 
 ---
 
-## 7️⃣ SSL Termination
+## 7 SSL Termination
 
 ```
 SSL/TLS = encryption (HTTPS)
@@ -324,7 +324,7 @@ OPTION A: Termination at LB (common)
    ┌─────┐    HTTPS   ┌──────┐   HTTP   ┌────────┐
    │USER │ ─────────► │  LB  │ ───────► │SERVERS │
    └─────┘            └──────┘          └────────┘
-   
+
    LB decrypts → forwards plain HTTP to backend
    Servers don't need SSL cert
    CPU offload from servers
@@ -335,7 +335,7 @@ OPTION B: Pass-through (end-to-end SSL)
    ┌─────┐    HTTPS   ┌──────┐   HTTPS  ┌────────┐
    │USER │ ─────────► │  LB  │ ───────► │SERVERS │
    └─────┘            └──────┘          └────────┘
-   
+
    LB doesn't decrypt — forwards encrypted
    End-to-end encryption
    LB can't inspect (must be L4)
@@ -343,7 +343,7 @@ OPTION B: Pass-through (end-to-end SSL)
 
 ---
 
-## 8️⃣ AWS Load Balancer Types
+## 8 AWS Load Balancer Types
 
 ```
 ┌────────────┬───────────┬─────────────────────────┐
@@ -367,7 +367,7 @@ OPTION B: Pass-through (end-to-end SSL)
 
 ---
 
-## 9️⃣ Active-Active vs Active-Passive
+## 9 Active-Active vs Active-Passive
 
 ```
 ACTIVE-ACTIVE:
@@ -377,7 +377,7 @@ ACTIVE-ACTIVE:
      │       │
      ▼       ▼
    servers servers
-   
+
    Double capacity
    No idle resource
    More complex
@@ -386,10 +386,10 @@ ACTIVE-PASSIVE:
    ┌────┐  ┌────┐
    │ LB1│  │ LB2│  ← Only LB1 active
    └─┬──┘  └─X──┘     LB2 idle (standby)
-     │       
-     ▼       
-   servers   
-   
+     │
+     ▼
+   servers
+
    LB1 crashes → LB2 takes over
    Simple
    Half capacity unused
@@ -425,7 +425,7 @@ L7 = Letter content reader (slow, smart)
 
 5 algos: RR, Least-Conn, Weighted, IP-Hash, Least-Resp
 Health: /health every 30s → remove dead
-Sticky: cookie | Shared: Redis | JWT: stateless 
+Sticky: cookie | Shared: Redis | JWT: stateless
 SSL: terminate at LB (common) | pass-through (L4 only)
 AWS: ALB (L7) | NLB (L4)
 ```

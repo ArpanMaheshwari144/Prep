@@ -1,35 +1,35 @@
 # ════════════════════════════════════════════════════════════
-# 🌐 MySQL Service — Stable Network Access
+# MySQL Service — Stable Network Access
 # ════════════════════════════════════════════════════════════
 # Pod ephemeral hota — IP change ho sakti.
 # Service = stable IP + DNS name (mysql:3306 jaise)
 #
 # Type: ClusterIP (internal only — other pods reach via service name)
-#       NodePort would be: external accessible via node IP
-#       LoadBalancer would be: external via cloud LB
+# NodePort would be: external accessible via node IP
+# LoadBalancer would be: external via cloud LB
 #
 # For DB: ClusterIP (only Spring container needs to reach)
 #
 # Apply command:
-#   kubectl apply -f mysql-service.yaml
+# kubectl apply -f mysql-service.yaml
 #
 # Verify:
-#   kubectl get services
-#   kubectl describe service mysql
+# kubectl get services
+# kubectl describe service mysql
 # ════════════════════════════════════════════════════════════
 
 apiVersion: v1
 kind: Service
 metadata:
   name: mysql                       # ← THIS becomes DNS hostname!
-                                     #   Other pods: jdbc:mysql://mysql:3306/userdb
+                                     # Other pods: jdbc:mysql://mysql:3306/userdb
 
 spec:
   type: ClusterIP                   # ← Internal only (default)
 
   selector:
     app: mysql                      # ← Match pods with this label
-                                     #   (same as Deployment template labels)
+                                     # (same as Deployment template labels)
 
   ports:
   - port: 3306                      # ← Service port
@@ -37,14 +37,14 @@ spec:
     protocol: TCP
 
 # Note: We could also use NodePort for external access:
-#   type: NodePort
-#   nodePort: 30306    (range 30000-32767)
-#   = then access via: localhost:30306 from host
+# type: NodePort
+# nodePort: 30306    (range 30000-32767)
+# = then access via: localhost:30306 from host
 #
 # But for K8s-internal use (Spring container talking to MySQL),
 # ClusterIP is sufficient and more secure.
 #
 # DNS resolution:
-#   Same namespace: just "mysql"
-#   Other namespace: "mysql.namespace-name"
-#   Full FQDN: "mysql.default.svc.cluster.local"
+# Same namespace: just "mysql"
+# Other namespace: "mysql.namespace-name"
+# Full FQDN: "mysql.default.svc.cluster.local"

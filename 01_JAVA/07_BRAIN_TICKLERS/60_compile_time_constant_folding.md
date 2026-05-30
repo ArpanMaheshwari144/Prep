@@ -35,7 +35,7 @@ s2  ─────────────────────►│  (SHAR
                          └─────────────┘
 
 DONO same pool object pe point kar rahe!
-s1 == s2  →  TRUE  
+s1 == s2  →  TRUE
 ```
 
 ---

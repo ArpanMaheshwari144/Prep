@@ -54,7 +54,7 @@
    │  public setAge()       │    │  public setAge()       │
    │     (validation)          │    │     (validation)          │
    └──────────────────────────┘    └──────────────────────────┘
-   
+
    Each User = self-contained. Data + behavior together.
 ```
 
@@ -69,11 +69,11 @@ public class UserApp {
     static String[] names = new String[100];
     static int[] ages = new int[100];
     static String[] emails = new String[100];
-    
+
     public static void updateAge(int id, int age) {
         ages[id] = age;   // Anyone can pass -50
     }
-    
+
     public static void main(String[] args) {
         names[0] = "Arpan";
         ages[0] = 28;
@@ -89,18 +89,18 @@ public class User {
     private String name;
     private int age;
     private String email;
-    
+
     public User(String name, int age, String email) {
         this.name = name;
         setAge(age);                // validation
         this.email = email;
     }
-    
+
     public void setAge(int age) {
         if (age < 0) throw new IllegalArgumentException();
         this.age = age;             // validated
     }
-    
+
     public String getName() { return name; }
     // ... other getters
 }
@@ -141,20 +141,20 @@ u.setAge(-50);   // Throws exception — protection enforced
 
 ```
 Jira Ticket = Object
-   
+
    Data:                       Behaviour:
    • title                     • assignTo()
    • description                • markResolved()
    • status                     • addComment()
    • assignee                   • close()
-   
+
    ↓ Bundled together as one entity ↓
-   
+
    class JiraTicket {
        private String title;
        private String status;
        private User assignee;
-       
+
        public void assignTo(User u) { ... }
        public void markResolved() { ... }
    }

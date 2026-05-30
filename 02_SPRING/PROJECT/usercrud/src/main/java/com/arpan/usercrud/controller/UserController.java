@@ -191,7 +191,7 @@ public class UserController {
             "USER"                      // role
         );
         // Service throws RuntimeException intentionally
-        // → @Transactional rollback 
+        // → @Transactional rollback
         // → GlobalExceptionHandler converts to 500 response
         return ResponseEntity.ok(service.createWithSimulatedFailure(dummyUser));
     }

@@ -61,8 +61,8 @@ import java.util.List;
 //
 //    Multi-user TODO app:
 //       User A ko sirf apne todos chahiye
-//       findAll() = SAB users ke todos return 
-//       findByUserId(A's id) = sirf A's todos 
+//       findAll() = SAB users ke todos return
+//       findByUserId(A's id) = sirf A's todos
 //
 //    Service layer mein:
 //       todoRepo.findByUserId(loggedInUserId)

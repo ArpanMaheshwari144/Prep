@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Concept (Factory Assembly Line)
+## 1 Concept (Factory Assembly Line)
 
 ```
 Imagine factory ka conveyor belt:
@@ -10,7 +10,7 @@ Imagine factory ka conveyor belt:
    → Filter → Transform → Pack
    ↑                                    ↓
    raw items                       finished
-   
+
    Each item: filtered → modified → collected
 ```
 
@@ -21,7 +21,7 @@ Stream = data ka assembly line
 
 ---
 
-## 2️⃣ Loop vs Stream — Visual
+## 2 Loop vs Stream — Visual
 
 ### OLD Loop Style
 ```java
@@ -62,18 +62,18 @@ Declarative:
 
 ---
 
-## 3️⃣ Stream Pipeline (3 Parts)
+## 3 Stream Pipeline (3 Parts)
 
 ```
    SOURCE              INTERMEDIATE              TERMINAL
    ──────              ────────────              ────────
-   
+
    list.stream()  →   .filter()           →    .collect()
                        .map()                   .reduce()
                        .sorted()                .forEach()
                        .distinct()              .count()
                        .limit()                 .sum()
-   
+
    ↑                       ↑                       ↑
    Where data            Modify each            Final result
    comes from            (LAZY)                 (eager)
@@ -81,7 +81,7 @@ Declarative:
 
 ---
 
-## 4️⃣ Intermediate Operations (Lazy)
+## 4 Intermediate Operations (Lazy)
 
 ```java
 .filter(p -> ...)        // keep matching
@@ -102,7 +102,7 @@ LAZY:
 
 ---
 
-## 5️⃣ Terminal Operations (Eager)
+## 5 Terminal Operations (Eager)
 
 ```java
 .collect(...)            // collect to List/Set/Map
@@ -125,7 +125,7 @@ EAGER:
 
 ---
 
-## 6️⃣ Common Examples
+## 6 Common Examples
 
 ### Filter + Collect
 ```java
@@ -157,7 +157,7 @@ List<String> result = names.stream()
 
 ---
 
-## 7️⃣ Reduce (Aggregate)
+## 7 Reduce (Aggregate)
 
 ```java
 List<Integer> nums = List.of(1, 2, 3, 4, 5);
@@ -185,7 +185,7 @@ reduce = "accumulate into one value"
 
 ---
 
-## 8️⃣ Collect with Collectors
+## 8 Collect with Collectors
 
 ```java
 // To List
@@ -207,7 +207,7 @@ list.stream()
 // "Arpan, Suresh, Mukesh"
 
 // Group by
-Map<Integer, List<Person>> byAge = 
+Map<Integer, List<Person>> byAge =
     people.stream()
           .collect(Collectors.groupingBy(Person::getAge));
 
@@ -219,7 +219,7 @@ long count = list.stream()
 
 ---
 
-## 9️⃣ Lazy Evaluation (Important!)
+## 9 Lazy Evaluation (Important!)
 
 ```java
 List<Integer> nums = List.of(1, 2, 3, 4, 5);
@@ -275,7 +275,7 @@ parallelStream:
    Internally uses ForkJoinPool
    Splits work across CPU cores
    = Faster for LARGE data + CPU-intensive ops
-   
+
 WARNINGS:
    Don't use for small lists (overhead)
    Don't use with shared mutable state
@@ -284,7 +284,7 @@ WARNINGS:
 
 ---
 
-## 1️⃣1️⃣ Common Trap
+## 11 Common Trap
 
 ```java
 // Can't reuse stream
@@ -299,7 +299,7 @@ list.stream().toList();   // 2nd use (new stream)
 
 ---
 
-## 1️⃣2️⃣ flatMap (Nested → Flat)
+## 12 flatMap (Nested → Flat)
 
 ```java
 List<List<Integer>> nested = List.of(
@@ -329,10 +329,10 @@ Stream = assembly line for collections
 
 Pipeline:
    source → intermediate → intermediate → terminal
-   
+
 Intermediate (LAZY):
    filter, map, sorted, distinct, limit
-   
+
 Terminal (EAGER):
    collect, reduce, forEach, count, sum
 

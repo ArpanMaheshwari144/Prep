@@ -77,7 +77,7 @@ package com.arpan.bank.model;
 // PATTERN: Template Method (concrete step implementation)
 //
 // SOLID — LSP (Liskov Substitution):
-//    Account a = new SavingsAccount(...);  
+//    Account a = new SavingsAccount(...);
 //    a.deposit(500);   ← inherited works
 //    a.withdraw(200);  ← inherited works
 //    a.calculateInterest();  ← Savings's 4% version runs

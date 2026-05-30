@@ -51,9 +51,9 @@ Config c3 = new Config();   // disk + network call AGAIN
 // Constructor PRIVATE — koi external new karna nahi sakta
 public class Config {
     private static Config instance;
-    
+
     private Config() { ... }   // ← PRIVATE
-    
+
     public static Config getInstance() {
         if (instance == null) {
             instance = new Config();
@@ -77,7 +77,7 @@ c1 == c2 == c3   // true — single instance
 ```
    First call:                    Subsequent calls:
    ───────────                    ──────────────────
-   
+
    Config.getInstance()           Config.getInstance()
         │                              │
         ▼                              ▼
@@ -99,15 +99,15 @@ c1 == c2 == c3   // true — single instance
 
 ## 4 Implementation Approaches
 
-### 1️⃣ EAGER Initialization (simplest, thread-safe)
+### 1 EAGER Initialization (simplest, thread-safe)
 
 ```java
 public class Config {
     // Initialize at class load — JVM thread-safe automatic
     private static final Config INSTANCE = new Config();
-    
+
     private Config() { /* private */ }
-    
+
     public static Config getInstance() {
         return INSTANCE;
     }
@@ -119,14 +119,14 @@ public class Config {
 
 ---
 
-### 2️⃣ LAZY Initialization (NOT thread-safe)
+### 2 LAZY Initialization (NOT thread-safe)
 
 ```java
 public class Config {
     private static Config instance;
-    
+
     private Config() { }
-    
+
     public static Config getInstance() {
         if (instance == null) {        // race condition
             instance = new Config();
@@ -143,7 +143,7 @@ public class Config {
    instance == null? true
                      instance == null? true (A hasn't created yet)
    instance = new Config()
-                     instance = new Config()  ← 2 instances! 
+                     instance = new Config()  ← 2 instances!
 ```
 
 **Pros:** Lazy (created only when needed)
@@ -151,15 +151,15 @@ public class Config {
 
 ---
 
-### 3️⃣ DOUBLE-CHECKED LOCKING (DCL) — Industry classic
+### 3 DOUBLE-CHECKED LOCKING (DCL) — Industry classic
 
 ```java
 public class Config {
     // volatile MANDATORY — prevents instruction reordering
     private static volatile Config instance;
-    
+
     private Config() { }
-    
+
     public static Config getInstance() {
         if (instance == null) {                   // 1st check (no lock)
             synchronized (Config.class) {
@@ -184,15 +184,15 @@ public class Config {
 
 ---
 
-### 4️⃣ ENUM Singleton — BEST APPROACH (Joshua Bloch)
+### 4 ENUM Singleton — BEST APPROACH (Joshua Bloch)
 
 ```java
 public enum Config {
     INSTANCE;
-    
+
     private final String bankName = "Konovo Bank";
     private final double maxLimit = 100000.0;
-    
+
     public String getBankName() { return bankName; }
     public double getMaxLimit() { return maxLimit; }
 }
@@ -374,9 +374,9 @@ Singleton = "One President per country"
 
 4 implementations:
    1. Eager     → class load pe — simple, not lazy
-   2. Lazy      → on-demand — NOT thread-safe 
+   2. Lazy      → on-demand — NOT thread-safe
    3. DCL       → industry standard — verbose, needs volatile
-   4. Enum      → BEST (Bloch) — auto-everything 
+   4. Enum      → BEST (Bloch) — auto-everything
 
 Key invariant:
    Config.getInstance() == Config.getInstance()  ← always true
@@ -385,7 +385,7 @@ Real-world (already use kar raha):
    • Spring beans (default singleton scope)
    • java.lang.Runtime
    • Loggers
-   • BankConfig in SimpleBankSystem 
+   • BankConfig in SimpleBankSystem
 
 Attack vectors (need defense):
    1. Reflection      → enum proof

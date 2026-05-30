@@ -54,11 +54,11 @@ TWITTER-LIKE APP:
 1. Get user info:
    GET /users/123
    Response: { id, name, email, age, address, phone, ... 30 fields }
-   
+
 2. Get user's tweets:
    GET /users/123/tweets
    Response: [{ tweet1 }, { tweet2 }, ...]
-   
+
 3. Get each tweet's likes:
    GET /tweets/1/likes
    GET /tweets/2/likes
@@ -113,7 +113,7 @@ Response:
 ```
 REST:
    Client needs: name + email
-   
+
    GET /users/123
    Server returns: {
       name: "Arpan",        ← needed
@@ -124,13 +124,13 @@ REST:
       preferences: {...},    ← extra
       ... 30 more fields    ← extra
    }
-   
+
    = Server decides, client gets MORE than needed
 
 GraphQL:
    Client asks: { user(id:123) { name email } }
    Server returns: { name, email }
-   
+
    = Client decides, gets EXACTLY what asked
 ```
 
@@ -141,10 +141,10 @@ GraphQL:
 ```
 REST:
    Need: User profile + their 5 latest tweets
-   
+
    Request 1: GET /users/123 → user data
    Request 2: GET /users/123/tweets → tweets
-   
+
    = 2 round trips
    = Mobile network = slow
 
@@ -155,7 +155,7 @@ GraphQL:
          tweets(limit: 5) { content }
       }
    }
-   
+
    = 1 round trip
    = Mobile friendly
 ```
@@ -173,14 +173,14 @@ GraphQL SCHEMA (mandatory):
      email: String
      tweets: [Tweet!]!
    }
-   
+
    type Tweet {
      id: ID!
      content: String!
      likes: Int!
      author: User!
    }
-   
+
    type Query {
      user(id: ID!): User
      tweets: [Tweet!]!
@@ -199,12 +199,12 @@ GraphQL SCHEMA (mandatory):
 ```
 1. N+1 PROBLEM (common pitfall)
    Query: { users { name posts { title } } }
-   
+
    Naive resolver:
       1 query for all users
       Then 1 query per user for posts
       = N+1 queries (slow)
-   
+
    FIX: DataLoader (batch + cache)
 
 2. CACHING HARD
@@ -212,18 +212,18 @@ GraphQL SCHEMA (mandatory):
    GraphQL: POST /graphql → same URL, different queries
    = Cache key must include query
    = Browser caching broken
-   
+
 3. RATE LIMITING HARD
    REST: count requests
    GraphQL: complex query = "1 request" but expensive
    = Need query complexity analysis
    = Depth limits, field limits
-   
+
 4. ERROR HANDLING
    REST: HTTP status codes (404, 400, 500)
    GraphQL: Always 200 OK, errors in body
    = Different mental model
-   
+
 5. FILE UPLOAD
    REST: multipart/form-data → standard
    GraphQL: needs extension/workaround
@@ -271,14 +271,14 @@ GRAPHQL CHOOSE WHEN:
 Facebook 2012:
    Mobile app slow on 2G networks
    REST API = too many requests, over-fetching
-   
+
    Solution: Created GraphQL internally
-   
+
    Result:
    • Single request per screen
    • Mobile-friendly bandwidth
    • Frontend devs autonomous (pick fields)
-   
+
    2015: Open-sourced
    Now: GitHub, Shopify, Airbnb, Twitter, Pinterest
 ```

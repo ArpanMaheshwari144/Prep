@@ -56,7 +56,7 @@ SQL CHOOSE KARO when:
    • Schema stable / well-defined
    • Reporting + analytics
    • Compliance / audit required
-   
+
    Examples: UserCRUD, banking, ERP
 
 NoSQL CHOOSE KARO when:
@@ -65,7 +65,7 @@ NoSQL CHOOSE KARO when:
    • Unstructured data (logs, social posts)
    • Specific access pattern (key-value lookups)
    • Eventual consistency acceptable
-   
+
    Examples:
    • Cache (Redis)
    • Social feed (Cassandra)

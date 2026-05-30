@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Problem — Fixed Set Of Values
+## 1 Problem — Fixed Set Of Values
 
 ```
 Imagine traffic light:
@@ -10,7 +10,7 @@ Imagine traffic light:
       RED
       YELLOW
       GREEN
-   
+
    Koi 4th value nahi hoti
    = FIXED SET
 ```
@@ -20,13 +20,13 @@ Same Java mein:
    • Days: MON, TUE, WED, THU, FRI, SAT, SUN
    • Direction: NORTH, SOUTH, EAST, WEST
    • Status: ACTIVE, INACTIVE, PENDING
-   
+
    Limited choices = use ENUM
 ```
 
 ---
 
-## 2️⃣ Without Enum (Painful Way)
+## 2 Without Enum (Painful Way)
 
 ```java
 class TrafficLight {
@@ -47,7 +47,7 @@ int light = TrafficLight.RED;
 
 ---
 
-## 3️⃣ With Enum (Clean)
+## 3 With Enum (Clean)
 
 ```java
 enum TrafficLight {
@@ -70,7 +70,7 @@ Benefits:
 
 ---
 
-## 4️⃣ Enum Built-in Methods
+## 4 Enum Built-in Methods
 
 ```java
 enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }
@@ -91,7 +91,7 @@ int pos = Day.WED.ordinal();  // 2 (0-indexed)
 
 ---
 
-## 5️⃣ Enum in Switch (Clean)
+## 5 Enum in Switch (Clean)
 
 ```java
 enum Status { ACTIVE, INACTIVE, PENDING }
@@ -115,22 +115,22 @@ void handle(Status s) {
 
 ---
 
-## 6️⃣ Enum with FIELDS (Power Mode)
+## 6 Enum with FIELDS (Power Mode)
 
 ```java
 enum Planet {
     EARTH(5.97e24, 6_378_137),
     MARS(6.42e23, 3_389_500),
     JUPITER(1.90e27, 69_911_000);
-    
+
     private final double mass;
     private final double radiusMeters;
-    
+
     Planet(double mass, double radius) {
         this.mass = mass;
         this.radiusMeters = radius;
     }
-    
+
     public double getMass() { return mass; }
     public double getRadius() { return radiusMeters; }
 }
@@ -148,7 +148,7 @@ Enum sirf constants nahi —
 
 ---
 
-## 7️⃣ Enum with ABSTRACT Methods (Polymorphism!)
+## 7 Enum with ABSTRACT Methods (Polymorphism!)
 
 ```java
 enum Operation {
@@ -161,7 +161,7 @@ enum Operation {
     TIMES {
         public int apply(int a, int b) { return a * b; }
     };
-    
+
     public abstract int apply(int a, int b);
 }
 
@@ -179,12 +179,12 @@ Polymorphism within Enum
 
 ---
 
-## 8️⃣ Singleton via Enum (Joshua Bloch's Recommendation)
+## 8 Singleton via Enum (Joshua Bloch's Recommendation)
 
 ```java
 public enum DatabaseConnection {
     INSTANCE;
-    
+
     public void query(String sql) {
         // ...
     }
@@ -200,13 +200,13 @@ WHY enum singleton?
    Serialization safe
    Reflection-attack safe
    Concise (one line)
-   
+
    = "Best way to implement Singleton" — Joshua Bloch
 ```
 
 ---
 
-## 9️⃣ Visual Comparison
+## 9 Visual Comparison
 
 ```
 ┌──────────────────┬────────────────┬─────────────────┐

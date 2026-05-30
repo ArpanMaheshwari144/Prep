@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Primitive Type Casting (Container Analogy)
+## 1 Primitive Type Casting (Container Analogy)
 
 ```
 Imagine 2 containers:
@@ -16,7 +16,7 @@ Imagine 2 containers:
         │
         ▼ pour into big bucket
    bucket (long = 5L)
-   
+
    = NO data loss
    = Java does AUTOMATICALLY
    = "widening"
@@ -34,7 +34,7 @@ long big = small;          // automatic widening
         │
         ▼ squeeze into small glass
    glass (int = ???)
-   
+
    = May LOSE data (overflow)
    = Java FORCES you to cast (explicit)
    = "narrowing"
@@ -56,7 +56,7 @@ int small = (int) big;     // FORCED cast
 
 ---
 
-## 2️⃣ Reference Type Casting
+## 2 Reference Type Casting
 
 ### Boss-Employee Analogy
 ```
@@ -77,7 +77,7 @@ Office hierarchy:
    Director  d = new Director();
    Manager   m = d;            // upcast (automatic)
    Employee  e = d;            // upcast (automatic)
-   
+
    "Director IS-A Employee" — always true
    = NO cast needed
 ```
@@ -113,7 +113,7 @@ Runtime: explodes — "you said Director, but actual is Manager"
 
 ---
 
-## 3️⃣ Solution = instanceof Check
+## 3 Solution = instanceof Check
 
 ```java
 Employee e = getSomeEmployee();   // could be anything
@@ -132,7 +132,7 @@ instanceof = "Is this object actually a Director?"
 
 ---
 
-## 4️⃣ Visual Flow
+## 4 Visual Flow
 
 ```
    Employee e = ???
@@ -151,7 +151,7 @@ instanceof = "Is this object actually a Director?"
 
 ---
 
-## 5️⃣ Java 16+ Pattern Matching
+## 5 Java 16+ Pattern Matching
 
 ```java
 // OLD style
@@ -168,7 +168,7 @@ if (e instanceof Director d) {       // cast + assign in one
 
 ---
 
-## 6️⃣ Real Use Case
+## 6 Real Use Case
 
 ```java
 public void processAnimal(Animal a) {
@@ -186,7 +186,7 @@ public void processAnimal(Animal a) {
 
 ---
 
-## 7️⃣ Common Trap
+## 7 Common Trap
 
 ```java
 Animal a = new Dog();
@@ -201,7 +201,7 @@ if (a instanceof Cat c2) {    // false → skip
 
 ---
 
-## 8️⃣ Memory Hooks
+## 8 Memory Hooks
 
 ```
 PRIMITIVE:
@@ -217,7 +217,7 @@ instanceof          = "kya ye actually X type ka hai?"
 
 ---
 
-## 9️⃣ Summary Visual
+## 9 Summary Visual
 
 ```
 Type Casting Tree:

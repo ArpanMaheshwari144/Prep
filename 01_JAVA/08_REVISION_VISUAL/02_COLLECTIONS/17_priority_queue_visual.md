@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Concept (Hospital ER Analogy)
+## 1 Concept (Hospital ER Analogy)
 
 ```
 Normal queue:
@@ -25,33 +25,33 @@ PriorityQueue = ER mein triage system
 
 ---
 
-## 2️⃣ Min-Heap vs Max-Heap
+## 2 Min-Heap vs Max-Heap
 
 ```
    MIN-HEAP                  MAX-HEAP
    ─────────                 ────────
-   
+
    Smallest at TOP           Largest at TOP
    poll() = smallest         poll() = largest
-   
+
    Java default = MIN-HEAP
 ```
 
 ---
 
-## 3️⃣ Tree Structure (Behind The Scenes)
+## 3 Tree Structure (Behind The Scenes)
 
 ```
 PriorityQueue internally = BINARY HEAP
 
    MIN-HEAP example:
-   
+
             1            ← smallest at root
            / \
           3   5
          /\   /\
         4  8 7  9
-   
+
    RULE:
       Parent <= both children
       = Min-heap property
@@ -60,7 +60,7 @@ PriorityQueue internally = BINARY HEAP
 ```
 Stored as ARRAY (compact):
    [1, 3, 5, 4, 8, 7, 9]
-   
+
    Index magic:
       Parent of i  = (i-1) / 2
       Left child   = 2i + 1
@@ -69,7 +69,7 @@ Stored as ARRAY (compact):
 
 ---
 
-## 4️⃣ Basic Operations
+## 4 Basic Operations
 
 ### Insert (offer)
 ```java
@@ -86,7 +86,7 @@ INSERT flow:
    2. "Bubble up" — compare with parent
    3. Smaller? Swap with parent
    4. Repeat until heap property restored
-   
+
    = O(log n)
 ```
 
@@ -105,7 +105,7 @@ POLL flow:
    3. "Bubble down" — compare with smaller child
    4. Larger than child? Swap
    5. Repeat until heap property restored
-   
+
    = O(log n)
 ```
 
@@ -116,7 +116,7 @@ pq.peek();   // see top without removal — O(1)
 
 ---
 
-## 5️⃣ Time Complexity
+## 5 Time Complexity
 
 ```
 ┌────────────────┬──────────────┐
@@ -131,11 +131,11 @@ pq.peek();   // see top without removal — O(1)
 
 ---
 
-## 6️⃣ Custom Priority (with Comparator)
+## 6 Custom Priority (with Comparator)
 
 ### Max-Heap
 ```java
-PriorityQueue<Integer> maxHeap = 
+PriorityQueue<Integer> maxHeap =
     new PriorityQueue<>(Comparator.reverseOrder());
 
 maxHeap.offer(5);
@@ -167,7 +167,7 @@ pq.poll();   // Mukesh (3)
 
 ---
 
-## 7️⃣ Real Use Cases
+## 7 Real Use Cases
 
 ```
 1. DIJKSTRA'S ALGORITHM
@@ -194,7 +194,7 @@ pq.poll();   // Mukesh (3)
 
 ---
 
-## 8️⃣ Top K Problem (Classic Pattern)
+## 8 Top K Problem (Classic Pattern)
 
 ```java
 // Top 3 largest numbers in stream
@@ -219,45 +219,45 @@ TRICK:
    Min-heap of size K
    When >K, pop smallest
    = Top K largest remain
-   
+
    Time: O(n log k)
    Space: O(k)
 ```
 
 ---
 
-## 9️⃣ Visual — Bubble Up (Insert)
+## 9 Visual — Bubble Up (Insert)
 
 ```
    Insert 1 into:
-   
+
             3
            / \
           5   7
          /\
         8 9
-   
+
    Step 1: Add at last:
             3
            / \
           5   7
          /\   /
         8 9  1
-   
+
    Step 2: Compare with parent (7), 1 < 7 → swap
             3
            / \
           5   1
          /\   /
         8 9  7
-   
+
    Step 3: Compare with parent (3), 1 < 3 → swap
             1
            / \
           5   3
          /\   /
         8 9  7
-   
+
    Done — heap property restored
 ```
 
@@ -283,7 +283,7 @@ KEY:
 
 ---
 
-## 1️⃣1️⃣ Common Trap
+## 11 Common Trap
 
 ```java
 PriorityQueue<Integer> pq = new PriorityQueue<>();

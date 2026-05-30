@@ -23,11 +23,11 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 1. JDK has compile tools (javac, jar, jlink)
    → BUT runtime mein sirf java -jar chahiye
    → JDK = JRE + javac + tools = WASTED in production
-   
+
 2. Build leftovers in final image
    → Maven cache, downloaded deps
    → Bigger attack surface (security)
-   
+
 3. Slower deploys
    → 256 MB content × 100 servers = 25.6 GB total
    → CI/CD pipelines slower (push/pull big images)
@@ -193,7 +193,7 @@ docker images usercrud-app
 IMAGE                  DISK USAGE   CONTENT SIZE
 ─────                  ──────────   ────────────
 usercrud-app:latest    758 MB       256 MB        (compose-built)
-usercrud-app:multi     502 MB       154 MB 
+usercrud-app:multi     502 MB       154 MB
 usercrud-app:single    758 MB       256 MB
 ```
 
@@ -217,9 +217,9 @@ SCENARIO — 100 servers running this image:
 
    Single-stage:  100 × 256 MB = 25.6 GB total
    Multi-stage:   100 × 154 MB = 15.4 GB total
-   
+
    SAVED: 10.2 GB across cluster
-   
+
 PLUS:
    CI/CD pipeline 40% faster (image push/pull)
    Bandwidth saved per deploy
@@ -256,8 +256,8 @@ Variant                              Final Size
 ───────                              ──────────
 Single-stage JDK                     ~256 MB
 Multi-stage JRE-jammy (full ubuntu)  ~154 MB (yahi banaya)
-Multi-stage JRE-alpine               ~80 MB  
-Multi-stage jlink (custom JRE)       ~50 MB  
+Multi-stage JRE-alpine               ~80 MB
+Multi-stage jlink (custom JRE)       ~50 MB
 
 Production = JRE-jammy ya alpine usually
 Custom jlink = max optimization for resource-constrained

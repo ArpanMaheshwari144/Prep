@@ -1,18 +1,18 @@
 # ════════════════════════════════════════════════════════════
-# 🚀 UserCRUD Spring Boot Deployment
+# UserCRUD Spring Boot Deployment
 # ════════════════════════════════════════════════════════════
 # Spring Boot pod manage karta:
-#   • 1 replica (dev)
-#   • Image: usercrud-app:multi (multi-stage built earlier)
-#   • imagePullPolicy: Never (use local image, NOT pull from registry)
-#   • Reads ConfigMap for env vars
+# • 1 replica (dev)
+# • Image: usercrud-app:multi (multi-stage built earlier)
+# • imagePullPolicy: Never (use local image, NOT pull from registry)
+# • Reads ConfigMap for env vars
 #
 # Apply command:
-#   kubectl apply -f usercrud-deployment.yaml
+# kubectl apply -f usercrud-deployment.yaml
 #
 # Verify:
-#   kubectl get pods
-#   kubectl logs deployment/usercrud
+# kubectl get pods
+# kubectl logs deployment/usercrud
 # ════════════════════════════════════════════════════════════
 
 apiVersion: apps/v1
@@ -44,7 +44,7 @@ spec:
       - name: usercrud
         image: arpanmah/usercrud-app:multi   # ← Docker Hub image (production pattern)
         imagePullPolicy: IfNotPresent        # ← Pull if not local
-                                              #   K8s pulls from Docker Hub if not cached
+                                              # K8s pulls from Docker Hub if not cached
 
         ports:
         - containerPort: 8080

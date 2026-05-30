@@ -24,7 +24,7 @@
                                             ↓
                                        Cabinet wapas connect
                                             ↓
-                                       Paper SAFE 
+                                       Paper SAFE
 ```
 
 ```
@@ -64,7 +64,7 @@ Volume    = FILING CABINET (permanent, separate)
       Volume:    create → mount → unmount → rm (rare delete)
 
    Data flow (with volume):
-      App writes → Container path /var/lib/mysql 
+      App writes → Container path /var/lib/mysql
                 → Mounted to volume mysql_data
                 → Lands on host disk (persistent)
 ```
@@ -97,7 +97,7 @@ Volume    = FILING CABINET (permanent, separate)
 ```
    Naya container WITHOUT volume:
       docker run -d --name mysql-userdb ... mysql:8
-   
+
    ┌─────────────────────────────┐
    │  NEW CONTAINER (different ID)│
    │  ┌────────────────────┐     │
@@ -105,7 +105,7 @@ Volume    = FILING CABINET (permanent, separate)
    │  │ EMPTY              │     │
    │  └────────────────────┘     │
    └─────────────────────────────┘
-   
+
    docker exec → SHOW TABLES;
       → Empty set        ← PROOF: container delete = data gone
 ```
@@ -152,7 +152,7 @@ Volume    = FILING CABINET (permanent, separate)
 ```
    Naya container WITH SAME volume:
       docker run ... -v mysql_data:/var/lib/mysql ... mysql:8
-   
+
                     ┌──────────────────┐
                     │  VOLUME          │
                     │  mysql_data      │
@@ -166,9 +166,9 @@ Volume    = FILING CABINET (permanent, separate)
    │  /var/lib/mysql ────────────┘
    │  Reads existing data         │
    └─────────────────────────────┘
-   
+
    docker exec → SELECT * FROM users;
-      → Arpan (id=1, age=27)   ← VOLUME SAVED THE DAY 
+      → Arpan (id=1, age=27)   ← VOLUME SAVED THE DAY
 ```
 
 ---
@@ -284,28 +284,28 @@ docker volume prune -f       REM Removes all unused (anonymous orphans)
 ## Lifecycle Visual — All 3 Together
 
 ```
-   IMAGE                                                            
-   │                                                                
-   │ docker run                                                     
-   ▼                                                                
-   CONTAINER ◄──── -v ────► VOLUME                                  
-   │ (running)              │ (persistent)                           
-   │                        │                                        
-   │ docker stop            │                                        
-   ▼                        │                                        
-   STOPPED                  │ (still alive, container stopped)        
-   │                        │                                        
-   │ docker rm              │                                        
-   ▼                        │                                        
-   GONE                  │ (still alive, container deleted)        
-                            │                                        
-                            │ docker run -v same_volume ...           
-                            ▼                                        
-   NEW CONTAINER ◄──── -v ────► SAME VOLUME (data intact)           
-                                                                     
-                                                                     
-   Volume independent of container lifecycle.                       
-   Container = process, Volume = data file (separate concerns).     
+   IMAGE
+   │
+   │ docker run
+   ▼
+   CONTAINER ◄──── -v ────► VOLUME
+   │ (running)              │ (persistent)
+   │                        │
+   │ docker stop            │
+   ▼                        │
+   STOPPED                  │ (still alive, container stopped)
+   │                        │
+   │ docker rm              │
+   ▼                        │
+   GONE                  │ (still alive, container deleted)
+                            │
+                            │ docker run -v same_volume ...
+                            ▼
+   NEW CONTAINER ◄──── -v ────► SAME VOLUME (data intact)
+
+
+   Volume independent of container lifecycle.
+   Container = process, Volume = data file (separate concerns).
 ```
 
 ---
@@ -344,7 +344,7 @@ Trap 13: Volume + container delete cleanup
             Or: explicit `docker volume rm X` baad mein
 
 Trap 14: Permissions issue (Linux containers)
-         Bind mount Windows folder → Linux container 
+         Bind mount Windows folder → Linux container
             permission errors (UID mismatch)
          Named volume preferred (Docker handles permissions)
             OR set proper UID in Dockerfile

@@ -103,7 +103,7 @@ Binary framing (efficient parsing)
 HPACK header compression
 Server push (preempt resources)
    "Browser asked for /index.html — I'll also push /style.css"
-   
+
 TCP-level head-of-line blocking
    (one lost packet = all streams stall)
 ```

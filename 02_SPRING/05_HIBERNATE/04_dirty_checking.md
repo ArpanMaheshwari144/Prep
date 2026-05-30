@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ Concept (Smart Notebook Analogy)
+## 1 Concept (Smart Notebook Analogy)
 
 ```
 Imagine SMART notebook:
@@ -10,13 +10,13 @@ Imagine SMART notebook:
    Notebook KHUD detect karta "ye change hua"
    Tu "save" button press NAHI karta
    Notebook auto-save karta jab tu band karta
-   
+
    = Hibernate Dirty Checking
 ```
 
 ---
 
-## 2️⃣ Without Dirty Checking (Normal Code)
+## 2 Without Dirty Checking (Normal Code)
 
 ```java
 User u = userRepo.findById(1L).orElseThrow();
@@ -31,14 +31,14 @@ userRepo.save(u);   // ek MANUAL call
 
 ---
 
-## 3️⃣ WITH Dirty Checking (Magic)
+## 3 WITH Dirty Checking (Magic)
 
 ```java
 @Transactional
 public void updateName(Long id, String name) {
     User u = userRepo.findById(id).orElseThrow();
     u.setName(name);
-    
+
     // NO save() call needed!
     // Transaction commit pe HIBERNATE khud UPDATE chalata
 }
@@ -53,7 +53,7 @@ Magic kya hua?
 
 ---
 
-## 4️⃣ Visual — Internal Flow
+## 4 Visual — Internal Flow
 
 ```
    @Transactional method shuru
@@ -86,7 +86,7 @@ Magic kya hua?
 
 ---
 
-## 5️⃣ When Hibernate Flushes Changes?
+## 5 When Hibernate Flushes Changes?
 
 ```
 1. Transaction COMMIT (most common)
@@ -104,7 +104,7 @@ Magic kya hua?
 
 ---
 
-## 6️⃣ Behind Scenes SQL
+## 6 Behind Scenes SQL
 
 ```java
 @Transactional
@@ -125,17 +125,17 @@ public void updateUser(Long id, String newEmail) {
 
 ---
 
-## 7️⃣ Common Trap — "Detached" Entity
+## 7 Common Trap — "Detached" Entity
 
 ```java
 @Service
 public class UserService {
-    
+
     public void updateUser(Long id, String name) {
         // NO @Transactional!
         User u = userRepo.findById(id).orElseThrow();
         // session band ho gayi
-        
+
         u.setName(name);    // entity now DETACHED
         // change tracked NAHI — koi session nahi
     }
@@ -155,7 +155,7 @@ Fix:
 
 ---
 
-## 8️⃣ Dirty Checking vs save()
+## 8 Dirty Checking vs save()
 
 ```
 DIRTY CHECKING (within @Transactional):
@@ -171,13 +171,13 @@ EXPLICIT save():
 
 ---
 
-## 9️⃣ Performance Implication
+## 9 Performance Implication
 
 ```
 Hibernate's snapshot tracking:
    Memory cost — saare entities ka snapshot rakhna
    CPU cost — compare on flush
-   
+
    For LARGE entities — measurable overhead
 
 Tweaking:
@@ -201,14 +201,14 @@ class User { ... }
 ## Interview Power Phrase
 
 ```
-"Dirty checking — Hibernate tracks changes to managed entities 
- within transaction. When entity loaded, Hibernate takes snapshot. 
- On commit, compares current state with snapshot — if dirty (modified), 
+"Dirty checking — Hibernate tracks changes to managed entities
+ within transaction. When entity loaded, Hibernate takes snapshot.
+ On commit, compares current state with snapshot — if dirty (modified),
  auto-fires UPDATE.
 
  Benefit: no explicit save() call needed for updates.
- 
- Catch: only works for entities in active session. 
+
+ Catch: only works for entities in active session.
  Detached entities need explicit save() or merge()."
 ```
 

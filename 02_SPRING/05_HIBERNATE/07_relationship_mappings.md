@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ 4 Relationship Types
+## 1 4 Relationship Types
 
 ```
 ek-to-ek         (@OneToOne)
@@ -20,14 +20,14 @@ many-to-many     (@ManyToMany)
 
 ---
 
-## 2️⃣ Bidirectional Relationship — Author + Book
+## 2 Bidirectional Relationship — Author + Book
 
 ```java
 @Entity
 class Author {
     @Id Long id;
     String name;
-    
+
     @OneToMany(mappedBy = "author")
     List<Book> books;       // ← "from author's perspective"
 }
@@ -36,7 +36,7 @@ class Author {
 class Book {
     @Id Long id;
     String title;
-    
+
     @ManyToOne
     @JoinColumn(name = "author_id")
     Author author;          // ← "from book's perspective"
@@ -51,7 +51,7 @@ Same relationship — 2 angles:
 
 ---
 
-## 3️⃣ Visual — DB Table Structure
+## 3 Visual — DB Table Structure
 
 ```
    authors table:
@@ -61,7 +61,7 @@ Same relationship — 2 angles:
    │ 1  │ Arpan  │
    │ 2  │ Suresh │
    └────┴────────┘
-   
+
    books table:
    ┌────┬─────────┬───────────┐
    │ id │ title   │ author_id │  ← Foreign Key
@@ -70,13 +70,13 @@ Same relationship — 2 angles:
    │ 2  │ Spring  │     1     │
    │ 3  │ Python  │     2     │
    └────┴─────────┴───────────┘
-   
+
    FK column = author_id in books table
 ```
 
 ---
 
-## 4️⃣ Owning Side (Critical)
+## 4 Owning Side (Critical)
 
 ```
 Owning side = WHO holds the foreign key
@@ -90,7 +90,7 @@ In Author + Book:
 
 ---
 
-## 5️⃣ `mappedBy` — Inverse Side Marker
+## 5 `mappedBy` — Inverse Side Marker
 
 ```java
 @OneToMany(mappedBy = "author")
@@ -106,7 +106,7 @@ mappedBy = "author"
 
 ---
 
-## 6️⃣ `@JoinColumn` — Owning Side
+## 6 `@JoinColumn` — Owning Side
 
 ```java
 @ManyToOne
@@ -123,7 +123,7 @@ Author author;
 
 ---
 
-## 7️⃣ CRITICAL PITFALL #1 — Forget `mappedBy`
+## 7 CRITICAL PITFALL #1 — Forget `mappedBy`
 
 ```java
 // WRONG
@@ -156,7 +156,7 @@ FIX:
 
 ---
 
-## 8️⃣ CRITICAL PITFALL #2 — Setting Only One Side
+## 8 CRITICAL PITFALL #2 — Setting Only One Side
 
 ```java
 Author a = new Author("Arpan");
@@ -185,14 +185,14 @@ a.addBook(b);   // both sides synced
 
 ---
 
-## 9️⃣ @ManyToMany — Many to Many
+## 9 @ManyToMany — Many to Many
 
 ```java
 @Entity
 class Student {
     @Id Long id;
     String name;
-    
+
     @ManyToMany
     @JoinTable(
         name = "student_course",
@@ -206,7 +206,7 @@ class Student {
 class Course {
     @Id Long id;
     String name;
-    
+
     @ManyToMany(mappedBy = "courses")
     List<Student> students;
 }
@@ -218,10 +218,10 @@ class Course {
 DB Structure:
    students table:
       id, name
-   
+
    courses table:
       id, name
-   
+
    student_course (JOIN table):
       student_id, course_id   ← combination
 ```
@@ -240,7 +240,7 @@ DB Structure:
                                         │    2       │    1       │
                                         │    3       │    3       │
                                         └────────────┴───────────┘
-   
+
    Arpan  → Java + Spring
    Suresh → Java
    Mukesh → Python
@@ -248,7 +248,7 @@ DB Structure:
 
 ---
 
-## 1️⃣1️⃣ PITFALL #3 — @ManyToMany Performance
+## 11 PITFALL #3 — @ManyToMany Performance
 
 ```
 @ManyToMany with collections:
@@ -260,18 +260,18 @@ DB Structure:
 ```
 INDUSTRY PREFERENCE:
    Replace @ManyToMany with 2 × @ManyToOne to junction entity:
-   
+
    Student → @OneToMany → Enrollment ← @ManyToOne ← Course
-   
+
    Enrollment table has:
       student_id, course_id, enrolledDate, grade
-   
+
    = Full control over join, can add fields
 ```
 
 ---
 
-## 1️⃣2️⃣ Pitfalls Summary
+## 12 Pitfalls Summary
 
 ```
 ┌──────────────────────────────┬──────────────────────────────┐
@@ -298,7 +298,7 @@ INDUSTRY PREFERENCE:
    • Setting only one side = data inconsistency (use helper methods)
    • @ManyToMany at scale = replace with junction entity for control
 
- At work, I default to @ManyToOne with junction entity for many-to-many 
+ At work, I default to @ManyToOne with junction entity for many-to-many
  because we usually need extra fields like enrolledDate, audit timestamps."
 ```
 

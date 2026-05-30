@@ -65,7 +65,7 @@ System.out.println(num);              // 10 — nahi badla!
 
 ### Case 2 — Object (reference ki copy pass)
 ```java
-void change(Student s) { s.name = "Rahul"; }   // andar ka data badla 
+void change(Student s) { s.name = "Rahul"; }   // andar ka data badla
 Student st = new Student("Arpan");
 change(st);
 System.out.println(st.name);                    // "Rahul" — badla!

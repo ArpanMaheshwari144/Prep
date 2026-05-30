@@ -148,12 +148,12 @@ T=5ms: Replica-1 catches up
 T=50ms: Replica-2 still updating
 
 User: POST /profile (update name)
-      → Primary 
+      → Primary
       → Returns success
-      
+
 User: GET /profile (read)
       → Hits Replica-2 (lagging)
-      → Returns OLD name 
+      → Returns OLD name
 ```
 
 ### Solutions

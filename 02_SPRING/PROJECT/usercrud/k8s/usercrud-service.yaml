@@ -1,17 +1,17 @@
 # ════════════════════════════════════════════════════════════
-# 🌐 UserCRUD Service — External Access (NodePort)
+# UserCRUD Service — External Access (NodePort)
 # ════════════════════════════════════════════════════════════
 # Type: NodePort
-#   • External access via host's port (30080 here)
-#   • Postman se hit kar sakte: localhost:30080
+# • External access via host's port (30080 here)
+# • Postman se hit kar sakte: localhost:30080
 #
 # Production would use LoadBalancer, but for local dev NodePort sufficient
 #
 # Apply:
-#   kubectl apply -f usercrud-service.yaml
+# kubectl apply -f usercrud-service.yaml
 #
 # Test:
-#   curl http://localhost:30080/auth/login
+# curl http://localhost:30080/auth/login
 # ════════════════════════════════════════════════════════════
 
 apiVersion: v1
@@ -29,5 +29,5 @@ spec:
   - port: 8080                      # ← Service port
     targetPort: 8080                # ← Pod's port
     nodePort: 30080                 # ← External port on host (30000-32767 range)
-                                     #   localhost:30080 se reach kar sakte
+                                     # localhost:30080 se reach kar sakte
     protocol: TCP

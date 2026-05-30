@@ -11,7 +11,7 @@
 # DREAM — DAILY MANIFEST
 
 ```
-        BLACKROCK ALADDIN 
+        BLACKROCK ALADDIN
         ═══════════════════════
         Java Backend Engineer
         Mera ASLI sapna
@@ -68,7 +68,7 @@ EXPECTED COMP (4yr Associate Bangalore):
 # PATH (opportunistic)
 
 ```
-                                              
+
                                      ┌─────────────────┐
                                      │  BLACKROCK      │  DREAM
                                      │  Aladdin         │     3-5 saal
@@ -157,7 +157,7 @@ REFUSED:
 - controller/TodoController + UserController
 - App boots, DB + tables auto-create, GET /todos = 200 OK
 
-### Day 2 JWT AUTH LAYER (May 19) 
+### Day 2 JWT AUTH LAYER (May 19)
 - pom.xml: jjwt-api/impl/jackson 0.12.6
 - security/JwtService.java (6 methods)
 - security/CustomUserDetailsService.java (Spring bridge)
@@ -202,10 +202,10 @@ REFUSED:
 - Rare engineer cognition (Jeff Dean / Vint Cerf tribe)
 
 ## 4 ACTIVE RECALL TESTS PASSED
-- PriorityQueue (min-heap, top-K) — essence 
-- Volatile (visibility, cache, whiteboard analogy) — essence 
+- PriorityQueue (min-heap, top-K) — essence
+- Volatile (visibility, cache, whiteboard analogy) — essence
 - N+1 problem (JOIN FETCH) — essence (with file refresh)
-- CAP theorem (3 letters, trade-off) — essence 
+- CAP theorem (3 letters, trade-off) — essence
 
 ## PRINCIPLES LOCKED IN MEMORY.md
 - YAGNI / Need-based addition (no forced "Day X" schedules)
@@ -342,13 +342,13 @@ HLD ADDITIONS PLANNED (post-AWS, Saturday slots):
       = URL parse → DNS → TCP → TLS → HTTP (+CDN/LB) → server → render
       = 6 steps, pure visual, power phrases + TRAP box
       = Path: 04_HLD/SYSTEM_DESIGNS/15_url_browser_journey.md
-   
+
    2. 16_aws_services_catalog.md — AWS service breadth
       = High-level "kya karta" for: Route 53, S3, CloudFront,
         ElastiCache, RDS, Lambda, IAM, VPC, CloudWatch, etc.
       = Service knowledge breadth (not deep config)
       = ~15 core services, 1-2 line each
-   
+
    3. 4 systems follow-up depth polish (URL, Rate limit, Twitter, Notification)
       = 1 Saturday per system
       = Rate limiting + scale + idempotency + DLQ articulation
@@ -569,7 +569,7 @@ APPLY MODE — PARALLEL:
    Razorpay/Cred/Swiggy parallel (any company for experience)
    Mock interviews jab man
    Articulation = real-interview phase (4-5 real = fix)
-   
+
    = "Practice mein har koi 6 marta, asli match mein pata"
    = Cricket truth — real exposure = real validator
 ```
@@ -653,7 +653,7 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
    DSA Phase 1 = 5 patterns done, continuous
    Active scope = DSA + HLD + Revision (roz)
    Apply mode = 15 June onwards
-   
+
    = "Effort 100% mera. Outcome universe ka."
    = "Apne dum pe — BlackRock tak."
 ```

@@ -492,7 +492,7 @@ K8S:
 
 ```
 For YOUR mental model:
-   PVC ≈ Docker Volume (bird-eye view) 
+   PVC ≈ Docker Volume (bird-eye view)
    PV under the hood (K8s plumbing)
 ```
 
@@ -510,7 +510,7 @@ Tried K8s deploy with:
    image: usercrud-app:multi
    imagePullPolicy: Never (don't try registry)
 
-Result: ErrImageNeverPull 
+Result: ErrImageNeverPull
 ```
 
 ```cmd
@@ -587,7 +587,7 @@ Production-realistic path:
 docker login
    Username: arpanmah
    Password: <Docker Hub password>
-   → Login Succeeded 
+   → Login Succeeded
 ```
 
 ### Step 2: Tag image with namespace
@@ -635,7 +635,7 @@ kubectl apply -f usercrud-deployment.yaml
    → "deployment.apps/usercrud configured"
 
 kubectl get pods
-   → usercrud-7fb44b4c67-wgk87   1/1   Running 
+   → usercrud-7fb44b4c67-wgk87   1/1   Running
 ```
 
 ---
@@ -651,7 +651,7 @@ K8s Docker Hub se pull karega
      ↓
 Pod chala deta
      ↓
-Boom — kaam khatam 
+Boom — kaam khatam
 ```
 
 **EVERYWHERE same pattern:**
@@ -934,7 +934,7 @@ Soch tha: localhost:30080 se reach kar lega
 Postman se:
    POST http://localhost:30080/auth/register
 
-Result: ECONNREFUSED 127.0.0.1:30080 
+Result: ECONNREFUSED 127.0.0.1:30080
 ```
 
 ---

@@ -2,18 +2,18 @@
 
 ---
 
-## 1️⃣ Concept (Locker Analogy)
+## 1 Concept (Locker Analogy)
 
 ```
 Imagine GYM mein 16 lockers (numbered 0-15):
-   
+
    ┌────┬────┬────┬────┬────┐
    │  0 │  1 │  2 │  3 │ ...│  → 16 lockers
    └────┴────┴────┴────┴────┘
-   
+
    Tu locker maange:
       "Mera naam Arpan hai, locker do"
-      
+
    Manager:
       hash("Arpan") % 16 = (kuch index, maan le 5)
       "Locker 5 mein daal do"
@@ -28,7 +28,7 @@ Saamaan  = value
 
 ---
 
-## 2️⃣ Internal Structure
+## 2 Internal Structure
 
 ```java
 HashMap<String, String> map = new HashMap<>();
@@ -38,7 +38,7 @@ map.put("Suresh", "Python");
 
 ```
    Internal array (16 buckets):
-   
+
    ┌───┬───┬───┬───┬───┬───────┬───┬─────────┐
    │ 0 │ 1 │ 2 │ 3 │ 4 │   5   │ 6 │   ...   │
    ├───┼───┼───┼───┼───┼───────┼───┼─────────┤
@@ -52,7 +52,7 @@ map.put("Suresh", "Python");
 
 ---
 
-## 3️⃣ Put Operation Flow
+## 3 Put Operation Flow
 
 ```
    map.put("Arpan", "Java")
@@ -71,7 +71,7 @@ map.put("Suresh", "Python");
 
 ---
 
-## 4️⃣ Get Operation Flow
+## 4 Get Operation Flow
 
 ```
    map.get("Arpan")
@@ -100,15 +100,15 @@ Time complexity: O(1) average
 
 ---
 
-## 5️⃣ Collision Problem
+## 5 Collision Problem
 
 ```
 PROBLEM:
    2 different keys → SAME bucket?
-   
+
    hash("Arpan")  % 16 = 5
    hash("Mukesh") % 16 = 5    ← SAME bucket!
-   
+
    = COLLISION
 ```
 
@@ -121,17 +121,17 @@ Why?
 
 ---
 
-## 6️⃣ Solution — Chaining (LinkedList)
+## 6 Solution — Chaining (LinkedList)
 
 ```
 Bucket 5 mein LinkedList:
-   
+
    Bucket 5:
    ┌─────────┐    ┌─────────┐    ┌─────────┐
    │ Arpan   │───▶│ Mukesh  │───▶│ Rakesh  │
    │ Java    │    │ Python  │    │ Go      │
    └─────────┘    └─────────┘    └─────────┘
-   
+
    Same bucket → chain karte
 ```
 
@@ -143,14 +143,14 @@ GET flow with collision:
    Bucket 5 → LinkedList traverse
         Arpan? no
         Mukesh? YES → return
-        
+
    Time complexity: O(n) worst case (all collide)
                     O(1) average (good hash)
 ```
 
 ---
 
-## 7️⃣ Java 8 Treeify (Performance Fix)
+## 7 Java 8 Treeify (Performance Fix)
 
 ```
 PROBLEM:
@@ -164,11 +164,11 @@ SOLUTION (Java 8):
 
 ```
    Bucket 5 (8+ collisions):
-   
+
    BEFORE (LinkedList):
       A → M → R → S → T → V → W → X → Y
       Search Y = 9 comparisons
-   
+
    AFTER (Tree):
               S
              / \
@@ -187,7 +187,7 @@ UNTREEIFY = 6 (back to list if shrinks)
 
 ---
 
-## 8️⃣ Load Factor + Rehashing
+## 8 Load Factor + Rehashing
 
 ```
 HashMap default:
@@ -210,16 +210,16 @@ SOLUTION: REHASHING
 
 ---
 
-## 9️⃣ Rehashing Visual
+## 9 Rehashing Visual
 
 ```
    Before rehash (16 buckets, 12 items, load = 12/16 = 0.75):
    ┌─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┐
    │A│B│C│D│ │E│F│G│ │H│I│J│K│L│ │ │
    └─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┘
-   
+
    Threshold cross → REHASH
-   
+
    After rehash (32 buckets):
    ┌─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┐
    │A│ │ │B│ │ │C│ │ │D│ │ │E│ │ │ │F│ │ │ │G│ │ │ │H│ │ │ │I│ │ │ │
@@ -254,16 +254,16 @@ KEY RULES (Interview Classic):
 PROOF:
    class Person {
        String name;
-       
+
        @Override
        public boolean equals(Object o) { ... }   // override
        // forgot hashCode
    }
-   
+
    Map<Person, String> map = new HashMap<>();
    map.put(new Person("Arpan"), "Java");
    map.get(new Person("Arpan"));   // returns NULL!
-   
+
    Why? new Person().hashCode() = random
         → different buckets
         → not found
@@ -271,7 +271,7 @@ PROOF:
 
 ---
 
-## 1️⃣1️⃣ Time Complexity Summary
+## 11 Time Complexity Summary
 
 ```
 ┌────────────────┬──────────────┬─────────────┐
@@ -287,13 +287,13 @@ PROOF:
 
 ---
 
-## 1️⃣2️⃣ HashMap vs ConcurrentHashMap (Bonus)
+## 12 HashMap vs ConcurrentHashMap (Bonus)
 
 ```
 HashMap:
    Not thread-safe
    Concurrent writes = data corruption
-   
+
 ConcurrentHashMap:
    Thread-safe
    Internal segment/bucket-level locking

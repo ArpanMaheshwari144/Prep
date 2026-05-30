@@ -59,7 +59,7 @@ synchronized(lockB) {
         // ...
     }
 }
-// Dono wait — DEADLOCK 
+// Dono wait — DEADLOCK
 ```
 
 ---

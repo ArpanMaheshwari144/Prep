@@ -41,13 +41,13 @@ Problems:
 ```
 Tu Dominos jata:
    "Mujhe Margherita pizza chahiye"
-   
+
    Tu CLASS ka naam NAHI bolta:
       "MargheritaPizza class banao"
-      
+
    Tu sirf TYPE bolta:
       "Margherita do"
-   
+
    Shop (factory):
       Type match karta
       Right class instance banata

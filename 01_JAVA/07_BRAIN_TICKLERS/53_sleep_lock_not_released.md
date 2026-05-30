@@ -27,7 +27,7 @@
 ```
    Thread A (in synchronized method)
         │
-        │ Took the LOCK 
+        │ Took the LOCK
         │
         ▼
    ┌─────────────────────┐
@@ -41,7 +41,7 @@
    Thread B → tries to enter same method → BLOCKED
                                             (lock still with A)
    Thread C → tries to enter same method → BLOCKED
-   
+
    All wait for A's full 5 sec sleep to complete
 ```
 
@@ -50,7 +50,7 @@
 ```
    Thread A (in synchronized method)
         │
-        │ Took the LOCK 
+        │ Took the LOCK
         │
         ▼
    ┌─────────────────────┐
@@ -64,7 +64,7 @@
    Thread B → tries to enter → ENTERS (lock free)
    Thread B does work, calls notify() → A wakes up
    Thread A → re-acquires lock → continues
-   
+
    Cooperation between threads
 ```
 
@@ -74,14 +74,14 @@
 
 ```java
 public class Bathroom {
-    
+
     // sleep — lock held, others blocked
     public synchronized void useBathroomSleep() throws InterruptedException {
         System.out.println("In bathroom, taking 5 sec nap");
         Thread.sleep(5000);                  // ← lock HELD during nap
         System.out.println("Done");
     }
-    
+
     // wait — lock released, others can enter
     public synchronized void useBathroomWait() throws InterruptedException {
         System.out.println("Waiting for signal");

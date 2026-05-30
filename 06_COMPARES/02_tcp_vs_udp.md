@@ -104,7 +104,7 @@ Video streaming case:
 LIVE STREAM (Twitch, sports):
    UDP — late frame useless, drop it
    Better stutter than 5-sec delay
-   
+
 ON-DEMAND (Netflix):
    TCP — buffer ahead, no rush
    Every frame matters for quality

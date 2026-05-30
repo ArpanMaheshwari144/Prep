@@ -44,8 +44,8 @@ Sab seats unbook (isBooked = false). Return booking.
 ## Flow:
 
 ```
-User → Show choose → Seats select 
-  → bookSeats(show, seats, user) 
+User → Show choose → Seats select
+  → bookSeats(show, seats, user)
     → sab available? → sab book → Booking return
     → koi booked? → null (FAIL)
 
@@ -326,7 +326,7 @@ class Seat {
     public void setBooked(boolean booked) {
         isBooked = booked;
     }
-    
+
 }
 
 

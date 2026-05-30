@@ -2,7 +2,7 @@
 
 ---
 
-## 1️⃣ length / size — 3 Different Things
+## 1 length / size — 3 Different Things
 
 ```java
 // Array
@@ -23,7 +23,7 @@ Memory hook:
    Array  → length      (field, no parens)
    String → length()    (method)
    List   → size()      (method)
-   
+
    Trap: array.length() compile error
          string.length  compile error
 ```
@@ -52,7 +52,7 @@ Why FIELD vs Method?
 ```
 Memory layout:
    int[] arr = new int[5];
-   
+
    ┌──────────────────────────────────┐
    │  Array header                     │
    │  ┌─────────────┐                  │
@@ -67,12 +67,12 @@ Memory layout:
 String contrast:
    class String {
        private final char[] value;
-       
+
        public int length() {
            return value.length;   ← wraps array's field
        }
    }
-   
+
    String = proper class
    Method exposed for encapsulation
    Internal char array still uses FIELD
@@ -80,7 +80,7 @@ String contrast:
 
 ---
 
-## 2️⃣ int vs Integer
+## 2 int vs Integer
 
 ```
    int     = primitive (4 bytes)
@@ -101,7 +101,7 @@ String contrast:
 
 ---
 
-## 3️⃣ == vs equals()
+## 3 == vs equals()
 
 ```java
 String a = "Hello";
@@ -117,40 +117,40 @@ a.equals(c);         // true (content same)
 Rule:
    ==       → reference (same memory location?)
    .equals()→ content (same data?)
-   
+
    Strings/Objects → ALWAYS .equals()
    Primitives → == only option
 ```
 
 ---
 
-## 4️⃣ final / finally / finalize — 3 DIFFERENT
+## 4 final / finally / finalize — 3 DIFFERENT
 
 ```
    final     → keyword
                 final variable: cannot reassign
                 final method: cannot override
                 final class: cannot extend
-   
+
    finally   → block
                 try-catch-FINALLY (always runs)
-   
+
    finalize() → method (DEPRECATED Java 9+)
                 GC ke before called (don't use)
 ```
 
 ```java
-final int X = 5;   // X = 10 
+final int X = 5;   // X = 10
 
 try { ... }
-finally { 
+finally {
     // ALWAYS runs
 }
 ```
 
 ---
 
-## 5️⃣ throw vs throws
+## 5 throw vs throws
 
 ```java
 // throw — RAISE exception (verb, action)
@@ -171,20 +171,20 @@ throws   = "yeh method exception throw KAR SAKTI" (declaration)
 
 ---
 
-## 6️⃣ Overload vs Override
+## 6 Overload vs Override
 
 ```
 OVERLOAD (compile-time):
    Same name, DIFFERENT parameters
    Same class
-   
+
    int add(int a, int b) { ... }
    int add(int a, int b, int c) { ... }    ← overload
 
 OVERRIDE (runtime):
    SAME signature
    Parent → Child class
-   
+
    class Animal { void eat() {...} }
    class Dog extends Animal {
        @Override
@@ -194,7 +194,7 @@ OVERRIDE (runtime):
 
 ---
 
-## 7️⃣ Constructor — Overload vs Override?
+## 7 Constructor — Overload vs Override?
 
 ```
 Overload constructor:    YES (different params)
@@ -220,7 +220,7 @@ OVERRIDE requires:
 Constructor rules:
    1. Constructor NOT inherited
    2. Constructor name = CLASS name
-   
+
    Parent constructor: Parent()
    Child constructor:  Child()
    = Different names = different identity
@@ -244,11 +244,11 @@ class Dog extends Animal {
 Constructor's JOB:
    Initialize THIS class's fields
    = Per-class concern
-   
+
 Constructor CAN:
    OVERLOAD (multiple in same class)
    CHAIN via super() (call parent)
-   
+
 Constructor CANNOT:
    Override
 ```
@@ -262,7 +262,7 @@ Side note — Also cannot override:
 
 ---
 
-## 8️⃣ HashMap vs Hashtable
+## 8 HashMap vs Hashtable
 
 ```
 ┌────────────────┬──────────────┬──────────────┐
@@ -282,7 +282,7 @@ Modern alternative to Hashtable:
 
 ---
 
-## 9️⃣ Vector vs ArrayList
+## 9 Vector vs ArrayList
 
 ```
 ┌────────────────┬──────────────┬──────────────┐
@@ -325,7 +325,7 @@ Modern: ArrayList always
 
 ---
 
-## 1️⃣1️⃣ Wrapper Cache (-128 to 127)
+## 11 Wrapper Cache (-128 to 127)
 
 ```java
 Integer a = 100;
@@ -341,21 +341,21 @@ c == d;              // FALSE (different objects)
 Integer.valueOf() internally:
    -128 to 127 → CACHED, reused
    Beyond → new Integer() always
-   
+
 Always use .equals() for Integer comparison!
 ```
 
 ---
 
-## 1️⃣2️⃣ Why Java Not 100% OOP?
+## 12 Why Java Not 100% OOP?
 
 ```
 Java has PRIMITIVES (int, long, double, etc.)
    Primitives are NOT objects
-   
+
 Pure OOP language:
    Everything is object (Smalltalk, Ruby)
-   
+
 Java made trade-off:
    Primitives for PERFORMANCE
    = ~95% OOP, not 100%
@@ -363,7 +363,7 @@ Java made trade-off:
 
 ---
 
-## 1️⃣3️⃣ Why Platform Independent? (WORA)
+## 13 Why Platform Independent? (WORA)
 
 ```
 Write Once, Run Anywhere
@@ -383,7 +383,7 @@ Write Once, Run Anywhere
 
 ---
 
-## 1️⃣4️⃣ Static Method — Override?
+## 14 Static Method — Override?
 
 ```java
 class Parent {
@@ -413,7 +413,7 @@ Static methods: HIDDEN, not overridden
 
 ---
 
-## 1️⃣5️⃣ Diamond Problem
+## 15 Diamond Problem
 
 ```
 Multiple inheritance issue:
@@ -423,7 +423,7 @@ Multiple inheritance issue:
      B   C
       \ /
        D
-   
+
    D extends B and C
    B and C both have method()
    Which method() D inherits?
@@ -440,7 +440,7 @@ Java solution:
 
 ---
 
-## 1️⃣6️⃣ transient Keyword
+## 16 transient Keyword
 
 ```java
 class User implements Serializable {
@@ -456,7 +456,7 @@ transient = "Mat serialize karo yeh field"
 
 ---
 
-## 1️⃣7️⃣ Marker Interfaces
+## 17 Marker Interfaces
 
 ```
 EMPTY interfaces — no methods
@@ -469,12 +469,12 @@ Purpose: SIGNAL to JVM
 
 ---
 
-## 1️⃣8️⃣ Shallow vs Deep Copy
+## 18 Shallow vs Deep Copy
 
 ```
 SHALLOW COPY:
    Object copy — but REFERENCES (nested) shared
-   
+
    User u1 = ...
    User u2 = u1.clone()  // shallow
    u2.address = ...
@@ -482,24 +482,24 @@ SHALLOW COPY:
 
 DEEP COPY:
    FULL copy of object + ALL nested objects
-   
+
    u1 and u2 = INDEPENDENT
    = No sharing
 ```
 
 ---
 
-## 1️⃣9️⃣ Initialization Order
+## 19 Initialization Order
 
 ```
 Java class loading order:
-   
+
    1. STATIC fields            (class load)
    2. STATIC blocks             (class load)
    3. INSTANCE fields           (constructor)
    4. INSTANCE blocks           (constructor)
    5. CONSTRUCTOR body
-   
+
    Parent before Child:
       Parent.static → Child.static
       Parent.instance → Child.instance
@@ -507,7 +507,7 @@ Java class loading order:
 
 ---
 
-## 2️⃣0️⃣ equals + hashCode Contract
+## 20 equals + hashCode Contract
 
 ```
 RULES:
@@ -524,10 +524,10 @@ CRITICAL:
 ```java
 class Person {
     String name;
-    
+
     @Override
     public boolean equals(Object o) { ... }
-    
+
     @Override
     public int hashCode() { ... }    // MUST also override
 }
