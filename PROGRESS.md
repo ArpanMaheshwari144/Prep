@@ -1,6 +1,6 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-30 (Day 25 — Prefix Sum pattern intuition, 5 classics)
+> **Last updated:** 2026-05-30 (Day 25 — Prefix Sum (5 classics) + HLD URL browser journey)
 > **Bangalore arrival:** June 15, 2026 (~16 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
@@ -337,9 +337,11 @@ HLD GAP DISCOVERED (Day 18, claude.ai cross-validation):
 
 
 HLD ADDITIONS PLANNED (post-AWS, Saturday slots):
-   1. 15_url_browser_journey.md — "Type amazon.com → kya hota?"
+   1. 15_url_browser_journey.md — "Type amazon.com → kya hota?"   DONE (Day 25)
       = Classic interview question (JP, GS, FAANG all ask)
-      = DNS → TCP → TLS → HTTP → CDN → server → response
+      = URL parse → DNS → TCP → TLS → HTTP (+CDN/LB) → server → render
+      = 6 steps, pure visual, power phrases + TRAP box
+      = Path: 04_HLD/SYSTEM_DESIGNS/15_url_browser_journey.md
    
    2. 16_aws_services_catalog.md — AWS service breadth
       = High-level "kya karta" for: Route 53, S3, CloudFront,
@@ -515,6 +517,27 @@ DSA — PREFIX SUM PATTERN:
    • Pattern overlap mapped: Hashing <-> Prefix (Subarray Sum = K dono mein)
    • Generalize insight: prefix concept = sum / product / XOR — koi cumulative
    • TRAP box (5 traps) + power phrases included
+```
+
+```
+HLD — URL BROWSER JOURNEY (Day 25 shaam, Saturday 2-slot plan):
+   • Path: 04_HLD/SYSTEM_DESIGNS/15_url_browser_journey.md
+   • "Type amazon.com → Enter → kya hota" — 6 steps:
+       1. URL Parse (protocol/domain/path/query)
+       2. DNS Lookup (naam → IP; cache layers + ROOT→TLD→Authoritative)
+       3. TCP Handshake (3-way SYN/SYN-ACK/ACK)
+       4. TLS Handshake (certificate identity + shared-key encryption)
+       5. HTTP Request (+ CDN edge cache + Load Balancer)
+       6. Server → DB → Response → Browser render (DOM/CSS/JS)
+   • Pure visual (spatial diagrams), power phrases + TRAP box
+   • Core doubt cleared solo: "domain = naam, connection IP-to-IP"
+   • CDN doubt cleared: edge caching (NOT bundle-in-browser);
+     existing 05_INFRA_DEEP/01_cdn.md found (no duplicate) + emoji-cleaned
+
+SATURDAY 2-SLOT PLAN VALIDATED:
+   • Subah (fresh mind) → DSA new pattern (Prefix Sum)
+   • Shaam (relaxed) → HLD visual (URL journey — home turf)
+   • Energy-matched scheduling = sustainable
 ```
 
 
