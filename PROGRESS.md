@@ -336,6 +336,30 @@ HLD GAP DISCOVERED (Day 18, claude.ai cross-validation):
    • Fix in viraam phase (post-AWS)
 
 
+HLD DEPTH — DIRECTION CALIBRATION (Day 25, 30 May — IMPORTANT):
+   Galat direction mein energy waste na ho. JP/GS ≠ FAANG (same as DSA no-hard rule).
+
+   FAANG / SDE3 flavor (LOW invest — JP itna deep nahi puchta):
+      - "Scale to 100M users" — global sharding, partitions
+      - CDN edge optimization, hyperscale distribution
+      - Celebrity problem, massive fan-out at scale
+
+   JP / FINANCE flavor (HIGH invest — yahaan asli interview test):
+      - Idempotency (duplicate order/txn dedup)
+      - Consistency > availability (paisa = no eventual consistency)
+      - ACID, ledger, double-entry, audit trail
+      - Data modeling correctness
+      - Failure handling (what if X fails — circuit breaker, DLQ, retry)
+      - Trade-off articulation (yeh chuna kyunki X)
+
+   RULE: HLD depth karo — par hyperscale-direction mein NAHI,
+         finance-correctness-direction mein. Basic system-design
+         competence zaroori (drop nahi), bas depth calibrate.
+   = Stock Broker / Trading Platform = perfect JP-flavor practice.
+   = Cross-checked with claude.ai (it over-stated "HLD deep pointless";
+     truth = depth needed, but in finance direction not FAANG-scale).
+
+
 HLD ADDITIONS PLANNED (post-AWS, Saturday slots):
    1. 15_url_browser_journey.md — "Type amazon.com → kya hota?"   DONE (Day 25)
       = Classic interview question (JP, GS, FAANG all ask)
