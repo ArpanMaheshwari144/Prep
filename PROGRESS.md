@@ -223,6 +223,60 @@ REFUSED:
 
 ---
 
+# NEXT — FORWARD PLAN (kya / kab / kaise)
+
+> Roz ka reference. Updated 31 May 2026. "Suno sabki, karo apne man ki."
+
+```
+KYA BACHA (remaining):
+
+   DSA Tier 1 (almost done — 6/7-8):
+      - can-ship dry run (2 min, fresh dimaag se)
+      - Kadane's (max subarray) — next pattern
+      - String basics (palindrome, reversal)
+      = phir Tier 1 COMPLETE
+
+   HLD (finance direction):
+      - Stock Broker / Trading Platform (#1 — finance gold)
+      - aws_services_catalog (breadth file)
+      - 4 systems follow-up depth (rate-limit/scale/idempotency/failure)
+
+   Chhote refreshers (LOW priority):
+      - DB indexing (already production-tested — quick note)
+      - Resume honest-pass (verify "Built/15+/30%" → rephrase exact)
+```
+
+```
+KAB (sequence / rhythm):
+   Subah (fresh)   → DSA (new pattern, peak focus)
+   Shaam (relaxed) → HLD (finance, visual — home turf)
+   Sunday          → light + evening OFF
+   Revision        → daily 1 hr + random micro-reads (background, continuous)
+```
+
+```
+KAISE (approach — STRATEGY locked 31 May):
+   - ONE concept at a time, "samjha?" gate, dry runs (DSA)
+   - aaram se, JALDI NAHI (thaka dimaag = retention zero)
+   - Domain = BACKEND only; K8s-deep/Docker-deep = SKIP (DevOps lane)
+   - Core SOLID, not guru ("koi faltu na bol sake") — JP-calibrated
+   - HLD depth = FINANCE direction (idempotency/ACID/consistency),
+     NOT FAANG-hyperscale (100M-scale/sharding)
+   - DSA cap = Easy + Medium (NO Hard)
+   - APPLY + LEARN saath-saath (perfect-prep ka wait nahi; referral turant)
+   - Notes = retention (har topic ka file banao)
+   - Integrity: jo kiya wahi bol ("work-on" vs "built")
+```
+
+```
+AFTER TIER 1:
+   - Phase 2: patterns ko CODE karna (kaise = tab design karenge, YAGNI)
+   - Post-Bangalore: microservices Phase 3 (OPTIONAL —
+     Konovo already = real production microservices experience)
+```
+
+---
+
 # CONTINUOUS
 
 ```
