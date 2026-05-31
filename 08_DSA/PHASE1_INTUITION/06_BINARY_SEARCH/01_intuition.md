@@ -165,6 +165,62 @@ KEY OBSERVATION: rotated = DO sorted parts. Kisi bhi mid pe EK half hamesha sort
 INTUITION: sorted-half mein range-check easy → us half mein jao, warna doosre mein. Har step pe "kaunsa half sorted" DOBARA check hota (narrowed part bhi thoda rotated ho sakta — algorithm self-corrects). Phir bhi har step aadha = O(log n).
 
 
+## CATEGORY 2: BINARY SEARCH ON ANSWERS
+
+Ab tak = BS on a sorted ARRAY (value dhundo). Doosri category = BS on the ANSWER RANGE (array nahi — possible answers ki range mein dhundo).
+
+```
+   CATEGORY 1 (array):   sorted array mein VALUE dhundo
+   CATEGORY 2 (answers): "minimum/maximum kya value chalegi?" — answer khud search
+```
+
+WHY POSSIBLE — monotonic "haan/naa":
+```
+   Answer range pe ek boundary hoti:
+   chhoti value:  NAA NAA NAA | HAAN HAAN HAAN  :badi value
+                              ↑ boundary (first HAAN)
+   = is boundary ko binary search se dhoondo (feasibility check har mid pe)
+```
+
+### CLASSIC: KOKO EATING BANANAS (canonical)
+
+```
+   piles = [3, 6, 7, 11]   H = 8 ghante
+   Koko speed K choose karti (K kele/ghanta, ek pile se).
+   Goal: MINIMUM speed jisse saare piles H ghante mein khatam.
+```
+
+FEASIBILITY: ek pile ke hours = ceil(pile / K) [UPAR round — pile khatam, kela bacha = pura ghanta]. Total = sum. total <= H → HAAN.
+
+```
+   speed K=3 → 1+2+3+4 = 10 ghante → NAA (>8)
+   speed K=4 → 1+2+2+3 = 8  ghante → HAAN (<=8)
+   speed K=6 → 1+1+2+2 = 6  ghante → HAAN
+
+   MONOTONIC: speed kam → ghante zyada (NAA); speed zyada → ghante kam (HAAN)
+   answer = pehla HAAN = smallest feasible speed
+```
+
+```
+   DRY RUN — range [1, 11], pehla HAAN (First-occurrence skeleton):
+   low=1,high=11: mid=6 → 6 ghante <=8 HAAN → answer=6, high=5
+   low=1,high=5:  mid=3 → 10 ghante >8 NAA → low=4
+   low=4,high=5:  mid=4 → 8 ghante <=8 HAAN → answer=4, high=3
+   low=4 > high=3 → answer = 4  ✓
+```
+
+WRAP — BS on answers recipe:
+```
+   1. Answer ki RANGE socho [min..max]
+   2. Monotonic? (chhoti=NAA, badi=HAAN ya ulta)
+   3. mid pe "feasible?" check (problem ka apna function)
+   4. HAAN → answer yaad + ek taraf (min ke liye bayen) ; NAA → doosri taraf
+   = First-occurrence binary search; bas "arr[mid]==target" ki jagah "feasible?"
+```
+
+SAME SKELETON, alag condition: "Ship packages in D days" (capacity mid pe din <= D?), "Split array largest sum", "sqrt(x)" — sab BS-on-answers, sirf feasibility-check badalta. Ek samjho → baaki transfer.
+
+
 ## POWER PHRASES
 
 - "Sorted? → binary search. Beech dekho, aadha fenko, repeat. O(log n)."
@@ -172,6 +228,7 @@ INTUITION: sorted-half mein range-check easy → us half mein jao, warna doosre 
 - "First occurrence: mila → high=mid-1 (bayen). Last: mila → low=mid+1 (dahine)."
 - "Insert position = loop-end ka low (target se bada pehla element)."
 - "Rotated array: ek half hamesha sorted — pehchaano, range-check, narrow."
+- "BS on answers: answer-range pe search; monotonic NAA|HAAN boundary; mid pe feasibility-check. (Koko, Ship-packages — same skeleton, alag check.)"
 
 
 ## TRAP BOX
