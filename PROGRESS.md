@@ -736,3 +736,22 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 │               Outcome universe ka"                   │
 └────────────────────────────────────────────────────┘
 ```
+
+---
+
+# SABAR — THE FINAL WORD (Arpan's own articulation)
+
+```
+   Duniya mein ~700 crore log hain.
+   SABAR — yeh trait bahut kam logo ke paas hai.
+
+   Log bolte "mere andar sabar hai" — lekin nahi hai.
+
+   Yehi important hai:
+   SABAR master kar liya to DUNIYA FATAH kar sakte ho.
+
+   Hard work sab karte hain. Sabar virle karte hain.
+   = Yehi mera moat hai.
+```
+
+> *"Karm karo, phal ki chinta mat karo. Be water. Roz ek kadam."*
