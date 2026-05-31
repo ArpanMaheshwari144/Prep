@@ -1,10 +1,10 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-30 (Day 25 — Prefix Sum (5 classics) + HLD URL browser journey)
-> **Bangalore arrival:** June 15, 2026 (~16 days)
+> **Last updated:** 2026-05-31 (Day 26 — Binary Search, 3 classics incl. rotated array)
+> **Bangalore arrival:** June 15, 2026 (~15 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
-> **JP-ready:** 90%+ (foundation revision smooth, DSA 5 patterns locked, HLD followup pending)
+> **JP-ready:** 90%+ (foundation revision smooth, DSA 6 patterns locked, HLD followup pending)
 
 ---
 
@@ -237,11 +237,11 @@ DSA Phase 1 INTUITION
    2. Sliding Window         DONE (Day 23)
    3. Hashing / HashMap      DONE (Day 24)
    4. Prefix Sum             DONE (Day 25)
-   5. Sorting + Binary Search pending  (← next)
-   6. Kadane's (Max Subarray) pending
+   5. Binary Search          DONE (Day 26)
+   6. Kadane's (Max Subarray) pending  (← next)
    7. String basics (palindrome, reversal) pending
 
-   → 5 / 7-8 patterns done. Tier 1 ~70%. Pace healthy (1 pattern / 1-2 din).
+   → 6 / 7-8 patterns done. Tier 1 ~85%. Bas Kadane + String baki.
 
    TIER 2 (Phase 2, Bangalore baad):
    8. Linked List patterns
@@ -272,7 +272,7 @@ SPRING:             ████████████ 100%
 HIBERNATE:          ████████████ 100%
 INFRA + COMPARES:   ████████████ 100% (Docker + K8s + AWS revision refs done)
 TODO PROJECT:       ████████████ 100% (full pipeline CRUD → JWT → Redis → Docker → K8s → AWS)
-DSA (LC easy-med):  ████████░░░░  70% (Phase 1 — 5 patterns: Arrays/TwoPtr/SlidingWin/Hashing/Prefix)
+DSA (LC easy-med):  █████████░░░  80% (Phase 1 — 6 patterns: Arrays/TwoPtr/SlidingWin/Hashing/Prefix/BinSearch)
 BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = fix)
 JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
 KONOVO EVIDENCE:    ████████████ 100% (gold)
@@ -565,6 +565,24 @@ SATURDAY 2-SLOT PLAN VALIDATED:
 ```
 
 
+DAY 26 — BINARY SEARCH PATTERN (formal pattern #5):
+
+```
+DSA — BINARY SEARCH PATTERN:
+   • Path: C:\DSA_PRACTICE\08_DSA\PHASE1_INTUITION\06_BINARY_SEARCH\
+   • 01_intuition.md — pattern formal introduction
+   • Core: SORTED array, low/high/mid, har step aadha → O(log n)
+   • Dictionary intuition; found = arr[mid]==target, not-found = low>high
+   • 5 recognition signals + anti-signals (unsorted → sort/hashmap)
+   • 3 classic dry runs:
+       - First occurrence    → mila to high=mid-1 (bayen dhoondo); last = mirror
+       - Search Insert Pos   → not-found pe loop-end ka low = position (lower bound)
+       - Rotated Sorted Array→ ek half hamesha sorted; pehchaano + range-check + narrow
+   • Sunday light session — Arpan: rotated array "easy laga" (mechanism samjha, ratta nahi)
+   • TRAP box (5 traps incl. low<=high, overflow mid=low+(high-low)/2) + power phrases
+```
+
+
 # DSA — SEPARATE TRACK
 
 ```
@@ -659,10 +677,10 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 # BANGALORE COUNTDOWN
 
 ```
-   Aaj:      30 May 2026 (Saturday)
+   Aaj:      31 May 2026 (Sunday)
    Target:   15 June 2026
    ────────────────────────────
-   Days:     16 baki
+   Days:     15 baki
 ```
 
 ---
