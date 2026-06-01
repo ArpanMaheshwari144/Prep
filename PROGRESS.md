@@ -1,10 +1,10 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-05-31 (Day 26 — Binary Search, 3 classics incl. rotated array)
-> **Bangalore arrival:** June 15, 2026 (~15 days)
+> **Last updated:** 2026-06-01 (Day 27 — Kadane's algorithm; Binary Search completed (Ship/feasibility))
+> **Bangalore arrival:** June 15, 2026 (~14 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
-> **JP-ready:** 90%+ (foundation revision smooth, DSA 6 patterns locked, HLD followup pending)
+> **JP-ready:** 91%+ (foundation revision smooth, DSA 7 patterns locked, HLD followup pending)
 
 ---
 
@@ -230,11 +230,9 @@ REFUSED:
 ```
 KYA BACHA (remaining):
 
-   DSA Tier 1 (almost done — 6/7-8):
-      - can-ship dry run (2 min, fresh dimaag se)
-      - Kadane's (max subarray) — next pattern
-      - String basics (palindrome, reversal)
-      = phir Tier 1 COMPLETE
+   DSA Tier 1 (7/7-8 — almost COMPLETE):
+      - String basics (palindrome, reversal) ← LAST pattern
+      = phir Tier 1 DONE
 
    HLD (finance direction):
       - Stock Broker / Trading Platform (#1 — finance gold)
@@ -291,11 +289,11 @@ DSA Phase 1 INTUITION
    2. Sliding Window         DONE (Day 23)
    3. Hashing / HashMap      DONE (Day 24)
    4. Prefix Sum             DONE (Day 25)
-   5. Binary Search          DONE (Day 26)
-   6. Kadane's (Max Subarray) pending  (← next)
-   7. String basics (palindrome, reversal) pending
+   5. Binary Search          DONE (Day 26, completed Day 27 — Ship/feasibility)
+   6. Kadane's (Max Subarray) DONE (Day 27)
+   7. String basics (palindrome, reversal) pending  (← LAST)
 
-   → 6 / 7-8 patterns done. Tier 1 ~85%. Bas Kadane + String baki.
+   → 7 / 7-8 patterns done. Tier 1 ~95%. Bas String basics baki = Tier 1 COMPLETE.
 
    TIER 2 (Phase 2, Bangalore baad):
    8. Linked List patterns
@@ -326,7 +324,7 @@ SPRING:             ████████████ 100%
 HIBERNATE:          ████████████ 100%
 INFRA + COMPARES:   ████████████ 100% (Docker + K8s + AWS revision refs done)
 TODO PROJECT:       ████████████ 100% (full pipeline CRUD → JWT → Redis → Docker → K8s → AWS)
-DSA (LC easy-med):  █████████░░░  80% (Phase 1 — 6 patterns: Arrays/TwoPtr/SlidingWin/Hashing/Prefix/BinSearch)
+DSA (LC easy-med):  ██████████░░  90% (Phase 1 — 7 patterns: Arrays/TwoPtr/SlidingWin/Hashing/Prefix/BinSearch/Kadane; String last)
 BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = fix)
 JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
 KONOVO EVIDENCE:    ████████████ 100% (gold)
@@ -637,6 +635,29 @@ DSA — BINARY SEARCH PATTERN:
 ```
 
 
+DAY 27 — KADANE'S + BINARY SEARCH COMPLETED (1 June):
+
+```
+DSA — KADANE'S ALGORITHM (formal pattern #6):
+   • Path: C:\DSA_PRACTICE\08_DSA\PHASE1_INTUITION\07_KADANE\
+   • Max contiguous subarray sum, O(n) single pass
+   • Core soch: "purana sum negative = bojh (drop, fresh); positive = madad (keep)"
+   • 2 variables: current_sum (chalta, reset) + max_sum (best-ever, snapshot)
+   • Arpan summarized it himself ("reset to 0 when negative, max update karte raho")
+   • THE classic trap learned: all-negative array → init maxSum=arr[0] (not 0),
+     update maxSum BEFORE reset (else returns 0 = bug)
+   • Easy peasy after revision — fresh-mind clarity
+
+BINARY SEARCH — COMPLETED (carried from Day 26):
+   • can-ship dry run done fresh (Arpan wrote feasibility if/else himself, correct)
+   • Ship Packages classic + Koko-vs-Ship feasibility comparison added to file
+   • Revision-first proved it: Day 26 raat foggy → Day 27 fresh = code-logic khud likha
+
+NOTE: 1 June started with REVISION (Arpan's self-diagnosis: "AI-dumber doubt =
+revision pending ka symptom; pen+copy+recall = doubt zero"). Validated.
+```
+
+
 # DSA — SEPARATE TRACK
 
 ```
@@ -731,10 +752,10 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 # BANGALORE COUNTDOWN
 
 ```
-   Aaj:      31 May 2026 (Sunday)
+   Aaj:      1 June 2026 (Monday)
    Target:   15 June 2026
    ────────────────────────────
-   Days:     15 baki
+   Days:     14 baki
 ```
 
 ---
