@@ -218,7 +218,52 @@ WRAP — BS on answers recipe:
    = First-occurrence binary search; bas "arr[mid]==target" ki jagah "feasible?"
 ```
 
-SAME SKELETON, alag condition: "Ship packages in D days" (capacity mid pe din <= D?), "Split array largest sum", "sqrt(x)" — sab BS-on-answers, sirf feasibility-check badalta. Ek samjho → baaki transfer.
+### CLASSIC 2: SHIP PACKAGES WITHIN D DAYS (same skeleton, alag check)
+
+```
+   weights = [3, 2, 2, 4, 1, 4]   D = 3 din
+   Packages ORDER mein (line fix). Har din ek ship, capacity C.
+   Goal: MINIMUM capacity C jisse sab D din mein ship.
+```
+
+RANGE: low = max(weights) = 4 (isse kam = '4' fit hi nahi hoga), high = sum(weights) = 16 (sab ek din).
+
+FEASIBILITY — "capacity C pe kitne din?" (greedy — formula nahi, chhota LOOP, kyunki order matters):
+```
+   days = 1            // pehla din
+   W = 0               // current din ka load
+   for each weights[i]:
+       if (weights[i] + W > C)   // fit nahi hoga
+           days++;               // naya din
+           W = weights[i];       // ye package naye din ka pehla
+       else
+           W += weights[i];      // isi din load
+   return days <= D;
+```
+
+```
+   DRY RUN (BS on range [4,16], smallest C with days<=3):
+   mid=10 → 2 din → HAAN → answer=10, high=9
+   mid=6  → 3 din → HAAN → answer=6,  high=5
+   mid=4  → 5 din → NAA  → low=5
+   mid=5  → 4 din → NAA  → low=6
+   low=6 > high=5 → answer = 6  ✓
+```
+
+### KOKO vs SHIP — feasibility-check ka FARAK (yahi confusion-point tha)
+
+```
+   KOKO:  formula per pile (har pile independent)
+          hours = ceil(p1/K) + ceil(p2/K) + ...   → hours <= H ?
+
+   SHIP:  greedy LOOP (order matters, running load + reset)
+          (upar wala if/else)                     → days <= D ?
+
+   = bahar ka binary-search structure DONO mein SAME
+   = sirf andar ka "feasible?" check alag
+```
+
+SAME SKELETON family: "Split array largest sum", "sqrt(x)", "min days to make bouquets" — sab BS-on-answers, sirf feasibility-check badalta. Ek samjho → baaki transfer.
 
 
 ## POWER PHRASES
