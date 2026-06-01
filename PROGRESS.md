@@ -235,10 +235,14 @@ KYA BACHA (remaining):
       → LeetCode/coding ab SHURU (intuition-first done, "no-LC-till-Bangalore" superseded)
       → pseudocode/logic → real code; edge cases + traps (e.g. Kadane all-negative)
 
-   HLD (finance direction):
-      - Stock Broker / Trading Platform (#1 — finance gold)
-      - aws_services_catalog (breadth file)
-      - 4 systems follow-up depth (rate-limit/scale/idempotency/failure)
+   HLD — DEPTH plan (June 2-14): files BAN CHUKE (16), ab DEEPEN (recreate NAHI)
+      = "core/beech strong"; SKIP 100M-scale/hyperscale (domain nahi)
+      LAYER 1: har file samjho + solo active recall
+      LAYER 2: follow-up/trade-off — "kyun/kab/trade-off/fail ho to/kab NAHI"
+               (yeh interview-depth layer, pending tha)
+      ORDER: FOUNDATIONS (01-10, core blocks) pehle → SYSTEM_DESIGNS (11-16) follow-ups
+      WITH ME: ek topic → visual deep-dive + follow-up reasoning (quiz nahi)
+      Stock Broker (16) = DONE; aws_services_catalog = optional breadth (low pri)
 
    Chhote refreshers (LOW priority):
       - DB indexing (already production-tested — quick note)
