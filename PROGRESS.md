@@ -244,8 +244,9 @@ KYA BACHA (remaining):
       WITH ME: ek topic → visual deep-dive + follow-up reasoning (quiz nahi)
       Stock Broker (16) = DONE; aws_services_catalog = optional breadth (low pri)
 
-   Chhote refreshers (LOW priority):
-      - DB indexing (already production-tested — quick note)
+   Chhote refreshers:
+      - DB indexing DONE (Day 27, hands-on practical) -> 09_DATABASE/01_indexing_practical.md
+        (1 lakh rows, EXPLAIN before/after, B-tree, tradeoff, decision, prod audit)
       - Resume honest-pass (verify "Built/15+/30%" → rephrase exact)
 ```
 
