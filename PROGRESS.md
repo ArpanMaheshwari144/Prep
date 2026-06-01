@@ -230,8 +230,10 @@ REFUSED:
 ```
 KYA BACHA (remaining):
 
-   DSA Tier 1: *** COMPLETE *** (8/8 patterns, Day 27)
-      → Next: Phase 2 = patterns ko CODE karna (design tab, YAGNI)
+   DSA: Tier 1 intuition COMPLETE (8/8). Ab PHASE 2 = CODING (ACTIVE, 1 June se):
+      → har pattern lo → 2-3 problems CODE karo (intuition file = guide)
+      → LeetCode/coding ab SHURU (intuition-first done, "no-LC-till-Bangalore" superseded)
+      → pseudocode/logic → real code; edge cases + traps (e.g. Kadane all-negative)
 
    HLD (finance direction):
       - Stock Broker / Trading Platform (#1 — finance gold)
@@ -245,10 +247,11 @@ KYA BACHA (remaining):
 
 ```
 KAB (sequence / rhythm):
-   Subah (fresh)   → DSA (new pattern, peak focus)
+   Subah (fresh)   → DSA CODING (ek pattern, 2-3 problems — Phase 2)
    Shaam (relaxed) → HLD (finance, visual — home turf)
    Sunday          → light + evening OFF
    Revision        → daily 1 hr + random micro-reads (background, continuous)
+   15 June se      → APPLY bhi saath-saath (referral turant)
 ```
 
 ```
@@ -266,10 +269,14 @@ KAISE (approach — STRATEGY locked 31 May):
 ```
 
 ```
-AFTER TIER 1:
-   - Phase 2: patterns ko CODE karna (kaise = tab design karenge, YAGNI)
-   - Post-Bangalore: microservices Phase 3 (OPTIONAL —
+PHASE 2 (NOW — coding) + BEYOND:
+   - DSA Phase 2: code the 8 patterns (2-3 problems each) — ACTIVE 1 June
+   - Tier 2 patterns (Linked List, Trees, BST, Recursion, 1D DP, Graph)
+     = post-Bangalore / as needed (BST priority for BlackRock)
+   - Microservices = Phase 3 (post-Bangalore, OPTIONAL —
      Konovo already = real production microservices experience)
+   - SCOPE NOW (14 din): DSA-coding + HLD-finance + revision ONLY.
+     Microservices abhi NAHI (lane se bahar) — defer.
 ```
 
 ---
