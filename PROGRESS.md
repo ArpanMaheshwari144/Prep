@@ -436,7 +436,12 @@ HLD ADDITIONS PLANNED (post-AWS, Saturday slots):
       = 1 Saturday per system
       = Rate limiting + scale + idempotency + DLQ articulation
 
-   4. STOCK BROKER / TRADING PLATFORM (NEW — HIGH PRIORITY for JP/GS)
+   4. STOCK BROKER / TRADING PLATFORM   DONE (Day 27, 1 June)
+      = Path: 04_HLD/SYSTEM_DESIGNS/16_stock_broker_trading.md
+      = Covered: matching engine (order book + price-time), money block,
+        ledger (double-entry/audit), atomicity (ACID/@Transactional),
+        strong-vs-eventual consistency, idempotency, price feed (WebSocket/pub-sub)
+      = ALL the JP finance-gold points; analogies locked (OLX/GPay/WhatsApp/ticket)
       = Finance interview GOLD — JP pattern confirmed (trading/price-feed/ledger)
       = Real-time price feed (WebSocket, market data fan-out)
       = Order placement + matching engine
