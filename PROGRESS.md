@@ -1,10 +1,10 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-06-01 (Day 27 — Kadane's algorithm; Binary Search completed (Ship/feasibility))
+> **Last updated:** 2026-06-01 (Day 27 — *** DSA Phase-1 TIER 1 COMPLETE: 8 patterns *** + Kadane + Strings)
 > **Bangalore arrival:** June 15, 2026 (~14 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
-> **JP-ready:** 91%+ (foundation revision smooth, DSA 7 patterns locked, HLD followup pending)
+> **JP-ready:** 92%+ (foundation solid, DSA Tier-1 intuition COMPLETE, HLD followup pending)
 
 ---
 
@@ -230,9 +230,8 @@ REFUSED:
 ```
 KYA BACHA (remaining):
 
-   DSA Tier 1 (7/7-8 — almost COMPLETE):
-      - String basics (palindrome, reversal) ← LAST pattern
-      = phir Tier 1 DONE
+   DSA Tier 1: *** COMPLETE *** (8/8 patterns, Day 27)
+      → Next: Phase 2 = patterns ko CODE karna (design tab, YAGNI)
 
    HLD (finance direction):
       - Stock Broker / Trading Platform (#1 — finance gold)
@@ -291,9 +290,10 @@ DSA Phase 1 INTUITION
    4. Prefix Sum             DONE (Day 25)
    5. Binary Search          DONE (Day 26, completed Day 27 — Ship/feasibility)
    6. Kadane's (Max Subarray) DONE (Day 27)
-   7. String basics (palindrome, reversal) pending  (← LAST)
+   7. String basics (palindrome, reversal, anagram) DONE (Day 27)
 
-   → 7 / 7-8 patterns done. Tier 1 ~95%. Bas String basics baki = Tier 1 COMPLETE.
+   → 8 / 8 patterns done. *** TIER 1 COMPLETE (Day 27, 1 June) ***
+   → Next phase: Phase 2 = patterns ko CODE karna (design tab).
 
    TIER 2 (Phase 2, Bangalore baad):
    8. Linked List patterns
@@ -324,7 +324,7 @@ SPRING:             ████████████ 100%
 HIBERNATE:          ████████████ 100%
 INFRA + COMPARES:   ████████████ 100% (Docker + K8s + AWS revision refs done)
 TODO PROJECT:       ████████████ 100% (full pipeline CRUD → JWT → Redis → Docker → K8s → AWS)
-DSA (LC easy-med):  ██████████░░  90% (Phase 1 — 7 patterns: Arrays/TwoPtr/SlidingWin/Hashing/Prefix/BinSearch/Kadane; String last)
+DSA (LC easy-med):  ████████████ 100% Phase-1 intuition (8 patterns — Arrays/TwoPtr/SlidingWin/Hashing/Prefix/BinSearch/Kadane/Strings). TIER 1 COMPLETE. Next: Phase 2 coding.
 BEHAVIORAL POLISH:  █████░░░░░░░  40% (real interview = fix)
 JP-SPECIFIC DRILL:  █████░░░░░░░  40% (banking narrative)
 KONOVO EVIDENCE:    ████████████ 100% (gold)
