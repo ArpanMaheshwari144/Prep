@@ -228,6 +228,30 @@ Server-2 bypassed until recovers
 
 ---
 
+## LB Redundancy — LB Khud SPOF (DEPTH)
+
+**Problem:** saari traffic LB se guzarti. LB **KHUD** crash → poora system DOWN (servers zinda, par koi unhe traffic route nahi kar raha). LB ban gaya **Single Point of Failure**. (Ek hi guard, woh beemar = poora gate band.)
+
+**Fix — LB bhi REDUNDANT (1 nahi, 2+):**
+```
+   ACTIVE-STANDBY  — ek ACTIVE (traffic handle), ek STANDBY (backup, idle)
+                     active mar gaya → standby TAKE OVER
+   ACTIVE-ACTIVE   — dono LB kaam karte (load share)
+                     ek gira → doosra poora sambhaal le
+   HEARTBEAT       — dono ek-doosre ko monitor (pulse)
+                     active ka heartbeat band → standby detect → take over
+   TRAFFIC SHIFT   — floating/virtual IP ya DNS → standby pe redirect
+                     (clients ko pata bhi nahi chalta)
+   MANAGED LB      — AWS ALB/NLB yeh internally handle (built-in redundant)
+```
+
+```
+   = "guard ka backup guard" — ek gira, doosra turant sambhaal le
+   = no downtime (LB ab SPOF nahi raha)
+```
+
+---
+
 ## Nginx Deep — User's Question
 
 ### **Nginx ≠ AWS** (open-source software, not AWS-specific!)
