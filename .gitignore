@@ -38,3 +38,6 @@ RESOURCES/
 *.key
 .aws/
 aws-credentials*
+*.exe
+*.out
+sol
