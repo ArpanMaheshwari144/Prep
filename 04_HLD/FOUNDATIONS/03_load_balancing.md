@@ -196,6 +196,36 @@ Server-2 bypassed until recovers
 
 **Without health checks**, LB sends traffic to dead servers → user errors.
 
+### Slow/Late Server Handling — TIMEOUT + THRESHOLD (DEPTH)
+
+**Concern:** server thoda LATE/slow respond kare (busy, blip) — kya LB turant DEAD maan le? **NO** — warna healthy-but-slow server galat se mar jaaye (**FALSE POSITIVE**).
+
+**Fix = TIMEOUT + THRESHOLD:**
+```
+   TIMEOUT             — har check ki deadline (e.g. 2s).
+                         Late beyond timeout = woh EK check failed.
+   unhealthy_threshold — DEAD tabhi maane jab N CONSECUTIVE fails (e.g. 3).
+                         Ek blip = SURVIVE (agla check pass → count reset).
+   healthy_threshold   — wapas ZINDA tabhi jab N consecutive OK (e.g. 2)
+                         (flaky server turant wapas na aaye).
+   INTERVAL            — har N sec check (e.g. 5-10s).
+```
+
+```
+   Server 1 baar late  → 1 fail count → agla pass → reset (zinda rehta)
+   Server 3 baar fail   → sach mein down → DEAD mark (failover)
+   = transient slowness tolerated; sustained failure = dead
+```
+
+**Tuning trade-off (interview-depth):**
+```
+   AGGRESSIVE (threshold 1, fast interval)
+      → dead jaldi pakda, PAR false-positive risk (healthy-slow ko maar de)
+   LENIENT (threshold 5, slow interval)
+      → stable, kam false-positive, PAR dead detect slow
+   = sweet spot: ~3 consecutive fails + 5-10s interval
+```
+
 ---
 
 ## Nginx Deep — User's Question
@@ -380,4 +410,9 @@ Trap 3: "Round Robin best"
 Trap 4: "LB = Nginx = AWS"
          Different things
          Nginx software, AWS infrastructure, ALB AWS's LB service
+
+Trap 5: "1 slow/late health-check response = server dead"
+         NO — false positive (healthy-but-slow ko maar dega)
+         TIMEOUT + unhealthy_threshold (N consecutive fails, e.g. 3)
+         Ek blip survive; sustained failure = dead
 ```
