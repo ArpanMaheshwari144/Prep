@@ -63,6 +63,21 @@ With cache:
 
 **Each layer reduces load on next.**
 
+### Local (app) vs Distributed (Redis) cache — DEPTH
+
+```
+   LOCAL / IN-PROCESS (Caffeine, JVM ke andar):
+      ✓ FASTEST (same process, no network hop)
+      ✗ Har server ka APNA cache → 5 servers = 5 alag (inconsistent)
+      ✗ Server restart → cache gaya
+   DISTRIBUTED (Redis, alag service):
+      ✓ SHARED (sab servers ek hi Redis) → consistent
+      ✓ Server restart → cache safe (Redis alag)
+      ✗ Thoda slow (network hop)
+   = aksar DONO (L1 local + L2 Redis) = "near cache" pattern
+     (local fastest hits, miss pe Redis, phir DB)
+```
+
 ---
 
 ## 4 Cache Strategies
@@ -109,6 +124,15 @@ Cache PROACTIVELY refresh before expiry
 ```
 **Use:** Predictable hot data (trending items)
 
+### 5. **Write-Around**
+```
+Write → SEEDHA DB mein (cache BYPASS, cache update NAHI)
+Cache sirf READ pe bharta (cache-aside jaisa)
+```
+**Use:** Jab likha data TURANT nahi padha jaata (warna cache mein
+"kabhi na padha jaane wala" data bharta = waste). **Pros:** cache pollution kam.
+**Cons:** likhne ke turant baad read = cache miss (DB se).
+
 ---
 
 ## Strategy Comparison
@@ -133,6 +157,14 @@ Cache: [A, B, C, D, E]   E most recent, A oldest
 Add F → Evict A (oldest accessed)
 ```
 **Used by:** Redis, browsers, OS page cache
+
+**LRU IMPLEMENT kaise (O(1)) — DSA connect:**
+```
+   HashMap (key → node, O(1) lookup) + Doubly Linked List (recency order)
+   → access: node ko FRONT laao (most recent)
+   → evict: list ke END se hatao (least recent)
+   = "HashMap + DLL" = classic LRU Cache design (LeetCode 146 — DSA Phase 2)
+```
 
 ### **LFU (Least Frequently Used)**
 ```
