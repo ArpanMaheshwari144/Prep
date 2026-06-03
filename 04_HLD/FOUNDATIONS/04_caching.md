@@ -267,6 +267,41 @@ Senior-level interview depth. (Penetration + Avalanche naye; Breakdown = stamped
    BREAKDOWN   = EK hot key expire (massive traffic) → mutex / soft-TTL
 ```
 
+### Cache-Aside RACE CONDITION (concurrent read + write)
+
+```
+   Setup: cache-aside, ek READ (miss) + ek WRITE ek saath. DB = "John" (purana).
+
+   t1: A (READ)  → cache miss → DB padha → "John" mila (cache mein DAALA NAHI, slow)
+   t2: B (WRITE) → DB update "John" → "Johnny"
+   t3: B (WRITE) → cache delete (khaali tha)
+   t4: A (continue) → cache mein "John" DAAL diya (jo t1 pe padha — PURANA)
+
+   RESULT: cache = "John" (purana), DB = "Johnny" (naya) → STALE
+   = slow read purana padh ke, write ke BAAD cache mein daal de → stale (threads)
+```
+
+**Fixes:**
+```
+   1. SHORT TTL — stale ho bhi gaya to jaldi expire (safety net)
+   2. DELAYED DOUBLE-DELETE — write: DB update → cache delete → thodi der baad
+      DOBARA delete (beech ka stale catch ho jaaye)
+   3. VERSIONING/CAS — cache mein version; purana version reject (complex)
+```
+
+**Lock se rok sakte? Haan, PAR:**
+```
+   - Java `synchronized` = SINGLE JVM tak. Distributed (multi-server + Redis)
+     mein → DISTRIBUTED LOCK chahiye (Redis SETNX/Redlock, Zookeeper)
+   - Lock = CONTENTION + LATENCY → caching ka speed maara → SELECTIVELY use
+     (hot keys / strong-consistency), har operation pe nahi
+   = general race → cheaper (TTL/double-delete); lock → critical/hot-key (mutex)
+```
+
+> **Meta:** Koi system PERFECT nahi — har fix naye trade-off laata (cache→invalidation,
+> lock→contention, TTL→staleness). Senior = RIGHT trade-off chunna, perfect dhoondna nahi
+> (= CAP theorem ka spirit).
+
 ---
 
 ## Cache Hit Ratio
