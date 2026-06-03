@@ -220,6 +220,55 @@ DB write → publish event → caches subscribe → delete entry
 
 ---
 
+## Advanced — 3 Cache Problems + Bloom Filter (DEPTH)
+
+Senior-level interview depth. (Penetration + Avalanche naye; Breakdown = stampede, upar interview-points mein bhi.)
+
+```
+   ┌──────────────┬──────────────────────────┬───────────────────────────┐
+   │ Problem      │ Kya                       │ Fix                        │
+   ├──────────────┼──────────────────────────┼───────────────────────────┤
+   │ PENETRATION  │ non-existent keys (jo hai │ negative caching (null bhi │
+   │              │ HI NAHI) → cache miss     │ cache, short TTL) /        │
+   │              │ → har baar DB → overload  │ BLOOM FILTER (DB se pehle  │
+   │              │                           │ "exist?" check)            │
+   │ AVALANCHE    │ BAHUT keys EK SAATH expire│ JITTER / random TTL (sab   │
+   │              │ (same TTL) → bheed DB pe  │ ek saath nahi, bikhre)     │
+   │              │ → DB crash                │ + cache HA (cluster)       │
+   │ BREAKDOWN /  │ EK super-HOT key expire   │ MUTEX (1 thread rebuild,   │
+   │ STAMPEDE     │ → massive concurrent      │ baaki wait) / soft-logical │
+   │              │ traffic ek saath DB pe    │ TTL (background refresh) / │
+   │              │                           │ never-expire hot keys      │
+   └──────────────┴──────────────────────────┴───────────────────────────┘
+```
+
+### Bloom Filter (penetration fix — kaise kaam karta)
+
+```
+   = "yeh key set mein hai ya nahi" — space-efficient, probabilistic
+   2 jawab: "DEFINITELY nahi" (pakka) | "SHAYAD hai" (maybe, false-positive ok)
+
+   BANTA: ek BIT ARRAY (0/1) + k HASH functions
+   ADD:   key ko k hash → un k positions ke bits 1 karo (key store nahi hoti)
+   CHECK: k hash → koi bit 0? → DEFINITELY nahi (reject, DB hit nahi)
+                   saare 1? → shayad hai → DB check (confirm)
+
+   INSIGHT: bit 0 = key kabhi add hi nahi hui (no false negative)
+            saare 1 = shayad (doosri key ke hash collide hoke 1 kar sakte = false positive)
+   = "nahi" 100% sahi; "haan" ~99% (kabhi false positive)
+   USE: pre-load valid keys → fake/non-existent keys DB se pehle reject
+   Origin: Burton Bloom (1970, academic). Google/Cassandra/Redis use karte.
+```
+
+### Penetration vs Avalanche vs Breakdown (confuse mat)
+```
+   PENETRATION = fake keys (hai HI NAHI)        → negative cache / bloom
+   AVALANCHE   = bahut REAL keys ek saath expire → jitter TTL
+   BREAKDOWN   = EK hot key expire (massive traffic) → mutex / soft-TTL
+```
+
+---
+
 ## Cache Hit Ratio
 
 ```
