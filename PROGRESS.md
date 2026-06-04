@@ -1,10 +1,10 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-06-01 (Day 27 — *** DSA Phase-1 TIER 1 COMPLETE: 8 patterns *** + Kadane + Strings)
-> **Bangalore arrival:** June 15, 2026 (~14 days)
+> **Last updated:** 2026-06-04 (Day 29 — DSA Phase-2 CODING: Two Pointer + Sliding Window DONE; HLD Sharding deepened — Consistent Hashing)
+> **Bangalore arrival:** June 15, 2026 (~11 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
-> **JP-ready:** 92%+ (foundation solid, DSA Tier-1 intuition COMPLETE, HLD followup pending)
+> **JP-ready:** 92%+ (foundation solid, DSA Phase-2 coding active, HLD deepening — finance direction)
 
 ---
 
@@ -675,6 +675,53 @@ revision pending ka symptom; pen+copy+recall = doubt zero"). Validated.
 ```
 
 
+DAY 28-29 — DSA PHASE 2 CODING (C++) + HLD SHARDING DEEPENED (4 June):
+
+```
+DSA — PHASE 2 CODING STARTED (C++, LeetCode-style class Solution):
+   • Path: C:\DSA_PRACTICE\08_DSA\PHASE2_CODING\
+   • Approach: 2-3 problems/pattern, breadth-first, SOLO + dry-run-before-run
+
+   01_TWO_POINTER — DONE:
+       - Two Sum II (sorted, opposite-ends)
+       - Remove Duplicates Sorted (slow/fast)
+       - Move Zeroes (slow/fast, swap approach — solo)
+
+   02_SLIDING_WINDOW — DONE (4 problems, fixed + variable, solo-owned):
+       - Max Sum Subarray K (fixed)
+       - Min Size Subarray Sum (variable)
+       - Max Consecutive Ones III (variable, solo retry — self-debugged)
+       - Longest Substring No Repeat (variable + map, solo + self-fix if->while)
+
+   03_HASHING — NEXT (file ready: 01_two_sum.cpp — Two Sum unsorted)
+
+   GAP DIAGNOSED (self): logic STRONG, code-translation = SILLY mistakes
+   (zeroCount--, i++ placement) — NOT understanding. He solo-debugged the
+   SW retry himself. Fix = reps + dry-run-before-run habit. Rust, not ability.
+
+HLD — DATABASE SHARDING DEEPENED (06_database_sharding.md):
+   • Why shard (almirah bhar gayi → tod do) → Range vs Hash vs Consistent Hashing
+   • Range = range-query fast but hotspot; Hash = even but resharding nightmare
+   • CONSISTENT HASHING ring walkthrough ADDED (intuition that finally clicked):
+       ring (gol number line) → shards on ring → user forward-walk (clockwise)
+       → first shard owns → each shard owns PREVIOUS arc
+       → add shard = only one slice (~K/N keys) moves, not whole data
+   • File already rich (strategies/cross-shard/hotspots/traps) — only added
+     the visual ring intuition (no duplicate, no rewrite)
+   • Micro-step teaching RE-CONFIRMED: "bahut confusing" → "bahut easy" when
+     broken into tiny gated pieces (same lesson as Koko/Binary Search)
+   • Next HLD: Database Replication (#05) — sharding ka joda (write+read pair)
+
+GIT FLOW LEARNED (jigyasa): working dir -> add -> commit -> push (4-box model);
+   git add -A = all changes, git add <file> = one file only.
+
+EMOTIONAL ARC (Day 28-29): June 3 = DSA discouragement ("DSA mere liye nahi bana").
+   June 4 = solo cracked SW capstone + self-fixed bug = confidence rebuilt.
+   His own insight: "ek bura din next ko nahi rokta — kal tha, aaj nahi."
+   = SABAR in action. Bad day != inability.
+```
+
+
 # DSA — SEPARATE TRACK
 
 ```
@@ -769,10 +816,10 @@ OVERLOAD → STOP, sleep, fresh mind tomorrow
 # BANGALORE COUNTDOWN
 
 ```
-   Aaj:      1 June 2026 (Monday)
+   Aaj:      4 June 2026 (Thursday)
    Target:   15 June 2026
    ────────────────────────────
-   Days:     14 baki
+   Days:     11 baki
 ```
 
 ---
