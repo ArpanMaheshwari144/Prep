@@ -7,8 +7,9 @@
 //
 // Example:
 //   nums = [1,1,1,0,0,0,1,1,1,1,0], k = 2   ->  6
-//     (do 0 flip karo: [0,0,1,1,1,1] -> 6 length window of 1's)
 //   nums = [0,0,1,1,0,0,1,1,1,0,1,1,0,0,0,1,1,1,1], k = 3   ->  10
+//
+// RETRY — SOLO, no hints. (Kal wala solution git history mein safe: commit 4686ab1)
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -19,10 +20,11 @@ class Solution
 public:
     int longestOnes(vector<int> &nums, int k)
     {
-        // TODO: tera code (Sliding Window - variable)
-        int i = 0, j = 0, n = nums.size();
+        int n = nums.size(); // 1,1,1,0,0,0,1,1,1,1,0
+        int i = 0;
+        int j = 0;
+        int maxAns = INT_MIN;
         int zeroCount = 0;
-        int maxLen = 0;
         while (j < n)
         {
             if (nums[j] == 0)
@@ -31,7 +33,7 @@ public:
             }
             if (zeroCount <= k)
             {
-                maxLen = max(maxLen, j - i + 1);
+                maxAns = max(maxAns, j - i + 1);
             }
             if (zeroCount > k)
             {
@@ -40,10 +42,11 @@ public:
                     zeroCount--;
                 }
                 i++;
+                
             }
             j++;
         }
-        return maxLen;
+        return maxAns;
     }
 };
 
