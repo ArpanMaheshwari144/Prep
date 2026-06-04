@@ -171,13 +171,57 @@ Add 5th shard:
 ```
 
 **Solution: Consistent Hashing**
-```
-Hash ring (0 to 2^32):
-   Servers placed at hash positions
-   Keys placed at hash positions
-   Each key → next clockwise server
 
-   Add server → only K/N keys move (not all)
+Soch — number line (0 se max) ko mod ke **gol** bana do (ghadi). Yehi **ring**.
+
+```
+STEP 1 — Shards ko ring pe baithao (hash(shard) = position):
+
+                 0 / max
+                    │
+          S3 ●      │      ● S1
+         (80)       │     (10)
+                    │
+               ●────┴
+              S2 (40)
+
+STEP 2 — User ko bhi ring pe (hash(user) = position). Maan le 30 pe.
+
+STEP 3 — RULE: user ki jagah se aage (clockwise, number badhta) chalo,
+         jo PEHLA shard mile — user ushi ka. Pehle pe RUK jao.
+
+   user 30 → aage → 40 pe S2 (pehla) → user S2 ka.
+```
+
+**Har shard apne se pehle waala arc own karta** (pichle node se khud tak) —
+kyunki us range ke saare users aage chal ke ushi pe pohochte:
+
+```
+   0  – 10   → S1
+   10 – 40   → S2
+   40 – 80   → S3
+   80 – max  → wapas ghum ke S1   (ring gol hai)
+```
+
+**Jaadu — naya shard add (S4 ko 60 pe daala):**
+
+```
+          S3 ●            ● S1 (10)
+         (80)
+            ●
+          S4 (60)
+            ●────
+          S2 (40)
+
+   40 – 60  → ab pehle S4 milta → S3 se S4 pe SHIFT (sirf yeh slice)
+   60 – 80  → abhi bhi S3 (koi change nahi)
+   0  – 40  → S1/S2, chhua tak nahi
+```
+
+```
+   % N waala:  4→5 pe SAARI keys move.
+   Ring waala: sirf EK arc/slice (~K/N keys) move, poora data nahi.
+   => add/remove sasta + smooth. Yehi consistent hashing ka point.
 ```
 
 **Use:** Cassandra, DynamoDB, Memcached cluster all use this.
