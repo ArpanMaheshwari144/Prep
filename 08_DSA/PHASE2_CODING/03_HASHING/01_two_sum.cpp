@@ -15,16 +15,28 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class Solution {
+class Solution
+{
 public:
-    vector<int> twoSum(vector<int>& nums, int target) {
+    vector<int> twoSum(vector<int> &nums, int target)
+    {
         // TODO: tera code (Hashing - HashMap, complement check) — SOLO
-
+        unordered_map<int, int> mp; // nums = [2, 7, 11, 15], target = 9   ->  [0, 1]   (2 + 7 = 9)
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (mp.find(target - nums[i]) != mp.end())
+            {
+                return vector<int>{mp[target - nums[i]], i};
+            }
+            mp[nums[i]] = i;
+        }
+        return vector<int>{};
     }
 };
 
 // ---- test harness (run karke verify — yeh solution nahi, bas runner) ----
-int main() {
+int main()
+{
     Solution s;
     vector<int> nums = {2, 7, 11, 15};
     int target = 9;
@@ -32,6 +44,6 @@ int main() {
     cout << "[";
     for (int i = 0; i < (int)ans.size(); i++)
         cout << ans[i] << (i + 1 < (int)ans.size() ? ", " : "");
-    cout << "]" << endl;   // expected: [0, 1]
+    cout << "]" << endl; // expected: [0, 1]
     return 0;
 }
