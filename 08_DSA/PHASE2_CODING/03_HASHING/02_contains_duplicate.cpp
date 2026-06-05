@@ -18,7 +18,6 @@ class Solution
 public:
     bool containsDuplicate(vector<int> &nums)
     {
-        // TODO: tera code (Hashing - HashSet, "pehle dekha kya?") — SOLO
         unordered_set<int> st;
         for (int i = 0; i < nums.size(); i++)
         {
@@ -32,7 +31,6 @@ public:
     }
 };
 
-// ---- test harness (run karke verify — yeh solution nahi, bas runner) ----
 int main()
 {
     Solution s;

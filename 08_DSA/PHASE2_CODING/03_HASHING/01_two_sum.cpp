@@ -20,7 +20,6 @@ class Solution
 public:
     vector<int> twoSum(vector<int> &nums, int target)
     {
-        // TODO: tera code (Hashing - HashMap, complement check) — SOLO
         unordered_map<int, int> mp; // nums = [2, 7, 11, 15], target = 9   ->  [0, 1]   (2 + 7 = 9)
         for (int i = 0; i < nums.size(); i++)
         {
@@ -34,7 +33,6 @@ public:
     }
 };
 
-// ---- test harness (run karke verify — yeh solution nahi, bas runner) ----
 int main()
 {
     Solution s;

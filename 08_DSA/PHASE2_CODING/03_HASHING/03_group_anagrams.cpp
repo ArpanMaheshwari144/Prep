@@ -22,7 +22,6 @@ class Solution
 public:
     vector<vector<string>> groupAnagrams(vector<string> &strs)
     {
-        // TODO: tera code (HashMap: key = sorted word, value = list of words) — SOLO
         unordered_map<string, vector<string>> mp;
         for (auto &str : strs)
         {
@@ -40,7 +39,6 @@ public:
     }
 };
 
-// ---- test harness (run karke verify — yeh solution nahi, bas runner) ----
 int main()
 {
     Solution s;
@@ -53,6 +51,5 @@ int main()
             cout << w << " ";
         cout << "]" << endl;
     }
-    // expected (kisi bhi order mein): [eat tea ate]  [tan nat]  [bat]
     return 0;
 }

@@ -20,7 +20,6 @@ class Solution
 public:
     int lengthOfLongestSubstring(string s)
     {
-        // TODO: tera code (Sliding Window + set/map to track chars) — SOLO
         int i = 0;
         int j = 0;
         int n = s.size();
@@ -41,7 +40,6 @@ public:
     }
 };
 
-// ---- test harness (run karke verify — yeh solution nahi, bas runner) ----
 int main()
 {
     Solution sol;

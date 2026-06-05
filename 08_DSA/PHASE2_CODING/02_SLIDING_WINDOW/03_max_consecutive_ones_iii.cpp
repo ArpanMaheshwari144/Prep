@@ -50,7 +50,6 @@ public:
     }
 };
 
-// ---- test harness (run karke verify — yeh solution nahi, bas runner) ----
 int main()
 {
     Solution s;

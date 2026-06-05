@@ -14,7 +14,6 @@ using namespace std;
 class Solution {
 public:
     int maxSumSubarray(vector<int>& nums, int k) {
-        // TODO: tera code (Sliding Window - fixed size)
         int i = 0, j = 0, n = nums.size();
         int currSum = 0, maxSum = INT_MIN;
         while(j < n){
@@ -33,7 +32,6 @@ public:
     }
 };
 
-// ---- test harness (run karke verify — yeh solution nahi, bas runner) ----
 int main() {
     Solution s;
     vector<int> nums = {2, 1, 5, 1, 3, 2};

@@ -34,7 +34,6 @@ public:
     }
 };
 
-// ---- test harness (run karke verify — yeh solution nahi, bas runner) ----
 int main() {
     Solution s;
     vector<int> numbers = {2, 7, 11, 15};

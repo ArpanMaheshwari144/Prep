@@ -16,7 +16,6 @@ using namespace std;
 class Solution {
 public:
     void moveZeroes(vector<int>& nums) {
-        // TODO: tera code (Two Pointer - slow/fast)
         int slow = 0;
         int fast = 0;
         while(fast < nums.size()){
@@ -29,7 +28,6 @@ public:
     }
 };
 
-// ---- test harness (run karke verify — yeh solution nahi, bas runner) ----
 int main() {
     Solution s;
     vector<int> nums = {0, 1, 0, 3, 12};
