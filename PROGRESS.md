@@ -1,6 +1,6 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-06-04 (Day 29 — DSA Phase-2 CODING: Two Pointer + Sliding Window DONE; HLD Sharding deepened — Consistent Hashing)
+> **Last updated:** 2026-06-05 (Day 30 — DSA Hashing DONE (3/7 patterns coded); HLD Database Replication deepened — sync/async, failover, split-brain, no-perfect-system)
 > **Bangalore arrival:** June 15, 2026 (~11 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
@@ -719,6 +719,39 @@ EMOTIONAL ARC (Day 28-29): June 3 = DSA discouragement ("DSA mere liye nahi bana
    June 4 = solo cracked SW capstone + self-fixed bug = confidence rebuilt.
    His own insight: "ek bura din next ko nahi rokta — kal tha, aaj nahi."
    = SABAR in action. Bad day != inability.
+```
+
+
+DAY 30 — DSA HASHING DONE + HLD REPLICATION DEEPENED (5 June):
+
+```
+DSA — HASHING pattern coded (03_HASHING/, solo, clean — slips dropping):
+   - 01 Two Sum (unsorted)  → HashMap complement, one-pass O(n)
+   - 02 Contains Duplicate  → HashSet membership ("pehle dekha kya?")
+   - 03 Group Anagrams      → HashMap grouping (sorted-key), interview-meaty
+   = 3 problems, teeno forms (complement/membership/grouping). Hashing OWNED.
+   NOTE: aaj slips KAM (Day 29 se behtar) — clean compiles, idiomatic C++
+   (begin/end, operator[] auto-create, copy-to-sort). Reps + dry-run kaam kar rahe.
+
+   DSA Phase 2: Two Pointer + Sliding Window + Hashing = 3/7 patterns coded.
+   Next: Prefix Sum.
+
+HLD — DATABASE REPLICATION deepened (05_database_replication.md):
+   - Problem (SPOF + read load) → same-data copies (master + replicas)
+   - Roles: writes->master only (one source of truth), reads->replicas
+   - SYNC vs ASYNC (his "beech mein fail" Q): async=fast but lag + crash-loss;
+     sync=safe/consistent but slow+fragile; criticality-based (money sync, rest async; banks hybrid)
+   - FAILOVER deepened: promote most-up-to-date replica; cascading (new master
+     dies->promote next) + SELF-HEAL (replenish pool) + BACKUP (final net) = stable end
+   - SPLIT-BRAIN (his Q — old master returns = 2 masters): QUORUM (majority) +
+     FENCING (STONITH) prevent it; returning master demoted to replica. Banks strict.
+   - META: everything fails + recovers, but every solution has a cost/trade-off —
+     NO PERFECT SYSTEM (same thread as caching + sharding; HE connected it himself)
+   - File enriched with today's visuals (failover-deeper + split-brain + meta), no duplicate
+   - His JIGYASA drove the depth: self-generated the real interview follow-ups
+     ("beech mein fail?", "naya master bhi mare?", "do master kaise?")
+
+   Next HLD: Message Queues (#07) or CAP (#08).
 ```
 
 

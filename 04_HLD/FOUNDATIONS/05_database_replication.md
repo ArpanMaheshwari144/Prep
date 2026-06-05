@@ -140,6 +140,86 @@ Downtime: minutes (slow)
 
 ---
 
+## Failover — Deeper (cascading + self-heal + backup ka "end")
+
+> Sawaal: master mara → replica promote kiya. Par naya master BHI mar jaaye to? End kya hai? Infinite marna?
+
+```
+   Nahi — wahi cycle, par system khud ko BHAR leta:
+
+   1 master + 4 replica
+      master mara  → R1 promote   (1 master + 3 replica)
+      SYSTEM turant nayi replica banata (master se copy) → wapas 4
+      R1 mara      → R2 promote   → phir nayi replica add
+   = har death ke baad pool wapas full. Endless marna nahi.
+```
+
+```
+   "END" / asli safety net — 3 layer:
+   1. REDUNDANCY  — copies alag machine/rack/region pe → saath marna almost impossible
+   2. SELF-HEAL   — har failover ke baad nayi replica add → count maintain
+   3. BACKUP      — sab mar bhi jaaye (rare) → snapshot se restore
+                    (thodi loss last-backup tak, par data bach jaata)
+   = End = stable healthy cluster wapas. Final guarantee = backup.
+```
+
+---
+
+## Split-Brain (do master problem — KHATARNAK)
+
+> Sawaal: purana master CRASH ke baad WAPAS zinda ho gaya, par usko nahi pata ki naya master ban chuka. Ab system mein 2 master? Aise kaise chalega?
+
+```
+   Chalna NAHI chahiye. Do master = dono writes lene lage →
+   data alag-alag → conflict → corruption. Disaster.
+
+   Isliye system 2 master banne hi NAHI deta — 2 tarike:
+```
+
+```
+   1. QUORUM (majority vote):
+      master wahi jise AADHE-SE-ZYADA node maane.
+      5 node → naye master ke paas 3 (majority) = woh asli.
+      Purana akela laut aaya = 1 (minority) → "tu master nahi" → step down.
+      = akela banda master nahi ban sakta.
+
+   2. FENCING (purane ko force isolate / "STONITH"):
+      naya master promote karte waqt, purane ko forcibly cut-off →
+      woh writes le hi na sake.
+```
+
+```
+   Purana master wapas aaya → use bola jaata "tu ab REPLICA hai" →
+   DEMOTE ho ke naye master ki copy banta, sync kar leta. Shaanti.
+
+   = 2 master kabhi saath active nahi. Quorum/fencing = sirf 1 master.
+   FINANCE: split-brain = paise mein corruption = isiliye banks strict
+   quorum-based failover rakhte (do-master kabhi nahi).
+```
+
+---
+
+## META — No Perfect System (replication ka asli sabak)
+
+```
+   "Sab FAIL ho sakta hai"   → 100% sach (failure = norm, exception nahi).
+   "Sab RECOVER ho sakta hai" → haan, PAR har recovery ka ek COST/TRADE-OFF:
+        - zyada copies = zyada paisa + complexity
+        - sync (safe) = slow ;  async (fast) = loss-risk
+        - instant failover = quorum/monitoring ka overhead
+
+   = Har problem ka solution hai, par har solution naya cost laata.
+     PERFECT (zero-cost, zero-loss) system NAHI hota.
+
+   Engineer ka kaam = solution dhoondna nahi (woh exist karte) —
+   apne case ka SAHI TRADE-OFF chunna:
+        Finance → cost do, loss/inconsistency mat lo (sync/quorum)
+        Social  → thodi lag/loss chalega, par fast + sasta (async)
+   (Same sabak jo Caching + Sharding mein bhi aaya — koi perfect system nahi.)
+```
+
+---
+
 ## Replication Lag (key challenge)
 
 ```
