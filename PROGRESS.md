@@ -1,10 +1,50 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-06-05 (Day 30 — DSA Hashing DONE (3/7 patterns coded); HLD Database Replication deepened — sync/async, failover, split-brain, no-perfect-system)
-> **Bangalore arrival:** June 15, 2026 (~11 days)
+> **Last updated:** 2026-06-06 (Day 31 — DSA Prefix Sum (Range Sum Query + Pivot Index) + Subarray Sum K solo redo; HLD CAP Theorem deepened; DSA method breakthrough → investigation/navigator style; memory consolidated to single MEMORY.md)
+> **Bangalore arrival:** June 15, 2026 (~9 days)
 > **Primary target:** JP Morgan (Associate, Bangalore)
 > **Open to:** Any company for interview experience
 > **JP-ready:** 92%+ (foundation solid, DSA Phase-2 coding active, HLD deepening — finance direction)
+
+---
+
+# FINAL STUDY WEEK — PLAN (8-13 June, before Bangalore)
+
+> Theme: Tier-1 DSA coding WRAP (new navigator/investigation method) + core HLD foundations finish + daily revision. No big new thing — CONSOLIDATE the core, then guilt-free move. Energy-matched (morning DSA / evening HLD). Flexibility: jaldi nahi, adjust if over-run, rest if tired. Gate-focus, quality over volume.
+
+```
+   MON 8:   SUBAH  DSA → build NAVIGATOR (signal->pattern, together) = new method launch
+            SHAAM  HLD → Message Queues (#07) — async/idempotency/DLQ/retry
+
+   TUE 9:   SUBAH  DSA → Binary Search (investigation-style) + BS-on-answers (Koko/Ship)
+            SHAAM  HLD → Databases what/when (#09) — SQL vs NoSQL choice (JP)
+
+   WED 10:  SUBAH  DSA → Kadane (quick) + Strings start
+            SHAAM  HLD → MS Communication (#10) — sync/async, REST/gRPC/queue
+
+   THU 11:  SUBAH  DSA → Strings finish (palindrome/anagram, 2-3)
+            SHAAM  HLD → Stock Broker/Trading follow-ups (JP gold) or Capacity Estimation
+
+   FRI 12:  SUBAH  DSA → BUFFER: shaky patterns solo redo (Product-Except-Self etc.) + navigator refine
+            SHAAM  HLD → BUFFER: pending HLD finish, or basics revision
+
+   SAT 13:  (2-slot) SUBAH  REVISION consolidation — navigator recognition-drill (signal->pattern)
+                            + HLD foundations quick re-glance
+                     SHAAM  Java/basics trap-drill (interview fundamentals) + Bangalore mindset
+
+   ROZ:     1 hr solo revision + random micro-reads; basics sharpen woven in.
+
+   SUN 14:  REST (buffer before move)
+   15-17:   BANGALORE MOVE — guilt-free, no study
+   17+:     build apply-system (day-1) + apply + learn-on-go
+```
+
+```
+   Week-end target position:
+   - DSA Phase 2: Tier-1 coding ~DONE (7 patterns) + NAVIGATOR ready
+   - HLD deep: 8 foundations (LB/Cache/Shard/Replication/CAP/MQ/DB-choice/MS-comm)
+   = "15 se pehle kaafi kuch" — on schedule.
+```
 
 ---
 
