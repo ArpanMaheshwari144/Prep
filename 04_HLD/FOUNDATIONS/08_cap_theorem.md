@@ -308,6 +308,18 @@ MESSAGE QUEUES (already done):
 = CAP TIES ALL FOUNDATIONS TOGETHER
 ```
 
+```
+PER-CRITICALITY, not whole-system (Arpan's insight 2026-06-06):
+   CAP choice ek poore system pe nahi — DATA ki criticality pe hota.
+
+   FINANCE bhi pura CP nahi:
+      money-path (ledger / transaction / balance)  → CP  (galat/lag bardaasht nahi)
+      non-critical (statement / report / feed)      → AP  (thoda stale chalega)
+
+   = wahi "money-path SYNC, baaki ASYNC" wala replication insight,
+     CAP ki bhasha mein. Ek system mein dono CP aur AP zones ho sakte.
+```
+
 ---
 
 ## Quick Interview Sense
