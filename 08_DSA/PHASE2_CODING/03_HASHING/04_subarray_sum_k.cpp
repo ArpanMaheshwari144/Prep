@@ -3,8 +3,7 @@
 // ============================================================
 // NOTE: Yeh HASHING ka question hai (asli kaam HashMap karta — count/lookup).
 //       Prefix sum (running cumulative sum) yahan sirf ek TOOL ki tarah use
-//       hua. Bridge problem (Hashing + Prefix), par dil HASHING ka hai —
-//       isiliye Hashing folder mein rakha.
+//       hua. Bridge problem (Hashing + Prefix), par dil HASHING ka hai.
 //
 // Ek array `nums` aur ek int `k` diya hai. Kitne CONTIGUOUS subarrays
 // hain jinka sum EXACTLY k hai — woh COUNT return karo.
@@ -13,28 +12,24 @@
 // Example:
 //   nums = [1, 1, 1], k = 2      ->  2     ([1,1] do jagah)
 //   nums = [1, 2, 3], k = 3      ->  2     ([1,2] aur [3])
-//   nums = [1, -1, 0], k = 0     ->  3
+//   nums = [0, 0, 0], k = 0      ->  6     (edge — saare 0)
 //
-// Idea: running prefix sum chalao. Har point pe poochho —
-//       "(currentSum - k) pehle kabhi dekha?" (HashMap mein count).
-//       Agar haan → utne subarrays yahan khatam hote. map[0]=1 se start (edge).
+// REDO — SOLO, HASHING way (map). Intuition: running total chalao, har point pe
+//   "(currentSum - k) pehle kitni baar dekha?" (HashMap count). map[0]=1 se start.
 // ============================================================
 
 #include <bits/stdc++.h>
 using namespace std;
 
-class Solution
-{
+class Solution {
 public:
-    int subarraySum(vector<int> &nums, int k)
-    {
+    int subarraySum(vector<int>& nums, int k) {
         int n = nums.size();
         unordered_map<int, int> mp;
         mp[0] = 1;
-        int currSum = 0;
         int ans = 0;
-        for (int i = 0; i < n; i++)
-        {
+        int currSum = 0;
+        for(int i=0;i<n;i++){
             currSum += nums[i];
             ans += mp[currSum - k];
             mp[currSum]++;
@@ -43,10 +38,12 @@ public:
     }
 };
 
-int main()
-{
+int main() {
     Solution s;
-    vector<int> nums = {1, 1, 1};
-    cout << s.subarraySum(nums, 2) << endl; // expected: 2
+    vector<int> a = {1, 1, 1};
+    cout << s.subarraySum(a, 2) << endl;   // expected: 2
+
+    vector<int> b = {0, 0, 0};
+    cout << s.subarraySum(b, 0) << endl;   // expected: 6  (edge test)
     return 0;
 }
