@@ -1,7 +1,7 @@
 # Databases — Kya Hai, Kab Use, Real-World Connect
 
 > **HLD Reference** — 7 DB types with everyday-life analogies
-> No CAP yet — that connects later
+> CAP done — SQL-vs-NoSQL choice + finance/ACID connection at bottom
 
 ---
 
@@ -364,13 +364,29 @@ Tera Amazon shopping experience:
 
 ---
 
-## Connect to CAP (baad mein discuss karenge)
+## Connect to CAP + FINANCE (CAP done — ab connection)
 
 ```
-Har DB ka CAP positioning:
-   • Banking-style (PostgreSQL, MongoDB) → CP-leaning
-   • Social-scale (Cassandra, DynamoDB) → AP-leaning
-   • Cache (Redis) → tunable
+SQL vs NoSQL ka choice CAP se SEEDHA judta:
+   SQL (PostgreSQL/Oracle)        → CP-leaning (consistency, ACID)  → money/ledger
+   NoSQL scale (Cassandra/Dynamo) → AP-leaning (availability/scale) → high-scale/flexible
+   Redis (key-value)              → tunable
+```
 
-[Topic 8: CAP Theorem already done — this connects later]
+```
+ARPAN'S CASE (finance/JP) — THE takeaway (his own):
+   "Mere case mein ACID ka khayal → SQL."
+
+   Ledger / account balance / transaction  =  SQL (ACID + strong consistency)
+   = galat balance / double-spend KABHI nahi.
+   JP insider-tip: "PostgreSQL/Oracle over NoSQL for ledgers; ACID > eventual."
+```
+
+```
+PER-CRITICALITY (CAP se jod ke) — ek hi app mein dono zones:
+   money-path (ledger/txn)              → SQL / CP
+   non-critical high-scale (logs/catalog/feed/recos) → NoSQL / AP
+
+   = "polyglot persistence" + CAP per-criticality = same insight.
+     (replication "money-path sync, baaki async" ki bhi yahi soch.)
 ```
