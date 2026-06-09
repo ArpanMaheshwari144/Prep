@@ -68,6 +68,78 @@ Real-life: seller sabse zyada dene wale ke paas jaata, buyer sabse saste ke paas
    = "pehle aao pehle pao" (same price pe). Fair + efficient.
 ```
 
+### Single-Threaded PER SYMBOL (deep-dive — RULE, not if-condition)
+
+```
+   Soch: ek dukaan, ek BILLING COUNTER. Sab EK line mein → ek-ek bill → koi gadbad nahi.
+
+   Ab 5 counters (5 threads) par SAME stock ka SAME order book:
+      Counter-A: "Suresh ke 10 share Ramesh ko de diye"
+      Counter-B: (usi waqt) "Suresh ke 10 share Mohan ko de diye"
+      = Suresh ke paas the sirf 10 → DONO ko de diye = 20 bik gaye
+      = DOUBLE-MATCH / race condition = paisa-share disaster
+```
+
+```
+   FIX: har STOCK ka EK hi matching thread.
+      TCS → Thread-1   INFY → Thread-2   RELIANCE → Thread-3
+      har symbol → apni EK queue → ek-ek process (exact order)
+      = naturally serialized → koi race, koi lock nahi → in-memory, microseconds
+```
+
+```
+   Lock kyun nahi? → exchange-speed pe lock = slow + deadlock risk.
+                     Single-thread = race ho hi nahi sakti (line hi ek hai).
+   Scale kaise?    → alag symbol = alag thread (symbol ke hisaab se baant do).
+```
+
+```
+   YEH RULE HAI, CONDITION NAHI:
+      if-condition  = "kabhi haan kabhi naa" (situation pe depend)
+      RULE/invariant = "hamesha, bina exception" (jaise aasmaan = neela)
+   Single-thread per symbol = har trading system mein HONA HI HOGA — warna toot jayega.
+
+   Interview line:
+   "Matching engine is single-threaded PER SYMBOL — orders serialized in one queue,
+    no locks, deterministic + replayable. Scale horizontally BY symbol."
+```
+
+### Order Types — LIMIT vs MARKET (deep-dive)
+
+```
+   Soch: sabzi mandi.
+   LIMIT  = "TCS sirf 3000 ya BEHTAR pe loonga. Mehnga? Rukunga." → PRICE pakka, time flexible
+   MARKET = "Bhav chhodo, ABHI do jo current price hai."          → TIME pakka, price flexible
+```
+
+```
+   BUY limit  → "3000 ya usse NEECHE" (buyer ko sasta chahiye)
+   SELL limit → "3000 ya usse UPAR"   (seller ko mehnga chahiye)
+   = dono "ya usse BEHTAR" — behtar = buyer ke liye sasta, seller ke liye mehnga.
+
+   Kab: sahi daam chahiye, jaldi nahi → LIMIT | turant ghuso/niklo → MARKET.
+```
+
+### Partial Fill (deep-dive — order ek baar mein poora na bhare to?)
+
+```
+   Soch: dukaan pe "10 packet @12" maange, us daam pe sirf 6 the.
+   → 6 LE LIYE (jitne mile) + baaki 4 ka parcha chhoda ("aur aaye to rakhna, wait karta hoon").
+
+   Trading: "BUY 10 TCS @3000", us price pe abhi sirf 6 share.
+      → 6 turant MATCH (partial fill)
+      → baaki 4 order book mein PENDING
+      → naye seller @3000 aaye → 4 bhare → ab FULLY filled
+```
+
+```
+   Order ki 3 haalat (app mein bhi yahi dikhta):
+   - FILLED            → poore 10 mil gaye        (Executed)
+   - PARTIALLY filled  → kuch (6) mile, baaki (4) pending  (Partially executed)
+   - OPEN / unfilled   → abhi tak kuch nahi       (Open)
+   = real hai: Zerodha/Groww/NSE/BSE sab mein yahi.
+```
+
 ---
 
 ## 4. Money Side (JP ka asli interest)
@@ -152,6 +224,88 @@ Real-life: seller sabse zyada dene wale ke paas jaata, buyer sabse saste ke paas
    - Price feed: sirf LATEST matters → ephemeral broadcast (missed ticks gaye,
                  reconnect pe bas CURRENT price) → per-user history nahi chahiye
    = push mechanism same; delivery-guarantee alag
+```
+
+---
+
+## 6b. Settlement across services — SAGA (deep-dive)
+
+```
+   Settlement ATOMIC tha (@Transactional, ACID) — par woh sirf jab sab EK database mein ho.
+
+   Microservices mein:
+      paisa  → Wallet Service (apna DB) | shares → Portfolio Service (apna DB) | order → Order Service (apna DB)
+   = 3 alag service, 3 alag DB. Ek @Transactional 3 alag DB pe NAHI chal sakti.
+
+   PROBLEM: Wallet ne paisa kaata ✓ → Portfolio share-add pe crash ✗
+            = paisa gaya, share nahi mila = inconsistent. All-or-nothing toot gaya.
+```
+
+```
+   Soch: TRAVEL booking — Flight + Hotel + Cab (3 alag company, koi ek transaction nahi).
+   Flight book ✓ → Hotel full ✗ → Flight CANCEL + refund (taaki paisa na phase).
+   = step-by-step; aage fail to peeche wale ko ULTA karke undo.
+```
+
+```
+   SAGA pattern:
+   - Bade transaction ko chhote LOCAL steps mein todo (har service apna step, apne DB pe)
+   - Koi step fail → pichle steps ka ULTA (COMPENSATING action):
+       Step1: Wallet debit 30k     ✓
+       Step2: Portfolio add shares  ✗ FAIL
+       Compensate: Wallet REFUND 30k (step1 ka ulta) → wapas consistent
+   - Rollback DB nahi karta — HAMARA CODE compensating step likhta hai.
+```
+
+```
+   ACID vs SAGA:
+   EK database     → @Transactional → INSTANT all-or-nothing (DB khud rollback, koi aadha-state nahi dikhta)
+   KAI services/DB → SAGA           → code-driven undo, "EVENTUALLY" all-or-nothing
+                                      (chhota window jahan state aadhi → phir compensate → consistent)
+
+   Line: "Saga = same all-or-nothing GOAL, code-driven compensating undo, eventually consistent.
+          Use jab transaction services/DBs ke beech faili ho (ek @Transactional kaafi nahi)."
+```
+
+---
+
+## 7. Event Log / Sequencer (deep-dive — crash recovery + audit)
+
+```
+   PROBLEM: order book RAM mein hai (single-thread, fast). Server crash/restart →
+            RAM saaf → poora order book + pending orders GAYAB. Disaster.
+```
+
+```
+   Soch: CRICKET match.
+   - Live scoreboard (screen) = RAM. Bijli gayi → score gayab.
+   - Scorer ka REGISTER (ball-by-ball) = log. Bijli aayi → register se poora score WAPAS.
+```
+
+```
+   FIX = EVENT LOG (sequencer):
+   - Har event PEHLE append-only log mein likho (disk/Kafka), PHIR order book mein lagao:
+       "Order#1 aaya", "Order#2 aaya", "Match hua", "Order#3 cancel"...  (sequence mein)
+   - Crash? → log shuru se REPLAY → har event dobara apply → order book bilkul waisa wapas.
+   = yeh wahi "write-ahead log (WAL)" soch hai jo databases mein hoti.
+
+   2 muft faayde:
+   1. AUDIT TRAIL (who-what-when, immutable) = regulator/JP ke liye sona
+   2. Single-thread DETERMINISTIC → replay se HAR baar SAME result.
+```
+
+### Logging vs Audit (alag cheez — confuse mat karna)
+
+```
+                  LOGGING                      AUDIT (audit trail)
+   Kiske liye:    engineer (debug/monitor)     regulator/business (proof)
+   Kya:           technical (error/latency)    business action (who-what-when)
+   Kitne din:     thode (rotate/delete)        saal-saal (legal majboori)
+   Badal sakte:   haan (freely)                NAHI (immutable/tamper-proof)
+
+   logging = "kya chal raha bataata (debug)"   |  audit = "kisne kya kiya (proof, permanent)"
+   JP/BlackRock: DONO rakhte; par audit NON-NEGOTIABLE (regulator — "woh gaya to company band").
+   Trading ka event log itna pakka ki woh AUDIT ka kaam bhi de deta (ek cheez, dono role).
 ```
 
 ---
