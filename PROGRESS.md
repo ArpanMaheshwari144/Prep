@@ -41,7 +41,7 @@
 # WHAT'S LEFT — focused (the "bada kya bacha")
 
 ```
-   1. DSA CODING:  Prefix Sum (1 troubling Q to RE-DERIVE properly, new method) → then Binary Search (nemesis) | Kadane | Strings
+   1. DSA CODING:  Prefix Sum (1 troubling Q re-derive) → CLASSIC problems (Container/3Sum/Longest-Substring-No-Repeat/etc — see DSA STATUS) → Binary Search (nemesis) | Kadane | Strings
    2. HLD OTHER DESIGNS (optional depth pass): url-shortener, rate-limiter, twitter-feed, notification
                        (Stock Broker JP-deep = ALL 4 layers DONE; Foundations 10/10 DONE)
    3. APPLY SYSTEM (Bangalore day-1): platform list + referral targets + resume-tailor + tracker
@@ -60,6 +60,13 @@ PHASE 2 CODING (C++) — NEW derive-first method (Day 35), re-done topic-by-topi
           Sliding Window (FIXED + VARIABLE) | Hashing (3 core forms — confirmed done)
    PREFIX SUM (◐): problems coded, but 1 troubling Q to RE-DERIVE properly (new method) before marking done.
    LEFT:  Binary Search (nemesis — next) | Kadane | Strings
+
+CLASSIC PROBLEMS TO COVER (interview-FREQUENT — polish per pattern, Easy-Med only; ★★=must, ★=strong; SAB nahi — 1-2 each):
+   Arrays:          ★ Best Time to Buy/Sell Stock | Majority Element (Moore's voting)
+   Two Pointer:     ★ Container With Most Water | ★ 3Sum | Sort Colors (Dutch flag 3-way partition)
+   Sliding Window:  ★★ Longest Substring No-Repeat (THE classic — must) | Longest Repeating Char Replacement
+   Hashing:         ★ Longest Consecutive Sequence (O(n) with set) | Top K Frequent Elements
+   (These COME UP in interviews — do via the SAME derive-first method. Polish, not foundation.)
 
 METHOD (PROVEN Day 35 — "PEHLE SAMJHO, FIR CODE KARO"): Claude gives problem + asks Socratic kya/kyu/kaise;
    ARPAN derives the approach himself (in words), THEN writes 100% of code; Claude gives STUB-ONLY + RUNS only
