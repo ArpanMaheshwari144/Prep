@@ -9,11 +9,11 @@
 //   {1, 1, 1, 1},       target = 7  ->  0   (kabhi 7 nahi)
 //
 // INTUITION (soch — code TU likhega):
-//   Ek khidki jo BAD-TI aur GHAT-TI hai.
-//   - RIGHT se badhao — element add, sum badhta jaye.
+//   Ek khidki jo BAD-TI aur GHAT-TI hai (variable).
+//   - RIGHT se EXPAND karo — element add, sum badhta jaye.
 //   - Jab sum >= target ho jaye:
-//        LEFT se chhoti karo (element hatao, sum ghatta), jab tak sum >= target rahe,
-//        har baar sabse CHHOTI lambai yaad rakho.
+//        LEFT se WHILE-SHRINK karo (element hatao, sum ghatta), jab tak sum >= target rahe,
+//        har valid pe sabse CHHOTI lambai yaad rakho.
 //   - Poora ghoom ke jo sabse chhoti lambai mili = answer. (kabhi >= target na ho -> 0)
 // ============================================================
 
@@ -22,16 +22,14 @@ using namespace std;
 
 int minSubArrayLen(vector<int> &nums, int target)
 {
-    int n = nums.size();
-    int i = 0, j = 0;
-    int minLen = INT_MAX, currSum = 0;
-    while (j < n)
+    int i = 0, j = 0, minLen = INT_MAX, sum = 0;
+    while (j < nums.size())
     {
-        currSum += nums[j]; // a = {2, 3, 1, 2, 4, 3};
-        while (currSum >= target)
+        sum += nums[j];
+        while (sum >= target)
         {
             minLen = min(minLen, j - i + 1);
-            currSum -= nums[i];
+            sum -= nums[i];
             i++;
         }
         j++;

@@ -1,19 +1,19 @@
 // ============================================================
 // MAX SUM SUBARRAY (size k)   —   Sliding Window (FIXED)
 // ============================================================
-// Array `nums`, k size ke lagatar subarray ka MAXIMUM sum return karo.
+// Array `nums`, k size ke LAGATAR (consecutive) subarray ka MAXIMUM sum return karo.
 //
 // Example:
 //   {2, 1, 5, 1, 3, 2}, k = 3  ->  9   (5 + 1 + 3)
 //
 // INTUITION (soch — code TU likhega):
-//   Ek KHIDKI jo k lagatar elements dekhti hai.
+//   Ek KHIDKI (window) jo k lagatar elements dekhti hai.
 //   Pehle k elements ka sum nikaalo (pehli khidki).
 //   Phir khidki ek kadam AAGE sarkao:
-//     naya element andar aaya  -> sum mein JODO
-//     sabse purana bahar gaya  -> sum mein se GHATAO
-//   Har baar sum dekho, sabse bada yaad rakho.
-//   Trick: poora dobara mat joro — bas ek add, ek minus.
+//       naya element andar aaya   -> sum mein JODO   (+ entering)
+//       sabse purana bahar gaya   -> sum mein se GHATAO (- leaving)
+//   Har poori khidki pe sum dekho, sabse bada yaad rakho.
+//   Trick: poora dobara mat joro — bas ek add, ek minus (O(n)).
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -21,10 +21,8 @@ using namespace std;
 
 int maxSumK(vector<int> &nums, int k)
 {
-    int currSum = 0;
-    int maxSum = 0;
-    int i = 0, j = 0, n = nums.size();
-    while (j < n) // {2, 1, 5, 1, 3, 2}, k = 3  ->  9   (5 + 1 + 3)
+    int i = 0, j = 0, n = nums.size(), currSum = 0, maxSum = 0;
+    while (j < n)
     {
         currSum += nums[j];
         if (j - i + 1 > k)
