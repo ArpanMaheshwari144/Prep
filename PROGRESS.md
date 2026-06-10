@@ -1,7 +1,7 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-06-09 (Day ~34) — HLD Foundations 10/10 DONE (MS Communication finished); DSA Phase 2 coding at 5 patterns; Stock Broker design deep-dive started.
-> **Bangalore arrival:** 15-17 June 2026 (~6-8 days) | **Primary target:** JP Morgan (Associate, Bangalore) | **Open to:** any company for experience | **JP-ready:** ~93% (foundation solid; DSA-coding 3 patterns + HLD design-depth = remaining)
+> **Last updated:** 2026-06-10 (Day 35) — DSA NEW derive-first method ("pehle samjho, fir code") PROVEN: Arrays / Two-Pointer / Sliding-Window re-done topic-by-topic (all self-derived + self-coded, NO freeze); Hashing confirmed done. Big turnaround: quit-despair → "maza aa raha".
+> **Bangalore arrival:** 15-17 June 2026 (~5 days) | **Primary target:** JP Morgan (Associate, Bangalore) | **Open to:** any company for experience | **JP-ready:** ~93% (foundation solid; DSA-coding remaining via new method + HLD design-depth)
 
 ---
 
@@ -31,7 +31,7 @@
    HLD System Designs  IN PROGRESS       6 drafted; Stock Broker = JP-deep DONE (4 layers: single-thread/order-types/event-log/saga)
    ───────────────────────────────────────────────────────────────────────────────────────
    DSA Phase 1 (intuition) DONE  8/8     Arrays, Two-Ptr, Sliding-Win, Hashing, Prefix, Binary-Search, Kadane, Strings + NAVIGATOR
-   DSA Phase 2 (coding)    IN PROGRESS   5 patterns coded (~16 problems); 3 patterns LEFT
+   DSA Phase 2 (coding)    IN PROGRESS   Arrays/Two-Ptr/Sliding-Win/Hashing DONE (new derive-first); Prefix 1Q left → then BS/Kadane/Strings
    ───────────────────────────────────────────────────────────────────────────────────────
    Apply system        NOT STARTED       Bangalore DAY-1 task (referral-first)
 ```
@@ -41,14 +41,10 @@
 # WHAT'S LEFT — focused (the "bada kya bacha")
 
 ```
-   1. DSA CODING (3 patterns):    Binary Search (+ BS-on-answers, rotated) | Kadane | Strings
-   2. HLD STOCK BROKER deep-dive (4 layers — ALL DONE):
-         [x] Matching engine SINGLE-THREADED per symbol (concurrency)   DONE
-         [x] Order TYPES (market vs limit) + PARTIAL fills   DONE
-         [x] EVENT LOG / sequencer (crash → rebuild, audit replay)   DONE
-         [x] SETTLEMENT across services → SAGA (when one @Transactional isn't enough)   DONE
-   3. HLD OTHER DESIGNS (optional depth pass): url-shortener, rate-limiter, twitter-feed, notification
-   4. APPLY SYSTEM (Bangalore day-1): platform list + referral targets + resume-tailor + tracker
+   1. DSA CODING:  Prefix Sum (1 troubling Q to RE-DERIVE properly, new method) → then Binary Search (nemesis) | Kadane | Strings
+   2. HLD OTHER DESIGNS (optional depth pass): url-shortener, rate-limiter, twitter-feed, notification
+                       (Stock Broker JP-deep = ALL 4 layers DONE; Foundations 10/10 DONE)
+   3. APPLY SYSTEM (Bangalore day-1): platform list + referral targets + resume-tailor + tracker
 ```
 
 ---
@@ -59,14 +55,17 @@
 PHASE 1 INTUITION — COMPLETE (8/8): Arrays, Two Pointer, Sliding Window, Hashing, Prefix Sum,
    Binary Search (+BS-on-answers), Kadane, Strings.  NAVIGATOR.md built (signal -> pattern).
 
-PHASE 2 CODING (C++, his method: pure-intuition -> he writes ALL code) — in progress:
-   DONE (5):  Arrays-basics(5) | Two Pointer(3) | Sliding Window(3) | Hashing(3) | Prefix Sum(2)   = ~16 problems, solo
-   LEFT (3):  Binary Search | Kadane | Strings
-   (Subarray-Sum-K = Hashing+Prefix bridge — conquered via gullak analogy, solo-coded incl map[0]=1 edge.)
+PHASE 2 CODING (C++) — NEW derive-first method (Day 35), re-done topic-by-topic:
+   DONE:  Arrays foundation + basics | Two Pointer (incl Remove Duplicates, slow/fast) |
+          Sliding Window (FIXED + VARIABLE) | Hashing (3 core forms — confirmed done)
+   PREFIX SUM (◐): problems coded, but 1 troubling Q to RE-DERIVE properly (new method) before marking done.
+   LEFT:  Binary Search (nemesis — next) | Kadane | Strings
 
-METHOD (locked): give ONE simple real-life analogy = pure-words intuition (no code/syntax/pseudo),
-   then HE writes all code (production rep). Intuition FIRST in chat, file SECOND on his go.
-   He is ALREADY a problem-solver (Konovo proof); DSA = the interview GATE only. Metric = patterns covered, not count.
+METHOD (PROVEN Day 35 — "PEHLE SAMJHO, FIR CODE KARO"): Claude gives problem + asks Socratic kya/kyu/kaise;
+   ARPAN derives the approach himself (in words), THEN writes 100% of code; Claude gives STUB-ONLY + RUNS only
+   (no dictation, no dry-run/code-echo unless he's stuck & asks). His "blank" was WRONG-METHOD, not incapability —
+   understand-first killed the freeze. (Bonus: he dry-runs on a copy BEFORE asking to run — why code passes first-try.)
+   He is ALREADY a problem-solver (Konovo proof); DSA = the interview GATE only. Metric = topics mastered, not count.
 
 TIER 2 (post-Bangalore / as-needed): Linked List, Trees (DFS/BFS), BST (BlackRock), Recursion+Backtracking,
    1D DP (coin change = JP), Graph BFS/DFS (clone = JP).
@@ -159,8 +158,8 @@ COMP (4yr Associate Bangalore): base 18-22L, total 26-33L median, top ~47L (Seni
 # COUNTDOWN
 
 ```
-   Aaj: 9 June 2026   |   Move: 15-17 June   |   Days: ~6-8 baki
-   Pre-move focus: DSA coding (Binary Search next) + Stock Broker deep-dive + daily revision. CONSOLIDATE, then guilt-free move.
+   Aaj: 10 June 2026 (Day 35)   |   Move: 15-17 June   |   Days: ~5 baki
+   Pre-move focus: DSA topic-by-topic (new derive-first method) — Prefix-Q then Binary Search + daily revision. CONSOLIDATE, then guilt-free move.
 ```
 
 ---
