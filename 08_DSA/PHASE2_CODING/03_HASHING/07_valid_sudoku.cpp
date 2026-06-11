@@ -16,9 +16,74 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+bool validate(vector<vector<char>> &board, int startRow, int endRow, int startCol, int endCol)
+{
+    for (int i = startRow; i <= endRow; i++)
+    {
+        unordered_set<int> st;
+        for (int j = startCol; j <= endCol; j++)
+        {
+            if (board[i][j] == '.')
+                continue;
+            if (st.count(board[i][j]))
+            {
+                return false;
+            }
+            st.insert(board[i][j]);
+        }
+    }
+    return true;
+}
+
 bool isValidSudoku(vector<vector<char>> &board)
 {
-    
+    int row = board.size();
+    int col = board[0].size();
+
+    for (int i = 0; i < row; i++)
+    {
+        unordered_set<int> st;
+        for (int j = 0; j < col; j++)
+        {
+            if (board[i][j] == '.')
+                continue;
+            if (st.count(board[i][j]))
+            {
+                return false;
+            }
+            st.insert(board[i][j]);
+        }
+    }
+
+    for (int j = 0; j < col; j++)
+    {
+        unordered_set<int> st;
+        for (int i = 0; i < row; i++)
+        {
+            if (board[i][j] == '.')
+                continue;
+            if (st.count(board[i][j]))
+            {
+                return false;
+            }
+            st.insert(board[i][j]);
+        }
+    }
+
+    // 3*3
+    for (int startRow = 0; startRow < row; startRow += 3)
+    {
+        int endRow = startRow + 2;
+        for (int startCol = 0; startCol < col; startCol += 3)
+        {
+            int endCol = startCol + 2;
+            if (!validate(board, startRow, endRow, startCol, endCol))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 int main()
