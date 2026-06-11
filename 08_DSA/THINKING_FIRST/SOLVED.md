@@ -50,5 +50,13 @@
 
 ---
 
-> **Status:** 7 done (5 Hashing + 1 Prefix-Suffix + 1 Two Pointer, sab khud derive). Aage yahin add hota rahega.
-> **Pending:** Valid Sudoku (box-indexing twist — fresh dimaag pe), Encode/Decode Strings.
+## #8 — Valid Sudoku   (Medium | Hashing on grid)
+- **Signal:** "har row/col/3x3-box mein digit repeat to nahi?" → set per row/col/box
+- **Approach (derived):** har row → set, har col → set, har box → set. Cell repeat (`.` skip) → false; sab pass → true.
+- **Box-indexing twist (CRACKED):** box ka corner step `0,3,6` → `board[boxRow+r][boxCol+c]` (corner + andar ka 0..2 offset). 4 nested loop.
+- **Meta:** raat ko "impossible" laga (thakaan) → fresh dimaag pe "kuch khaas nahi". Problem same, STATE badla. Dry-run + mind-visualize = solved khud.
+
+---
+
+> **Status:** 8 done (6 Hashing/grid + 1 Prefix-Suffix + 1 Two Pointer, sab khud derive). **Arrays & Hashing COMPLETE.**
+> **Defer (kabhi phir):** Encode/Decode Strings. **Next:** thoda aur grid/matrix (2D-index pakka) → phir agla pattern.
