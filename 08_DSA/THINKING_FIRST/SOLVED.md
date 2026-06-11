@@ -41,6 +41,14 @@
 - **Key:** "pehle store (before ka product), phir apna daalo" → isse self exclude hota.
 - **Space-opt (FYI):** result[] mein left bharo, phir suffix-VARIABLE se peeche-se multiply → O(1) extra.
 
+## #7 — Valid Palindrome (alnum + case)   (Easy | Two Pointer)
+- **Signal:** "aage-se-peeche same? par junk ignore karo" → Two Pointer (opposite ends)
+- **Approach (derived):** left=0, right=end. Do haath andar ki taraf.
+  **2 faraq simple palindrome se:** (1) `isalnum` nahi → us pointer ko skip (left++/right--, compare mat karo),
+  (2) compare `tolower(s[left])` vs `tolower(s[right])` (case ignore). Mismatch → false; sab pass → true.
+- **Trick:** built-in `isalnum` / `tolower` — koi helper banane ki zaroorat nahi.
+
 ---
 
-> **Status:** 6 done (5 Hashing + 1 Prefix-Suffix, sab khud derive). Aage yahin add hota rahega.
+> **Status:** 7 done (5 Hashing + 1 Prefix-Suffix + 1 Two Pointer, sab khud derive). Aage yahin add hota rahega.
+> **Pending:** Valid Sudoku (box-indexing twist — fresh dimaag pe), Encode/Decode Strings.
