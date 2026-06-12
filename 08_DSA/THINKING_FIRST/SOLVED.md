@@ -58,5 +58,17 @@
 
 ---
 
-> **Status:** 8 done (6 Hashing/grid + 1 Prefix-Suffix + 1 Two Pointer, sab khud derive). **Arrays & Hashing COMPLETE.**
-> **Defer (kabhi phir):** Encode/Decode Strings. **Next:** thoda aur grid/matrix (2D-index pakka) → phir agla pattern.
+## #9 — Rotate Image (90° clockwise, in-place)   (Medium | Grid)
+- **Signal:** "2D grid ko rotate/transform" → grid-index manipulation
+- **Approach (derived):** observation — har COLUMN → ek ROW ban jaati, **ULTI**. Direct in-place = overwrite (data loss). 2-step: **TRANSPOSE** (`swap(board[i][j], board[j][i])`, sirf `j>i` half) + har **ROW REVERSE**.
+- **Key:** swap (assign nahi, warna data udd jaata); sirf upper-triangle (`j>i`, warna double-swap undo). Bug tha: `j>1` typo (logic sahi thi).
+
+## #10 — Set Matrix Zeroes   (Medium | Grid)
+- **Signal:** "cell 0 → uski poori row + col 0" → row/col marking
+- **Approach (derived):** TWIST — chalte-chalte 0 mat karo (cascade → poori matrix 0). 2-pass: **Pass 1** `zeroRow[]`/`zeroCol[]` (bool) mark; **Pass 2** agar `zeroRow[i]` YA `zeroCol[j]` → cell 0.
+- **Key:** record-first-then-apply (Rotate ka overwrite-lesson dobara use).
+
+---
+
+> **Status:** 10 done (6 Hashing + 1 Prefix-Suffix + 1 Two Pointer + 2 Grid, sab khud derive). **Arrays & Hashing COMPLETE.** Grid series chal rahi.
+> **Defer (kabhi phir):** Encode/Decode Strings. **Next:** ek-do aur grid (Spiral Matrix) → phir agla pattern.
