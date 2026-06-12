@@ -5,6 +5,32 @@
 
 ---
 
+## REVISION TRACKER — spaced active-recall
+
+> **Kaise:** neeche ka SIGNAL padho, approach DHAK ke **cold recall** karo (bol ke / kaagaz pe). Recall ho gaya → ✓ + gap aage badha. Blank → tabhi peek + dobara.
+> **Schedule per problem:** R1 ≈ din 3 · R2 ≈ din 10 · R3 ≈ din 30. Solid → skip aage; blank → reset chhota.
+> **Re-code:** sirf `[C]`-marked (coding tricky thi) ko laptop pe **bina dekhe** dobara likho. Baaki sirf **approach-recall** (2-3 min each).
+> Box mein date/✓ bhar jab woh review kare.
+
+| #  | Problem                  | Pattern        | R1 | R2 | R3 | re-code? |
+|----|--------------------------|----------------|----|----|----|----------|
+| 1  | Contains Duplicate       | Hashing        |    |    |    |          |
+| 2  | Valid Anagram            | Hashing        |    |    |    |          |
+| 3  | Two Sum                  | Hashing        |    |    |    |          |
+| 4  | Group Anagrams           | Hashing        |    |    |    |          |
+| 5  | Top K Frequent           | Hashing/bucket |    |    |    |          |
+| 6  | Product Except Self      | Prefix×Suffix  |    |    |    |          |
+| 7  | Valid Palindrome (alnum) | Two Pointer    |    |    |    |          |
+| 8  | Valid Sudoku             | Grid           |    |    |    | `[C]` box-index |
+| 9  | Rotate Image             | Grid           |    |    |    | `[C]` transpose+rev |
+| 10 | Set Matrix Zeroes        | Grid           |    |    |    |          |
+| 11 | Spiral Matrix            | Grid           |    |    |    | `[C]` 4-boundary |
+
+> **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
+> Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
+
+---
+
 ## #1 — Contains Duplicate   (Easy | Hashing)
 - **Signal:** "koi value repeat hui?" → Hashing (set/map)
 - **Approach (derived):** map mein count store; jab count > 1 → `true`; warna `false`.
