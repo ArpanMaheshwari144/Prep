@@ -70,5 +70,14 @@
 
 ---
 
-> **Status:** 10 done (6 Hashing + 1 Prefix-Suffix + 1 Two Pointer + 2 Grid, sab khud derive). **Arrays & Hashing COMPLETE.** Grid series chal rahi.
-> **Defer (kabhi phir):** Encode/Decode Strings. **Next:** ek-do aur grid (Spiral Matrix) → phir agla pattern.
+## #11 — Spiral Matrix   (Medium | Grid)
+- **Signal:** "grid ko boundary-by-boundary clockwise ghoomna" → 4 shrinking boundaries
+- **Approach (derived):** 4 boundaries `top, bottom, left, right`. Order: top row (L→R) → right col (T→B) → bottom row (R→L) → left col (B→T). Har edge ke baad woh boundary ek kadam ANDAR sikudti; `top<=bottom && left<=right` tak.
+- **Key:** har edge apni CURRENT boundary pe chale (`matrix[top][j]`, `matrix[i][right]`...); guard chahiye (non-square mein double-print se bachne ko).
+- **Honest note:** apna purana LeetCode solution dekh ke kiya — PAR copy nahi, mind mein dry-run + image bana ke samjha (active processing). Recognition se solve hua; retention ke liye 20-din baad COLD re-try karna hoga ([[active-recall-spacing]]).
+
+---
+
+> **Status:** 11 done (6 Hashing + 1 Prefix-Suffix + 1 Two Pointer + 3 Grid, sab khud derive/process). **Arrays & Hashing COMPLETE.** Grid series ki 3 done.
+> **Defer (kabhi phir):** Encode/Decode Strings. **Next:** agla pattern (Two Pointer / Sliding Window deepen) — ya aur grid.
+> **RETENTION reminder:** yeh solved problems 20-din-cycle mein BINA dekhe cold re-try karna (recognition → retention). Bhoolna fail nahi, revise na karna fail.
