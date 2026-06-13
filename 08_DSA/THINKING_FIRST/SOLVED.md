@@ -25,6 +25,7 @@
 | 9  | Rotate Image             | Grid           |    |    |    | `[C]` transpose+rev |
 | 10 | Set Matrix Zeroes        | Grid           |    |    |    |          |
 | 11 | Spiral Matrix            | Grid           |    |    |    | `[C]` 4-boundary |
+| 12 | 3Sum                     | Two Pointer    |    |    |    | `[C]` dedup+2ptr |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -102,8 +103,14 @@
 - **Key:** har edge apni CURRENT boundary pe chale (`matrix[top][j]`, `matrix[i][right]`...); guard chahiye (non-square mein double-print se bachne ko).
 - **Honest note:** apna purana LeetCode solution dekh ke kiya — PAR copy nahi, mind mein dry-run + image bana ke samjha (active processing). Recognition se solve hua; retention ke liye 20-din baad COLD re-try karna hoga ([[active-recall-spacing]]).
 
+## #12 — 3Sum   (Medium | Two Pointer)
+- **Signal:** "teen number ka sum = target, unique triplets" → SORT + fix-one + Two-Pointer
+- **Approach (derived):** array SORT. `for i` (har element FIX) → target = −nums[i] → `low=i+1, high=n-1` two-pointer (Two Sum II). sum<target → low++; > → high--; == → triplet record.
+- **Dedup twist:** outer `i` repeat (`nums[i]==nums[i-1]`) → skip (warna same triplet dobara). Inner low/high duplicates bhi skip.
+- **Honest note:** basic (sort+fix+two-pointer) KHUD derive kiya. Dedup pe dry-run kiya, stuck hua → apna purana LeetCode solution dekha, samjha, lagaya (struggle-FIRST phir peek = legit). 20-din cold re-try → `[C]`.
+
 ---
 
-> **Status:** 11 done (6 Hashing + 1 Prefix-Suffix + 1 Two Pointer + 3 Grid, sab khud derive/process). **Arrays & Hashing COMPLETE.** Grid series ki 3 done.
-> **Defer (kabhi phir):** Encode/Decode Strings. **Next:** agla pattern (Two Pointer / Sliding Window deepen) — ya aur grid.
-> **RETENTION reminder:** yeh solved problems 20-din-cycle mein BINA dekhe cold re-try karna (recognition → retention). Bhoolna fail nahi, revise na karna fail.
+> **Status:** 12 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid). **Arrays & Hashing COMPLETE. Two Pointer COMPLETE.**
+> **Defer (kabhi phir):** Encode/Decode Strings. **Next:** Sliding Window deepen / agla pattern.
+> **RETENTION reminder:** solved problems 20-din-cycle mein BINA dekhe cold re-try (recognition → retention). Bhoolna fail nahi, revise na karna fail.
