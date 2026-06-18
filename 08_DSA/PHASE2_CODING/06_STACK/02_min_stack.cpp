@@ -23,8 +23,14 @@ class MinStack
 public:
     void push(int x)
     {
-        int m = st.empty() ? x : min(x, st.top().second);
-        st.push({x, m});
+        if (st.empty())
+        {
+            st.push({x, x});
+        }
+        else
+        {
+            st.push({x, min(x, st.top().second)});
+        }
     }
 
     void pop()
