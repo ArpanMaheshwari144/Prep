@@ -27,6 +27,7 @@
 | 11 | Spiral Matrix            | Grid           |    |    |    | `[C]` 4-boundary |
 | 12 | 3Sum                     | Two Pointer    |    |    |    | `[C]` dedup+2ptr |
 | 13 | Longest Repeating Char Repl | Sliding Window |    |    |    | `[C]` maxFreq+window |
+| 14 | Permutation in String    | Sliding Window |    |    |    | `[C]` map==+erase |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -120,6 +121,14 @@
 
 ---
 
-> **Status:** 13 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 1 Sliding Window). **Arrays & Hashing COMPLETE. Two Pointer COMPLETE.** Sliding Window deepen shuru.
-> **Defer (kabhi phir):** Encode/Decode Strings. **Next:** aur Sliding Window (Permutation in String) / agla pattern.
+## #14 — Permutation in String   (Medium | Sliding Window + Hashing)
+- **Signal:** "s2 mein s1 ka anagram substring?" → FIXED Sliding Window (size = s1.len) + char-count
+- **Approach (derived):** s1Count (fixed) + windowCount (s2 pe slide, size s1.len). Window size == s1.len → `mp1 == mp2 ?` → true.
+- **2 naye tools (khud dry-run se pakde):** (1) `mp1 == mp2` → poore maps ek line mein compare (loop nahi); (2) count `0` → **erase** key (warna zero-value keys `==` bigaadti). Common SW+map-compare gotcha.
+
+---
+
+> **Status:** 14 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window). **Arrays & Hashing + Two Pointer COMPLETE. Sliding Window deepened.**
+> **Milestone:** Arpan ne khud bola "medium easy lagne laga" — recognition→generation muscle ban raha.
+> **Defer:** Encode/Decode Strings. **Next:** naya pattern (Stack / Binary Search) — clean easy-medium.
 > **RETENTION reminder:** solved problems 20-din-cycle mein BINA dekhe cold re-try (recognition → retention). Bhoolna fail nahi, revise na karna fail.
