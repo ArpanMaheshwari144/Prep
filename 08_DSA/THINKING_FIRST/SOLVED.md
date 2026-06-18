@@ -28,6 +28,7 @@
 | 12 | 3Sum                     | Two Pointer    |    |    |    | `[C]` dedup+2ptr |
 | 13 | Longest Repeating Char Repl | Sliding Window |    |    |    | `[C]` maxFreq+window |
 | 14 | Permutation in String    | Sliding Window |    |    |    | `[C]` map==+erase |
+| 15 | Valid Parentheses        | Stack          |    |    |    | `[C]` pair-match |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -128,7 +129,15 @@
 
 ---
 
-> **Status:** 14 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window). **Arrays & Hashing + Two Pointer COMPLETE. Sliding Window deepened.**
-> **Milestone:** Arpan ne khud bola "medium easy lagne laga" — recognition→generation muscle ban raha.
-> **Defer:** Encode/Decode Strings. **Next:** naya pattern (Stack / Binary Search) — clean easy-medium.
+## #15 — Valid Parentheses   (Easy | Stack)
+- **Signal:** "matching pairs / nesting / LAST-opened PEHLE-closed (LIFO)" → **Stack**
+- **Approach (derived):** opening `( { [` → push; closing → stack empty? false : top-match? pop : false; end → stack empty? true.
+- **Naya:** Stack DS seekha (push/pop/top/empty, LIFO = plates ki dher). Pair-match: `'(' ↔ ')'` etc — `==` se direct nahi (alag chars), explicit pair-check ya expected-closing-push trick.
+- **Note:** pehla Stack problem + pehla "production-muscle" rep — idea tha, syntax pehle copy kiya, phir KHUD apni style mein (match→continue/else-false + empty-guard) likha. Idea + syntax dono apne.
+
+---
+
+> **Status:** 15 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 1 Stack). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window deepened. Stack shuru.**
+> **Milestone:** "medium easy lagne laga"; pehla self-written syntax (production muscle ban raha).
+> **Defer:** Encode/Decode Strings. **Next:** aur Stack (Min Stack / Eval RPN) ya Binary Search.
 > **RETENTION reminder:** solved problems 20-din-cycle mein BINA dekhe cold re-try (recognition → retention). Bhoolna fail nahi, revise na karna fail.
