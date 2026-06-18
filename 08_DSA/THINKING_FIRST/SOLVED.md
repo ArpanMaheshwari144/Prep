@@ -29,6 +29,7 @@
 | 13 | Longest Repeating Char Repl | Sliding Window |    |    |    | `[C]` maxFreq+window |
 | 14 | Permutation in String    | Sliding Window |    |    |    | `[C]` map==+erase |
 | 15 | Valid Parentheses        | Stack          |    |    |    | `[C]` pair-match |
+| 16 | Min Stack                | Stack (design) |    |    |    | `[C]` pair {val,min} |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -137,7 +138,14 @@
 
 ---
 
-> **Status:** 15 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 1 Stack). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window deepened. Stack shuru.**
-> **Milestone:** "medium easy lagne laga"; pehla self-written syntax (production muscle ban raha).
-> **Defer:** Encode/Decode Strings. **Next:** aur Stack (Min Stack / Eval RPN) ya Binary Search.
+## #16 — Min Stack   (Medium | Stack design)
+- **Signal:** "stack + getMin() sab O(1)" → har element ke saath min-so-far track karo
+- **Approach (derived):** 1 stack of PAIRS `{value, minSoFar}`. `push(x)`: m = empty? x : min(x, top.second); push {x,m}. `getMin()` = top.second. Pop pe pichla pair apne aap pichla-min de deta (scan nahi).
+- **Naya:** pehla DESIGN problem (class). 2-stack se 1-stack (pair) tak khud derive kiya. getMin O(1) bina scan.
+
+---
+
+> **Status:** 16 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 2 Stack). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window deepened. Stack chal raha.**
+> **Milestone:** "medium easy lagne laga"; self-written syntax; pehla design problem.
+> **Defer:** Encode/Decode Strings. **Next:** aur Stack (Eval RPN / Daily Temperatures) ya Binary Search.
 > **RETENTION reminder:** solved problems 20-din-cycle mein BINA dekhe cold re-try (recognition → retention). Bhoolna fail nahi, revise na karna fail.
