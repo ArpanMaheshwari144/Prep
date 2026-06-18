@@ -26,6 +26,7 @@
 | 10 | Set Matrix Zeroes        | Grid           |    |    |    |          |
 | 11 | Spiral Matrix            | Grid           |    |    |    | `[C]` 4-boundary |
 | 12 | 3Sum                     | Two Pointer    |    |    |    | `[C]` dedup+2ptr |
+| 13 | Longest Repeating Char Repl | Sliding Window |    |    |    | `[C]` maxFreq+window |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -111,6 +112,14 @@
 
 ---
 
-> **Status:** 12 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid). **Arrays & Hashing COMPLETE. Two Pointer COMPLETE.**
-> **Defer (kabhi phir):** Encode/Decode Strings. **Next:** Sliding Window deepen / agla pattern.
+## #13 — Longest Repeating Character Replacement   (Medium | Sliding Window)
+- **Signal:** "longest substring with a condition (k changes allowed)" → variable Sliding Window
+- **Approach (derived):** left/right window + count map. Window VALID jab `(windowLen − maxFreq) ≤ k`. right badhao + maxFreq update; invalid → left badhao (count--); ans = max valid windowLen.
+- **Key trick (elegant):** `(windowLen − maxFreq)` = kitne chars badalne padenge → `≤ k` to valid. Kaunse char badle, track nahi karna — bas "kitne non-majority". maxFreq sirf naye char ke count se update (poore map pe loop nahi).
+- **Note:** yehi woh problem thi jo pehli baar samajh nahi aayi thi — fresh dimaag pe khud derive + samjha. Index-bug (left pointer) khud pakda.
+
+---
+
+> **Status:** 13 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 1 Sliding Window). **Arrays & Hashing COMPLETE. Two Pointer COMPLETE.** Sliding Window deepen shuru.
+> **Defer (kabhi phir):** Encode/Decode Strings. **Next:** aur Sliding Window (Permutation in String) / agla pattern.
 > **RETENTION reminder:** solved problems 20-din-cycle mein BINA dekhe cold re-try (recognition → retention). Bhoolna fail nahi, revise na karna fail.
