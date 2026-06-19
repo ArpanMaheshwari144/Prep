@@ -1,7 +1,7 @@
 # Interview Prep — Progress Tracker
 
-> **Last updated:** 2026-06-10 (Day 35) — DSA NEW derive-first method ("pehle samjho, fir code") PROVEN: Arrays / Two-Pointer / Sliding-Window re-done topic-by-topic (all self-derived + self-coded, NO freeze); Hashing confirmed done. Big turnaround: quit-despair → "maza aa raha".
-> **Bangalore arrival:** 15-17 June 2026 (~5 days) | **Primary target:** JP Morgan (Associate, Bangalore) | **Open to:** any company for experience | **JP-ready:** ~93% (foundation solid; DSA-coding remaining via new method + HLD design-depth)
+> **Last updated:** 2026-06-19 (BANGALORE) — Big multi-day stretch. DSA active-derive = 20 problems logged (Stack + Binary Search added; "medium easy lagne laga"). Payment-System HLD (JP/finance) done. And the BOTTLENECK UNBLOCKED — full apply-machine built + **JP Morgan APPLIED** (job-id 210714912, Under Review) + Kumar (JP VP, ex-GS) referral message sent.
+> **In Bangalore since:** 15 June 2026 | **Primary target:** JP Morgan (Associate / SE-III, Bangalore) | **Open to:** product/fintech for experience | **JP-ready:** ~93% (foundation solid; DSA reps + HLD depth ongoing). **Mode now = APPLY + LEARN parallel (apply is LIVE).**
 
 ---
 
@@ -28,12 +28,12 @@
    Database            DONE (core)       Indexing practical (hands-on)
    ───────────────────────────────────────────────────────────────────────────────────────
    HLD Foundations     DONE  10/10       HLD-basics, Capacity, LB, Cache, Replication, Sharding, MQ, CAP, DB-choice, MS-Comm
-   HLD System Designs  IN PROGRESS       6 drafted; Stock Broker = JP-deep DONE (4 layers: single-thread/order-types/event-log/saga)
+   HLD System Designs  IN PROGRESS       Stock Broker JP-deep DONE (4 layers) + Payment System (UPI) JP/finance DEEP DONE (file 17)
    ───────────────────────────────────────────────────────────────────────────────────────
    DSA Phase 1 (intuition) DONE  8/8     Arrays, Two-Ptr, Sliding-Win, Hashing, Prefix, Binary-Search, Kadane, Strings + NAVIGATOR
-   DSA Phase 2 (coding)    IN PROGRESS   Arrays/Two-Ptr/Sliding-Win/Hashing DONE (new derive-first); Prefix 1Q left → then BS/Kadane/Strings
+   DSA active-derive       IN PROGRESS   20 logged (SOLVED.md): Hashing+Two-Ptr COMPLETE, Sliding-Win deep, Grid 3, STACK 4, BINARY-SEARCH 2
    ───────────────────────────────────────────────────────────────────────────────────────
-   Apply system        NOT STARTED       Bangalore DAY-1 task (referral-first)
+   Apply system        LIVE              Machine BUILT (resume/LinkedIn/Naukri/Cutshort + playbook) | JP Morgan APPLIED + Kumar(VP) referral
 ```
 
 ---
@@ -41,10 +41,13 @@
 # WHAT'S LEFT — focused (the "bada kya bacha")
 
 ```
-   1. DSA CODING:  Prefix Sum (1 troubling Q re-derive) → CLASSIC problems (Container/3Sum/Longest-Substring-No-Repeat/etc — see DSA STATUS) → Binary Search (nemesis) | Kadane | Strings
-   2. HLD OTHER DESIGNS (optional depth pass): url-shortener, rate-limiter, twitter-feed, notification
-                       (Stock Broker JP-deep = ALL 4 layers DONE; Foundations 10/10 DONE)
-   3. APPLY SYSTEM (Bangalore day-1): platform list + referral targets + resume-tailor + tracker
+   1. APPLY (now the #1 active lever — machine built, keep FEEDING it):
+        - Apply-Method daily: 3-5 target companies (referral-first), via Apply-System tracker
+        - CHECK Kumar (JP VP) reply on the job-id referral; RESPOND to inbound (Cutshort 18 interested + recruiter InMails = warmest)
+        - Send remaining ~5 referral requests + follow-up the 4 already sent
+   2. DSA REPS (active-derive daily): continue patterns (more Binary Search -> Trees / Linked List / etc.)
+        + start the 20-day spaced COLD re-try cycle on the 20 logged problems (real retention test)
+   3. HLD: more JP/finance designs (interview depth) — Payment + Stock-Broker done; pick 1-2 more.
 ```
 
 ---
@@ -55,28 +58,36 @@
 PHASE 1 INTUITION — COMPLETE (8/8): Arrays, Two Pointer, Sliding Window, Hashing, Prefix Sum,
    Binary Search (+BS-on-answers), Kadane, Strings.  NAVIGATOR.md built (signal -> pattern).
 
-PHASE 2 CODING (C++) — NEW derive-first method (Day 35), re-done topic-by-topic:
-   DONE:  Arrays foundation + basics | Two Pointer (incl Remove Duplicates, slow/fast) |
-          Sliding Window (FIXED + VARIABLE) | Hashing (3 core forms — confirmed done)
-   PREFIX SUM (◐): problems coded, but 1 troubling Q to RE-DERIVE properly (new method) before marking done.
-   LEFT:  Binary Search (nemesis — next) | Kadane | Strings
+ACTIVE-DERIVE (C++) — 20 problems logged in 08_DSA/THINKING_FIRST/SOLVED.md (~40 coded total).
+   Tracker = SOLVED.md (signal -> pattern -> approach -> key -> note) + a 20-DAY SPACED REVISION table
+   (R1~d3 / R2~d10 / R3~d30 active-recall, [C] = cold re-code marker).
+   Hashing (6) + Two Pointer (2) ............ COMPLETE
+   Prefix/Suffix (1: Product Except Self) ... done
+   Sliding Window (2: Longest Repeating Char Replacement, Permutation in String) ... deepened
+   Grid / Matrix (3: Rotate Image, Set Matrix Zeroes, Spiral Matrix) ... done (new 05_MATRIX folder)
+   STACK (4: Valid Parentheses, Min Stack, Evaluate RPN, Daily Temperatures/MONOTONIC) ... done (06_STACK)
+   BINARY SEARCH (2: basic + Search-in-Rotated-Sorted) ... done (07_BINARY_SEARCH) — toughest yet, self-debugged
+   STATE: "medium easy lagne laga." Production-muscle (blank-page generation + self-written syntax) building.
 
-CLASSIC PROBLEMS TO COVER (interview-FREQUENT — polish per pattern, Easy-Med only; ★★=must, ★=strong; SAB nahi — 1-2 each):
-   Arrays:          ★ Best Time to Buy/Sell Stock | Majority Element (Moore's voting)
-   Two Pointer:     ★ Container With Most Water | ★ 3Sum | Sort Colors (Dutch flag 3-way partition)
-   Sliding Window:  ★★ Longest Substring No-Repeat (THE classic — must) | Longest Repeating Char Replacement
-   Hashing:         ★ Longest Consecutive Sequence (O(n) with set) | Top K Frequent Elements
-   (These COME UP in interviews — do via the SAME derive-first method. Polish, not foundation.)
+HIS OWN META-LEARNINGS (June 19 — HE articulated each; these guide the method now):
+   (1) scaffold/pseudo-code in the stub = TRANSCRIPTION, not learning ("DSA na aane wala bhi dekh ke pass kara lega")
+       -> stubs are now MINIMAL (signal + a nudge question, NO structure). He generates the code from blank.
+   (2) test-pass != correct — he caught his own linear-loop-masquerading-as-binary-search (low++/high--) and >= vs >.
+   (3) forgetting-curve = WHY revision: retrieval strengthens the trace -> the spaced cold-recode cycle.
+   (4) cold-generate WITHOUT peeking old code (peeking mid-attempt mixes mental models -> confusion).
+   (5) HLD-effortless vs DSA-blank = his SPATIAL-dominant cognition. HLD = native spatial mode; DSA-generation =
+       symbolic/2nd mode + rust. FIX = pull spatial INTO dsa (one clean analogy + dry-run-on-paper). Not a defect.
 
-METHOD (PROVEN Day 35 — "PEHLE SAMJHO, FIR CODE KARO"): Claude gives problem + asks Socratic kya/kyu/kaise;
-   ARPAN derives the approach himself (in words), THEN writes 100% of code; Claude gives STUB-ONLY + RUNS only
-   (no dictation, no dry-run/code-echo unless he's stuck & asks). His "blank" was WRONG-METHOD, not incapability —
-   understand-first killed the freeze. (Bonus: he dry-runs on a copy BEFORE asking to run — why code passes first-try.)
-   He is ALREADY a problem-solver (Konovo proof); DSA = the interview GATE only. Metric = topics mastered, not count.
+METHOD ("PEHLE SAMJHO, FIR CODE"): Claude gives problem + signal; ARPAN derives approach, writes 100% of code;
+   Claude gives MINIMAL stub + RUNS only (compile + report pass/fail + expected-vs-got). On FAIL: never read/reveal
+   his bug — nudge him to dry-run the specific index/cell; HE finds it (that's the generation practice).
+   He is ALREADY a problem-solver (Konovo proof); DSA = the interview GATE only. Metric = patterns owned, not count.
 
-TIER 2 (post-Bangalore / as-needed): Linked List, Trees (DFS/BFS), BST (BlackRock), Recursion+Backtracking,
+NEXT TIER (as-needed): Linked List, Trees (DFS/BFS), BST (BlackRock), Recursion+Backtracking,
    1D DP (coin change = JP), Graph BFS/DFS (clone = JP).
 CAP: Easy + Medium only — NO Hard (JP/GS/BlackRock != FAANG). Quality over volume (2-3/pattern).
+PENDING (when he raises it): upgrade SOLVED.md into a pattern+TEMPLATE library — per problem, read his code
+   (explicit exception to the RUN-ONLY no-read rule) and add the reusable code SKELETON next to signal/approach.
 ```
 
 ---
@@ -88,9 +99,12 @@ FOUNDATIONS — COMPLETE (10/10):
    01 HLD-basics | 02 Capacity-estimation | 03 Load-balancing | 04 Caching | 05 Replication |
    06 Sharding (consistent hashing) | 07 Message-queues | 08 CAP | 09 DB what/when | 10 MS-Communication.
 
-SYSTEM DESIGNS — 6 drafted:
+SYSTEM DESIGNS:
    11 URL-shortener | 12 Rate-limiter | 13 Twitter-feed | 14 Notification | 15 URL-browser-journey |
-   16 Stock-Broker/Trading (JP GOLD — base strong; deep-dive 4 layers in progress).
+   16 Stock-Broker/Trading (JP GOLD — 4 layers DONE) |
+   17 PAYMENT SYSTEM (UPI) — JP/finance DEEP DONE: idempotency (key+register+race), consistency (ACID/Saga,
+      debits=credits invariant), failure-handling (status-track + reconciliation, courier-tracking analogy),
+      ledger/audit (immutable double-entry, permanent-diary). Saved "jaise padha waise" with analogies.
 
 DEPTH DIRECTION = JP/FINANCE flavor (HIGH invest): idempotency, consistency>availability, ACID/ledger/
    double-entry/audit-trail, failure-handling (circuit-breaker/DLQ/retry), trade-off articulation.
@@ -132,16 +146,28 @@ Konovo production evidence (interview gold, Forward-Deployed-Engineer):
 
 ---
 
-# BANGALORE PHASE (15+ June)
+# APPLY — STATUS (the bottleneck, now LIVE)
 
 ```
-MOVE 15-17 = guilt-free (travel + settle, no study). Then APPLY mode (parallel):
-   JP Morgan PRIMARY (referral turant) | GS (stretch) | Razorpay/Cred/Swiggy/any (experience).
-DAY-1 task: build apply-system — platform list (LinkedIn/Naukri/Dice/Indeed), referral targets
-   (LinkedIn + ex-colleagues + Konovo network), resume-tailoring template, tracker.
-   HYBRID: dream-tier = referral-first + per-role tailoring; experience-tier = bulk OK. "Smart pel."
+MACHINE BUILT (all in private RESOURCES, backed up to private repo ArpanMaheshwari144/Resources):
+   - Resume: polished + honest (600+ production incidents, $20K Doximity vendor-payment fix, VP/CTO recognition,
+     "work-on" not "built" for the existing platform). One-page PDF compiled.
+   - LinkedIn: headline/About/Experience optimized, Open-to-Work ON (inbound > cold).
+   - Naukri / Cutshort / Instahyre / Wellfound: profiles inbound-optimized. Cutshort = 18 companies INTERESTED.
+   - Apply-Method.md (playbook: channels by yield referral>inbound>career-page>cold, fit-checklist, skip-rules,
+     standard form answers, referral templates) + Apply-System.md (target list + tracker + 10 referral targets).
+
+EXECUTED:
+   - JP MORGAN APPLIED — SE III Back-end (Chase UK), job-id 210714912, status Under Review.
+   - Kumar Sudarshan (JP VP, ex-GS) accepted connection + got the job-id referral message = dream-play.
+   - ~6 quality applies (FIS / Kong / a broker / Akamai / Zerodha / Tracxn tier).
+   - Method he learned himself: job-id -> fit-verify (Java/Spring, mid-level, product/fintech) -> apply -> referral.
+
+CHANNEL STRATEGY (HYBRID): dream-tier (JP/GS/top-fintech) = referral-first + per-role tailoring;
+   experience-tier = bulk OK. Inbound (recruiter InMails / Cutshort interested) = WARMEST, respond first. "Smart pel."
 SABAR for the no-offer window: 100 apply -> 5 callback -> 1 offer; 4-7 month window NORMAL; reject = data point.
 Cricket truth: "Practice mein har koi 6 marta, asli match mein pata." Real interview = real validator.
+NOTE: never add company-account "ArpanMaheshwariApollo" as collaborator on the Resources repo (leaving that company).
 ```
 
 ---
@@ -165,8 +191,11 @@ COMP (4yr Associate Bangalore): base 18-22L, total 26-33L median, top ~47L (Seni
 # COUNTDOWN
 
 ```
-   Aaj: 10 June 2026 (Day 35)   |   Move: 15-17 June   |   Days: ~5 baki
-   Pre-move focus: DSA topic-by-topic (new derive-first method) — Prefix-Q then Binary Search + daily revision. CONSOLIDATE, then guilt-free move.
+   Aaj: 19 June 2026   |   In Bangalore (since 15 June)   |   Mode: APPLY + LEARN parallel (apply LIVE)
+   Focus now: (1) FEED the apply-machine daily (referral-first, check JP/Kumar + inbound) — #1 lever
+              (2) DSA active-derive daily + start 20-day spaced cold-recode cycle
+              (3) HLD JP/finance depth (Payment + Broker done; 1-2 more)
+   Bottleneck = was APPLYING -> now UNBLOCKED & live; keep the momentum, sabar for the no-signal window.
 ```
 
 ---

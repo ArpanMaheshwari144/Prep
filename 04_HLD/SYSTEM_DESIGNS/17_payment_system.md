@@ -109,6 +109,46 @@ Paisa banta/marta nahi — sirf MOVE hota (conserved).
 
 ---
 
+### SAGA — gehra (distributed system ka ROLLBACK)
+
+**Core (ek line):** distributed system ka rollback — ek service fail -> peeche chalo, sabka UNDO -> bas.
+
+**Kyun chahiye:** single DB mein rollback AUTOMATIC milta (ACID ka 'A' — DB khud undo karta).
+ALAG DBs/services mein woh free rollback NAHI milta -> isliye KHUD har step ka undo (compensating
+action) likhna padta. SAGA = "manually banaya hua rollback".
+
+**Analogy (TRIP BOOKING — flight + hotel + cab, 3 alag websites se):**
+```
+   Step 1: Flight book  -> DONE
+   Step 2: Hotel book   -> DONE
+   Step 3: Cab book     -> FAIL
+   => peeche chalo, sabka undo (REVERSE order):
+        CANCEL hotel  ->  CANCEL flight
+   -> system wapas clean, koi adhoora booking nahi pada
+```
+
+**Payment mein:**
+```
+   Step 1: Bank A se Arpan -500           -> DONE
+   Step 2: Bank B mein Merchant +500      -> FAIL
+   Compensating: Bank A mein Arpan +500 wapas (undo step 1)
+   -> paisa wapas, kuch gayab nahi
+```
+
+**Trade-off (JP isko sunna chahta):**
+```
+   SAGA          -> local steps + compensating-undo. Loose, scalable. PAR beech mein thodi der
+                    inconsistency dikh sakti (eventual) -> phir undo se theek.
+   2-Phase-Commit -> coordinator "ready? -> commit". Strict, par SLOW / BLOCKING.
+```
+
+```
+   Saga = distributed rollback. ACID ka free rollback nahi (alag DBs) -> khud ka undo banaya.
+          step gira -> peeche chal ke sabka compensating-undo -> bas.
+```
+
+---
+
 ## 3. FAILURE-HANDLING  (crash beech mein -> paisa kahan)
 
 **HARD TRUTH:** crash ke baad tujhe aksar PATA NAHI:
