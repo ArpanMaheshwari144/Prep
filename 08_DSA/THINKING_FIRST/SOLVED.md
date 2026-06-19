@@ -31,6 +31,7 @@
 | 15 | Valid Parentheses        | Stack          |    |    |    | `[C]` pair-match |
 | 16 | Min Stack                | Stack (design) |    |    |    | `[C]` pair {val,min} |
 | 17 | Evaluate RPN             | Stack          |    |    |    | `[C]` pop b,a + stoi |
+| 18 | Daily Temperatures       | Stack (monotonic) |    |    |    | `[C]` next-greater |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -139,6 +140,12 @@
 
 ---
 
+## #18 — Daily Temperatures   (Medium | Stack — MONOTONIC)
+- **Signal:** "har element ke liye agla BADA (kitni door)" → monotonic stack (next-greater pattern)
+- **Approach (derived):** stack of INDICES (decreasing temp). ans init 0. `for i`: while top CHOTA (`temp[i] > temp[st.top()]`) → idx=pop, `ans[idx] = i - idx`; push i. End → jo bache = 0.
+- **Key:** answer POP ke waqt set hota (POP-hue ka, current ka nahi); INDEX store karo (distance ke liye); "warmer" = strictly `>` (na ki `>=` — equal warmer nahi).
+- **Note:** pehla MONOTONIC STACK. Pehle pseudo-code transcribe kiya tha → phir Arpan ne khud demand kiya "yeh real nahi" → BLANK se apni thinking se DOBARA likha (confused hua purana-naya mix se, khud untangle kiya, pass). ASLI generation. Meta-lesson: cold-generate karte waqt purana code mat dekho.
+
 ## #17 — Evaluate Reverse Polish Notation   (Medium | Stack)
 - **Signal:** "postfix evaluate / last-2-numbers pe operate" → Stack
 - **Approach (derived):** stack<int>. number → `push(stoi(token))`; operator → `b=pop, a=pop, push(a op b)`. End → top = answer.
@@ -151,7 +158,8 @@
 
 ---
 
-> **Status:** 17 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 3 Stack). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window deepened. Stack chal raha (3).**
+> **Status:** 18 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window deepened. Stack chal raha (4, incl monotonic).**
+> **Meta-milestone (19 Jun):** Arpan ne khud pakda "scaffold-transcription ≠ real learning" + "cold-generate karte waqt purana mat dekho". Aage minimal stubs (signal only, no pseudo-code) — woh structure khud generate karega.
 > **Milestone:** "medium easy lagne laga"; self-written syntax; pehla design problem.
 > **Defer:** Encode/Decode Strings. **Next:** aur Stack (Eval RPN / Daily Temperatures) ya Binary Search.
 > **RETENTION reminder:** solved problems 20-din-cycle mein BINA dekhe cold re-try (recognition → retention). Bhoolna fail nahi, revise na karna fail.
