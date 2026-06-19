@@ -30,6 +30,7 @@
 | 14 | Permutation in String    | Sliding Window |    |    |    | `[C]` map==+erase |
 | 15 | Valid Parentheses        | Stack          |    |    |    | `[C]` pair-match |
 | 16 | Min Stack                | Stack (design) |    |    |    | `[C]` pair {val,min} |
+| 17 | Evaluate RPN             | Stack          |    |    |    | `[C]` pop b,a + stoi |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -138,6 +139,11 @@
 
 ---
 
+## #17 — Evaluate Reverse Polish Notation   (Medium | Stack)
+- **Signal:** "postfix evaluate / last-2-numbers pe operate" → Stack
+- **Approach (derived):** stack<int>. number → `push(stoi(token))`; operator → `b=pop, a=pop, push(a op b)`. End → top = answer.
+- **Key:** order `a op b` (b = top/2nd-operand, a = next/1st) — `-` aur `/` mein matter. `stoi` = string→int. Helper `operate(a,b,op)` khud banaya.
+
 ## #16 — Min Stack   (Medium | Stack design)
 - **Signal:** "stack + getMin() sab O(1)" → har element ke saath min-so-far track karo
 - **Approach (derived):** 1 stack of PAIRS `{value, minSoFar}`. `push(x)`: m = empty? x : min(x, top.second); push {x,m}. `getMin()` = top.second. Pop pe pichla pair apne aap pichla-min de deta (scan nahi).
@@ -145,7 +151,7 @@
 
 ---
 
-> **Status:** 16 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 2 Stack). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window deepened. Stack chal raha.**
+> **Status:** 17 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 3 Stack). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window deepened. Stack chal raha (3).**
 > **Milestone:** "medium easy lagne laga"; self-written syntax; pehla design problem.
 > **Defer:** Encode/Decode Strings. **Next:** aur Stack (Eval RPN / Daily Temperatures) ya Binary Search.
 > **RETENTION reminder:** solved problems 20-din-cycle mein BINA dekhe cold re-try (recognition → retention). Bhoolna fail nahi, revise na karna fail.
