@@ -34,6 +34,7 @@
 | 18 | Daily Temperatures       | Stack (monotonic) |    |    |    | `[C]` next-greater |
 | 19 | Binary Search            | Binary Search  |    |    |    | `[C]` mid+1/mid-1 |
 | 20 | Search in Rotated Sorted | Binary Search  |    |    |    | `[C]` which-half+range |
+| 21 | Find Min in Rotated Sorted | Binary Search |    |    |    | `[C]` mid-vs-end, no target |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -148,6 +149,12 @@
 - **Key:** Sawaal-1 mein target NAHI (sirf low vs mid); Sawaal-2 mein target. Range-check `&&` se — `nums[low] <= target && target < nums[mid]`. **C++ chained comparison `a < x < b` GALAT** (bool ban jaata — `(a<x)<b`), `&&` chahiye.
 - **Note:** sabse tough yet. Two-question structure derive kiya; atka → debug-prints + dry-run se buggy line KHUD pakdi; seekha C++ chained-comparison nahi chalta (LOGIC sahi thi, LANGUAGE gotcha — alag cheez). Real debugging + generation, transcription nahi.
 
+## #21 — Find Minimum in Rotated Sorted Array   (Medium | Binary Search)
+- **Signal:** "rotated sorted + min dhoondo O(log n)" → modified Binary Search
+- **Approach (derived):** min = pivot (jahan order tuta). mid ko **END se compare** karo: `nums[mid] > nums[high]` → drop mid ke RIGHT mein → `low = mid+1`; warna min LEFT half mein (mid included) → `high = mid`. Range simat jaaye → `nums[low]` = min.
+- **Key:** **koi TARGET nahi** (Search-in-Rotated se yahi farq — Arpan ne khud pakda). Sawaal "target kahan?" nahi, balki "min kis taraf?" — sirf mid-vs-end. SIMPLER hai (ek comparison, nested if-else nahi). `high=mid` (mid-1 nahi — mid khud min ho sakta).
+- **Note:** Search-in-Rotated ka milta-julta — usi din kiya (pattern reinforce). Tune khud reframe kiya "target hai hi nahi" → mid-vs-end nikaala → dry-run [4,5,6,7,0,1,2] copy pe → first proper try pass. **Copy-pe-trace = generation** (aaj ki badi seekh).
+
 ## #19 — Binary Search   (Easy | Binary Search — pattern start)
 - **Signal:** "sorted + search" → Binary Search (har step AADHA kaato)
 - **Approach (derived):** lo=0, hi=n-1. `while(lo<=hi)`: `mid = lo+(hi-lo)/2`; ==target→return mid; <target→`lo=mid+1`; >target→`hi=mid-1`. End → -1.
@@ -172,8 +179,9 @@
 
 ---
 
-> **Status:** 20 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 2 Binary Search). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. Binary Search chal raha (2, incl rotated).**
-> **Meta-milestone (19 Jun):** Arpan ne khud pakda "scaffold-transcription ≠ real learning" + "cold-generate karte waqt purana mat dekho". Aage minimal stubs (signal only, no pseudo-code) — woh structure khud generate karega.
+> **Status:** 21 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 3 Binary Search). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. Binary Search chal raha (3: basic + rotated-search + rotated-min).**
+> **Binary Search "khatam" plan:** [x] basic [x] Search-in-Rotated [x] Find-Min-Rotated → baaki: Search a 2D Matrix, Koko Eating Bananas (BS-on-ANSWER). Ye 2 ho gaye → BS BAND, aage badho. (One pattern at a time, pura khatam karke move — Arpan ka rule.)
+> **Meta-milestone (19 Jun):** Arpan ne khud pakda "scaffold-transcription ≠ real learning" + "cold-generate karte waqt purana mat dekho" + **"DSA = COPY + PEN: baith, trace kar, jahan jaaye uske hisaab se code likh do — bas, aur kuch nahi"** (bina copy = impossible; spatial dimaag → trace se code aata). Aage minimal stubs (signal only, no pseudo-code) — woh structure khud generate karega.
 > **Milestone:** "medium easy lagne laga"; self-written syntax; pehla design problem.
-> **Defer:** Encode/Decode Strings. **Next:** aur Stack (Eval RPN / Daily Temperatures) ya Binary Search.
+> **Defer:** Encode/Decode Strings. **Next:** Search a 2D Matrix / Koko (BS finish), phir naya pattern (Linked List / Trees).
 > **RETENTION reminder:** solved problems 20-din-cycle mein BINA dekhe cold re-try (recognition → retention). Bhoolna fail nahi, revise na karna fail.
