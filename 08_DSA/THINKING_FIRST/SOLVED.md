@@ -35,6 +35,7 @@
 | 19 | Binary Search            | Binary Search  |    |    |    | `[C]` mid+1/mid-1 |
 | 20 | Search in Rotated Sorted | Binary Search  |    |    |    | `[C]` which-half+range |
 | 21 | Find Min in Rotated Sorted | Binary Search |    |    |    | `[C]` mid-vs-end, no target |
+| 22 | Koko Eating Bananas      | BS-on-answer   |    |    |    | `[C]` feasible + int-ceil |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -149,6 +150,12 @@
 - **Key:** Sawaal-1 mein target NAHI (sirf low vs mid); Sawaal-2 mein target. Range-check `&&` se — `nums[low] <= target && target < nums[mid]`. **C++ chained comparison `a < x < b` GALAT** (bool ban jaata — `(a<x)<b`), `&&` chahiye.
 - **Note:** sabse tough yet. Two-question structure derive kiya; atka → debug-prints + dry-run se buggy line KHUD pakdi; seekha C++ chained-comparison nahi chalta (LOGIC sahi thi, LANGUAGE gotcha — alag cheez). Real debugging + generation, transcription nahi.
 
+## #22 — Koko Eating Bananas   (Medium | Binary Search ON THE ANSWER)
+- **Signal:** "min/max VALUE jo ek condition satisfy kare + monotonic N..N Y..Y" → Binary Search on the ANSWER (array pe nahi, answer-space pe)
+- **Approach (derived):** search-space `lo=1 .. hi=max(pile)` = possible speeds. Kisi speed `k` pe FEASIBLE? → `sum(ceil(pile/k)) <= h`. PASS → `ans=mid, high=mid-1` (aur dheere dhoondo); FAIL → `low=mid+1` (tez karo). boundary (pehli PASS) = min speed.
+- **Key:** naya sub-pattern — answer khud BS karte hain (feasibility line sorted N..N Y..Y). check-fn `sum(ceil(pile/k))`. **int-ceil = `(pile+k-1)/k`** (NOT `ceil(int/int)` — woh pehle floor kar deta!). `low` 1 se (0 → div-by-zero crash).
+- **Note:** multi-bug safar, SAB khud debug kiya — (1) missing return khud pakda, (2) low=0 div-0 crash khud fix, (3) `ceil(int/int)` bug DRY-RUN se nikaala (int division pehle floor → ceil bekaar), (4) exact-division edge → int-ceil trick lagaaya. Copy pe trace karke phoda. "Copy uthao, trace karo, code aata" — jiya.
+
 ## #21 — Find Minimum in Rotated Sorted Array   (Medium | Binary Search)
 - **Signal:** "rotated sorted + min dhoondo O(log n)" → modified Binary Search
 - **Approach (derived):** min = pivot (jahan order tuta). mid ko **END se compare** karo: `nums[mid] > nums[high]` → drop mid ke RIGHT mein → `low = mid+1`; warna min LEFT half mein (mid included) → `high = mid`. Range simat jaaye → `nums[low]` = min.
@@ -179,8 +186,8 @@
 
 ---
 
-> **Status:** 21 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 3 Binary Search). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. Binary Search chal raha (3: basic + rotated-search + rotated-min).**
-> **Binary Search "khatam" plan:** [x] basic [x] Search-in-Rotated [x] Find-Min-Rotated → baaki: Search a 2D Matrix, Koko Eating Bananas (BS-on-ANSWER). Ye 2 ho gaye → BS BAND, aage badho. (One pattern at a time, pura khatam karke move — Arpan ka rule.)
+> **Status:** 22 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 4 Binary Search). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. Binary Search 4/5 (basic + rotated-search + rotated-min + Koko BS-on-answer).**
+> **Binary Search "khatam" plan:** [x] basic [x] Search-in-Rotated [x] Find-Min-Rotated [x] Koko (BS-on-ANSWER) → baaki: **Search a 2D Matrix**. Woh ho gaya → BS BAND, aage badho (Linked List / Trees). (One pattern at a time, pura khatam karke move — Arpan ka rule.)
 > **Meta-milestone (19 Jun):** Arpan ne khud pakda "scaffold-transcription ≠ real learning" + "cold-generate karte waqt purana mat dekho" + **"DSA = COPY + PEN: baith, trace kar, jahan jaaye uske hisaab se code likh do — bas, aur kuch nahi"** (bina copy = impossible; spatial dimaag → trace se code aata). Aage minimal stubs (signal only, no pseudo-code) — woh structure khud generate karega.
 > **Milestone:** "medium easy lagne laga"; self-written syntax; pehla design problem.
 > **Defer:** Encode/Decode Strings. **Next:** Search a 2D Matrix / Koko (BS finish), phir naya pattern (Linked List / Trees).
