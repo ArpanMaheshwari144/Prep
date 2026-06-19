@@ -26,7 +26,18 @@ bool isFeasible(vector<int> &piles, int h, int mid)
     int sum = 0;
     for (int i = 0; i < piles.size(); i++)
     {
-        sum += ((piles[i] + mid - 1) / mid);
+        // ek dher ke ghante = ceil(pile / speed). Do tareeke, DONO same kaam:
+        //
+        // (A) DOUBLE cast (yahan use kiya):  ceil((double)piles[i] / mid)
+        //     ZAROORI: ek operand double banao. SIRF ceil(piles[i] / mid) GALAT —
+        //     int/int pehle floor kar deta (7/4 -> 1), phir ceil(1)=1 (decimal pehle hi udd gaya).
+        //     double se asli division: 7.0/4 = 1.75 -> ceil = 2. ceil double pe hi chalta hai.
+        //
+        // (B) PURE-INT formula (double nahi chahiye to):  (piles[i] + mid - 1) / mid
+        //     int hi mein ceiling. +(mid-1) = remainder ho to agle multiple pe dhakka,
+        //     exact divide ho to na badhe. No floating-point, no precision issue (CP-favourite).
+        sum += ceil((double)piles[i] / mid);
+        // sum += ((piles[i] + mid - 1) / mid);   // (B) ka alternative
     }
     return sum <= h;
 }
