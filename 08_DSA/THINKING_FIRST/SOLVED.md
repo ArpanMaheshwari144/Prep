@@ -33,6 +33,7 @@
 | 17 | Evaluate RPN             | Stack          |    |    |    | `[C]` pop b,a + stoi |
 | 18 | Daily Temperatures       | Stack (monotonic) |    |    |    | `[C]` next-greater |
 | 19 | Binary Search            | Binary Search  |    |    |    | `[C]` mid+1/mid-1 |
+| 20 | Search in Rotated Sorted | Binary Search  |    |    |    | `[C]` which-half+range |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -141,6 +142,12 @@
 
 ---
 
+## #20 — Search in Rotated Sorted Array   (Medium | Binary Search)
+- **Signal:** "rotated sorted + search O(log n)" → modified Binary Search
+- **Approach (derived):** mid==target → return. Warna **2 alag sawaal:** (1) kaunsa half SORTED? `nums[low] <= nums[mid]` → left sorted, warna right. (2) target us sorted-half ki RANGE mein? → wahan jao : doosre jao. (NESTED, flat nahi.)
+- **Key:** Sawaal-1 mein target NAHI (sirf low vs mid); Sawaal-2 mein target. Range-check `&&` se — `nums[low] <= target && target < nums[mid]`. **C++ chained comparison `a < x < b` GALAT** (bool ban jaata — `(a<x)<b`), `&&` chahiye.
+- **Note:** sabse tough yet. Two-question structure derive kiya; atka → debug-prints + dry-run se buggy line KHUD pakdi; seekha C++ chained-comparison nahi chalta (LOGIC sahi thi, LANGUAGE gotcha — alag cheez). Real debugging + generation, transcription nahi.
+
 ## #19 — Binary Search   (Easy | Binary Search — pattern start)
 - **Signal:** "sorted + search" → Binary Search (har step AADHA kaato)
 - **Approach (derived):** lo=0, hi=n-1. `while(lo<=hi)`: `mid = lo+(hi-lo)/2`; ==target→return mid; <target→`lo=mid+1`; >target→`hi=mid-1`. End → -1.
@@ -165,7 +172,7 @@
 
 ---
 
-> **Status:** 19 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 1 Binary Search). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. Binary Search SHURU.**
+> **Status:** 20 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 2 Binary Search). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. Binary Search chal raha (2, incl rotated).**
 > **Meta-milestone (19 Jun):** Arpan ne khud pakda "scaffold-transcription ≠ real learning" + "cold-generate karte waqt purana mat dekho". Aage minimal stubs (signal only, no pseudo-code) — woh structure khud generate karega.
 > **Milestone:** "medium easy lagne laga"; self-written syntax; pehla design problem.
 > **Defer:** Encode/Decode Strings. **Next:** aur Stack (Eval RPN / Daily Temperatures) ya Binary Search.
