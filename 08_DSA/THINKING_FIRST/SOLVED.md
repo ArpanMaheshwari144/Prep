@@ -32,6 +32,7 @@
 | 16 | Min Stack                | Stack (design) |    |    |    | `[C]` pair {val,min} |
 | 17 | Evaluate RPN             | Stack          |    |    |    | `[C]` pop b,a + stoi |
 | 18 | Daily Temperatures       | Stack (monotonic) |    |    |    | `[C]` next-greater |
+| 19 | Binary Search            | Binary Search  |    |    |    | `[C]` mid+1/mid-1 |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -140,6 +141,12 @@
 
 ---
 
+## #19 — Binary Search   (Easy | Binary Search — pattern start)
+- **Signal:** "sorted + search" → Binary Search (har step AADHA kaato)
+- **Approach (derived):** lo=0, hi=n-1. `while(lo<=hi)`: `mid = lo+(hi-lo)/2`; ==target→return mid; <target→`lo=mid+1`; >target→`hi=mid-1`. End → -1.
+- **Key:** `lo=mid+1` / `hi=mid-1` (HALF skip = O(log n)) — NOT `lo++`/`hi--` (woh LINEAR O(n)!). `mid = lo+(hi-lo)/2` (overflow-safe). `lo<=hi`.
+- **Note:** chhote tests `lo++`/`hi--` (linear) se bhi PASS ho gaye — "test-pass ≠ correct" flag se pakda. Live lesson: chhote tests O(n) vs O(log n) miss karte. (Foundational BS template OWN ho gaya.)
+
 ## #18 — Daily Temperatures   (Medium | Stack — MONOTONIC)
 - **Signal:** "har element ke liye agla BADA (kitni door)" → monotonic stack (next-greater pattern)
 - **Approach (derived):** stack of INDICES (decreasing temp). ans init 0. `for i`: while top CHOTA (`temp[i] > temp[st.top()]`) → idx=pop, `ans[idx] = i - idx`; push i. End → jo bache = 0.
@@ -158,7 +165,7 @@
 
 ---
 
-> **Status:** 18 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window deepened. Stack chal raha (4, incl monotonic).**
+> **Status:** 19 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 1 Binary Search). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. Binary Search SHURU.**
 > **Meta-milestone (19 Jun):** Arpan ne khud pakda "scaffold-transcription ≠ real learning" + "cold-generate karte waqt purana mat dekho". Aage minimal stubs (signal only, no pseudo-code) — woh structure khud generate karega.
 > **Milestone:** "medium easy lagne laga"; self-written syntax; pehla design problem.
 > **Defer:** Encode/Decode Strings. **Next:** aur Stack (Eval RPN / Daily Temperatures) ya Binary Search.
