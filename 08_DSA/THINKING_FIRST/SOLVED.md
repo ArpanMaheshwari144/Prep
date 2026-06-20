@@ -32,9 +32,9 @@
 
 | #  | Problem                  | Pattern        | R1 | R2 | R3 | re-code? |
 |----|--------------------------|----------------|----|----|----|----------|
-| 1  | Contains Duplicate       | Hashing        |    |    |    |          |
-| 2  | Valid Anagram            | Hashing        |    |    |    |          |
-| 3  | Two Sum                  | Hashing        |    |    |    |          |
+| 1  | Contains Duplicate       | Hashing        | ✓ 20Jun cold |    |    |          |
+| 2  | Valid Anagram            | Hashing        | ✓ 20Jun cold |    |    |          |
+| 3  | Two Sum                  | Hashing        | ✓ 20Jun cold |    |    |          |
 | 4  | Group Anagrams           | Hashing        |    |    |    |          |
 | 5  | Top K Frequent           | Hashing/bucket |    |    |    |          |
 | 6  | Product Except Self      | Prefix×Suffix  |    |    |    |          |
