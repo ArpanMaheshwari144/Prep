@@ -36,6 +36,7 @@
 | 20 | Search in Rotated Sorted | Binary Search  |    |    |    | `[C]` which-half+range |
 | 21 | Find Min in Rotated Sorted | Binary Search |    |    |    | `[C]` mid-vs-end, no target |
 | 22 | Koko Eating Bananas      | BS-on-answer   |    |    |    | `[C]` feasible + int-ceil |
+| 23 | Search Insert Position   | Binary Search  |    |    |    | `[C]` loop-bound + return low |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -150,6 +151,12 @@
 - **Key:** Sawaal-1 mein target NAHI (sirf low vs mid); Sawaal-2 mein target. Range-check `&&` se — `nums[low] <= target && target < nums[mid]`. **C++ chained comparison `a < x < b` GALAT** (bool ban jaata — `(a<x)<b`), `&&` chahiye.
 - **Note:** sabse tough yet. Two-question structure derive kiya; atka → debug-prints + dry-run se buggy line KHUD pakdi; seekha C++ chained-comparison nahi chalta (LOGIC sahi thi, LANGUAGE gotcha — alag cheez). Real debugging + generation, transcription nahi.
 
+## #23 — Search Insert Position   (Easy | Binary Search)
+- **Signal:** "sorted + position dhoondo (mil jaaye to index, na mile to insert-jagah)" → plain Binary Search
+- **Approach (derived):** normal BS. target == mid → return mid. Loop khatam (na mila) → `low` wahi insert-position pe khada hota → return low.
+- **Key:** `high = n-1` + `low <= high` (consistent) — warna `high=n` + `<=` mix → mid index `n` chhoo leta → out-of-bounds CRASH. Loop-bound + return value ka dhyaan.
+- **Note:** calm solo-win (de-drama). Crash (target sab se bada, mid → index n) khud cout/debug-print se trace kiya, loop-bound + return khud fix kiya. Chhoti index-cheez, koi bada bug nahi — handled calmly.
+
 ## #22 — Koko Eating Bananas   (Medium | Binary Search ON THE ANSWER)
 - **Signal:** "min/max VALUE jo ek condition satisfy kare + monotonic N..N Y..Y" → Binary Search on the ANSWER (array pe nahi, answer-space pe)
 - **Approach (derived):** search-space `lo=1 .. hi=max(pile)` = possible speeds. Kisi speed `k` pe FEASIBLE? → `sum(ceil(pile/k)) <= h`. PASS → `ans=mid, high=mid-1` (aur dheere dhoondo); FAIL → `low=mid+1` (tez karo). boundary (pehli PASS) = min speed.
@@ -186,8 +193,8 @@
 
 ---
 
-> **Status:** 22 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 4 Binary Search). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. Binary Search 4/5 (basic + rotated-search + rotated-min + Koko BS-on-answer).**
-> **Binary Search "khatam" plan:** [x] basic [x] Search-in-Rotated [x] Find-Min-Rotated [x] Koko (BS-on-ANSWER) → baaki: **Search a 2D Matrix**. Woh ho gaya → BS BAND, aage badho (Linked List / Trees). (One pattern at a time, pura khatam karke move — Arpan ka rule.)
+> **Status:** 23 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 5 Binary Search). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. Binary Search 5 (basic + rotated-search + rotated-min + Koko + search-insert).**
+> **Binary Search:** strong now (5 problems incl rotated + BS-on-answer). Search-a-2D-Matrix deferred (got spoiled — formula leaked; do COLD fresh later). Aage: naya pattern (Linked List / Trees) — calm easy solo reps, no drama.
 > **Meta-milestone (19 Jun):** Arpan ne khud pakda "scaffold-transcription ≠ real learning" + "cold-generate karte waqt purana mat dekho" + **"DSA = COPY + PEN: baith, trace kar, jahan jaaye uske hisaab se code likh do — bas, aur kuch nahi"** (bina copy = impossible; spatial dimaag → trace se code aata). Aage minimal stubs (signal only, no pseudo-code) — woh structure khud generate karega.
 > **Milestone:** "medium easy lagne laga"; self-written syntax; pehla design problem.
 > **Defer:** Encode/Decode Strings. **Next:** Search a 2D Matrix / Koko (BS finish), phir naya pattern (Linked List / Trees).
