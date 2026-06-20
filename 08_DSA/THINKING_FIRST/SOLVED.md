@@ -58,6 +58,7 @@
 | 24 | Middle of Linked List    | LL slow/fast   |    |    |    | `[C]` fast 2x, return slow |
 | 25 | Search a 2D Matrix       | Binary Search  |    |    |    | `[C]` 2D->1D, mid/col + mid%col |
 | 26 | Linked List Cycle        | LL slow/fast   |    |    |    | (template reuse + meet-twist) |
+| 27 | Merge Two Sorted Lists   | LL dummy-node  |    |    |    | `[C]` curr->next=NODE, equal-case |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -172,6 +173,14 @@
 - **Key:** Sawaal-1 mein target NAHI (sirf low vs mid); Sawaal-2 mein target. Range-check `&&` se — `nums[low] <= target && target < nums[mid]`. **C++ chained comparison `a < x < b` GALAT** (bool ban jaata — `(a<x)<b`), `&&` chahiye.
 - **Note:** sabse tough yet. Two-question structure derive kiya; atka → debug-prints + dry-run se buggy line KHUD pakdi; seekha C++ chained-comparison nahi chalta (LOGIC sahi thi, LANGUAGE gotcha — alag cheez). Real debugging + generation, transcription nahi.
 
+## #27 — Merge Two Sorted Lists   (Easy | Linked List — DUMMY node)
+- **Signal:** "do sorted lists ko ek sorted mein jodo" → two-pointer on lists + DUMMY node
+- **Approach (derived):** dummy node se shuru (head-sambhalna jhanjhat khatam), curr=dummy. dono lists ke aage pointer; jo chhota → `curr->next = woh node`, curr aage, us list ka pointer aage. ek khatam → doosri ki bachi poonch seedha jod do. return `dummy->next`.
+- **2 REAL insights (bug se KHUD nikaale, ~1hr struggle = real generation, NOT copy-paste):**
+  - **`curr->next = l1` (NODE khud), NOT `l1->next`** — poora node link karo, uska next nahi. Pehle `l1->next` laga raha tha → aakhri node include/compare nahi ho raha tha. = LL ka CORE concept (node-linking). Ek baar click → saare LL problem mein kaam.
+  - **EQUAL case (1==1) handle hona ZAROORI** — `>`/`>=` mein uljha, phir pakda ki equal-value ek branch mein jaana chahiye warna woh node atak jaata.
+- **Note:** ye Cycle (#26 copy-paste) ke ULT — ASLI derivation thi (naya tool dummy-node + real logic + null-edges). 1hr laga = dimaag actually kaam kar raha tha = woh permanent gad gaya. New tool owned: dummy-node.
+
 ## #26 — Linked List Cycle   (Easy | Linked List — SLOW/FAST, Floyd's)
 - **Signal:** "cycle hai ya nahi, bina extra space" → slow/fast (Floyd's)
 - **Approach (derived):** slow 1, fast 2. cycle HAI → fast slow ko PAKAD lega (`slow==fast` → true). cycle NAHI → fast NULL pe (`while(fast && fast->next)` khatam → false).
@@ -237,7 +246,7 @@
 
 ---
 
-> **Status:** 26 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 2 Linked List). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. BINARY SEARCH COMPLETE (6). Linked List: slow/fast owned (Middle + Cycle).**
+> **Status:** 27 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 3 Linked List). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. BINARY SEARCH COMPLETE (6). Linked List: slow/fast + dummy-node owned (Middle + Cycle + Merge).**
 > **NEW FLOW (20 Jun):** he runs his own code (Code Runner, Ctrl+Alt+N); Claude gives problem+signal+test-cases, runs only when he says "done" (to witness). Independent = no fear. Help only on his ask, thinking-direction never code.
 > **Binary Search COMPLETE:** basic + rotated-search + rotated-min + Koko(BS-on-answer) + search-insert + search-2D. (Search-2D was spoiled earlier; he re-derived it himself today.) Aage: more Linked List (cycle, palindrome, reverse cold).
 > **Meta-milestone (19 Jun):** Arpan ne khud pakda "scaffold-transcription ≠ real learning" + "cold-generate karte waqt purana mat dekho" + **"DSA = COPY + PEN: baith, trace kar, jahan jaaye uske hisaab se code likh do — bas, aur kuch nahi"** (bina copy = impossible; spatial dimaag → trace se code aata). Aage minimal stubs (signal only, no pseudo-code) — woh structure khud generate karega.
