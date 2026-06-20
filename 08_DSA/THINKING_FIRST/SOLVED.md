@@ -37,6 +37,7 @@
 | 21 | Find Min in Rotated Sorted | Binary Search |    |    |    | `[C]` mid-vs-end, no target |
 | 22 | Koko Eating Bananas      | BS-on-answer   |    |    |    | `[C]` feasible + int-ceil |
 | 23 | Search Insert Position   | Binary Search  |    |    |    | `[C]` loop-bound + return low |
+| 24 | Middle of Linked List    | LL slow/fast   |    |    |    | `[C]` fast 2x, return slow |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -151,6 +152,12 @@
 - **Key:** Sawaal-1 mein target NAHI (sirf low vs mid); Sawaal-2 mein target. Range-check `&&` se — `nums[low] <= target && target < nums[mid]`. **C++ chained comparison `a < x < b` GALAT** (bool ban jaata — `(a<x)<b`), `&&` chahiye.
 - **Note:** sabse tough yet. Two-question structure derive kiya; atka → debug-prints + dry-run se buggy line KHUD pakdi; seekha C++ chained-comparison nahi chalta (LOGIC sahi thi, LANGUAGE gotcha — alag cheez). Real debugging + generation, transcription nahi.
 
+## #24 — Middle of the Linked List   (Easy | Linked List — SLOW/FAST pointer)
+- **Signal:** "middle / half / cycle without counting length" → SLOW + FAST pointer (naya tool)
+- **Approach (derived):** slow 1 kadam, fast 2 kadam. `while(fast && fast->next)` → jab fast aakhir pe, slow theek beech. even length → doosra middle (problem ne yahi maanga). return slow.
+- **Key:** loop condition `fast && fast->next` (dono check — warna fast->next->next NULL pe crash). Naya pattern: slow/fast = middle, cycle-detect, palindrome-LL sab isi pe.
+- **Note:** FIRST clean INDEPENDENT solo-win under the new self-run flow (he runs own code via Code Runner, Claude out of loop). Slow/fast khud derive kiya, first try, saare edge (even/odd/single) pass. "main apna malik." DSA fear ka root = dependence; independence ne kaata. Spatial mode (arrows) se nikaala.
+
 ## #23 — Search Insert Position   (Easy | Binary Search)
 - **Signal:** "sorted + position dhoondo (mil jaaye to index, na mile to insert-jagah)" → plain Binary Search
 - **Approach (derived):** normal BS. target == mid → return mid. Loop khatam (na mila) → `low` wahi insert-position pe khada hota → return low.
@@ -193,8 +200,9 @@
 
 ---
 
-> **Status:** 23 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 5 Binary Search). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. Binary Search 5 (basic + rotated-search + rotated-min + Koko + search-insert).**
-> **Binary Search:** strong now (5 problems incl rotated + BS-on-answer). Search-a-2D-Matrix deferred (got spoiled — formula leaked; do COLD fresh later). Aage: naya pattern (Linked List / Trees) — calm easy solo reps, no drama.
+> **Status:** 24 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 5 Binary Search + 1 Linked List). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. Binary Search strong (5). Linked List STARTED (slow/fast).**
+> **NEW FLOW (20 Jun):** he runs his own code (Code Runner, Ctrl+Alt+N); Claude only gives problem+signal+test-cases. Independent = no fear. Help only on his ask, thinking-direction never code.
+> **Binary Search:** 5 problems (incl rotated + BS-on-answer). Search-a-2D-Matrix + Reverse-LL deferred (spoiled — do COLD fresh). Aage: more Linked List (slow/fast → cycle, palindrome; + reverse cold).
 > **Meta-milestone (19 Jun):** Arpan ne khud pakda "scaffold-transcription ≠ real learning" + "cold-generate karte waqt purana mat dekho" + **"DSA = COPY + PEN: baith, trace kar, jahan jaaye uske hisaab se code likh do — bas, aur kuch nahi"** (bina copy = impossible; spatial dimaag → trace se code aata). Aage minimal stubs (signal only, no pseudo-code) — woh structure khud generate karega.
 > **Milestone:** "medium easy lagne laga"; self-written syntax; pehla design problem.
 > **Defer:** Encode/Decode Strings. **Next:** Search a 2D Matrix / Koko (BS finish), phir naya pattern (Linked List / Trees).
