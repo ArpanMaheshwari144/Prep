@@ -17,24 +17,30 @@
 
 # AT A GLANCE — kya gaya, kya bacha
 
+> **FULL INVENTORY (actual file-count audit, 20 Jun) — "kuch nahi ho raha" is FALSE; folder proves months of solid work:**
 ```
-   AREA                STATUS            DETAIL
+   AREA                STATUS            ACTUAL COUNT + DETAIL
    ─────────────────   ───────────────   ──────────────────────────────────────────────
-   Java                DONE              Collections, Java8, Multithreading, SOLID, Patterns, BrainTicklers
-   Spring              DONE              Basics, @Transactional, JWT, Hibernate, Profiles, Docker, K8s, Revision-visual
-   LLD                 DONE              11 problems (parking, bms, ttt, snake, elevator, atm, bank, cart, library, vending, hotel)
+   Java                DONE              110 note files (Core/Collections/Java8/Multithreading/SOLID/Patterns/BrainTicklers)
+   Spring              DONE              41 note files (basics/@Transactional/JWT/Hibernate/Profiles/Docker/K8s + revision-visual)
+   LLD                 DONE              11 problems (parking, bms, ttt, snake-ladder, elevator, atm, bank, cart, library, vending, hotel)
    Projects            DONE              TODO full pipeline (CRUD → JWT → Redis → Docker → K8s → AWS EC2)
-   Infra / Compares    DONE              CDN/LB/DNS/WAF + AWS/Docker/K8s commands; 12 compare-notes
-   Database            DONE (core)       Indexing practical (hands-on)
+   Infra (05_INFRA)    DONE              9 notes (CDN + AWS/Docker/K8s setup-journeys + commands)
+   Compares (06)       DONE              12 notes (SQL/NoSQL, TCP/UDP, REST/GraphQL, WebSocket/SSE, sync/async, auth...)
+   Database (09)       DONE (core)       Indexing practical (hands-on)
    ───────────────────────────────────────────────────────────────────────────────────────
    HLD Foundations     DONE  10/10       HLD-basics, Capacity, LB, Cache, Replication, Sharding, MQ, CAP, DB-choice, MS-Comm
-   HLD System Designs  IN PROGRESS       Stock Broker JP-deep DONE (4 layers) + Payment System (UPI) JP/finance DEEP DONE (file 17)
+   HLD System Designs  7 done            url-shortener, rate-limiter, twitter-feed, notification, url-journey,
+                                         #16 STOCK BROKER/TRADING (JP-deep) + #17 PAYMENT SYSTEM/UPI (JP-finance deep)
    ───────────────────────────────────────────────────────────────────────────────────────
-   DSA Phase 1 (intuition) DONE  8/8     Arrays, Two-Ptr, Sliding-Win, Hashing, Prefix, Binary-Search, Kadane, Strings + NAVIGATOR
-   DSA active-derive       IN PROGRESS   20 logged (SOLVED.md): Hashing+Two-Ptr COMPLETE, Sliding-Win deep, Grid 3, STACK 4, BINARY-SEARCH 2
+   DSA coded           43 .cpp           8 patterns: Arrays-basics 8, Two-Ptr 7, Sliding-Win 5, Hashing 7,
+                                         Prefix 4, Matrix 3, Stack 4, Binary-Search 5
+   DSA active-derive   IN PROGRESS  23   SOLVED.md: Hashing+Two-Ptr COMPLETE, Sliding-Win/Stack/Grid deep, Binary-Search 5 (strong)
    ───────────────────────────────────────────────────────────────────────────────────────
-   Apply system        LIVE              Machine BUILT (resume/LinkedIn/Naukri/Cutshort + playbook) | JP Morgan APPLIED + Kumar(VP) referral
+   Apply system        LIVE              Machine BUILT (resume/LinkedIn/Naukri/Cutshort + playbook) | JP applied + Razorpay + FIS + referrals
 ```
+> **FINANCE/JP-HLD depth (the edge):** #16 Stock-Broker (order matching, event-log, saga) + #17 Payment (idempotency,
+> consistency, failure-handling, ledger double-entry, Saga) = JP/GS core. NEXT depth option: Order-Matching-Engine OR Wallet/Ledger system.
 
 ---
 
