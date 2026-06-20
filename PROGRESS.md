@@ -192,10 +192,15 @@ COMP (4yr Associate Bangalore): base 18-22L, total 26-33L median, top ~47L (Seni
 
 ```
    Aaj: 19 June 2026   |   In Bangalore (since 15 June)   |   Mode: APPLY + LEARN parallel (apply LIVE)
-   Focus now: (1) FEED the apply-machine daily (referral-first, check JP/Kumar + inbound) — #1 lever
-              (2) DSA active-derive daily + start 20-day spaced cold-recode cycle
-              (3) HLD JP/finance depth (Payment + Broker done; 1-2 more)
-   Bottleneck = was APPLYING -> now UNBLOCKED & live; keep the momentum, sabar for the no-signal window.
+
+   SETTLED DAILY RHYTHM (19 Jun, de-drama'd):
+      1. REVISION (Claude drills from his own notes):  Java  ->  HLD     [important -> note immediately]
+      2. DSA  ->  calm reps (easy + solo, no drama)
+      3. APPLY (evening): Apply-Method 3-5/day, check Kumar(JP) reply, respond to inbound, referrals.
+
+   STRENGTH-FOCUS: go DEEP on Java + Spring + HLD = the real EDGE (esp. JP/finance: HLD trade-offs + Java depth).
+   DSA = a narrow GATE to clear (~2 mediums), NOT a mountain to "master". Calm reps are enough.
+   Note (19 Jun): stop over-dramatizing DSA -- struggle IS the work; on a real stuck, hint/peek and move on, no spiral.
 ```
 
 ---

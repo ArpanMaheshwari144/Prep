@@ -139,6 +139,38 @@ Producer → Topic → ALL subscribers receive
 
 ---
 
+## WHY Kafka Bana — LinkedIn Origin (event-driven architecture)
+
+> Apni connection (revision 20 Jun): LinkedIn ne Kafka banaya, unka pura system pub-sub hai.
+
+```
+PROBLEM (LinkedIn ~2010): bahut services -- profile, feed, search, messaging,
+   analytics, ML recommendations. Har koi ko har kisi ka data chahiye.
+   Agar har service SEEDHA har service se baat kare:
+        N services -> N×N connections -> SPAGHETTI
+        naya consumer add -> sab producers ko change (nightmare)
+
+SOLUTION (Kafka = central event LOG):
+   koi bhi event ho (profile update, post like, job view)
+        -> ek central LOG (topic) mein likho, EK BAAR
+        -> jisko chahiye SUBSCRIBE kar le (feed, search, analytics, ML...)
+   Producer ko pata NAHI kaun sun raha. Naya consumer add -> kisi ko change nahi.
+   -> LinkedIn ka pura architecture EVENT-DRIVEN / pub-sub ban gaya.
+```
+
+**Kafka ka khaas (normal queue se farak — yehi insight):**
+```
+   Normal MQ (RabbitMQ/SQS): message uthaya -> DELETE (transient, ek baar)
+   Kafka: DURABLE append-only LOG -> retention (days/weeks)
+        -> naya consumer aaye -> PURANE events bhi padh sakta (REPLAY)
+        -> isliye analytics/ML ko bhi feed kar paaya (woh history chahte)
+```
+
+> **1-line:** N×N spaghetti se bachne ko sab kuch ek central durable event-log mein —
+> producer blind, consumer subscribe, replay possible. LinkedIn = pub-sub at its core.
+
+---
+
 ## Kafka Deep (key concepts)
 
 ```
