@@ -38,6 +38,7 @@
 | 22 | Koko Eating Bananas      | BS-on-answer   |    |    |    | `[C]` feasible + int-ceil |
 | 23 | Search Insert Position   | Binary Search  |    |    |    | `[C]` loop-bound + return low |
 | 24 | Middle of Linked List    | LL slow/fast   |    |    |    | `[C]` fast 2x, return slow |
+| 25 | Search a 2D Matrix       | Binary Search  |    |    |    | `[C]` 2D->1D, mid/col + mid%col |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -152,6 +153,12 @@
 - **Key:** Sawaal-1 mein target NAHI (sirf low vs mid); Sawaal-2 mein target. Range-check `&&` se — `nums[low] <= target && target < nums[mid]`. **C++ chained comparison `a < x < b` GALAT** (bool ban jaata — `(a<x)<b`), `&&` chahiye.
 - **Note:** sabse tough yet. Two-question structure derive kiya; atka → debug-prints + dry-run se buggy line KHUD pakdi; seekha C++ chained-comparison nahi chalta (LOGIC sahi thi, LANGUAGE gotcha — alag cheez). Real debugging + generation, transcription nahi.
 
+## #25 — Search a 2D Matrix   (Medium | Binary Search — 2D as 1D)
+- **Signal:** "fully sorted grid (rows sorted + rows ordered) + search O(log)" → BS on virtual 1D index
+- **Approach (derived):** poori matrix = ek lambi sorted line. Physically flatten NAHI — dimaag mein 1D maano, index `0..m*n-1` pe plain BS. mid (flat index) → cell: `row = mid/cols`, `col = mid%cols`. value `matrix[mid/col][mid%col]` → compare → left/right/found.
+- **Key:** mid ko (row,col) mein todna = divide/remainder (#columns se). `hi = row*col - 1`. Baaki sab normal BS.
+- **Note:** ye problem PEHLE spoiled hua tha (Claude ne formula de diya). AAJ Arpan ne `mid/cols`, `mid%cols` KHUD re-derived ("6/4=1, 6%4=2, saaf dikh raha") + poora BS khud likha + khud run. Cold re-derivation = passed. Spoiled cheez ko apni samajh se phoda = real learning proof. Binary Search COMPLETE (6 problems, all variants).
+
 ## #24 — Middle of the Linked List   (Easy | Linked List — SLOW/FAST pointer)
 - **Signal:** "middle / half / cycle without counting length" → SLOW + FAST pointer (naya tool)
 - **Approach (derived):** slow 1 kadam, fast 2 kadam. `while(fast && fast->next)` → jab fast aakhir pe, slow theek beech. even length → doosra middle (problem ne yahi maanga). return slow.
@@ -200,9 +207,9 @@
 
 ---
 
-> **Status:** 24 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 5 Binary Search + 1 Linked List). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. Binary Search strong (5). Linked List STARTED (slow/fast).**
-> **NEW FLOW (20 Jun):** he runs his own code (Code Runner, Ctrl+Alt+N); Claude only gives problem+signal+test-cases. Independent = no fear. Help only on his ask, thinking-direction never code.
-> **Binary Search:** 5 problems (incl rotated + BS-on-answer). Search-a-2D-Matrix + Reverse-LL deferred (spoiled — do COLD fresh). Aage: more Linked List (slow/fast → cycle, palindrome; + reverse cold).
+> **Status:** 25 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 1 Linked List). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. BINARY SEARCH COMPLETE (6, all variants). Linked List STARTED (slow/fast).**
+> **NEW FLOW (20 Jun):** he runs his own code (Code Runner, Ctrl+Alt+N); Claude gives problem+signal+test-cases, runs only when he says "done" (to witness). Independent = no fear. Help only on his ask, thinking-direction never code.
+> **Binary Search COMPLETE:** basic + rotated-search + rotated-min + Koko(BS-on-answer) + search-insert + search-2D. (Search-2D was spoiled earlier; he re-derived it himself today.) Aage: more Linked List (cycle, palindrome, reverse cold).
 > **Meta-milestone (19 Jun):** Arpan ne khud pakda "scaffold-transcription ≠ real learning" + "cold-generate karte waqt purana mat dekho" + **"DSA = COPY + PEN: baith, trace kar, jahan jaaye uske hisaab se code likh do — bas, aur kuch nahi"** (bina copy = impossible; spatial dimaag → trace se code aata). Aage minimal stubs (signal only, no pseudo-code) — woh structure khud generate karega.
 > **Milestone:** "medium easy lagne laga"; self-written syntax; pehla design problem.
 > **Defer:** Encode/Decode Strings. **Next:** Search a 2D Matrix / Koko (BS finish), phir naya pattern (Linked List / Trees).
