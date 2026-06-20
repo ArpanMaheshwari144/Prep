@@ -29,7 +29,6 @@ struct ListNode
 // ---- TERA kaam: yeh function ----
 ListNode *removeNthFromEnd(ListNode *head, int n)
 {
-    // ListNode *dummy = head;
     ListNode *slow = head;
     ListNode *fast = head;
 
