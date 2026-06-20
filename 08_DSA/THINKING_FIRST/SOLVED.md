@@ -153,6 +153,12 @@
 - **Key:** Sawaal-1 mein target NAHI (sirf low vs mid); Sawaal-2 mein target. Range-check `&&` se — `nums[low] <= target && target < nums[mid]`. **C++ chained comparison `a < x < b` GALAT** (bool ban jaata — `(a<x)<b`), `&&` chahiye.
 - **Note:** sabse tough yet. Two-question structure derive kiya; atka → debug-prints + dry-run se buggy line KHUD pakdi; seekha C++ chained-comparison nahi chalta (LOGIC sahi thi, LANGUAGE gotcha — alag cheez). Real debugging + generation, transcription nahi.
 
+## BINARY SEARCH — `<=` vs `<` (Arpan ki apni insight, khud socha 20 Jun)
+- **Search-and-return template (most common) → hamesha `low <= high`.** Kyunki tu element DHOONDH raha hai — jab `lo` aur `hi` mil jaayein (sirf ek element bacha), woh akela element TARGET ho sakta. `<` use kiya to loop us last element ko check kiye bina nikal jaata → MISS.
+- **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
+- **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
+- Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
 ## #25 — Search a 2D Matrix   (Medium | Binary Search — 2D as 1D)
 - **Signal:** "fully sorted grid (rows sorted + rows ordered) + search O(log)" → BS on virtual 1D index
 - **Approach (derived):** poori matrix = ek lambi sorted line. Physically flatten NAHI — dimaag mein 1D maano, index `0..m*n-1` pe plain BS. mid (flat index) → cell: `row = mid/cols`, `col = mid%cols`. value `matrix[mid/col][mid%col]` → compare → left/right/found.
