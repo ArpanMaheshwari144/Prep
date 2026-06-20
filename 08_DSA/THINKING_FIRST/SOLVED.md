@@ -59,6 +59,7 @@
 | 25 | Search a 2D Matrix       | Binary Search  |    |    |    | `[C]` 2D->1D, mid/col + mid%col |
 | 26 | Linked List Cycle        | LL slow/fast   |    |    |    | (template reuse + meet-twist) |
 | 27 | Merge Two Sorted Lists   | LL dummy-node  |    |    |    | `[C]` curr->next=NODE, equal-case |
+| 28 | Remove Nth From End      | LL gap+dummy   |    |    |    | `[C]` n-gap, head-edge (fast==NULL) |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -173,6 +174,12 @@
 - **Key:** Sawaal-1 mein target NAHI (sirf low vs mid); Sawaal-2 mein target. Range-check `&&` se — `nums[low] <= target && target < nums[mid]`. **C++ chained comparison `a < x < b` GALAT** (bool ban jaata — `(a<x)<b`), `&&` chahiye.
 - **Note:** sabse tough yet. Two-question structure derive kiya; atka → debug-prints + dry-run se buggy line KHUD pakdi; seekha C++ chained-comparison nahi chalta (LOGIC sahi thi, LANGUAGE gotcha — alag cheez). Real debugging + generation, transcription nahi.
 
+## #28 — Remove Nth Node From End   (Medium | Linked List — two-pointer GAP)
+- **Signal:** "end se Nth / ek pass" → two-pointer with GAP of n (+ head-edge handling)
+- **Approach (derived):** fast ko PEHLE n kadam aage. phir slow+fast SAATH. fast end pe → slow us node ke PICHLE pe (jise hatana, uska previous) → link skip. head-hatane wala edge alag.
+- **Key (he spotted the edge himself, needed nudge only for the handle-idiom):** n-advance ke baad agar `fast == NULL` → n = length → HEAD hi hatana → `return head->next`. (Idiom seekha; soch — edge spot karna — uski thi.)
+- **Honest note:** gap + previous-node logic KHUD nikaala. Phasa sirf head-removal edge ke HANDLE pe (fast==NULL→head->next) — Claude ne THINKING-direction di (code nahi), Arpan ne return khud nikaala. Perfect new-help-model example. His own framing: "edge SPOT karna meri soch thi; handle ka IDIOM naya seekha" (soch ≠ idiom; idioms exposure se jamte hain).
+
 ## #27 — Merge Two Sorted Lists   (Easy | Linked List — DUMMY node)
 - **Signal:** "do sorted lists ko ek sorted mein jodo" → two-pointer on lists + DUMMY node
 - **Approach (derived):** dummy node se shuru (head-sambhalna jhanjhat khatam), curr=dummy. dono lists ke aage pointer; jo chhota → `curr->next = woh node`, curr aage, us list ka pointer aage. ek khatam → doosri ki bachi poonch seedha jod do. return `dummy->next`.
@@ -246,7 +253,8 @@
 
 ---
 
-> **Status:** 27 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 3 Linked List). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. BINARY SEARCH COMPLETE (6). Linked List: slow/fast + dummy-node owned (Middle + Cycle + Merge).**
+> **Status:** 28 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 4 Linked List). **Arrays&Hashing + Two Pointer COMPLETE. BINARY SEARCH COMPLETE (6). Linked List: slow/fast + dummy + gap owned (Middle + Cycle + Merge + Remove-Nth).**
+> **COLD REDO started (20 Jun):** new `08_DSA/COLD_REDO/` — redo ALL patterns blank/self-run (purane mein kahin Claude-help thi; ye clean ownership). Original PHASE2_CODING = reference (peek nahi). Nothing deleted.
 > **NEW FLOW (20 Jun):** he runs his own code (Code Runner, Ctrl+Alt+N); Claude gives problem+signal+test-cases, runs only when he says "done" (to witness). Independent = no fear. Help only on his ask, thinking-direction never code.
 > **Binary Search COMPLETE:** basic + rotated-search + rotated-min + Koko(BS-on-answer) + search-insert + search-2D. (Search-2D was spoiled earlier; he re-derived it himself today.) Aage: more Linked List (cycle, palindrome, reverse cold).
 > **Meta-milestone (19 Jun):** Arpan ne khud pakda "scaffold-transcription ≠ real learning" + "cold-generate karte waqt purana mat dekho" + **"DSA = COPY + PEN: baith, trace kar, jahan jaaye uske hisaab se code likh do — bas, aur kuch nahi"** (bina copy = impossible; spatial dimaag → trace se code aata). Aage minimal stubs (signal only, no pseudo-code) — woh structure khud generate karega.
