@@ -60,6 +60,7 @@
 | 26 | Linked List Cycle        | LL slow/fast   |    |    |    | (template reuse + meet-twist) |
 | 27 | Merge Two Sorted Lists   | LL dummy-node  |    |    |    | `[C]` curr->next=NODE, equal-case |
 | 28 | Remove Nth From End      | LL gap+dummy   |    |    |    | `[C]` n-gap, head-edge (fast==NULL) |
+| 29 | Reverse Linked List      | LL 3-pointer   |    |    |    | `[C]` prev/curr/next, save-then-flip |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -174,6 +175,12 @@
 - **Key:** Sawaal-1 mein target NAHI (sirf low vs mid); Sawaal-2 mein target. Range-check `&&` se — `nums[low] <= target && target < nums[mid]`. **C++ chained comparison `a < x < b` GALAT** (bool ban jaata — `(a<x)<b`), `&&` chahiye.
 - **Note:** sabse tough yet. Two-question structure derive kiya; atka → debug-prints + dry-run se buggy line KHUD pakdi; seekha C++ chained-comparison nahi chalta (LOGIC sahi thi, LANGUAGE gotcha — alag cheez). Real debugging + generation, transcription nahi.
 
+## #29 — Reverse Linked List   (Easy | Linked List — 3-pointer walk)  [REDEMPTION]
+- **Signal:** "reverse / direction badlo" → 3-pointer walk (prev, curr, next)
+- **Approach (derived):** prev=NULL, curr=head. loop: `next = curr->next` (aage bachao) → `curr->next = prev` (arrow ulta) → `prev = curr` → `curr = next`. return prev.
+- **Key:** next ko PEHLE save karo, phir flip (warna aage ki list kho jaati). return PREV (curr to NULL).
+- **Note (REDEMPTION):** ye WAHI problem tha jisne aaj subah spiral kiya (Claude ne template de diya → frustrate → delete → "main nahi karunga"). Raat ko spoiler BHOOL gaya → BLANK se khud derive → first try, saare edge pass, CLEAN SOLO. Proof: spoiler-free + thoda time = he derives it himself. LL ka foundational base owned.
+
 ## #28 — Remove Nth Node From End   (Medium | Linked List — two-pointer GAP)
 - **Signal:** "end se Nth / ek pass" → two-pointer with GAP of n (+ head-edge handling)
 - **Approach (derived):** fast ko PEHLE n kadam aage. phir slow+fast SAATH. fast end pe → slow us node ke PICHLE pe (jise hatana, uska previous) → link skip. head-hatane wala edge alag.
@@ -253,7 +260,8 @@
 
 ---
 
-> **Status:** 28 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 4 Linked List). **Arrays&Hashing + Two Pointer COMPLETE. BINARY SEARCH COMPLETE (6). Linked List: slow/fast + dummy + gap owned (Middle + Cycle + Merge + Remove-Nth).**
+> **Status:** 29 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 5 Linked List). **Arrays&Hashing + Two Pointer COMPLETE. BINARY SEARCH COMPLETE (6). LINKED LIST COMPLETE (Reverse + Middle + Cycle + Merge + Remove-Nth; tools: 3-pointer reverse / slow-fast / dummy / gap). Palindrome-LL = Middle+Reverse combine (pieces ready, do later).**
+> **Next pattern: TREES (DFS/BFS) — spatial, his mode.**
 > **COLD REDO started (20 Jun):** new `08_DSA/COLD_REDO/` — redo ALL patterns blank/self-run (purane mein kahin Claude-help thi; ye clean ownership). Original PHASE2_CODING = reference (peek nahi). Nothing deleted.
 > **NEW FLOW (20 Jun):** he runs his own code (Code Runner, Ctrl+Alt+N); Claude gives problem+signal+test-cases, runs only when he says "done" (to witness). Independent = no fear. Help only on his ask, thinking-direction never code.
 > **Binary Search COMPLETE:** basic + rotated-search + rotated-min + Koko(BS-on-answer) + search-insert + search-2D. (Search-2D was spoiled earlier; he re-derived it himself today.) Aage: more Linked List (cycle, palindrome, reverse cold).
