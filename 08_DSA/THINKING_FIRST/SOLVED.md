@@ -5,6 +5,24 @@
 
 ---
 
+## CORE PHILOSOPHY (Arpan ki apni, khud bola 20 Jun) — yeh sabse pehle padho
+
+> **DSA = ~12 core TEMPLATE reuse karo + har problem ka chhota TWIST adapt karo. Bas.**
+> Itni saari problem/template koi pagal yaad nahi rakhta — woh impossible + passive hai.
+> Sirf ginti ke template OWN karo, baaki har baar twist nikaalo (jo main kar leta hoon).
+
+```
+   ~12 CORE TEMPLATES:
+   two-pointer · sliding-window · binary-search · slow/fast · prefix-sum ·
+   stack(monotonic) · DFS/BFS · heap/top-k · recursion+backtrack · 1D-DP · hashing
+```
+- Har naya problem = inme se EK template + ek chhota twist.
+  (Cycle = slow/fast + meet-check. Middle = slow/fast + return-slow. Same template, alag twist.)
+- **Yehi "blank ho jaunga" dar ka jawab:** infinite twists yaad NAHI rakhne — sirf 12 template + twist on-the-spot.
+- Template automatic (reflex) ho jaaye → dimaag twist ke liye FREE → problem solve.
+
+---
+
 ## REVISION TRACKER — spaced active-recall
 
 > **Kaise:** neeche ka SIGNAL padho, approach DHAK ke **cold recall** karo (bol ke / kaagaz pe). Recall ho gaya → ✓ + gap aage badha. Blank → tabhi peek + dobara.
@@ -39,6 +57,7 @@
 | 23 | Search Insert Position   | Binary Search  |    |    |    | `[C]` loop-bound + return low |
 | 24 | Middle of Linked List    | LL slow/fast   |    |    |    | `[C]` fast 2x, return slow |
 | 25 | Search a 2D Matrix       | Binary Search  |    |    |    | `[C]` 2D->1D, mid/col + mid%col |
+| 26 | Linked List Cycle        | LL slow/fast   |    |    |    | (template reuse + meet-twist) |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -153,6 +172,11 @@
 - **Key:** Sawaal-1 mein target NAHI (sirf low vs mid); Sawaal-2 mein target. Range-check `&&` se — `nums[low] <= target && target < nums[mid]`. **C++ chained comparison `a < x < b` GALAT** (bool ban jaata — `(a<x)<b`), `&&` chahiye.
 - **Note:** sabse tough yet. Two-question structure derive kiya; atka → debug-prints + dry-run se buggy line KHUD pakdi; seekha C++ chained-comparison nahi chalta (LOGIC sahi thi, LANGUAGE gotcha — alag cheez). Real debugging + generation, transcription nahi.
 
+## #26 — Linked List Cycle   (Easy | Linked List — SLOW/FAST, Floyd's)
+- **Signal:** "cycle hai ya nahi, bina extra space" → slow/fast (Floyd's)
+- **Approach (derived):** slow 1, fast 2. cycle HAI → fast slow ko PAKAD lega (`slow==fast` → true). cycle NAHI → fast NULL pe (`while(fast && fast->next)` khatam → false).
+- **Honest note:** ye BADA derivation NAHI tha — slow/fast TEMPLATE Middle-of-LL se REUSE (copy-paste jaisa), naya sirf meet-check twist. AUR YEHI GOOD HAI: template ab reflex (bina soche reuse aaya) = exactly the goal. Arpan ne khud flag kiya "ye copy-paste tha" (accurate self-awareness) + bola "DSA = template reuse, warna itni saari kaun yaad rakhega" (= core philosophy upar).
+
 ## BINARY SEARCH — `<=` vs `<` (Arpan ki apni insight, khud socha 20 Jun)
 - **Search-and-return template (most common) → hamesha `low <= high`.** Kyunki tu element DHOONDH raha hai — jab `lo` aur `hi` mil jaayein (sirf ek element bacha), woh akela element TARGET ho sakta. `<` use kiya to loop us last element ko check kiye bina nikal jaata → MISS.
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
@@ -213,7 +237,7 @@
 
 ---
 
-> **Status:** 25 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 1 Linked List). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. BINARY SEARCH COMPLETE (6, all variants). Linked List STARTED (slow/fast).**
+> **Status:** 26 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 2 Linked List). **Arrays&Hashing + Two Pointer COMPLETE. Sliding Window + Stack deepened. BINARY SEARCH COMPLETE (6). Linked List: slow/fast owned (Middle + Cycle).**
 > **NEW FLOW (20 Jun):** he runs his own code (Code Runner, Ctrl+Alt+N); Claude gives problem+signal+test-cases, runs only when he says "done" (to witness). Independent = no fear. Help only on his ask, thinking-direction never code.
 > **Binary Search COMPLETE:** basic + rotated-search + rotated-min + Koko(BS-on-answer) + search-insert + search-2D. (Search-2D was spoiled earlier; he re-derived it himself today.) Aage: more Linked List (cycle, palindrome, reverse cold).
 > **Meta-milestone (19 Jun):** Arpan ne khud pakda "scaffold-transcription ≠ real learning" + "cold-generate karte waqt purana mat dekho" + **"DSA = COPY + PEN: baith, trace kar, jahan jaaye uske hisaab se code likh do — bas, aur kuch nahi"** (bina copy = impossible; spatial dimaag → trace se code aata). Aage minimal stubs (signal only, no pseudo-code) — woh structure khud generate karega.
