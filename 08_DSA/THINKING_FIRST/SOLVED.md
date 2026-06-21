@@ -62,6 +62,7 @@
 | 28 | Remove Nth From End      | LL gap+dummy   |    |    |    | `[C]` n-gap, head-edge (fast==NULL) |
 | 29 | Reverse Linked List      | LL 3-pointer   |    |    |    | `[C]` prev/curr/next, save-then-flip |
 | 30 | Maximum Depth of Tree    | Trees (DFS rec)|    |    |    | base + recurse L/R + combine |
+| 31 | Invert Binary Tree       | Trees (DFS rec)|    |    |    | base + swap(L,R) + recurse |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -207,6 +208,12 @@
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
 
+## #31 — Invert Binary Tree   (Easy | Trees — DFS recursion)
+- **Signal:** "tree transform / har node pe kuch karna" → recursion (DFS)
+- **Approach (derived):** `if(root==NULL) return NULL;` (base) → `swap(root->left, root->right)` (node-kaam) → invert left, invert right → return root.
+- **Key:** SAME tree-template as max-depth — only the "node pe kaam" changed (max-depth = `1+max(l,r)`; invert = `swap(L,R)`). Structure same: base + node-work + recurse L/R.
+- **Note:** 2nd tree problem, clean solo first-try. Tree-template owned (proof: 2 problems, same shape, only node-work differs). Calm pace (Arpan set "aaram se chal, jaldi nahi" — understanding > speed).
+
 ## #30 — Maximum Depth of Binary Tree   (Easy | Trees — DFS recursion)  [TREES START]
 - **Signal:** "tree ki height/depth ya har node pe compute" → RECURSION (DFS)
 - **Approach (derived):** `if(root==NULL) return 0;` (base) → `l=maxDepth(left); r=maxDepth(right);` → `return 1 + max(l,r)`. left/right khud solve karte, tu bas combine.
@@ -267,7 +274,7 @@
 
 ---
 
-> **Status:** 30 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 5 Linked List + 1 Trees). **Arrays&Hashing + Two Pointer COMPLETE. BINARY SEARCH COMPLETE (6). LINKED LIST COMPLETE (5; tools: 3-pointer reverse / slow-fast / dummy / gap). TREES STARTED (max-depth; tree-recursion template = base + recurse L/R + combine). Palindrome-LL = Middle+Reverse combine (do later).**
+> **Status:** 31 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 5 Linked List + 2 Trees). **Arrays&Hashing + Two Pointer COMPLETE. BINARY SEARCH COMPLETE (6). LINKED LIST COMPLETE (5). TREES going (max-depth + invert; tree-recursion template = base + node-work + recurse L/R — only node-work changes per problem). Palindrome-LL = Middle+Reverse combine (do later).**
 > **Next pattern: TREES (DFS/BFS) — spatial, his mode.**
 > **COLD REDO started (20 Jun):** new `08_DSA/COLD_REDO/` — redo ALL patterns blank/self-run (purane mein kahin Claude-help thi; ye clean ownership). Original PHASE2_CODING = reference (peek nahi). Nothing deleted.
 > **NEW FLOW (20 Jun):** he runs his own code (Code Runner, Ctrl+Alt+N); Claude gives problem+signal+test-cases, runs only when he says "done" (to witness). Independent = no fear. Help only on his ask, thinking-direction never code.
