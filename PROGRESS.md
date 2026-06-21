@@ -239,9 +239,13 @@ COMP (4yr Associate/AVP Bangalore): base 18-22L, total 26-33L median, top ~47L.
    APPLY (evening): check Kumar(JP VP) + Ishita(JP, resume sent) + Oracle replies; follow-ups; gh-auth fix for RESOURCES push.
 
    PROGRESS: 33 DSA (9 patterns; Hashing/Two-Ptr/BinarySearch/LinkedList COMPLETE; Trees going).
-   Applied (live pipeline): JP Morgan(+Kumar+Ishita referrals) · Oracle(inbound) · Barclays(dream-tier) · FIS · Razorpay · Target.
-   Mantra (21 Jun): JP is in reach — its DSA is his level, its real weight (Java/HLD/LLD/behavioral) is his strength.
-   Effort his, outcome the universe's. "Sab ka waqt aata hai."
+   Applied (live pipeline): JP Morgan(+Kumar+Ishita JP referrals, resume sent) · Oracle(inbound, emailed) ·
+     Barclays(dream-tier) · FIS · Razorpay · Target · DELTA · Portfolio-Mgmt-Engineer.
+   FAST-APPLY SYSTEM: Simplify Copilot set up (autofill 90%, only custom Qs manual, ~30 sec/apply).
+     Channels: INBOUND (Cutshort 18 / InMails / hackajob — warmest) + REFERRAL-first + Simplify bulk. Apply to his LEVEL only.
+
+   DAILY (firm, his words): roz JAVA + HLD (one topic each, JP-level, for interview-confidence) + DSA gate-maintenance.
+     One step for JP every day. (Working style: NO gyaan, NO motivation, NO faltu samajh — facts + action only.)
 ```
 
 ---
