@@ -64,6 +64,7 @@
 | 30 | Maximum Depth of Tree    | Trees (DFS rec)|    |    |    | base + recurse L/R + combine |
 | 31 | Invert Binary Tree       | Trees (DFS rec)|    |    |    | base + swap(L,R) + recurse |
 | 32 | Same Tree                | Trees (2-tree) |    |    |    | both-null/one-null base + val + recurse both |
+| 33 | Diameter of Binary Tree  | Trees (depth+track) |    |    |    | `[C]` RE-REVISIT — passed via nudges, samajh shaky |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -209,6 +210,12 @@
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
 
+## #33 — Diameter of Binary Tree   (Easy-but-tricky | Trees — depth + track-max)  [C] RE-REVISIT
+- **Signal:** "longest path / diameter" → depth-recursion + har node pe max track
+- **Approach:** helper depth lautata (`1+max(l,r)`) AUR side mein global `maxi = max(maxi, l+r)` update karta. diameter func: `maxi=0` reset → depth chalao → return maxi.
+- **Key (3 gotchas — yahi confuse karte):** (1) function DEPTH lautata, diameter SIDE-effect (maxi); (2) diameter-func maxi return kare, depth nahi; (3) global maxi har call pe RESET (warna pichla value reh jaata).
+- **HONEST note:** ye TODAY's toughest tree tha — depth + track-another-thing pattern, pehli baar = confusing. Passed via Claude's thinking-nudges (3 distinct bugs), NOT full solo derivation. Arpan honestly flagged "samajh nahi aaya, recursion-with-extra-layer hard". **[C] = cold re-revisit when fresh (paper dry-run slowly).** This is the recognition-vs-generation gap on novel twists — builds slow (weeks), normal at ~2 days active.
+
 ## #32 — Same Tree   (Easy | Trees — recursion on TWO trees)
 - **Signal:** "do tree compare / same hai?" → recursion dono pe SAATH
 - **Approach (derived):** base — dono NULL → true; ek NULL ek nahi → false (DONO directions). node-kaam — `p->val != q->val` → false. recurse — `sameTree(p->left,q->left) && sameTree(p->right,q->right)` (dono true tabhi same).
@@ -281,7 +288,8 @@
 
 ---
 
-> **Status:** 32 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 5 Linked List + 3 Trees). **Arrays&Hashing + Two Pointer COMPLETE. BINARY SEARCH COMPLETE (6). LINKED LIST COMPLETE (5). TREES going (max-depth + invert + same-tree; tree-recursion template = base + node-work + recurse — extends to 2-tree). Palindrome-LL = Middle+Reverse combine (do later).**
+> **Status:** 33 done (6 Hashing + 1 Prefix-Suffix + 2 Two Pointer + 3 Grid + 2 Sliding Window + 4 Stack + 6 Binary Search + 5 Linked List + 4 Trees). **Arrays&Hashing + Two Pointer COMPLETE. BINARY SEARCH COMPLETE (6). LINKED LIST COMPLETE (5). TREES going (max-depth + invert + same-tree solo; diameter [C] re-revisit). Palindrome-LL = Middle+Reverse combine (do later).**
+> **NOW: CONSOLIDATE PHASE (21 Jun) — ek-do din ONLY REVISION (HLD+Java+DSA), no new problems, then resume. DSA revision = active-recall (Claude gives name+signal, he recalls approach cold). 14/14 cold recall on 21 Jun.**
 > **Next pattern: TREES (DFS/BFS) — spatial, his mode.**
 > **COLD REDO started (20 Jun):** new `08_DSA/COLD_REDO/` — redo ALL patterns blank/self-run (purane mein kahin Claude-help thi; ye clean ownership). Original PHASE2_CODING = reference (peek nahi). Nothing deleted.
 > **NEW FLOW (20 Jun):** he runs his own code (Code Runner, Ctrl+Alt+N); Claude gives problem+signal+test-cases, runs only when he says "done" (to witness). Independent = no fear. Help only on his ask, thinking-direction never code.
