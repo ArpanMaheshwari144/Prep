@@ -178,18 +178,46 @@ NOTE: never add company-account "ArpanMaheshwariApollo" as collaborator on the R
 
 ---
 
-# JP MORGAN — INTERVIEW PATTERN (reference)
+# JP MORGAN — INTERVIEW PATTERN (VERIFIED — 2 real SDE-3 Bangalore writeups + web research, 21 Jun)
 
 ```
-ROUNDS (3-4):
-   1. HackerRank OA — 90 min (aptitude + 2 easy-med DSA)
-   2. Coding/Tech (VP) — 50-60 min (2 LC-mediums)
-   3. System Design + Java — 50-60 min (LLD/HLD + internals)
-   4. Behavioral (ED) — 45-60 min  <- REAL GATE
-QUESTIONS: DSA (combination-sum/recursion/streams); System (trading platform / price feed / ledger);
-   Java (8/11/17, Runnable vs Callable, Spring autowiring); Behavioral ("why JPM", conflict, STAR).
-INSIDER: drop "idempotency" + "audit trail" in design; PostgreSQL/Oracle over NoSQL for ledgers; ACID mastery.
-COMP (4yr Associate Bangalore): base 18-22L, total 26-33L median, top ~47L (Senior Associate).
+DIFFICULTY: 3.1/5 (MODERATE, NOT brutal), 75% positive. "Breadth under pressure, NOT any single
+   hard problem." JP = BANK, not a competitive-programming / FAANG-hard shop.
+
+ROUNDS: OA -> (Superday) Code-pair + Design-pair + Behavioral. 3-6 weeks. Score => SDE2 vs SDE3.
+
+   1. ONLINE ASSESSMENT (HackerRank, ~60-90 min):
+        2 LC EASY-to-MEDIUM (string/array/DS/algo). e.g. Minimum Platforms, valid-substrings(sliding win).
+   2. CODE PAIR (~45 min): PR review (design principles/SECURITY/SQL-injection/concurrency/logging)
+        + 1 DSA problem. REAL examples seen: Min-Stack, Two-Sum, Level-Order-BFS, Delete-Node-LL,
+        Trapping-Rain-Water, grid/matrix-graph. HINTS GIVEN, main-logic often enough (not full code).
+   3. DESIGN PAIR (~45 min): system design. REAL examples: file-upload->validate->S3->tracking-link;
+        News-Aggregator. (GENERAL product designs — NOT necessarily payment/trading.) One candidate
+        literally used the 8-step framework: Functional -> Non-functional -> HLD -> DB tables -> APIs.
+   4. BEHAVIORAL: resume/projects, "why JPM", "handle pushback from management", "keep up with tech", STAR.
+
+   (Tech-screen variant may also probe JAVA INTERNALS deep: HashMap, collections, DI, REST, Java 21,
+    concurrency — one MAANG SDE-2 got DOWNLEVELED on the JAVA round + YOE, NOT on DSA.)
+COMP (4yr Associate/AVP Bangalore): base 18-22L, total 26-33L median, top ~47L.
+```
+
+## FOCUS ALLOCATION (data-driven — kahan focus, kahan NAHI)
+```
+   PRIMARY (energy here — JP's real WEIGHT + Arpan's STRENGTHS):
+     - JAVA depth: internals (HashMap/collections/DI), Java 21, concurrency, code-review/bug-fix
+     - SYSTEM DESIGN: the 8-step FRAMEWORK on VARIETY (file-upload, news-feed, url, chat, payment, rate-limiter)
+     - LLD: 11 problems + OOP design
+     - BEHAVIORAL: Konovo STAR stories (pushback->WAF/X-Forwarded-For, $20K payment, etc.)
+
+   MAINTENANCE (gate-level only — don't over-invest):
+     - DSA: common LC-mediums sharp (arrays/strings/hashing/two-ptr/sliding-win/stack/BS/LL/trees-BFS).
+            HINTS given + breadth-not-depth -> his exact zone. NO hard-variant obsession (diameter etc).
+            Just clear the OA gate (2 LC-mediums).
+
+   DON'T over-do: FAANG-hard DSA, obscure tricky variants, deep DP/graphs. JP doesn't go there.
+   CORRECTION (21 Jun): earlier over-emphasized "JP = payment/trading/ledger designs" — real data shows
+     GENERAL product designs too. Framework matters most; finance-flavor (idempotency/ledger) = a depth-tool
+     to drop in ANY design, not the guaranteed question.
 ```
 
 ---
@@ -197,16 +225,23 @@ COMP (4yr Associate Bangalore): base 18-22L, total 26-33L median, top ~47L (Seni
 # COUNTDOWN
 
 ```
-   Aaj: 19 June 2026   |   In Bangalore (since 15 June)   |   Mode: APPLY + LEARN parallel (apply LIVE)
+   Aaj: 21 June 2026   |   In Bangalore   |   Mode: CONSOLIDATE + APPLY (apply LIVE)
 
-   SETTLED DAILY RHYTHM (19 Jun, de-drama'd):
-      1. REVISION (Claude drills from his own notes):  Java  ->  HLD     [important -> note immediately]
-      2. DSA  ->  calm reps (easy + solo, no drama)
-      3. APPLY (evening): Apply-Method 3-5/day, check Kumar(JP) reply, respond to inbound, referrals.
+   STRATEGIC PIVOT (21 Jun — derived from 2 REAL JP interview writeups + research):
+     JP DSA = LC-medium standard + HINTS (his level, NOT FAANG-hard). Real WEIGHT = Java + System-Design
+     + LLD + Behavioral (his STRENGTHS). So FLIP the priority:
+       PRIMARY  -> Java(internals/Java21/concurrency) + HLD(framework on variety) + LLD + Behavioral STAR
+       MAINTAIN -> DSA at gate-level (common mediums sharp; NO hard-variant obsession; clear OA = 2 mediums)
 
-   STRENGTH-FOCUS: go DEEP on Java + Spring + HLD = the real EDGE (esp. JP/finance: HLD trade-offs + Java depth).
-   DSA = a narrow GATE to clear (~2 mediums), NOT a mountain to "master". Calm reps are enough.
-   Note (19 Jun): stop over-dramatizing DSA -- struggle IS the work; on a real stuck, hint/peek and move on, no spiral.
+   CONSOLIDATE PHASE (next ek-do din): ONLY revision (Java + HLD + DSA), no new problems, then resume.
+     DSA revision = active-recall (worked great 21 Jun: 14/14 cold recall incl hard [C] ones).
+
+   APPLY (evening): check Kumar(JP VP) + Ishita(JP, resume sent) + Oracle replies; follow-ups; gh-auth fix for RESOURCES push.
+
+   PROGRESS: 33 DSA (9 patterns; Hashing/Two-Ptr/BinarySearch/LinkedList COMPLETE; Trees going).
+   Applied (live pipeline): JP Morgan(+Kumar+Ishita referrals) · Oracle(inbound) · Barclays(dream-tier) · FIS · Razorpay · Target.
+   Mantra (21 Jun): JP is in reach — its DSA is his level, its real weight (Java/HLD/LLD/behavioral) is his strength.
+   Effort his, outcome the universe's. "Sab ka waqt aata hai."
 ```
 
 ---
