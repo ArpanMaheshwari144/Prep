@@ -66,7 +66,7 @@
 | 32 | Same Tree                | Trees (2-tree) |    |    |    | both-null/one-null base + val + recurse both |
 | 33 | Diameter of Binary Tree  | Trees (depth+track) |    |    |    | `[C]` RE-REVISIT — passed via nudges, samajh shaky |
 | 34 | Level Order Traversal    | Trees (BFS queue) |    |    |    | SOLO — queue.size()=level; v-not-cleared bug khud pakda |
-| 35 | Binary Tree Right Side View | Trees (BFS twist) |    |    |    | SOLO — same #34 template, twist: i==size-1 (level ka last=right-most) |
+| 35 | Binary Tree Right Side View | Trees (BFS twist) |    |    |    | same #34 template; off-by-one i==size-1 nudge se pakda (dry-run nahi) |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -216,7 +216,7 @@
 - **Signal:** "har level se EK node (right se dikhne wala)" → BFS (level-order ka twist)
 - **Approach (derived):** #34 ka SAME BFS template (queue + `size = queue.size()` per level). Twist: har level se sirf **last node** (`i == size-1`) ans mein push; bachche (left,right) hamesha queue mein.
 - **Key:** level ka last node = right-most (right se wahi dikhta). Off-by-one: loop `i<size` → last node pe `i == size-1`, NOT `size` (0-based).
-- **Note:** SOLO. Pehle `i==size` likha (kabhi true nahi hota → empty) — dry-run se khud `size-1` pakda. Chhota off-by-one, par asli win = **BFS template bina socke reuse** ("12 template + twist" live). Ek template se ab 2 problem (#34 level-order + #35 right-view).
+- **Note:** Pehle `i==size` likha (kabhi true nahi hota → empty). Khud dry-run se NAHI — Claude ke nudge ("loop i<size, last node pe i kya? i==size hota hai?") se `size-1` pakda. Off-by-one chhota tha. Asli win = **BFS template bina socke reuse** ("12 template + twist" live). Ek template se ab 2 problem (#34 level-order + #35 right-view). (#34 wala bug khud dry-run se pakda tha; ye wala nudge se.)
 
 ## #34 — Level Order Traversal   (Medium | Trees — BFS / queue)   SOLO
 - **Signal:** "level by level / har level alag list" → BFS → QUEUE (DFS nahi)
