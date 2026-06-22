@@ -66,6 +66,7 @@
 | 32 | Same Tree                | Trees (2-tree) |    |    |    | both-null/one-null base + val + recurse both |
 | 33 | Diameter of Binary Tree  | Trees (depth+track) |    |    |    | `[C]` RE-REVISIT — passed via nudges, samajh shaky |
 | 34 | Level Order Traversal    | Trees (BFS queue) |    |    |    | SOLO — queue.size()=level; v-not-cleared bug khud pakda |
+| 35 | Binary Tree Right Side View | Trees (BFS twist) |    |    |    | SOLO — same #34 template, twist: i==size-1 (level ka last=right-most) |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -210,6 +211,12 @@
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
+## #35 — Binary Tree Right Side View   (Medium | Trees — BFS twist)   SOLO
+- **Signal:** "har level se EK node (right se dikhne wala)" → BFS (level-order ka twist)
+- **Approach (derived):** #34 ka SAME BFS template (queue + `size = queue.size()` per level). Twist: har level se sirf **last node** (`i == size-1`) ans mein push; bachche (left,right) hamesha queue mein.
+- **Key:** level ka last node = right-most (right se wahi dikhta). Off-by-one: loop `i<size` → last node pe `i == size-1`, NOT `size` (0-based).
+- **Note:** SOLO. Pehle `i==size` likha (kabhi true nahi hota → empty) — dry-run se khud `size-1` pakda. Chhota off-by-one, par asli win = **BFS template bina socke reuse** ("12 template + twist" live). Ek template se ab 2 problem (#34 level-order + #35 right-view).
 
 ## #34 — Level Order Traversal   (Medium | Trees — BFS / queue)   SOLO
 - **Signal:** "level by level / har level alag list" → BFS → QUEUE (DFS nahi)
