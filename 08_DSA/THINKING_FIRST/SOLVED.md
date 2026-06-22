@@ -67,6 +67,7 @@
 | 33 | Diameter of Binary Tree  | Trees (depth+track) |    |    |    | `[C]` RE-REVISIT — passed via nudges, samajh shaky |
 | 34 | Level Order Traversal    | Trees (BFS queue) |    |    |    | SOLO — queue.size()=level; v-not-cleared bug khud pakda |
 | 35 | Binary Tree Right Side View | Trees (BFS twist) |    |    |    | same #34 template; off-by-one i==size-1 nudge se pakda (dry-run nahi) |
+| 36 | Zigzag Level Order       | Trees (BFS twist) |    |    |    | SOLO — same #34 template + toggle flag; smart: direct index size-i-1 (no reverse) |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -211,6 +212,13 @@
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
+## #36 — Zigzag Level Order Traversal   (Medium | Trees — BFS twist)   SOLO
+- **Signal:** "level by level + alternate ULTA / zigzag" → BFS (#34 template) + alternate-reverse twist
+- **Approach (derived):** #34 ka SAME BFS template (queue + `size=queue.size()` per level) + `bool flag` har level pe toggle. Twist: queue ka order MAT chhedo (hamesha L→R nikaalo) — bas placement badlo.
+- **Key (his own smart move):** reverse-at-end ki jagah **direct index placement** — `v.resize(size)` phir `index = flag ? i : size-i-1`. Reversed level mein i=0→last, i=1→second-last. Ek operation bach gaya, cleaner. (Claude ne reverse-at-end hint ki thi; usne better variant khud derive kiya.)
+- **2 cheezein khud handle ki (nudge se):** (1) reversed index `size-i-1` (constant `size-1` nahi); (2) `v` ko `resize(size)` — khaali vector pe `v[index]=` UB hota.
+- **Note:** SOLO. BFS template ab 3 problem (#34 level-order + #35 right-view + #36 zigzag) — ek template, teen twist. "12 template + twist" live proof.
 
 ## #35 — Binary Tree Right Side View   (Medium | Trees — BFS twist)   SOLO
 - **Signal:** "har level se EK node (right se dikhne wala)" → BFS (level-order ka twist)
