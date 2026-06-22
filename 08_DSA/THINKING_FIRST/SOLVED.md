@@ -69,6 +69,7 @@
 | 35 | Binary Tree Right Side View | Trees (BFS twist) |    |    |    | same #34 template; off-by-one i==size-1 nudge se pakda (dry-run nahi) |
 | 36 | Zigzag Level Order       | Trees (BFS twist) |    |    |    | SOLO — same #34 template + toggle flag; smart: direct index size-i-1 (no reverse) |
 | 37 | Lowest Common Ancestor   | Trees (DFS bubble-up) |    |    |    | SOLO clean (no bug) — base(null/p-q) + combine(L-null->R, R-null->L, both->root) |
+| 38 | Count Good Nodes         | Trees (DFS pass-down) |    |    |    | **COLD TEST — genuinely unseen, FULL SOLO** (pattern+key "carry path-max" khud derive, no signal) |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -213,6 +214,12 @@
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
+## #38 — Count Good Nodes in Binary Tree   (Medium | Trees — DFS pass-down)   COLD TEST · FULL SOLO
+- **Signal:** (NONE given — cold test) → node ko judge karne ko "raaste ka max" chahiye → DFS me max NEECHE pass + count
+- **Approach (derived COLD, no help):** har node tak path ka **max-so-far** carry karo. `node->val >= maxSoFar` → good (count++). recurse left/right with `max(maxSoFar, node->val)`. (BFS bhi valid — queue me `{node, pathMax}`, par level-loop NAHI chahiye.)
+- **Key:** "judge karne ko kya yaad chahiye?" = path ka max. Pehchaan ki **level ka role nahi** (traversal, level-grouping nahi) — khud bola.
+- **WHY THIS MATTERS (proof entry):** Arpan ne shaq kiya tha "DSA nahi ban raha, pichhle saare solution dekh ke kiye the (recall, derive nahi)." Test: ek GENUINELY-UNSEEN problem, koi signal/approach nahi, leetcode band. Usne pattern khud pehchaana (DFS/BFS), level-irrelevance khud notice ki, key insight (carry path-max) khud derive ki, 6/6 pass. **Cold generation WORKS** — recognition nahi, asli derive. His own conclusion: "dimaag hai, bas DSA me thoda slow" (accurate — slow ≠ nahi banta; generation hafton me banta).
 
 ## #37 — Lowest Common Ancestor (Binary Tree)   (Medium | Trees — DFS bubble-up)   SOLO
 - **Signal:** "do node ka milne ka point / common ancestor" → DFS + jawab UPAR bubble karo
