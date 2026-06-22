@@ -41,7 +41,7 @@ struct TreeNode
 // ---- TERA kaam: yeh function bhar (BFS + alternate reverse) ----
 vector<vector<int>> zigzagLevelOrder(TreeNode *root)
 {
-   if (!root)
+    if (!root)
     {
         return {};
     }
@@ -53,13 +53,16 @@ vector<vector<int>> zigzagLevelOrder(TreeNode *root)
     while (!q.empty())
     {
         int size = q.size();
-        vector<int> v(size, 0);
+        vector<int> v;
         for (int i = 0; i < size; i++)
         {
             TreeNode *curr = q.front();
             q.pop();
-            int index = flag ? i : size - i - 1;
-            v[index] = curr->val;
+
+            // int index = flag ? i : size - i - 1;
+            // v[index] = curr->val;
+
+            v.push_back(curr->val);
 
             if (curr->left != nullptr)
             {
@@ -70,6 +73,10 @@ vector<vector<int>> zigzagLevelOrder(TreeNode *root)
                 q.push(curr->right);
             }
         }
+        if (flag == false)
+        {
+            reverse(begin(v), end(v));
+        }
         flag = !flag;
         ans.push_back(v);
     }
@@ -79,15 +86,28 @@ vector<vector<int>> zigzagLevelOrder(TreeNode *root)
 // ---- helpers (mat chhu) ----
 TreeNode *build(vector<int> v)
 {
-    if (v.empty() || v[0] == -1) return nullptr;
+    if (v.empty() || v[0] == -1)
+        return nullptr;
     TreeNode *root = new TreeNode(v[0]);
-    queue<TreeNode *> q; q.push(root);
+    queue<TreeNode *> q;
+    q.push(root);
     int i = 1;
     while (!q.empty() && i < v.size())
     {
-        TreeNode *node = q.front(); q.pop();
-        if (i < v.size() && v[i] != -1) { node->left = new TreeNode(v[i]); q.push(node->left); } i++;
-        if (i < v.size() && v[i] != -1) { node->right = new TreeNode(v[i]); q.push(node->right); } i++;
+        TreeNode *node = q.front();
+        q.pop();
+        if (i < v.size() && v[i] != -1)
+        {
+            node->left = new TreeNode(v[i]);
+            q.push(node->left);
+        }
+        i++;
+        if (i < v.size() && v[i] != -1)
+        {
+            node->right = new TreeNode(v[i]);
+            q.push(node->right);
+        }
+        i++;
     }
     return root;
 }
@@ -101,10 +121,12 @@ void printLevels(vector<vector<int>> res)
         for (int j = 0; j < res[i].size(); j++)
         {
             cout << res[i][j];
-            if (j + 1 < res[i].size()) cout << ",";
+            if (j + 1 < res[i].size())
+                cout << ",";
         }
         cout << "]";
-        if (i + 1 < res.size()) cout << ",";
+        if (i + 1 < res.size())
+            cout << ",";
     }
     cout << "]" << endl;
 }
