@@ -65,6 +65,7 @@
 | 31 | Invert Binary Tree       | Trees (DFS rec)|    |    |    | base + swap(L,R) + recurse |
 | 32 | Same Tree                | Trees (2-tree) |    |    |    | both-null/one-null base + val + recurse both |
 | 33 | Diameter of Binary Tree  | Trees (depth+track) |    |    |    | `[C]` RE-REVISIT — passed via nudges, samajh shaky |
+| 34 | Level Order Traversal    | Trees (BFS queue) |    |    |    | SOLO — queue.size()=level; v-not-cleared bug khud pakda |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -209,6 +210,12 @@
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
+## #34 — Level Order Traversal   (Medium | Trees — BFS / queue)   SOLO
+- **Signal:** "level by level / har level alag list" → BFS → QUEUE (DFS nahi)
+- **Approach (derived):** root queue mein → jab tak queue khaali na ho: `size = queue.size()` (= POORA ek level) → us size jitne node ek-ek front se nikaalo (value level-list mein), har node ke left/right (non-null) queue ke peeche push → level-list ans mein push.
+- **Key:** `queue.size() = ek pura level` = BFS ka dil. Level-list har baar **fresh (clear)** honi chahiye.
+- **Note:** SOLO solved. Ek bug khud pakda — level-list (`v`) ko loop ke bahar declare kiya tha, har level mein clear nahi hota tha → purani values jud ke aati ([[1],[1,2,3]...]). Paper dry-run se khud dhoonda + theek kiya, bina bataye. Derived = stick. JP yeh DIRECTLY pucchta (real writeup).
 
 ## #33 — Diameter of Binary Tree   (Easy-but-tricky | Trees — depth + track-max)  [C] RE-REVISIT
 - **Signal:** "longest path / diameter" → depth-recursion + har node pe max track
