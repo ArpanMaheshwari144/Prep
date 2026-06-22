@@ -68,6 +68,7 @@
 | 34 | Level Order Traversal    | Trees (BFS queue) |    |    |    | SOLO — queue.size()=level; v-not-cleared bug khud pakda |
 | 35 | Binary Tree Right Side View | Trees (BFS twist) |    |    |    | same #34 template; off-by-one i==size-1 nudge se pakda (dry-run nahi) |
 | 36 | Zigzag Level Order       | Trees (BFS twist) |    |    |    | SOLO — same #34 template + toggle flag; smart: direct index size-i-1 (no reverse) |
+| 37 | Lowest Common Ancestor   | Trees (DFS bubble-up) |    |    |    | SOLO clean (no bug) — base(null/p-q) + combine(L-null->R, R-null->L, both->root) |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -212,6 +213,12 @@
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
+## #37 — Lowest Common Ancestor (Binary Tree)   (Medium | Trees — DFS bubble-up)   SOLO
+- **Signal:** "do node ka milne ka point / common ancestor" → DFS + jawab UPAR bubble karo
+- **Approach (derived SOLO):** base — `node null → null`; `node == p ya q → wahi node` (mil gaya). recurse left+right. combine — `left null → return right`; `right null → return left`; **dono non-null → return root** (p ek taraf, q doosri → yahi LCA).
+- **Key:** har node upar ek jawab bhejta. Dono taraf se kuch mila = p,q split = current node hi meeting-point. Ek taraf se = LCA us taraf neeche.
+- **Note:** SOLO, **pehli baar mein clean (koi bug nahi)**. Combine-logic (left/right null cases + dono→root) Arpan ne KHUD derive ki; Claude ne sirf base-case ka sawaal poocha. 6/6 pass incl ancestor-of-itself + split-sides. Naya pattern: DFS bubble-up (jawab neeche se upar lautana).
 
 ## #36 — Zigzag Level Order Traversal   (Medium | Trees — BFS twist)   SOLO
 - **Signal:** "level by level + alternate ULTA / zigzag" → BFS (#34 template) + alternate-reverse twist
