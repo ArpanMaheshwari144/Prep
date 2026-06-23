@@ -381,4 +381,75 @@ RACE CONDITION (concurrent custom requests):
 └─────────────────┴─────────────────────────────┘
 ```
 
+---
+
+# 8-STEP INTERVIEW FRAMEWORK DRIVE
+
+> Arpan ne KHUD derive kiya (21 Jun) — pehla full solo HLD drive. Micro-read ke liye.
+> (Framework: 04_HLD/INTERVIEW_FRAMEWORK.md)
+
+## STEP 1 — REQUIREMENTS clarify (chup mat baitho)
+```
+   FUNCTIONAL:  long URL -> short URL banao;  short pe click -> original pe redirect
+   NON-FUNCTIONAL:  fast redirect (low latency), high availability, READ-heavy
+   clarifying Qs:  custom short-URL allow? links expire hote ya hamesha?
+```
+
+## STEP 2 — SCALE / numbers
+```
+   maano 100M writes/day.  TRICK: 1 din ~ 100,000 sec (10^5) -> easy division
+   100M/day = 10^8 / 10^5 = ~1000 writes/sec
+   read = 100x = ~100,000 reads/sec  -> READ-HEAVY (click >> create)
+   -> ye number drive karta: read-heavy = cache+CDN; billions = sharding
+```
+
+## STEP 3 — API design
+```
+   POST /shorten   {longUrl} -> {shortUrl}      (BANANA -> POST)
+   GET  /{code}    -> 302 redirect to longUrl   (LAANA  -> GET)
+   YAAD: banana=POST, laana=GET (swap mat karna)
+```
+
+## STEP 4 — HIGH-LEVEL boxes
+```
+   Client -> CDN -> LB -> App Servers -> Redis Cache -> Database
+   read (cache-aside): cache HIT -> turant return | MISS -> DB se laao -> cache daalo -> return
+   HOT URLs hi cache (billions cache nahi -> popular wale)
+```
+
+## STEP 5 — DATA MODEL + DB choice (KYUN bolo)
+```
+   schema:  shortCode (KEY) -> longUrl   (+ createdAt, expiresAt)
+   KEY = shortCode (redirect mein short se long laana -> lookup by shortCode)
+   DB = NoSQL (DynamoDB/Cassandra): pure key-value, no joins, read-heavy -> fast key-lookup + horizontal scale
+```
+
+## STEP 6 — DEEP DIVE: short code kaise generate? (3 options)
+```
+   1. MD5 HASH       -> collision ho sakta + compute cost
+   2. RANDOM (62 ch) -> collision check ke liye HAR BAAR DB hit (slow)
+   3. COUNTER + Base62 (BEST) -> counter(1,2,3) -> Base62 -> code
+        guaranteed UNIQUE (counter repeat nahi -> zero collision -> no DB check) + chhota
+        counter SPOF na bane -> har server ko RANGE do (1-1000, 1001-2000)
+   -> WINNER: counter + Base62
+```
+
+## STEP 7 — BOTTLENECK / SCALE
+```
+   rate limiting (abuse rok) | READ -> read REPLICAS | WRITE -> SHARDING (write-replicas nahi hota)
+   shard by shortCode (billions ek DB nahi) | async analytics (click-count queue -> redirect block na ho)
+   geo-routing (nearest region, latency kam)
+```
+
+## STEP 8 — WRAP
+```
+   Client->CDN->LB->App->Redis->NoSQL(sharded); counter+Base62; read-replicas+cache; async analytics.
+   Aage: custom URLs, expiry/TTL cleanup, geo-distribution.
+```
+
+> CORRECTIONS seekhi (soch sahi thi): GET/POST swap (banana=POST), "write replicas" -> sharding,
+> KEY=shortCode. Asli reasoning (read-heavy, NoSQL+kyun, hot-cache, counter+Base62, shard) khud sahi derive.
+
+---
+
 [← HLD README](README.md)

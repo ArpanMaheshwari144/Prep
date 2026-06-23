@@ -345,3 +345,73 @@ Real-life: seller sabse zyada dene wale ke paas jaata, buyer sabse saste ke paas
 │   → Server dead + laggy. WebSocket push + pub/sub.       │
 └─────────────────────────────────────────────────────────┘
 ```
+
+---
+
+# 8-STEP INTERVIEW FRAMEWORK DRIVE
+
+> Upar ka detail/visual = depth. Yeh = 8-step framework piro ke (jaise interview mein bolega).
+> Framework: 04_HLD/INTERVIEW_FRAMEWORK.md. FLAVOR: CONSISTENCY + LATENCY heavy (paisа + speed).
+
+## STEP 1 — REQUIREMENTS clarify
+```
+   FUNCTIONAL:  BUY/SELL order (stock,qty,price) -> MATCH -> paisа+shares move -> live price -> cancel/status
+   NON-FUNCTIONAL:  FAST (microseconds) | CONSISTENT (ek share do ko na bike) | reliable | FAIR (pehle aaya pehle match)
+   Qs: orders/sec? limit ya market? partial match?
+   KEY: PAISА+SPEED -> consistency NON-NEGOTIABLE (strong, never eventual) + latency critical
+```
+
+## STEP 2 — SCALE / numbers
+```
+   50 lakh users, orders 50 lakh/din (market-open storm). per-sec ~250 normal, PEAK 10k+ burst.
+   price feed = CRORE reads/sec (broadcast).
+   -> matching in-memory+fast | feed websocket-push | money SQL/ACID
+```
+
+## STEP 3 — API design
+```
+   POST /order {stock,side,qty,price,type, idempotencyKey} -> orderId + OPEN
+   DELETE /order/{id} cancel | PUT modify | GET /order/{id} status | GET /portfolio | WS /prices?symbol=
+   senior: idempotencyKey (double-click rok) + price=WebSocket push (poll nahi)
+```
+
+## STEP 4 — HIGH-LEVEL boxes (order ka safar)
+```
+   Order Svc(validate+IDEMPOTENCY) -> Wallet(paisа BLOCK) -> Matching(order book, SINGLE-THREAD per symbol)
+   -> Settlement(ATOMIC double-entry) -> Price Feed(WebSocket+pubsub) | + EVENT LOG (crash recovery + audit)
+   KYUN: block-before-match (double-spend rok) | per-symbol matching (race-free) | atomic settlement (paisа na vanish)
+```
+
+## STEP 5 — DATA MODEL + DB (KYUN)
+```
+   ORDER/WALLET/LEDGER/PORTFOLIO/TRADE tables. ORDER BOOK = RAM (DB nahi).
+   money/orders -> SQL+ACID (strong, all-or-nothing, audit; NoSQL eventual NAHI)
+   order book -> IN-MEMORY per-symbol (microseconds) | ledger -> append-only immutable (audit)
+   CONTRAST: speed-temp(book)=RAM | paisа-permanent=SQL/ACID
+```
+
+## STEP 6 — DEEP DIVE: matching race kaise roko?
+```
+   order book: best-bid>=best-ask match; price-time priority (same price->FIFO)
+   PROBLEM: 2 thread same book -> Suresh ke 10 share DONO ko -> 20 bik gaye = DOUBLE-MATCH
+   OPTIONS: 1.LOCK (slow+deadlock, NAHI)  2.SINGLE-THREAD PER SYMBOL (BEST: ek symbol=ek queue=serialized->race-free->no lock->microseconds)
+   WINNER: single-thread per symbol. scale = shard by symbol. RULE hai (warna toot jaaye).
+   line: "single-threaded PER SYMBOL — one queue, no locks, deterministic+replayable, scale BY symbol"
+```
+
+## STEP 7 — BOTTLENECK / scale
+```
+   order book RAM crash -> EVENT LOG replay (=WAL) + audit | settlement crash -> EK transaction (ACID/@Transactional)
+   cross-service settlement -> SAGA (local steps + fail pe compensate/ulta) | feed crore reads -> WebSocket+pubsub
+   one symbol load -> shard by symbol
+   CORE: ACID(ek DB)=instant all-or-nothing | SAGA(kai service)=code-driven compensating undo, eventually
+```
+
+## STEP 8 — WRAP
+```
+   Order(validate+idempotency)->Wallet(BLOCK)->Matching(single-thread/symbol)->Settlement(ATOMIC)->Feed(ws+pubsub) | EventLog(replay+audit)
+   DATA: money=SQL/ACID | book=in-memory. DEEP: single-thread per symbol. SCALE: shard by symbol, event-log, ACID/SAGA, pubsub.
+   IMPROVE: stop-loss, circuit breakers, real-time risk checks, regulatory reporting.
+```
+
+> Trading twist: money=ACID/strong + matching=single-thread-per-symbol(race-free) + event-log(replay+audit) + feed=push.
