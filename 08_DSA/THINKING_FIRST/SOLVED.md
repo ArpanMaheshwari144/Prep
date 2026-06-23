@@ -73,6 +73,7 @@
 | 39 | Validate BST             | Trees (range window) |    |    |    | range(min,max) narrow; bug "early return true" -> AND of children (nudge se fix) |
 | 40 | Kth Smallest in BST      | Trees (inorder=sorted) |    |    |    | SOLO clean — BST inorder=sorted -> v[k-1] (0-based) |
 | 41 | Subsets (power set)      | Backtracking   |    |    |    | REP 1 of backtracking — choose/explore/un-choose; nudges (temp=param, 2-call not loop, pop ORDER) |
+| 42 | Permutations             | Backtracking (used[]) |    |    |    | REP 2 — structure SOLO (used[]/loop/choose-explore-unchoose); nudge only C++ sizing + placement. Curve improving |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -217,6 +218,12 @@
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
+## #42 — Permutations   (Medium | Backtracking — used[])   REP 2
+- **Signal:** "saare arrangements / order" → backtracking + `used[]` track (kaunse use ho chuke).
+- **Approach:** helper(nums, used&, temp&, ans&). base temp.size()==n → ans.push(temp). loop i: `if(!used[i])` → CHOOSE (used[i]=true, push) → EXPLORE (recurse) → UN-CHOOSE (pop, used[i]=false). All 3 INSIDE the if.
+- **Twist vs subsets:** subsets = index lo/chhodo (kuch elements); permutations = SAARE elements alag ORDER → loop over all + used[] to avoid reuse.
+- **Note:** REP 2 of backtracking. Structure (used[]/loop/choose-explore-unchoose) Arpan set up SOLO; nudges only = (1) C++ `vector<bool> used(n,false)` sizing (empty → runtime crash, mechanic he'd seen), (2) choose/explore/unchoose all-inside-the-if placement. **Curve improving vs rep-1** (rep-1 needed 3 conceptual nudges; rep-2 conceptual structure was his). His take: "thoda dimaag khula, help li par pehle se kam — progress."
 
 ## #41 — Subsets / Power Set   (Medium | Backtracking)   REP 1 (new pattern)
 - **Signal:** "saare subsets/combinations" → BACKTRACKING (choices ka ped). Har element: LO ya CHHODO.
