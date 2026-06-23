@@ -71,6 +71,17 @@ chahe 5 baar aaye, paisa SIRF EK BAAR move ho.
 store se pehle -> dono "naya" samajh ke process -> double-charge.
 => check + store ATOMIC hona chahiye (lock / DB unique-constraint) -> ek hi jeete.
 
+**Atomic kaise (drill se — 23 Jun):**
+```
+   - DB UNIQUE CONSTRAINT (saaf): key pe unique column -> req1 INSERT success, req2 same-key INSERT -> DB REJECT
+     -> DB ka atomic insert = automatic lock (alag lock-service nahi chahiye). Money ke liye DURABLE (best).
+   - Redis SETNX (set-if-not-exists, atomic): fast in-flight dedup. PAR cache volatile -> money ke liye DB bhi chahiye.
+   - BEST = Redis SETNX (fast layer) + DB unique-constraint (durable backstop, asli source of truth).
+   key STATUS rakho: IN_PROGRESS / DONE. req2 dekhe -> IN_PROGRESS=ruko | DONE=stored result wapas.
+```
+**TRAP:** done pe key DELETE mat karo! late retry (network timeout, 30 sec baad) -> key gayab -> "naya" samjhe -> DOBARA charge.
+   -> TTL (24h) ya result store rakho; cache temporary, DB = final truth.
+
 ```
    Idempotency = "same key, same outcome — chahe kitni baar aaye, paisa ek baar"
 ```
