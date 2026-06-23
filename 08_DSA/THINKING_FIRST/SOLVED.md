@@ -71,6 +71,7 @@
 | 37 | Lowest Common Ancestor   | Trees (DFS bubble-up) |    |    |    | SOLO clean (no bug) — base(null/p-q) + combine(L-null->R, R-null->L, both->root) |
 | 38 | Count Good Nodes         | Trees (DFS pass-down) |    |    |    | **COLD TEST — genuinely unseen, FULL SOLO** (pattern+key "carry path-max" khud derive, no signal) |
 | 39 | Validate BST             | Trees (range window) |    |    |    | range(min,max) narrow; bug "early return true" -> AND of children (nudge se fix) |
+| 40 | Kth Smallest in BST      | Trees (inorder=sorted) |    |    |    | SOLO clean — BST inorder=sorted -> v[k-1] (0-based) |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -215,6 +216,12 @@
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
+## #40 — Kth Smallest Element in a BST   (Medium | Trees — inorder=sorted)   SOLO
+- **Signal:** "BST + k-th smallest" → inorder (left→node→right) BST pe SORTED deta → k-th nikaalo
+- **Approach (SOLO):** inorder helper (reference vector bharता) → poora sorted list → return `v[k-1]` (0-based, isi liye k-1). base null → return.
+- **Key:** BST ka inorder HAMESHA sorted (ascending) — kyunki left(chhote)→node→right(bade). Yeh BST ka doosra core concept (pehla = range-window #39).
+- **Note:** SOLO clean, koi bug nahi. (Optimization possible: poora vector na banake counter se k-th pe early-stop — par yeh approach bhi sahi/clear.) #40 milestone — 40 active-derive.
 
 ## #39 — Validate Binary Search Tree   (Medium | Trees — range window)
 - **Signal:** "valid BST?" → har node ek allowed WINDOW (min,max) ke andar; window neeche jaate NARROW hota
