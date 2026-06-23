@@ -74,6 +74,7 @@
 | 40 | Kth Smallest in BST      | Trees (inorder=sorted) |    |    |    | SOLO clean — BST inorder=sorted -> v[k-1] (0-based) |
 | 41 | Subsets (power set)      | Backtracking   |    |    |    | REP 1 of backtracking — choose/explore/un-choose; nudges (temp=param, 2-call not loop, pop ORDER) |
 | 42 | Permutations             | Backtracking (used[]) |    |    |    | REP 2 — structure SOLO (used[]/loop/choose-explore-unchoose); nudge only C++ sizing + placement. Curve improving |
+| 43 | Combination Sum          | Backtracking (start+reuse) |    |    |    | **REP 3 — FULL SOLO, zero help, all 3 twists first-try. JP actual OA Q. Curve proof (rep1 nudged→rep3 solo)** |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -218,6 +219,12 @@
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
+## #43 — Combination Sum   (Medium | Backtracking — start-index + reuse)   REP 3 · FULL SOLO · JP OA Q
+- **Signal:** "sum==target ke saare combos, reuse allowed" → backtracking + 3 twist.
+- **Approach (FULL SOLO):** helper(cand, target, idx, temp&, ans&). base: target==0 → push(temp); target<0 → return (prune). loop i from idx: push(cand[i]) → recurse(target-cand[i], **i** — NOT i+1, reuse) → pop.
+- **3 twists (all SOLO first-try):** (1) REUSE → recurse with same `i` not i+1; (2) TARGET base → ==0 found, <0 prune; (3) START index → loop from idx (no going back) → kills duplicate combos.
+- **CURVE PROOF (the point):** rep1 Subsets#41 = 3 conceptual nudges; rep2 Permutations#42 = structure-solo + 1-2 small nudges; rep3 Combination-Sum#43 = **ZERO help, all-solo, first-try.** Exactly the trees curve (diameter#33 nudged → Good-Nodes#38 cold-solo). Directly answers his earlier doubt ("bina help nahi banta") — 3 reps → solo. AND it's JP's literal OA question, solved alone. Backtracking now OWNED at template level.
 
 ## #42 — Permutations   (Medium | Backtracking — used[])   REP 2
 - **Signal:** "saare arrangements / order" → backtracking + `used[]` track (kaunse use ho chuke).
