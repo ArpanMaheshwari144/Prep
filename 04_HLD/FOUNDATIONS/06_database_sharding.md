@@ -155,6 +155,15 @@ Every query:
 
 > **Rule:** High cardinality + even distribution + matches query pattern
 
+**"matches query pattern" = SHARD ON YOUR QUERY KEY (drill se seekha):**
+```
+   Jis field se tu LOOKUP karta hai, USI pe shard karo.
+   URL shortener: redirect mein tere paas SIRF shortCode hota (GET /abc123) — user-id/geo nahi.
+     -> user-id pe shard kiya  -> redirect pe pata hi nahi kaunsा shard (user-id available nahi) -> sab dhoondho. SLOW.
+     -> shortCode pe shard      -> hash(shortCode) -> seedha ek shard. SAHI.
+   Principle: shard us cheez pe jisse query aati hai (warna har query = saare shards scan).
+```
+
 ---
 
 ### 2. **Resharding** — real nightmare
