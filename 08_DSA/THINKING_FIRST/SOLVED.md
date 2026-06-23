@@ -70,6 +70,7 @@
 | 36 | Zigzag Level Order       | Trees (BFS twist) |    |    |    | SOLO — same #34 template + toggle flag; smart: direct index size-i-1 (no reverse) |
 | 37 | Lowest Common Ancestor   | Trees (DFS bubble-up) |    |    |    | SOLO clean (no bug) — base(null/p-q) + combine(L-null->R, R-null->L, both->root) |
 | 38 | Count Good Nodes         | Trees (DFS pass-down) |    |    |    | **COLD TEST — genuinely unseen, FULL SOLO** (pattern+key "carry path-max" khud derive, no signal) |
+| 39 | Validate BST             | Trees (range window) |    |    |    | range(min,max) narrow; bug "early return true" -> AND of children (nudge se fix) |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -214,6 +215,13 @@
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
+## #39 — Validate Binary Search Tree   (Medium | Trees — range window)
+- **Signal:** "valid BST?" → har node ek allowed WINDOW (min,max) ke andar; window neeche jaate NARROW hota
+- **Approach:** root window (-inf,+inf). har node: `min < val < max` ? nahi → false. left recurse → (min, val) [max=node]; right recurse → (val, max) [min=node]. base null → true. C++: `long long` inf (node INT_MIN/MAX bhi ho sakti).
+- **Key:** TRAP = node ko sirf parent se compare karna GALAT (2 under 8 valid-lagta par root-5 ke right me 2<5 → invalid). Window se pakda jaata: right gaye → min=5 → 2<5 → false.
+- **Bug (nudge se fix):** pehle "current node range me → TURANT return true" likha → root hamesha range me → SAB valid aaye. Fix: true return karne ki jagah **AND of children** — "valid = current theek AND left-valid AND right-valid". (Claude ne structure-flaw point kiya: early-return + dead-recursion; Arpan ne AND laga ke theek kiya.) 7/7 pass.
+- **Note:** BST ka pehla concept. Naya pattern = range/bounds pass-down (Count-Good-Nodes ke pass-down se related, par yahan 2 bounds + AND-combine).
 
 ## #38 — Count Good Nodes in Binary Tree   (Medium | Trees — DFS pass-down)   COLD TEST · FULL SOLO
 - **Signal:** (NONE given — cold test) → node ko judge karne ko "raaste ka max" chahiye → DFS me max NEECHE pass + count
