@@ -72,6 +72,7 @@
 | 38 | Count Good Nodes         | Trees (DFS pass-down) |    |    |    | **COLD TEST — genuinely unseen, FULL SOLO** (pattern+key "carry path-max" khud derive, no signal) |
 | 39 | Validate BST             | Trees (range window) |    |    |    | range(min,max) narrow; bug "early return true" -> AND of children (nudge se fix) |
 | 40 | Kth Smallest in BST      | Trees (inorder=sorted) |    |    |    | SOLO clean — BST inorder=sorted -> v[k-1] (0-based) |
+| 41 | Subsets (power set)      | Backtracking   |    |    |    | REP 1 of backtracking — choose/explore/un-choose; nudges (temp=param, 2-call not loop, pop ORDER) |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -216,6 +217,12 @@
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
+## #41 — Subsets / Power Set   (Medium | Backtracking)   REP 1 (new pattern)
+- **Signal:** "saare subsets/combinations" → BACKTRACKING (choices ka ped). Har element: LO ya CHHODO.
+- **Approach:** helper(idx, nums, temp&, ans&). base idx==size → ans.push(temp). idx pe 2 call: (1) LIYA — temp.push(nums[idx]) → recurse(idx+1) → **temp.pop() (undo)** → (2) NAHI LIYA — recurse(idx+1). 2^n subsets.
+- **Key:** template = CHOOSE → EXPLORE → UN-CHOOSE. (1) `temp` PARAMETER hona chahiye (local nahi — carry across recursion). (2) idx-model = 2 recursive call, NO for-loop (for-loop = doosra model, mix mat karo). (3) **pop ORDER**: undo "liya"-call ke BAAD aur "nahi liya"-call se PEHLE (warna exclude branch mein bhi element ghus jaata).
+- **Note:** FIRST backtracking problem EVER — needed 3 nudges (temp=param, 2-call-not-loop, pop-order). NORMAL for rep-1 of a new pattern. Trees-curve repeat expected: diameter#33 nudged → Good-Nodes#38 cold-solo; backtracking will go same (rep 1 help → rep 3-4 solo). His settled take: "sabar + practice — reps se baithta."
 
 ## #40 — Kth Smallest Element in a BST   (Medium | Trees — inorder=sorted)   SOLO
 - **Signal:** "BST + k-th smallest" → inorder (left→node→right) BST pe SORTED deta → k-th nikaalo
