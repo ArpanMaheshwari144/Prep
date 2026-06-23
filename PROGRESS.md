@@ -1,7 +1,7 @@
 # Interview Prep — Progress Tracker
 
-> **Updated:** 22 June 2026 (Bangalore) | **Target:** JP Morgan (Associate/SE-III, Bangalore) → BlackRock (4-5yr) |
-> **Mode:** CONSOLIDATE + APPLY. JP-ready ~93%. Apply LIVE.
+> **Updated:** 23 June 2026 (Bangalore) | **Target:** JP Morgan (Associate/SE-III, Bangalore) → BlackRock (4-5yr) |
+> **Mode:** REVISE + APPLY (daily 3-lane: Java + HLD + DSA-gate). JP-ready ~94%. Apply LIVE.
 
 ```
    GOAL:  Konovo (12L) → Bangalore product/fintech (18-25L) → JPM/GS (26-50L) → BlackRock Aladdin (50+L)
@@ -58,8 +58,8 @@ INSIDER: drop idempotency/audit-trail/ACID in design; PostgreSQL/Oracle for ledg
      Spring V90 (41 notes: @Transactional/JWT/Hibernate/Profiles/Docker/K8s + IoC/DI/autowiring/security)
      LLD 11 problems · Projects (TODO full pipeline JWT/Redis/Docker/K8s/AWS) · Infra 9 · Compares 12 · DB indexing
 
-   HLD: Foundations 10/10. Designs 18 (incl #16 Stock-Broker, #17 Payment, #18 File-upload — interview-framework notes).
-   DSA: 33 active-derive (SOLVED.md), 43+ coded .cpp.
+   HLD: Foundations 10/10. Designs 19 (incl #16 Stock-Broker, #17 Payment, #18 File-upload, #19 News-Aggregator — 8-step interview notes). DRILL-method unlocked.
+   DSA: 40 active-derive (SOLVED.md), 50+ coded .cpp. Trees gate-DONE.
 
    LEFT (priority order):
      1. JAVA deep (concurrency/internals to JP-grill depth) + LLD  ← #1
@@ -73,11 +73,14 @@ INSIDER: drop idempotency/audit-trail/ACID in design; PostgreSQL/Oracle for ledg
 # DSA — STATUS
 
 ```
-COMPLETE: Arrays&Hashing, Two-Pointer, Binary-Search (6: basic/rotated-search/rotated-min/Koko/search-insert/search-2D),
-          Linked-List (5: reverse/middle/cycle/merge/remove-nth — tools: 3-ptr-reverse/slow-fast/dummy/gap).
+COMPLETE: Arrays&Hashing, Two-Pointer, Binary-Search (6), Linked-List (5: reverse/middle/cycle/merge/remove-nth).
 DEEP:     Sliding-Window, Stack, Grid/Matrix.
-GOING:    TREES — max-depth/invert/same-tree (solo); diameter [C] re-revisit (recursion+global-track, tough).
-NEXT:     finish Trees → light Heap/Backtrack (gate-level only). NO hard DP/Graphs for JP.
+TREES — GATE-DONE (40 total):
+   DFS core: max-depth/invert/same/diameter[C]
+   BFS family: level-order/right-view/zigzag (1 template, 3 twists, solo)
+   LCA (bubble-up, solo clean) · Count-Good-Nodes (#38 COLD TEST genuinely-unseen FULL SOLO — proof generation works)
+   BST: Validate (range-window #39) + Kth-Smallest (inorder=sorted #40)
+NEXT:     light Heap (top-k) OR trees cold-recall revision. NO hard DP/Graphs for JP. DSA = gate-maintenance now.
 
 METHOD: self-run flow — he runs own code (Code Runner), Claude gives problem+signal+test-cases, RUNS to witness.
    Help = thinking-direction only, never code. Tracker = SOLVED.md (signal→pattern→approach→[C] cold-retry markers).
@@ -97,6 +100,10 @@ DESIGNS: url-shortener · rate-limiter · twitter · notification · url-journey
    1.clarify(FR+NFR+Qs) 2.scale/estimation 3.API 4.boxes 5.data+DB(KYUN/trade-off) 6.DEEP-DIVE(options→choose)
    7.bottleneck/scale 8.wrap.  META: think-out-loud · trade-off every choice · chup mat baitho.
 DEPTH = JP/finance flavor (idempotency, consistency>availability, ACID/ledger/audit, failure-handling) — NOT FAANG-hyperscale.
+DRILL-METHOD (23 Jun — the real upgrade): Claude=interviewer fires cross-questions, Arpan defends. Deep-dives cluster into
+   ~8 FOUNDATION themes (cache/DB/consistency/CAP/queue/failure/idempotency/LB) + design twist = same "12-template+twist" idea.
+   When drilled → pull from FOUNDATIONS (10/10). Learned: cache-stampede(mutex/load-shed), counter range-alloc, SHARD-ON-QUERY-KEY.
+Each design = ONE file now (8-step drives merged into mains; dup files deleted).
 ```
 
 ---
@@ -111,7 +118,8 @@ SYSTEM: Resume (honest: 600+ incidents, $20K Doximity fix, VP/CTO recognition, o
    Apply to his LEVEL (3-5yr); skip FAANG-DSA-hard (Amazon), 8+yr senior, refused-tier.
 
 APPLIED: JP Morgan (210714912) · Razorpay (Debangan ref) · FIS · Barclays (hackajob) · Oracle (inbound, emailed) ·
-   Target India · DELTA · Portfolio-Mgmt-Engineer (Simplify).
+   Target India · DELTA · Portfolio-Mgmt-Engineer (Simplify) · Siemens Energy (Java Backend, Bengaluru, 22 Jun, CTC ask 22L — real product MNC, exact-stack-fit).
+   NOTE: Dice MCP = US-only (skip); Indeed-India = mostly staffing noise (~1 gem/search). Real channels = inbound + referral + Simplify.
 REFERRALS OUT: Kumar Sudarshan (JP VP) · Ishita Nandwani (JP — resume SENT) · Anmol+Debangan (Razorpay) · Madhur/Saurabh.
    JP referrals no-reply yet (normal, days).
 PENDING: RESOURCES push (gh-auth fix → `gh auth login` as personal ArpanMaheshwari144). NEVER add company-acct as collaborator.
