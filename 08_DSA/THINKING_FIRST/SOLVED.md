@@ -75,6 +75,7 @@
 | 41 | Subsets (power set)      | Backtracking   |    |    |    | REP 1 of backtracking — choose/explore/un-choose; nudges (temp=param, 2-call not loop, pop ORDER) |
 | 42 | Permutations             | Backtracking (used[]) |    |    |    | REP 2 — structure SOLO (used[]/loop/choose-explore-unchoose); nudge only C++ sizing + placement. Curve improving |
 | 43 | Combination Sum          | Backtracking (start+reuse) |    |    |    | **REP 3 — FULL SOLO, zero help, all 3 twists first-try. JP actual OA Q. Curve proof (rep1 nudged→rep3 solo)** |
+| 44 | Kth Largest Element       | Heap (size-K min-heap) |    |    |    | SOLO clean — size-K min-heap (size>k pop, top=ans). Last NEW pattern; DSA gate COMPLETE |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -219,6 +220,13 @@
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
+## #44 — Kth Largest Element in an Array   (Medium | Heap)   SOLO · DSA gate COMPLETE
+- **Signal:** "Kth largest / top-K" → HEAP (priority_queue).
+- **Approach (SOLO):** size-K MIN-heap. har element push; `if(size > k) pop()` (sabse chhota nikal jaata). ant me K sabse bade bachte → `top()` = Kth largest.
+- **Key:** "Kth LARGEST" → MIN-heap of size K (counterintuitive par sahi — top of size-K min-heap = Kth largest). C++: `priority_queue<int, vector<int>, greater<int>>` = min-heap. Alt: max-heap + (k-1) pops.
+- **Heap basics:** min/max hamesha top; push/pop O(log n), top O(1); use = top-K/Kth/running-min-max.
+- **Note:** SOLO clean first-try. Heap = LAST new pattern. **DSA gate-level COMPLETE** — Hashing/Two-Ptr/Sliding-Window/Prefix/Binary-Search/Stack/LinkedList/Grid/Trees(+BST)/Backtracking/Heap all done (44). Now → pure REVISION rotation (1/pattern/day), no new for JP.
 
 ## #43 — Combination Sum   (Medium | Backtracking — start-index + reuse)   REP 3 · FULL SOLO · JP OA Q
 - **Signal:** "sum==target ke saare combos, reuse allowed" → backtracking + 3 twist.
