@@ -64,7 +64,7 @@
 | 30 | Maximum Depth of Tree    | Trees (DFS rec)|    |    |    | base + recurse L/R + combine |
 | 31 | Invert Binary Tree       | Trees (DFS rec)|    |    |    | base + swap(L,R) + recurse |
 | 32 | Same Tree                | Trees (2-tree) |    |    |    | both-null/one-null base + val + recurse both |
-| 33 | Diameter of Binary Tree  | Trees (depth+track) |    |    |    | `[C]` RE-REVISIT — passed via nudges, samajh shaky |
+| 33 | Diameter of Binary Tree  | Trees (depth+track) | ✓ 25Jun COLD SOLO |    |    | [C] CLEARED — cold re-code solo, 3 gotchas khud handle (told→derived) |
 | 34 | Level Order Traversal    | Trees (BFS queue) |    |    |    | SOLO — queue.size()=level; v-not-cleared bug khud pakda |
 | 35 | Binary Tree Right Side View | Trees (BFS twist) |    |    |    | same #34 template; off-by-one i==size-1 nudge se pakda (dry-run nahi) |
 | 36 | Zigzag Level Order       | Trees (BFS twist) |    |    |    | SOLO — same #34 template + toggle flag; smart: direct index size-i-1 (no reverse) |
