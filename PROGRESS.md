@@ -1,12 +1,34 @@
 # Interview Prep — Progress Tracker
 
-> **Updated:** 23 June 2026 (Bangalore) | **Target:** JP Morgan (Associate/SE-III, Bangalore) → BlackRock (4-5yr) |
-> **Mode:** REVISE + APPLY (daily 3-lane: Java + HLD + DSA-gate). JP-ready ~94%. Apply LIVE.
+> **Updated:** 26 June 2026 | **Target:** JP Morgan (Associate/SE-III, Bangalore) → BlackRock (4-5yr) |
+> **Mode:** APPLY + INTERVIEW + behavioral-STAR (technicals = warm-revise). JP-ready ~95%. Apply LIVE.
 
 ```
    GOAL:  Konovo (12L) → Bangalore product/fintech (18-25L) → JPM/GS (26-50L) → BlackRock Aladdin (50+L)
    Refused (hard no): TCS/Infosys/Wipro/Cognizant/Capgemini/KPMG.
    "Effort 100% mera, outcome universe ka. Roz ek kadam. Apne dum pe — BlackRock tak."
+```
+
+---
+
+# PLAN: NOW (July, home) → AUGUST (office return)  — BUFFER MONTH
+
+```
+   CONTEXT: Konovo RTO July → pushed to AUGUST. July = home ~1 month = BUFFER + RUNWAY.
+   THEME: prep ko INTERVIEWS me CONVERT karo (technically JP-READY — ab PERFORM + APPLY, naya seekhna nahi).
+   Sab REMOTE ho jaata: apply + ZOOM interview (JPMC interview Zoom pe hota) → buffer ka faayda. Family-first, own pace.
+
+   1. APPLY + REFERRAL (daily, asli focus):
+        REFERRAL-first (10x convert): JPMC (Raunak✓, Jhabar/Aman + naye) · Razorpay/CRED/PhonePe ⭐ contacts
+        + Simplify easy-apply VOLUME (3-5/din) + INBOUND respond (Cutshort/InMail/hackajob)
+   2. ★ BEHAVIORAL STAR (#1 GAP — 3 real JPMC writeups ne confirm kiya, decisive round):
+        Konovo stories S-T-A-R me: WAF/X-Forwarded-IP · $20K-fix · 600+ incidents · HikariCP · Lambda-throttle
+        + why-JP · manager-disagreement · led-project · initiative · oncall · design-reject
+   3. WARM-REVISE (light daily): Java/Spring/HLD cards rotate (articulable rahe)
+   4. DSA: calm maintenance (cold-recall rotate + [C] revisits: Coin-Change/House-Robber). gate COMPLETE, no new pressure.
+   5. INTERVIEW MODE: call aaye → Zoom (ghar se) → har ke baad DEBRIEF → weak-spot drill.
+
+   GOAL by August: active interview pipeline + ideally offer(s) in progress.
 ```
 
 ---
@@ -73,14 +95,16 @@ INSIDER: drop idempotency/audit-trail/ACID in design; PostgreSQL/Oracle for ledg
 # DSA — STATUS
 
 ```
-COMPLETE: Arrays&Hashing, Two-Pointer, Binary-Search (6), Linked-List (5: reverse/middle/cycle/merge/remove-nth).
-DEEP:     Sliding-Window, Stack, Grid/Matrix.
-TREES — GATE-DONE (40 total):
-   DFS core: max-depth/invert/same/diameter[C]
-   BFS family: level-order/right-view/zigzag (1 template, 3 twists, solo)
-   LCA (bubble-up, solo clean) · Count-Good-Nodes (#38 COLD TEST genuinely-unseen FULL SOLO — proof generation works)
-   BST: Validate (range-window #39) + Kth-Smallest (inorder=sorted #40)
-NEXT:     light Heap (top-k) OR trees cold-recall revision. NO hard DP/Graphs for JP. DSA = gate-maintenance now.
+GATE COMPLETE — 46 problems, all JP patterns:
+   Hashing · Two-Pointer · Sliding-Window · Prefix · Binary-Search(6) · Stack · Linked-List(5) · Grid
+   TREES(+BST): DFS(max-depth/invert/same/diameter-[C]-cleared-cold) · BFS(level/right/zigzag) ·
+                LCA · Count-Good-Nodes(#38 COLD-SOLO genuinely-unseen) · Validate-BST(#39) · Kth-Smallest(#40)
+   BACKTRACKING: Subsets(#41)/Permutations(#42)/Combination-Sum(#43 JP-OA-Q SOLO) — rep1-help→rep3-solo curve
+   HEAP: Kth-Largest(#44 size-K min-heap)
+   1D-DP: Climbing-Stairs(#45 memoize) · House-Robber(#46 take/skip [C])
+PARKED: Coin-Change [C] (hardest basic DP, didn't click 26 Jun — preserved NOT deleted, cold-revisit fresh day).
+SKIP: graphs, hard-DP (JP nahi puchта; BlackRock-later). DSA = now pure CALM maintenance (cold-recall + [C] revisits).
+COGNITION: abstract-formula feels hard (spatial brain), concrete-numbers/code easy → when stuck go CONCRETE fast.
 
 METHOD: self-run flow — he runs own code (Code Runner), Claude gives problem+signal+test-cases, RUNS to witness.
    Help = thinking-direction only, never code. Tracker = SOLVED.md (signal→pattern→approach→[C] cold-retry markers).
