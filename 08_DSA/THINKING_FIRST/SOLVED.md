@@ -75,7 +75,9 @@
 | 41 | Subsets (power set)      | Backtracking   |    |    |    | REP 1 of backtracking — choose/explore/un-choose; nudges (temp=param, 2-call not loop, pop ORDER) |
 | 42 | Permutations             | Backtracking (used[]) |    |    |    | REP 2 — structure SOLO (used[]/loop/choose-explore-unchoose); nudge only C++ sizing + placement. Curve improving |
 | 43 | Combination Sum          | Backtracking (start+reuse) |    |    |    | **REP 3 — FULL SOLO, zero help, all 3 twists first-try. JP actual OA Q. Curve proof (rep1 nudged→rep3 solo)** |
-| 44 | Kth Largest Element       | Heap (size-K min-heap) |    |    |    | SOLO clean — size-K min-heap (size>k pop, top=ans). Last NEW pattern; DSA gate COMPLETE |
+| 44 | Kth Largest Element       | Heap (size-K min-heap) |    |    |    | SOLO clean — size-K min-heap (size>k pop, top=ans) |
+| 45 | Climbing Stairs           | 1D-DP (memoize) |    |    |    | DP rep 1 — ways(n)=ways(n-1)+ways(n-2) Fib; pure-rec -> memoize (shared dp ref) via hints |
+| 46 | House Robber              | 1D-DP (take/skip) |    |    |    | `[C]` DP rep 2 — dp[i]=max(money[i]+dp[i-2], dp[i-1]); recurrence solo, help on direction/base/empty-edge |
 
 > **Daily ~1hr:** 40 min NAYA (active derive) + 20 min REVISION (upar ka recall + 1 cold re-code).
 > Sab re-solve NAHI — approach recall sasta, code sirf `[C]` wale.
@@ -220,6 +222,17 @@
 - **Example:** `[1,3,5,7]` target=7 → lo=hi=3 pe pahunch jaata. `<=` → mid=3, arr[3]=7 = found ✓. `<` → 3<3 false → loop khatam → miss ✗.
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
+
+## #46 — House Robber   (Medium | 1D-DP take/skip)   DP rep 2 · [C]
+- **Signal:** "max, par adjacent nahi le sakte" → 1D-DP (take/skip choice).
+- **Recurrence:** `dp[i] = max(money[i] + dp[i-2], dp[i-1])` (LOOT i → money[i]+dp[i-2]; SKIP i → dp[i-1]). base dp[0]=nums[0], dp[1]=max(nums[0],nums[1]). empty → 0.
+- **Note:** DP rep 2. RECURRENCE khud samjha (loot vs skip = max). Help laga STRUCTURAL pe: (1) direction (0 se shuru → negative index crash; n-1 se shuru karna), (2) base on `i` not nums.size(), (3) empty-guard. 5/6 logic se pass, sirf empty-edge hint. **[C] cold-revisit** (rep 2 of new pattern, curve abhi build ho raha — backtracking/trees jaisा rep3-4 pe solo aayega). His own calm-DP-mode: stuck→peek→move-on→[C]→cold-revisit, no hungama.
+
+## #45 — Climbing Stairs   (Easy | 1D-DP intro)   DP rep 1
+- **Signal:** "kitne tareeke / ways to reach" + per-step choice → DP.
+- **Recurrence:** `ways(n) = ways(n-1) + ways(n-2)` (step n pe aaya: n-1 se +1, ya n-2 se +2) = Fibonacci. base ways(1)=1, ways(2)=2.
+- **DP learning:** pure recursion O(2^n) (same subproblem baar-baar) → MEMOIZE: `dp[n+1]` init -1, SHARED via reference; "stored? return : compute+store+return" → O(n). (shared-dp-by-reference = key, jo pehle confuse tha).
+- **Note:** First DP problem. Recurrence solo-ish, memoization via hints. DP concept (recurrence + store/recompute-mat-karo) unlock.
 
 ## #44 — Kth Largest Element in an Array   (Medium | Heap)   SOLO · DSA gate COMPLETE
 - **Signal:** "Kth largest / top-K" → HEAP (priority_queue).
