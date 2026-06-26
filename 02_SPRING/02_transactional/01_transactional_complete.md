@@ -859,6 +859,13 @@ public List<Order> findRecentOrders(Long userId) {
 ### Q: "Konse cases mein `@Transactional` work nahi karta?"
 > "**3 cases:** (1) Self-invocation, (2) Private/final methods (proxy override nahi kar sakta), (3) Static methods."
 
+### Q: "Bade scale pe (JP jaisа) sab kuch `@Transactional` se ho jata hai?" (drill — 26 Jun)
+> "NAHI. `@Transactional` = SINGLE DB, single service ka tool (ek DB transaction). Distributed system mein insufficient:
+> - **cross-service / multi-DB** (Wallet-DB + Portfolio-DB alag) → ek `@Transactional` 2 DB pe nahi chalti → **SAGA** (compensating undo) ya 2PC.
+> - **low-latency trading** (microseconds) → DB transaction hot-path pe NAHI → in-memory engine + **event-log (WAL)** + async settlement.
+> - **duplicate/retry** → `@Transactional` nahi rokta → **idempotency key + reconciliation job**.
+> Interview line: *'@Transactional ka apna scope hai — single-DB ACID. Distributed/scale pe SAGA + event-sourcing + idempotency. Right tool for right scope.'* (= trading #16 / payment #17 designs)"
+
 ### Q: "Konsa isolation use karoge?"
 > "99% cases mein DB ka default — Postgres ka READ_COMMITTED kaafi hai. Banking/financial → SERIALIZABLE. High level = strong consistency but locking zyada."
 

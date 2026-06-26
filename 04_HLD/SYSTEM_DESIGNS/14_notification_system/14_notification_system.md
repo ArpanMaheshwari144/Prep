@@ -343,6 +343,41 @@ With throttling:
 
 ---
 
+## 16b Provider Failover + Circuit Breaker  (drill — 26 Jun)
+
+```
+PROBLEM: worker third-party provider (Twilio/FCM/SES) ko call karta. Woh provider DOWN / SLOW ->
+         worker atak jaata, har call timeout -> saare workers phas jaate -> poora system thapp.
+
+FIX 1 — MULTI-PROVIDER FAILOVER (no SPOF):
+   ek channel ke 2+ provider rakho (SMS: Twilio + AWS-SNS).
+   ek down -> traffic doosre provider pe ROUTE -> ek pe depend nahi.
+
+FIX 2 — CIRCUIT BREAKER (dead provider ko hammer mat karo):
+   provider pe N consecutive failures -> circuit "TRIP" (OPEN) -> us provider ko call BAND ->
+   backup pe route. Beech-beech "half-open" check -> provider wapas aaya? -> phir use karo (CLOSE).
+   -> workers dead-provider ke timeouts pe phaste nahi.
+
+   states: CLOSED (normal) -> OPEN (fail-threshold paar, calls block) -> HALF-OPEN (test) -> CLOSED/OPEN
+```
+
+---
+
+## 16c Delivery Status — provider WEBHOOK (accept != delivered)
+
+```
+   worker ne provider ko bheja = "ACCEPTED" (provider ne le liya), par user tak PAHUNCHA kya? pata nahi.
+   accept != delivered.
+
+   provider WEBHOOK/callback bhejta -> "delivered" / "failed" / "bounced":
+     send -> status SENT (accepted by provider)
+     provider webhook aaya -> status DELIVERED ya FAILED (update Tracking DB)
+     FAILED (galat number / bounce) -> retry / doosrа channel / mark-failed
+   = "sent" (humne bheja) vs "delivered" (provider ne confirm kiya) -> webhook se gap pata.
+```
+
+---
+
 ## 17 Horizontal Scaling
 
 ```
