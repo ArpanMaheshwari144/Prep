@@ -28,7 +28,6 @@ using namespace std;
 // ---- TERA kaam: yeh function bhar (1D-DP table) ----
 int coinChange(vector<int> coins, int amount)
 {
-    return solve()
 }
 
 int main()
