@@ -1,9 +1,9 @@
 # JP PREP — PRACTICE PLAYBOOK
 
-> Learning/coverage DONE. Ab = PRACTICE GAME (training, not progress-tracking).
 > GOAL: JP Morgan (Associate/SE-III, Bangalore) → later BlackRock. *"Effort 100% mera, outcome universe ka."*
-> STATE: ~60-65% JP-ready. Gap = novel-handling under pressure + nervousness-on-unfamiliar + behavioral. All TRAINABLE.
-> MODE: APPLIES PAUSED (~1-2 month). TRAINING-FIRST. Bangalore jaane se pehle itna practice ki "dimaag me kuch hai" feel ho.
+> **MODE (his call, 29 Jun): 2 MONTHS PURE STUDY (July + Aug) — no mocks, no referral-chasing, no new applies, no faltu meta-talk. Just PRACTICE. Reassess after Aug (kaha hain + kitna aur time).**
+> STATE: ~60-65% ready. Gap = novel-handling under pressure + nervousness + behavioral. Pressure-gap closes ONLY via mocks/real-interviews (LATER). Now = build knowledge + train.
+> Claude: bolna kam, KARANA zyada. (in-flight referrals Raunak-JP[submitted] / Anmol-RZP[no-role-yet] sit naturally — call aaye to decide then.)
 
 ---
 
