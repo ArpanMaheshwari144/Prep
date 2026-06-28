@@ -31,11 +31,15 @@
      SUBAH (FRESH mind → HARD/gap areas):
        1. HLD  → ~1 hr → revise existing notes/foundations (he reads, asks doubts) + extract pattern + "kaunsa block kab" / drill
        2. DSA  → ~1 hr → COLD solve (medium, JP-level; only question+tests → he codes → na hua → hint → teach → redo)
-     DOPAHAR (easier, revise lane):
+       2b. LLD + PR-REVIEW (with CODE — he's only done THEORY, needs to SEE+do code):
+         - LLD: SOLID violations→fixes, design-patterns IMPLEMENTED, Builder — show REAL code, work through it (not just theory)
+         - PR-REVIEW round practice: Claude shows production code w/ bugs+bad-practices → he finds bugs + improves (OOP/patterns/clean-code)
+   DOPAHAR (easier, revise lane):
        3. JAVA + SPRING → ~2 hr → visual-code revise (FULL clear code he can SEE/trace, NOT crammed snippets), topics rotate
      + BEHAVIORAL STAR → 2-3x/week (Konovo stories)
    LOGIC: hard/novel (HLD+DSA = the gap) ko FRESH-mind morning; Java/Spring (strong, revise) afternoon.
-   Claude rule: bolna kam, KARANA zyada. CODE = full/visual (he's spatial — must SEE it). JP-focused only — NEVER off-target/above-JP/unstudied design.
+   *** CODE-VISIBILITY RULE: show LOTS of CODE (he's spatial — jitna code dekhega utna yaad + round-practice). Java/Spring/LLD/PR-review = CODE-heavy, not theory. ***
+   Claude rule: bolna kam, KARANA zyada. JP-focused only — NEVER off-target/above-JP/unstudied design.
 ```
 
 ---
@@ -44,7 +48,9 @@
 
 ```
    DIFFICULTY: MODERATE — "breadth under pressure", NOT single-hard, NOT FAANG. Reason-the-WHY.
-   ROUNDS (~3): Coding (LC easy-medium + HINTS + code-review) + JAVA/Spring DEPTH (decisive grill) + System-Design + Behavioral/STAR.
+   ROUNDS (~4, real writeups incl Pramod Jan-2026): (1) DSA + LLD (greedy/medium problem + SOLID/patterns/Builder) ·
+     (2) System-Design + Spring-Boot (project architecture + a design e.g. notification) · (3) PR-REVIEW (buggy prod code → find+fix, OOP/patterns/clean-code) · (4) HR/Behavioral STAR.
+     DSA = LC easy-MEDIUM + HINTS (greedy/combo-sum/circular-dial — NOT hard-DP/graphs). Balance DSA+LLD+HLD; know your project architecture.
    - CODING = his zone (Combination-Sum, Streams, Min-Stack, Level-Order seen). hints + main-logic enough.
    - JAVA/SPRING GRILL = HEAVIEST/decisive (HashMap-vs-CHM, concurrency/thread-safety, Spring-Boot internals, DI/autowiring,
      Java8 streams, exceptions, Runnable-vs-Callable, design-patterns, project deep-dive). ← his strength, keep revising.
