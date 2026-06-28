@@ -28,10 +28,13 @@
 
 ```
    DAILY SCHEDULE (pel ke — idle nahi, enjoy + grind, roz):
-     1. JAVA + SPRING  → ~2 HRS, FULL FOCUS (JP's HARDEST/decisive round) → visual-code revise (FULL clear code he can SEE/trace, NOT crammed snippets), topics rotate
-     2. HLD            → ~1 hr → read designs + extract pattern + "kaunsa block kab" / drill
-     3. DSA            → ~1 hr → COLD solve (medium, JP-level; hint→teach→redo)
+     SUBAH (FRESH mind → HARD/gap areas):
+       1. HLD  → ~1 hr → revise existing notes/foundations (he reads, asks doubts) + extract pattern + "kaunsa block kab" / drill
+       2. DSA  → ~1 hr → COLD solve (medium, JP-level; only question+tests → he codes → na hua → hint → teach → redo)
+     DOPAHAR (easier, revise lane):
+       3. JAVA + SPRING → ~2 hr → visual-code revise (FULL clear code he can SEE/trace, NOT crammed snippets), topics rotate
      + BEHAVIORAL STAR → 2-3x/week (Konovo stories)
+   LOGIC: hard/novel (HLD+DSA = the gap) ko FRESH-mind morning; Java/Spring (strong, revise) afternoon.
    Claude rule: bolna kam, KARANA zyada. CODE = full/visual (he's spatial — must SEE it). JP-focused only — NEVER off-target/above-JP/unstudied design.
 ```
 
