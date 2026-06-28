@@ -27,8 +27,12 @@
 ```
 
 ```
-   DAILY: Java/Spring revise → HLD (read+pattern / drill) → DSA (cold solve). + Behavioral STAR. calm, one-by-one, no drama, roz.
-   Claude rule: bolna kam, KARANA zyada. JP-focused only — NEVER off-target / above-JP / unstudied design (WhatsApp mistake).
+   DAILY SCHEDULE (pel ke — idle nahi, enjoy + grind, roz):
+     1. JAVA + SPRING  → ~2 HRS, FULL FOCUS (JP's HARDEST/decisive round) → visual-code revise (FULL clear code he can SEE/trace, NOT crammed snippets), topics rotate
+     2. HLD            → ~1 hr → read designs + extract pattern + "kaunsa block kab" / drill
+     3. DSA            → ~1 hr → COLD solve (medium, JP-level; hint→teach→redo)
+     + BEHAVIORAL STAR → 2-3x/week (Konovo stories)
+   Claude rule: bolna kam, KARANA zyada. CODE = full/visual (he's spatial — must SEE it). JP-focused only — NEVER off-target/above-JP/unstudied design.
 ```
 
 ---
