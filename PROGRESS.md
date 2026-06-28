@@ -68,6 +68,13 @@ ROUNDS: OA/screen → (Superday) Code-pair + Design-pair + Behavioral. 3-6 weeks
 
 COMP (4yr Associate/AVP Bangalore): base 18-22L, total 26-33L median, top ~47L.
 INSIDER: drop idempotency/audit-trail/ACID in design; PostgreSQL/Oracle for ledgers; honesty on unknown ("don't know, will research").
+
+DIFFICULTY (re-verified 28 Jun, web): MODERATE — "BREADTH under pressure", NOT single-hard-problem. Reason-the-WHY
+   (HashMap internals, DI, "kyun kaam karta"). Rounds shift basic-syntax → deeper fast. NOT FAANG-level.
+SYSTEM DESIGN = FINANCE-FLAVORED only: reliable + low-latency + secure + consistency/ACID/idempotency.
+   ❌ NOT social-media HYPERSCALE (WhatsApp / Instagram / Twitter-scale, persistent-connection real-time) — OVERKILL, JP nahi puchта.
+   ✓ PRACTICE: Rate-Limiter, Payment, File-upload, News-Aggregator, Stock-Trading, URL-shortener (all DONE).
+   → HLD prep = warm-revise/drill THESE finance-flavored designs. Don't attempt hyperscale-social cold.
 ```
 
 ---
