@@ -15,20 +15,32 @@
 
 ```
    CONTEXT: Konovo RTO July → pushed to AUGUST. July = home ~1 month = BUFFER + RUNWAY.
-   THEME: prep ko INTERVIEWS me CONVERT karo (technically JP-READY — ab PERFORM + APPLY, naya seekhna nahi).
-   Sab REMOTE ho jaata: apply + ZOOM interview (JPMC interview Zoom pe hota) → buffer ka faayda. Family-first, own pace.
+   HONEST STATE: ~70% (NOT 95, NOT 20). Java/Spring strong; HLD blocks mostly there; DSA gate done.
+     GAP = novel/twist HANDLING under pressure + few unknown blocks + nervousness-on-unfamiliar. = TRAINABLE.
+   THEME: TEACH-mode → TRAIN-mode. (taught ≠ trained; recognition ≠ generation). Train so NOTHING NEW trips him.
+   Sab REMOTE: apply + ZOOM interview (JPMC = Zoom). Family-first, own pace. Roz, no drama.
 
-   1. APPLY + REFERRAL (daily, asli focus):
-        REFERRAL-first (10x convert): JPMC (Raunak✓, Jhabar/Aman + naye) · Razorpay/CRED/PhonePe ⭐ contacts
-        + Simplify easy-apply VOLUME (3-5/din) + INBOUND respond (Cutshort/InMail/hackajob)
-   2. ★ BEHAVIORAL STAR (#1 GAP — 3 real JPMC writeups ne confirm kiya, decisive round):
-        Konovo stories S-T-A-R me: WAF/X-Forwarded-IP · $20K-fix · 600+ incidents · HikariCP · Lambda-throttle
-        + why-JP · manager-disagreement · led-project · initiative · oncall · design-reject
-   3. WARM-REVISE (light daily): Java/Spring/HLD cards rotate (articulable rahe)
-   4. DSA: calm maintenance (cold-recall rotate + [C] revisits: Coin-Change/House-Robber). gate COMPLETE, no new pressure.
-   5. INTERVIEW MODE: call aaye → Zoom (ghar se) → har ke baad DEBRIEF → weak-spot drill.
+   1. JAVA + SPRING = REVISION (daily, light ~20-30min): present notes/cards, he re-reads. STRONG → just warm.
 
-   GOAL by August: active interview pipeline + ideally offer(s) in progress.
+   2. HLD = TRAIN to do ANY design ("har HLD kar paau" — NOT rote specific designs):
+        a. 8-step FRAMEWORK reflex (every design same skeleton)
+        b. BUILDING BLOCKS master cold (what/when/why/tradeoff): LB · cache · DB(SQL/NoSQL) · sharding · replication ·
+           queue(Kafka) · CAP/consistency · idempotency · rate-limit · WebSocket/real-time · CDN/streaming · presence
+           → NEW block (Netflix=CDN/streaming, chat=WebSocket) = Claude TEACHES block first, then he applies.
+        c. VARIED designs (1/day): framework + assemble blocks. known→new. = any design (Netflix/WhatsApp/Uber) assemble, NOT memorize.
+        ✓ Finance-flavored focus (JP). ❌ no hyperscale-social cold-lead.
+
+   3. DSA = TRAIN generation (cold reps): daily cold problem (NO teaching, blank page) → solve → learn from miss.
+        rotate patterns + [C] revisits (Coin-Change/House-Robber). recognition → generation muscle.
+
+   4. ★ BEHAVIORAL STAR (#1 gap, decisive): Konovo stories S-T-A-R (WAF/X-Forwarded-IP · $20K · 600+ incidents · HikariCP · Lambda)
+        + why-JP · manager-disagreement · led-project · initiative · oncall · design-reject.
+
+   5. APPLY + REFERRAL (daily, parallel): referral-first (Raunak-JP✓ / Anmol-RZP✓ / Jhabar/Aman / CRED-PhonePe) +
+        Simplify volume + inbound. INTERVIEW = Zoom from home → DEBRIEF each → drill weak-spot (interviews = ultimate training).
+
+   GOAL by August: ~70% → 85-90% (train novel-handling) + active interview pipeline + offer(s) in progress.
+   Nervousness fix = FAMILIARITY (more reps → less unfamiliar → less freeze).
 ```
 
 ---
