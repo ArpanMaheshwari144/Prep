@@ -36,11 +36,12 @@
    4. ★ BEHAVIORAL STAR (#1 gap, decisive): Konovo stories S-T-A-R (WAF/X-Forwarded-IP · $20K · 600+ incidents · HikariCP · Lambda)
         + why-JP · manager-disagreement · led-project · initiative · oncall · design-reject.
 
-   5. APPLY + REFERRAL (daily, parallel): referral-first (Raunak-JP✓ / Anmol-RZP✓ / Jhabar/Aman / CRED-PhonePe) +
-        Simplify volume + inbound. INTERVIEW = Zoom from home → DEBRIEF each → drill weak-spot (interviews = ultimate training).
+   5. APPLY = PAUSED (his call, 28 Jun): "kuch nahi aata abhi, pehle train karunga, phir apply." NEW applies STOPPED for ~1 month.
+        ONLY in-flight referrals RIDE (Raunak-JP✓ / Anmol-RZP✓ already sent) → call aaye to take (= training rep), else focus training.
+        → 1 month deep TRAINING first, THEN reassess + resume apply.
 
-   GOAL by August: ~70% → 85-90% (train novel-handling) + active interview pipeline + offer(s) in progress.
-   Nervousness fix = FAMILIARITY (more reps → less unfamiliar → less freeze).
+   GOAL (1 month): ~70% → 85-90% (train novel-handling + kill nervousness via familiarity). THEN dekhenge kaha hain.
+   His decision: depth-first, one-by-one, dhang se, no drama, daily. (low-confidence-day call — respected; training addresses the real gap.)
 ```
 
 ---
