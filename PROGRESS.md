@@ -14,10 +14,15 @@
       - Claude notes + code present kare, he RE-READS, repeat. NOT active-practice.
       - goal: interview me KOI answer pe na atke. (proven method for him.)
 
-   2. DSA = COLD SOLVE  (medium, JP→BlackRock level — FAANG-hard NAHI)
-      - Claude gives ONLY question + test-cases. NO hint, NO code, NO signal first.
-      - he codes COLD. fasa → HINT (thinking-direction). phir bhi fasa → Claude TEACH (kahan galat) → he REDOES cold.
-      - target: novel problem handle under pressure (generation muscle).
+   2. DSA = TEACH-FIRST PRACTICE  (medium, JP→BlackRock level — FAANG-hard NAHI)
+      ★ LEARNING PHASE (his call 30-Jun): spoiler se farak NAHI padta abhi. flow:
+        STEP 1. Claude PEHLE problem SAMJHAYE (kya poocha + kaise sochna) — teach, na ki seedha cold-throw.
+        STEP 2. Claude FILE banaye (stub: problem + tests + // expected + empty function + main).
+        STEP 3. Arpan code kare (run kare).
+        STEP 4. na hua  -> Claude HINT de (thinking-direction).
+        STEP 5. phir bhi na hua -> Claude SOLUTION/code bataye -> Arpan likhe -> [C] mark (cold-redo later).
+      - pehle SAMJHANA phir KARWANA. (NOT pure "ja cold kar" pheko.)
+      - target: pattern samajh + novel handle. (pressure-gap baad me mocks se.)
 
    3. HLD = ★ NEW DESIGN PADHNA BAND (30-Jun lock) → ab TRADEOFF-DRILL PRACTICE ★
       - sab designs padh liye, pattern aa gaya (8-step + block-kab = ek formula har design pe). NAYA design NAHI.
