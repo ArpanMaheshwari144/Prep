@@ -19,17 +19,22 @@
       - he codes COLD. fasa → HINT (thinking-direction). phir bhi fasa → Claude TEACH (kahan galat) → he REDOES cold.
       - target: novel problem handle under pressure (generation muscle).
 
-   3. HLD = READ MANY + EXTRACT PATTERN  ("har HLD kar paau")
-      - padho jitne JP-relevant designs → pattern EK hai (8-step framework + building-blocks).
-      - master "kaunsa BLOCK kab": CDN · WebSocket/real-time · cache · queue(Kafka) · shard · replica ·
-        LB · CAP/consistency · idempotency · rate-limit · presence.
-      - phir KOI design = pattern pehchaano + sahi blocks ASSEMBLE (ratta nahi). finance/general, hyperscale NAHI.
+   3. HLD = ★ NEW DESIGN PADHNA BAND (30-Jun lock) → ab TRADEOFF-DRILL PRACTICE ★
+      - sab designs padh liye, pattern aa gaya (8-step + block-kab = ek formula har design pe). NAYA design NAHI.
+      - ab PRACTICE = RAW TRADEOFF drill (design "padhna/samajhna" NAHI):
+        Claude ek design pe TWIST/follow-up phekta → Arpan DEFEND kare. Arpan ki khud ki line:
+        "interview me questions LAGBHAG SAME — har design pe wahi twists" → reflex banana.
+        common twists: "10x traffic?" · "cache stale?" · "queue full?" · "SQL slow → NoSQL kyun nahi?" ·
+        "payment timeout/fail?" · "2-region?" · "double-X race?" → kab/kya/kyun/kaise REFLEX.
+      - master "kaunsa BLOCK kab": CDN · WebSocket · cache · queue(Kafka) · shard · replica · LB ·
+        CAP/consistency · idempotency-vs-atomic · rate-limit. finance/general, hyperscale NAHI.
+      - NOT ratta — formula samjha hua hai, sirf tradeoff-handling cold-practice. (DSA bhi same: practice mode.)
 ```
 
 ```
    DAILY SCHEDULE (pel ke — idle nahi, enjoy + grind, roz):
      SUBAH (FRESH mind → HARD/gap areas):
-       1. HLD  → ~1 hr → revise existing notes/foundations (he reads, asks doubts) + extract pattern + "kaunsa block kab" / drill
+       1. HLD  → ~1 hr → TRADEOFF-DRILL (Claude pheke twist on a design → Arpan defends). NO new design padhna.
        2. DSA  → ~1 hr → COLD solve (medium, JP-level; only question+tests → he codes → na hua → hint → teach → redo)
        2b. LLD + PR-REVIEW (with CODE — he's only done THEORY, needs to SEE+do code):
          - LLD: SOLID violations→fixes, design-patterns IMPLEMENTED, Builder — show REAL code, work through it (not just theory)
