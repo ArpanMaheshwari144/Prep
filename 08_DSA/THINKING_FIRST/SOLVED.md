@@ -223,6 +223,12 @@
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
 
+## #47 — Maximum Subarray   (Medium | Kadane / running-sum)   30-Jun · mostly SOLO
+- **Signal:** "contiguous subarray ka MAX sum" → har element pe choice: pichhle tukde me jodu YA yahan se naya shuru karu?
+- **Approach (derived):** `sum += nums[i]; maxSum = max(maxSum, sum); if(sum<0) sum=0;` (negative jod = bojh → drop, fresh start). best track.
+- **Edge (khud bug pakda + fix):** `maxSum` ko `0` se init kiya tha → all-negative array (`[-5,-3,-8]` → -3) pe galat (0 jeet jaata). FIX = `maxSum = nums[0]` (khaali-tukda na jeete, kam-se-kam 1 element rule). Test add karke khud dekha fail → fixed.
+- **Note:** running-sum + drop-negative logic COLD nikaala; sirf init-edge pe ek nudge. DP-family par "scary DP" nahi (1 pass, 1 var, no table). Apna folder `17_KADANE`.
+
 ## #46 — House Robber   (Medium | 1D-DP take/skip)   DP rep 2 · [C]
 - **Signal:** "max, par adjacent nahi le sakte" → 1D-DP (take/skip choice).
 - **Recurrence:** `dp[i] = max(money[i] + dp[i-2], dp[i-1])` (LOOT i → money[i]+dp[i-2]; SKIP i → dp[i-1]). base dp[0]=nums[0], dp[1]=max(nums[0],nums[1]). empty → 0.
