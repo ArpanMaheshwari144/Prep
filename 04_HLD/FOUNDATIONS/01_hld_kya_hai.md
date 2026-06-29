@@ -35,6 +35,23 @@
 
 ---
 
+## SCALING — Horizontal vs Vertical (core concept)
+
+```
+   VERTICAL (scale UP):  EK machine ko BADA/powerful banao (zyada CPU/RAM/disk).
+       - simple. PAR: ek hadd ke baad nahi badh sakti + mehngi + ek gire to SAB gaya (SPOF).
+       spatial: ek dukandaar ko aur tez banao (ek banda, zyada kaam) -> ek limit.
+
+   HORIZONTAL (scale OUT): ZYADA machines ADD karo (kai chhote servers), load baant do.
+       - no single-limit (aur add karte raho) + ek gire to baaki chalein (resilient). PAR coordination (LB, distributed).
+       spatial: aur dukandaar (servers) add karo, kaam baant -> jitne chaaho.
+
+   modern bade systems = HORIZONTAL (servers add). LB + replication + sharding = horizontal-scaling ke tools.
+   SQL = vertical-leaning (spread mushkil) | NoSQL = horizontal-easy (machines/shards me baatna aasaan).
+```
+
+---
+
 ## HLD Visual — Typical System
 
 ```
