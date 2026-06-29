@@ -24,22 +24,24 @@
       - pehle SAMJHANA phir KARWANA. (NOT pure "ja cold kar" pheko.)
       - target: pattern samajh + novel handle. (pressure-gap baad me mocks se.)
 
-   3. HLD = ★ NEW DESIGN PADHNA BAND (30-Jun lock) → ab TRADEOFF-DRILL PRACTICE ★
-      - sab designs padh liye, pattern aa gaya (8-step + block-kab = ek formula har design pe). NAYA design NAHI.
-      - ab PRACTICE = RAW TRADEOFF drill (design "padhna/samajhna" NAHI):
-        Claude ek design pe TWIST/follow-up phekta → Arpan DEFEND kare. Arpan ki khud ki line:
-        "interview me questions LAGBHAG SAME — har design pe wahi twists" → reflex banana.
-        common twists: "10x traffic?" · "cache stale?" · "queue full?" · "SQL slow → NoSQL kyun nahi?" ·
-        "payment timeout/fail?" · "2-region?" · "double-X race?" → kab/kya/kyun/kaise REFLEX.
-      - master "kaunsa BLOCK kab": CDN · WebSocket · cache · queue(Kafka) · shard · replica · LB ·
-        CAP/consistency · idempotency-vs-atomic · rate-limit. finance/general, hyperscale NAHI.
-      - NOT ratta — formula samjha hua hai, sirf tradeoff-handling cold-practice. (DSA bhi same: practice mode.)
+   3. HLD = ★ RAW TRADEOFF DRILL — DESIGN-LESS (30-Jun lock, Arpan clarified) ★
+      - sab designs padh liye, formula aa gaya (block-kab har design pe SAME). NAYA design NAHI, BookMyShow jaisा known bhi NAHI.
+      - RAW = KOI design ki story nahi (na fresh, na rehearsed). SEEDHA tradeoff/concept rapid-fire, COLD:
+        Claude pheke isolated sawaal → Arpan kab/kya/kyun/kaise bole. e.g.:
+          • "kab SQL, kab NoSQL?"
+          • "10M user aaye → kaise scale? kab SHARD? kis KEY pe shard? kyun?"
+          • "kab REPLICA? kab CACHE? kab QUEUE?"
+          • "read-heavy hua to? write-spike hua to? consistency-critical hua to?"
+        → ye answers har design me SAME (sharding/replica/cache/queue universal) → isliye design ke BINA reflex-drill.
+      - KYUN raw/design-less: design-wrapper "rehearsed/checked" lagता hai; Arpan ko GENUINE cold-practice chahiye (jaise DSA).
+      - master "kaunsa BLOCK kab": cache · queue(Kafka) · shard(+key) · replica · LB · CAP/consistency ·
+        idempotency-vs-atomic · rate-limit · CDN · WebSocket. NOT ratta — kyun/kab samajh ke. (DSA bhi practice-mode.)
 ```
 
 ```
    DAILY SCHEDULE (pel ke — idle nahi, enjoy + grind, roz):
      SUBAH (FRESH mind → HARD/gap areas):
-       1. HLD  → ~1 hr → TRADEOFF-DRILL (Claude pheke twist on a design → Arpan defends). NO new design padhna.
+       1. HLD  → ~1 hr → RAW TRADEOFF DRILL (design-less rapid-fire: SQL-vs-NoSQL, 10M→shard/replica/cache kab-kyun-kaise). NO design story.
        2. DSA  → ~1 hr → COLD solve (medium, JP-level; only question+tests → he codes → na hua → hint → teach → redo)
        2b. LLD + PR-REVIEW (with CODE — he's only done THEORY, needs to SEE+do code):
          - LLD: SOLID violations→fixes, design-patterns IMPLEMENTED, Builder — show REAL code, work through it (not just theory)
