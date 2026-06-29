@@ -41,9 +41,32 @@
    DB sharding NAHI (data chhota: movies/shows/seats finite).
 ```
 
-## STEP 3-5 (next) — API · BOXES · DATA+DB
+## STEP 3 — API (endpoints)
 ```
-   (to be filled)
+   GET  /movies?city=BLR                -> movies list
+   GET  /shows?movieId=X                -> show timings
+   GET  /shows/{id}/seats              -> seat map (available/booked)
+   POST /bookings  {showId,seats,user}  -> seats HOLD (atomic) -> bookingId + TTL
+   POST /bookings/{id}/pay             -> pay success -> seats 'booked' | fail -> release
+```
+
+## STEP 4 — BOXES (architecture)
+```
+   USER -> LOAD BALANCER -> APP servers
+                              |- CACHE (Redis)  : seat-map, show data  [browse read-heavy]
+                              |- DB (SQL)        : seats, bookings      [CP, row-lock]
+                              |- QUEUE (Kafka)   : booking spike absorb [popular release]
+                              \- PAYMENT service : pay confirm
+```
+
+## STEP 5 — DATA + DB (kyun SQL)
+```
+   seats(seat_id, show_id, status[available/held/booked], user_id, version)
+   bookings(booking_id, user_id, show_id, seat_ids, status, created_at)
+
+   DB = SQL (NoSQL nahi) -> KYUN: consistency = dil. ACID + row-lock chahiye atomic seat-update ke liye
+        (UPDATE ... WHERE status='available') -> no double-book. NoSQL eventual = booking ke liye risky.
+   data chhota (movies/shows finite) -> sharding nahi.
 ```
 
 ## STEP 6 — DEEP DIVE: seat DOUBLE-BOOKING kaise roke? (concurrency — asli khel)
