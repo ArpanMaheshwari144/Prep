@@ -223,6 +223,11 @@
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
 
+## #48 — Sort Colors   (Medium | Dutch National Flag / 3-pointer)   30-Jun · SOLO (intuition-build)
+- **Signal:** "sirf 0/1/2, in-place sort" → 3-pointer Dutch flag (ya 2-pass count).
+- **Approach:** low/mid/high; mid scans. `nums[mid]==0`: swap(low,mid), low++, mid++. `==1`: mid++. `==2`: swap(mid,high), high-- (mid SAME — aaya hua unknown, recheck). loop `mid<=high`. O(n) 1-pass.
+- **Note:** counting (2-pass) khud samajh gaya. neat 1-pass ke liye Claude ne ZONE-intuition build kiya (4 zones: 0s|1s|unknown|2s) → phir Arpan ne code SOLO likha, sahi. Asli twist (2 pe mid na badhe) sahi pakda. teach-first flow worked.
+
 ## #47 — Maximum Subarray   (Medium | Kadane / running-sum)   30-Jun · mostly SOLO
 - **Signal:** "contiguous subarray ka MAX sum" → har element pe choice: pichhle tukde me jodu YA yahan se naya shuru karu?
 - **Approach (derived):** `sum += nums[i]; maxSum = max(maxSum, sum); if(sum<0) sum=0;` (negative jod = bojh → drop, fresh start). best track.
