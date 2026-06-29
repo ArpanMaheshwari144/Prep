@@ -48,7 +48,27 @@
 
 ## STEP 6 — DEEP DIVE: seat DOUBLE-BOOKING kaise roke? (concurrency — asli khel)
 ```
-   (to be filled — JP-relevant: 2 log ek saath same seat -> ek ko hi mile)
+   PROBLEM: 2 ALAG user ek SAATH same seat A1 book karein -> dono ko "available" dikhe -> dono book -> 1 seat 2 ko = disaster.
+            (= wahi "check-then-act RACE" jo payment idempotency + trading no-double-match me tha.)
+
+   FIX (mark seat atomically -> doosra dekhe taken -> ek hi jeete):
+   1. ATOMIC conditional UPDATE (best):
+        UPDATE seats SET status='booked', user=X WHERE seat_id='A1' AND status='available'
+        -> 2 request ek saath: DB me sirf EK ka update lagega (atomic).
+           doosre ka WHERE 'available' nahi milega -> 0 rows -> FAIL -> "seat taken, doosri lo".
+        -> "check(available?) + mark(booked)" EK ATOMIC step -> race khatam.
+   2. ya ROW LOCK: SELECT ... FOR UPDATE (seat row lock -> check -> book -> release).
+
+   SEAT HOLD with TTL: select kare -> seat 'held' (5 min) jab tak pay kare ->
+        pay success -> 'booked' | TTL expire -> wapas 'available' (na double-book, na forever-block).
+```
+
+### ⚠ idempotency-key vs atomic-mark (yeh confuse hota — clarify)
+```
+   2 ALAG user, ek seat (double-booking) -> ATOMIC mark / row-lock   (race BETWEEN users)   <- yahan
+   1 SAME user, duplicate (retry/double-click "Pay") -> IDEMPOTENCY key (retry-dedup)        <- alag problem
+   -> dono booking me hote, par ALAG problem ke liye. tool ko problem se match karo.
+   (Arpan ka "seat mark-booked, doosra taken dekhe" = CORRECT; sirf "idempotency" word galat tha -> woh atomic-mark hai.)
 ```
 
 ---

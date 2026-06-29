@@ -17,10 +17,10 @@
 using namespace std;
 
 // ---- TERA kaam: yeh function bhar ----
-vector<vector<int> > merge(vector<vector<int> > intervals)
+vector<vector<int>> merge(vector<vector<int> > intervals)
 {
     sort(begin(intervals), end(intervals));
-    vector<vector<int> > ans;
+    vector<vector<int>> ans;
     vector<int> current = intervals[0];
 
     for (int i = 1; i < intervals.size(); i++)
