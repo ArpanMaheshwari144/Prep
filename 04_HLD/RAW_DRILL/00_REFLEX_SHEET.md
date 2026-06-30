@@ -119,5 +119,17 @@
      - net OFF, baad me mila    -> OFFLINE store-and-forward (msg DB/queue me save -> online aaye to deliver). alag concern.
 ```
 
+## 10. DB INDEXING (slow query fast)
+```
+   Q: 10 crore rows, "WHERE email=x" slow (full scan) -> ?  A: INDEX on email.
+   KAISE: DB index ke liye B-TREE banata (SORTED tree). search = root se -> chhota left, bada right traverse.
+   SPEED: full-scan O(n) = 10 crore steps -> B-tree O(log n) = ~27 steps! (contrast bolna interview me.)
+   TRADEOFF (index free nahi):
+     - WRITES slow (har insert/update pe tree bhi update).
+     - extra STORAGE (tree alag).
+     -> HAR column pe nahi, SELECTIVE (jin pe queries chalti: email/id).
+   YAAD: index = B-tree sorted -> O(log n). tradeoff = writes slow + storage. selective lagao.
+```
+
 ---
-> aage aur reflexes add karte jaana (idempotency-vs-atomic, indexing, write-through vs write-back cache) jaise drill hote.
+> aage aur reflexes add karte jaana (idempotency-vs-atomic, write-through vs write-back cache, LB algos) jaise drill hote.
