@@ -96,5 +96,14 @@
    YAAD: rate-limit = per-user count in REDIS + token-bucket -> cross -> 429.
 ```
 
+## 8. CDN (global static content)
+```
+   Q: global users, static files (img/video/css/js) door server se aane me slow -> ?  A: CDN.
+   EDGE servers (duniya bhar me, user ke kareeb) pe static files ki copy. user -> nearest edge se mile.
+   miss (edge pe nahi) -> ORIGIN server se laao -> edge pe cache -> user ko serve.
+   KYUN fast: data kam distance travel -> kam latency.
+   YAAD: CDN = STATIC files edge se (img/video/css/js). dynamic data nahi.
+```
+
 ---
-> aage aur reflexes add karte jaana (idempotency-vs-atomic, CDN, websocket) jaise drill hote.
+> aage aur reflexes add karte jaana (idempotency-vs-atomic, websocket, indexing) jaise drill hote.
