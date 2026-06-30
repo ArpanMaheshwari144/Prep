@@ -223,6 +223,11 @@
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
 
+## #49 — Merge Intervals   (Medium | Intervals — sort + sweep)   30-Jun · COLD-REDO SOLO ([C] cleared)
+- **Signal:** "overlapping intervals merge" → pehle SORT (by start), phir ek-ek sweep, "current" merged track.
+- **Approach:** `sort(intervals)`; current=intervals[0]; loop i=1..: `intervals[i][0] <= current[1]`? overlap → `current[1]=max(current[1], intervals[i][1])` : push current → current=intervals[i]. loop ke baad LAST current push.
+- **Note:** ★ kal (29-Jun) ye [C] tha — copy-paste/bataya hua, Arpan ka khud ka structure nahi tha. AAJ blank file se COLD khud likha, 5/5 pass, ZERO galti. [C] → cold-solo conversion = retention proof. Old [C] file delete (git-history me safe), clean REDO rakha.
+
 ## #48 — Sort Colors   (Medium | Dutch National Flag / 3-pointer)   30-Jun · SOLO (intuition-build)
 - **Signal:** "sirf 0/1/2, in-place sort" → 3-pointer Dutch flag (ya 2-pass count).
 - **Approach:** low/mid/high; mid scans. `nums[mid]==0`: swap(low,mid), low++, mid++. `==1`: mid++. `==2`: swap(mid,high), high-- (mid SAME — aaya hua unknown, recheck). loop `mid<=high`. O(n) 1-pass.
