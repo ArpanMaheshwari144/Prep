@@ -86,5 +86,15 @@
    YAAD: money = CP | social = AP.
 ```
 
+## 7. RATE LIMITER (abuse/DDoS rokna)
+```
+   Q: ek user/bot 1000 req/sec maar raha, baaki suffer -> ?  A: RATE LIMITER.
+   per user+endpoint COUNT rakho -> threshold cross -> block (429). algos: token-bucket / fixed-window / sliding-window.
+   TOKEN BUCKET (common): bucket me tokens, har req 1 token kharch, khaali->reject, fixed rate refill.
+   ★ COUNT KAHAN: REDIS me -> fast (in-memory) + SHARED across servers (user kisi bhi server pe -> count ek hi jagah).
+                  (local memory me rakha to har server alag count -> limit toot jaaye.)
+   YAAD: rate-limit = per-user count in REDIS + token-bucket -> cross -> 429.
+```
+
 ---
-> aage aur reflexes add karte jaana (rate-limit, idempotency-vs-atomic, CDN, websocket) jaise drill hote.
+> aage aur reflexes add karte jaana (idempotency-vs-atomic, CDN, websocket) jaise drill hote.
