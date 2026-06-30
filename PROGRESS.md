@@ -85,15 +85,43 @@
 
 ---
 
-## STATUS SNAPSHOT (for context, not tracking)
+## ★ STATUS SNAPSHOT + FOCUS MAP (as of 30-Jun-2026) ★
 
 ```
-   COVERAGE DONE: Java 110 notes, Spring 41, HLD 19 designs + foundations 10/10, DSA 46 problems (all patterns), LLD 11.
-   DSA patterns: Hashing/Two-Ptr/Sliding-Win/Prefix/Binary-Search/Stack/LinkedList/Grid/Trees(+BST)/Backtracking/Heap/1D-DP.
-     parked [C]: Coin-Change (hardest, cold-revisit). SKIP: graphs/hard-DP (BlackRock-later).
-   REFERRALS (ride, in-flight): Raunak Narayan (JP — email+phone sent ✓) · Anmol Srivastava (Razorpay — role-link pending, no fit yet).
-   APPLIES: PAUSED (his call) — resume after training. (~16 applied earlier: eBay/Nutanix/DocuSign/Visa/CME/Siemens etc.)
-   RESOURCES (resume/apply-tracker) = PRIVATE repo ArpanMaheshwari144/Resources (push pending gh-auth; never expose / never add company-acct).
+   AAJ KAHAN HAIN — subject-wise (honest):
+
+   1. HLD  = STRONG + favourite (confidence wapas, 30-Jun proof). 16 raw-drill reflexes + master table done.
+        PENDING: 11 reflexes (capacity-est · 8-step-framework · LRU · msg-delivery · SAGA · health-check ·
+                 pagination · circuit-breaker · blob/S3 · conn-pooling · denormalization) -> 04_HLD/RAW_DRILL.
+        FOCUS: pending 11 khatam -> phir sirf revise+tradeoff-drill, naya nahi. [kam time chahiye, par coverage poora karo]
+
+   2. JAVA + SPRING = COMFORTABLE. par JP ka SABSE DECISIVE/heavy round -> DROP nahi karna.
+        revised: HashMap·CHM·volatile/sync·CAS·deadlock·threadpool·IoC/DI·Qualifier·Boot·@Transactional (+ aur notes).
+        FOCUS: roz dopahar visual-code revise (topics rotate). interview me KOI answer pe na atke = goal. [daily, steady]
+
+   3. DSA = BROAD theek, par EK clear weak-edge. 50 problems, 12 pattern cold-solo OWNED
+        (two-ptr·sliding·hashing·stack·binary-search·linked-list·trees·backtracking[rep3-solo]·intervals·greedy·grid·kadane).
+        ★ WEAK SPOT = DP (rep 2-3, hint lagta — House Robber base-case, Coin Change parked [C]). + novel-twist-under-pressure.
+        = WAHI backtracking-curve (rep1=3nudge -> rep3=solo); DP late-start, abhi rep2-3 -> rep4-5 pe solo aayega.
+        FOCUS: ★ DP ke 4-5 reps (climbing/robber/coin/LIS/knapsack-lite) -> solo-curve. [SABSE ZYADA time yahan]
+        SKIP: hard-graphs / hard-DP (BlackRock-later).
+
+   4. LLD + PR-REVIEW = abhi THEORY-only (11 LLD notes). CODE-practice nahi kiya = GAP.
+        FOCUS: SOLID/patterns CODE me likho + buggy-PR find-fix practice. [shuru karna hai]
+
+   5. BEHAVIORAL STAR = #1 untouched GAP. Konovo stories abhi tak likhi nahi.
+        FOCUS: 4-5 STAR stories likho (S-T-A-R format). [2-3x/week, pending]
+
+   ─────────────────────────────────────────────────────────────────────
+   KAHAN PEL (time priority): 1) DSA-DP (biggest edge)  2) HLD-pending-11  3) Java/Spring-daily-revise
+                              4) LLD/PR-review-START     5) STAR-stories-START
+   ─────────────────────────────────────────────────────────────────────
+   ~OVERALL: ~65-70% ready. roz teeno-lane (HLD+DSA+Java) + STAR/LLD weave-in. Reassess after Aug.
+```
+
+```
+   REFERRALS (ride, in-flight): Raunak Narayan (JP — email+phone sent ✓) · Anmol Srivastava (Razorpay — no fit yet).
+   APPLIES: PAUSED (his call) — resume after training. RESOURCES = PRIVATE repo (never expose / never add company-acct).
 ```
 
 ---
