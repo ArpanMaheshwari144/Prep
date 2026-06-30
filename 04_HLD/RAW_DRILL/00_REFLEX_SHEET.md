@@ -147,5 +147,14 @@
    ★ YAAD: idempotency-key = SAME user duplicate/retry. (vs atomic-mark/lock = 2 ALAG user same resource race. DONO alag!)
 ```
 
+## 12. CACHE CONSISTENCY (stale cache rokna)
+```
+   Q: data update hua, cache me purana pada -> read stale dega -> kaise sync rakhu?  A: CACHE-ASIDE.
+   CACHE-ASIDE (common): write pe -> DB update + cache key DELETE (invalidate). agla read: miss -> DB se -> cache me daal.
+     ★ DELETE karo, UPDATE nahi -> kyun: 2 thread update karein to galat order race. delete = next read latest laata, race-free.
+   WRITE-THROUGH (alt): write pe cache AUR DB dono ek saath. hamesha sync, par har write cache ko bhi chhuye.
+   YAAD: stale rokna -> cache-aside: DB update + cache DELETE -> next read repopulate. (delete > update.)
+```
+
 ---
-> aage aur reflexes add karte jaana (write-through vs write-back cache, LB algos, microservices vs monolith) jaise drill hote.
+> aage aur reflexes add karte jaana (LB algos, microservices vs monolith, consistent-hashing) jaise drill hote.
