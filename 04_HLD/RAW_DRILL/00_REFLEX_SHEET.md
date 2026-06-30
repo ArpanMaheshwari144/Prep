@@ -223,7 +223,15 @@
    5. SAGA / DISTRIBUTED TXN   -> MS me paisa-transaction rollback (JP finance-relevant). (note: 02_transactional)
    6. HEALTH-CHECK / HEARTBEAT -> LB ko kaise pata server down (failover).
    7. PAGINATION              -> feed offset vs cursor.
-   (consistent-hashing = optional/hyperscale, JP-moderate me skip-able.)
+   8. CIRCUIT BREAKER + RESILIENCE -> service call baar-baar fail -> calling ROK do (retry/timeout/fallback). MS-resilience, JP poochta.
+   9. BLOB / OBJECT STORAGE (S3) -> images/videos/files DB me nahi -> S3 me, DB me sirf URL. (file-upload design).
+   10. CONNECTION POOLING     -> har request pe nayi DB connection mehngi -> pool me reuse.
+   11. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
+   (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
+```
+
+```
+   ★ in 11 ke baad HLD ka JP-level set POORA -> phir sirf revise+drill, naya concept nahi.
 ```
 
 ---
