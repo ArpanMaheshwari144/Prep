@@ -105,5 +105,19 @@
    YAAD: CDN = STATIC files edge se (img/video/css/js). dynamic data nahi.
 ```
 
+## 9. WEBSOCKET vs KAFKA (real-time push — ★ confusion clear ★)
+```
+   Q: server ko user ko real-time data PUSH karna (live price/chat/notification), bina user maange -> ?
+   A: WEBSOCKET.
+   WEBSOCKET = server <-> USER(browser) ka PERMANENT 2-way pipe (khula rehta) -> server jab chahe PUSH kare.
+       (normal HTTP: client maange tab milta, ek baar, band. websocket: connection khula -> server push.)
+   KAFKA = backend SERVICES ke beech data move (internal pipe). user-browser tak NAHI jaata.
+   ★ YAAD: server->user real-time PUSH = WEBSOCKET | backend services ke beech = KAFKA.
+
+   bonus (WhatsApp 2 cheezein alag):
+     - dono online live chat   -> WEBSOCKET (turant push)
+     - net OFF, baad me mila    -> OFFLINE store-and-forward (msg DB/queue me save -> online aaye to deliver). alag concern.
+```
+
 ---
-> aage aur reflexes add karte jaana (idempotency-vs-atomic, websocket, indexing) jaise drill hote.
+> aage aur reflexes add karte jaana (idempotency-vs-atomic, indexing, write-through vs write-back cache) jaise drill hote.
