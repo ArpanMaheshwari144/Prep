@@ -180,5 +180,18 @@
    YAAD: monolith=simple/chhota | MS=scale+fault-isolation+independent-deploy/bada. galti = chhote pe MS.
 ```
 
+## 15. API GATEWAY (microservices ka single darwaza)
+```
+   Q: 10 microservices -> client har service ka address + auth/rate-limit har jagah? -> ?  A: API GATEWAY.
+   = microservices ke saamne SINGLE entry-point. client sirf gateway se baat kare, internal services ka pata nahi.
+   KAAM:
+     1. ROUTING        -> request sahi service pe bheje. (core)
+     2. AUTH           -> token/login check EK jagah (har service me dobara nahi). ★ sabse bada fayda.
+     3. RATE-LIMIT     -> central throttling.
+     4. LOGGING/MONITOR-> saare requests ek jagah track.
+     5. (bonus) AGGREGATION -> 2-3 services ka data jod ke ek response.
+   YAAD: API Gateway = MS ka single entry-point -> cross-cutting (routing+auth+rate-limit+logging) ek jagah centralize.
+```
+
 ---
-> aage aur reflexes add karte jaana (consistent-hashing, write-back cache, API-gateway, DB-vs-cache-stampede) jaise drill hote.
+> aage aur reflexes add karte jaana (consistent-hashing, write-back cache, DB-vs-cache-stampede) jaise drill hote.
