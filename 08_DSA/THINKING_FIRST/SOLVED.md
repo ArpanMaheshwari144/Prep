@@ -244,7 +244,8 @@
 - **Edge (khud bug pakda + fix):** `maxSum` ko `0` se init kiya tha → all-negative array (`[-5,-3,-8]` → -3) pe galat (0 jeet jaata). FIX = `maxSum = nums[0]` (khaali-tukda na jeete, kam-se-kam 1 element rule). Test add karke khud dekha fail → fixed.
 - **Note:** running-sum + drop-negative logic COLD nikaala; sirf init-edge pe ek nudge. DP-family par "scary DP" nahi (1 pass, 1 var, no table). Apna folder `17_KADANE`.
 
-## #46 — House Robber   (Medium | 1D-DP take/skip)   DP rep 2 · [C]
+## #46 — House Robber   (Medium | 1D-DP take/skip)   DP rep 2 · [C] → ★ CLEARED rep 3 (30-Jun)
+- **[C] CLEARED (30-Jun, rep 3):** cold-redo blank se, TOP-DOWN recursive+memo liya (approach khud evolve). Sirf 1 hint laga — base case me `dp[0]/dp[1]` (jo -1 the) ki jagah `nums` ki values. baaki solo, 5/5. CURVE: rep2 = 3 nudges → rep3 = 1 hint. (backtracking/trees jaisी convergence — DP ab build ho raha.) File: `12_DP/04_house_robber_REDO.cpp`.
 - **Signal:** "max, par adjacent nahi le sakte" → 1D-DP (take/skip choice).
 - **Recurrence:** `dp[i] = max(money[i] + dp[i-2], dp[i-1])` (LOOT i → money[i]+dp[i-2]; SKIP i → dp[i-1]). base dp[0]=nums[0], dp[1]=max(nums[0],nums[1]). empty → 0.
 - **Note:** DP rep 2. RECURRENCE khud samjha (loot vs skip = max). Help laga STRUCTURAL pe: (1) direction (0 se shuru → negative index crash; n-1 se shuru karna), (2) base on `i` not nums.size(), (3) empty-guard. 5/6 logic se pass, sirf empty-edge hint. **[C] cold-revisit** (rep 2 of new pattern, curve abhi build ho raha — backtracking/trees jaisा rep3-4 pe solo aayega). His own calm-DP-mode: stuck→peek→move-on→[C]→cold-revisit, no hungama.
