@@ -68,6 +68,16 @@
    JP-flavor: payment/trade/balance -> SQL | feed/logs/session/notification -> NoSQL.
 ```
 
+## 2b. REPLICATION LAG (replica ka chhupa catch)
+```
+   Q: write master pe gaya, user ne TURANT refresh (read replica se) -> PURANA data dikha. kyun? fix?
+   KYUN: master->replica copy INSTANT nahi -> thoda DELAY = REPLICATION LAG (millisec-sec).
+         us gap me replica pe abhi purana data -> user ko purana mila.
+   FIX: "READ YOUR OWN WRITES" -> jisne abhi likha, use thodi der MASTER se padhao (naya wahan hai),
+        baaki sab replica se. (ya sync-replication, par slow.)
+   YAAD: replica thoda purana ho sakta. "abhi likha turant padha" -> master se. (eventual-consistency catch.)
+```
+
 ## 6. CAP THEOREM
 ```
    Partition (network toot) ke time C ya A — ek hi mil sakta:
