@@ -213,4 +213,18 @@
 ```
 
 ---
-> aage aur reflexes add karte jaana (consistent-hashing, write-back cache, DB-vs-cache-stampede) jaise drill hote.
+
+## ⏳ PENDING DRILL (kal ke liye — abhi bache hue, JP-relevant)
+```
+   1. CAPACITY ESTIMATION   -> "1M user -> server/storage/QPS" back-of-envelope math. (note: 02_capacity_estimation.md)
+   2. 8-STEP FRAMEWORK       -> answer assemble: clarify->scale->API->boxes->data->deep-dive->bottleneck->wrap. (INTERVIEW_FRAMEWORK.md)
+   3. CACHE EVICTION (LRU/LFU)-> cache full -> kya nikaalo.
+   4. MSG DELIVERY GUARANTEE  -> at-least-once / exactly-once (idempotency se juda).
+   5. SAGA / DISTRIBUTED TXN   -> MS me paisa-transaction rollback (JP finance-relevant). (note: 02_transactional)
+   6. HEALTH-CHECK / HEARTBEAT -> LB ko kaise pata server down (failover).
+   7. PAGINATION              -> feed offset vs cursor.
+   (consistent-hashing = optional/hyperscale, JP-moderate me skip-able.)
+```
+
+---
+> drill hote jaayein -> pending se upar (sections me) move karte jaana.
