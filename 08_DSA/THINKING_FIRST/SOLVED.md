@@ -223,6 +223,11 @@
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
 
+## #50 — Group Anagrams   (Medium | Hashing — sorted-word key)   30-Jun · SOLO · ★ #50 milestone
+- **Signal:** "anagrams group karo" → 2 words anagram = letters sort karne pe SAME → sorted-word = KEY.
+- **Approach:** `unordered_map<string, vector<string>>`; har word: `key=word; sort(key); mp[key].push_back(word)`. phir map ke saare `.second` (groups) ans me daal.
+- **Note:** clean SOLO, idiomatic (range-for, mp[key].push_back direct). seed (sorted-key) diya, code khud. half-century — 50 problems active-derive.
+
 ## #49 — Merge Intervals   (Medium | Intervals — sort + sweep)   30-Jun · COLD-REDO SOLO ([C] cleared)
 - **Signal:** "overlapping intervals merge" → pehle SORT (by start), phir ek-ek sweep, "current" merged track.
 - **Approach:** `sort(intervals)`; current=intervals[0]; loop i=1..: `intervals[i][0] <= current[1]`? overlap → `current[1]=max(current[1], intervals[i][1])` : push current → current=intervals[i]. loop ke baad LAST current push.
