@@ -156,5 +156,15 @@
    YAAD: stale rokna -> cache-aside: DB update + cache DELETE -> next read repopulate. (delete > update.)
 ```
 
+## 13. LOAD BALANCER ALGORITHMS (request kis server pe)
+```
+   Q: LB ke peeche S1/S2/S3 -> request kis pe bheje, kaise decide?
+   ROUND-ROBIN      : baari-baari S1,S2,S3,S1... -> sabko barabar. (servers EQUAL capacity tab.)
+   WEIGHTED RR      : powerful server ko ZYADA (weight). (bada server -> 2x requests.)
+   LEAST-CONNECTIONS: jis pe abhi sabse KAM active conn -> usko. (requests uneven-length ho tab best.)
+   IP-HASH          : same user(IP) -> HAMESHA same server. ★ SESSION STICKINESS (session data local us server pe).
+   YAAD: round-robin(equal) · weighted(capacity) · least-conn(uneven) · IP-hash(session sticky).
+```
+
 ---
-> aage aur reflexes add karte jaana (LB algos, microservices vs monolith, consistent-hashing) jaise drill hote.
+> aage aur reflexes add karte jaana (microservices vs monolith, consistent-hashing, write-back cache) jaise drill hote.
