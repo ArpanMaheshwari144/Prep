@@ -193,5 +193,19 @@
    YAAD: API Gateway = MS ka single entry-point -> cross-cutting (routing+auth+rate-limit+logging) ek jagah centralize.
 ```
 
+## 16. SESSION vs JWT (login state, multi-server)
+```
+   Q: login ke baad user ko "yaad" kaise rakhe? LB ke peeche 10 server -> agla request dusre server pe gaya to?
+   MODEL A — SESSION + REDIS (stateful):
+     login -> session Redis me, client ko SESSION-ID. har request -> server Redis lookup "id valid?" -> haan.
+     10 server sab same Redis check. COST: har request pe Redis lookup.
+   MODEL B — JWT (stateless): ★
+     login -> JWT token jo KHUD SIGNED (secret-key signature). token me user-info + signature -> self-proving.
+     har request -> server sirf SIGNATURE verify (secret-key se) -> NO store, NO Redis. sab server same secret -> koi bhi verify kare.
+   ANALOGY (Arpan's): JWT = ID-card with office STAMP -> guard sirf stamp dekhe -> kahi bhi ghoomo (no reception call).
+                      Session = visitor pass -> guard har baar reception ko CALL kare (Redis lookup).
+   YAAD: Session = Redis lookup per req (stateful) | JWT = signature verify, no store (STATELESS, scale-friendly).
+```
+
 ---
 > aage aur reflexes add karte jaana (consistent-hashing, write-back cache, DB-vs-cache-stampede) jaise drill hote.
