@@ -166,5 +166,19 @@
    YAAD: round-robin(equal) · weighted(capacity) · least-conn(uneven) · IP-hash(session sticky).
 ```
 
+## 14. MONOLITH vs MICROSERVICES
+```
+   MONOLITH: saare features ek codebase+deploy. develop/debug EASY, par scale HARD + ek part crash -> POORA down.
+             -> chhota app / kam users.
+   MICROSERVICES: har feature alag service+deploy. debug MUSHKIL (distributed), par:
+             - scale EASY: sirf JIS service pe load usko alag scale (payment-svc 10 instance, baaki 2) -> resource bache.
+             - FAULT ISOLATION: ek service down -> baaki chalu.
+             - independent DEPLOY: alag team alag deploy, poora app redeploy nahi.
+             -> bada app / millions.
+   ★ CAUTION: chhote app pe MS = OVER-ENGINEER (network calls + distributed-debug + cross-service consistency).
+              "default MONOLITH se start -> scale aaye to MS me todo."
+   YAAD: monolith=simple/chhota | MS=scale+fault-isolation+independent-deploy/bada. galti = chhote pe MS.
+```
+
 ---
-> aage aur reflexes add karte jaana (microservices vs monolith, consistent-hashing, write-back cache) jaise drill hote.
+> aage aur reflexes add karte jaana (consistent-hashing, write-back cache, API-gateway, DB-vs-cache-stampede) jaise drill hote.
