@@ -9,18 +9,24 @@
 ## ★ MASTER REFLEX TABLE (need -> block -> kyun) ★
 
 ```
-   NEED / SCENARIO               ->  BLOCK            ->  KYUN (1 line)
-   ──────────────────────────────────────────────────────────────────────────────
-   read-heavy (baar-baar padho)  ->  CACHE (Redis)    ->  RAM me data, disk se 100x tez
-   reads phir bhi DB pe zyada    ->  READ REPLICA     ->  DB ki copies, reads baant do (read-scale)
-   WRITES bahut zyada / big data ->  SHARDING         ->  data tukdon me alag DB, write/storage-scale
-   instant SPIKE/burst absorb    ->  QUEUE (Kafka)    ->  requests HOLD/buffer, crash nahi (LB nahi!)
-   traffic distribute            ->  LOAD BALANCER    ->  requests servers me BAANTO (hold nahi)
-   availability / failover       ->  REPLICATION      ->  copy gira to dusri le le
-   consistency-critical (paisa)  ->  SQL + CP         ->  ACID, galat data NEVER
-   slow/async kaam, decouple     ->  QUEUE            ->  background me process
-   concurrency (no double-X)     ->  LOCK / ATOMIC    ->  check+mark ek atomic step (race khatam)
-   ──────────────────────────────────────────────────────────────────────────────
+   NEED / SCENARIO                  ->  BLOCK                ->  KYUN (1 line)
+   ───────────────────────────────────────────────────────────────────────────────────────────
+   read-heavy (baar-baar padho)     ->  CACHE (Redis)        ->  RAM me data, disk se 100x tez
+   reads phir bhi DB pe zyada       ->  READ REPLICA         ->  DB ki copies, reads baant do (read-scale)
+   "abhi likha turant padha" stale  ->  READ-YOUR-OWN-WRITES ->  replication lag -> woh read master se
+   WRITES bahut zyada / big data    ->  SHARDING (+key)      ->  data tukdon me alag DB, write/storage-scale
+   instant SPIKE/burst absorb       ->  QUEUE (Kafka)        ->  requests HOLD/buffer, crash nahi (LB nahi!)
+   traffic distribute               ->  LOAD BALANCER        ->  requests servers me BAANTO (hold nahi)
+   availability / failover          ->  REPLICATION          ->  copy gira to dusri le le
+   consistency-critical (paisa)     ->  SQL + CP             ->  ACID, galat data NEVER
+   slow/async kaam, decouple        ->  QUEUE                ->  background me process
+   concurrency (2 user, no double-X)->  LOCK / ATOMIC        ->  check+mark ek atomic step (race khatam)
+   duplicate/retry (SAME user)      ->  IDEMPOTENCY KEY      ->  key se ek hi baar effect (paisa ek baar)
+   abuse / too many req per user    ->  RATE LIMITER         ->  Redis count + token-bucket -> 429
+   global static files slow         ->  CDN                  ->  edge server user ke paas (kam latency)
+   server -> user real-time PUSH    ->  WEBSOCKET            ->  permanent 2-way pipe (live price/chat)
+   slow query (full scan)           ->  DB INDEX (B-tree)    ->  sorted -> O(log n) search
+   ───────────────────────────────────────────────────────────────────────────────────────────
    PRINCIPLE: need dekho -> block match. mismatch mat karo (spike pe replica NAHI -> queue).
 ```
 
@@ -131,5 +137,15 @@
    YAAD: index = B-tree sorted -> O(log n). tradeoff = writes slow + storage. selective lagao.
 ```
 
+## 11. IDEMPOTENCY KEY (duplicate/retry — same user)
+```
+   Q: user ne "Pay" 2 baar dabaya (ya retry) -> paisa 2 baar kata -> ?  A: IDEMPOTENCY KEY.
+   har request ek UNIQUE key -> key request ke saath jaaye. server key check kare:
+     - key "processing" (chal rahi)  -> duplicate -> reject/ignore.
+     - key "DONE" (complete)         -> duplicate -> ERROR nahi, PEHLA SAME result laut do (consistent jawab).
+   -> 10 click bhi -> effect ek hi baar.
+   ★ YAAD: idempotency-key = SAME user duplicate/retry. (vs atomic-mark/lock = 2 ALAG user same resource race. DONO alag!)
+```
+
 ---
-> aage aur reflexes add karte jaana (idempotency-vs-atomic, write-through vs write-back cache, LB algos) jaise drill hote.
+> aage aur reflexes add karte jaana (write-through vs write-back cache, LB algos, microservices vs monolith) jaise drill hote.
