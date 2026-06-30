@@ -26,6 +26,11 @@
    global static files slow         ->  CDN                  ->  edge server user ke paas (kam latency)
    server -> user real-time PUSH    ->  WEBSOCKET            ->  permanent 2-way pipe (live price/chat)
    slow query (full scan)           ->  DB INDEX (B-tree)    ->  sorted -> O(log n) search
+   data update -> cache stale       ->  CACHE-ASIDE          ->  DB update + cache DELETE (not update) -> read repopulate
+   request kis server pe bheje      ->  LB ALGO              ->  round-robin/least-conn/IP-hash(session-sticky)
+   bada app, alag scale + isolation ->  MICROSERVICES        ->  per-service scale+deploy, ek down baaki chalu (chhote pe nahi!)
+   microservices ka single darwaza  ->  API GATEWAY          ->  routing+auth+rate-limit+logging ek jagah
+   login state (multi-server)       ->  JWT (stateless)      ->  signed token self-proving, no store (vs Session=Redis lookup)
    ───────────────────────────────────────────────────────────────────────────────────────────
    PRINCIPLE: need dekho -> block match. mismatch mat karo (spike pe replica NAHI -> queue).
 ```
