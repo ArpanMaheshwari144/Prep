@@ -40,6 +40,7 @@
    27. multi-service transaction     ->  SAGA                 ->  local commits chain -> fail -> COMPENSATING (ulta)
    28. message kitni baar pahunche   ->  DELIVERY GUARANTEE   ->  at-least-once + IDEMPOTENCY = exactly-once
    29. "1M user -> server/storage?"  ->  CAPACITY ESTIMATION  ->  QPS=req/day÷10^5 · peak×2-3 · storage=req×size×(yr×400)
+   30. read-heavy, JOIN slow         ->  DENORMALIZATION      ->  data jod ke ek jagah (duplicate) -> no JOIN, read fast
    ───────────────────────────────────────────────────────────────────────────────────────────
    PRINCIPLE: need dekho -> block match. mismatch mat karo (spike pe replica NAHI -> queue).
 ```
@@ -330,13 +331,21 @@
 
 ---
 
+## 26. DENORMALIZATION (read-heavy -> duplicate, no JOIN)
+```
+   Q: normalized me alag tables -> read pe JOIN mehnga (read-heavy me slow) -> reads fast kaise?  A: DENORMALIZE.
+   NORMALIZE = alag dabbe, no-repeat, JOIN pe padho (write-friendly). = ingredients alag, har baar jodo.
+   DENORMALIZE = sab jod ke EK table/row (duplicate chalega) -> read fast, no JOIN. = ready-made THALI.
+   TRADE-OFF: read FAST | par data REPEAT (user_name 10 order me 10 baar) -> jagah zyada + naam badle to 10 jagah update (write mushkil + inconsistency risk).
+   YAAD: read-heavy + JOIN slow -> denormalize (duplication accept for read-speed). NoSQL me common.
+```
+
 ## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
 ```
    1. 8-STEP FRAMEWORK       -> answer assemble: clarify->scale->API->boxes->data->deep-dive->bottleneck->wrap. (INTERVIEW_FRAMEWORK.md)
    2. MSG DELIVERY GUARANTEE  -> at-most/at-least/exactly (at-least+idempotency=exactly). [Arpan revisit — abhi clear nahi, note #25 padh]
-   3. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common). [Arpan revisit — abhi clear nahi]
-   4. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
-   5. ⚡ ONE-LINER DECISION SHORTCUTS -> "X vs Y -> kab-kaunsa" crisp one-liners (SQL-vs-NoSQL, kab-CDN, kab-LB, LRU-vs-LFU,
+   3. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
+   4. ⚡ ONE-LINER DECISION SHORTCUTS -> "X vs Y -> kab-kaunsa" crisp one-liners (SQL-vs-NoSQL, kab-CDN, kab-LB, LRU-vs-LFU,
       offset-vs-cursor, session-vs-JWT, monolith-vs-MS...) -> flash-reflex layer for interview. (Arpan idea 1-Jul)
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
