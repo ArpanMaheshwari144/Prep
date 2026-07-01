@@ -212,22 +212,47 @@
    YAAD: Session = Redis lookup per req (stateful) | JWT = signature verify, no store (STATELESS, scale-friendly).
 ```
 
+## 17. CAPACITY ESTIMATION (back-of-envelope — calculator NAHI)
+```
+   4 cheez estimate: QPS · Storage · Bandwidth · Cache.
+
+   ★★ MENTAL-MATH SHORTCUT (powers of 10 -> exponents ADD karo, no calculator) ★★
+   YAAD karo:
+     1 din ≈ 10^5 sec   (86,400 ≈ 1,00,000)         <- sabse zaroori
+     1 saal ≈ 400 din   (365 round-up, easy multiply)
+     K=10^3 · M=10^6 · B=10^9 · T=10^12
+     1 char=1 byte · KB=10^3 B · MB=10^6 · GB=10^9 · TB=10^12
+
+   FORMULAS:
+     total req/day = DAU × req-per-user
+     AVG QPS  = (req/day) ÷ 10^5          [10 ke power minus 5 -> exponent se seedha]
+     PEAK QPS = avg × 2 se 3
+     STORAGE  = (req/day) × record-size × (saal × 400)
+     CACHE    = hot 20% (80-20 rule)      BANDWIDTH = QPS × response-size
+
+   TRICK (multiply bina calculator): sab ko a×10^n likho -> numbers multiply, exponent ADD.
+     e.g. 20M × 2KB = (2×10^7) × (2×10^3) = 4×10^10 bytes = 40 GB.   (10^9 B=1GB -> 10^10=10GB -> ×4=40GB)
+     e.g. 40GB/day × 3yr = 40 × (3×400) = 40 × 1200 = 48,000 GB ≈ ~48 TB.  (round -> fast)
+
+   WORKED (5M DAU, 4 req/user, 2KB, 3yr): total=20M/day · avgQPS=200 · peak=400-600 · storage≈44-48TB.
+   ★ interview me EXACT nahi -> rough number + method dikhao. round aggressively.
+```
+
 ---
 
-## ⏳ PENDING DRILL (kal ke liye — abhi bache hue, JP-relevant)
+## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
 ```
-   1. CAPACITY ESTIMATION   -> "1M user -> server/storage/QPS" back-of-envelope math. (note: 02_capacity_estimation.md)
-   2. 8-STEP FRAMEWORK       -> answer assemble: clarify->scale->API->boxes->data->deep-dive->bottleneck->wrap. (INTERVIEW_FRAMEWORK.md)
-   3. CACHE EVICTION (LRU/LFU)-> cache full -> kya nikaalo.
-   4. MSG DELIVERY GUARANTEE  -> at-least-once / exactly-once (idempotency se juda).
-   5. SAGA / DISTRIBUTED TXN   -> MS me paisa-transaction rollback (JP finance-relevant). (note: 02_transactional)
-   6. HEALTH-CHECK / HEARTBEAT -> LB ko kaise pata server down (failover).
-   7. PAGINATION              -> feed offset vs cursor.
-   8. CIRCUIT BREAKER + RESILIENCE -> service call baar-baar fail -> calling ROK do (retry/timeout/fallback). MS-resilience, JP poochta.
-   9. BLOB / OBJECT STORAGE (S3) -> images/videos/files DB me nahi -> S3 me, DB me sirf URL. (file-upload design).
-   10. CONNECTION POOLING     -> har request pe nayi DB connection mehngi -> pool me reuse.
-   11. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
-   12. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
+   1. 8-STEP FRAMEWORK       -> answer assemble: clarify->scale->API->boxes->data->deep-dive->bottleneck->wrap. (INTERVIEW_FRAMEWORK.md)
+   2. CACHE EVICTION (LRU/LFU)-> cache full -> kya nikaalo.
+   3. MSG DELIVERY GUARANTEE  -> at-least-once / exactly-once (idempotency se juda).
+   4. SAGA / DISTRIBUTED TXN   -> MS me paisa-transaction rollback (JP finance-relevant). (note: 02_transactional)
+   5. HEALTH-CHECK / HEARTBEAT -> LB ko kaise pata server down (failover).
+   6. PAGINATION              -> feed offset vs cursor.
+   7. CIRCUIT BREAKER + RESILIENCE -> service call baar-baar fail -> calling ROK do (retry/timeout/fallback). MS-resilience, JP poochta.
+   8. BLOB / OBJECT STORAGE (S3) -> images/videos/files DB me nahi -> S3 me, DB me sirf URL. (file-upload design).
+   9. CONNECTION POOLING     -> har request pe nayi DB connection mehngi -> pool me reuse.
+   10. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
+   11. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
 
