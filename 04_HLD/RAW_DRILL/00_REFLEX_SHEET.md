@@ -248,6 +248,16 @@
    YAAD: LRU=TIME(last kab) · LFU=COUNT(kitni baar) · TTL=auto-expire. aksar TTL + LRU saath.
 ```
 
+## 19. PAGINATION (badi list -> page-by-page)
+```
+   Q: feed me 1 crore items -> ek saath nahi bhej sakte -> ?  A: pagination (page-by-page, e.g. 20/page).
+   OFFSET: "LIMIT 20 OFFSET N" -> simple. DIKKAT: deep page (OFFSET 10 lakh) -> DB pehle N rows SKIP kare -> SLOW.
+           + beech me naya item -> items shift/duplicate.
+   CURSOR (better): "last dekhe item ke BAAD ke 20" -> WHERE id > last_seen_id LIMIT 20.
+           -> DB INDEX se SEEDHA jump (koi skip nahi) -> deep page bhi FAST + stable. infinite-scroll isi se.
+   YAAD: OFFSET=skip N (deep slow) | CURSOR="last id ke baad" (index jump, fast). badi list/infinite-scroll -> CURSOR.
+```
+
 ---
 
 ## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
@@ -256,12 +266,11 @@
    2. MSG DELIVERY GUARANTEE  -> at-least-once / exactly-once (idempotency se juda).
    3. SAGA / DISTRIBUTED TXN   -> MS me paisa-transaction rollback (JP finance-relevant). (note: 02_transactional)
    4. HEALTH-CHECK / HEARTBEAT -> LB ko kaise pata server down (failover).
-   5. PAGINATION              -> feed offset vs cursor.
-   6. CIRCUIT BREAKER + RESILIENCE -> service call baar-baar fail -> calling ROK do (retry/timeout/fallback). MS-resilience, JP poochta.
-   7. BLOB / OBJECT STORAGE (S3) -> images/videos/files DB me nahi -> S3 me, DB me sirf URL. (file-upload design).
-   8. CONNECTION POOLING     -> har request pe nayi DB connection mehngi -> pool me reuse.
-   9. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
-   10. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
+   5. CIRCUIT BREAKER + RESILIENCE -> service call baar-baar fail -> calling ROK do (retry/timeout/fallback). MS-resilience, JP poochta.
+   6. BLOB / OBJECT STORAGE (S3) -> images/videos/files DB me nahi -> S3 me, DB me sirf URL. (file-upload design).
+   7. CONNECTION POOLING     -> har request pe nayi DB connection mehngi -> pool me reuse.
+   8. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
+   9. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
 
