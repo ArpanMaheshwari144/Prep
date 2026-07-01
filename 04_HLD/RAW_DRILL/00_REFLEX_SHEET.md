@@ -31,6 +31,15 @@
    bada app, alag scale + isolation ->  MICROSERVICES        ->  per-service scale+deploy, ek down baaki chalu (chhote pe nahi!)
    microservices ka single darwaza  ->  API GATEWAY          ->  routing+auth+rate-limit+logging ek jagah
    login state (multi-server)       ->  JWT (stateless)      ->  signed token self-proving, no store (vs Session=Redis lookup)
+   cache FULL -> kya hataao         ->  EVICTION (LRU/LFU/TTL)->  LRU=time(last-use) · LFU=count · TTL=auto-expire
+   badi list -> page-by-page        ->  PAGINATION (cursor)  ->  offset=deep-slow(skip) | cursor="last id ke baad"=fast
+   server down -> LB ko kaise pata  ->  HEALTH-CHECK/HEARTBEAT->  LB /health ping+threshold (pull) | server "alive" signal (push)
+   dead service ko hammer / cascade ->  CIRCUIT BREAKER      ->  OPEN=fail-fast(no wait) / HALF-OPEN=test / CLOSED=normal
+   bade files (img/video/pdf)       ->  BLOB / S3            ->  file S3 me, DB me sirf URL. pre-signed URL(direct)+CDN
+   har req nayi DB connection mehngi ->  CONNECTION POOL      ->  ready connections reuse (borrow/use/return). size-fix->exhaust
+   multi-service transaction        ->  SAGA                 ->  local commits chain -> fail -> COMPENSATING (ulta) actions
+   message kitni baar pahunche      ->  DELIVERY GUARANTEE   ->  at-least-once + IDEMPOTENCY = effectively exactly-once
+   "1M user -> server/storage?"      ->  CAPACITY ESTIMATION  ->  QPS=req/day÷10^5 · peak×2-3 · storage=req×size×(yr×400)
    ───────────────────────────────────────────────────────────────────────────────────────────
    PRINCIPLE: need dekho -> block match. mismatch mat karo (spike pe replica NAHI -> queue).
 ```
