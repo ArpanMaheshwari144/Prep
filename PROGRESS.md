@@ -36,6 +36,10 @@
       - KYUN raw/design-less: design-wrapper "rehearsed/checked" lagता hai; Arpan ko GENUINE cold-practice chahiye (jaise DSA).
       - master "kaunsa BLOCK kab": cache · queue(Kafka) · shard(+key) · replica · LB · CAP/consistency ·
         idempotency-vs-atomic · rate-limit · CDN · WebSocket. NOT ratta — kyun/kab samajh ke. (DSA bhi practice-mode.)
+      ★★ DRILL-RESPONSE RULE (Arpan 1-Jul, IMPORTANT): Arpan usually RIGHT — concepts aate hain, gap = DELIVERY.
+         jab sahi -> bolo "sahi, galat nahi" + uske APNE sentence ko clean INTERVIEW-ENGLISH me reframe karo
+         (taaki interview me crisp bol sake). NAYE concept/detail DUMP mat karo jaise usne galti ki.
+         sirf jahan SACH me GALAT ho -> wahan batao. (extra-info thopna = usse lagta "galat tha" -> irritate karta.)
 ```
 
 ```
