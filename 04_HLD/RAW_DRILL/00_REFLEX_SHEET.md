@@ -41,6 +41,7 @@
    28. message kitni baar pahunche   ->  DELIVERY GUARANTEE   ->  at-least-once + IDEMPOTENCY = exactly-once
    29. "1M user -> server/storage?"  ->  CAPACITY ESTIMATION  ->  QPS=req/day÷10^5 · peak×2-3 · storage=req×size×(yr×400)
    30. read-heavy, JOIN slow         ->  DENORMALIZATION      ->  data jod ke ek jagah (duplicate) -> no JOIN, read fast
+   31. frontend->API alag origin     ->  CORS                 ->  server Access-Control-Allow-Origin header (specific origin)
    ───────────────────────────────────────────────────────────────────────────────────────────
    PRINCIPLE: need dekho -> block match. mismatch mat karo (spike pe replica NAHI -> queue).
 ```
@@ -340,12 +341,22 @@
    YAAD: read-heavy + JOIN slow -> denormalize (duplication accept for read-speed). NoSQL me common.
 ```
 
+## 27. CORS (cross-origin browser block)
+```
+   Q: frontend(myapp.com) -> API(api.myapp.com, alag origin) call -> browser BLOCK, CORS error. kyun? fix?
+   KYUN: browser ki SAME-ORIGIN POLICY -> alag origin ki request default block (security).
+   FIX: backend response me header -> Access-Control-Allow-Origin: https://myapp.com -> browser permission dekh ke allow.
+   ★ REFINEMENT: "*" (koi bhi origin) PROD me RISKY -> SPECIFIC origin whitelist karo.
+                 (credentials/cookies ke saath "*" chalta hi nahi -> specific dena padta.)
+   precision: ye BROWSER enforce karta (server-to-server/Postman me CORS nahi). header server response me, browser check.
+   YAAD: cross-origin -> browser block (same-origin policy) -> server Access-Control-Allow-Origin header (specific, "*" nahi prod me).
+```
+
 ## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
 ```
    1. 8-STEP FRAMEWORK       -> answer assemble: clarify->scale->API->boxes->data->deep-dive->bottleneck->wrap. (INTERVIEW_FRAMEWORK.md)
    2. MSG DELIVERY GUARANTEE  -> at-most/at-least/exactly (at-least+idempotency=exactly). [Arpan revisit — abhi clear nahi, note #25 padh]
-   3. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
-   4. ⚡ ONE-LINER DECISION SHORTCUTS -> "X vs Y -> kab-kaunsa" crisp one-liners (SQL-vs-NoSQL, kab-CDN, kab-LB, LRU-vs-LFU,
+   3. ⚡ ONE-LINER DECISION SHORTCUTS -> "X vs Y -> kab-kaunsa" crisp one-liners (SQL-vs-NoSQL, kab-CDN, kab-LB, LRU-vs-LFU,
       offset-vs-cursor, session-vs-JWT, monolith-vs-MS...) -> flash-reflex layer for interview. (Arpan idea 1-Jul)
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
