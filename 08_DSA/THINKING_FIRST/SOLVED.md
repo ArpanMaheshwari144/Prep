@@ -223,6 +223,11 @@
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
 
+## #51 — Unique Paths   (Medium | 2D-DP grid)   1-Jul · SOLO (zero hint) · DP curve
+- **Signal:** "top-left -> bottom-right, sirf right/down, kitne paths" -> 2D DP. cell pe = upar-se + left-se.
+- **Approach (TOP-DOWN memo, khud):** solve(i,j): out-of-bounds->0, destination(m-1,n-1)->1, memo-hit return, warna `down=solve(i+1,j) + right=solve(i,j+1)`, store. dp(m×n,-1).
+- **Note:** ZERO hint, SOLO. House-Robber wala recursive+memo template KHUD reuse kiya (ab 2D pe) -> DP-template internalize ho raha. DP weak-edge tha -> 2D bhi solo = curve chal padi (rep aage). His approach consistently top-down memo now.
+
 ## #50 — Group Anagrams   (Medium | Hashing — sorted-word key)   30-Jun · SOLO · ★ #50 milestone
 - **Signal:** "anagrams group karo" → 2 words anagram = letters sort karne pe SAME → sorted-word = KEY.
 - **Approach:** `unordered_map<string, vector<string>>`; har word: `key=word; sort(key); mp[key].push_back(word)`. phir map ke saare `.second` (groups) ans me daal.
