@@ -223,6 +223,11 @@
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
 
+## #52 — Coin Change   (Medium | 1D-DP min-coins)   1-Jul · ★ [C] CLEARED (parked -> done)
+- **Signal:** "min coins for amount, unlimited coins" -> 1D DP, state=amount. solve(amt)=har coin: 1+solve(amt-coin) -> MIN.
+- **Approach (top-down memo, khud):** base amt==0->0, amt<0->INT_MAX(invalid). memo dp[amt]. loop coins: sub=solve(amt-coin); if sub!=INT_MAX -> mini=min(mini,1+sub). end: INT_MAX?-1:ans.
+- **Note:** ★ ye woh problem tha jise Arpan ne PEHLE PARK kiya tha ("mai nahi karunga isko, samjha nahi"). AAJ core loop SOLO, 1 hint sirf BASE-CASE pe (jahan pehle atka), phir memo+overflow-guard+(-1) sab khud. [C] CLEARED. DP weak-edge ka sabse-parka problem ab done -> curve pakki. (minor: solve() 2x call -> variable me store, delivery polish.)
+
 ## #51 — Unique Paths   (Medium | 2D-DP grid)   1-Jul · SOLO (zero hint) · DP curve
 - **Signal:** "top-left -> bottom-right, sirf right/down, kitne paths" -> 2D DP. cell pe = upar-se + left-se.
 - **Approach (TOP-DOWN memo, khud):** solve(i,j): out-of-bounds->0, destination(m-1,n-1)->1, memo-hit return, warna `down=solve(i+1,j) + right=solve(i,j+1)`, store. dp(m×n,-1).
