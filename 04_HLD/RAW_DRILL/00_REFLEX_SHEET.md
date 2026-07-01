@@ -280,6 +280,16 @@
    YAAD: CB = CLOSED(normal)/OPEN(block+fail-fast)/HALF-OPEN(test). dead service hammer nahi -> cascading failure roke.
 ```
 
+## 22. BLOB / OBJECT STORAGE (bade files kahan)
+```
+   Q: users bade files (img/video/pdf, MBs-GBs) upload karte -> DB me rakhu?  A: NAHI -> OBJECT STORAGE (S3).
+   files -> S3 (object storage) me. DB me sirf URL/reference.
+   KYUN NOT DB: file GB tak -> DB load/space badhe + server bottleneck (poori video server se laana feasible nahi).
+   UPLOAD/DOWNLOAD = PRE-SIGNED URL: client SEEDHA S3 se (server ke through nahi) -> server bandwidth/threads bache.
+   + CDN: S3 files edge se serve -> global fast.
+   YAAD: bade files -> S3 + DB me URL. flow = pre-signed URL (direct S3, server bypass) + CDN.
+```
+
 ---
 
 ## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
@@ -287,10 +297,9 @@
    1. 8-STEP FRAMEWORK       -> answer assemble: clarify->scale->API->boxes->data->deep-dive->bottleneck->wrap. (INTERVIEW_FRAMEWORK.md)
    2. MSG DELIVERY GUARANTEE  -> at-least-once / exactly-once (idempotency se juda).
    3. SAGA / DISTRIBUTED TXN   -> MS me paisa-transaction rollback (JP finance-relevant). (note: 02_transactional)
-   4. BLOB / OBJECT STORAGE (S3) -> images/videos/files DB me nahi -> S3 me, DB me sirf URL. (file-upload design).
-   5. CONNECTION POOLING     -> har request pe nayi DB connection mehngi -> pool me reuse.
-   6. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
-   7. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
+   4. CONNECTION POOLING     -> har request pe nayi DB connection mehngi -> pool me reuse.
+   5. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
+   6. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
 
