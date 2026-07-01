@@ -9,37 +9,37 @@
 ## ★ MASTER REFLEX TABLE (need -> block -> kyun) ★
 
 ```
-   NEED / SCENARIO                  ->  BLOCK                ->  KYUN (1 line)
+   #   NEED / SCENARIO               ->  BLOCK                ->  KYUN (1 line)
    ───────────────────────────────────────────────────────────────────────────────────────────
-   read-heavy (baar-baar padho)     ->  CACHE (Redis)        ->  RAM me data, disk se 100x tez
-   reads phir bhi DB pe zyada       ->  READ REPLICA         ->  DB ki copies, reads baant do (read-scale)
-   "abhi likha turant padha" stale  ->  READ-YOUR-OWN-WRITES ->  replication lag -> woh read master se
-   WRITES bahut zyada / big data    ->  SHARDING (+key)      ->  data tukdon me alag DB, write/storage-scale
-   instant SPIKE/burst absorb       ->  QUEUE (Kafka)        ->  requests HOLD/buffer, crash nahi (LB nahi!)
-   traffic distribute               ->  LOAD BALANCER        ->  requests servers me BAANTO (hold nahi)
-   availability / failover          ->  REPLICATION          ->  copy gira to dusri le le
-   consistency-critical (paisa)     ->  SQL + CP             ->  ACID, galat data NEVER
-   slow/async kaam, decouple        ->  QUEUE                ->  background me process
-   concurrency (2 user, no double-X)->  LOCK / ATOMIC        ->  check+mark ek atomic step (race khatam)
-   duplicate/retry (SAME user)      ->  IDEMPOTENCY KEY      ->  key se ek hi baar effect (paisa ek baar)
-   abuse / too many req per user    ->  RATE LIMITER         ->  Redis count + token-bucket -> 429
-   global static files slow         ->  CDN                  ->  edge server user ke paas (kam latency)
-   server -> user real-time PUSH    ->  WEBSOCKET            ->  permanent 2-way pipe (live price/chat)
-   slow query (full scan)           ->  DB INDEX (B-tree)    ->  sorted -> O(log n) search
-   data update -> cache stale       ->  CACHE-ASIDE          ->  DB update + cache DELETE (not update) -> read repopulate
-   request kis server pe bheje      ->  LB ALGO              ->  round-robin/least-conn/IP-hash(session-sticky)
-   bada app, alag scale + isolation ->  MICROSERVICES        ->  per-service scale+deploy, ek down baaki chalu (chhote pe nahi!)
-   microservices ka single darwaza  ->  API GATEWAY          ->  routing+auth+rate-limit+logging ek jagah
-   login state (multi-server)       ->  JWT (stateless)      ->  signed token self-proving, no store (vs Session=Redis lookup)
-   cache FULL -> kya hataao         ->  EVICTION (LRU/LFU/TTL)->  LRU=time(last-use) · LFU=count · TTL=auto-expire
-   badi list -> page-by-page        ->  PAGINATION (cursor)  ->  offset=deep-slow(skip) | cursor="last id ke baad"=fast
-   server down -> LB ko kaise pata  ->  HEALTH-CHECK/HEARTBEAT->  LB /health ping+threshold (pull) | server "alive" signal (push)
-   dead service ko hammer / cascade ->  CIRCUIT BREAKER      ->  OPEN=fail-fast(no wait) / HALF-OPEN=test / CLOSED=normal
-   bade files (img/video/pdf)       ->  BLOB / S3            ->  file S3 me, DB me sirf URL. pre-signed URL(direct)+CDN
-   har req nayi DB connection mehngi ->  CONNECTION POOL      ->  ready connections reuse (borrow/use/return). size-fix->exhaust
-   multi-service transaction        ->  SAGA                 ->  local commits chain -> fail -> COMPENSATING (ulta) actions
-   message kitni baar pahunche      ->  DELIVERY GUARANTEE   ->  at-least-once + IDEMPOTENCY = effectively exactly-once
-   "1M user -> server/storage?"      ->  CAPACITY ESTIMATION  ->  QPS=req/day÷10^5 · peak×2-3 · storage=req×size×(yr×400)
+    1. read-heavy (baar-baar padho)  ->  CACHE (Redis)        ->  RAM me data, disk se 100x tez
+    2. reads phir bhi DB pe zyada    ->  READ REPLICA         ->  DB ki copies, reads baant do (read-scale)
+    3. "abhi likha turant padha"stale->  READ-YOUR-OWN-WRITES ->  replication lag -> woh read master se
+    4. WRITES bahut / big data       ->  SHARDING (+key)      ->  data tukdon me alag DB, write/storage-scale
+    5. instant SPIKE/burst absorb    ->  QUEUE (Kafka)        ->  requests HOLD/buffer, crash nahi (LB nahi!)
+    6. traffic distribute            ->  LOAD BALANCER        ->  requests servers me BAANTO (hold nahi)
+    7. availability / failover       ->  REPLICATION          ->  copy gira to dusri le le
+    8. consistency-critical (paisa)  ->  SQL + CP             ->  ACID, galat data NEVER
+    9. slow/async kaam, decouple     ->  QUEUE                ->  background me process
+   10. concurrency (2 user, no dbl-X)->  LOCK / ATOMIC        ->  check+mark ek atomic step (race khatam)
+   11. duplicate/retry (SAME user)   ->  IDEMPOTENCY KEY      ->  key se ek hi baar effect (paisa ek baar)
+   12. abuse / too many req per user ->  RATE LIMITER         ->  Redis count + token-bucket -> 429
+   13. global static files slow      ->  CDN                  ->  edge server user ke paas (kam latency)
+   14. server -> user real-time PUSH ->  WEBSOCKET            ->  permanent 2-way pipe (live price/chat)
+   15. slow query (full scan)        ->  DB INDEX (B-tree)    ->  sorted -> O(log n) search
+   16. data update -> cache stale    ->  CACHE-ASIDE          ->  DB update + cache DELETE (not update) -> repopulate
+   17. request kis server pe bheje   ->  LB ALGO              ->  round-robin/least-conn/IP-hash(session-sticky)
+   18. bada app, scale + isolation   ->  MICROSERVICES        ->  per-service scale+deploy, ek down baaki chalu
+   19. microservices ka single dwaza ->  API GATEWAY          ->  routing+auth+rate-limit+logging ek jagah
+   20. login state (multi-server)    ->  JWT (stateless)      ->  signed token self-proving, no store (vs Session=Redis)
+   21. cache FULL -> kya hataao      ->  EVICTION(LRU/LFU/TTL)->  LRU=time(last-use) · LFU=count · TTL=auto-expire
+   22. badi list -> page-by-page     ->  PAGINATION (cursor)  ->  offset=deep-slow(skip) | cursor="last id ke baad"=fast
+   23. server down -> LB ko pata     ->  HEALTH-CHECK/HEARTBT ->  LB /health ping+threshold(pull) | server "alive"(push)
+   24. dead service hammer / cascade ->  CIRCUIT BREAKER      ->  OPEN=fail-fast / HALF-OPEN=test / CLOSED=normal
+   25. bade files (img/video/pdf)    ->  BLOB / S3            ->  file S3 me, DB me sirf URL. pre-signed URL+CDN
+   26. har req nayi DB conn mehngi   ->  CONNECTION POOL      ->  ready conn reuse (borrow/use/return). size-fix->exhaust
+   27. multi-service transaction     ->  SAGA                 ->  local commits chain -> fail -> COMPENSATING (ulta)
+   28. message kitni baar pahunche   ->  DELIVERY GUARANTEE   ->  at-least-once + IDEMPOTENCY = exactly-once
+   29. "1M user -> server/storage?"  ->  CAPACITY ESTIMATION  ->  QPS=req/day÷10^5 · peak×2-3 · storage=req×size×(yr×400)
    ───────────────────────────────────────────────────────────────────────────────────────────
    PRINCIPLE: need dekho -> block match. mismatch mat karo (spike pe replica NAHI -> queue).
 ```
