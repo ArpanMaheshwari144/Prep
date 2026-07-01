@@ -290,6 +290,16 @@
    YAAD: bade files -> S3 + DB me URL. flow = pre-signed URL (direct S3, server bypass) + CDN.
 ```
 
+## 23. CONNECTION POOLING (DB connection reuse)
+```
+   Q: har request pe naya DB connection (open->query->close) -> mehnga kyun? fix?  A: CONNECTION POOL (HikariCP).
+   NAYA connection mehnga: TCP handshake + auth + setup (~10-100ms) har baar -> overhead + DB churn se choke.
+   POOL: N connections pehle se OPEN+ready. request BORROW -> use -> RETURN (band nahi, reuse). no re-handshake -> fast.
+   ★ EXHAUSTION (Arpan's real bug): pool size FIXED (e.g.10). sab borrow + return nahi (slow query pakde rahe) ->
+     pool khali nahi -> naye request WAIT/fail. (uska "HikariCP exhaustion, 95% email fail, blocking batch query" bug.)
+   YAAD: pool = ready connections reuse (borrow/use/return) -> handshake bacha. size fixed -> hold-too-long -> EXHAUSTION.
+```
+
 ---
 
 ## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
@@ -297,9 +307,8 @@
    1. 8-STEP FRAMEWORK       -> answer assemble: clarify->scale->API->boxes->data->deep-dive->bottleneck->wrap. (INTERVIEW_FRAMEWORK.md)
    2. MSG DELIVERY GUARANTEE  -> at-least-once / exactly-once (idempotency se juda).
    3. SAGA / DISTRIBUTED TXN   -> MS me paisa-transaction rollback (JP finance-relevant). (note: 02_transactional)
-   4. CONNECTION POOLING     -> har request pe nayi DB connection mehngi -> pool me reuse.
-   5. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
-   6. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
+   4. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
+   5. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
 
