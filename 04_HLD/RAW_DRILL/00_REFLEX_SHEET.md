@@ -268,6 +268,18 @@
    YAAD: HEALTH-CHECK = LB PULL (/health ping, threshold, recover) | HEARTBEAT = server PUSH (alive signal).
 ```
 
+## 21. CIRCUIT BREAKER (cascading failure roke — resilience)
+```
+   Q: A -> B call, B down. A baar-baar B call kare -> har call timeout tak ruke -> A ke threads bhare -> A bhi choke
+      = CASCADING FAILURE. -> A ko dead B hammer karne se kaise roke?  A: CIRCUIT BREAKER (3 states).
+   CLOSED    = normal, sab call ja rahi (server theek).
+   OPEN      = server fail -> call BLOCK -> turant FAIL/fallback (fail FAST, no timeout-wait -> threads bache).
+   HALF-OPEN = thodi (1-2) test call bhej -> theek? -> CLOSED | phir fail? -> OPEN. (recover ka mauka.)
+   trip OPEN kab: fails threshold cross (e.g. last 10 me 50% fail).
+   naam-trick (bijli): CLOSED=juda=current behe=normal · OPEN=toota=current band=block.
+   YAAD: CB = CLOSED(normal)/OPEN(block+fail-fast)/HALF-OPEN(test). dead service hammer nahi -> cascading failure roke.
+```
+
 ---
 
 ## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
@@ -275,11 +287,10 @@
    1. 8-STEP FRAMEWORK       -> answer assemble: clarify->scale->API->boxes->data->deep-dive->bottleneck->wrap. (INTERVIEW_FRAMEWORK.md)
    2. MSG DELIVERY GUARANTEE  -> at-least-once / exactly-once (idempotency se juda).
    3. SAGA / DISTRIBUTED TXN   -> MS me paisa-transaction rollback (JP finance-relevant). (note: 02_transactional)
-   4. CIRCUIT BREAKER + RESILIENCE -> service call baar-baar fail -> calling ROK do (retry/timeout/fallback). MS-resilience, JP poochta.
-   5. BLOB / OBJECT STORAGE (S3) -> images/videos/files DB me nahi -> S3 me, DB me sirf URL. (file-upload design).
-   6. CONNECTION POOLING     -> har request pe nayi DB connection mehngi -> pool me reuse.
-   7. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
-   8. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
+   4. BLOB / OBJECT STORAGE (S3) -> images/videos/files DB me nahi -> S3 me, DB me sirf URL. (file-upload design).
+   5. CONNECTION POOLING     -> har request pe nayi DB connection mehngi -> pool me reuse.
+   6. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
+   7. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
 
