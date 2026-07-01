@@ -310,14 +310,22 @@
    YAAD: SAGA = multi-service distributed txn. local commits chain -> fail -> COMPENSATING ulta-actions (rollback nahi). (@Transactional=ek DB.)
 ```
 
+## 25. MESSAGE DELIVERY GUARANTEE (queue/Kafka — kitni baar pahunche)
+```
+   AT-MOST-once : bhej diya, bas -> LOST ho sakta (fire-forget). fast, unreliable. (kam use)
+   AT-LEAST-once: PAKKA pahunche, par DUPLICATE ho sakta (ack na mila -> dobara bhej). ★ COMMON.
+   EXACTLY-once : na lost na duplicate, theek 1 baar. HARD + mehnga.
+   ★ practical: AT-LEAST-once + IDEMPOTENCY-key (duplicate ignore) = effectively EXACTLY-once. (industry standard.)
+   YAAD: at-most(lost) · at-least(duplicate, common) · exactly(hard). real exactly = at-least + idempotent consumer.
+```
+
 ---
 
 ## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
 ```
    1. 8-STEP FRAMEWORK       -> answer assemble: clarify->scale->API->boxes->data->deep-dive->bottleneck->wrap. (INTERVIEW_FRAMEWORK.md)
-   2. MSG DELIVERY GUARANTEE  -> at-least-once / exactly-once (idempotency se juda).
-   3. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common). [Arpan revisit — abhi clear nahi]
-   4. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
+   2. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common). [Arpan revisit — abhi clear nahi]
+   3. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
 
