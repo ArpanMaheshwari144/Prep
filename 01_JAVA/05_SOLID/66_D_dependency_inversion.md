@@ -12,6 +12,15 @@ Matlab: `OrderService` ko **`OrderRepository` interface** pe depend karna chahiy
 
 ---
 
+## ★ REAL-LIFE ANALOGY (JP: "real-life use batao")
+
+> **Wall socket** (interface) — koi bhi appliance (phone charger, laptop) laga do, socket wahi rehta.
+> Appliance seedha wiring me solder nahi hota → warna badalna nightmare. Socket = abstraction.
+> **Code:** `OrderService` seedha `new MySQLDatabase()` mat kare → `Database` interface pe depend, object INJECT ho.
+> (= yahi Spring `@Autowired` / DI karta.)
+
+---
+
 ## STORY — Tight Coupling Hell
 
 → Tune **OrderService** likhi — directly **MySQLOrderRepository** use kiya:

@@ -12,6 +12,14 @@ Matlab: naya feature add karo **naya class likh ke** — existing tested code ko
 
 ---
 
+## ★ REAL-LIFE ANALOGY (JP: "real-life use batao")
+
+> Electric board me **naya appliance** lagana → naya **socket** add karo, poori building ki wiring mat kholo.
+> (extension = naya socket | modification = poori wiring redo → galat.)
+> **Code:** naya payment mode → nayi class (`CryptoPayment`), purani `Payment` class chhuo mat.
+
+---
+
 ## STORY — Payment Processor Mess
 
 → Pehle PayPal payment tha. Code:

@@ -12,6 +12,15 @@ Matlab: agar `Account` use ho raha hai, **`SavingsAccount` daalna safe** hona ch
 
 ---
 
+## ★ REAL-LIFE ANALOGY (JP: "real-life use batao")
+
+> **Bird** ke paas `fly()` hai. **Penguin** bhi Bird hai — par ud NAHI sakta.
+> Penguin ko Bird (jo fly maanta) ki jagah lagaya → `fly()` par TOOTA = LSP violation.
+> **Fix:** `Bird` → `FlyingBird` / `NonFlyingBird` → Penguin = NonFlyingBird.
+> (finance: `FixedDeposit` ko `Account.withdraw()` ki jagah lagana → toota — same baat.)
+
+---
+
 ## STORY — FixedDeposit ki Galti
 
 → `Account` class banayi — har account ka `withdraw()` method

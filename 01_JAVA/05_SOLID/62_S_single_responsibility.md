@@ -12,6 +12,14 @@ Matlab: ek class **ek hi kaam** ke liye responsible — ek hi cheez badle toh cl
 
 ---
 
+## ★ REAL-LIFE ANALOGY (JP: "real-life use batao")
+
+> Ek hi banda **cook + waiter + cashier** sab kare → ek gadbad, poora system atke.
+> Har banda **ek kaam** → cook badle to waiter/cashier pe asar nahi.
+> **Code:** ek class DB + email + logic sab kare → koi ek badle to sab toote. Split → har class ek kaam.
+
+---
+
 ## STORY — ShoppingCart Bug
 
 → ShoppingCart class banayi — ek dum smart, **3 kaam** karti thi:
