@@ -238,21 +238,30 @@
    ★ interview me EXACT nahi -> rough number + method dikhao. round aggressively.
 ```
 
+## 18. CACHE EVICTION (cache full -> kya hataao)
+```
+   Q: Redis full -> naya data ke liye purana kaunsa hataao?  A: eviction algo.
+   LRU (Least Recently Used) -> TIME based: jo LONG-TIME se use nahi hua (last-access purana) -> evict. ★ common.
+   LFU (Least Frequently Used)-> COUNT based: jo sabse KAM BAAR use hua -> evict.
+   TTL (Time To Live)         -> har entry pe expiry -> time khatam pe APNE AAP delete (full ho ya na ho). fresh bhi rakhe.
+   example: A=100 baar use par last 1hr pehle · B=2 baar use par last 1sec pehle -> LRU hataye A (time), LFU hataye B (count).
+   YAAD: LRU=TIME(last kab) · LFU=COUNT(kitni baar) · TTL=auto-expire. aksar TTL + LRU saath.
+```
+
 ---
 
 ## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
 ```
    1. 8-STEP FRAMEWORK       -> answer assemble: clarify->scale->API->boxes->data->deep-dive->bottleneck->wrap. (INTERVIEW_FRAMEWORK.md)
-   2. CACHE EVICTION (LRU/LFU)-> cache full -> kya nikaalo.
-   3. MSG DELIVERY GUARANTEE  -> at-least-once / exactly-once (idempotency se juda).
-   4. SAGA / DISTRIBUTED TXN   -> MS me paisa-transaction rollback (JP finance-relevant). (note: 02_transactional)
-   5. HEALTH-CHECK / HEARTBEAT -> LB ko kaise pata server down (failover).
-   6. PAGINATION              -> feed offset vs cursor.
-   7. CIRCUIT BREAKER + RESILIENCE -> service call baar-baar fail -> calling ROK do (retry/timeout/fallback). MS-resilience, JP poochta.
-   8. BLOB / OBJECT STORAGE (S3) -> images/videos/files DB me nahi -> S3 me, DB me sirf URL. (file-upload design).
-   9. CONNECTION POOLING     -> har request pe nayi DB connection mehngi -> pool me reuse.
-   10. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
-   11. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
+   2. MSG DELIVERY GUARANTEE  -> at-least-once / exactly-once (idempotency se juda).
+   3. SAGA / DISTRIBUTED TXN   -> MS me paisa-transaction rollback (JP finance-relevant). (note: 02_transactional)
+   4. HEALTH-CHECK / HEARTBEAT -> LB ko kaise pata server down (failover).
+   5. PAGINATION              -> feed offset vs cursor.
+   6. CIRCUIT BREAKER + RESILIENCE -> service call baar-baar fail -> calling ROK do (retry/timeout/fallback). MS-resilience, JP poochta.
+   7. BLOB / OBJECT STORAGE (S3) -> images/videos/files DB me nahi -> S3 me, DB me sirf URL. (file-upload design).
+   8. CONNECTION POOLING     -> har request pe nayi DB connection mehngi -> pool me reuse.
+   9. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
+   10. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
 
