@@ -41,8 +41,9 @@ int solve(vector<int> &coins, int amount, vector<int> &dp)
     int mini = INT_MAX;
     for (int i = 0; i < coins.size(); i++)
     {
-        if (solve(coins, amount - coins[i], dp) != INT_MAX)
-            mini = min(mini, 1 + solve(coins, amount - coins[i], dp));
+        int sub_call = solve(coins, amount - coins[i], dp);
+        if (sub_call != INT_MAX)
+            mini = min(mini, 1 + sub_call);
     }
     return dp[amount] = mini;
 }
@@ -50,7 +51,8 @@ int solve(vector<int> &coins, int amount, vector<int> &dp)
 int coinChange(vector<int> &coins, int amount)
 {
     vector<int> dp(amount + 1, -1);
-    return solve(coins, amount, dp) == INT_MAX ? -1 : solve(coins, amount, dp);
+    int ans = solve(coins, amount, dp);
+    return ans  == INT_MAX ? -1 : ans;
 }
 
 int main()
