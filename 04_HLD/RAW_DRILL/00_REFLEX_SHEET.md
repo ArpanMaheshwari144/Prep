@@ -300,15 +300,24 @@
    YAAD: pool = ready connections reuse (borrow/use/return) -> handshake bacha. size fixed -> hold-too-long -> EXHAUSTION.
 ```
 
+## 24. SAGA (distributed transaction — multi-service)
+```
+   Q: order+payment+inventory teeno alag DB. @Transactional ek DB pe -> multi-DB me kaise atomic? payment fail to?
+   A: SAGA = local transactions ki CHAIN. har service apne DB me LOCAL commit.
+   fail -> pichhle committed steps DB-rollback NAHI ho sakte (already commit) -> COMPENSATING (ULTA) action chalao:
+     payment fail -> "cancel order" (create ka ulta) + "restore inventory" (ghatane ka ulta) -> undo.
+   2 types: CHOREOGRAPHY (har service event sun ke khud next/compensate) · ORCHESTRATION (central orchestrator direct kare).
+   YAAD: SAGA = multi-service distributed txn. local commits chain -> fail -> COMPENSATING ulta-actions (rollback nahi). (@Transactional=ek DB.)
+```
+
 ---
 
 ## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
 ```
    1. 8-STEP FRAMEWORK       -> answer assemble: clarify->scale->API->boxes->data->deep-dive->bottleneck->wrap. (INTERVIEW_FRAMEWORK.md)
    2. MSG DELIVERY GUARANTEE  -> at-least-once / exactly-once (idempotency se juda).
-   3. SAGA / DISTRIBUTED TXN   -> MS me paisa-transaction rollback (JP finance-relevant). (note: 02_transactional)
-   4. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common).
-   5. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
+   3. DENORMALIZATION        -> read-heavy me joins mehnge -> data pehle se jod ke rakho (NoSQL me common). [Arpan revisit — abhi clear nahi]
+   4. CORS                   -> frontend(domain A) -> API(domain B): browser BLOCK karta (same-origin) -> server "Access-Control-Allow-Origin" header de -> allow. (frontend+backend alag domain = common.)
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
 
