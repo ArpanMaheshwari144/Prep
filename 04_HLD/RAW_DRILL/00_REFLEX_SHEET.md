@@ -48,6 +48,25 @@
 
 ---
 
+## ⚡ ONE-LINER DECISION SHORTCUTS (X vs Y -> kab-kaunsa · flash-reflex)
+
+```
+    1. SQL vs NoSQL          :  ACID/consistency/relations -> SQL   |  flexible/scale -> NoSQL
+    2. CP vs AP              :  money/banking -> CP                 |  social/feed -> AP
+    3. LRU vs LFU            :  time (last-use) -> LRU              |  count (frequency) -> LFU
+    4. OFFSET vs CURSOR      :  skip-N / deep-slow -> OFFSET        |  last-id / fast (badi list) -> CURSOR
+    5. Cache-aside vs W-through: DB update + cache DELETE -> ASIDE  |  cache+DB saath update -> WRITE-THROUGH
+    6. Session vs JWT        :  server-state / Redis-lookup -> SESSION | stateless self-proving token -> JWT
+    7. Monolith vs MS        :  ek deploy / chhota -> MONOLITH      |  alag services / scale+isolation -> MS
+    8. Normalize vs Denorm   :  alag-tables + JOIN / write-friendly -> NORMALIZE | merge+duplicate / read-fast -> DENORM
+    9. Replica vs Shard      :  read-heavy -> REPLICA               |  write-heavy -> SHARD
+   10. Queue vs LB           :  spike-absorb -> QUEUE               |  traffic-distribute -> LB
+   11. WebSocket vs Kafka    :  server->USER live-push -> WEBSOCKET |  backend-services (pub-sub) -> KAFKA
+   12. Lock/Atomic vs Idempotency: 2-user same-resource race -> LOCK/ATOMIC | same-user duplicate/retry -> IDEMPOTENCY
+```
+
+---
+
 ## 1. CACHE (read-heavy)
 ```
    Q: reads bahut, DB slow -> ?            A: CACHE (Redis).
@@ -366,16 +385,13 @@
    YAAD: CLARIFY->SCALE->API->BOXES->DATA->DEEP-DIVE->BOTTLENECK->WRAP.
 ```
 
-## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
+## ✅ PENDING — ALL CLEARED (2-Jul)
 ```
-   1. ⚡ ONE-LINER DECISION SHORTCUTS -> "X vs Y -> kab-kaunsa" crisp one-liners (SQL-vs-NoSQL, kab-CDN, kab-LB, LRU-vs-LFU,
-      offset-vs-cursor, session-vs-JWT, monolith-vs-MS...) -> flash-reflex layer for interview. (Arpan idea 1-Jul)
+   HLD JP-level set POORA HAI ab:
+   - 28 concept sections + 8-step framework + 31-row master table + 12 one-liner shortcuts.
+   - kuch bacha nahi. ab sirf REVISE + DRILL + ek-do full design (delivery practice). NAYA concept nahi.
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
 
-```
-   ★ in 11 ke baad HLD ka JP-level set POORA -> phir sirf revise+drill, naya concept nahi.
-```
-
 ---
-> drill hote jaayein -> pending se upar (sections me) move karte jaana.
+> HLD CONCEPT-SIDE DONE. aage: sheet open rakh ke tradeoff-drill + 1-2 full design (assemble/delivery practice).
