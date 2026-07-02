@@ -24,10 +24,10 @@ bool canJump(vector<int> nums)
     int farthest = 0;
     for (int i = 0; i < n; i++)
     {
-        if (i > farthest == false)
-        {
+        if (i <= farthest)
             farthest = max(farthest, i + nums[i]);
-        }
+        else
+            return false;
     }
     return (farthest >= n - 1) ? true : false;
 }
