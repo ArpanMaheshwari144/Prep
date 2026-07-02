@@ -223,6 +223,11 @@
 - **Rule:** `high = n-1` (last valid index) → `low <= high` (== zaroori). [`low < high` wala alag template — `hi = n`, boundary-find, mid check kiye bina converge — woh isse mat confuse karna.]
 - Tune ye test-case fail dekh ke KHUD reason kiya (kuch case jahan lo==hi run hi nahi hue). Senior-thinking.
 
+## #53 — Min Path Sum   (Medium | 2D-DP grid, min-cost)   2-Jul · SOLO (1 base-case nudge)
+- **Signal:** "grid top-left->bottom-right, right/down, MIN cost path" -> 2D DP. cell = grid + min(upar, left).
+- **Approach (top-down memo):** destination(m-1,n-1)->grid[i][j] · out-of-bounds(i>=m||j>=n)->INT_MAX · dp[i][j]=grid[i][j]+min(down,right). overflow-guard.
+- **Note:** ★ Arpan ne KHUD PAKDA "ye Unique-Paths ke SAME pattern hai!" -> apna UP template reuse kiya (bas base: dest->cost, out->INT_MAX; count(+) ki jagah min). recognition-not-generation proof. pehle base-case direction galat tha (i==0||j==0 = start, direction se mismatch) -> 1 nudge -> khud fix. DP 2D 2nd solo.
+
 ## #52 — Coin Change   (Medium | 1D-DP min-coins)   1-Jul · ★ [C] CLEARED (parked -> done)
 - **Signal:** "min coins for amount, unlimited coins" -> 1D DP, state=amount. solve(amt)=har coin: 1+solve(amt-coin) -> MIN.
 - **Approach (top-down memo, khud):** base amt==0->0, amt<0->INT_MAX(invalid). memo dp[amt]. loop coins: sub=solve(amt-coin); if sub!=INT_MAX -> mini=min(mini,1+sub). end: INT_MAX?-1:ans.
