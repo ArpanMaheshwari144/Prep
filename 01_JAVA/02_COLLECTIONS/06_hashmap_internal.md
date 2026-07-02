@@ -79,3 +79,30 @@ Average: O(1)  |  Worst: O(log n) tree, O(n) chain
 > *"HashMap uses hashCode() to find the bucket index and equals() to resolve collisions in the LinkedList. Java 8 converts the bucket to a Red-Black Tree when it has more than 8 entries — O(n) becomes O(log n)."*
 
 **Yaad rakh:** hashCode → index → store. Collision = LinkedList. Java 8: 8+ entries → Tree.
+
+---
+
+## RED-BLACK TREE — bucket 8+ pe kya banta (visual, 2-Jul sekha)
+
+```
+   ek bucket me 8+ nodes -> LinkedList ko RED-BLACK TREE bana deta (treeify) -> us bucket search O(n) -> O(log n).
+   sort kis pe: HASH value pe.
+
+   Red-Black tree = self-balancing BINARY SEARCH TREE -> SORTED (left chhota, right bada).
+   Rules (4):
+     1. root HAMESHA black
+     2. RED node ke bachche BLACK (do red lagataar nahi)
+     3. har path me BLACK nodes ki count SAME
+     -> in rules ka maqsad: tree BALANCED rahe -> height ~log n -> O(log n) guarantee.
+
+   Insert 10,20,30 (seedha chain -> unbalanced -> rotation+recolor -> balance):
+                    20 (B)          <- black root
+                   /      \
+               10 (R)     30 (R)    <- red children, dono taraf barabar black-height
+```
+
+```
+   B-TREE vs RED-BLACK (dono sorted+balanced -> O(log n), bas shape/jagah alag):
+   B-TREE     -> MULTI-WAY (kai keys/node), mota-chaudा -> DISK (DB index).
+   RED-BLACK  -> BINARY (2 child, 1 key), patla + colored -> RAM (HashMap bucket).
+```

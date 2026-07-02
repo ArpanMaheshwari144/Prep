@@ -261,3 +261,29 @@ Raw B-tree nodes/pages = InnoDB ke internal binary files (.ibd) mein -> SQL se d
 │   -> error. Cross-join trick use karo (har version).      │
 └─────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## B-TREE — index sorted kaise? (visual, 2-Jul sekha)
+
+```
+   Index andar se B-TREE banata -> ek node me KAI keys (SORTED). node full -> SPLIT, middle key UPAR.
+   (max 2 keys/node maan le.)
+
+   Insert 10,20:   [10 , 20]
+
+   Insert 5:       [5,10,20] FULL -> middle(10) UPAR:
+                        [10]
+                       /    \
+                    [5]      [20]
+
+   Insert 6,12,30:      [10 , 20]
+                       /    |    \
+                   [5,6]  [12]   [30]
+   -> node ke andar sorted + nodes ke beech sorted (left<key<right). ALAG se sort NAHI karna padta.
+
+   KYUN INDEXING me: hamesha sorted -> search O(log n) (binary-search jaisा) + RANGE query fast
+                     (WHERE age BETWEEN 20-30 -> sorted range seedha).
+   MULTI-WAY (kai keys/node) -> tree CHOTA (kam levels) -> disk pe kam jumps -> DB ke liye perfect.
+   TRADE-OFF: sorted maintain -> har insert/update pe tree adjust -> writes thode slow + storage. (selective index.)
+```
