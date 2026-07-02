@@ -321,7 +321,7 @@
    YAAD: SAGA = multi-service distributed txn. local commits chain -> fail -> COMPENSATING ulta-actions (rollback nahi). (@Transactional=ek DB.)
 ```
 
-## 25. MESSAGE DELIVERY GUARANTEE (queue/Kafka — kitni baar pahunche)  [Arpan revisit — abhi clear nahi, kal fresh]
+## 25. MESSAGE DELIVERY GUARANTEE (queue/Kafka — kitni baar pahunche)  ✅ CLEARED 2-Jul
 ```
    AT-MOST-once : bhej diya, bas -> LOST ho sakta (fire-forget). fast, unreliable. (kam use)
    AT-LEAST-once: PAKKA pahunche, par DUPLICATE ho sakta (ack na mila -> dobara bhej). ★ COMMON.
@@ -368,8 +368,7 @@
 
 ## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
 ```
-   1. MSG DELIVERY GUARANTEE  -> at-most/at-least/exactly (at-least+idempotency=exactly). [Arpan revisit — abhi clear nahi, note #25 padh]
-   2. ⚡ ONE-LINER DECISION SHORTCUTS -> "X vs Y -> kab-kaunsa" crisp one-liners (SQL-vs-NoSQL, kab-CDN, kab-LB, LRU-vs-LFU,
+   1. ⚡ ONE-LINER DECISION SHORTCUTS -> "X vs Y -> kab-kaunsa" crisp one-liners (SQL-vs-NoSQL, kab-CDN, kab-LB, LRU-vs-LFU,
       offset-vs-cursor, session-vs-JWT, monolith-vs-MS...) -> flash-reflex layer for interview. (Arpan idea 1-Jul)
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
