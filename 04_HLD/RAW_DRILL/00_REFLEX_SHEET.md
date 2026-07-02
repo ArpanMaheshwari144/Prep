@@ -352,11 +352,24 @@
    YAAD: cross-origin -> browser block (same-origin policy) -> server Access-Control-Allow-Origin header (specific, "*" nahi prod me).
 ```
 
+## 28. ★ 8-STEP FRAMEWORK (koi bhi HLD answer isi order me — the GLUE)
+```
+   1. CLARIFY      -> pehle SAWAAL pooch. functional (kya kare) + non-functional (consistency/latency/scale) + scope.
+   2. SCALE        -> capacity: DAU->QPS(÷10^5), peak(×2-3), storage(×size×retention). read-heavy ya write-heavy?
+   3. API          -> key endpoints (POST /posts, GET /feed?userId=...). request/response shape.
+   4. BOXES        -> architecture diagram: Client -> LB -> App -> Cache/DB/Queue (boxes + arrows).
+   5. DATA + DB    -> data model + SQL(consistency/relations) ya NoSQL(scale/flexible) + KYUN + shard-key.
+   6. DEEP DIVE    -> sabse HARD part (interviewer yahi dekhta): concurrency(lock/atomic), hotspot, consistency.
+   7. BOTTLENECK+FIX-> "kahan tootega? kaise theek?" -> block-kab reflexes YAHAN: read->cache+replica, spike->queue, write->shard, slow-query->index.
+   8. WRAP         -> summary + trade-offs + "aur time hota to...".
+   ★ 1-5 = SETUP (structure) · 6-7 = jahan SHINE karta (deep-dive + block-kab plug hote). framework=plate, reflexes=khaana.
+   YAAD: CLARIFY->SCALE->API->BOXES->DATA->DEEP-DIVE->BOTTLENECK->WRAP.
+```
+
 ## ⏳ PENDING DRILL (abhi bache hue, JP-relevant)
 ```
-   1. 8-STEP FRAMEWORK       -> answer assemble: clarify->scale->API->boxes->data->deep-dive->bottleneck->wrap. (INTERVIEW_FRAMEWORK.md)
-   2. MSG DELIVERY GUARANTEE  -> at-most/at-least/exactly (at-least+idempotency=exactly). [Arpan revisit — abhi clear nahi, note #25 padh]
-   3. ⚡ ONE-LINER DECISION SHORTCUTS -> "X vs Y -> kab-kaunsa" crisp one-liners (SQL-vs-NoSQL, kab-CDN, kab-LB, LRU-vs-LFU,
+   1. MSG DELIVERY GUARANTEE  -> at-most/at-least/exactly (at-least+idempotency=exactly). [Arpan revisit — abhi clear nahi, note #25 padh]
+   2. ⚡ ONE-LINER DECISION SHORTCUTS -> "X vs Y -> kab-kaunsa" crisp one-liners (SQL-vs-NoSQL, kab-CDN, kab-LB, LRU-vs-LFU,
       offset-vs-cursor, session-vs-JWT, monolith-vs-MS...) -> flash-reflex layer for interview. (Arpan idea 1-Jul)
    (SKIP — hyperscale/niche, JP-moderate me nahi: consistent-hashing, bloom-filter, leader-election, WAL.)
 ```
