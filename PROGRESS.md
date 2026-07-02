@@ -22,6 +22,9 @@
         STEP 4. na hua  -> Claude HINT de (thinking-direction).
         STEP 5. phir bhi na hua -> Claude SOLUTION/code bataye -> Arpan likhe -> [C] mark (cold-redo later).
       - pehle SAMJHANA phir KARWANA. (NOT pure "ja cold kar" pheko.)
+      ★★ (Arpan 2-Jul) PATTERN-CONNECTED problems do — jo known questions se milte-julte ho (e.g. Min-Path-Sum ~ Unique-Paths robot).
+         -> he practices RECOGNITION ("yeh kis question jaisा?"). STEP 4 hint = DIRECTION do (usko solution ki taraf le jao),
+         par CODE/SOLUTION KABHI mat dikhao jab tak WOH khud na maange. khud nikalwao. (edge-case naya milta rahe.)
       - target: pattern samajh + novel handle. (pressure-gap baad me mocks se.)
 
    3. HLD = ★ RAW TRADEOFF DRILL — DESIGN-LESS (30-Jun lock, Arpan clarified) ★
