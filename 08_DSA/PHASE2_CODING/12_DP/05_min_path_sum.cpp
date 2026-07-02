@@ -15,6 +15,14 @@
 //   [[5]]                     -> 5
 //   [[1,2],[1,1]]             -> 3    (1+1+1)
 // ============================================================
+// ★★ SEEKHA (Arpan, 2-Jul) — recursion ki DIRECTION base-case decide karti: ★★
+//   FORWARD  (start se destination ki taraf, i+1/j+1 -> neeche-right)
+//            -> base = DESTINATION pahuncha (i==m-1 && j==n-1) + out-of-bounds (i>=m||j>=n)->INT_MAX
+//   BACKWARD (destination se start ki taraf, i-1/j-1 -> upar-left)
+//            -> base = ORIGIN (i==0 && j==0) + out-of-bounds (i<0||j<0)->INT_MAX
+//   -> is question me FORWARD gaya -> DESTINATION base lagaya (0-wala nahi).
+//   RULE: "jidhar recurse kar rahe, base wahi jahan pahunchna hai."
+// ============================================================
 
 #include <iostream>
 #include <vector>
