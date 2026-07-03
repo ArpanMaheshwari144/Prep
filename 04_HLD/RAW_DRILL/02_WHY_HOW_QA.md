@@ -182,5 +182,23 @@
    like auth, rate-limiting, and logging, so each service doesn't repeat them."
 ```
 
+**Q24. LB request kis server pe bheje? algorithms? IP-hash kab?**
+```
+   ROUND-ROBIN (baari-baari s1,s2,s3) · WEIGHTED-RR (bade/strong server ko zyada) · LEAST-CONNECTIONS (jis pe kam active conn) ·
+   IP-HASH (same user → HAMESHA same server). IP-hash kab: SESSION-STICKINESS — session us server pe local hai, warna doosre server
+   pe jaaye → session lost → re-login.
+   interview: "Round-robin, weighted round-robin, least-connections, or IP-hash. IP-hash keeps a user on the same server —
+   used for session stickiness so their session isn't lost."
+```
+
+**Q25. Rate-limiter algorithm + token-bucket refill kyu?**
+```
+   algos: TOKEN-BUCKET (common) · FIXED-WINDOW · SLIDING-WINDOW. token-bucket: bucket me tokens, har req 1 token, khaali → reject.
+   REFILL kyu: fixed rate pe tokens WAPAS aate (100/min) → user ko quota har period wapas → warna ek baar khatam = hamesha blocked.
+   + idle-jama tokens (bucket-capacity tak) → BURST allow.
+   interview: "Token bucket: each request consumes a token, empty → reject. Tokens refill at a fixed rate so the user regains
+   quota each period (else they'd be blocked forever), and accumulated tokens allow bursts."
+```
+
 ---
-> aage: LB-algos, rate-limiter-algos, CORS, capacity-est · aur.
+> aage: capacity-estimation, CORS · aur.
