@@ -157,5 +157,30 @@
    seen id using the index — a direct jump, fast and stable."
 ```
 
+**Q21. Denormalization trade-off (nuksaan)?**
+```
+   read FAST (no JOIN, data pehle se jod ke ek jagah). par data DUPLICATE (user_name har order me) →
+   naam badle to SAARI copies update → WRITE hard + inconsistency risk + storage zyada. "read-fast, write-hard."
+   interview: "Denormalization speeds reads by avoiding joins, but the duplicated data means an update must touch many rows —
+   harder writes, more storage, and consistency risk."
+```
+
+**Q22. Kab monolith, kab MS? chhote app pe MS kyu galat?**
+```
+   chhota app → MONOLITH (simple). bada/growing → MICROSERVICES (fault-isolation: ek service down → baaki chalu, no SPOF).
+   (Arpan analogy: Gmail down par Google chalta.) chhote app pe MS GALAT = network-calls + distributed-debug +
+   cross-service-consistency complexity = OVER-ENGINEERING. "monolith se start, scale aaye to MS me todo."
+   interview: "Small app → monolith for simplicity; large/growing → microservices for independent scale and fault isolation.
+   On a small app, MS adds network calls, distributed debugging, and cross-service consistency overhead — over-engineering."
+```
+
+**Q23. Single entry-point (routing + auth + rate-limit) — kya cheez?**
+```
+   API GATEWAY. ROUTING: request ko sahi service pe bheje (client ko internal addresses yaad nahi rakhne).
+   ★ + AUTH + RATE-LIMIT + LOGGING gateway pe EK jagah (har service me dohrana nahi) = cross-cutting concerns centralize.
+   interview: "An API Gateway is a single entry point — it routes to the right service and centralizes cross-cutting concerns
+   like auth, rate-limiting, and logging, so each service doesn't repeat them."
+```
+
 ---
-> aage: denormalization, rate-limiter-algos, API-gateway, monolith-vs-MS, LB-algos, CORS, capacity-est · aur.
+> aage: LB-algos, rate-limiter-algos, CORS, capacity-est · aur.
