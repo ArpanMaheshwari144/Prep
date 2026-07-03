@@ -200,5 +200,14 @@
    quota each period (else they'd be blocked forever), and accumulated tokens allow bursts."
 ```
 
+**Q26. CORS: frontend(domain A) → API(domain B) → browser BLOCK. kyu? fix?**
+```
+   browser ki SAME-ORIGIN POLICY → alag origin ki request default block. fix = server response me
+   Access-Control-Allow-Origin header → permission → browser allow. ★ prod me SPECIFIC origin whitelist (NOT "*", security;
+   credentials ke saath "*" chalta bhi nahi). browser-enforced (server-to-server/Postman me CORS nahi).
+   interview: "The browser's same-origin policy blocks cross-origin requests unless the server returns an
+   Access-Control-Allow-Origin header naming that origin. In prod I whitelist the specific origin, not '*'."
+```
+
 ---
-> aage: capacity-estimation, CORS · aur.
+> aage: capacity-estimation · aur.
