@@ -83,3 +83,21 @@
 ```
 
 > Naya sirf: **inter-service call + DB-per-service + failure**. Baaki (controller/service/repo) tera purana.
+
+---
+
+## PHASE 2 (aage — coming weeks, phase-1 poora hone ke BAAD)
+
+```
+   REASON: Arpan HLD me Kafka/LB "bol" sakta, par CODE me kaise kaam karta — nahi pata (recognition≠implementation gap).
+           project me add karke woh band hoga: "bol sakta" -> "bana sakta". JP-relevant bhi.
+
+   ADD (ek-ek karke, phase-1 ke baad):
+     1. @FeignClient : RestTemplate ki jagah DECLARATIVE inter-service call (interface likho, Spring call banata).
+                       phase-1 me RestTemplate (explicit, seekhne ke liye) -> phase-2 me Feign (clean/real-world).
+     2. KAFKA        : payment -> notification ASYNC event (sync REST ki jagah). code-level: producer/consumer/topic.
+     3. API GATEWAY  : ek entry-point (Spring Cloud Gateway) — routing + cross-cutting.
+     4. LB / CIRCUIT-BREAKER : resilience.
+
+   ★ abhi NAHI (phase-1 khinch jaayega). pehle basic MS (order+payment+call+failure) done karo.
+```
