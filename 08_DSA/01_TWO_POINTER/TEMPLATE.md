@@ -35,4 +35,6 @@
    - Move Zeroes (slow-fast swap) — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
    - Valid Palindrome (opposite-ends L/R compare) — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
    - Container Most Water (opposite-ends, move-shorter-wall) — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
+   - 3Sum (sort → fix-one → two-pointer → skip-dupes) — structure SOLO, 1 hint on inner dup-skip/bounds. ★ REDO priority: [ ] +3din [ ] +7din
+     (yaad: triplet mile → low++/high-- PEHLE, phir skip-dupes; nums[high+1] bounds!)
 ```
