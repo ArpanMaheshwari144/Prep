@@ -33,4 +33,5 @@
 ## Solved (produce + spaced-redo track)
 ```
    - Move Zeroes (slow-fast swap) — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
+   - Valid Palindrome (opposite-ends L/R compare) — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
 ```
