@@ -133,5 +133,29 @@
    the client talks directly to S3, keeping the file off the server. Serve via CDN for speed."
 ```
 
+**Q18. Live price → server user ko real-time PUSH. WebSocket ya Kafka?**
+```
+   WEBSOCKET — server↔user ka permanent 2-way pipe, server jab chahe turant PUSH kare (client maange ya na maange).
+   Kafka NAHI kyu: Kafka = backend SERVICES ke beech (internal pub-sub), user ke browser tak nahi jaata.
+   interview: "Use a WebSocket — it's a persistent connection so the server can push live updates instantly. Kafka is for
+   backend service-to-service messaging, not pushing to a user's browser."
+```
+
+**Q19. Cache FULL → kaunsa purana hataao? kaise decide?**
+```
+   EVICTION algo: LRU = TIME (jo LONG-time se use nahi hua, last-access purana) · LFU = COUNT (jo sabse KAM baar use hua) ·
+   TTL = auto-expire (time khatam pe apne aap delete). LRU sabse common.
+   interview: "Use an eviction policy — LRU evicts the least recently used (time), LFU the least frequently used (count),
+   TTL auto-expires by time. LRU is most common."
+```
+
+**Q20. Feed crore items → page-by-page. OFFSET deep-page pe dikkat?**
+```
+   OFFSET (LIMIT 20 OFFSET 100000) → DB pehle 1 lakh rows SKIP karta → deep page jitna gehra, utna SLOW.
+   CURSOR pagination = "last-id ke BAAD ke 20" (WHERE id > last_id) → index se seedha JUMP, no skip → fast + stable. infinite-scroll isi se.
+   interview: "Offset scans and skips all preceding rows, so deep pages get slow. Cursor pagination fetches rows after the last
+   seen id using the index — a direct jump, fast and stable."
+```
+
 ---
-> aage: websocket-vs-kafka, cache-eviction, pagination · aur.
+> aage: denormalization, rate-limiter-algos, API-gateway, monolith-vs-MS, LB-algos, CORS, capacity-est · aur.
