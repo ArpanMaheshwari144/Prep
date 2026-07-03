@@ -67,6 +67,26 @@
 
 ---
 
+## ★ DESIGN-TIME DECISION REFLEXES (assemble ke waqt — gaps se bane, 3-Jul rate-limiter drill)
+
+```
+   in decisions pe atka tha -> ab reflex:
+
+   A. NFR kaunsa critical?      -> component HAR request pe baithta (middleware) -> LATENCY sabse critical -> in-memory (Redis).
+   B. component DOWN -> allow ya block?  -> FAIL-OPEN (allow) default -> saare legit block karna >> thodi der abuse.
+                                           FAIL-CLOSED (block) sirf jab security critical (payment/auth).
+   C. shared state, MULTIPLE servers?    -> CENTRALIZED store (ek shared Redis) -> per-server count = limit TOOTE (S1+S3 alag).
+   D. central store DOWN?                -> REPLICA (HA/failover) -> woh bhi gaya -> FAIL-OPEN.
+   E. central store OVERLOAD (scale)?    -> SHARDING (user_id/region se baant) -> NOT CDN! (CDN=static files only, counters nahi.)
+   F. counter / rate / session?          -> REDIS (in-memory fast + atomic INCR + shared + TTL auto-expire).
+
+   ★ 2 BADE TRAP (aaj galti hui):
+   - "load divide karna" = SHARDING, na ki CDN. (CDN sirf static img/video/css.)
+   - down-case default = FAIL-OPEN (allow), na ki "sab block -> abuse rokega kaun".
+```
+
+---
+
 ## 1. CACHE (read-heavy)
 ```
    Q: reads bahut, DB slow -> ?            A: CACHE (Redis).
