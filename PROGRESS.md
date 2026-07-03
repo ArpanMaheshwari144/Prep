@@ -40,7 +40,7 @@
    5. JAVA/SPRING fundamentals — keep sharp (String-pool, HashMap-internals, CHM, concurrency — heavily tested, strength).
    6. DSA — LIGHT + CONSISTENT, core patterns, easy-medium, no-panic (skip nahi, obsess nahi).
 
-   DESIGN THEMES (recurring): rate-limiter ✓ · notification ✓ · payments (add) · subscription (add) · parking-lot · top-K-scale.
+   DESIGN THEMES (recurring): rate-limiter ✓ · notification ✓ · payments (add) · subscription (add) · parking-lot · top-K-scale · news-aggregator/real-time-feed (add — multi-source→UI, user-login+preferences).
 ```
 
 ---
@@ -62,6 +62,32 @@
    PROFILE FIT: offers went to 2.9-5.5 YOE, Tier-2/3/4 colleges, service-MNC/bank backgrounds → JPMC SDE-2 ~25L.
                 Arpan = 4yr, dev-able, comparable/better. REALISTIC target, not fantasy.
    ❌ NOT social-hyperscale (WhatsApp/Insta = overkill).
+```
+
+---
+
+## ★ THE PATTERN (Arpan-spotted across 11 writeups, 3-Jul) — DSA is a GATE, not the differentiator
+
+```
+   EVERY JP writeup = SAME shape (Aug-Dec 2025 verified):
+     - OA/HackerRank GATE : 2 medium DSA in 60 min → pass/fail threshold (clear karo, obsess mat).
+     - Superday (same-day, 3-4 independent rounds, 2-din result — ek kharab round ≠ auto-reject):
+         1. DSA          : EK dedicated round, MEDIUM (matrix/graph-BFS, arrays, sliding-window). "panic na karo to ho jaata."
+         2. SYSTEM DESIGN: ALWAYS. FR→NFR→HLD-diagram→DB(tables/cols)→API + FOLLOW-UPS. ← YAHAN select/reject hota.
+         3. BEHAVIORAL   : ALWAYS. resume + project-deep-dive + generic (mgmt-pushback, naye-tech-kaise).
+         + Code-Pair/PR-review + Java/Spring-fundamentals (heavily tested, often combined).
+
+   INSIGHT (Arpan-derived, DATA-backed): JP tests a REAL engineer ki BREADTH (DSA-medium + design + behavioral + Java-craft),
+     NOT DSA-DEPTH. koi offer DSA ke liye nahi milta — DSA sirf GATE (medium-comfortable + no-panic = kaafi, wahin ruk).
+     SELECT/REJECT = System-Design-delivery + Behavioral pe. Java/Spring + PR-review = Arpan ka HOME-turf (strength → convert).
+   -> Arpan ka profile (4yr, prod, Java-strong, HLD-done) is SHAPE se match — FAANG-DSA-grinder se nahi. DSA-anxiety un-warranted.
+
+   RESOURCES (from writeups): HLD = HelloInterview + Alex Xu · LLD = Head First Design Patterns · DSA = Striver/Take-U-Forward.
+
+   JAVA-REVISION Q-CHECKLIST (real JP Qs — crisp answers ready rakho, project ke saath revise):
+     sort-a-map (Comparator/stream) · thread-safe singleton · SQL metadata (information_schema) · dup-strings-in-list (HashSet) ·
+     comparable-vs-comparator · palindrome ✓ · Java 7/8 features (lambda/stream/Optional/diamond) · try-with-resources ·
+     multi-catch · REST-vs-SOAP · server-crash/memory-debug (← Arpan STRENGTH: 650 tickets, HikariCP, Lambda-throttle).
 ```
 
 ---
