@@ -89,6 +89,38 @@
 
 ---
 
+## JAVA + SPRING REVISION — via PROJECT (Mini Payment System)  [Arpan-chosen, 3-Jul]
+
+```
+   IDEA: Java/Spring revision + microservices seekhna + HLD payments-theme — teen kaam EK project se.
+         JP = bank → payments-domain project = direct-relevant. Revision "padho" se nahi, "banao" se.
+
+   PROJECT: Mini Payment System — 3 chhote Spring Boot microservices:
+
+     order-service  --REST-->  payment-service  --event(Kafka/RabbitMQ)-->  notification-service
+     (order banao)             (pay karo)            "payment done"          (email/sms bhejo)
+       apna DB                   apna DB                                       listener
+
+   HAR SERVICE JO SIKHAYEGA (microservice concepts):
+     - DB-per-service   : har service ka apna DB (MS core rule)
+     - inter-service    : order→payment REST call (FeignClient / RestTemplate)
+     - async event      : payment→notification message-queue se (decouple, sync nahi)
+     - API Gateway      : ek entry-point (Spring Cloud Gateway)
+     - resilience       : circuit-breaker (payment down → fail-fast)
+
+   SPRING REVISION saath: @RestController, @Service, @Repository, JPA/@Entity, DI, application.yml, DTO.
+   HLD FEED: seedha payments + notification design me kaam aayega.
+
+   METHOD (pace #0): EK service theek se khada karo → phir agli. fata-fata dump NAHI.
+     step 1: order-service akela (controller→service→repo→DB, ek REST endpoint chale)
+     step 2: payment-service + order→payment REST call
+     step 3: notification-service + async event (queue)
+     step 4: API gateway + circuit-breaker
+   (kal HLD ke baad Java-revision = IS project se saath-saath.)
+```
+
+---
+
 ## BEHAVIORAL STAR — Konovo evidence (write in S-T-A-R)
 
 ```
@@ -103,13 +135,17 @@
 
 ```
    HLD  = concept 100% done. gap = COLD-DELIVERY (assemble live + follow-ups). ← TOP focus.
-   JAVA+SPRING = COMFORTABLE (strength). keep sharp.
-   DSA  = 53 problems, easy automatic. gap = cold-GENERATION + RETENTION (single-exposure nahi tikta). → rep-blocks + spaced-redo, LIGHT.
+   JAVA+SPRING = COMFORTABLE (strength). keep sharp → revision via Mini-Payment-System PROJECT (microservices).
+   DSA  = TWO-POINTER pattern DONE (5/5: MoveZeroes, Palindrome, Container, 3Sum, SortColors — SOLO produce).
+          gap = cold-GENERATION + RETENTION (single-exposure nahi tikta). → rep-blocks + spaced-redo (gaps me), LIGHT.
+          next pattern = sliding-window (two-pointer ka extension).
    LLD + CODE-REVIEW = theory-only → CODE-practice start.
    STAR = #1 untouched gap.
 
-   PRIORITY (data-flipped): HLD-DELIVERY → STAR → LLD-code → Code-Review → Java/Spring-sharp → DSA-light.
+   PRIORITY (data-flipped): HLD-DELIVERY → STAR → LLD-code → Code-Review → Java/Spring-sharp(project) → DSA-light.
    REALITY: strengths = JP-core. gaps = delivery + behavioral (trainable). DSA moderate for JP, not the blocker.
+
+   NEXT-SESSION ORDER (Arpan-set): 1) HLD (follow-up twist drill) → 2) Java+Spring revision (via project, step-1 order-service) → 3) DSA (sliding-window / two-pointer redo).
 ```
 
 ```
