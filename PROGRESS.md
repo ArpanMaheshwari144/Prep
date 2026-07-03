@@ -20,6 +20,9 @@
       - STUCK → HINT (direction) → phir bhi na hua → SOLUTION bata (jab woh MAANGE) → likhe → [C] cold-redo later.
         ★ CODE/SOLUTION khud se mat dikhao jab tak woh na bole — khud nikalwao.
       - pattern-CONNECT: naya problem known se jodo ("kis jaisा?") → recognition. +MOCKS jaldi (pressure-gap sirf mock se).
+      ★ STUB RULE (Arpan 3-Jul): file stub me sirf PROBLEM + TESTS (+ halka seed agar naya). poora template/recurrence
+        SPELL-OUT mat karo — woh spoon-feed hai (transcribe karta, khud generate nahi). template alag reference,
+        ya jab pattern settle ho tab. "abhi se template mat do — pattern banne lage tab."
 
    3. HLD = CONCEPT DONE → ab DELIVERY PRACTICE
       - reflex sheet 100% COMPLETE (04_HLD/RAW_DRILL/00_REFLEX_SHEET.md): master table + shortcuts + 28 concepts + 8-step framework.
