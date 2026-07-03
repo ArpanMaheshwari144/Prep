@@ -77,5 +77,35 @@
    Failing fast returns an instant error/fallback, frees resources, stops the cascade."
 ```
 
+**Q11. Shard-KEY galat (country, 90% India) → dikkat? achhi key kaise?**
+```
+   skewed key (country) → 90% users EK shard → HOT SHARD (overload), baaki khaali → benefit khatam.
+   good key = (1) QUERY-key (queries me condition, e.g. userId) (2) EVENLY-distributed/high-cardinality. userId dono; country #2 fail.
+   interview: "Shard on the query key so lookups hit one shard — but it must be high-cardinality and evenly distributed.
+   A skewed key like country puts 90% on one shard (hot shard), killing the benefit."
+```
+
+**Q12. at-least-once me DUPLICATE → kaise handle?**
+```
+   at-least-once = pakka pahunche, par ack-lost pe resend → duplicate. IDEMPOTENCY-key → consumer check kare "processed?" → skip → effect once.
+   interview: "The consumer uses an idempotency key — checks if the message-id was already processed and skips it — so the effect happens once."
+```
+
+**Q13. SAGA me rollback nahi COMPENSATING kyu?**
+```
+   normal rollback (@Transactional) sirf EK DB ka UNCOMMITTED work undo karta. SAGA me har service ALREADY COMMIT kar chuki apne DB me →
+   committed cheez rollback nahi hoti → COMPENSATING action (naya reverse op, e.g. "cancel order") se undo.
+   interview: "A rollback only undoes uncommitted work in one DB. In a saga each service already committed locally, so you run a
+   compensating action — an explicit reverse operation — to undo the committed effect."
+```
+
+**Q14. DB index O(log n) fast — har column pe kyu nahi?**
+```
+   index = B-tree (sorted, O(log n) read). PAR har WRITE pe tree REORDER karna padta → writes SLOW + extra storage.
+   isliye sirf query-condition wale columns pe index. (EXPLAIN se dekho query index use kar rahi ya nahi.)
+   interview: "An index is a B-tree giving O(log n) reads, but every write must update the tree — so indexes slow writes and
+   add storage. Index only columns used in query filters, not everything."
+```
+
 ---
-> aage: Q11 shard-key galat (country) dikkat + achhi key · Q12 msg-queue duplicate handle · Q13 SAGA compensating-vs-rollback · aur.
+> aage: replication-lag, connection-pooling, blob/S3, websocket-vs-kafka, cache-eviction, pagination · aur.
