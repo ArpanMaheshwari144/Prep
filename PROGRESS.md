@@ -1,64 +1,90 @@
 # JP PREP — PRACTICE PLAYBOOK
 
-> GOAL: JP Morgan (Associate/SE-III, Bangalore) → later BlackRock. *"Effort 100% mera, outcome universe ka."*
-> MODE (29-Jun): 2 MONTHS PURE STUDY (July+Aug) — no mocks-chasing, no new applies, no faltu meta-talk. Reassess after Aug.
-> Claude: bolna kam, KARANA zyada. JP-focused only. NEVER off-target / above-JP / unstudied cold-throw.
+> GOAL: JP Morgan (Associate/SDE-2, Bangalore) → later BlackRock. *"Effort 100% mera, outcome universe ka."*
+> MODE: pure study. no faltu meta-talk. Timeline honest: JP DSA moderate (not FAANG) → achievable in months of RIGHT practice.
 
 ---
 
-## THE 3 LOCKS (how to practice)
+## ★★★★★ CLAUDE RULES (read FIRST — 4-month root-causes, 3-Jul)
 
 ```
-   1. JAVA + SPRING = READ / REVISE
-      - Claude FULL VISUAL code + notes present kare (jo woh SEE/trace kare, crammed nahi) → he RE-READS, repeat.
-      - baar-baar padhna = uska proven method. goal: interview me KOI answer pe na atke.
+   #0 PACE (DSA): pace ARPAN ka, Claude ka NAHI. EK cheez → RUKO → Arpan "agla" bole tabhi aage.
+      NEVER "ek aur?", NEVER level-jump, NEVER un-studied cold-throw, NEVER dump.
+      ★ SOLUTION/steps/code KABHI spell-out mat karo — max = ek SAWAAL ya "yeh concept dekh". "solution de diya" → ruk.
+      Slow > fast, depth > breadth. "RUK" → turant ruk. (Claude bhaagta raha → crash → restart-loop 3-4x. yeh #1 failure tha.)
 
-   2. DSA = PER-PATTERN REP-BLOCKS  (medium, JP-level — FAANG-hard NAHI)  ★ method (3-Jul, gap ab MEDIUM pe)
-      ★★★★ PACE RULE (Arpan 3-Jul, ROOT-CAUSE — 4-mahine se Claude BHAAG raha, yahi cycle repeat karta):
-         DSA me PACE ARPAN control karega, CLAUDE NAHI. EK cheez poori solid -> Arpan bole "agla" -> tabhi next.
-         Claude "ek aur? ek aur?" PUSH mat kare. level JUMP mat kare (jab Arpan comfortable tabhi chhota step).
-         kam problems + ZYADA depth. SLOW > fast. (fast + DSA-weak = bar-bar wahi frustration pe wapas.)
-      - ek pattern pakdo → Claude us pattern ka TEMPLATE saaf SAMJHAYE (Arpan trace/copy-pen — spatial) →
-        phir 3-4 problems us SAME pattern ke LAGATAAR (block-wise, NOT scattered-har-din-alag) → reflex → agla pattern.
-      - un-studied medium ko BINA-SAMJHAYE cold-throw MAT karo (froze karta). "har pattern samjha-samjha ke, phir code."
-      - STUCK → HINT (direction) → phir bhi na hua → SOLUTION bata (jab woh MAANGE) → likhe → [C] cold-redo later.
-        ★ CODE/SOLUTION khud se mat dikhao jab tak woh na bole — khud nikalwao.
-      - pattern-CONNECT: naya problem known se jodo ("kis jaisा?") → recognition. +MOCKS jaldi (pressure-gap sirf mock se).
-      ★ STUB RULE (Arpan 3-Jul): file stub me sirf PROBLEM + TESTS (+ halka seed agar naya). poora template/recurrence
-        SPELL-OUT mat karo — woh spoon-feed hai (transcribe karta, khud generate nahi). template alag reference,
-        ya jab pattern settle ho tab. "abhi se template mat do — pattern banne lage tab."
+   #0b RETENTION FIX (why solved-problems don't stick): passive dekhna = RECOGNITION, not GENERATION.
+      single-exposure fades in days. FIX = ACTIVE RETRIEVAL: samjho → sab BAND → khaali page pe KHUD likho (na re-read)
+      → SAME problem 1/3/7 din SPACED-redo till AUTOMATIC → tabhi agla. depth-per-pattern, NOT scattered.
 
-   3. HLD = CONCEPT DONE → ab DELIVERY PRACTICE
-      - reflex sheet 100% COMPLETE (04_HLD/RAW_DRILL/00_REFLEX_SHEET.md): master table + shortcuts + 28 concepts + 8-step framework.
-      - ab: (a) RAW TRADEOFF-DRILL (design-less rapid-fire: "10M→shard/kis-key? kab replica/cache/queue? SQL vs NoSQL?")
-             (b) FULL-DESIGN practice (sheet open → design assemble → twists defend → gaps sheet me). log: 01_DESIGN_PRACTICE_LOG.md.
-      - ★ DRILL-RESPONSE RULE: Arpan usually RIGHT (concepts aate, gap = DELIVERY). jab sahi → "sahi, galat nahi" +
-        uske APNE sentence ko clean INTERVIEW-ENGLISH me reframe. NAYE concept DUMP mat karo jaise usne galti ki (irritate).
-        sirf jahan SACH me GALAT → wahan batao.
-```
+   #0c NO FILLER: message end me "main yahin hoon"/🤝/❤️/warm-sign-off/emoji-padding MAT. PLAIN, substance-only.
 
-```
-   DAILY (roz, pel ke):
-   SUBAH (fresh → hard/gap): HLD (tradeoff-drill / 1 design) + DSA (pattern rep-block).
-   DOPAHAR (revise lane):    JAVA+SPRING visual-code revise (topics rotate).
-   WEAVE: STAR 2-3x/week (Konovo) · LLD+PR-review with CODE (abhi theory-only = gap).
-   CODE-VISIBILITY: LOTS of code (spatial — jitna dekhega utna yaad).
+   #0d Arpan is DEV-ABLE (4yr prod, 650 tickets, codebase-nav, Java/Spring strong, HLD manageable). DSA = ONE isolated
+       weak-spot, method-fixable (not ability). Don't condescend / over-explain. Validate correct → don't nitpick.
 ```
 
 ---
 
-## JP INTERVIEW REALITY (real writeups + web, verified)
+## ★ THE STRATEGY (8 real JP writeups + web verified — DATA-BACKED)
 
 ```
-   DIFFICULTY: MODERATE — "breadth under pressure", NOT FAANG. reason-the-WHY.
-   4 ROUNDS: (1) DSA + LLD (medium/greedy + SOLID/patterns/Builder) · (2) System-Design + Spring-Boot (project arch + e.g. notification) ·
-             (3) PR-REVIEW (buggy prod code → find+fix) · (4) HR/Behavioral STAR.
-   DSA = LC easy-MEDIUM + hints (NOT hard-DP/graphs).
-   JAVA/SPRING = HEAVIEST/decisive (HashMap-vs-CHM, concurrency, Spring internals, DI, streams, patterns, project deep-dive). ← strength, keep revising.
-   SYSTEM DESIGN = FINANCE-FLAVORED (reliable/low-latency/ACID/idempotency): Rate-Limiter, Payment, Notification, File-upload, URL.
-             ❌ NOT social-hyperscale (WhatsApp/Insta = overkill).
-   BEHAVIORAL = STAR. #1 untouched GAP.
-   COMP (4yr Associate Blr): base ~18-22L, total ~26-33L. Interview = Zoom.
+   BIG TRUTH: "DSA necessary but NOT sufficient." JP rejects on HLD-DELIVERY + BEHAVIORAL — NOT on DSA.
+   -> Arpan ki STRENGTHS (Java/Spring-fundamentals, HLD-concepts, code-review-via-650-tickets) = JP ka CORE weight.
+   -> DSA-panic DISPROPORTIONATE. energy HLD-delivery + STAR pe jani chahiye.
+
+   PREP PRIORITY (data se):
+   1. HLD DELIVERY  — full-design cold-ASSEMBLE + FOLLOW-UP/twist-defense (biggest reject-reason). freeze-proof.
+   2. BEHAVIORAL STAR — Konovo stories, convincing/structured (always-tested, #1 untouched gap).
+   3. LLD in CODE   — SOLID/patterns/Builder IMPLEMENTED (not theory).
+   4. CODE-REVIEW   — Java basics/static-volatile/clean-code (strength via debugging, but practice the round).
+   5. JAVA/SPRING fundamentals — keep sharp (String-pool, HashMap-internals, CHM, concurrency — heavily tested, strength).
+   6. DSA — LIGHT + CONSISTENT, core patterns, easy-medium, no-panic (skip nahi, obsess nahi).
+
+   DESIGN THEMES (recurring): rate-limiter ✓ · notification ✓ · payments (add) · subscription (add) · parking-lot · top-K-scale.
+```
+
+---
+
+## JP INTERVIEW REALITY (8 writeups consolidated)
+
+```
+   FORMAT: Zoom, Super-Day (3-4 elimination rounds, any order). result 48h-week.
+   ROUNDS (vary, but consistent CORE):
+   - JAVA/SPRING + SQL fundamentals: String ==/equals + String-pool, HashMap internals + load-factor, CHM, concurrency,
+     nested SQL, Maven/Jenkins, project deep-dive. ← HEAVILY tested. Arpan's STRENGTH.
+   - SYSTEM DESIGN (always): rate-limiter/notification/parking-lot/subscription/top-K-scale. + FOLLOW-UPS (payments, failures,
+     DB-down, scale-up, evolving requirements). ← where people REJECT if can't deliver/extend. Arpan's practice-focus.
+   - CODE REVIEW (often): buggy prod code → find bugs + best-practices + "production-ready?". OOP/static/volatile/clean-code.
+   - DSA: arrays/hashmap/greedy/sliding-window/strings — usually EASY-MEDIUM ("solve easily if don't panic").
+          OCCASIONALLY medium-hard (graph shortest-path, harder SW). → cover core + graph-BASICS, no FAANG-grind.
+   - BEHAVIORAL/HM (always): STAR — ownership, conflicts, failures, why-switch, deadlines, "ask thoughtful questions".
+
+   PROFILE FIT: offers went to 2.9-5.5 YOE, Tier-2/3/4 colleges, service-MNC/bank backgrounds → JPMC SDE-2 ~25L.
+                Arpan = 4yr, dev-able, comparable/better. REALISTIC target, not fantasy.
+   ❌ NOT social-hyperscale (WhatsApp/Insta = overkill).
+```
+
+---
+
+## HOW TO PRACTICE (per area)
+
+```
+   HLD (top priority): sheet 100% done (04_HLD/RAW_DRILL/00_REFLEX_SHEET.md). NOW = DELIVERY:
+      full-design cold-assemble (8-step) + Claude pheke FOLLOW-UP twists → Arpan defend. gaps → sheet. log: 01_DESIGN_PRACTICE_LOG.md.
+      new designs: payments, subscription (+ redo rate-limiter/notification cold). freeze-proof karna.
+      ★ DRILL-RESPONSE: Arpan usually RIGHT (gap = delivery) → "sahi, galat nahi" + uske sentence ko clean interview-English.
+        NAYA concept DUMP mat karo jaise galti ki. sirf jahan SACH me galat → wahan.
+
+   STAR: 4-5 Konovo stories S-T-A-R me likho → bolne ki practice.
+
+   LLD: SOLID/patterns/Builder CODE me implement (real code, not theory). PR-review: buggy code → find+fix.
+
+   JAVA/SPRING: FULL VISUAL code revise (SEE/trace, crammed nahi), baar-baar. String-pool/HashMap/CHM/concurrency sharp.
+
+   DSA (light-consistent): PER-PATTERN REP-BLOCKS + RETENTION-FIX (#0b) + PACE (#0) + STUB rule.
+      ek pattern → template samjho → 3-4 SAME-pattern reps → SPACED cold-redo till automatic → agla.
+      ★ STUB: file me sirf PROBLEM + TESTS. template/recurrence SPELL-OUT mat karo — Arpan khud generate kare.
+      core patterns: two-pointer/sliding-window/hashing/binary-search/greedy/DP-1D + graph-BASICS (BFS/DFS). easy-medium.
 ```
 
 ---
@@ -66,7 +92,7 @@
 ## BEHAVIORAL STAR — Konovo evidence (write in S-T-A-R)
 
 ```
-   WAF / X-Forwarded-IP bug (2 layers, whole-system) · $20K Doximity payment fix · 600+ incidents (92% closure) ·
+   WAF/X-Forwarded-IP bug (2 layers, whole-system) · $20K Doximity payment fix · 600+ incidents (92% closure) ·
    HikariCP pool exhaustion (95% email-fail) · Lambda concurrency (1800+ throttles) · vendor-portal + email-dedup API (built) · VP/CTO recognition.
    HONESTY: 10+country platform = maintained/extended (NOT "built"); greenfield only = "built".
 ```
@@ -76,23 +102,19 @@
 ## STATUS (honest, 3-Jul-2026)
 
 ```
-   1. HLD  = concept-side DONE (sheet 100%). NOW = delivery-practice (tradeoff-drill + full-design cold-assemble).
-             gap = COLD-assembly still kachchi (1st design pe refinements aaye). fix = design-reps.
-   2. JAVA+SPRING = COMFORTABLE (revised: collections/concurrency/CAS/deadlock/IoC-DI/Boot/@Transactional/SOLID/patterns/security). daily revise.
-   3. DSA  = 53 problems, saare patterns dekhe. easy DONE. ★ GAP ab MEDIUM level pe (cold-generation fluency).
-             DP building (Coin-Change [C] cleared, Unique/Min-Path solo). fix = PER-PATTERN REP-BLOCKS (study→reps).
-             SKIP: hard-graphs / hard-DP.
-   4. LLD + PR-REVIEW = theory-only → CODE-practice start karna hai. GAP.
-   5. STAR = #1 untouched GAP — Konovo stories likhni hain.
+   HLD  = concept 100% done. gap = COLD-DELIVERY (assemble live + follow-ups). ← TOP focus.
+   JAVA+SPRING = COMFORTABLE (strength). keep sharp.
+   DSA  = 53 problems, easy automatic. gap = cold-GENERATION + RETENTION (single-exposure nahi tikta). → rep-blocks + spaced-redo, LIGHT.
+   LLD + CODE-REVIEW = theory-only → CODE-practice start.
+   STAR = #1 untouched gap.
 
-   PRIORITY: DSA (pattern-rep-blocks, MEDIUM) → HLD (design-reps) → Java/Spring (daily) → LLD/STAR (start).
-   ~65-70% ready. gap = cold-generation-fluency + delivery-under-pressure (reps + mocks se bharega, knowledge nahi).
+   PRIORITY (data-flipped): HLD-DELIVERY → STAR → LLD-code → Code-Review → Java/Spring-sharp → DSA-light.
+   REALITY: strengths = JP-core. gaps = delivery + behavioral (trainable). DSA moderate for JP, not the blocker.
 ```
 
 ```
-   REFERRALS (in-flight): Raunak (JP — sent ✓) · Anmol (Razorpay — no fit yet).
-   APPLIES: PAUSED (his call). RESOURCES = PRIVATE repo (never expose / never add company-acct).
+   REFERRALS: Raunak (JP — sent ✓) · Anmol (Razorpay — no fit). RESOURCES = PRIVATE repo (never expose / never add company-acct).
 ```
 
 ---
-> Karm karo, phal ki chinta mat karo. Gap upar chadhta ja raha (easy→medium) — yahi progress. SABAR = moat.
+> Karm karo, phal ki chinta mat karo. Strengths JP-core se match — gap DELIVERY hai, ability nahi. SABAR = moat.

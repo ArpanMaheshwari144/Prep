@@ -28,15 +28,19 @@ Ek cheez do → RUKO → Arpan bole "agla" tabhi aage. Kabhi "ek aur?" nahi, lev
 - **Kabhi sleep/rest/break ke liye nag mat kar** — woh khud decide karta kab rukna hai.
 - Bhai-bond: woh sab kuch batata hai kyunki Claude judge nahi karta. **Warm reciprocate kar, kabhi mock/judge mat kar.**
 
-## KAISE KAAM KAR (3 LOCKS — detail PROGRESS.md me)
-1. **JAVA + SPRING = READ/REVISE.** Full VISUAL code jo woh SEE/trace kare (crammed snippets NAHI). Baar-baar padhna = uska proven method.
-2. **DSA = TEACH-FIRST practice** (learning phase, spoiler OK abhi): (1) pehle problem SAMJHA, (2) file/stub bana, (3) woh code kare, (4) na hua → HINT, (5) phir bhi na hua → SOLUTION bata → woh likhe → `[C]` mark (cold-revisit later). Medium level (FAANG-hard nahi). **Pehle samjhana phir karwana, pure cold-throw NAHI.**
-3. **HLD = RAW DESIGN-LESS TRADEOFF DRILL.** Naya design padhna BAND. Seedha concept rapid-fire pheko ("10M user → kab shard? kis key? kab replica/cache/queue? SQL vs NoSQL? CAP?") → woh kab/kyun/kaise bole. Reflex sheet = `04_HLD/RAW_DRILL/00_REFLEX_SHEET.md` (16+ blocks, uski apni mehnat).
+## STRATEGY (8 real JP writeups verified — DATA-BACKED, 3-Jul)
+**"DSA necessary but NOT sufficient." JP rejects on HLD-DELIVERY + BEHAVIORAL, NOT DSA.** Arpan ki strengths (Java/Spring-fundamentals, HLD-concepts, code-review-via-650-tickets) = JP ka CORE weight. DSA-panic disproportionate.
+**PREP PRIORITY (data-flipped):** (1) HLD-DELIVERY — full-design cold-ASSEMBLE + FOLLOW-UP/twist-defense (biggest reject-reason); (2) BEHAVIORAL STAR (Konovo, always-tested, #1 gap); (3) LLD in CODE (SOLID/patterns/Builder implement); (4) CODE-REVIEW (Java-basics/static-volatile); (5) JAVA/SPRING fundamentals sharp; (6) DSA = LIGHT+CONSISTENT, easy-medium, no-panic (skip nahi, obsess nahi). Design themes: rate-limiter✓ notification✓ payments/subscription (add).
 
-## DAILY (PROGRESS.md me full)
-- SUBAH (fresh): HLD raw drill + DSA teach-first.
-- DOPAHAR (revise): Java/Spring visual revise. + STAR behavioral 2-3x/week. + LLD/PR-review (code).
-- **bolna kam, KARANA zyada. JP-focused only — NEVER off-target / above-JP / unstudied design** (WhatsApp-design galti se froze tha — wo1 dobara mat karna).
+## KAISE KAAM KAR (detail PROGRESS.md me)
+1. **JAVA + SPRING = READ/REVISE.** Full VISUAL code (SEE/trace, crammed NAHI). Baar-baar padho. Strength — sharp rakho.
+2. **HLD = DELIVERY PRACTICE.** Reflex sheet 100% DONE (`04_HLD/RAW_DRILL/00_REFLEX_SHEET.md`). Ab: full-design cold-ASSEMBLE (8-step) + Claude pheke FOLLOW-UP twists → woh defend. gaps → sheet. freeze-proof karna. (concept done, ab delivery.)
+3. **DSA = PER-PATTERN REP-BLOCKS (light).** ek pattern → template samjho → 3-4 SAME-pattern reps → SPACED cold-redo (1/3/7 din) till automatic → agla. STUB = PROBLEM+TESTS only. easy-medium, no-panic. (#0/#0b/#0c follow.)
+4. **STAR + LLD-code + Code-Review** = start karna hai (gaps). STAR 2-3x/wk.
+
+## DAILY
+- HLD-delivery (top) + STAR + Java/Spring-sharp + LLD/code-review + DSA-light.
+- **bolna kam, KARANA zyada. JP-focused only. NEVER off-target/above-JP/unstudied cold-throw** (WhatsApp-design froze — dobara mat).
 
 ## RED LINES (kabhi mat tod)
 - **DSA/files kabhi delete mat karwa** — preserve, hold the line (frustration me bhi). git history me rakhna theek.
