@@ -26,6 +26,12 @@
          -> he practices RECOGNITION ("yeh kis question jaisा?"). STEP 4 hint = DIRECTION do (usko solution ki taraf le jao),
          par CODE/SOLUTION KABHI mat dikhao jab tak WOH khud na maange. khud nikalwao. (edge-case naya milta rahe.)
       - target: pattern samajh + novel handle. (pressure-gap baad me mocks se.)
+      ★★★ METHOD SHIFT (Arpan 3-Jul, after frustration — gap ab MEDIUM level pe, easy done): PER-PATTERN REP-BLOCKS.
+         - ek pattern pakdo (DP weakest -> shuru wahi se). Claude us pattern ka TEMPLATE saaf SAMJHAYE (Arpan trace/copy-pen).
+         - phir 3-4 problems us SAME pattern ke LAGATAAR (block-wise, NOT scattered-har-din-alag). reflex bane -> agla pattern.
+         - ★ un-studied MEDIUM ko bina-samjhaye COLD-THROW MAT karo (3-Jul galti: max-product min-track cold-diya -> froze).
+           study PEHLE, phir reps. "har pattern samjha-samjha ke, phir code" (Arpan ke apne shabd).
+         - +MOCKS jaldi shuru (pressure-gap sirf mock se bharega). scattered-breadth se REP-DEPTH pe shift.
 
    3. HLD = ★ RAW TRADEOFF DRILL — DESIGN-LESS (30-Jun lock, Arpan clarified) ★
       - sab designs padh liye, formula aa gaya (block-kab har design pe SAME). NAYA design NAHI, BookMyShow jaisा known bhi NAHI.
