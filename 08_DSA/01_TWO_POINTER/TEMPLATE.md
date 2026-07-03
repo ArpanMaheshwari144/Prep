@@ -37,4 +37,6 @@
    - Container Most Water (opposite-ends, move-shorter-wall) — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
    - 3Sum (sort → fix-one → two-pointer → skip-dupes) — structure SOLO, 1 hint on inner dup-skip/bounds. ★ REDO priority: [ ] +3din [ ] +7din
      (yaad: triplet mile → low++/high-- PEHLE, phir skip-dupes; nums[high+1] bounds!)
+   - Sort Colors (Dutch flag, 3-pointer low/mid/high) — SOLO produce, atka ==2 pe. ★ REDO priority: [ ] +3din [ ] +7din
+     (yaad: ==2 → swap(mid,high) + high-- SIRF, mid++ NAHI (high se aaya element unchecked). 0 → swap(low,mid)+low+++mid++. 1 → mid++.)
 ```
