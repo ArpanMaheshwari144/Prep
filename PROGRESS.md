@@ -40,7 +40,7 @@
    5. JAVA/SPRING fundamentals — keep sharp (String-pool, HashMap-internals, CHM, concurrency — heavily tested, strength).
    6. DSA — LIGHT + CONSISTENT, core patterns, easy-medium, no-panic (skip nahi, obsess nahi).
 
-   DESIGN THEMES (recurring): rate-limiter ✓ · notification ✓ · payments (add) · subscription (add) · parking-lot · top-K-scale · news-aggregator/real-time-feed (add — multi-source→UI, user-login+preferences).
+   DESIGN THEMES (recurring): rate-limiter ✓ · notification ✓ · payments ✓ · twitter-feed ✓ · news-aggregator ✓ · bookmyshow ✓ · url-shortener ✓ · stock-broker ✓ · file-upload ✓ · subscription (add) · parking-lot(LLD) · top-K-scale.
 ```
 
 ---
@@ -157,16 +157,50 @@
 
 ---
 
+## ★ REPO INVENTORY (anti-compaction snapshot — kya ALREADY BANA hai, 3-Jul-2026)
+
+```
+   (Claude: compaction ke baad yeh padh — "add karna hai" bolne se pehle CHECK. bahut kuch DONE hai.)
+
+   HLD  04_HLD/
+     FOUNDATIONS (11): hld-kya · capacity · LB · caching · replication · sharding · queues · CAP · db-what-when · ms-comm · reliability-spof
+     SYSTEM_DESIGNS (10 DONE): 11 url-shortener · 12 rate-limiter · 13 twitter-feed · 14 notification · 15 url-browser-journey
+                               · 16 stock-broker · 17 payment-system · 18 file-upload · 19 news-aggregator · 20 bookmyshow
+                               (18/19/20 = full 8-step INTERVIEW-DELIVERY format ✓ — delivery practice ho rahi)
+     RAW_DRILL: 00 REFLEX_SHEET (100%) · 01 DESIGN_PRACTICE_LOG · 02 WHY_HOW_QA (27 Q) · INTERVIEW_FRAMEWORK.md
+
+   LLD  03_LLD/  (IN CODE — NOT theory-only): parking-lot · bookmyshow · tictactoe · snake-ladder · elevator · atm
+        · bank-account · shopping-cart · library · vending-machine · hotel-booking  (+ notes for first 6)
+
+   JAVA 01_JAVA/: core(oop/string/keywords/exceptions) · collections · java8 · multithreading · SOLID · design-patterns
+        · brain-ticklers · 08_REVISION_VISUAL (core/collections/java8/mt/oop-design/quick-qa)
+        PROJECT: SimpleBankSystem (SOLID + factory + observer + repository + service — patterns implemented ✓)
+
+   SPRING 02_SPRING/: basics · transactional · jwt-security · profiles · hibernate · docker · k8s · REVISION_VISUAL
+        PROJECT: usercrud (Spring Boot + JWT + k8s + tests ✓)   |   07_PROJECTS/todoapp (Spring Boot + k8s + tests ✓)
+
+   DSA  08_DSA/ (pattern folders 00-17): 01_TWO_POINTER DONE (5/5, SOLO). baaki folders = ready, khaali.
+
+   DB   09_DATABASE/: indexing-practical (B-tree). INFRA 05_INFRA_DEEP/: AWS/Docker/K8S.
+   RESOURCES/ = PRIVATE (own .git) — NEVER expose/touch.
+
+   -> NEW-BUILD scope (jo abhi nahi hai): Mini-Payment-System MULTI-service (order+payment+notification, Kafka, gateway) —
+      usercrud/todoapp single-service base pe MICROSERVICES layer sikhne ke liye. subscription HLD design. STAR stories.
+```
+
+---
+
 ## STATUS (honest, 3-Jul-2026)
 
 ```
-   HLD  = concept 100% done. gap = COLD-DELIVERY (assemble live + follow-ups). ← TOP focus.
-   JAVA+SPRING = COMFORTABLE (strength). keep sharp → revision via Mini-Payment-System PROJECT (microservices).
+   HLD  = concept 100% + 10 designs done (18/19/20 INTERVIEW-delivery format). gap = COLD-DELIVERY freeze-proof + follow-ups. ← TOP focus.
+   JAVA+SPRING = COMFORTABLE (strength) — core+collections+java8+MT+SOLID+patterns notes + SimpleBankSystem + usercrud/todoapp projects.
+          keep sharp → microservices layer via Mini-Payment-System (order+payment+notification) on top of single-service base.
    DSA  = TWO-POINTER pattern DONE (5/5: MoveZeroes, Palindrome, Container, 3Sum, SortColors — SOLO produce).
           gap = cold-GENERATION + RETENTION (single-exposure nahi tikta). → rep-blocks + spaced-redo (gaps me), LIGHT.
           next pattern = sliding-window (two-pointer ka extension).
-   LLD + CODE-REVIEW = theory-only → CODE-practice start.
-   STAR = #1 untouched gap.
+   LLD  = 11 designs IN CODE (parking-lot..hotel-booking) + SimpleBankSystem patterns. NOT untouched. gap = cold-recode + SOLID/pattern-articulate.
+   CODE-REVIEW = round-practice start (buggy-PR → security/concurrency/clean-code find). STAR = #1 untouched gap.
 
    PRIORITY (data-flipped): HLD-DELIVERY → STAR → LLD-code → Code-Review → Java/Spring-sharp(project) → DSA-light.
    REALITY: strengths = JP-core. gaps = delivery + behavioral (trainable). DSA moderate for JP, not the blocker.
