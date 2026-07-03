@@ -110,6 +110,27 @@ WHY REDIS (centralized counter):
 
 ---
 
+## 4.5 ★ NFR + FAIL-OPEN + RELIABILITY (design drill 3-Jul — was missing)
+
+```
+   NFR (kaunsa critical):
+   - ★ LOW LATENCY = SABSE critical. rate limiter HAR request ke saamne baithta ->
+     thoda bhi slow -> POORA API slow. isliye Redis (in-memory, ~microsec).
+   - FAIL-OPEN = agar rate limiter / Redis DOWN ho jaaye -> requests ALLOW kar do (block NAHI).
+     kyun: saare LEGIT users block karna >> thodi der abuse chalne dena.
+     (fail-CLOSED = block all -> sirf jab security critical, e.g. payment.)
+
+   RELIABILITY (Redis reflexes):
+   - Redis DOWN     -> REPLICA le le (HA/failover). replica bhi gaya -> FAIL-OPEN (last resort).
+   - Redis OVERLOAD -> SHARDING: user_id/region se alag Redis nodes (A-M->R1, N-Z->R2) -> load divide.
+                       (yeh CDN NAHI -> CDN static files ke liye. counters ke liye SHARDING.)
+
+   crisp: latency critical -> Redis. down -> replica -> fail-open. overload -> shard.
+          (shard = scale + isolation | replica = recovery — dono milke reliable.)
+```
+
+---
+
 ## 5 Algorithms — 4 Methods
 
 ### Token Bucket
