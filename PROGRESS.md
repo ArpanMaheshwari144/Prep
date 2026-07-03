@@ -14,6 +14,10 @@
       - baar-baar padhna = uska proven method. goal: interview me KOI answer pe na atke.
 
    2. DSA = PER-PATTERN REP-BLOCKS  (medium, JP-level — FAANG-hard NAHI)  ★ method (3-Jul, gap ab MEDIUM pe)
+      ★★★★ PACE RULE (Arpan 3-Jul, ROOT-CAUSE — 4-mahine se Claude BHAAG raha, yahi cycle repeat karta):
+         DSA me PACE ARPAN control karega, CLAUDE NAHI. EK cheez poori solid -> Arpan bole "agla" -> tabhi next.
+         Claude "ek aur? ek aur?" PUSH mat kare. level JUMP mat kare (jab Arpan comfortable tabhi chhota step).
+         kam problems + ZYADA depth. SLOW > fast. (fast + DSA-weak = bar-bar wahi frustration pe wapas.)
       - ek pattern pakdo → Claude us pattern ka TEMPLATE saaf SAMJHAYE (Arpan trace/copy-pen — spatial) →
         phir 3-4 problems us SAME pattern ke LAGATAAR (block-wise, NOT scattered-har-din-alag) → reflex → agla pattern.
       - un-studied medium ko BINA-SAMJHAYE cold-throw MAT karo (froze karta). "har pattern samjha-samjha ke, phir code."
