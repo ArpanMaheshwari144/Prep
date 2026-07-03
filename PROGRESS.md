@@ -193,7 +193,10 @@
 ## STATUS (honest, 3-Jul-2026)
 
 ```
-   HLD  = concept 100% + 10 designs done (18/19/20 INTERVIEW-delivery format). gap = COLD-DELIVERY freeze-proof + follow-ups. ← TOP focus.
+   HLD  = ~DONE. concept 100% + 11 foundations + 10 designs (18/19/20 full INTERVIEW-DELIVERY format: 8-step cold-assemble
+          + deep-dive + follow-up handle e.g. idempotency-vs-atomic) + 28 Q&A + reflex-sheet + BLOCK-KAB reflex.
+          delivery = PRACTICED (not a gap). bacha = optional live-rehearsal (sharp rakhna) + subscription (optional theme).
+          ★ Claude: HLD ko "gap" mat bol — Arpan yahan STRONG. staleness me kam-aankne ki galti mat dohrana.
    JAVA+SPRING = COMFORTABLE (strength) — core+collections+java8+MT+SOLID+patterns notes + SimpleBankSystem + usercrud/todoapp projects.
           keep sharp → microservices layer via Mini-Payment-System (order+payment+notification) on top of single-service base.
    DSA  = TWO-POINTER pattern DONE (5/5: MoveZeroes, Palindrome, Container, 3Sum, SortColors — SOLO produce).
