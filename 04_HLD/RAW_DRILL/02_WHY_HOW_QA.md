@@ -107,5 +107,31 @@
    add storage. Index only columns used in query filters, not everything."
 ```
 
+**Q15. Read-replica: abhi likha, turant padha → PURANA mila. kyu? fix?**
+```
+   kyu: write MASTER pe gaya, replica tak abhi propagate nahi (replication lag) → replica se padha → stale.
+   fix = READ-YOUR-OWN-WRITES: jisne abhi likha, use thodi der REPLICA ki jagah MASTER se padhao (fresh wahi hai),
+   replica catch-up ho jaye phir normal (replica se).
+   interview: "That's replication lag — the write hasn't propagated to the replica yet. Fix: for a user who just wrote,
+   read from the master briefly (read-your-own-writes) until the replica catches up."
+```
+
+**Q16. Har request pe naya DB connection mehnga kyu? behtar?**
+```
+   naya connection = har baar TCP handshake + auth + setup (~10-100ms) → overhead. CONNECTION POOL (HikariCP):
+   set of ready connections → borrow → use → RETURN (reuse), naya nahi banate.
+   (Arpan analogy: hotel me set-of-waiters sab guests handle karte, har guest pe naya waiter nahi.)
+   interview: "Creating a connection each time needs a TCP handshake + auth + setup. A pool keeps ready connections you
+   borrow, use, and return — avoiding repeated setup."
+```
+
+**Q17. Bade files (video/image) DB me store karein? nahi to kahan?**
+```
+   NAHI — S3 (object storage) me, DB me sirf URL. big files DB me = load/space + server-bottleneck (video server se serve = heavy load).
+   client SEEDHA S3 se (server bypass) = PRE-SIGNED URL (server temporary signed-URL deta, client us se direct S3 up/download). + CDN for speed.
+   interview: "Store large files in object storage (S3) with only the URL in the DB. Uploads/downloads use a pre-signed URL so
+   the client talks directly to S3, keeping the file off the server. Serve via CDN for speed."
+```
+
 ---
-> aage: replication-lag, connection-pooling, blob/S3, websocket-vs-kafka, cache-eviction, pagination · aur.
+> aage: websocket-vs-kafka, cache-eviction, pagination · aur.
