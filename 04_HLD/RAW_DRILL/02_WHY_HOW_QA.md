@@ -215,7 +215,7 @@
    response NAHI aaya → turant dead NAHI mark karta (network delay/blip ho sakta) → 3-4 baar retry (kuch second).
    phir bhi no response → LB us server ko DEAD mark → us pe traffic bhejnа BAND → baaki HEALTHY servers pe route.
    server recover + health-check dobara pass → LB wapas pool me ADD kar deta.
-   ★ Arpan ne khud retry-threshold nuance add kiya (1 fail = blip ho sakta, isliye N-consecutive). [links Q9]
+   (1 fail = blip ho sakta, isliye N-consecutive threshold — [links Q9])
    interview: "The LB health-checks each server (pings /health). A missed response isn't marked dead immediately — it could
    be a transient blip — so after N consecutive failed checks the LB marks it dead, stops routing to it, and sends traffic to
    the healthy servers. When it recovers and passes checks again, the LB adds it back."
@@ -227,7 +227,6 @@
    fix = LOCK / SINGLE-FLIGHT: sirf PEHLI request DB jaaye, data laaye, cache repopulate kare;
          baaki requests WAIT karein → phir fresh cache se padhein. DB ko ek hit, hazaar nahi.
    (bonus: refresh-before-expiry / stale-while-revalidate bhi option — proactive refresh.)
-   ★ Arpan ne khud single-flight logic reason kiya (naam nahi, mechanism bilkul sahi).
    interview: "A hot key expiring makes all concurrent requests miss and hit the DB at once — a cache stampede that can
    overload it. Fix with a lock / single-flight: only the first request goes to the DB, recomputes, and repopulates the cache;
    the rest wait and then read the fresh value. The DB takes one hit, not thousands."
