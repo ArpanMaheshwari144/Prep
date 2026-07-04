@@ -232,5 +232,22 @@
    the rest wait and then read the fresh value. The DB takes one hit, not thousands."
 ```
 
+**Q29. S3 ko "shard" kar sakte? (DB shard karte, S3 kyu nahi?)**
+```
+   NAHI — S3 ko DB jaisा manually shard nahi karte.
+   shard KYUN karte? -> ek DB NODE ki limit (storage/throughput) -> data baant ke multiple nodes.
+   S3 -> already MASSIVELY-DISTRIBUTED managed service -> AWS khud internally partition + auto-scale karta
+         (near-INFINITE storage + requests). "single-node limit" wali problem hi nahi -> manual shard bekaar.
+   -> jo sharding tu DB me karta, wo S3 me AWS PEHLE SE kar raha (chhupa ke).
+
+   S3 ka analogous concept (confuse hota):
+     1. KEY-PREFIX distribution: S3 objects ko key-prefix se internally partition karta. bahut high throughput chahiye
+        -> keys alag prefixes me spread (/users/a/, /users/b/) -> parallel. (ab AWS per-prefix auto-scale, mostly zaroori nahi.)
+     2. Multiple BUCKETS: region/tenant/type se alag -> ISOLATION/region-locality ke liye, SCALE ke liye nahi (1 bucket already infinite).
+   interview: "You don't shard S3 — it's a managed, massively-distributed store that AWS auto-partitions and scales to
+   near-infinite. The DB reason to shard (single-node limits) doesn't apply. The S3 analogue is key-prefix distribution for
+   throughput, or multiple buckets for isolation/region — not for scale, since one bucket already scales."
+```
+
 ---
 > aage: capacity-estimation · aur (mostly touched-domain; interview-stretch OK, alien cold-throw nahi).
