@@ -100,6 +100,34 @@
    (= HLD Q13: committed rollback nahi -> compensating se undo.)
 ```
 
+## 7d. API Gateway — single entry-point + routing (Spring Cloud Gateway)
+```
+   WHAT: ek SINGLE darwaza (port 8080) saari services ke aage. client sirf gateway se baat karta,
+         gateway sahi service pe FORWARD karta (routing). client ko har service ka URL/port yaad nahi rakhna.
+   WHY:  (1) single entry (client ko sirf 8080).  (2) cross-cutting (auth/rate-limit/logging/CORS) ek jagah.
+
+   SERVLET vs REACTIVE gateway -> app ke STACK se match karo:
+     app = spring-webmvc (servlet)  -> "Gateway" (gateway-server-webmvc)   <- HAMARA
+     app = webflux (reactive)       -> "Reactive Gateway"
+
+   CONFIG (application.yml) — ★ SAHI prefix (yahin galti hui thi):
+     spring.cloud.gateway.server.webmvc.routes      <- servlet gateway (dependency = gateway-server-webmvc)
+       - id · uri (kahan bheje) · predicates (Path=... kaunsi request)
+     ❌ galti: "gateway.mvc.routes" -> galat namespace -> routes LOAD hi nahi hui -> har request 404.
+     ✓ DEBUG lesson: dependency-artifact ke naam se namespace match karo -> "server-webmvc" -> "server.webmvc".
+       (docs/net pe bharosa mat karo blindly — version alag hota; artifact-naam se derive karo.)
+
+   ROUTE = PREDICATE (kaunsi request: Path=/order) + URI (kahan: http://localhost:8081).
+
+   METHOD forwarding: gateway = TRANSPARENT PROXY. GET/POST/DELETE + body + headers JAISE-KE-TAISE forward.
+     -> method-wise alag rule NAHI. ek "Path=/order/**" -> saare methods + subpaths -> order-service.
+     -> gateway = "kis SERVICE" (path decide).  service = "kya karna" (@Get/@Post/@DeleteMapping dispatch).
+
+   /** vs exact: single endpoint -> exact "Path=/order".  many endpoints/methods -> "Path=/order/**" (poora group route).
+
+   Boot 4.1 gotcha: Spring Cloud compatibility-verifier off (Feign wala hi).
+```
+
 ## 8. .gitignore — Windows case-insensitivity + anchor (silent config-loss gotcha)
 ```
    HUA KYA: "RESOURCES/" (private root folder ke liye) ne "src/main/resources/" ko bhi ignore kar diya
