@@ -208,7 +208,8 @@
    PRIORITY (data-flipped): HLD-DELIVERY → STAR → LLD-code → Code-Review → Java/Spring-sharp(project) → DSA-light.
    REALITY: strengths = JP-core. gaps = delivery + behavioral (trainable). DSA moderate for JP, not the blocker.
 
-   NEXT-SESSION ORDER (Arpan-set, 4-Jul): 1) DSA — sliding-window reps + two-pointer SPACED-REDO (cold) → 2) PROJECT phase-2 — Kafka in code (async) → 3) HLD daily-revision (1 design self-quiz → DESIGN_PRACTICE_LOG, light). Pending gaps (later): STAR stories · code-review round.
+   NEXT-SESSION ORDER (Arpan-set, 4-Jul EOD): 1) DSA — two-pointer + SW SPACED-REDO (blank cold) + naya pattern (hashing/binary-search) → 2) PROJECT phase-2 — Kafka (async, code) → 3) BEHAVIORAL — 1 STAR story (Konovo, S-T-A-R) [#1 gap, started 4-Jul] → (+ HLD light revise). Pending: STAR stories · code-review round.
+   ★ DONE 4-Jul: two-pointer (5) + SLIDING-WINDOW (3: fixed/variable/combo) — SOLO produce, template settled, spaced-redo pending. hard SW-variations (min-window) = optional/later. · BEHAVIORAL folder started (10_BEHAVIORAL: JP-company + why-JP).
    ★ PROJECT (4-Jul, mini_payment_ms): order+payment+api-gateway (3 services) · Feign inter-service · SAGA compensating · API-Gateway routing (8080) · DB-per-service — sab BANAYA/DEBUG/SAMJHA khud, tested. LEARNINGS.md me ~10 concepts (HikariCP, boilerplate, Feign, SAGA, gateway-namespace-gotcha, gitignore...). "bol sakta -> bana sakta" for MS achieved. BACHA (phase-2): Kafka (async, code me) — kal.
 ```
 
