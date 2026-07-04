@@ -12,6 +12,12 @@
    - Longest Substring Without Repeating (VARIABLE window + unordered_map<char,int> count; dup pe while-shrink; count 0 -> erase)
      — SOLO produce, 1 hint on erase-syntax (KEY se erase). | redo: [ ] +3din [ ] +7din
      (yaad: s[i]=KEY (char), mp[s[i]]=VALUE (count). mp.erase(s[i]) -> KEY se, value se nahi.)
+     ★ C++ nugget (count vs value — confuse hota):
+        mp[key]        =>  us key ki VALUE (frequency — jo tu badha/ghata raha).
+        mp.count(key)  =>  wo key HAI ya nahi (EXISTENCE -> 0 ya 1). key add hai to hamesha 1.
+        -> "value 0 pe erase" karna ho to:  if (mp[s[i]] == 0) mp.erase(s[i]);    (VALUE check, count nahi)
+        -> "if (mp.count(s[i]) == 0) erase" = DEAD (key exist -> count hamesha 1 -> kabhi chalta hi nahi).
+        -> aur erase yahan OPTIONAL hai (cleanup/memory ke liye, correctness ke liye nahi).
 
    ★ PATTERN (Arpan-generalized): SKELETON same -> right add -> [check] -> record + left shrink.
      FIXED = "if (size==k)" + track SUM  |  VARIABLE = "while (condition)" + track LEN. bas if->while, sum->len.
