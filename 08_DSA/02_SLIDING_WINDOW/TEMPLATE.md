@@ -19,6 +19,11 @@
         -> "if (mp.count(s[i]) == 0) erase" = DEAD (key exist -> count hamesha 1 -> kabhi chalta hi nahi).
         -> aur erase yahan OPTIONAL hai (cleanup/memory ke liye, correctness ke liye nahi).
 
+   - Longest Repeating Character Replacement (window + char-freq; VALID if (size - maxFreq) <= k, warna shrink)
+     — ★ SOLO produce ✓ (ye pehle "nahi hua tha" / defer hua tha -> aaj khud phad diya!). maxFreq-not-decrement trick sahi.
+     | redo: [ ] +3din [ ] +7din
+     (yaad: majority char rakho, baaki (size-maxFreq) ko k badal me same banao. maxFreq shrink pe ghatana zaroori nahi.)
+
    ★ PATTERN (Arpan-generalized): SKELETON same -> right add -> [check] -> record + left shrink.
      FIXED = "if (size==k)" + track SUM  |  VARIABLE = "while (condition)" + track LEN. bas if->while, sum->len.
      VARIABLE+dup = window me set/map se track -> "while (dup)" shrink. skeleton wahi, condition rich.
