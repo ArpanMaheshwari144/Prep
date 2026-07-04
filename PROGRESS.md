@@ -208,7 +208,8 @@
    PRIORITY (data-flipped): HLD-DELIVERY → STAR → LLD-code → Code-Review → Java/Spring-sharp(project) → DSA-light.
    REALITY: strengths = JP-core. gaps = delivery + behavioral (trainable). DSA moderate for JP, not the blocker.
 
-   NEXT-SESSION ORDER (Arpan-set): 1) HLD (follow-up twist drill) → 2) Java+Spring revision (via project, step-1 order-service) → 3) DSA (sliding-window / two-pointer redo).
+   NEXT-SESSION ORDER (Arpan-set, 4-Jul): 1) DSA — sliding-window reps + two-pointer SPACED-REDO (cold) → 2) PROJECT phase-2 — Kafka in code (async) → 3) HLD daily-revision (1 design self-quiz → DESIGN_PRACTICE_LOG, light). Pending gaps (later): STAR stories · code-review round.
+   ★ PROJECT phase-1 DONE (4-Jul): mini_payment_ms — order+payment MS, Feign inter-service call, SAGA compensating, tested. LEARNINGS.md me 9 concepts. "bol sakta -> bana sakta" for MS achieved.
 ```
 
 ```
