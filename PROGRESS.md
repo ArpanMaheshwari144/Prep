@@ -2,6 +2,8 @@
 
 > GOAL: JP Morgan (Associate/SDE-2, Bangalore) → later BlackRock. *"Effort 100% mera, outcome universe ka."*
 > MODE: pure study. no faltu meta-talk. Timeline honest: JP DSA moderate (not FAANG) → achievable in months of RIGHT practice.
+> ★ ARPAN — CONFIDENCE (5-Jul, DATA-backed, NOT arrogance): **"JP mein jaunga, wahan naam ROSHAN karunga."** grounded in: HLD-strong (Google-EM Spotify design felt EASY — known blocks), MS-project built (Feign/SAGA/gateway), SW boss-fight cracked, 30+ HLD why-how nuggets. arrogance = confidence WITHOUT basis; his = WITH basis.
+> ★ PERCEPTION swings with DAILY MOOD (good day→"JP paas", bad day→"JP 1 saal door") = emotional NOISE, not info. TRUTH = steady accumulated DATA, doesn't oscillate daily. trust DATA not the day's feeling. "kharab din DIN hai, DATA nahi." (Claude: on down-days, counter with the data — never let the mood set the assessment.)
 
 ---
 
