@@ -81,6 +81,21 @@
    result: RestTemplate ka SAME kaam, kam code.
 ```
 
+## 8. .gitignore — Windows case-insensitivity + anchor (silent config-loss gotcha)
+```
+   HUA KYA: "RESOURCES/" (private root folder ke liye) ne "src/main/resources/" ko bhi ignore kar diya
+            -> dono services ki application.properties git me gayi hi nahi -> fresh clone pe config missing.
+
+   WHY: .gitignore matching by DEFAULT case-SENSITIVE hai (Linux). PAR Windows/Mac filesystem case-INSENSITIVE
+        -> git khud core.ignorecase=true karta -> "RESOURCES/" = "resources/" match hone laga.
+
+   FIX (case ka nahi, ANCHOR ka): "RESOURCES/" -> "/RESOURCES/"  (leading slash = sirf ROOT).
+        nested src/main/resources root pe nahi -> ab match nahi. private root RESOURCES safe (still ignored).
+
+   LESSON: (1) Windows pe gitignore case-INSENSITIVE. (2) root/private folders HAMESHA "/name/" se anchor karo.
+           (3) "git add -A" ke baad HAMESHA "git status" dekho -> silent-ignore/silent-delete aise hi chhup jaate.
+```
+
 ## 7. Feign / Spring Cloud — version compatibility verifier (real-world gotcha)
 ```
    Feign = Spring CLOUD ka part. Spring Cloud ki version, Spring Boot version se MATCH honi chahiye.
