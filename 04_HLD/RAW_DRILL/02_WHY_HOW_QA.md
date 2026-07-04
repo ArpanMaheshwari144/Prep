@@ -266,6 +266,3 @@
    partially update. A DB gives structured, queryable, consistent data. So you store the big file in S3 and its metadata +
    queryable fields + the S3 URL in the DB — they're complementary, not substitutes."
 ```
-
----
-> aage: capacity-estimation · aur (mostly touched-domain; interview-stretch OK, alien cold-throw nahi).
