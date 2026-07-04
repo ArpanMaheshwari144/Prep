@@ -34,9 +34,6 @@ int lengthOfLongestSubstring(string s)
         {
             mp[s[i]]--;
             i++;
-            if(mp[s[j]] == 0){
-                mp.erase(s[i]);
-            }
         }
         minLen = max(minLen, j - i + 1);
         j++;
