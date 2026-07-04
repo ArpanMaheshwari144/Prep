@@ -58,3 +58,43 @@
    record -> compiler sab auto banata, accessor = orderId()  (no "get")
    class  -> tu khud getters likhta, accessor = getOrderId()  (with "get")
 ```
+
+## 7b. @FeignClient — RestTemplate ka clean/declarative version
+```
+   PROBLEM: bahut saari services -> har jagah RestTemplate + Map + URL + postForObject = boilerplate, repeat.
+   FEIGN: ek INTERFACE likho jo remote endpoint ko DESCRIBE kare -> Spring KHUD implementation banata (HTTP call).
+
+     @FeignClient(name="payment-service", url="http://localhost:8082")   // CALLER side (order-service) me
+     interface PaymentClient {
+         @PostMapping("/pay")                        // remote endpoint ka CONTRACT mirror
+         String pay(@RequestBody Map<String,Object> body);   // no body -> Spring implement karega
+     }
+
+   use: client.pay(body)   // dikhta local method, peeche HTTP call (RestTemplate jaisा) -> boilerplate gaya.
+
+   ★ 3 key baatein:
+     - interface CALLER side pe (jo call karta), CALLEE ko point karta.
+     - method annotations (@PostMapping/@RequestBody/return) = remote contract se MATCH karne chahiye.
+     - SERVICE BOUNDARY: order payment ka class (PayRequest) IMPORT nahi kar sakta (alag service/jar).
+       -> Map use kiya (ya apna copy banao). services JSON-contract se baat karti, code share NAHI.
+     - enable: main app pe @EnableFeignClients + dependency spring-cloud-starter-openfeign.
+   result: RestTemplate ka SAME kaam, kam code.
+```
+
+## 7. Feign / Spring Cloud — version compatibility verifier (real-world gotcha)
+```
+   Feign = Spring CLOUD ka part. Spring Cloud ki version, Spring Boot version se MATCH honi chahiye.
+
+   humara Boot = 4.1.0 (bahut naya) -> Spring Cloud (OpenFeign 5.0.1) ki compatibility-LIST me
+   abhi 4.1.0 tha hi nahi -> startup pe "compatibility VERIFIER" ne "INCOMPATIBLE" bolke app rok di
+   -> mvn install ka contextLoads test FAIL (app uthi hi nahi).
+
+   FIX (application.properties):  spring.cloud.compatibility-verifier.enabled=false
+   -> verifier check OFF -> app uth gayi -> build success.
+
+   analogy: verifier = bouncer + "allowed-versions" list. tera Boot itna naya ki list me nahi -> roka.
+            humne bouncer se kaha "chhod de" (check off).
+
+   LESSON: bleeding-edge Boot + Spring Cloud = version-mismatch aa sakta. tera CODE galat nahi, version-newness.
+           real-world me aksar aise hi verifier off/version pin karke aage badhte.
+```

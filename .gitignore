@@ -30,7 +30,8 @@ Prep/
 INTERVIEW/
 
 # Personal — resume, notes, templates (keep private even in public repo)
-RESOURCES/
+# NOTE: leading slash = ONLY repo-root RESOURCES/ (private). warna nested src/main/resources/ bhi ignore ho jaata (Windows case-insensitive).
+/RESOURCES/
 
 # Secrets — SSH keys, AWS keys, credentials (NEVER commit)
 *.pem
