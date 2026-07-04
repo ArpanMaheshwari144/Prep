@@ -36,10 +36,19 @@ public class OrderService {
         Map<String, Object> body = new HashMap<>();
         body.put("orderId", order.getId().toString());
         body.put("amount", amount);
-        String ans = client.pay(body);
-        System.out.println(ans);
 
-        order.setStatus("PAID");
+        // ★ SAGA (compensating transaction) — microservices me cross-service SINGLE transaction NAHI hota
+        //   (order apne DB me commit ho chuka, payment ALAG service/DB hai -> @Transactional yahan nahi phailta).
+        //   isliye: payment PASS -> order PAID  |  payment FAIL -> order FAILED (compensating action).
+        //   committed order ko "rollback" nahi kar sakte -> explicit FAILED mark karo -> state consistent, crash NAHI.
+        try {
+            String ans = client.pay(body);
+            order.setStatus("PAID");
+            System.out.println(ans);
+        } catch (Exception e) {
+            order.setStatus("FAILED");
+            e.printStackTrace();
+        }
         return repo.save(order);
     }
 }

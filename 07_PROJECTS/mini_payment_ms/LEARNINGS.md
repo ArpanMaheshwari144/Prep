@@ -81,6 +81,25 @@
    result: RestTemplate ka SAME kaam, kam code.
 ```
 
+## 7c. SAGA (compensating) — cross-service failure handling
+```
+   PROBLEM: MS me cross-service SINGLE transaction NAHI. order apne DB me commit + payment ALAG service/DB.
+            @Transactional 2 service pe nahi phailta. order committed + payment fail -> order stuck "CREATED" = INCONSISTENT.
+            committed row ko rollback bhi nahi kar sakte.
+
+   SAGA = local commits ki chain + COMPENSATING action on failure.
+   code me (chhote scale) = try-catch:
+       try   -> payment call + order PAID
+       catch -> order FAILED   (compensating: "rollback" ki jagah explicit mark)
+   -> dono case save -> order kabhi inconsistent/atka nahi.
+
+   TEST (jaan-boojh ke fail): payment-service BAND -> POST /order
+     -> Feign RetryableException: "Connection refused ... 8082/pay" -> catch -> 200 OK + status=FAILED (crash NAHI).
+
+   bade scale pe SAGA = coordinator / events / state-machine, par CORE idea wahi: step fail -> compensate.
+   (= HLD Q13: committed rollback nahi -> compensating se undo.)
+```
+
 ## 8. .gitignore — Windows case-insensitivity + anchor (silent config-loss gotcha)
 ```
    HUA KYA: "RESOURCES/" (private root folder ke liye) ne "src/main/resources/" ko bhi ignore kar diya
