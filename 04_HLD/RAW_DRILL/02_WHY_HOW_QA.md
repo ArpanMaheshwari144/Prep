@@ -249,5 +249,23 @@
    throughput, or multiple buckets for isolation/region — not for scale, since one bucket already scales."
 ```
 
+**Q30. S3 itna scalable+sasta hai to sab wahi store karo, DB banao hi kyu?**
+```
+   S3 aur DB ALAG kaam ke liye -> S3 DB ko REPLACE nahi karta.
+
+   S3 (object storage) DETA: file/blob ko KEY se store/get. bas.
+     ❌ QUERY nahi ("SELECT WHERE age>25") · ❌ no ACID/transaction (atomic update) · ❌ no joins/relationships
+     ❌ no partial-update (object pura overwrite) · ❌ many-small-fast-reads pe slow.
+   DB DETA (jo S3 nahi): QUERY (where/sort/filter) · INDEX · ACID/transaction (no-double-spend) · JOINS · in-place UPDATE.
+
+   analogy: S3 = giant WAREHOUSE (boxes label/key se fetch, par "sab red-shirt wale box do" nahi pooch sakte -> har box kholna padega).
+            DB = smart INDEXED CATALOG (turant query/filter/relate/atomic-update, par bhaari boxes khud store nahi karta).
+
+   -> DONO saath: bada FILE -> S3 | uska metadata + queryable-data + S3-URL -> DB. (video-app: video->S3, title/user/views->DB) [=Q17 blob-S3]
+   interview: "S3 is object storage — great for large blobs fetched by key, but it can't query, index, join, transact, or
+   partially update. A DB gives structured, queryable, consistent data. So you store the big file in S3 and its metadata +
+   queryable fields + the S3 URL in the DB — they're complementary, not substitutes."
+```
+
 ---
 > aage: capacity-estimation · aur (mostly touched-domain; interview-stretch OK, alien cold-throw nahi).
