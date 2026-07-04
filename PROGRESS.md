@@ -209,7 +209,7 @@
    REALITY: strengths = JP-core. gaps = delivery + behavioral (trainable). DSA moderate for JP, not the blocker.
 
    NEXT-SESSION ORDER (Arpan-set, 4-Jul): 1) DSA — sliding-window reps + two-pointer SPACED-REDO (cold) → 2) PROJECT phase-2 — Kafka in code (async) → 3) HLD daily-revision (1 design self-quiz → DESIGN_PRACTICE_LOG, light). Pending gaps (later): STAR stories · code-review round.
-   ★ PROJECT phase-1 DONE (4-Jul): mini_payment_ms — order+payment MS, Feign inter-service call, SAGA compensating, tested. LEARNINGS.md me 9 concepts. "bol sakta -> bana sakta" for MS achieved.
+   ★ PROJECT (4-Jul, mini_payment_ms): order+payment+api-gateway (3 services) · Feign inter-service · SAGA compensating · API-Gateway routing (8080) · DB-per-service — sab BANAYA/DEBUG/SAMJHA khud, tested. LEARNINGS.md me ~10 concepts (HikariCP, boilerplate, Feign, SAGA, gateway-namespace-gotcha, gitignore...). "bol sakta -> bana sakta" for MS achieved. BACHA (phase-2): Kafka (async, code me) — kal.
 ```
 
 ```
