@@ -4,5 +4,6 @@
 
 ## Solved (produce + spaced-redo track)
 ```
-   - (yahan aayenge)
+   - Max Sum Subarray of size K (FIXED window: right add / shrink pe left minus -> O(n), recompute nahi)
+     — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
 ```
