@@ -266,3 +266,31 @@
    partially update. A DB gives structured, queryable, consistent data. So you store the big file in S3 and its metadata +
    queryable fields + the S3 URL in the DB — they're complementary, not substitutes."
 ```
+
+**Q31. CDN = cache hai, wo browser ke andar hota? (kahan baithta?)**
+```
+   CDN = distributed CACHE -> HAAN (essence). PAR browser me NAHI.
+   BROWSER CACHE = device/browser ke ANDAR (local) -> ALAG cheez.
+   CDN           = duniya bhar me faile EDGE SERVERS ka network (geo-distributed, e.g. CloudFront: Mumbai/Singapore/US...).
+                   static content (image/video/css) edge pe cache -> user ke PAAS wale server se serve.
+   levels: browser-cache (device) -> CDN edge (user ke shehar) -> ORIGIN (door, main). CDN beech me, EXTERNAL servers.
+   point: content user ke NAZDEEK se -> low latency. (India user -> Mumbai edge, US origin tak nahi.)
+   interview: "A CDN is a distributed cache, but on geographically-spread edge servers near users — not in the browser.
+   Browser cache is local to the device; the CDN sits between browser and origin, serving static content from the nearest edge."
+```
+
+**Q32. DB ko region-wise replica (EU->EU, Asia->Asia) — ye kya? sharding se farak? geo-shard bhi hota?**
+```
+   ye = GEO-REPLICATION (multi-region replication): har region me DB ki COPY -> user paas wale replica se READ -> low latency.
+
+   REPLICATION vs SHARDING (core):
+     replication = SAME data ki COPIES (har replica pe POORA data) -> availability + read-scale + geo-locality.
+     sharding    = data ko TUKDO me BAANT (har shard pe ALAG/different data) -> SCALE (ek node pe fit nahi).
+
+   GEO-SHARDING bhi hota (haan): data ko REGION se BAANT -> EU users ka data EU shard, Asia ka Asia shard (DIFFERENT data, copy nahi).
+     kyun geo-SHARD: ★ DATA-RESIDENCY/COMPLIANCE (GDPR -> EU data EU me hi rehna chahiye, legal) [★ JP=finance, HUGE] + write-locality + scale.
+   real me DONO: region se SHARD (compliance) + har region me REPLICATE (availability).
+   interview: "Region-wise copies = geo-replication (same data replicated per region for read-locality/availability).
+   Sharding splits data (different data per node) for scale. Geo-sharding partitions data BY region — mainly for data
+   residency/compliance (e.g. GDPR keeping EU data in EU) plus write-locality. Big apps do both: geo-shard + replicate within region."
+```
