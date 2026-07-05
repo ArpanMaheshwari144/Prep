@@ -1,21 +1,38 @@
-# Kafka broker (KRaft mode — Zookeeper nahi chahiye, modern Kafka).
-# chalane ke liye:  docker compose up -d   (isi folder me)
-# band karne ke liye: docker compose down
-# broker services se milega: localhost:9092
+# Kafka broker (KRaft) + Kafka-UI (browser me topics/messages dekhne ke liye).
+# chalane: docker compose up -d   (isi folder me)   |   band: docker compose down
+# broker (host services se): localhost:9092   |   Kafka-UI (browser): localhost:8090
+#
+# ★ 2 listener kyun:
+#   PLAINTEXT (localhost:9092) -> HOST pe chal rahi services (order/payment/notification) ke liye.
+#   DOCKER    (kafka:29092)    -> docker network ke ANDAR (kafka-ui container) ke liye.
+#   (advertised-listener: broker jab client ko apna address batata, sahi wala chahiye — isliye dono.)
 
 services:
   kafka:
     image: apache/kafka:3.8.0
     container_name: kafka
     ports:
-      - "9092:9092"        # services yahan connect karengi (localhost:9092)
+      - "9092:9092"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,DOCKER://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,DOCKER://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+
+  kafka-ui:
+    image: kafbat/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8090:8080"        # browser: http://localhost:8090
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092   # docker-network ke andar se broker
+      DYNAMIC_CONFIG_ENABLED: "true"
+    depends_on:
+      - kafka
