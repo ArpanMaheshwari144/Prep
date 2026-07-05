@@ -128,6 +128,26 @@
    Boot 4.1 gotcha: Spring Cloud compatibility-verifier off (Feign wala hi).
 ```
 
+## 7e. Kafka — async messaging (producer / topic / consumer)  [phase-2, code me dekha]
+```
+   SYNC (Feign)  = order ne payment ko call kiya, jawab tak RUKA. direct, wait.
+   ASYNC (Kafka) = "fire-and-forget" -> event daal ke aage badh gaya, jawab ka wait nahi.
+
+   3 cheez:
+     PRODUCER  -> KafkaTemplate<String,String> inject -> kafka.send("payment-done", message). (payment-service)
+     TOPIC     -> naamit channel/mailbox ("payment-done") jahan message padta.
+     CONSUMER  -> @KafkaListener(topics="payment-done", groupId="...") wala METHOD -> message aate hi Spring khud call karta. (notification-service)
+   -> producer & consumer DECOUPLED: seedha nahi jaante, sirf TOPIC ke through. no polling-loop (Spring listener bulaata).
+
+   kab kya: jawab TURANT chahiye -> SYNC (Feign). "ho gaya, ab background kaam (email)" -> ASYNC (Kafka).
+     -> payment ho gaya -> order turant confirm -> email peeche apni marzi se (user wait nahi karta). decouple + spike-absorb + 1 event N consumer.
+
+   SETUP: Kafka broker chahiye -> docker-compose.yml (KRaft mode, Zookeeper-free, port 9092) -> "docker compose up -d".
+   config (services me): spring.kafka.bootstrap-servers=localhost:9092 (+ consumer group-id, auto-offset-reset=earliest).
+   analogy: Feign = PHONE call (ruko jab tak jawab) · Kafka = LETTERBOX (chitthi daal ke chale gaye, jisko chahiye padhe).
+   tested: POST /order -> payment saves + event -> notification console: "Email send -> Payment DONE for order 1..." (async, no wait).
+```
+
 ## 8. .gitignore — Windows case-insensitivity + anchor (silent config-loss gotcha)
 ```
    HUA KYA: "RESOURCES/" (private root folder ke liye) ne "src/main/resources/" ko bhi ignore kar diya
