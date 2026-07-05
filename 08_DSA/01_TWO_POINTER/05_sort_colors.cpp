@@ -38,6 +38,7 @@ void sortColors(vector<int> &nums)
         }
         else
         {
+            // yaha mid++ isliye nahi kyuki jo high se element ayega ukos bhi process karna hai
             swap(nums[mid], nums[high]);
             high--;
         }

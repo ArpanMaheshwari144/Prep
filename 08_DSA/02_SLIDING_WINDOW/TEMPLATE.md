@@ -1,6 +1,15 @@
 # SLIDING_WINDOW — template (Arpan-seekha)
 
-> Abhi khaali. Jab tu is pattern ko PRODUCE karega, tab apne words me template yahan bharenge (pre-fill nahi — peek se bachne ke liye).
+## ★ CORE INSIGHT (Arpan, 5-Jul) — sab SW code EK HI TEMPLATE hai
+```
+   har SW problem ka code LAGBHAG COPY-PASTE same hai (pichle wale ki tarah). skeleton:
+     1. window AAGE badhao (right++, element andar lo)
+     2. koi CONDITION check karo
+     3. condition pe SHRINK karo (left++, element bahar)
+     4. ANSWER store karo (max/min/len)
+   -> steps SAME. bas CONDITION badalti + ORDER thoda change hota (kab record, kab shrink).
+   -> ek baar skeleton aa gaya -> har naya problem = wahi template + naya condition. isliye "easy" lagta.
+```
 
 ## Solved (produce + spaced-redo track)
 ```
