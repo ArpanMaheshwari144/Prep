@@ -169,7 +169,7 @@
      SYSTEM_DESIGNS (10 DONE): 11 url-shortener · 12 rate-limiter · 13 twitter-feed · 14 notification · 15 url-browser-journey
                                · 16 stock-broker · 17 payment-system · 18 file-upload · 19 news-aggregator · 20 bookmyshow
                                (18/19/20 = full 8-step INTERVIEW-DELIVERY format ✓ — delivery practice ho rahi)
-     RAW_DRILL: 00 REFLEX_SHEET (100%) · 01 DESIGN_PRACTICE_LOG · 02 WHY_HOW_QA (27 Q) · INTERVIEW_FRAMEWORK.md
+     RAW_DRILL: 00 REFLEX_SHEET (100%) · 01 DESIGN_PRACTICE_LOG · 02 WHY_HOW_QA (32 Q, incl S3-shard/S3-vs-DB/CDN-edge/geo-replica-vs-shard) · INTERVIEW_FRAMEWORK.md
 
    LLD  03_LLD/  (IN CODE — NOT theory-only): parking-lot · bookmyshow · tictactoe · snake-ladder · elevator · atm
         · bank-account · shopping-cart · library · vending-machine · hotel-booking  (+ notes for first 6)
@@ -181,13 +181,16 @@
    SPRING 02_SPRING/: basics · transactional · jwt-security · profiles · hibernate · docker · k8s · REVISION_VISUAL
         PROJECT: usercrud (Spring Boot + JWT + k8s + tests ✓)   |   07_PROJECTS/todoapp (Spring Boot + k8s + tests ✓)
 
-   DSA  08_DSA/ (pattern folders 00-17): 01_TWO_POINTER DONE (5/5, SOLO). baaki folders = ready, khaali.
+   DSA  08_DSA/: 01_TWO_POINTER DONE (5/5 SOLO, incl 3Sum COLD-REDO cleared) · 02_SLIDING_WINDOW DONE (4/4 SOLO: fixed/variable/combo/char-replacement)
+        + SW core-insight (sab SW = 1 template). TEMPLATE.md me tracks. baaki pattern-folders ready/khaali. spaced-redo (+7din) pending.
 
    DB   09_DATABASE/: indexing-practical (B-tree). INFRA 05_INFRA_DEEP/: AWS/Docker/K8S.
    RESOURCES/ = PRIVATE (own .git) — NEVER expose/touch.
 
-   -> NEW-BUILD scope (jo abhi nahi hai): Mini-Payment-System MULTI-service (order+payment+notification, Kafka, gateway) —
-      usercrud/todoapp single-service base pe MICROSERVICES layer sikhne ke liye. subscription HLD design. STAR stories.
+   PROJECT (07_PROJECTS/mini_payment_ms) = COMPLETE (5-Jul): api-gateway + order + payment + notification (4 services)
+      · Feign(sync) · SAGA · Kafka(async, docker broker) · kafka-ui(:8090) · DB-per-service · LEARNINGS.md (13+ concepts + flow-diagram). tested end-to-end.
+   BEHAVIORAL 10_BEHAVIORAL/: 01_JP_COMPANY · 02_WHY_JP (started — #1 gap).
+   -> STILL-TODO (jo abhi NAHI): STAR stories (Konovo) · code-review round · Java/Spring brush-up · DSA new-patterns(hashing/BS) · subscription HLD (optional).
 ```
 
 ---
