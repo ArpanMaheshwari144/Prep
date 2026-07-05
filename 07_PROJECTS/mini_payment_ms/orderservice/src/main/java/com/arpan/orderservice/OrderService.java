@@ -6,19 +6,25 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 // import org.springframework.web.client.RestTemplate;
 
+/**
+ * OrderService — order banata + payment-service ko call karta.
+ * FLOW: order save (CREATED) -> Feign se payment call (SYNC) -> PASS=PAID / FAIL=FAILED (SAGA compensating).
+ */
 @Service
 public class OrderService {
 
-    private final OrderRepository repo;
+    private final OrderRepository repo;   // order ka apna DB (orderdb) — save/find
 
-    private final PaymentClient client;
+    private final PaymentClient client;   // Feign client -> payment-service (8082) ko call
 
+    // constructor injection — Spring repo + client khud inject karta
     public OrderService(OrderRepository repo, PaymentClient client) {
         this.repo = repo;
         this.client = client;
     }
 
     public Order createOrder(String item, double amount) {
+        // 1. order save karo -> status CREATED, DB se id milti
         Order order = repo.save(new Order(item, amount, "CREATED"));
 
         // Ye dursi service ko call karne ke liye(MS)

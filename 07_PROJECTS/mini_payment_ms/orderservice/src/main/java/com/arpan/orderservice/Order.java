@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "orders")   // "order" SQL reserved word -> table naam "orders"
+// Order — @Entity -> DB "orders" table. apna DB = orderdb (DB-per-service).
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

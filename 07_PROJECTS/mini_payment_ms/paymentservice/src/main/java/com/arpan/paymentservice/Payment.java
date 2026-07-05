@@ -3,6 +3,7 @@ package com.arpan.paymentservice;
 import jakarta.persistence.*;
 
 @Entity
+// Payment — @Entity -> DB "payment" table. apna DB = paydb (DB-per-service).
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

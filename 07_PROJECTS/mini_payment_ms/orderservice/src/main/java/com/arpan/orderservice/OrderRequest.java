@@ -1,5 +1,6 @@
 package com.arpan.orderservice;
 
+// OrderRequest — POST /order ka request body { item, amount } (DTO). @RequestBody isme JSON bharta.
 public class OrderRequest {
     private String item;
     private double amount;

@@ -4,6 +4,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * PaymentController — REST entry. POST /pay -> PaymentService.pay() call karta.
+ * (order-service Feign se ise call karta; body me { orderId, amount }.)
+ */
 @RestController
 public class PaymentController {
 

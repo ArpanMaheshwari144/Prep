@@ -1,5 +1,6 @@
 package com.arpan.paymentservice;
 
+// PayRequest — POST /pay ka request body { orderId, amount } (DTO).
 public class PayRequest {
     private String orderId;
     private double amount;
