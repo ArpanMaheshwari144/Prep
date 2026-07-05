@@ -192,6 +192,31 @@
    tested: POST /order -> payment saves + event -> notification console: "Email send -> Payment DONE for order 1..." (async, no wait).
 ```
 
+## 7f. Kafka — queue KAHAN hai + kaise DEKHE (broker, CLI, kafka-ui)
+```
+   QUEUE Spring me NAHI -> Kafka BROKER (docker container) me. Spring sirf CLIENT (producer/consumer).
+     messages broker ke DISK pe persist -> Spring restart pe bhi safe.
+   topic AUTO-created -> producer ne pehli baar "payment-done" pe bheja -> Kafka ne khud bana diya.
+
+   ★ LOG-based (classic queue se farak):
+     classic queue -> message consume hua = HAT gaya.
+     Kafka -> message topic me RAHTA (retention tak) -> multiple consumers/groups padh sakte + --from-beginning REPLAY.
+     OFFSET = message ka partition me position (0,1,2..). consumer isi se track "kahan tak padha". groupId per offset.
+
+   DEKHNE ke 2 tareeke:
+     CLI (docker exec):
+       kafka-topics.sh --list --bootstrap-server localhost:9092
+       kafka-console-consumer.sh --topic payment-done --from-beginning --bootstrap-server localhost:9092
+       (git-bash pe path-mangle -> MSYS_NO_PATHCONV=1 prefix. PowerShell me seedha.)
+     kafka-UI (GRAPHICAL, browser):
+       docker-compose me kafbat/kafka-ui add (port 8090) -> browser localhost:8090.
+       ★ networking: kafka-ui CONTAINER hai -> broker tak INTERNAL listener chahiye (kafka:29092).
+         isliye broker pe DUAL listener: PLAINTEXT(localhost:9092=host services) + DOCKER(kafka:29092=ui container).
+         advertised-listener = broker jo address client ko batata; container vs host ke liye alag chahiye.
+       UI me: Brokers (health) · Topics (payment-done -> Messages -> offset/value dekho) · Consumers (group lag).
+     __consumer_offsets = Kafka ka INTERNAL topic (50 partitions default) jo har group ka offset track karta.
+```
+
 ## 8. .gitignore — Windows case-insensitivity + anchor (silent config-loss gotcha)
 ```
    HUA KYA: "RESOURCES/" (private root folder ke liye) ne "src/main/resources/" ko bhi ignore kar diya
