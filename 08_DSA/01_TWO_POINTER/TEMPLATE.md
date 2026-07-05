@@ -35,8 +35,9 @@
    - Move Zeroes (slow-fast swap) — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
    - Valid Palindrome (opposite-ends L/R compare) — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
    - Container Most Water (opposite-ends, move-shorter-wall) — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
-   - 3Sum (sort → fix-one → two-pointer → skip-dupes) — structure SOLO, 1 hint on inner dup-skip/bounds. ★ REDO priority: [ ] +3din [ ] +7din
-     (yaad: triplet mile → low++/high-- PEHLE, phir skip-dupes; nums[high+1] bounds!)
+   - 3Sum (sort → fix-one → two-pointer → skip-dupes) — 3-Jul: structure SOLO + 1 hint (dup-skip/bounds).
+     ★ 5-Jul COLD-REDO: SOLO 4/4, bina hint — GAP CLEARED ✓ (jaha atka tha, ab automatic). redo: [x] +1 [ ] +7din
+     (yaad: triplet mile → skip-dupes (while low<high && nums[low]==nums[low+1]) → phir low++/high-- advance.)
    - Sort Colors (Dutch flag, 3-pointer low/mid/high) — SOLO produce, atka ==2 pe. ★ REDO priority: [ ] +3din [ ] +7din
      (yaad: ==2 → swap(mid,high) + high-- SIRF, mid++ NAHI (high se aaya element unchecked). 0 → swap(low,mid)+low+++mid++. 1 → mid++.)
 ```

@@ -21,8 +21,11 @@ using namespace std;
 
 vector<vector<int>> threeSum(vector<int> &nums)
 {
-    sort(begin(nums), end(nums));
+    // TODO: tera code (COLD REDO)
+    //   sort -> fix i -> low/high two-pointer -> sum==0 -> record + skip-dupes
+    //   (yaad jaha atka tha: triplet mile -> skip-dupes + low++/high-- advance; bounds!)
     vector<vector<int>> ans;
+    sort(begin(nums), end(nums));
 
     for (int i = 0; i < nums.size(); i++)
     {
@@ -42,10 +45,13 @@ vector<vector<int>> threeSum(vector<int> &nums)
                 ans.push_back(temp);
 
                 while (low < high && nums[low] == nums[low + 1])
+                {
                     low++;
+                }
                 while (low < high && nums[high] == nums[high - 1])
+                {
                     high--;
-
+                }
                 low++;
                 high--;
             }
@@ -59,6 +65,7 @@ vector<vector<int>> threeSum(vector<int> &nums)
             }
         }
     }
+
     return ans;
 }
 
