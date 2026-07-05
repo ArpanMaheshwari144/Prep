@@ -12,6 +12,6 @@
 ## Solved (produce + spaced-redo track)
 ```
    - Two Sum (map {value->index}; "(target-num) seen?" find!=end -> pair; else add. ONE pass O(n)) — SOLO ✓ | redo: [ ] +3din [ ] +7din
-   - Valid Anagram (COUNT map: s ++ , t -- , sab EXACTLY 0 -> anagram; length-check first) — SOLO, 1 silly-slip (>1 vs !=0, khud fix) | redo: [ ] +3din [ ] +7din
-     (yaad: index-map nahi, COUNT-map. check "!= 0" (koi bhi non-zero = not anagram), ">1" NAHI.)
+   - Valid Anagram (COUNT map: s ++ , t -- , sab EXACTLY 0 -> anagram; length-check first) | redo: [ ] +3din [ ] +7din
+     GALTI: final check me ">1" likh diya -> chahiye tha "!= 0" (koi bhi non-zero count = not anagram).
 ```
