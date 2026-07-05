@@ -4,6 +4,50 @@
 
 ---
 
+## 0. OVERALL FLOW (poora picture)
+```
+        POST /order  { item, amount }
+             |
+             v
+   ┌──────────────┐  route (Path=/order)  ┌──────────────┐
+   │ api-gateway  │ ────────────────────► │ order-service│
+   │ (8080)       │  single entry-point   │ (8081)       │
+   └──────────────┘                       └──────┬───────┘
+                                                 │  Feign  ★ SYNC (RUKO jab tak jawab)
+                                                 v
+                                       ┌──────────────────┐
+                                       │ payment-service  │ ◄── PRODUCER
+                                       │ (8082)           │
+                                       │ 1. DB save (paydb)│
+                                       │ 2. kafka.send(   │
+                                       │  "payment-done", │
+                                       │   "Payment...")  │
+                                       └──────┬───────────┘
+                                              │  ★ ASYNC (bhej ke aage, wait nahi)
+                                              v
+                     ╔════════════════════════════════════════╗
+                     ║   KAFKA BROKER (docker, :9092)          ║
+                     ║   TOPIC "payment-done"                  ║
+                     ║    partition 0: [offset 0] "Payment     ║
+                     ║                  DONE for order:1..."   ║ ◄── message PADA (persist, disk)
+                     ╚═══════════════╤════════════════════════╝
+                                     │  @KafkaListener("payment-done", groupId="notification-group")
+                                     v
+                           ┌──────────────────────┐
+                           │ notification-service │ ◄── CONSUMER
+                           │ (8083)  -> "Email    │
+                           │  send -> Payment..." │
+                           └──────────────────────┘
+
+   SYNC  (Feign) : order↔payment -> jawab TURANT chahiye -> ruko.
+   ASYNC (Kafka) : payment→notification -> "ho gaya, ab email" -> bhej ke aage, user wait nahi.
+   CONNECTOR     : topic naam "payment-done" -> producer send() + consumer @KafkaListener, DONO me SAME.
+   OFFSET        : message ka partition me position (0,1,2...). consumer isi se track "kahan tak padha".
+   DB-per-service: order->orderdb · payment->paydb · notification->koi DB nahi (sirf sune+print).
+```
+
+---
+
 ## 1. Microservice = alag programs, HTTP pe baat
 ```
    single-app  -> paymentService.pay()   = SAME program ke andar METHOD call
