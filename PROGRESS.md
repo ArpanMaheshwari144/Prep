@@ -23,6 +23,12 @@
 
 ## 1. STRATEGY (11 real JP writeups + web — DATA-backed)
 ```
+   ★★ INSIDER CONFIRM (Raunak, JP SE-2, 6-Jul — DM): "LeetCode MEDIUM for DSA · MEDIUM system design ·
+      Alex Xu Vol-1 padhi hai to KAAFI hai." -> DIRECTLY validates below strategy:
+      DSA = medium-gate (no FAANG-hard) · HLD (11 found + 10 designs, Alex-Xu-based: rate-limiter/notification/
+      url-shortener/twitter = Vol-1 chapters) = ALREADY at/above bar -> SD tera DONE + SUFFICIENT. no exotic depth.
+```
+```
    BIG TRUTH: "DSA necessary but NOT sufficient." JP REJECT hota hai HLD-DELIVERY + BEHAVIORAL pe, DSA pe nahi.
    -> Arpan ki strengths (Java/Spring-fundamentals, HLD-concepts, code-review-via-650-tickets) = JP ka CORE weight.
    -> DSA-panic disproportionate. energy behaviorial + delivery pe.
