@@ -91,6 +91,12 @@
 
 ## 5. METHOD (kaise karna — condensed)
 ```
+   ★ REVISION = HABIT (Arpan, 6-Jul): jo padha/banaya (project bhi) wo ~10 din me FADE -> revisit ZAROORI.
+     fresh-aaj ≠ yaad-baad-me (same spaced-retention principle, macro/schedule level).
+     -> AUGUST (apply-phase) se ~2 HRS DAILY sirf REVISE (DSA + Java + HLD + project, pel ke); abhi bhi roz thoda.
+     ★ Claude: roz REVISE-REMINDER dena (ye mera kaam).
+```
+```
    DSA        : template samjho → 3-4 SAME-pattern blank reps → SPACED redo (1/3/7) till automatic → agla.
                 STUB = PROBLEM+TESTS only (approach spell-out nahi). stuck→direction, code nahi. DELETE/restart-loop NAHI.
    HLD        : design uthao → khud poocho "kyun/kya/kaise" → blank-assemble → gap → sheet. delivery = practiced, maintain.
