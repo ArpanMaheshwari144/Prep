@@ -17,4 +17,5 @@
    - Group Anagrams (map {sorted-word -> list}; word sort = canonical KEY -> same key = same group) | redo: [ ] +3din [ ] +7din
    - Subarray Sum = K (PREFIX-SUM + map {sum->count}; (sum-k) seen? -> add count; map[0]=1 init) | redo: [ ] +3din [ ] +7din
      NOTE: naya insight (prefix-sum) — seed se seekha, solo nahi hua. REDO pe khud nikalna (yehi tikega). tip: mp[sum-k] seedha (na ho to 0).
+   - Longest Consecutive Sequence (SET; (num-1) na ho -> START -> aage count -> max; O(n)) — SOLO ✓ | redo: [ ] +3din [ ] +7din
 ```
