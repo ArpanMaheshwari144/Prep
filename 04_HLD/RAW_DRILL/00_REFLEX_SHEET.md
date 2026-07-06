@@ -2,7 +2,7 @@
 
 > PRACTICE MODE (30-Jun): koi design nahi. SEEDHA tradeoff/concept ka kab/kyun/kaise reflex.
 > ye answers HAR design me SAME aate -> isliye design ke bina drill. (detail = 04-09 foundation notes.)
-> use: Claude sawaal pheke -> tu cold bole. ya khud cover karke recall kar.
+> use: Claude sawaal pheke -> tu recall karke bole. ya khud cover karke recall kar.
 
 ---
 

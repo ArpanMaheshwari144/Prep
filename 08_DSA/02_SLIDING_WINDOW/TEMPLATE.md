@@ -1,6 +1,6 @@
 # SLIDING_WINDOW — template (Arpan-seekha)
 
-> ★ REDO SCHEDULE: har SOLVED problem ko +3 din AUR +7 din -> BLANK pe COLD-redo (dekh ke nahi). neeche checkbox mark karo. yehi recognition->generation = asli retention. (dry-run habit bhi: "done" se pehle ek example trace.)
+> ★ REDO SCHEDULE: har SOLVED problem ko +3 din AUR +7 din -> BLANK pe REDO (dekh ke nahi). neeche checkbox mark karo. yehi recognition->generation = asli retention. (dry-run habit bhi: "done" se pehle ek example trace.)
 
 ## ★ CORE INSIGHT (Arpan, 5-Jul) — sab SW code EK HI TEMPLATE hai
 ```

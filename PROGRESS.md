@@ -11,7 +11,7 @@
 
 ```
    #0 PACE (DSA): pace ARPAN ka, Claude ka NAHI. EK cheez → RUKO → Arpan "agla" bole tabhi aage.
-      NEVER "ek aur?", NEVER level-jump, NEVER un-studied cold-throw, NEVER dump.
+      NEVER "ek aur?", NEVER level-jump, NEVER un-studied throw, NEVER dump.
       ★ SOLUTION/steps/code KABHI spell-out mat karo — max = ek SAWAAL ya "yeh concept dekh". "solution de diya" → ruk.
       Slow > fast, depth > breadth. "RUK" → turant ruk. (Claude bhaagta raha → crash → restart-loop 3-4x. yeh #1 failure tha.)
 
@@ -35,7 +35,7 @@
    -> DSA-panic DISPROPORTIONATE. energy HLD-delivery + STAR pe jani chahiye.
 
    PREP PRIORITY (data se):
-   1. HLD DELIVERY  — full-design cold-ASSEMBLE + FOLLOW-UP/twist-defense (biggest reject-reason). freeze-proof.
+   1. HLD DELIVERY  — full-design ASSEMBLE + FOLLOW-UP/twist-defense (biggest reject-reason). freeze-proof.
    2. BEHAVIORAL STAR — Konovo stories, convincing/structured (always-tested, #1 untouched gap).
    3. LLD in CODE   — SOLID/patterns/Builder IMPLEMENTED (not theory).
    4. CODE-REVIEW   — Java basics/static-volatile/clean-code (strength via debugging, but practice the round).
@@ -98,8 +98,8 @@
 
 ```
    HLD (top priority): sheet 100% done (04_HLD/RAW_DRILL/00_REFLEX_SHEET.md). NOW = DELIVERY:
-      full-design cold-assemble (8-step) + Claude pheke FOLLOW-UP twists → Arpan defend. gaps → sheet. log: 01_DESIGN_PRACTICE_LOG.md.
-      new designs: payments, subscription (+ redo rate-limiter/notification cold). freeze-proof karna.
+      full-design assemble (8-step) + Claude pheke FOLLOW-UP twists → Arpan defend. gaps → sheet. log: 01_DESIGN_PRACTICE_LOG.md.
+      new designs: payments, subscription (+ redo rate-limiter/notification). freeze-proof karna.
       ★ DRILL-RESPONSE: Arpan usually RIGHT (gap = delivery) → "sahi, galat nahi" + uske sentence ko clean interview-English.
         NAYA concept DUMP mat karo jaise galti ki. sirf jahan SACH me galat → wahan.
 
@@ -110,7 +110,7 @@
    JAVA/SPRING: FULL VISUAL code revise (SEE/trace, crammed nahi), baar-baar. String-pool/HashMap/CHM/concurrency sharp.
 
    DSA (light-consistent): PER-PATTERN REP-BLOCKS + RETENTION-FIX (#0b) + PACE (#0) + STUB rule.
-      ek pattern → template samjho → 3-4 SAME-pattern reps → SPACED cold-redo till automatic → agla.
+      ek pattern → template samjho → 3-4 SAME-pattern reps → SPACED redo till automatic → agla.
       ★ STUB: file me sirf PROBLEM + TESTS. template/recurrence SPELL-OUT mat karo — Arpan khud generate kare.
       core patterns: two-pointer/sliding-window/hashing/binary-search/greedy/DP-1D + graph-BASICS (BFS/DFS). easy-medium.
 ```
@@ -181,7 +181,7 @@
    SPRING 02_SPRING/: basics · transactional · jwt-security · profiles · hibernate · docker · k8s · REVISION_VISUAL
         PROJECT: usercrud (Spring Boot + JWT + k8s + tests ✓)   |   07_PROJECTS/todoapp (Spring Boot + k8s + tests ✓)
 
-   DSA  08_DSA/: 01_TWO_POINTER DONE (5/5 SOLO, incl 3Sum COLD-REDO cleared) · 02_SLIDING_WINDOW DONE (4/4 SOLO: fixed/variable/combo/char-replacement)
+   DSA  08_DSA/: 01_TWO_POINTER DONE (5/5 SOLO, incl 3Sum REDO cleared) · 02_SLIDING_WINDOW DONE (4/4 SOLO: fixed/variable/combo/char-replacement)
         + SW core-insight (sab SW = 1 template). TEMPLATE.md me tracks. baaki pattern-folders ready/khaali. spaced-redo (+7din) pending.
 
    DB   09_DATABASE/: indexing-practical (B-tree). INFRA 05_INFRA_DEEP/: AWS/Docker/K8S.
@@ -198,23 +198,23 @@
 ## STATUS (honest, 3-Jul-2026)
 
 ```
-   HLD  = ~DONE. concept 100% + 11 foundations + 10 designs (18/19/20 full INTERVIEW-DELIVERY format: 8-step cold-assemble
+   HLD  = ~DONE. concept 100% + 11 foundations + 10 designs (18/19/20 full INTERVIEW-DELIVERY format: 8-step assemble
           + deep-dive + follow-up handle e.g. idempotency-vs-atomic) + 28 Q&A + reflex-sheet + BLOCK-KAB reflex.
           delivery = PRACTICED (not a gap). bacha = optional live-rehearsal (sharp rakhna) + subscription (optional theme).
           ★ Claude: HLD ko "gap" mat bol — Arpan yahan STRONG. staleness me kam-aankne ki galti mat dohrana.
    JAVA+SPRING = COMFORTABLE (strength) — core+collections+java8+MT+SOLID+patterns notes + SimpleBankSystem + usercrud/todoapp projects.
           keep sharp → microservices layer via Mini-Payment-System (order+payment+notification) on top of single-service base.
    DSA  = TWO-POINTER pattern DONE (5/5: MoveZeroes, Palindrome, Container, 3Sum, SortColors — SOLO produce).
-          gap = cold-GENERATION + RETENTION (single-exposure nahi tikta). → rep-blocks + spaced-redo (gaps me), LIGHT.
+          gap = GENERATION + RETENTION (single-exposure nahi tikta). → rep-blocks + spaced-redo (gaps me), LIGHT.
           next pattern = sliding-window (two-pointer ka extension).
-   LLD  = 11 designs IN CODE (parking-lot..hotel-booking) + SimpleBankSystem patterns. NOT untouched. gap = cold-recode + SOLID/pattern-articulate.
+   LLD  = 11 designs IN CODE (parking-lot..hotel-booking) + SimpleBankSystem patterns. NOT untouched. gap = recode + SOLID/pattern-articulate.
    CODE-REVIEW = round-practice start (buggy-PR → security/concurrency/clean-code find). STAR = #1 untouched gap.
 
    PRIORITY (data-flipped): HLD-DELIVERY → STAR → LLD-code → Code-Review → Java/Spring-sharp(project) → DSA-light.
    REALITY: strengths = JP-core. gaps = delivery + behavioral (trainable). DSA moderate for JP, not the blocker.
 
    NEXT-SESSION ORDER (Arpan-set, 5-Jul EOD): 1) JAVA/SPRING brush-up (String-pool/HashMap/CHM/concurrency crisp) → 2) BEHAVIORAL — STAR story (Konovo, S-T-A-R) [#1 gap] → 3) DSA — naya pattern (hashing/binary-search) + spaced-redo (two-ptr/SW +7din) → (+ code-review round start, HLD light-revise). Pending gaps: STAR · code-review · LLD-articulate.
-   ★ DONE (DSA): two-pointer (5, incl 3Sum COLD-REDO 5-Jul — gap CLEARED, SOLO no-hint) + SLIDING-WINDOW (4: fixed/variable/combo/char-replacement — char-replacement was earlier "nahi hua"/defer -> 5-Jul SOLO cracked). ★ SW core-insight: sab SW = ONE template (window++, condition, shrink, store; only condition+order change). spaced-redo (+7din) pending.
+   ★ DONE (DSA): two-pointer (5, incl 3Sum REDO 5-Jul — gap CLEARED, SOLO no-hint) + SLIDING-WINDOW (4: fixed/variable/combo/char-replacement — char-replacement was earlier "nahi hua"/defer -> 5-Jul SOLO cracked). ★ SW core-insight: sab SW = ONE template (window++, condition, shrink, store; only condition+order change). spaced-redo (+7din) pending.
    ★ PROJECT COMPLETE (5-Jul, mini_payment_ms): order+payment+api-gateway+notification (4 services) · Feign(SYNC inter-service) · SAGA compensating · API-Gateway routing (8080) · KAFKA async (payment producer -> "payment-done" topic -> notification consumer) · kafka-ui (localhost:8090, docker) · DB-per-service — sab BANAYA/DEBUG/SAMJHA/VISUALIZE khud, tested end-to-end. LEARNINGS.md = 13+ concepts + flow-diagram (HikariCP, Feign, SAGA, Kafka, gateway-namespace, gitignore, kafka-ui/broker...). "bol sakta -> bana sakta -> dekh/samajh bhi liya" for MS FULLY achieved. · BEHAVIORAL folder (10_BEHAVIORAL: JP-company + why-JP).
 ```
 
