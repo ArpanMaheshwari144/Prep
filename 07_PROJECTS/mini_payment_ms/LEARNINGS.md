@@ -217,6 +217,38 @@
      __consumer_offsets = Kafka ka INTERNAL topic (50 partitions default) jo har group ka offset track karta.
 ```
 
+## 7g. Idempotency — same request 2 baar, charge SIRF 1 baar  [phase-2, khud banaya+tested 6-Jul]
+```
+   WHAT: idempotent = SAME operation 1 baar karo ya 10 baar -> effect/result SAME rahe, extra side-effect NAHI.
+   WHY payment me: client double-click / network retry / timeout-retry -> same /pay 2 baar aa jaye
+                   -> 2 baar CHARGE. galat. idempotency ye rokta.
+   analogy: cloakroom TOKEN / cinema ticket-stub. token pehle se register -> "already ho chuka, dobara nahi"
+            -> purana result laut do. naya token -> process + register. (token = IDEMPOTENCY KEY.)
+
+   KAISE banaya (3 badlav, payment-service):
+     1. Payment entity : orderId ko @Column(unique=true) -> DB-level safety-net (same orderId 2 row nahi).
+     2. PaymentRepository : Optional<Payment> findByOrderId(String) -> Spring Data method-NAAM se query khud banata.
+     3. PaymentService.pay() : CHECK-then-ACT ->
+            findByOrderId PEHLE -> mila (present) -> WAHI return (no save, no Kafka).
+            nahi mila (else) -> ab new Payment + save + kafka.send + return.
+     (key = orderId; hamare case 1 order = 1 payment, isliye orderId hi idempotency-key ban gaya.)
+
+   ★ BUG jo khud pakda (ORDER matters):
+     pehle save-then-check kiya tha (ULTA) ->
+       1st call: save -> phir check -> apni hi entry mil gayi -> Kafka SKIP (notification nahi gaya). ✗
+       2nd call: save -> UNIQUE constraint VIOLATION -> CRASH. ✗
+     FIX: CHECK sabse PEHLE (create/save se bhi pehle). trace kar ke dono case galat dikhe -> theek kiya.
+
+   TEST (Postman, POST localhost:8082/pay, body {"orderId":12,"amount":500} DO baar):
+     1st -> paymentId=1 (1.76s: save+Kafka hua).
+     2nd -> paymentId=1 SAME (13ms: existing laut diya, save+Kafka SKIP) -> double-charge BACHA. ✓ PASS.
+     (kafka-ui: "payment-done" me sirf 1 message -> 2nd ne send nahi kiya.)
+
+   ★ 2 LAYER idempotency (mazedaar connect): startup ProducerConfig me enable.idempotence=true dikha ->
+     ye KAFKA ki APNI idempotency (producer retry pe duplicate MESSAGE na jaye, broker-level).
+     humne APP-level banayi (payment double na ho). SAME concept, 2 ALAG layer (app + broker).
+```
+
 ## 8. .gitignore — Windows case-insensitivity + anchor (silent config-loss gotcha)
 ```
    HUA KYA: "RESOURCES/" (private root folder ke liye) ne "src/main/resources/" ko bhi ignore kar diya
