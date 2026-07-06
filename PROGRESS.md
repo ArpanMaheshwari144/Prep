@@ -23,12 +23,6 @@
 
 ## 1. STRATEGY (11 real JP writeups + web — DATA-backed)
 ```
-   ★★ INSIDER CONFIRM (Raunak, JP SE-2, 6-Jul — DM): "LeetCode MEDIUM for DSA · MEDIUM system design ·
-      Alex Xu Vol-1 padhi hai to KAAFI hai." -> DIRECTLY validates below strategy:
-      DSA = medium-gate (no FAANG-hard) · HLD (11 found + 10 designs, Alex-Xu-based: rate-limiter/notification/
-      url-shortener/twitter = Vol-1 chapters) = ALREADY at/above bar -> SD tera DONE + SUFFICIENT. no exotic depth.
-```
-```
    BIG TRUTH: "DSA necessary but NOT sufficient." JP REJECT hota hai HLD-DELIVERY + BEHAVIORAL pe, DSA pe nahi.
    -> Arpan ki strengths (Java/Spring-fundamentals, HLD-concepts, code-review-via-650-tickets) = JP ka CORE weight.
    -> DSA-panic disproportionate. energy behaviorial + delivery pe.
@@ -107,8 +101,7 @@
 ---
 ```
    WADA (6-Jul, CLAUDE.md me full): Arpan→"DSA behtar hunga, raat-din"; Claude→"hamesha saath + delete-loop/recognition-copy se rokunga".
-   REFERRALS: Raunak (JP — referral submitted ~29-Jun via email/phone, portal; valid ~6 mahine → ~Dec-2026; expire pe renew-able). Anmol (Razorpay — no fit).
-   ★ APPLY TIMELINE (Arpan-set): JULY = prep only · AUGUST se apply shuru (same email jo Raunak ko di) · ~4-mahine runway, comfortable. apply≠instant-interview (recruiter-screen→rounds = weeks, prep parallel chalti).
    RESOURCES/ = PRIVATE (own .git) — NEVER expose / never add company-acct. DSA/files NEVER delete (git-history theek).
+   → Referral (Raunak) + insider tips + apply-timeline = PRIVATE, RESOURCES/JP_referral_tracker.md me (public PROGRESS me NAHI).
 ```
 > Karm karo, phal ki chinta mat. Strengths JP-core se match — gap = DELIVERY + reps, ability nahi. SABAR = moat.
