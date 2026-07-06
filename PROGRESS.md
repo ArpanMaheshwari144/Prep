@@ -79,12 +79,13 @@
 
 ---
 
-## 4. NEXT SESSION (KAL ka plan — Arpan-set 6-Jul)
+## 4. NEXT SESSION (KAL ka plan — Arpan-set 6-Jul, is order me)
 ```
-   1. PROJECT aage: mini_payment_ms me IDEMPOTENCY-KEY (/pay double-charge na ho) + CIRCUIT-BREAKER (Resilience4j,
-      payment-down→fail-fast) + use/practice → phir project DONE.
-   2. DSA: pehle Arpan KHUD revise → phir ek NAYA pattern (binary-search/greedy), blank-spaced.
-   3. JAVA + SPRING + HLD: same revise (pel ke) + bol-ke articulation (slow-build).
+   1. PROJECT se SHURU: mini_payment_ms me IDEMPOTENCY-KEY (/pay double-charge na ho) + CIRCUIT-BREAKER
+      (Resilience4j, payment-down→fail-fast) + use/practice → phir project DONE.
+   2. HLD REVISE: design self-quiz (why/kya/kaise) + reflex + why-how QA.
+   3. DSA: pehle Arpan KHUD revise → phir NAYA (kuch naya hoga wo dekh lenge — binary-search/greedy), blank-spaced.
+   4. JAVA + SPRING: jaise chal raha waise hi (revise + bol-ke, slow-build).
 ```
 
 ---
