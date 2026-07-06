@@ -101,7 +101,8 @@
 ---
 ```
    WADA (6-Jul, CLAUDE.md me full): Arpan→"DSA behtar hunga, raat-din"; Claude→"hamesha saath + delete-loop/recognition-copy se rokunga".
-   REFERRALS: Raunak (JP — sent ✓) · Anmol (Razorpay — no fit).
+   REFERRALS: Raunak (JP — referral submitted ~29-Jun via email/phone, portal; valid ~6 mahine → ~Dec-2026; expire pe renew-able). Anmol (Razorpay — no fit).
+   ★ APPLY TIMELINE (Arpan-set): JULY = prep only · AUGUST se apply shuru (same email jo Raunak ko di) · ~4-mahine runway, comfortable. apply≠instant-interview (recruiter-screen→rounds = weeks, prep parallel chalti).
    RESOURCES/ = PRIVATE (own .git) — NEVER expose / never add company-acct. DSA/files NEVER delete (git-history theek).
 ```
 > Karm karo, phal ki chinta mat. Strengths JP-core se match — gap = DELIVERY + reps, ability nahi. SABAR = moat.
