@@ -249,6 +249,43 @@
      humne APP-level banayi (payment double na ho). SAME concept, 2 ALAG layer (app + broker).
 ```
 
+## 7h. Circuit Breaker (Resilience4j) — dead service ko baar-baar call se bachao  [phase-2, khud banaya+tested 7-Jul]
+```
+   WHAT: ek "switch" jo ek service ke calls pe nazar rakhe. call baar-baar FAIL -> switch OPEN ->
+         us service ko call karna BAND -> turant FALLBACK (fail-fast). caller healthy rehta.
+   WHY:  payment DOWN -> order har baar usko call (Feign) -> har call TIMEOUT tak WAIT -> order ke threads
+         atak jaate -> order-service bhi slow/hang. ek ka failure DUSRE ko le dooba (CASCADE). CB ye rokta.
+   analogy: ghar ka FUSE. short-circuit -> fuse TRIP -> current band -> baaki ghar bacha. der baad reset-try.
+
+   3 STATE (interview isko poochta):
+     CLOSED    = normal, calls jaa rahe (fuse chalu).
+     OPEN      = fail-threshold cross -> calls BAND, seedha fallback (service ko chhuta bhi nahi).
+     HALF-OPEN = wait-duration baad -> 1-2 TEST call -> theek? -> CLOSED : phir OPEN.
+
+   KAISE banaya (Resilience4j, 4 tukde — mostly boilerplate; order-service me, kyunki wahi payment ko call karta):
+     1. dependency: spring-cloud-starter-circuitbreaker-resilience4j, VERSION 5.0.2 (explicit — is pom me koi
+        Spring Cloud BOM nahi, isliye Feign ki tarah har cloud-dep ko apni version deni padti; CB starter Feign se
+        alag sub-project -> apni 5.0.x version).
+     2. annotation: createOrder() pe @CircuitBreaker(name="paymentService", fallbackMethod="payFallback").
+        import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker.
+     3. fallback method: public Order payFallback(String item, double amount, Throwable t) -> FAILED order.
+        ★ RULE: signature = annotated-method ke SAME params + ek Throwable (last), return type SAME.
+     4. config (application.properties): sliding-window-size, minimum-number-of-calls, failure-rate-threshold(%),
+        wait-duration-in-open-state, permitted-number-of-calls-in-half-open-state. instance-naam = annotation ka "name".
+
+   ★ TRY-CATCH HATANA pada: CB failures tabhi COUNT karta jab exception method se BAHAR aaye. purana SAGA
+     try-catch use ANDAR hi kha jaata tha -> CB ko fail dikhta hi nahi. hataya -> fallback hi naya "catch" ban gaya.
+     (self-invocation gotcha nahi: createOrder controller se call hota -> proxy ke through -> CB lagta.)
+
+   TEST (payment-service BAND, POST localhost:8081/order baar-baar):
+     call 1-3: log "Connection refused ...8082/pay" -> CB CLOSED, payment TRY kiya, fail -> fallback FAILED.
+     call 4  : log "CircuitBreaker 'paymentService' is OPEN and does not permit further calls"
+               -> CB OPEN (3 fail + 50%+ threshold) -> payment ko TRY KIYE BINA short-circuit. ★ yahi CB ka kaam.
+     der baad: HALF-OPEN -> ek test call -> still down -> refused -> wapas OPEN.
+     -> teeno state live: CLOSED -> OPEN -> HALF-OPEN -> OPEN.
+     PROOF: "is OPEN...does not permit" wali line = CB ne dead payment ko chhua tak nahi (fail-fast).
+```
+
 ## 8. .gitignore — Windows case-insensitivity + anchor (silent config-loss gotcha)
 ```
    HUA KYA: "RESOURCES/" (private root folder ke liye) ne "src/main/resources/" ko bhi ignore kar diya
