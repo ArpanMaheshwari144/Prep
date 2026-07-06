@@ -81,8 +81,7 @@
 
 ## 4. NEXT SESSION (KAL ka plan — Arpan-set 6-Jul, is order me)
 ```
-   1. PROJECT se SHURU: mini_payment_ms me IDEMPOTENCY-KEY (/pay double-charge na ho) + CIRCUIT-BREAKER
-      (Resilience4j, payment-down→fail-fast) + use/practice → phir project DONE.
+   1. PROJECT: IDEMPOTENCY ✓ DONE (6-Jul — orderId unique-key + findByOrderId check-then-act; tested 2x-same-orderId no-double-charge; LEARNINGS 7g). BACHA = CIRCUIT-BREAKER (Resilience4j, payment-down→fail-fast) → phir project DONE.
    2. HLD REVISE: design self-quiz (why/kya/kaise) + reflex + why-how QA.
    3. DSA: pehle Arpan KHUD revise → phir NAYA (kuch naya hoga wo dekh lenge — binary-search/greedy), blank-spaced.
    4. JAVA + SPRING: jaise chal raha waise hi (revise + bol-ke, slow-build).
