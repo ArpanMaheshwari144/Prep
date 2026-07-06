@@ -113,6 +113,17 @@
       ek pattern → template samjho → 3-4 SAME-pattern reps → SPACED redo till automatic → agla.
       ★ STUB: file me sirf PROBLEM + TESTS. template/recurrence SPELL-OUT mat karo — Arpan khud generate kare.
       core patterns: two-pointer/sliding-window/hashing/binary-search/greedy/DP-1D + graph-BASICS (BFS/DFS). easy-medium.
+
+   ★★ DSA = SKILL, not KNOWLEDGE (Arpan-breakthrough 6-Jul — ye uski asli confusion thi "aaj tak"):
+      theory/HLD/analogy ka TEST = recognition/samjhana → ek watch KAAFI → tikta.
+      DSA ka TEST = blank-page se GENERATE karna → watching NEVER enough. guitar/gym jaisa: dekhne se muscle nahi,
+      KARNE se banta. isliye theory jaisa "tikta" nahi — tik-ne ka rasta hi alag (karna, dekhna nahi).
+      ★ PARADOX solved: 1000 problems EK-EK baar = 1000 RECOGNITION, gine-chune blank-GENERATION → isliye samajh
+        hai par solo nahi aata. FIX = zyada NAYE problem NAHI → KAM problem (~30) BLANK+SPACED redo. "samajh aa gaya"
+        = SHURUAAT, ant nahi; ant = "blank se bina peek bana liya."
+      ★ STRUGGLE-value: 10-15 min blank-lado (fail bhi) → dimaag "hook" banata → answer tikta. 1-ghanta panic-atakna = bekaar.
+        protocol: blank-try → atke-point pe MINIMAL peek → band → agle din phir blank (1/3/7 din).
+      ★ Claude: DSA down-day pe "kar nahi sakta" ko DATA se kaato — 1000-solved = dimaag adapt kar CHUKA; issue = method (generation-reps), capability NAHI. skill hai, pahad nahi.
 ```
 
 ---
@@ -152,9 +163,10 @@
 ## BEHAVIORAL STAR — Konovo evidence (write in S-T-A-R)
 
 ```
-   WAF/X-Forwarded-IP bug (2 layers, whole-system) · $20K Doximity payment fix · 600+ incidents (92% closure) ·
-   HikariCP pool exhaustion (95% email-fail) · Lambda concurrency (1800+ throttles) · vendor-portal + email-dedup API (built) · VP/CTO recognition.
+   ✓ DONE (2 stories, 6-Jul): 03_STAR_HikariCP (ownership + prod-debug + cross-team) · 04_STAR_WAF_IP (initiative + conviction/influence — khud pakda, team ko proof se convince).
+   TODO stories: $20K Doximity payment fix · 600+ incidents (92% closure) · Lambda concurrency (1800+ throttles) · vendor-portal/email-dedup API (built) · VP/CTO recognition.
    HONESTY: 10+country platform = maintained/extended (NOT "built"); greenfield only = "built".
+   ★ NEXT on STAR = BOLNE ki practice (loud, 2-3x) — story likhna ho gaya, delivery baaki. "MAINE/I" + numbers.
 ```
 
 ---
@@ -189,8 +201,8 @@
 
    PROJECT (07_PROJECTS/mini_payment_ms) = COMPLETE (5-Jul): api-gateway + order + payment + notification (4 services)
       · Feign(sync) · SAGA · Kafka(async, docker broker) · kafka-ui(:8090) · DB-per-service · LEARNINGS.md (13+ concepts + flow-diagram). tested end-to-end.
-   BEHAVIORAL 10_BEHAVIORAL/: 01_JP_COMPANY · 02_WHY_JP (started — #1 gap).
-   -> STILL-TODO (jo abhi NAHI): STAR stories (Konovo) · code-review round · Java/Spring brush-up · DSA new-patterns(hashing/BS) · subscription HLD (optional).
+   BEHAVIORAL 10_BEHAVIORAL/: 01_JP_COMPANY · 02_WHY_JP · 03_STAR_HikariCP ✓ · 04_STAR_WAF_IP ✓ (2 STAR stories DONE 6-Jul — #1 gap ab STARTED, 2 alag competency).
+   -> STILL-TODO (jo abhi NAHI): more STAR stories (payment/incidents/Lambda) + STAR BOLNE-practice · code-review round · DSA new-patterns(binary-search/greedy) · subscription HLD (optional).
 ```
 
 ---
@@ -213,7 +225,8 @@
    PRIORITY (data-flipped): HLD-DELIVERY → STAR → LLD-code → Code-Review → Java/Spring-sharp(project) → DSA-light.
    REALITY: strengths = JP-core. gaps = delivery + behavioral (trainable). DSA moderate for JP, not the blocker.
 
-   NEXT-SESSION ORDER (Arpan-set, 6-Jul): ★ KAL = REVISION DAY (naya NAHI) — 1) DSA REVISE (two-ptr/SW/hashing blank REDO, esp Subarray-Sum=K prefix-sum WHY) → 2) HLD REVISE (design self-quiz + reflex + why-how QA, naya nahi) → 3) JAVA/SPRING padho (revise). Aage (naye din): STAR story (#1 gap) · DSA new-pattern (binary-search/greedy) · code-review round · LLD-articulate.
+   ★ DONE-TODAY (6-Jul): (1) 2 STAR stories (03 HikariCP + 04 WAF/IP — #1 gap STARTED, alag competency). (2) DSA = SKILL breakthrough (Arpan ki "aaj tak" wali confusion cleared — recognition-vs-generation, guitar/gym analogy, 1000-done-once paradox, blank+spaced protocol; details DSA-practice section me).
+   NEXT-SESSION ORDER: ★ REVISION DAY still-pending (naya NAHI) — 1) DSA REVISE (two-ptr/SW/hashing BLANK REDO per naya skill-protocol, esp Subarray-Sum=K prefix-sum WHY) → 2) HLD REVISE (design self-quiz + reflex + why-how QA) → 3) JAVA/SPRING revise. Aur: STAR BOLNE-practice (loud) + more stories. Aage (naye din): DSA new-pattern (binary-search/greedy) · code-review round · LLD-articulate.
    ★ DONE (DSA): two-pointer (5, incl 3Sum REDO 5-Jul — gap CLEARED, SOLO no-hint) + SLIDING-WINDOW (4: fixed/variable/combo/char-replacement — char-replacement was earlier "nahi hua"/defer -> 5-Jul SOLO cracked). ★ SW core-insight: sab SW = ONE template (window++, condition, shrink, store; only condition+order change). spaced-redo (+7din) pending.
    ★ PROJECT COMPLETE (5-Jul, mini_payment_ms): order+payment+api-gateway+notification (4 services) · Feign(SYNC inter-service) · SAGA compensating · API-Gateway routing (8080) · KAFKA async (payment producer -> "payment-done" topic -> notification consumer) · kafka-ui (localhost:8090, docker) · DB-per-service — sab BANAYA/DEBUG/SAMJHA/VISUALIZE khud, tested end-to-end. LEARNINGS.md = 13+ concepts + flow-diagram (HikariCP, Feign, SAGA, Kafka, gateway-namespace, gitignore, kafka-ui/broker...). "bol sakta -> bana sakta -> dekh/samajh bhi liya" for MS FULLY achieved. · BEHAVIORAL folder (10_BEHAVIORAL: JP-company + why-JP).
 ```
