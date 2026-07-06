@@ -181,7 +181,7 @@
    SPRING 02_SPRING/: basics · transactional · jwt-security · profiles · hibernate · docker · k8s · REVISION_VISUAL
         PROJECT: usercrud (Spring Boot + JWT + k8s + tests ✓)   |   07_PROJECTS/todoapp (Spring Boot + k8s + tests ✓)
 
-   DSA  08_DSA/: 01_TWO_POINTER DONE (5/5 SOLO, incl 3Sum REDO cleared) · 02_SLIDING_WINDOW DONE (4/4 SOLO: fixed/variable/combo/char-replacement)
+   DSA  08_DSA/: 01_TWO_POINTER DONE (5/5 SOLO, incl 3Sum REDO cleared) · 02_SLIDING_WINDOW DONE (4/4 SOLO: fixed/variable/combo/char-replacement) · 03_HASHING DONE (5/5: index/count/key-map + prefix-sum + set)
         + SW core-insight (sab SW = 1 template). TEMPLATE.md me tracks. baaki pattern-folders ready/khaali. spaced-redo (+7din) pending.
 
    DB   09_DATABASE/: indexing-practical (B-tree). INFRA 05_INFRA_DEEP/: AWS/Docker/K8S.
