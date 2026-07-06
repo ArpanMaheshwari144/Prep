@@ -15,4 +15,6 @@
    - Valid Anagram (COUNT map: s ++ , t -- , sab EXACTLY 0 -> anagram; length-check first) | redo: [ ] +3din [ ] +7din
      GALTI: final check me ">1" likh diya -> chahiye tha "!= 0" (koi bhi non-zero count = not anagram).
    - Group Anagrams (map {sorted-word -> list}; word sort = canonical KEY -> same key = same group) | redo: [ ] +3din [ ] +7din
+   - Subarray Sum = K (PREFIX-SUM + map {sum->count}; (sum-k) seen? -> add count; map[0]=1 init) | redo: [ ] +3din [ ] +7din
+     NOTE: naya insight (prefix-sum) — seed se seekha, solo nahi hua. REDO pe khud nikalna (yehi tikega). tip: mp[sum-k] seedha (na ho to 0).
 ```
