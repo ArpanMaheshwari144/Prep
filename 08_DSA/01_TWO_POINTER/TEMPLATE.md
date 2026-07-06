@@ -36,7 +36,7 @@
 ```
    - Move Zeroes (slow-fast swap) — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
    - Valid Palindrome (opposite-ends L/R compare) — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
-   - Container Most Water (opposite-ends, move-shorter-wall) — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
+   - Container Most Water (opposite-ends, move-shorter-wall) — SOLO blank-produce ✓ | redo: [x] BLANK-REDO 6-Jul (SOLO, 5/5, no-hint) [ ] +7din
    - 3Sum (sort → fix-one → two-pointer → skip-dupes) — 3-Jul: structure SOLO + 1 hint (dup-skip/bounds).
      ★ 5-Jul REDO: SOLO 4/4, bina hint — GAP CLEARED ✓ (jaha atka tha, ab automatic). redo: [x] +1 [ ] +7din
      (yaad: triplet mile → skip-dupes (while low<high && nums[low]==nums[low+1]) → phir low++/high-- advance.)
