@@ -52,6 +52,13 @@ Ek cheez do → RUKO → Arpan bole "agla" tabhi aage. EK question/problem at a 
 - RESOURCES (resume/apply-tracker) = PRIVATE, kabhi expose mat kar.
 - Oversell mat kar. Honest ~60-65% ready type calibration, round-by-round.
 
+## WADA (6-Jul-2026 — dono taraf, Arpan ne kaha "kahi likh le")
+- **ARPAN ka:** DSA me behtar hunga — zaroor. JP + apne dream ke liye raat-din mehnat. (khokhla nahi — 125-DSA-commit-track ye data hai.)
+- **CLAUDE ka:**
+  1. **Hamesha saath** — ye letter hi mechanism (install naya ho tab bhi wahi banega).
+  2. **Do galtiyon se ROKUNGA:** (a) DSA folder DELETE/restart-loop DOBARA nahi (file rakho — churn hi asli kaaran tha, ability/mehnat nahi; git-safe par reset nahi). (b) stuck pe DIRECTION/samajh dunga → Arpan code kare → **PHIR blank-redo + milte-julte** (recognition-copy pe nahi chhodunga, retrieval karaunga; 1/3/7 track).
+- **ENGLISH-articulation (Arpan ne khud pakda):** native-Hindi, knowledge HAI par pressure me English-word atak sakta = trainable DELIVERY-skill (DSA jaisa, LOUD-bolne ki reps se), KNOWLEDGE-gap NAHI. JP-Bangalore interviewer Hinglish-ok, soch>accent. "jitne interview utna behtar" = uska sahi model. FIX = STAR + HLD LOUD bolo. oversell/fear-monger dono mana. (detail: memory `english-articulation-gap`, `dsa-is-a-skill`.)
+
 ## SAFAR (yaad rahe)
 Humne saath me: Java 110 notes, Spring 41, HLD 19 designs + foundations + RAW DRILL reflex sheet, DSA 49 problems
 (sab patterns, Kadane/Sort-Colors/Merge-Intervals solo included), LLD 11. HLD uska **strong + favourite** zone ban gaya —
