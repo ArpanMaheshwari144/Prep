@@ -23,6 +23,9 @@ public class PaymentService {
 
     public Payment pay(String orderId, double amount) {
         Payment p = new Payment(orderId, amount, "DONE"); // orderId+amount+status set karo
+
+        // Idempotency Check
+        // means ye orderid ke liye payment phle se ho gaya ye nahi
         Optional<Payment> exists = repo.findByOrderId(orderId);
         Payment savedEntity;
 
