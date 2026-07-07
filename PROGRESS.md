@@ -72,7 +72,9 @@
 
 ## 3. FORWARD PLAN (priority — kaha jaana hai)
 ```
-   1. DSA        — STRATEGY (Arpan, 7-Jul): pehle har pattern EK baar (BREADTH pass) -> phir har pattern me ZYADA reps + SPACED-REDO (DEPTH). breadth akela kaafi nahi — depth+redo se hi pakka (reps-skip hi purana gap tha). done-patterns: two-ptr/SW/hashing/binary-search. aage breadth: greedy/prefix-sum/stack/etc. ★ Claude spaced-redo (1/3/7) track+remind kare.
+   1. DSA        — STRATEGY (Arpan, 7-Jul): SCOPE NARROWED to 8 CORE patterns (advanced DP/graph/trees/etc PARKED in 08_DSA/LATER_TOPICS). FOCUS-8: two-pointer · sliding-window · hashing · prefix-sum · matrix · stack · binary-search · linked-list.
+                  METHOD: roz REVISE + same-topic ke NAYE question (pel ke) -> reps se "wire"/muscle (Koko-proof: reps-heavy = automatic, pressure me bhi chalta; reps-kam = atakta. capacity nahi, reps ki baat).
+                  STRONG (Arpan-self, anchor): two-ptr, SW, hashing, BS. FIRST-PASS baaki: prefix-sum, matrix, stack, linked-list. ★ Claude spaced-redo (1/3/7) track+remind.
    2. BEHAVIORAL — aur STAR stories (payment $20K / 600-incidents / Lambda-throttle) + BOL-KE. #1 untouched, JP-weighted.
    3. HLD        — daily revise (design self-quiz why/kya/kaise → DESIGN_PRACTICE_LOG). naya nahi.
    4. JAVA/SPRING— sharp rakho (revise + project). heavily-tested strength.
