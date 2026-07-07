@@ -40,6 +40,6 @@
    - 3Sum (sort → fix-one → two-pointer → skip-dupes) — 3-Jul: structure SOLO + 1 hint (dup-skip/bounds).
      ★ 5-Jul REDO: SOLO 4/4, bina hint — GAP CLEARED ✓ (jaha atka tha, ab automatic). redo: [x] +1 [ ] +7din
      (yaad: triplet mile → skip-dupes (while low<high && nums[low]==nums[low+1]) → phir low++/high-- advance.)
-   - Sort Colors (Dutch flag, 3-pointer low/mid/high) — SOLO produce, atka ==2 pe. ★ REDO priority: [ ] +3din [ ] +7din
+   - Sort Colors (Dutch flag, 3-pointer low/mid/high) — SOLO produce, atka ==2 pe. redo: [x] BLANK-REDO 8-Jul (5/5, copy-pen — ==2 pe mid-not-increment ab SAHI nikaala, slip-point cleared) [ ] +7din
      (yaad: ==2 → swap(mid,high) + high-- SIRF, mid++ NAHI (high se aaya element unchecked). 0 → swap(low,mid)+low+++mid++. 1 → mid++.)
 ```
