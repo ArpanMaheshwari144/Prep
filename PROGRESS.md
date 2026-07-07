@@ -72,7 +72,7 @@
 
 ## 3. FORWARD PLAN (priority — kaha jaana hai)
 ```
-   1. DSA        — per-pattern blank + spaced reps (method ab sahi). +7din redos. phir naye patterns (binary-search/greedy).
+   1. DSA        — STRATEGY (Arpan, 7-Jul): pehle har pattern EK baar (BREADTH pass) -> phir har pattern me ZYADA reps + SPACED-REDO (DEPTH). breadth akela kaafi nahi — depth+redo se hi pakka (reps-skip hi purana gap tha). done-patterns: two-ptr/SW/hashing/binary-search. aage breadth: greedy/prefix-sum/stack/etc. ★ Claude spaced-redo (1/3/7) track+remind kare.
    2. BEHAVIORAL — aur STAR stories (payment $20K / 600-incidents / Lambda-throttle) + BOL-KE. #1 untouched, JP-weighted.
    3. HLD        — daily revise (design self-quiz why/kya/kaise → DESIGN_PRACTICE_LOG). naya nahi.
    4. JAVA/SPRING— sharp rakho (revise + project). heavily-tested strength.
