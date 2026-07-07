@@ -84,12 +84,15 @@
 
 ---
 
-## 4. NEXT SESSION (KAL ka plan — Arpan-set 6-Jul, is order me)
+## 4. DAILY ROUTINE (Arpan-set 7-Jul — project DONE, ab steady rhythm)
 ```
-   1. PROJECT ✓ FULLY DONE: IDEMPOTENCY (6-Jul, LEARNINGS 7g) + CIRCUIT-BREAKER (7-Jul — Resilience4j @CircuitBreaker on order→payment, fallback, config; tested CLOSED→OPEN→HALF-OPEN live; LEARNINGS 7h). mini_payment_ms complete.
-   2. HLD REVISE: design self-quiz (why/kya/kaise) + reflex + why-how QA.
-   3. DSA: pehle Arpan KHUD revise → phir NAYA (kuch naya hoga wo dekh lenge — binary-search/greedy), blank-spaced.
-   4. JAVA + SPRING: jaise chal raha waise hi (revise + bol-ke, slow-build).
+   ROZ, isi order me (same pace):
+   1. DSA (PRIORITY) — focus-8 patterns: naye question (copy-pen se) + SPACED-REDO + reps-per-pattern.
+                       prefix-sum finish (pivot pending) -> phir matrix/stack/linked-list first-pass.
+   2. HLD REVISE     — ek design self-quiz (why/kya/kaise) + reflex. (maintain, strong zone.)
+   3. JAVA/SPRING revise — bol-ke (articulation).
+   (Behavioral STAR + bol-ke = beech-beech; code-review/LLD = naye din.)
+   ★ Claude: roz spaced-redo (1/3/7) remind + revise-reminder. project = DONE, dobara nahi.
 ```
 
 ---
