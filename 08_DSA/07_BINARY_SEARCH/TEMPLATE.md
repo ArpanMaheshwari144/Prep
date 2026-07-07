@@ -17,4 +17,6 @@
    - Search in Rotated Sorted Array (mid pe: ek half HAMESHA sorted -> pehchaan -> target us range me? narrow) — 5/5, PAR prior-exposure + THODA PEEK (Arpan-honest) -> recognition-heavy, NOT full-generation.
      ★ isliye BLANK-REDO pending (no-peek) +1-2 din -> tab lock. | redo: [ ] BLANK-no-peek [ ] +7din
      core: nums[low]<=nums[mid] (left sorted) -> target [low..mid] me? high=mid-1 : low=mid+1. warna (right sorted) -> target [mid..high] me? low=mid+1 : high=mid-1.
+   - Find Minimum in Rotated (nums[mid]>nums[high] -> min DAAYE -> low=mid+1; warna high=mid-1; return nums[low]) — SOLO ✓ 5/5, NO peek (rotated ka reinforce) | redo: [ ] +7din
+     ★ KEY: mid ko HIGH se compare. ★ VALUE chahiye -> return nums[low] (INDEX low nahi). rotated-soch ab baith rahi.
 ```
