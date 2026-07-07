@@ -90,6 +90,7 @@
    1. DSA (PRIORITY) — Arpan-method (7-Jul): (a) roz SPACED-REDO purane problems (+3/+4/+7 din, blank, copy-pen) — Claude track+remind.
                        (b) DEPTH: jab ek topic SMOOTH chale -> us SAME topic ka ek aur naya Q (Claude gauge kare). (c) jab SOLID -> NEW topic utha.
                        focus-8: two-ptr/SW/hashing/BS/prefix-sum DONE first-pass. BAAKI first-pass: matrix (light, index-nav: spiral/rotate/set-zeroes), stack, linked-list.
+                       ★ KAL (Arpan): MATRIX finish first (spiral/rotate/set-zeroes — no big trick, careful index-nav; copy-pen pe grid bana ke, index/off-by-one galti aasan) -> phir LINKED-LIST + STACK.
    2. HLD REVISE     — ek design self-quiz (why/kya/kaise) + reflex. (maintain, strong zone.)
    3. JAVA/SPRING revise — bol-ke (articulation).
    (Behavioral STAR + bol-ke = beech-beech; code-review/LLD = naye din.)
