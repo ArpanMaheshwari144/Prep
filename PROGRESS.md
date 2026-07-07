@@ -55,11 +55,13 @@
    COMPARES   ✓ 12 (sql-nosql, tcp-udp, sync-async, process-thread, concurrency-parallelism, rest-graphql, ws-sse...).
    DATABASE   ◐ indexing-practical (B-tree). INFRA ✓ AWS/Docker/K8S.
 
-   DSA        ◐ METHOD FIXED (6-Jul: skill + blank-spaced). CODED/blank-produce = 3 patterns:
-                  01 TWO-POINTER (5, incl 3Sum) · 02 SLIDING-WINDOW (4 + redo) · 03 HASHING (5 + redo).
-              intuition/template NOTES ready (not-yet-blank-coded): prefix-sum, binary-search, matrix, stack,
-                  linked-list, trees, backtracking, heap, dp, greedy, graph, intervals, kadane, arrays-basics.
-              gap = retention (ab address ho raha via spaced-redo). +7din redos pending: Subarray-Sum=K, Longest-Substr.
+   DSA        ◐ METHOD FIXED (6-Jul: blank + spaced reps). CODED/blank-produce = 4 patterns:
+                  01 TWO-POINTER (5, incl 3Sum) · 02 SLIDING-WINDOW (4 + redo) · 03 HASHING (5 + redo)
+                  · 07 BINARY-SEARCH (6, 7-Jul: basic/insert/first-last/rotated/find-min/koko — array-side + BS-on-answers).
+              intuition/template NOTES ready (not-yet-blank-coded): prefix-sum, matrix, stack, linked-list,
+                  trees, backtracking, heap, dp, greedy, graph, intervals, kadane, arrays-basics.
+              gap = reps-per-pattern (Arpan-diagnosed: samajh nahi, SAME-pattern 10-10 skip kiye the -> fix = zyada reps/pattern).
+              +7din/blank-redo pending: Subarray-Sum=K, Longest-Substr, ★ Rotated-Search (peeked), Koko/find-min.
 
    BEHAVIORAL ◐ #1 GAP, STARTED : 01_JP_COMPANY · 02_WHY_JP · 03_STAR_HikariCP (ownership+debug) · 04_STAR_WAF_IP
               (initiative+conviction). aur stories + BOL-KE practice chahiye.
