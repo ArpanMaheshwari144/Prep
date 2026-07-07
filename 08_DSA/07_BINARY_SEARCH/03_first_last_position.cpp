@@ -23,6 +23,11 @@ using namespace std;
 vector<int> searchRange(vector<int> &nums, int target)
 {
     int low = 0, high = nums.size() - 1;
+    // ★ VECTOR rule:
+    //   size PATA hai (fixed)   -> vector<int> ans(2,-1);  phir ans[0]=.., ans[1]=..  (slots pehle se bane, SET karo).
+    //   size NAHI pata (badhta) -> vector<int> ans;        phir ans.push_back(..)      (naya slot END me jodta).
+    //   ★ dono MIX mat karo -> pichhli galti: ans(2,-1) + push_back = [-1,-1,mid...] (extra append, ans[0]/[1] -1 reh gaye).
+    //   yahan size FIXED (2: first+last) -> isliye ans(2,-1) + index-set.
     vector<int> ans(2, -1);
     while (low <= high)
     {

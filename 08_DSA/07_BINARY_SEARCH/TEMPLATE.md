@@ -14,4 +14,7 @@
      ★ KEY: target na mile -> loop khatam pe `low` = insertion-point (jahan daalna chahiye). yahi twist.
    - First & Last Position (duplicates; 2 BS: leftmost=match pe high=mid-1, rightmost=match pe low=mid+1) — SOLO ✓ 5/5 | redo: [ ] +3din [ ] +7din
      ★ KEY: match pe RUKO mat -> us taraf aur dhundo. ★ GALTI-fix: dono BS ke beech low/high RESET karna (0..n-1) — warna doosra loop chalta hi nahi.
+   - Search in Rotated Sorted Array (mid pe: ek half HAMESHA sorted -> pehchaan -> target us range me? narrow) — 5/5, PAR prior-exposure + THODA PEEK (Arpan-honest) -> recognition-heavy, NOT full-generation.
+     ★ isliye BLANK-REDO pending (no-peek) +1-2 din -> tab lock. | redo: [ ] BLANK-no-peek [ ] +7din
+     core: nums[low]<=nums[mid] (left sorted) -> target [low..mid] me? high=mid-1 : low=mid+1. warna (right sorted) -> target [mid..high] me? low=mid+1 : high=mid-1.
 ```
