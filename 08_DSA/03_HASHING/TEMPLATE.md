@@ -19,5 +19,5 @@
      NOTE: prefix-sum idea seed se. GALTI (pichli baar): "k-sum" likha -> dry-run ne "wrong" dikhaya par KYUN samajh nahi aaya -> seed dekh ke "sum-k" fix kiya.
      ★ 6-Jul BLANK-REDO: nemesis CLEARED — khud se prefix[j]-prefix[i-1]=k -> rearrange -> sum-k nikaala, blank code 4/4 solo. recognition->generation proof.
      ★ WHY sum-k (redo pe yaad): prefix[i]-prefix[j]=k -> prefix[j]=sum-k -> map me "sum-k" (purana prefix jo k-kam ho) dhundo. k-sum ULTA. tip: mp[sum-k] seedha (na ho to 0).
-   - Longest Consecutive Sequence (SET; (num-1) na ho -> START -> aage count -> max; O(n)) — SOLO ✓ | redo: [ ] +3din [ ] +7din
+   - Longest Consecutive Sequence (SET; (num-1) na ho -> START -> aage count -> max; O(n)) — SOLO ✓ | redo: [x] BLANK-REDO 7-Jul (5/5, copy-pen — galtiyan khud pakdi+fix) [ ] +7din
 ```
