@@ -63,8 +63,9 @@
               gap = reps-per-pattern (Arpan-diagnosed: samajh nahi, SAME-pattern 10-10 skip kiye the -> fix = zyada reps/pattern).
               +7din/blank-redo pending: Subarray-Sum=K, Longest-Substr, ★ Rotated-Search (peeked), Koko/find-min.
 
-   BEHAVIORAL ◐ #1 GAP, STARTED : 01_JP_COMPANY · 02_WHY_JP · 03_STAR_HikariCP (ownership+debug) · 04_STAR_WAF_IP
-              (initiative+conviction). aur stories + BOL-KE practice chahiye.
+   BEHAVIORAL ◐ #1 GAP, 3 STAR stories done : 01_JP_COMPANY · 02_WHY_JP · 03_STAR_HikariCP (ownership+debug) ·
+              04_STAR_WAF_IP (initiative+conviction) · 05_STAR_Doximity (IMPACT $20K + initiative + business-sense).
+              teeno alag competency. NEXT: BOL-KE practice (delivery) + maybe a FAILURE story (common ask, still missing).
    CODE-REVIEW ✗ round-practice abhi start karna (buggy-PR → security/concurrency/clean-code find).
 ```
 
