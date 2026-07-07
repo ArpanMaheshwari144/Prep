@@ -19,4 +19,8 @@
      core: nums[low]<=nums[mid] (left sorted) -> target [low..mid] me? high=mid-1 : low=mid+1. warna (right sorted) -> target [mid..high] me? low=mid+1 : high=mid-1.
    - Find Minimum in Rotated (nums[mid]>nums[high] -> min DAAYE -> low=mid+1; warna high=mid-1; return nums[low]) — SOLO ✓ 5/5, NO peek (rotated ka reinforce) | redo: [ ] +7din
      ★ KEY: mid ko HIGH se compare. ★ VALUE chahiye -> return nums[low] (INDEX low nahi). rotated-soch ab baith rahi.
+
+   ── BS on ANSWERS (index pe nahi, answer-RANGE pe BS) ──
+   - Koko Eating Bananas (min speed; range 1..max-pile; feasible(k)=sum(ceil(pile/k))<=h? -> ans=mid,high=mid-1 : low=mid+1) — 4/4 clean (alag solve()); MUSCLE-MEMORY (Arpan bahut baar kar chuka, fresh-first nahi) | redo: [ ] +7din
+     ★ PATTERN: alag feasible/check-function banao -> answer-range pe BS -> chalta hai? chhoti try : badi. (Ship/Book-allocation bhi same.)
 ```
