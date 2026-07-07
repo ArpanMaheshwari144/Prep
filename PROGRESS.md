@@ -87,8 +87,9 @@
 ## 4. DAILY ROUTINE (Arpan-set 7-Jul — project DONE, ab steady rhythm)
 ```
    ROZ, isi order me (same pace):
-   1. DSA (PRIORITY) — focus-8 patterns: naye question (copy-pen se) + SPACED-REDO + reps-per-pattern.
-                       prefix-sum finish (pivot pending) -> phir matrix/stack/linked-list first-pass.
+   1. DSA (PRIORITY) — Arpan-method (7-Jul): (a) roz SPACED-REDO purane problems (+3/+4/+7 din, blank, copy-pen) — Claude track+remind.
+                       (b) DEPTH: jab ek topic SMOOTH chale -> us SAME topic ka ek aur naya Q (Claude gauge kare). (c) jab SOLID -> NEW topic utha.
+                       focus-8: two-ptr/SW/hashing/BS/prefix-sum DONE first-pass. BAAKI first-pass: matrix (light, index-nav: spiral/rotate/set-zeroes), stack, linked-list.
    2. HLD REVISE     — ek design self-quiz (why/kya/kaise) + reflex. (maintain, strong zone.)
    3. JAVA/SPRING revise — bol-ke (articulation).
    (Behavioral STAR + bol-ke = beech-beech; code-review/LLD = naye din.)
