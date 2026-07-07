@@ -18,7 +18,7 @@
    - Max Sum Subarray of size K (FIXED window: right add / shrink pe left minus -> O(n), recompute nahi)
      — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
    - Minimum Size Subarray Sum (VARIABLE window: grow right, WHILE sum>=target shrink + record min-len; INT_MAX->0 if none)
-     — SOLO blank-produce ✓ | redo: [ ] +3din [ ] +7din
+     — SOLO blank-produce ✓ | redo: [x] BLANK-REDO 8-Jul (5/5, copy-pen, clean) [ ] +7din
 
    - Longest Substring Without Repeating (VARIABLE window + unordered_map<char,int> count; dup pe while-shrink; count 0 -> erase)
      — SOLO produce, 1 hint on erase-syntax (KEY se erase). | redo: [x] BLANK-REDO 6-Jul (SOLO, 6/6, template exact, no-hint) [ ] +7din
