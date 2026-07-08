@@ -104,17 +104,20 @@
    ★★ SUNDAY 12-JUL-2026 REMINDER (Arpan, 8-Jul): PATTERN-SHEET banana -> har solved DSA problem ko ek short PATTERN-summary me convert (code NAHI), sab ek FILE me. revision us pattern-file se hoga (code nahi kholenge). "same/similar Q aaye -> pattern dekho, code nahi." Claude: is Sunday ye raise karna + Arpan ke saath sheet banana/improve karna. (Claude ko Sunday ye YAAD dilana hai.)
 ```
 
-## 4. DAILY ROUTINE (Arpan-set 7-Jul — project DONE, ab steady rhythm)
+## 4. DAILY ROUTINE (Arpan-set 8-Jul — ★ ORDER FLIPPED: DSA ab SUBAH NAHI, SHAAM ko / LAST)
 ```
+   ★ WHY order flipped (Arpan, 8-Jul): subah DSA -> ho gaya = confidence; NA hua = mood kharab -> POORA DIN kharab.
+     -> FIX: subah STRENGTHS pehle (Java/Spring/HLD = glance-recall, win banked, confidence). DSA sabse LAST (shaam).
+     -> DSA flop bhi ho to din already productive -> mood safe. (fits "DSA = gate, identity nahi".)
+
    ROZ, isi order me (same pace):
-   1. DSA (PRIORITY) — Arpan-method (7-Jul): (a) roz SPACED-REDO purane problems (+3/+4/+7 din, blank, copy-pen) — Claude track+remind.
-                       (b) DEPTH: jab ek topic SMOOTH chale -> us SAME topic ka ek aur naya Q (Claude gauge kare). (c) jab SOLID -> NEW topic utha.
-                       focus-8: two-ptr/SW/hashing/BS/prefix-sum DONE first-pass. BAAKI first-pass: matrix (light, index-nav: spiral/rotate/set-zeroes), stack, linked-list.
-                       ★ KAL (Arpan): MATRIX finish first (spiral/rotate/set-zeroes — no big trick, careful index-nav; copy-pen pe grid bana ke, index/off-by-one galti aasan) -> phir LINKED-LIST + STACK.
+   1. JAVA/SPRING revise — subah SABSE PEHLE (bol-ke, articulation). strength -> din confident shuru.
    2. HLD REVISE     — ek design self-quiz (why/kya/kaise) + reflex. (maintain, strong zone.)
-   3. JAVA/SPRING revise — bol-ke (articulation).
+   3. DSA (SHAAM/LAST) — Arpan-method: (a) roz SPACED-REDO purane problems (+1/3/7 din, blank, copy-pen) — Claude track+remind.
+                       (b) DEPTH: jab topic SMOOTH -> same topic ka ek aur naya Q. (c) jab SOLID -> NEW topic.
+                       focus-8: two-ptr/SW/hashing/BS/prefix-sum/MATRIX/STACK DONE first-pass. BAAKI: sirf LINKED-LIST (aakhri).
    (Behavioral STAR + bol-ke = beech-beech; code-review/LLD = naye din.)
-   ★ Claude: roz spaced-redo (1/3/7) remind + revise-reminder. project = DONE, dobara nahi.
+   ★ Claude: roz spaced-redo (1/3/7) remind + revise-reminder. DSA ko shaam ke liye rakho, subah strengths. project = DONE, dobara nahi.
 ```
 
 ---
