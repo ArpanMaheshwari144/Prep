@@ -55,13 +55,14 @@
    COMPARES   ✓ 12 (sql-nosql, tcp-udp, sync-async, process-thread, concurrency-parallelism, rest-graphql, ws-sse...).
    DATABASE   ◐ indexing-practical (B-tree). INFRA ✓ AWS/Docker/K8S.
 
-   DSA        ◐ METHOD FIXED (6-Jul: blank + spaced reps). CODED/blank-produce = 4 patterns:
-                  01 TWO-POINTER (5, incl 3Sum) · 02 SLIDING-WINDOW (4 + redo) · 03 HASHING (5 + redo)
-                  · 07 BINARY-SEARCH (6, 7-Jul: basic/insert/first-last/rotated/find-min/koko — array-side + BS-on-answers).
-              intuition/template NOTES ready (not-yet-blank-coded): prefix-sum, matrix, stack, linked-list,
-                  trees, backtracking, heap, dp, greedy, graph, intervals, kadane, arrays-basics.
-              gap = reps-per-pattern (Arpan-diagnosed: samajh nahi, SAME-pattern 10-10 skip kiye the -> fix = zyada reps/pattern).
-              +7din/blank-redo pending: Subarray-Sum=K, Longest-Substr, ★ Rotated-Search (peeked), Koko/find-min.
+   DSA        ◐ METHOD = blank-produce + COPY-PEN (paper trace pehle) + spaced-redo. CODED = 5 patterns:
+                  01 TWO-POINTER (5+2redo) · 02 SLIDING-WINDOW (4+2redo) · 03 HASHING (5+2redo)
+                  · 07 BINARY-SEARCH (6: basic/insert/first-last/rotated/find-min/koko) · 04 PREFIX-SUM (pivot/altitude/product).
+                  05 MATRIX = STARTED (set-zeros in-progress; spiral tough — deferred). baaki first-pass: stack, linked-list.
+              advanced PARKED (08_DSA/LATER_TOPICS): trees/backtracking/heap/dp/greedy/graph/intervals/kadane.
+              ROOT-CAUSE (Arpan-owned 8-Jul): 1000-problems = video-based RECOGNITION, not independent generation.
+                  FIX = khud-blank-solve (no video) + spaced-redo + PEEK->SIMILAR-PROBLEM-TEST (verify pattern set, not ratta).
+              ★ DSA = GATE (medium, pass-karna), not mastery. strengths (HLD/Java) = where JP decides. spaced-redo pending: Rotated(peeked)/Koko/Subarray-K/Longest-Substr.
 
    BEHAVIORAL ◐ #1 GAP, 3 STAR stories done : 01_JP_COMPANY · 02_WHY_JP · 03_STAR_HikariCP (ownership+debug) ·
               04_STAR_WAF_IP (initiative+conviction) · 05_STAR_Doximity (IMPACT $20K + initiative + business-sense).
@@ -83,6 +84,16 @@
 ```
 
 ---
+
+## RECENT DONE (7-8 Jul, factual)
+```
+   - PROJECT mini_payment_ms FULLY DONE: idempotency + circuit-breaker (Resilience4j, tested CLOSED->OPEN->HALF-OPEN).
+   - DSA: binary-search (6) + prefix-sum (3) coded; 4 spaced-redos (copy-pen); matrix STARTED (spiral tough, deferred).
+   - HLD: rate-limiter full deep-dive (discussion mode: why/algo/distributed/fail-open/placement) — notes already comprehensive, added reject-early reasoning. HLD = STRONG (glance-recall).
+   - JAVA/SPRING revise (code-read mode, 10+ topics): String/StringBuilder · SOLID · IoC-DI · @Transactional · Streams/Lambda · Comparable-Comparator · Exceptions · Singleton/Factory · JPA. (all glance-recall = mastery.)
+   - BEHAVIORAL: 3 STAR stories (HikariCP/WAF/Doximity).
+   NEXT: matrix first-pass (fresh, copy-pen) + stack/LL · spaced-redos · behavioral bol-ke · Java/HLD daily-revise.
+```
 
 ## 4. DAILY ROUTINE (Arpan-set 7-Jul — project DONE, ab steady rhythm)
 ```
