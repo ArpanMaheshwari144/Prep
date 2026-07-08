@@ -57,10 +57,12 @@
    COMPARES   ✓ 12 (sql-nosql, tcp-udp, sync-async, process-thread, concurrency-parallelism, rest-graphql, ws-sse...).
    DATABASE   ◐ indexing-practical (B-tree). INFRA ✓ AWS/Docker/K8S.
 
-   DSA        ◐ METHOD = blank-produce + COPY-PEN (paper trace pehle) + spaced-redo. CODED = 5 patterns:
+   DSA        ◐ METHOD = blank-produce + COPY-PEN (paper trace pehle) + spaced-redo. CODED = 7 patterns:
                   01 TWO-POINTER (5+2redo) · 02 SLIDING-WINDOW (4+2redo) · 03 HASHING (5+2redo)
                   · 07 BINARY-SEARCH (6: basic/insert/first-last/rotated/find-min/koko) · 04 PREFIX-SUM (pivot/altitude/product).
-                  · 05 MATRIX (8-Jul: spiral + set-zeros + transpose — ALL SOLO via copy-pen; spiral crashed then conquered same-day). baaki first-pass: stack, linked-list.
+                  · 05 MATRIX (8-Jul: spiral + set-zeros + transpose — ALL SOLO via copy-pen; spiral crashed then conquered same-day).
+                  · 06 STACK ✓ (8-Jul, first-pass DONE: valid-parentheses + min-stack[pair-trick, SOLO] + next-greater[MONOTONIC, hint+SOLO, bugs caught on paper]). Daily-Temperatures optional (same monotonic).
+                  ★ focus-8 me sirf 08 LINKED-LIST bacha (folder khaali, abhi shuru nahi) -> wo ho gaya = poora focus-8 first-pass complete.
               advanced PARKED (08_DSA/LATER_TOPICS): trees/backtracking/heap/dp/greedy/graph/intervals/kadane.
               ROOT-CAUSE (Arpan-owned 8-Jul): 1000-problems = video-based RECOGNITION, not independent generation.
                   FIX = khud-blank-solve (no video) + spaced-redo + PEEK->SIMILAR-PROBLEM-TEST (verify pattern set, not ratta).
