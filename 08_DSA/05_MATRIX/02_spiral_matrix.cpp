@@ -25,7 +25,7 @@ vector<int> spiralOrder(vector<vector<int>> &matrix)
     int col = matrix[0].size();
     int top = 0, bottom = row - 1, left = 0, right = col - 1;
 
-    // boundary chcek
+    // boundary check
     while (top <= bottom && left <= right)
     {
         for (int i = left; i <= right; i++)
