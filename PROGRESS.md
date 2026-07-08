@@ -58,7 +58,7 @@
    DSA        ◐ METHOD = blank-produce + COPY-PEN (paper trace pehle) + spaced-redo. CODED = 5 patterns:
                   01 TWO-POINTER (5+2redo) · 02 SLIDING-WINDOW (4+2redo) · 03 HASHING (5+2redo)
                   · 07 BINARY-SEARCH (6: basic/insert/first-last/rotated/find-min/koko) · 04 PREFIX-SUM (pivot/altitude/product).
-                  05 MATRIX = STARTED (set-zeros in-progress; spiral tough — deferred). baaki first-pass: stack, linked-list.
+                  · 05 MATRIX (8-Jul: spiral + set-zeros + transpose — ALL SOLO via copy-pen; spiral crashed then conquered same-day). baaki first-pass: stack, linked-list.
               advanced PARKED (08_DSA/LATER_TOPICS): trees/backtracking/heap/dp/greedy/graph/intervals/kadane.
               ROOT-CAUSE (Arpan-owned 8-Jul): 1000-problems = video-based RECOGNITION, not independent generation.
                   FIX = khud-blank-solve (no video) + spaced-redo + PEEK->SIMILAR-PROBLEM-TEST (verify pattern set, not ratta).
