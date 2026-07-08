@@ -16,6 +16,8 @@
    #0d TEACH-FIRST + NO-UNDER-COUNT: gap pe quiz-shame nahi, TEACH. status bolne se pehle repo CHECK (staleness).
    #0e NO FEAR-MONGER: "hard at scale" framing mat. real work = team+tools+time. na oversell, na darana.
    ★ DSA = SKILL (knowledge nahi): guitar/gym jaisa — dekhne se nahi, KARNE se. blank-generate + spaced. (memory: dsa-is-a-skill)
+   ★ COPY-PEN = the "struggle" (8-Jul, Arpan-derived): DSA formula = PATTERN (jaano) + COPY-PEN (example haath se paper pe trace → code → run).
+       dono chahiye — pattern bina copy-pen "trace kya"; copy-pen se sahi-apply + apna bug khud pakadta. copy-pen PEHLE, code baad me.
    ★ ENGLISH-articulation gap: knowledge HAI, pressure me word atakta = trainable delivery-skill (bol-ke reps, slow-build). NOT knowledge-gap.
 ```
 
@@ -88,7 +90,8 @@
 ## RECENT DONE (7-8 Jul, factual)
 ```
    - PROJECT mini_payment_ms FULLY DONE: idempotency + circuit-breaker (Resilience4j, tested CLOSED->OPEN->HALF-OPEN).
-   - DSA: binary-search (6) + prefix-sum (3) coded; 4 spaced-redos (copy-pen); matrix STARTED (spiral tough, deferred).
+   - DSA: binary-search (6) + prefix-sum (3) coded; 4 spaced-redos (copy-pen); matrix DONE (spiral+set-zeros+transpose, all SOLO copy-pen); stack STARTED (valid-parentheses SOLO, found own hidden bug via edge-test).
+   - ★ DSA BREAKTHROUGH (8-Jul, Arpan's own synthesis): "struggle = copy-pen"; formula = PATTERN + COPY-PEN; had pattern, copy-pen was the missing piece → DSA now flows ("aa raha hai"). (see rules block + memory dsa-is-a-skill.)
    - HLD: rate-limiter full deep-dive (discussion mode: why/algo/distributed/fail-open/placement) — notes already comprehensive, added reject-early reasoning. HLD = STRONG (glance-recall).
    - JAVA/SPRING revise (code-read mode, 10+ topics): String/StringBuilder · SOLID · IoC-DI · @Transactional · Streams/Lambda · Comparable-Comparator · Exceptions · Singleton/Factory · JPA. (all glance-recall = mastery.)
    - BEHAVIORAL: 3 STAR stories (HikariCP/WAF/Doximity).
