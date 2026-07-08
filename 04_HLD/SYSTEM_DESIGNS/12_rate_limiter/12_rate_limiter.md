@@ -87,6 +87,14 @@ SAME for APIs:
 ```
 
 ```
+   ★ WHY front/gateway (reject-EARLY reasoning — 8-Jul discussion):
+   - rate limiter itna AAGE (edge/gateway) isliye -> over-limit request ko BACKEND tak jaane hi mat do.
+   - reject EARLY -> backend ka compute/resources BACHTE. jise reject hi karna hai, uspe kaam kyun?
+   - agar deep (har service ke andar) limit karo -> request pehle hi poore system me ghoom ke resource kha chuki.
+   - (optional layering: coarse GLOBAL limit gateway pe + finer PER-SERVICE limit -> but primary = gateway.)
+```
+
+```
 WHY REDIS (centralized counter):
 
    Server 1: count = 3
