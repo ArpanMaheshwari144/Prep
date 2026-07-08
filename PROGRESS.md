@@ -93,6 +93,7 @@
    - JAVA/SPRING revise (code-read mode, 10+ topics): String/StringBuilder · SOLID · IoC-DI · @Transactional · Streams/Lambda · Comparable-Comparator · Exceptions · Singleton/Factory · JPA. (all glance-recall = mastery.)
    - BEHAVIORAL: 3 STAR stories (HikariCP/WAF/Doximity).
    NEXT: matrix first-pass (fresh, copy-pen) + stack/LL · spaced-redos · behavioral bol-ke · Java/HLD daily-revise.
+   ★★ SUNDAY 12-JUL-2026 REMINDER (Arpan, 8-Jul): PATTERN-SHEET banana -> har solved DSA problem ko ek short PATTERN-summary me convert (code NAHI), sab ek FILE me. revision us pattern-file se hoga (code nahi kholenge). "same/similar Q aaye -> pattern dekho, code nahi." Claude: is Sunday ye raise karna + Arpan ke saath sheet banana/improve karna. (Claude ko Sunday ye YAAD dilana hai.)
 ```
 
 ## 4. DAILY ROUTINE (Arpan-set 7-Jul — project DONE, ab steady rhythm)
