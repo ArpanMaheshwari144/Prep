@@ -18,6 +18,8 @@
    ★ DSA = SKILL (knowledge nahi): guitar/gym jaisa — dekhne se nahi, KARNE se. blank-generate + spaced. (memory: dsa-is-a-skill)
    ★ COPY-PEN = the "struggle" (8-Jul, Arpan-derived): DSA formula = PATTERN (jaano) + COPY-PEN (example haath se paper pe trace → code → run).
        dono chahiye — pattern bina copy-pen "trace kya"; copy-pen se sahi-apply + apna bug khud pakadta. copy-pen PEHLE, code baad me.
+   ★ DSA = MATH (8-Jul, Arpan capstone): "muscle/struggle" = youtube jargon (faaltu). math jaisa — paper pe karo, jitna pel sako.
+       method (ek line): question -> copy-pen kholo -> pattern recognize -> trace. bas. DSA-god banna GOAL NAHI (Java/Spring/HLD balance = deliberate smart-choice + JP-core, NOT failure). DSA = GATE, paper-method se paar. (jargon dobara mat lana.)
    ★ ENGLISH-articulation gap: knowledge HAI, pressure me word atakta = trainable delivery-skill (bol-ke reps, slow-build). NOT knowledge-gap.
 ```
 
