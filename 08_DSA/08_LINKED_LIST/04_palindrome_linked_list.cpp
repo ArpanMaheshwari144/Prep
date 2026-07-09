@@ -68,6 +68,21 @@ bool isPalindrome(Node *head)
         return true;
     }
 
+    // ---- KAISE KAAM KARTA (trace: {1,2,3,2,1}) ----
+    // 1) middleNode(head)  -> "3" (beech wala node) return karta.
+    // 2) reverseList("3")  -> use mid se aage wala tukda milta: [3 -> 2 -> 1]
+    //                         reverse hoke banta: 1 -> 2 -> 3   (rev isko point karta).
+    //
+    // 3) KEY POINT: pehle half ke "2" ka ->next KABHI nahi badla -> abhi bhi "3" ko point karta.
+    //    isliye head se chalo to: 1 -> 2 -> 3 -> NULL  (3 tak pahunch jaate ho).
+    //
+    //    Structure (do half, beech ke EK "3" pe aa milte):
+    //          1 -> 2 -> 3 <- 2 <- 1
+    //        head se:  1 -> 2 -> 3 -> NULL
+    //        rev  se:  1 -> 2 -> 3 -> NULL
+    //    -> "3" EK hi node hai (odd length me middle SHARED). do alag 3 nahi bante.
+    //
+    // 4) ab head aur rev ko saath chala ke compare -> sab match -> palindrome (true).
     Node *midNode = middleNode(head);
     Node *rev = reverseList(midNode);
 
