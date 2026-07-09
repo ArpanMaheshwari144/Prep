@@ -20,6 +20,7 @@
        dono chahiye — pattern bina copy-pen "trace kya"; copy-pen se sahi-apply + apna bug khud pakadta. copy-pen PEHLE, code baad me.
    ★ DSA = MATH (8-Jul, Arpan capstone): "muscle/struggle" = youtube jargon (faaltu). math jaisa — paper pe karo, jitna pel sako.
        method (ek line): question -> copy-pen kholo -> pattern recognize -> trace. bas. DSA-god banna GOAL NAHI (Java/Spring/HLD balance = deliberate smart-choice + JP-core, NOT failure). DSA = GATE, paper-method se paar. (jargon dobara mat lana.)
+   ★ NO-DRAMA DSA (9-Jul, Arpan resolution): process = question -> pattern pehchano -> trace -> code. na hua = thoda dimmag, phir stuck = HELP lo, AAGE BADHO. no emotional drama, no time-waste, pelte jaao. Java/HLD pe dhyaan ZYADA (strengths, JP-core). ★ realization: DRAMA hi asli dushman tha (4-mahine crashes), DSA nahi.
    ★ ENGLISH-articulation gap: knowledge HAI, pressure me word atakta = trainable delivery-skill (bol-ke reps, slow-build). NOT knowledge-gap.
 ```
 
