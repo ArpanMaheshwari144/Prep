@@ -22,14 +22,23 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// ---- ★ LEARNING (khud pakda copy-pen se, 10-Jul) ----
+// GALTI: pehle likha  hours += ceil(piles[i] / mid);  -> ANSWER GALAT.
+// KYUN:  piles[i]/mid = INT / INT -> C++ pehle hi FLOOR kar deta (7/3 = 2)
+//        -> uske baad ceil() lagane se kuch nahi hota (ceil(2)=2). ceil BEKAAR.
+// PAPER pe main 7/3 = 2.33 -> 3 (ceil) kar raha tha; code 2 de raha tha -> MISMATCH dikha -> bug pakda.
+// FIX (2 tarike):
+//   1. (piles[i] + mid - 1) / mid     -> PURE INTEGER ceil. no float. INTERVIEW me ye PREFER (safe).
+//   2. ceil((double)piles[i] / mid)   -> pehle DOUBLE me cast -> tab ceil kaam karta. (bade num pe float-risk)
+// SABAK: int/int pe ceil chahiye -> ya integer-formula, ya double-cast. seedha ceil(int/int) = trap.
 bool solve(vector<int> &piles, int h, int mid)
 {
-    int hours = 0;
+    long long hours = 0; // sum overflow se bachao (bade piles) -> long
     for (int i = 0; i < piles.size(); i++)
     {
-        // hours += ((piles[i] + mid - 1) / mid); // ceil nikalne ka formula
+        // hours += ((piles[i] + mid - 1) / mid); // ceil (integer formula — preferred)
 
-        hours += ceil((double)piles[i] / mid); // ceil nikalne ka formula
+        hours += ceil((double)piles[i] / mid); // ceil (double-cast — dono sahi)
     }
     return hours <= h;
 }
