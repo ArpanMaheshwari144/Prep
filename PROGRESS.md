@@ -72,9 +72,10 @@
               ★ DSA = GATE (medium, pass-karna), not mastery. strengths (HLD/Java) = where JP decides.
               ★ SPACED-REDO RULE (Arpan, 8-Jul): SABKO baar-baar redo karna hai — solo kiya ho ya peek, KOI farak nahi. "ek baar ho gaya" ≠ "pakka". har problem blank+copy-pen se dobara till automatic. (solo/peek tag = sirf note ki pehli baar kaisa gaya, filter NAHI — redo se koi bachta nahi.) FLAGGED-REDO LIST KHATAM (10-Jul): Rotated ✓ · Longest-Substr ✓ · Koko ✓ · Subarray-K ✓ -- sab blank SOLO, pattern SET. ab pending = sirf recent-naye (matrix/stack/LL) ka PERIODIC redo (3-7 din baad, jaldi nahi). DSA maintenance mode -> focus shift: behavioral + Java/HLD sharp.
 
-   BEHAVIORAL ◐ #1 GAP, 3 STAR stories done : 01_JP_COMPANY · 02_WHY_JP · 03_STAR_HikariCP (ownership+debug) ·
-              04_STAR_WAF_IP (initiative+conviction) · 05_STAR_Doximity (IMPACT $20K + initiative + business-sense).
-              teeno alag competency. NEXT: BOL-KE practice (delivery) + maybe a FAILURE story (common ask, still missing).
+   BEHAVIORAL ◐ #1 GAP, 4 STAR stories done : 01_JP_COMPANY · 02_WHY_JP · 03_STAR_HikariCP (ownership+debug) ·
+              04_STAR_WAF_IP (initiative+conviction) · 05_STAR_Doximity (IMPACT $20K + business-sense) ·
+              06_STAR_Mentoring (10-Jul: teamwork + leadership-without-authority, new-joinee walkthrough).
+              4 alag competency. NEXT: BOL-KE practice (delivery, #1 actual skill) + FAILURE story (aakhri common gap, still missing).
    CODE-REVIEW ✗ round-practice abhi start karna (buggy-PR → security/concurrency/clean-code find).
 ```
 
