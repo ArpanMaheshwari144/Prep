@@ -82,8 +82,24 @@ store se pehle -> dono "naya" samajh ke process -> double-charge.
 **TRAP:** done pe key DELETE mat karo! late retry (network timeout, 30 sec baad) -> key gayab -> "naya" samjhe -> DOBARA charge.
    -> TTL (24h) ya result store rakho; cache temporary, DB = final truth.
 
+**⚠ CONFUSION-CLEAR (Arpan-doubt, 10-Jul): "phir main GENUINE 2 baar Rs.100 kaise bhejun (=Rs.200)? key to reject kar degi?"**
 ```
-   Idempotency = "same key, same outcome — chahe kitni baar aaye, paisa ek baar"
+   JAWAB: key AMOUNT/account se NAHI banti -> har NAYE payment-intent pe CLIENT ek NAYI unique key banata.
+   - GENUINE 2 payments (100 + 100):  press-1 -> key ABC · press-2 -> key XYZ (alag key) -> DONO process -> 200. ✓
+   - RETRY (wahi EK payment):          app WAHI key ABC dobara bhejta -> dedup -> paisa EK hi baar (100). ✓
+   -> idempotency sirf WAHI-attempt ka duplicate rokti; alag-alag GENUINE payments (alag key) ko NAHI rokti.
+
+   AUR: duplicate key pe "REJECT / error" NAHI bhejta -> SAVED result wapas deta
+        (taaki retry karne wale client ko wahi SUCCESS mile jo net-error me kho gaya tha). block nahi, dedup.
+
+   NAYA intent  -> client NAYI key -> process.
+   RETRY (wahi) -> client WAHI key -> re-process nahi -> stored result wapas.
+   -> "Google guess nahi karta; CLIENT key se batata ki naya hai ya retry."
+```
+
+```
+   Idempotency = "same key, same outcome — chahe kitni baar aaye, paisa ek baar.
+                  (par ALAG intent = ALAG key = alag payment; genuine repeat block nahi hota.)"
 ```
 
 ---
