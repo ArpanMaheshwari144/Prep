@@ -70,7 +70,7 @@
               ROOT-CAUSE (Arpan-owned 8-Jul): 1000-problems = video-based RECOGNITION, not independent generation.
                   FIX = khud-blank-solve (no video) + spaced-redo + PEEK->SIMILAR-PROBLEM-TEST (verify pattern set, not ratta).
               ★ DSA = GATE (medium, pass-karna), not mastery. strengths (HLD/Java) = where JP decides.
-              ★ SPACED-REDO RULE (Arpan, 8-Jul): SABKO baar-baar redo karna hai — solo kiya ho ya peek, KOI farak nahi. "ek baar ho gaya" ≠ "pakka". har problem blank+copy-pen se dobara till automatic. (solo/peek tag = sirf note ki pehli baar kaisa gaya, filter NAHI — redo se koi bachta nahi.) abhi-pending redo: Rotated · Koko · Subarray-K · Longest-Substr · + saare naye (matrix/stack/BS/prefix).
+              ★ SPACED-REDO RULE (Arpan, 8-Jul): SABKO baar-baar redo karna hai — solo kiya ho ya peek, KOI farak nahi. "ek baar ho gaya" ≠ "pakka". har problem blank+copy-pen se dobara till automatic. (solo/peek tag = sirf note ki pehli baar kaisa gaya, filter NAHI — redo se koi bachta nahi.) abhi-pending redo: Koko · Subarray-K · Longest-Substr · + saare naye (matrix/stack/LL). (Rotated ✓ 10-Jul blank-redo SOLO -> pattern SET, done.)
 
    BEHAVIORAL ◐ #1 GAP, 3 STAR stories done : 01_JP_COMPANY · 02_WHY_JP · 03_STAR_HikariCP (ownership+debug) ·
               04_STAR_WAF_IP (initiative+conviction) · 05_STAR_Doximity (IMPACT $20K + initiative + business-sense).
