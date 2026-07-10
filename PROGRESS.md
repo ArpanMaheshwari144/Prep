@@ -74,8 +74,8 @@
 
    BEHAVIORAL ◐ #1 GAP, 4 STAR stories done : 01_JP_COMPANY · 02_WHY_JP · 03_STAR_HikariCP (ownership+debug) ·
               04_STAR_WAF_IP (initiative+conviction) · 05_STAR_Doximity (IMPACT $20K + business-sense) ·
-              06_STAR_Mentoring (10-Jul: teamwork + leadership-without-authority, new-joinee walkthrough).
-              4 alag competency. NEXT: BOL-KE practice (delivery, #1 actual skill) + FAILURE story (aakhri common gap, still missing).
+              06_STAR_Mentoring (10-Jul: teamwork + leadership-without-authority) · 07_STAR_Failure_JDK (10-Jul: JDK8->11 migration, failure=wrong assumption, lesson "compiles!=runs").
+              5 STAR = saare common competency COVER (ownership/initiative/impact/teamwork/failure). NEXT: sirf BOL-KE practice (delivery, #1 actual skill ab) -- naye story ki zaroorat nahi, ab loud-articulation.
    CODE-REVIEW ✗ round-practice abhi start karna (buggy-PR → security/concurrency/clean-code find).
 ```
 
