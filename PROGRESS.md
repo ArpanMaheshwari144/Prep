@@ -46,7 +46,8 @@
 
 ---
 
-## 2. WHERE WE STAND (current, accurate — ~65-70% JP-ready, honest)
+## 2. WHERE WE STAND (11-Jul, honest — ~70-72% JP-ready; DSA focus-8 done + behavioral done raised it)
+> ★ Arpan's grounded self-view (11-Jul, PERFECT calibration): "god-level DSA nahi, par JP ke liye KAAFI — main wo hoon." fear reduced via reps. na oversell na undersell.
 ```
    HLD        ✓ STRONG (differentiator) : 11 FOUNDATIONS + 10 SYSTEM_DESIGNS (18/19/20 full interview-delivery
               format) + RAW_DRILL (reflex-sheet + design-practice-log + 32 why-how QA). delivery PRACTICED.
@@ -60,17 +61,15 @@
    COMPARES   ✓ 12 (sql-nosql, tcp-udp, sync-async, process-thread, concurrency-parallelism, rest-graphql, ws-sse...).
    DATABASE   ◐ indexing-practical (B-tree). INFRA ✓ AWS/Docker/K8S.
 
-   DSA        ◐ METHOD = blank-produce + COPY-PEN (paper trace pehle) + spaced-redo. CODED = 7 patterns:
-                  01 TWO-POINTER (5+2redo) · 02 SLIDING-WINDOW (4+2redo) · 03 HASHING (5+2redo)
-                  · 07 BINARY-SEARCH (6: basic/insert/first-last/rotated/find-min/koko) · 04 PREFIX-SUM (pivot/altitude/product).
-                  · 05 MATRIX (8-Jul: spiral + set-zeros + transpose — ALL SOLO via copy-pen; spiral crashed then conquered same-day).
-                  · 06 STACK ✓ (8-Jul, first-pass DONE: valid-parentheses + min-stack[pair-trick, SOLO] + next-greater[MONOTONIC, hint+SOLO, bugs caught on paper]). Daily-Temperatures optional (same monotonic).
-                  ★ focus-8 me sirf 08 LINKED-LIST bacha (folder khaali, abhi shuru nahi) -> wo ho gaya = poora focus-8 first-pass complete.
-              advanced PARKED (08_DSA/LATER_TOPICS): trees/backtracking/heap/dp/greedy/graph/intervals/kadane.
-              ROOT-CAUSE (Arpan-owned 8-Jul): 1000-problems = video-based RECOGNITION, not independent generation.
-                  FIX = khud-blank-solve (no video) + spaced-redo + PEEK->SIMILAR-PROBLEM-TEST (verify pattern set, not ratta).
-              ★ DSA = GATE (medium, pass-karna), not mastery. strengths (HLD/Java) = where JP decides.
-              ★ SPACED-REDO RULE (Arpan, 8-Jul): SABKO baar-baar redo karna hai — solo kiya ho ya peek, KOI farak nahi. "ek baar ho gaya" ≠ "pakka". har problem blank+copy-pen se dobara till automatic. (solo/peek tag = sirf note ki pehli baar kaisa gaya, filter NAHI — redo se koi bachta nahi.) FLAGGED-REDO LIST KHATAM (10-Jul): Rotated ✓ · Longest-Substr ✓ · Koko ✓ · Subarray-K ✓ -- sab blank SOLO, pattern SET. ab pending = sirf recent-naye (matrix/stack/LL) ka PERIODIC redo (3-7 din baad, jaldi nahi). DSA maintenance mode -> focus shift: behavioral + Java/HLD sharp.
+   DSA        ✓ FOCUS-8 COMPLETE (11-Jul) -> ab REVISE/MAINTENANCE mode (naye pattern NAHI). METHOD = blank-produce + COPY-PEN. CODED = 8 patterns:
+                  01 TWO-POINTER (5 + container-water self-test ✓) · 02 SLIDING-WINDOW (4 + longest-substr-redo + max-consec-ones-III self-test ✓) · 03 HASHING (5 + subarray-K-redo)
+                  · 07 BINARY-SEARCH (basic/insert/first-last/rotated/find-min/koko/rotated-redo/koko-redo) · 04 PREFIX-SUM (pivot/altitude/product)
+                  · 05 MATRIX (spiral+set-zeros+transpose, ALL SOLO copy-pen) · 06 STACK ✓ (valid-paren+min-stack+next-greater+daily-temp — monotonic SET)
+                  · 08 LINKED-LIST ✓ (9-10 Jul, DONE: reverse + middle + detect-cycle + palindrome + merge — fast/slow + reverse + dummy-node, deep pointer-samajh khud nikaali).
+              advanced PARKED (08_DSA/LATER_TOPICS): trees/backtracking/heap/dp/greedy/graph/intervals/kadane. (kab? focus-8 solid + behavioral chalu -> tab TOP-3: trees/graph/DP. abhi NAHI.)
+              ★ DSA = GATE (medium, pass-karna), not mastery. strengths (HLD/Java) = where JP decides. DSA-god banna GOAL NAHI (Arpan-owned).
+              ★ FLAGGED-REDO LIST KHATAM (10-Jul): Rotated ✓ · Longest-Substr ✓ · Koko ✓ · Subarray-K ✓ -- sab blank SOLO. + self-tests (max-consec-ones, container-water) SOLO pass. pending = recent-naye ka PERIODIC redo only.
+              ★ TRICK-TAXONOMY (Arpan 11-Jul): trick-problems (Subarray-K = prefix+map[sum-k]) re-derive nahi hote -> RECALL. broad tricks (fast/slow, monotonic, prefix-map, BS-on-answer, sliding-window, dummy-node) = high-leverage (ek trick, kai problem). samajhne-wale (LL pointers) = ek baar samjho -> tikta. pattern-sheet me broad-tricks pehle.
 
    BEHAVIORAL ◐ #1 GAP, 4 STAR stories done : 01_JP_COMPANY · 02_WHY_JP · 03_STAR_HikariCP (ownership+debug) ·
               04_STAR_WAF_IP (initiative+conviction) · 05_STAR_Doximity (IMPACT $20K + business-sense) ·
@@ -81,29 +80,30 @@
 
 ---
 
-## 3. FORWARD PLAN (priority — kaha jaana hai)
+## 3. FORWARD PLAN (priority — 11-Jul updated, focus-8 DONE)
 ```
-   1. DSA        — STRATEGY (Arpan, 7-Jul): SCOPE NARROWED to 8 CORE patterns (advanced DP/graph/trees/etc PARKED in 08_DSA/LATER_TOPICS). FOCUS-8: two-pointer · sliding-window · hashing · prefix-sum · matrix · stack · binary-search · linked-list.
-                  METHOD: roz REVISE + same-topic ke NAYE question (pel ke) -> reps se "wire"/muscle (Koko-proof: reps-heavy = automatic, pressure me bhi chalta; reps-kam = atakta. capacity nahi, reps ki baat).
-                  STRONG (Arpan-self, anchor): two-ptr, SW, hashing, BS. FIRST-PASS baaki: prefix-sum, matrix, stack, linked-list. ★ Claude spaced-redo (1/3/7) track+remind.
-   2. BEHAVIORAL — aur STAR stories (payment $20K / 600-incidents / Lambda-throttle) + BOL-KE. #1 untouched, JP-weighted.
-   3. HLD        — daily revise (design self-quiz why/kya/kaise → DESIGN_PRACTICE_LOG). naya nahi.
-   4. JAVA/SPRING— sharp rakho (revise + project). heavily-tested strength.
-   5. CODE-REVIEW round + LLD-articulate (bol-ke) — naye din start.
+   1. DSA        — ✓ FOCUS-8 COMPLETE -> ab REVISE mode (naye pattern NAHI). jo kiya wo revise + periodic blank-redo (recent-naye ka).
+                  ★ SUNDAY 12-JUL = PATTERN-SHEET banao (har problem -> ek-line trick; broad-tricks pehle) -> revision usi se.
+   2. BEHAVIORAL — ✓ 5 STAR DONE (saare competency: ownership/initiative/impact/teamwork/failure). ab sirf BOL-KE practice (loud delivery, apne words). #1 actual skill ab = articulation.
+   3. HLD        — daily revise (design self-quiz why/kya/kaise → DESIGN_PRACTICE_LOG). strong zone, maintain.
+   4. JAVA/SPRING— sharp rakho (revise, pel ke). heavily-tested strength. ★ articulation-focus: "concept + interview me KAISE bolun".
+   5. CODE-REVIEW round + LLD-articulate (bol-ke) — abhi start nahi hua (naya kaam, jab time ho).
 ```
 
 ---
 
-## RECENT DONE (7-8 Jul, factual)
+## RECENT DONE (through 11-Jul, factual)
 ```
-   - PROJECT mini_payment_ms FULLY DONE: idempotency + circuit-breaker (Resilience4j, tested CLOSED->OPEN->HALF-OPEN).
-   - DSA: binary-search (6) + prefix-sum (3) coded; 4 spaced-redos (copy-pen); matrix DONE (spiral+set-zeros+transpose, all SOLO copy-pen); stack STARTED (valid-parentheses SOLO, found own hidden bug via edge-test).
-   - ★ DSA BREAKTHROUGH (8-Jul, Arpan's own synthesis): "struggle = copy-pen"; formula = PATTERN + COPY-PEN; had pattern, copy-pen was the missing piece → DSA now flows ("aa raha hai"). (see rules block + memory dsa-is-a-skill.)
-   - HLD: rate-limiter full deep-dive (discussion mode: why/algo/distributed/fail-open/placement) — notes already comprehensive, added reject-early reasoning. HLD = STRONG (glance-recall).
-   - JAVA/SPRING revise (code-read mode, 10+ topics): String/StringBuilder · SOLID · IoC-DI · @Transactional · Streams/Lambda · Comparable-Comparator · Exceptions · Singleton/Factory · JPA. (all glance-recall = mastery.)
-   - BEHAVIORAL: 3 STAR stories (HikariCP/WAF/Doximity).
-   NEXT: matrix first-pass (fresh, copy-pen) + stack/LL · spaced-redos · behavioral bol-ke · Java/HLD daily-revise.
-   ★★ SUNDAY 12-JUL-2026 REMINDER (Arpan, 8-Jul): PATTERN-SHEET banana -> har solved DSA problem ko ek short PATTERN-summary me convert (code NAHI), sab ek FILE me. revision us pattern-file se hoga (code nahi kholenge). "same/similar Q aaye -> pattern dekho, code nahi." Claude: is Sunday ye raise karna + Arpan ke saath sheet banana/improve karna. (Claude ko Sunday ye YAAD dilana hai.)
+   - PROJECT mini_payment_ms FULLY DONE: idempotency + circuit-breaker (Resilience4j).
+   - DSA (8-11 Jul): STACK done (valid-paren/min-stack/next-greater/daily-temp) · LINKED-LIST done (reverse/middle/cycle/palindrome/merge) -> FOCUS-8 COMPLETE.
+       + FLAGGED-REDO all blank-SOLO (Rotated/Longest-Substr/Koko/Subarray-K) + self-tests SOLO (max-consec-ones-III, container-water). DSA -> revise/maintenance mode.
+   - ★ DSA BREAKTHROUGHS (Arpan's own, 8-11 Jul): "struggle = copy-pen" · "DSA = MATH (paper pe karo)" · muscle=RESULT-of-copy-pen · NO-DRAMA (question->pattern->trace->code, stuck=help+move-on) · trick-taxonomy (broad vs narrow). copy-pen + cout = his 2 bug-catching tools (catches own bugs on PAPER). (detail: memory dsa-is-a-skill.)
+   - HLD: BookMyShow revise + IDEMPOTENCY doubt cleared (genuine-repeat=new-key vs retry=same-key; duplicate->saved-result NOT reject; in 17_payment_system note).
+   - JAVA revise (code-read, articulation-focus): Core/OOP/String/Keywords/Collections + Java8 + Multithreading + SOLID + Design-Patterns (all 6). glance-recall.
+   - BEHAVIORAL: 5 STAR DONE -> +Mentoring (teamwork) +Failure-JDK (self-awareness). all common competencies covered. next = bol-ke only.
+   - ★ EMOTIONAL (11-Jul): fear was real, now REDUCED (via DOING/reps, not pep-talk). grounded self-assessment: "god-level DSA nahi, par JP ke liye KAAFI" = perfect honest calibration. mantra intact: "effort mera, outcome universe ka."
+   NEXT: DSA revise + pattern-sheet · behavioral BOL-KE · Java/Spring full revise (OOP->Spring) · HLD revise.
+   ★★ SUNDAY 12-JUL-2026 (TOMORROW) — PATTERN-SHEET banana: har solved problem -> ek-line TRICK/pattern (code NAHI), ek FILE me. broad-tricks (fast/slow, monotonic, prefix-map, BS-on-answer, sliding-window, dummy-node) PEHLE. revision usi se ("similar Q -> pattern dekho, code nahi"). ★ Claude ko ye Sunday RAISE karna + saath banana hai.
 ```
 
 ## 4. DAILY ROUTINE (Arpan-set 8-Jul — ★ ORDER FLIPPED: DSA ab SUBAH NAHI, SHAAM ko / LAST)
@@ -115,9 +115,8 @@
    ROZ, isi order me (same pace):
    1. JAVA/SPRING revise — subah SABSE PEHLE (bol-ke, articulation). strength -> din confident shuru.
    2. HLD REVISE     — ek design self-quiz (why/kya/kaise) + reflex. (maintain, strong zone.)
-   3. DSA (SHAAM/LAST) — Arpan-method: (a) roz SPACED-REDO purane problems (+1/3/7 din, blank, copy-pen) — Claude track+remind.
-                       (b) DEPTH: jab topic SMOOTH -> same topic ka ek aur naya Q. (c) jab SOLID -> NEW topic.
-                       focus-8: two-ptr/SW/hashing/BS/prefix-sum/MATRIX/STACK DONE first-pass. BAAKI: sirf LINKED-LIST (aakhri).
+   3. DSA (SHAAM/LAST) — ✓ FOCUS-8 COMPLETE -> ab REVISE mode: jo kiya wo blank-redo (periodic) + PATTERN-SHEET se revise.
+                       naye pattern NAHI (advanced parked). occasional self-test theek (paani check). Claude: DSA ko shaam/last rakhо.
    (Behavioral STAR + bol-ke = beech-beech; code-review/LLD = naye din.)
    ★ Claude: roz spaced-redo (1/3/7) remind + revise-reminder. DSA ko shaam ke liye rakho, subah strengths. project = DONE, dobara nahi.
 ```
