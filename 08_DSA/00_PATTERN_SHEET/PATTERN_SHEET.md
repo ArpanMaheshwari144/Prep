@@ -56,6 +56,8 @@
    Max Consecutive Ones III    -> window me zeros count <= k; zeros>k to left shrink -> ans unconditional.
    Fruit Into Baskets          -> ★ = "longest subarray, AT MOST 2 DISTINCT" (fruit/basket sirf kahani).
                                   map<type,count>; mp.size()>2 -> left shrink (count--); ★ count==0 -> map.ERASE (warna size galat).
+   Subarray Product < K        -> ★ COUNT (length nahi). prod*=nums[j]; prod>=k -> prod/=nums[i], i++.
+                                  ★★ COUNT TRICK: window valid -> count += (j-i+1) = window size (j pe end hone wale saare valid subarrays). (bahut count-Q me kaam aata)
 
    ★ 2 type: FIXED window (max-sum-k) · VARIABLE window (baaki).
 ```

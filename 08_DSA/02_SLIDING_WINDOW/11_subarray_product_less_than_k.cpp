@@ -6,8 +6,13 @@
 //   nums=[10,5,2,6], k=100 -> 8
 //     ([10],[5],[2],[6],[10,5],[5,2],[2,6],[5,2,6]) -> 8 subarrays product<100
 //
-// (approach yahan LIKHA NAHI -- code TU likhega. Arpan ki approach BAAD me,
-//  jab tu code kare. copy-pen pe trace pehle.)
+// ---- ARPAN KI APPROACH ----
+//  same SW pattern: expand -> condition ke hisab se shrink -> ans, j++. bas twist thoda:
+//  prod track karo (prod *= nums[j]). agar prod >= k -> window se left hatao: prod /= nums[i], i++.
+//  ★ COUNT ka trick (yahi naya): count kaise? copy-pen pe i,j trace karo -> jab window valid ho,
+//     us j pe END hone wale saare valid subarrays ki ginti = (j - i + 1) = window size.
+//     -> count += (j - i + 1). ye trick BAHUT questions me kaam aata (subarray-COUNT wale).
+
 //
 // Tests (nums, k -> expected):
 //   [10,5,2,6], k=100   -> 8
