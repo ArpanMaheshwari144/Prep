@@ -17,8 +17,10 @@
    3. TRADE-OFF SENSE     -> ek "sahi answer" nahi. good-enough vs over-engineered.
                             (idempotency-vs-atomic, clean-vs-special-cases, BlockingQueue-vs-wait/notify.)
 
-   4. NO EGO             -> trick seekhna/poochna/dekhna = cheating NAHI, library banti.
-                            (koi zero se invent nahi karta. seekho -> pehchano -> lagao.)
+   4. EGO KABU (khatam nahi) -> ego SABME hai (tere bhi, maan — jhooth mat bol). khatam nahi hota (warna insaan nahi).
+                            ACHHA ego = self-respect ("JP leke rahunga" wala fire) -> rakho.
+                            BURA ego = "galti nahi maanunga / trick nahi seekhunga / gusse me delete" -> KABU karo.
+                            -> trick seekhna/poochna = cheating NAHI, library banti. koi zero se invent nahi karta (main bhi nahi — team ne banaya).
 
    5. SABAR              -> hard bug/problem pe TIKNA, quit nahi. (tera MOAT — proven.)
 ```
