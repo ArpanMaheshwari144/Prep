@@ -68,7 +68,8 @@
                   · 07 BINARY-SEARCH (basic/insert/first-last/rotated/find-min/koko/rotated-redo/koko-redo) · 04 PREFIX-SUM (pivot/altitude/product)
                   · 05 MATRIX (spiral+set-zeros+transpose, ALL SOLO copy-pen) · 06 STACK ✓ (valid-paren+min-stack+next-greater+daily-temp — monotonic SET)
                   · 08 LINKED-LIST ✓ (9-10 Jul, DONE: reverse + middle + detect-cycle + palindrome + merge — fast/slow + reverse + dummy-node, deep pointer-samajh khud nikaali).
-              advanced PARKED (08_DSA/LATER_TOPICS): trees/backtracking/heap/dp/greedy/graph/intervals/kadane. (kab? focus-8 solid + behavioral chalu -> tab TOP-3: trees/graph/DP. abhi NAHI.)
+              advanced PARKED (08_DSA/LATER_TOPICS): trees/backtracking/heap/dp/greedy/graph/intervals/kadane.
+              ★ LATER-TOPICS TIMELINE (Arpan 13-Jul): ABHI NAHI. pehle Java+Spring khatam + HLD revise + DSA revise (redo + naye same-topic Q till CONFIDENCE dikhe). ~20-25 Jul ke BAAD (1-2 hafte) TAB trees se uthana. sirf TOP-3 (trees/graph/DP), few problems each, tree-trace seekhte hue. "kaafi" karo, "poora" nahi (DSA-god trap se bacho). JP-core (Java/HLD/behavioral) se NEECHE priority.
               ★ DSA = GATE (medium, pass-karna), not mastery. strengths (HLD/Java) = where JP decides. DSA-god banna GOAL NAHI (Arpan-owned).
               ★ FLAGGED-REDO LIST KHATAM (10-Jul): Rotated ✓ · Longest-Substr ✓ · Koko ✓ · Subarray-K ✓ -- sab blank SOLO. + self-tests (max-consec-ones, container-water) SOLO pass. pending = recent-naye ka PERIODIC redo only.
               ★ TRICK-TAXONOMY (Arpan 11-Jul): trick-problems (Subarray-K = prefix+map[sum-k]) re-derive nahi hote -> RECALL. broad tricks (fast/slow, monotonic, prefix-map, BS-on-answer, sliding-window, dummy-node) = high-leverage (ek trick, kai problem). samajhne-wale (LL pointers) = ek baar samjho -> tikta. pattern-sheet me broad-tricks pehle.
