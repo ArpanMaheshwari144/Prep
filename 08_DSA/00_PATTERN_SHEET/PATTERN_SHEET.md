@@ -19,6 +19,7 @@
    2D-index-map          -> search 2D matrix (row=i/col, col=i%col)
    VARIABLE window (shrink-till-valid, ans unconditional) -> longest-no-repeat · max-consec-ones · char-replace · min-len
    "assign PEHLE, update BAAD" -> pivot-index · product-except-self
+   fill-from-END (result peeche se) -> squares-of-sorted-array (bada square end me)
    -> ye 11 broad-tricks yaad -> zyadatar focus-8 problems recognize + solve.
 ```
 
@@ -33,6 +34,8 @@
    Container Most Water   -> left/right; area = min(h)*width; CHHOTI height wala pointer andar (bottleneck).
    3Sum                  -> ★ pehle SORT [sort(begin(nums),end(nums));] -> ek number fix -> baaki 2 pointer target=-fixed; TRIPLETS; duplicates skip.
    Sort Colors (0,1,2)    -> 3 pointer (low/mid/high): 0->low-swap, 2->high-swap, 1->mid++. (Dutch flag)
+   Squares of Sorted Arr  -> ★ negatives ka square order ULTA -> 2 pointer (left,right); dono ke square compare
+                             -> BADA wala result ke END me daalo (k=n-1, ghatta); us pointer andar. O(n), no sort.
 ```
 
 ---
