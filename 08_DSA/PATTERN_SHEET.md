@@ -97,7 +97,8 @@
 ```
    BROAD IDEA: stack = LIFO. "kholo push, band karo pop-match" · ya MONOTONIC (next-greater/smaller).
 
-   Valid Parentheses    -> opening push; closing aaye to top se match+pop; end me stack KHALI = valid.
+   Valid Parentheses    -> opening push; closing aaye to top se match+pop; end me stack KHALI = valid. (closing pe stack empty -> false)
+                           ★ match: (topp=='('&&it==')') || (topp=='['&&it==']') || (topp=='{'&&it=='}')
    Min Stack            -> ★ pair{val, minSoFar} push -> getMin = top().second (O(1), koi scan nahi).
    Next Greater Element  -> ★ MONOTONIC stack (index rakho); jab curr > stack-top -> pop + ans[top]=curr.
    Daily Temperatures   -> same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).
