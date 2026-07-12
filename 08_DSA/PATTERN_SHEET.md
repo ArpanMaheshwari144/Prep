@@ -119,7 +119,9 @@
                               RIGHT-most ke liye -> ans=mid; low=mid+1 (aur right dhoondo).
    Search in Rotated       -> ★ mid; kaunsa half SORTED -> target us sorted half ki RANGE me hai? -> udhar jao.
    Find Min in Rotated     -> ★ mid ko HIGH se compare. [if(nums[mid]>nums[high]) low=mid+1; else high=mid;] -> low pe min.
-   Koko Bananas            -> ★ BS on ANSWER (speed k); hours(k)=sum(ceil(pile/k))<=h? -> chhoti k try. (ceil: (a+k-1)/k)
+   Koko Bananas            -> ★ BS on ANSWER (speed k); hours(k)=sum(ceil(pile/k))<=h? -> chhoti k try.
+                              ★ ceil: hours += ceil((double)piles[i]/mid);  ya integer: (piles[i]+mid-1)/mid.
+                              ★ TRAP: ceil(int/int) BEKAAR (int-div pehle floor). double-cast ya integer-formula use karo.
    Search 2D Matrix        -> ★ poore matrix ko 1D maano; index -> row=mid/col, col=mid%col.
 
    ★ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
