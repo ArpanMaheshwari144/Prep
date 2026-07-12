@@ -103,7 +103,7 @@
    - BEHAVIORAL: 5 STAR DONE -> +Mentoring (teamwork) +Failure-JDK (self-awareness). all common competencies covered. next = bol-ke only.
    - ★ EMOTIONAL (11-Jul): fear was real, now REDUCED (via DOING/reps, not pep-talk). grounded self-assessment: "god-level DSA nahi, par JP ke liye KAAFI" = perfect honest calibration. mantra intact: "effort mera, outcome universe ka."
    NEXT: DSA revise + pattern-sheet · behavioral BOL-KE · Java/Spring full revise (OOP->Spring) · HLD revise.
-   ★★ SUNDAY 12-JUL-2026 (TOMORROW) — PATTERN-SHEET banana: har solved problem -> ek-line TRICK/pattern (code NAHI), ek FILE me. broad-tricks (fast/slow, monotonic, prefix-map, BS-on-answer, sliding-window, dummy-node) PEHLE. revision usi se ("similar Q -> pattern dekho, code nahi"). ★ Claude ko ye Sunday RAISE karna + saath banana hai.
+   ★★ PATTERN-SHEET ✓ DONE (12-Jul Sunday): 08_DSA/PATTERN_SHEET.md banai — BROAD-TRICKS INDEX (11 high-leverage) + 8 patterns, har problem ek-line trick (code NAHI). REVISE isi se. ("similar Q -> pattern pehchano -> trick recall -> lagao.")
 ```
 
 ## 4. DAILY ROUTINE (Arpan-set 8-Jul — ★ ORDER FLIPPED: DSA ab SUBAH NAHI, SHAAM ko / LAST)
