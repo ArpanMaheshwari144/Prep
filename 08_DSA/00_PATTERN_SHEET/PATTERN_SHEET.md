@@ -54,6 +54,8 @@
    Longest Substring No-Repeat -> set/map me char; repeat aaye to left shrink jab tak repeat gaya -> max length.
    Char Replacement (longest)  -> window me (windowLen - maxFreqChar) <= k valid; warna left shrink.
    Max Consecutive Ones III    -> window me zeros count <= k; zeros>k to left shrink -> ans unconditional.
+   Fruit Into Baskets          -> ★ = "longest subarray, AT MOST 2 DISTINCT" (fruit/basket sirf kahani).
+                                  map<type,count>; mp.size()>2 -> left shrink (count--); ★ count==0 -> map.ERASE (warna size galat).
 
    ★ 2 type: FIXED window (max-sum-k) · VARIABLE window (baaki).
 ```

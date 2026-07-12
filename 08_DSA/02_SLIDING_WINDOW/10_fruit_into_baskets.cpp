@@ -9,8 +9,12 @@
 //   [0,1,2,2]     -> 3   (1,2,2)
 //   [1,2,3,2,2]   -> 4   (2,3,2,2)
 //
-// (approach yahan LIKHA NAHI -- code TU likhega. Arpan ki approach BAAD me,
-//  jab tu code kare. copy-pen pe trace pehle.)
+// ---- ARPAN KI APPROACH ----
+//  same SW pattern: expand -> condition ke hisab se shrink -> ans store.
+//  map<type,count> rakho. condition = sirf 2 type allowed -> mp.size() (distinct count) > 2 ho
+//  to left se shrink (count--). ★ jab count 0 ho jaaye -> map se ERASE karo, warna wo key map me
+//  padi reh jaati -> mp.size() galat distinct deta -> condition toot jaati. ans = max window length.
+
 //
 // Tests (// expected):
 //   [1,2,1]         -> 3
