@@ -4,8 +4,11 @@
 // sorted array ko pivot pe ROTATE kiya (distinct). target ka INDEX return karo,
 // nahi mile -> -1.  O(log n).
 //
-// (pichhli baar PEEK kiya tha -> ab BINA peek, khud se. purani file mat kholna.
-//  atko -> "atka hoon yahan" bol, direction dunga.)
+// ---- ARPAN KI APPROACH ----
+//  mid==target -> return. warna kaunsa half sorted dekho:
+//  nums[low]<=nums[mid] -> LEFT sorted -> target [low..mid] me -> high=mid-1, warna low=mid+1.
+//  else RIGHT sorted -> target [mid..high] me -> low=mid+1, warna high=mid-1.
+//  aadha-aadha kaat-te ho -> O(log n). mila nahi -> -1.
 //
 // Tests (// expected):
 //   [4,5,6,7,0,1,2], target=0  -> 4

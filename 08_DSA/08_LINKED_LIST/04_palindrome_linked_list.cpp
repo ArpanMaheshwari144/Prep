@@ -6,11 +6,11 @@
 //   1 -> 2 -> 3 -> 2 -> 1   -> true
 //   1 -> 2                  -> false
 //
-// (approach LIKHA NAHI -- 2 raaste:
-//   (a) EASY: values vector me daalo -> two-pointer (aage/peeche) compare.
-//   (b) ELEGANT (O(1) space): MIDDLE nikaalo (fast/slow) -> 2nd half REVERSE -> compare.
-//              <- ye tere pichle 2 problems ka combo. jo pasand aaye.)
-//   copy-pen pe [1,2,2,1] trace kar pehle.
+// ---- ARPAN KI APPROACH ----
+//  pichle 2 problems ka COMBO (O(1) space): middleNode(fast/slow) se beech nikaalo,
+//  phir mid se aage ka tukda reverseList se ULTA karo (rev = naya head).
+//  ab head (front) aur rev (back) ko saath chala ke val compare -> koi mismatch
+//  mila to false, warna end tak match -> palindrome true. khali list = true.
 //
 // Tests (// expected):
 //   [1,2,2,1]      -> 1  (true)

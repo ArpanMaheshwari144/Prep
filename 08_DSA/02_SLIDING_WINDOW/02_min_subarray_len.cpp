@@ -5,9 +5,10 @@
 // SABSE CHHOTI length ka CONTIGUOUS subarray dhoondho jiska sum >= target.
 // us length ko return karo. koi aisा subarray na ho -> 0 return karo.
 //
-// seed: VARIABLE window. right (j) se window GROW karo (sum += nums[j]).
-//       jab tak sum >= target -> min-length record karo + left (i) se SHRINK (sum -= nums[i], i++).
-//       case-logic TU soch.
+// ---- ARPAN KI APPROACH ----
+//  variable window: j se sum me add (grow). jab tak sum >= target ->
+//  minLen = min(minLen, j-i+1) record + left se shrink (sum -= nums[i], i++).
+//  end me minLen == INT_MAX -> koi window mila hi nahi -> 0.
 //
 // Tests (// expected):
 //   target=7,  [2,3,1,2,4,3]        -> 2   ([4,3])

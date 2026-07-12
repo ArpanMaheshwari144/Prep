@@ -6,8 +6,10 @@
 //   [3,2,0,-4] with tail->node(index1)  -> true
 //   [1,2,3] no cycle                     -> false
 //
-// (approach LIKHA NAHI -- tu ne khud pehchana: MIDDLE wala same concept = fast/slow.
-//  socho: agar cycle hai to tez aur dheema kabhi MILENGE? ya nahi? copy-pen pe socho.)
+// ---- ARPAN KI APPROACH ----
+//  fast/slow (Floyd): slow 1 kadam, fast 2 kadam. agar cycle hai to fast
+//  ghoom-ghoom ke slow ko loop-ke-andar pakad lega -> slow==fast -> true.
+//  agar cycle nahi to fast NULL pe pahunch ke loop khatam -> false.
 //
 // Tests (values, cyclePos):  cyclePos = -1 matlab NO cycle; warna us index pe tail jud jaata.
 //   [3,2,0,-4], pos=1   -> true

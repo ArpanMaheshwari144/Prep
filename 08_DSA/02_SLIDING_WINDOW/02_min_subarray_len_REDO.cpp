@@ -4,8 +4,9 @@
 // POSITIVE ints ka array + target diya. sabse CHHOTE contiguous subarray ki
 // LENGTH nikaalo jiska sum >= target. koi na ho -> 0. O(n).
 //
-// (hint: variable window -> right badhao + sum me add.
-//  jab tak sum >= target -> min-length record karo + LEFT se shrink (sum minus, left++). khud socho.)
+// ---- ARPAN KI APPROACH ----
+//  variable window: j se sum me add. jab tak sum >= target -> size = min(size, j-i+1)
+//  record + left se shrink (sum -= nums[i], i++). end me size == INT_MAX -> 0.
 //
 // Tests (// expected):
 //   target=7,  [2,3,1,2,4,3]        -> 2   ([4,3])

@@ -5,10 +5,10 @@
 // unke 1-BASED index lautao [i, j]. (exactly ek solution hai.)
 //   [2,7,11,15], target=9  -> [1,2]   (2+7=9)
 //
-// (approach LIKHA NAHI -- regular two-sum HASHMAP se hua tha; par ye SORTED hai
-//  -> hashmap ki zaroorat nahi -> 2 pointer (left=0, right=end):
-//     sum == target -> mila. sum < target -> left++ (bada chahiye). sum > target -> right-- (chhota).
-//  O(1) space. copy-pen pe trace.)
+// ---- ARPAN KI APPROACH ----
+//  sorted hai to hashmap ki zaroorat nahi. 2 pointer left=0, right=end.
+//  sum == target -> return {left+1, right+1} (1-based index).
+//  sum < target -> left++ (bada chahiye). sum > target -> right-- (chhota chahiye).
 //
 // Tests (array, target -> expected 1-based):
 //   [2,7,11,15], t=9    -> 1 2

@@ -5,9 +5,10 @@
 // flip karke jo SABSE LAMBI consecutive 1s ki length ban sakti -> wo lautao.
 //   nums=[1,1,1,0,0,0,1,1,1,1,0], k=2  -> 6
 //
-// (purana code MAT dekhna. yaad kar wo PATTERN jo tune khud nikaala:
-//  expand -> shrink-till-valid (while zeros>k) -> ans UNCONDITIONAL (koi if(zeroCount==k) NAHI).
-//  copy-pen pe trace pehle.)
+// ---- ARPAN KI APPROACH ----
+//  variable window + zeroCount. j pe 0 mila -> zeroCount++. k>0 hua to jab tak
+//  zeroCount > k -> left se shrink. update sirf jab (zeroCount == k && k > 0).
+//  end me agar total zeros==0 ya zeros<k -> poora nums.size() lautao, warna ans.
 //
 // Tests (complete — edge cases bhi):
 //   [1,1,1,0,0,0,1,1,1,1,0], k=2                       -> 6

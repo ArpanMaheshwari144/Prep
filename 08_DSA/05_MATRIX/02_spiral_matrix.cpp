@@ -5,7 +5,11 @@
 // ek vector me return karo.
 //   [[1,2,3],[4,5,6],[7,8,9]] -> [1,2,3,6,9,8,7,4,5]
 //
-// (approach yahan LIKHA NAHI -- poora tera. copy-pen pe grid+arrows pehle.)
+// ---- ARPAN KI APPROACH ----
+//  4 boundaries rakho: top, bottom, left, right. while(top<=bottom && left<=right):
+//  top row L->R chalo (phir top++), right col T->B (phir right--),
+//  bottom row R->L agar top<=bottom (phir bottom--), left col B->T agar left<=right (phir left++).
+//  boundaries andar simat-te jaate, saara spiral order ans me push hota jaata.
 //
 // Tests (// expected):
 //   [[1,2,3],[4,5,6],[7,8,9]]              -> 1 2 3 6 9 8 7 4 5
@@ -44,6 +48,7 @@ vector<int> spiralOrder(vector<vector<int>> &matrix)
         {
             for (int i = right; i >= left; i--)
             {
+                // yaha bottom daal rahe hai isilye dekh rahe hai ki top <= bottom hia ye nahi warna duplicate elemenet dal saket hiai
                 ans.push_back(matrix[bottom][i]);
             }
             bottom--;

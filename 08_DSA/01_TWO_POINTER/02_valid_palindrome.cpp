@@ -12,6 +12,11 @@
 //   "abca"     -> 0
 //   ""         -> 1
 // ============================================================
+// ---- ARPAN KI APPROACH ----
+//  2 pointer: left=0, right=end. jab tak left <= right.
+//  s[left] != s[right] -> turant false. warna left++ , right--.
+//  loop bina mismatch nikal gaya -> palindrome hai -> true.
+// ============================================================
 
 #include <iostream>
 #include <string>

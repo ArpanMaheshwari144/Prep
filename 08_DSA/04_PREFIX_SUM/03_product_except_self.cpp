@@ -14,6 +14,11 @@
 //   [2,3]            -> 3 2
 //   [5]              -> 1
 // ============================================================
+// ---- ARPAN KI APPROACH ----
+//  do pass, no division. left[] me har index ke LEFT ka running product bharo (prod ko pehle set, phir *= nums[i]).
+//  phir reverse chalke right[] me har index ke RIGHT ka running product bharo (prod reset karke).
+//  ant me ans[i] = left[i] * right[i] -- yahi khud ke bina ka product. O(n).
+// ============================================================
 
 #include <iostream>
 #include <vector>

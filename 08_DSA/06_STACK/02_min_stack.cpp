@@ -6,8 +6,10 @@
 //   getMin() = stack ke ANDAR ka current MINIMUM element lautaye (O(1), loop nahi).
 //   yahi trick hai -> min ko har waqt kaise "ready" rakhein bina scan kiye. socho.
 //
-// (approach yahan LIKHA NAHI -- poora tera. class ke members bhi tere.
-//  stuck -> hint maang lena, de dunga.)
+// ---- ARPAN KI APPROACH ----
+//  stack me pair<int,int> rakho: {value, uss point tak ka min}.
+//  push pe naya min = min(val, purana top ka min) nikaal ke saath store karo.
+//  getMin() -> bas top ka second (min) lauta do, koi loop nahi -> O(1).
 //
 // Tests (// expected):
 //   push(-2) push(0) push(-3)

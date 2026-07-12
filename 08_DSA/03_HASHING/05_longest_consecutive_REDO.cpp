@@ -5,8 +5,9 @@
 //   e.g. [100,4,200,1,3,2] -> [1,2,3,4] -> 4.
 // ★ sort NAHI karna. O(n) chahiye.
 //
-// (hint: set banao. har num pe -> agar (num-1) set me NAHI -> ye sequence ka START ->
-//  aage count karo (num+1, num+2...). START-check se har sequence ek hi baar count. khud socho.)
+// ---- ARPAN KI APPROACH ----
+//  saare nums ek SET me daalo. har num pe: agar (num-1) set me NAHI -> ye sequence ka START.
+//  phir num+1, num+2... jab tak set me hai count -> max track. O(n).
 //
 // Tests (// expected):
 //   [100,4,200,1,3,2]        -> 4

@@ -13,6 +13,11 @@
 //   [1,2,3]              -> 6
 //   [44,32,-9,52,23,-50,50,33,-84,47,-14,48]  -> 148
 // ============================================================
+// ---- ARPAN KI APPROACH ----
+//  sum=0, maxi=0 se start. har gain[i] ko running sum me add karte jao (yeh current altitude hai).
+//  saath-saath maxi = max(maxi, sum) update karo. start (0) already maxi me hai isliye woh bhi candidate.
+//  end me maxi return -- sabse oonchi altitude jo kabhi pahuncha.
+// ============================================================
 
 #include <iostream>
 #include <vector>

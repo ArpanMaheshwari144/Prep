@@ -6,9 +6,10 @@
 //   area = min(height[i], height[j]) * (j - i)   [width * chhoti wali height]
 //   height=[1,8,6,2,5,4,8,3,7] -> 49
 //
-// (approach LIKHA NAHI -- socho: 2 pointer (i=start, j=end).
-//  area nikaalo -> phir CHHOTI height wale pointer ko andar khisko (kyun? chhoti height bottleneck hai).
-//  max area track karo. copy-pen pe trace pehle.)
+// ---- ARPAN KI APPROACH ----
+//  2 pointer: low=0, high=end. width=high-low, area=width*min(height[low],height[high]).
+//  max_area me max rakho. chhoti wall wala pointer andar khisko
+//  (height[low]<height[high] -> low++, warna high--). chhoti wall bottleneck.
 //
 // Tests (// expected):
 //   [1,8,6,2,5,4,8,3,7]     -> 49

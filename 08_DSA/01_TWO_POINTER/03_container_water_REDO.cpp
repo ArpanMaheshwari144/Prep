@@ -5,8 +5,10 @@
 // DO lines chuno jo container banayein -> sabse ZYADA paani hold kare -> woh AREA return karo.
 // area = min(height[i], height[j]) * (j - i).   (paani chhoti wall tak hi bharta.)
 //
-// (approach yahan LIKHA NAHI — khud dimaag se. purani file mat kholna.
-//  atko -> "atka hoon yahan" bol, direction dunga.)
+// ---- ARPAN KI APPROACH ----
+//  2 pointer: left=0, right=end. har step area = (right-left)*min(height[left],height[right]).
+//  maxArea me max rakho. phir CHHOTI wall wale pointer ko andar khisko
+//  (height[left]<height[right] -> left++, warna right--). chhoti wall bottleneck.
 //
 // Tests (// expected):
 //   [1,8,6,2,5,4,8,3,7]  -> 49

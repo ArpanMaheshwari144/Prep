@@ -5,10 +5,9 @@
 // (sequence = lagataar badhte numbers, e.g. [1,2,3,4]). O(n) me karo (sort nahi).
 //   nums=[100,4,200,1,3,2] -> 4   (1,2,3,4)
 //
-// (approach LIKHA NAHI -- blank. socho: saare numbers ek SET me daalo.
-//  phir har number pe: kya ye kisi sequence ki SHURUAAT hai? (yani num-1 set me NAHI hai?)
-//  agar haan -> num+1, num+2... set me jab tak hai count karo -> max track.
-//  copy-pen pe [100,4,200,1,3,2] trace kar.)
+// ---- ARPAN KI APPROACH ----
+//  saare nums ek SET me daalo. har num pe: agar (num-1) set me NAHI -> ye sequence ka START.
+//  phir num+1, num+2... jab tak set me hai count karo -> max track. O(n).
 //
 // Tests (// expected):
 //   [100,4,200,1,3,2]            -> 4

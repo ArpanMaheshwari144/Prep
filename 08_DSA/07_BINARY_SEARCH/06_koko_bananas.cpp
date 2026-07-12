@@ -5,8 +5,11 @@
 // har ghante wo EK pile chunti aur k kele khaati (pile < k -> poora kha ke ruk jaati, agla ghanta).
 // MINIMUM speed k return karo jisse wo `h` ghante me SAARE kele kha le.
 //
-// (idea: index pe nahi, ANSWER ki RANGE (1..max-pile) pe BS.
-//  kisi k pe hours = sum of ceil(pile/k). hours<=h -> chhoti try, warna badi. khud likho.)
+// ---- ARPAN KI APPROACH ----
+//  BS index pe nahi, ANSWER (speed k) ki range [1 .. max-pile] pe.
+//  solve(mid): hours = sum of ceil(pile/mid) (double-cast se), hours<=h to speed kaafi hai.
+//  kaafi hai -> ans=mid aur choti try karo (high=mid-1), warna badi (low=mid+1).
+//  min feasible k lautao.
 //
 // Tests (// expected):
 //   [3,6,7,11],        h=8  -> 4

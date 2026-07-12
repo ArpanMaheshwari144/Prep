@@ -11,6 +11,11 @@
 //   [0,0,1]       -> 1 0 0
 //   [4,0,5,0,0,6] -> 4 5 6 0 0 0
 // ============================================================
+// ---- ARPAN KI APPROACH ----
+//  2 pointer slow/fast, dono 0 se start. fast poore array pe chalta.
+//  jab nums[fast] != 0 -> swap(slow, fast) -> slow++. fast har baar ++.
+//  non-zero aage swap hote jaate, 0 apne aap peeche reh jaate. order bana rehta.
+// ============================================================
 
 #include <iostream>
 #include <vector>

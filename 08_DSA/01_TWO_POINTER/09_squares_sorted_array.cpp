@@ -6,10 +6,10 @@
 //   [-4,-1,0,3,10] -> [0,1,9,16,100]
 //   (kyun tricky: -4 ka square 16 bada hai -> negatives ka square order ULTA ho jaata)
 //
-// (approach LIKHA NAHI -- socho: sabse BADA square kahaan? -> ya to LEFT chhor (bada negative)
-//  ya RIGHT chhor (bada positive). -> 2 pointer (left, right); dono ke square compare;
-//  BADA wala result ke END me daalo (peeche se bharo) -> us pointer ko andar khisko.
-//  copy-pen pe [-4,-1,0,3,10] trace kar.)
+// ---- ARPAN KI APPROACH ----
+//  ans array size n, PEECHE se bharo (k = n-1). 2 pointer left=0, right=end.
+//  sabse bada square ya left-chhor (bada negative) ya right-chhor pe hota.
+//  left^2 <= right^2 -> ans[k]=right^2, right--; warna ans[k]=left^2, left++. har baar k--.
 //
 // Tests (// expected):
 //   [-4,-1,0,3,10]     -> 0 1 9 16 100

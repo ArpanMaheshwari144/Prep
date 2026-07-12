@@ -12,6 +12,11 @@
 //   [1,2,1]             -> 2
 //   [2,3,4,5,18,17,6]   -> 17
 // ============================================================
+// ---- ARPAN KI APPROACH ----
+//  2 pointer: left=0, right=end. har step area = (right-left)*min(height[left],height[right]).
+//  maxArea me max rakho. phir CHHOTI wall wale pointer ko andar khisko
+//  (height[left]<height[right] -> left++, warna right--). chhoti wall bottleneck isliye usko chhodo.
+// ============================================================
 
 #include <iostream>
 #include <vector>

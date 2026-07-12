@@ -4,8 +4,11 @@
 // ek sorted array ko pivot pe ROTATE kiya (distinct). SABSE CHHOTA element return karo.
 //   e.g. [3,4,5,1,2] -> min = 1.   O(log n) chahiye.
 //
-// (hint — khud socho: mid ko HIGH se compare karo -> min kaunse half me hai,
-//  us taraf jao. array pehle se sorted (rotate=0) ka case bhi dhyan.)
+// ---- ARPAN KI APPROACH ----
+//  mid ko HIGH se compare karo (na ki target se).
+//  nums[mid] > nums[high] -> min mid ke DAAYE hai -> low=mid+1.
+//  warna min mid pe ya BAAYE ho sakta -> high=mid-1.
+//  loop khatam pe low sabse chhote pe ruk jaata -> return nums[low].
 //
 // Tests (// expected):
 //   [3,4,5,1,2]        -> 1

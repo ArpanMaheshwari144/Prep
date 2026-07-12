@@ -5,8 +5,11 @@
 //   e.g. [0,1,2,4,5,6,7] -> rotate -> [4,5,6,7,0,1,2].
 // target ka INDEX return karo, nahi mile -> -1.  O(log n) chahiye (linear nahi).
 //
-// (hint — khud socho: har `mid` pe array ka EK half HAMESHA sorted hota hai.
-//  pehchaan kaunsa half sorted hai -> target us sorted range me hai kya? -> us hisaab se low/high narrow karo.)
+// ---- ARPAN KI APPROACH ----
+//  mid==target -> return. warna dekho kaunsa half sorted hai:
+//  nums[low]<=nums[mid] -> LEFT half sorted -> agar target us range [low..mid] me -> high=mid-1, warna low=mid+1.
+//  else RIGHT half sorted -> agar target [mid..high] me -> low=mid+1, warna high=mid-1.
+//  har baar aadha kaat-te ho -> O(log n). mila nahi -> -1.
 //
 // Tests (// expected):
 //   [4,5,6,7,0,1,2], target=0  -> 4

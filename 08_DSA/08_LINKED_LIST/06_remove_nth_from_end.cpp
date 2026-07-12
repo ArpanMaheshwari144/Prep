@@ -5,11 +5,11 @@
 //   [1,2,3,4,5], n=2  ->  [1,2,3,5]   (end se 2nd = "4" hata)
 //   [1], n=1          ->  []          (single node hata -> empty)
 //
-// (approach LIKHA NAHI -- tera fast/slow ka GAP variant:
-//  - fast ko PEHLE n steps aage bhejo.
-//  - phir fast aur slow DONO saath chalao jab tak fast->next NULL.
-//  - ab slow us node pe hai jiske BAAD wala hatana hai -> slow->next = slow->next->next.
-//  ★ DUMMY node use kar (head khud hatana pade to easy). copy-pen pe trace.)
+// ---- ARPAN KI APPROACH ----
+//  fast/slow GAP variant: pehle fast ko n kadam aage bhejo (gap ban gaya).
+//  edge: agar fast ab NULL -> matlab HEAD hi hatana tha -> return head->next.
+//  warna fast->next NULL hone tak dono saath chalao; ab slow, hatane wale ke
+//  THEEK PEHLE ruka -> slow->next = slow->next->next se node bypass. head lautao.
 //
 // Tests (values, n -> expected):
 //   [1,2,3,4,5], n=2  -> 1 2 3 5

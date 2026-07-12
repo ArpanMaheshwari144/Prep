@@ -6,10 +6,11 @@
 // BADAL sakta hai. Badalne ke baad, SABSE LAMBI substring ki LENGTH nikaalo
 // jisme SAARE characters SAME ho.
 //
-// ★ TWIST (yahi atka tha): window me har char ki FREQUENCY rakho.
-//    window "VALID" hai agar:  (window-size  -  us window ke sabse-frequent-char-ka-count)  <= k
-//       -> matlab: majority char chhod ke baaki jitne hain, unko k badal me same bana sakte.
-//    agar (size - maxFreq) > k  -> left se SHRINK.  har VALID window ka max-size track.
+// ---- ARPAN KI APPROACH ----
+//  variable window + char freq map. j char count++, maxFreq = max(maxFreq, us count).
+//  window VALID jab (size - maxFreq) <= k -> maxLen = max(maxLen, size) update.
+//  agar (size - maxFreq) > k -> left se shrink (mp[s[i]]--, i++).
+//  maxFreq kabhi ghatate nahi -> longest ke liye chal jaata (window sirf badhta/slide).
 //
 // Tests (// expected):
 //   "ABAB",    k=2  -> 4   (2 badal ke "AAAA"/"BBBB")

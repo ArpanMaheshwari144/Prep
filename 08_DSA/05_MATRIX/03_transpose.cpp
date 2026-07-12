@@ -5,7 +5,10 @@
 // matrix[i][j] -> result[j][i].  (non-square bhi ho sakta -> naya n x m matrix.)
 //   [[1,2,3],[4,5,6]] -> [[1,4],[2,5],[3,6]]
 //
-// (approach yahan LIKHA NAHI -- poora tera. copy-pen pe grid pehle.)
+// ---- ARPAN KI APPROACH ----
+//  naya ans matrix banao ulte dimension ka: col x row (non-square handle ho jaata).
+//  do loops i over col, j over row: ans[i][j] = matrix[j][i] -- rows aur cols swap.
+//  matrix[i][j] ka element ans me [j][i] pe chala jaata.
 //
 // Tests (// expected):
 //   [[1,2,3],[4,5,6]]              -> 1 4 | 2 5 | 3 6

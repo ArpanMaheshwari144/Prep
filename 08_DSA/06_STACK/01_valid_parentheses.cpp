@@ -5,7 +5,10 @@
 // TRUE agar sab brackets sahi se MATCH + NESTED hain, warna FALSE.
 //   "()[]{}" -> true   ·   "([)]" -> false
 //
-// (approach yahan LIKHA NAHI -- poora tera. copy-pen pe ek example trace pehle.)
+// ---- ARPAN KI APPROACH ----
+//  Stack use karo. Opening bracket ( [ { aaye -> push kar do.
+//  Closing aaye -> stack ka top pop karke check karo ki matching pair hai kya;
+//  nahi ya stack khaali -> false. Ant me stack khaali hona chahiye (sab match ho gaye).
 //
 // Tests (// expected):
 //   "()"        -> 1   (true)

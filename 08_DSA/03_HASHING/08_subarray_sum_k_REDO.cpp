@@ -6,10 +6,9 @@
 //   nums=[1,1,1], k=2  -> 2   ([1,1] index0-1, [1,1] index1-2)
 //   nums=[1,2,3], k=3  -> 2   ([1,2], [3])
 //
-// (purana code MAT dekhna. copy-pen pe socho:
-//  running prefixSum rakho -> map<prefixSum, count>. har step:
-//  agar (prefixSum - k) map me hai -> uska count ans me add. phir current prefixSum map me ++.
-//  ★ map me {0:1} se start karo (khud se sum=k wale subarray ke liye).)
+// ---- ARPAN KI APPROACH ----
+//  running prefix-SUM + map { prefix-sum -> count }. init map[0]=1.
+//  har num pe: sum += num; count += map[sum-k]; phir map[sum]++. return count.
 //
 // Tests (// expected):
 //   [1,1,1], k=2               -> 2

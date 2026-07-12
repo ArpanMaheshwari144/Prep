@@ -15,6 +15,11 @@
 //   [0]                  -> 0
 //   [-1,-1,-1,-1,-1,0]   -> 2
 // ============================================================
+// ---- ARPAN KI APPROACH ----
+//  pehle poora totalSum nikaal lo. phir left-se-right chalo, leftSum running rakho.
+//  har index i pe rightSum = totalSum - leftSum - nums[i]. agar leftSum == rightSum -> pivot mila, return i.
+//  dhyan: check pehle karo, PHIR leftSum += nums[i]. koi na mile -> -1.
+// ============================================================
 
 #include <iostream>
 #include <vector>

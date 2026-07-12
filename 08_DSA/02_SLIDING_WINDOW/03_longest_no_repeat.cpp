@@ -5,11 +5,10 @@
 // Ek string di. SABSE LAMBI substring ki LENGTH nikaalo jisme koi
 // character REPEAT na ho (sab unique).
 //
-// seed: WINDOW skeleton wahi (right grow, left shrink). NAYA: ek SET rakho jo
-//       window ke current chars track kare.
-//       right char pehle se window(set) me hai (duplicate) -> left se shrink karo
-//       (set se chars hatao) jab tak duplicate na nikle -> phir right char add.
-//       har step max-length record. case-logic TU soch.
+// ---- ARPAN KI APPROACH ----
+//  variable window + freq map (mp). j char ka count++ karo. jab tak current char
+//  ka count > 1 (duplicate) -> left se shrink (mp[s[i]]--, i++) till duplicate gaya.
+//  har step minLen = max(minLen, j-i+1). khaali string -> INT_MIN reh jaata -> 0.
 //
 // Tests (// expected):
 //   "abcabcbb"  -> 3   ("abc")

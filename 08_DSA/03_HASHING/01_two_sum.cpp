@@ -4,9 +4,10 @@
 // Array nums + ek target diya. DO indices [i, j] return karo jinke
 // nums[i] + nums[j] == target. (exactly ek solution, same element 2 baar nahi.)
 //
-// seed: ek map rakho { value -> index }. har num pe:
-//        "(target - num) map me PEHLE se hai?"  -> haan -> {us index, current index} return.
-//        nahi -> num ko map me daalo (num -> index), aage badho.  -> ONE pass, O(n).
+// ---- ARPAN KI APPROACH ----
+//  map me {value:index} rakho. har num pe check: (target-num) map me pehle se hai?
+//  -> haan -> {us index, current index} return. nahi -> num daal do map me, aage badho.
+//  ONE pass, O(n).
 //
 // Tests (// expected — indices; pair sahi hona chahiye):
 //   [2,7,11,15], t=9  -> [0,1]   (2+7)

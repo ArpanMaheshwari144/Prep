@@ -4,8 +4,10 @@
 // Array me sirf 0, 1, 2. IN-PLACE sort karo (0s → 1s → 2s).
 // Library sort() NAHI. ideal = single pass.
 //
-// seed: 3 pointer — low (0-zone boundary), high (2-zone boundary), mid (scanner).
-//       mid scan kare; jo dikhe (0/1/2) uske hisaab se swap + move. case-logic TU soch.
+// ---- ARPAN KI APPROACH ----
+//  Dutch flag 3 pointer: low=0, mid=0, high=end. mid se scan (mid<=high).
+//  nums[mid]==0 -> swap(low,mid), low++,mid++.  ==1 -> sirf mid++.
+//  ==2 -> swap(mid,high), high-- (mid NAHI badhao, high se aaya element abhi check hona baaki).
 //
 // Tests (// expected):
 //   [2,0,2,1,1,0]  -> 0 0 1 1 2 2

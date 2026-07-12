@@ -10,7 +10,10 @@
 //     4 -> koi bada nahi -> -1
 //     3 -> -1
 //
-// (approach yahan LIKHA NAHI -- HINT alag se diya hai chat me. copy-pen pe trace pehle.)
+// ---- ARPAN KI APPROACH ----
+//  Monotonic stack (INDEX ka). Left se right chalo. Jab tak stack ke top wala
+//  element se current bada hai -> pop karo aur un sab ka answer = current value.
+//  Phir current index push. Jo end tak stack me reh gaye unka answer -1 rehta.
 //
 // Tests (// expected):
 //   [2,1,2,4,3]      -> 4 2 4 -1 -1

@@ -4,9 +4,10 @@
 // Array + ek number k diya. SIZE k ke har CONTIGUOUS subarray ka sum dekho,
 // unme se SABSE BADA sum return karo.
 //
-// seed: window size = k FIXED. window ko slide karo (left-to-right).
-//       trick: har baar poora sum dobara mat jodo — window khisakte waqt
-//              naya element ADD, purana (jo window se bahar gaya) REMOVE. case-logic TU soch.
+// ---- ARPAN KI APPROACH ----
+//  fixed window: j se har element sum me add. jab window size (j-i+1) >= k ho ->
+//  maxSum = max(maxSum, sum) update, phir left nums[i] hatao (sum -= nums[i]) + i++.
+//  window k-size pe locked slide karta rehta -> last me maxSum.
 //
 // Tests (// expected):
 //   [2,1,5,1,3,2], k=3   -> 9   (5+1+3)

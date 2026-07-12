@@ -5,10 +5,11 @@
 // AAKHRI se bada (yani poora matrix ek sorted 1D array jaisा). target dhoondo -> true/false.
 //   [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target=3 -> true
 //
-// (approach LIKHA NAHI -- blank. socho: poore matrix ko ek VIRTUAL 1D sorted array maano
-//  (size = m*n) -> uspe normal BINARY SEARCH.
-//  index i ko (row, col) me kaise badlein? -> row = i / cols, col = i % cols. socho.
-//  copy-pen pe trace kar.)
+// ---- ARPAN KI APPROACH ----
+//  poore matrix ko ek VIRTUAL 1D sorted array maano (size = row*col) -> uspe normal BS.
+//  low=0, high=row*col-1. index mid ko (r,c) me badlo: r = mid/col, c = mid%col.
+//  matrix[r][c]==target -> true. <target -> low=mid+1, warna high=mid-1.
+//  loop khatam -> nahi mila -> false.
 //
 // Tests (// expected):
 //   [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target=3   -> 1 (true)

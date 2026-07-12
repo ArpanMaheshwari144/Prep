@@ -7,9 +7,9 @@
 //   "bbbbb"    -> 1   ("b")
 //   "pwwkew"   -> 3   ("wke")
 //
-// (purana code MAT dekhna -- retrieval. copy-pen pe socho:
-//  window [left..right] chalao -> repeat char aaye to left ko aage khisko jab tak repeat gone.
-//  window ki max length track karo. set/map se dekho char window me hai ya nahi.)
+// ---- ARPAN KI APPROACH ----
+//  empty -> 0 guard pehle. variable window + freq map. j char count++. jab tak us
+//  char ka count > 1 -> left se shrink (mp[s[i]]--, i++). har step ans = max(ans, j-i+1).
 //
 // Tests (// expected):
 //   "abcabcbb" -> 3

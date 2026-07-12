@@ -4,11 +4,10 @@
 // Unsorted array diya. SABSE LAMBI consecutive elements ki sequence ki
 // LENGTH nikaalo (e.g. [1,2,3,4] -> 4). sort NAHI (O(n) chahiye).
 //
-// seed (tera approach): saare nums ek SET me daalo.
-//        har num pe: agar (num-1) set me NAHI -> ye ek sequence ka START.
-//          phir aage count karo (num+1, num+2... jab tak set me milte) -> length.
-//          max-length track karo.
-//        (start-check se har sequence sirf EK baar count -> O(n).)
+// ---- ARPAN KI APPROACH ----
+//  saare nums ek SET me daalo. har num pe: agar (num-1) set me NAHI -> ye sequence ka START.
+//  phir num+1, num+2... jab tak set me hai count karo -> length. max-length track.
+//  start-check se har sequence sirf EK baar count -> O(n).
 //
 // Tests (// expected):
 //   [100,4,200,1,3,2]        -> 4   ([1,2,3,4])

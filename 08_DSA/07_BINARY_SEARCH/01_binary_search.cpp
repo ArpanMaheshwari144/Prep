@@ -4,7 +4,10 @@
 // SORTED array nums + ek target diya. target ka INDEX return karo.
 // nahi mile -> -1 return karo.  O(log n) chahiye (linear scan nahi).
 //
-// (approach yahan LIKHA NAHI — khud dimaag se. atko -> "atka hoon yahan" bol, direction dunga.)
+// ---- ARPAN KI APPROACH ----
+//  low=0, high=n-1. jab tak low<=high: mid = low+(high-low)/2 (overflow-safe).
+//  nums[mid]==target -> mid return. nums[mid]<target -> daaye jao (low=mid+1).
+//  warna baaye jao (high=mid-1). loop khatam -> mila nahi -> -1.
 //
 // Tests (// expected):
 //   [-1,0,3,5,9,12], target=9   -> 4

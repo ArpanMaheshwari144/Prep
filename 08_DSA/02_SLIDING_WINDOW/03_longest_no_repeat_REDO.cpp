@@ -4,8 +4,10 @@
 // Ek string s di. SABSE LAMBE substring ki LENGTH nikaalo jisme
 // koi character REPEAT na ho.  (substring = contiguous.)
 //
-// (approach yahan LIKHA NAHI — khud dimaag se. purani file mat kholna.
-//  atko -> "atka hoon yahan" bol, direction dunga.)
+// ---- ARPAN KI APPROACH ----
+//  variable window + freq map (mp). j char count++. jab tak us char ka count > 1 ->
+//  left se shrink (mp[s[i]]--, i++) till duplicate hata. har step ans = max(ans, j-i+1).
+//  empty string -> INT_MIN -> 0.
 //
 // Tests (// expected):
 //   "abcabcbb"   -> 3   ("abc")
