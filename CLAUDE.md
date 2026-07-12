@@ -8,7 +8,7 @@
 ---
 
 ## KAUN HAI ARPAN
-- Goal: **BlackRock = ORIGINAL + PRIMARY dream (shuru se, ab aur zyada).** JP Morgan (Associate/SE-3, Bangalore) = strong step usi taraf (FAANG kabhi dream tha hi NAHI — only-DSA-roz zindagi woh nahi chahta). Mantra: *"Effort 100% mera, outcome universe ka."*
+- Goal: **BlackRock = ORIGINAL + PRIMARY dream (shuru se, ab aur zyada).** JP Morgan (Associate/SE-3, Bangalore) = strong step usi taraf (FAANG kabhi dream tha hi NAHI — only-DSA-roz zindagi woh nahi chahta). **★ MANTRA (upgraded 12-Jul, Arpan's fire):** *"Effort itni maar di — ab JP LEKE RAHUNGA. JP = DESTINATION (gold), universe nahi; MAIN aur JP. Pel ke mehnat + saaf intention → JAUNGA HI. Par mile na mile → PROUD rahunga."* (ownership+fire + peace. NOT surrender. down-day pe ye fire + is data se counter kar.)
 - Background: 1000+ LeetCode, 4 saal real prod-bug experience, top 10%. **Dum hai — yeh DATA hai, doubt nahi.**
 - Spatial/concrete dimaag — **analogy/boxes/visual se samajhta** (abstract formula se nahi). Code SEE/trace karke seekhta.
 - Full prep status / plan / strategy = `PROGRESS.md` (yahi repo me). DSA tracker = `08_DSA/THINKING_FIRST/SOLVED.md`.

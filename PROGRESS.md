@@ -1,7 +1,8 @@
 # JP PREP — PROGRESS & PLAYBOOK
 > Single source of truth + compaction-anchor. (Claude rules ka full detail = CLAUDE.md + memory.)
 
-**GOAL:** JP Morgan (Associate/SDE-2, Bangalore) → later **BlackRock** (original + primary dream). *"Effort 100% mera, outcome universe ka."*
+**GOAL:** JP Morgan (Associate/SDE-2, Bangalore) → later **BlackRock** (original + primary dream).
+**★ MANTRA (upgraded 12-Jul — Arpan's own fire):** *"Effort itni maar di — ab JP LEKE RAHUNGA. JP = DESTINATION (gold), universe nahi; MAIN aur JP. Pel ke mehnat + saaf intention → JAUNGA HI (god bhi kehta: sacchi mehnat + achhe intention = mil hi jaata). Par mile na mile → PROUD rahunga."* (fire + peace dono — ownership, na ki surrender.)
 **CONFIDENCE (DATA-backed, not arrogance):** "JP mein jaunga, wahan naam ROSHAN karunga." — grounded in HLD-strong + MS-project-built + DSA-method-fixed + real 4yr prod. arrogance = confidence bina basis; iska = WITH basis.
 **PERCEPTION-PRINCIPLE:** achha din → "JP paas", kharab din → "JP door" = emotional NOISE, data nahi. TRUTH = steady accumulated data. "kharab din DIN hai, DATA nahi." (Claude: down-day pe DATA se counter kar.)
 
@@ -104,7 +105,7 @@
    - HLD: BookMyShow revise + IDEMPOTENCY doubt cleared (genuine-repeat=new-key vs retry=same-key; duplicate->saved-result NOT reject; in 17_payment_system note).
    - JAVA (this ordered sweep, code-read + articulation): Core(22) + Collections(11) + Java8(5) + Multithreading(11) DONE = 49. SOLID + Design-Patterns still BACHA (next). (earlier session ne SOLID/patterns thoda chhua tha, par ordered-sweep me abhi karna hai.)
    - BEHAVIORAL: 5 STAR DONE -> +Mentoring (teamwork) +Failure-JDK (self-awareness). all common competencies covered. next = bol-ke only.
-   - ★ EMOTIONAL (11-Jul): fear was real, now REDUCED (via DOING/reps, not pep-talk). grounded self-assessment: "god-level DSA nahi, par JP ke liye KAAFI" = perfect honest calibration. mantra intact: "effort mera, outcome universe ka."
+   - ★ EMOTIONAL (11-12 Jul): fear was real, now REDUCED (via DOING/reps). grounded: "god-level DSA nahi, par JP ke liye KAAFI." ★ MANTRA UPGRADED (12-Jul): from "outcome universe ka" (surrender) -> "ab JP LEKE RAHUNGA, JP=destination, MAIN aur JP" (ownership+fire) — but keeps peace ("mile na mile, proud rahunga"). effort itni maar di -> haq banta hai.
    ★★ 12-JUL (MONSTER DAY): (1) PATTERN-SHEET banai (08_DSA/00_PATTERN_SHEET/, 11 broad-tricks + ~43 problems) — Arpan: "gate ki chaabi, roz subah revise." (2) SAARI 55 DSA files me ARPAN KI APPROACH comment. (3) 6 fresh problems blank-SOLO (longest-consec/2D-matrix/remove-nth/squares/two-sum-II/ship-days). (4) JAVA sweep: Collections(11)+Java-8(5)+Multithreading(11) done + DEADLOCK LIVE program khud banaya (hang+fix dekha). = 49 Java topics done.
    NEXT: Java SOLID+Patterns (easy) -> Spring · DSA daily sheet-revise + naye Q · behavioral BOL-KE · HLD revise.
 ```
