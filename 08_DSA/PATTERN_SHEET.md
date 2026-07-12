@@ -59,3 +59,46 @@
 
    ★ common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
 ```
+
+---
+
+## PATTERN 5 — MATRIX
+```
+   BROAD IDEA: 2D grid pe index-navigation (boundary/direction careful; copy-pen pe grid banao).
+
+   Set Matrix Zeroes  -> 2 pass: pehle zeroRow[]/zeroCol[] mark; phir jahan row ya col marked -> 0.
+   Spiral Matrix      -> 4 boundary (top/bottom/left/right); L->R, T->B, R->L, B->T; har layer ke baad boundary shrink.
+                         ★ bottom-row & left-col loop me guard: if(top<=bottom) / if(left<=right).
+   Transpose          -> ans[i][j] = matrix[j][i]; naya matrix col×row size ka.
+```
+
+---
+
+## PATTERN 6 — STACK
+```
+   BROAD IDEA: stack = LIFO. "kholo push, band karo pop-match" · ya MONOTONIC (next-greater/smaller).
+
+   Valid Parentheses    -> opening push; closing aaye to top se match+pop; end me stack KHALI = valid.
+   Min Stack            -> ★ pair{val, minSoFar} push -> getMin = top().second (O(1), koi scan nahi).
+   Next Greater Element  -> ★ MONOTONIC stack (index rakho); jab curr > stack-top -> pop + ans[top]=curr.
+   Daily Temperatures   -> same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).
+
+   ★ broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
+```
+
+---
+
+## PATTERN 7 — BINARY SEARCH
+```
+   BROAD IDEA: sorted space -> mid -> aadha kaato -> O(log n). (space array ho ya ANSWER-range).
+
+   Binary Search (basic)   -> mid; target<mid -> left half, warna right. (low<=high, mid±1)
+   Search Insert Position  -> basic BS; na mile to low return (wahi insert jagah).
+   First & Last Position   -> 2 BS: ek left-most (mila to high=mid-1 continue), ek right-most.
+   Search in Rotated       -> ★ mid; kaunsa half SORTED -> target us sorted half ki RANGE me hai? -> udhar jao.
+   Find Min in Rotated     -> mid vs right; mid>right -> min right-half (low=mid+1), warna left (high=mid).
+   Koko Bananas            -> ★ BS on ANSWER (speed k); hours(k)=sum(ceil(pile/k))<=h? -> chhoti k try. (ceil: (a+k-1)/k)
+   Search 2D Matrix        -> ★ poore matrix ko 1D maano; index -> row=mid/col, col=mid%col.
+
+   ★ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
+```
