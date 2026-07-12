@@ -129,6 +129,9 @@
                               ★ ceil: hours += ceil((double)piles[i]/mid);  ya integer: (piles[i]+mid-1)/mid.
                               ★ TRAP: ceil(int/int) BEKAAR (int-div pehle floor). double-cast ya integer-formula use karo.
    Search 2D Matrix        -> ★ poore matrix ko 1D maano (low=0, high=row*col-1). access: matrix[mid/col][mid%col]. (row=mid/col, col=mid%col)
+   Ship Within D Days      -> ★ BS on ANSWER = CAPACITY (Koko cousin). low=max(weights), high=sum(weights).
+                             solve(mid): days ginо -> sum+w>mid -> naya din (day++, sum=0); warna sum+=w. day<=D? feasible.
+                             feasible -> ans=mid, high=mid-1 (choti try); warna low=mid+1. (Koko: ceil per pile; yahan: running-load "exceed to naya din" kyunki order fixed)
 
    ★ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
 ```
