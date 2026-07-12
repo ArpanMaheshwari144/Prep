@@ -36,6 +36,9 @@
    Sort Colors (0,1,2)    -> 3 pointer (low/mid/high): 0->low-swap, 2->high-swap, 1->mid++. (Dutch flag)
    Squares of Sorted Arr  -> ★ negatives ka square order ULTA -> 2 pointer (left,right); dono ke square compare
                              -> BADA wala result ke END me daalo (k=n-1, ghatta); us pointer andar. O(n), no sort.
+   Two Sum II (SORTED)    -> ★ sorted -> hashmap ki zaroorat nahi -> 2 pointer (left,right); sum==target -> mila (return 1-based).
+                             sum<target -> left++ (bada chahiye); sum>target -> right-- (chhota). O(1) space.
+                             (regular two-sum UNSORTED = hashmap; SORTED = 2-pointer.)
 ```
 
 ---
