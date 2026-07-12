@@ -44,11 +44,12 @@ vector<int> spiralOrder(vector<vector<int>> &matrix)
         }
         right--;
 
+        // yahan BOTTOM row daal rahe hai -> isliye pehle check: top <= bottom hai ya nahi?
+        // (agar top bottom se aage nikal gaya to row already ho chuki -> guard na ho to DUPLICATE element daal denge)
         if (top <= bottom)
         {
             for (int i = right; i >= left; i--)
             {
-                // yaha bottom daal rahe hai isilye dekh rahe hai ki top <= bottom hia ye nahi warna duplicate elemenet dal saket hiai
                 ans.push_back(matrix[bottom][i]);
             }
             bottom--;
