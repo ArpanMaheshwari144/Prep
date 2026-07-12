@@ -114,7 +114,9 @@
 
    Binary Search (basic)   -> mid; target<mid -> left half, warna right. (low<=high, mid±1)
    Search Insert Position  -> basic BS; na mile to low return (wahi insert jagah).
-   First & Last Position   -> 2 BS: ek left-most (mila to high=mid-1 continue), ek right-most.
+   First & Last Position   -> ★ 2 BS. mila to RUKO MAT -> boundary tak continue:
+                              LEFT-most ke liye  -> ans=mid; high=mid-1 (aur left dhoondo).
+                              RIGHT-most ke liye -> ans=mid; low=mid+1 (aur right dhoondo).
    Search in Rotated       -> ★ mid; kaunsa half SORTED -> target us sorted half ki RANGE me hai? -> udhar jao.
    Find Min in Rotated     -> mid vs right; mid>right -> min right-half (low=mid+1), warna left (high=mid).
    Koko Bananas            -> ★ BS on ANSWER (speed k); hours(k)=sum(ceil(pile/k))<=h? -> chhoti k try. (ceil: (a+k-1)/k)
