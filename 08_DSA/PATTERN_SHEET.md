@@ -6,6 +6,24 @@
 
 ---
 
+## ★★ BROAD-TRICKS INDEX (sabse high-leverage — ek trick, kai problem)
+```
+   FAST/SLOW pointer     -> middle · detect-cycle · palindrome-LL
+   REVERSE (3-pointer)   -> reverse-LL · palindrome-LL
+   DUMMY node            -> merge-two-sorted (+ LL insert/build)
+   MONOTONIC stack       -> next-greater · daily-temperatures
+   PREFIX-SUM + map[sum-k]-> subarray-sum=K
+   num-1 START-check      -> longest-consecutive-sequence (O(n))
+   BS on ANSWER          -> koko (speed pe search, not array)
+   sorted-half-check     -> search in rotated array
+   2D-index-map          -> search 2D matrix (row=i/col, col=i%col)
+   VARIABLE window (shrink-till-valid, ans unconditional) -> longest-no-repeat · max-consec-ones · char-replace · min-len
+   "assign PEHLE, update BAAD" -> pivot-index · product-except-self
+   -> ye 11 broad-tricks yaad -> zyadatar focus-8 problems recognize + solve.
+```
+
+---
+
 ## PATTERN 1 — TWO POINTER
 ```
    BROAD IDEA: do pointer (dono taraf se, ya slow-fast) -> ek saath move karke O(n).
@@ -102,3 +120,21 @@
 
    ★ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
 ```
+
+---
+
+## PATTERN 8 — LINKED LIST
+```
+   BROAD IDEA: pointer manipulation. 3 broad-trick: FAST/SLOW · REVERSE (3-pointer) · DUMMY node.
+
+   Reverse Linked List  -> ★ 3-pointer: nextt=curr->next; curr->next=prev; prev=curr; curr=nextt. return prev.
+   Middle of List       -> ★ FAST/SLOW: slow 1 step, fast 2 step; fast end pe -> slow MIDDLE pe.
+   Detect Cycle         -> ★ FAST/SLOW (Floyd): cycle ho to tez-dheema MILENGE (slow==fast) -> true.
+   Palindrome LL        -> ★ COMBO: middle nikaalo -> 2nd half REVERSE -> dono half compare. (mid pe list TOOT jaati)
+   Merge Two Sorted     -> ★ DUMMY node + tail; chhota wala tail->next; ek khatam -> baaki jod do. ans=dummy->next.
+
+   ★ 3 high-leverage: fast/slow (middle+cycle+palindrome) · reverse (reverse+palindrome) · dummy-node (merge).
+```
+
+---
+> REVISE isi sheet se. code nahi kholना. "similar Q -> pattern pehchano -> trick recall -> lagao."
