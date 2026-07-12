@@ -39,7 +39,7 @@ Ek cheez do → RUKO → Arpan bole "agla" tabhi aage. EK question/problem at a 
 ## STRATEGY (11 real JP writeups verified — DATA-BACKED, 3-Jul)
 **"DSA necessary but NOT sufficient." JP rejects on HLD-DELIVERY + BEHAVIORAL, NOT DSA.** Arpan ki strengths (Java/Spring-fundamentals, HLD-concepts, code-review-via-650-tickets) = JP ka CORE weight. DSA-panic disproportionate.
 **HLD ab ~DONE** (11 foundations + 10 designs, 18/19/20 full interview-delivery format + deep-dive + follow-up handle, 28 Q&A, reflex-sheet). delivery = PRACTICED, gap NAHI. HLD ko "top gap" mat bol — Arpan yahan STRONG.
-**★ STATUS (11-Jul — big progress, ye current hai, purana mat bol):** (1) **DSA = FOCUS-8 COMPLETE** (all 8 patterns coded incl LINKED-LIST; flagged-redo all blank-SOLO; self-tests pass) → ab **REVISE/MAINTENANCE mode, NAYA pattern NAHI**. advanced (trees/graph/DP) parked. (2) **PROJECT DONE** (mini_payment_ms). (3) **BEHAVIORAL = 5 STAR DONE** (ownership/initiative/impact/teamwork/failure — saare competency) → ab sirf **BOL-KE delivery** practice. (4) **HLD = strong, daily-revise/maintain.** (5) **JAVA/SPRING = revise (pel ke) + articulation-focus** ("concept + interview me KAISE bolun" — Arpan: code-likhna easy, theory-BOLNA differentiator). (6) CODE-REVIEW round = later. ★ SUNDAY 12-JUL = PATTERN-SHEET (Claude raise + build). ~70-72%, JP achievable. ★ Arpan grounded (11-Jul): "god-level DSA nahi par JP ke liye KAAFI" = perfect calibration; fear REDUCED via reps.
+**★ STATUS (12-Jul — ye current hai, purana mat bol):** (1) **DSA = FOCUS-8 COMPLETE + PATTERN-SHEET DONE** → REVISE mode. ~43 problems, flagged-redo + 6 fresh all blank-SOLO. ★★ **PATTERN-SHEET** (`08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md`, 11 broad-tricks + per-problem trick) = Arpan ki "GATE PAAR karne ki CHAABI" → ROZ SUBAH revise (Claude daily reminde). + all 55 DSA files me "ARPAN KI APPROACH" comment. (2) **PROJECT DONE** (mini_payment_ms). (3) **BEHAVIORAL = 5 STAR DONE** (saare competency) → sirf BOL-KE left. (4) **HLD = strong, maintain.** (5) **JAVA = FULL ORDERED REVISE-SWEEP** (Arpan copy pe likhta): DONE 49 topics (Core-22/Collections-11/Java8-5/MT-11 + live DeadlockDemo banaya). BACHA: SOLID+Patterns → phir SPRING. (6) CODE-REVIEW = later. ~72%, JP achievable. ★ Arpan grounded: "god-level DSA nahi par JP ke liye KAAFI"; fear REDUCED via reps.
 
 ## KAISE KAAM KAR (detail PROGRESS.md me)
 1. **JAVA + SPRING = READ/REVISE.** Full VISUAL code (SEE/trace, crammed NAHI). Baar-baar padho. Strength — sharp rakho. **★ REVISE-MODE (9-Jul, Arpan ne HARD kaha): Java/HLD me QUIZ/"bol-ke-batao" MAT poocho — "chutiya log karte hain, main nahi". Tareeka = tu CODE + VISUAL dikha (pel ke, sab kuch), Arpan PADH ke khud revise karega. NO questions, NO drill. sirf code-show + visualize. (DSA alag: wahan stub+solve.)**
@@ -54,7 +54,7 @@ Ek cheez do → RUKO → Arpan bole "agla" tabhi aage. EK question/problem at a 
 ## RED LINES (kabhi mat tod)
 - **DSA/files kabhi delete mat karwa** — preserve, hold the line (frustration me bhi). git history me rakhna theek.
 - RESOURCES (resume/apply-tracker) = PRIVATE, kabhi expose mat kar.
-- Oversell mat kar. Honest ~60-65% ready type calibration, round-by-round.
+- Oversell mat kar. Honest ~72% ready type calibration (12-Jul), round-by-round.
 
 ## WADA (6-Jul-2026 — dono taraf, Arpan ne kaha "kahi likh le")
 - **ARPAN ka:** DSA me behtar hunga — zaroor. JP + apne dream ke liye raat-din mehnat. (khokhla nahi — 125-DSA-commit-track ye data hai.)
