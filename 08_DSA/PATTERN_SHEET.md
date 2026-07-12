@@ -28,10 +28,10 @@
 ```
    BROAD IDEA: do pointer (dono taraf se, ya slow-fast) -> ek saath move karke O(n).
 
-   Move Zeroes           -> slow/fast; fast scan kare, non-zero mile to slow<->fast SWAP -> slow++. (zeros peeche)
+   Move Zeroes           -> slow/fast; fast scan kare, non-zero mile to swap -> slow++. [swap(nums[slow], nums[fast]);]
    Valid Palindrome      -> left/right dono taraf se, compare karte andar aao.
    Container Most Water   -> left/right; area = min(h)*width; CHHOTI height wala pointer andar (bottleneck).
-   3Sum                  -> sort -> ek number fix -> baaki 2 pointer target=-fixed; duplicates skip.
+   3Sum                  -> ★ pehle SORT [sort(begin(nums),end(nums));] -> ek number fix -> baaki 2 pointer target=-fixed; TRIPLETS; duplicates skip.
    Sort Colors (0,1,2)    -> 3 pointer (low/mid/high): 0->low-swap, 2->high-swap, 1->mid++. (Dutch flag)
 ```
 
@@ -39,8 +39,9 @@
 
 ## PATTERN 2 — SLIDING WINDOW
 ```
-   BROAD IDEA: window [left..right]. right se EXPAND -> condition toote to left se SHRINK-till-valid -> ans record.
-   ★ KEY: shrink ke baad window HAMESHA valid -> ans UNCONDITIONAL update (koi extra if nahi).
+   BROAD IDEA: right se EXPAND -> CONDITION ke hisab se left se SHRINK -> ans STORE.
+   ★ KEY: ans store HAMESHA condition ke saath NAHI hota. jab shrink guarantee kare window valid -> ans UNCONDITIONAL
+          (jaise max-consec-ones). condition sirf SHRINK pe lagti, store pe zaroori nahi.
 
    Max Sum of K (FIXED window) -> fixed size k window slide; naya add, purana(left) minus -> max track.
    Min Subarray Len (>=target) -> expand jab tak sum>=target -> shrink karke chhoti length -> min track.
@@ -60,7 +61,7 @@
    Two Sum                 -> map me {value: index}; har num pe (target-num) map me hai? -> mila.
    Valid Anagram           -> count-array (26) ya map; ek me ++, doosre me --; sab zero -> anagram.
    Group Anagrams          -> har word ko SORT karo -> wahi key; map<sortedKey, list> me group.
-   Subarray Sum = K        -> ★ prefix-sum + map[sum]; har step (sum-k) map me? count add. map{0:1} se START.
+   Subarray Sum = K        -> ★ prefix-sum + map[sum]; map{0:1} se START. [count += mp[sum-k];  // = prefix[j]-prefix[i-1]=k]
    Longest Consecutive Seq -> ★ set me sab; count START tabhi jab (num-1) set me NAHI (sequence start) -> O(n).
 ```
 
@@ -70,7 +71,7 @@
 ```
    BROAD IDEA: running sum pehle se rakho -> range/left-right sum O(1) (baar-baar loop nahi).
 
-   Pivot Index          -> total nikaalo; leftSum chalao; right = total-leftSum-nums[i]; ★ compare BEFORE leftSum+=nums[i].
+   Pivot Index          -> total nikaalo; leftSum chalao. ★ order: rightSum=total-leftSum-nums[i]; if(left==right)return i; PHIR leftSum+=nums[i]. (leftSum BAAD me)
    Highest Altitude     -> running sum chalao, max track. (simple prefix)
    Product Except Self  -> 2 pass. ★ ORDER trick: pehle left[i]=prod, PHIR prod*=nums[i] (assign-before-update).
                            left-pass phir right-pass -> ans[i] = left × right. (bina division)
@@ -86,8 +87,8 @@
 
    Set Matrix Zeroes  -> 2 pass: pehle zeroRow[]/zeroCol[] mark; phir jahan row ya col marked -> 0.
    Spiral Matrix      -> 4 boundary (top/bottom/left/right); L->R, T->B, R->L, B->T; har layer ke baad boundary shrink.
-                         ★ bottom-row & left-col loop me guard: if(top<=bottom) / if(left<=right).
-   Transpose          -> ans[i][j] = matrix[j][i]; naya matrix col×row size ka.
+                         ★ guard: BOTTOM-row chalane se pehle if(top<=bottom); LEFT-col chalane se pehle if(left<=right).
+   Transpose          -> [ans[i][j] = matrix[j][i];] naya matrix col×row size ka.
 ```
 
 ---
