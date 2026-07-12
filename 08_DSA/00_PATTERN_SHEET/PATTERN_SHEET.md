@@ -8,7 +8,7 @@
 
 ## ★★ BROAD-TRICKS INDEX (sabse high-leverage — ek trick, kai problem)
 ```
-   FAST/SLOW pointer     -> middle · detect-cycle · palindrome-LL
+   FAST/SLOW pointer     -> middle · detect-cycle · palindrome-LL · remove-nth-from-end (GAP: fast ko n aage bhejo)
    REVERSE (3-pointer)   -> reverse-LL · palindrome-LL
    DUMMY node            -> merge-two-sorted (+ LL insert/build)
    MONOTONIC stack       -> next-greater · daily-temperatures
@@ -138,8 +138,12 @@
    Detect Cycle         -> ★ FAST/SLOW (Floyd): cycle ho to tez-dheema MILENGE (slow==fast) -> true.
    Palindrome LL        -> ★ COMBO: middle nikaalo -> 2nd half REVERSE -> dono half compare. (mid pe list TOOT jaati)
    Merge Two Sorted     -> ★ DUMMY node + tail; chhota wala tail->next; ek khatam -> baaki jod do. ans=dummy->next.
+   Remove Nth From End  -> ★ FAST/SLOW GAP: fast ko PEHLE aage bhejo (loop i=1; i<=n). ab fast & slow me n ka gap.
+                           ★ agar fast==NULL -> head hi hatana hai -> return head->next.
+                           warna dono SAATH chalao (gap constant) jab tak fast->next NULL -> slow "hatane wale ke PEHLE" baith jaata.
+                           slow->next us node ko point kar raha -> slow->next = slow->next->next. done.
 
-   ★ 3 high-leverage: fast/slow (middle+cycle+palindrome) · reverse (reverse+palindrome) · dummy-node (merge).
+   ★ 3 high-leverage: fast/slow (middle+cycle+palindrome+remove-nth) · reverse (reverse+palindrome) · dummy-node (merge).
 ```
 
 ---
