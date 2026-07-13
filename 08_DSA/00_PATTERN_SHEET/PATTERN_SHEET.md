@@ -132,7 +132,8 @@
    Daily Temperatures   -> same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).
    Min Add Make Valid   -> ★ COUNTER, stack nahi (sirf () hain). 2 counter:
                            close_needed = kitne '(' ka ')' abhi baaki  ·  open_needed = kitne ')' ke liye '(' add karna.
-                           '(' aaye -> close_needed++.   ')' aaye -> agar close_needed>0 to MATCH (close_needed--), warna open_needed++.
+                           '(' aaye -> close_needed++.   ')' aaye -> agar close_needed>0 to MATCH (close_needed--)
+                              [aur close_needed 0 ho gaya = poora bracket valid -> CONTINUE, aage kuch nahi], warna open_needed++.
                            ans = open_needed + close_needed.   ★ trap: match hua ')' open_needed me MAT ginо (nested "(())" = 0).
 
    ★ broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
