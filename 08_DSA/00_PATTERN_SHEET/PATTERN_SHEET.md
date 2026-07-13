@@ -62,17 +62,18 @@
    ★ KEY: shrink ke BAAD window HAMESHA valid -> ans UNCONDITIONAL (koi if(==k) nahi).
    ★ LENGTH ya COUNT: length -> max(ans, j-i+1) · subarray COUNT -> count += (j-i+1) (window size).
 
-   Max Sum of K (FIXED window) -> fixed size k window slide; naya add, purana(left) minus -> max track.
-   Min Subarray Len (>=target) -> expand jab tak sum>=target -> shrink karke chhoti length -> min track.
-   Longest Substring No-Repeat -> set/map me char; repeat aaye to left shrink jab tak repeat gaya -> max length.
-   Char Replacement (longest)  -> window me (windowLen - maxFreqChar) <= k valid; warna left shrink.
-   Max Consecutive Ones III    -> window me zeros count <= k; zeros>k to left shrink -> ans unconditional.
-   Fruit Into Baskets          -> ★ = "longest subarray, AT MOST 2 DISTINCT" (fruit/basket sirf kahani).
-                                  map<type,count>; mp.size()>2 -> left shrink (count--); ★ count==0 -> map.ERASE (warna size galat).
-   Subarray Product < K        -> ★ COUNT (length nahi). prod*=nums[j]; prod>=k -> prod/=nums[i], i++.
-                                  ★★ COUNT TRICK: window valid -> count += (j-i+1) = window size (j pe end hone wale saare valid subarrays). (bahut count-Q me kaam aata)
+   [track] · [INVALID kab -> shrink] · [ans]
+   Max Sum of K (FIXED)        -> track: windowSum. slide: +nums[j], -nums[j-k] (size k fix). ans = max(sum). (no shrink-condition, fixed size)
+   Min Subarray Len (>=target) -> ★ SHORTEST type (ULTA): track sum; VALID (sum>=target) hote hi shrink-WHILE-valid -> ans = MIN length.
+   Longest Substring No-Repeat -> track: char freq-map; INVALID = repeat (freq>1) -> left shrink; ans = MAX length.
+   Char Replacement (longest)  -> track: freq + maxFreq; INVALID = (windowLen - maxFreq) > k -> left shrink; ans = MAX length.
+   Max Consecutive Ones III    -> track: zerosCount; INVALID = zeros > k -> left shrink; ans = MAX length (UNCONDITIONAL).
+   Fruit Into Baskets          -> ★ = "longest, AT MOST 2 DISTINCT" (fruit/basket sirf kahani). track: map<type,count>;
+                                  INVALID = mp.size()>2 -> shrink (count--, ★ count==0 -> map.ERASE warna size galat); ans = MAX length.
+   Subarray Product < K        -> ★ COUNT (length nahi). track: prod; INVALID = prod>=k -> prod/=nums[i], i++.
+                                  ★★ COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid). (bahut count-Q me)
 
-   ★ 2 type: FIXED window (max-sum-k) · VARIABLE window (baaki).
+   ★★ LONGEST vs SHORTEST (yaad rakh): LONGEST -> shrink jab INVALID, ans=MAX. SHORTEST (min-len) -> shrink jab VALID, ans=MIN.
 ```
 
 ---
