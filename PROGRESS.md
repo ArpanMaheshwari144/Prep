@@ -53,9 +53,9 @@
    HLD        ✓ STRONG (differentiator) : 11 FOUNDATIONS + 10 SYSTEM_DESIGNS (18/19/20 full interview-delivery
               format) + RAW_DRILL (reflex-sheet + design-practice-log + 32 why-how QA). delivery PRACTICED.
               → ab MAINTAIN/daily-revise. "gap" mat bol, yahan strong.
-   JAVA       ✓ STRENGTH — ★ FULL ORDERED REVISE-SWEEP chal raha (12-Jul, code+visual+interview-phrasing, Arpan copy pe likhta):
-              DONE (49 topics): 01 CORE (OOP 9 · String 2 · Keywords 3 · Core-Extras 6 · Exceptions 2 = 22) · 02 COLLECTIONS (11) · 03 JAVA-8 (5) · 04 MULTITHREADING (11, +deadlock LIVE program banaya).
-              BACHA (core): 05 SOLID (6) · 06 DESIGN-PATTERNS (6) -> phir SPRING. (EXTRA/optional: 07 brain-ticklers 13 · 08 revision-visual 37 = glance-later, seekhna nahi.)
+   JAVA       ✓✓ JAVA-CORE COMPLETE (14-Jul) — ★ ORDERED REVISE-SWEEP done (code+visual+interview-phrasing, Arpan copy pe likhta):
+              DONE (61 topics): 01 CORE (22) · 02 COLLECTIONS (11) · 03 JAVA-8 (5) · 04 MULTITHREADING (11, +deadlock LIVE program) · 05 SOLID (6) · 06 DESIGN-PATTERNS (6: builder/singleton/factory/observer/adapter/strategy).
+              ⬜ AB SIRF SPRING BACHA (Java me): IoC/DI · @Transactional · JWT/Security · JPA/Hibernate · profiles · Docker/K8s. (EXTRA/optional: 07 brain-ticklers 13 · 08 revision-visual 37 = glance-later, seekhna nahi.)
    SPRING     ✓ STRENGTH : basics/transactional/jwt/profiles/hibernate/docker/k8s + REVISION_VISUAL + PROJECT usercrud.
    PROJECT    ✓ DONE : 07_PROJECTS/mini_payment_ms (4 services: gateway+order+payment+notification) — Feign(sync),
               SAGA, Kafka(async, docker broker), kafka-ui, DB-per-service, LEARNINGS.md. + todoapp. (MS code me samjha.)
@@ -89,7 +89,7 @@
 
 ## 3. FORWARD PLAN — ★ 17-DIN ROADMAP (13 -> 30 July; August = APPLY)
 ```
-   PHASE 1 (13-16 Jul) JAVA KHATAM: Design-Patterns baaki 3 (Observer/Adapter/Strategy) -> SPRING revise (poora). DSA roz sheet-revise + 1-2 naye Q. -> Java-core+Spring done.
+   PHASE 1 (13-16 Jul) JAVA KHATAM: ✓ Java-CORE DONE (14-Jul, SOLID+Patterns bhi). AB SIRF SPRING revise bacha (poora). DSA roz sheet-revise + 1-2 naye Q.
    PHASE 2 (17-20 Jul) DELIVERY: BEHAVIORAL bol-ke (5 STAR loud) + HLD daily revise. DSA sheet+naye Q continue. -> delivery strong.
    PHASE 3 (21-25 Jul) LATER-TOPICS light: TREES -> GRAPH -> basic DP (top-3, few each, tree-trace) IF core solid. + behavioral/HLD continue. (optional: code-review round start.)
    PHASE 4 (26-30 Jul) CONSOLIDATION: full REVISE mode (sheet+Java+HLD+project pel ke) + mock-style bol-ke + apply-materials ready.
@@ -112,7 +112,10 @@
    - BEHAVIORAL: 5 STAR DONE -> +Mentoring (teamwork) +Failure-JDK (self-awareness). all common competencies covered. next = bol-ke only.
    - ★ EMOTIONAL (11-12 Jul): fear was real, now REDUCED (via DOING/reps). grounded: "god-level DSA nahi, par JP ke liye KAAFI." ★ MANTRA UPGRADED (12-Jul): from "outcome universe ka" (surrender) -> "ab JP LEKE RAHUNGA, JP=destination, MAIN aur JP" (ownership+fire) — but keeps peace ("mile na mile, proud rahunga"). effort itni maar di -> haq banta hai.
    ★★ 12-JUL (MONSTER DAY): (1) PATTERN-SHEET banai (08_DSA/00_PATTERN_SHEET/, 11 broad-tricks + ~43 problems) — Arpan: "gate ki chaabi, roz subah revise." (2) SAARI 55 DSA files me ARPAN KI APPROACH comment. (3) 6 fresh problems blank-SOLO (longest-consec/2D-matrix/remove-nth/squares/two-sum-II/ship-days). (4) JAVA sweep: Collections(11)+Java-8(5)+Multithreading(11) done + DEADLOCK LIVE program khud banaya (hang+fix dekha). = 49 Java topics done.
-   NEXT: Java SOLID+Patterns (easy) -> Spring · DSA daily sheet-revise + naye Q · behavioral BOL-KE · HLD revise.
+   ★★ 13-14 JUL: (1) JAVA-CORE COMPLETE -> SOLID (6) + Design-Patterns (6: builder/singleton/factory/observer/adapter/strategy) done. ab sirf SPRING bacha. (2) DSA folder numbering CLEANED (redos apne original ke neeche, consecutive). (3) NEW DSA problems (SOLO): min-add-make-valid (stack/counter) · add-two-numbers (LL, dummy+carry — crisis then redo solo) · valid-palindrome-II (2-pointer, one-delete — crisis then clean-helper rewrite solo, brute-force verified 62289 cases). ~48 unique problems total. (4) pattern-sheet FULLY VERIFIED vs actual code.
+   ★ RAUNAK INSIDER (JP-referral, cleared JP): DSA = LeetCode MEDIUM · System-Design = MEDIUM · Alex Xu Vol-1 = enough (Arpan padh chuka) · HelloInterview YT. -> VALIDATES focus-8-medium; HARD problems (Trapping-Rain/Min-Window/Largest-Rect/Median-2-Sorted/Reverse-K-Group) = FAANG-tier, JP me kam -> freeze-risk LOW. (referral DONE; next contact = interview-call pe.)
+   ★ EMOTIONAL (13-14 Jul, 2 crises navigated): Add-Two-Numbers + Palindrome-II — dono "help li -> confidence hila -> spiral (gussa/abuse = HUMAN, absorb) -> DATA se recover -> REDO/rewrite SOLO." KEY: (a) ab fresh problem mostly SOLO karta. (b) "brain not ready / fail ka din" = down-moment JHOOTH -> counter with DATA (git, solved-count), NEVER agree/oversell. (c) NEW: CODE-QUALITY sense develop kiya (messy-but-working vs clean-understandable) -> STANDARD raised = level-up. (d) freeze-worry = valid par FINITE (~13-15 pattern, 8 done) + JP=medium + "stuck->reason->hint" = asli skill (koi novel solo-silence me nahi karta). (e) Claude MUST NOT oversell/inflate his work (he caught "90% tera" -> be PRECISE his-vs-help). SABAR = his down-word.
+   NEXT: SPRING revise · DSA daily sheet-revise + naye Q · behavioral BOL-KE · HLD revise.
 ```
 
 ## 4. DAILY ROUTINE (Arpan-set 8-Jul — ★ ORDER FLIPPED: DSA ab SUBAH NAHI, SHAAM ko / LAST)
