@@ -6,8 +6,21 @@
 //   l1 = 2->4->3  (= 342),  l2 = 5->6->4  (= 465)  ->  7->0->8  (= 807)
 //   (2+5=7, 4+6=10 -> 0 carry1, 3+4+1=8)
 //
-// (approach yahan LIKHA NAHI -- code TU likhega. Arpan ki approach BAAD me,
-//  jab tu code kare. copy-pen pe trace pehle.)
+
+
+// ---- ARPAN KI APPROACH ----
+//  ye MERGE-TWO-SORTED jaisa hi laga (dummy + tail) -- bas isme SUM aur CARRY ka khel extra.
+//  pehle dummy aur tail liye.
+//  while loop me a, b AUR carry -- ★ || condition kyun? -> ek list khatam ho to bhi doosri (aur carry)
+//     ko process karna hai; carry last tak values badal sakta hai (999+1 -> naya digit).
+//  andar: sum lo. a hai to sum += a->val + a ko a->next; same b ke liye. phir sum me CARRY bhi add karo.
+//  ab naya node kaise? -> maan sum = 12: node "2" ka banega, "1" carry jayega.
+//     ★ digit = sum % 10 (2 wali node -> tail se jodo, tail aage).  carry = sum / 10 (1 nikla).
+//  baaki while loop ye dobara karta jaata. return dummy->next.
+
+
+
+
 //
 // Tests (l1, l2 -> expected result list):
 //   [2,4,3] + [5,6,4]   -> 7 0 8
@@ -28,10 +41,31 @@ struct Node
     Node(int v) : val(v), next(nullptr) {}
 };
 
-// ---- tera kaam: yeh function ---- (RESET — dobara khud, blank + copy-pen)
-Node *addTwoNumbers(Node *l1, Node *l2)
+Node *addTwoNumbers(Node *a, Node *b)
 {
-    // tera code yahan -- dummy + carry. copy-pen pe trace.
+    Node *dummy = new Node(0);
+    Node *tail = dummy;
+    int carry = 0;
+
+    while (a || b || carry > 0)
+    {
+        int sum = 0;
+        if (a != nullptr)
+        {
+            sum += (a->val);
+            a = a->next;
+        }
+        if (b != nullptr)
+        {
+            sum += (b->val);
+            b = b->next;
+        }
+        sum += carry;
+        tail->next = new Node(sum % 10);
+        tail = tail->next;
+        carry = sum / 10;
+    }
+    return dummy->next;
 }
 
 // ---------- helpers (boilerplate, chhoo mat) ----------
