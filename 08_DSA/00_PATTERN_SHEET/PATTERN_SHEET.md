@@ -130,10 +130,10 @@
    Min Stack            -> ★ pair{val, minSoFar} push -> getMin = top().second (O(1), koi scan nahi).
    Next Greater Element  -> ★ MONOTONIC stack (index rakho); jab curr > stack-top -> pop + ans[top]=curr.
    Daily Temperatures   -> same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).
-   Min Add Make Valid   -> ★ COUNTER (sirf () -> stack nahi chahiye). close_needed = unmatched '(' (chahiye ')'),
-                           open_needed = ')' jinke liye koi '(' nahi. '(' -> close_needed++.
-                           ')' -> close_needed>0 ? close_needed-- (match; 0 hone pe poora bracket valid -> continue) : open_needed++.
-                           ans = open_needed + close_needed. ★ trap: MATCHED ')' pe open_needed++ MAT karo (nested "(())" = 0).
+   Min Add Make Valid   -> ★ COUNTER, stack nahi (sirf () hain). 2 counter:
+                           close_needed = kitne '(' ka ')' abhi baaki  ·  open_needed = kitne ')' ke liye '(' add karna.
+                           '(' aaye -> close_needed++.   ')' aaye -> agar close_needed>0 to MATCH (close_needed--), warna open_needed++.
+                           ans = open_needed + close_needed.   ★ trap: match hua ')' open_needed me MAT ginо (nested "(())" = 0).
 
    ★ broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
 ```
