@@ -51,9 +51,16 @@
 
 ## PATTERN 2 — SLIDING WINDOW
 ```
-   BROAD IDEA: right se EXPAND -> CONDITION ke hisab se left se SHRINK -> ans STORE.
-   ★ KEY: ans store HAMESHA condition ke saath NAHI hota. jab shrink guarantee kare window valid -> ans UNCONDITIONAL
-          (jaise max-consec-ones). condition sirf SHRINK pe lagti, store pe zaroori nahi.
+   ★ KAB PEHCHANO: CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
+   ★ 2 TYPE:
+     (a) FIXED window   -> size k DIYA hai. window slide: naya[j] add, purana[j-k] hatao. har step track.
+     (b) VARIABLE window-> size condition se. TEMPLATE:
+            for j in arr:  window me arr[j] add (update tracker)
+                           while (INVALID): left[i] hatao (tracker update), i++
+                           ans update  (length = j-i+1, ya count += j-i+1)
+   ★ KYA TRACK: sum · freq-map (distinct=map.size / char-count) · zeros-count · product · maxFreq.
+   ★ KEY: shrink ke BAAD window HAMESHA valid -> ans UNCONDITIONAL (koi if(==k) nahi).
+   ★ LENGTH ya COUNT: length -> max(ans, j-i+1) · subarray COUNT -> count += (j-i+1) (window size).
 
    Max Sum of K (FIXED window) -> fixed size k window slide; naya add, purana(left) minus -> max track.
    Min Subarray Len (>=target) -> expand jab tak sum>=target -> shrink karke chhoti length -> min track.
