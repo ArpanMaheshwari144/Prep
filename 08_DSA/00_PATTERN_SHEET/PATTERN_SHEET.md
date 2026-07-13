@@ -30,6 +30,8 @@
    BROAD IDEA: do pointer (dono taraf se, ya slow-fast) -> ek saath move karke O(n).
 
    Move Zeroes           -> slow/fast; fast scan kare, non-zero mile to swap -> slow++. [swap(nums[slow], nums[fast]);]
+   Remove Dup (sorted)   -> ★ move-zeroes cousin. slow=write-index, fast=scan. nums[slow]!=nums[fast] (naya unique)
+                            -> slow++, phir nums[slow]=nums[fast]. fast har baar++. unique count = slow+1 (0-based +1).
    Valid Palindrome      -> left/right dono taraf se, compare karte andar aao.
    Container Most Water   -> left/right; area = min(h)*width; CHHOTI height wala pointer andar (bottleneck).
    3Sum                  -> ★ pehle SORT [sort(begin(nums),end(nums));] -> ek number fix -> baaki 2 pointer target=-fixed; TRIPLETS; duplicates skip.
