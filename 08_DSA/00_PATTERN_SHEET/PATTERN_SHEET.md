@@ -63,7 +63,8 @@
    ★ LENGTH ya COUNT: length -> max(ans, j-i+1) · subarray COUNT -> count += (j-i+1) (window size).
 
    [track] · [INVALID kab -> shrink] · [ans]
-   Max Sum of K (FIXED)        -> track: windowSum. slide: +nums[j], -nums[j-k] (size k fix). ans = max(sum). (no shrink-condition, fixed size)
+   Max Sum of K (FIXED)        -> track: windowSum (size k fix). slide: window aage -> NAYA element (right) ADD +
+                                  PURANA element (jo left se nikla) MINUS. (poora dobara mat jodo -> +naya -purana = O(n)). ans = max(sum).
    Min Subarray Len (>=target) -> ★ SHORTEST type (ULTA): track sum; VALID (sum>=target) hote hi shrink-WHILE-valid -> ans = MIN length.
    Longest Substring No-Repeat -> track: char freq-map; INVALID = repeat (freq>1) -> left shrink; ans = MAX length.
    Char Replacement (longest)  -> track: freq + maxFreq; INVALID = (windowLen - maxFreq) > k -> left shrink; ans = MAX length.
