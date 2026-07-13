@@ -33,7 +33,10 @@
    Valid Palindrome      -> left/right dono taraf se, compare karte andar aao.
    Container Most Water   -> left/right; area = min(h)*width; CHHOTI height wala pointer andar (bottleneck).
    3Sum                  -> ★ pehle SORT [sort(begin(nums),end(nums));] -> ek number fix -> baaki 2 pointer target=-fixed; TRIPLETS; duplicates skip.
-   Sort Colors (0,1,2)    -> 3 pointer (low/mid/high): 0->low-swap, 2->high-swap, 1->mid++. (Dutch flag)
+   Sort Colors (0,1,2)    -> ★ Dutch flag, 3 pointer (low/mid/high):
+                             nums[mid]==0 -> swap(low,mid), low++ AUR mid++ (dono).
+                             nums[mid]==1 -> sirf mid++.
+                             nums[mid]==2 -> swap(mid,high), high-- (★ mid++ NAHI -> high se aaya element unknown, dobara check).
    Squares of Sorted Arr  -> ★ negatives ka square order ULTA -> 2 pointer (left,right); dono ke square compare
                              -> BADA wala result ke END me daalo (k=n-1, ghatta); us pointer andar. O(n), no sort.
    Two Sum II (SORTED)    -> ★ sorted -> hashmap ki zaroorat nahi -> 2 pointer (left,right); sum==target -> mila (return 1-based).
