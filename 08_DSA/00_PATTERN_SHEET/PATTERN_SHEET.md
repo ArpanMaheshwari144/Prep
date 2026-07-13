@@ -130,6 +130,9 @@
    Min Stack            -> ★ pair{val, minSoFar} push -> getMin = top().second (O(1), koi scan nahi).
    Next Greater Element  -> ★ MONOTONIC stack (index rakho); jab curr > stack-top -> pop + ans[top]=curr.
    Daily Temperatures   -> same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).
+   Min Add Make Valid   -> ★ COUNTER (sirf ()  -> stack nahi chahiye). close_needed = unmatched '(' (chahiye ')'),
+                           open_needed = ')' jinke liye '(' nahi. '(' -> close_needed++; ')' -> close_needed>0? match(close_needed--) : open_needed++.
+                           ans = open_needed + close_needed. ★ trap: matched ')' pe open_needed++ MAT karo (nested "(())" =0).
 
    ★ broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
 ```
