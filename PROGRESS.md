@@ -87,13 +87,16 @@
 
 ---
 
-## 3. FORWARD PLAN (priority — 12-Jul updated)
+## 3. FORWARD PLAN — ★ 17-DIN ROADMAP (13 -> 30 July; August = APPLY)
 ```
-   1. JAVA/SPRING — ★ ORDERED REVISE-SWEEP continue: ab 05 SOLID (easy) -> 06 DESIGN-PATTERNS (easy) -> Java-core KHATAM -> phir SPRING (poora). Arpan copy pe likhta.
-   2. DSA        — ✓ FOCUS-8 done + pattern-sheet done. ab: ROZ SUBAH PATTERN-SHEET revise (Arpan-ask, "gate ki chaabi") + naye same-pattern questions (recognize->apply) + periodic blank-redo.
-   3. BEHAVIORAL — ✓ 5 STAR DONE. ab sirf BOL-KE practice (loud delivery). #1 actual skill ab = articulation.
-   4. HLD        — daily revise (self-quiz why/kya/kaise). strong zone, maintain.
-   5. CODE-REVIEW round + LLD-articulate (bol-ke) — abhi start nahi hua (naya, jab time ho).
+   PHASE 1 (13-16 Jul) JAVA KHATAM: Design-Patterns baaki 3 (Observer/Adapter/Strategy) -> SPRING revise (poora). DSA roz sheet-revise + 1-2 naye Q. -> Java-core+Spring done.
+   PHASE 2 (17-20 Jul) DELIVERY: BEHAVIORAL bol-ke (5 STAR loud) + HLD daily revise. DSA sheet+naye Q continue. -> delivery strong.
+   PHASE 3 (21-25 Jul) LATER-TOPICS light: TREES -> GRAPH -> basic DP (top-3, few each, tree-trace) IF core solid. + behavioral/HLD continue. (optional: code-review round start.)
+   PHASE 4 (26-30 Jul) CONSOLIDATION: full REVISE mode (sheet+Java+HLD+project pel ke) + mock-style bol-ke + apply-materials ready.
+   AUGUST: APPLY (Raunak referral). JP -> BlackRock.
+
+   ★ FLEXIBLE, not rigid: Phase slip ho to koi baat nahi (pace Arpan ka). later-topics OPTIONAL (focus-8 JP ke liye kaafi).
+   ★ NON-NEGOTIABLE roz: PATTERN-SHEET subah revise + jo bhi kaam. baaki adjust ho sakta.
 ```
 
 ---
@@ -118,8 +121,14 @@
      -> FIX: subah STRENGTHS pehle (Java/Spring/HLD = glance-recall, win banked, confidence). DSA sabse LAST (shaam).
      -> DSA flop bhi ho to din already productive -> mood safe. (fits "DSA = gate, identity nahi".)
 
+   ★★ CLAUDE ka ROZ-SUBAH REVISE-REMINDER (Arpan-ask 13-Jul): har subah Arpan ko revise ke liye BOL — ROTATE karke:
+       - ★ PATTERN-SHEET (DAILY, non-negotiable — "gate ki chaabi")
+       - kabhi HLD ("aaj ek design revise/bol")  · kabhi LLD ("LLD file khol ke padh")
+       - kabhi Java/Spring (wo already karwa raha) · kabhi behavioral bol-ke · kabhi COMPARES/DB.
+       -> har din ek revise-nudge do (sheet + rotating topic). taaki sab fresh rahe, kuch fade na ho.
+
    ROZ, isi order me (same pace):
-   ★★ 0. DSA PATTERN-SHEET revise (Arpan-ask 12-Jul) — ROZ SUBHA, chahe kuch bhi ho. "gate paar karne ki chaabi." Claude ye reminder ROZ de.
+   ★★ 0. DSA PATTERN-SHEET revise — ROZ SUBHA, chahe kuch bhi ho.
    1. JAVA/SPRING revise — subah (bol-ke, articulation). strength -> din confident shuru.
    2. HLD REVISE     — ek design self-quiz (why/kya/kaise) + reflex. (maintain, strong zone.)
    3. DSA (SHAAM/LAST) — ✓ FOCUS-8 COMPLETE -> ab REVISE mode: PATTERN-SHEET + naye same-pattern Q + periodic blank-redo.

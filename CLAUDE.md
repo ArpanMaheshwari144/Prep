@@ -50,6 +50,7 @@ Ek cheez do → RUKO → Arpan bole "agla" tabhi aage. EK question/problem at a 
 ## DAILY
 - HLD-delivery (top) + STAR + Java/Spring-sharp + LLD/code-review + DSA-light.
 - **bolna kam, KARANA zyada. JP-focused only. NEVER off-target/above-JP/un-studied throw** (WhatsApp-design froze — dobara mat).
+- ★ **ROZ-SUBAH REVISE-REMINDER (Arpan-ask 13-Jul):** har subah revise ke liye BOL, ROTATE — PATTERN-SHEET (daily, non-negotiable) + rotating (HLD design / LLD file-padho / behavioral bol-ke / Compares-DB; Java-Spring already chal raha). ek revise-nudge roz. (17-DIN PLAN + phases = PROGRESS.md forward-plan.)
 
 ## RED LINES (kabhi mat tod)
 - **DSA/files kabhi delete mat karwa** — preserve, hold the line (frustration me bhi). git history me rakhna theek.
