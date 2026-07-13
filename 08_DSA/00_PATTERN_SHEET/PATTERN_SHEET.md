@@ -53,7 +53,7 @@
 ```
    ★ KAB PEHCHANO: CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
    ★ 2 TYPE:
-     (a) FIXED window   -> size k DIYA hai. window slide: naya[j] add, purana[j-k] hatao. har step track.
+     (a) FIXED window   -> size k DIYA hai. i/j pointer: sum += nums[j]; jab (j-i+1) >= k -> track + left hatao (sum -= nums[i], i++).
      (b) VARIABLE window-> size condition se. TEMPLATE:
             for j in arr:  window me arr[j] add (update tracker)
                            while (INVALID): left[i] hatao (tracker update), i++
@@ -142,7 +142,9 @@
    First & Last Position   -> ★ 2 BS. mila to RUKO MAT -> boundary tak continue:
                               LEFT-most ke liye  -> ans=mid; high=mid-1 (aur left dhoondo).
                               RIGHT-most ke liye -> ans=mid; low=mid+1 (aur right dhoondo).
-   Search in Rotated       -> ★ mid; kaunsa half SORTED -> target us sorted half ki RANGE me hai? -> udhar jao.
+   Search in Rotated       -> mid==target return. ★ kaunsa half sorted? nums[low]<=nums[mid] -> LEFT sorted:
+                              target [nums[low]..nums[mid]] me? -> high=mid-1, warna low=mid+1.
+                              else RIGHT sorted: target [nums[mid]..nums[high]] me? -> low=mid+1, warna high=mid-1.
    Find Min in Rotated     -> ★ mid ko HIGH se compare. [if(nums[mid]>nums[high]) low=mid+1; else high=mid;] -> low pe min.
    Koko Bananas            -> ★ BS on ANSWER (speed k); hours(k)=sum(ceil(pile/k))<=h? -> chhoti k try.
                               ★ ceil: hours += ceil((double)piles[i]/mid);  ya integer: (piles[i]+mid-1)/mid.
