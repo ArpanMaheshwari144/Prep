@@ -49,6 +49,14 @@
    Merge Sorted Array     -> ★ in-place, PEECHE se bharo (aakhir me zeros = jagah). 3 ptr: i=m-1, j=n-1, k=m+n-1 (NA m*n-1).
                              while(i>=0 && j>=0): BADA nums1[k] me daalo, us ptr+k ghatao. ★ && (|| nahi -> ek khatam = out-of-bounds crash).
                              leftover nums2 (j) neeche while-loop se bhar do. (pattern: main-loop && + tail-loops)
+   Valid Palindrome II    -> ★ = palindrome YA ek char DELETE karke palindrome ban jaaye.
+                             IDEA: two-pointer; MISMATCH pe -> ya LEFT char delete ya RIGHT char delete. koi ek bane -> true, dono na bane -> false.
+                             v1 (BEKAAR/verbose): 2 poore pass. pass-1 = LEFT skip (flag, 1 baar); doosra mismatch -> BREAK
+                                 (false NAHI -> right-skip try baaki -> pass-2). pass-1 ke baad palindrome nikla ("aba") -> return true.
+                                 pass-2 = RESET, RIGHT skip; doosra mismatch -> return FALSE (dono option exhaust).
+                             v2 (CLEAN/YEHI likhna): helper isPalindrome(s,l,r). main loop; mismatch pe seedha ->
+                                 return isPalindrome(s,l+1,r) || isPalindrome(s,l,r-1);   (left-delete YA right-delete; || = ek se bhi bane -> true)
+                                 koi mismatch na aaye -> already palindrome -> true.
 ```
 
 ---

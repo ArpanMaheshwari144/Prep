@@ -12,17 +12,26 @@
 //  -> ya LEFT char delete (left skip) ya RIGHT char delete (right skip). koi ek se palindrome ban jaaye -> TRUE.
 //  dono se na bane -> FALSE.
 //
-//  --- version 1 (BEKAAR wali) ---
-//  2 poore PASS: pass-1 me first mismatch pe LEFT skip karke poora check (flag se ek hi baar allowed) -> ho gaya to true.
-//  warna RESET karke pass-2 me RIGHT skip karke check -> true/false.
+//  --- version 1 (BEKAAR wali -- chalti hai par verbose) ---
+//  PASS-1 (LEFT skip): two-pointer chalao. mismatch aaye to FLAG se ek baar LEFT skip (left++) allowed.
+//    agar ek-skip ke baad BHI mismatch (dono taraf theek se nahi) -> BREAK.
+//    ★ break kyun, false-return kyun NAHI? -> kyunki humne abhi RIGHT skip try hi nahi kiya ->
+//      isliye pass-1 me early false nahi de sakte -> break karke pass-2 me jao.
+//  ★ pass-1 ke while ke BAAD `return true` kyun? -> agar string pehle hi palindrome nikal gayi (jaise "aba"),
+//      to woh pass-1 me hi khatam -> pass-2 ki zaroorat hi nahi -> return true.
+//  PASS-2 (RIGHT skip): reset karke same, par flag ab RIGHT skip ke liye. yahan doosra mismatch aaye ->
+//    RETURN FALSE (ab dono option -- left aur right -- exhaust ho gaye, koi single delete kaam nahi karta).
+//    end me (left < right) -> false, warna true.
 //  (matlab: 2 baar palindrome-check -- ek left-skip ke saath, ek right-skip ke saath. bas ghumavdaar tarika.)
 //
-//  --- version 2 ---
+//  --- version 2 (ACHHI wali -- clean, samajh-aane-wali, YEHI likhna) ---
 //  ek chhota HELPER: isPalindrome(s, l, r) -> range [l..r] palindrome hai kya.
-//  main loop me first mismatch tak jao. mismatch pe SEEDHA:
+//  main while(left<=right) chalao. jab MISMATCH mile -> hamare paas 2 option: LEFT skip ya RIGHT skip.
+//  to dono try kar lo -> left+1 wale se palindrome check YA right-1 wale se palindrome check:
 //     return isPalindrome(s, left+1, right) || isPalindrome(s, left, right-1);   // left-delete YA right-delete
+//  ★ || laga -> ek se bhi ban gaya to answer TRUE. (yehi version-1 wali technique hai, bas SAAF.)
 //  koi mismatch hi na aaye -> already palindrome -> true.
-//  -> same logic, par ek line, koi reset/flag nahi. yehi interview me likhna.
+//  -> same logic, par ek line, koi reset/flag nahi.
 //
 // Tests (s -> expected):
 //   "aba"        -> 1
