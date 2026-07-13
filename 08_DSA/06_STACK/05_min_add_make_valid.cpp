@@ -11,11 +11,11 @@
 // ---- ARPAN KI APPROACH ----
 //  COUNTER (stack ki zaroorat nahi -- sirf ( ) hain). do counter:
 //    close_needed = jab '(' aaye -> close_needed++.
-//    open_needed  = jab ')' aaye aur koi '(' unmatched na ho -> uske liye '(' chahiye.
-//  ')' aaye to:
-//    - close_needed > 0 -> close_needed-- (match ho gaya). aur jab close_needed 0 ho jaaye ->
-//      matlab poora bracket valid ho gaya -> continue (aage kuch check nahi).
-//    - warna else -> open_needed++ (is ')' ke liye koi '(' tha hi nahi).
+//    open_needed  = jab ')' aaye.
+//  else (')' aaye) to:
+//    - close_needed > 0 -> close_needed-- (match ho gaya). bas.
+//    - warna (close_needed == 0) -> open_needed++.
+//  (★ open_needed++ ELSE me hai -> match wale case me chalta hi nahi -> continue ki zaroorat NAHI.)
 //  answer = open_needed + close_needed (jo ')' pehle chahiye the + jo '(' aakhir me unmatched bache).
 //
 // Tests (s -> expected):
@@ -49,10 +49,6 @@ int minAddToMakeValid(string s)
             if (close_needed > 0)
             {
                 close_needed--;
-                if (close_needed == 0)
-                {
-                    continue;
-                }
             }
             else
             {
