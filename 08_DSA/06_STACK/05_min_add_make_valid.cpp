@@ -44,7 +44,7 @@ int minAddToMakeValid(string s)
         {
             close_needed++;
         }
-        else if (it == ')')
+        else
         {
             if (close_needed > 0)
             {
