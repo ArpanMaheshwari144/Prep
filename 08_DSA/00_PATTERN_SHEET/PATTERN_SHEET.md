@@ -39,6 +39,9 @@
    Two Sum II (SORTED)    -> ★ sorted -> hashmap ki zaroorat nahi -> 2 pointer (left,right); sum==target -> mila (return 1-based).
                              sum<target -> left++ (bada chahiye); sum>target -> right-- (chhota). O(1) space.
                              (regular two-sum UNSORTED = hashmap; SORTED = 2-pointer.)
+   Merge Sorted Array     -> ★ in-place, PEECHE se bharo (aakhir me zeros = jagah). 3 ptr: i=m-1, j=n-1, k=m+n-1 (NA m*n-1).
+                             while(i>=0 && j>=0): BADA nums1[k] me daalo, us ptr+k ghatao. ★ && (|| nahi -> ek khatam = out-of-bounds crash).
+                             leftover nums2 (j) neeche while-loop se bhar do. (pattern: main-loop && + tail-loops)
 ```
 
 ---
