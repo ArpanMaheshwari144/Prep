@@ -19,8 +19,9 @@
    2D-index-map          -> search 2D matrix (row=i/col, col=i%col)
    VARIABLE window (shrink-till-valid, ans unconditional) -> longest-no-repeat · max-consec-ones · char-replace · min-len
    "assign PEHLE, update BAAD" -> pivot-index · product-except-self
-   fill-from-END (result peeche se) -> squares-of-sorted-array (bada square end me)
-   -> ye 11 broad-tricks yaad -> zyadatar focus-8 problems recognize + solve.
+   fill-from-END (result peeche se) -> squares-of-sorted-array · merge-sorted-array (bada element end me)
+   count += window-size (subarray COUNT) -> subarray-product<k (j pe end hone wale saare valid)
+   -> ye broad-tricks yaad -> zyadatar focus-8 problems recognize + solve.
 ```
 
 ---
