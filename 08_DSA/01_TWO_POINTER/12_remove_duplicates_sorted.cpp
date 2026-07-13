@@ -8,9 +8,10 @@
 //
 
 // ---- ARPAN KI APPROACH ----
-//  MOVE-ZEROES ka cousin: slow = write-index (unique tak), fast = scan.
-//  wahan 0 dekhte the, yahan DUPLICATE dekhte: agar nums[slow] != nums[fast] (naya unique mila) ->
-//  pehle slow++ (agle dupe element pe jao), phir nums[slow] = nums[fast] (naya unique wahan rakho).
+//  MOVE-ZEROES ka cousin: slow = last-unique ka index, fast = scan.
+//  wahan 0 dekhte the, yahan DUPLICATE: agar nums[slow] != nums[fast] (naya unique mila) ->
+//  pehle slow++ (slow ab ek DUPLICATE pe jaata -- khali nahi, pichle run ka dupe pada hota),
+//  phir nums[slow] = nums[fast] (us dupe ko naye unique se OVERWRITE kar do).
 //  fast har baar ++ (aage badhta rehta). end me unique count = slow + 1 (0-based isliye +1).
 
 
