@@ -180,9 +180,11 @@
                            ★ agar fast==NULL -> head hi hatana hai -> return head->next.
                            warna dono SAATH chalao (gap constant) jab tak fast->next NULL -> slow "hatane wale ke PEHLE" baith jaata.
                            slow->next us node ko point kar raha -> slow->next = slow->next->next. done.
-   Add Two Numbers      -> ★ MERGE jaisa (dummy + tail) + CARRY ka khel. digits ULTA store (units pehle) -> seedha jodo.
-                           while(a || b || carry): sum = (a?a->val:0)+(b?b->val:0)+carry; a/b ko aage; digit=sum%10 (naya node, tail se jodo), carry=sum/10.
-                           ★ '|| carry' zaroori (999+1=1000, end me carry -> naya node). return dummy->next.
+   Add Two Numbers      -> ★ MERGE jaisa (dummy + tail) + CARRY ka khel. digits ULTA store (units-digit pehle) -> seedha jodo.
+                           while(a || b || carry):   ← koi list bachi HAI ya carry bacha -> chalo
+                              sum = 0; a hai to sum += a->val, a=a->next; b hai to sum += b->val, b=b->next; phir sum += carry.
+                              ★ digit = sum % 10 -> naya node, tail se jodo, tail aage.   ★ carry = sum / 10 -> agle ke liye.
+                           return dummy->next.   ★ '|| carry' zaroori (999+1=1000 -> end me carry bacha to naya node).
 
    ★ 3 high-leverage: fast/slow (middle+cycle+palindrome+remove-nth) · reverse (reverse+palindrome) · dummy-node (merge).
 ```
