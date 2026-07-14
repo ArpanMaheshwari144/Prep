@@ -60,6 +60,9 @@
    Is Subsequence         -> ★ s, t ki subsequence hai kya (order same, beech ke char skip allowed). 2 pointer: i for s, j for t.
                              s[i]==t[j] -> i++ AUR j++ (char mila).  nahi mila -> sirf j++ (t aage scan).
                              ANT: i >= s.size() -> saare s-char order me mil gaye -> TRUE. warna FALSE.
+   Reverse Vowels         -> ★ sirf vowels (a/e/i/o/u, lower+upper) aapas me reverse, baaki char apni jagah.
+                             chhota helper isVowel(ch). left/right pointer:
+                             dono vowel -> swap + left++ right--.  left vowel nahi -> left++.  warna right--.
 ```
 
 ---
