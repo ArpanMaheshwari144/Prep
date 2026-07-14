@@ -5,7 +5,15 @@
 // flip karke jo SABSE LAMBI consecutive 1s ki length ban sakti -> wo lautao.
 //   nums=[1,1,1,0,0,0,1,1,1,1,0], k=2  -> 6
 //
-// -> clean/unconditional-ans template likh (non-redo 05 jaisa). koi k>0 guard mat.
+// ---- ARPAN KI APPROACH ----
+//  variable sliding window + zeroCount. window me zeros ki ginti rakho.
+//  j aage badhao: nums[j]==0 -> zeroCount++.
+//  INVALID kab? -> zeroCount > k (allowed se zyada flip). tab tak left(i) se shrink:
+//     nums[i]==0 hai to zeroCount--, i++ (jab tak window firse valid).
+//  ★ ans store karte waqt KOI if nahi -- kyunki jab hum upar se yahan tak aaye,
+//     to upar ki (shrink) conditions se window APNE AAP valid ho chuki hai.
+//     isliye seedha ans = max(ans, j-i+1) UNCONDITIONAL.
+//  koi k>0 guard/flag nahi -- k=0 apne aap handle (zeroCount>0 pe shrink ho jaata).
 //
 // Tests (edge + bug-catch bhi):
 //   [1,1,1,0,0,0,1,1,1,1,0], k=2                       -> 6
