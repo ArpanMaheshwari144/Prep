@@ -1,26 +1,22 @@
 // ============================================================
-// REVERSE VOWELS OF A STRING — Two Pointer  (fresh)
+// REVERSE VOWELS OF A STRING — Two Pointer  (REDO — paper pehle, code baad me)
 // ============================================================
-// string s di hai. SIRF vowels (a,e,i,o,u -- lower & upper dono) ko aapas me
-// REVERSE karo, baaki characters apni jagah par rahein. nayi string lautao.
-//   "hello"   -> "holle"   (e,o swap; baaki same)
+// string s. SIRF vowels (a,e,i,o,u -- lower & upper) ko aapas me REVERSE karo,
+// baaki characters apni jagah. nayi string lautao.
+//   "hello"   -> "holle"
 //   "leetcode"-> "leotcede"
-//   "aA"      -> "Aa"
+
+// ---- ARPAN KI APPROACH ----
+//  same SWAP pattern. sirf vowels ko swap karna hai.
+//  left/right pointer -> dono vowel (isVowel(s[left]) && isVowel(s[right])) -> swap + left++ right--.
+//  left vowel nahi -> left++.  warna (right vowel nahi) -> right--.
+
 //
-
-/*
----- ARPAN KI APPROACH ----
-ye easy hai -- MOVE-ZEROES jaisa hi concept, bas thoda different. do pointer: ek start, ek end.
-dekho dono vowel hain kya -> dono vowel to swap kar do, phir left++ AUR right--.
-agar left vowel nahi -> left++.  else (right vowel nahi) -> right--.
-bas itna hi, isme aur zyada khaas kuch nahi.
-*/
-
 // Tests (s -> expected):
 //   "hello"     -> "holle"
 //   "leetcode"  -> "leotcede"
 //   "aA"        -> "Aa"
-//   "bcdfg"     -> "bcdfg"    (koi vowel nahi -> same)
+//   "bcdfg"     -> "bcdfg"
 //   "AEIOU"     -> "UOIEA"
 //   ""          -> ""
 // ============================================================

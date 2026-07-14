@@ -1,28 +1,23 @@
 // ============================================================
-// IS SUBSEQUENCE — Two Pointer  (fresh)
+// IS SUBSEQUENCE — Two Pointer  (REDO — paper pehle, code baad me)
 // ============================================================
-// do string s aur t. TRUE agar s, t ki SUBSEQUENCE hai.
-// subsequence = t me se kuch (ya koi nahi) characters HATA ke s ban jaaye,
-// baaki characters ka ORDER same rahe.
-//   s="abc", t="ahbgdc"  -> true   (a..b..c order me mil gaye)
-//   s="axc", t="ahbgdc"  -> false  ('x' nahi mila)
-//
-// -> problem ko naye sire se padh. pattern baad me.
+// do string s aur t. TRUE agar s, t ki SUBSEQUENCE hai (t me se kuch char
+// HATA ke s ban jaaye, order same rahe).
+//   s="abc", t="ahbgdc"  -> true
+//   s="axc", t="ahbgdc"  -> false
 
 // ---- ARPAN KI APPROACH ----
-//  do pointer: i for s, j for t.
-//  s[i]==t[j] (char mil gaya) -> i++ AUR j++.  nahi mila -> sirf j++ (t aage scan karte raho).
-//  loop tab tak jab tak dono range me. ANT me: agar i, s ke aakhir tak pahunch gaya (i >= s.size())
-//     -> matlab s ke saare char order me mil gaye -> TRUE. warna FALSE.
-//  (★ chhoti galti ki thi: s[i]==s[j] check kar raha tha -- sahi hai s[i]==t[j].)
+//  do string di hain. do pointer lo -> i for s, j for t.
+//  s[i]==t[j] (char mil gaya) -> i++ AUR j++.  warna -> sirf j++ (t aage chalta rahega).
+//  jab i, s ko paar kar le (i >= s.size()) -> saare s-char mil gaye -> TRUE. warna FALSE.
 
 //
 // Tests (s, t -> expected):
 //   "abc",  "ahbgdc"   -> 1
 //   "axc",  "ahbgdc"   -> 0
-//   "",     "abc"      -> 1     (khaali s har string ki subsequence)
+//   "",     "abc"      -> 1
 //   "abc",  ""         -> 0
-//   "aaa",  "aa"       -> 0     (s bada, mil hi nahi sakta)
+//   "aaa",  "aa"       -> 0
 //   "ace",  "abcde"    -> 1
 // ============================================================
 
@@ -45,12 +40,9 @@ bool isSubsequence(string s, string t)
             j++;
         }
     }
-    if(i >= s.size()){
+    if (i >= s.size())
         return true;
-    }
     return false;
-
-    
 }
 
 int main()

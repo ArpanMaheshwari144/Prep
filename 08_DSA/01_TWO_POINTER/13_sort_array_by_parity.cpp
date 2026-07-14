@@ -1,24 +1,23 @@
 // ============================================================
-// SORT ARRAY BY PARITY — Two Pointer  (fresh)
+// SORT ARRAY BY PARITY — Two Pointer  (REDO — paper pehle, code baad me)
 // ============================================================
-// int array nums. rearrange karo taaki SAARE EVEN numbers pehle, phir saare ODD.
-// even-even ya odd-odd ka aapas ka order koi bhi ho (koi bhi valid answer chalega).
-//   [3,1,2,4]  -> [2,4,3,1]  (ya [4,2,1,3] etc -- evens pehle, odds baad)
-//   [0]        -> [0]
+// int array nums. SAARE EVEN pehle, phir saare ODD (aapas ka order koi bhi).
+//   [3,1,2,4]  -> evens {2,4} pehle, odds {1,3} baad
+
+// ---- ARPAN KI APPROACH ----
+//  even pehle, odd baad. left/right pointer.
+//  condition: left ODD && right EVEN (dono galat jagah) -> turant swap + left++ right--.
+//  left EVEN (sahi jagah) -> left++.  warna -> right--.
+
 //
-// Tests niche khud check kar raha hoon (evens-first, phir odds -- order koi bhi):
-//   [3,1,2,4]     -> evens {2,4} pehle, odds {1,3} baad
-//   [0,1,2]       -> evens {0,2} pehle, odd {1}
-//   [1,3,5]       -> all odd -> same
-//   [2,4,6]       -> all even -> same
-//   []            -> []
+// Tests (checker "VALID/INVALID" bata dega):
+//   [3,1,2,4] · [2,3] · [2,1] · [0,1,2] · [1,3,5] · [2,4,6] · []
 // ============================================================
 
 #include <iostream>
 #include <vector>
 using namespace std;
 
-// tera code yahan:
 vector<int> sortArrayByParity(vector<int> nums)
 {
     int left = 0;
@@ -47,14 +46,13 @@ vector<int> sortArrayByParity(vector<int> nums)
 void check(vector<int> nums)
 {
     vector<int> r = sortArrayByParity(nums);
-    // valid? -> koi even kisi odd ke BAAD nahi hona chahiye
     bool seenOdd = false, ok = true;
     for (int x : r)
     {
         if (x % 2 != 0)
             seenOdd = true;
         else if (seenOdd)
-            ok = false; // even mila odd ke baad -> galat
+            ok = false;
     }
     cout << "[ ";
     for (int x : r)
@@ -65,15 +63,11 @@ void check(vector<int> nums)
 int main()
 {
     check({3, 1, 2, 4});
-    check({3, 0, 2, 4});
-    check({3, 1, 3, 4});
+    check({2, 3});
+    check({2, 1});
     check({0, 1, 2});
     check({1, 3, 5});
     check({2, 4, 6});
     check({});
-    // ★ ye chhupe case abhi INVALID aayenge (left even && right odd wala galat branch):
-    check({2, 3});
-    check({2, 1});
-    check({4, 2, 6, 1});
     return 0;
 }

@@ -63,6 +63,10 @@
    Reverse Vowels         -> ★ sirf vowels (a/e/i/o/u, lower+upper) aapas me reverse, baaki char apni jagah.
                              chhota helper isVowel(ch). left/right pointer:
                              dono vowel -> swap + left++ right--.  left vowel nahi -> left++.  warna right--.
+   Sort Array By Parity   -> ★ evens pehle, odds baad (aapas order koi bhi). left/right pointer.
+                             left ODD && right EVEN (dono galat jagah) -> swap + left++ right--.
+                             left EVEN (sahi) -> left++.  warna -> right--.
+                             ★ TRAP: left even && right odd pe swap MAT karo -> dono already sahi jagah.
 ```
 
 ---
