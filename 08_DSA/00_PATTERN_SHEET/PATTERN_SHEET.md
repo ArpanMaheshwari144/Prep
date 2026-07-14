@@ -57,6 +57,9 @@
                              v2 (CLEAN/YEHI likhna): helper isPalindrome(s,l,r). main loop; mismatch pe seedha ->
                                  return isPalindrome(s,l+1,r) || isPalindrome(s,l,r-1);   (left-delete YA right-delete; || = ek se bhi bane -> true)
                                  koi mismatch na aaye -> already palindrome -> true.
+   Is Subsequence         -> ★ s, t ki subsequence hai kya (order same, beech ke char skip allowed). 2 pointer: i for s, j for t.
+                             s[i]==t[j] -> i++ AUR j++ (char mila).  nahi mila -> sirf j++ (t aage scan).
+                             ANT: i >= s.size() -> saare s-char order me mil gaye -> TRUE. warna FALSE.
 ```
 
 ---
