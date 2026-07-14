@@ -99,6 +99,11 @@
    Subarray Product < K        -> ★ COUNT (length nahi). track: prod; INVALID = prod>=k -> prod/=nums[i], i++.
                                   ★★ COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid). (bahut count-Q me)
 
+   Find All Anagrams           -> ★ s me p ke SAARE anagram ki start-index. ANAGRAM-check + FIXED window ka combo.
+                                  helper isAnagram (valid-anagram reuse): same length + har char ka count barabar.
+                                  i/j se p ki length ka window; size == p.size() pe -> substr(i,len) p se anagram? -> ans.push(i).
+                                  size > p.size() -> i++. j har baar++.
+
    ★★ LONGEST vs SHORTEST (yaad rakh): LONGEST -> shrink jab INVALID, ans=MAX. SHORTEST (min-len) -> shrink jab VALID, ans=MIN.
 ```
 
