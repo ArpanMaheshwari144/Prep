@@ -11,7 +11,7 @@
 //   [-5,1,5,0,-7]        -> 1    (altitudes: 0,-5,-4,1,1,-6 -> max 1)
 //   [-4,-3,-2,-1,4,3,2]  -> 0    (kabhi 0 se upar nahi gaya -> start 0 hi max)
 //   [1,2,3]              -> 6
-//   [44,32,-9,52,23,-50,50,33,-84,47,-14,48]  -> 148
+//   [44,32,-9,52,23,-50,50,33,-84,47,-14,48]  -> 175
 // ============================================================
 // ---- ARPAN KI APPROACH ----
 //  sum=0, maxi=0 se start. har gain[i] ko running sum me add karte jao (yeh current altitude hai).
@@ -31,7 +31,7 @@ int largestAltitude(vector<int> &gain)
     {
         sum += gain[i];
         maxi = max(maxi, sum);
-        cout << sum << endl;
+        // cout << sum << endl;
     }
     return maxi;
 }
