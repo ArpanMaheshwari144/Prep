@@ -67,6 +67,9 @@
                              left ODD && right EVEN (dono galat jagah) -> swap + left++ right--.
                              left EVEN (sahi) -> left++.  warna -> right--.
                              ★ TRAP: left even && right odd pe swap MAT karo -> dono already sahi jagah.
+   Remove Element         -> ★ saare val hata, non-val ki count k lauta (move-zeroes cousin). slow/fast.
+                             nums[fast]!=val -> nums[slow]=nums[fast], slow++.  ==val -> sirf fast++ (skip).
+                             end me slow = k (bache shuru ke k me).
 ```
 
 ---
