@@ -161,13 +161,13 @@
    Search in Rotated       -> mid==target return. ★ kaunsa half sorted? nums[low]<=nums[mid] -> LEFT sorted:
                               target [nums[low]..nums[mid]] me? -> high=mid-1, warna low=mid+1.
                               else RIGHT sorted: target [nums[mid]..nums[high]] me? -> low=mid+1, warna high=mid-1.
-   Find Min in Rotated     -> ★ mid ko HIGH se compare. [if(nums[mid]>nums[high]) low=mid+1; else high=mid;] -> low pe min.
+   Find Min in Rotated     -> ★ mid ko HIGH se compare. while(low<=high): if(nums[mid]>nums[high]) low=mid+1; else high=mid-1; -> return nums[low] (low pe min).
    Koko Bananas            -> ★ BS on ANSWER (speed k); hours(k)=sum(ceil(pile/k))<=h? -> chhoti k try.
                               ★ ceil: hours += ceil((double)piles[i]/mid);  ya integer: (piles[i]+mid-1)/mid.
                               ★ TRAP: ceil(int/int) BEKAAR (int-div pehle floor). double-cast ya integer-formula use karo.
    Search 2D Matrix        -> ★ poore matrix ko 1D maano (low=0, high=row*col-1). access: matrix[mid/col][mid%col]. (row=mid/col, col=mid%col)
    Ship Within D Days      -> ★ BS on ANSWER = CAPACITY (Koko cousin). low=max(weights), high=sum(weights).
-                             solve(mid): days ginо -> sum+w>mid -> naya din (day++, sum=0); warna sum+=w. day<=D? feasible.
+                             solve(mid): days ginо -> if(sum+w>mid) -> naya din (day++, sum=0); phir sum+=w HAMESHA (dono case me -- current weight naye din me add hota, drop nahi). day<=D? feasible.
                              feasible -> ans=mid, high=mid-1 (choti try); warna low=mid+1. (Koko: ceil per pile; yahan: running-load "exceed to naya din" kyunki order fixed)
 
    ★ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
