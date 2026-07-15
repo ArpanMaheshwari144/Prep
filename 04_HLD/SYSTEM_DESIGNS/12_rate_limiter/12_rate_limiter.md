@@ -139,6 +139,31 @@ WHY REDIS (centralized counter):
 
 ---
 
+## 4.6 ★ SPOF-CHAIN — har layer redundant (deep-dive, Arpan-derived 15-Jul)
+
+```
+   PRINCIPLE: koi bhi critical cheez ka SINGLE instance mat rakho. har SPOF -> >=2 + AUTO-FAILOVER.
+              chain apne WEAKEST-single-point pe tootti -> har layer replicate: LB, Redis, app, DB.
+
+   - REDIS down  -> replica AUTO-PROMOTE (Redis Sentinel / cluster failover). seva chalti rahti.
+                    poori Redis layer gayi (primary + saare replica) -> TAB FAIL-OPEN (last resort).
+                    order: replica failover -> phir fail-open.
+
+   - LB down     -> kabhi 1 LB nahi chalate. multiple LB (active-active / active-passive).
+                    health-check + failover: dead LB detect -> traffic doosre pe.
+                       (Route 53 health-check dead LB se traffic hata deta, YA floating/Virtual-IP standby LB pe shift.)
+                    cloud ALB khud MULTI-AZ + internally redundant -> ek box nahi -> isse SPOF nahi maante.
+
+   - ★ MECHANISM (zaroori): replicate kar diya, par koi failure DETECT karke REDIRECT kare =
+                    health-check + failover (Redis=Sentinel, LB=Route53/VIP). warna sirf replica bekaar.
+
+   - TOP = DNS (Route 53) globally distributed/managed -> khud single-box nahi -> top-level SPOF nahi banta.
+
+   crisp: Redis down -> replica -> (last) fail-open | LB down -> dusra LB (health-check/VIP) | har layer redundant + auto-failover.
+```
+
+---
+
 ## 5 Algorithms — 4 Methods
 
 ### Token Bucket
