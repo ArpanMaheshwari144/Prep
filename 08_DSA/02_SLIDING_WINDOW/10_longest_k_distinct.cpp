@@ -19,9 +19,32 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int totalFruit(vector<int> &fruits, int k)
+{
+    int ans = INT_MIN;
+    unordered_map<int, int> mp;
+    int i = 0, j = 0;
+    while (j < fruits.size())
+    {
+        mp[fruits[j]]++;
+        while (mp.size() > k)
+        {
+            mp[fruits[i]]--;
+            if (mp[fruits[i]] == 0)
+            {
+                mp.erase(fruits[i]);
+            }
+            i++;
+        }
+        ans = max(ans, j - i + 1);
+        j++;
+    }
+    return ans == INT_MIN ? 0 : ans;
+}
+
 int longestKDistinct(string s, int k)
 {
-    // TODO
+    return totalFruit(s, k)
 }
 
 int main()

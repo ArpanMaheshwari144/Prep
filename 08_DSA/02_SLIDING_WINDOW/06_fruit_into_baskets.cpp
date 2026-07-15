@@ -1,5 +1,6 @@
 // ============================================================
 // FRUIT INTO BASKETS — Sliding Window  (fresh)
+//   (aka "Longest Subarray with AT MOST 2 Distinct Elements")
 // ============================================================
 // fruits[] = tree row, har number ek fruit-TYPE. tere paas 2 basket, har basket
 // me SIRF EK type. tu ek continuous window (row me consecutive trees) se fruit uthata.
@@ -14,7 +15,6 @@
 //  map<type,count> rakho. condition = sirf 2 type allowed -> mp.size() (distinct count) > 2 ho
 //  to left se shrink (count--). ★ jab count 0 ho jaaye -> map se ERASE karo, warna wo key map me
 //  padi reh jaati -> mp.size() galat distinct deta -> condition toot jaati. ans = max window length.
-
 //
 // Tests (// expected):
 //   [1,2,1]         -> 3
@@ -28,12 +28,13 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <climits>
 using namespace std;
 
 int totalFruit(vector<int> &fruits)
 {
     int ans = INT_MIN;
-    unordered_map<int, int> mp; // {0, 1, 2, 2};
+    unordered_map<int, int> mp;
     int i = 0, j = 0;
     while (j < fruits.size())
     {

@@ -94,7 +94,7 @@
    Longest Substring No-Repeat -> track: char freq-map; INVALID = repeat (freq>1) -> left shrink; ans = MAX length.
    Char Replacement (longest)  -> track: freq + maxFreq; INVALID = (windowLen - maxFreq) > k -> left shrink; ans = MAX length.
    Max Consecutive Ones III    -> track: zerosCount; INVALID = zeros > k -> left shrink; ans = MAX length (UNCONDITIONAL).
-   Fruit Into Baskets          -> ★ = "longest, AT MOST 2 DISTINCT" (fruit/basket sirf kahani). track: map<type,count>;
+   Fruit Into Baskets          -> ★ = "Longest Subarray with AT MOST 2 DISTINCT elements" (fruit/basket sirf kahani). track: map<type,count>;
                                   INVALID = mp.size()>2 -> shrink (count--, ★ count==0 -> map.ERASE warna size galat); ans = MAX length.
    Subarray Product < K        -> ★ COUNT (length nahi). track: prod; INVALID = prod>=k -> prod/=nums[i], i++.
                                   ★★ COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid). (bahut count-Q me)
