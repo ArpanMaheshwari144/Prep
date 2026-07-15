@@ -103,6 +103,9 @@
                                   helper isAnagram (valid-anagram reuse): same length + har char ka count barabar.
                                   i/j se p ki length ka window; size == p.size() pe -> substr(i,len) p se anagram? -> ans.push(i).
                                   size > p.size() -> i++. j har baar++.
+   Permutation in String       -> ★ s2 me s1 ka koi permutation (anagram) substring hai? = FIND-ALL-ANAGRAMS wahi.
+                                  farak: index push karne ki jagah -> ek match mile to seedha TRUE (koi na mile -> FALSE).
+                                  checkInclusion(s1,s2) = findAnagrams(s2, s1) [return true on first match].
 
    ★★ LONGEST vs SHORTEST (yaad rakh): LONGEST -> shrink jab INVALID, ans=MAX. SHORTEST (min-len) -> shrink jab VALID, ans=MIN.
 ```
