@@ -195,6 +195,23 @@ STORAGE:
 
 ---
 
+## ★ Route 53 kya hai (AWS DNS — sabse upar wala hop)
+
+```
+   - AWS ki DNS service (naam "53" = DNS port 53). Amazon ne banaya.
+   - jo bhi user aaye, ye use SAHI IP tak ROUTE karta -> isiliye har HLD me sabse UPAR.
+   - DNS = PHONEBOOK: naam (amazon.in) -> IP address. computer IP samajhta hai, naam nahi -> koi translate kare = DNS.
+   - Route 53 ke kaam:
+       1. naam -> IP resolve (base DNS).
+       2. ★ HEALTH-CHECK + FAILOVER: dead server/LB se traffic HATA deta, sirf zinda pe bheje. (LB-SPOF fix isi se.)
+       3. latency/geo routing: user ko NEAREST + fastest region pe le jaaye.
+       4. domain registration (domain khareedna) bhi.
+   - flow: user domain type -> Route 53 (resolve + health-check) -> nearest HEALTHY LB/region -> CDN -> LB -> app.
+   crisp: Route 53 = AWS ka smart DNS -> naam->IP + health-check (zinda pe) + nearest-region routing.
+```
+
+---
+
 ## 8 Architecture — Full Picture
 
 ```
