@@ -106,6 +106,9 @@
    Permutation in String       -> ★ s2 me s1 ka koi permutation (anagram) substring hai? = FIND-ALL-ANAGRAMS wahi.
                                   farak: index push karne ki jagah -> ek match mile to seedha TRUE (koi na mile -> FALSE).
                                   checkInclusion(s1,s2) = findAnagrams(s2, s1) [return true on first match].
+   Longest At-Most-K Distinct  -> ★ FRUIT-INTO-BASKETS ka GENERAL version. wahi variable window + map<char,count>,
+                                  distinct (mp.size()) > k ho -> left se shrink (erase-on-0). ans = max length.
+                                  farak: fruit me "2" hardcoded tha, yahan wahi jagah "k" (mp.size() > k).
 
    ★★ LONGEST vs SHORTEST (yaad rakh): LONGEST -> shrink jab INVALID, ans=MAX. SHORTEST (min-len) -> shrink jab VALID, ans=MIN.
 ```

@@ -5,6 +5,12 @@
 // ZYADA-SE-ZYADA k ALAG (distinct) characters hon.
 //   s="eceba", k=2  -> 3
 //   s="aa",    k=1  -> 2
+
+// ---- ARPAN KI APPROACH ----
+//  ye same FRUIT-INTO-BASKETS wala hi hai (longest at-most-2-distinct).
+//  dono me kaam ek: variable window + map<char,count>, distinct > allowed ho to left se shrink (erase-on-0), ans = max length.
+//  farak sirf itna: wahan "2" HARDCODED tha, yahan wahi jagah "k" ho gaya -> mp.size() > k. bas.
+
 //
 // Tests (s, k -> expected):
 //   "eceba", 2   -> 3
@@ -19,20 +25,20 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int totalFruit(vector<int> &fruits, int k)
+int totalFruit(string &s, int k)
 {
     int ans = INT_MIN;
     unordered_map<int, int> mp;
     int i = 0, j = 0;
-    while (j < fruits.size())
+    while (j < s.size())
     {
-        mp[fruits[j]]++;
+        mp[s[j]]++;
         while (mp.size() > k)
         {
-            mp[fruits[i]]--;
-            if (mp[fruits[i]] == 0)
+            mp[s[i]]--;
+            if (mp[s[i]] == 0)
             {
-                mp.erase(fruits[i]);
+                mp.erase(s[i]);
             }
             i++;
         }
@@ -44,7 +50,7 @@ int totalFruit(vector<int> &fruits, int k)
 
 int longestKDistinct(string s, int k)
 {
-    return totalFruit(s, k)
+    return totalFruit(s, k);
 }
 
 int main()
