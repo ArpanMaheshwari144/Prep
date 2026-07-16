@@ -225,6 +225,13 @@
                               sum = 0; a hai to sum += a->val, a=a->next; b hai to sum += b->val, b=b->next; phir sum += carry.
                               ★ digit = sum % 10 -> naya node, tail se jodo, tail aage.   ★ carry = sum / 10 -> agle ke liye.
                            return dummy->next.   ★ '|| carry' zaroori (999+1=1000 -> end me carry bacha to naya node).
+   Swap Nodes in Pairs  -> ★ har do adjacent NODE ki jodi swap (values nahi, NODES -- pointer rewire). DUMMY-node trick.
+                           prev=dummy (head se pehle), first=head. loop jab tak jodi (2 node) bache (prev->next && first->next):
+                             second=first->next · temp=second->next (BACHA lo warna gum).
+                             second->next=first (2->1) · first->next=temp (1->baaki) · prev->next=second (dummy->2 = naya head).
+                             advance: prev=first AUR first=temp. end -> return dummy->next.
+                           ★ dummy kyu: jodi ko reconnect karne ko "jodi se pehle wala" node chahiye; pehli jodi se pehle kuch nahi -> dummy.
+                           ★ har iteration = SIRF EK jodi (aage ki jodi ka kaam mat karo).
 
    ★ 3 high-leverage: fast/slow (middle+cycle+palindrome+remove-nth) · reverse (reverse+palindrome) · dummy-node (merge).
 ```
