@@ -835,6 +835,16 @@ public class JwtFilter extends OncePerRequestFilter {
 
 ---
 
+## ★ "Bearer" kya hai + prefix kyu? (brainstorm 16-Jul)
+
+`Authorization: Bearer <token>` — **"Bearer" ek STANDARD auth-scheme naam hai** (HTTP spec / OAuth2, RFC 6750).
+- **Matlab:** "jiske paas ye token hai use access mil jaata" — cash-note jaisa (bearer = token-holder).
+- **Prefix KYU:** `Authorization` header **alag-alag type** carry kar sakta — `Basic <base64(user:pass)>` · `Bearer <token>` · `Digest ...`. Prefix **SERVER ko batata konsa scheme** hai -> server jaanta kaise parse/validate kare.
+- **Bina "Bearer" / galat prefix:** server ka `authHeader.startsWith("Bearer ")` **fail** -> "koi token nahi" -> **401** (ya `substring(7)` galat char kaat de). Technically bina-Bearer apna server likh sakte, par **standard toot jaata** + tools/interceptor kaam nahi karte (non-idiomatic).
+- **One line:** Bearer = standard identifier "ye bearer-token hai, prefix hata ke validate karo".
+
+---
+
 ## 3 `SecurityConfig` — Wire it all together
 
 ```java
@@ -873,6 +883,16 @@ public class SecurityConfig {
     }
 }
 ```
+
+---
+
+## ★ CSRF kya hai + `csrf.disable()` kyu safe? (brainstorm 16-Jul)
+
+**CSRF = Cross-Site Request Forgery.** Malicious site tere browser ko **dhoka** deke ek site pe request bhijwa deti jahan tu **already logged-in** hai.
+- **Kaise:** tu bank me logged-in (bank ka **COOKIE** browser me pada). Gande site pe gaya -> uska hidden form/img `bank.com/transfer?to=hacker` pe request maar deta -> browser **AUTOMATICALLY** bank ka cookie us request me laga deta -> bank samajhta "ye Arpan hai" -> paisa transfer!
+- ★ **Key:** CSRF chalta hai kyunki **COOKIES browser APNE-AAP bhejta** hai.
+- ★ **JWT me safe kyu (isliye `csrf.disable()`):** JWT cookie me nahi, **Authorization HEADER (Bearer)** me. Header browser auto-attach **NAHI** karta (JS ko khud daalna padta). To gandi site teri JWT **auto-bhej hi nahi sakti** -> CSRF attack lagता hi nahi -> disable safe.
+- (CSRF protection **SESSION/cookie-based** auth ke liye chahiye, header-JWT ke liye nahi.)
 
 ---
 
