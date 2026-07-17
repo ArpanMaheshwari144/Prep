@@ -216,6 +216,11 @@
         mid REJECT kar diya (pakka galat, e.g. target!=mid) -> high = mid-1  (+ while low<=high)
         mid abhi CANDIDATE (peak / find-min-rotated / boundary) -> high = mid  (+ while low<high)
         ★ trap: high=mid ke saath while(low<=high) = INFINITE LOOP -> high=mid hamesha low<high ke saath.
+        ★ KYUN (nuance): mid = low+(high-low)/2 NEECHE (low ki taraf) round karta. jab low==high==mid ho:
+            high=mid-1 -> range SHRINK (mid-1) -> low>high -> exit. safe with low<=high.
+            high=mid   -> high nahi hilता (mid=low) -> range shrink NAHI -> low<=high hua to ATAK (infinite).
+            isliye high=mid ko low<high chahiye (low==high pe TURANT exit, atakne se pehle).
+            e.g. [2,1] peak-logic + while(low<=high): mid=0 -> high=mid=0 -> low=high=0 kabhi khatam nahi (loop).
 ```
 
 ---
