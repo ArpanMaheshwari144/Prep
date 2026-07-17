@@ -201,8 +201,16 @@
    Ship Within D Days      -> ★ BS on ANSWER = CAPACITY (Koko cousin). low=max(weights), high=sum(weights).
                              solve(mid): days ginо -> if(sum+w>mid) -> naya din (day++, sum=0); phir sum+=w HAMESHA (dono case me -- current weight naye din me add hota, drop nahi). day<=D? feasible.
                              feasible -> ans=mid, high=mid-1 (choti try); warna low=mid+1. (Koko: ceil per pile; yahan: running-load "exceed to naya din" kyunki order fixed)
+   Find Peak Element       -> ★ NAYA: array SORTED nahi, phir bhi BS (ek comparison se half discard -- full-sorted nahi chahiye).
+                             mid ko sirf mid+1 se compare: nums[mid] < nums[mid+1] -> chadhaai -> peak RIGHT -> low=mid+1.
+                             else (nums[mid] > nums[mid+1]) -> dhalaan -> peak mid-khud/left -> high = mid (NOT mid-1, mid khud peak ho sakta).
+                             while(low<high), return low. edges auto (bahar -inf -> kinaara khud peak).
 
    ★ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
+   ★★ high=mid vs high=mid-1 (kab konsa -- ek sawaal: "mid KHUD answer ho sakta abhi bhi?"):
+        mid REJECT kar diya (pakka galat, e.g. target!=mid) -> high = mid-1  (+ while low<=high)
+        mid abhi CANDIDATE (peak / find-min-rotated / boundary) -> high = mid  (+ while low<high)
+        ★ trap: high=mid ke saath while(low<=high) = INFINITE LOOP -> high=mid hamesha low<high ke saath.
 ```
 
 ---
