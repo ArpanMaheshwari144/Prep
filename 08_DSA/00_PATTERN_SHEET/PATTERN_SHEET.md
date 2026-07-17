@@ -210,6 +210,12 @@
                              while(low<high), return low. edges auto (bahar -inf -> kinaara khud peak).
                              ★ 2 valid version, DONO SAME core (answer HAMESHA return-low se): V1=short (upar, interview-BEST) · V2=explicit peak-check+return-mid+high=mid-1 (extra early-return, optional).
                              ★ interview=V1 short: no explicit-check, no edge-sentinel (low<high -> mid+1 hamesha in-bounds). sentinel dena ho to INT_MIN (nums[0] nahi).
+   Single Element (sorted)  -> ★ har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY (XOR bhi solve karta par O(n) -> yahan log-n chahiye).
+                              pairs: single se PEHLE (even,odd) index pe shuru; single ke BAAD (odd,even) me SHIFT. single hi ye shift karता.
+                              mid nikalo + parity check, nums[mid] ko nums[mid-1] se compare:
+                                mid EVEN: ==nums[mid-1] -> single PEECHE -> high=mid-1 · else -> low=mid+1
+                                mid ODD:  !=nums[mid-1] -> single PEECHE -> high=mid-1 · else -> low=mid+1
+                              return nums[high] (high khud single pe aa ke rukता). ★ edge mid==0 -> return nums[0] (baaki sab pair eliminate).
 
    ★ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
    ★★ high=mid vs high=mid-1 (kab konsa -- ek sawaal: "mid KHUD answer ho sakta abhi bhi?"):
