@@ -184,6 +184,9 @@
 ## PATTERN 7 — BINARY SEARCH
 ```
    BROAD IDEA: sorted space -> mid -> aadha kaato -> O(log n). (space array ho ya ANSWER-range).
+   ★★ BS ko POORI SORTED array chahiye HI NAHI -- bas ek comparison se "LEFT ya RIGHT (konsa half phenkna)" DECIDE kar paana chahiye.
+      sorted-array us decision ka ek common case hai; find-peak (unsorted) me bhi mid vs mid+1 se half discard hota -> BS lagta.
+      => asli requirement = "half safely discard karne ka rule", na ki full sorting.
 
    Binary Search (basic)   -> mid; target<mid -> left half, warna right. (low<=high, mid±1)
    Search Insert Position  -> basic BS; na mile to low return (wahi insert jagah).
