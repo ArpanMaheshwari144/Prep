@@ -208,6 +208,8 @@
                              mid ko sirf mid+1 se compare: nums[mid] < nums[mid+1] -> chadhaai -> peak RIGHT -> low=mid+1.
                              else (nums[mid] > nums[mid+1]) -> dhalaan -> peak mid-khud/left -> high = mid (NOT mid-1, mid khud peak ho sakta).
                              while(low<high), return low. edges auto (bahar -inf -> kinaara khud peak).
+                             ★ 2 valid version, DONO SAME core (answer HAMESHA return-low se): V1=short (upar, interview-BEST) · V2=explicit peak-check+return-mid+high=mid-1 (extra early-return, optional).
+                             ★ interview=V1 short: no explicit-check, no edge-sentinel (low<high -> mid+1 hamesha in-bounds). sentinel dena ho to INT_MIN (nums[0] nahi).
 
    ★ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
    ★★ high=mid vs high=mid-1 (kab konsa -- ek sawaal: "mid KHUD answer ho sakta abhi bhi?"):

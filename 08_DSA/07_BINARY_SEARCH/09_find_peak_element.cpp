@@ -23,8 +23,15 @@
 //     (rule: mid REJECT kar diya? -> mid-1 (+ while low<=high).  mid abhi CANDIDATE? -> mid (+ while low<high).)
 //  while(low < high); ant me low == high pe aake ruk jaata -> wahi peak -> return low.
 //  (edges auto-handle: kinaare ke bahar -infinity, to kinaara khud peak ban jaata -- sentinel add karne ki zaroorat nahi.)
-
-
+//
+//  ---- 18-Jul, DEBUG + REFINE se nikla (2 valid version, dono SAME core) ----
+//  V1 (SHORT, interview-BEST -- neeche active): sirf mid vs mid+1; nums[mid]<nums[mid+1] -> low=mid+1; else high=mid; return low.
+//  V2 (explicit peak-check, khud debug kiya): pehle "mid peak hai?" (dono neighbour) -> return mid; else ascending->low=mid+1; else high=mid-1.
+//     ★ V2 me high=mid-1 SAHI hai kyunki mid ko EXPLICITLY reject (peak-check se) kar chuke -> discard safe.
+//  ★★ DONO SAME algorithm hain -- answer HAMESHA `return low` (convergence) se aa hi jaata; V2 ka explicit-check bas EXTRA early-return hai (optional).
+//  ★ INTERVIEW = V1 (short): koi explicit-check nahi, koi edge-sentinel nahi (while low<high -> mid<high -> mid+1 hamesha in-bounds).
+//  ★ agar sentinel dena ho (nums[-1] wala): -infinity = INT_MIN daalo, `nums[0]` NAHI (nums[0]<nums[0]=false -> check mid=0 pe kaam nahi karta; phir bhi return-low bacha leta).
+//  ★ META: surface pe alag dikhne wale 2 code -> peeche SAME pattern pehchanna = recognition skill.
 
 // Tests (checker verify karega ki lautaya index sach me peak hai):
 //   [1,2,3,1] · [1,2,1,3,5,6,4] · [1] · [1,2] · [2,1] · [5,4,3,2,1] · [1,2,3,4,5]
