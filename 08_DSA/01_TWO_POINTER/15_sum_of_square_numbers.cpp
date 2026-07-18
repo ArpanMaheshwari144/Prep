@@ -13,7 +13,8 @@
 // ---- ARPAN KI APPROACH ----
 //  ★ RECOGNITION: 2 NUMBER (pair a,b) chahiye jinke square ka sum = c -> TWO-POINTER (dono taraf se converge).
 //     (BS confuse mat ho -- BS = single element dhundhna / ek direction decide. yahan JODI chahiye -> two-pointer.)
-//  low = 0 (★ 0, not 1 -- warna c=4 me a=0 wala 0*0+2*2 miss ho jaye).
+//  low = 0 (★ 0, not 1 -- c=0 wale case se pakda: high=sqrt(0)=0; agar low=1 to low<=high (1<=0) FALSE -> loop
+//     chalega hi nahi -> 0*0+0*0=0 wala answer MISS. low=0 + low<=high se c=0 sahi chalta.)
 //  high = sqrt(c) (isse aage jaane ki zaroorat nahi -- akela hi c cross kar jayega).
 //  two-pointer: ans = low*low + high*high;  ans==c -> TRUE · ans<c -> low++ (bada chahiye) · ans>c -> high-- (chhota).
 //  low > high -> return FALSE.
