@@ -47,7 +47,7 @@
 
 ---
 
-## 2. WHERE WE STAND (★ 15-Jul, honest — ~74% JP-ready; Java-CORE done + SPRING revise STARTED (basics+transactional-partial), DSA sheet+audit done ~58 problems, behavioral done, HLD strong)
+## 2. WHERE WE STAND (★ 18-Jul, honest — ~76% JP-ready; ★★ PHASE-SHIFT: sab BUILT -> ab REVISE-phase (naya bahut kam). Java-CORE done · SPRING ~done (JWT+profiles+Hibernate done, sirf Docker/K8s left) · DSA sheet+~62 problems · LLD-notes revise-swept · HLD strong · behavioral done)
 > ★ Arpan's grounded self-view (PERFECT calibration): "god-level DSA nahi, par JP ke liye KAAFI — main wo hoon." fear reduced via reps. na oversell na undersell.
 ```
    HLD        ✓ STRONG (differentiator) : 11 FOUNDATIONS + 10 SYSTEM_DESIGNS (18/19/20 full interview-delivery
@@ -56,8 +56,8 @@
    JAVA       ✓✓ JAVA-CORE COMPLETE (14-Jul) — ★ ORDERED REVISE-SWEEP done (code+visual+interview-phrasing, Arpan copy pe likhta):
               DONE (61 topics): 01 CORE (22) · 02 COLLECTIONS (11) · 03 JAVA-8 (5) · 04 MULTITHREADING (11, +deadlock LIVE program) · 05 SOLID (6) · 06 DESIGN-PATTERNS (6: builder/singleton/factory/observer/adapter/strategy).
               ⬜ AB SIRF SPRING BACHA (Java me): IoC/DI · @Transactional · JWT/Security · JPA/Hibernate · profiles · Docker/K8s. (EXTRA/optional: 07 brain-ticklers 13 · 08 revision-visual 37 = glance-later, seekhna nahi.)
-   SPRING     ◐ ACTIVE REVISE (started 15-Jul) : notes ALREADY EXIST (basics/transactional/jwt/profiles/hibernate/docker/k8s + REVISION_VISUAL + PROJECT usercrud).
-              revise-mode sweep: ✓ 01_basics · ◐ 02_transactional (chunk 1-3 done, chunk-4 left) · ⬜ jwt/profiles/hibernate/docker/k8s. (Claude shows content in chat, Arpan hand-notes.)
+   SPRING     ◐ ~DONE (revise-swept 15-18 Jul, chunk-by-chunk in chat, Arpan hand-notes): ✓ 01_basics · ✓ 02_transactional (concept+DB-internals+propagation+2-gotcha+wrap) · ✓ 03_jwt (5 chunk + Bearer + CSRF + signature-TRUST-visual + no-DB-nuance) · ✓ 04_profiles (skipped-light) · ✓ 05_HIBERNATE (7 chunk: jpa-vs-hib · N+1 · lazy-vs-eager · dirty-checking · L1-cache · cascade · relationship-mappings).
+              ⬜ SIRF Docker + K8s BACHA (Arpan: "jaldi ho jayenge"). (STS/Eclipse setup 17-Jul.)
    PROJECT    ✓ DONE : 07_PROJECTS/mini_payment_ms (4 services: gateway+order+payment+notification) — Feign(sync),
               SAGA, Kafka(async, docker broker), kafka-ui, DB-per-service, LEARNINGS.md. + todoapp. (MS code me samjha.)
    LLD        ✓ 11 designs IN CODE (parking-lot..hotel-booking). gap = SOLID/pattern-ARTICULATE (bol-ke).
@@ -131,6 +131,21 @@
    ★ RAUNAK ROUND-STRUCTURE (insider, stored PRIVATE in RESOURCES/JP_referral_tracker.md): **3 rounds = 1 DSA + 1 System-Design + 1 behavioural(regular).** 2/3 (SD+behavioral) = Arpan's STRENGTH, only 1 DSA. thank-you msg SENT.
    ★ JP LAYOFFS RESEARCH (Arpan scared by news): 2026 JP cuts = **OPERATIONS/call-center/fraud-specialist** (Plano 244, Jersey-City 172) — NOT software-engineering. banks cutting ops + INVESTING in tech/AI -> Arpan's target (SDE/tech) = GROWING side, not cut side. layoffs = macro/everywhere/not-personal; strong-engineer = last-cut + first-rehire. -> news is NOT red-flag for his role.
    NEXT: SPRING continue (transactional chunk-4 -> jwt/profiles/hibernate/docker/k8s) · DSA = SHEET-REVISE daily (highest value) + occasional known-pattern Q (recognition rep, only if he wants) · behavioral BOL-KE · HLD daily revise · Sunday sheet-polish.
+
+   ★★★ 17-18 JUL (MARATHON night->morning, BREAKTHROUGH session — "grind me maza aa gaya"):
+   SPRING: JWT complete (5 chunk + Bearer-explainer + CSRF-explainer + ★ SIGNATURE=TRUST full-visual [login/verify/hacker-tamper-reject/fake-fail] + no-DB-nuance TarikaA-vs-B) · Hibernate complete (7 chunk). SPRING ~DONE (sirf Docker/K8s).
+   DSA (all via ★ INTERVIEWER-BRAINSTORMING -- Claude sirf nudge-sawaal, Arpan khud pahuncha): Word-Pattern (2-map, edge-fix) · SWAP-NODES-IN-PAIRS (fresh, brainstorm) + ★★ REDO 42x PROOF: 3.5hr(fresh) -> 5min(after sheet-revise) SOLO -- Arpan's own principle proven with data · FIND-PEAK-ELEMENT (BS on UNSORTED, high=mid vs high=mid-1 nuance, 2-versions-same-core, edge-sentinel=INT_MIN) · SINGLE-ELEMENT-SORTED (index-parity BS, even/odd mid rules, mid==0 edge -- 3AM solo brainstorm, "maza aa gaya"). ~62 problems. NEW BS broad-tricks in sheet.
+   LLD: revise-swept 5 designs (parking-lot · bookmyshow · elevator · atm · tic-tac-toe) -- "ab easy lagta" (familiarity).
+   ★★ ARPAN'S BREAKTHROUGH REALIZATIONS (his own, CRYSTALLIZED -- reinforce, never re-argue):
+      (a) "DSA slow tha DIMAAG se nahi, REVISION nahi thi" -- 1000 Q kiye par kabhi SHEET nahi banayi, kabhi REVISE nahi kiya (kisi ne bataya nahi) -> isliye fade. sheet + revise = missing piece. (swap-nodes 3.5hr->5min = live proof.)
+      (b) "MUSCLE koi alag cheez NAHI -- wo REVISION ka RESULT hai. revise hui to 'muscle', warna nahi." -> "muscle/reps" = course-bechne-wale ke hollow word; kaam ki baat = REVISE karo. (BANNED at him.)
+      (c) SHEET-REVISE = highest value ("gate ki chaabi"); naya-solve KAM, revise ZYADA. Sunday = sheet-polish.
+      (d) HLD daudta (deep-familiar via 19-designs+real-context, NOT daily-hands-on) vs DSA slow (kam-familiar) = SAME dimaag, alag familiarity. DSA ko HLD-jaisा banana zaroori nahi (gate hai).
+      (e) BS families ~done (7-8 tricks); naye = variations, alien nahi (convergence).
+   ★ INTERVIEWER-BRAINSTORMING DSA-METHOD (Arpan LOVED -- now permanent, top of MEMORY.md): Claude = nudge-sawaal ("2 map se socho?", "mid REJECT kiya ya candidate?"), Arpan khud solution tak. Code/answer NEVER. Struggle 15-20min -> stuck? glance/editorial (LEGIT no-guilt) -> sheet-add -> REDO. copy-pen = "diamond thing in DSA".
+   ★★ EMOTIONAL MILESTONE (Arpan, DIL se, 3AM->subah): "4-5 mahine ki grind, roz lada, gaali di, folder-delete kiya par DOBARA HAAR NAHI -- aaj yahaan khada. bahut mehnat lagi, aise hi nahi hua. DSA me ab MAZA aata (jise 'maut' bola tha). ab naya kam, revise zyada. because of you (Claude) DSA badhiya hua." -> Claude reciprocate: kaam TERA, main sirf sawaal poochta -- "wapas aana" hi tera asli dum.
+   ★ FORWARD PLAN (build->REVISE phase): naya bacha = Docker/K8s + behavioral-bol-ke + (~21-25 Jul) top-3 trees/graph/DP-light + code-review-optional. DAILY = pattern-sheet + rotate(Java/Spring/HLD/LLD/behavioral/Compares). Sunday=sheet-polish. Aug=apply.
+   ★ PENDING DSA (Arpan flagged): LeetCode 633 Sum-of-Square-Numbers (Google-asked, two-pointer family) -- kal karega.
 ```
 
 ## 4. DAILY ROUTINE (Arpan-set 8-Jul — ★ ORDER FLIPPED: DSA ab SUBAH NAHI, SHAAM ko / LAST)
