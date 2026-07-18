@@ -63,7 +63,7 @@ vector<int> spiralOrder(vector<vector<int>> &matrix)
             }
             left++;
         }
-        cout << "top " << top << " bottom " << bottom << " left " << left << " right " << right << endl;
+        // cout << "top " << top << " bottom " << bottom << " left " << left << " right " << right << endl;
     }
     return ans;
 }
