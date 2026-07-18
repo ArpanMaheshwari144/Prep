@@ -131,6 +131,14 @@
      ★ s, t ki subsequence hai kya (order same, beech ke char skip allowed). 2 pointer: i for s, j for t.
      s[i]==t[j] -> i++ AUR j++ (char mila).  nahi mila -> sirf j++ (t aage scan).
      ANT: i >= s.size() -> saare s-char order me mil gaye -> TRUE. warna FALSE.
+ ───────────────────────────────────────────────────────────────
+ • Trapping Rain Water (LC-42)
+     ★ ek bar `i` ke upar paani = min(leftMax[i], rightMax[i]) - height[i]. (min kyun: chhoti side se bah jaata.)
+     [A] O(n) space: leftMax[] pass-aage · rightMax[] pass-peeche · ans += min(leftMax[i],rightMax[i]) - height[i].
+     [B] O(1) two-pointer: left/right + 2 var leftMax/rightMax. if(leftMax<=rightMax) -> REFRESH leftMax pehle,
+         phir ans += leftMax-height[left], left++ (else side ulta). ★ refresh-PEHLE-add-baad (warna naya-bada-bar pe negative).
+         ★ kyun safe: chhoti-max side ka paani sirf usi side se limit (doosri side ऊँची wall already).
+     edge: empty -> 0.
 ```
 
 ---
