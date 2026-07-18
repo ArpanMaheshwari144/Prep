@@ -70,6 +70,10 @@
    Remove Element         -> ★ saare val hata, non-val ki count k lauta (move-zeroes cousin). slow/fast.
                              nums[fast]!=val -> nums[slow]=nums[fast], slow++.  ==val -> sirf fast++ (skip).
                              end me slow = k (bache shuru ke k me).
+   Sum of Square Numbers  -> ★ a²+b²==c possible? (LC 633, Google). ★ RECOGNITION: 2 NUMBER (pair) chahiye -> TWO-POINTER.
+                             (BS nahi -- BS=single/direction dhundhna; JODI chahiye to two-pointer, dono taraf se converge.)
+                             low=0 (★ 0 not 1, warna c=4 me a=0 wala miss), high=sqrt(c). ans=low²+high²: ==c->true · <c->low++ · >c->high--. low>high->false.
+                             ★ OVERFLOW: ans ko LONG LONG rakho (c up to 2^31-1).
 ```
 
 ---
