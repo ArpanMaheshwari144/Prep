@@ -47,7 +47,10 @@ bool wordPattern(string pattern, string s) // "abba", "dog cat cat dog"   -> 1
     {
         if (i < pattern.size())
         {
-            // ISOMORPHIC CODE
+            // ISOMORPHIC CODE (wahi 2-map clash-check, bas char<->WORD)
+            // ★ || KYUN (&& nahi): do taraf ka clash-check -- mp1 (char->word) side AUR mp2 (word->char) side.
+            //   in dono me se KOI BHI EK clash mila -> galat -> return false. isliye OR (||).
+            //   (&& hota to DONO taraf ek saath clash chahiye hota -> galat; ek hi taraf ka clash bhi false hona chahiye.)
             if (!mp1.empty() && !mp2.empty() &&
                     (mp1.count(pattern[i]) == 1 && mp1[pattern[i]] != word) ||
                 (mp2.count(word) == 1 && mp2[word] != pattern[i]))
