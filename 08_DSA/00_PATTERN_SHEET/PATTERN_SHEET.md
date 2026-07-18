@@ -219,10 +219,11 @@
                              ★ interview=V1 short: no explicit-check, no edge-sentinel (low<high -> mid+1 hamesha in-bounds). sentinel dena ho to INT_MIN (nums[0] nahi).
    Single Element (sorted)  -> ★ har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY (XOR bhi solve karta par O(n) -> yahan log-n chahiye).
                               pairs: single se PEHLE (even,odd) index pe shuru; single ke BAAD (odd,even) me SHIFT. single hi ye shift karता.
-                              mid nikalo + parity check, nums[mid] ko nums[mid-1] se compare:
+                              while(low<=high); mid nikalo + parity check, nums[mid] ko nums[mid-1] se compare:
                                 mid EVEN: ==nums[mid-1] -> single PEECHE -> high=mid-1 · else -> low=mid+1
                                 mid ODD:  !=nums[mid-1] -> single PEECHE -> high=mid-1 · else -> low=mid+1
-                              return nums[high] (high khud single pe aa ke rukता). ★ edge mid==0 -> return nums[0] (baaki sab pair eliminate).
+                              return nums[HIGH] (NOT low) -- dono branch mid ko REJECT karte (high=mid-1 / low=mid+1) -> isliye while low<=high; high khud single pe aa ke rukता.
+                              ★ edge mid==0 -> return nums[0] (baaki sab pair eliminate).
    Split Array Largest Sum  -> ★ BS on ANSWER = KOKO/SHIP ka SAME-TO-SAME. "k parts me baanto -> LARGEST part-sum MINIMIZE".
                               range: low=max(arr) (bada element akela aayega, tod nahi sakte) · high=sum(arr) (k=1 -> pura ek tukda).
                               solve(mid): mid=cap. sum+=nums[i]; sum>mid -> count++, sum=nums[i] (naye tukde me carry). ★ count=1 se START (warna aakhri tukda chhoot jaye). feasible = count<=k.
@@ -231,8 +232,9 @@
 
    ★ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
    ★★ high=mid vs high=mid-1 (kab konsa -- ek sawaal: "mid KHUD answer ho sakta abhi bhi?"):
-        mid REJECT kar diya (pakka galat, e.g. target!=mid) -> high = mid-1  (+ while low<=high)
-        mid abhi CANDIDATE (peak / find-min-rotated / boundary) -> high = mid  (+ while low<high)
+        TARGET-REJECT (mid ko target/condition se compare -> mid pakka galat, e.g. basic-BS/rotated-search: target!=mid) -> high = mid-1  (+ while low<=high)
+        KHUD-ANSWER-DHOONDH (koi target nahi, mid KHUD answer ho sakta -- find-PEAK · find-MIN-rotated) -> high = MID  (+ while low<high)
+        ★ BUG-CATCH (find-min, 18-Jul): [3,1,2] pe high=mid-1 karte to mid(=1, khud min) HAT jaata -> galat 3 aata. high=mid se bacha.
         ★ trap: high=mid ke saath while(low<=high) = INFINITE LOOP -> high=mid hamesha low<high ke saath.
         ★ KYUN (nuance): mid = low+(high-low)/2 NEECHE (low ki taraf) round karta. jab low==high==mid ho:
             high=mid-1 -> range SHRINK (mid-1) -> low>high -> exit. safe with low<=high.
