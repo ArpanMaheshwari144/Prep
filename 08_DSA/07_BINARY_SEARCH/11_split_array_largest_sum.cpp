@@ -3,9 +3,22 @@
 // ============================================================
 // int array nums (non-negative) aur ek int k diya.
 // array ko K CONTIGUOUS (lagatar) non-empty subarrays me baanto.
-// har split ka ek "sum" hota (us subarray ke elements ka jod).
-// K subarrays ke jitne bhi sum bane, unme se SABSE BADA sum -> minimize karo.
-// yaani: aise baanto ki "largest subarray-sum" JITNA CHHOTA ho sake, wahi lauta.
+//
+// ★★ WORDING SAAF (10-din-baad-confusion-proof):
+//   ek split me K parts bante -> har part ka apna sum. us split ka jo SABSE BADA part-sum ho,
+//   wahi us split ki "COST" hai (chhote part-sum se matlab nahi -- bada hi cost decide karta).
+//   ab SAARE possible splits me se jis split ki COST (bada-sum) SABSE CHHOTI ho -> wahi answer lauta.
+//   (yaani: bada-sum ko "across all splits" minimize karo. ek split ke andar uska bada-sum majboori hai.)
+//
+//   ★ EXAMPLE se pakka samjho -- [7,2,5,10,8], k=2. saare 2-splits + har ek ka BADA-sum:
+//        [7]        | [2,5,10,8]   -> 7,  25   -> cost = 25
+//        [7,2]      | [5,10,8]     -> 9,  23   -> cost = 23
+//        [7,2,5]    | [10,8]       -> 14, 18   -> cost = 18   <-- inme sabse CHHOTI cost
+//        [7,2,5,10] | [8]          -> 24, 8    -> cost = 24
+//      har split ki cost: 25, 23, 18, 24 -> in sab me se MINIMUM = 18 -> ANSWER = 18.
+//      ★ 14 kyun NAHI: 14 to [7,2,5] wale split ka CHHOTA part hai; ussi split me [10,8]=18 bhi hai
+//        jise ignore nahi kar sakte. "dono part <= 14" karna chaho -> [10,8]=18 > 14 -> fit hi nahi.
+//        isliye 18 se neeche jaa hi nahi sakte.
 
 // ---- ARPAN KI APPROACH ----
 //  ★ RECOGNITION: ye bhai koko-bananas aur ship-within-days wale se SAME-TO-SAME pattern pe based hai
