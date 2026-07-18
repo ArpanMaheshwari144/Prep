@@ -201,7 +201,9 @@
    Search in Rotated       -> mid==target return. ★ kaunsa half sorted? nums[low]<=nums[mid] -> LEFT sorted:
                               target [nums[low]..nums[mid]] me? -> high=mid-1, warna low=mid+1.
                               else RIGHT sorted: target [nums[mid]..nums[high]] me? -> low=mid+1, warna high=mid-1.
-   Find Min in Rotated     -> ★ mid ko HIGH se compare. while(low<=high): if(nums[mid]>nums[high]) low=mid+1; else high=mid-1; -> return nums[low] (low pe min).
+   Find Min in Rotated     -> ★ mid ko HIGH se compare (koi target nahi, khud min dhoondna). while(low<high): if(nums[mid]>nums[high]) low=mid+1; else high=MID; -> return nums[low].
+                             ★★ high=MID (NOT mid-1): else me mid KHUD min ho sakta (CANDIDATE) -> discard mat karo. isliye while(low<high) (warna infinite-loop). [BUG-CATCH: [3,1,2] high=mid-1 se galat 3 deta tha.]
+                             (ye wahi high=mid vs high=mid-1 rule -- find-peak jaisa: khud-answer-dhoondh -> high=mid+low<high; target-reject -> high=mid-1+low<=high.)
    Koko Bananas            -> ★ BS on ANSWER (speed k); hours(k)=sum(ceil(pile/k))<=h? -> chhoti k try.
                               ★ ceil: hours += ceil((double)piles[i]/mid);  ya integer: (piles[i]+mid-1)/mid.
                               ★ TRAP: ceil(int/int) BEKAAR (int-div pehle floor). double-cast ya integer-formula use karo.
