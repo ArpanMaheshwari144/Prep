@@ -14,7 +14,7 @@
    MONOTONIC stack       -> next-greater · daily-temperatures
    PREFIX-SUM + map[sum-k]-> subarray-sum=K
    num-1 START-check      -> longest-consecutive-sequence (O(n))
-   BS on ANSWER          -> koko (speed pe search, not array)
+   BS on ANSWER          -> koko (min speed) · ship (min capacity) · split-array (min largest-sum) [teeno same shape: low/high range + solve(mid) count-check]
    sorted-half-check     -> search in rotated array
    2D-index-map          -> search 2D matrix (row=i/col, col=i%col)
    VARIABLE window (shrink-till-valid, ans unconditional) -> longest-no-repeat · max-consec-ones · char-replace · min-len
@@ -221,6 +221,11 @@
                                 mid EVEN: ==nums[mid-1] -> single PEECHE -> high=mid-1 · else -> low=mid+1
                                 mid ODD:  !=nums[mid-1] -> single PEECHE -> high=mid-1 · else -> low=mid+1
                               return nums[high] (high khud single pe aa ke rukता). ★ edge mid==0 -> return nums[0] (baaki sab pair eliminate).
+   Split Array Largest Sum  -> ★ BS on ANSWER = KOKO/SHIP ka SAME-TO-SAME. "k parts me baanto -> LARGEST part-sum MINIMIZE".
+                              range: low=max(arr) (bada element akela aayega, tod nahi sakte) · high=sum(arr) (k=1 -> pura ek tukda).
+                              solve(mid): mid=cap. sum+=nums[i]; sum>mid -> count++, sum=nums[i] (naye tukde me carry). ★ count=1 se START (warna aakhri tukda chhoot jaye). feasible = count<=k.
+                              feasible -> ans=mid, high=mid-1 (chhota try); warna low=mid+1. while low<=high, return ans.
+                              ★ sibling: koko (min speed) · ship (min capacity) · split (min largest-sum) -> teeno IDENTICAL shape.
 
    ★ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
    ★★ high=mid vs high=mid-1 (kab konsa -- ek sawaal: "mid KHUD answer ho sakta abhi bhi?"):
