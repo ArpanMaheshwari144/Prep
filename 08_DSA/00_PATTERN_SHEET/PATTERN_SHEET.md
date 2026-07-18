@@ -147,10 +147,11 @@
  ★ KYA TRACK: sum · freq-map (distinct=map.size / char-count) · zeros-count · product · maxFreq.
  ★ KEY: shrink ke BAAD window HAMESHA valid -> ans UNCONDITIONAL (koi if(==k) nahi).
  ★ LENGTH ya COUNT: length -> max(ans, j-i+1) · subarray COUNT -> count += (j-i+1) (window size).
+ ★★ SHRINK construct: FIXED window -> if (ek add, ek remove -- size fix). VARIABLE window -> while (jab tak INVALID, ek se zyada bhi nikal sakta).
  [track] · [INVALID kab -> shrink] · [ans]
 
 ┌── FAMILY: variable-LONGEST ───────────────────────────────────
-│ KYUN SAATH: window expand; jab INVALID ho tab left se shrink; ans = MAX length. (kya track alag: freq/maxFreq/zeros/distinct.)
+│ KYUN SAATH: window expand; jab INVALID ho tab left se shrink (WHILE); ans = MAX length. (kya track alag: freq/maxFreq/zeros/distinct.)
 └───────────────────────────────────────────────────────────────
  • Longest Substring No-Repeat
      track: char freq-map; INVALID = repeat (freq>1) -> left shrink; ans = MAX length.
@@ -171,7 +172,7 @@
      farak: fruit me "2" hardcoded tha, yahan wahi jagah "k" (mp.size() > k).
 
 ┌── FAMILY: variable-SHORTEST ──────────────────────────────────
-│ KYUN SAATH: ULTA — jab VALID ho tab shrink karke chhota karo; ans = MIN length.
+│ KYUN SAATH: ULTA — jab VALID ho tab shrink (WHILE) karke chhota karo; ans = MIN length.
 └───────────────────────────────────────────────────────────────
  • Min Subarray Len (>=target)
      ★ SHORTEST type (ULTA): track sum; VALID (sum>=target) hote hi shrink-WHILE-valid -> ans = MIN length.
@@ -180,7 +181,7 @@
 │ KYUN SAATH: window ka size k pehle se DIYA hai; slide karte jao.
 └───────────────────────────────────────────────────────────────
  • Max Sum of K (FIXED)
-     i/j pointer (baaki SW jaisa): sum += nums[j]. jab window size (j-i+1) >= k ->
+     i/j pointer (baaki SW jaisa): sum += nums[j]. ★ IF (j-i+1) >= k (WHILE nahi -- fixed size, ek hi remove) ->
      maxSum = max(maxSum, sum); phir left hatao (sum -= nums[i], i++). window k-size pe slide. ans = maxSum.
 
 ┌── FAMILY: COUNT (length nahi) ────────────────────────────────
