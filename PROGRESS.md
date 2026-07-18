@@ -23,6 +23,8 @@
        method (ek line): question -> copy-pen kholo -> pattern recognize -> trace. bas. DSA-god banna GOAL NAHI (Java/Spring/HLD balance = deliberate smart-choice + JP-core, NOT failure). DSA = GATE, paper-method se paar. (jargon dobara mat lana.)
    ★ NO-DRAMA DSA (9-Jul, Arpan resolution): process = question -> pattern pehchano -> trace -> code. na hua = thoda dimmag, phir stuck = HELP lo, AAGE BADHO. no emotional drama, no time-waste, pelte jaao. Java/HLD pe dhyaan ZYADA (strengths, JP-core). ★ realization: DRAMA hi asli dushman tha (4-mahine crashes), DSA nahi.
    ★ ENGLISH-articulation gap: knowledge HAI, pressure me word atakta = trainable delivery-skill (bol-ke reps, slow-build). NOT knowledge-gap.
+   ★ COMMIT + PUSH SAATH (18-Jul, Arpan 2x): har commit ke turant baad PUSH bhi — ek step (add && commit && push). commit-only chhodo mat. remote = safety-net.
+   ★ SINGLE MEMORY FILE (18-Jul, Arpan): memory sirf ek file `memory/MEMORY.md` me — alag chhote per-fact files MAT banao. essence MEMORY.md me, full detail yahin (PROGRESS.md) + CLAUDE.md.
 ```
 
 ---
@@ -57,7 +59,7 @@
               DONE (61 topics): 01 CORE (22) · 02 COLLECTIONS (11) · 03 JAVA-8 (5) · 04 MULTITHREADING (11, +deadlock LIVE program) · 05 SOLID (6) · 06 DESIGN-PATTERNS (6: builder/singleton/factory/observer/adapter/strategy).
               ⬜ AB SIRF SPRING BACHA (Java me): IoC/DI · @Transactional · JWT/Security · JPA/Hibernate · profiles · Docker/K8s. (EXTRA/optional: 07 brain-ticklers 13 · 08 revision-visual 37 = glance-later, seekhna nahi.)
    SPRING     ◐ ~DONE (revise-swept 15-18 Jul, chunk-by-chunk in chat, Arpan hand-notes): ✓ 01_basics · ✓ 02_transactional (concept+DB-internals+propagation+2-gotcha+wrap) · ✓ 03_jwt (5 chunk + Bearer + CSRF + signature-TRUST-visual + no-DB-nuance) · ✓ 04_profiles (skipped-light) · ✓ 05_HIBERNATE (7 chunk: jpa-vs-hib · N+1 · lazy-vs-eager · dirty-checking · L1-cache · cascade · relationship-mappings).
-              ⬜ SIRF Docker + K8s BACHA (Arpan: "jaldi ho jayenge"). (STS/Eclipse setup 17-Jul.)
+              ⬜ Docker chal raha (18-Jul revise: ✓ Foundation[image-vs-container/run-flags/layers/port] · ✓ Volumes[named/bind/tmpfs/anon-trap] · ✓ Networks[custom-bridge=DNS-by-name]) -> ⬜ bacha Compose + K8s. (STS/Eclipse setup 17-Jul.)
    PROJECT    ✓ DONE : 07_PROJECTS/mini_payment_ms (4 services: gateway+order+payment+notification) — Feign(sync),
               SAGA, Kafka(async, docker broker), kafka-ui, DB-per-service, LEARNINGS.md. + todoapp. (MS code me samjha.)
    LLD        ✓ 11 designs IN CODE (parking-lot..hotel-booking). gap = SOLID/pattern-ARTICULATE (bol-ke).
@@ -78,6 +80,7 @@
               ★ SHEET = LIVING doc (Arpan 12-Jul): "HAR SUNDAY ise aur IMPROVE karenge" -> naye problems add + tricks refine. iterative, perfectionism me phasna nahi (v1 already kaam karti). "PATTERN-SHEET SUNDAY" = ritual. Claude ko har Sunday ye raise karna.
               ★ ARPAN KI APPROACH (12-Jul): saari 55 DSA .cpp files me "ARPAN KI APPROACH" comment (uski apni approach, plain Hinglish) -> file se bhi revise ho sakti (sheet + file = 2 revision-tool).
               ★ 12-Jul fresh problems (blank SOLO, pattern-recognize + apply): longest-consecutive · search-2D-matrix · remove-nth-from-end · squares-sorted-array · two-sum-II-sorted · ship-within-days(Koko-cousin). ~43 problems total.
+              ★ 18-Jul (evening) — SHEET-POLISH + FOLDER-AUDIT session: (1) Split-Array-Largest-Sum SOLO via brainstorming (BS-on-answer, koko/ship sibling — low=max/high=sum khud derive). (2) POORA DSA folder review (80 .cpp, 3 parallel agents + self-verify). (3) ★ find-min-rotated ka ASLI BUG mila+fix: [3,1,2] galat 3 deta tha -> high=mid-1 galat (mid khud min=candidate) -> high=MID + while low<high. code+comment+sheet updated. (4) isomorphic/word-pattern || comment saaf · spiral debug-cout comment · single-element XOR-verify(28 case) OK. (5) ★★ PATTERN-SHEET REFORMAT: "light-separator" boxed style (per-pattern header ═══ + per-problem block • + ───── separators). 63 problems intact. + content adds (single-element while-cond, broad-box target-reject vs khud-answer-dhoondh). ~63 problems total.
 
    BEHAVIORAL ◐ #1 GAP, 4 STAR stories done : 01_JP_COMPANY · 02_WHY_JP · 03_STAR_HikariCP (ownership+debug) ·
               04_STAR_WAF_IP (initiative+conviction) · 05_STAR_Doximity (IMPACT $20K + business-sense) ·
