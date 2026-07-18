@@ -30,36 +30,79 @@
 //  ★ EDGE: empty array -> return 0.
 //  example {2,0,3}: leftMax=2,2,3 · rightMax=3,3,3 -> (2-2)+(2-0)+(3-3) = 2. sahi.
 
+// ---- ARPAN KI APPROACH (2nd = TWO-POINTER, O(1) space) ----
+//  ★ upar wale O(n)-space (leftMax[]/rightMax[] arrays) ka OPTIMIZED version -- arrays ki zaroorat NAHI,
+//     bas 2 variable leftMax/rightMax track karo. (ye version thoda tricky -- proof samajhna zaroori.)
+//  setup: left=0, right=n-1. leftMax=height[0], rightMax=height[n-1] (shuru me set -- important).
+//  loop while(left<right):
+//     if (leftMax <= rightMax):   -- left side ki max chhoti/barabar
+//         ★ KYUN SAFE: right me rightMax (>= leftMax) already khada = wall. to left bar ka paani sirf
+//            leftMax se limit hoga (right se nahi) -> abhi PAKKA commit kar sakte, right pura dekhe bina.
+//         leftMax = max(leftMax, height[left]);   (★ REFRESH PEHLE -- naya bar bada ho to wall ban jaye)
+//         ans += leftMax - height[left];          (refresh ke baad add -> agar naya bar sabse ooncha to 0 add, negative nahi)
+//         left++;
+//     else:  (right side chhoti) -> SAME ulta: rightMax=max(..,height[right]); ans += rightMax-height[right]; right--;
+//  ★ ORDER TRAP (yahi atka tha): REFRESH pehle, ADD baad me. warna naya bar leftMax se bada hone pe
+//     "add-first" NEGATIVE de deta (ans += 4-6). max() se bada wala bacha rehta -> negative nahi aata.
+//  ★ ek comparison (leftMax<=rightMax) se decide "konsi side process" -> har bar ek hi pointer chalta -> O(n) time, O(1) space.
+
 #include <bits/stdc++.h>
 using namespace std;
 
 int trap(vector<int> &height)
 {
+    // Prefix Sum wala approach
     // vector<int> b = {4, 2, 0, 3, 2, 5};
+    // if (height.size() == 0)
+    //     return 0;
+
+    // int ans = 0;
+    // int n = height.size();
+
+    // int leftMax[n];
+    // int rightMax[n];
+
+    // leftMax[0] = height[0];
+    // for (int i = 1; i < n; i++)
+    // {
+    //     leftMax[i] = max(leftMax[i - 1], height[i]);
+    // }
+
+    // rightMax[n - 1] = height[n - 1];
+    // for (int i = n - 2; i >= 0; i--)
+    // {
+    //     rightMax[i] = max(rightMax[i + 1], height[i]);
+    // }
+
+    // for (int i = 0; i < n; i++)
+    // {
+    //     ans += min(leftMax[i], rightMax[i]) - height[i];
+    // }
+    // return ans;
+
+    // two pointer
     if (height.size() == 0)
         return 0;
 
     int ans = 0;
     int n = height.size();
 
-    int leftMax[n];
-    int rightMax[n];
-
-    leftMax[0] = height[0];
-    for (int i = 1; i < n; i++)
+    int left = 0, right = n - 1;
+    int leftMax = height[0], rightMax = height[n - 1];
+    while (left < right)
     {
-        leftMax[i] = max(leftMax[i - 1], height[i]);
-    }
-
-    rightMax[n - 1] = height[n - 1];
-    for (int i = n - 2; i >= 0; i--)
-    {
-        rightMax[i] = max(rightMax[i + 1], height[i]);
-    }
-
-    for (int i = 0; i < n; i++)
-    {
-        ans += min(leftMax[i], rightMax[i]) - height[i];
+        if (leftMax <= rightMax)
+        {
+            leftMax = max(leftMax, height[left]);
+            ans += leftMax - height[left];
+            left++;
+        }
+        else if (rightMax <= leftMax)
+        {
+            rightMax = max(rightMax, height[right]);
+            ans += rightMax - height[right];
+            right--;
+        }
     }
     return ans;
 }
