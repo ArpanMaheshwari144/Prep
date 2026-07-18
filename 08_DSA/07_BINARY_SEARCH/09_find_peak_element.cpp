@@ -53,7 +53,7 @@ int findPeakElement(vector<int> &nums)
         }
         else if (nums[mid] > nums[mid + 1])
         {
-            high = mid;
+            high = mid; // important
         }
     }
     return low;
