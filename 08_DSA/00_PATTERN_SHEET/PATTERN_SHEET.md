@@ -304,10 +304,14 @@
  BROAD IDEA: stack = LIFO. "kholo push, band karo pop-match" · ya MONOTONIC (next-greater/smaller).
 
 ┌── FAMILY: MONOTONIC stack ────────────────────────────────────
-│ KYUN SAATH: index stack rakho; jab curr > stack-top -> pop + us index ka ans set. (bas ans me kya bharo alag: value / distance / circular.)
+│ KYUN SAATH: index stack rakho; curr vs stack-top compare -> pop + us index ka ans set. (bas alag: comparison > ya < · ans me value/distance · circular.)
 └───────────────────────────────────────────────────────────────
  • Next Greater Element
      ★ MONOTONIC stack (index rakho); jab curr > stack-top -> pop + ans[top]=curr.
+ ───────────────────────────────────────────────────────────────
+ • Next Smaller Element
+     ★ Next-Greater ka SAME code, bas condition ULTA: while nums[st.top()] > nums[i] -> pop + ans[top]=nums[i]. (greater me < tha, smaller me >.)
+     ★ strictly smaller (> , >= nahi) -> [2,2,2] -> saare -1. baaki (index-stack, push, init -1) sab wahi.
  ───────────────────────────────────────────────────────────────
  • Daily Temperatures
      same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).
