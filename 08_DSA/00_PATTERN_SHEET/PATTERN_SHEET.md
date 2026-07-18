@@ -38,8 +38,17 @@
      -> slow++ (slow ab ek DUPLICATE pe, khali nahi), phir nums[slow]=nums[fast] (dupe ko OVERWRITE).
      fast har baar++. unique count = slow+1 (0-based +1).
  ───────────────────────────────────────────────────────────────
- • Valid Palindrome
-     left/right dono taraf se, compare karte andar aao.
+ • Valid Palindrome (simple)
+     left/right dono taraf se, compare karte andar aao. (sirf lowercase-letters wala aasan version.)
+ ───────────────────────────────────────────────────────────────
+ • Valid Palindrome (FULL, LC-125)
+     ★ mixed chars (letter/digit/space/punct, UPPER+lower). SIRF alnum consider · case IGNORE. helpers: isalnum, tolower (<cctype>).
+     2 pointer left/right, ORDER:
+       1. tolower(s[left])==tolower(s[right]) -> match -> left++ right--.
+       2. else !isalnum(s[left])  -> left non-alnum -> skip -> left++.
+       3. else !isalnum(s[right]) -> right non-alnum -> skip -> right--.
+       4. else (dono alnum PAR alag) -> return FALSE.
+     bina false cross -> TRUE. (koi alnum na ho / khaali -> true.)
  ───────────────────────────────────────────────────────────────
  • Container Most Water
      left/right; area = min(h)*width; CHHOTI height wala pointer andar (bottleneck).
