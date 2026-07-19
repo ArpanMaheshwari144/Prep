@@ -322,7 +322,7 @@
      ★ prev-smaller + next-smaller ka COMBO. har bar apni OWN height pe rectangle banata -> left prev-smaller tak, right next-smaller tak (dono usse chhote = boundary). sabka area -> MAX.
      width = nS[i] - pS[i] - 1 · area = heights[i]*width · ans = max(ans, area).
      ★ TRICK 1: prev/next-smaller me VALUE nahi, INDEX store karo (width ke liye).
-     ★ TRICK 2: next-smaller "koi nahi" -> sentinel = n (NA -1, warna width negative -> [2,4] fail). prev-smaller "none" = -1 sahi (left boundary).
+     ★ TRICK 2: next-smaller "koi chhota nahi" -> sentinel = n (right-edge, bar END tak failta), NA -1. (-1 se width negative -> [2,4]: 2-(-1)-1=-1 galat; n=2 se 2-(-1)-1=2 -> area 4 sahi.) prev-smaller "none" = -1 sahi (left boundary).
      ★ "-1" rule: boundary bar rectangle me NAHI (smaller) -> -1 lagta. include hoti -> nahi.
      ★ next-GREATER se NAHI: rectangle taller bar ko include karta, shorter pe rukta -> smaller boundary chahiye. (greater tab jab bada element boundary ho.)
  ───────────────────────────────────────────────────────────────

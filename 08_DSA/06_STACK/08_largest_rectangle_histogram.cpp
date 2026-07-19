@@ -36,6 +36,14 @@
 //  ★ NEXT-GREATER se kyun NAHI hoga (ye socha tha): rectangle taller bar ko INCLUDE karta, SHORTER pe RUKTA.
 //     next-greater bar 5 ko 6 (taller) pe rok deta -> width sirf 1 -> 5*1=5 GALAT (10 chahiye). isliye SMALLER boundary hi.
 //     (next-greater tab kaam aata jab problem me BADA element boundary ho, chhota nahi.)
+//
+//  ★ next-smaller me "n" sentinel ka FAYDA kyun ([2,4] se samjho):
+//     [2,4] me kisi bar ka next-smaller HAI HI NAHI (right me kuch chhota nahi). plain "next-smaller" problem me
+//     iska matlab "-1 = koi jawab nahi." PAR histogram me next-smaller = RIGHT BOUNDARY -> "right me koi chhota nahi"
+//     ka matlab hai bar array ke RIGHT-EDGE tak failta -> wo edge index = n (last ke ek aage).
+//     n=2 (sahi): bar2(idx0) pS=-1,nS=2 -> width 2-(-1)-1=2 -> 2*2=4 · bar4(idx1) pS=0,nS=2 -> 2-0-1=1 -> 4*1=4 -> max 4 ✓
+//     -1 (galat): nS=-1 -> width -1-(-1)-1=-1 (negative) -> area -2/-8 -> max -2 ✗.
+//     => n = "bar right-edge tak failta" -> width positive banti. (-1 plain-problem ke liye theek, boundary ke liye n.)
 
 #include <bits/stdc++.h>
 using namespace std;
