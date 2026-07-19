@@ -26,6 +26,16 @@
 //     (-1 rakha to width = ns-ps-1 NEGATIVE aa jaati -> [2,4] jaise fail. prev-smaller ka "none" = -1 sahi hai, left boundary.)
 //  ★ FORMULA: har i pe -> width = nS[i] - pS[i] - 1;  area = heights[i] * width;  ans = max(ans, area).
 //     (-1 isliye: dono boundary bar khud rectangle me nahi aate, unke beech wale aate.)
+//
+//  ---- 19-Jul brainstorm se 2 aur samajh (yaad rakhne wali) ----
+//  ★ HAR bar apna OWN rectangle banata -> sabka area nikaal ke MAX lete. (bar 5 -> 5*2=10 · bar 6 -> 6*1=6 · max=10.)
+//     ek rectangle "us bar ka" hai jiski height us range me sabse chhoti (jo define karti). taller bars uske upar se guzarte.
+//  ★ "-1" ka RULE (kab lagta): boundary bar rectangle me SHAAMIL hai ya nahi?
+//       boundary = SMALLER element (next/prev-smaller) -> wo bar rectangle me NAHI -> width = ns-ps-1 (-1 LAGTA, beech ka count).
+//       agar koi boundary INCLUDE hoti -> us taraf -1 NAHI (e.g. seedha ns-ps type).
+//  ★ NEXT-GREATER se kyun NAHI hoga (ye socha tha): rectangle taller bar ko INCLUDE karta, SHORTER pe RUKTA.
+//     next-greater bar 5 ko 6 (taller) pe rok deta -> width sirf 1 -> 5*1=5 GALAT (10 chahiye). isliye SMALLER boundary hi.
+//     (next-greater tab kaam aata jab problem me BADA element boundary ho, chhota nahi.)
 
 #include <bits/stdc++.h>
 using namespace std;
