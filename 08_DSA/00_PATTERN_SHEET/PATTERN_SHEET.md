@@ -12,7 +12,9 @@
    FAST/SLOW pointer      -> middle · detect-cycle · palindrome-LL · remove-nth-from-end (GAP: fast ko n aage bhejo)
    REVERSE (3-pointer)    -> reverse-LL · palindrome-LL
    DUMMY node             -> merge-two-sorted (+ LL insert/build)
-   MONOTONIC stack        -> next-greater · daily-temperatures
+   MONOTONIC stack        -> next-greater · daily-temperatures · next/prev-smaller
+   NEAREST-SMALLER/GREATER BOUNDARY (monotonic) -> har element ka prev+next smaller/greater se boundary -> uska CONTRIBUTION (width/count/span):
+                            largest-rectangle-histogram (width) · sum-of-subarray-minimums (count) · maximal-rectangle-2D (per-row histogram) · stock-span (prev-greater). [ek weapon, kai problem]
    PREFIX-SUM + map[sum-k] -> subarray-sum=K
    num-1 START-check       -> longest-consecutive-sequence (O(n))
    BS on ANSWER           -> koko (min speed) · ship (min capacity) · split-array (min largest-sum) [teeno same shape: low/high range + solve(mid) count-check]
