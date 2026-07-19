@@ -313,6 +313,11 @@
      ★ Next-Greater ka SAME code, bas condition ULTA: while nums[st.top()] > nums[i] -> pop + ans[top]=nums[i]. (greater me < tha, smaller me >.)
      ★ strictly smaller (> , >= nahi) -> [2,2,2] -> saare -1. baaki (index-stack, push, init -1) sab wahi.
  ───────────────────────────────────────────────────────────────
+ • Previous Smaller Element
+     ★ Next-Smaller ka MIRROR: SAME code, bas for-loop ULTA (right->left, i=n-1..0). (array peeche se dekho -> "right ka next-smaller" = "left ka previous-smaller".)
+     while nums[st.top()] > nums[i] -> pop + ans[top]=nums[i] (curr i popped ke LEFT me -> uska prev-smaller). push(i). left me kuch nahi -> -1.
+     ★ prev-smaller + next-smaller = Largest-Rectangle-in-Histogram ke building block.
+ ───────────────────────────────────────────────────────────────
  • Daily Temperatures
      same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).
  ───────────────────────────────────────────────────────────────
