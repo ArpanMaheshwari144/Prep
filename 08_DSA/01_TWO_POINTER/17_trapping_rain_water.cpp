@@ -89,12 +89,13 @@ int trap(vector<int> &height)
 
     int left = 0, right = n - 1;
     int leftMax = height[0], rightMax = height[n - 1];
-    while (left < right)
+    while (left < right) // eg {4, 2, 0, 3, 2, 5}
     {
+        // jo max CHHOTA hai (min wali side) wahi tak paani rukega -> wahi side process
         if (leftMax <= rightMax)
         {
-            leftMax = max(leftMax, height[left]);
-            ans += leftMax - height[left];
+            leftMax = max(leftMax, height[left]); // refresh PEHLE (naya bar bada ho to wall)
+            ans += leftMax - height[left];        // phir is bar ka paani jodo
             left++;
         }
         else if (rightMax <= leftMax)
@@ -103,6 +104,8 @@ int trap(vector<int> &height)
             ans += rightMax - height[right];
             right--;
         }
+        // cout << ans << endl;                        // debug (band)
+        // cout << leftMax << " " << rightMax << endl; // debug (band)
     }
     return ans;
 }
