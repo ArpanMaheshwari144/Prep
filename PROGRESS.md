@@ -93,6 +93,12 @@
 
 ## 3. FORWARD PLAN — ★ 17-DIN ROADMAP (13 -> 30 July; August = APPLY)
 ```
+   ★★ FINAL-10-DAYS (20-30 Jul, Arpan-set 20-Jul) = CONSOLIDATION + ROTATION, NAYA HEAVY NAHI.
+      - ROTATION: har subah FRESH-energy me alag topic (HLD / Java / LLD / behavioral / project-revise / DSA) -> bore nahi + sab warm. "jo zyada DIKHEGA wo STRONG hoga."
+      - DSA = SHAAM/LAST + LIGHT (gate; dheel nahi par doobna nahi). sheet-revise + paper dheere.
+      - HLD ko FRESH energy (differentiator; DSA-heavy days me neglect hua tha). Spring khatam (Docker ARG+K8s bacha).
+      - Arpan: "20 din me ummeed se ZYADA kiya." fear gaya -> ab consolidate. Aug = APPLY.
+```
    PHASE 1 (13-16 Jul) JAVA KHATAM: ✓ Java-CORE DONE. ◐ SPRING REVISE ACTIVE (15-Jul started: basics done, transactional partial) -> continue transactional-ch4 + jwt/profiles/hibernate/docker/k8s. DSA = sheet-revise daily (naye Q kam, revision zyada).
    PHASE 2 (17-20 Jul) DELIVERY: BEHAVIORAL bol-ke (5 STAR loud) + HLD daily revise. DSA sheet+naye Q continue. -> delivery strong.
    PHASE 3 (21-25 Jul) LATER-TOPICS light: TREES -> GRAPH -> basic DP (top-3, few each, tree-trace) IF core solid. + behavioral/HLD continue. (optional: code-review round start.)
