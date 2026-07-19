@@ -318,6 +318,14 @@
      while nums[st.top()] > nums[i] -> pop + ans[top]=nums[i] (curr i popped ke LEFT me -> uska prev-smaller). push(i). left me kuch nahi -> -1.
      ★ prev-smaller + next-smaller = Largest-Rectangle-in-Histogram ke building block.
  ───────────────────────────────────────────────────────────────
+ • Largest Rectangle in Histogram (LC-84)
+     ★ prev-smaller + next-smaller ka COMBO. har bar apni OWN height pe rectangle banata -> left prev-smaller tak, right next-smaller tak (dono usse chhote = boundary). sabka area -> MAX.
+     width = nS[i] - pS[i] - 1 · area = heights[i]*width · ans = max(ans, area).
+     ★ TRICK 1: prev/next-smaller me VALUE nahi, INDEX store karo (width ke liye).
+     ★ TRICK 2: next-smaller "koi nahi" -> sentinel = n (NA -1, warna width negative -> [2,4] fail). prev-smaller "none" = -1 sahi (left boundary).
+     ★ "-1" rule: boundary bar rectangle me NAHI (smaller) -> -1 lagta. include hoti -> nahi.
+     ★ next-GREATER se NAHI: rectangle taller bar ko include karta, shorter pe rukta -> smaller boundary chahiye. (greater tab jab bada element boundary ho.)
+ ───────────────────────────────────────────────────────────────
  • Daily Temperatures
      same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).
  ───────────────────────────────────────────────────────────────
