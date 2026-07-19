@@ -32,6 +32,8 @@
 //  ========== WIDTH FORMULA "NS - PS - 1" KYUN AATA (derivation, 19-Jul) ==========
 //   1. PS (prev-smaller) aur NS (next-smaller) dono CHHOTE bar hain -> ye rectangle me NAHI aate (inpe ruk gaya).
 //      -> rectangle ka PEHLA bar = PS + 1   ·   rectangle ka AAKHRI bar = NS - 1.
+//      ★ DIRECTION: dono boundary se ANDAR ki taraf ek kadam -> PS+1 (left boundary se right), NS-1 (right boundary se left).
+//        (ns+1 / ps-1 NAHI -- wo to bahar chala jaata; hamesha andar.)  e.g. PS=1,NS=4 -> bar 2 aur 3 = buildings 5,6.
 //   2. kisi range me kitne bar? -> BASIC count formula:  count = last - first + 1.
 //      (★ +1 kyunki DONO ends count hote. e.g. 2 se 5 tak = 2,3,4,5 = 4 = 5-2+1.)
 //   3. yahan lagao:  count = (NS - 1) - (PS + 1) + 1
