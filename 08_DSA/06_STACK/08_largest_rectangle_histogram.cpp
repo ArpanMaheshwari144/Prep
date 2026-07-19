@@ -16,6 +16,8 @@
 // ============================================================
 
 // ---- ARPAN KI APPROACH ----
+//  ★★ MENTAL MODEL (ek line me pura): HAR height pe KHADE ho -> dono taraf ka NEAREST-SMALLER (prev + next) dhoondo
+//      -> width = next - prev - 1 -> area = height * width -> sab me se MAX. bas.
 //  ★ ye question = PREV-SMALLER + NEXT-SMALLER ka code reuse (dono building block pehle bana liye). "hard" lagta
 //     par medium hai -- bas 2-3 trick ek saath.
 //  ★ IDEA: har bar `i` ko uski OWN height pe rectangle bana ke failao -- left me prev-smaller tak, right me next-smaller tak

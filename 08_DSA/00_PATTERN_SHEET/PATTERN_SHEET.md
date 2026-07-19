@@ -319,6 +319,7 @@
      ★ prev-smaller + next-smaller = Largest-Rectangle-in-Histogram ke building block.
  ───────────────────────────────────────────────────────────────
  • Largest Rectangle in Histogram (LC-84)
+     ★★ MENTAL MODEL: HAR height pe KHADE ho -> dono taraf NEAREST-SMALLER (prev+next) -> width=next-prev-1 -> area=height*width -> MAX. bas.
      ★ prev-smaller + next-smaller ka COMBO. har bar apni OWN height pe rectangle banata -> left prev-smaller tak, right next-smaller tak (dono usse chhote = boundary). sabka area -> MAX.
      width = nS[i] - pS[i] - 1 · area = heights[i]*width · ans = max(ans, area).
      ★ TRICK 1: prev/next-smaller me VALUE nahi, INDEX store karo (width ke liye).
