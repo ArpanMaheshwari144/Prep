@@ -330,6 +330,11 @@
      ★ width=NS-PS-1 KYUN (derive): boundary rectangle me nahi -> bars PS+1 se NS-1 tak. count=last-first+1=(NS-1)-(PS+1)+1=NS-PS-1. (-1 SIRF EK baar, do nahi -- building6: 4-2-1=1 sahi, 4-2-1-1=0 galat.)
      ★ next-GREATER se NAHI: rectangle taller bar ko include karta, shorter pe rukta -> smaller boundary chahiye. (greater tab jab bada element boundary ho.)
  ───────────────────────────────────────────────────────────────
+ • Maximal Rectangle (LC-85, 2D)
+     ★ Largest-Rectangle-Histogram ka 2D bhai. HAR ROW ko histogram maano -> us row ke histogram pe largest-rectangle -> saare rows ka MAX.
+     heights[] (size = COL): cell 1 -> heights[j]+=1 (build up) · cell 0 -> heights[j]=0 (reset). har row ke baad maxi=max(maxi, largestRectangleArea(heights)).
+     ★ heights COL-size ka (har column neeche jaate height accumulate). inner loop j=col, outer i=row.
+ ───────────────────────────────────────────────────────────────
  • Daily Temperatures
      same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).
  ───────────────────────────────────────────────────────────────
