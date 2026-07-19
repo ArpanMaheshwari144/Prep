@@ -29,6 +29,19 @@
 //  ★ FORMULA: har i pe -> width = nS[i] - pS[i] - 1;  area = heights[i] * width;  ans = max(ans, area).
 //     (-1 isliye: dono boundary bar khud rectangle me nahi aate, unke beech wale aate.)
 //
+//  ========== WIDTH FORMULA "NS - PS - 1" KYUN AATA (derivation, 19-Jul) ==========
+//   1. PS (prev-smaller) aur NS (next-smaller) dono CHHOTE bar hain -> ye rectangle me NAHI aate (inpe ruk gaya).
+//      -> rectangle ka PEHLA bar = PS + 1   ·   rectangle ka AAKHRI bar = NS - 1.
+//   2. kisi range me kitne bar? -> BASIC count formula:  count = last - first + 1.
+//      (★ +1 kyunki DONO ends count hote. e.g. 2 se 5 tak = 2,3,4,5 = 4 = 5-2+1.)
+//   3. yahan lagao:  count = (NS - 1) - (PS + 1) + 1
+//                          = NS - 1 - PS - 1 + 1
+//                          = NS - PS - 1        (★ constants: -1 -1 +1 = -1 -> ek hi -1 bacha)
+//   4. example building 5 (PS=1, NS=4): first=PS+1=2, last=NS-1=3 -> count = 3-2+1 = 2 = 4-1-1 -> 5*2 = 10.
+//   ★ NOTE: -1 SIRF EK baar (NS-PS-1). "dono boundary hatane ko do -1" GALAT ->
+//           building 6 (NS=4, PS=2): 4-2-1 = 1 sahi (6*1=6); 4-2-1-1 = 0 galat.
+//  ================================================================================
+//
 //  ---- 19-Jul brainstorm se 2 aur samajh (yaad rakhne wali) ----
 //  ★ HAR bar apna OWN rectangle banata -> sabka area nikaal ke MAX lete. (bar 5 -> 5*2=10 · bar 6 -> 6*1=6 · max=10.)
 //     ek rectangle "us bar ka" hai jiski height us range me sabse chhoti (jo define karti). taller bars uske upar se guzarte.
