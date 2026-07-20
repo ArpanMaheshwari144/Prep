@@ -12,6 +12,16 @@
 //   [6,1,6], val=6           -> [1]          (head + tail dono hataye)
 //
 // ============================================================
+// ---- ARPAN KI APPROACH ----
+//  ★ val wale SAARE node hatane hain. HEAD bhi ho sakta -> isliye prev/curr traverse + head special-case.
+//  prev=NULL, curr=head. loop:
+//     curr->val==val && prev==NULL (HEAD hatana) -> head=head->next, curr=curr->next.  (prev NULL hi rehne do)
+//     curr->val==val && prev!=NULL (beech/end)   -> prev->next=curr->next, curr=curr->next.
+//        ★★ BUG-CATCH: removal pe prev ADVANCE MAT karo (prev=curr galat -- curr to HATA diya).
+//           prev waise ka waisa rehta (kyunki uska next ab curr-ke-aage pe hai). warna consecutive [1,6,6,2] fail.
+//     warna (no match) -> prev=curr, curr=curr->next.   (yahan prev advance hota)
+//  return head.
+//  (dummy-node se bhi ho sakta: head se pehle dummy -> head special-case ki zaroorat nahi. yahan head-case use kiya.)
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -23,16 +33,6 @@ struct Node
     Node(int v) : val(v), next(nullptr) {}
 };
 
-// ---- ARPAN KI APPROACH ----
-//  ★ val wale SAARE node hatane hain. HEAD bhi ho sakta -> isliye prev/curr traverse + head special-case.
-//  prev=NULL, curr=head. loop:
-//     curr->val==val && prev==NULL (HEAD hatana) -> head=head->next, curr=curr->next.  (prev NULL hi rehne do)
-//     curr->val==val && prev!=NULL (beech/end)   -> prev->next=curr->next, curr=curr->next.
-//        ★★ BUG-CATCH: removal pe prev ADVANCE MAT karo (prev=curr galat -- curr to HATA diya).
-//           prev waise ka waisa rehta (kyunki uska next ab curr-ke-aage pe hai). warna consecutive [1,6,6,2] fail.
-//     warna (no match) -> prev=curr, curr=curr->next.   (yahan prev advance hota)
-//  return head.
-//  (dummy-node se bhi ho sakta: head se pehle dummy -> head special-case ki zaroorat nahi. yahan head-case use kiya.)
 Node *removeElements(Node *head, int val)
 {
     if (!head)
