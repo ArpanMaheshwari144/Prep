@@ -17,17 +17,6 @@
 //   50+ put -> sab phir bhi milne chahiye
 // ============================================================
 
-#include <bits/stdc++.h>
-using namespace std;
-
-struct Entry
-{
-    string key;
-    int value;
-    Entry *next;
-    Entry(string k, int v) : key(k), value(v), next(nullptr) {}
-};
-
 // ---- ARPAN KI APPROACH ----
 //  ★ CORE: ek ARRAY (buckets) jisme har slot ek CHAIN (linked-list) ka HEAD ho.
 //     buckets[index] = us slot ki poori linked-list ka head (ya NULL agar khaali).
@@ -70,6 +59,17 @@ struct Entry
 //     do:    buckets[i] = curr->next           prev->next = curr->next
 //     baad:  buckets[i]->[B]->NULL             [A]->[C]->NULL   (B bypass)
 //  ==========================================================
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Entry
+{
+    string key;
+    int value;
+    Entry *next;
+    Entry(string k, int v) : key(k), value(v), next(nullptr) {}
+};
 
 class MyHashMap
 {
@@ -155,7 +155,7 @@ public:
                 sz--;
                 return;
             }
-            prev = prev->next;
+            prev = curr;
             curr = curr->next;
         }
         return;

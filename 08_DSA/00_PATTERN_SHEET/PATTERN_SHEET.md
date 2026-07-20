@@ -571,6 +571,14 @@
         buckets[i] = curr->next              prev->next = curr->next
         => buckets[i]->[B]->NULL             => [A]->[C]->NULL
      (redo ke liye poora code: file 08_DSA/09_DESIGN/01_hashmap.cpp)
+
+ ▸ DESIGN HASHSET (LLD) ────────────────────────────────────────
+     ★ HashMap ka CHHOTA bhai: same bucket-array + chaining, bas VALUE/update nahi. Entry = |key|next|.
+     add:      key chain me hai? -> kuch mat karo (duplicate nahi). na ho -> node lagao + sz++.
+     contains: chain traverse -> key match -> true, else false. (= HashMap get, bas bool.)
+     remove:   prev+curr traverse. HEAD(prev null) -> buckets[i]=curr->next · beech -> prev->next=curr->next. sz--.
+     ★★ remove BUG-CATCH: prev ko "prev = curr" karo (NA prev=prev->next -- prev NULL se non-head remove pe CRASH).
+     (file 08_DSA/09_DESIGN/02_hashset.cpp)
 ```
 
 ---
