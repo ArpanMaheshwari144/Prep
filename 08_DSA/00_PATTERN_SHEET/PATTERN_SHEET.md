@@ -501,13 +501,14 @@
      slow->next us node ko point kar raha -> slow->next = slow->next->next. done.
  ───────────────────────────────────────────────────────────────
  ▸ REMOVE ELEMENTS (delete by val, LC-203) ─────────────────────
-     ★ val wale SAARE node hatao. HEAD bhi hat sakta -> prev/curr traverse + head special-case.
-       3 case (curr har baar aage):
-         match & HEAD (prev null)  -> head aage (head = head->next).
-         match & beech (prev hai)  -> prev->next = curr->next  (curr skip).
-         no-match                  -> prev = curr.
-     ★★ TRICK: prev sirf NO-MATCH pe aage badhta (removal pe prev=curr MAT -- curr to hata diya). warna consecutive [1,6,6,2] fail.
-     (guard: head null -> return null. dummy-node se head-special-case avoid ho sakta.)
+     ★ val wale SAARE node hatao.  if (!head) return null;   prev = null, curr = head;
+     while (curr != null && head != null):
+        curr->val==val && prev==null   -> head = head->next          (HEAD / ya sab-node-same)
+        curr->val==val && prev!=null   -> prev->next = curr->next     (beech)
+        else (no-match)                -> prev = curr
+        curr = curr->next              (har case ke end me)
+     return head;
+     ★ TRICK: prev SIRF no-match pe aage (removal pe prev=curr NAHI -- curr hata) -> warna consecutive [1,6,6,2] fail.
 
 ┌── FAMILY: DUMMY node ─────────────────────────────────────────
 │ KYUN SAATH: fake head (dummy) + tail; naye node rewire/jodte jao; ans = dummy->next. head-edge apne aap handle.
