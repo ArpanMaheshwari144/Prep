@@ -532,4 +532,29 @@
 ```
 
 ---
+
+```
+═══════════════════ PATTERN 9 — DESIGN (data-structure) ═══════════════════
+ BROAD IDEA: data-structure ko khud banao (built-in ke bina) -> array + pointers/nodes se.
+
+ ▸ DESIGN HASHMAP (LLD) ────────────────────────────────────────
+     ★★ MENTAL MODEL: ek ARRAY (buckets); har slot me ek LINKED-LIST (chain). buckets[index] = us chain ka HEAD.
+        index = hash(key) % cap.  same index pe 2 key (collision) -> chain me jode (next se).
+     fields: buckets (Entry* ka array) · cap (slots = 16) · sz (kitne pairs).
+
+     put(key,val):  index nikalo -> chain me key DHUNDO.
+                       mil gayi -> value UPDATE karo, return.
+                       na mili  -> naya node chain me LAGAO + sz++.
+     get(key):      chain traverse -> key match -> value laut.  na mile / null -> -1.
+     remove(key):   prev + curr se traverse -> key match pe:
+                       HEAD (prev == null) -> buckets[i] = curr->next.
+                       beech/end           -> prev->next = curr->next.
+                       phir sz--.
+
+     ★ COMBO (yahi naya/tricky tha): buckets[index] khud ek POINTER hai (chain ka head)
+       -> isliye array-assign (buckets[i]=X) aur node-link (X->next) MIX ho jaate = array + linked-list.
+     (redo ke liye poora visual + code: file 08_DSA/09_DESIGN/01_hashmap.cpp)
+```
+
+---
 > REVISE isi sheet se. code nahi kholना. "similar Q -> pattern pehchano -> trick recall -> lagao."
