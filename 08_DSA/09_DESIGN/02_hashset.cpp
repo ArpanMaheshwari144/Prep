@@ -10,7 +10,7 @@
 //   void remove(string key)     -> key hatao
 //   int  size()                 -> kitni distinct keys
 //
-// (HashMap jaisा hi: bucket array + chaining. bas value/update wala part nahi.)
+// (HashMap jaisa hi: bucket array + chaining. bas value/update wala part nahi.)
 //
 // Tests (expected):
 //   add("apple") add("banana") add("apple")   -> contains("apple")=1, size=2 (duplicate nahi)
@@ -19,7 +19,7 @@
 //   50+ add -> sab contains milne chahiye
 // ============================================================
 //  ============ MENTAL MODEL (dekhne ke liye — no code) ============
-//   HashMap jaisा hi: ARRAY (buckets) + har slot ek CHAIN. bas node me VALUE nahi -> Entry = | key | next |
+//   HashMap jaisa hi: ARRAY (buckets) + har slot ek CHAIN. bas node me VALUE nahi -> Entry = | key | next |
 //   index = hash(key) % cap.  same index (collision) -> chain me jode (next se).
 //
 //     buckets

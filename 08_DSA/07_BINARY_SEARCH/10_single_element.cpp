@@ -14,7 +14,7 @@
 //  ★ bahut achha (aur mushkil) problem -- interview me fresh 45-min me nikalna tough. TRICK = INDEX-PARITY.
 //  ★ sorted array me pairs ka pattern (single se pehle vs baad):
 //     single se PEHLE  -> pair (EVEN, odd) index pe shuru: (0,1)(2,3)... -> nums[even]==nums[even+1]
-//     single ke BAAD   -> pair (ODD, even) pe shift: -> nums[odd]==nums[odd+1]. single hi ye shift karता hai.
+//     single ke BAAD   -> pair (ODD, even) pe shift: -> nums[odd]==nums[odd+1]. single hi ye shift karta hai.
 //  ★ BS: mid nikalo (normal), phir mid ki PARITY dekho + nums[mid] ko nums[mid-1] se compare:
 //     mid EVEN:  nums[mid]==nums[mid-1] -> pairing SHIFT ho chuki (single peeche) -> high = mid-1
 //                warna -> pairing intact (single aage) -> low = mid+1

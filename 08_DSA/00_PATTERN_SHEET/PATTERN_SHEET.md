@@ -160,7 +160,7 @@
      [A] O(n) space: leftMax[] pass-aage · rightMax[] pass-peeche · ans += min(leftMax[i],rightMax[i]) - height[i].
      [B] O(1) two-pointer: left/right + 2 var leftMax/rightMax. if(leftMax<=rightMax) -> REFRESH leftMax pehle,
          phir ans += leftMax-height[left], left++ (else side ulta). ★ refresh-PEHLE-add-baad (warna naya-bada-bar pe negative).
-         ★ kyun safe: chhoti-max side ka paani sirf usi side se limit (doosri side ऊँची wall already).
+         ★ kyun safe: chhoti-max side ka paani sirf usi side se limit (doosri side oonchi wall already).
      edge: empty -> 0.
 ```
 
@@ -450,11 +450,11 @@
 
  ▸ SINGLE ELEMENT (SORTED) ─────────────────────────────────────
      ★ har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY (XOR bhi solve karta par O(n) -> yahan log-n chahiye).
-     pairs: single se PEHLE (even,odd) index pe shuru; single ke BAAD (odd,even) me SHIFT. single hi ye shift karता.
+     pairs: single se PEHLE (even,odd) index pe shuru; single ke BAAD (odd,even) me SHIFT. single hi ye shift karta.
      while(low<=high); mid nikalo + parity check, nums[mid] ko nums[mid-1] se compare:
        mid EVEN: ==nums[mid-1] -> single PEECHE -> high=mid-1 · else -> low=mid+1
        mid ODD:  !=nums[mid-1] -> single PEECHE -> high=mid-1 · else -> low=mid+1
-     return nums[HIGH] (NOT low) -- dono branch mid ko REJECT karte (high=mid-1 / low=mid+1) -> isliye while low<=high; high khud single pe aa ke rukता.
+     return nums[HIGH] (NOT low) -- dono branch mid ko REJECT karte (high=mid-1 / low=mid+1) -> isliye while low<=high; high khud single pe aa ke rukta.
      ★ edge mid==0 -> return nums[0] (baaki sab pair eliminate).
 
 ┌── FAMILY: 2D-index-map ───────────────────────────────────────
@@ -471,7 +471,7 @@
       ★ trap: high=mid ke saath while(low<=high) = INFINITE LOOP -> high=mid hamesha low<high ke saath.
       ★ KYUN (nuance): mid = low+(high-low)/2 NEECHE (low ki taraf) round karta. jab low==high==mid ho:
           high=mid-1 -> range SHRINK (mid-1) -> low>high -> exit. safe with low<=high.
-          high=mid   -> high nahi hilता (mid=low) -> range shrink NAHI -> low<=high hua to ATAK (infinite).
+          high=mid   -> high nahi hilta (mid=low) -> range shrink NAHI -> low<=high hua to ATAK (infinite).
           isliye high=mid ko low<high chahiye (low==high pe TURANT exit, atakne se pehle).
           e.g. [2,1] peak-logic + while(low<=high): mid=0 -> high=mid=0 -> low=high=0 kabhi khatam nahi (loop).
 ```
@@ -582,4 +582,4 @@
 ```
 
 ---
-> REVISE isi sheet se. code nahi kholना. "similar Q -> pattern pehchano -> trick recall -> lagao."
+> REVISE isi sheet se. code nahi kholna. "similar Q -> pattern pehchano -> trick recall -> lagao."

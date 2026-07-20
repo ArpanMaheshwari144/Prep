@@ -3,7 +3,7 @@
 // ============================================================
 // POSITIVE numbers ka array + ek target diya.
 // SABSE CHHOTI length ka CONTIGUOUS subarray dhoondho jiska sum >= target.
-// us length ko return karo. koi aisा subarray na ho -> 0 return karo.
+// us length ko return karo. koi aisa subarray na ho -> 0 return karo.
 //
 // ---- ARPAN KI APPROACH ----
 //  variable window: j se sum me add (grow). jab tak sum >= target ->

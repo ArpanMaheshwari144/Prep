@@ -25,7 +25,7 @@
 //  ★ ye question = largestRectangleArea (histogram) ka SAME-TO-SAME, bas 1D ki jagah 2D.
 //  ★ IDEA: matrix ke HAR ROW ko ek HISTOGRAM me badlo, phir us row ke histogram pe kal wala
 //     largest-rectangle laga do -> saare rows ka MAX = answer.
-//  ★ HISTOGRAM kaise banta (heights array): row-by-row upar se neeche chalते hue --
+//  ★ HISTOGRAM kaise banta (heights array): row-by-row upar se neeche chalte hue --
 //        cell == 1 -> heights[j] += 1  (upar wale 1s ke saath height build up)
 //        cell == 0 -> heights[j] = 0   (column toot gaya -> reset)
 //     example row2 tak col 2,3,4 me do lagataar 1 -> height 2, width 3 -> 2*3 = 6.

@@ -2,7 +2,7 @@
 // SEARCH A 2D MATRIX — Binary Search  (blank test)
 // ============================================================
 // m x n matrix: har row sorted, aur har row ka PEHLA element pichli row ke
-// AAKHRI se bada (yani poora matrix ek sorted 1D array jaisा). target dhoondo -> true/false.
+// AAKHRI se bada (yani poora matrix ek sorted 1D array jaisa). target dhoondo -> true/false.
 //   [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target=3 -> true
 //
 // ---- ARPAN KI APPROACH ----

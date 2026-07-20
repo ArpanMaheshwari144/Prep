@@ -23,7 +23,7 @@
 //  ★ CORE insight (copy-pen se nikla): kisi EK bar `i` ke upar kitna paani rukega?
 //     = min(uske LEFT ka sabse ooncha, uske RIGHT ka sabse ooncha) - height[i].
 //     (kyun min: chhoti wali side se paani BAH jaata -- {3,0,2} me beech pe 2 hi rukega, 3 nahi.)
-//  ★ har bar ke liye left-max/right-max baar-baar scan = O(n²). isliye PEHLE SE nikaal ke rakho (prefix jaisा):
+//  ★ har bar ke liye left-max/right-max baar-baar scan = O(n²). isliye PEHLE SE nikaal ke rakho (prefix jaisa):
 //     leftMax[i]  = 0..i tak ka max -> ek pass AAGE se.   leftMax[0]=height[0] (shuru me set, warna dikkat).
 //     rightMax[i] = i..n-1 tak ka max -> ek pass PEECHE se. rightMax[n-1]=height[n-1] (shuru me set).
 //  ★ final: ans += min(leftMax[i], rightMax[i]) - height[i]  (har i pe).  -> O(n) time, O(n) space.
