@@ -35,13 +35,15 @@
 //
 // ============================================================
 // ---- ARPAN KI APPROACH (SOLO — poora khud likha, kuch copy nahi) ----
-// buckets mei jo shys mei wo bhi as pointers his and ukse baad LL shsru hia 
-//  ★ structure: buckets = Entry* ka array (cap=16), har slot pe ek chain (linked list). Entry = |key|value|next|.
+//  ★ structure: buckets = Entry* ka array (cap=16). har slot (buckets[i]) KHUD ek POINTER hai --
+//     wo us slot ki chain (linked list) ke HEAD pe point karta; uske aage se LL shuru. Entry = |key|value|next|.
 //  index = hash<string>{}(key) % cap.
-//  put:    slot khaali -> newNode + sz++. warna chain traverse:
-//             key mil gayi -> value UPDATE + ★ RETURN (turant niklo). na mili + last node per jaao -> append + sz++.
+//  put:    slot khaali -> newNode + sz++. warna chain traverse (while LL != NULL):
+//             key mil gayi -> value UPDATE + ★ RETURN (turant niklo). na mili + last node par pahunche -> append + sz++.
 //  get:    index -> chain traverse -> key match -> value return. na mile -> -1.
-//  remove: index -> prev+curr traverse -> match: while(LL != null) agra HEAD delete (mtlb prev null) -> (buckets[i] ye pointer hia)=LL->next · beech -> prev->next=LL->next. sz--.
+//  remove: index -> prev+curr traverse (while LL != NULL), key match par:
+//             HEAD (prev == NULL) -> buckets[i] (ye khud pointer hai) = LL->next.
+//             beech/aage          -> prev->next = LL->next.    phir sz--.
 //  ★★ TRAP (khud pakda): put me update ke baad RETURN na ho -> loop aage jaata -> last node pe DUPLICATE append + sz galat.
 //     tests tab bhi PASS the -> seekh: "test-pass != code-sahi". return logically zaroori hai.
 // ============================================================
