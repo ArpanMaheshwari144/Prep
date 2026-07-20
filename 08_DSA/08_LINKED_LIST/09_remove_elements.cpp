@@ -50,6 +50,10 @@ Node *removeElements(Node *head, int val)
         }
         else if (curr->val == val && prev != NULL)
         {
+            // ★ yahan prev = curr NAHI karenge. kyun: curr abhi HAT raha hai (skip ho raha).
+            //   maan lo beech me 2 ya usse zyada consecutive same-val node hain (jaise [1,6,6,2], val=6).
+            //   agar prev=curr kar diya to prev ek HATE hue node pe chala jayega -> agla 6 sahi se link nahi hoga.
+            //   isliye prev waisa ka waisa rehta (uska next hi aage badhta), sirf curr aage jata.
             prev->next = curr->next;
         }
         else
