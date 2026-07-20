@@ -487,6 +487,12 @@
 ═══════════════════ PATTERN 8 — LINKED LIST ═══════════════════
  BROAD IDEA: pointer manipulation. 3 broad-trick: FAST/SLOW · REVERSE (3-pointer) · DUMMY node.
 
+ ★★ LOOP-CONDITION TRICK (while ka kya likhun -- CP-log ise DEKHTE hi jaante, dry-run nahi karte):
+    EK sawaal: "aakhri node ka bhi kaam hai, ya sirf uske NEXT ko peek karna hai?"
+      • har node ka apna kaam (key check / process / remove / end pe append) -> `while (curr != NULL)`   [ye ZYADATAR: get, remove, count, print]
+      • curr ke NEXT ko dekhna/use, ya aakhri node PE rukna (tail pakadke aage jodna) -> `while (curr->next != NULL)`   [khaas case, kam]
+    (proof: `A->B->NULL` pe dono trace -> `curr!=NULL` B tak jaake B ka kaam karta; `curr->next!=NULL` B se pehle ruk jaata, B ka kaam nahi. => op ka naam nahi, ye sawaal decide karta.)
+
 ┌── FAMILY: FAST/SLOW ──────────────────────────────────────────
 │ KYUN SAATH: slow 1 step, fast 2 step (ya gap). middle/cycle/palindrome/nth-from-end sab isi 2-speed pe.
 └───────────────────────────────────────────────────────────────
