@@ -597,4 +597,17 @@
 ```
 
 ---
+
+```
+═══════════════════ PATTERN 10 — KADANE (running value + max update) ═══════════════════
+ BROAD IDEA: ek value AAGE carry karo (min/sum), har step MAX update. single pass, O(1) space.
+
+ ▸ BEST TIME BUY/SELL STOCK (LC-121) ───────────────────────────
+     ★ ye TWO-POINTER nahi -- KADANE. (link: diff-array [p[i]-p[i-1]] ka MAX SUBARRAY SUM = ye.)
+     ★ running-min: mini = ab tak sabse SASTA · maxProfit = ab tak best.
+       har din: mini = min(mini, prices[i]);  maxProfit = max(maxProfit, prices[i] - mini);
+     ★ sell buy-ke-BAAD apne-aap (mini hamesha current se pehle). maxProfit=INT_MIN safe (pehle din 0). O(n)/O(1).
+```
+
+---
 > REVISE isi sheet se. code nahi kholna. "similar Q -> pattern pehchano -> trick recall -> lagao."
