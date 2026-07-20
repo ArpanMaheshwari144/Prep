@@ -44,7 +44,7 @@ Node *removeElements(Node *head, int val)
     Node *curr = head;
     while (curr != NULL && head != NULL)
     {
-        if (curr->val == val && prev == NULL)
+        if (curr->val == val && prev == NULL) // head case or agar sab nodes same hai to ye case hi chalega
         {
             head = head->next;
             curr = curr->next;
