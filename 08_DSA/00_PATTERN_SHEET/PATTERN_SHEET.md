@@ -553,7 +553,24 @@
 
      ★ COMBO (yahi naya/tricky tha): buckets[index] khud ek POINTER hai (chain ka head)
        -> isliye array-assign (buckets[i]=X) aur node-link (X->next) MIX ho jaate = array + linked-list.
-     (redo ke liye poora visual + code: file 08_DSA/09_DESIGN/01_hashmap.cpp)
+
+     VISUAL:                                      Entry = | key | value | next |
+        buckets
+        ┌────┐
+      0 │ ●──┼──> NULL
+        ├────┤
+      1 │ ●──┼──> | apple | 5 | ●─|──> NULL
+        ├────┤
+      3 │ ●──┼──> | cat | 9 | ●─|──> | dog | 4 | ●─|──> NULL     <- COLLISION (chain)
+        └────┘
+        buckets[i] = us chain ka HEAD (ya NULL).
+
+     REMOVE head (prev==null):            REMOVE beech (prev exist):
+        buckets[i]->[A]->[B]->NULL           [A]->[B]->[C]->NULL   (remove B)
+                    ^curr                          ^prev ^curr
+        buckets[i] = curr->next              prev->next = curr->next
+        => buckets[i]->[B]->NULL             => [A]->[C]->NULL
+     (redo ke liye poora code: file 08_DSA/09_DESIGN/01_hashmap.cpp)
 ```
 
 ---
