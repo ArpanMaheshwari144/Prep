@@ -275,6 +275,11 @@
 
  ▸ LONGEST CONSECUTIVE SEQ ─────────────────────────────────────
      ★ set me sab; count START tabhi jab (num-1) set me NAHI (sequence start) -> O(n).
+
+ ▸ MAJORITY ELEMENT (LC-169, >n/2) ─────────────────────────────
+     map se: mp[x]++; count > n/2 wala return. O(n) time, O(n) space. (seedha.)
+     ★ BOYER-MOORE VOTING (O(1) space): majority n/2 se zyada -> baaki sab milkar bhi kam -> do ALAG element CANCEL karo, majority bachega.
+       candidate + count. ==candidate -> count++ · !=candidate -> count-- · count==0 -> candidate=nums[i], ★ count=1 (0 chhoda to -1 me chala jaayega, reset kabhi nahi -> BUG). end: candidate = ans.
 ```
 
 ---
