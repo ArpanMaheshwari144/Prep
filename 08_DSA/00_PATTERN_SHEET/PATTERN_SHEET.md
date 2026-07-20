@@ -499,6 +499,11 @@
      ★ agar fast==NULL -> head hi hatana hai -> return head->next.
      warna dono SAATH chalao (gap constant) jab tak fast->next NULL -> slow "hatane wale ke PEHLE" baith jaata.
      slow->next us node ko point kar raha -> slow->next = slow->next->next. done.
+ ───────────────────────────────────────────────────────────────
+ ▸ REMOVE ELEMENTS (delete by val, LC-203) ─────────────────────
+     ★ val wale SAARE node hatao. HEAD bhi ho sakta -> prev/curr traverse + head special-case (ya DUMMY node).
+     prev=null,curr=head: val-match & prev==null (HEAD) -> head=head->next · val-match & prev!=null -> prev->next=curr->next · else prev=curr. curr har baar aage.
+     ★★ BUG-CATCH: removal pe prev ADVANCE MAT karo (prev=curr galat, curr hata diya) -> warna consecutive [1,6,6,2] fail. prev sirf no-match pe aage.
 
 ┌── FAMILY: DUMMY node ─────────────────────────────────────────
 │ KYUN SAATH: fake head (dummy) + tail; naye node rewire/jodte jao; ans = dummy->next. head-edge apne aap handle.
