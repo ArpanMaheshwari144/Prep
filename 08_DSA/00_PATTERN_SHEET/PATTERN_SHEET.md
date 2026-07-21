@@ -181,6 +181,17 @@
  ★★ SHRINK construct: FIXED window -> if (ek add, ek remove -- size fix). VARIABLE window -> while (jab tak INVALID, ek se zyada bhi nikal sakta).
  [track] · [INVALID kab -> shrink] · [ans]
 
+ ★★★ ONE SKELETON (fixed + variable DONO isi pe -- ye poora khel):
+    i = 0, j = 0
+    while (j < n):                     // EXPAND (j HAMESHA aage). [for(j..) == while(j<n){..;j++} -- SAME]
+        arr[j] window me ADD           (tracker update: sum / map / zeros / product)
+        while / if  (WINDOW BAD):      // SHRINK (i aage)
+            arr[i] REMOVE (tracker update);  i++
+        ans UPDATE
+        j++
+    -> sirf 2 cheez badalti: (1) inner IF (fixed, ek remove) ya WHILE (variable, jab tak invalid)
+                             (2) "WINDOW BAD" kya + kya track. baaki dhaancha har baar SAME.
+
 ┌── FAMILY: variable-LONGEST ───────────────────────────────────
 │ KYUN SAATH: window expand; jab INVALID ho tab left se shrink (WHILE); ans = MAX length. (kya track alag: freq/maxFreq/zeros/distinct.)
 └───────────────────────────────────────────────────────────────
@@ -244,6 +255,14 @@
 ```
 ═══════════════════ PATTERN 3 — HASHING ═══════════════════
  BROAD IDEA: hashmap/hashset = O(1) lookup. "pehle dekha?" / "complement hai?" / count -> O(n).
+
+ ★★ COMMON SKELETON (seen / complement / count family -- ek pass):
+    map/set banao   (kabhi PRELOAD: two-sum khaali · subarray-sum-k -> mp{0:1})
+    for x in arr:
+        CHECK pehle   (map me complement/seen/count hai? -> ans use/count)   // ★ UPDATE se PEHLE
+        UPDATE baad   (map me x daalo / count++)
+    ★ ORDER KYUN (check-before-update): warna element KHUD se match kar leta (two-sum: x apne aap ko complement maan leta). isliye pehle dekho, phir daalo.
+    (NOTE: har hashing Q one-pass nahi -- group-anagrams = pehle poora map bharo phir output · longest-consec = set-membership. ye skeleton "seen/complement/count" family ke liye.)
 
 ┌── FAMILY: 2-MAP BIJECTION ────────────────────────────────────
 │ KYUN SAATH: dono taraf ki mapping (mp1 + mp2); clash dono side check; koi ek clash -> false (||). (one map kaafi nahi.)
