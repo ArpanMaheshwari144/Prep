@@ -19,8 +19,8 @@
                                     patterns · brain-ticklers        STATUS: core DONE.
 
    SPRING       02_SPRING/          basics · @Transactional · JWT ·  READ-mode (08_REVISION_VISUAL).
-                                    profiles · Hibernate · Docker ·  STATUS: almost done — sirf K8s
-                                    K8S                              (Ingress + ConfigMap/Secret) baaki.
+                                    profiles · Hibernate · Docker ·  STATUS: ✓ DONE (K8s 6/6 complete
+                                    K8S (6/6 done)                   — practical folder = hands-on baaki).
 
  ★ HLD          04_HLD/             FOUNDATIONS(11) · SYSTEM_        RAW_DRILL/00_REFLEX_SHEET = ROZ.
                                     DESIGNS(10) · RAW_DRILL          02_WHY_HOW_QA = rotate. 01_PRACTICE
