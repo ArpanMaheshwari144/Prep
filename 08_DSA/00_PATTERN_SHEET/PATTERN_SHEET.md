@@ -239,6 +239,10 @@
      ★ COUNT (length nahi). track: prod; INVALID = prod>=k -> prod/=nums[i], i++.
      ★★ COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid). (bahut count-Q me)
 
+ ▸ SUBSTRINGS CONTAINING ALL 3 (LC-1358) ───────────────────────
+     ★ COUNT + contains-all. need={a,b,c}=1 each (count=3). valid(count==0) -> shrink i tightest -> ★ ans += i (valid left-starts, har right-end).
+     ★ INTUITION: valid window ko LEFT-extend karo -> valid REHTA -> left-starts ek BLOCK (0..point) -> ek saath gino. (mp-- if ke BAHAR: extras negative track.)
+
 ┌── FAMILY: ANAGRAM-window ─────────────────────────────────────
 │ KYUN SAATH: fixed p-length window + har position pe anagram-check (isAnagram helper reuse).
 └───────────────────────────────────────────────────────────────
