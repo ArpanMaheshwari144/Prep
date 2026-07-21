@@ -406,7 +406,13 @@
      ★ match: (topp=='('&&it==')') || (topp=='['&&it==']') || (topp=='{'&&it=='}')
 
  ▸ MIN STACK ───────────────────────────────────────────────────
-     ★ pair{val, minSoFar} push -> getMin = top().second (O(1), koi scan nahi).
+     ★ DESIGN: push/pop/top/getMin SAB O(1). trick = min hamesha "ready" rakho, bina scan kiye.
+     ★ har element ke SAATH uska "yahaan tak ka MIN" store karo -> stack<pair<val, minSoFar>>.
+        push:   newMin = empty ? val : min(val, top().second);  push {val, newMin}.
+        getMin: top().second (O(1), koi loop nahi).   top: top().first.   pop: normal.
+     ★★ KYUN pair (ek single min-var kyun NAHI): pop pe min WAPAS badal sakta -> purana min laut aata;
+        single var us history ko recover nahi kar paata. har element apna min saath -> pop pe neeche wala min apne-aap sahi.
+        (e.g. push 5,3,7 -> min 3 · pop 7 -> min still 3 · pop 3 -> min 5 WAPAS aa gaya.)
 
  ▸ MIN ADD MAKE VALID ──────────────────────────────────────────
      ★ COUNTER, stack nahi (sirf () hain). 2 counter:
