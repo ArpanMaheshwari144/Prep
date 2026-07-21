@@ -1,5 +1,5 @@
 // ============================================================
-// DESIGN A HASHMAP (internals) — LLD / data-structure   (C++)   [REDO]
+// DESIGN A HASHMAP (internals) — LLD / data-structure   (C++)   [REDO-2, pakka]
 // ============================================================
 // Apna khud ka HashMap banao (built-in map/unordered_map ke BINA).
 // string key -> int value. put / get / remove / size.
@@ -10,14 +10,12 @@
 //   void remove(string key)        -> key hatao.
 //   int  size()                    -> kitni distinct keys.
 //
-// (★ ye tere HASHSET ka bada bhai hai: SAME bucket-array + chaining, bas node me ek VALUE extra
-//    aur put me "pehle se ho to UPDATE" wala part.)
 // ============================================================
-//  ============ MENTAL MODEL (ye picture pehle baithao — code nahi) ============
+//  ============ MENTAL MODEL (picture pehle) ============
 //   HashMap = ek ARRAY (buckets) + har slot pe ek LINKED LIST (chain).
+//   buckets[i] KHUD ek POINTER hai -> chain ke HEAD pe point karta; uske aage se LL shuru.
 //   node (Entry) = | key | value | next |
-//   index nikaalo: index = hash<string>{}(key) % cap.   (key ko ek slot-number me badla.)
-//   do key same index pe aa gaye (COLLISION) -> us slot ki chain me AAGE jod do (linked list).
+//   index = hash<string>{}(key) % cap.   do key same index (COLLISION) -> chain me aage jodo.
 //
 //     buckets (array)
 //     ┌────┐
@@ -25,27 +23,20 @@
 //     ├────┤
 //   1 │ ●──┼──> | "a"|50| ●──|──> NULL
 //     ├────┤
-//   3 │ ●──┼──> | "b"|20| ●──|──> | "z"|90| ●──|──> NULL   <- COLLISION (b aur z same slot -> chain)
+//   3 │ ●──┼──> | "b"|20| ●──|──> | "z"|90| ●──|──> NULL   <- COLLISION (chain)
 //     └────┘
-//     buckets[i] = us chain ka HEAD (ya NULL).
 //
-//   => jab picture ye ban gaya, to put/get/remove sab bas us slot ki chain me
-//      LINKED-LIST traverse hai (jo tu already jaanta hai). naya kuch nahi.
-//  ============================================================================
-//
+//   => put/get/remove = us slot pe jao (hash%cap), phir chain me LINKED-LIST traverse.
+//  =====================================================
 // ============================================================
-// ---- ARPAN KI APPROACH (SOLO — poora khud likha, kuch copy nahi) ----
-//  ★ structure: buckets = Entry* ka array (cap=16). har slot (buckets[i]) KHUD ek POINTER hai --
-//     wo us slot ki chain (linked list) ke HEAD pe point karta; uske aage se LL shuru. Entry = |key|value|next|.
+// ---- ARPAN KI APPROACH (SOLO — 2nd rep, faada) ----
+//  ★ structure: buckets = vector<Entry*> (cap=16). buckets[i] = us slot ki chain ka head (ya NULL). Entry = |key|value|next|.
 //  index = hash<string>{}(key) % cap.
-//  put:    slot khaali -> newNode + sz++. warna chain traverse (while LL != NULL):
-//             key mil gayi -> value UPDATE + ★ RETURN (turant niklo). na mili + last node par pahunche -> append + sz++.
+//  put:    slot khaali -> node laga + sz++. warna chain traverse (while head != NULL):
+//             key mili -> value UPDATE + RETURN (turant niklo). na mili + end (head->next==NULL) -> node append + sz++.
 //  get:    index -> chain traverse -> key match -> value return. na mile -> -1.
-//  remove: index -> prev+curr traverse (while LL != NULL), key match par:
-//             HEAD (prev == NULL) -> buckets[i] (ye khud pointer hai) = LL->next.
-//             beech/aage          -> prev->next = LL->next.    phir sz--.
-//  ★★ TRAP (khud pakda): put me update ke baad RETURN na ho -> loop aage jaata -> last node pe DUPLICATE append + sz galat.
-//     tests tab bhi PASS the -> seekh: "test-pass != code-sahi". return logically zaroori hai.
+//  remove: index -> prev+head traverse -> key match: HEAD(prev NULL) -> buckets[i]=head->next · beech -> prev->next=head->next. sz--.
+//  ★★ TRAP (kal seekha): put me update ke baad RETURN zaroori (warna loop aage -> last pe DUPLICATE + sz galat). "test-pass != code-sahi".
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -75,77 +66,74 @@ public:
 
     void put(string key, int val)
     {
-        int index = hash<string>{}(key) % cap;
-        Entry *newNode = new Entry(key, val);
-        if (buckets[index] == nullptr)
+        int index = hash<string>{}(key) % cap; // bucket ka index nikala (hash % cap)
+        Entry *node = new Entry(key, val);      // naya node banaya
+        if (buckets[index] == nullptr)          // slot khaali -> seedha yahin laga do
         {
-            // first node in that index
-            buckets[index] = newNode;
-            sz++;
+            buckets[index] = node;
+            sz++; // nayi key add hui
         }
         else
         {
-            // is slot pe pehle se node hai -> chain me traverse: key mili to value UPDATE, na mili to aage node jodo
-            Entry *LL = buckets[index];
-            while (LL != NULL)
+            // slot me pehle se chain hai -> traverse: key mili to value UPDATE, warna end me node jodo
+            Entry *head = buckets[index];
+            while (head != NULL)
             {
-                if (LL->key == key)
+                if (head->key == key)
                 {
-                    LL->value = val;
+                    head->value = val;
                     return;
                 }
                 else
                 {
-                    if (LL->next == NULL)
+                    if (head->next == nullptr)
                     {
-                        LL->next = newNode;
-                        sz++;
+                        head->next = node;
+                        sz++; // nayi key chain ke end me add hui
                     }
                 }
-                LL = LL->next;
+                head = head->next;
             }
         }
     }
 
     int get(string key)
     {
-        // index nikaalo -- buckets array me konse slot pe jaana hai
-        int index = hash<string>{}(key) % cap;
-        Entry *LL = buckets[index]; // us slot ka chain-head (linked list) lo, us par traverse karo -- bas aur kuch nahi
-        while (LL != NULL)
+        int index = hash<string>{}(key) % cap; // array me bucket ka index
+        Entry *head = buckets[index];           // us slot ki chain (LL) ka head
+        while (head != NULL) // chain traverse: key match hui to uski value return
         {
-            if (LL->key == key)
+            if (head->key == key)
             {
-                return LL->value;
+                return head->value;
             }
-            LL = LL->next;
+            head = head->next;
         }
         return -1;
     }
 
     void remove(string key)
     {
-        int index = hash<string>{}(key) % cap; // index nikaala
-        Entry *LL = buckets[index];            // us slot ka chain-head le liya (LL)
-
-        // ab wahi "remove from linked list" wala logic -- prev + curr traverse
-        Entry *prev = nullptr;
-        while (LL != NULL)
+        int index = hash<string>{}(key) % cap; // index nikala
+        Entry *head = buckets[index];           // us slot ki chain (LL) ka head
+        Entry *prev = NULL;                     // peeche wala node track karne ke liye
+        while (head != NULL)
         {
-            if (LL->key == key)
+            // andar tabhi jao jab key MATCH ho (jise hatana hai) -> tabhi sz--
+            if (head->key == key)
             {
-                if (prev != NULL) // beech/aage wala node -> prev ko LL ke aage jod do (LL skip ho gaya)
+                if (prev != NULL) // prev != NULL -> ye beech/aage wali node hai
                 {
-                    prev->next = LL->next;
+                    prev->next = head->next;
                 }
-                else // prev == NULL -> ye HEAD node hai -> bucket ko seedha LL ke aage point karao
+                else // prev == NULL -> ye HEAD node hai
                 {
-                    buckets[index] = LL->next;
+                    buckets[index] = head->next;
                 }
-                sz--;
+                sz--; // node hata -> ginti ghatao
             }
-            prev = LL;
-            LL = LL->next;
+            prev = head;
+            head = head->next;
         }
     }
 
@@ -186,10 +174,15 @@ int main()
     cout << m.get("k49") << " (expected 2401)\n";
     cout << "size: " << m.size() << " (expected 51)\n"; // "b"(1) + 50 keys = 51
 
-    // // --- remove from a chain: neighbor bacha rehna chahiye ---
+    // --- UPDATE key jo collision-chain ke ANDAR ho (return-trap test) ---
+    m.put("k0", 999);
+    cout << m.get("k0") << " (expected 999)\n";
+    cout << "size: " << m.size() << " (expected 51)\n"; // size badhna NAHI chahiye
+
+    // --- remove from a chain: neighbor bacha rehna chahiye ---
     m.remove("k7");
     cout << m.get("k7") << " (expected -1)\n";
-    cout << m.get("k8") << " (expected 64)\n"; // aas-paas wale bache rahein
+    cout << m.get("k8") << " (expected 64)\n";
     cout << "size: " << m.size() << " (expected 50)\n";
 
     return 0;
