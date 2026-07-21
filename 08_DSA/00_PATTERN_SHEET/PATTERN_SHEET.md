@@ -214,6 +214,11 @@
      distinct (mp.size()) > k ho -> left se shrink (erase-on-0). ans = max length.
      farak: fruit me "2" hardcoded tha, yahan wahi jagah "k" (mp.size() > k).
 
+ ▸ EQUAL SUBSTR WITHIN BUDGET (LC-1208) ──────────────────────────
+     ★ cost per char = |s[i]-t[i]| -> problem = "cost-array ka sabse LAMBA window jiska SUM <= maxCost".
+     j se cost += abs(s[j]-t[j]);  WHILE (cost > maxCost) -> cost -= abs(s[i]-t[i]), i++;  ans = max(ans, j-i+1); j++.
+     track sirf cost (koi map nahi). = longest-subarray-sum <= k, string ke bhes me.
+
 ┌── FAMILY: variable-SHORTEST ──────────────────────────────────
 │ KYUN SAATH: ULTA — jab VALID ho tab shrink (WHILE) karke chhota karo; ans = MIN length.
 └───────────────────────────────────────────────────────────────
