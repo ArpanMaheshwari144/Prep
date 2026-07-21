@@ -44,6 +44,29 @@
 //           building 6 (NS=4, PS=2): 4-2-1 = 1 sahi (6*1=6); 4-2-1-1 = 0 galat.
 //  ================================================================================
 //
+//  ========== VISUAL (aankhon se — 20-Jul, jo click karaata) ==========
+//   heights = [2,1,5,6,2,3]
+//        c0   c1   c2   c3   c4   c5
+//   h6                   #
+//   h5              #    #
+//   h4              #    #
+//   h3              #    #         #
+//   h2    #         #    #    #    #
+//   h1    #    #    #    #    #    #
+//
+//   index :  0    1    2    3    4    5
+//   height:  2    1    5    6    2    3
+//   PS    : -1   -1    1    2    1    4     (baayein pehla CHHOTA bar ka index; koi nahi -> -1)
+//   NS    :  1    6    4    4    6    6     (dayein pehla CHHOTA bar ka index; koi nahi -> n=6)
+//   width :  1    6    2    1    4    1     (NS - PS - 1)
+//   area  :  2    6   10    6    8    3     -> MAX = 10
+//
+//   bar 5 (idx2) pe dekh -- PS=1 (h=1), NS=4 (h=2). rectangle DONO stoppers ke BEECH baithta:
+//        PS=1 |  c2    c3  | NS=4        -> sirf c2,c3 (dono >=5) -> 2 chaudा
+//        (1)  | (5)  (6)  | (2)
+//   first = PS+1 = 2,  last = NS-1 = 3  -> count = 3-2+1 = 2 = NS-PS-1. (stoppers KHUD rectangle me nahi aate.)
+//  ====================================================================
+//
 //  ---- 19-Jul brainstorm se 2 aur samajh (yaad rakhne wali) ----
 //  ★ HAR bar apna OWN rectangle banata -> sabka area nikaal ke MAX lete. (bar 5 -> 5*2=10 · bar 6 -> 6*1=6 · max=10.)
 //     ek rectangle "us bar ka" hai jiski height us range me sabse chhoti (jo define karti). taller bars uske upar se guzarte.
