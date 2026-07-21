@@ -200,6 +200,7 @@
 
  ▸ CHAR REPLACEMENT (LONGEST) ──────────────────────────────────
      track: freq + maxFreq; INVALID = (windowLen - maxFreq) > k -> left shrink; ans = MAX length.
+     ★★ CORE TRICK (LC-424 non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). stale/purana maxFreq chalta hai -- window kabhi apni best-length se chhota nahi hota (sirf badhta/slide) -> galat maxFreq bhi answer kharab nahi karta.
 
  ▸ MAX CONSECUTIVE ONES III ────────────────────────────────────
      track: zerosCount; INVALID = zeros > k -> left shrink; ans = MAX length (UNCONDITIONAL).
@@ -540,7 +541,8 @@
      ★ FAST/SLOW (Floyd): cycle ho to tez-dheema MILENGE (slow==fast) -> true.
 
  ▸ PALINDROME LL ───────────────────────────────────────────────
-     ★ COMBO: middle nikaalo -> 2nd half REVERSE -> dono half compare. (mid pe list TOOT jaati)
+     ★ COMBO: middle nikaalo -> 2nd half REVERSE (rev=naya head) -> head(front) & rev(back) saath chala ke compare. khali=true.
+     ★★ list TOOT-ti NAHI: pehle-half node ka ->next kabhi nahi badalta; odd me middle node SHARED (head-se aur rev-se DONO beech pe aa ke NULL milte) -> while(head && rev) bina explicit cut ke odd+even dono sahi handle karta.
 
  ▸ REMOVE NTH FROM END ─────────────────────────────────────────
      ★ FAST/SLOW GAP: fast ko PEHLE aage bhejo (loop i=1; i<=n). ab fast & slow me n ka gap.
