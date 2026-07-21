@@ -46,14 +46,17 @@
 
 ---
 
-## DAILY (ek revise-nudge, rotate)
+## DAILY (21-30 Jul — DEEP HLD/LLD phase)
 
 ```
-   ★ ROZ non-negotiable:  DSA PATTERN_SHEET (5-10 min)  +  HLD REFLEX_SHEET (5 min)
-   ★ ROTATE (ek din ek):  HLD design blank-assemble · LLD file · Behavioral bol-ke ·
-                          Compares · Java/Spring read · DSA solve/redo
-   ★ Sunday:              pattern-sheet polish.
-   ★ off-day:             MINDSET.md kholo → light-gear (revise-only), kaam rukna nahi.
+   ★★ MAIN (~5 din):   HLD roz EK topic -> Claude se MOCK-TEST karao (interview-Q poochhe)
+                       + delivery-coaching (achhe words: caching/sharding/replication;
+                       "aise bolo, kaise/kab/kyun" -> interviewer impress). LLD me bhi deep.
+   ★ SHAAM (light):    DSA -> pattern-sheet (browser me hamesha khuli) + ek redo/solo problem.
+   ★ BEECH-BEECH:      Java/Spring READ-revise (built, notes-ready; NO quiz) · Behavioral bol-ke · Compares.
+   ★ Sunday:           pattern-sheet polish.
+   ★ off-day:          MINDSET.md -> light-gear (revise-only), kaam rukna nahi.
+   ★ TREES/GRAPH:      HOLD (~27-30 Jul ke baad). projects-revise ~25-Jul-baad.
 ```
 
 > Target: Aug = APPLY. Abhi ~76% ready — Java/Spring strong, HLD strong, DSA gate-level, behavioral 5-star.

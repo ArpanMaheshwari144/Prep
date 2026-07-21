@@ -49,7 +49,7 @@
 
 ---
 
-## 2. WHERE WE STAND (★ 18-Jul, honest — ~76% JP-ready; ★★ PHASE-SHIFT: sab BUILT -> ab REVISE-phase (naya bahut kam). Java-CORE done · SPRING ~done (JWT+profiles+Hibernate done, sirf Docker/K8s left) · DSA sheet+~62 problems · LLD-notes revise-swept · HLD strong · behavioral done)
+## 2. WHERE WE STAND (★ 21-Jul, honest — ~76% JP-ready; ★★ BUILD KHATAM: Java+Spring theory DONE -> ab DEEP HLD/LLD + consolidate. Java-CORE done · ★ SPRING ✓ DONE (JWT+profiles+Hibernate+Docker+K8s 6/6) · DSA sheet+~68 problems · LLD-notes revise-swept · HLD strong · behavioral done)
 > ★ Arpan's grounded self-view (PERFECT calibration): "god-level DSA nahi, par JP ke liye KAAFI — main wo hoon." fear reduced via reps. na oversell na undersell.
 ```
    HLD        ✓ STRONG (differentiator) : 11 FOUNDATIONS + 10 SYSTEM_DESIGNS (18/19/20 full interview-delivery
@@ -93,16 +93,17 @@
 
 ## 3. FORWARD PLAN — ★ 17-DIN ROADMAP (13 -> 30 July; August = APPLY)
 ```
-   ★★ FINAL-10-DAYS (20-30 Jul, Arpan-set 20-Jul) = CONSOLIDATION + ROTATION, NAYA HEAVY NAHI.
-      - ROTATION: har subah FRESH-energy me alag topic (HLD / Java / LLD / behavioral / project-revise / DSA) -> bore nahi + sab warm. "jo zyada DIKHEGA wo STRONG hoga."
-      - DSA = SHAAM/LAST + LIGHT (gate; dheel nahi par doobna nahi). sheet-revise + paper dheere.
-      - HLD ko FRESH energy (differentiator; DSA-heavy days me neglect hua tha). Spring khatam (Docker ARG+K8s bacha).
-      - Arpan: "20 din me ummeed se ZYADA kiya." fear gaya -> ab consolidate. Aug = APPLY.
+   ★★ FINAL-DAYS (21-30 Jul, Arpan-set 21-Jul) = CONSOLIDATION, NAYA HEAVY NAHI (Java+Spring theory DONE).
+      - ★★ ~5 DIN DEEP HLD + LLD (MAIN): roz EK HLD topic -> Claude MOCK-TEST (interview-Q) + DELIVERY-COACHING (achhe words caching/sharding/replication; "aise bolo, kaise/kab/kyun" -> interviewer IMPRESS). LLD me bhi deep. [HLD/LLD = ab quiz/mock CHAHIYE; Java/Spring = no-quiz.]
+      - DSA = SHAAM/LAST + LIGHT (gate; doobna nahi). redo + pattern-sheet (browser me hamesha khuli, jab-mann).
+      - JAVA/SPRING = beech-beech READ-revise (notes+git-safe, lifelong; no quiz).
+      - TREES/GRAPH = HOLD (~27-30 Jul, ABHI NAHI). projects-revise ~25-Jul-baad (LEARNINGS.md).
+      - Aug = APPLY.
 ```
    PHASE 1 (13-16 Jul) JAVA KHATAM: ✓ Java-CORE DONE. ◐ SPRING REVISE ACTIVE (15-Jul started: basics done, transactional partial) -> continue transactional-ch4 + jwt/profiles/hibernate/docker/k8s. DSA = sheet-revise daily (naye Q kam, revision zyada).
    PHASE 2 (17-20 Jul) DELIVERY: BEHAVIORAL bol-ke (5 STAR loud) + HLD daily revise. DSA sheet+naye Q continue. -> delivery strong.
-   PHASE 3 (21-25 Jul) LATER-TOPICS light: TREES -> GRAPH -> basic DP (top-3, few each, tree-trace) IF core solid. + behavioral/HLD continue. (optional: code-review round start.)
-   PHASE 4 (26-30 Jul) CONSOLIDATION: full REVISE mode (sheet+Java+HLD+project pel ke) + mock-style bol-ke + apply-materials ready.
+   PHASE 3 (21-25 Jul) ★ DEEP HLD + LLD: roz ek HLD topic + Claude MOCK-TEST + delivery-coaching (words/style/kaise-kab-kyun). LLD deep. shaam = DSA light (redo+sheet). Java/Spring beech-beech read-revise. (TREES HOLD.)
+   PHASE 4 (26-30 Jul) CONSOLIDATION + (optional) trees/graph/DP light: full revise (HLD/LLD/DSA-sheet/Java-Spring-read/project) + mock-style bol-ke + apply-materials ready.
    AUGUST: APPLY (Raunak referral). JP -> BlackRock.
 
    ★ FLEXIBLE, not rigid: Phase slip ho to koi baat nahi (pace Arpan ka). later-topics OPTIONAL (focus-8 JP ke liye kaafi).
