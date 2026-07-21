@@ -353,6 +353,16 @@
 ┌── FAMILY: MONOTONIC stack ────────────────────────────────────
 │ KYUN SAATH: index stack rakho; curr vs stack-top compare -> pop + us index ka ans set. (bas alag: comparison > ya < · ans me value/distance · circular.)
 └───────────────────────────────────────────────────────────────
+ ★★★ ONE SKELETON (next/prev + greater/smaller + daily-temp + histogram DONO isi pe):
+    ans[] init (na-mile default: -1 ya n) ; stack<int> st  (INDEX rakho, value nahi)
+    for i in arr:                         // prev-wale ke liye loop ULTA (n-1..0)
+        while (!st.empty() && cmp(nums[st.top()], nums[i])):   // top ka jawab mil gaya
+            ans[st.top()] = <nums[i] / (i - st.top()) / width>;  st.pop()
+        st.push(i)
+    -> sirf 3 cheez badalti: (1) cmp = `>` (smaller dhoondh rahe) ya `<` (greater) [ULTA lagta -- top ko jab curr HARA de]
+                             (2) ans me kya: VALUE (next-greater/smaller) · DISTANCE i-top (daily-temp) · WIDTH (histogram)
+                             (3) direction: next = aage(0..n) · prev = peeche(n-1..0) · circular = 2n loop, i%n.
+
  ▸ NEXT GREATER ELEMENT ────────────────────────────────────────
      ★ MONOTONIC stack (index rakho); jab curr > stack-top -> pop + ans[top]=curr.
 
