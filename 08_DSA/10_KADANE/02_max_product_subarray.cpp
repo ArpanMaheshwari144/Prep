@@ -12,8 +12,13 @@
 //   [5]               -> 5
 //
 // ---- ARPAN KI APPROACH ----
-//  ★ TRICK: product me neg×neg = BADA -> aaj ka sabse CHHOTA kal SABSE BADA ban sakta -> MIN bhi carry.
-// dekh ye probke assan lekin trcik hia iske 
+//  ★ problem aasan, bas TRICK: product me neg×neg = BADA -> negative (MIN) bhi track karna hai, sirf max se nahi banega.
+//    isliye maxprod AUR minprod dono chalao. bas yahi trick, baaki simple.
+//  ★ 4 line:
+//     temp    = max({ nums[i], maxprod*nums[i], minprod*nums[i] })   // teen candidate ka max
+//     minprod = min({ nums[i], maxprod*nums[i], minprod*nums[i] })   // same teen ka min
+//     maxprod = temp                                                 // ab max update (temp isliye)
+//     ans     = max(ans, maxprod)
 // ============================================================
 
 #include <iostream>
