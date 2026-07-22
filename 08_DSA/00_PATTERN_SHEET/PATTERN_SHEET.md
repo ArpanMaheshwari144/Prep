@@ -664,29 +664,29 @@
 ═══════════════════ PATTERN 10 — KADANE (running value + max update) ═══════════════════
  BROAD IDEA: ek value AAGE carry karo (min/sum), har step MAX update. single pass, O(1) space.
 
- ▸ BEST TIME BUY/SELL STOCK (LC-121) ───────────────────────────
-     ★ ye TWO-POINTER nahi -- KADANE. (link: diff-array [p[i]-p[i-1]] ka MAX SUBARRAY SUM = ye.)
-     ★ running-min: mini = ab tak sabse SASTA · maxProfit = ab tak best.
-       har din: mini = min(mini, prices[i]);  maxProfit = max(maxProfit, prices[i] - mini);
-     ★ sell buy-ke-BAAD apne-aap (mini hamesha current se pehle). maxProfit=INT_MIN safe (pehle din 0). O(n)/O(1).
+ ▸ BUY/SELL STOCK (LC-121) ─────────────────────────────────────
+     TRICK: aaj becho = aaj ka daam MINUS ab-tak-ka-sasta. bas 2 cheez track: mini + maxProfit.
+       mini = min(mini, prices[i]);   maxProfit = max(maxProfit, prices[i] - mini);
+     (sell buy-ke-BAAD auto -- mini hamesha current se pehle ka.)
 
- ▸ MAX SUBARRAY SUM (LC-53) ── family ka BAAP ──────────────────
-     ★ CHOICE har element pe: "pichhla sum saath, ya YAHIN se naya?" -> pichhla sum NEGATIVE = BOJH -> PHENKO.
-       sum += nums[i];  max_sum = max(max_sum, sum);  if(sum < 0) sum = 0;
-     ★★ TRAP: max_sum update RESET se PEHLE + max_sum = INT_MIN start (warna all-negative [-1] miss).
-     ★ SUM me flip nahi -> EK value kaafi.
+ ▸ MAX SUBARRAY SUM (LC-53) ────────────────────────────────────
+     TRICK: pichhla running sum NEGATIVE = aage bojh -> PHENK do (sum=0), fresh. bas yahi.
+       sum += nums[i];   max_sum = max(max_sum, sum);   if(sum < 0) sum = 0;
+     TRAP: max_sum update RESET se PEHLE + max_sum=INT_MIN start (warna all-negative [-1] miss).
 
- ▸ MAX PRODUCT SUBARRAY (LC-152) ── flip aata -> 2 value ────────
-     ★★ TRICK: neg×neg = +  -> chhota(min) achanak sabse BADA ban sakta -> MAX aur MIN DONO track.
-     ★ har step 3 CANDIDATE: { num(restart), num×oldMax, num×oldMin }.  newMax=max(3), newMin=min(3).
-       ★★ FREEZE: temp=max(3); min=min(3, PURANE-max se); max=temp.  (warna naya-max, min-calc me ghus jaata = BUG.)
-       ans = max(ans, max).   ★ ans me PURANA ans rakhna (running best).
+ ▸ MAX PRODUCT SUBARRAY (LC-152) ───────────────────────────────
+     TRICK: neg*neg = BADA -> sirf max se nahi banega, MIN bhi track karo (chhota kal sabse bada ban sakta).
+       temp    = max({ num, num*max, num*min });     // 3 candidate ka max
+       min     = min({ num, num*max, num*min });     // FREEZE: min purane max/min se
+       max     = temp;  ans = max(ans, max);         // max min-ke-BAAD, ans me purana bhi
 
- ▸ MAX ABSOLUTE SUM (LC-1749) ── #152 ka near-transfer, SUM pe ──
-     ★ same 2-value + 3-candidate, bas × ki jagah + :  { num, num+oldMax, num+oldMin } (+ freeze).
-       maxSum & minSum track;  ans = max(ans, |maxSum|, |minSum|).  (answer minSum se bhi aa sakta: [-1,-2,-3]->6)
-     ★★ FAMILY 1-line: 53=SUM(1 val) · 152=PRODUCT(flip->max+min,3-cand) · 1749=ABS-SUM(max+min,3-cand).
-        MECHANIC = "flip ho to min bhi track + 3-candidate + old FREEZE" -> ek baar seekho, transfer ho jaata.
+ ▸ MAX ABSOLUTE SUM (LC-1749) ──────────────────────────────────
+     TRICK: bilkul 152 jaisा, bas GUNA (*) ki jagah PLUS (+). answer minSum se bhi aa sakta -> abs DONO ka.
+       temp=max({num, num+max, num+min}); min=min({...}); max=temp; ans=max(ans, |max|, |min|);
+       (dry-run [2,-5,1,-4,3,-2]->8: [-5,1,-4]=-8 minSum me aata, |−8|=8.)
+
+   FAMILY: 53=sum(1 value) · 152=product(flip -> max+min) · 1749=abs-sum(max+min).
+   MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
 ```
 
 ---
