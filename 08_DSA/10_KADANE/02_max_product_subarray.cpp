@@ -12,10 +12,21 @@
 //   [5]               -> 5
 //
 // ---- ARPAN KI APPROACH ----
-//  ★ TRICK: product me neg×neg = BADA -> aaj ka sabse CHHOTA kal SABSE BADA ban sakta.
-//    isliye max ke saath MIN bhi carry karo. ([-2,3,-4]: min -6 -> -6×-4 = +24.)
-//  ★ har step 3 candidate {num, num×max, num×min} se naya max/min. FREEZE (min purane max se, phir max badlo).
-//  ★ ans = max(ans, max).   [family: 53=sum · 152=product · 1749=abs-sum -> 04_max_abs_sum.cpp]
+//  ★ TRICK: product me neg×neg = BADA -> aaj ka sabse CHHOTA kal SABSE BADA ban sakta -> MIN bhi carry.
+//
+//  ★ WHY 3 candidate  { num , num×oldMax , num×oldMin } :
+//      num akela   -> pichhla bekaar (0/sign kharab) -> YAHIN se fresh shuru
+//      num×oldMax  -> positive streak aage badhao
+//      num×oldMin  -> ★ FLIP: bada-negative min × current-negative = bada POSITIVE
+//    teeno me se best kuch bhi ho sakta -> max=max(3), min=min(3). FREEZE (min purane max se, PHIR max badlo).
+//    ans = max(ans, max).
+//
+//  ★ DRY-RUN [-2,3,-4] -> 24 :
+//      start:               max=-2   min=-2   ans=0
+//      num= 3: {3, -6, -6}      -> max=3    min=-6    ans=3
+//      num=-4: {-4, -12, +24}   -> max=24   min=-12   ans=24    <- min(-6)×-4 = +24  FLIP!
+//
+//  [family: 53=sum · 152=product · 1749=abs-sum -> 04_max_abs_sum.cpp]
 // ============================================================
 
 #include <iostream>
