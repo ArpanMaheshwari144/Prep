@@ -690,6 +690,14 @@
 
    FAMILY: 53=sum(1 value) · 152=product(flip -> max+min) · 1749=abs-sum(max+min).
    MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
+
+═══════════════════ PATTERN 11 — BIT MANIPULATION (XOR) ═══════════════════
+ BROAD IDEA: XOR ki 2 property -> a^a=0 (pair cancel), a^0=a (single bacha). pairs khud gayab, extra memory nahi.
+
+ ▸ SINGLE NUMBER (LC-136) ──────────────────────────────────────
+     TRICK: har num 2-baar, ek 1-baar -> saare XOR karo -> pairs cut -> jo bacha = answer.
+       XORR = nums[0];  for i=1..n: XORR ^= nums[i];  return XORR.   (O(n)/O(1), koi map nahi)
+     ★ FAMILY: Missing-Number · Single-Number-II bhi XOR-based.
 ```
 
 ---
