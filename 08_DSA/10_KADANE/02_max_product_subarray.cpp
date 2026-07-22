@@ -11,8 +11,16 @@
 //   [-3,-1,-1]        -> 3    (-3*-1)
 //   [5]               -> 5
 //
-// (PEHLE haath se trace kar -- chhota example, jaise [2,3,-2,4] ya [-2,3,-4].
-//  dekh negative aane pe kya hota. behavior samajh, phir code. koi hint nahi.)
+// ---- ARPAN KI APPROACH (22-Jul, derive-first + struggle-first) ----
+//  ★ KADANE family: har position pe "best-ending-HERE" nikalo + global best track. PAR product me
+//     NEGATIVE-FLIP hota (num<0 -> min(bahut chhota) × num = BADA positive) -> MAX aur MIN DONO track.
+//  ★ har step 3 CANDIDATE: {num (RESTART), num×oldMax, num×oldMin}. newMax=max(3), newMin=min(3).
+//     ★★ old value FREEZE (temp): temp=max(3);  min=min(3, PURANE max se);  max=temp.
+//        warna naya-max, min ke calc me ghus jaata -> BUG (2 var + 1 temp).
+//     ans = max(ans, max).  ★ ans me PURANA ans rakhna (running best) -- warna reset ho ke best bhool jaata.
+//  ★ WHY 3-candidate (na single running prod): single wala RESTART nahi kar sakta + MIN-flip use nahi kar sakta.
+//  ★ TWIN: LC-53 Max-Subarray = SUM (ek value, no-flip) · LC-1749 Max-Abs-Sum = SUM par max+min dono.
+//     (poori family + why + transfer-seekh = 04_max_abs_sum.cpp me)
 // ============================================================
 
 #include <iostream>
