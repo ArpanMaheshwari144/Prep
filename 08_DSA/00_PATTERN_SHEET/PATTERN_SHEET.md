@@ -694,10 +694,13 @@
 ═══════════════════ PATTERN 11 — BIT MANIPULATION (XOR) ═══════════════════
  BROAD IDEA: XOR ki 2 property -> a^a=0 (pair cancel), a^0=a (single bacha). pairs khud gayab, extra memory nahi.
 
+┌── FAMILY: XOR-cancel ─────────────────────────────────────────
+│ KYUN SAATH: pair-wise cheezein XOR se KHUD cancel (a^a=0); jo "akela / missing" bacha wahi answer. no map, O(1) space.
+└───────────────────────────────────────────────────────────────
  ▸ SINGLE NUMBER (LC-136) ──────────────────────────────────────
      TRICK: har num 2-baar, ek 1-baar -> saare XOR karo -> pairs cut -> jo bacha = answer.
        XORR = nums[0];  for i=1..n: XORR ^= nums[i];  return XORR.   (O(n)/O(1), koi map nahi)
-     ★ FAMILY: Missing-Number · Single-Number-II bhi XOR-based.
+     ★ FAMILY (aage isi daabe me aayenge): Missing-Number · Single-Number-II bhi XOR-based.
 ```
 
 ---
