@@ -669,6 +669,24 @@
      ★ running-min: mini = ab tak sabse SASTA · maxProfit = ab tak best.
        har din: mini = min(mini, prices[i]);  maxProfit = max(maxProfit, prices[i] - mini);
      ★ sell buy-ke-BAAD apne-aap (mini hamesha current se pehle). maxProfit=INT_MIN safe (pehle din 0). O(n)/O(1).
+
+ ▸ MAX SUBARRAY SUM (LC-53) ── family ka BAAP ──────────────────
+     ★ CHOICE har element pe: "pichhla sum saath, ya YAHIN se naya?" -> pichhla sum NEGATIVE = BOJH -> PHENKO.
+       sum += nums[i];  max_sum = max(max_sum, sum);  if(sum < 0) sum = 0;
+     ★★ TRAP: max_sum update RESET se PEHLE + max_sum = INT_MIN start (warna all-negative [-1] miss).
+     ★ SUM me flip nahi -> EK value kaafi.
+
+ ▸ MAX PRODUCT SUBARRAY (LC-152) ── flip aata -> 2 value ────────
+     ★★ TRICK: neg×neg = +  -> chhota(min) achanak sabse BADA ban sakta -> MAX aur MIN DONO track.
+     ★ har step 3 CANDIDATE: { num(restart), num×oldMax, num×oldMin }.  newMax=max(3), newMin=min(3).
+       ★★ FREEZE: temp=max(3); min=min(3, PURANE-max se); max=temp.  (warna naya-max, min-calc me ghus jaata = BUG.)
+       ans = max(ans, max).   ★ ans me PURANA ans rakhna (running best).
+
+ ▸ MAX ABSOLUTE SUM (LC-1749) ── #152 ka near-transfer, SUM pe ──
+     ★ same 2-value + 3-candidate, bas × ki jagah + :  { num, num+oldMax, num+oldMin } (+ freeze).
+       maxSum & minSum track;  ans = max(ans, |maxSum|, |minSum|).  (answer minSum se bhi aa sakta: [-1,-2,-3]->6)
+     ★★ FAMILY 1-line: 53=SUM(1 val) · 152=PRODUCT(flip->max+min,3-cand) · 1749=ABS-SUM(max+min,3-cand).
+        MECHANIC = "flip ho to min bhi track + 3-candidate + old FREEZE" -> ek baar seekho, transfer ho jaata.
 ```
 
 ---

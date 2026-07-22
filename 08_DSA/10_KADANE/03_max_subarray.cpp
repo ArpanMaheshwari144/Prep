@@ -18,6 +18,17 @@
 //   4. SIRF sachchi struggle ke BAAD atke -> tab editorial (last resort, no guilt).
 //   5. Kuch din baad COLD REDO -> tab pata chalega tera hua ya nahi.
 // ============================================================
+// ---- ARPAN KI APPROACH (basic KADANE -- poore family ka BAAP) ----
+//  ★ AHA: har element pe ek SAWAAL -- "pichhla sum saath le jaaun, ya YAHIN se naya shuru karun?"
+//     -> pichhla running sum NEGATIVE hai? wo aage sirf BOJH hai (ghatata hai) -> PHENK do (sum=0), fresh shuru.
+//     -> positive hai? saath le chalo (faayda dega).  isi ek choice se poora array ek baar me nikal jaata.
+//  ★ code:  sum += nums[i];   max_sum = max(max_sum, sum);   if(sum < 0) sum = 0;      (O(n) / O(1))
+//     ★★ TRAP: max_sum ka update RESET se PEHLE -- warna all-negative [-1] me answer miss hota
+//        (isiliye max_sum = INT_MIN se start, 0 se nahi).
+//  ★ SUM me negative-FLIP nahi hota -> ek running value kaafi.
+//     (Product me flip hota [neg×neg=+] -> wahan MAX + MIN dono track, 3-candidate -- 02_max_product.cpp)
+//  ★ FAMILY: 53 (sum, 1 value) · 152 (product, 3-cand max+min) · 1749 (abs-sum, 3-cand). poora why = 04_max_abs_sum.cpp
+// ============================================================
 
 #include <iostream>
 #include <vector>
