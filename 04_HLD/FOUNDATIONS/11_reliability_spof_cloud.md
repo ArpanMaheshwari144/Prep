@@ -24,7 +24,7 @@
 ## SPOF (Single Point of Failure)
 
 ```
-   SPOF = ek aisा point jiske girne se POORA system gir jaaye.
+   SPOF = ek aisa point jiske girne se POORA system gir jaaye.
    e.g. sab kuch EK server pe -> woh gira -> sab gaya = SPOF.
    FIX = spread karo (kai machines) -> koi ek point nahi jiske girne se sab jaaye -> SPOF khatam.
 ```

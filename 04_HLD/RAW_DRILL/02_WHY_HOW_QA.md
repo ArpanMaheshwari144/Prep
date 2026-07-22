@@ -234,7 +234,7 @@
 
 **Q29. S3 ko "shard" kar sakte? (DB shard karte, S3 kyu nahi?)**
 ```
-   NAHI — S3 ko DB jaisा manually shard nahi karte.
+   NAHI — S3 ko DB jaisa manually shard nahi karte.
    shard KYUN karte? -> ek DB NODE ki limit (storage/throughput) -> data baant ke multiple nodes.
    S3 -> already MASSIVELY-DISTRIBUTED managed service -> AWS khud internally partition + auto-scale karta
          (near-INFINITE storage + requests). "single-node limit" wali problem hi nahi -> manual shard bekaar.

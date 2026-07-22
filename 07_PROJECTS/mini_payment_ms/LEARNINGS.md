@@ -114,7 +114,7 @@
          String pay(@RequestBody Map<String,Object> body);   // no body -> Spring implement karega
      }
 
-   use: client.pay(body)   // dikhta local method, peeche HTTP call (RestTemplate jaisा) -> boilerplate gaya.
+   use: client.pay(body)   // dikhta local method, peeche HTTP call (RestTemplate jaisa) -> boilerplate gaya.
 
    ★ 3 key baatein:
      - interface CALLER side pe (jo call karta), CALLEE ko point karta.

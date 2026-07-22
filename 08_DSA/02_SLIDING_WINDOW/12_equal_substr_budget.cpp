@@ -3,7 +3,7 @@
 // ============================================================
 // do string s aur t (same length) aur ek int maxCost diya.
 // s[i] ko t[i] me badalne ka COST = |s[i] - t[i]| (ASCII farak).
-// aisा SABSE LAMBA substring (window) ki LENGTH lautao jise t ke us hisse me
+// aisa SABSE LAMBA substring (window) ki LENGTH lautao jise t ke us hisse me
 // badalne ka TOTAL cost <= maxCost ho.
 //
 //   s="abcd", t="bcdf", maxCost=3  -> 3   (|a-b|+|b-c|+|c-d| = 1+1+1 = 3, length 3)
@@ -15,7 +15,7 @@
 // ============================================================
 /*
 ---- ARPAN KI APPROACH (khud ke words) ----
-Approach dekh -- ye same VARIABLE WINDOW jaisा hi hai, bas problem thoda alag laga.
+Approach dekh -- ye same VARIABLE WINDOW jaisa hi hai, bas problem thoda alag laga.
 same i, j, cost, ans.
 
   while (j < size):

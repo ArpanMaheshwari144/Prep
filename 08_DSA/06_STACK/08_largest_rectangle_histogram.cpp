@@ -62,7 +62,7 @@
 //   area  :  2    6   10    6    8    3     -> MAX = 10
 //
 //   bar 5 (idx2) pe dekh -- PS=1 (h=1), NS=4 (h=2). rectangle DONO stoppers ke BEECH baithta:
-//        PS=1 |  c2    c3  | NS=4        -> sirf c2,c3 (dono >=5) -> 2 chaudा
+//        PS=1 |  c2    c3  | NS=4        -> sirf c2,c3 (dono >=5) -> 2 chauda
 //        (1)  | (5)  (6)  | (2)
 //   first = PS+1 = 2,  last = NS-1 = 3  -> count = 3-2+1 = 2 = NS-PS-1. (stoppers KHUD rectangle me nahi aate.)
 //  ====================================================================

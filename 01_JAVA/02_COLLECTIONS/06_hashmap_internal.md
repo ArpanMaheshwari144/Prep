@@ -103,6 +103,6 @@ Average: O(1)  |  Worst: O(log n) tree, O(n) chain
 
 ```
    B-TREE vs RED-BLACK (dono sorted+balanced -> O(log n), bas shape/jagah alag):
-   B-TREE     -> MULTI-WAY (kai keys/node), mota-chaudा -> DISK (DB index).
+   B-TREE     -> MULTI-WAY (kai keys/node), mota-chauda -> DISK (DB index).
    RED-BLACK  -> BINARY (2 child, 1 key), patla + colored -> RAM (HashMap bucket).
 ```

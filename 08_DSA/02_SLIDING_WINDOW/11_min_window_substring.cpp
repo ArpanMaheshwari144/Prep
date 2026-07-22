@@ -22,7 +22,7 @@
 //  EXPAND (j):  if(mp[s[j]]>0) count--;   phir  mp[s[j]]--;   <-- mp-- IF ke BAAHAR (HAMESHA)
 //     ★★ WHY bahar (D-asymmetry BUG): non-t char (D) if me nahi ghusta -> expand me GHATTA nahi ->
 //        par shrink me mp++ hota -> mp[D] 0->1 -> guard>0 TRUE -> count++ GALAT. bahar rakho -> D negative
-//        -> shrink me wapas <=0 -> guard kabhi trigger nahi -> D "count ke liye invisible" (jaisा chahiye).
+//        -> shrink me wapas <=0 -> guard kabhi trigger nahi -> D "count ke liye invisible" (jaisa chahiye).
 //  VALID (count==0) -> SHRINK (i):  answer-save (len<minLen -> minLen,index) ;
 //        mp[s[i]]++;  if(mp[s[i]]>0) count++;  i++;   <-- MIRROR: aana=-- , jaana=++ (guard ke saath)
 //  return minLen==INT_MAX ? "" : s.substr(index, minLen).

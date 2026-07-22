@@ -1,7 +1,7 @@
 // ============================================================
 // MAXIMUM SUBARRAY — (LeetCode 53, Easy/Medium)   [NAYA METHOD: struggle-first, NO peek]
 // ============================================================
-// ek int array diya. aisा CONTIGUOUS subarray dhoondho jiska SUM sabse BADA ho.
+// ek int array diya. aisa CONTIGUOUS subarray dhoondho jiska SUM sabse BADA ho.
 // wo max sum lautao. (kam-se-kam ek element)
 //
 //   [-2,1,-3,4,-1,2,1,-5,4]  -> 6    ([4,-1,2,1])

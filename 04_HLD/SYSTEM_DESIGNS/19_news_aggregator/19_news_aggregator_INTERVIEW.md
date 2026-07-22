@@ -1,6 +1,6 @@
 # News Aggregator — INTERVIEW (8-step framework)
 
-> JP general-product design (Google News / Inshorts jaisा): alag sources se news kheencho
+> JP general-product design (Google News / Inshorts jaisa): alag sources se news kheencho
 > -> store -> user ko ek feed do. READ-HEAVY system.
 > Framework: 04_HLD/INTERVIEW_FRAMEWORK.md
 
@@ -80,7 +80,7 @@
        nayi news -> cache refresh. 5-min purani chalegi (news mein OK, paisа nahi)
    OPTION 3 — FANOUT (har user ki personalized feed pehle se)
        personalized+fast PAR 10 lakh alag feed banao+store -> mehnga. sirf personalized chahiye to.
-   WINNER: OPTION 2 -> sabko lagभग SAME latest feed -> ek cache sab use -> read-heavy perfect
+   WINNER: OPTION 2 -> sabko lagbhag SAME latest feed -> ek cache sab use -> read-heavy perfect
        flow: nayi news -> worker -> DB+cache refresh | user -> cache(99%) --miss--> DB-replica -> wapas cache
    -> trade-off bol ke choose = asli marks yahin
 ```

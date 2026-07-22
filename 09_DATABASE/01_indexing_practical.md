@@ -282,7 +282,7 @@ Raw B-tree nodes/pages = InnoDB ke internal binary files (.ibd) mein -> SQL se d
                    [5,6]  [12]   [30]
    -> node ke andar sorted + nodes ke beech sorted (left<key<right). ALAG se sort NAHI karna padta.
 
-   KYUN INDEXING me: hamesha sorted -> search O(log n) (binary-search jaisा) + RANGE query fast
+   KYUN INDEXING me: hamesha sorted -> search O(log n) (binary-search jaisa) + RANGE query fast
                      (WHERE age BETWEEN 20-30 -> sorted range seedha).
    MULTI-WAY (kai keys/node) -> tree CHOTA (kam levels) -> disk pe kam jumps -> DB ke liye perfect.
    TRADE-OFF: sorted maintain -> har insert/update pe tree adjust -> writes thode slow + storage. (selective index.)

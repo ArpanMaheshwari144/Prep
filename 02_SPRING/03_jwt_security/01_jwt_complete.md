@@ -964,7 +964,7 @@ public class SecurityConfig {
 **CSRF = Cross-Site Request Forgery.** Malicious site tere browser ko **dhoka** deke ek site pe request bhijwa deti jahan tu **already logged-in** hai.
 - **Kaise:** tu bank me logged-in (bank ka **COOKIE** browser me pada). Gande site pe gaya -> uska hidden form/img `bank.com/transfer?to=hacker` pe request maar deta -> browser **AUTOMATICALLY** bank ka cookie us request me laga deta -> bank samajhta "ye Arpan hai" -> paisa transfer!
 - ★ **Key:** CSRF chalta hai kyunki **COOKIES browser APNE-AAP bhejta** hai.
-- ★ **JWT me safe kyu (isliye `csrf.disable()`):** JWT cookie me nahi, **Authorization HEADER (Bearer)** me. Header browser auto-attach **NAHI** karta (JS ko khud daalna padta). To gandi site teri JWT **auto-bhej hi nahi sakti** -> CSRF attack lagता hi nahi -> disable safe.
+- ★ **JWT me safe kyu (isliye `csrf.disable()`):** JWT cookie me nahi, **Authorization HEADER (Bearer)** me. Header browser auto-attach **NAHI** karta (JS ko khud daalna padta). To gandi site teri JWT **auto-bhej hi nahi sakti** -> CSRF attack lagta hi nahi -> disable safe.
 - (CSRF protection **SESSION/cookie-based** auth ke liye chahiye, header-JWT ke liye nahi.)
 
 ---

@@ -133,8 +133,8 @@ void method() {
 ## GENERATIONAL GC (young/old) — JP yahan deep jaata
 
 ```
-   NEEV: "zyादातr object JALDI marte" (method ke temp object -> method khatam -> turant garbage).
-         thode object LAMBा chalte (config/cache/connection).
+   NEEV: "zyadatar object JALDI marte" (method ke temp object -> method khatam -> turant garbage).
+         thode object LAMBa chalte (config/cache/connection).
 
    HEAP age-wise baanta:
    ┌──────────────────────┬──────────────────┐
@@ -154,7 +154,7 @@ void method() {
 ## MEMORY LEAK in JAVA (GC hai phir bhi leak kaise? — JP twist)
 
 ```
-   GC sirf UNREACHABLE uthaता. Leak tab: object ki zaroorat NAHI, par reference galti se ZINDA
+   GC sirf UNREACHABLE uthata. Leak tab: object ki zaroorat NAHI, par reference galti se ZINDA
    -> GC reachable samajh ke saaf NAHI karta -> memory bharti.
 
    Classic causes:

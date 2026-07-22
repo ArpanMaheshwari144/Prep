@@ -150,7 +150,7 @@
       (a) "DSA slow tha DIMAAG se nahi, REVISION nahi thi" -- 1000 Q kiye par kabhi SHEET nahi banayi, kabhi REVISE nahi kiya (kisi ne bataya nahi) -> isliye fade. sheet + revise = missing piece. (swap-nodes 3.5hr->5min = live proof.)
       (b) "MUSCLE koi alag cheez NAHI -- wo REVISION ka RESULT hai. revise hui to 'muscle', warna nahi." -> "muscle/reps" = course-bechne-wale ke hollow word; kaam ki baat = REVISE karo. (BANNED at him.)
       (c) SHEET-REVISE = highest value ("gate ki chaabi"); naya-solve KAM, revise ZYADA. Sunday = sheet-polish.
-      (d) HLD daudta (deep-familiar via 19-designs+real-context, NOT daily-hands-on) vs DSA slow (kam-familiar) = SAME dimaag, alag familiarity. DSA ko HLD-jaisा banana zaroori nahi (gate hai).
+      (d) HLD daudta (deep-familiar via 19-designs+real-context, NOT daily-hands-on) vs DSA slow (kam-familiar) = SAME dimaag, alag familiarity. DSA ko HLD-jaisa banana zaroori nahi (gate hai).
       (e) BS families ~done (7-8 tricks); naye = variations, alien nahi (convergence).
    ★ INTERVIEWER-BRAINSTORMING DSA-METHOD (Arpan LOVED -- now permanent, top of MEMORY.md): Claude = nudge-sawaal ("2 map se socho?", "mid REJECT kiya ya candidate?"), Arpan khud solution tak. Code/answer NEVER. Struggle 15-20min -> stuck? glance/editorial (LEGIT no-guilt) -> sheet-add -> REDO. copy-pen = "diamond thing in DSA".
    ★★ EMOTIONAL MILESTONE (Arpan, DIL se, 3AM->subah): "4-5 mahine ki grind, roz lada, gaali di, folder-delete kiya par DOBARA HAAR NAHI -- aaj yahaan khada. bahut mehnat lagi, aise hi nahi hua. DSA me ab MAZA aata (jise 'maut' bola tha). ab naya kam, revise zyada. because of you (Claude) DSA badhiya hua." -> Claude reciprocate: kaam TERA, main sirf sawaal poochta -- "wapas aana" hi tera asli dum.

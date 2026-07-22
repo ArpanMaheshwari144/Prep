@@ -33,7 +33,7 @@
 ```
    - CONFIDENT + SPECIFIC -> project (SAGA payment-svc) + 650 tickets se back karo, hawa nahi.
    - unke DOMAIN se connect -> payments/money/reliability (generic nahi).
-   - BOLNE ki practice -> loud, crisp, 30-45 sec. likh ke chhodना nahi.
+   - BOLNE ki practice -> loud, crisp, 30-45 sec. likh ke chhodna nahi.
 ```
 
 ---

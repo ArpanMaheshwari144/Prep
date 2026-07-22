@@ -402,7 +402,7 @@
      ★ "-1" rule: boundary bar rectangle me NAHI (smaller) -> -1 lagta. include hoti -> nahi.
      ★ width=NS-PS-1 KYUN (derive): boundary rectangle me nahi -> bars PS+1 se NS-1 tak. count=last-first+1=(NS-1)-(PS+1)+1=NS-PS-1. (-1 SIRF EK baar, do nahi -- building6: 4-2-1=1 sahi, 4-2-1-1=0 galat.)
      ★ VISUAL (aankhon se, [2,1,5,6,2,3]):  idx: 0 1 2 3 4 5 · h: 2 1 5 6 2 3 · PS: -1 -1 1 2 1 4 · NS: 1 6 4 4 6 6 · width(NS-PS-1): 1 6 2 1 4 1 · area: 2 6 [10] 6 8 3 -> MAX 10.
-       bar5(idx2): PS=1(h1),NS=4(h2) -> rectangle DONO stoppers ke BEECH (c2,c3, dono>=5) = 2 chaudा. first=PS+1=2, last=NS-1=3 -> 3-2+1=2. stoppers khud andar nahi.
+       bar5(idx2): PS=1(h1),NS=4(h2) -> rectangle DONO stoppers ke BEECH (c2,c3, dono>=5) = 2 chauda. first=PS+1=2, last=NS-1=3 -> 3-2+1=2. stoppers khud andar nahi.
      ★ next-GREATER se NAHI: rectangle taller bar ko include karta, shorter pe rukta -> smaller boundary chahiye. (greater tab jab bada element boundary ho.)
 
  ▸ MAXIMAL RECTANGLE (LC-85, 2D) ───────────────────────────────
@@ -681,7 +681,7 @@
        max     = temp;  ans = max(ans, max);         // max min-ke-BAAD, ans me purana bhi
 
  ▸ MAX ABSOLUTE SUM (LC-1749) ──────────────────────────────────
-     TRICK: bilkul 152 jaisा, bas GUNA (*) ki jagah PLUS (+). answer minSum se bhi aa sakta -> abs DONO ka.
+     TRICK: bilkul 152 jaisa, bas GUNA (*) ki jagah PLUS (+). answer minSum se bhi aa sakta -> abs DONO ka.
        temp=max({num, num+max, num+min}); min=min({...}); max=temp; ans=max(ans, |max|, |min|);
        (dry-run [2,-5,1,-4,3,-2]->8: [-5,1,-4]=-8 minSum me aata, |−8|=8.)
 

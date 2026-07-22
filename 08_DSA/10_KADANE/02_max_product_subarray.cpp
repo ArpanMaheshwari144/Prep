@@ -1,7 +1,7 @@
 // ============================================================
 // MAXIMUM PRODUCT SUBARRAY — (LeetCode 152, Medium)   [derive-first, pen-paper]
 // ============================================================
-// ek int array diya. aisा CONTIGUOUS subarray dhoondho jiska elements ka
+// ek int array diya. aisa CONTIGUOUS subarray dhoondho jiska elements ka
 // PRODUCT (guna) sabse BADA ho. wo max product lautao.
 //
 //   [2,3,-2,4]        -> 6    (2*3)
