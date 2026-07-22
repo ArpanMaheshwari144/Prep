@@ -11,16 +11,21 @@
 //   [-3,-1,-1]        -> 3    (-3*-1)
 //   [5]               -> 5
 //
-// ---- ARPAN KI APPROACH (22-Jul, derive-first + struggle-first) ----
-//  ★ KADANE family: har position pe "best-ending-HERE" nikalo + global best track. PAR product me
-//     NEGATIVE-FLIP hota (num<0 -> min(bahut chhota) × num = BADA positive) -> MAX aur MIN DONO track.
-//  ★ har step 3 CANDIDATE: {num (RESTART), num×oldMax, num×oldMin}. newMax=max(3), newMin=min(3).
-//     ★★ old value FREEZE (temp): temp=max(3);  min=min(3, PURANE max se);  max=temp.
-//        warna naya-max, min ke calc me ghus jaata -> BUG (2 var + 1 temp).
-//     ans = max(ans, max).  ★ ans me PURANA ans rakhna (running best) -- warna reset ho ke best bhool jaata.
-//  ★ WHY 3-candidate (na single running prod): single wala RESTART nahi kar sakta + MIN-flip use nahi kar sakta.
-//  ★ TWIN: LC-53 Max-Subarray = SUM (ek value, no-flip) · LC-1749 Max-Abs-Sum = SUM par max+min dono.
-//     (poori family + why + transfer-seekh = 04_max_abs_sum.cpp me)
+// ---- ARPAN KI APPROACH (22-Jul, derive-first) ----
+//  ★ AHA (ye pura khel isi ek baat pe hai): SUM me sirf "sabse bada" yaad rakhte the (Kadane-53).
+//     par PRODUCT me neg × neg = BADA POSITIVE. matlab AAJ ka sabse CHHOTA (most-negative) product
+//     kal ek aur negative aane pe achanak SABSE BADA ban sakta hai!
+//     -> isliye "sabse chhota" ko PHENKNA nahi -> MAX aur MIN, dono ko saath le chalo.
+//        (dekh [-2,3,-4]: -4 pe, jo min tha -6, wo -6×-4 = +24 me FLIP ho gaya -> answer.)
+//
+//  ★ har element pe 3 RAASTE (kaunsa best?):  { num akela (fresh shuru) , num×oldMax , num×oldMin }
+//        newMax = in 3 ka max        newMin = in 3 ka min
+//     ★★ TRAP -- FREEZE karo: newMin nikalte waqt PURANA max chahiye. agar max pehle badal diya,
+//        to naya max, min ke hisaab me ghus jaata -> galat. isliye  temp = max(3);  min = min(3);  max = temp;
+//     ★ ans = max(ans, max)  -- ans me PURANA ans bhi rakho (0 ya dip aaye to best bhool na jaaye).
+//
+//  ★ TWIN: LC-53 = SUM (flip nahi -> 1 value) · LC-152 = PRODUCT (flip -> max+min, ye) · LC-1749 = ABS-SUM (max+min).
+//     poora family = 04_max_abs_sum.cpp
 // ============================================================
 
 #include <iostream>
