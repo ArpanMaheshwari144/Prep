@@ -11,29 +11,11 @@
 //   [-3,-1,-1]        -> 3    (-3*-1)
 //   [5]               -> 5
 //
-// ---- ARPAN KI APPROACH (22-Jul, derive-first) ----
-//  ★ AHA (ye pura khel isi ek baat pe hai): SUM me sirf "sabse bada" yaad rakhte the (Kadane-53).
-//     par PRODUCT me neg × neg = BADA POSITIVE. matlab AAJ ka sabse CHHOTA (most-negative) product
-//     kal ek aur negative aane pe achanak SABSE BADA ban sakta hai!
-//     -> isliye "sabse chhota" ko PHENKNA nahi -> MAX aur MIN, dono ko saath le chalo.
-//        (dekh [-2,3,-4]: -4 pe, jo min tha -6, wo -6×-4 = +24 me FLIP ho gaya -> answer.)
-//
-//  ★ har element pe 3 RAASTE (kaunsa best?):  { num akela (fresh shuru) , num×oldMax , num×oldMin }
-//        newMax = in 3 ka max        newMin = in 3 ka min
-//     ★★ TRAP -- FREEZE karo: newMin nikalte waqt PURANA max chahiye. agar max pehle badal diya,
-//        to naya max, min ke hisaab me ghus jaata -> galat. isliye  temp = max(3);  min = min(3);  max = temp;
-//     ★ ans = max(ans, max)  -- ans me PURANA ans bhi rakho (0 ya dip aaye to best bhool na jaaye).
-//
-//  ★ SKELETON (yahi yaad -> neeche code dekhne ki zaroorat nahi):
-//        max_prod = min_prod = nums[0];  ans = 0;
-//        for i = 1..n:
-//            temp     = max( num , num*max_prod , num*min_prod );   // 3 raaste ka best
-//            min_prod = min( num , num*max_prod , num*min_prod );   // FREEZE: purane max/min se
-//            max_prod = temp;                                       // ab max badlo (min ke BAAD)
-//            ans      = max(ans, max_prod);
-//
-//  ★ TWIN: LC-53 = SUM (flip nahi -> 1 value) · LC-152 = PRODUCT (flip -> max+min, ye) · LC-1749 = ABS-SUM (max+min).
-//     poora family = 04_max_abs_sum.cpp
+// ---- ARPAN KI APPROACH ----
+//  ★ TRICK: product me neg×neg = BADA -> aaj ka sabse CHHOTA kal SABSE BADA ban sakta.
+//    isliye max ke saath MIN bhi carry karo. ([-2,3,-4]: min -6 -> -6×-4 = +24.)
+//  ★ har step 3 candidate {num, num×max, num×min} se naya max/min. FREEZE (min purane max se, phir max badlo).
+//  ★ ans = max(ans, max).   [family: 53=sum · 152=product · 1749=abs-sum -> 04_max_abs_sum.cpp]
 // ============================================================
 
 #include <iostream>
