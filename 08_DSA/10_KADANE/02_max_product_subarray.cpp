@@ -24,6 +24,14 @@
 //        to naya max, min ke hisaab me ghus jaata -> galat. isliye  temp = max(3);  min = min(3);  max = temp;
 //     ★ ans = max(ans, max)  -- ans me PURANA ans bhi rakho (0 ya dip aaye to best bhool na jaaye).
 //
+//  ★ SKELETON (yahi yaad -> neeche code dekhne ki zaroorat nahi):
+//        max_prod = min_prod = nums[0];  ans = 0;
+//        for i = 1..n:
+//            temp     = max( num , num*max_prod , num*min_prod );   // 3 raaste ka best
+//            min_prod = min( num , num*max_prod , num*min_prod );   // FREEZE: purane max/min se
+//            max_prod = temp;                                       // ab max badlo (min ke BAAD)
+//            ans      = max(ans, max_prod);
+//
 //  ★ TWIN: LC-53 = SUM (flip nahi -> 1 value) · LC-152 = PRODUCT (flip -> max+min, ye) · LC-1749 = ABS-SUM (max+min).
 //     poora family = 04_max_abs_sum.cpp
 // ============================================================
