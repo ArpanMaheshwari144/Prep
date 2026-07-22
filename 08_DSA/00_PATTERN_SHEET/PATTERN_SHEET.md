@@ -224,13 +224,7 @@
 └───────────────────────────────────────────────────────────────
  ▸ MIN SUBARRAY LEN (>=TARGET) ─────────────────────────────────
      ★ SHORTEST type (ULTA): track sum; VALID (sum>=target) hote hi shrink-WHILE-valid -> ans = MIN length.
-
- ▸ MIN WINDOW SUBSTRING (LC-76, Hard) ──────────────────────────
-     ★ s ka sabse CHHOTA window jisme t ke SAARE char (count sameet). need-map(t) + count(=t.size, 0=valid).
-     EXPAND: if(mp[s[j]]>0)count--; mp[s[j]]-- (★ IF ke BAHAR -- non-t char negative -> count ke liye "invisible"; andar rakha to D-asymmetry BUG: shrink me count++ galat).
-     VALID(count==0) -> shrink: min-save (len<minLen) ; mp[s[i]]++; if>0 count++; i++ (MIRROR: aana=--,jaana=++). return substr(index,minLen) ya "".
-     ★★ TWIN = LC-1358 (substrings-all-3): SAME skeleton, bas answer-handle alag (yahaan MIN-track · wahaan COUNT ans+=i). t="abc" -> dono ek. [recognize+adapt]
-     ★ DERIVE-first: chhote example haath-trace (ADOBECODEBANC->BANC) -> behavior mila -> "baar-baar kya check?" se map+count (=code ki aankhein) nikla.
+     (char-matching wala SHORTEST = MIN WINDOW LC-76 -> neeche "need-map + COUNT" family me, LC-1358 ke saath.)
 
 ┌── FAMILY: FIXED window ───────────────────────────────────────
 │ KYUN SAATH: window ka size k pehle se DIYA hai; slide karte jao.
@@ -246,10 +240,19 @@
      ★ COUNT (length nahi). track: prod; INVALID = prod>=k -> prod/=nums[i], i++.
      ★★ COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid). (bahut count-Q me)
 
+┌── FAMILY: need-map + COUNT (char-matching, --/++ MIRROR) ─────
+│ KYUN SAATH: dono "t ke SAARE char chahiye" type -> IDENTICAL skeleton: need-map(t) + count(baaki char) + EXPAND(if(mp>0)count--; mp-- IF ke BAHAR) + valid pe shrink(mp++; if(mp>0)count++). SIRF answer-handle alag: LC-76 = MIN-track · LC-1358 = COUNT (ans+=i). t="abc" daalo -> dono ek. [ye wahi --/++ MIRROR mechanic jo naya tha]
+└───────────────────────────────────────────────────────────────
+ ▸ MIN WINDOW SUBSTRING (LC-76, Hard) ──────────────────────────
+     ★ s ka sabse CHHOTA window jisme t ke SAARE char (count sameet). need-map(t) + count(=t.size, 0=valid).
+     EXPAND: if(mp[s[j]]>0)count--; mp[s[j]]-- (★ IF ke BAHAR -- non-t char negative -> count ke liye "invisible"; andar rakha to D-asymmetry BUG: shrink me count++ galat).
+     VALID(count==0) -> shrink: min-save (len<minLen) ; mp[s[i]]++; if>0 count++; i++ (★ MIRROR: aana=-- , jaana=++). return substr(index,minLen) ya "".
+     ★ DERIVE-first: chhote example haath-trace (ADOBECODEBANC->BANC) -> "baar-baar kya check?" se map+count (=code ki aankhein) nikla.
+
  ▸ SUBSTRINGS CONTAINING ALL 3 (LC-1358) ───────────────────────
      ★ COUNT + contains-all. need={a,b,c}=1 each (count=3). valid(count==0) -> shrink i tightest -> ★ ans += i (valid left-starts, har right-end).
      ★ INTUITION: valid window ko LEFT-extend karo -> valid REHTA -> left-starts ek BLOCK (0..point) -> ek saath gino. (mp-- if ke BAHAR: extras negative track.)
-     ★★ TWIN = MIN-WINDOW (LC-76): SAME SW skeleton, bas MIN-track ki jagah ans+=i (COUNT). minWindow(s,"abc") reuse. [recognize+adapt]
+     minWindow(s,"abc") reuse -> bas MIN-track ki jagah ans += i.
 
 ┌── FAMILY: ANAGRAM-window ─────────────────────────────────────
 │ KYUN SAATH: fixed p-length window + har position pe anagram-check (isAnagram helper reuse).
