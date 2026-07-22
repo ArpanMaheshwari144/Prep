@@ -1,5 +1,11 @@
 # ★★★ START HERE — POORA PREP KA NAKSHA ★★★
 
+> ★★ 22-JUL UPDATE — AAGE KAISE CHALNA (poora detail: memory MEMORY.md + neeche):
+> • DSA NAYA METHOD: STRUGGLE-FIRST (peek NAHI) → chhota example HAND-TRACE/derive → sachchi struggle ke baad hi editorial (last-resort) → kuch din baad COLD-REDO. 1 problem/din 30-45min (job ke saath). DSA = mechanics-ki-LIBRARY; ek-ek mechanic easiest-ghar me seekho.
+> • DSA HONEST: cold-solve abhi weak = library CHHOTI hai (na ability). in-library → instant (Kadane); missing → learn karo ek baar. August-JP-apply TOO SOON; DSA = LONG-term; ABHI strengths (Java/Spring/HLD/LLD+4yr) se softer-gate roles apply karo.
+> • RESUME: 3-din DSA+HLD+LLD DEEP. HLD roz (rapid-fire strong 6-7/8). Max-Product = concept-se-LEARN (2var+freeze-old last-mile). project-revise baad me. ★ NEVER folder-delete (WADA, git-safe).
+
+
 > Subah utho, mood ho → **laptop khol → ye file dekho** → kahaan kya hai + kya revise karna, sab yahaan.
 > Full plan/state = `PROGRESS.md` · rules = `CLAUDE.md` · mindset/off-day = `MINDSET.md`.
 > ★ ROTATION: har subah ek alag topic fresh-energy me (kabhi DSA, kabhi HLD, kabhi Java...). Jo zyada DIKHEGA wo zyada STRONG.
