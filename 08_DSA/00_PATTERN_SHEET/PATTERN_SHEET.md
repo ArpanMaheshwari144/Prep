@@ -628,6 +628,9 @@
      put(key,val):  index nikalo -> chain me key DHUNDO.
                        mil gayi -> value UPDATE karo, return.
                        na mili  -> naya node chain me LAGAO + sz++.
+     ★★ PUT TRAP (7-redo se pakka): key mil gayi -> update + TURANT return. return NA kiya to loop
+        aage jaake DUPLICATE node laga deta + sz galat. ("test-pass != code-sahi" -- basic test me
+        nahi dikhta, chain-ke-ANDAR update pe phat-ta.)
      get(key):      chain traverse -> key match -> value laut.  na mile / null -> -1.
      remove(key):   prev + curr se traverse -> key match pe:
                        HEAD (prev == null) -> buckets[i] = curr->next.
