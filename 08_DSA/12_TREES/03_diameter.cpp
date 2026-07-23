@@ -48,13 +48,13 @@ int height(TreeNode *root, int &maxDia)
         return 0;
     }
 
-    // ye ek dum child tak jata bus bbech mei nahi rukta
+    // recursion pehle ekdum neeche (leaf) tak jaati -- beech me rukti nahi; kaam PEECHE aate hue hota (post-order)
     int left = height(root->left, maxDia);
     int right = height(root->right, maxDia);
 
-    maxDia = max(maxDia, left + right); // return diameter mean left and right ki chid ka distnace
+    maxDia = max(maxDia, left + right); // is node se guzarne wali diameter = leftH + rightH (dono taraf ka jod) -> global max
 
-    return 1 + max(left, right); // te rturn karta heiugh ye fir depth bhi bol akte ho
+    return 1 + max(left, right); // return HEIGHT (isko depth bhi keh sakte) -- PARENT ke liye
 }
 
 int diameterOfBinaryTree(TreeNode *root)
