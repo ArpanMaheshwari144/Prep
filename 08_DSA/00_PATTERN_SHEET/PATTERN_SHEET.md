@@ -732,12 +732,13 @@
      ★ POINTER swap (root->left, root->right), NA value: pointer = poori BRANCH side badle (SAHI);
         value (left->val) = sirf 2 number + leaf pe null->val CRASH (GALAT).   ★ order FREE (swap+recurse independent).
 
-┌── FAMILY: return-ONE + track-ANOTHER (post-order + global) ───
-│ KYUN SAATH: parent ko ek cheez chahiye (HEIGHT) -> wo RETURN karo; ANSWER alag hota -> global/ref me TRACK. recurse-PEHLE zaroori.
+┌── FAMILY: MAX-DEPTH + ek TWIST (return height, ANSWER alag global me) ──
+│ KYUN SAATH: height wapas PARENT ko chahiye -> wo RETURN; asli ANSWER return-value me nahi aata -> global/ref me TRACK. (recurse-PEHLE zaroori.)
 └───────────────────────────────────────────────────────────────
- ▸ DIAMETER (LC-543) ───────────────────────────────────────────
-     RETURN height (1+max(L,R)) -- parent ko chahiye.   TRACK global: maxDia = max(maxDia, leftH+rightH).
-     ★ return HEIGHT na diameter: parent ko child ki HEIGHT chahiye; diameter byproduct -> global collect. (height = recursion ka eendhan)
+ ▸ DIAMETER (LC-543)  =  MAX-DEPTH + 1 line ─────────────────────
+     height() BILKUL max-depth (return 1 + max(L,R)).  BAS ek line EXTRA:
+        har node pe ->  maxDia = max(maxDia, leftH + rightH).      answer = global maxDia (return NAHI).
+     ★ height return kyun, diameter nahi: parent ko child ki HEIGHT chahiye; diameter byproduct -> global collect.
      ★ maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
 ```
 
