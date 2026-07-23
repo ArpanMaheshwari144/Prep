@@ -714,4 +714,18 @@
 ```
 
 ---
+
+```
+═══════════════════ PATTERN 12 — TREES (recursion) ═══════════════════
+ BROAD IDEA: har tree-Q = RECURSION. TreeNode = val + left + right. 3 cheez -> BASE (null pe kuch return) · dono taraf RECURSE · phir COMBINE.
+ ★ ORDER (kaam pehle ya recurse pehle): kaam recursion-RESULT pe depend kare -> recurse-PEHLE (post-order). independent ho -> free (jaise invert).
+
+┌── FAMILY: recurse + combine ──────────────────────────────────
+│ KYUN SAATH: base = null; har node pe left+right recurse -> return COMBINE. (bas combine/kaam alag hota.)
+└───────────────────────────────────────────────────────────────
+ ▸ MAX DEPTH (LC-104) ──────────────────────────────────────────
+     TRICK: base null -> 0.  return 1 + max(leftDepth, rightDepth).  (khud=1 + gehri branch)
+```
+
+---
 > REVISE isi sheet se. code nahi kholna. "similar Q -> pattern pehchano -> trick recall -> lagao."

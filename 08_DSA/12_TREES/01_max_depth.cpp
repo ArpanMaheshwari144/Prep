@@ -20,7 +20,7 @@
 //   -- har tree problem = RECURSION. TreeNode = val + left + right (do bachche).
 //   -- BASE CASE: node NULL ho -> kuch return (yahan 0). [recursion yahin rukti]
 //   -- har node pe: LEFT recurse + RIGHT recurse -> phir dono ko COMBINE.
-//   -- Max-Depth: base = 0. COMBINE tu soch -> "khud + bachcho ki depth" se kya banega?
+//   -- Max-Depth SOLVED: base = 0.  return 1 + max(leftDepth, rightDepth).  (khud=1 + gehri branch)
 //   (bas 3 cheez: base | dono taraf recurse | combine. poora tree khel isi pe.)
 // ============================================================
 
