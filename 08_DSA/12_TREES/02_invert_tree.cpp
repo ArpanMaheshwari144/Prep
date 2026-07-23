@@ -17,8 +17,8 @@
 // ---- APPROACH ----
 //  ★ tree = RECURSION. kaam = children SWAP.
 //  1. BASE: root null -> return null
-//  2. left  = invertTree(root->left)     -> left subtree invert
-//  3. right = invertTree(root->right)    -> right subtree invert
+//  2. invertTree(root->left)             -> left subtree invert
+//  3. invertTree(root->right)            -> right subtree invert
 //  4. swap(root->left, root->right)      -> children POINTERS swap
 //  5. return root
 //
