@@ -1,7 +1,7 @@
 // ============================================================
 // DIAMETER OF BINARY TREE — (LeetCode 543, Easy)   [TREES #3]
 // ============================================================
-// diameter = kisi bhi DO node ke beech sabse LAMBा path ki length (EDGES me).
+// diameter = kisi bhi DO node ke beech sabse LAMBA path ki length (EDGES me).
 // path root se guzre YA na guzre. (length = edges ki ginti, nodes-1.)
 //
 //        1
