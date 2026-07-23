@@ -439,6 +439,24 @@ ATOMIC OPERATION (no race):
    = atomic, thread-safe
 ```
 
+```
+★ WHY atomic? — REDIS SINGLE-THREADED (23-Jul, mock me seekha):
+
+   Redis ek time pe SIRF EK command chalata (single-threaded) -> beech me koi
+   doosri request ghus NAHI sakti -> isiliye INCR / MULTI-EXEC apne-aap ATOMIC.
+
+   RACE jo ise rokta: 2 request EK saath, bucket me 1 token bacha ->
+     read-then-write hota to DONO ko token milta (limit toot) ->
+     par INCR atomic -> ek poora hoke hi doosra chalta -> safe.
+
+   ★ multi-STEP logic (token-bucket: refill + check + decrement) -> LUA SCRIPT:
+     Redis poore Lua script ko ek ATOMIC unit me chalata (production standard).
+
+   INTERVIEW LINE: "Since Redis is single-threaded, the check-and-decrement is
+     atomic -- INCR for a counter, or a Lua script for token-bucket logic, to
+     avoid the read-modify-write race."
+```
+
 ---
 
 ## 9 Tiered Limits
