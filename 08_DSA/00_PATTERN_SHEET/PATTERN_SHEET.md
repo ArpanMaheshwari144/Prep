@@ -178,7 +178,10 @@
  ★ KYA TRACK: sum · freq-map (distinct=map.size / char-count) · zeros-count · product · maxFreq.
  ★ KEY: shrink ke BAAD window HAMESHA valid -> ans UNCONDITIONAL (koi if(==k) nahi).
  ★ LENGTH ya COUNT: length -> max(ans, j-i+1) · subarray COUNT -> count += (j-i+1) (window size).
- ★★ SHRINK construct: FIXED window -> if (ek add, ek remove -- size fix). VARIABLE window -> while (jab tak INVALID, ek se zyada bhi nikal sakta).
+ ★★ IF vs WHILE (ye confusion CLEAR kar) -> SAWAAL: "window ka SIZE fix hai, ya condition pe depend?"
+     · SIZE fix (koi number diya: k-elements ya p.length()) -> IF (ek add, ek remove, size wahi rehta).   [Max-Sum-of-K · Anagram]
+     · SIZE condition pe (sum/distinct/repeat/product) -> WHILE (jab tak invalid, ek se zyada nikal sakte).  [baaki sab]
+     ★★ TRAP -- `k` ka matlab dekh: Max-Sum-size-K me k = SIZE (fix -> IF); Subarray-Product<K me k = product LIMIT (size NAHI -> WHILE). same letter `k`, alag matlab.
  [track] · [INVALID kab -> shrink] · [ans]
 
  ★★★ ONE SKELETON (fixed + variable DONO isi pe -- ye poora khel):
