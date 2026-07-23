@@ -15,11 +15,19 @@
 //   [1]          -> 0
 // ============================================================
 //
-// ★ MAX-DEPTH pe build (height), NAYA twist -> return HEIGHT, par global DIAMETER track:
-//   -- height(node) = 1 + max(leftH, rightH);  base null -> 0.   (bilkul max-depth)
-//   -- har node pe: is-node-se-guzarne-wali diameter = leftH + rightH  -> global MAX update.
-//   -- helper HEIGHT return karta (parent ke liye), par ANSWER = global diameter.  [2 ALAG cheez]
-//   ★ ORDER: recurse-PEHLE (post-order) -- leftH/rightH chahiye TABHI diameter nikle. (yehi "order matters".)
+// ---- APPROACH ----
+//  ★ MAX-DEPTH pe build (height). har node pe DO alag sawaal:
+//     Q1 "main kitna OONCHA?"          = HEIGHT = 1 + max(leftH, rightH)   -> PARENT ko chahiye -> ye RETURN.
+//     Q2 "mujh se guzarne wala path?"  = leftH + rightH                    -> ANSWER-candidate -> global MAX track.
+//
+//  ★★ RETURN height kyun, diameter kyun NAHI (yehi asli samajh):
+//     parent ko child ki HEIGHT chahiye (apni leftH/rightH banane ko). agar diameter return karte to
+//     height KHO jaati -> parent apna kaam nahi kar paata. HEIGHT = recursion ka "eendhan" (upar flow karta);
+//     DIAMETER byproduct hai -> return-slot me nahi ja sakta -> SIDE me (global/reference) collect.
+//     (diameter clean-compose nahi hoti -- wo heights se banti, isliye heights ko upar bhejna PADTA.)
+//
+//  ★ ORDER: recurse-PEHLE (post-order) -- leftH/rightH chahiye TABHI Q2 nikle. yehi "order matters" ka live case.
+//  ★ steps: base null->0 · leftH,rightH recurse · maxDia = max(maxDia, leftH+rightH) · return 1+max(leftH,rightH).
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -40,12 +48,13 @@ int height(TreeNode *root, int &maxDia)
         return 0;
     }
 
+    // ye ek dum child tak jata bus bbech mei nahi rukta
     int left = height(root->left, maxDia);
     int right = height(root->right, maxDia);
 
-    maxDia = max(maxDia, left + right);
+    maxDia = max(maxDia, left + right); // return diameter mean left and right ki chid ka distnace
 
-    return 1 + max(left, right);
+    return 1 + max(left, right); // te rturn karta heiugh ye fir depth bhi bol akte ho
 }
 
 int diameterOfBinaryTree(TreeNode *root)

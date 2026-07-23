@@ -731,6 +731,11 @@
      ★★ POINTER swap (root->left, root->right) -- NA value:
         pointer = poori BRANCH side badalti (SAHI).  value (left->val) = sirf 2 number, subtree apni jagah + leaf pe null->val CRASH (GALAT).
      ★ ORDER free (swap + recurse INDEPENDENT -- swap ko recursion-result nahi chahiye).
+
+ ▸ DIAMETER (LC-543) ───────────────────────────────────────────
+     TRICK: har node pe RETURN height (1+max(L,R), PARENT ko chahiye) + track global maxDia = max(maxDia, leftH+rightH).
+     ★★ return HEIGHT na diameter: parent ko child ki HEIGHT chahiye; diameter byproduct -> SIDE/global me collect. (height = recursion ka "eendhan"; diameter clean-compose nahi hoti.)
+     ★ POST-ORDER (recurse-PEHLE) -- leftH/rightH chahiye TABHI diameter nikle (order matters). ★ maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
 ```
 
 ---
