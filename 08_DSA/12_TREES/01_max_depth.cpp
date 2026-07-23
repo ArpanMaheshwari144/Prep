@@ -16,12 +16,12 @@
 //   [1]            -> 1
 // ============================================================
 //
-// ★ TREES ka CORE (naya mechanic -- ek baar samajh, phir har tree-Q isi pe):
-//   -- har tree problem = RECURSION. TreeNode = val + left + right (do bachche).
-//   -- BASE CASE: node NULL ho -> kuch return (yahan 0). [recursion yahin rukti]
-//   -- har node pe: LEFT recurse + RIGHT recurse -> phir dono ko COMBINE.
-//   -- Max-Depth SOLVED: base = 0.  return 1 + max(leftDepth, rightDepth).  (khud=1 + gehri branch)
-//   (bas 3 cheez: base | dono taraf recurse | combine. poora tree khel isi pe.)
+// ---- APPROACH ----
+//  ★ tree = RECURSION (har node khud ko call karta).
+//  1. BASE: root null -> return 0            (recursion yahin rukti)
+//  2. left  = maxDepth(root->left)           -> left subtree ki depth
+//  3. right = maxDepth(root->right)          -> right subtree ki depth
+//  4. COMBINE: return 1 + max(left, right)   (1 = khud, + gehri branch)
 // ============================================================
 
 #include <bits/stdc++.h>
