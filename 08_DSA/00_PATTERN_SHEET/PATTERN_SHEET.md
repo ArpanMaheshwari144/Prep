@@ -717,25 +717,28 @@
 
 ```
 ═══════════════════ PATTERN 12 — TREES (recursion) ═══════════════════
- BROAD IDEA: har tree-Q = RECURSION. TreeNode = val + left + right. 3 cheez -> BASE (null pe kuch return) · dono taraf RECURSE · phir COMBINE.
- ★ ORDER (kaam pehle ya recurse pehle): kaam recursion-RESULT pe depend kare -> recurse-PEHLE (post-order). independent ho -> free (jaise invert).
+ BROAD IDEA: har tree-Q = RECURSION on TreeNode (val + left + right). 3 cheez:
+   BASE (null pe kuch return)  ·  dono taraf RECURSE  ·  phir COMBINE.
+ ★ ORDER: kaam recursion-RESULT pe depend kare -> recurse-PEHLE (post-order); independent -> free.
 
-┌── FAMILY: recurse + combine ──────────────────────────────────
-│ KYUN SAATH: base = null; har node pe left+right recurse -> return COMBINE. (bas combine/kaam alag hota.)
+┌── FAMILY: recurse + COMBINE (answer = return-value) ──────────
+│ KYUN SAATH: base=null; left+right recurse -> jo COMBINE karo WAHI return. answer seedha return me aata.
 └───────────────────────────────────────────────────────────────
  ▸ MAX DEPTH (LC-104) ──────────────────────────────────────────
-     TRICK: base null -> 0.  return 1 + max(leftDepth, rightDepth).  (khud=1 + gehri branch)
+     base null -> 0.   return 1 + max(leftDepth, rightDepth).   (khud=1 + gehri branch)
 
  ▸ INVERT TREE (LC-226) ────────────────────────────────────────
-     TRICK: base null -> null.  children SWAP + recurse dono.  return root.
-     ★★ POINTER swap (root->left, root->right) -- NA value:
-        pointer = poori BRANCH side badalti (SAHI).  value (left->val) = sirf 2 number, subtree apni jagah + leaf pe null->val CRASH (GALAT).
-     ★ ORDER free (swap + recurse INDEPENDENT -- swap ko recursion-result nahi chahiye).
+     base null -> null.   children SWAP + recurse.   return root.
+     ★ POINTER swap (root->left, root->right), NA value: pointer = poori BRANCH side badle (SAHI);
+        value (left->val) = sirf 2 number + leaf pe null->val CRASH (GALAT).   ★ order FREE (swap+recurse independent).
 
+┌── FAMILY: return-ONE + track-ANOTHER (post-order + global) ───
+│ KYUN SAATH: parent ko ek cheez chahiye (HEIGHT) -> wo RETURN karo; ANSWER alag hota -> global/ref me TRACK. recurse-PEHLE zaroori.
+└───────────────────────────────────────────────────────────────
  ▸ DIAMETER (LC-543) ───────────────────────────────────────────
-     TRICK: har node pe RETURN height (1+max(L,R), PARENT ko chahiye) + track global maxDia = max(maxDia, leftH+rightH).
-     ★★ return HEIGHT na diameter: parent ko child ki HEIGHT chahiye; diameter byproduct -> SIDE/global me collect. (height = recursion ka "eendhan"; diameter clean-compose nahi hoti.)
-     ★ POST-ORDER (recurse-PEHLE) -- leftH/rightH chahiye TABHI diameter nikle (order matters). ★ maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
+     RETURN height (1+max(L,R)) -- parent ko chahiye.   TRACK global: maxDia = max(maxDia, leftH+rightH).
+     ★ return HEIGHT na diameter: parent ko child ki HEIGHT chahiye; diameter byproduct -> global collect. (height = recursion ka eendhan)
+     ★ maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
 ```
 
 ---
