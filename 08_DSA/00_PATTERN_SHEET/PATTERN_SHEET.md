@@ -725,6 +725,11 @@
 └───────────────────────────────────────────────────────────────
  ▸ MAX DEPTH (LC-104) ──────────────────────────────────────────
      TRICK: base null -> 0.  return 1 + max(leftDepth, rightDepth).  (khud=1 + gehri branch)
+
+ ▸ INVERT TREE (LC-226) ────────────────────────────────────────
+     TRICK: base null -> null.  children SWAP + recurse dono.  return root.
+     ★★ POINTER swap (root->left, root->right) -- NA value: swap(left->val,right->val) -> leaf pe null->val = CRASH + subtree side nahi jaata.
+     ★ ORDER free (swap + recurse INDEPENDENT).
 ```
 
 ---

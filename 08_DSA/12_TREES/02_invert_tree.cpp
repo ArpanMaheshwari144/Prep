@@ -14,10 +14,20 @@
 //   invert ke baad:     4 7 2 9 6 3 1
 // ============================================================
 //
-// ★ SAME tree mechanic (base + recurse + kaam) -- bas is baar KAAM = swap:
-//   -- BASE CASE: node NULL -> return NULL (kuch swap nahi).
-//   -- har node pe: left/right SWAP karo, phir dono bachcho pe recurse.
-//   -- return root.  (kaam pehle ya recurse pehle -- dono chalta, soch kyun.)
+// ---- APPROACH ----
+//  ★ tree = RECURSION. kaam = children SWAP.
+//  1. BASE: root null -> return null
+//  2. left  = invertTree(root->left)     -> left subtree invert
+//  3. right = invertTree(root->right)    -> right subtree invert
+//  4. swap(root->left, root->right)      -> children POINTERS swap
+//  5. return root
+//
+//  ★★ POINTER swap (root->left, root->right) -- NA value:
+//     swap(left->val, right->val) galat -> (a) leaf pe left=null -> null->val = CRASH (segfault)
+//                                          (b) crash na ho tab bhi: value badalta, poora SUBTREE side nahi jaata.
+//     invert = SUBTREE ko side badalna -> isliye pointers swap, values nahi.
+//  ★ ORDER free: swap-first ya recurse-first -- dono same (swap + recurse INDEPENDENT,
+//    swap ko recursion-result nahi chahiye).
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -37,11 +47,9 @@ TreeNode *invertTree(TreeNode *root)
     {
         return nullptr;
     }
-
-    // swap(root->left, root->right); // swap + recurse INDEPENDENT -> order matter NAHI (swap-first ya recurse-first, dono same)
-
-    TreeNode *left = invertTree(root->left);
-    TreeNode *right = invertTree(root->right);
+    
+    invertTree(root->left);
+    invertTree(root->right);
 
     swap(root->left, root->right);
 
