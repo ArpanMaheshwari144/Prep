@@ -27,7 +27,8 @@
 //     -- POINTER swap: dono pointers palat do -> poora LEFT-subtree RIGHT me chala jaata, RIGHT-subtree LEFT me.
 //        = poori BRANCH side badli. SAHI (invert = subtree mirror).
 //     -- VALUE swap (left->val, right->val): sirf 2 top NUMBER badalte, subtree apni jagah pada rehta. GALAT.
-//        + leaf pe: left = invertTree(null) = NULL -> null->val deref -> CRASH (segfault).
+//        + LEAF pe CRASH kyun: leaf ke DONO bachche NULL hote. value-swap ko bachcho ka
+//          ->val chahiye -> par NULL ka ->val nahi hota -> null pointer access -> SEGFAULT.
 //     yaad: invert = poori BRANCH ghumao (pointer), sirf number ghumana nahi (value).
 //  ★ ORDER free: swap-first ya recurse-first -- dono same (swap + recurse INDEPENDENT,
 //    swap ko recursion-result nahi chahiye).
