@@ -67,12 +67,14 @@
       beech me koi achhi comp crack ho to wo bhi JP/BlackRock ka raasta (route FLEXIBLE, end-goal fixed).
    ★ PHASE = CONSOLIDATION + remaining fill (naya-heavy nahi; Java+Spring theory DONE → beech-beech READ-revise, no-quiz).
 
-   ROZ ka flow (Arpan-set):
-   - SUBAH:  pattern-sheet glance (daily, "gate ki chaabi") + HLD ek topic → Claude MOCK-TEST (interview-Q) + delivery-coaching (achhe words: caching/sharding/replication/idempotency — "aise bolo, kaise/kab/kyun" → interviewer impress).
-   - SHAAM (light DSA): Trees continue (1-2 easy) YA pattern glance-test (jo bane=solid, jo nahi=redo-list). gate hai, doobna nahi.
-   - BEECH-BEECH: Java/Spring ek note READ-revise (no quiz) + ★ PROJECT-REVISE.
-   - SUNDAY: pattern-sheet polish.
-   - OFF-DAY: light-gear (sheet revise/purana padho) — zero-day nahi par pahaad bhi nahi. (MEMORY.md off-day playbook.)
+   ★ ROZ ka flow (24-Jul REFINED, Arpan-set — PROJECT top, kyunki JP JAVA ko BHAARI weight deta):
+   1. pattern-sheet GLANCE (daily, "gate ki chaabi", 5-10 min recall-test).
+   2. ★★ PROJECT-REVISE (TOP PRIORITY, HLD se UPAR) — mini_payment_ms = Java showcase + MULTIPLIER: ek saath Java-round + system-design + behavioral-deep-dive ko feed karta -> isliye pehle. (detail neeche.)
+   3. HLD MOCK — ek topic (jaise "monolith 50x scale" / "optimize-skeleton" = JP-framings) → Claude interview-Q + delivery-coaching (words: caching/sharding/replication/idempotency).
+   4. SHAAM / light DSA: Trees continue (1-2 easy) YA JP-gap (Top-K-Frequent · Non-overlapping-Intervals · Graph-BFS) YA glance-test. gate hai, doobna nahi.
+   5. BEECH-BEECH: Java/Spring ek note READ-revise (no quiz).
+   - SUNDAY: pattern-sheet polish.  OFF-DAY: light-gear (sheet/purana padho — zero-day nahi, pahaad bhi nahi; MEMORY.md playbook).
+   ★ JP kya poochta (DSA-gaps/HLD-framings/Java-Qs) = JP_INTERVIEW_INTEL.md (24-Jul research).
 
    ★★ PROJECT-REVISE (NAYA, IMPORTANT — 24-Jul se, Arpan-asked): mini_payment_ms ko interview ke liye ready karo.
       - SHURU SE, IN ORDER: LEARNINGS.md topic 0 (Overall Flow) → 1 → 2 ... sequentially (beech se nahi).
