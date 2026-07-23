@@ -7,7 +7,7 @@
 
 
 > Subah utho, mood ho → **laptop khol → ye file dekho** → kahaan kya hai + kya revise karna, sab yahaan.
-> Full plan/state = `PROGRESS.md` · rules = `CLAUDE.md` · mindset/off-day = `MINDSET.md`.
+> Full plan/state = `PROGRESS.md` · rules = `CLAUDE.md` · mindset/off-day = `MINDSET.md` · ★ JP kya poochta = `JP_INTERVIEW_INTEL.md`.
 > ★ ROTATION: har subah ek alag topic fresh-energy me (kabhi DSA, kabhi HLD, kabhi Java...). Jo zyada DIKHEGA wo zyada STRONG.
 
 ---
