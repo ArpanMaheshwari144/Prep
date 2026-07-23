@@ -22,10 +22,13 @@
 //  4. swap(root->left, root->right)      -> children POINTERS swap
 //  5. return root
 //
-//  ★★ POINTER swap (root->left, root->right) -- NA value:
-//     swap(left->val, right->val) galat -> (a) leaf pe left=null -> null->val = CRASH (segfault)
-//                                          (b) crash na ho tab bhi: value badalta, poora SUBTREE side nahi jaata.
-//     invert = SUBTREE ko side badalna -> isliye pointers swap, values nahi.
+//  ★★ SWAP kise? -> POINTER (root->left, root->right), NA value (->val). ye samajh:
+//     recurse ke baad -> root->left = left-subtree ka root · root->right = right-subtree ka root.
+//     -- POINTER swap: dono pointers palat do -> poora LEFT-subtree RIGHT me chala jaata, RIGHT-subtree LEFT me.
+//        = poori BRANCH side badli. SAHI (invert = subtree mirror).
+//     -- VALUE swap (left->val, right->val): sirf 2 top NUMBER badalte, subtree apni jagah pada rehta. GALAT.
+//        + leaf pe: left = invertTree(null) = NULL -> null->val deref -> CRASH (segfault).
+//     yaad: invert = poori BRANCH ghumao (pointer), sirf number ghumana nahi (value).
 //  ★ ORDER free: swap-first ya recurse-first -- dono same (swap + recurse INDEPENDENT,
 //    swap ko recursion-result nahi chahiye).
 // ============================================================
