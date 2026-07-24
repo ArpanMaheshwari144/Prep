@@ -55,6 +55,11 @@ TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q)
     TreeNode *right = lowestCommonAncestor(root->right, p, q);
 
     // COMBINE: ek side NULL -> doosri return (dono ek hi side me). DONO non-null -> ★ root = LCA (p,q alag side split)
+    // ★ if(left==NULL) return right -- ye DO case ek saath sambhaalta:
+    //    (a) left khali, right me answer  -> right return.
+    //    (b) DONO khali (left & right null) -> right(=NULL) return -> is subtree me kuch nahi mila, NULL return SAHI.
+    //    ★ agar "&& right != NULL" add karte -> case (b) is branch se nikal jaata -> aage fall-through
+    //       -> return root -> GALAT (root return karta jabki NULL hona chahiye).
     if (left == NULL)
     {
         return right;
