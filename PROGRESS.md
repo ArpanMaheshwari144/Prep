@@ -50,8 +50,8 @@
               profiles · Hibernate(7: N+1/lazy-eager/dirty-check/L1/cascade/mappings) · Docker · K8s (6/6).
    PROJECT    ✓ mini_payment_ms — 4 microservices (gateway+order+payment+notification): Feign(sync) · SAGA · Kafka(async, docker broker) ·
               idempotency (check-then-act, bug-fixed) · Circuit-Breaker(Resilience4j, 3-state) · API-Gateway(routing) · DB-per-service · kafka-ui.
-              LEARNINGS.md + FULL SOURCE CODE (20 java files). + todoapp. -> ★ ab PROJECT-REVISE phase (see §3).
-   LLD        ✓ 11 designs IN CODE (parking/bms/atm/elevator/hotel...). 5 revise-swept ("easy lagta ab"). gap = SOLID/pattern ARTICULATE.
+              LEARNINGS.md + FULL SOURCE CODE (20 java files). + todoapp. -> ★★ PROJECT-REVISE ACTIVE (24-Jul: topics 0-6 done via revise-mode — Overall-Flow/microservice/RestTemplate/DB-per-service/HikariCP/boilerplate/getId-bug; bacha 7-onwards: record/Feign/Saga/Gateway/Kafka/idempotency/CircuitBreaker).
+   LLD        ✓ 11 designs IN CODE (parking/bms/atm/elevator/hotel...). 5 revise-swept. FORWARD = HLD-jaisa MOCK + ★ 1-2 design COLD-REDO (jaise HashMap→HashSet ek baar sahi karke code-verify). gap = SOLID/pattern ARTICULATE.
    DSA        ✓ ~12 PATTERNS (sheet family-boxed, ~700 line, "gate ki chaabi") + ~70 problems. REVISE mode + Trees STARTED (see §4).
    BEHAVIORAL ✓ 5 STAR (HikariCP/WAF/Doximity/Mentoring/Failure-JDK — all competencies). done bol-ke; ab reps.
    COMPARES   ✓ 12 (sql-nosql/tcp-udp/sync-async/rest-graphql...). DATABASE ◐ (indexing+txn-internals). INFRA ✓ (AWS/Docker/K8s).
@@ -106,8 +106,8 @@
 ## 5. METHOD (kaise karna — per subject, condensed)
 ```
    DSA        : struggle-first → hand-trace → (stuck) editorial → COLD-REDO spaced (1/3/7). stub = PROBLEM+TESTS. interviewer-brainstorming (Claude nudge, no code). DELETE/restart NAHI.
-   HLD/LLD    : DELIVERY-phase → roz ek topic MOCK-TEST (interview-Q) + delivery-coaching (achhe words). LLD deep. [HLD/LLD = mock CHAHIYE; Java/Spring = no-quiz read.]
-   PROJECT    : topic-by-topic (LEARNINGS.md se, in order) → concept + ACTUAL CODE → story + follow-ups ready. read-mode + notes.
+   HLD/LLD    : DELIVERY-phase → roz ek topic MOCK-TEST (interview-Q) + delivery-coaching. ★ HLD mocks STRONG (payment/URL/LB/rate-limiter — base solid, sirf chhote refinements jaise webhook). LLD = mock + ★ 1-2 design COLD-REDO (HashMap→HashSet jaisa, code-verify). [HLD/LLD = mock; Java/Spring+PROJECT = revise-mode read, no-quiz.]
+   PROJECT    : Java/Spring-style REVISE-MODE — Claude ACTUAL LEARNINGS.md content + source-code snippet CHAT me dikhata (fabricate NAHI; code+facts = uska project, story/power-words = packaging jo flag karo), Arpan padh ke COPY pe hand-notes, "aage" bole to agla topic (folder ORDER me). NO quiz. (visual/image → narrate = uski HLD-delivery strength.)
    JAVA/SPRING: READ-revise (built, notes-ready, git-safe, lifelong). Claude ACTUAL note-content dikhata (fabricate nahi). NO quiz.
    STAR       : story S-T-A-R → BOL-KE loud (own words, script-ratta nahi). reps se sharp.
    ★ REVISION = HABIT: jo padha/banaya (project bhi) ~10 din me fade → roz thoda revise. Claude roz REVISE-REMINDER de (rotate: sheet daily + HLD/LLD/behavioral/Java-Spring/project).
