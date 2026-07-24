@@ -15,19 +15,19 @@
 //   [1]          -> 0
 // ============================================================
 //
-// ---- APPROACH ----
-//  ★ MAX-DEPTH pe build (height). har node pe DO alag sawaal:
-//     Q1 "main kitna OONCHA?"          = HEIGHT = 1 + max(leftH, rightH)   -> PARENT ko chahiye -> ye RETURN.
-//     Q2 "mujh se guzarne wala path?"  = leftH + rightH                    -> ANSWER-candidate -> global MAX track.
+// ---- APPROACH ----  (step-by-step, jaise code kiya)
+//  = MAX-DEPTH (height) + ek line EXTRA (diameter track). helper: height(root, maxDia).
+//  1. base : root null -> return 0
+//  2. left  = height(root->left)
+//  3. right = height(root->right)
+//  4. maxDia = max(maxDia, left + right)      -> is node se guzarne wali diameter -> global MAX me
+//  5. return 1 + max(left, right)             -> HEIGHT return (parent ko chahiye)
 //
-//  ★★ RETURN height kyun, diameter kyun NAHI (yehi asli samajh):
-//     parent ko child ki HEIGHT chahiye (apni leftH/rightH banane ko). agar diameter return karte to
-//     height KHO jaati -> parent apna kaam nahi kar paata. HEIGHT = recursion ka "eendhan" (upar flow karta);
-//     DIAMETER byproduct hai -> return-slot me nahi ja sakta -> SIDE me (global/reference) collect.
-//     (diameter clean-compose nahi hoti -- wo heights se banti, isliye heights ko upar bhejna PADTA.)
-//
-//  ★ ORDER: recurse-PEHLE (post-order) -- leftH/rightH chahiye TABHI Q2 nikle. yehi "order matters" ka live case.
-//  ★ steps: base null->0 · leftH,rightH recurse · maxDia = max(maxDia, leftH+rightH) · return 1+max(leftH,rightH).
+//  ★★ RETURN height, NA diameter (asli samajh): parent ko child ki HEIGHT chahiye (apni leftH/rightH banane ko).
+//     diameter return karte to height KHO jaati -> parent kaam nahi kar paata. HEIGHT = recursion ka "eendhan";
+//     DIAMETER byproduct -> return-slot me nahi -> global/ref me collect. (diameter heights se banti.)
+//  ★ ORDER: recurse-PEHLE (post-order) -- leftH/rightH chahiye TABHI step-4.
+//  ★ maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
 // ============================================================
 
 #include <bits/stdc++.h>
