@@ -42,14 +42,14 @@ bool isSameTree(TreeNode *p, TreeNode *q)
         return false;
     }
 
-    // agra value alga to yehi se falue recsre nahi
+    // value ALAG -> yahi se false (aage recurse hi nahi karna)
     if (p->val != q->val)
     {
         return false;
     }
     else if (p->val == q->val)
     {
-        // agar value same left and right rceise karke dekho
+        // value SAME -> left & right recurse karke dekho (DONO side match hone chahiye)
         return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
     }
     return false;
