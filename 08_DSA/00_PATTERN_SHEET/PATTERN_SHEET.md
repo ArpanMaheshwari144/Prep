@@ -717,50 +717,58 @@
 
 ```
 ═══════════════════ PATTERN 12 — TREES (recursion) ═══════════════════
- BROAD IDEA: har tree-Q = RECURSION on TreeNode (val + left + right). 3 cheez:
-   BASE (null pe kuch return)  ·  dono taraf RECURSE  ·  phir COMBINE.
+ BROAD IDEA: har tree-Q = RECURSION on TreeNode(val, left, right). 3 cheez -> BASE (null pe return) · dono taraf RECURSE · COMBINE.
  ★ ORDER: kaam recursion-RESULT pe depend kare -> recurse-PEHLE (post-order); independent -> free.
- ★ 3 DFS TRAVERSALS (LC-144/94/145) -- teeno SAME recursion, sirf VISIT [res.push_back(val)] ki JAGAH badalti:
-      PREORDER  : VISIT -> left -> right      (root PEHLE)
-      INORDER   : left -> VISIT -> right      (root BEECH me)
-      POSTORDER : left -> right -> VISIT      (root BAAD me)
+ ★ 3 DFS TRAVERSALS (LC-144/94/145): teeno SAME recursion, sirf VISIT [res.push_back] ki JAGAH badalti ->
+      PRE = VISIT->left->right (root pehle) · IN = left->VISIT->right (beech) · POST = left->right->VISIT (baad).
 
 ┌── FAMILY: recurse + COMBINE (answer = return-value) ──────────
-│ KYUN SAATH: base=null; left+right recurse -> jo COMBINE karo WAHI return. answer seedha return me aata.
+│ base=null; left+right recurse -> jo COMBINE karo WAHI return. answer seedha return me aata.
 └───────────────────────────────────────────────────────────────
  ▸ MAX DEPTH (LC-104) ──────────────────────────────────────────
-     base null -> 0.   return 1 + max(leftDepth, rightDepth).   (khud=1 + gehri branch)
+     base : null -> 0.
+     comb : return 1 + max(leftDepth, rightDepth).   (khud=1 + gehri branch)
 
  ▸ INVERT TREE (LC-226) ────────────────────────────────────────
-     base null -> null.   children SWAP + recurse.   return root.
-     ★ POINTER swap (root->left, root->right), NA value: pointer = poori BRANCH side badle (SAHI);
-        value (left->val) = sirf 2 number + leaf pe null->val CRASH (GALAT).   ★ order FREE (swap+recurse independent).
+     base : null -> null.
+     comb : children SWAP + recurse dono -> return root.
+     ★ POINTER swap (root->left, root->right), NA value: pointer = BRANCH side badle; value(left->val) = 2 number + leaf pe null->val CRASH. order FREE.
 
  ▸ SAME TREE (LC-100) ──────────────────────────────────────────
-     base: dono null->true · ek null->false · val alag->false.   warna: isSame(p->left,q->left) && isSame(p->right,q->right).
+     base : dono null->true · ek null->false · val alag->false.
+     comb : isSame(p->left, q->left) && isSame(p->right, q->right).
      ★ COMBINE = && (dono side match ho tabhi true).   (clean base: if(!p||!q) return p==q;)
 
- ▸ SYMMETRIC TREE (LC-101) = Same-Tree + CROSS ─────────────────
-     isSymmetric(root): root null->true; warna compare(root->left, root->right) MIRROR-wise.
-     compare(p,q) = Same-Tree ka base (dono null->true · ek null->false · val alag->false) + CROSS recurse:
-        compare(p->left, q->right) && compare(p->right, q->left).   ★ CROSS = mirror (yehi Same-Tree se EK change).
+ ▸ SYMMETRIC TREE (LC-101)  = SAME-TREE + CROSS ───────────────
+     base : dono null->true · ek null->false · val alag->false.
+     comb : CROSS -> compare(p->left, q->right) && compare(p->right, q->left).   ★ CROSS = mirror (yehi ek change).
+     call : isSymmetric(root) = root null?true : compare(root->left, root->right).
 
-┌── FAMILY: MAX-DEPTH + ek TWIST (return height, ANSWER alag global me) ──
-│ KYUN SAATH: height wapas PARENT ko chahiye -> wo RETURN; asli ANSWER return-value me nahi aata -> global/ref me TRACK. (recurse-PEHLE zaroori.)
+┌── FAMILY: return-ONE + track-ANOTHER (post-order + global) ───
+│ parent ko ek cheez (HEIGHT) chahiye -> wo RETURN; asli ANSWER global/ref me TRACK. recurse-PEHLE zaroori.
 └───────────────────────────────────────────────────────────────
- ▸ DIAMETER (LC-543)  =  MAX-DEPTH + 1 line ─────────────────────
-     height() BILKUL max-depth (return 1 + max(L,R)).  BAS ek line EXTRA:
-        har node pe ->  maxDia = max(maxDia, leftH + rightH).      answer = global maxDia (return NAHI).
-     ★ height return kyun, diameter nahi: parent ko child ki HEIGHT chahiye; diameter byproduct -> global collect.
+ ▸ DIAMETER (LC-543)  = MAX-DEPTH + 1 line ─────────────────────
+     = max-depth height() (return 1+max(L,R)), BAS ek line EXTRA -> har node pe: maxDia = max(maxDia, leftH+rightH).
+     ★ RETURN height (parent ko chahiye); diameter = byproduct -> global maxDia (return nahi).
      ★ maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
 
-┌── FAMILY: return FOUND-node UP (search + bubble-up) ──────────
-│ KYUN SAATH: jise dhundh rahe wo mila to UPAR return karo; jahan DONO taraf se kuch mila = answer.
+┌── FAMILY: search + BUBBLE-UP (found-node upar bhejo) ─────────
+│ jise dhundh rahe wo mila -> UPAR return karo; jahan DONO taraf se kuch mila = answer.
 └───────────────────────────────────────────────────────────────
  ▸ LCA -- Lowest Common Ancestor (LC-236) ──────────────────────
-     INTUITION: wo node jahan p, q ALAG side split hote.
-     base: null->null · root==p||q -> return root.   recurse dono.
-     COMBINE: ek side null -> doosri return; DONO non-null -> ★ root = LCA.  (mechanic: found-node UPAR bhejo.)
+     idea : wo node jahan p, q ALAG side split hote.
+     base : null->null · root==p||q -> return root.
+     comb : recurse dono. ek side null -> doosri return; DONO non-null -> ★ root = LCA.
+
+┌── FAMILY: carry-value DOWN + root-to-LEAF ────────────────────
+│ value NEECHE carry karo (target ghatao / running-sum add); LEAF pe check. combine = OR (koi ek path).
+└───────────────────────────────────────────────────────────────
+ ▸ PATH SUM (LC-112) ───────────────────────────────────────────
+     idea : root-se-LEAF sum == target? value NEECHE carry (target me se ghatao).
+     base : null -> false.
+     leaf : (!root->left && !root->right) -> return target == root->val.
+     comb : hasPathSum(left, t-val) || hasPathSum(right, t-val).
+     ★★ TRAP: LEAF = !root->left && !root->right (ACTUAL bachche), NA "!left && !right" (recursion-result) -> warna non-leaf pe galat match. [test-pass != code-sahi]
 ```
 
 ---
