@@ -733,8 +733,8 @@
         value (left->val) = sirf 2 number + leaf pe null->val CRASH (GALAT).   ★ order FREE (swap+recurse independent).
 
  ▸ SAME TREE (LC-100) ──────────────────────────────────────────
-     BASE: dono null=true · ek null=false · val alag=false.   COMBINE = isSame(L,L) && isSame(R,R).  (★ && = DONO side match zaroori)
-     (clean base one-liner: if(!p || !q) return p==q;)
+     base: dono null->true · ek null->false · val alag->false.   warna: isSame(p->left,q->left) && isSame(p->right,q->right).
+     ★ COMBINE = && (dono side match ho tabhi true).   (clean base: if(!p||!q) return p==q;)
 
 ┌── FAMILY: MAX-DEPTH + ek TWIST (return height, ANSWER alag global me) ──
 │ KYUN SAATH: height wapas PARENT ko chahiye -> wo RETURN; asli ANSWER return-value me nahi aata -> global/ref me TRACK. (recurse-PEHLE zaroori.)
