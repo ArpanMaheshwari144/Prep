@@ -190,10 +190,14 @@ debit hua? credit hua? poora ho gaya bas RESPONSE kho gaya?
        Kuch karne se PEHLE "PENDING" likho (intent).
        -> crash ke baad "yeh PENDING thi" pata -> resolve. Kabhi GUM nahi.
 
-   (2) RECONCILIATION (background job):
+   (2) RECONCILIATION (background job) = PULL / batch:
        PENDING/atke payments dhoondho -> bank se POOCHO "yeh hui?"
           haan -> SUCCESS ; nahi -> retry (idempotency safe) ya FAILED + refund
        -> koi payment LIMBO mein nahi
+
+   (2b) WEBHOOK (gateway PUSH — real-time) [24-Jul mock me add]:
+       gateway KHUD tumhe CALL-BACK kare jab payment complete ho -> turant status update.
+       -> PUSH (webhook, instant) + PULL (reconciliation, safety-net agar webhook miss ho) DONO use karo.
 
    (3) IDEMPOTENCY + retry: retry safe (double-process rokta)
 ```
