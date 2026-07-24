@@ -753,6 +753,14 @@
         har node pe ->  maxDia = max(maxDia, leftH + rightH).      answer = global maxDia (return NAHI).
      ★ height return kyun, diameter nahi: parent ko child ki HEIGHT chahiye; diameter byproduct -> global collect.
      ★ maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
+
+┌── FAMILY: return FOUND-node UP (search + bubble-up) ──────────
+│ KYUN SAATH: jise dhundh rahe wo mila to UPAR return karo; jahan DONO taraf se kuch mila = answer.
+└───────────────────────────────────────────────────────────────
+ ▸ LCA -- Lowest Common Ancestor (LC-236) ──────────────────────
+     INTUITION: wo node jahan p, q ALAG side split hote.
+     base: null->null · root==p||q -> return root.   recurse dono.
+     COMBINE: ek side null -> doosri return; DONO non-null -> ★ root = LCA.  (mechanic: found-node UPAR bhejo.)
 ```
 
 ---
