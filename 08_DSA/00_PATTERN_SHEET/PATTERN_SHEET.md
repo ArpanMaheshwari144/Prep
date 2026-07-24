@@ -737,8 +737,9 @@
      ★ COMBINE = && (dono side match ho tabhi true).   (clean base: if(!p||!q) return p==q;)
 
  ▸ SYMMETRIC TREE (LC-101) = Same-Tree + CROSS ─────────────────
-     helper isMirror(a,b): base wahi (dono null->true · ek null->false · val alag->false). warna CROSS:
-        isMirror(a->left, b->right) && isMirror(a->right, b->left).   ★ CROSS = mirror.   call: isMirror(root->left, root->right).
+     isSymmetric(root): root null->true; warna compare(root->left, root->right) MIRROR-wise.
+     compare(p,q) = Same-Tree ka base (dono null->true · ek null->false · val alag->false) + CROSS recurse:
+        compare(p->left, q->right) && compare(p->right, q->left).   ★ CROSS = mirror (yehi Same-Tree se EK change).
 
 ┌── FAMILY: MAX-DEPTH + ek TWIST (return height, ANSWER alag global me) ──
 │ KYUN SAATH: height wapas PARENT ko chahiye -> wo RETURN; asli ANSWER return-value me nahi aata -> global/ref me TRACK. (recurse-PEHLE zaroori.)
