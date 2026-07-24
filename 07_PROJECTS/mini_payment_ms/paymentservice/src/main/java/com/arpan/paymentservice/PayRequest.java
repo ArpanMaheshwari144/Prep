@@ -18,6 +18,6 @@ package com.arpan.paymentservice;
 //     public void setAmount(double amount) { this.amount = amount; }
 // }
 
-// ★ mera point: record class jaisa hi hai -- bas SETTERS nahi hote -> IMMUTABLE (value ek baar banti, phir badal nahi sakti).
-//   getters/constructor auto ban jaate; use waise hi hota (data carry). setters isliye nahi kyunki record badalne ke liye bana hi nahi.
+// record class jaisa hi hai -- bas SETTERS nahi hote -> IMMUTABLE (value ek baar banti, phir badal nahi sakti).
+// getters/constructor auto ban jaate; use waise hi hota (data carry). setters isliye nahi kyunki record badalne ke liye bana hi nahi.
 public record PayRequest(String orderId, double amount) {}
