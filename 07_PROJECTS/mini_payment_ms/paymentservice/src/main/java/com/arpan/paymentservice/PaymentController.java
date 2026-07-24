@@ -19,7 +19,10 @@ public class PaymentController {
 
     @PostMapping("/pay")
     public String pay(@RequestBody PayRequest req) {
-        Payment saved = service.pay(req.getOrderId(), req.getAmount());   // service ko values do, poora req nahi
+        // ★ req.orderId() / req.amount() -- "get" BINA. KYUN? PayRequest ab record hai -> accessor getOrderId() se orderId() ban gaya.
+        //   (purana class-version: req.getOrderId(), req.getAmount())
+        Payment saved = service.pay(req.orderId(), req.amount());   // service ko values do, poora req nahi
+
         return "Payment DONE for order " + saved.getOrderId()
                + " (amount " + saved.getAmount() + "), paymentId=" + saved.getId();
     }
