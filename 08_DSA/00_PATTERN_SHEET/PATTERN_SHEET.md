@@ -725,10 +725,12 @@
    Q1  "root->left" likhu ya "left"?
         root->left / root->right = ASLI bachche (structure)  -> inme RECURSE · LEAF-check (!root->left && !root->right) · SWAP (invert)
         left / right             = recursion ka RETURN (jawab) -> COMBINE me use
-   Q1b RETURN TYPE = problem kya maangta (aur 'left'/'right' variable USI type ka):
-        "hai kya/match/possible?" -> bool       (bool left = ...)   -- Same-Tree, Symmetric, Path-Sum
-        "wo NODE do"              -> TreeNode*   (TreeNode* left=..) -- LCA, Invert
-        "kitna/gehrai/sum/count"  -> int         (int left = ...)    -- Max-Depth, Diameter
+   Q1b RETURN TYPE = problem kya maangta (agar variable banao to USI type ka):
+        "hai kya/match/possible?" -> bool        -- Same-Tree, Symmetric, Path-Sum
+        "wo NODE do"              -> TreeNode*    -- LCA, Invert
+        "kitna/gehrai/sum/count"  -> int          -- Max-Depth, Diameter
+        ★ variable ZAROORI NAHI: value EK baar use -> DIRECT call return me (path-sum: return f||f · same-tree: f&&f).
+          value 2 baar/alag chahiye -> TAB variable banao (diameter: left,right -> maxDia AUR return, dono jagah).
    Q2  COMBINE me kaunsa operator? (question se pata):
         "gehra/bada" -> max  ·  "dono side match" -> &&  ·  "koi ek path" -> ||  ·  "wo node dhundo" -> node return
         ★ kuch Q me base ke ALAWA ek special CONDITION: path-sum -> LEAF pe check · LCA -> root==p||q. (jahan zaroorat, wahan lagao.)
