@@ -720,8 +720,10 @@
  BROAD IDEA: har tree-Q = RECURSION on TreeNode (val + left + right). 3 cheez:
    BASE (null pe kuch return)  ·  dono taraf RECURSE  ·  phir COMBINE.
  ★ ORDER: kaam recursion-RESULT pe depend kare -> recurse-PEHLE (post-order); independent -> free.
- ★ 3 DFS TRAVERSALS (LC-144/94/145) -- recurse DONO same, sirf VISIT [res.push_back(val)] ki JAGAH badalti:
-    PRE = root->L->R (visit PEHLE) · IN = L->root->R (BEECH) · POST = L->R->root (BAAD).  [pre/in/post = node-visit ki POSITION]
+ ★ 3 DFS TRAVERSALS (LC-144/94/145) -- teeno SAME recursion, sirf VISIT [res.push_back(val)] ki JAGAH badalti:
+      PREORDER  : VISIT -> left -> right      (root PEHLE)
+      INORDER   : left -> VISIT -> right      (root BEECH me)
+      POSTORDER : left -> right -> VISIT      (root BAAD me)
 
 ┌── FAMILY: recurse + COMBINE (answer = return-value) ──────────
 │ KYUN SAATH: base=null; left+right recurse -> jo COMBINE karo WAHI return. answer seedha return me aata.

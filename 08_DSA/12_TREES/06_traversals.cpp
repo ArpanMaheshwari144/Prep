@@ -1,11 +1,13 @@
 // ============================================================
 // TREE TRAVERSALS — inorder / preorder / postorder   [TREES #6 · DFS fundamentals]
 // ============================================================
-// teeno DFS hain. FARAK sirf ek: node ko VISIT (res.push_back(val)) KAB karte ho —
-//   PREORDER   : ROOT -> Left -> Right      (visit PEHLE, phir recurse)
-//   INORDER    : Left -> ROOT -> Right      (left recurse, visit BEECH me, right recurse)
-//   POSTORDER  : Left -> Right -> ROOT      (dono recurse, visit BAAD me)
-// -> yehi "ORDER MATTERS" (jaise diameter) — bas visit-line ki JAGAH badalti, recurse wahi.
+// ---- APPROACH ----
+// teeno = SAME recursion (base: if(!root) return;  ·  left recurse  ·  right recurse).
+// SIRF ek line -- VISIT = res.push_back(root->val) -- ki JAGAH badalti, aur wahi ORDER decide karti:
+//   PREORDER   : VISIT -> left -> right      (root PEHLE)
+//   INORDER    : left -> VISIT -> right      (root BEECH me)
+//   POSTORDER  : left -> right -> VISIT      (root BAAD me)
+// ★ recurse dono HAMESHA same -- sirf VISIT-position badalti. (yehi "order matters", jaise diameter.)
 //
 //        1
 //       / \
