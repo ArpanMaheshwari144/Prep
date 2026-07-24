@@ -101,6 +101,13 @@
 ```
    record -> compiler sab auto banata, accessor = orderId()  (no "get")
    class  -> tu khud getters likhta, accessor = getOrderId()  (with "get")
+
+   ★ LIVE EXAMPLE (project me KIYA): PayRequest DTO ko class -> RECORD banaya.
+       public record PayRequest(String orderId, double amount) {}   // 1 line, ctor+accessor+equals AUTO
+     - KYUN: DTO immutable data-carrier -> record perfect + boilerplate gaya.
+     - @RequestBody se JSON -> Spring/Jackson record me daal deta (request-body chalega).
+     - NUANCE: accessor "get" bina -> orderId()/amount() -> caller (PaymentController) req.orderId() me update kiya.
+     - Order/Payment ENTITY = class hi rahe (JPA ko no-arg ctor + setters chahiye, record immutable).
 ```
 
 ## 7b. @FeignClient — RestTemplate ka clean/declarative version
