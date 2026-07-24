@@ -725,12 +725,22 @@
    Q1  "root->left" likhu ya "left"?
         root->left / root->right = ASLI bachche (structure)  -> inme RECURSE · LEAF-check (!root->left && !root->right) · SWAP (invert)
         left / right             = recursion ka RETURN (jawab) -> COMBINE me use
-   Q1b RETURN TYPE = problem kya maangta (agar variable banao to USI type ka):
-        "hai kya/match/possible?" -> bool        -- Same-Tree, Symmetric, Path-Sum
-        "wo NODE do"              -> TreeNode*    -- LCA, Invert
-        "kitna/gehrai/sum/count"  -> int          -- Max-Depth, Diameter
-        ★ variable ZAROORI NAHI: value EK baar use -> DIRECT call return me (path-sum: return f||f · same-tree: f&&f).
-          value 2 baar/alag chahiye -> TAB variable banao (diameter: left,right -> maxDia AUR return, dono jagah).
+   Q1b RETURN TYPE = problem kya maangta -> variable ya DIRECT (asli code se):
+
+       bool (hai kya/match?)  -- value 1 baar -> DIRECT call, koi variable NAHI:
+           return hasPathSum(root->left, t-val) || hasPathSum(root->right, t-val);   // path-sum
+           return isSame(p->left, q->left) && isSame(p->right, q->right);            // same-tree
+
+       TreeNode* (wo node do) -- LCA (variable, dono side check karne):
+           TreeNode* left  = lca(root->left, p, q);
+           TreeNode* right = lca(root->right, p, q);
+           if(!left) return right;  if(!right) return left;  return root;
+
+       int (kitna/gehrai)     -- value DOBARA chahiye -> variable ZAROORI:
+           int left  = height(root->left);
+           int right = height(root->right);
+           maxDia = max(maxDia, left + right);   // <- yahan left, right chahiye
+           return 1 + max(left, right);          // <- aur yahan phir -> isliye variable
    Q2  COMBINE me kaunsa operator? (question se pata):
         "gehra/bada" -> max  ·  "dono side match" -> &&  ·  "koi ek path" -> ||  ·  "wo node dhundo" -> node return
         ★ kuch Q me base ke ALAWA ek special CONDITION: path-sum -> LEAF pe check · LCA -> root==p||q. (jahan zaroorat, wahan lagao.)
