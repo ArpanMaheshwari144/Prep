@@ -731,6 +731,15 @@
         answer seedha ban raha -> RETURN.   answer alag (parent ko height chahiye) -> height RETURN + answer GLOBAL (diameter)
    Q4  value UPAR le jau ya NEECHE?
         answer subtree se banti (height/sum) -> UPAR return.   target/condition path pe -> value NEECHE carry (path-sum)
+ ★ VISUAL -- root->left  vs  left (aankhon se):
+              [root]
+              /    \
+       root->left   root->right     <- ASLI child NODES (structure/POINTER). recursion me BHEJTE ho (INPUT).
+              |            |
+        left = f(root->left) ;  right = f(root->right)
+              v            v
+         (JAWAB value)  (JAWAB value)   <- recursion jo WAPAS deta (VALUE). COMBINE me use (OUTPUT).
+   => root->left = child NODE (pointer -- BHEJO)   ·   left = uska ANSWER (value -- MILA).
 
 ┌── FAMILY: recurse + COMBINE (answer = return-value) ──────────
 │ base=null; left+right recurse -> jo COMBINE karo WAHI return. answer seedha return me aata.
