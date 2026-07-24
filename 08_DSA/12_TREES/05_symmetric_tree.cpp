@@ -13,11 +13,17 @@
 //   [1]    -> true
 //   null   -> true
 // ============================================================
-// ---- APPROACH ----
-//  ★ = SAME-TREE + ek CHANGE (recognize + adapt): tree ko apne MIRROR se compare (fold beech se -> dono half overlap).
-//  helper isMirror(a, b): base wahi -> dono null=true · ek null=false · val alag=false.
-//    warna CROSS recurse:  isMirror(a->left, b->right) && isMirror(a->right, b->left).   (★ CROSS = mirror)
-//  call: isSymmetric(root) = isMirror(root->left, root->right).
+// ---- APPROACH ----  (step-by-step, jaise code kiya)
+//  = SAME-TREE + ek CHANGE (recognize + adapt): tree ko apne MIRROR se compare (fold beech se -> dono half overlap).
+//
+//  isSymmetric(root):
+//     1. root NULL -> return true
+//     2. warna     -> return isSameTree(root->left, root->right)   (left & right ko mirror-compare)
+//
+//  isSameTree(p, q)  [ise reuse kiya, par CROSS ke saath = mirror-compare]:
+//     base: dono null->true · ek null->false · val alag->false
+//     warna CROSS recurse:  isSameTree(p->left, q->right) && isSameTree(p->right, q->left)
+//  ★ CROSS = mirror (p ka LEFT <-> q ka RIGHT; p ka RIGHT <-> q ka LEFT). yehi Same-Tree se EK change.
 // ============================================================
 
 #include <bits/stdc++.h>
