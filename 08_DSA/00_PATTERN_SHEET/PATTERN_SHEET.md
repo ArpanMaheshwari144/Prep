@@ -721,13 +721,16 @@
  ★ ORDER: kaam recursion-RESULT pe depend kare -> recurse-PEHLE (post-order); independent -> free.
  ★ 3 DFS TRAVERSALS (LC-144/94/145): teeno SAME recursion, sirf VISIT [res.push_back] ki JAGAH badalti ->
       PRE = VISIT->left->right (root pehle) · IN = left->VISIT->right (beech) · POST = left->right->VISIT (baad).
- ★★ DECISION-GUIDE (Arpan-derived 24-Jul -- 4 sawaal se koi bhi tree-Q likh jaata):
-   1. root->left/right (CHILD-POINTER, actual structure) vs left/right (RECURSION-RESULT, jo laut ke aaya):
-        root->left/right -> recurse-INTO · LEAF-check (!root->left && !root->right) · SWAP (invert).
-        left/right       -> COMBINE karne ko (result use).
-   2. COMBINE = question ka matlab:  max (gehra/bada) · && (DONO match) · || (KOI ek path) · node (dhundhna=LCA).
-   3. RETURN vs TRACK:  simple answer -> return-value me.  answer alag/parent-ko-aur-chahiye -> RETURN one + global TRACK (diameter).
-   4. carry DOWN vs return UP:  condition path pe depend (target) -> value NEECHE carry.  answer subtree se banti -> UPAR return.
+ ★★ DECISION-GUIDE (Arpan-derived -- 4 simple sawaal, koi tree-Q likhne se pehle):
+   Q1  "root->left" likhu ya "left"?
+        root->left / root->right = ASLI bachche (structure)  -> inme RECURSE · LEAF-check (!root->left && !root->right) · SWAP (invert)
+        left / right             = recursion ka RETURN (jawab) -> COMBINE me use
+   Q2  COMBINE me kaunsa operator? (question se pata):
+        "gehra/bada" -> max  ·  "dono side match" -> &&  ·  "koi ek path" -> ||  ·  "wo node dhundo" -> node return
+   Q3  answer RETURN karu ya GLOBAL me rakhu?
+        answer seedha ban raha -> RETURN.   answer alag (parent ko height chahiye) -> height RETURN + answer GLOBAL (diameter)
+   Q4  value UPAR le jau ya NEECHE?
+        answer subtree se banti (height/sum) -> UPAR return.   target/condition path pe -> value NEECHE carry (path-sum)
 
 ┌── FAMILY: recurse + COMBINE (answer = return-value) ──────────
 │ base=null; left+right recurse -> jo COMBINE karo WAHI return. answer seedha return me aata.
