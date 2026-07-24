@@ -725,8 +725,13 @@
    Q1  "root->left" likhu ya "left"?
         root->left / root->right = ASLI bachche (structure)  -> inme RECURSE · LEAF-check (!root->left && !root->right) · SWAP (invert)
         left / right             = recursion ka RETURN (jawab) -> COMBINE me use
+   Q1b RETURN TYPE = problem kya maangta (aur 'left'/'right' variable USI type ka):
+        "hai kya/match/possible?" -> bool       (bool left = ...)   -- Same-Tree, Symmetric, Path-Sum
+        "wo NODE do"              -> TreeNode*   (TreeNode* left=..) -- LCA, Invert
+        "kitna/gehrai/sum/count"  -> int         (int left = ...)    -- Max-Depth, Diameter
    Q2  COMBINE me kaunsa operator? (question se pata):
         "gehra/bada" -> max  ·  "dono side match" -> &&  ·  "koi ek path" -> ||  ·  "wo node dhundo" -> node return
+        ★ kuch Q me base ke ALAWA ek special CONDITION: path-sum -> LEAF pe check · LCA -> root==p||q. (jahan zaroorat, wahan lagao.)
    Q3  answer RETURN karu ya GLOBAL me rakhu?
         answer seedha ban raha -> RETURN.   answer alag (parent ko height chahiye) -> height RETURN + answer GLOBAL (diameter)
    Q4  value UPAR le jau ya NEECHE?
