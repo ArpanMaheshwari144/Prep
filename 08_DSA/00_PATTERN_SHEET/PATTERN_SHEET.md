@@ -740,6 +740,14 @@
               v            v
          (JAWAB value)  (JAWAB value)   <- recursion jo WAPAS deta (VALUE). COMBINE me use (OUTPUT).
    => root->left = child NODE (pointer -- BHEJO)   ·   left = uska ANSWER (value -- MILA).
+ ★ FLOW -- recursion kaise chalti (neeche jaati -> JAWAB upar laati):
+        [A]         (1) CALL neeche jaati:  f(A) -> f(B) -> f(D) -> f(null) [yahan RUKTI = base]
+       /   \        (2) upar BUBBLE hota:   f(null)=base -> f(D) -> f(B) -> f(A) = ANSWER
+     [B]   [C]          (har node apne left/right ka jawab le ke, APNA jawab UPAR bhejta)
+     /
+   [D]        -> ek branch POORI neeche (null/leaf) tak -> phir DOOSRI. neeche se jawab bubble -> root pe final.
+   -> ★ TRUST ONE LEVEL: poora trace mat karo. maano left/right ka jawab MIL gaya -> bas "is node pe kya karu?" socho.
+   -> ★ debugger = recursion ka COPY-PEN (call-stack dekhne ko, LEGIT). iterative=paper, recursion=debugger.
 
 ┌── FAMILY: recurse + COMBINE (answer = return-value) ──────────
 │ base=null; left+right recurse -> jo COMBINE karo WAHI return. answer seedha return me aata.
