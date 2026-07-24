@@ -740,22 +740,26 @@
               v            v
          (JAWAB value)  (JAWAB value)   <- recursion jo WAPAS deta (VALUE). COMBINE me use (OUTPUT).
    => root->left = child NODE (pointer -- BHEJO)   ·   left = uska ANSWER (value -- MILA).
- ★ FLOW -- recursion kaise chalti (NEECHE jaati -> phir JAWAB UPAR laati):
+ ★ FLOW -- root->left / left recursion me KAHAN aate (ye samajh):
 
-              [A]  <- root
-             /   \
-           [B]   [C]
-           /
-         [D]
+        [A]            "root" = jis node pe ABHI khade ho (har call pe badalta).
+       /   \           root->left / root->right = us node ke DO bachche (POINTER).
+     [B]   [C]         left / right             = un bachchon se aaya JAWAB (f() ka return).
+     /
+   [D]
 
-   (1) CALL neeche GHUSTI, ek branch POORI null tak:
-              f(A)  -->  f(B)  -->  f(D)  -->  f(null)          <-- yahan RUKTI (base)
+   NEECHE jaate waqt -- har node apne root->left ko CALL karta:
+     A pe:  left = f(root->left)  ->  A ka root->left = B    ->  CALL f(B)
+     B pe:  left = f(root->left)  ->  B ka root->left = D    ->  CALL f(D)
+     D pe:  left = f(root->left)  ->  D ka root->left = null ->  f(null) = BASE, ruko
 
-   (2) null se JAWAB peeche UPAR bubble (har node apna jawab upar bhejta):
-              f(null)  -->  f(D)  -->  f(B)  -->  f(A) = ANSWER
-                base       jawab      jawab      jawab
+   UPAR aate waqt -- jo RETURN hua, wahi UPAR wale ka 'left' ban jaata:
+     f(null) = base      -->  ye D ka  left
+     f(D) ka jawab       -->  ye B ka  left
+     f(B) ka jawab       -->  ye A ka  left   ->  A apna answer banata (left + right se)
 
-   -> ek branch POORI neeche tak -> phir DOOSRI -> jawab neeche se upar chadhta -> root pe FINAL.
+   => root->left = "current node ka child" (POINTER -- CALL karo, neeche bhejo)
+      left       = "us child se jo RETURN aaya" (VALUE -- use karo, combine karo)
    -> ★ TRUST ONE LEVEL: poora trace mat karo. maano left/right ka jawab MIL gaya -> bas "is node pe kya karu?" socho.
    -> ★ debugger = recursion ka COPY-PEN (call-stack dekhne, LEGIT). iterative=paper, recursion=debugger.
 
