@@ -731,37 +731,35 @@
         answer seedha ban raha -> RETURN.   answer alag (parent ko height chahiye) -> height RETURN + answer GLOBAL (diameter)
    Q4  value UPAR le jau ya NEECHE?
         answer subtree se banti (height/sum) -> UPAR return.   target/condition path pe -> value NEECHE carry (path-sum)
- ★ VISUAL -- root->left  vs  left (aankhon se):
-              [root]
-              /    \
-       root->left   root->right     <- ASLI child NODES (structure/POINTER). recursion me BHEJTE ho (INPUT).
-              |            |
-        left = f(root->left) ;  right = f(root->right)
-              v            v
-         (JAWAB value)  (JAWAB value)   <- recursion jo WAPAS deta (VALUE). COMBINE me use (OUTPUT).
-   => root->left = child NODE (pointer -- BHEJO)   ·   left = uska ANSWER (value -- MILA).
- ★ FLOW -- root->left / left recursion me KAHAN aate (ye samajh):
+ ★ CORE -- GENERIC tree-recursion (har tree-Q bas yehi 4 line; sirf BASE + COMBINE badalte):
+       solve(node):
+         if (node == NULL) return BASE;      // (1) base  -> null pe ruko
+         left  = solve(node->left);          // (2) left bachche ka jawab MAANGO
+         right = solve(node->right);         // (3) right bachche ka jawab MAANGO
+         return COMBINE(left, right);        // (4) apna jawab banao -> parent ko DO
 
-        [A]            "root" = jis node pe ABHI khade ho (har call pe badalta).
-       /   \           root->left / root->right = us node ke DO bachche (POINTER).
-     [B]   [C]         left / right             = un bachchon se aaya JAWAB (f() ka return).
-     /
-   [D]
+   ★★ 2 shabd jo poori recursion kholte:
+        node->left  =  NEECHE bhejo   (child ko solve karne bhej diya -- CALL)
+        left        =  jo VALUE wapas aayi   (us child ka jawab -> ab COMBINE me use)
 
-   NEECHE jaate waqt -- har node apne root->left ko CALL karta:
-     A pe:  left = f(root->left)  ->  A ka root->left = B    ->  CALL f(B)
-     B pe:  left = f(root->left)  ->  B ka root->left = D    ->  CALL f(D)
-     D pe:  left = f(root->left)  ->  D ka root->left = null ->  f(null) = BASE, ruko
+ ★ FLOW -- calls NEECHE jaati, JAWAB upar BUBBLE hota:
+        [A]
+       /   \
+     [B]   [C]
+     /  \
+   [D]  [E]
 
-   UPAR aate waqt -- jo RETURN hua, wahi UPAR wale ka 'left' ban jaata:
-     f(null) = base      -->  ye D ka  left
-     f(D) ka jawab       -->  ye B ka  left
-     f(B) ka jawab       -->  ye A ka  left   ->  A apna answer banata (left + right se)
+   solve(A)
+     line2:  left  = solve(B) ──► neeche gaya
+                  solve(B):  left=solve(D), right=solve(E) ─► DONO ka COMBINE ═► B ka jawab ─► A ki 'left'
+     line3:  right = solve(C) ──► neeche gaya
+                  solve(C):  ... ─► COMBINE ═► C ka jawab ─► A ki 'right'
+     line4:  return COMBINE(left, right) ═════════════════► FINAL ANSWER
 
-   => root->left = "current node ka child" (POINTER -- CALL karo, neeche bhejo)
-      left       = "us child se jo RETURN aaya" (VALUE -- use karo, combine karo)
+   -> har node SIRF apne 2 bachchon ka jawab leta -> apna banata -> upar deta. poora tree ek saath NAHI.
+   -> null pe BASE -> phir jawab neeche se upar chadhta -> root pe final.
    -> ★ TRUST ONE LEVEL: poora trace mat karo. maano left/right ka jawab MIL gaya -> bas "is node pe kya karu?" socho.
-   -> ★ debugger = recursion ka COPY-PEN (call-stack dekhne, LEGIT). iterative=paper, recursion=debugger.
+   -> ★ debugger = recursion ka copy-pen (call-stack dekhne, LEGIT). iterative=paper, recursion=debugger.
 
 ┌── FAMILY: recurse + COMBINE (answer = return-value) ──────────
 │ base=null; left+right recurse -> jo COMBINE karo WAHI return. answer seedha return me aata.
