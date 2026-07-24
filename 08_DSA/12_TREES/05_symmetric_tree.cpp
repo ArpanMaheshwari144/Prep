@@ -60,7 +60,7 @@ bool isSameTree(TreeNode *p, TreeNode *q)
     }
     else if (p->val == q->val)
     {
-        // value SAME -> left & right recurse karke dekho (DONO side match hone chahiye)
+        // value SAME -> CROSS recurse (MIRROR): p->left ko q->RIGHT se, p->right ko q->LEFT se. dono match zaroori.
         return isSameTree(p->left, q->right) && isSameTree(p->right, q->left);
     }
     return false;
