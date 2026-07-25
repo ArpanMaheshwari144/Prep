@@ -1,7 +1,7 @@
 // ============================================================
 // BINARY TREE ZIGZAG LEVEL ORDER TRAVERSAL — (LeetCode 103, Medium)   [TREES #11]
 // ============================================================
-// level-order jaisा -- par direction ZIGZAG (alternate):
+// level-order jaisa -- par direction ZIGZAG (alternate):
 //   level 0 -> LEFT-to-RIGHT
 //   level 1 -> RIGHT-to-LEFT
 //   level 2 -> LEFT-to-RIGHT ... (aise alternate)

@@ -887,7 +887,7 @@
      ★ FIFO L-to-R dequeue -> i == sz-1 = sabse right.  (left-side-view chahiye -> i == 0 le lo.)
 
  ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse ────────
-     idea : level-order jaisा, par direction ALTERNATE (level 0: L->R · 1: R->L · 2: L->R ...).
+     idea : level-order jaisa, par direction ALTERNATE (level 0: L->R · 1: R->L · 2: L->R ...).
      change: level HAMESHA L-to-R banao (normal) -> ek levelCounter rakho -> if (levelCounter % 2 != 0) reverse(level).
      ★ even level (0,2..) = seedha · odd level (1,3..) = ULTA.  (alt: front-insert/deque, par reverse simplest.)
 ```
