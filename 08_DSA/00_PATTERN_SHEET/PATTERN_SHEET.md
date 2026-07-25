@@ -945,6 +945,16 @@
      idea : level-order jaisa, par direction ALTERNATE (level 0: L->R · 1: R->L · 2: L->R ...).
      change: level HAMESHA L-to-R banao (normal) -> ek levelCounter rakho -> if (levelCounter % 2 != 0) reverse(level).
      ★ even level (0,2..) = seedha · odd level (1,3..) = ULTA.  (alt: front-insert/deque, par reverse simplest.)
+
+┌── FAMILY: BST (Binary Search Tree -- left < node < right) ────
+│ ★ BST ka INORDER (left->node->right) = SORTED (ascending). yehi BST ki asli TRICK -- "sorted/kth chahiye? -> INORDER".
+└───────────────────────────────────────────────────────────────
+
+ ▸ KTH SMALLEST IN BST (LC-230) ────────────────────────────────
+     idea : BST inorder = SORTED -> kth smallest = inorder ka k-va element.
+     steps: inorder(root) -> sorted vector 'ans' -> return ans[k-1].
+     ★ k-1 TRAP: k 1-based (1st smallest = k=1), vector 0-based -> index = k-1.
+     ★ optimize: k-va pe EARLY-STOP (counter, k-va node pe ruko) -- collect-all bhi gate-theek.
 ```
 
 ---
