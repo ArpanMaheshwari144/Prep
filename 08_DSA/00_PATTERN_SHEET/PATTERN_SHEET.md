@@ -827,6 +827,7 @@
 
    -> har node SIRF apne 2 bachchon ka jawab leta -> apna banata -> upar deta. poora tree ek saath NAHI.
    -> null pe BASE -> phir jawab neeche se upar chadhta -> root pe final.
+
    ★★ RECURSION DEBUG (trace POORA mat karo -- 3 tool, copy-pen deep-recursion ke liye bana hi nahi):
 
      1. TRUST ONE LEVEL: maano left/right ka jawab MIL gaya -> bas "is node pe kya karu?" socho. deep me mat jhaanko.
