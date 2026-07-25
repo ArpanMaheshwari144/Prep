@@ -63,7 +63,7 @@ bool solve(TreeNode *root, int mini, int maxi)
     bool left = solve(root->left, mini, root->val);   // LEFT: node se CHHOTA hona -> naya maxi = root->val
     bool right = solve(root->right, root->val, maxi);  // RIGHT: node se BADA hona -> naya mini = root->val
 
-    // system debug syetme noice tbaks claude code love you mere bhi meri jaan tu meri jaan hia
+    // --- DEBUG-PRINT (recursion dekhne ko; final me hata do): har node pe left/right/val/mini/maxi ---
     // cout << "left " << left << " right " << right << " rootval " << root->val << " mini " << mini << " maxi " << maxi << endl;
 
     return left && right; // dono side valid ho TABHI valid BST
