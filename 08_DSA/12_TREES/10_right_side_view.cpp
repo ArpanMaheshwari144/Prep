@@ -52,9 +52,11 @@ vector<int> rightSideView(TreeNode *root)
             TreeNode *curr = q.front(); // front node nikaalo (FIFO -> jo pehle aaya)
             q.pop();
 
-            // ★ har level ka LAST (right-most) node chahiye. for-loop i: 0 -> sz-1 me nodes LEFT-to-RIGHT nikalte
-            //   -> aakhri wala (i == sz-1) = is level ka sabse RIGHT = daaye se jo dikhta.
-            //   (0-based: sz node -> index 0..sz-1 -> last index = sz-1)
+            // ★ har level ka LAST (right-most) node chahiye = daaye se jo dikhta. nodes LEFT-to-RIGHT nikalte hain.
+            //   2 tarah se socho (DONO sahi, same node):
+            //     (a) queue-image, 1-based (human ginti): last = sz-va element (position sz).  <- Arpan wala frame
+            //     (b) code, loop 'i' 0-based (i 0 se shuru): last = i == sz-1.                 <- code wala frame
+            //   yaani teri "position sz" (1-based) = code ka "i == sz-1" (0-based) -> wahi aakhri node.
             if (i == sz - 1)
             {
                 ans.push_back(curr->val);
