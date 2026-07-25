@@ -50,7 +50,7 @@
               profiles · Hibernate(7: N+1/lazy-eager/dirty-check/L1/cascade/mappings) · Docker · K8s (6/6).
    PROJECT    ✓ mini_payment_ms — 4 microservices (gateway+order+payment+notification): Feign(sync) · SAGA · Kafka(async, docker broker) ·
               idempotency (check-then-act, bug-fixed) · Circuit-Breaker(Resilience4j, 3-state) · API-Gateway(routing) · DB-per-service · kafka-ui.
-              LEARNINGS.md + FULL SOURCE CODE (20 java files). + todoapp. -> ★★ PROJECT-REVISE ACTIVE (24-Jul: topics 0-6 done via revise-mode — Overall-Flow/microservice/RestTemplate/DB-per-service/HikariCP/boilerplate/getId-bug; bacha 7-onwards: record/Feign/Saga/Gateway/Kafka/idempotency/CircuitBreaker).
+              LEARNINGS.md + FULL SOURCE CODE (20 java files). + todoapp. -> ★★ PROJECT-REVISE ACTIVE (25-Jul: topics 0-6 + record-vs-class + 7b Feign + 7c SAGA + 7d Gateway + 7e Kafka DONE via revise-mode; bacha: 7f Kafka-queue-location + 7g Idempotency + 7h Circuit-Breaker + 8 gitignore + Feign-version). ★ live-change: PayRequest DTO class→record (Arpan khud, run-verified).
    LLD        ✓ 11 designs IN CODE (parking/bms/atm/elevator/hotel...). 5 revise-swept. FORWARD = HLD-jaisa MOCK + ★ 1-2 design COLD-REDO (jaise HashMap→HashSet ek baar sahi karke code-verify). gap = SOLID/pattern ARTICULATE.
    DSA        ✓ ~12 PATTERNS (sheet family-boxed, ~700 line, "gate ki chaabi") + ~70 problems. REVISE mode + Trees STARTED (see §4).
    BEHAVIORAL ✓ 5 STAR (HikariCP/WAF/Doximity/Mentoring/Failure-JDK — all competencies). done bol-ke; ab reps.
@@ -82,7 +82,12 @@
       - Claude ACTUAL note/code dikhata (fabricate NAHI); Arpan padh ke apni copy pe notes; STORY + code dono ready.
       - code mapping: idempotency→PaymentService.java · Feign→PaymentClient.java · Saga+CircuitBreaker→OrderService.java · Kafka-consumer→NotificationListener.java · Gateway→api-gateway/application.yml.
 
-   ★ TREES/GRAPH/DP: Trees STARTED (23-Jul). continue easy → phir Graph, DP, Backtracking, Heap, Intervals (finite ~5-6 pattern bache — sheet CONVERGE karti, ~70% done).
+   ★ TREES/GRAPH/DP: Trees ab 11 problems (25-Jul: recursion-CORE khula + BFS family — level-order/right-view/zigzag near-transfer solo). continue → phir Graph, DP, Backtracking, Heap, Intervals (finite ~5-6 pattern bache — sheet CONVERGE karti, ~70% done).
+
+   ★★ REVISE-MODE ROADMAP (25-Jul, Arpan-set — project-revise ke BAAD, SAME hand-note mode, IN ORDER):
+      07_PROJECTS (chal raha, 7f-onwards bacha) → 05_INFRA_DEEP → 06_COMPARES → 09_DATABASE → 04_HLD/FOUNDATIONS (designs NAHI — FOUNDATIONS).
+      har folder: Claude ACTUAL note-content dikhata → Arpan paper pe hand-note → "aage" pe next. NO quiz.
+      ★ FOCUS (Arpan-clarity 25-Jul): Java/Spring BACKEND depth only (+ Kafka/AWS saath aate). React/Flutter/etc = OUT (distraction, "bhaad me"). C++ = sirf DSA. GOAL = Java+Spring itna deep ki koi bhi same-type Q pehle kar de. limit = focus, na kamzori.
 ```
 
 ---
