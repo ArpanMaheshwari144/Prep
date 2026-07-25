@@ -830,12 +830,23 @@
 │ level-by-level chahiye (depth nahi) -> QUEUE (FIFO). koi recursion NAHI. root push -> while queue: ek baar = ek LEVEL.
 └───────────────────────────────────────────────────────────────
  ▸ LEVEL ORDER (LC-102) ────────────────────────────────────────
-     idea : har level ke node alag list -> list-of-lists. queue=FIFO (pehle-aaya-pehle-process) -> apne aap level-order + L-to-R.
-     base : root null -> empty ans.
-     loop : q me root push. while(!q.empty): sz = q.size() [SNAPSHOT] -> sz baar { front pop -> val level-list me -> bachche(L,R) push } -> level-list ans me.
-     ★★ TRAP: sz ko for-loop se PEHLE variable me pakdo. loop ke andar bachche push -> q.size() badalta -> warna agle-level ke node is level me ghus jaate.
-     ★ order: root pehle, bachche baad -> FIFO -> level-order + left-to-right apne aap.
-     ★ TEMPLATE: saare BFS-level Q isi pe (right-side-view = level ka last · level-average · zigzag) -- bas "level me kya karna" badalta.
+     idea : har level ki alag list -> list-of-lists. queue = FIFO (pehle-aaya-pehle-process) -> level-order + L-to-R apne aap.
+     SKELETON (saare BFS-level Q bas isi pe):
+         if (!root) return ans;
+         q.push(root);
+         while (!q.empty()) {
+             int sz = q.size();               // ★ SNAPSHOT -- is level ke node (for se PEHLE pakdo)
+             vector<int> level;
+             for (int i = 0; i < sz; i++) {
+                 node = q.front();  q.pop();
+                 level.push_back(node->val);
+                 if (node->left)  q.push(node->left);    // bachche -> AGLE level me jaayenge
+                 if (node->right) q.push(node->right);
+             }
+             ans.push_back(level);
+         }
+     ★★ TRAP: sz ko for se PEHLE pakdo. loop me bachche push -> q.size() badalta -> warna agle level ke node is level me ghus jaate.
+     ★ TEMPLATE: right-side-view (level ka LAST) · level-average · zigzag -- sab isi skeleton pe, bas "level me kya karna" badalta.
 ```
 
 ---
