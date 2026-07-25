@@ -847,6 +847,10 @@
          }
      ★★ TRAP: sz ko for se PEHLE pakdo. loop me bachche push -> q.size() badalta -> warna agle level ke node is level me ghus jaate.
      ★ TEMPLATE: right-side-view (level ka LAST) · level-average · zigzag -- sab isi skeleton pe, bas "level me kya karna" badalta.
+ ▸ RIGHT SIDE VIEW (LC-199)  = LEVEL-ORDER + 1 line ─────────────
+     idea : daaye khade -> har level ka RIGHT-MOST node dikhta (baaki peeche chhup jaate). SAME skeleton, sirf collect badla.
+     change: SAARE collect ki jagah -> for-loop me { if (i == sz-1) ans.push(node->val); }  (level ka aakhri = right-most).
+     ★ FIFO L-to-R dequeue -> i == sz-1 = sabse right.  (left-side-view chahiye -> i == 0 le lo.)
 ```
 
 ---
