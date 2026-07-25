@@ -82,7 +82,8 @@
       - Claude ACTUAL note/code dikhata (fabricate NAHI); Arpan padh ke apni copy pe notes; STORY + code dono ready.
       - code mapping: idempotency→PaymentService.java · Feign→PaymentClient.java · Saga+CircuitBreaker→OrderService.java · Kafka-consumer→NotificationListener.java · Gateway→api-gateway/application.yml.
 
-   ★ TREES/GRAPH/DP: Trees ab 11 problems (25-Jul: recursion-CORE khula + BFS family — level-order/right-view/zigzag near-transfer solo). continue → phir Graph, DP, Backtracking, Heap, Intervals (finite ~5-6 pattern bache — sheet CONVERGE karti, ~70% done).
+   ★ TREES = GATE-DONE (25-Jul, 14 problems SOLO): DFS[max-depth/invert/diameter/same/symmetric/traversals/LCA/path-sum] · BFS[level-order/right-view/zigzag] · Balanced(-1 sentinel) · BST[kth-smallest/validate-bst]. saari families cover. recursion-CORE + print-debug + patterns khud-pakde. ab koi naya tree-Q = near-transfer.
+   ★ NEXT DSA: Graph, DP, Backtracking, Heap, Intervals (finite ~5-6 pattern bache — sheet CONVERGE karti, ~70% done).
 
    ★★ REVISE-MODE ROADMAP (25-Jul, Arpan-set — project-revise ke BAAD, SAME hand-note mode, IN ORDER):
       07_PROJECTS: mini_payment_ms (chal raha, 7f-onwards) → todoapp (EXTRA: JWT/Spring-Security/Redis/K8s — mini_payment me nahi tha; NO LEARNINGS.md → actual CODE se concept, fabricate nahi)
