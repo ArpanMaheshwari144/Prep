@@ -828,9 +828,14 @@
    -> har node SIRF apne 2 bachchon ka jawab leta -> apna banata -> upar deta. poora tree ek saath NAHI.
    -> null pe BASE -> phir jawab neeche se upar chadhta -> root pe final.
    ★★ RECURSION DEBUG (trace POORA mat karo -- 3 tool, copy-pen deep-recursion ke liye bana hi nahi):
+
      1. TRUST ONE LEVEL: maano left/right ka jawab MIL gaya -> bas "is node pe kya karu?" socho. deep me mat jhaanko.
-     2. CHHOTA-CASE verify: bug pakadne ko sirf BASE + 2-3 node wala SMALLEST tree haath se check (deep case nahi). base sahi + 1-level sahi = poori recursion sahi.
+
+     2. CHHOTA-CASE verify: bug pakadne ko sirf BASE + 2-3 node wala SMALLEST tree haath se check (deep case nahi).
+        base sahi + 1-level sahi = poori recursion sahi.
+
      3. PRINT > debugger -- crash-safe placement (KAHAN/KAB daalo):
+
           int solve(TreeNode* node) {
               if (!node) return BASE;                        // ★ null-check PEHLE
               cout << "enter " << node->val << endl;         // enter-print: null-check ke BAAD (warna null->val = CRASH)
@@ -840,6 +845,7 @@
               cout << node->val << " : left=" << left << " right=" << right << " -> " << result << endl;  // return-print
               return result;
           }
+
         -> output LINEAR LOG (enter=neeche jaana, return=upar bubble) -> flow PADH lo, stepping/confusion nahi.
         ★ enter-print HAMESHA null-check ke NEECHE (sabse common crash-trap).  ★ result variable me -> print + return dono ho jaayen.
 
