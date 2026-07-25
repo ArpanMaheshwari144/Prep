@@ -52,6 +52,7 @@
 
 ```
 ═══════════════════ PATTERN 1 — TWO POINTER ═══════════════════
+
  BROAD IDEA: do pointer (dono taraf se, ya slow-fast) -> ek saath move karke O(n).
 
 ┌── FAMILY: slow/fast OVERWRITE ────────────────────────────────
@@ -174,16 +175,22 @@
 
 ```
 ═══════════════════ PATTERN 2 — SLIDING WINDOW ═══════════════════
+
  ★ KAB PEHCHANO: CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
+
  ★ 2 TYPE:
    (a) FIXED window   -> size k DIYA hai. i/j pointer: sum += nums[j]; jab (j-i+1) >= k -> track + left hatao (sum -= nums[i], i++).
    (b) VARIABLE window-> size condition se. TEMPLATE:
           for j in arr:  window me arr[j] add (update tracker)
                          while (INVALID): left[i] hatao (tracker update), i++
                          ans update  (length = j-i+1, ya count += j-i+1)
+
  ★ KYA TRACK: sum · freq-map (distinct=map.size / char-count) · zeros-count · product · maxFreq.
+
  ★ KEY: shrink ke BAAD window HAMESHA valid -> ans UNCONDITIONAL (koi if(==k) nahi).
+
  ★ LENGTH ya COUNT: length -> max(ans, j-i+1) · subarray COUNT -> count += (j-i+1) (window size).
+
  ★★ IF vs WHILE (ye confusion CLEAR kar) -> SAWAAL: "window ka SIZE fix hai, ya condition pe depend?"
      · SIZE fix (koi number diya: k-elements ya p.length()) -> IF (ek add, ek remove, size wahi rehta).   [Max-Sum-of-K · Anagram]
      · SIZE condition pe (sum/distinct/repeat/product) -> WHILE (jab tak invalid, ek se zyada nikal sakte).  [baaki sab]
@@ -290,6 +297,7 @@
 
 ```
 ═══════════════════ PATTERN 3 — HASHING ═══════════════════
+
  BROAD IDEA: hashmap/hashset = O(1) lookup. "pehle dekha?" / "complement hai?" / count -> O(n).
 
  ★★ COMMON SKELETON (seen / complement / count family -- ek pass):
@@ -343,6 +351,7 @@
 
 ```
 ═══════════════════ PATTERN 4 — PREFIX SUM ═══════════════════
+
  BROAD IDEA: running sum pehle se rakho -> range/left-right sum O(1) (baar-baar loop nahi).
 
 ┌── FAMILY: "assign PEHLE, update BAAD" ────────────────────────
@@ -369,6 +378,7 @@
 
 ```
 ═══════════════════ PATTERN 5 — MATRIX ═══════════════════
+
  BROAD IDEA: 2D grid pe index-navigation (boundary/direction careful; copy-pen pe grid banao).
 
 ┌── (STANDALONE — har ek apni index-navigation) ────────────────
@@ -389,11 +399,13 @@
 
 ```
 ═══════════════════ PATTERN 6 — STACK ═══════════════════
+
  BROAD IDEA: stack = LIFO. "kholo push, band karo pop-match" · ya MONOTONIC (next-greater/smaller).
 
 ┌── FAMILY: MONOTONIC stack ────────────────────────────────────
 │ KYUN SAATH: index stack rakho; curr vs stack-top compare -> pop + us index ka ans set. (bas alag: comparison > ya < · ans me value/distance · circular.)
 └───────────────────────────────────────────────────────────────
+
  ★★★ ONE SKELETON (next/prev + greater/smaller + daily-temp + histogram DONO isi pe):
     ans[] init (na-mile default: -1 ya n) ; stack<int> st  (INDEX rakho, value nahi)
     for i in arr:                         // prev-wale ke liye loop ULTA (n-1..0)
@@ -469,7 +481,9 @@
 
 ```
 ═══════════════════ PATTERN 7 — BINARY SEARCH ═══════════════════
+
  BROAD IDEA: sorted space -> mid -> aadha kaato -> O(log n). (space array ho ya ANSWER-range).
+
  ★★ BS ko POORI SORTED array chahiye HI NAHI -- bas ek comparison se "LEFT ya RIGHT (konsa half phenkna)" DECIDE kar paana chahiye.
     sorted-array us decision ka ek common case hai; find-peak (unsorted) me bhi mid vs mid+1 se half discard hota -> BS lagta.
     => asli requirement = "half safely discard karne ka rule", na ki full sorting.
@@ -553,6 +567,7 @@
      ★ poore matrix ko 1D maano (low=0, high=row*col-1). access: matrix[mid/col][mid%col]. (row=mid/col, col=mid%col)
 
  ★ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
+
  ★★ high=mid vs high=mid-1 (kab konsa -- ek sawaal: "mid KHUD answer ho sakta abhi bhi?"):
       TARGET-REJECT (mid ko target/condition se compare -> mid pakka galat, e.g. basic-BS/rotated-search: target!=mid) -> high = mid-1  (+ while low<=high)
       KHUD-ANSWER-DHOONDH (koi target nahi, mid KHUD answer ho sakta -- find-PEAK · find-MIN-rotated) -> high = MID  (+ while low<high)
@@ -569,6 +584,7 @@
 
 ```
 ═══════════════════ PATTERN 8 — LINKED LIST ═══════════════════
+
  BROAD IDEA: pointer manipulation. 3 broad-trick: FAST/SLOW · REVERSE (3-pointer) · DUMMY node.
 
  ★★ LOOP-CONDITION TRICK (while ka kya likhun -- CP-log ise DEKHTE hi jaante, dry-run nahi karte):
@@ -645,6 +661,7 @@
 
 ```
 ═══════════════════ PATTERN 9 — DESIGN (data-structure) ═══════════════════
+
  BROAD IDEA: data-structure ko khud banao (built-in ke bina) -> array + pointers/nodes se.
 
  ▸ DESIGN HASHMAP (LLD) ────────────────────────────────────────
@@ -698,6 +715,7 @@
 
 ```
 ═══════════════════ PATTERN 10 — KADANE (running value + max update) ═══════════════════
+
  BROAD IDEA: ek value AAGE carry karo (min/sum), har step MAX update. single pass, O(1) space.
 
  ▸ BUY/SELL STOCK (LC-121) ─────────────────────────────────────
@@ -729,6 +747,7 @@
 
 ```
 ═══════════════════ PATTERN 11 — BIT MANIPULATION (XOR) ═══════════════════
+
  BROAD IDEA: XOR ki 2 property -> a^a=0 (pair cancel), a^0=a (single bacha). pairs khud gayab, extra memory nahi.
 
 ┌── FAMILY: XOR-cancel ─────────────────────────────────────────
@@ -745,10 +764,14 @@
 
 ```
 ═══════════════════ PATTERN 12 — TREES (recursion) ═══════════════════
+
  BROAD IDEA: har tree-Q = RECURSION on TreeNode(val, left, right). 3 cheez -> BASE (null pe return) · dono taraf RECURSE · COMBINE.
+
  ★ ORDER: kaam recursion-RESULT pe depend kare -> recurse-PEHLE (post-order); independent -> free.
+
  ★ 3 DFS TRAVERSALS (LC-144/94/145): teeno SAME recursion, sirf VISIT [res.push_back] ki JAGAH badalti ->
       PRE = VISIT->left->right (root pehle) · IN = left->VISIT->right (beech) · POST = left->right->VISIT (baad).
+
  ★★ DECISION-GUIDE (Arpan-derived -- 4 simple sawaal, koi tree-Q likhne se pehle):
    Q1  "root->left" likhu ya "left"?
         root->left / root->right = ASLI bachche (structure)  -> inme RECURSE · LEAF-check (!root->left && !root->right) · SWAP (invert)
@@ -776,6 +799,7 @@
         answer seedha ban raha -> RETURN.   answer alag (parent ko height chahiye) -> height RETURN + answer GLOBAL (diameter)
    Q4  value UPAR le jau ya NEECHE?
         answer subtree se banti (height/sum) -> UPAR return.   target/condition path pe -> value NEECHE carry (path-sum)
+
  ★ CORE -- GENERIC tree-recursion (har tree-Q bas yehi 4 line; sirf BASE + COMBINE badalte):
        solve(node):
          if (node == NULL) return BASE;      // (1) base  -> null pe ruko
