@@ -75,6 +75,7 @@ public class OrderService {
         // ab try-catch NAHI (upar comment kiya) -> client.pay() FAIL hua to exception BAHAR jaayega
         // -> tabhi CB use "failure" count karta (try-catch andar kha jaata to CB ko pata hi na chalta).
         // call theek -> PAID.  call fail / CB OPEN -> Spring khud payFallback bula lega.
+        // ★ SAGA ka compensate (order FAILED) ab payFallback me chala gaya (neeche) -> CB + SAGA jud gaye.
         String ans = client.pay(body);
         order.setStatus("PAID");
         System.out.println(ans);
@@ -86,6 +87,10 @@ public class OrderService {
     // RULE: signature = createOrder ke SAME params (item, amount) + ek EXTRA Throwable t (last me),
     //       aur return type SAME (Order). naam wahi jo annotation me fallbackMethod = "payFallback".
     // yahan: payment down -> naya order FAILED mark karke laut do (order-service hang/crash nahi hota).
+    //
+    // ★ SAGA + CB ka RISHTA: pehle SAGA ka compensate try-catch ke CATCH me karte the (order FAILED).
+    //   try-catch hataya (CB ko exception BAHAR chahiye) -> ab wahi COMPENSATE yahin, is fallback me.
+    //   matlab CB ne bhi ek tarah ka SAGA-compensate bana diya: step-fail -> order FAILED (rollback ki jagah).
     public Order payFallback(String item, double amount, Throwable t) {
         System.out.println("CB fallback -> payment down: " + t.getMessage());
         return repo.save(new Order(item, amount, "FAILED")); // fail-fast: FAILED order
