@@ -50,7 +50,7 @@
               profiles · Hibernate(7: N+1/lazy-eager/dirty-check/L1/cascade/mappings) · Docker · K8s (6/6).
    PROJECT    ✓ mini_payment_ms — 4 microservices (gateway+order+payment+notification): Feign(sync) · SAGA · Kafka(async, docker broker) ·
               idempotency (check-then-act, bug-fixed) · Circuit-Breaker(Resilience4j, 3-state) · API-Gateway(routing) · DB-per-service · kafka-ui.
-              LEARNINGS.md + FULL SOURCE CODE (20 java files). + todoapp. -> ★★ PROJECT-REVISE ACTIVE (25-Jul: topics 0-6 + record-vs-class + 7b Feign + 7c SAGA + 7d Gateway + 7e Kafka DONE via revise-mode; bacha: 7f Kafka-queue-location + 7g Idempotency + 7h Circuit-Breaker + 8 gitignore + Feign-version). ★ live-change: PayRequest DTO class→record (Arpan khud, run-verified).
+              LEARNINGS.md + FULL SOURCE CODE (20 java files). + todoapp. -> ★★ PROJECT-REVISE ACTIVE (25-Jul: topics 0-6 + record-vs-class + 7b Feign + 7c SAGA + 7d Gateway + 7e Kafka + 7f Kafka-queue-location DONE via revise-mode; ★ AGLA START = 7g Idempotency; phir 7h Circuit-Breaker + 8 gitignore + Feign-version). ★ live-change: PayRequest DTO class→record (Arpan khud, run-verified).
    LLD        ✓ 11 designs IN CODE (parking/bms/atm/elevator/hotel...). 5 revise-swept. FORWARD = HLD-jaisa MOCK + ★ 1-2 design COLD-REDO (jaise HashMap→HashSet ek baar sahi karke code-verify). gap = SOLID/pattern ARTICULATE.
    DSA        ✓ ~12 PATTERNS (sheet family-boxed, ~700 line, "gate ki chaabi") + ~70 problems. REVISE mode + Trees STARTED (see §4).
    BEHAVIORAL ✓ 5 STAR (HikariCP/WAF/Doximity/Mentoring/Failure-JDK — all competencies). done bol-ke; ab reps.
