@@ -955,6 +955,13 @@
      steps: inorder(root) -> sorted vector 'ans' -> return ans[k-1].
      ★ k-1 TRAP: k 1-based (1st smallest = k=1), vector 0-based -> index = k-1.
      ★ optimize: k-va pe EARLY-STOP (counter, k-va node pe ruko) -- collect-all bhi gate-theek.
+
+ ▸ VALIDATE BST (LC-98)  = RANGE carry-DOWN ────────────────────
+     ★★ TRAP: local check (sirf turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna.
+     idea : har node ki ek WINDOW (mini, maxi) -> node us range me hona chahiye. neeche jaate window TIGHT hoti (ancestor-rule carry).
+     solve(root, mini, maxi): null->true · (val<=mini || val>=maxi)->false · left=solve(L, mini, val) · right=solve(R, val, maxi) · return left&&right.
+     call : solve(root, INT_MIN, INT_MAX).  ★ LEFT jao -> maxi=val (chhota hona) · RIGHT jao -> mini=val (bada hona).
+     (2nd tarika: inorder = strictly increasing? -> kth-smallest ka near-transfer.)
 ```
 
 ---
