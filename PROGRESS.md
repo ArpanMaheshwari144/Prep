@@ -85,8 +85,10 @@
    ★ TREES/GRAPH/DP: Trees ab 11 problems (25-Jul: recursion-CORE khula + BFS family — level-order/right-view/zigzag near-transfer solo). continue → phir Graph, DP, Backtracking, Heap, Intervals (finite ~5-6 pattern bache — sheet CONVERGE karti, ~70% done).
 
    ★★ REVISE-MODE ROADMAP (25-Jul, Arpan-set — project-revise ke BAAD, SAME hand-note mode, IN ORDER):
-      07_PROJECTS (chal raha, 7f-onwards bacha) → 05_INFRA_DEEP → 06_COMPARES → 09_DATABASE → 04_HLD/FOUNDATIONS (designs NAHI — FOUNDATIONS).
-      har folder: Claude ACTUAL note-content dikhata → Arpan paper pe hand-note → "aage" pe next. NO quiz.
+      07_PROJECTS: mini_payment_ms (chal raha, 7f-onwards) → todoapp (EXTRA: JWT/Spring-Security/Redis/K8s — mini_payment me nahi tha; NO LEARNINGS.md → actual CODE se concept, fabricate nahi)
+      → 05_INFRA_DEEP → 06_COMPARES → 09_DATABASE → 04_HLD/FOUNDATIONS (designs NAHI — FOUNDATIONS).
+      har folder: Claude ACTUAL note-content/code dikhata → Arpan paper pe hand-note → "aage" pe next. NO quiz.
+      ★ NOTE-PHILOSOPHY (Arpan): sab kuch note NAHI (kaun itna likhega) — sirf IMPORTANT/high-value/behtareen, jaise ab tak ke notes. selective = smart.
       ★ FOCUS (Arpan-clarity 25-Jul): Java/Spring BACKEND depth only (+ Kafka/AWS saath aate). React/Flutter/etc = OUT (distraction, "bhaad me"). C++ = sirf DSA. GOAL = Java+Spring itna deep ki koi bhi same-type Q pehle kar de. limit = focus, na kamzori.
 ```
 
