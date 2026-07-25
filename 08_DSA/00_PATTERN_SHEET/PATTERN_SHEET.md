@@ -261,10 +261,7 @@
      ★★ COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid). (bahut count-Q me)
 
 ┌── FAMILY: need-map + COUNT (char-matching, --/++ MIRROR) ─────
-│ KYUN SAATH: dono "t ke SAARE char chahiye" type -> IDENTICAL skeleton:
-│   need-map(t) + count(baaki char) + EXPAND(if(mp>0)count--; mp-- IF ke BAHAR) + valid pe shrink(mp++; if(mp>0)count++).
-│   SIRF answer-handle alag: LC-76 = MIN-track · LC-1358 = COUNT (ans+=i).
-│   t="abc" daalo -> dono ek.  [ye wahi --/++ MIRROR mechanic jo naya tha]
+│ KYUN SAATH: dono "t ke SAARE char chahiye" type -> IDENTICAL skeleton: need-map(t) + count(baaki char) + EXPAND(if(mp>0)count--; mp-- IF ke BAHAR) + valid pe shrink(mp++; if(mp>0)count++). SIRF answer-handle alag: LC-76 = MIN-track · LC-1358 = COUNT (ans+=i). t="abc" daalo -> dono ek. [ye wahi --/++ MIRROR mechanic jo naya tha]
 └───────────────────────────────────────────────────────────────
 
  ▸ MIN WINDOW SUBSTRING (LC-76, Hard) ──────────────────────────
