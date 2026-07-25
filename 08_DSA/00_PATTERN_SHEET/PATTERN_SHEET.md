@@ -827,8 +827,12 @@
 
    -> har node SIRF apne 2 bachchon ka jawab leta -> apna banata -> upar deta. poora tree ek saath NAHI.
    -> null pe BASE -> phir jawab neeche se upar chadhta -> root pe final.
-   -> ★ TRUST ONE LEVEL: poora trace mat karo. maano left/right ka jawab MIL gaya -> bas "is node pe kya karu?" socho.
-   -> ★ debugger = recursion ka copy-pen (call-stack dekhne, LEGIT). iterative=paper, recursion=debugger.
+   ★★ RECURSION DEBUG (trace POORA mat karo -- 3 tool, copy-pen deep-recursion ke liye bana hi nahi):
+     1. TRUST ONE LEVEL: maano left/right ka jawab MIL gaya -> bas "is node pe kya karu?" socho. deep me mat jhaanko.
+     2. CHHOTA-CASE verify: bug pakadne ko sirf BASE + 2-3 node wala SMALLEST tree haath se check (deep case nahi). base sahi + 1-level sahi = poori recursion sahi.
+     3. PRINT > debugger: function START me cout "enter X", RETURN se pehle cout "return Y" -> output ek LINEAR LOG banta:
+          enter 3 | enter 9..return 1 | enter 20..return 2 | return 3
+        -> flow PADH lo (stepping/confusion nahi). = copy-pen ka recursion-version (kaagaz ki jagah print).
 
 ┌── FAMILY: recurse + COMBINE (answer = return-value) ──────────
 │ base=null; left+right recurse -> jo COMBINE karo WAHI return. answer seedha return me aata.
