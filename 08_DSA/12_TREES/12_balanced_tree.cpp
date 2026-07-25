@@ -75,6 +75,9 @@ int maxDepth(TreeNode *root)
 
     int result = 1 + max(left, right); // balanced -> asli HEIGHT (max-depth wala)
 
+    // ★ simple "return X" -- "enter X" ka MIRROR: kab node ANDAR aaya (enter) vs kab RETURN hua, jodi saaf dikhti.
+    cout << "return : " << root->val << endl;
+
     // --- DEBUG-PRINT: left/right = neeche se aayi VALUES, result = HEIGHT jo UPAR ja rahi ---
     cout << "node " << root->val << " : left=" << left << ", right=" << right
          << " -> HEIGHT return " << result << endl;
