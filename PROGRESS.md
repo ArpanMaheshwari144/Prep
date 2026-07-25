@@ -89,6 +89,8 @@
       → 05_INFRA_DEEP → 06_COMPARES → 09_DATABASE → 04_HLD/FOUNDATIONS (designs NAHI — FOUNDATIONS).
       har folder: Claude ACTUAL note-content/code dikhata → Arpan paper pe hand-note → "aage" pe next. NO quiz.
       ★ NOTE-PHILOSOPHY (Arpan): sab kuch note NAHI (kaun itna likhega) — sirf IMPORTANT/high-value/behtareen, jaise ab tak ke notes. selective = smart.
+      ★★ SPRING AUTO-REVISE (Arpan-insight 25-Jul): project-revise karne se SPRING khud-ba-khud revise hota — project Spring APPLIED use karta (DI/@Service/@Transactional/JWT/Feign/Kafka live) -> context me Spring dobara aata. 2-in-1 (project showcase + Spring revision). yehi project = TOP-priority ki asli wajah (theory-alone se behtar, kyunki interview me "Spring KAISE use kiya" poochha jaata).
+      ★ PARALLEL: DSA + HLD roadmap ke SAATH-SAATH chalte rahenge (rotate), roadmap unhe rokta nahi.
       ★ FOCUS (Arpan-clarity 25-Jul): Java/Spring BACKEND depth only (+ Kafka/AWS saath aate). React/Flutter/etc = OUT (distraction, "bhaad me"). C++ = sirf DSA. GOAL = Java+Spring itna deep ki koi bhi same-type Q pehle kar de. limit = focus, na kamzori.
 ```
 
