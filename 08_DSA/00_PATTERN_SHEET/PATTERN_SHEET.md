@@ -772,6 +772,7 @@
  ★ 3 DFS TRAVERSALS (LC-144/94/145): teeno SAME recursion, sirf VISIT [res.push_back] ki JAGAH badalti ->
       PRE = VISIT->left->right (root pehle) · IN = left->VISIT->right (beech) · POST = left->right->VISIT (baad).
 
+ ──────────────────────────────────────────────────────────────
  ★★ DECISION-GUIDE (Arpan-derived -- 4 simple sawaal, koi tree-Q likhne se pehle):
    Q1  "root->left" likhu ya "left"?
         root->left / root->right = ASLI bachche (structure)  -> inme RECURSE · LEAF-check (!root->left && !root->right) · SWAP (invert)
@@ -800,6 +801,7 @@
    Q4  value UPAR le jau ya NEECHE?
         answer subtree se banti (height/sum) -> UPAR return.   target/condition path pe -> value NEECHE carry (path-sum)
 
+ ──────────────────────────────────────────────────────────────
  ★ CORE -- GENERIC tree-recursion (har tree-Q bas yehi 4 line; sirf BASE + COMBINE badalte):
        solve(node):
          if (node == NULL) return BASE;      // (1) base  -> null pe ruko
@@ -811,6 +813,7 @@
         node->left  =  NEECHE bhejo   (child ko solve karne bhej diya -- CALL)
         left        =  jo VALUE wapas aayi   (us child ka jawab -> ab COMBINE me use)
 
+ ──────────────────────────────────────────────────────────────
  ★ FLOW -- calls NEECHE jaati, JAWAB upar BUBBLE hota:
         [A]
        /   \
@@ -828,6 +831,7 @@
    -> har node SIRF apne 2 bachchon ka jawab leta -> apna banata -> upar deta. poora tree ek saath NAHI.
    -> null pe BASE -> phir jawab neeche se upar chadhta -> root pe final.
 
+ ──────────────────────────────────────────────────────────────
    ★★ RECURSION DEBUG (trace POORA mat karo -- 3 tool, copy-pen deep-recursion ke liye bana hi nahi):
 
      1. TRUST ONE LEVEL: maano left/right ka jawab MIL gaya -> bas "is node pe kya karu?" socho. deep me mat jhaanko.
