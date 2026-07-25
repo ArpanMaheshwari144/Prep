@@ -825,6 +825,17 @@
      leaf : (!root->left && !root->right) -> return target == root->val.
      comb : hasPathSum(left, t-val) || hasPathSum(right, t-val).
      ★★ TRAP: LEAF = !root->left && !root->right (ACTUAL bachche), NA "!left && !right" (recursion-result) -> warna non-leaf pe galat match. [test-pass != code-sahi]
+
+┌── FAMILY: BFS / LEVEL-ORDER (QUEUE -- DFS recursion se ALAG) ──
+│ level-by-level chahiye (depth nahi) -> QUEUE (FIFO). koi recursion NAHI. root push -> while queue: ek baar = ek LEVEL.
+└───────────────────────────────────────────────────────────────
+ ▸ LEVEL ORDER (LC-102) ────────────────────────────────────────
+     idea : har level ke node alag list -> list-of-lists. queue=FIFO (pehle-aaya-pehle-process) -> apne aap level-order + L-to-R.
+     base : root null -> empty ans.
+     loop : q me root push. while(!q.empty): sz = q.size() [SNAPSHOT] -> sz baar { front pop -> val level-list me -> bachche(L,R) push } -> level-list ans me.
+     ★★ TRAP: sz ko for-loop se PEHLE variable me pakdo. loop ke andar bachche push -> q.size() badalta -> warna agle-level ke node is level me ghus jaate.
+     ★ order: root pehle, bachche baad -> FIFO -> level-order + left-to-right apne aap.
+     ★ TEMPLATE: saare BFS-level Q isi pe (right-side-view = level ka last · level-average · zigzag) -- bas "level me kya karna" badalta.
 ```
 
 ---
