@@ -945,9 +945,16 @@
 └───────────────────────────────────────────────────────────────
 
  ▸ LCA -- Lowest Common Ancestor (LC-236) ──────────────────────
-     idea : wo node jahan p, q ALAG side split hote.
-     base : null->null · root==p||q -> return root.
-     comb : recurse dono. ek side null -> doosri return; DONO non-null -> ★ root = LCA.
+     idea : wo node jahan p, q ALAG side split ho jaate (ek left, ek right).
+        TreeNode* lca(root, p, q):
+            if (!root) return NULL;
+            if (root == p || root == q) return root;    // mil gaya -> UPAR bhejo
+            left  = lca(root->left, p, q);
+            right = lca(root->right, p, q);
+            if (!left)  return right;                    // ek side khali -> doosri return
+            if (!right) return left;
+            return root;                                 // ★ DONO non-null -> yehi split-point = LCA
+     ★ mechanic: found-node UPAR bubble; jahan DONO taraf se kuch mila = LCA. (if(!left) return right dono case sambhaalta: left-khali+right-mila, aur dono-khali->NULL.)
 
 ┌── FAMILY: carry-value DOWN + root-to-LEAF ────────────────────
 │ value NEECHE carry karo (target ghatao / running-sum add); LEAF pe check. combine = OR (koi ek path).
