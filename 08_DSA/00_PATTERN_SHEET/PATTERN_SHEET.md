@@ -930,8 +930,14 @@
  ▸ BALANCED TREE (LC-110)  = MAX-DEPTH + (-1 SENTINEL) ─────────
      Q: HAR node pe abs(leftH - rightH) <= 1?  true/false.
      ★ trick: alag "balanced?" pass NAHI -> height nikaalte-nikaalte HI check -> O(n) single-pass. maxDepth return = HEIGHT ya -1 (imbalance-flag).
-     steps: left=maxDepth(L); if(left==-1)ret -1;  right=maxDepth(R); if(right==-1)ret -1;  if(abs(left-right)>1)ret -1;  else ret 1+max(left,right).
-     ★★ -1 = SENTINEL: imbalance neeche mila -> UPAR propagate -> ek node bhi galat = poora false.  isBalanced = (maxDepth(root) != -1).
+        int maxDepth(root):
+            if (!root) return 0;
+            left  = maxDepth(root->left);    if (left == -1)  return -1;   // neeche imbalance -> UPAR propagate
+            right = maxDepth(root->right);   if (right == -1) return -1;
+            if (abs(left - right) > 1) return -1;                          // ★ IS node pe imbalance
+            return 1 + max(left, right);                                   // balanced -> asli HEIGHT
+        isBalanced = (maxDepth(root) != -1).
+     ★★ -1 = SENTINEL: imbalance neeche mila -> UPAR propagate -> ek node bhi galat = poora false.
      ★ TRAP: check HAR node pe (sirf root nahi) -- root balanced par ANDAR imbalanced ho sakta [test-pass != code-sahi].
 
 ┌── FAMILY: search + BUBBLE-UP (found-node upar bhejo) ─────────
