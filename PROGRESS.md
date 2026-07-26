@@ -109,6 +109,7 @@
    ★★ REVISION-AIRTIGHT (23-Jul): solo-vs-feed IRRELEVANT — cold-solved bhi bina revise 7-din me blur. feed+revision = solo+revision = SAME. metric = REVISION, na solo-ness. (= "help+redo=owned" ka root.)
 
    RECENT (23-Jul): Two-Pointer + SW pattern REVISE (glance-test, sab recall, 2 revise-note) · Max-Product + HashMap COLD-REDO (verified) · Single-Number(XOR) solo · Trees STARTED (Max-Depth + Invert solo, pointer-vs-value+leaf-crash seekha) · while-vs-if + k=size-vs-limit confusion cleared · Redis-single-threaded (HLD rate-limiter mock).
+   ★★ RECENT (26-Jul): POORI SHEET recall-test done -- ALMOST SAB recall (library SOLID); thaka nahi (flow ban gaya). Jaha entries dense/fuzzy thi (recall-atki) -> ~15 entries ACTUAL-CODE se match + saaf ki: SW min-window family (76+1358: LC-76 save loop-ANDAR vs LC-1358 ans+=i loop-BAAD + expand-line) · char-replacement · trapping-RW · longest-consec · product-except-self · spiral-matrix · maximal-rectangle · first-last · koko/ship/split (shared-shell + per-Q solve-formula) · find-peak · single-element · palindrome-LL · merge-two-sorted. => sheet ab pattern-by-pattern code-matched. proof: "trick pata->easy, na-pata->hard" (Max-Product genuinely-naya mechanic ka poster-child); DSA = library+recognize, aaj library test hui + khadi rahi.
 ```
 
 ---
