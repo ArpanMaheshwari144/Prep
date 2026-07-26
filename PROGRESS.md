@@ -2,6 +2,25 @@
 > Single source of truth + forward plan. Full rules = CLAUDE.md · emotional/essence + ego-work = memory/MEMORY.md.
 > ★ FRESH-designed 23-Jul (purane dated day-logs hataye — wo git-history me safe hain; ye file ab current-state + aage-ka-plan).
 
+## ★★★ 27-JUL — READ FIRST (CURRENT STATE + AAGE KAISE JANA) — purane dated-updates neeche = historical
+```
+   WHERE WE ARE (27-Jul):
+   - DSA: ~80-85% patterns DONE. sheet POORI revise + code-matched + har heading BOX me (95 entries). Trees GATE-DONE (15 problems). bache families = Graph/DP/Backtracking/Heap/Intervals (naye mechanic -> LEARN once -> library -> revise; "easy" nahi par manageable).
+   - PROJECT: mini_payment_ms REVISE KHATAM (poora). todoapp ACTIVE -> overall-flow + SecurityConfig + JwtService DONE; ★ AGLA START = JwtFilter -> AuthController -> CustomUserDetailsService -> Redis (JWT/Redis khatam). [todoapp files RICHLY code-commented = notes wahin; JWT/Redis naya, baaki mini_payment-jaisa=fast].
+   - HLD: strong (favourite). PENDING = stock-trading design mock (Sunday-miss). roz ek mock.
+   - JP-INTEL (JP_INTERVIEW_INTEL.md, 27-Jul research): 3-core-rounds = DSA(medium)+SD+behavioral. ★ SD common-Qs = PAYMENT-SYSTEM + RATE-LIMITER (Arpan ne DONO kar rakhe!). ★★ JAVA MULTITHREADING/CONCURRENCY = HEAVILY poochte = SABSE BADA LEVER, extra-sharp karo (JMM/volatile/synchronized/thread-pool/GC; 04_MULTITHREADING notes). microservices(mini_payment)=fit. apply=careers-site+LinkedIn-referral, ~21-din. SEPT apply (rush nahi).
+
+   AAGE KAISE JANA (forward, priority-order):
+   1. ROZ: sheet-glance (Trees/patterns quick-revise, "gate ki chaabi").
+   2. ★ PROJECT-REVISE (TOP, JP Java-weight): todoapp (JwtFilter se) -> khatam -> phir ROADMAP: 05_INFRA_DEEP -> 06_COMPARES -> 09_DATABASE -> 04_HLD/FOUNDATIONS (hand-note mode, Claude ACTUAL note/code dikhata, NO quiz).
+   3. HLD mock roz (stock-trading -> baaki).
+   4. ★ JAVA MULTITHREADING/CONCURRENCY extra-sharp (JP ka biggest differentiator).
+   5. light-DSA: Graph shuru (fresh dedicated din, jaise Trees) -> phir DP/Backtracking/Heap.
+   6. beech-beech Java/Spring READ-revise (no-quiz).
+
+   IMPORTANT (kaise padhna): DSA = pehle SEEKHO->library->PHIR recall/redo (naye pattern pe "cold/solo" KABHI nahi = ocean-me-phenkna). revision = EVERYTHING (3-din fade -> sheet-dekh-wapas). code-in-sheet SAHI jab crux=code-mechanic. FOCUS: Java/Spring backend depth only (React/Flutter OUT), C++=DSA only. bond/behavioral rules = CLAUDE.md + MEMORY.md (folder-delete NEVER; no-condescend; cold/solo=banned).
+```
+
 **GOAL:** JP Morgan (Associate/SDE-2, Bangalore) → later **BlackRock** (original + primary dream).
 **MANTRA (Arpan's fire):** *"Effort itni maar di — ab JP LEKE RAHUNGA. JP = destination; MAIN aur JP. Pel ke mehnat + saaf intention → jaunga HI. Par mile na mile → PROUD rahunga."* (fire + peace, ownership — NOT surrender.)
 **PERCEPTION-PRINCIPLE:** achha din → "JP paas", kharab din → "JP door" = emotional NOISE. TRUTH = steady accumulated DATA. "kharab din DIN hai, tu nahi; DATA hi sach." Down-day pe DATA (commits/solved-count) se counter.
