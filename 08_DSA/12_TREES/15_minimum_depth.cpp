@@ -25,18 +25,19 @@
 //   []  (null root)          -> 0
 // ============================================================
 // ---- APPROACH ----  (BFS -- level-order skeleton + EARLY-STOP; naya BFS flavor)
-//  ★ idea: BFS level-by-level neeche jaati -> jo PEHLA leaf mila = sabse PAAS = min depth. first-leaf pe RUK jao.
+//  ★ idea: BFS level-by-level neeche jaati -> jo PEHLA leaf mila = sabse PAAS = min depth -> RUK jao.
 //     (BFS ki taakat: "sabse pehle jo mila = shortest" -- poora tree dekhne ki zaroorat nahi.)
-//  1. base : root null -> 0.
-//  2. queue me root push. depth = 0 (ab tak poore hue level).
-//  3. while (!q.empty()) -- har ghumaav = ek LEVEL:
-//       sz = q.size() [snapshot] -> sz baar: front pop ->
-//           ★ agar LEAF (!curr->left && !curr->right) -> return depth + 1 (current level ki depth).
-//           warna bachche (L,R) queue me push.
-//       level poora -> depth++.
-//  ★ depth+1 kyun: depth = ABHI TAK poore hue level ki ginti; jab leaf is level me milta, wo current level = depth+1.
-//  ★★ DFS-TRAP (isliye BFS chuna): "1 + min(leftDepth, rightDepth)" GALAT -- NULL-child ko depth-0 maan ke chhota answer deta
-//     (skew tree 2->3->4 pe). BFS me ye dikkat hi nahi (first leaf = sahi min).
+//  1. base : root null -> return 0.
+//  2. queue me root push. depth = 0 (ab tak POORE hue level ki ginti).
+//  3. while (!q.empty()) -- har ghumaav = EK level:
+//       a. sz = q.size()  -> is level ke node (snapshot).
+//       b. sz baar loop: front nikaalo + pop ->
+//            - ★ LEAF hai? (!curr->left && !curr->right) -> return depth + 1  (yehi min depth, EARLY-STOP).
+//            - warna bachche (left, right) queue me push.
+//       c. level poora -> depth++.
+//  ★ depth+1 kyun: depth = ab tak POORE hue level; leaf is (current) level me mila -> current level = depth + 1.
+//  ★★ DFS-TRAP (isliye BFS chuna): "1 + min(leftD, rightD)" GALAT -- NULL-child ko depth-0 maan ke skew-tree (2->3->4)
+//     pe chhota galat deta. BFS me ye dikkat hi nahi (first-leaf = sahi min).
 // ============================================================
 
 #include <bits/stdc++.h>
