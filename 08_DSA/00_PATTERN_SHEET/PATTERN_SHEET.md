@@ -382,9 +382,13 @@
  ▸ PIVOT INDEX ─────────────────────────────────────────────────
      total nikaalo; leftSum chalao. ★ order: rightSum=total-leftSum-nums[i]; if(left==right)return i; PHIR leftSum+=nums[i]. (leftSum BAAD me)
 
- ▸ PRODUCT EXCEPT SELF ─────────────────────────────────────────
-     2 pass. ★ ORDER trick: pehle left[i]=prod, PHIR prod*=nums[i] (assign-before-update).
-     left-pass phir right-pass -> ans[i] = left × right. (bina division)
+ ▸ PRODUCT EXCEPT SELF (LC-238) ────────────────────────────────
+     ans[i] = (i se PEHLE sabka product) × (i ke BAAD sabka product).  no division, O(n).
+     running `prod` se 2 pass (★ assign-BEFORE-update dono me):
+        left-pass  (aage):    left[i]  = prod;  prod *= nums[i];
+        right-pass (peeche):  prod=1;  right[i] = prod;  prod *= nums[i];
+        combine:              ans[i] = left[i] * right[i].
+     ★ ORDER TRAP: pehle ASSIGN (left[i]=prod), PHIR UPDATE (prod*=nums[i]) -> warna khud ka element bhi product me ghus jaata.
 
 ┌── (STANDALONE — apni alag trick) ─────────────────────────────
 └───────────────────────────────────────────────────────────────
@@ -408,9 +412,13 @@
  ▸ SET MATRIX ZEROES ───────────────────────────────────────────
      2 pass: pehle zeroRow[]/zeroCol[] mark; phir jahan row ya col marked -> 0.
 
- ▸ SPIRAL MATRIX ───────────────────────────────────────────────
-     4 boundary (top/bottom/left/right); L->R, T->B, R->L, B->T; har layer ke baad boundary shrink.
-     ★ guard: BOTTOM-row chalane se pehle if(top<=bottom); LEFT-col chalane se pehle if(left<=right).
+ ▸ SPIRAL MATRIX (LC-54) ───────────────────────────────────────
+     4 boundary: top=0, bottom=row-1, left=0, right=col-1.   while (top<=bottom && left<=right):
+        top row    L->R  (i: left..right)   -> top++
+        right col  T->B  (i: top..bottom)   -> right--
+        ★ if (top<=bottom):  bottom row R->L (i: right..left) -> bottom--
+        ★ if (left<=right):  left col   B->T (i: bottom..top) -> left++
+     ★ GUARD kyun: last 2 loops (bottom-row/left-col) se PEHLE check -- warna single row/col bache to DUPLICATE push ho jaata.
 
  ▸ TRANSPOSE ───────────────────────────────────────────────────
      [ans[i][j] = matrix[j][i];] naya matrix col×row size ka.
