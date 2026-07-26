@@ -475,9 +475,12 @@
      ★ next-GREATER se NAHI: rectangle taller bar ko include karta, shorter pe rukta -> smaller boundary chahiye. (greater tab jab bada element boundary ho.)
 
  ▸ MAXIMAL RECTANGLE (LC-85, 2D) ───────────────────────────────
-     ★ Largest-Rectangle-Histogram ka 2D bhai. HAR ROW ko histogram maano -> us row ke histogram pe largest-rectangle -> saare rows ka MAX.
-     heights[] (size = COL): cell 1 -> heights[j]+=1 (build up) · cell 0 -> heights[j]=0 (reset). har row ke baad maxi=max(maxi, largestRectangleArea(heights)).
-     ★ heights COL-size ka (har column neeche jaate height accumulate). inner loop j=col, outer i=row.
+     ★ = Largest-Rectangle-Histogram (LC-84) ka 2D bhai. HAR ROW ko histogram maano -> us pe LC-84 laga -> saare rows ka MAX.
+     heights[] (size = COL, har column ki running height -- upar se neeche):
+        cell == 1 -> heights[j] += 1;    // upar wale 1s ke saath build-up
+        cell == 0 -> heights[j] = 0;     // column toot gaya -> RESET
+     har row ke baad:  maxi = max(maxi, largestRectangleArea(heights));   // LC-84 code REUSE (prev/next-smaller + area)
+     ★ inner loop j (col), outer i (row).  heights COL-size ka (row nahi).
 
  ▸ DAILY TEMPERATURES ──────────────────────────────────────────
      same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).
