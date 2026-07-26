@@ -163,11 +163,17 @@
      ANT: i >= s.size() -> saare s-char order me mil gaye -> TRUE. warna FALSE.
 
  ▸ TRAPPING RAIN WATER (LC-42) ─────────────────────────────────
-     ★ ek bar `i` ke upar paani = min(leftMax[i], rightMax[i]) - height[i]. (min kyun: chhoti side se bah jaata.)
-     [A] O(n) space: leftMax[] pass-aage · rightMax[] pass-peeche · ans += min(leftMax[i],rightMax[i]) - height[i].
-     [B] O(1) two-pointer: left/right + 2 var leftMax/rightMax. if(leftMax<=rightMax) -> REFRESH leftMax pehle,
-         phir ans += leftMax-height[left], left++ (else side ulta). ★ refresh-PEHLE-add-baad (warna naya-bada-bar pe negative).
-         ★ kyun safe: chhoti-max side ka paani sirf usi side se limit (doosri side oonchi wall already).
+     ★ CORE: bar `i` ke upar paani = min(leftMax[i], rightMax[i]) - height[i].  (min kyun: CHHOTI side se paani bah jaata.)
+
+     [A] O(n) space: leftMax[] ek pass AAGE se · rightMax[] ek pass PEECHE se · ans += min(leftMax[i], rightMax[i]) - height[i].
+
+     [B] O(1) two-pointer (arrays hata, bas 2 var):
+           left=0, right=n-1;   leftMax=height[0], rightMax=height[n-1];
+           while (left < right):
+               if (leftMax <= rightMax):  leftMax  = max(leftMax,  height[left]);   ans += leftMax  - height[left];   left++;
+               else:                      rightMax = max(rightMax, height[right]);  ans += rightMax - height[right];  right--;
+         ★ REFRESH pehle, ADD baad (warna naya-bada-bar pe ans NEGATIVE de deta).
+         ★ kyun SAFE: chhoti-max side ka paani sirf usi side se limit (doosri side oonchi wall already khadi).
      edge: empty -> 0.
 ```
 
@@ -215,9 +221,12 @@
  ▸ LONGEST SUBSTRING NO-REPEAT ─────────────────────────────────
      track: char freq-map; INVALID = repeat (freq>1) -> left shrink; ans = MAX length.
 
- ▸ CHAR REPLACEMENT (LONGEST) ──────────────────────────────────
-     track: freq + maxFreq; INVALID = (windowLen - maxFreq) > k -> left shrink; ans = MAX length.
-     ★★ CORE TRICK (LC-424 non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). stale/purana maxFreq chalta hai -- window kabhi apni best-length se chhota nahi hota (sirf badhta/slide) -> galat maxFreq bhi answer kharab nahi karta.
+ ▸ CHAR REPLACEMENT (LONGEST, LC-424) ──────────────────────────
+     freq-map. j pe: mp[s[j]]++, maxFreq = max(maxFreq, mp[s[j]]).
+     VALID (windowLen - maxFreq <= k)  -> maxLen = max(maxLen, windowLen).
+     INVALID (windowLen - maxFreq > k) -> left shrink (mp[s[i]]--, i++).
+     ★★ CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window apni best-length
+        se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
 
  ▸ MAX CONSECUTIVE ONES III ────────────────────────────────────
      track: zerosCount; INVALID = zeros > k -> left shrink; ans = MAX length (UNCONDITIONAL).
@@ -260,20 +269,30 @@
      ★ COUNT (length nahi). track: prod; INVALID = prod>=k -> prod/=nums[i], i++.
      ★★ COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid). (bahut count-Q me)
 
-┌── FAMILY: need-map + COUNT (char-matching, --/++ MIRROR) ─────
-│ KYUN SAATH: dono "t ke SAARE char chahiye" type -> IDENTICAL skeleton: need-map(t) + count(baaki char) + EXPAND(if(mp>0)count--; mp-- IF ke BAHAR) + valid pe shrink(mp++; if(mp>0)count++). SIRF answer-handle alag: LC-76 = MIN-track · LC-1358 = COUNT (ans+=i). t="abc" daalo -> dono ek. [ye wahi --/++ MIRROR mechanic jo naya tha]
+┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
+│ LC-76 + LC-1358 ka SKELETON bilkul SAME -- SIRF answer-handle wali 1 line alag. t="abc" daalo -> dono ek. [--/++ MIRROR mechanic, naya tha]
 └───────────────────────────────────────────────────────────────
 
- ▸ MIN WINDOW SUBSTRING (LC-76, Hard) ──────────────────────────
-     ★ s ka sabse CHHOTA window jisme t ke SAARE char (count sameet). need-map(t) + count(=t.size, 0=valid).
-     EXPAND: if(mp[s[j]]>0)count--; mp[s[j]]-- (★ IF ke BAHAR -- non-t char negative -> count ke liye "invisible"; andar rakha to D-asymmetry BUG: shrink me count++ galat).
-     VALID(count==0) -> shrink: min-save (len<minLen) ; mp[s[i]]++; if>0 count++; i++ (★ MIRROR: aana=-- , jaana=++). return substr(index,minLen) ya "".
-     ★ DERIVE-first: chhote example haath-trace (ADOBECODEBANC->BANC) -> "baar-baar kya check?" se map+count (=code ki aankhein) nikla.
+ ★ SHARED SKELETON (dono bas isi pe):
+      need-map(t);  count = t.size();                 // count==0 => window me t ke SAARE char (VALID)
+      for j (EXPAND):
+          if (mp[s[j]] > 0) count--;                  // t-char mila -> ek zaroorat puri
+          mp[s[j]]--;                                 // ★ IF ke BAHAR: non-t char -ve -> count me "invisible"
+                                                      //   (andar rakha to D-ASYMMETRY BUG: shrink me count++ galat)
+          while (count == 0) {                         // VALID -> shrink (i++)
+              <<< ANSWER-HANDLE -- yehi 1 line har Q me alag >>>
+              mp[s[i]]++;  if (mp[s[i]] > 0) count++;  // ★ MIRROR: aana = -- , jaana = ++
+              i++;
+          }
 
- ▸ SUBSTRINGS CONTAINING ALL 3 (LC-1358) ───────────────────────
-     ★ COUNT + contains-all. need={a,b,c}=1 each (count=3). valid(count==0) -> shrink i tightest -> ★ ans += i (valid left-starts, har right-end).
-     ★ INTUITION: valid window ko LEFT-extend karo -> valid REHTA -> left-starts ek BLOCK (0..point) -> ek saath gino. (mp-- if ke BAHAR: extras negative track.)
-     minWindow(s,"abc") reuse -> bas MIN-track ki jagah ans += i.
+ ▸ MIN WINDOW SUBSTRING (LC-76, Hard) -- answer-handle = MIN-track ──
+     s ka sabse CHHOTA window jisme t ke saare char. shrink se PEHLE: (j-i+1) < minLen -> save (bestI, minLen).
+     return substr(bestI, minLen) ya "".
+     ★ DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) -> "baar-baar kya check?" se map+count nikla.
+
+ ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer-handle = COUNT ──
+     need = {a,b,c} 1-each (count=3). valid -> tightest tak shrink -> ★ ans += i (valid left-starts BLOCK 0..i, har right-end pe gino).
+     ★ INTUITION: valid window ko LEFT-extend -> valid REHTA -> left-starts ek BLOCK -> ek saath count.
 
 ┌── FAMILY: ANAGRAM-window ─────────────────────────────────────
 │ KYUN SAATH: fixed p-length window + har position pe anagram-check (isAnagram helper reuse).
@@ -338,8 +357,10 @@
  ▸ SUBARRAY SUM = K ────────────────────────────────────────────
      ★ prefix-sum + map[sum]; map{0:1} se START. [count += mp[sum-k];  // = prefix[j]-prefix[i-1]=k]
 
- ▸ LONGEST CONSECUTIVE SEQ ─────────────────────────────────────
-     ★ set me sab; count START tabhi jab (num-1) set me NAHI (sequence start) -> O(n).
+ ▸ LONGEST CONSECUTIVE SEQ (LC-128) ────────────────────────────
+     saare num ek SET me daalo. har num pe: agar (num-1) set me NAHI -> ye sequence ka START ->
+        curr = num, count = 1;  while (set me curr+1) { count++; curr++; }  -> ans = max(ans, count).
+     ★ (num-1)-check kyun: sirf START-num se ginti chalao -> har element ek hi baar visit -> O(n) (warna O(n^2)).
 
  ▸ MAJORITY ELEMENT (LC-169, >n/2) ─────────────────────────────
      map se: mp[x]++; count > n/2 wala return. O(n) time, O(n) space. (seedha.)
