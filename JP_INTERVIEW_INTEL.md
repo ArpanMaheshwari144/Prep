@@ -63,6 +63,23 @@
    ★ Arpan: 5 STAR done + project-revise (mini_payment_ms) -> ready.
 ```
 
+## ★ 6b. PROJECT-STORY FILTER (Arpan-insight 26-Jul — interview me kya bolna, kya NAHI)
+```
+   ★ har seekhi cheez interview me VOLUNTEER karne layak NAHI. sawaal: "story SHARP dikhati, ya BASIC gap reveal karti?"
+
+   VOLUNTEER (DEPTH dikhati — ye utha):
+     - Idempotency ka ORDER-bug (check-before-save)      -> race-condition ki samajh.
+     - SAGA + Circuit-Breaker ka try-catch hatana         -> pattern-interaction, design-judgment.
+     - cross-service transaction nahi -> compensating     -> distributed-systems depth.
+     - getId() null-before-save (@GeneratedValue lifecycle) -> ORM samajh.
+
+   APNE PAAS RAKH (basic-gotcha, BACKFIRE risk — khud se mat bol):
+     - gitignore case-insensitivity (Windows)  -> "should've known" lagta; attention-to-detail hai par interview-point NAHI.
+     - Spring-Cloud version-verifier off        -> border-line (DIRECT poocha jaaye to theek, khud se nahi).
+
+   ★ RULE: knowledge SAB rakho (real-work ke liye) -- par interview me sirf DEPTH/judgment wali stories VOLUNTEER karo. selectivity = skill.
+```
+
 ---
 
 ## ★ BOTTOM LINE
