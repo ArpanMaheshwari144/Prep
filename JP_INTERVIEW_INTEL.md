@@ -25,6 +25,15 @@
    => ACTIONABLE: Sept apply -> careers-site + LinkedIn-referral; prep already matches (DSA-medium + SD + behavioral + Java/Spring). skills = jo abhi bana raha.
 ```
 
+## 0c. REAL-EXPERIENCE INTEL — kya ACTUALLY poochte (online candidate-experiences, 27-Jul)
+```
+   ★ SYSTEM DESIGN common Qs: "Design a PAYMENT SYSTEM" + "Design a RATE LIMITER" -> ★★ Arpan ne DONO kar rakhe (payment HLD-mock + rate-limiter sheet)! HLD super-hard NAHI, practical. Java-based architecture expect karte.
+   ★★ JAVA MULTITHREADING/CONCURRENCY = HEAVILY poochte (★ SHARPEN = biggest differentiator): JMM/happens-before · volatile/synchronized/final · thread-pool internal · GC-tuning · synchronized-vs-modern-concurrency-utils. + Spring-Boot basics. (Arpan 04_MULTITHREADING notes hain -> extra sharp rakho.)
+   ★ MICROSERVICES architecture pe bhaari -> mini_payment_ms (Kafka/Feign/Saga/CircuitBreaker) = EXACT fit.
+   ★ DSA: arrays/strings/sort/DP/trees, MEDIUM, aksar BUSINESS-context (trade-matching/transaction-validation). India: DSA -> phir DB-indexing/APIs/tera-tech-stack discussion.
+   => prep DIRECTLY maps; sirf JAVA-CONCURRENCY depth extra-sharp karna = SABSE BADA lever.
+```
+
 ## 1. DSA
 ```
    DIFFICULTY: LeetCode EASY-MEDIUM (Hard kam). BREADTH > depth -- 1 ghante me 1-2 medium + complexity/edge-case discuss.
