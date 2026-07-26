@@ -7,28 +7,6 @@
 
 ---
 
-## ★★ BROAD-TRICKS INDEX (sabse high-leverage — ek trick, kai problem)
-```
-   FAST/SLOW pointer      -> middle · detect-cycle · palindrome-LL · remove-nth-from-end (GAP: fast ko n aage bhejo)
-   REVERSE (3-pointer)    -> reverse-LL · palindrome-LL
-   DUMMY node             -> merge-two-sorted (+ LL insert/build)
-   MONOTONIC stack        -> next-greater · daily-temperatures · next/prev-smaller
-   NEAREST-SMALLER/GREATER BOUNDARY (monotonic) -> har element ka prev+next smaller/greater se boundary -> uska CONTRIBUTION (width/count/span):
-                            largest-rectangle-histogram (width) · sum-of-subarray-minimums (count) · maximal-rectangle-2D (per-row histogram) · stock-span (prev-greater). [ek weapon, kai problem]
-   PREFIX-SUM + map[sum-k] -> subarray-sum=K
-   num-1 START-check       -> longest-consecutive-sequence (O(n))
-   BS on ANSWER           -> koko (min speed) · ship (min capacity) · split-array (min largest-sum) [teeno same shape: low/high range + solve(mid) count-check]
-   sorted-half-check      -> search in rotated array
-   2D-index-map           -> search 2D matrix (row=i/col, col=i%col)
-   VARIABLE window (shrink-till-valid, ans unconditional) -> longest-no-repeat · max-consec-ones · char-replace · min-len
-   "assign PEHLE, update BAAD" -> pivot-index · product-except-self
-   fill-from-END (result peeche se) -> squares-of-sorted-array · merge-sorted-array (bada element end me)
-   count += window-size (subarray COUNT) -> subarray-product<k (j pe end hone wale saare valid)
-   -> ye broad-tricks yaad -> zyadatar focus-8 problems recognize + solve.
-```
-
----
-
 ## ★ NAAM-SE-CONFUSE MAT HO (Container vs Trapping vs Histogram — teeno ALAG!)
 ```
                     CONTAINER Most Water    TRAPPING Rain Water      LARGEST Rectangle (Histogram)
