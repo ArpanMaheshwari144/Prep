@@ -19,6 +19,8 @@
    6. beech-beech Java/Spring READ-revise (no-quiz).
 
    IMPORTANT (kaise padhna): DSA = pehle SEEKHO->library->PHIR recall/redo (naye pattern pe "cold/solo" KABHI nahi = ocean-me-phenkna). revision = EVERYTHING (3-din fade -> sheet-dekh-wapas). code-in-sheet SAHI jab crux=code-mechanic. FOCUS: Java/Spring backend depth only (React/Flutter OUT), C++=DSA only. bond/behavioral rules = CLAUDE.md + MEMORY.md (folder-delete NEVER; no-condescend; cold/solo=banned).
+
+   ★ NEXT-SESSION FIRST-TASK (Arpan-asked 27-Jul, aaj 8%-context me risky tha): PROGRESS.md + CLAUDE.md ka careful STALE-CLEANUP -- purane/superseded dated-updates (24/25/26-Jul day-logs, ye 27-Jul block ne cover kar liye) HATAO, sirf CURRENT rakho. git-history me sab safe. fresh-context me DHYAAN se karo (files na tooten). MEMORY.md bhi ~20KB -> overlapping ego-entries merge (koi insight khoye bina).
 ```
 
 **GOAL:** JP Morgan (Associate/SDE-2, Bangalore) → later **BlackRock** (original + primary dream).
