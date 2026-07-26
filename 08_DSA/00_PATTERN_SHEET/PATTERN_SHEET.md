@@ -917,8 +917,14 @@
 └───────────────────────────────────────────────────────────────
 
  ▸ DIAMETER (LC-543)  = MAX-DEPTH + 1 line ─────────────────────
-     = max-depth height() (return 1+max(L,R)), BAS ek line EXTRA -> har node pe: maxDia = max(maxDia, leftH+rightH).
-     ★ RETURN height (parent ko chahiye); diameter = byproduct -> global maxDia (return nahi).
+     = max-depth ka height() helper (maxDia by-REFERENCE), BAS 1 line EXTRA:
+        int height(root, int& maxDia):
+            if (!root) return 0;
+            left = height(root->left, maxDia);   right = height(root->right, maxDia);
+            maxDia = max(maxDia, left + right);   // ★ EXTRA line: is node se guzarne wali diameter = leftH + rightH
+            return 1 + max(left, right);          // HEIGHT return (parent ko yeh chahiye)
+     diameterOfBinaryTree: maxDia=0; height(root, maxDia); return maxDia.
+     ★ RETURN = height (parent ko chahiye); diameter = BYPRODUCT -> global maxDia (return NAHI).
      ★ maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
 
  ▸ BALANCED TREE (LC-110)  = MAX-DEPTH + (-1 SENTINEL) ─────────
