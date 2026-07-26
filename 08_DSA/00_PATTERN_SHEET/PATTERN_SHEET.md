@@ -284,14 +284,19 @@
           }
 
  ▸ MIN WINDOW SUBSTRING (LC-76, Hard) -- answer = MIN-track, loop ke ANDAR ──
-     s ka sabse CHHOTA window jisme t ke saare char. save shrink-loop ke ANDAR (top), har valid window pe:
-          while (count == 0) { len=j-i+1; if(len<minLen){ minLen=len; index=i; }  mp[s[i]]++; if>0 count++; i++; }
+     s ka sabse CHHOTA window jisme t ke saare char.  count = t.size().
+     for j:  if(mp[s[j]]>0) count--;  mp[s[j]]--;                                            // EXPAND
+     while (count == 0) { len=j-i+1; if(len<minLen){minLen=len; index=i;}  mp[s[i]]++; if>0 count++; i++; }   // shrink + SAVE (andar)
      return minLen==INT_MAX ? "" : s.substr(index, minLen).
      ★ DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) se map+count nikla.
 
  ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD ──
-          while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   ->   ★ ans += i;   (loop ke BAAD, har j pe)
-     ★ WHY ans += i: shrink window ko INVALID tak le jaata -> ab [0 .. i-1] SAARE valid left-starts hain (is right-end j ke saath) -> unki ginti = i.
+     need = a,b,c  (count = 3).
+     for j:  if(mp[s[j]]>0) count--;  mp[s[j]]--;                                            // EXPAND (same)
+     while (count == 0) { mp[s[i]]++; if>0 count++; i++; }                                   // shrink to INVALID
+     ans += i;                                                                               // ★ loop ke BAAD, har j pe
+     ★ WHY ans += i: shrink window ko INVALID tak le jaata -> ab [0 .. i-1] SAARE valid left-starts hain -> ginti = i.
+     numberOfSubstrings(s) = minWindow(s, "abc") reuse.
      numberOfSubstrings(s) = minWindow(s, "abc") reuse.
 
 ┌── FAMILY: ANAGRAM-window ─────────────────────────────────────
