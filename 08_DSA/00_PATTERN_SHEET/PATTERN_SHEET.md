@@ -1000,13 +1000,13 @@
      change: level HAMESHA L-to-R banao (normal) -> ek levelCounter rakho -> if (levelCounter % 2 != 0) reverse(level).
      ★ even level (0,2..) = seedha · odd level (1,3..) = ULTA.  (alt: front-insert/deque, par reverse simplest.)
 
- ┌──────────────────────────────────────────────────────────────────────────────
+ ┌──────────────────────────────────────────────────────────
  │ ▸ MINIMUM DEPTH (LC-111)   = LEVEL-ORDER + EARLY-STOP
- │     idea : root se sabse PAAS wale LEAF tak depth. BFS neeche -> PEHLA leaf mila = min depth -> RUK jao (first = shortest).
- │     change: level-order skeleton + depth-counter (har level ke baad depth++). for-loop me -> LEAF? (!L && !R) -> return depth+1 (turant, aage nahi).
- │     ★ depth = ab tak POORE hue level; leaf is level me mila -> current level = depth+1.
- │     ★★ DFS-TRAP (isliye BFS): "1 + min(leftD, rightD)" GALAT -- NULL-child ko depth-0 maan ke skew-tree (2->3->4) pe galat deta. BFS me ye dikkat nahi.
- └──────────────────────────────────────────────────────────────────────────────
+ └──────────────────────────────────────────────────────────
+     idea : root se sabse PAAS wale LEAF tak depth. BFS neeche -> PEHLA leaf mila = min depth -> RUK jao (first = shortest).
+     change: level-order skeleton + depth-counter (har level ke baad depth++). for-loop me -> LEAF? (!L && !R) -> return depth+1 (turant, aage nahi).
+     ★ depth = ab tak POORE hue level; leaf is level me mila -> current level = depth+1.
+     ★★ DFS-TRAP (isliye BFS): "1 + min(leftD, rightD)" GALAT -- NULL-child ko depth-0 maan ke skew-tree (2->3->4) pe galat deta. BFS me ye dikkat nahi.
 
 ┌── FAMILY: BST (Binary Search Tree -- left < node < right) ────
 │ ★ BST ka INORDER (left->node->right) = SORTED (ascending). yehi BST ki asli TRICK -- "sorted/kth chahiye? -> INORDER".
