@@ -556,26 +556,36 @@
      ★★ high=MID (NOT mid-1): else me mid KHUD min ho sakta (CANDIDATE) -> discard mat karo. isliye while(low<high) (warna infinite-loop). [BUG-CATCH: [3,1,2] high=mid-1 se galat 3 deta tha.]
      (ye wahi high=mid vs high=mid-1 rule -- find-peak jaisa: khud-answer-dhoondh -> high=mid+low<high; target-reject -> high=mid-1+low<=high.)
 
-┌── FAMILY: BS-on-ANSWER ───────────────────────────────────────
-│ KYUN SAATH: array pe nahi, ANSWER-range pe BS (low..high = possible answers). solve(mid) feasible? -> feasible to chhota try (high=mid-1), warna bada (low=mid+1). TEENO ka code SAME-TO-SAME.
+┌── FAMILY: BS-on-ANSWER (koko · ship · split -- SHELL same, sirf RANGE + solve(mid) alag) ─────
+│ array pe nahi, ANSWER-range pe BS. solve(mid) feasible? -> feasible=chhota try (high=mid-1), warna bada (low=mid+1).
 └───────────────────────────────────────────────────────────────
 
- ▸ KOKO BANANAS ────────────────────────────────────────────────
-     ★ BS on ANSWER (speed k); hours(k)=sum(ceil(pile/k))<=h? -> chhoti k try.
-     ★ ceil: hours += ceil((double)piles[i]/mid);  ya integer: (piles[i]+mid-1)/mid.
-     ★ TRAP: ceil(int/int) BEKAAR (int-div pehle floor). double-cast ya integer-formula use karo.
+ ★ SHARED SHELL (teeno bilkul same):
+      low, high = <RANGE>;   ans = -1;
+      while (low <= high) {
+          mid = low + (high - low) / 2;
+          if (solve(mid)) { ans = mid; high = mid - 1; }   // feasible -> chhota try
+          else              low = mid + 1;                  // bada chahiye
+      }
+      return ans;
+   ★ FARAK sirf 2 cheez: (a) RANGE (low, high)   (b) solve(mid) ka FORMULA.
 
- ▸ SHIP WITHIN D DAYS ──────────────────────────────────────────
-     ★ BS on ANSWER = CAPACITY (Koko cousin). low=max(weights), high=sum(weights).
-     solve(mid): days ginо -> if(sum+w>mid) -> naya din (day++, sum=0); phir sum+=w HAMESHA (dono case me -- current weight naye din me add hota, drop nahi). day<=D? feasible.
-     feasible -> ans=mid, high=mid-1 (choti try); warna low=mid+1. (Koko: ceil per pile; yahan: running-load "exceed to naya din" kyunki order fixed)
+ ▸ KOKO BANANAS (LC-875) -- min eating-speed k ─────────────────
+     RANGE : low=1, high=max(piles).
+     solve : hours = Σ ceil(piles[i] / mid);   return hours <= h.
+     ★ ceil TRAP: ceil(int/int) BEKAAR (int-div pehle FLOOR kar deta). use (piles[i]+mid-1)/mid YA ceil((double)piles[i]/mid). hours = long (overflow).
 
- ▸ SPLIT ARRAY LARGEST SUM ─────────────────────────────────────
-     ★ BS on ANSWER = KOKO/SHIP ka SAME-TO-SAME. "k parts me baanto -> LARGEST part-sum MINIMIZE".
-     range: low=max(arr) (bada element akela aayega, tod nahi sakte) · high=sum(arr) (k=1 -> pura ek tukda).
-     solve(mid): mid=cap. sum+=nums[i]; sum>mid -> count++, sum=nums[i] (naye tukde me carry). ★ count=1 se START (warna aakhri tukda chhoot jaye). feasible = count<=k.
-     feasible -> ans=mid, high=mid-1 (chhota try); warna low=mid+1. while low<=high, return ans.
-     ★ sibling: koko (min speed) · ship (min capacity) · split (min largest-sum) -> teeno IDENTICAL shape.
+ ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity ────────────────
+     RANGE : low=max(weights), high=sum(weights).
+     solve : day=1, sum=0;   for w: if (sum+w > mid) { day++; sum=0; }   sum += w;   return day <= D.
+
+ ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum ────
+     "k parts me baanto -> LARGEST part-sum ko MINIMIZE."
+     RANGE : low=max(arr) (bada element akela aayega, tod nahi sakte) · high=sum(arr) (k=1 -> pura ek tukda).
+     solve : sum=0, count=1;   for x: sum += x; if (sum > mid) { count++; sum = x; }   return count <= k.
+     ★ count = 1 se START (warna aakhri tukda ginti me chhoot jaaye).
+
+ ★ sibling: koko (min speed) · ship (min capacity) · split (min largest-sum) -> teeno IDENTICAL shell.
 
 ┌── FAMILY: HALF-DISCARD (unsorted / half-property) ────────────
 │ KYUN SAATH: array pura sorted nahi, phir bhi ek comparison se aadha safe discard ho jaata (peak: mid vs mid+1 · single: index-parity).
