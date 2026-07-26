@@ -88,14 +88,9 @@
       beech me koi achhi comp crack ho to wo bhi JP/BlackRock ka raasta (route FLEXIBLE, end-goal fixed).
    ★ PHASE = CONSOLIDATION + remaining fill (naya-heavy nahi; Java+Spring theory DONE → beech-beech READ-revise, no-quiz).
 
-   ★ ROZ ka flow (24-Jul REFINED, Arpan-set — PROJECT top, kyunki JP JAVA ko BHAARI weight deta):
-   1. pattern-sheet GLANCE (daily, "gate ki chaabi", 5-10 min recall-test).
-   2. ★★ PROJECT-REVISE (TOP PRIORITY, HLD se UPAR) — mini_payment_ms = Java showcase + MULTIPLIER: ek saath Java-round + system-design + behavioral-deep-dive ko feed karta -> isliye pehle. (detail neeche.)
-   3. HLD MOCK — ek topic (jaise "monolith 50x scale" / "optimize-skeleton" = JP-framings) → Claude interview-Q + delivery-coaching (words: caching/sharding/replication/idempotency).
-   4. SHAAM / light DSA: Trees continue (1-2 easy) YA JP-gap (Top-K-Frequent · Non-overlapping-Intervals · Graph-BFS) YA glance-test. gate hai, doobna nahi.
-   5. BEECH-BEECH: Java/Spring ek note READ-revise (no quiz).
+   ★ ROZ-flow + forward-priority = upar ka 27-JUL block (authoritative).
    - SUNDAY: pattern-sheet polish.  OFF-DAY: light-gear (sheet/purana padho — zero-day nahi, pahaad bhi nahi; MEMORY.md playbook).
-   ★ JP kya poochta (DSA-gaps/HLD-framings/Java-Qs) = JP_INTERVIEW_INTEL.md (24-Jul research).
+   ★ JP kya poochta (rounds/SD-Qs/Java-multithreading/gaps) = JP_INTERVIEW_INTEL.md (27-Jul research).
 
    ★★ PROJECT-REVISE (NAYA, IMPORTANT — 24-Jul se, Arpan-asked): mini_payment_ms ko interview ke liye ready karo.
       - SHURU SE, IN ORDER: LEARNINGS.md topic 0 (Overall Flow) → 1 → 2 ... sequentially (beech se nahi).
@@ -103,10 +98,7 @@
       - Claude ACTUAL note/code dikhata (fabricate NAHI); Arpan padh ke apni copy pe notes; STORY + code dono ready.
       - code mapping: idempotency→PaymentService.java · Feign→PaymentClient.java · Saga+CircuitBreaker→OrderService.java · Kafka-consumer→NotificationListener.java · Gateway→api-gateway/application.yml.
 
-   ★ TREES = GATE-DONE (25-Jul, 14 problems): DFS[max-depth/invert/diameter/same/symmetric/traversals/LCA/path-sum] · BFS[level-order/right-view/zigzag] · Balanced(-1 sentinel) · BST[kth-smallest/validate-bst]. saari families cover + samjhe + code likhe + revise-ready. recursion-CORE + print-debug + patterns pakde. ab koi naya tree-Q = near-transfer.
-   ★ NEXT DSA: Graph, DP, Backtracking, Heap, Intervals (finite ~5-6 pattern bache — sheet CONVERGE karti, ~70% done).
-
-   ★★ REVISE-MODE ROADMAP (25-Jul, Arpan-set — project-revise ke BAAD, SAME hand-note mode, IN ORDER):
+   ★★ REVISE-MODE ROADMAP (Arpan-set — project-revise ke BAAD, SAME hand-note mode, IN ORDER):
       07_PROJECTS: mini_payment_ms (chal raha, 7f-onwards) → todoapp (EXTRA: JWT/Spring-Security/Redis/K8s — mini_payment me nahi tha; NO LEARNINGS.md → actual CODE se concept, fabricate nahi)
       → 05_INFRA_DEEP → 06_COMPARES → 09_DATABASE → 04_HLD/FOUNDATIONS (designs NAHI — FOUNDATIONS).
       har folder: Claude ACTUAL note-content/code dikhata → Arpan paper pe hand-note → "aage" pe next. NO quiz.
@@ -129,7 +121,6 @@
    ★ PHILOSOPHY (Arpan's, reinforce NEVER re-argue): "DSA = pattern + trick ka khel." REVISION >> new-solve (swap-nodes 3.5hr→5min proof). DSA = GATE (medium), not CP/mastery. hints/editorial = LEGIT no-guilt.
    ★★ REVISION-AIRTIGHT (23-Jul): solo-vs-feed IRRELEVANT — cold-solved bhi bina revise 7-din me blur. feed+revision = solo+revision = SAME. metric = REVISION, na solo-ness. (= "help+redo=owned" ka root.)
 
-   RECENT (23-Jul): Two-Pointer + SW pattern REVISE (glance-test, sab recall, 2 revise-note) · Max-Product + HashMap COLD-REDO (verified) · Single-Number(XOR) solo · Trees STARTED (Max-Depth + Invert solo, pointer-vs-value+leaf-crash seekha) · while-vs-if + k=size-vs-limit confusion cleared · Redis-single-threaded (HLD rate-limiter mock).
    ★★ RECENT (26-Jul): POORI SHEET recall-test done -- ALMOST SAB recall (library SOLID); thaka nahi (flow ban gaya). Jaha entries dense/fuzzy thi (recall-atki) -> ~15 entries ACTUAL-CODE se match + saaf ki: SW min-window family (76+1358: LC-76 save loop-ANDAR vs LC-1358 ans+=i loop-BAAD + expand-line) · char-replacement · trapping-RW · longest-consec · product-except-self · spiral-matrix · maximal-rectangle · first-last · koko/ship/split (shared-shell + per-Q solve-formula) · find-peak · single-element · palindrome-LL · merge-two-sorted. => sheet ab pattern-by-pattern code-matched. proof: "trick pata->easy, na-pata->hard" (Max-Product genuinely-naya mechanic ka poster-child); DSA = library+recognize, aaj library test hui + khadi rahi.
 ```
 
