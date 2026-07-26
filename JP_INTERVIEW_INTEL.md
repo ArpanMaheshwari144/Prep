@@ -14,6 +14,17 @@
    - No centralized interviewing -> department-specific variation.
 ```
 
+## 0b. HIRING PROCESS + APPLY (India, experienced Java — online research 27-Jul)
+```
+   ★ INDIA = JP ka SABSE BADA tech-hub US ke bahar: 50,000+ emp (Mumbai/Bangalore/Hyderabad). entry-tech ~15-28 LPA; SDE-2/AVP upar.
+   ★ SKILLS chahiye: Backend Java/J2EE/Spring 4-6yr + DSA + system-design = Arpan ka EXACT profile + prep.
+   ★ ROUNDS (experienced/lateral): 1. online coding-assessment (medium) -> 2. tech-screen (team-manager) -> 3. live-coding (LeetCode MEDIUM, hard nahi) -> 4. system-design -> 5. behavioral. [core ~3 rounds x 45-60min = DSA + SD + behavioral, Raunak-match]
+   ★ APPLY: careers site (jpmorgan.com/careers) -> role search -> apply. ★ REFERRAL: preference + speed deta PAR referral ke baad bhi portal pe KHUD apply karna (profile auto-referred). LinkedIn/network se referral dhundo (worth).
+   ★ TIMELINE: apply -> hire average ~21 din.
+   ★ NEWS (27-Jul): JP India-GCC me 1000 hire kar raha (CLOUD + CYBERSECURITY) jabki AI 40% staffing-cut -> matlab specialized-DEPTH (backend/cloud/security) survive + demand; Arpan focus (Java/Spring depth + AWS/K8s + JWT/Security) ON-TARGET.
+   => ACTIONABLE: Sept apply -> careers-site + LinkedIn-referral; prep already matches (DSA-medium + SD + behavioral + Java/Spring). skills = jo abhi bana raha.
+```
+
 ## 1. DSA
 ```
    DIFFICULTY: LeetCode EASY-MEDIUM (Hard kam). BREADTH > depth -- 1 ghante me 1-2 medium + complexity/edge-case discuss.
