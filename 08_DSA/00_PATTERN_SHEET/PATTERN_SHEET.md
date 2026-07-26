@@ -591,22 +591,21 @@
 │ KYUN SAATH: array pura sorted nahi, phir bhi ek comparison se aadha safe discard ho jaata (peak: mid vs mid+1 · single: index-parity).
 └───────────────────────────────────────────────────────────────
 
- ▸ FIND PEAK ELEMENT ───────────────────────────────────────────
-     ★ NAYA: array SORTED nahi, phir bhi BS (ek comparison se half discard -- full-sorted nahi chahiye).
-     mid ko sirf mid+1 se compare: nums[mid] < nums[mid+1] -> chadhaai -> peak RIGHT -> low=mid+1.
-     else (nums[mid] > nums[mid+1]) -> dhalaan -> peak mid-khud/left -> high = mid (NOT mid-1, mid khud peak ho sakta).
-     while(low<high), return low. edges auto (bahar -inf -> kinaara khud peak).
-     ★ 2 valid version, DONO SAME core (answer HAMESHA return-low se): V1=short (upar, interview-BEST) · V2=explicit peak-check+return-mid+high=mid-1 (extra early-return, optional).
-     ★ interview=V1 short: no explicit-check, no edge-sentinel (low<high -> mid+1 hamesha in-bounds). sentinel dena ho to INT_MIN (nums[0] nahi).
+ ▸ FIND PEAK ELEMENT (LC-162) ──────────────────────────────────
+     ★ array SORTED nahi, phir bhi BS -- ek comparison (mid vs mid+1) se aadha discard. (peak = neighbours se bada; edges bahar -inf.)
+     low=0, high=n-1;   while (low < high):   mid = low+(high-low)/2;
+        nums[mid] < nums[mid+1]        -> CHADHAAI -> peak RIGHT me       -> low = mid+1;
+        else (nums[mid] > nums[mid+1]) -> DHALAAN  -> peak mid-KHUD ya LEFT -> high = mid;   // ★ mid (NOT mid-1)
+     return low;   (low==high pe converge = peak. edges auto.)
+     ★★ GOTCHA: dhalaan me high = mid (mid-1 NAHI) -- mid khud peak ho sakta. isliye while low<high (mid+1 hamesha in-bounds, no sentinel).
 
- ▸ SINGLE ELEMENT (SORTED) ─────────────────────────────────────
-     ★ har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY (XOR bhi solve karta par O(n) -> yahan log-n chahiye).
-     pairs: single se PEHLE (even,odd) index pe shuru; single ke BAAD (odd,even) me SHIFT. single hi ye shift karta.
-     while(low<=high); mid nikalo + parity check, nums[mid] ko nums[mid-1] se compare:
-       mid EVEN: ==nums[mid-1] -> single PEECHE -> high=mid-1 · else -> low=mid+1
-       mid ODD:  !=nums[mid-1] -> single PEECHE -> high=mid-1 · else -> low=mid+1
-     return nums[HIGH] (NOT low) -- dono branch mid ko REJECT karte (high=mid-1 / low=mid+1) -> isliye while low<=high; high khud single pe aa ke rukta.
-     ★ edge mid==0 -> return nums[0] (baaki sab pair eliminate).
+ ▸ SINGLE ELEMENT (SORTED, LC-540) ─────────────────────────────
+     ★ har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR bhi solve karta par O(n) -> yahan log-n chahiye.)
+     idea: single se PEHLE pairs (even,odd) index pe · single ke BAAD (odd,even) me SHIFT. single hi ye shift karta.
+     low=0, high=n-1;   while (low <= high):   mid;   if (mid==0) return nums[0];   // edge
+        mid EVEN: nums[mid]==nums[mid-1] -> single PEECHE -> high=mid-1  · else -> low=mid+1;
+        mid ODD:  nums[mid]!=nums[mid-1] -> single PEECHE -> high=mid-1  · else -> low=mid+1;
+     return nums[HIGH];   ★ nums[HIGH] (not low) -- dono branch mid REJECT karte -> high khud single pe aa ke rukta.
 
 ┌── FAMILY: 2D-index-map ───────────────────────────────────────
 │ KYUN SAATH: 2D matrix ko 1D sorted array maan ke normal BS; index ko (row,col) me convert.
