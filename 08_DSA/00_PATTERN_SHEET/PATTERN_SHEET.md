@@ -270,29 +270,29 @@
      ★★ COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid). (bahut count-Q me)
 
 ┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
-│ LC-76 + LC-1358 ka SKELETON bilkul SAME -- SIRF answer-handle wali 1 line alag. t="abc" daalo -> dono ek. [--/++ MIRROR mechanic, naya tha]
+│ LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD). t="abc" -> dono ek.
 └───────────────────────────────────────────────────────────────
 
- ★ SHARED SKELETON (dono bas isi pe):
+ ★ SHARED SKELETON (expand + shrink -- dono me same):
       need-map(t);  count = t.size();                 // count==0 => window me t ke SAARE char (VALID)
       for j (EXPAND):
           if (mp[s[j]] > 0) count--;                  // t-char mila -> ek zaroorat puri
           mp[s[j]]--;                                 // ★ IF ke BAHAR: non-t char -ve -> count me "invisible"
                                                       //   (andar rakha to D-ASYMMETRY BUG: shrink me count++ galat)
           while (count == 0) {                         // VALID -> shrink (i++)
-              <<< ANSWER-HANDLE -- yehi 1 line har Q me alag >>>
-              mp[s[i]]++;  if (mp[s[i]] > 0) count++;  // ★ MIRROR: aana = -- , jaana = ++
-              i++;
+              mp[s[i]]++;  if (mp[s[i]] > 0) count++;  i++;   // ★ MIRROR: aana = -- , jaana = ++
           }
 
- ▸ MIN WINDOW SUBSTRING (LC-76, Hard) -- answer-handle = MIN-track ──
-     s ka sabse CHHOTA window jisme t ke saare char. shrink se PEHLE: (j-i+1) < minLen -> save (bestI, minLen).
-     return substr(bestI, minLen) ya "".
-     ★ DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) -> "baar-baar kya check?" se map+count nikla.
+ ▸ MIN WINDOW SUBSTRING (LC-76, Hard) -- answer = MIN-track, loop ke ANDAR ──
+     s ka sabse CHHOTA window jisme t ke saare char. save shrink-loop ke ANDAR (top), har valid window pe:
+          while (count == 0) { len=j-i+1; if(len<minLen){ minLen=len; index=i; }  mp[s[i]]++; if>0 count++; i++; }
+     return minLen==INT_MAX ? "" : s.substr(index, minLen).
+     ★ DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) se map+count nikla.
 
- ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer-handle = COUNT ──
-     need = {a,b,c} 1-each (count=3). valid -> tightest tak shrink -> ★ ans += i (valid left-starts BLOCK 0..i, har right-end pe gino).
-     ★ INTUITION: valid window ko LEFT-extend -> valid REHTA -> left-starts ek BLOCK -> ek saath count.
+ ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD ──
+          while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   ->   ★ ans += i;   (loop ke BAAD, har j pe)
+     ★ WHY ans += i: shrink window ko INVALID tak le jaata -> ab [0 .. i-1] SAARE valid left-starts hain (is right-end j ke saath) -> unki ginti = i.
+     numberOfSubstrings(s) = minWindow(s, "abc") reuse.
 
 ┌── FAMILY: ANAGRAM-window ─────────────────────────────────────
 │ KYUN SAATH: fixed p-length window + har position pe anagram-check (isAnagram helper reuse).
