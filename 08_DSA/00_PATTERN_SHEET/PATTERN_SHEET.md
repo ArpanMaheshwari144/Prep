@@ -535,10 +535,12 @@
  ▸ SEARCH INSERT POSITION ──────────────────────────────────────
      basic BS; na mile to low return (wahi insert jagah).
 
- ▸ FIRST & LAST POSITION ───────────────────────────────────────
-     ★ 2 BS. mila to RUKO MAT -> boundary tak continue:
-     LEFT-most ke liye  -> ans=mid; high=mid-1 (aur left dhoondo).
-     RIGHT-most ke liye -> ans=mid; low=mid+1 (aur right dhoondo).
+ ▸ FIRST & LAST POSITION (LC-34) ───────────────────────────────
+     sorted + duplicates. target ka {first, last} index. 2 BS, ans(2,-1). mila nahi -> {-1,-1}.
+     ★ CORE: mid==target pe RUKO MAT -> boundary tak ek side aur dhoondo.
+     1st pass (FIRST): nums[mid]==target -> ans[0]=mid; high=mid-1   (aur LEFT dhoondo)
+     2nd pass (LAST):  nums[mid]==target -> ans[1]=mid; low=mid+1    (aur RIGHT dhoondo)
+        baaki dono pass me normal: nums[mid] < target -> low=mid+1 · else -> high=mid-1.
 
 ┌── FAMILY: ROTATED ────────────────────────────────────────────
 │ KYUN SAATH: array rotate hua; ek comparison se pata karo kaunsa half sorted / pivot kis taraf, phir wahi half rakho.
