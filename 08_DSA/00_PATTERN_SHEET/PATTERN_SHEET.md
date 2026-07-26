@@ -651,9 +651,13 @@
  ▸ DETECT CYCLE ────────────────────────────────────────────────
      ★ FAST/SLOW (Floyd): cycle ho to tez-dheema MILENGE (slow==fast) -> true.
 
- ▸ PALINDROME LL ───────────────────────────────────────────────
-     ★ COMBO: middle nikaalo -> 2nd half REVERSE (rev=naya head) -> head(front) & rev(back) saath chala ke compare. khali=true.
-     ★★ list TOOT-ti NAHI: pehle-half node ka ->next kabhi nahi badalta; odd me middle node SHARED (head-se aur rev-se DONO beech pe aa ke NULL milte) -> while(head && rev) bina explicit cut ke odd+even dono sahi handle karta.
+ ▸ PALINDROME LL (LC-234) ──────────────────────────────────────
+     ★ COMBO (3 tool jodo): middle -> 2nd half REVERSE -> head(front) & rev(back) saath chala ke compare.
+        Node* mid = middleNode(head);     // slow/fast
+        Node* rev = reverseList(mid);     // 2nd half ulta (rev = naya head)
+        while (head && rev) { if (head->val != rev->val) return false; head=head->next; rev=rev->next; }
+        return true;   (khali list -> true)
+     ★★ list TOOT-ti NAHI: pehle-half node ka ->next kabhi nahi badla -> odd me middle node SHARED (head-se aur rev-se dono beech pe aa ke NULL milte -> while(head&&rev) bina cut ke odd+even dono handle).
 
  ▸ REMOVE NTH FROM END ─────────────────────────────────────────
      ★ FAST/SLOW GAP: fast ko PEHLE aage bhejo (loop i=1; i<=n). ab fast & slow me n ka gap.
@@ -676,8 +680,13 @@
 │ KYUN SAATH: fake head (dummy) + tail; naye node rewire/jodte jao; ans = dummy->next. head-edge apne aap handle.
 └───────────────────────────────────────────────────────────────
 
- ▸ MERGE TWO SORTED ────────────────────────────────────────────
-     ★ DUMMY node + tail; chhota wala tail->next; ek khatam -> baaki jod do. ans=dummy->next.
+ ▸ MERGE TWO SORTED (LC-21) ────────────────────────────────────
+     ★ DUMMY node + tail (dummy = head ka special-case avoid).
+        while (a && b): (a->val <= b->val) ? { tail->next=a; a=a->next; } : { tail->next=b; b=b->next; }   tail=tail->next;
+        while (a) { tail->next=a; a=a->next; tail=tail->next; }    // baaki a jod do (already sorted)
+        while (b) { tail->next=b; b=b->next; tail=tail->next; }    // baaki b jod do
+        return dummy->next;   (dummy skip -> asli head)
+     ★ ek list khatam -> doosri ki BAAKI seedha jod do (dono already sorted).
 
  ▸ ADD TWO NUMBERS ─────────────────────────────────────────────
      ★ MERGE jaisa (dummy + tail) + CARRY ka khel. digits ULTA store (units-digit pehle) -> seedha jodo.
