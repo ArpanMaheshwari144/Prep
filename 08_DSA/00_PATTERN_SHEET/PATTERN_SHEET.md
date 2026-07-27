@@ -1294,9 +1294,10 @@
      ★★ '0'-check base me (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ CONNECTED COMPONENTS (LC-323)  = Islands on an adj-list
+ │ ▸ CONNECTED COMPONENTS (LC-323)  = count components (adj-list, BFS)
  └──────────────────────────────────────────────────────────────
-     = ISLANDS ka outer-loop + count, PAR adj-list pe (grid ki jagah).  adj banao (undirected).
+     ISLANDS jaisa concept (outer-loop + count), PAR: adj-list (grid nahi) + BFS use kiya (islands ne DFS kiya tha).
+     adj banao (undirected).
      for(i=0..n-1): if(!vis[i]) { count++; BFS(i); }   return count.   // har unvisited node = naya group
      BFS(i) = PATH-EXISTS jaisa (queue + visited; neighbours = adj[node]).
      ★★ count++ + BFS DONO if(!vis[i]) ke ANDAR -- warna har node gine (=n).
@@ -1308,10 +1309,11 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
  └──────────────────────────────────────────────────────────────
-     = tree LEVEL-ORDER (sz-snapshot) grid pe (neighbours 4-dir).  har LEVEL = 1 minute.
-     NAYA: saare rotten(2) PEHLE queue me (MULTI-SOURCE = level-0) + fresh gino.
-     per-level (sz--): pop (r,c); 4-dir valid && grid==1 -> grid=2, push, fresh--.   level baad mins++.
-     return (fresh==0) ? mins-1 : -1.   // ★★ mins-1 (last level pe kuch rot nahi = ek extra) · fresh bacha -> -1
+     = tree LEVEL-ORDER (sz-snapshot) grid pe (neighbours 4-dir via dirs[]).  har LEVEL = 1 minute.
+     NAYA: saare rotten(2) PEHLE queue me (MULTI-SOURCE = level-0).  queue<pair<int,int>>.
+     per-level (sz--): pop (r,c); dirs[] 4-dir -> valid && grid==1 -> grid=2, push.   level baad mins++.
+     END: grid DOBARA scan -> koi 1 bacha? return -1.   warna return mins-1.
+     ★★ mins-1 (last level pe kuch rot nahi = ek extra).   ★ -1 = end-scan pe koi fresh bacha (unreachable).
 ```
 
 ---
