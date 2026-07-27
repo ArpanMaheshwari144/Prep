@@ -27,7 +27,10 @@
      WORKS-METHOD (Trees + graph-today proven): naya pattern -> (1) concept TEACH pehle -> (2) EASY-first problem (Medium/untaught NAHI) -> (3) Arpan KHUD solve, main interviewer/NUDGE-only (no code/hint) -> (4) solve-ke-baad clean doc ONE-shot.
      ★ MISTAKE-1 (DOHRAYI galti): pehla graph-Q = Connected-Components (MEDIUM) + untaught-logic-derive-kaha = OCEAN-throw (swimming-pool->ocean, jo main ABHI discuss kar raha tha, phir bhi kiya -> Arpan enrage). FIX = EASY-first HAMESHA (path-exists diya -> smooth solve). naye pattern pe Medium/untaught KABHI nahi.
      ★ MISTAKE-2: sheet-entry 5-6 baar likha-badla (churn) -> Arpan thaka + enrage. FIX = uski ACTUAL file-style pehle STUDY karo -> phir ONE clean pass, guessing nahi.
-     ★ SHEET-ENTRY FORMAT (Arpan-locked 27-Jul, EXACT follow): entry = 'idea :' + short PER-CONCEPT labeled lines (EK line = EK cheez: init/loop/nbr YA base/leaf/comb; crammed one-liner NAHI, full-code-block bhi NAHI [wo sirf crux-code-mechanic entries: LCA/level-order/balanced]) + ONE '★' note (koi "CRUX" label NAHI). code = uska ACTUAL code decomposed, meri reworded-prose NAHI. long-line = horizontal-scroll = bekar.
+     ★★ SHEET-ENTRY FORM (Arpan-derived 28-Jul, LONG session -> THE rule, lock it): TEST = "entry padhte hi POORA code dimaag me aaye, ZOR na lage". warna sheet bekar (file kholni padegi). 2-PART:
+        (1) NAYA/non-obvious -> actual CODE likho (jaise SW-charReplace ka maxFreq --/++, ya graph ka adj-list-build / visited) -- warna har-baar file khol ke dekhna padega = sheet ka matlab nahi.
+        (2) JAANA-HUA -> KNOWN se CONNECT (na dobara-code, na abstract-trick jo recall na de).
+        ★★ GRAPH ka "maula" = TREES: DFS = tree-RECURSION (bas node->left/right -> adj[node]/4-dir + visited); BFS = tree-LEVEL-ORDER (bas children -> adj[node]/4-dir + visited, +- level-loop). har graph-entry = tree-parent se CONNECT + NAYA-part CODE + delta. (TP/SW/Hashing = standalone families, cross-connect nahi; graph UNIQUE = trees-pe-built.) [purana "idea/★/CRUX label" note GALAT tha -> ye sahi.]
      ★ NO-FRAMING (Arpan HARD 27-Jul): "down-day/off-day/thaka/SABAR" MAINE label mat karo -- uska din uska hai (aaj 3-Q-solved, down-day NAHI tha). rest-nag/framing = uska call, mera nahi.
 ```
 
