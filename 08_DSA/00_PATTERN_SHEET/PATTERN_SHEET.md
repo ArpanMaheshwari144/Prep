@@ -1263,74 +1263,30 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
  └──────────────────────────────────────────────────────────────
-     idea : source se dst tak rasta? EK BFS source se -> dst mila to true.
-     SKELETON:
-         adj banao (undirected -> dono taraf);
-         q.push(src);  vis[src] = true;
-         while (!q.empty()) {
-             node = q.front();  q.pop();
-             if (node == dst) return true;
-             for (nbr : adj[node])
-                 if (!vis[nbr]) { vis[nbr]=true;  q.push(nbr); }
-         }
-         return false;
-     ★ single-source EK traversal (reachability) -> outer-loop/count NAHI (wo CC/islands).
+     idea : source se dst tak rasta hai? (reachability)
+     trick: EK BFS source se -> dst mila to true, queue khali -> false.
+     ★ single-source -> outer-loop / count NAHI (yehi CC/islands se farak).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
  └──────────────────────────────────────────────────────────────
-     idea : grid = graph (cell=node, 4 padosi=edge). naya land se DFS dubo -> count++.
-     SKELETON:
-         for (i,j) over grid:
-             if (grid[i][j]=='1') { DFS(i,j);  count++; }
-         return count;
-
-         void DFS(i,j):
-             if (bounds || grid[i][j]=='0') return;   // '0'-check
-             grid[i][j] = '0';                         // sink = visited
-             DFS(i+1,j); DFS(i-1,j); DFS(i,j+1); DFS(i,j-1);
-     ★★ TRAP: base me '0'-check ZAROORI (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
+     idea : kitne island (connected '1' groups, 4-direction).
+     trick: har naye '1' pe DFS -> poora island '0' kar do (SINK) + count++.
+     ★★ TRAP: DFS base me '0'-check (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CONNECTED COMPONENTS (LC-323)  = Islands on an adj-list
  └──────────────────────────────────────────────────────────────
-     idea : kitne alag group. har unvisited node = naya component.
-     SKELETON:
-         adj banao (undirected -> dono taraf);
-         for (i = 0..n-1)
-             if (!vis[i]) {                            // NAYA group
-                 count++;  q.push(i);  vis[i]=true;
-                 while (!q.empty()) {                  // BFS: poora group mark
-                     node = q.front();  q.pop();
-                     for (nbr : adj[node])
-                         if (!vis[nbr]) { vis[nbr]=true; q.push(nbr); }
-                 }
-             }
-         return count;
-     ★ count++ + BFS if(!vis[i]) ke ANDAR -- warna har node gin jaata (=n); isolated bhi khud ek group.
+     idea : kitne alag group (adj-list graph).
+     trick: har UNVISITED node pe count++ + BFS/DFS (poora us group ko mark).
+     ★ count++ AUR BFS if(!vis[i]) ke ANDAR -- warna har node gin jaata (=n); isolated bhi khud ek group.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
  └──────────────────────────────────────────────────────────────
-     idea : saare rotten EK saath phailte; har minute = ek BFS level; end pe fresh -> -1.
-     SKELETON:
-         saare rotten(2) -> queue me push;      // MULTI-SOURCE = level-0
-         while (!q.empty()) {
-             int sz = q.size();                 // level snapshot
-             while (sz--) {
-                 (r,c) = q.front();  q.pop();
-                 for (d : dirs) {               // 4 padosi
-                     nr=r+d[0], nc=c+d[1];
-                     if (in-bounds && grid[nr][nc]==1) {
-                         grid[nr][nc]=2;  q.push({nr,nc});
-                     }
-                 }
-             }
-             mins++;                            // ek level = ek minute
-         }
-         koi 1 bacha? -> -1  :  return mins-1;
-     ★★ multi-source (saare rotten pehle) + minutes = LEVELS.
-     ★ mins-1: last level pe kuch rot nahi hota = ek extra gina.
+     idea : kitne minute me saare fresh rot? (multi-source spread)
+     trick: saare rotten(2) EK saath queue (MULTI-SOURCE) -> level-order BFS (har level = 1 minute).
+     ★★ mins-1 (last level pe kuch rot nahi = ek extra) · end me koi 1 bacha -> -1.
 ```
 
 ---
