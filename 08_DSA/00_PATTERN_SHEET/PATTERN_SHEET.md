@@ -1256,6 +1256,7 @@
      idea : source se dst tak rasta? EK BFS source se -> dst mila to true.
      bfs  : push(src)+mark -> while q: pop; node==dst? true; unvisited nbrs mark+push.
      end  : queue khali -> false.
+     ★ single-source EK traversal (reachability) -> outer-loop/count NAHI (wo CC/islands).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
@@ -1263,6 +1264,7 @@
      idea : grid = graph (cell=node, 4 padosi=edge). naya land se DFS dubo -> count++.
      main : for(i,j): grid[i][j]=='1' -> { DFS(i,j); count++; };  return count.
      dfs  : (bounds || grid=='0') -> return;  grid='0' (sink);  DFS 4-dir.
+     ★★ TRAP: DFS base me '0'-check (bounds ke SAATH) -- warna paani pe nahi rukta, grid kha jaata.
 ```
 
 ---
