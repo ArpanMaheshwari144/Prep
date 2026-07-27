@@ -1308,9 +1308,10 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
  └──────────────────────────────────────────────────────────────
-     idea : kitne minute me saare fresh rot? = LEVEL-ORDER (sz-snapshot) grid pe + MULTI-SOURCE.
-     ★ rotten SAB pehle queue (multi-source); per-level  sz=q.size()  = 1 minute.
-     ★★ TRAP: fresh gino; end me fresh bacha -> -1.  (mins-1: last level pe kuch rot nahi = ek extra.)
+     = tree LEVEL-ORDER (sz-snapshot) grid pe (neighbours 4-dir).  har LEVEL = 1 minute.
+     NAYA: saare rotten(2) PEHLE queue me (MULTI-SOURCE = level-0) + fresh gino.
+     per-level (sz--): pop (r,c); 4-dir valid && grid==1 -> grid=2, push, fresh--.   level baad mins++.
+     return (fresh==0) ? mins-1 : -1.   // ★★ mins-1 (last level pe kuch rot nahi = ek extra) · fresh bacha -> -1
 ```
 
 ---
