@@ -1250,7 +1250,14 @@
    ★ kyun: ek BFS/DFS sirf EK connected group cover karti -> disconnected group tak khud nahi jaati ->
       isliye HAR node check. (Connected-Components = ise GINO [count++] · Islands = grid pe yehi.)
 
- (▸ graph problems yahan add honge jaise solve karega — first up: path-exists / islands / connected-components.)
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ PATH EXISTS (LC-1971)  = single BFS + visited
+ └──────────────────────────────────────────────────────────────
+     idea : source se dst tak rasta hai? ek BFS source se -> dst mila to true, queue khali to false.
+     code : q.push(src); while(q){ node=pop; if(node==dst) true; unvisited nbrs mark+push; } -> false.
+     ★ ek source se EK traversal (reachability) -> outer-loop/count NAHI (wo count-Q me: CC/islands).
+
+ (▸ aage: islands · connected-components · cycle-detect · shortest-path yahan add honge.)
 ```
 
 ---

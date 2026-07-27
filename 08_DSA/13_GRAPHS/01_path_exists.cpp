@@ -50,7 +50,7 @@ bool validPath(int n, vector<vector<int>> &edges, int source, int destination)
         int node = q.front();
         q.pop();
 
-        if (node == destination) // ★ POP pe check -> src==dst (n=1) bhi apne aap sahi
+        if (node == destination)
             return true;
 
         for (auto &it : adj[node]) // unvisited neighbours -> mark + push
