@@ -1302,6 +1302,13 @@
      BFS(i) = PATH-EXISTS jaisa (queue + visited; neighbours = adj[node]).
      ★★ count++ + BFS DONO if(!vis[i]) ke ANDAR -- warna har node gine (=n).
 
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
+ └──────────────────────────────────────────────────────────────
+     = ISLANDS, bas DFS VOID nahi -> AREA return kare.  ans = max(ans, DFS(i,j)) har naye '1' pe.
+     DFS: base grid==0 -> return 0;  sink grid=0;  return 1 + (4-dir DFS returns ka sum).   // = tree max-depth (1 + combine)
+     ★ no island -> ans==INT_MIN -> return 0.
+
 ┌── FAMILY: MULTI-SOURCE / level-BFS ──────────────────────────
 │ KYUN SAATH: saare sources EK saath queue (level-0); per-level sz-snapshot -> ek level = ek step/minute. (level-order ka cousin.)
 └───────────────────────────────────────────────────────────────
