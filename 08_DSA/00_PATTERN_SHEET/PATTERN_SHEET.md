@@ -1237,20 +1237,28 @@
         ek source -> target / ek hi component -> NAHI:
              sirf source se EK traversal (koi outer-loop nahi)              (Path-Exists)
    Q2  DFS ya BFS? (connectivity ke liye dono same)
-        BFS = shortest-path/level (unweighted) ya connectivity  ·  DFS = flood-fill/grid-sink, code chhota
-        BFS (tera path-exists / CC -- adj-list):
-            q.push(start);  vis[start] = true;
+        BFS = shortest-path / level (unweighted)   ·   DFS = recursion, code chhota
+
+        BFS (queue):
+            vis[start] = true;
+            q.push(start);
             while (!q.empty()) {
-                node = q.front();  q.pop();
-                for (nbr : adj[node])
-                    if (!vis[nbr]) { vis[nbr] = true;  q.push(nbr); }
+                int node = q.front();
+                q.pop();
+                for (int nbr : adj[node])
+                    if (!vis[nbr]) {
+                        vis[nbr] = true;
+                        q.push(nbr);
+                    }
             }
-        DFS (tera islands -- grid):
-            dfs(i,j):
-                if (bounds || grid[i][j]=='0') return;
-                grid[i][j] = '0';                 // sink = visited
-                dfs(i+1,j); dfs(i-1,j); dfs(i,j+1); dfs(i,j-1);
-        ★ adj-list pe DFS = grid ki jagah -> for(nbr : adj[node]) if(!vis[nbr]) dfs(nbr).
+
+        DFS (recursion):
+            void dfs(int node) {
+                vis[node] = true;
+                for (int nbr : adj[node])
+                    if (!vis[nbr]) dfs(nbr);
+            }
+        ★ GRID pe: adj[node] ki jagah 4-direction (Q3 dirs-trick); visited = cell ko SINK ('0'/'2').
    Q3  neighbours kaise? (graph ka roop)
         edges diye -> adjacency-list -> adj[node]
         grid diya  -> 2 TRICK (ratta -- islands/rotting/flood-fill sab me; ye apne-aap nahi aate):
