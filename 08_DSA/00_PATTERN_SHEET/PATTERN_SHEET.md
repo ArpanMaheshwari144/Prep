@@ -1296,9 +1296,10 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CONNECTED COMPONENTS (LC-323)  = Islands on an adj-list
  └──────────────────────────────────────────────────────────────
-     idea : kitne alag group. = ISLANDS ka adj-list version (grid ki jagah adj[node]).
-     ★ count = outer-loop se kitne naye BFS/DFS launch (har unvisited = naya group).
-     ★★ TRAP: count++ + traversal if(!vis[i]) ke ANDAR -- warna har node gin jaata (=n).
+     = ISLANDS ka outer-loop + count, PAR adj-list pe (grid ki jagah).  adj banao (undirected).
+     for(i=0..n-1): if(!vis[i]) { count++; BFS(i); }   return count.   // har unvisited node = naya group
+     BFS(i) = PATH-EXISTS jaisa (queue + visited; neighbours = adj[node]).
+     ★★ count++ + BFS DONO if(!vis[i]) ke ANDAR -- warna har node gine (=n).
 
 ┌── FAMILY: MULTI-SOURCE / level-BFS ──────────────────────────
 │ KYUN SAATH: saare sources EK saath queue (level-0); per-level sz-snapshot -> ek level = ek step/minute. (level-order ka cousin.)
