@@ -1253,7 +1253,11 @@
         ★ adj-list pe DFS = grid ki jagah -> for(nbr : adj[node]) if(!vis[nbr]) dfs(nbr).
    Q3  neighbours kaise? (graph ka roop)
         edges diye -> adjacency-list -> adj[node]
-        grid diya  -> 4-direction    -> (i+1,j) (i-1,j) (i,j+1) (i,j-1)
+        grid diya  -> 2 TRICK (ratta -- islands/rotting/flood-fill sab me; ye apne-aap nahi aate):
+          (a) DIRS-vector:  vector<vector<int>> dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+                            for (auto &d : dirs) { int nr=r+d[0], nc=c+d[1]; ... }
+          (b) BOUNDS+valid if:  if (nr>=0 && nr<m && nc>=0 && nc<n && grid[nr][nc]==?) { ... }
+              ★ ye if HAR grid-Q me lagti; '==?' question-hisaab badalta (islands/rotting: =='1'). YEHI asli trick.
    ★ visited HAMESHA (cycle rok) -> push/enter ke waqt mark.
 
  ┌──────────────────────────────────────────────────────────────
