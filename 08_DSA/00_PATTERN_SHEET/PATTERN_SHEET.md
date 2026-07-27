@@ -1253,21 +1253,31 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
  └──────────────────────────────────────────────────────────────
-     idea : source se dst tak rasta hai? EK BFS source se.
-     bfs  : q.push(src)+mark;  while(q){ node=pop;  node==dst? return true;
-            for(nbr) if(!vis){ mark+push; } }   ->  return false.
-     ★ ek source = EK traversal (reachability); outer-loop/count NAHI (wo CC/islands).
+     idea : source se dst tak rasta hai? EK BFS source se -> dst visit hua? true.
+        bool validPath(n, edges, src, dst):
+            adj banao (undirected -> adj[u]+=v, adj[v]+=u)
+            q.push(src);  vis[src] = true;
+            while (!q.empty()) {
+                node = q.front();  q.pop();
+                if (node == dst) return true;
+                for (nbr : adj[node])
+                    if (!vis[nbr]) { vis[nbr] = true;  q.push(nbr); }
+            }
+            return false;
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
  └──────────────────────────────────────────────────────────────
-     idea : grid = graph (cell=node, 4 padosi=edge). naya land '1' -> DFS dubo -> count++.
-     main : for(i,j): if(grid[i][j]=='1'){ DFS(i,j); count++; }   -> return count.
-     DFS  : if(bounds || grid[i][j]=='0') return;
-            grid[i][j]='0';  -> DFS(i+1,j) DFS(i-1,j) DFS(i,j+1) DFS(i,j-1).
-     ★★ TRAP (jo tune pakda): DFS base me '0'-check -- warna paani pe nahi rukta, grid kha jaata.
+     idea : grid = graph (cell=node, 4 padosi=edge). har naye land se DFS dubo -> count++.
+        int numIslands(grid):
+            for (i,j) over grid:
+                if (grid[i][j] == '1') { DFS(i,j);  count++; }
+            return count;
 
- (▸ aage: connected-components · cycle-detect · shortest-path (BFS) yahan add honge.)
+        void DFS(grid, i, j):
+            if (out-of-bounds || grid[i][j] == '0') return;   // ★ '0'-check
+            grid[i][j] = '0';                                 // SINK = visited
+            DFS(i+1,j);  DFS(i-1,j);  DFS(i,j+1);  DFS(i,j-1);
 ```
 
 ---
