@@ -1250,17 +1250,7 @@
    ★ kyun: ek BFS/DFS sirf EK connected group cover karti -> disconnected group tak khud nahi jaati ->
       isliye HAR node check. (Connected-Components = ise GINO [count++] · Islands = grid pe yehi.)
 
-┌── FAMILY: traversal + COUNT (visited + outer-loop) ──────────
-│ pura graph traverse; disconnected group ke liye HAR node check -> naya-unvisited = ek aur group/component.
-└───────────────────────────────────────────────────────────────
-
- ┌──────────────────────────────────────────────────────────────
- │ ▸ CONNECTED COMPONENTS (LC-323)
- └──────────────────────────────────────────────────────────────
-     idea : kitne alag-alag group. ek BFS/DFS = ek POORA group light-up.
-     trick: OUTER-LOOP -> har ANCHHUE (unvisited) node = naya group -> count++.
-     code : for i=0..n-1:  if(!vis[i]) { count++; BFS(i); }  -> return count.
-     ★ visited BAHAR (reset NAHI) · push pe mark · count++ sirf naye-unvisited pe.
+ (▸ graph problems yahan add honge jaise solve karega — first up: path-exists / islands / connected-components.)
 ```
 
 ---
