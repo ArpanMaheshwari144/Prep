@@ -1265,11 +1265,20 @@
               ★ HAR grid-Q me lagti (YEHI trick); '==?' per-Q badalta (islands/rotting =='1').
    ★ visited HAMESHA (cycle rok) -> push/enter ke waqt mark.
 
+┌── FAMILY: single-source traversal (reachability) ────────────
+│ ek source se BFS/DFS -> jo REACHABLE wo visit. koi OUTER-loop nahi (poora graph nahi, ek source).
+└───────────────────────────────────────────────────────────────
+
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
  └──────────────────────────────────────────────────────────────
      idea : source se dst tak rasta? EK BFS/DFS source se -> dst mila to true.
      ★ single-source -> OUTER-loop/count NAHI (CC/islands se farak). visited = cycle-rok.
+
+┌── FAMILY: COUNT components (outer-loop + FLOOD each) ─────────
+│ har node/cell pe jao; UNVISITED mila -> naya group -> count++ + traverse (poora group visit-mark).
+│ (Islands = grid · Connected-Components = adj-list; shape SAME.)
+└───────────────────────────────────────────────────────────────
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
@@ -1284,6 +1293,10 @@
      idea : kitne alag group. = ISLANDS ka adj-list version (grid ki jagah adj[node]).
      ★ count = outer-loop se kitne naye BFS/DFS launch (har unvisited = naya group).
      ★★ TRAP: count++ + traversal if(!vis[i]) ke ANDAR -- warna har node gin jaata (=n).
+
+┌── FAMILY: MULTI-SOURCE / level-BFS ──────────────────────────
+│ saare sources EK saath queue (level-0); per-level sz-snapshot -> ek level = ek step/minute.
+└───────────────────────────────────────────────────────────────
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
