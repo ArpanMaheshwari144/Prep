@@ -1230,20 +1230,6 @@
       directed   -> sirf adj[u].push_back(v);                    // ek taraf
 
  ──────────────────────────────────────────────────────────────
- ★ CORE -- 2 template (graph problems ka ~80% yehi 2):
-
-     BFS (queue):                                DFS (recursion):
-       q.push(start);  vis[start]=true;            dfs(node):
-       while (!q.empty()) {                          vis[node]=true;
-          node = q.front();  q.pop();                for (nbr : adj[node])
-          for (nbr : adj[node])                         if (!vis[nbr]) dfs(nbr);
-             if (!vis[nbr]) {
-                vis[nbr]=true;  q.push(nbr);
-             }
-       }
-   ★★ visited PUSH ke waqt mark (front pe nahi) -> ek node dobara queue me na ghuse.
-
- ──────────────────────────────────────────────────────────────
  ★★ DECISION-GUIDE (koi graph-Q se pehle -- Trees-guide jaisa; "question dekh ke pehchano"):
    Q1  OUTER-LOOP bahar chahiye? (SABSE bada -- yehi trick)
         kitne group / poora graph / disconnected -> HAAN:
@@ -1251,8 +1237,20 @@
         ek source -> target / ek hi component -> NAHI:
              sirf source se EK traversal (koi outer-loop nahi)              (Path-Exists)
    Q2  DFS ya BFS? (connectivity ke liye dono same)
-        BFS (queue)     -> shortest-path / level (unweighted); ya bas connectivity
-        DFS (recursion) -> flood-fill / grid-sink; code chhota
+        BFS = shortest-path/level (unweighted) ya connectivity  ·  DFS = flood-fill/grid-sink, code chhota
+        BFS (tera path-exists / CC -- adj-list):
+            q.push(start);  vis[start] = true;
+            while (!q.empty()) {
+                node = q.front();  q.pop();
+                for (nbr : adj[node])
+                    if (!vis[nbr]) { vis[nbr] = true;  q.push(nbr); }
+            }
+        DFS (tera islands -- grid):
+            dfs(i,j):
+                if (bounds || grid[i][j]=='0') return;
+                grid[i][j] = '0';                 // sink = visited
+                dfs(i+1,j); dfs(i-1,j); dfs(i,j+1); dfs(i,j-1);
+        ★ adj-list pe DFS = grid ki jagah -> for(nbr : adj[node]) if(!vis[nbr]) dfs(nbr).
    Q3  neighbours kaise? (graph ka roop)
         edges diye -> adjacency-list -> adj[node]
         grid diya  -> 4-direction    -> (i+1,j) (i-1,j) (i,j+1) (i,j-1)
