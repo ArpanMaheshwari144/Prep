@@ -31,6 +31,17 @@
 //     nahi jaati -> isliye HAR node manually check karo, har naya-unvisited node = ek aur group.
 //  ★ visited PUSH ke waqt mark (dobara queue me na aaye) + visited BAHAR (reset NAHI -> groups yaad rahein).
 //  ★ visited NAYA hai (Tree me nahi tha) -- graph me CYCLE ho sakti isliye.
+// ------------------------------------------------------------
+//   DRY-RUN  (n=5, edges=[[0,1],[1,2],[3,4]])  -- count sirf NAYE group pe badhta:
+//     adj:  0->[1]   1->[0,2]   2->[1]   3->[4]   4->[3]
+//
+//     i=0   vis? NO   -> count=1,  BFS(0) visits {0,1,2}      vis={0,1,2}
+//     i=1   vis? YES  -> skip
+//     i=2   vis? YES  -> skip
+//     i=3   vis? NO   -> count=2,  BFS(3) visits {3,4}        vis={0,1,2,3,4}
+//     i=4   vis? YES  -> skip
+//     ------------------------------------------------
+//     return count = 2   ✓   (BFS ne group flood kiya; outer-loop ne naye group DHOONDE)
 // ============================================================
 
 #include <bits/stdc++.h>

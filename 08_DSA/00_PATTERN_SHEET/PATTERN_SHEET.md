@@ -1212,8 +1212,11 @@
      solve(root, mini, maxi): null->true · (val<=mini || val>=maxi)->false · left=solve(L, mini, val) · right=solve(R, val, maxi) · return left&&right.
      call : solve(root, INT_MIN, INT_MAX).  ★ LEFT jao -> maxi=val (chhota hona) · RIGHT jao -> mini=val (bada hona).
      (2nd tarika: inorder = strictly increasing? -> kth-smallest ka near-transfer.)
+```
 
+---
 
+```
 ═══════════════════ PATTERN 13 — GRAPHS (BFS/DFS + visited) ═══════════════════
 
  BROAD IDEA: graph = nodes + edges. TREE bhi ek graph hai (special) -> Graph = Tree + 2 cheez:
