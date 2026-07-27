@@ -1263,31 +1263,50 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
  └──────────────────────────────────────────────────────────────
-     idea : source se dst tak rasta? EK BFS source se.
-     adj  : edges -> adjacency list (undirected -> dono taraf).
-     init : q.push(src);  vis[src] = true.
-     loop : node = pop -> node == dst? return true.
-     nbr  : har unvisited neighbour -> vis = true + push.
-     end  : queue khali -> return false.
+     idea : source se dst tak rasta? EK BFS source se -> dst mila to true.
+     SKELETON:
+         adj banao (undirected -> dono taraf);
+         q.push(src);  vis[src] = true;
+         while (!q.empty()) {
+             node = q.front();  q.pop();
+             if (node == dst) return true;
+             for (nbr : adj[node])
+                 if (!vis[nbr]) { vis[nbr]=true;  q.push(nbr); }
+         }
+         return false;
      ★ single-source EK traversal (reachability) -> outer-loop/count NAHI (wo CC/islands).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
  └──────────────────────────────────────────────────────────────
-     idea : grid = graph (cell = node, 4 padosi = edge). naya land se DFS dubo -> count++.
-     scan : for(i,j) -> grid[i][j]=='1'? -> DFS(i,j);  count++.
-     base : (bounds || grid[i][j]=='0') -> return.
-     sink : grid[i][j] = '0'   (= visited-mark).
-     rec  : DFS 4-dir -> (i+1,j) (i-1,j) (i,j+1) (i,j-1).
+     idea : grid = graph (cell=node, 4 padosi=edge). naya land se DFS dubo -> count++.
+     SKELETON:
+         for (i,j) over grid:
+             if (grid[i][j]=='1') { DFS(i,j);  count++; }
+         return count;
+
+         void DFS(i,j):
+             if (bounds || grid[i][j]=='0') return;   // '0'-check
+             grid[i][j] = '0';                         // sink = visited
+             DFS(i+1,j); DFS(i-1,j); DFS(i,j+1); DFS(i,j-1);
      ★★ TRAP: base me '0'-check ZAROORI (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CONNECTED COMPONENTS (LC-323)  = Islands on an adj-list
  └──────────────────────────────────────────────────────────────
      idea : kitne alag group. har unvisited node = naya component.
-     adj  : edges -> adjacency list (undirected -> dono taraf).
-     loop : for i=0..n-1 -> vis[i]? skip : { count++; BFS(i); }.
-     bfs  : push(i)+mark -> pop node -> unvisited nbrs mark+push.
+     SKELETON:
+         adj banao (undirected -> dono taraf);
+         for (i = 0..n-1)
+             if (!vis[i]) {                            // NAYA group
+                 count++;  q.push(i);  vis[i]=true;
+                 while (!q.empty()) {                  // BFS: poora group mark
+                     node = q.front();  q.pop();
+                     for (nbr : adj[node])
+                         if (!vis[nbr]) { vis[nbr]=true; q.push(nbr); }
+                 }
+             }
+         return count;
      ★ count++ + BFS if(!vis[i]) ke ANDAR -- warna har node gin jaata (=n); isolated bhi khud ek group.
 
  ┌──────────────────────────────────────────────────────────────
