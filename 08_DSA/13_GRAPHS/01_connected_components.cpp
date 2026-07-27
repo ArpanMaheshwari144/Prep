@@ -17,20 +17,13 @@
 //     n=4, edges=[]                          -> 4   (koi edge nahi -> har node akela = 4 group)
 //     n=1, edges=[]                          -> 1
 // ============================================================
-// ---- APPROACH ----  (BFS + visited + OUTER-LOOP count)
-//  mechanic: ek BFS = ek POORA group light-up. outer-loop har anchhue node pe naya group ginta.
-//  1. edges -> ADJACENCY LIST (undirected -> adj[u]+=v AUR adj[v]+=u).
-//  2. visited[] BAHAR + count = 0.
-//  3. for i=0..n-1:  vis[i]? -> skip.   nahi? -> count++ + BFS(i) [poora group visit].
-//  4. return count.
-//  ★★ KEY TRAP: outer-loop kyun -> ek BFS sirf EK group cover karti; disconnected tak khud nahi jaati.
-//  ★ visited BAHAR (reset NAHI) · push pe mark (dobara queue me na aaye).
-// ------------------------------------------------------------
-//   DRY-RUN  (n=5, edges=[[0,1],[1,2],[3,4]]):   adj: 0->[1] 1->[0,2] 2->[1] 3->[4] 4->[3]
-//     i=0  NEW  -> count=1, BFS visits {0,1,2}
-//     i=1,2     -> visited, skip
-//     i=3  NEW  -> count=2, BFS visits {3,4}
-//     i=4       -> visited, skip                    => return 2
+// ---- APPROACH ----  (tu likh — pehle copy-pen pe trace, phir code)
+//
+//
+//
+// ============================================================
+// NOTE: ye STUB hai — baad me fresh solve karna (jab graph ki baari aaye).
+//       purani solved-version git history me safe hai (recover ho sakti).
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -38,48 +31,9 @@ using namespace std;
 
 int countComponents(int n, vector<vector<int>> &edges)
 {
-    // STEP 1: edges -> ADJACENCY LIST (har graph problem ka same first-step)
-    unordered_map<int, vector<int>> adj;
-    for (auto &it : edges)
-    {
-        int u = it[0];
-        int v = it[1];
+    // tera code yahan
 
-        adj[u].push_back(v); // u ka neighbour v
-        adj[v].push_back(u); // v ka neighbour u  (undirected -> dono taraf)
-    }
 
-    queue<int> q;
-    vector<bool> vis(n, false); // ★ visited BAHAR — ek hi, saare BFS share (reset nahi)
-    int count = 0;
-
-    // STEP 2: OUTER LOOP — har node check (disconnected group chhut na jaaye)
-    for (int i = 0; i < n; i++)
-    {
-        if (!vis[i]) // ye node kisi gine-hue group me nahi -> NAYA component
-        {
-            count++;       // naya group gino
-            q.push(i);     // yahin se BFS -> is group ke sab nodes visit ho jaayenge
-            vis[i] = true; // push ke waqt mark
-
-            // ---- normal BFS (Tree ke level-order jaisa, bas visited add) ----
-            while (!q.empty())
-            {
-                int node = q.front();
-                q.pop();
-                for (auto &nbr : adj[node])
-                {
-                    if (!vis[nbr])
-                    {
-                        vis[nbr] = true; // ★ push ke waqt mark -> dobara queue me na aaye
-                        q.push(nbr);
-                    }
-                }
-            }
-            // BFS khatam = is poore group ke nodes visited -> outer loop aage badhega
-        }
-    }
-    return count; // kitne naye-group-start mile = utne connected components
 }
 
 int main()
