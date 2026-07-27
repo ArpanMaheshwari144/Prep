@@ -104,6 +104,45 @@ Real-life: seller sabse zyada dene wale ke paas jaata, buyer sabse saste ke paas
     no locks, deterministic + replayable. Scale horizontally BY symbol."
 ```
 
+### ONE HOT SYMBOL — scale WITHIN a symbol (deep-dive — sabse tricky)
+
+```
+   PROBLEM: TCS single-thread hai. Market-open pe AKELE TCS pe LAKHON orders/sec.
+      "shard by symbol" yahan kaam NAHI karta — TCS to already EK hi symbol/EK hi thread hai,
+      usse aur symbol-shards me nahi tod sakte. To ek thread pe itna load = kya karein?
+```
+
+```
+   Soch: dukaan, EK billing counter (= single thread).
+      - Normal din  : customer aate-jaate, counter aaram se sab nipta leta.
+      - Sale lag gayi (market-open): 500 log EK SAATH aa gaye.
+      - BINA line   : bhagdad -> kuch bina-bill chale jaate (orders DROP) ya counter baith jaata.
+      - LINE (queue): sab line me khade -> counter apni NORMAL speed se ek-ek ->
+                      koi jaata NAHI (drop nahi), bas thodi WAIT -> rush khatam -> line chhoti.
+```
+
+```
+   FIX (2 cheez):
+   1. Thread ko MAXIMIZE karo, split MAT karo: matching PURE in-memory + NO-LOCK hai -> ek hi thread
+      LAKHON orders/sec nigal leta (real exchanges/NASDAQ literally aise chalte). "slow" ka dar zyada hai.
+   2. Burst ko QUEUE / EVENT-LOG absorb kare (backpressure): orders pehle durable queue me append ->
+      thread wahan se FIFO apni pace pe consume -> spike me kuch DROP nahi, bas thoda latency.
+      = arrival-rate aur process-rate DECOUPLE ho gaye (aane ki speed != process ki speed).
+```
+
+```
+   Order book ko 2 THREAD me kyun NAHI todte?
+      ek hi SHARED book -> 2 thread = wahi DOUBLE-MATCH race wapas + price-time priority TOOT jaati
+      + lock lagane padenge (slow). Correctness ke liye ek book = ek thread = SERIALIZED rehna HI padta.
+
+   Interview line:
+   "You don't parallelize a single order book — keep it single-threaded for correctness, optimize it
+    in-memory, and put a durable queue in front to absorb bursts. Scale is BY symbol across threads,
+    NEVER within a symbol."
+```
+
+---
+
 ### Order Types — LIMIT vs MARKET (deep-dive)
 
 ```
@@ -403,7 +442,8 @@ Real-life: seller sabse zyada dene wale ke paas jaata, buyer sabse saste ke paas
 ```
    order book RAM crash -> EVENT LOG replay (=WAL) + audit | settlement crash -> EK transaction (ACID/@Transactional)
    cross-service settlement -> SAGA (local steps + fail pe compensate/ulta) | feed crore reads -> WebSocket+pubsub
-   one symbol load -> shard by symbol
+   MANY symbols load -> shard BY symbol (alag thread) | ONE hot symbol -> can't split book (race);
+                        optimize in-memory thread + durable QUEUE absorbs burst (never 2-thread on 1 book)
    CORE: ACID(ek DB)=instant all-or-nothing | SAGA(kai service)=code-driven compensating undo, eventually
 ```
 
