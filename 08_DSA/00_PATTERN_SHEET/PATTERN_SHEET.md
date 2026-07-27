@@ -1284,6 +1284,15 @@
      loop : for i=0..n-1 -> vis[i]? skip : { count++; BFS(i); }.
      bfs  : push(i)+mark -> pop node -> unvisited nbrs mark+push.
      ★ count++ + BFS if(!vis[i]) ke ANDAR -- warna har node gin jaata (=n); isolated bhi khud ek group.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
+ └──────────────────────────────────────────────────────────────
+     idea : saare rotten EK saath phailte; har minute = BFS level; end pe fresh bacha -> -1.
+     init : saare rotten(2) queue me (multi-source = level-0).
+     loop : sz-snapshot -> pop (r,c) -> 4-dir: in-bounds && ==1? rot(=2)+push;  level baad mins++.
+     end  : koi 1 bacha? -> -1  :  return mins-1.
+     ★ multi-source + minutes=LEVELS; mins-1 (last level pe kuch rot nahi = ek extra). neighbour-cond (in-bounds && ==1) har grid-Q me.
 ```
 
 ---
