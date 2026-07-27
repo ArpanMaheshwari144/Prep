@@ -1264,6 +1264,7 @@
  │ ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
  └──────────────────────────────────────────────────────────────
      idea : source se dst tak rasta? EK BFS source se.
+     adj  : edges -> adjacency list (undirected -> dono taraf).
      init : q.push(src);  vis[src] = true.
      loop : node = pop -> node == dst? return true.
      nbr  : har unvisited neighbour -> vis = true + push.
