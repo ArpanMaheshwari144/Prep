@@ -1268,33 +1268,29 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
  └──────────────────────────────────────────────────────────────
-     idea : source se dst tak rasta hai? (single BFS source se)
-     key  : pop pe -> node==dst? return true.  unvisited neighbours -> mark + push.
-     end  : queue khali (dst nahi mila) -> return false.
-     ★ single-source -> outer-loop / count NAHI (yehi CC/islands se farak).
+     idea : source se dst tak rasta? EK BFS/DFS source se -> dst mila to true.
+     ★ CRUX: single-source -> OUTER-loop/count NAHI (CC/islands se farak). visited = cycle-rok.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
  └──────────────────────────────────────────────────────────────
-     idea : kitne island ('1' ke connected groups, 4-dir).
-     key  : har naye '1' pe -> count++ + DFS(i,j).
-     dfs  : (bounds || grid=='0') return;  grid='0' (SINK);  4-dir recurse.
-     ★★ '0'-check base me ZAROORI (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
+     idea : kitne island ('1' ke connected groups).
+     ★ CRUX = OUTER-loop: har unvisited '1' -> count++ + DFS poora island '0' (SINK).
+     ★★ TRAP: DFS base me '0'-check (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CONNECTED COMPONENTS (LC-323)  = Islands on an adj-list
  └──────────────────────────────────────────────────────────────
-     idea : kitne alag group (adj-list).
-     key  : for(all nodes) -> !vis[i]? count++ + BFS(i) (poora us group mark).
-     ★ count++ AUR BFS if(!vis[i]) ke ANDAR -- warna har node gin jaata (=n); isolated bhi khud ek group.
+     idea : kitne alag group. = ISLANDS ka adj-list version (grid ki jagah adj[node]).
+     ★ CRUX: count = outer-loop se kitne naye BFS/DFS launch (har unvisited = naya group).
+     ★★ TRAP: count++ + traversal if(!vis[i]) ke ANDAR -- warna har node gin jaata (=n).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
  └──────────────────────────────────────────────────────────────
-     idea : kitne minute me saare fresh(1) rot?
-     key  : saare rotten(2) queue me (MULTI-SOURCE) -> level-order BFS -> har level = 1 minute (mins++).
-     end  : koi 1 bacha? -> -1  :  return mins-1.
-     ★ mins-1 (last level pe kuch rot nahi) · multi-source = sab ek saath spread.
+     idea : kitne minute me saare fresh rot? = LEVEL-ORDER (sz-snapshot) grid pe + MULTI-SOURCE.
+     ★ CRUX: rotten SAB pehle queue (multi-source); per-level  sz=q.size()  = 1 minute.
+     ★★ TRAP: fresh gino; end me fresh bacha -> -1.  (mins-1: last level pe kuch rot nahi = ek extra.)
 ```
 
 ---
