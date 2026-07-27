@@ -1305,9 +1305,11 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
  └──────────────────────────────────────────────────────────────
-     = ISLANDS, bas DFS VOID nahi -> AREA return kare.  ans = max(ans, DFS(i,j)) har naye '1' pe.
-     DFS: base grid==0 -> return 0;  sink grid=0;  return 1 + (4-dir DFS returns ka sum).   // = tree max-depth (1 + combine)
-     ★ no island -> ans==INT_MIN -> return 0.
+     = ISLANDS, bas 1 NAYA: DFS VOID nahi -> AREA (int) RETURN kare.
+     for(i,j): if(grid[i][j]==1) ans = max(ans, DFS(i,j));   return ans;   // har island ka area -> MAX
+     DFS(i,j): base (bounds || grid==0) -> return 0;
+               sink grid[i][j]=0;   return 1 + (4-dir DFS ka sum);   // = tree max-depth (return 1 + combine)
+     ★ ans = INT_MIN se start; end me ==INT_MIN -> return 0 (koi island nahi).
 
 ┌── FAMILY: MULTI-SOURCE / level-BFS ──────────────────────────
 │ KYUN SAATH: saare sources EK saath queue (level-0); per-level sz-snapshot -> ek level = ek step/minute. (level-order ka cousin.)
