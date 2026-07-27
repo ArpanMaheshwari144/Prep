@@ -1,5 +1,5 @@
 // ============================================================
-// NUMBER OF CONNECTED COMPONENTS — (LeetCode 323, Medium)   [GRAPHS #1 · BFS/DFS + visited]
+// NUMBER OF CONNECTED COMPONENTS — (LeetCode 323, Medium)   [GRAPHS #3 · adj-list BFS + visited + count]
 // ============================================================
 // n nodes hain (0 se n-1 tak). edges list di hai (undirected — [a,b] matlab a aur b jude).
 // Batao graph me kitne ALAG-ALAG GROUP (connected components) hain.
@@ -17,32 +17,19 @@
 //     n=4, edges=[]                          -> 4   (koi edge nahi -> har node akela = 4 group)
 //     n=1, edges=[]                          -> 1
 // ============================================================
-// ---- APPROACH ----  (tu likh — pehle copy-pen pe trace, phir code)
-//
-//
-//
-// ============================================================
-// NOTE: ye STUB hai — baad me fresh solve karna (jab graph ki baari aaye).
-//       purani solved-version git history me safe hai (recover ho sakti).
+// ---- APPROACH ----  (BFS + visited + outer-loop count)  = Islands ka adj-list version
+//  ★ idea: har UNVISITED node = ek naya group -> count++ + BFS se poora group mark. outer-loop = disconnected cover.
+//  1. edges -> adjacency list (undirected -> adj[u]+=v, adj[v]+=u).
+//  2. for i = 0..n-1 -> agar vis[i] NAHI:
+//       a. count++  +  q.push(i) + mark
+//       b. BFS: while queue -> pop node -> uske unvisited neighbours mark + push
+//  3. return count.
+//  ★ TRAP (jo tune pakda): count++ AUR BFS dono if(!vis[i]) ke ANDAR -- warna har node gin leta (= n).
+//    isolated node (n=4 no-edge -> 4) sahi tabhi jab har unvisited node KHUD ek naya group gine. [3rd/4th case]
 // ============================================================
 
 #include <bits/stdc++.h>
 using namespace std;
-
-void DFS(vector<vector<char>> &grid, int i, int j, int m, int n)
-{
-    // ★ out-of-bounds YA paani/visited ('0') -> ruk jao (yehi '0'-check island ko contain karta)
-    if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == '0')
-    {
-        return;
-    }
-
-    grid[i][j] = '0'; // ★ SINK -> is land ko visited mark (dobara na gino)
-    DFS(grid, i + 1, j, m, n); // neeche
-    DFS(grid, i - 1, j, m, n); // upar
-    DFS(grid, i, j + 1, m, n); // right
-    DFS(grid, i, j - 1, m, n); // left
-}
 
 int countComponents(int n, vector<vector<int>> &edges)
 {
@@ -56,10 +43,32 @@ int countComponents(int n, vector<vector<int>> &edges)
         adj[v].push_back(u); // v ka neighbour u  (bi-direction)
     }
 
-    
-    
-
-
+    queue<int> q;
+    vector<bool> vis(n, false);
+    int count = 0;
+    for (int i = 0; i < n; i++) // har node scan (outer-loop -> disconnected groups bhi cover)
+    {
+        if (!vis[i]) // ★ NAYA (unvisited) node -> naya group. sab kuch iske ANDAR (warna har node gin jaata = n)
+        {
+            q.push(i);
+            vis[i] = true;
+            count++; // naya group gino
+            while (!q.empty()) // BFS: is POORE group ko visit-mark kar do
+            {
+                int node = q.front();
+                q.pop();
+                for (auto &it : adj[node])
+                {
+                    if (!vis[it])
+                    {
+                        vis[it] = true; // push ke waqt mark
+                        q.push(it);
+                    }
+                }
+            }
+        }
+    }
+    return count; // kitne naye-group mile = utne components
 }
 
 int main()

@@ -1269,6 +1269,15 @@
      sink : grid[i][j] = '0'   (= visited-mark).
      rec  : DFS 4-dir -> (i+1,j) (i-1,j) (i,j+1) (i,j-1).
      ★★ TRAP: base me '0'-check ZAROORI (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ CONNECTED COMPONENTS (LC-323)  = Islands on an adj-list
+ └──────────────────────────────────────────────────────────────
+     idea : kitne alag group. har unvisited node = naya component.
+     adj  : edges -> adjacency list (undirected -> dono taraf).
+     loop : for i=0..n-1 -> vis[i]? skip : { count++; BFS(i); }.
+     bfs  : push(i)+mark -> pop node -> unvisited nbrs mark+push.
+     ★ count++ + BFS if(!vis[i]) ke ANDAR -- warna har node gin jaata (=n); isolated bhi khud ek group.
 ```
 
 ---
