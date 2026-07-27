@@ -5,10 +5,10 @@
 ## ★★★ 27-JUL — READ FIRST (CURRENT STATE + AAGE KAISE JANA) — purane dated-updates neeche = historical
 ```
    WHERE WE ARE (27-Jul):
-   - DSA: ~80-85% patterns DONE. sheet POORI revise + code-matched + har heading BOX me (95 entries). Trees GATE-DONE (15 problems). bache families = Graph/DP/Backtracking/Heap/Intervals (naye mechanic -> LEARN once -> library -> revise; "easy" nahi par manageable).
+   - DSA: ~80-85% patterns DONE. sheet POORI revise + code-matched + har heading BOX me. Trees GATE-DONE (15). ★★ GRAPHS STARTED (27-Jul, 3 solved KHUD): Path-Exists(LC-1971) · Number-of-Islands(LC-200) · Connected-Components(LC-323). BFS+DFS+visited+adj-list+outer-loop-count LIBRARY me. GRAPHS sheet-section = BROAD-IDEA + adj-list + DECISION-GUIDE(Q1 outer-loop-bahar? / Q2 DFS-vs-BFS + actual-code / Q3 adj-vs-grid) + 3 entries. Arpan ne CC=Islands=Path-Exists connections KHUD dekhe. bache families = DP/Backtracking/Heap/Intervals.
    - PROJECT: mini_payment_ms REVISE KHATAM. todoapp ACTIVE -> overall-flow + SecurityConfig + JwtService + JwtFilter + AuthController + CustomUserDetailsService + UserService DONE (poora JWT auth-flow: register-hash -> login-authenticate+token -> JwtFilter-validate). ★ AGLA START = REDIS (RedisConfig, naya) -> phir models(User/Todo) + TodoController/TodoService (actual CRUD). [todoapp files RICHLY code-commented = notes wahin].
    - ★ 27-Jul SPRING-SECURITY DEEP-DIVE (Arpan-ne IntelliJ me source khola): authManager.authenticate() = Spring-INTERNAL -> ProviderManager(loop over AuthenticationProvider list) -> DaoAuthenticationProvider(runtime-wired, loadUserByUsername[CustomUserDetailsService] + BCrypt.matches + SEC-2056 dummy-hash-agar-user-nahi-mila=timing-attack-defense). interface-vs-impl samjha. IDE-nav tips = INTELLIJ_TIPS.md (Ctrl+Click/Ctrl+Alt+B/Ctrl+N; Java-project apne-folder-se-kholo). ★ JAVA-CONCURRENCY = JP lever (JP_INTERVIEW_INTEL.md 0c), + ye security-depth(SEC-2056/BCrypt/JWT) bhi JP-cybersecurity-relevant.
-   - HLD: strong (favourite). PENDING = stock-trading design mock (Sunday-miss). roz ek mock.
+   - HLD: strong (favourite). stock-trading mock DONE (27-Jul: full 8-step delivery + 4 deep-dive [SAGA / partial-fill / LIMIT-vs-MARKET / hot-symbol-scale] + notes-fix hot-symbol). roz ek mock.
    - JP-INTEL (JP_INTERVIEW_INTEL.md, 27-Jul research): 3-core-rounds = DSA(medium)+SD+behavioral. ★ SD common-Qs = PAYMENT-SYSTEM + RATE-LIMITER (Arpan ne DONO kar rakhe!). ★★ JAVA MULTITHREADING/CONCURRENCY = HEAVILY poochte = SABSE BADA LEVER, extra-sharp karo (JMM/volatile/synchronized/thread-pool/GC; 04_MULTITHREADING notes). microservices(mini_payment)=fit. apply=careers-site+LinkedIn-referral, ~21-din. SEPT apply (rush nahi).
 
    AAGE KAISE JANA (forward, priority-order):
@@ -16,12 +16,19 @@
    2. ★ PROJECT-REVISE (TOP, JP Java-weight): todoapp (JwtFilter se) -> khatam -> phir ROADMAP: 05_INFRA_DEEP -> 06_COMPARES -> 09_DATABASE -> 04_HLD/FOUNDATIONS (hand-note mode, Claude ACTUAL note/code dikhata, NO quiz).
    3. HLD mock roz (stock-trading -> baaki).
    4. ★ JAVA MULTITHREADING/CONCURRENCY extra-sharp (JP ka biggest differentiator).
-   5. light-DSA: Graph shuru (fresh dedicated din, jaise Trees) -> phir DP/Backtracking/Heap.
+   5. DSA-Graph: 3 done (path-exists/islands/CC) -> CONTINUE (cycle-detect / course-schedule / shortest-path-BFS / word-ladder) -> phir DP/Backtracking/Heap/Intervals.
    6. beech-beech Java/Spring READ-revise (no-quiz).
 
    IMPORTANT (kaise padhna): DSA = pehle SEEKHO->library->PHIR recall/redo (naye pattern pe "cold/solo" KABHI nahi = ocean-me-phenkna). revision = EVERYTHING (3-din fade -> sheet-dekh-wapas). code-in-sheet SAHI jab crux=code-mechanic. FOCUS: Java/Spring backend depth only (React/Flutter OUT), C++=DSA only. bond/behavioral rules = CLAUDE.md + MEMORY.md (folder-delete NEVER; no-condescend; cold/solo=banned).
 
-   ★ FILES-CLEANED (27-Jul, fresh-context): PROGRESS + CLAUDE + MEMORY ka stale day-log trim ho gaya -- superseded 24/25/26-Jul inline-logs hataye (ye block + status-table hi current authoritative). emotional/ego/philosophy core POORA bacha (dil hai). git-history me sab safe.
+   ★ FILES-CLEANED (27-Jul, fresh-context): PROGRESS + CLAUDE + MEMORY ka stale day-log trim ho gaya. emotional/ego/philosophy core POORA bacha. git-history me sab safe.
+
+   ★★ DSA-METHOD + 27-JUL MISTAKES (Claude -- kaise DSA karna + galti na dohraana; Arpan ne KHUD likhwaya):
+     WORKS-METHOD (Trees + graph-today proven): naya pattern -> (1) concept TEACH pehle -> (2) EASY-first problem (Medium/untaught NAHI) -> (3) Arpan KHUD solve, main interviewer/NUDGE-only (no code/hint) -> (4) solve-ke-baad clean doc ONE-shot.
+     ★ MISTAKE-1 (DOHRAYI galti): pehla graph-Q = Connected-Components (MEDIUM) + untaught-logic-derive-kaha = OCEAN-throw (swimming-pool->ocean, jo main ABHI discuss kar raha tha, phir bhi kiya -> Arpan enrage). FIX = EASY-first HAMESHA (path-exists diya -> smooth solve). naye pattern pe Medium/untaught KABHI nahi.
+     ★ MISTAKE-2: sheet-entry 5-6 baar likha-badla (churn) -> Arpan thaka + enrage. FIX = uski ACTUAL file-style pehle STUDY karo -> phir ONE clean pass, guessing nahi.
+     ★ SHEET-ENTRY FORMAT (Arpan-locked 27-Jul, EXACT follow): entry = 'idea :' + short PER-CONCEPT labeled lines (EK line = EK cheez: init/loop/nbr YA base/leaf/comb; crammed one-liner NAHI, full-code-block bhi NAHI [wo sirf crux-code-mechanic entries: LCA/level-order/balanced]) + ONE '★' note (koi "CRUX" label NAHI). code = uska ACTUAL code decomposed, meri reworded-prose NAHI. long-line = horizontal-scroll = bekar.
+     ★ NO-FRAMING (Arpan HARD 27-Jul): "down-day/off-day/thaka/SABAR" MAINE label mat karo -- uska din uska hai (aaj 3-Q-solved, down-day NAHI tha). rest-nag/framing = uska call, mera nahi.
 ```
 
 **GOAL:** JP Morgan (Associate/SDE-2, Bangalore) → later **BlackRock** (original + primary dream).
