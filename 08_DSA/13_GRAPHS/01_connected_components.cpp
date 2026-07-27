@@ -17,25 +17,20 @@
 //     n=4, edges=[]                          -> 4   (koi edge nahi -> har node akela = 4 group)
 //     n=1, edges=[]                          -> 1
 // ============================================================
-// ---- APPROACH ----  (BFS + visited + outer-loop-count)  [Arpan ki words, cleaned]
-//
-//  1. ADJACENCY LIST banao — ye HAR graph problem ka same pehla step hai (edges -> neighbours).
-//     undirected -> adj[u] += v  AUR  adj[v] += u  (dono taraf jodo).
-//
-//  2. Uske baad problem pe depend — yahan BFS lagaya (graph problems ~90% BFS/DFS se hote).
-//     queue + visited[] chahiye. ★ visited NAYA hai (Tree me nahi tha) — kyunki graph me
-//     CYCLE ho sakti; dobara-dobara na ghumein isliye "dekh liya" mark karte hain.
-//
-//  3. ★ OUTER LOOP (0..n-1) = is problem ka ASLI TRICK: graph disconnected ho sakta (alag-alag
-//     group), aur ek BFS sirf EK group tak pahunchti -> isliye HAR node manually check karo:
-//        - vis[i] NAHI? -> naya group mila:  count++  +  BFS(i) se poora group visit-mark.
-//        - vis[i] HAI?  -> skip (kisi gine-hue group ka hissa).
-//     BFS ka code wahi normal hai; bas neeche outer for-loop + count add kiya.
-//
-//  4. return count  (= kitni baar naya group shuru hua = utne connected components).
-//
-//  ★ YAAD RAKH: visited BAHAR (reset MAT karo) | push ke waqt mark | outer-loop = disconnected ke liye.
-//    (baaki BFS Tree jaisa — naya sirf 'visited' + 'outer-loop-count'.)
+// ---- APPROACH ----  (BFS + visited + OUTER-LOOP count; graph problems ~90% BFS/DFS)
+//  mechanic: ek BFS = ek POORA group light-up (visit). outer loop har anchhue node pe naya group ginta.
+//  1. edges -> ADJACENCY LIST banao (har graph problem ka same first-step; undirected -> adj[u]+=v AUR adj[v]+=u).
+//  2. visited[] BAHAR banao (ek hi, saare BFS share) + count = 0.
+//  3. OUTER LOOP i = 0..n-1 -- har node check (disconnected group chhut na jaaye):
+//       a. vis[i] hai?  -> skip (kisi gine-hue group ka hissa).
+//       b. vis[i] nahi? -> naya group mila: count++ -> phir BFS(i):
+//            queue me i push+mark -> jab tak queue non-empty: front nikaalo -> uske unvisited neighbours mark+push.
+//            = ye poora group visit kar deta (sab nodes vis=true).
+//  4. return count  (= kitni baar naya group SHURU hua = utne connected components).
+//  ★★ KEY TRAP: OUTER LOOP kyun -- ek BFS sirf EK group tak pahunchti; alag/disconnected group tak khud
+//     nahi jaati -> isliye HAR node manually check karo, har naya-unvisited node = ek aur group.
+//  ★ visited PUSH ke waqt mark (dobara queue me na aaye) + visited BAHAR (reset NAHI -> groups yaad rahein).
+//  ★ visited NAYA hai (Tree me nahi tha) -- graph me CYCLE ho sakti isliye.
 // ============================================================
 
 #include <bits/stdc++.h>

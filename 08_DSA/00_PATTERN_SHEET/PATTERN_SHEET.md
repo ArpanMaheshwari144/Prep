@@ -1212,6 +1212,45 @@
      solve(root, mini, maxi): null->true · (val<=mini || val>=maxi)->false · left=solve(L, mini, val) · right=solve(R, val, maxi) · return left&&right.
      call : solve(root, INT_MIN, INT_MAX).  ★ LEFT jao -> maxi=val (chhota hona) · RIGHT jao -> mini=val (bada hona).
      (2nd tarika: inorder = strictly increasing? -> kth-smallest ka near-transfer.)
+
+
+═══════════════════ PATTERN 13 — GRAPHS (BFS/DFS + visited) ═══════════════════
+
+ BROAD IDEA: graph = nodes + edges. TREE bhi ek graph hai (special) -> Graph = Tree + 2 cheez:
+   (1) CYCLE ho sakti -> VISITED chahiye (warna A->B->C->A infinite loop)   (2) pointers ki jagah ADJACENCY LIST.
+
+ ★ TREE se transfer: BFS = queue (level-order jaisa) · DFS = recursion (left/right ki jagah adj[node]). bas 'visited' add.
+
+ ★ ADJACENCY LIST (har graph-Q ka same FIRST-step) -- edges se banao:
+      unordered_map<int, vector<int>> adj;    // ya  vector<int> adj[n];
+      undirected -> adj[u].push_back(v);  adj[v].push_back(u);   // DONO taraf
+      directed   -> sirf adj[u].push_back(v);                    // ek taraf
+
+ ──────────────────────────────────────────────────────────────
+ ★ CORE -- 2 template (graph problems ka ~80% yehi 2):
+
+     BFS (queue):                                DFS (recursion):
+       q.push(start);  vis[start]=true;            dfs(node):
+       while (!q.empty()) {                          vis[node]=true;
+          node = q.front();  q.pop();                for (nbr : adj[node])
+          for (nbr : adj[node])                         if (!vis[nbr]) dfs(nbr);
+             if (!vis[nbr]) {
+                vis[nbr]=true;  q.push(nbr);
+             }
+       }
+   ★★ visited PUSH ke waqt mark (front pe nahi) -> ek node dobara queue me na ghuse.
+
+┌── FAMILY: traversal + COUNT (visited + outer-loop) ──────────
+│ pura graph traverse; disconnected group ke liye HAR node check -> naya-unvisited = ek aur group/component.
+└───────────────────────────────────────────────────────────────
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ CONNECTED COMPONENTS (LC-323)
+ └──────────────────────────────────────────────────────────────
+     idea : kitne alag-alag group. ek BFS/DFS = ek POORA group light-up. outer loop har anchhue node pe naya group ginta.
+     steps: adj-list banao -> visited BAHAR + count=0 -> for i=0..n-1: if(!vis[i]){ count++; BFS/DFS(i); } -> return count.
+     ★★ OUTER LOOP kyun: ek BFS sirf EK group tak pahunchti; disconnected group tak khud nahi jaati -> HAR node manually check.
+     ★ visited BAHAR (reset NAHI -> groups yaad rahein) · push ke waqt mark · count++ SIRF naye-unvisited pe.
 ```
 
 ---
