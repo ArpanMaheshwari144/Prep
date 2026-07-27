@@ -29,9 +29,45 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+void DFS(vector<vector<char>> &grid, int i, int j, int m, int n)
+{
+    // ★ out-of-bounds YA paani/visited ('0') -> ruk jao (yehi '0'-check island ko contain karta)
+    if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == '0')
+    {
+        return;
+    }
+
+    grid[i][j] = '0'; // ★ SINK -> is land ko visited mark (dobara na gino)
+    DFS(grid, i + 1, j, m, n); // neeche
+    DFS(grid, i - 1, j, m, n); // upar
+    DFS(grid, i, j + 1, m, n); // right
+    DFS(grid, i, j - 1, m, n); // left
+}
+
 int countComponents(int n, vector<vector<int>> &edges)
 {
-    // tera code yahan
+    unordered_map<int, vector<int>> adj;
+    for (auto &it : edges)
+    {
+        int u = it[0];
+        int v = it[1];
+
+        adj[u].push_back(v); // u ka neighbour v
+        adj[v].push_back(u); // v ka neighbour u  (bi-direction)
+    }
+    
+    for (int i = 0; i < m; i++) // har cell scan (outer double-loop)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (grid[i][j] == '1') // naya (abhi tak un-sunk) land -> naya island
+            {
+                DFS(grid, i, j, m, n); // poora island dubo do (sab connected '1' -> '0')
+                count++;
+            }
+        }
+    }
+    return count;
 
 
 }

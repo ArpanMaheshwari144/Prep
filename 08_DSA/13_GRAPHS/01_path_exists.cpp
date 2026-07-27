@@ -16,12 +16,15 @@
 //     n=1, edges=[], src=0, dst=0                          -> true   (khud se khud = path)
 //     n=4, edges=[[0,1],[2,3]], src=0, dst=3               -> false
 // ============================================================
-// ---- APPROACH ----  (single BFS source se + visited)
-//  mechanic: source se BFS chalao -> jo node REACHABLE wo visit hote; destination visit hua? -> path hai.
-//  1. edges -> ADJACENCY LIST (undirected -> adj[u]+=v AUR adj[v]+=u).
-//  2. BFS source se: queue me source push+mark -> jab tak queue non-empty: front nikaalo ->
-//       node == destination? -> return true.   warna unvisited neighbours mark+push.
-//  3. queue khali, dst nahi mila -> return false (dst alag group me hai).
+// ---- APPROACH ----
+//  ★ INTUITION: source se BFS chalao -> jo reachable wo visit hote; destination visit ho gaya? -> rasta hai.
+//  1. edges -> adjacency list            (undirected -> adj[u]+=v, adj[v]+=u)
+//  2. queue me source push, vis[source] = true
+//  3. while queue non-empty:
+//       node = front, pop
+//       node == destination? -> return true
+//       har unvisited neighbour -> vis = true + push
+//  4. queue khali, dst nahi mila -> return false
 // ============================================================
 
 #include <bits/stdc++.h>

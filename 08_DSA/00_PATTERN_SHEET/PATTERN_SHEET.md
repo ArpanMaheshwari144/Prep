@@ -1251,13 +1251,19 @@
       isliye HAR node check. (Connected-Components = ise GINO [count++] · Islands = grid pe yehi.)
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ PATH EXISTS (LC-1971)  = single BFS + visited
+ │ ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
  └──────────────────────────────────────────────────────────────
-     idea : source se dst tak rasta hai? ek BFS source se -> dst mila to true, queue khali to false.
-     code : q.push(src); while(q){ node=pop; if(node==dst) true; unvisited nbrs mark+push; } -> false.
-     ★ ek source se EK traversal (reachability) -> outer-loop/count NAHI (wo count-Q me: CC/islands).
+     idea : source se dst tak rasta hai? EK BFS source se -> dst mila to true, queue khali -> false.
+     ★ ek source = EK traversal (reachability); outer-loop/count NAHI (wo CC/islands me).
 
- (▸ aage: islands · connected-components · cycle-detect · shortest-path yahan add honge.)
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
+ └──────────────────────────────────────────────────────────────
+     idea : grid = graph (cell=node, 4 padosi=edge). har naya land '1' -> DFS se dubo -> count++.
+     steps: double-loop cells · '1'? -> count++ + DFS(i,j) [poora island '0' kar do].
+     ★★ TRAP: DFS base me '0'-check ZAROORI (bounds ke saath) -> warna paani pe nahi rukta, grid kha jaata.
+
+ (▸ aage: connected-components · cycle-detect · shortest-path (BFS) yahan add honge.)
 ```
 
 ---
