@@ -1243,6 +1243,13 @@
        }
    ★★ visited PUSH ke waqt mark (front pe nahi) -> ek node dobara queue me na ghuse.
 
+ ★ OUTER-LOOP trick (POORA graph traverse -- disconnected bhi) -- upar wale BFS/DFS ko wrap karo:
+       for (int i = 0; i < n; i++)
+          if (!vis[i])
+             BFS(i);  // ya  dfs(i);      <- har ANCHHUE node se ek naya traversal
+   ★ kyun: ek BFS/DFS sirf EK connected group cover karti -> disconnected group tak khud nahi jaati ->
+      isliye HAR node check. (Connected-Components = ise GINO [count++] · Islands = grid pe yehi.)
+
 ┌── FAMILY: traversal + COUNT (visited + outer-loop) ──────────
 │ pura graph traverse; disconnected group ke liye HAR node check -> naya-unvisited = ek aur group/component.
 └───────────────────────────────────────────────────────────────
@@ -1250,10 +1257,10 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CONNECTED COMPONENTS (LC-323)
  └──────────────────────────────────────────────────────────────
-     idea : kitne alag-alag group. ek BFS/DFS = ek POORA group light-up. outer loop har anchhue node pe naya group ginta.
-     steps: adj-list banao -> visited BAHAR + count=0 -> for i=0..n-1: if(!vis[i]){ count++; BFS/DFS(i); } -> return count.
-     ★★ OUTER LOOP kyun: ek BFS sirf EK group tak pahunchti; disconnected group tak khud nahi jaati -> HAR node manually check.
-     ★ visited BAHAR (reset NAHI -> groups yaad rahein) · push ke waqt mark · count++ SIRF naye-unvisited pe.
+     idea : kitne alag-alag group. ek BFS/DFS = ek POORA group light-up.
+     trick: OUTER-LOOP -> har ANCHHUE (unvisited) node = naya group -> count++.
+     code : for i=0..n-1:  if(!vis[i]) { count++; BFS(i); }  -> return count.
+     ★ visited BAHAR (reset NAHI) · push pe mark · count++ sirf naye-unvisited pe.
 ```
 
 ---

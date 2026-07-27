@@ -17,31 +17,20 @@
 //     n=4, edges=[]                          -> 4   (koi edge nahi -> har node akela = 4 group)
 //     n=1, edges=[]                          -> 1
 // ============================================================
-// ---- APPROACH ----  (BFS + visited + OUTER-LOOP count; graph problems ~90% BFS/DFS)
-//  mechanic: ek BFS = ek POORA group light-up (visit). outer loop har anchhue node pe naya group ginta.
-//  1. edges -> ADJACENCY LIST banao (har graph problem ka same first-step; undirected -> adj[u]+=v AUR adj[v]+=u).
-//  2. visited[] BAHAR banao (ek hi, saare BFS share) + count = 0.
-//  3. OUTER LOOP i = 0..n-1 -- har node check (disconnected group chhut na jaaye):
-//       a. vis[i] hai?  -> skip (kisi gine-hue group ka hissa).
-//       b. vis[i] nahi? -> naya group mila: count++ -> phir BFS(i):
-//            queue me i push+mark -> jab tak queue non-empty: front nikaalo -> uske unvisited neighbours mark+push.
-//            = ye poora group visit kar deta (sab nodes vis=true).
-//  4. return count  (= kitni baar naya group SHURU hua = utne connected components).
-//  ★★ KEY TRAP: OUTER LOOP kyun -- ek BFS sirf EK group tak pahunchti; alag/disconnected group tak khud
-//     nahi jaati -> isliye HAR node manually check karo, har naya-unvisited node = ek aur group.
-//  ★ visited PUSH ke waqt mark (dobara queue me na aaye) + visited BAHAR (reset NAHI -> groups yaad rahein).
-//  ★ visited NAYA hai (Tree me nahi tha) -- graph me CYCLE ho sakti isliye.
+// ---- APPROACH ----  (BFS + visited + OUTER-LOOP count)
+//  mechanic: ek BFS = ek POORA group light-up. outer-loop har anchhue node pe naya group ginta.
+//  1. edges -> ADJACENCY LIST (undirected -> adj[u]+=v AUR adj[v]+=u).
+//  2. visited[] BAHAR + count = 0.
+//  3. for i=0..n-1:  vis[i]? -> skip.   nahi? -> count++ + BFS(i) [poora group visit].
+//  4. return count.
+//  ★★ KEY TRAP: outer-loop kyun -> ek BFS sirf EK group cover karti; disconnected tak khud nahi jaati.
+//  ★ visited BAHAR (reset NAHI) · push pe mark (dobara queue me na aaye).
 // ------------------------------------------------------------
-//   DRY-RUN  (n=5, edges=[[0,1],[1,2],[3,4]])  -- count sirf NAYE group pe badhta:
-//     adj:  0->[1]   1->[0,2]   2->[1]   3->[4]   4->[3]
-//
-//     i=0   vis? NO   -> count=1,  BFS(0) visits {0,1,2}      vis={0,1,2}
-//     i=1   vis? YES  -> skip
-//     i=2   vis? YES  -> skip
-//     i=3   vis? NO   -> count=2,  BFS(3) visits {3,4}        vis={0,1,2,3,4}
-//     i=4   vis? YES  -> skip
-//     ------------------------------------------------
-//     return count = 2   ✓   (BFS ne group flood kiya; outer-loop ne naye group DHOONDE)
+//   DRY-RUN  (n=5, edges=[[0,1],[1,2],[3,4]]):   adj: 0->[1] 1->[0,2] 2->[1] 3->[4] 4->[3]
+//     i=0  NEW  -> count=1, BFS visits {0,1,2}
+//     i=1,2     -> visited, skip
+//     i=3  NEW  -> count=2, BFS visits {3,4}
+//     i=4       -> visited, skip                    => return 2
 // ============================================================
 
 #include <bits/stdc++.h>
