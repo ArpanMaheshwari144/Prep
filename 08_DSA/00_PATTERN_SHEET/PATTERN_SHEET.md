@@ -1266,7 +1266,7 @@
    ★ visited HAMESHA (cycle rok) -> push/enter ke waqt mark.
 
 ┌── FAMILY: single-source traversal (reachability) ────────────
-│ ek source se BFS/DFS -> jo REACHABLE wo visit. koi OUTER-loop nahi (poora graph nahi, ek source).
+│ KYUN SAATH: ek source se EK BFS/DFS -> jo REACHABLE wo visit; "target mila? / connected?". koi OUTER-loop nahi (ek source).
 └───────────────────────────────────────────────────────────────
 
  ┌──────────────────────────────────────────────────────────────
@@ -1276,8 +1276,8 @@
      ★ single-source -> OUTER-loop/count NAHI (CC/islands se farak). visited = cycle-rok.
 
 ┌── FAMILY: COUNT components (outer-loop + FLOOD each) ─────────
-│ har node/cell pe jao; UNVISITED mila -> naya group -> count++ + traverse (poora group visit-mark).
-│ (Islands = grid · Connected-Components = adj-list; shape SAME.)
+│ KYUN SAATH: har node/cell pe jao; UNVISITED mila -> naya group -> count++ + flood (poora group visit-mark). dono same skeleton.
+│ (Islands = grid · Connected-Components = adj-list; sirf "neighbour kaise" badalta.)
 └───────────────────────────────────────────────────────────────
 
  ┌──────────────────────────────────────────────────────────────
@@ -1295,7 +1295,7 @@
      ★★ TRAP: count++ + traversal if(!vis[i]) ke ANDAR -- warna har node gin jaata (=n).
 
 ┌── FAMILY: MULTI-SOURCE / level-BFS ──────────────────────────
-│ saare sources EK saath queue (level-0); per-level sz-snapshot -> ek level = ek step/minute.
+│ KYUN SAATH: saare sources EK saath queue (level-0); per-level sz-snapshot -> ek level = ek step/minute. (level-order ka cousin.)
 └───────────────────────────────────────────────────────────────
 
  ┌──────────────────────────────────────────────────────────────
