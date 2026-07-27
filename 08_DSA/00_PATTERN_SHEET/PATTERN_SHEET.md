@@ -1309,11 +1309,16 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
  └──────────────────────────────────────────────────────────────
-     = tree LEVEL-ORDER (sz-snapshot) grid pe (neighbours 4-dir via dirs[]).  har LEVEL = 1 minute.
-     NAYA: saare rotten(2) PEHLE queue me (MULTI-SOURCE = level-0).  queue<pair<int,int>>.
-     per-level (sz--): pop (r,c); dirs[] 4-dir -> valid && grid==1 -> grid=2, push.   level baad mins++.
-     END: grid DOBARA scan -> koi 1 bacha? return -1.   warna return mins-1.
-     ★★ mins-1 (last level pe kuch rot nahi = ek extra).   ★ -1 = end-scan pe koi fresh bacha (unreachable).
+     = tree LEVEL-ORDER (sz-snapshot) grid pe, MULTI-SOURCE.  har level = 1 minute.
+     for(i,j): if(grid==2) q.push({i,j});           // MULTI-SOURCE = level-0 (saare rotten PEHLE)
+     dirs = {{1,0},{-1,0},{0,1},{0,-1}};            // 4-dir neighbour-trick
+     while(q){ sz=q.size();
+               while(sz--){ pop(r,c);
+                 for(d:dirs){ nr=r+d[0], nc=c+d[1];
+                   if(nr>=0 && nr<m && nc>=0 && nc<n && grid[nr][nc]==1){ grid[nr][nc]=2; push; } } }
+               mins++; }
+     for(i,j): if(grid==1) return -1;               // END re-scan: fresh bacha -> -1
+     return mins-1;                                 // ★★ mins-1 (last level extra)
 ```
 
 ---
