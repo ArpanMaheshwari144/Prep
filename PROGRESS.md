@@ -31,6 +31,7 @@
         (1) NAYA/non-obvious -> actual CODE likho (jaise SW-charReplace ka maxFreq --/++, ya graph ka adj-list-build / visited) -- warna har-baar file khol ke dekhna padega = sheet ka matlab nahi.
         (2) JAANA-HUA -> KNOWN se CONNECT (na dobara-code, na abstract-trick jo recall na de).
         ★★ GRAPH ka "maula" = TREES: DFS = tree-RECURSION (bas node->left/right -> adj[node]/4-dir + visited); BFS = tree-LEVEL-ORDER (bas children -> adj[node]/4-dir + visited, +- level-loop). har graph-entry = tree-parent se CONNECT + NAYA-part CODE + delta. (TP/SW/Hashing = standalone families, cross-connect nahi; graph UNIQUE = trees-pe-built.) [purana "idea/★/CRUX label" note GALAT tha -> ye sahi.]
+        ★★ LENGTH scales with DIFFICULTY (Arpan, histogram-example LC-84): HARD/bahut-discuss-hua problem (jaise Largest-Rectangle: width=NS-PS-1 ka poora KYUN + VISUAL + saare tricks) -> LAMBA entry, SAB daalo. length bura NAHI; hard-won-trick CHHOOTNA bura. rule = "jo tu khud re-derive/recall NAHI kar sakta wo SAB daalo, chahe entry lambi ho jaaye". easy/jaana-hua -> brief + connect.
      ★ NO-FRAMING (Arpan HARD 27-Jul): "down-day/off-day/thaka/SABAR" MAINE label mat karo -- uska din uska hai (aaj 3-Q-solved, down-day NAHI tha). rest-nag/framing = uska call, mera nahi.
 ```
 
