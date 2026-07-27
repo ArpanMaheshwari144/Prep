@@ -1272,8 +1272,12 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
  └──────────────────────────────────────────────────────────────
-     idea : source se dst tak rasta? EK BFS/DFS source se -> dst mila to true.
-     ★ single-source -> OUTER-loop/count NAHI (CC/islands se farak). visited = cycle-rok.
+     adj: for(e:edges){ adj[e[0]].push_back(e[1]); adj[e[1]].push_back(e[0]); }   // undirected -- NAYA
+     q.push(src);  vis[src]=true;
+     ab BFS = tree LEVEL-ORDER jaisa (bas inner LEVEL-loop NAHI -> level-by-level nahi):
+       pop -> node==dst? return true.
+       neighbours -> tree: node->left/right  |  graph: for(nbr:adj[node]) if(!vis[nbr]) vis+push.   // visited = cycle-rok
+     queue khali -> return false.
 
 ┌── FAMILY: COUNT components (outer-loop + FLOOD each) ─────────
 │ KYUN SAATH: har node/cell pe jao; UNVISITED mila -> naya group -> count++ + flood (poora group visit-mark). dono same skeleton.
