@@ -1243,12 +1243,20 @@
        }
    ★★ visited PUSH ke waqt mark (front pe nahi) -> ek node dobara queue me na ghuse.
 
- ★ OUTER-LOOP trick (POORA graph traverse -- disconnected bhi) -- upar wale BFS/DFS ko wrap karo:
-       for (int i = 0; i < n; i++)
-          if (!vis[i])
-             BFS(i);  // ya  dfs(i);      <- har ANCHHUE node se ek naya traversal
-   ★ kyun: ek BFS/DFS sirf EK connected group cover karti -> disconnected group tak khud nahi jaati ->
-      isliye HAR node check. (Connected-Components = ise GINO [count++] · Islands = grid pe yehi.)
+ ──────────────────────────────────────────────────────────────
+ ★★ DECISION-GUIDE (koi graph-Q se pehle -- Trees-guide jaisa; "question dekh ke pehchano"):
+   Q1  OUTER-LOOP bahar chahiye? (SABSE bada -- yehi trick)
+        kitne group / poora graph / disconnected -> HAAN:
+             for (i : all nodes)  if (!vis[i]) { count++; BFS(i); }         (CC, Islands)
+        ek source -> target / ek hi component -> NAHI:
+             sirf source se EK traversal (koi outer-loop nahi)              (Path-Exists)
+   Q2  DFS ya BFS? (connectivity ke liye dono same)
+        BFS (queue)     -> shortest-path / level (unweighted); ya bas connectivity
+        DFS (recursion) -> flood-fill / grid-sink; code chhota
+   Q3  neighbours kaise? (graph ka roop)
+        edges diye -> adjacency-list -> adj[node]
+        grid diya  -> 4-direction    -> (i+1,j) (i-1,j) (i,j+1) (i,j-1)
+   ★ visited HAMESHA (cycle rok) -> push/enter ke waqt mark.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
