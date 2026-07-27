@@ -1293,11 +1293,25 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
  └──────────────────────────────────────────────────────────────
-     idea : saare rotten EK saath phailte; har minute = BFS level; end pe fresh bacha -> -1.
-     init : saare rotten(2) queue me (multi-source = level-0).
-     loop : sz-snapshot -> pop (r,c) -> 4-dir: in-bounds && ==1? rot(=2)+push;  level baad mins++.
-     end  : koi 1 bacha? -> -1  :  return mins-1.
-     ★ multi-source + minutes=LEVELS; mins-1 (last level pe kuch rot nahi = ek extra). neighbour-cond (in-bounds && ==1) har grid-Q me.
+     idea : saare rotten EK saath phailte; har minute = ek BFS level; end pe fresh -> -1.
+     SKELETON:
+         saare rotten(2) -> queue me push;      // MULTI-SOURCE = level-0
+         while (!q.empty()) {
+             int sz = q.size();                 // level snapshot
+             while (sz--) {
+                 (r,c) = q.front();  q.pop();
+                 for (d : dirs) {               // 4 padosi
+                     nr=r+d[0], nc=c+d[1];
+                     if (in-bounds && grid[nr][nc]==1) {
+                         grid[nr][nc]=2;  q.push({nr,nc});
+                     }
+                 }
+             }
+             mins++;                            // ek level = ek minute
+         }
+         koi 1 bacha? -> -1  :  return mins-1;
+     ★★ multi-source (saare rotten pehle) + minutes = LEVELS.
+     ★ mins-1: last level pe kuch rot nahi hota = ek extra gina.
 ```
 
 ---
