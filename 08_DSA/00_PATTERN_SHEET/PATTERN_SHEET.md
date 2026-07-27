@@ -1287,9 +1287,11 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
  └──────────────────────────────────────────────────────────────
-     idea : kitne island ('1' ke connected groups).
-     ★ OUTER-loop: har unvisited '1' -> count++ + DFS poora island '0' (SINK).
-     ★★ TRAP: DFS base me '0'-check (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
+     grid = graph: cell=node, 4-dir padosi=edges (adj-list nahi banti -- neighbours seedha 4-direction).  -- NAYA
+     for(i,j): if(grid[i][j]=='1') { DFS(i,j); count++; }   return count.   // har naya '1' = naya island
+     DFS = tree RECURSION jaisa, bas neighbours -> tree: node->left/right | grid: (i+1,j)(i-1,j)(i,j+1)(i,j-1):
+       base: bounds ya grid[i][j]=='0' -> return.   grid[i][j]='0'  (SINK = visited).
+     ★★ '0'-check base me (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CONNECTED COMPONENTS (LC-323)  = Islands on an adj-list
