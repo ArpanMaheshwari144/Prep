@@ -1,14 +1,14 @@
 // ============================================================
 // MAX AREA OF ISLAND — (LeetCode 695, Medium)   [GRAPHS #5 · grid DFS return-value]
 // ============================================================
-// grid me 0 (paani) / 1 (land). island = 4-direction connected 1's. (islands jaisा hi.)
+// grid me 0 (paani) / 1 (land). island = 4-direction connected 1's. (islands jaisa hi.)
 // Batao SABSE BADE island ka AREA (kitne cells). koi island na ho -> 0.
 //
 //        1 1 0            islands: {(0,0),(0,1),(1,0)} = 3 cells,  {(2,2)} = 1 cell
 //        1 0 0        ->  max area = 3
 //        0 0 1
 //
-//   ★ ISLANDS (LC-200) jaisा -- bas farak: count nahi, har island ka AREA nikaalo -> max track.
+//   ★ ISLANDS (LC-200) jaisa -- bas farak: count nahi, har island ka AREA nikaalo -> max track.
 //     DFS ab VOID nahi -> AREA return kare (1 + 4-dir DFS ke returns).  [= tree recursion jo VALUE return karti]
 //
 //   Example:
