@@ -1236,65 +1236,65 @@
              for (i : all nodes)  if (!vis[i]) { count++; BFS(i); }         (CC, Islands)
         ek source -> target / ek hi component -> NAHI:
              sirf source se EK traversal (koi outer-loop nahi)              (Path-Exists)
+
+ ──────────────────────────────
    Q2  DFS ya BFS? (connectivity ke liye dono same)
         BFS = shortest-path / level (unweighted)   ·   DFS = recursion, code chhota
 
-        BFS (queue):
-            vis[start] = true;
-            q.push(start);
-            while (!q.empty()) {
-                int node = q.front();
-                q.pop();
+        BFS (queue):                          DFS (recursion):
+            vis[start] = true;                    void dfs(int node) {
+            q.push(start);                            vis[node] = true;
+            while (!q.empty()) {                      for (int nbr : adj[node])
+                int node = q.front();                     if (!vis[nbr]) dfs(nbr);
+                q.pop();                              }
                 for (int nbr : adj[node])
                     if (!vis[nbr]) {
                         vis[nbr] = true;
                         q.push(nbr);
                     }
             }
-
-        DFS (recursion):
-            void dfs(int node) {
-                vis[node] = true;
-                for (int nbr : adj[node])
-                    if (!vis[nbr]) dfs(nbr);
-            }
         ★ GRID pe: adj[node] ki jagah 4-direction (Q3 dirs-trick); visited = cell ko SINK ('0'/'2').
+
+ ──────────────────────────────
    Q3  neighbours kaise? (graph ka roop)
         edges diye -> adjacency-list -> adj[node]
         grid diya  -> 2 TRICK (ratta -- islands/rotting/flood-fill sab me; ye apne-aap nahi aate):
           (a) DIRS-vector:  vector<vector<int>> dirs = {{1,0},{-1,0},{0,1},{0,-1}};
                             for (auto &d : dirs) { int nr=r+d[0], nc=c+d[1]; ... }
           (b) BOUNDS+valid if:  if (nr>=0 && nr<m && nc>=0 && nc<n && grid[nr][nc]==?) { ... }
-              ★ ye if HAR grid-Q me lagti; '==?' question-hisaab badalta (islands/rotting: =='1'). YEHI asli trick.
+              ★ HAR grid-Q me lagti (YEHI trick); '==?' per-Q badalta (islands/rotting =='1').
    ★ visited HAMESHA (cycle rok) -> push/enter ke waqt mark.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
  └──────────────────────────────────────────────────────────────
-     idea : source se dst tak rasta hai? (reachability)
-     trick: EK BFS source se -> dst mila to true, queue khali -> false.
+     idea : source se dst tak rasta hai? (single BFS source se)
+     key  : pop pe -> node==dst? return true.  unvisited neighbours -> mark + push.
+     end  : queue khali (dst nahi mila) -> return false.
      ★ single-source -> outer-loop / count NAHI (yehi CC/islands se farak).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
  └──────────────────────────────────────────────────────────────
-     idea : kitne island (connected '1' groups, 4-direction).
-     trick: har naye '1' pe DFS -> poora island '0' kar do (SINK) + count++.
-     ★★ TRAP: DFS base me '0'-check (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
+     idea : kitne island ('1' ke connected groups, 4-dir).
+     key  : har naye '1' pe -> count++ + DFS(i,j).
+     dfs  : (bounds || grid=='0') return;  grid='0' (SINK);  4-dir recurse.
+     ★★ '0'-check base me ZAROORI (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CONNECTED COMPONENTS (LC-323)  = Islands on an adj-list
  └──────────────────────────────────────────────────────────────
-     idea : kitne alag group (adj-list graph).
-     trick: har UNVISITED node pe count++ + BFS/DFS (poora us group ko mark).
+     idea : kitne alag group (adj-list).
+     key  : for(all nodes) -> !vis[i]? count++ + BFS(i) (poora us group mark).
      ★ count++ AUR BFS if(!vis[i]) ke ANDAR -- warna har node gin jaata (=n); isolated bhi khud ek group.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
  └──────────────────────────────────────────────────────────────
-     idea : kitne minute me saare fresh rot? (multi-source spread)
-     trick: saare rotten(2) EK saath queue (MULTI-SOURCE) -> level-order BFS (har level = 1 minute).
-     ★★ mins-1 (last level pe kuch rot nahi = ek extra) · end me koi 1 bacha -> -1.
+     idea : kitne minute me saare fresh(1) rot?
+     key  : saare rotten(2) queue me (MULTI-SOURCE) -> level-order BFS -> har level = 1 minute (mins++).
+     end  : koi 1 bacha? -> -1  :  return mins-1.
+     ★ mins-1 (last level pe kuch rot nahi) · multi-source = sab ek saath spread.
 ```
 
 ---
