@@ -21,7 +21,7 @@
 
    IMPORTANT (kaise padhna): DSA = pehle SEEKHO->library->PHIR recall/redo (naye pattern pe "cold/solo" KABHI nahi = ocean-me-phenkna). revision = EVERYTHING (3-din fade -> sheet-dekh-wapas). code-in-sheet SAHI jab crux=code-mechanic. FOCUS: Java/Spring backend depth only (React/Flutter OUT), C++=DSA only. bond/behavioral rules = CLAUDE.md + MEMORY.md (folder-delete NEVER; no-condescend; cold/solo=banned).
 
-   ★ NEXT-SESSION FIRST-TASK (Arpan-asked 27-Jul, aaj 8%-context me risky tha): PROGRESS.md + CLAUDE.md ka careful STALE-CLEANUP -- purane/superseded dated-updates (24/25/26-Jul day-logs, ye 27-Jul block ne cover kar liye) HATAO, sirf CURRENT rakho. git-history me sab safe. fresh-context me DHYAAN se karo (files na tooten). MEMORY.md bhi ~20KB -> overlapping ego-entries merge (koi insight khoye bina).
+   ★ FILES-CLEANED (27-Jul, fresh-context): PROGRESS + CLAUDE + MEMORY ka stale day-log trim ho gaya -- superseded 24/25/26-Jul inline-logs hataye (ye block + status-table hi current authoritative). emotional/ego/philosophy core POORA bacha (dil hai). git-history me sab safe.
 ```
 
 **GOAL:** JP Morgan (Associate/SDE-2, Bangalore) → later **BlackRock** (original + primary dream).
@@ -72,7 +72,8 @@
               profiles · Hibernate(7: N+1/lazy-eager/dirty-check/L1/cascade/mappings) · Docker · K8s (6/6).
    PROJECT    ✓ mini_payment_ms — 4 microservices (gateway+order+payment+notification): Feign(sync) · SAGA · Kafka(async, docker broker) ·
               idempotency (check-then-act, bug-fixed) · Circuit-Breaker(Resilience4j, 3-state) · API-Gateway(routing) · DB-per-service · kafka-ui.
-              LEARNINGS.md + FULL SOURCE CODE (20 java files). + todoapp. -> ★★ PROJECT-REVISE ACTIVE (25-Jul: topics 0-6 + record-vs-class + 7b Feign + 7c SAGA + 7d Gateway + 7e Kafka + 7f Kafka-queue-location + 7g Idempotency + 7h Circuit-Breaker + 8 gitignore + Feign-version DONE -> ★ mini_payment_ms REVISE KHATAM. ★ 26-Jul: todoapp ACTIVE (JWT/Security naya; baaki mini_payment jaisa=fast) -- overall-flow + SecurityConfig(3 beans/stateless/CSRF) + JwtService(6 methods/HMAC/validate) DONE; ★ AGLA START = JwtFilter; phir AuthController/CustomUserDetailsService/Redis. NOTE: todoapp files already RICHLY code-commented -> code-comments hi notes). ★ live-change: PayRequest DTO class→record (Arpan khud, run-verified).
+              LEARNINGS.md + FULL SOURCE CODE (20 java files). + todoapp (JWT/Security/Redis). PayRequest DTO = record (Arpan-verified).
+              -> ★★ PROJECT-REVISE: mini_payment_ms KHATAM · todoapp CHAL RAHA (current status + agla-step = upar 27-JUL block; files richly code-commented = notes wahin).
    LLD        ✓ 11 designs IN CODE (parking/bms/atm/elevator/hotel...). 5 revise-swept. FORWARD = HLD-jaisa MOCK + ★ 1-2 design COLD-REDO (jaise HashMap→HashSet ek baar sahi karke code-verify). gap = SOLID/pattern ARTICULATE.
    DSA        ✓ ~12 PATTERNS (sheet family-boxed, ~700 line, "gate ki chaabi") + ~70 problems. REVISE mode + Trees STARTED (see §4).
    BEHAVIORAL ✓ 5 STAR (HikariCP/WAF/Doximity/Mentoring/Failure-JDK — all competencies). done bol-ke; ab reps.
@@ -122,7 +123,7 @@
    ★ PHILOSOPHY (Arpan's, reinforce NEVER re-argue): "DSA = pattern + trick ka khel." REVISION >> new-solve (swap-nodes 3.5hr→5min proof). DSA = GATE (medium), not CP/mastery. hints/editorial = LEGIT no-guilt.
    ★★ REVISION-AIRTIGHT (23-Jul): solo-vs-feed IRRELEVANT — cold-solved bhi bina revise 7-din me blur. feed+revision = solo+revision = SAME. metric = REVISION, na solo-ness. (= "help+redo=owned" ka root.)
 
-   ★★ RECENT (26-Jul): POORI SHEET recall-test done -- ALMOST SAB recall (library SOLID); thaka nahi (flow ban gaya). Jaha entries dense/fuzzy thi (recall-atki) -> ~15 entries ACTUAL-CODE se match + saaf ki: SW min-window family (76+1358: LC-76 save loop-ANDAR vs LC-1358 ans+=i loop-BAAD + expand-line) · char-replacement · trapping-RW · longest-consec · product-except-self · spiral-matrix · maximal-rectangle · first-last · koko/ship/split (shared-shell + per-Q solve-formula) · find-peak · single-element · palindrome-LL · merge-two-sorted. => sheet ab pattern-by-pattern code-matched. proof: "trick pata->easy, na-pata->hard" (Max-Product genuinely-naya mechanic ka poster-child); DSA = library+recognize, aaj library test hui + khadi rahi.
+   ★★ SHEET-STATE: POORI sheet recall-tested + pattern-by-pattern ACTUAL-CODE se matched (~18 dense entries saaf kiye) + har heading BOX me (95 entries). library SOLID (almost sab recall, thaka nahi). proof: "trick pata->easy, na-pata->hard"; DSA = library+recognize, test hui + khadi rahi. ★ sheet-design (Arpan): code-in-sheet SAHI jab crux ek CODE-MECHANIC ho (mirror/sentinel/by-ref/bubble-up); conceptual-trick = pattern kaafi; use = recall-ANCHOR, na ratta.
 ```
 
 ---
