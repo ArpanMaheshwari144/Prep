@@ -1253,31 +1253,16 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
  └──────────────────────────────────────────────────────────────
-     idea : source se dst tak rasta hai? EK BFS source se -> dst visit hua? true.
-        bool validPath(n, edges, src, dst):
-            adj banao (undirected -> adj[u]+=v, adj[v]+=u)
-            q.push(src);  vis[src] = true;
-            while (!q.empty()) {
-                node = q.front();  q.pop();
-                if (node == dst) return true;
-                for (nbr : adj[node])
-                    if (!vis[nbr]) { vis[nbr] = true;  q.push(nbr); }
-            }
-            return false;
+     idea : source se dst tak rasta? EK BFS source se -> dst mila to true.
+     bfs  : push(src)+mark -> while q: pop; node==dst? true; unvisited nbrs mark+push.
+     end  : queue khali -> false.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
  └──────────────────────────────────────────────────────────────
-     idea : grid = graph (cell=node, 4 padosi=edge). har naye land se DFS dubo -> count++.
-        int numIslands(grid):
-            for (i,j) over grid:
-                if (grid[i][j] == '1') { DFS(i,j);  count++; }
-            return count;
-
-        void DFS(grid, i, j):
-            if (out-of-bounds || grid[i][j] == '0') return;   // ★ '0'-check
-            grid[i][j] = '0';                                 // SINK = visited
-            DFS(i+1,j);  DFS(i-1,j);  DFS(i,j+1);  DFS(i,j-1);
+     idea : grid = graph (cell=node, 4 padosi=edge). naya land se DFS dubo -> count++.
+     main : for(i,j): grid[i][j]=='1' -> { DFS(i,j); count++; };  return count.
+     dfs  : (bounds || grid=='0') -> return;  grid='0' (sink);  DFS 4-dir.
 ```
 
 ---

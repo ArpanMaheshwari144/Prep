@@ -56,7 +56,7 @@ int countComponents(int n, vector<vector<int>> &edges)
         adj[v].push_back(u); // v ka neighbour u  (bi-direction)
     }
 
-
+    
     
 
 
