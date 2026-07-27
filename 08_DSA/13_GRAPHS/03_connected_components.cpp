@@ -55,19 +55,9 @@ int countComponents(int n, vector<vector<int>> &edges)
         adj[u].push_back(v); // u ka neighbour v
         adj[v].push_back(u); // v ka neighbour u  (bi-direction)
     }
+
+
     
-    for (int i = 0; i < m; i++) // har cell scan (outer double-loop)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            if (grid[i][j] == '1') // naya (abhi tak un-sunk) land -> naya island
-            {
-                DFS(grid, i, j, m, n); // poora island dubo do (sab connected '1' -> '0')
-                count++;
-            }
-        }
-    }
-    return count;
 
 
 }
