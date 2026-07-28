@@ -1,4 +1,4 @@
-# DSA PATTERN SHEET
+<h1 align="center">DSA PATTERN SHEET</h1>
 
 > Arpan ka revision-tool (12-Jul se banna shuru). REVISE isi se hoga -> code nahi kholenge.
 > "similar Q aaye -> pattern dekho, trick recall karo, laga do."
