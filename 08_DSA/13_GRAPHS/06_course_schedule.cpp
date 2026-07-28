@@ -26,9 +26,9 @@
 //  1. question deta -> MATRIX:  prerequisites = [[1,0],[2,1],[3,2]]   (har [a,b] = a lene ko b pehle -> edge u->v)
 //     usme se KHUD adj-list + indegree[] banao:
 //       for(it:prerequisites){ u=it[0], v=it[1];  adj[u].push_back(v);  indegree[v]++; }  // u->v; v ka ek prereq badha
-//  2. queue me saare indegree-0 daalo  (koi prereq nahi -> abhi kar sakte).
-//  3. BFS: while queue -> pop node -> topo me daalo (= count) ->
-//          uske har neighbour ka indegree-- ;  naya 0 hua? -> push.
+//  2. queue me indegree-0 wale daalo:  for(i=0;i<n;i++) if(indegree[i]==0) q.push(i);   // jo bhi 0 = koi prereq nahi
+//  3. BFS: while(q) -> pop node -> topo me daalo (= count) ->
+//          for(nbr:adj[node]){ indegree[nbr]--; if(indegree[nbr]==0) q.push(nbr); }   // prereq pura -> ghatao; 0 hua -> push
 //  4. topo.size() == numCourses (saare process hue)? -> TRUE (no cycle) : FALSE (cycle).
 //  ★ indegree KYUN: indegree = "kitne prereq BACHE". 0 = ready-to-take. process karte-karte ghatate jaate.
 //     CYCLE wale nodes ka indegree KABHI 0 nahi hota (ek-dusre pe atke) -> queue me aate hi nahi

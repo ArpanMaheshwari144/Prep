@@ -1341,9 +1341,9 @@
      TEMPLATE (Kahn's = BFS + indegree):
          usme se KHUD adj-list + indegree banao:
          for(it : prerequisites){ u=it[0], v=it[1];  adj[u].push_back(v); indegree[v]++; }   // u->v; v ka prereq++
-         queue <- saare indegree-0 (koi prereq nahi);
+         for(i=0;i<n;i++) if(indegree[i]==0) q.push(i);        // jo bhi indegree-0 (koi prereq nahi) -> queue me
          while(q){ node=pop; topo.push(node);
-                   for(nbr:adj[node]) if(--indegree[nbr]==0) q.push(nbr); }
+                   for(nbr:adj[node]){ indegree[nbr]--; if(indegree[nbr]==0) q.push(nbr); } }  // prereq pura -> ghatao; 0 hua -> push
          return topo.size() == numCourses;                     // sab process = no cycle
      ★ indegree = "kitne prereq BACHE"; 0 = ready-to-take. cycle-wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
 ```
