@@ -1385,15 +1385,14 @@
         color[] : -1 = uncolored,  0/1 = do rang.
         START ko 0 do -> har neighbour OPPOSITE:  color[it] = !color[curr]   (0<->1 flip).
         neighbour ka rang curr ke SAME nikla -> CONFLICT -> return false.
-        (BFS/DFS to sirf "ghoomne" ka vehicle -- asli naya = ye COLOURING)
-     idea : input KHUD adj-list. outer-loop (CC jaisa, disconnected) se har component BFS.
-     TEMPLATE (BFS = known vehicle; naya sirf upar wala COLOUR):
-         color[node]=0;  q.push(node);
-         BFS(q): curr nikalo -> for(it : graph[curr]):
-             uncolored(-1) -> color[it] = !color[curr];  q.push(it);
-             else color[it]==color[curr]? -> return false;
-         (outer loop: har uncolored node se BFS; koi component fail -> false)
-     = BFS (known) + CC-outer-loop (known) + 2-COLOUR check (naya).
+     idea : input KHUD adj-list. disconnected -> outer-loop (CC jaisa).
+     TEMPLATE:
+         color[] = -1 (sab uncolored);
+         outer loop har node i: uncolored -> BFS(i):
+             color[i]=0;  q.push(i);
+             curr nikalo -> for(it : graph[curr]):
+                 uncolored(-1) -> color[it] = !color[curr];  q.push(it);
+                 else color[it]==color[curr]? -> return false;
 ```
 
 ---
