@@ -1346,6 +1346,26 @@
                    for(nbr:adj[node]){ indegree[nbr]--; if(indegree[nbr]==0) q.push(nbr); } }  // prereq pura -> ghatao; 0 hua -> push
          return topo.size() == numCourses;                     // sab process = no cycle
      ★ indegree = "kitne prereq BACHE"; 0 = ready-to-take. cycle-wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
+
+┌── FAMILY: CLONE / deep-copy (hashmap old->new) ────────────────
+│ KYUN SAATH: "graph ka DEEP COPY / naya-graph banao" -> traversal (BFS/DFS) + map(purana->naya). map = cycle-rok + clone-dhundo.
+└───────────────────────────────────────────────────────────────
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ CLONE GRAPH (LC-133)  = BFS/DFS + map(old->new)
+ └──────────────────────────────────────────────────────────────
+     idea : har node ka CLONE map me daalo + neighbours JODO. map = (1)"clone ho chuka?" (2)"uska clone ye raha".
+            ★ map ki VALUE hi clone -> mp[node] = us node ka clone khud.
+     TEMPLATE (BFS):
+         mp[node]=new Node(node->val);  q.push(node);            // start clone -> map + queue
+         while(q){ curr=pop;
+             for(it : curr->neighbors){
+                 if(!mp.count(it)){ mp[it]=new Node(it->val); q.push(it); }   // naya hi banao + push
+                 mp[curr]->neighbors.push_back(mp[it]);          // JODO -- HAMESHA (naya/purana)
+             } }
+         return mp[node];
+     ★ 2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
+     ★ DFS: recursion + same map -> node pe: map me hai? return; nahi -> clone+map -> har nbr recurse+jodo -> return.
 ```
 
 ---
