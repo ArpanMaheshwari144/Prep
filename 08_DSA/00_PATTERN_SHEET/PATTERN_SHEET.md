@@ -1388,7 +1388,8 @@
         neighbour ka rang curr ke SAME nikla -> CONFLICT -> return false.
      TEMPLATE:
          color[] = -1 (sab uncolored);
-         outer loop har node i: uncolored -> BFS(i):
+         outer loop har node i: uncolored mila ->
+         phir BFS(i) us current node se shuru:
              color[i]=0;  q.push(i);        // ★★ START ko color ZAROORI -- warna !color[curr] galat
              curr nikalo -> for(it : graph[curr]):
                  uncolored(-1) -> color[it] = !color[curr];  q.push(it);
