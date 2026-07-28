@@ -1338,7 +1338,7 @@
  └──────────────────────────────────────────────────────────────
      idea : "prereq + can-finish-ALL?" = koi CYCLE to nahi? cycle -> false.
      TEMPLATE (Kahn's = BFS + indegree):
-         for [u,v]: adj[u].push_back(v);  indegree[v]++;       // u->v edge; v ka prereq badha
+         for(it : prerequisites){ u=it[0], v=it[1];  adj[u].push_back(v); indegree[v]++; }   // u->v; v ka prereq++
          queue <- saare indegree-0 (koi prereq nahi);
          while(q){ node=pop; topo.push(node);
                    for(nbr:adj[node]) if(--indegree[nbr]==0) q.push(nbr); }
