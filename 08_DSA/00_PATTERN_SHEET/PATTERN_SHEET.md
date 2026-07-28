@@ -1337,7 +1337,9 @@
  │ ▸ COURSE SCHEDULE (LC-207)  = TOPO-SORT (Kahn's), cycle-detect
  └──────────────────────────────────────────────────────────────
      idea : "prereq + can-finish-ALL?" = koi CYCLE to nahi? cycle -> false.
+     question deta -> MATRIX:  prerequisites = [[1,0],[2,1],[3,2]]   // har [a,b] = a lene ke liye b pehle (edge b se... u->v)
      TEMPLATE (Kahn's = BFS + indegree):
+         usme se KHUD adj-list + indegree banao:
          for(it : prerequisites){ u=it[0], v=it[1];  adj[u].push_back(v); indegree[v]++; }   // u->v; v ka prereq++
          queue <- saare indegree-0 (koi prereq nahi);
          while(q){ node=pop; topo.push(node);
