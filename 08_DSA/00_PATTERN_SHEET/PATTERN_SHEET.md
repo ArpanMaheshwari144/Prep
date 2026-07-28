@@ -1328,6 +1328,22 @@
                mins++; }
      for(i,j): if(grid==1) return -1;               // END re-scan: fresh bacha -> -1
      return mins-1;                                 // ★★ mins-1 (last level extra)
+
+┌── FAMILY: TOPO-SORT / cycle-detect (DIRECTED graph) ─────────
+│ KYUN SAATH: "prerequisites/dependencies + can-finish? / valid-order?" -> TOPO-SORT (Kahn's = BFS + indegree). cycle -> impossible.
+└───────────────────────────────────────────────────────────────
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ COURSE SCHEDULE (LC-207)  = TOPO-SORT (Kahn's), cycle-detect
+ └──────────────────────────────────────────────────────────────
+     idea : "prereq + can-finish-ALL?" = koi CYCLE to nahi? cycle -> false.
+     TEMPLATE (Kahn's = BFS + indegree):
+         for [u,v]: adj[u].push_back(v);  indegree[v]++;       // u->v edge; v ka prereq badha
+         queue <- saare indegree-0 (koi prereq nahi);
+         while(q){ node=pop; topo.push(node);
+                   for(nbr:adj[node]) if(--indegree[nbr]==0) q.push(nbr); }
+         return topo.size() == numCourses;                     // sab process = no cycle
+     ★ indegree = "kitne prereq BACHE"; 0 = ready-to-take. cycle-wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
 ```
 
 ---
