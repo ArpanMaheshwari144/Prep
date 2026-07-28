@@ -75,6 +75,9 @@ int main()
     vector<vector<int>> e3 = {};
     vector<vector<int>> e4 = {{0, 1}, {2, 3}};
 
+    // ── VISUAL (har test ka graph; index=node, values=neighbours) ──
+    //  e1:  0-1-2 aur 2-0  (triangle, sab jude)         src0->dst2 = TRUE
+
     cout << validPath(3, e1, 0, 2) << " (expected 1)\n";
     cout << validPath(6, e2, 0, 5) << " (expected 0)\n";
     cout << validPath(1, e3, 0, 0) << " (expected 1)\n";

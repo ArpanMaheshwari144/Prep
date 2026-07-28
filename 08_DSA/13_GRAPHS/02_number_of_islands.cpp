@@ -76,6 +76,11 @@ int main()
     vector<vector<char>> g3 = {{'0', '0'}, {'0', '0'}};
     vector<vector<char>> g4 = {{'1'}};
 
+    // ── VISUAL (g1; 1=land 0=water; 4-dir se jude land = ek island) ──
+    //   1 1 0
+    //   1 0 0     -> 2 island: top-left (3 cells jude) + bottom-right (1 cell)
+    //   0 0 1
+
     cout << numIslands(g1) << " (expected 2)\n";
     cout << numIslands(g2) << " (expected 1)\n";
     cout << numIslands(g3) << " (expected 0)\n";

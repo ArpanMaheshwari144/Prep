@@ -78,6 +78,9 @@ int main()
     vector<vector<int>> e3 = {};
     vector<vector<int>> e4 = {};
 
+    // ── VISUAL (har test ka graph; index=node, values=neighbours) ──
+    //  e1(n=5):  0-1-2   |   3-4              -> 2 groups
+
     cout << countComponents(5, e1) << " (expected 2)\n";
     cout << countComponents(5, e2) << " (expected 1)\n";
     cout << countComponents(4, e3) << " (expected 4)\n";

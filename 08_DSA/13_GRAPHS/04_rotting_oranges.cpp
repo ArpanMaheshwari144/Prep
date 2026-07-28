@@ -98,6 +98,11 @@ int main()
     vector<vector<int>> g2 = {{2, 1, 1}, {0, 1, 1}, {1, 0, 1}};
     vector<vector<int>> g3 = {{0, 2}};
 
+    // ── VISUAL (g1; 2=rotten 1=fresh 0=empty; rotten 4-dir me failta har min) ──
+    //   2 1 1
+    //   1 1 0     -> saare fresh rot hone me 4 min lagte
+    //   0 1 1
+
     cout << orangesRotting(g1) << " (expected 4)\n";
     cout << orangesRotting(g2) << " (expected -1)\n";
     cout << orangesRotting(g3) << " (expected 0)\n";

@@ -73,6 +73,11 @@ int main()
     vector<vector<int>> g3 = {{0, 0}, {0, 0}};
     vector<vector<int>> g4 = {{1}};
 
+    // ── VISUAL (g1; 1=land; area = ek island ke cells ki count) ──
+    //   1 1 0
+    //   1 0 0     -> island1 area=3 (top-left L), island2 area=1 -> MAX 3
+    //   0 0 1
+
     cout << maxAreaOfIsland(g1) << " (expected 3)\n";
     cout << maxAreaOfIsland(g2) << " (expected 4)\n";
     cout << maxAreaOfIsland(g3) << " (expected 0)\n";

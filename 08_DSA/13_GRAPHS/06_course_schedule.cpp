@@ -97,6 +97,9 @@ int main()
     vector<vector<int>> p3 = {{1, 0}, {2, 1}, {3, 2}};
     vector<vector<int>> p4 = {{0, 1}, {1, 2}, {2, 0}};
 
+    // ── VISUAL ([a,b] = directed edge a->b; CYCLE ho to false) ──
+    //  p4(n=3):  0->1->2->0  (loop = cycle)   -> FALSE   (p3 = chain 3->2->1->0 -> TRUE)
+
     cout << canFinish(2, p1) << " (expected 1)\n";
     cout << canFinish(2, p2) << " (expected 0)\n";
     cout << canFinish(4, p3) << " (expected 1)\n";

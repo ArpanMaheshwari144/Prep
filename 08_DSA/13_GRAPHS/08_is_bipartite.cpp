@@ -91,6 +91,11 @@ int main()
     vector<vector<int>> g4 = {{1}, {0}, {3}, {2}};                   // 2 separate edges -> true
     vector<vector<int>> g5 = {{1, 2}, {0, 2}, {0, 1}};               // triangle 0-1-2 -> false
 
+    // ── VISUAL (har test; index=node, values=neighbours) ──
+    //  g1:  0-1     square (4-cycle)     -> 2-colour ho jaata  TRUE
+    //       | |
+    //       3-2
+
     cout << "T1: " << (isBipartite(g1) ? "true " : "false") << " (exp true)\n";
     cout << "T2: " << (isBipartite(g2) ? "true " : "false") << " (exp false)\n";
     cout << "T3: " << (isBipartite(g3) ? "true " : "false") << " (exp true)\n";
