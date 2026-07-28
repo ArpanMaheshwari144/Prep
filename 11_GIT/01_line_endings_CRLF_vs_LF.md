@@ -40,6 +40,16 @@ Aur do systems ise DO ALAG tareeke se likhte:
 => **"modified" hamesha content-change nahi hota** — kabhi sirf line-ending hota hai.
    Confirm karne ka tareeka:  `diff --strip-trailing-cr fileA fileB`  (CRLF ignore karke compare).
 
+## ★ WO WARNING JO TU HAR COMMIT/PUSH PE DEKHTA HAI (yehi cheez hai!)
+Har `git add`/commit pe git ye line deta:
+```
+warning: in the working copy of '...file...', LF will be replaced by CRLF the next time Git touches it
+```
+Iska matlab: **"is file me repo ke andar LF (1-char) hai, par teri Windows machine pe ye CRLF (2-char) ban jaayega."**
+- Ye **ERROR NAHI** — sirf INFORMATION. Koi dikkat nahi, kaam kuch nahi karna.
+- Mahino tak ye dikhti rahi par naam nahi pata tha -> ignore karta tha (sahi tha).
+- Ab pata: ye wahi CRLF/LF wali baat hai. Git bas convert-hone ka heads-up de raha.
+
 ## FIX / PREVENTION (ye yaad rakh — real teams me use hota)
 - **Turant saaf:** `git restore <path>` -> git ke LF version wapas, status clean (content same rehta).
 - **Automatic handle (Windows pe recommended):**
