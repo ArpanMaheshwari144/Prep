@@ -1367,7 +1367,7 @@
          mp[node] = clone(node);  q.push(node);          // seed: start ka clone map me + queue
          BFS(q): curr nikalo -> for(it : curr->neighbors):
              (a) it clone nahi hua? -> mp[it]=clone(it); q.push(it);   // naya clone banao + push
-             (b) mp[curr]->neighbors.push_back(mp[it]);                // JODO <-- YEHI crux
+             (b) mp[curr]->neighbors.push_back(mp[it]);                // mp[curr]=A', mp[it]=B' -> JODO (crux)
          return mp[node];
          (clone(x) = new Node(); ->val = x->val)
      ★ 2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
