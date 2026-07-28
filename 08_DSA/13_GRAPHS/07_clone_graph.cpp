@@ -10,10 +10,11 @@
 //
 //   ★ twist: graph me CYCLE hoti (A-B, B-A) -> traverse karte same node baar-baar
 //     clone na ho jaaye -> "kaunsa already clone hua + uska clone kya" yaad rakhna.
+//
+//   ★★★ SAAR: "mere GRAPH ke saare node map me clone bana (A->A', B->B'),
+//              phir un clones ko CONNECT kar (A'--B')." bas yehi kaam.
 // ============================================================
 // ---- APPROACH ----  (BFS + hashmap; DFS-recursion se bhi hota)
-//  ★★★ SAAR: "mere GRAPH ke saare node map me clone bana
-//        (A->A', B->B'), phir un clones ko CONNECT kar (A'--B')." bas yehi kaam.
 //  ★ idea: map me har node ka clone BANAO (A->A', B->B') -> phir un clones ko CONNECT karo (sab map ke andar).
 //     2 kaam:  (1) clone map me daalo   (2) neighbours ke clone se JODO (push_back).
 //     map DO kaam karta:  "ye node clone ho chuka?" (cycle-rok) + "uska clone ye raha" (jodne ko).
