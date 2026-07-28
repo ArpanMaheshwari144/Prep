@@ -12,6 +12,8 @@
 //     clone na ho jaaye -> "kaunsa already clone hua + uska clone kya" yaad rakhna.
 // ============================================================
 // ---- APPROACH ----  (BFS + hashmap; DFS-recursion se bhi hota)
+//  ★★★ SAAR (ek line): map me har node ka CLONE banao -> phir un clones ko CONNECT karo. BAS.
+//        (A-B visual neeche: original A--B -> map {A->A',B->B'} -> jodo A'--B')
 //  ★ idea: map me har node ka clone BANAO (A->A', B->B') -> phir un clones ko CONNECT karo (sab map ke andar).
 //     2 kaam:  (1) clone map me daalo   (2) neighbours ke clone se JODO (push_back).
 //     map DO kaam karta:  "ye node clone ho chuka?" (cycle-rok) + "uska clone ye raha" (jodne ko).
