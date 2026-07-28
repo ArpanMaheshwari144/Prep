@@ -1395,6 +1395,3 @@
                  uncolored(-1) -> color[it] = !color[curr];  q.push(it);
                  else color[it]==color[curr]? -> return false;
 ```
-
----
-> REVISE isi sheet se. code nahi kholna. "similar Q -> pattern pehchano -> trick recall -> lagao."
