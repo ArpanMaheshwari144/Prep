@@ -12,7 +12,7 @@
 //     clone na ho jaaye -> "kaunsa already clone hua + uska clone kya" yaad rakhna.
 // ============================================================
 // ---- APPROACH ----  (BFS + hashmap; DFS-recursion se bhi hota)
-//  ★★★ SAAR (jaise question ne mujhe bola): "mere GRAPH ke saare node map me clone bana
+//  ★★★ SAAR: "mere GRAPH ke saare node map me clone bana
 //        (A->A', B->B'), phir un clones ko CONNECT kar (A'--B')." bas yehi kaam.
 //  ★ idea: map me har node ka clone BANAO (A->A', B->B') -> phir un clones ko CONNECT karo (sab map ke andar).
 //     2 kaam:  (1) clone map me daalo   (2) neighbours ke clone se JODO (push_back).
