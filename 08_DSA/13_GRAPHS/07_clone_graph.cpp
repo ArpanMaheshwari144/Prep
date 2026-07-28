@@ -64,13 +64,15 @@ Node *cloneGraph(Node *node)
     // STEP 1: START node ka clone -> map me daalo + queue me START (purana) push
     Node *clone = new Node();
     clone->val = node->val;
-    mp[node] = clone; // mp[node] = us node ka clone khud
-    q.push(node);
+
+    // mp[node] = clone -> key = node (A, purana),  value = clone (A', naya).  yaani "A ka clone A'"
+    mp[node] = clone;
+    q.push(node); // A (purana) ko queue me daala
 
     // STEP 2: BFS -> har node ke neighbours ka clone + JODO
     while (!q.empty())
     {
-        Node *curr = q.front();
+        Node *curr = q.front(); // curr = A (queue se nikla)
         q.pop();
 
         for (auto &it : curr->neighbors)
@@ -80,10 +82,13 @@ Node *cloneGraph(Node *node)
             {
                 Node *newClone = new Node();
                 newClone->val = it->val;
+
+                // B ka clone B' bana -> mp[B] = B'
                 mp[it] = newClone;
                 q.push(it); // taaki iske neighbours bhi baad me process ho
             }
             // (b) JODO -- curr ke clone ko it ke clone se (ye HAMESHA, naya/purana koi bhi)
+            // A' ke neighbour-list me B' jod diya (clones aapas me jude)
             mp[curr]->neighbors.push_back(mp[it]);
         }
     }
