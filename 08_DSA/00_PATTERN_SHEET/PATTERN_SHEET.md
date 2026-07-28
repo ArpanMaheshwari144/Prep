@@ -1357,6 +1357,11 @@
      idea : map me har node ka clone BANAO (A->A', B->B') -> phir un clones ko CONNECT karo (sab map ke andar).
             2 kaam:  (1) clone map me daalo   (2) neighbours ke clone se JODO (push_back).
             map ki VALUE hi clone -> mp[node] = us node ka clone; map = "clone ho chuka?" + "uska clone kaha".
+     VISUAL (A-B graph):
+         original:  A --- B
+         (1) clone map me daalo:  mp = { A->A' ,  B->B' }     // naye node, abhi LOOSE (jude nahi)
+         (2) clones ko JODO:      A' --- B'                    // mp[A]->neighbors += mp[B]
+         => naya deep-copy graph  A'-B'  taiyaar
      TEMPLATE (BFS = normal traversal; map<old,new> + 2 special move):
          mp[node] = clone(node);  q.push(node);          // seed: start ka clone map me + queue
          BFS(q): curr nikalo -> for(it : curr->neighbors):

@@ -17,6 +17,12 @@
 //     map DO kaam karta:  "ye node clone ho chuka?" (cycle-rok) + "uska clone ye raha" (jodne ko).
 //     ★ map ki VALUE hi clone hai -> mp[node] = us node ka clone khud.
 //
+//  ★ VISUAL (A-B graph):
+//        original:  A --- B
+//        (1) clone map me daalo:  mp = { A->A' ,  B->B' }    // naye node, abhi LOOSE (jude nahi)
+//        (2) clones ko JODO:      A' --- B'                  // mp[A]->neighbors += mp[B]
+//        => naya deep-copy graph  A'-B'  taiyaar
+//
 //  ★★ TEMPLATE (BFS):
 //  1. start node ka clone banao -> mp[node]=clone ; queue me START node (purana) push.
 //  2. while queue: curr nikalo -> uske HAR neighbour it pe:
