@@ -2,6 +2,7 @@ package com.arpan.todoapp.controller;
 // ─── PACKAGE ─────────────────────────────────────────────────
 // File: src/main/java/com/arpan/todoapp/controller/UserController.java
 
+import com.arpan.todoapp.dto.UserResponse;
 import com.arpan.todoapp.model.User;
 import com.arpan.todoapp.service.UserService;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 // ─── IMPORTS ─────────────────────────────────────────────────
 // User, UserService     → entity + business logic
+// UserResponse          → response DTO (password strip — entity leak na ho)
 // @Valid                → trigger Bean Validation
 // ResponseEntity        → HTTP response wrapper
 // @RestController, etc. → REST mapping annotations
@@ -78,24 +80,32 @@ public class UserController {
         this.service = service;
     }
 
+    // ═══ RETURN = UserResponse (NOT User entity) — teeno endpoint mein ═══
+    //    KYUN: service.register()/getById()/update() -> User deta (password ke SAATH)
+    //          User seedha return karte -> password (hash) response me LEAK
+    //    FIX:  UserResponse.from(user) -> sirf id/name/email map (password chhoda)
+    //          -> API response me password KABHI nahi jaata (entity internal-only)
+    //    from() = static factory (mapping ek jagah, DRY)
+    // ═══════════════════════════════════════════════════════════════════
+
     // ─── POST /users — CREATE ──────────────────────────────────
     // Register-like — naya user save
     // @Valid → User class ke validation rules apply (NotBlank, Email, Size)
-    // 200 OK + saved user (with auto-generated id)
+    // register() = password BCrypt-hash karke save
     @PostMapping
-    public ResponseEntity<User> create(@Valid @RequestBody User user) {
-        return ResponseEntity.ok(service.register(user));
+    public ResponseEntity<UserResponse> create(@Valid @RequestBody User user) {
+        return ResponseEntity.ok(UserResponse.from(service.register(user)));  // entity -> DTO (password strip)
     }
 
     // ─── GET /users/{id} — READ ONE ────────────────────────────
     @GetMapping("/{id}")
-    public ResponseEntity<User> get(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getById(id));
+    public ResponseEntity<UserResponse> get(@PathVariable Long id) {
+        return ResponseEntity.ok(UserResponse.from(service.getById(id)));
     }
 
     // ─── PUT /users/{id} — UPDATE ──────────────────────────────
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @Valid @RequestBody User user) {
-        return ResponseEntity.ok(service.update(id, user));
+    public ResponseEntity<UserResponse> update(@PathVariable Long id, @Valid @RequestBody User user) {
+        return ResponseEntity.ok(UserResponse.from(service.update(id, user)));
     }
 }
