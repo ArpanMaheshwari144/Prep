@@ -23,8 +23,9 @@
 // ---- APPROACH ----  (TOPO SORT = Kahn's algo: BFS + indegree; cycle-detect)
 //  ★ idea: "prerequisites + can-finish-ALL?" = TOPO SORT = koi CYCLE to nahi? (cycle = impossible = false)
 //  ★★ TEMPLATE (Kahn's -- ye poora topo-sort ka template, RATTA kar lo):
-//  1. adj-list + indegree[] banao:
-//       for [u,v]:  adj[u].push_back(v);  indegree[v]++;   // u->v edge; v ka ek prereq badha
+//  1. question deta -> MATRIX:  prerequisites = [[1,0],[2,1],[3,2]]   (har [a,b] = a lene ko b pehle -> edge u->v)
+//     usme se KHUD adj-list + indegree[] banao:
+//       for(it:prerequisites){ u=it[0], v=it[1];  adj[u].push_back(v);  indegree[v]++; }  // u->v; v ka ek prereq badha
 //  2. queue me saare indegree-0 daalo  (koi prereq nahi -> abhi kar sakte).
 //  3. BFS: while queue -> pop node -> topo me daalo (= count) ->
 //          uske har neighbour ka indegree-- ;  naya 0 hua? -> push.
