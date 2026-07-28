@@ -1389,7 +1389,7 @@
      TEMPLATE:
          color[] = -1 (sab uncolored);
          outer loop har node i: uncolored -> BFS(i):
-             color[i]=0;  q.push(i);
+             color[i]=0;  q.push(i);        // ★★ START ko color ZAROORI -- warna !color[curr] galat
              curr nikalo -> for(it : graph[curr]):
                  uncolored(-1) -> color[it] = !color[curr];  q.push(it);
                  else color[it]==color[curr]? -> return false;
