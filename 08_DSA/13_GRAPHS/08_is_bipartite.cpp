@@ -50,7 +50,8 @@ bool BFS(vector<vector<int>> &graph, int node, vector<int> &color)
         {
             if (color[it] == -1) // uncolored -> OPPOSITE rang do + push
             {
-                color[it] = !color[curr]; // !0=1, !1=0 (flip)
+                color[it] = 1 - color[curr]; // OPPOSITE flip: 0->1, 1->0 (sirf 0/1 hai, isliye 1-x kaam karta)
+                // (ya: color[it] = !color[curr];  bhi same -> !0=1, !1=0)
                 q.push(it);
             }
             else // already colored -> check
