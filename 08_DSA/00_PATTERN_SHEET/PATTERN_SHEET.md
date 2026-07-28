@@ -1381,7 +1381,7 @@
  │ ▸ IS BIPARTITE (LC-785)  = 2-colour BFS + outer-loop (CC jaisa)
  └──────────────────────────────────────────────────────────────
      SAAR : har node 2 rang (0/1); koi 2 ADJACENT same-rang na ho -> bipartite. odd-cycle -> false.
-     ★★ TRICK (NAYA -- har graph-Q me NAHI hota, isiliye sheet me): 2-COLOUR
+     ★★ TRICK (NAYA): 2-COLOUR
         color[] : -1 = uncolored,  0/1 = do rang.
         START ko 0 do -> har neighbour OPPOSITE:  color[it] = !color[curr]   (0<->1 flip).
         neighbour ka rang curr ke SAME nikla -> CONFLICT -> return false.
