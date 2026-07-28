@@ -1357,20 +1357,13 @@
      idea : map me har node ka clone BANAO (A->A', B->B') -> phir un clones ko CONNECT karo (sab map ke andar).
             2 kaam:  (1) clone map me daalo   (2) neighbours ke clone se JODO (push_back).
             map ki VALUE hi clone -> mp[node] = us node ka clone; map = "clone ho chuka?" + "uska clone kaha".
-     TEMPLATE (BFS) -- tera code:
-         Node* clone = new Node();  clone->val = node->val;      // START node ka clone
-         mp[node] = clone;  q.push(node);                        // map me daalo + queue me push
-         while(!q.empty()){
-             Node* curr = q.front();  q.pop();
-             for(auto &it : curr->neighbors){
-                 if(mp.count(it) == 0){                          // (a) clone NAHI hua -> banao
-                     Node* newClone = new Node();  newClone->val = it->val;
-                     mp[it] = newClone;  q.push(it);
-                 }
-                 mp[curr]->neighbors.push_back(mp[it]);          // (b) JODO -- hamesha
-             }
-         }
+     TEMPLATE (BFS = normal traversal; map<old,new> + 2 special move):
+         mp[node] = clone(node);  q.push(node);          // seed: start ka clone map me + queue
+         BFS(q): curr nikalo -> for(it : curr->neighbors):
+             (a) it clone nahi hua? -> mp[it]=clone(it); q.push(it);   // naya clone banao + push
+             (b) mp[curr]->neighbors.push_back(mp[it]);                // JODO <-- YEHI crux
          return mp[node];
+         (clone(x) = new Node(); ->val = x->val)
      ★ 2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
      ★ DFS: recursion + same map -> node pe: map me hai? return; nahi -> clone+map -> har nbr recurse+jodo -> return.
 ```
