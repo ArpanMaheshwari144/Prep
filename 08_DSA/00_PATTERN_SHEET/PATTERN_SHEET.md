@@ -1354,15 +1354,22 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CLONE GRAPH (LC-133)  = BFS/DFS + map(old->new)
  └──────────────────────────────────────────────────────────────
-     idea : har node ka CLONE map me daalo + neighbours JODO. map = (1)"clone ho chuka?" (2)"uska clone ye raha".
-            ★ map ki VALUE hi clone -> mp[node] = us node ka clone khud.
-     TEMPLATE (BFS):
-         mp[node]=new Node(node->val);  q.push(node);            // start clone -> map + queue
-         while(q){ curr=pop;
-             for(it : curr->neighbors){
-                 if(!mp.count(it)){ mp[it]=new Node(it->val); q.push(it); }   // naya hi banao + push
-                 mp[curr]->neighbors.push_back(mp[it]);          // JODO -- HAMESHA (naya/purana)
-             } }
+     idea : map me har node ka clone BANAO (A->A', B->B') -> phir un clones ko CONNECT karo (sab map ke andar).
+            2 kaam:  (1) clone map me daalo   (2) neighbours ke clone se JODO (push_back).
+            map ki VALUE hi clone -> mp[node] = us node ka clone; map = "clone ho chuka?" + "uska clone kaha".
+     TEMPLATE (BFS) -- tera code:
+         Node* clone = new Node();  clone->val = node->val;      // START node ka clone
+         mp[node] = clone;  q.push(node);                        // map me daalo + queue me push
+         while(!q.empty()){
+             Node* curr = q.front();  q.pop();
+             for(auto &it : curr->neighbors){
+                 if(mp.count(it) == 0){                          // (a) clone NAHI hua -> banao
+                     Node* newClone = new Node();  newClone->val = it->val;
+                     mp[it] = newClone;  q.push(it);
+                 }
+                 mp[curr]->neighbors.push_back(mp[it]);          // (b) JODO -- hamesha
+             }
+         }
          return mp[node];
      ★ 2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
      ★ DFS: recursion + same map -> node pe: map me hai? return; nahi -> clone+map -> har nbr recurse+jodo -> return.
