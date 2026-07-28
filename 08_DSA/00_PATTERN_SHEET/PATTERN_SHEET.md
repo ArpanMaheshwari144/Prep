@@ -1372,6 +1372,23 @@
          (clone(x) = new Node(); ->val = x->val)
      ★ 2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
      ★ DFS: recursion + same map -> node pe: map me hai? return; nahi -> clone+map -> har nbr recurse+jodo -> return.
+
+┌── FAMILY: GRAPH-COLOURING / bipartite (2-colour) ─────────────
+│ KYUN SAATH: "graph ko 2 group me baant sakte? / odd-cycle?" -> 2-COLOUR BFS. adjacent same-rang = false.
+└───────────────────────────────────────────────────────────────
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ IS BIPARTITE (LC-785)  = 2-colour BFS + outer-loop (CC jaisa)
+ └──────────────────────────────────────────────────────────────
+     SAAR : har node 2 rang (0/1); koi 2 ADJACENT same-rang na ho -> bipartite. odd-cycle -> false.
+     idea : input KHUD adj-list. color[]=-1. outer-loop (CC jaisa, disconnected) -> BFS se 2-colour.
+     TEMPLATE (BFS, ek component):
+         color[node]=0;  q.push(node);             // ★ START ko color -- warna opposite galat nikalta
+         BFS(q): curr nikalo -> for(it : graph[curr]):
+             uncolored(-1) -> color[it] = !color[curr];  q.push(it);   // OPPOSITE rang
+             else same? (color[it]==color[curr]) -> return false;      // conflict = bipartite nahi
+         (outer loop: har uncolored node se BFS; koi component fail -> false)
+     ★ opposite trick: !color[curr] (0<->1 flip).   = BFS + CC-outer-loop + colour-check.
 ```
 
 ---
