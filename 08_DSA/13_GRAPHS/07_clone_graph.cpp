@@ -88,6 +88,7 @@ Node *cloneGraph(Node *node)
                 q.push(it); // taaki iske neighbours bhi baad me process ho
             }
             // (b) JODO -- curr ke clone ko it ke clone se (ye HAMESHA, naya/purana koi bhi)
+            // mp[curr] = A ki map-value = A'   |   mp[it] = B ki map-value = B'
             // A' ke neighbour-list me B' jod diya (clones aapas me jude)
             mp[curr]->neighbors.push_back(mp[it]);
         }
