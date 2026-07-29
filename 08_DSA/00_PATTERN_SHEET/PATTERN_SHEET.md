@@ -1424,7 +1424,7 @@
              }
          }
          return dist;
-     min-heap: priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;  // {dist, node}
+     min-heap (pura syntax): priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;  // {dist,node}
 
 ┌── FAMILY: DSU / Union-Find ────────────────────────────────────
 │ KYUN SAATH: "groups / connected / same-set?" + edges ek-ek MERGE -> DSU. (BFS/DFS=pura traverse; DSU=incremental)
