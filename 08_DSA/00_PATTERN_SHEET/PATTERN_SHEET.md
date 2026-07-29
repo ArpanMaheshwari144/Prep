@@ -1405,8 +1405,9 @@
      SAAR : BFS ka WEIGHTED bhai. wahi template, 2 swap:
               queue -> MIN-HEAP (chhoti dist pehle)   |   visited[] -> dist[] (init INF, src=0)
             + naya = RELAXATION.
-     ★★ TRICK (NAYA): RELAX = "dheela karo" -> naya rasta (d + edge_w) purane dist[nbr] se kam? -> update+push.
-        w = EDGE ka weight (it.second), NA ki dist[node].
+     ★★ TRICK (NAYA): RELAX = "dheela karo".  d = node tak ki dist,  w = us EDGE ka weight.
+        naya rasta (d + w) purane dist[nbr] se kam? -> dist[nbr]=d+w; push.
+        ★ w = EDGE ka weight (it.second), NA ki dist[node].
      idea : min-heap kyun -> "kam edges != kam weight", greedily sabse-sasti-abhi-tak node uthani padti.
      TEMPLATE:
          edges -> weighted adj:  adj[u]+={v,w}, adj[v]+={u,w}   (undirected DONO taraf)

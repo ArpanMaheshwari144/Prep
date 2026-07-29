@@ -16,9 +16,11 @@
 //   TEMPLATE:
 //     1. edges -> weighted adj-list: adj[u]+={v,w}, adj[v]+={u,w}  (undirected -> DONO taraf).
 //     2. dist[]=INF, dist[src]=0. min-heap me {0, src}.
-//     3. while heap: {d, node} pop.
+//     3. while heap: {d, node} pop.    // d = node tak ki ABHI-TAK ki dist
 //          d > dist[node]?  -> STALE, skip (behtar rasta pehle mil chuka).
-//          har neighbour {nbr, w} -> RELAX:  d + w < dist[nbr]? -> dist[nbr]=d+w; push {d+w, nbr}.
+//          har neighbour {nbr, w}   // nbr = padosi node,  w = un dono ke beech EDGE ka weight
+//            RELAX:  d + w  = nbr tak naya rasta (node-tak-dist + edge-weight).
+//                    (d + w) < dist[nbr]?  ->  dist[nbr] = d + w;  push {d+w, nbr}.
 //     4. dist[] = saare shortest distances.
 //   ★ RELAX = "dheela karo": naya rasta (d+w) purane dist[nbr] se kam? -> update.
 //     ★★ w = it.second (EDGE ka weight), na ki dist[node]. -- ye bug HAND-TRACE me pakda tha!
