@@ -40,7 +40,11 @@ using namespace std;
 class DSU
 {
 public:
-    vector<int> parent, rnk; // rnk = rank (tree ki approx height)
+    vector<int> parent, rnk;
+    // parent[x] = x ka parent (root = khud ka parent = LEADER)
+    // rnk[x]    = us tree ki approx HEIGHT (kitna gehra). union-by-rank isi se "chhota-bada" naap ke
+    //             chhota ped bade ke neeche lagata -> tree FLAT rehta -> find fast.
+    //             (path-compression ke baad ye actual-height nahi, bas heuristic reh jaata.)
 
     DSU(int n)
     {
