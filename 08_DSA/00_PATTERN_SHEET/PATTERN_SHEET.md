@@ -1425,4 +1425,24 @@
          }
          return dist;
      min-heap: priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;  // {dist, node}
+
+┌── FAMILY: DSU / Union-Find ────────────────────────────────────
+│ KYUN SAATH: "groups / connected / same-set?" + edges ek-ek MERGE -> DSU. (BFS/DFS=pura traverse; DSU=incremental)
+└───────────────────────────────────────────────────────────────
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ DSU (Union-Find)  = parent[] + find + unite
+ └──────────────────────────────────────────────────────────────
+     REAL: dost-circle manager ("A-B same circle?"), network/accounts merge.
+     SAAR : parent[]=har node ka leader. edge -> 2 node UNITE. end me alag ROOT (parent[i]==i) = components.
+     KAB  : groups/connected/same-set? · UNDIRECTED cycle-detect · provinces · redundant-conn · MST-Kruskal.
+     TEMPLATE (class):
+         DSU(n): parent[i]=i;  rnk[i]=0;
+         find(x):   if(x==parent[x]) return x;   return parent[x]=find(parent[x]);   // PATH COMPRESSION
+         unite(x,y): ux=find(x), uy=find(y);  if(ux==uy) return;                      // UNION BY RANK:
+             rnk[ux]<rnk[uy] -> parent[ux]=uy;
+             rnk[uy]<rnk[ux] -> parent[uy]=ux;
+             else            -> parent[uy]=ux; rnk[ux]++;
+     same group? find(x)==find(y).    components = count(i where find(i)==i).
+     ★ 2 opt: path-compression (tree flat) + union-by-rank (chhota bade ke neeche) -> find/unite ~O(1).
 ```
