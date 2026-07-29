@@ -1409,13 +1409,19 @@
         naya rasta (d + w) purane dist[nbr] se kam? -> dist[nbr]=d+w; push.
         ★ w = EDGE ka weight (it.second), NA ki dist[node].
      idea : min-heap kyun -> "kam edges != kam weight", greedily sabse-sasti-abhi-tak node uthani padti.
-     TEMPLATE:
-         edges -> weighted adj:  adj[u]+={v,w}, adj[v]+={u,w}   (undirected DONO taraf)
-         dist[]=INF, dist[src]=0;  min-heap.push({0, src});
-         while(pq){ {d,node}=pop;
-             if(d > dist[node]) continue;                       // STALE skip
-             for({nbr,w} : adj[node])
-                 if(d + w < dist[nbr]){ dist[nbr]=d+w; pq.push({d+w, nbr}); }   // RELAX
+     TEMPLATE (tera code):
+         adj: for(it:edges){ u=it[0],v=it[1],w=it[2]; adj[u]+={v,w}; adj[v]+={u,w}; }  // undirected DONO taraf
+         vector<int> dist(n, INF);  dist[src]=0;   pq.push({0, src});
+         while(!pq.empty()){
+             wt = pq.top().first;  node = pq.top().second;  pq.pop();
+             if(wt > dist[node]) continue;                     // STALE skip
+             for(it : adj[node]){              // it.first = nbr node,  it.second = edge weight
+                 if(wt + it.second < dist[it.first]){          // RELAX (naya rasta chhota?)
+                     dist[it.first] = wt + it.second;
+                     pq.push({wt + it.second, it.first});
+                 }
+             }
          }
-     min-heap syntax: priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;  // {dist,node}
+         return dist;
+     min-heap: priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;  // {dist, node}
 ```
