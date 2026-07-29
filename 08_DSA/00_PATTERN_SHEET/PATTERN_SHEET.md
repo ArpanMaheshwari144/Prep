@@ -1394,4 +1394,27 @@
              curr nikalo -> for(it : graph[curr]):
                  uncolored(-1) -> color[it] = !color[curr];  q.push(it);
                  else color[it]==color[curr]? -> return false;
+
+┌── FAMILY: WEIGHTED shortest-path ──────────────────────────────
+│ KYUN SAATH: "edges pe WEIGHT/cost + shortest path?" -> Dijkstra. (kam edges != kam weight -> BFS kaafi nahi)
+└───────────────────────────────────────────────────────────────
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ DIJKSTRA  = BFS template + 2 swap + relaxation
+ └──────────────────────────────────────────────────────────────
+     SAAR : BFS ka WEIGHTED bhai. wahi template, 2 swap:
+              queue -> MIN-HEAP (chhoti dist pehle)   |   visited[] -> dist[] (init INF, src=0)
+            + naya = RELAXATION.
+     ★★ TRICK (NAYA): RELAX = "dheela karo" -> naya rasta (d + edge_w) purane dist[nbr] se kam? -> update+push.
+        w = EDGE ka weight (it.second), NA ki dist[node].
+     idea : min-heap kyun -> "kam edges != kam weight", greedily sabse-sasti-abhi-tak node uthani padti.
+     TEMPLATE:
+         edges -> weighted adj:  adj[u]+={v,w}, adj[v]+={u,w}   (undirected DONO taraf)
+         dist[]=INF, dist[src]=0;  min-heap.push({0, src});
+         while(pq){ {d,node}=pop;
+             if(d > dist[node]) continue;                       // STALE skip
+             for({nbr,w} : adj[node])
+                 if(d + w < dist[nbr]){ dist[nbr]=d+w; pq.push({d+w, nbr}); }   // RELAX
+         }
+     min-heap syntax: priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;  // {dist,node}
 ```
