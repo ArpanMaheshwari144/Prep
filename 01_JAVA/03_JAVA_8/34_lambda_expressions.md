@@ -67,6 +67,34 @@ name -> System.out.println(name)
 
 ---
 
+## ★ KYUN CHALTA + BODY (samajh — 3 point)
+
+### 1. Lambda KYUN chalta → FUNCTIONAL INTERFACE (sirf 1 method)
+→ Lambda tabhi likh sakte jab interface pe **sirf EK abstract method** ho (= **functional interface**).
+→ Lambda us **akele method ka BODY** deta.
+   `Runnable` → 1 method `run()` → `() -> {...}` = us `run()` ka body.
+→ **2 method** hote → lambda **NAHI** chalti (compiler confuse: kaun sa method?).
+
+### 2. Lambda body `{}` = normal code block (kitne bhi operations)
+→ `{}` ke andar **jo chahe, jitna chahe** — statements, loops, if-else, synchronized. **ek-operation ki limit NAHI.**
+```java
+() -> {
+    op1();  op2();  int x = calc();
+    for (int i=0;i<100;i++) count++;    // 10-20 operation, sab EK lambda me
+}
+```
+→ ★ "1 method" ka matlab: lambda ek **METHOD** fill karta — **NA ki 1 operation.** body me unlimited.
+
+### 3. Type INFERENCE — Runnable alag se likhna zaroori nahi
+→ `new Thread(() -> {...})` — yahan `Runnable` likha hi nahi.
+→ compiler `Thread` constructor ke **param-type** se INFER kar leta (wo Runnable maangta) → lambda = Runnable.
+```java
+Runnable r = () -> {...};  new Thread(r);   // explicit
+new Thread(() -> {...});                    // inferred (short) -- dono SAME
+```
+
+---
+
 ## TRAP — Java mein `=>` NAHI hota
 
 > **Java = `->` (dash arrow). JavaScript = `=>` (fat arrow). Java mein `=>` EXIST nahi karta.**
