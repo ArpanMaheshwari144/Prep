@@ -20,9 +20,12 @@ public class RaceDemo {
 //        count++;
 //    }
 
-    static AtomicInteger count = new AtomicInteger(0);   // CAS-based, lock-free + atomic (safe)
+//    static AtomicInteger count = new AtomicInteger(0);   // CAS-based, lock-free + atomic (safe)
 
     public static void main(String[] args) throws InterruptedException {
+        // count ab main ke ANDAR (local). lambda ise capture kar leta kyunki 'count' reference
+        // kabhi reassign nahi hota = EFFECTIVELY FINAL (andar ka object mutate hota, reference nahi).
+        AtomicInteger count = new AtomicInteger(0);
         // task = har thread ka kaam: counter ko loop me 10 lakh baar badhao
         Runnable task = () -> {
             for (int i = 0; i < 1000000; i++) {
