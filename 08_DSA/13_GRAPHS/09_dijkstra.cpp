@@ -14,14 +14,18 @@
 //        visited[]  -> dist[]   (har node tak abhi-tak ka shortest; init INF, src=0)
 //      + naya = RELAXATION.
 //   TEMPLATE:
-//     1. edges -> weighted adj-list: adj[u]+={v,w}, adj[v]+={u,w}  (undirected -> DONO taraf).
-//     2. dist[]=INF, dist[src]=0. min-heap me {0, src}.
-//     3. while heap: {d, node} pop.    // d = node tak ki ABHI-TAK ki dist
-//          d > dist[node]?  -> STALE, skip (behtar rasta pehle mil chuka).
-//          har neighbour {nbr, w}   // nbr = padosi node,  w = un dono ke beech EDGE ka weight
-//            RELAX:  d + w  = nbr tak naya rasta (node-tak-dist + edge-weight).
-//                    (d + w) < dist[nbr]?  ->  dist[nbr] = d + w;  push {d+w, nbr}.
-//     4. dist[] = saare shortest distances.
+//     adj: for(it:edges){ u=it[0],v=it[1],w=it[2]; adj[u]+={v,w}; adj[v]+={u,w}; }  // undirected DONO taraf
+//     dist(n,INF); dist[src]=0;  pq.push({0, src});
+//     while(!pq.empty()){
+//        wt = pq.top().first;  node = pq.top().second;  pq.pop();   // wt = node tak abhi-tak ki dist
+//        if(wt > dist[node]) continue;                              // STALE skip
+//        for(it : adj[node]){          // it.first = nbr node,  it.second = us EDGE ka weight
+//           if(wt + it.second < dist[it.first]){                    // RELAX (naya rasta chhota?)
+//              dist[it.first] = wt + it.second;
+//              pq.push({wt + it.second, it.first});
+//           }
+//        }
+//     }  return dist;
 //   ★ RELAX = "dheela karo": naya rasta (d+w) purane dist[nbr] se kam? -> update.
 //     ★★ w = it.second (EDGE ka weight), na ki dist[node]. -- ye bug HAND-TRACE me pakda tha!
 //   ★ min-heap KYUN (queue nahi): weighted me "kam edges" != "kam weight" -> greedily hamesha
