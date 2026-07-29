@@ -850,7 +850,7 @@
  │ ▸ DESIGN HASHMAP (LLD)
  └──────────────────────────────────────────────────────────────
      ★★ MENTAL MODEL: ek ARRAY (buckets); har slot me ek LINKED-LIST (chain). buckets[index] = us chain ka HEAD.
-        index = hash(key) % cap.  same index pe 2 key (collision) -> chain me jode (next se).
+        index = hash<string>{}(key) % cap.  (★ exact C++ syntax: hash<string>{}(key) -- string hash.)  same index pe 2 key (collision) -> chain me jode (next se).
      fields: buckets (Entry* ka array) · cap (slots = 16) · sz (kitne pairs).
 
      put(key,val):  index nikalo -> chain me key DHUNDO.
