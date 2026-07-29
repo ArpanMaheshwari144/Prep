@@ -1402,6 +1402,7 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ DIJKSTRA  = BFS template + 2 swap + relaxation
  └──────────────────────────────────────────────────────────────
+     REAL: Google Maps/GPS (shortest route), network routing (packets), delivery/flights -- roz use hota.
      SAAR : BFS ka WEIGHTED bhai. wahi template, 2 swap:
               queue -> MIN-HEAP (chhoti dist pehle)   |   visited[] -> dist[] (init INF, src=0)
             + naya = RELAXATION.
