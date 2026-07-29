@@ -1179,9 +1179,12 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse
  └──────────────────────────────────────────────────────────────
-     idea : level-order jaisa, par direction ALTERNATE (level 0: L->R · 1: R->L · 2: L->R ...).
-     change: level HAMESHA L-to-R banao (normal) -> ek levelCounter rakho -> if (levelCounter % 2 != 0) reverse(level).
-     ★ even level (0,2..) = seedha · odd level (1,3..) = ULTA.  (alt: front-insert/deque, par reverse simplest.)
+     idea : level-order BFS jaisa, par direction ALTERNATE (0:L->R · 1:R->L · 2:L->R...).
+     = LEVEL-ORDER ka SAME skeleton (queue + sz-SNAPSHOT + inner-loop -> temp) + ek levelCounter.
+     DELTA (naya = bas ye, inner-loop ke BAAD -- level HAMESHA normal L->R banao):
+         if (levelCounter % 2 != 0) reverse(temp);   // ODD level -> ULTA (R->L)
+         levelCounter++;  ans.push_back(temp);
+     ★ even (0,2..) = seedha · odd (1,3..) = reversed.  (alt: deque/front-insert, par reverse simplest.)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MINIMUM DEPTH (LC-111)   = LEVEL-ORDER + EARLY-STOP
