@@ -103,6 +103,24 @@ int countComponents(int n, vector<vector<int>> &edges)
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
+// ── VISUAL DRY-RUN (T1: n=5, edges={{0,1},{1,2},{3,4}}) ──────────────
+//   Shuru: parent=[0,1,2,3,4]  rnk=[0,0,0,0,0]     0  1  2  3  4  (sab apna leader)
+//
+//   unite(0,1): rnk barabar -> parent[1]=0, rnk[0]++
+//      parent=[0,0,2,3,4]  rnk=[1,0,0,0,0]      0(r1)     2   3   4
+//                                                |
+//                                                1
+//   unite(1,2): find(1)=0; rnk[0]=1 > rnk[2]=0 -> parent[2]=0  (chhota bade ke neeche)
+//      parent=[0,0,0,3,4]  rnk=[1,0,0,0,0]       0(r1)        3   4
+//                                               /  \
+//                                              1    2
+//   unite(3,4): rnk barabar -> parent[4]=3, rnk[3]++
+//      parent=[0,0,0,3,3]  rnk=[1,0,0,1,0]       0(r1)        3(r1)
+//                                               /  \           |
+//                                              1    2          4
+//   count: find(i)==i wale -> node 0 aur node 3 -> 2 ROOT = 2 components
+//   (2 alag ped: {0,1,2} leader 0, {3,4} leader 3)
+// ─────────────────────────────────────────────────────────────────────
 int main()
 {
     vector<vector<int>> e1 = {{0, 1}, {1, 2}, {3, 4}};
