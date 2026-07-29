@@ -26,7 +26,14 @@ public class RaceDemo {
         // count ab main ke ANDAR (local). lambda ise capture kar leta kyunki 'count' reference
         // kabhi reassign nahi hota = EFFECTIVELY FINAL (andar ka object mutate hota, reference nahi).
         AtomicInteger count = new AtomicInteger(0);
+
         // task = har thread ka kaam: counter ko loop me 10 lakh baar badhao
+        // ★ LAMBDA vs CLASS -- dono SAME (Thread ko ek Runnable [jisme run()] chahiye):
+        //   CLASS way:  class MyTask implements Runnable { public void run(){ ...loop... } }
+        //               new Thread(new MyTask());          // alag class + run() likhna padta
+        //   LAMBDA way (neeche): () -> { ...loop... }       // ye {} block hi run() ka BODY
+        //   kyun chalta: Runnable = FUNCTIONAL INTERFACE (sirf 1 method = run()) -> lambda 1-line me.
+        //   lambda = class+run() ka SHORTCUT (kaam same, likhna kam).
         Runnable task = () -> {
             for (int i = 0; i < 1000000; i++) {
                 // count++;              // raw int hota to yahan RACE (ek update LOST)
