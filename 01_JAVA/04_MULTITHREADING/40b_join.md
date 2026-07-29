@@ -77,9 +77,39 @@ public static void main(String[] args) throws InterruptedException {   // <- ye
 
 ---
 
+## TRAP 2 — join() SEQUENTIAL nahi karta
+
+> **`t1.join(); t2.join();` threads ko ek-ke-baad-ek NAHI chalata.**
+> t1 aur t2 **PARALLEL hi chalte** (saath-saath). join sirf **main ko rukata**, threads ko nahi.
+
+```
+main:  start(t1) start(t2) ──[t1.join WAIT]──[t2.join WAIT]── println
+t1:              [═══════ running ═══════] done
+t2:              [═══════ running ═══════] done   <- t1,t2 SAATH chal rahe
+```
+
+→ `t1.join()` pe main ruka, par **t2 tab bhi chal raha** tha saath me.
+→ **Proof:** RaceDemo me race dikhi = dono ek saath chale (overlap). Sequential hote to race hoti hi nahi.
+
+---
+
+## TRAP 3 — join() akele CORRECT count nahi deta
+
+> **join() = TIMING fix (dono done hone ka wait). RACE fix NAHI.**
+> Correct count = `synchronized` ya `AtomicInteger (CAS)` se — wo increment ko **atomic** banate.
+
+| | kaam | bina iske |
+|--|------|-----------|
+| **join** | dono khatam hone ka WAIT (timing) | main pehle padh leta -> **adhoora** |
+| **synchronized/CAS** | increment ATOMIC (no lost update) | count **racy** (kam) -- chahe join ho |
+
+→ **Exact result ke liye DONO chahiye:** join (done ke baad padho) + atomic (beech me gum na ho).
+
+---
+
 ## POWER PHRASE
 
-> *"`t.join()` makes the calling thread wait until thread t completes its execution. Without it, the main thread may proceed before the worker threads finish, giving incomplete results."*
+> *"`t.join()` makes the calling thread wait until thread t completes its execution. Without it, the main thread may proceed before the worker threads finish, giving incomplete results. join() only handles timing — thread-safety still needs synchronized or atomics."*
 
 > **Yaad rakh:**
 > `start()` = thread chala do (parallel)
