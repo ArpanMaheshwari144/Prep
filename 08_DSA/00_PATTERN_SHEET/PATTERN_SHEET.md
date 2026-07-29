@@ -325,13 +325,12 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD
  └──────────────────────────────────────────────────────────────
-     need = a,b,c  (count = 3).
+     t = "abc"  (count = 3 = t.size()).   -- SAME skeleton as LC-76, bas t FIXED "abc" + answer alag.
      for j:  if(mp[s[j]]>0) count--;  mp[s[j]]--;                                            // EXPAND (same)
      while (count == 0) { mp[s[i]]++; if>0 count++; i++; }                                   // shrink to INVALID
      ans += i;                                                                               // ★ loop ke BAAD, har j pe
      ★ WHY ans += i: shrink window ko INVALID tak le jaata -> ab [0 .. i-1] SAARE valid left-starts hain -> ginti = i.
-     numberOfSubstrings(s) = minWindow(s, "abc") reuse.
-     numberOfSubstrings(s) = minWindow(s, "abc") reuse.
+     ★ CODE: numberOfSubstrings(s) = minWindow(s, "abc")  -- wahi SW function reuse, bas t="abc" pass.
 
 ┌── FAMILY: ANAGRAM-window ─────────────────────────────────────
 │ KYUN SAATH: fixed p-length window + har position pe anagram-check (isAnagram helper reuse).
