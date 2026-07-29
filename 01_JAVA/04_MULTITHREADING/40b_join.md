@@ -7,9 +7,9 @@
 ## STORY — Count Adhoora Aa Gaya
 
 → RaceDemo me `t1.start()`, `t2.start()` kiya — dono background me chalne lage
-→ Bina wait ke `main` seedha `println(count)` pe pahunch gaya
+→ Bina wait ke `main()` method seedha `println(count)` pe pahunch gaya
 → Par threads **abhi chal rahe the** — count **0 / adhoora** print hua
-→ `t1.join(); t2.join();` lagaya → main **dono ke khatam hone ka wait** kiya
+→ `t1.join(); t2.join();` lagaya → `main()` **dono ke khatam hone ka wait** kiya
 → Phir print → **poora count** aaya
 → **`join()` = "jab tak thread khatam na ho, aage mat badho"**
 
@@ -17,7 +17,10 @@
 
 ## WHY — join() Kya Karta
 
-→ `t.join()` = **calling thread (jaise main) RUK jaata** jab tak thread `t` apna `run()` **poora na kar le**
+> ★ NOTE (yaad rakh): yahan **"main"** = **`main()` method** (jo **"main thread"** pe chalta) — ye
+>   angrezi word "main" hai, Hindi ka "मैं (I/me)" NAHI. har code kisi thread pe chalta; `main()` "main thread" pe.
+
+→ `t.join()` = **calling thread (`main()` method wala = main thread) RUK jaata** jab tak thread `t` apna `run()` **poora na kar le**
 → Uske baad hi calling thread aage badhta
 
 ```
