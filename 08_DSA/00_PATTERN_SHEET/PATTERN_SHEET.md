@@ -1432,6 +1432,8 @@
         naya rasta (d + w) purane dist[nbr] se kam? -> dist[nbr]=d+w; push.
         ★ w = EDGE ka weight (it.second), NA ki dist[node].
      idea : min-heap kyun -> "kam edges != kam weight", greedily sabse-sasti-abhi-tak node uthani padti.
+     ★★ PAIR-in-HEAP trick: pq me {dist, node} PAIR daalo -> heap FIRST element (dist) se sort karta (tie -> second).
+        min-heap -> sabse chhoti dist TOP pe. (yehi top-K, "value+index saath" me bhi. HAMESHA {jispe-sort, saath-wala}.)
      TEMPLATE:
          adj: for(it:edges){ u=it[0],v=it[1],w=it[2]; adj[u]+={v,w}; adj[v]+={u,w}; }  // undirected DONO taraf
          vector<int> dist(n, INF);  dist[src]=0;   pq.push({0, src});
