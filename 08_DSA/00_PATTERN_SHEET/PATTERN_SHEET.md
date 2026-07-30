@@ -1448,3 +1448,27 @@
      same group? find(x)==find(y).    components = count(i where find(i)==i).
      ★ 2 opt: path-compression (tree flat) + union-by-rank (chhota bade ke neeche) -> find/unite ~O(1).
 ```
+
+---
+
+═══════════════════ PATTERN 14 — HEAP (priority_queue: min/max top pe) ═══════════════════
+
+```
+ BROAD IDEA: baar-baar MIN ya MAX chahiye + data BADALTA rehta -> HEAP (sort mahenga). top=O(1), push/pop=O(log n).
+   C++ syntax:  priority_queue<int> = MAX-heap  ·  priority_queue<int, vector<int>, greater<int>> = MIN-heap.
+   ops: pq.push(x) · pq.top() · pq.pop() · pq.size() · pq.empty().
+   REAL: emergency-room (severity top pe). KAB: top-K · k-th largest/smallest · merge-k-lists · Dijkstra · median-stream.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ LAST STONE WEIGHT (LC-1046, Easy)  = MAX-HEAP smash
+ └──────────────────────────────────────────────────────────────
+     SAAR : har turn "2 SABSE BHAARI" pathar smash -> MAX-HEAP. pop 2, diff wapas push, till <=1 bache.
+     TEMPLATE:
+         priority_queue<int> pq;  for(s:stones) pq.push(s);        // saare -> max-heap
+         while(pq.size() > 1){
+             x=pq.top(); pq.pop();   y=pq.top(); pq.pop();         // 2 sabse bhaari nikaalo
+             diff = abs(x-y);  if(diff>0) pq.push(diff);           // barabar -> 0 (dono khatam)
+         }
+         return pq.empty() ? 0 : pq.top();
+     ★ heap kyun (sort nahi): smash ke baad set BADALTA -> baar-baar "2 max" chahiye -> pop O(log n), top O(1).
+```
