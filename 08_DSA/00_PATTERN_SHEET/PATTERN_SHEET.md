@@ -1,12 +1,5 @@
 <h1 align="center">DSA PATTERN SHEET</h1>
 
-> Arpan ka revision-tool (12-Jul se banna shuru). REVISE isi se hoga -> code nahi kholenge.
-> "similar Q aaye -> pattern dekho, trick recall karo, laga do."
-> broad/high-leverage tricks pehchano -> ek trick, kai problem.
-> ★ FAMILY-WISE: har pattern ke andar same-trick problems ek DAABE (family) me. family ke upar "KYUN saath" likha. content waisa ka waisa.
-
----
-
 ## ★★ ESSENCE — DSA ka ASLI tareeka (31-Jul, Arpan-derived)
 
 > **DSA = pattern reflexively THOPNA nahi. Pehle PROBLEM samjho -> phir pattern.**
