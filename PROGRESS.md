@@ -2,22 +2,25 @@
 > Single source of truth + forward plan. Full rules = CLAUDE.md · emotional/essence + ego-work = memory/MEMORY.md.
 > ★ FRESH-designed 23-Jul (purane dated day-logs hataye — wo git-history me safe hain; ye file ab current-state + aage-ka-plan).
 
-## ★★★ 29-JUL — READ FIRST (CURRENT STATE + AAGE KAISE JANA) — purane dated-updates neeche = historical
+## ★★★ 30-JUL — READ FIRST (CURRENT STATE + AAGE KAISE JANA) — purane dated-updates neeche = historical
 ```
-   WHERE WE ARE (29-Jul):
-   - ★★ DSA GRAPHS SEALED (28-29 Jul, 10 problems, sab KHUD solve): Path-Exists(1971) · Islands(200) · Connected-Components(323) · Rotting-Oranges(994) · Max-Area-Island(695) · Course-Schedule/TOPO-SORT-Kahn's(207) · Clone-Graph(133) · Bipartite/2-colour(785) · DIJKSTRA(weighted shortest-path, min-heap+dist[]+relax) · DSU/Union-Find(path-compression + union-by-rank, FULL). GRAPH ab teeno tier: BFS-tier(8) + weighted(Dijkstra) + DSU. Har problem: file(comments+APPROACH+VISUAL+test-visual) + sheet-entry(FAMILY-boxed, connect-to-trees form, NAYA-part=code) + kuch me DRY-RUN visual. Clone-graph REDO bhi kiya (same-din, 4/4 memory-se). Dijkstra: Arpan ne HAND-TRACE se apna bug (relax = wt+it.second na ki wt+dist[node]) KHUD pakda. DSU: Arpan ne PEHLE padha tha -> peek+recall (NOT cold). ★ REAL-life anchor add kiya sheet me (Dijkstra=Google-Maps/routing).
-   - ★★ DSA INVENTORY (28-Jul UNDER-COUNT FIX, ab accurate): 13 FOLDER DONE ~124 problem -> 01_TWO_POINTER(21) 02_SLIDING_WINDOW(17) 03_HASHING(12) 04_PREFIX_SUM(4) 05_MATRIX(3) 06_STACK(10, monotonic) 07_BINARY_SEARCH(14) 08_LINKED_LIST(11) 09_DESIGN(3) 10_KADANE(5) 11_BIT(1) 12_TREES(15) 13_GRAPHS(10). ★ SIRF 4 NAYE FAMILY BACHE: HEAP · BACKTRACKING · INTERVALS · DP (DP sabse bada). Arpan ~aadhe se AAGE hai -- "DSA nahi aati" GALAT, bounded+winning.
-   - ★★ JAVA MULTITHREADING revise (chat->copy hand-note mode, JP ka BIGGEST lever): DONE = 39(thread-basics) 40(lifecycle) 40b(JOIN -- NEW note banaya, Arpan ne gap pakda) 41(synchronized) 42(volatile) 42b(atomic/CAS) 43(deadlock). ★ CHHODA 43 pe -> AGLA = 44(wait-vs-sleep) -> 45/46/47/48. Multithreading ~aadha done.
-   - ★★ JAVA PRACTICAL (NAYA -- 01_JAVA/04_MULTITHREADING/practical/RaceDemo.java): race-condition LIVE dekhi (bada loop -> count<expected) + AtomicInteger fix (2000000 exact). Arpan ne KHUD likha (beech me method-inside-main / class-level syntax-slips -> seekha). ★ INSIGHT: Java "kacha" NAHI -- concept STRONG (61 topics), sirf WRITING-FLUENCY rusty (padhta zyada, likhta kam). FIX = WRITE (practicals), padho nahi. -> aage har topic pe chhota practical.
-   - NEW folders/notes: 11_GIT (CRLF/LF vs "LF will be replaced by CRLF" warning note -- real-dev knowledge) · Helm note (05_INFRA_DEEP/DEVOPS/K8S/helm.md, K8s package-manager). Sheet polish: title CENTERED (<h1 align=center>), "REVISE isi sheet se" footer HATAYA.
-   - PROJECT (todoapp/mini_payment DONE, unchanged) + HLD (strong, stock-mock done) + JP-INTEL = neeche historical-blocks + JP_INTERVIEW_INTEL.md. Multithreading = JP SABSE BADA differentiator.
+   WHERE WE ARE (30-Jul):
+   - ★★ DSA GRAPHS SEALED (10 problems, sab KHUD solve): Path-Exists · Islands · Connected-Components · Rotting-Oranges · Max-Area-Island · Course-Schedule/TOPO-SORT-Kahn's · Clone-Graph · Bipartite/2-colour · DIJKSTRA(min-heap+dist[]+relax) · DSU/Union-Find(path-compression+union-by-rank). 3 tier: BFS(8) + weighted + DSU. Har problem: file(comments+APPROACH+VISUAL) + sheet-entry + kuch me DRY-RUN. Dijkstra bug Arpan ne HAND-TRACE se KHUD pakda; DSU pehle-padha-tha -> recall (not cold).
+   - ★★ DSA HEAP DONE (30-Jul, 3 problems -- naya PATTERN 14 sheet me): Last-Stone-Weight(1046, MAX-heap) · Kth-Largest(215, MIN-heap-of-size-k = top-K core) · Merge-K-Lists(23-HARD, min-heap-of-heads). teeno KHUD solve, 4-5/5. min-heap Dijkstra se warm tha. ★ median/two-heaps DEFERRED (Arpan-call: advanced+kam-common, baad me). heap folder = 08_DSA/14_HEAP.
+   - ★★ DSA INVENTORY (accurate): 14 FOLDER DONE ~127 problem -> TWO_POINTER(21) SLIDING_WINDOW(17) HASHING(12) PREFIX_SUM(4) MATRIX(3) STACK(10) BINARY_SEARCH(14) LINKED_LIST(11) DESIGN(3) KADANE(5) BIT(1) TREES(15) GRAPHS(10) HEAP(3). ★ SIRF 3 NAYE FAMILY BACHE: INTERVALS(easy, NEXT) · BACKTRACKING · DP(sabse bada). Arpan ~aadhe se aage -- bounded+winning.
+   - ★★★ JAVA MULTITHREADING **COMPLETE** (JP ka SABSE BADA lever -- chat->copy hand-note): SAARE 12 topic DONE = 39(basics) 40(lifecycle) 40b(JOIN, NEW note) 41(synchronized) 42(volatile) 42b(atomic/CAS) 43(deadlock) 44(wait-vs-sleep) 45(notify-deep) 46(executor/pool) 47(future/completablefuture) 48(producer-consumer). + 3 PRACTICALS (khud likhe, 01_JAVA/04_MULTITHREADING/practical/): RaceDemo(race+atomic) · ProducerConsumer(wait/notify) · DeadlockDemo. (program/ folder practical/ me merge.)
+   - ★ JAVA INSIGHT (reinforce): Java "kacha" NAHI -- concept STRONG (61 topics), sirf WRITING-FLUENCY rusty (padhta zyada likhta kam). FIX = WRITE (practicals). aage har naye Java-topic pe chhota practical.
+   - NEW notes/folders (28-30 Jul): 11_GIT (CRLF/LF warning note) · Helm (05_INFRA/DEVOPS/K8S) · TO_STUDY.md (backlog: Elasticsearch, distributed-ID-gen) · 09_DATABASE/03_zero_downtime_add_column · 34_lambda note enhanced (functional-interface/body/inference) · 40b_join enhanced (main-vs-मैं ambiguity, traps).
+   - ★ SHEET UPGRADE (30-Jul): saare 14 PATTERN headers ab markdown ## HEADINGS (fence-bahar) -> GitHub pe BADE + auto table-of-contents/outline (navigable). title centered, footer hataya. (READING = GitHub-browser/VS-Code Ctrl+Shift+V, terminal se nahi.)
+   - PROJECT (todoapp/mini_payment DONE) + HLD (strong, stock-mock done) + JP-INTEL = neeche historical + JP_INTERVIEW_INTEL.md.
 
    AAGE KAISE JANA (forward, priority):
-   1. ROZ: sheet-glance (Dijkstra/DSU fresh -> lock; rotating baaki).
-   2. ★ KAL: HEAP family shuru (naya, teach-first: min/max-heap, priority_queue -- min-heap Dijkstra me warm). phir BACKTRACKING · INTERVALS · DP. ★ RECURSION/BACKTRACKING = Arpan ka WEAK zone (khud bola) -> DEDICATED time, jaldi nahi.
-   3. ★ JAVA: multithreading continue (44 wait-vs-sleep next) + har topic pe CHHOTA PRACTICAL (writing-fluency = uska gap, likhne se banti).
-   4. HLD mock roz.
-   5. beech-beech Java/Spring + project-roadmap (05_INFRA -> 06_COMPARES -> 09_DB -> 04_HLD-foundations) READ-revise.
+   1. ROZ: sheet-glance (Heap/Dijkstra/DSU fresh -> lock; rotating baaki).
+   2. ★ NEXT DSA family = INTERVALS (easy, Arpan-call: "koi dikkat nahi"). phir BACKTRACKING + DP (important). ★ RECURSION/BACKTRACKING = Arpan ka WEAK zone (khud bola) -> DEDICATED time, jaldi nahi.
+   3. ★ JAVA: multithreading DONE. aage Java/Spring other-topics READ-revise + har naye pe CHHOTA PRACTICAL (writing-fluency = uska gap).
+   4. HLD mock roz + behavioral/STAR + English-aloud (JP ke asli levers, DSA se zyada).
+   5. project-roadmap (05_INFRA -> 06_COMPARES -> 09_DB -> 04_HLD-foundations).
+   ★ JP TIMELINE: ~SEPT apply. Readiness ~78-82%. bacha = polish/delivery (3 DSA family + HLD/behavioral mock), foundational-gap NAHI.
 
    IMPORTANT (kaise padhna): DSA = SEEKHO->sheet->revise->redo (naye pattern pe "cold" KABHI nahi). revision = EVERYTHING. FOCUS: Java/Spring backend (React/Flutter OUT), C++=DSA. ★★ BEHAVIORAL RULES (CRITICAL, MEMORY.md me poora) = folder-delete NEVER; NO-CONDESCEND / "neecha-feel-karwana" = uska #1 dard -> over-explain BAND, upar-baith-ke nahi, tera-insight-tera, correct-without-condescend, "neecha karwaya" bole -> TURANT RUK; cold/solo=banned.
 
