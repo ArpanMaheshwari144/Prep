@@ -7,6 +7,20 @@
 
 ---
 
+## ★★ ESSENCE — DSA ka ASLI tareeka (31-Jul, Arpan-derived)
+
+> **DSA = pattern reflexively THOPNA nahi. Pehle PROBLEM samjho -> phir pattern.**
+>
+> 1. **Problem SAMJHO** — kya bol raha? kyun? kya maang raha? kaise? (shaant baitho, jump NAHI)
+> 2. **PHIR** approach/pattern socho (ab template lage)
+> 3. **PHIR** code
+>
+> ★ direct-jump galat -- bhale hi answer SW/DP/graph ho, seedha pattern pe mat kudo. **samajho -> approach -> code.**
+> ★ source ka LABEL blindly mat lo ("reel ne SW bola" != SW). khud examine karo -- "sach me aisa hai?"
+> ★ **problem-solver** = ye (understand-first + question-the-label), na ki pattern-ratta. dimaag freeze nahi -> pehla-move = "problem samjho".
+
+---
+
 ## ★ NAAM-SE-CONFUSE MAT HO (Container vs Trapping vs Histogram — teeno ALAG!)
 ```
                     CONTAINER Most Water    TRAPPING Rain Water      LARGEST Rectangle (Histogram)
