@@ -28,8 +28,9 @@
 
 ---
 
+## PATTERN 1 — TWO POINTER
+
 ```
-═══════════════════ PATTERN 1 — TWO POINTER ═══════════════════
 
  BROAD IDEA: do pointer (dono taraf se, ya slow-fast) -> ek saath move karke O(n).
 
@@ -191,8 +192,9 @@
 
 ---
 
+## PATTERN 2 — SLIDING WINDOW
+
 ```
-═══════════════════ PATTERN 2 — SLIDING WINDOW ═══════════════════
 
  ★ KAB PEHCHANO: CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
 
@@ -356,8 +358,9 @@
 
 ---
 
+## PATTERN 3 — HASHING
+
 ```
-═══════════════════ PATTERN 3 — HASHING ═══════════════════
 
  BROAD IDEA: hashmap/hashset = O(1) lookup. "pehle dekha?" / "complement hai?" / count -> O(n).
 
@@ -428,8 +431,9 @@
 
 ---
 
+## PATTERN 4 — PREFIX SUM
+
 ```
-═══════════════════ PATTERN 4 — PREFIX SUM ═══════════════════
 
  BROAD IDEA: running sum pehle se rakho -> range/left-right sum O(1) (baar-baar loop nahi).
 
@@ -465,8 +469,9 @@
 
 ---
 
+## PATTERN 5 — MATRIX
+
 ```
-═══════════════════ PATTERN 5 — MATRIX ═══════════════════
 
  BROAD IDEA: 2D grid pe index-navigation (boundary/direction careful; copy-pen pe grid banao).
 
@@ -496,8 +501,9 @@
 
 ---
 
+## PATTERN 6 — STACK
+
 ```
-═══════════════════ PATTERN 6 — STACK ═══════════════════
 
  BROAD IDEA: stack = LIFO. "kholo push, band karo pop-match" · ya MONOTONIC (next-greater/smaller).
 
@@ -601,8 +607,9 @@
 
 ---
 
+## PATTERN 7 — BINARY SEARCH
+
 ```
-═══════════════════ PATTERN 7 — BINARY SEARCH ═══════════════════
 
  BROAD IDEA: sorted space -> mid -> aadha kaato -> O(log n). (space array ho ya ANSWER-range).
 
@@ -737,8 +744,9 @@
 
 ---
 
+## PATTERN 8 — LINKED LIST
+
 ```
-═══════════════════ PATTERN 8 — LINKED LIST ═══════════════════
 
  BROAD IDEA: pointer manipulation. 3 broad-trick: FAST/SLOW · REVERSE (3-pointer) · DUMMY node.
 
@@ -841,8 +849,9 @@
 
 ---
 
+## PATTERN 9 — DESIGN (data-structure)
+
 ```
-═══════════════════ PATTERN 9 — DESIGN (data-structure) ═══════════════════
 
  BROAD IDEA: data-structure ko khud banao (built-in ke bina) -> array + pointers/nodes se.
 
@@ -899,8 +908,9 @@
 
 ---
 
+## PATTERN 10 — KADANE (running value + max update)
+
 ```
-═══════════════════ PATTERN 10 — KADANE (running value + max update) ═══════════════════
 
  BROAD IDEA: ek value AAGE carry karo (min/sum), har step MAX update. single pass, O(1) space.
 
@@ -939,8 +949,9 @@
 
 ---
 
+## PATTERN 11 — BIT MANIPULATION (XOR)
+
 ```
-═══════════════════ PATTERN 11 — BIT MANIPULATION (XOR) ═══════════════════
 
  BROAD IDEA: XOR ki 2 property -> a^a=0 (pair cancel), a^0=a (single bacha). pairs khud gayab, extra memory nahi.
 
@@ -958,8 +969,9 @@
 
 ---
 
+## PATTERN 12 — TREES (recursion)
+
 ```
-═══════════════════ PATTERN 12 — TREES (recursion) ═══════════════════
 
  BROAD IDEA: har tree-Q = RECURSION on TreeNode(val, left, right). 3 cheez -> BASE (null pe return) · dono taraf RECURSE · COMBINE.
 
@@ -1218,8 +1230,9 @@
 
 ---
 
+## PATTERN 13 — GRAPHS (BFS/DFS + visited)
+
 ```
-═══════════════════ PATTERN 13 — GRAPHS (BFS/DFS + visited) ═══════════════════
 
  BROAD IDEA: graph = nodes + edges. TREE bhi ek graph hai (special) -> Graph = Tree + 2 cheez:
    (1) CYCLE ho sakti -> VISITED chahiye (warna A->B->C->A infinite loop)   (2) pointers ki jagah ADJACENCY LIST.
@@ -1451,7 +1464,7 @@
 
 ---
 
-═══════════════════ PATTERN 14 — HEAP (priority_queue: min/max top pe) ═══════════════════
+## PATTERN 14 — HEAP (priority_queue: min/max top pe)
 
 ```
  BROAD IDEA: baar-baar MIN ya MAX chahiye + data BADALTA rehta -> HEAP (sort mahenga). top=O(1), push/pop=O(log n).
