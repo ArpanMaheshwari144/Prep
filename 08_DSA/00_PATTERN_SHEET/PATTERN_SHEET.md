@@ -1484,4 +1484,15 @@
          }
          return pq.empty() ? 0 : pq.top();
      ★ heap kyun (sort nahi): smash ke baad set BADALTA -> baar-baar "2 max" chahiye -> pop O(log n), top O(1).
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ KTH LARGEST ELEMENT (LC-215, Medium)  = MIN-HEAP of size k
+ └──────────────────────────────────────────────────────────────
+     SAAR : k SABSE BADE min-heap me rakho -> unme se sabse chhota (heap TOP) = k-th largest.
+     ★★ TRICK (top-K ka core): MIN-heap of size k.  (kyun MIN: size>k pe sabse-chhota EVICT karna hai.)
+     TEMPLATE:
+         priority_queue<int, vector<int>, greater<int>> pq;   // MIN-heap
+         for(num : nums){ pq.push(num);  if(pq.size() > k) pq.pop(); }   // k se zyada -> chhota nikaal
+         return pq.top();                                      // k bade me se chhota = kth largest
+     ★ O(n log k) (sort O(n log n) se behtar jab sirf k-th chahiye).  yehi pattern = "top-K" saare problems.
 ```
