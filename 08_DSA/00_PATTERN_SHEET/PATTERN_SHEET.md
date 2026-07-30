@@ -1495,4 +1495,20 @@
          for(num : nums){ pq.push(num);  if(pq.size() > k) pq.pop(); }   // k se zyada -> chhota nikaal
          return pq.top();                                      // k bade me se chhota = kth largest
      ★ O(n log k) (sort O(n log n) se behtar jab sirf k-th chahiye).  yehi pattern = "top-K" saare problems.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ MERGE K SORTED LISTS (LC-23, Hard)  = MIN-HEAP of current heads
+ └──────────────────────────────────────────────────────────────
+     SAAR : min-heap me har list ka current HEAD. pop chhota -> result me jodo -> uska NEXT push. repeat.
+     TEMPLATE:
+         struct Compare { bool operator()(ListNode*a, ListNode*b){ return a->val > b->val; } };  // MIN-heap
+         priority_queue<ListNode*, vector<ListNode*>, Compare> pq;
+         for(l:lists) if(l) pq.push(l);                            // saare heads (NULL skip)
+         dummy + tail;                                             // merge-2-lists jaisa build
+         while(!pq.empty()){
+             curr = pq.top(); pq.pop();  tail->next = curr; tail = curr;   // chhota -> jodo
+             if(curr->next) pq.push(curr->next);                  // uska next pq me
+         }
+         return dummy->next;
+     ★ heap me max k nodes (1 per list) -> O(N log k).  ★ ListNode* min-heap = custom Compare (a->val > b->val).
 ```
