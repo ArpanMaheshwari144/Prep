@@ -1316,13 +1316,22 @@
      ★★ '0'-check base me (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ CONNECTED COMPONENTS (LC-323)  = count components (adj-list, BFS)
+ │ ▸ CONNECTED COMPONENTS (LC-323)  = ISLANDS par ADJ-LIST graph (grid nahi) + BFS
  └──────────────────────────────────────────────────────────────
-     ISLANDS jaisa concept (outer-loop + count), PAR: adj-list (grid nahi) + BFS use kiya (islands ne DFS kiya tha).
-     adj banao (undirected).
-     for(i=0..n-1): if(!vis[i]) { count++; BFS(i); }   return count.   // har unvisited node = naya group
-     BFS(i) = PATH-EXISTS jaisa (queue + visited; neighbours = adj[node]).
-     ★★ count++ + BFS DONO if(!vis[i]) ke ANDAR -- warna har node gine (=n).
+     SAAR : ISLANDS ka SAME skeleton (outer-loop + count), bas 2 farak:
+            (a) graph = ADJ-LIST (grid nahi)   (b) BFS use kiya (islands ne DFS kiya tha).
+     input = n nodes + edges[] -> pehle ADJ banao (undirected -> DONO taraf):   -- NAYA
+         vector<int> adj[n];
+         for(auto &e : edges){ adj[e[0]].push_back(e[1]); adj[e[1]].push_back(e[0]); }
+     TEMPLATE:
+         vector<bool> vis(n,false);  int count=0;
+         for(i=0..n-1)
+             if(!vis[i]){ count++; bfs(i,adj,vis); }     // har UNVISITED node = naya component
+         return count;
+         bfs(i): queue push i + vis[i]=true;
+                 pop node -> for(nbr : adj[node]) if(!vis[nbr]){ vis[nbr]=true; push nbr; }   // = PATH-EXISTS ka body
+     ★★ count++ AUR bfs DONO if(!vis[i]) ke ANDAR -- warna har node alag gine (=n galat).
+     ★ neighbours = adj[node] (islands me 4-direction tha) -- yahi ek farak, baaki skeleton same.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
