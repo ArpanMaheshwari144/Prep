@@ -1546,15 +1546,19 @@
      ★ ans.back() = last interval; [0]=start [1]=END.  ★ pehla step HAMESHA sort-by-start.
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ MEETING ROOMS (LC-252, Easy)  = Merge ka TWIN (sort + overlap check, bool)
+ │ ▸ MEETING ROOMS (LC-252, Easy)  = Merge Intervals ka SAME template, bas action alag
  └──────────────────────────────────────────────────────────────
-     SAAR : saare meeting attend ho sakte? = koi 2 OVERLAP na karein. sort-by-start -> adjacent check.
-     TEMPLATE:
-         sort(intervals);
-         for(i=1..n) if(intervals[i][0] < intervals[i-1][1]) return false;   // overlap -> nahi
+     SAAR : saare meeting attend ho sakte? = koi 2 OVERLAP na karein. (Merge ka SAME skeleton reuse.)
+     ★★ SAME as MERGE (sort + ans.push(first) + loop overlap-check) -- bas overlap pe KYA karo:
+          MERGE:   overlap -> ans.back()[1]=max(...)  (merge)  |  end: return ANS (list)
+          MEETING: overlap -> return FALSE           (ruko)    |  end: return TRUE
+     TEMPLATE (merge-jaisa hi):
+         sort(intervals);  ans.push_back(intervals[0]);
+         for(i=1..n){
+             if(intervals[i][0] < ans.back()[1]) return false;   // overlap -> attend nahi
+             else ans.push_back(intervals[i]);
+         }
          return true;
-     ★★ MERGE vs MEETING -- boundary FARAK (yehi crux): touching pe kya karna?
-        Merge:   touching MERGE -> curr.start <= prev.end   (<=)
-        Meeting: touching OK (5-khatam, 5-shuru = takrav nahi) -> curr.start < prev.end   (<)
-     ★ same pattern (sort+overlap), bas overlap-condition ka boundary problem-ke-hisaab (< vs <=). PROBLEM SAMJHO -> boundary decide.
+     ★★ boundary FARAK (crux): Merge touching-MERGE -> `<=`  ·  Meeting touching-OK -> `<`.
+     ★ ek pattern (sort+overlap) -> bas (a) overlap pe action (merge vs stop) + (b) boundary (< vs <=) badalta. PROBLEM SAMJHO -> decide.
 ```
