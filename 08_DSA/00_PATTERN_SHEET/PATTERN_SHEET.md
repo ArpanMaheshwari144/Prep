@@ -1544,4 +1544,17 @@
              else ans.push_back(intervals[i]);          // no overlap -> naya
          }
      ★ ans.back() = last interval; [0]=start [1]=END.  ★ pehla step HAMESHA sort-by-start.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ MEETING ROOMS (LC-252, Easy)  = Merge ka TWIN (sort + overlap check, bool)
+ └──────────────────────────────────────────────────────────────
+     SAAR : saare meeting attend ho sakte? = koi 2 OVERLAP na karein. sort-by-start -> adjacent check.
+     TEMPLATE:
+         sort(intervals);
+         for(i=1..n) if(intervals[i][0] < intervals[i-1][1]) return false;   // overlap -> nahi
+         return true;
+     ★★ MERGE vs MEETING -- boundary FARAK (yehi crux): touching pe kya karna?
+        Merge:   touching MERGE -> curr.start <= prev.end   (<=)
+        Meeting: touching OK (5-khatam, 5-shuru = takrav nahi) -> curr.start < prev.end   (<)
+     ★ same pattern (sort+overlap), bas overlap-condition ka boundary problem-ke-hisaab (< vs <=). PROBLEM SAMJHO -> boundary decide.
 ```
