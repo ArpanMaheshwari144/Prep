@@ -1561,4 +1561,24 @@
          return true;
      ★★ boundary FARAK (crux): Merge touching-MERGE -> `<=`  ·  Meeting touching-OK -> `<`.
      ★ ek pattern (sort+overlap) -> bas (a) overlap pe action (merge vs stop) + (b) boundary (< vs <=) badalta. PROBLEM SAMJHO -> decide.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ INSERT INTERVAL (LC-57)  = already-SORTED -> 3 phase (no sort)
+ └──────────────────────────────────────────────────────────────
+     SAAR : intervals pehle se sorted+non-overlap. new insert karo (overlap->merge). SORT nahi -> ek pass, 3 phase.
+     ★★ KEY : new = "GROWING BOX" -- har overlap use STRETCH karta; sab overlap khatam pe ek baar push.
+     TEMPLATE:
+         vector<vector<int>> ans;  int count=0;
+         for(i=0..n){
+             if(intervals[i][1] < new[0])       ans.push_back(intervals[i]);   // 1. new se PEHLE khatam -> push
+             else if(intervals[i][0] > new[1])  break;                          // 3. new ke AAGE -> BREAK (sorted, aage sab door)
+             else { new[0]=min(new[0],intervals[i][0]);                         // 2. OVERLAP -> new ko GROW
+                    new[1]=max(new[1],intervals[i][1]); }
+             count++;                                                           // kitne process hue (break se pehle ruk)
+         }
+         ans.push_back(new);                                                   // 4. bada-hua new daalo
+         for(i=count..n) ans.push_back(intervals[i]);                          //    phir count se aage baaki
+         return ans;
+     ★ break-optimization: interval.start > new.end -> aage sab aur door (sorted) -> ruk. 'count'=kahan ruke -> doosra loop wahin se.
+     ★ Merge/Meeting me SORT + ans.push(first);  yahan sorted-diya -> SORT nahi, bas 3-phase (before / grow / after).
 ```
