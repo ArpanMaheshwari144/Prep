@@ -1521,3 +1521,27 @@
          return dummy->next;
      ★ heap me max k nodes (1 per list) -> O(N log k).  ★ ListNode* min-heap = custom Compare (a->val > b->val).
 ```
+
+---
+
+## PATTERN 15 — INTERVALS (sort-by-start + overlap)
+
+```
+ BROAD IDEA: interval = [start,end]. dikha -> PEHLA reflex = SORT by start. phir left-to-right overlap handle.
+   OVERLAP (sorted me): curr.start <= prev.end  ->  merge [start, max(prev.end, curr.end)].
+   REAL: calendar/meeting-scheduling, booking, resource-alloc.  KAB: merge/insert/count-overlaps, meeting-rooms.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ MERGE INTERVALS (LC-56)  = sort-by-start + merge
+ └──────────────────────────────────────────────────────────────
+     SAAR : sort by start -> ans me first daalo -> har next OVERLAP? merge : push.
+     TEMPLATE:
+         sort(intervals.begin(), intervals.end());     // default FIRST-element (start) se sort (pair jaisa)
+         ans.push_back(intervals[0]);                   // pehla baseline
+         for(i=1..n){
+             if(intervals[i][0] <= ans.back()[1])       // OVERLAP: curr.start <= last.END
+                 ans.back()[1] = max(ans.back()[1], intervals[i][1]);   // merge -> bada end
+             else ans.push_back(intervals[i]);          // no overlap -> naya
+         }
+     ★ ans.back() = last interval; [0]=start [1]=END.  ★ pehla step HAMESHA sort-by-start.
+```
