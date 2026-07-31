@@ -94,6 +94,17 @@
 
 ## 3. FORWARD PLAN (24-Jul onwards → SEPTEMBER apply)
 ```
+   ★★★ 31-JUL → 31-AUG PLAN (Arpan-set, AUTHORITATIVE month-plan). direction pakki, deadline LOOSE (slow week ≠ failure). Sept apply fixed.
+      current: DSA 15-pattern done, bache = BACKTRACKING + DP. Java/Spring/Multithreading DONE. HLD strong (11 design + foundations + distributed-cache). Behavioral 5-star. Projects done.
+      => AUGUST = last-2-DSA-family + CONSOLIDATION (revise + mock-delivery + English-aloud). naya-heavy nahi.
+
+      ★★ ROZ DSA (NON-NEGOTIABLE, Arpan-locked 31-Jul): sheet-glance REVISE + 1 PROBLEM roz (koi bhi — redo ya naya — jo padhe-hue PATTERN pe based ho). Claude roz nudge kare. daily-question yahi.
+      - Week 1 (Aug 1-7)  = BACKTRACKING (naya family: subsets→permutations→combinations→comb-sum; teach→Arpan-solve→sheet). + 2 HLD design bolke-revise + 1 STAR aloud.
+      - Week 2 (Aug 8-14) = DP part-1 (1D: climbing-stairs→house-robber→coin-change→LIS). + 2 HLD revise + 1 FULL MOCK (bolke,timed) + 1 STAR.
+      - Week 3 (Aug 15-21)= DP part-2 (2D: grid→knapsack→LCS→edit-distance). + HLD reflex-sheet full pass + 2 STAR + English-aloud.
+      - Week 4 (Aug 22-31)= CONSOLIDATION (NO new topic): DSA full-revise spaced-redo · HLD mock-heavy (timed rounds) · Java/Spring sharp-revise + backlog (Elasticsearch/distributed-ID) · behavioral polish + English-aloud roz. end: Sept-apply ready.
+      ★ project-revise roadmap (neeche 24-Jul block) = ab SECONDARY/parallel; month-focus upar hai.
+
    ★★ TIMELINE (23-Jul, Arpan-set — "August=apply" PURANA): JP apply = SEPTEMBER (rush nahi). end-Aug tak "sahi jagah hold" → Sept apply + pel.
       beech me koi achhi comp crack ho to wo bhi JP/BlackRock ka raasta (route FLEXIBLE, end-goal fixed).
    ★ PHASE = CONSOLIDATION + remaining fill (naya-heavy nahi; Java+Spring theory DONE → beech-beech READ-revise, no-quiz).
