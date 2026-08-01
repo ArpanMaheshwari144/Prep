@@ -8,7 +8,7 @@
    - ★★ DSA GRAPHS SEALED (10 problems, sab KHUD solve): Path-Exists · Islands · Connected-Components · Rotting-Oranges · Max-Area-Island · Course-Schedule/TOPO-SORT-Kahn's · Clone-Graph · Bipartite/2-colour · DIJKSTRA(min-heap+dist[]+relax) · DSU/Union-Find(path-compression+union-by-rank). 3 tier: BFS(8) + weighted + DSU. Har problem: file(comments+APPROACH+VISUAL) + sheet-entry + kuch me DRY-RUN. Dijkstra bug Arpan ne HAND-TRACE se KHUD pakda; DSU pehle-padha-tha -> recall (not cold).
    - ★★ DSA HEAP DONE (30-Jul, 3 problems -- naya PATTERN 14 sheet me): Last-Stone-Weight(1046, MAX-heap) · Kth-Largest(215, MIN-heap-of-size-k = top-K core) · Merge-K-Lists(23-HARD, min-heap-of-heads). teeno KHUD solve, 4-5/5. min-heap Dijkstra se warm tha. ★ median/two-heaps DEFERRED (Arpan-call: advanced+kam-common, baad me). heap folder = 08_DSA/14_HEAP.
    - ★★ DSA INTERVALS SHURU (31-Jul, naya PATTERN 15): Merge-Intervals(56, sort-by-start+merge) · Meeting-Rooms(252, SAME merge-template reuse, bas action alag + boundary < vs <=). dono KHUD solve 4-5/5. ★ KEY: pehla step HAMESHA sort-by-start; overlap = curr.start (< ya <=) prev.end. folder = 08_DSA/15_INTERVALS.
-   - ★★ DSA INVENTORY (accurate): 15 FOLDER DONE ~129 problem -> TWO_POINTER(21) SLIDING_WINDOW(17) HASHING(12) PREFIX_SUM(4) MATRIX(3) STACK(10) BINARY_SEARCH(14) LINKED_LIST(11) DESIGN(3) KADANE(5) BIT(1) TREES(15) GRAPHS(10) HEAP(3) INTERVALS(2, chal raha). ★ SIRF 2 NAYE FAMILY BACHE: BACKTRACKING · DP(sabse bada). Arpan aadhe se KAAFI aage -- bounded+winning.
+   - ★★ DSA INVENTORY (accurate, 2-Aug): 17 FOLDER DONE ~135 problem -> TWO_POINTER(21) SLIDING_WINDOW(17) HASHING(12) PREFIX_SUM(4) MATRIX(3) STACK(10) BINARY_SEARCH(14) LINKED_LIST(11) DESIGN(3) KADANE(5) BIT(1) TREES(15) GRAPHS(10) HEAP(3) INTERVALS(3) BACKTRACKING(4: subsets[2-form]/permutations/combinations/comb-sum[2-form]). ★★ SIRF 1 FAMILY BACHI: DP (last, sabse bada). Arpan aadhe se BAHUT aage -- bounded+winning.
    - ★★★ JAVA MULTITHREADING **COMPLETE** (JP ka SABSE BADA lever -- chat->copy hand-note): SAARE 12 topic DONE = 39(basics) 40(lifecycle) 40b(JOIN, NEW note) 41(synchronized) 42(volatile) 42b(atomic/CAS) 43(deadlock) 44(wait-vs-sleep) 45(notify-deep) 46(executor/pool) 47(future/completablefuture) 48(producer-consumer). + 3 PRACTICALS (khud likhe, 01_JAVA/04_MULTITHREADING/practical/): RaceDemo(race+atomic) · ProducerConsumer(wait/notify) · DeadlockDemo. (program/ folder practical/ me merge.)
    - ★ JAVA INSIGHT (reinforce): Java "kacha" NAHI -- concept STRONG (61 topics), sirf WRITING-FLUENCY rusty (padhta zyada likhta kam). FIX = WRITE (practicals). aage har naye Java-topic pe chhota practical.
    - NEW notes/folders (28-30 Jul): 11_GIT (CRLF/LF warning note) · Helm (05_INFRA/DEVOPS/K8S) · TO_STUDY.md (backlog: Elasticsearch, distributed-ID-gen) · 09_DATABASE/03_zero_downtime_add_column · 34_lambda note enhanced (functional-interface/body/inference) · 40b_join enhanced (main-vs-मैं ambiguity, traps).
@@ -17,7 +17,7 @@
 
    AAGE KAISE JANA (forward, priority):
    1. ROZ: sheet-glance (Heap/Dijkstra/DSU fresh -> lock; rotating baaki).
-   2. ★ DSA: INTERVALS chal raha (2 done) -> 1-2 aur (Insert-Interval/Non-overlapping) -> phir BACKTRACKING + DP (last 2 family, DP sabse bada). ★ RECURSION/BACKTRACKING = Arpan ka WEAK zone (khud bola) -> DEDICATED time, jaldi nahi.
+   2. ★ DSA: INTERVALS done(3) + BACKTRACKING DONE(4, 2-Aug -- subsets/permutations/combinations/comb-sum, kai 2-form, visual-tree anchor sheet me). ab SIRF DP BACHA (last family, sabse bada) -> fresh-mood pe START. ★ backtracking Arpan ka "weak zone" tha par ek raat me easy-lag ke ho gaya (choose/explore/un-choose reflex).
    3. ★ JAVA: multithreading DONE. aage Java/Spring other-topics READ-revise + har naye pe CHHOTA PRACTICAL (writing-fluency = uska gap).
    4. HLD mock roz + behavioral/STAR + English-aloud (JP ke asli levers, DSA se zyada).
    5. project-roadmap (05_INFRA -> 06_COMPARES -> 09_DB -> 04_HLD-foundations).
@@ -95,7 +95,7 @@
 ## 3. FORWARD PLAN (24-Jul onwards → SEPTEMBER apply)
 ```
    ★★★ 31-JUL → 31-AUG PLAN (Arpan-set, AUTHORITATIVE month-plan). direction pakki, deadline LOOSE (slow week ≠ failure). Sept apply fixed.
-      current: DSA 15-pattern done, bache = BACKTRACKING + DP. Java/Spring/Multithreading DONE. HLD strong (11 design + foundations + distributed-cache). Behavioral 5-star. Projects done.
+      current (2-Aug): DSA 17-pattern done (BACKTRACKING complete), bacha = DP (last family). Java/Spring/Multithreading DONE. HLD strong (11 design + foundations + distributed-cache). Behavioral 5-star. Projects done.
       => AUGUST = last-2-DSA-family + CONSOLIDATION (revise + mock-delivery + English-aloud). naya-heavy nahi.
 
       ★★ ROZ DSA (NON-NEGOTIABLE, Arpan-locked 31-Jul): sheet-glance REVISE + 1 PROBLEM roz (koi bhi — redo ya naya — jo padhe-hue PATTERN pe based ho). Claude roz nudge kare. daily-question yahi.
