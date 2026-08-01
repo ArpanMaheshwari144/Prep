@@ -1641,26 +1641,27 @@
        (include/exclude form me 'if(index==size) return' likhna padta; loop form khud terminate.)
      ★ FARAK: include/exclude = base pe subset add + 2 branch  |  start-loop = HAR node pe add + loop. dono 2^n, same choose/explore/un-choose.
 
-     ── RECURSION TREE (for-loop form, nums=[1,2,3]) — har node = ek subset (RECORD) ──
+     ── RECURSION TREE (for-loop, nums=[1,2,3]) ──   ↓ neeche = PUSH (choose)   ↑ upar = POP (backtrack)
                               [ ]                        <- solve(start=0)
                 ┌──────────────┼──────────────┐
-               +1             +2             +3
+              ↓+1            ↓+2            ↓+3
                 │              │              │
-               [1]            [2]            [3]
+               [1]            [2]            [3]          (har node = ek subset -> RECORD)
             ┌───┴───┐          │
-           +2      +3         +3
+          ↓+2      ↓+3        ↓+3
             │       │          │
           [1,2]   [1,3]      [2,3]
             │
-           +3
+          ↓+3
             │
-         [1,2,3]
+         [1,2,3]  END (i=3, loop khatam)
 
-     FLOW (leftmost path samjho): +1 daala -> +2 daala -> +3 daala -> [1,2,3] bana (end)
-        -> ab POP 3 -> [1,2]  -> POP 2 -> [1]  -> phir +3 -> [1,3] ...
-        = aage-aage DAALTE jao (choose) -> end/dead pe UNDO (pop) -> doosri branch (agla element).
-     ★ right taraf tree PATLI hoti: i+1/start-aage -> node sirf apne AAGE wale pe branch ([2] ke paas sirf +3, [3] ke paas kuch nahi).
-     ★ har node RECORD (leaf hi nahi) · har frame APNA push pop karta (neeche-se-upar unwind).
+     BACKTRACK (wapsi, leftmost path — yeh dekh):
+         [1,2,3] ──↑pop 3──▶ [1,2] ──↑pop 2──▶ [1] ──(ab [1] ka loop AAGE)──▶ ↓+3 ──▶ [1,3]
+     ★ POP KYU? current frame ka ek branch khatam -> jo element DAALA tha usko NIKAALO (undo)
+        -> taaki WAHI jagah AGLE element (sibling) ko mile. undo na karo -> path ganda -> galat subset banta.
+     ★ down = choose (push) · up = un-choose (pop) · har frame APNA push pop karta.
+     ★ right taraf tree PATLI: i+1/start-aage -> node sirf apne AAGE wale pe branch ([2]->+3, [3]->kuch nahi).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
