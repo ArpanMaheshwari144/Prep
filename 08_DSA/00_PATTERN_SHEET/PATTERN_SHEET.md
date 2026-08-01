@@ -1649,4 +1649,20 @@
          // caller: temp + used(n,false) BAHAR bana ke by-ref pass.
      ★ n! permutations.  ★ base = size==n (full length), subsets me har-node/index-end tha.
      ★ 1-line yaad: SUBSETS='start-aage' (kaunse) · PERMUTATION='used[]+loop-0-se' (kis order).
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ COMBINATIONS (LC-77)  = SUBSETS-code REUSE, bas base size==k (pattern-reuse!)
+ └──────────────────────────────────────────────────────────────
+     SAAR : 1..n me se k numbers ke saare combos (order nahi). = subsets ka start-loop, record SIRF size==k pe.
+     TEMPLATE:
+         void solve(n, k, ans, start, temp):
+             if(temp.size() == k){ ans.push_back(temp); return; }   // fixed-size combo poora
+             for(i = start; i <= n; i++){                            // 1..n numbers, start se aage
+                 temp.push_back(i);                // CHOOSE
+                 solve(n, k, ans, i+1, temp);      // EXPLORE (i+1 -> order nahi, aage hi)
+                 temp.pop_back();                  // UN-CHOOSE
+             }
+         // caller: solve(n, k, ans, 1, temp)   (start = 1).
+     ★ subsets se FARAK = SIRF base: subsets har-node add · combinations size==k pe add. (baaki code SAME -> reuse.)
+     ★★ family 1-line: SUBSETS='start-aage, har-node' · COMBINATIONS='start-aage, size==k' · PERMUTATION='used[]+loop-0, size==n'.
 ```
