@@ -1695,4 +1695,21 @@
          // caller: solve(n, k, ans, 1, temp)   (start = 1).
      ★ subsets se FARAK = SIRF base: subsets har-node add · combinations size==k pe add. (baaki code SAME -> reuse.)
      ★★ family 1-line: SUBSETS='start-aage, har-node' · COMBINATIONS='start-aage, size==k' · PERMUTATION='used[]+loop-0, size==n'.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ COMBINATION SUM (LC-39)  = COMBINATIONS-code REUSE, 2 tweak: REUSE-'i' + TARGET-base
+ └──────────────────────────────────────────────────────────────
+     SAAR : candidates me se (REUSE allowed) sum==target wale saare combos. = combinations code, bas base target + recurse 'i'.
+     TEMPLATE:
+         void solve(cand, target, ans, start, temp):
+             if(target < 0) return;                          // prune (aage koi faida nahi)
+             if(target == 0){ ans.push_back(temp); return; } // valid combo
+             for(i = start; i < cand.size(); i++){
+                 temp.push_back(cand[i]);                     // CHOOSE
+                 solve(cand, target - cand[i], ans, i, temp); // EXPLORE (★ 'i' -> REUSE allowed, i+1 nahi)
+                 temp.pop_back();                             // UN-CHOOSE
+             }
+     ★★ combinations se FARAK: (1) recurse 'i' na i+1 (same element dobara) (2) base = target (0=record, <0=prune), size==k nahi.
+     ★ start=i -> same element repeat OK par PEECHE wale nahi (duplicate combo rok). candidates positive -> target ghatta -> infinite nahi.
+     ★★ FAMILY (5) 1-line: SUBSETS=start-aage,har-node · COMBINATIONS=start-aage,size==k · COMB-SUM=start-'i'(reuse),target-base · PERMUTATION=used[]+loop-0,size==n.
 ```

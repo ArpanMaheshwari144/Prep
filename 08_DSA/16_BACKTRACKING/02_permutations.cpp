@@ -55,7 +55,6 @@ void solve(vector<int> &nums, vector<vector<int>> &ans, vector<int> &temp, vecto
 
 vector<vector<int>> permute(vector<int> &nums)
 {
-    // TODO: helper(nums, ans, temp, used) -> base temp.size()==n; for(i=0..n) skip used, choose/explore/un-choose
     vector<vector<int>> ans;
     vector<bool> used(nums.size(), false);
     vector<int> temp;
