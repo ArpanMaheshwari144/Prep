@@ -34,7 +34,7 @@ void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &
     {
         temp.push_back(nums[i]);
         solve(nums, ans, i + 1, temp);
-        temp.pop_back();
+        temp.pop_back(); // undo
     }
 }
 

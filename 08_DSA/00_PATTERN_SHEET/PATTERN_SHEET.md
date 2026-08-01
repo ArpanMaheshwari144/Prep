@@ -1602,6 +1602,16 @@
    ★ DECISION TREE: har node = choice-point; har leaf tak ka raasta = ek possible answer.
    KAB: "saare subsets/permutations/combinations", "N-queens", "har-combination try karo".
 
+ ★★ 2 FORMS = SAME cheez, alag LIKHAWAT (dono recursion + undo, same output):
+    A) INCLUDE/EXCLUDE : 2 explicit call (element liya / nahi-liya). base pe record.
+         solve(i): if(i==n){ record; return; }
+                   push -> solve(i+1) -> pop;    // liya
+                   solve(i+1);                    // nahi-liya
+    B) FOR-LOOP (start-loop): loop se har element pe branch. HAR node pe record.
+         solve(start): record;
+                       for(i=start..n){ push(i) -> solve(i+1) -> pop; }
+ ★ dono me core SAME: CHOOSE -> EXPLORE (recursion) -> UN-CHOOSE (undo/pop). bas shakal alag.
+
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBSETS (LC-78)  = har element pe 2 choice (INCLUDE / EXCLUDE)
  └──────────────────────────────────────────────────────────────
