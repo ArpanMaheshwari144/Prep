@@ -28,25 +28,26 @@ using namespace std;
 // ============================================================
 void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp)
 {
-    // base case sahi agra indes ums size ke aage ya wah take ek mil gaya
+    // base case: agar index nums.size() ke aage/barabar -> ek poora subset ban gaya
     if (index >= nums.size())
     {
         ans.push_back(temp);
         return;
     }
 
-    // le liye
+    // INCLUDE: element le liya
     temp.push_back(nums[index]);
-    solve(nums, ans, index + 1, temp); // age badho
-    temp.pop_back(); // and ukos hata diya
+    solve(nums, ans, index + 1, temp); // aage badho
+    temp.pop_back();                   // aur usko hata diya (un-choose / backtrack)
 
-    solve(nums, ans, index + 1, temp); // nahi liya
+    // EXCLUDE: element nahi liya
+    solve(nums, ans, index + 1, temp);
 }
 
 vector<vector<int>> subsets(vector<int> &nums)
 {
     vector<vector<int>> ans;
-    vector<int> temp; // ye baahar hi benga kyu ki agar helper mei bane to har baar new banage jo ki galat hai
+    vector<int> temp; // ye BAHAR hi banega -- agar helper me banate to har call naya banta (backtrack toot jaata)
     solve(nums, ans, 0, temp);
     return ans;
 }
