@@ -104,6 +104,9 @@
       - Week 3 (Aug 15-21)= DP part-2 (2D: grid→knapsack→LCS→edit-distance). + HLD reflex-sheet full pass + 2 STAR + English-aloud.
       - Week 4 (Aug 22-31)= CONSOLIDATION (NO new topic): DSA full-revise spaced-redo · HLD mock-heavy (timed rounds) · Java/Spring sharp-revise + backlog (Elasticsearch/distributed-ID) · behavioral polish + English-aloud roz. end: Sept-apply ready.
       ★ project-revise roadmap (neeche 24-Jul block) = ab SECONDARY/parallel; month-focus upar hai.
+      ★★ OFF-DAY LIGHT-WORK MODE (Arpan-set 2-Aug, "note down progress me"): jis din MOOD-OFF ya achhi-neend-nahi -> naya-DSA/backtracking NAHI -> us din HAND-NOTE revise-WRITING karo (halka, frustrate nahi). ye ARPAN-DRIVEN ("jis din main kahun us din"), collaborative (Claude actual content dikhata + Arpan important hand-note -> tera+mera input).
+         streams (rotate): HLD DESIGNS 8-STEP-notes (URL-shortener + rate-limiter DONE 2-Aug; format = 8-step interview-flow, important-only) · Java/Spring hand-notes PAIRED with PROJECT (todo-app + payment) · payment-system.
+         ★ method PROOF (2-Aug): mood-off din pe bhi 2 HLD 8-step notes + Kadane-redo ho gaye -> zero-day nahi. hand-note se cross-design PATTERN surface hota (Arpan-caught: "centralized Redis" URL-shortener + rate-limiter dono me = recurring building-block). yehi HLD-easy ki wajah.
 
    ★★ TIMELINE (23-Jul, Arpan-set — "August=apply" PURANA): JP apply = SEPTEMBER (rush nahi). end-Aug tak "sahi jagah hold" → Sept apply + pel.
       beech me koi achhi comp crack ho to wo bhi JP/BlackRock ka raasta (route FLEXIBLE, end-goal fixed).
