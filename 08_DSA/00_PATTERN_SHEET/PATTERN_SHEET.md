@@ -1641,27 +1641,25 @@
        (include/exclude form me 'if(index==size) return' likhna padta; loop form khud terminate.)
      ★ FARAK: include/exclude = base pe subset add + 2 branch  |  start-loop = HAR node pe add + loop. dono 2^n, same choose/explore/un-choose.
 
-     ── RECURSION TREE (for-loop, nums=[1,2,3]) ──   ↓ neeche = PUSH (choose)   ↑ upar = POP (backtrack)
-                              [ ]                        <- solve(start=0)
-                ┌──────────────┼──────────────┐
-              ↓+1            ↓+2            ↓+3
-                │              │              │
-               [1]            [2]            [3]          (har node = ek subset -> RECORD)
-            ┌───┴───┐          │
-          ↓+2      ↓+3        ↓+3
-            │       │          │
-          [1,2]   [1,3]      [2,3]
+     ── RECURSION TREE (for-loop, nums=[1,2,3]) ── har edge 2 BAAR: ↓neeche=PUSH(choose) · ↑wapas=POP(backtrack)
+                                  [ ]                       <- solve(start=0)
+                 ┌─────────────────┼─────────────────┐
+             ↓+1 ↑pop1        ↓+2 ↑pop2        ↓+3 ↑pop3
+                 │                 │                 │
+                [1]               [2]               [3]      (har node = subset -> RECORD)
+            ┌────┴────┐            │
+        ↓+2 ↑pop2  ↓+3 ↑pop3   ↓+3 ↑pop3
+            │         │            │
+          [1,2]     [1,3]        [2,3]
             │
-          ↓+3
+        ↓+3 ↑pop3
             │
          [1,2,3]  END (i=3, loop khatam)
 
-     BACKTRACK (wapsi, leftmost path — yeh dekh):
-         [1,2,3] ──↑pop 3──▶ [1,2] ──↑pop 2──▶ [1] ──(ab [1] ka loop AAGE)──▶ ↓+3 ──▶ [1,3]
-     ★ POP KYU? current frame ka ek branch khatam -> jo element DAALA tha usko NIKAALO (undo)
-        -> taaki WAHI jagah AGLE element (sibling) ko mile. undo na karo -> path ganda -> galat subset banta.
-     ★ down = choose (push) · up = un-choose (pop) · har frame APNA push pop karta.
-     ★ right taraf tree PATLI: i+1/start-aage -> node sirf apne AAGE wale pe branch ([2]->+3, [3]->kuch nahi).
+     ★ har edge pe DONO arrow: neeche jaate waqt ↓PUSH (choose), wapas aate waqt ↑POP (backtrack). ek edge = 2 baar cross.
+     ★ POP KYU? branch khatam -> jo element DAALA tha usko NIKAALO (undo) -> taaki WAHI jagah AGLE sibling ko mile.
+        (undo na karo -> path ganda -> galat subset.)  e.g. [1,2,3]→↑pop3→[1,2]→↑pop2→[1]→ab loop aage ↓+3→[1,3].
+     ★ right taraf tree PATLI: i+1/start-aage -> node sirf apne AAGE wale pe branch ([2]→+3, [3]→kuch nahi).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
