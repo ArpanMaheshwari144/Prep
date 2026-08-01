@@ -1641,6 +1641,23 @@
        (include/exclude form me 'if(index==size) return' likhna padta; loop form khud terminate.)
      ★ FARAK: include/exclude = base pe subset add + 2 branch  |  start-loop = HAR node pe add + loop. dono 2^n, same choose/explore/un-choose.
 
+     ── DRY-RUN TREE (for-loop form, nums=[1,2,3]) — har node RECORD, har frame APNA push POP ──
+         solve(0,[])  ── REC []
+         ├─ +1 → solve(1,[1])  ── REC [1]
+         │    ├─ +2 → solve(2,[1,2])  ── REC [1,2]
+         │    │    └─ +3 → solve(3,[1,2,3])  ── REC [1,2,3]   (i=3, loop khali → return)
+         │    │       pop 3 → [1,2]        (solve(2,[1,2]) ne 3 daala → wahi pop)
+         │    │    pop 2 → [1]             (solve(1,[1]) ne 2 daala → wahi pop)
+         │    └─ +3 → solve(3,[1,3])  ── REC [1,3]  →  pop 3 → [1]
+         │    pop 1 → []                   (solve(0,[]) ne 1 daala → wahi pop)
+         ├─ +2 → solve(2,[2])  ── REC [2]
+         │    └─ +3 → solve(3,[2,3])  ── REC [2,3]  →  pop 3 → [2]
+         │    pop 2 → []
+         └─ +3 → solve(3,[3])  ── REC [3]  →  pop 3 → []
+         REC order: []  [1]  [1,2]  [1,2,3]  [1,3]  [2]  [2,3]  [3]   = 8 subsets
+     ★ har NODE pe record (leaf hi nahi) · har branch = loop ka ek iteration · i+1 = child AAGE se (repeat nahi)
+     ★ har frame APNA daala hua element pop karta (neeche-se-upar unwind) -> isliye ek path pe kai pop chain me dikhte.
+
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
  └──────────────────────────────────────────────────────────────
