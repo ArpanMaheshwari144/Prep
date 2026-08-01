@@ -1711,5 +1711,17 @@
              }
      ★★ combinations se FARAK: (1) recurse 'i' na i+1 (same element dobara) (2) base = target (0=record, <0=prune), size==k nahi.
      ★ start=i -> same element repeat OK par PEECHE wale nahi (duplicate combo rok). candidates positive -> target ghatta -> infinite nahi.
+
+     ── ALT FORM: INCLUDE/EXCLUDE (2-branch) ── same output, alag likhawat (subsets ki tarah dono):
+         void solve(cand, target, ans, index, temp):
+             if(target < 0) return;
+             if(index >= cand.size()){ if(target==0) ans.push_back(temp); return; }   // end pe check
+             // INCLUDE: cand[index] liya (index SAME -> reuse)
+             temp.push_back(cand[index]);
+             solve(cand, target - cand[index], ans, index, temp);
+             temp.pop_back();
+             // EXCLUDE: cand[index] chhoda -> aage (index+1)
+             solve(cand, target, ans, index+1, temp);
+     ★ for-loop form: base target==0 pe turant record.  include/exclude form: base index==size pe (target==0? record).
      ★★ FAMILY (5) 1-line: SUBSETS=start-aage,har-node · COMBINATIONS=start-aage,size==k · COMB-SUM=start-'i'(reuse),target-base · PERMUTATION=used[]+loop-0,size==n.
 ```
