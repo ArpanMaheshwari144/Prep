@@ -1630,4 +1630,23 @@
      ★ start-loop me EXPLICIT base-case ki zaroorat NAHI: index==n -> loop chalega hi nahi -> khud ruk jaata.
        (include/exclude form me 'if(index==size) return' likhna padta; loop form khud terminate.)
      ★ FARAK: include/exclude = base pe subset add + 2 branch  |  start-loop = HAR node pe add + loop. dono 2^n, same choose/explore/un-choose.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
+ └──────────────────────────────────────────────────────────────
+     SAAR : saare elements ka har ORDER (arrangement). har position pe koi bhi UNUSED element -> used[] track.
+     ★★ SUBSETS se FARAK (crux): subsets = 'start' index (sirf AAGE) -> [1,2]==[2,1] repeat nahi.
+                                 permutation = ORDER matter -> loop 0 SE + used[] se skip (start nahi).
+     TEMPLATE:
+         void solve(nums, ans, temp, used):
+             if(temp.size() == nums.size()){ ans.push_back(temp); return; }   // poora arrangement
+             for(i = 0; i < nums.size(); i++){                                 // ★ 0 se (start nahi)
+                 if(used[i]) continue;                                         // already-liya -> skip
+                 used[i]=true;  temp.push_back(nums[i]);      // CHOOSE
+                 solve(nums, ans, temp, used);                // EXPLORE (i+1 nahi -> phir 0 se, used skip)
+                 temp.pop_back();  used[i]=false;             // UN-CHOOSE (dono undo)
+             }
+         // caller: temp + used(n,false) BAHAR bana ke by-ref pass.
+     ★ n! permutations.  ★ base = size==n (full length), subsets me har-node/index-end tha.
+     ★ 1-line yaad: SUBSETS='start-aage' (kaunse) · PERMUTATION='used[]+loop-0-se' (kis order).
 ```
