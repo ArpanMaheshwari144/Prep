@@ -1618,5 +1618,16 @@
          // caller: temp BAHAR bana ke by-ref pass; solve(nums, ans, 0, temp).
      ★ temp by-REFERENCE (shared path); push/pop usi pe -> backtrack. helper-andar banate -> har call naya -> toot jaata.
      ★ 2^n subsets (har element in/out = power set).
-     ★ ALT (start-loop form): har NODE pe temp ans me daalo + for(i=start..n){ push -> solve(i+1) -> pop }. same cheez, alag likhawat.
+
+     ── ALT FORM: START-LOOP (for-loop) ── same cheez, alag likhawat (dono yaad rakho):
+         void solve(nums, ans, index, temp):
+             ans.push_back(temp);                 // ★ HAR node = ek subset (alag base-case NAHI)
+             for(i = index; i < nums.size(); i++){
+                 temp.push_back(nums[i]);          // CHOOSE
+                 solve(nums, ans, i+1, temp);      // EXPLORE (i+1 -> agla aage se, peeche dobara nahi)
+                 temp.pop_back();                  // UN-CHOOSE (backtrack)
+             }
+     ★ start-loop me EXPLICIT base-case ki zaroorat NAHI: index==n -> loop chalega hi nahi -> khud ruk jaata.
+       (include/exclude form me 'if(index==size) return' likhna padta; loop form khud terminate.)
+     ★ FARAK: include/exclude = base pe subset add + 2 branch  |  start-loop = HAR node pe add + loop. dono 2^n, same choose/explore/un-choose.
 ```
