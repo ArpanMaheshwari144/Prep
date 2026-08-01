@@ -1591,3 +1591,32 @@
      ★ break-optimization: interval.start > new.end -> aage sab aur door (sorted) -> ruk. 'count'=kahan ruke -> doosra loop wahin se.
      ★ Merge/Meeting me SORT + ans.push(first);  yahan sorted-diya -> SORT nahi, bas 3-phase (before / grow / after).
 ```
+
+## PATTERN 16 — BACKTRACKING (choose / explore / un-choose)
+
+```
+ BROAD IDEA: saari possibilities explore -> solution EK-EK step build; galat lage -> PEECHE aao (backtrack) -> agla raasta.
+   MAZE anchor: raasta pakdo -> dead-end -> WAPAS last-junction -> doosra try. har element pe CHOICE(s).
+   TEMPLATE (3 step): CHOOSE (element lo/path me daalo) -> EXPLORE (aage recurse) -> UN-CHOOSE (pop/undo -> agli choice).
+   ★ path by-REFERENCE (bahar bana) = ek SHARED path; push/pop usi pe -> backtrack kaam kare. (helper-andar naya = toot jaata.)
+   ★ DECISION TREE: har node = choice-point; har leaf tak ka raasta = ek possible answer.
+   KAB: "saare subsets/permutations/combinations", "N-queens", "har-combination try karo".
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ SUBSETS (LC-78)  = har element pe 2 choice (INCLUDE / EXCLUDE)
+ └──────────────────────────────────────────────────────────────
+     SAAR : har element ke saamne 2 raaste -> LE lo ya CHHOD do -> 2 recursive call. index==size pe temp = ek subset.
+     TEMPLATE (index-based, include/exclude):
+         void solve(nums, ans, index, temp):
+             if(index >= nums.size()){ ans.push_back(temp); return; }   // poora subset ban gaya
+             // INCLUDE:
+             temp.push_back(nums[index]);
+             solve(nums, ans, index+1, temp);
+             temp.pop_back();                     // UN-CHOOSE (backtrack)
+             // EXCLUDE:
+             solve(nums, ans, index+1, temp);     // element chhod ke aage
+         // caller: temp BAHAR bana ke by-ref pass; solve(nums, ans, 0, temp).
+     ★ temp by-REFERENCE (shared path); push/pop usi pe -> backtrack. helper-andar banate -> har call naya -> toot jaata.
+     ★ 2^n subsets (har element in/out = power set).
+     ★ ALT (start-loop form): har NODE pe temp ans me daalo + for(i=start..n){ push -> solve(i+1) -> pop }. same cheez, alag likhawat.
+```
