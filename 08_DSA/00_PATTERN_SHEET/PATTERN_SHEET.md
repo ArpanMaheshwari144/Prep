@@ -1641,22 +1641,26 @@
        (include/exclude form me 'if(index==size) return' likhna padta; loop form khud terminate.)
      ★ FARAK: include/exclude = base pe subset add + 2 branch  |  start-loop = HAR node pe add + loop. dono 2^n, same choose/explore/un-choose.
 
-     ── DRY-RUN TREE (for-loop form, nums=[1,2,3]) — har node RECORD, har frame APNA push POP ──
-         solve(0,[])  ── REC []
-         ├─ +1 → solve(1,[1])  ── REC [1]
-         │    ├─ +2 → solve(2,[1,2])  ── REC [1,2]
-         │    │    └─ +3 → solve(3,[1,2,3])  ── REC [1,2,3]   (i=3, loop khali → return)
-         │    │       pop 3 → [1,2]        (solve(2,[1,2]) ne 3 daala → wahi pop)
-         │    │    pop 2 → [1]             (solve(1,[1]) ne 2 daala → wahi pop)
-         │    └─ +3 → solve(3,[1,3])  ── REC [1,3]  →  pop 3 → [1]
-         │    pop 1 → []                   (solve(0,[]) ne 1 daala → wahi pop)
-         ├─ +2 → solve(2,[2])  ── REC [2]
-         │    └─ +3 → solve(3,[2,3])  ── REC [2,3]  →  pop 3 → [2]
-         │    pop 2 → []
-         └─ +3 → solve(3,[3])  ── REC [3]  →  pop 3 → []
-         REC order: []  [1]  [1,2]  [1,2,3]  [1,3]  [2]  [2,3]  [3]   = 8 subsets
-     ★ har NODE pe record (leaf hi nahi) · har branch = loop ka ek iteration · i+1 = child AAGE se (repeat nahi)
-     ★ har frame APNA daala hua element pop karta (neeche-se-upar unwind) -> isliye ek path pe kai pop chain me dikhte.
+     ── RECURSION TREE (for-loop form, nums=[1,2,3]) — har node = ek subset (RECORD) ──
+                              [ ]                        <- solve(start=0)
+                ┌──────────────┼──────────────┐
+               +1             +2             +3
+                │              │              │
+               [1]            [2]            [3]
+            ┌───┴───┐          │
+           +2      +3         +3
+            │       │          │
+          [1,2]   [1,3]      [2,3]
+            │
+           +3
+            │
+         [1,2,3]
+
+     FLOW (leftmost path samjho): +1 daala -> +2 daala -> +3 daala -> [1,2,3] bana (end)
+        -> ab POP 3 -> [1,2]  -> POP 2 -> [1]  -> phir +3 -> [1,3] ...
+        = aage-aage DAALTE jao (choose) -> end/dead pe UNDO (pop) -> doosri branch (agla element).
+     ★ right taraf tree PATLI hoti: i+1/start-aage -> node sirf apne AAGE wale pe branch ([2] ke paas sirf +3, [3] ke paas kuch nahi).
+     ★ har node RECORD (leaf hi nahi) · har frame APNA push pop karta (neeche-se-upar unwind).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
