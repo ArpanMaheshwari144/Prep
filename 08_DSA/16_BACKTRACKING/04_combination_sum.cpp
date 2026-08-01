@@ -31,7 +31,7 @@ using namespace std;
 //     for(i=start..n): push cand[i] -> solve2(i = REUSE, target-cand[i]) -> pop.
 //
 //  ★ FARAK: form1 = element pe liya/chhoda (2 call) · form2 = loop se har candidate branch. dono me reuse (index/i SAME).
-// same subets jaise code vus target aa gaya ab bas aur kuch nahi
+// same subsets jaisa code, bas target aa gaya -- ab aur kuch nahi
 // FORM 1 — INCLUDE/EXCLUDE (2-branch): har element pe liya(index same=reuse) / chhoda(index+1).
 void solve(vector<int> &candidates, int target, vector<vector<int>> &ans, int index, vector<int> &temp)
 {
