@@ -176,6 +176,38 @@ action) likhna padta. SAGA = "manually banaya hua rollback".
 
 ---
 
+### 2PC (2-Phase Commit) — gehra (distributed atomicity, COORDINATOR ke through)
+
+**Core:** alag DBs/banks me ek transaction ko all-or-nothing banana — ek COORDINATOR sabko manage karta.
+```
+   PHASE 1 (PREPARE / voting):
+        coordinator sab participants (Bank A, Bank B) se pooche "ready to commit?"
+        har ek kaam karke resource LOCK karta -> "YES ready" ya "NO" bolta
+   PHASE 2 (COMMIT / abort):
+        SAB ne YES bola?  -> coordinator "COMMIT" -> sab commit
+        koi ek ne NO?     -> coordinator "ABORT"  -> sab rollback
+   = distributed atomicity (dono ya koi nahi)
+```
+
+**DIKKAT (kyun slow / blocking):**
+```
+   - participants LOCK pakde rehte jab tak coordinator "commit/abort" na bole
+   - coordinator beech me CRASH -> participants ATKE (locked, waiting) -> system thapp
+   -> isliye scale pe SAGA preferred (async, no long lock)
+```
+
+```
+   SAGA vs 2PC (yaad):
+      2PC  = strict / synchronous / LOCKING -> strong consistency, par SLOW + blocking
+      SAGA = async compensating-undo        -> eventual consistency, par scalable + no-lock
+```
+
+```
+   2PC = "coordinator ready?->commit; sab-yes to commit, koi-no to abort. atomic par LOCK-blocking (coordinator crash = atke)."
+```
+
+---
+
 ## 3. FAILURE-HANDLING  (crash beech mein -> paisa kahan)
 
 **HARD TRUTH:** crash ke baad tujhe aksar PATA NAHI:
