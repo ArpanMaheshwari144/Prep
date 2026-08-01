@@ -99,6 +99,7 @@
       => AUGUST = last-2-DSA-family + CONSOLIDATION (revise + mock-delivery + English-aloud). naya-heavy nahi.
 
       ★★ ROZ DSA (NON-NEGOTIABLE, Arpan-locked 31-Jul): sheet-glance REVISE + 1 PROBLEM roz (koi bhi — redo ya naya — jo padhe-hue PATTERN pe based ho). Claude roz nudge kare. daily-question yahi.
+      ★★ SHEET CHUNK-REVISE (2-Aug, Arpan-set — sheet ab 16-pattern/1600-line, poori roz revise impractical): roz QUICK-glance-all (2-3 min, map fresh) + DEEP-revise 2 pattern ROTATE (aaj TP+SW, kal Hashing+Prefix, aise) -> poori sheet ~week me cover -> repeat. Claude nudge me rotation TRACK kare (kaunsa pattern aaj), koi pattern lambe-time miss na ho.
       - Week 1 (Aug 1-7)  = BACKTRACKING (naya family: subsets→permutations→combinations→comb-sum; teach→Arpan-solve→sheet). + 2 HLD design bolke-revise + 1 STAR aloud.
       - Week 2 (Aug 8-14) = DP part-1 (1D: climbing-stairs→house-robber→coin-change→LIS). + 2 HLD revise + 1 FULL MOCK (bolke,timed) + 1 STAR.
       - Week 3 (Aug 15-21)= DP part-2 (2D: grid→knapsack→LCS→edit-distance). + HLD reflex-sheet full pass + 2 STAR + English-aloud.
