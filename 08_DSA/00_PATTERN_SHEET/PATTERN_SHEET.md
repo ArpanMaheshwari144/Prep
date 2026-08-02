@@ -307,8 +307,16 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ FRUIT INTO BASKETS
  └──────────────────────────────────────────────────────────────
-     ★ = "Longest Subarray with AT MOST 2 DISTINCT elements" (fruit/basket sirf kahani). track: map<type,count>;
-     INVALID = mp.size()>2 -> shrink (count--, ★ count==0 -> map.ERASE warna size galat); ans = MAX length.
+     SAAR : "longest subarray with AT MOST 2 DISTINCT" (fruit/basket sirf kahani). SW skeleton + map<type,count>.
+     DELTA (SW skeleton pe -- sirf ye badalta):
+         mp[nums[j]]++;                              // window me add
+         while(mp.size() > 2){                       // INVALID: 2 se zyada distinct
+             mp[nums[i]]--;
+             if(mp[nums[i]]==0) mp.erase(nums[i]);   // ★ count 0 -> ERASE
+             i++;
+         }
+         ans = max(ans, j - i + 1);
+     ★★ CRUX = erase-on-0: count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST AT-MOST-K DISTINCT
