@@ -171,27 +171,25 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ 3SUM (LC-15)  = SORT + ek fix + baaki 2-pointer (+ duplicate skip)
  └──────────────────────────────────────────────────────────────
-     SAAR : saare UNIQUE triplets jinka sum==0. SORT -> ek number FIX -> baaki 2 ke liye 2-pointer (target = -fixed).
-     TEMPLATE:
-         sort(nums.begin(), nums.end());
-         for(int i=0; i<n-2; i++){
-             if(i>0 && nums[i]==nums[i-1]) continue;      // ★ duplicate FIXED skip
-             if(nums[i]>0) break;                          // sorted -> aage sab +ve -> sum 0 impossible
-             int l=i+1, r=n-1, target=-nums[i];
-             while(l<r){
-                 int sum = nums[l]+nums[r];
-                 if(sum==target){
-                     ans.push_back({nums[i],nums[l],nums[r]});
-                     while(l<r && nums[l]==nums[l+1]) l++;  // ★ duplicate L skip
-                     while(l<r && nums[r]==nums[r-1]) r--;  // ★ duplicate R skip
-                     l++; r--;
+     SAAR : saare UNIQUE triplets jinka sum==0. SORT -> ek number FIX -> baaki 2 ke liye 2-pointer (sum = -fixed).
+     TEMPLATE (Arpan ka actual code):
+         sort(begin(nums), end(nums));
+         for(int i=0; i<nums.size(); i++){
+             if(i>0 && nums[i]==nums[i-1]) continue;              // ★ duplicate FIXED skip
+             int low=i+1, high=nums.size()-1, sum=-nums[i];
+             while(low<high){
+                 if(nums[low]+nums[high]==sum){
+                     ans.push_back({nums[i],nums[low],nums[high]});
+                     while(low<high && nums[low]==nums[low+1]) low++;   // ★ duplicate LOW skip
+                     while(low<high && nums[high]==nums[high-1]) high--; // ★ duplicate HIGH skip
+                     low++; high--;
                  }
-                 else if(sum < target) l++;                 // chhota -> l aage (bada chahiye)
-                 else r--;                                  // bada  -> r peeche
+                 else if(nums[low]+nums[high] < sum) low++;       // chhota -> low aage (bada chahiye)
+                 else high--;                                     // bada  -> high peeche
              }
          }
-     ★★ CRUX = DUPLICATE skip 3 JAGAH: (1) fixed i (i>0 && nums[i]==nums[i-1]) (2) match ke baad L (3) match ke baad R.
-     ★ target = -nums[i] (fixed ko doosri taraf) -> sorted pe 2-pointer (= 2SUM-II).  ★ nums[i]>0 -> break (early exit).
+     ★★ CRUX = DUPLICATE skip 3 JAGAH: (1) fixed i (i>0 && nums[i]==nums[i-1]) (2) match ke baad LOW (3) match ke baad HIGH.
+     ★ sum = -nums[i] (fixed ko doosri taraf) -> sorted pe 2-pointer (= 2SUM-II).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ IS SUBSEQUENCE
@@ -262,17 +260,19 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST SUBSTRING NO-REPEAT (LC-3)  = variable window + freq-map
  └──────────────────────────────────────────────────────────────
-     SAAR : longest substring jisme koi char REPEAT na ho. window expand -> repeat aaya to left shrink.
-     TEMPLATE:
-         unordered_map<char,int> freq;  int l=0, ans=0;
-         for(int r=0; r<n; r++){
-             freq[s[r]]++;                        // window me add
-             while(freq[s[r]] > 1){               // INVALID: repeat (current char 2 baar)
-                 freq[s[l]]--; l++;               // left shrink jab tak repeat khatam
+     SAAR : longest substring jisme koi char REPEAT na ho. variable window + freq-map(mp).
+     TEMPLATE (Arpan ka actual code):
+         unordered_map<char,int> mp;  int i=0, j=0, minLen=INT_MIN;
+         while(j < s.size()){
+             mp[s[j]]++;                          // window me add
+             while(mp[s[j]] > 1){                 // INVALID: current char (s[j]) repeat
+                 mp[s[i]]--; i++;                 // left shrink jab tak repeat khatam
              }
-             ans = max(ans, r - l + 1);           // valid window length
+             minLen = max(minLen, j - i + 1);     // valid window length
+             j++;
          }
-     ★ INVALID = freq[s[r]]>1 (jo abhi add hua wahi repeat). shrink usi char ke doosre occurrence tak.
+         return minLen==INT_MIN ? 0 : minLen;     // khaali string -> INT_MIN reh jaata -> 0
+     ★ INVALID = mp[s[j]]>1 (jo abhi add hua wahi repeat). ★ empty-string edge -> INT_MIN -> 0.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CHAR REPLACEMENT (LONGEST, LC-424)
@@ -286,18 +286,23 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX CONSECUTIVE ONES III (LC-1004)  = variable window + zeros-count (k flips)
  └──────────────────────────────────────────────────────────────
-     SAAR : at most k zeros ko FLIP kar sakte -> longest all-1 window. sirf zerosCount track (freq-map nahi).
-     TEMPLATE:
-         int l=0, zeros=0, ans=0;
-         for(int r=0; r<n; r++){
-             if(nums[r]==0) zeros++;              // window me zero add
-             while(zeros > k){                    // INVALID: k se zyada zero (flip nahi kar sakte)
-                 if(nums[l]==0) zeros--;          // left ka zero nikla to count kam
-                 l++;
+     SAAR : at most k zeros ko FLIP -> longest all-1 window. sirf zeroCount track (freq-map nahi).
+     TEMPLATE (Arpan ka actual code):
+         int ans=INT_MIN, zeroCount=0, i=0, j=0;
+         while(j < nums.size()){
+             if(nums[j]==0) zeroCount++;          // window me zero add
+             while(zeroCount > k){                // INVALID: k se zyada zero (flip nahi kar sakte)
+                 if(nums[i]==0) zeroCount--;      // left ka zero nikla to count kam
+                 i++;
              }
-             ans = max(ans, r - l + 1);           // valid window length
+             ans = max(ans, j - i + 1);           // ★ UNCONDITIONAL (koi if nahi)
+             j++;
          }
-     ★ INVALID = zeros > k.  ★ shrink pe left==0 hi zeros-- (1 nikalne pe count na badle).
+         return ans==INT_MIN ? 0 : ans;
+     ★★ CORE LEARNING (Arpan ne khud debug karke nikaala): ans UNCONDITIONAL update -> if(zeroCount==k) MAT lagao.
+        kyun: upar while(zeroCount>k) shrink ke BAAD window HAMESHA valid (<=k) -> yahan pahunchte hi valid -> condition faltu.
+        (galti thi: if(zeroCount==k) -> sirf exactly-k ginta -> k=0 / k>zeros case toot jaate.)
+     ★ shrink pe nums[i]==0 hi zeroCount-- (1 nikalne pe count na badle).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ FRUIT INTO BASKETS
