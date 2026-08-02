@@ -414,19 +414,29 @@
 └───────────────────────────────────────────────────────────────
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ FIND ALL ANAGRAMS
+ │ ▸ FIND ALL ANAGRAMS (LC-438)  = ANAGRAM-check + FIXED window (PARENT)
  └──────────────────────────────────────────────────────────────
-     ★ s me p ke SAARE anagram ki start-index. ANAGRAM-check + FIXED window ka combo.
-     helper isAnagram (valid-anagram reuse): same length + har char ka count barabar.
-     i/j se p ki length ka window; size == p.size() pe -> substr(i,len) p se anagram? -> ans.push(i).
-     size > p.size() -> i++. j har baar++.
+     SAAR : s me p ke SAARE anagram ki START-INDEX. fixed window (p ki length) + har window pe anagram-check.
+     TEMPLATE:
+         bool isAnagram(a,b): size same + har char count barabar (map: a se ++, b se --, sab 0 -> true).
+         int i=0, j=0;
+         while(j < s.size()){
+             while(j-i+1 > p.size()) i++;                          // ★ window ko p-size pe rakho (FIXED)
+             if(j-i+1 == p.size())
+                 if(isAnagram(s.substr(i, j-i+1), p)) ans.push_back(i);  // anagram -> START-index push
+             j++;
+         }
+     ★ valid-anagram helper reuse. fixed-window slide + har full-window pe check.
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ PERMUTATION IN STRING
+ │ ▸ PERMUTATION IN STRING (LC-567)  = FIND-ALL-ANAGRAMS ka EXACT same code
  └──────────────────────────────────────────────────────────────
-     ★ s2 me s1 ka koi permutation (anagram) substring hai? = FIND-ALL-ANAGRAMS wahi.
-     farak: index push karne ki jagah -> ek match mile to seedha TRUE (koi na mile -> FALSE).
-     checkInclusion(s1,s2) = findAnagrams(s2, s1) [return true on first match].
+     SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? -> upar wale ka HUBAHU same skeleton.
+     ★★ CONNECTION: bilkul FIND-ALL-ANAGRAMS -- same isAnagram + same fixed-window. SIRF 1 DELTA:
+        anagram mila -> push-index ki jagah -> SEEDHA return TRUE (koi na mile -> return FALSE).
+        i.e.  if(isAnagram(...)) return true;   ... loop-ke-baad return false;
+     ★ checkInclusion(s1,s2) = findAnagrams(s2, s1) with "return true on first match".
+     ★ farak sirf: FIND-ALL = saare indices (push) · PERMUTATION = pehla match = TRUE (bool).
 
  ★★ LONGEST vs SHORTEST (yaad rakh): LONGEST -> shrink jab INVALID, ans=MAX. SHORTEST (min-len) -> shrink jab VALID, ans=MIN.
 ```
