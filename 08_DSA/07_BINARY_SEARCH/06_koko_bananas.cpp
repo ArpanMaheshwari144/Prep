@@ -23,7 +23,7 @@ using namespace std;
 
 bool solve(vector<int> &piles, int h, int mid)
 {
-    int hours = 0;
+    long hours = 0; // ★ long -> bahut saari/badi piles pe sum int-overflow na ho
     for (int i = 0; i < piles.size(); i++)
     {
         hours += ceil((double)piles[i] / mid);
