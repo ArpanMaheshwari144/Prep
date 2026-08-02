@@ -172,7 +172,7 @@
  │ ▸ 3SUM (LC-15)  = SORT + ek fix + baaki 2-pointer (+ duplicate skip)
  └──────────────────────────────────────────────────────────────
      SAAR : saare UNIQUE triplets jinka sum==0. SORT -> ek number FIX -> baaki 2 ke liye 2-pointer (sum = -fixed).
-     TEMPLATE (Arpan ka actual code):
+     TEMPLATE:
          sort(begin(nums), end(nums));
          for(int i=0; i<nums.size(); i++){
              if(i>0 && nums[i]==nums[i-1]) continue;              // ★ duplicate FIXED skip
@@ -261,7 +261,7 @@
  │ ▸ LONGEST SUBSTRING NO-REPEAT (LC-3)  = variable window + freq-map
  └──────────────────────────────────────────────────────────────
      SAAR : longest substring jisme koi char REPEAT na ho. variable window + freq-map(mp).
-     TEMPLATE (Arpan ka actual code):
+     TEMPLATE:
          unordered_map<char,int> mp;  int i=0, j=0, minLen=INT_MIN;
          while(j < s.size()){
              mp[s[j]]++;                          // window me add
@@ -287,7 +287,7 @@
  │ ▸ MAX CONSECUTIVE ONES III (LC-1004)  = variable window + zeros-count (k flips)
  └──────────────────────────────────────────────────────────────
      SAAR : at most k zeros ko FLIP -> longest all-1 window. sirf zeroCount track (freq-map nahi).
-     TEMPLATE (Arpan ka actual code):
+     TEMPLATE:
          int ans=INT_MIN, zeroCount=0, i=0, j=0;
          while(j < nums.size()){
              if(nums[j]==0) zeroCount++;          // window me zero add
