@@ -1678,7 +1678,9 @@
              }
          // caller: temp + used(n,false) BAHAR bana ke by-ref pass.
      ★ n! permutations.  ★ base = size==n (full length), subsets me har-node/index-end tha.
-     ★ 1-line yaad: SUBSETS='start-aage' (kaunse) · PERMUTATION='used[]+loop-0-se' (kis order).
+     ★★ INDEX/start KYU NAHI PASS kiya (permutation me): order MATTER karta -> har position pe koi bhi UNUSED element (peeche wala bhi) chahiye -> loop HAMESHA 0-se -> "peeche mat jao" wali baat hi nahi -> isliye 'start' ki zaroorat nahi, uski jagah used[].
+        (subsets/combinations me start = "peeche mat jao" (duplicate-rok, order-agnostic). permutation me wo nahi chahiye -> used[] = "same element dobara mat lo".)
+     ★ 1-line yaad: SUBSETS='start-aage' (kaunse) · PERMUTATION='used[]+loop-0-se, NO start' (kis order).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ COMBINATIONS (LC-77)  = SUBSETS-code REUSE, bas base size==k (pattern-reuse!)
