@@ -26,6 +26,9 @@ using namespace std;
 //  4. EXPLORE  : solve(...)   (koi 'start'/i+1 nahi -> phir 0 se, bas used skip).
 //  5. UN-CHOOSE: temp.pop(); used[i]=false   (backtrack -> dono undo).
 //  ★ n! permutations. used[] + temp DONO by-reference (shared).
+//  ★★ INDEX/start KYU NAHI PASS kiya? -> order MATTER -> har position pe koi bhi UNUSED (peeche wala bhi)
+//     -> loop HAMESHA 0-se -> "peeche mat jao" wali baat nahi -> 'start' ki zaroorat nahi, uski jagah used[].
+//     (subsets/combinations me start = "peeche mat jao" (duplicate-rok, order-agnostic); yahan wo nahi chahiye.)
 // ============================================================
 void solve(vector<int> &nums, vector<vector<int>> &ans, vector<int> &temp, vector<bool> &used)
 {

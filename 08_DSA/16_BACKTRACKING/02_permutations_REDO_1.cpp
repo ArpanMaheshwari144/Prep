@@ -14,10 +14,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ★ INDEX/start KYU NAHI PASS kiya? -> permutation me ORDER matter -> har position pe koi bhi UNUSED
-//   element (peeche wala bhi) chahiye -> loop HAMESHA 0-se -> "peeche mat jao" wali baat nahi -> start ki
-//   zaroorat nahi, uski jagah used[] ("same element dobara mat lo").
-//   (subsets/combinations me start = "peeche mat jao" = duplicate-rok, order-agnostic; yahan wo nahi chahiye.)
 void solve(vector<int> &nums, vector<vector<int>> &ans, vector<int> &temp, vector<bool> &used)
 {
     if (temp.size() == nums.size())
