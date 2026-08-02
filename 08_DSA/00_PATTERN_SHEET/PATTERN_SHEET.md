@@ -337,10 +337,24 @@
 └───────────────────────────────────────────────────────────────
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ MIN SUBARRAY LEN (>=TARGET)
+ │ ▸ MIN SUBARRAY LEN (>=TARGET, LC-209)  = SHORTEST window (longest se ULTA)
  └──────────────────────────────────────────────────────────────
-     ★ SHORTEST type (ULTA): track sum; VALID (sum>=target) hote hi shrink-WHILE-valid -> ans = MIN length.
-     (char-matching wala SHORTEST = MIN WINDOW LC-76 -> neeche "need-map + COUNT" family me, LC-1358 ke saath.)
+     SAAR : positive nums, sum >= target wala SABSE CHHOTA subarray ki length (nahi mile -> 0).
+     TEMPLATE:
+         int sum=0, minLen=INT_MAX, i=0, j=0;
+         while(j < nums.size()){
+             sum += nums[j];                       // window add (expand)
+             while(sum >= target){                 // ★ VALID hote hi -> record + SHRINK (aur chhota dhoondo)
+                 minLen = min(minLen, j - i + 1);   //   ★ record ANDAR (shrink loop ke andar)
+                 sum -= nums[i]; i++;               //   left shrink
+             }
+             j++;
+         }
+         return minLen==INT_MAX ? 0 : minLen;      // koi valid window nahi -> 0
+     ★★ LONGEST vs SHORTEST (yahi confusion ki JAD):
+        LONGEST  -> shrink WHILE **INVALID**, record BAAHAR (bada window chahiye).
+        SHORTEST -> shrink WHILE **VALID**,   record ANDAR   (chhota window chahiye)  <- YE wahi.
+     ★ char-matching wala SHORTEST = MIN WINDOW (LC-76) -> neeche "need-map + COUNT" family me (LC-1358 ke saath).
 
 ┌── FAMILY: FIXED window ───────────────────────────────────────
 │ KYUN SAATH: window ka size k pehle se DIYA hai; slide karte jao.
