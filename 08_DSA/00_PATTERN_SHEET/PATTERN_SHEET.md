@@ -537,14 +537,23 @@
      2 pass: pehle zeroRow[]/zeroCol[] mark; phir jahan row ya col marked -> 0.
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ SPIRAL MATRIX (LC-54)
+ │ ▸ SPIRAL MATRIX (LC-54)  = 4 boundary andar simat-te (clockwise)
  └──────────────────────────────────────────────────────────────
-     4 boundary: top=0, bottom=row-1, left=0, right=col-1.   while (top<=bottom && left<=right):
-        top row    L->R  (i: left..right)   -> top++
-        right col  T->B  (i: top..bottom)   -> right--
-        ★ if (top<=bottom):  bottom row R->L (i: right..left) -> bottom--
-        ★ if (left<=right):  left col   B->T (i: bottom..top) -> left++
-     ★ GUARD kyun: last 2 loops (bottom-row/left-col) se PEHLE check -- warna single row/col bache to DUPLICATE push ho jaata.
+     SAAR : top/bottom/left/right 4 boundary rakho -> clockwise push -> boundaries andar simat-te.
+     TEMPLATE:
+         int top=0, bottom=row-1, left=0, right=col-1;
+         while(top<=bottom && left<=right){
+             for(int i=left; i<=right; i++)  ans.push_back(matrix[top][i]);     top++;   // top row L->R
+             for(int i=top; i<=bottom; i++)  ans.push_back(matrix[i][right]);   right--; // right col T->B
+             if(top<=bottom){                                                   // ★ GUARD
+                 for(int i=right; i>=left; i--) ans.push_back(matrix[bottom][i]); bottom--; // bottom row R->L
+             }
+             if(left<=right){                                                   // ★ GUARD
+                 for(int i=bottom; i>=top; i--) ans.push_back(matrix[i][left]);   left++;   // left col B->T
+             }
+         }
+     ★ GUARD kyun: last 2 loops (bottom-row / left-col) se PEHLE check -- warna single row/col bache to DUPLICATE push.
+     ★ index yaad: top-row [top][i] · right-col [i][right] · bottom-row [bottom][i] · left-col [i][left].
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ TRANSPOSE
@@ -763,14 +772,26 @@
      ★★ GOTCHA: dhalaan me high = mid (mid-1 NAHI) -- mid khud peak ho sakta. isliye while low<high (mid+1 hamesha in-bounds, no sentinel).
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ SINGLE ELEMENT (SORTED, LC-540)
+ │ ▸ SINGLE ELEMENT (SORTED, LC-540)  = INDEX-PARITY binary search
  └──────────────────────────────────────────────────────────────
-     ★ har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR bhi solve karta par O(n) -> yahan log-n chahiye.)
-     idea: single se PEHLE pairs (even,odd) index pe · single ke BAAD (odd,even) me SHIFT. single hi ye shift karta.
-     low=0, high=n-1;   while (low <= high):   mid;   if (mid==0) return nums[0];   // edge
-        mid EVEN: nums[mid]==nums[mid-1] -> single PEECHE -> high=mid-1  · else -> low=mid+1;
-        mid ODD:  nums[mid]!=nums[mid-1] -> single PEECHE -> high=mid-1  · else -> low=mid+1;
-     return nums[HIGH];   ★ nums[HIGH] (not low) -- dono branch mid REJECT karte -> high khud single pe aa ke rukta.
+     SAAR : har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR = O(n); yahan log-n chahiye.)
+        idea: single se PEHLE pairs (even,odd) index pe · single ke BAAD (odd,even) SHIFT. single hi ye shift karta.
+     TEMPLATE:
+         if(nums.size()==1) return nums[0];            // BASE
+         int low=0, high=n-1;
+         while(low<=high){
+             int mid=low+(high-low)/2;
+             if(mid==0) return nums[mid];              // edge (mid-1 OOB; mid==0 tak pahunche => single yahi)
+             if(mid%2==0){                             // EVEN mid
+                 if(nums[mid]==nums[mid-1]) high=mid-1; //   pairing SHIFT ho chuki -> single PEECHE
+                 else low=mid+1;                        //   pairing intact -> single AAGE
+             } else {                                  // ODD mid
+                 if(nums[mid]!=nums[mid-1]) high=mid-1; //   single PEECHE
+                 else low=mid+1;
+             }
+         }
+         return nums[high];
+     ★ return nums[HIGH] (not low) -- dono branch mid REJECT karte -> high khud single pe aa ke rukta.
 
 ┌── FAMILY: 2D-index-map ───────────────────────────────────────
 │ KYUN SAATH: 2D matrix ko 1D sorted array maan ke normal BS; index ko (row,col) me convert.
@@ -878,15 +899,24 @@
      return dummy->next.   ★ '|| carry' zaroori (999+1=1000 -> end me carry bacha to naya node).
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ SWAP NODES IN PAIRS
+ │ ▸ SWAP NODES IN PAIRS  = DUMMY + 3-player rewire (order + temp-save)
  └──────────────────────────────────────────────────────────────
-     ★ har do adjacent NODE ki jodi swap (values nahi, NODES -- pointer rewire). DUMMY-node trick.
-     prev=dummy (head se pehle), first=head. loop jab tak jodi (2 node) bache (prev->next && first->next):
-       second=first->next · temp=second->next (BACHA lo warna gum).
-       second->next=first (2->1) · first->next=temp (1->baaki) · prev->next=second (dummy->2 = naya head).
-       advance: prev=first AUR first=temp. end -> return dummy->next.
-     ★ dummy kyu: jodi ko reconnect karne ko "jodi se pehle wala" node chahiye; pehli jodi se pehle kuch nahi -> dummy.
-     ★ har iteration = SIRF EK jodi (aage ki jodi ka kaam mat karo).
+     SAAR : har do adjacent NODE ki jodi swap (values nahi, NODES = pointer rewire). DUMMY-node trick.
+     TEMPLATE:
+         if(!head) return nullptr;
+         Node* dummy=new Node(0); dummy->next=head;
+         Node* prev=dummy, *first=head;
+         while(prev->next && first->next){        // jodi (2 node) bache tab tak
+             Node* second=first->next;
+             Node* temp=second->next;             // ★ BACHA lo (warna next line me gum)
+             second->next=first;                  // 2 -> 1
+             first->next=temp;                    // 1 -> baaki list
+             prev->next=second;                   // prev -> 2 (= is jodi ka naya head)
+             prev=first;  first=temp;             // ADVANCE (prev=purana first, first=agli jodi ka pehla)
+         }
+         return dummy->next;
+     ★ dummy kyu: jodi reconnect karne ko "jodi se pehle wala" node chahiye; pehli jodi ke pehle kuch nahi -> dummy.
+     ★ rewire ORDER + temp-save = crux. har iteration = SIRF EK jodi (aage ki jodi ka kaam mat karo).
 
 ┌── FAMILY: REVERSE (3-pointer) ────────────────────────────────
 │ KYUN SAATH: prev/curr/next se link ulti karo. (reverse khud + palindrome ka 2nd-half.)
@@ -1255,8 +1285,20 @@
  │ ▸ MINIMUM DEPTH (LC-111)   = LEVEL-ORDER + EARLY-STOP
  └──────────────────────────────────────────────────────────────
      idea : root se sabse PAAS wale LEAF tak depth. BFS neeche -> PEHLA leaf mila = min depth -> RUK jao (first = shortest).
-     change: level-order skeleton + depth-counter (har level ke baad depth++). for-loop me -> LEAF? (!L && !R) -> return depth+1 (turant, aage nahi).
-     ★ depth = ab tak POORE hue level; leaf is level me mila -> current level = depth+1.
+     TEMPLATE (level-order skeleton + EARLY-STOP):
+         if(!root) return 0;
+         queue<TreeNode*> q; q.push(root);  int depth=0;
+         while(!q.empty()){
+             int sz=q.size();
+             for(int i=0;i<sz;i++){
+                 auto curr=q.front(); q.pop();
+                 if(!curr->left && !curr->right) return depth+1;  // ★ PEHLA leaf -> turant return (aage mat dekho)
+                 if(curr->left)  q.push(curr->left);
+                 if(curr->right) q.push(curr->right);
+             }
+             depth++;                                             // ★ level POORA -> depth++ (for-loop ke BAAHAR)
+         }
+     ★ depth = ab tak POORE hue level; leaf is level me mila -> return depth+1.
      ★★ DFS-TRAP (isliye BFS): "1 + min(leftD, rightD)" GALAT -- NULL-child ko depth-0 maan ke skew-tree (2->3->4) pe galat deta. BFS me ye dikkat nahi.
 
 ┌── FAMILY: BST (Binary Search Tree -- left < node < right) ────
