@@ -169,9 +169,29 @@
 └───────────────────────────────────────────────────────────────
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ 3SUM
+ │ ▸ 3SUM (LC-15)  = SORT + ek fix + baaki 2-pointer (+ duplicate skip)
  └──────────────────────────────────────────────────────────────
-     ★ pehle SORT [sort(begin(nums),end(nums));] -> ek number fix -> baaki 2 pointer target=-fixed; TRIPLETS; duplicates skip.
+     SAAR : saare UNIQUE triplets jinka sum==0. SORT -> ek number FIX -> baaki 2 ke liye 2-pointer (target = -fixed).
+     TEMPLATE:
+         sort(nums.begin(), nums.end());
+         for(int i=0; i<n-2; i++){
+             if(i>0 && nums[i]==nums[i-1]) continue;      // ★ duplicate FIXED skip
+             if(nums[i]>0) break;                          // sorted -> aage sab +ve -> sum 0 impossible
+             int l=i+1, r=n-1, target=-nums[i];
+             while(l<r){
+                 int sum = nums[l]+nums[r];
+                 if(sum==target){
+                     ans.push_back({nums[i],nums[l],nums[r]});
+                     while(l<r && nums[l]==nums[l+1]) l++;  // ★ duplicate L skip
+                     while(l<r && nums[r]==nums[r-1]) r--;  // ★ duplicate R skip
+                     l++; r--;
+                 }
+                 else if(sum < target) l++;                 // chhota -> l aage (bada chahiye)
+                 else r--;                                  // bada  -> r peeche
+             }
+         }
+     ★★ CRUX = DUPLICATE skip 3 JAGAH: (1) fixed i (i>0 && nums[i]==nums[i-1]) (2) match ke baad L (3) match ke baad R.
+     ★ target = -nums[i] (fixed ko doosri taraf) -> sorted pe 2-pointer (= 2SUM-II).  ★ nums[i]>0 -> break (early exit).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ IS SUBSEQUENCE
@@ -240,9 +260,19 @@
 └───────────────────────────────────────────────────────────────
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ LONGEST SUBSTRING NO-REPEAT
+ │ ▸ LONGEST SUBSTRING NO-REPEAT (LC-3)  = variable window + freq-map
  └──────────────────────────────────────────────────────────────
-     track: char freq-map; INVALID = repeat (freq>1) -> left shrink; ans = MAX length.
+     SAAR : longest substring jisme koi char REPEAT na ho. window expand -> repeat aaya to left shrink.
+     TEMPLATE:
+         unordered_map<char,int> freq;  int l=0, ans=0;
+         for(int r=0; r<n; r++){
+             freq[s[r]]++;                        // window me add
+             while(freq[s[r]] > 1){               // INVALID: repeat (current char 2 baar)
+                 freq[s[l]]--; l++;               // left shrink jab tak repeat khatam
+             }
+             ans = max(ans, r - l + 1);           // valid window length
+         }
+     ★ INVALID = freq[s[r]]>1 (jo abhi add hua wahi repeat). shrink usi char ke doosre occurrence tak.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CHAR REPLACEMENT (LONGEST, LC-424)
@@ -254,9 +284,20 @@
         se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ MAX CONSECUTIVE ONES III
+ │ ▸ MAX CONSECUTIVE ONES III (LC-1004)  = variable window + zeros-count (k flips)
  └──────────────────────────────────────────────────────────────
-     track: zerosCount; INVALID = zeros > k -> left shrink; ans = MAX length (UNCONDITIONAL).
+     SAAR : at most k zeros ko FLIP kar sakte -> longest all-1 window. sirf zerosCount track (freq-map nahi).
+     TEMPLATE:
+         int l=0, zeros=0, ans=0;
+         for(int r=0; r<n; r++){
+             if(nums[r]==0) zeros++;              // window me zero add
+             while(zeros > k){                    // INVALID: k se zyada zero (flip nahi kar sakte)
+                 if(nums[l]==0) zeros--;          // left ka zero nikla to count kam
+                 l++;
+             }
+             ans = max(ans, r - l + 1);           // valid window length
+         }
+     ★ INVALID = zeros > k.  ★ shrink pe left==0 hi zeros-- (1 nikalne pe count na badle).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ FRUIT INTO BASKETS
