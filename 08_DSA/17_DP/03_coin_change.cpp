@@ -3,6 +3,8 @@
 // ============================================================
 // coins[] (distinct denominations) + amount. amount banane ke liye MINIMUM kitne coins
 // chahiye? har coin UNLIMITED baar use kar sakte. na ban sake -> -1.
+// amount EXACTLY banana hai (11 = theek 11, na kam na zyada). zyada le liya -> amount < 0 ho jaata
+// = wo case GALAT (overshoot) -> wahan koi valid answer nahi -> INT_MAX (INVALID).
 //
 //   coins=[1,2,5], amount=11  -> 3    (5+5+1)
 //   coins=[2],     amount=3   -> -1   (nahi ban sakta)
