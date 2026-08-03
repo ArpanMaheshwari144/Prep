@@ -14,38 +14,43 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// ---- APPROACH ----  (FOR-LOOP form -- SAME idea, bas likhawat alag)
+//  ★ take/not-take se FARAK: yahan SIRF "TAKE" hai -> for-loop me har coin lo -> min. NOT-TAKE alag likhne
+//     ki zaroorat NAHI -- wo apne-aap ho jaata (backtracking ke for-loop/start-loop form jaisa: choice loop me).
+//     [take/not-take me index i pe 2 branch; for-loop me saare coins loop -> "kaunsa coin lein" khud choose hota.]
+//  ★ solve(amt) = for coin in coins -> min(1 + solve(amt - coin)).  'i' index ki zaroorat NAHI -> 1D dp[amount].
+//  ★ base: amount<0 -> INT_MAX (INVALID) · amount==0 -> 0.
+//  ★★ INT_MAX = "ban nahi sakta" signal -> min me apne-aap haar jaata.
+//  ★★ OVERFLOW guard: 1+solve(...) SIRF jab solve != INT_MAX (warna 1+INT_MAX overflow).
+//  ★ caller: answer INT_MAX -> -1.
+// ============================================================
 int solve(vector<int> &coins, int amount, int i, vector<int> &dp)
 {
     if (amount < 0)
-        return INT_MAX;
+        return INT_MAX;            // INVALID (amount cross)
 
     if (amount == 0)
-    {
-        return 0;
-    }
+        return 0;                  // ban gaya -> 0 coins
 
-    if (dp[amount] != -1)
-    {
+    if (dp[amount] != -1)          // cache HIT
         return dp[amount];
-    }
 
-    int Take = INT_MAX;
-    for (int i = 0; i < coins.size(); i++)
+    int Take = INT_MAX;            // default INVALID
+    for (int i = 0; i < coins.size(); i++)              // har coin TRY karo
     {
-        if (solve(coins, amount - coins[i], i, dp) != INT_MAX)
-        {
-            Take = min(Take, 1 + solve(coins, amount - coins[i], i, dp));
-        }
+        if (solve(coins, amount - coins[i], i, dp) != INT_MAX)          // overflow guard
+            Take = min(Take, 1 + solve(coins, amount - coins[i], i, dp)); // sabme se MIN (yehi "many coins" ka min)
     }
 
-    return dp[amount] = Take;
+    return dp[amount] = Take;      // compute + STORE
 }
 
 int coinChange(vector<int> &coins, int amount)
 {
     int n = coins.size();
     vector<int> dp(amount + 1, -1);
-    return (solve(coins, amount, n - 1, dp) == INT_MAX ? -1 : solve(coins, amount, n - 1, dp));
+    int ans = solve(coins, amount, n - 1, dp);
+    return ans == INT_MAX ? -1 : ans;                   // na-ban-sake -> -1
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
