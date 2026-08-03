@@ -17,6 +17,9 @@
 //   ★ DP: overlap karta -> memoize (dp[i]!=-1 check + store), climbing-stairs jaisa.
 // ============================================================
 
+#include <bits/stdc++.h>
+using namespace std;
+
 // ---- APPROACH ----  (take/SKIP choice + max -- climbing-stairs se aage: har step pe CHOICE)
 //  ★ har ghar i pe 2 CHOICE:
 //     LOOT i : nums[i] + solve(i-2)   (adjacent nahi -> i-1 skip karna padta)
