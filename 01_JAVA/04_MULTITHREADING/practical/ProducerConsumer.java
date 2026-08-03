@@ -30,7 +30,6 @@ public class ProducerConsumer {
         }
 
         public synchronized int consume() throws InterruptedException {
-            // TODO: while(empty) wait();  poll;  notify();  return;
             while(queue.isEmpty()){
                 wait();
             }
