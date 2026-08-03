@@ -1910,6 +1910,8 @@
  │ ▸ COIN CHANGE (LC-322)  = MIN coins + REUSE (dono form, backtracking jaisa)
  └──────────────────────────────────────────────────────────────
      SAAR : amount banane ko MIN coins (har coin UNLIMITED = reuse). na ban sake -> -1.
+     ★★ amount==0 vs amount<0 (THEEK utna, na kam na zyada): amount==0 -> THEEK bana (11 = theek 11) -> SUCCESS -> 0 coins ·
+        amount<0 -> 0 ke NEECHE (coin bada le liya, overshoot) -> INVALID. (ban-na = theek 0 pe RUKNA, cross nahi.)
      ★★ 3 TRAP (yahi phasaate): (1) INT_MAX = "ban nahi sakta" signal -> min me apne-aap HAAR jaata.
         (2) OVERFLOW: 1+solve(...) SIRF jab solve != INT_MAX (warna 1+INT_MAX -> negative -> min galat).
         (3) caller: answer INT_MAX -> return -1.
