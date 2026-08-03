@@ -26,7 +26,6 @@
 //  ★ solve(n-1) call: n-1 = array ka LAST index (0..n-1) -> "last ghar tak max". ye TOP-DOWN hi hai (bottom-up nahi).
 //     (climbing me 'n' step-count 1..n tha; yahan array-index -> n-1. sirf naming ka farak.)
 //  ★ memo wahi 3-pattern: dp[] -1 init · dp[i]!=-1 -> return · compute + store.
-//  ★ bottom-up: dp[i] = max(nums[i]+dp[i-2], dp[i-1]) -- recursion ka i-1/i-2 pass = wahi table index.
 // ============================================================
 int solve(vector<int> &nums, int i, vector<int> &dp)
 {
