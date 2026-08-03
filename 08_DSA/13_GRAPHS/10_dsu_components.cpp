@@ -4,11 +4,11 @@
 // n nodes (0..n-1), undirected edges. Kitne ALAG groups (components)?
 //   (yehi #3 tha -- tab BFS se kiya. ab UNION-FIND se. jawab same aana chahiye.)
 //
-//   ★ DSU (Disjoint Set Union / Union-Find) = "kaun kiske GROUP me" ka FAST manager.
+//   DSU (Disjoint Set Union / Union-Find) = "kaun kiske GROUP me" ka FAST manager.
 //     real-life: DOST-CIRCLE. sab apne-apne circle me; do dost bante -> circles MERGE.
 //                poochо "A-B same circle?" -> turant jawab.
 //
-//   ★ SAAR: parent[] -> har node ka leader. har edge pe do node UNITE karo.
+//   SAAR: parent[] -> har node ka leader. har edge pe do node UNITE karo.
 //           end me kitne alag LEADER (root, parent[i]==i) bache = utne components.
 //
 //   ---- STRUCTURE ----
@@ -30,7 +30,7 @@
 //     "groups / connected / same-set?" + edges ek-ek aate + MERGE/query.
 //     e.g.: connected components, UNDIRECTED cycle-detect, number of provinces,
 //           redundant connection, accounts merge, MST-Kruskal.
-//     ★ DSU vs BFS/DFS: BFS/DFS pura graph traverse karta; DSU INCREMENTAL (edge aate-aate merge) + query fast.
+//     DSU vs BFS/DFS: BFS/DFS pura graph traverse karta; DSU INCREMENTAL (edge aate-aate merge) + query fast.
 // ============================================================
 
 #include <bits/stdc++.h>

@@ -13,7 +13,7 @@
 // ---- ARPAN KI APPROACH ----
 //  same SW pattern: expand -> condition ke hisab se shrink -> ans store.
 //  map<type,count> rakho. condition = sirf 2 type allowed -> mp.size() (distinct count) > 2 ho
-//  to left se shrink (count--). ★ jab count 0 ho jaaye -> map se ERASE karo, warna wo key map me
+//  to left se shrink (count--). jab count 0 ho jaaye -> map se ERASE karo, warna wo key map me
 //  padi reh jaati -> mp.size() galat distinct deta -> condition toot jaati. ans = max window length.
 //
 // Tests (// expected):

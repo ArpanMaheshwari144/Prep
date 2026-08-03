@@ -12,16 +12,16 @@
 //   [3,7,2]       -> 2     (7,3->4 | 4,2->2)
 //   []            -> 0
 //
-//   ★ HEAP idea: hamesha "2 sabse bhaari" chahiye -> MAX-HEAP. pop 2, smash, diff wapas push.
-//   ★ C++ max-heap: priority_queue<int> pq;   pq.push(x); pq.top(); pq.pop();
+//   HEAP idea: hamesha "2 sabse bhaari" chahiye -> MAX-HEAP. pop 2, smash, diff wapas push.
+//   C++ max-heap: priority_queue<int> pq;   pq.push(x); pq.top(); pq.pop();
 // ============================================================
 
 #include <bits/stdc++.h>
 using namespace std;
 
 // ---- APPROACH ----  (MAX-HEAP; hamesha 2 sabse bhaari chahiye)
-//  ★ idea: har turn "2 SABSE BHAARI" pathar chahiye -> MAX-HEAP (bada top pe). pop 2, smash, diff wapas push.
-//  ★ heap kyun (sort nahi): har smash ke baad pathar BADALTE -> baar-baar "2 max" chahiye. sort har-baar
+//  idea: har turn "2 SABSE BHAARI" pathar chahiye -> MAX-HEAP (bada top pe). pop 2, smash, diff wapas push.
+//  heap kyun (sort nahi): har smash ke baad pathar BADALTE -> baar-baar "2 max" chahiye. sort har-baar
 //     mahenga; max-heap: pop=O(log n), top=O(1) -> perfect "changing set + extreme chahiye".
 int lastStoneWeight(vector<int> &stones)
 {

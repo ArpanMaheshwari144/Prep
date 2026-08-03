@@ -14,15 +14,15 @@
 //
 // ============================================================
 // ---- ARPAN KI APPROACH ----
-//  ★ ye TWO-POINTER nahi -- KADANE-family (running value + max update).
+//  ye TWO-POINTER nahi -- KADANE-family (running value + max update).
 //     (rigorous link: din-ba-din DIFFERENCE array [p[i]-p[i-1]] ka MAX SUBARRAY SUM = ye. wahi Kadane.)
-//  ★ IDEA (running-min): ek hi pass. do cheez track:
+//  IDEA (running-min): ek hi pass. do cheez track:
 //        mini      = ab tak ka sabse SASTA din (yahan kharida hota).
 //        maxProfit = ab tak ka best (aaj bech-te to kitna).
 //     har din:  mini = min(mini, prices[i]);   maxProfit = max(maxProfit, prices[i] - mini);
 //     (aaj becho -> aaj ka daam MINUS ab tak ka sabse sasta = aaj ka best profit.)
-//  ★ sell hamesha buy ke BAAD -> apne-aap sahi (mini hamesha CURRENT se pehle ka min).
-//  ★ maxProfit=INT_MIN safe: pehle hi din price-mini=0 -> 0 se kam kabhi return nahi (no-profit -> 0).
+//  sell hamesha buy ke BAAD -> apne-aap sahi (mini hamesha CURRENT se pehle ka min).
+//  maxProfit=INT_MIN safe: pehle hi din price-mini=0 -> 0 se kam kabhi return nahi (no-profit -> 0).
 //  O(n) time, O(1) space.
 // ============================================================
 

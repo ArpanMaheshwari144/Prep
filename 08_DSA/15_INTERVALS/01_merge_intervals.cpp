@@ -8,16 +8,16 @@
 //   [[1,4],[2,3]]                 -> [[1,4]]                    (2-3 andar hai)
 //   [[1,4]]                       -> [[1,4]]
 //
-//   ★ idea: SORT by start -> result me first daalo -> har next: overlap (curr.start <= last.end)?
+//   idea: SORT by start -> result me first daalo -> har next: overlap (curr.start <= last.end)?
 //     -> merge (last.end = max(last.end, curr.end)). warna naya push.
-//   ★ C++: sort(intervals.begin(), intervals.end()) -> default first-element (start) se sort (pair jaisa!).
+//   C++: sort(intervals.begin(), intervals.end()) -> default first-element (start) se sort (pair jaisa!).
 // ============================================================
 
 #include <bits/stdc++.h>
 using namespace std;
 
 // ---- APPROACH ----  (SORT by start -> ek pass, overlap merge)
-//  ★ har interval problem ka pehla step = SORT by start.  phir left-to-right:
+//  har interval problem ka pehla step = SORT by start.  phir left-to-right:
 //  1. sort(intervals) -> default FIRST-element (start) se sort (pair jaisa).
 //  2. ans me PEHLA interval daalo (baseline).
 //  3. har next interval [i]:
@@ -25,7 +25,7 @@ using namespace std;
 //          -> merge: ans.back()[1] = max(last end, curr end).   (start wahi, end bada wala)
 //       NO overlap -> ans me naya push.
 //  4. return ans.
-//  ★ ans.back() = ans ka LAST interval;  [0]=start, [1]=END. isliye ans.back()[1] = last-merged ka end.
+//  ans.back() = ans ka LAST interval;  [0]=start, [1]=END. isliye ans.back()[1] = last-merged ka end.
 // ============================================================
 vector<vector<int>> merge(vector<vector<int>> &intervals)
 {

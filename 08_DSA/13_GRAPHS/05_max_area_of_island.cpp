@@ -8,7 +8,7 @@
 //        1 0 0        ->  max area = 3
 //        0 0 1
 //
-//   ★ ISLANDS (LC-200) jaisa -- bas farak: count nahi, har island ka AREA nikaalo -> max track.
+//   ISLANDS (LC-200) jaisa -- bas farak: count nahi, har island ka AREA nikaalo -> max track.
 //     DFS ab VOID nahi -> AREA return kare (1 + 4-dir DFS ke returns).  [= tree recursion jo VALUE return karti]
 //
 //   Example:
@@ -18,14 +18,14 @@
 //     [[1]]                      -> 1
 // ============================================================
 // ---- APPROACH ----  (= ISLANDS ka cousin; DFS AREA return karti)
-//  ★ = ISLANDS (LC-200), bas farak: count nahi -> har island ka AREA -> MAX track.
+//  = ISLANDS (LC-200), bas farak: count nahi -> har island ka AREA -> MAX track.
 //  1. double-loop har cell: grid[i][j]==1? -> ans = max(ans, DFS(i,j)).
 //  2. DFS(i,j) AREA return kare (islands ki VOID-DFS se ek step upar):
 //       base   : out-of-bounds YA grid==0 -> return 0.   (0 area)
 //       sink   : grid[i][j]=0 (visited).
 //       return : 1 + (4-dir DFS ke returns ka SUM).       // khud(1) + chaaron taraf ka area
 //  3. koi island na ho -> ans==INT_MIN -> return 0.
-//  ★★ DFS-RETURN-VALUE = tree RECURSION jo VALUE lauti (max-depth: return 1+max(L,R); yahan 1 + 4-dir sum).
+//  DFS-RETURN-VALUE = tree RECURSION jo VALUE lauti (max-depth: return 1+max(L,R); yahan 1 + 4-dir sum).
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -33,13 +33,13 @@ using namespace std;
 
 int DFS(vector<vector<int>> &grid, int i, int j, int m, int n)
 {
-    // ★ out-of-bounds YA paani/visited ('0') -> ruk jao (yehi '0'-check island ko contain karta)
+    // out-of-bounds YA paani/visited ('0') -> ruk jao (yehi '0'-check island ko contain karta)
     if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == 0)
     {
         return 0;
     }
 
-    grid[i][j] = 0; // ★ SINK (visited) -- islands jaisa
+    grid[i][j] = 0; // SINK (visited) -- islands jaisa
     int neeche = DFS(grid, i + 1, j, m, n); // neeche wale hisse ka area
     int upar = DFS(grid, i - 1, j, m, n);   // upar
     int right = DFS(grid, i, j + 1, m, n);  // right

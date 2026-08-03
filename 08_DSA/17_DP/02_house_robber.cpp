@@ -9,26 +9,26 @@
 //   [5]           -> 5
 //   [2,1,1,2]     -> 4    (2 + 2)
 //
-//   ★ SOCH: har ghar i pe 2 CHOICE ->
+//   SOCH: har ghar i pe 2 CHOICE ->
 //       LOOT   ghar i : nums[i] + solve(i-2)   (i-1 skip karna padta, adjacent nahi)
 //       SKIP   ghar i :           solve(i-1)   (ghar i chhoda, i-1 available)
 //     => solve(i) = max( nums[i] + solve(i-2),  solve(i-1) )
-//   ★ base: i<0 -> 0  (ya i==0 -> nums[0]).
-//   ★ DP: overlap karta -> memoize (dp[i]!=-1 check + store), climbing-stairs jaisa.
+//   base: i<0 -> 0  (ya i==0 -> nums[0]).
+//   DP: overlap karta -> memoize (dp[i]!=-1 check + store), climbing-stairs jaisa.
 // ============================================================
 
 #include <bits/stdc++.h>
 using namespace std;
 
 // ---- APPROACH ----  (take/SKIP choice + max -- climbing-stairs se aage: har step pe CHOICE)
-//  ★ har ghar i pe 2 CHOICE:
+//  har ghar i pe 2 CHOICE:
 //     LOOT i : nums[i] + solve(i-2)   (adjacent nahi -> i-1 skip karna padta)
 //     SKIP i :          solve(i-1)    (ghar chhoda -> i-1 available)
 //     => solve(i) = max(LOOT, SKIP).
-//  ★ base: i<0 -> 0 · i==0 -> nums[0].
-//  ★ solve(n-1) call: n-1 = array ka LAST index (0..n-1) -> "last ghar tak max". ye TOP-DOWN hi hai (bottom-up nahi).
+//  base: i<0 -> 0 · i==0 -> nums[0].
+//  solve(n-1) call: n-1 = array ka LAST index (0..n-1) -> "last ghar tak max". ye TOP-DOWN hi hai (bottom-up nahi).
 //     (climbing me 'n' step-count 1..n tha; yahan array-index -> n-1. sirf naming ka farak.)
-//  ★ memo wahi 3-pattern: dp[] -1 init · dp[i]!=-1 -> return · compute + store.
+//  memo wahi 3-pattern: dp[] -1 init · dp[i]!=-1 -> return · compute + store.
 // ============================================================
 int solve(vector<int> &nums, int i, vector<int> &dp)
 {

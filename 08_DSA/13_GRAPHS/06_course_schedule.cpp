@@ -5,11 +5,11 @@
 //   [a, b]  matlab -> course 'a' lene ke liye 'b' PEHLE karna padega. (b -> a dependency)
 // Batao: kya SAARE courses finish kar sakte ho? (true / false)
 //
-//   ★ = TOPO SORT: valid order exist karta? = koi CYCLE (circular prereq) to nahi?
+//   = TOPO SORT: valid order exist karta? = koi CYCLE (circular prereq) to nahi?
 //     cycle ho (a->b->a) -> dono ek-dusre ka wait -> IMPOSSIBLE -> false.
 //     no cycle (DAG) -> valid order milta -> true.
 //
-//   ★ KAHN'S ALGO (BFS + indegree) -- jo tune recall kiya:
+//   KAHN'S ALGO (BFS + indegree) -- jo tune recall kiya:
 //     indegree[x] = x ke kitne prerequisites. indegree-0 = koi prereq nahi (abhi kar sakte).
 //     queue me saare indegree-0 -> pop -> uske neighbours ka indegree-- -> naya 0 hua? push.
 //     count processed nodes. count == numCourses? -> no cycle -> true. warna cycle -> false.
@@ -21,8 +21,8 @@
 //     numCourses=3, prereq=[[0,1],[1,2],[2,0]] -> false (cycle)
 // ============================================================
 // ---- APPROACH ----  (TOPO SORT = Kahn's algo: BFS + indegree; cycle-detect)
-//  ★ idea: "prerequisites + can-finish-ALL?" = TOPO SORT = koi CYCLE to nahi? (cycle = impossible = false)
-//  ★★ TEMPLATE (Kahn's -- ye poora topo-sort ka template, RATTA kar lo):
+//  idea: "prerequisites + can-finish-ALL?" = TOPO SORT = koi CYCLE to nahi? (cycle = impossible = false)
+//  TEMPLATE (Kahn's -- ye poora topo-sort ka template, RATTA kar lo):
 //  1. question deta -> MATRIX:  prerequisites = [[1,0],[2,1],[3,2]]   (har [a,b] = a lene ko b pehle -> edge u->v)
 //     usme se KHUD adj-list + indegree[] banao:
 //       for(it:prerequisites){ u=it[0], v=it[1];  adj[u].push_back(v);  indegree[v]++; }  // u->v; v ka ek prereq badha
@@ -30,10 +30,10 @@
 //  3. BFS: while(q) -> pop node -> topo me daalo (= count) ->
 //          for(nbr:adj[node]){ indegree[nbr]--; if(indegree[nbr]==0) q.push(nbr); }   // prereq pura -> ghatao; 0 hua -> push
 //  4. topo.size() == numCourses (saare process hue)? -> TRUE (no cycle) : FALSE (cycle).
-//  ★ indegree KYUN: indegree = "kitne prereq BACHE". 0 = ready-to-take. process karte-karte ghatate jaate.
+//  indegree KYUN: indegree = "kitne prereq BACHE". 0 = ready-to-take. process karte-karte ghatate jaate.
 //     CYCLE wale nodes ka indegree KABHI 0 nahi hota (ek-dusre pe atke) -> queue me aate hi nahi
 //     -> topo.size() < numCourses -> false. (yehi cycle-detection.)
-//  ★ = BFS + indegree (level-order jaisa queue; bas "indegree-0 pe push" + end-count-check).
+//  = BFS + indegree (level-order jaisa queue; bas "indegree-0 pe push" + end-count-check).
 // ============================================================
 
 #include <bits/stdc++.h>

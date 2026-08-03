@@ -9,9 +9,9 @@
 //   coins=[1],     amount=0   -> 0    (0 amount -> 0 coins)
 //   coins=[1,2,5], amount=7   -> 2    (5+2)
 //
-//   ★ SOCH: solve(amt) = har coin try -> 1 + solve(amt - coin) -> sabme se MIN.  reuse -> amt ghatao.
-//   ★ base: amt==0 -> 0 · amt<0 -> INVALID (INT_MAX).
-//   ★★ 3 TRAP (jahan phasa tha): (1) amt==0 base zaroori (2) best = INT_MAX se start (min dhoondh rahe)
+//   SOCH: solve(amt) = har coin try -> 1 + solve(amt - coin) -> sabme se MIN.  reuse -> amt ghatao.
+//   base: amt==0 -> 0 · amt<0 -> INVALID (INT_MAX).
+//   3 TRAP (jahan phasa tha): (1) amt==0 base zaroori (2) best = INT_MAX se start (min dhoondh rahe)
 //      (3) OVERFLOW: 1+solve(...) sirf tab jab solve != INT_MAX. end me: answer INT_MAX -> return -1.
 //   (dono form: take/not-take (index) YA for-loop (saare coins) -- jo comfortable ho)
 // ============================================================
@@ -20,19 +20,19 @@
 using namespace std;
 
 // ---- APPROACH ----  (TAKE / NOT-TAKE per coin index -- 2D dp[i][amount])
-//  ★ har coin index i pe 2 CHOICE:
+//  har coin index i pe 2 CHOICE:
 //     NOT-TAKE : coin i chhodo -> solve(i-1)              (agla coin, amount same)
 //     TAKE     : coin i lo     -> 1 + solve(i, amount-coins[i])   (i SAME = reuse, amount ghata)
 //     => min(notTake, take).
-//  ★ base: amount<0 -> INT_MAX (INVALID) · i<0 -> (amount==0 ? 0 : INT_MAX)   [koi coin nahi bacha]
+//  base: amount<0 -> INT_MAX (INVALID) · i<0 -> (amount==0 ? 0 : INT_MAX)   [koi coin nahi bacha]
 //     (i<0 base kyu, i==0 nahi: i==0 pe bhi coin[0] usable -> normal choice chalne do; base = sach me coin khatam = i<0.)
-//  ★★ INT_MAX ka role: "is raaste se ban nahi sakta" ka signal -> final min me apne-aap HAAR jaata.
-//  ★★ OVERFLOW guard: 1+solve(...) SIRF jab solve != INT_MAX (warna 1+INT_MAX overflow -> negative -> min galat).
-//  ★ caller: answer INT_MAX -> return -1 (na-ban-sake).  memo = 2D dp[i][amount] (state = i + amount).
+//  INT_MAX ka role: "is raaste se ban nahi sakta" ka signal -> final min me apne-aap HAAR jaata.
+//  OVERFLOW guard: 1+solve(...) SIRF jab solve != INT_MAX (warna 1+INT_MAX overflow -> negative -> min galat).
+//  caller: answer INT_MAX -> return -1 (na-ban-sake).  memo = 2D dp[i][amount] (state = i + amount).
 // ============================================================
 int solve(vector<int> &coins, int amount, int i, vector<vector<int>> &dp)
 {
-    // ★★ amount==0 vs amount<0 = THEEK utna, na kam na zyada:
+    // amount==0 vs amount<0 = THEEK utna, na kam na zyada:
     //    amount==0 -> THEEK bana (11 ko theek 11) -> SUCCESS -> 0 coins.
     //    amount<0  -> 0 ke NEECHE gaya (coin bada le liya, overshoot) -> INVALID (ban-na = theek 0 pe rukna, cross nahi).
     if (amount < 0)

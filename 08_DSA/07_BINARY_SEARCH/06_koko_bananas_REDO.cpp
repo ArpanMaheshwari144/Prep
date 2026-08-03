@@ -24,7 +24,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- ★ LEARNING (khud pakda copy-pen se, 10-Jul) ----
+// ---- LEARNING (khud pakda copy-pen se, 10-Jul) ----
 // GALTI: pehle likha  hours += ceil(piles[i] / mid);  -> ANSWER GALAT.
 // KYUN:  piles[i]/mid = INT / INT -> C++ pehle hi FLOOR kar deta (7/3 = 2)
 //        -> uske baad ceil() lagane se kuch nahi hota (ceil(2)=2). ceil BEKAAR.

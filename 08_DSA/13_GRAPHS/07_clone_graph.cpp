@@ -8,36 +8,36 @@
 //   Node: { int val; vector<Node*> neighbors; }
 //   val 1..N, har node ki val unique (1-indexed).
 //
-//   ★ twist: graph me CYCLE hoti (A-B, B-A) -> traverse karte same node baar-baar
+//   twist: graph me CYCLE hoti (A-B, B-A) -> traverse karte same node baar-baar
 //     clone na ho jaaye -> "kaunsa already clone hua + uska clone kya" yaad rakhna.
 //
-//   ★★★ SAAR: "mere GRAPH ke saare node map me clone bana (A->A', B->B'),
+//   SAAR: "mere GRAPH ke saare node map me clone bana (A->A', B->B'),
 //              phir un clones ko CONNECT kar (A'--B')." bas yehi kaam.
 // ============================================================
 // ---- APPROACH ----  (BFS + hashmap; DFS-recursion se bhi hota)
-//  ★ idea: map me har node ka clone BANAO (A->A', B->B') -> phir un clones ko CONNECT karo (sab map ke andar).
+//  idea: map me har node ka clone BANAO (A->A', B->B') -> phir un clones ko CONNECT karo (sab map ke andar).
 //     2 kaam:  (1) clone map me daalo   (2) neighbours ke clone se JODO (push_back).
 //     map DO kaam karta:  "ye node clone ho chuka?" (cycle-rok) + "uska clone ye raha" (jodne ko).
-//     ★ map ki VALUE hi clone hai -> mp[node] = us node ka clone khud.
+//     map ki VALUE hi clone hai -> mp[node] = us node ka clone khud.
 //
-//  ★ VISUAL (A-B graph):
+//  VISUAL (A-B graph):
 //        original:  A --- B
 //        (1) clone map me daalo:  mp = { A->A' ,  B->B' }    // naye node, abhi LOOSE (jude nahi)
 //        (2) clones ko JODO:      A' --- B'                  // mp[A]->neighbors += mp[B]
 //        => naya deep-copy graph  A'-B'  taiyaar
 //
-//  ★★ TEMPLATE (BFS):
+//  TEMPLATE (BFS):
 //  1. start node ka clone banao -> mp[node]=clone ; queue me START node (purana) push.
 //  2. while queue: curr nikalo -> uske HAR neighbour it pe:
 //        (a) agar it clone NAHI hua (mp me nahi) -> clone banao + mp[it]=clone + q.push(it).
 //        (b) mp[curr]->neighbors.push_back(mp[it]);   // JODO -- ye HAMESHA (naya ho ya purana)
 //  3. return mp[node].
 //
-//  ★ 2 alag kaam (yehi crux samjha):
+//  2 alag kaam (yehi crux samjha):
 //     - clone BANANA (map me daalna) = node EXIST karwa do (loose)
 //     - JODNA (push_back) = A'-B' ke beech edge -- bina iske clones jude nahi -> structure adhoora.
-//  ★ "clone naya banao SIRF jab map me nahi" -> cycle me duplicate/overwrite rok + queue infinite-rok.
-//  ★ = BFS (queue+map) ; DFS version = recursion + same map (return mp[node]).
+//  "clone naya banao SIRF jab map me nahi" -> cycle me duplicate/overwrite rok + queue infinite-rok.
+//  = BFS (queue+map) ; DFS version = recursion + same map (return mp[node]).
 // ============================================================
 
 #include <bits/stdc++.h>

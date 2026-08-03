@@ -17,7 +17,7 @@
 //     n=4, edges=[[0,1],[2,3]], src=0, dst=3               -> false
 // ============================================================
 // ---- APPROACH ----
-//  ★ INTUITION: source se BFS chalao -> jo reachable wo visit hote; destination visit ho gaya? -> rasta hai.
+//  INTUITION: source se BFS chalao -> jo reachable wo visit hote; destination visit ho gaya? -> rasta hai.
 //  1. edges -> adjacency list            (undirected -> adj[u]+=v, adj[v]+=u)
 //  2. queue me source push, vis[source] = true
 //  3. while queue non-empty:

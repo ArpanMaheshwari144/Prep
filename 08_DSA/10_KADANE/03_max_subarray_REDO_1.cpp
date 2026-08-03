@@ -9,7 +9,7 @@
 //   [-1]                     -> -1
 //   [-2,-3,-1,-5]            -> -1   (saare negative -> sabse bada single)
 //
-//   ★ Kadane: har index pe -> "yahan tak ka best" = max(khud, pichla-best + khud).
+//   Kadane: har index pe -> "yahan tak ka best" = max(khud, pichla-best + khud).
 //     global-max alag track. (running sum negative hua to reset = khud se shuru.)
 // ============================================================
 

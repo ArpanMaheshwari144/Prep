@@ -22,7 +22,7 @@
 //   [1]         -> true
 // ============================================================
 // ---- APPROACH ----  (= MAX-DEPTH code + thoda change; -1 = "imbalance mila" ka SIGNAL)
-//  ★ idea: alag "balanced?" pass NAHI. height nikaalte-nikaalte HI balance check kar lo -> O(n) ek pass.
+//  idea: alag "balanced?" pass NAHI. height nikaalte-nikaalte HI balance check kar lo -> O(n) ek pass.
 //     helper maxDepth(root) ab 2 kaam karta: (a) height return, YA (b) -1 agar kahin imbalance.
 //  1. base : null -> 0.
 //  2. left  = maxDepth(root->left);   left == -1 -> turant -1 return (neeche imbalance mil gaya, aage mat dekho).
@@ -30,7 +30,7 @@
 //  4. IS node pe check: abs(left - right) > 1 -> -1 return (yahan imbalance).
 //  5. warna balanced -> asli HEIGHT return: 1 + max(left, right).
 //  isBalanced: maxDepth(root) != -1 -> true.  (kahin -1 aaya = imbalance = false)
-//  ★★ -1 = SENTINEL/flag: "imbalance neeche mila" -> UPAR propagate -> ek node bhi galat -> poora false.
+//  -1 = SENTINEL/flag: "imbalance neeche mila" -> UPAR propagate -> ek node bhi galat -> poora false.
 //     O(n) single-pass (O(n^2) se behtar: har node pe alag-alag height nikaalne ki zaroorat nahi).
 // ============================================================
 
@@ -54,7 +54,7 @@ int maxDepth(TreeNode *root)
     }
 
     // --- DEBUG-PRINT (recursion samajhne ko; final solution me HATA dena) ---
-    // ★ enter-print null-check ke BAAD -- warna null node pe root->val = CRASH (segfault).
+    // enter-print null-check ke BAAD -- warna null node pe root->val = CRASH (segfault).
     cout << "enter : " << root->val << endl;
 
     int left = maxDepth(root->left);
@@ -70,12 +70,12 @@ int maxDepth(TreeNode *root)
 
     if (abs(left - right) > 1)
     {
-        return -1; // ★ IS node pe imbalance -> -1 (yehi wo "har node" check tha)
+        return -1; // IS node pe imbalance -> -1 (yehi wo "har node" check tha)
     }
 
     int result = 1 + max(left, right); // balanced -> asli HEIGHT (max-depth wala)
 
-    // ★ simple "return X" -- "enter X" ka MIRROR: kab node ANDAR aaya (enter) vs kab RETURN hua, jodi saaf dikhti.
+    // simple "return X" -- "enter X" ka MIRROR: kab node ANDAR aaya (enter) vs kab RETURN hua, jodi saaf dikhti.
     cout << "return : " << root->val << endl;
 
     // --- DEBUG-PRINT: left/right = neeche se aayi VALUES, result = HEIGHT jo UPAR ja rahi ---
@@ -123,7 +123,7 @@ int main()
 
     // TreeNode *c = new TreeNode(1);
 
-    // ★ TRAP TEST (d): ROOT balanced, par ANDAR ka node imbalanced -> answer FALSE.
+    // TRAP TEST (d): ROOT balanced, par ANDAR ka node imbalanced -> answer FALSE.
     //        1
     //       / \
     //      2   2
@@ -153,7 +153,7 @@ int main()
     // cout << isBalanced(b) << " (expected false)\n";
     // cout << isBalanced(c) << " (expected true)\n";
     // cout << isBalanced(nullptr) << " (expected true)\n";
-    // cout << isBalanced(d) << " (expected false)  <- ★ TRAP: root balanced par andar imbalanced\n";
+    // cout << isBalanced(d) << " (expected false)  <- TRAP: root balanced par andar imbalanced\n";
     // cout << isBalanced(e) << " (expected false)\n";
     return 0;
 }

@@ -20,9 +20,9 @@
 //  1. base : root null -> empty {}.
 //  2. queue me root push. while(!q.empty):
 //       sz = q.size()  [snapshot -- is level ke node].
-//       for i = 0..sz-1: front pop -> ★ if(i == sz-1) ans me daalo -> bachche(L,R) push.
-//  ★ WHY i==sz-1: FIFO me level LEFT-to-RIGHT dequeue hota -> aakhri (i=sz-1) = sabse right = daaye se dikhne wala.
-//  ★ 0-based: sz node -> index 0..sz-1 -> last = sz-1.  (left-side-view chahiye to i==0 le lena.)
+//       for i = 0..sz-1: front pop -> if(i == sz-1) ans me daalo -> bachche(L,R) push.
+//  WHY i==sz-1: FIFO me level LEFT-to-RIGHT dequeue hota -> aakhri (i=sz-1) = sabse right = daaye se dikhne wala.
+//  0-based: sz node -> index 0..sz-1 -> last = sz-1.  (left-side-view chahiye to i==0 le lena.)
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -46,13 +46,13 @@ vector<int> rightSideView(TreeNode *root)
     vector<int> ans;
     while (!q.empty())
     {
-        int sz = q.size(); // ★ SNAPSHOT: abhi queue me jitne node = is level ke saare (for-loop se pehle pakda)
+        int sz = q.size(); // SNAPSHOT: abhi queue me jitne node = is level ke saare (for-loop se pehle pakda)
         for (int i = 0; i < sz; i++)
         {
             TreeNode *curr = q.front(); // front node nikaalo (FIFO -> jo pehle aaya)
             q.pop();
 
-            // ★ har level ka LAST (right-most) node chahiye = daaye se jo dikhta. nodes LEFT-to-RIGHT nikalte hain.
+            // har level ka LAST (right-most) node chahiye = daaye se jo dikhta. nodes LEFT-to-RIGHT nikalte hain.
             //   2 tarah se socho (DONO sahi, same node):
             //     (a) queue-image, 1-based (human ginti): last = sz-va element (position sz).  <- Arpan wala frame
             //     (b) code, loop 'i' 0-based (i 0 se shuru): last = i == sz-1.                 <- code wala frame

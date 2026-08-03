@@ -15,14 +15,14 @@
 // ============================================================
 
 // ---- ARPAN KI APPROACH ----
-//  ★ NEXT-SMALLER ka SAME-TO-SAME code -- bas ek cheez badli: for-loop ULTA (right se left, i = n-1 -> 0).
+//  NEXT-SMALLER ka SAME-TO-SAME code -- bas ek cheez badli: for-loop ULTA (right se left, i = n-1 -> 0).
 //     (samajh: array ko PEECHE se dekhoge to "right ka next-smaller" ban jaata "left ka previous-smaller".)
 //  monotonic stack (index): loop i = n-1 down to 0:
 //     while(!empty && nums[st.top()] > nums[i]) -> pop + ans[top] = nums[i]  (curr i us popped ke LEFT me hai -> uska prev-smaller).
 //     phir push(i).
 //  stack me bache index -> left me koi chhota nahi -> -1 (ans init -1).
-//  ★ example {4,5,2,10,8}: peeche se -> 8,10 stack me; 2 aaya (chhota) -> 10 aur 8 dono ka prev-smaller = 2; ... -> [-1,4,-1,2,2].
-//  ★ strictly smaller (>) -> [2,2,2] -> saare -1.
+//  example {4,5,2,10,8}: peeche se -> 8,10 stack me; 2 aaya (chhota) -> 10 aur 8 dono ka prev-smaller = 2; ... -> [-1,4,-1,2,2].
+//  strictly smaller (>) -> [2,2,2] -> saare -1.
 
 #include <bits/stdc++.h>
 using namespace std;

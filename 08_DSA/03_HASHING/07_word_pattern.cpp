@@ -13,11 +13,11 @@
 //  ye ISOMORPHIC ka BHAI hai -- wahi 2-map BIJECTION. bas farak: wahan char<->char tha,
 //  yahan char <-> STRING (word). aur kuch nahi.
 //  s space-separated words ka hai -> stringstream(s) + while(ss >> word) se ek-ek word nikaalo.
-//  ★ pattern pe alag FOR-loop NAHI (words hi drive kar rahe hain) -> ek counter i rakho:
+//  pattern pe alag FOR-loop NAHI (words hi drive kar rahe hain) -> ek counter i rakho:
 //        if (i < pattern.size()) { ...mapping... i++ }   -> har word ke saath pattern[i] jodo.
 //  mapping = isomorphic wahi: clash-check dono taraf, warna mp1[pattern[i]]=word, mp2[word]=pattern[i].
 //  koi bhi taraf clash -> false.
-//  ★ EDGE (length-guard): pattern.size() aur WORDS ki ginti barabar honi chahiye. words ko 'j' se gino;
+//  EDGE (length-guard): pattern.size() aur WORDS ki ginti barabar honi chahiye. words ko 'j' se gino;
 //     end me pattern.size()==j -> true, warna false. (warna "a","dog cat" jaisa galat true de deta -- extra word chup-chaap skip.)
 
 //
@@ -48,7 +48,7 @@ bool wordPattern(string pattern, string s) // "abba", "dog cat cat dog"   -> 1
         if (i < pattern.size())
         {
             // ISOMORPHIC CODE (wahi 2-map clash-check, bas char<->WORD)
-            // ★ || KYUN (&& nahi): do taraf ka clash-check -- mp1 (char->word) side AUR mp2 (word->char) side.
+            // || KYUN (&& nahi): do taraf ka clash-check -- mp1 (char->word) side AUR mp2 (word->char) side.
             //   in dono me se KOI BHI EK clash mila -> galat -> return false. isliye OR (||).
             //   (&& hota to DONO taraf ek saath clash chahiye hota -> galat; ek hi taraf ka clash bhi false hona chahiye.)
             if (!mp1.empty() && !mp2.empty() &&

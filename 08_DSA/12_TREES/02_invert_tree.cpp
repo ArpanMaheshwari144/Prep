@@ -15,14 +15,14 @@
 // ============================================================
 //
 // ---- APPROACH ----
-//  ★ tree = RECURSION. kaam = children SWAP.
+//  tree = RECURSION. kaam = children SWAP.
 //  1. BASE: root null -> return null
 //  2. invertTree(root->left)             -> left subtree invert
 //  3. invertTree(root->right)            -> right subtree invert
 //  4. swap(root->left, root->right)      -> children POINTERS swap
 //  5. return root
 //
-//  ★★ SWAP kise? -> POINTER (root->left, root->right), NA value (->val). ye samajh:
+//  SWAP kise? -> POINTER (root->left, root->right), NA value (->val). ye samajh:
 //     recurse ke baad -> root->left = left-subtree ka root · root->right = right-subtree ka root.
 //     -- POINTER swap: dono pointers palat do -> poora LEFT-subtree RIGHT me chala jaata, RIGHT-subtree LEFT me.
 //        = poori BRANCH side badli. SAHI (invert = subtree mirror).
@@ -30,7 +30,7 @@
 //        + LEAF pe CRASH kyun: leaf ke DONO bachche NULL hote. value-swap ko bachcho ka
 //          ->val chahiye -> par NULL ka ->val nahi hota -> null pointer access -> SEGFAULT.
 //     yaad: invert = poori BRANCH ghumao (pointer), sirf number ghumana nahi (value).
-//  ★ ORDER free: swap-first ya recurse-first -- dono same (swap + recurse INDEPENDENT,
+//  ORDER free: swap-first ya recurse-first -- dono same (swap + recurse INDEPENDENT,
 //    swap ko recursion-result nahi chahiye).
 // ============================================================
 

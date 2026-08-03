@@ -2,17 +2,17 @@
 // COMBINATION SUM — (LeetCode 39, Medium)   [BACKTRACKING #4 · reuse allowed + target]
 // ============================================================
 // candidates[] (distinct positive). SAARE unique combinations lautao jinka SUM == target.
-// ★ SAME number UNLIMITED baar use kar sakte (reuse allowed).
+// SAME number UNLIMITED baar use kar sakte (reuse allowed).
 //
 //   candidates=[2,3,6,7], target=7  ->  [[2,2,3],[7]]
 //   candidates=[2,3,5],   target=8  ->  [[2,2,2,2],[2,3,3],[3,5]]
 //   candidates=[2],       target=1  ->  []            (nahi ban sakta)
 //   candidates=[2],       target=4  ->  [[2,2]]
 //
-//   ★ combinations (LC-77) se FARAK: yahan REUSE allowed -> recurse me 'i' pass karo (i+1 NAHI)
+//   combinations (LC-77) se FARAK: yahan REUSE allowed -> recurse me 'i' pass karo (i+1 NAHI)
 //     -> same element dobara aa sake.
-//   ★ base: target==0 -> ek valid combo -> record + return.  target<0 -> return (prune, aage koi faida nahi).
-//   ★ CHOOSE (push cand[i], target-cand[i]) -> EXPLORE (start = i, reuse) -> UN-CHOOSE (pop).
+//   base: target==0 -> ek valid combo -> record + return.  target<0 -> return (prune, aage koi faida nahi).
+//   CHOOSE (push cand[i], target-cand[i]) -> EXPLORE (start = i, reuse) -> UN-CHOOSE (pop).
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -30,7 +30,7 @@ using namespace std;
 //     base: target<0 -> return ; target==0 -> record + return.
 //     for(i=start..n): push cand[i] -> solve2(i = REUSE, target-cand[i]) -> pop.
 //
-//  ★ FARAK: form1 = element pe liya/chhoda (2 call) · form2 = loop se har candidate branch. dono me reuse (index/i SAME).
+//  FARAK: form1 = element pe liya/chhoda (2 call) · form2 = loop se har candidate branch. dono me reuse (index/i SAME).
 // same subsets jaisa code, bas target aa gaya -- ab aur kuch nahi
 // FORM 1 — INCLUDE/EXCLUDE (2-branch): har element pe liya(index same=reuse) / chhoda(index+1).
 void solve(vector<int> &candidates, int target, vector<vector<int>> &ans, int index, vector<int> &temp)

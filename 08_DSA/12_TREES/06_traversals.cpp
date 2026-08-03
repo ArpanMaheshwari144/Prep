@@ -7,7 +7,7 @@
 //   PREORDER   : VISIT -> left -> right      (root PEHLE)
 //   INORDER    : left -> VISIT -> right      (root BEECH me)
 //   POSTORDER  : left -> right -> VISIT      (root BAAD me)
-// ★ recurse dono HAMESHA same -- sirf VISIT-position badalti. (yehi "order matters", jaise diameter.)
+// recurse dono HAMESHA same -- sirf VISIT-position badalti. (yehi "order matters", jaise diameter.)
 //
 //        1
 //       / \

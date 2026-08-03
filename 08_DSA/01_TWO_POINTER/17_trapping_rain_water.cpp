@@ -18,33 +18,33 @@
 // ============================================================
 
 // ---- ARPAN KI APPROACH ----
-//  ★ ye question DEKHNE/bolne me hard lagta, par soch nikaalne ke baad kaafi easy. (honest: is variation ko
+//  ye question DEKHNE/bolne me hard lagta, par soch nikaalne ke baad kaafi easy. (honest: is variation ko
 //     interview me PEHLI baar dekh ke khud reach karna mushkil -- isliye ISE pehle se pata hona = edge.)
-//  ★ CORE insight (copy-pen se nikla): kisi EK bar `i` ke upar kitna paani rukega?
+//  CORE insight (copy-pen se nikla): kisi EK bar `i` ke upar kitna paani rukega?
 //     = min(uske LEFT ka sabse ooncha, uske RIGHT ka sabse ooncha) - height[i].
 //     (kyun min: chhoti wali side se paani BAH jaata -- {3,0,2} me beech pe 2 hi rukega, 3 nahi.)
-//  ★ har bar ke liye left-max/right-max baar-baar scan = O(n²). isliye PEHLE SE nikaal ke rakho (prefix jaisa):
+//  har bar ke liye left-max/right-max baar-baar scan = O(n²). isliye PEHLE SE nikaal ke rakho (prefix jaisa):
 //     leftMax[i]  = 0..i tak ka max -> ek pass AAGE se.   leftMax[0]=height[0] (shuru me set, warna dikkat).
 //     rightMax[i] = i..n-1 tak ka max -> ek pass PEECHE se. rightMax[n-1]=height[n-1] (shuru me set).
-//  ★ final: ans += min(leftMax[i], rightMax[i]) - height[i]  (har i pe).  -> O(n) time, O(n) space.
-//  ★ EDGE: empty array -> return 0.
+//  final: ans += min(leftMax[i], rightMax[i]) - height[i]  (har i pe).  -> O(n) time, O(n) space.
+//  EDGE: empty array -> return 0.
 //  example {2,0,3}: leftMax=2,2,3 · rightMax=3,3,3 -> (2-2)+(2-0)+(3-3) = 2. sahi.
 
 // ---- ARPAN KI APPROACH (2nd = TWO-POINTER, O(1) space) ----
-//  ★ upar wale O(n)-space (leftMax[]/rightMax[] arrays) ka OPTIMIZED version -- arrays ki zaroorat NAHI,
+//  upar wale O(n)-space (leftMax[]/rightMax[] arrays) ka OPTIMIZED version -- arrays ki zaroorat NAHI,
 //     bas 2 variable leftMax/rightMax track karo. (ye version thoda tricky -- proof samajhna zaroori.)
 //  setup: left=0, right=n-1. leftMax=height[0], rightMax=height[n-1] (shuru me set -- important).
 //  loop while(left<right):
 //     if (leftMax <= rightMax):   -- left side ki max chhoti/barabar
-//         ★ KYUN SAFE: right me rightMax (>= leftMax) already khada = wall. to left bar ka paani sirf
+//         KYUN SAFE: right me rightMax (>= leftMax) already khada = wall. to left bar ka paani sirf
 //            leftMax se limit hoga (right se nahi) -> abhi PAKKA commit kar sakte, right pura dekhe bina.
-//         leftMax = max(leftMax, height[left]);   (★ REFRESH PEHLE -- naya bar bada ho to wall ban jaye)
+//         leftMax = max(leftMax, height[left]);   (REFRESH PEHLE -- naya bar bada ho to wall ban jaye)
 //         ans += leftMax - height[left];          (refresh ke baad add -> agar naya bar sabse ooncha to 0 add, negative nahi)
 //         left++;
 //     else:  (right side chhoti) -> SAME ulta: rightMax=max(..,height[right]); ans += rightMax-height[right]; right--;
-//  ★ ORDER TRAP (yahi atka tha): REFRESH pehle, ADD baad me. warna naya bar leftMax se bada hone pe
+//  ORDER TRAP (yahi atka tha): REFRESH pehle, ADD baad me. warna naya bar leftMax se bada hone pe
 //     "add-first" NEGATIVE de deta (ans += 4-6). max() se bada wala bacha rehta -> negative nahi aata.
-//  ★ ek comparison (leftMax<=rightMax) se decide "konsi side process" -> har bar ek hi pointer chalta -> O(n) time, O(1) space.
+//  ek comparison (leftMax<=rightMax) se decide "konsi side process" -> har bar ek hi pointer chalta -> O(n) time, O(1) space.
 
 #include <bits/stdc++.h>
 using namespace std;

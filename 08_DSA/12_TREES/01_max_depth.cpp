@@ -17,7 +17,7 @@
 // ============================================================
 //
 // ---- APPROACH ----
-//  ★ tree = RECURSION (har node khud ko call karta).
+//  tree = RECURSION (har node khud ko call karta).
 //  1. BASE: root null -> return 0            (recursion yahin rukti)
 //  2. left  = maxDepth(root->left)           -> left subtree ki depth
 //  3. right = maxDepth(root->right)          -> right subtree ki depth

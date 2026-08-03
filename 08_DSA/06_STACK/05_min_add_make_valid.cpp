@@ -15,7 +15,7 @@
 //  else (')' aaye) to:
 //    - close_needed > 0 -> close_needed-- (match ho gaya). bas.
 //    - warna (close_needed == 0) -> open_needed++.
-//  (★ open_needed++ ELSE me hai -> match wale case me chalta hi nahi -> continue ki zaroorat NAHI.)
+//  (open_needed++ ELSE me hai -> match wale case me chalta hi nahi -> continue ki zaroorat NAHI.)
 //  answer = open_needed + close_needed (jo ')' pehle chahiye the + jo '(' aakhir me unmatched bache).
 //
 // Tests (s -> expected):

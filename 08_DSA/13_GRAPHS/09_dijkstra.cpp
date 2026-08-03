@@ -5,11 +5,11 @@
 // source diya. Return: har node tak ka SHORTEST total-weight distance (vector<int>).
 //   unreachable node -> INF.
 //
-//   ★ SAAR: BFS + min-heap + dist[]. hamesha sabse-chhoti-dist node uthao ->
+//   SAAR: BFS + min-heap + dist[]. hamesha sabse-chhoti-dist node uthao ->
 //           uske neighbours RELAX karo (dist[node]+w < dist[nbr] -> update+push).
 //
 //   ---- APPROACH ----  (= BFS TEMPLATE, bas 2 cheez swap + relaxation)
-//   ★★ DIJKSTRA = BFS ka WEIGHTED bhai. wahi template, do swap:
+//   DIJKSTRA = BFS ka WEIGHTED bhai. wahi template, do swap:
 //        queue      -> MIN-HEAP (priority_queue, chhoti dist pehle)
 //        visited[]  -> dist[]   (har node tak abhi-tak ka shortest; init INF, src=0)
 //      + naya = RELAXATION.
@@ -26,13 +26,13 @@
 //           }
 //        }
 //     }  return dist;
-//   ★ RELAX = "dheela karo": naya rasta (d+w) purane dist[nbr] se kam? -> update.
-//     ★★ w = it.second (EDGE ka weight), na ki dist[node]. -- ye bug HAND-TRACE me pakda tha!
-//   ★ min-heap KYUN (queue nahi): weighted me "kam edges" != "kam weight" -> greedily hamesha
+//   RELAX = "dheela karo": naya rasta (d+w) purane dist[nbr] se kam? -> update.
+//     w = it.second (EDGE ka weight), na ki dist[node]. -- ye bug HAND-TRACE me pakda tha!
+//   min-heap KYUN (queue nahi): weighted me "kam edges" != "kam weight" -> greedily hamesha
 //     sabse-sasti-abhi-tak node uthani padti -> min-heap deta.
 //
-//   ★ adj-list weighted: adj[u] = list of {neighbour, weight}   -> pair<int,int>
-//   ★ MIN-HEAP syntax (C++): sabse chhoti dist upar chahiye ->
+//   adj-list weighted: adj[u] = list of {neighbour, weight}   -> pair<int,int>
+//   MIN-HEAP syntax (C++): sabse chhoti dist upar chahiye ->
 //       priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
 //       (pair = {dist, node}. greater<> = min-heap. default priority_queue MAX-heap hota.)
 // ============================================================
@@ -76,7 +76,7 @@ vector<int> dijkstra(int n, vector<vector<int>> &edges, int src)
 
         for (auto &it : adj[node]) // RELAX: har neighbour {nbr=it.first, w=it.second}
         {
-            // ★ w = it.second (EDGE ka weight) -- ye HAND-TRACE me pakda (dist[node] nahi)
+            // w = it.second (EDGE ka weight) -- ye HAND-TRACE me pakda (dist[node] nahi)
             if (wt + it.second < dist[it.first]) // naya rasta chhota? -> dheela karo
             {
                 dist[it.first] = wt + it.second;

@@ -3,7 +3,7 @@
 // ============================================================
 // BST diya + integer k. k-va SABSE CHHOTA element lautao (1-indexed).
 //
-// ★ BST (Binary Search Tree) PROPERTY (ye YAAD rakh -- BST family ka dil):
+// BST (Binary Search Tree) PROPERTY (ye YAAD rakh -- BST family ka dil):
 //     har node pe -> LEFT subtree ke SAARE value < node->val < RIGHT subtree ke SAARE value.
 //     (yani left me chhote, right me bade. har node pe.)
 //
@@ -27,11 +27,11 @@
 //   [1]             k=1 -> 1
 // ============================================================
 // ---- APPROACH ----  (BST family -- naya mechanic: BST ka INORDER = SORTED)
-//  ★★ KEY: BST ko INORDER (left -> node -> right) traverse karo -> values ASCENDING (sorted) order me aati.
+//  KEY: BST ko INORDER (left -> node -> right) traverse karo -> values ASCENDING (sorted) order me aati.
 //     kyunki har node pe left < node < right -> inorder pehle poora LEFT (chhote), phir NODE, phir RIGHT (bade).
 //  1. inorder helper: left recurse -> push node->val -> right recurse.  (values sorted vector me aa jaate.)
 //  2. kthSmallest: inorder se sorted list banao -> return list[k - 1].
-//  ★ k-1 TRAP: k 1-based (1st smallest = k=1), vector 0-based -> index = k-1.
+//  k-1 TRAP: k 1-based (1st smallest = k=1), vector 0-based -> index = k-1.
 //  (optimize: k-va pe EARLY-STOP kar sakte -- counter rakho, k-va node pe ruk jao; par collect-all gate-level theek.)
 // ============================================================
 

@@ -10,7 +10,7 @@
 //   [-3,-1,-1]        -> 3
 //   [5]               -> 5
 //
-//   ★ trick (halka yaad?): neg×neg = BADA -> MIN bhi track (sirf max se nahi banega).
+//   trick (halka yaad?): neg×neg = BADA -> MIN bhi track (sirf max se nahi banega).
 //     max_prod + min_prod dono chalao; freeze temp se (min purane max/min se nikaalo).
 //     atke to peek -- koi guilt nahi.
 // ============================================================

@@ -23,7 +23,7 @@
 //  isSameTree(p, q)  [ise reuse kiya, par CROSS ke saath = mirror-compare]:
 //     base: dono null->true · ek null->false · val alag->false
 //     warna CROSS recurse:  isSameTree(p->left, q->right) && isSameTree(p->right, q->left)
-//  ★ CROSS = mirror (p ka LEFT <-> q ka RIGHT; p ka RIGHT <-> q ka LEFT). yehi Same-Tree se EK change.
+//  CROSS = mirror (p ka LEFT <-> q ka RIGHT; p ka RIGHT <-> q ka LEFT). yehi Same-Tree se EK change.
 // ============================================================
 
 #include <bits/stdc++.h>

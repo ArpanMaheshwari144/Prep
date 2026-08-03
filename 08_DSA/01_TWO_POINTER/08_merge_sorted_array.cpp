@@ -9,9 +9,9 @@
 
 // ---- ARPAN KI APPROACH ----
 //  PEECHE se bharo (squares-sorted jaisa). 3 pointer: i=m-1 (nums1 last valid), j=n-1 (nums2 last),
-//  k=m+n-1 (bharne ki jagah, end). ★ galti bachi: k = m+n-1 hai, m*n-1 NAHI.
+//  k=m+n-1 (bharne ki jagah, end). galti bachi: k = m+n-1 hai, m*n-1 NAHI.
 //  while(i>=0 && j>=0): dono value compare -> BADA nums1[k] me daalo -> us pointer + k ghatao.
-//  ★ && lagao (|| NAHI): jab dono compare kar rahe to DONO valid hone chahiye. || lagate to ek khatam
+//  && lagao (|| NAHI): jab dono compare kar rahe to DONO valid hone chahiye. || lagate to ek khatam
 //    hone par doosra kis se compare karta? -> galat. isliye &&; aur ek khatam wala case NEECHE ke
 //    do while-loops me handle (jo bacha use seedha bhar do). (ye pattern kai merge-Q me: main-loop && + tail-loops)
 

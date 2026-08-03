@@ -5,24 +5,24 @@
 //
 //   [1,2,5], 11  -> 3   ·   [2], 3 -> -1   ·   [1], 0 -> 0   ·   [1,2,5], 7 -> 2   ·   [2,5,10,1], 27 -> 4
 //
-//   ★ FOR-LOOP form: solve(amt) = har coin loop me try -> 1 + solve(amt - coin) -> sabme se MIN.
+//   FOR-LOOP form: solve(amt) = har coin loop me try -> 1 + solve(amt - coin) -> sabme se MIN.
 //     yahan 'i' index ki zaroorat nahi -> 1D dp[amount] kaafi.
-//   ★ base: amt==0 -> 0 · amt<0 -> INVALID (INT_MAX).
-//   ★ overflow: 1+solve(...) sirf jab solve != INT_MAX. end: answer INT_MAX -> -1.
+//   base: amt==0 -> 0 · amt<0 -> INVALID (INT_MAX).
+//   overflow: 1+solve(...) sirf jab solve != INT_MAX. end: answer INT_MAX -> -1.
 // ============================================================
 
 #include <bits/stdc++.h>
 using namespace std;
 
 // ---- APPROACH ----  (FOR-LOOP form -- SAME idea, bas likhawat alag)
-//  ★ take/not-take se FARAK: yahan SIRF "TAKE" hai -> for-loop me har coin lo -> min. NOT-TAKE alag likhne
+//  take/not-take se FARAK: yahan SIRF "TAKE" hai -> for-loop me har coin lo -> min. NOT-TAKE alag likhne
 //     ki zaroorat NAHI -- wo apne-aap ho jaata (backtracking ke for-loop/start-loop form jaisa: choice loop me).
 //     [take/not-take me index i pe 2 branch; for-loop me saare coins loop -> "kaunsa coin lein" khud choose hota.]
-//  ★ solve(amt) = for coin in coins -> min(1 + solve(amt - coin)).  'i' index ki zaroorat NAHI -> 1D dp[amount].
-//  ★ base: amount<0 -> INT_MAX (INVALID) · amount==0 -> 0.
-//  ★★ INT_MAX = "ban nahi sakta" signal -> min me apne-aap haar jaata.
-//  ★★ OVERFLOW guard: 1+solve(...) SIRF jab solve != INT_MAX (warna 1+INT_MAX overflow).
-//  ★ caller: answer INT_MAX -> -1.
+//  solve(amt) = for coin in coins -> min(1 + solve(amt - coin)).  'i' index ki zaroorat NAHI -> 1D dp[amount].
+//  base: amount<0 -> INT_MAX (INVALID) · amount==0 -> 0.
+//  INT_MAX = "ban nahi sakta" signal -> min me apne-aap haar jaata.
+//  OVERFLOW guard: 1+solve(...) SIRF jab solve != INT_MAX (warna 1+INT_MAX overflow).
+//  caller: answer INT_MAX -> -1.
 // ============================================================
 int solve(vector<int> &coins, int amount, int i, vector<int> &dp)
 {

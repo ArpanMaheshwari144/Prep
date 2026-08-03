@@ -8,12 +8,12 @@
 //  mid ko HIGH se compare karo (na ki kisi target se -- yahan koi target hai hi nahi, khud min DHOONDNA hai).
 //  nums[mid] > nums[high] -> min mid ke DAAYE hai -> low = mid+1 (mid pakka min nahi -> reject).
 //  else -> min mid pe YA mid ke BAAYE ho sakta.
-//     ★★ yahan high = mid (NOT mid-1) -- kyunki MID KHUD MIN HO SAKTA hai (candidate) -> use discard mat karo.
+//     yahan high = mid (NOT mid-1) -- kyunki MID KHUD MIN HO SAKTA hai (candidate) -> use discard mat karo.
 //     ye wahi find-peak wala rule: mid CANDIDATE -> high=mid + while(low<high) · mid REJECT -> high=mid-1 + while(low<=high).
-//     ★ target-wale BS me mid ko target se compare karke reject karte the (high=mid-1); yahan target nahi ->
+//     target-wale BS me mid ko target se compare karke reject karte the (high=mid-1); yahan target nahi ->
 //        mid khud answer ho sakta -> aise "khud-answer-dhoondh" wale questions me high=mid + while(low<high).
 //  loop khatam pe low sabse chhote pe ruk jaata -> return nums[low].
-//  ★ TRAP jo pakda: [3,1,2] -- high=mid-1 karte to mid(=1, khud min) hat jaata -> galat (3 aata). high=mid se bacha.
+//  TRAP jo pakda: [3,1,2] -- high=mid-1 karte to mid(=1, khud min) hat jaata -> galat (3 aata). high=mid se bacha.
 //
 // Tests (// expected):
 //   [3,4,5,1,2]        -> 1
@@ -21,7 +21,7 @@
 //   [11,13,15,17]      -> 11   (rotate nahi hua)
 //   [2,1]              -> 1
 //   [1]                -> 1
-//   [3,1,2]            -> 1    (★ ye pehle FAIL hota tha high=mid-1 se; high=mid fix ke baad sahi)
+//   [3,1,2]            -> 1    (ye pehle FAIL hota tha high=mid-1 se; high=mid fix ke baad sahi)
 //   [5,1,2,3,4]        -> 1    (pivot shuru ke paas)
 //   [2,3,4,5,1]        -> 1    (pivot end pe)
 // ============================================================

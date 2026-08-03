@@ -10,7 +10,7 @@
 //     -> 2 islands     -> 1 island (center se sab jude)
 //     ({(0,0),(0,1),(1,0)} + {(2,2)})
 //
-//   ★ SOCH: grid bhi ek GRAPH hai -- har cell = node; uske 4 padosi (up/down/left/right) = edges.
+//   SOCH: grid bhi ek GRAPH hai -- har cell = node; uske 4 padosi (up/down/left/right) = edges.
 //           (adjacency-list banane ki zaroorat nahi -- neighbours = row/col +-1 se mil jaate.)
 //
 //   Example:
@@ -20,16 +20,16 @@
 //     [[1]]                       -> 1
 // ============================================================
 // ---- APPROACH ----  (grid = GRAPH; DFS se island sink + count)
-//  ★ INTUITION: har cell = node, 4 padosi (up/down/left/right) = edges. har naye land se DFS -> poora island dubo -> count++.
+//  INTUITION: har cell = node, 4 padosi (up/down/left/right) = edges. har naye land se DFS -> poora island dubo -> count++.
 //  1. double-loop har cell (i,j) pe ghoomo
 //  2. cell == '1' (naya land)? -> count++  +  DFS(i,j)      (DFS poora island sink karegi)
 //  3. return count
 //
 //  DFS(i,j) -- ek island ko poora '0' kar deta:
 //     base    : out-of-bounds YA cell == '0' (paani/visited) -> return
-//     mark    : grid[i][j] = '0'                 (★ SINK = visited)
+//     mark    : grid[i][j] = '0'                 (SINK = visited)
 //     recurse : 4 direction -> (i+1,j) (i-1,j) (i,j+1) (i,j-1)
-//  ★★ TRAP (jo tune pakda): DFS base me '0'-check ZAROORI -- warna paani pe nahi rukta, poora grid kha jaata.
+//  TRAP (jo tune pakda): DFS base me '0'-check ZAROORI -- warna paani pe nahi rukta, poora grid kha jaata.
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -37,13 +37,13 @@ using namespace std;
 
 void DFS(vector<vector<char>> &grid, int i, int j, int m, int n)
 {
-    // ★ out-of-bounds YA paani/visited ('0') -> ruk jao (yehi '0'-check island ko contain karta)
+    // out-of-bounds YA paani/visited ('0') -> ruk jao (yehi '0'-check island ko contain karta)
     if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == '0')
     {
         return;
     }
 
-    grid[i][j] = '0'; // ★ SINK -> is land ko visited mark (dobara na gino)
+    grid[i][j] = '0'; // SINK -> is land ko visited mark (dobara na gino)
     DFS(grid, i + 1, j, m, n); // neeche
     DFS(grid, i - 1, j, m, n); // upar
     DFS(grid, i, j + 1, m, n); // right

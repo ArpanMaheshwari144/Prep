@@ -18,13 +18,13 @@
 //     n=1, edges=[]                          -> 1
 // ============================================================
 // ---- APPROACH ----  (BFS + visited + outer-loop count)  = Islands ka adj-list version
-//  ★ idea: har UNVISITED node = ek naya group -> count++ + BFS se poora group mark. outer-loop = disconnected cover.
+//  idea: har UNVISITED node = ek naya group -> count++ + BFS se poora group mark. outer-loop = disconnected cover.
 //  1. edges -> adjacency list (undirected -> adj[u]+=v, adj[v]+=u).
 //  2. for i = 0..n-1 -> agar vis[i] NAHI:
 //       a. count++  +  q.push(i) + mark
 //       b. BFS: while queue -> pop node -> uske unvisited neighbours mark + push
 //  3. return count.
-//  ★ TRAP (jo tune pakda): count++ AUR BFS dono if(!vis[i]) ke ANDAR -- warna har node gin leta (= n).
+//  TRAP (jo tune pakda): count++ AUR BFS dono if(!vis[i]) ke ANDAR -- warna har node gin leta (= n).
 //    isolated node (n=4 no-edge -> 4) sahi tabhi jab har unvisited node KHUD ek naya group gine. [3rd/4th case]
 // ============================================================
 
@@ -48,7 +48,7 @@ int countComponents(int n, vector<vector<int>> &edges)
     int count = 0;
     for (int i = 0; i < n; i++) // har node scan (outer-loop -> disconnected groups bhi cover)
     {
-        if (!vis[i]) // ★ NAYA (unvisited) node -> naya group. sab kuch iske ANDAR (warna har node gin jaata = n)
+        if (!vis[i]) // NAYA (unvisited) node -> naya group. sab kuch iske ANDAR (warna har node gin jaata = n)
         {
             q.push(i);
             vis[i] = true;

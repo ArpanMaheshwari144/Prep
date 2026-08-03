@@ -7,7 +7,7 @@
 //   [0]      ->  [], [0]
 //   [1,2]    ->  [], [1], [2], [1,2]
 //
-//   ★ start-loop idea (include/exclude se alag likhawat):
+//   start-loop idea (include/exclude se alag likhawat):
 //     - HAR node pe current temp ans me daalo (alag base-case nahi -- har node = ek subset)
 //     - for(i = start .. n-1):  CHOOSE (push nums[i]) -> EXPLORE (solve i+1) -> UN-CHOOSE (pop)
 //     - 'start' aage badhta (i+1) -> peeche wale dobara na aaye
@@ -17,15 +17,15 @@
 using namespace std;
 
 // ---- APPROACH ----  (START-LOOP / for-loop form — include/exclude ka doosra roop)
-//  ★ HAR node pe current temp = ek subset -> seedha ans me daalo (alag base-case/return NAHI).
+//  HAR node pe current temp = ek subset -> seedha ans me daalo (alag base-case/return NAHI).
 //  1. ans.push_back(temp)  -> har call pe current subset record.
 //  2. for(i = index .. n-1):
 //        CHOOSE   -> temp.push_back(nums[i])
 //        EXPLORE  -> solve(i+1)   (i+1 -> agla element aage se, peeche wale dobara nahi)
 //        UN-CHOOSE-> temp.pop_back()   (backtrack)
-//  ★ EXPLICIT base-case ki zaroorat NAHI: jab index==n -> loop chalega hi nahi (body skip) -> recursion khud ruk jaata.
+//  EXPLICIT base-case ki zaroorat NAHI: jab index==n -> loop chalega hi nahi (body skip) -> recursion khud ruk jaata.
 //     (include/exclude form me alag 'if(index==size) return' likhna padta; yahan loop hi terminate karta.)
-//  ★ temp by-REFERENCE (bahar bana) = shared path; push/pop usi pe -> backtrack. 2^n subsets.
+//  temp by-REFERENCE (bahar bana) = shared path; push/pop usi pe -> backtrack. 2^n subsets.
 // ============================================================
 void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp)
 {

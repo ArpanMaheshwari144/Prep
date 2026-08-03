@@ -9,7 +9,7 @@
 // ---- ARPAN KI APPROACH ----
 //  same SW pattern: expand -> condition ke hisab se shrink -> ans, j++. bas twist thoda:
 //  prod track karo (prod *= nums[j]). agar prod >= k -> window se left hatao: prod /= nums[i], i++.
-//  ★ COUNT ka trick (yahi naya): count kaise? copy-pen pe i,j trace karo -> jab window valid ho,
+//  COUNT ka trick (yahi naya): count kaise? copy-pen pe i,j trace karo -> jab window valid ho,
 //     us j pe END hone wale saare valid subarrays ki ginti = (j - i + 1) = window size.
 //     -> count += (j - i + 1). ye trick BAHUT questions me kaam aata (subarray-COUNT wale).
 

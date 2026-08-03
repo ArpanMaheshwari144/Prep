@@ -7,7 +7,7 @@
 //   [0,1]    ->  [0,1],[1,0]
 //   [1]      ->  [1]
 //
-//   ★ used[] track + loop 0-se (start nahi) + base temp.size()==n.
+//   used[] track + loop 0-se (start nahi) + base temp.size()==n.
 //     CHOOSE: used[i]=true, push -> EXPLORE -> UN-CHOOSE: pop, used[i]=false.
 // ============================================================
 

@@ -15,9 +15,9 @@
 //  --- version 1 (BEKAAR wali -- chalti hai par verbose) ---
 //  PASS-1 (LEFT skip): two-pointer chalao. mismatch aaye to FLAG se ek baar LEFT skip (left++) allowed.
 //    agar ek-skip ke baad BHI mismatch (dono taraf theek se nahi) -> BREAK.
-//    ★ break kyun, false-return kyun NAHI? -> kyunki humne abhi RIGHT skip try hi nahi kiya ->
+//    break kyun, false-return kyun NAHI? -> kyunki humne abhi RIGHT skip try hi nahi kiya ->
 //      isliye pass-1 me early false nahi de sakte -> break karke pass-2 me jao.
-//  ★ pass-1 ke while ke BAAD `return true` kyun? -> agar string pehle hi palindrome nikal gayi (jaise "aba"),
+//  pass-1 ke while ke BAAD `return true` kyun? -> agar string pehle hi palindrome nikal gayi (jaise "aba"),
 //      to woh pass-1 me hi khatam -> pass-2 ki zaroorat hi nahi -> return true.
 //  PASS-2 (RIGHT skip): reset karke same, par flag ab RIGHT skip ke liye. yahan doosra mismatch aaye ->
 //    RETURN FALSE (ab dono option -- left aur right -- exhaust ho gaye, koi single delete kaam nahi karta).
@@ -29,7 +29,7 @@
 //  main while(left<=right) chalao. jab MISMATCH mile -> hamare paas 2 option: LEFT skip ya RIGHT skip.
 //  to dono try kar lo -> left+1 wale se palindrome check YA right-1 wale se palindrome check:
 //     return isPalindrome(s, left+1, right) || isPalindrome(s, left, right-1);   // left-delete YA right-delete
-//  ★ || laga -> ek se bhi ban gaya to answer TRUE. (yehi version-1 wali technique hai, bas SAAF.)
+//  || laga -> ek se bhi ban gaya to answer TRUE. (yehi version-1 wali technique hai, bas SAAF.)
 //  koi mismatch hi na aaye -> already palindrome -> true.
 //  -> same logic, par ek line, koi reset/flag nahi.
 //
@@ -40,7 +40,7 @@
 //   "a"          -> 1
 //   "deeee"      -> 1     (ek 'd' delete -> "eeee")
 //   "cbbcc"      -> 1     (ek 'c' delete -> "cbbc")
-//   "abcdba"     -> 1     (★ 'c' delete -> "abdba" = palindrome. [galti sudhri: pehle 0 likha tha])
+//   "abcdba"     -> 1     ('c' delete -> "abdba" = palindrome. [galti sudhri: pehle 0 likha tha])
 //   "caaab"      -> 0     (ek delete se bhi nahi: c-hata->"aaab" nahi, b-hata->"caaa" nahi)
 // ============================================================
 

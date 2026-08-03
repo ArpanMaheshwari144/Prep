@@ -2,7 +2,7 @@
 // SORT COLORS (Dutch National Flag) — BLANK REDO
 // ============================================================
 // array me sirf 0, 1, 2 hain. IN-PLACE sort karo (0s -> 1s -> 2s).
-// ★ ek PASS, O(1) extra space (counting-sort/library-sort nahi).
+// ek PASS, O(1) extra space (counting-sort/library-sort nahi).
 //
 // ---- ARPAN KI APPROACH ----
 //  Dutch flag 3 pointer: low=0, mid=0, high=end. mid se scan (mid<=high).

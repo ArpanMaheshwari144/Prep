@@ -19,24 +19,24 @@
 //
 //     buckets (array)
 //     ┌────┐
-//   0 │ ●──┼──> NULL
+//   0 │ - ──┼──> NULL
 //     ├────┤
-//   1 │ ●──┼──> | "a"|50| ●──|──> NULL
+//   1 │ - ──┼──> | "a"|50| - ──|──> NULL
 //     ├────┤
-//   3 │ ●──┼──> | "b"|20| ●──|──> | "z"|90| ●──|──> NULL   <- COLLISION (chain)
+//   3 │ - ──┼──> | "b"|20| - ──|──> | "z"|90| - ──|──> NULL   <- COLLISION (chain)
 //     └────┘
 //
 //   => put/get/remove = us slot pe jao (hash%cap), phir chain me LINKED-LIST traverse.
 //  =====================================================
 // ============================================================
 // ---- ARPAN KI APPROACH (SOLO — 2nd rep, faada) ----
-//  ★ structure: buckets = vector<Entry*> (cap=16). buckets[i] = us slot ki chain ka head (ya NULL). Entry = |key|value|next|.
+//  structure: buckets = vector<Entry*> (cap=16). buckets[i] = us slot ki chain ka head (ya NULL). Entry = |key|value|next|.
 //  index = hash<string>{}(key) % cap.
 //  put:    slot khaali -> node laga + sz++. warna chain traverse (while head != NULL):
 //             key mili -> value UPDATE + RETURN (turant niklo). na mili + end (head->next==NULL) -> node append + sz++.
 //  get:    index -> chain traverse -> key match -> value return. na mile -> -1.
 //  remove: index -> prev+head traverse -> key match: HEAD(prev NULL) -> buckets[i]=head->next · beech -> prev->next=head->next. sz--.
-//  ★★ TRAP (kal seekha): put me update ke baad RETURN zaroori (warna loop aage -> last pe DUPLICATE + sz galat). "test-pass != code-sahi".
+//  TRAP (kal seekha): put me update ke baad RETURN zaroori (warna loop aage -> last pe DUPLICATE + sz galat). "test-pass != code-sahi".
 // ============================================================
 
 #include <bits/stdc++.h>

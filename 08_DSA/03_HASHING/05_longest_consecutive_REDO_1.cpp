@@ -3,7 +3,7 @@
 // ============================================================
 // UNSORTED array. SABSE LAMBI consecutive elements ki sequence ki LENGTH nikaalo.
 //   e.g. [100,4,200,1,3,2] -> [1,2,3,4] -> 4.
-// ★ sort NAHI karna. O(n) chahiye.
+// sort NAHI karna. O(n) chahiye.
 //
 // ---- ARPAN KI APPROACH ----
 //  saare nums ek SET me daalo. har num pe: agar (num-1) set me NAHI -> ye sequence ka START.

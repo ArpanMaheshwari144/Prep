@@ -24,11 +24,11 @@
 //
 //     buckets
 //     ┌────┐
-//   0 │ ●──┼──> NULL
+//   0 │ - ──┼──> NULL
 //     ├────┤
-//   1 │ ●──┼──> | apple | ●──|──> NULL
+//   1 │ - ──┼──> | apple | - ──|──> NULL
 //     ├────┤
-//   3 │ ●──┼──> | cat | ●──|──> | dog | ●──|──> NULL     <- COLLISION (chain)
+//   3 │ - ──┼──> | cat | - ──|──> | dog | - ──|──> NULL     <- COLLISION (chain)
 //     └────┘
 //     buckets[i] = us chain ka HEAD (ya NULL).
 //
@@ -39,14 +39,14 @@
 //  =================================================================
 //
 // ---- ARPAN KI APPROACH ----
-//  ★ HashMap ka SAME design (bucket array + chaining), bas VALUE/update ka part hata.
+//  HashMap ka SAME design (bucket array + chaining), bas VALUE/update ka part hata.
 //     Entry = |key|next| (value nahi). fields: buckets(Entry*) · cap=16 · sz.
 //  index = hash<string>{}(key) % cap.
 //  add(key):     bucket khaali -> buckets[index]=node, sz++. else chain traverse:
 //                   key mil gayi -> return (duplicate nahi). tail (curr->next==null) -> append + sz++.
 //  contains(key): chain traverse -> key match -> true. na mile/null -> false. (= HashMap ka get, bas bool.)
 //  remove(key):  prev+curr traverse -> match: HEAD(prev null)->buckets[i]=curr->next · else prev->next=curr->next. sz--.
-//     ★★ BUG-CATCH (khud dimaag me pakda): prev ko har step "prev = curr" karo (NA prev=prev->next --
+//     BUG-CATCH (khud dimaag me pakda): prev ko har step "prev = curr" karo (NA prev=prev->next --
 //        prev NULL se shuru -> non-head remove pe NULL->next = CRASH). prev = curr; curr = curr->next;
 //  size(): sz.
 

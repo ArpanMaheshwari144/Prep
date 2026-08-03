@@ -3,7 +3,7 @@
 // ============================================================
 // diya tree VALID BST hai? true/false.
 //
-// ★ BST rule (STRICT): HAR node pe -> POORE left-subtree ke saare value < node->val
+// BST rule (STRICT): HAR node pe -> POORE left-subtree ke saare value < node->val
 //   < POORE right-subtree ke saare value.  (sirf turant child se compare = KAAFI NAHI!)
 //
 //        5                       5
@@ -12,7 +12,7 @@
 //     / \ / \                     / \
 //    2  4 6  8                   3   7
 //
-//   ★ TRAP: doosra tree -> local check sab PASS (4<5, 6>5, 3<6, 7>6) PAR 3 galat hai:
+//   TRAP: doosra tree -> local check sab PASS (4<5, 6>5, 3<6, 7>6) PAR 3 galat hai:
 //     3, node-6 ke left me hai (6<6 nahi, thik) -- PAR 6 to 5 ke RIGHT subtree me -> 5 ke right ke SAARE value > 5 hone chahiye.
 //     3 < 5 -> RULE toota -> INVALID. (turant-parent check ye MISS karta.)
 //
@@ -23,7 +23,7 @@
 //   [2,2,2]              -> false  (equal -> strict < toota)
 // ============================================================
 // ---- APPROACH ----  (BST family -- RANGE/bounds carry-DOWN; local check KAAFI NAHI)
-//  ★★ KEY: har node ka ek allowed WINDOW (mini, maxi) -> node->val us range me hona chahiye.
+//  KEY: har node ka ek allowed WINDOW (mini, maxi) -> node->val us range me hona chahiye.
 //     ancestors ye window banate; NEECHE jaate window TIGHT hoti -> isliye deep node bhi root/ancestor ka rule maanta.
 //  helper solve(root, mini, maxi):
 //  1. base : null -> true (khaali valid).
@@ -32,7 +32,7 @@
 //  4. RIGHT jao -> node se BADA hona   -> naya mini = root->val:  solve(right, root->val, maxi).
 //  5. return left && right (dono side valid ho TABHI).
 //  call: isValidBST = solve(root, INT_MIN, INT_MAX).  (root ki window poori KHULI.)
-//  ★ TRAP: local check (turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna; window carry-down se hota.
+//  TRAP: local check (turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna; window carry-down se hota.
 //  (edge: node value INT_MIN/INT_MAX ho to bounds me long ya null-pointer behtar -- gate-level ye theek.)
 // ============================================================
 
@@ -54,7 +54,7 @@ bool solve(TreeNode *root, int mini, int maxi)
         return true; // khaali subtree valid
     }
 
-    // ★ node apni WINDOW (mini, maxi) ke andar hona chahiye. bahar -> invalid. (<=,>= = strict, equal bhi galat)
+    // node apni WINDOW (mini, maxi) ke andar hona chahiye. bahar -> invalid. (<=,>= = strict, equal bhi galat)
     if (root->val <= mini || root->val >= maxi)
     {
         return false;
@@ -113,7 +113,7 @@ int main()
 
     cout << boolalpha;
     cout << isValidBST(a) << " (expected true)\n";
-    cout << isValidBST(b) << " (expected false)  <- ★ TRAP: local pass par 3<5 galat\n";
+    cout << isValidBST(b) << " (expected false)  <- TRAP: local pass par 3<5 galat\n";
     cout << isValidBST(c) << " (expected true)\n";
     cout << isValidBST(d) << " (expected false)\n";
     cout << isValidBST(nullptr) << " (expected true)\n";

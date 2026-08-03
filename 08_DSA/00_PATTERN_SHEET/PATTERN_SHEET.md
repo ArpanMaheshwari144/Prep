@@ -1,6 +1,6 @@
 <h1 align="center">DSA PATTERN SHEET</h1>
 
-## ★★ ESSENCE — DSA ka ASLI tareeka (31-Jul, Arpan-derived)
+## ESSENCE — DSA ka ASLI tareeka (31-Jul, Arpan-derived)
 
 > **DSA = pattern reflexively THOPNA nahi. Pehle PROBLEM samjho -> phir pattern.**
 >
@@ -8,13 +8,13 @@
 > 2. **PHIR** approach/pattern socho (ab template lage)
 > 3. **PHIR** code
 >
-> ★ direct-jump galat -- bhale hi answer SW/DP/graph ho, seedha pattern pe mat kudo. **samajho -> approach -> code.**
-> ★ source ka LABEL blindly mat lo ("reel ne SW bola" != SW). khud examine karo -- "sach me aisa hai?"
-> ★ **problem-solver** = ye (understand-first + question-the-label), na ki pattern-ratta. dimaag freeze nahi -> pehla-move = "problem samjho".
+> direct-jump galat -- bhale hi answer SW/DP/graph ho, seedha pattern pe mat kudo. **samajho -> approach -> code.**
+> source ka LABEL blindly mat lo ("reel ne SW bola" != SW). khud examine karo -- "sach me aisa hai?"
+> **problem-solver** = ye (understand-first + question-the-label), na ki pattern-ratta. dimaag freeze nahi -> pehla-move = "problem samjho".
 
 ---
 
-## ★ NAAM-SE-CONFUSE MAT HO (Container vs Trapping vs Histogram — teeno ALAG!)
+## NAAM-SE-CONFUSE MAT HO (Container vs Trapping vs Histogram — teeno ALAG!)
 ```
                     CONTAINER Most Water    TRAPPING Rain Water      LARGEST Rectangle (Histogram)
                     (LC-11)                 (LC-42)                  (LC-84)
@@ -29,8 +29,8 @@
    technique         two-pointer             two-ptr O(1) / prefix    MONOTONIC stack
                      (CHHOTI wall andar)     leftMax/rightMax         (prev + next smaller)
 
-   ★ 1-line: Container = 2-deewar-BEECH-max-paani · Trapping = har-gaddha-SUM · Histogram = SOLID-block-MAX (paani nahi).
-   ★ bada farak: Container/Trapping = PAANI · Histogram = SOLID.   Trapping = SUM · baaki dono = MAX.
+   1-line: Container = 2-deewar-BEECH-max-paani · Trapping = har-gaddha-SUM · Histogram = SOLID-block-MAX (paani nahi).
+   bada farak: Container/Trapping = PAANI · Histogram = SOLID.   Trapping = SUM · baaki dono = MAX.
 ```
 
 ---
@@ -53,14 +53,14 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REMOVE DUP (SORTED)
  └──────────────────────────────────────────────────────────────
-     ★ move-zeroes cousin. slow=last-unique index, fast=scan. nums[slow]!=nums[fast] (naya unique)
+     move-zeroes cousin. slow=last-unique index, fast=scan. nums[slow]!=nums[fast] (naya unique)
      -> slow++ (slow ab ek DUPLICATE pe, khali nahi), phir nums[slow]=nums[fast] (dupe ko OVERWRITE).
      fast har baar++. unique count = slow+1 (0-based +1).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REMOVE ELEMENT
  └──────────────────────────────────────────────────────────────
-     ★ saare val hata, non-val ki count k lauta (move-zeroes cousin). slow/fast.
+     saare val hata, non-val ki count k lauta (move-zeroes cousin). slow/fast.
      nums[fast]!=val -> nums[slow]=nums[fast], slow++.  ==val -> sirf fast++ (skip).
      end me slow = k (bache shuru ke k me).
 
@@ -76,7 +76,7 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ VALID PALINDROME (FULL, LC-125)
  └──────────────────────────────────────────────────────────────
-     ★ mixed chars (letter/digit/space/punct, UPPER+lower). SIRF alnum consider · case IGNORE. helpers: isalnum, tolower (<cctype>).
+     mixed chars (letter/digit/space/punct, UPPER+lower). SIRF alnum consider · case IGNORE. helpers: isalnum, tolower (<cctype>).
      2 pointer left/right, ORDER:
        1. tolower(s[left])==tolower(s[right]) -> match -> left++ right--.
        2. else !isalnum(s[left])  -> left non-alnum -> skip -> left++.
@@ -87,7 +87,7 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ VALID PALINDROME II
  └──────────────────────────────────────────────────────────────
-     ★ = palindrome YA ek char DELETE karke palindrome ban jaaye.
+     = palindrome YA ek char DELETE karke palindrome ban jaaye.
      IDEA: two-pointer; MISMATCH pe -> ya LEFT char delete ya RIGHT char delete. koi ek bane -> true, dono na bane -> false.
      v1 (BEKAAR/verbose): 2 poore pass. pass-1 = LEFT skip (flag, 1 baar); doosra mismatch -> BREAK
          (false NAHI -> right-skip try baaki -> pass-2). pass-1 ke baad palindrome nikla ("aba") -> return true.
@@ -99,7 +99,7 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REVERSE VOWELS
  └──────────────────────────────────────────────────────────────
-     ★ sirf vowels (a/e/i/o/u, lower+upper) aapas me reverse, baaki char apni jagah.
+     sirf vowels (a/e/i/o/u, lower+upper) aapas me reverse, baaki char apni jagah.
      chhota helper isVowel(ch). left/right pointer:
      dono vowel -> swap + left++ right--.  left vowel nahi -> left++.  warna right--.
 
@@ -115,18 +115,18 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ TWO SUM II (SORTED)
  └──────────────────────────────────────────────────────────────
-     ★ sorted -> hashmap ki zaroorat nahi -> 2 pointer (left,right); sum==target -> mila (return 1-based).
+     sorted -> hashmap ki zaroorat nahi -> 2 pointer (left,right); sum==target -> mila (return 1-based).
      sum<target -> left++ (bada chahiye); sum>target -> right-- (chhota). O(1) space.
      (regular two-sum UNSORTED = hashmap; SORTED = 2-pointer.)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUM OF SQUARE NUMBERS
  └──────────────────────────────────────────────────────────────
-     ★ a²+b²==c possible? (LC 633, Google). ★ RECOGNITION: 2 NUMBER (pair) chahiye -> TWO-POINTER.
+     a²+b²==c possible? (LC 633, Google). RECOGNITION: 2 NUMBER (pair) chahiye -> TWO-POINTER.
      (BS nahi -- BS=single/direction dhundhna; JODI chahiye to two-pointer, dono taraf se converge.)
      high=sqrt(c). ans=low²+high²: ==c->true · <c->low++ · >c->high--. low>high->false.
-     ★★ c=0 case dono cheez pakadta (high=sqrt(0)=0): (1) low=0 (not 1, warna loop skip -> 0+0 miss) (2) while low<=high (NOT low<high -- low==high==0 wala single-point bhi check ho).
-     ★ OVERFLOW: ans ko LONG LONG rakho (c up to 2^31-1).
+     c=0 case dono cheez pakadta (high=sqrt(0)=0): (1) low=0 (not 1, warna loop skip -> 0+0 miss) (2) while low<=high (NOT low<high -- low==high==0 wala single-point bhi check ho).
+     OVERFLOW: ans ko LONG LONG rakho (c up to 2^31-1).
 
 ┌── FAMILY: fill-from-END ──────────────────────────────────────
 │ KYUN SAATH: result ko PEECHE se bharo (aakhir me jagah khali). bada element end me daalte hue 2/3 pointer.
@@ -135,14 +135,14 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SQUARES OF SORTED ARR
  └──────────────────────────────────────────────────────────────
-     ★ negatives ka square order ULTA -> 2 pointer (left,right); dono ke square compare
+     negatives ka square order ULTA -> 2 pointer (left,right); dono ke square compare
      -> BADA wala result ke END me daalo (k=n-1, ghatta); us pointer andar. O(n), no sort.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MERGE SORTED ARRAY
  └──────────────────────────────────────────────────────────────
-     ★ in-place, PEECHE se bharo (aakhir me zeros = jagah). 3 ptr: i=m-1, j=n-1, k=m+n-1 (NA m*n-1).
-     while(i>=0 && j>=0): BADA nums1[k] me daalo, us ptr+k ghatao. ★ && (|| nahi -> ek khatam = out-of-bounds crash).
+     in-place, PEECHE se bharo (aakhir me zeros = jagah). 3 ptr: i=m-1, j=n-1, k=m+n-1 (NA m*n-1).
+     while(i>=0 && j>=0): BADA nums1[k] me daalo, us ptr+k ghatao. && (|| nahi -> ek khatam = out-of-bounds crash).
      leftover nums2 (j) neeche while-loop se bhar do. (pattern: main-loop && + tail-loops)
 
 ┌── FAMILY: PARTITION / swap-in-place ──────────────────────────
@@ -152,18 +152,18 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SORT COLORS (0,1,2)
  └──────────────────────────────────────────────────────────────
-     ★ Dutch flag, 3 pointer (low/mid/high):
+     Dutch flag, 3 pointer (low/mid/high):
      nums[mid]==0 -> swap(low,mid), low++ AUR mid++ (dono).
      nums[mid]==1 -> sirf mid++.
-     nums[mid]==2 -> swap(mid,high), high-- (★ mid++ NAHI -> high se aaya element unknown, dobara check).
+     nums[mid]==2 -> swap(mid,high), high-- (mid++ NAHI -> high se aaya element unknown, dobara check).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SORT ARRAY BY PARITY
  └──────────────────────────────────────────────────────────────
-     ★ evens pehle, odds baad (aapas order koi bhi). left/right pointer.
+     evens pehle, odds baad (aapas order koi bhi). left/right pointer.
      left ODD && right EVEN (dono galat jagah) -> swap + left++ right--.
      left EVEN (sahi) -> left++.  warna -> right--.
-     ★ TRAP: left even && right odd pe swap MAT karo -> dono already sahi jagah.
+     TRAP: left even && right odd pe swap MAT karo -> dono already sahi jagah.
 
 ┌── (STANDALONE — apni alag trick) ─────────────────────────────
 └───────────────────────────────────────────────────────────────
@@ -175,33 +175,33 @@
      TEMPLATE:
          sort(begin(nums), end(nums));
          for(int i=0; i<nums.size(); i++){
-             if(i>0 && nums[i]==nums[i-1]) continue;              // ★ duplicate FIXED skip
+             if(i>0 && nums[i]==nums[i-1]) continue;              // duplicate FIXED skip
              int low=i+1, high=nums.size()-1, sum=-nums[i];
              while(low<high){
                  if(nums[low]+nums[high]==sum){
                      ans.push_back({nums[i],nums[low],nums[high]});
-                     while(low<high && nums[low]==nums[low+1]) low++;   // ★ duplicate LOW skip
-                     while(low<high && nums[high]==nums[high-1]) high--; // ★ duplicate HIGH skip
+                     while(low<high && nums[low]==nums[low+1]) low++;   // duplicate LOW skip
+                     while(low<high && nums[high]==nums[high-1]) high--; // duplicate HIGH skip
                      low++; high--;
                  }
                  else if(nums[low]+nums[high] < sum) low++;       // chhota -> low aage (bada chahiye)
                  else high--;                                     // bada  -> high peeche
              }
          }
-     ★★ CRUX = DUPLICATE skip 3 JAGAH: (1) fixed i (i>0 && nums[i]==nums[i-1]) (2) match ke baad LOW (3) match ke baad HIGH.
-     ★ sum = -nums[i] (fixed ko doosri taraf) -> sorted pe 2-pointer (= 2SUM-II).
+     CRUX = DUPLICATE skip 3 JAGAH: (1) fixed i (i>0 && nums[i]==nums[i-1]) (2) match ke baad LOW (3) match ke baad HIGH.
+     sum = -nums[i] (fixed ko doosri taraf) -> sorted pe 2-pointer (= 2SUM-II).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ IS SUBSEQUENCE
  └──────────────────────────────────────────────────────────────
-     ★ s, t ki subsequence hai kya (order same, beech ke char skip allowed). 2 pointer: i for s, j for t.
+     s, t ki subsequence hai kya (order same, beech ke char skip allowed). 2 pointer: i for s, j for t.
      s[i]==t[j] -> i++ AUR j++ (char mila).  nahi mila -> sirf j++ (t aage scan).
      ANT: i >= s.size() -> saare s-char order me mil gaye -> TRUE. warna FALSE.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ TRAPPING RAIN WATER (LC-42)
  └──────────────────────────────────────────────────────────────
-     ★ CORE: bar `i` ke upar paani = min(leftMax[i], rightMax[i]) - height[i].  (min kyun: CHHOTI side se paani bah jaata.)
+     CORE: bar `i` ke upar paani = min(leftMax[i], rightMax[i]) - height[i].  (min kyun: CHHOTI side se paani bah jaata.)
 
      [A] O(n) space: leftMax[] ek pass AAGE se · rightMax[] ek pass PEECHE se · ans += min(leftMax[i], rightMax[i]) - height[i].
 
@@ -210,8 +210,8 @@
            while (left < right):
                if (leftMax <= rightMax):  leftMax  = max(leftMax,  height[left]);   ans += leftMax  - height[left];   left++;
                else:                      rightMax = max(rightMax, height[right]);  ans += rightMax - height[right];  right--;
-         ★ REFRESH pehle, ADD baad (warna naya-bada-bar pe ans NEGATIVE de deta).
-         ★ kyun SAFE: chhoti-max side ka paani sirf usi side se limit (doosri side oonchi wall already khadi).
+         REFRESH pehle, ADD baad (warna naya-bada-bar pe ans NEGATIVE de deta).
+         kyun SAFE: chhoti-max side ka paani sirf usi side se limit (doosri side oonchi wall already khadi).
      edge: empty -> 0.
 ```
 
@@ -221,28 +221,28 @@
 
 ```
 
- ★ KAB PEHCHANO: CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
+ KAB PEHCHANO: CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
 
- ★ 2 TYPE:
+ 2 TYPE:
    (a) FIXED window   -> size k DIYA hai. i/j pointer: sum += nums[j]; jab (j-i+1) >= k -> track + left hatao (sum -= nums[i], i++).
    (b) VARIABLE window-> size condition se. TEMPLATE:
           for j in arr:  window me arr[j] add (update tracker)
                          while (INVALID): left[i] hatao (tracker update), i++
                          ans update  (length = j-i+1, ya count += j-i+1)
 
- ★ KYA TRACK: sum · freq-map (distinct=map.size / char-count) · zeros-count · product · maxFreq.
+ KYA TRACK: sum · freq-map (distinct=map.size / char-count) · zeros-count · product · maxFreq.
 
- ★ KEY: shrink ke BAAD window HAMESHA valid -> ans UNCONDITIONAL (koi if(==k) nahi).
+ KEY: shrink ke BAAD window HAMESHA valid -> ans UNCONDITIONAL (koi if(==k) nahi).
 
- ★ LENGTH ya COUNT: length -> max(ans, j-i+1) · subarray COUNT -> count += (j-i+1) (window size).
+ LENGTH ya COUNT: length -> max(ans, j-i+1) · subarray COUNT -> count += (j-i+1) (window size).
 
- ★★ IF vs WHILE (ye confusion CLEAR kar) -> SAWAAL: "window ka SIZE fix hai, ya condition pe depend?"
+ IF vs WHILE (ye confusion CLEAR kar) -> SAWAAL: "window ka SIZE fix hai, ya condition pe depend?"
      · SIZE fix (koi number diya: k-elements ya p.length()) -> IF (ek add, ek remove, size wahi rehta).   [Max-Sum-of-K · Anagram]
      · SIZE condition pe (sum/distinct/repeat/product) -> WHILE (jab tak invalid, ek se zyada nikal sakte).  [baaki sab]
-     ★★ TRAP -- `k` ka matlab dekh: Max-Sum-size-K me k = SIZE (fix -> IF); Subarray-Product<K me k = product LIMIT (size NAHI -> WHILE). same letter `k`, alag matlab.
+     TRAP -- `k` ka matlab dekh: Max-Sum-size-K me k = SIZE (fix -> IF); Subarray-Product<K me k = product LIMIT (size NAHI -> WHILE). same letter `k`, alag matlab.
  [track] · [INVALID kab -> shrink] · [ans]
 
- ★★★ ONE SKELETON (fixed + variable DONO isi pe -- ye poora khel):
+ ONE SKELETON (fixed + variable DONO isi pe -- ye poora khel):
     i = 0, j = 0
     while (j < n):                     // EXPAND (j HAMESHA aage). [for(j..) == while(j<n){..;j++} -- SAME]
         arr[j] window me ADD           (tracker update: sum / map / zeros / product)
@@ -272,7 +272,7 @@
              j++;
          }
          return minLen==INT_MIN ? 0 : minLen;     // khaali string -> INT_MIN reh jaata -> 0
-     ★ INVALID = mp[s[j]]>1 (jo abhi add hua wahi repeat). ★ empty-string edge -> INT_MIN -> 0.
+     INVALID = mp[s[j]]>1 (jo abhi add hua wahi repeat). empty-string edge -> INT_MIN -> 0.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CHAR REPLACEMENT (LONGEST, LC-424)
@@ -280,7 +280,7 @@
      freq-map. j pe: mp[s[j]]++, maxFreq = max(maxFreq, mp[s[j]]).
      VALID (windowLen - maxFreq <= k)  -> maxLen = max(maxLen, windowLen).
      INVALID (windowLen - maxFreq > k) -> left shrink (mp[s[i]]--, i++).
-     ★★ CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window apni best-length
+     CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window apni best-length
         se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
 
  ┌──────────────────────────────────────────────────────────────
@@ -295,14 +295,14 @@
                  if(nums[i]==0) zeroCount--;      // left ka zero nikla to count kam
                  i++;
              }
-             ans = max(ans, j - i + 1);           // ★ UNCONDITIONAL (koi if nahi)
+             ans = max(ans, j - i + 1);           // UNCONDITIONAL (koi if nahi)
              j++;
          }
          return ans==INT_MIN ? 0 : ans;
-     ★★ CORE LEARNING (Arpan ne khud debug karke nikaala): ans UNCONDITIONAL update -> if(zeroCount==k) MAT lagao.
+     CORE LEARNING (Arpan ne khud debug karke nikaala): ans UNCONDITIONAL update -> if(zeroCount==k) MAT lagao.
         kyun: upar while(zeroCount>k) shrink ke BAAD window HAMESHA valid (<=k) -> yahan pahunchte hi valid -> condition faltu.
         (galti thi: if(zeroCount==k) -> sirf exactly-k ginta -> k=0 / k>zeros case toot jaate.)
-     ★ shrink pe nums[i]==0 hi zeroCount-- (1 nikalne pe count na badle).
+     shrink pe nums[i]==0 hi zeroCount-- (1 nikalne pe count na badle).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ FRUIT INTO BASKETS
@@ -312,23 +312,23 @@
          mp[nums[j]]++;                              // window me add
          while(mp.size() > 2){                       // INVALID: 2 se zyada distinct
              mp[nums[i]]--;
-             if(mp[nums[i]]==0) mp.erase(nums[i]);   // ★ count 0 -> ERASE
+             if(mp[nums[i]]==0) mp.erase(nums[i]);   // count 0 -> ERASE
              i++;
          }
          ans = max(ans, j - i + 1);
-     ★★ CRUX = erase-on-0: count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
+     CRUX = erase-on-0: count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST AT-MOST-K DISTINCT
  └──────────────────────────────────────────────────────────────
-     ★ FRUIT-INTO-BASKETS ka GENERAL version. wahi variable window + map<char,count>,
+     FRUIT-INTO-BASKETS ka GENERAL version. wahi variable window + map<char,count>,
      distinct (mp.size()) > k ho -> left se shrink (erase-on-0). ans = max length.
      farak: fruit me "2" hardcoded tha, yahan wahi jagah "k" (mp.size() > k).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ EQUAL SUBSTR WITHIN BUDGET (LC-1208)
  └──────────────────────────────────────────────────────────────
-     ★ cost per char = |s[i]-t[i]| -> problem = "cost-array ka sabse LAMBA window jiska SUM <= maxCost".
+     cost per char = |s[i]-t[i]| -> problem = "cost-array ka sabse LAMBA window jiska SUM <= maxCost".
      j se cost += abs(s[j]-t[j]);  WHILE (cost > maxCost) -> cost -= abs(s[i]-t[i]), i++;  ans = max(ans, j-i+1); j++.
      track sirf cost (koi map nahi). = longest-subarray-sum <= k, string ke bhes me.
 
@@ -344,17 +344,17 @@
          int sum=0, minLen=INT_MAX, i=0, j=0;
          while(j < nums.size()){
              sum += nums[j];                       // window add (expand)
-             while(sum >= target){                 // ★ VALID hote hi -> record + SHRINK (aur chhota dhoondo)
-                 minLen = min(minLen, j - i + 1);   //   ★ record ANDAR (shrink loop ke andar)
+             while(sum >= target){                 // VALID hote hi -> record + SHRINK (aur chhota dhoondo)
+                 minLen = min(minLen, j - i + 1);   //   record ANDAR (shrink loop ke andar)
                  sum -= nums[i]; i++;               //   left shrink
              }
              j++;
          }
          return minLen==INT_MAX ? 0 : minLen;      // koi valid window nahi -> 0
-     ★★ LONGEST vs SHORTEST (yahi confusion ki JAD):
+     LONGEST vs SHORTEST (yahi confusion ki JAD):
         LONGEST  -> shrink WHILE **INVALID**, record BAAHAR (bada window chahiye).
         SHORTEST -> shrink WHILE **VALID**,   record ANDAR   (chhota window chahiye)  <- YE wahi.
-     ★ char-matching wala SHORTEST = MIN WINDOW (LC-76) -> neeche "need-map + COUNT" family me (LC-1358 ke saath).
+     char-matching wala SHORTEST = MIN WINDOW (LC-76) -> neeche "need-map + COUNT" family me (LC-1358 ke saath).
 
 ┌── FAMILY: FIXED window ───────────────────────────────────────
 │ KYUN SAATH: window ka size k pehle se DIYA hai; slide karte jao.
@@ -363,7 +363,7 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX SUM OF K (FIXED)
  └──────────────────────────────────────────────────────────────
-     i/j pointer (baaki SW jaisa): sum += nums[j]. ★ IF (j-i+1) >= k (WHILE nahi -- fixed size, ek hi remove) ->
+     i/j pointer (baaki SW jaisa): sum += nums[j]. IF (j-i+1) >= k (WHILE nahi -- fixed size, ek hi remove) ->
      maxSum = max(maxSum, sum); phir left hatao (sum -= nums[i], i++). window k-size pe slide. ans = maxSum.
 
 ┌── FAMILY: COUNT (length nahi) ────────────────────────────────
@@ -373,21 +373,21 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBARRAY PRODUCT < K
  └──────────────────────────────────────────────────────────────
-     ★ COUNT (length nahi). track: prod; INVALID = prod>=k -> prod/=nums[i], i++.
-     ★★ COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid). (bahut count-Q me)
+     COUNT (length nahi). track: prod; INVALID = prod>=k -> prod/=nums[i], i++.
+     COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid). (bahut count-Q me)
 
 ┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
 │ LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD). t="abc" -> dono ek.
 └───────────────────────────────────────────────────────────────
 
- ★ SHARED SKELETON (expand + shrink -- dono me same):
+ SHARED SKELETON (expand + shrink -- dono me same):
       need-map(t);  count = t.size();                 // count==0 => window me t ke SAARE char (VALID)
       for j (EXPAND):
           if (mp[s[j]] > 0) count--;                  // t-char mila -> ek zaroorat puri
-          mp[s[j]]--;                                 // ★ IF ke BAHAR: non-t char -ve -> count me "invisible"
+          mp[s[j]]--;                                 // IF ke BAHAR: non-t char -ve -> count me "invisible"
                                                       //   (andar rakha to D-ASYMMETRY BUG: shrink me count++ galat)
           while (count == 0) {                         // VALID -> shrink (i++)
-              mp[s[i]]++;  if (mp[s[i]] > 0) count++;  i++;   // ★ MIRROR: aana = -- , jaana = ++
+              mp[s[i]]++;  if (mp[s[i]] > 0) count++;  i++;   // MIRROR: aana = -- , jaana = ++
           }
 
  ┌──────────────────────────────────────────────────────────────
@@ -397,7 +397,7 @@
      for j:  if(mp[s[j]]>0) count--;  mp[s[j]]--;                                            // EXPAND
      while (count == 0) { len=j-i+1; if(len<minLen){minLen=len; index=i;}  mp[s[i]]++; if>0 count++; i++; }   // shrink + SAVE (andar)
      return minLen==INT_MAX ? "" : s.substr(index, minLen).
-     ★ DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) se map+count nikla.
+     DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) se map+count nikla.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD
@@ -405,9 +405,9 @@
      t = "abc"  (count = 3 = t.size()).   -- SAME skeleton as LC-76, bas t FIXED "abc" + answer alag.
      for j:  if(mp[s[j]]>0) count--;  mp[s[j]]--;                                            // EXPAND (same)
      while (count == 0) { mp[s[i]]++; if>0 count++; i++; }                                   // shrink to INVALID
-     ans += i;                                                                               // ★ loop ke BAAD, har j pe
-     ★ WHY ans += i: shrink window ko INVALID tak le jaata -> ab [0 .. i-1] SAARE valid left-starts hain -> ginti = i.
-     ★ CODE: numberOfSubstrings(s) = minWindow(s, "abc")  -- wahi SW function reuse, bas t="abc" pass.
+     ans += i;                                                                               // loop ke BAAD, har j pe
+     WHY ans += i: shrink window ko INVALID tak le jaata -> ab [0 .. i-1] SAARE valid left-starts hain -> ginti = i.
+     CODE: numberOfSubstrings(s) = minWindow(s, "abc")  -- wahi SW function reuse, bas t="abc" pass.
 
 ┌── FAMILY: ANAGRAM-window ─────────────────────────────────────
 │ KYUN SAATH: fixed p-length window + har position pe anagram-check (isAnagram helper reuse).
@@ -421,24 +421,24 @@
          bool isAnagram(a,b): size same + har char count barabar (map: a se ++, b se --, sab 0 -> true).
          int i=0, j=0;
          while(j < s.size()){
-             while(j-i+1 > p.size()) i++;                          // ★ window ko p-size pe rakho (FIXED)
+             while(j-i+1 > p.size()) i++;                          // window ko p-size pe rakho (FIXED)
              if(j-i+1 == p.size())
                  if(isAnagram(s.substr(i, j-i+1), p)) ans.push_back(i);  // anagram -> START-index push
              j++;
          }
-     ★ valid-anagram helper reuse. fixed-window slide + har full-window pe check.
+     valid-anagram helper reuse. fixed-window slide + har full-window pe check.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PERMUTATION IN STRING (LC-567)  = FIND-ALL-ANAGRAMS ka EXACT same code
  └──────────────────────────────────────────────────────────────
      SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? -> upar wale ka HUBAHU same skeleton.
-     ★★ CONNECTION: bilkul FIND-ALL-ANAGRAMS -- same isAnagram + same fixed-window. SIRF 1 DELTA:
+     CONNECTION: bilkul FIND-ALL-ANAGRAMS -- same isAnagram + same fixed-window. SIRF 1 DELTA:
         anagram mila -> push-index ki jagah -> SEEDHA return TRUE (koi na mile -> return FALSE).
         i.e.  if(isAnagram(...)) return true;   ... loop-ke-baad return false;
-     ★ checkInclusion(s1,s2) = findAnagrams(s2, s1) with "return true on first match".
-     ★ farak sirf: FIND-ALL = saare indices (push) · PERMUTATION = pehla match = TRUE (bool).
+     checkInclusion(s1,s2) = findAnagrams(s2, s1) with "return true on first match".
+     farak sirf: FIND-ALL = saare indices (push) · PERMUTATION = pehla match = TRUE (bool).
 
- ★★ LONGEST vs SHORTEST (yaad rakh): LONGEST -> shrink jab INVALID, ans=MAX. SHORTEST (min-len) -> shrink jab VALID, ans=MIN.
+ LONGEST vs SHORTEST (yaad rakh): LONGEST -> shrink jab INVALID, ans=MAX. SHORTEST (min-len) -> shrink jab VALID, ans=MIN.
 ```
 
 ---
@@ -449,12 +449,12 @@
 
  BROAD IDEA: hashmap/hashset = O(1) lookup. "pehle dekha?" / "complement hai?" / count -> O(n).
 
- ★★ COMMON SKELETON (seen / complement / count family -- ek pass):
+ COMMON SKELETON (seen / complement / count family -- ek pass):
     map/set banao   (kabhi PRELOAD: two-sum khaali · subarray-sum-k -> mp{0:1})
     for x in arr:
-        CHECK pehle   (map me complement/seen/count hai? -> ans use/count)   // ★ UPDATE se PEHLE
+        CHECK pehle   (map me complement/seen/count hai? -> ans use/count)   // UPDATE se PEHLE
         UPDATE baad   (map me x daalo / count++)
-    ★ ORDER KYUN (check-before-update): warna element KHUD se match kar leta (two-sum: x apne aap ko complement maan leta). isliye pehle dekho, phir daalo.
+    ORDER KYUN (check-before-update): warna element KHUD se match kar leta (two-sum: x apne aap ko complement maan leta). isliye pehle dekho, phir daalo.
     (NOTE: har hashing Q one-pass nahi -- group-anagrams = pehle poora map bharo phir output · longest-consec = set-membership. ye skeleton "seen/complement/count" family ke liye.)
 
 ┌── FAMILY: 2-MAP BIJECTION ────────────────────────────────────
@@ -464,17 +464,17 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ISOMORPHIC STRINGS
  └──────────────────────────────────────────────────────────────
-     ★ 2 MAP trick (dono taraf): mp1=s->t, mp2=t->s. (ek map kaafi nahi -- "ab"->"aa" clash sirf ULTI-taraf se pakadta.)
-     ★ MAP-CHECK idiom (har map-Q me): mp.count(key)==1 (key hai?) && mp[key]!=val (par value alag?) -> CLASH -> false.
-     ★ || KYUN: mp1-side clash YA mp2-side clash -> koi ek bhi -> false (isliye OR, && nahi).
+     2 MAP trick (dono taraf): mp1=s->t, mp2=t->s. (ek map kaafi nahi -- "ab"->"aa" clash sirf ULTI-taraf se pakadta.)
+     MAP-CHECK idiom (har map-Q me): mp.count(key)==1 (key hai?) && mp[key]!=val (par value alag?) -> CLASH -> false.
+     || KYUN: mp1-side clash YA mp2-side clash -> koi ek bhi -> false (isliye OR, && nahi).
      loop s/t saath; koi bhi taraf clash -> false; warna dono map me jodo (mp1[s]=t, mp2[t]=s). end -> true.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ WORD PATTERN
  └──────────────────────────────────────────────────────────────
-     ★ ISOMORPHIC ka bhai -- wahi 2-map bijection, bas char<->STRING (word). s ko stringstream(s)+while(ss>>word) se todo.
+     ISOMORPHIC ka bhai -- wahi 2-map bijection, bas char<->STRING (word). s ko stringstream(s)+while(ss>>word) se todo.
      pattern pe for-loop NAHI (words drive) -> counter i: if(i<pattern.size()){ map + i++ }. mapping = char<->word clash-check dono taraf (|| , same isomorphic).
-     ★ EDGE: words ki ginti (j) == pattern.size() honi chahiye (warna "a","dog cat" galat true). end me pattern.size()==j -> true.
+     EDGE: words ki ginti (j) == pattern.size() honi chahiye (warna "a","dog cat" galat true). end me pattern.size()==j -> true.
 
 ┌── (STANDALONE — apni alag trick) ─────────────────────────────
 └───────────────────────────────────────────────────────────────
@@ -497,21 +497,21 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBARRAY SUM = K
  └──────────────────────────────────────────────────────────────
-     ★ prefix-sum + map[sum]; map{0:1} se START. [count += mp[sum-k];  // = prefix[j]-prefix[i-1]=k]
+     prefix-sum + map[sum]; map{0:1} se START. [count += mp[sum-k];  // = prefix[j]-prefix[i-1]=k]
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST CONSECUTIVE SEQ (LC-128)
  └──────────────────────────────────────────────────────────────
      saare num ek SET me daalo. har num pe: agar (num-1) set me NAHI -> ye sequence ka START ->
         curr = num, count = 1;  while (set me curr+1) { count++; curr++; }  -> ans = max(ans, count).
-     ★ (num-1)-check kyun: sirf START-num se ginti chalao -> har element ek hi baar visit -> O(n) (warna O(n^2)).
+     (num-1)-check kyun: sirf START-num se ginti chalao -> har element ek hi baar visit -> O(n) (warna O(n^2)).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAJORITY ELEMENT (LC-169, >n/2)
  └──────────────────────────────────────────────────────────────
      map se: mp[x]++; count > n/2 wala return. O(n) time, O(n) space. (seedha.)
-     ★ BOYER-MOORE VOTING (O(1) space): majority n/2 se zyada -> baaki sab milkar bhi kam -> do ALAG element CANCEL karo, majority bachega.
-       candidate + count. ==candidate -> count++ · !=candidate -> count-- · count==0 -> candidate=nums[i], ★ count=1 (0 chhoda to -1 me chala jaayega, reset kabhi nahi -> BUG). end: candidate = ans.
+     BOYER-MOORE VOTING (O(1) space): majority n/2 se zyada -> baaki sab milkar bhi kam -> do ALAG element CANCEL karo, majority bachega.
+       candidate + count. ==candidate -> count++ · !=candidate -> count-- · count==0 -> candidate=nums[i], count=1 (0 chhoda to -1 me chala jaayega, reset kabhi nahi -> BUG). end: candidate = ans.
 ```
 
 ---
@@ -529,17 +529,17 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PIVOT INDEX
  └──────────────────────────────────────────────────────────────
-     total nikaalo; leftSum chalao. ★ order: rightSum=total-leftSum-nums[i]; if(left==right)return i; PHIR leftSum+=nums[i]. (leftSum BAAD me)
+     total nikaalo; leftSum chalao. order: rightSum=total-leftSum-nums[i]; if(left==right)return i; PHIR leftSum+=nums[i]. (leftSum BAAD me)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PRODUCT EXCEPT SELF (LC-238)
  └──────────────────────────────────────────────────────────────
      ans[i] = (i se PEHLE sabka product) × (i ke BAAD sabka product).  no division, O(n).
-     running `prod` se 2 pass (★ assign-BEFORE-update dono me):
+     running `prod` se 2 pass (assign-BEFORE-update dono me):
         left-pass  (aage):    left[i]  = prod;  prod *= nums[i];
         right-pass (peeche):  prod=1;  right[i] = prod;  prod *= nums[i];
         combine:              ans[i] = left[i] * right[i].
-     ★ ORDER TRAP: pehle ASSIGN (left[i]=prod), PHIR UPDATE (prod*=nums[i]) -> warna khud ka element bhi product me ghus jaata.
+     ORDER TRAP: pehle ASSIGN (left[i]=prod), PHIR UPDATE (prod*=nums[i]) -> warna khud ka element bhi product me ghus jaata.
 
 ┌── (STANDALONE — apni alag trick) ─────────────────────────────
 └───────────────────────────────────────────────────────────────
@@ -549,7 +549,7 @@
  └──────────────────────────────────────────────────────────────
      running sum chalao, max track. (simple prefix)
 
- ★ common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
+ common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
 ```
 
 ---
@@ -577,15 +577,15 @@
          while(top<=bottom && left<=right){
              for(int i=left; i<=right; i++)  ans.push_back(matrix[top][i]);     top++;   // top row L->R
              for(int i=top; i<=bottom; i++)  ans.push_back(matrix[i][right]);   right--; // right col T->B
-             if(top<=bottom){                                                   // ★ GUARD
+             if(top<=bottom){                                                   // GUARD
                  for(int i=right; i>=left; i--) ans.push_back(matrix[bottom][i]); bottom--; // bottom row R->L
              }
-             if(left<=right){                                                   // ★ GUARD
+             if(left<=right){                                                   // GUARD
                  for(int i=bottom; i>=top; i--) ans.push_back(matrix[i][left]);   left++;   // left col B->T
              }
          }
-     ★ GUARD kyun: last 2 loops (bottom-row / left-col) se PEHLE check -- warna single row/col bache to DUPLICATE push.
-     ★ index yaad: top-row [top][i] · right-col [i][right] · bottom-row [bottom][i] · left-col [i][left].
+     GUARD kyun: last 2 loops (bottom-row / left-col) se PEHLE check -- warna single row/col bache to DUPLICATE push.
+     index yaad: top-row [top][i] · right-col [i][right] · bottom-row [bottom][i] · left-col [i][left].
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ TRANSPOSE
@@ -605,7 +605,7 @@
 │ KYUN SAATH: index stack rakho; curr vs stack-top compare -> pop + us index ka ans set. (bas alag: comparison > ya < · ans me value/distance · circular.)
 └───────────────────────────────────────────────────────────────
 
- ★★★ ONE SKELETON (next/prev + greater/smaller + daily-temp + histogram DONO isi pe):
+ ONE SKELETON (next/prev + greater/smaller + daily-temp + histogram DONO isi pe):
     ans[] init (na-mile default: -1 ya n) ; stack<int> st  (INDEX rakho, value nahi)
     for i in arr:                         // prev-wale ke liye loop ULTA (n-1..0)
         while (!st.empty() && cmp(nums[st.top()], nums[i])):   // top ka jawab mil gaya
@@ -618,44 +618,44 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NEXT GREATER ELEMENT
  └──────────────────────────────────────────────────────────────
-     ★ MONOTONIC stack (index rakho); jab curr > stack-top -> pop + ans[top]=curr.
+     MONOTONIC stack (index rakho); jab curr > stack-top -> pop + ans[top]=curr.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NEXT SMALLER ELEMENT
  └──────────────────────────────────────────────────────────────
-     ★ Next-Greater ka SAME code, bas condition ULTA: while nums[st.top()] > nums[i] -> pop + ans[top]=nums[i]. (greater me < tha, smaller me >.)
-     ★ strictly smaller (> , >= nahi) -> [2,2,2] -> saare -1. baaki (index-stack, push, init -1) sab wahi.
+     Next-Greater ka SAME code, bas condition ULTA: while nums[st.top()] > nums[i] -> pop + ans[top]=nums[i]. (greater me < tha, smaller me >.)
+     strictly smaller (> , >= nahi) -> [2,2,2] -> saare -1. baaki (index-stack, push, init -1) sab wahi.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PREVIOUS SMALLER ELEMENT
  └──────────────────────────────────────────────────────────────
-     ★ Next-Smaller ka MIRROR: SAME code, bas for-loop ULTA (right->left, i=n-1..0). (array peeche se dekho -> "right ka next-smaller" = "left ka previous-smaller".)
+     Next-Smaller ka MIRROR: SAME code, bas for-loop ULTA (right->left, i=n-1..0). (array peeche se dekho -> "right ka next-smaller" = "left ka previous-smaller".)
      while nums[st.top()] > nums[i] -> pop + ans[top]=nums[i] (curr i popped ke LEFT me -> uska prev-smaller). push(i). left me kuch nahi -> -1.
-     ★ prev-smaller + next-smaller = Largest-Rectangle-in-Histogram ke building block.
+     prev-smaller + next-smaller = Largest-Rectangle-in-Histogram ke building block.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)
  └──────────────────────────────────────────────────────────────
-     ★★ MENTAL MODEL: HAR height pe KHADE ho -> dono taraf NEAREST-SMALLER (prev+next) -> width=next-prev-1 -> area=height*width -> MAX. bas.
-     ★ prev-smaller + next-smaller ka COMBO. har bar apni OWN height pe rectangle banata -> left prev-smaller tak, right next-smaller tak (dono usse chhote = boundary). sabka area -> MAX.
+     MENTAL MODEL: HAR height pe KHADE ho -> dono taraf NEAREST-SMALLER (prev+next) -> width=next-prev-1 -> area=height*width -> MAX. bas.
+     prev-smaller + next-smaller ka COMBO. har bar apni OWN height pe rectangle banata -> left prev-smaller tak, right next-smaller tak (dono usse chhote = boundary). sabka area -> MAX.
      width = nS[i] - pS[i] - 1 · area = heights[i]*width · ans = max(ans, area).
-     ★ TRICK 1: prev/next-smaller me VALUE nahi, INDEX store karo (width ke liye).
-     ★ TRICK 2: next-smaller "koi chhota nahi" -> sentinel = n (right-edge, bar END tak failta), NA -1. (-1 se width negative -> [2,4]: 2-(-1)-1=-1 galat; n=2 se 2-(-1)-1=2 -> area 4 sahi.) prev-smaller "none" = -1 sahi (left boundary).
-     ★ "-1" rule: boundary bar rectangle me NAHI (smaller) -> -1 lagta. include hoti -> nahi.
-     ★ width=NS-PS-1 KYUN (derive): boundary rectangle me nahi -> bars PS+1 se NS-1 tak. count=last-first+1=(NS-1)-(PS+1)+1=NS-PS-1. (-1 SIRF EK baar, do nahi -- building6: 4-2-1=1 sahi, 4-2-1-1=0 galat.)
-     ★ VISUAL (aankhon se, [2,1,5,6,2,3]):  idx: 0 1 2 3 4 5 · h: 2 1 5 6 2 3 · PS: -1 -1 1 2 1 4 · NS: 1 6 4 4 6 6 · width(NS-PS-1): 1 6 2 1 4 1 · area: 2 6 [10] 6 8 3 -> MAX 10.
+     TRICK 1: prev/next-smaller me VALUE nahi, INDEX store karo (width ke liye).
+     TRICK 2: next-smaller "koi chhota nahi" -> sentinel = n (right-edge, bar END tak failta), NA -1. (-1 se width negative -> [2,4]: 2-(-1)-1=-1 galat; n=2 se 2-(-1)-1=2 -> area 4 sahi.) prev-smaller "none" = -1 sahi (left boundary).
+     "-1" rule: boundary bar rectangle me NAHI (smaller) -> -1 lagta. include hoti -> nahi.
+     width=NS-PS-1 KYUN (derive): boundary rectangle me nahi -> bars PS+1 se NS-1 tak. count=last-first+1=(NS-1)-(PS+1)+1=NS-PS-1. (-1 SIRF EK baar, do nahi -- building6: 4-2-1=1 sahi, 4-2-1-1=0 galat.)
+     VISUAL (aankhon se, [2,1,5,6,2,3]):  idx: 0 1 2 3 4 5 · h: 2 1 5 6 2 3 · PS: -1 -1 1 2 1 4 · NS: 1 6 4 4 6 6 · width(NS-PS-1): 1 6 2 1 4 1 · area: 2 6 [10] 6 8 3 -> MAX 10.
        bar5(idx2): PS=1(h1),NS=4(h2) -> rectangle DONO stoppers ke BEECH (c2,c3, dono>=5) = 2 chauda. first=PS+1=2, last=NS-1=3 -> 3-2+1=2. stoppers khud andar nahi.
-     ★ next-GREATER se NAHI: rectangle taller bar ko include karta, shorter pe rukta -> smaller boundary chahiye. (greater tab jab bada element boundary ho.)
+     next-GREATER se NAHI: rectangle taller bar ko include karta, shorter pe rukta -> smaller boundary chahiye. (greater tab jab bada element boundary ho.)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAXIMAL RECTANGLE (LC-85, 2D)
  └──────────────────────────────────────────────────────────────
-     ★ = Largest-Rectangle-Histogram (LC-84) ka 2D bhai. HAR ROW ko histogram maano -> us pe LC-84 laga -> saare rows ka MAX.
+     = Largest-Rectangle-Histogram (LC-84) ka 2D bhai. HAR ROW ko histogram maano -> us pe LC-84 laga -> saare rows ka MAX.
      heights[] (size = COL, har column ki running height -- upar se neeche):
         cell == 1 -> heights[j] += 1;    // upar wale 1s ke saath build-up
         cell == 0 -> heights[j] = 0;     // column toot gaya -> RESET
      har row ke baad:  maxi = max(maxi, largestRectangleArea(heights));   // LC-84 code REUSE (prev/next-smaller + area)
-     ★ inner loop j (col), outer i (row).  heights COL-size ka (row nahi).
+     inner loop j (col), outer i (row).  heights COL-size ka (row nahi).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ DAILY TEMPERATURES
@@ -665,7 +665,7 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NEXT GREATER ELEM II
  └──────────────────────────────────────────────────────────────
-     ★ same monotonic, bas array CIRCULAR. trick: loop 2 BAAR (i: 0..2n-1), access i % n (mod).
+     same monotonic, bas array CIRCULAR. trick: loop 2 BAAR (i: 0..2n-1), access i % n (mod).
      doosre chakkar me aakhri elements ko SHURU ka greater mil jaata (wrap). baaki wahi; na mile -> -1.
 
 ┌── (STANDALONE — apni alag trick) ─────────────────────────────
@@ -675,28 +675,28 @@
  │ ▸ VALID PARENTHESES
  └──────────────────────────────────────────────────────────────
      opening push; closing aaye to top se match+pop; end me stack KHALI = valid. (closing pe stack empty -> false)
-     ★ match: (topp=='('&&it==')') || (topp=='['&&it==']') || (topp=='{'&&it=='}')
+     match: (topp=='('&&it==')') || (topp=='['&&it==']') || (topp=='{'&&it=='}')
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MIN STACK
  └──────────────────────────────────────────────────────────────
-     ★ DESIGN: push/pop/top/getMin SAB O(1). trick = min hamesha "ready" rakho, bina scan kiye.
-     ★ har element ke SAATH uska "yahaan tak ka MIN" store karo -> stack<pair<val, minSoFar>>.
+     DESIGN: push/pop/top/getMin SAB O(1). trick = min hamesha "ready" rakho, bina scan kiye.
+     har element ke SAATH uska "yahaan tak ka MIN" store karo -> stack<pair<val, minSoFar>>.
         push:   newMin = empty ? val : min(val, top().second);  push {val, newMin}.
         getMin: top().second (O(1), koi loop nahi).   top: top().first.   pop: normal.
-     ★★ KYUN pair (ek single min-var kyun NAHI): pop pe min WAPAS badal sakta -> purana min laut aata;
+     KYUN pair (ek single min-var kyun NAHI): pop pe min WAPAS badal sakta -> purana min laut aata;
         single var us history ko recover nahi kar paata. har element apna min saath -> pop pe neeche wala min apne-aap sahi.
         (e.g. push 5,3,7 -> min 3 · pop 7 -> min still 3 · pop 3 -> min 5 WAPAS aa gaya.)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MIN ADD MAKE VALID
  └──────────────────────────────────────────────────────────────
-     ★ COUNTER, stack nahi (sirf () hain). 2 counter:
+     COUNTER, stack nahi (sirf () hain). 2 counter:
      close_needed = kitne '(' UNMATCHED bache (inke liye ')' chahiye)  ·  open_needed = kitne ')' UNMATCHED aaye (inke liye '(' chahiye).
      '(' aaye -> close_needed++.   else (')' aaye) -> close_needed>0 ? close_needed-- (match) : open_needed++.
-     ans = open_needed + close_needed.   ★ trap: match hua ')' open_needed me MAT ginо (nested "(())" = 0).
+     ans = open_needed + close_needed.   trap: match hua ')' open_needed me MAT ginо (nested "(())" = 0).
 
- ★ broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
+ broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
 ```
 
 ---
@@ -707,7 +707,7 @@
 
  BROAD IDEA: sorted space -> mid -> aadha kaato -> O(log n). (space array ho ya ANSWER-range).
 
- ★★ BS ko POORI SORTED array chahiye HI NAHI -- bas ek comparison se "LEFT ya RIGHT (konsa half phenkna)" DECIDE kar paana chahiye.
+ BS ko POORI SORTED array chahiye HI NAHI -- bas ek comparison se "LEFT ya RIGHT (konsa half phenkna)" DECIDE kar paana chahiye.
     sorted-array us decision ka ek common case hai; find-peak (unsorted) me bhi mid vs mid+1 se half discard hota -> BS lagta.
     => asli requirement = "half safely discard karne ka rule", na ki full sorting.
 
@@ -729,7 +729,7 @@
  │ ▸ FIRST & LAST POSITION (LC-34)
  └──────────────────────────────────────────────────────────────
      sorted + duplicates. target ka {first, last} index. 2 BS, ans(2,-1). mila nahi -> {-1,-1}.
-     ★ CORE: mid==target pe RUKO MAT -> boundary tak ek side aur dhoondo.
+     CORE: mid==target pe RUKO MAT -> boundary tak ek side aur dhoondo.
      1st pass (FIRST): nums[mid]==target -> ans[0]=mid; high=mid-1   (aur LEFT dhoondo)
      2nd pass (LAST):  nums[mid]==target -> ans[1]=mid; low=mid+1    (aur RIGHT dhoondo)
         baaki dono pass me normal: nums[mid] < target -> low=mid+1 · else -> high=mid-1.
@@ -741,22 +741,22 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SEARCH IN ROTATED
  └──────────────────────────────────────────────────────────────
-     mid==target return. ★ kaunsa half sorted? nums[low]<=nums[mid] -> LEFT sorted:
+     mid==target return. kaunsa half sorted? nums[low]<=nums[mid] -> LEFT sorted:
      target [nums[low]..nums[mid]] me? -> high=mid-1, warna low=mid+1.
      else RIGHT sorted: target [nums[mid]..nums[high]] me? -> low=mid+1, warna high=mid-1.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ FIND MIN IN ROTATED
  └──────────────────────────────────────────────────────────────
-     ★ mid ko HIGH se compare (koi target nahi, khud min dhoondna). while(low<high): if(nums[mid]>nums[high]) low=mid+1; else high=MID; -> return nums[low].
-     ★★ high=MID (NOT mid-1): else me mid KHUD min ho sakta (CANDIDATE) -> discard mat karo. isliye while(low<high) (warna infinite-loop). [BUG-CATCH: [3,1,2] high=mid-1 se galat 3 deta tha.]
+     mid ko HIGH se compare (koi target nahi, khud min dhoondna). while(low<high): if(nums[mid]>nums[high]) low=mid+1; else high=MID; -> return nums[low].
+     high=MID (NOT mid-1): else me mid KHUD min ho sakta (CANDIDATE) -> discard mat karo. isliye while(low<high) (warna infinite-loop). [BUG-CATCH: [3,1,2] high=mid-1 se galat 3 deta tha.]
      (ye wahi high=mid vs high=mid-1 rule -- find-peak jaisa: khud-answer-dhoondh -> high=mid+low<high; target-reject -> high=mid-1+low<=high.)
 
 ┌── FAMILY: BS-on-ANSWER (koko · ship · split -- SHELL same, sirf RANGE + solve(mid) alag) ─────
 │ array pe nahi, ANSWER-range pe BS. solve(mid) feasible? -> feasible=chhota try (high=mid-1), warna bada (low=mid+1).
 └───────────────────────────────────────────────────────────────
 
- ★ SHARED SHELL (teeno bilkul same):
+ SHARED SHELL (teeno bilkul same):
       low, high = <RANGE>;   ans = -1;
       while (low <= high) {
           mid = low + (high - low) / 2;
@@ -764,14 +764,14 @@
           else              low = mid + 1;                  // bada chahiye
       }
       return ans;
-   ★ FARAK sirf 2 cheez: (a) RANGE (low, high)   (b) solve(mid) ka FORMULA.
+   FARAK sirf 2 cheez: (a) RANGE (low, high)   (b) solve(mid) ka FORMULA.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ KOKO BANANAS (LC-875) -- min eating-speed k
  └──────────────────────────────────────────────────────────────
      RANGE : low=1, high=max(piles).
      solve : hours = Σ ceil(piles[i] / mid);   return hours <= h.
-     ★ ceil TRAP: ceil(int/int) BEKAAR (int-div pehle FLOOR kar deta). use (piles[i]+mid-1)/mid YA ceil((double)piles[i]/mid). hours = long (overflow).
+     ceil TRAP: ceil(int/int) BEKAAR (int-div pehle FLOOR kar deta). use (piles[i]+mid-1)/mid YA ceil((double)piles[i]/mid). hours = long (overflow).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity
@@ -785,9 +785,9 @@
      "k parts me baanto -> LARGEST part-sum ko MINIMIZE."
      RANGE : low=max(arr) (bada element akela aayega, tod nahi sakte) · high=sum(arr) (k=1 -> pura ek tukda).
      solve : sum=0, count=1;   for x: sum += x; if (sum > mid) { count++; sum = x; }   return count <= k.
-     ★ count = 1 se START (warna aakhri tukda ginti me chhoot jaaye).
+     count = 1 se START (warna aakhri tukda ginti me chhoot jaaye).
 
- ★ sibling: koko (min speed) · ship (min capacity) · split (min largest-sum) -> teeno IDENTICAL shell.
+ sibling: koko (min speed) · ship (min capacity) · split (min largest-sum) -> teeno IDENTICAL shell.
 
 ┌── FAMILY: HALF-DISCARD (unsorted / half-property) ────────────
 │ KYUN SAATH: array pura sorted nahi, phir bhi ek comparison se aadha safe discard ho jaata (peak: mid vs mid+1 · single: index-parity).
@@ -796,12 +796,12 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ FIND PEAK ELEMENT (LC-162)
  └──────────────────────────────────────────────────────────────
-     ★ array SORTED nahi, phir bhi BS -- ek comparison (mid vs mid+1) se aadha discard. (peak = neighbours se bada; edges bahar -inf.)
+     array SORTED nahi, phir bhi BS -- ek comparison (mid vs mid+1) se aadha discard. (peak = neighbours se bada; edges bahar -inf.)
      low=0, high=n-1;   while (low < high):   mid = low+(high-low)/2;
         nums[mid] < nums[mid+1]        -> CHADHAAI -> peak RIGHT me       -> low = mid+1;
-        else (nums[mid] > nums[mid+1]) -> DHALAAN  -> peak mid-KHUD ya LEFT -> high = mid;   // ★ mid (NOT mid-1)
+        else (nums[mid] > nums[mid+1]) -> DHALAAN  -> peak mid-KHUD ya LEFT -> high = mid;   // mid (NOT mid-1)
      return low;   (low==high pe converge = peak. edges auto.)
-     ★★ GOTCHA: dhalaan me high = mid (mid-1 NAHI) -- mid khud peak ho sakta. isliye while low<high (mid+1 hamesha in-bounds, no sentinel).
+     GOTCHA: dhalaan me high = mid (mid-1 NAHI) -- mid khud peak ho sakta. isliye while low<high (mid+1 hamesha in-bounds, no sentinel).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SINGLE ELEMENT (SORTED, LC-540)  = INDEX-PARITY binary search
@@ -823,7 +823,7 @@
              }
          }
          return nums[high];
-     ★ return nums[HIGH] (not low) -- dono branch mid REJECT karte -> high khud single pe aa ke rukta.
+     return nums[HIGH] (not low) -- dono branch mid REJECT karte -> high khud single pe aa ke rukta.
 
 ┌── FAMILY: 2D-index-map ───────────────────────────────────────
 │ KYUN SAATH: 2D matrix ko 1D sorted array maan ke normal BS; index ko (row,col) me convert.
@@ -832,16 +832,16 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SEARCH 2D MATRIX
  └──────────────────────────────────────────────────────────────
-     ★ poore matrix ko 1D maano (low=0, high=row*col-1). access: matrix[mid/col][mid%col]. (row=mid/col, col=mid%col)
+     poore matrix ko 1D maano (low=0, high=row*col-1). access: matrix[mid/col][mid%col]. (row=mid/col, col=mid%col)
 
- ★ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
+ 3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
 
- ★★ high=mid vs high=mid-1 (kab konsa -- ek sawaal: "mid KHUD answer ho sakta abhi bhi?"):
+ high=mid vs high=mid-1 (kab konsa -- ek sawaal: "mid KHUD answer ho sakta abhi bhi?"):
       TARGET-REJECT (mid ko target/condition se compare -> mid pakka galat, e.g. basic-BS/rotated-search: target!=mid) -> high = mid-1  (+ while low<=high)
       KHUD-ANSWER-DHOONDH (koi target nahi, mid KHUD answer ho sakta -- find-PEAK · find-MIN-rotated) -> high = MID  (+ while low<high)
-      ★ BUG-CATCH (find-min, 18-Jul): [3,1,2] pe high=mid-1 karte to mid(=1, khud min) HAT jaata -> galat 3 aata. high=mid se bacha.
-      ★ trap: high=mid ke saath while(low<=high) = INFINITE LOOP -> high=mid hamesha low<high ke saath.
-      ★ KYUN (nuance): mid = low+(high-low)/2 NEECHE (low ki taraf) round karta. jab low==high==mid ho:
+      BUG-CATCH (find-min, 18-Jul): [3,1,2] pe high=mid-1 karte to mid(=1, khud min) HAT jaata -> galat 3 aata. high=mid se bacha.
+      trap: high=mid ke saath while(low<=high) = INFINITE LOOP -> high=mid hamesha low<high ke saath.
+      KYUN (nuance): mid = low+(high-low)/2 NEECHE (low ki taraf) round karta. jab low==high==mid ho:
           high=mid-1 -> range SHRINK (mid-1) -> low>high -> exit. safe with low<=high.
           high=mid   -> high nahi hilta (mid=low) -> range shrink NAHI -> low<=high hua to ATAK (infinite).
           isliye high=mid ko low<high chahiye (low==high pe TURANT exit, atakne se pehle).
@@ -856,10 +856,10 @@
 
  BROAD IDEA: pointer manipulation. 3 broad-trick: FAST/SLOW · REVERSE (3-pointer) · DUMMY node.
 
- ★★ LOOP-CONDITION TRICK (while ka kya likhun -- CP-log ise DEKHTE hi jaante, dry-run nahi karte):
+ LOOP-CONDITION TRICK (while ka kya likhun -- CP-log ise DEKHTE hi jaante, dry-run nahi karte):
     EK sawaal: "aakhri node ka bhi kaam hai, ya sirf uske NEXT ko peek karna hai?"
-      • har node ka apna kaam (key check / process / remove / end pe append) -> `while (curr != NULL)`   [ye ZYADATAR: get, remove, count, print]
-      • curr ke NEXT ko dekhna/use, ya aakhri node PE rukna (tail pakadke aage jodna) -> `while (curr->next != NULL)`   [khaas case, kam]
+      - har node ka apna kaam (key check / process / remove / end pe append) -> `while (curr != NULL)`   [ye ZYADATAR: get, remove, count, print]
+      - curr ke NEXT ko dekhna/use, ya aakhri node PE rukna (tail pakadke aage jodna) -> `while (curr->next != NULL)`   [khaas case, kam]
     (proof: `A->B->NULL` pe dono trace -> `curr!=NULL` B tak jaake B ka kaam karta; `curr->next!=NULL` B se pehle ruk jaata, B ka kaam nahi. => op ka naam nahi, ye sawaal decide karta.)
 
 ┌── FAMILY: FAST/SLOW ──────────────────────────────────────────
@@ -869,28 +869,28 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MIDDLE OF LIST
  └──────────────────────────────────────────────────────────────
-     ★ FAST/SLOW: slow 1 step, fast 2 step; fast end pe -> slow MIDDLE pe.
+     FAST/SLOW: slow 1 step, fast 2 step; fast end pe -> slow MIDDLE pe.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ DETECT CYCLE
  └──────────────────────────────────────────────────────────────
-     ★ FAST/SLOW (Floyd): cycle ho to tez-dheema MILENGE (slow==fast) -> true.
+     FAST/SLOW (Floyd): cycle ho to tez-dheema MILENGE (slow==fast) -> true.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PALINDROME LL (LC-234)
  └──────────────────────────────────────────────────────────────
-     ★ COMBO (3 tool jodo): middle -> 2nd half REVERSE -> head(front) & rev(back) saath chala ke compare.
+     COMBO (3 tool jodo): middle -> 2nd half REVERSE -> head(front) & rev(back) saath chala ke compare.
         Node* mid = middleNode(head);     // slow/fast
         Node* rev = reverseList(mid);     // 2nd half ulta (rev = naya head)
         while (head && rev) { if (head->val != rev->val) return false; head=head->next; rev=rev->next; }
         return true;   (khali list -> true)
-     ★★ list TOOT-ti NAHI: pehle-half node ka ->next kabhi nahi badla -> odd me middle node SHARED (head-se aur rev-se dono beech pe aa ke NULL milte -> while(head&&rev) bina cut ke odd+even dono handle).
+     list TOOT-ti NAHI: pehle-half node ka ->next kabhi nahi badla -> odd me middle node SHARED (head-se aur rev-se dono beech pe aa ke NULL milte -> while(head&&rev) bina cut ke odd+even dono handle).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REMOVE NTH FROM END
  └──────────────────────────────────────────────────────────────
-     ★ FAST/SLOW GAP: fast ko PEHLE aage bhejo (loop i=1; i<=n). ab fast & slow me n ka gap.
-     ★ agar fast==NULL -> head hi hatana hai -> return head->next.
+     FAST/SLOW GAP: fast ko PEHLE aage bhejo (loop i=1; i<=n). ab fast & slow me n ka gap.
+     agar fast==NULL -> head hi hatana hai -> return head->next.
      warna dono SAATH chalao (gap constant) jab tak fast->next NULL -> slow "hatane wale ke PEHLE" baith jaata.
      slow->next us node ko point kar raha -> slow->next = slow->next->next. done.
  ───────────────────────────────────────────────────────────────
@@ -898,14 +898,14 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REMOVE ELEMENTS (delete by val, LC-203)
  └──────────────────────────────────────────────────────────────
-     ★ val wale SAARE node hatao.  if (!head) return null;   prev = null, curr = head;
+     val wale SAARE node hatao.  if (!head) return null;   prev = null, curr = head;
      while (curr != null && head != null):
         curr->val==val && prev==null   -> head = head->next          (HEAD / ya sab-node-same)
         curr->val==val && prev!=null   -> prev->next = curr->next     (beech)
         else (no-match)                -> prev = curr
         curr = curr->next              (har case ke end me)
      return head;
-     ★ TRICK: prev SIRF no-match pe aage (removal pe prev=curr NAHI -- curr hata) -> warna consecutive [1,6,6,2] fail.
+     TRICK: prev SIRF no-match pe aage (removal pe prev=curr NAHI -- curr hata) -> warna consecutive [1,6,6,2] fail.
 
 ┌── FAMILY: DUMMY node ─────────────────────────────────────────
 │ KYUN SAATH: fake head (dummy) + tail; naye node rewire/jodte jao; ans = dummy->next. head-edge apne aap handle.
@@ -914,21 +914,21 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MERGE TWO SORTED (LC-21)
  └──────────────────────────────────────────────────────────────
-     ★ DUMMY node + tail (dummy = head ka special-case avoid).
+     DUMMY node + tail (dummy = head ka special-case avoid).
         while (a && b): (a->val <= b->val) ? { tail->next=a; a=a->next; } : { tail->next=b; b=b->next; }   tail=tail->next;
         while (a) { tail->next=a; a=a->next; tail=tail->next; }    // baaki a jod do (already sorted)
         while (b) { tail->next=b; b=b->next; tail=tail->next; }    // baaki b jod do
         return dummy->next;   (dummy skip -> asli head)
-     ★ ek list khatam -> doosri ki BAAKI seedha jod do (dono already sorted).
+     ek list khatam -> doosri ki BAAKI seedha jod do (dono already sorted).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ADD TWO NUMBERS
  └──────────────────────────────────────────────────────────────
-     ★ MERGE jaisa (dummy + tail) + CARRY ka khel. digits ULTA store (units-digit pehle) -> seedha jodo.
+     MERGE jaisa (dummy + tail) + CARRY ka khel. digits ULTA store (units-digit pehle) -> seedha jodo.
      while(a || b || carry):   <- koi list bachi HAI ya carry bacha -> chalo
         sum = 0; a hai to sum += a->val, a=a->next; b hai to sum += b->val, b=b->next; phir sum += carry.
-        ★ digit = sum % 10 -> naya node, tail se jodo, tail aage.   ★ carry = sum / 10 -> agle ke liye.
-     return dummy->next.   ★ '|| carry' zaroori (999+1=1000 -> end me carry bacha to naya node).
+        digit = sum % 10 -> naya node, tail se jodo, tail aage.   carry = sum / 10 -> agle ke liye.
+     return dummy->next.   '|| carry' zaroori (999+1=1000 -> end me carry bacha to naya node).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SWAP NODES IN PAIRS  = DUMMY + 3-player rewire (order + temp-save)
@@ -940,15 +940,15 @@
          Node* prev=dummy, *first=head;
          while(prev->next && first->next){        // jodi (2 node) bache tab tak
              Node* second=first->next;
-             Node* temp=second->next;             // ★ BACHA lo (warna next line me gum)
+             Node* temp=second->next;             // BACHA lo (warna next line me gum)
              second->next=first;                  // 2 -> 1
              first->next=temp;                    // 1 -> baaki list
              prev->next=second;                   // prev -> 2 (= is jodi ka naya head)
              prev=first;  first=temp;             // ADVANCE (prev=purana first, first=agli jodi ka pehla)
          }
          return dummy->next;
-     ★ dummy kyu: jodi reconnect karne ko "jodi se pehle wala" node chahiye; pehli jodi ke pehle kuch nahi -> dummy.
-     ★ rewire ORDER + temp-save = crux. har iteration = SIRF EK jodi (aage ki jodi ka kaam mat karo).
+     dummy kyu: jodi reconnect karne ko "jodi se pehle wala" node chahiye; pehli jodi ke pehle kuch nahi -> dummy.
+     rewire ORDER + temp-save = crux. har iteration = SIRF EK jodi (aage ki jodi ka kaam mat karo).
 
 ┌── FAMILY: REVERSE (3-pointer) ────────────────────────────────
 │ KYUN SAATH: prev/curr/next se link ulti karo. (reverse khud + palindrome ka 2nd-half.)
@@ -957,9 +957,9 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REVERSE LINKED LIST
  └──────────────────────────────────────────────────────────────
-     ★ 3-pointer: nextt=curr->next; curr->next=prev; prev=curr; curr=nextt. return prev.
+     3-pointer: nextt=curr->next; curr->next=prev; prev=curr; curr=nextt. return prev.
 
- ★ 3 high-leverage: fast/slow (middle+cycle+palindrome+remove-nth) · reverse (reverse+palindrome) · dummy-node (merge).
+ 3 high-leverage: fast/slow (middle+cycle+palindrome+remove-nth) · reverse (reverse+palindrome) · dummy-node (merge).
 ```
 
 ---
@@ -973,14 +973,14 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ DESIGN HASHMAP (LLD)
  └──────────────────────────────────────────────────────────────
-     ★★ MENTAL MODEL: ek ARRAY (buckets); har slot me ek LINKED-LIST (chain). buckets[index] = us chain ka HEAD.
-        index = hash<string>{}(key) % cap.  (★ exact C++ syntax: hash<string>{}(key) -- string hash.)  same index pe 2 key (collision) -> chain me jode (next se).
+     MENTAL MODEL: ek ARRAY (buckets); har slot me ek LINKED-LIST (chain). buckets[index] = us chain ka HEAD.
+        index = hash<string>{}(key) % cap.  (exact C++ syntax: hash<string>{}(key) -- string hash.)  same index pe 2 key (collision) -> chain me jode (next se).
      fields: buckets (Entry* ka array) · cap (slots = 16) · sz (kitne pairs).
 
      put(key,val):  index nikalo -> chain me key DHUNDO.
                        mil gayi -> value UPDATE karo, return.
                        na mili  -> naya node chain me LAGAO + sz++.
-     ★★ PUT TRAP (7-redo se pakka): key mil gayi -> update + TURANT return. return NA kiya to loop
+     PUT TRAP (7-redo se pakka): key mil gayi -> update + TURANT return. return NA kiya to loop
         aage jaake DUPLICATE node laga deta + sz galat. ("test-pass != code-sahi" -- basic test me
         nahi dikhta, chain-ke-ANDAR update pe phat-ta.)
      get(key):      chain traverse -> key match -> value laut.  na mile / null -> -1.
@@ -989,17 +989,17 @@
                        beech/end           -> prev->next = curr->next.
                        phir sz--.
 
-     ★ COMBO (yahi naya/tricky tha): buckets[index] khud ek POINTER hai (chain ka head)
+     COMBO (yahi naya/tricky tha): buckets[index] khud ek POINTER hai (chain ka head)
        -> isliye array-assign (buckets[i]=X) aur node-link (X->next) MIX ho jaate = array + linked-list.
 
      VISUAL:                                      Entry = | key | value | next |
         buckets
         ┌────┐
-      0 │ ●──┼──> NULL
+      0 │ - ──┼──> NULL
         ├────┤
-      1 │ ●──┼──> | apple | 5 | ●─|──> NULL
+      1 │ - ──┼──> | apple | 5 | - ─|──> NULL
         ├────┤
-      3 │ ●──┼──> | cat | 9 | ●─|──> | dog | 4 | ●─|──> NULL     <- COLLISION (chain)
+      3 │ - ──┼──> | cat | 9 | - ─|──> | dog | 4 | - ─|──> NULL     <- COLLISION (chain)
         └────┘
         buckets[i] = us chain ka HEAD (ya NULL).
 
@@ -1013,11 +1013,11 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ DESIGN HASHSET (LLD)
  └──────────────────────────────────────────────────────────────
-     ★ HashMap ka CHHOTA bhai: same bucket-array + chaining, bas VALUE/update nahi. Entry = |key|next|.
+     HashMap ka CHHOTA bhai: same bucket-array + chaining, bas VALUE/update nahi. Entry = |key|next|.
      add:      key chain me hai? -> kuch mat karo (duplicate nahi). na ho -> node lagao + sz++.
      contains: chain traverse -> key match -> true, else false. (= HashMap get, bas bool.)
      remove:   prev+curr traverse. HEAD(prev null) -> buckets[i]=curr->next · beech -> prev->next=curr->next. sz--.
-     ★★ remove BUG-CATCH: prev ko "prev = curr" karo (NA prev=prev->next -- prev NULL se non-head remove pe CRASH).
+     remove BUG-CATCH: prev ko "prev = curr" karo (NA prev=prev->next -- prev NULL se non-head remove pe CRASH).
      (file 08_DSA/09_DESIGN/02_hashset.cpp)
 ```
 
@@ -1079,7 +1079,7 @@
  └──────────────────────────────────────────────────────────────
      TRICK: har num 2-baar, ek 1-baar -> saare XOR karo -> pairs cut -> jo bacha = answer.
        XORR = nums[0];  for i=1..n: XORR ^= nums[i];  return XORR.   (O(n)/O(1), koi map nahi)
-     ★ FAMILY (aage isi daabe me aayenge): Missing-Number · Single-Number-II bhi XOR-based.
+     FAMILY (aage isi daabe me aayenge): Missing-Number · Single-Number-II bhi XOR-based.
 ```
 
 ---
@@ -1090,13 +1090,13 @@
 
  BROAD IDEA: har tree-Q = RECURSION on TreeNode(val, left, right). 3 cheez -> BASE (null pe return) · dono taraf RECURSE · COMBINE.
 
- ★ ORDER: kaam recursion-RESULT pe depend kare -> recurse-PEHLE (post-order); independent -> free.
+ ORDER: kaam recursion-RESULT pe depend kare -> recurse-PEHLE (post-order); independent -> free.
 
- ★ 3 DFS TRAVERSALS (LC-144/94/145): teeno SAME recursion, sirf VISIT [res.push_back] ki JAGAH badalti ->
+ 3 DFS TRAVERSALS (LC-144/94/145): teeno SAME recursion, sirf VISIT [res.push_back] ki JAGAH badalti ->
       PRE = VISIT->left->right (root pehle) · IN = left->VISIT->right (beech) · POST = left->right->VISIT (baad).
 
  ──────────────────────────────────────────────────────────────
- ★★ DECISION-GUIDE (Arpan-derived -- 4 simple sawaal, koi tree-Q likhne se pehle):
+ DECISION-GUIDE (Arpan-derived -- 4 simple sawaal, koi tree-Q likhne se pehle):
    Q1  "root->left" likhu ya "left"?
         root->left / root->right = ASLI bachche (structure)  -> inme RECURSE · LEAF-check (!root->left && !root->right) · SWAP (invert)
         left / right             = recursion ka RETURN (jawab) -> COMBINE me use
@@ -1118,26 +1118,26 @@
            return 1 + max(left, right);          // <- aur yahan phir -> isliye variable
    Q2  COMBINE me kaunsa operator? (question se pata):
         "gehra/bada" -> max  ·  "dono side match" -> &&  ·  "koi ek path" -> ||  ·  "wo node dhundo" -> node return
-        ★ kuch Q me base ke ALAWA ek special CONDITION: path-sum -> LEAF pe check · LCA -> root==p||q. (jahan zaroorat, wahan lagao.)
+        kuch Q me base ke ALAWA ek special CONDITION: path-sum -> LEAF pe check · LCA -> root==p||q. (jahan zaroorat, wahan lagao.)
    Q3  answer RETURN karu ya GLOBAL me rakhu?
         answer seedha ban raha -> RETURN.   answer alag (parent ko height chahiye) -> height RETURN + answer GLOBAL (diameter)
    Q4  value UPAR le jau ya NEECHE?
         answer subtree se banti (height/sum) -> UPAR return.   target/condition path pe -> value NEECHE carry (path-sum)
 
  ──────────────────────────────────────────────────────────────
- ★ CORE -- GENERIC tree-recursion (har tree-Q bas yehi 4 line; sirf BASE + COMBINE badalte):
+ CORE -- GENERIC tree-recursion (har tree-Q bas yehi 4 line; sirf BASE + COMBINE badalte):
        solve(node):
          if (node == NULL) return BASE;      // (1) base  -> null pe ruko
          left  = solve(node->left);          // (2) left bachche ka jawab MAANGO
          right = solve(node->right);         // (3) right bachche ka jawab MAANGO
          return COMBINE(left, right);        // (4) apna jawab banao -> parent ko DO
 
-   ★★ 2 shabd jo poori recursion kholte:
+   2 shabd jo poori recursion kholte:
         node->left  =  NEECHE bhejo   (child ko solve karne bhej diya -- CALL)
         left        =  jo VALUE wapas aayi   (us child ka jawab -> ab COMBINE me use)
 
  ──────────────────────────────────────────────────────────────
- ★ FLOW -- calls NEECHE jaati, JAWAB upar BUBBLE hota:
+ FLOW -- calls NEECHE jaati, JAWAB upar BUBBLE hota:
         [A]
        /   \
      [B]   [C]
@@ -1155,7 +1155,7 @@
    -> null pe BASE -> phir jawab neeche se upar chadhta -> root pe final.
 
  ──────────────────────────────────────────────────────────────
-   ★★ RECURSION DEBUG (trace POORA mat karo -- 3 tool, copy-pen deep-recursion ke liye bana hi nahi):
+   RECURSION DEBUG (trace POORA mat karo -- 3 tool, copy-pen deep-recursion ke liye bana hi nahi):
 
      1. TRUST ONE LEVEL: maano left/right ka jawab MIL gaya -> bas "is node pe kya karu?" socho. deep me mat jhaanko.
 
@@ -1165,7 +1165,7 @@
      3. PRINT > debugger -- crash-safe placement (KAHAN/KAB daalo):
 
           int solve(TreeNode* node) {
-              if (!node) return BASE;                        // ★ null-check PEHLE
+              if (!node) return BASE;                        // null-check PEHLE
               cout << "enter " << node->val << endl;         // enter-print: null-check ke BAAD (warna null->val = CRASH)
               int left  = solve(node->left);
               int right = solve(node->right);
@@ -1175,7 +1175,7 @@
           }
 
         -> output LINEAR LOG (enter=neeche jaana, return=upar bubble) -> flow PADH lo, stepping/confusion nahi.
-        ★ enter-print HAMESHA null-check ke NEECHE (sabse common crash-trap).  ★ result variable me -> print + return dono ho jaayen.
+        enter-print HAMESHA null-check ke NEECHE (sabse common crash-trap).  result variable me -> print + return dono ho jaayen.
 
 ┌── FAMILY: recurse + COMBINE (answer = return-value) ──────────
 │ base=null; left+right recurse -> jo COMBINE karo WAHI return. answer seedha return me aata.
@@ -1192,20 +1192,20 @@
  └──────────────────────────────────────────────────────────────
      base : null -> null.
      comb : children SWAP + recurse dono -> return root.
-     ★ POINTER swap (root->left, root->right), NA value: pointer = BRANCH side badle; value(left->val) = 2 number + leaf pe null->val CRASH. order FREE.
+     POINTER swap (root->left, root->right), NA value: pointer = BRANCH side badle; value(left->val) = 2 number + leaf pe null->val CRASH. order FREE.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SAME TREE (LC-100)
  └──────────────────────────────────────────────────────────────
      base : dono null->true · ek null->false · val alag->false.
      comb : isSame(p->left, q->left) && isSame(p->right, q->right).
-     ★ COMBINE = && (dono side match ho tabhi true).   (clean base: if(!p||!q) return p==q;)
+     COMBINE = && (dono side match ho tabhi true).   (clean base: if(!p||!q) return p==q;)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SYMMETRIC TREE (LC-101)  = SAME-TREE + CROSS
  └──────────────────────────────────────────────────────────────
      base : dono null->true · ek null->false · val alag->false.
-     comb : CROSS -> compare(p->left, q->right) && compare(p->right, q->left).   ★ CROSS = mirror (yehi ek change).
+     comb : CROSS -> compare(p->left, q->right) && compare(p->right, q->left).   CROSS = mirror (yehi ek change).
      call : isSymmetric(root) = root null?true : compare(root->left, root->right).
 
 ┌── FAMILY: return-ONE + track-ANOTHER (post-order + global) ───
@@ -1219,26 +1219,26 @@
         int height(root, int& maxDia):
             if (!root) return 0;
             left = height(root->left, maxDia);   right = height(root->right, maxDia);
-            maxDia = max(maxDia, left + right);   // ★ EXTRA line: is node se guzarne wali diameter = leftH + rightH
+            maxDia = max(maxDia, left + right);   // EXTRA line: is node se guzarne wali diameter = leftH + rightH
             return 1 + max(left, right);          // HEIGHT return (parent ko yeh chahiye)
      diameterOfBinaryTree: maxDia=0; height(root, maxDia); return maxDia.
-     ★ RETURN = height (parent ko chahiye); diameter = BYPRODUCT -> global maxDia (return NAHI).
-     ★ maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
+     RETURN = height (parent ko chahiye); diameter = BYPRODUCT -> global maxDia (return NAHI).
+     maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ BALANCED TREE (LC-110)  = MAX-DEPTH + (-1 SENTINEL)
  └──────────────────────────────────────────────────────────────
      Q: HAR node pe abs(leftH - rightH) <= 1?  true/false.
-     ★ trick: alag "balanced?" pass NAHI -> height nikaalte-nikaalte HI check -> O(n) single-pass. maxDepth return = HEIGHT ya -1 (imbalance-flag).
+     trick: alag "balanced?" pass NAHI -> height nikaalte-nikaalte HI check -> O(n) single-pass. maxDepth return = HEIGHT ya -1 (imbalance-flag).
         int maxDepth(root):
             if (!root) return 0;
             left  = maxDepth(root->left);    if (left == -1)  return -1;   // neeche imbalance -> UPAR propagate
             right = maxDepth(root->right);   if (right == -1) return -1;
-            if (abs(left - right) > 1) return -1;                          // ★ IS node pe imbalance
+            if (abs(left - right) > 1) return -1;                          // IS node pe imbalance
             return 1 + max(left, right);                                   // balanced -> asli HEIGHT
         isBalanced = (maxDepth(root) != -1).
-     ★★ -1 = SENTINEL: imbalance neeche mila -> UPAR propagate -> ek node bhi galat = poora false.
-     ★ TRAP: check HAR node pe (sirf root nahi) -- root balanced par ANDAR imbalanced ho sakta [test-pass != code-sahi].
+     -1 = SENTINEL: imbalance neeche mila -> UPAR propagate -> ek node bhi galat = poora false.
+     TRAP: check HAR node pe (sirf root nahi) -- root balanced par ANDAR imbalanced ho sakta [test-pass != code-sahi].
 
 ┌── FAMILY: search + BUBBLE-UP (found-node upar bhejo) ─────────
 │ jise dhundh rahe wo mila -> UPAR return karo; jahan DONO taraf se kuch mila = answer.
@@ -1255,8 +1255,8 @@
             right = lca(root->right, p, q);
             if (!left)  return right;                    // ek side khali -> doosri return
             if (!right) return left;
-            return root;                                 // ★ DONO non-null -> yehi split-point = LCA
-     ★ mechanic: found-node UPAR bubble; jahan DONO taraf se kuch mila = LCA. (if(!left) return right dono case sambhaalta: left-khali+right-mila, aur dono-khali->NULL.)
+            return root;                                 // DONO non-null -> yehi split-point = LCA
+     mechanic: found-node UPAR bubble; jahan DONO taraf se kuch mila = LCA. (if(!left) return right dono case sambhaalta: left-khali+right-mila, aur dono-khali->NULL.)
 
 ┌── FAMILY: carry-value DOWN + root-to-LEAF ────────────────────
 │ value NEECHE carry karo (target ghatao / running-sum add); LEAF pe check. combine = OR (koi ek path).
@@ -1269,7 +1269,7 @@
      base : null -> false.
      leaf : (!root->left && !root->right) -> return target == root->val.
      comb : hasPathSum(left, t-val) || hasPathSum(right, t-val).
-     ★★ TRAP: LEAF = !root->left && !root->right (ACTUAL bachche), NA "!left && !right" (recursion-result) -> warna non-leaf pe galat match. [test-pass != code-sahi]
+     TRAP: LEAF = !root->left && !root->right (ACTUAL bachche), NA "!left && !right" (recursion-result) -> warna non-leaf pe galat match. [test-pass != code-sahi]
 
 ┌── FAMILY: BFS / LEVEL-ORDER (QUEUE -- DFS recursion se ALAG) ──
 │ level-by-level chahiye (depth nahi) -> QUEUE (FIFO). koi recursion NAHI. root push -> while queue: ek baar = ek LEVEL.
@@ -1283,7 +1283,7 @@
          if (!root) return ans;
          q.push(root);
          while (!q.empty()) {
-             int sz = q.size();               // ★ SNAPSHOT -- is level ke node (for se PEHLE pakdo)
+             int sz = q.size();               // SNAPSHOT -- is level ke node (for se PEHLE pakdo)
              vector<int> level;
              for (int i = 0; i < sz; i++) {
                  node = q.front();  q.pop();
@@ -1293,15 +1293,15 @@
              }
              ans.push_back(level);
          }
-     ★★ TRAP: sz ko for se PEHLE pakdo. loop me bachche push -> q.size() badalta -> warna agle level ke node is level me ghus jaate.
-     ★ TEMPLATE: right-side-view (level ka LAST) · level-average · zigzag -- sab isi skeleton pe, bas "level me kya karna" badalta.
+     TRAP: sz ko for se PEHLE pakdo. loop me bachche push -> q.size() badalta -> warna agle level ke node is level me ghus jaate.
+     TEMPLATE: right-side-view (level ka LAST) · level-average · zigzag -- sab isi skeleton pe, bas "level me kya karna" badalta.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ RIGHT SIDE VIEW (LC-199)  = LEVEL-ORDER + 1 line
  └──────────────────────────────────────────────────────────────
      idea : daaye khade -> har level ka RIGHT-MOST node dikhta (baaki peeche chhup jaate). SAME skeleton, sirf collect badla.
      change: SAARE collect ki jagah -> for-loop me { if (i == sz-1) ans.push(node->val); }  (level ka aakhri = right-most).
-     ★ FIFO L-to-R dequeue -> i == sz-1 = sabse right.  (left-side-view chahiye -> i == 0 le lo.)
+     FIFO L-to-R dequeue -> i == sz-1 = sabse right.  (left-side-view chahiye -> i == 0 le lo.)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse
@@ -1311,7 +1311,7 @@
      DELTA (naya = bas ye, inner-loop ke BAAD -- level HAMESHA normal L->R banao):
          if (levelCounter % 2 != 0) reverse(temp);   // ODD level -> ULTA (R->L)
          levelCounter++;  ans.push_back(temp);
-     ★ even (0,2..) = seedha · odd (1,3..) = reversed.  (alt: deque/front-insert, par reverse simplest.)
+     even (0,2..) = seedha · odd (1,3..) = reversed.  (alt: deque/front-insert, par reverse simplest.)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MINIMUM DEPTH (LC-111)   = LEVEL-ORDER + EARLY-STOP
@@ -1324,17 +1324,17 @@
              int sz=q.size();
              for(int i=0;i<sz;i++){
                  auto curr=q.front(); q.pop();
-                 if(!curr->left && !curr->right) return depth+1;  // ★ PEHLA leaf -> turant return (aage mat dekho)
+                 if(!curr->left && !curr->right) return depth+1;  // PEHLA leaf -> turant return (aage mat dekho)
                  if(curr->left)  q.push(curr->left);
                  if(curr->right) q.push(curr->right);
              }
-             depth++;                                             // ★ level POORA -> depth++ (for-loop ke BAAHAR)
+             depth++;                                             // level POORA -> depth++ (for-loop ke BAAHAR)
          }
-     ★ depth = ab tak POORE hue level; leaf is level me mila -> return depth+1.
-     ★★ DFS-TRAP (isliye BFS): "1 + min(leftD, rightD)" GALAT -- NULL-child ko depth-0 maan ke skew-tree (2->3->4) pe galat deta. BFS me ye dikkat nahi.
+     depth = ab tak POORE hue level; leaf is level me mila -> return depth+1.
+     DFS-TRAP (isliye BFS): "1 + min(leftD, rightD)" GALAT -- NULL-child ko depth-0 maan ke skew-tree (2->3->4) pe galat deta. BFS me ye dikkat nahi.
 
 ┌── FAMILY: BST (Binary Search Tree -- left < node < right) ────
-│ ★ BST ka INORDER (left->node->right) = SORTED (ascending). yehi BST ki asli TRICK -- "sorted/kth chahiye? -> INORDER".
+│ BST ka INORDER (left->node->right) = SORTED (ascending). yehi BST ki asli TRICK -- "sorted/kth chahiye? -> INORDER".
 └───────────────────────────────────────────────────────────────
 
  ┌──────────────────────────────────────────────────────────────
@@ -1342,16 +1342,16 @@
  └──────────────────────────────────────────────────────────────
      idea : BST inorder = SORTED -> kth smallest = inorder ka k-va element.
      steps: inorder(root) -> sorted vector 'ans' -> return ans[k-1].
-     ★ k-1 TRAP: k 1-based (1st smallest = k=1), vector 0-based -> index = k-1.
-     ★ optimize: k-va pe EARLY-STOP (counter, k-va node pe ruko) -- collect-all bhi gate-theek.
+     k-1 TRAP: k 1-based (1st smallest = k=1), vector 0-based -> index = k-1.
+     optimize: k-va pe EARLY-STOP (counter, k-va node pe ruko) -- collect-all bhi gate-theek.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ VALIDATE BST (LC-98)  = RANGE carry-DOWN
  └──────────────────────────────────────────────────────────────
-     ★★ TRAP: local check (sirf turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna.
+     TRAP: local check (sirf turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna.
      idea : har node ki ek WINDOW (mini, maxi) -> node us range me hona chahiye. neeche jaate window TIGHT hoti (ancestor-rule carry).
      solve(root, mini, maxi): null->true · (val<=mini || val>=maxi)->false · left=solve(L, mini, val) · right=solve(R, val, maxi) · return left&&right.
-     call : solve(root, INT_MIN, INT_MAX).  ★ LEFT jao -> maxi=val (chhota hona) · RIGHT jao -> mini=val (bada hona).
+     call : solve(root, INT_MIN, INT_MAX).  LEFT jao -> maxi=val (chhota hona) · RIGHT jao -> mini=val (bada hona).
      (2nd tarika: inorder = strictly increasing? -> kth-smallest ka near-transfer.)
 ```
 
@@ -1364,15 +1364,15 @@
  BROAD IDEA: graph = nodes + edges. TREE bhi ek graph hai (special) -> Graph = Tree + 2 cheez:
    (1) CYCLE ho sakti -> VISITED chahiye (warna A->B->C->A infinite loop)   (2) pointers ki jagah ADJACENCY LIST.
 
- ★ TREE se transfer: BFS = queue (level-order jaisa) · DFS = recursion (left/right ki jagah adj[node]). bas 'visited' add.
+ TREE se transfer: BFS = queue (level-order jaisa) · DFS = recursion (left/right ki jagah adj[node]). bas 'visited' add.
 
- ★ ADJACENCY LIST (har graph-Q ka same FIRST-step) -- edges se banao:
+ ADJACENCY LIST (har graph-Q ka same FIRST-step) -- edges se banao:
       unordered_map<int, vector<int>> adj;    // ya  vector<int> adj[n];
       undirected -> adj[u].push_back(v);  adj[v].push_back(u);   // DONO taraf
       directed   -> sirf adj[u].push_back(v);                    // ek taraf
 
  ──────────────────────────────────────────────────────────────
- ★★ DECISION-GUIDE (koi graph-Q se pehle -- Trees-guide jaisa; "question dekh ke pehchano"):
+ DECISION-GUIDE (koi graph-Q se pehle -- Trees-guide jaisa; "question dekh ke pehchano"):
    Q1  OUTER-LOOP bahar chahiye? (SABSE bada -- yehi trick)
         kitne group / poora graph / disconnected -> HAAN:
              for (i : all nodes)  if (!vis[i]) { count++; BFS(i); }         (CC, Islands)
@@ -1395,7 +1395,7 @@
                         q.push(nbr);
                     }
             }
-        ★ GRID pe: adj[node] ki jagah 4-direction (Q3 dirs-trick); visited = cell ko SINK ('0'/'2').
+        GRID pe: adj[node] ki jagah 4-direction (Q3 dirs-trick); visited = cell ko SINK ('0'/'2').
 
  ──────────────────────────────
    Q3  neighbours kaise? (graph ka roop)
@@ -1404,8 +1404,8 @@
           (a) DIRS-vector:  vector<vector<int>> dirs = {{1,0},{-1,0},{0,1},{0,-1}};
                             for (auto &d : dirs) { int nr=r+d[0], nc=c+d[1]; ... }
           (b) BOUNDS+valid if:  if (nr>=0 && nr<m && nc>=0 && nc<n && grid[nr][nc]==?) { ... }
-              ★ HAR grid-Q me lagti (YEHI trick); '==?' per-Q badalta (islands/rotting =='1').
-   ★ visited HAMESHA (cycle rok) -> push/enter ke waqt mark.
+              HAR grid-Q me lagti (YEHI trick); '==?' per-Q badalta (islands/rotting =='1').
+   visited HAMESHA (cycle rok) -> push/enter ke waqt mark.
 
 ┌── FAMILY: single-source traversal (reachability) ────────────
 │ KYUN SAATH: ek source se EK BFS/DFS -> jo REACHABLE wo visit; "target mila? / connected?". koi OUTER-loop nahi (ek source).
@@ -1433,7 +1433,7 @@
      for(i,j): if(grid[i][j]=='1') { DFS(i,j); count++; }   return count.   // har naya '1' = naya island
      DFS = tree RECURSION jaisa, bas neighbours -> tree: node->left/right | grid: (i+1,j)(i-1,j)(i,j+1)(i,j-1):
        base: bounds ya grid[i][j]=='0' -> return.   grid[i][j]='0'  (SINK = visited).
-     ★★ '0'-check base me (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
+     '0'-check base me (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CONNECTED COMPONENTS (LC-323)  = ISLANDS par ADJ-LIST graph (grid nahi) + BFS
@@ -1450,8 +1450,8 @@
          return count;
          bfs(i): queue push i + vis[i]=true;
                  pop node -> for(nbr : adj[node]) if(!vis[nbr]){ vis[nbr]=true; push nbr; }   // = PATH-EXISTS ka body
-     ★★ count++ AUR bfs DONO if(!vis[i]) ke ANDAR -- warna har node alag gine (=n galat).
-     ★ neighbours = adj[node] (islands me 4-direction tha) -- yahi ek farak, baaki skeleton same.
+     count++ AUR bfs DONO if(!vis[i]) ke ANDAR -- warna har node alag gine (=n galat).
+     neighbours = adj[node] (islands me 4-direction tha) -- yahi ek farak, baaki skeleton same.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
@@ -1460,7 +1460,7 @@
      for(i,j): if(grid[i][j]==1) ans = max(ans, DFS(i,j));   return ans;   // har island ka area -> MAX
      DFS(i,j): base (bounds || grid==0) -> return 0;
                sink grid[i][j]=0;   return 1 + (4-dir DFS ka sum);   // = tree max-depth (return 1 + combine)
-     ★ ans = INT_MIN se start; end me ==INT_MIN -> return 0 (koi island nahi).
+     ans = INT_MIN se start; end me ==INT_MIN -> return 0 (koi island nahi).
 
 ┌── FAMILY: MULTI-SOURCE / level-BFS ──────────────────────────
 │ KYUN SAATH: saare sources EK saath queue (level-0); per-level sz-snapshot -> ek level = ek step/minute. (level-order ka cousin.)
@@ -1478,7 +1478,7 @@
                    if(nr>=0 && nr<m && nc>=0 && nc<n && grid[nr][nc]==1){ grid[nr][nc]=2; push; } } }
                mins++; }
      for(i,j): if(grid==1) return -1;               // END re-scan: fresh bacha -> -1
-     return mins-1;                                 // ★★ mins-1 (last level extra)
+     return mins-1;                                 // mins-1 (last level extra)
 
 ┌── FAMILY: TOPO-SORT / cycle-detect (DIRECTED graph) ─────────
 │ KYUN SAATH: "prerequisites/dependencies + can-finish? / valid-order?" -> TOPO-SORT (Kahn's = BFS + indegree). cycle -> impossible.
@@ -1496,7 +1496,7 @@
          while(q){ node=pop; topo.push(node);
                    for(nbr:adj[node]){ indegree[nbr]--; if(indegree[nbr]==0) q.push(nbr); } }  // prereq pura -> ghatao; 0 hua -> push
          return topo.size() == numCourses;                     // sab process = no cycle
-     ★ indegree = "kitne prereq BACHE"; 0 = ready-to-take. cycle-wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
+     indegree = "kitne prereq BACHE"; 0 = ready-to-take. cycle-wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
 
 ┌── FAMILY: CLONE / deep-copy (hashmap old->new) ────────────────
 │ KYUN SAATH: "graph ka DEEP COPY / naya-graph banao" -> traversal (BFS/DFS) + map(purana->naya). map = cycle-rok + clone-dhundo.
@@ -1521,8 +1521,8 @@
              (b) mp[curr]->neighbors.push_back(mp[it]);                // mp[curr]=A', mp[it]=B' -> JODO (crux)
          return mp[node];
          (clone(x) = new Node(); ->val = x->val)
-     ★ 2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
-     ★ DFS: recursion + same map -> node pe: map me hai? return; nahi -> clone+map -> har nbr recurse+jodo -> return.
+     2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
+     DFS: recursion + same map -> node pe: map me hai? return; nahi -> clone+map -> har nbr recurse+jodo -> return.
 
 ┌── FAMILY: GRAPH-COLOURING / bipartite (2-colour) ─────────────
 │ KYUN SAATH: "graph ko 2 group me baant sakte? / odd-cycle?" -> 2-COLOUR BFS. adjacent same-rang = false.
@@ -1533,7 +1533,7 @@
  └──────────────────────────────────────────────────────────────
      SAAR : har node 2 rang (0/1); koi 2 ADJACENT same-rang na ho -> bipartite. odd-cycle -> false.
      idea : input KHUD adj-list. disconnected -> outer-loop (CC jaisa).
-     ★★ TRICK (NAYA): 2-COLOUR
+     TRICK (NAYA): 2-COLOUR
         color[] : -1 = uncolored,  0/1 = do rang.
         START ko 0 do -> har neighbour OPPOSITE:  color[it] = !color[curr]   (0<->1 flip).
         neighbour ka rang curr ke SAME nikla -> CONFLICT -> return false.
@@ -1541,7 +1541,7 @@
          color[] = -1 (sab uncolored);
          outer loop har node i: uncolored mila ->
          phir BFS(i) us current node se shuru:
-             color[i]=0;  q.push(i);        // ★★ START ko color ZAROORI -- warna !color[curr] galat
+             color[i]=0;  q.push(i);        // START ko color ZAROORI -- warna !color[curr] galat
              curr nikalo -> for(it : graph[curr]):
                  uncolored(-1) -> color[it] = !color[curr];  q.push(it);
                  else color[it]==color[curr]? -> return false;
@@ -1557,11 +1557,11 @@
      SAAR : BFS ka WEIGHTED bhai. wahi template, 2 swap:
               queue -> MIN-HEAP (chhoti dist pehle)   |   visited[] -> dist[] (init INF, src=0)
             + naya = RELAXATION.
-     ★★ TRICK (NAYA): RELAX = "dheela karo".  d = node tak ki dist,  w = us EDGE ka weight.
+     TRICK (NAYA): RELAX = "dheela karo".  d = node tak ki dist,  w = us EDGE ka weight.
         naya rasta (d + w) purane dist[nbr] se kam? -> dist[nbr]=d+w; push.
-        ★ w = EDGE ka weight (it.second), NA ki dist[node].
+        w = EDGE ka weight (it.second), NA ki dist[node].
      idea : min-heap kyun -> "kam edges != kam weight", greedily sabse-sasti-abhi-tak node uthani padti.
-     ★★ PAIR-in-HEAP trick: pq me {dist, node} PAIR daalo -> heap FIRST element (dist) se sort karta (tie -> second).
+     PAIR-in-HEAP trick: pq me {dist, node} PAIR daalo -> heap FIRST element (dist) se sort karta (tie -> second).
         min-heap -> sabse chhoti dist TOP pe. (yehi top-K, "value+index saath" me bhi. HAMESHA {jispe-sort, saath-wala}.)
      TEMPLATE:
          adj: for(it:edges){ u=it[0],v=it[1],w=it[2]; adj[u]+={v,w}; adj[v]+={u,w}; }  // undirected DONO taraf
@@ -1597,7 +1597,7 @@
              rnk[uy]<rnk[ux] -> parent[uy]=ux;
              else            -> parent[uy]=ux; rnk[ux]++;
      same group? find(x)==find(y).    components = count(i where find(i)==i).
-     ★ 2 opt: path-compression (tree flat) + union-by-rank (chhota bade ke neeche) -> find/unite ~O(1).
+     2 opt: path-compression (tree flat) + union-by-rank (chhota bade ke neeche) -> find/unite ~O(1).
 ```
 
 ---
@@ -1621,18 +1621,18 @@
              diff = abs(x-y);  if(diff>0) pq.push(diff);           // barabar -> 0 (dono khatam)
          }
          return pq.empty() ? 0 : pq.top();
-     ★ heap kyun (sort nahi): smash ke baad set BADALTA -> baar-baar "2 max" chahiye -> pop O(log n), top O(1).
+     heap kyun (sort nahi): smash ke baad set BADALTA -> baar-baar "2 max" chahiye -> pop O(log n), top O(1).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ KTH LARGEST ELEMENT (LC-215, Medium)  = MIN-HEAP of size k
  └──────────────────────────────────────────────────────────────
      SAAR : k SABSE BADE min-heap me rakho -> unme se sabse chhota (heap TOP) = k-th largest.
-     ★★ TRICK (top-K ka core): MIN-heap of size k.  (kyun MIN: size>k pe sabse-chhota EVICT karna hai.)
+     TRICK (top-K ka core): MIN-heap of size k.  (kyun MIN: size>k pe sabse-chhota EVICT karna hai.)
      TEMPLATE:
          priority_queue<int, vector<int>, greater<int>> pq;   // MIN-heap
          for(num : nums){ pq.push(num);  if(pq.size() > k) pq.pop(); }   // k se zyada -> chhota nikaal
          return pq.top();                                      // k bade me se chhota = kth largest
-     ★ O(n log k) (sort O(n log n) se behtar jab sirf k-th chahiye).  yehi pattern = "top-K" saare problems.
+     O(n log k) (sort O(n log n) se behtar jab sirf k-th chahiye).  yehi pattern = "top-K" saare problems.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MERGE K SORTED LISTS (LC-23, Hard)  = MIN-HEAP of current heads
@@ -1648,7 +1648,7 @@
              if(curr->next) pq.push(curr->next);                  // uska next pq me
          }
          return dummy->next;
-     ★ heap me max k nodes (1 per list) -> O(N log k).  ★ ListNode* min-heap = custom Compare (a->val > b->val).
+     heap me max k nodes (1 per list) -> O(N log k).  ListNode* min-heap = custom Compare (a->val > b->val).
 ```
 
 ---
@@ -1672,13 +1672,13 @@
                  ans.back()[1] = max(ans.back()[1], intervals[i][1]);   // merge -> bada end
              else ans.push_back(intervals[i]);          // no overlap -> naya
          }
-     ★ ans.back() = last interval; [0]=start [1]=END.  ★ pehla step HAMESHA sort-by-start.
+     ans.back() = last interval; [0]=start [1]=END.  pehla step HAMESHA sort-by-start.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MEETING ROOMS (LC-252, Easy)  = Merge Intervals ka SAME template, bas action alag
  └──────────────────────────────────────────────────────────────
      SAAR : saare meeting attend ho sakte? = koi 2 OVERLAP na karein. (Merge ka SAME skeleton reuse.)
-     ★★ SAME as MERGE (sort + ans.push(first) + loop overlap-check) -- bas overlap pe KYA karo:
+     SAME as MERGE (sort + ans.push(first) + loop overlap-check) -- bas overlap pe KYA karo:
           MERGE:   overlap -> ans.back()[1]=max(...)  (merge)  |  end: return ANS (list)
           MEETING: overlap -> return FALSE           (ruko)    |  end: return TRUE
      TEMPLATE (merge-jaisa hi):
@@ -1688,14 +1688,14 @@
              else ans.push_back(intervals[i]);
          }
          return true;
-     ★★ boundary FARAK (crux): Merge touching-MERGE -> `<=`  ·  Meeting touching-OK -> `<`.
-     ★ ek pattern (sort+overlap) -> bas (a) overlap pe action (merge vs stop) + (b) boundary (< vs <=) badalta. PROBLEM SAMJHO -> decide.
+     boundary FARAK (crux): Merge touching-MERGE -> `<=`  ·  Meeting touching-OK -> `<`.
+     ek pattern (sort+overlap) -> bas (a) overlap pe action (merge vs stop) + (b) boundary (< vs <=) badalta. PROBLEM SAMJHO -> decide.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ INSERT INTERVAL (LC-57)  = already-SORTED -> 3 phase (no sort)
  └──────────────────────────────────────────────────────────────
      SAAR : intervals pehle se sorted+non-overlap. new insert karo (overlap->merge). SORT nahi -> ek pass, 3 phase.
-     ★★ KEY : new = "GROWING BOX" -- har overlap use STRETCH karta; sab overlap khatam pe ek baar push.
+     KEY : new = "GROWING BOX" -- har overlap use STRETCH karta; sab overlap khatam pe ek baar push.
      TEMPLATE:
          vector<vector<int>> ans;  int count=0;
          for(i=0..n){
@@ -1708,8 +1708,8 @@
          ans.push_back(new);                                                   // 4. bada-hua new daalo
          for(i=count..n) ans.push_back(intervals[i]);                          //    phir count se aage baaki
          return ans;
-     ★ break-optimization: interval.start > new.end -> aage sab aur door (sorted) -> ruk. 'count'=kahan ruke -> doosra loop wahin se.
-     ★ Merge/Meeting me SORT + ans.push(first);  yahan sorted-diya -> SORT nahi, bas 3-phase (before / grow / after).
+     break-optimization: interval.start > new.end -> aage sab aur door (sorted) -> ruk. 'count'=kahan ruke -> doosra loop wahin se.
+     Merge/Meeting me SORT + ans.push(first);  yahan sorted-diya -> SORT nahi, bas 3-phase (before / grow / after).
 ```
 
 ## PATTERN 16 — BACKTRACKING (choose / explore / un-choose)
@@ -1718,11 +1718,11 @@
  BROAD IDEA: saari possibilities explore -> solution EK-EK step build; galat lage -> PEECHE aao (backtrack) -> agla raasta.
    MAZE anchor: raasta pakdo -> dead-end -> WAPAS last-junction -> doosra try. har element pe CHOICE(s).
    TEMPLATE (3 step): CHOOSE (element lo/path me daalo) -> EXPLORE (aage recurse) -> UN-CHOOSE (pop/undo -> agli choice).
-   ★ path by-REFERENCE (bahar bana) = ek SHARED path; push/pop usi pe -> backtrack kaam kare. (helper-andar naya = toot jaata.)
-   ★ DECISION TREE: har node = choice-point; har leaf tak ka raasta = ek possible answer.
+   path by-REFERENCE (bahar bana) = ek SHARED path; push/pop usi pe -> backtrack kaam kare. (helper-andar naya = toot jaata.)
+   DECISION TREE: har node = choice-point; har leaf tak ka raasta = ek possible answer.
    KAB: "saare subsets/permutations/combinations", "N-queens", "har-combination try karo".
 
- ★★ 2 FORMS = SAME cheez, alag LIKHAWAT (dono recursion + undo, same output):
+ 2 FORMS = SAME cheez, alag LIKHAWAT (dono recursion + undo, same output):
     A) INCLUDE/EXCLUDE : 2 explicit call (element liya / nahi-liya). base pe record.
          solve(i): if(i==n){ record; return; }
                    push -> solve(i+1) -> pop;    // liya
@@ -1730,7 +1730,7 @@
     B) FOR-LOOP (start-loop): loop se har element pe branch. HAR node pe record.
          solve(start): record;
                        for(i=start..n){ push(i) -> solve(i+1) -> pop; }
- ★ dono me core SAME: CHOOSE -> EXPLORE (recursion) -> UN-CHOOSE (undo/pop). bas shakal alag.
+ dono me core SAME: CHOOSE -> EXPLORE (recursion) -> UN-CHOOSE (undo/pop). bas shakal alag.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBSETS (LC-78)  = har element pe 2 choice (INCLUDE / EXCLUDE)
@@ -1746,20 +1746,20 @@
              // EXCLUDE:
              solve(nums, ans, index+1, temp);     // element chhod ke aage
          // caller: temp BAHAR bana ke by-ref pass; solve(nums, ans, 0, temp).
-     ★ temp by-REFERENCE (shared path); push/pop usi pe -> backtrack. helper-andar banate -> har call naya -> toot jaata.
-     ★ 2^n subsets (har element in/out = power set).
+     temp by-REFERENCE (shared path); push/pop usi pe -> backtrack. helper-andar banate -> har call naya -> toot jaata.
+     2^n subsets (har element in/out = power set).
 
      ── ALT FORM: START-LOOP (for-loop) ── same cheez, alag likhawat (dono yaad rakho):
          void solve(nums, ans, index, temp):
-             ans.push_back(temp);                 // ★ HAR node = ek subset (alag base-case NAHI)
+             ans.push_back(temp);                 // HAR node = ek subset (alag base-case NAHI)
              for(i = index; i < nums.size(); i++){
                  temp.push_back(nums[i]);          // CHOOSE
                  solve(nums, ans, i+1, temp);      // EXPLORE (i+1 -> agla aage se, peeche dobara nahi)
                  temp.pop_back();                  // UN-CHOOSE (backtrack)
              }
-     ★ start-loop me EXPLICIT base-case ki zaroorat NAHI: index==n -> loop chalega hi nahi -> khud ruk jaata.
+     start-loop me EXPLICIT base-case ki zaroorat NAHI: index==n -> loop chalega hi nahi -> khud ruk jaata.
        (include/exclude form me 'if(index==size) return' likhna padta; loop form khud terminate.)
-     ★ FARAK: include/exclude = base pe subset add + 2 branch  |  start-loop = HAR node pe add + loop. dono 2^n, same choose/explore/un-choose.
+     FARAK: include/exclude = base pe subset add + 2 branch  |  start-loop = HAR node pe add + loop. dono 2^n, same choose/explore/un-choose.
 
      ── RECURSION TREE (for-loop, nums=[1,2,3]) ── har edge 2 BAAR: ↓neeche=PUSH(choose) · ↑wapas=POP(backtrack)
                                   [ ]                       <- solve(start=0)
@@ -1776,31 +1776,31 @@
             │
          [1,2,3]  END (i=3, loop khatam)
 
-     ★ har edge pe DONO arrow: neeche jaate waqt ↓PUSH (choose), wapas aate waqt ↑POP (backtrack). ek edge = 2 baar cross.
-     ★ POP KYU? branch khatam -> jo element DAALA tha usko NIKAALO (undo) -> taaki WAHI jagah AGLE sibling ko mile.
+     har edge pe DONO arrow: neeche jaate waqt ↓PUSH (choose), wapas aate waqt ↑POP (backtrack). ek edge = 2 baar cross.
+     POP KYU? branch khatam -> jo element DAALA tha usko NIKAALO (undo) -> taaki WAHI jagah AGLE sibling ko mile.
         (undo na karo -> path ganda -> galat subset.)  e.g. [1,2,3]→↑pop3→[1,2]→↑pop2→[1]→ab loop aage ↓+3→[1,3].
-     ★ right taraf tree PATLI: i+1/start-aage -> node sirf apne AAGE wale pe branch ([2]→+3, [3]→kuch nahi).
+     right taraf tree PATLI: i+1/start-aage -> node sirf apne AAGE wale pe branch ([2]→+3, [3]→kuch nahi).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
  └──────────────────────────────────────────────────────────────
      SAAR : saare elements ka har ORDER (arrangement). har position pe koi bhi UNUSED element -> used[] track.
-     ★★ SUBSETS se FARAK (crux): subsets = 'start' index (sirf AAGE) -> [1,2]==[2,1] repeat nahi.
+     SUBSETS se FARAK (crux): subsets = 'start' index (sirf AAGE) -> [1,2]==[2,1] repeat nahi.
                                  permutation = ORDER matter -> loop 0 SE + used[] se skip (start nahi).
      TEMPLATE:
          void solve(nums, ans, temp, used):
              if(temp.size() == nums.size()){ ans.push_back(temp); return; }   // poora arrangement
-             for(i = 0; i < nums.size(); i++){                                 // ★ 0 se (start nahi)
+             for(i = 0; i < nums.size(); i++){                                 // 0 se (start nahi)
                  if(used[i]) continue;                                         // already-liya -> skip
                  used[i]=true;  temp.push_back(nums[i]);      // CHOOSE
                  solve(nums, ans, temp, used);                // EXPLORE (i+1 nahi -> phir 0 se, used skip)
                  temp.pop_back();  used[i]=false;             // UN-CHOOSE (dono undo)
              }
          // caller: temp + used(n,false) BAHAR bana ke by-ref pass.
-     ★ n! permutations.  ★ base = size==n (full length), subsets me har-node/index-end tha.
-     ★★ INDEX/start KYU NAHI PASS kiya (permutation me): order MATTER karta -> har position pe koi bhi UNUSED element (peeche wala bhi) chahiye -> loop HAMESHA 0-se -> "peeche mat jao" wali baat hi nahi -> isliye 'start' ki zaroorat nahi, uski jagah used[].
+     n! permutations.  base = size==n (full length), subsets me har-node/index-end tha.
+     INDEX/start KYU NAHI PASS kiya (permutation me): order MATTER karta -> har position pe koi bhi UNUSED element (peeche wala bhi) chahiye -> loop HAMESHA 0-se -> "peeche mat jao" wali baat hi nahi -> isliye 'start' ki zaroorat nahi, uski jagah used[].
         (subsets/combinations me start = "peeche mat jao" (duplicate-rok, order-agnostic). permutation me wo nahi chahiye -> used[] = "same element dobara mat lo".)
-     ★ 1-line yaad: SUBSETS='start-aage' (kaunse) · PERMUTATION='used[]+loop-0-se, NO start' (kis order).
+     1-line yaad: SUBSETS='start-aage' (kaunse) · PERMUTATION='used[]+loop-0-se, NO start' (kis order).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ COMBINATIONS (LC-77)  = SUBSETS-code REUSE, bas base size==k (pattern-reuse!)
@@ -1815,8 +1815,8 @@
                  temp.pop_back();                  // UN-CHOOSE
              }
          // caller: solve(n, k, ans, 1, temp)   (start = 1).
-     ★ subsets se FARAK = SIRF base: subsets har-node add · combinations size==k pe add. (baaki code SAME -> reuse.)
-     ★★ family 1-line: SUBSETS='start-aage, har-node' · COMBINATIONS='start-aage, size==k' · PERMUTATION='used[]+loop-0, size==n'.
+     subsets se FARAK = SIRF base: subsets har-node add · combinations size==k pe add. (baaki code SAME -> reuse.)
+     family 1-line: SUBSETS='start-aage, har-node' · COMBINATIONS='start-aage, size==k' · PERMUTATION='used[]+loop-0, size==n'.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ COMBINATION SUM (LC-39)  = COMBINATIONS-code REUSE, 2 tweak: REUSE-'i' + TARGET-base
@@ -1828,11 +1828,11 @@
              if(target == 0){ ans.push_back(temp); return; } // valid combo
              for(i = start; i < cand.size(); i++){
                  temp.push_back(cand[i]);                     // CHOOSE
-                 solve(cand, target - cand[i], ans, i, temp); // EXPLORE (★ 'i' -> REUSE allowed, i+1 nahi)
+                 solve(cand, target - cand[i], ans, i, temp); // EXPLORE ('i' -> REUSE allowed, i+1 nahi)
                  temp.pop_back();                             // UN-CHOOSE
              }
-     ★★ combinations se FARAK: (1) recurse 'i' na i+1 (same element dobara) (2) base = target (0=record, <0=prune), size==k nahi.
-     ★ start=i -> same element repeat OK par PEECHE wale nahi (duplicate combo rok). candidates positive -> target ghatta -> infinite nahi.
+     combinations se FARAK: (1) recurse 'i' na i+1 (same element dobara) (2) base = target (0=record, <0=prune), size==k nahi.
+     start=i -> same element repeat OK par PEECHE wale nahi (duplicate combo rok). candidates positive -> target ghatta -> infinite nahi.
 
      ── ALT FORM: INCLUDE/EXCLUDE (2-branch) ── same output, alag likhawat (subsets ki tarah dono):
          void solve(cand, target, ans, index, temp):
@@ -1844,28 +1844,28 @@
              temp.pop_back();
              // EXCLUDE: cand[index] chhoda -> aage (index+1)
              solve(cand, target, ans, index+1, temp);
-     ★ for-loop form: base target==0 pe turant record.  include/exclude form: base index==size pe (target==0? record).
-     ★★ FAMILY (5) 1-line: SUBSETS=start-aage,har-node · COMBINATIONS=start-aage,size==k · COMB-SUM=start-'i'(reuse),target-base · PERMUTATION=used[]+loop-0,size==n.
+     for-loop form: base target==0 pe turant record.  include/exclude form: base index==size pe (target==0? record).
+     FAMILY (5) 1-line: SUBSETS=start-aage,har-node · COMBINATIONS=start-aage,size==k · COMB-SUM=start-'i'(reuse),target-base · PERMUTATION=used[]+loop-0,size==n.
 ```
 
 ## PATTERN 17 — DP (dynamic programming = recursion + memo)
 
 ```
- ★★★ ESSENCE (Arpan-samjha, apne shabd): "DP kuch ALAG nahi -- RECURSION ko SMART way me karna. plain recursion
+ ESSENCE (Arpan-samjha, apne shabd): "DP kuch ALAG nahi -- RECURSION ko SMART way me karna. plain recursion
       sabko BAAR-BAAR calculate karta (waste); DP bolti = jo ek baar nikala use ARRAY me STORE karlo, dobara maango
       to wahan se uthao. bas. DP = recursion ka smart tareeka." (kaam TABHI karta jab OVERLAP ho -- same subproblem repeat.)
- ★★★ BASE-CASE = asli FIDDLY part (Arpan-insight): RELATION (take/not-take, min/max) lagbhag SAME rehta, aasaan.
+ BASE-CASE = asli FIDDLY part (Arpan-insight): RELATION (take/not-take, min/max) lagbhag SAME rehta, aasaan.
       MUSHKIL = BASE + invalid-handling, jo har problem me ALAG. climbing/robber = base SIMPLE (i==0 -> value) -> jaldi ho gaye;
       coin-change = base AJEEB (i<0 vs i==0, INVALID=INT_MAX, -1) -> wahi phasaya. => relation easy likho, BASE pe RUK ke socho.
 
  BROAD IDEA: same SUBPROBLEM baar-baar aaye (OVERLAPPING) -> dobara compute mat karo -> ek baar karke YAAD rakho.
    DP = RECURSION + memo. (recursion tu jaanta -- DP usi pe "cache" add karta.)
-   ★ ARC (har DP isi tarah crack karo): 1) plain RECURSION likho (relation + base) -> 2) OVERLAP dekho (dry-run: same call 2x)
+   ARC (har DP isi tarah crack karo): 1) plain RECURSION likho (relation + base) -> 2) OVERLAP dekho (dry-run: same call 2x)
       -> 3) MEMOIZE (dp[] cache) -> [optional] 4) BOTTOM-UP (loop se table bharo).
-   ★ 2 STYLE:
+   2 STYLE:
       TOP-DOWN (memoization) = recursion + dp[] cache. sochne me aasaan (relation seedha).
       BOTTOM-UP (tabulation) = base bharo -> loop chhote-se-bade dp[i] bharo. no recursion-stack.
-   ★ MEMO ka pattern (har DP me SAME 3 cheez):
+   MEMO ka pattern (har DP me SAME 3 cheez):
       1. dp[] ko -1 (ya kisi "nahi-nikala" marker) se init.
       2. function start: if(dp[state]!=-1) return dp[state];   // cache HIT
       3. compute + STORE: return dp[state] = <relation>;
@@ -1879,12 +1879,12 @@
      TEMPLATE (top-down memo):
          int solve(int n, vector<int>& dp){
              if(n==0 || n==1) return 1;              // base
-             if(dp[n]!=-1) return dp[n];             // ★ cache HIT
-             return dp[n] = solve(n-1,dp) + solve(n-2,dp);   // ★ compute + STORE
+             if(dp[n]!=-1) return dp[n];             // cache HIT
+             return dp[n] = solve(n-1,dp) + solve(n-2,dp);   // compute + STORE
          }
          // caller: vector<int> dp(n+1, -1); return solve(n, dp);
-     ★ plain recursion = solve(n-2) BAAR-BAAR (overlap) -> exponential. memo se O(n).
-     ★ BOTTOM-UP bhi: dp[0]=dp[1]=1; for(i=2..n) dp[i]=dp[i-1]+dp[i-2]; return dp[n].
+     plain recursion = solve(n-2) BAAR-BAAR (overlap) -> exponential. memo se O(n).
+     BOTTOM-UP bhi: dp[0]=dp[1]=1; for(i=2..n) dp[i]=dp[i-1]+dp[i-2]; return dp[n].
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ HOUSE ROBBER (LC-198)  = har step pe TAKE/SKIP choice + max
@@ -1902,24 +1902,24 @@
              return dp[i] = max(LOOT, SKIP);                      // compute + STORE
          }
          // caller: dp(n,-1); return solve(nums, n-1, dp);        // n-1 = array ka LAST index (0..n-1)
-     ★★ climbing-stairs se FARAK: wahan sirf ADD (ways(n-1)+ways(n-2)); yahan har step CHOICE -> max(take, skip).
-     ★ n-1 kyu: ye TOP-DOWN hi hai (bottom-up nahi). nums[] ke index 0..n-1 -> LAST ghar = n-1 -> "last tak max" = solve(n-1).
+     climbing-stairs se FARAK: wahan sirf ADD (ways(n-1)+ways(n-2)); yahan har step CHOICE -> max(take, skip).
+     n-1 kyu: ye TOP-DOWN hi hai (bottom-up nahi). nums[] ke index 0..n-1 -> LAST ghar = n-1 -> "last tak max" = solve(n-1).
         (climbing me 'n' = step-count 1..n tha, array nahi; yahan index hai -> n-1. sirf naming, direction nahi.)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ COIN CHANGE (LC-322)  = MIN coins + REUSE (dono form, backtracking jaisa)
  └──────────────────────────────────────────────────────────────
      SAAR : amount banane ko MIN coins (har coin UNLIMITED = reuse). na ban sake -> -1.
-     ★★ amount==0 vs amount<0 (THEEK utna, na kam na zyada): amount==0 -> THEEK bana (11 = theek 11) -> SUCCESS -> 0 coins ·
+     amount==0 vs amount<0 (THEEK utna, na kam na zyada): amount==0 -> THEEK bana (11 = theek 11) -> SUCCESS -> 0 coins ·
         amount<0 -> 0 ke NEECHE (coin bada le liya, overshoot) -> INVALID. (ban-na = theek 0 pe RUKNA, cross nahi.)
-     ★★ 3 TRAP (yahi phasaate): (1) INT_MAX = "ban nahi sakta" signal -> min me apne-aap HAAR jaata.
+     3 TRAP (yahi phasaate): (1) INT_MAX = "ban nahi sakta" signal -> min me apne-aap HAAR jaata.
         (2) OVERFLOW: 1+solve(...) SIRF jab solve != INT_MAX (warna 1+INT_MAX -> negative -> min galat).
         (3) caller: answer INT_MAX -> return -1.
 
      ── FORM A: TAKE / NOT-TAKE (index i, 2D dp[i][amount]) ──
          int solve(coins, amount, i, dp):
              if(amount < 0) return INT_MAX;                       // INVALID
-             if(i < 0) return amount==0 ? 0 : INT_MAX;            // ★ koi coin nahi bacha (i<0, NA i==0 -- coin[0] usable)
+             if(i < 0) return amount==0 ? 0 : INT_MAX;            // koi coin nahi bacha (i<0, NA i==0 -- coin[0] usable)
              if(dp[i][amount]!=-1) return dp[i][amount];
              int notTake = solve(coins, amount, i-1, dp);         // coin i chhoda -> agla
              int Take = INT_MAX;
@@ -1938,5 +1938,5 @@
                  if(solve(coins, amount-coins[i], dp) != INT_MAX)           // overflow guard
                      Take = min(Take, 1 + solve(coins, amount-coins[i], dp)); // sabme se MIN
              return dp[amount] = Take;
-     ★★ dono form SAME (backtracking jaisा): TAKE/NOT-TAKE = index pe 2 branch · FOR-LOOP = SIRF take, NOT-TAKE apne-aap
+     dono form SAME (backtracking jaisा): TAKE/NOT-TAKE = index pe 2 branch · FOR-LOOP = SIRF take, NOT-TAKE apne-aap
         (loop me "kaunsa coin" khud choose). for-loop me 'i' index nahi -> 1D dp; 2D me state = (i, amount).

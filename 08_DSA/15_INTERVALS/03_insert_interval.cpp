@@ -10,7 +10,7 @@
 //   [[1,5]], new=[2,3]                             -> [[1,5]]
 //   [[1,5]], new=[6,8]                             -> [[1,5],[6,8]]
 //
-//   ★ idea (3 PHASE -- already sorted, isliye sort nahi):
+//   idea (3 PHASE -- already sorted, isliye sort nahi):
 //     1. jo intervals new se PEHLE khatam (interval.end < new.start) -> seedha result me.
 //     2. jo OVERLAP (interval.start <= new.end) -> merge: new = [min(starts), max(ends)].
 //     3. merged new push -> phir baaki (jo new ke baad) result me.
@@ -20,13 +20,13 @@
 using namespace std;
 
 // ---- APPROACH ----  (already SORTED -> 3 phase, no sort needed)
-//  ★ intervals pehle se sorted+non-overlapping. isliye ek left-to-right pass:
+//  intervals pehle se sorted+non-overlapping. isliye ek left-to-right pass:
 //  1. jo new se PEHLE khatam (interval.end < new.start) -> seedha ans me (before-wale).
 //  2. jo OVERLAP -> new ko GROW karo (nigal lo): new[0]=min, new[1]=max. push abhi nahi.
 //  3. jo new ke AAGE shuru (interval.start > new.end) -> BREAK (sorted hai, aage sab non-overlap).
 //  4. loop-ke-baad: bada-hua new push -> phir 'count' se aage baaki intervals push.
-//  ★★ crux -- new = "growing box": har overlap use stretch karta; sab overlap khatam pe ek baar push.
-//  ★ break-optimization: teesri phase me interval.start > new.end -> aage sab aur door -> ruk jao.
+//  crux -- new = "growing box": har overlap use stretch karta; sab overlap khatam pe ek baar push.
+//  break-optimization: teesri phase me interval.start > new.end -> aage sab aur door -> ruk jao.
 //     'count' = kahan ruke -> doosra loop wahin se baaki push karta.  (O(n))
 // ============================================================
 // ─── YAHAN SOLVE KAR ────────────────────────────────────────

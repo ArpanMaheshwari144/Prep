@@ -23,11 +23,11 @@
 //  4. maxDia = max(maxDia, left + right)      -> is node se guzarne wali diameter -> global MAX me
 //  5. return 1 + max(left, right)             -> HEIGHT return (parent ko chahiye)
 //
-//  ★★ RETURN height, NA diameter (asli samajh): parent ko child ki HEIGHT chahiye (apni leftH/rightH banane ko).
+//  RETURN height, NA diameter (asli samajh): parent ko child ki HEIGHT chahiye (apni leftH/rightH banane ko).
 //     diameter return karte to height KHO jaati -> parent kaam nahi kar paata. HEIGHT = recursion ka "eendhan";
 //     DIAMETER byproduct -> return-slot me nahi -> global/ref me collect. (diameter heights se banti.)
-//  ★ ORDER: recurse-PEHLE (post-order) -- leftH/rightH chahiye TABHI step-4.
-//  ★ maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
+//  ORDER: recurse-PEHLE (post-order) -- leftH/rightH chahiye TABHI step-4.
+//  maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
 // ============================================================
 
 #include <bits/stdc++.h>

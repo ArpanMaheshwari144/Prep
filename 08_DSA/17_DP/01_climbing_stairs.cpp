@@ -10,10 +10,10 @@
 //   n=1  -> 1
 //   n=5  -> 8
 //
-//   ★ SOCH: step n pe pahunchne ke liye -> ya (n-1) se 1 step, ya (n-2) se 2 step.
+//   SOCH: step n pe pahunchne ke liye -> ya (n-1) se 1 step, ya (n-2) se 2 step.
 //     => ways(n) = ways(n-1) + ways(n-2)   (= Fibonacci!)
-//   ★ base: ways(1)=1, ways(2)=2.  (ya ways(0)=1, ways(1)=1)
-//   ★ DP: ye recursion overlap karta (ways(n-2) do baar) -> memo/table se ek baar.
+//   base: ways(1)=1, ways(2)=2.  (ya ways(0)=1, ways(1)=1)
+//   DP: ye recursion overlap karta (ways(n-2) do baar) -> memo/table se ek baar.
 //     bottom-up: dp[i] = dp[i-1] + dp[i-2], chhote se bade bharo.
 // ============================================================
 
@@ -21,14 +21,14 @@
 using namespace std;
 
 // ---- APPROACH ----  (RECURSION -> overlap -> MEMOIZE = DP ka pehla arc)
-//  ★ SOCH: step n pe pahunchne ke 2 raaste -> (n-1) se 1-step ya (n-2) se 2-step
+//  SOCH: step n pe pahunchne ke 2 raaste -> (n-1) se 1-step ya (n-2) se 2-step
 //     => solve(n) = solve(n-1) + solve(n-2)   (Fibonacci shape). base: n==0||n==1 -> 1.
-//  ★ PLAIN RECURSION slow: solve(3), solve(2) BAAR-BAAR compute (OVERLAPPING subproblems) -> exponential.
-//  ★ MEMOIZE (top-down DP) -- 2 line add:
+//  PLAIN RECURSION slow: solve(3), solve(2) BAAR-BAAR compute (OVERLAPPING subproblems) -> exponential.
+//  MEMOIZE (top-down DP) -- 2 line add:
 //     1. dp[] size n+1, sab -1 (matlab "abhi tak nahi nikala").
 //     2. solve me pehle CHECK: dp[n]!=-1 -> seedha return dp[n] (cache hit, compute nahi).
 //     3. warna compute + STORE: return dp[n] = solve(n-1) + solve(n-2).
-//  ★ DP = recursion + "dp[n]!=-1 check" + "store". har DP me yehi pattern.
+//  DP = recursion + "dp[n]!=-1 check" + "store". har DP me yehi pattern.
 // ============================================================
 int solve(int n, vector<int> &dp)
 {

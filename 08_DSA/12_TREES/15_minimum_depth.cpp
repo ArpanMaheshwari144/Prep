@@ -10,13 +10,13 @@
 //         / \
 //        15  7
 //
-//   ★ DFS-TRAP (isliye BFS saaf): neeche wale tree me --
+//   DFS-TRAP (isliye BFS saaf): neeche wale tree me --
 //        2
 //         \
 //          3
 //           \
 //            4        -> 3   (sirf ek path 2->3->4 = 3 node, 4 leaf)
-//   ★ yahan "1 + min(leftDepth, rightDepth)" GALAT: 2 ka left NULL (depth 0) -> min=0 -> galat 1 deta.
+//   yahan "1 + min(leftDepth, rightDepth)" GALAT: 2 ka left NULL (depth 0) -> min=0 -> galat 1 deta.
 //     LEAF tak jaana hai, NULL-child ko "depth 0" mat maano. BFS me ye dikkat hi nahi (first leaf pe ruk jao).
 //
 //   [3,9,20,null,null,15,7]  -> 2
@@ -25,18 +25,18 @@
 //   []  (null root)          -> 0
 // ============================================================
 // ---- APPROACH ----  (BFS -- level-order skeleton + EARLY-STOP; naya BFS flavor)
-//  ★ idea: BFS level-by-level neeche jaati -> jo PEHLA leaf mila = sabse PAAS = min depth -> RUK jao.
+//  idea: BFS level-by-level neeche jaati -> jo PEHLA leaf mila = sabse PAAS = min depth -> RUK jao.
 //     (BFS ki taakat: "sabse pehle jo mila = shortest" -- poora tree dekhne ki zaroorat nahi.)
 //  1. base : root null -> return 0.
 //  2. queue me root push. depth = 0 (ab tak POORE hue level ki ginti).
 //  3. while (!q.empty()) -- har ghumaav = EK level:
 //       a. sz = q.size()  -> is level ke node (snapshot).
 //       b. sz baar loop: front nikaalo + pop ->
-//            - ★ LEAF hai? (!curr->left && !curr->right) -> return depth + 1  (yehi min depth, EARLY-STOP).
+//            - LEAF hai? (!curr->left && !curr->right) -> return depth + 1  (yehi min depth, EARLY-STOP).
 //            - warna bachche (left, right) queue me push.
 //       c. level poora -> depth++.
-//  ★ depth+1 kyun: depth = ab tak POORE hue level; leaf is (current) level me mila -> current level = depth + 1.
-//  ★★ DFS-TRAP (isliye BFS chuna): "1 + min(leftD, rightD)" GALAT -- NULL-child ko depth-0 maan ke skew-tree (2->3->4)
+//  depth+1 kyun: depth = ab tak POORE hue level; leaf is (current) level me mila -> current level = depth + 1.
+//  DFS-TRAP (isliye BFS chuna): "1 + min(leftD, rightD)" GALAT -- NULL-child ko depth-0 maan ke skew-tree (2->3->4)
 //     pe chhota galat deta. BFS me ye dikkat hi nahi (first-leaf = sahi min).
 // ============================================================
 
@@ -67,7 +67,7 @@ int minDepth(TreeNode *root)
             TreeNode *curr = q.front(); // front node nikaalo (FIFO -> jo pehle aaya)
             q.pop();
 
-            // ★ EARLY-STOP: level-order se neeche jaate, jo PEHLA leaf mila = sabse PAAS = min depth. wahi return, aage mat dekho.
+            // EARLY-STOP: level-order se neeche jaate, jo PEHLA leaf mila = sabse PAAS = min depth. wahi return, aage mat dekho.
             if (!curr->left && !curr->right)
             {
                 return depth + 1; // depth = poore ho chuke level; ye node current level me = depth+1

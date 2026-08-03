@@ -10,11 +10,11 @@
 //   "badc","baba"  -> false  (d aur c dono 'a'/'b' me clash)
 
 // ---- ARPAN KI APPROACH ----
-//  ★ 2 MAP wala trick (dono taraf ki mapping): mp1 = s->t, mp2 = t->s.
+//  2 MAP wala trick (dono taraf ki mapping): mp1 = s->t, mp2 = t->s.
 //  (sirf ek map kaafi nahi -- "ab"->"aa" me a->a, b->a: do alag s-char same t-char me clash;
 //   ye clash pakadne ke liye ULTI taraf (t->s) ki mapping bhi chahiye.)
 //
-//  ★ MAP me CHECK karne ki technique (yahi seekhi -- har map-problem me kaam aati):
+//  MAP me CHECK karne ki technique (yahi seekhi -- har map-problem me kaam aati):
 //     "key pehle se hai kya, aur agar hai to uski VALUE wahi hai jo abhi chahiye?"
 //        mp1.count(s[i]) == 1   -> s[i] pehle map ho chuka?
 //        mp1[s[i]] != t[i]      -> par ab alag t-char pe aa raha -> CLASH -> false.
@@ -42,7 +42,7 @@ bool isIsomorphic(string s, string t)
     unordered_map<char, char> mp2;
     for (int i = 0; i < s.size(); i++)
     {
-        // ★ || KYUN (&& nahi): do taraf ka clash-check hai -- mp1 (s->t) side AUR mp2 (t->s) side.
+        // || KYUN (&& nahi): do taraf ka clash-check hai -- mp1 (s->t) side AUR mp2 (t->s) side.
         //   in dono me se KOI BHI EK clash mila -> galat -> return false. isliye OR (||).
         //   (&& hota to DONO taraf ek saath clash chahiye hota -> galat; ek hi taraf ka clash bhi false hona chahiye.)
         //   example: pehle g->d map kiya; ab wahi g phir 'e' char pe aa raha (g->e) -> mp1 side clash -> || se turant false.

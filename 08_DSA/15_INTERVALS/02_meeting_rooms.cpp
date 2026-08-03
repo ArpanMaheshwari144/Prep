@@ -10,22 +10,22 @@
 //   [[1,5],[4,10]]           -> false
 //   [[5,8]]                  -> true
 //
-//   ★ idea: SORT by start -> adjacent check. curr.start < prev.end -> OVERLAP -> false.
-//     (★ '<' na ki '<=' -- touching [5,10] & [1,5] overlap NAHI, meeting-boundary pe OK.)
+//   idea: SORT by start -> adjacent check. curr.start < prev.end -> OVERLAP -> false.
+//     ('<' na ki '<=' -- touching [5,10] & [1,5] overlap NAHI, meeting-boundary pe OK.)
 // ============================================================
 
 #include <bits/stdc++.h>
 using namespace std;
 
 // ---- APPROACH ----  (Merge-Intervals ka TWIN: sort + overlap-check; merge nahi, bool)
-//  ★ same pattern jaisa Merge: SORT by start -> adjacent overlap check.
+//  same pattern jaisa Merge: SORT by start -> adjacent overlap check.
 //  1. sort by start.
 //  2. har next: OVERLAP (curr.start < prev.end)? -> koi 2 meeting takra rahe -> return false.
 //  3. loop khatam, koi overlap nahi -> return true (saare attend ho sakte).
-//  ★★ MERGE vs MEETING -- boundary FARAK (yehi crux, subtle):
+//  MERGE vs MEETING -- boundary FARAK (yehi crux, subtle):
 //     Merge:   touching MERGE karna -> curr.start <= prev.end   (<=)
 //     Meeting: touching OK (ek 5-pe-khatam, doosra 5-se-shuru = takrav nahi) -> curr.start < prev.end   (<)
-//  ★ (yahan 'ans' vector ki zaroorat NAHI thi -- bas prev.end se compare; par chalta hai.)
+//  (yahan 'ans' vector ki zaroorat NAHI thi -- bas prev.end se compare; par chalta hai.)
 // ============================================================
 bool canAttendMeetings(vector<vector<int>> &intervals)
 {
@@ -35,7 +35,7 @@ bool canAttendMeetings(vector<vector<int>> &intervals)
 
     for (int i = 1; i < intervals.size(); i++)
     {
-        // OVERLAP: curr ka start < prev ka END  (★ '<' -- touching OK, merge se yahi farak)
+        // OVERLAP: curr ka start < prev ka END  ('<' -- touching OK, merge se yahi farak)
         if (intervals[i][0] < ans.back()[1])
         {
             return false; // 2 meeting takra rahe -> saare attend nahi kar sakte

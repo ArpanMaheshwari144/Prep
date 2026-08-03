@@ -10,7 +10,7 @@
 //        0 1 1            1 0 1
 //     -> 4 minute      -> -1  (bottom-left ka fresh(1) tak koi rotten nahi pahunch sakta)
 //
-//   ★ TWIST (naya): ye ISLANDS jaisa grid+BFS hai, PAR --
+//   TWIST (naya): ye ISLANDS jaisa grid+BFS hai, PAR --
 //     - MULTI-SOURCE: ek source se nahi, SAARE rotten(2) EK saath spread karte -> shuru me sab rotten queue me daalo.
 //     - MINUTES = LEVELS: har "minute" = BFS ka ek LEVEL (Tree level-order ka sz-snapshot yaad kar). level ginte jao.
 //     - end me koi FRESH bacha? -> -1.
@@ -21,14 +21,14 @@
 //     [[0,2]]                     -> 0   (koi fresh hai hi nahi)
 // ============================================================
 // ---- APPROACH ----  (grid MULTI-SOURCE BFS + level-count)
-//  ★ idea: saare rotten EK saath phailte (multi-source). har MINUTE = ek BFS LEVEL. end pe fresh bacha -> -1.
+//  idea: saare rotten EK saath phailte (multi-source). har MINUTE = ek BFS LEVEL. end pe fresh bacha -> -1.
 //  init : saare rotten(2) ka (i,j) queue<pair> me -> ye level-0 (multi-source start).
 //  dirs : {{1,0},{-1,0},{0,1},{0,-1}} -> 4 padosi (grid ka classic neighbour-trick, bahut jagah use).
 //  loop : level-order (sz-snapshot) -> pop (row,col) -> har dir se (nr,nc):
 //           in-bounds && grid[nr][nc]==1? -> rot (=2) + push.    har level ke baad mins++.
 //  end  : grid me koi 1 bacha? -> return -1.  warna return mins-1.
-//  ★ crux: MULTI-SOURCE (saare rotten pehle) + minutes = LEVELS; mins-1 (last level pe kuch rot nahi -> ek extra).
-//  ★ neighbour-CONDITION (in-bounds && grid==1) HAR grid-Q me lagti -- '==1' = sirf 1-wale ko rot, SAB ko nahi (question-hisaab badalti). [tera flag]
+//  crux: MULTI-SOURCE (saare rotten pehle) + minutes = LEVELS; mins-1 (last level pe kuch rot nahi -> ek extra).
+//  neighbour-CONDITION (in-bounds && grid==1) HAR grid-Q me lagti -- '==1' = sirf 1-wale ko rot, SAB ko nahi (question-hisaab badalti). [tera flag]
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -56,7 +56,7 @@ int orangesRotting(vector<vector<int>> &grid)
     int mins = 0;
     while (!q.empty()) // har ghumaav = EK minute (level)
     {
-        int sz = q.size(); // ★ SNAPSHOT: is level ke saare rotten (level-order jaisa)
+        int sz = q.size(); // SNAPSHOT: is level ke saare rotten (level-order jaisa)
         for (int i = 0; i < sz; i++)
         {
             int row = q.front().first;
@@ -67,7 +67,7 @@ int orangesRotting(vector<vector<int>> &grid)
             {
                 int newRow = row + it[0];
                 int newCol = col + it[1];
-                // ★ in-bounds AUR fresh(==1) -> tabhi rot. (sirf 1-wale ko 2 karo, sab ko nahi)
+                // in-bounds AUR fresh(==1) -> tabhi rot. (sirf 1-wale ko 2 karo, sab ko nahi)
                 if (newRow >= 0 && newRow < m && newCol >= 0 && newCol < n && grid[newRow][newCol] == 1)
                 {
                     grid[newRow][newCol] = 2; // rot
@@ -89,7 +89,7 @@ int orangesRotting(vector<vector<int>> &grid)
             }
         }
     }
-    return mins - 1; // ★ mins-1: last level pe kuch rot nahi hota -> ek extra gina gaya
+    return mins - 1; // mins-1: last level pe kuch rot nahi hota -> ek extra gina gaya
 }
 
 int main()

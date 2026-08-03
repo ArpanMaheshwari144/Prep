@@ -4,7 +4,7 @@
 
 while (saans > 0)               // jab tak zinda hai / saans LEFT hai
 {
-    seekhna != jhukna;          // ★ ye HAMESHA true -- seekhna KABHI jhukna nahi
+    seekhna != jhukna;          // ye HAMESHA true -- seekhna KABHI jhukna nahi
     seekho();                   // seekhte raho, ladte raho
     life++;                     // har din ek kadam UPAR
     continue;                   // rukna nahi -- chalte raho

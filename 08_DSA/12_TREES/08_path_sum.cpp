@@ -18,11 +18,11 @@
 //   null target=0 -> false
 // ============================================================
 // ---- APPROACH ----
-//  ★ NAYA angle: value UPAR return nahi -- value NEECHE carry karo (target me se ghatate jao).
+//  NAYA angle: value UPAR return nahi -- value NEECHE carry karo (target me se ghatate jao).
 //  1. base: root NULL -> false.
-//  2. ★ LEAF (!root->left && !root->right) pe -> return (targetSum == root->val).  [bacha target leaf-value se match?]
+//  2. LEAF (!root->left && !root->right) pe -> return (targetSum == root->val).  [bacha target leaf-value se match?]
 //  3. warna -> hasPathSum(left, target - val) || hasPathSum(right, target - val).   COMBINE = OR (koi ek path bane).
-//  ★★ TRAP (jo tune pakda): LEAF ka check = !root->left && !root->right (ACTUAL bachche), NA ki !left && !right
+//  TRAP (jo tune pakda): LEAF ka check = !root->left && !root->right (ACTUAL bachche), NA ki !left && !right
 //     (recursion-result). warna non-leaf pe bhi target==val match ho jaata -> GALAT. (5->3, target5 = false, na true.)
 // ============================================================
 
@@ -44,7 +44,7 @@ bool hasPathSum(TreeNode *root, int targetSum)
         return false;
     }
 
-    // ★ LEAF check: left & right DONO nahi -> mei jahan khada hu WAHI leaf hai (ACTUAL bachche dekho).
+    // LEAF check: left & right DONO nahi -> mei jahan khada hu WAHI leaf hai (ACTUAL bachche dekho).
     // neeche aate hue target me se har node-value ghatate aaye -> leaf pe: bacha target == leaf-value? -> path poora.
     if (!root->left && !root->right)
         return root->val == targetSum;

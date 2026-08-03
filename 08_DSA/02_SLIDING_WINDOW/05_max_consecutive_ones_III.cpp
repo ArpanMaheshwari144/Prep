@@ -44,7 +44,7 @@ int longestOnes(vector<int> &nums, int k)
             i++;
         }
 
-        // ---- ★ PATTERN / LEARNING (khud debug karke nikaala) ----
+        // ---- PATTERN / LEARNING (khud debug karke nikaala) ----
         // yahan if(zeroCount == k) MAT lagao -> wo FALTU hai. kyun?
         //   upar wale  while(zeroCount > k)  shrink ke BAAD window [i..j] me zeroCount HAMESHA <= k
         //   -> window yahan pahunchte hi HAMESHA VALID hoti -> invalid ho hi nahi sakti.
@@ -52,7 +52,7 @@ int longestOnes(vector<int> &nums, int k)
         // (galti thi: pehle if(zeroCount==k) laga diya tha -> sirf "exactly k" window ginta ->
         //  k=0 / k>zeros wale case toot gaye. condition hatao -> saara mess gayab -> 7/7 clean.)
         //
-        // ★ BROAD PATTERN (variable sliding window):
+        // BROAD PATTERN (variable sliding window):
         //     expand -> shrink-till-valid -> ans UNCONDITIONAL (record, no if).
         ans = max(ans, j - i + 1);
         j++;

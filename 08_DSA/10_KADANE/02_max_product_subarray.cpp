@@ -12,9 +12,9 @@
 //   [5]               -> 5
 //
 // ---- ARPAN KI APPROACH ----
-//  ★ problem aasan, bas TRICK: product me neg×neg = BADA -> negative (MIN) bhi track karna hai, sirf max se nahi banega.
+//  problem aasan, bas TRICK: product me neg×neg = BADA -> negative (MIN) bhi track karna hai, sirf max se nahi banega.
 //    isliye maxprod AUR minprod dono chalao. bas yahi trick, baaki simple.
-//  ★ 4 line:
+//  4 line:
 //     temp    = max({ nums[i], maxprod*nums[i], minprod*nums[i] })   // teen candidate ka max
 //     minprod = min({ nums[i], maxprod*nums[i], minprod*nums[i] })   // same teen ka min
 //     maxprod = temp                                                 // ab max update (temp isliye)
@@ -37,12 +37,12 @@ int maxProduct(vector<int> &nums)
     int ans = 0;
     for (int i = 1; i < nums.size(); i++)
     {
-        // ★ 3 RAASTE: num akela (fresh) · num×oldMax · num×oldMin -> in me se best
+        // 3 RAASTE: num akela (fresh) · num×oldMax · num×oldMin -> in me se best
         int temp = max({nums[i], nums[i] * max_prod, nums[i] * min_prod});
-        // ★★ FREEZE: min bhi PURANE max/min se nikaalo -- isiliye upar temp me rakha, max abhi tak badla NAHI
+        // FREEZE: min bhi PURANE max/min se nikaalo -- isiliye upar temp me rakha, max abhi tak badla NAHI
         min_prod = min({nums[i], nums[i] * max_prod, nums[i] * min_prod});
-        max_prod = temp; // ★ ab max update (min nikalne ke BAAD -- warna naya-max ghus jaata = BUG)
-        ans = max(ans, max_prod); // ★ ans me purana bhi (dip/0 aaye to best na bhoole)
+        max_prod = temp; // ab max update (min nikalne ke BAAD -- warna naya-max ghus jaata = BUG)
+        ans = max(ans, max_prod); // ans me purana bhi (dip/0 aaye to best na bhoole)
     }
     return ans;
 }

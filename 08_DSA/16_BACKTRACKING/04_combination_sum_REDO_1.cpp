@@ -6,7 +6,7 @@
 //   [2,3,6,7], t=7  -> [[2,2,3],[7]]   ·   [2,3,5], t=8 -> [[2,2,2,2],[2,3,3],[3,5]]
 //   [2], t=1 -> []   ·   [2], t=4 -> [[2,2]]
 //
-//   ★ combinations jaisa, 2 tweak: recurse 'i' (REUSE, i+1 nahi) + base = TARGET (0=record, <0=prune).
+//   combinations jaisa, 2 tweak: recurse 'i' (REUSE, i+1 nahi) + base = TARGET (0=record, <0=prune).
 //     (dono form allowed: for-loop ya include/exclude — jo yaad aaye)
 // ============================================================
 

@@ -3,7 +3,7 @@
 // ============================================================
 // Ek connected UNDIRECTED graph ka ek node diya. DEEP COPY (clone) banake return karo
 // -- bilkul naya graph, same structure. neighbours bhi NAYE clone-nodes ki taraf.
-//   ★ twist: CYCLE hoti -> same node dobara clone na ho.
+//   twist: CYCLE hoti -> same node dobara clone na ho.
 //
 //   (memory se likh. atke to 07_clone_graph.cpp / sheet peek. koi guilt nahi.)
 // ============================================================

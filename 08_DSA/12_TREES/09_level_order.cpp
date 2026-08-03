@@ -23,9 +23,9 @@
 //       b. temp list (is level ka).
 //       c. sz baar loop: front nikaalo + pop -> val temp me -> uske bachche (left,right) queue me push.
 //       d. temp -> ans (level poora).
-//  ★★ KEY TRAP: sz ko for-loop se PEHLE pakdo (variable me). loop ke ANDAR bachche push hote -> queue.size()
+//  KEY TRAP: sz ko for-loop se PEHLE pakdo (variable me). loop ke ANDAR bachche push hote -> queue.size()
 //     badal jaata -> agar condition me seedha q.size() use karte to agle-level ke node bhi is level me ghus jaate.
-//  ★ order: root pehle push -> uske bachche baad me -> FIFO -> apne aap level-order + left-to-right.
+//  order: root pehle push -> uske bachche baad me -> FIFO -> apne aap level-order + left-to-right.
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -50,7 +50,7 @@ vector<vector<int>> levelOrder(TreeNode *root)
     q.push(root); // level-0 ka node (root) queue me daala -- yahin se BFS shuru
     while (!q.empty())
     {
-        int sz = q.size(); // ★ SNAPSHOT: abhi queue me jitne node = is level ke saare (for-loop se pehle pakda)
+        int sz = q.size(); // SNAPSHOT: abhi queue me jitne node = is level ke saare (for-loop se pehle pakda)
         vector<int> temp;  // is level ka apna answer collect karne ko
         for (int i = 0; i < sz; i++)
         {

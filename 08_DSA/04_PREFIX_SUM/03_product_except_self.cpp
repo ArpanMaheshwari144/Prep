@@ -3,7 +3,7 @@
 // ============================================================
 // nums[] diya. output[] return karo jahan output[i] = nums ke SAARE elements ka
 // product SIWAAY nums[i] ke.
-// ★ DIVISION use nahi karna. O(n) chahiye.
+// DIVISION use nahi karna. O(n) chahiye.
 //
 // (hint: har index ke LEFT ka product + RIGHT ka product.
 //  output[i] = (i se pehle sabka product) * (i ke baad sabka product). khud socho.)

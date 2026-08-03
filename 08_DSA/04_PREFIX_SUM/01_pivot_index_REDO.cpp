@@ -5,8 +5,8 @@
 // RIGHT sabhi elements ka sum. (index khud kisi taraf count nahi.)
 // aisa PEHLA index return karo; koi na ho -> -1.
 //
-// ★ PEHLE COPY-PEN pe: [1,7,3,6,5,6] le, total nikaal, ek-ek index pe left/right likh -> pattern dekh. PHIR code.
-// (leftSum running + rightSum = total - leftSum - nums[i]. ★ dhyan: leftSum += kab karna -- check se pehle ya baad?)
+// PEHLE COPY-PEN pe: [1,7,3,6,5,6] le, total nikaal, ek-ek index pe left/right likh -> pattern dekh. PHIR code.
+// (leftSum running + rightSum = total - leftSum - nums[i]. dhyan: leftSum += kab karna -- check se pehle ya baad?)
 //
 // Tests (// expected):
 //   [1,7,3,6,5,6]        -> 3

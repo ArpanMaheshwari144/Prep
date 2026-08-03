@@ -10,7 +10,7 @@
 //  j aage badhao: nums[j]==0 -> zeroCount++.
 //  INVALID kab? -> zeroCount > k (allowed se zyada flip). tab tak left(i) se shrink:
 //     nums[i]==0 hai to zeroCount--, i++ (jab tak window firse valid).
-//  ★ ans store karte waqt KOI if nahi -- kyunki jab hum upar se yahan tak aaye,
+//  ans store karte waqt KOI if nahi -- kyunki jab hum upar se yahan tak aaye,
 //     to upar ki (shrink) conditions se window APNE AAP valid ho chuki hai.
 //     isliye seedha ans = max(ans, j-i+1) UNCONDITIONAL.
 //  koi k>0 guard/flag nahi -- k=0 apne aap handle (zeroCount>0 pe shrink ho jaata).
@@ -23,8 +23,8 @@
 //   [1,0,1,0,1], k=1                                    -> 3
 //   [1,1,1,1], k=2                                      -> 4   (k > total zeros)
 //   [1,1,0,1], k=5                                      -> 4   (k > total zeros)
-//   [1,1,0,1,1], k=0                                    -> 2   (★ mixed + k=0)
-//   [0,1,1], k=0                                        -> 2   (★ mixed + k=0)
+//   [1,1,0,1,1], k=0                                    -> 2   (mixed + k=0)
+//   [0,1,1], k=0                                        -> 2   (mixed + k=0)
 // ============================================================
 
 #include <iostream>

@@ -13,11 +13,11 @@
 //
 // ============================================================
 // ---- ARPAN KI APPROACH ----
-//  ★ val wale SAARE node hatane hain. HEAD bhi ho sakta -> isliye prev/curr traverse + head special-case.
+//  val wale SAARE node hatane hain. HEAD bhi ho sakta -> isliye prev/curr traverse + head special-case.
 //  prev=NULL, curr=head. loop:
 //     curr->val==val && prev==NULL (HEAD hatana) -> head=head->next, curr=curr->next.  (prev NULL hi rehne do)
 //     curr->val==val && prev!=NULL (beech/end)   -> prev->next=curr->next, curr=curr->next.
-//        ★★ BUG-CATCH: removal pe prev ADVANCE MAT karo (prev=curr galat -- curr to HATA diya).
+//        BUG-CATCH: removal pe prev ADVANCE MAT karo (prev=curr galat -- curr to HATA diya).
 //           prev waise ka waisa rehta (kyunki uska next ab curr-ke-aage pe hai). warna consecutive [1,6,6,2] fail.
 //     warna (no match) -> prev=curr, curr=curr->next.   (yahan prev advance hota)
 //  return head.
@@ -50,7 +50,7 @@ Node *removeElements(Node *head, int val)
         }
         else if (curr->val == val && prev != NULL)
         {
-            // ★ yahan prev = curr NAHI karenge. kyun: curr abhi HAT raha hai (skip ho raha).
+            // yahan prev = curr NAHI karenge. kyun: curr abhi HAT raha hai (skip ho raha).
             //   maan lo beech me 2 ya usse zyada consecutive same-val node hain (jaise [1,6,6,2], val=6).
             //   agar prev=curr kar diya to prev ek HATE hue node pe chala jayega -> agla 6 sahi se link nahi hoga.
             //   isliye prev waisa ka waisa rehta (uska next hi aage badhta), sirf curr aage jata.
