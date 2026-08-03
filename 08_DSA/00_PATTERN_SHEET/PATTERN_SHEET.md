@@ -1928,10 +1928,10 @@
              if(amount < 0) return INT_MAX;
              if(amount == 0) return 0;
              if(dp[amount]!=-1) return dp[amount];
-             int best = INT_MAX;
-             for(coin : coins)                                    // har coin TRY (choose khud loop me)
-                 if(solve(coins, amount-coin, dp) != INT_MAX)     // overflow guard
-                     best = min(best, 1 + solve(coins, amount-coin, dp));  // sabme se MIN
-             return dp[amount] = best;
+             int Take = INT_MAX;
+             for(int i=0; i<coins.size(); i++)                              // har coin TRY (choose khud loop me)
+                 if(solve(coins, amount-coins[i], dp) != INT_MAX)           // overflow guard
+                     Take = min(Take, 1 + solve(coins, amount-coins[i], dp)); // sabme se MIN
+             return dp[amount] = Take;
      ★★ dono form SAME (backtracking jaisा): TAKE/NOT-TAKE = index pe 2 branch · FOR-LOOP = SIRF take, NOT-TAKE apne-aap
         (loop me "kaunsa coin" khud choose). for-loop me 'i' index nahi -> 1D dp; 2D me state = (i, amount).
