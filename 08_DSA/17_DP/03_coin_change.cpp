@@ -32,11 +32,14 @@ using namespace std;
 // ============================================================
 int solve(vector<int> &coins, int amount, int i, vector<vector<int>> &dp)
 {
+    // ★★ amount==0 vs amount<0 = THEEK utna, na kam na zyada:
+    //    amount==0 -> THEEK bana (11 ko theek 11) -> SUCCESS -> 0 coins.
+    //    amount<0  -> 0 ke NEECHE gaya (coin bada le liya, overshoot) -> INVALID (ban-na = theek 0 pe rukna, cross nahi).
     if (amount < 0)
-        return INT_MAX;                    // INVALID (amount cross kar gaya)
+        return INT_MAX;                    // INVALID (0 cross -> zyada le liya)
 
     if (i < 0)                             // koi coin nahi bacha
-        return amount == 0 ? 0 : INT_MAX;  //   amount pura -> 0 coins · warna INVALID
+        return amount == 0 ? 0 : INT_MAX;  //   amount THEEK 0 -> 0 coins · warna INVALID
 
     if (dp[i][amount] != -1)               // cache HIT
         return dp[i][amount];
