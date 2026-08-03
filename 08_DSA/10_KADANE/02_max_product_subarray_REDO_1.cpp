@@ -2,7 +2,7 @@
 // [COLD REDO] MAXIMUM PRODUCT SUBARRAY — (LeetCode 152, Medium)
 // ============================================================
 // sheet/original file MAT dekh. fresh dimaag se, khud se solve kar.
-// int array diya. aisा CONTIGUOUS subarray dhoondho jiska elements ka
+// int array diya. aisa CONTIGUOUS subarray dhoondho jiska elements ka
 // PRODUCT sabse BADA ho. wo max product lautao.
 //
 //   [2,3,-2,4]        -> 6

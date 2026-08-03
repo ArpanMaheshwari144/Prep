@@ -6,7 +6,7 @@
 //
 //   DSU (Disjoint Set Union / Union-Find) = "kaun kiske GROUP me" ka FAST manager.
 //     real-life: DOST-CIRCLE. sab apne-apne circle me; do dost bante -> circles MERGE.
-//                poochо "A-B same circle?" -> turant jawab.
+//                poocho "A-B same circle?" -> turant jawab.
 //
 //   SAAR: parent[] -> har node ka leader. har edge pe do node UNITE karo.
 //           end me kitne alag LEADER (root, parent[i]==i) bache = utne components.

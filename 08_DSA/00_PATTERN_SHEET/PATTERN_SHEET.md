@@ -694,7 +694,7 @@
      COUNTER, stack nahi (sirf () hain). 2 counter:
      close_needed = kitne '(' UNMATCHED bache (inke liye ')' chahiye)  ·  open_needed = kitne ')' UNMATCHED aaye (inke liye '(' chahiye).
      '(' aaye -> close_needed++.   else (')' aaye) -> close_needed>0 ? close_needed-- (match) : open_needed++.
-     ans = open_needed + close_needed.   trap: match hua ')' open_needed me MAT ginо (nested "(())" = 0).
+     ans = open_needed + close_needed.   trap: match hua ')' open_needed me MAT gino (nested "(())" = 0).
 
  broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
 ```
@@ -1940,7 +1940,7 @@
                  if(solve(coins, amount-coins[i], dp) != INT_MAX)           // overflow guard
                      Take = min(Take, 1 + solve(coins, amount-coins[i], dp)); // sabme se MIN
              return dp[amount] = Take;
-     dono form SAME (backtracking jaisा): TAKE/NOT-TAKE = index pe 2 branch · FOR-LOOP = SIRF take, NOT-TAKE apne-aap
+     dono form SAME (backtracking jaisa): TAKE/NOT-TAKE = index pe 2 branch · FOR-LOOP = SIRF take, NOT-TAKE apne-aap
         (loop me "kaunsa coin" khud choose). for-loop me 'i' index nahi -> 1D dp; 2D me state = (i, amount).
 
  ┌──────────────────────────────────────────────────────────────
