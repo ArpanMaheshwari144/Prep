@@ -48,21 +48,23 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MOVE ZEROES
  └──────────────────────────────────────────────────────────────
-     slow/fast; fast scan kare, non-zero mile to swap -> slow++. [swap(nums[slow], nums[fast]);]
+     slow = agli jagah jahan non-zero rakhna hai; fast SCAN karta.
+     fast pe non-zero mila -> pehle swap(nums[slow], nums[fast]) -> PHIR slow++.
+     ★ ORDER: swap PEHLE, slow++ BAAD (slow tabhi aage jab ek non-zero apni jagah lag gaya).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REMOVE DUP (SORTED)
  └──────────────────────────────────────────────────────────────
-     move-zeroes cousin. slow=last-unique index, fast=scan. nums[slow]!=nums[fast] (naya unique)
-     -> slow++ (slow ab ek DUPLICATE pe, khali nahi), phir nums[slow]=nums[fast] (dupe ko OVERWRITE).
-     fast har baar++. unique count = slow+1 (0-based +1).
+     move-zeroes cousin. slow = last-UNIQUE ka index, fast SCAN.
+     naya unique (nums[slow] != nums[fast]) -> pehle slow++ (slow ab duplicate/khali slot pe) -> PHIR nums[slow] = nums[fast] (overwrite).
+     ★ ORDER: yahan slow++ PEHLE, overwrite BAAD (move-zeroes se ULTA). fast har baar++. unique count = slow+1.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REMOVE ELEMENT
  └──────────────────────────────────────────────────────────────
-     saare val hata, non-val ki count k lauta (move-zeroes cousin). slow/fast.
-     nums[fast]!=val -> nums[slow]=nums[fast], slow++.  ==val -> sirf fast++ (skip).
-     end me slow = k (bache shuru ke k me).
+     saare 'val' hata, non-val ki count k lauta (move-zeroes cousin). slow = agli keep-jagah, fast scan.
+     nums[fast] != val -> pehle nums[slow] = nums[fast] -> PHIR slow++.   nums[fast] == val -> skip (sirf fast++).
+     ★ ORDER: write PEHLE, slow++ BAAD (move-zeroes jaisा). end me slow = k (bache shuru ke k me).
 
 ┌── FAMILY: left/right COMPARE-CONVERGE ────────────────────────
 │ KYUN SAATH: do pointer dono chhor se andar aate; har step CHAR/condition compare karke decide. (palindrome-type + vowel-swap.)
