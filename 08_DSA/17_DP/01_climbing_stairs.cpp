@@ -9,12 +9,6 @@
 //   n=4  -> 5
 //   n=1  -> 1
 //   n=5  -> 8
-//
-//   SOCH: step n pe pahunchne ke liye -> ya (n-1) se 1 step, ya (n-2) se 2 step.
-//     => ways(n) = ways(n-1) + ways(n-2)   (= Fibonacci!)
-//   base: ways(1)=1, ways(2)=2.  (ya ways(0)=1, ways(1)=1)
-//   DP: ye recursion overlap karta (ways(n-2) do baar) -> memo/table se ek baar.
-//     bottom-up: dp[i] = dp[i-1] + dp[i-2], chhote se bade bharo.
 // ============================================================
 
 #include <bits/stdc++.h>

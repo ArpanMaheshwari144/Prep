@@ -8,12 +8,6 @@
 //   coins=[2],     amount=3   -> -1   (nahi ban sakta)
 //   coins=[1],     amount=0   -> 0    (0 amount -> 0 coins)
 //   coins=[1,2,5], amount=7   -> 2    (5+2)
-//
-//   SOCH: solve(amt) = har coin try -> 1 + solve(amt - coin) -> sabme se MIN.  reuse -> amt ghatao.
-//   base: amt==0 -> 0 · amt<0 -> INVALID (INT_MAX).
-//   3 TRAP (jahan phasa tha): (1) amt==0 base zaroori (2) best = INT_MAX se start (min dhoondh rahe)
-//      (3) OVERFLOW: 1+solve(...) sirf tab jab solve != INT_MAX. end me: answer INT_MAX -> return -1.
-//   (dono form: take/not-take (index) YA for-loop (saare coins) -- jo comfortable ho)
 // ============================================================
 
 #include <bits/stdc++.h>

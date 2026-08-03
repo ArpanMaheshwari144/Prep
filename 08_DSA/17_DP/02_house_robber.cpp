@@ -8,13 +8,6 @@
 //   [2,7,9,3,1]   -> 12   (2 + 9 + 1)
 //   [5]           -> 5
 //   [2,1,1,2]     -> 4    (2 + 2)
-//
-//   SOCH: har ghar i pe 2 CHOICE ->
-//       LOOT   ghar i : nums[i] + solve(i-2)   (i-1 skip karna padta, adjacent nahi)
-//       SKIP   ghar i :           solve(i-1)   (ghar i chhoda, i-1 available)
-//     => solve(i) = max( nums[i] + solve(i-2),  solve(i-1) )
-//   base: i<0 -> 0  (ya i==0 -> nums[0]).
-//   DP: overlap karta -> memoize (dp[i]!=-1 check + store), climbing-stairs jaisa.
 // ============================================================
 
 #include <bits/stdc++.h>
