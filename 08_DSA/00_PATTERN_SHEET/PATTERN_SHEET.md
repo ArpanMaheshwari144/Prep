@@ -1851,6 +1851,10 @@
 ## PATTERN 17 — DP (dynamic programming = recursion + memo)
 
 ```
+ ★★★ ESSENCE (Arpan-samjha, apne shabd): "DP kuch ALAG nahi -- RECURSION ko SMART way me karna. plain recursion
+      sabko BAAR-BAAR calculate karta (waste); DP bolti = jo ek baar nikala use ARRAY me STORE karlo, dobara maango
+      to wahan se uthao. bas. DP = recursion ka smart tareeka." (kaam TABHI karta jab OVERLAP ho -- same subproblem repeat.)
+
  BROAD IDEA: same SUBPROBLEM baar-baar aaye (OVERLAPPING) -> dobara compute mat karo -> ek baar karke YAAD rakho.
    DP = RECURSION + memo. (recursion tu jaanta -- DP usi pe "cache" add karta.)
    ★ ARC (har DP isi tarah crack karo): 1) plain RECURSION likho (relation + base) -> 2) OVERLAP dekho (dry-run: same call 2x)
