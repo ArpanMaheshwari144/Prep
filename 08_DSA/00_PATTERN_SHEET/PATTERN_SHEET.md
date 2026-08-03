@@ -1722,6 +1722,7 @@
    DECISION TREE: har node = choice-point; har leaf tak ka raasta = ek possible answer.
    KAB: "saare subsets/permutations/combinations", "N-queens", "har-combination try karo".
 
+ ──────────────────────────────────────────────────────────────
  2 FORMS = SAME cheez, alag LIKHAWAT (dono recursion + undo, same output):
     A) INCLUDE/EXCLUDE : 2 explicit call (element liya / nahi-liya). base pe record.
          solve(i): if(i==n){ record; return; }
@@ -1858,6 +1859,7 @@
       MUSHKIL = BASE + invalid-handling, jo har problem me ALAG. climbing/robber = base SIMPLE (i==0 -> value) -> jaldi ho gaye;
       coin-change = base AJEEB (i<0 vs i==0, INVALID=INT_MAX, -1) -> wahi phasaya. => relation easy likho, BASE pe RUK ke socho.
 
+ ──────────────────────────────────────────────────────────────
  BROAD IDEA: same SUBPROBLEM baar-baar aaye (OVERLAPPING) -> dobara compute mat karo -> ek baar karke YAAD rakho.
    DP = RECURSION + memo. (recursion tu jaanta -- DP usi pe "cache" add karta.)
    ARC (har DP isi tarah crack karo): 1) plain RECURSION likho (relation + base) -> 2) OVERLAP dekho (dry-run: same call 2x)
