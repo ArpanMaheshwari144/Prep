@@ -1878,4 +1878,23 @@
          // caller: vector<int> dp(n+1, -1); return solve(n, dp);
      ★ plain recursion = solve(n-2) BAAR-BAAR (overlap) -> exponential. memo se O(n).
      ★ BOTTOM-UP bhi: dp[0]=dp[1]=1; for(i=2..n) dp[i]=dp[i-1]+dp[i-2]; return dp[n].
-```
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ HOUSE ROBBER (LC-198)  = har step pe TAKE/SKIP choice + max
+ └──────────────────────────────────────────────────────────────
+     SAAR : adjacent ghar loot nahi sakte -> max paisa. har ghar i pe 2 CHOICE:
+        LOOT i : nums[i] + solve(i-2)   (i-1 skip -- adjacent nahi)  ·  SKIP i : solve(i-1)
+        => solve(i) = max(LOOT, SKIP).  base: i<0 -> 0 · i==0 -> nums[0].
+     TEMPLATE (top-down memo, LAST index se):
+         int solve(nums, i, dp){
+             if(i<0) return 0;
+             if(i==0) return nums[0];
+             if(dp[i]!=-1) return dp[i];                          // cache HIT
+             int LOOT = nums[i] + solve(nums, i-2, dp);
+             int SKIP =           solve(nums, i-1, dp);
+             return dp[i] = max(LOOT, SKIP);                      // compute + STORE
+         }
+         // caller: dp(n,-1); return solve(nums, n-1, dp);        // ★ n-1 (LAST) se shuru
+     ★★ climbing-stairs se FARAK: wahan sirf ADD (ways(n-1)+ways(n-2)); yahan har step CHOICE -> max(take, skip).
+     ★ START-state problem-dependent: climbing = n/top se · robber = n-1/last-index se.
+     ★ BOTTOM-UP: dp[i] = max(nums[i]+dp[i-2], dp[i-1]) -- recursion ka i-1/i-2 = wahi table index.
