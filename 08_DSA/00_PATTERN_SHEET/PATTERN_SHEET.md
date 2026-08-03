@@ -1721,6 +1721,7 @@
    path by-REFERENCE (bahar bana) = ek SHARED path; push/pop usi pe -> backtrack kaam kare. (helper-andar naya = toot jaata.)
    DECISION TREE: har node = choice-point; har leaf tak ka raasta = ek possible answer.
    KAB: "saare subsets/permutations/combinations", "N-queens", "har-combination try karo".
+   PROBLEMS (is family, order): 1.SUBSETS (LC-78) -> 2.PERMUTATIONS (LC-46) -> 3.COMBINATIONS (LC-77) -> 4.COMBINATION SUM (LC-39).
 
  2 FORMS = SAME cheez, alag LIKHAWAT (dono recursion + undo, same output):
     A) INCLUDE/EXCLUDE : 2 explicit call (element liya / nahi-liya). base pe record.
@@ -1870,6 +1871,7 @@
       2. function start: if(dp[state]!=-1) return dp[state];   // cache HIT
       3. compute + STORE: return dp[state] = <relation>;
    KAB DP: "kitne WAYS" · "min/max cost" · "kya possible" + har step CHOICE + subproblems OVERLAP.
+   PROBLEMS (is family, order): 1.CLIMBING STAIRS (LC-70) -> 2.HOUSE ROBBER (LC-198) -> 3.COIN CHANGE (LC-322)  [aage: LIS, grid-paths, knapsack, LCS, edit-distance].
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CLIMBING STAIRS (LC-70)  = Fibonacci-shape (ways = ways(n-1)+ways(n-2))
