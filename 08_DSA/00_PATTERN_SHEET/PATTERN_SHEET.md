@@ -1902,3 +1902,36 @@
      ★★ climbing-stairs se FARAK: wahan sirf ADD (ways(n-1)+ways(n-2)); yahan har step CHOICE -> max(take, skip).
      ★ n-1 kyu: ye TOP-DOWN hi hai (bottom-up nahi). nums[] ke index 0..n-1 -> LAST ghar = n-1 -> "last tak max" = solve(n-1).
         (climbing me 'n' = step-count 1..n tha, array nahi; yahan index hai -> n-1. sirf naming, direction nahi.)
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ COIN CHANGE (LC-322)  = MIN coins + REUSE (dono form, backtracking jaisa)
+ └──────────────────────────────────────────────────────────────
+     SAAR : amount banane ko MIN coins (har coin UNLIMITED = reuse). na ban sake -> -1.
+     ★★ 3 TRAP (yahi phasaate): (1) INT_MAX = "ban nahi sakta" signal -> min me apne-aap HAAR jaata.
+        (2) OVERFLOW: 1+solve(...) SIRF jab solve != INT_MAX (warna 1+INT_MAX -> negative -> min galat).
+        (3) caller: answer INT_MAX -> return -1.
+
+     ── FORM A: TAKE / NOT-TAKE (index i, 2D dp[i][amount]) ──
+         int solve(coins, amount, i, dp):
+             if(amount < 0) return INT_MAX;                       // INVALID
+             if(i < 0) return amount==0 ? 0 : INT_MAX;            // ★ koi coin nahi bacha (i<0, NA i==0 -- coin[0] usable)
+             if(dp[i][amount]!=-1) return dp[i][amount];
+             int notTake = solve(coins, amount, i-1, dp);         // coin i chhoda -> agla
+             int Take = INT_MAX;
+             if(solve(coins, amount-coins[i], i, dp) != INT_MAX)  // overflow guard
+                 Take = 1 + solve(coins, amount-coins[i], i, dp); // coin i liya (i SAME = reuse)
+             return dp[i][amount] = min(notTake, Take);
+         // caller: dp(n+1, vec(amount+1,-1)); ans=solve(..,n-1,..); return ans==INT_MAX?-1:ans;
+
+     ── FORM B: FOR-LOOP (saare coins, 1D dp[amount]) ──  SAME idea, likhawat alag
+         int solve(coins, amount, dp):
+             if(amount < 0) return INT_MAX;
+             if(amount == 0) return 0;
+             if(dp[amount]!=-1) return dp[amount];
+             int best = INT_MAX;
+             for(coin : coins)                                    // har coin TRY (choose khud loop me)
+                 if(solve(coins, amount-coin, dp) != INT_MAX)     // overflow guard
+                     best = min(best, 1 + solve(coins, amount-coin, dp));  // sabme se MIN
+             return dp[amount] = best;
+     ★★ dono form SAME (backtracking jaisा): TAKE/NOT-TAKE = index pe 2 branch · FOR-LOOP = SIRF take, NOT-TAKE apne-aap
+        (loop me "kaunsa coin" khud choose). for-loop me 'i' index nahi -> 1D dp; 2D me state = (i, amount).
