@@ -1847,3 +1847,35 @@
      ★ for-loop form: base target==0 pe turant record.  include/exclude form: base index==size pe (target==0? record).
      ★★ FAMILY (5) 1-line: SUBSETS=start-aage,har-node · COMBINATIONS=start-aage,size==k · COMB-SUM=start-'i'(reuse),target-base · PERMUTATION=used[]+loop-0,size==n.
 ```
+
+## PATTERN 17 — DP (dynamic programming = recursion + memo)
+
+```
+ BROAD IDEA: same SUBPROBLEM baar-baar aaye (OVERLAPPING) -> dobara compute mat karo -> ek baar karke YAAD rakho.
+   DP = RECURSION + memo. (recursion tu jaanta -- DP usi pe "cache" add karta.)
+   ★ ARC (har DP isi tarah crack karo): 1) plain RECURSION likho (relation + base) -> 2) OVERLAP dekho (dry-run: same call 2x)
+      -> 3) MEMOIZE (dp[] cache) -> [optional] 4) BOTTOM-UP (loop se table bharo).
+   ★ 2 STYLE:
+      TOP-DOWN (memoization) = recursion + dp[] cache. sochne me aasaan (relation seedha).
+      BOTTOM-UP (tabulation) = base bharo -> loop chhote-se-bade dp[i] bharo. no recursion-stack.
+   ★ MEMO ka pattern (har DP me SAME 3 cheez):
+      1. dp[] ko -1 (ya kisi "nahi-nikala" marker) se init.
+      2. function start: if(dp[state]!=-1) return dp[state];   // cache HIT
+      3. compute + STORE: return dp[state] = <relation>;
+   KAB DP: "kitne WAYS" · "min/max cost" · "kya possible" + har step CHOICE + subproblems OVERLAP.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ CLIMBING STAIRS (LC-70)  = Fibonacci-shape (ways = ways(n-1)+ways(n-2))
+ └──────────────────────────────────────────────────────────────
+     SAAR : n steps, ek baar 1 ya 2 step -> top tak kitne tareeke. step n pe -> (n-1) se 1-step YA (n-2) se 2-step.
+        => solve(n) = solve(n-1) + solve(n-2).  base: n==0 || n==1 -> 1.  (= Fibonacci)
+     TEMPLATE (top-down memo):
+         int solve(int n, vector<int>& dp){
+             if(n==0 || n==1) return 1;              // base
+             if(dp[n]!=-1) return dp[n];             // ★ cache HIT
+             return dp[n] = solve(n-1,dp) + solve(n-2,dp);   // ★ compute + STORE
+         }
+         // caller: vector<int> dp(n+1, -1); return solve(n, dp);
+     ★ plain recursion = solve(n-2) BAAR-BAAR (overlap) -> exponential. memo se O(n).
+     ★ BOTTOM-UP bhi: dp[0]=dp[1]=1; for(i=2..n) dp[i]=dp[i-1]+dp[i-2]; return dp[n].
+```
