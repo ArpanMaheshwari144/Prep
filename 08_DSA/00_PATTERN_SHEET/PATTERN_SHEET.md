@@ -1898,4 +1898,3 @@
      ★★ climbing-stairs se FARAK: wahan sirf ADD (ways(n-1)+ways(n-2)); yahan har step CHOICE -> max(take, skip).
      ★ n-1 kyu: ye TOP-DOWN hi hai (bottom-up nahi). nums[] ke index 0..n-1 -> LAST ghar = n-1 -> "last tak max" = solve(n-1).
         (climbing me 'n' = step-count 1..n tha, array nahi; yahan index hai -> n-1. sirf naming, direction nahi.)
-     ★ BOTTOM-UP: dp[i] = max(nums[i]+dp[i-2], dp[i-1]) -- recursion ka i-1/i-2 = wahi table index.
