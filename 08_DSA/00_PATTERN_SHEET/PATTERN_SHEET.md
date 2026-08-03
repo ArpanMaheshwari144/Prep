@@ -1854,6 +1854,9 @@
  ★★★ ESSENCE (Arpan-samjha, apne shabd): "DP kuch ALAG nahi -- RECURSION ko SMART way me karna. plain recursion
       sabko BAAR-BAAR calculate karta (waste); DP bolti = jo ek baar nikala use ARRAY me STORE karlo, dobara maango
       to wahan se uthao. bas. DP = recursion ka smart tareeka." (kaam TABHI karta jab OVERLAP ho -- same subproblem repeat.)
+ ★★★ BASE-CASE = asli FIDDLY part (Arpan-insight): RELATION (take/not-take, min/max) lagbhag SAME rehta, aasaan.
+      MUSHKIL = BASE + invalid-handling, jo har problem me ALAG. climbing/robber = base SIMPLE (i==0 -> value) -> jaldi ho gaye;
+      coin-change = base AJEEB (i<0 vs i==0, INVALID=INT_MAX, -1) -> wahi phasaya. => relation easy likho, BASE pe RUK ke socho.
 
  BROAD IDEA: same SUBPROBLEM baar-baar aaye (OVERLAPPING) -> dobara compute mat karo -> ek baar karke YAAD rakho.
    DP = RECURSION + memo. (recursion tu jaanta -- DP usi pe "cache" add karta.)
