@@ -1942,3 +1942,21 @@
              return dp[amount] = Take;
      dono form SAME (backtracking jaisा): TAKE/NOT-TAKE = index pe 2 branch · FOR-LOOP = SIRF take, NOT-TAKE apne-aap
         (loop me "kaunsa coin" khud choose). for-loop me 'i' index nahi -> 1D dp; 2D me state = (i, amount).
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ LONGEST INCREASING SUBSEQUENCE (LC-300)  = TAKE/NOT-TAKE + prev-track
+ └──────────────────────────────────────────────────────────────
+     SAAR : sabse lambi STRICTLY-increasing subsequence ki LENGTH. coin-change family (take/not-take), ek twist = prev.
+     TEMPLATE:
+         int solve(index, prevIndex, nums, dp):
+             if(index == n) return 0;                                   // base (saaf -- no INT_MAX/overflow/-1)
+             if(dp[index][prevIndex+1] != -1) return dp[index][prevIndex+1];
+             int notTake = solve(index+1, prevIndex, nums, dp);         // chhoda -> prev wahi
+             int Take = 0;
+             if(prevIndex==-1 || nums[index] > nums[prevIndex])         // increasing rahe TABHI take
+                 Take = 1 + solve(index+1, index, nums, dp);            // liya -> ab prev = index
+             return dp[index][prevIndex+1] = max(Take, notTake);
+         // caller: dp(n+1, vec(n+1,-1)); return solve(0, -1, nums, dp);
+     ★★ TWIST vs coin-change: (1) state me PREV bhi (kya-liya, taaki increasing check ho) (2) take pe CONDITION (nums[i]>nums[prev]).
+     ★ MEMO offset: prevIndex -1 se shuru -> dp[index][prevIndex + 1] (+1 se index 0..n valid).
+     ★ LIS EASY kyu (Arpan): base sirf index==n -> 0 (coin-change ka i<0/INT_MAX/overflow/-1 ganda tha; yahan saaf).
