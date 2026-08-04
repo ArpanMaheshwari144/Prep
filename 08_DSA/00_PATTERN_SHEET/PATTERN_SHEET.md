@@ -1450,12 +1450,13 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
  └──────────────────────────────────────────────────────────────
-     adj: for(e:edges){ adj[e[0]].push_back(e[1]); adj[e[1]].push_back(e[0]); }   // undirected -- NAYA
-     q.push(src);  vis[src]=true;
-     ab BFS = tree LEVEL-ORDER jaisa (bas inner LEVEL-loop NAHI -> level-by-level nahi):
-       pop -> node==dst? return true.
-       neighbours -> tree: node->left/right  |  graph: for(nbr:adj[node]) if(!vis[nbr]) vis+push.   // visited = cycle-rok
-     queue khali -> return false.
+     = tree LEVEL-ORDER (BFS) ka SAME skeleton (queue + pop + push), graph ke liye 3 ADD:
+        (1) NEIGHBOURS : tree me node->left/right built-in · graph me adj[node] (edges se banao).
+        (2) VISITED    : tree me cycle nahi · graph me vis[] chahiye (cycle-rok, dobara na ghoomo).
+        (3) LEVEL-loop NAHI : path-exists ko level-by-level nahi -> sirf reachability (target mil?).
+     adj (undirected -- NAYA): for(auto& it: edges){ adj[it[0]].push_back(it[1]); adj[it[1]].push_back(it[0]); }
+     flow: q.push(src), vis[src]=true -> pop node -> node==dst? return true
+           -> for(nbr: adj[node]) if(!vis[nbr]) { vis[nbr]=true; q.push(nbr); }.   queue khali -> return false.
 
 ┌── FAMILY: COUNT components (outer-loop + FLOOD each) ─────────
 │ KYUN SAATH: har node/cell pe jao; UNVISITED mila -> naya group -> count++ + flood (poora group visit-mark). dono same skeleton.
