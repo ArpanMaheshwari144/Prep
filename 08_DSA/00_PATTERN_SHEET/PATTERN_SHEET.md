@@ -1711,7 +1711,12 @@
                  ans.back()[1] = max(ans.back()[1], intervals[i][1]);   // merge -> bada end
              else ans.push_back(intervals[i]);          // no overlap -> naya
          }
-     ans.back() = last interval; [0]=start [1]=END.  pehla step HAMESHA sort-by-start.
+     DRY-RUN  [[1,3],[2,6],[8,10],[15,18]]  (sorted):
+         ans=[[1,3]]
+         [2,6]  : 2 <= 3  overlap -> end=max(3,6)=6 -> ans=[[1,6]]
+         [8,10] : 8 <= 6? NO      -> push          -> ans=[[1,6],[8,10]]
+         [15,18]: 15 <=10? NO     -> push          -> ans=[[1,6],[8,10],[15,18]]
+     ans.back() = last interval; [0]=start [1]=END.  overlap = curr.start last.END ko chhoo/cross kare. sort-by-start HAMESHA pehla step.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MEETING ROOMS (LC-252, Easy)  = Merge Intervals ka SAME template, bas action alag
