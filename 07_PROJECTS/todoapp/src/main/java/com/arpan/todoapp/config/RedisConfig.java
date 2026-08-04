@@ -16,6 +16,13 @@ import java.time.Duration;
 //    95% Spring + Redis projects mein yeh same file dikhti
 //    Sirf TTL duration project-wise change hota
 //
+// CACHE vs REDIS (confuse mat hona):
+//    CACHE = CONCEPT (hot data fast rakho, DB dobara na hit ho).
+//    REDIS = us concept ka ek TOOL (key-value store; Caffeine/Memcached bhi tools).
+//    YE FILE = Spring me Redis ko CACHE ki tarah wire karti. @Cacheable method pe
+//              Spring isi manager se result Redis me daalta (key -> JSON value, 5-min TTL).
+//    => "cache = kya (idea) · Redis = kaise (tool) · ye config = jodne wala".
+//
 // PURPOSE:
 //    Redis mein data save karte time JSON format use karo
 //    (default JDK serializer = binary gibberish + Serializable
