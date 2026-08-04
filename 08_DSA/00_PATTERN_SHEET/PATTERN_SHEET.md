@@ -353,9 +353,12 @@
              j++;
          }
          return minLen==INT_MAX ? 0 : minLen;      // koi valid window nahi -> 0
-     LONGEST vs SHORTEST (yahi confusion ki JAD):
-        LONGEST  -> shrink WHILE **INVALID**, record BAAHAR (bada window chahiye).
-        SHORTEST -> shrink WHILE **VALID**,   record ANDAR   (chhota window chahiye)  <- YE wahi.
+     LONGEST vs SHORTEST (yahi confusion ki JAD -- window BADA chahiye ya CHHOTA):
+        LONGEST  (jaise no-repeat): window BADA chahiye -> shrink SIRF jab INVALID ho (validity wapas laane ko) ->
+                 record BAAHAR (shrink ke BAAD, valid window ki length).
+        SHORTEST (ye / min-window):  window CHHOTA chahiye -> VALID hote hi record + shrink (chhota karte jao jab tak valid) ->
+                 record ANDAR (shrink loop ke andar, har step).   <- YE wahi.
+        1-line: LONGEST = shrink-jab-MAJBOORI(invalid), record-baad  ·  SHORTEST = shrink-jab-tak-VALID, record-andar.
      char-matching wala SHORTEST = MIN WINDOW (LC-76) -> neeche "need-map + COUNT" family me (LC-1358 ke saath).
 
 ┌── FAMILY: FIXED window ───────────────────────────────────────
