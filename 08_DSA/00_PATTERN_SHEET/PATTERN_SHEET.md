@@ -1335,9 +1335,10 @@
  │ ▸ RIGHT SIDE VIEW (LC-199)  = LEVEL-ORDER + 1 line
  └──────────────────────────────────────────────────────────────
      idea : daaye khade -> har level ka SIRF right-most node dikhta (baaki peeche chhup jaate).
-     = LEVEL-ORDER (upar wala skeleton), bas 1 LINE badli: SAARE-push ki jagah -> if(i == sz-1) ans.push(node->val).
-     KYUN juda: level-order me nodes L-to-R (FIFO) nikalte -> level ka AAKHRI (i == sz-1) = sabse RIGHT = right-most.
-     (left-side-view chahiye -> i == 0 le lo.)
+     LEVEL-ORDER template bilkul SAME (while + sz-snapshot + for + push L/R). FARAK sirf level ke andar 1 line:
+         level-order :  har node ka kaam / sab collect
+         right-view  :  if(i == sz-1) ans.push_back(curr->val);     // level ka LAST hi
+     KYUN i==sz-1: nodes L-to-R (FIFO) nikalte -> level ka AAKHRI = sabse RIGHT.  (left-side-view -> i==0 le lo.)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse
