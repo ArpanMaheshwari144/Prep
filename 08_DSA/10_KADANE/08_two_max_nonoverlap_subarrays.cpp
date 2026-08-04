@@ -1,5 +1,5 @@
 // ============================================================
-// TWO MAX-SUM NON-OVERLAPPING SUBARRAYS   [KADANE #5 · STUB — khud solve, no peek]
+// TWO MAX-SUM NON-OVERLAPPING SUBARRAYS   (khud solve, no peek)
 // ============================================================
 // ek int array (size N) diya. usme se DO subarrays chuno:
 //   - dono CONTIGUOUS (lagataar), dono NON-EMPTY (kam-se-kam 1 element)

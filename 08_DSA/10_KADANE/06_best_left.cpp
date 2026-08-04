@@ -1,5 +1,5 @@
 // ============================================================
-// BEST SUBARRAY IN PREFIX 0..i  (bestLeft[])   [KADANE #7 · bestLeft prefix]
+// BEST SUBARRAY IN PREFIX 0..i  (bestLeft[])
 // ============================================================
 // har index i ke liye: nums[0..i] ke ANDAR (i tak) sabse-badi-sum contiguous subarray.
 // (end[] se farak: end[i] me subarray i pe KHATAM hona zaroori tha; yahan i ke ANDAR

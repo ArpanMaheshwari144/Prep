@@ -1,5 +1,5 @@
 // ============================================================
-// BEST SUBARRAY IN SUFFIX i..n-1  (bestRight[])   [KADANE #8 · bestRight suffix]
+// BEST SUBARRAY IN SUFFIX i..n-1  (bestRight[])
 // ============================================================
 // har index i ke liye: nums[i..n-1] ke ANDAR (i se aage) sabse-badi-sum contiguous subarray.
 // = bestLeft ka MIRROR -- bas right se.

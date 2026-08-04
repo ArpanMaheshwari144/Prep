@@ -1,5 +1,5 @@
 // ============================================================
-// MAX SUBARRAY ENDING AT EACH INDEX i   [KADANE #6 · end[] array]
+// MAX SUBARRAY ENDING AT EACH INDEX i   (end[] array)
 // ============================================================
 // ek int array diya. har index i ke liye nikaalo: "index i pe KHATAM hone waali"
 // sabse-badi-sum contiguous subarray ka sum. (i pe end hona ZAROORI, aage nahi jaana.)
