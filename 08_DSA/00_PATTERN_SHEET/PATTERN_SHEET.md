@@ -1073,10 +1073,9 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX ABSOLUTE SUM (LC-1749)
  └──────────────────────────────────────────────────────────────
-     TRICK: bilkul 152 jaisa, bas GUNA (*) ki jagah PLUS (+). answer minSum se bhi aa sakta -> abs DONO ka.
-        temp    = max({ num, num+max, num+min });        // 3 candidate ka max
-        min     = min({ num, num+max, num+min });        // FREEZE: min purane max/min se
-        max     = temp;  ans = max({ ans, |max|, |min| });  // abs DONO ka; max min-ke-BAAD, ans me purana bhi
+     = MAX PRODUCT SUBARRAY (152) ka HUBAHU same skeleton (temp/min/max freeze, upar dekh), sirf 2 TWEAK:
+        (1) GUNA (*) -> PLUS (+)                    (num*max -> num+max, num*min -> num+min)
+        (2) ans me ABS dono -> ans = max({ ans, |max|, |min| })   (answer minSum se bhi aa sakta -> isliye abs)
      ★ dry-run [2,-5,1,-4,3,-2] -> 8: subarray [-5,1,-4]=-8 minSum me -> |-8|=8.
 
    FAMILY: 53=sum(1 value) · 152=product(flip -> max+min) · 1749=abs-sum(max+min).
