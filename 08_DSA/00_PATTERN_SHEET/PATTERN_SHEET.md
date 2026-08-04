@@ -940,11 +940,13 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ADD TWO NUMBERS
  └──────────────────────────────────────────────────────────────
-     MERGE jaisa (dummy + tail) + CARRY ka khel. digits ULTA store (units-digit pehle) -> seedha jodo.
-     while(a || b || carry):   <- koi list bachi HAI ya carry bacha -> chalo
-        sum = 0; a hai to sum += a->val, a=a->next; b hai to sum += b->val, b=b->next; phir sum += carry.
-        digit = sum % 10 -> naya node, tail se jodo, tail aage.   carry = sum / 10 -> agle ke liye.
-     return dummy->next.   '|| carry' zaroori (999+1=1000 -> end me carry bacha to naya node).
+     dummy + tail (MERGE jaisa) + CARRY. digits ULTA store (units-digit pehle) -> seedha aage-aage jodo.
+     while(a || b || carry):              <- koi list bachi HAI ya carry bacha -> chalte raho
+        sum = carry;                        (pichle ka carry se shuru)
+        a hai to sum += a->val (a aage);  b hai to sum += b->val (b aage).
+        naya node = sum % 10 -> tail se jodo, tail aage.   carry = sum / 10 (agle ke liye).
+     return dummy->next.
+     ★ '|| carry' zaroori: 999 + 1 = 1000 -> dono list khatam par carry bacha -> ek aur node chahiye (leading '1').
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SWAP NODES IN PAIRS  = DUMMY + 3-player rewire (order + temp-save)
