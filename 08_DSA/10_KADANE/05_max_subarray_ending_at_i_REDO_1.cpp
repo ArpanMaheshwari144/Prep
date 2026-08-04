@@ -31,7 +31,6 @@ vector<int> maxEndingAt(vector<int> &nums)
     ans[0] = nums[0];
     for (int i = 1; i < n; i++)
     {
-       
         ans[i] = max(nums[i], ans[i - 1] + nums[i]);
     }
     return ans;
