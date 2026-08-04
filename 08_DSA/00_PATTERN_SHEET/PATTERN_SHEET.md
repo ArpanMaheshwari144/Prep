@@ -1466,11 +1466,12 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
  └──────────────────────────────────────────────────────────────
-     grid = graph: cell=node, 4-dir padosi=edges (adj-list nahi banti -- neighbours seedha 4-direction).  -- NAYA
-     for(i,j): if(grid[i][j]=='1') { DFS(i,j); count++; }   return count.   // har naya '1' = naya island
-     DFS = tree RECURSION jaisa, bas neighbours -> tree: node->left/right | grid: (i+1,j)(i-1,j)(i,j+1)(i,j-1):
-       base: bounds ya grid[i][j]=='0' -> return.   grid[i][j]='0'  (SINK = visited).
-     '0'-check base me (bounds ke saath) -- warna paani pe nahi rukta, grid kha jaata.
+     outer: for(i,j) if(grid[i][j]=='1') { DFS(i,j); count++; }   // har naya '1' = naya island
+     DFS grid ke 3 farak (adj-list nahi):
+        NEIGHBOURS : 4-direction seedha -> (i+1,j)(i-1,j)(i,j+1)(i,j-1).
+        VISITED    : cell '0' kar do (SINK) -> dobara na gino.
+        BASE       : bounds-bahar (i<0||i>=m||j<0||j>=n) YA grid=='0' -> return.
+     '0'-check base me (bounds ke SAATH) -- warna paani/visited pe nahi rukta, poora grid kha jaata.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CONNECTED COMPONENTS (LC-323)  = ISLANDS par ADJ-LIST graph (grid nahi) + BFS
