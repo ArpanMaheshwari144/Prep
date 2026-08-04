@@ -72,7 +72,7 @@ int maxTwoNonOverlap(vector<int> &nums)
     vector<int> bestLeft = bestLeftPrefix(nums);
     vector<int> bestRight = bestRightPrefix(nums);
 
-    for (int i = 0; i < nums.size() - 2; i++)
+    for (int i = 0; i < nums.size() - 1; i++)
     {
         ans = max(ans, bestLeft[i] + bestRight[i + 1]);
     }
@@ -92,5 +92,7 @@ int main()
     cout << maxTwoNonOverlap(c) << " (expected 18)\n";
     cout << maxTwoNonOverlap(d) << " (expected 10)\n";
     cout << maxTwoNonOverlap(e) << " (expected 10)\n";
+    vector<int> f = {-5, 10, 10};
+    cout << maxTwoNonOverlap(f) << " (expected 20)\n";   // <-- ye wala dhyaan se (dono 10 alag subarray)
     return 0;
 }
