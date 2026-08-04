@@ -1034,18 +1034,24 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ DESIGN HASHSET (LLD)
  └──────────────────────────────────────────────────────────────
-     = HashMap ka EXACT code, bas VALUE nikaal do. CONNECTION (sirf 4 cheez badalti):
-     ┌─────────┬──────────────────────────────┬─────────────────────────────┐
-     │         │ HashMap                      │ HashSet                     │
-     ├─────────┼──────────────────────────────┼─────────────────────────────┤
-     │ Entry   │ | key | VALUE | next |       │ | key | next |   (value NAHI)│
-     │ insert  │ put: match -> value UPDATE   │ add: match -> KUCH NAHI (dup)│
-     │ lookup  │ get: value laut (na mile -1) │ contains: TRUE / FALSE       │
-     │ delete  │ remove                       │ remove: HUBAHU SAME          │
-     └─────────┴──────────────────────────────┴─────────────────────────────┘
-     baaki SAB same: bucket-array + chaining, index=hash<string>{}(key)%cap, collision-chain, remove head-vs-beech, VISUAL/COMBO (upar HashMap entry dekh).
-     ★★ BUG-CATCH (khud pakda): remove-traverse me advance = "prev = curr; curr = curr->next"
-        (NA prev = prev->next -- prev NULL se shuru -> non-head remove pe NULL->next = CRASH). (file 08_DSA/09_DESIGN/02_hashset.cpp)
+     = HashMap ka EXACT code, bas VALUE nikaal do. CONNECTION:
+     ┌──────────┬──────────────────────────────┬──────────────────────────────┐
+     │ ASPECT   │ HashMap                      │ HashSet                      │
+     ├──────────┼──────────────────────────────┼──────────────────────────────┤
+     │ Entry    │ | key | VALUE | next |       │ | key | next |   (value NAHI)│
+     ├──────────┼──────────────────────────────┼──────────────────────────────┤
+     │ insert:  │ put(k,v)                     │ add(k)                       │
+     │  mili    │   value UPDATE + return      │   kuch nahi (duplicate skip) │
+     │  na-mili │   chain END me append + sz++ │   chain END me append + sz++ │  <- DONO SAME
+     │          │   ★ UPDATE-then-RETURN trap  │   (koi trap nahi -- simpler) │
+     ├──────────┼──────────────────────────────┼──────────────────────────────┤
+     │ lookup   │ get(k): value / -1           │ contains(k): true / false    │
+     │ delete   │ remove(k)                    │ remove(k): HUBAHU SAME       │
+     │ size     │ return sz                    │ SAME                         │
+     └──────────┴──────────────────────────────┴──────────────────────────────┘
+     SAME (dono me): bucket khaali -> node laga + sz++; index = hash<string>{}(key)%cap; chaining/collision; remove head-vs-beech; VISUAL/COMBO (upar HashMap entry).
+     ★★ BUG-CATCH (remove, khud pakda): advance = "prev = curr; curr = curr->next"
+        (NA prev = prev->next -- prev NULL se non-head remove pe NULL->next = CRASH). (file 08_DSA/09_DESIGN/02_hashset.cpp)
 ```
 
 ---
