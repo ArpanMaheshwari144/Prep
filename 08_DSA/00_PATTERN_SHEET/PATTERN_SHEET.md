@@ -1034,12 +1034,16 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ DESIGN HASHSET (LLD)
  └──────────────────────────────────────────────────────────────
-     = HashMap ka EXACT hi code, bas VALUE nikaal do. CONNECTION (HashMap -> HashSet, sirf 4 cheez badalti):
-        Entry | key | VALUE | next |     ->   Entry | key | next |            (value field HATAO)
-        put : match pe value UPDATE      ->   add : match pe KUCH NAHI          (duplicate skip)
-        get : VALUE return (na mile -1)  ->   contains : TRUE / FALSE           (bas presence)
-        remove                           ->   remove : HUBAHU SAME              (koi change nahi)
-     baaki SAB same HashMap: bucket-array + chaining, index = hash<string>{}(key)%cap, collision-chain, remove head-vs-beech, VISUAL/COMBO (upar dekh).
+     = HashMap ka EXACT code, bas VALUE nikaal do. CONNECTION (sirf 4 cheez badalti):
+     ┌─────────┬──────────────────────────────┬─────────────────────────────┐
+     │         │ HashMap                      │ HashSet                     │
+     ├─────────┼──────────────────────────────┼─────────────────────────────┤
+     │ Entry   │ | key | VALUE | next |       │ | key | next |   (value NAHI)│
+     │ insert  │ put: match -> value UPDATE   │ add: match -> KUCH NAHI (dup)│
+     │ lookup  │ get: value laut (na mile -1) │ contains: TRUE / FALSE       │
+     │ delete  │ remove                       │ remove: HUBAHU SAME          │
+     └─────────┴──────────────────────────────┴─────────────────────────────┘
+     baaki SAB same: bucket-array + chaining, index=hash<string>{}(key)%cap, collision-chain, remove head-vs-beech, VISUAL/COMBO (upar HashMap entry dekh).
      ★★ BUG-CATCH (khud pakda): remove-traverse me advance = "prev = curr; curr = curr->next"
         (NA prev = prev->next -- prev NULL se shuru -> non-head remove pe NULL->next = CRASH). (file 08_DSA/09_DESIGN/02_hashset.cpp)
 ```
