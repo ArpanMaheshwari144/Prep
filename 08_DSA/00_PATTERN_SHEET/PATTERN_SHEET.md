@@ -1097,6 +1097,10 @@
    MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
 
 
+┌── FAMILY: PREFIX best (Kadane ko per-index STORE) ────────────
+│ KYUN SAATH: MAX SUBARRAY SUM ka running-value HAR index pe STORE -> "har index tak best" -> uska running-max = 0..i best.
+└───────────────────────────────────────────────────────────────
+
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX SUBARRAY ENDING AT i    = MAX SUBARRAY SUM (53) ko per-index STORE
  └──────────────────────────────────────────────────────────────
