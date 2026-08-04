@@ -1334,9 +1334,10 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ RIGHT SIDE VIEW (LC-199)  = LEVEL-ORDER + 1 line
  └──────────────────────────────────────────────────────────────
-     idea : daaye khade -> har level ka RIGHT-MOST node dikhta (baaki peeche chhup jaate). SAME skeleton, sirf collect badla.
-     change: SAARE collect ki jagah -> for-loop me { if (i == sz-1) ans.push(node->val); }  (level ka aakhri = right-most).
-     FIFO L-to-R dequeue -> i == sz-1 = sabse right.  (left-side-view chahiye -> i == 0 le lo.)
+     idea : daaye khade -> har level ka SIRF right-most node dikhta (baaki peeche chhup jaate).
+     = LEVEL-ORDER (upar wala skeleton), bas 1 LINE badli: SAARE-push ki jagah -> if(i == sz-1) ans.push(node->val).
+     KYUN juda: level-order me nodes L-to-R (FIFO) nikalte -> level ka AAKHRI (i == sz-1) = sabse RIGHT = right-most.
+     (left-side-view chahiye -> i == 0 le lo.)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse
