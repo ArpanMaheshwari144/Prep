@@ -2013,3 +2013,19 @@
          // caller: dp(m, vec(n,-1)); return solve(m-1, n-1, s1, s2, dp);
      ★ MATCH -> diagonal (i-1,j-1) +1 · NO-MATCH -> max of 2 side (i-1,j)/(i,j-1). base i<0||j<0 -> 0.
      ★ grid nahi (2 string) par same 2D soch; ye "2-string DP" ka base (edit-distance, etc. isi pe).
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ EDIT DISTANCE (LC-72, Hard)  = LCS reuse -- no-match 3-choice + base 2-sided
+ └──────────────────────────────────────────────────────────────
+     SAAR : w1 -> w2 min ops (insert/delete/replace). = LCS code, transition badli. (HARD par template = easy)
+     TEMPLATE:
+         int solve(i, j, w1, w2, dp):
+             if(i<0) return j+1;                          // w1 khatam -> bache w2 ke j+1 char INSERT
+             if(j<0) return i+1;                          // w2 khatam -> w1 ke i+1 char DELETE
+             if(dp[i][j] != -1) return dp[i][j];
+             if(w1[i] == w2[j]) return dp[i][j] = solve(i-1, j-1, ...);   // MATCH -> koi op nahi
+             return dp[i][j] = 1 + min({ solve(i-1, j-1, ...),   // REPLACE
+                                         solve(i-1, j,   ...),   // DELETE (w1 peeche)
+                                         solve(i,   j-1, ...) }); // INSERT (w2 peeche)
+     ★★ LCS se FARAK: (1) no-match = 1 + MIN-of-3 (LCS me max-of-2 tha) (2) base = j+1/i+1 (LCS me 0).
+     ★ 3-choice matlab: replace=diagonal · delete=i-1 · insert=j-1. base 2-sided (dono string ke bache char count).
