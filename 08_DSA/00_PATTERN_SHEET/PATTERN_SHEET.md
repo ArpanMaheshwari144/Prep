@@ -1125,6 +1125,18 @@
        bestLeft : [ 1    3    3    8   14   14 ]     <- ab tak ka max, kabhi neeche nahi
        ★ TRAP [5,-2,-2,-1]: temp=[5,3,1,0] -> bestLeft=[5,5,5,5]  (temp gira par bestLeft TIKA)
 
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)   = bestLeft + bestRight, WALL
+ └──────────────────────────────────────────────────────────────
+     TRICK: 2 non-overlap tukde -> beech me DEEWAAR. har deewaar pe left-best + right-best -> MAX.
+       bestLeft = bestLeftPrefix(nums);   bestRight = bestRightPrefix(nums);
+       for(i=0..n-2)  ans = max(ans, bestLeft[i] + bestRight[i+1]);   // i+1 = non-overlap (left i-TAK, right i+1-SE)
+     DRY-RUN [2,1,-99,3,3]:
+       bestLeft  : [ 2  3  3  3  6 ]
+       bestRight : [ 6  6  6  6  3 ]
+       i=1: bestLeft[1]=3 + bestRight[2]=6 = 9
+     ★ TRAP: loop i=0..n-2 (i<n-1) -- aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
+
 ```
 
 ---
