@@ -1096,6 +1096,31 @@
    FAMILY: 53=sum(1 value) · 152=product(flip -> max+min) · 1749=abs-sum(max+min).
    MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
 
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ MAX SUBARRAY ENDING AT i    = MAX SUBARRAY SUM (53) ko per-index STORE
+ └──────────────────────────────────────────────────────────────
+     TRICK: 53 wala hi (running sum, negative pe phenko) -- bas GLOBAL max ki jagah HAR index ka value STORE.
+       ans[0] = nums[0];
+       for(i=1..n-1)  ans[i] = max( nums[i] , ans[i-1] + nums[i] );   // pichhla positive? jod : phenk ke akela
+     DRY-RUN:
+       idx :   0    1    2    3    4    5
+       val : [ 1    2   -7    8    6   -4 ]
+       ans : [ 1    3   -4    8   14   10 ]
+       i=3: pichhla ans -4 (bojh) -> phenko -> sirf nums[3]=8.    i=4: 8 positive -> 8+6 = 14.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ BEST IN 0..i  (bestLeft)    = upar wale `ans` ka RUNNING-MAX
+ └──────────────────────────────────────────────────────────────
+     TRICK: 0..i me best = ab-tak-ke ans me sabse bada = running-max ("ab tak ka max", kabhi neeche nahi).
+       temp = maxEndingAt(nums);           // upar wala ans[]
+       ans[0] = temp[0];
+       for(i=1..n-1)  ans[i] = max( ans[i-1] , temp[i] );    // AB TAK ka max (ans[i-1], NA temp[i-1])
+     DRY-RUN:
+       temp     : [ 1    3   -4    8   14   10 ]     <- upar wala
+       bestLeft : [ 1    3    3    8   14   14 ]     <- ab tak ka max, kabhi neeche nahi
+       ★ TRAP [5,-2,-2,-1]: temp=[5,3,1,0] -> bestLeft=[5,5,5,5]  (temp gira par bestLeft TIKA)
+
 ```
 
 ---
