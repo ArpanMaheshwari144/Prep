@@ -11,3 +11,5 @@ nahi banata pehli baar) -> KHUL ke sikhao, phir TURANT set karo: "aaj seekh, kal
 - PACE: Arpan ka. EK cheez -> ruko -> "agla". "ruk" -> turant. SHOW-FIRST: sheet-edit se pehle chat me dikhao.
 - CRASH = teach aur redo ke beech ka GAP -- Arpan ki weakness NAHI. Gap turant band karo.
 - RECOGNITION > invention: naya pattern turant-invent kisi se nahi hota; library+redo se pehchan aati (converge).
+- DRY-RUN / copy-pen = APPLY-tool (known approach trace/verify + apna bug pakdo). Naya mechanic (i+1 jaisa)
+  dry-run se derive NAHI hota -- wo SIKHANA padta. Naye pe "struggle-first/khud derive" mat maango.
