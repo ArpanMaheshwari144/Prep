@@ -1479,26 +1479,26 @@
      SAAR : ISLANDS ka SAME skeleton (outer-loop + count), bas 2 farak:
             (a) graph = ADJ-LIST (grid nahi)   (b) BFS use kiya (islands ne DFS kiya tha).
      input = n nodes + edges[] -> pehle ADJ banao (undirected -> DONO taraf):   -- NAYA
-         vector<int> adj[n];
-         for(auto &e : edges){ adj[e[0]].push_back(e[1]); adj[e[1]].push_back(e[0]); }
+         unordered_map<int, vector<int>> adj;
+         for(auto &it : edges){ adj[it[0]].push_back(it[1]); adj[it[1]].push_back(it[0]); }
      TEMPLATE:
-         vector<bool> vis(n,false);  int count=0;
-         for(i=0..n-1)
-             if(!vis[i]){ count++; bfs(i,adj,vis); }     // har UNVISITED node = naya component
+         vector<bool> vis(n,false);   int count=0;
+         for(i=0..n-1)                                // outer-loop = har node scan -> DISCONNECTED groups bhi cover
+             if(!vis[i]){ count++; bfs(i,adj,vis); }  // har UNVISITED node = naya component
          return count;
-         bfs(i): queue push i + vis[i]=true;
-                 pop node -> for(nbr : adj[node]) if(!vis[nbr]){ vis[nbr]=true; push nbr; }   // = PATH-EXISTS ka body
+         bfs(i): q.push i + vis[i]=true;
+                 pop node -> for(auto &it : adj[node]) if(!vis[it]){ vis[it]=true; q.push it; }   // = PATH-EXISTS ka body
      count++ AUR bfs DONO if(!vis[i]) ke ANDAR -- warna har node alag gine (=n galat).
      neighbours = adj[node] (islands me 4-direction tha) -- yahi ek farak, baaki skeleton same.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
  └──────────────────────────────────────────────────────────────
-     = ISLANDS, bas 1 NAYA: DFS VOID nahi -> AREA (int) RETURN kare.
-     for(i,j): if(grid[i][j]==1) ans = max(ans, DFS(i,j));   return ans;   // har island ka area -> MAX
-     DFS(i,j): base (bounds || grid==0) -> return 0;
-               sink grid[i][j]=0;   return 1 + (4-dir DFS ka sum);   // = tree max-depth (return 1 + combine)
-     ans = INT_MIN se start; end me ==INT_MIN -> return 0 (koi island nahi).
+     = ISLANDS ka SAME code (base + sink same), bas 2 delta:
+        (1) DFS VOID nahi -> AREA return: return 1 + (4-dir DFS ka sum);   // khud(1) + chaaron ka area
+        (2) outer count++ nahi -> ans = max(ans, DFS(i,j));                // har island ka area -> MAX
+     base + sink islands jaisa:  base(bounds || grid==0) return 0;   grid[i][j]=0 (SINK).
+     ans = INT_MIN se start; koi island na mila (end ==INT_MIN) -> return 0.
 
 ┌── FAMILY: MULTI-SOURCE / level-BFS ──────────────────────────
 │ KYUN SAATH: saare sources EK saath queue (level-0); per-level sz-snapshot -> ek level = ek step/minute. (level-order ka cousin.)
