@@ -818,19 +818,24 @@
  │ ▸ SINGLE ELEMENT (SORTED, LC-540)  = INDEX-PARITY binary search
  └──────────────────────────────────────────────────────────────
      SAAR : har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR = O(n); yahan log-n chahiye.)
-        idea: single se PEHLE pairs (even,odd) index pe · single ke BAAD (odd,even) SHIFT. single hi ye shift karta.
+        idea: single se PEHLE (left-half) pairs (even,odd) index pe -> yani EVEN-index apne RIGHT se pair (mid & mid+1);
+              uska LEFT (mid-1) = PICHLE pair ka end = ALAG. single ke BAAD ye flip (odd,even).
+     ★★ CONFUSION-CLEAR (even-mid me mid-1/LEFT se kyu compare, jabki even to right se pair karta?):
+        LEFT-half me even-mid ka LEFT (mid-1) ALAG hona CHAHIYE (uska pair to RIGHT me hai). is "expected" se disha:
+          even-mid  nums[mid] == nums[mid-1] (LEFT se MATCH ho gaya)  = pattern TOOTA = shift ho chuki = single PEECHE.
+          even-mid  nums[mid] != nums[mid-1] (LEFT alag = normal)     = abhi left-half = single AAGE.
      TEMPLATE:
          if(nums.size()==1) return nums[0];            // BASE
          int low=0, high=n-1;
          while(low<=high){
              int mid=low+(high-low)/2;
              if(mid==0) return nums[mid];              // edge (mid-1 OOB; mid==0 tak pahunche => single yahi)
-             if(mid%2==0){                             // EVEN mid
-                 if(nums[mid]==nums[mid-1]) high=mid-1; //   pairing SHIFT ho chuki -> single PEECHE
-                 else low=mid+1;                        //   pairing intact -> single AAGE
-             } else {                                  // ODD mid
-                 if(nums[mid]!=nums[mid-1]) high=mid-1; //   single PEECHE
-                 else low=mid+1;
+             if(mid%2==0){                             // EVEN mid  (left-half me iska LEFT ALAG hona chahiye)
+                 if(nums[mid]==nums[mid-1]) high=mid-1; //   LEFT se match = pattern toota -> single PEECHE
+                 else low=mid+1;                        //   LEFT alag = normal left-half -> single AAGE
+             } else {                                  // ODD mid  (left-half me iska LEFT SAME hona chahiye)
+                 if(nums[mid]!=nums[mid-1]) high=mid-1; //   LEFT se match nahi = pattern toota -> single PEECHE
+                 else low=mid+1;                        //   LEFT same = normal -> single AAGE
              }
          }
          return nums[high];
