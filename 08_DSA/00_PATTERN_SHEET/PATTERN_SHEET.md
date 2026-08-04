@@ -1095,6 +1095,40 @@
 
    FAMILY: 53=sum(1 value) · 152=product(flip -> max+min) · 1749=abs-sum(max+min).
    MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
+
+┌── FAMILY: PREFIX/SUFFIX best (Kadane ko per-index STORE -> dono taraf ka best) ──
+│ KYUN SAATH: normal Kadane 1 GLOBAL max deta. jab "har index tak ka / aage ka best" chahiye
+│             (2 non-overlap subarray, split-point Q) -> Kadane per-index store -> prefix+suffix best.
+└───────────────────────────────────────────────────────────────
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ MAX SUBARRAY ENDING AT i  (end[])
+ └──────────────────────────────────────────────────────────────
+     end[i] = EXACTLY index i pe KHATAM hone waali best subarray ka sum.
+     = prefix-sum + twist: jama-total NEGATIVE ho -> PHENK do, fresh shuru (Kadane, per-index STORE).
+       end[i] = max( nums[i] , end[i-1] + nums[i] )
+     ★ [1,2,-7,8,6,-4] -> [1,3,-4,8,14,10]
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ BEST IN PREFIX 0..i  (bestLeft[])   = end[] ka RUNNING-MAX
+ └──────────────────────────────────────────────────────────────
+     bestLeft[i] = 0..i ke ANDAR best (kahin bhi khatam). end[] = exactly-i-pe; iska running-max = 0..i best.
+       bestLeft[i] = max( bestLeft[i-1] , end[i] )
+     ★ end=[1,3,-4,8,14,10] -> bestLeft=[1,3,3,8,14,14]
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ BEST IN SUFFIX i..n-1  (bestRight[])   = bestLeft ka MIRROR
+ └──────────────────────────────────────────────────────────────
+     sab ULTA: start[i] = EXACTLY i pe SHURU best = max(nums[i], nums[i]+start[i+1])  (R->L).
+     bestRight[i] = start[] ka running-max RIGHT se: max( bestRight[i+1] , start[i] ).
+     ★ [1,2,-7,8,6,-4] -> bestRight=[14,14,14,14,6,-4]
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google-tag)  = bestLeft + bestRight, WALL
+ └──────────────────────────────────────────────────────────────
+     2 non-overlap subarray, sum ka JOD max. beech me WALL -> 1 poori LEFT, 1 poori RIGHT (overlap kabhi nahi).
+       ans = max over i of  bestLeft[i] + bestRight[i+1]      // wall har jagah try
+     ★ [2,1,-99,3,3]: bestLeft=[2,3,3,3,6] bestRight=[6,6,6,6,3] -> wall i=1: 3+6 = 9.
 ```
 
 ---
