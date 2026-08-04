@@ -1,5 +1,5 @@
 // ============================================================
-// MAX SUBARRAY ENDING AT EACH INDEX i   [KADANE #6 · LADDER rung-1 · khud code kar]
+// MAX SUBARRAY ENDING AT EACH INDEX i   [KADANE #6 · end[] array]
 // ============================================================
 // ek int array diya. har index i ke liye nikaalo: "index i pe KHATAM hone waali"
 // sabse-badi-sum contiguous subarray ka sum. (i pe end hona ZAROORI, aage nahi jaana.)
@@ -9,6 +9,13 @@
 //   [5,4,-1,7,8]      -> [5, 9, 8, 15, 23]
 //   [2,1,-99,3,3]     -> [2, 3, -96, 3, 6]
 //   [-2,-1]           -> [-2, -1]
+// ============================================================
+// ---- APPROACH ----  (ye NAYA nahi -- PREFIX-SUM se juda, bas ek twist)
+//  prefix-sum jaisa running total chalao. FARAK: prefix-sum bojh dho ke aage le jaata;
+//  yahan jab jama-total NEGATIVE ho jaaye = aage sirf bojh -> PHENK do, fresh shuru.
+//  end[i] = max( nums[i] , end[i-1] + nums[i] )
+//     = "pichhla running-total positive? jod le  :  chhod ke nums[i] se naya shuru."
+//  yani prefix-sum HI hai -- bas max-le-ke-negative-reset kar diya (Kadane wala twist). invent kuch nahi.
 // ============================================================
 
 #include <iostream>

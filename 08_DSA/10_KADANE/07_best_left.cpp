@@ -1,8 +1,8 @@
 // ============================================================
-// BEST SUBARRAY IN PREFIX 0..i  (bestLeft[])   [KADANE #7 · LADDER rung-2 · khud code kar]
+// BEST SUBARRAY IN PREFIX 0..i  (bestLeft[])   [KADANE #7 · bestLeft prefix]
 // ============================================================
 // har index i ke liye: nums[0..i] ke ANDAR (i tak) sabse-badi-sum contiguous subarray.
-// (rung-1 se farak: rung-1 me subarray i pe KHATAM hona zaroori tha; yahan i ke ANDAR
+// (end[] se farak: end[i] me subarray i pe KHATAM hona zaroori tha; yahan i ke ANDAR
 //  kahin bhi khatam ho sakti -- bas index i se aage nahi.)
 // ye values ka ARRAY lautao (size N).
 //
@@ -10,6 +10,11 @@
 //   [5,4,-1,7,8]      -> [5, 9, 9, 15, 23]
 //   [2,1,-99,3,3]     -> [2, 3, 3, 3, 6]
 //   [-2,-1]           -> [-2, -1]
+// ============================================================
+// ---- APPROACH ----  (end[] REUSE + running-max)
+//  bestLeft[i] = "0..i ke ANDAR best subarray" (kahin bhi khatam ho, bas i ke andar).
+//  end[i] = EXACTLY i pe khatam best. to 0..i me best = end[0..i] ka sabse bada = RUNNING MAX.
+//  step: temp = maxEndingAt(nums)  [end[] reuse] -> ans[i] = max(ans[i-1], temp[i]).
 // ============================================================
 
 #include <iostream>
