@@ -11,6 +11,20 @@
 //   [1,2,3,4]         -> 10
 //   [5,-2,5]          -> 10    ([5] · [5])
 // ============================================================
+// ---- APPROACH ----  (bestLeft + bestRight -> WALL. sab Kadane ka per-index STORE.)
+//  SOCH: 2 non-overlapping tukde -> beech me ek DEEWAAR (wall) socho. 1 subarray poori LEFT,
+//        doosra poori RIGHT -> overlap KABHI nahi. har wall pe: left-ka-best + right-ka-best -> MAX.
+//
+//  4 building block (sab Kadane, upar-neeche STORE):
+//    1. maxEndingAtForLeft  = har index i pe "yahin-KHATAM best"  (Kadane, L->R).
+//    2. bestLeftPrefix[i]   = 0..i me best   = #1 ka RUNNING-MAX ("ab tak ka max", kabhi neeche nahi).
+//    3. maxEndingAtForRight = har index pe "yahin-SHURU best"     (Kadane, R->L).
+//    4. bestRightPrefix[i]  = i..n-1 me best = #3 ka running-max R->L.   (2 aur 4 = MIRROR)
+//
+//  WALL (jodna):  for i=0..n-2 ->  ans = max(ans, bestLeft[i] + bestRight[i+1]).
+//    ★ i+1 (non-overlap ki JAAN): left ne index i TAK le liya -> right ko i+1 SE -> dono kabhi nahi milte.
+//    ★ loop i=0..n-2 (i<n-1): aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
+// ============================================================
 
 #include <iostream>
 #include <vector>
