@@ -1978,3 +1978,17 @@
          // caller: dp(m, vec(n,-1)); return solve(m-1, n-1, dp);
      ★★ climbing-stairs se CONNECT: 1D -> 2D. ways(n-1)+ways(n-2) -> ways(i-1,j)+ways(i,j-1). dp[n] -> dp[i][j].
      ★ 2D DP ka pehla: state = (i,j) do coordinate. base do (out-of-grid=0, start=1). memo 2D array.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ MIN PATH SUM (LC-64)  = UNIQUE-PATHS reuse, bas MIN + cost
+ └──────────────────────────────────────────────────────────────
+     SAAR : grid me har cell cost. (0,0)->(m-1,n-1), right/down. MIN-sum path. = unique-paths code, 2 tweak.
+     TEMPLATE:
+         int solve(i, j, grid, dp):
+             if(i<0 || j<0) return INT_MAX;                 // INVALID (grid ke bahar) -> min ignore karega
+             if(i==0 && j==0) return grid[0][0];            // start ki cost
+             if(dp[i][j] != -1) return dp[i][j];
+             int up = solve(i-1, j, ...), left = solve(i, j-1, ...);
+             return dp[i][j] = grid[i][j] + min(up, left);  // apni cost + upar/left me CHHOTA
+     ★★ unique-paths se FARAK: (1) up+left (count) -> min(up,left)  (2) +grid[i][j] (cost add).
+     ★ INT_MAX = "yahan se nahi aa sakte" (coin-change INVALID-signal). real cell pe >=1 dir valid -> overflow nahi.

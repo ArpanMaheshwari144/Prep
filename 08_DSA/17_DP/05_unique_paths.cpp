@@ -15,7 +15,7 @@
 using namespace std;
 
 // ---- APPROACH ----  (2D DP intro = climbing-stairs ka 2D cousin)
-//  cell (i,j) pe pahunchne ke raaste = UPAR se (i-1,j) + LEFT se (i,j-1)
+//  cell (i,j) means (0,0) pe pahunchne ke raaste = UPAR se (i-1,j) + LEFT se (i,j-1)
 //     => solve(i,j) = solve(i-1,j) + solve(i,j-1).
 //  base: (0,0) -> 1 (start) · i<0 || j<0 -> 0 (grid ke bahar, koi raasta nahi).
 //  ★ climbing-stairs se connect: 1D dp[n] -> 2D dp[i][j]; ways(n-1)+ways(n-2) -> ways(i-1,j)+ways(i,j-1).
