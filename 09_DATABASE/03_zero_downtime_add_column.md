@@ -4,7 +4,7 @@
 
 ---
 
-## ❓ QUESTION
+## QUESTION
 
 > Ek table hai jispe **millions of users har second read + write** kar rahe (hot table).
 > Ab mujhe usme **ek naya column ADD** karna hai — **NO DOWNTIME**. Kaise?
@@ -19,13 +19,13 @@ Naive `ALTER TABLE users ADD COLUMN ...` purane DB/versions me:
 
 ---
 
-## ✅ ANSWER — solutions (chhote-se-bade order me)
+## ANSWER — solutions (chhote-se-bade order me)
 
 ### 1. Modern DB — native INSTANT add (chhota/nullable column)
 - **MySQL 8.0+:** nullable column **end me** add = **INSTANT** (metadata-only, NO table rewrite).
   ya `ALTER TABLE ... ADD COLUMN ..., ALGORITHM=INPLACE, LOCK=NONE` (writes chalte rehte).
 - **PostgreSQL 11+:** nullable / constant-default column add = **instant** (metadata-only).
-- ★★ **KEY:** **nullable + no-heavy-default = FAST.** **NOT NULL + computed default = full REWRITE (bura).**
+- **KEY:** **nullable + no-heavy-default = FAST.** **NOT NULL + computed default = full REWRITE (bura).**
 
 ### 2. Online-schema-change TOOLS (badi table / purana DB / complex change)
 **gh-ost (GitHub)** ya **pt-online-schema-change (Percona):**
@@ -43,7 +43,7 @@ Naive `ALTER TABLE users ADD COLUMN ...` purane DB/versions me:
 
 ---
 
-## ⚠️ KEY DON'Ts
+## KEY DON'Ts
 - Huge table pe **NOT NULL + default EK-SHOT me NAHI** (rewrite/lock)
 - Backfill **ek bade UPDATE me NAHI** — hamesha **BATCH** (1k-10k rows at a time; warna lock + replica-lag)
 
