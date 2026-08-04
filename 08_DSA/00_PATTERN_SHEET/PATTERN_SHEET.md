@@ -818,28 +818,30 @@
  │ ▸ SINGLE ELEMENT (SORTED, LC-540)  = INDEX-PARITY binary search
  └──────────────────────────────────────────────────────────────
      SAAR : har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR = O(n); yahan log-n chahiye.)
-        idea: single se PEHLE (left-half) pairs (even,odd) index pe -> yani EVEN-index apne RIGHT se pair (mid & mid+1);
-              uska LEFT (mid-1) = PICHLE pair ka end = ALAG. single ke BAAD ye flip (odd,even).
-     ★★ CONFUSION-CLEAR (even-mid me mid-1/LEFT se kyu compare, jabki even to right se pair karta?):
-        LEFT-half me even-mid ka LEFT (mid-1) ALAG hona CHAHIYE (uska pair to RIGHT me hai). is "expected" se disha:
-          even-mid  nums[mid] == nums[mid-1] (LEFT se MATCH ho gaya)  = pattern TOOTA = shift ho chuki = single PEECHE.
-          even-mid  nums[mid] != nums[mid-1] (LEFT alag = normal)     = abhi left-half = single AAGE.
+        idea: single se PEHLE (left-half) pairs (even,odd) pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 (LEFT) se compare.
      TEMPLATE:
          if(nums.size()==1) return nums[0];            // BASE
          int low=0, high=n-1;
          while(low<=high){
              int mid=low+(high-low)/2;
-             if(mid==0) return nums[mid];              // edge (mid-1 OOB; mid==0 tak pahunche => single yahi)
-             if(mid%2==0){                             // EVEN mid  (left-half me iska LEFT ALAG hona chahiye)
-                 if(nums[mid]==nums[mid-1]) high=mid-1; //   LEFT se match = pattern toota -> single PEECHE
-                 else low=mid+1;                        //   LEFT alag = normal left-half -> single AAGE
-             } else {                                  // ODD mid  (left-half me iska LEFT SAME hona chahiye)
-                 if(nums[mid]!=nums[mid-1]) high=mid-1; //   LEFT se match nahi = pattern toota -> single PEECHE
-                 else low=mid+1;                        //   LEFT same = normal -> single AAGE
+             if(mid==0) return nums[mid];              // edge
+             if(mid%2==0){                             // EVEN mid
+                 if(nums[mid]==nums[mid-1]) high=mid-1; //   single PEECHE
+                 else low=mid+1;                        //   single AAGE
+             } else {                                  // ODD mid
+                 if(nums[mid]!=nums[mid-1]) high=mid-1; //   single PEECHE
+                 else low=mid+1;                        //   single AAGE
              }
          }
          return nums[high];
-     return nums[HIGH] (not low) -- dono branch mid REJECT karte -> high khud single pe aa ke rukta.
+     ── DRY-RUN [1,1,2,3,3,4,4,8,8]  (single = 2 @ index 2) -- ISKO paper pe dekh, prose bhool ──
+        idx:  0 1 2 3 4 5 6 7 8   (values: 1 1 2 3 3 4 4 8 8)
+        low0 high8 -> mid=4 (EVEN) : nums[4]=3 == nums[3]=3 -> high=4-1=3
+        low0 high3 -> mid=1 (ODD)  : nums[1]=1 == nums[0]=1 -> low=1+1=2
+        low2 high3 -> mid=2 (EVEN) : nums[2]=2 != nums[1]=1 -> low=2+1=3
+        low3 high3 -> mid=3 (ODD)  : nums[3]=3 != nums[2]=2 -> high=3-1=2
+        low3 > high2 -> STOP -> return nums[high]=nums[2]= 2  (sahi)
+     ★ return nums[HIGH] (not low): dono branch mid REJECT karte -> high khud single pe aa ke rukta.
 
 ┌── FAMILY: 2D-index-map ───────────────────────────────────────
 │ KYUN SAATH: 2D matrix ko 1D sorted array maan ke normal BS; index ko (row,col) me convert.
