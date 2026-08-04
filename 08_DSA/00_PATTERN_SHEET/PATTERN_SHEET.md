@@ -1962,3 +1962,19 @@
      ★★ TWIST vs coin-change: (1) state me PREV bhi (kya-liya, taaki increasing check ho) (2) take pe CONDITION (nums[i]>nums[prev]).
      ★ MEMO offset: prevIndex -1 se shuru -> dp[index][prevIndex + 1] (+1 se index 0..n valid).
      ★ LIS EASY kyu (Arpan): base sirf index==n -> 0 (coin-change ka i<0/INT_MAX/overflow/-1 ganda tha; yahan saaf).
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ UNIQUE PATHS (LC-62)  = 2D DP intro (climbing-stairs ka 2D cousin)
+ └──────────────────────────────────────────────────────────────
+     SAAR : m x n grid, robot (0,0) -> (m-1,n-1), sirf RIGHT/DOWN. kitne raaste? cell pe = UPAR se + LEFT se.
+     TEMPLATE:
+         int solve(i, j, dp):
+             if(i<0 || j<0) return 0;                       // grid ke bahar -> koi raasta nahi
+             if(i==0 && j==0) return 1;                     // start cell
+             if(dp[i][j] != -1) return dp[i][j];
+             int up   = solve(i-1, j, dp);
+             int left = solve(i, j-1, dp);
+             return dp[i][j] = up + left;
+         // caller: dp(m, vec(n,-1)); return solve(m-1, n-1, dp);
+     ★★ climbing-stairs se CONNECT: 1D -> 2D. ways(n-1)+ways(n-2) -> ways(i-1,j)+ways(i,j-1). dp[n] -> dp[i][j].
+     ★ 2D DP ka pehla: state = (i,j) do coordinate. base do (out-of-grid=0, start=1). memo 2D array.
