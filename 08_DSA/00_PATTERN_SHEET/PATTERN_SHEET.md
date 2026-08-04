@@ -2029,3 +2029,20 @@
                                          solve(i,   j-1, ...) }); // INSERT (w2 peeche)
      ★★ LCS se FARAK: (1) no-match = 1 + MIN-of-3 (LCS me max-of-2 tha) (2) base = j+1/i+1 (LCS me 0).
      ★ 3-choice matlab: replace=diagonal · delete=i-1 · insert=j-1. base 2-sided (dono string ke bache char count).
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ 0/1 KNAPSACK (classic)  = PURE take/not-take (item ONCE)
+ └──────────────────────────────────────────────────────────────
+     SAAR : items (wt,val) + bag capacity W. har item ek baar (0/1). MAX value, weight<=W. (chor: bag me best chura)
+     TEMPLATE:
+         int solve(wt, val, W, i, dp):
+             if(i<0) return 0;                                       // koi item nahi
+             if(dp[i][W] != -1) return dp[i][W];
+             int notTake = solve(wt, val, W, i-1, dp);               // item chhoda
+             int take = 0;
+             if(wt[i] <= W)                                          // fit hota hai tabhi
+                 take = val[i] + solve(wt, val, W - wt[i], i-1, dp); // liya -> value+ , weight ghata, i-1 (ONCE)
+             return dp[i][W] = max(take, notTake);
+     ★★ coin-change se FARAK: item ONCE -> take me i-1 (coin me REUSE -> i same tha). yehi 0/1 ka matlab.
+     ★★ BASE i<0 vs i==0 (dono valid, same jawab): i<0 -> index-0 NORMAL item (recursion + i<0-base khud sambhaale, CLEANER);
+        i==0 -> item-0 explicit-handle (recursion 1 level pehle rukti, zyada code). i<0 = "sach me khatam", index-0 = normal.
