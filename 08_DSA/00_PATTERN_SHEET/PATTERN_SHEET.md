@@ -699,10 +699,13 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MIN ADD MAKE VALID
  └──────────────────────────────────────────────────────────────
-     COUNTER, stack nahi (sirf () hain). 2 counter:
-     close_needed = kitne '(' UNMATCHED bache (inke liye ')' chahiye)  ·  open_needed = kitne ')' UNMATCHED aaye (inke liye '(' chahiye).
-     '(' aaye -> close_needed++.   else (')' aaye) -> close_needed>0 ? close_needed-- (match) : open_needed++.
-     ans = open_needed + close_needed.   trap: match hua ')' open_needed me MAT gino (nested "(())" = 0).
+     COUNTER (stack nahi -- sirf '(' ')'). 2 counter (naam tere code se):
+        close_needed = kitne '(' abhi UNMATCHED khade (inhe aage ')' chahiye).
+        open_needed  = kitne ')' UNMATCHED aaye (inhe pehle '(' chahiye tha).
+     '(' aaye  -> close_needed++                                          (ek open, iska close pending).
+     ')' aaye  -> close_needed > 0 ? close_needed-- (pending open se MATCH) : open_needed++ (koi open nahi -> ye ')' extra).
+     ans = open_needed + close_needed                                     (dono bache = utne insert karne).
+     ★ TRAP: ')' match ho gaya to open_needed me MAT gino -- match = 0 insertion (nested "(())" -> 0).
 
  broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
 ```
