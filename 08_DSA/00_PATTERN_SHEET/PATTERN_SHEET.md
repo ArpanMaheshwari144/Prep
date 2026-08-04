@@ -834,8 +834,9 @@
              }
          }
          return nums[high];
-     ── DRY-RUN [1,1,2,3,3,4,4,8,8]  (single = 2 @ index 2) -- ISKO paper pe dekh, prose bhool ──
-        idx:  0 1 2 3 4 5 6 7 8   (values: 1 1 2 3 3 4 4 8 8)
+     ── DRY-RUN -- ISKO paper pe dekh, prose bhool (single = 2 @ idx 2) ──
+        idx:  0  1  2  3  4  5  6  7  8
+        arr:  1  1  2  3  3  4  4  8  8
         low0 high8 -> mid=4 (EVEN) : nums[4]=3 == nums[3]=3 -> high=4-1=3
         low0 high3 -> mid=1 (ODD)  : nums[1]=1 == nums[0]=1 -> low=1+1=2
         low2 high3 -> mid=2 (EVEN) : nums[2]=2 != nums[1]=1 -> low=2+1=3
