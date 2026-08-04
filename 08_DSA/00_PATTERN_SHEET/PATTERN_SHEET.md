@@ -1034,12 +1034,10 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ DESIGN HASHSET (LLD)
  └──────────────────────────────────────────────────────────────
-     HashMap ka CHHOTA bhai: same bucket-array + chaining, bas VALUE/update nahi. Entry = |key|next|.
-     add:      key chain me hai? -> kuch mat karo (duplicate nahi). na ho -> node lagao + sz++.
-     contains: chain traverse -> key match -> true, else false. (= HashMap get, bas bool.)
-     remove:   prev+curr traverse. HEAD(prev null) -> buckets[i]=curr->next · beech -> prev->next=curr->next. sz--.
-     remove BUG-CATCH: prev ko "prev = curr" karo (NA prev=prev->next -- prev NULL se non-head remove pe CRASH).
-     (file 08_DSA/09_DESIGN/02_hashset.cpp)
+     = HashMap MINUS value (upar HashMap entry dekh). Entry = |key|next| (koi val/update nahi). same bucket-array + chaining.
+        add = HashMap put (par duplicate pe kuch nahi) · contains = HashMap get (bas bool) · remove = HashMap remove (same).
+     ★★ BUG-CATCH (yahi non-obvious, baaki HashMap se same): remove me prev-advance = "prev = curr"
+        (NA prev = prev->next -- warna prev NULL se non-head remove pe CRASH). (file 08_DSA/09_DESIGN/02_hashset.cpp)
 ```
 
 ---
