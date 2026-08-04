@@ -998,14 +998,15 @@
         index = hash<string>{}(key) % cap.  (exact C++ syntax: hash<string>{}(key) -- string hash.)  same index pe 2 key (collision) -> chain me jode (next se).
      fields: buckets (Entry* ka array) · cap (slots = 16) · sz (kitne pairs).
 
-     put(key,val):  index nikalo -> chain me key DHUNDO.
-                       mil gayi -> value UPDATE karo, return.
-                       na mili  -> naya node chain me LAGAO + sz++.
+     put(key,val):  1. index = hash<string>{}(key) % cap      (kaunsa BUCKET).
+                    2. us bucket ki CHAIN me traverse (curr = buckets[index]; aage curr = curr->next):
+                          key MILI  -> value UPDATE + return.
+                          na mili   -> chain ke END me naya node LAGAO + sz++.
      PUT TRAP (7-redo se pakka): key mil gayi -> update + TURANT return. return NA kiya to loop
         aage jaake DUPLICATE node laga deta + sz galat. ("test-pass != code-sahi" -- basic test me
         nahi dikhta, chain-ke-ANDAR update pe phat-ta.)
-     get(key):      chain traverse -> key match -> value laut.  na mile / null -> -1.
-     remove(key):   prev + curr se traverse -> key match pe:
+     get(key):      index nikalo -> chain traverse (curr aage-aage) -> key match -> value laut.  na mile / null -> -1.
+     remove(key):   index nikalo -> prev + curr se traverse -> key match pe:
                        HEAD (prev == null) -> buckets[i] = curr->next.
                        beech/end           -> prev->next = curr->next.
                        phir sz--.
