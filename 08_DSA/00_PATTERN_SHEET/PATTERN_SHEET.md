@@ -1034,12 +1034,13 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ DESIGN HASHSET (LLD)
  └──────────────────────────────────────────────────────────────
-     = HashMap ka SAME design (bucket-array + chaining) MINUS value/update. Entry = | key | next | (no val).
-        fields: buckets(Entry*) · cap=16 · sz.   index = hash<string>{}(key) % cap.   (chain-visual + COMBO = upar HashMap entry)
-     add(key)      : bucket khaali -> buckets[index]=node, sz++.  warna chain traverse: key MILI -> return (DUPLICATE nahi); tail -> append + sz++.
-     contains(key) : chain traverse -> key match -> true.  na mile/null -> false.   (= HashMap get, bas BOOL, value nahi.)
-     remove(key)   : prev+curr traverse -> match: HEAD(prev==null) -> buckets[i]=curr->next; beech -> prev->next=curr->next. sz--.
-     ★★ BUG-CATCH (khud pakda, yahi non-obvious): traverse me advance = "prev = curr; curr = curr->next"
+     = HashMap ka EXACT hi code, bas VALUE nikaal do. CONNECTION (HashMap -> HashSet, sirf 4 cheez badalti):
+        Entry | key | VALUE | next |     ->   Entry | key | next |            (value field HATAO)
+        put : match pe value UPDATE      ->   add : match pe KUCH NAHI          (duplicate skip)
+        get : VALUE return (na mile -1)  ->   contains : TRUE / FALSE           (bas presence)
+        remove                           ->   remove : HUBAHU SAME              (koi change nahi)
+     baaki SAB same HashMap: bucket-array + chaining, index = hash<string>{}(key)%cap, collision-chain, remove head-vs-beech, VISUAL/COMBO (upar dekh).
+     ★★ BUG-CATCH (khud pakda): remove-traverse me advance = "prev = curr; curr = curr->next"
         (NA prev = prev->next -- prev NULL se shuru -> non-head remove pe NULL->next = CRASH). (file 08_DSA/09_DESIGN/02_hashset.cpp)
 ```
 
