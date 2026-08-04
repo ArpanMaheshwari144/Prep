@@ -487,22 +487,25 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ TWO SUM
  └──────────────────────────────────────────────────────────────
-     map me {value: index}; har num pe (target-num) map me hai? -> mila.
+     map me {value -> index}. har num pe dekho: (target - num) map me HAI? -> haan to jodi mil gayi (dono index).
+     ek pass: pehle CHECK phir daalo (taaki num khud se na match kare).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ VALID ANAGRAM
  └──────────────────────────────────────────────────────────────
-     count-array (26) ya map; ek me ++, doosre me --; sab zero -> anagram.
+     dono me har char ka count barabar? count-array[26] (ya map): string-1 se ++, string-2 se -- -> sab ZERO -> anagram.
+     (length alag -> turant false.)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ GROUP ANAGRAMS
  └──────────────────────────────────────────────────────────────
-     har word ko SORT karo -> wahi key; map<sortedKey, list> me group.
+     anagrams ka SORTED-roop same hota -> har word SORT karo = KEY -> map<sortedKey, list<word>> me daalo -> lists hi groups.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBARRAY SUM = K
  └──────────────────────────────────────────────────────────────
-     prefix-sum + map[sum]; map{0:1} se START. [count += mp[sum-k];  // = prefix[j]-prefix[i-1]=k]
+     prefix-sum + hashmap {prefixSum -> count}. running sum chalao; count += mp[sum - k], phir mp[sum]++.
+     ★ mp[0]=1 se START zaroori (jab sum khud == k ho, tab prefix-0 chahiye). idea: pichla prefix jahan se ab tak k bana.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST CONSECUTIVE SEQ (LC-128)
