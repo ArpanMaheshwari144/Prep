@@ -1857,6 +1857,10 @@
  ESSENCE (Arpan-samjha, apne shabd): "DP kuch ALAG nahi -- RECURSION ko SMART way me karna. plain recursion
       sabko BAAR-BAAR calculate karta (waste); DP bolti = jo ek baar nikala use ARRAY me STORE karlo, dobara maango
       to wahan se uthao. bas. DP = recursion ka smart tareeka." (kaam TABHI karta jab OVERLAP ho -- same subproblem repeat.)
+ ESSENCE-2 (Arpan, DP me flow aane ke baad): "DP = FULL-TEMPLATE based, sabse template-able topic. har DP me wahi 3-part
+      SKELETON: base + TRANSITION (solve(i-1)/solve(j-1)/... = choices) + memo. SIRF base+transition badalti, skeleton SAME.
+      aur ye transition wahi RECURSION hai jo TREES (left/right=2) / DFS-grid (4-dir) / grid-DP (up/left=2) me thi -- bas
+      BRANCH-ginti alag. DP = purani recursion + MEMO chipka di. 'naya' nahi laga kyunki tha hi nahi." => naya DP = bas "transition kya?" socho.
  BASE-CASE = asli FIDDLY part (Arpan-insight): RELATION (take/not-take, min/max) lagbhag SAME rehta, aasaan.
       MUSHKIL = BASE + invalid-handling, jo har problem me ALAG. climbing/robber = base SIMPLE (i==0 -> value) -> jaldi ho gaye;
       coin-change = base AJEEB (i<0 vs i==0, INVALID=INT_MAX, -1) -> wahi phasaya. => relation easy likho, BASE pe RUK ke socho.
@@ -1992,3 +1996,18 @@
              return dp[i][j] = grid[i][j] + min(up, left);  // apni cost + upar/left me CHHOTA
      ★★ unique-paths se FARAK: (1) up+left (count) -> min(up,left)  (2) +grid[i][j] (cost add).
      ★ INT_MAX = "yahan se nahi aa sakte" (coin-change INVALID-signal). real cell pe >=1 dir valid -> overflow nahi.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ LONGEST COMMON SUBSEQUENCE (LC-1143)  = 2D DP on 2 STRINGS (match/no-match)
+ └──────────────────────────────────────────────────────────────
+     SAAR : do string me sabse lambi COMMON subsequence ki length. state = (i,j) = s1 index-i-tak, s2 index-j-tak.
+     TEMPLATE:
+         int solve(i, j, s1, s2, dp):
+             if(i<0 || j<0) return 0;                              // koi string khatam
+             if(dp[i][j] != -1) return dp[i][j];
+             if(s1[i] == s2[j])                                    // char MATCH
+                 return dp[i][j] = 1 + solve(i-1, j-1, ...);       //   liya -> DONO se peeche (diagonal)
+             return dp[i][j] = max(solve(i-1, j, ...), solve(i, j-1, ...));  // no-match -> ek char chhodo (2 side)
+         // caller: dp(m, vec(n,-1)); return solve(m-1, n-1, s1, s2, dp);
+     ★ MATCH -> diagonal (i-1,j-1) +1 · NO-MATCH -> max of 2 side (i-1,j)/(i,j-1). base i<0||j<0 -> 0.
+     ★ grid nahi (2 string) par same 2D soch; ye "2-string DP" ka base (edit-distance, etc. isi pe).
