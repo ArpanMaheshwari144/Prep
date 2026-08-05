@@ -20,9 +20,9 @@ using namespace std;
 //  NOT-TAKE : solve(i-1, W)                                  (item chhoda -> capacity same)
 //  TAKE     : agar wt[i] <= W -> val[i] + solve(i-1, W-wt[i])  (liya -> value+ , weight ghata, item ONCE -> i-1)
 //  => max(take, notTake).
-//  ★ coin-change take/not-take se FARAK: item ONCE -> take me bhi i-1 (coin me REUSE -> i same tha).
+//  coin-change take/not-take se FARAK: item ONCE -> take me bhi i-1 (coin me REUSE -> i same tha).
 //
-//  ★★ BASE: i<0 vs i==0 (dono VALID, same jawab -- ye samajhne layak):
+//  BASE: i<0 vs i==0 (dono VALID, same jawab -- ye samajhne layak):
 //     i<0 (yahan)  : index-0 ko NORMAL item maano (take/not-take chale). recursion i-1=-1 pe -> base 0.
 //                    => i==0 ka case recursion + i<0-base ne APNE-AAP sambhaal liya (special-case NAHI chahiye). CLEANER.
 //     i==0 (online): item-0 ko EXPLICIT handle (if(i==0) return wt[0]<=W?val[0]:0), recursion 1 level pehle rukti.

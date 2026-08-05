@@ -16,7 +16,7 @@
 //         GLOBAL max NAHI -> HAR index ka value STORE.
 //     ans[0] = nums[0];
 //     ans[i] = max( nums[i] , ans[i-1] + nums[i] );   // prefix JOD, ya phenk ke akela nums[i] -- jo bada
-//  ★ [1,2,-7,8,6,-4] -> [1,3,-4,8,14,10]   (i=3: pichhla ans -4 bojh -> phenko -> sirf nums[3]=8)
+//  [1,2,-7,8,6,-4] -> [1,3,-4,8,14,10]   (i=3: pichhla ans -4 bojh -> phenko -> sirf nums[3]=8)
 
 #include <iostream>
 #include <vector>

@@ -22,8 +22,8 @@ using namespace std;
 //       solve(i-1, j)    = DELETE  (w1 ka char hataya, w1 peeche)
 //       solve(i,   j-1)  = INSERT  (w2 wala daala, w2 peeche)
 //  base (2-SIDED, LCS se farak): i<0 -> j+1 (w1 khatam -> bache w2 ke j+1 char INSERT) · j<0 -> i+1 (w1 ke i+1 DELETE).
-//  ★ LCS se FARAK: (1) no-match pe max-of-2 nahi -> 1 + MIN-of-3 (2) base 0 nahi -> j+1/i+1.
-//  ★ ESSENCE-2 proof: HARD problem bhi LCS-template + transition tweak = easy.
+//  LCS se FARAK: (1) no-match pe max-of-2 nahi -> 1 + MIN-of-3 (2) base 0 nahi -> j+1/i+1.
+//  ESSENCE-2 proof: HARD problem bhi LCS-template + transition tweak = easy.
 // ============================================================
 int solve(int i, int j, string s1, string s2, vector<vector<int>> &dp)
 {

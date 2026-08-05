@@ -25,9 +25,9 @@ using namespace std;
 //  s1[i] == s2[j] (char MATCH) -> 1 + solve(i-1, j-1)            (char liya, DONO se ek-ek peeche)
 //  match NAHI                  -> max( solve(i-1, j), solve(i, j-1) )   (ek string se ek char CHHODO, dono taraf try)
 //  base: i<0 || j<0 -> 0 (koi string khatam -> aur common nahi).  memo: dp[i][j].
-//  ★★ CORE-CONNECT (Arpan): ye wahi RECURSION hai jo trees(left/right=2)/DFS(4-dir)/grid-DP(up/left=2) me thi --
+//  CORE-CONNECT (Arpan): ye wahi RECURSION hai jo trees(left/right=2)/DFS(4-dir)/grid-DP(up/left=2) me thi --
 //     bas branch-ginti alag. DP = purani recursion + MEMO. "naya" nahi, sirf transition badalti.
-//  ★ transition: match -> DIAGONAL (i-1,j-1) · no-match -> 2 side (i-1,j) / (i,j-1). base + transition hi problem-specific.
+//  transition: match -> DIAGONAL (i-1,j-1) · no-match -> 2 side (i-1,j) / (i,j-1). base + transition hi problem-specific.
 // ============================================================
 int solve(int i, int j, string s1, string s2, vector<vector<int>> &dp)
 {

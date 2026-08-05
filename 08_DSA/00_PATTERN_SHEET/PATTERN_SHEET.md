@@ -50,21 +50,21 @@
  └──────────────────────────────────────────────────────────────
      slow = agli jagah jahan non-zero rakhna hai; fast SCAN karta.
      fast pe non-zero mila -> pehle swap(nums[slow], nums[fast]) -> PHIR slow++.
-     ★ ORDER: swap PEHLE, slow++ BAAD (slow tabhi aage jab ek non-zero apni jagah lag gaya).
+     ORDER: swap PEHLE, slow++ BAAD (slow tabhi aage jab ek non-zero apni jagah lag gaya).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REMOVE DUP (SORTED)
  └──────────────────────────────────────────────────────────────
      move-zeroes cousin. slow = last-UNIQUE ka index, fast SCAN.
      naya unique (nums[slow] != nums[fast]) -> pehle slow++ (slow ab duplicate/khali slot pe) -> PHIR nums[slow] = nums[fast] (overwrite).
-     ★ ORDER: yahan slow++ PEHLE, overwrite BAAD (move-zeroes se ULTA). fast har baar++. unique count = slow+1.
+     ORDER: yahan slow++ PEHLE, overwrite BAAD (move-zeroes se ULTA). fast har baar++. unique count = slow+1.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REMOVE ELEMENT
  └──────────────────────────────────────────────────────────────
      saare 'val' hata, non-val ki count k lauta (move-zeroes cousin). slow = agli keep-jagah, fast scan.
      nums[fast] != val -> pehle nums[slow] = nums[fast] -> PHIR slow++.   nums[fast] == val -> skip (sirf fast++).
-     ★ ORDER: write PEHLE, slow++ BAAD (move-zeroes jaisा). end me slow = k (bache shuru ke k me).
+     ORDER: write PEHLE, slow++ BAAD (move-zeroes jaisा). end me slow = k (bache shuru ke k me).
 
 ┌── FAMILY: left/right COMPARE-CONVERGE ────────────────────────
 │ KYUN SAATH: do pointer dono chhor se andar aate; har step CHAR/condition compare karke decide. (palindrome-type + vowel-swap.)
@@ -505,7 +505,7 @@
  │ ▸ SUBARRAY SUM = K
  └──────────────────────────────────────────────────────────────
      prefix-sum + hashmap {prefixSum -> count}. running sum chalao; count += mp[sum - k], phir mp[sum]++.
-     ★ mp[0]=1 se START zaroori (jab sum khud == k ho, tab prefix-0 chahiye). idea: pichla prefix jahan se ab tak k bana.
+     mp[0]=1 se START zaroori (jab sum khud == k ho, tab prefix-0 chahiye). idea: pichla prefix jahan se ab tak k bana.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST CONSECUTIVE SEQ (LC-128)
@@ -705,7 +705,7 @@
      '(' aaye  -> close_needed++                                          (ek open, iska close pending).
      ')' aaye  -> close_needed > 0 ? close_needed-- (pending open se MATCH) : open_needed++ (koi open nahi -> ye ')' extra).
      ans = open_needed + close_needed                                     (dono bache = utne insert karne).
-     ★ TRAP: ')' match ho gaya to open_needed me MAT gino -- match = 0 insertion (nested "(())" -> 0).
+     TRAP: ')' match ho gaya to open_needed me MAT gino -- match = 0 insertion (nested "(())" -> 0).
 
  broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
 ```
@@ -842,7 +842,7 @@
         low2 high3 -> mid=2 (EVEN) : nums[2]=2 != nums[1]=1 -> low=2+1=3
         low3 high3 -> mid=3 (ODD)  : nums[3]=3 != nums[2]=2 -> high=3-1=2
         low3 > high2 -> STOP -> return nums[high]=nums[2]= 2  (sahi)
-     ★ return nums[HIGH] (not low): dono branch mid REJECT karte -> high khud single pe aa ke rukta.
+     return nums[HIGH] (not low): dono branch mid REJECT karte -> high khud single pe aa ke rukta.
 
 ┌── FAMILY: 2D-index-map ───────────────────────────────────────
 │ KYUN SAATH: 2D matrix ko 1D sorted array maan ke normal BS; index ko (row,col) me convert.
@@ -949,7 +949,7 @@
         a hai to sum += a->val (a aage);  b hai to sum += b->val (b aage).
         naya node = sum % 10 -> tail se jodo, tail aage.   carry = sum / 10 (agle ke liye).
      return dummy->next.
-     ★ '|| carry' zaroori: 999 + 1 = 1000 -> dono list khatam par carry bacha -> ek aur node chahiye (leading '1').
+     '|| carry' zaroori: 999 + 1 = 1000 -> dono list khatam par carry bacha -> ek aur node chahiye (leading '1').
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SWAP NODES IN PAIRS  = DUMMY + 3-player rewire (order + temp-save)
@@ -1044,14 +1044,14 @@
      │ insert:  │ put(k,v)                     │ add(k)                       │
      │  mili    │   value UPDATE + return      │   kuch nahi (duplicate skip) │
      │  na-mili │   chain END me append + sz++ │   chain END me append + sz++ │  <- DONO SAME
-     │          │   ★ UPDATE-then-RETURN trap  │   (koi trap nahi -- simpler) │
+     │          │   UPDATE-then-RETURN trap  │   (koi trap nahi -- simpler) │
      ├──────────┼──────────────────────────────┼──────────────────────────────┤
      │ lookup   │ get(k): value / -1           │ contains(k): true / false    │
      │ delete   │ remove(k)                    │ remove(k): HUBAHU SAME       │
      │ size     │ return sz                    │ SAME                         │
      └──────────┴──────────────────────────────┴──────────────────────────────┘
      SAME (dono me): bucket khaali -> node laga + sz++; index = hash<string>{}(key)%cap; chaining/collision; remove head-vs-beech; VISUAL/COMBO (upar HashMap entry).
-     ★★ BUG-CATCH (remove, khud pakda): advance = "prev = curr; curr = curr->next"
+     BUG-CATCH (remove, khud pakda): advance = "prev = curr; curr = curr->next"
         (NA prev = prev->next -- prev NULL se non-head remove pe NULL->next = CRASH). (file 08_DSA/09_DESIGN/02_hashset.cpp)
 ```
 
@@ -1091,7 +1091,7 @@
      = MAX PRODUCT SUBARRAY (152) ka HUBAHU same skeleton (temp/min/max freeze, upar dekh), sirf 2 TWEAK:
         (1) GUNA (*) -> PLUS (+)                    (num*max -> num+max, num*min -> num+min)
         (2) ans me ABS dono -> ans = max({ ans, |max|, |min| })   (answer minSum se bhi aa sakta -> isliye abs)
-     ★ dry-run [2,-5,1,-4,3,-2] -> 8: subarray [-5,1,-4]=-8 minSum me -> |-8|=8.
+     dry-run [2,-5,1,-4,3,-2] -> 8: subarray [-5,1,-4]=-8 minSum me -> |-8|=8.
 
    FAMILY: 53=sum(1 value) · 152=product(flip -> max+min) · 1749=abs-sum(max+min).
    MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
@@ -1113,17 +1113,17 @@
        bestRight[i] = max( bestRight[i+1] , maxEndAt[i] )            // 06 ULTA (loop PEECHE: i = n-2 -> 0)
        ans          = max over i of  bestLeft[i] + bestRight[i+1]    // WALL: i+1 = non-overlap
 
-     ★ VISUAL [1,2,-7,8,6,-4]:
+     VISUAL [1,2,-7,8,6,-4]:
        val       : [ 1    2   -7    8    6   -4 ]
        maxEndAt  : [ 1    3   -4    8   14   10 ]   (05)
        bestLeft  : [ 1    3    3    8   14   14 ]   (06)
        bestRight : [ 14   14   14   14   6   -4 ]   (06 ka mirror)
        i=1: bestLeft[1]=3 + bestRight[2]=14 = 17
 
-     ★ i+1 KYUN (non-overlap ki JAAN): right ko i se lo (bestRight[i]) -> shared index DONO subarray me -> DO BAAR count -> OVERLAP.
+     i+1 KYUN (non-overlap ki JAAN): right ko i se lo (bestRight[i]) -> shared index DONO subarray me -> DO BAAR count -> OVERLAP.
        e.g. bestLeft[3]=8 + bestRight[3]=14 = 22, index 3 DONO me = jhootha. i+1 (ya i-1, loop i=1->n-1) se dono ALAG.
 
-     ★ loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
+     loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
 
 ```
 
@@ -2037,9 +2037,9 @@
                  Take = 1 + solve(index+1, index, nums, dp);            // liya -> ab prev = index
              return dp[index][prevIndex+1] = max(Take, notTake);
          // caller: dp(n+1, vec(n+1,-1)); return solve(0, -1, nums, dp);
-     ★★ TWIST vs coin-change: (1) state me PREV bhi (kya-liya, taaki increasing check ho) (2) take pe CONDITION (nums[i]>nums[prev]).
-     ★ MEMO offset: prevIndex -1 se shuru -> dp[index][prevIndex + 1] (+1 se index 0..n valid).
-     ★ LIS EASY kyu (Arpan): base sirf index==n -> 0 (coin-change ka i<0/INT_MAX/overflow/-1 ganda tha; yahan saaf).
+     TWIST vs coin-change: (1) state me PREV bhi (kya-liya, taaki increasing check ho) (2) take pe CONDITION (nums[i]>nums[prev]).
+     MEMO offset: prevIndex -1 se shuru -> dp[index][prevIndex + 1] (+1 se index 0..n valid).
+     LIS EASY kyu (Arpan): base sirf index==n -> 0 (coin-change ka i<0/INT_MAX/overflow/-1 ganda tha; yahan saaf).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ UNIQUE PATHS (LC-62)  = 2D DP intro (climbing-stairs ka 2D cousin)
@@ -2054,8 +2054,8 @@
              int left = solve(i, j-1, dp);
              return dp[i][j] = up + left;
          // caller: dp(m, vec(n,-1)); return solve(m-1, n-1, dp);
-     ★★ climbing-stairs se CONNECT: 1D -> 2D. ways(n-1)+ways(n-2) -> ways(i-1,j)+ways(i,j-1). dp[n] -> dp[i][j].
-     ★ 2D DP ka pehla: state = (i,j) do coordinate. base do (out-of-grid=0, start=1). memo 2D array.
+     climbing-stairs se CONNECT: 1D -> 2D. ways(n-1)+ways(n-2) -> ways(i-1,j)+ways(i,j-1). dp[n] -> dp[i][j].
+     2D DP ka pehla: state = (i,j) do coordinate. base do (out-of-grid=0, start=1). memo 2D array.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MIN PATH SUM (LC-64)  = UNIQUE-PATHS reuse, bas MIN + cost
@@ -2068,8 +2068,8 @@
              if(dp[i][j] != -1) return dp[i][j];
              int up = solve(i-1, j, ...), left = solve(i, j-1, ...);
              return dp[i][j] = grid[i][j] + min(up, left);  // apni cost + upar/left me CHHOTA
-     ★★ unique-paths se FARAK: (1) up+left (count) -> min(up,left)  (2) +grid[i][j] (cost add).
-     ★ INT_MAX = "yahan se nahi aa sakte" (coin-change INVALID-signal). real cell pe >=1 dir valid -> overflow nahi.
+     unique-paths se FARAK: (1) up+left (count) -> min(up,left)  (2) +grid[i][j] (cost add).
+     INT_MAX = "yahan se nahi aa sakte" (coin-change INVALID-signal). real cell pe >=1 dir valid -> overflow nahi.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST COMMON SUBSEQUENCE (LC-1143)  = 2D DP on 2 STRINGS (match/no-match)
@@ -2083,8 +2083,8 @@
                  return dp[i][j] = 1 + solve(i-1, j-1, ...);       //   liya -> DONO se peeche (diagonal)
              return dp[i][j] = max(solve(i-1, j, ...), solve(i, j-1, ...));  // no-match -> ek char chhodo (2 side)
          // caller: dp(m, vec(n,-1)); return solve(m-1, n-1, s1, s2, dp);
-     ★ MATCH -> diagonal (i-1,j-1) +1 · NO-MATCH -> max of 2 side (i-1,j)/(i,j-1). base i<0||j<0 -> 0.
-     ★ grid nahi (2 string) par same 2D soch; ye "2-string DP" ka base (edit-distance, etc. isi pe).
+     MATCH -> diagonal (i-1,j-1) +1 · NO-MATCH -> max of 2 side (i-1,j)/(i,j-1). base i<0||j<0 -> 0.
+     grid nahi (2 string) par same 2D soch; ye "2-string DP" ka base (edit-distance, etc. isi pe).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ EDIT DISTANCE (LC-72, Hard)  = LCS reuse -- no-match 3-choice + base 2-sided
@@ -2099,8 +2099,8 @@
              return dp[i][j] = 1 + min({ solve(i-1, j-1, ...),   // REPLACE
                                          solve(i-1, j,   ...),   // DELETE (w1 peeche)
                                          solve(i,   j-1, ...) }); // INSERT (w2 peeche)
-     ★★ LCS se FARAK: (1) no-match = 1 + MIN-of-3 (LCS me max-of-2 tha) (2) base = j+1/i+1 (LCS me 0).
-     ★ 3-choice matlab: replace=diagonal · delete=i-1 · insert=j-1. base 2-sided (dono string ke bache char count).
+     LCS se FARAK: (1) no-match = 1 + MIN-of-3 (LCS me max-of-2 tha) (2) base = j+1/i+1 (LCS me 0).
+     3-choice matlab: replace=diagonal · delete=i-1 · insert=j-1. base 2-sided (dono string ke bache char count).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ 0/1 KNAPSACK (classic)  = PURE take/not-take (item ONCE)
@@ -2115,6 +2115,6 @@
              if(wt[i] <= W)                                          // fit hota hai tabhi
                  take = val[i] + solve(wt, val, W - wt[i], i-1, dp); // liya -> value+ , weight ghata, i-1 (ONCE)
              return dp[i][W] = max(take, notTake);
-     ★★ coin-change se FARAK: item ONCE -> take me i-1 (coin me REUSE -> i same tha). yehi 0/1 ka matlab.
-     ★★ BASE i<0 vs i==0 (dono valid, same jawab): i<0 -> index-0 NORMAL item (recursion + i<0-base khud sambhaale, CLEANER);
+     coin-change se FARAK: item ONCE -> take me i-1 (coin me REUSE -> i same tha). yehi 0/1 ka matlab.
+     BASE i<0 vs i==0 (dono valid, same jawab): i<0 -> index-0 NORMAL item (recursion + i<0-base khud sambhaale, CLEANER);
         i==0 -> item-0 explicit-handle (recursion 1 level pehle rukti, zyada code). i<0 = "sach me khatam", index-0 = normal.

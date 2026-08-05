@@ -17,8 +17,8 @@
 //     temp = maxEndingAt(nums);              // 05 wala array
 //     ans[0] = temp[0];
 //     ans[i] = max( ans[i-1] , temp[i] );    // AB TAK ka max (ans[i-1], NA temp[i-1])
-//  ★ [1,2,-7,8,6,-4]:  temp=[1,3,-4,8,14,10]  ->  bestLeft=[1,3,3,8,14,14]
-//  ★ TRAP [5,-2,-2,-1]: temp=[5,3,1,0] -> [5,5,5,5]  (temp gira par ans TIKA -> ab-tak chahiye, sirf pichhla nahi)
+//  [1,2,-7,8,6,-4]:  temp=[1,3,-4,8,14,10]  ->  bestLeft=[1,3,3,8,14,14]
+//  TRAP [5,-2,-2,-1]: temp=[5,3,1,0] -> [5,5,5,5]  (temp gira par ans TIKA -> ab-tak chahiye, sirf pichhla nahi)
 
 #include <iostream>
 #include <vector>

@@ -16,8 +16,8 @@ using namespace std;
 // ---- APPROACH ----  (= UNIQUE-PATHS code REUSE, 2 tweak: MIN + cost)
 //  solve(i,j) = grid[i][j] + min( solve(i-1,j), solve(i,j-1) )   (apni cost + upar/left me CHHOTA)
 //  base: (0,0) -> grid[0][0] (start ki cost) · i<0 || j<0 -> INT_MAX (INVALID, min ignore karega).
-//  ★ unique-paths se FARAK: (1) up+left (count) -> min(up,left) (2) +grid[i][j] (cost add).
-//  ★ INT_MAX = coin-change wala "yahan se nahi aa sakte" signal. real cell pe kam-se-kam ek dir valid -> overflow nahi.
+//  unique-paths se FARAK: (1) up+left (count) -> min(up,left) (2) +grid[i][j] (cost add).
+//  INT_MAX = coin-change wala "yahan se nahi aa sakte" signal. real cell pe kam-se-kam ek dir valid -> overflow nahi.
 // ============================================================
 int solve(int i, int j, vector<vector<int>> &dp, vector<vector<int>> &grid)
 {
