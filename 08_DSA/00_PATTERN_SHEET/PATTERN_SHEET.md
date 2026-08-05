@@ -64,7 +64,7 @@
  └──────────────────────────────────────────────────────────────
      saare 'val' hata, non-val ki count k lauta (move-zeroes cousin). slow = agli keep-jagah, fast scan.
      nums[fast] != val -> pehle nums[slow] = nums[fast] -> PHIR slow++.   nums[fast] == val -> skip (sirf fast++).
-     ORDER: write PEHLE, slow++ BAAD (move-zeroes jaisा). end me slow = k (bache shuru ke k me).
+     ORDER: write PEHLE, slow++ BAAD (move-zeroes jaisa). end me slow = k (bache shuru ke k me).
 
 ┌── FAMILY: left/right COMPARE-CONVERGE ────────────────────────
 │ KYUN SAATH: do pointer dono chhor se andar aate; har step CHAR/condition compare karke decide. (palindrome-type + vowel-swap.)
