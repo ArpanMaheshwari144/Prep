@@ -8,6 +8,8 @@
 // ============================================================
 // ---- APPROACH ----   (= 06 (bestLeft) + uska MIRROR (bestRight) -> WALL se jodo)
 //  ESSENCE: har wall pe -> [0..i] ka best + [i+1..n-1] ka best -> in sab ka MAX. bas yehi.
+//  KYUN kadane+prefix: har index tak ka running SUM = prefix-sum; uska MAX (neg aaye to reset) = kadane.
+//  eg [2,1,-99,3,3]=9 -> wall index-1 pe: LEFT best=3 ([2,1]) + RIGHT best=6 ([3,3]) = 9.
 //  VISUAL (index-3 overlap):
 //     val       : [  1   2  -7   8   6  -4 ]
 //     bestLeft  : [  1   3   3  (8) 14  14 ]   (0..i)          <- aage

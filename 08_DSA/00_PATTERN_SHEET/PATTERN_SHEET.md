@@ -1125,6 +1125,8 @@
      CONNECT: ye KADANE + PREFIX/SUFFIX ka COMBO hai (do pattern jud rahe).
         05 (kadane per-index) -> maxEndingAt array -> uska PREFIX-max (aage) = bestLeft,
         SUFFIX-max (peeche) = bestRight -> phir WALL se jodo.  (var = code jaisa: ans/temp)
+        KYUN kadane+prefix: har index tak ka running SUM = prefix-sum; uska MAX (neg aaye to reset) = kadane.
+        eg [2,1,-99,3,3]=9 -> wall index-1 pe: LEFT best=3 ([2,1]) + RIGHT best=6 ([3,3]) = 9.
 
        maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)
            ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // Kadane per-index (=05, prefix-sum+reset)
