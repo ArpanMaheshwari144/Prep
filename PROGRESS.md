@@ -92,7 +92,7 @@
               idempotency (check-then-act, bug-fixed) · Circuit-Breaker(Resilience4j, 3-state) · API-Gateway(routing) · DB-per-service · kafka-ui.
               LEARNINGS.md + FULL SOURCE CODE (20 java files). + todoapp (JWT/Security/Redis). PayRequest DTO = record (Arpan-verified).
               -> ★★ PROJECT-REVISE: mini_payment_ms + todoapp DONE (files richly code-commented = notes wahin).
-   LLD        ✓ 11 designs IN CODE (parking/bms/atm/elevator/hotel...). 5 revise-swept. FORWARD = HLD-jaisa MOCK + ★ 1-2 design COLD-REDO (jaise HashMap→HashSet ek baar sahi karke code-verify). gap = SOLID/pattern ARTICULATE.
+   LLD        ✓ 11 designs IN CODE (parking/bms/atm/elevator/hotel...). 5 revise-swept. FORWARD = HLD-jaisa MOCK + ★ 1-2 design REDO (jaise HashMap→HashSet ek baar sahi karke code-verify). gap = SOLID/pattern ARTICULATE.
    DSA        ✓✓ COMPLETE (4-Aug): 18-pattern sheet (~2000 line, "gate ki chaabi") + ~165 problems, saare 17 family (DP last). REVISE-only (see §4).
    BEHAVIORAL ✓ 5 STAR (HikariCP/WAF/Doximity/Mentoring/Failure-JDK — all competencies). done bol-ke; ab reps.
    COMPARES   ✓ 12 (sql-nosql/tcp-udp/sync-async/rest-graphql...). DATABASE ◐ (indexing+txn-internals). INFRA ✓ (AWS/Docker/K8s).
@@ -102,23 +102,12 @@
 
 ---
 
-## 3. FORWARD PLAN (24-Jul onwards → SEPTEMBER apply)
+## 3. FORWARD PLAN → SEPTEMBER apply
 ```
-   ★★★ CURRENT PHASE (4-Aug onwards): BUILD KHATAM. DSA COMPLETE (17 families, DP last done), Java/Spring/Multithreading DONE,
-      HLD strong (11 foundations + 10 designs + distributed-cache + 7 designs ke 8-step hand-notes), Behavioral 5-star, Projects revise-DONE.
-      => ab SIRF CONSOLIDATION (revise + mock-delivery + English-aloud), naya-heavy KUCH NAHI. direction pakki, deadline LOOSE (slow week ≠ failure).
-
-      ★★ ROZ DSA (NON-NEGOTIABLE): sheet-glance REVISE + 1 PROBLEM (redo ya naya, padhe-hue PATTERN pe). Claude roz nudge kare.
-      ★★ SHEET CHUNK-REVISE: sheet 18-pattern/2000-line, poori roz impractical -> roz QUICK-glance-all (2-3 min) + DEEP-revise 2 pattern ROTATE
-         (TP+SW / Hashing+Prefix / Stack+BS ...) -> poori sheet ~week me cover -> repeat. Claude nudge me rotation TRACK kare, koi pattern miss na ho.
-      ★★ CONSOLIDATION FOCUS (no new topic): DSA full-revise spaced-redo · HLD mock-heavy (timed) · Java/Spring sharp-revise + backlog (Elasticsearch/distributed-ID)
-         · behavioral polish + English-aloud roz. end: Sept-apply ready.
-      ★★ OFF-DAY LIGHT-WORK MODE (Arpan-set): MOOD-OFF/neend-nahi din -> naya-DSA NAHI -> HAND-NOTE revise-WRITING (halka, frustrate nahi).
-         ARPAN-DRIVEN ("jis din main kahun"), collaborative. PROOF: mood-off din pe bhi 2 HLD 8-step notes + Kadane-redo ho gaye -> zero-day nahi.
-
-   ★★ TIMELINE: JP apply = SEPTEMBER (rush nahi). end-Aug tak "sahi jagah hold" → Sept apply + pel. beech me achhi comp = wo bhi JP/BlackRock raasta (route FLEXIBLE, end-goal fixed).
-   - SUNDAY: pattern-sheet polish.  OFF-DAY: light-gear (sheet/purana padho — MEMORY.md playbook).
-   ★ JP kya poochta (rounds/SD-Qs/Java-multithreading/gaps) = JP_INTERVIEW_INTEL.md.
+   ★★★ CURRENT PLAN = neeche "25-DIN SCHEDULE" block (6→31 Aug) + top READ-FIRST block. BUILD KHATAM -> CONSOLIDATION
+      (revise + mock-delivery + English-aloud), naya-heavy KUCH NAHI. direction pakki, deadline LOOSE (slow week != failure).
+      OFF-DAY = light-gear (sheet/purana padho, hand-note revise-writing), ghar mat jao (full playbook = MEMORY.md).
+   ★ SUNDAY: pattern-sheet polish.  ★ JP kya poochta (rounds/SD-Qs/Java-multithreading/gaps) = JP_INTERVIEW_INTEL.md.
 
    ★★ PROJECT REVISE-MODE (mini_payment_ms + todoapp DONE; ye evergreen method jab dobara chhue): Claude ACTUAL note/code dikhata (fabricate NAHI)
       -> Arpan padh ke copy pe notes -> "aage" pe next, NO quiz. STORY + ACTUAL-CODE dono ready ("code kaise?" ke liye).
