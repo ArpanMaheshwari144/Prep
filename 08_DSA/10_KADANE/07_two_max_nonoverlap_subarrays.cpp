@@ -8,7 +8,11 @@
 // ============================================================
 // ---- APPROACH ----   (= 06 (bestLeft) + uska MIRROR (bestRight) -> WALL se jodo)
 //  ESSENCE: har wall pe -> [0..i] ka best + [i+1..n-1] ka best -> in sab ka MAX. bas yehi.
-//  OVERLAP dekh: bestLeft=[1,3,3,(8),14,14]  bestRight=[14,14,14,(14),6,-4] -- index 3 pe 8 AUR 14 dono = COMMON = do baar count (jhootha 22).
+//  VISUAL (index-3 overlap):
+//     val       : [  1   2  -7   8   6  -4 ]
+//     bestLeft  : [  1   3   3  (8) 14  14 ]   (0..i)          <- aage
+//     bestRight : [ 14  14  14 (14) 6  -4 ]   (i+1..n-1)      <- peeche
+//     overlap dekh: index 3 pe bestLeft ka 8 AUR bestRight ka 14 -- dono me index 3 COMMON = do baar count (jhootha 22).
 //    isliye left [0..i], right [i+1..n-1] -> ek AAGE shift -> index 3 dono me nahi. (ya left [0..i-1], right [i..n-1])
 //    SAHI (non-overlap): har wall pe bestLeft[i]+bestRight[i+1] -> in sab ka MAX. i=1: 3+14 = 17 = ANSWER.
 //  TRICK: 2 non-overlap tukde -> beech me DEEWAAR. har deewaar pe left-best + right-best -> MAX.
