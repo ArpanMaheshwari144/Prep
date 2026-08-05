@@ -16,10 +16,72 @@ using namespace std;
 // STEP 4 — bestRightPrefix      (STEP3 ka running-max, peeche)
 // STEP 5 — maxTwoNonOverlap     (WALL: bestLeft[i] + bestRight[i+1], i=0..n-2)
 
+// Kadane's + Prefix Sum
+vector<int> maxEndingAtForLeft(vector<int> &nums)
+{
+    int n = nums.size();
+    vector<int> ans(n, 0);
+    ans[0] = nums[0];
+    for (int i = 1; i < n; i++)
+    {
+        // prefix sum + kadane
+        ans[i] = max(ans[i - 1] + nums[i], nums[i]);
+    }
+    return ans;
+}
+
+vector<int> bestLeftPrefix(vector<int> &nums)
+{
+
+    int n = nums.size();
+    vector<int> temp = maxEndingAtForLeft(nums);
+    vector<int> ans(n, 0);
+    ans[0] = temp[0];
+    for (int i = 1; i < n; i++)
+    {
+        ans[i] = max(ans[i - 1], temp[i]);
+    }
+    return ans;
+}
+
+vector<int> maxEndingAtForRight(vector<int> &nums)
+{
+    int n = nums.size();
+    vector<int> ans(n, 0);
+    ans[n - 1] = nums[n - 1];
+    for (int i = n - 2; i >= 0; i--)
+    {
+        ans[i] = max(ans[i + 1] + nums[i], nums[i]);
+    }
+    return ans;
+}
+
+vector<int> bestRightPrefix(vector<int> &nums)
+{
+
+    int n = nums.size();
+    vector<int> temp = maxEndingAtForRight(nums);
+    vector<int> ans(n, 0);
+    ans[n - 1] = temp[n - 1];
+    for (int i = n - 2; i >= 0; i--)
+    {
+        ans[i] = max(ans[i + 1], temp[i]);
+    }
+    return ans;
+}
+
 int maxTwoNonOverlap(vector<int> &nums)
 {
-    // TODO: khud likho (5 step)
-    return 0;
+    int n = nums.size();
+    vector<int> bestForleft = bestLeftPrefix(nums);
+    vector<int> bestForRight = bestRightPrefix(nums);
+    int ans = INT_MIN;
+
+    for (int i = 0; i < n - 1; i++)
+    {
+        ans = max(ans, bestForleft[i] + bestForRight[i + 1]);
+    }
+    return ans;
 }
 
 int main()
