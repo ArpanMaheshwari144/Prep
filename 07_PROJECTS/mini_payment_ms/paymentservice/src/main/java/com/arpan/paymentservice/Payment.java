@@ -9,6 +9,11 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // orderId — ye FK NAHI hai! sirf plain String (logical reference).
+    //   KYUN: DB-per-service -> order doosre DB (orderdb) me, payment ka apna (paydb).
+    //         FK sirf SAME DB ke tables beech banta -> cross-service FK possible hi nahi.
+    //   -> microservices me reference sirf ID se (logical), consistency SAGA/events se (FK se nahi).
+    //   unique=true = FK ke liye nahi, IDEMPOTENCY ke liye (ek orderId -> ek hi payment; race pe DB bounce).
     @Column(unique = true)
     private String orderId;
 
