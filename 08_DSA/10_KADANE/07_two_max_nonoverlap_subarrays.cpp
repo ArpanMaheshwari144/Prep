@@ -7,6 +7,7 @@
 //   [1,2,3,4] -> 10    [5,-2,5] -> 10    [-5,10,10] -> 20
 // ============================================================
 // ---- APPROACH ----   (= 06 (bestLeft) + uska MIRROR (bestRight) -> WALL se jodo)
+//  ESSENCE: har wall pe -> [0..i] ka best + [i+1..n-1] ka best -> in sab ka MAX. bas yehi.
 //  TRICK: 2 non-overlap tukde -> beech me DEEWAAR. har deewaar pe left-best + right-best -> MAX.
 //     bestLeft  = 06 wala (aage chalke: i = 1 -> n-1).
 //     bestRight = 06 wala hi ULTA (peeche chalke: i = n-2 -> 0).
