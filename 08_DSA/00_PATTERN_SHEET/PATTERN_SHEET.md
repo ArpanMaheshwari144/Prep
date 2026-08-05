@@ -1106,19 +1106,23 @@
        bestRight : [ 14  14  14 (14) 6  -4 ]   (i+1..n-1)      <- peeche
        overlap dekh: index 3 pe bestLeft ka 8 AUR bestRight ka 14 -- dono me index 3 COMMON = do baar count (jhootha).
        isliye: left = [0..i], right = [i+1..n-1] -> ek AAGE shift -> index 3 dono me nahi. (ya left [0..i-1], right [i..n-1])
+
      CONNECT: 05 + 06 se DO array bane -> phir WALL se jodo.  formulas:
        maxEndAt[i]  = max( nums[i] , maxEndAt[i-1] + nums[i] )       // 05 (Kadane)
        bestLeft[i]  = max( bestLeft[i-1] , maxEndAt[i] )             // 06 (loop AAGE: i = 1 -> n-1)
        bestRight[i] = max( bestRight[i+1] , maxEndAt[i] )            // 06 ULTA (loop PEECHE: i = n-2 -> 0)
        ans          = max over i of  bestLeft[i] + bestRight[i+1]    // WALL: i+1 = non-overlap
+
      ★ VISUAL [1,2,-7,8,6,-4]:
        val       : [ 1    2   -7    8    6   -4 ]
        maxEndAt  : [ 1    3   -4    8   14   10 ]   (05)
        bestLeft  : [ 1    3    3    8   14   14 ]   (06)
        bestRight : [ 14   14   14   14   6   -4 ]   (06 ka mirror)
        i=1: bestLeft[1]=3 + bestRight[2]=14 = 17
+
      ★ i+1 KYUN (non-overlap ki JAAN): right ko i se lo (bestRight[i]) -> shared index DONO subarray me -> DO BAAR count -> OVERLAP.
        e.g. bestLeft[3]=8 + bestRight[3]=14 = 22, index 3 DONO me = jhootha. i+1 (ya i-1, loop i=1->n-1) se dono ALAG.
+
      ★ loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
 
 ```
