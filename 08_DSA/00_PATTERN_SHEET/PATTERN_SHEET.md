@@ -1098,19 +1098,22 @@
 
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)   = bestLeft + bestRight, WALL
+ │ ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)   = do array (bestLeft + bestRight) + WALL
  └──────────────────────────────────────────────────────────────
-     TRICK: 2 non-overlap tukde -> beech me DEEWAAR. har deewaar pe left-best + right-best -> MAX.
-       bestLeft  = 06 wala (aage chalke: i = 1 -> n-1).
-       bestRight = 06 wala hi ULTA (peeche chalke: i = n-2 -> 0).
-       for(i=0..n-2)  ans = max( ans , bestLeft[i] + bestRight[i+1] );   // i+1 = non-overlap
+     CONNECT: 05 + 06 se DO array bane -> phir WALL se jodo.  formulas:
+       maxEndAt[i]  = max( nums[i] , maxEndAt[i-1] + nums[i] )       // 05 (Kadane)
+       bestLeft[i]  = max( bestLeft[i-1] , maxEndAt[i] )             // 06 (loop AAGE: i = 1 -> n-1)
+       bestRight[i] = max( bestRight[i+1] , maxEndAt[i] )            // 06 ULTA (loop PEECHE: i = n-2 -> 0)
+       ans          = max over i of  bestLeft[i] + bestRight[i+1]    // WALL: i+1 = non-overlap
      ★ VISUAL [1,2,-7,8,6,-4]:
        val       : [ 1    2   -7    8    6   -4 ]
        maxEndAt  : [ 1    3   -4    8   14   10 ]   (05)
        bestLeft  : [ 1    3    3    8   14   14 ]   (06)
        bestRight : [ 14   14   14   14   6   -4 ]   (06 ka mirror)
-       i=1: bestLeft[1]=3 + bestRight[2]=14 = 17   (max)
-     ★ i+1 KYUN: bestRight[i] (SAME index) -> index i dono me = OVERLAP -> jhootha 22. i+1 se dono alag.
+       i=1: bestLeft[1]=3 + bestRight[2]=14 = 17
+     ★ i+1 KYUN (non-overlap ki JAAN): bestLeft[i] = 0..i tak best (index i SHAAMIL). agar right bhi i se lo
+       (bestRight[i]) -> index i DONO subarray me aa jaata -> OVERLAP -> galat (jhootha bada, 22).
+       e.g. bestLeft[3]=8 + bestRight[3]=14 = 22, par dono me index 3 hai. isliye right ko i+1 SE -> dono alag, sahi.
      ★ loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
 
 ```
