@@ -127,6 +127,31 @@
       ★ FOCUS: Java/Spring BACKEND depth only (+Kafka/AWS). React/Flutter = OUT. C++ = sirf DSA. limit = focus, na kamzori.
 ```
 
+### ★★★ 25-DIN SCHEDULE (6-Aug → ~31-Aug, phir SEPT apply) — Arpan-asked 5-Aug
+```
+   MANTRA: DSA COMPLETE -> 25 din me naya NAHI; = REFLEX-tight banao + asli lever (HLD/behavioral/English) pe PEL.
+   (DSA me over-invest MAT -- done hai; energy HLD-mock + English-aloud pe.)
+
+   ROZ (daily rhythm):
+     - DSA 30-45min: sheet quick-glance + CHUNK-REVISE 2-pattern (rotate) + 1 REDO. [maintenance, light]
+     - HLD (MAIN): 1 design mock-delivery BOLKE (interview-Q) YA 1 bacha hand-note.
+     - BEHAVIORAL/ENGLISH: 1 STAR loud YA 1 HLD delivery aloud. (English-aloud roz.)
+     - JAVA/SPRING: light read-revise (woven / 2-3x week).
+
+   WEEK 1 (6-12 Aug): DSA chunk rotate Stack+BS -> LinkedList+Design -> Kadane+Bit ·
+                      HLD: 4 bache hand-notes KHATAM (file-upload, news-aggregator, distributed-cache, url-browser-journey) ·
+                      Behavioral: 5 STAR loud reps.
+   WEEK 2 (13-19 Aug): DSA chunk rotate Trees+Graphs -> Heap+Backtracking -> DP+Intervals + 2 COMBO-problem (do-pattern gap-fix) ·
+                      HLD: 2-3 design FULL mock-delivery TIMED (bolke, follow-up handle) · English-aloud roz.
+   WEEK 3 (20-26 Aug): DSA poori sheet 2nd FAST pass (sab reflex) ·
+                      HLD: baaki designs mock + deep-dive/follow-up · Java backlog (Elasticsearch, distributed-ID-gen) · behavioral polish.
+   WEEK 4 / BUFFER (27-31 Aug): FULL-LOOP mock (DSA + System-Design + behavioral EK sitting = interview simulate) ·
+                      weak-spot fill · sab sharp-pass -> SEPT apply ready.
+
+   MILESTONE GATES: wk1-end = saare hand-notes done · wk2-end = sheet 1 full pass + combos · wk3-end = HLD sab mock-delivered · wk4 = full-loop mocks.
+   ★ deadline LOOSE (slow-hafta != fail); direction pakki. off-day = light-gear (revise), ghar mat jao. luck-belief: effort=ready-tool, guarantee nahi.
+```
+
 ---
 
 ## 4. DSA — STATUS + PHILOSOPHY (condensed; poora emotional/method = MEMORY.md)
