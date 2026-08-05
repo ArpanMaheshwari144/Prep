@@ -11,14 +11,11 @@
 //   [-2,-1]           -> [-2, -1]
 // ============================================================
 
-// ---- APPROACH ----  (prefix-sum ka variant -- running total + reset)
-//  prefix-sum jaisa running total chalao. FARAK: jab pichhla accumulation NEGATIVE ho (bojh),
-//  use carry mat karo -> phenk do, nums[i] se fresh shuru.
-//  end[i] = max( nums[i] , end[i-1] + nums[i] )
-//     = "pichhla running-total positive? jod le  :  chhod ke nums[i] se naya."
-//  ★ DRY-RUN [1,2,-7,8,6,-4]: index-3 pe -> end[2]=-4 (negative, bojh) -> phenk -> sirf nums[3]=8.
-//    isiliye end[3]=8, na ki -4+8. wahi reset ka faisla.
-//  init: ans[0]=nums[0]; loop i=1..n-1.
+// ---- APPROACH ----   (= MAX SUBARRAY SUM ko per-index STORE)
+//  TRICK: running sum chalao; jama-total NEGATIVE ho -> phenk do, fresh (Kadane). GLOBAL max NAHI, HAR index STORE.
+//     ans[0] = nums[0];
+//     ans[i] = max( nums[i] , ans[i-1] + nums[i] );   // pichhla positive? jod : phenk ke akela
+//  ★ [1,2,-7,8,6,-4] -> [1,3,-4,8,14,10]   (i=3: pichhla ans -4 bojh -> phenko -> sirf nums[3]=8)
 
 #include <iostream>
 #include <vector>

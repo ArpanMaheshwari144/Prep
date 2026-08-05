@@ -11,13 +11,13 @@
 //   [2,1,-99,3,3]     -> [2, 3, 3, 3, 6]
 //   [-2,-1]           -> [-2, -1]
 // ============================================================
-// ---- APPROACH ----  (end[] REUSE + running-max)
-//  bestLeft[i] = "0..i ke ANDAR best" (kahin bhi khatam, bas i tak). end[i] = EXACTLY i pe khatam best.
-//  to 0..i me best = end[0..i] ka sabse bada = RUNNING MAX.
-//     bestLeft[i] = max( bestLeft[i-1] , end[i] )
-//  ★ TRAP (test T5 [5,-2,-2,-1] ne pakda): running-max = AB TAK ka max -> bestLeft[i-1] chahiye,
-//    NA sirf end[i-1] (wo sirf pichhla end, ab-tak-ka-max nahi). end=[5,3,1,0] -> bestLeft=[5,5,5,5].
-//  step: temp = maxEndingAt(nums) [end[] reuse] -> ans[i] = max(ans[i-1], temp[i]).
+// ---- APPROACH ----   (= maxEndingAt ka RUNNING-MAX)
+//  TRICK: 0..i me best = ab-tak-ke maxEndingAt me sabse bada = running-max (kabhi neeche nahi).
+//     temp = maxEndingAt(nums);              // 05 wala
+//     ans[0] = temp[0];
+//     ans[i] = max( ans[i-1] , temp[i] );    // AB TAK ka max (ans[i-1], NA temp[i-1])
+//  ★ [1,2,-7,8,6,-4]: temp=[1,3,-4,8,14,10] -> [1,3,3,8,14,14]
+//  ★ TRAP [5,-2,-2,-1]: temp=[5,3,1,0] -> [5,5,5,5]  (temp gira par ans TIKA -> ab-tak chahiye, sirf pichhla nahi)
 
 #include <iostream>
 #include <vector>
