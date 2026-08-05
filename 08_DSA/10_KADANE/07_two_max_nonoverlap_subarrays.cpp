@@ -10,6 +10,7 @@
 //  ESSENCE: har wall pe -> [0..i] ka best + [i+1..n-1] ka best -> in sab ka MAX. bas yehi.
 //  OVERLAP dekh: bestLeft=[1,3,3,(8),14,14]  bestRight=[14,14,14,(14),6,-4] -- index 3 pe 8 AUR 14 dono = COMMON = do baar count (jhootha 22).
 //    isliye left [0..i], right [i+1..n-1] -> ek AAGE shift -> index 3 dono me nahi. (ya left [0..i-1], right [i..n-1])
+//    SAHI (non-overlap): har wall pe bestLeft[i]+bestRight[i+1] -> in sab ka MAX. i=1: 3+14 = 17 = ANSWER.
 //  TRICK: 2 non-overlap tukde -> beech me DEEWAAR. har deewaar pe left-best + right-best -> MAX.
 //     bestLeft  = 06 wala (aage chalke: i = 1 -> n-1).
 //     bestRight = 06 wala hi ULTA (peeche chalke: i = n-2 -> 0).
