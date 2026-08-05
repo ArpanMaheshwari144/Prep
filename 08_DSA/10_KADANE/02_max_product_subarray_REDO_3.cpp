@@ -12,15 +12,22 @@
 //   [5]               -> 5
 // ============================================================
 
-#include <iostream>
-#include <vector>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
 int maxProduct(vector<int> &nums)
 {
-    // TODO: khud likho
-    return 0;
+    int mini = 1;
+    int maxi = 1;
+    int ans = INT_MIN;
+    for (int i = 0; i < nums.size(); i++)
+    {
+        int temp = max({nums[i], mini * nums[i], maxi * nums[i]});
+        mini = min({nums[i], mini * nums[i], maxi * nums[i]});
+        maxi = temp;
+        ans = max(ans, maxi);
+    }
+    return ans;
 }
 
 int main()
