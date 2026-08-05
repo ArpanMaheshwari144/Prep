@@ -11,7 +11,12 @@
 //     bestLeft  = maxEndingAt ka running-max (0..i best).       // 05, 06 wale
 //     bestRight = mirror, right se (i..n-1 best).
 //     for(i=0..n-2)  ans = max( ans , bestLeft[i] + bestRight[i+1] );   // i+1 = non-overlap
-//  ★ [1,2,-7,8,6,-4]:  bestLeft=[1,3,3,8,14,14]  bestRight=[14,14,14,14,6,-4]  ->  i=1: 3+14 = 17
+//  ★ VISUAL [1,2,-7,8,6,-4]:
+//     val       : [ 1    2   -7    8    6   -4 ]
+//     maxEndAt  : [ 1    3   -4    8   14   10 ]
+//     bestLeft  : [ 1    3    3    8   14   14 ]
+//     bestRight : [ 14   14   14   14   6   -4 ]
+//     i=1: bestLeft[1]=3 + bestRight[2]=14 = 17   (max)
 //  ★ i+1 KYUN: bestRight[i] (SAME index) -> index i dono me = OVERLAP -> jhootha 22. i+1 se dono alag.
 //  ★ loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
 // ============================================================
