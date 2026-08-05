@@ -14,6 +14,21 @@
 
 ---
 
+## CODE-LIKHTE-WAQT: INIT-DEFAULT ka RULE (min/max silly-bug)
+
+> min le raha hai  -> "invalid / nahi-ho-sakta" ka default = INT_MAX  (badi value, min me kabhi galat na jeete).
+> max le raha hai  -> default = INT_MIN.
+> 0 sirf tab jab 0 sach-much VALID answer ho.
+>
+> KYUN: coin-change (min problem) me take = 0 daala -> 0 HAMESHA min jeet gaya -> jhootha answer.
+>       INT_MAX daalo -> na-ho-sakne wala branch min me HAAR jaata (sahi).
+>
+> PAKADNE ka NET: ye bug aankh se code padhne pe nahi dikhta.
+>   -> sabse CHHOTA dry-run chalao (n=1, ya jaha coin fit hi na ho) -> 2 line me galat output turant dikhta.
+>   -> init likhte waqt haath ruke: "min le raha -> default MAX? max le raha -> default MIN?"
+
+---
+
 ## NAAM-SE-CONFUSE MAT HO (Container vs Trapping vs Histogram — teeno ALAG!)
 ```
                     CONTAINER Most Water    TRAPPING Rain Water      LARGEST Rectangle (Histogram)
