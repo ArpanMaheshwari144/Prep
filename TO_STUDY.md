@@ -17,5 +17,12 @@
 - **Alternatives:** UUID (128-bit random, globally unique, par bada + un-ordered) · Snowflake ID (Twitter -- timestamp+machine-id+sequence, unique + roughly time-ordered) · DB-ticket-server / sequence.
 - **Padhna:** auto-increment kyun distributed me toota · UUID pros/cons · Snowflake kaise kaam karta · kab kya chuno.
 
+### 3. [POST-SEPT, tool — abhi mat chhed] MemPalace — AI memory system setup
+- **Link:** https://github.com/mempalace/mempalace  (MIT, local-first, free)
+- **Kya hai:** open-source AI memory — conversation verbatim store + semantic search + Claude Code auto-save hooks + MCP (36 tools). = MEMORY.md + guard-hook ka AUTOMATED version (mujhe manually memory padhni na pade, auto-retrieve ho).
+- **Stack:** Python 3.9+ · ChromaDB · Docker. sab LOCAL (kuch bahar nahi jaata).
+- **Kyun WAIT:** setup ek chhota project hai (Python/ChromaDB/embeddings/Docker) -> ABHI 25-din JP-schedule se dhyan bhatkega (rabbit-hole). current setup (markdown + hook) simple + kaam kar raha.
+- **Kab:** SEPTEMBER apply ke BAAD, time ho tab. + soch: personal/emotional baatein vector-DB me verbatim jaayengi (local hai to risk kam).
+
 ---
 > (done topics -> hata do ya ~strikethrough~)
