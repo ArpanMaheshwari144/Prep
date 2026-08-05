@@ -11,10 +11,11 @@
 //   [-2,-1]           -> [-2, -1]
 // ============================================================
 
-// ---- APPROACH ----   (= MAX SUBARRAY SUM ko per-index STORE)
-//  TRICK: running sum chalao; jama-total NEGATIVE ho -> phenk do, fresh (Kadane). GLOBAL max NAHI, HAR index STORE.
+// ---- APPROACH ----   (= PREFIX-SUM + max/reset  = MAX SUBARRAY SUM ko per-index STORE)
+//  TRICK: prefix-sum jaisa running total (ans[i-1] + nums[i]); par jab NEGATIVE ho -> phenk do, fresh (Kadane).
+//         GLOBAL max NAHI -> HAR index ka value STORE.
 //     ans[0] = nums[0];
-//     ans[i] = max( nums[i] , ans[i-1] + nums[i] );   // pichhla positive? jod : phenk ke akela
+//     ans[i] = max( nums[i] , ans[i-1] + nums[i] );   // prefix JOD, ya phenk ke akela nums[i] -- jo bada
 //  ★ [1,2,-7,8,6,-4] -> [1,3,-4,8,14,10]   (i=3: pichhla ans -4 bojh -> phenko -> sirf nums[3]=8)
 
 #include <iostream>

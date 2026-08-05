@@ -11,12 +11,13 @@
 //   [2,1,-99,3,3]     -> [2, 3, 3, 3, 6]
 //   [-2,-1]           -> [-2, -1]
 // ============================================================
-// ---- APPROACH ----   (= maxEndingAt ka RUNNING-MAX)
-//  TRICK: 0..i me best = ab-tak-ke maxEndingAt me sabse bada = running-max (kabhi neeche nahi).
-//     temp = maxEndingAt(nums);              // 05 wala
+// ---- APPROACH ----   (= 05 (maxEndingAt) ka ARRAY le ke uska RUNNING-MAX)
+//  TRICK: 05 ne "har index tak yahin-khatam best" ka ARRAY diya. bestLeft = us array ka AB-TAK-ka-max (0..i best).
+//         running-max kabhi neeche nahi jaata.
+//     temp = maxEndingAt(nums);              // 05 wala array
 //     ans[0] = temp[0];
 //     ans[i] = max( ans[i-1] , temp[i] );    // AB TAK ka max (ans[i-1], NA temp[i-1])
-//  ★ [1,2,-7,8,6,-4]: temp=[1,3,-4,8,14,10] -> [1,3,3,8,14,14]
+//  ★ [1,2,-7,8,6,-4]:  temp=[1,3,-4,8,14,10]  ->  bestLeft=[1,3,3,8,14,14]
 //  ★ TRAP [5,-2,-2,-1]: temp=[5,3,1,0] -> [5,5,5,5]  (temp gira par ans TIKA -> ab-tak chahiye, sirf pichhla nahi)
 
 #include <iostream>
