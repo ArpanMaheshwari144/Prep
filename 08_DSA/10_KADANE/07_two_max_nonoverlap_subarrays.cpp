@@ -86,8 +86,10 @@ int maxTwoNonOverlap(vector<int> &nums)
     vector<int> bestRight = bestRightPrefix(nums);
     int ans = INT_MIN;
 
-    for (int i = 0; i < n-1; i++)
+    for (int i = 0; i < n - 1; i++)
     {
+        // i+1 KYUN: right ko i se lete to shared index DONO subarray me -> do baar count -> OVERLAP
+        // (e.g. bestLeft[3]=8 + bestRight[3]=14 = 22, index 3 dono me = jhootha). i+1 (ya i-1) se dono ALAG.
         ans = max(ans, bestLeft[i] + bestRight[i + 1]);
     }
 
