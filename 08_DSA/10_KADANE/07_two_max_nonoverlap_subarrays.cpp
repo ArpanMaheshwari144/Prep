@@ -6,22 +6,20 @@
 //   [2,1,-99,3,3] -> 9    [1,2,-7,8,6,-4] -> 17    [3,3,-100,6,6] -> 18
 //   [1,2,3,4] -> 10    [5,-2,5] -> 10    [-5,10,10] -> 20
 // ============================================================
-// ---- APPROACH ----  (bestLeft + bestRight -> WALL. 5 step, sab Kadane per-index STORE.)
+// ---- APPROACH ----  (bestLeft + bestRight -> WALL. sab Kadane per-index STORE.)
 //  SOCH: 2 non-overlap tukde -> beech me DEEWAAR. 1 poori LEFT, 1 poori RIGHT -> overlap kabhi nahi.
 //        har deewaar pe: left-ka-best + right-ka-best -> MAX.
-//  STEP 1 maxEndingAtForLeft  = har index tak "yahin-KHATAM best"  (Kadane L->R).
-//  STEP 2 bestLeftPrefix      = #1 ka RUNNING-MAX (0..i me best).
-//  STEP 3 maxEndingAtForRight = #1 ka MIRROR, right se ("yahin-SHURU best").
-//  STEP 4 bestRightPrefix     = #3 ka running-max R->L (i..n-1 me best).
-//  STEP 5 WALL                = for i=0..n-2: ans = max(ans, bestLeft[i] + bestRight[i+1]).
 //
-//  ★ i+1 (non-overlap ki JAAN): left ne index i TAK le liya -> right ko i+1 SE lena.
-//     agar bestLeft[i] + bestRight[i] (same index) karo -> index i DONO me aata = OVERLAP -> jhoothа bada (22).
-//  ★ loop i=0..n-2 (i<n-1): aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
-//  DRY-RUN [1,2,-7,8,6,-4]:
-//     bestLeft  : [ 1   3   3   8  14  14 ]
-//     bestRight : [ 14  14  14  14  6  -4 ]
-//     i=1: bestLeft[1]=3 + bestRight[2]=14 = 17   (max).   overlap-galti: bestLeft[3]+bestRight[3]=8+14=22 (index 3 dono me)
+//  [1,2,-7,8,6,-4] pe -- 4 array ban-te (upar se neeche padho):
+//     val       : [ 1    2   -7    8    6   -4 ]
+//     maxEndAt  : [ 1    3   -4    8   14   10 ]   (STEP 1)    i pe "yahin-khatam best"  (Kadane)
+//     bestLeft  : [ 1    3    3    8   14   14 ]   (STEP 2)    maxEndAt ka RUNNING-MAX (0..i best)
+//     bestRight : [ 14   14   14   14   6   -4 ]   (STEP 3+4)  right se wahi (i..n-1 best)
+//  WALL (STEP 5): for(i=0..n-2)  ans = max(ans, bestLeft[i] + bestRight[i+1]).
+//     i=1: bestLeft[1]=3 + bestRight[2]=14 = 17   (max)
+//
+//  ★ i+1 KYUN: bestRight[i] (SAME index) -> index i DONO subarray me = OVERLAP -> jhoothа 22. i+1 se dono alag.
+//  ★ loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
 // ============================================================
 
 #include <bits/stdc++.h>
