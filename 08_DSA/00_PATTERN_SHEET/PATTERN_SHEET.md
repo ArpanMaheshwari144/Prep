@@ -1097,45 +1097,22 @@
    MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
 
 
-┌── FAMILY: PREFIX best (Kadane ko per-index STORE) ────────────
-│ KYUN SAATH: MAX SUBARRAY SUM ka running-value HAR index pe STORE -> "har index tak best" -> uska running-max = 0..i best.
-└───────────────────────────────────────────────────────────────
-
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MAX SUBARRAY ENDING AT i    = MAX SUBARRAY SUM (53) ko per-index STORE
- └──────────────────────────────────────────────────────────────
-     TRICK: 53 wala hi (running sum, negative pe phenko) -- bas GLOBAL max ki jagah HAR index ka value STORE.
-       ans[0] = nums[0];
-       for(i=1..n-1)  ans[i] = max( nums[i] , ans[i-1] + nums[i] );   // pichhla positive? jod : phenk ke akela
-     DRY-RUN:
-       idx :   0    1    2    3    4    5
-       val : [ 1    2   -7    8    6   -4 ]
-       ans : [ 1    3   -4    8   14   10 ]
-       i=3: pichhla ans -4 (bojh) -> phenko -> sirf nums[3]=8.    i=4: 8 positive -> 8+6 = 14.
-
- ┌──────────────────────────────────────────────────────────────
- │ ▸ BEST IN 0..i  (bestLeft)    = upar wale `ans` ka RUNNING-MAX
- └──────────────────────────────────────────────────────────────
-     TRICK: 0..i me best = ab-tak-ke ans me sabse bada = running-max ("ab tak ka max", kabhi neeche nahi).
-       temp = maxEndingAt(nums);           // upar wala ans[]
-       ans[0] = temp[0];
-       for(i=1..n-1)  ans[i] = max( ans[i-1] , temp[i] );    // AB TAK ka max (ans[i-1], NA temp[i-1])
-     DRY-RUN:
-       temp     : [ 1    3   -4    8   14   10 ]     <- upar wala
-       bestLeft : [ 1    3    3    8   14   14 ]     <- ab tak ka max, kabhi neeche nahi
-       ★ TRAP [5,-2,-2,-1]: temp=[5,3,1,0] -> bestLeft=[5,5,5,5]  (temp gira par bestLeft TIKA)
-
  ┌──────────────────────────────────────────────────────────────
  │ ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)   = bestLeft + bestRight, WALL
  └──────────────────────────────────────────────────────────────
      TRICK: 2 non-overlap tukde -> beech me DEEWAAR. har deewaar pe left-best + right-best -> MAX.
-       bestLeft = bestLeftPrefix(nums);   bestRight = bestRightPrefix(nums);
-       for(i=0..n-2)  ans = max(ans, bestLeft[i] + bestRight[i+1]);   // i+1 = non-overlap (left i-TAK, right i+1-SE)
-     DRY-RUN [2,1,-99,3,3]:
-       bestLeft  : [ 2  3  3  3  6 ]
-       bestRight : [ 6  6  6  6  3 ]
-       i=1: bestLeft[1]=3 + bestRight[2]=6 = 9
-     ★ TRAP: loop i=0..n-2 (i<n-1) -- aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
+       maxEndAt[i]  = i pe yahin-khatam best (Kadane, per-index STORE).   ans[i]=max(nums[i], ans[i-1]+nums[i])
+       bestLeft[i]  = maxEndAt ka RUNNING-MAX (0..i best).
+       bestRight[i] = MIRROR, right se (i..n-1 best).
+       for(i=0..n-2)  ans = max(ans, bestLeft[i] + bestRight[i+1]);   // i+1 = non-overlap
+     VISUAL [1,2,-7,8,6,-4]:
+       val       : [ 1    2   -7    8    6   -4 ]
+       maxEndAt  : [ 1    3   -4    8   14   10 ]
+       bestLeft  : [ 1    3    3    8   14   14 ]
+       bestRight : [ 14   14   14   14   6   -4 ]
+       i=1: bestLeft[1]=3 + bestRight[2]=14 = 17
+     ★ i+1 KYUN: bestRight[i] (same index) -> index i dono me = OVERLAP -> jhootha 22.
+     ★ loop i<n-1: aakhri split (right = last akela) MISS mat. [-5,10,10] -> 20.
 
 ```
 
