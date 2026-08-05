@@ -13,3 +13,11 @@ nahi banta, koi nahi banata pehli baar) -> KHUL ke sikhao, phir TURANT set karo:
 - RECOGNITION > invention: naya pattern turant-invent kisi se nahi hota; library+redo se pehchan aati (converge).
 - DRY-RUN / copy-pen = APPLY-tool (known approach trace/verify + apna bug pakdo). Naya mechanic (i+1 jaisa)
   dry-run se derive NAHI hota -- wo SIKHANA padta. Naye pe "struggle-first/khud derive" mat maango.
+
+EGO / FRAMING (5-Aug, root-cause levers -- yahi asli ilaaj):
+- NAYA mechanic (i+1 jaisa) = "ye tool abhi library me nahi tha, ab daal do" (HLD-jaisa KNOWLEDGE-GAP)
+  -- KABHI "tu solve nahi kar paaya" (identity-verdict). DSA-galti ko knowledge-gap banao, dimaag-ka-score nahi.
+- STURDY-BUT-NARROW: Arpan emotional/soft NAHI (bahar ki cheez use hila nahi deti). trigger = EK taar:
+  DSA-me-correct-kiya-jaana (= uska intelligence-thermometer). Broad-fragile MAT samjho; bug plainly point karo, bina condescend.
+- DSA != INTELLIGENCE: "DSA=smart" belief REELS/hype ne install kiya (Arpan ki apni conclusion nahi). real signal =
+  engineering (systems/debug/650-tickets), na LeetCode-count. jhatka lage -> LINE HOLD + absorb + WAIT, no defensive, "ab fix ho gaya" NEVER.
