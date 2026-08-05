@@ -1122,11 +1122,24 @@
        overlap dekh: index 3 pe bestLeft ka 8 AUR bestRight ka 14 -- dono me index 3 COMMON = do baar count (jhootha).
        isliye: left = [0..i], right = [i+1..n-1] -> ek AAGE shift -> index 3 dono me nahi. (ya left [0..i-1], right [i..n-1])
 
-     CONNECT: 05 + 06 se DO array bane -> phir WALL se jodo.  formulas:
-       maxEndAt[i]  = max( nums[i] , maxEndAt[i-1] + nums[i] )       // 05 (Kadane)
-       bestLeft[i]  = max( bestLeft[i-1] , maxEndAt[i] )             // 06 (loop AAGE: i = 1 -> n-1)
-       bestRight[i] = max( bestRight[i+1] , maxEndAt[i] )            // 06 ULTA (loop PEECHE: i = n-2 -> 0)
-       ans          = max over i of  bestLeft[i] + bestRight[i+1]    // WALL: i+1 = non-overlap
+     CONNECT: ye KADANE + PREFIX/SUFFIX ka COMBO hai (do pattern jud rahe).
+        05 (kadane per-index) -> maxEndingAt array -> uska PREFIX-max (aage) = bestLeft,
+        SUFFIX-max (peeche) = bestRight -> phir WALL se jodo.  (var = code jaisa: ans/temp)
+
+       maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)
+           ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // Kadane per-index (=05, prefix-sum+reset)
+
+       bestLeftPrefix       (temp=maxEndingAtForLeft;    base ans[0]=temp[0];       loop i=1..n-1  AAGE)
+           ans[i] = max( ans[i-1] , temp[i] )                            // PREFIX-max (=06)
+
+       maxEndingAtForRight  (base ans[n-1]=nums[n-1];    loop i=n-2..0  PEECHE)
+           ans[i] = max( nums[i] , ans[i+1] + nums[i] )                  // 05 ka MIRROR
+
+       bestRightPrefix      (temp=maxEndingAtForRight;   base ans[n-1]=temp[n-1];   loop i=n-2..0  PEECHE)
+           ans[i] = max( ans[i+1] , temp[i] )                           // SUFFIX-max (=06 ulta)
+
+       maxTwoNonOverlap     (bestLeft=bestLeftPrefix, bestRight=bestRightPrefix;  ans=INT_MIN)
+           for i = 0..n-2 :  ans = max( ans , bestLeft[i] + bestRight[i+1] )    // WALL, i+1 = non-overlap
 
      VISUAL [1,2,-7,8,6,-4]:
        val       : [ 1    2   -7    8    6   -4 ]
