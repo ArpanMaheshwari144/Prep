@@ -1128,14 +1128,16 @@
 
        maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)
            ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // Kadane per-index (=05, prefix-sum+reset)
+              |__ ye jo array RETURN hua  -->  neeche bestLeftPrefix me 'temp' ban jaata
 
-       bestLeftPrefix       (temp=maxEndingAtForLeft;    base ans[0]=temp[0];       loop i=1..n-1  AAGE)
+       bestLeftPrefix       (temp = UPAR wale ka RETURN;  base ans[0]=temp[0];   loop i=1..n-1  AAGE)
            ans[i] = max( ans[i-1] , temp[i] )                            // PREFIX-max (=06)
 
        maxEndingAtForRight  (base ans[n-1]=nums[n-1];    loop i=n-2..0  PEECHE)
            ans[i] = max( nums[i] , ans[i+1] + nums[i] )                  // 05 ka MIRROR
+              |__ ye jo array RETURN hua  -->  neeche bestRightPrefix me 'temp' ban jaata
 
-       bestRightPrefix      (temp=maxEndingAtForRight;   base ans[n-1]=temp[n-1];   loop i=n-2..0  PEECHE)
+       bestRightPrefix      (temp = UPAR wale ka RETURN;  base ans[n-1]=temp[n-1];  loop i=n-2..0  PEECHE)
            ans[i] = max( ans[i+1] , temp[i] )                           // SUFFIX-max (=06 ulta)
 
        maxTwoNonOverlap     (bestLeft=bestLeftPrefix, bestRight=bestRightPrefix;  ans=INT_MIN)
