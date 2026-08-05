@@ -1101,6 +1101,7 @@
  │ ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)   = do array (bestLeft + bestRight) + WALL
  └──────────────────────────────────────────────────────────────
      ESSENCE: har wall pe -> [0..i] ka best + [i+1..n-1] ka best -> in sab ka MAX. bas yehi.
+       dry-run [1,2,-7,8,6,-4]:  bestLeft(0..i)=[1,3,3,8,14,14]  |  bestRight(i+1..n-1)=[14,14,14,14,6,-4]  -> i=1: 3+14 = 17
      CONNECT: 05 + 06 se DO array bane -> phir WALL se jodo.  formulas:
        maxEndAt[i]  = max( nums[i] , maxEndAt[i-1] + nums[i] )       // 05 (Kadane)
        bestLeft[i]  = max( bestLeft[i-1] , maxEndAt[i] )             // 06 (loop AAGE: i = 1 -> n-1)
