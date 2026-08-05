@@ -4,6 +4,10 @@
 
 ## ★★★ 4-AUG — READ FIRST (CURRENT STATE + AAGE KAISE JANA) — purane dated-updates neeche = historical
 ```
+   ★ 5-AUG NOTE: two_max (Google) subah "impossible" -> shaam Arpan ne KHUD solve + OWNED (bestLeft/bestRight/wall/i+1, redo se) = tier-3 synthesis
+        bhi ho jaata jab tod-ke+nudge. ★ DSA-GUARD HOOK LIVE (.claude/DSA_GUARD.md + UserPromptSubmit hook -> har message pe rules inject;
+        "memory har baar nahi padhta" ka ilaaj). ★ "COLD" word RETIRED (ye word hi ulta-framing) -> guard/notes se hataya.
+
    ★★★★ DSA COMPLETE (4-Aug): 17 PATTERN FAMILIES DONE, ~165 problems, SAB samajh-ke (ratta NAHI). LAST family DP KHATAM.
         DP (9 problems, naya PATTERN 17): 1D = climbing-stairs(70) · house-robber(198) · coin-change(322) · LIS(300) |
         2D-grid = unique-paths(62) · min-path-sum(64) | 2D-string = LCS(1143) · edit-distance(72-HARD) | classic = 0/1-knapsack.
@@ -76,7 +80,7 @@
 
 ---
 
-## 2. WHERE WE STAND (23-Jul — honest ~76% JP-ready; BUILD KHATAM → CONSOLIDATE + fill remaining)
+## 2. WHERE WE STAND (BUILD-INVENTORY — ~85%+ JP-ready 4-Aug; DELIVERY/POLISH phase. NO-UNDER-COUNT reference)
 ```
    HLD        ✓✓ STRONG (differentiator) : 11 FOUNDATIONS + 10 SYSTEM_DESIGNS (full interview-delivery format) +
               RAW_DRILL (reflex-sheet + practice-log + 32 why-how QA) + SPOF-chain + Route-53. delivery PRACTICED (mock-tested).
@@ -87,9 +91,9 @@
    PROJECT    ✓ mini_payment_ms — 4 microservices (gateway+order+payment+notification): Feign(sync) · SAGA · Kafka(async, docker broker) ·
               idempotency (check-then-act, bug-fixed) · Circuit-Breaker(Resilience4j, 3-state) · API-Gateway(routing) · DB-per-service · kafka-ui.
               LEARNINGS.md + FULL SOURCE CODE (20 java files). + todoapp (JWT/Security/Redis). PayRequest DTO = record (Arpan-verified).
-              -> ★★ PROJECT-REVISE: mini_payment_ms KHATAM · todoapp CHAL RAHA (current status + agla-step = upar 27-JUL block; files richly code-commented = notes wahin).
+              -> ★★ PROJECT-REVISE: mini_payment_ms + todoapp DONE (files richly code-commented = notes wahin).
    LLD        ✓ 11 designs IN CODE (parking/bms/atm/elevator/hotel...). 5 revise-swept. FORWARD = HLD-jaisa MOCK + ★ 1-2 design COLD-REDO (jaise HashMap→HashSet ek baar sahi karke code-verify). gap = SOLID/pattern ARTICULATE.
-   DSA        ✓ ~12 PATTERNS (sheet family-boxed, ~700 line, "gate ki chaabi") + ~70 problems. REVISE mode + Trees STARTED (see §4).
+   DSA        ✓✓ COMPLETE (4-Aug): 18-pattern sheet (~2000 line, "gate ki chaabi") + ~165 problems, saare 17 family (DP last). REVISE-only (see §4).
    BEHAVIORAL ✓ 5 STAR (HikariCP/WAF/Doximity/Mentoring/Failure-JDK — all competencies). done bol-ke; ab reps.
    COMPARES   ✓ 12 (sql-nosql/tcp-udp/sync-async/rest-graphql...). DATABASE ◐ (indexing+txn-internals). INFRA ✓ (AWS/Docker/K8s).
    CODE-REVIEW ✗ (optional — buggy-PR find; low priority).
@@ -100,57 +104,41 @@
 
 ## 3. FORWARD PLAN (24-Jul onwards → SEPTEMBER apply)
 ```
-   ★★★ 31-JUL → 31-AUG PLAN (Arpan-set, AUTHORITATIVE month-plan). direction pakki, deadline LOOSE (slow week ≠ failure). Sept apply fixed.
-      current (2-Aug): DSA 17-pattern done (BACKTRACKING complete), bacha = DP (last family). Java/Spring/Multithreading DONE. HLD strong (11 design + foundations + distributed-cache). Behavioral 5-star. Projects done.
-      => AUGUST = last-2-DSA-family + CONSOLIDATION (revise + mock-delivery + English-aloud). naya-heavy nahi.
+   ★★★ CURRENT PHASE (4-Aug onwards): BUILD KHATAM. DSA COMPLETE (17 families, DP last done), Java/Spring/Multithreading DONE,
+      HLD strong (11 foundations + 10 designs + distributed-cache + 7 designs ke 8-step hand-notes), Behavioral 5-star, Projects revise-DONE.
+      => ab SIRF CONSOLIDATION (revise + mock-delivery + English-aloud), naya-heavy KUCH NAHI. direction pakki, deadline LOOSE (slow week ≠ failure).
 
-      ★★ ROZ DSA (NON-NEGOTIABLE, Arpan-locked 31-Jul): sheet-glance REVISE + 1 PROBLEM roz (koi bhi — redo ya naya — jo padhe-hue PATTERN pe based ho). Claude roz nudge kare. daily-question yahi.
-      ★★ SHEET CHUNK-REVISE (2-Aug, Arpan-set — sheet ab 16-pattern/1600-line, poori roz revise impractical): roz QUICK-glance-all (2-3 min, map fresh) + DEEP-revise 2 pattern ROTATE (aaj TP+SW, kal Hashing+Prefix, aise) -> poori sheet ~week me cover -> repeat. Claude nudge me rotation TRACK kare (kaunsa pattern aaj), koi pattern lambe-time miss na ho.
-      - Week 1 (Aug 1-7)  = BACKTRACKING (naya family: subsets→permutations→combinations→comb-sum; teach→Arpan-solve→sheet). + 2 HLD design bolke-revise + 1 STAR aloud.
-      - Week 2 (Aug 8-14) = DP part-1 (1D: climbing-stairs→house-robber→coin-change→LIS). + 2 HLD revise + 1 FULL MOCK (bolke,timed) + 1 STAR.
-      - Week 3 (Aug 15-21)= DP part-2 (2D: grid→knapsack→LCS→edit-distance). + HLD reflex-sheet full pass + 2 STAR + English-aloud.
-      - Week 4 (Aug 22-31)= CONSOLIDATION (NO new topic): DSA full-revise spaced-redo · HLD mock-heavy (timed rounds) · Java/Spring sharp-revise + backlog (Elasticsearch/distributed-ID) · behavioral polish + English-aloud roz. end: Sept-apply ready.
-      ★ project-revise roadmap (neeche 24-Jul block) = ab SECONDARY/parallel; month-focus upar hai.
-      ★★ OFF-DAY LIGHT-WORK MODE (Arpan-set 2-Aug, "note down progress me"): jis din MOOD-OFF ya achhi-neend-nahi -> naya-DSA/backtracking NAHI -> us din HAND-NOTE revise-WRITING karo (halka, frustrate nahi). ye ARPAN-DRIVEN ("jis din main kahun us din"), collaborative (Claude actual content dikhata + Arpan important hand-note -> tera+mera input).
-         streams (rotate): HLD DESIGNS 8-STEP-notes (URL-shortener + rate-limiter DONE 2-Aug; format = 8-step interview-flow, important-only) · Java/Spring hand-notes PAIRED with PROJECT (todo-app + payment) · payment-system.
-         ★ method PROOF (2-Aug): mood-off din pe bhi 2 HLD 8-step notes + Kadane-redo ho gaye -> zero-day nahi. hand-note se cross-design PATTERN surface hota (Arpan-caught: "centralized Redis" URL-shortener + rate-limiter dono me = recurring building-block). yehi HLD-easy ki wajah.
+      ★★ ROZ DSA (NON-NEGOTIABLE): sheet-glance REVISE + 1 PROBLEM (redo ya naya, padhe-hue PATTERN pe). Claude roz nudge kare.
+      ★★ SHEET CHUNK-REVISE: sheet 18-pattern/2000-line, poori roz impractical -> roz QUICK-glance-all (2-3 min) + DEEP-revise 2 pattern ROTATE
+         (TP+SW / Hashing+Prefix / Stack+BS ...) -> poori sheet ~week me cover -> repeat. Claude nudge me rotation TRACK kare, koi pattern miss na ho.
+      ★★ CONSOLIDATION FOCUS (no new topic): DSA full-revise spaced-redo · HLD mock-heavy (timed) · Java/Spring sharp-revise + backlog (Elasticsearch/distributed-ID)
+         · behavioral polish + English-aloud roz. end: Sept-apply ready.
+      ★★ OFF-DAY LIGHT-WORK MODE (Arpan-set): MOOD-OFF/neend-nahi din -> naya-DSA NAHI -> HAND-NOTE revise-WRITING (halka, frustrate nahi).
+         ARPAN-DRIVEN ("jis din main kahun"), collaborative. PROOF: mood-off din pe bhi 2 HLD 8-step notes + Kadane-redo ho gaye -> zero-day nahi.
 
-   ★★ TIMELINE (23-Jul, Arpan-set — "August=apply" PURANA): JP apply = SEPTEMBER (rush nahi). end-Aug tak "sahi jagah hold" → Sept apply + pel.
-      beech me koi achhi comp crack ho to wo bhi JP/BlackRock ka raasta (route FLEXIBLE, end-goal fixed).
-   ★ PHASE = CONSOLIDATION + remaining fill (naya-heavy nahi; Java+Spring theory DONE → beech-beech READ-revise, no-quiz).
+   ★★ TIMELINE: JP apply = SEPTEMBER (rush nahi). end-Aug tak "sahi jagah hold" → Sept apply + pel. beech me achhi comp = wo bhi JP/BlackRock raasta (route FLEXIBLE, end-goal fixed).
+   - SUNDAY: pattern-sheet polish.  OFF-DAY: light-gear (sheet/purana padho — MEMORY.md playbook).
+   ★ JP kya poochta (rounds/SD-Qs/Java-multithreading/gaps) = JP_INTERVIEW_INTEL.md.
 
-   ★ ROZ-flow + forward-priority = upar ka 27-JUL block (authoritative).
-   - SUNDAY: pattern-sheet polish.  OFF-DAY: light-gear (sheet/purana padho — zero-day nahi, pahaad bhi nahi; MEMORY.md playbook).
-   ★ JP kya poochta (rounds/SD-Qs/Java-multithreading/gaps) = JP_INTERVIEW_INTEL.md (27-Jul research).
-
-   ★★ PROJECT-REVISE (NAYA, IMPORTANT — 24-Jul se, Arpan-asked): mini_payment_ms ko interview ke liye ready karo.
-      - SHURU SE, IN ORDER: LEARNINGS.md topic 0 (Overall Flow) → 1 → 2 ... sequentially (beech se nahi).
-      - HAR topic pe DONO: (a) CONCEPT (story + why + how + bug-khud-pakda + power-words + follow-ups) + (b) ★ ACTUAL CODE (asli source file se snippet — "code kaise?" ready).
-      - Claude ACTUAL note/code dikhata (fabricate NAHI); Arpan padh ke apni copy pe notes; STORY + code dono ready.
-      - code mapping: idempotency→PaymentService.java · Feign→PaymentClient.java · Saga+CircuitBreaker→OrderService.java · Kafka-consumer→NotificationListener.java · Gateway→api-gateway/application.yml.
-
-   ★★ REVISE-MODE ROADMAP (Arpan-set — project-revise ke BAAD, SAME hand-note mode, IN ORDER):
-      07_PROJECTS: mini_payment_ms (chal raha, 7f-onwards) → todoapp (EXTRA: JWT/Spring-Security/Redis/K8s — mini_payment me nahi tha; NO LEARNINGS.md → actual CODE se concept, fabricate nahi)
-      → 05_INFRA_DEEP → 06_COMPARES → 09_DATABASE → 04_HLD/FOUNDATIONS (designs NAHI — FOUNDATIONS).
-      har folder: Claude ACTUAL note-content/code dikhata → Arpan paper pe hand-note → "aage" pe next. NO quiz.
-      ★ NOTE-PHILOSOPHY (Arpan): sab kuch note NAHI (kaun itna likhega) — sirf IMPORTANT/high-value/behtareen, jaise ab tak ke notes. selective = smart.
-      ★★ SPRING AUTO-REVISE (Arpan-insight 25-Jul): project-revise karne se SPRING khud-ba-khud revise hota — project Spring APPLIED use karta (DI/@Service/@Transactional/JWT/Feign/Kafka live) -> context me Spring dobara aata. 2-in-1 (project showcase + Spring revision). yehi project = TOP-priority ki asli wajah (theory-alone se behtar, kyunki interview me "Spring KAISE use kiya" poochha jaata).
-      ★ PARALLEL: DSA + HLD roadmap ke SAATH-SAATH chalte rahenge (rotate), roadmap unhe rokta nahi.
-      ★ FOCUS (Arpan-clarity 25-Jul): Java/Spring BACKEND depth only (+ Kafka/AWS saath aate). React/Flutter/etc = OUT (distraction, "bhaad me"). C++ = sirf DSA. GOAL = Java+Spring itna deep ki koi bhi same-type Q pehle kar de. limit = focus, na kamzori.
+   ★★ PROJECT REVISE-MODE (mini_payment_ms + todoapp DONE; ye evergreen method jab dobara chhue): Claude ACTUAL note/code dikhata (fabricate NAHI)
+      -> Arpan padh ke copy pe notes -> "aage" pe next, NO quiz. STORY + ACTUAL-CODE dono ready ("code kaise?" ke liye).
+      ★ NOTE-PHILOSOPHY: sab kuch note NAHI — sirf IMPORTANT/high-value, selective = smart.
+      ★★ SPRING AUTO-REVISE: project-revise se SPRING khud revise hota (project = DI/@Service/@Transactional/JWT/Feign/Kafka APPLIED live). 2-in-1; interview me "Spring KAISE use kiya" poochha jaata.
+      ★ FOCUS: Java/Spring BACKEND depth only (+Kafka/AWS). React/Flutter = OUT. C++ = sirf DSA. limit = focus, na kamzori.
 ```
 
 ---
 
 ## 4. DSA — STATUS + PHILOSOPHY (condensed; poora emotional/method = MEMORY.md)
 ```
-   SHEET = "gate ki chaabi" (08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md): 12 patterns, family-boxed (har pattern apna gray-box + "KYUN saath" family headers), ~700 line.
-     patterns: 1 two-pointer · 2 sliding-window · 3 hashing · 4 prefix-sum · 5 matrix · 6 stack(monotonic) · 7 binary-search · 8 linked-list · 9 design(hashmap/hashset) · 10 kadane · 11 bit-manip(XOR) · 12 trees.
-   ★ SHEET CONVERGE karti (Arpan-insight 23-Jul): sheet problems pe nahi, PATTERNS pe badti; patterns FINITE (~15-25). 1000-Q wale ka sheet 100k-line nahi — same ~20 pattern internalized. ~70% done → bacha ~5-6 bade pattern → phir plateau (naye Q = existing pattern).
+   SHEET = "gate ki chaabi" (08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md): 18 patterns, family-boxed, ~2000 line, emoji-cleaned + full code-audit. COMPLETE (saare 17 family, DP last).
+     patterns: two-pointer · sliding-window · hashing · prefix-sum · matrix · stack(monotonic) · binary-search · linked-list · design(hashmap/hashset) · kadane · bit-manip(XOR) · trees · graphs · heap · backtracking · DP (+ intervals/greedy woven).
+   ★ SHEET CONVERGE karti (Arpan-insight): sheet problems pe nahi, PATTERNS pe badti; patterns FINITE (~15-25). 1000-Q wale ka sheet 100k-line nahi — same ~20 pattern internalized. ab plateau (naye Q = existing pattern).
 
-   METHOD (23-Jul, Arpan-committed): STRUGGLE-FIRST (peek nahi) → chhota example HAND-TRACE → sachchi-struggle-ke-baad editorial LAST-RESORT (no guilt) → kuch-din-baad COLD-REDO (spaced). job ke saath 1 problem/din 30-45min.
-   ★ LIBRARY-OF-MECHANICS model: in-library pattern → instant; missing → learn ONCE (dry-run se zero-invent nahi hota) → library → transfer. "cold weak" = library-COVERAGE, ability nahi.
+   METHOD (Arpan-committed): STRUGGLE-FIRST (peek nahi) → chhota example HAND-TRACE → editorial LAST-RESORT (no guilt) → kuch-din-baad spaced-REDO. job ke saath 1 problem/din 30-45min.
+   ★ LIBRARY-OF-MECHANICS model: in-library pattern → instant; missing → learn ONCE (zero-invent nahi hota) → library → transfer. "weak" = library-COVERAGE, ability nahi. (naye pattern pe "cold-invent" = IMPOSSIBLE; "cold" word RETIRED = ulta-framing.)
    ★ PHILOSOPHY (Arpan's, reinforce NEVER re-argue): "DSA = pattern + trick ka khel." REVISION >> new-solve (swap-nodes 3.5hr→5min proof). DSA = GATE (medium), not CP/mastery. hints/editorial = LEGIT no-guilt.
-   ★★ REVISION-AIRTIGHT (23-Jul): solo-vs-feed IRRELEVANT — cold-solved bhi bina revise 7-din me blur. feed+revision = solo+revision = SAME. metric = REVISION, na solo-ness. (= "help+redo=owned" ka root.)
+   ★★ REVISION-AIRTIGHT: solo-vs-feed IRRELEVANT — bina revise 7-din me blur (help/khud koi bhi). feed+revision = khud+revision = SAME. metric = REVISION, na solo-ness. (= "help+redo=owned" ka root.)
 
    ★★ SHEET-STATE: POORI sheet recall-tested + pattern-by-pattern ACTUAL-CODE se matched (~18 dense entries saaf kiye) + har heading BOX me (95 entries). library SOLID (almost sab recall, thaka nahi). proof: "trick pata->easy, na-pata->hard"; DSA = library+recognize, test hui + khadi rahi. ★ sheet-design (Arpan): code-in-sheet SAHI jab crux ek CODE-MECHANIC ho (mirror/sentinel/by-ref/bubble-up); conceptual-trick = pattern kaafi; use = recall-ANCHOR, na ratta.
 ```
@@ -159,8 +147,8 @@
 
 ## 5. METHOD (kaise karna — per subject, condensed)
 ```
-   DSA        : struggle-first → hand-trace → (stuck) editorial → COLD-REDO spaced (1/3/7). stub = PROBLEM+TESTS. interviewer-brainstorming (Claude nudge, no code). DELETE/restart NAHI.
-   HLD/LLD    : DELIVERY-phase → roz ek topic MOCK-TEST (interview-Q) + delivery-coaching. ★ HLD mocks STRONG (payment/URL/LB/rate-limiter — base solid, sirf chhote refinements jaise webhook). LLD = mock + ★ 1-2 design COLD-REDO (HashMap→HashSet jaisa, code-verify). [HLD/LLD = mock; Java/Spring+PROJECT = revise-mode read, no-quiz.]
+   DSA        : struggle-first → hand-trace → (stuck) editorial → spaced-REDO (1/3/7). stub = PROBLEM+TESTS. interviewer-brainstorming (Claude nudge, no code). DELETE/restart NAHI.
+   HLD/LLD    : DELIVERY-phase → roz ek topic MOCK-TEST (interview-Q) + delivery-coaching. ★ HLD mocks STRONG (payment/URL/LB/rate-limiter — base solid). LLD = mock + ★ 1-2 design REDO (HashMap→HashSet jaisa, code-verify). [HLD/LLD = mock; Java/Spring+PROJECT = revise-mode read, no-quiz.]
    PROJECT    : Java/Spring-style REVISE-MODE — Claude ACTUAL LEARNINGS.md content + source-code snippet CHAT me dikhata (fabricate NAHI; code+facts = uska project, story/power-words = packaging jo flag karo), Arpan padh ke COPY pe hand-notes, "aage" bole to agla topic (folder ORDER me). NO quiz. (visual/image → narrate = uski HLD-delivery strength.)
    JAVA/SPRING: READ-revise (built, notes-ready, git-safe, lifelong). Claude ACTUAL note-content dikhata (fabricate nahi). NO quiz.
    STAR       : story S-T-A-R → BOL-KE loud (own words, script-ratta nahi). reps se sharp.
