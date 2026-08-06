@@ -1530,10 +1530,10 @@
  │ ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
  └──────────────────────────────────────────────────────────────
      outer: for(i,j) if(grid[i][j]=='1') { DFS(i,j); count++; }   // har naya '1' = naya island
-     DFS grid ke 3 farak (adj-list nahi):
-        NEIGHBOURS : 4-direction seedha -> (i+1,j)(i-1,j)(i,j+1)(i,j-1).
-        VISITED    : cell '0' kar do (SINK) -> dobara na gino.
-        BASE       : bounds-bahar (i<0||i>=m||j<0||j>=n) YA grid=='0' -> return.
+     DFS(i,j) — code order (upar se neeche), grid ke 3 farak (adj-list nahi):
+        1. BASE      : bounds-bahar (i<0||i>=m||j<0||j>=n) YA grid=='0' -> return.  // BOUNDS PEHLE (|| short-circuit; warna out-of-bounds crash)
+        2. VISITED   : grid[i][j]='0' (SINK) -> dobara na gino.
+        3. NEIGHBOURS: 4-dir DFS -> (i+1,j)(i-1,j)(i,j+1)(i,j-1).
      '0'-check base me (bounds ke SAATH) -- warna paani/visited pe nahi rukta, poora grid kha jaata.
 
  ┌──────────────────────────────────────────────────────────────
