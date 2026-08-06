@@ -245,7 +245,9 @@
       "Bash(g++ -std=c++17 07_two_max_nonoverlap_subarrays_REDO_1.cpp -o /tmp/tm)",
       "Bash(awk '{ print length\": \"NR }' 'C:\\\\Users\\\\ArpanMaheshwari\\\\.claude\\\\projects\\\\C--DSA-PRACTICE\\\\memory\\\\MEMORY.md')",
       "Bash(kill %1)",
-      "Bash(py -c \"import json; json.load\\(open\\('C:/DSA_PRACTICE/.claude/settings.local.json'\\)\\); print\\('JSON VALID'\\)\")"
+      "Bash(py -c \"import json; json.load\\(open\\('C:/DSA_PRACTICE/.claude/settings.local.json'\\)\\); print\\('JSON VALID'\\)\")",
+      "Bash(g++ -std=c++17 05_max_area_of_island.cpp -o /tmp/ma)",
+      "Bash(/tmp/ma)"
     ]
   },
   "hooks": {
