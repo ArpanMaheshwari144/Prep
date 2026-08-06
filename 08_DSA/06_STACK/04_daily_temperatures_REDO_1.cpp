@@ -19,8 +19,20 @@ using namespace std;
 
 vector<int> dailyTemperatures(vector<int> &temps)
 {
-    // TODO: khud likho (monotonic stack, INDEX rakho; pop pe ans = i - topp)
-    return vector<int>(temps.size(), 0);
+    int n = temps.size();
+    vector<int> ans(n, 0);
+    stack<int> st;
+    for (int i = 0; i < n; i++)
+    {
+        while (!st.empty() && temps[st.top()] < temps[i])
+        {
+            int tp = st.top();
+            st.pop();
+            ans[tp] = i - tp;
+        }
+        st.push(i);
+    }
+    return ans;
 }
 
 int main()

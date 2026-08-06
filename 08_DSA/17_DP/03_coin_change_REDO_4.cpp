@@ -19,10 +19,38 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int solve(vector<int> &coins, int amount, int i, vector<vector<int>> &dp)
+{
+    if (amount < 0)
+    {
+        return INT_MAX;
+    }
+
+    if (i < 0)
+    {
+        return amount == 0 ? 0 : INT_MAX;
+    }
+
+    if (dp[i][amount] != -1)
+    {
+        return dp[i][amount];
+    }
+
+    int notTake = 0 + solve(coins, amount, i - 1, dp);
+    int Take = INT_MAX;
+    if (solve(coins, amount - coins[i], i, dp) != INT_MAX)
+    {
+        Take = 1 + solve(coins, amount - coins[i], i, dp);
+    }
+    return dp[i][amount] = min(notTake, Take);
+}
+
 int coinChange(vector<int> &coins, int amount)
 {
-    // TODO: khud likho (take/not-take + 2 base + overflow guard + memo)
-    return 0;
+    int n = coins.size();
+    vector<vector<int>> dp(n + 1, vector<int>(amount + 1, -1));
+    int ans = solve(coins, amount, n - 1, dp);
+    return ans == INT_MAX ? -1 : ans;
 }
 
 void check(vector<int> coins, int amount, int exp, int t)
