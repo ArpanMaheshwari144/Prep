@@ -1560,11 +1560,11 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
  └──────────────────────────────────────────────────────────────
-     = ISLANDS ka SAME code (base + sink same), bas 2 delta:
-        (1) DFS VOID nahi -> AREA return: return 1 + (4-dir DFS ka sum);   // khud(1) + chaaron ka area
-        (2) outer count++ nahi -> ans = max(ans, DFS(i,j));                // har island ka area -> MAX
-     base + sink islands jaisa:  base(bounds || grid==0) return 0;   grid[i][j]=0 (SINK).
-     ans = INT_MIN se start; koi island na mila (end ==INT_MIN) -> return 0.
+     = ISLANDS ka SAME code (base + sink SAME), bas 2 DELTA:
+        (1) DFS void nahi -> AREA return:  return 1 + 4-dir DFS ka sum;   // khud(1) + chaaron ka area
+        (2) outer count++ nahi -> ans = max(ans, DFS(i,j));              // har island ka area -> MAX
+     base+sink = islands JAISA (bas DFS ab int -> base return 0).
+     ans = 0 se start (area hamesha >=0; koi island nahi -> ans 0 hi -> return 0).
 
 ┌── FAMILY: MULTI-SOURCE / level-BFS ──────────────────────────
 │ KYUN SAATH: saare sources EK saath queue (level-0); per-level sz-snapshot -> ek level = ek step/minute. (level-order ka cousin.)
