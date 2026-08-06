@@ -2149,6 +2149,15 @@
      LCS se FARAK: (1) no-match = 1 + MIN-of-3 (LCS me max-of-2 tha) (2) base = j+1/i+1 (LCS me 0).
      3-choice matlab: replace=diagonal · delete=i-1 · insert=j-1. base 2-sided (dono string ke bache char count).
 
+     VISUAL (pointer PEECHE se: i=w1 last, j=w2 last, X != Y -> 1 op):
+        SETUP:   w1: . . X          w2: . . Y
+                         ^i                  ^j
+        REPLACE : X ko Y bana -> dono last = Y (MATCH) -> DONO nipte  => solve(i-1, j-1)   [i--, j--]
+        DELETE  : X NIKAALA (w1 ka extra) -> w1 nipta, w2 chhua nahi   => solve(i-1, j)     [i--, j same]
+        INSERT  : Y DAALA w1 me (w2 ka Y match) -> w2 ka Y nipta -> j-- ; par w1 ka X abhi bacha (naya daala, purana nahi chhua) -> i WAHI
+                                                                       => solve(i, j-1)     [j--, i same]
+     CRUX: DELETE = w1 ka char NIKAALA (i--) · INSERT = w2 ke liye naya char DAALA (j--). ek nikaal ek daal -> ulta index.
+
  ┌──────────────────────────────────────────────────────────────
  │ ▸ 0/1 KNAPSACK (classic)  = PURE take/not-take (item ONCE)
  └──────────────────────────────────────────────────────────────
