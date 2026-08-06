@@ -1877,7 +1877,7 @@
        (include/exclude form me 'if(index==size) return' likhna padta; loop form khud terminate.)
      FARAK: include/exclude = base pe subset add + 2 branch  |  start-loop = HAR node pe add + loop. dono 2^n, same choose/explore/un-choose.
 
-     ── RECURSION TREE (for-loop, nums=[1,2,3]) ── har edge 2 BAAR: ↓neeche=PUSH(choose) · ↑wapas=POP(backtrack)
+     ── RECURSION TREE (nums=[1,2,3]) ── har edge 2 BAAR: ↓neeche=PUSH(choose) · ↑wapas=POP(backtrack)
                                   [ ]                       <- solve(start=0)
                  ┌─────────────────┼─────────────────┐
              ↓+1 ↑pop1        ↓+2 ↑pop2        ↓+3 ↑pop3
