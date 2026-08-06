@@ -24,7 +24,7 @@
 //       base   : out-of-bounds YA grid==0 -> return 0.   (0 area)
 //       sink   : grid[i][j]=0 (visited).
 //       return : 1 + (4-dir DFS ke returns ka SUM).       // khud(1) + chaaron taraf ka area
-//  3. koi island na ho -> ans==INT_MIN -> return 0.
+//  3. ans = 0 se start -> area hamesha >=0; koi island na ho -> ans 0 hi rahega -> return 0. (INT_MIN ki zaroorat NAHI)
 //  DFS-RETURN-VALUE = tree RECURSION jo VALUE lauti (max-depth: return 1+max(L,R); yahan 1 + 4-dir sum).
 // ============================================================
 
@@ -52,7 +52,7 @@ int maxAreaOfIsland(vector<vector<int>> &grid)
 {
     int m = grid.size();
     int n = grid[0].size();
-    int ans = INT_MIN;
+    int ans = 0; // area hamesha >=0 -> 0 se start (koi island nahi -> 0 hi rahega)
     for (int i = 0; i < m; i++) // har cell scan
     {
         for (int j = 0; j < n; j++)
@@ -63,7 +63,7 @@ int maxAreaOfIsland(vector<vector<int>> &grid)
             }
         }
     }
-    return ans == INT_MIN ? 0 : ans; // koi island na mila -> 0
+    return ans; // ans 0 se start tha -> koi island na mila -> 0 (special-check ki zaroorat nahi)
 }
 
 int main()
