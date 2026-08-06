@@ -2109,8 +2109,12 @@
              if(dp[i][j] != -1) return dp[i][j];
              int up = solve(i-1, j, ...), left = solve(i, j-1, ...);
              return dp[i][j] = grid[i][j] + min(up, left);  // apni cost + upar/left me CHHOTA
-     unique-paths se FARAK: (1) up+left (count) -> min(up,left)  (2) +grid[i][j] (cost add).
-     INT_MAX = "yahan se nahi aa sakte" (coin-change INVALID-signal). real cell pe >=1 dir valid -> overflow nahi.
+     unique-paths se CONNECT (SAME template, sirf 3 line badli):
+        return 0          ->  return INT_MAX             // base out-of-grid: count me 0 tha, ab INVALID -> min ignore karega
+        return 1          ->  return grid[0][0]          // base start: count nahi -> start ki COST
+        return up + left  ->  grid[i][j] + min(up,left)  // count-JOD -> apni cost + CHHOTA rasta
+     KYUN: count problem -> cost-MIN problem. baaki structure (memo + 2 base + 2-dir) bilkul SAME.
+     INT_MAX = coin-change INVALID-signal (min me haar jaata; real cell pe >=1 dir valid -> overflow nahi).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST COMMON SUBSEQUENCE (LC-1143)  = 2D DP on 2 STRINGS (match/no-match)
