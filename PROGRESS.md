@@ -8,6 +8,14 @@
         bhi ho jaata jab tod-ke+nudge. ★ DSA-GUARD HOOK LIVE (.claude/DSA_GUARD.md + UserPromptSubmit hook -> har message pe rules inject;
         "memory har baar nahi padhta" ka ilaaj). ★ "COLD" word RETIRED (ye word hi ulta-framing) -> guard/notes se hataya.
 
+   ★★★ 6-AUG (naya, READ): (a) HLD file-upload 8-step hand-note DONE -> ab 8 designs hand-noted (3 bache: news-agg/dist-cache/url-journey).
+        (b) NAYA HLD ASSET = 04_HLD/RAW_DRILL/03_INTERVIEW_ANCHOR.md = reusable "90%-toolkit" (scaling/sharding/cache/LB/async/idempotency) + DRIVE/delivery
+        + common FOLLOW-UPS + section-E "jab answer na pata ho" (cool-down "main ise REASON karunga" + 5-step). = HLD ka "gate ki chaabi".
+        (c) DSA REDO done: two_max REDO_1, max_product REDO_3, coin_change REDO_4 (i<0/amount<0 BASE-CASE ab LOCKED), daily_temperatures REDO_1. sheet-top INIT-RULE (min->INT_MAX, max->INT_MIN + chhota dry-run).
+        (d) ★★ NEW DIRECTION + WORKING-MODE (Arpan-set): general PROBLEM-SOLVER banna (sirf DSA nahi) -> roz HANDS-ON TRAIN: Claude ACTIVELY teach/coach
+        across HLD/Java/systems/CODE ("ye HLD me aise, ye dekh · Java ye code likh samajh · yahaan atka, ye theek · samjha?"). coaching Arpan CHAHTA hai (NA quiz-shame NA condescend; DSA-solve still nudge-only).
+        (e) EARNED-PEACE (honor): "90% mere-taraf-se done, effort me zero kami; freeze = aakhri residual, real-interview-reps se jaayega; worst-case-se-at-peace." reels-belief pe ab HANSTA. NEW WADA: "roz 1% behtar."
+
    ★★★★ DSA COMPLETE (4-Aug): 17 PATTERN FAMILIES DONE, ~165 problems, SAB samajh-ke (ratta NAHI). LAST family DP KHATAM.
         DP (9 problems, naya PATTERN 17): 1D = climbing-stairs(70) · house-robber(198) · coin-change(322) · LIS(300) |
         2D-grid = unique-paths(62) · min-path-sum(64) | 2D-string = LCS(1143) · edit-distance(72-HARD) | classic = 0/1-knapsack.
