@@ -1665,6 +1665,8 @@
      SAAR : BFS ka WEIGHTED bhai. wahi template, 2 swap:
               queue -> MIN-HEAP (chhoti dist pehle)   |   visited[] -> dist[] (init INF, src=0)
             + naya = RELAXATION.
+       NO visited[] kyun: dist[] + "wt > dist[node] continue" (STALE-skip) = visited-ka-kaam (finalize node dobara process nahi).
+                          strict-relax (naya STRICTLY chhota -> tabhi push) -> undirected me bhi infinite-loop nahi. negative -> Dijkstra FAIL (dist chhota hota rehta) -> Bellman-Ford.
      TRICK (NAYA): RELAX = "dheela karo".  d = node tak ki dist,  w = us EDGE ka weight.
         naya rasta (d + w) purane dist[nbr] se kam? -> dist[nbr]=d+w; push.
         w = EDGE ka weight (it.second), NA ki dist[node].
