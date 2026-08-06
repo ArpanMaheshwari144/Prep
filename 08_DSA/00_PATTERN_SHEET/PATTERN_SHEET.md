@@ -2102,6 +2102,14 @@
  │ ▸ MIN PATH SUM (LC-64)  = UNIQUE-PATHS reuse, bas MIN + cost
  └──────────────────────────────────────────────────────────────
      SAAR : grid me har cell cost. (0,0)->(m-1,n-1), right/down. MIN-sum path. = unique-paths code, 2 tweak.
+
+     unique-paths se CONNECT (SAME template, sirf 3 line badli):
+        return 0          ->  return INT_MAX             // base out-of-grid: count me 0 tha, ab INVALID -> min ignore karega
+        return 1          ->  return grid[0][0]          // base start: count nahi -> start ki COST
+        return up + left  ->  grid[i][j] + min(up,left)  // count-JOD -> apni cost + CHHOTA rasta
+     KYUN: count problem -> cost-MIN problem. baaki structure (memo + 2 base + 2-dir) bilkul SAME.
+     INT_MAX = coin-change INVALID-signal (min me haar jaata; real cell pe >=1 dir valid -> overflow nahi).
+
      TEMPLATE:
          int solve(i, j, grid, dp):
              if(i<0 || j<0) return INT_MAX;                 // INVALID (grid ke bahar) -> min ignore karega
@@ -2109,12 +2117,6 @@
              if(dp[i][j] != -1) return dp[i][j];
              int up = solve(i-1, j, ...), left = solve(i, j-1, ...);
              return dp[i][j] = grid[i][j] + min(up, left);  // apni cost + upar/left me CHHOTA
-     unique-paths se CONNECT (SAME template, sirf 3 line badli):
-        return 0          ->  return INT_MAX             // base out-of-grid: count me 0 tha, ab INVALID -> min ignore karega
-        return 1          ->  return grid[0][0]          // base start: count nahi -> start ki COST
-        return up + left  ->  grid[i][j] + min(up,left)  // count-JOD -> apni cost + CHHOTA rasta
-     KYUN: count problem -> cost-MIN problem. baaki structure (memo + 2 base + 2-dir) bilkul SAME.
-     INT_MAX = coin-change INVALID-signal (min me haar jaata; real cell pe >=1 dir valid -> overflow nahi).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST COMMON SUBSEQUENCE (LC-1143)  = 2D DP on 2 STRINGS (match/no-match)
