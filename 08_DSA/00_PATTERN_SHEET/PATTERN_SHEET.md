@@ -2149,14 +2149,34 @@
      LCS se FARAK: (1) no-match = 1 + MIN-of-3 (LCS me max-of-2 tha) (2) base = j+1/i+1 (LCS me 0).
      3-choice matlab: replace=diagonal · delete=i-1 · insert=j-1. base 2-sided (dono string ke bache char count).
 
-     VISUAL (pointer PEECHE se: i=w1 last, j=w2 last, X != Y -> 1 op):
+     VISUAL (pointer PEECHE se: i=w1 last, j=w2 last, X != Y -> 1 op lagega):
         SETUP:   w1: . . X          w2: . . Y
                          ^i                  ^j
-        REPLACE : X ko Y bana -> dono last = Y (MATCH) -> DONO nipte  => solve(i-1, j-1)   [i--, j--]
-        DELETE  : X NIKAALA (w1 ka extra) -> w1 nipta, w2 chhua nahi   => solve(i-1, j)     [i--, j same]
-        INSERT  : Y DAALA w1 me (w2 ka Y match) -> w2 ka Y nipta -> j-- ; par w1 ka X abhi bacha (naya daala, purana nahi chhua) -> i WAHI
-                                                                       => solve(i, j-1)     [j--, i same]
-     CRUX: DELETE = w1 ka char NIKAALA (i--) · INSERT = w2 ke liye naya char DAALA (j--). ek nikaal ek daal -> ulta index.
+
+        REPLACE -- X ko Y bana do (dono match ho jaate):
+           w1: . . X   ->   w1: . . Y        w2: . . Y
+                   ^i               ^                ^j
+           ab dono ka last = Y (MATCH) -> DONO peeche
+           => solve(i-1, j-1)     [i--, j--]
+
+        DELETE -- X hata do (w1 me ye extra tha):
+           w1: . . X   ->   w1: . .          w2: . . Y   (chhua nahi)
+                   ^i             ^i-1                ^j
+           w1 ka X nikaala -> i peeche; w2 wahi ka wahi
+           => solve(i-1, j)       [i--, j same]
+
+        INSERT -- Y ko w1 me DAALO (w2 ka Y match karne ko):
+           w1: . . X   ->   w1: . . X [Y]    w2: . . Y
+                   ^i               ^i(wahi)          ^j-1
+           naya [Y] daala -> w2 ka Y NIPAT gaya -> j peeche
+           par w1 ka apna X abhi bacha (naya daala, purana nahi chhua) -> i WAHI
+           => solve(i, j-1)       [j--, i same]
+
+        Ek nazar me:
+           REPLACE : X badla->Y          -> dono nipte -> i--, j--
+           DELETE  : X NIKAALA (w1)      -> w1 nipta   -> i--, j same
+           INSERT  : Y DAALA (w2 ke liye) -> w2 nipta  -> j--, i same
+     CRUX: DELETE = w1 ka char NIKAALA (i ghata) · INSERT = w2 ke liye naya char DAALA (j ghata). ek nikaal ek daal -> ulta index.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ 0/1 KNAPSACK (classic)  = PURE take/not-take (item ONCE)
