@@ -24,5 +24,11 @@
 - **Kyun WAIT:** setup ek chhota project hai (Python/ChromaDB/embeddings/Docker) -> ABHI 25-din JP-schedule se dhyan bhatkega (rabbit-hole). current setup (markdown + hook) simple + kaam kar raha.
 - **Kab:** SEPTEMBER apply ke BAAD, time ho tab. + soch: personal/emotional baatein vector-DB me verbatim jaayengi (local hai to risk kam).
 
+### 4. [THIS WEEKEND — Sat/Sun] MCM — Matrix Chain Multiplication (interval-DP, +1 pattern)
+- **Kya:** DSA ka aakhri by-choice-deferred pattern (interval-DP). Arpan ka apna man/attachment -> weekend pe seekhna.
+- **Arpan ka read (sahi):** MCM = formula/TEMPLATE-based (DP-satva: base + transition + memo). core = "kahaan SPLIT karun (k pe todo)". concept + "formula kaise bana" ek baar clear -> phir sirf APPLY.
+- **Method (mode-2 naya pattern):** Claude KHUL ke sikhaye (concept + visual + split-at-k idea) -> Arpan samjhe -> KHUD code (blank redo) -> phir milte-julte Q (burst-balloons type = SAME interval-DP -> recognize, naya-entry nahi) -> sheet-entry.
+- **Frame:** "code abhi nahi kar sakta, par SAMAJH sakta -> phir code bhi aa jaayega" (understand-first, 2 skill). NOT hard.
+
 ---
 > (done topics -> hata do ya ~strikethrough~)
