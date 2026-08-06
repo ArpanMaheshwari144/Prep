@@ -52,5 +52,29 @@
 
 ---
 
+## E. JAB ANSWER NA PATA HO (cool-down + 5-step) — sabse zaroori
+
+> SACH: sab kuch jaanna NA possible NA zaroori. Interviewer test karta hai "jo nahi pata usko KAISE attack karta",
+> na ki tune ratta kiya. "mujhe exact nahi pata, par aise sochunga" >> memorized answer (aksar).
+
+**COOL-DOWN:** panic ki jad = "mujhe pata HONA chahiye." Us soch ko DROP -> replace: **"main ise REASON karunga."**
+   ek line pura pressure utaar deti. unknown = reasoning dikhane ka mauka, dimaag pe verdict NAHI.
+
+**5-STEP (har subject):**
+1. BLUFF mat kar (galat-confident turant pakda jaata; honest > fake).
+2. Saaf bol: *"ye maine directly use nahi kiya, par main aise approach karunga..."*
+3. Fundamentals se REASON kar -- jo PATA hai usme tod ke socho, LOUD.
+4. CLARIFYING question poochho -> time + engagement + interviewer khud nudge deta.
+5. Jaani-hui cheez se JODO: *"ye X jaisa lagta, wahaan aise karta tha."*
+
+**Per subject:**
+- DSA : trick na pata -> freeze mat, BRUTE-FORCE se shuru ("naive O(n^2) ye, ab optimize"), loud -> nudge milta. cold-invent koi nahi karta.
+- Java: concept na pata -> "exact API yaad nahi, par mera samajh ye..." + reason. galat-confident API NAHI.
+- HLD : component na pata -> 90% TOOLKIT se reason (cache/queue/shard/LB). single-right-answer hota hi nahi -> REASONING hi answer.
+
+> BOTTOM LINE: score "sab pata" se nahi, "unknown ko kaise attack karta" se. shaant + todo + loud + honest. ye SKILL hai (reps), knowledge nahi.
+
+---
+
 > CORE: naya design aaye -> 8-step me is toolkit ko ASSEMBLE -> done. 90% pehle se pata hai.
 > "Problem-solver" HLD me = ye toolkit + trade-off bolna, na ki har baar scratch se sochna.
