@@ -4,16 +4,21 @@
 // matrices ki chain multiply karni hai. result to same, par ORDER (parenthesization) se
 // COST (scalar multiplications) badalti. MINIMUM total multiplications lautao.
 //
-// dims array p[] deta hai: matrix A_i = p[i-1] x p[i].  (n matrices = p.size()-1)
-//   eg p=[10,30,5,60] -> A1=10x30, A2=30x5, A3=5x60.
+// INPUT p[] = chain ki dims -> consecutive PAIR = ek matrix ka ROW x COL.  A_i = p[i-1] x p[i].  (n matrices = p.size()-1)
+//   eg p=[10,30,5,60] -> A1=10x30, A2=30x5, A3=5x60.  (p[0]=A1 rows, p[1]=A1 cols=A2 rows, ...)
 //
-// ---- YAAD (khud bola): two_max ka WALL jaisa + interval-DP ----
-//   solve(i, j):  chain A_i..A_j ko ek matrix banane ka MIN cost.
-//     base : i == j  -> ek hi matrix -> 0
-//     wall : k = i .. j-1  -> ( A_i..A_k ) x ( A_{k+1}..A_j )
-//            cost = solve(i,k) + solve(k+1,j) + p[i-1]*p[k]*p[j]   // combine = a*b*c
-//     -> in sab k ka MIN.   memo dp[i][j].   caller: solve(1, n).
-//   (combine: left block = p[i-1] x p[k], right = p[k] x p[j] -> multiply = p[i-1]*p[k]*p[j])
+// ---- APPROACH ----  (interval-DP = two_max ka WALL + loop-har-wall + recurse + memo)
+//  = two_max (Google) ka WALL hi hai. FARAK: two_max me left/right PRECOMPUTED (bestLeft/bestRight, O(1)) the;
+//    yahan sub-chains OVERLAP karti -> precompute nahi -> har wall LOOP + har side RECURSE + memo (DP over RANGE).
+//  solve(i,j) = chain A_i..A_j ko EK matrix banane ka MIN cost. (state = RANGE -> 2D dp[i][j].)
+//     base : i==j -> ek hi matrix -> 0
+//     wall : k = i..j-1 -> (A_i..A_k) x (A_{k+1}..A_j)
+//              cost = solve(i,k) + solve(k+1,j) + p[i-1]*p[k]*p[j]   // combine (a*b*c)
+//            -> in sab k ka MIN.  ans init INT_MAX (min-problem rule).
+//  COMBINE: block A_i..A_k -> size p[i-1] x p[k]. wall pe LEFT=p[i-1]xp[k], RIGHT=p[k]xp[j] -> mult = p[i-1]*p[k]*p[j].
+//     number-line: p[i-1]=poore-left ka baayaan chhor · p[k]=WALL · p[j]=poore-right ka dayaan chhor.
+//  INDEX: 1-indexed -> caller solve(1, n) [n=p.size()-1]. i=0 mat karo (p[i-1]=p[-1] crash).
+//  real-life: DB JOIN-order optimization · ML/graphics matrix-compute.
 //
 //   p=[10,30,5,60]        -> 4500     ((A1A2)A3 = 1500+3000)
 //   p=[40,20,30,10,30]    -> 26000

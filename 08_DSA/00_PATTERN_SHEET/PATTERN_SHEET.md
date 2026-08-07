@@ -2204,3 +2204,25 @@
      coin-change se FARAK: item ONCE -> take me i-1 (coin me REUSE -> i same tha). yehi 0/1 ka matlab.
      BASE i<0 vs i==0 (dono valid, same jawab): i<0 -> index-0 NORMAL item (recursion + i<0-base khud sambhaale, CLEANER);
         i==0 -> item-0 explicit-handle (recursion 1 level pehle rukti, zyada code). i<0 = "sach me khatam", index-0 = normal.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ MATRIX CHAIN MULT / MCM  = INTERVAL-DP  = two_max WALL + loop + recurse
+ └──────────────────────────────────────────────────────────────
+     SAAR : matrices chain multiply -> result SAME, COST order-pe badalti -> MIN scalar-mult nikaalo.
+     INPUT p[]: chain ki dims -> consecutive PAIR = ek matrix ka ROW x COL.  A_i = p[i-1] x p[i].  (n = p.size()-1 matrices)
+            eg p=[10,30,5,60] -> A1=10x30, A2=30x5, A3=5x60.
+     = two_max (Google) ka WALL hi. FARAK: two_max me left/right PRECOMPUTED (O(1)); yahan ranges OVERLAP
+       -> har wall LOOP + har side RECURSE + memo (interval-DP, state = RANGE (i,j) -> 2D dp).
+     TEMPLATE:
+         solve(i, j):                              // A_i..A_j ko 1 matrix banane ka MIN cost
+             if i == j: return 0                   // base: ek hi matrix -> koi multiply nahi
+             if dp[i][j] != -1: return dp[i][j]
+             ans = INT_MAX
+             for k = i .. j-1:                     // har WALL (two_max jaisa)
+                 cost = solve(i,k) + solve(k+1,j) + p[i-1]*p[k]*p[j]
+                 ans = min(ans, cost)
+             return dp[i][j] = ans
+         // caller: solve(1, n) [n=p.size()-1].   i=0 MAT karo (p[i-1]=p[-1] crash).
+     COMBINE (a*b*c): block A_i..A_k -> size p[i-1] x p[k]. wall pe LEFT=p[i-1]xp[k], RIGHT=p[k]xp[j] -> mult = p[i-1]*p[k]*p[j].
+              number-line: p[i-1]=poore-left baayaan chhor · p[k]=WALL · p[j]=poore-right dayaan chhor.
+     real: DB JOIN-order optimization · ML/graphics compute. interval-DP FAMILY: burst-balloons, stone-merge, optimal-BST.
