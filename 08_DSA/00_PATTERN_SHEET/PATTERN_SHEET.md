@@ -2226,7 +2226,9 @@
              if i == j: return 0                   // base: ek hi matrix bacha -> multiply ko kuch nahi -> 0  (2+ matrix hon tabhi mult)
              if dp[i][j] != -1: return dp[i][j]
              ans = INT_MAX
-             for k = i .. j-1:  // k = i..j-1 (na j): k=WALL, dono block >=1 matrix -> k=j pe RIGHT khaali=invalid. (burst=REMOVED balloon -> j)
+
+             // k = i..j-1 (na j): k=WALL, dono block >=1 -> k=j pe RIGHT khaali=invalid.  (burst: k=REMOVED -> j)
+             for k = i .. j-1:
                  cost = solve(i,k) + solve(k+1,j) + p[i-1]*p[k]*p[j]
                  ans = min(ans, cost)
              return dp[i][j] = ans
@@ -2290,7 +2292,9 @@
              if i > j: return 0                    // base: khaali range (single balloon base NAHI -> wo phoodta)
              if dp[i][j] != -1: return dp[i][j]
              ans = INT_MIN
-             for k = i .. j:   // k = i..j (na j-1): har balloon phoote-candidate; LEFT/RIGHT khaali chal jaati (base i>j=0). (MCM=WALL, dono side>=1 -> j-1)
+
+             // k = i..j (na j-1): har balloon ko phod-ke try -> MAX; LEFT/RIGHT khaali chal jaati (base i>j=0).  (MCM: k=WALL -> j-1)
+             for k = i .. j:
                  coins = solve(i,k-1) + solve(k+1,j) + p[i-1]*p[k]*p[j+1]
                  ans = max(ans, coins)
              return dp[i][j] = ans
