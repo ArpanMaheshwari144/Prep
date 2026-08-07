@@ -2284,17 +2284,22 @@
                  ans = max(ans, coins)
              return dp[i][j] = ans
          // caller: solve(1, n) [n = asli balloon count, pad ke baad].
-     COIN (p[i-1]*p[k]*p[j+1]): k = range ka LAST phoota -> andar sab pehle phoote -> k ke padosi = range ke BAHAR FIXED edges.
-              number-line: p[i-1]=poore-range baayaan-bahar · p[k]=k khud · p[j+1]=poore-range dayaan-bahar.
+     COIN  p[i-1]*p[k]*p[j+1]  kaise:  k = range [i..j] ka SABSE LAST phoota
+           -> andar ke baaki sab k se PEHLE ja chuke -> k akela; dono taraf sirf RANGE-KE-BAHAR balloons bache
+                 .-.        .-.        .-.
+              (p[i-1])     ( k )     (p[j+1])     <- k ke live padosi = ye do BAHAR wale (FIXED, hilte nahi)
+                 `-'        `-'        `-'
+                        p[i-1] * p[k] * p[j+1]
 
      DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   balloons=[3,1,5] -> pad [1,3,1,5,1], solve(1,3), LAST k=2
-             idx :   1     3     1     5     1
-                     p0    p1    p2    p3    p4
-                          LEFT   k    RIGHT
-                          (3)   (1)   (5)
-         LEFT  {3} = solve(1,1):   p0*p1*p2 = 1*3*1 = 3
-         RIGHT {5} = solve(3,3):   p2*p3*p4 = 1*5*1 = 5
-         k=2 (last)            :   p0*p2*p4 = 1*1*1 = 1
-         => 3 + 5 + 1 = 9
+                .-.    .-.    .-.    .-.    .-.
+               ( 1 )  ( 3 )  ( 1 )  ( 5 )  ( 1 )
+                `-'    `-'    `-'    `-'    `-'
+               p0     p1     p2     p3     p4
+               pad   LEFT    k     RIGHT   pad
+         LEFT  (3):  solve(1,1)  ->  1*3*1 = 3              (= p0*p1*p2)
+         RIGHT (5):  solve(3,3)  ->  1*5*1 = 5              (= p2*p3*p4)
+         k=2 (last): p0*p2*p4    ->  1*1*1 = 1  =  p[i-1]*p[k]*p[j+1]   (i=1, k=2, j=3)
+         TOTAL: 3 + 5 + 1 = 9
 
      real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
