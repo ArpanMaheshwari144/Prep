@@ -2296,6 +2296,7 @@
                  ans = max(ans, coins)
              return dp[i][j] = ans
          // caller: solve(1, n) [n = asli balloon count, pad ke baad].
+         // k = i..j (na j-1; MCM se ULTA): k = REMOVED balloon -> LEFT/RIGHT khaali chal jaati (base i>j=0) -> har balloon candidate.  (MCM: k=WALL, dono side >=1 -> j-1.)
 
      DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(p1,p3), k=p2 phoda
              val:    1     3     2     5     1
