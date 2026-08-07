@@ -2291,15 +2291,15 @@
                  `-'        `-'        `-'
                         p[i-1] * p[k] * p[j+1]
 
-     DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   balloons=[3,1,5] -> pad [1,3,1,5,1], solve(1,3), LAST k=2
+     DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   balloons=[3,2,5] -> pad [1,3,2,5,1], solve(1,3), LAST k=2
                 .-.    .-.    .-.    .-.    .-.
-               ( 1 )  ( 3 )  ( 1 )  ( 5 )  ( 1 )
+               ( 1 )  ( 3 )  ( 2 )  ( 5 )  ( 1 )      <- 1 = sirf PAD ; asli balloons = 3,2,5
                 `-'    `-'    `-'    `-'    `-'
                p0     p1     p2     p3     p4
                pad   LEFT    k     RIGHT   pad
-         LEFT  (3):  solve(1,1)  ->  1*3*1 = 3              (= p0*p1*p2)
-         RIGHT (5):  solve(3,3)  ->  1*5*1 = 5              (= p2*p3*p4)
-         k=2 (last): p0*p2*p4    ->  1*1*1 = 1  =  p[i-1]*p[k]*p[j+1]   (i=1, k=2, j=3)
-         TOTAL: 3 + 5 + 1 = 9
+         LEFT  {3} = solve(1,1):  p0*p1*p2 = 1*3*2 = 6
+         RIGHT {5} = solve(3,3):  p2*p3*p4 = 2*5*1 = 10
+         k=2 (last)            :  p0*p2*p4 = 1*2*1 = 2   =  p[i-1]*p[k]*p[j+1]  (i=1, k=2, j=3)
+         TOTAL: 6 + 10 + 2 = 18
 
      real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
