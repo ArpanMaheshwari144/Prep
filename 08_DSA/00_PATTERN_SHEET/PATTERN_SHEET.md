@@ -2229,7 +2229,7 @@
 
              // k = i se j-1 KYUN: k = WALL, chain ko (i..k)|(k+1..j) me todti; har side >=1 matrix chahiye.
              //   k=j pe RIGHT block khaali = invalid -> isliye max k = j-1.
-             //   eg {10,30,5,60}: k=j-1 pe right single, recursion sambhaal leta.  (burst se ULTA -> k poora i..j)
+             //   eg {10,30,5,60}: k=j-1 pe right single, recursion sambhaal leta.
              for k = i .. j-1:
                  cost = solve(i,k) + solve(k+1,j) + p[i-1]*p[k]*p[j]
                  ans = min(ans, cost)
