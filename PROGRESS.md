@@ -25,14 +25,14 @@
         Arpan ke ACTUAL .cpp se verified, 3 agent). ★ DP-top pe Arpan ke 2 ESSENCE + BASE-CASE insight.
 
    OTHER STATE (current, short): Java-core+multithreading DONE (+ practicals) · Spring DONE · Projects (mini_payment + todoapp) revise-DONE ·
-        HLD strong (8 designs ke 8-step hand-notes: URL/rate-limiter/payment/notification/twitter/stock-broker/bookmyshow/file-upload) · Behavioral 5-star.
+        HLD strong (9 designs ke 8-step hand-notes: URL/rate-limiter/payment/notification/twitter/stock-broker/bookmyshow/file-upload/news-aggregator) · Behavioral 5-star.
         sheet READING = GitHub-browser / VS-Code (Ctrl+Shift+V), terminal se nahi (box-chars). backlog (TO_STUDY.md): Elasticsearch, distributed-ID-gen.
 
    AAGE KAISE JANA (forward, priority):
    1. ★★ ROZ DSA (non-negotiable): sheet-glance + CHUNK-REVISE 2-pattern ROTATE (aaj-tak: TP+SW, Hashing+Prefix done -> aage Stack+BS...) + 1 REDO. sheet 18-pattern/2000-line -> poori roz nahi -> rotate ~week me cover. ★ PENDING: coin-change REDO (i<0 base baar-baar phasa -> lock karna, dono form).
    2. ★★★ DSA COMPLETE (4-Aug) -- ab NAYA DSA nahi bacha. Sirf REVISE + spaced-REDO. DP 9-problem done. (MCM/segment-tree by-choice-deferred, baad me.) => DSA ab GATE-ready.
    3. ★ JAVA/SPRING: multithreading + core DONE. aage READ-revise + naye topic pe chhota PRACTICAL (writing-fluency gap). ★ project-revise (mini_payment + todoapp) DONE.
-   4. ★★ AB ASLI FOCUS (DSA done -> shift): HLD DELIVERY/MOCK (bolke, roz) + BEHAVIORAL/STAR + ENGLISH-ALOUD (JP ke sabse bade lever). HLD = 8 designs ke 8-step hand-notes ban chuke (URL/rate-limiter/payment/notification/twitter/stock-broker/bookmyshow/file-upload).
+   4. ★★ AB ASLI FOCUS (DSA done -> shift): HLD DELIVERY/MOCK (bolke, roz) + BEHAVIORAL/STAR + ENGLISH-ALOUD (JP ke sabse bade lever). HLD = 9 designs ke 8-step hand-notes ban chuke (URL/rate-limiter/payment/notification/twitter/stock-broker/bookmyshow/file-upload/news-aggregator).
       ★★★ LEARN-FIRST-THEN-MOCK (4-Aug, Arpan-corrected -- Claude ne "mock" over-push kiya tha): MOCK sirf SEEKHE-hue ko DELIVERY-POLISH karta; jo PADHA NAHI, uska answer mock se bhi nahi niklega (Memcached na-padha -> 3-4 line se aage nahi, chahe 100 mock). => ORDER: (1) SEEKHO/PADHO = PRIMARY (weak-spots fill, jo nahi aata wo padho) -> (2) MOCK/bolke = polish layer (sikhe-hue ko fluent nikaalo). learning = foundation, mock = uske upar. "jitna zyada seekhu utna better answer." => sikhe-HLD(7) pe mock; weak-spots pe pehle PADHO phir mock. Claude "mock-mock" dobara over-push MAT kare.
    ★ JP TIMELINE: ~SEPT apply. Readiness ~85%+. bacha = pure POLISH/DELIVERY (HLD-mock + behavioral + English-aloud + DSA-revise). foundational-gap ZERO. ★ LUCK-belief: outcome luck-gated (MEMORY.md) -> effort = ready-rehne ka tool, guarantee mat becho.
 
@@ -136,7 +136,7 @@
      - JAVA/SPRING: light read-revise (woven / 2-3x week).
 
    WEEK 1 (6-12 Aug): DSA chunk rotate Stack+BS -> LinkedList+Design -> Kadane+Bit ·
-                      HLD: 3 bache hand-notes KHATAM (news-aggregator, distributed-cache, url-browser-journey) · [file-upload DONE 5-Aug] ·
+                      HLD: 2 bache hand-notes KHATAM (distributed-cache, url-browser-journey) · [file-upload + news-aggregator DONE] ·
                       Behavioral: 5 STAR loud reps.
    WEEK 2 (13-19 Aug): DSA chunk rotate Trees+Graphs -> Heap+Backtracking -> DP+Intervals + 2 COMBO-problem (do-pattern gap-fix) ·
                       HLD: 2-3 design FULL mock-delivery TIMED (bolke, follow-up handle) · English-aloud roz.
