@@ -2247,3 +2247,41 @@
          (3 matrices -> ek side single, ek block. 4 hote -> dono block. formula wahi.)
 
      real: DB JOIN-order optimization · ML/graphics compute. interval-DP FAMILY: burst-balloons, stone-merge, optimal-BST.
+
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ BURST BALLOONS (LC 312)  = INTERVAL-DP  = MCM ka WALL, sirf DELTA
+ └──────────────────────────────────────────────────────────────
+     SAAR : balloons ek-ek phodo. coins = (left-padosi)*(khud)*(right-padosi); padosi = US WAQT
+            zinda (phoote gaayab). phodne pe left-right adjacent. MAX coins.
+
+     = MCM BILKUL: range me ek k chuno -> left recurse + right recurse + combine -> memo (2D dp).
+       FARAK sirf 4 (MCM known -> ye DELTA):
+          MCM                                 BURST
+          ---                                 -----
+          k = WALL (LEFT block ka part)        k = jo balloon SABSE LAST phoota (REMOVED, kisi side me nahi)
+          solve(i,k) + solve(k+1,j)            solve(i,k-1) + solve(k+1,j)     <- k dono se BAHAR
+          MIN                                  MAX
+          p[i-1]*p[k]*p[j]                     p[i-1]*p[k]*p[j+1]   (+ dono taraf 1 PAD)
+          base i==j->0 (single matrix)         base i>j->0 (khaali); single balloon PHIR BHI phoodta
+
+     PAD: [1, ...balloons..., 1]   (kinaare ka gaayab padosi = 1)
+        idx :  1   3   1   5   8   1
+               0   1   2   3   4   5     <- caller solve(1, n) ; n = asli balloon count
+
+     "k = LAST phoota" kyun jaadू:  us waqt andar sab ja chuke -> k ke padosi = FIXED boundaries p[i-1],p[j+1]
+        1 [ ..left [i..k-1].. ]  k  [ ..right [k+1..j].. ] 1
+          left & right k se PEHLE alag-alag phoote (k beech me khada) -> 2 INDEPENDENT subproblem.
+
+     TEMPLATE:
+         solve(i,j):                          // A_i..A_j sab phodne ka MAX coins
+             if i > j: return 0               // khaali range (single balloon base NAHI -> wo phoodta)
+             if dp[i][j] != -1: return dp[i][j]
+             ans = INT_MIN
+             for k = i..j:                     // k = LAST phoota
+                 coins = solve(i,k-1) + solve(k+1,j) + p[i-1]*p[k]*p[j+1]
+                 ans = max(ans, coins)
+             return dp[i][j] = ans
+         // caller: solve(1, n) [n = asli balloon count, pad ke baad].
+
+     interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
