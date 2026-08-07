@@ -9,6 +9,9 @@
 //  solve(i,j) = balloons A_i..A_j sab phodne ka MAX coins. (state = RANGE -> 2D dp[i][j].)
 //     PAD: dono taraf 1 -> [1, ...balloons..., 1]. (kinaare ka gaayab padosi = 1, farak nahi.)
 //     "pehle kaunsa phodun" -> phas jaata (padosi badalte, ranges dependent). ULTA socho:
+//        k = is range ka SABSE LAST phoota balloon. tab andar sab ja chuke ->
+//            k ke padosi = bahar ke FIXED boundaries p[i-1], p[j+1].
+//            k se pehle: left [i..k-1] aur right [k+1..j] alag-alag phoote (k beech me khada tha).
 //     for k=i..j:  coins = solve(i,k-1) + solve(k+1,j) + p[i-1]*p[k]*p[j+1]   -> in sab ka MAX.
 //  MCM se DELTA: (1) MIN -> MAX  (2) k = REMOVED balloon (na wall-in-block) -> solve(i,k-1), NA solve(i,k)
 //     (3) base i>j (na i==j) -> single balloon PHIR BHI phoodta  (4) pad + boundary p[i-1],p[j+1] (na p[i-1],p[k],p[j]).
