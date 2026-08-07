@@ -2231,6 +2231,7 @@
                  ans = min(ans, cost)
              return dp[i][j] = ans
          // caller: solve(1, n) [n=p.size()-1].   i=0 MAT karo (p[i-1]=p[-1] crash).
+         // k <= j-1 (na j): agar k=j -> RIGHT (k+1..j) KHAALI = invalid. har side >=1 matrix; RIGHT recursion se auto-handle.
      COMBINE (a*b*c): block A_i..A_k -> size p[i-1] x p[k]. wall pe LEFT=p[i-1]xp[k], RIGHT=p[k]xp[j] -> mult = p[i-1]*p[k]*p[j].
               number-line: p[i-1]=poore-left baayaan chhor · p[k]=WALL · p[j]=poore-right dayaan chhor.
      real: DB JOIN-order optimization · ML/graphics compute. interval-DP FAMILY: burst-balloons, stone-merge, optimal-BST.
