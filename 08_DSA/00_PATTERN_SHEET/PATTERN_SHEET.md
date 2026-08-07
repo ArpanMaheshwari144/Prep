@@ -2292,9 +2292,9 @@
                      p0    p1    p2    p3    p4
                           |LEFT| (k) |RIGHT|
                           (bal3)     (bal5)
-         LEFT  (bal3):  solve(1,1)  --recursion-->   6    (= p0*p1*p2 = 1*3*2)
-         RIGHT (bal5):  solve(3,3)  --recursion-->  10    (= p2*p3*p4 = 2*5*1)
-         k=2 (bal2) LAST:  p0*p2*p4 = 1*2*1 = 2   =  p[i-1]*p[k]*p[j+1]   (i=1, k=2, j=3)
-         JODO (coins ADD): 6 + 10 + 2 = 18   (MCM me result MULTIPLY hote; yahan coins ADD)
+         LEFT  (bal3):   1*3*2 = 6     (= p0*p1*p2)
+         RIGHT (bal5):   2*5*1 = 10    (= p2*p3*p4)
+         k=2   (LAST):   1*2*1 = 2     (= p0*p2*p4 = p[i-1]*p[k]*p[j+1] ,  i=1,k=2,j=3)
+         JODO: 6 + 10 + 2 = 18    (MCM me result MULTIPLY hote; yahan coins ADD)
 
      real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
