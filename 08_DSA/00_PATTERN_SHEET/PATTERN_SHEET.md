@@ -2272,6 +2272,14 @@
 
         => phodne pe coin = (left) * (khud) * (right) ;  caller solve(1, n)  (n = asli count)
 
+     FORMULA  p[i-1]*p[k]*p[j+1]  kaise banti: k ko range [i..j] ka SABSE-LAST phodo ->
+        andar ke baaki pehle ja chuke -> k ke padosi = range ke BAAHAR wale 2 balloons:
+              .-.                    .-.                    .-.
+           (p[i-1])               ( p[k] )              (p[j+1])
+              `-'                    `-'                    `-'
+            baahar-L           k = LAST (akela)           baahar-R
+                       coin = p[i-1] * p[k] * p[j+1]
+
      = MCM ka WALL hi. FARAK: MCM me k = WALL (block ka part, MIN); yahan k = jo LAST phoota
        (REMOVED, dono side se BAHAR) -> solve(i,k-1)+solve(k+1,j), MAX, + PAD.
      TEMPLATE:
@@ -2284,8 +2292,6 @@
                  ans = max(ans, coins)
              return dp[i][j] = ans
          // caller: solve(1, n) [n = asli balloon count, pad ke baad].
-     COIN (p[i-1]*p[k]*p[j+1]): k = range [i..j] ka LAST phoota -> andar sab pehle gaye -> k ke padosi = range ke BAAHAR (p[i-1], p[j+1]) -> coin = p[i-1]*p[k]*p[j+1].
-              number-line: p[i-1]=poore-range baayaan-bahar · p[k]=k khud · p[j+1]=poore-range dayaan-bahar.
 
      DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(1,3), k=2 LAST-phoota
              idx:    1     3     2     5     1
