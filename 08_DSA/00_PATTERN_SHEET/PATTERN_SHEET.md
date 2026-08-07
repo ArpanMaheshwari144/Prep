@@ -2299,12 +2299,12 @@
              val:    1     3     2     5     1
              idx:    p0    p1    p2    p3    p4
                           |LEFT| (k) |RIGHT|
-                          (bal3)     (bal5)
-         k=2 phoda -> range TOOT gayi:  LEFT = p1 (bal3)  |  k = p2  |  RIGHT = p3 (bal5)
-         phir teeno ka coin nikaalo:
-         LEFT  (bal3):  p1 akela range me, padosi p0 & p2   ->  1*3*2 = 6      (= p0*p1*p2)
-         RIGHT (bal5):  p3 akela range me, padosi p2 & p4   ->  2*5*1 = 10     (= p2*p3*p4)
-         k=2   phoota:  LEFT/RIGHT ab ja chuke, k ke padosi = p0 & p4  ->  1*2*1 = 2   (= p[i-1]*p[k]*p[j+1] , i=1,k=2,j=3)
+                          (p1)       (p3)
+         k=2 phoda -> range TOOTI:  LEFT = solve(i,k-1) = solve(1,1)  |  k = p2  |  RIGHT = solve(k+1,j) = solve(3,3)
+         phir teeno ka coin JODO:
+         LEFT  solve(1,1):   1*3*2 = 6     (= p0*p1*p2)
+         RIGHT solve(3,3):   2*5*1 = 10    (= p2*p3*p4)
+         k=2   phoota:       1*2*1 = 2     (= p0*p2*p4 = p[i-1]*p[k]*p[j+1])
          uske baad JODO: 6 + 10 + 2 = 18    (MCM me result MULTIPLY hote; yahan coins ADD)
 
      real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
