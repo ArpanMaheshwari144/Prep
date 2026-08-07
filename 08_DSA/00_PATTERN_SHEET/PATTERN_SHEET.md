@@ -2209,8 +2209,16 @@
  │ ▸ MATRIX CHAIN MULT / MCM  = INTERVAL-DP  = two_max WALL + loop + recurse
  └──────────────────────────────────────────────────────────────
      SAAR : matrices chain multiply -> result SAME, COST order-pe badalti -> MIN scalar-mult nikaalo.
-     INPUT p[]: chain ki dims -> consecutive PAIR = ek matrix ka ROW x COL.  A_i = p[i-1] x p[i].  (n = p.size()-1 matrices)
-            eg p=[10,30,5,60] -> A1=10x30, A2=30x5, A3=5x60.
+
+     INPUT p[]: chain ki dims. consecutive PAIR = ek matrix ka ROW x COL. adjacent matrices ek number SHARE karti.
+        p[] :   10  --  30  --  5  --  60
+        idx :   p0      p1     p2     p3
+                 \__A1__/\__A2_/\_A3__/
+        A1 = p0 x p1 = 10 x 30
+        A2 = p1 x p2 = 30 x 5     <- p1=30 SHARED (A1 ka COL = A2 ka ROW -> isliye multiply hoti)
+        A3 = p2 x p3 = 5  x 60
+        => matrix A_i = p[i-1] x p[i]   (i = 1..n ;  n = p.size()-1 = 3 matrices)
+
      = two_max (Google) ka WALL hi. FARAK: two_max me left/right PRECOMPUTED (O(1)); yahan ranges OVERLAP
        -> har wall LOOP + har side RECURSE + memo (interval-DP, state = RANGE (i,j) -> 2D dp).
      TEMPLATE:
