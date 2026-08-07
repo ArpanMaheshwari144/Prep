@@ -2236,8 +2236,8 @@
               number-line: p[i-1]=poore-left baayaan chhor · p[k]=WALL · p[j]=poore-right dayaan chhor.
 
      DRY-RUN (combine = p[i-1]*p[k]*p[j]):   p=[10,30,5,60], solve(1,3), wall k=1
-             idx:    10    30    5    60
-                     p0    p1    p2   p3
+             val:    10    30    5    60
+             idx:    p0    p1    p2   p3
                      |LEFT|    |__RIGHT__|
                      (A1)       (A2..A3)
          LEFT  (A1):    10x30                          -> 1 matrix:  10 x 30   (= p0 x p1)
