@@ -2255,12 +2255,22 @@
      SAAR : balloons ek-ek phodo. phodne pe coins = left * khud * right (padosi = us waqt ZINDA) -> saare phod ke MAX total.
 
      INPUT p[]: balloons row; dono taraf 1 PAD (kinaare ka gaayab padosi = 1).
-        p[] :   1    3    1    5    8    1
-        idx :   p0   p1   p2   p3   p4   p5
-                pad  \______asli______/  pad
-        phodne pe (k): coin = (left-padosi) * (khud) * (right-padosi)
-        eg k=2 (val 1): p1=3, p3=5 -> 3 * 1 * 5 = 15   (phir 3,5 adjacent)
-        => caller solve(1, n)   (n = asli balloon count ; p0 & p[n+1] = pad)
+
+            .-.    .-.    .-.    .-.    .-.    .-.
+           ( 1 )  ( 3 )  ( 1 )  ( 5 )  ( 8 )  ( 1 )
+            `-'    `-'    `-'    `-'    `-'    `-'
+           p0     p1     p2     p3     p4     p5        <- indexing (p0 & p[n+1] = pad)
+           pad    \_________ asli _________/    pad
+
+        PHOD  k=2 (the (1)):   padosi (3) & (5)
+             .-.    .-.    .-.
+            ( 3 )  ( 1 )  ( 5 )          coins = 3 * 1 * 5 = 15
+             `-'   *POP*   `-'
+             .-.           .-.
+            ( 3 )         ( 5 )     ->   (1) gaya, ab (3) aur (5) adjacent
+             `-'           `-'
+
+        => phodne pe coin = (left) * (khud) * (right) ;  caller solve(1, n)  (n = asli count)
 
      = MCM ka WALL hi. FARAK: MCM me k = WALL (block ka part, MIN); yahan k = jo LAST phoota
        (REMOVED, dono side se BAHAR) -> solve(i,k-1)+solve(k+1,j), MAX, + PAD.
