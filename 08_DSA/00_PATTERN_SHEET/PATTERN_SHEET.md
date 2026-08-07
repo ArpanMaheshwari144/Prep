@@ -2272,12 +2272,11 @@
 
         => phodne pe coin = (left) * (khud) * (right) ;  caller solve(1, n)  (n = asli count)
 
-     FORMULA  p[i-1]*p[k]*p[j+1]  kaise banti: k ko range [i..j] ka SABSE-LAST phodo ->
-        andar ke baaki pehle ja chuke -> k ke padosi = range ke BAAHAR wale 2 balloons:
+     FORMULA  p[i-1]*p[k]*p[j+1]  kaise banti: k phoda -> uske padosi = range ke BAAHAR wale 2 balloons:
               .-.                    .-.                    .-.
            (p[i-1])               ( p[k] )              (p[j+1])
               `-'                    `-'                    `-'
-            baahar-L           k = LAST (akela)           baahar-R
+            baahar-L               k phoota               baahar-R
                        coin = p[i-1] * p[k] * p[j+1]
 
      = MCM ka WALL hi. FARAK: MCM me k = WALL (block ka part, MIN); yahan k = jo LAST phoota
@@ -2293,14 +2292,14 @@
              return dp[i][j] = ans
          // caller: solve(1, n) [n = asli balloon count, pad ke baad].
 
-     DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(1,3), k=2 LAST-phoota
+     DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(1,3), k=2 phoda
              idx:    1     3     2     5     1
                      p0    p1    p2    p3    p4
                           |LEFT| (k) |RIGHT|
                           (bal3)     (bal5)
          LEFT  (bal3):   1*3*2 = 6     (= p0*p1*p2)
          RIGHT (bal5):   2*5*1 = 10    (= p2*p3*p4)
-         k=2   (LAST):   1*2*1 = 2     (= p0*p2*p4 = p[i-1]*p[k]*p[j+1] ,  i=1,k=2,j=3)
+         k=2   phoota:   1*2*1 = 2     (= p0*p2*p4 = p[i-1]*p[k]*p[j+1] ,  i=1,k=2,j=3)
          JODO: 6 + 10 + 2 = 18    (MCM me result MULTIPLY hote; yahan coins ADD)
 
      real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
