@@ -774,9 +774,9 @@
      SAAR : sorted array pivot pe rotate ([4,5,6,7,0,1,2]). target ka INDEX, nahi mile -> -1.
      CORE : mid==target? return. warna -> ek half HAMESHA sorted -> wahi se decide:
          nums[low] <= nums[mid]  ->  LEFT half sorted:
-              nums[low] <= target < nums[mid]  ? -> high = mid-1   :  low = mid+1
+              nums[low] <= target <= nums[mid]  ? -> high = mid-1   :  low = mid+1
          else                    ->  RIGHT half sorted:
-              nums[mid] < target <= nums[high] ? -> low = mid+1    :  high = mid-1
+              nums[mid] <= target <= nums[high] ? -> low = mid+1    :  high = mid-1
          har baar aadha kaat -> O(log n). loop khatam -> -1.
      BOUNDARY RULE (dry-run se pakda): jahaan boundary KHUD valid answer ho sakti (nums[low]/nums[high]) -> >= / <= ZARURI (equality include).
               jahaan mid hai (already returned) -> < ya <= farak NAHI.
