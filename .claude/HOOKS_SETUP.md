@@ -6,15 +6,16 @@
 
 ## Do hooks (settings.local.json ke "hooks" block me):
 
-1. **SessionStart** -> har naye session pe `MEMORY-ANCHORS.md` auto-load (positive north-star + good-baatein):
+1. **SessionStart** -> har naye session pe `MEMORY-ANCHORS.md` + `PROGRESS.md` auto-load (north-star + current-state/plan):
    ```json
    "SessionStart": [
      { "matcher": "",
        "hooks": [ { "type": "command",
-         "command": "cat '/c/Users/ArpanMaheshwari/.claude/projects/C--DSA-PRACTICE/memory/MEMORY-ANCHORS.md'",
+         "command": "cat '/c/Users/ArpanMaheshwari/.claude/projects/C--DSA-PRACTICE/memory/MEMORY-ANCHORS.md' '/c/DSA_PRACTICE/PROGRESS.md'",
          "shell": "bash", "timeout": 10 } ] }
    ]
    ```
+   (CLAUDE.md ko hook NAHI chahiye -- wo "project instructions" hai, Claude Code khud har session load karta.)
 
 2. **UserPromptSubmit** -> har message pe `DSA_GUARD.md` inject (DSA behavioral rules):
    ```json
