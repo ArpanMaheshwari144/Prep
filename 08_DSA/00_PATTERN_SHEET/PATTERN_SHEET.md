@@ -2226,12 +2226,11 @@
              if i == j: return 0                   // base: ek hi matrix bacha -> multiply ko kuch nahi -> 0  (2+ matrix hon tabhi mult)
              if dp[i][j] != -1: return dp[i][j]
              ans = INT_MAX
-             for k = i .. j-1:                     // har WALL (two_max jaisa)
+             for k = i .. j-1:  // k = i..j-1 (na j): k=WALL, dono block >=1 matrix -> k=j pe RIGHT khaali=invalid. (burst=REMOVED balloon -> j)
                  cost = solve(i,k) + solve(k+1,j) + p[i-1]*p[k]*p[j]
                  ans = min(ans, cost)
              return dp[i][j] = ans
          // caller: solve(1, n) [n=p.size()-1].   i=0 MAT karo (p[i-1]=p[-1] crash).
-         // k <= j-1 (na j): agar k=j -> RIGHT (k+1..j) KHAALI = invalid. har side >=1 matrix; RIGHT recursion se auto-handle.
      COMBINE (a*b*c): block A_i..A_k -> size p[i-1] x p[k]. wall pe LEFT=p[i-1]xp[k], RIGHT=p[k]xp[j] -> mult = p[i-1]*p[k]*p[j].
               number-line: p[i-1]=poore-left baayaan chhor · p[k]=WALL · p[j]=poore-right dayaan chhor.
 
@@ -2291,12 +2290,11 @@
              if i > j: return 0                    // base: khaali range (single balloon base NAHI -> wo phoodta)
              if dp[i][j] != -1: return dp[i][j]
              ans = INT_MIN
-             for k = i .. j:                       // k = is range me LAST phoota
+             for k = i .. j:   // k = i..j (na j-1): har balloon phoote-candidate; LEFT/RIGHT khaali chal jaati (base i>j=0). (MCM=WALL, dono side>=1 -> j-1)
                  coins = solve(i,k-1) + solve(k+1,j) + p[i-1]*p[k]*p[j+1]
                  ans = max(ans, coins)
              return dp[i][j] = ans
          // caller: solve(1, n) [n = asli balloon count, pad ke baad].
-         // k = i..j (na j-1; MCM se ULTA): k = REMOVED balloon -> LEFT/RIGHT khaali chal jaati (base i>j=0) -> har balloon candidate.  (MCM: k=WALL, dono side >=1 -> j-1.)
 
      DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(p1,p3), k=p2 phoda
              val:    1     3     2     5     1
