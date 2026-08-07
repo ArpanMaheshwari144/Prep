@@ -2227,9 +2227,9 @@
              if dp[i][j] != -1: return dp[i][j]
              ans = INT_MAX
 
-             // k = i se j-1 KYUN: k = WALL (do matrix-block ke beech). dono block me >=1 matrix chahiye.
-             //   k=j pe RIGHT block khaali = invalid -> isliye k max = j-1.
-             //   burst se ULTA: wahan k = REMOVED balloon -> k poora i..j.
+             // k = i se j-1 KYUN: k = WALL, chain ko (i..k)|(k+1..j) me todti; har side >=1 matrix chahiye.
+             //   k=j pe RIGHT block khaali = invalid -> isliye max k = j-1.
+             //   eg {10,30,5,60}: k=j-1 pe right single, recursion sambhaal leta.  (burst se ULTA -> k poora i..j)
              for k = i .. j-1:
                  cost = solve(i,k) + solve(k+1,j) + p[i-1]*p[k]*p[j]
                  ans = min(ans, cost)
@@ -2295,9 +2295,9 @@
              if dp[i][j] != -1: return dp[i][j]
              ans = INT_MIN
 
-             // k = i se j KYUN: har balloon ko baari-baari phod-ke try karo -> unme se MAX.
-             //   LEFT/RIGHT khaali chal jaati hai (base i>j = 0 valid).
-             //   MCM se ULTA: wahan k = WALL (do block ke beech, dono ko >=1 chahiye) -> isliye j-1.
+             // k = i se j KYUN: har balloon ko baari-baari phod-ke try karo -> unme se MAX = answer.
+             //   eg {3,1,5,8}: 3 phodo, ya 1, ya 5, ya 8 -> har ek try -> MAX nikaalo.
+             //   MCM se ULTA: wahan matrix ke PAIRS the (wall pairs) -> j-1; yahan pair nahi -> k poora i..j.
              for k = i .. j:
                  coins = solve(i,k-1) + solve(k+1,j) + p[i-1]*p[k]*p[j+1]
                  ans = max(ans, coins)
