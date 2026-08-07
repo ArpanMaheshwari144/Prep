@@ -2250,40 +2250,41 @@
 
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ BURST BALLOONS (LC 312)  = INTERVAL-DP  = MCM ka WALL (delta)
+ │ ▸ BURST BALLOONS (LC 312)  = INTERVAL-DP  = MCM WALL + loop + recurse
  └──────────────────────────────────────────────────────────────
+     SAAR : balloons ek-ek phodo. phodne pe coins = left * khud * right (padosi = us waqt ZINDA) -> saare phod ke MAX total.
 
-   [1] PHODNE PE:  coins = left * khud * right   (padosi = us waqt ZINDA)
+     INPUT p[]: balloons row; dono taraf 1 PAD (kinaare ka gaayab padosi = 1).
+        p[] :   1    3    1    5    8    1
+        idx :   p0   p1   p2   p3   p4   p5
+                pad  \______asli______/  pad
+        phodne pe (k): coin = (left-padosi) * (khud) * (right-padosi)
+        eg k=2 (val 1): p1=3, p3=5 -> 3 * 1 * 5 = 15   (phir 3,5 adjacent)
+        => caller solve(1, n)   (n = asli balloon count ; p0 & p[n+1] = pad)
 
-          1   3   1   5   8   1        <- pad dono taraf 1
-                  ^ index-2 (=1) phoda
-          coins = 3 * 1 * 5 = 15
-          1   3       5   8   1        <- 1 gaya, ab 3 aur 5 padosi
-
-   [2] TRICK = "pehle kaun" NAHI -> "k = SABSE LAST kaun phoota"
-       (k last -> andar sab ja chuka -> uske padosi = FIXED edges)
-
-          1  [ ..left.. ]  k  [ ..right.. ]  1
-               i..k-1              k+1..j
-          k = deewar -> left & right ALAG kamre (independent)
-          coins = solve(left) + solve(right) + p[i-1]*p[k]*p[j+1]
-
-   [3] chhota dry-run  [3 1 5] -> beech(1) ko LAST maano:
-
-          1 [ 3 ] 1 [ 5 ] 1
-          left{3}=1*3*1=3    right{5}=1*5*1=5    k=1*1*1=1   =>  3+5+1 = 9
-
-   TEMPLATE:
-         solve(i,j):                          // A_i..A_j sab phodne ka MAX coins
-             if i > j: return 0               // khaali range (single balloon base NAHI -> wo phoodta)
+     = MCM ka WALL hi. FARAK: MCM me k = WALL (block ka part, MIN); yahan k = jo LAST phoota
+       (REMOVED, dono side se BAHAR) -> solve(i,k-1)+solve(k+1,j), MAX, + PAD.
+     TEMPLATE:
+         solve(i, j):                              // A_i..A_j sab phodne ka MAX coins
+             if i > j: return 0                    // base: khaali range (single balloon base NAHI -> wo phoodta)
              if dp[i][j] != -1: return dp[i][j]
              ans = INT_MIN
-             for k = i..j:                     // k = LAST phoota
+             for k = i .. j:                       // k = is range me LAST phoota
                  coins = solve(i,k-1) + solve(k+1,j) + p[i-1]*p[k]*p[j+1]
                  ans = max(ans, coins)
              return dp[i][j] = ans
          // caller: solve(1, n) [n = asli balloon count, pad ke baad].
+     COIN (p[i-1]*p[k]*p[j+1]): k = range ka LAST phoota -> andar sab pehle phoote -> k ke padosi = range ke BAHAR FIXED edges.
+              number-line: p[i-1]=poore-range baayaan-bahar · p[k]=k khud · p[j+1]=poore-range dayaan-bahar.
 
-   MCM se DELTA: MIN->MAX · k=REMOVED (solve i,k-1) · +PAD · edge p[i-1],p[j+1]
+     DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   balloons=[3,1,5] -> pad [1,3,1,5,1], solve(1,3), LAST k=2
+             idx :   1     3     1     5     1
+                     p0    p1    p2    p3    p4
+                          LEFT   k    RIGHT
+                          (3)   (1)   (5)
+         LEFT  {3} = solve(1,1):   p0*p1*p2 = 1*3*1 = 3
+         RIGHT {5} = solve(3,3):   p2*p3*p4 = 1*5*1 = 5
+         k=2 (last)            :   p0*p2*p4 = 1*1*1 = 1
+         => 3 + 5 + 1 = 9
 
-     interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
+     real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
