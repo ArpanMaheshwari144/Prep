@@ -2295,16 +2295,16 @@
              return dp[i][j] = ans
          // caller: solve(1, n) [n = asli balloon count, pad ke baad].
 
-     DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(1,3), k=2 phoda
+     DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(p1,p3), k=p2 phoda
              val:    1     3     2     5     1
              idx:    p0    p1    p2    p3    p4
                           |LEFT| (k) |RIGHT|
                           (p1)       (p3)
-         k=2 phoda -> range TOOTI:  LEFT = solve(i,k-1) = solve(1,1)  |  k = p2  |  RIGHT = solve(k+1,j) = solve(3,3)
+         k=p2 phoda -> range TOOTI:  LEFT = solve(i,k-1) = solve(p1,p1)  |  k = p2  |  RIGHT = solve(k+1,j) = solve(p3,p3)
          phir teeno ka coin JODO:
-         LEFT  solve(1,1):   1*3*2 = 6     (= p0*p1*p2)
-         RIGHT solve(3,3):   2*5*1 = 10    (= p2*p3*p4)
-         k=2   phoota:       1*2*1 = 2     (= p0*p2*p4 = p[i-1]*p[k]*p[j+1])
+         LEFT  solve(p1,p1):   1*3*2 = 6     (= p0*p1*p2)     [idx p1 akela, padosi p0,p2]
+         RIGHT solve(p3,p3):   2*5*1 = 10    (= p2*p3*p4)     [idx p3 akela, padosi p2,p4]
+         k=p2  phoota:         1*2*1 = 2     (= p0*p2*p4 = p[i-1]*p[k]*p[j+1])
          uske baad JODO: 6 + 10 + 2 = 18    (MCM me result MULTIPLY hote; yahan coins ADD)
 
      real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
