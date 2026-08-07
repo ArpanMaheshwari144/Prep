@@ -32,6 +32,8 @@ using namespace std;
 
 int solve(int i, int j, vector<int> &p, vector<vector<int>> &dp)
 {
+    // base i==j: chain me SIRF EK matrix bacha -> use akele multiply karne ko kuch nahi -> cost 0.
+    //   (2+ matrix hon tabhi multiply hoti; akela matrix = koi kaam nahi = 0.)
     if (i == j)
         return 0;
 

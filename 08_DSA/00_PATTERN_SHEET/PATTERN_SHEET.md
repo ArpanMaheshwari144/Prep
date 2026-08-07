@@ -2223,7 +2223,7 @@
        -> har wall LOOP + har side RECURSE + memo (interval-DP, state = RANGE (i,j) -> 2D dp).
      TEMPLATE:
          solve(i, j):                              // A_i..A_j ko 1 matrix banane ka MIN cost
-             if i == j: return 0                   // base: ek hi matrix -> koi multiply nahi
+             if i == j: return 0                   // base: ek hi matrix bacha -> multiply ko kuch nahi -> 0  (2+ matrix hon tabhi mult)
              if dp[i][j] != -1: return dp[i][j]
              ans = INT_MAX
              for k = i .. j-1:                     // har WALL (two_max jaisa)
