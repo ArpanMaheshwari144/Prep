@@ -2284,12 +2284,17 @@
                  ans = max(ans, coins)
              return dp[i][j] = ans
          // caller: solve(1, n) [n = asli balloon count, pad ke baad].
+     COIN (p[i-1]*p[k]*p[j+1]): k = range [i..j] ka LAST phoota -> andar sab pehle gaye -> k ke padosi = BAAHAR ke edges.
+              number-line: p[i-1]=poore-range ka baayaan-bahar · p[k]=k khud · p[j+1]=poore-range ka dayaan-bahar.
 
-     DRY-RUN  [3,2,5] -> pad [1,3,2,5,1] :   k=2 (val 2) ko LAST rakhna -> pehle baaki phodo, phir k
-         phodo 5 :          padosi 2, 1   ->  2*5*1 = 10        bacha:  1 3 2 1
-         phodo 3 :          padosi 1, 2   ->  1*3*2 = 6         bacha:  1 2 1
-         phodo 2 (k, LAST): padosi 1, 1   ->  1*2*1 = 2         bacha:  1 1
-         TOTAL = 10 + 6 + 2 = 18
-         (k LAST tha -> uske DONO padosi sirf PAD (1,1) bache -> yahi p[i-1]*p[k]*p[j+1] ka matlab)
+     DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(1,3), k=2 LAST-phoota
+             idx:    1     3     2     5     1
+                     p0    p1    p2    p3    p4
+                          |LEFT| (k) |RIGHT|
+                          (bal3)     (bal5)
+         LEFT  (bal3):  solve(1,1)  --recursion-->   6    (= p0*p1*p2 = 1*3*2)
+         RIGHT (bal5):  solve(3,3)  --recursion-->  10    (= p2*p3*p4 = 2*5*1)
+         k=2 (bal2) LAST:  p0*p2*p4 = 1*2*1 = 2   =  p[i-1]*p[k]*p[j+1]   (i=1, k=2, j=3)
+         JODO (coins ADD): 6 + 10 + 2 = 18   (MCM me result MULTIPLY hote; yahan coins ADD)
 
      real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
