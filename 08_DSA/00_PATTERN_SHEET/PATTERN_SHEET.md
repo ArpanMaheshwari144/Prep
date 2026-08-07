@@ -737,6 +737,10 @@
     sorted-array us decision ka ek common case hai; find-peak (unsorted) me bhi mid vs mid+1 se half discard hota -> BS lagta.
     => asli requirement = "half safely discard karne ka rule", na ki full sorting.
 
+ BOUNDARY RULE (har BS me lagta): jis comparison-boundary pe element KHUD valid answer ho sakta -> equality INCLUDE karo (>= ya <=).
+    jahaan boundary already-handle ho chuki (jaise mid==target upar return ho gaya) -> < ya <= farak NAHI.
+    galat >/< = off-by-one edge miss -> chhota DRY-RUN se pakdo. (eg SEARCH-ROTATED: nums[low] pe >= zaruri warna target==nums[low] fail.)
+
 ┌── FAMILY: BASIC / BOUNDARY ───────────────────────────────────
 │ KYUN SAATH: normal sorted-array BS; target ko mid se compare (low<=high, mid±1). boundary = mila to ruko-mat, ek taraf aur dhoondo.
 └───────────────────────────────────────────────────────────────
