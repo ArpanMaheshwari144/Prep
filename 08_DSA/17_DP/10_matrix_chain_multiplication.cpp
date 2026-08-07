@@ -25,10 +25,29 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int solve(int i, int j, vector<int> &p, vector<vector<int>> &dp)
+{
+    if (i == j)
+        return 0;
+
+    if (dp[i][j] != -1)
+    {
+        return dp[i][j];
+    }
+
+    int ans = INT_MAX;
+    for (int k = i; k <= j - 1; k++)
+    {
+        ans = min(ans, solve(i, k, p, dp) + solve(k + 1, j, p, dp) + p[i - 1] * p[k] * p[j]);
+    }
+    return dp[i][j] = ans;
+}
+
 int matrixChain(vector<int> &p)
 {
-    // TODO: khud likho (solve(i,j): base i==j->0, wall-loop k=i..j-1, combine p[i-1]*p[k]*p[j], min, memo dp[i][j]; caller solve(1,n))
-    return 0;
+    int n = p.size();
+    vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));
+    return solve(1, n - 1, p, dp);
 }
 
 void check(vector<int> p, int exp, int t)
