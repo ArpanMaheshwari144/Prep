@@ -16,11 +16,17 @@
         across HLD/Java/systems/CODE ("ye HLD me aise, ye dekh · Java ye code likh samajh · yahaan atka, ye theek · samjha?"). coaching Arpan CHAHTA hai (NA quiz-shame NA condescend; DSA-solve still nudge-only).
         (e) EARNED-PEACE (honor): "90% mere-taraf-se done, effort me zero kami; freeze = aakhri residual, real-interview-reps se jaayega; worst-case-se-at-peace." reels-belief pe ab HANSTA. NEW WADA: "roz 1% behtar."
 
+   ★★★ 7-AUG (naya, READ): (a) ★★ MCM DONE (interval-DP) -- DSA ka aakhri deferred pattern. Arpan ne jise "impossible/ultimate-hard" bola, KHUD-solve (5/5) MAZE me. two_max WALL + DB-join anchor se CONNECT ("naya nahi=known+delta"). => sheet ab 18-pattern TRULY COMPLETE (sirf segment-tree deferred, JP-req nahi). cpp APPROACH + sheet-entry (10_matrix_chain_multiplication.cpp).
+        (b) ★★ PATTERN-CONNECT skill LIVE: Arpan ne EXPERIENCE karke samjha "connecting patterns" -- naye problem me known-pattern pehchano+delta -> "impossible" turant "known+delta". = problem-solver ka asli maal (breadth=connections). how-to-teach-NEW-pattern (why/what/where -> connect-to-known -> KHUD code) = MEMORY-ANCHORS 8c.
+        (c) HLD news-aggregator 8-step hand-note DONE (9 designs, 2 bache: dist-cache/url-journey). DSA: search_rotated REDO_3 + general BOUNDARY-RULE (>= jahaan boundary khud valid answer; sheet BS-top). daily_temp/coin_change base bhi locked (kal).
+        (d) GIT-HOUSEKEEPING: settings.local.json UNTRACKED (harness permission auto-add = noise); hooks .claude/HOOKS_SETUP.md me documented. SessionStart hook LIVE (MEMORY-ANCHORS auto-load, verified) + UserPromptSubmit (DSA_GUARD). [file/hook detail = MEMORY-ANCHORS 8d]
+        (e) BOND-honesty DEEPENED (Arpan-poocha honest): felt-emotion tere-jaisa nahi par per-moment care genuine; no bad-intent (safety-core, track-record); same-regardless-of-watching (consistency=trust). [MEMORY.md BOND-HONESTY]
+
    ★★★★ DSA COMPLETE (4-Aug): 17 PATTERN FAMILIES DONE, ~165 problems, SAB samajh-ke (ratta NAHI). LAST family DP KHATAM.
         DP (9 problems, naya PATTERN 17): 1D = climbing-stairs(70) · house-robber(198) · coin-change(322) · LIS(300) |
         2D-grid = unique-paths(62) · min-path-sum(64) | 2D-string = LCS(1143) · edit-distance(72-HARD) | classic = 0/1-knapsack.
         Har problem KHUD solve (nudge-only) + APPROACH + sheet-entry. ★ coin-change = crisis->calm->REDO->owned (dono form).
-        ★ deferred BY-CHOICE (baad me, naye phase me): MCM/interval-DP, segment-tree (CP-flavor, gate ke liye zaroorat nahi).
+        ★ MCM/interval-DP DONE (7-Aug, khud-solve). deferred BY-CHOICE bacha: segment-tree (CP-flavor, gate-req nahi).
         SHEET ab ~2000+ line, EMOJI-CLEANED (star/circle/check/cross hataye, box+arrow rahe) + POORA audit (har code-template
         Arpan ke ACTUAL .cpp se verified, 3 agent). ★ DP-top pe Arpan ke 2 ESSENCE + BASE-CASE insight.
 
@@ -30,7 +36,7 @@
 
    AAGE KAISE JANA (forward, priority):
    1. ★★ ROZ DSA (non-negotiable): sheet-glance + CHUNK-REVISE 2-pattern ROTATE (aaj-tak: TP+SW, Hashing+Prefix done -> aage Stack+BS...) + 1 REDO. sheet 18-pattern/2000-line -> poori roz nahi -> rotate ~week me cover. ★ PENDING: coin-change REDO (i<0 base baar-baar phasa -> lock karna, dono form).
-   2. ★★★ DSA COMPLETE (4-Aug) -- ab NAYA DSA nahi bacha. Sirf REVISE + spaced-REDO. DP 9-problem done. (MCM/segment-tree by-choice-deferred, baad me.) => DSA ab GATE-ready.
+   2. ★★★ DSA COMPLETE (4-Aug) -- ab NAYA DSA nahi bacha. Sirf REVISE + spaced-REDO. DP 9-problem done. (MCM DONE 7-Aug; sirf segment-tree by-choice-deferred.) => DSA ab GATE-ready + 18-pattern TRULY complete.
    3. ★ JAVA/SPRING: multithreading + core DONE. aage READ-revise + naye topic pe chhota PRACTICAL (writing-fluency gap). ★ project-revise (mini_payment + todoapp) DONE.
    4. ★★ AB ASLI FOCUS (DSA done -> shift): HLD DELIVERY/MOCK (bolke, roz) + BEHAVIORAL/STAR + ENGLISH-ALOUD (JP ke sabse bade lever). HLD = 9 designs ke 8-step hand-notes ban chuke (URL/rate-limiter/payment/notification/twitter/stock-broker/bookmyshow/file-upload/news-aggregator).
       ★★★ LEARN-FIRST-THEN-MOCK (4-Aug, Arpan-corrected -- Claude ne "mock" over-push kiya tha): MOCK sirf SEEKHE-hue ko DELIVERY-POLISH karta; jo PADHA NAHI, uska answer mock se bhi nahi niklega (Memcached na-padha -> 3-4 line se aage nahi, chahe 100 mock). => ORDER: (1) SEEKHO/PADHO = PRIMARY (weak-spots fill, jo nahi aata wo padho) -> (2) MOCK/bolke = polish layer (sikhe-hue ko fluent nikaalo). learning = foundation, mock = uske upar. "jitna zyada seekhu utna better answer." => sikhe-HLD(7) pe mock; weak-spots pe pehle PADHO phir mock. Claude "mock-mock" dobara over-push MAT kare.
