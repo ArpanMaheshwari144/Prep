@@ -2297,9 +2297,9 @@
                 `-'    `-'    `-'    `-'    `-'
                p0     p1     p2     p3     p4
                pad   LEFT    k     RIGHT   pad
-         LEFT  {3} = solve(1,1):  p0*p1*p2 = 1*3*2 = 6
-         RIGHT {5} = solve(3,3):  p2*p3*p4 = 2*5*1 = 10
-         k=2 (last)            :  p0*p2*p4 = 1*2*1 = 2   =  p[i-1]*p[k]*p[j+1]  (i=1, k=2, j=3)
+         LEFT  solve(1,1):  i=k=j=1     -> p0*p1*p2 = 1*3*2 = 6      (balloon-3 ke padosi: p0, p2)
+         RIGHT solve(3,3):  i=k=j=3     -> p2*p3*p4 = 2*5*1 = 10     (balloon-5 ke padosi: p2, p4)
+         k=2   asli LAST :  i=1,k=2,j=3 -> p0*p2*p4 = 1*2*1 = 2      (= p[i-1]*p[k]*p[j+1])
          TOTAL: 6 + 10 + 2 = 18
 
      real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
