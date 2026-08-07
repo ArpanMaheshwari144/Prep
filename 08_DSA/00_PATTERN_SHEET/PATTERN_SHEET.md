@@ -2290,10 +2290,9 @@
              idx:    p0    p1    p2    p3    p4
                            |LEFT| (k) |RIGHT|
                            (3)    (2)   (5)
-         LEFT  block (3):   akela balloon  -> p0*p1*p2 = 1*3*2 = 6
-         RIGHT block (5):   akela balloon  -> p2*p3*p4 = 2*5*1 = 10
-         k (last, p2):      poore-range ke edges se -> p0*p2*p4 = 1*2*1 = 2
-                            = p[i-1] * p[k] * p[j+1]
+         LEFT  = p1 (bal 3):  p0*p1*p2 = 1*3*2 = 6
+         RIGHT = p3 (bal 5):  p2*p3*p4 = 2*5*1 = 10
+         k     = p2 (bal 2):  p0*p2*p4 = 1*2*1 = 2   = p[i-1]*p[k]*p[j+1]
          TOTAL: 6 + 10 + 2 = 18
 
      real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
