@@ -2296,8 +2296,8 @@
          // caller: solve(1, n) [n = asli balloon count, pad ke baad].
 
      DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(1,3), k=2 phoda
-             idx:    1     3     2     5     1
-                     p0    p1    p2    p3    p4
+             val:    1     3     2     5     1
+             idx:    p0    p1    p2    p3    p4
                           |LEFT| (k) |RIGHT|
                           (bal3)     (bal5)
          LEFT  (bal3):   1*3*2 = 6     (= p0*p1*p2)
