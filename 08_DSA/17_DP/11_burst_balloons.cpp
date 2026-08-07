@@ -41,10 +41,14 @@ int solve(int i, int j, vector<int> &p, vector<vector<int>> &dp)
 
     int ans = INT_MIN;
     /*
-        k = i..j kyun (na j-1; MCM se ULTA): yahan k = jo balloon PHOODTA (REMOVED), na WALL.
-        LEFT = solve(i, k-1) aur RIGHT = solve(k+1, j) KHAALI ho sakti (k=i -> LEFT khaali; k=j -> RIGHT khaali),
-        aur khaali range base i>j se 0 = VALID. isliye har balloon (i..j) candidate -> k poora i..j.
-        (MCM: k = WALL, dono block >=1 matrix chahiye -> k=j pe RIGHT khaali = invalid -> k max j-1.)
+        k = i..j kyun (na j-1): yahan k = jo balloon PHOODTA hai (REMOVED), na ki WALL.
+        agar k = i  -> LEFT  = solve(i, i-1) KHAALI ho jaata.
+        agar k = j  -> RIGHT = solve(j+1, j) KHAALI ho jaata.
+        par khaali range koi problem nahi -> base i>j se 0 laut aata (koi balloon nahi = 0 coins) = VALID.
+        isliye har balloon (i..j) ko "phoote-wala" maan sakte -> k poora i..j chalta.
+        eg {1,3,2,5,1}: k=i ya k=j pe ek side khaali, base 0 usse sambhaal leta.
+        (MCM se ULTA: wahan k = WALL, dono block me kam-se-kam 1 matrix chahiye ->
+         k=j pe RIGHT block KHAALI = INVALID -> isliye MCM me k max = j-1.)
     */
     for (int k = i; k <= j; k++)
     {
