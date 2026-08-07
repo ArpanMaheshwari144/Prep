@@ -2285,14 +2285,11 @@
              return dp[i][j] = ans
          // caller: solve(1, n) [n = asli balloon count, pad ke baad].
 
-     DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   balloons=[3,2,5] -> pad [1,3,2,5,1], solve(1,3), LAST k=2
-             val:    1     3     2     5     1        (1 = PAD ; asli = 3,2,5)
-             idx:    p0    p1    p2    p3    p4
-                           |LEFT| (k) |RIGHT|
-                           (3)    (2)   (5)
-         LEFT  = p1 (bal 3):  p0*p1*p2 = 1*3*2 = 6
-         RIGHT = p3 (bal 5):  p2*p3*p4 = 2*5*1 = 10
-         k     = p2 (bal 2):  p0*p2*p4 = 1*2*1 = 2   = p[i-1]*p[k]*p[j+1]
-         TOTAL: 6 + 10 + 2 = 18
+     DRY-RUN  [3,2,5] -> pad [1,3,2,5,1] :   k=2 (val 2) ko LAST rakhna -> pehle baaki phodo, phir k
+         phodo 5 :          padosi 2, 1   ->  2*5*1 = 10        bacha:  1 3 2 1
+         phodo 3 :          padosi 1, 2   ->  1*3*2 = 6         bacha:  1 2 1
+         phodo 2 (k, LAST): padosi 1, 1   ->  1*2*1 = 2         bacha:  1 1
+         TOTAL = 10 + 6 + 2 = 18
+         (k LAST tha -> uske DONO padosi sirf PAD (1,1) bache -> yahi p[i-1]*p[k]*p[j+1] ka matlab)
 
      real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
