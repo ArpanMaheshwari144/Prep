@@ -2284,12 +2284,6 @@
                  ans = max(ans, coins)
              return dp[i][j] = ans
          // caller: solve(1, n) [n = asli balloon count, pad ke baad].
-     COIN  p[i-1]*p[k]*p[j+1]  kaise:  k = range [i..j] ka SABSE LAST phoota
-           -> andar ke baaki sab k se PEHLE ja chuke -> k akela; dono taraf sirf RANGE-KE-BAHAR balloons bache
-                 .-.        .-.        .-.
-              (p[i-1])     ( k )     (p[j+1])     <- k ke live padosi = ye do BAHAR wale (FIXED, hilte nahi)
-                 `-'        `-'        `-'
-                        p[i-1] * p[k] * p[j+1]
 
      DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   balloons=[3,2,5] -> pad [1,3,2,5,1], solve(1,3), LAST k=2
                 .-.    .-.    .-.    .-.    .-.
