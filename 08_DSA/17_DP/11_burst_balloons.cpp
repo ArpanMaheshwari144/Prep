@@ -5,14 +5,14 @@
 // jahaan padosi = US WAQT ke zinda balloons (phoote hue gaayab). phodne ke baad left-right adjacent ho jaate.
 // MAX total coins lautao.
 //
-// ---- IDEA (jo aaj samjha; code khud likhna) ----
-//  1. dono taraa PHANTOM 1 pad karo -> [1, ...balloons..., 1]. (kinaare pe gaayab padosi = 1, farak nahi.)
-//  2. "pehle kaunsa phodun" -> phas jaata (padosi badalte, ranges dependent). ULTA socho:
-//     "is range me SABSE AAKHRI (LAST) kaunsa phoota?" -> wo balloon DEEWAR ban jaata:
-//        - uske phodne ke waqt andar sab khatam -> uske padosi = range ke bahar wale FIXED boundaries.
-//        - left-part aur right-part uski wajah se ALAG independent subproblem (deewar beech me rahi).
-//  3. har balloon ko baari-baari "last/deewar" maano -> uska coin + left-part + right-part -> in sab ka MAX.
-//     (min-nahi MAX. state = RANGE (i,j) -> 2D memo. bilkul MCM ka wall, sirf delta.)
+// ---- APPROACH ----  (interval-DP = MCM ka WALL, sirf delta)
+//  solve(i,j) = balloons A_i..A_j sab phodne ka MAX coins. (state = RANGE -> 2D dp[i][j].)
+//     PAD: dono taraf 1 -> [1, ...balloons..., 1]. (kinaare ka gaayab padosi = 1, farak nahi.)
+//     "pehle kaunsa phodun" -> phas jaata (padosi badalte, ranges dependent). ULTA socho:
+//     for k=i..j:  coins = solve(i,k-1) + solve(k+1,j) + p[i-1]*p[k]*p[j+1]   -> in sab ka MAX.
+//  MCM se DELTA: (1) MIN -> MAX  (2) k = REMOVED balloon (na wall-in-block) -> solve(i,k-1), NA solve(i,k)
+//     (3) base i>j (na i==j) -> single balloon PHIR BHI phoodta  (4) pad + boundary p[i-1],p[j+1] (na p[i-1],p[k],p[j]).
+//  real: coins/DP interview-classic. interval-DP FAMILY: MCM, stone-merge, optimal-BST.
 //
 //   balloons=[3,1,5,8]   -> 167
 //   balloons=[1,5]       -> 10
@@ -25,6 +25,9 @@ using namespace std;
 
 int solve(int i, int j, vector<int> &p, vector<vector<int>> &dp)
 {
+    // base i>j: range me KOI balloon bacha hi nahi (khaali) -> phodne ko kuch nahi -> 0.
+    //   i==j (single balloon) base NAHI: wo balloon abhi bhi PHOOTEGA (coin = p[i-1]*p[i]*p[i+1]),
+    //   isliye loop me jaata hai. (MCM se ULTA: wahan single matrix = 0 cost = base tha.)
     if (i > j)
         return 0;
 
