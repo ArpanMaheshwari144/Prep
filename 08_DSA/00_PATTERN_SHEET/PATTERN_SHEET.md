@@ -2300,9 +2300,11 @@
              idx:    p0    p1    p2    p3    p4
                           |LEFT| (k) |RIGHT|
                           (bal3)     (bal5)
+         k=2 phoda -> range TOOT gayi:  LEFT = p1 (bal3)  |  k = p2  |  RIGHT = p3 (bal5)
+         phir teeno ka coin nikaalo:
          LEFT  (bal3):   1*3*2 = 6     (= p0*p1*p2)
          RIGHT (bal5):   2*5*1 = 10    (= p2*p3*p4)
          k=2   phoota:   1*2*1 = 2     (= p0*p2*p4 = p[i-1]*p[k]*p[j+1] ,  i=1,k=2,j=3)
-         JODO: 6 + 10 + 2 = 18    (MCM me result MULTIPLY hote; yahan coins ADD)
+         uske baad JODO: 6 + 10 + 2 = 18    (MCM me result MULTIPLY hote; yahan coins ADD)
 
      real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
