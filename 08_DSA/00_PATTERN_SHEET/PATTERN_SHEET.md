@@ -2234,4 +2234,16 @@
          // k <= j-1 (na j): agar k=j -> RIGHT (k+1..j) KHAALI = invalid. har side >=1 matrix; RIGHT recursion se auto-handle.
      COMBINE (a*b*c): block A_i..A_k -> size p[i-1] x p[k]. wall pe LEFT=p[i-1]xp[k], RIGHT=p[k]xp[j] -> mult = p[i-1]*p[k]*p[j].
               number-line: p[i-1]=poore-left baayaan chhor · p[k]=WALL · p[j]=poore-right dayaan chhor.
+
+     DRY-RUN (combine = p[i-1]*p[k]*p[j]):   p=[10,30,5,60], solve(1,3), wall k=1
+             idx:    10    30    5    60
+                     p0    p1    p2   p3
+                     |LEFT|    |__RIGHT__|
+                     (A1)       (A2..A3)
+         LEFT  (A1):    10x30                          -> 1 matrix:  10 x 30   (= p0 x p1)
+         RIGHT (A2,A3): 30x5 , 5x60   --recursion-->      1 matrix:  30 x 60   (= p1 x p3)
+         COMBINE do result-matrix: (10x30) x (30x60) -> 10 * 30 * 60
+                     = p0 * p1 * p3  =  p[i-1] * p[k] * p[j]   (i=1, k=1, j=3)
+         (3 matrices -> ek side single, ek block. 4 hote -> dono block. formula wahi.)
+
      real: DB JOIN-order optimization · ML/graphics compute. interval-DP FAMILY: burst-balloons, stone-merge, optimal-BST.
