@@ -2257,6 +2257,8 @@
         (padosi = us waqt zinda; array-bahar = 1). saare phod ke MAX total coins?
 
      INPUT p[]: balloons row; dono taraf 1 PAD (kinaare ka gaayab padosi = 1).
+        pad = 1 KYUN (na 0): 1 = MULTIPLY ki identity -> kinaare wala phoote, gaayab-padosi ko 1 se guna = coin waisa ka waisa
+           (edge saaf handle). 0 se pad karte -> coin = x*0 = 0 -> poora coin gayab (galat).
 
             .-.    .-.    .-.    .-.    .-.    .-.
            ( 1 )  ( 3 )  ( 1 )  ( 5 )  ( 8 )  ( 1 )
