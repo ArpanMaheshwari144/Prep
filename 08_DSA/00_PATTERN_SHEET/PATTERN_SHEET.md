@@ -2284,11 +2284,8 @@
                  ans = max(ans, coins)
              return dp[i][j] = ans
          // caller: solve(1, n) [n = asli balloon count, pad ke baad].
-     COIN  p[i-1]*p[k]*p[j+1]  kaise (k = range ka SABSE-LAST phoota):
-          p[i-1]   |<------- range [i .. j] ------->|   p[j+1]
-          baahar-L         andar sab pehle gaye        baahar-R
-                    \_____ k akela bacha (LAST) _____/
-          k ke padosi = range ke BAAHAR wale -> coin = p[i-1] * p[k] * p[j+1]
+     COIN (p[i-1]*p[k]*p[j+1]): k = range [i..j] ka LAST phoota -> andar sab pehle gaye -> k ke padosi = range ke BAAHAR (p[i-1], p[j+1]) -> coin = p[i-1]*p[k]*p[j+1].
+              number-line: p[i-1]=poore-range baayaan-bahar · p[k]=k khud · p[j+1]=poore-range dayaan-bahar.
 
      DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(1,3), k=2 LAST-phoota
              idx:    1     3     2     5     1
