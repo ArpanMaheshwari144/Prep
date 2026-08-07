@@ -2253,8 +2253,8 @@
  │ ▸ BURST BALLOONS (LC 312)  = INTERVAL-DP  = MCM WALL + loop + recurse
  └──────────────────────────────────────────────────────────────
      SAAR : balloons ek-ek phodo. phodne pe coins = left * khud * right (padosi = us waqt ZINDA) -> saare phod ke MAX total.
-     Q (interview framing): "n balloons, har pe ek number. ek-ek phodo; balloon i phodne pe coins = nums[i-1]*nums[i]*nums[i+1]
-        (i-1, i+1 = us waqt ke ZINDA padosi; array ke bahar ho to 1 maano). saare phod ke MAXIMUM total coins nikaalo."
+     Q: balloons row, har pe number. ek-ek phodo; balloon i pe coins = nums[i-1]*nums[i]*nums[i+1]
+        (padosi = us waqt zinda; array-bahar = 1). saare phod ke MAX total coins?
 
      INPUT p[]: balloons row; dono taraf 1 PAD (kinaare ka gaayab padosi = 1).
 
