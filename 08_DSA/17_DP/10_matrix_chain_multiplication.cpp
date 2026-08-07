@@ -41,6 +41,13 @@ int solve(int i, int j, vector<int> &p, vector<vector<int>> &dp)
     }
 
     int ans = INT_MAX;
+    /*
+        k <= j-1 kyun (na j): wall chain ko (i..k) | (k+1..j) me todti hai.
+        agar k = j hota -> RIGHT block (k+1..j) KHAALI ho jaata = invalid split.
+        har side pe kam-se-kam 1 matrix chahiye -> isliye max k = j-1 (RIGHT = sirf A_j).
+        aur RIGHT (k+1..j) manually nahi banate -> solve(k+1, j) recursion APNE AAP handle karta.
+        eg {10,30,5,60}: k=j-1 pe right = single matrix, recursion sambhaal leta.
+    */
     for (int k = i; k <= j - 1; k++)
     {
         ans = min(ans, solve(i, k, p, dp) + solve(k + 1, j, p, dp) + p[i - 1] * p[k] * p[j]);
