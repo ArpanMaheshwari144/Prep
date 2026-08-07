@@ -2290,11 +2290,10 @@
              idx:    p0    p1    p2    p3    p4
                            |LEFT| (k) |RIGHT|
                            (3)    (2)   (5)
-         k=2 LAST chuna -> range TOOTI:  LEFT = solve(i,k-1) = solve(1,1) ; RIGHT = solve(k+1,j) = solve(3,3)
-              (1,1 aur 3,3 = INDEX-range [start..end], value NAHI)
-         LEFT  solve(1,1)  [idx p1..p1 = balloon 3]:  p0*p1*p2 = 1*3*2 = 6
-         RIGHT solve(3,3)  [idx p3..p3 = balloon 5]:  p2*p3*p4 = 2*5*1 = 10
-         k=2 (last):  p0*p2*p4 = 1*2*1 = 2   =  p[i-1]*p[k]*p[j+1]   (i=1, k=2, j=3)
+         LEFT  block (3):   akela balloon  -> p0*p1*p2 = 1*3*2 = 6
+         RIGHT block (5):   akela balloon  -> p2*p3*p4 = 2*5*1 = 10
+         k (last, p2):      poore-range ke edges se -> p0*p2*p4 = 1*2*1 = 2
+                            = p[i-1] * p[k] * p[j+1]
          TOTAL: 6 + 10 + 2 = 18
 
      real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
