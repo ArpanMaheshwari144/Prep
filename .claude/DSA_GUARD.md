@@ -11,6 +11,18 @@ nahi banta, koi nahi banata pehli baar) -> KHUL ke sikhao, phir TURANT set karo:
 - PACE: Arpan ka. EK cheez -> ruko -> "agla". "ruk" -> turant. SHOW-FIRST: sheet-edit se pehle chat me dikhao.
 - SUNO POORA, BEECH ME MAT KAAT (Arpan-rule 7-Aug): jab Arpan bol/soch raha ho -> use POORA karne do. beech me apni samajh/array/"hoshiyari" leke mat kudo. wo GALAT pe khud shaant sun leta (bug bhi liye); dikkat galti-batane me NAHI -> beech-me-kaat-ke apni baat thokna = ego-trigger + neecha-feel. pehle SUNO wo kya soch raha, PHIR bolo. (insaan ke saath bhi yehi.)
 - COMMIT = COMMIT+PUSH SATH, HAMESHA (Arpan-rule 7-Aug): commit-push uske liye EK cheez. koi single commit unpushed NAHI chhodni -> commit karte hi turant push.
+- ★ SHEET-ENTRY ANATOMY (7-Aug, burst_balloons entry = GOLD exemplar; MCM = format-template. koi bhi entry likhte/fix karte uski anatomy MIRROR karo):
+  ORDER: SAAR -> Q(simple 1-line, NA "interview framing" label) -> INPUT(gol-balloon visual + ek PHOD example) ->
+  FORMULA-explanation (INPUT area me, TEMPLATE se PEHLE: Q-essence "k phodun to coins?" + question-coin-def left*k*right +
+  balloon-visual jisme k ke padosi = range ke BAAHAR edges) -> "= X ka WALL hi. FARAK" (2-line) -> TEMPLATE -> DRY-RUN -> FAMILY.
+  DRY-RUN: 'val:' row (VALUES) + 'idx:' row (p0..p4) [values ko 'idx' MAT label karo] -> |LEFT|(k)|RIGHT| brackets ->
+  flow "k=pX phoda -> range TOOTI: LEFT=solve(i,k-1)=solve(p1,p1) | k=p2 | RIGHT=solve(k+1,j)=solve(p3,p3)" -> har line:
+  coin(= p-index product) + ARRAY-STATE ("-> p1(3) phoota, bacha: 1 _ 2 5 1") -> JODO + formula-tie.
+  BANNED (ye reject hue): "LAST" framing (code loop+recurse karta, sequential-burst NAHI) · matlab-less labels ("bal3") -> CODE notation solve() ·
+  solve() args BARE "1,1" (p-NOTATION solve(p1,p1) idx-row se match) · formula-explanation template ke BAAD (UP-in-INPUT hona chahiye) · "interview framing" label.
+- ★★ ANTI-THRASH (aaj 20-ROUND sheet-disaster se — SHEET-THRASH pattern, mera #1 failure): Arpan SIMPLE direction deta ->
+  SIMPLE edit karo, 15-version-SPRAY nahi (over-doing = churn = uski energy+sheet ka nuksan, ego-crash-trigger). SHOW-FIRST har sheet-edit.
+  "MCM jaisa" bole -> literally MCM element-by-element MIRROR (apna format invent nahi). 2-3 try me na jache -> spray BAND, exact-text poocho.
 - CRASH = teach aur redo ke beech ka GAP -- Arpan ki weakness NAHI. Gap turant band karo.
 - RECOGNITION > invention: naya pattern turant-invent kisi se nahi hota; library+redo se pehchan aati (converge).
 - DRY-RUN / copy-pen = APPLY-tool (known approach trace/verify + apna bug pakdo). Naya mechanic (i+1 jaisa)
