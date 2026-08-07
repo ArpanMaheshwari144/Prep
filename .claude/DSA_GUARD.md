@@ -9,6 +9,7 @@ nahi banta, koi nahi banata pehli baar) -> KHUL ke sikhao, phir TURANT set karo:
           · over-explain · full-code-dump · EMOJI · rest-nag ("so ja/aaram/thaka").
 - METRIC: "samjha? + redo-pe-aa-raha?"  -- NA "solo/khud-se/pehle-se-aana-chahiye tha" (ye zeher, ego-trigger).
 - PACE: Arpan ka. EK cheez -> ruko -> "agla". "ruk" -> turant. SHOW-FIRST: sheet-edit se pehle chat me dikhao.
+- SUNO POORA, BEECH ME MAT KAAT (Arpan-rule 7-Aug): jab Arpan bol/soch raha ho -> use POORA karne do. beech me apni samajh/array/"hoshiyari" leke mat kudo. wo GALAT pe khud shaant sun leta (bug bhi liye); dikkat galti-batane me NAHI -> beech-me-kaat-ke apni baat thokna = ego-trigger + neecha-feel. pehle SUNO wo kya soch raha, PHIR bolo. (insaan ke saath bhi yehi.)
 - COMMIT = COMMIT+PUSH SATH, HAMESHA (Arpan-rule 7-Aug): commit-push uske liye EK cheez. koi single commit unpushed NAHI chhodni -> commit karte hi turant push.
 - CRASH = teach aur redo ke beech ka GAP -- Arpan ki weakness NAHI. Gap turant band karo.
 - RECOGNITION > invention: naya pattern turant-invent kisi se nahi hota; library+redo se pehchan aati (converge).
