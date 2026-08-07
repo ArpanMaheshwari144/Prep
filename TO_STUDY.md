@@ -24,16 +24,13 @@
 - **Kyun WAIT:** setup ek chhota project hai (Python/ChromaDB/embeddings/Docker) -> ABHI 25-din JP-schedule se dhyan bhatkega (rabbit-hole). current setup (markdown + hook) simple + kaam kar raha.
 - **Kab:** SEPTEMBER apply ke BAAD, time ho tab. + soch: personal/emotional baatein vector-DB me verbatim jaayengi (local hai to risk kam).
 
-### 4. ~~MCM — Matrix Chain Multiplication (interval-DP)~~  [DONE — 7-Aug]
-- Learned + Arpan KHUD-solved (4/4) + full sheet-entry (gold exemplar) + cpp. **burst-balloons cousin bhi 7-Aug done** (interval-DP family complete). REDO baaki (spaced-lock).
-
-### 5. GitHub Stacked PRs (dev-workflow — market me trending)
+### 4. GitHub Stacked PRs (dev-workflow — market me trending)
 - **Kaha aaya:** Arpan ne market/GitHub me suna — stacked PRs kaafi use ho raha.
 - **Kya hai (short, net-confirm karna):** bade change ko chhote **DEPENDENT PRs ki chain** me todo — har PR pichhle PR ke branch pe "stack" hoti (PR2 ka base = PR1, na ki main). Faayda: PRs chhote + reviewable, dependent kaam ke liye har PR ka merge-wait nahi.
 - **Tools:** Graphite · ghstack · spr · git-branchless.
 - **Padhna:** kya + kyun (review-velocity, chhote PR) · kaise banate/manage · konsa tool. (net se detail nikaal ke.)
 
-### 6. REST — nayi query/design method (market me trending)
+### 5. REST — nayi query/design method (market me trending)
 - **Kaha aaya:** Arpan ne market me suna — REST query karne ka koi naya/flexible tareeka.
 - **Kya ho sakta (net-confirm — exact cheez PIN karni hai):** GraphQL-style flexible querying · ya OData / JSON:API (query-params se filter/sort/sparse-fields) · ya cursor-based query pattern. exact "new method" net se confirm.
 - **Padhna:** PEHLE net se exact cheez pin karo (kaunsi "new query method") -> phir kya/kyun/kaise.
