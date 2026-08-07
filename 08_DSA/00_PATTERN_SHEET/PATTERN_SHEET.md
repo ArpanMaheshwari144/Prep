@@ -2274,7 +2274,7 @@
 
         => phodne pe coin = (left) * (khud) * (right) ;  caller solve(1, n)  (n = asli count)
 
-     Q (yahan): "k ko phodun to coins kitne milenge?"
+     Q (yahan): "k ko phodun to coins kitne milenge?"  ->  question ke hisaab se: coin = (left-padosi) * k * (right-padosi)
      FORMULA  p[i-1]*p[k]*p[j+1]  kaise banti: k phoda -> uske padosi = range ke BAAHAR wale 2 balloons:
               .-.                    .-.                    .-.
            (p[i-1])               ( p[k] )              (p[j+1])
