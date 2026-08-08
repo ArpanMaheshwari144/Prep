@@ -390,7 +390,8 @@
      SAAR : k-size ke har window ka sum -> unme se MAX. fixed window (size hamesha k).
      KEY  : variable nahi -- size fix k, isliye IF (ek hi remove), WHILE nahi.
      j pe : sum += nums[j].
-     FULL (j-i+1 >= k) -> maxSum = max(maxSum, sum); phir left hatao (sum -= nums[i], i++).
+     FULL (j-i+1 >= k) -> maxSum = max(maxSum, sum); phir 1 remove (sum -= nums[i], i++).
+     WHY IF-not-WHILE : fixed size -> har step 1 add + 1 remove -> slide. variable hota to WHILE (kai remove).
      ans  : maxSum. window k-size pe slide.
 
 ┌── FAMILY: COUNT (length nahi) ────────────────────────────────
@@ -435,9 +436,10 @@
  │ ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD
  └──────────────────────────────────────────────────────────────
      t = "abc"  (count = 3 = t.size()).   -- SAME skeleton as LC-76, bas t FIXED "abc" + answer alag.
-     for j:  if(mp[s[j]]>0) count--;  mp[s[j]]--;   // EXPAND (same)
-     while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   // shrink to INVALID
-     ans += i;   // loop ke BAAD, har j pe
+     for j:                                          // har j pe (window right = j)
+         if(mp[s[j]]>0) count--;  mp[s[j]]--;        // EXPAND (same)
+         while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   // shrink to INVALID
+         ans += i;                                   // for ke ANDAR, while ke BAAD -> har j pe judta
      WHY ans += i: shrink window INVALID tak le jaata -> ab [0..i-1] SAARE valid left-starts -> ginti = i.
      CODE: numberOfSubstrings(s) = minWindow(s, "abc")  -- wahi SW function reuse, bas t="abc" pass.
 
