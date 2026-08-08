@@ -412,18 +412,21 @@
 
  SHARED SKELETON (expand + shrink -- dono me same):
       need-map(t);  count = t.size();                 // count==0 => window me t ke SAARE char (VALID)
-      for j (EXPAND):
+      while (j < n) {                                  // OUTER: j (right) aage
           if (mp[s[j]] > 0) count--;                  // t-char mila -> ek zaroorat puri
           mp[s[j]]--;                                 // IF ke BAHAR: non-t char -ve -> count me "invisible"
                                                       //   (andar rakha to D-ASYMMETRY BUG: shrink me count++ galat)
-          while (count == 0) {                         // VALID -> shrink (i++)
+          while (count == 0) {                         // INNER: VALID -> shrink (i++)
               mp[s[i]]++;  if (mp[s[i]] > 0) count++;  i++;   // MIRROR: aana = -- , jaana = ++
           }
+          j++;
+      }
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MIN WINDOW SUBSTRING (LC-76, Hard) -- answer = MIN-track, loop ke ANDAR
  └──────────────────────────────────────────────────────────────
      s ka sabse CHHOTA window jisme t ke saare char.  count = t.size().
+     VARIANT: LC-1358 = yahi machine, t="abc" + length ki jagah COUNT (neeche).
      while (j < n) {                          // OUTER: j (right) aage
          if(mp[s[j]]>0) count--;  mp[s[j]]--; // EXPAND
          while (count == 0) {                 // INNER: VALID -> shrink + SAVE (answer andar)
@@ -438,7 +441,8 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD
  └──────────────────────────────────────────────────────────────
-     t = "abc"  (count = 3 = t.size()).   -- SAME skeleton as LC-76, bas t FIXED "abc" + answer alag.
+     = LC-76 wahi machine. DELTA: (1) t FIX "abc" (given nahi) (2) length ki jagah COUNT (ans += i, loop-baad).
+     t = "abc"  (count = 3 = t.size()).
      while (j < n) {                                 // OUTER: j (right) aage
          if(mp[s[j]]>0) count--;  mp[s[j]]--;        // EXPAND (same)
          while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   // INNER: shrink to INVALID
