@@ -28,6 +28,11 @@ import java.util.stream.*;
 public class Q13_DeptToNames {
 
     static Map<String, List<String>> deptToNames(List<String> rows) {
+        // groupingBy ko DO cheez chahiye: (1) KEY  (2) VALUE -- dono ko WAHI poora `s` milta.
+        //   s = "arpan,eng"
+        //   KEY   = s.split(",")[1]  -> "eng"    (dept pe group)
+        //   VALUE = s.split(",")[0]  -> "arpan"  (WAHI s DOBARA split, is baar naam)
+        //   yani ek hi string do baar split -- pehli baar dept(key), doosri baar name(value).
         return rows.stream().collect(Collectors.groupingBy(s -> s.split(",")[1],
                 Collectors.mapping(s -> s.split(",")[0], Collectors.toList())));
     }
