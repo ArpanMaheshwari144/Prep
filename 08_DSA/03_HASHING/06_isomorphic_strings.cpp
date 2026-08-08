@@ -46,8 +46,10 @@ bool isIsomorphic(string s, string t)
         //   in dono me se KOI BHI EK clash mila -> galat -> return false. isliye OR (||).
         //   (&& hota to DONO taraf ek saath clash chahiye hota -> galat; ek hi taraf ka clash bhi false hona chahiye.)
         //   example: pehle g->d map kiya; ab wahi g phir 'e' char pe aa raha (g->e) -> mp1 side clash -> || se turant false.
-        if (!mp1.empty() && !mp2.empty() &&
-                (mp1.count(s[i]) == 1 && mp1[s[i]] != t[i]) ||
+        // NOTE: !mp1.empty() && !mp2.empty() guard HATA diya -- redundant. count() khud absent-key
+        //   handle karta (0 return -> condition false -> koi clash nahi -> else me jodo). guard-version me
+        //   'a && b || c' precedence bhi ajeeb tha; ye clean form sahi.
+        if ((mp1.count(s[i]) == 1 && mp1[s[i]] != t[i]) ||
             (mp2.count(t[i]) == 1 && mp2[t[i]] != s[i]))
         {
             return false;
