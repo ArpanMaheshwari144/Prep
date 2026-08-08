@@ -426,7 +426,7 @@
  │ ▸ MIN WINDOW SUBSTRING (LC-76, Hard) -- answer = MIN-track, loop ke ANDAR
  └──────────────────────────────────────────────────────────────
      s ka sabse CHHOTA window jisme t ke saare char.  count = t.size().
-     VARIANT: LC-1358 = yahi machine, t="abc" + length ki jagah COUNT (neeche).
+     VARIANT: LC-1358 = YEHI minWindow() reuse (t="abc") -- MIN-line hatao, while-baad ans += i. (neeche)
      while (j < n) {                          // OUTER: j (right) aage
          if(mp[s[j]]>0) count--;  mp[s[j]]--; // EXPAND
          while (count == 0) {                 // INNER: VALID -> shrink + SAVE (answer andar)
@@ -441,7 +441,11 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD
  └──────────────────────────────────────────────────────────────
-     = LC-76 wahi machine. DELTA: (1) t FIX "abc" (given nahi) (2) length ki jagah COUNT (ans += i, loop-baad).
+     = LC-76 ka SAME minWindow() -- literally REUSE: numberOfSubstrings(s) = minWindow(s, "abc").
+       farak SIRF answer-line:
+           LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (MIN track)
+           LC-1358 : while ke BAAD  -> ans += i                        (COUNT)
+       WHY ans += i: shrink INVALID tak -> i = kitne valid left-starts. hand-trace "abcabc": i = 0,0,1,2,3,4 -> sum 10.
      t = "abc"  (count = 3 = t.size()).
      while (j < n) {                                 // OUTER: j (right) aage
          if(mp[s[j]]>0) count--;  mp[s[j]]--;        // EXPAND (same)
