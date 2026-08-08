@@ -18,7 +18,13 @@ import java.util.stream.*;
 public class Q4_GroupByFirstLetter {
 
     static Map<Character, List<String>> groupByFirstLetter(List<String> words) {
-        // TODO: tu likh -- words.stream() -> collect(Collectors.groupingBy(w -> w.charAt(0)))
+        // TYPE INFERENCE -- `w` ki type kahin likhi nahi, phir Java ko kaise pata `w` = String?
+        //   type LEFT se aata: method me declare kiya `List<String> words`
+        //     -> words.stream() banata Stream<String> (String ki stream)
+        //     -> lambda `w -> ...` me Java samajh jaata "stream String rakhti -> w = String".
+        //   isliye `String w` likhna nahi padta; Java khud bhar deta (chaho to `(String w) -> ...` likh sakte, SAME).
+        //   List<Integer> -> Stream<Integer> -> n = Integer;  int[] -> IntStream -> n = int.
+        //   = C++ ka `auto` (for(auto x : nums)) -- compiler type khud nikaal leta. Type upar se neeche behta.
         return words.stream().collect(Collectors.groupingBy(w -> w.charAt(0)));
     }
 
