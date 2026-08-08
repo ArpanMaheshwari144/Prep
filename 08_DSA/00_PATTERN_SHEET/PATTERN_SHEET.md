@@ -483,6 +483,16 @@
        farak SIRF answer-line:
            LC-438 : isAnagram mila -> ans.push_back(i)  ... loop-baad: return ans    (SAARE indices)
            LC-567 : isAnagram mila -> return true        ... loop-baad: return false  (pehla match = bool)
+     CODE (findAnagrams; skeleton LC-438 wala, sirf answer-handle badla):
+         while(j < s.size()){
+             while(j-i+1 > p.size()) i++;                  // window ko p-size pe rakho (FIXED)
+             if(j-i+1 == p.size())
+                 if(isAnagram(s.substr(i,j-i+1), p))
+                     return true;                          // <- DELTA: push ki jagah return true
+             j++;
+         }
+         return false;                                     // loop-baad: koi na mila
+     checkInclusion(s1,s2) = findAnagrams(s2, s1).
 
  LONGEST vs SHORTEST (yaad rakh): LONGEST -> shrink jab INVALID, ans=MAX. SHORTEST (min-len) -> shrink jab VALID, ans=MIN.
 ```
