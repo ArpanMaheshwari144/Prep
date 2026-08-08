@@ -424,10 +424,13 @@
  │ ▸ MIN WINDOW SUBSTRING (LC-76, Hard) -- answer = MIN-track, loop ke ANDAR
  └──────────────────────────────────────────────────────────────
      s ka sabse CHHOTA window jisme t ke saare char.  count = t.size().
-     for j:  if(mp[s[j]]>0) count--;  mp[s[j]]--;   // EXPAND
-     while (count == 0) {                      // VALID -> shrink + SAVE (answer loop ke ANDAR)
-         len=j-i+1; if(len<minLen){minLen=len; index=i;}
-         mp[s[i]]++; if>0 count++; i++;
+     while (j < n) {                          // OUTER: j (right) aage
+         if(mp[s[j]]>0) count--;  mp[s[j]]--; // EXPAND
+         while (count == 0) {                 // INNER: VALID -> shrink + SAVE (answer andar)
+             len=j-i+1; if(len<minLen){minLen=len; index=i;}
+             mp[s[i]]++; if>0 count++; i++;
+         }
+         j++;
      }
      return minLen==INT_MAX ? "" : s.substr(index, minLen).
      DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) se map+count nikla.
@@ -436,10 +439,12 @@
  │ ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD
  └──────────────────────────────────────────────────────────────
      t = "abc"  (count = 3 = t.size()).   -- SAME skeleton as LC-76, bas t FIXED "abc" + answer alag.
-     for j:                                          // har j pe (window right = j)
+     while (j < n) {                                 // OUTER: j (right) aage
          if(mp[s[j]]>0) count--;  mp[s[j]]--;        // EXPAND (same)
-         while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   // shrink to INVALID
-         ans += i;                                   // for ke ANDAR, while ke BAAD -> har j pe judta
+         while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   // INNER: shrink to INVALID
+         ans += i;                                   // outer ke ANDAR, inner-while ke BAAD -> har j pe
+         j++;
+     }
      WHY ans += i: shrink window INVALID tak le jaata -> ab [0..i-1] SAARE valid left-starts -> ginti = i.
      CODE: numberOfSubstrings(s) = minWindow(s, "abc")  -- wahi SW function reuse, bas t="abc" pass.
 
