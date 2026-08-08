@@ -292,12 +292,14 @@
      INVALID = mp[s[j]]>1 (jo abhi add hua wahi repeat). empty-string edge -> INT_MIN -> 0.
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ CHAR REPLACEMENT (LONGEST, LC-424)
+ │ ▸ CHAR REPLACEMENT (LONGEST, LC-424)  = variable window + freq-map (k badal sakte)
  └──────────────────────────────────────────────────────────────
-     freq-map. j pe: mp[s[j]]++, maxFreq = max(maxFreq, mp[s[j]]).
-     VALID (windowLen - maxFreq <= k)  -> maxLen = max(maxLen, windowLen).
-     INVALID (windowLen - maxFreq > k) -> left shrink (mp[s[i]]--, i++).
-     CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window apni best-length
+     SAAR : longest window jisme <=k char badal ke sabko SAME bana sako. variable window + freq-map.
+     KEY  : windowLen - maxFreq = kitne char badalne padenge. <=k -> valid.
+     j pe : mp[s[j]]++, maxFreq = max(maxFreq, mp[s[j]]).
+     VALID   (windowLen - maxFreq <= k)  -> maxLen = max(maxLen, windowLen).
+     INVALID (windowLen - maxFreq > k)   -> left shrink (mp[s[i]]--, i++).
+     CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window best-length
         se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
 
  ┌──────────────────────────────────────────────────────────────
@@ -343,11 +345,13 @@
      farak: fruit me "2" hardcoded tha, yahan wahi jagah "k" (mp.size() > k).
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ EQUAL SUBSTR WITHIN BUDGET (LC-1208)
+ │ ▸ EQUAL SUBSTR WITHIN BUDGET (LC-1208)  = longest-subarray-sum <= k (string ke bhes me)
  └──────────────────────────────────────────────────────────────
-     cost per char = |s[i]-t[i]| -> problem = "cost-array ka sabse LAMBA window jiska SUM <= maxCost".
-     j se cost += abs(s[j]-t[j]);  WHILE (cost > maxCost) -> cost -= abs(s[i]-t[i]), i++;  ans = max(ans, j-i+1); j++.
-     track sirf cost (koi map nahi). = longest-subarray-sum <= k, string ke bhes me.
+     SAAR : s ko t banane me har char ka cost = |s[i]-t[i]|. longest window jiska cost-SUM <= maxCost.
+     KEY  : cost-array bana ke "longest subarray with sum <= k" -- bas string ke bhes me chhupa.
+     j pe : cost += abs(s[j]-t[j]).
+     INVALID (cost > maxCost) -> WHILE shrink: cost -= abs(s[i]-t[i]), i++.
+     ans  : max(ans, j-i+1).  track sirf cost (koi map nahi).
 
 ┌── FAMILY: variable-SHORTEST ──────────────────────────────────
 │ KYUN SAATH: ULTA — jab VALID ho tab shrink (WHILE) karke chhota karo; ans = MIN length.
