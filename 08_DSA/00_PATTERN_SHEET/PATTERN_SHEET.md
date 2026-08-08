@@ -520,16 +520,36 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ISOMORPHIC STRINGS
  └──────────────────────────────────────────────────────────────
-     2 MAP trick (dono taraf): mp1=s->t, mp2=t->s. (ek map kaafi nahi -- "ab"->"aa" clash sirf ULTI-taraf se pakadta.)
-     MAP-CHECK idiom (har map-Q me): mp.count(key)==1 (key hai?) && mp[key]!=val (par value alag?) -> CLASH -> false.
-     || KYUN: mp1-side clash YA mp2-side clash -> koi ek bhi -> false (isliye OR, && nahi).
-     loop s/t saath; koi bhi taraf clash -> false; warna dono map me jodo (mp1[s]=t, mp2[t]=s). end -> true.
+     SAAR : s->t har char ka 1-to-1 mapping (bijection)? "egg"->"add" true; "foo"->"bar", "ab"->"aa" false.
+     KEY  : 2 MAP dono taraf -- mp1=s->t, mp2=t->s. ek map kaafi nahi ("ab"->"aa" clash sirf ULTI-taraf pakadta).
+     CLASH: mp.count(key)==1 && mp[key]!=val. dono taraf check, || (kisi ek taraf bhi clash -> false).
+     TEMPLATE:
+         for(i=0..n-1){
+             if( (mp1.count(s[i]) && mp1[s[i]]!=t[i]) || (mp2.count(t[i]) && mp2[t[i]]!=s[i]) )
+                 return false;
+             mp1[s[i]]=t[i];  mp2[t[i]]=s[i];
+         }
+         return true;
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ WORD PATTERN
  └──────────────────────────────────────────────────────────────
-     ISOMORPHIC ka bhai -- wahi 2-map bijection, bas char<->STRING (word). s ko stringstream(s)+while(ss>>word) se todo.
-     pattern pe for-loop NAHI (words drive) -> counter i: if(i<pattern.size()){ map + i++ }. mapping = char<->word clash-check dono taraf (|| , same isomorphic).
+     = ISOMORPHIC ka SAME 2-map clash-check. REUSE: wahi mp1/mp2 || check, bas char <-> WORD.
+       farak SIRF 3 delta:
+           (1) INPUT: char[] ki jagah word-stream -> stringstream ss(s); while(ss>>word).
+           (2) KEY  : pattern[i] <-> word  (char<->char nahi).
+           (3) GUARD: end me pattern.size()==j (word-count) -> warna false ("a","dog cat" galat-true se bache).
+     TEMPLATE:
+         stringstream ss(s); string word; int i=0, j=0;
+         while(ss>>word){
+             if(i<pattern.size()){
+                 if( (mp1.count(pattern[i]) && mp1[pattern[i]]!=word) || (mp2.count(word) && mp2[word]!=pattern[i]) )
+                     return false;                       // <- ISOMORPHIC ki EXACT clash-line, bas char->word
+                 mp1[pattern[i]]=word; mp2[word]=pattern[i]; i++;
+             }
+             j++;
+         }
+         return pattern.size()==j;
      EDGE: words ki ginti (j) == pattern.size() honi chahiye (warna "a","dog cat" galat true). end me pattern.size()==j -> true.
 
 ┌── (STANDALONE — apni alag trick) ─────────────────────────────
