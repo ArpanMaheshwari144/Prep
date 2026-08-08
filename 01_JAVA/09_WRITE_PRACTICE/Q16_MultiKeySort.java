@@ -25,6 +25,14 @@ public class Q16_MultiKeySort {
     }
 
     static List<String> sortNames(List<Emp> emps) {
+        // TYPE kyun ek jagah likha, doosri me nahi? -> context hai ya nahi.
+        //   .map(e -> e.name)  -> e ka type NAHI likha: yahan Stream<Emp> pe hain -> Java stream se
+        //        janta e=Emp (context maujood) -> khud infer.
+        //   Comparator.comparing((Emp e) -> e.dept) -> (Emp e) LIKHA: ye comparator ALAG standalone
+        //        ban raha, stream se juda nahi -> Java ke paas e ka type janne ka context NAHI ->
+        //        khud batana pada. + thenComparing chain se inference aur toot-ti -> explicit type zaroori.
+        //   RULE: stream-ke-andar (map/filter) -> type stream se aata (na likho); comparator/collector
+        //        jo alag+chained ban raha -> context nahi -> type khud likho. (comparing se (Emp e) hatao -> error.)
         return emps.stream().sorted(Comparator.comparing((Emp e) -> e.dept)
                 .thenComparing(Comparator.comparingInt((Emp e) -> e.salary).reversed()))
                 .map(e -> e.name).collect(toList());
