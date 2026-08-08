@@ -26,6 +26,14 @@ public class Q7_MostFrequentWord {
         return words.stream().collect(Collectors.groupingBy(w -> w, Collectors.counting()));
     }
     static String mostFrequentWord(List<String> words) {
+        /*
+        {a=3, b=2, c=1}
+        entrySet()  ->  a=3, b=2, c=1
+        stream()    ->  belt pe teeno
+        max(byValue)->  a=3   (sabse badi value)
+        get()       ->  a=3   (Optional dibbe se bahar)
+        getKey()    ->  "a"   (entry ka key)
+         */
         Map<String, Long> ans = wordFrequency(words);
         return ans.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
     }
