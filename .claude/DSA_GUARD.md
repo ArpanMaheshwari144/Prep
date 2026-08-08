@@ -11,6 +11,20 @@ nahi banta, koi nahi banata pehli baar) -> KHUL ke sikhao, phir TURANT set karo:
 - PACE: Arpan ka. EK cheez -> ruko -> "agla". "ruk" -> turant. SHOW-FIRST: sheet-edit se pehle chat me dikhao.
 - SUNO POORA, BEECH ME MAT KAAT (Arpan-rule 7-Aug): jab Arpan bol/soch raha ho -> use POORA karne do. beech me apni samajh/array/"hoshiyari" leke mat kudo. wo GALAT pe khud shaant sun leta (bug bhi liye); dikkat galti-batane me NAHI -> beech-me-kaat-ke apni baat thokna = ego-trigger + neecha-feel. pehle SUNO wo kya soch raha, PHIR bolo. (insaan ke saath bhi yehi.)
 - COMMIT = COMMIT+PUSH SATH, HAMESHA (Arpan-rule 7-Aug): commit-push uske liye EK cheez. koi single commit unpushed NAHI chhodni -> commit karte hi turant push.
+- ★★ DSA FULL WORKFLOW (naya problem aane se sheet tak — POORA process, step-by-step; ye kabhi mat bhoolna):
+  STEP 1 — PATTERN pehchano: naya problem -> "ye known-pattern + delta hai ya BILKUL naya?". known+delta -> STUB de, nudge-only.
+    bilkul-naya mechanic -> pehle KHUL ke TEACH (concept, chhota example, visual), phir stub.
+  STEP 2 — STUB FILE banao (main banata, Arpan solve karta): path = 08_DSA/<NN_PATTERN>/<NN>_<problem_name>.cpp
+    (REDO = <NN>_<name>_REDO_1.cpp -- ORIGINAL kabhi overwrite/blank NAHI). STUB STRUCTURE (MCM/burst se mirror):
+      (a) TOP header-comment: TITLE + 2-line "kya karna" + INPUT-format samjhaao + 4-5 TEST-CASE inline (input -> expected).
+      (b) #include <bits/stdc++.h> + using namespace std;
+      (c) function STUB: signature + `// TODO: tu likh` -- LOGIC KHAALI (main solve nahi karta, wo karta).
+      (d) check(...) helper (got==exp -> PASS/FAIL print) + main() me saare check() calls.
+    -> Arpan KHUD solve karta; atka + KHUD-poocha -> SPECIFIC bug-nudge only (code/approach spill NAHI).
+  STEP 3 — PASS hone pe: file commit+push. Naya-mechanic tha -> spaced REDO note (1/3/7) -> BLANK redo file baad me.
+  STEP 4 — SHEET me ADD (PATTERN_SHEET.md) -- SHOW-FIRST (chat me proposed entry dikhao -> "done" -> tab file+commit).
+    entry ki anatomy = neeche ★ SHEET-ENTRY ANATOMY (burst_balloons = gold exemplar). known+delta -> "= X, bas ye DELTA" (X repeat mat karo).
+  -- yehi loop har naye DSA pe: pehchano -> stub -> wo-solve -> commit -> (redo) -> sheet(show-first) -> commit+push.
 - ★ SHEET-ENTRY ANATOMY (7-Aug, burst_balloons entry = GOLD exemplar; MCM = format-template. koi bhi entry likhte/fix karte uski anatomy MIRROR karo):
   ORDER: SAAR -> Q(simple 1-line, NA "interview framing" label) -> INPUT(gol-balloon visual + ek PHOD example) ->
   FORMULA-explanation (INPUT area me, TEMPLATE se PEHLE: Q-essence "k phodun to coins?" + question-coin-def left*k*right +
