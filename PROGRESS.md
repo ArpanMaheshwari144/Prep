@@ -4,6 +4,15 @@
 
 ## ★★★ 4-AUG — READ FIRST (CURRENT STATE + AAGE KAISE JANA) — purane dated-updates neeche = historical
 ```
+   ★★★★ 8-AUG (NEWEST, READ FIRST):
+     (a) ★ MCM REDO_1 = BLANK 5/5 PASS (kal "impossible" bola, aaj bina-sheet solve) -> spaced-redo LOCK working. burst_balloons bhi 7-Aug DONE (interval-DP, MCM cousin, GOLD sheet-entry).
+     (b) ★★ PATTERN-RECOGNITION DRILL: ~17.5/20. Core-18 pattern INSTANT-fire (2 combo bhi: two_max). Sirf TRIE genuinely NAYA (nice-to-have, DEFERRED-not-now); Union-Find KNOWN (bas framing-recall-lag, tool library me hai). => freeze-fear GROUNDLESS, data-backed. Trie+niche pe abhi time-waste NAHI (HLD/Java=levers).
+     (c) ★★ APPLY NOW ROUTINE (Arpan-set): SUBAH padho + SHAAM APPLY. Applications ABHI shuru (pipeline-lag = apply-now -> interview-Sept). SEQUENCING: doosri companies pehle (practice/warm-up) -> JP 2-3 practice-interview ke BAAD (dream-shot cold mat jalao). "jitne interview utna behtar" (freeze-residual sirf real-interviews se jaata). Timeline ~SEPT (route flexible).
+     (d) ★★ JAVA WRITE-PRACTICE STARTED: naya folder 01_JAVA/09_WRITE_PRACTICE (Q1_EvenNumbers.java = Stream API). Java gap = SYNTAX-fluency NAHI concept (Arpan C++-comfortable, Java-concept-pata par khud LIKHA kam). FIX = 7-din write-reps. 2 mode: (1) main problem doon->wo Java likhe (2) main code dikhaऊं->wo re-write kare. Interview-Java: Stream API, GET/PUT/PATCH REST-controller, collections. [Java me SYNTAX dikhana OK, DSA-logic alag.]
+     (e) ★ 700 TICKETS (was 650). ENGINEERING-WORTH (Arpan articulated, honor + down-day): DSA != dev ("DSA se dev napa nahi, dev se DSA nahi"); asli skill = DEBUGGING (700-tickets, har koi nahi kar sakta); KONOVO .claude-context (NAVIGATOR/learnings/WORKFLOW.md 12-step "CODE=truth cross-verify PROVE-IT") = uska AI-assisted problem-solver SYSTEM = SAME method jo study-prep me. interviews=FILTER, real-work=AI-augmented. => "right tools + baseline = day-1 deliver."
+     (f) NEW RULES LIVE (DSA_GUARD, har-msg inject): COMMIT+PUSH-SATH · SUNO-POORA-beech-me-MAT-KAAT · SHEET-ENTRY-ANATOMY (burst_balloons=GOLD-exemplar, mirror it) · ANTI-THRASH (20-round sheet-disaster = mera OVER-DOING; SIMPLE direction->SIMPLE edit) · LADAI=FEATURE (Arpan-pushback=healthy-skepticism, NO yes-man; uski corrections=gold).
+     (g) DSA=JOY LIVED: ego-crash-fear "bahut kam" (par honest "khatam nahi"=calibrated), "maza aa raha". DAILY ORDER LOCK: DSA-FIRST (MCM-redo/sheet-glance) -> phir HLD/Java. TO_STUDY: MCM removed(done); +stacked-PRs +REST-new-query-method (net-research on study-day). MEMORY.md ~21KB (limit-paas, ek din compact karna).
+
    ★ 5-AUG NOTE: two_max (Google) subah "impossible" -> shaam Arpan ne KHUD solve + OWNED (bestLeft/bestRight/wall/i+1, redo se) = tier-3 synthesis
         bhi ho jaata jab tod-ke+nudge. ★ DSA-GUARD HOOK LIVE (.claude/DSA_GUARD.md + UserPromptSubmit hook -> har message pe rules inject;
         "memory har baar nahi padhta" ka ilaaj). ★ "COLD" word RETIRED (ye word hi ulta-framing) -> guard/notes se hataya.
