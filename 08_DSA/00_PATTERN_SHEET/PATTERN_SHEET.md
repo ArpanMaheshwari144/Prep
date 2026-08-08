@@ -478,12 +478,11 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PERMUTATION IN STRING (LC-567)  = FIND-ALL-ANAGRAMS ka EXACT same code
  └──────────────────────────────────────────────────────────────
-     SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? -> upar wale ka HUBAHU same skeleton.
-     CONNECTION: bilkul FIND-ALL-ANAGRAMS -- same isAnagram + same fixed-window. SIRF 1 DELTA:
-        anagram mila -> push-index ki jagah -> SEEDHA return TRUE (koi na mile -> return FALSE).
-        i.e.  if(isAnagram(...)) return true;   ... loop-ke-baad return false;
-     checkInclusion(s1,s2) = findAnagrams(s2, s1) with "return true on first match".
-     farak sirf: FIND-ALL = saare indices (push) · PERMUTATION = pehla match = TRUE (bool).
+     SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? (bool)
+     = FIND-ALL-ANAGRAMS ka SAME code -- REUSE: checkInclusion(s1,s2) = findAnagrams(s2, s1).
+       farak SIRF answer-line:
+           LC-438 : isAnagram mila -> ans.push_back(i)  ... loop-baad: return ans    (SAARE indices)
+           LC-567 : isAnagram mila -> return true        ... loop-baad: return false  (pehla match = bool)
 
  LONGEST vs SHORTEST (yaad rakh): LONGEST -> shrink jab INVALID, ans=MAX. SHORTEST (min-len) -> shrink jab VALID, ans=MIN.
 ```
