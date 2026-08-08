@@ -385,20 +385,25 @@
 └───────────────────────────────────────────────────────────────
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ MAX SUM OF K (FIXED)
+ │ ▸ MAX SUM OF K (FIXED)  = fixed window size-k + running sum
  └──────────────────────────────────────────────────────────────
-     i/j pointer (baaki SW jaisa): sum += nums[j]. IF (j-i+1) >= k (WHILE nahi -- fixed size, ek hi remove) ->
-     maxSum = max(maxSum, sum); phir left hatao (sum -= nums[i], i++). window k-size pe slide. ans = maxSum.
+     SAAR : k-size ke har window ka sum -> unme se MAX. fixed window (size hamesha k).
+     KEY  : variable nahi -- size fix k, isliye IF (ek hi remove), WHILE nahi.
+     j pe : sum += nums[j].
+     FULL (j-i+1 >= k) -> maxSum = max(maxSum, sum); phir left hatao (sum -= nums[i], i++).
+     ans  : maxSum. window k-size pe slide.
 
 ┌── FAMILY: COUNT (length nahi) ────────────────────────────────
 │ KYUN SAATH: subarray GINTI chahiye (length nahi); valid window pe count += (j-i+1).
 └───────────────────────────────────────────────────────────────
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ SUBARRAY PRODUCT < K
+ │ ▸ SUBARRAY PRODUCT < K  = variable window + COUNT (running product)
  └──────────────────────────────────────────────────────────────
-     COUNT (length nahi). track: prod; INVALID = prod>=k -> prod/=nums[i], i++.
-     COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid). (bahut count-Q me)
+     SAAR : kitne subarray jinka product < k. variable window, COUNT (length nahi).
+     j pe : prod *= nums[j].
+     INVALID (prod >= k) -> shrink: prod /= nums[i], i++.
+     COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid subarray). (bahut count-Q me)
 
 ┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
 │ LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD). t="abc" -> dono ek.
@@ -418,8 +423,11 @@
  │ ▸ MIN WINDOW SUBSTRING (LC-76, Hard) -- answer = MIN-track, loop ke ANDAR
  └──────────────────────────────────────────────────────────────
      s ka sabse CHHOTA window jisme t ke saare char.  count = t.size().
-     for j:  if(mp[s[j]]>0) count--;  mp[s[j]]--;                                            // EXPAND
-     while (count == 0) { len=j-i+1; if(len<minLen){minLen=len; index=i;}  mp[s[i]]++; if>0 count++; i++; }   // shrink + SAVE (andar)
+     for j:  if(mp[s[j]]>0) count--;  mp[s[j]]--;   // EXPAND
+     while (count == 0) {                      // VALID -> shrink + SAVE (answer loop ke ANDAR)
+         len=j-i+1; if(len<minLen){minLen=len; index=i;}
+         mp[s[i]]++; if>0 count++; i++;
+     }
      return minLen==INT_MAX ? "" : s.substr(index, minLen).
      DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) se map+count nikla.
 
@@ -427,10 +435,10 @@
  │ ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD
  └──────────────────────────────────────────────────────────────
      t = "abc"  (count = 3 = t.size()).   -- SAME skeleton as LC-76, bas t FIXED "abc" + answer alag.
-     for j:  if(mp[s[j]]>0) count--;  mp[s[j]]--;                                            // EXPAND (same)
-     while (count == 0) { mp[s[i]]++; if>0 count++; i++; }                                   // shrink to INVALID
-     ans += i;                                                                               // loop ke BAAD, har j pe
-     WHY ans += i: shrink window ko INVALID tak le jaata -> ab [0 .. i-1] SAARE valid left-starts hain -> ginti = i.
+     for j:  if(mp[s[j]]>0) count--;  mp[s[j]]--;   // EXPAND (same)
+     while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   // shrink to INVALID
+     ans += i;   // loop ke BAAD, har j pe
+     WHY ans += i: shrink window INVALID tak le jaata -> ab [0..i-1] SAARE valid left-starts -> ginti = i.
      CODE: numberOfSubstrings(s) = minWindow(s, "abc")  -- wahi SW function reuse, bas t="abc" pass.
 
 ┌── FAMILY: ANAGRAM-window ─────────────────────────────────────
