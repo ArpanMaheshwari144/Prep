@@ -51,8 +51,9 @@ bool wordPattern(string pattern, string s) // "abba", "dog cat cat dog"   -> 1
             // || KYUN (&& nahi): do taraf ka clash-check -- mp1 (char->word) side AUR mp2 (word->char) side.
             //   in dono me se KOI BHI EK clash mila -> galat -> return false. isliye OR (||).
             //   (&& hota to DONO taraf ek saath clash chahiye hota -> galat; ek hi taraf ka clash bhi false hona chahiye.)
-            if (!mp1.empty() && !mp2.empty() &&
-                    (mp1.count(pattern[i]) == 1 && mp1[pattern[i]] != word) ||
+            // NOTE: !mp1.empty() && !mp2.empty() guard HATA diya -- redundant. count() khud absent-key
+            //   handle karta (0 return -> condition false -> koi clash nahi -> else me jodo).
+            if ((mp1.count(pattern[i]) == 1 && mp1[pattern[i]] != word) ||
                 (mp2.count(word) == 1 && mp2[word] != pattern[i]))
             {
                 return false;
