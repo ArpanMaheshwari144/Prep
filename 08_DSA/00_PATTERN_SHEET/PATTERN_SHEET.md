@@ -1543,8 +1543,6 @@
      DFS(i,j) — code order (upar se neeche), grid ke 3 farak (adj-list nahi):
         1. BASE (ek hi if, sab || se juda):
               if( i<0 || i>=m || j<0 || j>=n || grid[i][j]=='0' )  return;
-              -> 2 reason ek saath: (a) grid ke BAHAR (4 bounds)   (b) '0' = paani/visited.
-              -> 4 BOUNDS pehle, PHIR grid[i][j]=='0'  (|| short-circuit: bahar hua to grid chhuo hi mat -> crash bache).
         2. VISITED   : grid[i][j]='0' (SINK) -> dobara na gino.
         3. NEIGHBOURS: 4-dir DFS -> (i+1,j)(i-1,j)(i,j+1)(i,j-1).
      '0'-check base me (bounds ke SAATH) -- warna paani/visited pe nahi rukta, poora grid kha jaata.
