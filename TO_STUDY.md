@@ -24,13 +24,7 @@
 - **Kya ho sakta (net-confirm — exact cheez PIN karni hai):** GraphQL-style flexible querying · ya OData / JSON:API (query-params se filter/sort/sparse-fields) · ya cursor-based query pattern. exact "new method" net se confirm.
 - **Padhna:** PEHLE net se exact cheez pin karo (kaunsi "new query method") -> phir kya/kyun/kaise.
 
-### 4. [kal/parso — HLD] Distributed LRU Cache (YouTube mock interview)
-- **Kya:** "System Design Interview — Design a Distributed LRU Cache (Full mock with Sr. MAANG SWE)" (YouTube pe search).
-- **Kyun ye achha:** kal humne LRU **single-machine (DSA/LLD)** khud banaya (08_DSA/09_DESIGN/03_lru_cache.cpp) -> ye uska **DISTRIBUTED (HLD)** version = natural agla step (single -> distributed).
-- **Chapters:** functional/NFR -> API design (single-machine) -> API design (cache + linked-list) -> managing cache across nodes -> retrieval/replacement.
-- **Kaise:** dekho + NOTES likho (write-to-learn) -> 04_HLD me daal denge. connect: LRU (DSA) <-> distributed-cache (HLD).
-
-### 5. [chhota glance — CS-fundamental gap-fill] Computer Networks basics
+### 4. [chhota glance — CS-fundamental gap-fill] Computer Networks basics
 - **Kaha aaya:** JP recruitment skill-list (GfG) me CN listed — Arpan ne dedicated nahi padha (baaki sab — DSA/DBMS/OS-multithreading/Spring/microservices/Docker/K8s — done).
 - **Kyun (dara nahi, gap-fill):** lateral backend ke liye CN deep-theory GATE nahi (Raunak = 3 round: DSA + SD + behavioral, no MCQ-exam). PAR "interview me aa jaaye to dikkat na ho" — chhota glance kaafi.
 - **Kya padhna (halka, interview-level — ratta nahi, samajh):** TCP vs UDP (kab kya) · HTTP/HTTPS + status codes (200/4xx/5xx) · DNS (naam→IP kaise) · sockets basics · TLS/handshake ek-line · REST already-pata. (backend-relevant hi, OSI-7-layer ki ratта NAHI.)
