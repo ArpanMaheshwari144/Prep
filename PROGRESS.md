@@ -4,8 +4,12 @@
 
 ## ★★★ READ FIRST — CURRENT STATE
 ```
-   DSA: COMPLETE — 18-pattern sheet ("gate ki chaabi", ~2000 line, 08_DSA/00_PATTERN_SHEET/) + ~165 problems, saare family
+   DSA: COMPLETE — ab 19-pattern sheet ("gate ki chaabi", ~2100 line, 08_DSA/00_PATTERN_SHEET/) + ~168 problems, saare family
         (DP + MCM/interval-DP done; segment-tree by-choice-deferred, JP-req nahi). Ab REVISE + spaced-REDO + DECISION-DRILL.
+        ★★ 17-18 Aug: GREEDY-pattern ADD (18_GREEDY/) — assign-cookies(LC455) + jump-game(LC55) + non-overlapping-intervals(LC435).
+           SAB interview-mode me KHUD-DERIVE kiye (Arpan-led discussion, Claude sirf nudge): greedy-choice-property + keep-smaller-end
+           + edge-case DRY-RUN se khud pakda ([[1,100],[2,3],[3,4]] dead-branch bug) + fix khud → 5-6/6. sheet me PATTERN 18 GREEDY.
+        ★★ GIT-SAFE (18-Aug): PUBLIC repo github.com/ArpanMaheshwari144/Prep (fresh init). personal-files gitignored, personal-email commits.
         ★★★ BREAKTHROUGH (10-11 Aug raat, poore safar ka asli mod — Arpan-diagnosed; POORA detail = MEMORY-ANCHORS 8e):
            (1) FREEZE = EMOTIONAL na cognitive — DSA jab WORTH ka verdict ban jaata tab (Java/HLD me nahi). Belief "DSA=intelligence" (reels-installed).
                Proof: 20-classify-drill no-stakes → 18/20 no-freeze; "asli" divisible-pairs (load kiya) → freeze. Freeze = uske CONTROL me (live-saabit).
