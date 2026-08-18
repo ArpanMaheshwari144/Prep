@@ -1,0 +1,49 @@
+# Compiled class files
+*.class
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs (NEVER commit production data — tokens, IPs, PII)
+*.log
+logs.md
+*_logs.md
+*.logs
+
+# Large files
+*.pdf
+*.jar
+build/
+target/
+out/
+node_modules/
+
+# Not needed
+.claude/
+Prep/
+INTERVIEW/
+
+# Personal — resume, notes, templates (keep private even in public repo)
+# NOTE: leading slash = ONLY repo-root RESOURCES/ (private). warna nested src/main/resources/ bhi ignore ho jaata (Windows case-insensitive).
+/RESOURCES/
+
+# Secrets — SSH keys, AWS keys, credentials (NEVER commit)
+*.pem
+*.ppk
+*.key
+.aws/
+aws-credentials*
+*.exe
+*.out
+sol
+
+# PUBLIC repo — personal/emotional/strategy content (decide later; make repo private to include)
+/CLAUDE.md
+/PROGRESS.md
+/JP_INTERVIEW_INTEL.md

@@ -1,0 +1,47 @@
+# Deployment = blueprint for pods
+# kubectl ko bolta "todoapp ka 1 pod chala, image yeh use kar"
+
+apiVersion: apps/v1       # Deployment API version
+kind: Deployment          # Resource type
+metadata:
+  name: todoapp           # is Deployment ka naam
+  labels:
+    app: todoapp          # selector ke liye tag
+
+spec:
+  replicas: 1             # kitne pods chahiye (1 = single instance)
+
+  # selector = "ye pods kaun se hain"
+  # matchLabels app: todoapp = sirf ye pods is Deployment ke
+  selector:
+    matchLabels:
+      app: todoapp
+
+  # template = pod ka blueprint
+  template:
+    metadata:
+      labels:
+        app: todoapp      # same label (selector match karega)
+    spec:
+      containers:
+      - name: todoapp
+        image: todoapp-app:latest
+
+        # IMPORTANT — kind se locally loaded image
+        # Without "Never" = K8s try karega pull from Docker Hub = fail
+        imagePullPolicy: Never
+
+        ports:
+        - containerPort: 8080
+
+        # Spring properties override via env (jaisa docker-compose mein)
+        # mysql + redis = service names (later create karenge)
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://mysql:3306/tododb?createDatabaseIfNotExist=true
+        - name: SPRING_DATASOURCE_USERNAME
+          value: root
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: root
+        - name: SPRING_DATA_REDIS_HOST
+          value: redis

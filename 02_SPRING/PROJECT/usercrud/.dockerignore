@@ -1,0 +1,112 @@
+# ============================================================
+# 🚫 .dockerignore — UserCRUD
+# ============================================================
+# Yeh file Docker ko batati: build ke time KYA SKIP karna.
+#
+# Kyu zaroori?
+#   docker build .  →  Docker poora folder ("build context") read karta
+#   Bina .dockerignore: .git/, .idea/, target/*.class — sab scan
+#   Result: slow build, bigger image, secrets leak risk
+#
+# Best practice: SIRF wahi rakho jo Dockerfile ko COPY karna hai
+# ============================================================
+
+
+# ─────────────────────────────────────────────
+# Git / Version control
+# ─────────────────────────────────────────────
+# .git folder = entire history, sometimes 100s of MB
+# Container ko zarurat nahi
+.git/
+.gitignore
+.gitattributes
+
+
+# ─────────────────────────────────────────────
+# IDE / Editor files
+# ─────────────────────────────────────────────
+# Tera laptop-specific config — container mein useless
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+
+# ─────────────────────────────────────────────
+# Maven build noise
+# ─────────────────────────────────────────────
+# target/ folder mein:
+#   • .class files (compiled, intermediate)
+#   • test-classes/, maven-status/, maven-archiver/
+#   • generated-sources/
+#   • Aur usercrud-0.0.1-SNAPSHOT.jar (yeh chahiye!)
+#
+# Trick: pure target/ ignore mat kar (jar nahi milega)
+# Sirf intermediate stuff skip:
+target/classes/
+target/test-classes/
+target/generated-sources/
+target/generated-test-sources/
+target/maven-status/
+target/maven-archiver/
+target/surefire-reports/
+target/site/
+
+
+# ─────────────────────────────────────────────
+# Maven wrapper (host-specific)
+# ─────────────────────────────────────────────
+# mvnw / .mvn = Maven wrapper for tera laptop
+# Container mein Maven nahi chahiye (jar already built)
+.mvn/
+mvnw
+mvnw.cmd
+
+
+# ─────────────────────────────────────────────
+# Documentation / Readme files
+# ─────────────────────────────────────────────
+# Container ko padhne ki zarurat nahi
+HELP.md
+README.md
+*.md
+
+
+# ─────────────────────────────────────────────
+# OS-level junk
+# ─────────────────────────────────────────────
+# Mac/Windows ke automatic files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+
+# ─────────────────────────────────────────────
+# Logs / Temporary
+# ─────────────────────────────────────────────
+*.log
+logs/
+tmp/
+temp/
+
+
+# ─────────────────────────────────────────────
+# Don't ignore — Dockerfile itself bhi build context mein
+# ─────────────────────────────────────────────
+# Dockerfile aur .dockerignore Docker khud read karta — auto-skip
+# Inko explicitly mention karne ki zarurat nahi
+
+
+# ============================================================
+# 🧠 Concept Recap:
+# ============================================================
+# Build context = saara folder jo "docker build ." command dekhta
+# .dockerignore = filter usse pehle Docker dekhe
+#
+# Result for usercrud:
+#   target/usercrud-0.0.1-SNAPSHOT.jar  ✅ jaata image mein
+#   target/classes/, .git/, .idea/      ❌ skip
+#   Pure context: ~30 MB instead of ~500 MB
+#   Faster build + smaller, cleaner image
+# ============================================================
