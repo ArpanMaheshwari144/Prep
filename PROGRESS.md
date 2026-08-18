@@ -4,11 +4,14 @@
 
 ## ★★★ READ FIRST — CURRENT STATE
 ```
-   DSA: COMPLETE — ab 19-pattern sheet ("gate ki chaabi", ~2100 line, 08_DSA/00_PATTERN_SHEET/) + ~168 problems, saare family
-        (DP + MCM/interval-DP done; segment-tree by-choice-deferred, JP-req nahi). Ab REVISE + spaced-REDO + DECISION-DRILL.
-        ★★ 17-18 Aug: GREEDY-pattern ADD (18_GREEDY/) — assign-cookies(LC455) + jump-game(LC55) + non-overlapping-intervals(LC435).
-           SAB interview-mode me KHUD-DERIVE kiye (Arpan-led discussion, Claude sirf nudge): greedy-choice-property + keep-smaller-end
-           + edge-case DRY-RUN se khud pakda ([[1,100],[2,3],[3,4]] dead-branch bug) + fix khud → 5-6/6. sheet me PATTERN 18 GREEDY.
+   DSA: COMPLETE — ab 19-pattern sheet ("gate ki chaabi", ~2150 line, 08_DSA/00_PATTERN_SHEET/) + ~169 problems, saare family
+        (DP + MCM/interval-DP done; segment-tree by-choice-deferred, JP-req nahi). GREEDY = aakhri topic tha → ab DSA-BUILD 100% khatam. Ab sirf REVISE + spaced-REDO.
+        ★★ 17-18 Aug: GREEDY-pattern (18_GREEDY/) COMPLETE — 4 problems: assign-cookies(LC455) + jump-game(LC55) + non-overlapping-intervals(LC435) + gas-station(LC134).
+           SAB interview-mode me KHUD-DERIVE kiye (Arpan-led discussion, Claude sirf nudge): greedy-choice-property + keep-smaller-end + running-tank/reset-start
+           + edge-case DRY-RUN se khud pakda (non-overlap dead-branch bug; gas-station total-feasibility -1) + fix khud → 5-6/6. sheet me PATTERN 18 GREEDY.
+        ★★ 18-Aug FULL-REVISION MILESTONE: poori sheet PATTERN 1-19 revise ho gayi (bimaari me bhi) — DP/backtracking/graph "no-struggle instant" recall.
+           Recognition-DRILLS bolke (chat, code-nahi): koko-bananas(LC875 BS-on-answer) + daily-temperatures(monotonic-stack) — dono pattern+key+approach TURANT bola.
+           Graph INPUT-FORM insight KHUD nikala (sheet me add): edges-undirected(2-push)/directed(1-push+indegree)/grid(dirs,no-build)/given-graph(skip-build). Metric confirm: "revise karta hoon isliye fade nahi hua" (uska apna diagnosis, sateek).
         ★★ GIT-SAFE (18-Aug): PUBLIC repo github.com/ArpanMaheshwari144/Prep (fresh init). personal-files gitignored, personal-email commits.
         ★★★ BREAKTHROUGH (10-11 Aug raat, poore safar ka asli mod — Arpan-diagnosed; POORA detail = MEMORY-ANCHORS 8e):
            (1) FREEZE = EMOTIONAL na cognitive — DSA jab WORTH ka verdict ban jaata tab (Java/HLD me nahi). Belief "DSA=intelligence" (reels-installed).
@@ -37,10 +40,12 @@
    APPLY-PHASE LIVE: resume fresh (RESOURCES/Resume/ — 700 tickets, Kafka/K8s, "4+ years", sirf UnifyPatients project).
         3 inbound platforms optimized → NAUKRI (resume+recency+skills, headline keyword-loaded) · INSTAHYRE (92 opportunities) · CUTSHORT (talent-card LIVE, 17 companies interested).
         ★★ APPLIED: Harman (Naukri) + ★★★ JP MORGAN — Chase UK "Software Engineer III Backend" Bengaluru (DREAM role, strong-fit — ✓ APPLY DONE). AI-assisted-dev requirement = uska KONOVO/Claude-Code edge.
-   READINESS ~90%. bacha = POLISH/DELIVERY (HLD-mock + behavioral + English-aloud) + apply/inbound. foundational-gap ZERO. fear = interview-nerves, NOT DSA.
+   READINESS ~90%. ★ BUILD + DSA-FULL-REVISION dono KHATAM (18-Aug) — "padho/seekho" phase over, ab "BOLO + BHEJO" phase.
+        bacha = POLISH/DELIVERY (HLD-mock bolke + behavioral/STAR + English-aloud) + apply/inbound. foundational-gap ZERO. fear = interview-nerves, NOT DSA.
 
    AAGE KA PLAN:
-   1. ROZ DSA (light, non-negotiable): sheet-glance + CHUNK-REVISE 2-pattern rotate + 1 REDO.
+   1. ROZ DSA (light, non-negotiable — ab REVISE-ONLY, naya BUILD nahi bacha): sheet-glance + CHUNK-REVISE 2-pattern rotate + 1 REDO
+      + kabhi-kabhi RECOGNITION-DRILL (Claude chat me problem de → Arpan sirf pattern+key+approach BOLE, code nahi → jaise koko/daily-temps). reflex tez karne ko.
       ★★ DERIVE-FAMILY METHOD (11-Aug locked): SW/TP/Kadane/prefix = JP ka asli gate, weak-zone → FACE (avoid nahi). Flow = try-first → na aaye to Claude LEARN-first (disguise-transform khul-ke) → dry-run se IMAGE bana → code → redo → sheet. Structural (DP/graph) = strong, light-revise.
       ★★ NAYA (11-Aug se) DECISION-DRILL (10 min): 5-6 bare problems → SOLVE mat karo → sirf CLASSIFY (kaunsa DS/pattern) → Claude sahi/galat + SIGNAL bataye. Type-B (DS-derive) reflex banana = poore-safar ka missing piece. Claude problems dega, one-by-one. (pattern-sheet ke top pe DECISION-table.)
       ★★ 15-DIN MCM DURABILITY EXPERIMENT (Arpan-designed, LIVE — day-16 blank-test): MCM/interval-DP ko 15 din NA dekho/revise (baaki sheet normal revise).
@@ -61,7 +66,9 @@
       ★ CLAUDE ROZ DRIVE kare (reactive "kya karein?" NAHI; Arpan-dard "main hi hamesha aage") — khud aage aa ke lead. [detail = MEMORY-ANCHORS section 7]
    ★ RHYTHM: SUBAH = revise/mock (HLD-delivery + STAR + DSA-light + Java-write + DB-topic + PROBLEM-TODO-drill) · SHAAM = smart-apply/inbound. build khatam → POLISH + APPLY + PROBLEM-SOLVER-train.
    ★ TIMELINE: ~SEPT apply (route flexible, end-goal JP/BlackRock fixed; slow-hafta != fail).
-   ★ THIS-WEEK TAPER (12-16 Aug, Arpan-set, body-rest maanga after 6-mahine 6-7hr-neend grind): Wed→Fri thoda-thoda roz (LIGHT). Sat subah 1 HLD + 1 DSA-redo → phir OFF. SUN = FULL OFF (no DSA/HLD, KOI nudge nahi). Claude is-week LIGHT rakhe, Sun pe nudge/study-push NAHI. (JP Chase-UK apply ✓ DONE — koi apply-deadline pending nahi; ab inbound-respond chalta rahe.) (guilt-dissolve: 1-din se 6-mahine consistency nahi dhulti; rested-brain retain-behtar.)
+   ★ CURRENT PHASE (18-Aug onward) = DELIVERY + APPLY. Build+DSA-revision khatam. Ab roz: 1 HLD-mock BOLKE + STAR/behavioral (2-3x/wk) + English-aloud + DSA-light-revise + shaam smart-apply/inbound.
+      NEXT SESSION = Rate-limiter HLD mock (Arpan-picked, kal). Arpan is-din bimaar (fever/cough/cold) → thoda slow but samajh POORI (aaj proof: bimaari me bhi gas-station derive + full-sheet-revise + graph-insight). tabiyat theek hote hi pace wapas.
+      (guilt-dissolve: kharab/bimaar din = DIN hai, tu nahi; DATA steady rehta.)
    ★ LUCK-belief: outcome luck-gated → effort = ready-rehne ka tool, guarantee mat becho.
 ```
 
