@@ -2666,4 +2666,18 @@
      count = removals.  WHY chhota-end rakho: aage zyada jagah -> zyada fit.  O(n log n).
      ★ EDGE (dry-run se pakda): overlap pe BLINDLY start rakhna GALAT -> [[1,100],[2,3],[3,4]] pe 2 aata (sahi 1).
        end-compare zaroori. (alt: END pe sort karo -> pehla-waala hamesha chhota-end -> ye if-check gayab.)
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ GAS STATION (LC-134)  = greedy running-tank + reset-start
+ └──────────────────────────────────────────────────────────────
+     N pump CIRCLE me. gas[i]=milta, cost[i]=agle pump tak kharcha. kaha se shuru karu
+     ki poora ghoom ke wapas wahin aa jau? koi start possible nahi -> -1.
+     har pump ka NET = gas[i] - cost[i]. Ek pass, DO accumulator:
+        kyaNegativeHua  += gas[i]-cost[i];   // KABHI reset nahi -> ant me <0 -> -1 (petrol hi kam)
+        meriGaddiKaTank += gas[i]-cost[i];   // running; jaha doobta wahan se aage nahi ja sakte
+        if (meriGaddiKaTank < 0) { meriGaddiKaTank = 0; index = i+1; }   // start ko AGLE pump pe khiska do
+     return  kyaNegativeHua < 0 ? -1 : index;
+     ★ KEY: kyaNegativeHua>=0 ho to jo LAST reset-index bacha wahi ANSWER (unique). kyun: jis pump pe
+       tank dooba, us-se-pehle kisi bhi start se wahan pahucha ja HI nahi sakta -> start hamesha aage hi.
+     ★ cookies/jump/interval se FARAK: yahan sort NAHI. circular + 2-accumulator (feasibility + start-track).
 ```
