@@ -2653,4 +2653,17 @@
         maxReach = max(maxReach, i + nums[i]);       // apni pahunch badhao
      return maxReach >= n-1.    O(n), koi DP nahi.
      ★ cookies se FARAK: wahan sort+2-pointer; yahan sort nahi -> ek scan me "farthest reachable" track. greedy ke 2 alag rang.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ NON-OVERLAPPING INTERVALS (LC-435)  = greedy interval-scheduling (keep SMALLER-END)
+ └──────────────────────────────────────────────────────────────
+     intervals me se MIN kitne HATAO taaki koi overlap na bache? (= max non-overlapping rakho.)
+     GREEDY: default SORT. 2-pointer -> start=rakha-hua, end=candidate.
+        NO-overlap (start.end <= end.start):  start = end; end++;       // candidate safe, rakho
+        OVERLAP (else):  count++;                                        // ek to hatana hi
+                         if (start.end > end.end)  start = end;          // chhota-END wale ko rakho
+                         end++;
+     count = removals.  WHY chhota-end rakho: aage zyada jagah -> zyada fit.  O(n log n).
+     ★ EDGE (dry-run se pakda): overlap pe BLINDLY start rakhna GALAT -> [[1,100],[2,3],[3,4]] pe 2 aata (sahi 1).
+       end-compare zaroori. (alt: END pe sort karo -> pehla-waala hamesha chhota-end -> ye if-check gayab.)
 ```
