@@ -186,7 +186,7 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ TWO SUM II (SORTED)
  └──────────────────────────────────────────────────────────────
-     sorted -> hashmap ki zaroorat nahi -> 2 pointer (left,right); sum==target -> mila (return 1-based).
+     sorted -> 2 pointer (left,right); sum==target -> mila (return 1-based).
      sum<target -> left++ (bada chahiye); sum>target -> right-- (chhota). O(1) space.
      (regular two-sum UNSORTED = hashmap; SORTED = 2-pointer.)
 
@@ -448,7 +448,7 @@
  │ ▸ MAX SUM OF K (FIXED)  = fixed window size-k + running sum
  └──────────────────────────────────────────────────────────────
      SAAR : k-size ke har window ka sum -> unme se MAX. fixed window (size hamesha k).
-     KEY  : variable nahi -- size fix k, isliye IF (ek hi remove), WHILE nahi.
+     KEY  : variable nahi -- size fix k, isliye IF (ek hi remove).
      j pe : sum += nums[j].
      FULL (j-i+1 >= k) -> maxSum = max(maxSum, sum); phir 1 remove (sum -= nums[i], i++).
      WHY IF-not-WHILE : fixed size -> har step 1 add + 1 remove -> slide. variable hota to WHILE (kai remove).
