@@ -1689,10 +1689,12 @@
 
  TREE se transfer: BFS = queue (level-order jaisa) · DFS = recursion (left/right ki jagah adj[node]). bas 'visited' add.
 
- ADJACENCY LIST (har graph-Q ka same FIRST-step) -- edges se banao:
+ INPUT-FORM pehchano (pehle ye -- kab adj-list banani, kab NAHI):
       unordered_map<int, vector<int>> adj;    // ya  vector<int> adj[n];
-      undirected -> adj[u].push_back(v);  adj[v].push_back(u);   // DONO taraf
-      directed   -> sirf adj[u].push_back(v);                    // ek taraf
+      edges[] + undirected -> adj[u]+=v; adj[v]+=u;  DONO taraf      (path-exists, CC, dijkstra{v,w})
+      edges[] + directed   -> sirf adj[u]+=v; + indegree[v]++        (course-schedule/topo)
+      GRID (2D) diya       -> adj-list NAHI -> padosi = 4-dir `dirs`, cell khud node  (islands, rotting, max-area)
+      graph[]/node.neighbors already -> build SKIP, seedha traverse  (bipartite, clone-graph)
 
  ──────────────────────────────────────────────────────────────
  DECISION-GUIDE (koi graph-Q se pehle -- Trees-guide jaisa; "question dekh ke pehchano"):
