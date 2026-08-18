@@ -51,7 +51,7 @@ int eraseOverlapIntervals(vector<vector<int>> &intervals)
             {
                 start = end;
             }
-            // end++;
+            end++;
         }
     }
     return count;
