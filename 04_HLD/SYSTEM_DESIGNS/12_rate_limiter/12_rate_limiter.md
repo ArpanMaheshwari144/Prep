@@ -306,6 +306,14 @@ TIME:  10:00 ──────── 10:30 ──────── 11:00 ─�
 └──────────────────┴───────────┴─────────┴──────────┴─────────┘
 
          MOST COMMON ─────► Token Bucket
+
+   ★ WHY TOKEN BUCKET (interview default-pick):
+     - real traffic SPIKY hota (user 10 req ek-saath, phir shaant) -> token bucket JAMA-tokens se
+       ye burst allow karta = user-friendly. (bucket bhara -> ek-saath nikal jaao.)
+     - Leaky Bucket -> sabko CONSTANT-rate pe smooth karta -> burst BLOCK (real-user ko laggy lagta).
+     - Sliding Window -> accurate PAR har request ka timestamp -> MEMORY-heavy.
+     - Fixed Window -> sasta par WINDOW-EDGE pe double-burst (10:00:59 + 10:01:00 = 2x limit ek-saath).
+     => default = TOKEN BUCKET: burst-friendly + low-memory (AWS/Stripe yehi use karte).
 ```
 
 ---
