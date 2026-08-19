@@ -14,7 +14,7 @@ import com.arpan.usercrud.service.UserSearchService;
 // FLEXIBLE SEARCH — QueryDSL way
 //    GET /api/users/search?role=USER&minAge=25
 //    params -> @RequestParam (optional) -> service (QueryDSL) -> List<User>
-//    (controller READY — tera kaam service ke andar QueryDSL likhna hai.)
+//    (controller READY — kaam: service ke andar QueryDSL likhna hai.)
 // ═══════════════════════════════════════════════════════════════════════
 
 @RestController

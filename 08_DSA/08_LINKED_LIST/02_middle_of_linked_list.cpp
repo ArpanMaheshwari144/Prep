@@ -29,7 +29,7 @@ struct Node
     Node(int v) : val(v), next(nullptr) {}
 };
 
-// ---- tera kaam: yeh function ----
+// ---- kaam: yeh function ----
 Node *middleNode(Node *head)
 {
     Node *slow = head;

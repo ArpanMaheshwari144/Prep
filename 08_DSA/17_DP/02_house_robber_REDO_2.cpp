@@ -5,7 +5,7 @@
 // Chori karni hai PAR do LAGATAAR (adjacent) ghar nahi loot sakte
 // (alarm baj jaata). Max kitna paisa loot sakta hai?
 //
-// >>> METHOD: <<< tera jaana-pehchana DP.
+// >>> METHOD: <<< jaana-pehchana DP.
 //   Har ghar pe do choice: LOOT (to pichhla chhodna pada) ya SKIP.
 //   base + transition tujhe aata hai -- blank se likh, dekhna nahi.
 //

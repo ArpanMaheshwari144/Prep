@@ -31,7 +31,7 @@
 #include <vector>
 using namespace std;
 
-// tera code yahan:
+// code yahan:
 
 int longestOnes(vector<int> &nums, int k)
 {

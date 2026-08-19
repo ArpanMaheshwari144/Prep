@@ -13,7 +13,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 // FLEXIBLE SEARCH — QueryDSL way (type-safe dynamic query)
 //    @Query string NAHI, Streams NAHI — Q-classes + method chaining, compiler-checked.
 //
-// >>> TERA TASK: search() ke andar WHERE conditions likhna (BooleanBuilder se). <<<
+// >>> TASK: search() ke andar WHERE conditions likhna (BooleanBuilder se). <<<
 //    QUser user = QUser.user;                    <- generated Q-class (compile-time safe)
 //    BooleanBuilder where = new BooleanBuilder(); <- yahaan conditions AND-jodo
 //

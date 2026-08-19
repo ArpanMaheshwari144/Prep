@@ -30,7 +30,7 @@ struct Node
     Node(int v) : val(v), next(nullptr) {}
 };
 
-// ---- tera kaam: yeh function ----
+// ---- kaam: yeh function ----
 Node *removeNthFromEnd(Node *head, int n)
 {
     Node *slow = head;

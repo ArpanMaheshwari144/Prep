@@ -32,7 +32,7 @@ struct Node
     Node(int v) : val(v), next(nullptr) {}
 };
 
-// ---- tera kaam: yeh function ----
+// ---- kaam: yeh function ----
 Node *reverseList(Node *head)
 {
     Node *prev = NULL;

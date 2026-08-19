@@ -30,7 +30,7 @@ struct Node
     Node(int v) : val(v), next(nullptr) {}
 };
 
-// ---- tera kaam: yeh function ----
+// ---- kaam: yeh function ----
 Node *mergeTwoLists(Node *a, Node *b)
 {
     // [1,2,4] , [1,3,4]  -> 1 1 2 3 4 4

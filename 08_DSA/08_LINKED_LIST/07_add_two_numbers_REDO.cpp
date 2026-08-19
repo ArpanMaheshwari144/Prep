@@ -36,7 +36,7 @@ struct Node
     Node(int v) : val(v), next(nullptr) {}
 };
 
-// tera code yahan:
+// code yahan:
 
 Node *addTwoNumbers(Node *a, Node *b)
 {
