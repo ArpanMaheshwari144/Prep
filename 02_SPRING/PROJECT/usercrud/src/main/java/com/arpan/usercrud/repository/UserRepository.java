@@ -1,8 +1,11 @@
 package com.arpan.usercrud.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.arpan.usercrud.model.User;
@@ -147,4 +150,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // Login feature ke liye email-based lookup
     Optional<User> findByEmail(String email);
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // JPQL EXAMPLE — @Query ke andar JPQL (entity-based query language)
+    //    ★ Dekh: "SELECT u" LIKHA HI NAHI — seedha "FROM User u" se shuru.
+    //      JPQL me SELECT optional hai → "FROM User u" = "SELECT u FROM User u".
+    //    ★ "User" = TABLE nahi, ENTITY (Java class); "u.age" = column nahi, FIELD.
+    //      Hibernate ise run-time pe asli SQL (SELECT * FROM users WHERE age>=?) me translate karta.
+    //    ★ Ye QueryDSL/derived-method ka teesra bhai — jab custom logic chahiye par
+    //      string-query se kaam chal jaye (type-safety nahi chahiye).
+    // ═══════════════════════════════════════════════════════════════════════
+    @Query("FROM User u WHERE u.age >= :minAge")
+    List<User> findAdults(@Param("minAge") int minAge);
 }
