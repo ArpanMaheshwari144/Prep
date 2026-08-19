@@ -13,18 +13,12 @@
 - **Kyun WAIT:** setup ek chhota project hai (Python/ChromaDB/embeddings/Docker) -> ABHI 25-din JP-schedule se dhyan bhatkega (rabbit-hole). current setup (markdown + hook) simple + kaam kar raha.
 - **Kab:** SEPTEMBER apply ke BAAD, time ho tab. + soch: personal/emotional baatein vector-DB me verbatim jaayengi (local hai to risk kam).
 
-### 2. GitHub Stacked PRs (dev-workflow — market me trending)
-- **Kaha aaya:** Arpan ne market/GitHub me suna — stacked PRs kaafi use ho raha.
-- **Kya hai (short, net-confirm karna):** bade change ko chhote **DEPENDENT PRs ki chain** me todo — har PR pichhle PR ke branch pe "stack" hoti (PR2 ka base = PR1, na ki main). Faayda: PRs chhote + reviewable, dependent kaam ke liye har PR ka merge-wait nahi.
-- **Tools:** Graphite · ghstack · spr · git-branchless.
-- **Padhna:** kya + kyun (review-velocity, chhote PR) · kaise banate/manage · konsa tool. (net se detail nikaal ke.)
-
-### 3. REST — nayi query/design method (market me trending)
+### 2. REST — nayi query/design method (market me trending)
 - **Kaha aaya:** Arpan ne market me suna — REST query karne ka koi naya/flexible tareeka.
 - **Kya ho sakta (net-confirm — exact cheez PIN karni hai):** GraphQL-style flexible querying · ya OData / JSON:API (query-params se filter/sort/sparse-fields) · ya cursor-based query pattern. exact "new method" net se confirm.
 - **Padhna:** PEHLE net se exact cheez pin karo (kaunsi "new query method") -> phir kya/kyun/kaise.
 
-### 4. [chhota glance — CS-fundamental gap-fill] Computer Networks basics
+### 3. [chhota glance — CS-fundamental gap-fill] Computer Networks basics
 - **Kaha aaya:** JP recruitment skill-list (GfG) me CN listed — Arpan ne dedicated nahi padha (baaki sab — DSA/DBMS/OS-multithreading/Spring/microservices/Docker/K8s — done).
 - **Kyun (dara nahi, gap-fill):** lateral backend ke liye CN deep-theory GATE nahi (Raunak = 3 round: DSA + SD + behavioral, no MCQ-exam). PAR "interview me aa jaaye to dikkat na ho" — chhota glance kaafi.
 - **Kya padhna (halka, interview-level — ratta nahi, samajh):** TCP vs UDP (kab kya) · HTTP/HTTPS + status codes (200/4xx/5xx) · DNS (naam→IP kaise) · sockets basics · TLS/handshake ek-line · REST already-pata. (backend-relevant hi, OSI-7-layer ki ratта NAHI.)
