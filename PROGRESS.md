@@ -27,6 +27,9 @@
            · ★ DONE (13-Aug, taper-light-din): coin_change REDO_5 (LC322 min-coins DP) — SHEET-DEKHE-BINA blank 5/5 SOLO (take/not-take + memo, base saaf). "subah se sheet se kuch nahi padha, seedha DP nikaal di." → DP retention PERMANENT (03_coin_change_REDO_5.cpp committed+pushed). Structural-family reflex solid.
    JAVA/SPRING: core + Collections + Java-8 + Multithreading (+practicals) + SOLID/Patterns + Spring (Transactional/JWT/Hibernate/Docker/K8s) DONE.
         Java WRITE-PRACTICE chalu (gap = SYNTAX-fluency NOT concept; Stream toolkit + cheatsheet done). Ab READ-revise.
+        ★★ 19-Aug FLEXIBLE-QUERY (dynamic search) seekha — 3 approaches: (a) @Query null-check `(:p IS NULL OR field=:p)` [2-3 filter, simple] (b) JPA Specification [old/verbose] (c) QueryDSL [type-safe Q-classes, many-filter clean].
+           usercrud me QUERYDSL POORA BUILD: pom querydsl-apt (jakarta) → QUser generate · QueryDslConfig (JPAQueryFactory bean) · UserSearchService (BooleanBuilder + .eq/.goe) · UserSearchController (@RequestParam optional) → BUILD SUCCESS. Arpan ne query-LOGIC khud likhi (nudge-only).
+           ★ ARPAN-INSIGHT (khud nikala): "Spring ~90% BOILERPLATE hi hai — sirf LOGIC (2 line) badalta, baaki plumbing wahi." → naam-se-scary tool (QueryDSL) kar ke dekha = 2-line nikla. notes: 02_SPRING/09_QUERYDSL + 10_SPRING_DATA_JPA (folder-reorg: @Query & QueryDSL Hibernate se ALAG, apni jagah — Arpan-observed "ye Hibernate ka part nahi").
    HLD: STRONG (differentiator) — 11 FOUNDATIONS (+ elasticsearch + snowflake) + 10 SYSTEM_DESIGNS + 9 designs ke 8-step hand-notes
         (URL/rate-limiter/payment/notification/twitter/stock-broker/bookmyshow/file-upload/news-aggregator) + INTERVIEW_ANCHOR (90%-toolkit)
         + RAW_DRILL (reflex-sheet + 32 why-how QA). delivery PRACTICED.
@@ -67,7 +70,8 @@
    ★ RHYTHM: SUBAH = revise/mock (HLD-delivery + STAR + DSA-light + Java-write + DB-topic + PROBLEM-TODO-drill) · SHAAM = smart-apply/inbound. build khatam → POLISH + APPLY + PROBLEM-SOLVER-train.
    ★ TIMELINE: ~SEPT apply (route flexible, end-goal JP/BlackRock fixed; slow-hafta != fail).
    ★ CURRENT PHASE (18-Aug onward) = DELIVERY + APPLY. Build+DSA-revision khatam. Ab roz: 1 HLD-mock BOLKE + STAR/behavioral (2-3x/wk) + English-aloud + DSA-light-revise + shaam smart-apply/inbound.
-      NEXT SESSION = Rate-limiter HLD mock (Arpan-picked, kal). Arpan is-din bimaar (fever/cough/cold) → thoda slow but samajh POORI (aaj proof: bimaari me bhi gas-station derive + full-sheet-revise + graph-insight). tabiyat theek hote hi pace wapas.
+      ★ 19-Aug DONE: Rate-limiter HLD mock (bolke — race-condition→atomic-Redis/Lua gap KHUD nahi-aaya→note me tha→revise; token-bucket-WHY note add) + STAR HikariCP follow-up (honest: query manual-ad-hoc, code-fix nahi→monitoring/alerting=detection) + 3 DSA-redo (valid-paren/two-sum/kadane/SW-max ALL-PASS) + QueryDSL build + git FULLY-FIXED (personal-account push ab chup-chaap).
+      NEXT SESSION = Arpan subah KHUD HLD + behavioral bolke revise → PHIR Claude uska MOCK le (interviewer-mode). Arpan is-din bimaar (fever/cough/cold) → thoda slow but samajh POORI (aaj proof: bimaari me bhi gas-station derive + full-sheet-revise + graph-insight + QueryDSL build). tabiyat theek hote hi pace wapas.
       (guilt-dissolve: kharab/bimaar din = DIN hai, tu nahi; DATA steady rehta.)
    ★ LUCK-belief: outcome luck-gated → effort = ready-rehne ka tool, guarantee mat becho.
 ```
