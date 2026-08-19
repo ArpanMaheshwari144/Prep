@@ -215,6 +215,7 @@
  │ ▸ MERGE SORTED ARRAY
  └──────────────────────────────────────────────────────────────
      SAAR: 2 sorted arr; nums1 ke END me n khaali. in-place -> PEECHE se bharo (aage se karo to zinda element overwrite). O(m+n).  ★ k=m+n-1 NA m*n-1
+     in-place = naya array NAHI banaya; usi nums1 me answer bhara -> O(1) EXTRA space.
      TEMPLATE: i=m-1, j=n-1, k=m+n-1.
         while(i>=0 && j>=0):                       // ★ && (|| nahi -> -1 index crash)
            if(nums1[i] < nums2[j]) -> nums1[k--]=nums2[j], j--
