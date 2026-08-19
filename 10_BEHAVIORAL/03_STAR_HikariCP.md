@@ -44,9 +44,28 @@
    - ★ connection-pooling / lock ka concept (tera HLD Q16 se bhi connect).
 ```
 
+## FOLLOW-UP — "dobara na ho, kya kiya?" (interviewer YE poochega)
+```
+   HONEST jawab (jo ACTUAL kiya — oversell nahi):
+   - ye query hamare CODE ki NAHI thi -- kisi ne PROD me manually/ad-hoc chalayi thi.
+     Isliye koi permanent "code-fix" tha hi nahi -- asli guardrail = jaldi PAKADNA.
+   - MONITORING + ALERTING lagayi: aisa DB-load / lock / pool-timeout dobara aaye to
+     ALERT apne-aap chali jaati -> DevOps turant pakad ke handle kar lete.
+   - LOGGING behtar ki -> next baar root-cause jaldi trace ho.
+   - aur ye ownership dikhaya ki jo bhi PROD pe aisi bhaari query chalaye, wo dhyaan rakhe.
+
+   LINE (interview): "Since the query wasn't part of our codebase, there wasn't a code-level
+     fix -- so I focused on fast detection: I added monitoring and alerts on DB load and
+     connection-pool timeouts, and improved logging, so if it ever recurs it's caught
+     immediately and the team can act before it impacts users."
+   -> ye band-aid se ENGINEER wala jawab hai: har issue ka "perfect fix" nahi hota, kabhi
+      asli engineering = detection + fast-response. (ye honest hai, interviewer ko pasand aata.)
+```
+
 ## DELIVERY tips
 ```
    - "MAINE / I" bolo action me (team nahi, TU). result me NUMBERS (95%, 85%).
    - calm + structured -> S->T->A->R kram me. bolne ki PRACTICE (loud, 2-3 baar).
    - confirm/add: exact email-fail % (95%?) + koi aur metric (kitne der me resolve?).
+   - FOLLOW-UP wala honest jawab ready rakh (upar) -- band-aid nahi, detection-focus.
 ```
