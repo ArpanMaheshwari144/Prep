@@ -43,6 +43,18 @@
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
+		<!-- ═══════════════════════════════════════════════════
+		     QUERYDSL — type-safe dynamic queries (Q-classes se)
+		     Jakarta classifier (Spring Boot 3+/Jakarta EE ke liye).
+		     querydsl-apt (annotation processor) neeche build/plugins me.
+		     ═══════════════════════════════════════════════════ -->
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+			<version>5.1.0</version>
+			<classifier>jakarta</classifier>
+		</dependency>
+
 		<!-- ─────────────────────────────────────────────────
 		     Bean Validation — @Valid, @NotNull, @Email, @Size etc.
 		     Spring Boot 3.x mein alag starter (web ke andar nahi)
@@ -166,6 +178,17 @@
 								<path>
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
+								</path>
+								<!-- QueryDSL annotation processor -> QUser classes generate -->
+								<path>
+									<groupId>com.querydsl</groupId>
+									<artifactId>querydsl-apt</artifactId>
+									<version>5.1.0</version>
+									<classifier>jakarta</classifier>
+								</path>
+								<path>
+									<groupId>jakarta.persistence</groupId>
+									<artifactId>jakarta.persistence-api</artifactId>
 								</path>
 							</annotationProcessorPaths>
 						</configuration>
