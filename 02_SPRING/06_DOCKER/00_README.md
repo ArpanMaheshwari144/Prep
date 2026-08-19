@@ -109,7 +109,7 @@ This is THE main concept that ties everything together.
 ## Project Architecture (Final State — Day 2)
 
 ```
-TERA LAPTOP
+LAPTOP
   ┌─────────────────────────────────────────────────────────────┐
   │  Postman / Workbench                                         │
   │       │                                                      │
@@ -138,7 +138,7 @@ TERA LAPTOP
 ## Files Created During This Journey
 
 ```
-TERA PROJECT MEIN:
+PROJECT MEIN:
    02_SPRING/PROJECT/usercrud/
    ├── Dockerfile                       ← Spring image recipe
    ├── .dockerignore                    ← exclude from build context

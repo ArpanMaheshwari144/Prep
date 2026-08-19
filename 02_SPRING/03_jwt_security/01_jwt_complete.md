@@ -134,7 +134,7 @@ Teller: "Arpan! Account 12345, balance 50K, pichli baar tu ne 10K nikale the.
          Aaj kya help chahiye?"
 
 ↑ Teller TUJHE PEHCHAN-TA hai. Tujhe ID dikhane ki zaroorat nahi.
-↑ Teller ke dimaag mein TERA "state" stored hai.
+↑ Teller ke dimaag mein user ka "state" stored hai.
 ```
 
 ### Stateless — ATM (random ATM in any city)

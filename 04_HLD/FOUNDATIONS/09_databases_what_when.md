@@ -176,7 +176,7 @@ Kya hai:
    • Traversal queries (jump from one to another)
 ```
 
-### Real-world Connect (TERA POINT):
+### Real-world Connect (KEY POINT):
 ```
 Soch — LinkedList:
    Node1 → Node2 → Node3 → Node4
@@ -190,7 +190,7 @@ Graph DB exactly yahi:
    Query: "Mere doston mein kaun Google mein hai?"
    = Edges traverse karke find
 
-PRODUCTION USE — TERA OWN EXPERIENCE:
+PRODUCTION USE — OWN EXPERIENCE:
 
 YouTube "Next video" / "You might like":
    Tu ne video X dekha

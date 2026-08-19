@@ -32,7 +32,7 @@ MySQL = DATABASE
 ## DAY 1 (KAL) — Spring on HOST
 
 ```
-TERA LAPTOP                            DOCKER
+LAPTOP                            DOCKER
 ┌─────────────────────────┐           ┌──────────────────────┐
 │                          │           │                       │
 │  Spring Boot             │           │  MySQL Container     │
@@ -64,7 +64,7 @@ Setup commands (kal):
 ## DAY 2 (AAJ) — Spring ALSO in CONTAINER
 
 ```
-TERA LAPTOP
+LAPTOP
 ┌─────────────────────────────────────────────────────────────┐
 │                                                              │
 │  DOCKER                                                      │

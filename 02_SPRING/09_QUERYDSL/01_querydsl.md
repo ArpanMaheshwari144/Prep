@@ -16,6 +16,13 @@
 3. `mvn compile` → **Q-classes auto-generate** (`QUser`, target/generated-sources me).
    -> QUser = User ka type-safe mirror (user.role, user.age compile-time check).
 
+## ★ Compile kyun zaroori (direct-run nahi hota)
+Java = COMPILE-then-run. `mvn compile` do kaam karta:
+1. **Q-classes GENERATE** — `QUser` pehle exist NAHI karti; `querydsl-apt` build-time pe `User` entity se banata. Bina compile → `QUser.user` milega hi nahi.
+2. **CHECK (safety net)** — types/syntax verify. e.g. `user.age.goe("hi")` (number me string) → COMPILE-time error, run tak jaane hi nahi deta. Galti pehle pakdi, production me nahi.
+
+BUILD SUCCESS = Q generate + sab wiring green. (Python/JS = direct-run; Java = compile pehle.)
+
 ## Code — 3 tukde
 ```java
 // 1. CONFIG — JPAQueryFactory bean (ek baar)
@@ -34,6 +41,30 @@ return queryFactory.selectFrom(user).where(where).fetch();
 ## Operators (yaad)
 `.eq()` == · `.goe()` >= · `.loe()` <= · `.gt()` > · `.lt()` < · `.like("%x%")` · `.in(list)`
 BooleanBuilder + `.and()` / `.or()` se conditions jodo (null skip = optional filter).
+
+## JOIN + baaki clauses (SQL ke jaisa hi)
+`selectFrom(user)` = `SELECT * FROM user` (poori entity). Aur chahiye to chain karte jao:
+
+```java
+QUser user = QUser.user;  QOrder order = QOrder.order;
+queryFactory
+    .selectFrom(user)
+    .leftJoin(user.orders, order)   // LEFT JOIN (path, alias); .innerJoin / .join bhi
+    .where(order.amount.gt(1000))
+    .fetch();
+```
+
+| SQL | QueryDSL |
+|---|---|
+| ORDER BY age DESC        | `.orderBy(user.age.desc())` |
+| GROUP BY role            | `.groupBy(user.role)` |
+| HAVING avg(age)>30       | `.having(user.age.avg().gt(30))` |
+| LIMIT 10 OFFSET 20       | `.limit(10).offset(20)` |
+| SELECT name,email (not *) | `.select(user.name, user.email)` (selectFrom ki jagah → Tuple) |
+| DISTINCT                 | `.distinct()` |
+| single row               | `.fetchOne()` / `.fetchFirst()` |
+
+extra join-condition chahiye → `.on(...)`.
 
 ## Interview line
 "Dynamic optional filters ke liye QueryDSL — Q-classes se type-safe query, compile-time checked.

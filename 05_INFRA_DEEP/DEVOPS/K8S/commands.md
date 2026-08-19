@@ -341,7 +341,7 @@ Within cluster, services resolvable by name:
 - = Inter-pod communication via service name
 
 
-### Tera Day 19 example
+### Day 19 example
 - todoapp pod env: `SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/...`
 - App resolves "mysql" via cluster DNS
 - Reaches mysql service → routes to MySQL pod

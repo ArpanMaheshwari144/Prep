@@ -79,7 +79,7 @@ WHEN TO USE WHAT:
 - Docker containers = ECS / EKS
 - Quick web app deploy = App Runner
 
-TERA DAY 20: EC2 t3.micro use kiya (Spring Boot + MySQL + Redis)
+DAY 20: EC2 t3.micro use kiya (Spring Boot + MySQL + Redis)
 
 
 ## CATEGORY 2: STORAGE
@@ -95,7 +95,7 @@ ANALOGY:
 - EBS  = laptop HDD/SSD (attached to ONE EC2)
 - EFS  = shared NFS folder (multiple EC2 same data)
 
-TERA DAY 20: EBS 8 GiB gp3 attached to EC2 (default storage)
+DAY 20: EBS 8 GiB gp3 attached to EC2 (default storage)
 
 
 ## CATEGORY 3: DATABASE
@@ -145,7 +145,7 @@ SIMPLE EACH:
 - CloudFront   = global cache (Mumbai user → Mumbai server)
 - ALB          = receptionist (multiple servers traffic distribute)
 
-TERA DAY 20:
+DAY 20:
 - Default VPC use kiya (vpc-019c7092b58bb22a3)
   = AWS har account ko default VPC deta har region mein
 - Security group: launch-wizard-1
@@ -176,7 +176,7 @@ SIMPLE EACH:
 - Secrets Mgr    = locker for DB passwords (no hardcode)
 - WAF            = bouncer with rules (SQL injection, bad IPs block)
 
-TERA DAY 20 EVIDENCE:
+DAY 20 EVIDENCE:
 - IAM           = root account use kiya (production = NAHI)
 - Security Group = launch-wizard-1
 - Secrets       = passwords hardcoded compose mein (production = Secrets Mgr)
@@ -202,7 +202,7 @@ SIMPLE EACH:
 - X-Ray       = X-ray of microservices (slow point dikhata)
 - SNS         = bell/intercom (alarm → message bhejta)
 
-TERA DAY 20 EVIDENCE:
+DAY 20 EVIDENCE:
 - CloudWatch:
   - EC2 → Monitoring tab
   - CPUCreditBalance graph (credits trending to 0)
@@ -256,7 +256,7 @@ NAT Gateway             - $32/month FROM DAY 1 (no free tier)
 Public IPv4 (Feb 2024+) - $3.6/month per IP
 ```
 
-TERA DAY 20 LEARNING:
+DAY 20 LEARNING:
 - t3.micro = free tier, BUT burstable CPU
 - Idle "free" easy
 - Real Java app load = credits khatam = useless

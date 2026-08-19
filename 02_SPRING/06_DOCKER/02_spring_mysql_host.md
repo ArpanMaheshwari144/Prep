@@ -565,7 +565,7 @@ MySQL57   Running  MySQL57
 ## Concept Lock — Two MySQLs running
 
 ```
-TERA LAPTOP (host)
+LAPTOP (host)
 
   ┌─────────────────────────┐
   │ LOCAL MySQL57           │  ← Windows service

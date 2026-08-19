@@ -77,7 +77,7 @@
 ## 4 DAY 1 — Spring on HOST + MySQL Container
 
 ```
-   TERA LAPTOP (host)                        DOCKER
+   LAPTOP (host)                        DOCKER
    ┌─────────────────────────┐              ┌──────────────────────┐
    │                          │              │                       │
    │  ┌──────────────────┐   │              │  ┌─────────────────┐  │
@@ -134,7 +134,7 @@
 ## 6 DAY 2 — BOTH Containers (Compose stack)
 
 ```
-   TERA LAPTOP
+   LAPTOP
    ┌─────────────────────────────────────────────────────────────┐
    │                                                              │
    │  DOCKER (compose-managed network: usercrud_default)         │

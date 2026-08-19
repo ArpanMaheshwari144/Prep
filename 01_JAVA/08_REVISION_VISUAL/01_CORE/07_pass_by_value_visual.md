@@ -23,12 +23,12 @@ Tera dost paper mein change karna chahta.
 
 Option A: Original paper de do
    → Dost ne change kar diya
-   → TERA paper bhi changed
+   → paper bhi changed
    = PASS BY REFERENCE
 
 Option B: PHOTOCOPY de do
    → Dost ne photocopy mein change kiya
-   → TERA original SAFE
+   → original SAFE
    = PASS BY VALUE
 ```
 

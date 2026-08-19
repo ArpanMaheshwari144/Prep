@@ -53,7 +53,7 @@ Compose YAML = recipe book khol ke "thali ready"
 
 ---
 
-## TERA SETUP — 2 Files Banaaye
+## SETUP — 2 Files Banaaye
 
 ### File 1: `application-compose.properties`
 
