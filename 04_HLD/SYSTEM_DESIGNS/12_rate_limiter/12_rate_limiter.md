@@ -816,16 +816,15 @@ Docker Desktop -> Containers -> rl -> Logs me nginx khud likhta:
 
 ### 5. ★★ GEMS / gotchas (interview me bhi)
 ```
-1. return BYPASS: "return" limit_req se pehle wale phase me -> limit lagti hi nahi. File/proxy serve karo.
-2. LIMIT tabhi kaatti jab ARRIVAL-rate > limit: pehle rate=2r/s pe slow curl-loop se sab 200 aaye
+1. LIMIT tabhi kaatti jab ARRIVAL-rate > limit: pehle rate=2r/s pe slow curl-loop se sab 200 aaye
    (loop dheere tha, refill keep-up kar gaya). Tez maaro tabhi 503.
-3. burst = N  ->  spike me N+1 pass (nginx apni taraf se +1 karta):
+2. burst = N  ->  spike me N+1 pass (nginx apni taraf se +1 karta):
       burst=5 -> 6,   burst=100 -> 101.
       Wo +1 bucket me se NAHI hoti -> rate ki "live" 1 request bucket ke bahar se nikalti (alag slot).
       TEXTBOOK token-bucket = N (exact) | NGINX = N+1 (quirk).
       Aur EXACT bhi nahi -> timing/refill se thoda wobble (21, kabhi 22). Isiliye chala ke dekho, theory pe aankh-band bharosa nahi.
-4. 1 IP = 1 bucket ($binary_remote_addr). Real world me har user ka apna IP -> apna bucket.
-5. config badla -> "docker restart rl" karna PADTA (warna purana config chalta rehta).
+3. 1 IP = 1 bucket ($binary_remote_addr). Real world me har user ka apna IP -> apna bucket.
+4. config badla -> "docker restart rl" karna PADTA (warna purana config chalta rehta).
 ```
 
 ### 6. Dobara kaise chalaye (quick)
