@@ -102,6 +102,25 @@ Browser: **`http://localhost:8080/graphiql`** → query type karke ▶.
 
 ---
 
+## 4b. BEHIND-THE-SCENE — "koi alag API nahi dikhi?" (ek endpoint)
+Confusion: REST me alag URL (`GET /users`, `GET /user/1`) → har URL "API" jaisa.
+GraphQL me **EK endpoint** `POST /graphql` — sab queries usi pe (body me query). Isliye alag API nahi dikhti — **ek hi hai.**
+
+**Jab GraphiQL me ▶ dabaaya, andar ye hua:**
+```
+1. GraphiQL ne query li: { users { name } }
+2. HTTP POST banaya  -> POST localhost:8080/graphql
+                        body: { "query": "{ users { name } }" }
+3. Server (Spring GraphQL) -> SCHEMA se validate (field exist? type sahi?)
+4. RESOLVER call -> users() -> userRepository.findAll() -> MySQL se data
+5. Sirf maange field (name) nikaal -> JSON: { "data": { "users": [...] } }
+6. GraphiQL ne JSON right-panel me dikhaya
+```
+Flow: **GraphiQL(client) -> POST /graphql (endpoint = "API") -> schema-validate -> resolver -> DB -> JSON wapas.**
+- REST = bahut URL (har cheez alag). GraphQL = **ek URL**, query body me. Yehi GraphQL ka point.
+
+---
+
 ## 5. SCHEMA kyun IMPORTANT (deep — key samajh)
 Schema = client-server ka **CONTRACT**. 3 kaam:
 1. **Contract + docs** — client ko pehle se pata kya maang sakta. **GraphiQL auto-complete isi schema se.**
