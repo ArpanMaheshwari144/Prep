@@ -30,8 +30,8 @@ bool canFinish(int numCourses, vector<vector<int>> &prerequisites)
     vector<int> indegree(numCourses, 0);
     for (auto &it : prerequisites)
     {
-        int u = it[0];
-        int v = it[1];
+        int u = it[1];
+        int v = it[0];
 
         adj[u].push_back(v);
         indegree[v]++;
