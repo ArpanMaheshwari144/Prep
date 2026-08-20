@@ -185,8 +185,8 @@ public class SecurityConfig {
                 // Login/register/refresh — token chahiye nahi
                 .requestMatchers("/auth/**").permitAll()
                 // H2 console — dev only (production mein remove)
-                .requestMatchers("/h2-console/**").permitAll()
-                // Baki sab — JWT mandatory
+                .requestMatchers("/h2-console/**").permitAll().requestMatchers("/graphql", "/graphiql/**").permitAll()
+                    // Baki sab — JWT mandatory
                 .anyRequest().authenticated()
             )
 

@@ -64,6 +64,11 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-graphql</artifactId>
+		</dependency>
+
 		<!-- ═══════════════════════════════════════════════════
 		     SPRING SECURITY — Authentication + Authorization framework
 		     Provides:
@@ -101,6 +106,7 @@
 			<version>0.12.6</version>
 			<scope>runtime</scope>
 		</dependency>
+
 
 		<!-- ═══════════════════════════════════════════════════
 		     H2 — In-memory DB (DEV/TEST fallback)
