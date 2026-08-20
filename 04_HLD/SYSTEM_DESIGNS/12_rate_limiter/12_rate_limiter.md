@@ -744,4 +744,109 @@ REJECTED (429 Too Many Requests):
 
 ---
 
+## ═══ HANDS-ON — Nginx se rate-limiter LIVE chalaya (khud kiya, 21-Aug) ═══
+
+> Upar sab THEORY padhi. Ye section = wahi cheez REAL TOOL me chala ke apni aankhon se dekhi.
+> Koi program NAHI likha — sirf ek ready tool (Nginx) on kiya + config di + hammer maar ke 503 nikaala.
+> (files: isi folder me `nginx.conf`)
+
+### 0. Maqsad + tareeka
+```
+Rate-limiter ko PADHA to tha -> ab dekhna tha "practice me kaam kaise karta".
+Tool = Nginx (real web-server, jisme rate-limiter PEHLE se built-in hai).
+Nginx ko Docker container me chalaya, config di, curl se tez requests maari -> 503 aaya.
+```
+
+### 1. DOCKER kyun + kaise
+```
+Nginx laptop pe install karne ki zaroorat nahi -> Docker se ek command me container khada.
+    docker run -d --name rl -p 8080:80 -v "<path>\nginx.conf:/etc/nginx/nginx.conf:ro" nginx
+
+    -d            = background me chalao (detached)
+    --name rl     = container ka naam "rl"
+    -p 8080:80    = laptop ka 8080 -> container ke 80 se joda (localhost:8080 pe milega)
+    -v "...:...:ro" = apni nginx.conf ko container ke andar wali jagah pe MOUNT karo (ro=read-only)
+    nginx         = image (pehli baar auto-download hui: "Pulling from library/nginx")
+
+    -> ek lambi container-ID print hui = chalu.
+```
+
+### 2. CONFIG file (nginx.conf) — ismein kya likha (2 line hi asli rate-limiter)
+```
+limit_req_zone $binary_remote_addr zone=mylimit:10m rate=1r/m;   <- (1) BUCKET banao
+    $binary_remote_addr = client ka IP (har IP ka apna bucket)
+    zone=mylimit:10m    = bucket ka naam + memory
+    rate=1r/m           = REFILL speed (1 token per minute)
+
+location / {
+    limit_req zone=mylimit burst=5 nodelay;                       <- (2) LIMIT lagao
+        burst=5   = bucket ka SIZE (ek saath 5 jhel lega)
+        nodelay   = burst ko turant serve karo (queue me lataka mat)
+    root /usr/share/nginx/html;  index index.html;               <- content serve
+}
+
+Do knob (dono token-bucket theory se):  rate = REFILL speed  |  burst = bucket SIZE
+```
+
+### 3. ★ GALTI + FIX (sabse badi seekh — return bug)
+```
+Pehle location me "return 200" likha tha -> hammer maara -> SAB 200, koi 503 nahi (limit lag hi nahi rahi).
+KYUN: nginx me "return" ek PEHLE wale phase me chalta, "limit_req" uske BAAD wale phase me.
+      -> request rate-limiter tak pahunchne se PEHLE hi 200 laut jaati -> limit BYPASS.
+FIX:  "return" hatao, asli file serve karo (root/index) -> ab limit_req pehle chalta -> 503 aata.
+GEM:  rate-limit test karna ho to "return" mat use karo, file/proxy serve karo.
+```
+
+### 4. TEST kaise kiya (curl)
+```
+Normal (ek hit):
+    curl http://localhost:8080                 -> "OK" / welcome page (bucket me token hai)
+
+Hammer (30 request ek jhatke me, sirf status-code dikhao):
+    for /L %i in (1,1,30) do @curl -s -o nul -w "%{http_code} " http://localhost:8080
+        for /L (START,STEP,END) = (1,1,30) -> loop 30 baar -> 30 requests
+        -s -o nul  = chup raho, body phenk do
+        -w "%{http_code}" = sirf status code chhapo
+```
+
+### 5. Kya DEKHA (live)
+```
+200 200 200 200 200 200 503 503 503 503 ...
+└──── bucket ke token ────┘ └──── khatam = BLOCKED (503) ────┘
+
+Docker Desktop -> Containers -> rl -> Logs me nginx khud likhta:
+    "GET / HTTP/1.1" 503 197
+    [error] limiting requests, excess: 5.774 by zone "mylimit", client: 172.17.0.1
+        503 197      = status 503, response sirf 197 byte
+        excess: 5.77 = ye request bucket se kitne token UPAR thi
+        zone mylimit = kis bucket ne roka
+        client 172.17.0.1 = Docker gateway IP (saari requests ek hi IP se dikhi -> ek hi bucket share)
+```
+
+### 6. ★★ GEMS / gotchas (interview me bhi)
+```
+1. return BYPASS: "return" limit_req se pehle wale phase me -> limit lagti hi nahi. File/proxy serve karo.
+2. LIMIT tabhi kaatti jab ARRIVAL-rate > limit: pehle rate=2r/s pe slow curl-loop se sab 200 aaye
+   (loop dheere tha, refill keep-up kar gaya). Tez maaro tabhi 503.
+3. burst = N  ->  spike me N+1 pass (nginx apni taraf se +1 karta):
+      burst=5 -> 6,   burst=100 -> 101.
+      Wo +1 bucket me se NAHI hoti -> rate ki "live" 1 request bucket ke bahar se nikalti (alag slot).
+      TEXTBOOK token-bucket = N (exact) | NGINX = N+1 (quirk).
+      Aur EXACT bhi nahi -> timing/refill se thoda wobble (21, kabhi 22). Isiliye chala ke dekho, theory pe aankh-band bharosa nahi.
+4. 1 IP = 1 bucket ($binary_remote_addr). Real world me har user ka apna IP -> apna bucket.
+5. config badla -> "docker restart rl" karna PADTA (warna purana config chalta rehta).
+```
+
+### 7. Dobara kaise chalaye (quick)
+```
+docker start rl                                      (band ho to)
+curl http://localhost:8080                           (normal check)
+for /L %i in (1,1,30) do @curl -s -o nul -w "%{http_code} " http://localhost:8080   (hammer)
+docker logs rl                                       (limiting-requests lines dekho)
+docker restart rl                                    (config badla ho to reload)
+docker stop rl                                        (band karna ho to)
+```
+
+---
+
 [← HLD README](../README.md)
