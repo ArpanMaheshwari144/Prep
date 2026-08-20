@@ -237,7 +237,7 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
 
 ## Build:
 ```powershell
-cd C:\DSA_PRACTICE\02_SPRING\PROJECT\usercrud
+cd C:\DSA_PRACTICE\07_PROJECTS\usercrud
 mvn clean package -DskipTests
 ```
 
@@ -706,7 +706,7 @@ SELECT * FROM refresh_tokens;
 
 ```powershell
 # Inside project folder
-cd C:\DSA_PRACTICE\02_SPRING\PROJECT\usercrud
+cd C:\DSA_PRACTICE\07_PROJECTS\usercrud
 
 # Build (clean + compile + package)
 mvn clean package -DskipTests

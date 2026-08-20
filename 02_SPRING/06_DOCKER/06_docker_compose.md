@@ -93,7 +93,7 @@ application-compose.properties:  ← NEW
 
 ### File 2: `docker-compose.yml`
 
-**Path:** `C:\DSA_PRACTICE\02_SPRING\PROJECT\usercrud\docker-compose.yml`
+**Path:** `C:\DSA_PRACTICE\07_PROJECTS\usercrud\docker-compose.yml`
 
 ```yaml
 services:
@@ -209,7 +209,7 @@ docker rm -f mysql-userdb
 
 ### Step 2 — Build JAR (Spring Boot ke liye):
 ```cmd
-cd C:\DSA_PRACTICE\02_SPRING\PROJECT\usercrud
+cd C:\DSA_PRACTICE\07_PROJECTS\usercrud
 mvn clean package -DskipTests
 ```
 **Reason:** Dockerfile mein `COPY target/usercrud-0.0.1-SNAPSHOT.jar` — JAR pehle se hona chahiye.

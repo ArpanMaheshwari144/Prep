@@ -179,7 +179,7 @@ docker-compose build app             # build specific
 ## Maven + Java Run
 
 ```cmd
-cd C:\DSA_PRACTICE\02_SPRING\PROJECT\usercrud
+cd C:\DSA_PRACTICE\07_PROJECTS\usercrud
 
 # Build (clean + compile + package)
 mvn clean package -DskipTests

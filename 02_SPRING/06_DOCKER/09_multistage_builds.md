@@ -177,7 +177,7 @@ COPY --from=builder /build/target/*.jar app.jar
 
 ### Build commands:
 ```cmd
-cd C:\DSA_PRACTICE\02_SPRING\PROJECT\usercrud
+cd C:\DSA_PRACTICE\07_PROJECTS\usercrud
 
 REM Single-stage (default Dockerfile)
 docker build -t usercrud-app:single .

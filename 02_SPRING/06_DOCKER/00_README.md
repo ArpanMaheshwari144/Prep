@@ -139,7 +139,7 @@ LAPTOP
 
 ```
 PROJECT MEIN:
-   02_SPRING/PROJECT/usercrud/
+   07_PROJECTS/usercrud/
    ├── Dockerfile                       ← Spring image recipe
    ├── .dockerignore                    ← exclude from build context
    ├── docker-compose.yml               ← multi-container orchestration
