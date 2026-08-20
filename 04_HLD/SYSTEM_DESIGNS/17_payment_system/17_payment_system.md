@@ -82,7 +82,7 @@ store se pehle -> dono "naya" samajh ke process -> double-charge.
 **TRAP:** done pe key DELETE mat karo! late retry (network timeout, 30 sec baad) -> key gayab -> "naya" samjhe -> DOBARA charge.
    -> TTL (24h) ya result store rakho; cache temporary, DB = final truth.
 
-**⚠ CONFUSION-CLEAR (Arpan-doubt, 10-Jul): "phir main GENUINE 2 baar Rs.100 kaise bhejun (=Rs.200)? key to reject kar degi?"**
+** CONFUSION-CLEAR (Arpan-doubt, 10-Jul): "phir main GENUINE 2 baar Rs.100 kaise bhejun (=Rs.200)? key to reject kar degi?"**
 ```
    JAWAB: key AMOUNT/account se NAHI banti -> har NAYE payment-intent pe CLIENT ek NAYI unique key banata.
    - GENUINE 2 payments (100 + 100):  press-1 -> key ABC · press-2 -> key XYZ (alag key) -> DONO process -> 200. ✓

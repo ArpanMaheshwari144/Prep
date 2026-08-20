@@ -254,8 +254,8 @@
    S3 aur DB ALAG kaam ke liye -> S3 DB ko REPLACE nahi karta.
 
    S3 (object storage) DETA: file/blob ko KEY se store/get. bas.
-     ❌ QUERY nahi ("SELECT WHERE age>25") · ❌ no ACID/transaction (atomic update) · ❌ no joins/relationships
-     ❌ no partial-update (object pura overwrite) · ❌ many-small-fast-reads pe slow.
+      QUERY nahi ("SELECT WHERE age>25") ·  no ACID/transaction (atomic update) ·  no joins/relationships
+      no partial-update (object pura overwrite) ·  many-small-fast-reads pe slow.
    DB DETA (jo S3 nahi): QUERY (where/sort/filter) · INDEX · ACID/transaction (no-double-spend) · JOINS · in-place UPDATE.
 
    analogy: S3 = giant WAREHOUSE (boxes label/key se fetch, par "sab red-shirt wale box do" nahi pooch sakte -> har box kholna padega).

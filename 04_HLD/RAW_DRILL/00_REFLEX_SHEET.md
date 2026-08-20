@@ -48,7 +48,7 @@
 
 ---
 
-## ⚡ ONE-LINER DECISION SHORTCUTS (X vs Y -> kab-kaunsa · flash-reflex)
+##  ONE-LINER DECISION SHORTCUTS (X vs Y -> kab-kaunsa · flash-reflex)
 
 ```
     1. SQL vs NoSQL          :  ACID/consistency/relations -> SQL   |  flexible/scale -> NoSQL
@@ -360,7 +360,7 @@
    YAAD: SAGA = multi-service distributed txn. local commits chain -> fail -> COMPENSATING ulta-actions (rollback nahi). (@Transactional=ek DB.)
 ```
 
-## 25. MESSAGE DELIVERY GUARANTEE (queue/Kafka — kitni baar pahunche)  ✅ CLEARED 2-Jul
+## 25. MESSAGE DELIVERY GUARANTEE (queue/Kafka — kitni baar pahunche)   CLEARED 2-Jul
 ```
    AT-MOST-once : bhej diya, bas -> LOST ho sakta (fire-forget). fast, unreliable. (kam use)
    AT-LEAST-once: PAKKA pahunche, par DUPLICATE ho sakta (ack na mila -> dobara bhej). ★ COMMON.
@@ -405,7 +405,7 @@
    YAAD: CLARIFY->SCALE->API->BOXES->DATA->DEEP-DIVE->BOTTLENECK->WRAP.
 ```
 
-## ✅ PENDING — ALL CLEARED (2-Jul)
+##  PENDING — ALL CLEARED (2-Jul)
 ```
    HLD JP-level set POORA HAI ab:
    - 28 concept sections + 8-step framework + 31-row master table + 12 one-liner shortcuts.

@@ -86,7 +86,7 @@
         pay success -> 'booked' | TTL expire -> wapas 'available' (na double-book, na forever-block).
 ```
 
-### ⚠ idempotency-key vs atomic-mark (yeh confuse hota — clarify)
+###  idempotency-key vs atomic-mark (yeh confuse hota — clarify)
 ```
    2 ALAG user, ek seat (double-booking) -> ATOMIC mark / row-lock   (race BETWEEN users)   <- yahan
    1 SAME user, duplicate (retry/double-click "Pay") -> IDEMPOTENCY key (retry-dedup)        <- alag problem

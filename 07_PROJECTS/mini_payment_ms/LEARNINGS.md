@@ -164,7 +164,7 @@
    CONFIG (application.yml) — ★ SAHI prefix (yahin galti hui thi):
      spring.cloud.gateway.server.webmvc.routes      <- servlet gateway (dependency = gateway-server-webmvc)
        - id · uri (kahan bheje) · predicates (Path=... kaunsi request)
-     ❌ galti: "gateway.mvc.routes" -> galat namespace -> routes LOAD hi nahi hui -> har request 404.
+      galti: "gateway.mvc.routes" -> galat namespace -> routes LOAD hi nahi hui -> har request 404.
      ✓ DEBUG lesson: dependency-artifact ke naam se namespace match karo -> "server-webmvc" -> "server.webmvc".
        (docs/net pe bharosa mat karo blindly — version alag hota; artifact-naam se derive karo.)
 

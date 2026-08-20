@@ -33,7 +33,7 @@ Multi DB / shards:
 - ✓ Har node **khud** bana le (coordination-free), clash ~impossible
 - ✗ **Bada** (128-bit) · **random** → DB index unfriendly (sorted nahi → B-tree insert slow) · time-ordered nahi
 
-### 2. Snowflake ID (Twitter, 64-bit)  ⭐ interview-favourite
+### 2. Snowflake ID (Twitter, 64-bit)   interview-favourite
 ```
 64 bits = [ 1 unused ][ 41 TIMESTAMP ][ 10 MACHINE-ID ][ 12 SEQUENCE ]
              sign        ms since epoch   kaunsa node       same-ms counter
