@@ -1,12 +1,12 @@
 # ============================================================
-# 🚫 .dockerignore — UserCRUD
+# .dockerignore — UserCRUD
 # ============================================================
 # Yeh file Docker ko batati: build ke time KYA SKIP karna.
 #
 # Kyu zaroori?
-#   docker build .  →  Docker poora folder ("build context") read karta
-#   Bina .dockerignore: .git/, .idea/, target/*.class — sab scan
-#   Result: slow build, bigger image, secrets leak risk
+#  docker build .  →  Docker poora folder ("build context") read karta
+#  Bina .dockerignore: .git/, .idea/, target/*.class — sab scan
+#  Result: slow build, bigger image, secrets leak risk
 #
 # Best practice: SIRF wahi rakho jo Dockerfile ko COPY karna hai
 # ============================================================
@@ -37,10 +37,10 @@
 # Maven build noise
 # ─────────────────────────────────────────────
 # target/ folder mein:
-#   • .class files (compiled, intermediate)
-#   • test-classes/, maven-status/, maven-archiver/
-#   • generated-sources/
-#   • Aur usercrud-0.0.1-SNAPSHOT.jar (yeh chahiye!)
+#  • .class files (compiled, intermediate)
+#  • test-classes/, maven-status/, maven-archiver/
+#  • generated-sources/
+#  • Aur usercrud-0.0.1-SNAPSHOT.jar (yeh chahiye!)
 #
 # Trick: pure target/ ignore mat kar (jar nahi milega)
 # Sirf intermediate stuff skip:
@@ -99,14 +99,14 @@ temp/
 
 
 # ============================================================
-# 🧠 Concept Recap:
+# Concept Recap:
 # ============================================================
 # Build context = saara folder jo "docker build ." command dekhta
 # .dockerignore = filter usse pehle Docker dekhe
 #
 # Result for usercrud:
-#   target/usercrud-0.0.1-SNAPSHOT.jar  ✅ jaata image mein
-#   target/classes/, .git/, .idea/      ❌ skip
-#   Pure context: ~30 MB instead of ~500 MB
-#   Faster build + smaller, cleaner image
+#  target/usercrud-0.0.1-SNAPSHOT.jar   jaata image mein
+#  target/classes/, .git/, .idea/       skip
+#  Pure context: ~30 MB instead of ~500 MB
+#  Faster build + smaller, cleaner image
 # ============================================================
