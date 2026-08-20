@@ -788,16 +788,7 @@ location / {
 Do knob (dono token-bucket theory se):  rate = REFILL speed  |  burst = bucket SIZE
 ```
 
-### 3. ★ GALTI + FIX (sabse badi seekh — return bug)
-```
-Pehle location me "return 200" likha tha -> hammer maara -> SAB 200, koi 503 nahi (limit lag hi nahi rahi).
-KYUN: nginx me "return" ek PEHLE wale phase me chalta, "limit_req" uske BAAD wale phase me.
-      -> request rate-limiter tak pahunchne se PEHLE hi 200 laut jaati -> limit BYPASS.
-FIX:  "return" hatao, asli file serve karo (root/index) -> ab limit_req pehle chalta -> 503 aata.
-GEM:  rate-limit test karna ho to "return" mat use karo, file/proxy serve karo.
-```
-
-### 4. TEST kaise kiya (curl)
+### 3. TEST kaise kiya (curl)
 ```
 Normal (ek hit):
     curl http://localhost:8080                 -> "OK" / welcome page (bucket me token hai)
@@ -809,7 +800,7 @@ Hammer (30 request ek jhatke me, sirf status-code dikhao):
         -w "%{http_code}" = sirf status code chhapo
 ```
 
-### 5. Kya DEKHA (live)
+### 4. Kya DEKHA (live)
 ```
 200 200 200 200 200 200 503 503 503 503 ...
 └──── bucket ke token ────┘ └──── khatam = BLOCKED (503) ────┘
@@ -823,7 +814,7 @@ Docker Desktop -> Containers -> rl -> Logs me nginx khud likhta:
         client 172.17.0.1 = Docker gateway IP (saari requests ek hi IP se dikhi -> ek hi bucket share)
 ```
 
-### 6. ★★ GEMS / gotchas (interview me bhi)
+### 5. ★★ GEMS / gotchas (interview me bhi)
 ```
 1. return BYPASS: "return" limit_req se pehle wale phase me -> limit lagti hi nahi. File/proxy serve karo.
 2. LIMIT tabhi kaatti jab ARRIVAL-rate > limit: pehle rate=2r/s pe slow curl-loop se sab 200 aaye
@@ -837,7 +828,7 @@ Docker Desktop -> Containers -> rl -> Logs me nginx khud likhta:
 5. config badla -> "docker restart rl" karna PADTA (warna purana config chalta rehta).
 ```
 
-### 7. Dobara kaise chalaye (quick)
+### 6. Dobara kaise chalaye (quick)
 ```
 docker start rl                                      (band ho to)
 curl http://localhost:8080                           (normal check)
