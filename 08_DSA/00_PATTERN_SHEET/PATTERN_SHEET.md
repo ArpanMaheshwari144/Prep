@@ -1724,6 +1724,13 @@
         GRID pe: adj[node] ki jagah 4-direction (Q3 dirs-trick); visited = cell ko SINK ('0'/'2').
 
  ──────────────────────────────
+   Q2b  BFS ke ANDAR: PLAIN ya LEVEL-ORDER? (yehi rotting me chhoot gaya tha)
+        answer me "reach / connected / count / islands"   -> PLAIN BFS (bas queue, level-count nahi)
+        answer me "kitne STEPS / MINUTES / shortest-dist"  -> LEVEL-ORDER (size-snapshot loop):
+             while(!q.empty()) { int sz=q.size(); while(sz--){ ... push nbrs } steps++; }
+             ek queue-size snapshot = ek level = ek step.       (rotting-oranges, min-steps-in-grid, word-ladder)
+
+ ──────────────────────────────
    Q3  neighbours kaise? (graph ka roop)
         edges diye -> adjacency-list -> adj[node]
         grid diya  -> 2 TRICK (ratta -- islands/rotting/flood-fill sab me; ye apne-aap nahi aate):
