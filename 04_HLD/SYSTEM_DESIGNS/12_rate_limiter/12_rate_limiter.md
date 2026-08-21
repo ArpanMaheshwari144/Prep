@@ -727,6 +727,16 @@ REJECTED (429 Too Many Requests):
                    -> local + async-sync (fast PAR slight over-allow)
                    -> # REGION-STICKY (BEST): hash(user-id) % region -> home region -> saare paths ek region -> local Redis.
 
+   ★ ACCURACY vs LATENCY (local+async-sync ka asli trade-off -- ye decision yaad rakh):
+      local+async-sync = har instance apne LOCAL count se allow karta, sync BAAD me -> OVER-ALLOW.
+         e.g. limit 100, 5 instances -> har ek sync-se-pehle kuch nikaal deta -> user 100 se ZYADA le jaa sakta.
+         limit EXACT nahi rehti -> APPROXIMATE/soft ho jaati.
+      KAB CHALEGA (over-allow OK)  : limit sirf "server bachane" ke liye (general API throttle/abuse). Thoda upar-neeche se aafat nahi.
+      KAB NAHI CHALEGA (exact chahiye): limit = PAISA / SECURITY / correctness ->
+         "3 OTP attempts" (security) . "10 free calls phir charge" (billing) . withdrawal-limit
+         -> yahaan CENTRAL ATOMIC (Redis+Lua), latency ki keemat bhugto.
+      1-LINE:  protective/soft limit -> local+async (fast) | money/security limit -> central atomic (exact).
+
    RELIABILITY:  Redis DOWN -> Replica (Sentinel auto-promote) -> (last) FAIL-OPEN.
                  overload -> SHARDING (user/region). SPOF-chain: har layer 2-2 + health-check/failover (LB, Redis, app).
 
