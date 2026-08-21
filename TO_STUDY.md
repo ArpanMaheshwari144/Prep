@@ -19,5 +19,22 @@
 - **Kya padhna (halka, interview-level — ratta nahi, samajh):** TCP vs UDP (kab kya) · HTTP/HTTPS + status codes (200/4xx/5xx) · DNS (naam→IP kaise) · sockets basics · TLS/handshake ek-line · REST already-pata. (backend-relevant hi, OSI-7-layer ki ratта NAHI.)
 - **Kaise:** ek chhoti visual note → 09_DATABASE-jaisa folder (ya 05_INFRA_DEEP) me daal ke ek baar padho. connect: HTTP↔REST↔load-balancer↔caching (already-pata cheezon se jodo).
 
+### 3. [HANDS-ON BACKLOG — live chala ke dekhne wale] runnable demos
+> Ye tera engine (chal ke dekho + why). Done ho chuke: indexing(EXPLAIN), N+1(JOIN FETCH), isolation/dirty-read,
+> rate-limiter(Nginx), Kafka, CB(Resilience4j), Redis(@Cacheable), GraphQL, QueryDSL, JWT, Docker, K8s, load-test.
+
+**★ KAL (agli baar sabse pehle):**
+- **DB deadlock live** — 2 sessions ek-doosre ka lock maange -> MySQL "deadlock detected". (aaj ke 2-session setup se turant)
+- **Nginx load-balancer** — real nginx round-robin, requests backend-1/2 alternate. (scaling ka visual; node lb.js se alag)
+
+**Baad me (jab man kare):**
+- Non-repeatable + phantom read live (REPEATABLE READ vs SERIALIZABLE — isolation demo ka agla step)
+- Optimistic locking @Version — 2 requests same row -> OptimisticLockException (concurrency)
+- Spring Retry @Retryable — flaky method -> logs me retry-retry
+- @Async / @Scheduled — alag thread / cron live fire
+- Cache eviction + TTL live (@Cacheable ka agla step)
+- FK cascade / constraint live (parent delete -> cascade/restrict)
+- Actuator + Prometheus/Grafana — live metrics dashboard (graphs)
+
 ---
 > (done topics -> hata do ya ~strikethrough~)
