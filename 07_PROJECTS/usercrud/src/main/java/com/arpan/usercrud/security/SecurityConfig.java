@@ -182,12 +182,18 @@ public class SecurityConfig {
 
             // ROUTE RULES
             .authorizeHttpRequests(auth -> auth
-                // Login/register/refresh — token chahiye nahi
-                .requestMatchers("/auth/**").permitAll()
-                // H2 console — dev only (production mein remove)
-                .requestMatchers("/h2-console/**").permitAll().requestMatchers("/graphql", "/graphiql/**").permitAll()
-                    // Baki sab — JWT mandatory
-                .anyRequest().authenticated()
+             // Login/register/refresh — token chahiye nahi
+            .requestMatchers("/auth/**").permitAll()
+
+            // H2 console — dev only (production mein remove)
+            .requestMatchers("/h2-console/**").permitAll()
+
+            .requestMatchers("/graphql", "/graphiql/**").permitAll()
+
+            .requestMatchers("/n1/**").permitAll()
+
+            // Baki sab — JWT mandatory
+            .anyRequest().authenticated()
             )
 
             // H2 console iframe support (dev only)

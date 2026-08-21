@@ -1,4 +1,9 @@
 package com.arpan.usercrud.repository;
 
-public class BookRepository {
+import com.arpan.usercrud.model.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface BookRepository extends JpaRepository<Book, Long> {
 }
