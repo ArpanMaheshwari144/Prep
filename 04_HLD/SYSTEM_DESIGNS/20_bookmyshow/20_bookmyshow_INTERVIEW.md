@@ -94,6 +94,33 @@
    (Arpan ka "seat mark-booked, doosra taken dekhe" = CORRECT; sirf "idempotency" word galat tha -> woh atomic-mark hai.)
 ```
 
+## STEP 7 — BOTTLENECK / scale (har box: 10x load / failure?)
+```
+   App servers      -> kai instance + LB
+   Browse read load -> CACHE (seat-map/shows, 99%) + read-REPLICA  [read-heavy]
+   Booking SPIKE    -> QUEUE (Kafka) absorb (popular release, ek saath same seats)
+                       -> per-show workers seat-requests SERIALIZE karein -> atomic-mark race-safe
+   DB (seats/bookings) -> SQL/CP, row-lock. data chhota -> sharding NAHI.
+                       HOT-ROW risk: ek popular show pe sab same seats -> contention
+                       -> queue serialize + atomic conditional UPDATE (ek hi jeete)
+   Payment service  -> external -> retry + idempotency-key (double-charge na ho)
+   SPOF: "ek box gira to pura gire?" -> replicate. Redis cluster. DB replica (Sentinel auto-failover).
+```
+
+## STEP 8 — WRAP (ek saans + improve)
+```
+   USER -> LB -> App servers:
+      browse -> CACHE(99%) + read-REPLICA
+      book   -> ATOMIC conditional UPDATE / row-lock (SQL, CP) -> no double-book
+      spike  -> QUEUE (Kafka) absorb
+      hold   -> seat 'held' + TTL (pay -> 'booked' | expire -> 'available')
+      pay    -> PAYMENT service (retry + idempotency)
+   DB: SQL (consistency=dil, ACID+row-lock) | DEEP: atomic-mark + seat-HOLD TTL
+   SCALE: app-LB, browse cache+replica, booking queue, DB replica+failover
+   IMPROVE: virtual waiting-room (popular release bheed), distributed-lock (Redlock) agar multi-DB,
+            seat-TTL tune, analytics (popular shows).
+```
+
 ---
 > CORE: clarify -> scale -> API -> boxes -> data+DB(kyun) -> DEEP DIVE -> bottleneck -> wrap.
 > BookMyShow twist: CONSISTENCY (no double-book) = concurrency control (lock/atomic) + CP. browse=cache/replica, spike=queue.
