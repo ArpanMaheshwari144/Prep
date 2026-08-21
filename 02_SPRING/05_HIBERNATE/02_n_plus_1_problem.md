@@ -217,3 +217,115 @@ N+1 = 1 parent query + N child queries
 Detection: SQL logs mein same query repeat
 Fix:       JOIN FETCH ya @EntityGraph
 ```
+
+---
+
+## ═══ HANDS-ON — N+1 LIVE dekha usercrud me (khud kiya, 21-Aug) ═══
+
+> Upar theory. Ye section = wahi cheez REAL Spring Boot me chala ke Hibernate SQL logs me dekhi:
+> 5 authors ke books laane pe -> BAD = 6 queries (1+5) | GOOD (JOIN FETCH) = SIRF 1 query.
+> (project: usercrud. `spring.jpa.show-sql=true` on tha -> har SQL console me print hui.)
+
+### 0. Maqsad
+```
+1 parent -> kai child (Author -> kai Book) ka relationship banao.
+Saare authors laao + har author ke books access karo -> logs me dekho kitni queries chali.
+LAZY loading = default -> N+1. JOIN FETCH -> 1 query.
+```
+
+### 1. ENTITIES (relationship + LAZY = N+1 ki jad)
+```java
+@Entity @Data
+class Author {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
+    String name;
+    @OneToMany(mappedBy = "author")   // 1 author -> kai books. LAZY (default) = books tabhi load jab access
+    List<Book> books;
+}
+@Entity @Data
+class Book {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
+    String title;
+    @ManyToOne @JoinColumn(name = "author_id")   // kai books -> 1 author (FK author_id)
+    Author author;
+}
+```
+
+### 2. REPOSITORY — ek normal, ek JOIN-FETCH (fix)
+```java
+interface BookRepository extends JpaRepository<Book, Long> {}
+
+interface AuthorRepository extends JpaRepository<Author, Long> {
+    // FIX: JOIN FETCH -> authors + books SAB ek query me. distinct = duplicate authors hatao.
+    @Query("SELECT DISTINCT a FROM Author a LEFT JOIN FETCH a.books")
+    List<Author> findAllWithBooks();
+}
+```
+
+### 3. CONTROLLER — bad vs good endpoint
+```java
+@RestController
+class N1Controller {
+    private final AuthorRepository authorRepo;   // constructor inject
+
+    @GetMapping("/n1/bad")     // 1 + N
+    int bad() {
+        List<Author> authors = authorRepo.findAll();            // Query 1 (authors)
+        int total = 0;
+        for (Author a : authors) total += a.getBooks().size();  // har author -> +1 LAZY query = N
+        return total;
+    }
+    @GetMapping("/n1/good")    // 1
+    int good() {
+        List<Author> authors = authorRepo.findAllWithBooks();   // Query 1 (JOIN FETCH, sab andar)
+        int total = 0;
+        for (Author a : authors) total += a.getBooks().size();  // already loaded -> koi extra query nahi
+        return total;
+    }
+}
+```
++ SecurityConfig me permit: `.requestMatchers("/n1/**").permitAll()`  (JWT-guard block na kare)
+
+### 4. Kya DEKHA (Hibernate SQL logs)
+```
+curl /n1/bad  -> BAD (N+1):
+   select ... from author                       <- Query 1
+   select ... from book where author_id=?       <- Author 1 ke books
+   select ... from book where author_id=?       <- Author 2
+   select ... from book where author_id=?       <- Author 3
+   select ... from book where author_id=?       <- Author 4
+   select ... from book where author_id=?       <- Author 5
+   = 1 + 5 = 6 QUERIES
+
+curl /n1/good -> FIX:
+   select distinct a.*, b.* from author a LEFT JOIN book b on a.id=b.author_id
+   = 1 QUERY
+
+   6 -> 1.
+```
+
+### 5. KYUN (mechanism)
+```
+LAZY loading (default @OneToMany): books tabhi load hote jab a.getBooks() ACCESS karo.
+ -> loop me har author pe alag SELECT-book query -> N extra queries.
+JOIN FETCH: ek hi SQL me author + books dono utha lo (LEFT JOIN) -> per-author query khatam -> 1 query.
+ -> distinct: join se ek author uski har book ke saath repeat hota -> distinct duplicate authors hataata.
+
+SCALE: 1000 authors -> BAD = 1001 queries (DB tabaah) | GOOD = 1 query. Yehi silent perf-killer.
+```
+
+### 6. ★★ GEMS / gotchas
+```
+1. N+1 ki JAD = LAZY loading + loop me child access. (EAGER bhi fix nahi -> wo har jagah load karega, ulta bura.)
+2. FIX = JOIN FETCH (query me) ya @EntityGraph (annotation) -> ek query me parent+child.
+3. DETECT = SQL logs (show-sql=true) me "same select repeat" dikhe -> N+1 hai. (interview: "kaise pakadoge?" -> logs.)
+4. distinct JOIN FETCH me zaroori -> warna join-multiplication se parent duplicate.
+5. Connect: ye query-COUNT ka masla hai (kitni queries), INDEXING = per-query SPEED ka. Dono = DB performance.
+```
+
+### 7. Dobara kaise chalaye
+```
+usercrud/ me: mvn spring-boot:run   (MySQL local chalu)
+curl http://localhost:8080/n1/bad    -> logs me 1+N queries
+curl http://localhost:8080/n1/good   -> logs me 1 query
+```
