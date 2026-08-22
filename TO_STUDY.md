@@ -22,7 +22,7 @@
 ### 3. [HANDS-ON BACKLOG — live chala ke dekhne wale] runnable demos
 > Ye tera engine (chal ke dekho + why). Done ho chuke: indexing(EXPLAIN), N+1(JOIN FETCH), isolation/dirty-read,
 > DB-deadlock(1213), Nginx-LB(round-robin+failover), rate-limiter(Nginx), Kafka, CB(Resilience4j),
-> Redis(@Cacheable), GraphQL, QueryDSL, JWT, Docker, K8s, load-test.
+> Redis(@Cacheable+evict+TTL), GraphQL, QueryDSL, JWT, Docker, K8s, load-test.
 
 **★ KAL (agli baar sabse pehle):**
 - ~~DB deadlock live~~ **DONE (22-Aug)** — 09_DATABASE/08_deadlock.md
@@ -33,7 +33,6 @@
 - Optimistic locking @Version — 2 requests same row -> OptimisticLockException (concurrency)
 - Spring Retry @Retryable — flaky method -> logs me retry-retry
 - @Async / @Scheduled — alag thread / cron live fire
-- Cache eviction + TTL live (@Cacheable ka agla step)
 - FK cascade / constraint live (parent delete -> cascade/restrict)
 - Actuator + Prometheus/Grafana — live metrics dashboard (graphs)
 
