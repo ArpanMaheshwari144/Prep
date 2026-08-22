@@ -21,11 +21,12 @@
 
 ### 3. [HANDS-ON BACKLOG — live chala ke dekhne wale] runnable demos
 > Ye tera engine (chal ke dekho + why). Done ho chuke: indexing(EXPLAIN), N+1(JOIN FETCH), isolation/dirty-read,
-> rate-limiter(Nginx), Kafka, CB(Resilience4j), Redis(@Cacheable), GraphQL, QueryDSL, JWT, Docker, K8s, load-test.
+> DB-deadlock(1213), Nginx-LB(round-robin+failover), rate-limiter(Nginx), Kafka, CB(Resilience4j),
+> Redis(@Cacheable), GraphQL, QueryDSL, JWT, Docker, K8s, load-test.
 
 **★ KAL (agli baar sabse pehle):**
-- **DB deadlock live** — 2 sessions ek-doosre ka lock maange -> MySQL "deadlock detected". (aaj ke 2-session setup se turant)
-- **Nginx load-balancer** — real nginx round-robin, requests backend-1/2 alternate. (scaling ka visual; node lb.js se alag)
+- ~~DB deadlock live~~ **DONE (22-Aug)** — 09_DATABASE/08_deadlock.md
+- ~~Nginx load-balancer~~ **DONE (22-Aug)** — 05_INFRA_DEEP/02_load_balancer.md (hands-on section)
 
 **Baad me (jab man kare):**
 - Non-repeatable + phantom read live (REPEATABLE READ vs SERIALIZABLE — isolation demo ka agla step)
