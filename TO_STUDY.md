@@ -25,7 +25,15 @@
 - Spring Retry @Retryable — flaky method -> logs me retry-retry
 - @Async / @Scheduled — alag thread / cron live fire
 - FK cascade / constraint live (parent delete -> cascade/restrict)
-- Actuator + Prometheus/Grafana — live metrics dashboard (graphs)
+
+**DONE (hands-on ho gaye — 22-Aug):**
+- ~~DB indexing live EXPLAIN~~ (09_DATABASE/01)
+- ~~N+1 problem live~~ (02_SPRING/05_HIBERNATE/02 + usercrud)
+- ~~Isolation / dirty-read~~ (09_DATABASE/07)
+- ~~DB Deadlock (1213)~~ (09_DATABASE/08)
+- ~~Nginx Load Balancer (round-robin + failover)~~ (05_INFRA_DEEP/02)
+- ~~Optimistic Locking @Version~~ (02_SPRING/05_HIBERNATE/08 + usercrud)
+- ~~Actuator + Prometheus/Grafana live dashboard~~ (05_INFRA_DEEP/05)
 
 ---
 > (done topics -> hata do ya ~strikethrough~)

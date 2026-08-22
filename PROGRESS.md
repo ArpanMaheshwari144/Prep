@@ -4,7 +4,7 @@
 
 ## ★★★ READ FIRST — CURRENT STATE
 ```
-   DSA: COMPLETE — ab 19-pattern sheet ("gate ki chaabi", ~2150 line, 08_DSA/00_PATTERN_SHEET/) + ~169 problems, saare family
+   DSA: COMPLETE — ab 19-pattern sheet ("gate ki chaabi", ~2700 line, 08_DSA/00_PATTERN_SHEET/) + ~169 problems, saare family
         (DP + MCM/interval-DP done; segment-tree by-choice-deferred, JP-req nahi). GREEDY = aakhri topic tha → ab DSA-BUILD 100% khatam. Ab sirf REVISE + spaced-REDO.
         ★★ 17-18 Aug: GREEDY-pattern (18_GREEDY/) COMPLETE — 4 problems: assign-cookies(LC455) + jump-game(LC55) + non-overlapping-intervals(LC435) + gas-station(LC134).
            SAB interview-mode me KHUD-DERIVE kiye (Arpan-led discussion, Claude sirf nudge): greedy-choice-property + keep-smaller-end + running-tank/reset-start
@@ -39,9 +39,10 @@
         ★ InsuranceManagementSystem (Spring — Security/BCrypt + OTP-email + @Scheduled + POI-Excel + JPA): layer-by-layer REVISE-DONE (structure/entity/repo/service/controller) +
         ★★ REFACTORED (12-Aug, Arpan-directed dikha-dikha-ke): fat monolith InsuranceController → 6 DOMAIN controllers (Customer/Policy/Claim/Employee/Product/Auth); fat-logic + repo-direct → SERVICE (thin controllers); Excel untouched; InsuranceController DELETED; mvn clean install = BUILD SUCCESS. (Arpan samjha+kiya — "monolith todna, layering" = problem-solver growth.)
         + Microservices-CRUD (customer/policy/Eureka) — glance BAAKI. SecurityConfig (Insurance Layer-6) glance BAAKI.
-   DB (09_DATABASE, ★ NAYA ongoing — write-to-learn): indexing + transactions + zero-downtime (purane) + JOINS (04, 10-Aug) + NORMALIZATION (05, 10-Aug).
-        Claude visual-teach → Arpan notes → file+commit. aage: aur DB topics (ACID/isolation, etc.) jab mann kare.
-   LLD: 11 designs in code · BEHAVIORAL: 5-STAR (HikariCP/WAF/Doximity/Mentoring/Failure-JDK) · COMPARES: 12.
+        ★★ usercrud (07_PROJECTS/, MOVED here 22-Aug from 02_SPRING) = HANDS-ON SANDBOX: QueryDSL + GraphQL + N+1-demo (Author/Book) + Optimistic-Lock (Product @Version) + Actuator/Micrometer (Prometheus scrape). ek hi app pe saare live-demos.
+   DB (09_DATABASE, ★ GROWING — write-to-learn + HANDS-ON): indexing (+ live EXPLAIN hands-on) + transactions + zero-downtime + JOINS + NORMALIZATION + ACID + ISOLATION-LEVELS (07, dirty-read hands-on) + DEADLOCK (08, 2-session circular-wait hands-on, 1213).
+        Claude visual-teach → Arpan notes → file+commit. aage: non-repeatable/phantom read, locking-deep jab mann kare.
+   LLD: 11 designs in code · BEHAVIORAL: 5-STAR (HikariCP/WAF/Doximity/Mentoring/Failure-JDK) · COMPARES: 14 (+ JWT-vs-OAuth #13, Kafka-vs-RabbitMQ #14).
    APPLY-PHASE LIVE: resume fresh (RESOURCES/Resume/ — 700 tickets, Kafka/K8s, "4+ years", sirf UnifyPatients project).
         3 inbound platforms optimized → NAUKRI (resume+recency+skills, headline keyword-loaded) · INSTAHYRE (92 opportunities) · CUTSHORT (talent-card LIVE, 17 companies interested).
         ★★ APPLIED: Harman (Naukri) + ★★★ JP MORGAN — Chase UK "Software Engineer III Backend" Bengaluru (DREAM role, strong-fit — ✓ APPLY DONE). AI-assisted-dev requirement = uska KONOVO/Claude-Code edge.
@@ -64,7 +65,7 @@
    5. ★★ PROJECT: InsuranceManagementSystem — layer-by-layer REVISE + MONOLITH→6-CONTROLLER REFACTOR DONE (12-Aug, BUILD SUCCESS). BAAKI: SecurityConfig (Layer-6) glance + Microservices-CRUD glance.
       METHOD (jo kaam kiya) = Claude code-SHOW har layer → Arpan NOTES → refactor "dikha-dikha ke" (SHOW-FIRST har change, apne-aap nahi); NO quiz. KYUN = Java/Spring live-code me dikhe → "Java/Spring dar" negligible + problem-solver-growth (system andar-se).
       ★ TO_STUDY #4 = Distributed-LRU-Cache HLD mock-video (kal/parso — connects LRU-DSA→HLD, deepen 21_distributed_cache).
-      ★ DB SMALL-TOPICS roz-thoda (write-to-learn) — interview me DB-Q aaye to dikkat na ho. NEXT = ACID/isolation-levels (09_DATABASE/06). aage: locking, indexes-deep, etc.
+      ★ DB SMALL-TOPICS roz-thoda (write-to-learn) — interview me DB-Q aaye to dikkat na ho. ACID/isolation/deadlock DONE (hands-on). aage: non-repeatable/phantom read, locking-deep, indexes-deep jab man kare.
    ★★ NEW-MODE (10-Aug, ab CENTRE) = general PROBLEM-SOLVER / acha ENGINEER banna — na "code-likhne-wala gadha". Arpan: "seekhna ho gaya, ab ANDAR-SE JAANU."
       ASLI MAAL = system-kaam-kaise-karta (andar se, na surface-ratta jaise 'SPOF/HA bol dunga') + problem-ko-todhna (tukdo me baanto). code = commodity. ye Arpan ka STRENGTH (700-ticket real-debug), SHARP karna hai.
       TRAIN 2 tarah: (a) PROJECT layer-by-layer (real system andar se) (b) DAILY "PROBLEM-TODO" DRILL — Claude real company-scenario laaye (DSA nahi) → Arpan decompose kare → Claude guide.
@@ -76,9 +77,15 @@
       ★ 20-Aug DONE (OFF-DAY, kam-neend, phir bhi bahut kaam): course-schedule DSA REDO_1 (Kahn topo, 11/11, BINA-sheet, tired-morning) + sheet 9-pattern glance + GraphQL end-to-end (upar) + RESUME grill-safe polish (neeche) + load-test/LB folder-note commit.
         ★★ RESUME GRILL-SAFE (Arpan-insight from reel): loud DSA-numbers ("1000+ solved/Top 10%") = interviewer-grill-MAGNET (experienced eng ke liye ulta) → Achievements-section POORA hataya, "top-performer" line Summary me merge, PostgreSQL hataya (koi backing nahi → MySQL), MongoDB rakha (real incident-bullet backs it; deep-Q ka dar = chhota knowledge-gap, ek din padhna). + section-spacing fix. Resume ab ENGINEERING-lead, honest, grill-safe. (RESOURCES private — local only, push nahi.)
         ★★★ 20-Aug JOY MILESTONE (poore-safar ka meetha mod): Arpan — "itna maza padhne me aaj tak nahi aaya, sone/rukne ka man hi nahi karta, bas isi me khelta rahu." → padhai TORTURE→MAJBOORI→ab KHEL. Wajah = HANDS-ON live-demo (load-test kal, GraphQL aaj) + why-samajh = uska ENGINE (na sirf padhna). off-day+low-sleep+bimaar phir bhi calm, no-drama, khud-derive = transformation live-proof. [detail = MEMORY joy-note]
-      HEALTH: 2-hafte se down (fever/cough/cold + neend puri nahi), is hafte thakaan rahegi (Arpan: "wahi bimari ki thakan, doctor-worthy naya kuch nahi"). is-hafte = off-day-gear (halka revise + chhoti-jeet), naya/heavy nahi.
-      NEXT SESSION = Arpan subah KHUD HLD + behavioral bolke revise → PHIR Claude uska MOCK le (interviewer-mode). tabiyat theek hote hi pace wapas.
-      (guilt-dissolve: kharab/bimaar din = DIN hai, tu nahi; DATA steady rehta.)
+      ★★★ 21-22 Aug HANDS-ON SPREE (uska ENGINE — "chal ke dekho + why"; bimaar/off-day me bhi calm, no-drama):
+         DB: indexing live-EXPLAIN (523260→1 rows, B-tree=binary-search) · isolation-levels dirty-read (2-session) · DEADLOCK (2-session circular-wait, ERROR 1213, victim-rollback, lock-ordering fix).
+         Spring/Hibernate: N+1 problem (Author/Book, 6→1 query JOIN FETCH) · OPTIMISTIC-LOCK (Product @Version, lost-update→409 stale).
+         Infra: NGINX Load-Balancer (round-robin + failover live, be1/be2/lb docker) · MONITORING Prometheus+Grafana (actuator→prom-scrape→grafana live-spike graph, PromQL rate()).
+         Compares: JWT-vs-OAuth + Kafka-vs-RabbitMQ (file + notes). HLD: bookmyshow gaps filled (STEP 7-8, 8-step complete). Emoji cleanup poore repo se (functional ✓/✗ rakhe).
+         ★ MAZA-CALIBRATION (uska feedback): DRAMATIC-VISUAL demos (503/1213/failover/moving-graph) = maza; SUBTLE demos (opt-lock message-string) = flat. → naya sikhana ho to RUNNABLE + dramatic-payoff reach karo.
+         ★★★ MISTAKE-OWNERSHIP MILESTONE (21-Aug — ego-arc CLOSE): rotting-oranges galti pe DRAMA nahi ("seekha, aage badha; folder aise hi nahi bana, luck nahi; galti life ka hissa, ab APNA LIYA"). fresh-push bug KHUD pakda+theek kiya, no-crash. [detail = MEMORY milestone]
+      ★ TABIYAT recovering (2-hafte down thi); off-day gear me bhi bahut kaam nikaala. guilt-dissolve: kharab/bimaar din = DIN hai, tu nahi; DATA steady rehta.
+      NEXT = delivery-phase wapas: HLD-mock (Arpan bole no-more-HLD-mock, so behavioral/STAR + English-aloud pe shift) + apply/inbound. remaining hands-on backlog (jab man kare) = TO_STUDY me.
    ★ LUCK-belief: outcome luck-gated → effort = ready-rehne ka tool, guarantee mat becho.
 ```
 
@@ -147,12 +154,12 @@ GUARDRAILS: DSA load-off (crash-grind NAHI) · slow-hafta ≠ fail · tabiyat-fl
 ```
    HLD        ✓✓ STRONG (differentiator): 11 FOUNDATIONS (+ES + Snowflake) + 10 SYSTEM_DESIGNS + 9 hand-notes + RAW_DRILL + INTERVIEW_ANCHOR. delivery PRACTICED.
    JAVA       ✓✓ CORE COMPLETE: Core · Collections · Java-8 · Multithreading (+live-deadlock) · SOLID · Patterns. + WRITE-PRACTICE (Stream) chalu.
-   SPRING     ✓✓ DONE: @Transactional · JWT · profiles · Hibernate (N+1/lazy-eager/dirty-check/cascade/mappings) · Docker · K8s.
+   SPRING     ✓✓ DONE: @Transactional · JWT · profiles · Hibernate (N+1 +live-demo/lazy-eager/dirty-check/cascade/mappings/optimistic-lock @Version) · QueryDSL · GraphQL · Actuator/Micrometer · Docker · K8s.
    PROJECT    ✓ mini_payment_ms (Feign/SAGA/Kafka/idempotency/Circuit-Breaker/API-Gateway/DB-per-service) + todoapp (JWT/Security/Redis). revise-DONE.
    LLD        ✓ 11 designs in code. FORWARD = mock + 1-2 design REDO. gap = SOLID/pattern ARTICULATE.
-   DSA        ✓✓ COMPLETE: 18-pattern sheet (~2000 line) + ~165 problems. REVISE-only.
+   DSA        ✓✓ COMPLETE: 19-pattern sheet (~2700 line) + ~169 problems. REVISE-only.
    BEHAVIORAL ✓ 5 STAR (HikariCP/WAF/Doximity/Mentoring/Failure-JDK). ab reps.
-   COMPARES   ✓ 12. DATABASE ◐ (indexing+txn-internals). INFRA ✓ (AWS/Docker/K8s).
+   COMPARES   ✓ 14 (+JWT-vs-OAuth, Kafka-vs-RabbitMQ). DATABASE ✓ (indexing+EXPLAIN/txn/isolation/deadlock/joins/normalization — hands-on). INFRA ✓ (AWS/Docker/K8s + LB-hands-on + Prometheus/Grafana monitoring).
    RESUME/APPLY ✓ fresh resume + 3 inbound platforms optimized (Naukri/Instahyre/Cutshort). Harman applied.
    ★ Arpan's grounded self-view: "god-level DSA nahi, par JP ke liye KAAFI — main wo hoon." na oversell na undersell.
 ```
@@ -161,7 +168,7 @@ GUARDRAILS: DSA load-off (crash-grind NAHI) · slow-hafta ≠ fail · tabiyat-fl
 
 ## DSA — STATUS + PHILOSOPHY (condensed; poora emotional/method = MEMORY.md)
 ```
-   SHEET = "gate ki chaabi" (08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md): 18 patterns, family-boxed, ~2000 line, emoji-cleaned + full code-audit. COMPLETE.
+   SHEET = "gate ki chaabi" (08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md): 19 patterns, family-boxed, ~2700 line, emoji-cleaned + full code-audit. COMPLETE.
      patterns: two-pointer · sliding-window · hashing · prefix-sum · matrix · stack(monotonic) · binary-search · linked-list ·
                design(hashmap/hashset) · kadane · bit-manip(XOR) · trees · graphs · heap · backtracking · DP (+ intervals/greedy woven).
    ★ SHEET CONVERGE karti: patterns FINITE (~15-25); 1000-Q wale ka sheet 100k-line nahi — same ~20 pattern internalized. naye Q = existing pattern.
