@@ -19,18 +19,10 @@
 - **Kya padhna (halka, interview-level — ratta nahi, samajh):** TCP vs UDP (kab kya) · HTTP/HTTPS + status codes (200/4xx/5xx) · DNS (naam→IP kaise) · sockets basics · TLS/handshake ek-line · REST already-pata. (backend-relevant hi, OSI-7-layer ki ratта NAHI.)
 - **Kaise:** ek chhoti visual note → 09_DATABASE-jaisa folder (ya 05_INFRA_DEEP) me daal ke ek baar padho. connect: HTTP↔REST↔load-balancer↔caching (already-pata cheezon se jodo).
 
-### 3. [HANDS-ON BACKLOG — live chala ke dekhne wale] runnable demos
-> Ye tera engine (chal ke dekho + why). Done ho chuke: indexing(EXPLAIN), N+1(JOIN FETCH), isolation/dirty-read,
-> DB-deadlock(1213), Nginx-LB(round-robin+failover), rate-limiter(Nginx), Kafka, CB(Resilience4j),
-> Redis(@Cacheable+evict+TTL), GraphQL, QueryDSL, JWT, Docker, K8s, load-test.
-
-**★ KAL (agli baar sabse pehle):**
-- ~~DB deadlock live~~ **DONE (22-Aug)** — 09_DATABASE/08_deadlock.md
-- ~~Nginx load-balancer~~ **DONE (22-Aug)** — 05_INFRA_DEEP/02_load_balancer.md (hands-on section)
 
 **Baad me (jab man kare):**
 - Non-repeatable + phantom read live (REPEATABLE READ vs SERIALIZABLE — isolation demo ka agla step)
-- Optimistic locking @Version — 2 requests same row -> OptimisticLockException (concurrency)
+- ~~Optimistic locking @Version~~ **DONE (22-Aug)** — 02_SPRING/05_HIBERNATE/08_optimistic_locking.md
 - Spring Retry @Retryable — flaky method -> logs me retry-retry
 - @Async / @Scheduled — alag thread / cron live fire
 - FK cascade / constraint live (parent delete -> cascade/restrict)
