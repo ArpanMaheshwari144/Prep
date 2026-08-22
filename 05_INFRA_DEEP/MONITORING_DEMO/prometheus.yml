@@ -1,0 +1,12 @@
+# ─────────────────────────────────────────────
+#  Prometheus config — usercrud app ko scrape karo
+# ─────────────────────────────────────────────
+global:
+  scrape_interval: 2s          # har 2 sec me metrics kheencho (demo -> fast graph)
+
+scrape_configs:
+  - job_name: 'usercrud'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      # app HOST pe chal rahi (docker ke bahar) -> host.docker.internal se reach
+      - targets: ['host.docker.internal:8080']

@@ -194,6 +194,8 @@ public class SecurityConfig {
 
                             .requestMatchers("/product/**").permitAll()
 
+                            .requestMatchers("/actuator/**").permitAll()
+
                             // Baki sab — JWT mandatory
                             .anyRequest().authenticated()
             )
