@@ -22,7 +22,6 @@
 
 **Baad me (jab man kare):**
 - Non-repeatable + phantom read live (REPEATABLE READ vs SERIALIZABLE — isolation demo ka agla step)
-- ~~Optimistic locking @Version~~ **DONE (22-Aug)** — 02_SPRING/05_HIBERNATE/08_optimistic_locking.md
 - Spring Retry @Retryable — flaky method -> logs me retry-retry
 - @Async / @Scheduled — alag thread / cron live fire
 - FK cascade / constraint live (parent delete -> cascade/restrict)
