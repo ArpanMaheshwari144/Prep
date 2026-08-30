@@ -22,10 +22,26 @@
 //   [-2,-1]                       -> -1   (best = akela -1)
 //
 // ============================================================
-//  = DIAMETER ka SUM-version. FARAK:
-//    - diameter me arm = HEIGHT (1+..); yahan arm = GAIN (node-values ka sum)
-//    - negative arm -> 0 (mat lo, nuksan)
-//  (concept chat me: parent ko RETURN = ek-arm; answer me RECORD = dono-arm + node)
+//  = DIAMETER ka SUM-version.  CONNECTION (diameter ki line ke saamne kya badla):
+//    DIAMETER                            MAX PATH SUM
+//    left  = height(L, maxDia)           left  = max(0, solve(L, maxi))   <- neg arm -> 0
+//    right = height(R, maxDia)           right = max(0, solve(R, maxi))
+//    maxDia = max(maxDia, left+right)    maxi  = max(maxi, left + node->val + right)  <- +node
+//    return 1 + max(left,right)          return node->val + max(left,right)           <- val, 1 nahi
+//
+//  skeleton HUBAHU: return-EK-arm / record-DONO-arm / post-order / global-max.
+//  3 DELTA: (1) arm = height -> GAIN(sum)  (2) record me + node->val  (3) neg-arm skip max(0,..)
+//  maxi = INT_MIN (0 NAHI): akela -3 bhi valid path.
+//
+//  VISUAL (junction):        node
+//                           /    \        parent ko : node + max(L,R)   [EK sadak upar]
+//                       Lgain    Rgain    answer me : L + node + R      [junction pe DONO]
+//
+//  DRY-RUN            -10
+//                    /   \        @15->15  @7->7
+//                   9     20      @20 : maxi=15+20+7=42 ; return 20+max(15,7)=35
+//                        /  \     @-10: maxi=max(42, 9-10+35)=42 ; return -10+max(9,35)=25
+//                      15    7    ANS = 42  (15-20-7 ; root -10 chhoda)
 // ============================================================
 
 #include <bits/stdc++.h>

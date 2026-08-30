@@ -1725,6 +1725,42 @@
      maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
 
  ┌──────────────────────────────────────────────────────────────
+ │ ▸ MAX PATH SUM (LC-124, Hard)  = DIAMETER ka SUM-version
+ └──────────────────────────────────────────────────────────────
+   CONNECTION -- diameter ki HAR line ke saamne, kya badla (side-by-side):
+
+     DIAMETER (upar)                      MAX PATH SUM
+     -------------------------            -------------------------------------
+     left  = height(L, maxDia)            left  = max(0, solve(L, maxi))   <- neg arm -> 0
+     right = height(R, maxDia)            right = max(0, solve(R, maxi))
+     maxDia = max(maxDia, left+right)     maxi  = max(maxi, left + node->val + right)  <- +node
+     return 1 + max(left,right)           return node->val + max(left,right)           <- val, 1 nahi
+
+   => skeleton HUBAHU: return-EK-arm / record-DONO-arm / post-order / global-max.
+      SIRF 3 jagah badla:  (1) arm = height -> GAIN(sum)   [1 ki jagah node->val]
+                           (2) record me + node->val        [junction pe node bhi ginta]
+                           (3) max(0,..) neg-arm SKIP        [diameter me sab positive the]
+      + maxi = INT_MIN (0 NAHI!): akela -3 bhi valid path (khaali/0 se galat).
+
+   VISUAL (junction):
+            node
+           /    \
+       Lgain    Rgain      parent ko : node + max(L,R)   [EK sadak hi upar ja sakti]
+                           answer me : L + node + R      [junction pe DONO sadak, upar nahi]
+
+   DRY-RUN:
+              -10
+             /   \
+            9     20
+                 /  \
+               15    7
+       @15 -> return 15   |   @7 -> return 7
+       @20 : maxi = 15 + 20 + 7 = 42 ;   return 20 + max(15,7) = 35
+       @9  -> return 9
+       @-10: maxi = max(42, 9 + (-10) + 35) = 42 ;   return -10 + max(9,35) = 25
+       ANS = 42   (best path 15-20-7 ; root -10 chhoda -- neg arm skip ka faayda)
+
+ ┌──────────────────────────────────────────────────────────────
  │ ▸ BALANCED TREE (LC-110)  = MAX-DEPTH + (-1 SENTINEL)
  └──────────────────────────────────────────────────────────────
      Q: HAR node pe abs(leftH - rightH) <= 1?  true/false.
