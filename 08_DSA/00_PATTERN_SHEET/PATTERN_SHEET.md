@@ -2319,9 +2319,15 @@
 ## PATTERN 15 — INTERVALS (sort-by-start + overlap)
 
 ```
- BROAD IDEA: interval = [start,end]. dikha -> PEHLA reflex = SORT by start. phir left-to-right overlap handle.
-   OVERLAP (sorted me): curr.start <= prev.end  ->  merge [start, max(prev.end, curr.end)].
-   REAL: calendar/meeting-scheduling, booking, resource-alloc.  KAB: merge/insert/count-overlaps, meeting-rooms.
+ BROAD IDEA: interval = [start,end]. dikha -> PEHLA reflex = SORT. phir left-to-right handle.
+   REAL: calendar/meeting-scheduling, booking, resource-alloc.
+
+ ★ DECISION — input same [start,end], SAWAAL (verb) decide karta kaunsa tool:
+     "MERGE overlapping / combine"         -> sort by START + merge
+     "MAX non-overlapping pick / min remove" -> GREEDY: sort by END, free ho to pick
+     "kitne ek-SAATH / MIN rooms chahiye"  -> LINE-SWEEP (start +1, end -1, running-count ka MAX)
+   greedy = ALAG technique NAHI -> wahi sort+loop, bas KEY = END. kyun end? jaldi-khatam wali max room chhodti -> zyada fit.
+      (start se sort -> ek lambi meeting sab block: A[1,10]B[2,3]C[4,5] -> START-sort=1 | END-sort=2. END jeeta.)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MERGE INTERVALS (LC-56)  = sort-by-start + merge
