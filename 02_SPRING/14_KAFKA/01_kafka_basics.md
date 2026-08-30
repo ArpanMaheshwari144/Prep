@@ -2,6 +2,10 @@
 
 > Producer/consumer khud banaya usercrud me. LIVE dekha: message producer -> topic -> consumer.
 > Ye note = jaise humne kiya, waisa hi (code + steps + why). Theory-compare alag: 06_COMPARES/14_kafka_vs_rabbitmq.md
+>
+> ★★ UPDATE (30-Aug): neeche section 4-5 ka MANUAL config (producer/consumer factory, template, admin) ab
+> HATA diya gaya — wo Boot-4 autoconfig-bug ka workaround tha. Asli/clean version + DLQ = **02_kafka_dlq_and_autoconfig.md**.
+> Producer/consumer/flow/crux (section 1-4) abhi bhi valid; sirf CONFIG approach 02 me superseded hua.
 
 ---
 
