@@ -1,6 +1,8 @@
 package com.arpan.usercrud.controller;
 
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -8,8 +10,9 @@ public class KafkaConsumer {
 
     // Ye method topic pe naya message aate hi APNE-AAP chalta (Spring background me sunta rehta)
     @KafkaListener(topics = "user-events", groupId = "usercrud-group")
-    public void listen(String message) {
-        System.out.println(">>> CONSUMED from user-events: " + message);
+    public void listen(String message, @Header(KafkaHeaders.RECEIVED_PARTITION) int partition) {
+        System.out.println(">>> [" + Thread.currentThread().getName() + "]  partition=" + partition
+                + "  CONSUMED: " + message);
 
         if (message.contains("fail")) {
             throw new RuntimeException("Poison message! Cannot process: " + message);

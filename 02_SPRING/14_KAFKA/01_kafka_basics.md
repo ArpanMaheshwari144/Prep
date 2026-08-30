@@ -286,12 +286,81 @@ public class KafkaConfig {
 
 ---
 
+## 7B. CONSUMER-GROUP + PARTITIONS (scaling — LIVE demo)
+
+### 7B-a. Concept
+**Partition:** ek topic andar se kai tukdo (partitions) me bata hota; har partition = ek alag ordered line (log).
+Message kis partition me jaayega = **key ke hash se** (key na ho to sticky/round-robin). Same key -> same partition (order bana rehta).
+```
+Topic "user-events" (3 partitions)
+  P0: m1 m4 ...   |   P1: m2 m5 ...   |   P2: m3 m6 ...
+```
+**Consumer-group:** ek hi `groupId` ke kai consumer -> partitions aapas me BAANT lete (parallel = load-split).
+```
+group "usercrud-group", 3 consumer, 3 partition:
+  Consumer-A <- P0  |  Consumer-B <- P1  |  Consumer-C <- P2   (3x parallel)
+```
+**GOLDEN rule:** ek partition = SIRF EK consumer (us group me).
+```
+consumers <= partitions -> sab busy (achha)
+consumers >  partitions -> extra consumer KHAALI (partition hi nahi bacha)
+```
+Parallelism ki max limit = **partition count**. **Anchor:** dukaan (topic), 3 counter (partition), 3 cashier (consumer) -> 3x tez; 4th cashier ko counter nahi -> khaali.
+**Rebalance (1 line):** consumer aaya/gaya -> Kafka partitions dobara baant deta (auto).
+
+### 7B-b. CODE — jo change kiya (~3 line, zyada code nahi; Spring khud karta)
+`application.properties` — 3 consumer-thread ek app me:
+```
+spring.kafka.listener.concurrency=3
+```
+`KafkaConfig.java` — topic ko 3-partition declare (KafkaAdmin startup pe badha deta):
+```java
+@Bean
+public NewTopic userEventsTopic() {
+    return new NewTopic("user-events", 3, (short) 1);
+}
+```
+`KafkaConsumer.java` — dekhne ke liye thread + partition print + `@Header` se partition uthao:
+```java
+@KafkaListener(topics = "user-events", groupId = "usercrud-group")
+public void listen(String message,
+                   @Header(KafkaHeaders.RECEIVED_PARTITION) int partition) {
+    System.out.println(">>> [" + Thread.currentThread().getName() + "]  partition=" + partition
+                       + "  CONSUMED: " + message);
+    ...
+}
+```
+`KafkaProducerController.java` — ★ KEY ke saath bhejo (warna sab ek partition me):
+```java
+kafkaTemplate.send(TOPIC, message, message);   // (topic, KEY, value) — key = message
+```
+
+### 7B-c. ★★ GOTCHA — bina KEY sab ek partition me (sticky)
+Pehli baar bina-key (`send(TOPIC, message)`) bheja -> saare 6 message **partition=0, ek hi thread** pe gire.
+Wajah: **sticky partitioner** — bina key, ek burst ke message efficiency ke liye same partition me batch hote.
+**Fix:** key de do (`send(TOPIC, message, message)`) -> alag key = alag hash = alag partition.
+**Seekh:** KEY = load-distribution ka control. Bina key = sab ek jagah; key ke saath = spread across partitions.
+
+### 7B-d. LIVE output (key ke baad — load baanta)
+```
+[..#0-0-C-1]  partition=0  CONSUMED: h1
+[..#0-0-C-1]  partition=0  CONSUMED: h2
+[..#0-2-C-1]  partition=2  CONSUMED: h3
+[..#0-1-C-1]  partition=1  CONSUMED: h4
+[..#0-2-C-1]  partition=2  CONSUMED: h5
+[..#0-0-C-1]  partition=0  CONSUMED: h6
+```
+3 alag thread (#0-0 / #0-1 / #0-2), 3 alag partition -> kaam 3 me baant gaya. Yahi consumer-group scaling.
+
+---
+
 ## 8. Interview lines
 - "Kafka = pub-sub via topics; producer & consumer DECOUPLED, connected only by TOPIC NAME."
 - "Consumer PULLS (polls) — broker doesn't push. @KafkaListener runs a poll loop in background."
 - "Serializer = object->bytes on send; deserializer = bytes->object on consume."
 - "DLQ = retry N times -> phir bhi fail -> DeadLetterPublishingRecoverer se `<topic>-dlt` me route; main consumer unblocked, poison message parked."
 - "DefaultErrorHandler(recoverer, FixedBackOff) = retry policy + jahan gire."
+- "Consumer-group = same groupId ke consumers partitions baant lete (load-split); 1 partition = 1 consumer; parallelism max = partition count. Message KEY = partition-routing (same key -> same partition -> order)."
 - **Root-cause story:** "Boot 4 me raw `spring-kafka` autoconfig nahi laata — modularization ke baad autoconfig `spring-boot-starter-kafka` module me hai. Dependency-level pe root cause pakda, docs se confirm, ~60 line manual config ko 2 bean tak clean kiya."
 
 ## 9. Dobara kaise chalaye (LIVE test)
@@ -303,6 +372,6 @@ curl -X POST "http://localhost:8080/kafka/send?message=failme"   # -> 3 try -> D
 ```
 
 ## 10. AAGE (baaki - TO_STUDY / jab man kare)
-- Consumer-group (2 consumer -> partitions baant lete = load-split)
+- ~~Consumer-group / partitions (load-split)~~ -> DONE (section 7B, LIVE demo)
 - Idempotent consumer (same message dobara -> duplicate na ho)
 - Manual vs auto commit, offsets deep

@@ -16,7 +16,7 @@ public class KafkaProducerController {
 
     @PostMapping("/kafka/send")
     public String send(@RequestParam String message) {
-        kafkaTemplate.send(TOPIC, message);
+        kafkaTemplate.send(TOPIC, message, message);
         return "Sent to topic '" + TOPIC + "': " + message;
     }
 }

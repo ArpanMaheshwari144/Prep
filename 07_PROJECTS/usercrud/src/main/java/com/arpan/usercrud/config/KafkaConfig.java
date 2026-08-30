@@ -34,4 +34,9 @@ public class KafkaConfig {
     public NewTopic deadLetterTopic() {
         return new NewTopic("user-events-dlt", 1, (short) 1);   // naam, 1 partition, 1 replica
     }
+
+    @Bean
+    public NewTopic userEventsTopic() {
+        return new NewTopic("user-events", 3, (short) 1);   // 3 partition, 1 replica
+    }
 }
