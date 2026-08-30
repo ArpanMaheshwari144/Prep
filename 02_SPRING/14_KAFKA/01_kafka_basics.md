@@ -381,6 +381,73 @@ KEY nahi hai -> sticky: ek partition pakad ke batch -> burst me sab ek jagah
 
 ---
 
+## 7C. IDEMPOTENT CONSUMER (duplicate se bachao)
+
+### 7C-a. Kyun chahiye — Kafka "at-least-once"
+Kafka guarantee = message **kam-se-kam ek baar** (kabhi-kabhi ZYADA baar bhi = duplicate).
+```
+Consumer process karta -> offset COMMIT se PEHLE crash/rebalance
+   -> Kafka "commit nahi hua, dobara bhejta hoon" -> SAME message dobara -> DOUBLE process
+```
+Dikkat jab side-effect ho: "$100 add" -> $200 (double-charge!) · "email" -> 2 email · "order" -> 2 order.
+
+### 7C-b. Ilaaj — dedup by unique ID (ESSENCE, Arpan-line)
+```
+set me HAI    -> skip (ho chuka)
+set me NAHI   -> process + set me daal do
+```
+"jo dekh liya wo dobara nahi." Bas itna. **Anchor:** darwaze pe register — naam likha hai to dobara entry nahi.
+
+### 7C-c. CODE (`KafkaConsumer.java`)
+```java
+// "register" of processed message-ids (demo: in-memory; real world: DB/Redis)
+private final Set<String> processedIds = ConcurrentHashMap.newKeySet();
+
+@KafkaListener(topics = "user-events", groupId = "usercrud-group")
+public void listen(String message, @Header(KafkaHeaders.RECEIVED_PARTITION) int partition) {
+
+    if (processedIds.contains(message)) {                 // pehle dekha?
+        System.out.println("=== DUPLICATE skipped (already processed): " + message);
+        return;                                           // -> skip, koi double side-effect nahi
+    }
+
+    System.out.println(">>> ... CONSUMED: " + message);
+
+    if (message.contains("fail")) {
+        throw new RuntimeException("Poison message! Cannot process: " + message);
+    }
+
+    processedIds.add(message);   // mark processed -- SIRF success ke BAAD
+}
+```
+★ `add()` **aakhir me** (success ke baad): poison (`fail`) mark NAHI hoga -> retry/DLT abhi bhi kaam karega
+  (agar upar mark karte to retry pe skip ho ke DLQ toot jaata).
+
+### 7C-d. SET vs MAP (Arpan-Q: Map se bhi ho sakta?)
+Haan. Farak:
+```
+Set  -> sirf "seen or not" (membership) -- HAMARA case (bas skip karna hai)
+Map  -> id ke saath VALUE bhi chahiye:
+        Map<id, result>    -> duplicate pe WAHI result return karo (skip nahi) <- payment idempotency
+        Map<id, timestamp> -> TTL cleanup (purani ids hata do)
+        Map<id, status>    -> processing/done/failed track
+```
+★ Mazedaar: `ConcurrentHashMap.newKeySet()` = andar se Map HI hai (KeySetView<K,Boolean> = ek CHM ka key-view).
+  To Set = "Map with dummy Boolean value". Isiliye dono ek hi cheez ke roop.
+
+### 7C-e. ★ CONNECT — payment idempotency
+Ye WAHI idempotency jo tune payment me ki: "tap pay twice = ek hi charge, idempotency-key se."
+Yahaan **message-id = wahi idempotency key**, processedIds = wahi dedup store. Same funda, alag jagah. [[idempotency]]
+
+### 7C-f. LIVE output
+```
+curl ...?message=hello   (do baar):
+   >>> ... CONSUMED: hello                              <- 1st (process)
+   === DUPLICATE skipped (already processed): hello     <- 2nd (skip!)
+```
+
+---
+
 ## 8. Interview lines
 - "Kafka = pub-sub via topics; producer & consumer DECOUPLED, connected only by TOPIC NAME."
 - "Consumer PULLS (polls) — broker doesn't push. @KafkaListener runs a poll loop in background."
@@ -388,6 +455,7 @@ KEY nahi hai -> sticky: ek partition pakad ke batch -> burst me sab ek jagah
 - "DLQ = retry N times -> phir bhi fail -> DeadLetterPublishingRecoverer se `<topic>-dlt` me route; main consumer unblocked, poison message parked."
 - "DefaultErrorHandler(recoverer, FixedBackOff) = retry policy + jahan gire."
 - "Consumer-group = same groupId ke consumers partitions baant lete (load-split); 1 partition = 1 consumer; parallelism max = partition count. Message KEY = partition-routing (same key -> same partition -> order)."
+- "Idempotent consumer: Kafka is at-least-once, so dedup by unique message-id -> seen? skip : process+record. Same idea as payment idempotency-key. Set for membership, Map when you need to return the cached result on duplicate."
 - **Root-cause story:** "Boot 4 me raw `spring-kafka` autoconfig nahi laata — modularization ke baad autoconfig `spring-boot-starter-kafka` module me hai. Dependency-level pe root cause pakda, docs se confirm, ~60 line manual config ko 2 bean tak clean kiya."
 
 ## 9. Dobara kaise chalaye (LIVE test)
@@ -400,5 +468,7 @@ curl -X POST "http://localhost:8080/kafka/send?message=failme"   # -> 3 try -> D
 
 ## 10. AAGE (baaki - TO_STUDY / jab man kare)
 - ~~Consumer-group / partitions (load-split)~~ -> DONE (section 7B, LIVE demo)
-- Idempotent consumer (same message dobara -> duplicate na ho)
-- Manual vs auto commit, offsets deep
+- ~~Idempotent consumer (same message dobara -> duplicate na ho)~~ -> DONE (section 7C, LIVE demo)
+- Manual vs auto commit, offsets deep (ek level aur; jab man kare)
+
+> KAFKA STATUS: basics + DLQ + autoconfig-fix + consumer-group + idempotent + source-dive = COMPLETE.
