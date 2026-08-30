@@ -206,6 +206,8 @@ public class SecurityConfig {
 
                             .requestMatchers("/volatile/**").permitAll()
 
+                            .requestMatchers("/kafka/**").permitAll()
+
                             // Baki sab — JWT mandatory
                             .anyRequest().authenticated()
             )
