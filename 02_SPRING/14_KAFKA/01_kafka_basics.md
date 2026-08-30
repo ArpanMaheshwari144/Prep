@@ -352,6 +352,33 @@ Wajah: **sticky partitioner** — bina key, ek burst ke message efficiency ke li
 ```
 3 alag thread (#0-0 / #0-1 / #0-2), 3 alag partition -> kaam 3 me baant gaya. Yahi consumer-group scaling.
 
+### 7B-e. KEY -> partition kaise DECIDE hota (asli mechanism)
+Ye decision **PRODUCER** karta hai (bhejne se pehle), 2 tareeke se:
+
+**CASE 1 — KEY ke saath (split hua):** producer ek simple formula lagata:
+```
+partition = hash(key) % (total partitions)
+
+key "h3" -> hash -> % 3 -> P2
+key "h4" -> hash -> % 3 -> P1
+key "h1" -> hash -> % 3 -> P0
+```
+Alag key -> alag hash -> alag partition. + BONUS: same key HAMESHA same partition -> us key ka ORDER guaranteed
+(jaise ek user ke saare events ek hi partition -> sequence bani rehti).
+
+**CASE 2 — bina KEY (sab ek jagah):** hash kis cheez ka? kuch nahi. To Kafka **sticky partitioner**:
+```
+"ek partition PAKAD lo (P0), is burst ke saare message wahin daalo -> baad me switch"
+```
+Wajah = EFFICIENCY (ek partition me batch = network sasta). Isiliye burst ke 6 message sab P0 me.
+
+**Ek line:**
+```
+KEY hai      -> partition = hash(key)%N  -> deterministic spread (control tere haath)
+KEY nahi hai -> sticky: ek partition pakad ke batch -> burst me sab ek jagah
+```
+**Anchor:** parcel pe **pincode (key)** likha -> alag pincode alag area (partition). Pincode na ho -> courier "abhi sab ek truck me daal do" -> ek area.
+
 ---
 
 ## 8. Interview lines
