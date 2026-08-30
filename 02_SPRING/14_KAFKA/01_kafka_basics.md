@@ -157,6 +157,12 @@ Consumer ko message mila, process karne gaya, **FAIL** ho gaya. 2 wajah:
 **Bina DLQ ke:** Kafka wahi message BAAR-BAAR deta rehta (commit nahi hua na) -> consumer usi kharab
 message pe atka -> **poore topic ka flow ruk gaya**. Ek sada aam poore truck ko rok deta.
 
+**offset/commit ka funda (isiliye same message dobara aata):**
+```
+success -> offset AAGE badha (agla message aata)
+fail    -> offset ATKA -> isiliye SAME message dobara-dobara aata (jab tak recover ya DLT)
+```
+
 ### 7b. Ilaaj — 2 step
 ```
 1. RETRY: pehle 2-3 baar try karo (shayad temporary tha, DB wapas aa jaye)
@@ -165,6 +171,33 @@ message pe atka -> **poore topic ka flow ruk gaya**. Ek sada aam poore truck ko 
 ```
 **Anchor (postman):** package deliver nahi ho raha (galat address) -> 3 baar try -> phir poore route ko
 rokne ke bajaye "undelivered mail room" me daal deta. Yahi DLQ. (DLT = Dead Letter Topic)
+
+**POORA VISUAL FLOW (retry loop -> DLT):**
+```
+   POST failme
+       |
+       v
+  [user-events] --> listen() --> throw!  (try 1)
+       ^                            |
+       |  1 sec ruk (backoff)       |  DefaultErrorHandler pakadta
+       +----------------------------+
+       |                            |
+   try 2 --> throw!                 |
+   try 3 --> throw!  (backoff khatam: 2 extra done)
+       |
+       v  recoverer publish
+  [user-events-dlt] --> listenDLT() --> "XXX DEAD-LETTER me gira"
+       |
+       v
+  main [user-events] AAGE badh gaya (offset commit, unblocked)
+```
+
+**KAB DLT tak jaata (poison vs temporary):**
+```
+Temporary fail (DB 1 sec down)  -> retry me hi theek ho jaata -> DLT tak NAHI pahunchta
+Poison message (bad data)       -> har try pe fail -> 3 ke baad DLT me park
+```
+> Isiliye retry PEHLE (temporary ko mauka), DLT BAAD me (jo sach me kharab hai usko park).
 
 ### 7c. CODE — 4 tukde
 
