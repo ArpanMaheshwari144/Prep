@@ -77,7 +77,7 @@ double findMedianSortedArrays(vector<int> &A, vector<int> &B)
             }
             else
             {
-                return max(x1, x2);
+                return (double)max(x1, x2);
             }
         }
 
