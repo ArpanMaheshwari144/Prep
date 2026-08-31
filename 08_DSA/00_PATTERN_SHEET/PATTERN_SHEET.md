@@ -1239,29 +1239,21 @@
 
  3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
 
-╔══ DECISION: high=mid  vs  high=mid-1  ══════════════════════════╗
-║ EK SAWAAL: "mid KHUD answer ho sakta abhi bhi?"                  ║
-╠═════════════════════════════════════════════════════════════════╣
-║ TARGET-REJECT   -> mid ko target/condition se compare -> mid     ║
-║   pakka GALAT (basic-BS / rotated-search: target != mid)         ║
-║        => high = mid-1   (+ while low<=high)                     ║
-║                                                                  ║
-║ KHUD-ANSWER-DHOONDH -> koi target nahi, mid KHUD answer ho sakta ║
-║   (find-PEAK · find-MIN-rotated)                                 ║
-║        => high = MID     (+ while low<high)                      ║
-╠═════════════════════════════════════════════════════════════════╣
-║ BUG-CATCH (find-min): [3,1,2] pe high=mid-1 -> mid(=1, khud min) ║
-║   HAT jaata -> galat 3. high=mid se bacha.                       ║
-║ TRAP: high=mid + while(low<=high) = INFINITE LOOP.              ║
-║   -> high=mid HAMESHA low<high ke saath.                         ║
-╠═════════════════════════════════════════════════════════════════╣
-║ KYUN (nuance): mid = low+(high-low)/2 NEECHE round karta.        ║
-║   jab low==high==mid:                                            ║
-║     high=mid-1 -> range SHRINK -> low>high -> exit (safe w/ <=)  ║
-║     high=mid   -> high nahi hilta -> shrink NAHI -> <= pe ATAK   ║
-║   isliye high=mid ko low<high chahiye (low==high pe turant exit).║
-║   e.g. [2,1] peak + while(low<=high): mid=0 -> high=0 -> loop.   ║
-╚═════════════════════════════════════════════════════════════════╝
+┌══ DECISION: high=mid  vs  high=mid-1  (kab konsa) ═══════════════════════════
+│ EK SAWAAL: "mid KHUD answer ho sakta abhi bhi?"
+│──────────────────────────────────────────────────────────────────────────────
+│ TARGET-REJECT (mid ko target/condition se compare -> mid pakka galat, e.g. basic-BS/rotated-search: target!=mid) -> high = mid-1  (+ while low<=high)
+│ KHUD-ANSWER-DHOONDH (koi target nahi, mid KHUD answer ho sakta -- find-PEAK · find-MIN-rotated) -> high = MID  (+ while low<high)
+│──────────────────────────────────────────────────────────────────────────────
+│ BUG-CATCH (find-min, 18-Jul): [3,1,2] pe high=mid-1 karte to mid(=1, khud min) HAT jaata -> galat 3 aata. high=mid se bacha.
+│ trap: high=mid ke saath while(low<=high) = INFINITE LOOP -> high=mid hamesha low<high ke saath.
+│──────────────────────────────────────────────────────────────────────────────
+│ KYUN (nuance): mid = low+(high-low)/2 NEECHE (low ki taraf) round karta. jab low==high==mid ho:
+│     high=mid-1 -> range SHRINK (mid-1) -> low>high -> exit. safe with low<=high.
+│     high=mid   -> high nahi hilta (mid=low) -> range shrink NAHI -> low<=high hua to ATAK (infinite).
+│     isliye high=mid ko low<high chahiye (low==high pe TURANT exit, atakne se pehle).
+│     e.g. [2,1] peak-logic + while(low<=high): mid=0 -> high=mid=0 -> low=high=0 kabhi khatam nahi (loop).
+└──────────────────────────────────────────────────────────────────────────────
 
 ┌── FAMILY: BS-on-PARTITION / CUT (naya -- value pe nahi, CUT-position pe BS) ──
 │ KYUN ALAG: ab tak BS array-VALUE ya answer-value pe. Yahan 2 sorted arrays me ek CUT-POSITION dhoondni -> BS uspe.
