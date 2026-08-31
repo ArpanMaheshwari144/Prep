@@ -749,6 +749,28 @@
      sum = ((A[i]%k)+k)%k;   count += mp[(k-sum)%k];   mp[sum]++;
         partner = (k-sum)%k · lookup PEHLE phir insert (warna khud-se-pair).
 
+      ★ k-sum ka INTUITION (ek element se, concrete):
+        maan it=1, k=3.   pehle remainder: 1%3 = 1.
+        chahiye: (1 + partner) % 3 == 0.   to partner ka remainder = 3 - 1 = 2.
+        ab MAP me dekho: koi element pehle aaya jiska remainder 2 tha?
+             mp[2] jitna -> utne pair bane (har aisa element 1 ke saath jodi banata).
+        yehi hai partner = (k - sum) = 3 - 1 = 2.
+        (sum=0 aaya -> partner = 3-0 = 3, par 3%3 = 0 -> partner 0.  isiliye (k-sum)%k.)
+
+   ── DRY-RUN (nums=[1,2,3,4,5], k=3  ->  4 pairs) ──
+      sum = ((it)%k+k)%k :   1->1   2->2   3->0   4->1   5->2
+
+      it  sum  partner=(k-sum)%k   mp[partner]   count    mp-after
+       1   1        2                  0           0       {1:1}
+       2   2        1                  1          +1=1     {1:1, 2:1}      <- pair (1,2)
+       3   0        0                  0           0       {1:1, 2:1, 0:1}
+       4   1        2                  1          +1=2     {1:2, 2:1, 0:1} <- pair (2,4)
+       5   2        1                  2          +2=4     {1:2, 2:2, 0:1} <- pairs (1,5),(4,5)
+      ->  count = 4
+
+      KEY: it=5 pe mp[1]=2 (element 1 aur 4 dono ka rem 1) -> ek saath 2 pair jude.
+      LOOKUP pehle, INSERT baad (khud-se-pair na gine).
+
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST CONSECUTIVE SEQ (LC-128)
  └──────────────────────────────────────────────────────────────
