@@ -1271,11 +1271,17 @@
       }
 
    ── DRY-RUN (A=[1,3,8,9,15] m=5, B=[7,11,18,19,21,25] n=6, half=6) ──
-      Px=2: A-left{1,3} x1=3 x3=8 | Py=4 B-left{7,11,18,19} x2=19 x4=21
-            x2(19)<=x3(8)? NAHI -> A ne kam liya -> low=Px+1=3
-      Px=4: A-left{1,3,8,9} x1=9 x3=15 | Py=2 B-left{7,11} x2=11 x4=18
-            x1(9)<=x4(18) && x2(11)<=x3(15) -> SAHI cut. odd -> max(9,11)=11.  ANS=11
-      GOTCHA: even-formula pe /2.0 (int-div se 3.5 bug); (double) cast; edge ±INF warna out-of-bounds.
+
+     TRY Px=2:   A:  1  3 | 8  9  15          x1=3   x3=8
+                 B:  7 11 18 19 | 21 25       x2=19  x4=21   (Py=4)
+         x2(19) <= x3(8) ?  NAHI  -> A ne KAM liya -> low = Px+1 = 3
+
+     TRY Px=4:   A:  1  3  8  9 | 15          x1=9   x3=15
+                 B:  7 11 | 18 19 21 25       x2=11  x4=18   (Py=2)
+         x1(9)<=x4(18)  &&  x2(11)<=x3(15)  -> SAHI cut
+         odd -> median = max(x1,x2) = max(9,11) = 11   ANS=11
+
+     GOTCHA: even -> /2.0 + (double) cast (int-div se 3.5 bug) | edge ±INF warna out-of-bounds.
 
    FAMILY: BS-on-PARTITION (naya). cousin = BS-on-ANSWER (koko/ship) -> wahan VALUE pe BS, yahan CUT-position pe.
 ```
