@@ -1265,6 +1265,9 @@
    CUT idea (chhote array A pe BS -> Px; Py auto):
       A:  1  3  8  9 | 15            Px = A-left count (BS ISI pe, chhote array pe)
       B:  7 11       | 18 19 21 25   Py = (m+n+1)/2 - Px
+      yahan:  Px = 4  (A-left = {1,3,8,9})  = binary-search ka MID jahan cut VALID nikla
+              Py = (11+1)/2 - 4 = 6 - 4 = 2   (B-left = {7,11})
+              [Px = BS variable "mid" hi hai · A[Px-1]=x1 left-kinaara · A[Px]=x3 right-kinaara]
              x1=9  x3=15
              x2=11 x4=18
       |___ LEFT = 6 (half) ___|___ RIGHT = 5 ___|
