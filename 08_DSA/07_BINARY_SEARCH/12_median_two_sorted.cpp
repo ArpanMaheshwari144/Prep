@@ -15,6 +15,32 @@
 //   []           , [1]                 -> 1.0
 //   [2]          , []                  -> 2.0
 //   [0,0]        , [0,0]               -> 0.0
+//
+// ---- APPROACH (BS on PARTITION, is code ke hisaab se) ----
+// merge O(m+n) hota; O(log) ke liye: CUT dhundo, na ki merge.
+// chhote array (A) pe binary search -> Px = A se kitne element LEFT me.
+//   Py auto = (m+n+1)/2 - Px   [left side me total ka aadha hona chahiye]
+//
+//   A:  1  3  8  9 | 15            Px = 4 (A-left me 4)
+//   B:  7 11       | 18 19 21 25   Py = 6-4 = 2
+//         x1=9  x3=15
+//         x2=11 x4=18
+//   |___ LEFT = 6 (half) ___|___ RIGHT = 5 ___|
+//
+// 4 KINAARE (baaki se matlab NAHI -- sorted isliye apne-aap sahi):
+//   x1 = A[Px-1] = Aleft   (edge Px==0 -> INT_MIN)
+//   x2 = B[Py-1] = Bleft   (edge Py==0 -> INT_MIN)
+//   x3 = A[Px]   = Aright  (edge Px==m -> INT_MAX)
+//   x4 = B[Py]   = Bright  (edge Py==n -> INT_MAX)
+//
+// SAHI cut:  x1<=x4 && x2<=x3   (left-max <= right-min, dono taraf cross-check)
+//   galat -> x1>x4 (A ne left me ZYADA liya) -> high=Px-1
+//            warna    (A ne KAM liya)        -> low =Px+1
+// MEDIAN:  odd -> max(x1,x2)            [left ka sabse bada]
+//          even-> (max(x1,x2)+min(x3,x4))/2.0
+//
+// KYUN sirf 4 number: array sorted -> Px se pehle sab <=A[Px-1], aage sab >=A[Px].
+// isliye har step O(1), aur Px pe BS = O(log(min(m,n))).
 // ============================================================
 
 #include <bits/stdc++.h>

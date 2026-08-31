@@ -1227,6 +1227,57 @@
           high=mid   -> high nahi hilta (mid=low) -> range shrink NAHI -> low<=high hua to ATAK (infinite).
           isliye high=mid ko low<high chahiye (low==high pe TURANT exit, atakne se pehle).
           e.g. [2,1] peak-logic + while(low<=high): mid=0 -> high=mid=0 -> low=high=0 kabhi khatam nahi (loop).
+
+┌── FAMILY: BS-on-PARTITION / CUT (naya -- value pe nahi, CUT-position pe BS) ──
+│ KYUN ALAG: ab tak BS array-VALUE ya answer-value pe. Yahan 2 sorted arrays me ek CUT-POSITION dhoondni -> BS uspe.
+└───────────────────────────────────────────────────────────────
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ MEDIAN OF 2 SORTED ARRAYS (LC-4, Hard)
+ └──────────────────────────────────────────────────────────────
+   SAAR: 2 sorted arrays ka COMBINED median, O(log). MERGE mat karo -> ek CUT dhoondo:
+         LEFT aadha | RIGHT aadha, aur left ka HAR element <= right ka HAR. Cut ke 4 kinaare = median.
+
+   Q: A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> median?  (total 11, odd)
+
+   CUT idea (chhote array A pe BS -> Px; Py auto):
+      A:  1  3  8  9 | 15            Px = A-left count (BS ISI pe, chhote array pe)
+      B:  7 11       | 18 19 21 25   Py = (m+n+1)/2 - Px
+             x1=9  x3=15
+             x2=11 x4=18
+      |___ LEFT = 6 (half) ___|___ RIGHT = 5 ___|
+
+      4 KINAARE (baaki se matlab NAHI, sorted isliye apne-aap sahi):
+        x1=A[Px-1] Aleft   x3=A[Px] Aright   (edge Px==0->-INF, Px==m->+INF)
+        x2=B[Py-1] Bleft   x4=B[Py] Bright   (edge Py==0->-INF, Py==n->+INF)
+
+      SAHI cut:  x1<=x4  &&  x2<=x3        (left-max <= right-min, dono-taraf cross-check)
+        galat -> x1>x4 (A ne ZYADA liya) -> high=Px-1  |  warna -> low=Px+1
+      MEDIAN: odd -> max(x1,x2)  |  even -> (max(x1,x2)+min(x3,x4))/2.0
+
+      "= BS PAR array-value pe nahi -> CUT-POSITION (Px) pe. condition monotonic -> BS chalti."
+      KYUN sirf 4 number: sorted -> Px se pehle sab <=x1, aage sab >=x3. har step O(1), Px pe BS = O(log(min(m,n))).
+
+   TEMPLATE:
+      if(A.size()>B.size()) return solve(B,A);            // chhote pe BS -> Py kabhi -ve nahi
+      low=0, high=m;
+      while(low<=high){
+        Px=low+(high-low)/2;  Py=(m+n+1)/2 - Px;
+        x1=Px==0?INT_MIN:A[Px-1];  x2=Py==0?INT_MIN:B[Py-1];
+        x3=Px==m?INT_MAX:A[Px];    x4=Py==n?INT_MAX:B[Py];
+        if(x1<=x4 && x2<=x3)
+           return (m+n)%2==0 ? (max(x1,x2)+min(x3,x4))/2.0 : (double)max(x1,x2);
+        if(x1>x4) high=Px-1; else low=Px+1;
+      }
+
+   ── DRY-RUN (A=[1,3,8,9,15] m=5, B=[7,11,18,19,21,25] n=6, half=6) ──
+      Px=2: A-left{1,3} x1=3 x3=8 | Py=4 B-left{7,11,18,19} x2=19 x4=21
+            x2(19)<=x3(8)? NAHI -> A ne kam liya -> low=Px+1=3
+      Px=4: A-left{1,3,8,9} x1=9 x3=15 | Py=2 B-left{7,11} x2=11 x4=18
+            x1(9)<=x4(18) && x2(11)<=x3(15) -> SAHI cut. odd -> max(9,11)=11.  ANS=11
+      GOTCHA: even-formula pe /2.0 (int-div se 3.5 bug); (double) cast; edge ±INF warna out-of-bounds.
+
+   FAMILY: BS-on-PARTITION (naya). cousin = BS-on-ANSWER (koko/ship) -> wahan VALUE pe BS, yahan CUT-position pe.
 ```
 
 ---
