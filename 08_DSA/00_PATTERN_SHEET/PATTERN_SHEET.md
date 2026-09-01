@@ -1852,6 +1852,35 @@
        @20 : maxi = 15 + 20 + 7 = 42 ;   return 20 + max(15,7) = 35
        @9  -> return 9
        @-10: maxi = max(42, 9 + (-10) + 35) = 42 ;   return -10 + max(9,35) = 25
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ BUILD TREE from PREORDER + INORDER (LC-105)
+ └──────────────────────────────────────────────────────────────
+     preorder[0] = ROOT · inorder me us root pe todo -> LEFT-part | root | RIGHT-part. recurse.
+        TreeNode* solve(int& rootIndex, l, r):        // l,r = inorder ki current range
+            if (l > r) return NULL;                     // range khaali -> koi node nahi
+            pivot = mp[preorder[rootIndex]];            // inorder me root ki jagah (map O(1))
+            rootIndex++;                                // root use ho gaya -> pointer agle root pe
+            node = new TreeNode(inorder[pivot]);
+            node->left  = solve(l, pivot-1);            // inorder ka LEFT-part
+            node->right = solve(pivot+1, r);            // inorder ka RIGHT-part
+            return node;
+        buildTree: rootIndex=0; mp{inorder-val -> idx} bana; solve(0, n-1).
+     ★ rootIndex by-REFERENCE (&): ek moving pointer SAB calls me shared -> LEFT poora consume hone ke
+        BAAD hi RIGHT ko sahi agla-root milta (= preorder ka Root,Left,Right order). value-pass -> copy -> galat tree.
+     BF->OPT: pivot inorder me while-scan (O(n) har call -> O(n^2)) -> mp se O(1) -> total O(n).
+
+   VISUAL:   preorder  [3] 9 20 15 7        inorder  9 | 3 | 15 20 7
+                        ^root                           L  root   R
+             -> tree:       3
+                           / \
+                          9   20
+                             /  \
+                           15    7
+   DRY-RUN (rootIndex aage badhta, pivot = inorder me root):
+       solve(0,4): root=3,  pivot=1 | L=solve(0,0)   R=solve(2,4)
+         solve(0,0): root=9,  pivot=0 | NULL, NULL   (leaf 9)
+         solve(2,4): root=20, pivot=3 | L=solve(2,2)=15   R=solve(4,4)=7
        ANS = 42   (best path 15-20-7 ; root -10 chhoda -- neg arm skip ka faayda)
 
  ┌──────────────────────────────────────────────────────────────
