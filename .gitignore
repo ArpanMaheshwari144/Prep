@@ -61,3 +61,7 @@ sol
 .factorypath
 .apt_generated/
 bin/
+
+# Playwright MCP (browser automation scratch — snapshots/logs/screenshots)
+.playwright-mcp/
+*.png
