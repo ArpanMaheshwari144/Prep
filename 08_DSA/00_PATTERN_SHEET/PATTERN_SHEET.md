@@ -1857,25 +1857,20 @@
  │ ▸ BUILD TREE from PREORDER + INORDER (LC-105)
  └──────────────────────────────────────────────────────────────
      preorder[0] = ROOT · inorder me us root pe todo -> LEFT-part | root | RIGHT-part. recurse.
-     SKELETON (BF/OPT dono me HUBAHU -- sirf pivot-line badli):
-        TreeNode* solve(int& rootIndex, l, r):        // l,r = inorder ki current range
-            if (l > r) return NULL;                     // range khaali -> koi node nahi
-            int pivot = ...(neeche BF|OPT)...            // inorder me root ki jagah
-            rootIndex++;                                // root use -> pointer agle root pe
-            node = new TreeNode(inorder[pivot]);
-            node->left  = solve(l, pivot-1);            // inorder ka LEFT-part
-            node->right = solve(pivot+1, r);            // inorder ka RIGHT-part
-            return node;
-        buildTree: rootIndex=0; solve(0, n-1).
 
-   BF -> OPT -- SIRF pivot-dhoondhne wali line badli (side-by-side):
-
-     BF (pehle -- linear scan)                  OPTIMIZED (map)
-     -------------------------------------      -------------------------------------
-     int pivot = l;                             // buildTree me EK baar:
-     while (inorder[pivot]                      //   mp{inorder-val -> idx} bana
-            != preorder[rootIndex]) pivot++;    int pivot = mp[preorder[rootIndex]];
-     -> O(n) scan * O(n) calls = O(n^2)         -> pivot O(1) -> total O(n)
+     BF (linear scan)  O(n^2)                    OPTIMIZE (map)  O(n) -- sirf jaha badla
+     -----------------------------------------   -----------------------------------------
+     solve(int& rootIndex, l, r):
+       if (l > r) return NULL;
+       int pivot = l;                            int pivot = mp[preorder[rootIndex]];
+       while (inorder[pivot]                       // while-scan HATA -> map O(1)
+             != preorder[rootIndex]) pivot++;
+       rootIndex++;
+       node = new TreeNode(inorder[pivot]);
+       node->left  = solve(l, pivot-1);
+       node->right = solve(pivot+1, r);
+       return node;
+     buildTree: rootIndex=0; solve(0,n-1);       buildTree: + mp{inorder-val->idx} ek baar
 
      ★ rootIndex by-REFERENCE (&): ek moving pointer SAB calls me shared -> LEFT poora consume hone ke
         BAAD hi RIGHT ko sahi agla-root milta (= preorder ka Root,Left,Right order). value-pass -> copy -> galat tree.
