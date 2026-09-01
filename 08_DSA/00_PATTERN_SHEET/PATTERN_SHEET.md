@@ -1400,13 +1400,20 @@
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ADD TWO NUMBERS
  └──────────────────────────────────────────────────────────────
-     dummy + tail (MERGE jaisa) + CARRY. digits ULTA store (units-digit pehle) -> seedha aage-aage jodo.
-     while(a || b || carry):              <- koi list bachi HAI ya carry bacha -> chalte raho
-        sum = carry;                        (pichle ka carry se shuru)
-        a hai to sum += a->val (a aage);  b hai to sum += b->val (b aage).
-        naya node = sum % 10 -> tail se jodo, tail aage.   carry = sum / 10 (agle ke liye).
-     return dummy->next.
-     '|| carry' zaroori: 999 + 1 = 1000 -> dono list khatam par carry bacha -> ek aur node chahiye (leading '1').
+     SAAR: 2 number linked-list me ULTA pade (units-digit HEAD pe). Jodo -> naya list.
+           ULTA hai isiliye HEAD-se-HEAD jodo = school-wala right-to-left add (carry aage jaata).
+     e.g. (2->4->3) + (5->6->4) = 342 + 465 = 807 -> answer (7->0->8).
+
+     dummy + tail (MERGE jaisa) -> naye node peeche jodte jao.  + ek CARRY.
+     while (a || b || carry):          <- jab tak koi list bachi HAI, ya carry bacha
+        sum = carry                     (pichhle step ka carry se shuru)
+        if (a) { sum += a->val;  a = a->next; }     (a hai to jodo, a aage)
+        if (b) { sum += b->val;  b = b->next; }     (b hai to jodo, b aage)
+        tail->next = new Node(sum % 10);  tail = tail->next;   (digit jodo)
+        carry = sum / 10;                                      (agle ke liye)
+     return dummy->next
+
+     '|| carry' KYUN: 999 + 1 -> dono list khatam, par carry=1 bacha -> ek aur node (leading 1) chahiye.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SWAP NODES IN PAIRS  = DUMMY + 3-player rewire (order + temp-save)
