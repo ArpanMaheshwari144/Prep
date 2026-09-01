@@ -27,30 +27,33 @@ struct TreeNode
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
-TreeNode *solve(int &rootIndex, vector<int> &preorder, vector<int> &inorder, int l, int r)
+// map-REDO: pivot linear-scan HATA ke unordered_map (inorder value->index) se O(1) karna.
+
+TreeNode *solve(int &rootIndex, vector<int> &preorder, vector<int> &inorder, int l, int r, unordered_map<int, int> &mp)
 {
     if (l > r)
     {
         return NULL;
     }
 
-    int pivot = l;
-    while (inorder[pivot] != preorder[rootIndex])
-    {
-        pivot++;
-    }
+    int pivot = mp[preorder[rootIndex]];
     rootIndex++;
-
+    
     TreeNode *newNode = new TreeNode(inorder[pivot]);
-    newNode->left = solve(rootIndex, preorder, inorder, l, pivot - 1);
-    newNode->right = solve(rootIndex, preorder, inorder, pivot + 1, r);
+    newNode->left = solve(rootIndex, preorder, inorder, l, pivot - 1, mp);
+    newNode->right = solve(rootIndex, preorder, inorder, pivot + 1, r, mp);
     return newNode;
 }
 
 TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder)
 {
     int rootIndex = 0;
-    return solve(rootIndex, preorder, inorder, 0, inorder.size() - 1);
+    unordered_map<int, int> mp;
+    for (int i = 0; i < inorder.size(); i++)
+    {
+        mp[inorder[i]] = i;
+    }
+    return solve(rootIndex, preorder, inorder, 0, inorder.size() - 1, mp);
 }
 
 // ---- verify helpers (built tree ka pre+in traversal nikaalte) ----
