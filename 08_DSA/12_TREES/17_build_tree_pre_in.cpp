@@ -15,6 +15,39 @@
 //   []            , []              -> empty (null)
 //   [1,2,3,4]     , [4,3,2,1]       -> left-skewed
 // ============================================================
+//
+// ---- APPROACH ----  (BF pehle -> phir OPTIMIZE, recursion trace ke saath)
+//  preorder = ROOT,Left,Right  |  inorder = Left,ROOT,Right
+//  soch: preorder ka pehla = ROOT. inorder me us root pe todo -> LEFT-part | root | RIGHT-part.
+//        LEFT-part pe recurse, RIGHT-part pe recurse. har baar preorder ka AGLA = agla root.
+//
+//  ---- BRUTE FORCE (pehle likha) ----
+//  solve(rootIndex&, l, r):        // l, r = inorder ki current range
+//     1. base : l > r -> return NULL                 (range khaali -> koi node nahi)
+//     2. pivot: inorder me preorder[rootIndex] kahan -> WHILE-scan
+//            int pivot = l;  while (inorder[pivot] != preorder[rootIndex]) pivot++;
+//     3. rootIndex++                                 (root use ho gaya -> pointer agle root pe)
+//     4. node = new TreeNode(inorder[pivot])
+//     5. node->left  = solve(l, pivot-1)             (inorder ka LEFT-part -> left-subtree)
+//     6. node->right = solve(pivot+1, r)             (inorder ka RIGHT-part -> right-subtree)
+//     7. return node
+//  buildTree: rootIndex = 0 se  solve(0, n-1)  call.
+//
+//  ---- RECURSION KAISE CHALTI  (trace: preorder[3,9,20,15,7] , inorder[9,3,15,20,7]) ----
+//   solve(0,4): root=3,  pivot=1, rootIndex->1 | left=solve(0,0)   right=solve(2,4)
+//     solve(0,0): root=9,  pivot=0, rootIndex->2 | solve(0,-1)=NULL, solve(1,0)=NULL   (leaf 9)
+//     solve(2,4): root=20, pivot=3, rootIndex->3 | left=solve(2,2)   right=solve(4,4)
+//       solve(2,2): root=15, pivot=2, rootIndex->4 | NULL, NULL     (leaf 15)
+//       solve(4,4): root=7,  pivot=4, rootIndex->5 | NULL, NULL     (leaf 7)
+//   -> LEFT poora ban-ne ke BAAD hi RIGHT chalti (rootIndex tab tak aage) = Root,Left,Right order.
+//
+//  * rootIndex = REFERENCE (&): ek hi pointer sab calls me shared -> tabhi left-subtree poora
+//    consume hone ke baad right ko sahi agla-root milta. value se pass -> copy -> galat tree.
+//
+//  ---- OPTIMIZE (map) ----  BF ka step-2 while-scan slow (O(n) har call -> O(n^2)).
+//   inorder ka {value -> index} ek baar unordered_map me -> pivot = mp[preorder[rootIndex]]  O(1).
+//   -> total O(n).  baaki poora same.
+// ============================================================
 
 #include <bits/stdc++.h>
 using namespace std;
