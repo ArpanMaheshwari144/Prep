@@ -58,8 +58,6 @@ struct TreeNode
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
-// map-REDO: pivot linear-scan HATA ke unordered_map (inorder value->index) se O(1) karna.
-
 TreeNode *solve(int &rootIndex, vector<int> &preorder, vector<int> &inorder, int l, int r, unordered_map<int, int> &mp)
 {
     if (l > r)
