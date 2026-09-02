@@ -1447,6 +1447,46 @@
         return prev;
      har step: nextt BACHA -> curr ka link ULTA (->prev) -> dono aage. end: prev = naya head.
 
+┌── FAMILY: HASHMAP-AS-GLUE (clone) ────────────────────────────
+│ KYUN SAATH: map<old*,new*> = purane node ko naye se jodne wala GOND.
+│ (LRU me bhi hashmap-as-glue; yahan clone ke liye old->new.)
+└───────────────────────────────────────────────────────────────
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ COPY LIST w/ RANDOM POINTER (LC-138) = HASHMAP old->new + 2 PASS
+ └──────────────────────────────────────────────────────────────
+     SAAR: har node me val+next+RANDOM (kahin bhi ya NULL). DEEP copy banao,
+           copy ke random COPY-list ke andar point karein (original pe NAHI).
+     KYUN 2 PASS: random aage/peeche kahin bhi -> 1-pass me target abhi bana
+           hi na ho. pehle SAARE new node bana lo (+map), PHIR random set.
+
+     VISUAL:   orig:  7 -> 13 -> 11 -> 10 -> 1
+               rand:  13->7 , 11->1 , 10->11 , 1->7 , 7->NULL
+               mp:    7=>7'  13=>13'  11=>11'  10=>10'  1=>1'
+       PASS1 (clone+next, rand khaali):  7'->13'->11'->10'->1'
+       PASS2 (random = mp[orig.random]):  13'.r=mp[7]=7' , 11'.r=mp[1]=1' ,
+             10'.r=mp[11]=11' , 1'.r=mp[7]=7' , 7'.r=NULL  -> sab COPY ke andar
+
+     TEMPLATE:
+       // PASS 1: clone + next + map
+       curr=head; prev=NULL; newHead=NULL;
+       while(curr){
+          Node* temp=new Node(curr->val); mp[curr]=temp;
+          if(newHead==NULL){ newHead=temp; prev=temp; }
+          else { prev->next=temp; prev=temp; }
+          curr=curr->next;
+       }
+       // PASS 2: random set
+       curr=head; currRand=newHead;
+       while(curr){
+          currRand->random = (curr->random==NULL) ? NULL : mp[curr->random];
+          curr=curr->next; currRand=currRand->next;
+       }
+       return newHead;
+
+     KEY: currRand->random = mp[curr->random] = old-random ka NAYA-copy -> DEEP.
+     T=O(n) S=O(n).  [O(1)-space alt = interleave A->A'->B->B' clone, optional.]
+
 ```
 
 ---
