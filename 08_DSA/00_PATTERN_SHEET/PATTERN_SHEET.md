@@ -1485,6 +1485,9 @@
        return newHead;
 
      KEY: currRand->random = mp[curr->random] = old-random ka NAYA-copy -> DEEP.
+     ★ SAMAJH: "13 ka random 7 pe hai" -> ye ORIGINAL batata (curr->random padho).
+       mp sirf old->new BADALTA (clone-map). Source hamesha curr (original);
+       currRand (copy) padhte to random abhi NULL hota -- isliye curr se lete.
      T=O(n) S=O(n).  [O(1)-space alt = interleave A->A'->B->B' clone, optional.]
 
 ```
