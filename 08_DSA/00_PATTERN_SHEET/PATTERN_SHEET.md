@@ -1460,12 +1460,21 @@
      KYUN 2 PASS: random aage/peeche kahin bhi -> 1-pass me target abhi bana
            hi na ho. pehle SAARE new node bana lo (+map), PHIR random set.
 
-     VISUAL:   orig:  7 -> 13 -> 11 -> 10 -> 1
-               rand:  13->7 , 11->1 , 10->11 , 1->7 , 7->NULL
-               mp:    7=>7'  13=>13'  11=>11'  10=>10'  1=>1'
-       PASS1 (clone+next, rand khaali):  7'->13'->11'->10'->1'
-       PASS2 (random = mp[orig.random]):  13'.r=mp[7]=7' , 11'.r=mp[1]=1' ,
-             10'.r=mp[11]=11' , 1'.r=mp[7]=7' , 7'.r=NULL  -> sab COPY ke andar
+     VISUAL ( [x]=node · -> next · ~> random ):
+       ORIG:  [7] -> [13] -> [11] -> [10] -> [1]
+       rand:   7~>NULL   13~>7   11~>1   10~>11   1~>7      (random kahin bhi)
+       mp (clone ka pata):  7=>7'   13=>13'   11=>11'   10=>10'   1=>1'
+
+       PASS 1 (har orig ka clone + next jodo; ~> abhi KHAALI):
+       COPY:  [7']-> [13']-> [11']-> [10']-> [1']
+
+       PASS 2 (orig se rand padho -> UPAR mp me dekho -> naya utha ke copy pe lagao):
+         13' ~>  mp[ 13.rand=7 ]  = 7'         (orig-7 ka naya = 7')
+         11' ~>  mp[ 11.rand=1 ]  = 1'
+         10' ~>  mp[ 10.rand=11]  = 11'
+          1' ~>  mp[ 1.rand=7  ]  = 7'
+          7' ~>  NULL
+       => saare copy-random COPY ke andar (original pe nahi) = DEEP
 
      TEMPLATE:
        // PASS 1: clone + next + map
