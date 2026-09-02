@@ -463,6 +463,13 @@ ATOMIC OPERATION (no race):
    INTERVIEW LINE: "Since Redis is single-threaded, the check-and-decrement is
      atomic -- INCR for a counter, or a Lua script for token-bucket logic, to
      avoid the read-modify-write race."
+
+   ★ CONNECT (2-Sep mock): ye WAHI race hai jo IDEMPOTENCY me thi (HDFC
+     duplicate-payment) -- naive containsKey+put ke beech ka gap -> 2 request
+     ghus jaati -> double charge. Wahan ilaaj = putIfAbsent (atomic). Yahan
+     ilaaj = Lua script (atomic). DONO = "read+modify+write ko EK atomic
+     unit banao, beech ka gap band". Rate-limiter <-> idempotency = SAME
+     race, same lock-cure.
 ```
 
 ---
