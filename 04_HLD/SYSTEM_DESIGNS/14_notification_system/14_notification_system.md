@@ -417,7 +417,9 @@ Partition by user_id:
         ↓
 100 partitions × 100 workers
         ↓
-30,000 msg/sec processing capacity
+100,000 msg/sec processing capacity   (100 workers × 1000/sec — sec 17 se consistent)
+        ↓
+demand 300/sec << 100K capacity = bahut headroom
         ↓
 Smooth delivery
 ```
