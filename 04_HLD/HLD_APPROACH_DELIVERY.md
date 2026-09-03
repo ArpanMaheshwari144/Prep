@@ -94,4 +94,38 @@
 
 ---
 
-> 1-line recall: **RAIL pakdo (7-step) → har box naam+why → trade-off saanche me → atko to 4-move (kabhi chup nahi). Perfect nahi, NAVIGATE karna hai.**
+## 5 — ANJAAN DESIGN + "kuch nahi aata" ka darr (3-Sep, Arpan ka #1 fear)
+
+### (A) Design jo padha NAHI (Google Docs / Search jaisa)
+```
+   Designs YAAD nahi karte -> wo same ~15 BLOCKS ke naye COMBINATION hain.
+   Blocks: LB · cache · DB · queue · shard · replica · CDN · index · consistency-choice.
+   15+ design padhe = ye blocks bahut baar milte dekhe -> naya = wahi blocks nayi jodni.
+
+   Anjaan design -> RAIL pe chal ke DERIVE kar (recall nahi):
+     e.g. Google Docs -> "real-time collab edit -> concurrent edits clash ->
+          I'd order/sequence operations per doc." (naam OT/CRDT na aaye tab bhi REASON)
+   Interviewer JAAN-BOOJH ke anjaan deta -> framework-apply dekhna, ratta nahi.
+   JP-backend me Google-scale nahi -> rate-limiter/payment/notification/url type = tere paas.
+```
+
+### (B) "Kuch aata nahi -> nerves -> poora interview bekar" — us case me:
+```
+   1. Kuch na aana GUARANTEED + EXPECTED. Har candidate ko 1-3 cheez nahi aati.
+      Grade = "na-aane pe kaise handle kiya", na ki "sab aata tha".
+   2. Ek unknown se interview bekar NAHI. Poora round grade hota; JP = 2/3 round tera zone.
+   3. Asli khatra = unknown nahi, SPIRAL hai ("fail ho raha -> panic -> baaki bikhra").
+      Skill = unknown ko spiral se ALAG karna.
+   4. FIX = pehle se ratti-hui line (rehearse -> automatic -> trigger hi na bane):
+      > "I haven't worked with X directly, but I'd approach it by [jo aata usse reason].
+         Let me note it and continue."
+   5. "Nahi aata par aise nikaalunga" = POSITIVE signal -> bluff se zyada respect.
+   6. ANCHOR: 4 saal + 700 prod-tickets -> "2am prod down, pata nahi kya toota" tune
+      baar-baar dabaav me navigate kiya. Interview-unknown usse AASAAN. Tu mushkil kar chuka.
+```
+> NICHOD: sab nahi jaanega = normal, fail nahi. Interview banata/bigaadta = tera RESPONSE, na unknown.
+> Pehla interview = warm-up rep, "final" nahi.
+
+---
+
+> 1-line recall: **RAIL pakdo (7-step) → har box naam+why → trade-off saanche me → atko to 4-move (kabhi chup nahi). Perfect nahi, NAVIGATE karna hai. Anjaan = blocks se DERIVE. "Nahi aata" = ratti-line + reason, spiral se alag.**
