@@ -1447,6 +1447,32 @@
         return prev;
      har step: nextt BACHA -> curr ka link ULTA (->prev) -> dono aage. end: prev = naya head.
 
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ REVERSE NODES IN K-GROUP (LC-25)  = REVERSE-LL (3-ptr) + RECURSION
+ └──────────────────────────────────────────────────────────────
+     SAAR: har k-node group ko reverse (NODES). k se KAM bache -> waise hi.
+
+     2 TUKDE (dono pehle se aate):
+        REVERSE-LL  = ek group ko 3-pointer se ulta        [engine reuse]
+        RECURSION   = group reverse -> BAAKI list pe khud ko call -> stitch
+
+     VISUAL ( 1 -> 2 -> 3 -> 4 -> 5 ,  k=2 ):
+        GRP1 [1,2]:  1 -> 2 -> (3 4 5)
+             rev ->  2 -> 1          (prev=2 = NAYA HEAD ,  1 = TAIL)
+             1(TAIL) -> reverseKGroup(3 4 5)     [RECURSE baaki pe]
+        GRP2 [3,4]:  3 -> 4 -> (5)
+             rev ->  4 -> 3          (3 = TAIL)
+             3(TAIL) -> reverseKGroup(5)
+        GRP3 [5]:    count=1 < 2 -> return 5      (leftover, waise hi)
+        JODO:  2 -> 1 -> 4 -> 3 -> 5
+
+     DELTA (reverse-LL ke upar):
+        (1) count-FIRST: k node GINO -> < k? return head (leftover guard).
+        (2) 3-pointer se k reverse (count<k).
+        (3) head ab TAIL -> head->next = reverseKGroup(next,k) ; return prev.
+
+     crux: count-FIRST + head-BANTA-TAIL + RECURSE-stitch.
+
 ┌── FAMILY: HASHMAP-AS-GLUE (clone) ────────────────────────────
 │ KYUN SAATH: map<old*,new*> = purane node ko naye se jodne wala GOND.
 │ (LRU me bhi hashmap-as-glue; yahan clone ke liye old->new.)

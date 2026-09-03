@@ -21,6 +21,23 @@
 //   [], k=2            -> (empty)
 // ============================================================
 
+// ---- ARPAN KI APPROACH ----
+//  = REVERSE-LL (3-pointer engine) + RECURSION. do known tukde.
+//
+//  STEP 1 — count-FIRST (leftover guard): k node GINO. countNodes != k -> return head
+//     (bache node WAISE HI, reverse nahi).
+//  STEP 2 — REVERSE k: 3-pointer (prev/curr/next), count<k tak.  [= reverse-LL wala loop]
+//     baad me -> prev = NAYA HEAD · head = is group ka TAIL · curr/next = agle group ka pehla.
+//  STEP 3 — RECURSE stitch: head->next = reverseKGroup(next, k);  return prev;
+//
+//  VISUAL ( 1 -> 2 -> 3 -> 4 -> 5 , k=2 ):
+//     GRP1 [1,2]:  rev -> 2 -> 1   (prev=2 = HEAD, 1 = TAIL) ; 1 -> reverseKGroup(3 4 5)
+//     GRP2 [3,4]:  rev -> 4 -> 3   (3 = TAIL)                ; 3 -> reverseKGroup(5)
+//     GRP3 [5]:    count=1 < 2 -> return 5   (leftover, waise hi)
+//     JODO:  2 -> 1 -> 4 -> 3 -> 5
+//
+//  crux: count-FIRST + head-BANTA-TAIL + RECURSE-stitch.
+
 #include <iostream>
 #include <vector>
 using namespace std;
