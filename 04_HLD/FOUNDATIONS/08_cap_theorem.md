@@ -154,8 +154,10 @@ NOT REALLY POSSIBLE in distributed system
 ```
 SERVICE              CHOICE                       WHY
 ──────              ──────                        ────
-YouTube             CP (server down sometimes)    Wrong video corruption worse
-                                                   than 5-min outage
+YouTube             AP (video milta rahe)         CDN-served, available > strict
+                                                   consistency; stale view-count/
+                                                   comment OK (eventual) — Facebook
+                                                   feed jaisa hi
 
 Bank/UPI            CP (sometimes "unavailable")  Wrong balance = legal disaster
 
@@ -338,7 +340,7 @@ PER-CRITICALITY, not whole-system (Arpan's insight 2026-06-06):
 
 **Q4: "Real-world example?"**
 
-> *"Banking — CP (correct balance > available). Social media — AP (feed dikhe > error). YouTube down sometimes — chose CP. Facebook stale feed — chose AP. Sab somewhere trade-off karte — perfect distributed system NAHI hota."*
+> *"Banking — CP (correct balance > available). Social media — AP (feed dikhe > error). YouTube — AP (video available rahe, stale view-count OK). Facebook stale feed — AP. Sab somewhere trade-off karte — perfect distributed system NAHI hota."*
 
 **Q5: "PACELC kya hai?"**
 

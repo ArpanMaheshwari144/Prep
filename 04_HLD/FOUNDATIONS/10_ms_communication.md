@@ -84,7 +84,9 @@ Cons:
    • JSON heavy (verbose)
    • No strict contract
    • Slower (~5-10x vs gRPC)
-   • Each call = new TCP connection (HTTP/1.1)
+   • HTTP/1.1 = NO multiplexing: ek connection pe ek-time ek request
+     (head-of-line blocking). [keep-alive se connection reuse HOTA hai,
+      par ek-ek karke; HTTP/2 many streams ek connection pe multiplex karta]
 ```
 
 ### gRPC (HTTP/2 + Protobuf)
