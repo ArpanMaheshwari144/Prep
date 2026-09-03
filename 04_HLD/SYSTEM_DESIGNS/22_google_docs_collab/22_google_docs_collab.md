@@ -66,6 +66,21 @@ Do log same instant same position pe type karein — winner mat chuno, **MERGE k
 - **CRDT** = alt: har char ko unique id/position → merge apne aap commutative, central transform ki zaroorat nahi.
 - Interview line: *"operations bhejta, snapshot nahi; concurrent ops OT/CRDT se transform/merge; sab converge; koi write lost nahi."* (implement nahi karna.)
 
+**OT transform — step-by-step (dono side same pe converge):**
+```
+Base doc: "HELLO"
+A ka op: insert("X", pos 0)        B ka op: insert("Y", pos 0)    [same waqt]
+
+  A ke paas:                         B ke paas:
+    apply A  -> "XHELLO"               apply B  -> "YHELLO"
+    B aaya (pos 0); par A pehle        A aaya (pos 0); tie-break
+    0 pe daal chuka -> SHIFT           (A pehle) -> pos 0 pe
+    -> insert("Y", pos 1)             -> insert("X", pos 0)
+    -> "XYHELLO"                      -> "XYHELLO"
+
+  => dono = "XYHELLO"  (CONVERGE, dono ke akshar bache, koi lost nahi)
+```
+
 ### 7 — Bottleneck
 ```
 1. Crore WebSocket connections → dedicated CONNECTION-TIER (sockets hold), alag scale;
@@ -74,6 +89,25 @@ Do log same instant same position pe type karein — winner mat chuno, **MERGE k
    alag docs → alag shards. load bat-ta + OT clean.
 3. Hot doc bounded hai (Google ~100 editor cap) → per-doc OT ek server pe theek.
 4. Spike → message QUEUE se absorb. Redis pub/sub → replication + horizontal scale.
+```
+
+---
+
+## WRITE PATH — ek edit ka safar (end-to-end)
+```
+1. User A ek char type karta -> op ban-ta { docId, userId, insert, pos, char, ts }
+2. op WebSocket se A ke Conn-Server pe jaata
+3. server: OT transform (concurrent ops ke against) -> apply
+4. op Redis PUB/SUB pe publish -> baaki Conn-Servers -> unke WebSocket clients (User B) ko PUSH
+5. op Redis BUFFER me jama -> periodically BATCH -> NoSQL edit-log me persist (har keystroke DB nahi)
+6. B ka client op receive -> apna OT transform -> screen update
+```
+
+## SNAPSHOT + OPS — read optimization
+```
+Dikkat: doc kholte waqt 10-lakh ops replay karna = slow.
+Fix:   periodically doc ka SNAPSHOT (poora current text) save karo + uske baad ke ops.
+       doc-load = latest snapshot + baad ke thode ops apply. (append-log + periodic compaction.)
 ```
 
 ---
@@ -102,6 +136,17 @@ CAP ka faisla SIRF **partition ke waqt** matter karta; no-partition = dono milte
      ▼                                              ▼
   OT/merge (per docId shard)  ───────────► NoSQL edit-log (Cassandra: docId/timestamp)
                                             [permissions → strong-consistent store]
+```
+
+---
+
+## TRAP BOX (ye galtiyan mock me aayi thi)
+```
+GALAT: Last-Write-Wins    -> kisi ka likha KHO jaata; collab me chalta nahi. OT/CRDT karo.
+GALAT: "consistency = CP"  -> actual AP (offline-type + converge). CP hota to typing rukti.
+GALAT: "consistency = SQL" -> DB data-SHAPE se aati; edit-log = NoSQL. "relations nahi" = NoSQL ki taraf.
+GALAT: har keystroke DB hit -> nahi; buffer + batch persist.
+GALAT: ek CAP poore system pe -> per-component (edits AP, permissions CP).
 ```
 
 ---
