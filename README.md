@@ -42,10 +42,15 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 - **[03_jwt_security](02_SPRING/03_jwt_security/01_jwt_complete.md)** — JWT complete
 - **[04_profiles](02_SPRING/04_profiles)** — [basics](02_SPRING/04_profiles/01_basics.md) · [compose](02_SPRING/04_profiles/02_compose_integration.md) · [reference](02_SPRING/04_profiles/03_reference.md)
 - **[05_HIBERNATE](02_SPRING/05_HIBERNATE)** — [jpa-vs-hibernate](02_SPRING/05_HIBERNATE/01_jpa_vs_hibernate.md) · [N+1](02_SPRING/05_HIBERNATE/02_n_plus_1_problem.md) · [lazy-vs-eager](02_SPRING/05_HIBERNATE/03_lazy_vs_eager.md) · [dirty-checking](02_SPRING/05_HIBERNATE/04_dirty_checking.md) · [1st-level-cache](02_SPRING/05_HIBERNATE/05_first_level_cache.md) · [cascade](02_SPRING/05_HIBERNATE/06_cascade_types.md) · [relationships](02_SPRING/05_HIBERNATE/07_relationship_mappings.md) · [optimistic-lock](02_SPRING/05_HIBERNATE/08_optimistic_locking.md)
-- **[06_DOCKER](02_SPRING/06_DOCKER)** — foundation → compose → networks → volumes → multistage → arg-vs-env (11 files)
+- **[06_DOCKER](02_SPRING/06_DOCKER)** — [foundation](02_SPRING/06_DOCKER/01_foundation.md) · [spring+mysql](02_SPRING/06_DOCKER/02_spring_mysql_host.md) · [volumes](02_SPRING/06_DOCKER/03_volumes.md) · [transition](02_SPRING/06_DOCKER/04_transition.md) · [networks](02_SPRING/06_DOCKER/05_networks.md) · [compose](02_SPRING/06_DOCKER/06_docker_compose.md) · [reference](02_SPRING/06_DOCKER/07_reference.md) · [revision (visual)](02_SPRING/06_DOCKER/08_revision_visual.md) · [multistage](02_SPRING/06_DOCKER/09_multistage_builds.md) · [arg-vs-env](02_SPRING/06_DOCKER/10_arg_vs_env.md)
 - **[07_K8S](02_SPRING/07_K8S)** — [why/arch](02_SPRING/07_K8S/01_why_k8s_and_architecture.md) · [pod](02_SPRING/07_K8S/02_pod.md) · [deployment](02_SPRING/07_K8S/03_deployment.md) · [service](02_SPRING/07_K8S/04_service.md) · [ingress](02_SPRING/07_K8S/05_ingress.md) · [configmap/secret](02_SPRING/07_K8S/06_configmap_secret.md)
 - **[08_REVISION_VISUAL](02_SPRING/08_REVISION_VISUAL)** — basics · rest-flow · transactional · jwt · profiles (visual)
-- **[09_QUERYDSL](02_SPRING/09_QUERYDSL/01_querydsl.md)** · **[10_SPRING_DATA_JPA](02_SPRING/10_SPRING_DATA_JPA/01_custom_queries_dto.md)** · **[11_GRAPHQL](02_SPRING/11_GRAPHQL/01_graphql.md)** · **[12_ASYNC_SCHEDULING](02_SPRING/12_ASYNC_SCHEDULING/01_async_scheduled.md)** · **[13_CACHE](02_SPRING/13_CACHE/01_cache.md)** · **[14_KAFKA](02_SPRING/14_KAFKA/01_kafka_basics.md)**
+- **[09_QUERYDSL](02_SPRING/09_QUERYDSL/01_querydsl.md)** — type-safe dynamic queries (Q-classes)
+- **[10_SPRING_DATA_JPA](02_SPRING/10_SPRING_DATA_JPA/01_custom_queries_dto.md)** — custom @Query · DTO projection
+- **[11_GRAPHQL](02_SPRING/11_GRAPHQL/01_graphql.md)** — schema · @QueryMapping · client-picks-fields
+- **[12_ASYNC_SCHEDULING](02_SPRING/12_ASYNC_SCHEDULING/01_async_scheduled.md)** — @Async · @Scheduled
+- **[13_CACHE](02_SPRING/13_CACHE/01_cache.md)** — @Cacheable · @CacheEvict
+- **[14_KAFKA](02_SPRING/14_KAFKA/01_kafka_basics.md)** — producer/consumer · DLQ · idempotency
 
 ## [03_LLD](03_LLD) (code — 11 designs)
 - [parking-lot](03_LLD/01_parking_lot) · [bookmyshow](03_LLD/02_bookmyshow) · [tictactoe](03_LLD/03_tictactoe) · [snake-ladder](03_LLD/04_snake_ladder) · [elevator](03_LLD/06_elevator) · [atm](03_LLD/07_atm_machine) · [bank-account](03_LLD/08_bank_account) · [shopping-cart](03_LLD/09_shopping_cart) · [library](03_LLD/10_library) · [vending-machine](03_LLD/11_vending_machine) · [hotel-booking](03_LLD/12_hotel_booking)
