@@ -56,6 +56,17 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 - [parking-lot](03_LLD/01_parking_lot) · [bookmyshow](03_LLD/02_bookmyshow) · [tictactoe](03_LLD/03_tictactoe) · [snake-ladder](03_LLD/04_snake_ladder) · [elevator](03_LLD/06_elevator) · [atm](03_LLD/07_atm_machine) · [bank-account](03_LLD/08_bank_account) · [shopping-cart](03_LLD/09_shopping_cart) · [library](03_LLD/10_library) · [vending-machine](03_LLD/11_vending_machine) · [hotel-booking](03_LLD/12_hotel_booking)
 
 ## [04_HLD](04_HLD)
+
+> ★★ HLD RAIL — har design isi kram pe bolo (roz dekh, dimaag me ghoome):
+
+```
+┌──────────────┐   ┌──────────┐   ┌─────┐   ┌────────────┐   ┌───────────┐   ┌────────────┐   ┌─────────────┐
+│ Requirements │ → │ Estimate │ → │ API │ → │ Data model │ → │ HL boxes  │ → │ Deep-dive  │ → │ Bottleneck  │
+└──────────────┘   └──────────┘   └─────┘   └────────────┘   └───────────┘   └────────────┘   └─────────────┘
+
+  har box = KYA (component) + KYUN (1 line).    atko? → freeze nahi, 4-move: reason-aloud / assume+move / clarify-Q / honest+approach.
+```
+
 - ★ **[HLD_APPROACH_DELIVERY](04_HLD/HLD_APPROACH_DELIVERY.md)** — "kaise bolna" playbook (rail · meta-moves · anjaan-design · darr) · **[INTERVIEW_FRAMEWORK](04_HLD/INTERVIEW_FRAMEWORK.md)** · **[SPEAKING_VOCAB](04_HLD/SPEAKING_VOCAB.md)**
 - **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — [hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [caching](04_HLD/FOUNDATIONS/04_caching.md) · [replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) · [CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) · [ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) · [reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md)
 - **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — [url-shortener](04_HLD/SYSTEM_DESIGNS/11_url_shortener/11_url_shortener.md) · [rate-limiter](04_HLD/SYSTEM_DESIGNS/12_rate_limiter/12_rate_limiter.md) · [twitter-feed](04_HLD/SYSTEM_DESIGNS/13_twitter_feed/13_twitter_feed.md) · [notification](04_HLD/SYSTEM_DESIGNS/14_notification_system/14_notification_system.md) · [url-browser-journey](04_HLD/SYSTEM_DESIGNS/15_url_browser_journey/15_url_browser_journey.md) · [stock-broker](04_HLD/SYSTEM_DESIGNS/16_stock_broker_trading/16_stock_broker_trading.md) · [payment](04_HLD/SYSTEM_DESIGNS/17_payment_system/17_payment_system.md) · [file-upload](04_HLD/SYSTEM_DESIGNS/18_file_upload_validate_system/18_file_upload_INTERVIEW.md) · [news-aggregator](04_HLD/SYSTEM_DESIGNS/19_news_aggregator/19_news_aggregator_INTERVIEW.md) · [bookmyshow](04_HLD/SYSTEM_DESIGNS/20_bookmyshow/20_bookmyshow_INTERVIEW.md) · [distributed-cache](04_HLD/SYSTEM_DESIGNS/21_distributed_cache/21_distributed_cache.md)
