@@ -25,7 +25,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ---
 
-## 01_JAVA
+## [01_JAVA](01_JAVA)
 - **[01_CORE_JAVA](01_JAVA/01_CORE_JAVA)** — [OOP](01_JAVA/01_CORE_JAVA/01_OOP) (kya-hai · 4-pillars · abstract-vs-interface · overloading-vs-overriding · immutable · constructor-chaining · type-casting · instanceof) · [STRING](01_JAVA/01_CORE_JAVA/02_STRING) (immutable · builder/buffer) · [KEYWORDS](01_JAVA/01_CORE_JAVA/03_KEYWORDS) (static · final · this-vs-super) · [CORE_EXTRAS](01_JAVA/01_CORE_JAVA/04_CORE_EXTRAS) (jdk/jre/jvm · access-modifiers · wrapper/autobox · GC · enum · pass-by-value) · [EXCEPTIONS](01_JAVA/01_CORE_JAVA/05_EXCEPTIONS) (checked-vs-unchecked · try/catch/finally)
 - **[02_COLLECTIONS](01_JAVA/02_COLLECTIONS)** — [hashmap-internal](01_JAVA/02_COLLECTIONS/06_hashmap_internal.md) · [hashmap-vs-CHM](01_JAVA/02_COLLECTIONS/07_hashmap_vs_concurrenthashmap.md) · [arraylist](01_JAVA/02_COLLECTIONS/25_arraylist_internal.md) · [linkedlist](01_JAVA/02_COLLECTIONS/26_linkedlist_internal.md) · [iterator-vs-listiterator](01_JAVA/02_COLLECTIONS/27_iterator_vs_listiterator.md) · [hashmap/linkedhashmap/treemap](01_JAVA/02_COLLECTIONS/28_hashmap_linkedhashmap_treemap.md) · [hashset](01_JAVA/02_COLLECTIONS/29_hashset_internal.md) · [comparable-vs-comparator](01_JAVA/02_COLLECTIONS/30_comparable_vs_comparator.md) · [thenComparing](01_JAVA/02_COLLECTIONS/31_thencomparing_chained_sorting.md) · [fail-fast-vs-safe](01_JAVA/02_COLLECTIONS/32_fail_fast_vs_fail_safe.md) · [priorityqueue](01_JAVA/02_COLLECTIONS/33_priorityqueue_min_heap.md)
 - **[03_JAVA_8](01_JAVA/03_JAVA_8)** — [lambda](01_JAVA/03_JAVA_8/34_lambda_expressions.md) · [functional-interface](01_JAVA/03_JAVA_8/35_functional_interface_pfcs.md) · [method-reference](01_JAVA/03_JAVA_8/36_method_reference.md) · [streams](01_JAVA/03_JAVA_8/37_streams_api.md) · [optional](01_JAVA/03_JAVA_8/38_optional.md) · [stream-cheatsheet](01_JAVA/03_JAVA_8/39_stream_methods_cheatsheet.md)
@@ -36,7 +36,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 - **[08_REVISION_VISUAL](01_JAVA/08_REVISION_VISUAL)** — visual revise-set: [CORE](01_JAVA/08_REVISION_VISUAL/01_CORE) · [COLLECTIONS](01_JAVA/08_REVISION_VISUAL/02_COLLECTIONS) · [JAVA_8](01_JAVA/08_REVISION_VISUAL/03_JAVA_8) · [MULTITHREADING](01_JAVA/08_REVISION_VISUAL/04_MULTITHREADING) · [OOP_DESIGN (SOLID + patterns)](01_JAVA/08_REVISION_VISUAL/05_OOP_DESIGN) · [QUICK_QA](01_JAVA/08_REVISION_VISUAL/06_QUICK_QA)
 - **[09_WRITE_PRACTICE](01_JAVA/09_WRITE_PRACTICE)** — Java-8 STREAMS write-to-learn practice (filter/map/groupingBy/reduce/word-frequency Qs + REDO files) — specifically streams ke liye
 
-## 02_SPRING
+## [02_SPRING](02_SPRING)
 - **[01_basics](02_SPRING/01_basics)** — [spring-kya-hai](02_SPRING/01_basics/01_spring_kya_hai.md) · [beans/IoC](02_SPRING/01_basics/02_beans_ioc_container.md) · [annotations/DI](02_SPRING/01_basics/03_annotations_di_types.md)
 - **[02_transactional](02_SPRING/02_transactional/01_transactional_complete.md)** — @Transactional complete
 - **[03_jwt_security](02_SPRING/03_jwt_security/01_jwt_complete.md)** — JWT complete
@@ -47,37 +47,37 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 - **[08_REVISION_VISUAL](02_SPRING/08_REVISION_VISUAL)** — basics · rest-flow · transactional · jwt · profiles (visual)
 - **[09_QUERYDSL](02_SPRING/09_QUERYDSL/01_querydsl.md)** · **[10_SPRING_DATA_JPA](02_SPRING/10_SPRING_DATA_JPA/01_custom_queries_dto.md)** · **[11_GRAPHQL](02_SPRING/11_GRAPHQL/01_graphql.md)** · **[12_ASYNC_SCHEDULING](02_SPRING/12_ASYNC_SCHEDULING/01_async_scheduled.md)** · **[13_CACHE](02_SPRING/13_CACHE/01_cache.md)** · **[14_KAFKA](02_SPRING/14_KAFKA/01_kafka_basics.md)**
 
-## 03_LLD (code — 11 designs)
+## [03_LLD](03_LLD) (code — 11 designs)
 - [parking-lot](03_LLD/01_parking_lot) · [bookmyshow](03_LLD/02_bookmyshow) · [tictactoe](03_LLD/03_tictactoe) · [snake-ladder](03_LLD/04_snake_ladder) · [elevator](03_LLD/06_elevator) · [atm](03_LLD/07_atm_machine) · [bank-account](03_LLD/08_bank_account) · [shopping-cart](03_LLD/09_shopping_cart) · [library](03_LLD/10_library) · [vending-machine](03_LLD/11_vending_machine) · [hotel-booking](03_LLD/12_hotel_booking)
 
-## 04_HLD
+## [04_HLD](04_HLD)
 - ★ **[HLD_APPROACH_DELIVERY](04_HLD/HLD_APPROACH_DELIVERY.md)** — "kaise bolna" playbook (rail · meta-moves · anjaan-design · darr) · **[INTERVIEW_FRAMEWORK](04_HLD/INTERVIEW_FRAMEWORK.md)** · **[SPEAKING_VOCAB](04_HLD/SPEAKING_VOCAB.md)**
 - **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — [hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [caching](04_HLD/FOUNDATIONS/04_caching.md) · [replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) · [CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) · [ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) · [reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md)
 - **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — [url-shortener](04_HLD/SYSTEM_DESIGNS/11_url_shortener/11_url_shortener.md) · [rate-limiter](04_HLD/SYSTEM_DESIGNS/12_rate_limiter/12_rate_limiter.md) · [twitter-feed](04_HLD/SYSTEM_DESIGNS/13_twitter_feed/13_twitter_feed.md) · [notification](04_HLD/SYSTEM_DESIGNS/14_notification_system/14_notification_system.md) · [url-browser-journey](04_HLD/SYSTEM_DESIGNS/15_url_browser_journey/15_url_browser_journey.md) · [stock-broker](04_HLD/SYSTEM_DESIGNS/16_stock_broker_trading/16_stock_broker_trading.md) · [payment](04_HLD/SYSTEM_DESIGNS/17_payment_system/17_payment_system.md) · [file-upload](04_HLD/SYSTEM_DESIGNS/18_file_upload_validate_system/18_file_upload_INTERVIEW.md) · [news-aggregator](04_HLD/SYSTEM_DESIGNS/19_news_aggregator/19_news_aggregator_INTERVIEW.md) · [bookmyshow](04_HLD/SYSTEM_DESIGNS/20_bookmyshow/20_bookmyshow_INTERVIEW.md) · [distributed-cache](04_HLD/SYSTEM_DESIGNS/21_distributed_cache/21_distributed_cache.md)
 - **[RAW_DRILL](04_HLD/RAW_DRILL)** — [reflex-sheet](04_HLD/RAW_DRILL/00_REFLEX_SHEET.md) · [design-practice-log](04_HLD/RAW_DRILL/01_DESIGN_PRACTICE_LOG.md) · [why-how-QA](04_HLD/RAW_DRILL/02_WHY_HOW_QA.md) · [interview-anchor](04_HLD/RAW_DRILL/03_INTERVIEW_ANCHOR.md)
 
-## 05_INFRA_DEEP
+## [05_INFRA_DEEP](05_INFRA_DEEP)
 - [cdn](05_INFRA_DEEP/01_cdn.md) · [load-balancer](05_INFRA_DEEP/02_load_balancer.md) · [dns](05_INFRA_DEEP/03_dns.md) · [waf](05_INFRA_DEEP/04_waf.md) · [monitoring (Prometheus/Grafana)](05_INFRA_DEEP/05_monitoring_prometheus_grafana.md) · [load-test demo](05_INFRA_DEEP/LOADTEST_SCALE_DEMO/NOTES.md)
 - **[DEVOPS](05_INFRA_DEEP/DEVOPS)** — [AWS](05_INFRA_DEEP/DEVOPS/AWS) (commands · setup-journey) · [DOCKER](05_INFRA_DEEP/DEVOPS/DOCKER) (commands) · [K8S](05_INFRA_DEEP/DEVOPS/K8S) (commands · helm · setup-journey)
 - Hands-on demos: [LB_DEMO](05_INFRA_DEEP/LB_DEMO) (nginx-lb.conf) · [MONITORING_DEMO](05_INFRA_DEEP/MONITORING_DEMO) (prometheus.yml) · [LOADTEST_SCALE_DEMO](05_INFRA_DEEP/LOADTEST_SCALE_DEMO)
 
-## 06_COMPARES
+## [06_COMPARES](06_COMPARES)
 - [sql-vs-nosql](06_COMPARES/01_sql_vs_nosql.md) · [tcp-vs-udp](06_COMPARES/02_tcp_vs_udp.md) · [http-vs-https](06_COMPARES/03_http_vs_https.md) · [monolith-vs-ms](06_COMPARES/04_monolith_vs_microservices.md) · [stateful-vs-stateless](06_COMPARES/05_stateful_vs_stateless.md) · [sync-vs-async](06_COMPARES/06_sync_vs_async.md) · [authn-vs-authz](06_COMPARES/07_authentication_vs_authorization.md) · [process-vs-thread](06_COMPARES/08_process_vs_thread.md) · [concurrency-vs-parallelism](06_COMPARES/09_concurrency_vs_parallelism.md) · [rest-vs-graphql](06_COMPARES/10_rest_vs_graphql.md) · [http-versions](06_COMPARES/11_http_versions.md) · [ws-vs-sse-vs-polling](06_COMPARES/12_websockets_vs_sse_vs_long_polling.md) · [jwt-vs-oauth](06_COMPARES/13_jwt_vs_oauth.md) · [kafka-vs-rabbitmq](06_COMPARES/14_kafka_vs_rabbitmq.md)
 
-## 07_PROJECTS (hands-on Spring Boot)
+## [07_PROJECTS](07_PROJECTS) (hands-on Spring Boot)
 - [mini_payment_ms](07_PROJECTS/mini_payment_ms) ([learnings](07_PROJECTS/mini_payment_ms/LEARNINGS.md)) · [todoapp](07_PROJECTS/todoapp) · [usercrud](07_PROJECTS/usercrud) · [Microservices-CRUD](07_PROJECTS/Microservices-CRUD) · [InsuranceManagementSystem](07_PROJECTS/InsuranceManagementSystem)
 
-## 08_DSA (19 patterns · ~200 problems)
+## [08_DSA](08_DSA) (19 patterns · ~200 problems)
 - ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi" (saar + template + dry-run)
 - [01_TWO_POINTER](08_DSA/01_TWO_POINTER) (22) · [02_SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) (23) · [03_HASHING](08_DSA/03_HASHING) (18) · [04_PREFIX_SUM](08_DSA/04_PREFIX_SUM) (10) · [05_MATRIX](08_DSA/05_MATRIX) (5) · [06_STACK](08_DSA/06_STACK) (12) · [07_BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) (18) · [08_LINKED_LIST](08_DSA/08_LINKED_LIST) (13) · [09_DESIGN](08_DSA/09_DESIGN) (5) · [10_KADANE](08_DSA/10_KADANE) (14) · [11_BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) (1) · [12_TREES](08_DSA/12_TREES) (19) · [13_GRAPHS](08_DSA/13_GRAPHS) (13) · [14_HEAP](08_DSA/14_HEAP) (8) · [15_INTERVALS](08_DSA/15_INTERVALS) (6) · [16_BACKTRACKING](08_DSA/16_BACKTRACKING) (8) · [17_DP](08_DSA/17_DP) (25) · [18_GREEDY](08_DSA/18_GREEDY) (5)
 
-## 09_DATABASE
+## [09_DATABASE](09_DATABASE)
 - [indexing](09_DATABASE/01_indexing_practical.md) · [transaction-internals](09_DATABASE/02_transaction_internals.md) · [zero-downtime-add-column](09_DATABASE/03_zero_downtime_add_column.md) · [joins](09_DATABASE/04_joins.md) · [normalization](09_DATABASE/05_normalization.md) · [ACID](09_DATABASE/06_acid.md) · [isolation-levels](09_DATABASE/07_isolation_levels.md) · [deadlock](09_DATABASE/08_deadlock.md)
 
-## 10_BEHAVIORAL (STAR)
+## [10_BEHAVIORAL](10_BEHAVIORAL) (STAR)
 - [JP-company](10_BEHAVIORAL/01_JP_COMPANY.md) · [why-JP](10_BEHAVIORAL/02_WHY_JP.md) · [STAR: HikariCP](10_BEHAVIORAL/03_STAR_HikariCP.md) · [STAR: WAF-IP](10_BEHAVIORAL/04_STAR_WAF_IP.md) · [STAR: payment](10_BEHAVIORAL/05_STAR_Doximity_Payment.md) · [STAR: mentoring](10_BEHAVIORAL/06_STAR_Mentoring.md) · [STAR: failure-JDK](10_BEHAVIORAL/07_STAR_Failure_JDK.md)
 
-## 11_GIT
+## [11_GIT](11_GIT)
 - [line-endings CRLF-vs-LF](11_GIT/01_line_endings_CRLF_vs_LF.md) · [stacked-PRs](11_GIT/02_stacked_PRs.md) · [merge-vs-rebase](11_GIT/03_merge_vs_rebase.md)
 
 ---
