@@ -87,7 +87,27 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ## [08_DSA](08_DSA) (19 patterns · ~200 problems)
 - ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi" (saar + template + dry-run)
-- [01_TWO_POINTER](08_DSA/01_TWO_POINTER) (22) · [02_SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) (23) · [03_HASHING](08_DSA/03_HASHING) (18) · [04_PREFIX_SUM](08_DSA/04_PREFIX_SUM) (10) · [05_MATRIX](08_DSA/05_MATRIX) (5) · [06_STACK](08_DSA/06_STACK) (12) · [07_BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) (18) · [08_LINKED_LIST](08_DSA/08_LINKED_LIST) (13) · [09_DESIGN](08_DSA/09_DESIGN) (5) · [10_KADANE](08_DSA/10_KADANE) (14) · [11_BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) (1) · [12_TREES](08_DSA/12_TREES) (19) · [13_GRAPHS](08_DSA/13_GRAPHS) (13) · [14_HEAP](08_DSA/14_HEAP) (8) · [15_INTERVALS](08_DSA/15_INTERVALS) (6) · [16_BACKTRACKING](08_DSA/16_BACKTRACKING) (8) · [17_DP](08_DSA/17_DP) (25) · [18_GREEDY](08_DSA/18_GREEDY) (5)
+
+| # | Pattern | Problems |
+|---|---------|----------|
+| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 22 |
+| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 23 |
+| 03 | [HASHING](08_DSA/03_HASHING) | 18 |
+| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 10 |
+| 05 | [MATRIX](08_DSA/05_MATRIX) | 5 |
+| 06 | [STACK](08_DSA/06_STACK) | 12 |
+| 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 18 |
+| 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 |
+| 09 | [DESIGN](08_DSA/09_DESIGN) | 5 |
+| 10 | [KADANE](08_DSA/10_KADANE) | 14 |
+| 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 |
+| 12 | [TREES](08_DSA/12_TREES) | 19 |
+| 13 | [GRAPHS](08_DSA/13_GRAPHS) | 13 |
+| 14 | [HEAP](08_DSA/14_HEAP) | 8 |
+| 15 | [INTERVALS](08_DSA/15_INTERVALS) | 6 |
+| 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 8 |
+| 17 | [DP](08_DSA/17_DP) | 25 |
+| 18 | [GREEDY](08_DSA/18_GREEDY) | 5 |
 
 ## [09_DATABASE](09_DATABASE)
 - [indexing](09_DATABASE/01_indexing_practical.md) · [transaction-internals](09_DATABASE/02_transaction_internals.md) · [zero-downtime-add-column](09_DATABASE/03_zero_downtime_add_column.md) · [joins](09_DATABASE/04_joins.md) · [normalization](09_DATABASE/05_normalization.md) · [ACID](09_DATABASE/06_acid.md) · [isolation-levels](09_DATABASE/07_isolation_levels.md) · [deadlock](09_DATABASE/08_deadlock.md)
