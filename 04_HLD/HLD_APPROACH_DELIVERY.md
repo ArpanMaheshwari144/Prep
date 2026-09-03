@@ -1,0 +1,91 @@
+# HLD — APPROACH / DELIVERY PLAYBOOK ("kaise bolna", content nahi)
+
+> Ye note DESIGN ka content nahi — ye HLD interview me KAISE conduct karna hai, wahi.
+> Banaya 3-Sep: Arpan ne pehli baar HLD-mock kiya + bola "padh liya par bolna kaise nahi aata".
+> HLD = khula game (DSA binary + Java deterministic se ALAG). Par khula ≠ blank — hamesha RAIL hoti hai.
+
+---
+
+## 0 — 3 rounds ka farak (kyun HLD alag lagta)
+```
+   DSA     = BINARY      (library me pattern hai -> ho gaya; warna nahi)
+   Java    = DETERMINISTIC (fixed sawaal -> fixed jawab)
+   HLD     = OPEN GAME   (koi answer-key nahi; interviewer SAATH drive karta)
+```
+> HLD grade karta = SOCH + COMMUNICATION + TRADE-OFF navigate + ambiguity me aage badhna.
+> "Perfect complete answer" grade karta hi NAHI. Open isliye = wo dekhna chahte tu ANJAAN me kaise chalega.
+
+---
+
+## 1 — THE RAIL (khula game me kabhi blank se shuru nahi; isi 7-step pe chal)
+```
+   Requirements  →  Estimate  →  API  →  Data model  →  HL boxes  →  Deep-dive  →  Bottleneck
+```
+- Ye rail HI "approach" hai. Kisi bhi design me isi kram pe bolo.
+- Har box pe: KYA (component) + KYUN (1 line reason). Bas. "Redis cache — read-heavy, DB bachana."
+- Tu YE LEAD karta — interviewer wait nahi karta.
+
+---
+
+## 2 — 4 META-MOVES (open-game ke asli sawaalon ke jawab)
+
+### (a) "Kahan se start?"
+```
+   Tu drive karta: requirements clarify + 2 clarifying Q
+   ("custom URL chahiye? links expire hote? scale kitna?")
+   -> chup mat baitho, tu lead karta hai.
+```
+
+### (b) "Kya-kaise-kyun bolna?"
+```
+   Rail ke har box pe -> naam + EK why.
+   Zyada nahi. Ek line why har component pe = seniority-signal.
+```
+
+### (c) "Trade-off kaise bolna?"  (ek fixed SAANCHA)
+```
+   "X vs Y — X deta [fayda] par costs [nuksan]; main X lunga kyunki [requirement]."
+
+   e.g. "SQL vs Cassandra — SQL simple par 180B rows pe scale nahi;
+         Cassandra lunga kyunki key-value + horizontal scale + HA."
+   -> har trade-off isi saanche me. Rat lo ye pattern.
+```
+
+### (d) "Answer NAHI pata to kaise nikaalun?"  (SABSE IMPORTANT — noob-fear yahi)
+```
+   RULE: kabhi FREEZE / chup NAHI. 4 escape:
+
+   1. REASON ALOUD   -> "Main isse aise sochunga..." (first-principles derive)
+   2. ASSUME + MOVE  -> "Main maan leta X, aage badhta hoon."
+   3. CLARIFYING Q   -> "Scale kitna maanu?" (waqt bhi milta)
+   4. HONEST+APPROACH-> "Ye use nahi kiya, par aise approach karunga..."
+
+   Interviewer YAHI test karta -> atakne pe kaise NAVIGATE karta.
+   Wo "sab pata" nahi dekhta; wo "ambiguity handle" dekhta.
+```
+
+---
+
+## 3 — META-SACH (darr todne ke liye)
+```
+   - Perfect answer koi nahi deta -> tu bhi kabhi nahi dega, na chahiye.
+   - Nervousness + kuch point chhoot-na = NORMAL, fail nahi.
+   - HLD = DIALOGUE (monologue nahi) -> interviewer nudge karta, tu respond.
+   - Ye TRAINABLE performance-skill hai (English-delivery jaisa) -> mock-reps se aata,
+     na ki "aata/nahi-aata" knowledge.
+   - Pehla HLD kisi ka smooth nahi. Pehla interview = "pehla rep", "final" nahi.
+```
+
+---
+
+## 4 — MOCK me main (Claude) kya coach karunga
+```
+   Answer "poora hai ki nahi" NAHI dekhunga.
+   Dekhunga: rail pe chala? · har box why bola? · trade-off saanche me bola?
+             · atakne pe 4-move se navigate kiya? · pichhli-baar-se behtar?
+   -> laundry-list/quiz/gatekeeper nahi. Coaching, na test.
+```
+
+---
+
+> 1-line recall: **RAIL pakdo (7-step) → har box naam+why → trade-off saanche me → atko to 4-move (kabhi chup nahi). Perfect nahi, NAVIGATE karna hai.**
