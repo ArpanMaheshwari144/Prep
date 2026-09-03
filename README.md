@@ -67,7 +67,20 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 - Hands-on demos: [LB_DEMO](05_INFRA_DEEP/LB_DEMO) (nginx-lb.conf) · [MONITORING_DEMO](05_INFRA_DEEP/MONITORING_DEMO) (prometheus.yml) · [LOADTEST_SCALE_DEMO](05_INFRA_DEEP/LOADTEST_SCALE_DEMO)
 
 ## [06_COMPARES](06_COMPARES)
-- [sql-vs-nosql](06_COMPARES/01_sql_vs_nosql.md) · [tcp-vs-udp](06_COMPARES/02_tcp_vs_udp.md) · [http-vs-https](06_COMPARES/03_http_vs_https.md) · [monolith-vs-ms](06_COMPARES/04_monolith_vs_microservices.md) · [stateful-vs-stateless](06_COMPARES/05_stateful_vs_stateless.md) · [sync-vs-async](06_COMPARES/06_sync_vs_async.md) · [authn-vs-authz](06_COMPARES/07_authentication_vs_authorization.md) · [process-vs-thread](06_COMPARES/08_process_vs_thread.md) · [concurrency-vs-parallelism](06_COMPARES/09_concurrency_vs_parallelism.md) · [rest-vs-graphql](06_COMPARES/10_rest_vs_graphql.md) · [http-versions](06_COMPARES/11_http_versions.md) · [ws-vs-sse-vs-polling](06_COMPARES/12_websockets_vs_sse_vs_long_polling.md) · [jwt-vs-oauth](06_COMPARES/13_jwt_vs_oauth.md) · [kafka-vs-rabbitmq](06_COMPARES/14_kafka_vs_rabbitmq.md)
+- **[01 sql-vs-nosql](06_COMPARES/01_sql_vs_nosql.md)**
+- **[02 tcp-vs-udp](06_COMPARES/02_tcp_vs_udp.md)**
+- **[03 http-vs-https](06_COMPARES/03_http_vs_https.md)**
+- **[04 monolith-vs-microservices](06_COMPARES/04_monolith_vs_microservices.md)**
+- **[05 stateful-vs-stateless](06_COMPARES/05_stateful_vs_stateless.md)**
+- **[06 sync-vs-async](06_COMPARES/06_sync_vs_async.md)**
+- **[07 authn-vs-authz](06_COMPARES/07_authentication_vs_authorization.md)**
+- **[08 process-vs-thread](06_COMPARES/08_process_vs_thread.md)**
+- **[09 concurrency-vs-parallelism](06_COMPARES/09_concurrency_vs_parallelism.md)**
+- **[10 rest-vs-graphql](06_COMPARES/10_rest_vs_graphql.md)**
+- **[11 http-versions](06_COMPARES/11_http_versions.md)**
+- **[12 ws-vs-sse-vs-polling](06_COMPARES/12_websockets_vs_sse_vs_long_polling.md)**
+- **[13 jwt-vs-oauth](06_COMPARES/13_jwt_vs_oauth.md)**
+- **[14 kafka-vs-rabbitmq](06_COMPARES/14_kafka_vs_rabbitmq.md)**
 
 ## [07_PROJECTS](07_PROJECTS) (hands-on Spring Boot)
 - [mini_payment_ms](07_PROJECTS/mini_payment_ms) ([learnings](07_PROJECTS/mini_payment_ms/LEARNINGS.md)) · [todoapp](07_PROJECTS/todoapp) · [usercrud](07_PROJECTS/usercrud) · [Microservices-CRUD](07_PROJECTS/Microservices-CRUD) · [InsuranceManagementSystem](07_PROJECTS/InsuranceManagementSystem)
