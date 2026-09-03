@@ -34,7 +34,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 - **[06_DESIGN_PATTERNS](01_JAVA/06_DESIGN_PATTERNS)** — [builder](01_JAVA/06_DESIGN_PATTERNS/01_builder.md) · [singleton](01_JAVA/06_DESIGN_PATTERNS/02_singleton.md) · [factory](01_JAVA/06_DESIGN_PATTERNS/03_factory.md) · [observer](01_JAVA/06_DESIGN_PATTERNS/04_observer.md) · [adapter](01_JAVA/06_DESIGN_PATTERNS/05_adapter.md) · [strategy](01_JAVA/06_DESIGN_PATTERNS/06_strategy.md)
 - **[07_BRAIN_TICKLERS](01_JAVA/07_BRAIN_TICKLERS)** — 13 gotchas (string-intern, equals-trap, immutable, diamond, final-vs-finally-vs-finalize, covariant-return, ...)
 - **[08_REVISION_VISUAL](01_JAVA/08_REVISION_VISUAL)** — visual revise-set: [CORE](01_JAVA/08_REVISION_VISUAL/01_CORE) · [COLLECTIONS](01_JAVA/08_REVISION_VISUAL/02_COLLECTIONS) · [JAVA_8](01_JAVA/08_REVISION_VISUAL/03_JAVA_8) · [MULTITHREADING](01_JAVA/08_REVISION_VISUAL/04_MULTITHREADING) · [OOP_DESIGN (SOLID + patterns)](01_JAVA/08_REVISION_VISUAL/05_OOP_DESIGN) · [QUICK_QA](01_JAVA/08_REVISION_VISUAL/06_QUICK_QA)
-- **[09_WRITE_PRACTICE](01_JAVA/09_WRITE_PRACTICE)** — write-to-learn practice
+- **[09_WRITE_PRACTICE](01_JAVA/09_WRITE_PRACTICE)** — Java-8 STREAMS write-to-learn practice (filter/map/groupingBy/reduce/word-frequency Qs + REDO files) — specifically streams ke liye
 
 ## 02_SPRING
 - **[01_basics](02_SPRING/01_basics)** — [spring-kya-hai](02_SPRING/01_basics/01_spring_kya_hai.md) · [beans/IoC](02_SPRING/01_basics/02_beans_ioc_container.md) · [annotations/DI](02_SPRING/01_basics/03_annotations_di_types.md)
