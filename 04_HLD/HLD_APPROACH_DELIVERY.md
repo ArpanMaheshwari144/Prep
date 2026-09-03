@@ -25,6 +25,12 @@
 - Har box pe: KYA (component) + KYUN (1 line reason). Bas. "Redis cache — read-heavy, DB bachana."
 - Tu YE LEAD karta — interviewer wait nahi karta.
 
+> ★ ESTIMATE pe MAT ATKO (Hello-Interview + cracked-round comments): ek QUICK estimate
+>   karo (scale justify — "read-heavy, billions -> cache+shard") phir aage. Exact number
+>   (1500 vs 2000 RPS, storage 3TB vs 90TB) design nahi badalta -> us math pe waqt/energy mat do.
+>   PAR bilkul SKIP bhi mat karo -> ek banda Zomato me reject hua kyunki BOTE skip karke
+>   seedha distributed chala gaya. Balance = 30-sec estimate, phir move on.
+
 ---
 
 ## 2 — 4 META-MOVES (open-game ke asli sawaalon ke jawab)

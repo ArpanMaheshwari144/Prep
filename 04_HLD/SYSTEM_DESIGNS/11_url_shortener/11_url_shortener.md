@@ -198,6 +198,14 @@ STORAGE (100M PER DAY -> ×365 din, NA ×12 months):
 └─────────────────────────────────────────────────────────┘
 ```
 
+```
+★ 302 ke DO reason bolo (Hello-Interview se):
+   1. CLICK-ANALYTICS  -> har hit server pe aata, count milta (301 cache -> nahi milta)
+   2. EXPIRY / UPDATABLE longUrl -> 301 browser CACHE kar leta, to jab URL
+        expire ho ya client longUrl badle -> 301 purana dikhaata (toot jaata).
+      302 = har baar fresh -> safe.
+```
+
 ---
 
 ## ★ Route 53 kya hai (AWS DNS — sabse upar wala hop)
@@ -381,6 +389,30 @@ RACE CONDITION (concurrent custom requests):
 
    FIX: DB UNIQUE constraint
         INSERT IF NOT EXISTS (atomic)
+```
+
+---
+
+## ★ INTERVIEW GOTCHAS + NUGGETS (Hello Interview video + comments, 3-Sep)
+
+```
+1. CACHE-TTL GOTCHA (deep-dive, interviewer poochta):
+   Redis me expiry store nahi -> expired URL bhi cache se serve ho sakta
+   = TTL/expiry FUNCTIONAL-REQ violate.
+   FIX: cache-entry ka TTL = URL-expiry (Redis SET ... EX <expiry>) -> expire pe apne-aap nikal jaaye.
+
+2. COUNTER BATCHING (counter bottleneck fix):
+   Write-service Redis se EK BAAR me next 1000 counts le le (range) -> har request pe Redis-hit nahi.
+   = mera "range allocation" wahi hai. (Redis crash pe kuch range waste = OK, collision nahi.)
+
+3. COLLISION = DB UNIQUE-CONSTRAINT + retry (pre-read check NAHI):
+   shortCode pe unique-constraint; insert fail ho to naya code + retry.
+   Counter/Snowflake se waise bhi unique-by-design -> constraint = safety net.
+
+4. DELIVERY (jinhone round crack kiya):
+   - Har design-decision ko REQUIREMENT se jodo, ek-ek functional-req karke.
+   - HLD = DISCUSSION, perfect script nahi. Interviewer ke saath decide karo.
+   - ESTIMATE pe mat atko: ek QUICK estimate (scale justify) -> aage. Exact number (1500 vs 2000 RPS) design nahi badalta. [par bilkul skip bhi mat karo -> Zomato-reject case]
 ```
 
 ---
