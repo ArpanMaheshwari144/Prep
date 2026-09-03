@@ -130,17 +130,17 @@ ACCESS PATTERN:
 ## 6 Capacity Estimation
 
 ```
-ASSUMPTIONS:
-   100M users × 1 URL/month = 100M URLs/month
-   Each URL clicked 100×    = 10B clicks/month
-   Storage retention        = 5 years
+ASSUMPTIONS (ek hi maano — 100M writes/DAY; poore note me consistent):
+   100M new URLs / DAY
+   Each URL clicked 100×   = read 100× write  (READ-HEAVY)
+   Storage retention       = 5 years
 ```
 
 ```
 WRITES (shorten):                READS (redirect):
-   100M / 30 days                  10B / 30 days
-   = 3.3M / day                    = 333M / day
-   = 40 / sec                      = 4000 / sec
+   100M / day                       100× writes
+   ÷ ~100k sec/day                  ≈ 100k / sec
+   ≈ 1000 / sec
 
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                     READ : WRITE
@@ -151,8 +151,13 @@ WRITES (shorten):                READS (redirect):
 ```
 
 ```
-STORAGE:
-   5 yr × 12 mo × 100M URLs × 500 bytes = 3 TB
+STORAGE (100M PER DAY -> ×365 din, NA ×12 months):
+   100M/day × 365 × 5 yr  = ~180 BILLION URLs
+   × 500 bytes            ≈ ~90 TB
+
+   ⚠ PEHLE GALAT tha: "5yr × 12mo × 100M × 500B = 3TB"
+     -> wo 100M/MONTH maan ke tha; upar 100M/DAY bola -> inconsistent.
+     Ab per-DAY consistent (×365) -> ~90 TB. Unit (day vs month) hi asli slip.
 ```
 
 ---
