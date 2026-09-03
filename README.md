@@ -45,6 +45,8 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 - **[09_WRITE_PRACTICE](01_JAVA/09_WRITE_PRACTICE)** — Java-8 STREAMS write-to-learn practice (filter/map/groupingBy/reduce/word-frequency Qs + REDO files) — specifically streams ke liye
 
+- **[PROJECT — SimpleBankSystem](01_JAVA/PROJECT/SimpleBankSystem)** — plain-Java bank system (design patterns applied: factory · observer + layered model/repository/service/config/exception)
+
 ---
 
 ## [02_SPRING](02_SPRING)
