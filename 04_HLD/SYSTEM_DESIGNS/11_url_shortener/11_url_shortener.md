@@ -160,6 +160,23 @@ STORAGE (100M PER DAY -> ×365 din, NA ×12 months):
      Ab per-DAY consistent (×365) -> ~90 TB. Unit (day vs month) hi asli slip.
 ```
 
+```
+★ SCALE = ASSUMPTION pe DEPEND karta (Hello-Interview + kal ka day/month sabak):
+   - Modest maano: 1 BILLION total URLs (100M daily-active = zyadatar READERS, writers kam)
+       -> 1B × 500B ≈ ~500 GB -> SINGLE DB me FIT -> sharding ki zaroorat NAHI.
+   - Aggressive maano: 100M writes/DAY -> billions -> ~90 TB -> shard by shortCode chahiye.
+   - DONO sahi -> farak sirf ASSUMPTION ka. INTERVIEW me: assumption BOLO + usse reason karo;
+     exact number pe mat atko (wahi kal wala "estimate obsess mat" sabak).
+   ★ DELIVERY-GEM: real-Bitly ~500GB single-DB me aata -> BINA-zaroorat SHARD mat karo
+     (over-engineering = common galti). Shard SIRF jab throughput/storage genuinely demand kare.
+```
+
+```
+★ LATENCY (concrete NFR bolo): redirect p99 < 200ms.
+★ FAST LOOKUP: shortCode pe PRIMARY-KEY (B-tree) index -> O(log n) lookup (disk pe bhi tez).
+   + Redis-LRU cache hot-URLs -> zyadatar disk hit hi nahi.
+```
+
 ---
 
 ## 7 API Design — Just 2 Endpoints
