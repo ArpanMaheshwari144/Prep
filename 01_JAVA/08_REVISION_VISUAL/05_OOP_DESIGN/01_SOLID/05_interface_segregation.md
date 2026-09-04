@@ -88,4 +88,4 @@ Chef shouldn't implement cleanFloor()
     ek class ko sirf zaruri implement karne do"
 ```
 
-[← Back to SOLID](00_overview.md)
+[← Back to SOLID](01_overview.md)

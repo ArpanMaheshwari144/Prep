@@ -83,4 +83,4 @@ charger + adapter
    Extend karo, modify nahi
 ```
 
-[← Back to SOLID](00_overview.md)
+[← Back to SOLID](01_overview.md)

@@ -95,4 +95,4 @@ Switch works on Bulb interface, not Philips concrete
    Spring DI = DIP automated
 ```
 
-[← Back to SOLID](00_overview.md)
+[← Back to SOLID](01_overview.md)
