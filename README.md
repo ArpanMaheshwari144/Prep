@@ -16,7 +16,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | CDN · LB · DNS · WAF · Prometheus/Grafana · load-test |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side compares |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | Hands-on Spring Boot projects |
-| 08 | [**08_DSA**](08_DSA) | 19 patterns · ~200 problems |
+| 08 | [**08_DSA**](08_DSA) | 18 patterns · ~200 problems |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · transactions · isolation · deadlock |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | STAR stories (JP) |
 | 11 | [**11_GIT**](11_GIT) | Git workflows |
@@ -157,7 +157,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ---
 
-## [08_DSA](08_DSA) (19 patterns · ~200 problems)
+## [08_DSA](08_DSA) (18 patterns · ~200 problems)
 
 - ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi" (saar + template + dry-run)
 
