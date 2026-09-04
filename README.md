@@ -83,7 +83,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ## [03_LLD](03_LLD) (code — 11 designs)
 
-- [01 parking-lot](03_LLD/01_parking_lot) · [02 bookmyshow](03_LLD/02_bookmyshow) · [03 tictactoe](03_LLD/03_tictactoe) · [04 snake-ladder](03_LLD/04_snake_ladder) · [06 elevator](03_LLD/06_elevator) · [07 atm](03_LLD/07_atm_machine) · [08 bank-account](03_LLD/08_bank_account) · [09 shopping-cart](03_LLD/09_shopping_cart) · [10 library](03_LLD/10_library) · [11 vending-machine](03_LLD/11_vending_machine) · [12 hotel-booking](03_LLD/12_hotel_booking)
+- [01 parking-lot](03_LLD/01_parking_lot) · [02 bookmyshow](03_LLD/02_bookmyshow) · [03 tictactoe](03_LLD/03_tictactoe) · [04 snake-ladder](03_LLD/04_snake_ladder) · [05 elevator](03_LLD/05_elevator) · [06 atm](03_LLD/06_atm_machine) · [07 bank-account](03_LLD/07_bank_account) · [08 shopping-cart](03_LLD/08_shopping_cart) · [09 library](03_LLD/09_library) · [10 vending-machine](03_LLD/10_vending_machine) · [11 hotel-booking](03_LLD/11_hotel_booking)
 
 ---
 
