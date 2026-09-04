@@ -83,7 +83,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ## [03_LLD](03_LLD) (code — 11 designs)
 
-- [parking-lot](03_LLD/01_parking_lot) · [bookmyshow](03_LLD/02_bookmyshow) · [tictactoe](03_LLD/03_tictactoe) · [snake-ladder](03_LLD/04_snake_ladder) · [elevator](03_LLD/06_elevator) · [atm](03_LLD/07_atm_machine) · [bank-account](03_LLD/08_bank_account) · [shopping-cart](03_LLD/09_shopping_cart) · [library](03_LLD/10_library) · [vending-machine](03_LLD/11_vending_machine) · [hotel-booking](03_LLD/12_hotel_booking)
+- [01 parking-lot](03_LLD/01_parking_lot) · [02 bookmyshow](03_LLD/02_bookmyshow) · [03 tictactoe](03_LLD/03_tictactoe) · [04 snake-ladder](03_LLD/04_snake_ladder) · [06 elevator](03_LLD/06_elevator) · [07 atm](03_LLD/07_atm_machine) · [08 bank-account](03_LLD/08_bank_account) · [09 shopping-cart](03_LLD/09_shopping_cart) · [10 library](03_LLD/10_library) · [11 vending-machine](03_LLD/11_vending_machine) · [12 hotel-booking](03_LLD/12_hotel_booking)
 
 ---
 
@@ -101,17 +101,17 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 - ★ **[HLD_APPROACH_DELIVERY](04_HLD/HLD_APPROACH_DELIVERY.md)** — "kaise bolna" playbook (rail · meta-moves · anjaan-design · darr) · **[INTERVIEW_FRAMEWORK](04_HLD/INTERVIEW_FRAMEWORK.md)** · **[SPEAKING_VOCAB](04_HLD/SPEAKING_VOCAB.md)**
 
-- **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — [hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [caching](04_HLD/FOUNDATIONS/04_caching.md) · [replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) · [CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) · [ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) · [reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md)
+- **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — [01 hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [03 load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) · [05 replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [06 sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) · [08 CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [09 db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) · [10 ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) · [11 reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [13 snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md)
 
-- **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — [url-shortener](04_HLD/SYSTEM_DESIGNS/11_url_shortener/11_url_shortener.md) · [rate-limiter](04_HLD/SYSTEM_DESIGNS/12_rate_limiter/12_rate_limiter.md) · [twitter-feed](04_HLD/SYSTEM_DESIGNS/13_twitter_feed/13_twitter_feed.md) · [notification](04_HLD/SYSTEM_DESIGNS/14_notification_system/14_notification_system.md) · [url-browser-journey](04_HLD/SYSTEM_DESIGNS/15_url_browser_journey/15_url_browser_journey.md) · [stock-broker](04_HLD/SYSTEM_DESIGNS/16_stock_broker_trading/16_stock_broker_trading.md) · [payment](04_HLD/SYSTEM_DESIGNS/17_payment_system/17_payment_system.md) · [file-upload](04_HLD/SYSTEM_DESIGNS/18_file_upload_validate_system/18_file_upload_INTERVIEW.md) · [news-aggregator](04_HLD/SYSTEM_DESIGNS/19_news_aggregator/19_news_aggregator_INTERVIEW.md) · [bookmyshow](04_HLD/SYSTEM_DESIGNS/20_bookmyshow/20_bookmyshow_INTERVIEW.md) · [distributed-cache](04_HLD/SYSTEM_DESIGNS/21_distributed_cache/21_distributed_cache.md) · [google-docs-collab](04_HLD/SYSTEM_DESIGNS/22_google_docs_collab/22_google_docs_collab.md)
+- **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — [11 url-shortener](04_HLD/SYSTEM_DESIGNS/11_url_shortener/11_url_shortener.md) · [12 rate-limiter](04_HLD/SYSTEM_DESIGNS/12_rate_limiter/12_rate_limiter.md) · [13 twitter-feed](04_HLD/SYSTEM_DESIGNS/13_twitter_feed/13_twitter_feed.md) · [14 notification](04_HLD/SYSTEM_DESIGNS/14_notification_system/14_notification_system.md) · [15 url-browser-journey](04_HLD/SYSTEM_DESIGNS/15_url_browser_journey/15_url_browser_journey.md) · [16 stock-broker](04_HLD/SYSTEM_DESIGNS/16_stock_broker_trading/16_stock_broker_trading.md) · [17 payment](04_HLD/SYSTEM_DESIGNS/17_payment_system/17_payment_system.md) · [18 file-upload](04_HLD/SYSTEM_DESIGNS/18_file_upload_validate_system/18_file_upload_INTERVIEW.md) · [19 news-aggregator](04_HLD/SYSTEM_DESIGNS/19_news_aggregator/19_news_aggregator_INTERVIEW.md) · [20 bookmyshow](04_HLD/SYSTEM_DESIGNS/20_bookmyshow/20_bookmyshow_INTERVIEW.md) · [21 distributed-cache](04_HLD/SYSTEM_DESIGNS/21_distributed_cache/21_distributed_cache.md) · [22 google-docs-collab](04_HLD/SYSTEM_DESIGNS/22_google_docs_collab/22_google_docs_collab.md)
 
-- **[RAW_DRILL](04_HLD/RAW_DRILL)** — [reflex-sheet](04_HLD/RAW_DRILL/00_REFLEX_SHEET.md) · [design-practice-log](04_HLD/RAW_DRILL/01_DESIGN_PRACTICE_LOG.md) · [why-how-QA](04_HLD/RAW_DRILL/02_WHY_HOW_QA.md) · [interview-anchor](04_HLD/RAW_DRILL/03_INTERVIEW_ANCHOR.md)
+- **[RAW_DRILL](04_HLD/RAW_DRILL)** — [00 reflex-sheet](04_HLD/RAW_DRILL/00_REFLEX_SHEET.md) · [01 design-practice-log](04_HLD/RAW_DRILL/01_DESIGN_PRACTICE_LOG.md) · [02 why-how-QA](04_HLD/RAW_DRILL/02_WHY_HOW_QA.md) · [03 interview-anchor](04_HLD/RAW_DRILL/03_INTERVIEW_ANCHOR.md)
 
 ---
 
 ## [05_INFRA_DEEP](05_INFRA_DEEP)
 
-- [cdn](05_INFRA_DEEP/01_cdn.md) · [load-balancer](05_INFRA_DEEP/02_load_balancer.md) · [dns](05_INFRA_DEEP/03_dns.md) · [waf](05_INFRA_DEEP/04_waf.md) · [monitoring (Prometheus/Grafana)](05_INFRA_DEEP/05_monitoring_prometheus_grafana.md) · [load-test demo](05_INFRA_DEEP/LOADTEST_SCALE_DEMO/NOTES.md)
+- [01 cdn](05_INFRA_DEEP/01_cdn.md) · [02 load-balancer](05_INFRA_DEEP/02_load_balancer.md) · [03 dns](05_INFRA_DEEP/03_dns.md) · [04 waf](05_INFRA_DEEP/04_waf.md) · [05 monitoring (Prometheus/Grafana)](05_INFRA_DEEP/05_monitoring_prometheus_grafana.md) · [load-test demo](05_INFRA_DEEP/LOADTEST_SCALE_DEMO/NOTES.md)
 
 - **[DEVOPS](05_INFRA_DEEP/DEVOPS)** — [AWS](05_INFRA_DEEP/DEVOPS/AWS) (commands · setup-journey) · [DOCKER](05_INFRA_DEEP/DEVOPS/DOCKER) (commands) · [K8S](05_INFRA_DEEP/DEVOPS/K8S) (commands · helm · setup-journey)
 
@@ -186,19 +186,19 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ## [09_DATABASE](09_DATABASE)
 
-- [indexing](09_DATABASE/01_indexing_practical.md) · [transaction-internals](09_DATABASE/02_transaction_internals.md) · [zero-downtime-add-column](09_DATABASE/03_zero_downtime_add_column.md) · [joins](09_DATABASE/04_joins.md) · [normalization](09_DATABASE/05_normalization.md) · [ACID](09_DATABASE/06_acid.md) · [isolation-levels](09_DATABASE/07_isolation_levels.md) · [deadlock](09_DATABASE/08_deadlock.md)
+- [01 indexing](09_DATABASE/01_indexing_practical.md) · [02 transaction-internals](09_DATABASE/02_transaction_internals.md) · [03 zero-downtime-add-column](09_DATABASE/03_zero_downtime_add_column.md) · [04 joins](09_DATABASE/04_joins.md) · [05 normalization](09_DATABASE/05_normalization.md) · [06 ACID](09_DATABASE/06_acid.md) · [07 isolation-levels](09_DATABASE/07_isolation_levels.md) · [08 deadlock](09_DATABASE/08_deadlock.md)
 
 ---
 
 ## [10_BEHAVIORAL](10_BEHAVIORAL) (STAR)
 
-- [JP-company](10_BEHAVIORAL/01_JP_COMPANY.md) · [why-JP](10_BEHAVIORAL/02_WHY_JP.md) · [STAR: HikariCP](10_BEHAVIORAL/03_STAR_HikariCP.md) · [STAR: WAF-IP](10_BEHAVIORAL/04_STAR_WAF_IP.md) · [STAR: payment](10_BEHAVIORAL/05_STAR_Doximity_Payment.md) · [STAR: mentoring](10_BEHAVIORAL/06_STAR_Mentoring.md) · [STAR: failure-JDK](10_BEHAVIORAL/07_STAR_Failure_JDK.md)
+- [01 JP-company](10_BEHAVIORAL/01_JP_COMPANY.md) · [02 why-JP](10_BEHAVIORAL/02_WHY_JP.md) · [03 STAR: HikariCP](10_BEHAVIORAL/03_STAR_HikariCP.md) · [04 STAR: WAF-IP](10_BEHAVIORAL/04_STAR_WAF_IP.md) · [05 STAR: payment](10_BEHAVIORAL/05_STAR_Doximity_Payment.md) · [06 STAR: mentoring](10_BEHAVIORAL/06_STAR_Mentoring.md) · [07 STAR: failure-JDK](10_BEHAVIORAL/07_STAR_Failure_JDK.md)
 
 ---
 
 ## [11_GIT](11_GIT)
 
-- [line-endings CRLF-vs-LF](11_GIT/01_line_endings_CRLF_vs_LF.md) · [stacked-PRs](11_GIT/02_stacked_PRs.md) · [merge-vs-rebase](11_GIT/03_merge_vs_rebase.md)
+- [01 line-endings CRLF-vs-LF](11_GIT/01_line_endings_CRLF_vs_LF.md) · [02 stacked-PRs](11_GIT/02_stacked_PRs.md) · [03 merge-vs-rebase](11_GIT/03_merge_vs_rebase.md)
 
 ---
 
