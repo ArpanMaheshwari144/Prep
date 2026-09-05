@@ -4,11 +4,6 @@
 // singly linked list ka head diya. use ULTA (reverse) karke naya head lautao.
 //   1 -> 2 -> 3 -> 4 -> 5   =>   5 -> 4 -> 3 -> 2 -> 1
 //
-// ---- ARPAN KI APPROACH ----
-//  3 pointer: prev=NULL, curr=head, nextt.
-//  har step: nextt=curr->next (agla bacha lo) -> curr->next=prev (arrow ULTA) ->
-//            prev=curr (aage) -> curr=nextt (aage). end me prev = naya head.
-//  har node ke beech ka arrow ki direction ulti kar di.
 //
 // Tests (// expected):
 //   [1,2,3,4,5]  -> 5 4 3 2 1

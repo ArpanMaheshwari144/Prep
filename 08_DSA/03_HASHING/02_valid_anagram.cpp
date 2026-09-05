@@ -4,9 +4,6 @@
 // Do string s, t di. Check karo t, s ka ANAGRAM hai ya nahi
 // (same characters, same COUNT — bas order alag).
 //
-// ---- ARPAN KI APPROACH ----
-//  length alag -> turant false. warna ek COUNT map { char -> count }.
-//  s ke har char pe ++, t ke har char pe --. end me sab count 0 -> anagram, warna nahi.
 //
 // Tests (// expected):
 //   "anagram","nagaram" -> 1 (true)

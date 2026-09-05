@@ -4,9 +4,6 @@
 // Array nums + ek number k diya. KITNE contiguous subarrays hain
 // jinka sum EXACTLY k hai -> woh COUNT return karo.
 //
-// ---- ARPAN KI APPROACH ----
-//  running prefix-SUM + map { prefix-sum -> count }. init map[0]=1.
-//  har num pe: sum += num; count += map[sum-k]; phir map[sum]++. return count.
 //
 // Tests (// expected):
 //   [1,1,1],              k=2  -> 2

@@ -13,20 +13,6 @@
 //   s="abcd", t="abcd", maxCost=0  -> 4   (sab same, cost 0)
 //
 // ============================================================
-/*
----- ARPAN KI APPROACH (khud ke words) ----
-Approach dekh -- ye same VARIABLE WINDOW jaisa hi hai, bas problem thoda alag laga.
-same i, j, cost, ans.
-
-  while (j < size):
-      cost += abs(s[j] - t[j])                  // window me char add
-      ab dekh -> while (cost > maxCost) to bhai ab INVALID -> shrink kar, i++
-          lekin hatao KYA? -> cost -= abs(s[i] - t[i])   (jo dala tha wahi nikaal do, bas)
-      baaki answer update to hota hi hai -> ans = max(ans, j - i + 1)
-      j++
-
-  return ans
-*/
 
 
 #include <iostream>

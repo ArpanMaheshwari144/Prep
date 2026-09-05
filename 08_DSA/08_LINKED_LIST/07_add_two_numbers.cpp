@@ -8,15 +8,6 @@
 //
 
 
-// ---- ARPAN KI APPROACH ----
-//  ye MERGE-TWO-SORTED jaisa hi laga (dummy + tail) -- bas isme SUM aur CARRY ka khel extra.
-//  pehle dummy aur tail liye.
-//  while loop me a, b AUR carry -- || condition kyun? -> ek list khatam ho to bhi doosri (aur carry)
-//     ko process karna hai; carry last tak values badal sakta hai (999+1 -> naya digit).
-//  andar: sum lo. a hai to sum += a->val + a ko a->next; same b ke liye. phir sum me CARRY bhi add karo.
-//  ab naya node kaise? -> maan sum = 12: node "2" ka banega, "1" carry jayega.
-//     digit = sum % 10 (2 wali node -> tail se jodo, tail aage).  carry = sum / 10 (1 nikla).
-//  baaki while loop ye dobara karta jaata. return dummy->next.
 
 
 

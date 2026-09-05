@@ -6,11 +6,6 @@
 //   s1="ab", s2="eidbaooo"  -> true
 //   s1="ab", s2="eidboaoo"  -> false
 
-// ---- ARPAN KI APPROACH ----
-//  ye same hai FIND-ALL-ANAGRAMS wala -- dono me kaam ek hi hai.
-//  farak sirf itna: wahan har match pe INDEX push karte the (poori list),
-//  yahan bas EK match mile to seedha TRUE return (koi match na mile -> FALSE).
-//  helper isAnagram (same length + char-count barabar) + p ki length ka fixed window -- wahi.
 
 //
 // Tests (s1, s2 -> expected):

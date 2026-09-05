@@ -4,11 +4,6 @@
 // Array diya. SAARE UNIQUE triplets [a,b,c] dhoondho jinka sum = 0.
 // (duplicate triplets nahi chahiye.)
 //
-// ---- ARPAN KI APPROACH ----
-//  pehle sort. phir i pe har element FIX karo (i dupe ho -> continue skip).
-//  baaki pe two-pointer low=i+1, high=end, target sum = -nums[i].
-//  nums[low]+nums[high] == sum -> triplet push -> dono taraf dupes skip -> low++,high--.
-//  sum chhota -> low++ , sum bada -> high--.
 //
 // Tests (// expected — triplets sorted, order alag ho sakta):
 //   [-1,0,1,2,-1,-4]  -> [-1,-1,2] [-1,0,1]

@@ -18,12 +18,6 @@
 //   4. SIRF sachchi struggle ke BAAD atke -> tab editorial (last resort, no guilt).
 //   5. Kuch din baad COLD REDO -> tab pata chalega tera hua ya nahi.
 // ============================================================
-// ---- ARPAN KI APPROACH ----
-//  TRICK: pichhla running sum NEGATIVE = aage sirf bojh -> PHENK do (sum=0), fresh shuru. bas yahi.
-//  3 line:
-//     sum += nums[i]
-//     max_sum = max(max_sum, sum)     // update RESET se PEHLE (max_sum=INT_MIN start -> all-negative [-1] safe)
-//     if (sum < 0) sum = 0
 // ============================================================
 
 #include <iostream>

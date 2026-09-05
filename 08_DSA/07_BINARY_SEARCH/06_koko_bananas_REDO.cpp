@@ -6,11 +6,6 @@
 // MINIMUM eating-speed k lautao jisse wo h ghante me SAARE kele kha le.
 //   piles=[3,6,7,11], h=8  -> 4
 //
-// ---- ARPAN KI APPROACH ----
-//  BS speed k ki range [1 .. max(piles)] pe (index pe nahi).
-//  solve(mid): hours = sum of ceil(piles[i]/mid) -> ceil ke liye (piles[i]+mid-1)/mid ya double-cast
-//  (seedha int/int ceil trap hai). hours long-long (overflow safe).
-//  hours<=h -> ans=mid, high=mid-1 (choti try), warna low=mid+1. min feasible k lautao.
 //
 // Tests (// expected):
 //   [3,6,7,11],        h=8  -> 4

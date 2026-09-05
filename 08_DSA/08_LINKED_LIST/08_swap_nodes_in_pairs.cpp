@@ -8,21 +8,6 @@
 //   1                 ->  1
 //   (empty)           ->  (empty)
 
-// ---- ARPAN KI APPROACH ----
-//  ye question tab tak dimaag ghumata jab tak DUMMY-node wali trick na aaye; trick aate hi easy.
-//  DUMMY node banao (val 0), prev=dummy, prev->next=head. (dummy isliye -- pehli jodi ke pehle kuch nahi,
-//     aur naye head ko connect karne ke liye jodi se "pehle wala" node chahiye.)
-//  har jodi me 3 khiladi: prev (jodi se pehle) · first (prev->next) · second (first->next).
-//
-//  SWAP (order + temp-save zaroori, warna node GUM):
-//     Node* temp = second->next;   // 3 ko bacha lo -- warna next line me gum ho jaayega
-//     second->next = first;        // 2 -> 1
-//     first->next  = temp;         // 1 -> baaki list ka start (temp); agli jodi swap hone pe khud 1->4 ban jaata
-//     prev->next   = second;       // dummy -> 2  (2 = is jodi ka naya head)
-//
-//  ADVANCE: prev = first (ab first agli jodi se ek pehle baitha hai); first = temp (agli jodi ka pehla).
-//  loop tab tak jab tak ek poori JODI (2 node) bache. return dummy->next (naya head).
-//  har iteration = SIRF EK jodi ka kaam (aage ki jodi ka kaam mat karo -- wo apni iteration me hoga).
 
 
 // Tests (list -> expected):

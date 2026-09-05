@@ -5,11 +5,6 @@
 // ek vector me return karo.
 //   [[1,2,3],[4,5,6],[7,8,9]] -> [1,2,3,6,9,8,7,4,5]
 //
-// ---- ARPAN KI APPROACH ----
-//  4 boundaries rakho: top, bottom, left, right. while(top<=bottom && left<=right):
-//  top row L->R chalo (phir top++), right col T->B (phir right--),
-//  bottom row R->L agar top<=bottom (phir bottom--), left col B->T agar left<=right (phir left++).
-//  boundaries andar simat-te jaate, saara spiral order ans me push hota jaata.
 //
 // Tests (// expected):
 //   [[1,2,3],[4,5,6],[7,8,9]]              -> 1 2 3 6 9 8 7 4 5

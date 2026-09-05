@@ -15,19 +15,6 @@
 //
 // ============================================================
 
-// ---- ARPAN KI APPROACH ----
-//  MENTAL MODEL (ek line me pura): HAR height pe KHADE ho -> dono taraf ka NEAREST-SMALLER (prev + next) dhoondo
-//      -> width = next - prev - 1 -> area = height * width -> sab me se MAX. bas.
-//  ye question = PREV-SMALLER + NEXT-SMALLER ka code reuse (dono building block pehle bana liye). "hard" lagta
-//     par medium hai -- bas 2-3 trick ek saath.
-//  IDEA: har bar `i` ko uski OWN height pe rectangle bana ke failao -- left me prev-smaller tak, right me next-smaller tak
-//     (dono usse chhote, wahi rok dete). us rectangle ki height = heights[i], width = beech ke bars ki ginti.
-//     example [2,1,5,6,2,3]: bar 5 (idx 2) -> left prev-smaller idx 1, right next-smaller idx 4 -> beech me idx 2,3 -> width 2 -> 5*2 = 10.
-//  TRICK 1: is baar prev/next-smaller me VALUE nahi, INDEX store karo (width ke liye index chahiye).
-//  TRICK 2 (yahi atka): next-smaller ke "koi chhota nahi" case me sentinel = n (array ke aage), NA ki -1.
-//     (-1 rakha to width = ns-ps-1 NEGATIVE aa jaati -> [2,4] jaise fail. prev-smaller ka "none" = -1 sahi hai, left boundary.)
-//  FORMULA: har i pe -> width = nS[i] - pS[i] - 1;  area = heights[i] * width;  ans = max(ans, area).
-//     (-1 isliye: dono boundary bar khud rectangle me nahi aate, unke beech wale aate.)
 //
 //  ========== WIDTH FORMULA "NS - PS - 1" KYUN AATA (derivation, 19-Jul) ==========
 //   1. PS (prev-smaller) aur NS (next-smaller) dono CHHOTE bar hain -> ye rectangle me NAHI aate (inpe ruk gaya).

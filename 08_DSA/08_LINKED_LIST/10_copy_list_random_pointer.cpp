@@ -23,29 +23,6 @@
 // FAMILY (nudge, baaki khud): interleave-clone (A->A'->B->B'..) ya
 //   hashmap(old->new). random set karne se pehle saare new nodes ban jaayein.
 // ============================================================
-// ---- ARPAN KI APPROACH ---- (HASHMAP old->new, 2 PASS)
-//  DIKKAT: random KISI BHI node pe point kar sakta (aage/peeche). agar ek hi
-//    pass me random set karun, to jo node abhi bana hi nahi -> uska naya-wala
-//    address pata hi nahi. isliye 2 PASS.
-//
-//  mp<oldNode*, newNode*> = purane -> naye ka mapping (ye asli chaabi).
-//
-//  PASS 1 (nodes bana + next link + mapping):
-//     curr = head se chalo. har node ka new Node(curr->val) banao.
-//        mp[curr] = temp;                 // mapping bhar do
-//        newHead==NULL -> newHead=temp, prev=temp   (pehla node)
-//        warna -> prev->next=temp; prev=temp        (aage jodo)
-//     -> ab deep-copy list ban gayi, PAR random abhi khaali.
-//
-//  PASS 2 (random set):
-//     curr=head, currRand=newHead  SAATH chalao.
-//        curr->random==NULL -> currRand->random=NULL
-//        warna -> currRand->random = mp[curr->random]   // old-random ka NAYA
-//     -> kyunki PASS-1 me saare new node ban chuke, mp har old ka new deta.
-//
-//  KEY: mp[old->random] = us random-target ka naya-copy. isse random bhi
-//       COPY-list ke andar point karta (original pe nahi) = DEEP.
-//  T=O(n), S=O(n) (map).  [O(1)-space alt = interleave-clone, abhi ye hi.]
 // ============================================================
 #include <bits/stdc++.h>
 using namespace std;

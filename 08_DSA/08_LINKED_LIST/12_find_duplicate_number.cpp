@@ -5,14 +5,6 @@
 // repeat hota hai (ek ya kai baar). Us DUPLICATE number ko return karo.
 //   CONSTRAINT: O(1) extra space + array MODIFY nahi (read-only).
 //
-// ---- ARPAN KI APPROACH (VERIFIED 5/5, kyun linked-list) ----
-//  har index ko POINTER samjho: i se jump -> nums[i].
-//    e.g. nums = [3,1,3,4,2]:  0->nums[0]=3 ->nums[3]=4 ->nums[2]=3 ->4 ->3 ->4... (LOOP)
-//  values 1..n + n+1 slots -> koi value 2 baar point hoti -> CHAIN me CYCLE banta.
-//  cycle ka ENTRY node = duplicate number.  ->  Floyd fast/slow (jaise detect_cycle):
-//    PHASE-1: slow=nums[slow] (1 kadam), fast=nums[nums[fast]] (2 kadam) -> milte (slow==fast).
-//    PHASE-2: ek pointer 0 pe reset -> dono 1-1 kadam (p=nums[p], slow=nums[slow]) -> jahan mile = duplicate.
-//
 // INPUT format: vector<int> nums (size n+1, values 1..n, exactly 1 duplicate).
 //
 // TEST CASES (input -> expected):

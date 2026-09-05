@@ -6,10 +6,6 @@
 //   [-4,-1,0,3,10] -> [0,1,9,16,100]
 //   (kyun tricky: -4 ka square 16 bada hai -> negatives ka square order ULTA ho jaata)
 //
-// ---- ARPAN KI APPROACH ----
-//  ans array size n, PEECHE se bharo (k = n-1). 2 pointer left=0, right=end.
-//  sabse bada square ya left-chhor (bada negative) ya right-chhor pe hota.
-//  left^2 <= right^2 -> ans[k]=right^2, right--; warna ans[k]=left^2, left++. har baar k--.
 //
 // Tests (// expected):
 //   [-4,-1,0,3,10]     -> 0 1 9 16 100

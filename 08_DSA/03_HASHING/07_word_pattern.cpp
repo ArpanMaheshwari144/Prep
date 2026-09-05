@@ -9,16 +9,6 @@
 //   pattern="aaaa", s="dog cat cat dog"  -> false  (a->dog phir a->cat clash)
 //   pattern="abba", s="dog dog dog dog"  -> false  (a->dog, b->dog : 2 char same word me)
 
-// ---- ARPAN KI APPROACH ----
-//  ye ISOMORPHIC ka BHAI hai -- wahi 2-map BIJECTION. bas farak: wahan char<->char tha,
-//  yahan char <-> STRING (word). aur kuch nahi.
-//  s space-separated words ka hai -> stringstream(s) + while(ss >> word) se ek-ek word nikaalo.
-//  pattern pe alag FOR-loop NAHI (words hi drive kar rahe hain) -> ek counter i rakho:
-//        if (i < pattern.size()) { ...mapping... i++ }   -> har word ke saath pattern[i] jodo.
-//  mapping = isomorphic wahi: clash-check dono taraf, warna mp1[pattern[i]]=word, mp2[word]=pattern[i].
-//  koi bhi taraf clash -> false.
-//  EDGE (length-guard): pattern.size() aur WORDS ki ginti barabar honi chahiye. words ko 'j' se gino;
-//     end me pattern.size()==j -> true, warna false. (warna "a","dog cat" jaisa galat true de deta -- extra word chup-chaap skip.)
 
 //
 // Tests (pattern, s -> expected):

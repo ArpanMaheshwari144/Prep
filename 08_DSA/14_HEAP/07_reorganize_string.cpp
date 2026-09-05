@@ -28,23 +28,6 @@
 // FAMILY (nudge, baaki KHUD): ye HEAP wala hai — "sabse zyada baar wala char"
 //   baar-baar nikaalna. andar ek twist hai (turant wapas mat daal). derive kar.
 // ============================================================
-// ---- ARPAN KI APPROACH ---- (MAX-HEAP, POP-TWO-AT-A-TIME)
-//  IDEA: sabse zyada baar wale char ko jaldi kharcho (warna aakhir me akela
-//    bachega -> adjacent). MAX-HEAP {count,char} = top pe sabse zyada wala.
-//
-//  TWIST (asli chaabi): 1 nikaal ke turant wapas daala -> agli baar phir wahi
-//    top -> "aa". ISLIYE har round me DO nikaalo (top-2 alag), dono lagao.
-//
-//  LOOP (heap.size() > 1):
-//     tp1=pop, tp2=pop         // 2 sabse-zyada, guaranteed ALAG
-//     ans += tp1.ch, tp2.ch    // dono lagao (adjacent-safe)
-//     tp1.cnt--, tp2.cnt--     // ek-ek kharch -> cnt>=1 ho to wapas push
-//  END (1 bacha):
-//     bache char ki count > 1 -> IMPOSSIBLE -> return ""   (spread nahi hoga)
-//     warna (==1) -> wo char ans me laga do.
-//
-//  KEY: POP-TWO = adjacent-same kabhi nahi. last-1 count>1 = impossible-signal.
-//  T=O(n log 26), S=O(26).
 // ============================================================
 #include <bits/stdc++.h>
 using namespace std;

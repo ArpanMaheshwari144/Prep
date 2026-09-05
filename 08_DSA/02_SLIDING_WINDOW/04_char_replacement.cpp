@@ -6,11 +6,6 @@
 // BADAL sakta hai. Badalne ke baad, SABSE LAMBI substring ki LENGTH nikaalo
 // jisme SAARE characters SAME ho.
 //
-// ---- ARPAN KI APPROACH ----
-//  variable window + char freq map. j char count++, maxFreq = max(maxFreq, us count).
-//  window VALID jab (size - maxFreq) <= k -> maxLen = max(maxLen, size) update.
-//  agar (size - maxFreq) > k -> left se shrink (mp[s[i]]--, i++).
-//  maxFreq kabhi ghatate nahi -> longest ke liye chal jaata (window sirf badhta/slide).
 //
 // Tests (// expected):
 //   "ABAB",    k=2  -> 4   (2 badal ke "AAAA"/"BBBB")

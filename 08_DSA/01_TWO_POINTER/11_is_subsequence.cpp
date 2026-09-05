@@ -6,10 +6,6 @@
 //   s="abc", t="ahbgdc"  -> true
 //   s="axc", t="ahbgdc"  -> false
 
-// ---- ARPAN KI APPROACH ----
-//  do string di hain. do pointer lo -> i for s, j for t.
-//  s[i]==t[j] (char mil gaya) -> i++ AUR j++.  warna -> sirf j++ (t aage chalta rahega).
-//  jab i, s ko paar kar le (i >= s.size()) -> saare s-char mil gaye -> TRUE. warna FALSE.
 
 //
 // Tests (s, t -> expected):

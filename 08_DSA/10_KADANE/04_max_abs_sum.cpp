@@ -10,18 +10,6 @@
 //   [-1,-2,-3]           -> 6    (|-6|)
 //   [5]                  -> 5
 //
-// ---- ARPAN KI APPROACH ----
-//  FORMULA bilkul 152 (MAXIMUM PRODUCT SUBARRAY — (LeetCode 152, Medium)) jaisa -- bas GUNA (*) ki jagah PLUS (+). same 3 candidate, same freeze.
-//    (candidate ke andar maxSum aur minSum hi feed hote -> nums[i]+maxSum, nums[i]+minSum.)
-//  FARAK: answer minSum (sabse chhota/negative sum) se bhi aa sakta -> ans = max(|maxSum|, |minSum|).
-//  DRY-RUN [2,-5,1,-4,3,-2] -> 8:
-//      [-5,1,-4] ka sum = -8  -> ye minSum me aata (maxSum me nahi) -> |-8| = 8 = answer.
-//      isiliye maxSum-minSum DONO track + abs DONO ka.
-//  4 line:
-//      temp   = max({ nums[i], nums[i]+maxSum, nums[i]+minSum })
-//      minSum = min({ nums[i], nums[i]+maxSum, nums[i]+minSum })
-//      maxSum = temp
-//      ans    = max({ ans, abs(maxSum), abs(minSum) })
 // ============================================================
 
 #include <bits/stdc++.h>

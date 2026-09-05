@@ -6,10 +6,6 @@
 //   nums=[1,1,1,0,0,0,1,1,1,1,0], k=2  -> 6
 //     (index 5..10 window me 2 zeros flip -> 0,1,1,1,1,0 me... best window length 6)
 //
-// ---- ARPAN KI APPROACH ----
-//  variable window: j pe agar 0 mila -> zeroCount++. jab tak zeroCount > k ->
-//  left se shrink (nums[i]==0 to zeroCount--, i++). ans = max(ans, j-i+1) UNCONDITIONAL
-//  (shrink ke baad window hamesha valid -> koi if(zeroCount==k) mat lagao).
 //
 // Tests (// expected):
 //   [1,1,1,0,0,0,1,1,1,1,0], k=2                       -> 6

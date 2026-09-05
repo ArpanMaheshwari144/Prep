@@ -25,17 +25,6 @@
 //  doosra "char ko lowercase karo". C++ me ye <cctype> me hote hain.)
 // ============================================================
 
-// ---- ARPAN KI APPROACH ----
-//  ye question EASY hai -- bas tolower + isalnum ka khel. baaki normal two-pointer (left=0, right=end).
-//  2 nayi cheez normal-palindrome ke upar:
-//     (1) CASE-IGNORE: compare karte waqt dono ko tolower karo -> 'A' aur 'a' same maano.
-//     (2) SKIP non-alnum: space , : . etc ko chhodna hai -> isalnum se pakdo, us pointer ko aage/peeche khisko.
-//  ORDER (jo maine likha, kaam karta):
-//     1. tolower(s[left]) == tolower(s[right])  -> match (dono alnum-same YA dono skippable-same) -> left++ right--.
-//     2. warna !isalnum(s[left])  -> left non-alnum -> skip -> left++.
-//     3. warna !isalnum(s[right]) -> right non-alnum -> skip -> right--.
-//     4. warna (dono alnum PAR alag) -> return FALSE.
-//  loop bina false cross ho gaya -> return TRUE. (koi alnum na ho / khaali -> true.)
 
 #include <bits/stdc++.h>
 using namespace std;

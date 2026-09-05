@@ -7,11 +7,6 @@
 //   [5,4,3,2,1]  -> [-1,5,5,5,5]
 //   [1,2,3,4,3]  -> [2,3,4,-1,4]
 
-// ---- ARPAN KI APPROACH ----
-//  ye same-to-same NEXT-GREATER wala hi hai (monotonic stack), bas yaha array CIRCULAR hai.
-//  circular ka trick: loop ko 2 BAAR chalao (i: 0 se 2n-1), aur index/access i % n (mod) se karo.
-//  doosre chakkar me aakhri elements ko SHURU ke greater mil jaate (wrap-around).
-//  baaki wahi: nums[st.top()] < nums[i%n] -> pop + ans[top] = nums[i%n]. push i%n.  na mile -> -1 (already init).
 
 //
 // Tests (nums -> expected):

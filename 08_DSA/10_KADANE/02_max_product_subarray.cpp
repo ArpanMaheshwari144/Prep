@@ -11,14 +11,6 @@
 //   [-3,-1,-1]        -> 3    (-3*-1)
 //   [5]               -> 5
 //
-// ---- ARPAN KI APPROACH ----
-//  problem aasan, bas TRICK: product me neg×neg = BADA -> negative (MIN) bhi track karna hai, sirf max se nahi banega.
-//    isliye maxprod AUR minprod dono chalao. bas yahi trick, baaki simple.
-//  4 line:
-//     temp    = max({ nums[i], maxprod*nums[i], minprod*nums[i] })   // teen candidate ka max
-//     minprod = min({ nums[i], maxprod*nums[i], minprod*nums[i] })   // same teen ka min
-//     maxprod = temp                                                 // ab max update (temp isliye)
-//     ans     = max(ans, maxprod)
 // ============================================================
 
 #include <iostream>

@@ -6,9 +6,6 @@
 //   nums=[1,1,1], k=2  -> 2   ([1,1] index0-1, [1,1] index1-2)
 //   nums=[1,2,3], k=3  -> 2   ([1,2], [3])
 //
-// ---- ARPAN KI APPROACH ----
-//  running prefix-SUM + map { prefix-sum -> count }. init map[0]=1.
-//  har num pe: sum += num; count += map[sum-k]; phir map[sum]++. return count.
 //
 // Tests (// expected):
 //   [1,1,1], k=2               -> 2

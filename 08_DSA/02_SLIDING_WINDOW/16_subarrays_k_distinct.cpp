@@ -20,17 +20,6 @@
 //   [1],             k=1  -> 1
 // ============================================================
 //
-// ---- ARPAN KI APPROACH (exactly-K = atMost trick) ----
-//  "exactly K distinct" ko seedha SW se count karna ganda (boundary saaf nahi).
-//  TRICK: exactly(k) = atMost(k) - atMost(k-1).
-//     atMost(K) = normal variable-SW: window me distinct <= K rakho,
-//                 har right pe ans += (right - left + 1)  [is right pe khatam hone wale valid subarray].
-//     distinct > K -> left aage badhao (count-- , 0 hua to map se erase) jab tak <= K.
-//  KYUN: atMost(k) = "0..k distinct wale sab" ; atMost(k-1) = "0..k-1 wale sab".
-//        ghata do -> sirf EXACTLY k bache. (jaise "<=5 - <=1 = 2..5")
-//
-//  ★ k=1 pe koi special-case NAHI: formula uniform. atMost(0) naturally 0 return karta
-//    (0-distinct wala koi subarray nahi) -> subtraction rehne do.
 //
 //  ---- GALTI jo hui + fix (careful-note) ----
 //   atMost helper max-window (totalFruit) se copy kiya -> ans = INT_MIN reh gaya.

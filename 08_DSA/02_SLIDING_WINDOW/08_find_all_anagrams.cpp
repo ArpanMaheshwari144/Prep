@@ -13,14 +13,6 @@
 //   "aa", "bb"           -> (koi nahi)
 //   "baa", "aa"          -> 1
 //
-// ---- ARPAN KI APPROACH ----
-//  ye ANAGRAM check + WINDOW ka combo hai (valid-anagram wahi helper reuse kiya).
-//  helper isAnagram(a, b): same length + har char ka count barabar -> anagram.
-//  s pe i/j se FIXED window (p ki length ka) chalao:
-//    window size (j-i+1) > p.size() -> i++ (window ko p-size pe rakho).
-//    window size == p.size() -> us window ke substr(i, len) pe isAnagram(substr, p)?
-//        anagram mila -> ans me START index (i) daalo.
-//  j har baar ++.  (fixed window slide + har window pe anagram-check.)
 // ============================================================
 
 #include <bits/stdc++.h>

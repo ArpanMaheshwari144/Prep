@@ -4,15 +4,6 @@
 // string s me sirf '(' , ')' , '*'.  '*' = '(' YA ')' YA khaali (empty) ban sakta.
 // batao: kya string VALID parenthesis ban SAKTI hai? (har '(' ka matching ')' , order sahi)
 //
-// ---- ARPAN KI APPROACH ----
-//  RECOGNITION: har '*' pe CHOICE (3 option) -> try-all = recursion (choice ki CHAIN, for-loop nahi).
-//     alag choices SAME state pe pahunchti (overlap) -> memo -> DP. state = (index, open).
-//  TRACK: ek counter 'open' = abhi tak kitne '(' UNMATCHED khule.
-//     '(' -> index+1, open+1 · ')' -> open>0 ho to open-1, warna false (koi '(' nahi match ko)
-//     '*' -> 3 branch OR: as'(' (open+1) | as')' (open>0 to open-1) | khaali (open same)
-//  ★ GUARD: jahan bhi open-1 -> pehle open>0 check (warna open negative -> dp[-1] crash + galat).
-//     '*' pe direct return-false MAT (wo teeno option maar dega) -> sirf close-option false, baaki 2 khule.
-//  base: index==n -> open==0 ?  memo: dp[n+1][n+1] (-1 = un-visited). worst open = n (saare '(').
 //
 // ---- TEST CASES (s -> expected) ----
 //   "()"        -> true

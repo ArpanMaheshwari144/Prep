@@ -19,29 +19,6 @@
 //   [fresh] add(2) add(2) add(2) findMedian         -> 2.0
 // ============================================================
 //
-// ---- ARPAN KI APPROACH (two-heaps, interview-mode se KHUD derive) ----
-//  ASLI SOCH: median = beech wala. Poora sorted rakhna mehnga (har add pe O(n) ya O(nlogn)).
-//     Median ke liye bas 2 border-number chahiye -> numbers ko DO team me baanto:
-//        maxHeap = CHHOTI team  (top = chhoto ka SABSE BADA)   <- naam se ULTA: chhote numbers yahan
-//        minHeap = BADI team    (top = bado ka SABSE CHHOTA)
-//     dono top = beech ke 2 border -> median inhi se.
-//
-//  addNum (2 kadam):
-//    1. PLACEMENT: num <= maxHeap.top -> chhoti team (maxHeap) ; warna badi team (minHeap).
-//       (maxHeap khaali ho to seedha maxHeap.)
-//    2. BALANCE: farak max 1, aur EXTRA hamesha maxHeap me:
-//         minHeap bada  -> minHeap.top nikaal ke maxHeap me
-//         maxHeap 1 se zyada bada -> maxHeap.top nikaal ke minHeap me
-//
-//  findMedian (2 case):
-//    barabar size (even total) -> (maxHeap.top + minHeap.top)/2
-//    warna        (odd  total) -> maxHeap.top   (extra idhar, wahi akela beech)
-//
-//  ★ TRAP (yahin confuse hua tha): heap ka NAAM "max/min" batata hai uska TOP kya hai,
-//    ye NAHI ki wo kaise number rakhta. "bada number -> maxHeap" GALAT.
-//    Sahi: bada number -> BADI team -> minHeap.  Naam bhool ja, "chhoti/badi team" soch.
-//
-//  = HEAP-family + 2-heap-balance mechanic. COLD nahi banta -> library + revise 1/3/7.
 // ============================================================
 
 #include <bits/stdc++.h>

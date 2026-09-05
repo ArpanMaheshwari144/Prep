@@ -6,10 +6,6 @@
 //   s="eceba", k=2  -> 3
 //   s="aa",    k=1  -> 2
 
-// ---- ARPAN KI APPROACH ----
-//  ye same FRUIT-INTO-BASKETS wala hi hai (longest at-most-2-distinct).
-//  dono me kaam ek: variable window + map<char,count>, distinct > allowed ho to left se shrink (erase-on-0), ans = max length.
-//  farak sirf itna: wahan "2" HARDCODED tha, yahan wahi jagah "k" ho gaya -> mp.size() > k. bas.
 
 //
 // Tests (s, k -> expected):

@@ -10,9 +10,6 @@
 //   [7,3,5,3,7]    -> 5
 //   [-1,-1,-2]     -> -2
 //
-// ---- ARPAN KI APPROACH ----
-//  TRICK: XOR-cancel -> a^a=0 (pair gayab), a^0=a (single bacha). saare ko XOR karo -> jo bacha = answer.
-//  3 line:  XORR = nums[0];   for i=1..n: XORR ^= nums[i];   return XORR.   (O(n)/O(1), koi map nahi)
 //  FAMILY (bit-manip/XOR): Missing-Number · Single-Number-II bhi isi tarah.
 // ============================================================
 

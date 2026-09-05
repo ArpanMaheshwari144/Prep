@@ -8,10 +8,6 @@
 //     75 -> agla warmer 76 (4 din baad) -> 4
 //     76 -> aage koi warmer nahi -> 0
 //
-// ---- ARPAN KI APPROACH ----
-//  Next-greater jaisa monotonic stack (INDEX rakho). Current temp jab top wale
-//  se bada -> pop, aur uska answer = i - topp (kitne DIN baad, value nahi -- yahi twist).
-//  Phir i push. Jo stack me reh gaye unka answer 0 (aage koi warmer nahi).
 //
 // Tests (// expected):
 //   [73,74,75,71,69,72,76,73]  -> 1 1 4 2 1 1 0 0

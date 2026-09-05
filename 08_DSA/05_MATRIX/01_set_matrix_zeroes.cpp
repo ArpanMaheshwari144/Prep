@@ -4,10 +4,6 @@
 // m x n matrix diya. agar koi element 0 hai -> uski POORI ROW aur POORI COLUMN
 // ko 0 kar do. IN-PLACE (matrix hi modify karo). return void.
 //
-// ---- ARPAN KI APPROACH ----
-//  do marker arrays: zeroRow[row], zeroCol[col]. pehle pass me poora matrix ghoomo,
-//  jahan matrix[i][j]==0 mile wahan zeroRow[i]=1 aur zeroCol[j]=1 mark kar do.
-//  doosre pass me har cell dekho -- agar uski row ya col marked hai to matrix[i][j]=0. in-place.
 //
 // Tests (// expected):
 //   [[1,1,1],[1,0,1],[1,1,1]]        -> [[1,0,1],[0,0,0],[1,0,1]]

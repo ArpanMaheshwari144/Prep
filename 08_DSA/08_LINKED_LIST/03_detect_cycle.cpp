@@ -6,12 +6,6 @@
 //   [3,2,0,-4] with tail->node(index1)  -> true
 //   [1,2,3] no cycle                     -> false
 //
-// ---- ARPAN KI APPROACH ----
-//  fast/slow (Floyd): slow 1 kadam, fast 2 kadam. agar cycle hai to fast
-//  ghoom-ghoom ke slow ko loop-ke-andar pakad lega -> slow==fast -> true.
-//  agar cycle nahi to fast NULL pe pahunch ke loop khatam -> false.
-//  GUARD `fast && fast->next` DONO zaroori (warna fast->next->next NULL pe crash).
-//  ★ ye PHASE-1 hai (detect only). ENTRY chahiye -> phase-2 (cycle-II #13 / find-duplicate #12).
 //
 // Tests (values, cyclePos):  cyclePos = -1 matlab NO cycle; warna us index pe tail jud jaata.
 //   [3,2,0,-4], pos=1   -> true

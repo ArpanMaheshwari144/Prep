@@ -6,10 +6,6 @@
 //   "hello"   -> "holle"
 //   "leetcode"-> "leotcede"
 
-// ---- ARPAN KI APPROACH ----
-//  same SWAP pattern. sirf vowels ko swap karna hai.
-//  left/right pointer -> dono vowel (isVowel(s[left]) && isVowel(s[right])) -> swap + left++ right--.
-//  left vowel nahi -> left++.  warna (right vowel nahi) -> right--.
 
 //
 // Tests (s -> expected):

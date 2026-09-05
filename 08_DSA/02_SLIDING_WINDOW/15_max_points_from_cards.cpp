@@ -18,19 +18,6 @@
 //   [1,79,80,1,1,1,200,1],    k=3  -> 202
 // ============================================================
 //
-// ---- ARPAN KI APPROACH (interview-mode discussion se KHUD derive kiya) ----
-//  = MAX-SUM-SIZE-K (pattern-01) ka COUSIN + complement-twist.
-//
-//  TWIST (yahi hard part): li gayi cards DONO ends pe hoti (front-block + back-block)
-//     -> ye CONTIGUOUS nahi -> seedha sliding-window taken-cards pe kaam nahi karta.
-//  ULTA SOCHO: jo cards NAHI li -> wo array me BEECH me, ek saath (contiguous) hoti.
-//     un "nahi-li" cards ka window size = L - k  (total L, k utha liye).
-//  taken MAX karna  <=>  untaken (beech ka window) MIN karna.  (Total fix hai.)
-//     => answer = Total - min(window of size L-k).
-//
-//  ye = MAX-SUM-SIZE-K, bas 3 DELTA: (a) window size = L-k  (b) MAX ki jagah MIN
-//       (c) answer = Total - min.
-//  EDGE: k == L -> saare cards uthana -> window size 0 -> answer = Total (crash se bacho).
 //
 //  ---- 2 TRAP jo discussion me khud pakde + fix kiye ----
 //   1. "sirf back se k lo" GALAT -> front bhi le sakte, aur front+back MIX bhi. ([100,1,1,1,1],k=2 -> front best)

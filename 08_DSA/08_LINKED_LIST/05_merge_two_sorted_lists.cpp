@@ -5,11 +5,6 @@
 // naya head lautao.
 //   a: 1->2->4   b: 1->3->4   =>   1->1->2->3->4->4
 //
-// ---- ARPAN KI APPROACH ----
-//  DUMMY node trick: fake dummy banao, tail usi pe. jab tak dono list zinda ->
-//  a aur b ka val compare, CHHOTA wala tail->next me jodo, us list ko + tail ko aage.
-//  ek list khatam -> jo doosri bachi use seedha tail->next se latka do.
-//  answer = dummy->next (fake head skip). node naye nahi bante, bas link jodte.
 //
 // Tests (list-a, list-b -> expected):
 //   [1,2,4] , [1,3,4]  -> 1 1 2 3 4 4

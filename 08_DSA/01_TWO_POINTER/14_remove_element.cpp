@@ -14,11 +14,6 @@
 //   [4,5], 6                -> k=2  (koi val nahi -> sab bache)
 //   [], 0                   -> k=0
 //
-// ---- ARPAN KI APPROACH ----
-//  MOVE-ZEROES cousin. slow/fast pointer. fast poora array scan kare.
-//  nums[fast] != val (rakhne wala element) -> nums[slow] = nums[fast], slow++.
-//  nums[fast] == val -> kuch nahi, sirf fast++ (skip).
-//  end me slow = kitne non-val bache = k. (bache hue shuru ke k me aa jaate.)
 // ============================================================
 
 #include <iostream>

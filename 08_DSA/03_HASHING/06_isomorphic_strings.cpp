@@ -9,19 +9,6 @@
 //   "paper","title"-> true   (p->t, a->i, e->l, r->e)
 //   "badc","baba"  -> false  (d aur c dono 'a'/'b' me clash)
 
-// ---- ARPAN KI APPROACH ----
-//  2 MAP wala trick (dono taraf ki mapping): mp1 = s->t, mp2 = t->s.
-//  (sirf ek map kaafi nahi -- "ab"->"aa" me a->a, b->a: do alag s-char same t-char me clash;
-//   ye clash pakadne ke liye ULTI taraf (t->s) ki mapping bhi chahiye.)
-//
-//  MAP me CHECK karne ki technique (yahi seekhi -- har map-problem me kaam aati):
-//     "key pehle se hai kya, aur agar hai to uski VALUE wahi hai jo abhi chahiye?"
-//        mp1.count(s[i]) == 1   -> s[i] pehle map ho chuka?
-//        mp1[s[i]] != t[i]      -> par ab alag t-char pe aa raha -> CLASH -> false.
-//     dono taraf yahi: mp2 ke liye bhi (t[i] pehle kisi aur s-char se to nahi bandha).
-//
-//  loop s/t saath: koi bhi taraf clash mila -> return false. warna dono map me jodo (mp1[s[i]]=t[i], mp2[t[i]]=s[i]).
-//  poora chal gaya bina clash -> perfect one-to-one mapping -> true.
 
 //
 // Tests (s, t -> expected):

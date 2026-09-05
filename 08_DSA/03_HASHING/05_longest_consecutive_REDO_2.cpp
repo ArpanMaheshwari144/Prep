@@ -5,9 +5,6 @@
 // (sequence = lagataar badhte numbers, e.g. [1,2,3,4]). O(n) me karo (sort nahi).
 //   nums=[100,4,200,1,3,2] -> 4   (1,2,3,4)
 //
-// ---- ARPAN KI APPROACH ----
-//  saare nums ek SET me daalo. har num pe: agar (num-1) set me NAHI -> ye sequence ka START.
-//  phir num+1, num+2... jab tak set me hai count karo -> max track. O(n).
 //
 // Tests (// expected):
 //   [100,4,200,1,3,2]            -> 4

@@ -4,10 +4,6 @@
 // int array nums. SAARE EVEN pehle, phir saare ODD (aapas ka order koi bhi).
 //   [3,1,2,4]  -> evens {2,4} pehle, odds {1,3} baad
 
-// ---- ARPAN KI APPROACH ----
-//  even pehle, odd baad. left/right pointer.
-//  condition: left ODD && right EVEN (dono galat jagah) -> turant swap + left++ right--.
-//  left EVEN (sahi jagah) -> left++.  warna -> right--.
 
 //
 // Tests (checker "VALID/INVALID" bata dega):

@@ -7,12 +7,6 @@
 //   nums=[0,0,1,1,1,2,2,3,3,4] -> k=5, nums=[0,1,2,3,4,...]
 //
 
-// ---- ARPAN KI APPROACH ----
-//  MOVE-ZEROES ka cousin: slow = last-unique ka index, fast = scan.
-//  wahan 0 dekhte the, yahan DUPLICATE: agar nums[slow] != nums[fast] (naya unique mila) ->
-//  pehle slow++ (slow ab ek DUPLICATE pe jaata, pichle run ka dupe pada hota),
-//  phir nums[slow] = nums[fast] (us dupe ko naye unique se OVERWRITE kar do).
-//  fast har baar ++ (aage badhta rehta). end me unique count = slow + 1 (0-based isliye +1).
 
 
 // Tests (nums -> expected k, aur pehle k elements):

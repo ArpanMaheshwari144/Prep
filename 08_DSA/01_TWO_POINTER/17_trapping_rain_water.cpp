@@ -17,18 +17,6 @@
 // (soch: kisi ek bar ke UPAR kitna paani ruk sakta -- wo kis cheez pe depend karta?)
 // ============================================================
 
-// ---- ARPAN KI APPROACH ----
-//  ye question DEKHNE/bolne me hard lagta, par soch nikaalne ke baad kaafi easy. (honest: is variation ko
-//     interview me PEHLI baar dekh ke khud reach karna mushkil -- isliye ISE pehle se pata hona = edge.)
-//  CORE insight (copy-pen se nikla): kisi EK bar `i` ke upar kitna paani rukega?
-//     = min(uske LEFT ka sabse ooncha, uske RIGHT ka sabse ooncha) - height[i].
-//     (kyun min: chhoti wali side se paani BAH jaata -- {3,0,2} me beech pe 2 hi rukega, 3 nahi.)
-//  har bar ke liye left-max/right-max baar-baar scan = O(n²). isliye PEHLE SE nikaal ke rakho (prefix jaisa):
-//     leftMax[i]  = 0..i tak ka max -> ek pass AAGE se.   leftMax[0]=height[0] (shuru me set, warna dikkat).
-//     rightMax[i] = i..n-1 tak ka max -> ek pass PEECHE se. rightMax[n-1]=height[n-1] (shuru me set).
-//  final: ans += min(leftMax[i], rightMax[i]) - height[i]  (har i pe).  -> O(n) time, O(n) space.
-//  EDGE: empty array -> return 0.
-//  example {2,0,3}: leftMax=2,2,3 · rightMax=3,3,3 -> (2-2)+(2-0)+(3-3) = 2. sahi.
 
 // ---- ARPAN KI APPROACH (2nd = TWO-POINTER, O(1) space) ----
 //  upar wale O(n)-space (leftMax[]/rightMax[] arrays) ka OPTIMIZED version -- arrays ki zaroorat NAHI,

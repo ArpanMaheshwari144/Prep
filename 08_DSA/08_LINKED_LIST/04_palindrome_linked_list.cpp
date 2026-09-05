@@ -6,11 +6,6 @@
 //   1 -> 2 -> 3 -> 2 -> 1   -> true
 //   1 -> 2                  -> false
 //
-// ---- ARPAN KI APPROACH ----
-//  pichle 2 problems ka COMBO (O(1) space): middleNode(fast/slow) se beech nikaalo,
-//  phir mid se aage ka tukda reverseList se ULTA karo (rev = naya head).
-//  ab head (front) aur rev (back) ko saath chala ke val compare -> koi mismatch
-//  mila to false, warna end tak match -> palindrome true. khali list = true.
 //
 // Tests (// expected):
 //   [1,2,2,1]      -> 1  (true)

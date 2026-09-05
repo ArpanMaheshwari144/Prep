@@ -5,11 +5,6 @@
 //   target ka PEHLA index aur AAKHRI index return karo -> {first, last}.
 //   nahi mile -> {-1, -1}.  O(log n) chahiye (linear nahi).
 //
-// ---- ARPAN KI APPROACH ----
-//  do baar binary search. ans(2,-1).
-//  1st pass (FIRST index): mid==target -> ans[0]=mid par RUKO mat, high=mid-1 (aur baaye dhoondo).
-//  2nd pass (LAST index): mid==target -> ans[1]=mid, low=mid+1 (aur daaye dhoondo).
-//  baaki dono me normal <, > se low/high move. mila nahi -> {-1,-1}.
 //
 // Tests (// expected):
 //   [5,7,7,8,8,10], target=8  -> 3 4

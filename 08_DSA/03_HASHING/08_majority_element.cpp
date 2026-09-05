@@ -12,25 +12,6 @@
 //   [4,4,4,4,3,3,2]   -> 4
 //
 // ============================================================
-// ---- ARPAN KI APPROACH (do tarike) ----
-//
-//  APPROACH 1 — HASHMAP (count karo)   [O(n) time, O(n) space]
-//     har element ki ginti map me rakho (mp[x]++). phir map ghoomo --
-//     jiska count > n/2 wahi majority -> return.
-//     simple/seedha. space lagta (map). (comment me pada hai neeche.)
-//
-//  APPROACH 2 — BOYER-MOORE VOTING   [O(n) time, O(1) space]  <- ye laga hai
-//     INSIGHT: majority n/2 se ZYADA hai -> baaki SAB milkar bhi usse kam.
-//        to har DO ALAG element ko aapas me CANCEL karte jao -> aakhir me
-//        majority hi bachega (uske paas cancel karne ko extra bache honge).
-//     2 cheezein: candidate (abhi kaun aage) + count (kitne se aage).
-//        - naya == candidate  -> count++   (support badha)
-//        - naya != candidate  -> count--   (ek cancel hua)
-//        - count == 0         -> purana poora cancel ho gaya -> naya candidate = nums[i],
-//                                 count = 1 (naya khud EK baar aaya -> uska vote 1 se shuru,
-//                                    0 chhoda to agli mismatch pe -1 chala jaata, reset kabhi nahi hota -> BUG).
-//     end me jo candidate bacha = majority. (majority guaranteed hai, isliye verify-pass ki zaroorat nahi.)
-//        trace [3,2,3]: cand=3,c=1 -> i1: 2!=3 c=0 -> cand=2,c=1 -> i2: 3!=2 c=0 -> cand=3,c=1 -> ans 3. yes
 // ============================================================
 
 #include <bits/stdc++.h>

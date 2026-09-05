@@ -11,14 +11,6 @@
 //   "aaa"     -> 0   (b, c nahi)
 //   "ccccc"   -> 0
 //
-// ---- ARPAN KI APPROACH (recognize + adapt, 22-Jul) ----
-//  ye MIN-WINDOW ka TWIN hai -- SAME SW skeleton (expand-shrink + map + count). bas t = "abc".
-//     maine minWindow(s, t) reuse kiya -> numberOfSubstrings(s) = minWindow(s, "abc"). (t generic rakha.)
-//  HAND-TRACE ("abcabc" -> 10): har RIGHT-end pe "kitne valid left-starts". wo counts (0,0,1,2,3,4)
-//     = i ki VALUES hi hain (shrink ke baad) -> alag ginna nahi, bas ans += i. sum = 10.
-//  EXPAND: if(mp[s[j]]>0)count--; mp[s[j]]-- (IF ke BAHAR -- non-abc char negative, invisible).
-//  VALID(count==0) -> shrink (mp[s[i]]++; if>0 count++; i++)  -> phir  ans += i.  (MIN ki jagah COUNT.)
-//  Min-Window vs ye: SKELETON same, answer-handle alag (MIN track  vs  ans += i). do -> ek. (vice-versa.)
 // ============================================================
 
 #include <iostream>

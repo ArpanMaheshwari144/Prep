@@ -5,13 +5,6 @@
 // isi property ka faayda utha ke sort karo -> O(n log k) (normal n log n se behtar).
 //   arr = [6,5,3,2,8,10,9],  k=3  -> [2,3,5,6,8,9,10]
 //
-// ---- ARPAN KI APPROACH ----
-//  RECOGNITION: baar-baar MIN chahiye + data badalta -> DECISION-table = HEAP. min chahiye -> MIN-heap.
-//  WHY size k+1: sorted me index-0 ka MIN max index k tak ho sakta -> pehle k+1 me se MIN kaafi.
-//  SLIDING: har element push -> size k+1 se bada hua -> top(min) pop karke ans me daalo
-//     (heap hamesha <= k+1 -> O(n log k), normal n log n se behtar).
-//  end: loop ke baad heap me bache element pop karke ans me (sorted tail).
-//  = KTH-LARGEST (heap size k) ka COUSIN: wahan k bade RAKHE, yahan k+1 ka sliding buffer.
 //
 // ---- TEST CASES (arr, k -> expected sorted) ----
 //   [6,5,3,2,8,10,9],          k=3  -> [2,3,5,6,8,9,10]

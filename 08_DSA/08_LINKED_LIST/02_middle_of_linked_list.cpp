@@ -6,10 +6,6 @@
 //   [1,2,3,4,5]    -> 3
 //   [1,2,3,4,5,6]  -> 4   (do middle 3 aur 4 -> doosra = 4)
 //
-// ---- ARPAN KI APPROACH ----
-//  fast/slow: slow=head, fast=head. jab tak fast aur fast->next zinda ->
-//  slow 1 kadam, fast 2 kadam. fast end pe pahunche tab slow BEECH me.
-//  even length me slow apne aap DOOSRE middle pe ruk jaata. ek hi pass.
 //
 // Tests (// expected):
 //   [1,2,3,4,5]    -> 3

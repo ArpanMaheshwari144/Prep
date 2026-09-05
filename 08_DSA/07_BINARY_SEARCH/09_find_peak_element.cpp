@@ -12,17 +12,6 @@
 //   [2,1]            -> index 0
 //
 
-// ---- ARPAN KI APPROACH ----
-//  NAYA insight: array SORTED nahi, phir bhi BS lagta -- kyunki ek comparison se
-//     tu PAKKA keh sakta peak kis half me hoga (BS ko full-sorted nahi, "half-discard property" chahiye).
-//  mid ko DONO neighbours se compare NAHI -- sirf mid+1 se (ek comparison kaafi):
-//     nums[mid] < nums[mid+1]  -> chadhaai (right ooncha) -> peak RIGHT me guaranteed -> low = mid+1
-//     else (nums[mid] > nums[mid+1]) -> dhalaan -> peak mid KHUD ya LEFT me -> high = mid
-//  GOTCHA (yeh naya seekha): dusre case me high = mid-1 NAHI, high = mid.
-//     kyunki mid KHUD peak ho sakta hai (right se bada hai already) -> use discard mat karo.
-//     (rule: mid REJECT kar diya? -> mid-1 (+ while low<=high).  mid abhi CANDIDATE? -> mid (+ while low<high).)
-//  while(low < high); ant me low == high pe aake ruk jaata -> wahi peak -> return low.
-//  (edges auto-handle: kinaare ke bahar -infinity, to kinaara khud peak ban jaata -- sentinel add karne ki zaroorat nahi.)
 //
 //  ---- 18-Jul, DEBUG + REFINE se nikla (2 valid version, dono SAME core) ----
 //  V1 (SHORT, interview-BEST -- neeche active): sirf mid vs mid+1; nums[mid]<nums[mid+1] -> low=mid+1; else high=mid; return low.

@@ -6,10 +6,6 @@
 //   target NA mile  -> jahan use INSERT karna chahiye (sorted rahe) wo INDEX return karo.
 // O(log n) chahiye.
 //
-// ---- ARPAN KI APPROACH ----
-//  normal binary search: mid==target -> mid return. mid<target -> low=mid+1, warna high=mid-1.
-//  trick: mila nahi to loop-end pe `low` hi sahi insert-position hota hai
-//  (low woh pehli jagah ruk jaata jahan element target se bada hoga). isliye return low.
 //
 // Tests (// expected):
 //   [1,3,5,6], target=5  -> 2   (mila)

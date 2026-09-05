@@ -7,9 +7,6 @@
 //   "bbbbb"    -> 1   ("b")
 //   "pwwkew"   -> 3   ("wke")
 //
-// ---- ARPAN KI APPROACH ----
-//  empty -> 0 guard pehle. variable window + freq map. j char count++. jab tak us
-//  char ka count > 1 -> left se shrink (mp[s[i]]--, i++). har step ans = max(ans, j-i+1).
 //
 // Tests (// expected):
 //   "abcabcbb" -> 3

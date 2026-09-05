@@ -10,19 +10,6 @@
 //   [2,3,3]                 -> 2
 //
 
-// ---- ARPAN KI APPROACH ----
-//  bahut achha (aur mushkil) problem -- interview me fresh 45-min me nikalna tough. TRICK = INDEX-PARITY.
-//  sorted array me pairs ka pattern (single se pehle vs baad):
-//     single se PEHLE  -> pair (EVEN, odd) index pe shuru: (0,1)(2,3)... -> nums[even]==nums[even+1]
-//     single ke BAAD   -> pair (ODD, even) pe shift: -> nums[odd]==nums[odd+1]. single hi ye shift karta hai.
-//  BS: mid nikalo (normal), phir mid ki PARITY dekho + nums[mid] ko nums[mid-1] se compare:
-//     mid EVEN:  nums[mid]==nums[mid-1] -> pairing SHIFT ho chuki (single peeche) -> high = mid-1
-//                warna -> pairing intact (single aage) -> low = mid+1
-//     mid ODD:   nums[mid]!=nums[mid-1] -> single peeche -> high = mid-1
-//                warna -> low = mid+1
-//  (copy-pen pe run karo -> dikhta hai high APNE-AAP single pe aa ke ruk jaata -> return nums[high].)
-//  EDGE mid==0: mid-1 out-of-bounds. par mid==0 tak pahunche = baaki sab pairs eliminate = index 0 hi single -> return nums[mid].
-//  BASE: array me ek hi element (size==1) -> wahi single -> return nums[0].
 
 // Tests (nums -> expected):
 //   [1,1,2,3,3,4,4,8,8]  -> 2

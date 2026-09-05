@@ -14,13 +14,6 @@
 //
 // ============================================================
 
-// ---- ARPAN KI APPROACH ----
-//  NEXT-GREATER ka bilkul same code -- bas while-condition ULTA. baaki (index-stack, pop pe ans set, push) sab wahi.
-//  next-greater me: nums[st.top()] < nums[i]  (curr BADA -> top ka answer mila).
-//  next-smaller me: nums[st.top()] > nums[i]  (curr CHHOTA -> top ka answer mila) -- yahi ek line badli.
-//  monotonic stack (index rakho): while(!empty && nums[st.top()] > nums[i]) -> pop + ans[top]=nums[i]. phir push(i).
-//  stack me bache index -> koi chhota nahi mila -> -1 (ans init -1).
-//  strictly smaller (> , >= nahi) -> [2,2,2] me barabar count nahi -> saare -1.
 
 #include <bits/stdc++.h>
 using namespace std;

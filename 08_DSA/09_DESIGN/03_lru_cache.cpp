@@ -25,17 +25,6 @@
 //      DUMMY head/tail: koi real node kabhi NULL-padosi na dekhe -> edge-case clean.
 //  =====================================================
 // ============================================================
-// ---- ARPAN KI APPROACH ----
-//   structure: unordered_map<int,Node*> mp; DLL(dummy head,tail); Node=|key|val|prev|next|; cap.
-//   ctor:       head,tail dummy banao -> head<->tail link. cap = capacity.
-//   removeNode: node ke prev & next ko aapas me jodo (2 line) -> node beech se nikla (O(1)).
-//   addFront:   nxt = head->next (PEHLE pakdo!) -> head<->node<->nxt wire -> node MRU ban gaya.
-//   get:        mp.count==0 -> -1. warna node uthao -> removeNode + addFront -> node->val return.
-//   put:        hai   -> node->val UPDATE + addFront.
-//               naya  -> FULL? tail->prev removeNode + mp.erase(uski key); phir new node addFront + mp[key]=node.
-//   TRAP: (1) mp[key] missing key pe CHUP-CHAAP entry insert kar deta -> CHECK ke liye mp.count()/find(), mp[key] NAHI.
-//         (2) DLL rewire: jise overwrite karna ho use PEHLE temp me pakdo (nxt) -> warna node gum.
-//         (3) ctor me `int cap=` / `Node* head=` (type dobara) = shadowing (naya local); member ko seedha assign karo.
 // ============================================================
 
 #include <bits/stdc++.h>

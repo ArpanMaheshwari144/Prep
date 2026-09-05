@@ -4,9 +4,6 @@
 // Strings ka array diya. Anagrams ko SAATH group karo.
 // (anagram = same letters, order alag. "eat","tea","ate" ek group.)
 //
-// ---- ARPAN KI APPROACH ----
-//  har word ko SORT karke canonical key banao ("eat"/"tea" -> "aet" = same key).
-//  map { sorted-key -> list-of-words }. same key wale ek group. map ki values = answer.
 //
 // Tests (// expected — groups; order alag ho sakta):
 //   ["eat","tea","tan","ate","nat","bat"]

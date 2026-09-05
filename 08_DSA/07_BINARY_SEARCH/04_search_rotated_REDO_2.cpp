@@ -4,11 +4,6 @@
 // ek sorted array ko kisi pivot pe ROTATE kiya gaya (e.g. [0,1,2,4,5,6,7] -> [4,5,6,7,0,1,2]).
 // target diya -> uska INDEX lautao. na mile -> -1.  O(log n) (binary search).
 //
-// ---- ARPAN KI APPROACH ----
-//  mid==target -> return. warna kaunsa half sorted:
-//  nums[low]<=nums[mid] -> LEFT sorted -> target [low..mid] me -> high=mid-1, warna low=mid+1.
-//  else RIGHT sorted -> target [mid..high] me -> low=mid+1, warna high=mid-1.
-//  aadha kaat-te ho -> O(log n). mila nahi -> -1.
 //
 // Tests (// expected):
 //   [4,5,6,7,0,1,2], target=0  -> 4

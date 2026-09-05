@@ -4,13 +4,6 @@
 // head diya. Agar list me CYCLE hai to us cycle ke START (entry) node ka
 // POINTER return karo. Cycle nahi -> return NULL.
 //
-// ---- ARPAN KI APPROACH (VERIFIED 5/5) ----
-//  = DETECT CYCLE (03) + DELTA: sirf true/false nahi, cycle-ENTRY node chahiye.
-//  ye WAHI phase-2 hai jo find-duplicate (12) me kiya — bas ab Node* pe (nums[i] ki jagah ->next).
-//  PHASE-1 (meet): slow=slow->next (1), fast=fast->next->next (2) -> slow==fast (cycle).
-//                  fast ya fast->next NULL -> no cycle -> return NULL.
-//  PHASE-2 (entry): ek pointer head pe reset -> dono 1-1 kadam (p=p->next, slow=slow->next) -> mile = ENTRY.
-//  KYUN: meet-point se aur head se cycle-entry tak distance BARABAR (Floyd).
 //
 // INPUT format: values[] + pos (cyclePos). pos = -1 -> no cycle; warna last node ka
 //               ->next us index (pos) wale node se jud jaata. Return = ENTRY node ka val.

@@ -8,13 +8,6 @@
 //   "abc"    -> false
 //
 
-// ---- ARPAN KI APPROACH ----
-//  isme kuch fancy nahi. two-pointer left/right se andar aao.
-//  jab tak dono char SAME hain -> aage badho (left++, right--).
-//  jaise hi MISMATCH mile -> bas yahi wo jagah hai jahan ek delete ka mauka lagta:
-//    ya LEFT wala delete (left+1) karke dekho baaki palindrome hai kya,
-//    ya RIGHT wala delete (right-1) karke dekho palindrome hai kya.
-//  koi ek bhi TRUE -> answer true (isliye ||). koi mismatch aaya hi nahi -> already palindrome -> true.
 
 //
 // Tests (s -> expected):

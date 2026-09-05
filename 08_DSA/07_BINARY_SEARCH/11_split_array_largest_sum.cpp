@@ -20,30 +20,6 @@
 //        jise ignore nahi kar sakte. "dono part <= 14" karna chaho -> [10,8]=18 > 14 -> fit hi nahi.
 //        isliye 18 se neeche jaa hi nahi sakte.
 
-// ---- ARPAN KI APPROACH ----
-//  RECOGNITION: ye bhai koko-bananas aur ship-within-days wale se SAME-TO-SAME pattern pe based hai
-//     -> BS-ON-ANSWER. question ko samjho: array ko k parts me todna hai, har part ka sum, aur unme se
-//     SABSE BADA sum -> JITNA CHHOTA ho sake wahi lauta.
-//
-//  RANGE (kis cheez pe BS): guess-value = ek candidate "largest sum".
-//     low  = max of array  (kyunki sabse bada single element ko todna allowed nahi -> wo ek tukde me akela
-//            aayega hi -> largest sum kabhi max-element se chhota nahi ho sakta).
-//     high = sum of array  (k=1 wala case -> pura array ek hi tukda -> pura sum).
-//
-//  BS shape: while (low <= high) -- yahan low<high NAHI, kyunki hum high = mid-1 / low = mid+1 kar rahe
-//     (mid ko reject/accept karke aage badhte, candidate hold ans me karte). rule yaad: mid-1 use kiya -> low<=high.
-//
-//  mid = cap. maan lo [7,2,5,10,8] pe mid=21. iska matlab "koi tukda 21 se bada nahi hona chahiye".
-//     ab array ko is cap se tod ke GINN kitne tukde bante:
-//        - 21 pe 2 tukde bane (<= k) -> mid FEASIBLE -> ans = mid, aur CHHOTA try karo -> high = mid-1
-//        - agar tukde ZYADA (> k) -> cap chhota pad gaya -> low = mid+1
-//
-//  solve() = ship/koko wala feasibility-check: sum jodte jaao; sum > mid ho jaye -> count++ aur
-//     sum = nums[i] (naye tukde me current element carry). ant me count <= k -> feasible.
-//     count = 1 se START (0 se NAHI) -- warna aakhri tukda (jo kabhi cap cross nahi karta) ginti me
-//        chhut jayega. pehla tukda already chalu hai -> isliye 1.
-//
-//  ans = mid store karke aakhir me return ans (jab bhi feasible mila, best-so-far pakad ke chhota dhoondte gaye).
 
 
 //

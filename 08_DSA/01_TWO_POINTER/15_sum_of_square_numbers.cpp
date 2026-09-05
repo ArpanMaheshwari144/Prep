@@ -10,17 +10,6 @@
 //   c = 2  -> true   (1 + 1)
 //
 
-// ---- ARPAN KI APPROACH ----
-//  RECOGNITION: 2 NUMBER (pair a,b) chahiye jinke square ka sum = c -> TWO-POINTER (dono taraf se converge).
-//     (BS confuse mat ho -- BS = single element dhundhna / ek direction decide. yahan JODI chahiye -> two-pointer.)
-//  low = 0 (0, not 1 -- c=0 wale case se pakda: high=sqrt(0)=0; agar low=1 to low>high -> loop
-//     chalega hi nahi -> 0*0+0*0=0 wala answer MISS. low=0 se c=0 sahi chalta.)
-//  while (low <= high) NOT low<high -- ye BHI c=0 se pakda: c=0 me low==high==0; agar low<high (0<0=false)
-//     to loop hi nahi chalega -> 0+0 check hi nahi hoga. low<=high se low==high wala single-point bhi check hota.
-//  high = sqrt(c) (isse aage jaane ki zaroorat nahi -- akela hi c cross kar jayega).
-//  two-pointer: ans = low*low + high*high;  ans==c -> TRUE · ans<c -> low++ (bada chahiye) · ans>c -> high-- (chhota).
-//  low > high -> return FALSE.
-//  OVERFLOW: c up to 2^31-1 -> low*low + high*high ~4.3B -> int overflow. `ans` ko LONG LONG rakho (cast).
 
 //
 // Tests (c -> expected):

@@ -6,14 +6,6 @@
 //   l1 = 2->4->3 (=342),  l2 = 5->6->4 (=465)  ->  7->0->8  (=807)
 //
 
-// ---- ARPAN KI APPROACH ----
-//  ye easy hai -- MERGE-TWO-SORTED jaisa hi (dummy + tail) -- bas isme sum aur CARRY ka thoda extra khel.
-//  a aur b ki val jodo: sum += a->val (a hai to), same sum += b->val.
-//  phir CARRY bhi add karo -> sum += carry.  (ye yaad rakhna wali cheez hai.)
-//  node kaise banao? -> maan sum = 12 aaya. node "2" ki banegi, "1" carry jayega:
-//     digit = sum % 10 (=2, node),   carry = sum / 10 (=1).
-//  bas trick itni hi -- aur ye pattern kaafi aur questions me bhi aata hai.
-//  (while(a || b || carry) -> ek list khatam ho to bhi doosri + carry process ho; 999+1 = naya digit.)
 
 
 //

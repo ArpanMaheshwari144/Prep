@@ -7,13 +7,6 @@
 // packages D din me ship ho jaayein.
 //   weights=[1,2,3,4,5,6,7,8,9,10], D=5  -> 15
 //
-// ---- ARPAN KI APPROACH ----
-//  Koko jaisa BS on ANSWER, par yahan answer = ship CAPACITY.
-//  low  = max(weights)  (sabse bhaari package to ek din me jaana hi hai -> capacity usse kam nahi)
-//  high = sum(weights)  (poora ek hi din me bhej do)
-//  solve(mid): daysNeeded nikaalo -> sum chalao; agar sum+weights[i] > mid (capacity exceed)
-//              -> naya din (day++, sum=0); warna sum me add karte jao. end me day <= days? -> feasible.
-//  BS: solve(mid) true -> ans=mid, high=mid-1 (choti capacity try); warna low=mid+1. -> min feasible capacity.
 //
 // Tests (weights, D -> expected):
 //   [1,2,3,4,5,6,7,8,9,10], D=5  -> 15
