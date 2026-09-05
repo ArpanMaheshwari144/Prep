@@ -5,11 +5,6 @@
 // isi property ka faayda utha ke sort karo -> O(n log k).
 //   arr = [6,5,3,2,8,10,9],  k=3  -> [2,3,5,6,8,9,10]
 //
-// >>> SOCH (khud, blank se — dekhna nahi): <<<
-//   - chhota-se-chhota baar-baar chahiye + data badalta -> kaunsa DS?
-//   - min ke liye kitne element dekhne padte? -> heap ka size?
-//   - atka + KHUD poocho -> tab nudge.
-//
 // ---- TEST CASES (arr, k -> expected sorted) ----
 //   [6,5,3,2,8,10,9],          k=3  -> [2,3,5,6,8,9,10]
 //   [10,9,8,7,4,70,60,50],     k=4  -> [4,7,8,9,10,50,60,70]

@@ -4,21 +4,6 @@
 // nums[] aur k diya. har window (size k) ka MAXIMUM nikaalo, left->right slide karte.
 // return: har window-position ka max ek vector me.
 //
-// ---- APPROACH ----
-//  MONOTONIC DEQUE of INDICES (values decreasing) -> front hamesha window ka MAX. O(n).
-//  deque me INDICES rakhte (values nahi) -- kyunki front-expiry check ke liye INDEX chahiye.
-//
-//  CORE insight: naya nums[i] aaya -> deque ke back me jo usse CHHOTE hain wo BEKAAR
-//    (jab tak nums[i] window me zinda, wo chhote kabhi max ban hi nahi sakte) -> pop_back.
-//
-//  har i pe 3 STEP -- ★ ORDER MATTERS (badla to galat answer):
-//    1. FRONT EXPIRY : front-index window se bahar (== i-k) -> pop_front.
-//    2. MONOTONIC     : nums[back] <= nums[i] tak pop_back, phir push_back(i).
-//    3. RECORD        : window poora bana (i >= k-1) -> ans += nums[front] (front = max).
-//    -> record HAMESHA last: expiry + clean pehle na ho to stale/missing element -> galat.
-//
-//  MIN chahiye -> step-2 condition ULTA (nums[back] >= nums[i]).
-//
 // ---- TEST CASES ----
 //   nums=[1,3,-1,-3,5,3,6,7], k=3  -> [3,3,5,5,6,7]
 //   nums=[1],                 k=1  -> [1]

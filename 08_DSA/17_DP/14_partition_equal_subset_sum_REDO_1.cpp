@@ -6,9 +6,6 @@
 //
 //   [1,5,11,5] -> true   (S=22 -> har hissa 11: {11}=11, {1,5,5}=11)
 //
-// >>> HINT NAHI. khud yaad: = SUBSET-SUM ka delta.
-//     S odd -> false. warna target = S/2 -> subsetSum(nums, S/2). <<<
-//
 // ---- TEST (nums -> expected) ----
 //   [1,5,11,5]      -> true
 //   [1,2,3,5]       -> false     (S=11 odd)

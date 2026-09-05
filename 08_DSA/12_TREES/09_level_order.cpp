@@ -14,18 +14,6 @@
 //   [1]                      ->  [[1]]
 //   []  (null root)          ->  []
 // ============================================================
-// ---- APPROACH ----  (BFS -- yahan DFS recursion NAHI; level-by-level chahiye => QUEUE)
-//  mechanic: queue = FIFO (pehle-aaya-pehle-process) -> breadth (chaudai) me chalte, depth me nahi.
-//  1. base : root null -> empty ans lautao.
-//  2. queue banao, root push.
-//  3. while (queue non-empty) -- har ghumaav = EK level:
-//       a. sz = queue.size()  -> is level ke nodes ki GINTI (snapshot).
-//       b. temp list (is level ka).
-//       c. sz baar loop: front nikaalo + pop -> val temp me -> uske bachche (left,right) queue me push.
-//       d. temp -> ans (level poora).
-//  KEY TRAP: sz ko for-loop se PEHLE pakdo (variable me). loop ke ANDAR bachche push hote -> queue.size()
-//     badal jaata -> agar condition me seedha q.size() use karte to agle-level ke node bhi is level me ghus jaate.
-//  order: root pehle push -> uske bachche baad me -> FIFO -> apne aap level-order + left-to-right.
 // ============================================================
 
 #include <bits/stdc++.h>

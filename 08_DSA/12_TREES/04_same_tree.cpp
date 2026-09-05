@@ -9,14 +9,6 @@
 //   p=null     q=null         -> true
 //   p=[1]      q=null         -> false
 // ============================================================
-// ---- APPROACH ----  (step-by-step, jaise code kiya)
-//  compare-2-trees: har node pe p aur q ko match karo.
-//  1. dono NULL             -> return true     (dono khatam = same)
-//  2. ek NULL, doosra nahi   -> return false    (structure alag)
-//  3. dono val ALAG         -> return false
-//  4. dono val SAME         -> return isSame(p->left, q->left) && isSame(p->right, q->right)
-//  COMBINE = &&  (dono side match ho TABHI true).
-//  (clean base -- step 1+2 ek line me: if(!p || !q) return p==q;)
 // ============================================================
 
 #include <bits/stdc++.h>

@@ -5,10 +5,6 @@
 // MINIMUM kitne coins chahiye. Na ban sake -> return -1.
 // (har coin baar-baar use kar sakte — unbounded.)
 //
-// >>> METHOD (yaad kar, blank se): <<<
-//   - DP: har amount ke liye min-coins. base + transition + memo.
-//   - dekhna nahi, khud likh. atko + KHUD poocho -> tab nudge.
-//
 // ---- TEST CASES ----
 //   coins = {1,2,5},        amount = 11   -> 3     (5+5+1)
 //   coins = {2},            amount = 3    -> -1    (ban hi nahi sakta)

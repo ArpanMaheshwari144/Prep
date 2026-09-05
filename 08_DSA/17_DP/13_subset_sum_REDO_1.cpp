@@ -6,10 +6,6 @@
 //
 //   nums=[2,3,5], target=5  -> true   ({5} ya {2,3})
 //
-// >>> HINT NAHI. khud yaad: knapsack ka boolean bhai -- har number pe
-//     TAKE (target ghata) ya SKIP. answer take||notTake.
-//     BASE-ORDER: W==0 true (sabse PEHLE), i<0 false, i==0 wt[0]==W. <<<
-//
 // ---- TEST (nums, target -> expected) ----
 //   [2,3,5],     T=5   -> true
 //   [1,2,7],     T=6   -> false

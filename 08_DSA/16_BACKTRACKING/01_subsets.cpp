@@ -16,15 +16,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH ----  (INCLUDE / EXCLUDE — har element pe 2 choice, index-based)
-//  har element ke saamne 2 raaste: LE lo ya CHHOD do -> 2 recursive call.
-//  1. base: index >= size -> ek poora subset ban gaya (temp) -> ans me daalo -> RETURN.
-//  2. INCLUDE : temp.push(nums[i]) -> solve(i+1) -> temp.pop() (UN-CHOOSE, backtrack).
-//  3. EXCLUDE : solve(i+1) bina push kiye (element chhod diya).
-//  temp by-REFERENCE (bahar bana) -> ek hi SHARED path; push/pop usi pe -> backtrack kaam kare.
-//     (helper ke andar banate to har call naya temp -> backtrack toot jaata.)
-//  2^n subsets (har element in/out) -> yahi power-set.
-//  ALT form (start-loop): har NODE pe temp daalo + for(i=start..n) choose/explore/un-choose. same cheez.
 // ============================================================
 void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp)
 {

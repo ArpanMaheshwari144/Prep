@@ -9,12 +9,6 @@
 //   nums=[3,2,4],     target=6  -> [1,2]   (2+4)
 //   nums=[3,3],       target=6  -> [0,1]
 //
-// >>> METHOD (yaad kar, blank se): <<<
-//   - hashmap: value -> index. ek pass.
-//   - har i pe: complement = target - nums[i]. map me hai? -> {us index, i} mila.
-//     nahi -> nums[i] ko map me daalo (aage ke liye).
-//   -- dekhna nahi, khud likh.
-//
 // ---- TEST CASES (nums, target -> expected indices, order-free) ----
 //   [2,7,11,15], 9   -> {0,1}
 //   [3,2,4],     6   -> {1,2}

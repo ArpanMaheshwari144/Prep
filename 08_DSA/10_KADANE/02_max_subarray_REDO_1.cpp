@@ -8,13 +8,6 @@
 //   [1]                      -> 1
 //   [5,4,-1,7,8]             -> 23  (poora array)
 //
-// >>> METHOD (yaad kar, blank se): <<<
-//   - running-sum (cur) chalaao. har element pe: cur = max(nums[i], cur+nums[i]).
-//     (matlab: ya to yahin se naya shuru, ya pichhle ke saath aage.)
-//   - best = max(best, cur) har step.
-//   - ★ negative-heavy edge: best ko nums[0] se init karo (0 se NAHI — [-3,-1] pe -1 chahiye, 0 nahi).
-//   -- dekhna nahi, khud likh.
-//
 // ---- TEST CASES ----
 //   [-2,1,-3,4,-1,2,1,-5,4]  -> 6
 //   [1]                      -> 1

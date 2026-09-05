@@ -8,9 +8,6 @@
 //   SAAR: BFS + min-heap + dist[]. hamesha sabse-chhoti-dist node uthao ->
 //           uske neighbours RELAX karo (dist[node]+w < dist[nbr] -> update+push).
 //
-//   ---- APPROACH ----  (= BFS TEMPLATE, bas 2 cheez swap + relaxation)
-//   DIJKSTRA = BFS ka WEIGHTED bhai. wahi template, do swap:
-//        queue      -> MIN-HEAP (priority_queue, chhoti dist pehle)
 //        visited[]  -> dist[]   (har node tak abhi-tak ka shortest; init INF, src=0)
 //      + naya = RELAXATION.
 //   TEMPLATE:

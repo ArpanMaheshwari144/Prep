@@ -22,18 +22,6 @@
 //   []                   -> true
 //   [2,2,2]              -> false  (equal -> strict < toota)
 // ============================================================
-// ---- APPROACH ----  (BST family -- RANGE/bounds carry-DOWN; local check KAAFI NAHI)
-//  KEY: har node ka ek allowed WINDOW (mini, maxi) -> node->val us range me hona chahiye.
-//     ancestors ye window banate; NEECHE jaate window TIGHT hoti -> isliye deep node bhi root/ancestor ka rule maanta.
-//  helper solve(root, mini, maxi):
-//  1. base : null -> true (khaali valid).
-//  2. check: root->val <= mini || root->val >= maxi -> false (range se bahar; <=,>= = STRICT, equal bhi invalid).
-//  3. LEFT  jao -> node se CHHOTA hona -> naya maxi = root->val:  solve(left, mini, root->val).
-//  4. RIGHT jao -> node se BADA hona   -> naya mini = root->val:  solve(right, root->val, maxi).
-//  5. return left && right (dono side valid ho TABHI).
-//  call: isValidBST = solve(root, INT_MIN, INT_MAX).  (root ki window poori KHULI.)
-//  TRAP: local check (turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna; window carry-down se hota.
-//  (edge: node value INT_MIN/INT_MAX ho to bounds me long ya null-pointer behtar -- gate-level ye theek.)
 // ============================================================
 
 #include <bits/stdc++.h>

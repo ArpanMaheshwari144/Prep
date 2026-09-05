@@ -15,20 +15,6 @@
 //     [[1,3],[0,2],[1,3],[0,2]]        -> true   (square 0-1-2-3, 2-colour ho jaata)
 //     [[1,2,3],[0,2],[0,1,3],[0,2]]    -> false  (0-1-2 triangle, odd cycle)
 // ============================================================
-// ---- APPROACH ----  (2-COLOUR BFS; input KHUD adj-list hai)
-//  idea: har node ko 2 rang (0/1) do, koi 2 ADJACENT SAME-rang na ho -> bipartite.
-//          conflict (adjacent same rang forced ho jaaye) -> false.
-//  TEMPLATE:
-//  1. color[] = -1 (uncolored).  graph KHUD adj-list hai (banani NAHI -- yahan ready milta).
-//  2. outer loop har node pe (disconnected ke liye, CONNECTED-COMPONENTS jaisa): uncolored -> BFS.
-//  3. BFS: START node ko color do -> color[node]=0. phir curr nikalo -> uske har neighbour it pe:
-//        uncolored(-1)   -> color[it] = !color[curr]  (OPPOSITE rang) + push.
-//        already colored -> color[it]==color[curr]? -> SAME rang = conflict -> return false.
-//  4. kahin conflict nahi -> true.
-//  opposite trick: !color[curr] (ya 1-color[curr]) -> 0<->1 flip.
-//  START node color ZAROORI (color[node]=0): tabhi curr ka color set hota, tabhi !color[curr]
-//     sahi opposite deta. (pehle chhoot gaya tha -> !(-1) se by-luck chal raha tha -> FIX kiya.)
-//  = BFS (queue) + outer-loop (CC jaisa) + colour-check. ODD-CYCLE hone pe hi false aata.
 // ============================================================
 
 #include <bits/stdc++.h>

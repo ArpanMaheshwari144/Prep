@@ -4,9 +4,6 @@
 // nums[] + k. Ginno kitne SUBARRAYS ka XOR = k ho.
 //   [4,2,2,6,4], k=6  -> 4
 //
-// >>> HINT NAHI. khud yaad: = subarray-sum-k ka XOR-cousin.
-//     complement = curXor ^ k · count += mp[complement] · mp[curXor]++ · mp[0]=1 seed. <<<
-//
 // ---- TEST (nums, k -> expected) ----
 //   [4,2,2,6,4], k=6  -> 4
 //   [5,6,7,8,9], k=5  -> 2

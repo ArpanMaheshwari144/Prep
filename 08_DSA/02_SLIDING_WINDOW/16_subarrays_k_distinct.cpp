@@ -7,10 +7,6 @@
 //   nums = [1,2,1,2,3], k=2  -> 7
 //     ([1,2],[2,1],[1,2],[1,2,1],[2,1,2],[1,2,1,2] ... exactly-2-distinct wale)
 //
-// >>> TRICK (jo seekha): exactly(k) = atMost(k) - atMost(k-1).
-//     atMost(K) = normal variable-SW: distinct <= K rakho, har right pe += (right-left+1).
-//     baaki tu likh. <<<
-//
 // ---- TEST CASES (nums, k -> expected) ----
 //   [1,2,1,2,3],     k=2  -> 7
 //   [1,2,1,3,4],     k=3  -> 3

@@ -4,9 +4,6 @@
 // nums[] + k. Ginno kitne SUBARRAYS (contiguous) me EXACTLY k DIFFERENT numbers ho.
 //   [1,2,1,2,3], k=2  -> 7
 //
-// >>> HINT NAHI. khud yaad: exactly(k) = atMost(k) - atMost(k-1).
-//     atMost(K) = variable-SW, distinct<=K, har right pe += (right-left+1), ans=0 (COUNT). <<<
-//
 // ---- TEST (nums, k -> expected) ----
 //   [1,2,1,2,3], k=2  -> 7
 //   [1,2,1,3,4], k=3  -> 3

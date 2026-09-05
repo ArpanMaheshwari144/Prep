@@ -16,35 +16,6 @@
 //   [1,2,3,4]     , [4,3,2,1]       -> left-skewed
 // ============================================================
 //
-// ---- APPROACH ----  (BF pehle -> phir OPTIMIZE, recursion trace ke saath)
-//  preorder = ROOT,Left,Right  |  inorder = Left,ROOT,Right
-//  soch: preorder ka pehla = ROOT. inorder me us root pe todo -> LEFT-part | root | RIGHT-part.
-//        LEFT-part pe recurse, RIGHT-part pe recurse. har baar preorder ka AGLA = agla root.
-//
-//  BF (linear scan)  O(n^2)                    OPTIMIZE (map)  O(n) -- sirf jaha badla
-//  -----------------------------------------   -----------------------------------------
-//  solve(int& rootIndex, l, r):
-//    if (l > r) return NULL;
-//    int pivot = l;                            int pivot = mp[preorder[rootIndex]];
-//    while (inorder[pivot]                       // while-scan HATA -> map O(1)
-//          != preorder[rootIndex]) pivot++;
-//    rootIndex++;
-//    node = new TreeNode(inorder[pivot]);
-//    node->left  = solve(l, pivot-1);
-//    node->right = solve(pivot+1, r);
-//    return node;
-//  buildTree: rootIndex=0; solve(0,n-1);       buildTree: + mp{inorder-val->idx} ek baar
-//
-//  ---- RECURSION KAISE CHALTI  (trace: preorder[3,9,20,15,7] , inorder[9,3,15,20,7]) ----
-//   solve(0,4): root=3,  pivot=1, rootIndex->1 | left=solve(0,0)   right=solve(2,4)
-//     solve(0,0): root=9,  pivot=0, rootIndex->2 | solve(0,-1)=NULL, solve(1,0)=NULL   (leaf 9)
-//     solve(2,4): root=20, pivot=3, rootIndex->3 | left=solve(2,2)   right=solve(4,4)
-//       solve(2,2): root=15, pivot=2, rootIndex->4 | NULL, NULL     (leaf 15)
-//       solve(4,4): root=7,  pivot=4, rootIndex->5 | NULL, NULL     (leaf 7)
-//   -> LEFT poora ban-ne ke BAAD hi RIGHT chalti (rootIndex tab tak aage) = Root,Left,Right order.
-//
-//  * rootIndex = REFERENCE (&): ek hi pointer sab calls me shared -> tabhi left-subtree poora
-//    consume hone ke baad right ko sahi agla-root milta. value se pass -> copy -> galat tree.
 // ============================================================
 
 #include <bits/stdc++.h>

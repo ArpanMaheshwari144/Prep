@@ -15,20 +15,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH ----  (PURE take/not-take -- har item EK BAAR, chor-analogy: bag me max value)
-//  state = (i, W): "item index i tak, bag me W capacity bachi".
-//  NOT-TAKE : solve(i-1, W)                                  (item chhoda -> capacity same)
-//  TAKE     : agar wt[i] <= W -> val[i] + solve(i-1, W-wt[i])  (liya -> value+ , weight ghata, item ONCE -> i-1)
-//  => max(take, notTake).
-//  coin-change take/not-take se FARAK: item ONCE -> take me bhi i-1 (coin me REUSE -> i same tha).
-//
-//  BASE: i<0 vs i==0 (dono VALID, same jawab -- ye samajhne layak):
-//     i<0 (yahan)  : index-0 ko NORMAL item maano (take/not-take chale). recursion i-1=-1 pe -> base 0.
-//                    => i==0 ka case recursion + i<0-base ne APNE-AAP sambhaal liya (special-case NAHI chahiye). CLEANER.
-//     i==0 (online): item-0 ko EXPLICIT handle (if(i==0) return wt[0]<=W?val[0]:0), recursion 1 level pehle rukti.
-//                    same answer, bas zyada code.
-//     => i<0 = "sach me khatam", index-0 = normal. coin-change wala hi principle (i<0 kyu, i==0 nahi).
-//  DP: memo dp[i][W].
 // ============================================================
 int solve(vector<int> &wt, vector<int> &val, int W, int i, vector<vector<int>> &dp)
 {

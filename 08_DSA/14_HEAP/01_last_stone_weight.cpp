@@ -19,10 +19,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH ----  (MAX-HEAP; hamesha 2 sabse bhaari chahiye)
-//  idea: har turn "2 SABSE BHAARI" pathar chahiye -> MAX-HEAP (bada top pe). pop 2, smash, diff wapas push.
-//  heap kyun (sort nahi): har smash ke baad pathar BADALTE -> baar-baar "2 max" chahiye. sort har-baar
-//     mahenga; max-heap: pop=O(log n), top=O(1) -> perfect "changing set + extreme chahiye".
 int lastStoneWeight(vector<int> &stones)
 {
     // STEP 1: saare stones MAX-HEAP me (bada top pe)

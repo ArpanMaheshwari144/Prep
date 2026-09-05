@@ -4,7 +4,6 @@
 // Array A (positive/negative) aur number k. GINO: kitne CONTIGUOUS
 // subarrays hain jinka sum % k == 0.
 //
-// >>> METHOD (yaad kar, blank se — DRY-RUN pehle, IMAGE bana): <<<
 //   - prefix-sum + hashmap family. "divisible" -> exact-sum nahi.
 //   - kaagaz pe chhota example trace kar: running-sum ka REMAINDER dekh
 //     (negative sambhaal: ((sum%k)+k)%k). same remainder dobara aaye to beech ka tukda %k==0.
@@ -22,15 +21,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH (Arpan — blank REDO, 5/5) ----
-//  1. BRUTE: har subarray ka sum, %k==0? count++. O(n^2).
-//  2. DRY-RUN se IMAGE: running prefix-sum ka REMAINDER lo. do prefix ka SAME remainder
-//     -> beech ka tukda %k==0 (kyunki farak k ka multiple). => VALUE nahi, REMAINDER matter.
-//  3. CACHE remainders -> HASHMAP {remainder -> kitni baar}. har step:
-//       rem = ((sum%k)+k)%k;   count += mp[rem];   mp[rem]++;
-//     (same-rem pehle jitni baar aaya = utne naye valid subarrays.)
-//  4. SEED mp[0]=1: khaali-prefix -> jo subarray shuru-se hi %k==0, wo bhi ginega.
-//  ★ negative-SAFE: ((sum%k)+k)%k -> C++ me -ve % positive de sakta -> +k se 0..k-1 me laao.
 //  = SAME family: SUBARRAY-SUM-K / DIVISIBLE-PAIRS (prefix + hashmap-count).
 //    surface "divisible" -> un-disguise = REMAINDER-transform (dry-run se khula).
 

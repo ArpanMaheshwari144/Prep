@@ -14,16 +14,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH ----  (= LCS code REUSE -- 2-string DP, transition badli. LeetCode HARD par template = easy)
-//  state = (i,j): w1 index-i-tak, w2 index-j-tak. w1 ko w2 banana, min ops.
-//  MATCH (w1[i]==w2[j]) -> solve(i-1, j-1)                    (koi op nahi, dono peeche)
-//  no-MATCH -> 1 + min of 3:
-//       solve(i-1, j-1)  = REPLACE (char badla, dono peeche)
-//       solve(i-1, j)    = DELETE  (w1 ka char hataya, w1 peeche)
-//       solve(i,   j-1)  = INSERT  (w2 wala daala, w2 peeche)
-//  base (2-SIDED, LCS se farak): i<0 -> j+1 (w1 khatam -> bache w2 ke j+1 char INSERT) · j<0 -> i+1 (w1 ke i+1 DELETE).
-//  LCS se FARAK: (1) no-match pe max-of-2 nahi -> 1 + MIN-of-3 (2) base 0 nahi -> j+1/i+1.
-//  ESSENCE-2 proof: HARD problem bhi LCS-template + transition tweak = easy.
 // ============================================================
 int solve(int i, int j, string s1, string s2, vector<vector<int>> &dp)
 {

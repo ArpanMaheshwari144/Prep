@@ -8,9 +8,6 @@
 //   addNum(x)    -> stream me naya number daalo.
 //   findMedian() -> ab tak ke saare numbers ka median (double).
 //
-// >>> HINT NAHI. khud yaad: 2 heap (chhoti team maxHeap + badi team minHeap),
-//     placement (num<=maxHeap.top?) -> balance (farak<=1, extra maxHeap) -> findMedian (odd/even). <<<
-//
 // ---- TEST (operations -> expected median) ----
 //   add(1)                                          -> 1.0
 //   add(2)  findMedian                              -> 1.5   (1,2)

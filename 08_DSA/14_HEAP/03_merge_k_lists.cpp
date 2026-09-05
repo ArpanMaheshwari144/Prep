@@ -28,14 +28,6 @@ struct Compare
     bool operator()(ListNode *a, ListNode *b) { return a->val > b->val; }
 };
 
-// ---- APPROACH ----  (MIN-HEAP of current HEADS)
-//  idea: min-heap me har list ka current HEAD. pop SABSE CHHOTA -> result me jodo -> uska NEXT push. repeat.
-//  1. saare lists ke heads pq me push (NULL skip).
-//  2. dummy head + tail (merge-2-lists jaisa build).
-//  3. while(!pq.empty): pop smallest -> tail->next = node -> tail aage -> node->next hai to push.
-//  4. return dummy->next.
-//  heap me max k nodes (ek har list se) -> pop=O(log k), total N nodes -> O(N log k).
-//  min-heap of ListNode* -> custom Compare (a->val > b->val = chhota top pe). [upar defined]
 // ============================================================
 ListNode *mergeKLists(vector<ListNode *> &lists)
 {

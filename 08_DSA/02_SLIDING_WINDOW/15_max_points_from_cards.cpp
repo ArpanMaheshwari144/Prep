@@ -8,8 +8,6 @@
 //   [1,2,3,4,5,6,1], k=3   -> 12   (back se 3: 1+6+5)
 //   sirf ends se le sakte -- beech ka card seedha nahi utha sakte.
 //
-// >>> HINT NAHI. SW-library se soch: ends se k lena = beech me kya bachta? <<<
-//
 // ---- TEST CASES (cardPoints, k -> expected) ----
 //   [1,2,3,4,5,6,1],          k=3  -> 12
 //   [2,2,2],                  k=2  -> 4

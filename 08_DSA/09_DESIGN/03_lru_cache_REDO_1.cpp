@@ -9,10 +9,6 @@
 //   put(key,val)  -> insert/update. cache FULL -> LEAST-recently-used nikaalo (evict).
 //   dono O(1) hone chahiye.
 //
-// APPROACH (naam yaad rahe, logic tu likh):
-//   hashmap<key, Node*>  +  doubly-linked-list (dummy head <-> tail).
-//   MRU = head ke paas · LRU = tail ke paas. get/put pe node ko FRONT le aao.
-//
 // ---- TEST CASES (capacity = 2) ----
 //   put(1,1) · put(2,2) · get(1)->1 · put(3,3)[evict 2] · get(2)->-1
 //   put(4,4)[evict 1] · get(1)->-1 · get(3)->3 · get(4)->4

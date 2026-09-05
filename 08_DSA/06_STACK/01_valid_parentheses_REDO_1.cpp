@@ -10,12 +10,6 @@
 //   "([)]"    -> false   (galat order — cross)
 //   "{[]}"    -> true    (nested sahi)
 //
-// >>> METHOD (yaad kar, blank se): <<<
-//   - opening (({[) -> stack me PUSH.
-//   - closing ()}]) -> stack TOP se match? -> haan: pop. nahi (ya stack khaali): false.
-//   - end me stack KHAALI = valid. (bacha hua opening = unmatched = false.)
-//   -- dekhna nahi, khud likh.
-//
 // ---- TEST CASES ----
 //   "()"          -> true
 //   "()[]{}"      -> true

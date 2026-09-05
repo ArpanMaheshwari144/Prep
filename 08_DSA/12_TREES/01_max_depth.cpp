@@ -16,12 +16,6 @@
 //   [1]            -> 1
 // ============================================================
 //
-// ---- APPROACH ----
-//  tree = RECURSION (har node khud ko call karta).
-//  1. BASE: root null -> return 0            (recursion yahin rukti)
-//  2. left  = maxDepth(root->left)           -> left subtree ki depth
-//  3. right = maxDepth(root->right)          -> right subtree ki depth
-//  4. COMBINE: return 1 + max(left, right)   (1 = khud, + gehri branch)
 // ============================================================
 
 #include <bits/stdc++.h>

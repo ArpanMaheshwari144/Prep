@@ -5,9 +5,6 @@
 // jahan A[i] + A[j] == target  (i != j).
 // Maan lo hamesha exactly ek jodi milegi. Chhota index pehle.
 //
-// >>> STEP 1: BRUTE likh (do loop). STEP 2: optimize karenge. <<<
-//   brute recipe: NOUN = "pair" -> saare pair (i, j>i) -> A[i]+A[j]==target? -> {i, j} return.
-//
 // ---- TEST CASES ----
 //   A=[2,7,11,15], t=9  -> [0,1]     (2+7)
 //   A=[3,2,4],     t=6  -> [1,2]     (2+4)

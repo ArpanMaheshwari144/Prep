@@ -18,12 +18,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH ----  (= SUBSETS start-loop code REUSE, bas base size==k -- pattern-reuse LIVE)
-//  combinations = subsets ka start-loop form, ek tweak: record HAR node nahi -> sirf jab temp.size()==k.
-//  1. base: temp.size() == k -> fixed-size combination ban gaya -> ans me daalo -> RETURN.
-//  2. loop i = start .. n  (1..n numbers): CHOOSE i -> EXPLORE(i+1) -> UN-CHOOSE (pop).
-//  i+1 pass -> aage hi jaao (order matter nahi -> [1,2]==[2,1] repeat nahi).  start=1 se shuru.
-//  subsets se farak = SIRF base (subsets: har-node add; combinations: size==k pe add). recognize->reuse->tweak.
 // ============================================================
 void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp)
 {

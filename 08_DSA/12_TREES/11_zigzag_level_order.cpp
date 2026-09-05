@@ -21,16 +21,6 @@
 //   [1]                      ->  [[1]]
 //   []  (null root)          ->  []
 // ============================================================
-// ---- APPROACH ----  (= LEVEL-ORDER BFS + level-counter; sirf ODD level ULTA)
-//  same BFS skeleton (queue + sz-SNAPSHOT). extra = ek levelCounter.
-//  1. base : root null -> empty.
-//  2. queue me root push. levelCounter = 0. while(!q.empty):
-//       sz snapshot -> for sz baar { front pop -> val temp me -> bachche(L,R) push }.  (level HAMESHA L-to-R banao)
-//       if (levelCounter % 2 != 0) reverse(temp);   (ODD level -> ULTA = R-to-L)
-//       levelCounter++.  temp -> ans.
-//  TRICK: level normal (L-to-R) banao har baar; bas ODD levels pe REVERSE -> zigzag mil jaata.
-//     even (0,2,4..) = L-to-R seedha · odd (1,3..) = R-to-L (reversed).
-//  (alt: reverse ke bajaye deque/front-insert bhi -- par reverse simplest + saaf.)
 // ============================================================
 
 #include <bits/stdc++.h>

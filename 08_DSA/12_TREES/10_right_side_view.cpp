@@ -15,14 +15,6 @@
 //   [1,2,3,4]              ->  [1, 3, 4]     (4 level-2 me akela right)
 //   []  (null root)        ->  []
 // ============================================================
-// ---- APPROACH ----  (= LEVEL-ORDER BFS ka NEAR-TRANSFER; sirf "level me kya karna" badla)
-//  same BFS skeleton (queue + sz-SNAPSHOT), par har level se sirf RIGHT-MOST node chahiye.
-//  1. base : root null -> empty {}.
-//  2. queue me root push. while(!q.empty):
-//       sz = q.size()  [snapshot -- is level ke node].
-//       for i = 0..sz-1: front pop -> if(i == sz-1) ans me daalo -> bachche(L,R) push.
-//  WHY i==sz-1: FIFO me level LEFT-to-RIGHT dequeue hota -> aakhri (i=sz-1) = sabse right = daaye se dikhne wala.
-//  0-based: sz node -> index 0..sz-1 -> last = sz-1.  (left-side-view chahiye to i==0 le lena.)
 // ============================================================
 
 #include <bits/stdc++.h>

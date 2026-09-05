@@ -15,16 +15,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH ----  (TAKE / NOT-TAKE per coin index -- 2D dp[i][amount])
-//  har coin index i pe 2 CHOICE:
-//     NOT-TAKE : coin i chhodo -> solve(i-1)              (agla coin, amount same)
-//     TAKE     : coin i lo     -> 1 + solve(i, amount-coins[i])   (i SAME = reuse, amount ghata)
-//     => min(notTake, take).
-//  base: amount<0 -> INT_MAX (INVALID) · i<0 -> (amount==0 ? 0 : INT_MAX)   [koi coin nahi bacha]
-//     (i<0 base kyu, i==0 nahi: i==0 pe bhi coin[0] usable -> normal choice chalne do; base = sach me coin khatam = i<0.)
-//  INT_MAX ka role: "is raaste se ban nahi sakta" ka signal -> final min me apne-aap HAAR jaata.
-//  OVERFLOW guard: 1+solve(...) SIRF jab solve != INT_MAX (warna 1+INT_MAX overflow -> negative -> min galat).
-//  caller: answer INT_MAX -> return -1 (na-ban-sake).  memo = 2D dp[i][amount] (state = i + amount).
 // ============================================================
 int solve(vector<int> &coins, int amount, int i, vector<vector<int>> &dp)
 {

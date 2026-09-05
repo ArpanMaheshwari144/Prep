@@ -13,15 +13,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH ----  (take/SKIP choice + max -- climbing-stairs se aage: har step pe CHOICE)
-//  har ghar i pe 2 CHOICE:
-//     LOOT i : nums[i] + solve(i-2)   (adjacent nahi -> i-1 skip karna padta)
-//     SKIP i :          solve(i-1)    (ghar chhoda -> i-1 available)
-//     => solve(i) = max(LOOT, SKIP).
-//  base: i<0 -> 0 · i==0 -> nums[0].
-//  solve(n-1) call: n-1 = array ka LAST index (0..n-1) -> "last ghar tak max". ye TOP-DOWN hi hai (bottom-up nahi).
-//     (climbing me 'n' step-count 1..n tha; yahan array-index -> n-1. sirf naming ka farak.)
-//  memo wahi 3-pattern: dp[] -1 init · dp[i]!=-1 -> return · compute + store.
 // ============================================================
 int solve(vector<int> &nums, int i, vector<int> &dp)
 {

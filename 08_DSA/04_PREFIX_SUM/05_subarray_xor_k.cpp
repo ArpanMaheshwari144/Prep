@@ -7,9 +7,6 @@
 //   XOR yaad: a^a = 0 · a^0 = a · order matter nahi.
 //   [4,2,2,6,4], k=6  -> 4   ([4,2], [2,2,6], [4,2,2,6,4], [6])
 //
-// >>> HINT NAHI. ye SUBARRAY-SUM-K (03_HASHING/04) ka XOR-cousin hai:
-//     wahan sum tha -> prefix-sum + hashmap ; yahan XOR -> prefix-XOR + hashmap. <<<
-//
 // ---- TEST CASES (nums, k -> expected count) ----
 //   [4,2,2,6,4],   k=6  -> 4
 //   [5,6,7,8,9],   k=5  -> 2     ([5], [5,6,7,8,9]? -> XOR check)

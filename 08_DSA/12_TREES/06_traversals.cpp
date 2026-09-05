@@ -1,22 +1,6 @@
 // ============================================================
 // TREE TRAVERSALS — inorder / preorder / postorder   [TREES #6 · DFS fundamentals]
 // ============================================================
-// ---- APPROACH ----
-// teeno = SAME recursion (base: if(!root) return;  ·  left recurse  ·  right recurse).
-// SIRF ek line -- VISIT = res.push_back(root->val) -- ki JAGAH badalti, aur wahi ORDER decide karti:
-//   PREORDER   : VISIT -> left -> right      (root PEHLE)
-//   INORDER    : left -> VISIT -> right      (root BEECH me)
-//   POSTORDER  : left -> right -> VISIT      (root BAAD me)
-// recurse dono HAMESHA same -- sirf VISIT-position badalti. (yehi "order matters", jaise diameter.)
-//
-//        1
-//       / \
-//      2   3
-//     / \
-//    4   5
-//   preorder:   1 2 4 5 3
-//   inorder:    4 2 5 1 3
-//   postorder:  4 5 2 3 1
 // ============================================================
 
 #include <bits/stdc++.h>

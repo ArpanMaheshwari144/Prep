@@ -7,8 +7,6 @@
 //
 //   [2,3,1,1,4] -> true    (0->1->4, ya 0->2->3->4)
 //
-// >>> GREEDY: ek var "maxReach" (ab tak sabse door). i > maxReach -> false. <<<
-//
 // ---- TEST CASES (nums -> expected) ----
 //   [2,3,1,1,4]   -> true
 //   [3,2,1,0,4]   -> false   (index 3 pe value 0 -> aage nahi, 4 tak nahi pahunch sakte)
@@ -20,11 +18,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// >>> APPROACH (greedy: farthest-reach) <<<
-//   maxReach = ab tak sabse DOOR pahunch-yogya index. loop i:
-//     agar i > maxReach -> yahan tak pahunch hi nahi sakte -> return false.
-//     warna maxReach = max(maxReach, i + nums[i]).
-//   end: maxReach >= last-index -> true. O(n) single pass, no DP zaroorat.
 bool canJump(vector<int> &nums)
 {
     //   [2,3,1,1,4]   -> true

@@ -20,15 +20,6 @@
 //     [[2,1,1],[0,1,1],[1,0,1]]  -> -1
 //     [[0,2]]                     -> 0   (koi fresh hai hi nahi)
 // ============================================================
-// ---- APPROACH ----  (grid MULTI-SOURCE BFS + level-count)
-//  idea: saare rotten EK saath phailte (multi-source). har MINUTE = ek BFS LEVEL. end pe fresh bacha -> -1.
-//  init : saare rotten(2) ka (i,j) queue<pair> me -> ye level-0 (multi-source start).
-//  dirs : {{1,0},{-1,0},{0,1},{0,-1}} -> 4 padosi (grid ka classic neighbour-trick, bahut jagah use).
-//  loop : level-order (sz-snapshot) -> pop (row,col) -> har dir se (nr,nc):
-//           in-bounds && grid[nr][nc]==1? -> rot (=2) + push.    har level ke baad mins++.
-//  end  : grid me koi 1 bacha? -> return -1.  warna return mins-1.
-//  crux: MULTI-SOURCE (saare rotten pehle) + minutes = LEVELS; mins-1 (last level pe kuch rot nahi -> ek extra).
-//  neighbour-CONDITION (in-bounds && grid==1) HAR grid-Q me lagti -- '==1' = sirf 1-wale ko rot, SAB ko nahi (question-hisaab badalti). [tera flag]
 // ============================================================
 
 #include <bits/stdc++.h>

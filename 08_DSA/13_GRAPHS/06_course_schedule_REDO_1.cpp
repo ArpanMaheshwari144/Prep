@@ -5,8 +5,6 @@
 //  RETURN: kya SAARE courses complete kar sakte? (true/false)
 //
 //  INPUT-FORM: directed graph. {course, pre} = pre se course pe jaana padta.
-//  SOCH: directed graph me "sab complete ho paayega ya nahi" ka matlab kya? (tu pehchan)
-//
 //  TEST-CASES (input -> expected):
 //   1) n=2, [[1,0]]                          -> true   (0->1, seedha)
 //   2) n=2, [[1,0],[0,1]]                    -> false  (0<->1 cycle)

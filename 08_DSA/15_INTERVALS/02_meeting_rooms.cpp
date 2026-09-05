@@ -17,15 +17,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH ----  (Merge-Intervals ka TWIN: sort + overlap-check; merge nahi, bool)
-//  same pattern jaisa Merge: SORT by start -> adjacent overlap check.
-//  1. sort by start.
-//  2. har next: OVERLAP (curr.start < prev.end)? -> koi 2 meeting takra rahe -> return false.
-//  3. loop khatam, koi overlap nahi -> return true (saare attend ho sakte).
-//  MERGE vs MEETING -- boundary FARAK (yehi crux, subtle):
-//     Merge:   touching MERGE karna -> curr.start <= prev.end   (<=)
-//     Meeting: touching OK (ek 5-pe-khatam, doosra 5-se-shuru = takrav nahi) -> curr.start < prev.end   (<)
-//  (yahan 'ans' vector ki zaroorat NAHI thi -- bas prev.end se compare; par chalta hai.)
 // ============================================================
 bool canAttendMeetings(vector<vector<int>> &intervals)
 {

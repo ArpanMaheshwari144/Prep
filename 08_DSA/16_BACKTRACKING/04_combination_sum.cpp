@@ -18,21 +18,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH ----  (DONO form is file me: solve()=INCLUDE/EXCLUDE · solve2()=FOR-LOOP. same output.)
-//  COMMON: REUSE allowed (recurse me index/i SAME rehta, +1 nahi) · target ghatao · target==0 -> record · target<0 -> prune.
-//
-//  FORM 1 — solve()  INCLUDE/EXCLUDE (2-branch):
-//     base: target<0 -> return ; index>=size -> (target==0 ? record) -> return.
-//     INCLUDE: push cand[index] -> solve(index SAME = REUSE, target-cand[index]) -> pop.
-//     EXCLUDE: solve(index+1, target) bina push -> is element CHHODA, aage badho.
-//
-//  FORM 2 — solve2()  FOR-LOOP (start-loop):
-//     base: target<0 -> return ; target==0 -> record + return.
-//     for(i=start..n): push cand[i] -> solve2(i = REUSE, target-cand[i]) -> pop.
-//
-//  FARAK: form1 = element pe liya/chhoda (2 call) · form2 = loop se har candidate branch. dono me reuse (index/i SAME).
-// same subsets jaisa code, bas target aa gaya -- ab aur kuch nahi
-// FORM 1 — INCLUDE/EXCLUDE (2-branch): har element pe liya(index same=reuse) / chhoda(index+1).
 void solve(vector<int> &candidates, int target, vector<vector<int>> &ans, int index, vector<int> &temp)
 {
     if (target < 0)

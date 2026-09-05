@@ -21,17 +21,6 @@
 //   []  (null)  -> true
 //   [1]         -> true
 // ============================================================
-// ---- APPROACH ----  (= MAX-DEPTH code + thoda change; -1 = "imbalance mila" ka SIGNAL)
-//  idea: alag "balanced?" pass NAHI. height nikaalte-nikaalte HI balance check kar lo -> O(n) ek pass.
-//     helper maxDepth(root) ab 2 kaam karta: (a) height return, YA (b) -1 agar kahin imbalance.
-//  1. base : null -> 0.
-//  2. left  = maxDepth(root->left);   left == -1 -> turant -1 return (neeche imbalance mil gaya, aage mat dekho).
-//  3. right = maxDepth(root->right);  right == -1 -> turant -1 return.
-//  4. IS node pe check: abs(left - right) > 1 -> -1 return (yahan imbalance).
-//  5. warna balanced -> asli HEIGHT return: 1 + max(left, right).
-//  isBalanced: maxDepth(root) != -1 -> true.  (kahin -1 aaya = imbalance = false)
-//  -1 = SENTINEL/flag: "imbalance neeche mila" -> UPAR propagate -> ek node bhi galat -> poora false.
-//     O(n) single-pass (O(n^2) se behtar: har node pe alag-alag height nikaalne ki zaroorat nahi).
 // ============================================================
 
 #include <bits/stdc++.h>

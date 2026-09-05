@@ -18,12 +18,6 @@
 //   [[1,1,0,0],[0,0,1,0],[0,0,1,1]]     -> 5
 //   [[1]]                               -> 0   (akela server)
 //
-// APPROACH (= SET MATRIX ZEROES ka cousin -- 2-marker/2-pass, MARK ki jagah COUNT):
-//   rowCount[i] = us row me kitne server · colCount[j] = us col me kitne server.
-//   pass-1: har server (grid[i][j]==1) pe -> rowCount[i]++, colCount[j]++.
-//   pass-2: har server pe -> agar rowCount[i]>1 YA colCount[j]>1 -> communicate (ans++).
-//           (dono ==1 = wo apni row+col me AKELA -> skip.)
-//   O(m*n) time, O(m+n) space.
 // ==============================================================
 
 #include <bits/stdc++.h>

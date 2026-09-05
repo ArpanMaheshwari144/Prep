@@ -5,12 +5,6 @@
 // Ek din KHAREEDO, aur kisi BAAD wale din BECHO (buy-din < sell-din).
 // Sabse zyada profit batao. Agar koi profit possible nahi -> 0.
 //
-// >>> STEP 1: pehle BRUTE likh. STEP 2: baad me optimize karenge. <<<
-//   brute recipe: NOUN = "pair (buy-din, sell-din)" jahan buy < sell
-//                 -> saare pair bana (do loop: i buy, j = i+1..n sell)
-//                 -> profit = prices[j] - prices[i]
-//                 -> sabse bada profit rakho (aur 0 se neeche mat jaao).
-//
 // ---- TEST CASES ----
 //   [7,1,5,3,6,4]  -> 5     (kharido 1 pe, becho 6 pe)
 //   [7,6,4,3,1]    -> 0     (daam girta hi gaya, koi profit nahi)

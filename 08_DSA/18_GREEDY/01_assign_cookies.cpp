@@ -8,8 +8,6 @@
 //
 //   g=[1,2,3], s=[1,1] -> 1   (do size-1 cookie, sirf greed-1 wala bachha khush)
 //
-// >>> GREEDY: pehle SORT, phir ek linear pass. khud soch kaunsi cookie kisko. <<<
-//
 // ---- TEST CASES (g, s -> expected) ----
 //   [1,2,3], [1,1]         -> 1
 //   [1,2],   [1,2,3]       -> 2
@@ -21,10 +19,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// >>> APPROACH (greedy: sort + 2-pointer) <<<
-//   dono SORT. i=bachha(greed asc), j=cookie(size asc). chhoti-greed wale ko jitni-ZAROORAT-utni cookie:
-//     s[j]>=g[i] -> khush -> i++,j++,count++    ;    warna cookie choti -> j++ (badi dhoondho).
-//   count = ans. WHY greedy: chhoti cookie ko chhoti-greed pe "kharcho" -> badi cookies bade greed ke liye bachein. O(n log n).
 int findContentChildren(vector<int> &g, vector<int> &s)
 {
     int n = g.size(), m = s.size(), count = 0, i = 0, j = 0;

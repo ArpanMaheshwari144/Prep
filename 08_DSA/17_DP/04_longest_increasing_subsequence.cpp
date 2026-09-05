@@ -14,14 +14,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH ----  (TAKE / NOT-TAKE + prev-tracking -- coin-change family, ek twist)
-//  state = (index, prevIndex): "index pe hain, pichla-LIYA element ka index = prevIndex".
-//  NOT-TAKE : solve(index+1, prevIndex)                       (nums[index] chhoda -> prev wahi)
-//  TAKE     : agar increasing rahe (prevIndex==-1 YA nums[index] > nums[prevIndex])
-//                 -> 1 + solve(index+1, INDEX)                (liya -> ab prev = index)
-//  => max(take, notTake).   base: index==n -> 0.
-//  BASE saaf (LIS easy kyu): sirf index==n -> 0. koi INT_MAX/overflow/-1 nahi (coin-change se ulta).
-//  MEMO twist: prevIndex -1 se shuru -> dp[index][prevIndex + 1] (offset +1 se index 0..n banaye).
 // ============================================================
 int solve(int index, int prevIndex, vector<int> &nums, vector<vector<int>> &dp)
 {

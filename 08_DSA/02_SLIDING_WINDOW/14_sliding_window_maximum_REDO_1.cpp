@@ -9,14 +9,6 @@
 //       [3 -1 -3]   -> 3
 //         [-1 -3 5] -> 5   ... aise aage.
 //
-// >>> METHOD (yaad kar, blank se — kal daily-temps monotonic-STACK kiya, ye monotonic DEQUE): <<<
-//   - deque me INDEX rakho (value nahi). deque front = current window ka MAX-index.
-//   - 3 taar: (1) FRONT-expiry: agar front index window se bahar (i-k) -> pop_front.
-//             (2) MONOTONIC clean: jab tak deque-back ka value <= nums[i] -> pop_back (chhote bekaar).
-//             (3) push_back(i); phir window poori (i>=k-1) -> ans me nums[front] daalo.
-//   - ★ ORDER MATTERS: front-expiry -> clean+push -> record. record hamesha LAST.
-//   -- dekhna nahi, khud likh. atko + khud poocho -> tab nudge.
-//
 // ---- TEST CASES (nums, k -> expected) ----
 //   [1,3,-1,-3,5,3,6,7], 3   -> [3,3,5,5,6,7]
 //   [1],                 1   -> [1]

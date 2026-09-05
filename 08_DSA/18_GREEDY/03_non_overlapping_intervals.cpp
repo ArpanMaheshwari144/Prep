@@ -7,10 +7,6 @@
 //
 //   [[1,2],[2,3],[3,4],[1,3]] -> 1   ([1,3] hatao -> baaki non-overlap)
 //
-// >>> GREEDY: END-time pe SORT. jo pehle khatam ho use rakho (max room bacha). <<<
-//   - scan: curr.start >= last_end -> keep (last_end = curr.end) ; warna overlap -> remove (count++).
-//   - khud soch, bol-ke derive kar.
-//
 // ---- TEST CASES (intervals -> expected removals) ----
 //   [[1,2],[2,3],[3,4],[1,3]]           -> 1
 //   [[1,2],[1,2],[1,2]]                 -> 2
@@ -22,14 +18,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// >>> APPROACH (Arpan — greedy: default-sort + keep SMALLER-END; edge khud pakda, 6/6) <<<
-//   default SORT (start pe). 2-pointer: start = rakha-hua interval, end = candidate.
-//   NO-overlap (start.end <= end.start): candidate ok -> start = end, end++.
-//   OVERLAP (else): count++ (ek hatana hi hai). phir KEEP kaun = chhota-end waala:
-//        agar start.end > end.end -> start = end (bade-end wale ko chhodo). end++.
-//   count = removals. WHY chhota-end rakho: aage zyada jagah bachti -> zyada intervals fit. O(n log n).
-//   ★ EDGE (dry-run se khud pakda): overlap pe BLINDLY start rakhna GALAT --
-//     eg [[1,100],[2,3],[3,4]]: bina end-compare 2 aa jaata, sahi 1. end-compare se chhota-end aage chalta.
 int eraseOverlapIntervals(vector<vector<int>> &intervals)
 {
     sort(begin(intervals), end(intervals));

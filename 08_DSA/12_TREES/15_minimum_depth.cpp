@@ -24,8 +24,6 @@
 //   [1]                      -> 1
 //   []  (null root)          -> 0
 // ============================================================
-// ---- APPROACH ----  (BFS -- level-order skeleton + EARLY-STOP; naya BFS flavor)
-//  idea: BFS level-by-level neeche jaati -> jo PEHLA leaf mila = sabse PAAS = min depth -> RUK jao.
 //     (BFS ki taakat: "sabse pehle jo mila = shortest" -- poora tree dekhne ki zaroorat nahi.)
 //  1. base : root null -> return 0.
 //  2. queue me root push. depth = 0 (ab tak POORE hue level ki ginti).

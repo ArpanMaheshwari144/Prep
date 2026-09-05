@@ -16,16 +16,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH ----  (SORT by start -> ek pass, overlap merge)
-//  har interval problem ka pehla step = SORT by start.  phir left-to-right:
-//  1. sort(intervals) -> default FIRST-element (start) se sort (pair jaisa).
-//  2. ans me PEHLA interval daalo (baseline).
-//  3. har next interval [i]:
-//       OVERLAP? -> intervals[i][0] (curr start) <= ans.back()[1] (last-merged ka END)
-//          -> merge: ans.back()[1] = max(last end, curr end).   (start wahi, end bada wala)
-//       NO overlap -> ans me naya push.
-//  4. return ans.
-//  ans.back() = ans ka LAST interval;  [0]=start, [1]=END. isliye ans.back()[1] = last-merged ka end.
 // ============================================================
 vector<vector<int>> merge(vector<vector<int>> &intervals)
 {

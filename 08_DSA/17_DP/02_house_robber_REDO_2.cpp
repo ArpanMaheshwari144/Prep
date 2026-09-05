@@ -5,10 +5,6 @@
 // Chori karni hai PAR do LAGATAAR (adjacent) ghar nahi loot sakte
 // (alarm baj jaata). Max kitna paisa loot sakta hai?
 //
-// >>> METHOD: <<< jaana-pehchana DP.
-//   Har ghar pe do choice: LOOT (to pichhla chhodna pada) ya SKIP.
-//   base + transition tujhe aata hai -- blank se likh, dekhna nahi.
-//
 // ---- TEST CASES ----
 //   [2,7,9,3,1]   -> 12   (2 + 9 + 1)
 //   [1,2,3,1]     -> 4    (1 + 3)
