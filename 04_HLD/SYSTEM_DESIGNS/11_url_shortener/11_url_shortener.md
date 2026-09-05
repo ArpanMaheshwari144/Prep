@@ -454,10 +454,10 @@ RACE CONDITION (concurrent custom requests):
 
 ---
 
-# 8-STEP INTERVIEW FRAMEWORK DRIVE
+# 7-STEP RAIL DRIVE
 
 > Arpan ne KHUD derive kiya (21 Jun) — pehla full solo HLD drive. Micro-read ke liye.
-> (Framework: 04_HLD/INTERVIEW_FRAMEWORK.md)
+> (RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md) — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck.
 
 ## STEP 1 — REQUIREMENTS clarify (chup mat baitho)
 ```
@@ -466,7 +466,7 @@ RACE CONDITION (concurrent custom requests):
    clarifying Qs:  custom short-URL allow? links expire hote ya hamesha?
 ```
 
-## STEP 2 — SCALE / numbers
+## STEP 2 — ESTIMATE (scale / numbers)
 ```
    maano 100M writes/day.  TRICK: 1 din ~ 100,000 sec (10^5) -> easy division
    100M/day = 10^8 / 10^5 = ~1000 writes/sec
@@ -481,18 +481,18 @@ RACE CONDITION (concurrent custom requests):
    YAAD: banana=POST, laana=GET (swap mat karna)
 ```
 
-## STEP 4 — HIGH-LEVEL boxes
-```
-   Client -> CDN -> LB -> App Servers -> Redis Cache -> Database
-   read (cache-aside): cache HIT -> turant return | MISS -> DB se laao -> cache daalo -> return
-   HOT URLs hi cache (billions cache nahi -> popular wale)
-```
-
-## STEP 5 — DATA MODEL + DB choice (KYUN bolo)
+## STEP 4 — DATA MODEL + DB choice (KYUN bolo)
 ```
    schema:  shortCode (KEY) -> longUrl   (+ createdAt, expiresAt)
    KEY = shortCode (redirect mein short se long laana -> lookup by shortCode)
    DB = NoSQL (DynamoDB/Cassandra): pure key-value, no joins, read-heavy -> fast key-lookup + horizontal scale
+```
+
+## STEP 5 — HL BOXES
+```
+   Client -> CDN -> LB -> App Servers -> Redis Cache -> Database
+   read (cache-aside): cache HIT -> turant return | MISS -> DB se laao -> cache daalo -> return
+   HOT URLs hi cache (billions cache nahi -> popular wale)
 ```
 
 ## STEP 6 — DEEP DIVE: short code kaise generate? (3 options)
@@ -510,12 +510,9 @@ RACE CONDITION (concurrent custom requests):
    rate limiting (abuse rok) | READ -> read REPLICAS | WRITE -> SHARDING (write-replicas nahi hota)
    shard by shortCode (billions ek DB nahi) | async analytics (click-count queue -> redirect block na ho)
    geo-routing (nearest region, latency kam)
-```
 
-## STEP 8 — WRAP
-```
-   Client->CDN->LB->App->Redis->NoSQL(sharded); counter+Base62; read-replicas+cache; async analytics.
-   Aage: custom URLs, expiry/TTL cleanup, geo-distribution.
+   WRAP: Client->CDN->LB->App->Redis->NoSQL(sharded); counter+Base62; read-replicas+cache; async analytics.
+         Aage: custom URLs, expiry/TTL cleanup, geo-distribution.
 ```
 
 > CORRECTIONS seekhi (soch sahi thi): GET/POST swap (banana=POST), "write replicas" -> sharding,
