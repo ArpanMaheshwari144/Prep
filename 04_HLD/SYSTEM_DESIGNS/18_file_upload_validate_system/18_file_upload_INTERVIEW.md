@@ -1,8 +1,8 @@
-# File Upload + Validate + Track System — INTERVIEW (8-step framework)
+# File Upload + Validate + Track System — INTERVIEW (7-step RAIL)
 
 > JP ne ye ACTUALLY poocha (real SDE-3 writeup): file/folder lo -> third-party se validate (2-3 sec)
 > -> store -> user ko tracking-link do. General product design (NOT finance-specific).
-> Framework: 04_HLD/INTERVIEW_FRAMEWORK.md
+> RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck
 
 ---
 
@@ -13,7 +13,7 @@
    clarifying Qs:  file size limit? file types? validation kitna time? folder bhi ya sirf file?
 ```
 
-## STEP 2 — SCALE / numbers
+## STEP 2 — ESTIMATE (scale / numbers)
 ```
    maano 1 lakh files/day -> ~1-2 writes/sec
    log status BAAR-BAAR check karte -> reads zyada -> READ-HEAVY
@@ -27,7 +27,15 @@
    GET  /status/{trackingId}   -> status poocho: VALIDATING/DONE/FAILED (LAANA -> GET)
 ```
 
-## STEP 4 — HIGH-LEVEL boxes
+## STEP 4 — DATA MODEL + DB (KYUN bolo)
+```
+   files: trackingId(KEY) | fileName | ownerId | status | s3_url | createdAt
+   status = UPLOADING / VALIDATING / DONE / FAILED  (status = "kahan tak pahuncha" -- failure-handling base)
+   DB: simple key-lookup, status ko ACID chahiye -> PostgreSQL (SQL)
+       (massive scale + simple key-value -> NoSQL; money -> hamesha SQL/ACID)
+```
+
+## STEP 5 — HL BOXES
 ```
    Client -> API Gateway -> Upload Service -> [ file bytes -> S3 / object storage ]
                                             -> [ metadata  -> DB ]
@@ -35,14 +43,6 @@
    KEY decision: file bytes (bada) -> S3 (DB nahi, DB slow+mehnga badi cheez ke liye)
                  metadata (chhota: naam/status/owner) -> DB
                  slow validation -> queue+worker (user wait na kare)
-```
-
-## STEP 5 — DATA MODEL + DB (KYUN bolo)
-```
-   files: trackingId(KEY) | fileName | ownerId | status | s3_url | createdAt
-   status = UPLOADING / VALIDATING / DONE / FAILED  (status = "kahan tak pahuncha" -- failure-handling base)
-   DB: simple key-lookup, status ko ACID chahiye -> PostgreSQL (SQL)
-       (massive scale + simple key-value -> NoSQL; money -> hamesha SQL/ACID)
 ```
 
 ## STEP 6 — DEEP DIVE (asli khel): validation 2-3 sec delay kaise handle?
@@ -65,15 +65,12 @@
    - bahut files -> SHARD (trackingId pe)
    - validation backlog -> WORKERS auto-scale (queue-depth pe)
    - S3 -> already scalable (managed)
-```
 
-## STEP 8 — WRAP
-```
-   Client -> LB -> Upload Service -> file=S3, metadata=DB, validation=async(queue+worker),
-   status track. Scale: replicas + shard + worker auto-scale.
-   Improve: virus-scan, retry on fail, CDN for downloads.
+   WRAP: Client -> LB -> Upload Service -> file=S3, metadata=DB, validation=async(queue+worker),
+         status track. Scale: replicas + shard + worker auto-scale.
+         Improve: virus-scan, retry on fail, CDN for downloads.
 ```
 
 ---
-> CORE pattern (every design): clarify -> scale -> API -> boxes -> data+DB(kyun) -> DEEP DIVE(options->choose)
+> CORE pattern (every design): Requirements -> Estimate -> API -> Data-model+DB(kyun) -> HL boxes -> DEEP DIVE(options->choose)
 > -> bottleneck -> wrap. META: think out loud, trade-off har choice, chup mat baitho.

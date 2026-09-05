@@ -1,8 +1,8 @@
-# News Aggregator — INTERVIEW (8-step framework)
+# News Aggregator — INTERVIEW (7-step RAIL)
 
 > JP general-product design (Google News / Inshorts jaisa): alag sources se news kheencho
 > -> store -> user ko ek feed do. READ-HEAVY system.
-> Framework: 04_HLD/INTERVIEW_FRAMEWORK.md
+> RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck
 
 ---
 
@@ -16,7 +16,7 @@
    KEY soch: reads (har user feed kholta) >> writes (sources se) -> READ-HEAVY (poora design isi pe)
 ```
 
-## STEP 2 — SCALE / numbers
+## STEP 2 — ESTIMATE (scale / numbers)
 ```
    users 10 lakh, har user 5 baar/din feed -> 50 lakh reads/din
    sources 1000, 5 min mein nayi news -> ~3 lakh writes/din
@@ -39,7 +39,20 @@
                   GET = read | POST = state-change
 ```
 
-## STEP 4 — HIGH-LEVEL boxes (write-path + read-path ALAG)
+## STEP 4 — DATA MODEL + DB (KYUN bolo)
+```
+   ARTICLE:  id(KEY) | title | content | sourceId | category | publishedAt | url
+   SOURCE:   id(KEY) | name | rssUrl | lastFetchedAt
+   (opt) USER_PREFS: userId | categories[] | savedArticles[]
+
+   DB choice -> NoSQL (Mongo/Cassandra):
+     news = massive (crore, badhta) + simple structure + read-heavy + ACID na chahiye (paisа nahi)
+     NoSQL = horizontal scale easy + flexible schema + eventual-consistency chalega
+   CONTRAST (JP/finance flavor): News -> NoSQL | PAISA/ledger -> HAMESHA SQL/ACID
+   -> "data ka nature dekho phir DB choose karo"
+```
+
+## STEP 5 — HL BOXES (write-path + read-path ALAG)
 ```
    ── WRITE (news andar) ──
    Sources(1000) -> Fetcher/Crawler -> Queue(Kafka) -> Worker(clean+DEDUPE+category) -> DB + Cache
@@ -56,19 +69,6 @@
      Feed Svc -> feed banata, pehle cache, miss pe DB-replica
      LB       -> kai feed-svc instance pe load baanto
    CORE decision: WRITE-path (slow, background) aur READ-path (fast) ALAG -> ek doosre ko slow na karein
-```
-
-## STEP 5 — DATA MODEL + DB (KYUN bolo)
-```
-   ARTICLE:  id(KEY) | title | content | sourceId | category | publishedAt | url
-   SOURCE:   id(KEY) | name | rssUrl | lastFetchedAt
-   (opt) USER_PREFS: userId | categories[] | savedArticles[]
-
-   DB choice -> NoSQL (Mongo/Cassandra):
-     news = massive (crore, badhta) + simple structure + read-heavy + ACID na chahiye (paisа nahi)
-     NoSQL = horizontal scale easy + flexible schema + eventual-consistency chalega
-   CONTRAST (JP/finance flavor): News -> NoSQL | PAISA/ledger -> HAMESHA SQL/ACID
-   -> "data ka nature dekho phir DB choose karo"
 ```
 
 ## STEP 6 — DEEP DIVE (asli khel): feed FAST kaise rahe?
@@ -93,18 +93,16 @@
    Fetcher        -> kai parallel + queue backlog absorb; source down -> retry+skip (system na gire)
    Cache (Redis)  -> cluster (replicas) + miss pe DB-replica fallback
    SPOF: "ek box gira to pura system gire?" -> wahi replicate karo
-```
 
-## STEP 8 — WRAP (ek saans + improve)
-```
-   WRITE: sources -> fetcher -> queue -> worker(clean+dedupe+category) -> DB(NoSQL)+cache
-   READ:  user -> LB -> feed svc -> cache(99%) --miss--> DB read-replica
-   DB: NoSQL (massive+simple, ACID na chahiye) | DEEP: feed precompute+cache
-   SCALE: svc-LB, DB replica+shard+archive, fetcher parallel+retry, cache cluster
-   IMPROVE: personalized (category-wise cache), CDN images, ML ranking, real-time push (breaking)
+   WRAP (ek saans + improve):
+     WRITE: sources -> fetcher -> queue -> worker(clean+dedupe+category) -> DB(NoSQL)+cache
+     READ:  user -> LB -> feed svc -> cache(99%) --miss--> DB read-replica
+     DB: NoSQL (massive+simple, ACID na chahiye) | DEEP: feed precompute+cache
+     SCALE: svc-LB, DB replica+shard+archive, fetcher parallel+retry, cache cluster
+     IMPROVE: personalized (category-wise cache), CDN images, ML ranking, real-time push (breaking)
 ```
 
 ---
-> CORE pattern (har design same): clarify -> scale -> API -> boxes -> data+DB(kyun) -> DEEP DIVE(options->choose)
+> CORE pattern (har design same): Requirements -> Estimate -> API -> Data-model+DB(kyun) -> HL boxes -> DEEP DIVE(options->choose)
 > -> bottleneck -> wrap. META: think out loud, trade-off har choice, chup mat baitho.
 > News twist: write-path/read-path ALAG + feed precompute+cache (read-heavy). Paisа hota to SQL/ACID.
