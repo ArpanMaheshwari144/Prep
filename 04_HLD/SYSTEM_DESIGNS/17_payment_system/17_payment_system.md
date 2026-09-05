@@ -287,9 +287,9 @@ Galti -> NAYI entry se correct karo (purani mitao mat) -> history bachi rahe = a
 
 ---
 
-# 8-STEP INTERVIEW FRAMEWORK DRIVE
+# 7-STEP RAIL DRIVE
 
-> (Framework: 04_HLD/INTERVIEW_FRAMEWORK.md) — hand-notes se, more-explanation. Paisa = sacred. Interview me isi flow me bolo.
+> (RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md) — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck. Paisa = sacred. Interview me isi flow me bolo.
 
 ## STEP 1 — REQUIREMENTS (paisa = sacred)
 ```
@@ -299,14 +299,18 @@ Galti -> NAYI entry se correct karo (purani mitao mat) -> history bachi rahe = a
      x ATAK na sake     (network mara -> paisa kahan?)
      x DUPLICATE na ho  (double-charge)
      ok TRACEABLE       (audit)
+   INTERVIEW-WORD: atomicity · idempotency · strong-consistency · durability.
    # ye 4 constraint = 4 baar-baar aane wale HARD problems:
      idempotency . consistency . failure-handling . ledger/audit
 ```
 
-## STEP 2 — NAIVE FLOW + kyun simple nahi
+## STEP 2 — ESTIMATE (★ payment ka asli insight)
 ```
-   User App -> Payment Service -> Ledger (Arpan -500 debit, merchant +500 credit) -- simple dikhta.
-   PAR: crash / retry / network -> paisa kho / duplicate / atak sakta -> isliye 4 problem solve karne padte.
+   ~100M users. Transactions: peak bhi ~sau-do-sau/sec (millions NAHI).
+   ★ KEY LINE: "Payment high-THROUGHPUT problem nahi, high-CORRECTNESS problem hai —
+                isliye scale se pehle ATOMIC + IDEMPOTENT + LEDGER pe focus karunga."
+   -> DB choice yahin se: SQL/RDBMS (ACID, strong-consistency) + append-only LEDGER (audit).
+      NoSQL nahi (money = strong consistency + multi-row transaction chahiye).
 ```
 
 ## STEP 3 — API (idempotency-key = STAR)
@@ -315,18 +319,23 @@ Galti -> NAYI entry se correct karo (purani mitao mat) -> history bachi rahe = a
    # client HAR naye payment ke liye UNIQUE key banata; RETRY pe WAHI key bhejta.
 ```
 
-## STEP 4 — HIGH-LEVEL flow + status
-```
-   User -> Payment Service -> [Idempotency check] -> Ledger (debit+credit) -> status update -> response
-   STATUS states (DURABLE):  Pending -> Processing -> Success / Failed
-   # kuch karne se PEHLE "Pending" likho (= INTENT record) -> crash pe pata "ye pending thi".
-```
-
-## STEP 5 — DATA MODEL
+## STEP 4 — DATA MODEL
 ```
    LEDGER (double-entry):  har txn = 1 debit + 1 credit (barabar, saath). IMMUTABLE (delete/edit nahi).
    IDEMPOTENCY register:   key -> { status, result }   (TTL ~24h, delete mat karo)
+   TXN STATUS (durable, write-ahead):  INITIATED -> PENDING -> SUCCESS / FAILED
    INVARIANT:  sum(debits) == sum(credits)  HAMESHA.
+```
+
+## STEP 5 — HL BOXES (request kahan-kahan guzarti)
+```
+   User App -> [LB / API Gateway] -> Payment Service -> [Idempotency check]
+             -> DB (ledger debit+credit, txn = PENDING)
+             -> ★ external PSP / GATEWAY (Razorpay/Stripe)   <- ASLI paisa yahi move karta, TERA server nahi
+             -> PSP result (success/fail) -> ledger + status update -> response
+   STATE-MACHINE:  INITIATED -> PENDING (PSP ko bheja) -> SUCCESS / FAILED.
+   # PSP-call EXTERNAL + ASYNC hai -> isliye PENDING state + failure-handling (STEP 6) chahiye.
+   # naive flow simple dikhta (App->Service->Ledger), PAR crash/retry/network -> 4 hard problem.
 ```
 
 ## STEP 6 — DEEP DIVE: 4 hard problems
@@ -365,29 +374,20 @@ Galti -> NAYI entry se correct karo (purani mitao mat) -> history bachi rahe = a
          3) + idempotency-retry (double-process safe).
 ```
 
-## STEP 7 — LEDGER / AUDIT + trade-offs (deep wrap)
+## STEP 7 — BOTTLENECK (scale pe kya tootega)
 ```
-   LEDGER = finance ka DIL: permanent, immutable, double-entry (debit=credit), kabhi delete/edit nahi.
-            galti -> NAYI entry se correct (purani mitao mat) -> audit-trail bachi -> regulators (RBI/SEC) maangte.
-   KEY TRADE-OFF yaad: consistency = ACID (same DB) vs SAGA/2PC (distributed) ; failure = webhook + reconciliation dono.
+   Single DB tak: rollback FREE (ACID). PAR services/DB BADHNE pe (Bank A alag, Bank B alag) ->
+     ek DB transaction possible NAHI -> DISTRIBUTED TRANSACTION problem = payment ka asli bottleneck.
+   FIX: SAGA (compensating transactions) — step fail -> reverse-order UNDO (BankA +500 wapas).
+        2PC bhi option, par strict/slow/LOCKING (coordinator crash -> participants atke).  [full 2PC = upar concept]
+   LOAD badhe -> LB + multiple Payment-Service instances (stateless) ; DB read-replica / shard-by-account.
+   TRADE-OFF (JP sunna chahta): 2PC = strong/sync/locking (slow) | SAGA = async/eventual (scalable, no long-lock).
 
-   # 2PC (2-Phase Commit) = distributed txn ka all-or-nothing, ek COORDINATOR ke through:
-       Phase 1 (prepare/voting): coordinator sab (BankA, BankB) ko pooche "ready to commit?" ->
-                                 har ek kaam kar ke resource LOCK karta -> "yes ready" ya "No".
-       Phase 2 (commit/abort):   sab ne YES? -> coordinator "COMMIT" -> sab commit.
-                                 koi ek NO?  -> coordinator "ABORT"  -> sab rollback.  (distributed atomicity)
-       DIKKAT (kyun slow/blocking): participants LOCK pakde rehte jab tak coordinator bole;
-                                 coordinator beech me crash -> participants ATKE (locked) -> system thap.
-                                 isliye scale pe SAGA preferred (async, no long-lock).
-```
-
-## STEP 8 — WRAP-UP
-```
-   idempotency  -> same key, paisa EK baar.
-   consistency  -> debit+credit ek atomic FLIP (see-saw; ACID / SAGA).
-   failure      -> status record + RECONCILE (courier tracking, kabhi gum nahi).
-   ledger/audit -> immutable double-entry, debits=credits (permanent diary).
-   SAGA vs 2PC  -> 2PC = strict/sync/locking (strong, slow) | SAGA = async compensating-undo (eventual, scalable, no-lock).
+   WRAP (ek line each):
+     idempotency  -> same key, paisa EK baar.
+     consistency  -> debit+credit ek atomic FLIP (ACID / SAGA).
+     failure      -> status record + webhook + RECONCILE (kabhi gum nahi).
+     ledger/audit -> immutable double-entry, debits=credits.
 ```
 
 ---
