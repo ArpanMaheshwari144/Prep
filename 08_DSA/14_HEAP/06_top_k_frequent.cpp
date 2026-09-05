@@ -6,10 +6,6 @@
 //
 //   [1,1,1,2,2,3], k=2  -> [1,2]   (1 aaya 3 baar, 2 aaya 2 baar -> top 2)
 //
-// >>> HINT NAHI. = KTH-LARGEST ka cousin, bas "value" ki jagah "FREQUENCY".
-//     step 1: hashmap se har element ki freq gino.
-//     step 2: min-heap size k (freq pe) -> ya bucket. top-k freq wale nikaalo. <<<
-//
 // ---- TEST (nums, k -> expected, order-independent) ----
 //   [1,1,1,2,2,3],   k=2  -> {1,2}
 //   [1],             k=1  -> {1}
@@ -21,18 +17,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- APPROACH (min-heap size k) --------------------------------
-//  = KTH-LARGEST ka cousin. bas "value" ki jagah "FREQUENCY".
-//  STEP 1: hashmap se har number ki freq gino.
-//  STEP 2: min-heap me {freq, num} daalo. size > k hote hi TOP (sabse
-//          chhoti freq) pop -> heap me hamesha TOP-K freq wale hi bachte.
-//  STEP 3: heap ke num answer me nikaal do.
-//  heap me {freq, num} order isliye -> pair pehle .first(freq) se compare
-//  karta, to heap FREQUENCY pe sort hoti (yehi chahiye). O(n log k).
-//
-//  [maxHeap se bhi ho jaata: saare push -> k baar top-pop. par O(n log n),
-//   thoda slow. min-heap-size-k better.]
-// -----------------------------------------------------------------
 vector<int> topKFrequent(vector<int> &nums, int k)
 {
     // STEP 1: har number ki frequency gino
