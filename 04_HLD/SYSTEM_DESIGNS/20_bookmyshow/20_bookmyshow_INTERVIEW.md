@@ -1,7 +1,7 @@
-# BookMyShow (Ticket Booking) — INTERVIEW (8-step framework)
+# BookMyShow (Ticket Booking) — INTERVIEW (7-step RAIL)
 
 > JP-relevant: CONSISTENCY-critical (seat double-book na ho = trading ka no-double-spend jaisа). Concurrency = asli khel.
-> Framework: 04_HLD/INTERVIEW_FRAMEWORK.md
+> RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck
 
 ---
 
@@ -33,7 +33,7 @@
    KEY: CONSISTENCY-critical (double-book = disaster, paisа jaisа) -> CAP me CP-leaning.
 ```
 
-## STEP 2 — SCALE
+## STEP 2 — ESTIMATE (scale)
 ```
    10M users. 2 load:
    - BROWSE (shows/seats dekhna) -> SAB karte -> READ-HEAVY (lakhs reads)   -> CACHE + read-REPLICA
@@ -50,16 +50,7 @@
    POST /bookings/{id}/pay             -> pay success -> seats 'booked' | fail -> release
 ```
 
-## STEP 4 — BOXES (architecture)
-```
-   USER -> LOAD BALANCER -> APP servers
-                              |- CACHE (Redis)  : seat-map, show data  [browse read-heavy]
-                              |- DB (SQL)        : seats, bookings      [CP, row-lock]
-                              |- QUEUE (Kafka)   : booking spike absorb [popular release]
-                              \- PAYMENT service : pay confirm
-```
-
-## STEP 5 — DATA + DB (kyun SQL)
+## STEP 4 — DATA + DB (kyun SQL)
 ```
    seats(seat_id, show_id, status[available/held/booked], user_id, version)
    bookings(booking_id, user_id, show_id, seat_ids, status, created_at)
@@ -67,6 +58,15 @@
    DB = SQL (NoSQL nahi) -> KYUN: consistency = dil. ACID + row-lock chahiye atomic seat-update ke liye
         (UPDATE ... WHERE status='available') -> no double-book. NoSQL eventual = booking ke liye risky.
    data chhota (movies/shows finite) -> sharding nahi.
+```
+
+## STEP 5 — HL BOXES (architecture)
+```
+   USER -> LOAD BALANCER -> APP servers
+                              |- CACHE (Redis)  : seat-map, show data  [browse read-heavy]
+                              |- DB (SQL)        : seats, bookings      [CP, row-lock]
+                              |- QUEUE (Kafka)   : booking spike absorb [popular release]
+                              \- PAYMENT service : pay confirm
 ```
 
 ## STEP 6 — DEEP DIVE: seat DOUBLE-BOOKING kaise roke? (concurrency — asli khel)
@@ -105,22 +105,20 @@
                        -> queue serialize + atomic conditional UPDATE (ek hi jeete)
    Payment service  -> external -> retry + idempotency-key (double-charge na ho)
    SPOF: "ek box gira to pura gire?" -> replicate. Redis cluster. DB replica (Sentinel auto-failover).
-```
 
-## STEP 8 — WRAP (ek saans + improve)
-```
-   USER -> LB -> App servers:
-      browse -> CACHE(99%) + read-REPLICA
-      book   -> ATOMIC conditional UPDATE / row-lock (SQL, CP) -> no double-book
-      spike  -> QUEUE (Kafka) absorb
-      hold   -> seat 'held' + TTL (pay -> 'booked' | expire -> 'available')
-      pay    -> PAYMENT service (retry + idempotency)
-   DB: SQL (consistency=dil, ACID+row-lock) | DEEP: atomic-mark + seat-HOLD TTL
-   SCALE: app-LB, browse cache+replica, booking queue, DB replica+failover
-   IMPROVE: virtual waiting-room (popular release bheed), distributed-lock (Redlock) agar multi-DB,
-            seat-TTL tune, analytics (popular shows).
+   WRAP (ek saans + improve):
+     USER -> LB -> App servers:
+        browse -> CACHE(99%) + read-REPLICA
+        book   -> ATOMIC conditional UPDATE / row-lock (SQL, CP) -> no double-book
+        spike  -> QUEUE (Kafka) absorb
+        hold   -> seat 'held' + TTL (pay -> 'booked' | expire -> 'available')
+        pay    -> PAYMENT service (retry + idempotency)
+     DB: SQL (consistency=dil, ACID+row-lock) | DEEP: atomic-mark + seat-HOLD TTL
+     SCALE: app-LB, browse cache+replica, booking queue, DB replica+failover
+     IMPROVE: virtual waiting-room (popular release bheed), distributed-lock (Redlock) agar multi-DB,
+              seat-TTL tune, analytics (popular shows).
 ```
 
 ---
-> CORE: clarify -> scale -> API -> boxes -> data+DB(kyun) -> DEEP DIVE -> bottleneck -> wrap.
+> CORE: Requirements -> Estimate -> API -> Data-model+DB(kyun) -> HL boxes -> DEEP DIVE -> Bottleneck.
 > BookMyShow twist: CONSISTENCY (no double-book) = concurrency control (lock/atomic) + CP. browse=cache/replica, spike=queue.

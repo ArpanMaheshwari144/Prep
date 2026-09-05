@@ -195,9 +195,9 @@ Problem: **1 TB ek machine ki RAM me nahi aata** -> data todna padega.
 
 ---
 
-# 8-STEP INTERVIEW FRAMEWORK DRIVE
+# 7-STEP RAIL DRIVE
 
-> (Framework: 04_HLD/INTERVIEW_FRAMEWORK.md) — file content se, more-explanation. SPEED = dil. Interview me isi flow me bolo.
+> (RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md) — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck. SPEED = dil. Interview me isi flow me bolo.
 
 ## STEP 1 — REQUIREMENTS (SPEED = dil)
 ```
@@ -211,7 +211,7 @@ Problem: **1 TB ek machine ki RAM me nahi aata** -> data todna padega.
    # booking ka ULT: wahaan consistency=dil (seat double na ho), yahaan SPEED=dil.
 ```
 
-## STEP 2 — SCALE / numbers (numbers drive karte)
+## STEP 2 — ESTIMATE (scale / numbers drive karte)
 ```
    1 TB data, ~1M QPS, READ-HEAVY.
    - 1 node me 1TB RAM NAHI aata (na fit)         -> data todo = SHARDING
@@ -227,17 +227,7 @@ Problem: **1 TB ek machine ki RAM me nahi aata** -> data todna padega.
    DELETE key
 ```
 
-## STEP 4 — HIGH-LEVEL boxes (+ har box KYUN)
-```
-   CLIENT -> CACHE CLIENT (routing) -> Node A/B/C (+replica) --miss--> DATABASE
-   box KYUN:
-     Cache Client -> key ko node pe route (consistent-hash); app ko nodes ki ginti se azaad rakhe
-     Node         -> in-mem store: HashMap + DLL(LRU) + TTL ; primary + replica (HA)
-     DB           -> permanent source of truth (slow); miss pe yahin se
-   CORE: cache HIT pe DB gaya hi nahi (~90%) -> DB load 10x kam.
-```
-
-## STEP 5 — DATA MODEL (per node)
+## STEP 4 — DATA MODEL (per node)
 ```
    HashMap key -> value (O(1) get/put)
    EVICTION = LRU = HashMap + Doubly-Linked-List (O(1) -- LC146):
@@ -248,6 +238,16 @@ Problem: **1 TB ek machine ki RAM me nahi aata** -> data todna padega.
         active -> background thread periodic purge
    choice: in-mem KV (Redis-jaisa), DB peeche = source of truth.
    # <1ms -> RAM (disk nahi) . join nahi chahiye -> KV kaafi.
+```
+
+## STEP 5 — HL BOXES (+ har box KYUN)
+```
+   CLIENT -> CACHE CLIENT (routing) -> Node A/B/C (+replica) --miss--> DATABASE
+   box KYUN:
+     Cache Client -> key ko node pe route (consistent-hash); app ko nodes ki ginti se azaad rakhe
+     Node         -> in-mem store: HashMap + DLL(LRU) + TTL ; primary + replica (HA)
+     DB           -> permanent source of truth (slow); miss pe yahin se
+   CORE: cache HIT pe DB gaya hi nahi (~90%) -> DB load 10x kam.
 ```
 
 ## STEP 6 — DEEP DIVE: keys ko nodes pe kaise baanto? (options -> choose)
@@ -278,15 +278,13 @@ Problem: **1 TB ek machine ki RAM me nahi aata** -> data todna padega.
         FIX: MUTEX (1 thread DB se rebuild, baaki WAIT phir cache se) | soft-TTL (expiry se pehle bg-refresh) | never-expire.
    Hot-key OVERLOAD: ek key itni popular ki uska SHARD akela overwhelmed.
         FIX: hot key kai nodes replicate | L1 LOCAL cache (app ke andar, in-process -> request Redis tak jaati hi nahi).
-```
 
-## STEP 8 — WRAP
-```
-   SINGLE:     HashMap + DLL(LRU) + TTL
-   DISTRIBUTE: Consistent-Hashing (shard) + Replication (HA = mare-to-chale)
-   READ:       Cache-Aside (miss -> DB -> populate; 90% hit)
-   STALE:      TTL + explicit invalidation  |  STAMPEDE: mutex / soft-TTL  |  HOTSPOT: replicate / L1-local
-   # L1 = app ke andar local mini-cache (nano-sec) ; L2 = distributed Redis (network, micro-sec) -> DB.
-   IMPROVE:    metrics/monitoring (hit-ratio), write-back for write-heavy, multi-region cache.
-   TRADE-OFF:  speed vs consistency -> use-case pe chunta (= CAP spirit; cache = AP-leaning, eventual ok).
+   WRAP:
+     SINGLE:     HashMap + DLL(LRU) + TTL
+     DISTRIBUTE: Consistent-Hashing (shard) + Replication (HA = mare-to-chale)
+     READ:       Cache-Aside (miss -> DB -> populate; 90% hit)
+     STALE:      TTL + explicit invalidation  |  STAMPEDE: mutex / soft-TTL  |  HOTSPOT: replicate / L1-local
+     # L1 = app ke andar local mini-cache (nano-sec) ; L2 = distributed Redis (network, micro-sec) -> DB.
+     IMPROVE:    metrics/monitoring (hit-ratio), write-back for write-heavy, multi-region cache.
+     TRADE-OFF:  speed vs consistency -> use-case pe chunta (= CAP spirit; cache = AP-leaning, eventual ok).
 ```
