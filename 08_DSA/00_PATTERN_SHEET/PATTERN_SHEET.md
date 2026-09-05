@@ -1473,6 +1473,9 @@
 
      crux: count-FIRST + head-BANTA-TAIL + RECURSE-stitch.
 
+     PEHCHAN: "reverse in groups of k" sunte hi -> 3-ptr + count + recurse.
+              (copy-random se ALAG: yahan nodes ULATNA, naye banana NAHI.)
+
 ┌── FAMILY: HASHMAP-AS-GLUE (clone) ────────────────────────────
 │ KYUN SAATH: map<old*,new*> = purane node ko naye se jodne wala GOND.
 │ (LRU me bhi hashmap-as-glue; yahan clone ke liye old->new.)
@@ -1485,6 +1488,9 @@
            copy ke random COPY-list ke andar point karein (original pe NAHI).
      KYUN 2 PASS: random aage/peeche kahin bhi -> 1-pass me target abhi bana
            hi na ho. pehle SAARE new node bana lo (+map), PHIR random set.
+
+     PEHCHAN: "random pointer / deep copy" sunte hi -> MAP (old->new).
+              (k-group se ALAG: yahan naye node BANANA, ulatna NAHI.)
 
      VISUAL ( [x]=node · -> next · ~> random ):
        ORIG:  [7] -> [13] -> [11] -> [10] -> [1]
