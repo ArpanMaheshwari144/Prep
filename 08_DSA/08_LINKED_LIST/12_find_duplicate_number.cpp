@@ -48,6 +48,12 @@ int findDuplicate(vector<int> &nums)
     return slow;
 }
 
+// ---- ARPAN KI APPROACH (VERIFIED 5/5) ---- Floyd 2-phase, array-as-pointer
+//  array = implicit linked-list: i -> nums[i]. duplicate = cycle-ENTRY node.
+//  PHASE-1 (meet): slow=nums[slow] (1 kadam), fast=nums[nums[fast]] (2 kadam) -> slow==fast.
+//  PHASE-2 (entry): slow=0 reset -> dono 1-1 kadam (slow=nums[slow], fast=nums[fast]) -> mile = dup.
+//  KYUN phase-2: meet-point se aur 0 se cycle-entry tak ka distance BARABAR (Floyd) -> isliye reset+1-1.
+
 // ---- test harness ----
 void check(vector<int> nums, int expected)
 {

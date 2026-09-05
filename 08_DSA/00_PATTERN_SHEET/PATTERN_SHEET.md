@@ -1357,6 +1357,24 @@
      no-cycle -> fast NULL pe pahunch ke loop khatam -> false.
 
  ┌──────────────────────────────────────────────────────────────
+ │ ▸ FIND DUPLICATE NUMBER (LC-287)   [= DETECT CYCLE ka ARRAY-application]
+ └──────────────────────────────────────────────────────────────
+     SAAR: n+1 numbers, values 1..n, ek repeat. dhoondo. O(1) space + array READ-ONLY.
+     PEHCHAN: "array + duplicate + O(1)-space + no-modify" -> value ko POINTER samjho (i -> nums[i]).
+     = DETECT CYCLE, bas DELTA: (a) array-as-linked-list  (b) detect nahi, cycle-ENTRY chahiye -> PHASE-2.
+     KYUN CYCLE: values 1..n + n+1 slots -> koi value 2 baar point -> loop. entry-node = duplicate.
+     VISUAL: nums=[3,1,3,4,2]:  0->3->4->2->3->4->2...  (loop; entry=3=dup)
+     TEMPLATE:
+        int slow=0, fast=0;
+        slow=nums[slow]; fast=nums[nums[fast]];
+        while(slow!=fast){ slow=nums[slow]; fast=nums[nums[fast]]; }   // PHASE-1 meet
+        slow=0;
+        while(slow!=fast){ slow=nums[slow]; fast=nums[fast]; }          // PHASE-2 entry
+        return slow;
+     crux: phase-2 = meet aur 0 se entry-tak distance BARABAR (Floyd) -> 0-reset + 1-1 kadam.
+     FAMILY: FAST/SLOW (detect_cycle cousin) — wahi Floyd, array pe.
+
+ ┌──────────────────────────────────────────────────────────────
  │ ▸ PALINDROME LL (LC-234)
  └──────────────────────────────────────────────────────────────
      COMBO (3 tool jodo): middle -> 2nd half REVERSE -> head(front) & rev(back) saath chala ke compare.
