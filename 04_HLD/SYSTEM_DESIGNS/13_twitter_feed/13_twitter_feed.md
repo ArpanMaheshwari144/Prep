@@ -616,9 +616,9 @@ Day 3: Optimization
 
 ---
 
-# 8-STEP INTERVIEW FRAMEWORK DRIVE
+# 7-STEP RAIL DRIVE
 
-> (Framework: 04_HLD/INTERVIEW_FRAMEWORK.md) — file content se, more-explanation. READ-HEAVY. Interview me isi flow me bolo.
+> (RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md) — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck. READ-HEAVY. Interview me isi flow me bolo.
 
 ## STEP 1 — REQUIREMENTS
 ```
@@ -627,7 +627,7 @@ Day 3: Optimization
    CLARIFY:  kitne users/tweets? celeb (crore followers) handle karna? real-time ya thodi purani chalegi? media?
 ```
 
-## STEP 2 — SCALE / numbers
+## STEP 2 — ESTIMATE (scale / numbers)
 ```
    500M users, 500M tweets/day = ~5,800/sec. avg follow 200, 200 followers.
    celeb 100M+ followers (BIEBER problem).
@@ -641,7 +641,15 @@ Day 3: Optimization
    GET  /user/{id}/tweets           -> profile timeline
 ```
 
-## STEP 4 — HIGH-LEVEL boxes (arch)
+## STEP 4 — DATA MODEL + DB (KYUN)
+```
+   TWEET store:  Cassandra (wide-column, write-heavy, LSM-tree fast write, shard by user_id)
+   FEED inbox:   Redis list per user -> tweet_IDs only (LPUSH write / LRANGE read, LTRIM 800)
+   USER graph:   Graph DB (Neo4j) ya Cassandra (followers/following)
+   KYUN: tweets massive+simple+read-heavy -> NoSQL Cassandra . inbox turant chahiye -> Redis (in-memory).
+```
+
+## STEP 5 — HL BOXES (arch)
 ```
    User -> Route53 -> CDN(media) -> ALB -> [Tweet Svc (write) | Timeline Svc (read) | User/Graph Svc]
 
@@ -649,14 +657,6 @@ Day 3: Optimization
                         -> normal followers ke Redis inbox me LPUSH tweet_id
    READ:  Timeline Svc -> Redis inbox (push side) + Cassandra (celeb pull side)
    Graph DB -> follows/followers
-```
-
-## STEP 5 — DATA MODEL + DB (KYUN)
-```
-   TWEET store:  Cassandra (wide-column, write-heavy, LSM-tree fast write, shard by user_id)
-   FEED inbox:   Redis list per user -> tweet_IDs only (LPUSH write / LRANGE read, LTRIM 800)
-   USER graph:   Graph DB (Neo4j) ya Cassandra (followers/following)
-   KYUN: tweets massive+simple+read-heavy -> NoSQL Cassandra . inbox turant chahiye -> Redis (in-memory).
 ```
 
 ## STEP 6 — DEEP DIVE: feed FAST kaise? PUSH vs PULL (asli khel — options -> choose)
@@ -681,14 +681,11 @@ Day 3: Optimization
    PUSH<->PULL crossover:  10K threshold, follower cross -> auto-switch mode.
    SHARDING:  by user_id (profile fast, hot-user problem) + time sub-shard + GEO (India/EU/US: latency+GDPR+failure-isolation).
               hot-user REPLICATION (Bieber -> multiple shards -> load balanced).
-```
 
-## STEP 8 — WRAP
-```
-   WRITE: Tweet Svc -> Cassandra + Kafka -> Fanout -> Redis inbox (normal followers only).
-   READ:  Timeline Svc -> Redis inbox (push) + Cassandra (celeb pull) -> merge+sort+hydrate -> top 50.
-   HYBRID push/pull (Bieber problem) . hot-tweet cache (95% hit) . shard by user_id+time+geo . hot-user replicate.
-   IMPROVE: ML ranking (relevance feed), media CDN, trending/search.
+   WRAP: WRITE Tweet-Svc->Cassandra+Kafka->Fanout->Redis inbox (normal followers only).
+         READ Timeline-Svc->Redis inbox(push)+Cassandra(celeb pull)->merge+sort+hydrate->top 50.
+         HYBRID push/pull (Bieber) . hot-tweet cache (95% hit) . shard user_id+time+geo . hot-user replicate.
+         IMPROVE: ML ranking, media CDN, trending/search.
 ```
 
 ---

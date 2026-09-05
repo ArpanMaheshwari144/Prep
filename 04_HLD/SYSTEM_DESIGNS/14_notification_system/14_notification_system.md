@@ -526,9 +526,9 @@ CHANNELS:
 
 ---
 
-# 8-STEP INTERVIEW FRAMEWORK DRIVE
+# 7-STEP RAIL DRIVE
 
-> (Framework: 04_HLD/INTERVIEW_FRAMEWORK.md) — file content se, more-explanation. Interview me isi flow me bolo.
+> (RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md) — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck. Interview me isi flow me bolo.
 
 ## STEP 1 — REQUIREMENTS
 ```
@@ -539,7 +539,7 @@ CHANNELS:
    CLARIFY:  kaunse channels (push/email/sms)? notifications/user/day? priority tiers? real-time ya delay-ok?
 ```
 
-## STEP 2 — SCALE / numbers
+## STEP 2 — ESTIMATE (scale / numbers)
 ```
    100M users x 5 notif/user/day = 500M/day = ~5,800/sec AVERAGE.
    PEAK (sale day) 10x = ~58,000/sec.  fanout multiply (email+push+sms) -> aur zyada msg.
@@ -554,7 +554,15 @@ CHANNELS:
    CHANNELS:  Push (FCM/APNS) . Email (SES/SendGrid) . SMS (Twilio) . In-app (WebSocket) . Slack.
 ```
 
-## STEP 4 — HIGH-LEVEL boxes (arch)
+## STEP 4 — DATA MODEL + DB (KYUN)
+```
+   USER-PREF DB:  user_id -> channels-enabled, quiet-hours, unsubscribed-topics
+   TEMPLATE DB:   template_id -> format, i18n (Hindi/Eng), variables {{name}} {{orderId}}
+   TRACKING DB:   sent / delivered / opened / failed   (Cassandra)
+   KYUN: massive + simple + write-heavy + ACID na chahiye -> NoSQL (horizontal scale).
+```
+
+## STEP 5 — HL BOXES (arch)
 ```
    Producers (Order/Payment/User) -> KAFKA topic "notifications" -> Notification Service
         (consume: check user-pref -> load template -> decide channels -> FANOUT)
@@ -564,14 +572,6 @@ CHANNELS:
      Notif Svc -> pref+template+fanout (1 event -> N channel)
      per-channel queue+worker -> har channel apni speed/rate pe
      Tracking DB -> sent/delivered/failed
-```
-
-## STEP 5 — DATA MODEL + DB (KYUN)
-```
-   USER-PREF DB:  user_id -> channels-enabled, quiet-hours, unsubscribed-topics
-   TEMPLATE DB:   template_id -> format, i18n (Hindi/Eng), variables {{name}} {{orderId}}
-   TRACKING DB:   sent / delivered / opened / failed   (Cassandra)
-   KYUN: massive + simple + write-heavy + ACID na chahiye -> NoSQL (horizontal scale).
 ```
 
 ## STEP 6 — DEEP DIVE: reliable delivery (asli khel)
@@ -592,15 +592,12 @@ CHANNELS:
    THROTTLING:  provider rate-limits (SES 14/sec) -> per-worker token/leaky bucket -> 429 avoid.
    SCALE:  Kafka partitions x workers (100 part x 100 worker ~ 30k/sec). partition by hash(user_id) -> per-user ORDERING.
    DELIVERY STATUS:  accept != delivered -> provider WEBHOOK -> SENT vs DELIVERED/FAILED (Tracking update).
-```
 
-## STEP 8 — WRAP
-```
-   Event -> Kafka -> Notification Svc (pref+template) -> fanout per-channel queues -> workers -> providers -> user -> Tracking.
-   RELIABLE = retry+backoff+jitter + DLQ + idempotency(Redis).
-   PRIORITY = OTP fast-lane.   SCALE = partitions x workers, partition by user_id.
-   RESILIENCE = multi-provider + circuit-breaker + delivery-webhook.
-   IMPROVE: quiet-hours, i18n templates, analytics (open/click).
+   WRAP: Event->Kafka->Notif-Svc (pref+template)->fanout per-channel queues->workers->providers->user->Tracking.
+         RELIABLE = retry+backoff+jitter + DLQ + idempotency(Redis).
+         PRIORITY = OTP fast-lane.  SCALE = partitions x workers, partition by user_id.
+         RESILIENCE = multi-provider + circuit-breaker + delivery-webhook.
+         IMPROVE: quiet-hours, i18n templates, analytics (open/click).
 ```
 
 ---
