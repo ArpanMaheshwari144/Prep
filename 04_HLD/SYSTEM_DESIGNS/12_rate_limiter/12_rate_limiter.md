@@ -664,9 +664,9 @@ REJECTED (429 Too Many Requests):
 
 ---
 
-# 8-STEP INTERVIEW FRAMEWORK DRIVE
+# 7-STEP RAIL DRIVE
 
-> (Framework: 04_HLD/INTERVIEW_FRAMEWORK.md) — hand-notes se, more-explanation. Interview me isi flow me bolo.
+> (RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md) — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck. Interview me isi flow me bolo.
 
 ## STEP 1 — REQUIREMENTS
 ```
@@ -679,12 +679,12 @@ REJECTED (429 Too Many Requests):
    CLARIFY:  limit kis pe? (IP / user-id / API-key) . per-endpoint? . tiered (free/pro)?
 ```
 
-## STEP 2 — WHERE IT SITS (placement — by design)
+## STEP 2 — ESTIMATE (★ rate-limiter ka asli insight)
 ```
-   OPTIONS:  API Gateway | separate service | app library
-   WINNER:   API GATEWAY (most common)
-   # WHY front/gateway (reject EARLY): over-limit request ko backend tak jaane hi mat do.
-     reject hi karna hai -> uspe compute kyun kharch? -> backend resources bachte.
+   Rate limiter HAR request ke saamne baithta -> system ka SABSE HIGH-QPS component (gateway pe millions/sec).
+   ★ KEY LINE: "Ye storage-problem nahi, LATENCY problem hai — har request pe check <1ms hona chahiye,
+                warna poora API slow. Isliye in-memory Redis (counters), na DB."
+   -> per-key state chhota (counter + TTL), par ops-rate BAHUT high -> Redis atomic INCR.
 ```
 
 ## STEP 3 — API / RESPONSE
@@ -694,24 +694,25 @@ REJECTED (429 Too Many Requests):
    HEADERS:   X-RateLimit-Limit | X-RateLimit-Remaining | X-RateLimit-Reset (unix time)
 ```
 
-## STEP 4 — HIGH-LEVEL boxes (arch)
-```
-   User -> Route53 (DNS) -> CloudFront (CDN) -> ALB -> API Gateway (rate-limiter middleware) -> App
-                                                         |- Redis cluster (counters, atomic INCR)
-                                                         \- Kafka -> pattern-detection (abuse)
-   # WHY Redis (CENTRALIZED): multi-server -> har server apna count rakhe (s1=3, s2=4, s3=2)
-     -> total 9, par kisi ek server ko 5-limit cross dikha hi nahi -> limit TOOT.
-     -> SINGLE SOURCE OF TRUTH = Redis + atomic INCR.
-   # Route53 = AWS smart DNS: naam->IP + health-check (zinda server pe route) + nearest-region.
-```
-
-## STEP 5 — DATA MODEL (Redis key)
+## STEP 4 — DATA MODEL (Redis key)
 ```
    KEY:  rate:{endpoint}:{user} -> count     e.g. rate:login:192.168.1.5 -> 4
    TTL = window time (60 sec) -> key AUTO-EXPIRE (window reset ho jaata)
    ATOMIC (no race):  MULTI -> INCR key -> EXPIRE key 60 -> EXEC   (ek atomic unit)
    # WHY atomic: Redis SINGLE-THREADED -> ek time ek command -> INCR khud atomic (read-modify-write race nahi).
      multi-step (token-bucket: refill+check+decrement) -> LUA SCRIPT (poora ek atomic unit).
+```
+
+## STEP 5 — HL BOXES (arch + placement)
+```
+   User -> Route53 (DNS) -> CloudFront (CDN) -> ALB -> API Gateway (rate-limiter middleware) -> App
+                                                         |- Redis cluster (counters, atomic INCR)
+                                                         \- Kafka -> pattern-detection (abuse)
+   PLACEMENT (where it sits): API Gateway | separate service | app-library -> WINNER = API GATEWAY.
+     # WHY front/gateway (reject EARLY): over-limit request ko backend tak jaane hi mat do -> backend resources bachte.
+   # WHY Redis (CENTRALIZED): multi-server -> har server apna count (s1=3, s2=4, s3=2) -> total 9, par kisi ek ko
+     5-limit cross dikha hi nahi -> limit TOOT. -> SINGLE SOURCE OF TRUTH = Redis + atomic INCR.
+   # Route53 = AWS smart DNS: naam->IP + health-check (zinda server pe route) + nearest-region.
 ```
 
 ## STEP 6 — DEEP DIVE: Algorithms (4 methods)
@@ -750,13 +751,10 @@ REJECTED (429 Too Many Requests):
    LAYERED DEFENSE (rate-limit AKELA kyun nahi):
      - false positives (real-user fast clicks) . shared NAT IP (1 IP = 100 user) . legit bursts
      -> rate-limit + Kafka(pattern-detect) + WAF milke.
-```
 
-## STEP 8 — WRAP
-```
-   User -> Route53 -> CDN -> ALB -> API Gateway [rate limiter] -> Redis atomic-counter -> App
-   ALGO = token-bucket . KEY = rate:{endpoint}:{user} + TTL . 429 + Retry-After.
-   distributed -> region-sticky . reliable -> replica + fail-open + shard . layered -> rate-limit + Kafka + WAF.
+   WRAP: User->Route53->CDN->ALB->API-Gateway[rate limiter]->Redis atomic-counter->App.
+         ALGO=token-bucket . KEY=rate:{endpoint}:{user}+TTL . 429+Retry-After.
+         distributed->region-sticky . reliable->replica+fail-open+shard . layered->rate-limit+Kafka+WAF.
 ```
 
 ---
