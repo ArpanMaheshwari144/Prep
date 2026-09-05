@@ -276,6 +276,36 @@ Galti -> NAYI entry se correct karo (purani mitao mat) -> history bachi rahe = a
 
 ---
 
+## ★ REAL-WORLD ANCHOR — SCAM 1992 (Harshad Mehta): ye 4 control KYUN bane
+
+> (Arpan ne SCAM 1992 series dekhte-dekhte KHUD connect kiya — ledger concept ka asli WEIGHT yahin dikhta.)
+
+```
+   US WAQT (1990-91): computer nahi -> sab PAPER ledger + manual "Bank Receipt (BR)" (securities-held ka kaagaz-proof).
+   = ledger tha, par KAAGAZ pe + manual -> editable, forgeable, no real-time cross-check.
+
+   SCAM KA MECHANISM (literally "duplicate entry" NAHI -- usse gehra):
+     - FAKE / khaali BR: receipt jiske peeche actual securities the hi nahi (UNBACKED entry).
+     - bank-to-bank settlement paisa uske account se ghoom ke -> "float" (beech ka gap) me stock-market me laga diya.
+     - koi REAL-TIME verify / reconciliation nahi -> mahino chala, late pakda. (~Rs.4000 cr.)
+
+   ★ JO 4 CONTROL HUMNE DESIGN KIYE = THEEK ISKI GAIRHAAZRI ka fix:
+     fake/unbacked entry        -> INVARIANT sum(debits)=sum(credits) + backed-only (unbacked impossible)
+     paisa-gaya-securities-nahi -> ATOMIC settlement (both-or-neither; ACID / SAGA)
+     manual-editable BR         -> IMMUTABLE double-entry LEDGER + AUDIT-TRAIL (edit nahi, tamper-proof)
+     float/gap exploit, late    -> real-time RECONCILIATION (mismatch turant pakdo)
+
+   PAPER -> DIGITAL: ledger MARA nahi -> kaagaz-form mara. concept zinda, ab DB me (immutable, ACID).
+     1992-type (manual/float) scam ~impossible ab. PAR fraud khatam nahi -> shakal badli (cyber / insider / code-bug).
+     -> controls (immutable + audit + reconcile) AAJ BHI dil. BLOCKCHAIN = tamper-proof-ledger ki extreme
+        ("koi ek banda edit na kar sake" = Harshad-type trust-problem ka ultimate fix).
+
+   INTERVIEW-LINE: "Ledger immutable + reconciliation kyun? -- Scam 1992 exactly inki gairhaazri thi:
+     manual editable BRs + no real-time verify. India ka electronic-settlement / NSDL-demat / T+1 isi ke baad aaya."
+```
+
+---
+
 ## EK LINE MEIN (revision)
 ```
    Idempotency      -> same key, paisa ek baar (hashmap "pehle dekha?")
