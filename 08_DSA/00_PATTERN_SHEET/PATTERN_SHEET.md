@@ -1375,6 +1375,23 @@
      FAMILY: FAST/SLOW (detect_cycle cousin) — wahi Floyd, array pe.
 
  ┌──────────────────────────────────────────────────────────────
+ │ ▸ LINKED LIST CYCLE II (LC-142)   [= DETECT CYCLE + phase-2 ENTRY]
+ └──────────────────────────────────────────────────────────────
+     SAAR: cycle ho to uske START (entry) node ka pointer return; warna NULL.
+     = DETECT CYCLE (03), bas DELTA: true/false nahi, ENTRY chahiye -> PHASE-2.
+     = FIND-DUPLICATE (12) ka Node* version: nums[i] ki jagah ->next. SAME phase-2.
+     TEMPLATE:
+        slow=head, fast=head;
+        while(fast && fast->next){ slow=slow->next; fast=fast->next->next; if(slow==fast) break; }
+        if(slow!=fast) return NULL;          // no cycle
+        slow=head;
+        while(slow!=fast){ slow=slow->next; fast=fast->next; }   // PHASE-2 entry
+        return slow;
+     crux: meet aur head se entry-tak distance BARABAR (Floyd) -> head-reset + 1-1 kadam.
+     GOTCHA: phase-1 ke baad `slow!=fast` se distinguish -> cycle-mila vs fast-NULL-pe-khatam.
+     FAMILY: FAST/SLOW TRIPLET — detect_cycle(03) + find-duplicate(12) + cycle-II(13), teeno wahi Floyd.
+
+ ┌──────────────────────────────────────────────────────────────
  │ ▸ PALINDROME LL (LC-234)
  └──────────────────────────────────────────────────────────────
      COMBO (3 tool jodo): middle -> 2nd half REVERSE -> head(front) & rev(back) saath chala ke compare.

@@ -49,6 +49,13 @@ bool hasCycle(Node *head)
     return false;
 }
 
+// ---- ARPAN KI APPROACH (VERIFIED) ---- fast/slow (Floyd)
+//  slow 1 kadam (slow=slow->next), fast 2 kadam (fast=fast->next->next).
+//  cycle ho -> fast ghoom-ghoom ke slow ko loop-ke-andar PAKAD leta -> slow==fast -> true.
+//  cycle nahi -> fast (ya fast->next) NULL pe pahunch ke loop khatam -> false.
+//  GUARD `fast && fast->next` DONO zaroori (warna fast->next->next NULL pe crash).
+//  ★ ye base hai: ENTRY chahiye -> phase-2 (cycle II / find-duplicate). detect = phase-1 only.
+
 // ---------- helpers (boilerplate, chhoo mat) ----------
 // list banata; agar pos>=0 -> last node ka next = node at index pos (cycle).
 Node *buildListWithCycle(vector<int> v, int pos)
