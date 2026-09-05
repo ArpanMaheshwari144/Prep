@@ -10,6 +10,8 @@
 //  fast/slow (Floyd): slow 1 kadam, fast 2 kadam. agar cycle hai to fast
 //  ghoom-ghoom ke slow ko loop-ke-andar pakad lega -> slow==fast -> true.
 //  agar cycle nahi to fast NULL pe pahunch ke loop khatam -> false.
+//  GUARD `fast && fast->next` DONO zaroori (warna fast->next->next NULL pe crash).
+//  ★ ye PHASE-1 hai (detect only). ENTRY chahiye -> phase-2 (cycle-II #13 / find-duplicate #12).
 //
 // Tests (values, cyclePos):  cyclePos = -1 matlab NO cycle; warna us index pe tail jud jaata.
 //   [3,2,0,-4], pos=1   -> true
@@ -48,13 +50,6 @@ bool hasCycle(Node *head)
     }
     return false;
 }
-
-// ---- ARPAN KI APPROACH (VERIFIED) ---- fast/slow (Floyd)
-//  slow 1 kadam (slow=slow->next), fast 2 kadam (fast=fast->next->next).
-//  cycle ho -> fast ghoom-ghoom ke slow ko loop-ke-andar PAKAD leta -> slow==fast -> true.
-//  cycle nahi -> fast (ya fast->next) NULL pe pahunch ke loop khatam -> false.
-//  GUARD `fast && fast->next` DONO zaroori (warna fast->next->next NULL pe crash).
-//  ★ ye base hai: ENTRY chahiye -> phase-2 (cycle II / find-duplicate). detect = phase-1 only.
 
 // ---------- helpers (boilerplate, chhoo mat) ----------
 // list banata; agar pos>=0 -> last node ka next = node at index pos (cycle).

@@ -4,7 +4,7 @@
 // head diya. Agar list me CYCLE hai to us cycle ke START (entry) node ka
 // POINTER return karo. Cycle nahi -> return NULL.
 //
-// ---- SOCH ----
+// ---- ARPAN KI APPROACH (VERIFIED 5/5) ----
 //  = DETECT CYCLE (03) + DELTA: sirf true/false nahi, cycle-ENTRY node chahiye.
 //  ye WAHI phase-2 hai jo find-duplicate (12) me kiya — bas ab Node* pe (nums[i] ki jagah ->next).
 //  PHASE-1 (meet): slow=slow->next (1), fast=fast->next->next (2) -> slow==fast (cycle).
@@ -64,13 +64,6 @@ ListNode *detectCycle(ListNode *head)
     }
     return slow;
 }
-
-// ---- ARPAN KI APPROACH (VERIFIED 5/5) ---- Floyd 2-phase (find-duplicate ka Node* version)
-//  PHASE-1 (meet): slow=slow->next, fast=fast->next->next (guard fast && fast->next) -> slow==fast -> break (cycle).
-//                  loop bina-meet khatam (phir slow!=fast) -> NO cycle -> return NULL.
-//  PHASE-2 (entry): slow=head reset -> dono 1-1 kadam (slow->next, fast->next) -> jahan mile = cycle ENTRY.
-//  KYUN phase-2: meet-point se aur head se cycle-entry tak distance BARABAR (Floyd).
-//  = DETECT CYCLE (03) + phase-2  =  FIND-DUPLICATE (12) ka Node* roop (nums[i] -> ->next).
 
 // ---- test harness (list build with optional cycle) ----
 void check(vector<int> vals, int pos, int expected)
