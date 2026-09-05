@@ -1,6 +1,6 @@
 # Design a Distributed Cache — Visual System Design
 
-> **HLD Design 21 — component design (Redis-jaisa distributed cache).**
+> **HLD Design 11 — component design (Redis-jaisa distributed cache).**
 > Concept detail = FOUNDATIONS/04_caching.md. Yahan wahi cheezein DESIGN-format me (interview-delivery).
 
 ---

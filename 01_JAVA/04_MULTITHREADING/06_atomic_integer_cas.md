@@ -85,7 +85,7 @@ count.incrementAndGet();      // andar CAS -- atomic, taala nahi
 
 ## ★ PROJECT CONNECT — usercrud Idempotency (27-Aug, khud kiya)
 
-> Ye theory usercrud ke idempotency hands-on me LIVE chali. (poora = 04_HLD/SYSTEM_DESIGNS/17_payment_system.md)
+> Ye theory usercrud ke idempotency hands-on me LIVE chali. (poora = 04_HLD/SYSTEM_DESIGNS/07_payment_system/07_payment_system.md)
 
 ```
 IdempotencyController /pay:
