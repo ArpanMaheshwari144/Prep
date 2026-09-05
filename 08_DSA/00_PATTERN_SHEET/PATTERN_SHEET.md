@@ -2560,6 +2560,39 @@
        "bada number -> maxHeap" GALAT. bada -> BADI team -> minHeap. naam bhool, team soch.
 
      FAMILY: heap (kth-largest / k-sorted / merge-k) · running-value + do-heap-balance
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ REORGANIZE STRING (LC-767)  = MAX-HEAP + POP-TWO-AT-A-TIME
+ └──────────────────────────────────────────────────────────────
+     SAAR: chars rearrange -> koi 2 ADJACENT same na ho. na bane -> "".
+
+     PEHCHAN: "rearrange so adjacent not same" / "sabse-zyada wala spread karo"
+              -> MAX-HEAP {count,char}. (top-k-frequent ka cousin: wahan k nikaale,
+               yahan har round 2 nikaalo taaki adjacent-safe.)
+
+     FEASIBILITY (dry-run se khud nikli): maxCount-1 gaps, (n-maxCount) se bharo
+        -> (maxCount-1) <= (n-maxCount) tabhi possible.
+        aab: a2 -> 1 gap <= 1 baaki -> OK.   aaab: a3 -> 2 gap > 1 -> "".
+        (alag check na bhi rakho -> last-bacha-count>1 khud pakad leta.)
+
+     KYUN POP-TWO: 1 nikaal turant wapas -> phir wahi top -> "aa".
+        isliye har round DO alag (top-2) nikaalo, dono lagao -> safe.
+
+     VISUAL ( "aaabbb" ):        heap (3,a)(3,b)
+        R1: pop a,b -> "ab"   -> (2,a)(2,b)
+        R2: pop a,b -> "abab" -> (1,a)(1,b)
+        R3: pop a,b -> "ababab" -> empty      => "ababab"
+       ( "aaab": (3,a)(1,b) -> R1 "ab",(2,a) -> size1, count2>1 -> "" )
+
+     TEMPLATE:
+        while(heap.size()>1){ t1=pop; t2=pop; ans+=t1.ch; ans+=t2.ch;
+           if(--t1.cnt) push(t1); if(--t2.cnt) push(t2); }
+        if(heap.size()==1) return top.cnt>1 ? "" : ans+top.ch;
+        return ans;
+
+     crux: MAX-HEAP + har round 2 alag nikaalo + last-1 count>1 = impossible.
+
+     FAMILY: heap (top-k-frequent cousin) · greedy-place-most-frequent
 ```
 
 ---
