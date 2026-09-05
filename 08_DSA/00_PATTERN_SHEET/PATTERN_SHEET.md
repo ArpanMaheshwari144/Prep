@@ -53,6 +53,9 @@
 | prerequisites / cycle / ordering | **TOPO SORT (Kahn's)** | indegree + queue |
 | **"minimum X jisme condition sach"** / sorted-search | **BINARY SEARCH (on answer)** | lo/hi, feasible(mid)? |
 
+> ★ **"SORTED" FORK** (5-Sep, drill se): sorted dekh ke seedha BS mat firing karo — **DUSRA cue** padho:
+> pair / sum from **TWO ENDS** → **TWO-POINTER** (converge, O(n)) · **single position / threshold / "min X jisme condition sach"** → **BINARY SEARCH**. (two-sum-sorted = 2-pointer, NA BS.)
+
 **DRILL (roz 10 min):** bare problem → solve MAT karo → sirf: brute soch → "kya dohra raha" → is table se DS DERIVE karo → galat to signal wapas padho. Type-A = pehchan (strong). Type-B = DERIVE (banana hai). Dono = poora naksha.
 
 ---
