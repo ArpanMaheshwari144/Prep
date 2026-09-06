@@ -330,27 +330,16 @@ PROBLEM (multi-server):
 ```
 SOLUTIONS:
 
-┌────────────────────┬────────────┬─────────────┬─────────┐
-│  Approach          │ Coord      │ Bottleneck  │ Verdict │
-├────────────────────┼────────────┼─────────────┼─────────┤
-│ DB atomic counter  │ Per-write  │ Yes (DB)    │ Slow    │
-│ Redis INCR         │ Per-write  │ Yes (Redis) │ Better  │
-│ Range allocation   │ Per-batch  │ 1000× less  │ Good    │
-│ Snowflake IDs      │ NONE       │ NONE        │ Best    │
-└────────────────────┴────────────┴─────────────┴─────────┘
-```
+┌────────────────────┬────────────┬─────────────┬───────────┐
+│  Approach          │ Coord      │ Bottleneck  │ Verdict   │
+├────────────────────┼────────────┼─────────────┼───────────┤
+│ DB atomic counter  │ Per-write  │ Yes (DB)    │ Slow      │
+│ Redis INCR         │ Per-write  │ Yes (Redis) │ Better    │
+│ Range allocation   │ Per-batch  │ 1000× less  │ ★ WINNER  │
+└────────────────────┴────────────┴─────────────┴───────────┘
 
-```
-SNOWFLAKE ID — 64 bit:
-
-   ┌──────────────────┬──────────────┬─────────────┐
-   │ 41 bit timestamp │ 10 bit machine│ 12 bit seq  │
-   └──────────────────┴──────────────┴─────────────┘
-
-   Each server independently generates IDs
-   timestamp + machine_id ≠ same possible
-   = NO coordination needed
-   = 4M IDs/sec across 1024 servers
+   WINNER = Range allocation: har server ek block (1-1000, 1001-2000) le le ->
+   apne block se locally deta -> Redis pe har-request hit nahi -> counter+Base62 ka scale-version.
 ```
 
 ---
@@ -368,7 +357,7 @@ USER REQUEST FLOW:
                 │                   │
                 ▼                   ▼
         ┌───────────────┐    Counter Service
-        │ Validations:  │    (Snowflake)
+        │ Validations:  │    (range + Base62)
         │ Length OK   │           │
         │ Not reserved│           │
         │ No profanity│           │
@@ -424,7 +413,7 @@ RACE CONDITION (concurrent custom requests):
 
 3. COLLISION = DB UNIQUE-CONSTRAINT + retry (pre-read check NAHI):
    shortCode pe unique-constraint; insert fail ho to naya code + retry.
-   Counter/Snowflake se waise bhi unique-by-design -> constraint = safety net.
+   Counter (range+Base62) se waise bhi unique-by-design -> constraint = safety net.
 
 4. DELIVERY (jinhone round crack kiya):
    - Har design-decision ko REQUIREMENT se jodo, ek-ek functional-req karke.
@@ -446,7 +435,7 @@ RACE CONDITION (concurrent custom requests):
 │  App Servers    │  Spring Boot business logic  │
 │  Redis          │  Cache (95% hit rate)        │
 │  Cassandra      │  Permanent URL storage       │
-│  Counter Svc    │  Snowflake ID generation     │
+│  Counter Svc    │  Range-counter + Base62 (7-char code) │
 │  Kafka          │  Async analytics events      │
 │  Analytics DB   │  Separate query store        │
 └─────────────────┴─────────────────────────────┘
