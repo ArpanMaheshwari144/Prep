@@ -1079,6 +1079,23 @@
      same monotonic, bas array CIRCULAR. trick: loop 2 BAAR (i: 0..2n-1), access i % n (mod).
      doosre chakkar me aakhri elements ko SHURU ka greater mil jaata (wrap). baaki wahi; na mile -> -1.
 
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ ONLINE STOCK SPAN (LC-901)  = monotonic-stack + SUM-span DELTA
+ └──────────────────────────────────────────────────────────────
+   Q: STREAMING (next(price) call). span = aaj samet peeche kitne LAGATAAR din price <= aaj.
+   INPUT: next(100,80,60,70,60,75,85) -> 1,1,1,2,1,4,6
+   = monotonic stack ka DELTA -- 2 farak: (1) stack me INDEX nahi, PAIR {price, span}.
+     (2) top.price <= aaj -> pop karke uska span APNE span me JODO (index-answer nahi, SUM).
+   TEMPLATE:
+     int next(int price){
+        int span = 1;
+        while(!st.empty() && st.top().first <= price){ span += st.top().second; st.pop(); }
+        st.push({price, span});   return span;
+     }
+   DRY-RUN 75 (stack top pe ...60,70,60): 60<=75 span=2 pop · 70<=75 span=4 pop · (bacha) · 80>75 ruk -> span=4, push{75,4}.
+   KYUN span-JODO: pop hue chhote din KHUD apne peeche ka span nigal chuke -> unka span add = un sab din bhi cover (dobara peeche nahi jaana).
+   FAMILY: monotonic-stack (next-greater base) + "answer = accumulated SPAN" delta (index nahi, running count).
+
 ┌── (STANDALONE — apni alag trick) ─────────────────────────────
 └───────────────────────────────────────────────────────────────
 
