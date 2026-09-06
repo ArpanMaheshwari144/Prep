@@ -23,8 +23,10 @@
 
 ## STEP 3 — API design
 ```
-   POST /upload  {file}        -> turant trackingId wapas (BANANA -> POST)
-   GET  /status/{trackingId}   -> status poocho: VALIDATING/DONE/FAILED (LAANA -> GET)
+   POST /upload/init {fileName,size} -> presigned S3 URL + trackingId  (server sirf URL deta)
+   -> client SEEDHA S3 pe PUT kare (bytes app-server se nahi guzarte)
+   POST /upload/complete {trackingId} -> "uploaded, ab validate karo" (queue me daalo)
+   GET  /status/{trackingId}          -> status poocho: VALIDATING/DONE/FAILED (LAANA -> GET)
 ```
 
 ## STEP 4 — DATA MODEL + DB (KYUN bolo)
@@ -37,10 +39,11 @@
 
 ## STEP 5 — HL BOXES
 ```
-   Client -> API Gateway -> Upload Service -> [ file bytes -> S3 / object storage ]
-                                            -> [ metadata  -> DB ]
+   Client --presigned URL--> S3 (DIRECT, bytes app-server se nahi jaate)
+   Client -> API Gateway -> Upload Service -> [ metadata + presigned URL dena -> DB ]
                                             -> [ validation (2-3 sec) -> QUEUE -> Worker ]
-   KEY decision: file bytes (bada) -> S3 (DB nahi, DB slow+mehnga badi cheez ke liye)
+   KEY decision: file bytes (bada) -> client SEEDHA S3 (presigned URL); server = metadata + URL only
+                 (bytes app-server se guzaarna = anti-pattern: bandwidth double, server block)
                  metadata (chhota: naam/status/owner) -> DB
                  slow validation -> queue+worker (user wait na kare)
 ```
@@ -56,6 +59,20 @@
      flow: upload -> turant trackingId + "VALIDATING" -> queue -> worker validate ->
            status update (DONE/FAILED) -> user dekhe/notify
      -> user kabhi block nahi, scalable
+```
+
+## STEP 6b — PRESIGNED URL + MULTIPART (file-upload ka asli maal)
+```
+★ PRESIGNED URL (bada file ka sahi tareeka):
+   client server se short-lived signed URL maange -> SEEDHA S3 pe upload.
+   fayda: bytes app-server se nahi guzarte -> server free, bandwidth aadha, S3 scale khud.
+   server sirf metadata + URL deta (bytes ko haath nahi lagata).
+
+★ MULTIPART / RESUMABLE (bade file):
+   file ko chunks me todo (e.g. 5MB) -> har chunk alag upload -> S3 jodta (complete-multipart).
+   fail hua -> sirf woh chunk retry (poora file dobara nahi) = resumable.
+
+★ DEDUP (optional): file ka content-hash (MD5/SHA) -> already hai to dobara store nahi (storage bache).
 ```
 
 ## STEP 7 — BOTTLENECK / scale
