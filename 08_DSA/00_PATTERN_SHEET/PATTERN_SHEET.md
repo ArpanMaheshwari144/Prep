@@ -5,6 +5,26 @@
 > Neeche wali sheet PATTERNS deti hai (kya hote hain). Ye section DERIVATION deta hai — *"naya problem dekh ke kaise pata karun kaunsa lagega."*
 > Arpan-diagnosis: abhi tak "WHAT hashmap hai" pata tha, "WHEN/WHY lagta hai" kabhi nahi. Ye wahi bharta. Recognition pe depend NAHI — REASON karo.
 
+**STEP-0 — INPUT-SHAPE padho (story se PEHLE; disguise ke against #1 hathiyaar):**
+
+> Story jhooth bol sakti (disguise), input-shape aksar nahi. Input dekh ke family SHORTLIST karo, phir story ka transform kholo.
+
+| INPUT diya                           | → shortlist pattern |
+|--------------------------------------|---------------------|
+| **SORTED** array                     | two-pointer / binary-search (SORTED-FORK dekho) |
+| **"K"** (largest/closest/frequent)   | **HEAP** |
+| array + **target sum/relation**      | hashmap (unsorted) / two-pointer (sorted) |
+| **NEGATIVES** + subarray-sum         | **PREFIX+HASHMAP** (SW nahi — window toot-ta) |
+| **2D grid / matrix**                 | DFS/BFS (islands) / DP (paths) |
+| **tree / linked-list NODE**          | recursion/DFS / BFS / fast-slow |
+| **intervals [[s,e]]**                | sort + merge/sweep |
+| **prices/stock** + span/next-bigger  | monotonic STACK / kadane |
+| **"MIN/MAX value jo condition sach"**| **BINARY SEARCH on ANSWER** |
+| **edges / adjacency**                | graph BFS/DFS/topo |
+| string + **dictionary/words**        | DP (break) / Trie |
+
+> 2-LAYER method: (1) input-shape → family shortlist, (2) phir story ka transform kholo. **Input pehle, story baad me.** (6-Sep, Arpan-derived — disguised-problems ke live-test se.)
+
 **THE METHOD (har NAYE problem pe 4 step):**
 1. **BRUTE FORCE likho** — hamesha hota hai (partial answer + waqt).
 2. **Poocho:** *"main baar-baar SAME kya compute kar raha?"* → **REDUNDANCY** dhoondo.
