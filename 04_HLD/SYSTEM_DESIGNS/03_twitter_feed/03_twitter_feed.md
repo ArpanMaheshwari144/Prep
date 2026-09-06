@@ -135,8 +135,8 @@ SOLUTION: Bieber's tweets DON'T fanout.
 ┌────────────────────────┬────────────────────┐
 │  User type             │  Strategy           │
 ├────────────────────────┼────────────────────┤
-│ Normal (< 10K follow)  │ PUSH (fanout)       │
-│ Celebs (> 10K follow)  │ PULL (fetch on read)│
+│ Normal (< 10K followers)  │ PUSH (fanout)       │
+│ Celebs (> 10K followers)  │ PULL (fetch on read)│
 └────────────────────────┴────────────────────┘
 ```
 
@@ -665,8 +665,8 @@ Day 3: Optimization
         app khole -> apna inbox padho = INSTANT. PAR celeb (10 crore) -> 10 crore inbox likho -> SYSTEM CHOKED (Bieber).
    OPTION 2 — PULL (fanout-on-read): celeb tweet sirf DB me; follower app-khole pe FETCH. har read pe query (celeb ke liye theek).
    WINNER = HYBRID:
-        normal (< 10K follow) -> PUSH (inbox)
-        celeb  (> 10K follow) -> PULL (on read)
+        normal (< 10K followers) -> PUSH (inbox)
+        celeb  (> 10K followers) -> PULL (on read)
         READ = inbox(push) + celeb-tweets(pull) -> MERGE + SORT (time) + HYDRATE (id->content) -> top 50.
    -> trade-off bol ke choose = asli marks yahin.
 ```

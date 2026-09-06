@@ -336,7 +336,9 @@ Galti -> NAYI entry se correct karo (purani mitao mat) -> history bachi rahe = a
 
 ## STEP 2 — ESTIMATE (★ payment ka asli insight)
 ```
-   ~100M users. Transactions: peak bhi ~sau-do-sau/sec (millions NAHI).
+   ~100M users. Transactions: avg low-hundreds/sec, peak few-thousand/sec (sale/festival).
+   POINT: bhale hi throughput UPI-scale pe hazaaron TPS ho -> design CORRECTNESS-dominated hai
+   (paisa: idempotency + ACID + ledger), na ki raw throughput. (millions/sec NAHI.)
    ★ KEY LINE: "Payment high-THROUGHPUT problem nahi, high-CORRECTNESS problem hai —
                 isliye scale se pehle ATOMIC + IDEMPOTENT + LEDGER pe focus karunga."
    -> DB choice yahin se: SQL/RDBMS (ACID, strong-consistency) + append-only LEDGER (audit).

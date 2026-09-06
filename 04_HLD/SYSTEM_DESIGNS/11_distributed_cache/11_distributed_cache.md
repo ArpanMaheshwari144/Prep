@@ -113,9 +113,9 @@ Problem: **1 TB ek machine ki RAM me nahi aata** -> data todna padega.
 ## 8 DEEP DIVE — Stale data (cache purana -> update kaise)
 
 ```
-   WRITE strategy:
-      Cache-Aside   : DB update -> cache DELETE (invalidate) -> next read fresh
-      Write-Through : cache + DB dono sync (always fresh, slow write)
+   WRITE handling (cache ko fresh kaise rakhein):
+      Cache-Aside (read-pattern ka write-side): DB update -> cache DELETE (invalidate) -> next read fresh
+      Write-Through (asli write-strategy)      : cache + DB dono sync (always fresh, slow write)
 
    INVALIDATION (staleness control):
       • TTL       -> auto-expire (staleness ki max limit)
