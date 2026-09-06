@@ -295,8 +295,9 @@ SOLUTION: Idempotency key
 
 ```
 Implementation:
-   SET notification:abc123 sent EX 86400
-   On retry: EXISTS check → skip if yes
+   SET notification:abc123 sent NX EX 86400   (NX = set-only-if-absent = ATOMIC check+set)
+   -> return 1 (naya, ab bhejo) | return nil (pehle se hai, SKIP)
+   [ alag EXISTS-phir-SET race-prone -> NX ek hi atomic step me karta ]
 ```
 
 ---
@@ -409,7 +410,7 @@ Partition by user_id:
 ## 18 Throughput Visual
 
 ```
-100 orders/sec at peak
+100 events/sec (chhota demo number — headroom dikhane ko)
         ↓
 3x fanout (email+push+SMS)
         ↓
@@ -590,7 +591,7 @@ CHANNELS:
    PROVIDER FAILOVER + CIRCUIT-BREAKER: provider down/slow -> workers atke.
         multi-provider (SMS: Twilio + AWS-SNS) + circuit-breaker (CLOSED -> OPEN(fail-threshold) -> HALF-OPEN test -> CLOSED).
    THROTTLING:  provider rate-limits (SES 14/sec) -> per-worker token/leaky bucket -> 429 avoid.
-   SCALE:  Kafka partitions x workers (100 part x 100 worker ~ 30k/sec). partition by hash(user_id) -> per-user ORDERING.
+   SCALE:  Kafka partitions x workers (100 part x 100 worker = 100 x 1000/sec = ~100k/sec). partition by hash(user_id) -> per-user ORDERING.
    DELIVERY STATUS:  accept != delivered -> provider WEBHOOK -> SENT vs DELIVERED/FAILED (Tracking update).
 
    WRAP: Event->Kafka->Notif-Svc (pref+template)->fanout per-channel queues->workers->providers->user->Tracking.
