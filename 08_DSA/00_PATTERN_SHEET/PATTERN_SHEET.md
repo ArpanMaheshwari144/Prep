@@ -2538,6 +2538,25 @@
      O(n log k) (sort O(n log n) se behtar jab sirf k-th chahiye).  yehi pattern = "top-K" saare problems.
 
  ┌──────────────────────────────────────────────────────────────
+ │ ▸ K CLOSEST POINTS TO ORIGIN (LC-973, Medium)  = MAX-HEAP of size k
+ └──────────────────────────────────────────────────────────────
+     SAAR : origin (0,0) ke k SABSE PAAS points. paas = doori = x*x+y*y (√ NAHI, sirf compare).
+     = KTH-LARGEST ka MIRROR-TWIN. wahan k BADE (min-heap, chhota evict);
+       yahan k CHHOTE-dist (MAX-heap, sabse BADI-dist evict). "top-k chhote" -> MAX-heap of size k.
+     TEMPLATE (max-heap {dist, point}, size k):
+         priority_queue<pair<int, vector<int>>> pq;   // MAX-heap: sabse BADI dist top pe
+         for(auto &p : points){
+             int d = p[0]*p[0] + p[1]*p[1];           // √ skip -> compare-safe
+             pq.push({d, p});                          // {dist, point}
+             if(pq.size() > k) pq.pop();               // sabse door (top) EVICT -> k paas bache
+         }
+         while(!pq.empty()){ ans.push_back(pq.top().second); pq.pop(); }  // .second = {x,y} poora
+         return ans;
+     KEY : (1) dist = x²+y², √ ki zaroorat nahi (order same).  (2) k CHHOTE chahiye -> MAX-heap
+           (bada evict).  pair<int,vector<int>> = dist PEHLE (compare), point .second me poora.
+     O(n log k).  MIRROR-RULE: "k sabse BADE" -> MIN-heap ; "k sabse CHHOTE" -> MAX-heap.
+
+ ┌──────────────────────────────────────────────────────────────
  │ ▸ TOP K FREQUENT ELEMENTS (LC-347, Medium)  = MIN-HEAP size k on FREQUENCY
  └──────────────────────────────────────────────────────────────
      SAAR : k sabse ZYADA baar aane wale elements return karo (order matter nahi).
