@@ -1,8 +1,8 @@
-# URL Shortener — Visual System Design
+# URL Shortener — 7-STEP RAIL (single spine, revise top→bottom)
 
----
-
-## 1 Problem (1 line)
+> RAIL: Requirements → Estimate → API → Data-model → HL-boxes → Deep-dive → Bottleneck.
+> (framework: 04_HLD/HLD_APPROACH_DELIVERY.md). Arpan-derived 21-Jun; merged into clean 7-step 7-Sep.
+> Problem (1 line): long URL -> short 6-7 char code; short pe click -> original pe redirect (302).
 
 ```
    https://amazon.in/dp/B0BLKJSDKFJ934KJSDF/ref=...      (long)
@@ -11,501 +11,291 @@
                     bit.ly/abc123                         (short)
 ```
 
+---
+
+## STEP 1 — REQUIREMENTS (chup mat baitho, clarify karo)
+
 ```
-USE CASES:
-   ┌────────────────────┐
-   │ Twitter/SMS limits │
+FUNCTIONAL:
+   • long URL -> short URL banao (POST)
+   • short URL pe click -> original URL pe REDIRECT (GET -> 302)
+   • analytics / click-tracking dashboard
+   • (optional) custom alias, expiry
+
+NON-FUNCTIONAL:
+   • low latency (fast redirect — p99 < 200ms)
+   • high availability (redirect kabhi down na ho)
+   • READ-HEAVY (click >> create)
+
+CLARIFYING Qs (interviewer se poochho):
+   • custom short-URL allow karna hai?
+   • links expire hote ya hamesha rehte?
+   • analytics kitni real-time chahiye?
+```
+
+```
+USE CASES:                         WHY 302 (yahin flag kar dena):
+   ┌────────────────────┐             har hit SERVER pe aata -> click count milta
+   │ Twitter/SMS limits │             (301 permanent -> browser cache -> analytics MISS)
    │ Marketing tracking │
    │ QR codes / print   │
    │ Aesthetics         │
-   │ Future redirect    │
    └────────────────────┘
 ```
 
 ---
 
-## 2 Core Idea — HashMap Pattern
+## STEP 2 — ESTIMATE (scale / numbers — rough, exact pe mat atko)
 
 ```
-   ┌──────────────┬──────────────────────────┐
-   │  short_code  │  long_url                │
-   ├──────────────┼──────────────────────────┤
-   │  abc123      │  https://amazon.in/...   │
-   │  xyz789      │  https://flipkart.com/.. │
-   │  3xK9pQ2     │  https://google.com/...  │
-   └──────────────┴──────────────────────────┘
+ASSUMPTION (ek hi maano, poore note me consistent): 100M writes/DAY.
+TRICK: 1 din ~ 100,000 sec (10^5) -> easy division.
 
-         KEY              VALUE
-```
-
-```
-2 OPERATIONS:
-
-   POST /shorten              GET /abc123
-        │                          │
-        ▼                          ▼
-   generate code              lookup code
-   save (k,v)                 return long URL
-        │                          │
-        ▼                          ▼
-   return short URL          302 redirect
-```
-
----
-
-## 3 Short Code Generation — 3 Methods
-
-```
-┌─────────────────┬──────────────┬──────────────┬─────────────┐
-│   Method        │  Speed       │  Collision   │  Length     │
-├─────────────────┼──────────────┼──────────────┼─────────────┤
-│ Random          │  Fast        │  YES (check) │  6-7 chars  │
-│ Counter         │  Fast        │  NO          │  Variable   │
-│ Counter+Base62  │  Fast        │  NO          │  Compact    │
-└─────────────────┴──────────────┴──────────────┴─────────────┘
-
-         WINNER ──────────────────────────────► Counter+Base62
-```
-
----
-
-## 4 Base62 — Visual
-
-```
-INDEX → CHARACTER MAPPING
-
-   0─9     →   '0'─'9'        (10 chars)
-   10─35   →   'a'─'z'        (26 chars)
-   36─61   →   'A'─'Z'        (26 chars)
-                              ━━━━━━━━━━━
-                              Total: 62
-```
-
-```
-CONVERSION: 1,000,000,000 → ?
-
-   1B ÷ 62 = 16129032   r 16   → "g"
-   16M ÷ 62 = 260145    r 42   → "G"
-   260K ÷ 62 = 4195     r 55   → "T"
-   4195 ÷ 62 = 67       r 41   → "F"
-   67 ÷ 62 = 1          r 5    → "5"
-   1 ÷ 62 = 0           r 1    → "1"
-
-   Read remainders REVERSE:    "15FTGg"
-
-   1 BILLION  =  6 chars only
-```
-
-```
-COMPRESSION POWER:
-
-   62^7 = 3.5 TRILLION combinations in 7 chars
-   = 100+ years of users at scale
-```
-
----
-
-## 5 Storage Choice
-
-```
-ACCESS PATTERN:
-   INSERT once + SELECT WHERE short_code = ?
-   = Pure key-value lookup
-```
-
-```
-┌──────────────┬─────────────┬──────────────┬─────────────┐
-│  Database    │  Pattern    │  Scale       │  Verdict    │
-├──────────────┼─────────────┼──────────────┼─────────────┤
-│  MySQL       │  Relational │  Up to ~1B   │  Works      │
-│  Mongo       │  Document   │  Up to ~10B  │  Works      │
-│  Cassandra   │  Wide-col   │  Trillions   │  Optimal    │
-│  DynamoDB    │  K-V (AWS)  │  Trillions   │  Optimal    │
-│  Redis       │  In-memory  │  Cache layer │  Always +   │
-└──────────────┴─────────────┴──────────────┴─────────────┘
-```
-
----
-
-## 6 Capacity Estimation
-
-```
-ASSUMPTIONS (ek hi maano — 100M writes/DAY; poore note me consistent):
-   100M new URLs / DAY
-   Each URL clicked 100×   = read 100× write  (READ-HEAVY)
-   Storage retention       = 5 years
-```
-
-```
 WRITES (shorten):                READS (redirect):
    100M / day                       100× writes
-   ÷ ~100k sec/day                  ≈ 100k / sec
-   ≈ 1000 / sec
+   = 10^8 / 10^5                     ≈ 100,000 / sec
+   ≈ 1000 writes/sec
 
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                    READ : WRITE
-                       100 : 1
+                    READ : WRITE  =  100 : 1
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-         CACHING IS CRITICAL
+                 => READ-HEAVY => CACHING IS CRITICAL
 ```
 
 ```
 STORAGE (100M PER DAY -> ×365 din, NA ×12 months):
    100M/day × 365 × 5 yr  = ~180 BILLION URLs
    × 500 bytes            ≈ ~90 TB
-
-   ⚠ PEHLE GALAT tha: "5yr × 12mo × 100M × 500B = 3TB"
-     -> wo 100M/MONTH maan ke tha; upar 100M/DAY bola -> inconsistent.
-     Ab per-DAY consistent (×365) -> ~90 TB. Unit (day vs month) hi asli slip.
+   ⚠ slip-yaad: "5yr×12mo×100M×500B=3TB" GALAT tha (wo 100M/MONTH maan ke) -> per-DAY consistent = ~90 TB.
 ```
 
 ```
-★ SCALE = ASSUMPTION pe DEPEND karta (Hello-Interview + kal ka day/month sabak):
-   - Modest maano: 1 BILLION total URLs (100M daily-active = zyadatar READERS, writers kam)
-       -> 1B × 500B ≈ ~500 GB -> SINGLE DB me FIT -> sharding ki zaroorat NAHI.
-   - Aggressive maano: 100M writes/DAY -> billions -> ~90 TB -> shard by shortCode chahiye.
-   - DONO sahi -> farak sirf ASSUMPTION ka. INTERVIEW me: assumption BOLO + usse reason karo;
-     exact number pe mat atko (wahi kal wala "estimate obsess mat" sabak).
-   ★ DELIVERY-GEM: real-Bitly ~500GB single-DB me aata -> BINA-zaroorat SHARD mat karo
-     (over-engineering = common galti). Shard SIRF jab throughput/storage genuinely demand kare.
-```
+★ SCALE = ASSUMPTION pe depend (Hello-Interview + day/month sabak):
+   - Modest: 1 BILLION total URLs -> 1B × 500B ≈ ~500 GB -> SINGLE DB me FIT -> sharding NAHI.
+   - Aggressive: 100M writes/DAY -> billions -> ~90 TB -> shard by shortCode.
+   - DONO sahi -> farak sirf ASSUMPTION ka. INTERVIEW: assumption BOLO + usse reason karo; exact pe mat atko.
+   ★ DELIVERY-GEM: real-Bitly ~500GB single-DB me aata -> BINA-zaroorat SHARD mat karo (over-engineering = common galti).
 
-```
 ★ LATENCY (concrete NFR bolo): redirect p99 < 200ms.
-★ FAST LOOKUP: shortCode pe PRIMARY-KEY (B-tree) index -> O(log n) lookup (disk pe bhi tez).
-   + Redis-LRU cache hot-URLs -> zyadatar disk hit hi nahi.
+★ FAST LOOKUP: shortCode PRIMARY-KEY (B-tree) index -> O(log n) (disk pe bhi tez) + Redis-LRU hot-URLs.
 ```
 
 ---
 
-## 7 API Design — Just 2 Endpoints
+## STEP 3 — API DESIGN (just 2 endpoints)
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  POST /api/shorten                                      │
-├─────────────────────────────────────────────────────────┤
-│  Request:                                               │
-│  {                                                      │
-│    "long_url": "https://amazon...",                     │
-│    "custom_code": "arpan-resume"   (optional)           │
-│  }                                                      │
-│                                                         │
-│  Response:                                              │
-│  {                                                      │
-│    "short_url": "bit.ly/abc123",                        │
-│    "expires_at": "2031-05-08"                           │
-│  }                                                      │
-└─────────────────────────────────────────────────────────┘
+   POST /api/shorten                        GET /{code}   (e.g. /abc123)
+   ─────────────────                        ─────────────
+   Request:                                 Response:
+   {                                            HTTP 302 Found
+     "long_url": "https://amazon...",           Location: https://amazon...
+     "custom_code": "arpan-resume" (optional)
+   }                                        YAAD: banana=POST, laana=GET (swap mat karna)
+   Response:
+   {
+     "short_url": "bit.ly/abc123",
+     "expires_at": "2031-05-08"
+   }
 ```
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  GET /abc123                                            │
-├─────────────────────────────────────────────────────────┤
-│  Response:                                              │
-│      HTTP 302 Found                                     │
-│      Location: https://amazon...                        │
-│                                                         │
-│  301 (permanent) vs 302 (temporary)                     │
-│      ┌──────┬─────────────┬───────────────┐             │
-│      │ 301  │ Cache OK    │ NO tracking   │             │
-│      │ 302  │ No cache    │ Tracks clicks │ ← bit.ly    │
-│      └──────┴─────────────┴───────────────┘             │
-└─────────────────────────────────────────────────────────┘
-```
+301 (permanent) vs 302 (temporary):
+   ┌──────┬─────────────┬───────────────┐
+   │ 301  │ Cache OK    │ NO tracking   │
+   │ 302  │ No cache    │ Tracks clicks │ ← bit.ly uses 302
+   └──────┴─────────────┴───────────────┘
 
-```
-★ 302 ke DO reason bolo (Hello-Interview se):
+★ 302 ke DO reason bolo:
    1. CLICK-ANALYTICS  -> har hit server pe aata, count milta (301 cache -> nahi milta)
-   2. EXPIRY / UPDATABLE longUrl -> 301 browser CACHE kar leta, to jab URL
-        expire ho ya client longUrl badle -> 301 purana dikhaata (toot jaata).
+   2. EXPIRY / UPDATABLE longUrl -> 301 browser cache kar leta -> expire/change pe purana toot jaata;
       302 = har baar fresh -> safe.
 ```
 
 ---
 
-## ★ Route 53 kya hai (AWS DNS — sabse upar wala hop)
+## STEP 4 — DATA MODEL + DB CHOICE (KYUN bolo)
 
 ```
-   - AWS ki DNS service (naam "53" = DNS port 53). Amazon ne banaya.
-   - jo bhi user aaye, ye use SAHI IP tak ROUTE karta -> isiliye har HLD me sabse UPAR.
-   - DNS = PHONEBOOK: naam (amazon.in) -> IP address. computer IP samajhta hai, naam nahi -> koi translate kare = DNS.
-   - Route 53 ke kaam:
-       1. naam -> IP resolve (base DNS).
-       2. ★ HEALTH-CHECK + FAILOVER: dead server/LB se traffic HATA deta, sirf zinda pe bheje. (LB-SPOF fix isi se.)
-       3. latency/geo routing: user ko NEAREST + fastest region pe le jaaye.
-       4. domain registration (domain khareedna) bhi.
-   - flow: user domain type -> Route 53 (resolve + health-check) -> nearest HEALTHY LB/region -> CDN -> LB -> app.
-   crisp: Route 53 = AWS ka smart DNS -> naam->IP + health-check (zinda pe) + nearest-region routing.
+CORE = HashMap pattern (KEY -> VALUE):
+   ┌──────────────┬──────────────────────────┐
+   │  short_code  │  long_url                │
+   ├──────────────┼──────────────────────────┤
+   │  abc123      │  https://amazon.in/...   │
+   │  xyz789      │  https://flipkart.com/.. │
+   └──────────────┴──────────────────────────┘
+         KEY (partition)      VALUE
+
+SCHEMA:  short_code (PARTITION KEY) -> long_url  (+ created_at, expires_at, user_id?)
+   KEY = short_code KYUN: redirect hamesha short_code se aata (GET /{code}) ->
+         short_code pe partition -> SINGLE-partition point-read -> O(1), poora cluster scan nahi.
+```
+
+```
+ACCESS PATTERN:  INSERT once + SELECT WHERE short_code = ?  = pure key-value lookup (no joins).
+
+DB CHOICE:
+   ┌──────────────┬─────────────┬──────────────┬─────────────┐
+   │  Database    │  Pattern    │  Scale       │  Verdict    │
+   ├──────────────┼─────────────┼──────────────┼─────────────┤
+   │  MySQL       │  Relational │  Up to ~1B   │  Works      │
+   │  Mongo       │  Document   │  Up to ~10B  │  Works      │
+   │  Cassandra   │  Wide-col   │  Trillions   │  Optimal    │
+   │  DynamoDB    │  K-V (AWS)  │  Trillions   │  Optimal    │
+   │  Redis       │  In-memory  │  Cache layer │  Always +   │
+   └──────────────┴─────────────┴──────────────┴─────────────┘
+   WHY NoSQL (Cassandra/DynamoDB): simple key-based point-lookup, no joins, huge+write-heavy scale ->
+   horizontal scaling + high write throughput + tunable consistency. ("power" nahi -> ACCESS-PATTERN justify karta.)
 ```
 
 ---
 
-## 8 Architecture — Full Picture
+## STEP 5 — HIGH-LEVEL BOXES (architecture + flow)
 
 ```
                        USER
                         │
                         ▼
                  ┌─────────────┐
-                 │  Route 53   │ DNS
+                 │  Route 53   │ DNS (naam->IP + health-check + geo-routing)
                  └──────┬──────┘
-                        │
                         ▼
                  ┌─────────────┐
                  │ CloudFront  │ CDN (static assets)
                  └──────┬──────┘
-                        │
                         ▼
                  ┌─────────────┐
                  │     ALB     │ Load Balancer
                  └──┬───┬───┬──┘
-                    │   │   │
             ┌───────┘   │   └───────┐
             ▼           ▼           ▼
        ┌────────┐  ┌────────┐  ┌────────┐
-       │App S1  │  │App S2  │  │App S3  │  Spring Boot
-       └───┬────┘  └───┬────┘  └───┬────┘  (auto-scaling)
-           │           │           │
+       │App S1  │  │App S2  │  │App S3  │  Spring Boot (auto-scaling)
+       └───┬────┘  └───┬────┘  └───┬────┘
            └─────┬─────┴─────┬─────┘
-                 │           │
        ┌─────────┼───────────┼─────────────┐
        ▼         ▼           ▼             ▼
    ┌──────┐  ┌────────┐  ┌─────────┐  ┌─────────┐
    │REDIS │  │COUNTER │  │ KAFKA   │  │   DLQ   │
    │cache │  │service │  │ (async) │  └─────────┘
    └──┬───┘  └────────┘  └────┬────┘
-      │ miss                  │
-      ▼                       ▼
-   ┌────────────┐      ┌──────────────┐
-   │ CASSANDRA  │      │ Analytics    │
-   │ (urls DB)  │      │ Service + DB │
-   └────────────┘      └──────────────┘
+      │ miss                  ▼
+      ▼                 ┌──────────────┐
+   ┌────────────┐       │ Analytics    │
+   │ CASSANDRA  │       │ Service + DB │
+   │ (urls DB)  │       └──────────────┘
+   └────────────┘
 ```
 
 ```
-READ FLOW:                   WRITE FLOW:
-   USER click                    USER POST
-       │                             │
-       ▼                             ▼
-   LB → App                      LB → App
-       │                             │
-   Redis HIT? ─yes─► return       Counter Service
-       │                             │
-       no                         ID 123456 → "8m3"
-       ▼                             │
-   Cassandra ───► Redis cache       ▼
-       │                          Save to:
-       ▼                          • Redis
-   302 redirect                   • Cassandra
-       │                             │
-   ASYNC ► Kafka                     ▼
-   (analytics)                    Return short URL
+READ FLOW (cache-aside):              WRITE FLOW:
+   USER click                            USER POST
+       │                                     │
+   LB → App                              LB → App
+       │                                     │
+   Redis HIT? ─yes─► return              Counter Service (range+Base62)
+       │                                     │
+       no                                ID 123456 -> "8m3"
+       ▼                                     │
+   Cassandra ───► Redis populate            ▼
+       │                                  Save to: • Redis  • Cassandra
+       ▼                                     │
+   302 redirect                              ▼
+       │                                  Return short URL
+   ASYNC ► Kafka (analytics)
+```
+
+```
+★ Route 53 = AWS ka smart DNS: naam->IP + HEALTH-CHECK/failover (dead LB se traffic hata) + nearest-region routing + domain-registration. (LB-SPOF fix isi se.)
+
+COMPONENTS SUMMARY:
+   Route 53=DNS · CloudFront=CDN · ALB=LB · App=Spring Boot logic · Redis=cache(95% hit) ·
+   Cassandra=permanent store · Counter Svc=range+Base62(7-char) · Kafka=async analytics · Analytics DB=separate query store.
 ```
 
 ---
 
-## 9 Distributed Counter Problem
+## STEP 6 — DEEP DIVE: short code kaise GENERATE? (design ka DIL)
 
 ```
-PROBLEM (multi-server):
-
-   Server 1      Server 2      Server 3
-   counter=5     counter=5     counter=5
-       │             │             │
-       ▼             ▼             ▼
-   counter++     counter++     counter++
-   = 6           = 6           = 6
-       │             │             │
-       ▼             ▼             ▼
-   amazon        flipkart      google
-       │             │             │
-       └─────────────┼─────────────┘
-                     ▼
-              CODE "6" → 3 URLs!
-              COLLISION
+3 METHODS:
+   ┌─────────────────┬──────────────┬──────────────┬─────────────┐
+   │   Method        │  Speed       │  Collision   │  Length     │
+   ├─────────────────┼──────────────┼──────────────┼─────────────┤
+   │ MD5 / Random    │  Fast        │  YES (DB check har baar)│ 6-7 │
+   │ Counter         │  Fast        │  NO          │  Variable   │
+   │ Counter+Base62  │  Fast        │  NO          │  Compact    │ ★ WINNER
+   └─────────────────┴──────────────┴──────────────┴─────────────┘
+   WINNER = Counter+Base62: counter guaranteed UNIQUE (repeat nahi -> zero collision -> NO DB check) + chhota.
+   (Random/MD5 ko har baar "already exists?" DB-check chahiye -> extra read, slow at scale.)
 ```
 
 ```
+BASE62 (index -> char):
+   0─9   -> '0'─'9'   (10)      CONVERSION 1,000,000,000 -> ?
+   10─35 -> 'a'─'z'   (26)         baar-baar ÷62, remainders REVERSE padho -> "15FTGg"
+   36─61 -> 'A'─'Z'   (26)         => 1 BILLION = 6 chars only
+                      ─────      COMPRESSION: 62^7 = 3.5 TRILLION combos in 7 chars = 100+ yrs at scale
+                      Total 62
+```
+
+```
+DISTRIBUTED COUNTER PROBLEM (multi-server -> same counter -> collision):
+   S1 counter=5, S2 counter=5, S3 counter=5 -> sab ++ -> "6" -> 3 URLs = COLLISION!
+
 SOLUTIONS:
+   ┌────────────────────┬────────────┬─────────────┬───────────┐
+   │  Approach          │ Coord      │ Bottleneck  │ Verdict   │
+   ├────────────────────┼────────────┼─────────────┼───────────┤
+   │ DB atomic counter  │ Per-write  │ Yes (DB)    │ Slow      │
+   │ Redis INCR         │ Per-write  │ Yes (Redis) │ Better    │
+   │ Range allocation   │ Per-batch  │ 1000× less  │ ★ WINNER  │
+   └────────────────────┴────────────┴─────────────┴───────────┘
+   ★ RANGE ALLOCATION: central ticket/ID service har server ko ek BLOCK deta (1-1000, 1001-2000...);
+     server locally deta -> har-request coordination NAHI -> block khatam -> agla range maango.
+     restart pe kuch numbers waste = OK, collision nahi. (= counter+Base62 ka scale-version.)
+```
 
-┌────────────────────┬────────────┬─────────────┬───────────┐
-│  Approach          │ Coord      │ Bottleneck  │ Verdict   │
-├────────────────────┼────────────┼─────────────┼───────────┤
-│ DB atomic counter  │ Per-write  │ Yes (DB)    │ Slow      │
-│ Redis INCR         │ Per-write  │ Yes (Redis) │ Better    │
-│ Range allocation   │ Per-batch  │ 1000× less  │ ★ WINNER  │
-└────────────────────┴────────────┴─────────────┴───────────┘
+```
+CUSTOM SHORT CODES:
+   POST { custom_code? } -> CUSTOM: validate (length OK, not reserved, no profanity, unique) -> conflict? 409
+                         -> else AUTO-GENERATE (counter range+Base62) -> Save: Redis + Cassandra -> return.
+   RESERVED WORDS (block — system routes): admin, api, login, settings, help, docs, pricing, blog.
+   RACE (2 concurrent same custom): both check "available" -> both save -> dup.
+     FIX: DB UNIQUE constraint / INSERT IF NOT EXISTS (atomic).
+```
 
-   WINNER = Range allocation: har server ek block (1-1000, 1001-2000) le le ->
-   apne block se locally deta -> Redis pe har-request hit nahi -> counter+Base62 ka scale-version.
+```
+★ DEEP-DIVE GOTCHAS (interviewer kuredega):
+   1. CACHE-TTL: Redis me expiry na ho -> expired URL bhi serve ho jaaye = FR violate.
+        FIX: cache-entry TTL = URL-expiry (Redis SET ... EX <expiry>) -> apne-aap nikal jaaye.
+   2. COUNTER BATCHING: write-service Redis se EK BAAR 1000 counts (range) -> per-request Redis-hit nahi. (= range allocation)
+   3. COLLISION: shortCode pe UNIQUE-CONSTRAINT + retry (pre-read check NAHI). Counter se waise bhi unique-by-design -> constraint = safety net.
 ```
 
 ---
 
-## Custom Short Codes
+## STEP 7 — BOTTLENECK / SCALE / SPOF
 
 ```
-USER REQUEST FLOW:
+   rate limiting (abuse/hot-key rok) | READ -> read REPLICAS + cache | WRITE -> SHARDING (write-replica nahi hota)
+   shard by shortCode (billions ek DB nahi) | async analytics (Kafka -> redirect block na ho) | geo-routing (nearest region)
+   ★ SPOF: counter-coordinator khud -> 2-node (active-passive) ya range-allocation (already tolerate karta).
 
-   POST /api/shorten { custom_code?: "arpan-resume" }
-                          │
-                ┌─────────┴─────────┐
-                ▼                   ▼
-           CUSTOM PROVIDED      AUTO-GENERATE
-                │                   │
-                ▼                   ▼
-        ┌───────────────┐    Counter Service
-        │ Validations:  │    (range + Base62)
-        │ Length OK   │           │
-        │ Not reserved│           │
-        │ No profanity│           │
-        │ Unique      │           │
-        └───────┬───────┘           │
-                │                   │
-        Conflict? ──yes──► 409      │
-                │                   │
-                no                  │
-                │                   │
-                └────────┬──────────┘
-                         ▼
-                Save: Redis + Cassandra
-                         │
-                         ▼
-                Return short URL
-```
-
-```
-RESERVED WORDS LIST:
-   ┌──────┬──────┬─────────┬────────┐
-   │ admin│  api │  login  │settings│
-   │ help │ docs │ pricing │  blog  │
-   └──────┴──────┴─────────┴────────┘
-   = system routes — block these
-```
-
-```
-RACE CONDITION (concurrent custom requests):
-
-   T=0   User A: check "arpan" → available
-   T=0   User B: check "arpan" → available
-   T=1   User A: save → success
-   T=1   User B: save → DUPLICATE
-
-   FIX: DB UNIQUE constraint
-        INSERT IF NOT EXISTS (atomic)
+WRAP: Client->CDN->LB->App->Redis->NoSQL(sharded by shortCode); counter+Base62 (range); read-replicas+cache; async analytics.
+      Aage: custom URLs, expiry/TTL cleanup, geo-distribution.
 ```
 
 ---
 
-## ★ INTERVIEW GOTCHAS + NUGGETS (Hello Interview video + comments, 3-Sep)
-
+## ★ DELIVERY NUGGETS (round-crack karne walon se)
 ```
-1. CACHE-TTL GOTCHA (deep-dive, interviewer poochta):
-   Redis me expiry store nahi -> expired URL bhi cache se serve ho sakta
-   = TTL/expiry FUNCTIONAL-REQ violate.
-   FIX: cache-entry ka TTL = URL-expiry (Redis SET ... EX <expiry>) -> expire pe apne-aap nikal jaaye.
-
-2. COUNTER BATCHING (counter bottleneck fix):
-   Write-service Redis se EK BAAR me next 1000 counts le le (range) -> har request pe Redis-hit nahi.
-   = mera "range allocation" wahi hai. (Redis crash pe kuch range waste = OK, collision nahi.)
-
-3. COLLISION = DB UNIQUE-CONSTRAINT + retry (pre-read check NAHI):
-   shortCode pe unique-constraint; insert fail ho to naya code + retry.
-   Counter (range+Base62) se waise bhi unique-by-design -> constraint = safety net.
-
-4. DELIVERY (jinhone round crack kiya):
-   - Har design-decision ko REQUIREMENT se jodo, ek-ek functional-req karke.
-   - HLD = DISCUSSION, perfect script nahi. Interviewer ke saath decide karo.
-   - ESTIMATE pe mat atko: ek QUICK estimate (scale justify) -> aage. Exact number (1500 vs 2000 RPS) design nahi badalta. [par bilkul skip bhi mat karo -> Zomato-reject case]
+   • Har design-decision ko REQUIREMENT se jodo (ek-ek functional-req karke).
+   • HLD = DISCUSSION, perfect script nahi — interviewer ke saath decide karo.
+   • ESTIMATE: ek QUICK estimate (scale justify) -> aage. Exact (1500 vs 2000 RPS) design nahi badalta.
+     [par bilkul skip bhi mat karo -> Zomato-reject case]
+   • CORRECTIONS (soch sahi thi): GET/POST swap (banana=POST), "write replicas" -> sharding, KEY=shortCode.
 ```
-
----
-
-## Components Summary
-
-```
-┌─────────────────┬─────────────────────────────┐
-│  Component      │  Role                        │
-├─────────────────┼─────────────────────────────┤
-│  Route 53       │  DNS resolution              │
-│  CloudFront     │  CDN — static assets         │
-│  ALB            │  Load balancing              │
-│  App Servers    │  Spring Boot business logic  │
-│  Redis          │  Cache (95% hit rate)        │
-│  Cassandra      │  Permanent URL storage       │
-│  Counter Svc    │  Range-counter + Base62 (7-char code) │
-│  Kafka          │  Async analytics events      │
-│  Analytics DB   │  Separate query store        │
-└─────────────────┴─────────────────────────────┘
-```
-
----
-
-# 7-STEP RAIL DRIVE
-
-> Arpan ne KHUD derive kiya (21 Jun) — pehla full solo HLD drive. Micro-read ke liye.
-> (RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md) — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck.
-
-## STEP 1 — REQUIREMENTS clarify (chup mat baitho)
-```
-   FUNCTIONAL:  long URL -> short URL banao;  short pe click -> original pe redirect
-   NON-FUNCTIONAL:  fast redirect (low latency), high availability, READ-heavy
-   clarifying Qs:  custom short-URL allow? links expire hote ya hamesha?
-```
-
-## STEP 2 — ESTIMATE (scale / numbers)
-```
-   maano 100M writes/day.  TRICK: 1 din ~ 100,000 sec (10^5) -> easy division
-   100M/day = 10^8 / 10^5 = ~1000 writes/sec
-   read = 100x = ~100,000 reads/sec  -> READ-HEAVY (click >> create)
-   -> ye number drive karta: read-heavy = cache+CDN; billions = sharding
-```
-
-## STEP 3 — API design
-```
-   POST /shorten   {longUrl} -> {shortUrl}      (BANANA -> POST)
-   GET  /{code}    -> 302 redirect to longUrl   (LAANA  -> GET)
-   YAAD: banana=POST, laana=GET (swap mat karna)
-```
-
-## STEP 4 — DATA MODEL + DB choice (KYUN bolo)
-```
-   schema:  shortCode (KEY) -> longUrl   (+ createdAt, expiresAt)
-   KEY = shortCode (redirect mein short se long laana -> lookup by shortCode)
-   DB = NoSQL (DynamoDB/Cassandra): pure key-value, no joins, read-heavy -> fast key-lookup + horizontal scale
-```
-
-## STEP 5 — HL BOXES
-```
-   Client -> CDN -> LB -> App Servers -> Redis Cache -> Database
-   read (cache-aside): cache HIT -> turant return | MISS -> DB se laao -> cache daalo -> return
-   HOT URLs hi cache (billions cache nahi -> popular wale)
-```
-
-## STEP 6 — DEEP DIVE: short code kaise generate? (3 options)
-```
-   1. MD5 HASH       -> collision ho sakta + compute cost
-   2. RANDOM (62 ch) -> collision check ke liye HAR BAAR DB hit (slow)
-   3. COUNTER + Base62 (BEST) -> counter(1,2,3) -> Base62 -> code
-        guaranteed UNIQUE (counter repeat nahi -> zero collision -> no DB check) + chhota
-        counter SPOF na bane -> har server ko RANGE do (1-1000, 1001-2000)
-   -> WINNER: counter + Base62
-```
-
-## STEP 7 — BOTTLENECK / SCALE
-```
-   rate limiting (abuse rok) | READ -> read REPLICAS | WRITE -> SHARDING (write-replicas nahi hota)
-   shard by shortCode (billions ek DB nahi) | async analytics (click-count queue -> redirect block na ho)
-   geo-routing (nearest region, latency kam)
-
-   WRAP: Client->CDN->LB->App->Redis->NoSQL(sharded); counter+Base62; read-replicas+cache; async analytics.
-         Aage: custom URLs, expiry/TTL cleanup, geo-distribution.
-```
-
-> CORRECTIONS seekhi (soch sahi thi): GET/POST swap (banana=POST), "write replicas" -> sharding,
-> KEY=shortCode. Asli reasoning (read-heavy, NoSQL+kyun, hot-cache, counter+Base62, shard) khud sahi derive.
 
 ---
 
