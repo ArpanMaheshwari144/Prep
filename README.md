@@ -20,6 +20,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · transactions · isolation · deadlock |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | STAR stories (JP) |
 | 11 | [**11_GIT**](11_GIT) | Git workflows |
+| 12 | [**12_CODE_REVIEW**](12_CODE_REVIEW) | PR-review round: 5-bucket checklist + drills |
 
 > ★ Roz-revise: **[DSA Pattern Sheet](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** · **[HLD Approach Playbook](04_HLD/HLD_APPROACH_DELIVERY.md)**
 
@@ -197,6 +198,12 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ## [11_GIT](11_GIT)
 
 - [01 line-endings CRLF-vs-LF](11_GIT/01_line_endings_CRLF_vs_LF.md) · [02 stacked-PRs](11_GIT/02_stacked_PRs.md) · [03 merge-vs-rebase](11_GIT/03_merge_vs_rebase.md)
+
+---
+
+## [12_CODE_REVIEW](12_CODE_REVIEW)
+
+- [PR-review checklist (5-bucket) + worked drills](12_CODE_REVIEW/PR_REVIEW_CHECKLIST.md) — JP round-2 code-review: security · java-traps · resource · db · design
 
 ---
 
