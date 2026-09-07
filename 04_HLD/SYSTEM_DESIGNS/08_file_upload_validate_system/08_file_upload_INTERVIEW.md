@@ -59,10 +59,8 @@
      flow: upload -> turant trackingId + "VALIDATING" -> queue -> worker validate ->
            status update (DONE/FAILED) -> user dekhe/notify
      -> user kabhi block nahi, scalable
-```
 
-## STEP 6b — PRESIGNED URL + MULTIPART (file-upload ka asli maal)
-```
+--- PRESIGNED URL + MULTIPART (file-upload ka asli maal) ---
 ★ PRESIGNED URL (bada file ka sahi tareeka):
    client server se short-lived signed URL maange -> SEEDHA S3 pe upload.
    fayda: bytes app-server se nahi guzarte -> server free, bandwidth aadha, S3 scale khud.
