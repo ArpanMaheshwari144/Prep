@@ -95,8 +95,6 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ┌──────────────┐   ┌──────────┐   ┌─────┐   ┌────────────┐   ┌───────────┐   ┌────────────┐   ┌─────────────┐
 │ Requirements │ → │ Estimate │ → │ API │ → │ Data model │ → │ HL boxes  │ → │ Deep-dive  │ → │ Bottleneck  │
 └──────────────┘   └──────────┘   └─────┘   └────────────┘   └───────────┘   └────────────┘   └─────────────┘
-
-  har box = KYA (component) + KYUN (1 line).    atko? → freeze nahi, 4-move: reason-aloud / assume+move / clarify-Q / honest+approach.
 ```
 
 - ★ **[HLD_APPROACH_DELIVERY](04_HLD/HLD_APPROACH_DELIVERY.md)** — "kaise bolna" playbook (rail · meta-moves · anjaan-design · darr) · **[INTERVIEW_FRAMEWORK](04_HLD/INTERVIEW_FRAMEWORK.md)** · **[SPEAKING_VOCAB](04_HLD/SPEAKING_VOCAB.md)**
