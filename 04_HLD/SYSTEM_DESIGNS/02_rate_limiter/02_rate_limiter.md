@@ -1,760 +1,212 @@
-# Rate Limiter — Visual System Design
+# Rate Limiter — 7-STEP RAIL (single spine, revise top→bottom)
 
----
-
-## 1 Problem (Analogy)
-
-```
-   PUBLIC WATER TAP
-        │
-   Normal user: 1 bottle bhar ke gaya
-   Pagal user: 10 trucks le aaya, hours tak
-                    │
-                    ▼
-              Saara paani khatam
-              Real users vanchit
-                    │
-                    ▼
-        Park Rule: "5 bottles/day per person"
-                    │
-                    ▼
-              = RATE LIMITING
-```
+> RAIL: Requirements → Estimate → API → Data-model → HL-boxes → Deep-dive → Bottleneck.
+> (framework: 04_HLD/HLD_APPROACH_DELIVERY.md). Merged into clean 7-step 7-Sep. HANDS-ON demos = end me (preserve).
+> Problem (1 line): over-limit requests REJECT (429), legit ALLOW. e.g. "5 login/min per IP".
 
 ```
-SAME for APIs:
-
-   Normal user → 2 login attempts → done
-   Hacker bot → 10K attempts/sec → brute force
-                  │
-                  ▼
-            Rate limit:
-            "5 attempts/min per IP"
+   PUBLIC WATER TAP analogy:
+   Normal user: 1 bottle | Pagal user: 10 trucks, hours tak -> saara paani khatam, real users vanchit
+   -> Park Rule "5 bottles/day per person" = RATE LIMITING
+   SAME for APIs: hacker bot 10K login/sec (brute force) -> limit "5/min per IP".
 ```
 
 ---
-
-## 2 Real Use Cases
-
-```
-┌─────────────────────────┬──────────────────────────┐
-│  Use Case               │  Limit                    │
-├─────────────────────────┼──────────────────────────┤
-│  Login attempts         │  5/min per IP            │
-│  Password reset         │  3/hour per email        │
-│  Public API endpoint    │  100/min per API key     │
-│  Signup creation        │  10/day per IP           │
-│  Search queries         │  60/min per user         │
-└─────────────────────────┴──────────────────────────┘
-```
-
----
-
-## 3 Core Idea — Visual
-
-```
-   USER REQUEST
-        │
-        ▼
-   ┌─────────────────────┐
-   │   RATE LIMITER      │  ← gatekeeper
-   │   (counter check)   │
-   └──────────┬──────────┘
-              │
-       ┌──────┴──────┐
-       ▼             ▼
-   limit OK?      limit hit?
-       │             │
-       ▼             ▼
-   forward      REJECT
-   to API       (429 Too Many Requests)
-```
-
----
-
-## 4 Where It Sits — 3 Options
-
-```
-┌────────────────────┬───────────────────┬─────────────┐
-│  Placement         │  Pros              │  Cons       │
-├────────────────────┼───────────────────┼─────────────┤
-│ API Gateway        │ Built-in, easy     │ Vendor lock │
-│ Separate service   │ Custom logic       │ Extra hop   │
-│ App Server library │ No extra service   │ Inconsistent│
-└────────────────────┴───────────────────┴─────────────┘
-
-         WINNER ──────► API Gateway (most common)
-```
-
-```
-   ★ WHY front/gateway (reject-EARLY reasoning — 8-Jul discussion):
-   - rate limiter itna AAGE (edge/gateway) isliye -> over-limit request ko BACKEND tak jaane hi mat do.
-   - reject EARLY -> backend ka compute/resources BACHTE. jise reject hi karna hai, uspe kaam kyun?
-   - agar deep (har service ke andar) limit karo -> request pehle hi poore system me ghoom ke resource kha chuki.
-   - (optional layering: coarse GLOBAL limit gateway pe + finer PER-SERVICE limit -> but primary = gateway.)
-```
-
-```
-WHY REDIS (centralized counter):
-
-   Server 1: count = 3
-   Server 2: count = 4     ← each thinks alone
-   Server 3: count = 2
-                              Total real = 9
-                              Limit = 5
-                              break ho raha
-
-   FIX:
-   ┌──────┐  ┌──────┐  ┌──────┐
-   │ S1   │  │ S2   │  │ S3   │
-   └──┬───┘  └──┬───┘  └──┬───┘
-      └─────────┼─────────┘
-                ▼
-         ┌────────────┐
-         │   REDIS    │  ← single source of truth
-         │  (counter) │     atomic INCR
-         └────────────┘
-```
-
----
-
-## 4.5 ★ NFR + FAIL-OPEN + RELIABILITY (design drill 3-Jul — was missing)
-
-```
-   NFR (kaunsa critical):
-   - ★ LOW LATENCY = SABSE critical. rate limiter HAR request ke saamne baithta ->
-     thoda bhi slow -> POORA API slow. isliye Redis (in-memory, ~microsec).
-   - FAIL-OPEN = agar rate limiter / Redis DOWN ho jaaye -> requests ALLOW kar do (block NAHI).
-     kyun: saare LEGIT users block karna >> thodi der abuse chalne dena.
-     (fail-CLOSED = block all -> sirf jab security critical, e.g. payment.)
-
-   RELIABILITY (Redis reflexes):
-   - Redis DOWN     -> REPLICA le le (HA/failover). replica bhi gaya -> FAIL-OPEN (last resort).
-   - Redis OVERLOAD -> SHARDING: user_id/region se alag Redis nodes (A-M->R1, N-Z->R2) -> load divide.
-                       (yeh CDN NAHI -> CDN static files ke liye. counters ke liye SHARDING.)
-
-   crisp: latency critical -> Redis. down -> replica -> fail-open. overload -> shard.
-          (shard = scale + isolation | replica = recovery — dono milke reliable.)
-```
-
----
-
-## 4.6 ★ SPOF-CHAIN — har layer redundant (deep-dive, Arpan-derived 15-Jul)
-
-```
-   PRINCIPLE: koi bhi critical cheez ka SINGLE instance mat rakho. har SPOF -> >=2 + AUTO-FAILOVER.
-              chain apne WEAKEST-single-point pe tootti -> har layer replicate: LB, Redis, app, DB.
-
-   - REDIS down  -> replica AUTO-PROMOTE (Redis Sentinel / cluster failover). seva chalti rahti.
-                    poori Redis layer gayi (primary + saare replica) -> TAB FAIL-OPEN (last resort).
-                    order: replica failover -> phir fail-open.
-
-   - LB down     -> kabhi 1 LB nahi chalate. multiple LB (active-active / active-passive).
-                    health-check + failover: dead LB detect -> traffic doosre pe.
-                       (Route 53 health-check dead LB se traffic hata deta, YA floating/Virtual-IP standby LB pe shift.)
-                    cloud ALB khud MULTI-AZ + internally redundant -> ek box nahi -> isse SPOF nahi maante.
-
-   - ★ MECHANISM (zaroori): replicate kar diya, par koi failure DETECT karke REDIRECT kare =
-                    health-check + failover (Redis=Sentinel, LB=Route53/VIP). warna sirf replica bekaar.
-
-   - TOP = DNS (Route 53) globally distributed/managed -> khud single-box nahi -> top-level SPOF nahi banta.
-
-   crisp: Redis down -> replica -> (last) fail-open | LB down -> dusra LB (health-check/VIP) | har layer redundant + auto-failover.
-```
-
----
-
-## 5 Algorithms — 4 Methods
-
-### Token Bucket
-
-```
-Tokens auto-add: 1/sec
-       │
-       ▼
-   ┌──────────┐
-   │  BUCKET  │
-   │  │   max 10 tokens
-   │ (max 10) │
-   └────┬─────┘
-        │
-   Req aayi → token le → allow
-                │
-                ▼
-            (token used)
-
-   Bucket empty? → REJECT
-```
-
-### Leaky Bucket
-
-```
-   Reqs aaye ──→ ┌──────────┐
-                 │  BUCKET  │
-                 │    │
-                 └────┬─────┘
-                      │ hole (1/sec)
-                      ▼
-                Process at FIXED rate
-
-   Bucket FULL → overflow → REJECT
-```
-
-### Fixed Window Counter
-
-```
-   Time:  10:00───────10:01───────10:02
-   Count:    [0→5]      [0→5]      [0→5]
-              │          │          │
-              reset      reset      reset
-```
-
-**Edge spike problem:**
-```
-   10:00:59 → 5 reqs
-   10:01:00 → 5 reqs (new window)
-   = 10 reqs in 2 seconds!
-```
-
-### Sliding Window
-
-```
-   Time:    │←──── 60 seconds ────→│ NOW
-            │                       │
-   Reqs:    ▓ ▓ ▓ ▓     ▓     ▓ ▓ ▓
-
-   Count last 60 sec = 8
-   Limit = 5? → REJECT
-```
-
-#### Bus Stand Analogy (How Window ACTUALLY Shifts)
-
-```
-Watchman bus stand pe register rakhta:
-   Rule: "Last 1 hour mein 5 passenger MAX"
-
-   ┌─────────┬───────────┐
-   │ Time    │  Name     │
-   ├─────────┼───────────┤
-   │ 10:05   │  Ramesh   │
-   │ 10:15   │  Suresh   │
-   │ 10:30   │  Mukesh   │
-   │ 10:45   │  Naresh   │
-   │ 10:55   │  Dinesh   │
-   └─────────┴───────────┘
-```
-
-```
-CASE 1: Naya passenger 11:00 pe aaya
-   Watchman: "abhi 11:00, 60 min peeche = 10:00"
-   Count entries 10:00 ke baad = 5
-   Limit hit → REJECT
-
-CASE 2: Naya passenger 11:10 pe aaya
-   Watchman: "abhi 11:10, 60 min peeche = 10:10"
-   10:05 wala AB OUT (60 min se purana)
-   Count = 4
-   Limit OK → ALLOW + add 11:10
-```
-
-```
-WINDOW SHIFT KAISE HOTI:
-
-   NOT timer-based:
-        "Har second window 1 step slide"
-        (background job NAHI hoti)
-
-   ON-DEMAND (request-driven):
-        "Naya request aata = watchman ABHI se 60 min peeche dekhta"
-        Calculation fresh = window naturally shift
-
-   = Same end result
-   = Trigger = request arrival, not clock
-```
-
-```
-TIME:  10:00 ──────── 10:30 ──────── 11:00 ──────── 11:30
-                                         │
-                                  passenger aaya 11:00 pe
-                                         │
-                                         ▼
-                            Window CALCULATE hua:
-                        ←──── 60 min back ────┤
-                       10:00              11:00
-
-
-TIME:  10:00 ──────── 10:30 ──────── 11:00 ──────── 11:30
-                                                 │
-                                          passenger aaya 11:10 pe
-                                                 │
-                                                 ▼
-                                  Window CALCULATE hua:
-                              ←──── 60 min back ────┤
-                             10:10              11:10
-```
-
-### Comparison Table
-
-```
-┌──────────────────┬───────────┬─────────┬──────────┬─────────┐
-│  Algorithm       │ Bursts    │ Smooth  │ Memory   │ Common  │
-├──────────────────┼───────────┼─────────┼──────────┼─────────┤
-│ Token Bucket     │ YES    │ Variable│ Low      │ AWS,Stripe│
-│ Leaky Bucket     │ NO     │ YES     │ Low      │ Throttle │
-│ Fixed Window     │ Edge fail │ NO      │ Lowest   │ GitHub  │
-│ Sliding Window   │ Smooth    │ YES     │ High     │ Cloudflare│
-└──────────────────┴───────────┴─────────┴──────────┴─────────┘
-
-         MOST COMMON ─────► Token Bucket
-
-   ★ WHY TOKEN BUCKET (interview default-pick):
-     - real traffic SPIKY hota (user 10 req ek-saath, phir shaant) -> token bucket JAMA-tokens se
-       ye burst allow karta = user-friendly. (bucket bhara -> ek-saath nikal jaao.)
-     - Leaky Bucket -> sabko CONSTANT-rate pe smooth karta -> burst BLOCK (real-user ko laggy lagta).
-     - Sliding Window -> accurate PAR har request ka timestamp -> MEMORY-heavy.
-     - Fixed Window -> sasta par WINDOW-EDGE pe double-burst (10:00:59 + 10:01:00 = 2x limit ek-saath).
-     => default = TOKEN BUCKET: burst-friendly + low-memory (AWS/Stripe yehi use karte).
-```
-
----
-
-## ★ Route 53 kya hai (AWS DNS — sabse upar wala hop)
-
-```
-   - AWS ki DNS service (naam "53" = DNS port 53). Amazon ne banaya.
-   - jo bhi user aaye, ye use SAHI IP tak ROUTE karta -> isiliye har HLD me sabse UPAR.
-   - DNS = PHONEBOOK: naam (amazon.in) -> IP address. computer IP samajhta hai, naam nahi -> koi translate kare = DNS.
-   - Route 53 ke kaam:
-       1. naam -> IP resolve (base DNS).
-       2. ★ HEALTH-CHECK + FAILOVER: dead server/LB se traffic HATA deta, sirf zinda pe bheje. (LB-SPOF fix isi se.)
-       3. latency/geo routing: user ko NEAREST + fastest region pe le jaaye.
-       4. domain registration (domain khareedna) bhi.
-   - flow: user domain type -> Route 53 (resolve + health-check) -> nearest HEALTHY LB/region -> CDN -> LB -> app.
-   crisp: Route 53 = AWS ka smart DNS -> naam->IP + health-check (zinda pe) + nearest-region routing.
-```
-
----
-
-## 6 Architecture — Full Picture
-
-```
-                  USER
-                   │
-                   ▼
-            ┌──────────────┐
-            │  Route 53    │
-            └──────┬───────┘
-                   │
-                   ▼
-            ┌──────────────┐
-            │  CloudFront  │
-            └──────┬───────┘
-                   │
-                   ▼
-            ┌──────────────┐
-            │     ALB      │
-            └──────┬───────┘
-                   │
-                   ▼
-            ┌──────────────────────┐
-            │  API GATEWAY         │
-            │  ┌────────────────┐  │
-            │  │ Rate Limiter   │──┼──┐
-            │  │ Middleware     │  │  │
-            │  └────────────────┘  │  │
-            └──────────┬───────────┘  │
-                       │              │
-            ALLOWED ◄──┴──► REJECTED  │
-                       │              │
-                       ▼              │
-                ┌──────────────┐      │
-                │  App Servers │      │
-                └──────────────┘      │
-                                      ▼
-                              ┌──────────────┐
-                              │ REDIS CLUSTER│
-                              │ (counters)   │
-                              └──────────────┘
-                                      │
-                                      ▼
-                              ┌──────────────┐
-                              │  Kafka →     │
-                              │  Pattern     │
-                              │  Detection   │
-                              └──────────────┘
-```
-
----
-
-## 7 Request Flow Inside Rate Limiter
-
-```
-Request: "User X wants /api/login"
-              │
-              ▼
-   ┌──────────────────────────┐
-   │ 1. Identify user         │
-   │    (IP / user_id /       │
-   │     API key)             │
-   └────────────┬─────────────┘
-                │
-                ▼
-   ┌──────────────────────────┐
-   │ 2. Redis pe key check:   │
-   │    "rate:login:userX"    │
-   │    INCR atomic           │
-   └────────────┬─────────────┘
-                │
-                ▼
-   ┌──────────────────────────┐
-   │ 3. Count > limit?        │
-   └────────────┬─────────────┘
-                │
-       ┌────────┴────────┐
-       ▼                 ▼
-     YES               NO
-       │                 │
-       ▼                 ▼
-   REJECT 429         FORWARD
-   + Retry-After      to API
-```
-
----
-
-## 8 Redis Keys + Atomic Ops
-
-```
-KEY FORMAT:
-   rate:{endpoint}:{user_identifier}   →  count
-
-EXAMPLES:
-   rate:login:192.168.1.5         →  4
-   rate:signup:user_456           →  2
-   rate:search:apikey_xyz789      →  47
-
-   TTL = window time (60 sec)
-   = key auto-expires
-```
-
-```
-ATOMIC OPERATION (no race):
-
-   MULTI
-     INCR rate:login:userX
-     EXPIRE rate:login:userX 60
-   EXEC
-
-   = atomic, thread-safe
-```
-
-```
-★ WHY atomic? — REDIS SINGLE-THREADED (23-Jul, mock me seekha):
-
-   Redis ek time pe SIRF EK command chalata (single-threaded) -> beech me koi
-   doosri request ghus NAHI sakti -> isiliye INCR / MULTI-EXEC apne-aap ATOMIC.
-
-   RACE jo ise rokta: 2 request EK saath, bucket me 1 token bacha ->
-     read-then-write hota to DONO ko token milta (limit toot) ->
-     par INCR atomic -> ek poora hoke hi doosra chalta -> safe.
-
-   ★ multi-STEP logic (token-bucket: refill + check + decrement) -> LUA SCRIPT:
-     Redis poore Lua script ko ek ATOMIC unit me chalata (production standard).
-
-   INTERVIEW LINE: "Since Redis is single-threaded, the check-and-decrement is
-     atomic -- INCR for a counter, or a Lua script for token-bucket logic, to
-     avoid the read-modify-write race."
-
-   ★ CONNECT (2-Sep mock): ye WAHI race hai jo IDEMPOTENCY me thi (HDFC
-     duplicate-payment) -- naive containsKey+put ke beech ka gap -> 2 request
-     ghus jaati -> double charge. Wahan ilaaj = putIfAbsent (atomic). Yahan
-     ilaaj = Lua script (atomic). DONO = "read+modify+write ko EK atomic
-     unit banao, beech ka gap band". Rate-limiter <-> idempotency = SAME
-     race, same lock-cure.
-```
-
----
-
-## 9 Tiered Limits
-
-```
-┌──────────────┬─────────────────────┐
-│  Tier        │  Limit               │
-├──────────────┼─────────────────────┤
-│  Anonymous   │  60/hour            │
-│  Free user   │  5,000/hour         │
-│  Pro user    │  10,000/hour        │
-│  Enterprise  │  Custom             │
-└──────────────┴─────────────────────┘
-
-   Request → check user tier in DB
-              │
-              ▼
-        limit fetched
-              │
-              ▼
-        Redis counter compared
-```
-
----
-
-## Distributed Rate Limiting
-
-### PROBLEM
-```
-   USER (arpan_123)
-       │
-       ├── Bangalore from   ──► India region: 50 reqs
-       ├── Berlin from      ──► EU region:    50 reqs
-       └── US VPN from      ──► US region:    50 reqs
-
-   Each region thinks 50/100 OK
-   Total = 150 reqs > limit (100)
-   Limit broken
-```
-
-### SOLUTION 1: Centralized Redis
-```
-   ┌──────────┐  ┌──────────┐  ┌──────────┐
-   │  US      │  │  EU      │  │  Asia    │
-   └────┬─────┘  └────┬─────┘  └────┬─────┘
-        │             │             │
-        └─────────────┼─────────────┘
-                      ▼
-              ┌──────────────┐
-              │ GLOBAL REDIS │
-              └──────────────┘
-
-   Accurate    High latency, SPOF
-```
-
-### SOLUTION 2: Local + Async Sync
-```
-   ┌──────┐  ┌──────┐  ┌──────┐
-   │ US   │  │ EU   │  │ Asia │
-   │Redis │  │Redis │  │Redis │
-   └──┬───┘  └──┬───┘  └──┬───┘
-      └─────────┼─────────┘
-                │ async (1 sec)
-                ▼
-        ┌──────────────┐
-        │  Aggregator  │
-        └──────────────┘
-
-   Fast    Slight over-limit possible
-```
-
-### SOLUTION 3: Region-Sticky (BEST)
-```
-   USER (arpan_123, home = INDIA)
-       │
-       ├── Bangalore   ──► India Edge ──► INDIA region
-       ├── Berlin      ──► EU Edge    ──► INDIA region
-       └── US VPN      ──► US Edge    ──► INDIA region
-
-   ALL paths end at INDIA region
-   = Local Redis sees full picture
-```
-
-```
-ROUTING LOGIC:
-   hash(user_id) % regions = home_region
-
-   hash("arpan_123") % 3 = 0 → INDIA
-   hash("john_456") % 3  = 1 → EU
-   hash("alex_789") % 3  = 2 → US
-```
-
----
-
-## 11 Layered Defense (Production Reality)
-
-```
-   USER REQUEST
-        │
-        ▼
-   ┌───────────────────────┐
-   │  LAYER 1: Rate Limit  │  ← soft block (temporary)
-   │  (429 reject)         │     "wait 60 sec"
-   └─────────┬─────────────┘
-             │ rejected events
-             ▼
-   ┌───────────────────────┐
-   │  KAFKA event stream   │  ← async analytics
-   └─────────┬─────────────┘
-             │
-             ▼
-   ┌───────────────────────┐
-   │  LAYER 2: Pattern     │  ← detect repeat abusers
-   │  Detection            │     daily abuse pattern?
-   └─────────┬─────────────┘
-             │
-             ▼
-   ┌───────────────────────┐
-   │  LAYER 3: WAF /       │  ← PERMANENT block
-   │  IP Blocklist         │     blocked at edge
-   └───────────────────────┘
-```
-
-```
-Why not block immediately?
-   ┌────────────────────┬──────────────────────────┐
-   │  Risk              │  Reason                   │
-   ├────────────────────┼──────────────────────────┤
-   │ False positives    │ Real user 10 fast clicks │
-   │ Shared IPs (NAT)   │ 1 IP = 100 users         │
-   │ Legitimate bursts  │ Marketing campaign       │
-   └────────────────────┴──────────────────────────┘
-
-   Rate limit = forgiving (retry possible)
-   WAF block = permanent (verified abuse only)
-```
-
----
-
-## 12 Response Headers
-
-```
-SUCCESS (200 OK):
-   X-RateLimit-Limit:     100
-   X-RateLimit-Remaining: 47
-   X-RateLimit-Reset:     1715180400  (unix time)
-
-REJECTED (429 Too Many Requests):
-   Retry-After:           30   (wait seconds)
-   X-RateLimit-Limit:     100
-   X-RateLimit-Remaining: 0
-   X-RateLimit-Reset:     1715180400
-```
-
----
-
-## 13 Read Flow Line (Memorize)
-
-```
-"User request → Route 53 → CloudFront → ALB →
- API Gateway pe Rate Limiter middleware →
- Redis se atomic counter check (INCR + EXPIRE) →
- limit ke andar? App Server →
- limit cross? 429 with Retry-After header →
- abuse pattern? Kafka pe event for analytics →
- repeat offender? WAF blocklist permanent ban"
-```
-
----
-
-## Components Summary
-
-```
-┌─────────────────┬─────────────────────────────────┐
-│  Component      │  Role                            │
-├─────────────────┼─────────────────────────────────┤
-│  Route 53       │  DNS                             │
-│  CloudFront     │  CDN                             │
-│  ALB            │  Load balancing                  │
-│  API Gateway    │  Where rate limiter sits         │
-│  Redis          │  Atomic counter (INCR)           │
-│  Counter Key    │  rate:{endpoint}:{user}          │
-│  TTL            │  Auto-reset window               │
-│  429 Response   │  Reject + Retry-After header     │
-│  Kafka          │  Async pattern detection events  │
-│  Pattern Svc    │  Detect repeat abusers           │
-│  WAF            │  Permanent IP block              │
-└─────────────────┴─────────────────────────────────┘
-```
-
----
-
-# 7-STEP RAIL DRIVE
-
-> (RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md) — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck. Interview me isi flow me bolo.
 
 ## STEP 1 — REQUIREMENTS
+
 ```
-   FUNCTIONAL:  over-limit request REJECT (429), legit ALLOW.  limit e.g. = "5/min per IP"
-   NON-FUNCTIONAL:
-     - LOW LATENCY = critical -> rate limiter HAR request ke saamne baithta; ye slow -> POORA API slow.
-       isliye Redis (in-memory).
-     - FAIL-OPEN: rate limiter / Redis DOWN -> requests ALLOW karo (block NAHI).
-       soch: legit-users-block >> thodi abuse. (FAIL-CLOSED = block-all -> sirf payment/security-critical pe.)
-   CLARIFY:  limit kis pe? (IP / user-id / API-key) . per-endpoint? . tiered (free/pro)?
+FUNCTIONAL:  over-limit request REJECT (429 Too Many Requests), legit ALLOW. limit e.g. "5/min per IP".
+NON-FUNCTIONAL:
+   - ★ LOW LATENCY = SABSE critical -> rate limiter HAR request ke saamne baithta; thoda slow -> POORA API slow.
+       isliye Redis (in-memory, ~microsec).
+   - ★ FAIL-OPEN: rate limiter / Redis DOWN -> requests ALLOW karo (block NAHI).
+       soch: saare LEGIT users block >> thodi der abuse. (FAIL-CLOSED = block-all -> sirf payment/security-critical.)
+CLARIFY:  limit kis pe? (IP / user_id / API-key) . per-endpoint? . tiered (free/pro)?
+
+USE CASES:  login 5/min-IP . password-reset 3/hr-email . public-API 100/min-key . signup 10/day-IP . search 60/min-user.
 ```
 
+---
+
 ## STEP 2 — ESTIMATE (★ rate-limiter ka asli insight)
+
 ```
    Rate limiter HAR request ke saamne baithta -> system ka SABSE HIGH-QPS component (gateway pe millions/sec).
-   ★ KEY LINE: "Ye storage-problem nahi, LATENCY problem hai — har request pe check <1ms hona chahiye,
+   ★ KEY LINE: "Ye STORAGE-problem nahi, LATENCY problem hai — har request pe check <1ms hona chahiye,
                 warna poora API slow. Isliye in-memory Redis (counters), na DB."
    -> per-key state chhota (counter + TTL), par ops-rate BAHUT high -> Redis atomic INCR.
 ```
 
+---
+
 ## STEP 3 — API / RESPONSE
+
 ```
    limit OK   -> forward to API
    limit HIT  -> HTTP 429 (Too Many Requests) + Retry-After: 30 (kitna wait)
-   HEADERS:   X-RateLimit-Limit | X-RateLimit-Remaining | X-RateLimit-Reset (unix time)
+
+SUCCESS (200):                          REJECTED (429):
+   X-RateLimit-Limit:     100              Retry-After:           30   (wait seconds)
+   X-RateLimit-Remaining: 47               X-RateLimit-Limit:     100
+   X-RateLimit-Reset:     1715180400       X-RateLimit-Remaining: 0
+                          (unix time)      X-RateLimit-Reset:     1715180400
 ```
 
-## STEP 4 — DATA MODEL (Redis key)
+---
+
+## STEP 4 — DATA MODEL (Redis key + atomic)
+
 ```
-   KEY:  rate:{endpoint}:{user} -> count     e.g. rate:login:192.168.1.5 -> 4
+   KEY:  rate:{endpoint}:{user} -> count
+   EXAMPLES:  rate:login:192.168.1.5 -> 4 | rate:signup:user_456 -> 2 | rate:search:apikey_xyz -> 47
    TTL = window time (60 sec) -> key AUTO-EXPIRE (window reset ho jaata)
-   ATOMIC (no race):  MULTI -> INCR key -> EXPIRE key 60 -> EXEC   (ek atomic unit)
-   # WHY atomic: Redis SINGLE-THREADED -> ek time ek command -> INCR khud atomic (read-modify-write race nahi).
-     multi-step (token-bucket: refill+check+decrement) -> LUA SCRIPT (poora ek atomic unit).
+
+   ATOMIC (no race):   MULTI -> INCR rate:login:userX -> EXPIRE rate:login:userX 60 -> EXEC   (ek atomic unit)
 ```
+
+```
+★ WHY ATOMIC — REDIS SINGLE-THREADED (23-Jul mock):
+   Redis ek time pe SIRF EK command -> beech me koi doosri request ghus NAHI sakti -> INCR/MULTI-EXEC apne-aap ATOMIC.
+   RACE jo rokta: 2 request ek-saath, bucket me 1 token -> read-then-write hota to DONO ko token (limit toot);
+     INCR atomic -> ek poora hoke hi doosra -> safe.
+   ★ multi-STEP logic (token-bucket: refill+check+decrement) -> LUA SCRIPT (Redis poore script ko ek atomic unit me).
+   INTERVIEW LINE: "Since Redis is single-threaded, check-and-decrement is atomic — INCR for a counter,
+     or a Lua script for token-bucket, to avoid the read-modify-write race."
+   ★ CONNECT (2-Sep): ye WAHI race hai jo IDEMPOTENCY me thi (HDFC duplicate-payment) — naive containsKey+put ka gap
+     -> 2 request ghus -> double charge. Wahan ilaaj=putIfAbsent (atomic), yahan=Lua (atomic).
+     Rate-limiter <-> idempotency = SAME race, same lock-cure ("read+modify+write ko EK atomic unit").
+```
+
+---
 
 ## STEP 5 — HL BOXES (arch + placement)
+
 ```
-   User -> Route53 (DNS) -> CloudFront (CDN) -> ALB -> API Gateway (rate-limiter middleware) -> App
-                                                         |- Redis cluster (counters, atomic INCR)
-                                                         \- Kafka -> pattern-detection (abuse)
-   PLACEMENT (where it sits): API Gateway | separate service | app-library -> WINNER = API GATEWAY.
-     # WHY front/gateway (reject EARLY): over-limit request ko backend tak jaane hi mat do -> backend resources bachte.
-   # WHY Redis (CENTRALIZED): multi-server -> har server apna count (s1=3, s2=4, s3=2) -> total 9, par kisi ek ko
-     5-limit cross dikha hi nahi -> limit TOOT. -> SINGLE SOURCE OF TRUTH = Redis + atomic INCR.
-   # Route53 = AWS smart DNS: naam->IP + health-check (zinda server pe route) + nearest-region.
+                  USER
+                   ▼
+            ┌──────────────┐
+            │  Route 53    │  DNS
+            └──────┬───────┘
+                   ▼
+            ┌──────────────┐
+            │  CloudFront  │  CDN
+            └──────┬───────┘
+                   ▼
+            ┌──────────────┐
+            │     ALB      │  Load Balancer
+            └──────┬───────┘
+                   ▼
+            ┌──────────────────────┐
+            │  API GATEWAY         │
+            │  ┌────────────────┐  │
+            │  │ Rate Limiter   │  │
+            │  │ Middleware     │  │
+            │  └────────────────┘  │
+            └──────────┬───────────┘
+               ALLOWED │ REJECTED(429)
+                       ▼
+                ┌──────────────┐        ┌──────────────┐
+                │  App Servers │        │ REDIS CLUSTER│ (counters, atomic INCR)
+                └──────────────┘        └──────┬───────┘
+                                               ▼
+                                        ┌──────────────┐
+                                        │ Kafka ->     │  pattern-detection (abuse)
+                                        │ Pattern Svc  │
+                                        └──────────────┘
 ```
+
+```
+REQUEST FLOW (inside limiter):
+   1. Identify user (IP / user_id / API-key)
+   2. Redis key check "rate:login:userX" -> INCR atomic
+   3. count > limit ?  YES -> 429 + Retry-After  |  NO -> forward to API
+
+PLACEMENT (3 options): API Gateway | separate service | app-library -> ★ WINNER = API GATEWAY (most common).
+   ★ WHY front/gateway (reject EARLY, 8-Jul): over-limit request ko BACKEND tak jaane hi mat do -> backend compute BACHTA.
+     jise reject hi karna hai uspe kaam kyun? deep-me limit karo to request pehle poore system me ghoom ke resource kha chuki.
+     (optional: coarse GLOBAL limit gateway + finer PER-SERVICE -> par primary = gateway.)
+   ★ WHY REDIS (CENTRALIZED): multi-server -> har server apna count (s1=3,s2=4,s3=2) -> total 9, par kisi ek ko
+     5-limit cross dikha hi nahi -> limit TOOT -> SINGLE SOURCE OF TRUTH = Redis + atomic INCR.
+   ★ Route 53 = AWS smart DNS: naam->IP + HEALTH-CHECK/failover (dead LB se traffic hata) + nearest-region routing + domain-reg.
+```
+
+```
+READ-FLOW LINE (memorize):
+"User -> Route53 -> CloudFront -> ALB -> API Gateway rate-limiter -> Redis atomic INCR+EXPIRE ->
+ limit-andar? App Server | limit-cross? 429+Retry-After | abuse-pattern? Kafka event | repeat-offender? WAF permanent ban"
+```
+
+---
 
 ## STEP 6 — DEEP DIVE: Algorithms (4 methods)
+
 ```
-   1. TOKEN BUCKET  -> bucket me tokens auto-add (1/sec, max N). req -> token lo -> allow; empty -> reject.
-        # MOST COMMON (AWS/Stripe). BURSTS allow karta (jama tokens).
-   2. LEAKY BUCKET  -> req bucket me fixed-rate se leak/process. full -> overflow reject. SMOOTH, no burst.
-   3. FIXED WINDOW  -> per-minute counter (0-5, reset).
-        # EDGE SPIKE BUG: 10:00:59 pe 5 + 10:01:00 pe 5 = 10 req in 2 sec (window boundary pe double).
-   4. SLIDING WINDOW -> "last 60 sec" me count (request-driven: naya req -> abhi se 60 sec peeche dekho).
-        SMOOTH + accurate, par MEMORY zyada.
+1. TOKEN BUCKET (★ MOST COMMON, AWS/Stripe): bucket me tokens auto-add (1/sec, max N). req -> token lo -> allow; empty -> reject.
+      -> real traffic SPIKY (user 10 req ek-saath phir shaant); jama-tokens se BURST allow = user-friendly.
+2. LEAKY BUCKET: req bucket me, fixed-rate se leak/process (hole 1/sec). full -> overflow reject. SMOOTH, burst BLOCK (laggy lagta).
+3. FIXED WINDOW: per-minute counter (0->5, reset).
+      ★ EDGE-SPIKE BUG: 10:00:59 pe 5 + 10:01:00 pe 5 = 10 req in 2 sec (window-boundary pe 2x limit). sasta par ye bug.
+4. SLIDING WINDOW: "last 60 sec" me count. request-driven (naya req -> ABHI se 60 sec peeche gino).
+      SMOOTH + accurate PAR har request ka timestamp -> MEMORY-heavy.
 ```
 
-## STEP 7 — BOTTLENECK / SCALE
 ```
-   TIERED LIMITS:  anonymous 60/hr . free 5k/hr . pro 10k/hr . enterprise custom (user-tier DB se).
+BUS-STAND ANALOGY (sliding window ACTUALLY kaise shift hoti):
+   Watchman register: "last 1 hour me 5 passenger MAX". entries: Ramesh 10:05, Suresh 10:15, ... Dinesh 10:55.
+   11:00 pe naya -> "60 min peeche = 10:00" -> count(10:00 ke baad)=5 -> REJECT.
+   11:10 pe naya -> "60 min peeche = 10:10" -> 10:05 wala AB OUT -> count=4 -> ALLOW + add 11:10.
+   ★ WINDOW SHIFT = ON-DEMAND (request-driven), NOT timer/background-job. Trigger = request arrival, not clock.
 
-   DISTRIBUTED (user multi-region): Bangalore+Berlin+US -> VPN se har region 50 -> total 150 > 100 -> TOOT.
-      FIX ladder:  centralized-Redis (accurate PAR SPOF/latency)
-                   -> local + async-sync (fast PAR slight over-allow)
-                   -> # REGION-STICKY (BEST): hash(user-id) % region -> home region -> saare paths ek region -> local Redis.
+COMPARISON:
+   ┌──────────────────┬───────────┬─────────┬──────────┬─────────┐
+   │  Algorithm       │ Bursts    │ Smooth  │ Memory   │ Common  │
+   ├──────────────────┼───────────┼─────────┼──────────┼─────────┤
+   │ Token Bucket     │ YES       │ Variable│ Low      │ AWS,Stripe│
+   │ Leaky Bucket     │ NO        │ YES     │ Low      │ Throttle │
+   │ Fixed Window     │ Edge fail │ NO      │ Lowest   │ GitHub  │
+   │ Sliding Window   │ Smooth    │ YES     │ High     │ Cloudflare│
+   └──────────────────┴───────────┴─────────┴──────────┴─────────┘
+   => DEFAULT-PICK = TOKEN BUCKET (burst-friendly + low-memory).
+```
 
-   ★ ACCURACY vs LATENCY (local+async-sync ka asli trade-off -- ye decision yaad rakh):
-      local+async-sync = har instance apne LOCAL count se allow karta, sync BAAD me -> OVER-ALLOW.
-         e.g. limit 100, 5 instances -> har ek sync-se-pehle kuch nikaal deta -> user 100 se ZYADA le jaa sakta.
-         limit EXACT nahi rehti -> APPROXIMATE/soft ho jaati.
-      KAB CHALEGA (over-allow OK)  : limit sirf "server bachane" ke liye (general API throttle/abuse). Thoda upar-neeche se aafat nahi.
-      KAB NAHI CHALEGA (exact chahiye): limit = PAISA / SECURITY / correctness ->
-         "3 OTP attempts" (security) . "10 free calls phir charge" (billing) . withdrawal-limit
-         -> yahaan CENTRAL ATOMIC (Redis+Lua), latency ki keemat bhugto.
-      1-LINE:  protective/soft limit -> local+async (fast) | money/security limit -> central atomic (exact).
+---
 
-   RELIABILITY:  Redis DOWN -> Replica (Sentinel auto-promote) -> (last) FAIL-OPEN.
-                 overload -> SHARDING (user/region). SPOF-chain: har layer 2-2 + health-check/failover (LB, Redis, app).
+## STEP 7 — BOTTLENECK / SCALE / RELIABILITY
 
-   LAYERED DEFENSE (rate-limit AKELA kyun nahi):
-     - false positives (real-user fast clicks) . shared NAT IP (1 IP = 100 user) . legit bursts
-     -> rate-limit + Kafka(pattern-detect) + WAF milke.
+```
+TIERED LIMITS:  anonymous 60/hr . free 5k/hr . pro 10k/hr . enterprise custom (user-tier DB se fetch -> Redis counter compare).
 
-   WRAP: User->Route53->CDN->ALB->API-Gateway[rate limiter]->Redis atomic-counter->App.
-         ALGO=token-bucket . KEY=rate:{endpoint}:{user}+TTL . 429+Retry-After.
-         distributed->region-sticky . reliable->replica+fail-open+shard . layered->rate-limit+Kafka+WAF.
+DISTRIBUTED (user multi-region): arpan_123 Bangalore+Berlin+US-VPN -> har region 50 -> total 150 > 100 -> TOOT.
+   FIX LADDER:
+     1. CENTRALIZED Redis (accurate PAR SPOF + high-latency)
+     2. LOCAL + async-sync (fast PAR slight over-allow)
+     3. ★ REGION-STICKY (BEST): hash(user_id) % regions = home_region -> saare paths ek region -> local Redis full-picture.
+          hash("arpan_123")%3=0->INDIA . hash("john_456")%3=1->EU . hash("alex_789")%3=2->US.
+
+★ ACCURACY vs LATENCY (local+async-sync ka asli trade-off — yaad rakh):
+   local+async = har instance LOCAL count se allow, sync BAAD me -> OVER-ALLOW (limit APPROXIMATE/soft ho jaati).
+   KAB CHALEGA (over-allow OK): limit sirf "server bachane" (general API throttle/abuse) -> thoda upar-neeche se aafat nahi.
+   KAB NAHI (exact chahiye): limit = PAISA/SECURITY/correctness -> "3 OTP attempts" . "10 free calls phir charge" . withdrawal-limit
+        -> CENTRAL ATOMIC (Redis+Lua), latency ki keemat bhugto.
+   1-LINE: protective/soft limit -> local+async (fast) | money/security limit -> central atomic (exact).
+
+RELIABILITY (Redis reflexes + SPOF-chain):
+   - Redis DOWN -> REPLICA auto-promote (Sentinel/cluster failover) -> (poori Redis layer gayi -> TAB FAIL-OPEN, last resort).
+   - Redis OVERLOAD -> SHARDING (user_id/region se alag nodes A-M->R1, N-Z->R2). (shard=scale+isolation | replica=recovery.)
+   - ★ SPOF-CHAIN: koi bhi critical ka SINGLE instance mat rakho -> har layer >=2 + AUTO-FAILOVER (LB, Redis, app, DB).
+        LB down -> multiple LB (active-active/passive) + health-check/VIP failover. (cloud ALB khud multi-AZ redundant.)
+        ★ MECHANISM zaroori: replicate + koi failure DETECT karke REDIRECT kare = health-check+failover (Redis=Sentinel, LB=Route53/VIP); warna replica bekaar.
+        TOP=DNS(Route53) globally-managed -> khud single-box nahi -> top-level SPOF nahi.
+
+LAYERED DEFENSE (rate-limit AKELA kyun nahi):
+   Layer1 rate-limit (soft/temporary 429 "wait 60s") -> Kafka event -> Layer2 pattern-detection (repeat abuser?) -> Layer3 WAF/IP-blocklist (PERMANENT).
+   WHY not block immediately: false-positives (real-user fast clicks) . shared NAT IP (1 IP=100 user) . legit bursts (marketing).
+     rate-limit = forgiving (retry ok) | WAF = permanent (verified abuse only).
+
+WRAP: User->Route53->CDN->ALB->API-Gateway[rate limiter]->Redis atomic-counter->App.
+      ALGO=token-bucket . KEY=rate:{endpoint}:{user}+TTL . 429+Retry-After.
+      distributed->region-sticky . reliable->replica+fail-open+shard . layered->rate-limit+Kafka+WAF.
 ```
 
 ---
