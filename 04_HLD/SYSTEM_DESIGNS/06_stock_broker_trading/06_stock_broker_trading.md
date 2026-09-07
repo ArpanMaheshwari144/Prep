@@ -1,454 +1,190 @@
-# Stock Broker / Trading Platform — Visual System Design
+# Stock Broker / Trading Platform — 7-STEP RAIL (single spine, revise top→bottom)
 
-Finance interview GOLD (JP / GS). Hits the finance-flavor depth they test: consistency, ACID, idempotency, ledger, audit trail — NOT FAANG-hyperscale. Natural bridge from Konovo fraud-detection domain.
-
----
-
-## 1. Problem (1 line)
-
-```
-   User buy/sell order de → system MATCH kare → paisa + shares move
-   ho → sab CONSISTENT rahe (paisa idhar-udhar na ho) → + live price
-```
+> Finance interview GOLD (JP/GS): consistency, ACID, idempotency, ledger, audit — NOT FAANG-hyperscale.
+> Bridge from Konovo fraud-domain. FLAVOR = CONSISTENCY + LATENCY heavy (paisa + speed).
+> RAIL (04_HLD/HLD_APPROACH_DELIVERY.md). Merged into clean 7-step 7-Sep.
+> Problem (1 line): user buy/sell order -> system MATCH kare -> paisa + shares CONSISTENT move -> + live price.
 
 ---
 
-## 2. Components Overview (order ka safar)
+## STEP 1 — REQUIREMENTS
 
 ```
-   [User: "Buy 10 TCS @ 3000"]
-        │
+FUNCTIONAL:  BUY/SELL order (stock, qty, price, type) -> MATCH -> paisa+shares move -> live price -> cancel/status.
+NON-FUNCTIONAL:  FAST (microseconds) | CONSISTENT (ek share do ko na bike) | reliable | FAIR (pehle-aaya-pehle-match).
+CLARIFY:  orders/sec? limit ya market? partial match allowed?
+★ KEY: PAISA + SPEED -> consistency NON-NEGOTIABLE (STRONG, never eventual) + latency critical.
+```
+
+---
+
+## STEP 2 — ESTIMATE (scale / numbers)
+
+```
+   50 lakh users, ~50 lakh orders/din (market-open storm). per-sec ~250 normal, PEAK 10k+ burst.
+   price feed = CRORE reads/sec (broadcast).
+   -> matching IN-MEMORY+fast | feed WebSocket-push | money SQL/ACID.
+```
+
+---
+
+## STEP 3 — API DESIGN
+
+```
+   POST   /order {stock, side, qty, price, type, idempotencyKey} -> orderId + OPEN
+   DELETE /order/{id}   cancel  |  PUT /order/{id} modify  |  GET /order/{id} status
+   GET    /portfolio    |  WS /prices?symbol=   (live price PUSH, poll nahi)
+   ★ senior: idempotencyKey (double-click rok) + price = WebSocket push (not polling).
+```
+
+---
+
+## STEP 4 — DATA MODEL + DB (KYUN)
+
+```
+   TABLES: ORDER / WALLET / LEDGER / PORTFOLIO / TRADE.   ORDER BOOK = RAM (DB nahi!).
+   money/orders -> SQL + ACID (strong, all-or-nothing, audit; NoSQL eventual NAHI).
+   order book   -> IN-MEMORY per-symbol (microseconds).   ledger -> append-only immutable (audit).
+   ★ CONTRAST: speed-temp (book) = RAM  |  paisa-permanent = SQL/ACID.
+```
+
+---
+
+## STEP 5 — HL BOXES (order ka safar)
+
+```
+   [User: "Buy 10 TCS @3000"]
         ▼
-   ┌──────────────────┐
-   │ 1. ORDER SERVICE │  receive, validate, + IDEMPOTENCY (dup na lage)
-   └────────┬─────────┘
+   1. ORDER SERVICE     receive, validate, + IDEMPOTENCY (dup na lage)
         ▼
-   ┌──────────────────┐
-   │ 2. WALLET/LEDGER │  paisa BLOCK (double-spend rok)
-   └────────┬─────────┘
+   2. WALLET/LEDGER     paisa BLOCK (double-spend rok)
         ▼
-   ┌──────────────────┐
-   │ 3. MATCHING ENG. │  buy ↔ sell match (order book, price-time)
-   └────────┬─────────┘
+   3. MATCHING ENGINE   buy<->sell match (order book, price-time, SINGLE-THREAD per symbol)
         ▼
-   ┌──────────────────┐
-   │ 4. SETTLEMENT    │  paisa+shares ACTUAL move (double-entry, ATOMIC)
-   └────────┬─────────┘
+   4. SETTLEMENT        paisa+shares ACTUAL move (double-entry, ATOMIC)
         ▼
-   ┌──────────────────┐
-   │ 5. PRICE FEED    │  live price sab ko (WebSocket + pub/sub)
-   └──────────────────┘
+   5. PRICE FEED        live price sab ko (WebSocket + pub/sub)
+   + EVENT LOG (sequencer): crash recovery + audit trail (append PEHLE, book baad me)
+
+   box KYUN: block-before-match (double-spend rok) | per-symbol matching (race-free) | atomic settlement (paisa na vanish).
 ```
 
 ---
 
-## 3. Matching Engine (the heart)
-
-### Order Book — do sorted line
+## STEP 6 — DEEP DIVE: matching engine (the HEART — race kaise roko?)
 
 ```
-   SELLERS (asks)        BUYERS (bids)
-   3001  ← best (sasta)  2998  ← best (mehnga)
-   3003                  2995
-   3005                  2990
-
-   - Sellers: SASTA upar (buyer ko sasta chahiye)
-   - Buyers:  MEHNGA upar (seller ko zyada chahiye)
-   - MATCH jab: best bid >= best ask (buyer-max >= seller-min)
-```
-
-Core rule (1-on-1): DEAL hota jab Buyer-MAX price >= Seller-MIN price.
-Real-life: seller sabse zyada dene wale ke paas jaata, buyer sabse saste ke paas — market automate karta.
-
-### Price-Time Priority
-
-```
-   1. PRICE priority → best price pehle
-   2. Same price?    → TIME priority → jo PEHLE aaya (FIFO)
-   = "pehle aao pehle pao" (same price pe). Fair + efficient.
-```
-
-### Single-Threaded PER SYMBOL (deep-dive — RULE, not if-condition)
-
-```
-   Soch: ek dukaan, ek BILLING COUNTER. Sab EK line mein → ek-ek bill → koi gadbad nahi.
-
-   Ab 5 counters (5 threads) par SAME stock ka SAME order book:
-      Counter-A: "Suresh ke 10 share Ramesh ko de diye"
-      Counter-B: (usi waqt) "Suresh ke 10 share Mohan ko de diye"
-      = Suresh ke paas the sirf 10 → DONO ko de diye = 20 bik gaye
-      = DOUBLE-MATCH / race condition = paisa-share disaster
+ORDER BOOK (2 sorted lines):
+   SELLERS (asks): 3001<-best(sasta) 3003 3005   |   BUYERS (bids): 2998<-best(mehnga) 2995 2990
+   - Sellers SASTA upar, Buyers MEHNGA upar.  MATCH jab: best-bid >= best-ask.
+PRICE-TIME PRIORITY: (1) best PRICE pehle (2) same-price -> TIME/FIFO (pehle-aao-pehle-pao). Fair+efficient.
 ```
 
 ```
-   FIX: har STOCK ka EK hi matching thread.
-      TCS → Thread-1   INFY → Thread-2   RELIANCE → Thread-3
-      har symbol → apni EK queue → ek-ek process (exact order)
-      = naturally serialized → koi race, koi lock nahi → in-memory, microseconds
+★ SINGLE-THREADED PER SYMBOL (RULE, not condition):
+   PROBLEM: 5 threads SAME stock ka SAME book -> Counter-A "Suresh ke 10 Ramesh ko" + Counter-B "wahi 10 Mohan ko"
+            = 20 bik gaye (Suresh ke the 10) = DOUBLE-MATCH race = disaster.
+   FIX: har STOCK ka EK matching thread. TCS->T1, INFY->T2, RELIANCE->T3. Har symbol -> apni EK queue -> ek-ek process (exact order).
+        = naturally serialized -> koi race, koi LOCK nahi -> in-memory, microseconds.
+   LOCK kyun nahi? exchange-speed pe lock = slow + deadlock. Single-thread = race ho hi nahi sakti (line ek hai).
+   SCALE: alag symbol = alag thread (shard BY symbol).
+   ★ RULE not if-condition: har trading system me HONA HI HOGA (jaise aasmaan neela). warna toot jaaye.
+   LINE: "Matching engine is single-threaded PER SYMBOL — orders serialized in one queue, no locks,
+          deterministic + replayable. Scale horizontally BY symbol."
 ```
 
 ```
-   Lock kyun nahi? → exchange-speed pe lock = slow + deadlock risk.
-                     Single-thread = race ho hi nahi sakti (line hi ek hai).
-   Scale kaise?    → alag symbol = alag thread (symbol ke hisaab se baant do).
+★ ONE HOT SYMBOL (scale WITHIN a symbol — tricky): market-open pe AKELE TCS pe lakhon orders/sec.
+   "shard by symbol" yahan NAHI chalega (TCS already ek symbol/ek thread).
+   FIX (2): 1. thread MAXIMIZE karo, split MAT karo — matching pure in-memory + no-lock -> ek thread lakhon/sec nigal leta
+               (NASDAQ literally aise). "slow" ka dar zyada.
+            2. burst ko durable QUEUE/EVENT-LOG absorb kare (backpressure): orders pehle queue me append -> thread FIFO
+               apni pace pe consume -> spike me kuch DROP nahi, bas thodi latency (arrival-rate != process-rate DECOUPLE).
+   Book ko 2 thread me kyun NAHI: ek shared book -> DOUBLE-MATCH race wapas + price-time toot + lock (slow). Correctness = ek book = ek thread.
+   LINE: "You don't parallelize a single order book — keep it single-threaded for correctness, optimize in-memory,
+          put a durable queue in front to absorb bursts. Scale BY symbol across threads, NEVER within a symbol."
 ```
 
 ```
-   YEH RULE HAI, CONDITION NAHI:
-      if-condition  = "kabhi haan kabhi naa" (situation pe depend)
-      RULE/invariant = "hamesha, bina exception" (jaise aasmaan = neela)
-   Single-thread per symbol = har trading system mein HONA HI HOGA — warna toot jayega.
+ORDER TYPES (sabzi-mandi):
+   LIMIT  = "TCS sirf 3000 ya BEHTAR. Mehnga? rukunga." -> PRICE pakka, time flexible. (BUY: 3000-ya-neeche | SELL: 3000-ya-upar)
+   MARKET = "bhav chhodo, ABHI do current price." -> TIME pakka, price flexible.
+   kab: sahi-daam-jaldi-nahi -> LIMIT | turant-ghuso/niklo -> MARKET.
 
-   Interview line:
-   "Matching engine is single-threaded PER SYMBOL — orders serialized in one queue,
-    no locks, deterministic + replayable. Scale horizontally BY symbol."
-```
-
-### ONE HOT SYMBOL — scale WITHIN a symbol (deep-dive — sabse tricky)
-
-```
-   PROBLEM: TCS single-thread hai. Market-open pe AKELE TCS pe LAKHON orders/sec.
-      "shard by symbol" yahan kaam NAHI karta — TCS to already EK hi symbol/EK hi thread hai,
-      usse aur symbol-shards me nahi tod sakte. To ek thread pe itna load = kya karein?
-```
-
-```
-   Soch: dukaan, EK billing counter (= single thread).
-      - Normal din  : customer aate-jaate, counter aaram se sab nipta leta.
-      - Sale lag gayi (market-open): 500 log EK SAATH aa gaye.
-      - BINA line   : bhagdad -> kuch bina-bill chale jaate (orders DROP) ya counter baith jaata.
-      - LINE (queue): sab line me khade -> counter apni NORMAL speed se ek-ek ->
-                      koi jaata NAHI (drop nahi), bas thodi WAIT -> rush khatam -> line chhoti.
-```
-
-```
-   FIX (2 cheez):
-   1. Thread ko MAXIMIZE karo, split MAT karo: matching PURE in-memory + NO-LOCK hai -> ek hi thread
-      LAKHON orders/sec nigal leta (real exchanges/NASDAQ literally aise chalte). "slow" ka dar zyada hai.
-   2. Burst ko QUEUE / EVENT-LOG absorb kare (backpressure): orders pehle durable queue me append ->
-      thread wahan se FIFO apni pace pe consume -> spike me kuch DROP nahi, bas thoda latency.
-      = arrival-rate aur process-rate DECOUPLE ho gaye (aane ki speed != process ki speed).
-```
-
-```
-   Order book ko 2 THREAD me kyun NAHI todte?
-      ek hi SHARED book -> 2 thread = wahi DOUBLE-MATCH race wapas + price-time priority TOOT jaati
-      + lock lagane padenge (slow). Correctness ke liye ek book = ek thread = SERIALIZED rehna HI padta.
-
-   Interview line:
-   "You don't parallelize a single order book — keep it single-threaded for correctness, optimize it
-    in-memory, and put a durable queue in front to absorb bursts. Scale is BY symbol across threads,
-    NEVER within a symbol."
+PARTIAL FILL: "BUY 10 TCS @3000", us price pe abhi sirf 6 -> 6 turant MATCH (partial) + baaki 4 book me PENDING ->
+   naya seller @3000 -> 4 bhare -> FULLY filled.
+   3 states (app me bhi): FILLED (poore 10) | PARTIALLY filled (6 mile, 4 pending) | OPEN/unfilled (kuch nahi). (Zerodha/Groww/NSE/BSE).
 ```
 
 ---
 
-### Order Types — LIMIT vs MARKET (deep-dive)
+## STEP 7 — MONEY / RELIABILITY / SCALE (JP ka asli interest)
 
 ```
-   Soch: sabzi mandi.
-   LIMIT  = "TCS sirf 3000 ya BEHTAR pe loonga. Mehnga? Rukunga." → PRICE pakka, time flexible
-   MARKET = "Bhav chhodo, ABHI do jo current price hai."          → TIME pakka, price flexible
-```
+MONEY SIDE:
+   a. BLOCK on order (double-spend rok): wallet 50k, order 30k -> match-se-pehle paisa KATA nahi, BLOCK (hotel/petrol-deposit).
+        Total 50k | Blocked 30k | Available 20k. warna 50k se 2 order -> dono match -> 60k chahiye = double-spend.
+        match->kata+shares | cancel->unblock | pending->blocked.
+   b. SETTLEMENT + LEDGER (double-entry): buyer -30k +10sh | seller +30k -10sh. jitna ek se gaya utna doosre ko -> na BANTA na GAYAB, sirf MOVE.
+        double-entry -> total constant + har entry traceable = AUDIT TRAIL.
+   c. ATOMICITY (ACID — THE point): steps [buyer-debit, seller-credit, shares-move]. beech crash -> 30k GAYAB.
+        FIX: saare steps EK transaction -> sab COMMIT ya sab ROLLBACK (Spring @Transactional = yehi).
+   d. STRONG vs EVENTUAL: like-count -> eventual OK | PAISA -> STRONG (har waqt exact). LINE: "money = strong consistency, no eventual".
 
-```
-   BUY limit  → "3000 ya usse NEECHE" (buyer ko sasta chahiye)
-   SELL limit → "3000 ya usse UPAR"   (seller ko mehnga chahiye)
-   = dono "ya usse BEHTAR" — behtar = buyer ke liye sasta, seller ke liye mehnga.
+IDEMPOTENCY (duplicate/retry safe): "Pay" -> cut -> timeout -> re-click -> risk 60k.
+   FIX: har request UNIQUE idempotency-key; server "ABC123 done" yaad -> dobara -> same result wapas (chahe 10 baar, EK baar kata).
+   (GPay double-click -> ek charge; BookMyShow ek-ticket-ek-show.)
 
-   Kab: sahi daam chahiye, jaldi nahi → LIMIT | turant ghuso/niklo → MARKET.
-```
+PRICE FEED (real-time): POLLING galat (lakhon req/sec -> server dead). WEBSOCKET sahi (conn ek baar -> server PRICE-CHANGE pe PUSH).
+   PUB/SUB FAN-OUT: ek change -> broadcast -> lakhon subscribers (RADIO). 
+   WhatsApp se FARAK: WhatsApp msg keemti -> STORE+guaranteed. price-feed sirf LATEST -> EPHEMERAL broadcast (missed ticks gaye,
+        reconnect pe bas current). push same, delivery-guarantee alag.
 
-### Partial Fill (deep-dive — order ek baar mein poora na bhare to?)
+CROSS-SERVICE SETTLEMENT -> SAGA: @Transactional sirf EK DB pe. microservices me paisa=Wallet-DB, shares=Portfolio-DB, order=Order-DB
+   -> 3 DB pe ek @Transactional NAHI chalti. Wallet-debit ✓ -> Portfolio-crash ✗ = paisa-gaya-share-nahi.
+   SAGA: bade txn ko chhote LOCAL steps me todo; koi step fail -> pichle ka ULTA (COMPENSATING):
+        step1 Wallet-debit 30k ✓ | step2 Portfolio-add ✗ FAIL -> compensate: Wallet REFUND 30k -> consistent.
+        (rollback DB nahi karta -> HAMARA code compensating step likhta.) TRAVEL-analogy: Flight✓ Hotel✗ -> Flight-cancel+refund.
+   ACID(ek DB)=INSTANT all-or-nothing | SAGA(kai service)=code-driven undo, EVENTUALLY all-or-nothing.
 
-```
-   Soch: dukaan pe "10 packet @12" maange, us daam pe sirf 6 the.
-   → 6 LE LIYE (jitne mile) + baaki 4 ka parcha chhoda ("aur aaye to rakhna, wait karta hoon").
+EVENT LOG / SEQUENCER (crash recovery + audit): order book RAM me -> crash -> book+pending GAYAB.
+   FIX = append-only log (disk/Kafka): har event PEHLE log me likho, PHIR book me lagao. crash -> log REPLAY -> book waisa wapas.
+   (= write-ahead-log WAL. cricket: scoreboard=RAM gayab | scorer-register=log -> wapas.)
+   2 muft faayde: (1) AUDIT TRAIL (who-what-when, immutable) = regulator/JP sona (2) single-thread DETERMINISTIC -> replay = same result.
+   LOGGING vs AUDIT: logging=engineer-debug (technical, thode-din, badal-sakte) | AUDIT=regulator-proof (business who-what-when, saal-saal, IMMUTABLE).
+        JP/BlackRock dono; audit NON-NEGOTIABLE. Trading event-log itna pakka ki AUDIT ka kaam bhi de (ek cheez, dono role).
 
-   Trading: "BUY 10 TCS @3000", us price pe abhi sirf 6 share.
-      → 6 turant MATCH (partial fill)
-      → baaki 4 order book mein PENDING
-      → naye seller @3000 aaye → 4 bhare → ab FULLY filled
-```
+SCALE: many symbols -> shard BY symbol (alag thread) | one hot symbol -> can't split book -> optimize in-memory + durable queue absorb.
 
-```
-   Order ki 3 haalat (app mein bhi yahi dikhta):
-   - FILLED            → poore 10 mil gaye        (Executed)
-   - PARTIALLY filled  → kuch (6) mile, baaki (4) pending  (Partially executed)
-   - OPEN / unfilled   → abhi tak kuch nahi       (Open)
-   = real hai: Zerodha/Groww/NSE/BSE sab mein yahi.
-```
-
----
-
-## 4. Money Side (JP ka asli interest)
-
-### 4a. Block on order (double-spend rok)
-
-```
-   Wallet ₹50,000. Order "10 TCS @ 3000" = ₹30,000.
-   Match nahi hua abhi → paisa KATA nahi, BLOCK hua:
-     Total 50,000 | Blocked 30,000 | Available 20,000
-   Analogy: hotel/petrol deposit (HOLD, kata nahi).
-
-   Kyun: warna usi 50k se 2 order → dono match → 60k chahiye = double-spend.
-   Order ke baad: match→kata+shares | cancel→unblock | pending→blocked rehta
-```
-
-### 4b. Settlement + Ledger (double-entry)
-
-```
-   Match ke baad actual move:
-   ┌──────────────────────────────────────────┐
-   │  Buyer khaata:   -30,000   +10 shares     │
-   │  Seller khaata:  +30,000   -10 shares     │
-   └──────────────────────────────────────────┘
-   = jitna ek se gaya utna doosre ko aaya
-   = paisa/share na BANTA na GAYAB — sirf MOVE
-   Kyun double-entry: total constant + har entry traceable = AUDIT TRAIL
-```
-
-### 4c. Atomicity (ACID — THE point)
-
-```
-   Settlement steps: 1.buyer debit  2.seller credit  3.shares move
-   Beech mein crash? → step1 hua, step2 nahi → ₹30k GAYAB = disaster
-
-   FIX: saare steps EK transaction → sab COMMIT ya sab ROLLBACK
-   = all-or-nothing (tera Spring @Transactional = exactly yehi)
-```
-
-### 4d. Strong vs Eventual consistency
-
-```
-   Like-count → eventual OK (2 sec baad sahi, chalega)
-   PAISA      → STRONG zaroori (har waqt exact, "eventually" nahi)
-   = interview line: "money = strong consistency, no eventual"
+WRAP: Order(validate+idempotency)->Wallet(BLOCK)->Matching(single-thread/symbol)->Settlement(ATOMIC)->Feed(ws+pubsub) | EventLog(replay+audit).
+      DATA: money=SQL/ACID | book=in-memory. DEEP: single-thread per symbol. SCALE: shard-by-symbol, event-log, ACID/SAGA, pubsub.
+      IMPROVE: stop-loss, circuit-breakers, real-time risk-checks, regulatory reporting.
 ```
 
 ---
 
-## 5. Idempotency (duplicate/retry safe)
-
+## ★ POWER PHRASES (interview)
 ```
-   PROBLEM: "Pay" click → paisa cut → response timeout → tu RE-click
-            → risk: do baar cut (₹60k)
-
-   FIX: har request ek UNIQUE idempotency-key (e.g. ABC123)
-        server yaad rakhta "ABC123 done" → dobara aaye → naya process
-        NAHI, same result wapas → chahe 10 baar bhejo, EK baar kata
-
-   Analogy: GPay double-click par paisa ek hi baar; BookMyShow ek
-            ticket = ek show (used → reuse nahi)
-   Definition: same op kitni baar bhi chale → result SAME (ek-baar jaisa)
-```
-
----
-
-## 6. Price Feed (real-time market data)
-
-```
-   POLLING (galat): har user har sec poochta → lakhon req/sec = server dead + laggy
-
-   WEBSOCKET (sahi): connection ek baar khula → server PRICE CHANGE pe PUSH kare
-                     = real-time, baar-baar request nahi
-
-   PUB/SUB FAN-OUT: ek price change → broadcast → lakhon subscribers ek saath
-                    (RADIO analogy: ek broadcast, sab radios sunte)
-```
-
-```
-   WhatsApp se FARAK (design decision):
-   - WhatsApp: har message keemti → STORE + guaranteed delivery (offline bhi milta)
-   - Price feed: sirf LATEST matters → ephemeral broadcast (missed ticks gaye,
-                 reconnect pe bas CURRENT price) → per-user history nahi chahiye
-   = push mechanism same; delivery-guarantee alag
-```
-
----
-
-## 6b. Settlement across services — SAGA (deep-dive)
-
-```
-   Settlement ATOMIC tha (@Transactional, ACID) — par woh sirf jab sab EK database mein ho.
-
-   Microservices mein:
-      paisa  → Wallet Service (apna DB) | shares → Portfolio Service (apna DB) | order → Order Service (apna DB)
-   = 3 alag service, 3 alag DB. Ek @Transactional 3 alag DB pe NAHI chal sakti.
-
-   PROBLEM: Wallet ne paisa kaata ✓ → Portfolio share-add pe crash ✗
-            = paisa gaya, share nahi mila = inconsistent. All-or-nothing toot gaya.
-```
-
-```
-   Soch: TRAVEL booking — Flight + Hotel + Cab (3 alag company, koi ek transaction nahi).
-   Flight book ✓ → Hotel full ✗ → Flight CANCEL + refund (taaki paisa na phase).
-   = step-by-step; aage fail to peeche wale ko ULTA karke undo.
-```
-
-```
-   SAGA pattern:
-   - Bade transaction ko chhote LOCAL steps mein todo (har service apna step, apne DB pe)
-   - Koi step fail → pichle steps ka ULTA (COMPENSATING action):
-       Step1: Wallet debit 30k     ✓
-       Step2: Portfolio add shares  ✗ FAIL
-       Compensate: Wallet REFUND 30k (step1 ka ulta) → wapas consistent
-   - Rollback DB nahi karta — HAMARA CODE compensating step likhta hai.
-```
-
-```
-   ACID vs SAGA:
-   EK database     → @Transactional → INSTANT all-or-nothing (DB khud rollback, koi aadha-state nahi dikhta)
-   KAI services/DB → SAGA           → code-driven undo, "EVENTUALLY" all-or-nothing
-                                      (chhota window jahan state aadhi → phir compensate → consistent)
-
-   Line: "Saga = same all-or-nothing GOAL, code-driven compensating undo, eventually consistent.
-          Use jab transaction services/DBs ke beech faili ho (ek @Transactional kaafi nahi)."
-```
-
----
-
-## 7. Event Log / Sequencer (deep-dive — crash recovery + audit)
-
-```
-   PROBLEM: order book RAM mein hai (single-thread, fast). Server crash/restart →
-            RAM saaf → poora order book + pending orders GAYAB. Disaster.
-```
-
-```
-   Soch: CRICKET match.
-   - Live scoreboard (screen) = RAM. Bijli gayi → score gayab.
-   - Scorer ka REGISTER (ball-by-ball) = log. Bijli aayi → register se poora score WAPAS.
-```
-
-```
-   FIX = EVENT LOG (sequencer):
-   - Har event PEHLE append-only log mein likho (disk/Kafka), PHIR order book mein lagao:
-       "Order#1 aaya", "Order#2 aaya", "Match hua", "Order#3 cancel"...  (sequence mein)
-   - Crash? → log shuru se REPLAY → har event dobara apply → order book bilkul waisa wapas.
-   = yeh wahi "write-ahead log (WAL)" soch hai jo databases mein hoti.
-
-   2 muft faayde:
-   1. AUDIT TRAIL (who-what-when, immutable) = regulator/JP ke liye sona
-   2. Single-thread DETERMINISTIC → replay se HAR baar SAME result.
-```
-
-### Logging vs Audit (alag cheez — confuse mat karna)
-
-```
-                  LOGGING                      AUDIT (audit trail)
-   Kiske liye:    engineer (debug/monitor)     regulator/business (proof)
-   Kya:           technical (error/latency)    business action (who-what-when)
-   Kitne din:     thode (rotate/delete)        saal-saal (legal majboori)
-   Badal sakte:   haan (freely)                NAHI (immutable/tamper-proof)
-
-   logging = "kya chal raha bataata (debug)"   |  audit = "kisne kya kiya (proof, permanent)"
-   JP/BlackRock: DONO rakhte; par audit NON-NEGOTIABLE (regulator — "woh gaya to company band").
-   Trading ka event log itna pakka ki woh AUDIT ka kaam bhi de deta (ek cheez, dono role).
-```
-
----
-
-## POWER PHRASES (interview)
-
 - "Order book = bids (highest up) + asks (lowest up); match when best-bid >= best-ask; price-time priority."
 - "Order pe paisa BLOCK (reserve), match pe debit — double-spend rok."
 - "Ledger = double-entry: ek deta, ek leta, total constant = audit trail."
 - "Settlement ATOMIC (ACID / @Transactional) — all-or-nothing, warna paisa vanish."
 - "Money = STRONG consistency, never eventual."
-- "Idempotency key → duplicate/retry pe ek hi baar process (GPay double-click → ek charge)."
+- "Idempotency key -> duplicate/retry pe ek hi baar (GPay double-click -> ek charge)."
 - "Price feed = WebSocket push + pub/sub fan-out; ephemeral (latest-only), not stored like WhatsApp."
-
----
+- "Matching single-threaded PER SYMBOL — one queue, no locks, deterministic; scale BY symbol."
+```
 
 ## TRAP BOX
-
 ```
-┌─────────────────────────────────────────────────────────┐
-│ TRAP 1: Money pe eventual consistency                    │
-│   → NO. Paisa = strong/ACID. Eventual = like-counts only.│
-│                                                          │
-│ TRAP 2: Order pe turant debit                            │
-│   → Match se pehle BLOCK karo (kata nahi). Match pe debit.│
-│                                                          │
-│ TRAP 3: Settlement steps alag-alag (non-atomic)          │
-│   → Ek transaction: all-or-nothing, warna paisa vanish.  │
-│                                                          │
-│ TRAP 4: Idempotency bhulna                               │
-│   → Network retry = duplicate charge. Idempotency-key must.│
-│                                                          │
-│ TRAP 5: Price feed ko WhatsApp jaisa store karna          │
-│   → Latest-only ephemeral; per-user tick history bekaar. │
-│                                                          │
-│ TRAP 6: Polling for live price                           │
-│   → Server dead + laggy. WebSocket push + pub/sub.       │
-└─────────────────────────────────────────────────────────┘
+TRAP 1: Money pe eventual consistency -> NO. Paisa = strong/ACID (eventual = like-counts only).
+TRAP 2: Order pe turant debit -> match-se-pehle BLOCK karo; match pe debit.
+TRAP 3: Settlement steps non-atomic -> ek transaction (all-or-nothing) warna paisa vanish.
+TRAP 4: Idempotency bhulna -> network retry = duplicate charge. Idempotency-key must.
+TRAP 5: Price feed ko WhatsApp jaisa store -> latest-only ephemeral; per-user tick-history bekaar.
+TRAP 6: Polling for live price -> server dead+laggy. WebSocket push + pub/sub.
 ```
 
 ---
 
-# 7-STEP RAIL DRIVE
-
-> Upar ka detail/visual = depth. Yeh = 7-step RAIL piro ke (jaise interview mein bolega).
-> RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck. FLAVOR: CONSISTENCY + LATENCY heavy (paisа + speed).
-
-## STEP 1 — REQUIREMENTS clarify
-```
-   FUNCTIONAL:  BUY/SELL order (stock,qty,price) -> MATCH -> paisа+shares move -> live price -> cancel/status
-   NON-FUNCTIONAL:  FAST (microseconds) | CONSISTENT (ek share do ko na bike) | reliable | FAIR (pehle aaya pehle match)
-   Qs: orders/sec? limit ya market? partial match?
-   KEY: PAISА+SPEED -> consistency NON-NEGOTIABLE (strong, never eventual) + latency critical
-```
-
-## STEP 2 — ESTIMATE (scale / numbers)
-```
-   50 lakh users, orders 50 lakh/din (market-open storm). per-sec ~250 normal, PEAK 10k+ burst.
-   price feed = CRORE reads/sec (broadcast).
-   -> matching in-memory+fast | feed websocket-push | money SQL/ACID
-```
-
-## STEP 3 — API design
-```
-   POST /order {stock,side,qty,price,type, idempotencyKey} -> orderId + OPEN
-   DELETE /order/{id} cancel | PUT modify | GET /order/{id} status | GET /portfolio | WS /prices?symbol=
-   senior: idempotencyKey (double-click rok) + price=WebSocket push (poll nahi)
-```
-
-## STEP 4 — DATA MODEL + DB (KYUN)
-```
-   ORDER/WALLET/LEDGER/PORTFOLIO/TRADE tables. ORDER BOOK = RAM (DB nahi).
-   money/orders -> SQL+ACID (strong, all-or-nothing, audit; NoSQL eventual NAHI)
-   order book -> IN-MEMORY per-symbol (microseconds) | ledger -> append-only immutable (audit)
-   CONTRAST: speed-temp(book)=RAM | paisа-permanent=SQL/ACID
-```
-
-## STEP 5 — HL BOXES (order ka safar)
-```
-   Order Svc(validate+IDEMPOTENCY) -> Wallet(paisа BLOCK) -> Matching(order book, SINGLE-THREAD per symbol)
-   -> Settlement(ATOMIC double-entry) -> Price Feed(WebSocket+pubsub) | + EVENT LOG (crash recovery + audit)
-   KYUN: block-before-match (double-spend rok) | per-symbol matching (race-free) | atomic settlement (paisа na vanish)
-```
-
-## STEP 6 — DEEP DIVE: matching race kaise roko?
-```
-   order book: best-bid>=best-ask match; price-time priority (same price->FIFO)
-   PROBLEM: 2 thread same book -> Suresh ke 10 share DONO ko -> 20 bik gaye = DOUBLE-MATCH
-   OPTIONS: 1.LOCK (slow+deadlock, NAHI)  2.SINGLE-THREAD PER SYMBOL (BEST: ek symbol=ek queue=serialized->race-free->no lock->microseconds)
-   WINNER: single-thread per symbol. scale = shard by symbol. RULE hai (warna toot jaaye).
-   line: "single-threaded PER SYMBOL — one queue, no locks, deterministic+replayable, scale BY symbol"
-```
-
-## STEP 7 — BOTTLENECK / scale
-```
-   order book RAM crash -> EVENT LOG replay (=WAL) + audit | settlement crash -> EK transaction (ACID/@Transactional)
-   cross-service settlement -> SAGA (local steps + fail pe compensate/ulta) | feed crore reads -> WebSocket+pubsub
-   MANY symbols load -> shard BY symbol (alag thread) | ONE hot symbol -> can't split book (race);
-                        optimize in-memory thread + durable QUEUE absorbs burst (never 2-thread on 1 book)
-   CORE: ACID(ek DB)=instant all-or-nothing | SAGA(kai service)=code-driven compensating undo, eventually
-
-   WRAP: Order(validate+idempotency)->Wallet(BLOCK)->Matching(single-thread/symbol)->Settlement(ATOMIC)->Feed(ws+pubsub) | EventLog(replay+audit)
-         DATA: money=SQL/ACID | book=in-memory. DEEP: single-thread per symbol. SCALE: shard by symbol, event-log, ACID/SAGA, pubsub.
-         IMPROVE: stop-loss, circuit breakers, real-time risk checks, regulatory reporting.
-```
-
-> Trading twist: money=ACID/strong + matching=single-thread-per-symbol(race-free) + event-log(replay+audit) + feed=push.
+[← HLD README](../README.md)
