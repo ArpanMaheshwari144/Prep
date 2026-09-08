@@ -968,3 +968,23 @@ readOnly = true      =  "Hibernate optimization for SELECT"
     Private/final/static methods
     Default rollback (only Unchecked)
 ```
+
+---
+
+## ★ PROJECT CONNECT — usercrud + mini_payment (8-Sep)
+
+**usercrud (single-service — @Transactional kaafi):**
+```
+write (create/update/delete)   -> @Transactional (atomic commit/rollback)
+read (getById/getAll)          -> @Transactional(readOnly=true) (Hibernate no dirty-check, perf)
+createWithSimulatedFailure     -> RuntimeException -> ROLLBACK (demoRollback endpoint se KHUD test kiya, DB me user nahi bacha)
+UserNotFoundException note      -> "default rollback ONLY on RuntimeException, checked pe nahi" (rollback-rule LIVE)
+```
+
+**mini_payment_ms (DISTRIBUTED — jaha @Transactional KAAFI NAHI):**
+```
+order + payment ALAG service/DB -> ek local @Transactional dono ko cover nahi kar sakta
+-> SAGA (step + compensating rollback) + idempotency-key + Kafka  (real code: OrderService, PaymentService)
+```
+
+**★ Interview-story (strong):** *"Single service me @Transactional se atomicity. Par payment me order aur payment alag service/DB the — ek local transaction unhe cover nahi karti — isliye SAGA + idempotency-key use kiya."*

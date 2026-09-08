@@ -112,6 +112,28 @@ class OrderService {
 
 ---
 
+## ★ PROJECT CONNECT — usercrud @Transactional/@Cacheable/@Async (8-Sep)
+
+> Proxy ki theory tere project me 3 jagah LIVE:
+```
+@Transactional -> UserService: create/update/delete, getById/getAll (readOnly=true), createWithSimulatedFailure
+@Cacheable      -> CacheDemoService.getUser("users")
+@Async          -> AsyncDemoController (background task)
+```
+```
+1. UserService pe @Transactional -> Spring ne use PROXY me wrap kiya.
+2. UserController -> userService.create() call = asli nahi, PROXY ko -> proxy BEGIN -> create() -> COMMIT.
+3. demoRollback: createWithSimulatedFailure() ne RuntimeException -> PROXY ne pakda -> ROLLBACK
+   -> DB me user nahi (ye proxy ka LIVE proof, khud test kiya).
+4. @Cacheable getUser -> proxy pehle cache dekhta, hit -> method chalata hi nahi.
+```
+- Proxy hi @Transactional chalata = UserController -> proxy -> UserService (seedha nahi)
+- readOnly optimization = getById/getAll pe proxy ne Hibernate ko "no dirty-check" bola
+
+**Self-invocation honest note:** usercrud me create/update alag CONTROLLER se call (bahar se) -> proxy laga -> theek. Agar UserService.create() ANDAR se this.update() karta -> proxy bypass -> update ka tx na lagta. (project me aisa nahi, par trap yaad.)
+
+---
+
 ## POWER PHRASE
 
 > *"Spring implements @Transactional/@Async/@Cacheable through proxies — a wrapper around the bean that adds the cross-cutting logic (begin/commit/rollback) around the real method call. If the bean has an interface it uses a JDK dynamic proxy; otherwise CGLIB, which subclasses the class at runtime (Spring Boot defaults to CGLIB). Two gotchas: it can't proxy final classes/methods, and self-invocation (this.method()) bypasses the proxy so the annotation is ignored."*
