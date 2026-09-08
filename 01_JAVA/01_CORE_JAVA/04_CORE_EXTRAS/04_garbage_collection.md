@@ -168,6 +168,56 @@ void method() {
 
 ---
 
+## ★ GC COLLECTORS — safai-crew ka TAREEKA (8-Sep, deep-grill)
+
+> Heap = bada hall (kachra). Collector = safai ka TAREEKA. Sabka ek trade-off:
+> **throughput (kitna kaam ho) vs pause (app kitni der FREEZE = "stop-the-world").**
+
+```
+Serial GC    -> AKELA safai-wala. poora hall BAND karke akela jhaadu.
+                chhota app / single-core. pause LAMBA.        (-XX:+UseSerialGC)
+
+Parallel GC  -> KAI safai-wale ek saath, par hall abhi bhi BAND (stop-the-world).
+                kai log = tez. THROUGHPUT max, par pause dikhta.
+                Java 8 tak DEFAULT.                            (-XX:+UseParallelGC)
+
+CMS          -> app-ke-CHALTE-CHALTE saaf (mostly concurrent), hall kam band.
+                pause chhota. PAR fragmentation + Java 14 me HATA diya (dead).
+
+G1 (Garbage  -> hall ko chhote REGIONS me baanta. jis region me SABSE ZYADA
+   First)       kachra usko PEHLE saaf ("garbage-first").
+                pause-target de sakte: -XX:MaxGCPauseMillis=10. Java 9+ DEFAULT.
+
+ZGC/Shenandoah-> ultra-low pause (<1-10ms), BADE heap (TB) pe bhi. lagbhag poora
+                concurrent. latency-critical (trading/low-latency) apps.
+```
+
+**Ek line:** purane (Serial/Parallel) = hall BAND karke saaf (pause zyada, throughput accha) · naye (G1/ZGC) = app-ke-chalte + region-wise (pause chhota, predictable). **G1 = aaj ka default sweet-spot.**
+
+---
+
+## ★ REFERENCE TYPES — object ko kitna KASke pakda (8-Sep, deep-grill)
+
+> GC ka behaviour reference ki "grip" pe: **Strong = mutthi kaske · Soft = jeb me · Weak = haath dheela · Phantom = gir-chuka, sirf parchi.**
+
+```
+STRONG  -> normal `Student s = new Student()`. MUTTHI me kaske pakda.
+           jab tak strong-ref zinda -> GC HAATH NAHI lagata. (99% code)
+
+SOFT    -> "rakho jab tak memory hai; memory KAM padi -> hata do."
+           GC tabhi uthata jab MEMORY-PRESSURE ho. -> perfect for CACHE.
+
+WEAK    -> "dheela pakda — agli GC me agar sirf weak-ref bacha -> hata do."
+           -> WeakHashMap ki keys (auto-remove jab key kahin aur use na ho).
+
+PHANTOM -> object MAR chuka, bas "mar gaya" ki parchi (cleanup hook).
+           post-mortem cleanup. rarely-directly-used.
+```
+
+**GC-aggressiveness order:** Strong (kabhi nahi) → Soft (memory-pressure pe) → Weak (agli GC) → Phantom (already gaya).
+
+---
+
 ## TRAP
 
 > **`System.gc()` sirf request hai — guarantee nahi. JVM decide karta hai kab chalega.**

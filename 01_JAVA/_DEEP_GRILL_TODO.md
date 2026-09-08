@@ -26,10 +26,12 @@
    -> added to 10_executor_service_thread_pool.md: task-flow movie + "queue-sasta/thread-mehnga" reason + OOM trap
 4. Streams hard-layer (streams note EXTEND)
    -> parallelStream common-ForkJoinPool pitfall · Spliterator · short-circuit · stateful/stateless
-5. GC collectors + reference types (GC note EXTEND)
+5. [DONE 8-Sep] GC collectors + reference types (GC note EXTEND)
    -> Serial/Parallel/CMS/G1/ZGC · G1 regions · Soft/Weak/Phantom · tuning flags
-6. HashMap resize + load-factor math (hashmap_internal EXTEND)
+   -> added to 04_garbage_collection.md: safai-crew collectors + grip reference-types
+6. [DONE 8-Sep] HashMap resize + load-factor math (hashmap_internal EXTEND)
    -> 0.75 Poisson derive · lo/hi resize split · treeify needs table>=64 · untreeify 6
+   -> added to 01_hashmap_internal.md: threshold-double + 0.75-tradeoff + SPLIT numeric example (hash 5/21) + "16 kyun" + treeify/untreeify
 7. CompletableFuture thread-of-execution (future note EXTEND)
    -> thenApply vs thenApplyAsync · thenCompose vs thenApply · whenComplete/handle
 8. final-field safe publication + effectively-final (final/immutable/lambda EXTEND)
