@@ -14,35 +14,24 @@
 
 ---
 
-## ★ PRIORITY — top 8 deeper layer (ADD karne hain, order me)
+## ★ DONE (8-Sep) — hata diye list se, notes files me pakke
+```
+volatile+JMM · CAS/ABA/LongAdder · ThreadPoolExecutor · GC collectors+ref-types · HashMap resize-math
+```
+
+## ★ BACHA HUA — PRIORITY (ADD karne hain)
 
 ```
-1. volatile + JMM happens-before (NAYA note)
-   -> visibility vs atomicity · count++ race · double-checked-locking singleton
-2. Atomic / CAS / ABA / LongAdder (NAYA note)
-   -> CAS spin · ABA problem + AtomicStampedReference · LongAdder striping
-3. [DONE 8-Sep] ThreadPoolExecutor internals (executor note EXTEND)
-   -> 7 constructor params · core->queue->max ordering · rejection policies · IO-vs-CPU sizing
-   -> added to 10_executor_service_thread_pool.md: task-flow movie + "queue-sasta/thread-mehnga" reason + OOM trap
-4. Streams hard-layer (streams note EXTEND)
+1. Streams hard-layer (streams note EXTEND)
    -> parallelStream common-ForkJoinPool pitfall · Spliterator · short-circuit · stateful/stateless
-5. [DONE 8-Sep] GC collectors + reference types (GC note EXTEND)
-   -> Serial/Parallel/CMS/G1/ZGC · G1 regions · Soft/Weak/Phantom · tuning flags
-   -> added to 04_garbage_collection.md: safai-crew collectors + grip reference-types
-6. [DONE 8-Sep] HashMap resize + load-factor math (hashmap_internal EXTEND)
-   -> 0.75 Poisson derive · lo/hi resize split · treeify needs table>=64 · untreeify 6
-   -> added to 01_hashmap_internal.md: threshold-double + 0.75-tradeoff + SPLIT numeric example (hash 5/21) + "16 kyun" + treeify/untreeify
-7. CompletableFuture thread-of-execution (future note EXTEND)
+2. CompletableFuture thread-of-execution (future note EXTEND)
    -> thenApply vs thenApplyAsync · thenCompose vs thenApply · whenComplete/handle
-8. final-field safe publication + effectively-final (final/immutable/lambda EXTEND)
+3. final-field safe publication + effectively-final (final/immutable/lambda EXTEND)
    -> JMM guarantee jo immutable object ko thread-safe banata
 ```
 
 ## ★ MISSING ENTIRELY (naye note — biggest grill-risk)
 ```
-- volatile (upar #1)
-- Atomic/CAS (upar #2)
-- JMM / happens-before (upar #1 ke saath)
 - Lock toolkit: ReentrantLock / ReadWriteLock / Semaphore / CountDownLatch / CyclicBarrier
 - ThreadLocal (finance request-scoped me common)
 ```
