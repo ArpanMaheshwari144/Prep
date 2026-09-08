@@ -1206,3 +1206,31 @@ Logout                =  "Refresh token DB delete (access expires by itself)"
                                ▼
                           Response
 ```
+
+---
+
+## ★ PROJECT CONNECT — usercrud SecurityConfig (real filter-chain + auth-flow) (8-Sep)
+
+> Note ka theory tere project me poora LIVE — aur security-architecture gap bhi kaafi bhar deta:
+
+```
+SecurityConfig (@Configuration @EnableWebSecurity):
+  csrf DISABLE                -> "JWT stateless, cookies nahi, CSRF irrelevant"
+  session STATELESS           -> SessionCreationPolicy.STATELESS (multi-server scaling)
+  routes                      -> /auth/** permitAll, baaki .anyRequest().authenticated()
+  addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+      -> JwtFilter PEHLE chalta: header se token -> valid -> SecurityContext me auth SET
+
+AuthenticationManager flow (login, real):
+  authManager.authenticate(email, password)
+    -> CustomUserDetailsService.loadUserByUsername(email)   [DB se user]
+    -> PasswordEncoder(BCrypt).matches(plain, storedHash)
+    -> match? Authentication : BadCredentialsException
+
+PasswordEncoder = BCryptPasswordEncoder (salt + slow, cost 10)
+JwtFilter extends OncePerRequestFilter (per-request token check)
+```
+
+**Connection:** note ka "filter token check" = JwtFilter (UPAF se pehle) · "login verify" = AuthenticationManager -> CustomUserDetailsService -> BCrypt · "stateless" = STATELESS policy. Ye security-architecture deep-gap ko REAL code se bhar deta (DelegatingFilterProxy/FilterChainProxy naam theory rahenge, par AuthManager->UserDetailsService->PasswordEncoder + JwtFilter-in-chain LIVE hai).
+
+**★ Interview-story:** *"JWT stateless setup — SecurityConfig me session STATELESS + CSRF off; JwtFilter ko UPAF se pehle add kiya jo har request pe token verify karke SecurityContext set karta; login pe AuthenticationManager -> CustomUserDetailsService -> BCrypt matches."*
