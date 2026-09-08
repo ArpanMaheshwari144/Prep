@@ -680,6 +680,24 @@
 
      DRY-RUN [1,2,3,4,5,6,1] k=3: Total=22, win=4 -> [1,2,3,4]=10 · [2,3,4,5]=14 · [3,4,5,6]=18 · [4,5,6,1]=16 -> min=10 -> 22-10=12.
      FAMILY: fixed-size SW + COMPLEMENT trick ("kya NAHI liya" gino). trap = k cards TOTAL (dono end milake), na har end se k.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ CONTAINS DUPLICATE II (LC-219)  = FIXED window (size k) + HASHSET
+ └──────────────────────────────────────────────────────────────
+     Q: koi 2 index i,j jaha nums[i]==nums[j] AND |i-j| <= k ? true/false.
+     ★ RECOGNITION: "same value + index farak <=k ke ANDAR" -> window me sirf LAST k elements rakho (HashSet).
+        KEY INSIGHT: agar set me sirf last-k elements hain, aur andar duplicate mila -> uska index-farak apne-aap <=k
+        -> "|i-j|<=k" alag se check karne ki zaroorat NAHI. bas window ko k-size me rakho.
+     TEMPLATE:
+         unordered_set<int> st;  int i=0, j=0;
+         while(j < nums.size()){
+             if(st.count(nums[j])) return true;   // window me pehle se hai -> mil gaya (within k)
+             if(j - i + 1 > k){ st.erase(nums[i]); i++; }   // window k se badi -> oldest hatao
+             st.insert(nums[j]); j++;
+         }
+         return false;
+     DRY-RUN [1,2,3,1] k=3: 1,2,3 add -> j=3 nums=1 set me hai -> true. | [1,2,3,1,2,3] k=2: har baar window<=2, kabhi dup nahi -> false.
+     FAMILY: fixed-window (size k) + HashSet (seen-check). value-equal -> set; within-k -> window size k.
 ```
 
 ---
