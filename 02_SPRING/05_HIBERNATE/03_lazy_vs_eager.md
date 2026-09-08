@@ -240,3 +240,12 @@ Defaults:
 
 Rule: ALWAYS LAZY, fetch explicitly when needed
 ```
+
+---
+
+## ★ PROJECT CONNECT — usercrud Author/Book (8-Sep)
+```
+Author.books  @OneToMany(mappedBy="author")  -> LAZY (default ToMany) -> books tabhi load jab access
+Book.author   @ManyToOne @JoinColumn         -> EAGER (default ToOne) -> author saath aa jaata
+```
+Tere note ka "ToMany=LAZY, ToOne=EAGER" LIVE. Author.books LAZY hi N+1 ki jad thi (N1Controller me dekha).

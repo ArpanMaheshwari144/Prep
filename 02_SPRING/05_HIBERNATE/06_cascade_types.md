@@ -286,3 +286,13 @@ orphanRemoval = list se remove → DB se delete
 Use when: child OWNED by parent
 Avoid when: child shared (Books, Categories)
 ```
+
+---
+
+## ★ PROJECT CONNECT — HONEST (8-Sep)
+```
+usercrud me cascade JAAN-BOOJH ke NAHI laga: Author @OneToMany(mappedBy="author") pe koi cascade nahi
+   -> Book alag JpaRepository se save/delete hoti (independent). isliye cascade zaroorat hi nahi padi.
+Cascade tab lagta jab child parent ke SAATH hi save/delete ho (jaise Order + OrderItem).
+```
+★ Interview me honest: "mere usercrud me Author-Book independent the isliye cascade nahi laga; concept pata hai — Order/OrderItem jaise owned-child pe CascadeType.ALL + orphanRemoval lagta." (theory strong, project me use-case nahi tha.)

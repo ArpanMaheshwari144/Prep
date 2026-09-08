@@ -209,3 +209,13 @@ Same query 5 times in transaction = 1 DB hit
 Session end = cache cleared
 Cannot disable, automatic
 ```
+
+---
+
+## ★ PROJECT CONNECT — usercrud (8-Sep)
+```
+Ek @Transactional method ke andar getById(1) 2 baar -> DB query SIRF EK baar,
+doosri baar Hibernate session (L1) cache se SAME object reference.
+Method/txn khatam -> session band -> L1 cache clear.
+```
+Tera note ka "same txn, 1 DB hit, same object" LIVE. (usercrud har service method @Transactional -> ek session = ek L1 cache.)

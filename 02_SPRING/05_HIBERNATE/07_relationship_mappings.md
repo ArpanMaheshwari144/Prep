@@ -317,3 +317,17 @@ Inverse side = uses mappedBy
 ALWAYS set both sides in bidirectional
 Use helper methods for sync
 ```
+
+---
+
+## ★ PROJECT CONNECT — usercrud Author/Book bidirectional (8-Sep)
+```java
+@Entity Author { @OneToMany(mappedBy="author") List<Book> books; }   // INVERSE side (mappedBy)
+@Entity Book   { @ManyToOne @JoinColumn(name="author_id") Author author; }  // OWNING side (FK/@JoinColumn)
+```
+```
+Owning side = Book (jiske paas @JoinColumn/FK author_id) -> ye side FK likhti DB me.
+Inverse side = Author (mappedBy="author") -> "FK Book ke paas hai, main sirf mirror".
+= tera note ka "owning vs inverse, @JoinColumn vs mappedBy" LIVE.
+```
+★ Bonus: dono @Id @GeneratedValue(strategy=IDENTITY) -> **IDENTITY JDBC batch-insert DISABLE karta** (INSERT ke turant baad id chahiye -> batch nahi ho sakta). perf trade-off, interviewer pooch sakta.

@@ -108,3 +108,13 @@ Hibernate  = Implementation (does the work)
 Tera code  → JPA interface
 Behind     → Hibernate executes
 ```
+
+---
+
+## ★ PROJECT CONNECT — usercrud (8-Sep)
+```
+Author/Book/Product = @Entity (JPA spec annotations — @Entity/@Id/@OneToMany/@ManyToOne).
+BookRepository extends JpaRepository = Spring Data JPA (interface, Spring khud impl banata).
+Hibernate = PROVIDER jo Spring Boot ne auto-configure kiya (starter-data-jpa se).
+-> tune JPA likha, chalaya Hibernate ne. "spec vs impl" LIVE.
+```

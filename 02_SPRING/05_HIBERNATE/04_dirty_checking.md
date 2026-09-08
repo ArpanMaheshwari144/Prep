@@ -248,3 +248,12 @@ Outside @Transactional:
 3. @Transactional (jo tune padha) = ye SAB ko baandhne wala dhaaga —
    wahi session/txn zinda rakhta jisse dirty-check, LAZY-load, sab kaam karte.
 ```
+
+---
+
+## ★ PROJECT CONNECT — usercrud UserService.update (8-Sep)
+```
+update() @Transactional:  entity load -> setter se field badla -> koi explicit save()/repository.save() NAHI
+   -> commit pe Hibernate ne KHUD dirty-check karke UPDATE bheja (managed entity ka snapshot compare).
+```
+Tera note ka "managed entity, save bina UPDATE" LIVE — @Transactional (session zinda) ise possible banata.
