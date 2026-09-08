@@ -17,10 +17,9 @@
 
 ```
 1. BEAN LIFECYCLE (poora) + CIRCULAR DEPENDENCY   [01_basics/02 EXTEND]
-   -> instantiate -> populate/inject -> *Aware -> BeanPostProcessor.before
-      -> @PostConstruct/InitializingBean -> BeanPostProcessor.after -> READY
-      -> @PreDestroy/DisposableBean
-   -> circular-dep: constructor-injection FAIL kyun, Spring ka 3-level cache
+   -> [DONE 8-Sep: bean lifecycle onboarding-analogy 8-step + 3 crux -> 02_beans_ioc_container.md]
+   -> [DONE 8-Sep: why-DI deep (shared-singleton + PROXY) + kaha/kaise-banta -> 01_spring_kya_hai.md]
+   -> [BACHA: CIRCULAR DEPENDENCY] constructor-injection FAIL kyun, Spring ka 3-level cache
       (singletonObjects / earlySingletonObjects / singletonFactories),
       setter/field/@Lazy/ObjectProvider se cycle kaise tootta
 

@@ -150,6 +150,34 @@ Repository OUTSIDE se inject ki gayi.
 
 ---
 
+## ★ 2 AUR REASON new-chhodne ke (deep) — 8-Sep
+
+> Upar wale (coupling/test/swap) ke alaawa 2 aur, jo interview me kholta:
+
+**Reason: SHARED singleton (resource bachana).**
+```
+new DataSource() har service me -> 10 service = 10 DB connection-POOL khul jaate (barbaad).
+Spring: 1 hi DataSource banata (singleton), sabko WAHI deta -> resource bacha.
+```
+
+**Reason (SABSE BADA): PROXY.**
+```
+new -> RAW object milta. @Transactional/@Async/security tabhi chalte jab object ek COVER (proxy) me lipta ho.
+new me koi cover nahi -> @Transactional chup-chaap kaam hi NAHI karega.
+Spring bean ko proxy me lapet ke deta -> isiliye ye annotations kaam karte.
+```
+(ye [[proxy-jdk-vs-cglib]] topic se judega)
+
+## ★ "KAHA aur KAISE banta" (magic nahi) — 8-Sep
+```
+KAHA:  ek dabbe me = ApplicationContext (IoC container), app STARTUP pe.
+KAISE: Spring bhi andar-andar `new`/REFLECTION hi use karta -- koi jaadu se nahi banta.
+FARAK banane me NAHI; farak = kaun MANAGE karta + kya WIRE karta + kya LAPET (proxy) ke deta.
+```
+Ek line: **`new` galat nahi — bas coupling + no-sharing + no-test + no-proxy deta. Spring ne wiring haath le li -> decoupled + shared + testable + proxy-wrapped. Yahi IoC.**
+
+---
+
 ## TRAP
 
 > **Common confusion:** "DI = Dependency Injection = Spring's feature."
