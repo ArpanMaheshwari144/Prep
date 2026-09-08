@@ -3,6 +3,9 @@
 Java / Spring backend interview prep — DSA, system design, projects, hands-on notes.
 **Neeche poora TREE hai — kisi bhi file pe click → seedha wahi note khul jaata.**
 
+> ★ **AB (delivery phase — build ~done):** roz HLD-mock **BOLKE** + STAR **BOLKE** + DSA sheet-glance/redo + Java/Spring revise + shaam apply. Focus = "jaanna" se "bolke fluently nikalna".
+> Live state + plan → **[PROGRESS.md](PROGRESS.md)**
+
 ---
 
 ## Sections (ek nazar)
@@ -12,7 +15,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 01 | [**01_JAVA**](01_JAVA) | Core Java · Collections · Java-8 · Multithreading · SOLID · Design Patterns · Brain-ticklers |
 | 02 | [**02_SPRING**](02_SPRING) | Boot · @Transactional · JWT · Hibernate · Docker · K8s · QueryDSL · GraphQL · Kafka · Cache · Async |
 | 03 | [**03_LLD**](03_LLD) | Low-level design — 11 designs in code |
-| 04 | [**04_HLD**](04_HLD) | System design — foundations + 11 designs + approach-playbook |
+| 04 | [**04_HLD**](04_HLD) | System design — foundations + 12 designs + approach-playbook |
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | CDN · LB · DNS · WAF · Prometheus/Grafana · load-test |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side compares |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | Hands-on Spring Boot projects |
