@@ -3,6 +3,16 @@
 > 8-Sep audit (poora 02_SPRING padha): @Transactional + saara Hibernate + JWT-token half + Kafka/Async/Cache/QueryDSL/GraphQL = DEEP, grill-ready.
 > Asli holes = CONTAINER-INTERNALS (bean lifecycle, proxy, auto-config, security architecture). JP round-2 = Spring-internals GRILL. Ye bharne hain.
 
+## ★ REAL-PROJECT CONNECT — DONE (8-Sep)
+```
+Poora Spring core folder ab usercrud/mini_payment se juda (har concept -> "humne KAHA use kiya"):
+  01_basics 1-4 (IoC/DI, beans/stereotypes, constructor-inj, proxy) · 02_transactional (usercrud + mini_payment SAGA)
+  · 03_jwt_security (SecurityConfig real filter-chain) · 05_HIBERNATE 1/3/4/5/7 (Author/Book/Product) + 06 cascade HONEST-not-used
+  · 09_querydsl (UserSearchService) · 10_custom_queries (UserRepository @Query). 05_autoconfig pehle se (pom).
+  Already-connected (pehle se): Kafka/N+1/opt-lock/cache/async/graphql.
+NEXT (Arpan-plan): Java folder bhi aise real-project connect + STAR bolke + HLD mock.
+```
+
 ## ★ METHOD (Java jaisa — Arpan-LOCKED)
 ```
 1. Claude PEHLE TEACH kare — concept + analogy (store/box/visual), samjhaye.

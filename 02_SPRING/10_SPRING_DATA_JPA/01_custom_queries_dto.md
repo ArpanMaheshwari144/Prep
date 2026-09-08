@@ -170,3 +170,13 @@ List<CustomerOrderSummary> getCustomerSummaries(@Param("city") String city,
 - **Native → interface projection** (alias = getter). **JPQL → `new pkg.DTO(...)`** (full path + constructor).
 - Entity heavy/private → DTO se sirf zaroori fields expose.
 - **UPDATE/DELETE query** → `@Modifying` + `@Transactional` chahiye (`@Query("UPDATE User u SET u.city=:c WHERE u.id=:id")`).
+
+---
+
+## ★ PROJECT CONNECT — usercrud repositories (8-Sep)
+```java
+UserRepository:   @Query("FROM User u WHERE u.age >= :minAge")                     // custom JPQL + named param
+AuthorRepository: @Query("Select Distinct a from Author a left join fetch a.books") // JOIN FETCH (N+1 fix) + DISTINCT
+```
+Real `@Query` LIVE — JPQL custom queries. AuthorRepository ka JOIN FETCH N+1-note se bhi juda (DISTINCT duplicate hataata).
+QueryDSL vs @Query: **QueryDSL = runtime DYNAMIC** (conditions code me build) · **@Query = FIXED JPQL** (compile-time likhi). usercrud me dono side-by-side.

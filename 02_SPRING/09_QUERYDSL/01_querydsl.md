@@ -70,3 +70,13 @@ extra join-condition chahiye → `.on(...)`.
 "Dynamic optional filters ke liye QueryDSL — Q-classes se type-safe query, compile-time checked.
  BooleanBuilder me conditions conditionally add karta, string-query ki galti ka risk nahi.
  Specification ka cleaner, less-verbose alternative."
+
+---
+
+## ★ PROJECT CONNECT — usercrud UserSearchService (8-Sep)
+```java
+QUser user = QUser.user;                          // generated Q-class (compile-time safe)
+BooleanBuilder where = new BooleanBuilder();       // dynamic conditions AND-jodo
+queryFactory.selectFrom(user).where(where).fetch();
+```
+Real: `UserSearchService` (injected `JPAQueryFactory`), `UserSearchController` endpoint. Q-class `QUser` = querydsl-apt ne compile pe generate ki (pom plugin). "type-safe dynamic query" LIVE.
