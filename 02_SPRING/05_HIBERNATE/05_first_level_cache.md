@@ -212,6 +212,19 @@ Cannot disable, automatic
 
 ---
 
+## ★ L1 vs L2 vs @Cacheable — 3 ALAG cheezein (confuse mat ho, 8-Sep)
+
+> Teeno ko "cache" bolte, isliye ghichpich hoti. Ye teen bilkul alag hain:
+```
+L1 (first-level)  -> 1 TRANSACTION bhar · entity · AUTOMATIC (kuch nahi karna, band nahi kar sakte) · Hibernate
+L2 (second-level) -> poori APP, transactions ke BEECH share · entity · tum CONFIGURE karo (EhCache/Redis provider) · Hibernate
+@Cacheable        -> METHOD ka RESULT · tum ANNOTATION lagate · requests ke beech, TTL tak · Spring (Hibernate ka NAHI, alag layer)
+```
+- **L1** = fully automatic; **L2** = Hibernate ka par tum on/configure karte; **@Cacheable** = Spring ka apna, method-result.
+- Common trap: "cache = @Cacheable" samajhna. L1/L2 = ENTITY cache (Hibernate); @Cacheable = METHOD-result cache (Spring).
+
+---
+
 ## ★ PROJECT CONNECT — usercrud (8-Sep)
 ```
 Ek @Transactional method ke andar getById(1) 2 baar -> DB query SIRF EK baar,
