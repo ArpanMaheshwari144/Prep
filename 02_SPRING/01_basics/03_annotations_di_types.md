@@ -130,6 +130,29 @@ class UserService {
 
 ---
 
+## ★ PROJECT CONNECT — usercrud (constructor-injection everywhere) (8-Sep)
+
+> Theory ("constructor = best") tere project me har jagah:
+```
+CONSTRUCTOR INJECTION EVERYWHERE (field injection ek jagah nahi):
+  UserController -> private final UserService
+  UserService    -> private final UserRepository   (comment: "single-ctor -> @Autowired implicit")
+  AuthController -> 5 deps: UserRepository, RefreshTokenRepository, JwtService,
+                    AuthenticationManager, PasswordEncoder
+  JwtFilter      -> private final JwtService, CustomUserDetailsService
+```
+- `private final X` + constructor = "constructor injection = best" LIVE (final = immutable, guaranteed-set)
+- ek hi constructor -> `@Autowired` likhne ki zaroorat nahi, Spring khud samajhta (UserService comment)
+
+**★ Honest note (interview me aise bolo):**
+```
+@Qualifier/@Primary mere project me NAHI -> har type ka EK hi impl -> ambiguity aayi hi nahi.
+2 impl hote (JpaUserRepo + MongoUserRepo) tab @Qualifier/@Primary lagta.
+```
+Reality: **@Qualifier/@Primary bade real projects me KAM use hota** — mostly ek clean impl, sab ko pata kab/kaise -> koi bada scene nahi. Interview me theory bolna kaafi; har baar "maine project me" ghusana zaroori nahi.
+
+---
+
 ## ★ CIRCULAR DEPENDENCY — A ko B chahiye, B ko A (8-Sep, deep-grill)
 
 > Do bean ek doosre pe depend: `A(B b)` aur `B(A a)`. Kaun pehle bane?

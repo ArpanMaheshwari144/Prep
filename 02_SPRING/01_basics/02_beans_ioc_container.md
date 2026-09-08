@@ -196,6 +196,31 @@ session (web) -> 1 per user session. logout/timeout = destroy.
 
 ---
 
+## ★ PROJECT CONNECT — usercrud ke real beans (8-Sep)
+
+> Har bean-type + singleton + @Repository-magic tere apne project me:
+
+```
+@RestController  -> UserController, AuthController, CacheDemoController, AsyncDemoController  (HTTP layer)
+@Service         -> UserService, UserSearchService, CacheDemoService, JwtService, CustomUserDetailsService  (business)
+@Repository      -> BookRepository, RefreshTokenRepository (extends JpaRepository)  (DB layer)
+@Component       -> JwtFilter  (generic bean)
+@Configuration   -> KafkaConfig, QueryDslConfig  (@Bean methods)
+@RestControllerAdvice -> GlobalExceptionHandler  (cross-cutting exception bean)
+```
+```
+1. App start -> Spring ne ye saari classes SCAN ki (@Service/@Repository = "manage karo")
+2. har ka object banaya, ApplicationContext me rakha -> sab SINGLETON (1-1 copy)
+3. UserController ko UserService chahiye tha -> container se WIRE kiya
+4. BookRepository INTERFACE hai -> Spring ne KHUD implementation bean bana diya (JpaRepository magic)
+```
+- **Bean types** = har type ka live example project me
+- **@Repository extra-value** = BookRepository/RefreshTokenRepository (DB exception translation)
+- **Singleton** = UserService ek hi copy, saare controllers share
+- **Stateless rule** = services me koi request-data field nahi -> singleton safe
+
+---
+
 ## POWER PHRASE
 
 > *"Spring's IoC container manages beans — it instantiates them at startup via component scanning, wires dependencies, and serves them on request. Default scope is singleton — one instance shared across the entire application. Use @Service, @Repository, @Controller for layer-specific semantics."*

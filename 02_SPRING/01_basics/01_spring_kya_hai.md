@@ -178,6 +178,34 @@ Ek line: **`new` galat nahi — bas coupling + no-sharing + no-test + no-proxy d
 
 ---
 
+## ★ PROJECT CONNECT — usercrud UserController (IoC/DI LIVE, 8-Sep)
+
+> Theory ("new nahi likha, bahar se mila") tere apne project me kaha hai:
+
+```java
+// 07_PROJECTS/usercrud/.../controller/UserController.java
+@RestController
+@RequestMapping("/users")
+public class UserController {
+    private final UserService service;            // <- ye chahiye (dependency)
+    public UserController(UserService service) {  // <- "mujhe UserService do" (constructor injection)
+        this.service = service;
+    }
+    // service.create(user);  <- USE karta, kahin `new UserService(...)` NAHI likha
+}
+```
+```
+1. UserController ko UserService chahiye -> kahin `new UserService()` NAHI.
+2. Constructor me maang liya.
+3. App-start pe Spring ne container se ready UserService bean nikaal ke constructor me DE diya (INJECT).
+4. Controller bas service.create() use karta -> banane ka tension zero.
+```
+- **"new nahi, bahar se mila"** = ye constructor injection LIVE
+- **Constructor injection (best type)** = `final UserService` + constructor
+- **IoC** = control Controller ne nahi, Spring ne liya
+
+---
+
 ## TRAP
 
 > **Common confusion:** "DI = Dependency Injection = Spring's feature."
