@@ -119,6 +119,71 @@ count.incrementAndGet();         // hardware-level atomic
 
 ---
 
+## ★ PERFORMANCE COST — har cheez volatile kyun NAHI (8-Sep, Arpan-Q)
+> Sawaal: "volatile baar-baar main-memory se padhega to slow nahi hoga?" -> HAAN, cost hai.
+```
+Normal var -> CPU apni FAST cache se padhta (nano-sec).
+volatile   -> (1) cache-fayda gaya (har read/write RAM tak) + (2) CPU MEMORY FENCE/BARRIER lagata
+              -> har access mehnga + kuch JIT optimizations block (reordering rok deta).
+```
+- Isiliye har cheez volatile NAHI -> **selective**: sirf jahan cross-thread visibility chahiye.
+- Hot single-thread variable ko volatile karna = **faltu waste** (koi doosra thread padh hi nahi raha).
+- **TRADE-OFF: correctness (visibility) vs speed.** Flag ke liye cost chhota + zaroori; warna mat lagao.
+- (Ye "fence" hi agle section JMM/happens-before ka core hai — volatile sirf cache nahi, REORDERING bhi rokta.)
+
+---
+
+## ★ JMM + happens-before — volatile ka DUSRA kaam: ORDERING (8-Sep)
+> ★ volatile ke 2 kaam: (1) VISIBILITY (upar) + (2) ORDERING (ye). Atomicity phir bhi NAHI.
+
+### Tiffin-locker analogy (rattna nahi — ye picture)
+```
+Person A = khaana banata      | Person B = lene aata
+Shared locker = main memory   | bahar ek FLAG = "READY / NOT READY"
+A: (1) tiffin pack -> locker me rakho (data=42)   (2) flag "READY" (ready=true)
+B: flag "READY" dikhe -> locker khol ke tiffin le.
+```
+**PROBLEM = REORDERING:** A ka CPU tez banne ko order badal sakta -> pehle flag "READY", tiffin baad me.
+  B ne READY dekha -> locker khola -> tiffin hai hi nahi/aadha -> gadbad.
+  (Akela hota to order-badalna theek. **Doosra ORDER pe depend kare -> tootta.**)
+
+**FIX = flag `volatile` = SEALED promise:** "flag READY tabhi ho sakta jab **usse pehle ka SAB kaam** (tiffin locker me + visible) ho chuka; is flip ke aar-paar order badla NAHI jaa sakta."
+  -> B jab READY dekha -> tiffin GUARANTEED poora + visible.
+
+### JMM / happens-before (naam, par picture upar)
+- **JMM (Java Memory Model)** = official rulebook: KAB ek thread ka likha doosre ko GUARANTEED dikhega + reordering ki limits.
+- **happens-before** = "A happens-before B" -> A se pehle ka SAB kaam B ko dikhta = flag-stamp se pehle ka sab, dekhne-wale ko milta.
+- **volatile WRITE -> baad ka volatile READ = happens-before edge.** Isliye `data=42; ready(volatile)=true;` me B jab ready=true dekha -> data=42 bhi guaranteed (reorder nahi). volatile "apne se pehle ka SAB publish/seal kar deta" — sirf ek var nahi.
+- Doosre happens-before edges (same guarantee): lock RELEASE -> agla lock ACQUIRE (synchronized) · thread.start() -> us thread ka kaam · thread ka kaam -> thread.join() return.
+
+### DCL Singleton — volatile ka killer example (ghar + nameplate)
+```java
+class Singleton {
+    private static volatile Singleton instance;   // volatile ZAROORI
+    static Singleton get() {
+        if (instance == null) {                    // 1st check (no lock)
+            synchronized (Singleton.class) {
+                if (instance == null)              // 2nd check (locked)
+                    instance = new Singleton();
+            }
+        }
+        return instance;
+    }
+}
+```
+`instance = new Singleton()` = 3 kaam: allocate(plot) -> construct(ghar bano) -> assign(nameplate lagao).
+  Reorder -> nameplate PEHLE (`instance!=null`) par ghar AADHA-bana -> doosra thread nameplate dekh ke ghusa -> adhoora object -> crash.
+  **volatile reorder rokta -> safe publication.** Isliye DCL me `volatile` compulsory.
+
+### ★ 3-LINE YAAD
+```
+volatile = VISIBILITY (cache->RAM, latest dikhe) + ORDERING (reorder rok, "pehle ka sab seal" = happens-before)
+volatile != ATOMICITY (count++ race rahega -> AtomicInteger/synchronized)
+DCL singleton -> instance ko volatile (warna partially-constructed object dikh sakta)
+```
+
+---
+
 ## ★ TRIO CONNECT — volatile / atomic / synchronized (ek jagah)
 
 > 3 tools, badhta hua "kitna deta hai". aaj usercrud idempotency me atomic+synchronized dekhe; volatile flag ke liye.

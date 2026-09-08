@@ -54,6 +54,43 @@ CAS ek **single hardware (CPU) instruction** hai — CPU guarantee karta compare
 
 ---
 
+## ★ ABA PROBLEM — CAS ka chhupa trap (8-Sep)
+> CAS check karta "value == expected(5)?". Par value 5 -> 6 -> WAPAS 5 ho sakti. CAS ko 5 dikha -> "kuch nahi badla" -> success. Par badla tha aur wapas aa gaya.
+
+**Counter pe HARMLESS** (5 = 5, farak nahi). **Reference/pointer jo REUSE ho + history matter kare** wahan asli bug.
+
+Drawer-note analogy: tune "₹5 hai" note kiya -> koi ₹5 utha ke ALAG ₹5 rakh gaya -> tu "abhi bhi ₹5? haan" -> maan liya haath nahi laga. Par laga tha.
+
+**ASLI USE-CASE — lock-free STACK (pointer reuse):**
+```
+Stack: head -> A -> B -> C
+T1 pop-A plan: head=A, A.next=B -> CAS(head, exp=A, new=B) karne wala tha -> PAUSE.
+T2: A pop -> B pop -> A wapas push (ab A.next=C, aur B free/reuse).
+T1 wakes: CAS(head, exp=A, new=B) -> "head abhi bhi A? HAAN (wapas aaya)" -> SUCCESS
+   -> par head=B set -> B to nikaal/free ho chuka -> STACK CORRUPT (dangling/lost node).
+```
+Aata kahan: **lock-free stack/queue (Treiber), object/memory POOLS (freed address reuse), "same pointer != same state"** structures.
+
+**FIX = AtomicStampedReference** = value + VERSION-stamp; dono check.
+```
+A(v1) -> A(v3): value wapas A, par stamp 1 != 3 -> change PAKAD liya.  (₹5 note pe serial-number)
+```
+★ HONEST (interview me bhi): day-to-day Spring/backend me tu raw CAS-on-pointer khud NAHI likhta (ConcurrentHashMap/queues andar handle karte). ABA = mostly interview-depth / library-internals + lock-free-structure/pool likhne walon ka. Counter-level ignore, pointer/pool-level critical.
+
+## ★ LongAdder — high-contention counter (8-Sep)
+Problem: bahut thread ek hi AtomicLong pe hathauda -> zyaadatar CAS FAIL -> retry-spin -> waste -> slow. Ek hot memory-spot = bheed-bottleneck.
+
+Cash-counter analogy:
+```
+AtomicLong -> ek counter, 100 log line -> dhakka-mukki (CAS retries) -> slow
+LongAdder  -> 10 counter (CELLS) khol do -> log alag-alag pe (kam bheed) -> tez
+              total chahiye -> sab cells ka SUM.
+```
+- LongAdder counter ko **multiple CELLS** me baant deta; har thread apni cell -> kam collision. Read = sum of cells.
+- **TRADE-OFF:** AtomicLong = kisi bhi pal exact, ek spot (low-medium contention theek) | LongAdder = **high-write-contention** (metrics/hit-count) — writes tez, sum() thoda lazy.
+
+---
+
 ## Kab Kya Use Karein (yaad rakh)
 
 | Situation | Tool | Kyun |

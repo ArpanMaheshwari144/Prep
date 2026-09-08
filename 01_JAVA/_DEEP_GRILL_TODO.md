@@ -21,8 +21,9 @@
    -> visibility vs atomicity · count++ race · double-checked-locking singleton
 2. Atomic / CAS / ABA / LongAdder (NAYA note)
    -> CAS spin · ABA problem + AtomicStampedReference · LongAdder striping
-3. ThreadPoolExecutor internals (executor note EXTEND)
+3. [DONE 8-Sep] ThreadPoolExecutor internals (executor note EXTEND)
    -> 7 constructor params · core->queue->max ordering · rejection policies · IO-vs-CPU sizing
+   -> added to 10_executor_service_thread_pool.md: task-flow movie + "queue-sasta/thread-mehnga" reason + OOM trap
 4. Streams hard-layer (streams note EXTEND)
    -> parallelStream common-ForkJoinPool pitfall · Spliterator · short-circuit · stateful/stateless
 5. GC collectors + reference types (GC note EXTEND)

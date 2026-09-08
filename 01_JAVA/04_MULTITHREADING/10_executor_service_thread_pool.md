@@ -172,9 +172,77 @@ try {
 
 ---
 
+## ★ ANDAR KYA HAI — ThreadPoolExecutor (7 param + task-flow) (8-Sep)
+
+> `Executors.newFixedThreadPool(5)` andar-andar bas ek `new ThreadPoolExecutor(...)` hai. Ye 7 knob pool ka poora behaviour decide karte.
+
+**Restaurant analogy (7 param):**
+```
+corePoolSize        -> PERMANENT waiter (hamesha payroll pe, kaam ho ya na ho)
+maximumPoolSize     -> MAX waiter (permanent + temp mila ke itne se zyada nahi)
+keepAliveTime       -> temp-waiter ko kitni der khaali baithne do phir nikaal do
+workQueue           -> WAITING BENCH (customer baithe, waiter free ho to serve)
+threadFactory       -> waiter "banane" ka tareeka (naam/priority set karna)
+rejectedExecutionHandler -> jab bench full + waiter max -> customer ko kya bolo
+timeUnit            -> keepAliveTime ki unit (sec/ms)
+```
+
+### LIVE MOVIE — task ek-ek aate hain (core=2, bench=3, max=4)
+```
+T1 aaya  -> W1 free   -> W1 serve         Waiters:[W1:T1][W2: - ]   Bench:[ ][ ][ ]
+T2 aaya  -> W2 free   -> W2 serve         Waiters:[W1:T1][W2:T2]   Bench:[ ][ ][ ]   (core BUSY)
+
+T3 aaya  -> core full -> BENCH pe baith   Bench:[T3][  ][  ]
+T4 aaya  -> BENCH                          Bench:[T3][T4][  ]
+T5 aaya  -> BENCH                          Bench:[T3][T4][T5]   (bench FULL)
+
+T6 aaya  -> bench full -> TEMP W3 hire    Waiters:[W1][W2][W3:T6]          (threads=3)
+T7 aaya  -> bench full -> TEMP W4 hire    Waiters:[W1][W2][W3][W4:T7]      (threads=4 = MAX)
+
+T8 aaya  -> bench FULL + waiters MAX -> jagah nahi -> REJECT (rejection-handler chalta)
+```
+
+**ORDER (counterintuitive — yaad rakh):** core bharo -> **phir bench(queue)** -> **phir temp-thread(max)** -> phir reject.
+
+### ★ KYUN queue PEHLE, naya thread BAAD me? (asli samajh)
+```
+Bench pe bithana   -> bas list me ek reference daala. lagbhag FREE.
+Naya thread banana -> OS se thread maango -> ~1 MB stack + context-switch. MEHNGA.
+```
+Isiliye pool ki soch: **"pehle SASTI jagah (queue) bharo, kaam thoda wait karega chalega; jab sasti jagah bhi khatam -> TAB majboori me MEHNGA kaam (naya thread)."**
+Ek line: **thread banana = LAST RESORT. Jitna queue se chal jaaye chalao; thread tabhi jab queue bhi bhar jaaye.**
+
+### ★ OOM TRAP — bench INFINITE (unbounded queue)
+```
+newFixedThreadPool ki queue = UNBOUNDED (LinkedBlockingQueue, no limit).
+T3,T4,...T10000 -> sab bench pe baithte jaate (bench kabhi FULL nahi hoti)
+   -> temp-thread KABHI hire nahi hote (bench full hui hi nahi)
+   -> sirf core threads kaam karein, bench pe laakhon ka dher -> MEMORY phatt = OOM.
+   -> aur maximumPoolSize bekaar pada raha (kabhi use hi nahi hua).
+```
+Isiliye production me apna `ThreadPoolExecutor` **bounded queue** ke saath banao — bench limit ho to jaldi pata chale + reject/backpressure milega, chup-chaap OOM nahi.
+
+### Rejection policies (bench full + max ke baad kya)
+| Policy | Kya karta |
+|--------|-----------|
+| **AbortPolicy** (default) | `RejectedExecutionException` phenk deta |
+| **CallerRunsPolicy** | jo submit kar raha WAHI thread task chala de (natural slow-down/backpressure) |
+| **DiscardPolicy** | task chup-chaap phenk de (koi error nahi) |
+| **DiscardOldestPolicy** | queue ka sabse purana task hata ke naya daal de |
+
+### Sizing (kitne thread)
+```
+CPU-bound kaam (calc/loop)  -> ~ cores jitne (zyada thread = sirf context-switch waste)
+IO-bound kaam (DB/API wait) -> cores se ZYADA (thread waise bhi wait me, doosra kaam kar le)
+```
+
+---
+
 ## POWER PHRASE
 
 > *"`ExecutorService` manages a pool of reusable threads — avoiding the cost of creating new threads for every task. Use `FixedThreadPool` for predictable load, `submit()` to get a `Future`, and always call `shutdown()` to release resources."*
+
+> *"Internally it's a `ThreadPoolExecutor`: tasks fill the core threads first, then the queue, and only then spawn threads up to maximumPoolSize — because creating a thread is expensive, so the queue is used first. If the queue is unbounded (like `newFixedThreadPool`), the max size never kicks in and the queue can grow until OOM — so in production I use a bounded queue with a rejection policy."*
 
 > **Yaad rakh:**
 > `new Thread()` = expensive, manual lifecycle
