@@ -130,6 +130,52 @@ class UserService {
 
 ---
 
+## ★ CIRCULAR DEPENDENCY — A ko B chahiye, B ko A (8-Sep, deep-grill)
+
+> Do bean ek doosre pe depend: `A(B b)` aur `B(A a)`. Kaun pehle bane?
+
+**CONSTRUCTOR injection pe FAIL (deadlock):**
+```
+Rule: A tabhi bane jab HAATH me B ho; B tabhi bane jab HAATH me A ho.
+Spring: "A banau -> B chahiye -> B banau -> A chahiye -> A banau..." GOL-GOL -> BeanCurrentlyInCreationException.
+
+   A ──needs──► B
+   ▲           │
+   └──needs────┘     dono ek-doosre ka intezaar -> koi paida nahi -> DEADLOCK
+```
+Darwaze pe do dost: "pehle TU aa" / "nahi pehle TU". Koi andar nahi aata.
+
+**KYUN fail:** constructor me "paida hona" aur "dependency milna" EK step hai -> khaali paida ho hi nahi sakta -> cycle todne ka mauka hi nahi.
+
+**SETTER/FIELD injection pe TOOT jaata (movie):**
+Yahan paida-hona pehle, inject baad me. Spring ek DIARY (cache) me aadha-bana pata likhta:
+```
+1. A ka KHAALI shell paida (constructor bina B ke chal gaya)     A=[khaali, B missing]
+2. Spring diary me likha: "A yahan hai -> [address]"             DIARY:{A->addr}
+3. Ab B banao. B ko A chahiye -> diary dekha -> "A to yaha hai" -> B ko A ka address diya. B READY.
+4. Wapas A ke khaali haath me ready-B pakda diya (setter).        A READY.
+5. DONO ready -> cycle TOOT gaya.
+```
+
+**★ 3-LEVEL CACHE (interviewer kholega) = wahi DIARY, 3 khaane:**
+```
+1. singletonObjects       -> poore READY bean
+2. earlySingletonObjects  -> aadhe-bane (expose ho chuke, init baaki)
+3. singletonFactories     -> factory jo "early reference" bana ke deti
+```
+Level-3 sirf isliye: agar A ko PROXY (cover) me lapetna ho (@Transactional), to B ko jo early-reference mile wo PROXY ho, raw nahi. [[proxy-jdk-vs-cglib]]
+
+**FIX (order):**
+```
+1. @Lazy ek constructor-param pe -> Spring nakli-lazy proxy inject, asli bean pehli use pe -> chicken-egg toota
+2. REFACTOR (BEST) -> teesri class nikaal ke cycle hatao (cycle aksar DESIGN-SMELL)
+3. setter/field injection -> Spring diary-trick se todta (PAR Boot 2.6+ me by-default BAND ->
+   spring.main.allow-circular-references=true chahiye; LAST option)
+```
+★ NOTE: field/setter cycle todta ZAROOR, par "field injection accha" NAHI -> general best abhi bhi CONSTRUCTOR; cycle pe pehle @Lazy/refactor, field-injection last.
+
+---
+
 ## Multiple Beans Resolution
 
 ```java
@@ -158,7 +204,9 @@ private UserRepository userRepo;
 
 > *"`@Component` is the generic Spring-managed bean. `@Service`, `@Repository`, `@Controller` are semantic specializations — only `@Repository` adds real behavior (exception translation to Spring's DataAccessException)."*
 
-> *"Constructor injection is recommended in Spring — final fields, easy testing, required dependencies enforced. Field injection via `@Autowired` is discouraged because it relies on reflection and harms testability."*
+> *"Constructor injection is recommended in Spring — final fields, easy testing, required dependencies enforced. Field injection via `@Autowired` is discouraged for immutability/testability/null-safety reasons — it hides dependencies and can mask circular-dependency design smells."*
+
+> ★ FIX (8-Sep): "field injection discouraged kyunki reflection" GALAT tha — constructor injection bhi reflection use karta. Asli reason = **immutability (final), testability (`new UserService(mock)`), null-safety, hidden-deps, circular-dep masking** — reflection nahi.
 
 ---
 

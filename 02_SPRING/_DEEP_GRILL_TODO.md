@@ -16,10 +16,10 @@
 ## ★ TIER-1 — near-certain JP round-2 probes, ABHI MISSING (order me)
 
 ```
-1. BEAN LIFECYCLE (poora) + CIRCULAR DEPENDENCY   [01_basics/02 EXTEND]
-   -> [DONE 8-Sep: bean lifecycle onboarding-analogy 8-step + 3 crux -> 02_beans_ioc_container.md]
-   -> [DONE 8-Sep: why-DI deep (shared-singleton + PROXY) + kaha/kaise-banta -> 01_spring_kya_hai.md]
-   -> [BACHA: CIRCULAR DEPENDENCY] constructor-injection FAIL kyun, Spring ka 3-level cache
+1. [DONE 8-Sep] BEAN LIFECYCLE (poora) + CIRCULAR DEPENDENCY   [01_basics EXTEND]
+   -> bean lifecycle onboarding-analogy 8-step + 3 crux + scope-lifespan -> 02_beans_ioc_container.md
+   -> why-DI deep (shared-singleton + PROXY) + kaha/kaise-banta -> 01_spring_kya_hai.md
+   -> circular-dep A/B chicken-egg + constructor-fail + setter-diary + 3-level cache + @Lazy/refactor -> 03_annotations_di_types.md
       (singletonObjects / earlySingletonObjects / singletonFactories),
       setter/field/@Lazy/ObjectProvider se cycle kaise tootta
 
@@ -79,8 +79,8 @@
 2. 02_transactional (isolation matrix) -> MySQL InnoDB REPEATABLE_READ phantom="allow" standard-sahi
    PAR InnoDB gap/next-key lock zyadatar phantom rok deta -> caveat add.
 3. 02_transactional (NESTED) -> universal dikhaya; JpaTransactionManager pe kaam nahi karta -> caveat.
-4. 01_basics/03 -> "field injection discouraged kyunki reflection" IMPRECISE (constructor bhi reflection use
-   karta). Asli reason = immutability/testability/null-safety/hidden-deps/circular-dep-masking. -> theek karo.
+4. [DONE 8-Sep] 01_basics/03 -> "field injection discouraged kyunki reflection" IMPRECISE theek kar diya
+   (asli reason = immutability/testability/null-safety/hidden-deps/circular-dep-masking).
 ```
 
 ## ★ PEHLE SE DEEP (inpe kaam nahi — chinta mat)
