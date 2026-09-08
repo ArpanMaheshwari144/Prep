@@ -23,10 +23,9 @@
       (singletonObjects / earlySingletonObjects / singletonFactories),
       setter/field/@Lazy/ObjectProvider se cycle kaise tootta
 
-2. PROXY: JDK-dynamic vs CGLIB   [naya note ya 01_basics — @Transactional file link kare]
-   -> interface-based (JDK) vs subclass (CGLIB), Spring kab kaunsa chunta, proxyTargetClass
-   -> @Transactional/@Async/@Cacheable SAB isi pe -> self-invocation kyun toot-ta,
-      final class/method limitation
+2. [DONE 8-Sep] PROXY: JDK-dynamic vs CGLIB   [naya note 01_basics/04_proxy_jdk_cglib.md]
+   -> secretary-model + direct-kyun-nahi (repetition) + koi-jaadu-nahi + DRY/SoC
+   -> JDK(interface)/CGLIB(subclass) + Boot-default CGLIB + final-limitation + self-invocation trap
 
 3. SPRING BOOT AUTO-CONFIGURATION   [naya note]
    -> @EnableAutoConfiguration, @Conditional family (OnClass/OnMissingBean/OnProperty),

@@ -55,7 +55,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ## [02_SPRING](02_SPRING)
 
-- **[01_basics](02_SPRING/01_basics)** — [spring-kya-hai](02_SPRING/01_basics/01_spring_kya_hai.md) · [beans/IoC](02_SPRING/01_basics/02_beans_ioc_container.md) · [annotations/DI](02_SPRING/01_basics/03_annotations_di_types.md)
+- **[01_basics](02_SPRING/01_basics)** — [spring-kya-hai](02_SPRING/01_basics/01_spring_kya_hai.md) · [beans/IoC](02_SPRING/01_basics/02_beans_ioc_container.md) · [annotations/DI](02_SPRING/01_basics/03_annotations_di_types.md) · [proxy JDK-vs-CGLIB](02_SPRING/01_basics/04_proxy_jdk_cglib.md)
 
 - **[02_transactional](02_SPRING/02_transactional/01_transactional_complete.md)** — @Transactional complete
 
