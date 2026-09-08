@@ -143,3 +143,11 @@ Pessimistic DB lock   -> SELECT...FOR UPDATE (row lock pehle)     | pessimistic
 
 > Idempotency me `orderCounter.incrementAndGet()` = CAS (counter), `putIfAbsent` = bucket-atomic (map).
 > Agar poore 3-4 line ek atomic block chahiye hote to `synchronized` lagta.
+
+---
+
+## ★ PROJECT CONNECT — usercrud RateLimitController (8-Sep)
+```java
+public synchronized ResponseEntity<String> hit() { ... }   // method-level lock
+```
+`synchronized` method = ek waqt ek THREAD hi `hit()` me ghus sakta -> rate-limit counter safe (do request ek saath aayein to gadbad nahi). Yahi tera note ka "poora method/block ek thread ke liye lock" LIVE. (single-instance me theek; multi-instance pe Redis-counter chahiye — distributed.)

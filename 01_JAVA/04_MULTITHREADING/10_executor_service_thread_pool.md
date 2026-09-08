@@ -244,6 +244,19 @@ IO-bound kaam (DB/API wait) -> cores se ZYADA (thread waise bhi wait me, doosra 
 
 > *"Internally it's a `ThreadPoolExecutor`: tasks fill the core threads first, then the queue, and only then spawn threads up to maximumPoolSize — because creating a thread is expensive, so the queue is used first. If the queue is unbounded (like `newFixedThreadPool`), the max size never kicks in and the queue can grow until OOM — so in production I use a bounded queue with a rejection policy."*
 
+---
+
+## ★ PROJECT CONNECT — usercrud @Async DemoJobs (8-Sep)
+```java
+@Async
+public void sendEmail(String to) {
+    logger.info(">> sendEmail START | THREAD = {}", Thread.currentThread().getName());
+    Thread.sleep(3000);   // maano email 3 sec leta
+    logger.info(">> sendEmail DONE  | THREAD = {}", Thread.currentThread().getName());
+}
+```
+`@Async` ke peeche THREAD-POOL hai — call karte hi Spring ise pool ke ALAG thread pe daal deta, **main (request) thread block nahi hota** (turant return). Log me thread-naam alag dikhta (`task-1` waghera, http-thread nahi). Ye tera ThreadPoolExecutor note ka "pool se reusable thread par kaam" LIVE — @Async andar-andar ek `ThreadPoolTaskExecutor` use karta (bounded rakhna best, warna OOM-trap wahi).
+
 > **Yaad rakh:**
 > `new Thread()` = expensive, manual lifecycle
 > `ExecutorService` = pool, reuse, future, shutdown

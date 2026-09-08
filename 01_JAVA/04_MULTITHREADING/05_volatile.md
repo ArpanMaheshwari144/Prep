@@ -270,3 +270,13 @@ public class VolatileDemoController {
 - **"Kaam kar raha" dekh ke ye MAT samajhna ki code SAHI hai** — visibility bug chhupa reh sakta, machine badalte hi phoot sakta.
 - Farak = **GUARANTEE** (invisible jab tak koi machine hang na kare), na ki visible-behavior-change.
 - Isiliye flag pe hamesha `volatile` likhte — luck pe nahi chhodte.
+
+---
+
+## ★ PROJECT CONNECT — usercrud VolatileDemoController (8-Sep)
+```java
+private volatile boolean running = true;      // <- flag
+/volatile/start -> new Thread(() -> { while(running) { ...count++... } }).start();
+/volatile/stop  -> running = false;           // main thread flag off
+```
+Classic visibility demo LIVE: `running` volatile na ho -> worker-thread apni CPU-cache me purana `running=true` dekhta rehta -> `/volatile/stop` ke baad bhi loop **kabhi nahi rukta**. volatile lagते hi worker main-memory se fresh padhta -> ruk jaata. (endpoints se khud test kiya.)

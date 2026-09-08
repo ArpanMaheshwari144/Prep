@@ -3,6 +3,14 @@
 > 7-Sep audit se nikla: notes recall-achhe + kai genuinely DEEP, par concurrency-primitives patle.
 > JP round-2 = Java GRILL (decider round). Ye gaps bharne hain — deep, grill-ready.
 
+## ★ REAL-PROJECT CONNECT — DONE (8-Sep)
+```
+Concurrency notes usercrud demos se jude: 05_volatile (VolatileDemoController running-flag),
+04_synchronized (RateLimitController.hit), 02_hashmap-vs-CHM (Idempotency/KafkaConsumer CHM),
+10_executor (@Async DemoJobs), 06_atomic (Idempotency AtomicInteger — pehle se).
+Core Java (OOP/String/exceptions) = honest-general (no forced project-anchor).
+```
+
 ## ★ METHOD (Arpan-LOCKED — aise hi karna)
 ```
 1. Claude PEHLE TEACH kare — concept + analogy (store/box/visual jaisa), samjhaye.

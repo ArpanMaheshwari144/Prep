@@ -207,3 +207,13 @@ Iterator:
   HashMap: fail-fast (CME on modify)
   CHM:     fail-safe (snapshot view)
 ```
+
+---
+
+## ★ PROJECT CONNECT — usercrud (8-Sep)
+```java
+IdempotencyController: ConcurrentHashMap<String,String> processed;   // thread-safe claim
+                       processed.putIfAbsent(key, "PROCESSING");       // bucket-atomic (do request ek saath -> ek hi claim)
+KafkaConsumer:         Set<String> processedIds = ConcurrentHashMap.newKeySet();  // dedup, duplicate msg skip
+```
+Real CHM LIVE — kyun plain HashMap nahi: multiple request/consumer-thread ek saath likhte -> HashMap pe race/CME aata; CHM ka bucket-level lock/CAS `putIfAbsent` ko atomic banata (idempotency + dedup dono isi pe tikte).
