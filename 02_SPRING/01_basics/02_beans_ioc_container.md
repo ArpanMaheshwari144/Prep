@@ -130,6 +130,27 @@ class UserCache {
 
 ---
 
+## ★ Bean KAB MARTA (scope-wise lifespan) — 8-Sep
+
+> Sawaal: "ek request ka kaam khatam -> bean destroy hoga?" Jawab SCOPE pe depend karta:
+
+```
+singleton (default) -> poori app ke liye 1 copy. banta STARTUP pe, marta SHUTDOWN pe (@PreDestroy).
+   -> ek request nipta -> destroy NAHI. wahi zinda rehta -> agli request REUSE karti. (yahi point: banao-ek-baar chalao-hamesha)
+   -> GC bhi nahi uthata: container strong-reference poore time pakde rehta.
+   -> isiliye STATELESS rakho (request-data usme mat rakho, warna 2 request gadbad).
+
+prototype -> har baar NAYA. Spring banake haath me de deta, phir BHOOL jaata.
+   -> @PreDestroy NAHI chalta. GC tab uthata jab tera code reference chhod de.
+
+request (web) -> 1 per HTTP request. request KHATAM = destroy.
+session (web) -> 1 per user session. logout/timeout = destroy.
+```
+
+**Ek line:** default singleton beech me kabhi destroy nahi — reuse ke liye app-bhar zinda, sirf shutdown pe marta. "Kaam khatam, ab rahega?" -> haan, kyunki agli baar bhi wahi kaam aayega.
+
+---
+
 ## Bean Annotations Preview
 
 | Annotation | Role |
