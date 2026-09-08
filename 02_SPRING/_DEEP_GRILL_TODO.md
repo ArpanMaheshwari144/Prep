@@ -27,11 +27,9 @@
    -> secretary-model + direct-kyun-nahi (repetition) + koi-jaadu-nahi + DRY/SoC
    -> JDK(interface)/CGLIB(subclass) + Boot-default CGLIB + final-limitation + self-invocation trap
 
-3. SPRING BOOT AUTO-CONFIGURATION   [naya note]
-   -> @EnableAutoConfiguration, @Conditional family (OnClass/OnMissingBean/OnProperty),
-      META-INF/spring.factories -> AutoConfiguration.imports (Boot 2.7+/3.x),
-      @SpringBootApplication composition, starter andar kaise
-   (Kafka file me anecdote hai, general mechanism nahi)
+3. [DONE 8-Sep] SPRING BOOT AUTO-CONFIGURATION   [naya note 01_basics/05_autoconfiguration.md]
+   -> naukar-almari analogy + TERE usercrud pom se mapping (har starter -> Spring ne kya banaya)
+   -> @Conditional (OnClass/OnMissingBean/OnProperty) + spring.factories->AutoConfiguration.imports + starter=bundle
 
 4. SPRING SECURITY asli ARCHITECTURE   [03_jwt_security EXTEND]
    -> DelegatingFilterProxy -> FilterChainProxy -> SecurityFilterChain (default filters)
