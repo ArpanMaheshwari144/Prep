@@ -57,7 +57,9 @@ NEXT (Arpan-plan): Java folder bhi aise real-project connect + STAR bolke + HLD 
 6. [DONE 9-Sep] Hibernate ENTITY STATES (formal)   [05_HIBERNATE/04_dirty_checking.md]
    -> 4-state employee-HR analogy (transient/persistent/detached/removed) + transitions
    -> save vs persist vs merge (merge return-crux) + dirty-check-only-on-persistent
-7. OSIV (open-session-in-view)   [05_HIBERNATE/03 EXTEND]  -> Boot me default ON, lazy ka #1 follow-up, pros/cons
+7. [DONE 9-Sep] OSIV (open-session-in-view)   [05_HIBERNATE/03 EXTEND]
+   -> Boot default ON (session request-end tak), lazy #1 follow-up, ON/OFF trade-off (connection-hog vs pool-clean)
+   -> + HANDS-ON LazyDemoController demo (fail/fix-txn/fix-fetch, actual 500->200 results) merge kiya
 8. Spring MVC request lifecycle   [confirm 08_REVISION_VISUAL/02 ya naya]
    -> DispatcherServlet -> HandlerMapping -> HandlerAdapter -> HttpMessageConverters -> ViewResolver
    -> @ControllerAdvice/@ExceptionHandler global error, @Valid/Bean-Validation
