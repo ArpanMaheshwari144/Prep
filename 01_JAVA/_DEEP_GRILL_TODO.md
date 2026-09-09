@@ -48,9 +48,8 @@ volatile+JMM · CAS/ABA/LongAdder · ThreadPoolExecutor · GC collectors+ref-typ
 
 ## ★ FACTUAL FIX (quick win)
 ```
-- 04_MULTITHREADING/02_thread_lifecycle.md -> "RUNNING" state GALAT.
-  Java me RUNNING state hota hi nahi. Sahi 6 = NEW / RUNNABLE / BLOCKED / WAITING / TIMED_WAITING / TERMINATED.
-  (RUNNABLE hi on-CPU include karta.) -> theek karna.
+- [DONE 9-Sep] 02_thread_lifecycle.md -> "RUNNING" hataya, sahi 6-states + BLOCKED/WAITING/TIMED_WAITING distinction.
+- [DONE 9-Sep] (Spring) 03_jwt_security jjwt 0.9.x -> 0.12.x (signWith(key)/verifyWith/parseSignedClaims/SecretKey).
 ```
 
 ## ★ PEHLE SE DEEP (inpe kaam nahi — chinta mat karna)

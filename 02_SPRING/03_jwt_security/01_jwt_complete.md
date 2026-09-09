@@ -816,31 +816,36 @@ public class JwtService {
     @Value("${jwt.expiration}")  // 15 min in milliseconds
     private long expiration;
 
+    // secret >= 32 chars (256-bit) — HS256 minimum. Build a SecretKey ONCE.
+    private final SecretKey key =
+        Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+
     // ─── Generate token ─────────────────────────
     public String generateToken(User user) {
         return Jwts.builder()
-            .setSubject(user.getId().toString())
+            .subject(user.getId().toString())          // 0.12.x: setSubject -> subject
             .claim("name", user.getName())
             .claim("role", user.getRole())
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + expiration))
-            .signWith(SignatureAlgorithm.HS256, secret)
+            .issuedAt(new Date())                      // setIssuedAt -> issuedAt
+            .expiration(new Date(System.currentTimeMillis() + expiration))
+            .signWith(key)                             // algo INFERRED from key (no SignatureAlgorithm.HS256)
             .compact();
     }
 
     // ─── Extract userId from token ──────────────
     public String extractUserId(String token) {
         return Jwts.parser()
-            .setSigningKey(secret)
-            .parseClaimsJws(token)
-            .getBody()
+            .verifyWith(key)                           // 0.12.x: setSigningKey -> verifyWith
+            .build()                                   // parser ab BUILD hota (builder pattern)
+            .parseSignedClaims(token)                  // parseClaimsJws -> parseSignedClaims
+            .getPayload()                              // getBody -> getPayload
             .getSubject();
     }
 
     // ─── Validate token ─────────────────────────
     public boolean isValid(String token) {
         try {
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
             return true;   // signature + exp valid
         } catch (JwtException e) {
             return false;  // invalid/expired
@@ -849,7 +854,12 @@ public class JwtService {
 }
 ```
 
-**Used library:** `jjwt` (most popular Java JWT library).
+> ★ **jjwt VERSION (9-Sep fix):** ye code **jjwt 0.12.x** (usercrud pom = 0.12.6). Purana 0.9.x API HATA diya —
+> `signWith(SignatureAlgorithm.HS256, secret)` + `Jwts.parser().setSigningKey(secret).parseClaimsJws(...)` **deprecated/removed**.
+> 0.12.x: **SecretKey object** (`Keys.hmacShaKeyFor`, HS256 = >=256-bit key) · `signWith(key)` (algo inferred) ·
+> parse = `parser().verifyWith(key).build().parseSignedClaims(token).getPayload()` · builder setters ka "set" prefix gaya (`subject/issuedAt/expiration`).
+
+**Used library:** `jjwt` 0.12.x (`jjwt-api` + `jjwt-impl` + `jjwt-jackson`).
 
 ---
 

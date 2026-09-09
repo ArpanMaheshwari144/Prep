@@ -80,7 +80,7 @@ NEXT (Arpan-plan): Java folder bhi aise real-project connect + STAR bolke + HLD 
 
 ## ★ FACTUAL FIX (quick win)
 ```
-1. 03_jwt_security (code) -> deprecated jjwt 0.9.x API (signWith(SignatureAlgorithm,secret),
+1. [DONE 9-Sep] 03_jwt_security (code) -> deprecated jjwt 0.9.x API (signWith(SignatureAlgorithm,secret),
    Jwts.parser().setSigningKey). Naya 0.11+/0.12: Key/SecretKey object, parserBuilder()/verifyWith(),
    HS256 ke liye >=256-bit key. -> update.
 2. 02_transactional (isolation matrix) -> MySQL InnoDB REPEATABLE_READ phantom="allow" standard-sahi
