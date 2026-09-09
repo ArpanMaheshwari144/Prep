@@ -1,74 +1,38 @@
-# SPRING — DEEP-GRILL TODO (Java folder ke baad — same treatment)
+# SPRING — DEEP-GRILL TODO (JP round-2 = Spring-internals GRILL)
 
-> 8-Sep audit (poora 02_SPRING padha): @Transactional + saara Hibernate + JWT-token half + Kafka/Async/Cache/QueryDSL/GraphQL = DEEP, grill-ready.
-> Asli holes = CONTAINER-INTERNALS (bean lifecycle, proxy, auto-config, security architecture). JP round-2 = Spring-internals GRILL. Ye bharne hain.
+> @Transactional + saara Hibernate + JWT + Kafka/Async/Cache/QueryDSL/GraphQL + container-internals
+> (bean-lifecycle/proxy/auto-config/security-arch/entity-states/OSIV) = DONE, grill-ready.
+> Ye file = ab tak jo BACHA hai (pending only). DONE items hata diye — notes-files me pakke (git history bhi).
 
-## ★ REAL-PROJECT CONNECT — DONE (8-Sep)
+## ★ METHOD (Arpan-LOCKED)
 ```
-Poora Spring core folder ab usercrud/mini_payment se juda (har concept -> "humne KAHA use kiya"):
-  01_basics 1-4 (IoC/DI, beans/stereotypes, constructor-inj, proxy) · 02_transactional (usercrud + mini_payment SAGA)
-  · 03_jwt_security (SecurityConfig real filter-chain) · 05_HIBERNATE 1/3/4/5/7 (Author/Book/Product) + 06 cascade HONEST-not-used
-  · 09_querydsl (UserSearchService) · 10_custom_queries (UserRepository @Query). 05_autoconfig pehle se (pom).
-  Already-connected (pehle se): Kafka/N+1/opt-lock/cache/async/graphql.
-NEXT (Arpan-plan): Java folder bhi aise real-project connect + STAR bolke + HLD mock.
-```
-
-## ★ METHOD (Java jaisa — Arpan-LOCKED)
-```
-1. Claude PEHLE TEACH kare — concept + analogy (store/box/visual), samjhaye.
+1. Claude PEHLE TEACH — concept + analogy (store/box/visual), samjhaye.
 2. Arpan SAMJHE -> "samjha?" gate.
 3. PHIR file me likhe (samajh pehle, likhna baad me). silent "update kar di" NAHI.
-4. NAYA note banane ki jagah -> pehle dekho EXISTING file me daala ja sakta -> usme merge. Naya sirf jab koi ghar na ho.
+4. NAYA note ki jagah -> pehle EXISTING file me merge dekho.
 ```
 
 ---
 
-## ★ TIER-1 — near-certain JP round-2 probes, ABHI MISSING (order me)
+## ★ BACHA HUA — PENDING (order me)
 
 ```
-1. [DONE 8-Sep] BEAN LIFECYCLE (poora) + CIRCULAR DEPENDENCY   [01_basics EXTEND]
-   -> bean lifecycle onboarding-analogy 8-step + 3 crux + scope-lifespan -> 02_beans_ioc_container.md
-   -> why-DI deep (shared-singleton + PROXY) + kaha/kaise-banta -> 01_spring_kya_hai.md
-   -> circular-dep A/B chicken-egg + constructor-fail + setter-diary + 3-level cache + @Lazy/refactor -> 03_annotations_di_types.md
-      (singletonObjects / earlySingletonObjects / singletonFactories),
-      setter/field/@Lazy/ObjectProvider se cycle kaise tootta
+1. @Configuration CGLIB / proxyBeanMethods   [01_basics ya proxy-note ke saath]
+   -> inter-bean method call singleton kyun return karta (Lite vs Full config). classic filter-Q. (chhota)
 
-2. [DONE 8-Sep] PROXY: JDK-dynamic vs CGLIB   [naya note 01_basics/04_proxy_jdk_cglib.md]
-   -> secretary-model + direct-kyun-nahi (repetition) + koi-jaadu-nahi + DRY/SoC
-   -> JDK(interface)/CGLIB(subclass) + Boot-default CGLIB + final-limitation + self-invocation trap
-
-3. [DONE 8-Sep] SPRING BOOT AUTO-CONFIGURATION   [naya note 01_basics/05_autoconfiguration.md]
-   -> naukar-almari analogy + TERE usercrud pom se mapping (har starter -> Spring ne kya banaya)
-   -> @Conditional (OnClass/OnMissingBean/OnProperty) + spring.factories->AutoConfiguration.imports + starter=bundle
-
-4. [DONE 9-Sep] SPRING SECURITY asli ARCHITECTURE   [03_jwt_security me "SECURITY ARCHITECTURE (deep)"]
-   -> airport analogy 3-step: DelegatingFilterProxy->FilterChainProxy->SecurityFilterChain
-   -> auth-flow AuthManager->Provider->(UserDetailsService+PasswordEncoder)->Authentication->SecurityContextHolder(ThreadLocal)
-   -> authn-vs-authz + JWT-stateless (login-once-token, JwtFilter-per-req before UPAF) + UPAF kya/kyun + @PreAuthorize method-security
-   -> usercrud-connect + power-phrase
-
-5. @Configuration CGLIB / proxyBeanMethods   [#2 ke saath ya 01_basics]
-   -> inter-bean method call singleton kyun return karta (Lite vs Full config). classic filter-Q.
-```
-
-## ★ TIER-2 — likely follow-ups
-
-```
-6. [DONE 9-Sep] Hibernate ENTITY STATES (formal)   [05_HIBERNATE/04_dirty_checking.md]
-   -> 4-state employee-HR analogy (transient/persistent/detached/removed) + transitions
-   -> save vs persist vs merge (merge return-crux) + dirty-check-only-on-persistent
-7. [DONE 9-Sep] OSIV (open-session-in-view)   [05_HIBERNATE/03 EXTEND]
-   -> Boot default ON (session request-end tak), lazy #1 follow-up, ON/OFF trade-off (connection-hog vs pool-clean)
-   -> + HANDS-ON LazyDemoController demo (fail/fix-txn/fix-fetch, actual 500->200 results) merge kiya
-8. Spring MVC request lifecycle   [confirm 08_REVISION_VISUAL/02 ya naya]
+2. Spring MVC request lifecycle   [confirm 08_REVISION_VISUAL/02 ya naya]
    -> DispatcherServlet -> HandlerMapping -> HandlerAdapter -> HttpMessageConverters -> ViewResolver
    -> @ControllerAdvice/@ExceptionHandler global error, @Valid/Bean-Validation
-9. Transaction-manager types + NESTED savepoint caveat + programmatic tx   [02_transactional EXTEND]
+
+3. Transaction-manager types + NESTED savepoint caveat + programmatic tx   [02_transactional EXTEND]
    -> Jpa vs DataSource vs Jta; NESTED JpaTransactionManager pe kaam nahi karta (savepoint-capable chahiye);
       TransactionTemplate
-10. @GeneratedValue strategies   [05_HIBERNATE/07 EXTEND]  -> IDENTITY batch-insert disable karta (perf)
-11. Spring AOP internals   [naya ya #2 ke saath]  -> pointcut/advice/advisor, @Aspect, auto-proxy weaving
-12. ApplicationContext vs BeanFactory + context refresh() + ApplicationEvent/listeners
+
+4. @GeneratedValue strategies   [05_HIBERNATE/07 EXTEND]  -> IDENTITY batch-insert disable karta (perf)
+
+5. Spring AOP internals   [naya ya proxy-note ke saath]  -> pointcut/advice/advisor, @Aspect, auto-proxy weaving
+
+6. ApplicationContext vs BeanFactory + context refresh() + ApplicationEvent/listeners
 ```
 
 ## ★ TIER-3 — nice-to-have
@@ -79,23 +43,12 @@ NEXT (Arpan-plan): Java folder bhi aise real-project connect + STAR bolke + HLD 
 - Hibernate: MultipleBagFetchException (2 collection JOIN FETCH) + JOIN-FETCH+pagination in-memory trap
 ```
 
-## ★ FACTUAL FIX (quick win)
+## ★ FACTUAL FIX (quick win — bache)
 ```
-1. [DONE 9-Sep] 03_jwt_security (code) -> deprecated jjwt 0.9.x API (signWith(SignatureAlgorithm,secret),
-   Jwts.parser().setSigningKey). Naya 0.11+/0.12: Key/SecretKey object, parserBuilder()/verifyWith(),
-   HS256 ke liye >=256-bit key. -> update.
-2. 02_transactional (isolation matrix) -> MySQL InnoDB REPEATABLE_READ phantom="allow" standard-sahi
+1. 02_transactional (isolation matrix) -> MySQL InnoDB REPEATABLE_READ phantom="allow" standard-sahi
    PAR InnoDB gap/next-key lock zyadatar phantom rok deta -> caveat add.
-3. 02_transactional (NESTED) -> universal dikhaya; JpaTransactionManager pe kaam nahi karta -> caveat.
-4. [DONE 8-Sep] 01_basics/03 -> "field injection discouraged kyunki reflection" IMPRECISE theek kar diya
-   (asli reason = immutability/testability/null-safety/hidden-deps/circular-dep-masking).
-```
-
-## ★ PEHLE SE DEEP (inpe kaam nahi — chinta mat)
-```
-@Transactional (02) · saara 05_HIBERNATE (N+1/lazy-eager/dirty-check/cascade/relationships/opt-lock) ·
-JWT-token half (03) · 14_KAFKA · 12_ASYNC · 13_CACHE · 09_QUERYDSL · 11_GRAPHQL · 10_SPRING_DATA · 04_profiles · docker/k8s
+2. 02_transactional (NESTED) -> universal dikhaya; JpaTransactionManager pe kaam nahi karta -> caveat.
 ```
 
 ---
-> SHURU: Claude #1 (bean lifecycle + circular-dep) se TEACH-first. ek-ek topic, samajh -> phir file. ~2-3/din.
+> SHURU: #1 (@Configuration CGLIB — chhota) ya #2 (MVC-lifecycle) se TEACH-first. ek-ek topic.
