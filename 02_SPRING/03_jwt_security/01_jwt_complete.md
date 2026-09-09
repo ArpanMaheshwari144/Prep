@@ -1244,3 +1244,76 @@ JwtFilter extends OncePerRequestFilter (per-request token check)
 **Connection:** note ka "filter token check" = JwtFilter (UPAF se pehle) · "login verify" = AuthenticationManager -> CustomUserDetailsService -> BCrypt · "stateless" = STATELESS policy. Ye security-architecture deep-gap ko REAL code se bhar deta (DelegatingFilterProxy/FilterChainProxy naam theory rahenge, par AuthManager->UserDetailsService->PasswordEncoder + JwtFilter-in-chain LIVE hai).
 
 **★ Interview-story:** *"JWT stateless setup — SecurityConfig me session STATELESS + CSRF off; JwtFilter ko UPAF se pehle add kiya jo har request pe token verify karke SecurityContext set karta; login pe AuthenticationManager -> CustomUserDetailsService -> BCrypt matches."*
+
+---
+
+## ★★ SECURITY ARCHITECTURE (deep, airport analogy — 9-Sep, teach-first)
+
+> Request = passenger; controller = gate. Beech me SECURITY CHECKPOINT (filters ki line). Sab guards clear -> tabhi gate.
+
+### STEP 1 — request kaise andar aati (filter-chain structure)
+```
+Request
+  -> [1] DelegatingFilterProxy   servlet-world ka 1 filter jo Spring me DELEGATE karta
+  |         (servlet container Spring-beans nahi jaanta, sirf ek filter -> ye bridge)
+  -> [2] FilterChainProxy        MANAGER: URL dekh ke kaunsi chain + guards ko ORDER me chalata
+  -> [3] SecurityFilterChain     asli LINE of guards (~15 default filters), us URL-set ke liye
+  -> Controller (gate)           sab clear -> tabhi
+```
+- DelegatingFilterProxy = servlet->Spring **bridge**
+- FilterChainProxy = **manager** (URL-match pe chain chunta, guards order me)
+- SecurityFilterChain = **ek line of guards**; ek app me kai chains (/api/** alag, /admin/** alag)
+
+### STEP 2 — checkpoint pe identity verify (authentication flow) + kahan store
+```
+AuthenticationManager   "boss" -> verify karwaata (khud nahi karta, delegate)
+   -> AuthenticationProvider   asli verifier:
+        - UserDetailsService  DB se user (loadUserByUsername -> stored details + HASHED pwd)
+        - PasswordEncoder     BCrypt: plain-vs-hash match
+   -> match -> Authentication object  (STAMPED wristband: kaun + roles)
+   -> SecurityContextHolder (ThreadLocal)  wristband request-bhar tere saath -> aage sab "authenticated" jaante
+```
+★ **Authn vs Authz** (grill): Authn = "TU KAUN?" (identity, upar flow) · Authz = "TUJHE ALLOWED?" (permission, aakhri guard **AuthorizationFilter** wristband dekh ke URL/role check -> na -> 403).
+
+### STEP 3 — JWT me ye flow kahan (stateless) + tera usercrud
+```
+LOGIN (ek baar, /auth/login):  username+password -> AuthenticationManager flow (Step-2) -> sahi -> JWT token (boarding-pass)
+HAR AGLI REQUEST:  password DOBARA nahi -> header "Authorization: Bearer <token>" -> JwtFilter SCAN
+                   (signature+expiry valid?) -> valid -> Authentication bana ke SIDHA SecurityContextHolder me
+                   (koi DB-password-check nahi -> token hi proof) -> stateless
+```
+-> **AuthenticationManager sirf LOGIN pe chalta, har request pe nahi.**
+
+usercrud LIVE:
+```
+SecurityConfig: sessionCreationPolicy(STATELESS) + addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+JwtFilter extends OncePerRequestFilter: header token -> JwtService.validate -> Authentication -> SecurityContextHolder
+AuthController /auth/login: authManager.authenticate -> CustomUserDetailsService + BCryptPasswordEncoder -> JwtService token
+```
+
+### ★ UsernamePasswordAuthenticationFilter (UPAF) — kya/kyun (Arpan-Q)
+```
+UPAF = Spring ka DEFAULT form-login guard (session-based):
+   POST /login intercept -> username+password form se -> AuthenticationManager verify -> success -> SecurityContext + SESSION.
+Bahut apps (form-login/server-rendered) me ye ASLI workhorse.
+JWT app me tu form-login use hi nahi karta -> UPAF idle (sirf POST /login pe react karta).
+```
+"JwtFilter ko UPAF se PEHLE kyun":
+```
+1. JwtFilter jaldi chale -> SecurityContext PEHLE set (taaki aage AuthorizationFilter ko authenticated dikhe)
+2. UPAF = position-ANCHOR: addFilterBefore ko reference-filter chahiye; UPAF chain me authentication ki jaani-pehchani jagah
+   -> "before UPAF" = saaf, conventional "auth-stage pe rakho"
+3. JwtFilter context set -> UPAF dekhta "/login POST nahi + already set" -> kuch nahi karta, pass-through
+```
+★ Hataana zaroori NAHI (harmless, idle, ~0 cost + anchor). chaho to `http.formLogin(f -> f.disable())`. UPAF khud bekaar nahi — bas TERE JWT app me use nahi ho raha (framework general hai, zyadatar apps ko form-login chahiye).
+
+### ★ METHOD-SECURITY (barik authorization)
+```
+@EnableMethodSecurity (config) + @PreAuthorize("hasRole('ADMIN')") (method) -> sirf ADMIN chala sakta (SpEL)
+AuthorizationFilter -> URL-level ("/admin/**")   |   @PreAuthorize -> METHOD-level (finer). dono authorization.
+```
+
+### POWER PHRASE (bolne ka)
+> *"A request enters through DelegatingFilterProxy (servlet-to-Spring bridge) into FilterChainProxy, which picks the matching SecurityFilterChain — an ordered list of filters. Authentication is done by AuthenticationManager delegating to an AuthenticationProvider that uses UserDetailsService + PasswordEncoder; on success the Authentication is stored in SecurityContextHolder (a ThreadLocal) for the rest of the request. In a stateless JWT setup, login runs that flow once and issues a token; every later request carries the token and a custom JwtFilter (added before UsernamePasswordAuthenticationFilter) validates it and sets the SecurityContext — no session. Authorization is separate: AuthorizationFilter checks URL rules, and @PreAuthorize adds method-level checks."*
+
+> **Yaad rakh:** DelegatingFilterProxy(bridge) -> FilterChainProxy(manager) -> SecurityFilterChain(guards line) · Authn=AuthManager->Provider->(UserDetailsService+PasswordEncoder)->Authentication->SecurityContextHolder(ThreadLocal) · JWT: login-once-token, har-request JwtFilter-scan (before UPAF, stateless) · Authz: AuthorizationFilter(URL) + @PreAuthorize(method) · UPAF = form-login default (JWT me idle, position-anchor).

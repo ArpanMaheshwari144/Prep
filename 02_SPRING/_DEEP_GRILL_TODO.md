@@ -41,12 +41,11 @@ NEXT (Arpan-plan): Java folder bhi aise real-project connect + STAR bolke + HLD 
    -> naukar-almari analogy + TERE usercrud pom se mapping (har starter -> Spring ne kya banaya)
    -> @Conditional (OnClass/OnMissingBean/OnProperty) + spring.factories->AutoConfiguration.imports + starter=bundle
 
-4. SPRING SECURITY asli ARCHITECTURE   [03_jwt_security EXTEND]
-   -> DelegatingFilterProxy -> FilterChainProxy -> SecurityFilterChain (default filters)
-   -> AuthenticationManager -> AuthenticationProvider -> UserDetailsService -> PasswordEncoder
-   -> SecurityContextHolder (ThreadLocal + @Async propagation), ExceptionTranslationFilter/EntryPoint
-   -> method security @PreAuthorize/@EnableMethodSecurity
-   (JWT-token deep hai, filter-chain abhi "cartoon" level)
+4. [DONE 9-Sep] SPRING SECURITY asli ARCHITECTURE   [03_jwt_security me "SECURITY ARCHITECTURE (deep)"]
+   -> airport analogy 3-step: DelegatingFilterProxy->FilterChainProxy->SecurityFilterChain
+   -> auth-flow AuthManager->Provider->(UserDetailsService+PasswordEncoder)->Authentication->SecurityContextHolder(ThreadLocal)
+   -> authn-vs-authz + JWT-stateless (login-once-token, JwtFilter-per-req before UPAF) + UPAF kya/kyun + @PreAuthorize method-security
+   -> usercrud-connect + power-phrase
 
 5. @Configuration CGLIB / proxyBeanMethods   [#2 ke saath ya 01_basics]
    -> inter-bean method call singleton kyun return karta (Lite vs Full config). classic filter-Q.
