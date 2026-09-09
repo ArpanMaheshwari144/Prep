@@ -87,5 +87,61 @@
 ```
 
 ---
+
+## STEP 8 — FOLLOW-UPS (interviewer yahan kuredega — ye PEHLE SE pata hone chahiye)
+
+> Ye 5 cheezein core-design ke baad ke follow-up hain. Live-derive nahi hote — padh ke rakho taaki wahan bol pao.
+
+### 8a. FOLDER upload kaise (prompt me "file YA folder" tha)
+```
+folder = bunch of files. Do tareeke:
+  1. Client folder ko FLATTEN kare -> har file ka apna /upload/init -> apni presigned-URL + child-trackingId
+     -> ek PARENT trackingId (folder-level), uske neeche child (per-file). status = sab child DONE -> parent DONE.
+  2. (chhoti files) client zip banaye -> ek file jaisa upload -> server unzip -> validate.
+-> interview line: "folder = parent-trackingId + N child uploads; parent status = rollup of children."
+```
+
+### 8b. ORPHAN / FAILED cleanup (classic follow-up)
+```
+Problem: user ne /upload/init liya (presigned-URL mila) par /complete kabhi nahi kiya
+   -> bytes S3 me pade (ya aadhe) -> ORPHAN. Ya validation FAILED -> file rakhein kya?
+Fix:
+  - S3 LIFECYCLE RULE: jo object X ghante me /complete na ho -> auto-delete (S3 khud karta).
+  - FAILED validation -> file delete ya "quarantine" bucket me move (audit ke liye), DB status=FAILED.
+  - multipart adhoora -> S3 "abort incomplete multipart upload" lifecycle-rule (N din baad clean).
+-> line: "orphan/incomplete uploads ko S3 lifecycle-rule se auto-clean; failed ko quarantine/delete."
+```
+
+### 8c. ★ CACHE STALENESS / invalidation (ye CORE hai — humne cache chuna tha)
+```
+Humne read-heavy -> status pe CACHE (Redis) rakha. Dikkat: status VALIDATING->DONE badla,
+   par cache me abhi bhi "VALIDATING" -> user purana dekhta = STALE.
+Fix (koi ek bolo):
+  1. WRITE-THROUGH: worker jab DB status update kare, SAATH HI cache bhi update kare -> hamesha fresh.
+  2. TTL: cache entry pe chhota TTL (e.g. 5-10 sec) -> thodi der baad khud refresh (eventual, simplest).
+  3. INVALIDATE-on-change: status change pe cache key delete -> agli read DB se fresh + re-cache.
+-> best yahan: write-through (worker done pe cache update) -> status turant sahi dikhta.
+-> line: "cache staleness -> worker status-update pe write-through/invalidate, warna user stale status dekhega."
+```
+
+### 8d. SECURITY (presigned URL + auth)
+```
+- presigned URL = SHORT-LIVED (e.g. 5-15 min expiry) -> leak ho to bhi jaldi bekaar.
+- auth: /upload/init pe user authenticated (JWT) -> ownerId set -> koi doosre ki file na chhede.
+- GET /status -> sirf owner apni trackingId dekhe (authz check).
+- validation = virus/malware scan bhi (third-party) -> poison file store na ho.
+-> line: "presigned URL short-lived + owner-scoped authz + validation me virus-scan."
+```
+
+### 8e. DOWNLOAD path (validated file wapas kaise)
+```
+- GET /download/{trackingId} -> server presigned GET-URL deta -> client S3 se SEEDHA download
+  (bytes phir bhi app-server se nahi guzarte — upload jaisa hi ulta).
+- bahut download / bade file -> CDN (CloudFront) S3 ke aage -> edge se fast + S3 load kam.
+-> line: "download bhi presigned GET (direct S3); popular files CDN se."
+```
+
+---
 > CORE pattern (every design): Requirements -> Estimate -> API -> Data-model+DB(kyun) -> HL boxes -> DEEP DIVE(options->choose)
 > -> bottleneck -> wrap. META: think out loud, trade-off har choice, chup mat baitho.
+> ★ FOLLOW-UPS (step 8): folder-rollup · orphan-cleanup(S3 lifecycle) · cache-staleness(write-through) · security(short-lived presigned+authz) · download(presigned GET+CDN).
