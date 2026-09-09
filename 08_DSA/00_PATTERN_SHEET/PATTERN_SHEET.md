@@ -3029,15 +3029,18 @@
         (climbing me 'n' = step-count 1..n tha, array nahi; yahan index hai -> n-1. sirf naming, direction nahi.)
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ HOUSE ROBBER II (LC-213)  = House Robber I ka CIRCLE twist -> I ko 2x REUSE
+ │ ▸ HOUSE ROBBER II (LC-213)  = House Robber I + CIRCLE -> I ko 2 baar chala
  └──────────────────────────────────────────────────────────────
-     SAAR : ghar ab CIRCLE me -> pehla (0) aur aakhri (n-1) bhi ADJACENT -> dono ek saath loot nahi sakte.
-     KEY INSIGHT (poora twist yahi): circle ko 2 LINEAR problem me tod do ->
-        run-A = ghar 0 CHHOD ke (index 1..n-1)  ·  run-B = ghar n-1 CHHOD ke (index 0..n-2)
-        answer = max(robI(run-A), robI(run-B)).   robI = original House Robber (upar wala).
-     KYUN sahi: 0 aur n-1 dono nahi le sakte -> ya 0 chhodo YA n-1 chhodo -> in 2 me se best. (chhodne se circle -> line.)
-     EDGE: n==1 -> nums[0] (dono sub-array khaali reh jaate).
-     CONNECT: koi naya DP nahi -- House Robber I ko as-is REUSE (walk-before-run / library-reuse). twist = sirf "circle -> 2 linear".
+     SAAR : ghar CIRCLE me lage -> pehla(0) aur aakhri(n-1) ab ADJACENT -> dono EK-SAATH loot nahi sakte.
+     KEY INSIGHT (poora twist): circle ko 2 LINEAR me tod -> ya 0 chhodo YA n-1 chhodo (dono kabhi saath nahi):
+        run-A = index 1 .. n-1   (ghar 0 hataya)
+        run-B = index 0 .. n-2   (ghar n-1 hataya)
+        answer = max( robI(run-A), robI(run-B) )         // robI = original House Robber, jaisa hai waisa
+     KYUN kaam karta: ek ghar HATAO -> circle TOOT ke line ban jaata -> plain House Robber. 2 case cover:
+        (a) 0 nahi liya  -> baaki 1..n-1 pe azaad  ·  (b) n-1 nahi liya -> baaki 0..n-2 pe azaad. best = max.
+     CONCRETE [2,3,2]: run-A=[3,2]->3 · run-B=[2,3]->3 -> max=3. (seedha 2+2=4 GALAT: ghar 0 & 2 circle me adjacent.)
+     EDGE : n==1 -> nums[0] (warna dono sub-array khaali -> 0 galat aayega).
+     CONNECT: naya DP ZERO -- House Robber I as-is REUSE. twist sirf "circle -> ek ghar hata ke 2 linear". [walk-before-run]
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ COIN CHANGE (LC-322)  = MIN coins + REUSE (dono form, backtracking jaisa)
