@@ -35,8 +35,9 @@ volatile+JMM · CAS/ABA/LongAdder · ThreadPoolExecutor · GC collectors+ref-typ
    -> added to 03_JAVA_8/04_streams_api.md
 2. CompletableFuture thread-of-execution (future note EXTEND)
    -> thenApply vs thenApplyAsync · thenCompose vs thenApply · whenComplete/handle
-3. final-field safe publication + effectively-final (final/immutable/lambda EXTEND)
-   -> JMM guarantee jo immutable object ko thread-safe banata
+3. [DONE 9-Sep] final-field safe publication + effectively-final (final/immutable/lambda EXTEND)
+   -> added to 03_KEYWORDS/02_final_keyword.md: freeze-guarantee + house-analogy + code + "sab immutable kyun nahi"
+   -> LIVE DEMO practical/SafePubDemo.java (race 192415 vs atomic 200000 + effectively-final compile-err)
 ```
 
 ## ★ MISSING ENTIRELY (naye note — biggest grill-risk)
