@@ -4,8 +4,9 @@
 > aur fail -> retry -> dead-letter. Ye note = jaise humne kiya, waisa hi (code + steps + why + jo dikkat aayi).
 > Theory-compare alag: 06_COMPARES/14_kafka_vs_rabbitmq.md
 >
-> INDEX: 1 saar · 2 flow · 3 crux · 4 setup(clean) · 5 config(autoconfig) · 6 Boot-4 gotcha(root-cause+fix)
->        · 7 DLQ(retry+DLT) · 8 interview · 9 rerun · 10 aage
+> INDEX: 1 saar · 2 flow · 3 crux · 4 setup(clean) · **4B broker-infra(KRaft/localhost-vs-kafka/retry-spam)**
+>        · 5 config(autoconfig) · 6 Boot-4 gotcha(root-cause+fix) · 7 DLQ(retry+DLT) · 7B consumer-group/partitions
+>        · 7C idempotent · 8 interview · 9 rerun · 10 aage
 
 ---
 
@@ -42,7 +43,7 @@ todoapp me pehle se `kafka` + `kafka-ui` container the (apache/kafka:3.8.0) -> u
 ```
 docker start kafka kafka-ui        # 9092 pe broker
 ```
-(usercrud compose me apna kafka-block DAALA tha -> "name /kafka already in use" conflict -> COMMENT kar diya, purana reuse.)
+usercrud ke apne `docker-compose.yml` me bhi kafka-block hai (KRaft single-node). Broker chalu karne ka clean tareeka + poori BROKER-INFRA samajh = **section 4B** (9-Sep me detail me kiya).
 
 ### STEP 2 — Dependency (pom.xml) ✅ CLEAN
 ```xml
@@ -91,6 +92,107 @@ public class KafkaConsumer {
 
 ---
 
+## 4B. ★★ BROKER INFRA — Docker/KRaft, localhost-vs-kafka, retry-spam (9-Sep hands-on)
+
+> Ab tak upar wale sections = "app-side" (producer/consumer/DLQ). Ye section = "broker-side" —
+> Kafka KHUD kaise chalta, app usse kaise connect hota, aur ek asli galti (retry-spam) ka root-cause.
+> Ye interview me "Kafka setup/infra" wale sawaal + real-debug story dono deta.
+
+### 4B-a. Kafka broker = ALAG process (app ke andar nahi)
+```
+Spring Boot app  =/=  Kafka.
+Kafka ek ALAG server (broker) hai jo Docker container me chalta, :9092 pe sunta.
+App usse NETWORK pe baat karta (bootstrap-servers=...:9092).
+-> App chal jaaye par broker band ho -> app baar-baar connect try karega (retry-spam, 4B-d).
+```
+
+### 4B-b. KRaft — single-node broker config (zookeeper-free)
+Purana Kafka ko ek alag **Zookeeper** chahiye tha (coordination ke liye). Naya Kafka = **KRaft** mode:
+broker KHUD apna coordinator (controller) ban jaata -> zookeeper ki zaroorat KHATAM. Single-node ke liye perfect.
+
+`docker-compose.yml` ka kafka-block (har line ka matlab):
+```yaml
+kafka:
+  image: apache/kafka:3.8.0
+  container_name: kafka
+  ports:
+    - "9092:9092"                                    # host:container -> Boot yahin connect
+  environment:
+    KAFKA_NODE_ID: 1                                 # is node ki id
+    KAFKA_PROCESS_ROLES: broker,controller           # ★ KRaft: ek hi node = broker + controller dono
+    KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+                                                     # andar kaha-kaha sunega (9092 client, 9093 controller)
+    KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092   # ★ "client mujhe IS pate pe dhoondhe" (4B-c)
+    KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+    KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093 # controller-election: node-1, 9093 pe
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+    KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1        # single-node -> replica 1 (warna topic banega hi nahi)
+```
+> ★ Sabse zaroori jodi: `PROCESS_ROLES=broker,controller` + `CONTROLLER_QUORUM_VOTERS`.
+>   Ye MISSING ho -> broker ka controller set hi nahi hota -> broker theek se start nahi hota (4B-d ka asli kaaran).
+
+**Broker chalu karne ka CLEAN tareeka (project ke compose se):**
+```
+docker compose up -d kafka
+# agar "name /kafka already in use" -> purana container hata ke phir up:
+docker rm -f kafka
+docker compose up -d kafka
+```
+
+### 4B-c. ★★ ADVERTISED_LISTENERS + "localhost vs kafka:9092" (#1 confusion)
+Ye Kafka ka sabse tricky config. **advertised.listeners = wo pata jo broker CLIENT ko batata "mujhe yahan connect karo".**
+```
+Client pehle broker se poochta "tera address?" -> broker jo advertised-listener bola, WAHI client use karta.
+   advertised = localhost:9092  -> client "localhost:9092" pe connect karega.
+```
+Ab **localhost ka matlab = "jo poochh raha hai, usi ka apna machine/container":**
+```
+App HOST pe (IntelliJ se chala)      -> localhost = teri Windows -> kafka wahin (9092)  -> SAHI (abhi yahi)
+App CONTAINER me (compose profile)   -> localhost = app-ka-apna-container -> kafka wahan NAHI -> CONNECT FAIL
+                                        (container me kafka ka DNS-naam = "kafka:9092", localhost nahi)
+```
+Isiliye tune `application-compose.properties` me `spring.kafka.bootstrap-servers=kafka:9092` daala (9-Sep).
+Aur agar sach me app-in-container chalaye -> compose me `KAFKA_ADVERTISED_LISTENERS` bhi `kafka:9092` karna padega.
+**Anchor:** advertised-listener = broker ka "visiting card" pe likha address. Card pe "localhost" likha to jo bhi padhega
+apne-ghar samajhega -> host se theek, doosre container se galat.
+
+### 4B-d. ★ REAL BUG — "Rebootstrapping" retry-spam (root-cause + sabak)
+**Kya hua:** logs me baar-baar spam:
+```
+[AdminClient] Rebootstrapping ... / Connection to node -1 could not be established
+```
+**Galti (meri):** noise-fix ke naam pe maine `docker run -p 9092:9092 apache/kafka` chala diya — BINA KRaft env-vars ke.
+-> `PROCESS_ROLES`/`QUORUM_VOTERS` missing -> controller null -> broker properly up NAHI -> app connect na kar paaya -> spam.
+**Fix:** us aadhe-config broker ko hata, project ke apne compose-block (poore KRaft config wala) se broker uthaya (4B-b).
+Phir "partitions assigned" log aaya = kaam ho gaya (4B-e).
+
+**★ Asli root-cause (Arpan ka sawaal tha "dikkat commenting se thi?"):**
+```
+NAHI. compose-block comment hona = broker AUTO-start nahi hua (config-on-demand), bas.
+Kuch TOOTA nahi tha. Asli dikkat = app-code Kafka expect kar raha tha PAR koi
+   theek-se-configured broker chal hi nahi raha tha -> retry-spam.
+-> Theek-configured broker chalu karte hi (compose se) -> spam khatam, connect ho gaya.
+```
+**Sabaq:** (a) Kafka container ALWAYS poore KRaft env ke saath uthao; adhoora `docker run` = controller-less = spam.
+(b) "spam/connect-fail" = pehle dekho broker sach me UP + sahi-config hai kya (na ki app-code me kuch toota).
+(c) log = sach; "Rebootstrapping" seedha bata raha tha "broker mil hi nahi raha".
+
+### 4B-e. ★ "partitions assigned" log = sab theek (kaise padhe)
+Jab broker sahi chala + app connect hua, ye log aaya:
+```
+usercrud-group:     partitions assigned: [user-events-0, user-events-1, user-events-2]
+usercrud-dlt-group: partitions assigned: [user-events-dlt-0]
+```
+Matlab:
+```
+- broker mil gaya + topics maujood hain + consumers subscribe ho gaye.
+- "user-events" ke 3 partition (0,1,2) -> concurrency=3 ke 3 thread ko baant diye = REBALANCE/assignment.
+- "user-events-dlt" ka partition DLT-consumer ko mila -> dead-letter path bhi ready.
+-> "partitions assigned" dikhe = CONNECTED + WORKING. (isse pehle tak = abhi connect nahi hua.)
+```
+
+---
+
 ## 5. CONFIG — clean/autoconfig way (application.properties)
 Kafka ek ALAG process (Docker). App ko usse baat karne ki **WIRING** chahiye:
 broker-address + serializer (bhejne) + deserializer (padhne) + consumer-group.
@@ -108,6 +210,11 @@ Isse Spring KHUD bana deta: `ProducerFactory`, `KafkaTemplate`, `ConsumerFactory
 `ListenerContainerFactory`, `KafkaAdmin` — sab. Tu bas `KafkaTemplate` inject karta + `@KafkaListener` lagata.
 - **serializer** = message -> bytes (bhejne se pehle) | **deserializer** = bytes -> message (padhte waqt)
 - Ek line: config = tere simple code (send/@KafkaListener) aur asli Kafka-broker ke beech ka **pul** — jo Spring khud banata.
+
+> ★ PROFILE-INHERITANCE gotcha (9-Sep): `spring.kafka.*` sirf DEFAULT `application.properties` me hai.
+> `application-compose.properties` me kafka-line na ho -> wo default se `localhost:9092` INHERIT karega ->
+> par app-in-container me `localhost` = app-khud = galat (chahiye `kafka:9092`). Isiliye compose-profile me
+> `spring.kafka.bootstrap-servers=kafka:9092` add kiya. (kyun localhost-vs-kafka = section 4B-c.)
 
 ---
 
@@ -457,13 +564,17 @@ curl ...?message=hello   (do baar):
 - "Consumer-group = same groupId ke consumers partitions baant lete (load-split); 1 partition = 1 consumer; parallelism max = partition count. Message KEY = partition-routing (same key -> same partition -> order)."
 - "Idempotent consumer: Kafka is at-least-once, so dedup by unique message-id -> seen? skip : process+record. Same idea as payment idempotency-key. Set for membership, Map when you need to return the cached result on duplicate."
 - **Root-cause story:** "Boot 4 me raw `spring-kafka` autoconfig nahi laata — modularization ke baad autoconfig `spring-boot-starter-kafka` module me hai. Dependency-level pe root cause pakda, docs se confirm, ~60 line manual config ko 2 bean tak clean kiya."
+- **Broker-infra:** "Kafka = alag process; KRaft single-node (broker+controller ek hi node, zookeeper-free). advertised.listeners = jo pata broker client ko batata; container me `localhost` = app-khud isliye `kafka:9092` chahiye. 'partitions assigned' log = consumer connected + rebalanced."
+- **Debug story (retry-spam):** "'Rebootstrapping' spam dekha -> root cause = broker adhoore config (KRaft env missing) se properly up nahi tha, app-code me kuch toota nahi tha. Poore-config broker uthate hi theek. Log ne seedha bataya broker mil nahi raha."
 
 ## 9. Dobara kaise chalaye (LIVE test)
 ```
-docker start kafka             # broker up (9092)
-usercrud run                   # app
+docker start kafka                 # broker up (9092)  -- container pehle se bana ho to
+# ya project-compose se:  docker compose up -d kafka   (conflict -> docker rm -f kafka phir up)
+usercrud run                       # app (IntelliJ/host = default profile = localhost:9092)
 curl -X POST "http://localhost:8080/kafka/send?message=hello"    # -> CONSUMED
 curl -X POST "http://localhost:8080/kafka/send?message=failme"   # -> 3 try -> DLT me gira
+# app-log me "partitions assigned: [user-events-0/1/2]" = connected+working
 ```
 
 ## 10. AAGE (baaki - TO_STUDY / jab man kare)
@@ -471,4 +582,5 @@ curl -X POST "http://localhost:8080/kafka/send?message=failme"   # -> 3 try -> D
 - ~~Idempotent consumer (same message dobara -> duplicate na ho)~~ -> DONE (section 7C, LIVE demo)
 - Manual vs auto commit, offsets deep (ek level aur; jab man kare)
 
-> KAFKA STATUS: basics + DLQ + autoconfig-fix + consumer-group + idempotent + source-dive = COMPLETE.
+> KAFKA STATUS: basics + DLQ + autoconfig-fix + consumer-group + idempotent + source-dive
+>              + broker-infra (KRaft/docker/localhost-vs-kafka/retry-spam debug, 9-Sep) = COMPLETE.

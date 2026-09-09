@@ -19,20 +19,27 @@
 
 services:
 
-#  kafka:
-#    image: apache/kafka:3.8.0
-#    container_name: kafka
-#    ports:
-#      - "9092:9092"          # tera Spring Boot yahin connect karega
-#    environment:
-#      KAFKA_NODE_ID: 1
-#      KAFKA_PROCESS_ROLES: broker,controller
-#      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-#      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-#      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
-#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  # ─────────────────────────────────────────────
+  # KAFKA service (KRaft single-node — no zookeeper)
+  # NOTE: ADVERTISED_LISTENERS=localhost:9092 -> app ko HOST se (IntelliJ) chalao.
+  #       Agar 'app' bhi container me chale to yahan 'kafka:9092' chahiye + app ki
+  #       bootstrap-servers=kafka:9092 (localhost nahi).
+  # ─────────────────────────────────────────────
+  kafka:
+    image: apache/kafka:3.8.0
+    container_name: kafka
+    ports:
+      - "9092:9092"          # tera Spring Boot yahin connect karega
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    restart: unless-stopped
 
   # ─────────────────────────────────────────────
   # MySQL DATABASE service
