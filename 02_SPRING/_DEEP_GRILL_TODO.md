@@ -54,9 +54,9 @@ NEXT (Arpan-plan): Java folder bhi aise real-project connect + STAR bolke + HLD 
 ## ★ TIER-2 — likely follow-ups
 
 ```
-6. Hibernate ENTITY STATES (formal)   [05_HIBERNATE/04 EXTEND]
-   -> transient / persistent / detached / removed state-machine + persist/merge/remove/detach/flush
-   -> save vs persist vs merge vs saveOrUpdate
+6. [DONE 9-Sep] Hibernate ENTITY STATES (formal)   [05_HIBERNATE/04_dirty_checking.md]
+   -> 4-state employee-HR analogy (transient/persistent/detached/removed) + transitions
+   -> save vs persist vs merge (merge return-crux) + dirty-check-only-on-persistent
 7. OSIV (open-session-in-view)   [05_HIBERNATE/03 EXTEND]  -> Boot me default ON, lazy ka #1 follow-up, pros/cons
 8. Spring MVC request lifecycle   [confirm 08_REVISION_VISUAL/02 ya naya]
    -> DispatcherServlet -> HandlerMapping -> HandlerAdapter -> HttpMessageConverters -> ViewResolver

@@ -257,3 +257,39 @@ update() @Transactional:  entity load -> setter se field badla -> koi explicit s
    -> commit pe Hibernate ne KHUD dirty-check karke UPDATE bheja (managed entity ka snapshot compare).
 ```
 Tera note ka "managed entity, save bina UPDATE" LIVE — @Transactional (session zinda) ise possible banata.
+
+---
+
+## ★ ENTITY LIFECYCLE — 4 STATES (employee-HR analogy, 9-Sep)
+
+> Object ka "state" = wo Hibernate SESSION (manager) se kaise juda. (dirty-checking sirf PERSISTENT pe chalti.)
+
+```
+1. TRANSIENT  -> abhi `new User()`. Hibernate ko pata NAHI. = raah-chalta banda, payroll pe nahi.
+2. PERSISTENT -> session me ATTACHED (persist/save YA txn me find). Hibernate TRACK karta ->
+                 change -> AUTO-save (dirty-checking!). = payroll-employee, HR sab track.
+3. DETACHED   -> pehle persistent, ab session BAND. track NAHI -> change save NAHI. = ex-employee (record hai, tracking nahi).
+4. REMOVED    -> delete ke liye MARK (remove) -> flush pe DB-delete. = termination-scheduled.
+```
+
+**Transitions:**
+```
+new User()           -> TRANSIENT
+persist()/save()     -> TRANSIENT -> PERSISTENT   (ab tracked)
+find()/get()         -> load -> PERSISTENT
+remove()             -> PERSISTENT -> REMOVED
+session close/detach -> PERSISTENT -> DETACHED
+merge(detached)      -> DETACHED -> PERSISTENT (copy)
+```
+
+**save vs persist vs merge (grill):**
+```
+persist (JPA)   -> TRANSIENT -> PERSISTENT, return void
+save (Hibernate)-> ~same, generated ID return
+merge           -> DETACHED ki state ek PERSISTENT COPY me daal deta, MANAGED copy RETURN karta
+                   (argument khud detached rehta!). detached-changes DB me chahiye -> merge.
+saveOrUpdate    -> detached attach YA transient save (Hibernate-native)
+```
+★ merge crux (galti-prone): `User managed = session.merge(detached);` -> aage `managed` pe kaam karo, `detached` pe NAHI (wo abhi bhi detached). merge ka RETURN use karo.
+
+> **Ek line:** TRANSIENT(new,unknown) -persist-> PERSISTENT(tracked, dirty-check auto-save) -close-> DETACHED(untracked) -merge-> PERSISTENT-copy · remove -> REMOVED. dirty-checking sirf PERSISTENT pe.
