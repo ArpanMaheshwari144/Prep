@@ -208,6 +208,8 @@ public class SecurityConfig {
 
                             .requestMatchers("/kafka/**").permitAll()
 
+                            .requestMatchers("/lazy/**").permitAll()
+
                             // Baki sab — JWT mandatory
                             .anyRequest().authenticated()
             )
