@@ -195,3 +195,46 @@ panelists.stream().filter(p -> {
 > reduce = combine, distinct = unique, limit/skip = pagination, collect = result pakdo
 > **Stream ek baar use, dobara nahi**
 > **Intermediate = LAZY, Terminal = TRIGGER**
+
+---
+
+## ★ HARD-LAYER (grill differentiator, 9-Sep) — assembly-line analogy
+
+> Stream = LAZY assembly-line (conveyor belt). Har station (map/filter) item process karta; end pe terminal-op maal uthata.
+
+**1. LAZY — terminal-op ke bina belt CHALTI HI NAHI:**
+```java
+list.stream().filter(x->x>2).map(x->x*10);  // kuch nahi hua! sirf BLUEPRINT. filter/map RUN nahi.
+```
+Intermediate (filter/map/sorted) = setup only. Terminal (collect/count/forEach) aane pe POORI belt chalti.
+
+**2. Item EK-EK poori line guzarta (VERTICAL na horizontal):**
+```
+item1: filter->map->collect | item2: filter->map->collect ...   (NA: saare filter phir saare map)
+```
+Isi wajah se short-circuit possible.
+
+**3. SHORT-CIRCUIT — answer milte hi belt STOP:**
+```java
+stream.filter(x->x>2).findFirst();  // pehla mila -> STOP, baaki items chhue bhi nahi
+```
+findFirst / anyMatch / limit(n) -> aage process hi nahi hota. (infinite stream pe limit isliye chalta.)
+
+**4. STATELESS vs STATEFUL:**
+```
+STATELESS (map, filter)      -> har item AKELA. pichhle ka pata nahi chahiye. sasta.
+STATEFUL  (sorted, distinct) -> POORA data chahiye (sorted=buffer saare, distinct=set-yaad). parallel me MEHNGA.
+```
+
+**5. PARALLEL STREAM + COMMON-POOL TRAP (grill favourite):**
+```java
+list.parallelStream().map(...);   // kai lane/worker, tez (bade CPU-work pe)
+```
+★ Saare parallelStream ek hi JVM-wide **COMMON ForkJoinPool** share karte (size=cores-1, chhota).
+   parallel-stream me BLOCKING kaam (DB/API/IO) -> pool-thread block -> poori app ke baaki parallelStream STARVE.
+```
+Rule: parallelStream SIRF -> (a) BADA data (b) CPU-bound (c) independent items.
+      chhota / IO-blocking / order-dependent -> parallelStream MAT.
+```
+
+> **Ek line:** lazy assembly-line (intermediate=blueprint, terminal=chalu) · item ek-ek poori line -> short-circuit · stateless(map/filter) sasta / stateful(sorted/distinct) poora-data · parallelStream = ek common-pool sab share -> blocking daali to sab STARVE -> sirf CPU+bada+independent.

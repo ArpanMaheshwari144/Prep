@@ -30,8 +30,9 @@ volatile+JMM · CAS/ABA/LongAdder · ThreadPoolExecutor · GC collectors+ref-typ
 ## ★ BACHA HUA — PRIORITY (ADD karne hain)
 
 ```
-1. Streams hard-layer (streams note EXTEND)
-   -> parallelStream common-ForkJoinPool pitfall · Spliterator · short-circuit · stateful/stateless
+1. [DONE 9-Sep] Streams hard-layer (streams note EXTEND)
+   -> lazy assembly-line + vertical-flow + short-circuit + stateless/stateful + parallelStream common-pool trap
+   -> added to 03_JAVA_8/04_streams_api.md
 2. CompletableFuture thread-of-execution (future note EXTEND)
    -> thenApply vs thenApplyAsync · thenCompose vs thenApply · whenComplete/handle
 3. final-field safe publication + effectively-final (final/immutable/lambda EXTEND)
