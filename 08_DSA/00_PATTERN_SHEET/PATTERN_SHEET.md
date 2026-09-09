@@ -3029,6 +3029,17 @@
         (climbing me 'n' = step-count 1..n tha, array nahi; yahan index hai -> n-1. sirf naming, direction nahi.)
 
  ┌──────────────────────────────────────────────────────────────
+ │ ▸ HOUSE ROBBER II (LC-213)  = House Robber I ka CIRCLE twist -> I ko 2x REUSE
+ └──────────────────────────────────────────────────────────────
+     SAAR : ghar ab CIRCLE me -> pehla (0) aur aakhri (n-1) bhi ADJACENT -> dono ek saath loot nahi sakte.
+     KEY INSIGHT (poora twist yahi): circle ko 2 LINEAR problem me tod do ->
+        run-A = ghar 0 CHHOD ke (index 1..n-1)  ·  run-B = ghar n-1 CHHOD ke (index 0..n-2)
+        answer = max(robI(run-A), robI(run-B)).   robI = original House Robber (upar wala).
+     KYUN sahi: 0 aur n-1 dono nahi le sakte -> ya 0 chhodo YA n-1 chhodo -> in 2 me se best. (chhodne se circle -> line.)
+     EDGE: n==1 -> nums[0] (dono sub-array khaali reh jaate).
+     CONNECT: koi naya DP nahi -- House Robber I ko as-is REUSE (walk-before-run / library-reuse). twist = sirf "circle -> 2 linear".
+
+ ┌──────────────────────────────────────────────────────────────
  │ ▸ COIN CHANGE (LC-322)  = MIN coins + REUSE (dono form, backtracking jaisa)
  └──────────────────────────────────────────────────────────────
      SAAR : amount banane ko MIN coins (har coin UNLIMITED = reuse). na ban sake -> -1.
