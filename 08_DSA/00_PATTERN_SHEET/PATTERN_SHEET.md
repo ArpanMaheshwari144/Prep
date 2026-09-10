@@ -1816,10 +1816,13 @@
         wrap-max = TOTAL − (minimum-subarray-sum).   [min-subarray = Kadane ka MIN-version]
 
        maxK = maxKadane(nums);   minK = minKadane(nums);   total = sum(nums);
-       ans  = max( maxK, total − minK );
+       circular = total − minK;
 
-     ★ EDGE (all-negative): min-subarray = poora array -> total−minK = 0 (EMPTY) -> galat.
-        -> agar maxK < 0 (sab negative) -> sirf maxK return. (empty subarray allowed nahi.)
+     ★ RETURN (edge yahin handle -- Arpan-way, saaf):
+          if (maxK > 0)  return max(circular, maxK);   // normal: dono me se bada
+          return maxK;                                 // maxK<=0 = SAB non-positive (all-neg) -> sirf maxK
+     ★ EDGE KYUN: all-negative me min-subarray = poora array -> total−minK = 0 (EMPTY subarray) -> galat.
+        isliye maxK>0 check: agar koi positive hi nahi -> wrap bekaar -> seedha maxK (empty allowed nahi).
 
      CONCRETE [5,-3,5]:  maxK=7 (5,-3,5 contiguous -- -3 skip nahi hota) · minK=-3 · total=7
         -> wrap = 7−(−3) = 10  ->  ans = max(7,10) = 10.   (10 sirf WRAP se, seedhe Kadane se nahi.)
