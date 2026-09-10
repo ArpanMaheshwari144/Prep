@@ -1799,6 +1799,9 @@
         (2) ans me ABS dono -> ans = max({ ans, |max|, |min| })   (answer minSum se bhi aa sakta -> isliye abs)
      dry-run [2,-5,1,-4,3,-2] -> 8: subarray [-5,1,-4]=-8 minSum me -> |-8|=8.
 
+   FAMILY: 53=sum(1 value) · 152=product(flip -> max+min) · 1749=abs-sum(max+min).
+   MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
+
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX SUM CIRCULAR SUBARRAY (LC-918)  = TRICK: total − MIN-subarray (invent nahi hota, PATA hona chahiye)
  └──────────────────────────────────────────────────────────────
@@ -1815,9 +1818,6 @@
         -> wrap = 7−(−3)=10 -> ans=max(7,10)=10.  (10 sirf WRAP se, seedhe Kadane se nahi.)
      ★ minK Kadane-MIN se: cur = min(nums[i], cur+nums[i]); minK = min(minK, cur). (prefix-sum se NAHI -- Arpan-10-Sep pakda.)
      CONNECT: [[house-robber-II]] jaisa "circular twist" par MECHANISM alag (HR-II = exclude-first/last; ye = total−minKadane).
-
-   FAMILY: 53=sum(1 value) · 152=product(flip -> max+min) · 1749=abs-sum(max+min).
-   MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
 
 
  ┌──────────────────────────────────────────────────────────────
