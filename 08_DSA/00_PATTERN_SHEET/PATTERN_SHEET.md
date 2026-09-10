@@ -1807,17 +1807,28 @@
  └──────────────────────────────────────────────────────────────
      Q: circular array (end->start wrap), max-sum NON-EMPTY contiguous subarray (wrap ho sakta).
      ★ ye TRICK-problem hai -- interview me on-the-spot derive lagbhag impossible; SEEKHNA padta.
-     2 CASE (bada lo): A) NO-wrap = normal Kadane (max)  ·  B) WRAP = end+start juda, BEECH ka chunk chhoda.
+
+     2 CASE (bada lo):
+        A) NO-wrap  = normal Kadane (max)
+        B) WRAP     = end+start juda, BEECH ka chunk chhoda.
+
      KEY INSIGHT: wrap = poora array MINUS beech-ka-chunk. max-wrap ke liye SABSE-BURA (min) chunk hatao ->
         wrap-max = TOTAL − (minimum-subarray-sum).   [min-subarray = Kadane ka MIN-version]
-       maxK = maxKadane(nums);  minK = minKadane(nums);  total = sum(nums);
-       ans = max( maxK, total − minK );
+
+       maxK = maxKadane(nums);   minK = minKadane(nums);   total = sum(nums);
+       ans  = max( maxK, total − minK );
+
      ★ EDGE (all-negative): min-subarray = poora array -> total−minK = 0 (EMPTY) -> galat.
         -> agar maxK < 0 (sab negative) -> sirf maxK return. (empty subarray allowed nahi.)
-     CONCRETE [5,-3,5]: maxK=7 (5,-3,5 contiguous -- -3 skip nahi hota) · minK=-3 · total=7
-        -> wrap = 7−(−3)=10 -> ans=max(7,10)=10.  (10 sirf WRAP se, seedhe Kadane se nahi.)
-     ★ minK Kadane-MIN se: cur = min(nums[i], cur+nums[i]); minK = min(minK, cur). (prefix-sum se NAHI -- Arpan-10-Sep pakda.)
-     CONNECT: [[house-robber-II]] jaisa "circular twist" par MECHANISM alag (HR-II = exclude-first/last; ye = total−minKadane).
+
+     CONCRETE [5,-3,5]:  maxK=7 (5,-3,5 contiguous -- -3 skip nahi hota) · minK=-3 · total=7
+        -> wrap = 7−(−3) = 10  ->  ans = max(7,10) = 10.   (10 sirf WRAP se, seedhe Kadane se nahi.)
+
+     ★ minK Kadane-MIN se:  cur = min(nums[i], cur+nums[i]);   minK = min(minK, cur).
+        (prefix-sum se NAHI -- Arpan-10-Sep pakda.)
+
+     CONNECT: [[house-robber-II]] jaisa "circular twist" par MECHANISM alag
+              (HR-II = exclude-first/last · ye = total − minKadane).
 
 
  ┌──────────────────────────────────────────────────────────────
