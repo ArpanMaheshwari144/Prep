@@ -850,6 +850,25 @@
      map se: mp[x]++; count > n/2 wala return. O(n) time, O(n) space. (seedha.)
      BOYER-MOORE VOTING (O(1) space): majority n/2 se zyada -> baaki sab milkar bhi kam -> do ALAG element CANCEL karo, majority bachega.
        candidate + count. ==candidate -> count++ · !=candidate -> count-- · count==0 -> candidate=nums[i], count=1 (0 chhoda to -1 me chala jaayega, reset kabhi nahi -> BUG). end: candidate = ans.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ FIND DISAPPEARED NUMBERS (LC-448)  = ARRAY-KHUD-hashmap · index-negation, O(1) space
+ └──────────────────────────────────────────────────────────────
+   Q: nums[] size n, values 1..n (repeat ho sakte, kuch missing). [1..n] me se jo MISSING wo sab return.
+   INPUT: [4,3,2,7,8,2,3,1] -> [5,6]
+
+   SAAR: extra set/map nahi -> ARRAY KHUD ko hashmap banao. "value v dikha" ka nishaan = index (v-1) ko NEGATIVE.
+   KEY: value v -> uska ghar = index v-1. jo value dikhi us index ko -ve mark. end me jo index abhi bhi +ve
+        -> us index+1 kabhi mark nahi hua -> MISSING. (abs() lo kyunki value pehle -ve ho chuki ho sakti.)
+
+   TEMPLATE:
+     for (int i=0;i<n;i++){ int idx = abs(nums[i])-1; if (nums[idx]>0) nums[idx] = -nums[idx]; }
+     for (int i=0;i<n;i++) if (nums[i]>0) ans.push_back(i+1);
+
+   DRY-RUN [4,3,2,7,8,2,3,1]: mark index 3,2,1,6,7,1(already),2(already),0 -ve
+     -> +ve bache index 4,5 -> missing = 5,6.
+   FAMILY: array-as-hashmap (index-marking). SAME trick: find-duplicate(287)/first-missing-positive(41)/single-in-pairs.
+   ★ CONNECT: "values 1..n + O(1) space" = index-marking ka signal. (agar array modify NA kar sakta -> Floyd cycle.)
 ```
 
 ---
