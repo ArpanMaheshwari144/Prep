@@ -2980,6 +2980,22 @@
          exist(): har cell jaha board[i][j]==word[0] se dfs; koi true -> return true.
      ★ CRUX (yehi atkaata tha): (1) 4 DFS ko || me JODO — SHORT-CIRCUIT (ek direction true → baaki call hi nahi) (2) visited-check EK-hi if me (bounds+mismatch ke saath) (3) base = index==word.size().
      islands-DFS se FARAK: islands = bas fill/count. word-search = mark + recurse + UN-mark (path dobara use na ho) + return-bubble. yehi backtracking-twist.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ GENERATE PARENTHESES (LC-22)  = CONSTRAINT-guided backtracking (open/close count)
+ └──────────────────────────────────────────────────────────────
+     SAAR : n jode ke saare VALID strings. brute (2^2n saari strings + filter) NAHI -> validity-RULE se hi banao.
+     2 RULE (poora khel yahi): open<n -> '(' add sakta · close<open -> ')' add sakta (tabhi valid rahega).
+     TEMPLATE:
+         void solve(open, close, n, path, ans):
+             if (path.size() == 2*n) { ans.push_back(path); return; }   // base
+             if (open  < n)    solve(open+1, close, n, path+'(', ans);   // '(' branch
+             if (close < open) solve(open, close+1, n, path+')', ans);   // ')' branch
+         // caller: solve(0,0,n,"",ans);
+     ★ BUG-TRAP (Arpan-9-Sep, yaad rakh): dono branch pe `return solve(...)` mat likho!
+        first branch ke `return` se function KHATAM -> 2nd branch (')') kabhi chalti hi nahi -> sirf 1 string banti.
+        backtracking = DONO choice ek-ke-baad-ek chalao (koi return nahi). = classic "early-return kills 2nd branch" trap.
+     FAMILY: subsets-jaisa (har step pe choice), par choice CONSTRAINT se filter (open/close count) -> sirf valid bante.
 ```
 
 ## PATTERN 17 — DP (dynamic programming = recursion + memo)
