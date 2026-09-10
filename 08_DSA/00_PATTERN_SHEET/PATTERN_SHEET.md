@@ -2840,6 +2840,16 @@
    DECISION TREE: har node = choice-point; har leaf tak ka raasta = ek possible answer.
    KAB: "saare subsets/permutations/combinations", "N-queens", "har-combination try karo".
 
+ ★★ GOTCHA — EARLY-RETURN 2ND BRANCH MAAR DETA (Arpan-9-Sep, generate-parentheses me phasa):
+    Backtracking = har step pe kai CHOICE, sab explore karni hoti (branch-1, phir branch-2...).
+    Agar branch-1 wali recursive call ke aage `return` laga diya -> function WAHIN EXIT -> branch-2 kabhi chali hi nahi.
+       if(cond1) return solve(...);   // <- GALAT: neeche wali branch skip
+       if(cond2) solve(...);          //    ye kabhi nahi chalti
+    FIX: har branch bina return chalne do (ek-ke-baad-ek):
+       if(cond1) solve(...);   if(cond2) solve(...);
+    RULE: `return` HARMFUL sirf jab uske BAAD chalne wala code ho. LAST line pe return = redundant par safe;
+          BEECH me return = agla branch/code maar deta. (void-vs-non-void se koi lena-dena NAHI -- ye FLOW ka rule hai.)
+
  ──────────────────────────────────────────────────────────────
  2 FORMS = SAME cheez, alag LIKHAWAT (dono recursion + undo, same output):
     A) INCLUDE/EXCLUDE : 2 explicit call (element liya / nahi-liya). base pe record.
