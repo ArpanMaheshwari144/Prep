@@ -925,6 +925,25 @@
      xorr ^= it;   count += mp[xorr ^ k];   mp[xorr]++;
         mp[0]=1 SEED · complement mila -> count+ · same complement dobara -> count double (sum jaisa).
 
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ COUNT SUBARRAYS WITH MAX == K  = BOUNDARY-index (2 pointer track, NO stack/SW)
+ └──────────────────────────────────────────────────────────────
+     Q: kitne subarrays jinka MAXIMUM element bilkul K ho. [8,2,1,3,4,5,1,10],K=3 -> 3 ([2,1,3],[1,3],[3]).
+     valid = (har element <= K) AND (>=1 element == K).
+
+     ★ TRAP-instinct (jo dhoka deta): "subarray"->SW · "max"->monotonic STACK · "count"->PQ.
+        SAB galat -> max FIXED-K se compare (relative nahi) -> stack/SW ki zaroorat NAHI. SIMPLE LINEAR scan.
+
+     KEY INSIGHT: K se BADE elements = WALL (array ko todte). segment ke andar K-wale subarrays gino.
+     do INDEX track (dono init -1):
+        lastWall = aakhri index jahan arr[i] > K
+        lastK    = aakhri index jahan arr[i] == K
+     har i pe:  if (lastK > lastWall)  count += (lastK - lastWall);   // start-choices = lastWall+1 .. lastK
+     ★ guard lastK > lastWall KYUN: warna (lastK - lastWall) NEGATIVE (K kisi wall ke peeche dab gaya) -> count galat. ([5,3,5] dry-run me pakda.)
+     ★ count ~n^2/2 (5e9) -> LONG LONG (int overflow).
+     WHY simple: "hard-dikhne" wala tha (scary constraints + 3 candidate-pattern), par EK insight (walls) ne
+        collapse kar diya -> linear. mushkil = insight-dhundhna, code chhota. (search->test->eliminate = process.)
+
  common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
 ```
 
