@@ -188,3 +188,54 @@ LITE (@Component pe @Bean, YA @Configuration(proxyBeanMethods=false)) -> NO prox
 > "@Configuration classes are CGLIB-proxied so inter-bean method calls return the SAME singleton, not a new
 >  instance. proxyBeanMethods=false (lite mode) skips the proxy — faster startup but inter-bean calls create
 >  new objects; use it only when @Bean methods don't call each other."
+
+---
+
+## ★★ HANDS-ON DEMO — Spring internals LIVE (usercrud, 11-Sep)
+
+> [`SpringInternalsDemo.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/demo/SpringInternalsDemo.java) — ek endpoint `/internals` jo Spring ke 4 andar-ke-raaz aankhon ke saamne dikha deta. Theory padhi se aage — actual print dekha.
+
+### 4 RAAZ, 4 experiment, 4 print
+```
+RAAZ 1  PROXY  ->  userService.getClass().getName()
+   print: UserService$$SpringCGLIB$$0
+   matlab: bean asli nahi, uska CGLIB secretary (proxy). Yahi @Transactional chalati.
+
+RAAZ 2  SINGLETON  ->  getBean(Dependency.class) 2 baar, obj1==obj2 ?
+   print: true   (SomeService bhi true)
+   matlab: container me EK hi copy, har maang pe wahi.
+   + SomeService ko DemoConfig ne someService(){ new SomeService(dependency()) } se banaya ->
+     dependency() do jagah call par ek hi Dependency = upar wala @Configuration CGLIB jaadu LIVE.
+
+RAAZ 3  PROTOTYPE  ->  getBean(DummyBeam.class) 2 baar, p1==p2 ?
+   print: false
+   matlab: @Scope("prototype") -> har getBean pe NAYA object.
+
+RAAZ 4  BeanPostProcessor  ->  LoggingBeanPostProcessor har bean ke init pe naam print karti
+   print: "DummyBeam" 4 baar
+   matlab: prototype 2 baar maanga -> 2 baar naya bana -> har banne pe BPP before+after = 4.
+```
+
+### ★ Chhupa gold (khud mil gaya, plan nahi tha)
+```
+Dependency/SomeService pe getBean kiya -> koi BPP print NAHI aaya.
+   Kyunki SINGLETON startup pe ek baar bane -> BPP tabhi bol chuki ->
+   ab getBean sirf CACHED laata -> naya nahi banta -> BPP CHUP.
+DummyBeam PROTOTYPE -> ab-ab naya bana -> BPP ab boli -> 4 print.
+
+=> output ne KHUD singleton-vs-prototype ka farak prove kar diya:
+   singleton getBean = chup (cached) · prototype getBean = shor (naya banta).
+```
+(Aur `523` = Spring ne total kitne bean auto-banaye — tune 5-6 likhe, baaki auto-config ne.)
+
+### Project connect
+```
+UserService        -> @Service -> proxy chadha (RAAZ 1 ka $$SpringCGLIB$$)
+DemoConfig         -> @Configuration -> inter-bean singleton (RAAZ 2)
+DummyBeam          -> @Scope("prototype") (RAAZ 3)
+LoggingBeanPostProcessor -> BeanPostProcessor hook (RAAZ 4)
+LifecycleBean      -> constructor -> @Autowired setter -> @PostConstruct -> afterPropertiesSet
+                      (startup-log me 1->2->3->4 order dikhta = bean lifecycle LIVE)
+```
+
+> **Ek line (delivery):** "Spring har @Service ko proxy me wrap karta, singleton cache karta, prototype har baar naya deta, aur BeanPostProcessor se har bean ke init pe hook lagata — maine apne project me `/internals` endpoint se ye chaaron live print karke dekhe."
