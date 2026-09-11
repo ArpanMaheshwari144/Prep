@@ -273,3 +273,55 @@ LifecycleBean      -> constructor -> @Autowired setter -> @PostConstruct -> afte
 ```
 
 > **Ek line (delivery):** "Spring har @Service ko proxy me wrap karta, singleton cache karta, prototype har baar naya deta, aur BeanPostProcessor se har bean ke init pe hook lagata — maine apne project me `/internals` endpoint se ye chaaron live print karke dekhe."
+
+---
+
+## ★★ "Annotation se Spring ko PATA kaise chalta?" — REFLECTION (11-Sep, live demo)
+
+> [`ReflectionAnnotationDemo.java`](practical/ReflectionAnnotationDemo.java) — plain Java (koi Spring nahi), khud chala ke dekha ki Spring startup pe sticker kaise padhta.
+
+### Annotation = sirf STICKER (khud kuch nahi karta)
+```
+@Transactional  =  method pe chipka ek LABEL: "isko transaction chahiye".
+   Ye khud kuch nahi karta (jaise dabbe pe "FRAGILE" sticker khud dabbe ko nahi bachata).
+   Koi ise PADHE + uspe ACT kare -> tabhi kaam.
+```
+
+### Spring startup ka pipeline (jaadu nahi)
+```
+1. STICKER      annotation = metadata, method pe chipki
+2. REFLECTION   startup pe Spring har class scan karta -> "is method pe kaunsa sticker?"
+                  (Java superpower: runtime pe class se pooch lo methods + annotations)
+3. BeanPostProcessor   sticker mila -> checkpoint bolta "ise plain nahi, PROXY doonga"
+4. CGLIB        runtime pe ek NAYI class likh deta (teri class extend + method override + tx-logic)
+5. Tujhe wo GENERATED PROXY milta (raw object nahi)
+```
+> "sirf annotation se?" — NAHI. Annotation = trigger/ishaara. Asli kaam = **reflection (padho) + CGLIB (wrapper banao) + BeanPostProcessor (kab lagana)**. Ye Spring ke devs ne Java ke reflection + bytecode-gen pe banaya.
+
+### Historical (peeche kya hua)
+```
+Java 5 (2004) se PEHLE annotations the hi nahi -> early Spring sab XML se batata tha (paante bhar).
+Java 5 me annotations aaye -> Spring ne XML chhod ke @annotation pe shift kiya.
+=> annotation bhi Spring ka invention nahi, Java ka feature -> Spring ne uspe machinery baithayi.
+```
+
+### EK proxy per BEAN, per-METHOD decision (Arpan-samajh, sahi)
+```
+Spring ne BEAN (poora object) ke liye EK proxy banaya.
+Us proxy ke andar har CALL pe faisla alag:
+   transfer()        -> @annotated -> proxy begin/commit LAGAYE
+   ordinaryMethod()  -> no sticker -> proxy seedha pass kar de (plain call jaisa, kuch extra nahi)
+=> har method ka alag proxy NAHI; ek proxy, call-time pe per-method decide.
+```
+
+### Live demo ne kya dikhaya
+```
+Humne khud @MyTransactional (@Retention(RUNTIME)) banaya + BankService pe chipkaya:
+   getDeclaredMethods() -> loop -> m.isAnnotationPresent(MyTransactional.class)
+   OUTPUT:  transfer -> PROXY chahiye   |   ordinaryMethod -> plain
+Yahi Spring startup pe karta, bas 500+ class pe. Farak sirf PAIMANE ka — mechanism WAHI.
+★ @Retention(RUNTIME) zaroori: default CLASS retention runtime pe dikhta hi nahi (reflection andha).
+  isiliye Spring ke saare annotations RUNTIME-retained hote.
+```
+
+> **Ek line (delivery):** "Annotation ek runtime-retained marker hai; Spring startup pe reflection se use padhta, aur jin beans/methods pe wo hai unke liye CGLIB se ek proxy generate karta jo cross-cutting logic add karta — annotation khud kuch nahi karta, wo sirf trigger hai."
