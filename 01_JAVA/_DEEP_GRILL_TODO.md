@@ -16,8 +16,9 @@
 ## ★ BACHA HUA — PENDING (priority order)
 
 ```
-1. CompletableFuture thread-of-execution   [future note EXTEND]
-   -> thenApply vs thenApplyAsync · thenCompose vs thenApply · whenComplete/handle
+1. [DONE 11-Sep] CompletableFuture thread-of-execution   [11_future_vs_completablefuture EXTEND]
+   -> deep-grill layer added: thenApply vs thenApplyAsync (thread) · thenApply vs thenCompose (map/flatMap)
+   -> exceptionally vs handle vs whenComplete · thenCombine vs thenCompose · usercrud @Async connect
 
 2. Lock toolkit   [naya note — biggest grill-risk]
    -> ReentrantLock / ReadWriteLock / Semaphore / CountDownLatch / CyclicBarrier
