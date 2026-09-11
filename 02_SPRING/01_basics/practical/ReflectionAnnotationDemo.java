@@ -1,3 +1,17 @@
+// ============================================================
+// REFLECTION + ANNOTATION DEMO — "Spring sticker (annotation) kaise PADHTA hai?" = REFLECTION
+// Plain Java (Spring dependency ZERO). Yahan 02_SPRING me isliye ki maqsad Spring-internals samajhna.
+//
+// ★★ HONEST CAVEAT (revise me galatfehmi na ho):
+//    Ye demo sirf "PADHNA" (sticker read + decide) step ISOLATE karke dikhata — taaki reflection
+//    wali aankh aankhon se dikhe. Yahan koi proxy ACTUALLY nahi banta (BankService raw object;
+//    getClass() pe koi $$CGLIB$$ nahi).
+//    REAL Spring aisa ALAG nahi karta: padhna + proxy-banana DONO ek hi flow me SAATH chalte
+//    (BeanPostProcessor sticker dekhta aur usi waqt raw ki jagah proxy return karta).
+//      -> demo = teaching-simplification (ek step isolate) · Spring = one integrated flow.
+//    (asli proxy BANTE hue SpringInternalsDemo /internals me dekha -> UserService$$SpringCGLIB$$)
+// ============================================================
+
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
 
