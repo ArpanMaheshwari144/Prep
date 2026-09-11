@@ -143,3 +143,48 @@ class OrderService {
 > JDK dynamic = interface (same badge) · CGLIB = class (nakli subclass) · Boot default = CGLIB.
 > final = proxy nahi · this.method() = bypass (self-invocation trap).
 > Faayda = DRY + Separation of Concerns (kam code = symptom; asli = ek-jagah + consistent + kam-bug).
+
+---
+
+## ★★ @Configuration ka CGLIB jaadu — inter-bean call SINGLETON deta (11-Sep, classic filter-Q)
+
+> Proxy sirf @Transactional/@Async ke liye nahi — `@Configuration` class bhi CGLIB-proxied hoti. Interview me bahut poochte.
+
+```java
+@Configuration
+class AppConfig {
+    @Bean ServiceA serviceA() { return new ServiceA(dependency()); }
+    @Bean ServiceB serviceB() { return new ServiceB(dependency()); }   // dependency() DOBARA call
+    @Bean Dependency dependency() { return new Dependency(); }
+}
+```
+**SAWAAL:** `dependency()` do method call kar rahe -> 2 alag Dependency object banenge (plain Java jaisa)?
+**JAWAB: NAHI -> ek hi SINGLETON.** Yahi CGLIB ka jaadu.
+
+**KAISE:**
+```
+@Configuration class ko Spring seedha nahi -> uska CGLIB PROXY (subclass) banata.
+Proxy har @Bean method INTERCEPT karta:
+   dependency() call -> proxy check "container me PEHLE se hai?"
+      HAAN -> wahi cached SINGLETON return (dobara `new` nahi)
+      NAHI -> asli method chala ke banao + container me daalo
+-> serviceA aur serviceB dono ko SAME dependency.
+```
+Anchor: config-proxy = secretary jo har bean-request pe pehle almari (container) dekhti -> mila to wahi, warna banati. Plain Java me secretary nahi -> har call = naya `new`.
+
+**LITE vs FULL config (yahi discriminator):**
+```
+FULL (@Configuration)              -> CGLIB proxy -> inter-bean call SINGLETON (upar wala)
+LITE (@Component pe @Bean, YA @Configuration(proxyBeanMethods=false)) -> NO proxy
+   -> inter-bean call = plain Java call -> HAR baar NAYA object (singleton guarantee GAYI -> bug-risk)
+```
+```
+@Configuration(proxyBeanMethods = false) -> proxy skip -> thoda FAST startup,
+   PAR inter-bean method call ho raha (dependency() 2 jagah) -> ab 2 alag object -> bug.
+   -> proxyBeanMethods=false SIRF jab @Bean methods ek-doosre ko call NA karein.
+```
+
+**POWER-PHRASE:**
+> "@Configuration classes are CGLIB-proxied so inter-bean method calls return the SAME singleton, not a new
+>  instance. proxyBeanMethods=false (lite mode) skips the proxy — faster startup but inter-bean calls create
+>  new objects; use it only when @Bean methods don't call each other."

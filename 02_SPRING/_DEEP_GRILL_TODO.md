@@ -17,8 +17,8 @@
 ## ★ BACHA HUA — PENDING (order me)
 
 ```
-1. @Configuration CGLIB / proxyBeanMethods   [01_basics ya proxy-note ke saath]
-   -> inter-bean method call singleton kyun return karta (Lite vs Full config). classic filter-Q. (chhota)
+1. [DONE 11-Sep] @Configuration CGLIB / proxyBeanMethods   [04_proxy_jdk_cglib EXTEND]
+   -> config-class CGLIB-proxied -> inter-bean call SINGLETON (dependency() 2x = ek object); Lite vs Full; proxyBeanMethods=false trap
 
 2. Spring MVC request lifecycle   [confirm 08_REVISION_VISUAL/02 ya naya]
    -> DispatcherServlet -> HandlerMapping -> HandlerAdapter -> HttpMessageConverters -> ViewResolver
