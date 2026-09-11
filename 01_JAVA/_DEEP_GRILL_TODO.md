@@ -23,7 +23,9 @@
 2. Lock toolkit   [naya note — biggest grill-risk]
    -> ReentrantLock / ReadWriteLock / Semaphore / CountDownLatch / CyclicBarrier
 
-3. ThreadLocal   [naya note — finance request-scoped me common]
+3. [DONE 11-Sep] ThreadLocal   [naya note 13_threadlocal.md]
+   -> problem-first (shared-var clash) -> per-thread private copy -> set/get/remove
+   -> ★ thread-pool reuse -> finally remove() (leak trap) · InheritableThreadLocal · Spring SecurityContext connect
 ```
 
 ## ★ PEHLE SE DEEP (inpe kaam nahi — chinta mat karna, reference)
