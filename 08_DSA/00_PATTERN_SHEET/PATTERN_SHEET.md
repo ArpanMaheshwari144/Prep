@@ -3547,11 +3547,34 @@
      ★ cookies/jump/interval se FARAK: yahan sort NAHI. circular + 2-accumulator (feasibility + start-track).
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ TASK SCHEDULER (LC-621)  = greedy MOST-FREQUENT frame  [NEW 11-Sep — jab revise kare: stub+solve khud]
+ │ ▸ TASK SCHEDULER (LC-621)  = greedy IDLE-SLOTS (most-frequent frame)   [11-Sep, self-solved 6/6]
  └──────────────────────────────────────────────────────────────
      tasks (letters) + cooldown n: SAME task dobara chalane se pehle n gap chahiye. minimum total TIME (idle included)?
      SIGNAL: "same cheez dobara se pehle GAP/cooldown" + "minimum time" -> greedy (most-frequent frame) YA max-heap.
-     GREEDY idea: sabse zyada baar aane wala task (maxFreq) bottleneck. Uske around frame:
-        (maxFreq - 1) * (n + 1) + (kitne task maxFreq ke barabar)   -> vs  tasks.length  ka MAX.
-     (alt: max-heap by freq + cooldown-queue — har cycle sabse frequent pehle nikaalo.)
+
+     BADI SOCH: sabse ZYADA baar aane wala task (maxFreq) poori timeline ka DHANCHA banata.
+        usko n-gap ke saath rakho -> beech ke gaps doosre tasks/idle se bharo. jo gap khali bache = IDLE.
+
+     STEP-BY-STEP (har line ka KYUN):
+       1. freq count karo (26-size array), sort -> mp[25] = maxFreq.
+       2. gadde = maxFreq - 1                 // maxFreq copies rakho to unke BEECH itne gap bante
+                                              //   A _ _ A _ _ A  (3 A -> 2 gaps). WHY -1: gaps hamesha (count-1).
+       3. idleSlots = n * gadde              // har gap ki lambai kam-se-kam n (cooldown) -> total khali slots = n*gadde
+       4. baaki har task se gaps bharo:
+             idleSlots -= min(mp[i], gadde)   // WHY min(count, gadde): ek task har gap me SIRF EK copy daal sakta
+                                              //   (2 same ek gap me = apna cooldown tootega). gadde gaps hai ->
+                                              //   task max gadde slots bhar sakta; kam copies -> utne hi.
+       5. idleSlots > 0 ? tasks.size()+idleSlots : tasks.size()
+                                              // >0 = kuch gap sach me KHALI (idle) -> length + idle
+                                              // <=0 = saare gap bhar gaye (bahut distinct tasks) -> koi idle nahi -> LENGTH wins
+
+     DRY-RUN: tasks=[A,A,A,B,B,B], n=2
+        freq: A=3, B=3 -> maxFreq=3 (A frame banega)
+        gadde = 3-1 = 2                 // A _ _ A _ _ A  -> 2 gaps
+        idleSlots = n*gadde = 2*2 = 4   // 4 khali slots (_ _ _ _)
+        B se bharo: min(3,2)=2 -> idleSlots = 4-2 = 2   // B har gap me 1 -> 2 slot bhare; 3rd B last column me A ke saath
+        idleSlots=2 > 0 -> ans = 6 + 2 = 8
+        picture:  A B idle A B idle A B    // 2 idle bache = wahi idleSlots
+     ★ length-WINS edge: [A3,B3,C3,D2,E2] n=3 -> idleSlots -2 (<=0) -> ans = 13 (saare gap bhar gaye, idle 0).
+     (alt approach: max-heap by freq + cooldown-queue — har cycle sabse frequent pehle. heap = intuitive backup jab "actual schedule" poochein.)
 ```
