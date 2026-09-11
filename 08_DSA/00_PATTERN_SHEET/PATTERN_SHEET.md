@@ -2588,6 +2588,15 @@
      components  -> count(i where find(i)==i)
 
      2 opt: path-compression (tree flat) + union-by-rank (chhota bade ke neeche) -> find/unite ~O(1).
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ WORD LADDER (LC-127)  = BFS shortest-path (unweighted)  [NEW 11-Sep — jab revise kare: stub+solve khud]
+ └──────────────────────────────────────────────────────────────
+     startWord -> endWord, ek baar me EK letter badlo, har beech ka word dict me ho. MINIMUM steps?
+     SIGNAL: "minimum steps / shortest path" + har step = ek transformation -> BFS (level-by-level).
+     har word = NODE; edge = "ek letter farak + dict me maujood". BFS start se -> jitne LEVEL = utne steps.
+     generate-neighbours: word ke har position pe a..z try karo, jo dict-set me ho + unvisited -> queue me.
+     ★ islands/Kahn's wali BFS family; yahan graph implicit (words), "shortest unweighted = BFS" ka classic.
 ```
 
 ---
@@ -3536,4 +3545,13 @@
      ★ KEY: kyaNegativeHua>=0 ho to jo LAST reset-index bacha wahi ANSWER (unique). kyun: jis pump pe
        tank dooba, us-se-pehle kisi bhi start se wahan pahucha ja HI nahi sakta -> start hamesha aage hi.
      ★ cookies/jump/interval se FARAK: yahan sort NAHI. circular + 2-accumulator (feasibility + start-track).
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ TASK SCHEDULER (LC-621)  = greedy MOST-FREQUENT frame  [NEW 11-Sep — jab revise kare: stub+solve khud]
+ └──────────────────────────────────────────────────────────────
+     tasks (letters) + cooldown n: SAME task dobara chalane se pehle n gap chahiye. minimum total TIME (idle included)?
+     SIGNAL: "same cheez dobara se pehle GAP/cooldown" + "minimum time" -> greedy (most-frequent frame) YA max-heap.
+     GREEDY idea: sabse zyada baar aane wala task (maxFreq) bottleneck. Uske around frame:
+        (maxFreq - 1) * (n + 1) + (kitne task maxFreq ke barabar)   -> vs  tasks.length  ka MAX.
+     (alt: max-heap by freq + cooldown-queue — har cycle sabse frequent pehle nikaalo.)
 ```
