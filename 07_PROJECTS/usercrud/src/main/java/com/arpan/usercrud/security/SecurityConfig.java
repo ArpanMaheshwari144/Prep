@@ -187,28 +187,18 @@ public class SecurityConfig {
 
                             // H2 console — dev only (production mein remove)
                             .requestMatchers("/h2-console/**").permitAll()
-
                             .requestMatchers("/graphql", "/graphiql/**").permitAll()
-
                             .requestMatchers("/n1/**").permitAll()
-
                             .requestMatchers("/product/**").permitAll()
-
                             .requestMatchers("/actuator/**").permitAll()
-
                             .requestMatchers("/async-demo").permitAll()
-
                             .requestMatchers("/cache-demo/**").permitAll()
-
                             .requestMatchers("/rate-demo").permitAll()
-
                             .requestMatchers("/pay").permitAll()
-
                             .requestMatchers("/volatile/**").permitAll()
-
                             .requestMatchers("/kafka/**").permitAll()
-
                             .requestMatchers("/lazy/**").permitAll()
+                            .requestMatchers("/internals/**").permitAll()
 
                             // Baki sab — JWT mandatory
                             .anyRequest().authenticated()
