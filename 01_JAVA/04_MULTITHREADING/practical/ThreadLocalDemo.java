@@ -4,29 +4,23 @@ import java.util.concurrent.TimeUnit;
 
 public class ThreadLocalDemo {
 
-    // TODO-1: yahan ek per-thread variable declare kar (STATIC hona chahiye -- static methods use karenge).
-
-    // ek "request handle" karta: user set -> kaam -> apni value dekho -> (cleanup? remove)
+    private static final ThreadLocal<String> threadLocal = new ThreadLocal<String>();
     static void handleRequest(String user, boolean cleanup) {
-        // TODO-2: userContext.set(user);
-
+        threadLocal.set(user);
         try {
-            Thread.sleep(100); // kaam simulate (yahin dusre thread apna set kar rahe honge)
-
-            // TODO-3: get karke print ->
-            // System.out.println("[" + Thread.currentThread().getName() + "]  sees user = " + userContext.get());
-
+            Thread.sleep(100);
+            System.out.println("[" + Thread.currentThread().getName() + "]  sees user = " + threadLocal.get());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
-            // TODO-4: if (cleanup) userContext.remove();   <- leak-fix (sirf cleanup=true pe)
+            if (cleanup) {
+                threadLocal.remove();
+            }
         }
     }
 
-    // sirf GET karta (set nahi) -- stale-leak dikhane ko
     static void readOnly() {
-        // TODO-5: get karke print ->
-        // System.out.println("[" + Thread.currentThread().getName() + "]  readOnly sees = " + userContext.get());
+        System.out.println("[" + Thread.currentThread().getName() + "]  readOnly sees = " + threadLocal.get());
     }
 
     public static void main(String[] args) throws InterruptedException {
