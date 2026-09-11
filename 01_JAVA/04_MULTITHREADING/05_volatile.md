@@ -206,7 +206,7 @@ synchronized  -> VISIBILITY + ATOMICITY (lock)          | multi-line   | Slowest
 
 ---
 
-## ★ HANDS-ON — usercrud VolatileDemoController (27-Aug, khud live chalaya)
+## ★ HANDS-ON — usercrud [VolatileDemoController](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/VolatileDemoController.java) (27-Aug, khud live chalaya)
 
 > Maqsad tha: theory ko chal ke dekhna. Background thread ek `boolean running` flag pe loop kare; doosra thread
 > `false` kare — kya loop rukega? Story wali "background thread band nahi hua" cheez LIVE reproduce karni thi.

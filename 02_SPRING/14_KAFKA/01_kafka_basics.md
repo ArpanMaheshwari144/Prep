@@ -55,7 +55,7 @@ usercrud ke apne `docker-compose.yml` me bhi kafka-block hai (KRaft single-node)
 > ★ `spring-boot-starter-kafka` (na ki raw `spring-kafka`) — kyun, wo section 6 me. Ye starter library + Boot AUTOCONFIG dono laata.
 
 ### STEP 3 — PRODUCER (REST endpoint -> topic)
-`controller/KafkaProducerController.java`:
+[`controller/KafkaProducerController.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/KafkaProducerController.java):
 ```java
 @RestController
 public class KafkaProducerController {
@@ -77,7 +77,7 @@ public class KafkaProducerController {
 + SecurityConfig me permit: `.requestMatchers("/kafka/**").permitAll()` (JWT block na kare)
 
 ### STEP 4 — CONSUMER (@KafkaListener -> print)
-`controller/KafkaConsumer.java`:
+[`controller/KafkaConsumer.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/KafkaConsumer.java):
 ```java
 @Component
 public class KafkaConsumer {
@@ -320,7 +320,7 @@ public void listen(String message) {
 ```
 > exception = "processing fail ho gaya" ka signal. Exception uthte hi error-handler jaagta.
 
-**(ii) Error-handler = retry + DLT recoverer** (`KafkaConfig.java`):
+**(ii) Error-handler = retry + DLT recoverer** ([`KafkaConfig.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/config/KafkaConfig.java)):
 ```java
 @Bean
 public DefaultErrorHandler errorHandler(KafkaTemplate<String, String> kafkaTemplate) {

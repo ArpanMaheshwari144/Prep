@@ -298,7 +298,7 @@ User user2 = u.toBuilder()
 
 ### 1 `JwtService.java` — Token generate karte time
 
-**File:** `02_SPRING/02_PROJECT/usercrud/src/main/java/com/arpan/usercrud/security/JwtService.java`
+**File:** [`02_SPRING/02_PROJECT/usercrud/src/main/java/com/arpan/usercrud/security/JwtService.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/security/JwtService.java)
 
 ```java
 public String generateToken(User user) {
@@ -330,7 +330,7 @@ public String generateToken(User user) {
 
 ### 2 `CustomUserDetailsService.java` — Spring UserDetails build karte time
 
-**File:** `02_SPRING/02_PROJECT/usercrud/src/main/java/com/arpan/usercrud/security/CustomUserDetailsService.java`
+**File:** [`02_SPRING/02_PROJECT/usercrud/src/main/java/com/arpan/usercrud/security/CustomUserDetailsService.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/security/CustomUserDetailsService.java)
 
 ```java
 @Override

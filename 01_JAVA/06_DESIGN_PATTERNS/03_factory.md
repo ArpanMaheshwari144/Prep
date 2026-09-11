@@ -160,7 +160,7 @@ AccountFactory.register("crypto", p -> new CryptoAccount(p.id, p.balance));
 
 ## PROJECT USAGE — `AccountFactory.java`
 
-**File:** `01_JAVA/07_PROJECT/SimpleBankSystem/src/com/arpan/bank/factory/AccountFactory.java`
+**File:** [`01_JAVA/07_PROJECT/SimpleBankSystem/src/com/arpan/bank/factory/AccountFactory.java`](../PROJECT/SimpleBankSystem/src/com/arpan/bank/factory/AccountFactory.java)
 
 ```java
 public class AccountFactory {

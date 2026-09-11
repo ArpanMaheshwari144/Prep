@@ -52,7 +52,7 @@ type Query {
 spring.graphql.graphiql.enabled=true
 ```
 
-### STEP 3 — Resolver  [UserGraphQLController.java]
+### STEP 3 — Resolver  [UserGraphQLController.java](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/UserGraphQLController.java)
 ```java
 @Controller     // NA @RestController — GraphQL alag hai
 public class UserGraphQLController {

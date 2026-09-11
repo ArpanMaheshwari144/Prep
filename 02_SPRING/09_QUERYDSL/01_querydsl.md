@@ -79,4 +79,4 @@ QUser user = QUser.user;                          // generated Q-class (compile-
 BooleanBuilder where = new BooleanBuilder();       // dynamic conditions AND-jodo
 queryFactory.selectFrom(user).where(where).fetch();
 ```
-Real: `UserSearchService` (injected `JPAQueryFactory`), `UserSearchController` endpoint. Q-class `QUser` = querydsl-apt ne compile pe generate ki (pom plugin). "type-safe dynamic query" LIVE.
+Real: [`UserSearchService`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/service/UserSearchService.java) (injected `JPAQueryFactory`), [`UserSearchController`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/UserSearchController.java) endpoint. Q-class `QUser` = querydsl-apt ne compile pe generate ki (pom plugin). "type-safe dynamic query" LIVE.

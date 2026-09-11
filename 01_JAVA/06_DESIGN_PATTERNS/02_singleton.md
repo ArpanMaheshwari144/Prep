@@ -214,7 +214,7 @@ String name = Config.INSTANCE.getBankName();
 
 ## PROJECT USAGE — `BankConfig.java`
 
-**File:** `01_JAVA/07_PROJECT/SimpleBankSystem/src/com/arpan/bank/config/BankConfig.java`
+**File:** [`01_JAVA/07_PROJECT/SimpleBankSystem/src/com/arpan/bank/config/BankConfig.java`](../PROJECT/SimpleBankSystem/src/com/arpan/bank/config/BankConfig.java)
 
 ```java
 public enum BankConfig {

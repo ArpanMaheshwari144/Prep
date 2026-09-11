@@ -122,7 +122,7 @@ badalta-NAHI  -> immutable banao -> thread-safe MUFT (pehli pasand)
 badalta-HAI (counter/balance/cache) -> AtomicInteger / ConcurrentHashMap / synchronized-lock
 ```
 
-### ★ LIVE DEMO (khud chalaya, 9-Sep — `04_MULTITHREADING/practical/SafePubDemo.java`)
+### ★ LIVE DEMO (khud chalaya, 9-Sep — [`04_MULTITHREADING/practical/SafePubDemo.java`](../../04_MULTITHREADING/practical/SafePubDemo.java))
 ```
 Demo1 mutable Counter (plain int c++), 2 thread × 100000 inc  -> 192415  (200000 se KAM = lost updates, RACE dikha)
 Demo2 AtomicInteger, wahi 2×100000                            -> 200000  exactly (atomic = safe)

@@ -6,7 +6,7 @@
 
 ## STORY — Count Adhoora Aa Gaya
 
-→ RaceDemo me `t1.start()`, `t2.start()` kiya — dono background me chalne lage
+→ [RaceDemo](practical/RaceDemo.java) me `t1.start()`, `t2.start()` kiya — dono background me chalne lage
 → Bina wait ke `main()` method seedha `println(count)` pe pahunch gaya
 → Par threads **abhi chal rahe the** — count **0 / adhoora** print hua
 → `t1.join(); t2.join();` lagaya → `main()` **dono ke khatam hone ka wait** kiya

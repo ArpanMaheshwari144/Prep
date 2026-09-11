@@ -26,7 +26,7 @@ public class UsercrudApplication { ... }
 ```
 Ye 2 annotation na ho to @Async/@Scheduled IGNORE ho jaate (silently kuch nahi hota).
 
-### STEP 2 — DemoJobs component (dono methods)
+### STEP 2 — [DemoJobs](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/DemoJobs.java) component (dono methods)
 ```java
 @Component
 public class DemoJobs {

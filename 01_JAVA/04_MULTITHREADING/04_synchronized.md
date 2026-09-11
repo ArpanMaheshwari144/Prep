@@ -146,7 +146,7 @@ Pessimistic DB lock   -> SELECT...FOR UPDATE (row lock pehle)     | pessimistic
 
 ---
 
-## ★ PROJECT CONNECT — usercrud RateLimitController (8-Sep)
+## ★ PROJECT CONNECT — usercrud [RateLimitController](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/RateLimitController.java) (8-Sep)
 ```java
 public synchronized ResponseEntity<String> hit() { ... }   // method-level lock
 ```

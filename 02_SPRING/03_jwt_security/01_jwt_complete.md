@@ -804,7 +804,7 @@ HTTP Request
 
 ---
 
-## 1 `JwtService` — Token generate/parse
+## 1 [`JwtService`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/security/JwtService.java) — Token generate/parse
 
 ```java
 @Service

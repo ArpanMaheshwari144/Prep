@@ -248,13 +248,13 @@ Rule: ALWAYS LAZY, fetch explicitly when needed
 Author.books  @OneToMany(mappedBy="author")  -> LAZY (default ToMany) -> books tabhi load jab access
 Book.author   @ManyToOne @JoinColumn         -> EAGER (default ToOne) -> author saath aa jaata
 ```
-Tere note ka "ToMany=LAZY, ToOne=EAGER" LIVE. Author.books LAZY hi N+1 ki jad thi (N1Controller me dekha).
+Tere note ka "ToMany=LAZY, ToOne=EAGER" LIVE. Author.books LAZY hi N+1 ki jad thi ([N1Controller](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/N1Controller.java) me dekha).
 
 ---
 
 ## ★ HANDS-ON DEMO — LazyInitException LIVE + 2 fix (usercrud, 9-Sep)
 
-> `LazyDemoController.java` — 3 endpoint, teeno Postman se chalaye. Exception khud laayi, phir 2 tareeke se fix.
+> [`LazyDemoController.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/LazyDemoController.java) — 3 endpoint, teeno Postman se chalaye. Exception khud laayi, phir 2 tareeke se fix.
 > Ye "theory padhi" se aage — actual 500 dekha, phir 200 dekha. Yahi asli samajh.
 
 ### Endpoint 1 — `/lazy/fail` (exception KHUD laayi)
