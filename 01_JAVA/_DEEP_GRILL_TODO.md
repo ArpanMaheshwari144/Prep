@@ -16,17 +16,10 @@
 ## ★ BACHA HUA — PENDING (priority order)
 
 ```
-1. [DONE 11-Sep] CompletableFuture thread-of-execution   [11_future_vs_completablefuture EXTEND]
-   -> deep-grill layer added: thenApply vs thenApplyAsync (thread) · thenApply vs thenCompose (map/flatMap)
-   -> exceptionally vs handle vs whenComplete · thenCombine vs thenCompose · usercrud @Async connect
-
-2. Lock toolkit   [naya note — biggest grill-risk]
+1. Lock toolkit   [naya note — biggest grill-risk, LAST Java topic]
    -> ReentrantLock / ReadWriteLock / Semaphore / CountDownLatch / CyclicBarrier
-
-3. [DONE 11-Sep] ThreadLocal   [naya note 13_threadlocal.md]
-   -> problem-first (shared-var clash) -> per-thread private copy -> set/get/remove
-   -> ★ thread-pool reuse -> finally remove() (leak trap) · InheritableThreadLocal · Spring SecurityContext connect
 ```
+> (CompletableFuture + ThreadLocal 11-Sep DONE — notes-files me pakke, git history me bhi.)
 
 ## ★ PEHLE SE DEEP (inpe kaam nahi — chinta mat karna, reference)
 ```
@@ -37,4 +30,4 @@ HashMap resize-math · streams hard-layer · final-safe-publication · thread-li
 ```
 
 ---
-> SHURU: #1 (CompletableFuture) se TEACH-first. ek-ek topic, samajh -> phir file.
+> SHURU: #1 (Lock toolkit) se TEACH-first. ek-ek topic, samajh -> phir file. (Java ka AAKHRI grill-topic.)

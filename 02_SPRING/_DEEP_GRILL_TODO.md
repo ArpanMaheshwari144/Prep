@@ -17,23 +17,21 @@
 ## ★ BACHA HUA — PENDING (order me)
 
 ```
-1. [DONE 11-Sep] @Configuration CGLIB / proxyBeanMethods   [04_proxy_jdk_cglib EXTEND]
-   -> config-class CGLIB-proxied -> inter-bean call SINGLETON (dependency() 2x = ek object); Lite vs Full; proxyBeanMethods=false trap
-
-2. Spring MVC request lifecycle   [confirm 08_REVISION_VISUAL/02 ya naya]
+1. Spring MVC request lifecycle   [confirm 08_REVISION_VISUAL/02 ya naya]
    -> DispatcherServlet -> HandlerMapping -> HandlerAdapter -> HttpMessageConverters -> ViewResolver
    -> @ControllerAdvice/@ExceptionHandler global error, @Valid/Bean-Validation
 
-3. Transaction-manager types + NESTED savepoint caveat + programmatic tx   [02_transactional EXTEND]
+2. Transaction-manager types + NESTED savepoint caveat + programmatic tx   [02_transactional EXTEND]
    -> Jpa vs DataSource vs Jta; NESTED JpaTransactionManager pe kaam nahi karta (savepoint-capable chahiye);
       TransactionTemplate
 
-4. @GeneratedValue strategies   [05_HIBERNATE/07 EXTEND]  -> IDENTITY batch-insert disable karta (perf)
+3. @GeneratedValue strategies   [05_HIBERNATE/07 EXTEND]  -> IDENTITY batch-insert disable karta (perf)
 
-5. Spring AOP internals   [naya ya proxy-note ke saath]  -> pointcut/advice/advisor, @Aspect, auto-proxy weaving
+4. Spring AOP internals   [naya ya proxy-note ke saath]  -> pointcut/advice/advisor, @Aspect, auto-proxy weaving
 
-6. ApplicationContext vs BeanFactory + context refresh() + ApplicationEvent/listeners
+5. ApplicationContext vs BeanFactory + context refresh() + ApplicationEvent/listeners
 ```
+> (@Configuration CGLIB 11-Sep DONE — 04_proxy_jdk_cglib.md me, + SpringInternalsDemo live `/internals` se proxy/singleton/prototype/BPP dekhe.)
 
 ## ★ TIER-3 — nice-to-have
 ```
@@ -51,4 +49,4 @@
 ```
 
 ---
-> SHURU: #1 (@Configuration CGLIB — chhota) ya #2 (MVC-lifecycle) se TEACH-first. ek-ek topic.
+> SHURU: #1 (MVC-lifecycle) se TEACH-first. ek-ek topic.
