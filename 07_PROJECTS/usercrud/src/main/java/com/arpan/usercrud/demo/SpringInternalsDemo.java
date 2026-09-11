@@ -33,9 +33,12 @@ public class SpringInternalsDemo {
         Dependency obj2 = applicationContext.getBean(Dependency.class);
         System.out.println(obj1 == obj2);
 
-        SomeService s1 = applicationContext.getBean(SomeService.class);
-        SomeService s2 = applicationContext.getBean(SomeService.class);
-        System.out.println(s1 == s2);
+
+        System.out.println(applicationContext.getBean(DemoConfig.class).getClass().getName());
+        Dependency directDep = applicationContext.getBean(Dependency.class);
+        Dependency insideDep = applicationContext.getBean(SomeService.class).getDependency();
+        System.out.println(directDep == insideDep);
+
 
         DummyBeam p1 = applicationContext.getBean(DummyBeam.class);
         DummyBeam p2 = applicationContext.getBean(DummyBeam.class);
@@ -81,6 +84,7 @@ class LifecycleBean implements InitializingBean{
 }
 
 @Configuration
+//@Configuration(proxyBeanMethods = false)   // <- ye uncomment (upar wala comment) karke run -> inter-bean FALSE + DemoConfig plain (no $$SpringCGLIB$$)
 class DemoConfig {
     @Bean
     Dependency dependency() {
@@ -99,7 +103,14 @@ class Dependency{
 }
 
 class SomeService {
-    SomeService(Dependency d) { }
+    private Dependency dependency;
+    public SomeService(Dependency d) {
+        this.dependency = d;
+    }
+
+    public Dependency getDependency() {
+        return dependency;
+    }
 }
 
 

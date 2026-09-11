@@ -202,10 +202,8 @@ RAAZ 1  PROXY  ->  userService.getClass().getName()
    matlab: bean asli nahi, uska CGLIB secretary (proxy). Yahi @Transactional chalati.
 
 RAAZ 2  SINGLETON  ->  getBean(Dependency.class) 2 baar, obj1==obj2 ?
-   print: true   (SomeService bhi true)
-   matlab: container me EK hi copy, har maang pe wahi.
-   + SomeService ko DemoConfig ne someService(){ new SomeService(dependency()) } se banaya ->
-     dependency() do jagah call par ek hi Dependency = upar wala @Configuration CGLIB jaadu LIVE.
+   print: true
+   matlab: container me EK hi copy, har getBean pe wahi. (ye container-level -> proxy se independent)
 
 RAAZ 3  PROTOTYPE  ->  getBean(DummyBeam.class) 2 baar, p1==p2 ?
    print: false
@@ -215,6 +213,42 @@ RAAZ 4  BeanPostProcessor  ->  LoggingBeanPostProcessor har bean ke init pe naam
    print: "DummyBeam" 4 baar
    matlab: prototype 2 baar maanga -> 2 baar naya bana -> har banne pe BPP before+after = 4.
 ```
+
+### ★★ @Configuration CGLIB inter-bean — proxy ON vs OFF (khud FLIP karke dekha, 11-Sep)
+
+> Upar RAAZ me "singleton" dekha. Ye uska ASLI test — `DemoConfig` ke `someService()` ke ANDAR jo `dependency()` call hota, wo shared singleton deta ya naya? Do tarah SE dekha: (a) secretary khud dikhayi, (b) inter-bean result.
+
+**Code (jo likha):**
+```
+print  getBean(DemoConfig.class).getClass().getName()       <- (a) secretary hai ya nahi
+directDep = getBean(Dependency.class)                       <- container se SEEDHA
+insideDep = getBean(SomeService.class).getDependency()      <- SomeService ke ANDAR wali (getter se)
+print  directDep == insideDep                               <- (b) shared ya naya?
+```
+(getter ke liye SomeService me Dependency store karayi + `getDependency()` public banaya — warna doosri class se call nahi hota.)
+
+**Dono state khud chala ke — LIVE flip:**
+```
+                       DemoConfig getClass()          directDep == insideDep
+proxy ON               DemoConfig$$SpringCGLIB$$0            true    (shared singleton)
+(@Configuration)       = secretary MAUJOOD
+
+proxy OFF              DemoConfig  (plain)                   false   (naya Dependency)
+(proxyBeanMethods=     = koi secretary NAHI
+ false)
+```
+
+**KAISE (mechanism, aankhon se):**
+```
+ON : someService() ke andar dependency() -> secretary ne pakda -> almari(container) me hai? HAAN
+     -> wahi cached singleton -> insideDep == directDep -> TRUE
+OFF: koi secretary nahi -> dependency() = plain Java call -> body chali -> new Dependency
+     -> 2 alag object (container ka + andar ka) -> FALSE
+```
+`$$SpringCGLIB$$` line hi seedha bata deti proxy laga ya nahi — ON pe secretary dikhi, OFF pe plain `DemoConfig`.
+(★ `obj1==obj2` DONO state me `true` raha — wo container `getBean`, proxy se lena-dena nahi; sirf **inter-bean** flip hua.)
+
+> **Ek line:** "@Configuration CGLIB-proxied — isliye `someService()` ke andar `dependency()` call same singleton deta (maine `DemoConfig.getClass()` me `$$SpringCGLIB$$` + inter-bean `true` dekha); `proxyBeanMethods=false` pe proxy hata, plain call, naya object -> `false`."
 
 ### ★ Chhupa gold (khud mil gaya, plan nahi tha)
 ```
