@@ -110,7 +110,7 @@ karti (wahi remove() ka concept). Tera JWT-filter -> SecurityContext set -> down
 
 ---
 
-## ★ LIVE DEMO (chala ke dekha — practical/ThreadLocalDemo.java)
+## ★ LIVE DEMO (chala ke dekha — [practical/ThreadLocalDemo.java](practical/ThreadLocalDemo.java))
 ```
 DEMO 1 (3 threads):  T-A->Arpan · T-B->Rahul · T-C->Sita   = isolation (clash nahi)
 DEMO 2a (no remove): readOnly -> "Arpan" (stale, pichhli req ki) = LEAK live
