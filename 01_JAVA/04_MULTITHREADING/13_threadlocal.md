@@ -110,6 +110,14 @@ karti (wahi remove() ka concept). Tera JWT-filter -> SecurityContext set -> down
 
 ---
 
+## ★ LIVE DEMO (chala ke dekha — practical/ThreadLocalDemo.java)
+```
+DEMO 1 (3 threads):  T-A->Arpan · T-B->Rahul · T-C->Sita   = isolation (clash nahi)
+DEMO 2a (no remove): readOnly -> "Arpan" (stale, pichhli req ki) = LEAK live
+DEMO 2b (with remove): readOnly -> null   = clean
+```
+-> per-thread isolation + pool-reuse leak + remove()-fix, teeno output me confirm.
+
 ## POWER PHRASE
 > "ThreadLocal = per-thread isolated variable — each thread has its own copy behind one reference. Used for
 >  request-scoped context (userId, traceId, SecurityContext) without threading it through every method.
