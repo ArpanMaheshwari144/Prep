@@ -15,7 +15,6 @@ class BankService {
 
 public class ReflectionAnnotationDemo {
     public static void main(String[] args) {
-        BankService bankService = new BankService();
         Method[] methods = BankService.class.getDeclaredMethods();
         for (Method method : methods) {
             if(method.isAnnotationPresent(MyTransactional.class)) {
