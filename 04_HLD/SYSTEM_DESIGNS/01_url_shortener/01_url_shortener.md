@@ -231,6 +231,15 @@ COMPONENTS SUMMARY:
 ```
 
 ```
+★★ WORD-FREEZE FALLBACK (agar interview me exact term bhool jaao -> CONCEPT describe karo, atko mat):
+   "MD5/hash" bhoola   -> "long URL ka ek HASH lo, uske first 7 char"        (koi bhi hash, naam zaroori nahi)
+   "Base62"  bhoola    -> "mere paas 62 characters (a-z,A-Z,0-9) hain -> ID ko un 62 me ENCODE karo -> chhoti string"
+   "Counter" bhoola    -> "ek global auto-increment ID"
+   ★ Interviewer ko WORD nahi, SAMAJH chahiye (short+unique kaise). Concept bol -> wo khud naam bol dega.
+     soch teri, sirf shabd badlega -> word-freeze pe kabhi stuck nahi.
+```
+
+```
 BASE62 (index -> char):
    0─9   -> '0'─'9'   (10)      CONVERSION 1,000,000,000 -> ?
    10─35 -> 'a'─'z'   (26)         baar-baar ÷62, remainders REVERSE padho -> "15FTGg"
@@ -251,9 +260,11 @@ SOLUTIONS:
    │ Redis INCR         │ Per-write  │ Yes (Redis) │ Better    │
    │ Range allocation   │ Per-batch  │ 1000× less  │ ★ WINNER  │
    └────────────────────┴────────────┴─────────────┴───────────┘
-   ★ RANGE ALLOCATION: central ticket/ID service har server ko ek BLOCK deta (1-1000, 1001-2000...);
-     server locally deta -> har-request coordination NAHI -> block khatam -> agla range maango.
-     restart pe kuch numbers waste = OK, collision nahi. (= counter+Base62 ka scale-version.)
+   ★ RANGE ALLOCATION: central coordinator (aksar ZOOKEEPER, ya ek DB counter-table) har server ko
+     ek BLOCK deta (S1:1-1000, S2:1001-2000, S3:2001-3000...); ranges DISJOINT -> collision-free.
+     server block LOCALLY use karta -> har-request coordination NAHI, sirf per-BLOCK ek baar -> fast.
+     block khatam -> agla range maango. restart pe kuch numbers waste = OK, collision nahi.
+     (= counter+Base62 ka scale-version. ★ vocab: "range/block allocation" + coordinator "Zookeeper".)
 ```
 
 ```
@@ -281,6 +292,17 @@ CUSTOM SHORT CODES:
    rate limiting (abuse/hot-key rok) | READ -> read REPLICAS + cache | WRITE -> SHARDING (write-replica nahi hota)
    shard by shortCode (billions ek DB nahi) | async analytics (Kafka -> redirect block na ho) | geo-routing (nearest region)
    ★ SPOF: counter-coordinator khud -> 2-node (active-passive) ya range-allocation (already tolerate karta).
+```
+
+```
+★★ CACHE HOT/COLD -> LRU EVICTION (mock me Arpan ne KHUD bola, 12-Sep -> ye line recall trigger karegi):
+   Redis me SAB URLs nahi aa sakte. To rakho sirf HOT wale.
+     "koi YOUTUBE-SONG viral / WHATSAPP-forward -> abhi laakhon hits -> HOT -> Redis me rehna chahiye.
+      dhere-dhere log dekhna band -> COLD -> Redis se NIKAL jaaye -> jagah bane naye hot-URLs ko."
+   Ye mechanism = LRU eviction (Least Recently Used: access hua -> hot rehta, na hua -> evict).
+     Redis LRU/LFU policy + TTL (expiry) dono milke ye karte.
+   ★ Bolne ka tarika: "Redis pe LRU eviction + TTL -> hot URLs cache me, cold apne-aap nikal jaate."
+     (concept apne example se bola -> word-freeze fallback LIVE. LRU = anchor-word.)
 
 WRAP: Client->CDN->LB->App->Redis->NoSQL(sharded by shortCode); counter+Base62 (range); read-replicas+cache; async analytics.
       Aage: custom URLs, expiry/TTL cleanup, geo-distribution.
