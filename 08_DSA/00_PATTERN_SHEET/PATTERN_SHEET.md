@@ -2603,7 +2603,7 @@
          Level 4:  dog, log               (dot->dog, lot->log)
          Level 5:  cog == endWord -> 5    [hit hot dot dog cog = 5 WORDS]
 
-     TEMPLATE (dono BFS hi -- jo kiya wahi; in-place modify + RESTORE, naya 'nw' nahi):
+     TEMPLATE:
         TERA (level PAIR me)                       │  MERA (per-layer SIZE-loop)
         ───────────────────────────────────────────┼──────────────────────────────────
         set = {wordList}   (lookup + visited)      │  set = {wordList}
@@ -2619,7 +2619,6 @@
                                                    │    level++   (poora layer khatam)
                                                    │  return 0
         FARAK sirf level-track: TERA level PAIR me (push me lvl+1) · MERA size-loop + baad me level++.
-        (set-setup · neighbour-gen · erase-as-visited · RESTORE -- dono me BILKUL same.)
 
      ★ VISITED trick (Arpan): dict-set se word ERASE karo jaise hi use karo -> alag visited-set NAHI chahiye
                               (ek check "dict me hai?" + "visited nahi?" dono serve).
