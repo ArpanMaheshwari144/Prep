@@ -3576,5 +3576,15 @@
         idleSlots=2 > 0 -> ans = 6 + 2 = 8
         picture:  A B idle A B idle A B    // 2 idle bache = wahi idleSlots
      ★ length-WINS edge: [A3,B3,C3,D2,E2] n=3 -> idleSlots -2 (<=0) -> ans = 13 (saare gap bhar gaye, idle 0).
+
+     ★★ GOTCHA — gadde = maxFreq-1 KYUN (maxFreq nahi)?   [ye confusion 12-Sep REDO pe hui]
+        SAHI :  A _ _ A _ _ A         (3 A -> gaps sirf BEECH me -> 2 = maxFreq-1)
+        GALAT:  A _ _ A _ _ A _ _     (aakhri A ke baad gap NAHI)
+        KYUN: cooldown = "AGLA same-task chalane se pehle gap" -> wo AGLE ko rokta hai.
+              Aakhri A ke baad koi agla A nahi -> cooldown kisi ko rok nahi raha -> koi idle nahi.
+              (dawa: aakhri goli kha li -> bottle khali -> 2 ghante wait nahi, kaam khatam.)
+        + problem "FINISH tak minimum time" poochta -> aakhri task pe clock STOP.
+        => gaps = (count-1) = maxFreq-1 = gadde.  n*maxFreq lena = zyada idle = GALAT.
+
      (alt approach: max-heap by freq + cooldown-queue — har cycle sabse frequent pehle. heap = intuitive backup jab "actual schedule" poochein.)
 ```
