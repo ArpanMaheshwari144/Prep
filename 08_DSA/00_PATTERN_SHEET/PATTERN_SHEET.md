@@ -2603,19 +2603,19 @@
          Level 4:  dog, log               (dot->dog, lot->log)
          Level 5:  cog == endWord -> 5    [hit hot dot dog cog = 5 WORDS]
 
-     TEMPLATE (dono BFS hi -- jo kiya wahi, method matter nahi; CORE andar hi hai):
-        TERA (level PAIR me)                    │   MERA (per-level SIZE-loop)
-        set = {wordList}  (lookup + visited)    │   set = {wordList}
-        q<pair<word,lvl>>;  push {begin,1}      │   q<word>;  push begin;  level=1
-        while(!q):                              │   while(!q):
-          {w,lvl} = pop                         │      sz = q.size();  repeat sz baar:
-          w==end -> return lvl                  │         w = pop
-          NEIGHBOUR: har pos i, ch 'a'..'z':    │         w==end -> return level
-             nw = w me w[i]=ch                  │         NEIGHBOUR: har pos i, ch 'a'..'z':
-             nw set me? -> erase + push{nw,lvl+1}│            nw = w me w[i]=ch
-          (level++ ki zaroorat NAHI)            │            nw set me? -> erase + push nw
-        khatam -> return 0                      │      level++   (poora layer khatam)
-                                                │   khatam -> return 0
+     TEMPLATE (in-place modify -- jaise tune kiya):
+        set = {wordList}                     (O(1) lookup + VISITED dono)
+        BFS begin se.  pop word w.  w == endWord -> return uska level.
+        NEIGHBOUR (w ko IN-PLACE badlo, phir RESTORE -- naya 'nw' nahi banaya):
+           for pos i:   original = w[i]
+              for ch 'a'..'z':   w[i] = ch
+                 w set me?  ->  erase(w)  +  push w       (erase = visited-mark)
+              w[i] = original          <- RESTORE zaroori (warna word bigad jaata)
+        khatam bina mile -> return 0
+
+     LEVEL kaise track (bas YAHI 2 me alag, baaki upar wala same):
+        TERA :  queue<pair<w,lvl>>  ->  push {w, lvl+1};  end pe return lvl.   (level++ NAHI chahiye)
+        MERA :  queue<w> + har layer  sz=q.size()  loop  ->  layer ke baad  level++.
 
      ★ VISITED trick (Arpan): dict-set se word ERASE karo jaise hi use karo -> alag visited-set NAHI chahiye
                               (ek check "dict me hai?" + "visited nahi?" dono serve).
