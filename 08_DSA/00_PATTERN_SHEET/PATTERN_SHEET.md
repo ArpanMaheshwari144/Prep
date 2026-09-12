@@ -2588,6 +2588,41 @@
      components  -> count(i where find(i)==i)
 
      2 opt: path-compression (tree flat) + union-by-rank (chhota bade ke neeche) -> find/unite ~O(1).
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ WORD LADDER (LC-127)  = BFS shortest-path (unweighted)   [12-Sep, self-solved 4/4]
+ └──────────────────────────────────────────────────────────────
+     beginWord -> endWord, har step EK letter badlo, har beech ka word dict me ho. shortest me kitne WORD?
+     SIGNAL: "minimum steps / shortest unweighted path" -> BFS (level-by-level).
+     word = NODE · edge = "ek letter farak + dict me maujood".
+
+     ★★ EXAMPLE (yahi yaad -> poora recall flash):  begin=hit, end=cog, dict={hot,dot,dog,lot,log,cog}
+         Level 1:  hit
+         Level 2:  hot                    (hit->hot)
+         Level 3:  dot, lot               (hot->dot, hot->lot)
+         Level 4:  dog, log               (dot->dog, lot->log)
+         Level 5:  cog == endWord -> 5    [hit hot dot dog cog = 5 WORDS]
+
+     CORE:
+       1. wordList -> unordered_set (O(1) lookup + visited DONO ka kaam)
+       2. BFS begin se. neighbour: har position pe 'a'..'z' try -> naya word dict me? -> lo
+       3. endWord mila -> uska LEVEL return
+
+     LEVEL kaise track (dono BFS hi -- jo kiya wahi, method matter nahi):
+        TERA (level PAIR me)              │   MERA (per-level SIZE-loop)
+        queue<pair<word,lvl>>            │   queue<word>, level=1
+        push {begin, 1}                  │   while(!q):
+        while(!q):                       │      sz=q.size();  repeat sz baar:
+           {w,lvl} = pop                 │         w = pop
+           w==end -> return lvl          │         w==end -> return level
+           nbr -> push {nw, lvl+1}       │         nbr -> push nw
+        (level++ ki zaroorat NAHI)       │      level++    (poora layer khatam)
+
+     ★ VISITED trick (Arpan): dict-set se word ERASE karo jaise hi use karo -> alag visited-set NAHI chahiye
+                              (ek check "dict me hai?" + "visited nahi?" dono serve).
+     ★ RETURN = WORDS count (begin = 1), steps nahi -> hit..cog = 5 words.
+     ★ EDGE: endWord dict me nahi -> 0 (rasta possible hi nahi).
+     ★ islands/Kahn's wali BFS family; yahan graph IMPLICIT (words). "shortest unweighted = BFS" ka classic.
 ```
 
 ---
