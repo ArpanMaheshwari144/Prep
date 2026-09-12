@@ -3578,8 +3578,13 @@
      ★ length-WINS edge: [A3,B3,C3,D2,E2] n=3 -> idleSlots -2 (<=0) -> ans = 13 (saare gap bhar gaye, idle 0).
 
      ★★ GOTCHA — gadde = maxFreq-1 KYUN (maxFreq nahi)?   [ye confusion 12-Sep REDO pe hui]
-        SAHI :  A _ _ A _ _ A         (3 A -> gaps sirf BEECH me -> 2 = maxFreq-1)
-        GALAT:  A _ _ A _ _ A _ _     (aakhri A ke baad gap NAHI)
+        TERMS (mix mat kar — yahi confuse hua tha):
+           _     = ek SLOT (ek unit time)
+           _ _   = ek GADDA (do A ke BEECH ka poora gap) = n slots  (n=2 -> gadda me 2 slot)
+           gadde = KITNE gadde/gap = maxFreq-1   (A _ _ A _ _ A  -> 2 gadde)
+           total idle slots = gadde x n = 2 x 2 = 4     (gadda alag, slot alag!)
+        SAHI :  A _ _ A _ _ A         (3 A -> gadde sirf BEECH me -> 2 = maxFreq-1)
+        GALAT:  A _ _ A _ _ A _ _     (aakhri A ke baad gadda NAHI)
         KYUN: cooldown = "AGLA same-task chalane se pehle gap" -> wo AGLE ko rokta hai.
               Aakhri A ke baad koi agla A nahi -> cooldown kisi ko rok nahi raha -> koi idle nahi.
               (dawa: aakhri goli kha li -> bottle khali -> 2 ghante wait nahi, kaam khatam.)
