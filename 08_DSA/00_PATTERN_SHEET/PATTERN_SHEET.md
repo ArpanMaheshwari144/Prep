@@ -314,6 +314,45 @@
          REFRESH pehle, ADD baad (warna naya-bada-bar pe ans NEGATIVE de deta).
          kyun SAFE: chhoti-max side ka paani sirf usi side se limit (doosri side oonchi wall already khadi).
      edge: empty -> 0.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ PALINDROMIC SUBSTRINGS (LC-647)  = EXPAND AROUND CENTER   [14-Sep, self-derived 6/6]
+ └──────────────────────────────────────────────────────────────
+     String me kitne SUBSTRING (contiguous) palindrome hain? COUNT karo.
+     single char bhi palindrome · same-dikhne wale par ALAG POSITION wale ALAG count.
+     SIGNAL: "count palindromes / palindromic substrings" -> har CENTER pe khade ho ke PHAILO.
+
+     ★★ EXAMPLE (yahi yaad -> poora recall):   "abcba"
+         a  b  c  b  a
+               ^            "c"        <- center se shuru
+            ^  ^  ^         "bcb"      <- ek kadam phaila (b==b)
+         ^  ^  ^  ^  ^      "abcba"    <- aur phaila (a==a)
+         => ek hi center se 3 palindrome mile -> har phailav pe count++
+
+     ★ ARPAN-LINE (jisse ye derive hua): "beech wala khada ho ke dono taraf poochta --
+       'tum dono same ho? aa jao mere paas'. same hue -> palindrome bana -> phir agli jodi se poochta."
+
+     DO tarah ke CENTER (dono chahiye):
+        ODD  length -> center ek CHAR       ("abcba" -> c)     -> expand(i, i)
+        EVEN length -> center do CHAR jodi  ("abba"  -> bb)    -> expand(i, i+1)
+        n-length string me:  n odd-centers + (n-1) even-centers
+
+     TEMPLATE:
+        count = 0
+        for i in 0..n-1:
+            expand(i, i)        // odd
+            expand(i, i+1)      // even
+        return count
+
+        expand(i, j):
+            while (i >= 0 && j < n && s[i] == s[j]):
+                count++          // har MATCH = ek naya palindrome
+                i--;  j++        // dono taraf phailo
+
+     ★ count HAR match pe badhta (ant me ek baar nahi) -> kyunki har phailav khud ek palindrome hai.
+     ★ Complexity: O(n^2) time, O(1) space. Koi DP/recursion NAHI chahiye
+       (substring = CONTIGUOUS -> skip ka option nahi -> choice nahi -> recursion nahi.
+        recursion ki khushboo SUBSEQUENCE me aati, substring me nahi).
 ```
 
 ---
