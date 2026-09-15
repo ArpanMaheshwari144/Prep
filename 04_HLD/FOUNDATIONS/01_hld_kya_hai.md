@@ -1,5 +1,7 @@
 # HLD — Kya Hai Aur Kyu?
 
+> **NAV** — KYA: HLD hota kya hai (entry). UP: [MASTER](../00_MASTER_SHEET.md) · agla: [02 capacity-estimation](02_capacity_estimation.md)
+
 > **HLD Topic 1 — Foundation (Day 1)**
 
 ---

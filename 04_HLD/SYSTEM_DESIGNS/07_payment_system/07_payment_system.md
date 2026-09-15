@@ -1,5 +1,7 @@
 # Payment System (UPI-style) — 7-STEP RAIL (single spine, revise top→bottom)
 
+> **NAV** — ARCHETYPE C · DIL: paisa DO BAAR na kate. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [saga/ms-comm](../../FOUNDATIONS/10_ms_communication.md) · saath: [bookmyshow](../10_bookmyshow/10_bookmyshow_INTERVIEW.md) · [stock-broker](../06_stock_broker_trading/06_stock_broker_trading.md)
+
 > Finance HLD CORE. JP/GS favourite. 4 hard problems jo paise ko special banate: Idempotency, Consistency, Failure-handling, Ledger/Audit.
 > RAIL (04_HLD/HLD_APPROACH_DELIVERY.md). Merged into clean 7-step 7-Sep. HANDS-ON (Java idempotency) = end me.
 > Problem (1 line): User A -> User B/merchant paisa bheje, RELIABLY. Concrete: Arpan -> merchant Rs.500.
@@ -244,4 +246,4 @@ CHEQUE ANALOGY: key = cheque-number. Do alag cheque (alag number) 100+100 -> ban
 
 ---
 
-[← HLD README](../README.md)
+[← MASTER SHEET](../../00_MASTER_SHEET.md)

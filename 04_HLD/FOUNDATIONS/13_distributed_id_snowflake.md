@@ -1,5 +1,7 @@
 # Distributed ID Generation (Snowflake)
 
+> **NAV** — KYA: unique-ID at scale (snowflake/range). UP: [MASTER](../00_MASTER_SHEET.md) · lagta hai: [url-shortener](../SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md)
+
 > **HLD Topic 13 — Unique ID across many machines**
 
 ---

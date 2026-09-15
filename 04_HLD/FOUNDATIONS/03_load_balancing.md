@@ -1,5 +1,7 @@
 # Load Balancing
 
+> **NAV** — KYA: LB (L4/L7, algos, health-check). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [L4 vs L7](../TRADEOFFS.md) · lagta hai: [rate-limiter](../SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [browser-journey](../SYSTEM_DESIGNS/05_url_browser_journey/05_url_browser_journey.md)
+
 > **HLD Topic 3 — Traffic distribution + scaling foundation**
 
 ---

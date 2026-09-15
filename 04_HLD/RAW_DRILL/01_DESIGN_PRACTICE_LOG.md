@@ -1,5 +1,7 @@
 # HLD DESIGN PRACTICE LOG (assembled 8-step designs — revise ke liye)
 
+> **NAV** — KYA: purane mock ka LOG (archive — Jul me 8-step numbering thi; aaj ka rail 7-step hai, [MASTER](../00_MASTER_SHEET.md) dekho). Naya mock yahin likhna.
+
 > Full-design practice (sheet ko design me "pour" karna). Har design 8-step me assembled.
 > Revise: yeh dekho -> phir khud blank se try -> gaps sheet me daalo. (delivery/assemble skill.)
 

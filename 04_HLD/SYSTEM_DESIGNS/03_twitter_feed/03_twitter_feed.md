@@ -1,5 +1,7 @@
 # Twitter Feed — 7-STEP RAIL (single spine, revise top→bottom)
 
+> **NAV** — ARCHETYPE A (read-heavy/feed) · DIL: read SASTA ho. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · trade-off: [fanout write vs read](../../TRADEOFFS.md)
+
 > RAIL: Requirements → Estimate → API → Data-model → HL-boxes → Deep-dive → Bottleneck. READ-HEAVY.
 > (framework: 04_HLD/HLD_APPROACH_DELIVERY.md). Merged into clean 7-step 7-Sep. FULL TOPIC (Day1+2+3).
 > Problem (1 line): app khole -> HOME TIMELINE (jinko follow karta, LATEST-first). tweet POST bhi.
@@ -184,4 +186,4 @@ WRAP: WRITE Tweet-Svc->Cassandra+Kafka->Fanout->Redis inbox (normal followers on
 
 ---
 
-[← HLD README](../README.md)
+[← MASTER SHEET](../../00_MASTER_SHEET.md)

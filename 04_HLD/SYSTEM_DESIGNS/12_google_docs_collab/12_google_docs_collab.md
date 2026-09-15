@@ -1,5 +1,7 @@
 # Google Docs — Collaborative Editor — 7-STEP RAIL (single spine, revise top→bottom)
 
+> **NAV** — ARCHETYPE D (real-time) · DIL: saath edit, kuch na khoye, sab same. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [pubsub/queues](../../FOUNDATIONS/07_message_queues.md) · trade-off: [WebSocket vs SSE](../../TRADEOFFS.md)
+
 > 3-Sep MOCK me KHUD derive kiya (novel design). 3 NAYA tool the: per-component CAP · WebSocket+Redis-pubsub · OT/CRDT.
 > RAIL (04_HLD/HLD_APPROACH_DELIVERY.md). Merged into clean 7-step 7-Sep. WRITE-DOMINATED tool.
 > PROBLEM (crux): 2+ log ek doc EK SAATH edit -> koi clash/override na ho, likha kho na jaaye, near-real-time dikhe, aakhir me sabka doc SAME.
@@ -126,4 +128,4 @@ TRAP BOX (mock me aayi galtiyan):
 
 ---
 
-[← HLD README](../README.md)
+[← MASTER SHEET](../../00_MASTER_SHEET.md)

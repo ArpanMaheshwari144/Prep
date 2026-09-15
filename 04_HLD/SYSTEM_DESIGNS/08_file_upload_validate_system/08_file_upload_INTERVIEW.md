@@ -1,5 +1,7 @@
 # File Upload + Validate + Track System — INTERVIEW (7-step RAIL)
 
+> **NAV** — ARCHETYPE B+F · DIL: upload -> validate -> track. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [reliability/SPOF](../../FOUNDATIONS/11_reliability_spof_cloud.md)
+
 > JP ne ye ACTUALLY poocha (real SDE-3 writeup): file/folder lo -> third-party se validate (2-3 sec)
 > -> store -> user ko tracking-link do. General product design (NOT finance-specific).
 > RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck

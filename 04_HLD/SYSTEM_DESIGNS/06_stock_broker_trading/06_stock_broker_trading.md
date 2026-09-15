@@ -1,5 +1,7 @@
 # Stock Broker / Trading Platform — 7-STEP RAIL (single spine, revise top→bottom)
 
+> **NAV** — ARCHETYPE C (transactional) · DIL: order match + paisa/share consistent. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [payment](../07_payment_system/07_payment_system.md)
+
 > Finance interview GOLD (JP/GS): consistency, ACID, idempotency, ledger, audit — NOT FAANG-hyperscale.
 > Bridge from Konovo fraud-domain. FLAVOR = CONSISTENCY + LATENCY heavy (paisa + speed).
 > RAIL (04_HLD/HLD_APPROACH_DELIVERY.md). Merged into clean 7-step 7-Sep.
@@ -187,4 +189,4 @@ TRAP 6: Polling for live price -> server dead+laggy. WebSocket push + pub/sub.
 
 ---
 
-[← HLD README](../README.md)
+[← MASTER SHEET](../../00_MASTER_SHEET.md)

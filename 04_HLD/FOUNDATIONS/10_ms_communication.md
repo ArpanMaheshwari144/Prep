@@ -1,5 +1,7 @@
 # Microservices Communication
 
+> **NAV** — KYA: microservices baat kaise karti (sync/async, saga, gateway). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [sync vs async](../TRADEOFFS.md) · lagta hai: [payment](../SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [notification](../SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
+
 > **HLD Topic 10 — How services talk in distributed systems**
 
 ---
@@ -491,4 +493,4 @@ Next phase:
       • Rate Limiter
 ```
 
-[← HLD README](README.md)
+[← MASTER SHEET](../00_MASTER_SHEET.md)

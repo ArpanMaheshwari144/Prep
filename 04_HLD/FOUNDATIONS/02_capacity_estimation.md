@@ -1,5 +1,7 @@
 # Capacity Estimation — Back-of-Envelope Math
 
+> **NAV** — KYA: QPS/storage ka hisaab (RAIL step 2). UP: [MASTER](../00_MASTER_SHEET.md) · lagta hai: [url-shortener](../SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [twitter-feed](../SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [message-queue](../SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md)
+
 > **HLD Topic 2 — First Weapon (Day 1)**
 
 ---

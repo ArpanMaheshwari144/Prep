@@ -1,5 +1,7 @@
 # HLD SPEAKING VOCAB — Arpan ka word-bank
 
+> **NAV** — KYA: word-freeze se bachne ke shabd/phrases. UP: [MASTER](00_MASTER_SHEET.md) · delivery: [APPROACH_DELIVERY](HLD_APPROACH_DELIVERY.md)
+
 > **Kyun ye file:** concept 100% aata (Hindi me round faad de). Sirf interview me English
 > **word tongue pe** nahi aata -> us line pe freeze. Ye gap CHHOTA + FINITE hai — system-design ke
 > technical word gine-chune. Ye file = wo word + EXACT line jaise interview me bolega.

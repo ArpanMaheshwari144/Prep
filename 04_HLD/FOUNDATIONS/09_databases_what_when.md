@@ -1,5 +1,7 @@
 # Databases — Kya Hai, Kab Use, Real-World Connect
 
+> **NAV** — KYA: kaunsa DB kab (SQL/NoSQL/family). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [SQL vs NoSQL](../TRADEOFFS.md) · lagta hai: [payment](../SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [bookmyshow](../SYSTEM_DESIGNS/10_bookmyshow/10_bookmyshow_INTERVIEW.md) · [stock-broker](../SYSTEM_DESIGNS/06_stock_broker_trading/06_stock_broker_trading.md)
+
 > **HLD Reference** — 7 DB types with everyday-life analogies
 > CAP done — SQL-vs-NoSQL choice + finance/ACID connection at bottom
 

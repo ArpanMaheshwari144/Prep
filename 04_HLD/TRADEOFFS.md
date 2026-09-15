@@ -1,5 +1,7 @@
 # HLD TRADE-OFFS — 15 jode jo GHOOM-GHOOM ke aate hain
 
+> **NAV** — KYA: 15 A-vs-B jode + wajah + bolne-wali line. UP: [MASTER](00_MASTER_SHEET.md) · saancha: [APPROACH_DELIVERY](HLD_APPROACH_DELIVERY.md) · detail: [FOUNDATIONS](FOUNDATIONS)
+
 > KYUN ye file: trade-off koi alag "hoshiyari" nahi hai. Trade-off tabhi bol paate ho jab
 > ek slot pe DO option pata ho + ek wajah. Agar sirf ek option pata hai to trade-off aa hi
 > nahi sakta — ye knowledge ka sawaal hai, dimaag ka nahi.

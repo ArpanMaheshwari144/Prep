@@ -1,5 +1,7 @@
 # Design a Message Queue (Kafka-jaisa) — 7-STEP RAIL (single spine, revise top→bottom)
 
+> **NAV** — ARCHETYPE B/F · DIL: kisi ko rokna nahi, kho na jaye. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · [sharding/partition](../../FOUNDATIONS/06_database_sharding.md) · saath: [notification](../04_notification_system/04_notification_system.md)
+
 > HLD design. Concept-detail (queue kya/kyun, general) = FOUNDATIONS/07_message_queues.md.
 > RAIL = 04_HLD/HLD_APPROACH_DELIVERY.md.
 > Problem (1 line): ek aisa dabba jo events le le aur kai services ko apni-apni raftaar se de de —

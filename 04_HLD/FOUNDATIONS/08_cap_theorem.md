@@ -1,5 +1,7 @@
 # CAP Theorem — The Distributed Systems Classic
 
+> **NAV** — KYA: CAP (CP vs AP kab). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [strong vs eventual](../TRADEOFFS.md) · lagta hai: [bookmyshow](../SYSTEM_DESIGNS/10_bookmyshow/10_bookmyshow_INTERVIEW.md) · [payment](../SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [google-docs](../SYSTEM_DESIGNS/12_google_docs_collab/12_google_docs_collab.md)
+
 > **HLD Topic 8 — Pick 2 of 3 — interview ka favorite**
 > Real talk: "Perfect kuch nahi hota" — YouTube/Uber/Facebook sab kahin na kahin trade-off karte
 

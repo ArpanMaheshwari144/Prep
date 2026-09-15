@@ -1,5 +1,7 @@
 # Distributed Cache (Redis-jaisa) — 7-STEP RAIL (single spine, revise top→bottom)
 
+> **NAV** — ARCHETYPE F · DIL: SPEED + node mare to chale. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [replication](../../FOUNDATIONS/05_database_replication.md)
+
 > HLD component-design. Concept detail = FOUNDATIONS/04_caching.md. SPEED = dil.
 > RAIL (04_HLD/HLD_APPROACH_DELIVERY.md). Merged into clean 7-step 7-Sep.
 > Problem (1 line): fast in-memory key-value store jo 1 machine se bada + node-mare-to-chale.
@@ -137,4 +139,4 @@
 
 ---
 
-[← HLD README](../README.md)
+[← MASTER SHEET](../../00_MASTER_SHEET.md)

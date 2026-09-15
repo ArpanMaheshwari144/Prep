@@ -1,5 +1,7 @@
 # BookMyShow (Ticket Booking) — INTERVIEW (7-step RAIL)
 
+> **NAV** — ARCHETYPE C · DIL: do log EK seat na lein. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [payment](../07_payment_system/07_payment_system.md)
+
 > JP-relevant: CONSISTENCY-critical (seat double-book na ho = trading ka no-double-spend jaisа). Concurrency = asli khel.
 > RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck
 

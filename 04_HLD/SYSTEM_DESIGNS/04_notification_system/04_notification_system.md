@@ -1,5 +1,7 @@
 # Notification System — 7-STEP RAIL (single spine, revise top→bottom)
 
+> **NAV** — ARCHETYPE B (ingest) · DIL: ek event -> sahi channel/user/time. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [ms-communication](../../FOUNDATIONS/10_ms_communication.md) · saath: [13 message-queue](../13_message_queue_kafka/13_message_queue_kafka.md)
+
 > RAIL: Requirements → Estimate → API → Data-model → HL-boxes → Deep-dive → Bottleneck.
 > (framework: 04_HLD/HLD_APPROACH_DELIVERY.md). Merged into clean 7-step 7-Sep.
 > Problem (1 line): event aaye -> right CHANNEL -> right USER -> right TIME, reliably at scale.
@@ -166,4 +168,4 @@ WRAP: Event->Kafka->Notif-Svc (pref+template)->fanout per-channel queues->worker
 
 ---
 
-[← HLD README](../README.md)
+[← MASTER SHEET](../../00_MASTER_SHEET.md)

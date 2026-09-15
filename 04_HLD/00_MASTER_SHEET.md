@@ -1,5 +1,7 @@
 # HLD MASTER SHEET — koi bhi design ASSEMBLE karne ka tareeka
 
+> **NAV** — KYA: interview-din ki EK file (archetype -> assemble -> bolo). · KAISE-BOLNA: [APPROACH_DELIVERY](HLD_APPROACH_DELIVERY.md) · TRADE-OFF: [TRADEOFFS](TRADEOFFS.md) · SHABD: [SPEAKING_VOCAB](SPEAKING_VOCAB.md) · CONCEPT-detail: [FOUNDATIONS](FOUNDATIONS) · 13 DESIGN: [SYSTEM_DESIGNS](SYSTEM_DESIGNS) · DRILL: [RAW_DRILL](RAW_DRILL)
+
 > EK file. Interview se pehle sirf YE. (detail chahiye to hi SYSTEM_DESIGNS/* kholo.)
 >
 > IDEA: har design naya nahi hota. Har design **6 archetype** me se kisi ek (ya do ke mel) me girta hai.
@@ -8,6 +10,36 @@
 > ★ HONEST HAD: ye sheet kisi bhi design ka HIGH-LEVEL khada kar degi (boxes + kyun + trade-off).
 >   Jo cheez tune PADHI hi nahi uska DEEP-DIVE ye sheet nahi degi -- wahan section 7 wali
 >   honest line kaam aati hai. Ye kami nahi, ye tareeka hai.
+
+---
+
+## 0. KAUNSI FILE KAB — poore 04_HLD ka naksha (har file ka ek hi kaam)
+
+```
+   INTERVIEW-DIN / REVISE
+     00_MASTER_SHEET.md          <- YE. kya bolna: archetype -> blocks -> rail. (tu abhi yahin hai)
+     HLD_APPROACH_DELIVERY.md    <- KAISE bolna: meta-moves, trade-off saancha, na-pata-ho-to, follow-ups
+     TRADEOFFS.md                <- 15 A-vs-B jode + ready English line
+     SPEAKING_VOCAB.md           <- shabd atak jaaye to
+
+   PADHNE / DEPTH
+     FOUNDATIONS/01..13          <- ek-ek concept ka detail (cache, shard, CAP, queue...)
+     SYSTEM_DESIGNS/01..13       <- 13 poore design, har ek 7-step rail pe
+
+   DRILL / ABHYAS
+     RAW_DRILL/00_REFLEX_SHEET   <- rapid-fire: need -> block (design ke bina)
+     RAW_DRILL/02_WHY_HOW_QA     <- kyun/kaise Q&A, khud se poochho
+     RAW_DRILL/01_PRACTICE_LOG   <- purane mock ka log (archive) + naya mock yahin likho
+```
+```
+   ★ CONFUSION-PROOF NIYAM:
+       "kya bolna"   -> ye file
+       "kaise bolna" -> APPROACH_DELIVERY
+       "A ya B?"     -> TRADEOFFS
+       "ye cheez hai kya?" -> FOUNDATIONS
+       "poora design"      -> SYSTEM_DESIGNS
+     Har file ke UPAR ek NAV line hai -> wahan se seedha jump. README pe wapas jaane ki zaroorat nahi.
+```
 
 ---
 

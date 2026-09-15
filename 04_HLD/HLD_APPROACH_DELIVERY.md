@@ -1,5 +1,7 @@
 # HLD — APPROACH / DELIVERY PLAYBOOK ("kaise bolna", content nahi)
 
+> **NAV** — KYA: interview me KAISE bolna (rail-discipline · meta-moves · trade-off saancha · na-pata-ho-to · follow-ups). KYA bolna = [MASTER](00_MASTER_SHEET.md). · JODA: [TRADEOFFS](TRADEOFFS.md) · [SPEAKING_VOCAB](SPEAKING_VOCAB.md) · [REFLEX_SHEET](RAW_DRILL/00_REFLEX_SHEET.md)
+
 > Ye note DESIGN ka content nahi — ye HLD interview me KAISE conduct karna hai, wahi.
 > Banaya 3-Sep: Arpan ne pehli baar HLD-mock kiya + bola "padh liya par bolna kaise nahi aata".
 > HLD = khula game (DSA binary + Java deterministic se ALAG). Par khula ≠ blank — hamesha RAIL hoti hai.
@@ -125,6 +127,43 @@
 ```
 > NICHOD: sab nahi jaanega = normal, fail nahi. Interview banata/bigaadta = tera RESPONSE, na unknown.
 > Pehla interview = warm-up rep, "final" nahi.
+
+---
+
+## 6 — COMMON FOLLOW-UPS (jo ~har design me poochte — jawab ready rakh)
+
+```
+   "Scale 10x?"              -> shard + read-replica + cache + async (queue)
+   "Ye component gir jaaye?" -> replica / failover / no single point (+ circuit breaker)
+   "Consistency vs availability?" -> CAP: kaunsa chuna + KYUN (paisa/seat = CP, feed/cache = AP)
+   "Race condition?"         -> atomic check+mark . lock . unique-constraint . idempotency-key
+   "Hot / celebrity key?"    -> cache + consistent hashing + hybrid fanout
+   "Data lost na ho?"        -> replication + durable queue + ACID jahan zaroori
+   "Monitoring kya?"         -> p99 latency . error-rate . queue-lag . cache hit-rate
+```
+
+```
+   ★ JP / FINANCE FLAVOR: deep-dive me ye teen shabd DROP karo -> turant asar
+        IDEMPOTENCY  ·  AUDIT-TRAIL / LEDGER  ·  ACID jahan paisa hai
+```
+
+## 7 — "NA PATA HO" ka jawab — per subject (5-step)
+
+```
+   COOL-DOWN: panic ki jad = "mujhe pata HONA chahiye." Us soch ko DROP ->
+              replace: "main ise REASON karunga." Ek line poora pressure utaar deti.
+
+   1. BLUFF mat kar (galat-confident turant pakda jaata; honest > fake)
+   2. Saaf bol: "ye maine directly use nahi kiya, par main aise approach karunga..."
+   3. Fundamentals se REASON kar -- jo PATA hai usme tod ke socho, LOUD
+   4. CLARIFYING question poochho -> waqt + engagement + interviewer khud nudge deta
+   5. Jaani-hui cheez se JODO: "ye X jaisa lagta, wahan maine ___ kiya tha"
+
+   DSA  : trick na pata -> BRUTE-FORCE se shuru ("naive O(n^2) ye, ab optimize"), loud
+   JAVA : concept na pata -> "exact API yaad nahi, par mera samajh ye..." + reason
+   HLD  : component na pata -> block-menu se REASON (cache/queue/shard/LB).
+          single-right-answer hota hi nahi -> REASONING hi answer hai
+```
 
 ---
 

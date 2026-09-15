@@ -1,5 +1,7 @@
 # "Type amazon.com -> Enter" — Browser Journey (Visual)
 
+> **NAV** — KYA: Enter dabane ke baad kya hota (concept-walkthrough, design nahi). UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [load-balancing](../../FOUNDATIONS/03_load_balancing.md) · [DNS](../../../05_INFRA_DEEP/03_dns.md) · [CDN](../../../05_INFRA_DEEP/01_cdn.md)
+
 Classic interview question (JP / GS / FAANG). What happens between pressing Enter and the page showing up.
 
 ---

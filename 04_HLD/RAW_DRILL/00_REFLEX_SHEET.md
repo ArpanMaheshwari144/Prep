@@ -1,5 +1,7 @@
 # HLD — RAW DRILL REFLEX SHEET (design-less, rapid-fire)
 
+> **NAV** — KYA: rapid-fire DRILL (need -> block, design ke bina). Interview-din ki compact list = [MASTER](../00_MASTER_SHEET.md) section 4. · JODA: [TRADEOFFS](../TRADEOFFS.md) · [02_WHY_HOW_QA](02_WHY_HOW_QA.md) · [FOUNDATIONS](../FOUNDATIONS)
+
 > PRACTICE MODE (30-Jun): koi design nahi. SEEDHA tradeoff/concept ka kab/kyun/kaise reflex.
 > ye answers HAR design me SAME aate -> isliye design ke bina drill. (detail = 04-09 foundation notes.)
 > use: Claude sawaal pheke -> tu recall karke bole. ya khud cover karke recall kar.

@@ -1,5 +1,7 @@
 # News Aggregator — INTERVIEW (7-step RAIL)
 
+> **NAV** — ARCHETYPE A+E · DIL: kai source -> ek feed. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [elasticsearch](../../FOUNDATIONS/12_elasticsearch_search.md) · [caching](../../FOUNDATIONS/04_caching.md) · saath: [twitter-feed](../03_twitter_feed/03_twitter_feed.md)
+
 > JP general-product design (Google News / Inshorts jaisa): alag sources se news kheencho
 > -> store -> user ko ek feed do. READ-HEAVY system.
 > RAIL: 04_HLD/HLD_APPROACH_DELIVERY.md — Requirements → Estimate → API → Data model → HL boxes → Deep-dive → Bottleneck

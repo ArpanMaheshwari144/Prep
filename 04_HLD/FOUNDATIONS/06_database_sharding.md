@@ -1,5 +1,7 @@
 # Database Sharding
 
+> **NAV** — KYA: sharding (shard-key, consistent hashing, hot-shard). UP: [MASTER](../00_MASTER_SHEET.md) · farak: [replication vs sharding](../TRADEOFFS.md) · lagta hai: [twitter-feed](../SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [message-queue](../SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md)
+
 > **HLD Topic 6 — Write scaling + Storage scaling**
 
 ---

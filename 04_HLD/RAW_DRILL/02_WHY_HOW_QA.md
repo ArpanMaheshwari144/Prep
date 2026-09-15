@@ -1,5 +1,7 @@
 # HLD — WHY / HOW Q&A DRILL (reasoning + follow-ups)
 
+> **NAV** — KYA: kyun/kaise Q&A drill (khud se poochho). UP: [MASTER](../00_MASTER_SHEET.md) · reflex: [00_REFLEX_SHEET](00_REFLEX_SHEET.md) · detail: [FOUNDATIONS](../FOUNDATIONS)
+
 > JP follow-up style: "kyu? kaise? kab?" reasoning questions. Jaise-jaise karenge, pattern jama hoga.
 > Format: Q → crisp answer (Arpan-language) + interview-line (English). Arpan ne mostly khud diye (3-Jul).
 

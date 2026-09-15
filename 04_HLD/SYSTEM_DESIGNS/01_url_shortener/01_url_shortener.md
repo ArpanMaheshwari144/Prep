@@ -1,5 +1,7 @@
 # URL Shortener — 7-STEP RAIL (single spine, revise top→bottom)
 
+> **NAV** — ARCHETYPE F (infra/component) · DIL: chhota unique code + tez redirect. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [ID-gen](../../FOUNDATIONS/13_distributed_id_snowflake.md) · [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · trade-off: [301 vs 302](../../TRADEOFFS.md)
+
 > RAIL: Requirements → Estimate → API → Data-model → HL-boxes → Deep-dive → Bottleneck.
 > (framework: 04_HLD/HLD_APPROACH_DELIVERY.md). Arpan-derived 21-Jun; merged into clean 7-step 7-Sep.
 > Problem (1 line): long URL -> short 6-7 char code; short pe click -> original pe redirect (302).
@@ -321,4 +323,4 @@ WRAP: Client->CDN->LB->App->Redis->NoSQL(sharded by shortCode); counter+Base62 (
 
 ---
 
-[← HLD README](README.md)
+[← MASTER SHEET](../../00_MASTER_SHEET.md)

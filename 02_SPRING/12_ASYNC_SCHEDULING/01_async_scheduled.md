@@ -123,4 +123,4 @@ main-class: @EnableAsync @EnableScheduling -> method pe @Async / @Scheduled(fixe
 run -> logs me alag thread-name (task-*/scheduling-1) + endpoint instant.
 ```
 
-[← Spring README](../README.md)
+[← repo README](../../README.md)

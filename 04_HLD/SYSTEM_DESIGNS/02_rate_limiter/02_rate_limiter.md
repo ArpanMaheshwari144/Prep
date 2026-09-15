@@ -1,5 +1,7 @@
 # Rate Limiter — 7-STEP RAIL (single spine, revise top→bottom)
 
+> **NAV** — ARCHETYPE F · DIL: over-limit reject, legit allow. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [caching/Redis](../../FOUNDATIONS/04_caching.md) · [load-balancing](../../FOUNDATIONS/03_load_balancing.md) · [SPOF](../../FOUNDATIONS/11_reliability_spof_cloud.md)
+
 > RAIL: Requirements → Estimate → API → Data-model → HL-boxes → Deep-dive → Bottleneck.
 > (framework: 04_HLD/HLD_APPROACH_DELIVERY.md). Merged into clean 7-step 7-Sep. HANDS-ON demos = end me (preserve).
 > Problem (1 line): over-limit requests REJECT (429), legit ALLOW. e.g. "5 login/min per IP".
@@ -379,4 +381,4 @@ PS> 1..10 | % { curl.exe -s http://localhost:8080/rate-demo; "" }
 
 ---
 
-[← HLD README](../README.md)
+[← MASTER SHEET](../../00_MASTER_SHEET.md)

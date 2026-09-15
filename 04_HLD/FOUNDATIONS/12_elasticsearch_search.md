@@ -1,5 +1,7 @@
 # Elasticsearch (Full-Text Search)
 
+> **NAV** — KYA: search / inverted index. UP: [MASTER](../00_MASTER_SHEET.md) (archetype E) · lagta hai: [news-aggregator](../SYSTEM_DESIGNS/09_news_aggregator/09_news_aggregator_INTERVIEW.md)
+
 > **HLD Topic 12 — Search weapon**
 
 ---
