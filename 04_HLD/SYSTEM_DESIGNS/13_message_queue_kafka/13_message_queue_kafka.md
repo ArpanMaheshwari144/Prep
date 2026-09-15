@@ -42,6 +42,18 @@
      NFR = kya chahiye. Solution step 5/6 me.
 ```
 
+```
+   ★★ "DUPLICATE NA HO" MAT BOLNA (15-Sep mock me ye phasa tha)
+       requirement me "duplicate na ho" bola -> step 6 me "at-least-once, duplicate aayega,
+       consumer idempotent banega" bola -> DONO EK DOOSRE KO KAATTE HAIN
+       -> interviewer turant: "aapne no-duplicate bola tha, ab allow kar rahe ho?"
+
+       SAHI LINE (yahi bolna):
+         "No message loss. Duplicates ARE possible, and we handle them with idempotent
+          consumers -- so the EFFECT is exactly-once."
+       -> contradiction khatam, aur step-6 ka jawab requirement se hi nikal aata hai.
+```
+
 ## STEP 2 — ESTIMATE (numbers se decision nikaalo)
 
 ```
@@ -56,6 +68,11 @@
    ISI SE AGLA STEP NIKALTA HAI (number ko decision se baandho):
         ek broker ~1-2 TB aaram se rakh leta   -> 3-4 BROKER
         parallelism ki ikai = partition        -> har topic 3-6 PARTITION
+
+   ★★ YE AAKHRI DO LINE BOLNA MAT BHOOLNA (15-Sep mock me chhoot gayi thi):
+       700GB/2TB tak pahunch ke ruk gaya to estimate ek alag-thalag ganit lagta hai.
+       Ye do line jodte hi step-5 ke BOXES isi number se nikalte dikhte hain --
+       "2 TB hai, isliye 3-4 broker; parallelism partition se aati, isliye 3-6 partition."
 ```
 
 ## STEP 3 — API
@@ -190,6 +207,21 @@
 
    ★ CLOSING MOVE (bahut asar karta): neeche wale teen group pe ungli rakh ke bolna --
      "this is exactly the requirement I started with -- one event, many consumers."
+```
+
+```
+   ★★ TOPIC vs CONSUMER-GROUP -- yahan GALTI hui thi (15-Sep mock)
+       GALAT bola: "har service ke liye alag TOPIC hoga (user / email / notification)"
+       SAHI      : EK topic, aur uspe TEEN consumer-GROUP
+
+            TOPIC user-signup
+               -> GROUP email-svc          poora topic milta
+               -> GROUP notification-svc   poora topic milta
+               -> GROUP analytics-svc      poora topic milta
+
+       KYUN ye galti mehngi hai: alag-alag topic banaoge to PRODUCER ko ek hi event
+       TEEN baar bhejna padega -> step-1 ki "ek message kai consumer tak" wali
+       requirement hi toot gayi. Yahi MQ ka dil hai, interviewer isi pe ungli rakhta.
 
    ★ CDN yahan NAHI aata (wo static content ka kaam hai, ye backend ka dabba hai).
 ```
@@ -297,6 +329,26 @@
    6. PRODUCER SIDE
         acks=all har jagah -> latency badhi
         FIX: event ke hisaab se knob -> payment/order = acks=all . click/log = acks=1
+```
+
+```
+   ★★ 15-Sep MOCK ME YE DO LINE REH GAYI THI -- agli baar ZAROOR:
+     (a) DISK: "10x pe 2TB -> 20TB. retention 7->2 din, compaction, broker add,
+                purana data S3/tiered-storage me."
+     (b) PARTITION BADHANE KA CATCH (senior-level line, sabse zyada asar):
+         "Adding partitions changes hash(key) % n, so an existing key can move to a
+          different partition and its ordering can break -- that's why we start with
+          a few extra partitions instead of adding them later."
+```
+
+```
+   ★★ TRADE-OFF BOLNA MAT BHOOLNA (15-Sep mock me ek bhi nahi aaya)
+       Is design me DO ready pade hain, kam se kam EK bolna:
+         1. acks 0/1/all   -> "speed vs safety: payment ke liye acks=all, logs ke liye acks=1;
+                               keemat ye ki acks=all thoda slow karta hai"
+         2. pull vs push   -> "pull liya taaki slow consumer dab ke na mare;
+                               keemat ye ki agle poll tak thodi latency aati hai"
+       SAANCHA: "A chuna kyunki ___ . Keemat ye hai ki ___ ."
 ```
 
 ---
