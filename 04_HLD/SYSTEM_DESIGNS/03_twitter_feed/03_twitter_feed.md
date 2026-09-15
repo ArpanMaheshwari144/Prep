@@ -1,83 +1,236 @@
-# Twitter Feed — 7-STEP RAIL (single spine, revise top→bottom)
+# Twitter Feed — POORA ROUND (4 MOVE, jaise asli me hota hai)
 
 > **NAV** — ARCHETYPE A (read-heavy/feed) · DIL: read SASTA ho. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · trade-off: [fanout write vs read](../../TRADEOFFS.md)
 
-> RAIL: Requirements → Estimate → API → Data-model → HL-boxes → Deep-dive → Bottleneck. READ-HEAVY.
-> (framework: 04_HLD/HLD_APPROACH_DELIVERY.md). Merged into clean 7-step 7-Sep. FULL TOPIC (Day1+2+3).
-> Problem (1 line): app khole -> HOME TIMELINE (jinko follow karta, LATEST-first). tweet POST bhi.
+> 15-Sep: asli mock-video ke hisaab se dobara likha — koi 7-step rail nahi, sirf 4 move:
+> POOCHA -> do chhote block LIKHE -> BOXES banaye -> phir bolte-bolte JODTA gaya.
+> Har jagah: **tu kya BOLTA hai · BOARD pe kya banta · FAISLA + KYUN**.
+>
+> Problem (1 line): app khole -> HOME TIMELINE (jinko follow karta, latest-first). Tweet POST bhi.
 
 ```
    Tu app KHOLA -> home timeline: Virat "Match great" · Sachin "Watching IPL" · Dhoni "Practice"
-   = tweets from people TU follow karta, latest-first.
+   = un logon ke tweets jinhe TU follow karta hai, latest pehle.
 ```
 
 ```
-★ MASTER ANALOGY — ROYAL KINGDOM (visual anchor):
-   Notice Board  = Redis inbox per user   |  Town Crier = Fanout Service
-   Palace Board  = Tweet store (Cassandra)|  Royal Scribe = Tweet Service  |  News reader = Timeline Svc
+★ MASTER ANALOGY — ROYAL KINGDOM (visual anchor, poori file me isi se jodna):
+   Notice Board = Redis inbox per user   |  Town Crier   = Fanout Service
+   Palace Board = Tweet store (Cassandra)|  Royal Scribe = Tweet Service
+   News reader  = Timeline Service       |  Register     = Graph DB (kaun kisko follow karta)
+   Newspaper truck = Kafka
 ```
 
----
-
-## STEP 1 — REQUIREMENTS
-
 ```
-FUNCTIONAL:  user app khole -> HOME TIMELINE (follow-kiye logon ke tweets, LATEST-first). tweet POST karo.
-NON-FUNCTIONAL:  feed FAST khule (low latency) . READ-HEAVY . scale (500M user) . reliable.
-CLARIFY:  kitne users/tweets? celeb (crore followers) handle karna? real-time ya thodi purani? media?
-```
-
----
-
-## STEP 2 — ESTIMATE (scale / numbers)
-
-```
-   500M users . 500M tweets/day = ~5,800/sec . avg follow 200, 200 followers.
-   celeb 100M+ followers (★ BIEBER problem).
-   READ : WRITE ~ 50 : 1  -> READ-HEAVY
-   -> KEY: inbox PRECOMPUTE + cache (har read pe compute mat karo — read-heavy me read sasta banao).
+★★ TEEN NIYAM (poori file par lagte — [APPROACH_DELIVERY](../../HLD_APPROACH_DELIVERY.md) 5b)
+   1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
+   2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
+   3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega
 ```
 
 ---
 
-## STEP 3 — API DESIGN
+# MOVE 1 — POOCHO (board pe abhi kuch nahi)
 
 ```
-   POST /tweet   {content}          -> tweetId          (BANANA -> POST)
-   GET  /feed?limit=50              -> home timeline    (LAANA  -> GET)
-   GET  /user/{id}/tweets           -> profile timeline
-```
+   TU: "Twitter bada hai — timeline, tweet post, search, trending, DM, notifications.
+        Aap kis pe focus karwana chahenge? Main home timeline aur tweet post pe ja sakta hoon."
 
----
+   TU: "Kuch cheezein confirm kar lun —
+          - kitne users? main ~500 million maan raha hoon
+          - CELEBRITY handle karna hai? (jiske 10 crore follower hain)
+          - timeline bilkul real-time chahiye, ya kuch second purana chalega?
+          - media (photo/video) scope me hai ya sirf text?"
 
-## STEP 4 — DATA MODEL + DB (KYUN)
-
-```
-   TWEET store:  Cassandra  (wide-column, write-heavy, LSM-tree fast write, easy shard by user_id)
-   FEED inbox:   Redis list per user -> tweet_IDs only (LPUSH write / LRANGE read, LTRIM 800)
-   USER graph:   Graph DB (Neo4j) ya Cassandra (followers / following)
-   KYUN: tweets massive + simple + read-heavy -> NoSQL Cassandra . inbox turant chahiye -> Redis (in-memory).
-
-COMPONENTS MAP:  notice-board=Redis inbox . town-crier=Fanout Svc . palace-board=Cassandra . royal-scribe=Tweet Svc .
-                 news-reader=Timeline Svc . kingdom-register=Graph DB . newspaper-truck=Kafka.
+   ★ CELEBRITY wala sawaal sabse zaroori hai — is poore design ka asli mod wahi hai.
+     (aur "kuch second purana chalega?" ka jawab 'haan' mile to precompute ka raasta khulta hai)
 ```
 
 ---
 
-## STEP 5 — HL BOXES (arch + write/read flow)
+# MOVE 2 — DO CHHOTE BLOCK LIKHO
 
 ```
-                    USER opens app
+   ┌──────────────────────┐     ┌──────────────────────────────────┐
+   │ Twitter              │     │ Use cases:                       │
+   │   - Users            │     │   - tweet POST karo              │
+   │   - Tweets           │     │   - HOME TIMELINE kholo          │
+   │   - Follows (graph)  │     │     (follow-kiye logon ke tweets,│
+   │   - Timeline         │     │      latest pehle)               │
+   └──────────────────────┘     │                                  │
+                                │ NOT in scope: search . trending  │
+   ┌──────────────────────────┐ │                . DM . notifications│
+   │ Kya chahiye (NFR):       │ └──────────────────────────────────┘
+   │  - feed FAST khule <200ms│ <- DIL
+   │  - READ-HEAVY            │
+   │  - 500M user pe chale    │
+   │  - eventual OK (2 sec    │
+   │    purana chalega)       │
+   └──────────────────────────┘
+```
+
+```
+   Numbers:
+     - users            : 500 M
+     - tweets           : 500 M / day  =  ~5,800 / sec
+     - avg follow       : ~200 . avg followers ~200
+     - CELEB            : 10 crore (100M+) followers      <- ★ BIEBER problem
+     - read : write     : ~50 : 1
+```
+
+```
+   HAR NUMBER SE EK FAISLA (yahi bolna):
+     50 : 1 read-heavy   ──►  READ ko sasta banao — har read pe compute MAT karo,
+                              pehle se bana ke rakho (PRECOMPUTE)
+     celeb 10 crore      ──►  ek tweet pe 10 crore kaam? -> yahi design ka asli mod hai
+     eventual OK         ──►  precompute + cache ka raasta khula hai
+```
+
+---
+
+# MOVE 3 — BOXES BANAO (chhota banao, phir dikkat pe badhao)
+
+```
+   TU: "Sabse simple cheez se shuru karta hoon."
+
+        USER ──► [ App ] ──► [ DB ]
+                              tweets table
+                              follows table
+
+        feed kaise banega? -> "jinko main follow karta hoon unke tweets nikaalo, time se sort karo, top 50"
+
+   TU: "Ye chal jaata hai. Ab main USER ban ke app kholta hoon aur dekhta hoon kya hota hai."
+```
+
+### dikkat 1 — "har baar app kholne pe 200 logon ka data joda ja raha hai"
+
+```
+        app khuli ──► 200 follow nikaalo ──► sabke tweets ──► sort ──► top 50
+                          (har baar, har user ke liye, 50:1 read pe)   -> FEED SLOW
+
+   FAISLA: read ke waqt mat jodo — POST ke waqt hi sabke INBOX me daal do (precompute)
+
+        Virat tweet ──► [ Fanout ] ──► har follower ka inbox me tweet_id daal do
+                                          redis:inbox:arpan  ->  [t9, t7, t3, ...]
+
+        ab app khuli ──► sirf apna inbox padho ──► INSTANT
+
+   TU: "Read-heavy system me kaam READ se hata kar WRITE pe daal dete hain.
+        Tweet ek baar bana, par padha 50 baar jaayega — to mehnat likhte waqt kar lo."
+   ★ royal kingdom: Town Crier (fanout) har ghar ke Notice Board (inbox) pe parcha chipka deta hai
+```
+
+### dikkat 2 — "Bieber ne tweet kiya — 10 CRORE inbox likhne padenge"
+
+```
+        Bieber tweet ──► [ Fanout ] ──► 100,000,000 inbox writes
+                                          │
+                                          └─► Town Crier CHOKED -> poora system atka
+
+   FAISLA — HYBRID (yahi asli jawab hai):
+
+        ┌───────────────────────────┬────────────────────────────┐
+        │ NORMAL (< 10K followers)  │ PUSH  — fanout on write    │
+        │ CELEB  (> 10K followers)  │ PULL  — read ke waqt fetch │
+        └───────────────────────────┴────────────────────────────┘
+
+        celeb ka tweet sirf Cassandra me jaata (fanout NAHI)
+        read ke waqt: apna inbox (push)  +  celeb ke tweets (pull)  ──► merge + sort
+
+   CONCRETE: Arpan follows Virat (celeb) + Suresh (normal)
+             Suresh ka tweet -> Redis inbox se (push)
+             Virat ka tweet  -> Cassandra se (pull)
+             -> merge + sort by time -> top 50
+
+   ★ CROSSOVER: threshold ~10K followers. Tu 8K pe hai (PUSH mode) -> 2.5K aur follower aa gaye
+     = 10.5K -> threshold cross -> aage ke tweets PULL mode me. System khud re-evaluate karta hai.
+
+   TU: "Dono ka trade-off bol ke chun raha hoon — push read ko instant banata par celeb pe write-storm
+        laata; pull write bachata par har read mehnga. Isliye hybrid."
+```
+
+### dikkat 3 — "Virat ka tweet 10 crore log ek saath padh rahe hain"
+
+```
+        10 crore read ──► sab Cassandra pe ──► DB CRASH
+
+   FAISLA: HOT-TWEET CACHE
+
+        ┌─ library analogy: bestseller front-counter pe rakho (cache),
+        │                   normal kitaab peeche shelf me (DB)
+        ▼
+        [ Redis hot-tweet cache ]   recent celeb tweets, TTL 1 hr
+             95% HIT
+             miss -> Cassandra -> Redis me daal do -> return
+
+        recent (<1hr) = HOT -> cache (SETEX ... 3600)
+        purana        = COLD -> seedha DB
+```
+
+### dikkat 4 — "500 million inbox Redis me? memory phat jaayegi"
+
+```
+        DO ALAG CACHE hain (inhe ghaalmel mat karo):
+
+        CACHE-1  INBOX (per-user, PUSH side)
+            redis:inbox:arpan -> [tweet_ids only]   <- sirf ID, poora tweet nahi
+            LTRIM 800 (itna hi rakho)  ->  ~6.4 KB per inbox
+            500M user x 6.4 KB = ~3.2 TB -> Redis cluster me manageable
+
+        CACHE-2  HOT-TWEET (shared, PULL side)
+            cache:tweet:virat -> content, TTL 1 hr
+            ~500K recent tweets x 500 B = ~250 MB -> ek node me aa jaata
+
+        CASSANDRA = source of truth (saare tweets, petabytes, sharded)
+
+        INACTIVE USER: 30 din se app nahi khola -> uska inbox Redis se DELETE
+                       wapas aaya -> Cassandra se REBUILD (ek baar ka kharcha, memory bach gayi)
+```
+
+### dikkat 5 — "saare tweets ek DB me nahi aayenge"
+
+```
+   SHARDING ke teen tareeke (aur unka nuksan):
+
+     1. by tweet_id (random)   -> load bilkul even, PAR ek user ke tweets bikhar jaate
+                                  -> profile page = scatter-gather (slow)
+     2. by user_id  ★ pehla    -> ek user ke saare tweets ek shard pe -> profile fast
+        chunaav                   PAR hot-user (Bieber ka shard hammer hota rahega)
+     3. by user_id + time      -> hot user bhi time ke hisaab se bant gaya,
+                                  recent saath, purana cold-storage me
+
+   HOT-USER REPLICATION: Bieber ka shard hammer, baaki idle
+        -> Bieber ke tweets KAI shard pe replicate -> read bat gaye
+```
+
+### dikkat 6 — "India ka user US ke shard se padh raha hai (200ms)"
+
+```
+        GEO SHARDING: India / EU / US
+
+        KYUN (chaar wajah, chaaron bolna):
+          LATENCY     : India user -> India shard 5ms, US shard 200ms
+          COMPLIANCE  : GDPR — EU ka data EU me rahe
+          LOAD        : India ka peak aur US ka peak alag samay pe
+          FAILURE     : India region gira -> EU/US chalte rahenge
+
+        CROSS-REGION: Indian banda Bieber (US) ko follow karta
+                      -> Bieber ke HOT tweets India ke Redis me REPLICATE
+                      (production me yahi hota hai — hot data ko paas laao)
+```
+
+### ab poora naksha (jahan pahunche) + har box ka KYUN
+
+```
+                    USER app kholta hai
                          ▼
                   ┌──────────────┐
-                  │  Route 53    │  DNS
+                  │  Route 53    │  DNS + health-check
                   └──────┬───────┘
-                         ▼
-                  ┌──────────────┐
-                  │  CloudFront  │  CDN (media)
+                  ┌──────▼───────┐
+                  │  CloudFront  │  CDN (media: photo/video)
                   └──────┬───────┘
-                         ▼
-                  ┌──────────────┐
+                  ┌──────▼───────┐
                   │     ALB      │  Load Balancer
                   └──────┬───────┘
             ┌────────────┼────────────┐
@@ -89,99 +242,129 @@ COMPONENTS MAP:  notice-board=Redis inbox . town-crier=Fanout Svc . palace-board
      └────┬────┘  └────┬────┘  └────┬────┘
           ▼            │            ▼
      ┌─────────┐       │       ┌─────────┐
-     │  KAFKA  │       │       │ Graph DB│ (follows)
+     │  KAFKA  │       │       │ Graph DB│  kaun kisko follow karta
      └────┬────┘       │       └─────────┘
           ▼            │
      ┌─────────────┐   │
-     │  Fanout Svc │   │
+     │  Fanout Svc │   │   celeb ko SKIP karta hai
      │  (workers)  │   │
      └──────┬──────┘   │
             └──────────┼──────────────┐
                        ▼              ▼
                  ┌──────────┐  ┌─────────────┐
                  │  REDIS   │  │  CASSANDRA  │
-                 │ (inbox/  │  │ (tweets DB, │
-                 │  notice) │  │  full text) │
+                 │ inbox +  │  │ saare tweet │
+                 │ hot-tweet│  │ (sharded)   │
                  └──────────┘  └─────────────┘
+
+     Tweet Svc  : likhne ka darwaza (royal scribe)
+     Kafka      : fanout ko async kar diya -> tweet post turant lautta hai
+     Fanout Svc : town crier — normal followers ke inbox bhar deta, celeb skip
+     Redis      : inbox (instant read) + hot-tweet (celeb read ka bojh)
+     Cassandra  : source of truth — write-heavy, LSM-tree fast write, user_id se shard
+     Graph DB   : follow-graph (Neo4j ya Cassandra bhi chalega)
+     Timeline   : merge karne wala (push + pull)
+     CDN        : media user ke paas se
 ```
 
 ```
-WRITE FLOW (tweet post):
-   Virat tweets -> Tweet Service
-      ├──► SAVE -> Cassandra (tweet_id, user_id, content, time)
-      └──► event -> KAFKA -> Fanout Service (worker):
-                get followers -> celebs FILTER OUT (unke liye fanout nahi) ->
-                har NORMAL follower: LPUSH redis:inbox:userX  tweet_id
+   DO RAASTE alag-alag (ye bolna):
 
-READ FLOW (app open):
-   1. PUSH inbox read (Redis LRANGE)  -> normal users ke tweets
-   2. PULL celebs (Cassandra fetch)   -> Virat/Bieber ke tweets (fanout nahi hua tha)
-   3. MERGE + SORT by timestamp
-   4. HYDRATE tweet_ids -> full content -> return top 50
-   READ-FLOW LINE: "Timeline Svc -> LRANGE Redis inbox(push) + celeb-following Cassandra(pull) -> merge+sort -> hydrate -> top 50".
-```
+   WRITE (tweet post)                        READ (app khuli)
+   ──────────────────                        ─────────────────
+   Virat tweets -> Tweet Service             1. Redis inbox padho (LRANGE)   <- normal wale
+        │                                    2. celeb ke tweets Cassandra se <- pull wale
+        ├─► Cassandra me SAVE                3. MERGE + SORT (time se)
+        │   (tweet_id, user_id, content, ts) 4. HYDRATE: tweet_id -> poora content
+        │                                    5. top 50 wapas
+        └─► event -> KAFKA -> Fanout worker
+                 followers nikaalo
+                 celeb FILTER OUT
+                 har normal follower:
+                    LPUSH redis:inbox:userX tweet_id
 
----
-
-## STEP 6 — DEEP DIVE: feed FAST kaise? PUSH vs PULL (asli khel)
-
-```
-OPTION 1 — PUSH (fanout-on-write): tweet -> sab followers ke Redis inbox me LPUSH.
-   app khole -> apna inbox padho = INSTANT.
-   PAR celeb (Bieber 10 crore) -> 10 crore inbox likho -> TOWN CRIER choked -> SYSTEM CHOKED.
-   FIX: celeb ke tweets fanout NAHI -> sirf palace-board (Cassandra) me -> followers on-demand fetch.
-
-OPTION 2 — PULL (fanout-on-read): celeb tweet sirf DB me; follower app-khole pe FETCH. har read pe query (celeb ke liye theek).
-
-★ WINNER = HYBRID (industry reality):
-   ┌────────────────────────┬────────────────────┐
-   │ Normal (< 10K followers)  │ PUSH (fanout)       │
-   │ Celeb  (> 10K followers)  │ PULL (fetch on read)│
-   └────────────────────────┴────────────────────┘
-   READ = inbox(push, normal) + celeb-tweets(pull) -> MERGE + SORT (time) + HYDRATE -> top 50.
-   concrete: Arpan follows Virat(celeb)+Suresh(normal) -> Suresh Redis-inbox se (push), Virat Cassandra se (pull) -> merge.
-   -> trade-off BOL ke choose = asli marks yahin.
-
-★ PUSH<->PULL CROSSOVER: threshold ~10K followers. Tu 8K (PUSH) -> 2.5K aur kamaye = 10.5K -> threshold cross ->
-   future tweets PULL mode. System auto-evaluate karta.
+   YAAD-RAKHNE WALI LINE (read):
+     "Timeline Svc -> LRANGE Redis inbox (push) + celeb-following Cassandra (pull)
+      -> merge + sort -> hydrate -> top 50"
 ```
 
 ---
 
-## STEP 7 — BOTTLENECK / SCALE / OPTIMIZATION
+# MOVE 4 — BOLTE-BOLTE JODO (jo poocha jaaye, wahi kholo)
+
+## ► "API kya hogi?"
 
 ```
-HOT-TWEET CACHE (library-bestseller): Virat tweet -> 10 crore read -> sab Cassandra hit -> DB crash.
-   Bestseller front-counter pe (cache), normal book shelf-peeche (DB).
-   -> Redis HOT-TWEET cache (recent celeb, TTL 1hr): 95% HIT | miss -> Cassandra -> save-in-Redis -> return.
-   TTL pattern: recent (<1hr)=HOT->cache (SETEX ... 3600) | old=COLD->direct DB.
+     POST /tweet   { content }        ──►  tweetId            (BANANA  = POST)
+     GET  /feed?limit=50              ──►  home timeline      (LAANA   = GET)
+     GET  /user/{id}/tweets           ──►  profile timeline
+```
 
-2 CACHES (bounded ALAG):
-   CACHE-1 INBOX (per-user, PUSH side): redis:inbox:arpan -> [tweet_ids only], LTRIM 800, ~6.4KB/inbox.
-       500M users × 6.4KB = ~3.2 TB -> Redis cluster (manageable).
-   CACHE-2 HOT-TWEET (shared, PULL side): cache:tweet:virat -> content, TTL 1hr. ~500K recent × 500B = ~250MB (single node).
-   Cassandra = source of truth (all tweets, petabytes, sharded).
+## ► "DB me kya rakhoge, aur kaunsa DB?"
 
-INACTIVE users TTL: 30-din no-open -> inbox Redis se DELETE (memory bacha) -> reactivate -> Cassandra se REBUILD (one-time cost).
+```
+     TWEET store  ->  CASSANDRA
+                      kyun: massive + simple + write-heavy, LSM-tree fast write,
+                            user_id se shard karna aasan
 
-SHARDING strategies:
-   1. by tweet_id (random): even, PAR user-tweets scatter -> profile = scatter-gather (slow).
-   2. by user_id (★ recommended): user-tweets ek shard -> profile fast. PAR hot-user (Bieber shard hammered).
-   3. by user_id + time: hot-user time pe distribute, recent together, old -> cold-storage.
+     FEED inbox   ->  REDIS list per user
+                      kyun: turant chahiye (in-memory)
+                      LPUSH likhne me . LRANGE padhne me . LTRIM 800 (bounded)
+                      ★ sirf tweet_ID rakho, poora content nahi -> inbox halka rehta
 
-GEO SHARDING: India/EU/US regions.
-   LATENCY (India user -> India shard 5ms, na US 200ms) . COMPLIANCE (GDPR EU-data EU me) .
-   LOAD (India-peak != US-peak) . FAILURE-isolation (India outage -> EU/US safe).
-   cross-region: Indian follows Bieber(US) -> hot tweets India-Redis me REPLICATE (prod = replicate hot-data).
+     USER graph   ->  Graph DB (Neo4j) ya Cassandra
+                      followers / following
 
-HOT-USER REPLICATION: Bieber shard hammered, baaki idle -> Bieber tweets MULTIPLE shards pe replicate -> reads distribute -> load balanced.
+   TU: "Inbox me sirf ID rakhta hoon — content Cassandra me ek hi jagah rehta hai.
+        Warna ek tweet 200 jagah copy hota aur memory phat jaati."
+```
 
-REAL TWITTER = MULTI-DIMENSIONAL: user_id shard (primary) + time sub-shard + geo replication + hot-data global cache. No single strategy enough.
+## ► "PUSH lena ya PULL?" (deep-dive ka dil — upar dikkat-2 me jawab hai)
 
-WRAP: WRITE Tweet-Svc->Cassandra+Kafka->Fanout->Redis inbox (normal followers only).
-      READ Timeline-Svc->Redis inbox(push)+Cassandra(celeb pull)->merge+sort+hydrate->top 50.
-      HYBRID push/pull (Bieber) . hot-tweet cache (95% hit) . shard user_id+time+geo . hot-user replicate.
-      IMPROVE: ML ranking, media CDN, trending/search.
+```
+   OPTION 1 — PUSH (fanout on write)
+        tweet -> sab followers ke inbox me LPUSH
+        app khuli -> apna inbox padha = INSTANT
+        PAR celeb (10 crore) -> town crier choked
+
+   OPTION 2 — PULL (fanout on read)
+        celeb ka tweet sirf DB me; follower app-khole pe fetch kare
+        har read pe query, par write bacha
+
+   ★ WINNER = HYBRID (industry me yahi hota hai)
+        normal -> push . celeb -> pull . read pe merge + sort
+
+   ★ "trade-off bol ke chuna" — asli number yahin milte hain
+```
+
+## ► "Kahan tootega / aur scale karo"
+
+```
+   ★ RATTO MAT — USER ka raasta chalao:
+
+      user app kholta hai
+          │
+          ├─► Timeline Svc  -> har read pe 200 follow ka join? -> INBOX precompute
+          ├─► inbox (Redis) -> 500M inbox ka size?             -> LTRIM 800 + inactive TTL
+          ├─► celeb tweets  -> 10 crore read Cassandra pe?     -> HOT-TWEET cache (95% hit)
+          ├─► Cassandra     -> ek DB me sab?                   -> shard by user_id (+time)
+          │                    Bieber ka shard hammer?         -> hot-user replication
+          └─► doosre desh   -> 200ms latency + GDPR            -> GEO shard + hot-data replicate
+
+      ★ REAL TWITTER = MULTI-DIMENSIONAL:
+        user_id shard (primary) + time sub-shard + geo replication + hot-data global cache.
+        Koi ek strategy akeli kaafi nahi hoti.
+```
+
+## ► WRAP (aakhir me 3-4 line)
+
+```
+   "WRITE: Tweet Service -> Cassandra + Kafka -> Fanout -> Redis inbox (sirf normal followers).
+    READ : Timeline Service -> Redis inbox (push) + Cassandra (celeb pull) -> merge + sort
+           -> hydrate -> top 50.
+    Celeb ke liye hybrid push/pull, hot-tweet cache 95% hit,
+    shard by user_id + time + geo, aur hot user ko multiple shard pe replicate.
+    Aage badhata to: ML ranking, media CDN, trending aur search."
 ```
 
 ---
