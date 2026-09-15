@@ -215,6 +215,22 @@ COMPONENTS SUMMARY:
    Cassandra=permanent store · Counter Svc=range+Base62(7-char) · Kafka=async analytics · Analytics DB=separate query store.
 ```
 
+```
+★ API GATEWAY + READ/WRITE SERVICE ALAG (15-Sep, asli Bitly mock video se -- ye yahan nahi tha)
+
+   LB ke peeche ek API GATEWAY rakho, aur peeche DO alag service:
+
+        client -> LB -> API GATEWAY -> WRITE service (POST /urls, short code banana)
+                            |
+                            +-------> READ service  (GET /{code}, redirect)  <- 100x zyada traffic
+
+   KYUN GATEWAY : auth + rate-limit + routing + logging ek hi jagah,
+                  har service me dobara likhna na pade
+   KYUN ALAG    : read aur write ka load 100:1 hai -> dono ko ALAG-ALAG scale kar sakte
+                  (read service ke 20 instance, write ke 2) + ek girne se doosra chalta rehta
+   KEEMAT       : do service = zyada moving parts, deploy/monitor dono ka
+```
+
 ---
 
 ## STEP 6 — DEEP DIVE: short code kaise GENERATE? (design ka DIL)

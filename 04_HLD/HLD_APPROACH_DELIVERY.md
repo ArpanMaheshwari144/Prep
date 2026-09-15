@@ -39,9 +39,19 @@
 
 ### (a) "Kahan se start?"
 ```
-   Tu drive karta: requirements clarify + 2 clarifying Q
+   ★★ PEHLA MOVE = SCOPE KAATO (asli mock video, ex-Google EM -- 15-Sep)
+      "This is a big system -- I'll scope it to X and Y and go deep there. Sound good?"
+      Spotify ke round me usne turant bola: "sirf finding aur playing"
+      -> poora 40-minute sirf 2 cheez pe gaya, design bikhra nahi.
+      Bada product mile (LinkedIn/Uber/Zomato) -> 2-3 sub-system bolo, phir EK chuno.
+
+   Phir: requirements clarify + 2 clarifying Q
    ("custom URL chahiye? links expire hote? scale kitna?")
    -> chup mat baitho, tu lead karta hai.
+
+   CORE ENTITIES (20 second): requirements ke turant baad 3-5 NAAM bol do
+   ("Topic, Partition, Message, Consumer Group, Offset") -- iske baad API aur
+   data-model apne aap nikal aate hain. Alag bada step mat banao, ek line hai.
 ```
 
 ### (b) "Kya-kaise-kyun bolna?"

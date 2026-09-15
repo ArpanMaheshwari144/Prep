@@ -118,11 +118,26 @@
 
 ```
 STEP 1  REQUIREMENTS (2 min)
+   ★★ PEHLA MOVE = SCOPE KAATO (15-Sep, asli mock video se -- ex-Google EM ka pehla kaam):
+      "This is a big system -- I'll scope it to X and Y and go deep there. Sound good?"
+        Spotify wale round me usne turant bola: "sirf finding aur playing."
+        -> baaki 40 minute sirf 2 cheez pe gaye, design bikhra nahi.
+      Bada product (LinkedIn/Uber/Zomato) mile -> 2-3 sub-system bolo, phir EK chuno.
+
    . 2-3 clarifying Q poochho: kitne user? read-heavy ya write-heavy? real-time chahiye?
      kya scope me NAHI hai?
    . FR = 4-5 line, user ki bhasha me ("user post kare", "user feed dekhe")
    . NFR = scale . latency . availability . consistency (STRONG ya EVENTUAL -- ye bolna ZAROORI)
    . ★ AAKHIR ME DIL BOLO: "the heart of this problem is ___"   <- yahi poore interview ka anchor
+
+STEP 1b CORE ENTITIES (20 second -- ek line, bas)
+   3-5 NAAM bol do, poora schema nahi:
+        Kafka  -> "Topic, Partition, Message, Consumer Group, Offset"
+        Spotify-> "User, Song, Artist, Playlist"
+        Bitly  -> "User, Link, Click"
+   KYUN: iske baad API aur data-model apne aap nikal aate hain (dono me yahi naam aayenge).
+   (Hello-Interview framework isko alag step kehta hai; asli round me ye API ke saath hi
+    ek line me bol diya jaata -- bada step mat banao.)
 
 STEP 2  ESTIMATE (2 min) -- number se DECISION nikaalo, warna number bekaar
    QPS      = daily requests / 100,000      (approx: 86,400 ~ 10^5)
@@ -168,6 +183,9 @@ STEP 7  BOTTLENECK / SCALE-10x (3 min)
    spike / burst           -> QUEUE                              requests HOLD karo (LB nahi)
    slow kaam, decouple     -> QUEUE + WORKER                     user block na ho
    traffic baantna         -> LOAD BALANCER (L7)                 content-based routing + TLS
+   kai service, ek darwaza -> API GATEWAY                        auth+routing+rate-limit ek jagah
+   bhaari file stream/DL   -> SERVER SIRF LINK DE (presigned)    bytes client<->S3 seedha,
+                                                                 warna server bandwidth marta
    machine mare            -> REPLICATION (leader/follower)      copy se kaam chale
    paisa / seat            -> SQL + LOCK/unique + CP             galat data NEVER
    retry pe double-effect  -> IDEMPOTENCY KEY                    ek hi baar asar
