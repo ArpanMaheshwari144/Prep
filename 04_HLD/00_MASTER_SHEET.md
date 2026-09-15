@@ -43,6 +43,23 @@
 
 ---
 
+## ★★ TEEN BAATEIN JO SAB PE BHAARI (Arpan ka apna nichod, 15-Sep — asli mock videos se)
+
+```
+1. PERFECT DESIGN HOTA HI NAHI -- chhote se shuru, phir scale ke baare me socho.
+   sab ek saath kaise soch sakta koi? IMPOSSIBLE hai. pehle chhota, phir bada.
+   -> STEP 5 = sirf kaam-chalau boxes. cache/CDN/queue/shard = STEP 6-7, dikkat ke jawab me.
+
+2. NUMBER KE PEECHE MAT BHAAG -- wo bekaar hai. bolo aur aage badho.
+   number bol ke tu kuch SPECIAL nahi kar deta.
+
+3. BOTTLENECK RATTO MAT -- bolte waqt KHUD USER BANKE dekho:
+   wo kya soch raha, kahan cheez phat rahi. Bottleneck khud dikh jaayega.
+```
+> Detail + misaal = [HLD_APPROACH_DELIVERY](HLD_APPROACH_DELIVERY.md) section 5b.
+
+---
+
 ## 1. TEEN LINE KA METHOD (poora khel isi me hai)
 
 ```

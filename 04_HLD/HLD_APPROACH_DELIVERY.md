@@ -140,6 +140,33 @@
 
 ---
 
+## ★★ 5b — ARPAN KA APNA NICHOD (15-Sep, asli mock videos dekh ke — sabse zaroori)
+
+```
+1. PERFECT DESIGN BANANE KI KOSHISH MAT KAR -- WO HOTA HI NAHI
+   "chhote se shuru karo, phir scale ke baare me socho.
+    sab kuch ek saath mat banao. sab ek saath kaise soch sakta koi -- wo IMPOSSIBLE hai.
+    pehle chhota, phir usko bada."
+   -> Spotify/Bitly dono asli round me yahi hua: pehle 4 box (app/LB/server/DB),
+      phir jahan toota wahan CDN/cache/S3/shard joda.
+   -> STEP 5 me POORA design mat banao. cache/CDN/queue/shard STEP 6-7 me,
+      DIKKAT ke jawab me aayein.
+
+2. NUMBER KE PEECHE MAT BHAAG
+   "number ke peeche mat bhaago, wo bekaar hai. bas bolna hai aur aage badhna hai.
+    number bol ke tu kuch SPECIAL nahi kar deta."
+   -> 1000 ya 1200 -- farak nahi padta. mota andaaza bolo, ek decision nikaalo, aage badho.
+
+3. BOTTLENECK RATTO MAT -- KHUD USER BANKE DEKHO
+   "sab kuch aise hi aata rehta hai jab design bolte waqt KHUD USER banke dekho --
+    ki wo kya soch raha hai, kahan cheez phat rahi hai. cheezein ratto mat."
+   -> app kholi -> search -> har search DB pe?        -> cache chahiye
+   -> play dabaya -> 5MB stream -> gaana viral hua?   -> CDN chahiye
+   -> ye list yaad nahi karni; user ka raasta chalao, bottleneck khud dikh jaayega.
+```
+
+---
+
 ## 6 — COMMON FOLLOW-UPS (jo ~har design me poochte — jawab ready rakh)
 
 ```
