@@ -167,6 +167,58 @@
 
 ---
 
+## ★★ 5c — INTERVIEWER KYA DEKHTA HAI (16-Sep, ex-Google EM ka "10 signals" video)
+
+```
+★ SABSE BADI LINE (aur ye hamare component-plan ko confirm karti hai):
+    "Domain knowledge is NOT a quiz — it's the art of APPLYING components."
+  Matlab: pooche jaane wale component ka lecture nahi chahiye — ye chahiye ki tu use
+  SAHI JAGAH laga sake aur wajah bata sake. Isliye padhai ki ikai = COMPONENT, design nahi.
+```
+
+```
+1. BOILERPLATE ME MAT ULAJHO — core problem pe raho
+     load balancer, API gateway, CDN — ye boilerplate hain. Ek line me bol ke aage badho.
+     Waqt CORE logic pe do (matching engine, fanout, dedupe, seat-lock — jo bhi us design ka DIL hai).
+     ⚠ mera galat kadam (15-Sep): url-shortener me API-Gateway ka box "chhoot gaya tha" bol ke joda —
+       wo asal me boilerplate hai, core nahi. Box ginne se score nahi milta.
+
+2. ★ PARKING LOT — optimization dikhe to MENTION karo, turant THOKO mat
+     "There's an optimization here — caching. Let me park it and come back
+      once the core flow is right."
+     -> dono kaam ho gaye: dikha diya ki dikhta hai tujhe, aur design saaf bhi raha.
+     (yahi "chhote se shuru karo" ka bolne wala roop hai)
+
+3. LISTENING — jo wo bole, apne shabdon me DOHRA ke confirm karo (do second ka kaam)
+     "To aap chaahte hain ki main sirf play-music wale hisse pe rahun — sahi samjha?"
+     + beech-beech me chhota pause; sirf bolte mat raho.
+
+4. CONCISENESS — board pe poori kahani mat likho. Chhote label, bas.
+     (poora vaakya MUH se, board sirf tera notes hai)
+
+5. SHARING MINDSET — apni soch bolo, sirf nateeja mat bolo
+     "Main ye isliye soch raha hoon ki..." -> interviewer ko tera mental model dikhe
+
+6. FLEXIBILITY — wo feedback de ya requirement badle to approach BADAL do. ZIDD nahi.
+
+7. TESTING YOUR DESIGN — apne hi flow ko chala ke dekho, edge case pakdo
+     (= hamara "USER banke raasta chalao" — bottleneck isi se nikalta hai)
+
+8. DESIGN CHOICES — har faisle ka "kyun" bolo. Intentional raho, ittefaq se mat lagao.
+
+9. SCALING — back-of-the-envelope (QPS, storage) karke dikhao — par usi me atko mat.
+```
+
+```
+⚠ RED / YELLOW FLAGS (ye MAT karna):
+   · DEFENSIVE ho jaana — feedback pe bahas karna
+   · REQUIREMENTS me itna waqt lagana ki design ka waqt hi na bache
+     -> clarify + scope = 5-8 MINUTE, usse zyada nahi
+   · har optimization ko turant design me thok dena (-> parking lot use karo)
+```
+
+---
+
 ## 6 — COMMON FOLLOW-UPS (jo ~har design me poochte — jawab ready rakh)
 
 ```
