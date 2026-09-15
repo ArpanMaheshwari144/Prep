@@ -372,6 +372,27 @@
    ★ vocab: "range / block allocation" + coordinator "Zookeeper"
 ```
 
+```
+★★ FOLLOW-UP JO 16-Sep MOCK ME AAYA — "wo server 400 pe CRASH ho gaya, baaki numbers ka kya?"
+
+   restart hua server purani range YAAD NAHI rakhta -> coordinator se NAYI range maangta (2001-3000)
+   -> 401 se 1000 tak ke numbers BEKAAR chale gaye
+
+   ★ aur wo bekaar jaana BILKUL THEEK hai — yahi bolna:
+     "Kuch numbers waste ho jaayenge, aur main jaan-boojh ke usse theek maan raha hoon —
+      62^7 yaani ~3.5 trillion combination hain, kuch hazaar waste hona kuch nahi bigaadta.
+      Agar main har number ko crash-proof banata to har request pe coordination karni padti,
+      aur range allocation ka poora faayda hi khatam ho jaata."
+
+   => waste karna SOCHA-SAMJHA FAISLA hai, bug nahi — kyunki doosra option mehnga hai.
+
+   ★★ SAWAAL KIS BOX KA HAI — DHYAN SE SUNO (16-Sep mock me yahin phisla):
+      poocha gaya tha APP SERVER ka crash, jawab chala gaya REDIS ke master/replica pe.
+      ILAAJ: jawab dene se PEHLE sawaal dohra do —
+        "Aap us app server ki baat kar rahe hain jiske paas 1-1000 ki range thi, sahi?"
+      do second lagte hain, aur galat box pe jawab jaana ruk jaata hai.
+```
+
 ## ► "custom short code allow karoge?"
 
 ```
@@ -412,6 +433,20 @@
       ★ SPOF : counter-coordinator khud -> 2-node (active-passive)
                ya range-allocation (ye already tolerate karta hai)
       ★ WRITE ko replica se scale NAHI karte -> write scale = SHARDING
+```
+
+```
+★★ SHARD KEY = shortCode, GEO nahi (16-Sep mock me yahan phisla tha — "geo-based sharding" bola)
+
+   read HAMESHA short code se aata hai:  GET /abc123
+        shard by shortCode  ->  seedha ek hi shard pe jaata hai  ✓
+        shard by GEO        ->  pata hi nahi chalega code kis region me pada hai
+                                -> saare shard poochne padenge (scatter-gather)  ✗
+
+   GEO ka kaam ALAG hai — jagah baantna nahi, LATENCY kam karna:
+        shard by shortCode  =  data ko TUKDON me baantna (jagah + write scale)
+        geo replication     =  door wale user ko paas se jawab dena (speed)
+   -> dono saath chal sakte hain, par ye ek doosre ki jagah nahi lete.
 ```
 
 ```
