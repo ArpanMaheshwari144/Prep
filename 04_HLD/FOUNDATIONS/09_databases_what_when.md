@@ -7,6 +7,106 @@
 
 ---
 
+## ★★ SQL vs NoSQL — asli wajah, ratta nahi
+
+```
+★ NoSQL bana KYUN? (ye jad hai — "JSON store karna tha" nahi)
+
+  SQL EK MACHINE pe chalne ke liye bana tha.
+  ACID + JOIN + strong consistency ka waada SIRF tab nibhaya ja sakta hai jab saara data EK jagah ho.
+  Data ko do machine pe baant do -> "do table join karo, beech me transaction chalao"
+  ab NETWORK ke aar-paar karna padega -> mehnga + slow.
+
+  NoSQL waalon ne ULTA raasta liya:
+     "join denge hi nahi. Strong consistency hamesha nahi denge.
+      Iske badle data 100 machine pe baant denge, aur wo sach me chalega."
+
+  => NoSQL ne naye feature JODE nahi — usne feature CHHODE, taaki machine ke paar fail sake.
+     (flexible schema/JSON = saath me aaya faayda, jad wajah SCALE thi)
+```
+
+```
+★ SQL SCALE NAHI HOTA — ye GALAT hai. Ye jaanna zaroori hai, warna interviewer kuredega:
+     1. READ REPLICA   -> read baant do (sabse pehla, sasta kadam)
+     2. VERTICAL       -> badi machine (aaj ki machines bahut door tak le jaati hain)
+     3. PARTITIONING   -> ek hi DB me table ko tukdon me (date/range)
+     4. SHARDING       -> alag DB pe baant do (Vitess / Citus) — par cross-shard join/txn ab tumhara sar-dard
+     5. NewSQL         -> CockroachDB / Spanner / Aurora (SQL ka roop, andar distributed)
+
+   ★ "Real Bitly ka data ~500 GB hai — ek single Postgres me aa jaata."
+     Bina zaroorat NoSQL/sharding bolna = OVER-ENGINEERING (ye sabse common galti hai)
+```
+
+```
+★ NoSQL ye KAR kaise paata hai (teen cheezein):
+
+  1. PARTITION KEY   har row ke saath key -> hash(key) -> row kis machine pe jaayegi
+                     padhna: key do -> seedha us machine pe -> row utha lo
+                     -> 100 machine ho ya 1000, EK read ka kharcha wahi
+                     (SQL me "WHERE email = x" pe pata hi nahi kis machine pe hai -> sab se poochna padta)
+
+  2. JOIN NAHI DETA  join = do table, do machine, network ke aar-paar milao -> slow
+                     NoSQL: "jo saath chahiye, saath hi likh ke rakho" (DENORMALIZE)
+                     -> ek read = ek machine = ek jump
+                     -> isliye table QUERY ke hisaab se banate hain, query table ke hisaab se nahi
+
+  3. LSM TREE        SQL (B-tree): row ko uski SAHI jagah pe rakhna -> random write (slow)
+                     NoSQL (LSM) : jo aaya END me likh do (sequential), baad me background merge
+                     -> disk ka sabse tez mode (wahi append-only wali baat jo Kafka me thi)
+```
+
+```
+★ KEEMAT — NoSQL kab GALAT hai:
+  1. ACID / multi-row transaction chahiye        -> paisa, order, booking
+  2. NORMALIZATION nahi -> data DUPLICATE hota   -> ek cheez badli to 10 jagah badalni padegi
+                                                    (user ne naam badla -> 500 comments me copy pada hai)
+  3. QUERY PATTERN BAAD ME BADAL GAYA            -> SQL me naya WHERE/GROUP BY kabhi bhi chala lo;
+                                                    NoSQL me table query ke hisaab se bana tha
+                                                    -> naya tareeka = poora data DOBARA likho
+  4. CHHOTA DATA / shuruaati system              -> 500 GB me SQL aaram se; bina wajah join aur
+                                                    consistency khona bewakoofi hai
+```
+
+```
+★★ FAISLA — do sawaal, bas:
+     1. "JOIN aur multi-row TRANSACTION chahiye?"        haan -> SQL
+     2. "Access-pattern PAKKA key-lookup hai, aur data itna ki ek machine me na aaye?"  haan -> NoSQL
+     warna -> SQL hi rakho (replica/partition se kaam chal jaayega)
+
+★ BOLNE WALI LINE:
+  "SQL scale hota hai — replica, partitioning, ab NewSQL bhi. Main NoSQL isliye le raha hoon
+   kyunki mera access pattern pure key-lookup hai aur mujhe join chahiye hi nahi —
+   na ki isliye ki SQL scale nahi karta."
+
+★ EK LINE KA NIYAM:
+     SQL   -> "nahi pata kal kya poochunga" + "sahi hona zaroori hai"
+     NoSQL -> "hamesha KEY se uthaunga" + "itna data ki ek machine me nahi aayega"
+```
+
+```
+   DESIGN            CHUNA           WAJAH
+   ──────────────────────────────────────────────────────────────────────
+   payment           SQL             debit + credit dono ya koi nahi (ACID)
+   bookmyshow        SQL             ek seat do ko nahi -> row lock + atomic update
+   stock-broker      SQL + ledger    paisa aur share ek saath hile
+                     (+ RAM)         order-book RAM me — wo speed ke liye, alag cheez
+   file-upload       SQL             data CHHOTA hai, par status galat nahi ho sakta
+   url-shortener     NoSQL           sirf key se uthana, join nahi, ~90 TB
+   twitter-feed      NoSQL           crore tweets, simple shape, write-heavy
+   news-aggregator   NoSQL           crore article, simple, ACID ki zaroorat nahi
+   google-docs       NoSQL edit-log  + permissions ALAG SQL me
+   message-queue     append-only file + metadata strongly-consistent store (ZK/KRaft)
+
+   ★ DO SEEKH:
+     1. file-upload me data chhota tha phir bhi SQL -> faisla SIZE se nahi, ZARURAT se hota hai
+     2. google-docs aur message-queue me DONO hain:
+          bhaari + baar-baar aane wala   -> NoSQL / file
+          chhota + 100% sahi rehna wala  -> SQL / strongly-consistent store
+        -> ek design me ek hi DB hona zaroori nahi (ye bolna achha lagta hai)
+```
+
+---
+
 ## 7 Major Types
 
 ```
