@@ -1,6 +1,6 @@
 # Microservices Communication
 
-> **NAV** — KYA: microservices baat kaise karti (sync/async, saga, gateway). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [sync vs async](../TRADEOFFS.md) · lagta hai: [payment](../SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [notification](../SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
+> **NAV** — KYA: services aur client baat kaise karte (sync/async, server-push real-time, saga, gateway). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [sync vs async](../TRADEOFFS.md) · lagta hai: [payment](../SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [notification](../SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
 
 > **HLD Topic 10 — How services talk in distributed systems**
 
@@ -46,6 +46,77 @@ Different networks
 >
 > **Critical task?** Phone call (waiting OK).
 > **Non-urgent?** Email (don't block your work).
+
+---
+
+## ★★ TEESRA RAASTA — SERVER SE CLIENT tak PUSH (real-time)
+
+> REST/gRPC aur queue ke alawa ek teesri zaroorat hoti hai: server ko KHUD client tak
+> data pahunchana ho. Live score, chat, notification, collab — sab yahin aate hain.
+
+```
+DIKKAT — POLLING:
+   app har 2 second me poochti hai "naya kuch hai?"
+   50 lakh user x har 2 sec = 25 lakh request/sec
+   aur 99% baar jawab WAHI hota hai jo pichhli baar tha
+   -> network bill phatta, CPU 100%, aur PHIR BHI data 6-7 second late
+      (kyunki update 2-second wale agle poll ka intezaar karta hai)
+
+FIX — POLLING hatao, PUSH karo:
+   connection ek baar bane, aur naya data hone par SERVER khud bhej de
+   (WhatsApp me tu refresh nahi karta — message apne aap aata hai)
+```
+
+```
+★ WEBSOCKET vs SSE — kaunsa kab:
+     WEBSOCKET : DONO taraf baat (client bhi bhejta, server bhi)
+                 -> chat, collaborative editing, multiplayer, trading (order bhejna + price aana)
+     SSE       : sirf SERVER -> CLIENT stream, saada HTTP pe chalta, halka
+                 -> live score, notification feed, progress updates
+                 (client ko kuch bhejna hi nahi hai -> SSE kaafi hai)
+   ★ ye farak bolna depth dikhata hai — log default me WebSocket bol dete hain
+```
+
+```
+★ TURANT AANE WALA SAWAAL: "50 lakh ZINDA connection kahan rahenge?"
+     ek machine ~50k-100k connection pakadti hai
+     -> alag CONNECTION TIER (~50-100 machine), apne se scale hota hua
+     -> connection STATEFUL hai -> LB ko consistent routing karni padti
+        (user hamesha usi server pe wapas jaaye)
+
+★ UPDATE SAB TAK PAHUNCHEGA KAISE? -> PUB/SUB
+     score/chat service ──► PUB-SUB ──► saare connection servers ──► unke clients
+     (yahi dhaancha google-docs me tha: edit -> Redis pub/sub -> doosra conn-server
+      -> doosra user. Cheez wahi, bheja hua data alag.)
+```
+
+```
+★★ 50 LAKH TAK EK UPDATE — teen alag dikkatein, teen alag ilaaj (inko mat mila do):
+
+   1. data BADA hai            -> SHARDING
+      (yahan lagti hi nahi — score to 50 byte ka hai, baantne ko kuch hai hi nahi)
+
+   2. user DOOR hai (US/UK)    -> GEO / EDGE
+      connection servers user ke paas rakho; update ek baar har region me jaaye,
+      phir wahan se local push -> 3-4 second wali der khatam
+      ★ ye sharding NAHI hai:  sharding = "data bada hai, baant do"
+                               geo      = "user door hai, uske paas le jao"
+
+   3. BAHUT JAGAH bhejna hai   -> FANOUT TREE
+         score service
+              |  3 message
+         3 region hub
+              |  100 message
+         100 connection server
+              |
+         50 lakh clients
+      -> koi ek machine 50 lakh ko nahi bhejti; har machine apne ~50,000 ko
+
+   + DELTA BHEJO, poora payload nahi:
+        { runs:156, wickets:3, balls:204 }  ~50 byte   <- sirf jo badla
+        poora scorecard + commentary        ~5 KB
+        50 lakh x 5 KB vs 50 lakh x 50 byte -> 100 guna farak
+```
 
 ---
 
