@@ -6,6 +6,98 @@
 
 ---
 
+## ★★ QUEUE = EK CHEEZ, TEEN ALAG KAAM (designs me ye ghaalmel hota hai)
+
+> Har design me queue dikhti hai, par uska KAAM har jagah ek nahi hota.
+> Teesra wala (serialize) sabse kam pehchana jaata hai — aur wahi sabse interesting hai.
+
+```
+1. ASYNC / DECOUPLE  — "abhi mat karo, baad me kar lena"          (sabse common, ~80%)
+     notification  : signup -> email/push/SMS peeche chalein
+     payment       : ledger ke baad ka kaam
+     file-upload   : validation 2-3 sec leti -> user ko rokna nahi
+     url-shortener : analytics likhna -> redirect slow na ho
+     -> FAAYDA: user ka wait khatam + email-service gir jaaye to bhi SIGNUP chalta rahe
+
+2. BUFFER / SPIKE ABSORB — "sab ek saath mat aao, line me lago"
+     bookmyshow : popular release -> lakhs log ek saath, wahi seats
+                  queue spike pee jaati hai, warna DB hi baith jaata
+     -> yahan kaam "peeche karwana" nahi, BHEED ko line me lagana hai
+     -> queue me message ka thread nahi banta — wo bas JAMA hota hai (isliye 50k aa jaayein to bhi kuch nahi tootta)
+
+3. ★ SERIALIZE / ORDER — "ek baar me ek hi andar aayega"   (= LOCK ka sasta badal)
+     stock-broker : ek symbol ki EK queue -> orders ek-ek karke
+                    -> do thread ek hi order-book pe ghus hi nahi sakte -> DOUBLE-MATCH assambhav
+     bookmyshow   : per-show worker -> us show ki seat-requests ek-ek karke
+     -> yahan queue SPEED ke liye nahi, SAHI-PAN (correctness) ke liye hai
+     -> lock lagane ki zaroorat hi nahi padi, kyunki line ek hi hai
+```
+
+```
+★ EK LINE ME FARAK:
+     async     -> "abhi mat karo, baad me kar lena"
+     buffer    -> "sab ek saath mat aao, line me lago"
+     serialize -> "ek baar me ek hi andar aayega"
+```
+
+---
+
+## ★★ QUEUE KI JAGAH AUR KYA LAG SAKTA THA (aur wo kyun nahi)
+
+```
+BACKGROUND THREAD (async in-process)
+   + sabse sasta, koi naya box nahi
+   - server crash/restart -> memory me pade saare pending kaam GAYAB
+     (user ko "ho gaya" bol chuke ho, aur kisi ko pata bhi nahi chalega)
+   - spike -> 50,000 thread -> server khud mar gaya
+   - retry / fail hua kaam kahan jaaye -> khud likhna padega
+
+DB KO HI QUEUE BANA LO (jobs table + worker)
+   + durable hai
+   - polling DB pe padti rehti + lock/contention
+   - ek event KAI service ko chahiye -> ganda ho jaata
+
+CRON / BATCH (har 5 min)
+   + simple
+   - der lagti hai (OTP 5 minute baad? nahi chalega)
+
+QUEUE
+   + DURABLE (disk pe, machine ke BAHAR) + spike absorb + retry/DLQ built-in + ek event kai consumer
+   - ek aur system paalna + eventual consistency + duplicate khud handle karo
+```
+
+```
+★ NICHOD (bolne wali line):
+  "Background thread se bhi ho jaata — par wo tab tak theek hai jab tak kaam KHO jaane se
+   farak na pade. Jaise hi 'ye kaam pakka hona chahiye' banta hai, mujhe DURABILITY chahiye —
+   aur wahi queue deti hai."
+
+★ FARAK EK LINE ME:
+     background thread : kaam MEMORY me, usi machine pe  -> machine gayi, kaam gaya
+     queue             : kaam DISK pe, machine ke BAHAR  -> machine jaaye, kaam bacha rehta
+```
+
+---
+
+## ★★ QUEUE KAB GALAT HAI (keemat)
+
+```
+1. TURANT JAWAB CHAHIYE   -> caller intezaar kar raha hai -> yahan SYNC (REST/gRPC)
+                             (OTP BHEJNA queue se ho sakta; OTP VERIFY karna nahi)
+2. GLOBAL ORDER CHAHIYE   -> queue partition-level pe hi order deti hai, poore system ka nahi
+3. DUPLICATE AAYEGA       -> at-least-once default -> consumer ko IDEMPOTENT banana PADEGA (ab ye kaam tera hai)
+4. EVENTUAL + DEBUG MUSHKIL -> "ho gaya" bolne ke baad kaam peeche chal raha hai;
+                             flow ab ek jagah nahi, kai service me bikhra
+```
+
+```
+★ DO SAWAAL SE FAISLA HO JAATA HAI:
+     "caller ko JAWAB chahiye?"        haan -> sync (REST)         nahi -> queue
+     "kaam KHO jaaye to chalega?"      haan -> background thread   nahi -> queue (durable)
+```
+
+---
+
 ## Why MQ? (Sync vs Async)
 
 ### Without (Sync REST)
