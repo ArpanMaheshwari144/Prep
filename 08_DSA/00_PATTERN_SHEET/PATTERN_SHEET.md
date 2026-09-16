@@ -109,7 +109,17 @@
 
 ---
 
-## NAAM-SE-CONFUSE MAT HO (Container vs Trapping vs Histogram — teeno ALAG!)
+## NAAM-SE-CONFUSE MAT HO — ek-jaisi DIKHNE wali jodiyaan
+
+> ★ Ye section knowledge ka nahi, QUESTION-PADHNE ka hai. Har entry wo jagah hai jahan keyword sun ke
+> sabse KAREEB wala pattern upar aa gaya, par sawaal kuch aur poochh raha tha.
+> Pattern bolne se PEHLE do shabd khud se poochho:
+> ```
+> 1. SUBARRAY (jud-hua) · SUBSEQUENCE (tod sakte, order wahi) · SUBSET (order bekaar) ?
+> 2. MAX / MIN / COUNT / EXACT — kya maang raha ?
+> ```
+
+### A. Container vs Trapping vs Histogram
 ```
                     CONTAINER Most Water    TRAPPING Rain Water      LARGEST Rectangle (Histogram)
                     (LC-11)                 (LC-42)                  (LC-84)
@@ -126,6 +136,46 @@
 
    1-line: Container = 2-deewar-BEECH-max-paani · Trapping = har-gaddha-SUM · Histogram = SOLID-block-MAX (paani nahi).
    bada farak: Container/Trapping = PAANI · Histogram = SOLID.   Trapping = SUM · baaki dono = MAX.
+```
+
+### B. LIS vs LONGEST CONSECUTIVE (dono me "longest" + "badhta hua")
+```
+                    LIS                             LONGEST CONSECUTIVE
+                    (LC-300)                        (LC-128)
+   ────────────────────────────────────────────────────────────────────────────────
+   kya poochha       sabse lambi BADHTI chain        sabse lambi chain of
+                                                     CONSECUTIVE integers (+1, +1)
+   kitna badhna      bas BADA ho ( > )               exactly +1
+   ORDER matter?     HAAN — left se right            NAHI — shuffle karo, jawab wahi
+   array shuffle     jawab BADAL jaata               jawab SAME rehta
+   technique         DP  O(n^2)                      SET  O(n)
+                     ya tails+lower_bound O(n log n)  (num-1 set me nahi -> wahi start)
+
+   ★ TELL (question me ye shabd = LIS):  "order aage ka hi rahe" · "beech ke chhod sakte ho"
+   ★ TELL (= consecutive):               "+1" · "lagataar numbers" · order ka zikr HI nahi
+
+   CHECK: [10, 9, 2, 5, 3, 7, 101, 18]
+          LIS = 4  (2,3,7,18)          consecutive = 2  (2,3  ya  9,10)
+          -> ek hi array, do alag jawab. Yahi jodi 16-Sep drill me Q9 pe phansi thi.
+```
+
+### C. KADANE vs PREFIX+HASHMAP (dono me "subarray" + "sum")
+```
+                    KADANE                          PREFIX + HASHMAP
+                    (LC-53)                         (LC-560)
+   ────────────────────────────────────────────────────────────────────────────────
+   kya poochha       MAXIMUM sum wala subarray       KITNE subarray ka sum == K
+   jawab ka type     ek VALUE (max)                  ek COUNT
+   target diya hai?  NAHI — khud max dhoondhna       HAAN — exact K diya hua
+   negative allowed  haan (isi ke liye bana hai)     haan — aur isliye SW nahi chalti
+   technique         running sum, 0 se neeche        running sum + map[running-K]
+                     gaya to reset                   map[0] = 1 se shuru (ye line chhoot-ti hai)
+
+   ★ TELL: "MAX/sabse-bada sum"   -> Kadane
+   ★ TELL: "KITNE / count"  ya  "= K / exactly"  -> prefix + hashmap
+
+   ★ AUR EK: agar saare number POSITIVE hon aur "sum = K" poochhe -> SLIDING WINDOW bhi chalti.
+             negative aate hi window ka shrink-rule toot jaata -> tabhi prefix+hash zaroori.
 ```
 
 ---
