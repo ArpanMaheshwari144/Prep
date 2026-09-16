@@ -21,6 +21,91 @@
 
 ---
 
+## ★★ CACHE KI KEEMAT — aur kab ise NAHI lagana
+
+> Cache lagana muft nahi hai. Ye chaar cheezein saath me aati hain:
+
+```
+1. STALE DATA      DB me update ho gaya, cache me purana pada hai
+                   ILAAJ : update pe entry DELETE (invalidate) + TTL safety-net
+                   KEEMAT: system ab eventually-consistent hai — kuch der purana dikh sakta hai
+
+2. MEMORY LIMIT    RAM mehngi hai, sab kuch nahi samayega
+                   ILAAJ : LRU eviction
+                   KEEMAT: kabhi jo chahiye tha wo abhi-abhi nikal gaya hoga
+
+3. STAMPEDE        ek HOT key expire -> 1000 request ek saath miss -> sab DB pe -> DB down
+                   ILAAJ : mutex (ek hi rebuild kare) . soft-TTL (expire se pehle background refresh)
+
+4. ★ CACHE KHUD GIR GAYA  (sabse bada, aur sabse zyada bhoola jaata hai)
+                   ab 100% traffic seedha DB pe — jo DB is load ke liye bana hi nahi tha
+                   (cache lagate hi tumne DB ko us load ke liye CHHOTA kar diya tha)
+                   ILAAJ : replica + failover; kahin-kahin fail-open
+```
+
+```
+★ CACHE KAB NAHI LAGANA — ek line ka niyam:
+     "purana data dikhna kitna mehnga hai?"
+        bahut mehnga  -> bank balance . seat availability . payment status  -> cache nahi (ya bahut chhota TTL)
+        sasta         -> feed . profile . product page . URL mapping        -> bilkul lagao
+```
+
+```
+★ RAM vs DISK (thos number, bolne layak):
+     DISK ~1-10 milli-second   |   RAM ~100 nano-second   -> hazaron guna farak
+   + cache me QUERY hoti hi nahi — seedha key lookup (O(1)).
+     DB ko parse -> plan -> index -> disk page -> row banana padta hai.
+   => jagah bhi badli (RAM) aur KAAM bhi chhota hua (query -> lookup).
+```
+
+---
+
+## ★★ REDIS = EK CHEEZ, TEEN ALAG KAAM (ye ghaalmel sabse zyada hota hai)
+
+> Designs me "Redis" baar-baar aata hai — par har jagah uska KAAM alag hota hai.
+> Ye farak na pakdo to sab mix ho jaata hai.
+
+```
+1. CACHE          -> DB ka jawab paas rakh liya
+                     gir gaya to? -> sirf SLOW hoga, jawab wahi milega
+                     misaal: url-shortener (wahi URL baar-baar) . hot tweet
+
+2. SHARED STATE   -> sach YAHIN rehta hai (DB me hai hi nahi)
+                     gir gaya to? -> GALAT behaviour, niyam TOOT jaayega
+                     misaal: rate-limiter ka counter (har server ka apna count ho jaata -> limit toot)
+
+3. MEMORY / DEDUP -> "ye kaam pehle ho chuka" ka nishaan
+                     gir gaya to? -> dobara ho jaayega (double charge / double email)
+                     misaal: idempotency key (payment) . eventId dedup (Kafka consumer)
+```
+
+```
+★ PEHCHAN KA EK SAWAAL:
+     "ye Redis abhi gir jaaye to kya hoga?"
+        sirf SLOW hoga, jawab wahi         -> ye CACHE tha
+        GALAT jawab / niyam toot jaayega   -> ye cache NAHI tha, ye SOURCE OF TRUTH tha
+```
+
+```
+★ AUR EK CHEEZ JO CACHE JAISI DIKHTI HAI PAR NAHI HAI — PRECOMPUTE:
+     twitter ka inbox (Redis list) = cache nahi, PEHLE SE BANAYA HUA jawab.
+     cache  = "DB ne jo diya wo paas rakh liya"
+     precompute = "jawab pehle hi bana ke rakh diya, DB se aisa jawab milta hi nahi"
+```
+
+```
+   DESIGN              REDIS KAHAN               ASLI WAJAH
+   ────────────────────────────────────────────────────────────────────────────
+   url-shortener       cache-aside               wahi URL baar-baar padha ja raha
+   twitter (hot tweet) cache-aside               ek tweet 10 crore log padh rahe
+   rate-limiter        counter store             count sab servers me bikhar raha -> ek saanjhi jagah
+   twitter (inbox)     precomputed feed          har read pe 200 logon se jodna mehnga
+   payment / Kafka     dedup store (eventId)     "ye pehle ho chuka?" yaad rakhna
+   dist-cache          cache khud product hai    —
+```
+
+---
+
 ## Why Cache?
 
 ```
