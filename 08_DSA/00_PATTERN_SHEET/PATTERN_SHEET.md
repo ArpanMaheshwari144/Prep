@@ -156,7 +156,7 @@
 
    CHECK: [10, 9, 2, 5, 3, 7, 101, 18]
           LIS = 4  (2,3,7,18)          consecutive = 2  (2,3  ya  9,10)
-          -> ek hi array, do alag jawab. Yahi jodi 16-Sep drill me Q9 pe phansi thi.
+          -> ek hi array, do alag jawab. Yahi jodi drill me phansi thi — isliye yahan likhi hai.
 ```
 
 ### C. KADANE vs PREFIX+HASHMAP (dono me "subarray" + "sum")
