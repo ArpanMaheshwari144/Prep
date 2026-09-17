@@ -4,7 +4,7 @@
 
 ## STAR (Hinglish notes — yaad ke liye)
 ```
-   S (Situation): Konovo pe client ne raise kiya — emails/notifications ja hi nahi rahe. ★ EK BHI email nahi ja raha tha (100% blocked, partial nahi). critical PROD issue, routine nahi.
+   S (Situation): Konovo pe client ne raise kiya — emails/notifications ja hi nahi rahe. ★ PRACTICALLY SAARE email ruke hue the — partial slowdown nahi, delivery band. (★ exact % MAT bolna: us waqt metrics/measuring tool tha hi nahi — 95 ya 99, pakka nahi.) critical PROD issue, routine nahi.
    T (Task)     : root-cause dhundhna + email delivery jaldi restore karna (mujhe own karna tha).
    A (Action)   :
         1. pehle APP LOGS + DB dekha -> sab normal dikha, obvious error nahi.
@@ -17,7 +17,10 @@
         6. DevOps team ke saath coordinate -> woh runaway query KILL/stop karvayi.
    R (Result)   : query rukte hi -> pool recover -> RDS utilization normal -> email delivery restore.
                   ★ NAAP (ye 4 bolne hain):
-                     1. ZERO email ja raha tha — poora blocker, partial failure nahi
+                     1. practically SAARE email ruke — poora blocker, partial slowdown nahi
+                        ★ exact % MAT bolo. Us waqt measuring tool tha hi nahi. Banaya hua
+                          number follow-up pe TOOT jaayega. "I don't have an exact figure —
+                          we didn't have that instrumentation then" = ZYADA mazboot jawab.
                      2. report se fix tak ~1 - 1.5 GHANTA (logs normal dikh rahe the, isliye
                         andar tak jaana pada — wahi time laga)
                      3. DATA GAYA NAHI — MySQL insert hua hi nahi tha, to kuch aadha-adhoora
@@ -27,8 +30,9 @@
 
 ## SPOKEN (English — interview me bolna, ~60-90 sec)
 ```
-   "At Konovo, a client reported that their emails had stopped going out completely — not a single email was going
-    through. It was a critical production issue, so I took it on.
+   "At Konovo, a client reported that their emails had effectively stopped going out — it wasn't a slowdown,
+    delivery had stopped. I can't give you an exact failure rate; we didn't have that kind of instrumentation at
+    the time. It was a critical production issue, so I took it on.
 
     I first checked the application logs and the database, but everything looked normal. Digging deeper, I noticed HikariCP
     connection-pool exhaustion — repeated pool-timeout errors. I then checked AWS RDS metrics and saw database utilization
@@ -73,7 +77,11 @@
 
 ## DELIVERY tips
 ```
-   - "MAINE / I" bolo action me (team nahi, TU). result me NUMBERS (ZERO email, ~1-1.5 hr, 85% RDS).
+   - "MAINE / I" bolo action me (team nahi, TU).
+   - ★★ JO NAAPA NAHI, USKA NUMBER MAT BOLO. Is story me sirf DO cheez asli-naapi hui:
+     RDS utilization ~85% (metrics me dekhi) aur ~1-1.5 ghanta (apna time).
+     Email-fail % kabhi naapa hi nahi gaya -> "effectively all" bolo, 95/99/100 NAHI.
+     Jhootha number follow-up pe TOOTTA hai — aur wahi asli nuksaan hai.
    - calm + structured -> S->T->A->R kram me. bolne ki PRACTICE (loud, 2-3 baar).
    - ★ RESULT pe "sab theek ho gaya" MAT bolo — wo bhaari nahi lagta. Chaar naap bolo:
      zero email · ~1-1.5 ghanta · data gaya nahi · wajah code ki nahi thi.
