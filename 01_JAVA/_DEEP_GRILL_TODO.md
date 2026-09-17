@@ -16,10 +16,13 @@
 ## ★ BACHA HUA — PENDING (priority order)
 
 ```
-1. Lock toolkit   [naya note — biggest grill-risk, LAST Java topic]
-   -> ReentrantLock / ReadWriteLock / Semaphore / CountDownLatch / CyclicBarrier
+(khaali — Java ke saare grill-topic ho chuke)
 ```
-> (CompletableFuture + ThreadLocal 11-Sep DONE — notes-files me pakke, git history me bhi.)
+> (CompletableFuture + ThreadLocal DONE. **Lock toolkit DONE** — aakhri tha:
+>  ReentrantLock -> [04_MULTITHREADING/04_synchronized.md](04_MULTITHREADING/04_synchronized.md) ke andar
+>  (kyunki wo `synchronized` ka upgrade hai) · baaki chaar (ReadWriteLock / Semaphore /
+>  CountDownLatch / CyclicBarrier) -> [04_MULTITHREADING/14_lock_toolkit.md](04_MULTITHREADING/14_lock_toolkit.md).
+>  Ab Java me naya nahi — sirf REVISE.)
 
 ## ★ PEHLE SE DEEP (inpe kaam nahi — chinta mat karna, reference)
 ```
@@ -30,4 +33,4 @@ HashMap resize-math · streams hard-layer · final-safe-publication · thread-li
 ```
 
 ---
-> SHURU: #1 (Lock toolkit) se TEACH-first. ek-ek topic, samajh -> phir file. (Java ka AAKHRI grill-topic.)
+> AB: Java REVISE-only. Naya grill-topic nahi bacha — file padho, code dekho.
