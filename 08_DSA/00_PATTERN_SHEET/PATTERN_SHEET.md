@@ -31,23 +31,6 @@
 3. Us redundancy ko **CACHE/STORE** karo → recompute ki jagah **LOOK UP**.
 4. **Cache-ka-DS hi PATTERN hai** (guess nahi — DERIVE).
 > + "STORY hatao — structure kya? pairs? range? next-bigger/smaller? min/max? subproblems?"
-> + FREEZE = threat-response (na capability). Calm → naya twist sirf hard PUZZLE. Brute+reason+bolo.
-
-**STEP-1: BRUTE kaise likhein — NOUN → kitne loop** (enumerate + check):
-
-| Problem me NOUN        | Loops | Shell                          |
-|------------------------|-------|--------------------------------|
-| har **element**        | 1     | `for i`                        |
-| **pair** (i != j)      | 2     | `for i:  for j=i+1`            |
-| **subarray** (contig.) | 2 (+inner) | `for l:  for r=l`  {andar sum/compute} |
-| **triplet**            | 3     | `for i:  for j=i+1:  for k=j+1`|
-| **subset** (saare)     | rec.  | choose / not-choose            |
-
-> Loops = NOUN. Andar = CHECK (condition) + answer update (best/count/return).
-> Poora naksha: **noun→loop (brute) → "kya dohra raha" (redundancy) → DS (neeche table).**
-
-> **TEMPLATE (har brute):** ans=INIT → loops(noun) → if(CONDITION) ans=UPDATE → return.
-> ★ subarray-SUM = 3 loop: for l, for r (subarray chuno) + inner sum. (ya running-sum se inner hatao.)
 
 **TYPE-B — DATA-STRUCTURE derive karo** (ye kabhi practice nahi kiya tha; koi template NAHI):
 
@@ -62,50 +45,16 @@
 | **"running median / do halves balance"** | baar-baar sort | **TWO HEAPS** | max-heap + min-heap |
 | lookups by **prefix / word-set** | string scan baar-baar | **TRIE** | char-by-char tree |
 
-**TYPE-A — TEMPLATE wale** (pehchano + skeleton; tera STRONG):
-
-| Jab ye dikhe | → PATTERN | core |
-|---|---|---|
-| choices/subproblems + **overlap** | **DP** | state + recurrence + memo |
-| saare **combinations/arrangements/subsets** | **BACKTRACKING** | choose→recurse→un-choose |
-| **grid/graph** spread / connected / islands | **DFS/BFS** | visit+mark+neighbors |
-| level-by-level / **shortest (unweighted)** | **BFS** | queue, level-order |
-| prerequisites / cycle / ordering | **TOPO SORT (Kahn's)** | indegree + queue |
-| **"minimum X jisme condition sach"** / sorted-search | **BINARY SEARCH (on answer)** | lo/hi, feasible(mid)? |
-
 > ★ **"SORTED" FORK** (5-Sep, drill se): sorted dekh ke seedha BS mat firing karo — **DUSRA cue** padho:
 > pair / sum from **TWO ENDS** → **TWO-POINTER** (converge, O(n)) · **single position / threshold / "min X jisme condition sach"** → **BINARY SEARCH**. (two-sum-sorted = 2-pointer, NA BS.)
 
-**DRILL (roz 10 min):** bare problem → solve MAT karo → sirf: brute soch → "kya dohra raha" → is table se DS DERIVE karo → galat to signal wapas padho. Type-A = pehchan (strong). Type-B = DERIVE (banana hai). Dono = poora naksha.
-
 ---
 
-## ESSENCE — DSA ka ASLI tareeka (31-Jul, Arpan-derived)
+## ESSENCE — LABEL pe bharosa mat karo (31-Jul, Arpan-derived)
 
-> **DSA = pattern reflexively THOPNA nahi. Pehle PROBLEM samjho -> phir pattern.**
->
-> 1. **Problem SAMJHO** — kya bol raha? kyun? kya maang raha? kaise? (shaant baitho, jump NAHI)
-> 2. **PHIR** approach/pattern socho (ab template lage)
-> 3. **PHIR** code
->
-> direct-jump galat -- bhale hi answer SW/DP/graph ho, seedha pattern pe mat kudo. **samajho -> approach -> code.**
-> source ka LABEL blindly mat lo ("reel ne SW bola" != SW). khud examine karo -- "sach me aisa hai?"
-> **problem-solver** = ye (understand-first + question-the-label), na ki pattern-ratta. dimaag freeze nahi -> pehla-move = "problem samjho".
-
----
-
-## CODE-LIKHTE-WAQT: INIT-DEFAULT ka RULE (min/max silly-bug)
-
-> min le raha hai  -> "invalid / nahi-ho-sakta" ka default = INT_MAX  (badi value, min me kabhi galat na jeete).
-> max le raha hai  -> default = INT_MIN.
-> 0 sirf tab jab 0 sach-much VALID answer ho.
->
-> KYUN: coin-change (min problem) me take = 0 daala -> 0 HAMESHA min jeet gaya -> jhootha answer.
->       INT_MAX daalo -> na-ho-sakne wala branch min me HAAR jaata (sahi).
->
-> PAKADNE ka NET: ye bug aankh se code padhne pe nahi dikhta.
->   -> sabse CHHOTA dry-run chalao (n=1, ya jaha coin fit hi na ho) -> 2 line me galat output turant dikhta.
->   -> init likhte waqt haath ruke: "min le raha -> default MAX? max le raha -> default MIN?"
+> Problem samjho -> phir pattern -> phir code. Par asli baat ye:
+> **kisi aur ka LABEL blindly mat lo** — "reel ne SW bola" ka matlab SW nahi.
+> Khud examine karo: *"sach me aisa hai?"*
 
 ---
 
@@ -151,6 +100,8 @@ max path sum (tree)           left = max(0, left)                      2 ke neec
 min/max koi bhi DP            min le raha  -> init INT_MAX             coin-change: take=0 daala
                               max le raha  -> init INT_MIN             -> 0 hamesha min jeet gaya
                               0 sirf tab jab 0 VALID answer ho
+                              ★ init likhte waqt HAATH RUKE:            aankh se code padhne pe
+                                "min le raha -> default MAX?"           ye bug DIKHTA HI NAHI
 
 circular subarray (Kadane)    answer = max( normal-Kadane,             sab negative ho to
                                             total - minSubarray )      total-min = 0 aa jaata
