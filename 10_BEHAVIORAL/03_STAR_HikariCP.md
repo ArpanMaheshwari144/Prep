@@ -4,7 +4,7 @@
 
 ## STAR (Hinglish notes — yaad ke liye)
 ```
-   S (Situation): Konovo pe client ne raise kiya — emails/notifications ja hi nahi rahe (~95% fail). critical PROD issue, routine nahi.
+   S (Situation): Konovo pe client ne raise kiya — emails/notifications ja hi nahi rahe. ★ EK BHI email nahi ja raha tha (100% blocked, partial nahi). critical PROD issue, routine nahi.
    T (Task)     : root-cause dhundhna + email delivery jaldi restore karna (mujhe own karna tha).
    A (Action)   :
         1. pehle APP LOGS + DB dekha -> sab normal dikha, obvious error nahi.
@@ -15,13 +15,20 @@
         5. us query ne LONG time + LOCK hold kiya -> hamara flow BLOCK: system pehle MySQL me rows INSERT karta,
            phir AWS SNS se email bhejta -> inserts ruk gaye -> emails ruk gaye -> held connections ne POOL exhaust kiya -> tool slow.
         6. DevOps team ke saath coordinate -> woh runaway query KILL/stop karvayi.
-   R (Result)   : query rukte hi -> pool recover -> RDS utilization normal -> email delivery restore (~95% fail -> normal). critical incident RESOLVED.
+   R (Result)   : query rukte hi -> pool recover -> RDS utilization normal -> email delivery restore.
+                  ★ NAAP (ye 4 bolne hain):
+                     1. ZERO email ja raha tha — poora blocker, partial failure nahi
+                     2. report se fix tak ~1 - 1.5 GHANTA (logs normal dikh rahe the, isliye
+                        andar tak jaana pada — wahi time laga)
+                     3. DATA GAYA NAHI — MySQL insert hua hi nahi tha, to kuch aadha-adhoora
+                        ya gum hua nahi (AWS/SNS ka mamla tha hi nahi, MySQL end ka tha)
+                     4. wajah hamare CODE ki nahi thi — PROD pe haath se chalayi gayi query thi
 ```
 
 ## SPOKEN (English — interview me bolna, ~60-90 sec)
 ```
-   "At Konovo, a client reported that nearly all their emails had stopped going out — around 95% were failing. It was a
-    critical production issue, so I took it on.
+   "At Konovo, a client reported that their emails had stopped going out completely — not a single email was going
+    through. It was a critical production issue, so I took it on.
 
     I first checked the application logs and the database, but everything looked normal. Digging deeper, I noticed HikariCP
     connection-pool exhaustion — repeated pool-timeout errors. I then checked AWS RDS metrics and saw database utilization
@@ -33,7 +40,9 @@
     pool, slowing the whole tool.
 
     I coordinated with the DevOps team to stop that runaway query. Once it was killed, the pool recovered, RDS normalized,
-    and email delivery was restored."
+    and email delivery was restored — about an hour to an hour and a half from the report, most of it spent digging past
+    logs that looked normal. And because the MySQL inserts had never gone through, nothing was half-sent or lost — the
+    blocker was entirely on the database side, not on AWS."
 ```
 
 ## KYA DEMONSTRATE karta (interviewer ye dekhta)
@@ -64,8 +73,9 @@
 
 ## DELIVERY tips
 ```
-   - "MAINE / I" bolo action me (team nahi, TU). result me NUMBERS (95%, 85%).
+   - "MAINE / I" bolo action me (team nahi, TU). result me NUMBERS (ZERO email, ~1-1.5 hr, 85% RDS).
    - calm + structured -> S->T->A->R kram me. bolne ki PRACTICE (loud, 2-3 baar).
-   - confirm/add: exact email-fail % (95%?) + koi aur metric (kitne der me resolve?).
+   - ★ RESULT pe "sab theek ho gaya" MAT bolo — wo bhaari nahi lagta. Chaar naap bolo:
+     zero email · ~1-1.5 ghanta · data gaya nahi · wajah code ki nahi thi.
    - FOLLOW-UP wala honest jawab ready rakh (upar) -- band-aid nahi, detection-focus.
 ```
