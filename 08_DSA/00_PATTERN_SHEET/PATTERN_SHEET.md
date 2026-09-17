@@ -182,7 +182,26 @@ BFS grid / word ladder        visited ka kaam ANDAR-DAALTE-WAQT        nikaalte 
 
 heap — top K                  MIN-heap of size k                      max-heap me sab daal ke
                               (max-heap of everything NAHI)            k pop = O(n log n), haar gaye
+
+heap — COMPARATOR ka chihn    ★ jo chihn likho, uska ULTA milta        a<b likha -> sabse BADA
+                                 a > b   ->  MIN-heap                  top pe aa gaya -> merge-k
+                                 a < b   ->  MAX-heap                  ne ulta order de diya
+
+heap — pointer/object daalo   push se PEHLE null check                 merge-k: khaali list
+                              (khaali list, khaali node)                push ho gayi -> top()->val
+                                                                        pe SEGFAULT, test tak
+                                                                        pahuncha hi nahi
 ```
+
+> ★ **COMPARATOR wali baat kyun phisalti hai:** `priority_queue` comparator ko "sort order" samajh
+> lete hain, jabki wo poochta hai *"top pe kaun?"* — aur wo us element ko top pe rakhta hai jo
+> comparator ke hisaab se **sabse BADA** hai. Isliye `greater` (`a > b`) likhne pe **chhota** top
+> pe aata hai. Ek line me: **jo chihn likhoge, uska ULTA milega.**
+> ```
+> priority_queue<int>                                        -> max-heap (default)
+> priority_queue<int, vector<int>, greater<int>>             -> min-heap
+> struct Cmp { bool operator()(T a, T b){ return a > b; } }  -> min-heap
+> ```
 
 > **ISE KAISE USE KARNA:** code likhne se PEHLE nahi — code likhne ke BAAD, submit se pehle,
 > ek nazar. "meri problem is list me hai? to wo line daali maine?"
