@@ -121,6 +121,21 @@
 > Teesri: code likhte waqt dimaag SHAKAL pe hota hai; edge sirf tab dikhta hai jab koi KHAAS
 > input chalao. Isliye ye sochne se nahi, **DRY-RUN se** nikalte hain.
 >
+> ★★ **CHAUTHI — aur yahi sabse asli hai (Arpan ne khud pakdi):** hum problem ko aksar DIFF me
+> rakhte hain — *"X jaisa hi hai, bas ye badla"*. Dimaag poora X yaad rakh leta hai + wo diff.
+> Par jo line X me **THI HI NAHI**, uske latakne ki koi jagah nahi bachti — wo bhooli nahi
+> jaati, wo **andar jaati hi nahi**.
+> ```
+> max-path-sum ko store kiya:  "DIAMETER/maxDepth wala hi hai, bas  1 +  ki jagah  node->val"
+>
+> DIAMETER me   left/right = DEPTH  ->  kabhi negative ho hi nahi sakti
+>                                   ->  clamp ki zaroorat hi nahi  ->  template me wo line NAHI
+> MAX-PATH-SUM  left/right = SUM    ->  negative ho sakti
+>                                   ->  tabhi  max(0, ...)  paida hota hai
+> ```
+> **NIYAM:** jab bhi kuch "X jaisa hai, bas ye badla" karke rakho, ek sawaal aur poochho —
+> **"X me jo cheez THI HI NAHI, wo kya hai?"** Edge hamesha wahin chhupa hota hai.
+>
 > ★ Ye theek karne wali "kami" nahi hai — koi saare edges sar me le kar nahi ghoomta, log inhe
 > CHALA KE pakadte hain. Ilaaj = ye list roz aankh ke saamne se guzre + har code pe ek chhota
 > dushman-example chalao. Sheet dekh lene me koi ghaata nahi — ye DERIVE hone wali cheezein
