@@ -32,7 +32,7 @@
 4. **Cache-ka-DS hi PATTERN hai** (guess nahi — DERIVE).
 > + "STORY hatao — structure kya? pairs? range? next-bigger/smaller? min/max? subproblems?"
 
-**TYPE-B — DATA-STRUCTURE derive karo** (ye kabhi practice nahi kiya tha; koi template NAHI):
+**KAUNSA DS LAGEGA — SIGNAL se DERIVE karo** (pehchan se nahi; in sabka koi template hota hi nahi):
 
 | Jab ye SIGNAL dikhe | Brute me REDUNDANCY | → DS | KYUN |
 |---|---|---|---|
