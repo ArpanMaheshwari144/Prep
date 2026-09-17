@@ -15,11 +15,11 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 01 | [**01_JAVA**](01_JAVA) | Core · Collections · Java-8 · Multithreading · SOLID · Patterns · Testing | Java grill round ka **core** — collections-internal + multithreading sabse zyada pucha jaata |
 | 02 | [**02_SPRING**](02_SPRING) | Boot internals · @Transactional · Hibernate · JWT · Docker/K8s · Kafka/Async/Cache · QueryDSL/GraphQL | Backend role ka **dil** — proxy / N+1 / tx / Kafka = deep-grill favourites |
 | 03 | [**03_LLD**](03_LLD) | 11 OOP designs, code me | LLD round — class-design + patterns **bolke** |
-| 04 | [**04_HLD**](04_HLD) | Foundations + 12 designs + delivery-playbook | Tera **strong zone** — JP ka pura ek round |
+| 04 | [**04_HLD**](04_HLD) | Foundations + 13 designs + delivery-playbook | Tera **strong zone** — JP ka pura ek round |
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | CDN · LB · DNS · WAF · monitoring + devops + hands-on demos | HLD me "deploy/scale kaise" ki depth + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · ~200 problem + sheet | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 169 problem + REDO set + sheet | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | STAR stories | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase | PR-review + daily workflow Qs |
@@ -38,7 +38,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 - **[03_JAVA_8](01_JAVA/03_JAVA_8)** — functional style (har modern codebase me) — [01 lambda](01_JAVA/03_JAVA_8/01_lambda_expressions.md) · [02 functional-interface](01_JAVA/03_JAVA_8/02_functional_interface_pfcs.md) · [03 method-reference](01_JAVA/03_JAVA_8/03_method_reference.md) · [04 streams](01_JAVA/03_JAVA_8/04_streams_api.md) · [05 optional](01_JAVA/03_JAVA_8/05_optional.md) · [06 stream-cheatsheet](01_JAVA/03_JAVA_8/06_stream_methods_cheatsheet.md)
 
-- **[04_MULTITHREADING](01_JAVA/04_MULTITHREADING)** — *biggest grill-risk* (theory + runnable demos) — [01 basics](01_JAVA/04_MULTITHREADING/01_thread_basics.md) · [02 lifecycle](01_JAVA/04_MULTITHREADING/02_thread_lifecycle.md) · [03 join](01_JAVA/04_MULTITHREADING/03_join.md) · [04 synchronized](01_JAVA/04_MULTITHREADING/04_synchronized.md) · [05 volatile](01_JAVA/04_MULTITHREADING/05_volatile.md) · [06 atomic/CAS](01_JAVA/04_MULTITHREADING/06_atomic_integer_cas.md) · [07 deadlock](01_JAVA/04_MULTITHREADING/07_deadlock.md) · [08 wait-vs-sleep](01_JAVA/04_MULTITHREADING/08_wait_vs_sleep.md) · [09 notify](01_JAVA/04_MULTITHREADING/09_notify_deep_dive.md) · [10 executor/pool](01_JAVA/04_MULTITHREADING/10_executor_service_thread_pool.md) · [11 future-vs-completablefuture](01_JAVA/04_MULTITHREADING/11_future_vs_completablefuture.md) · [12 producer-consumer](01_JAVA/04_MULTITHREADING/12_producer_consumer.md) · [13 threadlocal](01_JAVA/04_MULTITHREADING/13_threadlocal.md)
+- **[04_MULTITHREADING](01_JAVA/04_MULTITHREADING)** — *biggest grill-risk* (theory + runnable demos) — [01 basics](01_JAVA/04_MULTITHREADING/01_thread_basics.md) · [02 lifecycle](01_JAVA/04_MULTITHREADING/02_thread_lifecycle.md) · [03 join](01_JAVA/04_MULTITHREADING/03_join.md) · [04 synchronized](01_JAVA/04_MULTITHREADING/04_synchronized.md) · [05 volatile](01_JAVA/04_MULTITHREADING/05_volatile.md) · [06 atomic/CAS](01_JAVA/04_MULTITHREADING/06_atomic_integer_cas.md) · [07 deadlock](01_JAVA/04_MULTITHREADING/07_deadlock.md) · [08 wait-vs-sleep](01_JAVA/04_MULTITHREADING/08_wait_vs_sleep.md) · [09 notify](01_JAVA/04_MULTITHREADING/09_notify_deep_dive.md) · [10 executor/pool](01_JAVA/04_MULTITHREADING/10_executor_service_thread_pool.md) · [11 future-vs-completablefuture](01_JAVA/04_MULTITHREADING/11_future_vs_completablefuture.md) · [12 producer-consumer](01_JAVA/04_MULTITHREADING/12_producer_consumer.md) · [13 threadlocal](01_JAVA/04_MULTITHREADING/13_threadlocal.md) · **[14 lock-toolkit](01_JAVA/04_MULTITHREADING/14_lock_toolkit.md)** (ReadWriteLock · Semaphore · CountDownLatch · CyclicBarrier — kaunsa kab)
   - **[practical/](01_JAVA/04_MULTITHREADING/practical)** — chala-ke-dekhe wale demos — [ThreadLocalDemo](01_JAVA/04_MULTITHREADING/practical/ThreadLocalDemo.java) (isolation + pool-leak + fix) · [SafePubDemo](01_JAVA/04_MULTITHREADING/practical/SafePubDemo.java) · [DeadlockDemo](01_JAVA/04_MULTITHREADING/practical/DeadlockDemo.java) · [RaceDemo](01_JAVA/04_MULTITHREADING/practical/RaceDemo.java) · [ProducerConsumer](01_JAVA/04_MULTITHREADING/practical/ProducerConsumer.java)
 
 - **[05_SOLID](01_JAVA/05_SOLID)** — design principles (LLD + code-review me) — [01 kya/kyun](01_JAVA/05_SOLID/01_solid_kya_hai_kyu.md) · [02 S](01_JAVA/05_SOLID/02_S_single_responsibility.md) · [03 O](01_JAVA/05_SOLID/03_O_open_closed.md) · [04 L](01_JAVA/05_SOLID/04_L_liskov_substitution.md) · [05 I](01_JAVA/05_SOLID/05_I_interface_segregation.md) · [06 D](01_JAVA/05_SOLID/06_D_dependency_inversion.md)
@@ -156,7 +156,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · ~200 problem
+## [08_DSA](08_DSA) — 18 pattern · 169 problem (+ 87 REDO/BLANK retrieval files)
 **Kya:** pattern-wise solved problems + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + spaced-redo.
 
 - ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi" (har pattern ka saar + template + dry-run) — **roz-glance**.
