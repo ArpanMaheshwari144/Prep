@@ -21,6 +21,19 @@ Goal: read scale + HA       Goal: write scale + storage scale
 
 **Production reality:** Dono saath — har shard ka apna replica set. Sharding (write) + Replication (read) = full coverage.
 
+> ★★ **GEO dono me aata hai — aur MATLAB ALAG hai (yahan log phisalte hain):**
+> ```
+> EK HI cheez ki NAKAL user ke paas    ->  REPLICATION (geo)
+>      cricket score India me bhi, US me bhi — WAHI score dono jagah
+>      dikkat thi: user DOOR hai
+>
+> ALAG-ALAG cheez alag jagah            ->  SHARDING (geo)
+>      EU walon ka data EU me, US walon ka US me — ek banda EK hi jagah
+>      dikkat thi: data BADA hai (ya KANOON keh raha hai)
+> ```
+> ★ geo-sharding ki wajah aksar technical hoti hi nahi — **KANOONI** hoti hai
+> (EU ka data EU se bahar rakhna hi mana hai). Ye bolne layak point hai.
+
 ---
 
 ## STORY — Phone Directory of India
@@ -51,11 +64,47 @@ Queries    → table scan slow
 
 ### With (10 shards)
 ```
-100 TB     → 10 × 10 TB
-1M w/s     → distributed (100K each)
-Backup     → parallel
-Queries    → smaller tables, fast
+100 TB → 10 × 10 TB
+1M w/s → distributed (100K each)
+Backup → parallel
+Queries → smaller tables, fast
 ```
+
+### ★★ Sharding se PEHLE teen aur raaste hain — aur wo kahan RUKTE hain
+
+> Interviewer ye poochhta hai. "Data bada tha isliye shard kiya" adhoora jawab hai —
+> asli jawab = "baaki teen raaste yahan tak chalte hain, uske aage sirf sharding bachti."
+
+```
+A. MACHINE BADI KAR DO (vertical)
+     chalta hai — ek had tak. Har machine ki CHHAT hoti hai.
+     aur 64 -> 512 GB me agla size 2x mehnga, 1.3x tez. Paisa doobta hai.
+     aur wo phir bhi EK machine hai.
+
+B. REPLICAS LAGA DO
+     ★ ye sabse badi galatfehmi hai — isse dikkat CHHUTI BHI NAHI:
+        leader  20 TB
+        copy-1  20 TB     <- wahi 20 TB, teen baar
+        copy-2  20 TB        data kahin BANTA nahi, sirf NAKAL badhi
+        copy-3  20 TB
+     aur saare WRITE ab bhi ek hi leader pe ja rahe hain.
+     -> REPLICATION padhne ka load baanta hai. DATA nahi baanta.
+
+C. PURANA DATA ARCHIVE KAR DO
+     ye sach me kaam karta hai, aur log ise kam aankte hain.
+     ★ "data kaunsa hai" se tay hota hai:
+          survey / log / analytics   ->  aaram se archive
+          paisa / order / audit      ->  DELETE to kabhi nahi (7-10 saal KANOONAN rakhna hai)
+                                         par THANDI storage me sarkana phir bhi hota hai
+                                         ("hatana" nahi — "garam se thanda")
+     ★ RUKTA KAHAN HAI: archive tab tak chalta jab tak PURANA data badh raha ho.
+        Jab ZINDA data khud bada ho jaye — 10 lakh user se 5 crore, sabke ACTIVE
+        order/balance — tab hatane ko kuch hai hi nahi. Archive SAMAY khareedta hai,
+        dikkat khatam nahi karta.
+```
+
+> **NICHOD:** A ki chhat aa jaati · B dikkat ko chhuti hi nahi · C samay deti par rukti hai.
+> Jis din LIVE data hi ek machine se bada ho jaye — sharding ke alawa kuch bachta hi nahi.
 
 ---
 
@@ -301,6 +350,51 @@ Fix:
 - Partition key = shard key
 - Auto-managed (you don't see shards)
 - Hot partition = throttling
+
+---
+
+## ★★ KIS DESIGN ME, KAUNSI KEY — (list ratne ki nahi, NIYAM lagane ki)
+
+> NIYAM: **"data itna bada ki ek machine me na samaye"** (ya kanoon keh raha ho).
+> Niyam lagao, jawab khud nikal aata hai — table sirf usko check karne ko hai.
+
+```
+DESIGN              shard KEY                    kyun
+------------------------------------------------------------------------
+url shortener       short-code ka HASH           arab rows, har row chhoti
+                                                 "range" kabhi chahiye hi nahi -> hash fit
+
+twitter feed        tweets  -> userId            "mere tweets"  = ek machine
+                    inbox   -> userId            "mera feed"    = ek machine
+
+payment             userId / accountId           + GEO/KANOON yahin aata
+                                                 (EU ka data EU me = majboori, choice nahi)
+
+bookmyshow          cityId / showId              ek show ki saari seat EK jagah
+                                                 (warna seat-lock cross-machine = aafat)
+
+★ message queue     PARTITION hi SHARD hai      Kafka ka partition-key = shard-key.
+  (Kafka)           partition-key = shard-key     "same key -> same partition"
+                                                  = "same key -> same machine".
+                                                  Aur wahan partition REHASH hone pe ORDER
+                                                  toot-ta tha — yahan shard-key badalne pe
+                                                  POORA DATA hilta hai. Ek hi baat, do naam.
+```
+
+### ★ Jahan sharding lagti HI NAHI (ye bhi bolna aata chahiye)
+
+```
+rate limiter     counter hai, kuch KB ka — baantne ko kuch hai hi nahi
+cricket score    50 byte ka score. Dikkat thi "BAHUT JAGAH bhejna",
+                 "data bada" nahi -> ilaaj FANOUT + delta, sharding NAHI
+seat booking     500 log EK hi row pe -> ye WRITE ki ladai hai
+                 -> lock / atomic UPDATE. Shard/replica dono bekaar.
+```
+
+> **★ SABSE BADA FAISLA — shard-key:** aisi chuno ki ROZ-MARRA ki query EK hi shard
+> me nipat jaaye. `userId` pe shard kiya -> "mere saare order" = ek machine (sasta).
+> `orderId` pe kiya -> wahi sawaal chaaron machine se (4 guna mehnga).
+> **Galat key = har request 4 guna. Aur baad me badalna = poora data dobara sarkana.**
 
 ---
 
