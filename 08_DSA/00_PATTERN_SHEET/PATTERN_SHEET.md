@@ -109,6 +109,72 @@
 
 ---
 
+## ★★ EDGE LIST — har template ke saath uski EK line
+
+> **KYUN ye section hai:** template har problem me lagta hai -> 50 baar chhua -> baith gaya.
+> Edge sirf us EK shakal me lagta hai -> 3-4 baar chhua -> fisal jaata. Mushkil hone ki wajah
+> se nahi, **kam baar saamne aane** ki wajah se.
+>
+> Doosri wajah: template ka DHAANCHA hota hai — ek tukda yaad aaya, baaki chain khud kheech
+> aayi. Edge AKELA padta hai, ek line, uske aage-peeche kuch nahi jo use upar kheenche.
+>
+> Teesri: code likhte waqt dimaag SHAKAL pe hota hai; edge sirf tab dikhta hai jab koi KHAAS
+> input chalao. Isliye ye sochne se nahi, **DRY-RUN se** nikalte hain.
+>
+> ★ Ye theek karne wali "kami" nahi hai — koi saare edges sar me le kar nahi ghoomta, log inhe
+> CHALA KE pakadte hain. Ilaaj = ye list roz aankh ke saamne se guzre + har code pe ek chhota
+> dushman-example chalao. Sheet dekh lene me koi ghaata nahi — ye DERIVE hone wali cheezein
+> hain hi nahi, PATA honi chahiye — aur PATA-hui cheez sirf REPETITION se tikti hai.
+
+```
+PROBLEM / TEMPLATE            EDGE — wo EK line                        kyun (chhota dushman-case)
+-----------------------------------------------------------------------------------------------
+max path sum (tree)           left = max(0, left)                      2 ke neeche -1:
+                              right = max(0, right)                    arm lene se 1, chhodne se 2
+                              "0 = wo arm li hi nahi"                  -> negative arm LENA nuksaan
+
+min/max koi bhi DP            min le raha  -> init INT_MAX             coin-change: take=0 daala
+                              max le raha  -> init INT_MIN             -> 0 hamesha min jeet gaya
+                              0 sirf tab jab 0 VALID answer ho
+
+circular subarray (Kadane)    answer = max( normal-Kadane,             sab negative ho to
+                                            total - minSubarray )      total-min = 0 aa jaata
+                              ★ all-negative case alag se dekho        -> normal-Kadane hi sahi
+
+prefix + hashmap (sum == K)   map[0] = 1  SE SHURU karo                [3], K=3: bina is line ke
+                              (running-K milne se pehle)               poore-array wala case chhoot jaata
+
+binary search ON ANSWER       lo = max(arr)   (isse kam me sabse        ship-in-D-days:
+                              hi bhaari item uth nahi payega)          lo=0 rakha to bekaar
+                              hi = sum(arr)                            aadhe chakkar lagenge
+
+sliding window (variable)     shrink ke baad map se ERASE karo         count 0 ho gaya par key
+                              jab count 0 ho jaye                      padi rahi -> map.size() jhooth
+                                                                       bolegi -> window galat
+
+two pointer (sorted)          duplicate skip karna hai kya?            3-sum: bina skip ke
+                              (3-sum haan, 2-sum nahi)                 ek hi triplet kai baar
+
+fast-slow (linked list)       loop ka SHURU nikalna ho ->              sirf "loop hai ya nahi"
+                              milne ke baad slow ko HEAD pe            poocha to ye step nahi chahiye
+                              bhejo, dono 1-1 step
+
+monotonic stack               stack me INDEX rakho, value nahi         daily temperatures:
+                              (kyunki DOORI chahiye hoti hai)          i - stack.top() chahiye
+
+BFS grid / word ladder        visited ka kaam ANDAR-DAALTE-WAQT        nikaalte waqt mark kiya to
+                              karo, nikaalte waqt nahi                 ek node kai baar queue me
+
+heap — top K                  MIN-heap of size k                      max-heap me sab daal ke
+                              (max-heap of everything NAHI)            k pop = O(n log n), haar gaye
+```
+
+> **ISE KAISE USE KARNA:** code likhne se PEHLE nahi — code likhne ke BAAD, submit se pehle,
+> ek nazar. "meri problem is list me hai? to wo line daali maine?"
+> Aur nayi edge mile to yahin ek line jodo — nayi file kabhi nahi.
+
+---
+
 ## NAAM-SE-CONFUSE MAT HO — ek-jaisi DIKHNE wali jodiyaan
 
 > ★ Ye section knowledge ka nahi, QUESTION-PADHNE ka hai. Har entry wo jagah hai jahan keyword sun ke
