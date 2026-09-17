@@ -1105,6 +1105,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ---
 
 ## PATTERN 5 — MATRIX
+> ★ **YAHAN NAHI MILENGI** (grid dikhti hai, par technique alag hai):
+> ```
+> number of islands · rotting oranges · max area of island   ->  PATTERN 13 (GRAPHS)
+>       grid hai, par kaam BFS/DFS ka hai — visit + mark + neighbors
+> search 2D matrix                                           ->  PATTERN 7 (BINARY SEARCH)
+>       naam me matrix hai, par rows sorted hain -> ek lambi sorted array maan lo
+> ```
 
 ```
 
@@ -1168,6 +1175,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ---
 
 ## PATTERN 6 — STACK
+> ★ **YAHAN NAHI MILEGI:**
+> ```
+> generate parentheses   ->  PATTERN 16 (BACKTRACKING)
+>       valid-parentheses CHECK karta hai (stack) · generate BANATA hai (choose/un-choose)
+> ```
 
 ```
 
@@ -1570,6 +1582,12 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ---
 
 ## PATTERN 8 — LINKED LIST
+> ★ **YAHAN NAHI MILEGI:**
+> ```
+> merge K sorted lists   ->  PATTERN 14 (HEAP)
+>       node/list dikhta hai, par asli kaam MIN-HEAP of current heads ka hai
+>       (jodne ka engine — dummy + tail — wahi hai jo merge-TWO me hai)
+> ```
 
 ```
 
@@ -2784,7 +2802,14 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
 ---
 
-## PATTERN 14 — HEAP (priority_queue: min/max top pe)
+## PATTERN 14 — HEAP
+> ★ **YAHAN NAHI MILENGI** ("k-th / median" sun ke heap lagta hai, par nahi):
+> ```
+> median of 2 sorted arrays  ->  PATTERN 7 (BINARY SEARCH)
+>       stream nahi hai — do SORTED array hain -> ek CUT dhoondo, O(log)
+> kth smallest in BST        ->  PATTERN 12 (TREES)
+>       BST ka INORDER khud sorted deta hai -> k-1 wala element, heap ki zaroorat nahi
+> ``` (priority_queue: min/max top pe)
 
 ```
  BROAD IDEA: baar-baar MIN ya MAX chahiye + data BADALTA rehta -> HEAP (sort mahenga). top=O(1), push/pop=O(log n).
@@ -2970,7 +2995,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
 ---
 
-## PATTERN 15 — INTERVALS (sort-by-start + overlap)
+## PATTERN 15 — INTERVALS
+> ★ **YAHAN NAHI MILEGI:**
+> ```
+> non-overlapping intervals  ->  PATTERN 18 (GREEDY)
+>       intervals hain, par sawaal "kam se kam kitne HATAO" = greedy choice
+>       (sort by END, aur takraane wala chhodo)
+> ``` (sort-by-start + overlap)
 
 ```
  BROAD IDEA: interval = [start,end]. dikha -> PEHLA reflex = SORT. phir left-to-right handle.
