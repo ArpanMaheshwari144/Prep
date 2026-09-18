@@ -487,6 +487,128 @@ Replay usko "achha rehne dete hain" se "zaroori hai" bana deta hai.
 
 ---
 
+## ═══ HANDS-ON — KAFKA REBALANCE (usi setup pe, 18-Sep) ═══
+
+> Wahi teen almari (`orders`, 3 partition). Ab kai AADMI padhne aayenge — ek hi group `billing` ke.
+> Har consumer background me chalaya: `docker exec -d kafka sh -c "kafka-console-consumer.sh ... &> /tmp/aN.log"`
+> Dekhne ka command: `kafka-consumer-groups.sh --describe --group billing` (+ `--members`)
+
+### NIYAM — ek almari, ek hi waqt me, sirf EK aadmi ke paas
+
+Do log ek almari nahi padh sakte — warna dono wahi dabba uthate, kaam DO BAAR hota.
+
+```
+1 aadmi  ->  teeno almari usi ke paas
+2 aadmi  ->  2 + 1
+3 aadmi  ->  1 + 1 + 1
+4 aadmi  ->  1 + 1 + 1 + KHAALI BAITHA     <- almari hi teen hain
+```
+Jab bhi koi AAYE ya JAAYE, almariyan dobara baanti jaati hain = **REBALANCE**.
+
+### Kadam 1 — ek consumer
+
+```
+PARTITION   CONSUMER-ID
+    0       console-consumer-322c9b18-...
+    1       console-consumer-322c9b18-...      <- ek hi ID, teeno jagah
+    2       console-consumer-322c9b18-...
+```
+
+### Kadam 2 — dusra consumer aaya
+
+```
+PARTITION   CONSUMER-ID
+    0       322c9b18...      <- pehla
+    1       322c9b18...      <- pehla
+    2       ec45df46...      <- DUSRA
+```
+2 + 1. Kuch nahi karna pada — dusre ke ghuste hi Kafka ne pehle se **ek almari cheen li**.
+
+★ Partition 2 ka `CURRENT-OFFSET` abhi bhi 12 tha. **Parchi aadmi ke saath nahi jaati, almari pe lagi
+rehti hai.** Naya aadmi wahin se uthata hai jahan purana chhod gaya — isi liye kaam dobara nahi hota.
+
+### Kadam 3 — teesra consumer
+
+```
+PARTITION   CONSUMER-ID
+    0       322c9b18...
+    1       ae0f70a0...      <- teesra
+    2       ec45df46...
+```
+1-1-1. Poora group barabar bant gaya, teeno lane saath chal rahi hain = **horizontal scaling**.
+
+### Kadam 4 — chautha consumer: KHAALI BAITHA
+
+```
+kafka-consumer-groups.sh --describe --group billing --members
+
+CONSUMER-ID       #PARTITIONS
+0a968ad8...            1
+318e8cf2...            0        <- ★ group me hai, par KAAM KUCH NAHI
+2077cef2...            1
+06088e7a...            1
+```
+
+★★ **EK GROUP ME KAAM KARNE WAALON KI HADD = PARTITION KI GINTI.**
+
+3 partition hain to 3 se zyada consumer kabhi kaam nahi karenge. Chautha, paanchva, dasva — sab khaali
+baithenge: group me rahenge, memory lenge, heartbeat bhejenge, kaam zero.
+
+→ "Load badh gaya, aur pods scale kar do" — pehle dekho **partition kitne hain**. Partition khatam ho
+chuke to pod badhane se kuch nahi hoga.
+
+→ Aur partition badhana aasan nahi: badhane pe `hash(key) % partitions` ka jawab badal jaata hai,
+yaani `u1` ka maal kal se DUSRI almari me jayega — **purana kram toot jaata hai**.
+Isi liye topic banate waqt partition aage ka soch ke rakhte hain.
+
+### ★ KADAM 5 — ek chalta hua consumer MAARA
+
+```
+docker exec kafka sh -c "pkill -o -f ConsoleConsumer"      # -o = sabse purana
+
+kafka-consumer-groups.sh --describe --group billing --members
+   0a968ad8...   1
+   318e8cf2...   1        <- ★ JO KHAALI BAITHA THA, ab uske paas 1 almari
+   2077cef2...   1
+   (06088e7a mar gaya, list se gayab)
+```
+
+Mare hue consumer ki almari **khaali baithe aadmi ko mil gayi**. Koi alert nahi, koi manual kaam nahi.
+
+**Production me yahi sabse kaam ka hissa hai:**
+```
+ek pod mara  ->  uske partition apne aap bant gaye  ->  KAAM RUKA NAHI
+naya pod aaya ->  rebalance dobara
+```
+
+Do cheezein jo ismein chhupi hain:
+```
+1. PARCHI BACH GAYI — mare hue consumer ke partition ka bookmark wahin tha; naye ne WAHIN SE uthaya,
+   shuru se nahi. (isi liye parchi KAFKA me rakhi jaati hai, consumer me nahi)
+
+2. REBALANCE ke waqt thodi der SAB RUK jaata hai — purane assignment chhootte, naye lagte, us beech
+   consume nahi hota. Isliye baar-baar rebalance (flapping pods) KHUD ek problem hai.
+```
+
+### ★ EK GALTI JO IS DEMO ME HUI (yaad rakhne layak)
+
+Pehli koshish me `--timeout-ms 300000` diya tha = *"5 min naya message na aaye to band ho jao"*.
+Pehla consumer 5-6 min purana ho chuka tha, to **wo apne aap mar gaya** jab tak chautha aaya —
+aur members me 4 ki jagah 3 dikhe, koi khaali nahi.
+
+→ Number dekh ke seedha natija mat nikalo. Pehle `ps -ef | grep -c ConsoleConsumer` se ginti karke
+dekho ki **waqai kitne zinda hain**. Saaf demo ke liye sabko `pkill` karke ek saath naye chalaye,
+`--timeout-ms 900000` ke saath — tab sahi tasveer bani.
+
+### Ek line me (interview me bolne layak)
+
+> *"Ek consumer-group me partition ek waqt me ek hi consumer ko milta hai, isliye parallelism ki
+> chhat partition-count hai — usse zyada pod sirf khaali baithenge. Consumer aaye ya jaaye,
+> Kafka partitions dobara baant deta hai, aur offset partition pe rehta hai (consumer me nahi)
+> isliye naya consumer wahin se uthata hai. Keemat ye ki rebalance ke dauraan consume ruk jaata hai."*
+
+---
+
 ## RabbitMQ Deep (key concepts)
 
 ```
