@@ -81,9 +81,14 @@ KADAM 5 — BOLO structured: security -> java-trap -> resource -> db -> design.
 >                  -> isliye "controller me auth nahi hai" sochna ULTA lagta hai. Sahi lagta hai.
 >
 > AUTHORIZATION    "is ACCOUNT / ORDER pe tumhara HAQ hai?"
->                  -> filter ye kar hi NAHI sakta — use `fromAcc` pata hi nahi,
->                     wo to request me ABHI aaya hai
->                  -> ye HANDLER me hi hona padega. Kahin aur ho hi nahi sakta.
+>                  -> GENERIC filter ye nahi kar sakta — usne `fromAcc` dekha hi nahi,
+>                     wo request me ABHI aaya hai
+>                  -> par ye handler me HI ho aisa zaroori NAHI:
+>                     @PreAuthorize("#fromAcc == authentication.name") · service-layer
+>                     check · ek aspect — teeno jayaz jagah hain
+>                  ★ matlab: is snippet me wo KAHIN nahi dikh raha — aur PR-review me
+>                    itna hi bolna hai: "yahan ownership-check nazar nahi aa raha,
+>                    kya wo kisi aspect/@PreAuthorize me hai?" — ye SAWAAL hai, ilzaam nahi.
 > ```
 > ★ **PAKADNE ka NISHAAN** (yaad rakhne se bahut aasan — ye ek SHAKAL hai):
 > ```
