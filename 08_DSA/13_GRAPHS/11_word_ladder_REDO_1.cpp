@@ -1,5 +1,5 @@
 // ============================================================
-// WORD LADDER (LC 127) — BFS shortest-path  |  REDO_1 (blank retrieval, 13-Sep)
+// WORD LADDER (LC 127) — BFS shortest-path  |  REDO_1 (khud se, bina dekhe -- 13-Sep)
 // Kal solve kiya (BFS + in-place modify + erase-as-visited). Aaj KHAALI PAGE se dobara.
 // Sheet/kal-ka-code mat dekh; atko to tabhi peek.
 // ============================================================

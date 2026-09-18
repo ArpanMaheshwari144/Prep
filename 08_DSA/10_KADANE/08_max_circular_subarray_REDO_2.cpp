@@ -1,15 +1,20 @@
 // ============================================================
-// MAXIMUM SUM CIRCULAR SUBARRAY — (LeetCode 918)  [REDO_1 · khud se, bina dekhe]
+// MAXIMUM SUM CIRCULAR SUBARRAY — (LeetCode 918)  [REDO_2]
 // ============================================================
-// circular array (end->start wrap), max-sum NON-EMPTY contiguous subarray (wrap ho sakta).
-//   [5,-3,5]         -> 10
-//   [1,-2,3,-2]      -> 3
-//   [3,-1,2,-1]      -> 4
-//   [5,-2,5,3,-6,4]  -> 15
-//   [-3,-2,-3]       -> -2   (all-negative EDGE -- khud handle)
-// insight (khud yaad kar): wrap = total − MIN-subarray -> ans = max(maxKadane, total − minKadane).
-//   ★ EDGE: sab negative -> total−minK = 0 (empty) galat -> maxK<0 ho to sirf maxK return.
-//   ★ minK = Kadane ka MIN-version (prefix-sum se NAHI).
+// Ek circular array di hai — matlab aakhri element ke baad pehla element aa jaata hai.
+// NON-EMPTY contiguous subarray ka MAXIMUM sum nikalo. Subarray wrap kar sakta hai
+// (end se shuru ho ke start pe khatam).
+//
+// contiguous ka matlab wahi: lagatar elements. har element at most EK baar use hoga.
+//
+//   nums = [5,-3,5]          -> 10
+//   nums = [1,-2,3,-2]       -> 3
+//   nums = [3,-1,2,-1]       -> 4
+//   nums = [5,-2,5,3,-6,4]   -> 15
+//   nums = [-3,-2,-3]        -> -2
+//   nums = [-2]              -> -2
+//   nums = [3,-2,2,-3]       -> 3
+//
 // ============================================================
 
 #include <bits/stdc++.h>
@@ -47,17 +52,17 @@ int maxSubarraySumCircular(vector<int> &nums)
         totalSum += nums[i];
     }
 
-    int maxK = maxKadaneK(nums);
-    int minK = minKadaneK(nums);
+    int maxSum = maxKadaneK(nums);
+    int minSum = minKadaneK(nums);
 
-    // cout << maxK << " " << minK << endl;
+    // cout << maxSum << " " << minSum << " " << totalSum << endl;
 
-    int circularSum = totalSum - minK;
-    if (maxK > 0)
+    int circularSum = totalSum - minSum;
+    if (maxSum > 0)
     {
-        return max(maxK, circularSum);
+        return max(circularSum, maxSum);
     }
-    return maxK;
+    return maxSum;
 }
 
 // ─── TESTS (haath mat lagana) ──────────────────────────
@@ -75,5 +80,9 @@ int main()
     check({3, -1, 2, -1}, 4, 3);
     check({5, -2, 5, 3, -6, 4}, 15, 4);
     check({-3, -2, -3}, -2, 5);
+    check({-2}, -2, 6);
+    check({3, -2, 2, -3}, 3, 7);
+    check({2, -2, 2, -2}, 2, 8);
+    check({-5, 3, 5, -2, 5, -3}, 11, 9);
     return 0;
 }

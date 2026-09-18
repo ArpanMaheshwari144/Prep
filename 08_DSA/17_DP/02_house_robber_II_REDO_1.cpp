@@ -1,5 +1,5 @@
 // ============================================================
-// HOUSE ROBBER II — (LeetCode 213, Medium)   [REDO_1 · blank retrieval, 1-day spaced]
+// HOUSE ROBBER II — (LeetCode 213, Medium)   [REDO_1 · khud se, bina dekhe -- 1 din baad]
 // ============================================================
 // House Robber jaisa: nums[] = har ghar me paisa, 2 ADJACENT ghar loot nahi sakte.
 // FARAK SIRF EK: ghar CIRCLE me -> PEHLA ghar aur AAKHRI ghar bhi ADJACENT

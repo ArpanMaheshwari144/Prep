@@ -1,5 +1,5 @@
 // ============================================================
-// SUBARRAY SUM EQUALS K   — BLANK REDO (6-Jul, +1 din retrieval)
+// SUBARRAY SUM EQUALS K   — BLANK REDO (6-Jul, +1 din baad)
 // ============================================================
 // Array nums + ek number k diya. KITNE contiguous subarrays hain
 // jinka sum EXACTLY k hai -> woh COUNT return karo.

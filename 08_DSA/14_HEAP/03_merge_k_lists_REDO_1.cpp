@@ -1,6 +1,6 @@
 // ============================================================
 // MERGE K SORTED LISTS (LC 23) — REDO_1   [HEAP #3]
-// blank retrieval — 03_merge_k_lists.cpp / sheet mat kholo; atko tabhi peek.
+// khud se, bina dekhe — 03_merge_k_lists.cpp / sheet mat kholo; atko tabhi peek.
 // ============================================================
 //
 // k sorted linked lists di hain. Sabko milaa ke EK sorted list lautao.

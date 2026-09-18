@@ -1,5 +1,5 @@
 // ============================================================
-// COUNT SUBARRAYS WITH MAXIMUM == K  [REDO_1 · blank retrieval]
+// COUNT SUBARRAYS WITH MAXIMUM == K  [REDO_1 · khud se, bina dekhe]
 // ============================================================
 // arr[] aur K -> kitne subarrays jinka MAX bilkul K ho -> count.
 //   valid = (har element <= K) AND (>=1 element == K).  K se bade = WALL.

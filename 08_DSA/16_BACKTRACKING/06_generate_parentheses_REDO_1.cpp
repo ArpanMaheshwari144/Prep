@@ -1,5 +1,5 @@
 // ============================================================
-// GENERATE PARENTHESES — (LeetCode 22)  [REDO_1 · blank retrieval]
+// GENERATE PARENTHESES — (LeetCode 22)  [REDO_1 · khud se, bina dekhe]
 // ============================================================
 // n jode brackets -> saare VALID (well-formed) combinations.
 //   n=1 -> ["()"]

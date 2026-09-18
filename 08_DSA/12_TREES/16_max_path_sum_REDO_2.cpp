@@ -1,6 +1,6 @@
 // ============================================================
 // BINARY TREE MAXIMUM PATH SUM (LC 124) — REDO_2   [TREES #16]
-// blank retrieval — REDO_1 / sheet mat kholo; atko tabhi peek.
+// khud se, bina dekhe — REDO_1 / sheet mat kholo; atko tabhi peek.
 // ============================================================
 //
 // Koi bhi PATH lo — connected chain: node -> child -> child ...

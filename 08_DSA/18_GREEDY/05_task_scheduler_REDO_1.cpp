@@ -1,5 +1,5 @@
 // ============================================================
-// TASK SCHEDULER (LC 621) — GREEDY  |  REDO_1 (blank retrieval, 12-Sep)
+// TASK SCHEDULER (LC 621) — GREEDY  |  REDO_1 (khud se, bina dekhe -- 12-Sep)
 // Kal solve kiya (idle-slots). Aaj KHAALI PAGE se dobara — memory se derive.
 // Notes/sheet mat dekh; atko to tabhi peek.
 // ============================================================

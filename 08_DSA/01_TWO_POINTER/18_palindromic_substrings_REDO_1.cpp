@@ -1,5 +1,5 @@
 // ============================================================
-// PALINDROMIC SUBSTRINGS (LC 647) — REDO_1  (blank retrieval, spaced)
+// PALINDROMIC SUBSTRINGS (LC 647) — REDO_1  (khud se, bina dekhe)
 // ============================================================
 //
 // String di hai. Kitne SUBSTRING (contiguous) palindrome hain? COUNT karo.

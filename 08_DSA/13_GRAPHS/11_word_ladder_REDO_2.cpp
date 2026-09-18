@@ -1,5 +1,5 @@
 // ============================================================
-// WORD LADDER (LC 127) — REDO_2  (blank retrieval, 3-day spaced)
+// WORD LADDER (LC 127) — REDO_2  (khud se, bina dekhe -- 3 din baad)
 // Sheet / purana code mat dekh; atko to tabhi peek.
 // ============================================================
 //

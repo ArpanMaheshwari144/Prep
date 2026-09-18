@@ -1,5 +1,5 @@
 // ============================================================
-// CONTAINS DUPLICATE II  — REDO_1 (blank retrieval, 9-Sep)
+// CONTAINS DUPLICATE II  — REDO_1 (khud se, bina dekhe -- 9-Sep)
 // ============================================================
 // Array nums + ek number k diya. Batao kya aise DO index i, j hain jaha
 //   nums[i] == nums[j]   AND   |i - j| <= k     -> true/false
