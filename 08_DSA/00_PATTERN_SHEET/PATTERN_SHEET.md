@@ -3327,6 +3327,65 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      BOTTOM-UP bhi: dp[0]=dp[1]=1; for(i=2..n) dp[i]=dp[i-1]+dp[i-2]; return dp[n].
 
  ┌──────────────────────────────────────────────────────────────
+ │ ▸ DECODE WAYS (LC-91)  = climbing-stairs ka bhai, par har STEP pe VALIDITY check
+ └──────────────────────────────────────────────────────────────
+     SAAR : "226" -> 1..26 = A..Z. kitne tareeke se decode ho sakta?
+        har index i pe 2 CHOICE (climbing-stairs jaisa):  1 ANK lo -> solve(i+1)   ·   2 ANK lo -> solve(i+2)
+        FARAK climbing-stairs se: wahan dono choice HAMESHA valid thi.
+                                  yahan har choice pehle VALID honi chahiye (neeche 2 rule).
+
+     ★ DO ZERO-RULE (yahi poora question hai, baaki climbing-stairs hai):
+        RULE-1  s[i]=='0'  -> is index se koi decode SHURU hota hi nahi -> ye raasta MARA (return 0).
+                             kyunki 0 ka koi letter nahi, aur "01" bhi A nahi (leading zero).
+        RULE-2  2 ANK tabhi lo jab wo 10..26 me ho ->  s[i]=='1'  ya  (s[i]=='2' && s[i+1]<='6')
+                             ("27" -> 2 ank invalid, sirf 1-ank raasta bachta)
+
+     TREE ("226") -- har node = jo string abhi BACHI hai, har edge = kitne ank uthaye:
+
+                            "226"
+                    ┌─────────┴──────────┐
+                  2 liya              22 liya
+                    │                    │
+                  "26"                  "6"
+              ┌─────┴──────┐             │
+            2 liya      26 liya        6 liya
+              │            │             │
+             "6"          ""             ""
+              │          KHATAM        KHATAM
+            6 liya
+              │
+             ""
+           KHATAM
+
+        neeche "" = string khatam = EK poora decoding ban gaya. teen KHATAM = answer 3.
+        "6" wala node DO jagah aaya (left me aur right me) -- dusri baar memo se seedha utha,
+        dobara neeche nahi gaya. yahi dp[] ka poora kaam.
+        do base: i==n -> 1 (khatam tak pahunchna HI ek valid tareeka hai, isliye 1 na 0)
+                 s[i]=='0' -> 0 (raasta mara)
+
+     TEMPLATE (top-down memo on index):
+         int solve(int i, string &s, int n, vector<int> &dp){
+             if(i == n)      return 1;                 // ★ KRAM: i==n PEHLE
+             if(s[i] == '0') return 0;                 //    s[i] BAAD me
+             if(dp[i] != -1) return dp[i];
+             int ans = solve(i+1, s, n, dp);           // 1 ank
+             if(i+1 < n && (s[i]=='1' || (s[i]=='2' && s[i+1]<='6')))
+                 ans += solve(i+2, s, n, dp);          // 2 ank (tabhi jab 10..26)
+             return dp[i] = ans;
+         }
+         // caller: vector<int> dp(n+1, -1); return solve(0, s, n, dp);
+
+     ★ EDGE (yahin galti hoti):
+       1. BASE ka KRAM -- i==n PEHLE, s[i]=='0' BAAD. ulta likha to i==n pe s[i] = string ke BAHAR.
+          (C++ me s[n] = '\0' deta hai isliye ulta bhi CHAL jaata -- par wo us ek guarantee pe tika hai. Seedha likho.)
+       2. i==n pe 1 lautao, 0 nahi. (0 lauta diya to poora answer 0.)
+       3. "10" -> 1 (sirf "10"=J; "1","0" me 0 akela invalid)   ·   "100" -> 0   ·   "06" -> 0   ·   "27" -> 1
+       4. dp ka size n+1 (i==n tak jaata hai), n nahi.
+
+     KAB YE PATTERN: string ko TUKDON me kaato + har tukda ek RULE pass kare + kitne tareeke/kam-se-kam
+        -> index pe DP. (word-break bhi yahi shakl -- wahan rule "dictionary me hai kya", yahan "1..26 me hai kya".)
+
+ ┌──────────────────────────────────────────────────────────────
  │ ▸ HOUSE ROBBER (LC-198)  = har step pe TAKE/SKIP choice + max
  └──────────────────────────────────────────────────────────────
      SAAR : adjacent ghar loot nahi sakte -> max paisa. har ghar i pe 2 CHOICE:
