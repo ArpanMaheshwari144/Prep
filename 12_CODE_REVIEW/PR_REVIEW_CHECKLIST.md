@@ -53,6 +53,11 @@ KADAM 3 — PHIR 5-bucket list pe ek sweep (neeche). Jo (a)(b)(c) me nahi aaya, 
                             (auth · validation · error-code)
                             -> aankh KABHI nahi pakdegi. Dekhne ko kuch hai hi nahi.
 
+   ★ AUR YE JAAN-KAARI ka mamla NAHI hai (Arpan ne saaf kiya):
+      "auth to seekha hua hai — par FILE SCAN karte waqt uske liye DEKHNA
+       kabhi seekha hi nahi."
+      Matlab gap gyaan me nahi, SCAN ki aadat me hai. Aur aadat list se banti hai.
+
    -> gayab cheez HUNT se nahi milti. Uske liye LIST chahiye. Ginni padti hai:
 
    Paise/data BADALNE wale kisi bhi endpoint pe — har line pe tick ya cross:
