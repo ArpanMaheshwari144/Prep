@@ -3375,13 +3375,6 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          }
          // caller: vector<int> dp(n+1, -1); return solve(0, s, n, dp);
 
-     ★ EDGE (yahin galti hoti):
-       1. BASE ka KRAM -- i==n PEHLE, s[i]=='0' BAAD. ulta likha to i==n pe s[i] = string ke BAHAR.
-          (C++ me s[n] = '\0' deta hai isliye ulta bhi CHAL jaata -- par wo us ek guarantee pe tika hai. Seedha likho.)
-       2. i==n pe 1 lautao, 0 nahi. (0 lauta diya to poora answer 0.)
-       3. "10" -> 1 (sirf "10"=J; "1","0" me 0 akela invalid)   ·   "100" -> 0   ·   "06" -> 0   ·   "27" -> 1
-       4. dp ka size n+1 (i==n tak jaata hai), n nahi.
-
      KAB YE PATTERN: string ko TUKDON me kaato + har tukda ek RULE pass kare + kitne tareeke/kam-se-kam
         -> index pe DP. (word-break bhi yahi shakl -- wahan rule "dictionary me hai kya", yahan "1..26 me hai kya".)
 
