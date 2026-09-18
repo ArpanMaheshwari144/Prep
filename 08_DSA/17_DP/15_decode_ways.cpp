@@ -31,14 +31,14 @@ using namespace std;
 
 int solve(int i, string s, int n, vector<int> &dp)
 {
-    if (s[i] == '0')
-    {
-        return dp[i] = 0;
-    }
-
     if (i == n)
     {
-        return dp[i] = 1;
+        return dp[i] = 1;      // poori string kat gayi = 1 valid tareeka mila
+    }
+
+    if (s[i] == '0')
+    {
+        return dp[i] = 0;      // '0' se koi decode SHURU hota hi nahi -> ye raasta mara
     }
 
     if (dp[i] != -1)
