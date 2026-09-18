@@ -289,6 +289,204 @@ OFFSET = position in partition
 
 ---
 
+## ═══ HANDS-ON — KAFKA REPLAY (asli Kafka, docker, 18-Sep) ═══
+
+> Setup: `07_PROJECTS/usercrud/docker-compose.yml` ka `kafka` service (apache/kafka:3.8.0, KRaft).
+> Har command + uska ASLI output.
+
+### TASVEER — pehle ye, baaki sab isi ka naam hai
+
+```
+TOPIC = teen ALMARI (partition 0,1,2). Har almari me DABBE ek line me, number 0 se.
+Naya dabba hamesha line ke AAKHIR me judta. Beech me ghusana / purana hatana = hota hi nahi.
+
+PARCHI (offset) = har almari pe chipki, likha hai "agla dabba main yahan se uthaunga".
+   - parchi CONSUMER ke paas nahi, KAFKA ke paas rehti hai
+   - parchi par ek hi number, naya likha to purana MIT gaya
+   - parchi hilane se DABBON ko kuch nahi hota
+
+★ parchi ALMARI ki nahi, GROUP ki hoti hai -> ek hi almari pe kai groups ki alag parchi
+```
+
+### 1. Topic banaya
+
+```
+kafka-topics.sh --create --topic orders --partitions 3 --replication-factor 1
+   Created topic orders.
+
+kafka-topics.sh --describe --topic orders
+   Partition: 0   Leader: 1   Replicas: 1   Isr: 1
+   Partition: 1   Leader: 1   Replicas: 1   Isr: 1
+   Partition: 2   Leader: 1   Replicas: 1   Isr: 1
+```
+`Replicas: 1` = ek hi copy (ek hi broker hai). `Isr` = jo copies leader ke saath chal rahi hain —
+sirf yahi leader ban sakti hain.
+
+### 2. 9 dabbe — BINA key
+
+```
+seq 1 9 | sed 's/^/order-/' | kafka-console-producer.sh --topic orders
+kafka-get-offsets.sh --topic orders
+   orders:0:0
+   orders:1:0
+   orders:2:9        <- SAB ek hi almari me
+```
+★ key na ho to Kafka round-robin NAHI karta — **sticky** hai: ek partition chun ke batch bharne tak
+wahin daalta rehta (network ke liye sasta). Purane Kafka me round-robin tha, 2.4 se ye.
+
+### 3. 9 dabbe — key ke SAATH
+
+```
+printf 'u1:order-1\nu2:order-2\n...' > /tmp/o.txt
+kafka-console-producer.sh --topic orders --property parse.key=true --property key.separator=: < /tmp/o.txt
+kafka-get-offsets.sh --topic orders
+   orders:0:3
+   orders:1:3
+   orders:2:12       <- 9 purane + 3 naye
+```
+Naye 9 gaye **3-3-3**. Niyam: `hash(key) % partitions`.
+★ Isliye `u1` ke saare message HAMESHA usi almari me -> **ek customer ka KRAM bana rehta hai.**
+
+```
+almari 0 :  [x][x][x]
+almari 1 :  [x][x][x]
+almari 2 :  [o1][o2]...[o9][x][x][x]        <- naye dabbe 9,10,11 number pe
+```
+
+### 4. Pehli baar padha — group `billing`
+
+```
+kafka-console-consumer.sh --topic orders --from-beginning --group billing --timeout-ms 8000
+   order-2, order-4, order-9, order-1, order-3, order-6, order-1, order-2, ...
+   Processed a total of 18 messages
+```
+Kram BIKHRA hua aaya — consumer teeno almari se saath-saath kheenchta hai.
+★ **Poore topic me kram hota hi nahi. Kram sirf EK PARTITION ke andar pakka hai.**
+(wo purane 9 ek saath sahi kram me dikhe — kyunki wo ek hi almari me the)
+
+`TimeoutException` = error nahi; 8 sec naya message na aane pe consumer band ho gaya.
+
+### 5. Parchi dekhi
+
+```
+kafka-consumer-groups.sh --describe --group billing
+   Consumer group 'billing' has no active members.
+
+   PARTITION   CURRENT-OFFSET   LOG-END-OFFSET   LAG
+       0             3                3            0
+       1             3                3            0
+       2            12               12            0
+```
+```
+CURRENT-OFFSET = PARCHI kahan hai        ("main yahan tak padh chuka")
+LOG-END-OFFSET = DABBE kahan tak hain    ("itna maal maujood hai")
+LAG            = dono ka antar           (production me ISI pe alert lagta hai)
+```
+`no active members` = consumer band, par **parchi Kafka ke paas rehti hai**
+(ek chhupe topic `__consumer_offsets` me). Padhne se dabba MITTA NAHI — Kafka queue nahi, **LOG** hai.
+Dabbe tab hatte hain jab retention poori ho, padhe jaane par nahi.
+
+### 6. Wahi command DOBARA — 0 message
+
+```
+kafka-console-consumer.sh --topic orders --from-beginning --group billing --timeout-ms 8000
+   Processed a total of 0 messages
+```
+★ `--from-beginning` ka asli matlab: *"agar is group ki PARCHI hai hi nahi, to shuru se."*
+```
+parchi NAHI  ->  --from-beginning chalta hai  ->  shuru se
+parchi HAI   ->  flag CHUP  ->  parchi jeetti hai
+```
+
+### 7. Naye group `audit` se padha — wahi 18 wapas
+
+```
+kafka-console-consumer.sh --topic orders --from-beginning --group audit --timeout-ms 8000
+   ... wahi 18 message, wahi kram
+```
+★★ **Parchi GROUP ki hoti hai, almari ki nahi:**
+```
+almari 2 :  [o1][o2]...[o9][x][x][x]
+                  ^                ^
+            audit ki parchi   billing ki parchi
+```
+Dabbe ek hi baar disk pe. billing apne hisaab se padhta, audit apne hisaab se.
+Purani queue (RabbitMQ/JMS): ek ne uthaya to KHATAM, dusre ko nahi milta.
+Kafka: koi uthata hi nahi, sab sirf DEKHTE hain.
+
+→ Isi se ek topic pe kai team baith jaati hain (billing · audit · analytics · fraud-check).
+Kal paanchvi team aaye — naya group naam le, poora itihaas mil jaata. Producer me ek line nahi badalti.
+
+### 8. REPLAY — parchi peeche khiskayi
+
+**Pehle DRY-RUN** (kuch badla nahi, sirf pucha "kya karoge"):
+```
+kafka-consumer-groups.sh --group billing --topic orders --reset-offsets --to-earliest --dry-run
+   GROUP     TOPIC    PARTITION   NEW-OFFSET
+   billing   orders       0           0
+   billing   orders       1           0
+   billing   orders       2           0
+```
+
+**Phir EXECUTE:**
+```
+kafka-consumer-groups.sh --group billing --topic orders --reset-offsets --to-earliest --execute
+kafka-consumer-groups.sh --describe --group billing
+
+   PARTITION   CURRENT-OFFSET   LOG-END-OFFSET   LAG
+       0             0                3            3
+       1             0                3            3
+       2             0               12           12
+```
+★ **DABBON ko haath nahi laga** — `LOG-END-OFFSET` waise ka waisa (3/3/12).
+Sirf parchi hili. LAG 0 se 18 ho gaya.
+
+★ **Purana 3/3/12 MIT gaya** — parchi par ek hi number hota hai, upar likh diya gaya. Koi undo nahi.
+
+### 9. Dobara padha — 18 wapas, BINA `--from-beginning`
+
+```
+kafka-console-consumer.sh --topic orders --group billing --timeout-ms 8000
+   ... 18 message
+   Processed a total of 18 messages
+```
+Flag tha hi nahi. Parchi 0 pe thi, isliye shuru se mila. **Faisla hamesha PARCHI ka, flag ka nahi.**
+
+### ★ RESET karte waqt — do aadat
+
+```
+1. PEHLE --describe chala ke purane number LIKH LO   -> wahi teri "undo" hai
+                                                        (--to-offset 12 se wapas ja sakte ho)
+2. --dry-run pehle, --execute baad me
+   (Kafka sakht hai: dono me se ek diye bina command chalta hi nahi)
+```
+★ Reset tabhi chalta hai jab group ka **koi consumer chal na raha ho** — isi liye har baar
+`has no active members` dikh raha tha. Chalta hua consumer apna purana offset wapas likh deta.
+
+### KAB REPLAY ZAROORAT PADTA — asli wajah
+
+```
+consumer me BUG tha (tax galat jud raha) -> 18 invoice galat ban gaye
+   bug theek kar diya, par wo 18 message "padhe hue" hain -> parchi unse AAGE hai
+   bina Kafka  : upstream se "2 din ka data dobara bhejo" (wo aksar kar hi nahi sakte)
+                 ya ek-baar ka backfill script (nayi jagah, nayi galti)
+   Kafka ke saath : parchi peeche karo -> wahi 18 dobara, theek code se
+```
+Aur jagah: nayi service ko poora itihaas chahiye · downstream DB kharab hua ·
+kharab message skip karna (`--shift-by`).
+
+★ **KEEMAT:** replay = wahi kaam **DOBARA**. Code paisa kaat raha ho to paisa do baar katega.
+→ consumer ka **IDEMPOTENT** hona zaroori hai (`usercrud` me `IdempotencyController` yahi kaam karta).
+Replay usko "achha rehne dete hain" se "zaroori hai" bana deta hai.
+
+### Ek line me (interview me bolne layak)
+
+> *"Kafka queue nahi, LOG hai — aur replay usi ka natija hai. Message padhne se mitta nahi, offset
+> sirf ek bookmark hai jo har consumer-group ka alag hota hai. Bookmark peeche karo, poora itihaas
+> dobara chal jaata hai. Keemat ye hai ki consumer idempotent hona chahiye."*
+
+---
+
 ## RabbitMQ Deep (key concepts)
 
 ```
