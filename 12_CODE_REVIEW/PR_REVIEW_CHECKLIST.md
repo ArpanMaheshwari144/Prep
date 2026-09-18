@@ -40,8 +40,54 @@ KADAM 2 — TEEN SAWAAL, is kram me. Har ek pe POORI file pe nazar daudao.
 
 KADAM 3 — PHIR 5-bucket list pe ek sweep (neeche). Jo (a)(b)(c) me nahi aaya, wo yahan milega.
 
-KADAM 4 — BOLO structured: security -> java-trap -> resource -> db -> design.
+★★ KADAM 4 — MUST-HAVE LIST  (18-Sep, Arpan-pakdi — ye sabse zaroori kadam hai)
+
+   Kadam 1-3 tak jo kiya wo HUNT tha — galat likhi hui line dhoondhna.
+   Par do bilkul alag kism ke bug hote hain:
+
+      GALAT LIKHA HUA   ->  line maujood hai, wo galat hai
+                            (SQL concat · Float · == · get(0))
+                            -> AANKH pakad leti hai. Hunt kaam karta hai.
+
+      LIKHA HI NAHI     ->  koi line hai hi NAHI
+                            (auth · validation · error-code)
+                            -> aankh KABHI nahi pakdegi. Dekhne ko kuch hai hi nahi.
+
+   -> gayab cheez HUNT se nahi milti. Uske liye LIST chahiye. Ginni padti hai:
+
+   Paise/data BADALNE wale kisi bhi endpoint pe — har line pe tick ya cross:
+   ```
+   [ ] AUTHORIZATION  bulane wale ka HAQ hai is resource pe?
+   [ ] VALIDATION     amount > 0? account exist? khud ko khud transfer?
+   [ ] TRANSACTION    multi-write ek saath commit/rollback?
+   [ ] IDEMPOTENCY    dobara chala to? (aur jo hai wo SACH me kaam karta hai?)
+   [ ] AUDIT          kaun, kab, kitna — record hua?
+   [ ] ERROR CODE     fail pe 4xx? ya sab 200 OK ja raha?
+   ```
+
+KADAM 5 — BOLO structured: security -> java-trap -> resource -> db -> design.
 ```
+
+> ★★ **AUTH ka SAHI FARAK (18-Sep, Arpan-pushback se nikla — ye maaf karne wali wajah BHI hai):**
+> ```
+> AUTHENTICATION   "kaun ho tum?"
+>                  -> SecurityConfig / JwtFilter me, EK jagah, saalon pehle likha
+>                  -> controller me dikhta hi NAHI, aur dikhna bhi nahi chahiye
+>                  -> isliye "controller me auth nahi hai" sochna ULTA lagta hai. Sahi lagta hai.
+>
+> AUTHORIZATION    "is ACCOUNT / ORDER pe tumhara HAQ hai?"
+>                  -> filter ye kar hi NAHI sakta — use `fromAcc` pata hi nahi,
+>                     wo to request me ABHI aaya hai
+>                  -> ye HANDLER me hi hona padega. Kahin aur ho hi nahi sakta.
+> ```
+> ★ **PAKADNE ka NISHAAN** (yaad rakhne se bahut aasan — ye ek SHAKAL hai):
+> ```
+> jab bhi REQUEST-PARAM me kisi CHEEZ ka naam aaye —
+>      accountId · orderId · userId · documentId
+> turant poochho: "ye cheez BULANE WALE ki hai — ye kahan check ho raha?"
+>
+> @RequestParam String fromAcc    <- yahin ruk jaana tha
+> ```
 
 > **★ KYUN teen sawaal PEHLE, checklist BAAD me:** checklist **shakal** pakadti hai
 > (hardcoded string, naya object, missing close) — wo aankh se dikh jaati hai.
@@ -165,6 +211,55 @@ CHHOOT GAYE (8):
    catch(Exception)+printStackTrace+return "FAILED"   DESIGN
    ★ no @Transactional + baahri charge beech me       FINANCE
    ★ no IDEMPOTENCY -> double charge                  FINANCE
+```
+
+### ★ Example 4 — TransferController (paisa transfer) — 18-Sep drill, 15 bug
+
+```
+PAKDE (7) — aur teen BHAARI wale jo pichli baar chhoote the, teeno aaye:
+   controller me DB query          layering / SRP
+   ★ @Transactional nahi           atomicity        <- 17-Sep ko chhoota tha
+   ★ SQL injection                  security         <- 17-Sep ko chhoota tha
+   constructor injection nahi      design
+   log me sensitive data           security
+   ★ idempotency nahi               finance          <- 17-Sep ko chhoota tha
+   rows.get(0) — khaali list pe crash
+
+CHHOOT GAYE (8):
+   ★★ KOI AUTHORIZATION NAHI      fromAcc request-param hai, maalik ka check kahin nahi
+                                   -> koi bhi kisi ka bhi account khaali kar sakta
+                                   = is file ka SABSE BADA bug
+   ★ NEGATIVE AMOUNT             "-5000" -> balance < amt paas -> balance-(-5000) = paisa BANA
+   status == "FROZEN"             Object pe == -> hamesha false -> frozen account bhi chal gaya
+   notifier.send() DO UPDATE ke BEECH  -> debit + "you received" bheja + credit FAIL
+   Float for money                ★ ye 17-Sep ko PAKDA tha, aaj chhoot gaya
+   recentTransfers = plain HashMap    4 bug ek saath:
+                                      thread-unsafe · kabhi clear nahi (leak) ·
+                                      key me amount/time nahi (dobara bhejna HAMESHA blocked) ·
+                                      instance field (2 pod = kaam hi nahi karega)
+                                      = idempotency ka DIKHAWA. "nahi hai" bolna SAHI tha.
+   har failure pe 200 OK          "INSUFFICIENT"/"FROZEN" bhi ResponseEntity.ok
+   MAX_RETRIES declare, use nahi  dead code
+```
+
+### ★ 17-Sep vs 18-Sep — ginti wahi, MAAL badal gaya
+
+```
+17-Sep   7 / 15      zyadatar SHAKAL wale (hardcoded string · missing close · field-injection)
+18-Sep   7 / 15      ab BEHAVIOUR wale (transaction · idempotency · injection) — teeno naye
+
+-> scan-protocol kaam kar raha hai. Ginti ko mat dekh, KISM ko dekh.
+```
+
+### ★ NAYA PATTERN jo 18-Sep ko dikha
+
+```
+STRUCTURE ke bug       ->  PAKAD raha   (layering · injection · transaction · idempotency)
+BUSINESS-LOGIC ke bug  ->  CHHOOT raha  (authz · negative amount · frozen-check · call ka order)
+
+-> chaaron BUSINESS wale "likha hi nahi" ya "galat niyat se chalao" kism ke hain
+-> isi liye KADAM 4 (MUST-HAVE LIST) joda gaya. Aaj ke 8 miss me se TEEN
+   seedha usi list se pakde jaate: authz · validation · error-code.
 ```
 
 ---
