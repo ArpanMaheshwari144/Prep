@@ -4,6 +4,9 @@
 
 > **HLD Topic 5 — Read scaling + High Availability**
 
+> ★ **YE SAB CHALA KE DEKHA HUA HAI** — failover · split brain · replica≠backup, asli Redis pe, har
+> command + output ke saath: [04_caching.md → HANDS-ON REPLICATION](04_caching.md#-hands-on--replication--failover--split-brain-asli-redis-18-sep)
+
 ---
 
 ## STORY — Library Master Copy + Photocopies

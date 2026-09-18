@@ -455,6 +455,257 @@ gayab ho sakti hai — aur pata tab chalega jab feature ruk jaayega. Koi error n
 
 ---
 
+## ═══ HANDS-ON — REPLICATION · FAILOVER · SPLIT BRAIN (asli Redis, 18-Sep) ═══
+
+> Upar wale eviction demo ka agla hissa, usi do container pe.
+> Sawaal: **"master mar jaaye to kya hota hai, aur kaun sa data marta hai?"**
+> Har command + uska ASLI output. Jo log-line neeche hai wo `docker logs` se copy ki hui hai.
+
+### Setup — dusra Redis, ek line me replica
+
+```yaml
+  redis-replica:
+    image: redis:7-alpine
+    container_name: redis-replica
+    ports:
+      - "6380:6379"                 # andar 6379, bahar 6380 (6379 master ne liya hua hai)
+    command: redis-server --replicaof redis-master 6379 --maxmemory 10mb
+    depends_on:
+      - redis-master
+    restart: unless-stopped
+```
+
+`--replicaof redis-master 6379` — bas itna. Replica khud master dhoondh ke poora data kheench leta hai,
+phir aage ka har badlaav sunta rehta hai.
+
+```
+docker compose up -d redis-replica
+docker exec redis-replica redis-cli GET mera:naam     ->  arpan
+```
+
+Replica pe kuch likha hi nahi, phir bhi key mili. Master ke logs:
+
+```
+Replica 172.19.0.3:6379 asks for synchronization
+Full resync requested by replica
+Diskless rdb transfer, done reading from pipe, 1 replicas still up.
+Synchronization with replica 172.19.0.3:6379 succeeded
+```
+
+**FULL RESYNC** — naya replica aaya to master ne apna poora snapshot socket pe bhej diya
+(`diskless` = disk pe file banaye bina, seedha network pe). Uske baad har badlaav stream hota hai.
+
+★ **Saath me ek aur cheez pakdi gayi:** `command:` badalne se compose ne **master ko bhi dobara banaya**
+(purana container delete, naya banaya) — aur phir bhi data bach gaya. Wajah neeche "RDB" wale hisse me.
+
+### Live stream — master pe likho, replica pe dikhe
+
+```
+docker exec redis-master  redis-cli FLUSHALL        ->  OK
+docker exec redis-master  redis-cli DBSIZE          ->  0
+docker exec redis-replica redis-cli DBSIZE          ->  0      <- replica ko chhua tak nahi
+
+docker exec redis-master  redis-cli SET shehar bangalore
+docker exec redis-replica redis-cli GET shehar      ->  bangalore
+docker exec redis-replica redis-cli DBSIZE          ->  1
+```
+
+`FLUSHALL` bhi replicate hota hai — hukum master pe chala, replica ne peeche se sun ke apna bhi saaf kiya.
+
+### Replica pe likhne ki koshish — saaf mana
+
+```
+docker exec redis-replica redis-cli SET shehar mumbai
+   READONLY You can't write against a read only replica.
+```
+
+**KYUN:** replication EK TARFA hai. Replica likhna maan leta to wo badlaav master tak jaata hi nahi —
+do Redis alag-alag sach lekar baith jaate. Aur agle resync pe replica apna sab phenk ke master ki copy
+banata — teri likhi cheez CHUPCHAP gayab. Error aana isse behtar hai.
+
+→ Niyam: **saare write leader pe, read kahin se bhi.** (wahi jo `05_database_replication.md` me likha hai)
+
+### Master maaro — padhna chalta hai, likhna ruk jaata hai
+
+```
+docker stop redis-master
+
+docker exec redis-replica redis-cli GET shehar                  ->  bangalore     <- READ ZINDA
+docker exec redis-replica redis-cli INFO replication | findstr /B master_link_status
+   master_link_status:down                                                        <- pata hai master mara
+
+docker exec redis-replica redis-cli SET shehar mumbai
+   READONLY You can't write against a read only replica.                          <- WRITE MARA
+```
+
+★★ **Redis ne KHUD SE KUCH NAHI KIYA.** Replica ko pata tha master gir gaya, phir bhi usne khud ko
+master banane ki koshish tak nahi ki.
+
+**Kyunki wo kar hi nahi sakta.** Replica ko ye nahi pata ki master *mara* hai ya sirf *network* toota hai.
+Agar farak kiye bina wo khud ko master bana le aur udhar purana master zinda ho — to DO master, dono likh
+rahe, dono ka data alag. Wo bimari data khone se buri hai.
+
+→ Promote hamesha **bahar se** hota hai. (production me wo "bahar wala" = Sentinel; neeche dekh)
+
+### Haath se failover
+
+```
+docker exec redis-replica redis-cli REPLICAOF NO ONE      ->  OK
+docker exec redis-replica redis-cli SET shehar mumbai     ->  OK      <- ab likh sakta hai
+docker exec redis-replica redis-cli GET shehar            ->  mumbai
+```
+
+### ★★ SPLIT BRAIN — purana master wapas aaya
+
+```
+docker start redis-master
+
+docker exec redis-master  redis-cli GET shehar   ->  bangalore     <- purana sach
+docker exec redis-replica redis-cli GET shehar   ->  mumbai        <- naya sach
+
+docker exec redis-master  redis-cli INFO replication | findstr /B role  ->  role:master
+docker exec redis-replica redis-cli INFO replication | findstr /B role  ->  role:master
+```
+
+```
+6379 (purana master)  ->  shehar = bangalore     role:master
+6380 (naya master)    ->  shehar = mumbai        role:master
+```
+
+**DONO MASTER. DONO LIKHNE KO TAIYAAR. DONO KA SACH ALAG.**
+
+App chal rahi hoti to kuch client 6379 pe likhte, kuch 6380 pe. Koi error nahi aata. Aur Redis ke paas
+inhe **jodne ka koi tareeka nahi** — kaun sa sach asli hai, ye machine tay nahi kar sakti.
+
+★ Galti kahan hui: promote karte waqt ye pakka nahi kiya ki purana master waqai mar chuka hai,
+aur lautne pe use turant replica nahi banaya. Dono kaam Sentinel karti hai.
+
+**Sulajhana = kisi ek ka data MAARNA:**
+
+```
+docker exec redis-master redis-cli REPLICAOF redis-replica 6379   ->  OK
+docker exec redis-master redis-cli GET shehar                     ->  mumbai
+```
+
+`bangalore` hamesha ke liye gaya. Jodne ka rasta hota hi nahi — bas chunna hota hai kiska sach rahega.
+Agar uski jagah kisi customer ka asli order hota, wo ab kahin nahi hai, kisi log me bhi nahi.
+
+**TEEN NIYAM jo isse nikalte hain:**
+```
+1. write hamesha EK jagah          -> do maalik banne hi mat do
+2. promote khud se nahi, BAHUMAT se -> quorum tay kare ki master waqai mara
+3. lauta hua purana master TURANT replica bane -> warna purana sach leke ghoomta rahega
+```
+
+★ **Aur: failover MUFT NAHI hota.** Master ke paas jo replica tak nahi pahuncha tha, wo failover me
+mar jaata hai. Isliye paise wale system me `WAIT`/semi-sync lagta hai — likhna dheema karo, par
+guarantee lo ki kam se kam ek replica tak pahunch gaya.
+
+### ★★ RDB — `docker stop` vs `docker kill` (sabse chaunkane wala hissa)
+
+Redis data RAM me rakhta hai, par beech-beech me `dump.rdb` — poore data ki ek photo — disk pe likhta hai.
+Redis image `/data` ko Docker volume banati hai, to container delete hone pe bhi wo file bachti hai.
+
+**SHAANT MAUT (`docker stop` = SIGTERM):** Redis turant marta nahi — pehle RAM ka sab kuch `dump.rdb`
+me likhta hai, phir band hota hai. Isi liye upar container dobara banne par bhi `mera:naam` bach gayi:
+
+```
+Loading RDB produced by version 7.4.11
+RDB age 1 seconds                        <- ek second pehle bani = MARTE WAQT
+Done loading RDB, keys loaded: 1
+```
+
+**GOLI (`docker kill` = SIGKILL):** likhne ka mauka hi nahi milta.
+
+```
+docker exec redis-master  redis-cli SET test:kill zinda
+docker exec redis-master  redis-cli GET test:kill    ->  zinda
+docker exec redis-replica redis-cli GET test:kill    ->  zinda      <- replica ke paas BHI hai
+
+docker kill redis-master
+docker exec redis-replica redis-cli GET test:kill    ->  zinda      <- replica pe abhi bhi zinda
+
+docker start redis-master
+docker exec redis-master  redis-cli GET test:kill    ->  (khaali)   <- master ne khoya
+docker exec redis-replica redis-cli GET test:kill    ->  (khaali)   <- REPLICA NE BHI PHENK DI
+```
+
+```
+docker stop  (SIGTERM)  ->  "ruk, main likh ke aata hoon"  ->  data BACHA
+docker kill  (SIGKILL)  ->  koi mauka nahi                 ->  data GAYA
+```
+
+Asli duniya me bijli jaana · OOM-killer · kernel panic — sab `kill` wale hain.
+Isliye "Redis disk pe likh leta hai" pe bharosa mat karo jab tak **AOF** na chalaya ho
+(AOF = photo ki jagah DIARY — har write command saath-ke-saath log me; dheema, par crash pe lagbhag
+kuch nahi khota. Hamare compose me AOF on nahi hai).
+
+### ★★ REPLICA ≠ BACKUP (is demo ki sabse badi seekh)
+
+Replica ke paas `zinda` MAUJOOD thi. Master khaali laut aaya. Replica ne kya kiya — uske apne logs:
+
+```
+Discarding previously cached master state.
+MASTER <-> REPLICA sync: Flushing old data          <- apna SAHI data KHUD phenka
+Done loading RDB, keys loaded: 1
+MASTER <-> REPLICA sync: Finished with success
+```
+
+Usne bina sawaal apni sahi copy phenk di. **Kyunki replica ka kaam sach rakhna nahi — master ki
+hubahu naql banna hai.** Master ke paas jo nahi, wo replica ke paas bhi nahi hona chahiye.
+
+> **Replica BACKUP nahi hai.** Backup PURANA rakhta hai. Replica TURANT naql karta hai — galti bhi,
+> khaalipan bhi. Master pe galti se `FLUSHALL` chala to replica bhi usi second khaali.
+> Recovery ke liye alag snapshot/backup chahiye — replica us kaam ka hai hi nahi.
+
+### PRODUCTION me ye sab kaun karta — SENTINEL
+
+> ⚠ Ye hissa **chala ke nahi dekha** — Redis docs se hai. Upar ka sab kuch chala ke dekha hua hai.
+
+`REPLICAOF NO ONE` production me koi insaan nahi chalata. **Sentinel** chalati hai — Redis ke saath aati
+hui alag process (`redis-sentinel`), data nahi rakhti, sirf chaukidari. 3 ya 5 chalate hain, alag machine pe.
+
+```
+1. har Sentinel master ko ping karti hai
+2. jawab na aaye -> akele me "shayad mara" (subjectively down)
+3. QUORUM itni Sentinels bhi haan kahein -> "pakka mara" (objectively down)
+4. Sentinels aapas me ek LEADER chunti hain (taaki do Sentinel do alag replica promote na kar dein)
+5. leader sabse behtar replica ko REPLICAOF NO ONE bhejti hai
+6. baaki replicas ko REPLICAOF <naya master>
+7. ★ purana master laute -> Sentinel use TURANT replica bana deti hai  (= split brain rukta hai)
+```
+
+```
+sentinel monitor mymaster 10.0.0.5 6379 2
+sentinel down-after-milliseconds mymaster 5000
+sentinel failover-timeout mymaster 60000
+sentinel parallel-syncs mymaster 1
+```
+- `2` = quorum (3 me se 2 haan kahein tabhi failover)
+- `down-after 5000` — chhota rakho to network ke ek jhatke pe faltu failover; bada rakho to downtime lamba
+- `parallel-syncs 1` — ek waqt me ek hi replica sync kare, warna sab milke naye master ko bitha denge
+
+★ **Jo log bhool jaate hain — APP ko bhi badalna padta hai.** Master ka IP hardcoded hai to failover ke
+baad app mare hue IP pe hi jaati rahegi. App ko Sentinel se POOCHNA padta hai "abhi master kaun hai":
+
+```properties
+spring.data.redis.sentinel.master=mymaster
+spring.data.redis.sentinel.nodes=s1:26379,s2:26379,s3:26379
+```
+Lettuce/Jedis dono ye samajhte hain aur failover pe khud naye master pe switch kar lete hain.
+
+**Asli duniya:** ElastiCache / Azure Cache jaise managed me ye sab wo khud karte hain — ek endpoint milta
+hai, peeche se naye master pe mod dete hain. Isi liye zyadatar team khud Sentinel nahi chalati.
+
+### Ek line me (interview me bolne layak)
+
+> *"Replica availability deta hai, safety nahi. Master gire to padhna chalta rehta hai — par likhna tab tak
+> ruka rehta hai jab tak koi BAHAR se promote na kare, aur wo faisla bahumat se hona chahiye warna split
+> brain ho jaata hai, jise sulajhane ka matlab hai kisi ek ka data maarna. Aur replica backup nahi hai —
+> wo master ki galti bhi usi second naql kar leta hai."*
+
+---
+
 ## Real-World Cache Tools
 
 ### **Redis** (modern choice — 80% market)
