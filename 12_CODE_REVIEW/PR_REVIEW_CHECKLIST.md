@@ -252,13 +252,66 @@ CHHOOT GAYE (8):
    MAX_RETRIES declare, use nahi  dead code
 ```
 
+### ★★ AAJ KE 8 MISS KA NISHAAN — "code me kya DIKHA tha, aur kya POOCHNA tha"
+
+> Miss ki list padhne se kuch nahi hota. Har miss ke saamne ek cheez code me SAAF dikh rahi thi.
+> Agli baar wo cheez dikhe -> sawaal apne-aap chalna chahiye. Yahi ratt-ne wali table hai.
+
+```
+NISHAAN (jo aankh ke saamne tha)          ->  SAWAAL (jo turant chalna chahiye)
+-----------------------------------------------------------------------------------------
+request me kisi ki CHEEZ ka naam              "bhejne wala iska MAALIK hai? check kahan?"
+(fromAccount · orderId · userId)              (filter me ho hi nahi sakta — usne ye param
+                                               dekha hi nahi. @PreAuthorize/service/aspect
+                                               me ho sakta -> POOCHO, ilzaam mat lagao)
+
+request se aaya NUMBER, aur usse              "iski HAD kahan check hui?
+ghatao/jodo ho raha                            -ve? 0? bahut bada? decimal?"
+                                               (-5000 -> balance-(-5000) = paisa BANA)
+
+Object/String pe  ==                          "ye reference jod raha ya value?"
+                                               (status=="FROZEN" -> hamesha false ->
+                                                frozen account bhi nikal gaya)
+
+do DB-update ke BEECH me koi BAAHAR ka call   "agla step fail hua to jo BAHAR ja chuka
+(mail · notification · 3rd-party API)          use wapas laa sakte ho?"
+                                               (debit -> "paisa aaya" bhej diya -> credit fail)
+
+float / double + paisa                        "ye paisa hai -> BigDecimal"
+                                               ★ ye 17-Sep ko PAKDA tha, 18-Sep ko CHHOOT gaya.
+                                               Ek baar pakad lene se ye yaad nahi rehta —
+                                               isi liye ye LIST me hai, yaad me nahi.
+
+controller/service me koi MUTABLE field       "ye har request me SAANJHA hai —
+(Map · List · counter · flag)                  thread-safe? kabhi khaali hota? 2 pod pe chalega?"
+                                               (recentTransfers = idempotency ka DIKHAWA)
+
+ResponseEntity.ok  failure waali branch me    "is haalat ka HTTP code kya hona chahiye?
+                                                400 / 409 / 422?"
+                                               (INSUFFICIENT bhi 200 OK ja raha tha)
+
+koi constant/field DECLARE hua                "ye use kahan hua?" — kahin nahi = dead code
+                                               (MAX_RETRIES)
+```
+
+```
+★ EK BAAT JO IS DRILL NE SAAF KI:
+  "idempotency nahi hai" bolna SAHI tha — jabki Map maujood tha.
+  Kyunki wo Map kaam hi nahi karta (thread-unsafe · kabhi clear nahi · key adhoori · instance field).
+  -> MAUJOOD HONA aur KAAM KARNA do alag baat hai. Cheez dikhe to ruk ke poochho
+     "ye waqai wo kaam karti hai jiske liye rakhi hai?" — dikh gayi, tick laga diya, ye galti hai.
+```
+
 ### ★ 17-Sep vs 18-Sep — ginti wahi, MAAL badal gaya
 
 ```
 17-Sep   7 / 15      zyadatar SHAKAL wale (hardcoded string · missing close · field-injection)
 18-Sep   7 / 15      ab BEHAVIOUR wale (transaction · idempotency · injection) — teeno naye
 
--> scan-protocol kaam kar raha hai. Ginti ko mat dekh, KISM ko dekh.
+-> KISM behtar hui, ginti nahi badli.
+   ★ par ye SAAF NAAP nahi hai — do PR alag the, mushkil bhi alag thi.
+     "protocol kaam kar gaya" tabhi kehna jab TEESRI drill bhi behaviour-wale bug de.
+     Abhi tak ka sach: 2 drill, dono 7/15.
 ```
 
 ### ★ NAYA PATTERN jo 18-Sep ko dikha
