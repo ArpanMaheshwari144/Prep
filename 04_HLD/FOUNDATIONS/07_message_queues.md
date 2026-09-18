@@ -263,6 +263,38 @@ SOLUTION (Kafka = central event LOG):
 > **1-line:** N×N spaghetti se bachne ko sab kuch ek central durable event-log mein —
 > producer blind, consumer subscribe, replay possible. LinkedIn = pub-sub at its core.
 
+**★ AUR GEHRA — unhone MQ banaya hi NAHI tha (18-Sep):**
+```
+Us waqt ke MQ (ActiveMQ/JMS) is kaam ke liye theek nahi baithe, 3 wajah:
+   1. HAR MESSAGE ka hisab rakhte the (kisko diya, kisne ack kiya, dobara kisko bhejna)
+      -> mehnga; volume badhne pe BROKER khud ghutne tek deta
+   2. padhne pe message MITT jaata -> ek team ne le liya, dusri ko nahi
+   3. isi wajah se NAYA consumer purana data kabhi nahi paa sakta tha
+
+Jay Kreps + team ne ULTA sawaal pucha: "DB apne andar kya karta hai?"
+   -> WRITE-AHEAD LOG. Ek file jisme sirf AAGE likha jaata hai.
+   -> aur disk ki sabse TEZ cheez yahi hai: seedhi lambi likhai (sequential write),
+      random likhai se kai guna tez.
+
+To unhone MQ banana chhoda hi nahi -- unhone ek BAANTA HUA COMMIT LOG banaya,
+aur DO faisle liye jinse baaki sab khud nikla:
+   1. padhne pe kuch MAT mitao   -> message rehne do; umar (retention) poori ho tabhi hatao
+   2. hisab BROKER se HATAO      -> broker ka kaam bas "aage likho + byte range do"
+                                    kaun kahan tak padha = sirf EK NUMBER (offset)
+
+   -> isi se: replay · kai team ek hi data pe · naye consumer ko poora itihaas
+   -> aur throughput bhi: broker ko per-message kuch sochna hi nahi,
+      OS ka page cache + zero-copy seedha network pe bhej deta hai
+```
+
+★ **Isliye ULTA kehna zyada sach hai:**
+> *Kafka MQ banane ki koshish me log nahi bana. Wo LOG banaya gaya tha — aur MQ uska ek ISTEMAAL nikal aaya.*
+
+**Jo MQ me normal hai par Kafka me hai hi NAHI** (kami nahi — us faisle ki KEEMAT hai):
+```
+per-message ack  ·  ek message ko haTA dena  ·  priority queue  ·  ek message ko dobara kataar me daalna
+```
+
 ---
 
 ## Kafka Deep (key concepts)
