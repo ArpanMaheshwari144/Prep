@@ -59,6 +59,42 @@ services:
       - redis-master
     restart: unless-stopped
 
+  sentinel-1:
+    image: redis:7-alpine
+    container_name: sentinel-1
+    ports:
+      - "26379:26379"
+    depends_on:
+      - redis-master
+    command: sh -c "IP=$$(getent hosts redis-master | cut -d' ' -f1); printf 'port 26379\nsentinel monitor
+      mymaster %s 6379 2\nsentinel down-after-milliseconds mymaster 5000\nsentinel failover-timeout mymaster
+      10000\nsentinel parallel-syncs mymaster 1\n' $$IP > /tmp/sentinel.conf; redis-sentinel /tmp/sentinel.conf"
+    restart: unless-stopped
+
+  sentinel-2:
+    image: redis:7-alpine
+    container_name: sentinel-2
+    ports:
+      - "26380:26379"
+    depends_on:
+      - redis-master
+    command: sh -c "IP=$$(getent hosts redis-master | cut -d' ' -f1); printf 'port 26379\nsentinel monitor
+      mymaster %s 6379 2\nsentinel down-after-milliseconds mymaster 5000\nsentinel failover-timeout mymaster
+      10000\nsentinel parallel-syncs mymaster 1\n' $$IP > /tmp/sentinel.conf; redis-sentinel /tmp/sentinel.conf"
+    restart: unless-stopped
+
+  sentinel-3:
+    image: redis:7-alpine
+    container_name: sentinel-3
+    ports:
+      - "26381:26379"
+    depends_on:
+      - redis-master
+    command: sh -c "IP=$$(getent hosts redis-master | cut -d' ' -f1); printf 'port 26379\nsentinel monitor
+      mymaster %s 6379 2\nsentinel down-after-milliseconds mymaster 5000\nsentinel failover-timeout mymaster
+      10000\nsentinel parallel-syncs mymaster 1\n' $$IP > /tmp/sentinel.conf; redis-sentinel /tmp/sentinel.conf"
+    restart: unless-stopped
+
   # ─────────────────────────────────────────────
   # MySQL DATABASE service
   # ─────────────────────────────────────────────
