@@ -305,6 +305,156 @@ Each entry has expiry → auto-evicted
 
 ---
 
+## ═══ HANDS-ON — EVICTION LIVE (asli Redis, docker, 18-Sep) ═══
+
+> Upar ki theory ko CHAL KE dekha. Har command + uska ASLI output neeche likha hai.
+> Setup: `07_PROJECTS/usercrud/docker-compose.yml` me `redis-master` service (redis:7-alpine).
+> Poora sawaal jise saabit karna tha: **"cache bhar jaaye to kya hota hai, aur kaun sa maal marta hai?"**
+
+### Setup
+
+```yaml
+  redis-master:
+    image: redis:7-alpine
+    container_name: redis-master
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 2mb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
+```
+
+```
+docker compose up -d redis-master
+docker exec redis-master redis-cli ping        ->  PONG
+```
+
+### ★ GALTI 1 — maxmemory BASELINE se neeche rakh diya (asli production gotcha)
+
+```
+docker exec redis-master redis-cli INFO memory
+   used_memory_human : 1.08M       <- KHAALI Redis, 0 key, phir bhi 1 MB kha chuka
+   maxmemory_human   : 2.00M
+   DBSIZE            : 0
+
+docker exec redis-master redis-benchmark -t set -n 100000 -r 100000 -d 200 -q
+   Error from server: OOM command not allowed when used memory > 'maxmemory'.
+```
+
+**KYUN:** `maxmemory` poore Redis process ki memory ginta hai, sirf teri keys ki nahi.
+Khaali Redis hi 1.08 MB le chuka tha (andaruni structures + client buffers) — bachi sirf ~0.9 MB.
+Benchmark ke 50 client khulte hi limit paar. Ab Redis ne evict karna chaha, **par keys thi hi nahi** —
+jo memory bhari thi wo keys ki thi hi nahi. Isliye haath khade: `OOM`.
+
+**SABAK:** `maxmemory` hamesha baseline se KAAFI upar. Warna Redis ke paas phenkne ko kuch bachta hi nahi.
+
+```
+docker exec redis-master redis-cli CONFIG SET maxmemory 10mb
+```
+
+### ★ GALTI 2 — `DEBUG POPULATE` Redis 7 me band hai
+
+```
+DEBUG POPULATE 100000
+   (error) ERR DEBUG command not allowed. If the enable-debug-command option is set to "local"...
+```
+Startup flag chahiye, chalte-chalte on nahi hota (koi galti se `DEBUG SEGFAULT` na maar de).
+Iski jagah **`redis-benchmark`** — Redis ke saath hi aata hai, aur asli load jaisa hai.
+
+```
+redis-benchmark -t set -n 5000 -r 5000 -d 500 -q
+   -t set    sirf SET chalao
+   -n 5000   itne command bhejo
+   -r 5000   itne alag key-naam ke daayre me se chuno
+   -d 500    har value 500 byte
+   -q        chup-chaap, bas aakhri line
+```
+
+### PRAYOG A — `allkeys-lru` : teri key BHI mar jaati
+
+```
+docker exec redis-master redis-cli FLUSHALL
+docker exec redis-master redis-cli CONFIG RESETSTAT
+docker exec redis-master redis-cli SET mera:naam arpan
+```
+
+| kadam | command | DBSIZE | used_memory | evicted_keys | `GET mera:naam` |
+|---|---|---|---|---|---|
+| 0 | (sirf apni key) | 1 | 1.11M | 0 | `arpan` |
+| 1 | `-n 10 -r 10 -d 500` | **8** | — | 0 | `arpan` |
+| 2 | `-n 5000 -r 5000 -d 500` | 3163 | 2.85M | 0 | `arpan` |
+| 3 | `-n 30000 -r 30000 -d 500` | 12714 | **8.22M** | **9712** | **(khaali)** |
+
+**Kadam 1 me 10 daale the, 7 kyun bani?** `-r 10` = sirf 10 naam ka daayra. 10 SET ne aankh band
+karke naam chune — kuch naam DO baar aa gaye. `SET` ka niyam: key pehle se hai to nayi nahi banti,
+purani ke upar likh jaata hai. To 10 me se ~7 alag nikle (+ `mera:naam` = 8). `KEYS *` ne saabit kiya:
+
+```
+key:000000000000  key:000000000002  key:000000000003  key:000000000004
+key:000000000005  key:000000000006  key:000000000008  mera:naam
+    ^ key:1, key:7, key:9 GAYAB — wo teen dabbe kisi ne chune hi nahi
+```
+
+**Kadam 3 ka asli natija:** 30,000 SET bheje. DBSIZE sirf +9551 badhi, aur 9712 keys PHENK di gayi.
+Memory 10 MB se **kabhi paar nahi gayi** (8.22M pe ruki). Koi error nahi, koi crash nahi — Redis chalta raha.
+
+★ **Aur `mera:naam` MAR GAYI.** Delete nahi ki thi, TTL nahi lagayi thi.
+`allkeys-lru` ka matlab hi hai *saari* keys ki bali chadh sakti hai — Redis ko nahi pata
+ki koi key tere liye khaas hai. 3 kadam se chhui nahi thi, to LRU ki nazar me wahi sabse purani thi.
+
+### PRAYOG B — `volatile-lru` : sirf TTL wali marti hain
+
+```
+docker exec redis-master redis-cli CONFIG SET maxmemory-policy volatile-lru
+docker exec redis-master redis-cli FLUSHALL
+docker exec redis-master redis-cli CONFIG RESETSTAT
+docker exec redis-master redis-cli SET mera:naam arpan            # TTL NAHI = dhaal
+```
+
+Bharne wali keys pe ab TTL hona ZAROORI hai — warna `volatile-lru` ke paas phenkne ko kuch nahi
+aur wahi `OOM` wapas aa jaayega. Isliye `SET` ki jagah **`SETEX`** (TTL ke saath):
+
+```
+docker exec redis-master redis-benchmark -n 200000 -r 200000 -q SETEX junk:__rand_int__ 600 padding_value_1234567890
+```
+
+```
+DBSIZE            : 56558
+used_memory_human : 8.53M
+evicted_keys      : 96957
+GET mera:naam     : arpan          <- ZINDA
+```
+
+### ★★ DONO KA FARAK — yahi poori seekh hai
+
+```
+policy            evicted      mera:naam
+allkeys-lru        9,712       (khaali)   <- mar gayi
+volatile-lru      96,957       arpan      <- bach gayi
+```
+
+96,957 junk keys kat gayi kyunki unpe TTL tha. `mera:naam` pe TTL nahi tha — Redis ne use dekha bhi nahi.
+
+**PRODUCTION ME MATLAB:** Redis me do kism ka maal rehta hai —
+
+| kya | TTL | kyun |
+|---|---|---|
+| session · cache entry · rate-limit counter | haan | bhar jaaye to phenk do, dobara ban jaayega |
+| feature flag · config · lookup table | nahi | dobara banana mehnga ya namumkin |
+
+`volatile-lru` laga do, phir **TTL hi tay karta hai ki kaun phenka jaayega.**
+TTL daala = "ye disposable hai". TTL nahi daala = "isko mat chhuna".
+
+★ **Ismein chhupa hua BUG:** agar koi galti se config key pe bhi TTL laga de, wo bhi chupchaap
+gayab ho sakti hai — aur pata tab chalega jab feature ruk jaayega. Koi error nahi aayega.
+
+### Ek line me (interview me bolne layak)
+
+> *"Cache kabhi sach ka maalik nahi hota. DB bharne pe 'fail' bolta hai, cache bharne pe
+> 'purana maal phenk deta hoon, tu chalta reh' bolta hai. Kaun phenka jaayega ye `maxmemory-policy`
+> tay karti hai — aur `volatile-lru` me wo faisla TTL ke haath me chala jaata hai."*
+
+---
+
 ## Real-World Cache Tools
 
 ### **Redis** (modern choice — 80% market)
