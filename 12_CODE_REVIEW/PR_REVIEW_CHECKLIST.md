@@ -278,9 +278,20 @@ do DB-update ke BEECH me koi BAAHAR ka call   "agla step fail hua to jo BAHAR ja
                                                (debit -> "paisa aaya" bhej diya -> credit fail)
 
 float / double + paisa                        "ye paisa hai -> BigDecimal"
-                                               ★ ye 17-Sep ko PAKDA tha, 18-Sep ko CHHOOT gaya.
+                                               ★★ DOHRAYA GAYA MISS: 17-Sep PAKDA,
+                                               18-Sep aur 19-Sep DONO me CHHOOTA.
                                                Ek baar pakad lene se ye yaad nahi rehta —
                                                isi liye ye LIST me hai, yaad me nahi.
+
+request se aaya amount, aur DB me uska             "kya ye DONO kabhi COMPARE hue?"
+asli/original amount bhi paas me hai                (19-Sep: orderAmount nikala, service tak
+                                                     bheja, aur kabhi compare hi nahi kiya
+                                                     -> ₹500 ke order pe ₹50,000 ka refund)
+
+do DB-write ke BEECH me BAAHAR ka call             "agar iske BAAD wala step fail hua to
+(gateway · mail · 3rd-party API)                    jo BAHAR ja chuka wo wapas aayega?"
+                                                    (19-Sep: paisa gateway se nikal gaya,
+                                                     company ke paas record hi nahi bana)
 
 controller/service me koi MUTABLE field       "ye har request me SAANJHA hai —
 (Map · List · counter · flag)                  thread-safe? kabhi khaali hota? 2 pod pe chalega?"
@@ -302,28 +313,94 @@ koi constant/field DECLARE hua                "ye use kahan hua?" — kahin nahi
      "ye waqai wo kaam karti hai jiske liye rakhi hai?" — dikh gayi, tick laga diya, ye galti hai.
 ```
 
-### ★ 17-Sep vs 18-Sep — ginti wahi, MAAL badal gaya
+### ★★ Example 5 — RefundController + RefundService — 19-Sep drill, 18 bug
 
 ```
-17-Sep   7 / 15      zyadatar SHAKAL wale (hardcoded string · missing close · field-injection)
-18-Sep   7 / 15      ab BEHAVIOUR wale (transaction · idempotency · injection) — teeno naye
+PAKDE (11):
+   SQL injection                        security
+   @Transactional nahi                  atomicity
+   field injection                      design
+   Connection/PreparedStatement close nahi   resource leak
+   SimpleDateFormat static              ★ thread-unsafe (classic Java trap)
+   status == "REFUNDED"                 java-trap
+   rows.get(0)                          khaali list pe crash
+   (double) order.get(...)              blind cast
+   ★ idempotency nahi                   Map DIKH raha tha, phir bhi sahi bola
+   log me poora request                 security
+   ★★ AUTHORIZATION nahi               aur SAHI SHABDON me: "dusri file me ho to theek"
 
--> KISM behtar hui, ginti nahi badli.
-   ★ par ye SAAF NAAP nahi hai — do PR alag the, mushkil bhi alag thi.
-     "protocol kaam kar gaya" tabhi kehna jab TEESRI drill bhi behaviour-wale bug de.
-     Abhi tak ka sach: 2 drill, dono 7/15.
+   ★ aakhri DO pichhli baar CHHOOTE the. authz + idempotency — wahi do jinke liye
+     MUST-HAVE LIST banayi thi. List ne kaam kiya.
+
+CHHOOTE (7):
+   ★ PAISA `double` me           teen jagah (orderAmount, refundAmount, ps.setDouble)
+                                  -> customer_balance me jud raha hai
+                                  ★★ DRILL-1 me PAKDA tha, ab DO BAAR lagatar chhoota
+
+   ★ refundAmount pe koi JAANCH nahi
+                                  orderAmount DB se nikala, service tak bheja bhi —
+                                  aur KABHI COMPARE hi nahi kiya
+                                  -> ₹500 ke order pe ₹50,000 ka refund nikal jayega
+                                  -> negative bhejo to balance + (-5000) = paisa KAT gaya
+
+   ★ gateway call DO DB-write ke BEECH me
+                                     status = REFUND_IN_PROGRESS   (DB)
+                                     gateway.refund(...)           (BAAHAR — paisa nikal gaya)
+                                     INSERT refunds                (DB)  <- yahan crash?
+                                  -> paisa customer ko ja chuka, company ke paas RECORD NAHI
+                                  ★ ye MUST-HAVE list ka sawaal hai: "beech me crash hua to?"
+
+   catch(Exception) -> ok(...)    refund FAIL hua, API 200 OK bhejti hai
+                                  log.error("refund failed") — na orderId na stack trace
+                                  ★ ERROR CODE pichhli baar BHI chhoota tha
+
+   refundCache ke andar 4 bug     "idempotency nahi" bolna SAHI tha, par Map me:
+                                    HashMap = thread-unsafe
+                                    kabhi clear nahi = leak
+                                    ★ put() PROCESSING se PEHLE — fail hone pe entry
+                                      hamesha ke liye retry BLOCK kar degi
+                                    instance field = restart pe gayab, 2 pod pe bekaar
+
+   MAX_REFUND_ATTEMPTS            declare hua, kahin use nahi = dead code
+
+   AUDIT TRAIL nahi               kisne maanga, kisne approve kiya, kab — kuch record nahi
+                                  finance me ye COMPLIANCE ki cheez hai
+
+   (bonus: RefundService me `dataSource` declare/inject hua hi nahi — compile nahi karega)
 ```
 
-### ★ NAYA PATTERN jo 18-Sep ko dikha
+### ★ TEENO DRILL — ab tak ka SAARA data
 
 ```
-STRUCTURE ke bug       ->  PAKAD raha   (layering · injection · transaction · idempotency)
-BUSINESS-LOGIC ke bug  ->  CHHOOT raha  (authz · negative amount · frozen-check · call ka order)
+17-Sep   PaymentService        7 / 15  (47%)   zyadatar SHAKAL wale (string · missing close · field-injection)
+18-Sep   TransferController    7 / 15  (47%)   ab BEHAVIOUR wale (transaction · idempotency · injection)
+19-Sep   RefundController     11 / 18  (61%)   ★ authz + idempotency DONO aaye (pichhli baar chhoote the)
 
--> chaaron BUSINESS wale "likha hi nahi" ya "galat niyat se chalao" kism ke hain
--> isi liye KADAM 4 (MUST-HAVE LIST) joda gaya. Aaj ke 8 miss me se TEEN
-   seedha usi list se pakde jaate: authz · validation · error-code.
+★ IMAANDARI: teeno PR alag the, mushkil bhi alag.
+  Ek drill se "sudhar gaya" nahi keh sakte — TEESRI baar bhi 60%+ aaye tabhi wo sach.
+  Abhi tak ka sach: 7/15, 7/15, 11/18.
 ```
+
+### ★ PATTERN — badla hua (19-Sep)
+
+```
+PURANA pattern (17+18 Sep)  ->  "LIKHA HI NAHI" wale chhoot rahe the (authz · idempotency)
+                                ★ YE THEEK HO GAYA — 19-Sep ko dono aaye
+
+NAYA pattern (19-Sep)       ->  PAKDA   : STRUCTURE + JAVA-TRAP
+                                          (injection · transaction · == · thread-safety · leak)
+                                CHHOOTA : PAISE KE NIYAM
+                                          (double for money · range check · amount se compare)
+                                          KRAM aur NAAKAAMI
+                                          (bahar ka call beech me · crash pe kya · 200 on failure)
+```
+
+★★ **DO CHEEZ AB DOBARA CHHOOTI HAIN — inhe MUST-HAVE LIST me chadhao:**
+```
+1. PAISA double/float me?        (drill-1 me pakda, drill-2 aur 3 me chhoota)
+2. FAILURE branch ka HTTP code?  (drill-2 aur 3 dono me chhoota)
+```
+Ek baar pakad lene se ye yaad nahi rehta — isi liye ye LIST me hain, yaad me nahi.
 
 ---
 
