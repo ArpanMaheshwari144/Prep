@@ -286,18 +286,90 @@ Poora treatment + LIVE hands-on (20 concurrent request, same key):
 
 ---
 
-### ⏳ dikkat 5 — ABHI BAAKI (agli baithak)
+### dikkat 5 — "ek hi account pe DO transfer ek saath aa gaye"
+
+★★ **ARPAN KA PUSHBACK (19-Sep) — aur wo SAHI tha. Maine "locking chahiye" bola, usne kaata:**
+
+> *"ye ho hi nahi sakta. hamara DB atomic constraint ke saath hai, wo do transaction ko
+> ek saath modify karne hi nahi dega. race ho sakti hai baat sahi, par DB hone nahi dega."*
+
+**Kyun wo sahi hai:**
+
+```sql
+UPDATE accounts SET balance = balance - 500 WHERE id = A;
+```
+```
+   hisaab DB KHUD kar raha hai, us row pe jo LOCK uske paas hai.
+   do transfer ek saath A ko chhuein -> DB unhe KATAAR me laga deta hai
+      ek chalega, dusra ruk ke uske BAAD.
+   -> LOST UPDATE ho hi nahi sakta. application-level lock ki zaroorat NAHI.
+```
+
+**Race tab hoti jab app PADH ke, JOD ke, WAPAS likhe** — aur wo humne kiya hi nahi:
+
+```java
+int bal = read(A);        // 1000
+bal = bal - 500;          // 500
+write(A, bal);            // 500   <- dusra bhi 1000 PADH chuka tha = lost update
+```
+
+→ **SANSHODHAN: "concurrency ke liye locking chahiye" = GALAT.** Ye baat file me thi, Arpan ne hatayi.
+
+---
+
+**PAR DO CHEEZ BACHTI HAI — dono chhoti, aur dono asli:**
+
+### (a) `balance >= 0` ka CHECK KAHAN hai?
 
 ```
-   "ek hi account pe DO transfer ek saath aa gaye" — concurrency / row locking
-      - SELECT FOR UPDATE (pessimistic) vs version column (optimistic) — kab kaunsa
-      - lock ka KRAM: A->B aur B->A ek saath = DEADLOCK
-        (Arpan ne ye LIVE dekha hua hai: 09_DATABASE/08_deadlock.md, error 1213)
-      - balance >= 0 kaun pakde — code ya DB constraint
+   A ke paas 300. do withdrawal, 200-200, ek saath.
+
+   check APP me ho to:
+      if (read(A).balance >= 200) { ... }   // DONO pass -- dono ne 300 dekha
+      update(...);                          // -100
+
+   -> dono UPDATE apni baari se chalenge (bilkul jaisa Arpan keh raha), PAR
+      CHECK dono ke PEHLE ho chuka tha. Balance -100.
 ```
 
-★ Ye teeno tukde Arpan ke paas PEHLE SE hain (deadlock live, usercrud me optimistic lock) —
-bas is design ke naam se ek jagah jude nahi hain. Seekhne ka kaam nahi, **jodne** ka hai.
+**Ilaaj wahi jo Arpan keh raha — DB se karwao, app se nahi:**
+
+```sql
+UPDATE accounts SET balance = balance - 200
+WHERE id = A AND balance >= 200;
+-- rows affected == 0  ->  paisa kam tha, REJECT
+```
+ya seedha `CHECK (balance >= 0)` constraint. **Dono me faisla DB ka, app ka nahi.**
+
+### (b) DEADLOCK — ye atomic UPDATE ke BAAD bhi rehta hai
+
+```
+   Txn1 : A -> B     A ka lock liya, ab B ka INTEZAAR
+   Txn2 : B -> A     B ka lock liya, ab A ka INTEZAAR
+          -> dono ek doosre ka intezaar. koi aage nahi. CIRCULAR WAIT.
+```
+
+```
+   dono UPDATE bilkul SAHI hain, ATOMIC hain -- phir bhi ATAK gaye.
+   DB detect karke EK ko maar deta hai (MySQL error 1213, victim rollback).
+   ★ Arpan ne ye LIVE chala ke dekha hua hai: 09_DATABASE/08_deadlock.md
+```
+
+**Ilaaj: hamesha EK TAY KRAM me lock lo** — account id sort karke chhota pehle.
+
+```
+   Txn1 : A -> B   ->  lock(A) phir lock(B)
+   Txn2 : B -> A   ->  ★ lock(A) phir lock(B)   (kaam ulta hai, LOCK ka kram wahi)
+   -> dono ek hi DISHA me chal rahe -> circle ban hi nahi sakta
+```
+
+---
+
+★ **IS HISSE KA NICHOD (ek line):**
+
+> *"Concurrency ke liye alag locking nahi chahiye — UPDATE me hisaab DB khud karta hai,
+> to lost update hota hi nahi. Jo dhyan dena hai wo do cheez hai: balance ka check
+> DB me ho (app me nahi), aur lock hamesha ek tay kram me liya jaaye warna deadlock."*
 
 ---
 
@@ -364,7 +436,12 @@ bas is design ke naam se ek jagah jude nahi hain. Seekhne ka kaam nahi, **jodne*
      reconciliation job = dono ko milane wala
      Kafka ki HADD: ledger ka ghar DB hai, Kafka commit ke BAAD ki khabar hai
 
+   ★★ ARPAN NE MUJHE KAATA (aur wo sahi tha):
+     maine dikkat-5 me "concurrency ke liye locking chahiye" likha tha.
+     usne kaata: "DB atomic hai, do transaction ek saath modify karne hi nahi dega."
+     -> SAHI. UPDATE me hisaab DB khud karta hai, lost update hota hi nahi.
+        line hata di. bacha sirf: CHECK kahan lagaya + lock ka KRAM (deadlock).
+
    ABHI TEST HI NAHI HUA:
-     concurrency / row locking / deadlock ka kram
-     API shape · pagination · hot-cold data
+     API shape · pagination on 11 arab rows · hot-cold data / archive
 ```
