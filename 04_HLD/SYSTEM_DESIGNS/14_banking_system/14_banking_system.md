@@ -373,15 +373,202 @@ ya seedha `CHECK (balance >= 0)` constraint. **Dono me faisla DB ka, app ka nahi
 
 ---
 
-# MOVE 4 — BOLTE-BOLTE JODO
+# MOVE 4 — BOLTE-BOLTE JODO (jo poocha jaaye, wahi kholo)
+
+## ► "API kya hogi?"
+
+★ Arpan: *"ye to aasan hai, isme itni badi dikkat nahi hai."* — **sahi hai, yahan ruko mat.**
 
 ```
-   ⏳ ABHI BAAKI — agli baithak me:
-      ► "API kya hogi?"
-      ► "History ka page kaise dikhaoge?" (pagination on 11 arab rows)
-      ► "Kahan tootega / scale?"  (read replica · balance read · ledger ka size · archive)
-      ► "2 din purana data chahiye vs 5 saal purana" (hot/cold, partition by month)
-      ► WRAP (ek line har problem ki)
+GET   /accounts/{id}/balance
+GET   /accounts/{id}/transactions?cursor=...&limit=20     <- ismein pench hai (neeche)
+POST  /transfers                  { from, to, amount }
+POST  /accounts/{id}/deposit      { amount }
+POST  /accounts/{id}/withdraw     { amount }
+```
+
+Ek hi cheez dhyan dene layak: **har POST me `Idempotency-Key` header jaata hai.** Baaki kuch nahi.
+
+---
+
+## ► "11 arab row pe history ka page kaise dikhaoge?"
+
+**Seedha jawab jo log dete hain:**
+
+```sql
+SELECT * FROM ledger_entries WHERE account_id = ?
+ORDER BY ts DESC LIMIT 20 OFFSET 100000;
+```
+
+★ Arpan ne OFFSET ka matlab sahi bola: *"skip karna — pehle page pe 0, agle pe 10 skip, aise chalta rahega."*
+**Jo chhoot raha tha: DB skip KARTA KAISE hai.** Wo aage KOODTA nahi — **padhta hai, phir phenkta hai:**
+
+```
+OFFSET 100000 LIMIT 20
+
+   row 1      padho -> phenko
+   row 2      padho -> phenko
+   ...
+   row 100000 padho -> phenko
+   row 100001 padho -> RAKHO   ... (20 tak)
+
+   = 1,00,020 row ka KAAM, 20 row dene ke liye
+```
+
+```
+   -> page 1 turant, page 5000 pe request ATAK jaati. jitna aage, utna DHEEMA.
+   -> aur ek chhupi dikkat: page-1 dekhte waqt nayi transaction aa gayi
+      -> saari row khisak gayi -> page-2 pe WAHI entry DOBARA dikhegi
+         (offset GINTI se chalta hai, aur ginti hil gayi)
+```
+
+**ILAAJ — offset ki jagah "kahan chhoda tha" yaad rakho (CURSOR / KEYSET):**
+
+```sql
+-- page 1
+SELECT * FROM ledger_entries WHERE account_id = ?
+ORDER BY ts DESC, id DESC LIMIT 20;
+-- aakhri row ka (ts, id) yaad rakho -> CURSOR banake client ko bhej do
+
+-- page 2  (skip NAHI -- SEEDHA wahan se)
+SELECT * FROM ledger_entries WHERE account_id = ?
+  AND (ts, id) < (:last_ts, :last_id)
+ORDER BY ts DESC, id DESC LIMIT 20;
+```
+
+```
+   -> index (account_id, ts DESC, id) pe DB SEEDHA us jagah koodta hai, 20 row uthata hai
+   -> page 1 ho ya page 5000 -- KHARCHA WAHI
+   -> nayi transaction se kuch khiskta nahi (hum GINTI nahi, JAGAH yaad rakh rahe hain)
+```
+
+★★ **Arpan ka anchor (khud joda):** *"ye cursor based cheez ho gayi, jaise YouTube karta hai."*
+
+```
+   PEHCHAN: jahan PAGE NUMBER nahi dikhte, sirf SCROLL chalta hai -- wahan CURSOR hai.
+            YouTube · Instagram · Twitter -- kisi me "page 5000 pe jao" nahi hota.
+            ★ wo missing feature NAHI, wo FAISLA hai: page-number chhoda taaki har page EK JAISA tez rahe.
+
+   ULTA:    Google search me page number DIKHTE hain -- kyunki wahan top ~1000 se aage jaane hi nahi dete.
+            HADD laga di, to offset chal jaata hai.
+```
+
+**KEEMAT:** "page 500 pe seedha jao" ab nahi ho sakta — sirf agla/pichhla.
+Bank statement ke liye ye theek hai (log scroll karte hain, ya DATE se filter karte hain).
+Admin panel ke liye offset chalega — wahan data chhota hota hai.
+
+★ **Aur ek cheez jiske bina DONO me se kuch nahi chalega:** index `(account_id, ts DESC, id)`.
+Wo na ho to 11 arab ka scan, aur baat yahin khatam.
+
+---
+
+## ► "5 saal purana data kahan rakhoge?"
+
+```
+   pichhle 3 mahine   ->  log ROZ dekhte hain
+   3 saal purana      ->  saal me shayad ek baar, ya regulator maange tab
+
+   ek hi table me sab pada hai -- garam bhi, thanda bhi.
+   har query, har index, har backup us 11 arab ke bojh ke saath chal raha hai.
+```
+
+★ **Arpan ka jawab:** *"purana data DB se hatao, archive kar do — on-demand wapas aa sakta.
+DELETE nahi kar sakte, wo galat hoga."*
+
+**DELETE waali baat sabse zaroori thi — bank me delete hota hi nahi. Kanoon saalon tak rakhne ko kehta hai.**
+
+### (a) "Hatao" kaise? — `DELETE` se NAHI
+
+```
+   30 crore row ek-ek karke DELETE  ->  table lock · transaction log full · ghanton ka kaam
+
+   ILAAJ: table ko MAHINE-MAHINE me baanto (PARTITION)
+
+      ledger_2026_07   ledger_2026_08   ledger_2026_09  ...
+
+      archive = us mahine ki partition DETACH kar do   (meta-data operation -- TURANT)
+                file uthao -> cold storage -> partition drop
+```
+
+```
+   DELETE          ->  ROW-BY-ROW kaam karta
+   DETACH PARTITION->  poore TUKDE pe ek nishaan hata deta
+   -> aasmaan-zameen ka farak
+```
+
+**BONUS:** partition se query bhi tez — "pichhle 3 mahine" poochha to DB baaki 33 partition ko **chhuta hi nahi**.
+
+### (b) Archive rakha kahan
+
+S3 (Parquet file) ya ek alag **cold DB**. On-demand wahin se padho (Athena jaisi cheez se, ya restore karke).
+Sasta, aur mukhya DB pe koi bojh nahi.
+
+### (c) ★★ EK CHEEZ JO SAATH ME TOOTEGI — aur ye is design se hi judi hai
+
+```
+   humne kaha tha: reconciliation roz  SUM(ledger)  nikaal ke  accounts.balance  se milayega.
+
+   ab 3 saal purani entries ARCHIVE ho gayin
+      -> SUM(ledger) ab ADHOORA hai (purani entries usme hain hi nahi)
+      -> reconciliation HAR account pe mismatch dikhayega
+```
+
+**ILAAJ — har period ka OPENING BALANCE snapshot rakho:**
+
+```
+   account_balance_snapshot (account_id, period_end, balance)
+
+      31-Mar-2023 ko A ka balance = 45,000    <- ye HAMESHA rahega, kabhi archive nahi hoga
+
+   ab reconciliation:
+      snapshot ka balance  +  uske BAAD wali (live) entries ka jod   =   aaj ka balance
+```
+
+★ Ab purani entries archive ho sakti hain aur hisaab phir bhi barabar rehta hai.
+**Yahi cheez bank statement me bhi dikhti** — har statement ke upar *"opening balance"* likha hota hai. Isi wajah se.
+
+---
+
+## ► "Kahan tootega / aur bada ho gaya to?"
+
+★ Arpan: *"dabba bada hua to shard + replication — wo to har design me ho gaya."* — sahi, par **KRAM** maayne rakhta:
+
+```
+   1. READ REPLICA          <- pehla kadam. read >> write hai, aur balance/history READ hain.
+                               write primary pe, read replica pe.
+                               ★ keemat: replication lag -- transfer ke turant baad balance
+                                  replica se padha to purana dikh sakta
+                                  -> "apna abhi kiya hua transaction" PRIMARY se padho (read-your-own-writes)
+
+   2. PARTITION by month    <- upar wala. archive + query dono ka fayda.
+
+   3. ★ SHARD = AAKHRI raasta, aur yahan uski KEEMAT badi hai:
+
+         shard by account_id  ->  A shard-1 pe, B shard-2 pe
+         -> transfer ab EK LOCAL TRANSACTION NAHI RAHA
+         -> wapas SAGA / 2PC ki duniya me ghus gaye
+         -> yaani dikkat-1 wali saari problem KHUD SE wapas bula li
+
+      ★ isi liye hamare number pe (120 write/sec) sharding ka sawaal hi nahi uthta.
+        pehle vertical (bada box) + replica. shard tabhi jab ek machine sach me chuk jaaye.
+```
+
+---
+
+## ► WRAP (ek line har problem ki)
+
+```
+   beech me crash               ->  ek local transaction (@Transactional). ek DB hai, SAGA ki zaroorat nahi.
+   dobara tap / retry           ->  Idempotency-Key + DB UNIQUE constraint
+   "paisa kahan se kahan gaya"  ->  append-only LEDGER, double-entry (jod hamesha zero)
+   balance dekhna tez           ->  accounts.balance = derived CACHE, ledger ke SAATH usi txn me likha
+   cache aur sach alag ho gaye  ->  raat ka RECONCILIATION job. farak mile to LEDGER jeetega.
+   overdraft / -ve balance      ->  check DB me (WHERE balance >= x / CHECK constraint), app me nahi
+   do transfer ulte kram me     ->  lock hamesha TAY KRAM me (account id sort) -> deadlock nahi
+   11 arab row pe history       ->  CURSOR pagination + index (account_id, ts DESC, id)
+   purana data                  ->  month PARTITION -> DETACH -> cold storage. DELETE kabhi nahi.
+   archive ke baad hisaab       ->  OPENING BALANCE snapshot (statement ke upar wali line)
+   load badha                   ->  read replica -> partition -> (aakhri me) shard
 ```
 
 ---
@@ -410,8 +597,10 @@ ya seedha `CHECK (balance >= 0)` constraint. **Dono me faisla DB ka, app ka nahi
                     │    KAFKA    │ ──► notification · fraud-check · analytics · statement
                     └─────────────┘
 
-      + read replica  (balance/history read)
-      + raat ko RECONCILIATION job : SUM(ledger) vs accounts.balance -> mismatch = ALERT
+      + read replica  (balance/history read)  -- apna abhi-kiya txn PRIMARY se padho
+      + raat ko RECONCILIATION job : snapshot + live entries  vs  accounts.balance -> mismatch = ALERT
+      + ledger_entries MONTH-wise partition  -> purana DETACH -> S3 / cold DB (delete KABHI nahi)
+      + account_balance_snapshot (period_end ka balance) -- archive ke baad bhi hisaab barabar
 ```
 
 ---
@@ -442,6 +631,20 @@ ya seedha `CHECK (balance >= 0)` constraint. **Dono me faisla DB ka, app ka nahi
      -> SAHI. UPDATE me hisaab DB khud karta hai, lost update hota hi nahi.
         line hata di. bacha sirf: CHECK kahan lagaya + lock ka KRAM (deadlock).
 
+   ARPAN NE KHUD NIKALA (MOVE 4 me):
+     "API me kuch nahi hai" -- SAHI, wahan waqt zaaya nahi kiya
+     OFFSET ka matlab (skip) theek bataya
+     ★ "cursor based, jaise YouTube karta hai" -- khud joda
+     ★ "purana data ARCHIVE karo, DELETE nahi -- wo galat hoga" (bank ka asli niyam)
+     "dabba bada hua to shard + replication" -- sahi, bas KRAM add karna tha
+
+   YAHAN SEEKHA (MOVE 4 me):
+     OFFSET skip KAISE karta (padho-phenko) -> isi liye page 5000 marta
+     offset pe nayi row aane se DUPLICATE dikhna
+     DETACH PARTITION vs row-by-row DELETE
+     ★ archive ke baad RECONCILIATION toot jaata -> OPENING BALANCE snapshot
+     shard ki keemat: transfer local transaction nahi rahega -> SAGA wapas
+
    ABHI TEST HI NAHI HUA:
-     API shape · pagination on 11 arab rows · hot-cold data / archive
+     security / auth layer · rate limiting · multi-currency · interest calculation
 ```
