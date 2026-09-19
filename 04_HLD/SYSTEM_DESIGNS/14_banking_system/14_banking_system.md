@@ -531,7 +531,7 @@ Sasta, aur mukhya DB pe koi bojh nahi.
 
 ## ► "Kahan tootega / aur bada ho gaya to?"
 
-★ Arpan: *"dabba bada hua to shard + replication — wo to har design me ho gaya."* — sahi, par **KRAM** maayne rakhta:
+★ Arpan: *"dabba bada hua to shard + replication — wo to har design me ho gaya."*
 
 ```
    1. READ REPLICA          <- pehla kadam. read >> write hai, aur balance/history READ hain.
@@ -636,7 +636,7 @@ Sasta, aur mukhya DB pe koi bojh nahi.
      OFFSET ka matlab (skip) theek bataya
      ★ "cursor based, jaise YouTube karta hai" -- khud joda
      ★ "purana data ARCHIVE karo, DELETE nahi -- wo galat hoga" (bank ka asli niyam)
-     "dabba bada hua to shard + replication" -- sahi, bas KRAM add karna tha
+     "dabba bada hua to shard + replication" -- sahi
 
    YAHAN SEEKHA (MOVE 4 me):
      OFFSET skip KAISE karta (padho-phenko) -> isi liye page 5000 marta
