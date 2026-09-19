@@ -15,11 +15,11 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 01 | [**01_JAVA**](01_JAVA) | Core · Collections · Java-8 · Multithreading · SOLID · Patterns · Testing | Java grill round ka **core** — collections-internal + multithreading sabse zyada pucha jaata |
 | 02 | [**02_SPRING**](02_SPRING) | Boot internals · @Transactional · Hibernate · JWT · Docker/K8s · Kafka/Async/Cache · QueryDSL/GraphQL | Backend role ka **dil** — proxy / N+1 / tx / Kafka = deep-grill favourites |
 | 03 | [**03_LLD**](03_LLD) | 11 OOP designs, code me | LLD round — class-design + patterns **bolke** |
-| 04 | [**04_HLD**](04_HLD) | Foundations + 13 designs + delivery-playbook | Tera **strong zone** — JP ka pura ek round |
+| 04 | [**04_HLD**](04_HLD) | Foundations + 14 designs + delivery-playbook | Tera **strong zone** — JP ka pura ek round |
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | CDN · LB · DNS · WAF · monitoring + devops + hands-on demos | HLD me "deploy/scale kaise" ki depth + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · 170 problem + 89 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 171 problem + 89 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | STAR stories | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase | PR-review + daily workflow Qs |
@@ -95,7 +95,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ---
 
 ## [04_HLD](04_HLD) — tera strong zone
-**Kya:** neev (foundations) + 12 poore design + "kaise bolna" playbook. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
+**Kya:** neev (foundations) + 14 poore design + "kaise bolna" playbook. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
 
 > ★★ **HLD RAIL** — har design isi kram pe bolo (roz dekh, dimaag me ghoome):
 ```
@@ -110,6 +110,10 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 - **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — building-blocks (har design inhi se bante) — [01 hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [03 load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) · [05 replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [06 sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) · [08 CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [09 db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) · [10 ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) · [11 reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [13 snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md)
 
 - **[RAW_DRILL](04_HLD/RAW_DRILL)** — bolke-practice + reflex — [00 reflex-sheet](04_HLD/RAW_DRILL/00_REFLEX_SHEET.md) (need→block rapid-fire) · [01 design-practice-log](04_HLD/RAW_DRILL/01_DESIGN_PRACTICE_LOG.md) (mock log/archive) · [02 why-how-QA](04_HLD/RAW_DRILL/02_WHY_HOW_QA.md)
+
+> ★ **DO FOUNDATION FILE ME LIVE HANDS-ON HAI** (padha hua nahi — CHALA KE dekha, har command + asli output):
+> · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) — eviction (`allkeys-lru` vs `volatile-lru`) · replication · read-only replica · haath-se failover → **split brain** · `stop` vs `kill` (RDB) · replica ≠ backup · **Sentinel se khud-b-khud failover 800ms me**
+> · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) — Kafka **replay** (offset reset) · **rebalance** (1→2→3→4 consumer, chautha khaali) · partition = parallelism ki chhat
 
 - **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — 14 poore design (roz ek rotate) — [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter-feed](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 url-browser-journey](04_HLD/SYSTEM_DESIGNS/05_url_browser_journey/05_url_browser_journey.md) · [06 stock-broker](04_HLD/SYSTEM_DESIGNS/06_stock_broker_trading/06_stock_broker_trading.md) · [07 payment](04_HLD/SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [08 file-upload](04_HLD/SYSTEM_DESIGNS/08_file_upload_validate_system/08_file_upload_INTERVIEW.md) · [09 news-aggregator](04_HLD/SYSTEM_DESIGNS/09_news_aggregator/09_news_aggregator_INTERVIEW.md) · [10 bookmyshow](04_HLD/SYSTEM_DESIGNS/10_bookmyshow/10_bookmyshow_INTERVIEW.md) · [11 distributed-cache](04_HLD/SYSTEM_DESIGNS/11_distributed_cache/11_distributed_cache.md) · [12 google-docs-collab](04_HLD/SYSTEM_DESIGNS/12_google_docs_collab/12_google_docs_collab.md) · [13 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md) · [★14 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/14_banking_system/14_banking_system.md)
 
@@ -136,6 +140,9 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 - [usercrud](07_PROJECTS/usercrud) — **main sandbox** (sab concept live) · [mini_payment_ms](07_PROJECTS/mini_payment_ms) ([learnings](07_PROJECTS/mini_payment_ms/LEARNINGS.md)) · [todoapp](07_PROJECTS/todoapp) · [Microservices-CRUD](07_PROJECTS/Microservices-CRUD) · [InsuranceManagementSystem](07_PROJECTS/InsuranceManagementSystem)
 
+> ★ **INFRA bhi isi compose me** ([docker-compose.yml](07_PROJECTS/usercrud/docker-compose.yml)) — MySQL · Kafka · **redis-master + redis-replica + 3 sentinel**.
+> Un pe kiye gaye live demo ke notes HLD foundations me hain (niche 04_HLD dekh), project me nahi — kyunki wo **concept** ka saboot hain, app ka feature nahi.
+
 #### usercrud — live demo sandbox
 > Yahi wo "connection" hai. Notes (Spring/Java folder me) = **theory (kya + kyu)**. Neeche ki demo-files (`07_PROJECTS/usercrud` me = inka asli ghar) = **wahi cheez CHAL-KE**. Note isi demo ko link karta.
 
@@ -156,25 +163,25 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 170 problem (+ 89 REDO/BLANK files) = 259 .cpp
+## [08_DSA](08_DSA) — 18 pattern · 171 problem (+ 89 REDO/BLANK files) = 260 .cpp
 **Kya:** pattern-wise solved problems + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + spaced-redo.
 
 - ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi" (har pattern ka saar + template + dry-run) — **roz-glance**.
 
-> Neeche ki ginti = **problem files** (REDO/BLANK alag se gine hain). Jod = 170.
+> Neeche ki ginti = **problem files** (REDO/BLANK alag se gine hain). Jod = 171.
 
 | # | Pattern | Problems | REDO | | # | Pattern | Problems | REDO |
 |---|---------|----------|------|---|---|---------|----------|------|
 | 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 6 | | 10 | [KADANE](08_DSA/10_KADANE) | 8 | 9 |
 | 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 8 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 0 |
 | 03 | [HASHING](08_DSA/03_HASHING) | 10 | 10 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 3 |
-| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 6 | 6 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 11 | 5 |
+| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 6 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 11 | 5 |
 | 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 1 | | 14 | [HEAP](08_DSA/14_HEAP) | 8 | 5 |
 | 06 | [STACK](08_DSA/06_STACK) | 11 | 3 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 2 |
 | 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 6 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 6 | 4 |
 | 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 4 | | 17 | [DP](08_DSA/17_DP) | 16 | 13 |
 | 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 2 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 2 |
-| | **KUL** | **170** | **89** | | | | **259 .cpp** | |
+| | **KUL** | **171** | **89** | | | | **260 .cpp** | |
 
 ---
 
@@ -202,7 +209,11 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ## [12_CODE_REVIEW](12_CODE_REVIEW)
 **Kya:** PR-review round ka framework. &nbsp; **Kyu:** JP round-2 me "is PR me kya galat" — 5-bucket se chalna.
 
-[PR-review checklist (5-bucket) + worked drills](12_CODE_REVIEW/PR_REVIEW_CHECKLIST.md) — security · java-traps · resource · db · design.
+[PR-review checklist](12_CODE_REVIEW/PR_REVIEW_CHECKLIST.md) — **SCAN PROTOCOL** (30-sec padho → 3 behaviour-sawaal → 5-bucket sweep → MUST-HAVE list → structured bolo)
++ 6 bucket (security · java-traps · resource · db · design · **finance**) + 5 worked example.
+
+> ★ **MUST-HAVE LIST kyun** — hunt sirf *galat likhi* line pakadta hai; *gayab* line (auth · validation · error-code) kabhi nahi. Wo ginni padti hai.
+> **Drill ka naapa hua record:** 17-Sep 7/15 · 18-Sep 7/15 · 19-Sep **11/18** (authz + idempotency dono aaye — pehle chhoote the).
 
 ---
 
