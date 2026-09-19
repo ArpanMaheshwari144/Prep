@@ -19,7 +19,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | CDN · LB · DNS · WAF · monitoring + devops + hands-on demos | HLD me "deploy/scale kaise" ki depth + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · 169 problem + REDO set + sheet | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 170 problem + 89 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | STAR stories | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase | PR-review + daily workflow Qs |
@@ -156,22 +156,25 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 169 problem (+ 87 REDO/BLANK files)
+## [08_DSA](08_DSA) — 18 pattern · 170 problem (+ 89 REDO/BLANK files) = 259 .cpp
 **Kya:** pattern-wise solved problems + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + spaced-redo.
 
 - ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi" (har pattern ka saar + template + dry-run) — **roz-glance**.
 
-| # | Pattern | Problems | | # | Pattern | Problems |
-|---|---------|----------|---|---|---------|----------|
-| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 22 | | 10 | [KADANE](08_DSA/10_KADANE) | 14 |
-| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 23 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 |
-| 03 | [HASHING](08_DSA/03_HASHING) | 18 | | 12 | [TREES](08_DSA/12_TREES) | 19 |
-| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 10 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 13 |
-| 05 | [MATRIX](08_DSA/05_MATRIX) | 5 | | 14 | [HEAP](08_DSA/14_HEAP) | 8 |
-| 06 | [STACK](08_DSA/06_STACK) | 12 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 6 |
-| 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 18 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 8 |
-| 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | | 17 | [DP](08_DSA/17_DP) | 25 |
-| 09 | [DESIGN](08_DSA/09_DESIGN) | 5 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 |
+> Neeche ki ginti = **problem files** (REDO/BLANK alag se gine hain). Jod = 170.
+
+| # | Pattern | Problems | REDO | | # | Pattern | Problems | REDO |
+|---|---------|----------|------|---|---|---------|----------|------|
+| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 6 | | 10 | [KADANE](08_DSA/10_KADANE) | 8 | 9 |
+| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 8 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 0 |
+| 03 | [HASHING](08_DSA/03_HASHING) | 10 | 10 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 3 |
+| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 6 | 6 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 11 | 5 |
+| 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 1 | | 14 | [HEAP](08_DSA/14_HEAP) | 8 | 5 |
+| 06 | [STACK](08_DSA/06_STACK) | 11 | 3 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 2 |
+| 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 6 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 6 | 4 |
+| 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 4 | | 17 | [DP](08_DSA/17_DP) | 16 | 13 |
+| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 2 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 2 |
+| | **KUL** | **170** | **89** | | | | **259 .cpp** | |
 
 ---
 
