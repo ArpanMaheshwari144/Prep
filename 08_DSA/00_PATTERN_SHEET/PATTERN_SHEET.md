@@ -1100,6 +1100,55 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         collapse kar diya -> linear. mushkil = insight-dhundhna, code chhota. (search->test->eliminate = process.)
 
  common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
+
+ ┌────────────────────────────────────────────────────────────
+ │ ▸ DIFFERENCE ARRAY / RANGE UPDATE (LC-1109 Corporate Flight Bookings)
+ │   = prefix-sum ka ULTA · aur SWEEP-LINE ka sagaa bhai (MEETING ROOMS II, PATTERN 15)
+ └────────────────────────────────────────────────────────────
+     KAB : "har RANGE pe kuch ADD karo" — aur aise 20,000 range hain.
+           seedha karo to har range pe loop = O(range × length). Chahiye O(n + ranges).
+     SAAR: har element ko CHHUO MAT. Sirf DO jagah nishaan lagao — jahan se shuru, aur jahan se khatam.
+           phir ek baar chal ke chalti-sum lo — wahi asli value hai.
+
+     TEMPLATE:
+         vector<int> diff(n + 2, 0);                   // ★ n+2 (end+1 ka max n+1 ho sakta)
+         for (auto &it : bookings) {
+             diff[ it[0] ]     += it[2];               // yahan se shuru
+             diff[ it[1] + 1 ] -= it[2];               // yahan ke BAAD khatam
+         }
+         vector<int> ans;  int run = 0;
+         for (int i = 1; i <= n; i++) { run += diff[i]; ans.push_back(run); }
+
+     DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
+         diff:   idx  1    2    3    4    5    6
+                     +10  +20  -10  -20   .   -25
+                          +25
+                 ---------------------------------
+                 net  +10  +45  -10  -20   0   -25
+         run :        10   55   45   25   25
+         ans = [10, 55, 45, 25, 25]
+
+     ★★ SWEEP-LINE se RISHTA (Arpan ne khud jod diya — "dono same hain, bas do farak"):
+     ```
+                          MEETING ROOMS II            DIFFERENCE ARRAY (yahan)
+        rakhte kahan  ->  map<int,int>                plain array
+                          (time BADI/bikhri: 10^9)    (index CHHOTI+ghani: 1..n)
+
+        interval      ->  [start, end)  EXCLUSIVE     [first, last]  INCLUSIVE
+        ghatate kahan ->  -1 at  end                  -count at  end+1
+                          ★ +1 isliye, kyunki AAKHRI wala bhi SHAAMIL hai.
+                            inclusive me `end` pe ghataya = aakhri element CHHOOT gaya.
+
+        nikaalte kya  ->  chalti-sum ka MAX            chalti-sum ka POORA array
+                          ("kitne kamre")              ("har flight ka total")
+     ```
+     -> MACHINE EK HAI. Sirf teen cheez badalti: kahan rakho · kahan ghatao · kya nikaalo.
+
+     ★ EDGE: `diff` ka size `n+2` — `end+1` sabse bada `n+1` ho sakta hai. `n+1` rakha to crash.
+
+     FAMILY: range-add · range-flip · car-pooling · "kitne ek-saath" — sab isi machine pe.
+             (JP OA bank me ye family 3-4 baar aayi hai — "Interval Flip Operations",
+              "Minimum Cores", "Maximum Concurrent Tasks")
 ```
 
 ---
@@ -3101,6 +3150,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      TIE (start==prev end): same key pe +1 aur -1 -> net 0 -> room REUSE free (jhoothi peak nahi).
      FARAK merge se: merge/meeting-I = "kya overlap?" (join/bool). MR-II = "KITNA overlap?" (peak count) -> sweep.
      FAMILY: sweep-line / "events + running count" -- interval-overlap, max-concurrent, CPU-load, planes-in-sky.
+     ★ YAHAN NAHI MILEGA: iska SAGAA BHAI = DIFFERENCE ARRAY (LC-1109) -> PATTERN 4 (PREFIX SUM) me hai.
+        wahi machine, bas: map ki jagah ARRAY · end ki jagah END+1 (inclusive) · max ki jagah POORA array.
 ```
 
 ## PATTERN 16 — BACKTRACKING (choose / explore / un-choose)
