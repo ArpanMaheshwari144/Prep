@@ -1,3 +1,5 @@
+package hashmap;
+
 public class H2_Takkar {
 
     public static void main(String[] args) {

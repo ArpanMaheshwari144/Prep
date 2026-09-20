@@ -1,3 +1,5 @@
+package hashmap;
+
 public class H1_IndexKaise {
 
     public static void main(String[] args) {

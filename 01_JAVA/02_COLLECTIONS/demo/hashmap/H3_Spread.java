@@ -1,3 +1,5 @@
+package hashmap;
+
 public class H3_Spread {
 
     public static void main(String[] args) {

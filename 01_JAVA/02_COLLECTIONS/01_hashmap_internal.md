@@ -198,16 +198,16 @@ untreeify: tree nodes 6 pe wapas LinkedList. (8 banao/6 todo -> gap taaki border
 
 | # | File | Kya sawaal uthaya |
 |---|------|-------------------|
-| H1 | [H1_IndexKaise.java](demo/H1_IndexKaise.java) | index kaise banta → *sirf 4 bit? to takkar hogi?* |
-| H2 | [H2_Takkar.java](demo/H2_Takkar.java) | takkar sach me hoti hai → *ilaaj kya* |
-| H3 | [H3_Spread.java](demo/H3_Spread.java) | ilaaj = spread (XOR) → *takkar phir bhi hui, ab kya* |
-| H4 | [H4_Bucket.java](demo/H4_Bucket.java) | bucket + chain banayi → *chain me SAHI key kaise pehchane* |
-| H5 | [H5_Get.java](demo/H5_Get.java) | `==` vs `equals` → *apni class me ye likhe hi na to* |
-| H6 | [H6_Contract.java](demo/H6_Contract.java) | hashCode/equals ka contract → *poora* |
+| H1 | [H1_IndexKaise.java](demo/hashmap/H1_IndexKaise.java) | index kaise banta → *sirf 4 bit? to takkar hogi?* |
+| H2 | [H2_Takkar.java](demo/hashmap/H2_Takkar.java) | takkar sach me hoti hai → *ilaaj kya* |
+| H3 | [H3_Spread.java](demo/hashmap/H3_Spread.java) | ilaaj = spread (XOR) → *takkar phir bhi hui, ab kya* |
+| H4 | [H4_Bucket.java](demo/hashmap/H4_Bucket.java) | bucket + chain banayi → *chain me SAHI key kaise pehchane* |
+| H5 | [H5_Get.java](demo/hashmap/H5_Get.java) | `==` vs `equals` → *apni class me ye likhe hi na to* |
+| H6 | [H6_Contract.java](demo/hashmap/H6_Contract.java) | hashCode/equals ka contract → *poora* |
 
 ---
 
-### H1 — [`demo/H1_IndexKaise.java`](demo/H1_IndexKaise.java)
+### H1 — [`demo/hashmap/H1_IndexKaise.java`](demo/hashmap/H1_IndexKaise.java)
 #### *shabd se array ki jagah*
 
 **Sawaal:** HashMap andar se ARRAY hai. Array maangta hai NUMBER (`table[5]`). Key hai SHABD (`"Arpan"`).
@@ -262,7 +262,7 @@ index      =  ... 0000 0000 0000 1100  =  12
 
 ---
 
-### H2 — [`demo/H2_Takkar.java`](demo/H2_Takkar.java)
+### H2 — [`demo/hashmap/H2_Takkar.java`](demo/hashmap/H2_Takkar.java)
 #### *28 bit phenkne ka nateeja*
 
 **Sawaal:** agar index sirf aakhri 4 bit dekhta hai, to do key jinke UPAR ke bits alag hain
@@ -316,7 +316,7 @@ par phir **list me chalna** padta → **O(1) khatam**.
 
 ---
 
-### H3 — [`demo/H3_Spread.java`](demo/H3_Spread.java)
+### H3 — [`demo/hashmap/H3_Spread.java`](demo/hashmap/H3_Spread.java)
 #### *upar ke bits ko NEECHE laana*
 
 **Sawaal:** 28 bit bekaar ja rahe. Index me zyada bit use nahi kar sakte (array chhota hai).
@@ -422,7 +422,7 @@ aur 4 bit se negative banta hi nahi. **`%` hota to negative aata aur crash hota.
 
 ---
 
-### H4 — [`demo/H4_Bucket.java`](demo/H4_Bucket.java)
+### H4 — [`demo/hashmap/H4_Bucket.java`](demo/hashmap/H4_Bucket.java)
 #### *takkar ki SHAKAL — table aur chain*
 
 **Sawaal:** ab tak sirf number the. Takkar dikhti kaisi hai?
@@ -510,7 +510,7 @@ Aur wahi `next` chain hai: `table[6] -> [JP|next] -> [audit|null]`
 
 ---
 
-### H5 — [`demo/H5_Get.java`](demo/H5_Get.java)
+### H5 — [`demo/hashmap/H5_Get.java`](demo/hashmap/H5_Get.java)
 #### *chain me SAHI key pehchanna — `==` vs `.equals()`*
 
 **Sawaal:** index ne bataya KAHAN dekhna hai. Par `table[6]` me **do** key hain.
@@ -614,7 +614,7 @@ if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k))))
 
 ---
 
-### H6 — [`demo/H6_Contract.java`](demo/H6_Contract.java)
+### H6 — [`demo/hashmap/H6_Contract.java`](demo/hashmap/H6_Contract.java)
 #### *apni class ko key banane pe — CONTRACT*
 
 **Sawaal:** ab tak key String thi (uska hashCode/equals JDK ne theek likha hua hai).

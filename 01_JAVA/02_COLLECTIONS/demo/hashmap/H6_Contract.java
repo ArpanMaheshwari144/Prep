@@ -1,3 +1,5 @@
+package hashmap;
+
 import java.util.*;
 
 public class H6_Contract {
