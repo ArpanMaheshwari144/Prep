@@ -1,24 +1,3 @@
-// ============================================================
-// HashMap #5 — get() : bucket tak pahunch gaye. Ab SAHI key kaise pakde?
-// ============================================================
-// chalana:   java H5_Get.java
-// ============================================================
-//
-// H4 me dekha:  bucket [6] me DO key hain -> JP aur audit
-//
-// To get("audit") me HashMap ko do kaam karne padte:
-//      1. index nikaalo            -> pata chala KAHAN dekhna hai
-//      2. us chain me GHUMO        -> aur har key se MILAO
-//
-// Milane ke do tareeke hain Java me, aur dono ka matlab ALAG hai:
-//
-//      ==        ->  "kya ye WAHI cheez hai?"  (memory me ek hi jagah?)
-//      .equals() ->  "kya ye BARABAR hai?"     (andar ka maal same?)
-//
-// Is stub ka maqsad: dono ka farak APNI AANKH se dekhna.
-//
-// ============================================================
-
 import java.util.ArrayList;
 import java.util.List;
 

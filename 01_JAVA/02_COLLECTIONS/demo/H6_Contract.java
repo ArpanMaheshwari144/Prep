@@ -1,23 +1,3 @@
-// ============================================================
-// HashMap #6 — hashCode / equals ka CONTRACT
-// ============================================================
-// chalana:   java H6_Contract.java
-// ============================================================
-//
-// H5 me dekha:  HashMap get() do cheez karta hai
-//                  1. hash se BUCKET dhoondta
-//                  2. us chain me equals() se SAHI key pehchanta
-//
-// To agar apni class me ye do method THEEK se na likhe, to kya tootega?
-//
-// Is stub me hum TEEN halat dekhenge, ek hi Employee class ke saath:
-//
-//     (a) dono me se KOI nahi likha    ->  Object wale default chalte
-//     (b) sirf equals() likha          ->  hash alag, equals same
-//     (c) dono likhe                   ->  sahi
-//
-// ============================================================
-
 import java.util.*;
 
 public class H6_Contract {
