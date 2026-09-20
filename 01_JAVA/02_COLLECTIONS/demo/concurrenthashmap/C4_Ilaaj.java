@@ -17,7 +17,7 @@ public class C4_Ilaaj {
 
         Thread a2 = new Thread(() -> {
             for (int i = 0; i < 10000; i++) {
-                map1.compute("hits", (k, v) -> v == null ? 1 : v + 1);
+                map1.merge("hits", 1, (purani, nayi) -> purani + nayi);
             }
         });
 
