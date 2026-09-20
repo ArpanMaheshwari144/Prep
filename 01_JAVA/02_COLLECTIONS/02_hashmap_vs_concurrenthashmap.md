@@ -210,6 +210,317 @@ Iterator:
 
 ---
 
+## ★★ HANDS-ON — [`demo/concurrenthashmap/`](demo/concurrenthashmap/) (20-Sep, chala ke dekha)
+
+> Upar wali saari baatein padhne ki cheezein hain. Ye section CHALANE ki cheez hai.
+> Chaar file, chhoti-chhoti, ek ke baad ek. Har file ek sawaal chhodti hai aur agli uska jawab hai.
+> Neeche jo code hai wo **file ka asli code** hai, aur jo output hai wo **asli run ka** — likha hua nahi.
+>
+> Chalane ka tarika (demo/ folder se):  `java concurrenthashmap/C1_Takkar.java`
+
+| # | file | kya dikhata hai → *kaunsa sawaal khada karta hai* |
+|---|------|--------------------------------------------------|
+| C1 | [C1_Takkar.java](demo/concurrenthashmap/C1_Takkar.java) | plain HashMap do thread me TOOTTA hai → *to sahi dabba kaunsa* |
+| C2 | [C2_Concurrent.java](demo/concurrenthashmap/C2_Concurrent.java) | ConcurrentHashMap poora 2000 deta hai → *ab sab theek ho gaya?* |
+| C3 | [C3_CheckThenAct.java](demo/concurrenthashmap/C3_CheckThenAct.java) | sahi dabbe me bhi jawab galat → *phir ilaaj kya* |
+| C4 | [C4_Ilaaj.java](demo/concurrenthashmap/C4_Ilaaj.java) | teen call ki jagah EK call → *poora* |
+
+---
+
+### C1 — [`demo/concurrenthashmap/C1_Takkar.java`](demo/concurrenthashmap/C1_Takkar.java)
+
+**Kya kiya:** ek hi plain `HashMap` me do thread ne 1000-1000 entry daali. Keys JAAN-BOOJH KE alag
+rakhi (0-999 aur 1000-1999), taaki "dono ne same key pe likh diya" wala bahana bache hi nahi.
+Size 2000 aana chahiye.
+
+```java
+HashMap<Integer, Integer> hashMap = new HashMap<>();
+
+Thread t1 = new Thread() {
+    public void run() {
+        for (int i = 0; i < 1000; i++) {
+            hashMap.put(i, 1);
+        }
+    }
+};
+
+Thread t2 = new Thread() {
+    public void run() {
+        for (int i = 1000; i < 2000; i++) {
+            hashMap.put(i, 1);
+        }
+    }
+};
+
+t1.start();
+t2.start();
+t1.join();
+t2.join();
+
+System.out.println("expected 2000, mila " + hashMap.size());
+```
+
+**Output (ek hi code, chhe alag run):**
+```
+expected 2000, mila 1656
+expected 2000, mila 1911
+expected 2000, mila 1678
+expected 2000, mila 1768
+expected 2000, mila 1818
+expected 2000, mila 1791
+```
+
+**Isse kya nikla:**
+
+- Koi exception nahi. `Process finished with exit code 0`. Code chupchaap **galat jawab** de gaya —
+  is bug ki sabse gandi baat yahi hai.
+- Number har baar alag hai kyunki takkar kab lagegi ye timing pe hai, aur timing kabhi same nahi hoti.
+- Kaam do jagah gira:
+  1. **Almari badalte waqt.** HashMap bharne pe nayi badi array banata hai aur purani ki saari entry
+     usme shift karta hai. Thread-1 shift kar raha tha, aur usi beech thread-2 ne **purani** array me
+     entry rakh di. Shift khatam, purani array phenk di — wo entry saath hi chali gayi.
+     2000 put me ye shift 7-8 baar hota hai (16 → 32 → 64 ... 2048), isliye itna maal gira.
+  2. **`size` ek saada `int` hai.** Har put pe `size++` hota hai, jo teen kaam hai — padho, jodo,
+     likho. Do thread ek saath 800 padh lein to dono 801 likhenge. Do put hue, ginti ek badhi.
+- ★ Java 7 me isi resize ke dauraan chain me **circle** ban jaata tha aur `get()` hamesha ke liye
+  ghoomta reh jaata — CPU 100%. Java 8 ne wo loop wala hissa theek kar diya, **par data girna abhi
+  bhi hota hai** — upar wala output usi ka hai.
+
+---
+
+### C2 — [`demo/concurrenthashmap/C2_Concurrent.java`](demo/concurrenthashmap/C2_Concurrent.java)
+
+**Kya kiya:** bilkul wahi test, sirf dabba badla. Test ko ek method me daala jiska parameter
+`Map` hai (`HashMap` nahi) — isi wajah se ek hi method dono dabbon pe chal jaata hai. Phir 10-10 baar
+dono chalaye.
+
+```java
+public static int chalao(Map<Integer, Integer> map) throws InterruptedException{
+
+    Thread t1 = new Thread() {
+        public void run() {
+            for (int i = 0; i < 1000; i++) {
+                map.put(i, 1);
+            }
+        }
+    };
+
+    Thread t2 = new Thread() {
+        public void run() {
+            for (int i = 1000; i < 2000; i++) {
+                map.put(i, 1);
+            }
+        }
+    };
+
+    t1.start();
+    t2.start();
+    t1.join();
+    t2.join();
+
+    return map.size();
+}
+```
+
+```java
+int ans1 = 0;
+for (int i = 0; i < 10; i++) {
+    Map<Integer, Integer> hashMap = new HashMap<>();
+    ans1 = chalao(hashMap);
+}
+
+int ans2 = 0;
+for (int i = 0; i < 10; i++) {
+    Map<Integer, Integer> concurrentHashMaphashMap = new ConcurrentHashMap<>();
+    ans2 = chalao(concurrentHashMaphashMap);
+}
+
+System.out.println(ans1);
+System.out.println(ans2);
+```
+
+**Output (do run):**
+```
+1950        <- HashMap
+2000        <- ConcurrentHashMap
+
+2000        <- HashMap, dusre run me
+2000        <- ConcurrentHashMap
+```
+
+**★ Ye dusra run hi is file ka sabse kaam ka hissa hai.** HashMap ne bhi 2000 de diya. Do wajah:
+`ans1` loop ke BAHAR print hota hai, isliye sirf **10ve** chakkar ka number dikhta hai; aur kabhi-kabhi
+do thread takraate hi nahi. Matlab **ek sahi output is bug ke na hone ka saboot nahi hai.**
+Isi liye C1 ko chhe baar chalaya gaya tha.
+
+**ConcurrentHashMap ne 2000 kyun diya — teen jagah alag kaam karta hai:**
+
+```
+1. taala poore map pe nahi, sirf EK BUCKET pe
+      thread-1 bucket 5 me likh raha, thread-2 bucket 12 me — kisi ko rukna nahi padta
+      khaali bucket me to taala bhi nahi, CAS se seedha node rakh diya jaata hai
+
+2. ginti ek int nahi hai
+      ginti kai alag cell me bant-ti hai, har thread apne cell me jodta hai
+      size() poochho to sab jod ke batata hai  ->  ginti kabhi girti nahi
+
+3. almari badalna MILKE hota hai
+      resize ke beech jo thread aata hai wo shift karne me HAATH BATAATA hai
+      jo bucket move ho chuka uspe forwarding-node ka nishaan hota hai
+      -> naye aane wale ko pata chal jaata hai "ye ab nayi almari me dekho"
+      -> koi andhere me purani almari me nahi likhta
+```
+
+★ `Hashtable` aur `Collections.synchronizedMap` bhi thread-safe hain, **par wo poore map pe ek hi
+taala lagate hain** — ek waqt me ek thread. Farak "safe hai ya nahi" ka nahi, **throughput** ka hai.
+
+---
+
+### C3 — [`demo/concurrenthashmap/C3_CheckThenAct.java`](demo/concurrenthashmap/C3_CheckThenAct.java)
+
+**Kya kiya:** map ab `ConcurrentHashMap` HI hai — wahi jo abhi 2000 de raha tha. Ek hi key `"hits"`,
+aur dono thread 10,000-10,000 baar ginti badhayenge. Badhane ka tarika wahi rakha jo log asli code me
+likhte hain: nikalo, jodo, wapas rakho.
+
+```java
+ConcurrentHashMap<String, Integer>  map = new ConcurrentHashMap<>();
+map.put("hits", 0);
+
+Thread t1 = new Thread(()->{
+    for (int i=0;i<10000;i++) {
+        int hits = map.get("hits");
+        int val = hits + 1;
+        map.put("hits",val);
+    }
+});
+// t2 bilkul same
+
+System.out.println("expected 20000, mila " + map.get("hits"));
+```
+
+**Output (paanch run):**
+```
+expected 20000, mila 12663
+expected 20000, mila 10704
+expected 20000, mila 11885
+expected 20000, mila 16227
+expected 20000, mila 12184
+```
+
+**Isse kya nikla — ye is poore section ka asli sabak hai:**
+
+```
+thread-1                         thread-2
+get("hits")  ->  500
+                                 get("hits")  ->  500
++1           ->  501
+                                 +1           ->  501
+put(501)
+                                 put(501)
+
+do baar badhaya, ginti EK hi badhi
+```
+
+`get` safe tha. `put` safe tha. Par beech me jo **gap** hai — jahan thread-1 ne padh liya aur abhi
+likha nahi — us gap me thread-2 ghus gaya. Thread-1 purani value pe hisaab karke likh gaya.
+
+> ★★ **Dabba thread-safe hone ka matlab ye NAHI ki tera CODE thread-safe hai.**
+> Har call apne aap me safe hai, par kai call **milkar** ek kaam banate hain aur us poore kaam ka
+> koi taala nahi hota. Isko **compound action** kehte hain.
+
+Iske roop — PR review me yahi shakal dhoondhni hai, **ek hi key pe do lagataar map-call**:
+```
+containsKey(k)  phir  put(k, ...)
+get(k)          phir  put(k, ...)
+get(k)  phir  check  phir  remove(k)
+```
+
+★ Aur ye prod tak isliye pahunchta hai ki dev machine pe do request chalti hain aur kuch nahi hota.
+Prod pe 200 request ek saath, aur ginti chupchaap kam ho jaati hai. Na exception, na log, na alert.
+
+---
+
+### C4 — [`demo/concurrenthashmap/C4_Ilaaj.java`](demo/concurrenthashmap/C4_Ilaaj.java)
+
+**Kya kiya:** C3 wala hi code, teen baar. Har baar sirf wo ek line badli. Teen alag map (warna ginti
+mil jaati).
+
+```java
+// TAREEKA 1 — merge
+ConcurrentHashMap<String, Integer> map1 = new ConcurrentHashMap<>();
+map1.put("hits", 0);
+// dono thread me:
+map1.merge("hits", 1, (purani, nayi) -> purani + nayi);
+
+
+// TAREEKA 2 — compute
+ConcurrentHashMap<String, Integer> map2 = new ConcurrentHashMap<>();
+map2.put("hits", 0);
+// dono thread me:
+map2.compute("hits", (k, v) -> v == null ? 1 : v + 1);
+
+
+// TAREEKA 3 — AtomicInteger
+ConcurrentHashMap<String, AtomicInteger> map3 = new ConcurrentHashMap<>();
+map3.put("hits", new AtomicInteger(0));
+// dono thread me:
+map3.get("hits").incrementAndGet();
+```
+
+**Output (do run, aur baar-baar chalane pe bhi hilta nahi):**
+```
+merge         = 20000
+compute       = 20000
+AtomicInteger = 20000
+```
+
+**`merge` ka syntax — teen cheezein leta hai:**
+```
+map1.merge("hits", 1, (purani, nayi) -> purani + nayi);
+        //   ^key   ^2nd        ^function
+
+key hai hi nahi   ->  2nd wali value (1) seedha rakh do. Function chalta hi NAHI.
+key maujood hai   ->  function bulao:  purani = map me padi value
+                                       nayi   = jo tune 2nd me bheja (1)
+                      jo return hua, wahi map me chala jaata hai.
+```
+`purani` / `nayi` sirf naam hain — `(a, b) -> a + b` bhi wahi baat hai. Chhota likhna ho to `Integer::sum`.
+
+★ Agar function `null` return kar de to **key map se HAT jaati hai** — isi se "ginti ghatao, zero ho
+jaaye to entry hi uda do" wala kaam hota hai.
+
+**AtomicInteger alag soch hai:** map ko chhedo hi mat. Entry ek hi baar banti hai, uske baad har
+increment `AtomicInteger` ke andar hota hai aur map ko pata bhi nahi chalta. Isi liye ek hi key pe
+bahut zyada likhai ho to ye sabse tez hai.
+
+★ `merge` / `compute` ka lambda **bucket ka taala lage hue** chalta hai — usme DB call, network call
+ya kisi doosre map ko chhedna mat likhna, poora bucket tab tak ruka rahega. Sirf hisaab.
+
+---
+
+### ★ EK SAANCHA — C1 se C4 tak ka nichod
+
+```
+SAWAAL 1: dabba sahi hai?          HashMap  ->  do thread me TOOTTA hai (C1)
+                                   CHM      ->  bucket-level taala, safe (C2)
+
+SAWAAL 2: kaam EK call me hai?     teen call (get/+1/put)  ->  gap khula = bug (C3)
+                                   ek call  (merge/compute) ->  taale ke andar = theek (C4)
+
+★ DONO chahiye. Sirf pehla kar ke ruk jaana = C3 wala haal.
+```
+
+**Kaunsa method kab:**
+```
+ginti badhani hai                 ->  merge
+value se hisaab karke rakhna      ->  compute
+nahi hai to bana do               ->  computeIfAbsent   (cache / list banane me)
+sirf pehli baar claim karni hai   ->  putIfAbsent       (idempotency — usercrud me yahi hai)
+ek key pe bahut zyada likhai      ->  value hi AtomicInteger bana do
+```
+
+---
+
 ## ★ PROJECT CONNECT — usercrud (8-Sep)
 ```java
 IdempotencyController: ConcurrentHashMap<String,String> processed;   // thread-safe claim
