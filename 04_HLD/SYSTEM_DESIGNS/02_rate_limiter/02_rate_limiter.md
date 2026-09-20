@@ -401,6 +401,113 @@
 
 ---
 
+## ★★ "LIMITER LAGA THA, CHAL BHI RAHA THA — PHIR BHI NAHI BACHA" (20-Sep deep-dive)
+
+> Upar ki 6 dikkatein limiter ko SAHI banane ki baat karti hain (distributed count, race,
+> Redis down, multi-region, repeat abuser). Ye section alag sawaal ka jawab hai:
+> *limiter sahi laga hua tha, chal raha tha, koi bug nahi tha — phir bhi server gaya. Kyun?*
+
+### 1. ★★ PER-USER limit BHEED se nahi bachati (sabse bada, sabse kam samjha jaane wala)
+
+```
+limit          = 100 req/min per user
+server ki had  = 5,000 req/s
+
+ek ABUSER aaya        -> 100 pe ruk gaya            -> limiter ne bacha liya ✓
+10,000 ASLI user aaye -> har ek apni limit ke ANDAR -> limiter khush ✓
+                      -> server pe 12,000 req/s     -> SERVER GIR GAYA ✗
+```
+
+Limiter ne kuch galat nahi kiya. **Har user niyam ke andar tha.**
+
+```
+RATE LIMIT      "kis USER ne kitni bheji"        ->  ABUSE / fairness ke liye
+LOAD SHEDDING   "SYSTEM abhi kitna jhel sakta"   ->  BACHNE ke liye
+```
+
+Ye DO alag cheezein hain aur aksar ek maan li jaati hain. Bheed ke liye chahiye: poore system ka
+ek **global cap** (ya concurrency limit), aur load shedding jo **system ki sehat** dekh ke chale
+("CPU 90% — ab nayi request mat lo"), na ki har user ki ginti dekh ke.
+
+### 2. Request ki GINTI gini, LOAD nahi
+
+```
+100 req/min allow hai
+
+user A:  100 chhoti request  (har ek 5ms)     =  0.5 second ka kaam
+user B:  100 report query    (har ek 30 sec)  =  50 MINUTE ka kaam
+```
+
+Limiter ke liye dono BARABAR hain. **Ginti ka load se koi rishta nahi.**
+
+```
+ILAAJ:
+   bhaari endpoint pe alag aur KADI limit
+   ya har request ko WAZAN do    (report = 50 token, login = 1 token)
+   ya ginti ki jagah CONCURRENCY seemit karo
+      ("ek user ki 2 se zyada bhaari query EK WAQT me nahi")  <- aksar ye sabse behtar
+```
+
+### 3. FAIL-OPEN ka ulta chehra
+
+Upar (dikkat 4) likha hai: Redis gaya → fail-open → sab allow. Availability ke liye sahi hai.
+Par socho wo **KAB** hoga:
+
+```
+attack shuru  -> traffic 50x -> Redis pe bhi 50x -> Redis slow / down
+              -> limiter FAIL-OPEN -> sab allow
+              -> limiter THEEK USI WAQT GAYAB hua jab uski sabse zyada zaroorat thi
+```
+
+```
+ILAAJ — fail-open akela kaafi nahi, uske SAATH local fallback:
+   Redis zinda  ->  poora aur theek hisaab (global count)
+   Redis gaya   ->  har node APNI MEMORY se motamoti rok lagaye
+
+   ye poori tarah theek nahi hoga (har node apna-apna ginega)
+   par attack ke waqt "kuch nahi" se "motamoti" BAHUT behtar hai
+```
+
+### 4. Galat cheez gin rahe the — IP
+
+`rate:login:192.168.1.5` — IP pe limit sabse aasan hai aur sabse dhokhedeh.
+
+```
+NAT ka masla       ek daftar / ek mobile network ke HAZAARON log ek hi public IP se
+                   -> ek banda limit kha gaya -> baaki SAB block -> asli user mara gaya
+
+botnet ka masla    hamlavar ke paas hazaaron IP
+                   -> har IP se 5 request -> kisi ki limit nahi tooti -> BILKUL nahi ruka
+```
+
+```
+ILAAJ:
+   jahan user LOGGED-IN hai      ->  user-id / API-key pe gino, IP pe NAHI
+   jahan pehchaan hai hi nahi    ->  (login / signup se pehle) IP par majboori hai
+      -> limit DHEELI rakho + asli faisla neeche WAF / bot-detection pe chhodo
+```
+
+### ★ Chhoti par asli — Retry-After ka thundering herd
+
+Sab blocked client ko `Retry-After: 30` mila, aur sabne **theek 30 second baad EK SAATH** dobara
+maara → window ki seema pe nayi laher. Isliye Retry-After me thoda **random farak** daalo —
+kisi ko 28, kisi ko 33. (JITTER — wahi cheez jo avalanche ke TTL me lagti hai.)
+
+---
+
+### ★ EK HI SHAKAL — poore HLD me ghoomti hai
+
+```
+LB me      "BACHANE wali cheez ne maara"              (health check / retry / sticky)
+cache me   "TEZ karne wali cheez ne raasta rok diya"  (slow Redis + no timeout)
+limiter me "ROKNE wali cheez ne bheed ko roka hi nahi" (per-user limit vs aggregate load)
+           "aur attack ke waqt wo KHUD gayab ho gayi"  (fail-open)
+```
+Poora dhaancha: `FOUNDATIONS/03_load_balancing.md` ka "CHHE TARIKE" + `04_caching.md` ka
+"REDIS LAGATE HI SERVER DOWN" section.
+
+---
+
 ## ═══ HANDS-ON — Nginx se rate-limiter LIVE chalaya (khud kiya, 21-Aug) ═══
 
 > Upar sab THEORY padhi. Ye section = wahi cheez REAL TOOL me chala ke apni aankhon se dekhi.
