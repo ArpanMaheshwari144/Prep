@@ -711,6 +711,132 @@ Fixes:
 
 ---
 
+## ★★ "QUEUE NE SPIKE ABSORB NAHI KIYA — ULTA BIGAAD DIYA" (20-Sep deep-dive)
+
+> "QUEUE KAB GALAT HAI" wala section upar hai — wo batata hai kab queue LAGANI hi nahi chahiye.
+> Ye section alag sawaal hai: **queue sahi jagah lagi hai, chal rahi hai — aur usi ne system maara.**
+
+### 1. Jad ki baat — queue BURST absorb karti hai, LAGATAAR overload nahi
+
+```
+aa rahi hain     1,000 msg/s
+nikal rahi hain    800 msg/s
+
+har second 200 jama  ->  1 ghante me 7,20,000 pending
+```
+
+Queue ne kaam GAAYAB nahi kiya. Usne **"abhi error"** ko **"hamesha late"** me badal diya.
+Agar aane ki raftaar nikalne ki raftaar se LAGATAAR zyada hai, to queue sirf ek dheere-dheere
+doobta hua system hai.
+
+```
+queue TAB kaam karti hai jab spike AATA-JAATA ho
+   10 second ka jhatka, jise agle 2 minute me nipta diya jaaye    <- ye absorb hai
+   lagataar 25% zyada load                                        <- ye absorb NAHI, ye DOOBNA hai
+```
+
+### 2. ★★ BACKLOG NIKALTE WAQT KA ULTA SPIKE (asli jawab)
+
+```
+consumer 10 minute down raha   ->  6,00,000 message jama
+consumer WAPAS aaya            ->  wo POORI RAFTAAR se kheenchta hai
+                               ->  DB pe normal se 10x load
+                               ->  DB GIR GAYA
+```
+
+**Queue ne spike absorb nahi kiya — usne spike ko JAMA karke rakha aur baad me EK SAATH chhod
+diya.** Aur wo laher asli spike se BADI thi.
+
+```
+ILAAJ consumer me hai:
+   bahar nikalne ki RAFTAAR pe apni limit (consumer-side rate limit)
+   backlog ke baad DHEERE-DHEERE raftaar badhao (ramp-up)
+
+   ★ consumer ka kaam "jitna TEZ ho sake" nahi hai — "jitna PEECHE WALA jhel sake" hai
+```
+
+### 3. Jo kaam ab BEKAAR ho chuka, wo bhi ho raha hai (MURDA KAAM)
+
+```
+user ne request bheji                  ->  queue me padi
+30 sec baad user ka sabar khatam       ->  page band / retry maar diya
+2 min baad consumer ne purana message  ->  poora kaam kiya
+                                       ->  us kaam ka ab koi INTEZAAR hi nahi kar raha
+                                       ->  aur retry wala NAYA message bhi queue me hai
+```
+
+Aadha kaam murda kaam hai, aur load dugna.
+
+```
+ILAAJ:
+   message ke saath uski DEADLINE rakho; consumer uthate waqt dekhe —
+      "ye 30 sec purana hai -> chhod do"
+   queue ko BOUNDED rakho: bhar gayi -> seedha MANA karo
+   ★ turant "na" kehna, late jawab dene se BEHTAR hai
+```
+
+### 4. Queue ne BACKPRESSURE CHHUPA di
+
+```
+BINA queue      server bhara -> client ko TURANT 503 -> wo ruk jaata
+                (system ne "na" bola, aur wahi sahi tha)
+
+QUEUE ke saath  sab accept ho raha -> kisi ko mana nahi mil raha
+                -> producer POORI raftaar se bhejta rehta
+                -> dashboard pe sab HARA (koi error nahi)
+                -> sirf ek number chupchaap badh raha hai: QUEUE DEPTH
+```
+
+Jab tak koi wo number dekhta hai, ghante ka backlog ban chuka hota hai.
+
+```
+★ isi liye asli ALERT  `error rate` pe NAHI —
+     QUEUE DEPTH  aur  MESSAGE KI UMAR (oldest message age) pe lagta hai
+```
+
+### 5. Consumer AUTOSCALE ne DB ko maar diya
+
+```
+queue depth badh rahi   ->  autoscaling ne consumer 5 se 50 kar diye
+50 consumer x 20 conn   =   1,000 connection DB pe
+DB ka pool 200 ka tha   ->  DB khatam  ->  ab KUCH BHI nahi chal raha
+```
+
+Bottleneck queue me tha hi nahi — **DB me tha**. Consumer badhane se sirf DB pe zor badha.
+
+```
+ILAAJ: consumer badhane se PEHLE dekho RUKA KAUN hai
+       peeche wale ki had ke hisaab se consumer ki MAX ginti baandho
+```
+
+### ★ Aur ek — jo seedha TRAFFIC GUNA kar deti hai (fan-out)
+
+```
+1 event publish hua
+   -> 5 service subscribe hain
+      -> har ek apne aage 3 call karti hai
+         = 1 request andar, 15 call bahar
+```
+
+Producer ko lagta hai usne "ek chhota event" bheja hai.
+**Pub-sub me traffic ginti nahi badhata — GUNA karta hai.**
+
+---
+
+### ★ EK HI SHAKAL — poore HLD me ghoomti hai
+
+```
+LB me      "BACHANE wali cheez ne maara"                (health check / retry / sticky)
+cache me   "TEZ karne wali cheez ne raasta rok diya"    (slow Redis + no timeout)
+limiter me "ROKNE wali cheez ne bheed ko roka hi nahi"  (per-user limit vs aggregate load)
+queue me   "ABSORB karne wali cheez ne spike JAMA karke baad me BADA karke chhoda"
+```
+
+Poora dhaancha: `03_load_balancing.md` ka "CHHE TARIKE" · `04_caching.md` ka "REDIS LAGATE HI
+SERVER DOWN" · `SYSTEM_DESIGNS/02_rate_limiter` ka "LIMITER LAGA THA PHIR BHI NAHI BACHA".
+
+---
+
 ## Real-World Tools
 
 | Tool | Type | Use |
