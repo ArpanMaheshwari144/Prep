@@ -958,6 +958,117 @@ DB write → publish event → caches subscribe → delete entry
 
 ---
 
+## ★★ "REDIS LAGATE HI SERVER DOWN HO GAYA" — cache KHUD kaise maarta hai (20-Sep deep-dive)
+
+> Neeche wala section (Penetration / Avalanche / Breakdown) us haalat ki baat karta hai jab cache
+> **MISS** ho jaati hai. Ye section alag sawaal ka jawab hai:
+> *cache to laga di, hit bhi ho rahi hai — phir server kyun baith gaya?*
+>
+> Wajah cache ka miss hona nahi hai. Wajah ye hai ki har request ke raste me ek **NAYI CHEEZ**
+> khadi kar di gayi — aur us nayi cheez ki apni bimariyaan hain.
+
+### 1. Ek EXTRA HOP jud gaya, aur uspe TIMEOUT nahi tha
+
+```
+PEHLE   request -> DB -> jawab
+AB      request -> REDIS -> DB -> REDIS me likho -> jawab      (do nayi network call)
+```
+
+Maan le Redis **mara nahi**, bas SLOW ho gaya — 1ms ki jagah 200ms. DB bilkul theek hai. Phir bhi:
+
+```
+app ke paas 200 thread
+har request ab 200ms Redis ka INTEZAAR kar rahi hai
+1000 req/s aa rahi hain
+
+200 thread x 5 req/sec = 1000  ... bas, POOL BHAR GAYA
+nayi request queue me -> timeout -> 503
+```
+
+Server "down" dikhta hai, **DB pe load ZERO hai**, aur mulzim ek cache hai jo sirf slow tha.
+
+```
+ILAAJ (likhna padta hai, apne aap nahi hota):
+   cache call pe CHHOTA timeout (e.g. 50-100ms)
+   fail/timeout ho to SEEDHA DB chale jao (fail-open)
+   = cache ka kaam TEZ karna hai; na mile to RAASTA BAND nahi hona chahiye
+```
+
+### 2. Redis ek waqt me EK hi command chalata hai
+
+Single-threaded hone ka natija ye hai ki **ek slow command = poora Redis ruka**.
+
+```
+KEYS *                 lakhon key pe ghoomta hai        -> sab khade rahenge
+bada SMEMBERS / HGETALL  ek key me 5 lakh item          -> wahi haal
+FLUSHALL / bada delete                                  -> wahi haal
+```
+
+Production me `KEYS *` chala dena ek **classic outage** hai. Uska sahi rishtedaar **`SCAN`** hai —
+thoda-thoda karke ghoomta hai, beech me doosron ko mauka deta hai.
+
+> ★ Hands-on note: upar ke eviction demo me `KEYS *` chalaya gaya tha — wahan data CHHOTA tha
+> isliye chal gaya. Lakhon key pe wahi command Redis ko rok deti.
+
+### 3. Ek GARAM key — aur sharding se koi fayda nahi
+
+Sharding data ko key ke hisaab se baantti hai. Par agar 80% traffic **EK HI key** pe hai
+(homepage banner, viral post, ek config) — to wo key ek hi node pe hai. **10 node laga le, bojh
+ek pe hi rahega.**
+
+```
+ILAAJ (sharding NAHI):
+   us key ko APP ki apni memory me bhi rakho (local cache, chhota TTL)
+        -> Redis tak jaana hi na pade
+   ya us EK key ki KAI COPY bana do: banner:1 ... banner:10
+        -> request random copy uthaye, bojh baant jaaye
+```
+
+### 4. BADE value — bandwidth chup-chaap khatam
+
+```
+1 MB ka JSON  x  5,000 req/s  =  5 GB/s
+```
+
+Redis ka CPU khaali dikhega, memory theek dikhegi, aur **network card bhara hua** hoga.
+Isi liye cache me poora object thoosne ki jagah **jitna chahiye utna** rakhte hain.
+
+### 5. ★★ SABSE TEDHI — DB ko cache ki AADAT lag jaati hai
+
+```
+cache se PEHLE    DB pe 10,000 req/s   -> DB ko itna hi jhelna hota tha
+cache ke BAAD     DB pe    500 req/s   -> "ab to DB khaali baitha hai"
+                                       -> aage chalke DB chhota kar diya jaata hai
+                                          ya usi pe aur kaam daal diya jaata hai
+
+ab Redis restart / flush / network gaya
+                  DB pe seedha 10,000  -> ye load DB ne KABHI nahi dekha -> gir gaya
+```
+
+**Cache ne load GHATAYA nahi tha — usne load CHHUPA diya tha.** Aur jis din cache gaya, poora load
+ek JHATKE me wapas aaya, thoda-thoda karke nahi.
+
+```
+ILAAJ cache me hai hi NAHI:
+   DB ki capacity itni rakho ki cache ke BINA bhi kuch der jee sake
+   cache jaane pe LOAD SHEDDING — kuch request seedha mana, taaki baaki chalti rahein
+   cache ko DHEERE garam karo (warm-up), ek saath nahi
+```
+
+---
+
+### ★ EK HI SHAKAL — LB wali baat yahan bhi
+
+```
+LB me     "BACHANE wali cheez ne maara"      (health check / retry / sticky)
+cache me  "TEZ karne wali cheez ne RAASTA ROK diya"  (slow Redis + no timeout)
+          "aur jo load chhupaya tha wo ek din EK SAATH wapas aaya"
+```
+Dono ka naam ek hi hai — **cascading / metastable failure**.
+(Poora dhaancha = `03_load_balancing.md` ka "CHHE TARIKE" wala section.)
+
+---
+
 ## Advanced — 3 Cache Problems + Bloom Filter (DEPTH)
 
 Senior-level interview depth. (Penetration + Avalanche naye; Breakdown = stampede, upar interview-points mein bhi.)
