@@ -18,7 +18,7 @@ HISSA 3 — RECORD    drill ke BAAD bharne ki cheez. Score, kya chhoota, pattern
 
 * [HISSA 1 — ATTACK](#hissa-1--attack) — 5 kadam · MUST-HAVE list · NISHAAN table · bolne ka tarika
 * [HISSA 2 — SAMAJH](#hissa-2--samajh) — 6 bucket · auth ka farak · kyun ye kram
-* [HISSA 3 — RECORD](#hissa-3--record) — 3 drill ka data · 5 example · pattern · mindset
+* [HISSA 3 — RECORD](#hissa-3--record) — 4 drill ka data · 6 example · pattern · mindset
 
 ---
 ---
@@ -92,9 +92,21 @@ KADAM 5 — BOLO structured: security -> java-trap -> resource -> db -> design. 
 [ ] AUDIT           kaun, kab, kitna — record hua?
 ```
 
-★ In me se **teen dobara-dobara chhoote hain** — MONEY TYPE (drill-1 pakda, 2 aur 3 me chhoota),
-ERROR CODE (drill-2 aur 3 dono), KRAM (drill-2 aur 3 dono). Ek baar pakad lene se ye yaad nahi
-rehta. Isi liye ye LIST me hain, yaad me nahi.
+★ **20-Sep tak in 9 ka haal** (gina hua, andaaza nahi):
+
+```
+AB AA JAATE HAIN    AUTHORIZATION · IDEMPOTENCY   (drill 3 aur 4, lagataar)
+                    MONEY TYPE · KRAM             (drill 2-3 me chhoote the, drill 4 me AAYE)
+                    TRANSACTION                   (drill 2 se aa raha hai)
+
+ABHI BHI CHHOOTE    VALIDATION      (-ve · 0 · bahut bada)
+                    AMOUNT COMPARE  (drill 3 aur 4 dono)
+                    ERROR CODE      (drill 2, 3 aur 4 — ★ TEEN baar)
+                    AUDIT           (drill 3 aur 4 dono)
+```
+
+Jo aa gaye, wo list me rehne se aaye — yaad se nahi. Jo chhoot rahe hain, unke liye list
+PADHNI padegi; wo nazar se nahi milte, gin ke milte hain.
 
 ## ★★ 1.3 — NISHAAN TABLE — "code me kya DIKHA, aur kya POOCHNA hai"
 
@@ -122,8 +134,8 @@ amount bhi paas me hai                             (19-Sep: orderAmount nikala, 
                                                     -> Rs.500 ke order pe Rs.50,000 ka refund)
 
 float / double + paisa                             "ye paisa hai -> BigDecimal"
-                                                   ★★ DOHRAYA MISS: 17-Sep PAKDA,
-                                                   18 aur 19-Sep DONO me CHHOOTA
+                                                   ★ 17-Sep pakda, 18 aur 19 me chhoota,
+                                                   20-Sep dobara AAYA — ab list se aata hai
 
 Object / String pe  ==                             "ye reference jod raha ya value?"
                                                    (status=="FROZEN" -> hamesha false ->
@@ -134,7 +146,7 @@ do DB-write ke BEECH me BAAHAR ka call             "iske BAAD wala step fail hua
                                                    (debit -> "paisa aaya" bhej diya -> credit fail)
                                                    (19-Sep: paisa gateway se nikla, company ke
                                                     paas record hi nahi bana)
-                                                   ★★ DOHRAYA MISS: drill-2 aur 3
+                                                   ★ drill-2 aur 3 me chhoota, drill-4 me AAYA
 
 controller/service me koi MUTABLE field            "ye har request me SAANJHA hai — thread-safe?
 (Map · List · counter · flag)                       kabhi khaali hota? 2 pod pe chalega?"
@@ -142,7 +154,9 @@ controller/service me koi MUTABLE field            "ye har request me SAANJHA ha
 
 ResponseEntity.ok  failure waali branch me         "is haalat ka HTTP code kya hona chahiye?
                                                     400 / 409 / 422?"
-                                                   ★★ DOHRAYA MISS: drill-2 aur 3
+                                                   ★★ TEEN BAAR CHHOOTA: drill 2, 3 aur 4
+                                                   (aur "ALREADY_IN_PROGRESS" bhi 200 OK tha
+                                                    -> wo 409 hai)
 
 koi constant / field DECLARE hua                   "ye use kahan hua?" — kahin nahi = dead code
                                                    (MAX_RETRIES · MAX_REFUND_ATTEMPTS)
@@ -281,10 +295,13 @@ wo aankh se DIKHTA HI NAHI. 17-Sep ko jo 8 chhoote, wo lagbhag saare BEHAVIOUR w
 17-Sep   PaymentService        7 / 15  (47%)   zyadatar SHAKAL wale (string · missing close · field-injection)
 18-Sep   TransferController    7 / 15  (47%)   ab BEHAVIOUR wale (transaction · idempotency · injection)
 19-Sep   RefundController     11 / 18  (61%)   ★ authz + idempotency DONO aaye (pichhli baar chhoote the)
+20-Sep   DisbursalController  11 / 18  (61%)   ★ MONEY-TYPE + KRAM dono aaye (pichhli DO baar chhoote the)
+                                              chhoote 7 me se 4 MUST-HAVE list me likhe hue the
 
-★ IMAANDARI: teeno PR alag the, mushkil bhi alag.
-  Ek drill se "sudhar gaya" nahi keh sakte — TEESRI baar bhi 60%+ aaye tabhi wo sach.
-  Abhi tak ka sach: 7/15, 7/15, 11/18.
+★ IMAANDARI: chaaron PR alag the, mushkil bhi alag.
+  Abhi tak ka sach: 7/15, 7/15, 11/18, 11/18.
+  Do baar lagataar 61% — 47% se upar, aur ab ye ek baar ka ittefaaq nahi hai.
+  Score wahi raha par CHHOOTNE WALI cheezein badal gayi — wo asli badlav hai, %-nahi.
 ```
 
 ## ★ 3.2 — PATTERN, waqt ke saath
@@ -299,6 +316,18 @@ NAYA pattern (19-Sep)       ->  PAKDA   : STRUCTURE + JAVA-TRAP
                                           (double for money · range check · amount se compare)
                                           KRAM aur NAAKAAMI
                                           (bahar ka call beech me · crash pe kya · 200 on failure)
+
+20-Sep ka pattern           ->  PAKDA   : upar wala SAB, aur uske OOPAR
+                                          double-for-money aur bahar-ka-call-beech-me
+                                          -> yaani jo cheez LIKHI hui hai, wo ab aa jaati hai
+
+                                CHHOOTA : sirf wo jo LIKHI HI NAHI HAI
+                                          validation · amount-compare · error-code · audit
+                                          (chaaron MUST-HAVE list ki line hain)
+
+★ ISKA MATLAB EK HI HAI: HUNT (kadam 1-3) kaam kar raha hai.
+  Jo chhoot raha hai wo sirf KADAM 4 hai — list padhi hi nahi jaati.
+  Agle drill me sudhaar list se aayega, aur zyada dhyaan se dekhne se nahi.
 ```
 
 ## ★ 3.3 — WORKED EXAMPLES
@@ -426,6 +455,59 @@ CHHOOTE (7):
                                   finance me ye COMPLIANCE ki cheez hai
 
    (bonus: RefundService me dataSource declare/inject hua hi nahi — compile nahi karega)
+```
+
+### ★★ Example 6 — DisbursalController + DisbursalService (loan disbursal) — 20-Sep drill, 18 bug
+
+```
+PAKDE (11):
+   constructor injection nahi           design
+   static SimpleDateFormat              java-trap / thread-unsafe
+   SQL injection — 4 jagah              security  <- sabse bada
+   ★ double har jagah                   MONEY TYPE — drill 2 aur 3 me chhoota tha, AAJ AAYA
+   @Transactional nahi                  atomicity
+   idempotency nahi                     finance   <- teesri baar lagataar
+   status == "APPROVED"                 java-trap
+   Connection / Statement / RS close nahi    resource leak
+   log me sensitive (aur log line khud ek DB call kar rahi hai)   security
+   ★ NEFT call DO DB-write ke BEECH me  KRAM — drill 2 aur 3 me chhoota tha, AAJ AAYA
+   ★★ AUTHORIZATION nahi                aur shabd theek the: "kahin likha ho to theek,
+                                        yahan nazar nahi aa raha"
+
+   ★ money-type aur kram DONO wo the jo pichhli DO baar chhoote the. List ne kaam kiya.
+
+CHHOOTE (7) — saat me se CHAAR must-have list ki line hain:
+   ★ amount pe koi JAANCH nahi      -ve amount -> outstanding BADH jayega, paisa bahar
+                                     0 -> NEFT call phir bhi hoga
+
+   ★ amount vs sanctioned_amount     sanctioned DB se NIKALA, variable me rakha,
+     kabhi COMPARE nahi hua          aur kabhi use hi nahi kiya
+                                     -> 5 lakh sanction, 50 lakh disburse
+
+   ★ har failure pe 200 OK           catch -> ok("FAILED")  ·  ok("ALREADY_IN_PROGRESS")
+                                     e.printStackTrace() + log.error("disbursal failed")
+                                     — na loanId na stack trace
+                                     ★★ ERROR CODE — ab TEEN baar chhoota
+
+   rs.next() ka return unchecked     galat loanId -> rs.getString pe seedha crash
+
+   UPDATE loan_accounts              WHERE me sirf customer_id, loan_id kahin nahi
+                                     -> customer ke DO loan hue to GALAT row overwrite
+                                     aur outstanding = sanctioned - amount
+                                     (purana outstanding padha hi nahi gaya)
+
+   AUDIT trail nahi                  kisne disburse kiya, kab, kitna — koi record nahi
+
+   MAX_DISBURSAL_RETRY               declare hua, use kahin nahi = dead code
+
+★ EK CHEEZ JO PAKDI PAR KHODI NAHI — inFlight Map:
+  "idempotency nahi" bolna SAHI tha. Par us Map ke andar chaar alag bug hain —
+  HashMap (thread-unsafe) · kabhi clear nahi (leak) · instance field (2 pod pe bekaar) ·
+  aur put() kaam se PEHLE, to ek baar fail hone pe wo loanId hamesha ke liye BLOCK.
+  -> dikhe to poochho "ye waqai kaam karti hai?" (2.4 wali baat)
+
+★ IS SNIPPET ME JO FAMILY TEST HI NAHI HUI (taaki tasveer honest rahe):
+  N+1 · entity/DTO expose · Optional.get() · hardcoded secret — inme se kuch tha hi nahi.
 ```
 
 ## ★ 3.4 — MINDSET (17-Sep ka asli sabak)
