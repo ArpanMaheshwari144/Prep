@@ -254,6 +254,184 @@ Server-2 bypassed until recovers
 
 ---
 
+## ★★ LB KHUD BOJH BAN JAATA HAI — "LB laga diya, phir bhi dabaav aa gaya" (20-Sep deep-dive)
+
+> Upar wala section LB ke MAR JAANE ki baat karta hai (SPOF → redundancy).
+> Ye section usse aage ka hai: LB ZINDA hai, sab kuch "sahi" laga hai, aur phir bhi system baith gaya.
+
+### Pehle ek line jo poori soch badalti hai
+
+```
+LB traffic ko BAANTTA hai. GHATATA nahi.
+```
+
+10,000 request aa rahi hain, 4 server hain → LB ke baad bhi 10,000 hi hain, bas 2,500-2,500.
+Agar ek server 2,000 hi jhel sakta hai to LB kuch nahi bachayega — **wo LB ka kaam tha hi nahi.**
+Dabaav GHATANE wali cheezein alag hain: cache · rate limit · autoscaling · load shedding.
+
+### LB ki apni HAD — wo bhi ek machine hai, aur chaar jagah khatam hoti hai
+
+```
+1. NETWORK CARD      saari request AUR saara response isi ek taar se guzarta hai
+                     10 Gbps card = 10 Gbps, chahe peeche 50 server ho
+                     (video / file-download wale system me ye SABSE PEHLE bharta hai)
+
+2. CPU — TLS         har NAYI https connection pe handshake ka hisaab LB karta hai
+                     mehnga kaam hai; har request nayi connection khole to
+                     LB ka CPU 100% ja sakta hai jabki peeche server KHAALI baithe hain
+
+3. CONNECTION TABLE  LB har zinda connection ka hisaab rakhta hai (kaunsa client ↔ kaunsa server)
+                     ye table memory + file-descriptor leti hai, ginti limited hai
+
+4. PORT              LB peeche server se baat karne ko apne port kholta hai
+                     ek machine ke paas ~65,000 port — bahut high traffic pe sach me khatam
+```
+
+### Ilaaj — har had ka alag
+
+```
+TLS ka CPU bhara       ->  keep-alive ON (ek connection pe kai request)
+                           ya TLS ka kaam alag jagah karao (offload)
+
+card / bandwidth bhara ->  ek LB se kaam nahi chalega, KAI LB chahiye
+                           DNS se hi 2-3 LB ke IP baanto (DNS round-robin)
+                           ya ANYCAST — ek hi IP, alag sheher me alag machine
+
+connection / port bhara->  aage ek halka L4 LB, peeche kai L7 LB
+                           (AWS ka NLB -> ALB wala dhaancha yahi hai)
+                           L4 sirf packet aage badhata hai, HTTP padhta hi nahi -> bahut zyada jhelta
+```
+
+★ Isi wajah se bade system me LB **ek nahi hota — ek LAYER hota hai**:
+```
+DNS (kai IP)  ->  L4 LB  ->  L7 LB  ->  server
+```
+
+---
+
+## ★★ CHHE TARIKE JINSE LB KHUD SYSTEM KO MAARTA HAI
+
+> Har ek me LB ne "galat" kuch nahi kiya — usne apna kaam hi kiya.
+> Yahi in sawaalon ka maza hai.
+
+### 1. JHOOTHA health check
+
+Server `/health` pe `200 OK` bhejta hai kyunki wo endpoint sirf itna kehta hai "main zinda hoon".
+Peeche DB connection pool khatam ho chuka hai. LB ko sab HARA dikhta hai, traffic bhejta rehta hai,
+har request 500 ban ke lautti hai.
+
+```
+shallow check   GET /health -> return "OK"                 <- sirf process zinda hai
+deep check      GET /health -> DB ping + cache + downstream
+```
+
+Deep check sahi lagta hai par uski keemat hai — har 5 sec × har server × ek DB query.
+50 server = DB pe faltu bojh. **Asli practice: check HALKA rakho par SACH bolne wala** —
+"pool me connection bacha hai?" ye to memory me pada hai, DB tak jaane ki zaroorat hi nahi.
+
+### 2. Health check ne hi POORA system maar diya — (PANIC MODE)
+
+DB down hua → **saare** server ka deep health check fail → LB ne SABKO dead mark kar diya →
+kisi ko traffic nahi bheja. Jo 20% request DB ke bina bhi chal sakti thi (cache se, static),
+wo bhi nahi chali. **Aadhi kharabi ko LB ne POORI kharabi bana diya.**
+
+```
+ILAAJ = PANIC MODE
+   agar ek had se zyada server unhealthy ho jaayein (maan le 50%),
+   to LB health-check ko NAZARANDAAZ karke sabko traffic bhejne lagta hai
+
+   soch: "sab dead hai" ka matlab aksar ye hota hai ki CHECK GALAT hai,
+         na ki sach me sab mar gaye
+   (Envoy me ye setting seedhe isi naam se hai)
+```
+
+### 3. Ek mara, baaki bhi mar gaye — (CASCADING)
+
+```
+3 server x 70%  ->  ek gira  ->  bache 2 pe 105%  ->  dono gire  ->  sab khatam
+```
+
+Ilaaj LB me hai hi nahi — **jagah chhod ke chalo**. Ek server ke marne pe bhi jeena hai to
+normal haalat me har server `100/(N-1)` se KAM pe chalna chahiye (3 server = ~66% se neeche).
+Isko **N+1 capacity** kehte hain. Saath me circuit breaker + load shedding — taaki server
+marne ki jagah kuch request seedha MANA kar de.
+
+### 4. RETRY ka toofan
+
+Server slow hua → request timeout → LB ne retry ki → client ne bhi → upar wali service ne bhi.
+Ek asli request 3-4 ban gayi — **theek us waqt jab system pehle se dooba hua tha.**
+
+```
+normal      100 req/s  ->  100 request
+degraded    100 req/s  ->  300-400 request    (har layer apni retry jod rahi hai)
+```
+
+Teen cheezein chahiye:
+```
+RETRY BUDGET              kul ka ~10% se zyada retry nahi
+BACKOFF + JITTER          sab ek saath dobara mat maaro, warna har 2 sec pe nayi LAHER
+RETRY SIRF SAFE JAGAH     jahan dobara chalana theek ho (idempotent)
+```
+
+### 5. Naya server boot hua aur usi pe SAB gir gaya — (SLOW START)
+
+Algorithm least-connections hai. Naya server khada hua → uske paas **0** connection → LB
+**saari** nayi request usi ko bhejne laga. JVM garam nahi, JIT ne compile nahi kiya, local cache
+khaali, pool khaali. Pehle hi minute me gir jaata hai, restart, phir wahi chakkar.
+
+```
+SLOW START            naye server ko DHEERE bojh do — maan le 30 sec me 0 se poora
+CONNECTION DRAINING   band karte waqt: nayi request roko, purani poori hone do
+                      (warna deploy ke waqt request BEECH me katti hai)
+```
+
+### 6. STICKY session ka garam server
+
+Sticky on → ek user hamesha ek hi server pe. Kuch bhaari user ek hi server pe baith gaye →
+wo 90% pe, baaki 30% pe. LB dekh raha hai par kuch kar nahi sakta — user ko hila nahi sakta.
+Aur wo server gira to unke session hi ud gaye.
+
+**Ilaaj sticky ko theek karna NAHI hai — sticky ki ZAROORAT khatam karo.**
+Session server ki memory se nikaal ke Redis ya token me daal do → har request kisi bhi server pe.
+
+---
+
+## ★★ IN CHHEO ME EK HI SHAKAL — CASCADING / METASTABLE FAILURE
+
+```
+har ek me, jo cheez BACHANE ke liye lagayi thi USI NE MAARA:
+
+   health check       ->  bachane ko tha, usne SAB dead kar diya
+   retry              ->  bachane ko tha, usne load 3x kar diya
+   least-connections  ->  barabar baantne ko tha, usne NAYE server ko maar diya
+   sticky             ->  session bachane ko tha, usne ek server GARAM kar diya
+```
+
+**CASCADING FAILURE** = ek cheez girne se agli girti hai, phir agli.
+
+**METASTABLE FAILURE** (tedha roop) = load HAT jaane ke baad bhi system apne aap theek NAHI hota,
+kyunki ab retry ka backlog KHUD hi naya load ban chuka hai. Aise me traffic band karke,
+backlog PHENK ke, system ko zabardasti reset karna padta hai.
+
+---
+
+## ★ BOLNE KE LIYE — "X fail ho gaya to kya hoga" wale sawaal pe
+
+```
+1. "LB traffic baantta hai, ghatata nahi"           <- soch ki jad
+2. "har bachane wali cheez ka apna failure mode hai" <- health check / retry / sticky
+3. ilaaj hamesha DO jagah:  LB ki setting  +  CAPACITY ki planning (N+1)
+4. "aadhi kharabi ko poori kharabi mat banne do"     <- panic mode / graceful degradation
+```
+
+> ★ IMAANDARI (20-Sep, jo likha wo ye hai):
+> upar likha SAB technology ka behaviour hai — ye aise hi kaam karta hai, ispe khade raho.
+> "interview me aisa poocha JAATA hai" — ye writeups se hai, Claude ne na interview diya na liya.
+> Itna kaafi hai: senior-backend design round me "X fail hua to?" wale sawaal writeups me
+> aksar milte hain, aur 700-ticket wale background ke saath ye Arpan ka sabse aasan zone hai.
+
+---
+
 ## Nginx Deep — User's Question
 
 ### **Nginx ≠ AWS** (open-source software, not AWS-specific!)
