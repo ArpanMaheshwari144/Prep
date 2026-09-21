@@ -167,16 +167,40 @@
         ye maine requirement me bhi likha tha."
 ```
 
-### dikkat 5 — "crore article jama ho gaye"
+### dikkat 5 — "6 mahine me 5 crore row — aur 'latest 20' wali query 2 second le rahi hai"
 
 ```
-   FAISLA:
-        SHARD    -> category ya date ke hisaab se
-        ARCHIVE  -> purani news cold storage me (kaun 2 saal purani news padhta hai)
-        cache me sirf latest -> DB pe load waise hi kam
+        feed ki query hai:   ORDER BY published_at DESC LIMIT 20
+
+        5 crore row pe ye index ke bawajood bhaari padti hai,
+        aur cache-MISS pe YAHI query chalti hai -> ab har miss 2 second ka
+
+        aur dekho: ye 20 row NAYI hain.
+        baaki 4.99 crore row sirf jagah ghere baithi hain, koi padhta hi nahi.
+
+   FAISLA: PURANA data alag karo
+        latest ~7 din   ->  garam table (chhoti, tez)
+        usse purana     ->  cold storage / archive table
+        cache me sirf latest  ->  DB pe load waise hi kam
+
+   ★ ye SHARDING nahi hai -- ye RETENTION hai. Dono alag cheezein hain,
+     aur aksar ek hi saans me bol di jaati hain.
 ```
 
-### dikkat 6 — "user ko apni pasand ki feed chahiye"
+### dikkat 6 — "archive ke baad bhi ek hi DB box pe 1000 source ki likhai aa rahi hai"
+
+```
+        fetcher har minute 1000 source se LIKH raha hai
+        aur usi box se user ka feed PADHA ja raha hai
+
+   FAISLA: SHARD  ->  date (ya category) ke hisaab se
+
+   ★ date se shard karne ka ek ASAR hai:
+     saari NAYI likhai EK hi shard pe girti hai (aaj wala) -> wahi shard garam rahega
+     -> wahi HOT-PARTITION wali baat jo caching aur chat design me bhi aati hai
+```
+
+### dikkat 7 — "user ko apni pasand ki feed chahiye"
 
 ```
         poora per-user fanout mehnga hai (10 lakh alag feed)
