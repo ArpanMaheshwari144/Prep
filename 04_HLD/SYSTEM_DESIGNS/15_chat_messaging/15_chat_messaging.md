@@ -2,8 +2,7 @@
 
 > **21-Sep.** Ye design baaki sab se ek buniyaadi cheez me alag hai, aur wahi is poore page ki jad hai.
 > Isi liye ye padh ke nahi, **chala ke** banaya gaya — ek chhota server likh ke, do browser tab khol ke,
-> aur teen asli bug khaa ke. Hands-on ka poora hissa neeche hai, aur uska code
-> [`07_PROJECTS/chatdemo/`](../../../07_PROJECTS/chatdemo/) me pada hai.
+> aur asli bug khaa ke. Hands-on ka poora hissa neeche hai.
 
 ---
 
@@ -443,10 +442,9 @@ Slack model      hamesha rakho, 3 saal purana bhi search
 
 > Ye design padh ke nahi, **chala ke** banaya gaya.
 > Ek chhota server + do browser tab (A aur B). Koi library nahi, koi framework nahi.
-> **Code yahan NAHI hai** — wo [`07_PROJECTS/chatdemo/`](../../../07_PROJECTS/chatdemo/) me pada hai.
-> Yahan sirf ye likha hai: kya kiya, aur SCREEN PE kya dikha.
->
-> Chalane ka tarika: `java ChatServer.java 8080` → phir `localhost:8080/?me=A` aur `?me=B`
+> **Code yahan jaan-boojh ke NAHI hai.** Design round me code poochha hi nahi jaata,
+> aur wo asli baat ko dhak deta hai. Yahan sirf ye likha hai:
+> kya kiya, aur SCREEN PE kya dikha.
 
 ---
 
