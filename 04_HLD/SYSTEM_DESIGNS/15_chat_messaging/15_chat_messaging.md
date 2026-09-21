@@ -1,8 +1,8 @@
 # Chat / Messaging System — POORA ROUND (4 MOVE, jaise asli me hota hai)
 
 > **21-Sep.** Ye design baaki sab se ek buniyaadi cheez me alag hai, aur wahi is poore page ki jad hai.
-> Isi liye ye padh ke nahi, **chala ke** banaya gaya — ek chhota server likh ke, do browser tab khol ke,
-> aur asli bug khaa ke. Jo us chalane se nikla, wo neeche ke MOVE me ghul chuka hai.
+> Ye design padh ke nahi bana — ek chhota server aur do browser tab chala ke bana.
+> Jahan-jahan koi cheez AANKH SE DEKHI gayi hai, wahan **★ DEKHA:** likha hai.
 
 ---
 
@@ -172,7 +172,7 @@ Baaki sab (offline, history, group, tick) **inhi do ke upar** khada hota hai.
 
 # MOVE 3 — BOXES BANAO (chhota banao, phir dikkat pe badhao)
 
-## Sabse simple cheez se shuru — EK server, do user (yahi chala ke dekha)
+## Sabse simple cheez se shuru — EK server, do user
 
 ```
    A ka browser                SERVER                 B ka browser
@@ -194,6 +194,10 @@ Baaki sab (offline, history, group, tick) **inhi do ke upar** khada hota hai.
    wo B ke us PURANE taar se gaya jo pehle se khula pada tha
 3. B ne kabhi nahi poocha "mere liye kuch aaya?"
 ```
+
+> ★ **DEKHA:** B ki screen pe message aa gaya jabki B ne kuch maanga hi nahi tha.
+> Uski screen upar likh rahi thi *"JUD GAYA — ye connection ab khuli padi hai"*,
+> aur server ki console pe `[JUDA] B   register ab = [A, B]`.
 
 ### dikkat 1 — "2 crore connection KHULI rakhni hain, aur har ek server ki memory kha rahi hai"
 
@@ -228,6 +232,12 @@ c. DEPLOY dard ban jaata hai
       -> thode-thode server, aur connection pehle se hataao (draining)
 ```
 
+> ★ **DEKHA:** server ki ginti jaan-boojh ke **teen** rakhi thi. Do khuli connection ne
+> do jagah pakad li, teesri bhi bhar gayi — aur message bhejne ki request server tak
+> **pahunchi hi nahi**. Console pe `[JUDA]` ki teen line thi aur `[SEND]` ki EK BHI nahi.
+> Na error, na crash, CPU khaali. Bas jagah khatam.
+> **Khuli connection bina kuch kiye bhi jagah ghere rehti hai** — ye padha nahi, dekha.
+
 ### dikkat 2 — "A server-1 se juda hai aur B server-7 se — server-1 ki diary me B hai hi nahi"
 
 ```
@@ -242,6 +252,10 @@ A ka message  ->  server-1 pe gira
 ```
 
 Server-1 jhooth nahi bol raha. **Har server ko sirf apne judne walon ka pata hai.**
+
+> ★ **DEKHA:** wahi ek program do baar chalaya, do alag port pe. A pehle pe, B doosre pe.
+> A ki screen pe aaya `(server bola: B OFFLINE hai)` — **aur B us waqt bilkul online tha,
+> uski connection khuli padi thi.** Ek server ki diary me `[A]`, doosre ki me `[B]`.
 
 ### Iske TEEN raste — ek bekaar, DO asli
 
@@ -455,7 +469,7 @@ POST  /messages/{id}/read           <- receipt
 
 ```
 CONNECTION ka bojh    2 crore khuli connection = ~200 server sirf haath pakadne ko
-                      -> event-loop, warna thread khatam (ye demo me DEKHA)
+                      -> event-loop, warna thread khatam
 REGISTER              memory me hai -> server gira to uska poora register gaya
                       -> Redis me TTL wali entry + dhadkan
 RECONNECT ka toofan   ek server gira -> 1 lakh ek saath wapas
@@ -479,17 +493,20 @@ PUSH ka raasta        Google/Apple bahar ki cheez hai -> uska apna retry/queue
 ## ★ IS DESIGN KA IMAANDAR HISAAB (21-Sep)
 
 ```
-JO HO GAYA (chala ke, sirf padh ke nahi):
-   push ka poora mechanism      khuli connection + register + pen
-   connection ka kharcha        thread khatam hone tak dekha
-   do server wali dikkat        do port pe chala ke saamne laayi
+JO HO GAYA:
+   push ka poora mechanism      khuli connection + register + pen        ★ dekha
+   connection ka kharcha        thread khatam ho ke server chup ho gaya  ★ dekha
+   do server wali dikkat        B online tha aur "OFFLINE" likha aaya    ★ dekha
+   ek banda = kai connection    "bhej diya (2 connection pe)"            ★ dekha
    uske teen raste              1 kharij + Redis routing + pub-sub
    offline ka raasta            pehle likho phir bhejo, catch-up, push notification
    storage                      chat_id partition, snowflake id, cursor, wide-column, cold
 
 JO ABHI BAKI HAI:
    group fan-out                ek message 500 logon tak -- ek likhai ya 500
-   tick                         sent / delivered / read -- teeno ka apna raasta
+   tick                         sent / delivered / read -- teeno ka apna ULTA raasta
+                                (21-Sep ko baat ho chuki + chala ke dekha, par is FILE me
+                                 abhi likha nahi -- ye do dikkat banni baaki hain)
    kram aur duplicate           ek hi message do baar na dikhe
    media                        photo/video ka alag rasta (blob + pata)
    presence                     online / last seen
