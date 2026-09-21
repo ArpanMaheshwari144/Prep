@@ -155,10 +155,10 @@ Baaki sab (offline, history, group, tick) **inhi do ke upar** khada hota hai.
       -> inhe API/business wale server se ALAG rakho
       -> aur inpe event-loop (Netty type), "ek connection = ek thread" chalega hi nahi
 
-2. SHARDING LAZMI HAI (yahan banking se ULTA faisla)
+2. STORAGE ek box ka kaam NAHI hai (yahan banking se ULTA)
       banking = 120 write/sec  ->  ek Postgres ka 10-va hissa  ->  sharding ki zaroorat NAHI
       chat    = 46,000 write/sec + 1.2 TB roz  ->  ek box ka sawaal hi nahi
-      ★ yahi wajah hai ki DB ka chunav bhi ULTA jaata hai
+      ★ DB kaunsa lenge ye ABHI nahi -- wo MOVE 3 me, jab ek box sach me tootega
 
 3. HISTORY ka MODEL storage ka dhaancha tay karta hai
       MOVE 1 ka sawaal #2 yahan cash hota hai:
@@ -167,35 +167,13 @@ Baaki sab (offline, history, group, tick) **inhi do ke upar** khada hota hai.
       is design me SLACK model maan ke chal rahe hain
 ```
 
-**DB CHUNAV — WIDE-COLUMN (Cassandra / Scylla type). Teen wajah:**
-
-```
-   1. LIKHAI bahut, PADHAI bahut SAADI
-         "is chat ke aakhri 50 message" -- bas yahi ek sawaal, baar-baar
-         koi join nahi . koi report nahi . koi search nahi (E2E scope se bahar)
-
-   2. PARTITION KEY pe data SORTED pada rehta
-         chat_id ke andar message_id ke kram me
-         -> "aakhri 50" EK disk read me
-
-   3. LIKHAI me tez aur AAGE-BADHAANE layak
-         node jodo -> aur likhai jhel lega (write path pe lock/constraint ka bojh nahi)
-```
-
-★ **Relational yahan kyun NAHI** (aur banking me kyun THA): banking me multi-row atomicity aur
-`balance >= 0` jaisa constraint chahiye tha -- wo relational ka kaam hai. Chat me ek message ek
-row hai, kisi doosri row se uska lena-dena nahi, aur koi constraint nahi -- sirf **bahut saari
-likhai**. Jo cheez banking me relational ko zaroori banati thi, wo yahan hai hi nahi.
-
-★ **Aur ek cheez jo relational me maar deti:** 1.2 TB roz ka ek hi `messages` table, jiska index
-har insert pe update hota. Wide-column me likhai append jaisi hai.
 
 ---
 ---
 
 # MOVE 3 — BOXES BANAO (chhota banao, phir dikkat pe badhao)
 
-## Kadam 1 — EK server, do user (yahi chala ke dekha)
+## Sabse simple cheez se shuru — EK server, do user (yahi chala ke dekha)
 
 ```
    A ka browser                SERVER                 B ka browser
@@ -218,7 +196,7 @@ har insert pe update hota. Wide-column me likhai append jaisi hai.
 3. B ne kabhi nahi poocha "mere liye kuch aaya?"
 ```
 
-## Kadam 2 — dikkat: connection MUFT NAHI hoti
+### dikkat 1 — "2 crore connection KHULI rakhni hain, aur har ek server ki memory kha rahi hai"
 
 ```
 har ek khuli connection ke liye server ke paas hona chahiye:
@@ -251,7 +229,7 @@ c. DEPLOY dard ban jaata hai
       -> thode-thode server, aur connection pehle se hataao (draining)
 ```
 
-## Kadam 3 — dikkat: DO SERVER ho gaye (yahi asli sawaal hai)
+### dikkat 2 — "A server-1 se juda hai aur B server-7 se — server-1 ki diary me B hai hi nahi"
 
 ```
 server-1 ki diary  =  { A -> penA }
@@ -304,7 +282,7 @@ ek server se dusre tak   ->  seedhi call YA pub-sub channel
 banda OFFLINE hai        ->  message DB/queue me + phone pe push notification
 ```
 
-## Kadam 4 — OFFLINE banda (raasta hamesha ALAG hota hai)
+### dikkat 3 — "B offline hai — uska pen hai hi nahi, to message jaaye kahan?"
 
 Poora khel ek ulte-lagne wale faisle pe tika hai:
 
@@ -367,7 +345,7 @@ ghanti wala      ->  tera server  ->  Google/Apple  ->  phone ka OS  ->  GHANTI
 App band ho, phone jeb me ho — ghanti phir bhi bajti hai, kyunki wo raasta tere server se nahi,
 **phone ke OS** se jaata hai. Isi liye har chat system me ye dono raaste alag banaye jaate hain.
 
-## Kadam 5 — HISTORY / STORAGE
+### dikkat 4 — "1.2 TB roz aur 46,000 write/sec — ye ek DB box pe nahi aayega"
 
 ```
 400 crore message/din  x  ~300 byte  =  ~1.2 TB roz
@@ -411,10 +389,31 @@ OFFSET 200000                                                   <- yahan bhi utn
                                                                    (banking design wali baat)
 ```
 
-### Kaunsa DB
+### Kaunsa DB — ab ye sawaal BANTA hai
 
-Wide-column (Cassandra / Scylla type) — **wajah MOVE 2 me likhi hai**, aur wo wajah in numbers se
-nikli thi, kisi "NoSQL modern hai" wali baat se nahi.
+Ek box toot chuka hai aur padhne ka tareeka saamne hai, to chunav apne aap nikal aata hai:
+
+```
+   1. LIKHAI bahut, PADHAI bahut SAADI
+         "is chat ke aakhri 50 message" -- bas yahi ek sawaal, baar-baar
+         koi join nahi . koi report nahi . koi search nahi (E2E scope se bahar)
+
+   2. PARTITION KEY pe data SORTED pada rehta
+         chat_id ke andar message_id ke kram me  ->  "aakhri 50" EK disk read me
+
+   3. LIKHAI me tez aur AAGE-BADHAANE layak
+         node jodo -> aur likhai jhel lega (write path pe lock/constraint ka bojh nahi)
+
+   ->  WIDE-COLUMN (Cassandra / Scylla type)
+```
+
+★ **Relational yahan kyun NAHI, aur banking me kyun THA:** banking me multi-row atomicity aur
+`balance >= 0` jaisa constraint chahiye tha -- wo relational ka kaam hai. Chat me ek message ek
+row hai, kisi doosri row se uska lena-dena nahi, aur koi constraint nahi -- sirf **bahut saari
+likhai**. Jo cheez banking me relational ko zaroori banati thi, wo yahan hai hi nahi.
+
+★ **Aur ek cheez jo relational me maar deti:** 1.2 TB roz ka ek hi `messages` table, jiska index
+har insert pe update hota. Wide-column me likhai append jaisi hai.
 
 ### Hot partition
 
