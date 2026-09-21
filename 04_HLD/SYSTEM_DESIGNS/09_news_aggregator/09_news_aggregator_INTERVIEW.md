@@ -211,6 +211,27 @@
         -> personalization bhi mil gaya, aur 10 lakh feed banane se bach bhi gaye
 ```
 
+### dikkat 8 — "subah 8 baje sab ek saath app kholte hain — ek Feed Service box ka CPU khatam"
+
+```
+        news ka traffic SPIKE wala hota hai (subah, lunch, raat)
+        ek box bhara  ->  request line me  ->  aur wahi box gira to feed POORI band
+
+        aur cache-MISS wali request seedha PRIMARY DB pe ja rahi hai --
+        usi primary pe fetcher 1000 source ki LIKHAI kar raha hai
+        ->  padhne wale ne likhne wale ko dheema kar diya
+
+   FAISLA (do alag cheezein, do alag wajah se):
+        kai FEED SERVICE instance + LB   ->  spike jhelne ke liye, aur ek gire to baaki chalein
+                                             (Feed Service stateless hai -- feed cache me hai,
+                                              box ki memory me nahi)
+        cache-miss ka read  ->  READ REPLICA se, primary se NAHI
+                                ->  padhna aur likhna alag raaston pe chale jaayein
+
+   ★ replica CACHE ki jagah nahi leti -- cache 99% rok leti hai,
+     replica sirf bache hue 1% ko primary se door rakhti hai
+```
+
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
 
 ```
@@ -235,8 +256,8 @@
      Worker    : raw ganda data -> clean + DEDUPE + category
      DB        : permanent store
      Cache     : read-heavy hai -> ready feed RAM me -> DB har baar mat maaro
-     Feed Svc  : feed banata — pehle cache, miss pe replica
-     LB        : kai feed-service instance pe load baantta
+     Feed Svc  : feed banata — pehle cache, miss pe REPLICA (primary ko chhua bhi nahi)
+     LB        : subah wale spike pe kai feed-service instance (dikkat 8)
 
    ★ CORE DECISION (ye line bolni hai): WRITE path aur READ path ALAG hain —
      ek doosre ko slow nahi karte.
