@@ -199,13 +199,38 @@
      "aapka number 12,340 hai") -> load smooth ho jaata hai
 ```
 
-### dikkat 6 — "ek box gira to sab gira"
+### dikkat 6 — "Redis restart hua — aur 99% browse traffic seedha primary DB pe gir gaya, jahan booking ke atomic UPDATE chal rahe the"
 
 ```
-        App servers  -> kai instance + LB
-        Redis        -> cluster (ek node mare to chale)
-        SQL DB       -> replica + auto failover (Sentinel jaisa mechanism)
-        Payment      -> external hai -> retry + idempotency key (double charge na ho)
+        seat-map ka poora read Redis se ja raha tha (dikkat 4 wala faisla)
+        Redis gaya   ->  wahi read ab PRIMARY pe
+                     ->  primary ka CPU bhar gaya
+                     ->  aur ab BOOKING ka atomic update bhi ruk gaya
+
+        = BROWSE ki kharabi ne BOOKING maar di
+          (browse me galti chalegi, booking me nahi -- par yahan halke ne bhaari ko le dooba)
+
+        FAISLA: Redis CLUSTER            ek node mare to baaki chalein
+                + browse ka read REPLICA se, booking ka update PRIMARY pe
+                + SQL pe replica + auto-failover (Sentinel jaisa mechanism)
+
+        ★ DONO RAASTE ALAG KARO -- warna halka kaam bhaari kaam ko le doobta hai
+```
+
+### dikkat 7 — "ek App box pe 500 log seat chun rahe the, aur wo box gir gaya"
+
+```
+        unke 3-minute wale HOLD ka kya hua?
+
+        -> HOLD Redis me hai, box ki memory me NAHI
+           -> seat ab bhi hold hai, apne TTL pe hi chhutegi
+           -> user dobara judega to kisi DOOSRE box pe jayega, aur wahi hold dekhega
+
+        FAISLA: kai App instance + LB (App stateless hai, isliye chal jaata hai)
+
+        ★ ye SIRF is liye kaam karta hai ki HOLD box ke BAHAR rakha gaya tha --
+          wo faisla dikkat 2 me liya gaya tha, aur wahi yahan bacha raha hai
+        ★ agar hold app ki memory me hota to box girte hi 500 seat ka pata hi na chalta
 ```
 
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
