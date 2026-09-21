@@ -251,13 +251,6 @@
      Content-Type bhi nahi
 ```
 
-> ★ **VIRUS SCAN yahan JAAN-BOOJH KE nahi hai** (21-Sep, Arpan-pushback — aur wo sahi tha):
-> scan tabhi maayne rakhta hai jab file **upload karne wale ke ALAWA kisi aur tak jaati ho** —
-> tab tu pahunchane ka zariya ban jaata hai. Is design me file upload hoti hai, validate hoti
-> hai, aur uska status track hota hai; kisi doosre ko serve karne ki baat hai hi nahi.
-> Aur jahan hoti bhi hai (bank waghairah), wahan wo **platform ki service** hoti hai —
-> koi team apne service me scanner nahi banati.
-
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
 
 ```
@@ -280,7 +273,7 @@
         │ status, owner│          ▼                                             └────────┘
         └──────▲───────┘   ┌──────────────┐                                          ▲
                │           │   WORKER     │ ──► third-party VALIDATE (2-3 sec)       │
-               └───────────┤ status update│ ──► virus scan                           │
+               └───────────┤ status update│ ──► magic-byte check (type sach me kya hai) │
                  cache     └──────────────┘ ──► fail? quarantine / delete ───────────┘
               invalidate
                   │
@@ -291,7 +284,7 @@
      S3             : bade bytes ka ghar, khud scalable; download pe aage CDN
      DB (SQL)       : trackingId + status + owner — chhota data, par status ACID chahiye
      QUEUE          : 2-3 sec wali slow validation ko user se alag karti hai
-     WORKER         : validate + virus scan + status update (+ cache invalidate)
+     WORKER         : magic-byte check + validate + status update (+ cache invalidate)
      CACHE          : status read-heavy hai -> DB bachaya
 ```
 
@@ -374,7 +367,7 @@
     Bade file ke liye multipart/resumable, adhoore upload ke liye S3 lifecycle rule,
     aur status read-heavy hai to cache + read replica — par cache ko worker ke update ke
     saath hi invalidate karna padega.
-    Aage badhata to: virus scan, fail pe retry, aur downloads ke liye CDN."
+    Aage badhata to: fail pe retry, aur downloads ke liye CDN."
 ```
 
 ---
