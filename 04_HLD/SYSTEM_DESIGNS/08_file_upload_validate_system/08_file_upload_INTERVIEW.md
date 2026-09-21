@@ -204,16 +204,59 @@
    ★ bahut saari chhoti files ho -> client zip kar de -> ek upload -> server unzip kare
 ```
 
-### dikkat 7 — "koi aur ka trackingId daal ke file download kar le to?"
+### dikkat 7 — "kisi ne DUSRE ka trackingId daal ke file maang li"
 
 ```
-   FAISLA — teen layer:
+        trackingId ek anuman-layak string hai,
+        aur usme "ye kiski file hai" likha hi NAHI
 
-        AUTH   : /upload/init pe user authenticated ho (JWT) -> ownerId set ho jaaye
-        AUTHZ  : GET /status aur /download sirf OWNER ko milein
-        URL    : presigned URL SHORT-LIVED (5-15 min) -> leak bhi ho to jaldi bekaar
-        SCAN   : validation me virus/malware scan bhi -> poison file store hi na ho
+   FAISLA: /upload/init pe user authenticated hai (JWT)
+           -> us waqt record me ownerId LIKH do
+           -> /status aur /download pe check: maangne wala == owner
+
+   ★ AUTHENTICATION vs AUTHORIZATION -- do ALAG cheezein hain:
+        AUTHN  "tum kaun ho"                -> filter / JWT me, EK jagah, dikhta bhi nahi
+        AUTHZ  "IS FILE pe tumhara haq hai?" -> filter ye kar hi NAHI sakta,
+                                                usne trackingId dekha hi nahi
+
+   ★ yahi wo shakal hai jo PR-REVIEW checklist me sabse upar hai:
+     "request me kisi ki CHEEZ ka naam aaye -> maalik ka check kahan hai?"
 ```
+
+### dikkat 8 — "owner ko S3 ka SEEDHA link diya, usne wo link aage bhej diya"
+
+```
+        link hamesha ke liye chal raha hai  ->  ab kisi ko bhi chalega
+        aur humara owner-check beech me aata hi nahi -- S3 seedha de raha hai
+
+   FAISLA: PRE-SIGNED URL, chhoti umar ka (5-15 minute)
+
+   ★ owner-check AB BHI hum karte hain -- URL tabhi BANTA hai jab check paas ho
+     URL "chaabi" nahi hai, "5 minute ka PAAS" hai
+```
+
+### dikkat 9 — "naam .pdf tha, Content-Type bhi application/pdf tha, par file asal me exe thi — aur wo S3 me pad chuki hai"
+
+```
+        dono cheezein CLIENT ne bheji hain  ->  dono pe bharosa nahi
+        aur bytes PEHLE HI S3 me hain (direct-to-S3 upload ka natija, dikkat 2)
+        -> "system apne aap reject kar dega" yahan hota hi nahi,
+           file pehle GIRTI hai, pakdi BAAD me jaati hai
+
+   FAISLA: worker file ke PEHLE BYTE padhe (magic number) aur type KHUD tay kare
+              PDF  %PDF-        PNG  \x89PNG        EXE  MZ
+           mel nahi khaya  ->  status REJECTED + file delete
+
+   ★ client ka bheja hua data KABHI sach nahi maana jaata -- naam bhi nahi,
+     Content-Type bhi nahi
+```
+
+> ★ **VIRUS SCAN yahan JAAN-BOOJH KE nahi hai** (21-Sep, Arpan-pushback — aur wo sahi tha):
+> scan tabhi maayne rakhta hai jab file **upload karne wale ke ALAWA kisi aur tak jaati ho** —
+> tab tu pahunchane ka zariya ban jaata hai. Is design me file upload hoti hai, validate hoti
+> hai, aur uska status track hota hai; kisi doosre ko serve karne ki baat hai hi nahi.
+> Aur jahan hoti bhi hai (bank waghairah), wahan wo **platform ki service** hoti hai —
+> koi team apne service me scanner nahi banati.
 
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
 
