@@ -84,16 +84,16 @@ SAKHT SHART: paisa na kabhi GUM ho, na kabhi BANE. har waqt hisaab barabar.
       zaroorat sharding ghusa dete hain.)
 ```
 
-**DB CHUNAV — RELATIONAL (Postgres / Oracle / MySQL). Teen wajah:**
+**DATA SE JO TEEN SAWAAL KHADE HOTE HAIN (jawab abhi nahi — MOVE 3 me):**
 
 ```
-   1. ACID + multi-row ATOMICITY  ->  debit aur credit ek saath, ya dono nahi
-   2. ROW LOCK                     ->  ek hi account pe do transfer ek saath = sambhal jaata
-   3. CONSTRAINT                   ->  balance >= 0 ko DB KHUD pakde, code ke bharose nahi
+   1. ek transfer me DO row badalti hain     ->  dono badlein ya koi nahi. Kaun sambhalega?
+   2. ek hi account pe do transfer ek saath  ->  kaun rokega?
+   3. balance kabhi -ve nahi hona chahiye    ->  ye niyam kahan likha jaayega?
 ```
 
-★ NoSQL yahan kyun nahi: multi-row atomicity aur constraint uska kaam hi nahi hai.
-(source-confirmed: JP core ledger ke liye relational hi preference deta hai)
+★ DB kaunsa lenge ye ABHI nahi bol raha -- wo MOVE 3 me tay hoga, jab ye teeno
+  sach me TOOTENGE. Board pe abhi sirf sawaal likhe hain.
 
 ---
 
@@ -145,6 +145,19 @@ Wo case is scope se BAHAR hai (poora treatment: [payment-system](../07_payment_s
       ek DB      ->  @Transactional
       cross-DB / cross-service / cross-bank  ->  SAGA (compensating undo)
 ```
+
+★★ **AUR YAHIN DB KA FAISLA HO GAYA — RELATIONAL (Postgres / Oracle / MySQL):**
+
+```
+   abhi jo BEGIN..COMMIT likha, wo poora hi ACID ka wada hai --
+   "do row badlein ya koi nahi" wala kaam DB khud karta hai.
+
+   NoSQL me ye hai hi nahi: multi-row atomicity uska kaam nahi.
+   Wahan ye poora sambhalna APP ko padta -- yaani wahi SAGA, bina zaroorat ke.
+
+   -> MOVE 2 ka SAWAAL 1 yahan JAWAB paa gaya.
+```
+(source-confirmed: JP core ledger ke liye relational hi preference deta hai)
 
 ---
 
@@ -340,6 +353,10 @@ WHERE id = A AND balance >= 200;
 -- rows affected == 0  ->  paisa kam tha, REJECT
 ```
 ya seedha `CHECK (balance >= 0)` constraint. **Dono me faisla DB ka, app ka nahi.**
+
+★ **MOVE 2 ka SAWAAL 3 yahan band hua:** "balance -ve na ho" ka niyam CODE me nahi,
+DB me likha jaata hai -- kyunki code ke kai raaste ho sakte hain (API, batch, kisi ka
+manual update), par DB ek hi hai. Aur constraint bhi relational ki hi den hai.
 
 ### (b) DEADLOCK — ye atomic UPDATE ke BAAD bhi rehta hai
 
