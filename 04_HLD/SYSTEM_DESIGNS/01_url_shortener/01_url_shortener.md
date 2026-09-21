@@ -147,26 +147,52 @@
         Isliye event queue me daal kar turant redirect kar deta hoon."
 ```
 
-### dikkat 4 — "5 saal ka ~90 TB ek machine me nahi + LB khud gir gaya to?"
+### dikkat 4 — "5 saal ka ~90 TB ek machine me nahi aayega"
 
 ```
-        USER ──► [ Route 53 ] ──► [ CloudFront ] ──► [ LB ] ──► [ App x3 ]
-                                                                    │
-                                                        [ Redis ] ──┘
-                                                            │ miss
-                                                            ▼
-                                                     [ CASSANDRA ]
-                                                      shard by shortCode + 3x replica
+        USER ──► [ LB ] ──► [ App x3 ]
+                                │
+                    [ Redis ] ──┘
+                        │ miss
+                        ▼
+                 [ CASSANDRA ]   shard by shortCode + 3x replica
 
-   TU (teeno alag wajah se — ek saath mat bolna):
-     Route 53   : "health-check mara hua LB traffic se hata deta — LB ka SPOF khatam"
-     CloudFront : "static cheezein user ke paas se, origin pe load kam"
-     Cassandra  : "90 TB ek machine me nahi -> shard by shortCode;
-                   machine mar sakti hai -> 3 copy (replica)"
+   TU: "90 TB ek machine me aayega hi nahi -> data ke TUKDE karne padenge (shard).
+        Aur wo machine bhi mar sakti hai -> har tukde ki 3 COPY (replica)."
 
    ★ SHARD aur REPLICA alag cheezein hain:
-        shard   = data ke TUKDE  (jagah + write scale)
+        shard   = data ke TUKDE   (jagah + write scale)
         replica = wahi data ki COPY (bachav + read scale)
+```
+
+### dikkat 5 — "LB khud gir gaya — saare App zinda hain, par koi unhe traffic de hi nahi raha"
+
+```
+        ab tak sab kuch EK LB ke peeche tha
+        wo gira -> App chal rahe hain, DB chal raha hai, Redis chal raha hai
+                -> aur site DOWN hai
+
+   FAISLA: ROUTE 53 (DNS) + health-check
+           mara hua LB traffic se HATA diya jaata hai, dusre pe chala jaata hai
+
+   ★ redundancy AKELI kaafi nahi hoti -- do LB rakh bhi diye to
+     koi cheez chahiye jo DEKHE ki ek mar gaya aur traffic MOD de
+     (Redis me yahi kaam Sentinel karta hai -- wahi shakal)
+```
+
+### dikkat 6 — "ek bande ne script chala di — ek raat me 10 lakh short link bana diye"
+
+```
+        counter ki range tez khatam hone lagi
+        DB me kachra bhar gaya
+        aur asli user ka create request line me lag gaya
+
+   FAISLA: RATE LIMIT (per user / per IP / per API-key)
+
+   ★ ye limit har App server me alag-alag likhoge to har server apna-apna ginega
+     -> isi liye use EK jagah rakhna aasan hai: API GATEWAY
+     (auth aur routing bhi wahi ek jagah baith jaate hain)
+   ★ poora rate-limiter apne aap me ek design hai -> 02_rate_limiter
 ```
 
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
@@ -178,10 +204,7 @@
                     │    Route 53     │  DNS + health-check + nearest region
                     └────────┬────────┘
                     ┌────────▼────────┐
-                    │   CloudFront    │  CDN (static)
-                    └────────┬────────┘
-                    ┌────────▼────────┐
-                    │  API GATEWAY    │  auth + rate-limit + routing, ek jagah
+                    │  API GATEWAY    │  rate-limit (dikkat 6) + auth + routing
                     └───┬─────────┬───┘
               WRITE ┌───▼───┐ ┌───▼────┐ READ
                     │ App   │ │  App   │   read:write = 100:1
@@ -201,8 +224,7 @@
                  └──────────┘  └───────────────┘
 
      Route 53   : mara hua LB hata deta -> SPOF khatam . nearest region
-     CloudFront : static user ke paas se -> origin pe load kam
-     API Gateway: auth + rate-limit + routing ek jagah
+     API Gateway: rate-limit EK jagah (10 lakh link wali dikkat) + auth + routing
      App        : stateless -> jitne chahiye utne
      read/write alag : load 100:1 -> alag scale + ek gire to doosra chalta rahe
      COUNTER    : range -> takraav bina unique code
