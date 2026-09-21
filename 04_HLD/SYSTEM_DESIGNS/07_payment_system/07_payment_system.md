@@ -267,12 +267,40 @@
         INVARIANT               : sum(debits) == sum(credits)
 ```
 
-### dikkat 7 — "load badh gaya"
+### dikkat 7 — "festival aaya, 3000 txn/sec — ek Payment Service box ka CPU khatam"
 
 ```
-        LB + kai Payment Service instance (stateless hain, isliye aasan)
-        DB: read replica (reporting/read ke liye) . shard by account
-        ★ par yaad rakhna: yahan asli bottleneck throughput nahi, DISTRIBUTED TRANSACTION hai
+        request queue me lag gayi -> timeout -> user ne DOBARA tap kiya
+        aur wahi ek box gira to POORA payment band -- ek bhi txn nahi
+
+        FAISLA: Payment Service pehle se STATELESS hai
+                (state DB aur idempotency register me hai, box ki memory me nahi)
+                -> isi liye kai instance chala sakte hain, aur aage LB
+
+        ★ agar service stateless na hoti to LB se kuch na hota --
+          yahi wajah hai ki "stateless rakho" wala faisla PEHLE liya gaya tha
+```
+
+### dikkat 8 — "merchant dashboard ki reporting query usi DB pe chal rahi hai, aur asli txn ka write ruk raha hai"
+
+```
+        FAISLA: READ REPLICA -- dashboard / report replica se padhein
+
+        ★ par PAYMENT ka read replica se NAHI --
+          balance aur txn status HAMESHA primary se
+          (replica lag ek rupaye ka farak bhi dikha sakta hai, aur paise me ye chalega nahi)
+```
+
+### dikkat 9 — "ek hi DB me 50 crore txn row, likhai dheemi padne lagi"
+
+```
+        FAISLA: SHARD by account_id
+
+        ★ aur yahin ek NAYA dard paida hota hai:
+          A aur B alag shard pe hue to transfer ab ek LOCAL transaction nahi raha
+          -> wapas SAGA wali baat (dikkat 5)
+        ★ yaad rakhna: is design me asli bottleneck throughput nahi,
+          DISTRIBUTED TRANSACTION hai
 ```
 
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
