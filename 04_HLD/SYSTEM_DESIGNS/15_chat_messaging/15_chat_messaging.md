@@ -438,6 +438,68 @@ Slack model      hamesha rakho, 3 saal purana bhi search
 ---
 ---
 
+# MOVE 4 — BOLTE-BOLTE JODO
+
+## ► "API kya hogi?"
+
+```
+GET   /connect                      <- ye BAND NAHI hoti (WebSocket / SSE)
+POST  /messages                     { chatId, text, clientMsgId }
+GET   /messages?chatId=&before=     <- catch-up + purani history (cursor)
+POST  /messages/{id}/read           <- receipt
+```
+
+★ `clientMsgId` client banata hai — wahi duplicate rokta hai (network retry pe do baar na jaaye).
+
+## ► "Kahan tootega / 10x traffic pe?"
+
+```
+CONNECTION ka bojh    2 crore khuli connection = ~200 server sirf haath pakadne ko
+                      -> event-loop, warna thread khatam (ye demo me DEKHA)
+REGISTER              memory me hai -> server gira to uska poora register gaya
+                      -> Redis me TTL wali entry + dhadkan
+RECONNECT ka toofan   ek server gira -> 1 lakh ek saath wapas
+                      -> backoff + jitter (warna nayi laher)
+HOT PARTITION         ek viral group ek hi partition pe -> chat_id + mahina
+PUSH ka raasta        Google/Apple bahar ki cheez hai -> uska apna retry/queue
+```
+
+## ► WRAP (ek line har problem ki)
+
+```
+"User -> LB -> CHAT SERVER (khuli connection + local register)
+ -> REDIS (kaun kis server pe) -> dusre server tak seedhi call ya pub-sub channel
+ -> message pehle DB me (wide-column, chat_id ke hisaab se baanta, snowflake id)
+ -> offline hua to DB me pada rehta hai + phone pe push notification
+ -> wapas aaya to 'mere aakhri id ke baad ka do'."
+```
+
+---
+
+## ★ IS DESIGN KA IMAANDAR HISAAB (21-Sep)
+
+```
+JO HO GAYA (chala ke, sirf padh ke nahi):
+   push ka poora mechanism      khuli connection + register + pen
+   connection ka kharcha        thread khatam hone tak dekha
+   do server wali dikkat        do port pe chala ke saamne laayi
+   uske teen raste              1 kharij + Redis routing + pub-sub
+   offline ka raasta            pehle likho phir bhejo, catch-up, push notification
+   storage                      chat_id partition, snowflake id, cursor, wide-column, cold
+
+JO ABHI BAKI HAI:
+   group fan-out                ek message 500 logon tak -- ek likhai ya 500
+   tick                         sent / delivered / read -- teeno ka apna raasta
+   kram aur duplicate           ek hi message do baar na dikhe
+   media                        photo/video ka alag rasta (blob + pata)
+   presence                     online / last seen
+```
+
+★ Imaandari: is design ka **teen-chauthai** hua hai. Jo bacha hai wo upar wale dhaanche ke **upar**
+baithta hai — buniyaad khadi ho chuki hai.
+
+---
+
 # ═══ HANDS-ON — CHAT KHUD CHALA KE DEKHA (21-Sep) ═══
 
 > Ye design padh ke nahi, **chala ke** banaya gaya.
@@ -607,66 +669,6 @@ chalane pe screen ne khud bata diya:
 > jab tak uski AAKHRI connection na jaaye, wo online hai.
 
 ---
-
-# MOVE 4 — BOLTE-BOLTE JODO
-
-## ► "API kya hogi?"
-
-```
-GET   /connect                      <- ye BAND NAHI hoti (WebSocket / SSE)
-POST  /messages                     { chatId, text, clientMsgId }
-GET   /messages?chatId=&before=     <- catch-up + purani history (cursor)
-POST  /messages/{id}/read           <- receipt
-```
-
-★ `clientMsgId` client banata hai — wahi duplicate rokta hai (network retry pe do baar na jaaye).
-
-## ► "Kahan tootega / 10x traffic pe?"
-
-```
-CONNECTION ka bojh    2 crore khuli connection = ~200 server sirf haath pakadne ko
-                      -> event-loop, warna thread khatam (ye demo me DEKHA)
-REGISTER              memory me hai -> server gira to uska poora register gaya
-                      -> Redis me TTL wali entry + dhadkan
-RECONNECT ka toofan   ek server gira -> 1 lakh ek saath wapas
-                      -> backoff + jitter (warna nayi laher)
-HOT PARTITION         ek viral group ek hi partition pe -> chat_id + mahina
-PUSH ka raasta        Google/Apple bahar ki cheez hai -> uska apna retry/queue
-```
-
-## ► WRAP (ek line har problem ki)
-
-```
-"User -> LB -> CHAT SERVER (khuli connection + local register)
- -> REDIS (kaun kis server pe) -> dusre server tak seedhi call ya pub-sub channel
- -> message pehle DB me (wide-column, chat_id ke hisaab se baanta, snowflake id)
- -> offline hua to DB me pada rehta hai + phone pe push notification
- -> wapas aaya to 'mere aakhri id ke baad ka do'."
-```
-
----
-
-## ★ IS DESIGN KA IMAANDAR HISAAB (21-Sep)
-
-```
-JO HO GAYA (chala ke, sirf padh ke nahi):
-   push ka poora mechanism      khuli connection + register + pen
-   connection ka kharcha        thread khatam hone tak dekha
-   do server wali dikkat        do port pe chala ke saamne laayi
-   uske teen raste              1 kharij + Redis routing + pub-sub
-   offline ka raasta            pehle likho phir bhejo, catch-up, push notification
-   storage                      chat_id partition, snowflake id, cursor, wide-column, cold
-
-JO ABHI BAKI HAI:
-   group fan-out                ek message 500 logon tak -- ek likhai ya 500
-   tick                         sent / delivered / read -- teeno ka apna raasta
-   kram aur duplicate           ek hi message do baar na dikhe
-   media                        photo/video ka alag rasta (blob + pata)
-   presence                     online / last seen
-```
-
-★ Imaandari: is design ka **teen-chauthai** hua hai. Jo bacha hai wo upar wale dhaanche ke **upar**
-baithta hai — buniyaad khadi ho chuki hai.
 
 ---
 
