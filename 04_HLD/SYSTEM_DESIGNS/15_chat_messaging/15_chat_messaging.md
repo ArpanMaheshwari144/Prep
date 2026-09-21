@@ -103,16 +103,92 @@ online EK WAQT me           ->  ~2 crore connection        <- ★ SABSE AHEM NUM
 # MOVE 2 — DO CHHOTE BLOCK LIKHO
 
 ```
-BLOCK 1 — CONNECTION (khuli rehti hai)
+ ┌── FR (kya karega) ────────────────┐   ┌── NFR (kaisa hona chahiye) ──────────┐
+ │  - 1-to-1 message bhejo           │   │  - TURANT pahunche (<1 sec)          │
+ │  - chhota group (500 tak)         │   │  - message KABHI na khoye            │
+ │  - offline banda: baad me mile     │   │  - KRAM na bigde (ek chat ke andar)  │
+ │  - purani history padho           │   │  - DUPLICATE na dikhe (retry pe bhi) │
+ │  - tick: sent/delivered/read      │   │  - 2 crore EK SAATH jude rahein      │
+ │  - online / last-seen             │   │  - server gire to dusra sambhal le   │
+ └────────────────────────────────┘   └───────────────────────────────────┘
+
+ SCOPE SE BAHAR (bol ke hatao): E2E encryption . voice/video call . bade broadcast group
+```
+
+**DO BLOCK JO POORA DESIGN CHALATE HAIN:**
+
+```
+BLOCK 1 -- CONNECTION (khuli rehti hai)
    har online user ka ek taar server se juda rehta hai
    ye taar hi wo raasta hai jisse server user tak pahunchega
 
-BLOCK 2 — REGISTER (kaun kis taar ke peeche)
+BLOCK 2 -- REGISTER (kaun kis taar ke peeche)
    user -> us user tak likhne ka raasta
    ye MEMORY me hai, DB me nahi -- kyunki taar khud memory me hai
 ```
 
 Baaki sab (offline, history, group, tick) **inhi do ke upar** khada hota hai.
+
+---
+
+**NUMBER (bolo, faisla nikaalo, aage badho):**
+
+```
+   50 crore user, 10 crore roz ke
+   ek user 40 message/din      ->  400 crore message/din
+
+   WRITE   4 x 10^9 / 86400        ~=  46,000 write/sec     (peak 2-3x = ~1.5 lakh)
+   READ    catch-up + history      ->  write se kam, par tick/receipt ise GUNA karte hain
+   ONLINE  ek waqt me              ~=  2 crore KHULI CONNECTION      <- ★ asli paimana
+
+   STORAGE  4 x 10^9 x ~300 byte   ~=  1.2 TB / din
+            1 saal                 ~=  ~440 TB       (Slack model, sab rakho)
+            WhatsApp model         ~=  lagbhag ZERO  (pahunchte hi delete)
+```
+
+**TEEN FAISLE JO IN NUMBERS SE SEEDHE NIKALTE HAIN:**
+
+```
+1. CONNECTION ka apna TIER chahiye
+      2 crore connection / ~1 lakh per box  =  ~200 CHAT SERVER
+      ye server kuch "kaam" nahi kar rahe -- sirf taar pakde baithe hain
+      -> inhe API/business wale server se ALAG rakho
+      -> aur inpe event-loop (Netty type), "ek connection = ek thread" chalega hi nahi
+
+2. SHARDING LAZMI HAI (yahan banking se ULTA faisla)
+      banking = 120 write/sec  ->  ek Postgres ka 10-va hissa  ->  sharding ki zaroorat NAHI
+      chat    = 46,000 write/sec + 1.2 TB roz  ->  ek box ka sawaal hi nahi
+      ★ yahi wajah hai ki DB ka chunav bhi ULTA jaata hai
+
+3. HISTORY ka MODEL storage ka dhaancha tay karta hai
+      MOVE 1 ka sawaal #2 yahan cash hota hai:
+         WhatsApp model -> server lagbhag storage-free, DB chhota
+         Slack model    -> 440 TB/saal + cold storage + archival
+      is design me SLACK model maan ke chal rahe hain
+```
+
+**DB CHUNAV — WIDE-COLUMN (Cassandra / Scylla type). Teen wajah:**
+
+```
+   1. LIKHAI bahut, PADHAI bahut SAADI
+         "is chat ke aakhri 50 message" -- bas yahi ek sawaal, baar-baar
+         koi join nahi . koi report nahi . koi search nahi (E2E scope se bahar)
+
+   2. PARTITION KEY pe data SORTED pada rehta
+         chat_id ke andar message_id ke kram me
+         -> "aakhri 50" EK disk read me
+
+   3. LIKHAI me tez aur AAGE-BADHAANE layak
+         node jodo -> aur likhai jhel lega (write path pe lock/constraint ka bojh nahi)
+```
+
+★ **Relational yahan kyun NAHI** (aur banking me kyun THA): banking me multi-row atomicity aur
+`balance >= 0` jaisa constraint chahiye tha -- wo relational ka kaam hai. Chat me ek message ek
+row hai, kisi doosri row se uska lena-dena nahi, aur koi constraint nahi -- sirf **bahut saari
+likhai**. Jo cheez banking me relational ko zaroori banati thi, wo yahan hai hi nahi.
+
+★ **Aur ek cheez jo relational me maar deti:** 1.2 TB roz ka ek hi `messages` table, jiska index
+har insert pe update hota. Wide-column me likhai append jaisi hai.
 
 ---
 ---
@@ -337,8 +413,8 @@ OFFSET 200000                                                   <- yahan bhi utn
 
 ### Kaunsa DB
 
-Likhai bahut zyada . padhai bahut saadi . join zero. Isi shakal ke liye **wide-column**
-(Cassandra / Scylla type) bana hai — ek partition key, uske andar sorted rows, aur likhai me tez.
+Wide-column (Cassandra / Scylla type) — **wajah MOVE 2 me likhi hai**, aur wo wajah in numbers se
+nikli thi, kisi "NoSQL modern hai" wali baat se nahi.
 
 ### Hot partition
 
