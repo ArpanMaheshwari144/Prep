@@ -120,7 +120,33 @@
    ★ royal kingdom: Town Crier (fanout) har ghar ke Notice Board (inbox) pe parcha chipka deta hai
 ```
 
-### dikkat 2 — "Bieber ne tweet kiya — 10 CRORE inbox likhne padenge"
+### dikkat 2 — "tweet ka button 3 second tak ghoomta raha — 200 inbox likhe ja rahe the"
+
+```
+        dikkat 1 me humne kaam READ se hata ke WRITE pe daal diya tha.
+        ab wo poora kaam POST karne wale ke SAR pe hai:
+
+        tweet bheja ──► 200 follower ──► 200 inbox write ──► TAB jaake "ho gaya"
+                                                              (user itni der RUKA hua hai)
+
+        aur Redis zara slow hua to tweet POST hi FAIL ho gaya --
+        jabki tweet to ban chuka tha, sirf baantna baaki tha
+
+   FAISLA: tweet DB me LIKHO -> ek EVENT queue (Kafka) pe daalo -> user ko TURANT "ho gaya"
+           FANOUT WORKER peeche se inbox bharta rahe
+
+        tweet ──► [ DB ] ──► [ KAFKA ] ──► [ Fanout worker ] ──► inbox x200
+                     │
+                     └──► user ko turant 200 OK
+
+   ★ post ab DO hisson me bat gaya:
+        "tweet ban gaya"    -> turant, user ka kaam khatam
+        "sab tak pahuncha"  -> peeche, dheere bhi chale to chalega
+   ★ aur ek bachav muft me: worker gir bhi gaya to tweet NAHI khoya --
+     event Kafka me pada hai, worker wapas aa ke wahin se uthayega
+```
+
+### dikkat 3 — "Bieber ne tweet kiya — 10 CRORE inbox likhne padenge"
 
 ```
         Bieber tweet ──► [ Fanout ] ──► 100,000,000 inbox writes
@@ -149,7 +175,7 @@
         laata; pull write bachata par har read mehnga. Isliye hybrid."
 ```
 
-### dikkat 3 — "Virat ka tweet 10 crore log ek saath padh rahe hain"
+### dikkat 4 — "Virat ka tweet 10 crore log ek saath padh rahe hain"
 
 ```
         10 crore read ──► sab Cassandra pe ──► DB CRASH
@@ -167,7 +193,7 @@
         purana        = COLD -> seedha DB
 ```
 
-### dikkat 4 — "500 million inbox Redis me? memory phat jaayegi"
+### dikkat 5 — "500 million inbox Redis me? memory phat jaayegi"
 
 ```
         DO ALAG CACHE hain (inhe ghaalmel mat karo):
@@ -187,7 +213,7 @@
                        wapas aaya -> Cassandra se REBUILD (ek baar ka kharcha, memory bach gayi)
 ```
 
-### dikkat 5 — "saare tweets ek DB me nahi aayenge"
+### dikkat 6 — "saare tweets ek DB me nahi aayenge"
 
 ```
    SHARDING ke teen tareeke (aur unka nuksan):
@@ -203,7 +229,7 @@
         -> Bieber ke tweets KAI shard pe replicate -> read bat gaye
 ```
 
-### dikkat 6 — "India ka user US ke shard se padh raha hai (200ms)"
+### dikkat 7 — "India ka user US ke shard se padh raha hai (200ms)"
 
 ```
         GEO SHARDING: India / EU / US
