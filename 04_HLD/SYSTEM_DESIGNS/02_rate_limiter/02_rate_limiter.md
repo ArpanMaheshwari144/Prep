@@ -234,9 +234,6 @@
             │  Route 53    │  DNS + health-check + nearest region
             └──────┬───────┘
             ┌──────▼───────┐
-            │  CloudFront  │  CDN (static)
-            └──────┬───────┘
-            ┌──────▼───────┐
             │     ALB      │  Load Balancer
             └──────┬───────┘
      ┌─────────────▼────────────┐
@@ -252,7 +249,7 @@
      └──────────────┘
                               [ REDIS ] ──event──► [ KAFKA ] ──► [ Pattern Svc ] ──► [ WAF ]
 
-     Route 53   : mara hua LB hata deta -> SPOF khatam
+     Route 53   : mara hua LB hata deta -> SPOF khatam   (dikkat 4 wali SPOF-chain)
      API Gateway: limiter sabse aage -> reject EARLY, backend ka compita bacha
      REDIS      : single source of truth + in-memory (<1ms) + atomic INCR
      replica    : Redis mare to failover . shard : load baantna
@@ -266,7 +263,7 @@
      3. count > limit ?  HAAN -> 429 + Retry-After   |   NAHI -> App ko bhej do
 
    YAAD RAKHNE WALI EK LINE:
-     "User -> Route53 -> CloudFront -> ALB -> API Gateway rate-limiter -> Redis atomic INCR+EXPIRE ->
+     "User -> Route53 -> ALB -> API Gateway rate-limiter -> Redis atomic INCR+EXPIRE ->
       limit-andar? App | limit-cross? 429+Retry-After | abuse-pattern? Kafka | repeat-offender? WAF ban"
 ```
 
