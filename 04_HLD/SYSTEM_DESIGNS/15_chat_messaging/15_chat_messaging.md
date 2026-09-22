@@ -571,6 +571,125 @@ Per-member record 500 pe chal jaata hai. 10 lakh pe nahi chalega.
 > **feature utna hi rakho jitna scale jhel sake, aur scale badhe to feature HATA do.**
 > Log yahan jugaad dhoondhte hain, jabki asli jawab SEEMA lagana hota hai.
 
+### dikkat 9 — "A ka net slow tha, app ne dobara bhej diya — B ko EK baat DO baar dikhi"
+
+```
+        A ne bheja -> net slow -> A ke app ne 5 sec baad TIMEOUT maan liya -> DOBARA bheja
+        par pehla wala pahunch CHUKA tha
+        -> server ke paas DO message, dono ko alag id -> B ko duplicate
+```
+
+**Ye bilkul wahi shakal hai jo payment design me thi** (`07_payment_system` dikkat 4).
+Ilaaj bhi wahi — **idempotency key**, jise chat me `clientMsgId` kehte hain.
+
+```
+   message ke saath ek id, jo CLIENT banata hai:
+        { chatId, text, clientMsgId: "a7f3-91" }
+
+   server:  "ye clientMsgId pehle aayi hai?"
+              haan ->  naya MAT banao, purana wala hi wapas de do
+              nahi ->  naya banao
+
+   ★ ID CLIENT KYUN BANATA HAI (yahi asli baat hai):
+     kyunki RETRY bhi client hi karta hai.
+     server banata to har retry pe NAYI id banti -> duplicate rukta hi nahi.
+     Jo cheez DOBARA bhej raha hai, usi ko PEHCHAN bhi deni hogi.
+```
+
+### dikkat 10 — "kram kis cheez se tay hoga — aur kiska time maanoge?"
+
+Isme **do alag sawaal** hain, aur log inhe mila dete hain:
+
+```
+   1. EK chat ke andar ka kram    A ne teen bheje -> teeno usi kram me dikhein
+   2. DO logon ke beech ka kram   A aur B ne saath bheja -> kiska pehle?
+```
+
+**Doosra sawaal asal me sawaal hai hi nahi.** Jo server pe pehle pahuncha wo pehle. Wo kram
+manmaana hai — par **sabko EK hi dikhta hai**, aur chat me itna hi chahiye.
+
+**Pehla pehle se hal ho chuka hai** (dikkat 4 se): message id time ke hisaab se badhti hai
+(snowflake) aur ek chat ka poora data EK partition pe pada hai. Ek jagah, ek kram, sabke liye.
+
+```
+★★ JAAL — kram CLIENT ke bheje hue TIME se MAT banao:
+     phone ki ghadi galat ho sakti hai
+     koi apna time jaan-boojh ke aage kar sakta hai -> uska message hamesha sabse UPAR chipak jayega
+
+   kram SERVER ki di hui ID se banta hai.
+   Client ka time sirf DIKHANE ke liye ("10:42 AM").
+```
+
+```
+★ AUR EK — message ULTE kram me pahunch sakte hain:
+     A ne teen bheje, par retry ki wajah se TEESRA pehle pahunch gaya
+     ILAAJ client me: B ka app message ko ID ke hisaab se lagata hai, AANE ke hisaab se nahi
+     aur beech ka id gayab dikhe (4415, 4417 aaya par 4416 nahi) -> catch-up maar ke maang lo
+```
+
+> ★★ **"Ye to WhatsApp me hota hai" — haan, aur jaan-boojh ke hota hai** (Arpan ne khud dekha:
+> do message bheje, doosra pehle chala gaya). STRICT kram chahiye to pehla message atakne pe
+> DOOSRA bhi rokna padega — ek ke chakkar me sab ruk jaayein. **Wahi head-of-line blocking hai
+> jo Kafka me dekhi thi.** Isliye chuna jaata hai: *kram thoda idhar-udhar ho jaaye, par message
+> rukein nahi.* Ek-do second ka farak insaan ko chal jaata hai.
+
+### dikkat 11 — "5 MB ka video bhejna hai — wo bhi isi raste se jaayega?"
+
+```
+GALAT:  video chat server ke through B tak
+        -> wo connection block, wo thread block
+        -> 200 server ka tier jo CHHOTE message push karne ko bana tha, ab BYTES dho raha hai
+
+SAHI:   client PEHLE blob store (S3) me daalta hai
+        phir message bhejta hai jisme sirf PATA hota hai:
+             { type: image, url: ..., size: ..., thumbnail: ... }
+```
+
+Upload ka tareeka wahi hai jo `08_file_upload` me tha — **pre-signed URL**, bytes app server ko
+chhute hi nahi. Download bhi wahi — **chhoti umar ka** pre-signed URL, taaki link aage bhej dene
+se kaam na chale (`08_file_upload` dikkat 8).
+
+```
+THUMBNAIL   client khud banata hai, kuch KB ka -> message ke SAATH ja sakta hai
+            -> B ko TURANT kuch dikh jaata hai bina 5 MB utare
+
+GROUP me    file EK baar upload hoti hai, 500 logon ko wahi EK pata milta hai
+            -> phir wahi baat: ek copy, kai pahunchai (dikkat 5)
+```
+
+### dikkat 12 — "online / last-seen — sabko sabka status kaise dikhaoge?"
+
+Ye sabse mehnga "chhota" feature hai. Wajah: **message kabhi-kabhi aata hai, status HAR WAQT
+badalta hai** — aur ek bande ka status uske saare contacts ko dikhana hota hai.
+
+```
+NAIVE:  har connect/disconnect pe saare contacts ko batao
+        2 crore user x 500 contact = bakwaas
+```
+
+Do cheezein isse sambhalti hain:
+
+```
+1. TTL SE APNE AAP MARNA
+      Redis me:   presence:B = online,  TTL 30 second
+      B ka app har 15 sec heartbeat bhejta hai -> TTL refresh ho jaata hai
+      app band / net gaya -> heartbeat ruka -> TTL khatam -> B APNE AAP offline
+
+      ★ "offline ho gaya" ka koi message bhejna hi NAHI padta.
+        CHUP HO JAANA hi signal hai. Ye is design ka sabse saaf hissa hai.
+
+2. POOCHO, BATAO MAT (pull, not push)
+      A ko B ka status TABHI chahiye jab A ne B ki chat KHOLI ho
+      -> A sirf unhi ka status maangta hai jinki chat abhi khuli hai
+      -> 500 contacts ka status har waqt bhejne ki zaroorat hi nahi
+```
+
+**Last seen** = wahi key ka aakhri update time, alag se rakha hua.
+
+> ★ Aur ek baat jo poori tarah technical nahi hai: **last-seen chhupane ka option hota hai.**
+> Matlab ye ek **setting** bhi hai — B ne chhupaya hua hai to A ko kuch nahi dikhana,
+> chahe data maujood ho. Design me privacy ek alag layer hai, data ke upar.
+
 ---
 ---
 
@@ -630,14 +749,17 @@ JO HO GAYA:
    tick ka ulta safar           B ki tab band -> ✓✓ kabhi aayi hi nahi      ★ dekha
    bade group me tick           feature ko scale ke hisaab se HATANA (dikkat 8)
 
-JO ABHI BAKI HAI:
-   kram aur duplicate           ek hi message do baar na dikhe
-   media                        photo/video ka alag rasta (blob + pata)
-   presence                     online / last seen
+   duplicate                    clientMsgId -- id CLIENT banata hai, kyunki RETRY client karta hai (dikkat 9)
+   kram                         server ki id se, client ke TIME se nahi (dikkat 10)
+   media                        bhaari cheez chat ke raste se NAHI -- blob + pata (dikkat 11)
+   presence                     TTL se apne aap marna + pull, push nahi (dikkat 12)
+
+JO SCOPE SE BAHAR RAKHA (bol ke hataya):
+   E2E encryption · voice/video call · bade broadcast group
 ```
 
-★ Imaandari: is design ka lagbhag **90%** ho gaya hai. Jo bacha hai wo upar wale dhaanche ke **upar**
-baithta hai — buniyaad khadi ho chuki hai.
+★ Imaandari: **design POORA ho gaya** (22-Sep). MOVE 1 se 4, 12 dikkat, aur har box ke peeche
+ek asli tootna. Jo scope se bahar rakha tha wo bol ke hataya gaya tha, chhupaya nahi.
 
 ---
 
