@@ -731,36 +731,4 @@ PUSH ka raasta        Google/Apple bahar ki cheez hai -> uska apna retry/queue
 
 ---
 
-## ★ IS DESIGN KA IMAANDAR HISAAB (21-Sep)
-
-```
-JO HO GAYA:
-   push ka poora mechanism      khuli connection + register + pen        ★ dekha
-   connection ka kharcha        thread khatam ho ke server chup ho gaya  ★ dekha
-   do server wali dikkat        B online tha aur "OFFLINE" likha aaya    ★ dekha
-   ek banda = kai connection    "bhej diya (2 connection pe)"            ★ dekha
-   uske teen raste              1 kharij + Redis routing + pub-sub
-   offline ka raasta            pehle likho phir bhejo, catch-up, push notification
-   storage                      chat_id partition, snowflake id, cursor, wide-column, cold
-
-   group fan-out                ek likhai, 500 pahunchai (dikkat 5)
-   group ka unread              per-member CURSOR, per-message record nahi (dikkat 6)
-   tick                         teen tick = teen ULTE safar, aur wahi cursor (dikkat 7)
-   tick ka ulta safar           B ki tab band -> ✓✓ kabhi aayi hi nahi      ★ dekha
-   bade group me tick           feature ko scale ke hisaab se HATANA (dikkat 8)
-
-   duplicate                    clientMsgId -- id CLIENT banata hai, kyunki RETRY client karta hai (dikkat 9)
-   kram                         server ki id se, client ke TIME se nahi (dikkat 10)
-   media                        bhaari cheez chat ke raste se NAHI -- blob + pata (dikkat 11)
-   presence                     TTL se apne aap marna + pull, push nahi (dikkat 12)
-
-JO SCOPE SE BAHAR RAKHA (bol ke hataya):
-   E2E encryption · voice/video call · bade broadcast group
-```
-
-★ Imaandari: **design POORA ho gaya** (22-Sep). MOVE 1 se 4, 12 dikkat, aur har box ke peeche
-ek asli tootna. Jo scope se bahar rakha tha wo bol ke hataya gaya tha, chhupaya nahi.
-
----
-
 [← SYSTEM_DESIGNS](..) · [← Home README](../../../README.md)
