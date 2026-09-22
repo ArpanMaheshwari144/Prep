@@ -6,6 +6,64 @@
 
 ---
 
+## ★★ QUEUE · KAFKA · WORKER — TEEN ALAG CHEEZEIN HAIN (22-Sep, Arpan ne poochha)
+
+> Sawaal jaayaz hai — teeno naam hamesha SAATH aate hain, isliye ek jaisi lagti hain.
+> Par ye ek cheez ke teen naam NAHI hain. Ye teen ALAG cheezein hain.
+
+```
+MESSAGE QUEUE   ek SOCH / ek DABBA
+                "kaam abhi mat karo -- parchi yahan rakh do, koi baad me uthayega"
+                ye koi product nahi hai -- ye JAGAH hai
+
+KAFKA           us dabbe ka EK BRAND
+                doosre brand: RabbitMQ · AWS SQS · ActiveMQ · Redis Streams
+                Kafka ki apni aadat: wo parchi PHENKTA nahi,
+                aur har padhne wala apna NISHAAN khud rakhta hai
+                (isi liye "smart log appender" wali samajh sahi hai)
+
+WORKER          wo PROGRAM jo dabbe se parchi UTHATA hai aur KAAM karta hai
+                ★ dabba KUCH NAHI karta -- wo sirf RAKHTA hai
+                  karne wala WORKER hai
+```
+
+**Rasoi wali tasveer me:**
+
+```
+   parchi ka khoonta    =  QUEUE
+   us khoonte ka brand  =  KAFKA
+   khansama             =  WORKER
+```
+
+**Naam ki ek uljhan — `consumer` aur `worker` aksar EK HI cheez hote hain:**
+
+```
+   producer   likhne wala
+   broker     dabba khud (Kafka ka server)
+   consumer   padhne wala        <- QUEUE ki taraf se naam
+   worker     kaam karne wala    <- KAAM ki taraf se naam
+```
+
+**Teeno ek doosre ke BINA bhi ho sakte hain — yahi saboot hai ki alag hain:**
+
+```
+   queue ho, Kafka na ho    ->  SQS ya RabbitMQ laga lo
+   worker ho, queue na ho   ->  background thread ya cron job
+   queue ho, worker na ho   ->  parchi padi rahegi, kaam KABHI hoga hi nahi
+```
+
+> ★ **Apne hi designs me dekh — teeno saath khade hain:**
+> ```
+> notification   Kafka topic -> notification service (consumer)
+>                            -> per-channel QUEUE -> WORKER
+> file upload    queue -> worker (validation)
+> news           fetcher -> queue -> worker (clean + dedupe)
+> ```
+> Notification wale me **Kafka aur queue DONO alag-alag** khade hain.
+> Agar ye ek cheez hoti to wahan do box na hote.
+
+---
+
 ## ★★ QUEUE = EK CHEEZ, TEEN ALAG KAAM (designs me ye ghaalmel hota hai)
 
 > Har design me queue dikhti hai, par uska KAAM har jagah ek nahi hota.
