@@ -691,6 +691,87 @@ Do cheezein isse sambhalti hain:
 > chahe data maujood ho. Design me privacy ek alag layer hai, data ke upar.
 
 ---
+
+### ab poora naksha (jahan pahunche) + har box ka KYUN
+
+```
+                          A ka phone / laptop / tab
+                                    │
+                                    │  ek KHULI connection (band nahi hoti)
+                                    ▼
+                          ┌──────────────┐
+                          │      LB      │   connection ko kisi chat-server pe bithata
+                          └──────┬──────┘
+                                 │
+        ┌───────────────────┼───────────────────┐
+        ▼                                          ▼
+  ┌─────────────────┐              ┌─────────────────┐
+  │  CHAT SERVER-1   │   ...(~200)  │  CHAT SERVER-7   │
+  │  local register  │              │  local register  │
+  │  A -> {pen, pen} │              │  B -> {pen}      │
+  └───────┬─────────┘              └───────▲─────────┘
+          │                                 │
+          │  "B kahan hai?"                 │  "B ke liye ye message"
+          ▼                                 │
+  ┌─────────────────────────────────────────────┐
+  │  REDIS   ─ presence / routing  (B -> server-7, TTL)  │
+  │          ─ pub-sub channel  "user-B"                  │
+  └─────────────────────────────────────────────┘
+
+          │ (/send aane pe SABSE PEHLE)
+          ▼
+  ┌─────────────────┐   ┌───────────────────┐   ┌───────────────────┐
+  │ IDEMPOTENCY    │   │  MESSAGE STORE     │   │  CURSOR STORE      │
+  │ clientMsgId    │   │  wide-column       │   │  per user per chat │
+  │ -> pehle aayi? │   │  partition chat_id │   │  read_upto         │
+  └─────────────────┘   │  sort  message_id  │   │  delivered_upto    │
+                        └────────┬─────────┘   └───────────────────┘
+                                 │ purana
+                                 ▼
+                        ┌─────────────────┐
+                        │  COLD STORAGE    │
+                        └─────────────────┘
+
+  B OFFLINE hua to:                          MEDIA bheji to:
+  ┌───────────────────────┐              ┌──────────────────────┐
+  │ PUSH   Google / Apple │              │  BLOB STORE (S3)      │
+  │        -> phone ka OS  │              │  pre-signed URL       │
+  └───────────────────────┘              └──────────────────────┘
+```
+
+**HAR BOX KA KYUN (aur wo kis DIKKAT se aaya):**
+
+```
+   LB                 connection ko kisi chat-server pe bithana        — dikkat 1
+   CHAT SERVER tier   2 crore khuli connection = ~200 box jo KUCH
+                      kaam nahi kar rahe, sirf taar pakde hain
+                      -> event-loop, "ek connection = ek thread" nahi   — dikkat 1
+   local register     "mere paas kaun juda hai" + uska PEN
+                      ★ pen MEMORY me hi reh sakta hai, DB me nahi      — jad ki baat
+                      ★ ek user -> KAI pen (phone + laptop + tab)       — ★ dekha
+   REDIS routing      "B kis SERVER pe hai" -- sirf PATA, pen nahi
+                      TTL + dhadkan, warna mare server ki entry padi rahegi — dikkat 2
+   pub-sub channel    bhejne wale ko jaanna hi na pade ki B kahan hai   — dikkat 2
+   IDEMPOTENCY        clientMsgId pehle aayi? -> retry pe duplicate nahi — dikkat 9
+   MESSAGE STORE      1.2 TB roz, 46k write/sec -> ek box ka kaam nahi
+                      chat_id se baanta, message_id se sorted
+                      -> "aakhri 50" EK disk read me                     — dikkat 4
+   COLD STORAGE       purana data sasti jagah, par reconciliation na toote — dikkat 4
+   CURSOR STORE       read_upto / delivered_upto -- per message per member
+                      wala record NAHI (wo 500-guna likhai laata)        — dikkat 6, 7
+   PUSH (Google/Apple) app BAND ho tab bhi ghanti -- ye raasta tere
+                      server se nahi, phone ke OS se jaata hai           — dikkat 3
+   BLOB STORE         bhaari cheez chat ke raste se NAHI jaati
+                      message me sirf PATA jaata hai                     — dikkat 11
+   PRESENCE (Redis)   TTL se apne aap marna -- "chup ho jaana" hi signal — dikkat 12
+```
+
+★ **Ek baat jo is naksha me dikhti hai:** poore design me DO alag duniya hain —
+**zinda taar** (memory, ek server ki, mar sakti hai) aur **pakka maal** (DB, sab jagah se dikhta).
+Register pehli me hai, message doosri me. Jo log ye gadbadate hain wo pen ko Redis me rakhne
+ki koshish karte hain — aur wo ho hi nahi sakta.
+
+---
 ---
 
 # MOVE 4 — BOLTE-BOLTE JODO
