@@ -3174,6 +3174,20 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
     RULE: `return` HARMFUL sirf jab uske BAAD chalne wala code ho. LAST line pe return = redundant par safe;
           BEECH me return = agla branch/code maar deta. (void-vs-non-void se koi lena-dena NAHI -- ye FLOW ka rule hai.)
 
+ ★★ ISKA SAGA BHAI — `else if` MAT LAGAO (Arpan-22-Sep, KHUD pakda):
+    Backtracking me dono branch ALAG `if` hone chahiye, `else if` NAHI:
+       if(cond1) solve(...);        // ✓ dono chalti hain
+       if(cond2) solve(...);
+       ------------------------------------------------
+       if(cond1) solve(...);        // ✗ cond1 sach hua to
+       else if(cond2) solve(...);   //    ye KABHI nahi chalti
+    KYUN: `else if` ka matlab hai "ek mil gaya, bas". Backtracking ka matlab ULTA hai --
+          **HAR combination try karni hai**, ek mil jaane pe rukna nahi hai.
+    ★ EK LINE: dhoondhne wale code me `else if` theek hai (ek jawab chahiye).
+      BANANE wale code me GALAT hai (saare jawab chahiye).
+    generate-parentheses me open<n aur close<open dono ek saath sach ho sakti hain --
+    aur tab DONO raaste chalne chahiye, warna aadhe combination bante hi nahi.
+
  ──────────────────────────────────────────────────────────────
  2 FORMS = SAME cheez, alag LIKHAWAT (dono recursion + undo, same output):
     A) INCLUDE/EXCLUDE : 2 explicit call (element liya / nahi-liya). base pe record.
@@ -3326,6 +3340,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              if (open  < n)    solve(open+1, close, n, path+'(', ans);   // '(' branch
              if (close < open) solve(open, close+1, n, path+')', ans);   // ')' branch
          // caller: solve(0,0,n,"",ans);
+     ★ BUG-TRAP #2 (Arpan-22-Sep, khud pakda): dono ALAG `if` hain, `else if` NAHI --
+        open<n aur close<open dono ek saath sach ho sakti hain, aur tab DONO chalni chahiye.
+        `else if` = "ek mil gaya bas" = dhoondhne wali soch. Yahan BANANA hai, saare banane hain.
      ★ BUG-TRAP (Arpan-9-Sep, yaad rakh): dono branch pe `return solve(...)` mat likho!
         first branch ke `return` se function KHATAM -> 2nd branch (')') kabhi chalti hi nahi -> sirf 1 string banti.
         backtracking = DONO choice ek-ke-baad-ek chalao (koi return nahi). = classic "early-return kills 2nd branch" trap.
