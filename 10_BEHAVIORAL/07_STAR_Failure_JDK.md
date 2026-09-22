@@ -25,7 +25,9 @@
 
    R: end me ZERO DOWNTIME ship hua. par asli cheez = LESSON.
 
-   LESSON: "it compiles" != "it runs". version-migration mechanical nahi hota.
+   LESSON (★ DO line, dono bolo — doosri Arpan ki apni hai, 22-Sep bolte waqt nikli):
+           "compile hone ka matlab nahi ki RUN ho gaya"
+           "number badalne ka matlab nahi ki MIGRATE ho gaya"
            ab KISI bhi migration se pehle release-notes me removed/breaking changes UPFRONT padhta hoon,
            runtime pe discover karne ke bajaye.
 ```
@@ -47,9 +49,9 @@
 >
 > **R:** "It ended up shipping with zero downtime. But the real takeaway was the lesson."
 >
-> **Lesson:** "It taught me that 'it compiles' doesn't mean 'it runs' — a version migration isn't mechanical.
-> Now, before any migration, I read the release notes for removed or breaking changes upfront, instead of
-> discovering them at runtime."
+> **Lesson:** "It taught me two things. First, 'it compiles' doesn't mean 'it runs'. And second — changing the
+> version number doesn't mean you've migrated. Now, before any migration, I read the release notes for removed
+> or breaking changes upfront, instead of discovering them at runtime."
 
 ---
 
@@ -58,6 +60,31 @@
    safe line: "It was a couple of the Java EE modules Java 11 unbundled — around the XML/binding side, if I recall."
    -> "if I recall" laga -> honest, aur exact-naam pe bet nahi. exact detail pe mat fasna.
    (failure-story me interviewer wahan grill nahi karta -> lesson/ownership dekhta.)
+```
+
+## ★ 22-Sep — BOLKE NIKAALI (pehli baar, khaali page se)
+
+```
+JO AAYA (bina dekhe):
+   S    migration meri zimmedari thi · sirf NUMBER badla · compile ho gaya par localhost pe nahi chala
+   T    solve karna mujhe hi tha
+   A    AI tha nahi -> StackOverflow + docs
+        ★ "ek din padhte hue LEAD mili" -- JDK 8 me kuch dependency thi jo 11 me nahi
+        phir aur dig kiya
+   ★ FAILURE KHUD OWN KIYA, aur sahi shabdon me:
+        "samjha galti kahan thi -- baat NUMBER badalne ki nahi thi, MODULES theek se rakhne ki thi"
+   R    "theek chal gaya, aaj tak chal raha hai"
+   ★ LESSON dugna bola, aur doosri line FILE SE BEHTAR thi (ab upar chadha di gayi)
+
+JO CHHOOTA (do, dono chhote):
+   1. "ZERO DOWNTIME"   R me ye nahi bola. Resume ki line yahi hai, aur failure-story me
+                        R bhi chahiye -- warna "kaam hua ki nahi" khula reh jaata hai.
+   2. FIX ka kadam      "modules theek se rakhe" bola.
+                        Asli line: "pom me un modules ko EXPLICITLY wapas add kiya"
+                        -> ek concrete kadam kahani ko SACH bana deta hai
+
+JO GAP HAI HI NAHI (isko gap mat samajhna):
+   exact dependency ka naam -- file khud kehti hai ki uski zaroorat nahi
 ```
 
 ## BOL-KE TIPS
