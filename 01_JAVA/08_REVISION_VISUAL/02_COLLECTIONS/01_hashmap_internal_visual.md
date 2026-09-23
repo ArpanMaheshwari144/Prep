@@ -203,7 +203,7 @@ PROBLEM:
    = Slow
 
 SOLUTION: REHASHING
-   Buckets used / capacity > 0.75?
+   Entries (size) / capacity > 0.75?   (bhare hue bucket nahi, KUL entry gini jaati)
       → Double capacity (16 → 32)
       → Re-distribute all existing items
 ```
