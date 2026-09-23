@@ -1,644 +1,189 @@
-# PR / CODE-REVIEW ROUND — ATTACK + SAMAJH + RECORD
+# PR REVIEW — KYA DHOONDHNA HAI, KAISE DIKHTA HAI, KYA BOLNA HAI
 
-> **CONFIRMED (17-Sep, bahar ke source se — andaaza nahi):** JP ke Superday me
-> **~10 minute ka asli PR-review segment hota hai** — ek pull request deke bug + style poochte hain.
-> Ye alag round nahi, Superday ka hissa hai. (techinterview.org JPMorgan guide + 5 candidate writeups.)
->
-> Ye CHECKLIST-skill hai (finite, ~20 recurring issue). **Knowledge pehle se hai — aadat SCAN ki chahiye.**
+> JP ke Superday me ~10 minute ka PR-review hota hai: ek PR dete hain, bug aur style poochte hain.
+> Is file me sirf wo hai jo review KARTE WAQT kaam aata hai.
+
+```
+1. KAISE CHALANA      5 kadam
+2. MASTER LIST        jo code me GALAT LIKHA hai — code me kaisa DIKHTA hai -> kya POOCHNA -> sahi kya
+3. AAKHRI 9 TICK      jo code me LIKHA HI NAHI hota — aankh se nahi milta, gin ke milta hai
+4. BOLNE KA TARIKA
+```
 
 ---
 
-## ★ IS FILE KO KAISE USE KARNA — teen hisse, teen kaam
+## 1. KAISE CHALANA
 
 ```
-HISSA 1 — ATTACK    drill ke WAQT sirf ye khula rakho. 5 kadam + 2 list. Bas.
-HISSA 2 — SAMAJH    ek baar padhne ki cheez. Har bucket ka poora detail + "kyun".
-HISSA 3 — RECORD    drill ke BAAD bharne ki cheez. Score, kya chhoota, pattern.
-```
+KADAM 1   30 second, kuch mat bolo. Poora code upar se neeche. "ye class kya kar rahi hai?"
 
-* [HISSA 1 — ATTACK](#hissa-1--attack) — 5 kadam · MUST-HAVE list · NISHAAN table · bolne ka tarika
-* [HISSA 2 — SAMAJH](#hissa-2--samajh) — 6 bucket · auth ka farak · kyun ye kram
-* [HISSA 3 — RECORD](#hissa-3--record) — 5 drill ka data · 7 example · pattern · mindset
+KADAM 2   teen sawaal, poori file pe:
+            (a) USER ka data kahan-kahan ja raha?   SQL me · log me · seedha return me · bina check ke
+            (b) beech me CRASH hua to aadha kaam kis haal me?   do write · beech me bahar ka call
+            (c) ye DO BAAR / EK SAATH chala to?   double charge · race · shared field
+
+KADAM 3   MASTER LIST (hissa 2) pe ek sweep — har category ek baar
+
+KADAM 4   ★ AAKHRI 9 (hissa 3) KAAGAZ PE LIKHO, har ek pe tick ya cross.
+          Ye kadam chhoda to jo "likha hi nahi" hai wo kabhi nahi milega.
+
+KADAM 5   bolo: pehle 2-3 sabse bhaari (security / paisa), phir baaki
+```
 
 ---
+
+## 2. MASTER LIST
+
+### SECURITY
+
+```
+CODE ME DIKHE                               POOCHO / BOLO                              SAHI
+---------------------------------------------------------------------------------------------------------
+SQL string ke andar  " + "                  "injection" — sabse bada bug, RUK JAO      PreparedStatement (?)
+                                                                                        / JPA param
+"sk_live_..." / password / URL              "secret code me hai"                        env / vault / config
+  code me likha
+
+log.info(... + req)  /  account / card /    "log me PII / card"                         sirf id / masked
+  IFSC / password log me
+
+return ok(ENTITY)  (User · Wallet ·         "saare field bahar — password, pinHash?"    DTO
+  Account)
+
+password seedha save                        "plaintext"                                  BCrypt
+
+request me kisi ki CHEEZ ka id              "bhejne wala iska MAALIK hai? check kahan?"  owner = logged-in user
+  (fromAcc · walletId · orderId · loanId)     userId BODY se aa raha = client jo chahe    (token se, body se NAHI)
+                                              bheje -> authz toota hua
+```
+
+### PAISA
+
+```
+CODE ME DIKHE                               POOCHO / BOLO                              SAHI
+---------------------------------------------------------------------------------------------------------
+double / float + paisa                      "paisa double me — rounding, ledger mismatch" BigDecimal / paise LONG
+new BigDecimal(0.015)                       "double se bana — 0.01499999..."            BigDecimal.valueOf / "0.015"
+amount.equals(BigDecimal.ZERO)              "equals SCALE dekhta — 0.00 != 0"            compareTo(..)==0 / signum()
+request ka amount, aur DB ka asli           "dono kabhi COMPARE hue?"                    compare karo
+  amount / limit bhi nikala gaya              (nikala, variable me rakha, use nahi kiya
+  (sanctioned · dailyLimit · orderAmount)      -> 5 lakh sanction, 50 lakh nikal gaya)
+request se aaya number, usse jod/ghata       "HAD kahan check hui? -ve? 0? bahut bada?"   > 0 aur upper limit
+                                              (-5000 -> balance - (-5000) = paisa BANA)
+```
+
+### TRANSACTION / KRAM / DO-BAAR
+
+```
+CODE ME DIKHE                               POOCHO / BOLO                              SAHI
+---------------------------------------------------------------------------------------------------------
+do ya zyada write, @Transactional nahi      "beech me fail -> aadha likha"               @Transactional
+@Transactional PRIVATE method pe,           "proxy se jaa raha hai?" — private pe proxy   public method, doosri
+  ya same class se call (this.x())           lagta hi nahi, self-call proxy se nahi       bean se call
+                                              jaata -> transaction HAI HI NAHI
+do DB-write ke BEECH me bahar ka call        "iske baad fail hua to jo BAHAR gaya,        bahar ka call transaction
+  (bank · gateway · mail · notification)      wo wapas aayega?" (paisa gaya, record nahi)  ke BAHAR + reconcile/retry
+balance PADHO -> ghatao -> SAVE             "do request ek saath -> dono ne 1000 padha,  @Version / SELECT FOR UPDATE
+  (bina lock)                                 dono nikale = double spend"                  / UPDATE ... WHERE bal>=?
+retry / double-click pe koi rok nahi         "dobara chala to double charge"              idempotency key (unique)
+Map / Set jo "idempotency" ka kaam kare     "ye SACH me kaam karta?"                     DB unique key
+  (instance field)                            HashMap = thread-unsafe · kabhi clear nahi
+                                              · 2 pod pe bekaar · put() kaam se PEHLE
+                                              -> ek fail = hamesha block
+```
+
+### JAVA / SPRING TRAP (code me "sahi dikhte" hain)
+
+```
+CODE ME DIKHE                               POOCHO / BOLO                              SAHI
+---------------------------------------------------------------------------------------------------------
+String pe ==   (status == "FROZEN")         "reference compare -> hamesha false"         "FROZEN".equals(x)
+Long / Integer pe == / !=                   "-128..127 tak chalta, uske upar FAIL"        Objects.equals
+findById(..).get()                          "khaali Optional -> 500"                     orElseThrow(NotFound)
+rs.next() ka return check nahi              "row nahi mili -> crash"                     if (!rs.next())
+rows.get(0) / list.get(0)                   "khaali list -> crash"                       isEmpty check
+static SimpleDateFormat                     "thread-safe nahi"                           DateTimeFormatter
+controller/service me mutable field         "har request me SAANJHA — thread-safe?"      local / DB / concurrent
+  (Map · List · counter · flag)
+(double) map.get(..)                        "null aaya to? type pakka?"                   check / typed
+```
+
+### RESOURCE / DB
+
+```
+CODE ME DIKHE                               POOCHO / BOLO                              SAHI
+---------------------------------------------------------------------------------------------------------
+Connection / Statement / ResultSet /        "close kahan?" — teeno me ek bhi chhoota     try-with-resources
+  FileWriter khule
+LOOP ke andar repo / DB call                "N+1 — 100 row = 101 query"                  join / findAllById / IN
+findByX(..) jo List lautaaye, Pageable nahi "10 lakh row ho gayi to?"                     pagination
+UPDATE ... WHERE me sirf customer_id        "customer ke DO record hue to galat row"      poori key (loan_id bhi)
+naya value purane ko PADHE bina likha        "outstanding = sanctioned - amt?              purana padho, usme se ghatao
+                                              purana outstanding kahan gaya?"
+```
+
+### ERROR HANDLING
+
+```
+CODE ME DIKHE                               POOCHO / BOLO                              SAHI
+---------------------------------------------------------------------------------------------------------
+ResponseEntity.ok(..) FAILURE branch me     "is haalat ka HTTP code kya?"                400 · 403 · 404 · 409 ·
+  ok("FAILED") · ok("INSUFFICIENT")                                                       422 · 500/502
+catch(Exception) { }  /  printStackTrace()  "exception nigla — galti dikhegi hi nahi"    log + rethrow / proper code
+  / return null / return "FAILED"
+log.error("failed")  — e aur id nahi         "stack trace kahan? kis id pe?"              log.error("... id={}", id, e)
+```
+
+### DESIGN
+
+```
+CODE ME DIKHE                               POOCHO / BOLO                              SAHI
+---------------------------------------------------------------------------------------------------------
+@Autowired field pe                         "constructor injection — final + testable"
+controller me SQL / JDBC / bahar ka call    "SRP — layer alag"                           controller -> service -> repo
+new RestTemplate() har call pe              "bean inject karo"
+constant / field declare, use kahin nahi    "dead code" (MAX_RETRIES)
+```
+
 ---
 
-# HISSA 1 — ATTACK
+## 3. AAKHRI 9 — KAAGAZ PE LIKHO, TICK KARO
 
-> Drill ke waqt neeche ki char cheez ke alawa kuch nahi chahiye.
-> **17-Sep ka sabak:** checklist me SQL-injection aur money-in-double dono LIKHE the.
-> Drill me dono chhoot gaye. File PADHNA kaam nahi karta — **CHALANA** karta hai.
-
-## ★ 1.1 — PAANCH KADAM
+> Ye wo cheezein hain jo code me **likhi hi nahi** hoti — isliye aankh kabhi nahi pakdegi.
+> Dekhne ko kuch hai hi nahi, **ginna** padta hai. Paise ya data badalne wale HAR endpoint pe:
 
 ```
-KADAM 1 — 30 SECOND, kuch mat bolo. Sirf POORA code upar-neeche padho.
-           "ye class kar kya rahi hai?" bas itna.
-           (seedha bug dhoondhne lage -> pehla dikhne wala hi bol doge, baaki chhoot jaayega)
-
-KADAM 2 — TEEN SAWAAL, is kram me. Har ek pe POORI file pe nazar daudao.
-
-   (a) "USER ka data KAHAN-KAHAN ja raha hai?"
-         -> SQL string me jud raha?        = INJECTION
-         -> log me ja raha?                 = card/password leak
-         -> seedha return ho raha?          = entity expose
-         -> bina validate use ho raha?
-
-   (b) "Yahan CRASH ho gaya to AADHA kaam kis haal me chhootega?"
-         -> do write, ek transaction nahi?  = paisa kata, order nahi bana
-         -> beech me BAAHRI call?           = uska rollback hota hi nahi
-         -> resource khula reh jaayega?     = leak
-         -> exception nigli ja rahi?        = galti dikhegi hi nahi
-
-   (c) "Ye DO BAAR chal gaya to?"
-         -> idempotency hai?                = double charge
-         -> shared mutable state?           = thread-safety
-         -> retry safe hai?
-
-KADAM 3 — 5-BUCKET pe ek sweep (HISSA 2 me poori list).
-           Jo (a)(b)(c) me nahi aaya, wo yahan milega.
-
-KADAM 4 — MUST-HAVE LIST (1.2) — ek-ek line pe tick ya cross. Ye SABSE zaroori kadam hai.
-
-KADAM 5 — BOLO structured: security -> java-trap -> resource -> db -> design.  (tarika 1.4 me)
-```
-
-## ★★ 1.2 — MUST-HAVE LIST — paise/data badalne wale HAR endpoint pe
-
-> **Kyun list, aur kyun kadam 1-3 kaafi nahi** (18-Sep, Arpan-pakdi):
-> kadam 1-3 tak jo kiya wo **HUNT** tha — galat likhi hui line dhoondhna. Do kism ke bug hote hain:
->
-> ```
-> GALAT LIKHA HUA   ->  line maujood hai, wo galat hai   (SQL concat · Float · == · get(0))
->                       -> AANKH pakad leti hai. Hunt kaam karta hai.
->
-> LIKHA HI NAHI     ->  koi line hai hi NAHI              (auth · validation · error-code)
->                       -> aankh KABHI nahi pakdegi. Dekhne ko kuch hai hi nahi.
-> ```
->
-> Aur ye JAAN-KAARI ka mamla NAHI hai (Arpan ne saaf kiya): *"auth to seekha hua hai — par FILE
-> SCAN karte waqt uske liye DEKHNA kabhi seekha hi nahi."* Gap gyaan me nahi, SCAN ki aadat me
-> hai. Aur aadat list se banti hai — gayab cheez hunt se nahi milti, ginni padti hai.
-
-```
-[ ] AUTHORIZATION   bulane wale ka HAQ hai is resource pe?
-[ ] VALIDATION      amount > 0? -ve? bahut bada? decimal? account exist? khud ko khud transfer?
-[ ] AMOUNT COMPARE  request ka amount aur DB ka asli amount — kabhi COMPARE hue?
-[ ] MONEY TYPE      paisa double/float me hai? -> BigDecimal ya paise LONG me
-[ ] TRANSACTION     multi-write ek saath commit/rollback?
-[ ] KRAM            do DB-write ke BEECH me koi BAAHRI call? (uska rollback hota hi nahi)
-[ ] IDEMPOTENCY     dobara chala to? (aur jo hai wo SACH ME kaam karta hai?)
-[ ] ERROR CODE      fail pe 4xx? ya sab 200 OK ja raha?
+[ ] AUTHORIZATION   bulane wala is cheez ka MAALIK hai? check kahan hai?
+[ ] VALIDATION      amount > 0? -ve? bahut bada? account exist? khud ko khud?
+[ ] AMOUNT COMPARE  request ka amount DB ke asli amount / limit se compare hua?
+[ ] MONEY TYPE      paisa BigDecimal / long me? (double, float, new BigDecimal(double) nahi)
+[ ] TRANSACTION     saare write ek saath commit/rollback? (aur @Transactional SACH me laga?)
+[ ] KRAM            do write ke beech bahar ka call?
+[ ] IDEMPOTENCY     dobara chala to? (aur jo hai wo SACH me kaam karta?)
+[ ] ERROR CODE      fail pe 4xx/5xx? ya sab 200 OK?
 [ ] AUDIT           kaun, kab, kitna — record hua?
 ```
 
-★ **23-Sep tak in 9 ka haal** (gina hua, andaaza nahi):
-
-```
-AB AA JAATE HAIN    AUTHORIZATION · IDEMPOTENCY   (drill 3, 4, 5 — lagataar)
-                    KRAM · TRANSACTION            (drill 4 aur 5)
-                    ★ AMOUNT COMPARE              (drill 3-4 me chhoota, drill 5 me AAYA)
-
-ABHI BHI CHHOOTE    ERROR CODE      (drill 2, 3, 4, 5 — ★★ CHAAR baar)
-                    VALIDATION      (drill 4 aur 5)
-                    AUDIT           (drill 3, 4, 5 — TEEN baar)
-```
-
-★★ **KADAM 4 ka pakka niyam (23-Sep se):** list sirf "yaad" se nahi chalegi. Review khatam karne
-se pehle ye **9 shabd kaagaz pe LIKHO** aur har ek ke aage tick ya cross lagao — tabhi bolna band karo.
-Chaar drill me jo teen line baar-baar chhooti (error code · validation · audit), wo teeno isi list
-me likhi thi. Chhooti isliye kyunki list CHALI hi nahi.
-
-Jo aa gaye, wo list me rehne se aaye — yaad se nahi. Jo chhoot rahe hain, unke liye list
-PADHNI padegi; wo nazar se nahi milte, gin ke milte hain.
-
-## ★★ 1.3 — NISHAAN TABLE — "code me kya DIKHA, aur kya POOCHNA hai"
-
-> Miss ki list padhne se kuch nahi hota. Har miss ke saamne ek cheez code me SAAF dikh rahi thi.
-> Agli baar wo cheez dikhe -> sawaal apne-aap chalna chahiye. **Yahi ratt-ne wali table hai.**
-
-```
-NISHAAN (jo aankh ke saamne hota hai)          ->  SAWAAL (jo turant chalna chahiye)
--------------------------------------------------------------------------------------------
-SQL ke andar kahin bhi  " + "                      "ye PreparedStatement kyun nahi?"
-                                                   = sabse bada bug, RUK JAO
-
-request me kisi ki CHEEZ ka naam                   "bhejne wala iska MAALIK hai? check kahan?"
-(fromAccount · orderId · userId · documentId)      (filter me ho hi nahi sakta — usne ye param
-@RequestParam String fromAcc  <- yahin rukna hai    dekha hi nahi. @PreAuthorize / service /
-                                                    aspect me ho sakta -> POOCHO, ilzaam nahi)
-
-request se aaya NUMBER, aur usse ghatao/jodo       "iski HAD kahan check hui?
-ho raha                                             -ve? 0? bahut bada? decimal?"
-                                                   (-5000 -> balance-(-5000) = paisa BANA)
-
-request se aaya amount, aur DB me uska asli        "kya ye DONO kabhi COMPARE hue?"
-amount bhi paas me hai                             (19-Sep: orderAmount nikala, service tak
-                                                    bheja, aur kabhi compare hi nahi kiya
-                                                    -> Rs.500 ke order pe Rs.50,000 ka refund)
-
-float / double + paisa                             "ye paisa hai -> BigDecimal"
-                                                   ★ 17-Sep pakda, 18 aur 19 me chhoota,
-                                                   20-Sep dobara AAYA — ab list se aata hai
-
-Object / String pe  ==                             "ye reference jod raha ya value?"
-                                                   (status=="FROZEN" -> hamesha false ->
-                                                    frozen account bhi nikal gaya)
-
-do DB-write ke BEECH me BAAHAR ka call             "iske BAAD wala step fail hua to jo BAHAR
-(gateway · mail · notification · 3rd-party API)     ja chuka, wo wapas aayega?"
-                                                   (debit -> "paisa aaya" bhej diya -> credit fail)
-                                                   (19-Sep: paisa gateway se nikla, company ke
-                                                    paas record hi nahi bana)
-                                                   ★ drill-2 aur 3 me chhoota, drill-4 me AAYA
-
-controller/service me koi MUTABLE field            "ye har request me SAANJHA hai — thread-safe?
-(Map · List · counter · flag)                       kabhi khaali hota? 2 pod pe chalega?"
-                                                   (recentTransfers = idempotency ka DIKHAWA)
-
-ResponseEntity.ok  failure waali branch me         "is haalat ka HTTP code kya hona chahiye?
-                                                    400 / 409 / 422?"
-                                                   ★★ CHAAR BAAR CHHOOTA: drill 2, 3, 4 aur 5
-                                                   (drill 5: ok("FAILED") · ok("INSUFFICIENT_BALANCE")
-                                                    -> 500/502 aur 422)
-                                                   (aur "ALREADY_IN_PROGRESS" bhi 200 OK tha
-                                                    -> wo 409 hai)
-
-koi constant / field DECLARE hua                   "ye use kahan hua?" — kahin nahi = dead code
-                                                   (MAX_RETRIES · MAX_REFUND_ATTEMPTS)
-
-paise wala kaam, aur koi INSERT-into-audit nahi    "kisne maanga, kisne approve kiya, kab?"
-                                                   finance me ye COMPLIANCE ki cheez hai
-                                                   ★ TEEN baar chhoota (drill 3, 4, 5)
-
---------------- 23-Sep (drill 5) se jude — sab JAVA / SPRING / MONEY trap ---------------
-
-Long / Integer pe  ==  ya  !=                      "ye WRAPPER hai — value ya reference?"
-(wallet.getUserId() != req.getUserId())             -128..127 tak cache se chal jaata, uske upar
-                                                    FAIL -> sahi owner bhi 403 kha gaya
-                                                    -> .equals() / Objects.equals()
-
-BigDecimal pe  .equals(...)                        "equals SCALE bhi dekhta hai"
-(amount.equals(BigDecimal.ZERO))                   0.00.equals(0) = FALSE
-                                                    -> compareTo(...) == 0 / signum()
-
-new BigDecimal(0.015)   <- double andar gaya       "ye double se bana — exact nahi"
-                                                    = 0.01499999999... (fee galat)
-                                                    -> BigDecimal.valueOf(0.015) / new BigDecimal("0.015")
-
-@Transactional kisi PRIVATE method pe,             "ye proxy se jaa raha hai?"
-ya same class ke andar se call                     Spring ka proxy private pe lagta hi nahi, aur
-(this.debit(...))                                   andar ka call proxy se jaata hi nahi
-                                                    -> annotation LAGA dikhta, transaction HAI NAHI
-
-balance PADHO -> ghatao -> SAVE                    "do request EK SAATH aayi to?"
-(bina lock / @Version / atomic UPDATE)              dono ne 1000 padha, dono ne nikala = double spend
-                                                    -> @Version / SELECT FOR UPDATE /
-                                                       UPDATE ... SET bal=bal-? WHERE bal>=?
-
-findById(...).get()                                "khaali Optional pe? -> NoSuchElementException
-                                                    -> 500". orElseThrow(NotFound) chahiye
-
-return ResponseEntity.ok(ENTITY)                   "is entity ke SAARE field bahar ja rahe —
-(Wallet · User · Account)                           pinHash? internal id?" -> DTO
-
-LOOP ke andar repo / DB call                       "N+1 — 100 row = 101 query"
-(for w : all -> beneficiaryRepo.findById)           -> join / IN (...) ek baar
-
-findByXxx(...) jo List lautaaye, Pageable nahi     "10 lakh row ho gayi to?" -> pagination
-
-catch (Exception e) { log.error("...failed") }     "e kahan hai? id kahan hai?"
-(exception object log me gaya hi nahi)              stack trace + kis walletId pe -> warna debug hi nahi
-```
-
-## ★ 1.4 — BOLNE KA TARIKA
-
-```
-SCAN ORDER:  security -> java-trap -> resource -> db -> design/error-handling
-BOLNE KA TARIKA (loud, structured):
-   "Main pehle SECURITY dekhta hoon -- yahan SQL string-concat se ban rahi, injection risk...
-    phir CONCURRENCY -- ye shared SimpleDateFormat thread-safe nahi...
-    phir RESOURCE -- ye connection close nahi ho raha...
-    phir DB -- ye loop me N+1...
-    aur ye payment flow hai, to main ye bhi dekhunga ki retry pe double-charge to nahi hoga."
--> structured review = interviewer ko dikhta tu SYSTEMATIC hai, andaze se nahi.
-
-★ TIME: ~10 min ka segment hai. 2-3 CRITICAL pehle bolo (security/paisa), style baad me.
-  Ek candidate ne 30 min PR-review me laga diye aur DSA ka time chala gaya — ye mat karna.
-
-★ GAYAB cheez ke liye SAWAAL, ILZAAM nahi:
-  "yahan ownership-check nazar nahi aa raha — kya wo kisi aspect/@PreAuthorize me hai?"
-```
+★ Koi cheez "hai" dikh rahi hai to bhi ek baar poochho **"ye SACH me kaam karti hai?"**
+(`@Transactional` private pe laga hai · idempotency ek HashMap hai · owner check body ke userId se hai
+— teeno "maujood" the, teeno kaam nahi karte the.)
 
 ---
----
 
-# HISSA 2 — SAMAJH
-
-## ★ 2.1 — 5-BUCKET CHECKLIST (har PR snippet inhi me se aata)
+## 4. BOLNE KA TARIKA
 
 ```
-1. SECURITY
-   [] SQL injection      -> string-concat query ("...'" + x + "'")? -> PreparedStatement (?)
-                            ★ SQL ke andar kahin bhi  " + "  dikhe = RUK JAO. Sabse bada bug.
-   [] hardcoded secret   -> password / API-key / URL code me? -> env / vault / config
-   [] password handling  -> plaintext store? (BCrypt) · logs me print? (mat karo)
-   [] LOG me sensitive   -> log.info("..." + req) -> poora object = card/password logs me (PCI)
-   [] sensitive expose   -> entity seedha return (password-field ke saath)? -> DTO
-   [] input validation   -> user-input bina validate use ho raha?
+KRAM:   security -> paisa -> transaction/kram -> java-trap -> resource/db -> error -> design
 
-2. JAVA TRAPS (round-2 ye HUNT karta)
-   [] SimpleDateFormat   -> shared/static? -> NOT thread-safe -> DateTimeFormatter (immutable)
-   [] Optional.get()     -> bina check .get()? -> orElseThrow / handle
-   [] == on String/boxed -> Long / Integer / String == compare? -> .equals()
-                            ("INR".equals(x) likho -> null-safe bhi ho jaata)
-   [] mutable shared field -> non-final instance/static field (thread-unsafe)?
-   [] rs.next() ka return -> check kiya? row na mile to seedha crash
-   [] blind cast          -> (double) map.get(...) — type pata hai? null aaya to?
+"Main pehle SECURITY dekhta hoon — yahan SQL string jod ke ban rahi hai, injection ka risk...
+ phir PAISA — amount double me hai, aur request ka amount DB se compare nahi hua...
+ phir TRANSACTION — do write hain aur beech me bank call hai...
+ aur ye payment flow hai, to retry pe double charge to nahi hoga — idempotency dekhta hoon."
 
-3. RESOURCE
-   [] stream/writer/conn -> close hota? -> try-with-resources
-   [] Connection + Statement + ResultSet — teeno (ek bhi chhoota = leak)
-   [] connection / thread / file-handle leak
+★ TIME: ~10 minute. 2-3 sabse bhaari pehle, style baad me.
 
-4. DATABASE
-   [] N+1 query          -> loop me findById / save? -> findAllById / saveAll (batch)
-   [] @Transactional     -> multi-write bina transaction (atomicity)?
-   [] double for money   -> ★ BigDecimal (scale + RoundingMode) ya paise LONG me.
-                            0.1 + 0.2 = 0.30000000000000004 -> lakhon txn pe ledger MISMATCH
-                            -> reconciliation FAIL. Finance code ka PEHLA niyam.
-   [] rows.get(0)        -> khaali list pe crash
-
-5. DESIGN / ERROR-HANDLING
-   [] SRP violation      -> controller/service me DB + business + external sab? -> layer alag
-   [] raw JDBC in service-> repository ka kaam service me ghusa hua
-   [] exception swallow  -> catch(Exception){} · e.printStackTrace() · return null/"FAILED"
-   [] magic numbers / magic string return values
-   [] field @Autowired   -> constructor injection better (final + testable)
-   [] dead code          -> declare hua constant/field jo kahin use nahi
-
-6. ★ FINANCE-FLAVOUR (JP/GS/Barclays ke liye — ye list me hona hi chahiye)
-   [] BAAHRI CALL transaction ke ANDAR
-        stripe.charge() -> phir DB update fail
-        = paisa asli duniya me kat gaya, DB me kuch nahi. Rollback ho hi nahi sakta.
-        -> DB kaam ek transaction me · baahri call USSE BAHAR · phir reconcile/retry
-   [] IDEMPOTENCY nahi   -> user ne do baar dabaya / network retry -> DOUBLE CHARGE
-                            -> idempotency key (04_HLD/07_payment_system wali baat)
-   [] AUDIT trail        -> paise wala kaam bina record ke? kaun, kab, kitna
-   [] AMOUNT validation  -> request ka amount DB ke asli amount se compare hua?
-   [] consistency > availability — paise me ye default jhukaav hai
+★ GAYAB cheez pe SAWAAL, ILZAAM nahi:
+  "yahan ownership check nazar nahi aa raha — kya wo kisi filter / @PreAuthorize me hai?"
+  (AUTHENTICATION = kaun hai, filter me hota. AUTHORIZATION = is cheez ka haq hai? — wo
+   param dekhe bina ho hi nahi sakta, isliye controller/service me dhoondho.)
 ```
-
-## ★★ 2.2 — AUTH ka SAHI FARAK (18-Sep, Arpan-pushback se nikla)
-
-```
-AUTHENTICATION   "kaun ho tum?"
-                 -> SecurityConfig / JwtFilter me, EK jagah, saalon pehle likha
-                 -> controller me dikhta hi NAHI, aur dikhna bhi nahi chahiye
-                 -> isliye "controller me auth nahi hai" sochna ULTA lagta hai. Sahi lagta hai.
-
-AUTHORIZATION    "is ACCOUNT / ORDER pe tumhara HAQ hai?"
-                 -> GENERIC filter ye nahi kar sakta — usne fromAcc dekha hi nahi,
-                    wo request me ABHI aaya hai
-                 -> par ye handler me HI ho aisa zaroori NAHI:
-                    @PreAuthorize("#fromAcc == authentication.name") · service-layer check ·
-                    ek aspect — teeno jayaz jagah hain
-                 ★ matlab: is snippet me wo KAHIN nahi dikh raha — aur PR-review me itna hi
-                   bolna hai: "yahan ownership-check nazar nahi aa raha, kya wo kisi
-                   aspect/@PreAuthorize me hai?" — ye SAWAAL hai, ilzaam nahi.
-```
-
-## ★ 2.3 — KYUN teen sawaal PEHLE, checklist BAAD me
-
-checklist **shakal** pakadti hai (hardcoded string, naya object, missing close) — wo aankh se
-dikh jaati hai. Teen sawaal **behaviour** pakadte hain (runtime pe, crash pe, retry pe kya hoga) —
-wo aankh se DIKHTA HI NAHI. 17-Sep ko jo 8 chhoote, wo lagbhag saare BEHAVIOUR wale the.
-
-## ★★ 2.4 — MAUJOOD HONA aur KAAM KARNA do alag baat hai
-
-```
-18-Sep drill ne ye saaf kiya:
-  "idempotency nahi hai" bolna SAHI tha — jabki Map maujood tha.
-  Kyunki wo Map kaam hi nahi karta:
-     HashMap                   = thread-unsafe
-     kabhi clear nahi          = leak
-     key me amount/time nahi   = dobara bhejna HAMESHA blocked
-     instance field            = restart pe gayab, 2 pod pe bekaar
-     put() PROCESSING se PEHLE = fail hone pe entry hamesha ke liye retry BLOCK kar degi
-
--> Cheez dikhe to ruk ke poochho: "ye waqai wo kaam karti hai jiske liye rakhi hai?"
-   Dikh gayi, tick laga diya — ye galti hai.
-```
-
----
----
-
-# HISSA 3 — RECORD
-
-## ★ 3.1 — SAARE DRILL ka data
-
-```
-17-Sep   PaymentService        7 / 15  (47%)   zyadatar SHAKAL wale (string · missing close · field-injection)
-18-Sep   TransferController    7 / 15  (47%)   ab BEHAVIOUR wale (transaction · idempotency · injection)
-19-Sep   RefundController     11 / 18  (61%)   ★ authz + idempotency DONO aaye (pichhli baar chhoote the)
-20-Sep   DisbursalController  11 / 18  (61%)   ★ MONEY-TYPE + KRAM dono aaye (pichhli DO baar chhoote the)
-                                              chhoote 7 me se 4 MUST-HAVE list me likhe hue the
-23-Sep   WithdrawalController  9 / 20  (45%)   ★ AMOUNT COMPARE pehli baar aaya · hardcoded secret aaya
-                                              11 chhoote: 7 NAYE family se (jaan-boojh ke daale,
-                                              pehle kabhi test nahi hue) + 4 must-have line
-
-★ IMAANDARI: chaaron PR alag the, mushkil bhi alag.
-  Abhi tak ka sach: 7/15, 7/15, 11/18, 11/18.
-  Do baar lagataar 61% — 47% se upar, aur ab ye ek baar ka ittefaaq nahi hai.
-  Score wahi raha par CHHOOTNE WALI cheezein badal gayi — wo asli badlav hai, %-nahi.
-  ★ 23-Sep ka 45% pichhle 61% se TULNA mat karna: is baar 20 me se 7 bilkul naye family ke the
-    (BigDecimal ke do trap · Long == · private @Transactional · N+1 · entity · pagination).
-    Jo family pehle test hui thi, unme se sirf must-have wali chhooti.
-```
-
-## ★ 3.2 — PATTERN, waqt ke saath
-
-```
-PURANA pattern (17+18 Sep)  ->  "LIKHA HI NAHI" wale chhoot rahe the (authz · idempotency)
-                                ★ YE THEEK HO GAYA — 19-Sep ko dono aaye
-
-NAYA pattern (19-Sep)       ->  PAKDA   : STRUCTURE + JAVA-TRAP
-                                          (injection · transaction · == · thread-safety · leak)
-                                CHHOOTA : PAISE KE NIYAM
-                                          (double for money · range check · amount se compare)
-                                          KRAM aur NAAKAAMI
-                                          (bahar ka call beech me · crash pe kya · 200 on failure)
-
-20-Sep ka pattern           ->  PAKDA   : upar wala SAB, aur uske OOPAR
-                                          double-for-money aur bahar-ka-call-beech-me
-                                          -> yaani jo cheez LIKHI hui hai, wo ab aa jaati hai
-
-                                CHHOOTA : sirf wo jo LIKHI HI NAHI HAI
-                                          validation · amount-compare · error-code · audit
-                                          (chaaron MUST-HAVE list ki line hain)
-
-★ ISKA MATLAB EK HI HAI: HUNT (kadam 1-3) kaam kar raha hai.
-  Jo chhoot raha hai wo sirf KADAM 4 hai — list padhi hi nahi jaati.
-  Agle drill me sudhaar list se aayega, aur zyada dhyaan se dekhne se nahi.
-
-23-Sep ka pattern           ->  PAKDA   : purana sab (authz · idempotency · kram · transaction)
-                                          + AMOUNT COMPARE (pehli baar) + hardcoded secret + Optional.get
-                                CHHOOTA : (1) wahi 3 must-have: error code · validation · audit
-                                          (2) JAVA/SPRING ke chhupe trap — jo code me "sahi dikhte" hain:
-                                              Long == · BigDecimal equals · new BigDecimal(double) ·
-                                              @Transactional private pe · read-modify-write race
-                                          (3) DB/API shakal: entity return · N+1 · pagination
-
-★ DO SABAK:
-  1. Must-have list LIKH ke tick karo (1.2 me niyam). Teen line chaar drill se isi wajah se chhoot rahi.
-  2. Naye trap ab 1.3 NISHAAN table me hain. Har ek code me SAAF dikhta hai
-     (==, .equals, "new BigDecimal(", @Transactional private, loop me repo) — table ek baar padh lo,
-     agli baar aankh khud rukegi.
-```
-
-## ★ 3.3 — WORKED EXAMPLES
-
-### Example 1 — UserController (SECURITY-heavy)
-```
-hardcoded dbPassword          -> secret code me (CRITICAL)
-requestCount++ but unused     -> dead code + thread-unsafe shared field
-SQL string-concat (dono query)-> SQL INJECTION (sabse bada)
-password plaintext store + LOG-> security
-return User (password expose) -> DTO use karo
-role == "ADMIN"               -> String == -> .equals()
-catch(Exception){printStackTrace} -> swallow
-SRP: controller me DB+external+logic -> service layer
-RestTemplate new per-call     -> injected bean
-```
-
-### Example 2 — OrderService (JAVA-TRAP heavy)
-```
-static SimpleDateFormat       -> NOT thread-safe -> DateTimeFormatter
-findById(...).get()           -> Optional bina check -> orElseThrow
-loop me itemRepo.findById     -> N+1 query -> findAllById
-double total/price            -> money in double -> BigDecimal (FINANCE!)
-FileWriter never closed       -> resource leak -> try-with-resources
-getCustomerId() == (Long)     -> reference compare -> .equals() (autobox trap)
-catch -> return null          -> exception swallow, caller ko silent null
-```
-
-### ★ Example 3 — PaymentService (FINANCE-heavy) — 17-Sep drill, 15 bug
-```
-KHUD PAKDE (7):
-   hardcoded STRIPE_KEY            SECURITY
-   Connection close nahi           RESOURCE
-   SimpleDateFormat shared         CONCURRENCY
-   service me raw JDBC             DESIGN / layering
-   field @Autowired                DESIGN
-   log.info("..." + req)           SECURITY (card logs me)
-   double for money                DB/FINANCE (rounding tak pahuncha)
-
-CHHOOT GAYE (8):
-   ★ SQL INJECTION — DO jagah      SECURITY  <- file ka sabse bada bug
-   req.getCurrency() == "INR"      JAVA TRAP
-   findById(id).get()              JAVA TRAP
-   rs.next() unchecked             JAVA TRAP
-   loop me findById + save (N+1)   DB
-   catch(Exception)+printStackTrace+return "FAILED"   DESIGN
-   ★ no @Transactional + baahri charge beech me       FINANCE
-   ★ no IDEMPOTENCY -> double charge                  FINANCE
-```
-
-### ★ Example 4 — TransferController (paisa transfer) — 18-Sep drill, 15 bug
-```
-PAKDE (7) — aur teen BHAARI wale jo pichli baar chhoote the, teeno aaye:
-   controller me DB query          layering / SRP
-   ★ @Transactional nahi           atomicity        <- 17-Sep ko chhoota tha
-   ★ SQL injection                  security         <- 17-Sep ko chhoota tha
-   constructor injection nahi      design
-   log me sensitive data           security
-   ★ idempotency nahi               finance          <- 17-Sep ko chhoota tha
-   rows.get(0) — khaali list pe crash
-
-CHHOOT GAYE (8):
-   ★★ KOI AUTHORIZATION NAHI      fromAcc request-param hai, maalik ka check kahin nahi
-                                   -> koi bhi kisi ka bhi account khaali kar sakta
-                                   = is file ka SABSE BADA bug
-   ★ NEGATIVE AMOUNT             "-5000" -> balance < amt paas -> balance-(-5000) = paisa BANA
-   status == "FROZEN"             Object pe == -> hamesha false -> frozen account bhi chal gaya
-   notifier.send() DO UPDATE ke BEECH  -> debit + "you received" bheja + credit FAIL
-   Float for money                ★ ye 17-Sep ko PAKDA tha, aaj chhoot gaya
-   recentTransfers = plain HashMap    4 bug ek saath (detail 2.4 me)
-   har failure pe 200 OK          "INSUFFICIENT"/"FROZEN" bhi ResponseEntity.ok
-   MAX_RETRIES declare, use nahi  dead code
-```
-
-### ★★ Example 5 — RefundController + RefundService — 19-Sep drill, 18 bug
-```
-PAKDE (11):
-   SQL injection                        security
-   @Transactional nahi                  atomicity
-   field injection                      design
-   Connection/PreparedStatement close nahi   resource leak
-   SimpleDateFormat static              ★ thread-unsafe (classic Java trap)
-   status == "REFUNDED"                 java-trap
-   rows.get(0)                          khaali list pe crash
-   (double) order.get(...)              blind cast
-   ★ idempotency nahi                   Map DIKH raha tha, phir bhi sahi bola
-   log me poora request                 security
-   ★★ AUTHORIZATION nahi               aur SAHI SHABDON me: "dusri file me ho to theek"
-
-   ★ aakhri DO pichhli baar CHHOOTE the. authz + idempotency — wahi do jinke liye
-     MUST-HAVE LIST banayi thi. List ne kaam kiya.
-
-CHHOOTE (7):
-   ★ PAISA double me             teen jagah (orderAmount, refundAmount, ps.setDouble)
-                                  -> customer_balance me jud raha hai
-                                  ★★ DRILL-1 me PAKDA tha, ab DO BAAR lagatar chhoota
-
-   ★ refundAmount pe koi JAANCH nahi
-                                  orderAmount DB se nikala, service tak bheja bhi —
-                                  aur KABHI COMPARE hi nahi kiya
-                                  -> Rs.500 ke order pe Rs.50,000 ka refund nikal jayega
-                                  -> negative bhejo to balance + (-5000) = paisa KAT gaya
-
-   ★ gateway call DO DB-write ke BEECH me
-                                     status = REFUND_IN_PROGRESS   (DB)
-                                     gateway.refund(...)           (BAAHAR — paisa nikal gaya)
-                                     INSERT refunds                (DB)  <- yahan crash?
-                                  -> paisa customer ko ja chuka, company ke paas RECORD NAHI
-                                  ★ ye MUST-HAVE list ka sawaal hai: "beech me crash hua to?"
-
-   catch(Exception) -> ok(...)    refund FAIL hua, API 200 OK bhejti hai
-                                  log.error("refund failed") — na orderId na stack trace
-                                  ★ ERROR CODE pichhli baar BHI chhoota tha
-
-   refundCache ke andar 4 bug     "idempotency nahi" bolna SAHI tha, par Map me:
-                                    HashMap = thread-unsafe
-                                    kabhi clear nahi = leak
-                                    ★ put() PROCESSING se PEHLE — fail hone pe entry
-                                      hamesha ke liye retry BLOCK kar degi
-                                    instance field = restart pe gayab, 2 pod pe bekaar
-
-   MAX_REFUND_ATTEMPTS            declare hua, kahin use nahi = dead code
-
-   AUDIT TRAIL nahi               kisne maanga, kisne approve kiya, kab — kuch record nahi
-                                  finance me ye COMPLIANCE ki cheez hai
-
-   (bonus: RefundService me dataSource declare/inject hua hi nahi — compile nahi karega)
-```
-
-### ★★ Example 6 — DisbursalController + DisbursalService (loan disbursal) — 20-Sep drill, 18 bug
-
-```
-PAKDE (11):
-   constructor injection nahi           design
-   static SimpleDateFormat              java-trap / thread-unsafe
-   SQL injection — 4 jagah              security  <- sabse bada
-   ★ double har jagah                   MONEY TYPE — drill 2 aur 3 me chhoota tha, AAJ AAYA
-   @Transactional nahi                  atomicity
-   idempotency nahi                     finance   <- teesri baar lagataar
-   status == "APPROVED"                 java-trap
-   Connection / Statement / RS close nahi    resource leak
-   log me sensitive (aur log line khud ek DB call kar rahi hai)   security
-   ★ NEFT call DO DB-write ke BEECH me  KRAM — drill 2 aur 3 me chhoota tha, AAJ AAYA
-   ★★ AUTHORIZATION nahi                aur shabd theek the: "kahin likha ho to theek,
-                                        yahan nazar nahi aa raha"
-
-   ★ money-type aur kram DONO wo the jo pichhli DO baar chhoote the. List ne kaam kiya.
-
-CHHOOTE (7) — saat me se CHAAR must-have list ki line hain:
-   ★ amount pe koi JAANCH nahi      -ve amount -> outstanding BADH jayega, paisa bahar
-                                     0 -> NEFT call phir bhi hoga
-
-   ★ amount vs sanctioned_amount     sanctioned DB se NIKALA, variable me rakha,
-     kabhi COMPARE nahi hua          aur kabhi use hi nahi kiya
-                                     -> 5 lakh sanction, 50 lakh disburse
-
-   ★ har failure pe 200 OK           catch -> ok("FAILED")  ·  ok("ALREADY_IN_PROGRESS")
-                                     e.printStackTrace() + log.error("disbursal failed")
-                                     — na loanId na stack trace
-                                     ★★ ERROR CODE — ab TEEN baar chhoota
-
-   rs.next() ka return unchecked     galat loanId -> rs.getString pe seedha crash
-
-   UPDATE loan_accounts              WHERE me sirf customer_id, loan_id kahin nahi
-                                     -> customer ke DO loan hue to GALAT row overwrite
-                                     aur outstanding = sanctioned - amount
-                                     (purana outstanding padha hi nahi gaya)
-
-   AUDIT trail nahi                  kisne disburse kiya, kab, kitna — koi record nahi
-
-   MAX_DISBURSAL_RETRY               declare hua, use kahin nahi = dead code
-
-★ EK CHEEZ JO PAKDI PAR KHODI NAHI — inFlight Map:
-  "idempotency nahi" bolna SAHI tha. Par us Map ke andar chaar alag bug hain —
-  HashMap (thread-unsafe) · kabhi clear nahi (leak) · instance field (2 pod pe bekaar) ·
-  aur put() kaam se PEHLE, to ek baar fail hone pe wo loanId hamesha ke liye BLOCK.
-  -> dikhe to poochho "ye waqai kaam karti hai?" (2.4 wali baat)
-
-★ IS SNIPPET ME JO FAMILY TEST HI NAHI HUI (taaki tasveer honest rahe):
-  N+1 · entity/DTO expose · Optional.get() · hardcoded secret — inme se kuch tha hi nahi.
-```
-
-### ★★ Example 7 — WithdrawalController (wallet se bank) — 23-Sep drill, 20 bug
-
-```
-PAKDE (9):
-   constructor injection nahi              design
-   log me account number + IFSC            security / PII
-   BANK_API_KEY hardcoded                  security  <- naya family, pehli baar me AAYA
-   withdraw pe transaction nahi            TRANSACTION
-   idempotency nahi                        finance   <- chauthi baar lagataar
-   findById().get()                        Optional trap  <- naya family, AAYA
-   ★ dailyLimit nikala, compare nahi       AMOUNT COMPARE — drill 3 aur 4 me chhoota, AAJ AAYA
-   userId request body se                  AUTHORIZATION
-   bank call do DB-write ke beech          KRAM
-
-   (ek point bug nahi tha: "history/debit kahan call hua" — history khud ek @GetMapping endpoint
-    hai, client seedha hit karta; debit withdraw ke andar call hua hai. Ginti me nahi joda.)
-
-CHHOOTE (11):
-   MUST-HAVE (4)
-   ★ 200 OK on failure         ok("FAILED") · ok("INSUFFICIENT_BALANCE")    ★★ CHAUTHI baar
-   ★ amount validation nahi    -ve / bahut bada amount pe koi rok nahi
-   ★ audit nahi                kisne kitna nikala — record nahi               TEEN baar
-   @Transactional PRIVATE pe   proxy private pe nahi lagta + self-call proxy se nahi jaata
-                               -> debit ka transaction HAI HI NAHI
-                               ("transaction nahi" sahi pakda, bas ye WAJAH nahi boli)
-
-   JAVA / MONEY TRAP (4)
-   Long != Long                127 ke upar reference compare -> sahi owner bhi 403
-   amount.equals(ZERO)         scale: 0.00 != 0 -> "0.00" wala check se nikal gaya
-   new BigDecimal(0.015)       double se -> 0.0149999... -> fee galat
-   balance padha-ghataya-save  do request ek saath -> double withdraw (lock / @Version nahi)
-
-   DB / API SHAKAL (3)
-   Wallet ENTITY return        saare andar ke field bahar -> DTO
-   history me N+1              har row pe beneficiaryRepo.findById
-   history me pagination nahi  saari history ek saath
-   (+ catch me log.error bina exception object aur bina walletId)
-
-★ IS SNIPPET ME JO FAMILY TEST HI NAHI HUI:
-  SQL injection (is baar JPA tha) · resource leak · static SimpleDateFormat · thread-unsafe field
-  -> ye pichhle drill me aa chuke hain, is baar code me the hi nahi.
-```
-
-## ★ 3.4 — MINDSET (17-Sep ka asli sabak)
-
-```
-★ GAP KNOWLEDGE KA NAHI HAI.
-  SQL-injection aur money-in-double dono is file me PEHLE SE likhe the.
-  Phir bhi chhoot gaye. Matlab file PADHNA kaam nahi karta — CHALANA karta hai.
-
-★ PATTERN jo dikha (asli, gina hua):
-     jo cheezein SHAKAL se dikhti hain    ->  pakdi gayi   (7/7 jaisi)
-     jo BEHAVIOUR me chhupi hain          ->  chhoot gayi  (8 me se lagbhag saari)
-                                              SQLi · crash pe aadha kaam · retry pe double
-
-  -> ilaaj = HISSA 1 ke 5 kadam, khaas kar teen sawaal aur MUST-HAVE list.
-
-- ye tera sabse SASTA round hai — 700 ticket ka PR-review pehle se kiya hua hai.
-  Naya seekhna nahi hai, sirf KRAM se dekhna hai.
-- checklist-skill FINITE hai -> kuch drill me "7 pakda" se "12-13 pakda" ho jaayega.
-- drill: alternate din 1 snippet -> 30 sec padho -> teen sawaal -> 5-bucket -> must-have -> bolo.
-```
-
----
-
-[← Home README](../README.md)
