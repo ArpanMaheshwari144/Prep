@@ -18,7 +18,7 @@ HISSA 3 — RECORD    drill ke BAAD bharne ki cheez. Score, kya chhoota, pattern
 
 * [HISSA 1 — ATTACK](#hissa-1--attack) — 5 kadam · MUST-HAVE list · NISHAAN table · bolne ka tarika
 * [HISSA 2 — SAMAJH](#hissa-2--samajh) — 6 bucket · auth ka farak · kyun ye kram
-* [HISSA 3 — RECORD](#hissa-3--record) — 4 drill ka data · 6 example · pattern · mindset
+* [HISSA 3 — RECORD](#hissa-3--record) — 5 drill ka data · 7 example · pattern · mindset
 
 ---
 ---
@@ -92,18 +92,22 @@ KADAM 5 — BOLO structured: security -> java-trap -> resource -> db -> design. 
 [ ] AUDIT           kaun, kab, kitna — record hua?
 ```
 
-★ **20-Sep tak in 9 ka haal** (gina hua, andaaza nahi):
+★ **23-Sep tak in 9 ka haal** (gina hua, andaaza nahi):
 
 ```
-AB AA JAATE HAIN    AUTHORIZATION · IDEMPOTENCY   (drill 3 aur 4, lagataar)
-                    MONEY TYPE · KRAM             (drill 2-3 me chhoote the, drill 4 me AAYE)
-                    TRANSACTION                   (drill 2 se aa raha hai)
+AB AA JAATE HAIN    AUTHORIZATION · IDEMPOTENCY   (drill 3, 4, 5 — lagataar)
+                    KRAM · TRANSACTION            (drill 4 aur 5)
+                    ★ AMOUNT COMPARE              (drill 3-4 me chhoota, drill 5 me AAYA)
 
-ABHI BHI CHHOOTE    VALIDATION      (-ve · 0 · bahut bada)
-                    AMOUNT COMPARE  (drill 3 aur 4 dono)
-                    ERROR CODE      (drill 2, 3 aur 4 — ★ TEEN baar)
-                    AUDIT           (drill 3 aur 4 dono)
+ABHI BHI CHHOOTE    ERROR CODE      (drill 2, 3, 4, 5 — ★★ CHAAR baar)
+                    VALIDATION      (drill 4 aur 5)
+                    AUDIT           (drill 3, 4, 5 — TEEN baar)
 ```
+
+★★ **KADAM 4 ka pakka niyam (23-Sep se):** list sirf "yaad" se nahi chalegi. Review khatam karne
+se pehle ye **9 shabd kaagaz pe LIKHO** aur har ek ke aage tick ya cross lagao — tabhi bolna band karo.
+Chaar drill me jo teen line baar-baar chhooti (error code · validation · audit), wo teeno isi list
+me likhi thi. Chhooti isliye kyunki list CHALI hi nahi.
 
 Jo aa gaye, wo list me rehne se aaye — yaad se nahi. Jo chhoot rahe hain, unke liye list
 PADHNI padegi; wo nazar se nahi milte, gin ke milte hain.
@@ -154,7 +158,9 @@ controller/service me koi MUTABLE field            "ye har request me SAANJHA ha
 
 ResponseEntity.ok  failure waali branch me         "is haalat ka HTTP code kya hona chahiye?
                                                     400 / 409 / 422?"
-                                                   ★★ TEEN BAAR CHHOOTA: drill 2, 3 aur 4
+                                                   ★★ CHAAR BAAR CHHOOTA: drill 2, 3, 4 aur 5
+                                                   (drill 5: ok("FAILED") · ok("INSUFFICIENT_BALANCE")
+                                                    -> 500/502 aur 422)
                                                    (aur "ALREADY_IN_PROGRESS" bhi 200 OK tha
                                                     -> wo 409 hai)
 
@@ -163,6 +169,46 @@ koi constant / field DECLARE hua                   "ye use kahan hua?" — kahin
 
 paise wala kaam, aur koi INSERT-into-audit nahi    "kisne maanga, kisne approve kiya, kab?"
                                                    finance me ye COMPLIANCE ki cheez hai
+                                                   ★ TEEN baar chhoota (drill 3, 4, 5)
+
+--------------- 23-Sep (drill 5) se jude — sab JAVA / SPRING / MONEY trap ---------------
+
+Long / Integer pe  ==  ya  !=                      "ye WRAPPER hai — value ya reference?"
+(wallet.getUserId() != req.getUserId())             -128..127 tak cache se chal jaata, uske upar
+                                                    FAIL -> sahi owner bhi 403 kha gaya
+                                                    -> .equals() / Objects.equals()
+
+BigDecimal pe  .equals(...)                        "equals SCALE bhi dekhta hai"
+(amount.equals(BigDecimal.ZERO))                   0.00.equals(0) = FALSE
+                                                    -> compareTo(...) == 0 / signum()
+
+new BigDecimal(0.015)   <- double andar gaya       "ye double se bana — exact nahi"
+                                                    = 0.01499999999... (fee galat)
+                                                    -> BigDecimal.valueOf(0.015) / new BigDecimal("0.015")
+
+@Transactional kisi PRIVATE method pe,             "ye proxy se jaa raha hai?"
+ya same class ke andar se call                     Spring ka proxy private pe lagta hi nahi, aur
+(this.debit(...))                                   andar ka call proxy se jaata hi nahi
+                                                    -> annotation LAGA dikhta, transaction HAI NAHI
+
+balance PADHO -> ghatao -> SAVE                    "do request EK SAATH aayi to?"
+(bina lock / @Version / atomic UPDATE)              dono ne 1000 padha, dono ne nikala = double spend
+                                                    -> @Version / SELECT FOR UPDATE /
+                                                       UPDATE ... SET bal=bal-? WHERE bal>=?
+
+findById(...).get()                                "khaali Optional pe? -> NoSuchElementException
+                                                    -> 500". orElseThrow(NotFound) chahiye
+
+return ResponseEntity.ok(ENTITY)                   "is entity ke SAARE field bahar ja rahe —
+(Wallet · User · Account)                           pinHash? internal id?" -> DTO
+
+LOOP ke andar repo / DB call                       "N+1 — 100 row = 101 query"
+(for w : all -> beneficiaryRepo.findById)           -> join / IN (...) ek baar
+
+findByXxx(...) jo List lautaaye, Pageable nahi     "10 lakh row ho gayi to?" -> pagination
+
+catch (Exception e) { log.error("...failed") }     "e kahan hai? id kahan hai?"
+(exception object log me gaya hi nahi)              stack trace + kis walletId pe -> warna debug hi nahi
 ```
 
 ## ★ 1.4 — BOLNE KA TARIKA
@@ -297,11 +343,17 @@ wo aankh se DIKHTA HI NAHI. 17-Sep ko jo 8 chhoote, wo lagbhag saare BEHAVIOUR w
 19-Sep   RefundController     11 / 18  (61%)   ★ authz + idempotency DONO aaye (pichhli baar chhoote the)
 20-Sep   DisbursalController  11 / 18  (61%)   ★ MONEY-TYPE + KRAM dono aaye (pichhli DO baar chhoote the)
                                               chhoote 7 me se 4 MUST-HAVE list me likhe hue the
+23-Sep   WithdrawalController  9 / 20  (45%)   ★ AMOUNT COMPARE pehli baar aaya · hardcoded secret aaya
+                                              11 chhoote: 7 NAYE family se (jaan-boojh ke daale,
+                                              pehle kabhi test nahi hue) + 4 must-have line
 
 ★ IMAANDARI: chaaron PR alag the, mushkil bhi alag.
   Abhi tak ka sach: 7/15, 7/15, 11/18, 11/18.
   Do baar lagataar 61% — 47% se upar, aur ab ye ek baar ka ittefaaq nahi hai.
   Score wahi raha par CHHOOTNE WALI cheezein badal gayi — wo asli badlav hai, %-nahi.
+  ★ 23-Sep ka 45% pichhle 61% se TULNA mat karna: is baar 20 me se 7 bilkul naye family ke the
+    (BigDecimal ke do trap · Long == · private @Transactional · N+1 · entity · pagination).
+    Jo family pehle test hui thi, unme se sirf must-have wali chhooti.
 ```
 
 ## ★ 3.2 — PATTERN, waqt ke saath
@@ -328,6 +380,20 @@ NAYA pattern (19-Sep)       ->  PAKDA   : STRUCTURE + JAVA-TRAP
 ★ ISKA MATLAB EK HI HAI: HUNT (kadam 1-3) kaam kar raha hai.
   Jo chhoot raha hai wo sirf KADAM 4 hai — list padhi hi nahi jaati.
   Agle drill me sudhaar list se aayega, aur zyada dhyaan se dekhne se nahi.
+
+23-Sep ka pattern           ->  PAKDA   : purana sab (authz · idempotency · kram · transaction)
+                                          + AMOUNT COMPARE (pehli baar) + hardcoded secret + Optional.get
+                                CHHOOTA : (1) wahi 3 must-have: error code · validation · audit
+                                          (2) JAVA/SPRING ke chhupe trap — jo code me "sahi dikhte" hain:
+                                              Long == · BigDecimal equals · new BigDecimal(double) ·
+                                              @Transactional private pe · read-modify-write race
+                                          (3) DB/API shakal: entity return · N+1 · pagination
+
+★ DO SABAK:
+  1. Must-have list LIKH ke tick karo (1.2 me niyam). Teen line chaar drill se isi wajah se chhoot rahi.
+  2. Naye trap ab 1.3 NISHAAN table me hain. Har ek code me SAAF dikhta hai
+     (==, .equals, "new BigDecimal(", @Transactional private, loop me repo) — table ek baar padh lo,
+     agli baar aankh khud rukegi.
 ```
 
 ## ★ 3.3 — WORKED EXAMPLES
@@ -508,6 +574,49 @@ CHHOOTE (7) — saat me se CHAAR must-have list ki line hain:
 
 ★ IS SNIPPET ME JO FAMILY TEST HI NAHI HUI (taaki tasveer honest rahe):
   N+1 · entity/DTO expose · Optional.get() · hardcoded secret — inme se kuch tha hi nahi.
+```
+
+### ★★ Example 7 — WithdrawalController (wallet se bank) — 23-Sep drill, 20 bug
+
+```
+PAKDE (9):
+   constructor injection nahi              design
+   log me account number + IFSC            security / PII
+   BANK_API_KEY hardcoded                  security  <- naya family, pehli baar me AAYA
+   withdraw pe transaction nahi            TRANSACTION
+   idempotency nahi                        finance   <- chauthi baar lagataar
+   findById().get()                        Optional trap  <- naya family, AAYA
+   ★ dailyLimit nikala, compare nahi       AMOUNT COMPARE — drill 3 aur 4 me chhoota, AAJ AAYA
+   userId request body se                  AUTHORIZATION
+   bank call do DB-write ke beech          KRAM
+
+   (ek point bug nahi tha: "history/debit kahan call hua" — history khud ek @GetMapping endpoint
+    hai, client seedha hit karta; debit withdraw ke andar call hua hai. Ginti me nahi joda.)
+
+CHHOOTE (11):
+   MUST-HAVE (4)
+   ★ 200 OK on failure         ok("FAILED") · ok("INSUFFICIENT_BALANCE")    ★★ CHAUTHI baar
+   ★ amount validation nahi    -ve / bahut bada amount pe koi rok nahi
+   ★ audit nahi                kisne kitna nikala — record nahi               TEEN baar
+   @Transactional PRIVATE pe   proxy private pe nahi lagta + self-call proxy se nahi jaata
+                               -> debit ka transaction HAI HI NAHI
+                               ("transaction nahi" sahi pakda, bas ye WAJAH nahi boli)
+
+   JAVA / MONEY TRAP (4)
+   Long != Long                127 ke upar reference compare -> sahi owner bhi 403
+   amount.equals(ZERO)         scale: 0.00 != 0 -> "0.00" wala check se nikal gaya
+   new BigDecimal(0.015)       double se -> 0.0149999... -> fee galat
+   balance padha-ghataya-save  do request ek saath -> double withdraw (lock / @Version nahi)
+
+   DB / API SHAKAL (3)
+   Wallet ENTITY return        saare andar ke field bahar -> DTO
+   history me N+1              har row pe beneficiaryRepo.findById
+   history me pagination nahi  saari history ek saath
+   (+ catch me log.error bina exception object aur bina walletId)
+
+★ IS SNIPPET ME JO FAMILY TEST HI NAHI HUI:
+  SQL injection (is baar JPA tha) · resource leak · static SimpleDateFormat · thread-unsafe field
+  -> ye pichhle drill me aa chuke hain, is baar code me the hi nahi.
 ```
 
 ## ★ 3.4 — MINDSET (17-Sep ka asli sabak)
