@@ -65,3 +65,6 @@ bin/
 # Playwright MCP (browser automation scratch — snapshots/logs/screenshots)
 .playwright-mcp/
 *.png
+
+# Java notes book (tracked on purpose)
+!01_JAVA/00_NOTES_BOOK/*.pdf
