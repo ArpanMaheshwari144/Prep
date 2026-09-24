@@ -695,13 +695,34 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBARRAY PRODUCT < K  = variable window + COUNT (running product)
  └──────────────────────────────────────────────────────────────
-     SAAR : kitne subarray jinka product < k. variable window, COUNT (length nahi).
-     j pe : prod *= nums[j].
-     INVALID (prod >= k) -> shrink: prod /= nums[i], i++.
-     ★ EDGE (24-Sep stress test): shrink loop = while (prod >= k && i <= j).
-        k=1 pe window KHAALI hone ke baad bhi prod = 1 (khaali ka product), aur 1 >= 1 sach
-        -> bina i<=j ke loop array ke BAHAR chala jaata ([1], k=1). k=0 upar alag return 0.
-     COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid subarray). (bahut count-Q me)
+     SAAR : kitne subarray jinka product < k.   (lambai nahi, GINTI chahiye)
+
+     TEMPLATE:
+         if (k == 0) return 0;
+         int count = 0, prod = 1, i = 0;
+         for (j = 0 .. n-1) {
+             prod *= nums[j];                      // naya element window me
+             while (prod >= k && i <= j) {         // zyada ho gaya -> baayi taraf se chhoto
+                 prod /= nums[i];
+                 i++;
+             }
+             count += j - i + 1;                   // j pe khatam hone wale saare valid subarray
+         }
+         return count;
+
+     GINTI KYUN (j-i+1):  window [i..j] valid hai, to j pe KHATAM hone wale ye sab bhi valid:
+                          [j], [j-1..j], ... [i..j]  =  j-i+1 subarray
+
+     DRY-RUN [10,5,2,6], k=100:
+         j=0  prod 10               window [10]          +1   count 1
+         j=1  prod 50               window [10,5]        +2   count 3
+         j=2  prod 100 >= 100 -> 10 hatao, prod 10       +2   count 5   ([5,2],[2])
+         j=3  prod 60               window [5,2,6]       +3   count 8
+
+     ★ EDGE (24-Sep): shrink ki shart me `&& i <= j` zaroori.
+         k = 1 pe window poori khaali hone ke baad bhi prod = 1 rehta (khaali ka product 1),
+         aur 1 >= 1 sach -> bina i <= j ke loop array ke BAHAR chala jaata.  ([1], k=1 -> 0)
+         k = 0 alag, upar hi return 0.
 
 ┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
 │ LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD). t="abc" -> dono ek.
