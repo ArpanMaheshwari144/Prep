@@ -879,7 +879,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         KEY INSIGHT: agar set me sirf last-k elements hain, aur andar duplicate mila -> uska index-farak apne-aap <=k
         -> "|i-j|<=k" alag se check karne ki zaroorat NAHI. bas window ko k-size me rakho.
      TEMPLATE:
-         if (k <= 0) return false;          // ★ EDGE (24-Sep): k=0 -> do alag index 0 doori pe ho hi nahi sakte
+         if (k <= 0) return false;
          unordered_set<int> st;  int i=0, j=0;
          while(j < nums.size()){
              if(st.count(nums[j])) return true;   // window me pehle se hai -> mil gaya (within k)
