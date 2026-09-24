@@ -80,7 +80,8 @@ int orangesRotting(vector<vector<int>> &grid)
             }
         }
     }
-    return mins - 1; // mins-1: last level pe kuch rot nahi hota -> ek extra gina gaya
+    return mins == 0 ? 0 : mins - 1;
+    // mins-1: last level pe kuch rot nahi hota -> ek extra gina gaya
 }
 
 int main()

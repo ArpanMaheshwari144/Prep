@@ -35,7 +35,7 @@ struct TreeNode
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
-bool solve(TreeNode *root, int mini, int maxi)
+bool solve(TreeNode *root, long long mini, long long maxi)
 {
     if (!root)
     {
@@ -61,7 +61,7 @@ bool isValidBST(TreeNode *root)
 {
     if (!root)
         return true;
-    return solve(root, INT_MIN, INT_MAX);
+    return solve(root, LLONG_MIN, LLONG_MAX);
 }
 
 int main()

@@ -20,6 +20,9 @@ using namespace std;
 // ============================================================
 bool canAttendMeetings(vector<vector<int>> &intervals)
 {
+    if (intervals.empty())
+        return true;
+    
     sort(intervals.begin(), intervals.end()); // start se sort (default first-element)
     vector<vector<int>> ans;
     ans.push_back(intervals[0]); // pehla baseline

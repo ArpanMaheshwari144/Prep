@@ -27,13 +27,15 @@ int numSubarrayProductLessThanK(vector<int> &nums, int k)
         return 0;
     }
 
+    
     int count = 0;
     int prod = 1;
     int i = 0, j = 0;
     while (j < nums.size())
     {
         prod *= nums[j];
-        while (prod >= k)
+        // agar array mei ek element hia to i<=j tak hi chalega
+        while (prod >= k && i <= j)
         {
             prod /= nums[i];
             i++;
@@ -52,10 +54,13 @@ int main()
     vector<int> d = {10, 9, 10, 4, 3, 8, 3, 3, 6, 2, 10, 10, 9, 3};
     vector<int> e = {1, 2, 3, 4};
 
-    cout << numSubarrayProductLessThanK(a, 100) << " (expected 8)\n";
-    cout << numSubarrayProductLessThanK(b, 0) << " (expected 0)\n";
-    cout << numSubarrayProductLessThanK(c, 2) << " (expected 6)\n";
-    cout << numSubarrayProductLessThanK(d, 19) << " (expected 18)\n";
-    cout << numSubarrayProductLessThanK(e, 10) << " (expected 7)\n";
+    // cout << numSubarrayProductLessThanK(a, 100) << " (expected 8)\n";
+    // cout << numSubarrayProductLessThanK(b, 0) << " (expected 0)\n";
+    // cout << numSubarrayProductLessThanK(c, 2) << " (expected 6)\n";
+    // cout << numSubarrayProductLessThanK(d, 19) << " (expected 18)\n";
+    // cout << numSubarrayProductLessThanK(e, 10) << " (expected 7)\n";
+
+    vector<int> f = {1};
+    cout << numSubarrayProductLessThanK(f, 1) << " (expected 0)   <- k=1\n";
     return 0;
 }

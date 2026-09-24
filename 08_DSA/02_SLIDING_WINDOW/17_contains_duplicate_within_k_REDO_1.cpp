@@ -21,6 +21,9 @@ using namespace std;
 
 bool containsNearbyDuplicate(vector<int> &nums, int k)
 {
+    if (k <= 0) 
+        return false;
+
     int i = 0, j = 0;
     unordered_set<int> st;
     while (j < nums.size())
