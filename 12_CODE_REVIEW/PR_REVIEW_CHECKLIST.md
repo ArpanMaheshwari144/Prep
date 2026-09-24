@@ -21,13 +21,19 @@ KADAM 2   teen sawaal, poori file pe:
             (a) USER ka data kahan-kahan ja raha?   SQL me · log me · seedha return me · bina check ke
             (b) beech me CRASH hua to aadha kaam kis haal me?   do write · beech me bahar ka call
             (c) ye DO BAAR / EK SAATH chala to?   double charge · race · shared field
+            (d) ★ REQUEST se aaya HAR param (id · amount) — us pe teen sawaal:
+                  id     -> "bhejne wala iska MAALIK hai?"          (authz)
+                  amount -> "HAD kahan check hui? -ve / 0 / bada?"  (validation)
+                  amount -> "DB ka asli amount / limit nikla? COMPARE hua?"   (amount compare)
+                ye teeno code me LIKHE HI NAHI hote -> param dikhte hi poochho
 
 KADAM 3   MASTER LIST (hissa 2) pe ek sweep — har category ek baar
 
 KADAM 4   ★ AAKHRI 9 (hissa 3) KAAGAZ PE LIKHO, har ek pe tick ya cross.
           Ye kadam chhoda to jo "likha hi nahi" hai wo kabhi nahi milega.
 
-KADAM 5   bolo: pehle 2-3 sabse bhaari (security / paisa), phir baaki
+KADAM 5   jo dikha, sab LIKH do / bol do — chhota lage tab bhi. Dimaag me pakda par likha nahi = gina nahi jaata.
+          kram: pehle 2-3 sabse bhaari (security / paisa), phir baaki
 ```
 
 ---
@@ -40,7 +46,10 @@ KADAM 5   bolo: pehle 2-3 sabse bhaari (security / paisa), phir baaki
 CODE ME DIKHE                               POOCHO / BOLO                              SAHI
 ---------------------------------------------------------------------------------------------------------
 SQL string ke andar  " + "                  "injection" — sabse bada bug, RUK JAO      PreparedStatement (?)
-                                                                                        / JPA param
+  ★ jdbc.update( · jdbc.query( ·                                                         / JPA param
+    createQuery( · createStatement dikhe ->
+    uski POORI string padho, aakhri line tak
+    (id aksar sabse neeche WHERE me hota)
 "sk_live_..." / password / URL              "secret code me hai"                        env / vault / config
   code me likha
 
@@ -153,15 +162,18 @@ constant / field declare, use kahin nahi    "dead code" (MAX_RETRIES)
 > Dekhne ko kuch hai hi nahi, **ginna** padta hai. Paise ya data badalne wale HAR endpoint pe:
 
 ```
-[ ] AUTHORIZATION   bulane wala is cheez ka MAALIK hai? check kahan hai?
-[ ] VALIDATION      amount > 0? -ve? bahut bada? account exist? khud ko khud?
-[ ] AMOUNT COMPARE  request ka amount DB ke asli amount / limit se compare hua?
-[ ] MONEY TYPE      paisa BigDecimal / long me? (double, float, new BigDecimal(double) nahi)
-[ ] TRANSACTION     saare write ek saath commit/rollback? (aur @Transactional SACH me laga?)
-[ ] KRAM            do write ke beech bahar ka call?
-[ ] IDEMPOTENCY     dobara chala to? (aur jo hai wo SACH me kaam karta?)
-[ ] ERROR CODE      fail pe 4xx/5xx? ya sab 200 OK?
-[ ] AUDIT           kaun, kab, kitna — record hua?
+★ = sabse zyada chhootne wale — inhe PEHLE tick karo
+
+[ ] ★ AUTHORIZATION   bulane wala is cheez ka MAALIK hai? check kahan hai?
+[ ] ★ VALIDATION      amount > 0? -ve? bahut bada? account exist? khud ko khud?
+[ ] ★ AMOUNT COMPARE  request ka amount DB ke asli amount / limit se compare hua?
+                       (DB se nikala, variable me rakha, use NAHI kiya = yahi bug)
+[ ] ★ AUDIT           kaun, kab, kitna — record hua?
+[ ]   MONEY TYPE      paisa BigDecimal / long me? (double, float, new BigDecimal(double) nahi)
+[ ]   TRANSACTION     saare write ek saath commit/rollback? (aur @Transactional SACH me laga?)
+[ ]   KRAM            do write ke beech bahar ka call?
+[ ]   IDEMPOTENCY     dobara chala to? (aur jo hai wo SACH me kaam karta?)
+[ ]   ERROR CODE      fail pe 4xx/5xx? ya sab 200 OK?
 ```
 
 ★ Koi cheez "hai" dikh rahi hai to bhi ek baar poochho **"ye SACH me kaam karti hai?"**
