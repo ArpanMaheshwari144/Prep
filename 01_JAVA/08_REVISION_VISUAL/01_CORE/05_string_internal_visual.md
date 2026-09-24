@@ -194,8 +194,8 @@ StringBuilder = WHITEBOARD
 │ Mutable?           │ YES              │ YES              │
 │ Thread-safe?       │ NO               │ YES (synchronized│
 │ Performance        │ FASTER            │ SLOWER (locking) │
-│ Single-thread use  │                │ (overkill)    │
-│ Multi-thread use   │                │               │
+│ Single-thread use  │ YES (best)       │ chalega (overkill)│
+│ Multi-thread use   │ NO (unsafe)      │ YES              │
 └────────────────────┴──────────────────┴──────────────────┘
 ```
 
