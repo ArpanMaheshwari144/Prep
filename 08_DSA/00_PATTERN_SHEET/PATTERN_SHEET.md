@@ -422,13 +422,24 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      [A] O(n) space: leftMax[] ek pass AAGE se · rightMax[] ek pass PEECHE se · ans += min(leftMax[i], rightMax[i]) - height[i].
 
-     [B] O(1) two-pointer (arrays hata, bas 2 var):
-           left=0, right=n-1;   leftMax=height[0], rightMax=height[n-1];
+     [B] O(1) two-pointer (arrays hata, bas 2 var)  — ★ 24-Sep THEEK KIYA (Arpan ka apna code):
+           left=0, right=n-1;   leftMax=0, rightMax=0;
            while (left < right):
-               if (leftMax <= rightMax):  leftMax  = max(leftMax,  height[left]);   ans += leftMax  - height[left];   left++;
-               else:                      rightMax = max(rightMax, height[right]);  ans += rightMax - height[right];  right--;
-         REFRESH pehle, ADD baad (warna naya-bada-bar pe ans NEGATIVE de deta).
-         kyun SAFE: chhoti-max side ka paani sirf usi side se limit (doosri side oonchi wall already khadi).
+               if (height[left] <= height[right]):          // ★ faisla ASLI DEEWAR pe
+                   if (leftMax > height[left])  ans += leftMax - height[left];   // chhota -> paani
+                   else                         leftMax = height[left];         // bada -> nayi deewar
+                   left++;
+               else:
+                   if (rightMax > height[right]) ans += rightMax - height[right];
+                   else                          rightMax = height[right];
+                   right--;
+         kyun SAFE: jis taraf ki DEEWAR chhoti, wahi taraf niptao -- doosri taraf ek badi deewar pakka khadi,
+                    to had isi chhoti taraf ke max se tay hoti.
+         ★ MILNE KI JAGAH: dono pointer jahan milte, wo cell kabhi process nahi hota. Deewar dekh ke chalne se
+           badi deewar apni jagah rukti -> dono SABSE UNCHI deewar pe milte, jahan paani hota hi nahi.
+         ★ PURANA (GALAT) jo yahan likha tha: faisla `leftMax <= rightMax` pe, leftMax=height[0] se shuru.
+           max abhi current deewar ko shaamil kiye bina -> milne ki jagah galat -> ek khamba chhoot jaata.
+           [4,1,4,1] pe 0 (sahi 3) · [4,5,3,1,4,4] pe 3 (sahi 4). 12 test pass the, random input pe ~1/5 galat.
      edge: empty -> 0.
 
  ┌──────────────────────────────────────────────────────────────
