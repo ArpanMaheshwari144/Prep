@@ -3380,6 +3380,27 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         first branch ke `return` se function KHATAM -> 2nd branch (')') kabhi chalti hi nahi -> sirf 1 string banti.
         backtracking = DONO choice ek-ke-baad-ek chalao (koi return nahi). = classic "early-return kills 2nd branch" trap.
      FAMILY: subsets-jaisa (har step pe choice), par choice CONSTRAINT se filter (open/close count) -> sirf valid bante.
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ LETTER COMBINATIONS OF A PHONE NUMBER (LC-17)  [24-Sep, Arpan khud]
+ └──────────────────────────────────────────────────────────────
+     SAAR : "23" -> har ank ke akshar me se EK-EK chuno -> saare shabd. (2=abc ... 7=pqrs ... 9=wxyz)
+     = har LEVEL (index) = ek ank, us level pe us ank ke SAARE akshar try karo (for loop), neeche jao.
+     TEMPLATE:
+         void solve(index, digits, mp, temp, ans):
+             if (index >= digits.size()) { ans.push_back(temp); return; }   // saare ank ho gaye
+             string str = mp[digits[index]];                                // is ank ke akshar
+             for (char c : str) {
+                 temp.push_back(c);                       // choose
+                 solve(index+1, digits, mp, temp, ans);   // explore (agla ank)
+                 temp.pop_back();                         // un-choose
+             }
+         // caller: digits khaali -> return {} (warna "" wali EK string aa jaati) · solve(0, ...)
+     ★ EDGE: digits "" -> khaali LIST, [""] nahi. isliye pehle hi return {}.
+     ★ BUG-TRAP (24-Sep): `ans` ko GLOBAL mat rakho -- ek hi program me function do baar bula to
+        pichhle jawab bhi jud jaate ("2" pe 3 ki jagah 12). LeetCode pe chal jaata (har test pe naya object),
+        local test me pakda gaya. -> ans function ke andar, solve() me REFERENCE se.
+     FAMILY: subsets/permutations jaisa (choose-explore-unchoose), bas har level pe choices = us ank ke akshar.
 ```
 
 ## PATTERN 17 — DP (dynamic programming = recursion + memo)
