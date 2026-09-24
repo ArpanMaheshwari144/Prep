@@ -74,9 +74,13 @@ CODE ME DIKHE                               POOCHO / BOLO                       
 double / float + paisa                      "paisa double me — rounding, ledger mismatch" BigDecimal / paise LONG
 new BigDecimal(0.015)                       "double se bana — 0.01499999..."            BigDecimal.valueOf / "0.015"
 amount.equals(BigDecimal.ZERO)              "equals SCALE dekhta — 0.00 != 0"            compareTo(..)==0 / signum()
-request ka amount, aur DB ka asli           "dono kabhi COMPARE hue?"                    compare karo
-  amount / limit bhi nikala gaya              (nikala, variable me rakha, use nahi kiya
-  (sanctioned · dailyLimit · orderAmount)      -> 5 lakh sanction, 50 lakh nikal gaya)
+★★ DB se koi value NIKALI, variable me        "ye nikali KYUN? kisse compare honi thi?"    request ke amount se
+   rakhi, aur NEECHE KAHIN USE NAHI HUI          (sabse chhupa bug: koi line galat nahi       compare -> mismatch pe 400
+   double billAmount = bill.getAmount();         dikhti, galti ek NAHI LIKHI line hai)
+   BigDecimal dailyLimit = ...getLimit();       bill 5000 ka, client ne amount=50 bheja
+   sanctioned = rs.getBigDecimal(...)           -> 50 kate, bill PAID, 4950 ka nuksaan
+                                               ★ SHAKAL = dead code (MAX_BILLS) jaisi: declare hua,
+                                                 use nahi. Bas constant ki jagah DB ki value.
 request se aaya number, usse jod/ghata       "HAD kahan check hui? -ve? 0? bahut bada?"   > 0 aur upper limit
                                               (-5000 -> balance - (-5000) = paisa BANA)
 ```
