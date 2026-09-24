@@ -699,14 +699,16 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      TEMPLATE:
          if (k == 0) return 0;
-         int count = 0, prod = 1, i = 0;
-         for (j = 0 .. n-1) {
+         int count = 0, prod = 1;
+         int i = 0, j = 0;
+         while (j < nums.size()) {
              prod *= nums[j];                      // naya element window me
              while (prod >= k && i <= j) {         // zyada ho gaya -> baayi taraf se chhoto
                  prod /= nums[i];
                  i++;
              }
              count += j - i + 1;                   // j pe khatam hone wale saare valid subarray
+             j++;
          }
          return count;
 
