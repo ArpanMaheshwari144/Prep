@@ -24,10 +24,10 @@ int maxProduct(vector<int> &nums)
     {
         return nums[0];
     }
-    int max_prod = nums[0]; // sabse BADA product jo yahaan tak khatam hota
-    int min_prod = nums[0]; // sabse CHHOTA (most-neg) -- kyunki neg×neg = BADA, ye kal flip ho sakta
-    int ans = 0;
-    for (int i = 1; i < nums.size(); i++)
+    int max_prod = 1; // sabse BADA product jo yahaan tak khatam hota
+    int min_prod = 1; // sabse CHHOTA (most-neg) -- kyunki neg×neg = BADA, ye kal flip ho sakta
+    int ans = INT_MIN;
+    for (int i = 0; i < nums.size(); i++)
     {
         // 3 RAASTE: num akela (fresh) · num×oldMax · num×oldMin -> in me se best
         int temp = max({nums[i], nums[i] * max_prod, nums[i] * min_prod});

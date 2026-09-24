@@ -19,13 +19,13 @@ int maxAbsoluteSum(vector<int> &nums)
 {
     if (nums.size() == 1)
     {
-        return nums[0];
+        return abs(nums[0]);
     }
 
-    int maxSum = nums[0]; // vector<int> c = {1, 2, 3};
-    int minSum = nums[0];
+    int maxSum = 0; // vector<int> c = {1, 2, 3};
+    int minSum = 0;
     int ans = 0;
-    for (int i = 1; i < nums.size(); i++)
+    for (int i = 0; i < nums.size(); i++)
     {
         int temp = max({nums[i], nums[i] + maxSum, nums[i] + minSum});
         minSum = min({nums[i], nums[i] + maxSum, nums[i] + minSum});

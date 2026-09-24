@@ -23,10 +23,10 @@ int maxProduct(vector<int> &nums)
         return nums[0];
     }
 
-    int maxProd = nums[0];
-    int minProd = nums[0];
+    int maxProd = 1;
+    int minProd = 1;
     int ans = 0; //  [-2,3,-4]         -> 24
-    for (int i = 1; i < nums.size(); i++)
+    for (int i = 0; i < nums.size(); i++)
     {
         // TRICK: har step 3 candidate -> { nums[i], nums[i]*maxProd, nums[i]*minProd }.
         // inka max = naya maxProd, min = naya minProd. (neg*neg flip -> min bhi carry, freeze temp se)

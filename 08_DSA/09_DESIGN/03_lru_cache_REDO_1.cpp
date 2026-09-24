@@ -74,7 +74,9 @@ public:
         {
             Node *node = mp[key];
             node->val = value;
+            removeNode(node);
             addFront(node);
+            return;
         }
         else
         {

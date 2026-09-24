@@ -687,6 +687,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      SAAR : kitne subarray jinka product < k. variable window, COUNT (length nahi).
      j pe : prod *= nums[j].
      INVALID (prod >= k) -> shrink: prod /= nums[i], i++.
+     ★ EDGE (24-Sep stress test): shrink loop = while (prod >= k && i <= j).
+        k=1 pe window KHAALI hone ke baad bhi prod = 1 (khaali ka product), aur 1 >= 1 sach
+        -> bina i<=j ke loop array ke BAHAR chala jaata ([1], k=1). k=0 upar alag return 0.
      COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid subarray). (bahut count-Q me)
 
 ┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
@@ -844,6 +847,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         KEY INSIGHT: agar set me sirf last-k elements hain, aur andar duplicate mila -> uska index-farak apne-aap <=k
         -> "|i-j|<=k" alag se check karne ki zaroorat NAHI. bas window ko k-size me rakho.
      TEMPLATE:
+         if (k <= 0) return false;          // ★ EDGE (24-Sep): k=0 -> do alag index 0 doori pe ho hi nahi sakte
          unordered_set<int> st;  int i=0, j=0;
          while(j < nums.size()){
              if(st.count(nums[j])) return true;   // window me pehle se hai -> mil gaya (within k)
@@ -852,6 +856,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          }
          return false;
      DRY-RUN [1,2,3,1] k=3: 1,2,3 add -> j=3 nums=1 set me hai -> true. | [1,2,3,1,2,3] k=2: har baar window<=2, kabhi dup nahi -> false.
+     ★ k=0 kyun alag: check (st.count) window CHHOTI hone se PEHLE hota hai -> k=0 pe pichhla element
+        abhi set me hota, [4,4] k=0 pe true aa jaata (sahi false).
      FAMILY: fixed-window (size k) + HashSet (seen-check). value-equal -> set; within-k -> window size k.
 ```
 
@@ -1696,14 +1702,16 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      = DETECT CYCLE (03), bas DELTA: true/false nahi, ENTRY chahiye -> PHASE-2.
      = FIND-DUPLICATE (12) ka Node* version: nums[i] ki jagah ->next. SAME phase-2.
      TEMPLATE:
-        slow=head, fast=head;
-        while(fast && fast->next){ slow=slow->next; fast=fast->next->next; if(slow==fast) break; }
-        if(slow!=fast) return NULL;          // no cycle
+        slow=head, fast=head;  bool cycle=false;
+        while(fast && fast->next){ slow=slow->next; fast=fast->next->next; if(slow==fast){ cycle=true; break; } }
+        if(!cycle) return NULL;              // no cycle
         slow=head;
         while(slow!=fast){ slow=slow->next; fast=fast->next; }   // PHASE-2 entry
         return slow;
      crux: meet aur head se entry-tak distance BARABAR (Floyd) -> head-reset + 1-1 kadam.
-     GOTCHA: phase-1 ke baad `slow!=fast` se distinguish -> cycle-mila vs fast-NULL-pe-khatam.
+     GOTCHA (24-Sep theek kiya): pehle `if(slow!=fast) return NULL` likha tha -- GALAT.
+        1 node, bina cycle: loop chalta hi nahi -> slow==fast==head reh jaate -> head return ho jaata (sahi NULL).
+        -> alag `cycle` flag rakho, sirf slow==fast MILNE pe true.
      FAMILY: FAST/SLOW TRIPLET — detect_cycle(03) + find-duplicate(12) + cycle-II(13), teeno wahi Floyd.
 
  ┌──────────────────────────────────────────────────────────────
@@ -1992,11 +2000,14 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                        n->next=nxt; nxt->prev=n;                           // n = MRU
 
      get(key):  mp.count(key)==0 -> -1.  warna: Node* node = mp[key]; removeNode(node); addFront(node); return node->val;
-     put(k,v):  hai  -> node->val=v  -> removeNode + addFront.
+     put(k,v):  hai  -> node->val=v  -> removeNode + addFront.   ★ DONO, get() jaisa (neeche TRAP-4)
                 naya -> FULL? tail->prev(=LRU) removeNode + mp.erase(uski key); phir new node addFront + mp[k]=node.
 
      TRAP: (1) mp[key] missing pe CHUP-CHAAP entry INSERT -> check ke liye mp.count()/find(). (C++ jaal)
            (2) DLL rewire: overwrite se PEHLE temp me pakdo (nxt).  (3) ctor me type-dobara = shadowing (naya local).
+           (4) ★ (24-Sep, base + REDO_1 dono me tha) put() me key pehle se ho to sirf addFront kiya, removeNode NAHI
+               -> node purani jagah pe BHI juda reh gaya, tail->prev use hi dekhta -> jo abhi update hua wahi evict.
+               cap=2: put1, put2, put(1,10), put3 -> get(1) = -1 aaya (sahi 10), get(2) = 2 (sahi -1).
 ```
 
 ---
@@ -2031,6 +2042,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
        temp    = max({ num, num*max, num*min });     // 3 candidate ka max
        min     = min({ num, num*max, num*min });     // FREEZE: min purane max/min se
        max     = temp;  ans = max(ans, max);         // max min-ke-BAAD, ans me purana bhi
+     ★ SHURUAAT (24-Sep theek kiya):  max = 1, min = 1, ans = INT_MIN,  loop i = 0 se.
+       pehle max=min=nums[0], ans=0, loop 1 se tha -> nums[0] AKELA kabhi ans me nahi gaya
+       -> [4,-3] pe 0 aata (sahi 4). niyam: loop 1 se ho to ans bhi nums[0] se; loop 0 se to 1 / INT_MIN se.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX ABSOLUTE SUM (LC-1749)
@@ -2038,6 +2052,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      = MAX PRODUCT SUBARRAY (152) ka HUBAHU same skeleton (temp/min/max freeze, upar dekh), sirf 2 TWEAK:
         (1) GUNA (*) -> PLUS (+)                    (num*max -> num+max, num*min -> num+min)
         (2) ans me ABS dono -> ans = max({ ans, |max|, |min| })   (answer minSum se bhi aa sakta -> isliye abs)
+     ★ SHURUAAT (24-Sep theek kiya): max = 0, min = 0, ans = 0, loop i = 0 se.   n==1 -> return abs(nums[0]).
+       pehle max=min=nums[0], ans=0, loop 1 se -> nums[0] akela chhoot jaata ([9,-6] pe 6, sahi 9);
+       aur n==1 pe abs nahi tha ([-7] pe -7, sahi 7).
      dry-run [2,-5,1,-4,3,-2] -> 8: subarray [-5,1,-4]=-8 minSum me -> |-8|=8.
 
    FAMILY: 53=sum(1 value) · 152=product(flip -> max+min) · 1749=abs-sum(max+min).
@@ -2490,7 +2507,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
             left  = solve(L, mini, val)      // LEFT  jao -> maxi = val (chhota hona)
             right = solve(R, val, maxi)      // RIGHT jao -> mini = val (bada hona)
             return left && right
-     CALL : solve(root, INT_MIN, INT_MAX).
+     CALL : solve(root, LLONG_MIN, LLONG_MAX);   mini/maxi = long long.
+     ★ EDGE (24-Sep): INT_MIN/INT_MAX se shuru kiya to node ki value KHUD INT_MIN ya INT_MAX ho
+        (LC-98 allow karta) -> strict check (<=, >=) use galat reject kar deta. [2147483647] pe false aata, sahi true.
      (alt: inorder traversal = strictly increasing? -> BST.)
      (2nd tarika: inorder = strictly increasing? -> kth-smallest ka near-transfer.)
 ```
@@ -2663,7 +2682,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      END:
          for(i,j): if(grid[i][j]==1) return -1;       // fresh bacha -> impossible
-         return mins-1;                               // last level extra -> -1
+         return mins == 0 ? 0 : mins-1;               // last level extra -> -1
+                                                      // ★ EDGE (24-Sep): grid me koi santra hi nahi -> loop
+                                                      //   chala hi nahi, mins=0 -> mins-1 = -1 aata, sahi 0
 
 ┌── FAMILY: TOPO-SORT / cycle-detect (DIRECTED graph) ─────────
 │ KYUN SAATH: "prerequisites/dependencies + can-finish? / valid-order?" -> TOPO-SORT (Kahn's = BFS + indegree). cycle -> impossible.
@@ -3090,6 +3111,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
           MERGE:   overlap -> ans.back()[1]=max(...)  (merge)  |  end: return ANS (list)
           MEETING: overlap -> return FALSE           (ruko)    |  end: return TRUE
      TEMPLATE (merge-jaisa hi):
+         if (intervals.empty()) return true;   // ★ EDGE (24-Sep): warna intervals[0] pe crash
          sort(intervals);  ans.push_back(intervals[0]);
          for(i=1..n){
              if(intervals[i][0] < ans.back()[1]) return false;   // overlap -> attend nahi
