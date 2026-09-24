@@ -52,6 +52,7 @@ finally {
    try    = recipe / risky code
    catch  = plan B for specific problem
    finally = cleanup (always)
+             (sirf System.exit() ya JVM crash pe nahi chalta)
 ```
 
 ---
@@ -310,7 +311,7 @@ public int test() {
 ```java
 try { ... }
 catch (Exception e) { ... }       // ← catches everything
-catch (IOException e) { ... }      // unreachable!
+catch (IOException e) { ... }      // COMPILE ERROR: already caught (unreachable)
 
 // FIX: child first, parent last
 try { ... }
