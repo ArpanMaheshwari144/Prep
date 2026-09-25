@@ -123,7 +123,9 @@ class Buffer {
 │ Releases lock?   │ YES            │ NO            │
 │ Where called?    │ synchronized block│ Anywhere         │
 │ Defined in?      │ Object class      │ Thread class     │
-│ Wake up by?      │ notify/notifyAll  │ Timeout only     │
+│ Wake up by?      │ notify/notifyAll  │ time pura hone pe│
+│                  │ (ya wait(ms) ka   │ (ya interrupt()) │
+│                  │  time, interrupt) │                  │
 └──────────────────┴──────────────────┴──────────────────┘
 ```
 
