@@ -30,7 +30,7 @@ int trap(vector<int> &height)
     int leftMax = 0, rightMax = 0, ans = 0;
     while (left < right)
     {
-        if (height[left] < height[right])
+        if (height[left] <= height[right])
         {
             if (leftMax > height[left])
             {
