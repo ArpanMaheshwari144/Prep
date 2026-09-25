@@ -433,7 +433,10 @@ har insert pe update hota. Wide-column me likhai append jaisi hai.
 Ek bahut active group ka poora bojh ek hi partition pe. **Wahi hot-key wali baat jo cache me thi.**
 
 ```
-partition key = chat_id + mahina      ->  ek chat bhi kai dabbon me bat gayi
+partition key = chat_id + mahina      ->  partition ka SIZE bandha (purana mahina alag)
+★ SACH: isse abhi ka BOJH nahi batta — is mahine ke saare message phir bhi EK hi (abhi wale) dabbe me.
+   hot group ka ilaaj: key me random bucket (chat_id + 0..9), padhte waqt 10 jagah se jodo;
+   ya group size / rate pe had.
 ```
 
 ### Purana data — yahan MOVE 1 ka sawaal wapas aata hai
@@ -624,7 +627,8 @@ manmaana hai — par **sabko EK hi dikhta hai**, aur chat me itna hi chahiye.
 ★ AUR EK — message ULTE kram me pahunch sakte hain:
      A ne teen bheje, par retry ki wajah se TEESRA pehle pahunch gaya
      ILAAJ client me: B ka app message ko ID ke hisaab se lagata hai, AANE ke hisaab se nahi
-     aur beech ka id gayab dikhe (4415, 4417 aaya par 4416 nahi) -> catch-up maar ke maang lo
+     beech ka message gayab pakadna ho to snowflake id se NAHI hoga (wo lagaataar nahi hoti,
+     gap normal hai) -> har chat ka apna SEQ number (+1 har message): 15, 17 aaya, 16 nahi -> catch-up
 ```
 
 > ★★ **"Ye to WhatsApp me hota hai" — haan, aur jaan-boojh ke hota hai** (Arpan ne khud dekha:
@@ -756,7 +760,7 @@ Do cheezein isse sambhalti hain:
    MESSAGE STORE      1.2 TB roz, 46k write/sec -> ek box ka kaam nahi
                       chat_id se baanta, message_id se sorted
                       -> "aakhri 50" EK disk read me                     — dikkat 4
-   COLD STORAGE       purana data sasti jagah, par reconciliation na toote — dikkat 4
+   COLD STORAGE       purana data sasti jagah (catch-up / search ka raasta na toote) — dikkat 4
    CURSOR STORE       read_upto / delivered_upto -- per message per member
                       wala record NAHI (wo 500-guna likhai laata)        — dikkat 6, 7
    PUSH (Google/Apple) app BAND ho tab bhi ghanti -- ye raasta tere
@@ -796,7 +800,8 @@ REGISTER              memory me hai -> server gira to uska poora register gaya
                       -> Redis me TTL wali entry + dhadkan
 RECONNECT ka toofan   ek server gira -> 1 lakh ek saath wapas
                       -> backoff + jitter (warna nayi laher)
-HOT PARTITION         ek viral group ek hi partition pe -> chat_id + mahina
+HOT PARTITION         ek viral group ek hi partition pe -> key me bucket (chat_id + 0..9) / had
+                      (chat_id + mahina sirf SIZE baandhta, abhi ka bojh nahi)
 PUSH ka raasta        Google/Apple bahar ki cheez hai -> uska apna retry/queue
 ```
 

@@ -124,7 +124,9 @@
          append-only -> hamesha END me -> SEQUENTIAL writes = disk ka sabse TEZ (100s MB/sec)
       2. DB isliye hota hai ki tum POOCH sako ("WHERE email = x").
          Queue me tum kuch POOCHTE HI NAHI — bas "offset 500 ke baad wala do".
-         -> offset = file me byte-position -> seedha jump -> index chahiye HI nahi
+         -> offset = message ka KRAM-number (0, 1, 2 ...), byte-position NAHI
+         -> ek chhota "sparse index" file offset -> byte-position bata deta (neeche .index dekho)
+         -> DB jaisa B-tree / query index chahiye HI nahi
 ```
 
 ### dikkat 2 — "ek machine me 2 TB aur 5,000/sec nahi aayega"
@@ -265,7 +267,8 @@
             -> REBALANCE -> partitions dobara bante -> C1->P0,P1 aur C3->P2  (kaam ruka nahi)
         naya consumer juda -> phir rebalance -> load phir se bat gaya
 
-        ★ COST: rebalance ke dauran poora group thodi der RUKTA hai (stop-the-world)
+        ★ COST: purane (eager) rebalance me poora group thodi der RUKTA hai (stop-the-world)
+                (Kafka 2.4+ cooperative rebalance: sirf badli hui partitions rukti hain)
                 -> consumer baar-baar restart mat karo
 
    CONSUMER LAG (production ka sabse zaroori metric — tera 700-ticket zone):

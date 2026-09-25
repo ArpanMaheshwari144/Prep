@@ -158,8 +158,11 @@
         = ORPHAN file (paisa lagta hai, gandagi badhti hai)
 
    FAISLA: S3 LIFECYCLE RULE
-        "X ghante me complete na ho -> auto DELETE"
-        adhoore multipart uploads ke liye bhi "abort incomplete multipart" rule
+        upload pehle tmp/ prefix me -> VALIDATE hone pe asli jagah copy
+        lifecycle: "tmp/ me 1 DIN se purana -> auto DELETE"
+        adhoore multipart uploads ke liye bhi "abort incomplete multipart" rule (ye bhi DIN me)
+        ★ lifecycle rule GHANTON me nahi, DINO me chalta (kam se kam 1 din), aur DB ka status
+          nahi dekh sakta. Jaldi saaf karna ho to DB status dekh ke chalne wala sweeper job.
 
    + validation FAILED wali file -> delete, ya "quarantine" bucket me daal do
      aur DB me status = FAILED

@@ -152,7 +152,8 @@ Wo case is scope se BAHAR hai (poora treatment: [payment-system](../07_payment_s
    abhi jo BEGIN..COMMIT likha, wo poora hi ACID ka wada hai --
    "do row badlein ya koi nahi" wala kaam DB khud karta hai.
 
-   NoSQL me ye hai hi nahi: multi-row atomicity uska kaam nahi.
+   NoSQL me ye kamzor / seemit hai (MongoDB 4.0+ aur DynamoDB TransactWriteItems me hai, par
+   constraints + joins ke saath relational me native hai).
    Wahan ye poora sambhalna APP ko padta -- yaani wahi SAGA, bina zaroorat ke.
 
    -> MOVE 2 ka SAWAAL 1 yahan JAWAB paa gaya.
@@ -202,6 +203,8 @@ Wo case is scope se BAHAR hai (poora treatment: [payment-system](../07_payment_s
       2. ledger USI transaction me likhna hota hai jisme paisa hila — Kafka us transaction ka hissa nahi ban sakta
 
    KAFKA KA KAAM: COMMIT ke BAAD ki khabar bahar bhejna
+      ★ JAAL: COMMIT hua aur Kafka bhejne se pehle app gira -> event GAYAB.
+        ilaaj = OUTBOX: event ko USI transaction me outbox table me likho, alag process bheje.
       COMMIT  ->  event  ->  notification · fraud-check · analytics · statement
       (yahan eventual consistency chalti hai — SMS 2 second late aaye to koi nahi marta)
 ```
@@ -220,7 +223,7 @@ Wo case is scope se BAHAR hai (poora treatment: [payment-system](../07_payment_s
    (b) balance = SUM(us account ki saari ledger entries)
           + hamesha SACH (entries se jhooth bolna mushkil)
           - ★ GINTI DEKH:
-               10M txn/din  ->  3 saal me ~11 ARAB ledger rows
+               10M txn/din  ->  3 saal me ~11 ARAB txn = double-entry se ~22 ARAB ledger rows
                ek purana account  ->  5,000 - 50,000 entries
                balance dekhna SABSE ZYADA hone wala kaam hai (read >> write)
             -> har baar app kholne pe 20,000 row jodo, aur lakhon log ek saath. NAHI chalega.

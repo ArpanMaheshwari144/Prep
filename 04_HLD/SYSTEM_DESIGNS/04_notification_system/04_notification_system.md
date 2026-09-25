@@ -81,8 +81,8 @@
      write-heavy        ──►  NoSQL (Cassandra) tracking ke liye, ACID ki zaroorat nahi
      58K/sec            ──►  ek worker ~1000/sec -> ~60-100 worker + utni partitions
 
-   ★ SANITY CHECK (bolne layak): "100 event/sec x 3 channel = 300/sec Kafka me;
-     100 partition x 100 worker = ~100K/sec capacity -> 300 << 100K, bahut headroom."
+   ★ SANITY CHECK (bolne layak): "peak 58K event/sec x 3 channel = ~1.75 lakh/sec Kafka me;
+     isliye partitions + workers PEAK ke hisaab se, average (5,800/sec) ke nahi."
 ```
 
 ---
@@ -167,7 +167,7 @@
                         │
                 SET notification:abc123 sent NX EX 86400
                         │
-                   ├─ 1 mila  -> naya hai -> BHEJO
+                   ├─ "OK" mila -> naya hai -> BHEJO   (SET ... NX "OK" deta; "1" purane SETNX ka jawab tha)
                    └─ nil mila-> pehle ho chuka -> SKIP
 
    ★ NX = "set only if absent" = check aur set EK atomic step me.
@@ -232,9 +232,9 @@
 
 ```
         PROVIDER RATE LIMITS (asli numbers):
-            FCM    ~1000 / sec
-            SES    ~14 / sec
-            Twilio ~100 / sec
+            FCM    default ~6 lakh / minute per project (~10K / sec)
+            SES    ~14 / sec  (naye account ka SHURUAATI default, badhwaya ja sakta)
+            Twilio short code ~100 / sec · long code ~1 / sec
 
         bina throttle -> burst -> 429 -> saare message fail
         FAISLA: worker khud limit maane (token bucket / leaky bucket) -> provider ki raftaar se bhejo

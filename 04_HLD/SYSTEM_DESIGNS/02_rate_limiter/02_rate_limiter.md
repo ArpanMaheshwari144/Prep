@@ -121,10 +121,13 @@
 
    FAISLA: read-modify-write ko EK ATOMIC unit banao
 
-        MULTI
-          INCR   rate:login:userX
-          EXPIRE rate:login:userX 60
-        EXEC
+        Lua script (ek atomic unit):
+          count = INCR rate:login:userX
+          if count == 1 then EXPIRE rate:login:userX 60 end     <- EXPIRE sirf PEHLI baar
+
+        ★ JAAL: har request pe EXPIRE 60 lagaya -> har request TTL ko phir 60 pe dhakel deti
+          -> lagaataar request aati rahe to key KABHI expire nahi -> window kabhi reset nahi
+          -> user hamesha ke liye block. (Redis 7+: EXPIRE key 60 NX bhi yahi karta)
 
    TU: "Redis single-threaded hai — ek waqt me ek hi command. Isliye INCR apne aap atomic hai,
         beech me koi doosri request ghus hi nahi sakti."
@@ -546,7 +549,10 @@ location / {
     root /usr/share/nginx/html;  index index.html;               <- content serve
 }
 
-Do knob (dono token-bucket theory se):  rate = REFILL speed  |  burst = bucket SIZE
+Do knob:  rate = kis speed se request NIKALTI hain  |  burst = kitni line me ruk sakti hain
+★ SACH: nginx apne docs me limit_req ko LEAKY BUCKET kehta hai (token bucket nahi).
+   burst = queue ka size; nodelay laga do to burst turant serve -> bartaav token-bucket JAISA.
+   503 aana sahi hai — limit_req_status ka default 503 hai.
 ```
 
 ### 3. TEST kaise kiya (curl)

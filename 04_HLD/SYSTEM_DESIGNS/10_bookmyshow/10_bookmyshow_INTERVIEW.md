@@ -132,7 +132,9 @@
 
    FAISLA: SEAT HOLD + TTL
 
-        seat select   ──►  status = 'held'  (5 minute ka TTL)
+        seat select   ──►  status = 'held', held_until = now + 5 min   (SQL me TTL nahi hota —
+                           isliye held_until column; "khali?" = status='available' OR held_until < now,
+                           ya ek sweeper job purane hold wapas 'available' kare)
                               │
               payment SUCCESS ──►  status = 'booked'
               TTL EXPIRE      ──►  status = 'available'  (wapas sabke liye khuli)
@@ -212,7 +214,7 @@
 
         FAISLA: Redis CLUSTER            ek node mare to baaki chalein
                 + browse ka read REPLICA se, booking ka update PRIMARY pe
-                + SQL pe replica + auto-failover (Sentinel jaisa mechanism)
+                + SQL pe replica + auto-failover (Patroni / RDS Multi-AZ; Sentinel Redis ka hai)
 
         ★ DONO RAASTE ALAG KARO -- warna halka kaam bhaari kaam ko le doobta hai
 ```
@@ -222,7 +224,7 @@
 ```
         unke 3-minute wale HOLD ka kya hua?
 
-        -> HOLD Redis me hai, box ki memory me NAHI
+        -> HOLD DB me hai (seats.status='held' + held_until), box ki memory me NAHI
            -> seat ab bhi hold hai, apne TTL pe hi chhutegi
            -> user dobara judega to kisi DOOSRE box pe jayega, aur wahi hold dekhega
 
@@ -276,7 +278,7 @@
 ## ► "DB me kya rakhoge, aur kaunsa DB?"
 
 ```
-   seats(seat_id, show_id, status ['available' / 'held' / 'booked'], user_id, version)
+   seats(seat_id, show_id, status ['available' / 'held' / 'booked'], user_id, held_until, version)
    bookings(booking_id, user_id, show_id, seat_ids, status, created_at)
 
    ★ DB = SQL (NoSQL nahi) — KYUN:

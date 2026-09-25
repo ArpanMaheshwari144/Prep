@@ -367,11 +367,11 @@
      (B) EK tap + RETRY (network hang):
              tap 1 -> key 555 bheja, jawab nahi aaya
              phone / network KHUD dobara WAHI 555 bhejta hai
-             server: "555 to aa chuka" -> BLOCK -> 100 ✓
+             server: "555 to aa chuka" -> dobara NAHI kaata, PEHLE wala result wapas -> 100 ✓
 
    ASLI FARAK = KAUN dobara bhej raha hai:
         TU tap karta hai      -> nayi key -> naya payment
-        SYSTEM auto-retry     -> same key -> block
+        SYSTEM auto-retry     -> same key -> DEDUP (stored result wapas)
         (retry me tu button dobara nahi dabata)
 
    MAQSAD: do baar pay karne se ROKNA nahi hai;
@@ -379,7 +379,7 @@
 
    ★ CHEQUE ANALOGY: key = cheque number.
      Do alag cheque (alag number) 100+100 -> bank dono cash karega = 200.
-     Ek hi cheque number do baar -> reject.
+     Ek hi cheque number do baar -> dobara cash nahi (hamare system me: pehla result wapas).
      Bank AMOUNT nahi dekhta duplicate ke liye, NUMBER dekhta hai. Waise hi Idempotency-Key.
 ```
 
@@ -443,7 +443,8 @@
 
    ★ LINE: "Ledger immutable aur reconciliation kyun? — Scam 1992 me theek inhi ki gairhaazri thi:
             manual editable BRs aur koi real-time verify nahi.
-            India ka electronic settlement / NSDL demat / T+1 isi ke baad aaya."
+            Iske baad SEBI ko kanooni taakat (1992), NSE screen trading (1994), NSDL demat (1996) aaye.
+            (T+2 2003 me, T+1 2021-23 me — wo baad ke kadam hain)"
 ```
 
 ---

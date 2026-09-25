@@ -167,13 +167,14 @@
         ye maine requirement me bhi likha tha."
 ```
 
-### dikkat 5 — "6 mahine me 5 crore row — aur 'latest 20' wali query 2 second le rahi hai"
+### dikkat 5 — "6 mahine me 5 crore row — disk, backup aur kharcha badhta ja raha hai"
 
 ```
         feed ki query hai:   ORDER BY published_at DESC LIMIT 20
 
-        5 crore row pe ye index ke bawajood bhaari padti hai,
-        aur cache-MISS pe YAHI query chalti hai -> ab har miss 2 second ka
+        ★ SACH: published_at pe index hai to ye query 5 crore pe bhi MILLISECONDS me
+          (DB index ke aakhri sire se 20 entry padh leta). Query slow NAHI hai.
+        asli dikkat: table, index, backup, restore sab 5 crore ka -> disk + kharcha + dheema restore
 
         aur dekho: ye 20 row NAYI hain.
         baaki 4.99 crore row sirf jagah ghere baithi hain, koi padhta hi nahi.

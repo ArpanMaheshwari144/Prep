@@ -326,7 +326,8 @@
    └──────────────┴─────────────┴──────────────┴─────────────┘
 
    ★ "NoSQL powerful hai" MAT bolna -> ACCESS PATTERN justify karta hai:
-     INSERT ek baar + SELECT WHERE short_code = ? . koi join nahi . huge + write-heavy
+     INSERT ek baar + SELECT WHERE short_code = ? . koi join nahi . HUGE (90 TB) + ek-key lookup
+     (write-heavy NAHI — ye 100:1 READ-heavy hai; NoSQL ki wajah SCALE + simple key-lookup hai)
 ```
 
 ## ► "short code banate kaise ho?" (design ka DIL — yahin sabse zyada waqt)

@@ -345,7 +345,7 @@
         Warna ek tweet 200 jagah copy hota aur memory phat jaati."
 ```
 
-## ► "PUSH lena ya PULL?" (deep-dive ka dil — upar dikkat-2 me jawab hai)
+## ► "PUSH lena ya PULL?" (deep-dive ka dil — upar dikkat-3 me jawab hai)
 
 ```
    OPTION 1 — PUSH (fanout on write)
