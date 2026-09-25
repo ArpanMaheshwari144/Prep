@@ -110,7 +110,7 @@ P: lock mil gaya
 WAITING SET                  RUNNING                   LOCK
 
 ┌──────────┐                                         ┌──────┐
-│   P      │  ◄── wait()      C: lock =          │  C   │
+│   P      │  ◄── wait()      C: lock liya          │  C   │
 │ WAITING  │                  C: poll()              └──────┘
 └──────────┘                  C: notify()
 
