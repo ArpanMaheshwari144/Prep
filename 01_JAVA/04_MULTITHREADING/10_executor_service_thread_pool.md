@@ -140,7 +140,7 @@ pool.shutdown();                        // graceful shutdown — naya kaam nahi 
 
 | Pool | Threads | Use case |
 |------|---------|----------|
-| **FixedThreadPool(N)** | N constant | Predictable load — 95% production |
+| **FixedThreadPool(N)** | N constant | Predictable load (par queue unbounded — neeche OOM TRAP) |
 | **CachedThreadPool** | Demand pe (unbounded) | Short, async tasks — danger of OOM under load |
 | **SingleThreadExecutor** | 1 | Sequential FIFO — order important |
 | **ScheduledThreadPool** | N | Cron jobs, delayed tasks |
@@ -150,7 +150,7 @@ pool.shutdown();                        // graceful shutdown — naya kaam nahi 
 ## TRAP 1 — `Executors.newCachedThreadPool()` Production Mein Risky
 
 > **Cached pool **unlimited** threads bana sakta** under heavy load → **OOM crash**.
-> **Production mein FixedThreadPool ya custom `ThreadPoolExecutor` use karo.**
+> **Production mein custom `ThreadPoolExecutor` (bounded queue) use karo** — FixedThreadPool ki bhi queue unbounded hai (neeche OOM TRAP).
 
 ## TRAP 2 — `shutdown()` Bhulna
 
@@ -167,8 +167,9 @@ try {
 
 ## TRAP 3 — `submit()` vs `execute()`
 
-> **`execute(Runnable)`** = no return, exception **silently swallow** ho sakta hai
-> **`submit(Runnable/Callable)`** = `Future` deta, exception `Future.get()` se milta
+> **`execute(Runnable)`** = no return. Exception aaya -> thread ke UncaughtExceptionHandler tak jaata -> **stack trace print hota** (thread marta, pool naya bana leta)
+> **`submit(Runnable/Callable)`** = `Future` deta. Exception **Future ke andar band** -> `get()` pe `ExecutionException` me milta
+> **ASLI TRAP:** `submit()` kiya aur `get()` kabhi nahi bulaya -> exception **chup-chaap gayab**, log me kuch nahi
 
 ---
 
@@ -260,5 +261,5 @@ public void sendEmail(String to) {
 > **Yaad rakh:**
 > `new Thread()` = expensive, manual lifecycle
 > `ExecutorService` = pool, reuse, future, shutdown
-> Production = FixedThreadPool (cached = OOM risk)
+> Production = custom ThreadPoolExecutor + bounded queue (cached = threads ka OOM, fixed = queue ka OOM)
 > shutdown() finally mein — leaked threads alive rehte
