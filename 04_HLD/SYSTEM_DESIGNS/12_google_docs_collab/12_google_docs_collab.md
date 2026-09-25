@@ -116,9 +116,12 @@
         Agar sirf server-se-client bhejna hota to SSE halka padta, par yahan dono taraf jaana hai."
 ```
 
-### dikkat 3 — "A server-1 pe juda hai, B server-2 pe — A ka op B tak pahunchega hi nahi"
+### dikkat 3 — "ek Conn-Server itne zinda socket nahi jhel sakta -> kai Conn-Server lagaye -> ab A server-1 pe, B server-2 pe"
 
 ```
+        ek box ki memory / file-descriptor ki had -> Conn-Server kai lagao (aage LB)
+        -> par ab ek hi doc ke do editor ALAG box pe ho sakte hain:
+
         User A ── Conn-Server-1          Conn-Server-2 ── User B
                         │                      ▲
                         └── ye dono ek doosre ko jaante hi nahi ──┘
@@ -212,6 +215,8 @@
 ### dikkat 8 — "crore WebSocket connections ek hi server pe?"
 
 ```
+   (dikkat 3 me kai Conn-Server aa chuke; ab crore connection pe unko SAHI tarah baantna hai)
+
    FAISLA:
      1. alag CONNECTION TIER — sirf sockets hold karne wale server, alag se scale honge
         connection STATEFUL hai -> LB ko consistent routing karna padega
@@ -219,6 +224,9 @@
      2. SHARD KEY = docId — ek doc ke saare editor + op-stream + OT EK shard pe
         (OT ko serialize karna hota hai -> ek jagah hona zaroori)
         alag doc -> alag shard -> load bat gaya
+        ★ to pub/sub ab bhi kyun? docId routing ke baad zyadatar editor ek hi box pe aate hain,
+          par reconnect / box badalne ke beech koi doosre box pe aa sakta -> pub/sub us case ka
+          bachav hai. (routing pakka ho to pub/sub ka kaam bahut kam ho jaata hai)
      3. hot doc bounded hai (Google ~100 editor ki cap rakhta) -> per-doc OT ek server pe theek chalta
      4. spike aaye -> queue absorb kare; Redis pub/sub replicate + horizontally scale
 ```

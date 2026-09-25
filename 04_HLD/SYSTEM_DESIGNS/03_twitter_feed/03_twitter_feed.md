@@ -160,7 +160,8 @@
         │ CELEB  (> 10K followers)  │ PULL  — read ke waqt fetch │
         └───────────────────────────┴────────────────────────────┘
 
-        celeb ka tweet sirf Cassandra me jaata (fanout NAHI)
+        celeb ka tweet sirf tweets DB me jaata (fanout NAHI)
+        (tweets DB = Cassandra — kyun, wo dikkat 6 me: petabytes + bahut writes)
         read ke waqt: apna inbox (push)  +  celeb ke tweets (pull)  ──► merge + sort
 
    CONCRETE: Arpan follows Virat (celeb) + Suresh (normal)
@@ -245,6 +246,24 @@
                       (production me yahi hota hai — hot data ko paas laao)
 ```
 
+### dikkat 8 — "ab tak sab EK App box me chal raha hai — wo bojh aur SPOF dono hai"
+
+```
+   (a) ek box lakhs user nahi jhel raha, aur gira to sab band
+         -> App ke kai box + aage LB (ALB). App stateless, state Redis / DB me.
+
+   (b) likhna (tweet) aur padhna (feed) ka bojh bilkul alag — 1:50
+         -> ek hi box me rakha to feed ka rush tweet-post ko bhi dheema kare
+         -> Tweet Service (write) aur Timeline Service (read) ALAG, apne-apne hisaab se scale
+         -> follow-graph (kaun kisko) har fanout pe chahiye -> User Service + graph store
+
+   (c) photo / video duniya bhar se, har baar humare server se
+         -> CDN (CloudFront), media user ke paas wali edge se
+
+   (d) ek region / ek LB gira to site gayi
+         -> Route 53: DNS + health-check, mara hua hataye, paas wala region de
+```
+
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
 
 ```
@@ -288,7 +307,8 @@
      Fanout Svc : town crier — normal followers ke inbox bhar deta, celeb skip
      Redis      : inbox (instant read) + hot-tweet (celeb read ka bojh)
      Cassandra  : source of truth — write-heavy, LSM-tree fast write, user_id se shard
-     Graph DB   : follow-graph (Neo4j ya Cassandra bhi chalega)
+     Graph DB   : follow-graph (1-hop follow list ke liye simple adjacency table / Cassandra kaafi;
+                  Neo4j tabhi jab "dost ke dost" jaise kai-hop sawaal ho)
      Timeline   : merge karne wala (push + pull)
      CDN        : media user ke paas se
 ```

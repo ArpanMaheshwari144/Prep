@@ -102,7 +102,7 @@ SAKHT SHART: paisa na kabhi GUM ho, na kabhi BANE. har waqt hisaab barabar.
 **Shuruaati naksha (jaan-boojh ke seedha):**
 
 ```
-   Client  ->  LOAD BALANCER  ->  [ Banking Service (business logic) ]  ->  [ SQL DB ]
+   Client  ->  [ Banking Service (business logic) ]  ->  [ SQL DB ]
 ```
 
 Bas itna. Ab isme dikkat daalte hain, aur har dikkat pe ek box badhta hai.
@@ -202,6 +202,8 @@ Wo case is scope se BAHAR hai (poora treatment: [payment-system](../07_payment_s
       1. ledger pe QUERY karni padti hai ("is account ka pichhle mahine ka hisaab") — Kafka wo nahi deta
       2. ledger USI transaction me likhna hota hai jisme paisa hila — Kafka us transaction ka hissa nahi ban sakta
 
+   DIKKAT (chhoti): transfer ke baad SMS · fraud-check · statement bhi chahiye —
+                   transfer ko inke liye ROKNA nahi, aur inme se koi gira to transfer na gire
    KAFKA KA KAAM: COMMIT ke BAAD ki khabar bahar bhejna
       ★ JAAL: COMMIT hua aur Kafka bhejne se pehle app gira -> event GAYAB.
         ilaaj = OUTBOX: event ko USI transaction me outbox table me likho, alag process bheje.
@@ -390,6 +392,24 @@ manual update), par DB ek hi hai. Aur constraint bhi relational ki hi den hai.
 > *"Concurrency ke liye alag locking nahi chahiye — UPDATE me hisaab DB khud karta hai,
 > to lost update hota hi nahi. Jo dhyan dena hai wo do cheez hai: balance ka check
 > DB me ho (app me nahi), aur lock hamesha ek tay kram me liya jaaye warna deadlock."*
+
+---
+
+### dikkat 6 — "salary day: ek Banking Service box bhara, aur wahi gira to poora bank band"
+
+```
+   FAISLA: kai Banking Service instance + aage LOAD BALANCER
+           service STATELESS hai (sab DB me) -> koi bhi box koi bhi request le
+```
+
+### dikkat 7 — "log balance / history baar-baar dekh rahe — sab padhai PRIMARY pe, transfer dheeme"
+
+```
+   FAISLA: READ REPLICA — balance / history ka read replica se, write primary pe
+   ★ JAAL: apna abhi-kiya transfer PRIMARY se padho (replica thoda peeche ho sakti)
+           warna user ko "paisa gaya hi nahi" dikhega -> dobara bhejega
+   (shard abhi NAHI — MOVE 2 ka hisaab: single primary + replica kaafi)
+```
 
 ---
 

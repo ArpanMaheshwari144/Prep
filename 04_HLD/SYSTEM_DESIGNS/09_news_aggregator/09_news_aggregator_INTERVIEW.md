@@ -112,7 +112,7 @@
            -> ek cache sab use karenge -> read-heavy ke liye ekdum fit
 
         nayi news ──► worker ──► DB + cache refresh
-        user      ──► cache (99%) ──miss──► DB read-replica ──► wapas cache me
+        user      ──► cache (99%) ──miss──► DB ──► wapas cache me
 
    ★ trade-off bol ke chunna — asli number yahin milte hain
 ```
@@ -129,7 +129,8 @@
         Sources(1000) ──► [ Fetcher / Crawler ] ──► [ QUEUE (Kafka) ] ──► [ Worker ] ──► DB + Cache
 
      ── READ (user padhta hai) — fast ──
-        User ──► [ LB ] ──► [ Feed Service ] ──► [ Cache ] ──miss──► [ DB read-replica ]
+        User ──► [ Feed Service ] ──► [ Cache ] ──miss──► [ DB ]
+                 (LB aur read-replica abhi NAHI — wo dikkat 8 me, jab sach me zaroorat aaye)
 
    TU: "Ye mera core decision hai — dono raaste alag rakhunga taaki ek doosre ko slow na karein.
         Crawling background ka kaam hai, feed dikhana foreground ka."
@@ -188,13 +189,15 @@
      aur aksar ek hi saans me bol di jaati hain.
 ```
 
-### dikkat 6 — "archive ke baad bhi ek hi DB box pe 1000 source ki likhai aa rahi hai"
+### dikkat 6 — (sirf BADE scale pe) "ek DB box likhai + data nahi jhel raha"
 
 ```
-        fetcher har minute 1000 source se LIKH raha hai
-        aur usi box se user ka feed PADHA ja raha hai
+        ★ IMAANDARI SE: humare number pe (writes ~3/sec, 7 din garam data) ek DB box aaram se
+          chal jaata hai -> SHARD ki ZAROORAT NAHI. Interview me yahi bolo:
+          "is scale pe shard nahi karunga; source 100x ho jaayein ya user-generated content aaye,
+           tab shard."
 
-   FAISLA: SHARD  ->  date (ya category) ke hisaab se
+   TAB (bade scale pe) FAISLA: SHARD  ->  date (ya category) ke hisaab se
 
    ★ date se shard karne ka ek ASAR hai:
      saari NAYI likhai EK hi shard pe girti hai (aaj wala) -> wahi shard garam rahega

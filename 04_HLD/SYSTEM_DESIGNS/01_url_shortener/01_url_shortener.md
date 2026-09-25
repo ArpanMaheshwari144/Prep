@@ -103,7 +103,7 @@
 ```
    TU: "Sabse simple cheez banata hoon jo kaam kar de, phir dekhte hain kahan tootti hai."
 
-        USER ──► [ LB ] ──► [ App x2 ] ──► [ DB ]
+        USER ──► [ App ] ──► [ DB ]
 
    TU: "Ye dono kaam kar deta hai. Ab main USER ban ke ise chala ke dekhta hoon."
 ```
@@ -111,16 +111,26 @@
 ### dikkat 1 — "har click DB pe jaa raha, aur redirect 200ms se tez chahiye"
 
 ```
-        USER ──► [ LB ] ──► [ App ] ──► [ REDIS ] ──miss──► [ DB ]
-                                           ▲                   │
-                                           └───── populate ────┘
+        USER ──► [ App ] ──► [ REDIS ] ──miss──► [ DB ]
+                                ▲                   │
+                                └───── populate ────┘
 
    TU: "Read:write 100:1 hai — isliye cache sabse pehle. Cache-aside, aur TTL link ki
         expiry ke barabar. ~95% read yahin nipat jaayenge."
       + DB me shortCode pe PRIMARY KEY / B-tree index -> O(log n), disk pe bhi tez
 ```
 
-### dikkat 2 — "do server ek hi short code bana denge"
+### dikkat 1b — "ek App box ~1 lakh redirect/sec nahi jhel raha, aur wo gira to poori site band"
+
+```
+        USER ──► [ LB ] ──► [ App-1 ]
+                       └──► [ App-2 ] ... (zaroorat pe aur)   ──► Redis ──► DB
+
+   TU: "Ek box pe bojh bhi zyada hai aur wo SPOF bhi hai. Isliye App ke kai box, aage LB.
+        App STATELESS hai (sab Redis / DB me), isliye koi bhi box koi bhi request le sakta."
+```
+
+### dikkat 2 — "ab do server hain — dono ek hi short code bana denge"
 
 ```
         [ App-1 ] ──┐
