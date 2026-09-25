@@ -18,7 +18,7 @@
 |--|---------|-----------|
 | **Class** | `Object` (lock pe call) | `Thread` (thread pe call) |
 | **Lock release?** | **YES** — chhod deta | **NO** — pakad ke rakhta |
-| **Wake up kaise?** | `notify()` / `notifyAll()` / timeout | Time khatam hote hi automatic |
+| **Wake up kaise?** | `notify()` / `notifyAll()` / timeout / `interrupt()` | Time khatam hote hi automatic, ya `interrupt()` (InterruptedException) |
 | **Use case** | **Inter-thread communication** (producer-consumer) | **Just delay** (timer, polling) |
 | **Kahaan call?** | **`synchronized` block ke andar MUST** | Kahin bhi |
 
