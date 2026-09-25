@@ -54,3 +54,32 @@
    - down -> replica/fail-open · overload -> shard/partition · duplicate -> idempotency · fail -> retry/DLQ.
    -> 8-step skeleton + ye reflexes = koi bhi design assemble ho jaata.
 ```
+
+---
+
+## SOCIAL MEDIA APP — dikkat-driven growth, BOLKE (25-Sep, Arpan ne khud chalaya, video wala tareeka)
+
+```
+   User -> Server -> DB se shuru, har dikkat pe ek dabba:
+   1. DB bojh          -> SQL rakha ("dikkat aaye tab badlenge") -> CACHE
+   2. aur bojh         -> 1 master + 2 read replica
+   3. server bojh      -> 4 server + LB (horizontal)
+   4. video / image    -> S3, DB me sirf URL + CDN + browser cache
+   5. bada upload      -> QUEUE + WORKER, user ko turant status
+   6. data aur badha   -> SHARD (region se, GDPR bhi)
+   7. India-EU follow  -> HYBRID FAN-OUT (kam follower = push, celebrity = pull)
+   8. alag data        -> polyglot (graph / Mongo / SQL), jahan dikkat wahan
+
+   SUDHAAR (Claude ne point kiye):
+   - S3 ki wajah "fast" nahi — DB bade binary ke liye bana nahi (size / backup / kharcha)
+   - cookie me file nahi rehti — static = browser HTTP cache, cookie = session id / token
+   - queue upload nahi karti — client pre-signed URL se seedha S3 (multipart);
+     queue upload ke BAAD ka kaam (transcode / thumbnail / check)
+   - region ke andar bhi shard (hash user_id) — warna India ka shard akela bada
+   - celebrity post "direct DB" nahi — read time pe khincho, post khud cache me
+   - Neo4j tabhi jab kai-hop (suggestions); follow list = simple table
+   - (jodne ko) servers stateless, session Redis / token me · fan-out queue se async · polyglot = outbox
+
+   AAJ NAHI HUE: requirements + estimation (seedha growth pe gaye) · API · schema ·
+                 like counter · comments · notification · search
+```
