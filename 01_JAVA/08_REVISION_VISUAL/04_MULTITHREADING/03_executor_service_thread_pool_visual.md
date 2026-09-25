@@ -200,7 +200,7 @@ pool.shutdown();
 
 ```
 10 URLs fetched in parallel
-   With 5 threads → ~2x faster than sequential
+   With 5 threads → 2 round (5 + 5) vs 10 ek-ek karke = ~5x faster
 ```
 
 ---
@@ -263,8 +263,8 @@ I/O-BOUND tasks (network, DB):
    threads = CPU cores × 2 (or more)
    Reason: threads often blocked waiting
 
-Spring Boot default:
-   200 threads (high — for I/O heavy)
+Spring Boot default (embedded Tomcat ke request threads):
+   server.tomcat.threads.max = 200 (high — for I/O heavy)
 ```
 
 ---
