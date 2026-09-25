@@ -1,6 +1,6 @@
 # HLD MASTER SHEET — koi bhi design ASSEMBLE karne ka tareeka
 
-> **NAV** — KYA: interview-din ki EK file (archetype -> assemble -> bolo). · KAISE-BOLNA: [APPROACH_DELIVERY](HLD_APPROACH_DELIVERY.md) · TRADE-OFF: [TRADEOFFS](TRADEOFFS.md) · SHABD: [SPEAKING_VOCAB](SPEAKING_VOCAB.md) · CONCEPT-detail: [FOUNDATIONS](FOUNDATIONS) · 13 DESIGN: [SYSTEM_DESIGNS](SYSTEM_DESIGNS) · DRILL: [RAW_DRILL](RAW_DRILL)
+> **NAV** — KYA: interview-din ki EK file (archetype -> assemble -> bolo). · KAISE-BOLNA: [APPROACH_DELIVERY](HLD_APPROACH_DELIVERY.md) · TRADE-OFF: [TRADEOFFS](TRADEOFFS.md) · SHABD: [SPEAKING_VOCAB](SPEAKING_VOCAB.md) · CONCEPT-detail: [FOUNDATIONS](FOUNDATIONS) · 15 DESIGN: [SYSTEM_DESIGNS](SYSTEM_DESIGNS) · DRILL: [RAW_DRILL](RAW_DRILL)
 
 > EK file. Interview se pehle sirf YE. (detail chahiye to hi SYSTEM_DESIGNS/* kholo.)
 >
@@ -24,7 +24,7 @@
 
    PADHNE / DEPTH
      FOUNDATIONS/01..13          <- ek-ek concept ka detail (cache, shard, CAP, queue...)
-     SYSTEM_DESIGNS/01..13       <- 13 poore design, har ek 7-step rail pe
+     SYSTEM_DESIGNS/01..15       <- 15 poore design (05 = concept walkthrough)
 
    DRILL / ABHYAS
      RAW_DRILL/00_REFLEX_SHEET   <- rapid-fire: need -> block (design ke bina)
@@ -227,25 +227,92 @@ TRADE-OFF bolna ho -> `04_HLD/TRADEOFFS.md` (15 jode + ready English lines).
 
 ---
 
-## 5. 13 PADHE HUE DESIGN — sirf DIL (mix na ho isliye, ek line each)
+## 5. 15 PADHE HUE DESIGN — DIL + KHAAS HISSA (jo PADHNA padta hai)
+
+> Common dabbe (LB · replica · cache · shard · queue · CDN · S3) har design me wahi — wo derive ho jaate.
+> Neeche sirf wo jo us design ka APNA hai, jise bina padhe bol nahi sakte (Arpan ka nichod, 25-Sep).
+> Detail = SYSTEM_DESIGNS/<naam>. Revise karte waqt bas ye section.
 
 ```
-   url-shortener     -> chhota unique code + tez redirect      (ID-gen + cache + 302)
-   rate-limiter      -> over-limit reject, legit allow         (Redis atomic counter + token-bucket)
-   twitter-feed      -> read SASTA ho                          (fanout-on-write + celeb hybrid)
-   notification      -> ek event -> sahi channel/user/time     (queue + per-channel worker + retry/DLQ)
-   browser-journey   -> Enter dabane ke baad kya-kya hota      (DNS->TCP->TLS->HTTP->render)
-   stock-broker      -> order MATCH + paisa/share consistent   (matching engine + ledger + low latency)
-   payment           -> paisa DO BAAR na kate                  (idempotency-key + ledger + saga)
-   file-upload       -> upload -> validate -> track            (S3 presigned + async validate + status)
-   news-aggregator   -> kai source -> ek feed                  (crawl/ingest + dedup + rank + cache)
-   bookmyshow        -> do log EK seat na lein                 (atomic hold/lock + TTL + payment)
-   distributed-cache -> SPEED, + node mare to chale            (consistent hashing + LRU + replica)
-   google-docs       -> saath edit, kuch na khoye, sab same    (WebSocket + OT/CRDT + convergence)
-   message-queue     -> kisi ko rokna nahi, kho na jaye        (partition+offset + group + replication)
+01 URL-SHORTENER   DIL: chhota unique code + tez redirect
+   . COUNTER + BASE62: counter kabhi repeat nahi -> collision nahi; /62 ke remainder ulte = code; 7 char = 3.5 trillion
+   . RANGE ALLOCATION: coordinator har server ko block (1..1000) de, server local chalaye; crash = baaki range waste (manzoor)
+   . 302 (301 nahi, browser cache kar leta -> click gine nahi jaate) · custom alias = UNIQUE constraint -> 409
 
-   ★ USE: kisi bhi design me confusion ho -> "iska DIL kya hai?" -> upar se uthao.
-     Dil sahi to blocks kahin se bhi lagao, jawab sahi rahega. Dil galat = jawab galat.
+02 RATE-LIMITER    DIL: over-limit reject, legit allow
+   . 4 ALGO: TOKEN bucket (refill, burst OK) · LEAKY bucket (fixed rate nikle) ·
+             FIXED window (edge pe 2x ka bug) · SLIDING window (sahi, par memory zyada)
+   . Redis INCR atomic; kai step = Lua; EXPIRE sirf PEHLI baar (count==1), warna key kabhi reset nahi
+   . 429 + Retry-After · fail-OPEN vs fail-CLOSED · per-user limit bheed se nahi bachata (load shedding alag)
+
+03 TWITTER-FEED    DIL: read sasta ho
+   . FANOUT ON WRITE: post pe follower ke inbox me sirf tweet_id (LPUSH), LTRIM 800 se capped
+   . HYBRID: ~10K se kam follower = push, celeb = pull; read = inbox + celeb tweets -> merge -> sort -> top 50
+   . fanout async (Kafka) -> "tweet bana" turant, "sab tak pahuncha" baad me
+
+04 NOTIFICATION    DIL: ek event -> sahi channel / user / time
+   . brain: preference (channel, quiet hours) + template -> per-CHANNEL queue + worker
+   . idempotent worker (SET id NX EX) + backoff x 2^n + jitter -> retry queue -> DLQ + circuit breaker
+   . PRIORITY lane (OTP alag, promo ke peeche nahi) · "accepted" != "delivered" (webhook)
+
+05 BROWSER-JOURNEY (design nahi, concept)   URL -> DNS -> TCP -> TLS -> HTTP -> render
+
+06 STOCK-BROKER    DIL: order MATCH + paisa/share sahi
+   . MATCHING ENGINE: har symbol ka EK thread, lock nahi; asks sasta-pehle, bids mehnga-pehle;
+     best-bid >= best-ask -> match; price-time priority; scale SYMBOL se, ek symbol ke andar kabhi nahi
+   . order pe paisa BLOCK, match pe debit · settlement ACID + double-entry
+   . EVENT LOG / SEQUENCER: pehle log, phir book; crash = replay (WAL wali soch) · live price = pub/sub
+
+07 PAYMENT         DIL: paisa DO BAAR na kate
+   . IDEMPOTENCY KEY: client har tap pe UUID, retry pe same; server STORED RESULT lautaye (reject nahi)
+     claim = UNIQUE constraint / SETNX, IN_PROGRESS -> DONE, key ~24h
+   . PENDING pehle likho, phir PSP call -> webhook (push) + reconciliation (pull) dono
+   . LEDGER double-entry, immutable (galti = nayi correction entry) · SAGA (compensate) vs 2PC (lock, coordinator atke)
+
+08 FILE-UPLOAD     DIL: upload -> validate -> track
+   . PRESIGNED URL: bytes client <-> S3 seedha, server sirf link (GET bhi, 5-15 min)
+   . MULTIPART: 5 MB tukde, sirf fail tukda dobara · tmp/ + lifecycle (DINO me) + abort-incomplete
+   . trackingId + status UPLOADING -> VALIDATING -> DONE/FAILED · ownerId authz · MAGIC BYTES (naam pe bharosa nahi)
+
+09 NEWS-AGGREGATOR DIL: kai source -> ek feed
+   . WRITE path (crawl) aur READ path (feed) ALAG, ek doosre ko dheema na karein
+   . worker me CLEAN + DEDUPE (ek khabar 5 source) + CATEGORY · har source alag timeout/retry/skip
+   . category-wise cache merge (10 lakh fanout se bache) · RETENTION != sharding
+
+10 BOOKMYSHOW      DIL: do log EK seat na lein
+   . ATOMIC: UPDATE seats SET status='booked' WHERE seat_id=? AND status='available' -> 1 row jeeta, 0 = gayi
+   . HOLD: status='held' + held_until (5 min); pay -> booked, time gaya -> available
+   . 2 user ek seat = atomic mark · 1 user double click = idempotency · spike = queue + per-show worker
+
+11 DISTRIBUTED-CACHE DIL: speed + node mare to chale
+   . CONSISTENT HASHING: ring, key clockwise agle node pe; node add/remove pe sirf ~K/N keys hilti; VIRTUAL nodes
+     (hash % N pe lagbhag sab keys shift)
+   . LRU = HashMap + doubly linked list, dono O(1) · stampede: mutex / soft-TTL · hot key: replicate + L1 local
+
+12 GOOGLE-DOCS     DIL: saath edit, kuch na khoye, sab same
+   . TEXT nahi, OPERATION bhejo ({insert "X", pos 0})
+   . OT: winner mat chuno, TRANSFORM karo (baad wale ki position shift), tie-break deterministic
+     CRDT: har char ki unique id, merge apne aap, central server nahi chahiye
+   . snapshot + baad ke ops · shard by docId (OT ek jagah serialize) · edits AP, permissions CP
+
+13 MESSAGE-QUEUE   DIL: kisi ko roko mat, kuch kho na jaaye
+   . APPEND-ONLY LOG + OFFSET (kram-number): padh ke delete nahi, consumer apna offset rakhe -> replay
+   . key -> partition = ek key ka ORDER · CONSUMER GROUP: group me baanto, alag group = sabko poora
+     parallelism = partition count
+   . ISR + acks (0/1/all) · at-least-once + idempotent consumer (eventId) · partition badhane pe order toot sakta
+
+14 BANKING         DIL: paisa na bane na mare
+   . ek DB = @Transactional (saga NAHI); cross-bank = saga
+   . DOUBLE-ENTRY LEDGER (jod hamesha 0) · BALANCE = derived, USI txn me update · raat ko reconciliation (ledger jeete)
+   . overdraft: UPDATE ... WHERE balance >= x (0 rows = mana) · deadlock: account-id ke kram me lock · outbox
+
+15 CHAT            DIL: turant pahunche, offline pe na khoye
+   . connection + register: kaun kis server pe (Redis me sirf PATA) · pub-sub server-to-server
+   . PEHLE DB me likho, PHIR bhejo · catch-up "id X ke baad ka do"
+   . CURSOR (read_upto / delivered_upto) = unread + ticks ek hi idea · clientMsgId (retry dedup)
+   . order SERVER id se (client time nahi) · presence = TTL + heartbeat · group = fan-out on READ
+
+★ USE: design ka naam suno -> yahan se DIL + KHAAS hissa -> baaki common dabbe dikkat pe lagao.
 ```
 
 ---
