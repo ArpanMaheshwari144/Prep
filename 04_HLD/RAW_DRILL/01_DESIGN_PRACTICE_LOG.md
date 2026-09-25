@@ -73,8 +73,10 @@
    SUDHAAR (Claude ne point kiye):
    - S3 ki wajah "fast" nahi — DB bade binary ke liye bana nahi (size / backup / kharcha)
    - cookie me file nahi rehti — static = browser HTTP cache, cookie = session id / token
+     (Arpan: pata tha, jaldi me bola — samajh ki galti nahi)
    - queue upload nahi karti — client pre-signed URL se seedha S3 (multipart);
      queue upload ke BAAD ka kaam (transcode / thumbnail / check)
+     (Arpan: pata tha, typing ki jaldi me bola — samajh ki galti nahi)
    - region ke andar bhi shard (hash user_id) — warna India ka shard akela bada
    - celebrity post "direct DB" nahi — read time pe khincho, post khud cache me
    - Neo4j tabhi jab kai-hop (suggestions); follow list = simple table
