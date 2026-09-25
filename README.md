@@ -47,7 +47,6 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 - **[07_BRAIN_TICKLERS](01_JAVA/07_BRAIN_TICKLERS)** — 13 gotcha traps (string-intern · equals-trap · immutable · diamond · final-vs-finally-vs-finalize · covariant-return ...) — quick-fire trick Qs.
 
-- **[08_REVISION_VISUAL](01_JAVA/08_REVISION_VISUAL)** — sab kuch ek-nazar visual revise-set — [CORE](01_JAVA/08_REVISION_VISUAL/01_CORE) · [COLLECTIONS](01_JAVA/08_REVISION_VISUAL/02_COLLECTIONS) · [JAVA_8](01_JAVA/08_REVISION_VISUAL/03_JAVA_8) · [MULTITHREADING](01_JAVA/08_REVISION_VISUAL/04_MULTITHREADING) · [OOP_DESIGN (SOLID+patterns)](01_JAVA/08_REVISION_VISUAL/05_OOP_DESIGN) · [QUICK_QA](01_JAVA/08_REVISION_VISUAL/06_QUICK_QA)
 
 - **[09_WRITE_PRACTICE](01_JAVA/09_WRITE_PRACTICE)** — streams write-to-learn (filter/map/groupingBy/reduce + REDO files) — likhke pakka karna.
 

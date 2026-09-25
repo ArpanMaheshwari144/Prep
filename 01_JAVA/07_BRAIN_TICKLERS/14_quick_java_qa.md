@@ -560,4 +560,4 @@ class Person {
 20. equals/hash → contract — override both
 ```
 
-[← Back to JAVA](../../)
+[← Back to JAVA](../)
