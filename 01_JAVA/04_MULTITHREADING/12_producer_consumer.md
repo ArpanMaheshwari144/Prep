@@ -253,14 +253,14 @@ public class Buffer {
 
 | Feature | `synchronized + wait/notify` | `ReentrantLock + Condition` |
 |---|---|---|
-| Lock granularity | Full method | Explicit lock/unlock |
+| Lock granularity | method ya block (JVM khud chhodta) | Explicit lock/unlock (finally me khud chhodo) |
 | Multiple wait conditions | Single `wait()`, shared queue | Multiple `Condition`s — `notFull`, `notEmpty` |
 | Selective wakeup | `notifyAll()` wakes everyone | `notEmpty.signalAll()` wakes only relevant threads |
 | Try-lock / timeout | Not available | `tryLock(timeout)` |
 | Interruptibility | Limited | `lockInterruptibly()` |
-| Performance | Lower | Higher under contention |
+| Performance | Lagbhag same (Java 6+ me synchronized optimize ho gaya) | Lagbhag same — faayda speed nahi, CONTROL hai |
 
-**`signalAll()` vs `notifyAll()`** — same concept, different API. Granular control = better performance.
+**`signalAll()` vs `notifyAll()`** — same concept, different API. Alag Condition = sirf sahi wale jaagte, bekaar wakeup kam.
 
 ---
 
@@ -270,7 +270,7 @@ public class Buffer {
 |---|---|---|---|---|
 | **synchronized + wait/notify** | High | Low | Medium | Interview classic, simple cases |
 | **BlockingQueue** | None | Low (preset) | High | **99% production** |
-| **ReentrantLock + Condition** | High | Highest | Highest | Advanced — custom signaling |
+| **ReentrantLock + Condition** | High | Highest | High (bekaar wakeup kam) | Advanced — custom signaling |
 
 **Production rule:** Default to **`BlockingQueue`**. Custom karna ho only — go to `ReentrantLock`.
 
