@@ -432,6 +432,50 @@ backlog PHENK ke, system ko zabardasti reset karna padta hai.
 
 ---
 
+## ★★ "LB LAGA HAI, PHIR BHI SAB EK SERVER PE" — ho sakta hai? (25-Sep, Arpan ne poochha)
+
+> Haan, ho sakta hai. Round robin ka code nahi bigadta, wo 1, 2, 3, 1, 2, 3 hi ghumata hai.
+> Bigadta tab hai jab LB jo GIN raha hai (server / connection / IP) wo asli bojh nahi hota.
+
+```
+1. SIRF EK SERVER "ZINDA" DIKHA
+   baaki health check me fail (sach me ya jhoothe) -> list me ek hi bacha
+   -> round robin = 1, 1, 1, 1 ... sab usi pe
+   ilaaj: upar wala PANIC MODE (50%+ dead dikhe to check ko nazarandaaz karo)
+
+2. LB CONNECTION baant-ta hai, REQUEST nahi          <- sabse aam, sabse chhupa
+   keep-alive / HTTP2 / gRPC / WebSocket = ek connection pe hazaaron request
+   L4 LB ne connection ek baar server-1 ko diya -> us connection ki SAARI request server-1 pe
+   scale out kiya? purane lambe connection purane server pe hi chipke rahe, naya khaali
+   ilaaj: L7 LB (har REQUEST alag baante) ya connection ki umar limit
+          (max connection age / max requests per connection -> client dobara jude, naye server pe bhi)
+
+3. IP HASH + bahut log EK IP ke peeche
+   poora office / college ek NAT IP se -> hash same -> sab ek server pe
+   ilaaj: IP hash mat lo; stickiness chahiye to cookie / session-id se, ya sticky ki zaroorat hi hatao
+
+4. DNS ne ek hi IP pakad liya
+   DNS round-robin ne 3 IP diye, par client / ISP resolver ne pehla cache kar liya -> sab usi pe
+   ilaaj: chhota TTL, aur DNS ke peeche bhi asli LB (DNS ko akela balancer mat maano)
+
+5. CONFIG galti
+   weight galat (server-1 = 100, baaki = 1) ya list me ek hi server
+```
+
+**Sab traffic ek pe nahi, par bojh phir bhi jhuka — request ki keemat alag:**
+```
+round robin har request ko BARABAR ginta hai
+10ms wali aur 5 sec wali (report, bada query) = dono "1 request"
+jis server pe bhaari wali padi wo doobta, ginti me sab barabar dikhta
+=> production me least-connections / least-response-time (jo abhi ka bojh dekhte hain)
+```
+
+> **EK LINE:** *"LB barabar tabhi baant-ta hai jab jo wo gin raha hai wahi asli bojh ho.
+> Connection gine aur request lambe connection pe aayein, IP gine aur sab ek NAT ke peeche hon,
+> ya request ki keemat alag ho — wahan jhukaav aata hai."*
+
+---
+
 ## Nginx Deep — User's Question
 
 ### **Nginx ≠ AWS** (open-source software, not AWS-specific!)
