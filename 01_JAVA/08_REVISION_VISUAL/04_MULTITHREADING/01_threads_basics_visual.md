@@ -108,7 +108,7 @@ Runnable preferred:
 
 ---
 
-## 5 Thread Lifecycle (5 States)
+## 5 Thread Lifecycle (Java me 6 states — Thread.State enum)
 
 ```
    NEW (just created, not started)
@@ -128,6 +128,10 @@ Runnable preferred:
         │
         ▼
    TERMINATED (done)
+
+   NOTE: RUNNING Java ka alag state NAHI hai — t.getState() RUNNABLE hi deta hai
+         (chal raha ho ya CPU ka intezaar). Asli 6: NEW, RUNNABLE, BLOCKED,
+         WAITING, TIMED_WAITING, TERMINATED. RUNNING sirf samjhane ke liye.
 ```
 
 ### Visual
@@ -304,8 +308,8 @@ volatile = "always read/write from MAIN MEMORY"
 ┌─────────────────┬────────────────────┬─────────────────┐
 │  Aspect         │  volatile           │  synchronized   │
 ├─────────────────┼────────────────────┼─────────────────┤
-│ Visibility      │                  │              │
-│ Atomicity       │                  │              │
+│ Visibility      │ YES                 │ YES             │
+│ Atomicity       │ NO                  │ YES             │
 │ Use case        │ Flag, single var    │ Multiple steps  │
 │ Performance     │ Fast (no lock)      │ Slower (lock)   │
 └─────────────────┴────────────────────┴─────────────────┘
