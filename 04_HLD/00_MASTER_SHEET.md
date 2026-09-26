@@ -60,6 +60,34 @@
 
 ---
 
+## ★★ HAR DESIGN PE 6 SAWAAL — dikkatein yaad nahi karni, ye nikaal dete hain (26-Sep, Arpan ka sawaal)
+
+> "Itni dikkatein yaad kaise rahengi?" -> yaad sirf YE 6. Har dabbe / har kadam pe inme se ek poochho,
+> dikkat khud nikal aati. SAWAAL har design me SAME, JAWAB design ke hisaab se badalta.
+
+```
+                              PAYMENT                              GOOGLE DOCS
+1. ye GIRA to?                beech me crash -> transaction,       server gira -> ops log/buffer,
+                              PENDING pehle                        snapshot + ops
+2. DOBARA aaya to?            retry -> idempotency key             same op do baar -> op-id, dobara chhodo
+3. do EK SAATH aaye to?       race -> UNIQUE, WHERE balance >= x   ek jagah do log type -> OT / CRDT
+4. bahar wala SLOW / band?    PSP -> status + timeout + recon      user offline -> likhne do, baad me merge
+5. BAHUT zyada ho gaya?       LB, replica, shard by account_id     crore WebSocket -> conn tier, shard docId
+6. kisi ko PURANA dikha?      cache / replica lag -> balance       edit der se -> WebSocket + pub/sub push
+                              PRIMARY se
+```
+
+```
+★ har design ka ek sawaal sabse BHAARI = uska DIL:
+     payment 2 + 3 (retry, race) · google docs 3 (saath edit) · chat 1 + 6 (offline, der)
+     bookmyshow 3 (ek seat do log) · rate limiter 3 + 5 · feed 5 + 6
+★ jawab kahan se: common dabbe (LB/replica/shard/cache) aate hain · KHAAS wala = neeche section 5
+★ round me bhool gaya -> ye 6 mann me ghumao. "ek second, sochta hoon" bolna normal.
+   45 min me 2-3 dikkat GEHRAI se = kaafi. sab ek saath koi nahi bolta.
+```
+
+---
+
 ## 1. TEEN LINE KA METHOD (poora khel isi me hai)
 
 ```
