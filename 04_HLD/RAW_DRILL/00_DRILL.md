@@ -357,7 +357,7 @@
    NAYA connection mehnga: TCP handshake + auth + setup (~10-100ms) har baar -> overhead + DB churn se choke.
    POOL: N connections pehle se OPEN+ready. request BORROW -> use -> RETURN (band nahi, reuse). no re-handshake -> fast.
    ★ EXHAUSTION (Arpan's real bug): pool size FIXED (e.g.10). sab borrow + return nahi (slow query pakde rahe) ->
-     pool khali nahi -> naye request WAIT/fail. (uska "HikariCP exhaustion, 95% email fail, blocking batch query" bug.)
+     pool khali nahi -> naye request WAIT/fail. (uska "HikariCP exhaustion — email ruk gaya tha, runaway query ne lock pakde the" bug.)
    YAAD: pool = ready connections reuse (borrow/use/return) -> handshake bacha. size fixed -> hold-too-long -> EXHAUSTION.
 ```
 
