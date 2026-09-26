@@ -1,6 +1,6 @@
 # Microservices Communication
 
-> **NAV** — KYA: services aur client baat kaise karte (sync/async, server-push real-time, saga, gateway). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [sync vs async](../TRADEOFFS.md) · lagta hai: [payment](../SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [notification](../SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
+> **NAV** — KYA: services aur client baat kaise karte (sync/async, server-push real-time, saga, gateway). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [sync vs async](../02_TRADEOFFS.md) · lagta hai: [payment](../SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [notification](../SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
 
 > **HLD Topic 10 — How services talk in distributed systems**
 
@@ -513,10 +513,10 @@ Electrical fuse
 
 ---
 
-## Phase 3 Project Application (July/August)
+## Spring me ye sab kya hota hai (stack mapping)
 
 ```
-When building full Spring microservices project:
+Spring microservices me har cheez ka auzaar:
 
    Service-to-service:
       Internal: gRPC (Spring gRPC)
@@ -540,28 +540,5 @@ When building full Spring microservices project:
 ```
 
 ---
-
-## Status
-
-```
-Topic 10/10 (HLD foundations) — Done
-
-Foundations complete:
-   01 HLD basics
-   02 Capacity estimation
-   03 Load balancing
-   04 Caching
-   05 DB replication
-   06 DB sharding
-   07 Message queues
-   08 CAP theorem
-   09 DB types (what when)
-   10 MS Communication ← YOU ARE HERE
-
-Next phase:
-   System Design Deep Dives
-      • URL Shortener
-      • Rate Limiter
-```
 
 [← MASTER SHEET](../00_MASTER_SHEET.md)

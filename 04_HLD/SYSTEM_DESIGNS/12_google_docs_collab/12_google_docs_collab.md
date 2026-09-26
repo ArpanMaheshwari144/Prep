@@ -1,6 +1,6 @@
 # Google Docs (Collaborative Editor) — POORA ROUND (4 MOVE)
 
-> **NAV** — ARCHETYPE D (real-time) · DIL: saath edit, kuch na khoye, sab same. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [pubsub/queues](../../FOUNDATIONS/07_message_queues.md) · trade-off: [WebSocket vs SSE](../../TRADEOFFS.md)
+> **NAV** — ARCHETYPE D (real-time) · DIL: saath edit, kuch na khoye, sab same. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [pubsub/queues](../../FOUNDATIONS/07_message_queues.md) · trade-off: [WebSocket vs SSE](../../02_TRADEOFFS.md)
 
 > 3-Sep MOCK me Arpan ne KHUD derive kiya (novel design) — 3 naye tool the:
 > per-component CAP · WebSocket + Redis pub/sub · OT/CRDT.
@@ -11,7 +11,7 @@
 > = real-time concurrent edit + no-lost-write + convergence = poore design ka dil.
 
 ```
-★★ TEEN NIYAM (poori file par lagte — [APPROACH_DELIVERY](../../HLD_APPROACH_DELIVERY.md) 5b)
+★★ TEEN NIYAM (poori file par lagte — [APPROACH_DELIVERY](../../01_DELIVERY.md) 5b)
    1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
    2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
    3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega

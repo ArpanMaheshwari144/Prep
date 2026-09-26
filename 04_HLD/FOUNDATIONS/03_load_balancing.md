@@ -1,6 +1,6 @@
 # Load Balancing
 
-> **NAV** — KYA: LB (L4/L7, algos, health-check). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [L4 vs L7](../TRADEOFFS.md) · lagta hai: [rate-limiter](../SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [browser-journey](../SYSTEM_DESIGNS/05_url_browser_journey/05_url_browser_journey.md)
+> **NAV** — KYA: LB (L4/L7, algos, health-check). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [L4 vs L7](../02_TRADEOFFS.md) · lagta hai: [rate-limiter](../SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [browser-journey](../SYSTEM_DESIGNS/05_url_browser_journey/05_url_browser_journey.md)
 
 > **HLD Topic 3 — Traffic distribution + scaling foundation**
 
@@ -473,6 +473,203 @@ jis server pe bhaari wali padi wo doobta, ginti me sab barabar dikhta
 > **EK LINE:** *"LB barabar tabhi baant-ta hai jab jo wo gin raha hai wahi asli bojh ho.
 > Connection gine aur request lambe connection pe aayein, IP gine aur sab ek NAT ke peeche hon,
 > ya request ki keemat alag ho — wahan jhukaav aata hai."*
+
+---
+
+## ★ PURANI INFRA FILE SE AAYE HISSE (26-Sep merge — purani 05_INFRA_DEEP/02_load_balancer.md, ab git history me)
+
+> Jo us file me tha aur yahan nahi tha, wahi laaya. Baaki (L4/L7, algo, health, active-active) upar pehle se hai.
+
+### CONCRETE EXAMPLE — Amazon.com
+
+```
+USER REQUEST:
+   "GET amazon.com/api/cart"  (HTTPS, port 443)
+
+   Envelope (L4 sees):
+      Source: User IP
+      Dest: amazon.com:443
+      Protocol: TCP
+
+   Letter (L7 sees):
+      Host: amazon.com
+      Path: /api/cart
+      Method: GET
+      Cookie: session=user123
+```
+
+```
+L4 LB decision:
+   "TCP to port 443 → koi bhi server"
+   Path-aware NAHI
+   Bas connection forward
+```
+
+```
+L7 LB decision:
+   /api/cart → cart-service cluster
+   /api/payment → payment-service cluster
+   /api/search → search-service cluster
+   /images/* → CDN/static servers
+   /admin → admin cluster (restricted)
+
+   CONTENT samjha → SMART routing
+   Microservices perfect
+```
+
+---
+
+### Sticky Sessions (Session Affinity)
+
+```
+PROBLEM:
+   User logs in → server 1 stores session
+   Next request → LB routes to server 2
+   Server 2: "Who are you? Login again."
+   = BAD UX
+```
+
+```
+SOLUTION 1: STICKY SESSION
+   LB cookie set: "this user → S1 always"
+   Same user always lands on S1
+
+   Simple
+   S1 crashes = user session lost
+   Uneven load
+
+SOLUTION 2: SHARED SESSION STORE
+   All servers share Redis for sessions
+   Any server can handle any request
+
+   Stateless servers
+   S1 crashes = no problem
+   Modern approach (preferred)
+
+SOLUTION 3: JWT (Stateless tokens)
+   Token contains user info
+   Any server validates and serves
+   Truly stateless
+   Tera UserCRUD use karta yeh
+```
+
+
+### SSL Termination
+
+```
+SSL/TLS = encryption (HTTPS)
+```
+
+```
+OPTION A: Termination at LB (common)
+   ┌─────┐    HTTPS   ┌──────┐   HTTP   ┌────────┐
+   │USER │ ─────────► │  LB  │ ───────► │SERVERS │
+   └─────┘            └──────┘          └────────┘
+
+   LB decrypts → forwards plain HTTP to backend
+   Servers don't need SSL cert
+   CPU offload from servers
+   Cert management centralized
+   Internal traffic unencrypted
+
+OPTION B: Pass-through (end-to-end SSL)
+   ┌─────┐    HTTPS   ┌──────┐   HTTPS  ┌────────┐
+   │USER │ ─────────► │  LB  │ ───────► │SERVERS │
+   └─────┘            └──────┘          └────────┘
+
+   LB doesn't decrypt — forwards encrypted
+   End-to-end encryption
+   LB can't inspect (must be L4)
+```
+
+---
+
+### AWS Load Balancer Types
+
+```
+ALB   L7       HTTP/HTTPS · path-based routing · microservices
+NLB   L4       TCP/UDP · bahut zyada throughput · gaming/video/IoT · static IP
+CLB   L4+L7    LEGACY, naye kaam me mat lo
+GWLB  L3       Gateway LB: firewall / inspection appliance ke aage (traffic unse guzaarna)
+               ★ geo routing iska kaam NAHI — multi-region / geo = Route 53 (DNS) ya Global Accelerator
+```
+
+### ═══ HANDS-ON — Nginx Load Balancer LIVE (round-robin + failover, 22-Aug) ═══
+
+> 2 backend (BACKEND-1, BACKEND-2) ke aage Nginx LB. Hit karo -> requests baari-baari dono pe (round-robin).
+> Ek backend gira do -> saara traffic doosre pe (failover). Sirf config, koi program nahi.
+> (files: ../../05_INFRA_DEEP/LB_DEMO/nginx-lb.conf)
+
+### 0. Maqsad
+```
+Nginx ek REAL LB hai. 2 backend ke aage lagao -> load baant deta (round-robin) +
+ek backend down ho to healthy pe route (failover). Scaling + resilience dono.
+```
+
+### 1. Setup — network + 2 backends
+```
+docker network create lbnet
+docker run -d --name be1 --network lbnet hashicorp/http-echo -text="Hello from BACKEND-1" -listen=:5678
+docker run -d --name be2 --network lbnet hashicorp/http-echo -text="Hello from BACKEND-2" -listen=:5678
+   lbnet   = private network -> containers ek-doosre ko NAAM se dhoondhein (be1, be2)
+   http-echo = tiny backend, bas apna text bolta
+```
+
+### 2. LB config (nginx-lb.conf) — ye 2 block hi asli LB
+```
+upstream backends {          # backends ka group
+    server be1:5678;
+    server be2:5678;         # default = ROUND ROBIN (aur: least_conn, ip_hash)
+}
+server {
+    listen 80;
+    location / { proxy_pass http://backends; }   # request ko group pe FORWARD -> nginx choose karta
+}
+```
+```
+docker run -d --name lb --network lbnet -p 8080:80 -v "<path>\nginx-lb.conf:/etc/nginx/nginx.conf:ro" nginx
+```
+
+### 3. Round-robin dekho
+```
+for /L %i in (1,1,8) do @curl -s http://localhost:8080
+-> BACKEND-1, BACKEND-2, 1, 2, 1, 2, 1, 2   (baari-baari = load baant diya)
+```
+
+### 4. Failover dekho (ek backend gira do)
+```
+docker stop be1
+for /L %i in (1,1,6) do @curl -s http://localhost:8080
+-> SAB BACKEND-2   (nginx ne dead be1 skip kar diya -> service chalti rahi, no downtime)
+docker start be1   (wapas -> phir round-robin)
+```
+
+### 5. KYUN / mechanism
+```
+upstream = backend-pool. proxy_pass -> nginx har request pool me se ek server chunta.
+   ROUND ROBIN (default) = baari-baari -> load barabar.
+   FAILOVER = jo server respond na kare, nginx use skip karke healthy pe bhejta (passive health-check).
+= horizontal scaling ka dil: load badhe -> aur backend upstream me jodo, LB baant dega.
+   ek node marr jaaye -> baaki pe route -> HA (high availability).
+```
+
+### 6. ★★ GEMS
+```
+1. LB = load baantna (round-robin) + failover (dead node skip). Dono ek saath.
+2. upstream + proxy_pass = poora nginx LB. algorithm: round-robin (default) / least_conn / ip_hash.
+3. ip_hash / sticky session -> ek user hamesha SAME backend (session-affinity chahiye tab).
+   warna stateless rakho (JWT/Redis) -> koi bhi backend serve kare.
+4. L7 (ALB, HTTP-aware, path/host routing) vs L4 (NLB, TCP, fast). AWS: ALB=L7, NLB=L4.
+5. LB khud SPOF na bane -> LB bhi 2 (active-passive / DNS).
+```
+
+### 7. Dobara kaise
+```
+docker start be1 be2 lb   (band ho to)
+for /L %i in (1,1,8) do @curl -s http://localhost:8080   -> round-robin
+docker stop be1  -> phir hit -> sab be2 (failover)
+```
+
 
 ---
 

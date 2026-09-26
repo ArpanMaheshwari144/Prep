@@ -1,5 +1,7 @@
 # Jab ILAAJ hi BIMARI ban jaaye — cascading / metastable failure
 
+> **NAV** — KYA: HUB — bachane wali cheez hi girane wali (LB · cache · queue · CAP · SPOF · CDN). UP: [MASTER](../00_MASTER_SHEET.md)
+
 > **Ye foundation baaki se alag hai.** Baaki files batati hain ki ek cheez **kaam kaise karti hai**.
 > Ye file ek hi sawaal ki hai: *sab kuch sahi laga hua tha, sab chal raha tha — phir bhi system gir
 > gaya. Kyun?*
@@ -40,6 +42,9 @@ queue me   "ABSORB karne wali cheez ne spike JAMA karke BADA karke chhoda"
 | Cache / Redis | "REDIS LAGATE HI SERVER DOWN HO GAYA" | [04_caching.md](04_caching.md) |
 | Rate limiter | "LIMITER LAGA THA, PHIR BHI NAHI BACHA" | [../SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md](../SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) |
 | Queue / Kafka | "QUEUE NE SPIKE ABSORB NAHI KIYA" | [07_message_queues.md](07_message_queues.md) |
+| CAP / consistency | "CHHE TARIKE JINSE CONSISTENCY KI CHOICE KHUD SYSTEM TODTI HAI" (25-Sep) | [08_cap_theorem.md](08_cap_theorem.md) |
+| SPOF / redundancy | "CHHE TARIKE JINSE REDUNDANCY KHUD FAIL HOTI HAI" (25-Sep) | [11_reliability_spof_cloud.md](11_reliability_spof_cloud.md) |
+| CDN | "CHHE TARIKE JINSE CDN KHUD SYSTEM KO MAARTA HAI" (25-Sep) | [15_cdn.md](15_cdn.md) |
 
 ---
 

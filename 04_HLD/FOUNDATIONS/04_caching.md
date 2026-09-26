@@ -1,6 +1,6 @@
 # Caching
 
-> **NAV** — KYA: caching (aside/through, TTL, eviction). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [cache strategies](../TRADEOFFS.md) · lagta hai: [distributed-cache](../SYSTEM_DESIGNS/11_distributed_cache/11_distributed_cache.md) · [url-shortener](../SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [twitter-feed](../SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md)
+> **NAV** — KYA: caching (aside/through, TTL, eviction). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [cache strategies](../02_TRADEOFFS.md) · lagta hai: [distributed-cache](../SYSTEM_DESIGNS/11_distributed_cache/11_distributed_cache.md) · [url-shortener](../SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [twitter-feed](../SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md)
 
 > **HLD Topic 4 — Speed weapon (Day 1)**
 

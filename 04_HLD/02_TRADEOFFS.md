@@ -1,6 +1,6 @@
 # HLD TRADE-OFFS — 15 jode jo GHOOM-GHOOM ke aate hain
 
-> **NAV** — KYA: 15 A-vs-B jode + wajah + bolne-wali line. UP: [MASTER](00_MASTER_SHEET.md) · saancha: [APPROACH_DELIVERY](HLD_APPROACH_DELIVERY.md) · detail: [FOUNDATIONS](FOUNDATIONS)
+> **NAV** — KYA: 15 A-vs-B jode + wajah + bolne-wali line. UP: [MASTER](00_MASTER_SHEET.md) · saancha: [DELIVERY](01_DELIVERY.md) · detail: [FOUNDATIONS](FOUNDATIONS)
 
 > KYUN ye file: trade-off koi alag "hoshiyari" nahi hai. Trade-off tabhi bol paate ho jab
 > ek slot pe DO option pata ho + ek wajah. Agar sirf ek option pata hai to trade-off aa hi
@@ -296,7 +296,17 @@
                        -> modulo -> node add/remove pe SAB key ghoom jaati (cache poori thandi)
                           consistent hashing -> sirf thodi key ghoomti
                           "That's why distributed caches use consistent hashing."
+
+   ── 26-Sep: DRILL ke one-liner jode jo yahan nahi the ──
+   LRU vs LFU          -> LRU = sabse purana-use hua nikaalo · LFU = sabse kam-use hua nikaalo
+   OFFSET vs CURSOR    -> offset = N chhodo (deep page slow) · cursor = "last id ke baad" (badi list tez)
+   Session vs JWT      -> session = server/Redis me state · JWT = token khud saboot, stateless
+   Monolith vs MS      -> chhota / ek team = monolith · alag scale + isolation = microservices
+   Queue vs LB         -> queue = spike ROKTI (hold) · LB = traffic BAANTTA (hold nahi)
+   WebSocket vs Kafka  -> WebSocket = server se USER tak live · Kafka = backend services ke beech
+   Lock vs Idempotency -> do user ek resource (race) = lock / atomic · ek user ka retry = idempotency
 ```
+> Gehre "farak batao" explainer (SQL/NoSQL, sync/async, WS/SSE, monolith/MS, Kafka/RabbitMQ...) = [06_COMPARES](../06_COMPARES).
 
 ---
 

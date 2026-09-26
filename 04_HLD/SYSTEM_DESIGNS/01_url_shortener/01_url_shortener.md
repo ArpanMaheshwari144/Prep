@@ -1,6 +1,6 @@
 # URL Shortener — POORA ROUND (4 MOVE, jaise asli me hota hai)
 
-> **NAV** — ARCHETYPE F (infra/component) · DIL: chhota unique code + tez redirect. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [ID-gen](../../FOUNDATIONS/13_distributed_id_snowflake.md) · [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · trade-off: [301 vs 302](../../TRADEOFFS.md)
+> **NAV** — ARCHETYPE F (infra/component) · DIL: chhota unique code + tez redirect. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [ID-gen](../../FOUNDATIONS/13_distributed_id_snowflake.md) · [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · trade-off: [301 vs 302](../../02_TRADEOFFS.md)
 
 > Arpan-derived 21-Jun · 15-Sep: asli mock-video dekh ke dobara likha.
 > **Asli round me koi 7-step rail nahi chali** — sirf ye 4 move hue:
@@ -10,7 +10,7 @@
 > Problem (1 line): long URL -> short 6-7 char code; short pe click -> original pe redirect (302).
 
 ```
-★★ TEEN NIYAM (poori file par lagte — [APPROACH_DELIVERY](../../HLD_APPROACH_DELIVERY.md) 5b)
+★★ TEEN NIYAM (poori file par lagte — [APPROACH_DELIVERY](../../01_DELIVERY.md) 5b)
    1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
    2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
    3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega

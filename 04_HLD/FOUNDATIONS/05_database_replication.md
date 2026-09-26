@@ -1,6 +1,6 @@
 # Database Replication
 
-> **NAV** — KYA: replication (leader/follower, lag, failover). UP: [MASTER](../00_MASTER_SHEET.md) · farak: [replication vs sharding](../TRADEOFFS.md) · lagta hai: [distributed-cache](../SYSTEM_DESIGNS/11_distributed_cache/11_distributed_cache.md) · [message-queue](../SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md)
+> **NAV** — KYA: replication (leader/follower, lag, failover). UP: [MASTER](../00_MASTER_SHEET.md) · farak: [replication vs sharding](../02_TRADEOFFS.md) · lagta hai: [distributed-cache](../SYSTEM_DESIGNS/11_distributed_cache/11_distributed_cache.md) · [message-queue](../SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md)
 
 > **HLD Topic 5 — Read scaling + High Availability**
 
@@ -459,7 +459,7 @@ stock broker            ek hi seat / ek hi symbol pe 500 log
       -> isliye bookmyshow me lock / atomic conditional UPDATE aaya tha, replica nahi
 ```
 
-> Ye wahi cheez hai jo [TRADEOFFS](../TRADEOFFS.md) me "replication vs sharding" ke saath padhni hai:
+> Ye wahi cheez hai jo [TRADEOFFS](../02_TRADEOFFS.md) me "replication vs sharding" ke saath padhni hai:
 > **replication = ek hi data ki kai copies (read + survival)** ·
 > **sharding = alag-alag data alag machine pe (data bada hai)**. Dono alag dikkat ke ilaaj hain.
 

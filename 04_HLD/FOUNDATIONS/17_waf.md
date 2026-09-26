@@ -1,5 +1,7 @@
 # WAF — Web Application Firewall
 
+> **NAV** — KYA: WAF (OWASP, rules, WAF + rate limiter). UP: [MASTER](../00_MASTER_SHEET.md) · lagta hai: [rate-limiter](../SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md)
+
 ---
 
 ## 1 Problem Without WAF
@@ -424,4 +426,4 @@ CLOUD WAFs: AWS WAF, Cloudflare, Akamai
 CHALLENGE: False positives → COUNT then BLOCK
 ```
 
-[← HLD README](../README.md)
+[← MASTER](../00_MASTER_SHEET.md)

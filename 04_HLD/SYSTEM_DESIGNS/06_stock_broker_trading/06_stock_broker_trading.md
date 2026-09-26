@@ -10,7 +10,7 @@
 > Problem (1 line): user buy/sell order de -> system MATCH kare -> paisa + share consistent move ho -> aur live price dikhe.
 
 ```
-★★ TEEN NIYAM (poori file par lagte — [APPROACH_DELIVERY](../../HLD_APPROACH_DELIVERY.md) 5b)
+★★ TEEN NIYAM (poori file par lagte — [APPROACH_DELIVERY](../../01_DELIVERY.md) 5b)
    1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
    2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
    3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega

@@ -15,8 +15,8 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 01 | [**01_JAVA**](01_JAVA) | Core · Collections · Java-8 · Multithreading · SOLID · Patterns · Testing | Java grill round ka **core** — collections-internal + multithreading sabse zyada pucha jaata |
 | 02 | [**02_SPRING**](02_SPRING) | Boot internals · @Transactional · Hibernate · JWT · Docker/K8s · Kafka/Async/Cache · QueryDSL/GraphQL | Backend role ka **dil** — proxy / N+1 / tx / Kafka = deep-grill favourites |
 | 03 | [**03_LLD**](03_LLD) | 11 OOP designs, code me | LLD round — class-design + patterns **bolke** |
-| 04 | [**04_HLD**](04_HLD) | Foundations + 14 designs + delivery-playbook | Tera **strong zone** — JP ka pura ek round |
-| 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | CDN · LB · DNS · WAF · monitoring + devops + hands-on demos | HLD me "deploy/scale kaise" ki depth + STAR-fodder |
+| 04 | [**04_HLD**](04_HLD) | 18 foundations + 15 designs + delivery + tradeoffs + drill | Tera **strong zone** — JP ka pura ek round |
+| 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects | Resume-backing + "kya banaya" ka **live proof** |
 | 08 | [**08_DSA**](08_DSA) | 18 pattern · 171 problem + 89 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
@@ -25,7 +25,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase | PR-review + daily workflow Qs |
 | 12 | [**12_CODE_REVIEW**](12_CODE_REVIEW) | 5-bucket checklist + drills | JP **round-2 code-review** |
 
-> ★ **Roz-revise pinned:** **[DSA Pattern Sheet](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** (gate ki chaabi) · **[HLD Approach Playbook](04_HLD/HLD_APPROACH_DELIVERY.md)** (kaise bolna)
+> ★ **Roz-revise pinned:** **[DSA Pattern Sheet](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** (gate ki chaabi) · **[HLD Master Sheet](04_HLD/00_MASTER_SHEET.md)** (kya bolna) · [HLD Delivery](04_HLD/01_DELIVERY.md) (kaise bolna)
 
 ---
 
@@ -94,7 +94,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ---
 
 ## [04_HLD](04_HLD) — tera strong zone
-**Kya:** neev (foundations) + 14 poore design + "kaise bolna" playbook. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
+**Kya:** neev (18 foundations) + 15 poore design + "kaise bolna" playbook. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
 
 > ★★ **HLD RAIL** — har design isi kram pe bolo (roz dekh, dimaag me ghoome):
 ```
@@ -103,12 +103,12 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 └──────────────┘   └──────────┘   └─────┘   └────────────┘   └───────────┘   └────────────┘   └─────────────┘
 ```
 
-- ★★ **[00_MASTER_SHEET](04_HLD/00_MASTER_SHEET.md) — SABSE PEHLE YE** — 6 archetype + universal rail + block-menu + 13 design ka DIL + anjaan-design recipe ("design LinkedIn" worked example). Interview se pehle sirf yahi kaafi.
-- ★ **Delivery-tools:** [HLD_APPROACH_DELIVERY](04_HLD/HLD_APPROACH_DELIVERY.md) — "kaise bolna" playbook (rail · meta-moves · trade-off saancha · na-pata-ho-to · common follow-ups) · [SPEAKING_VOCAB](04_HLD/SPEAKING_VOCAB.md) (word-freeze se bachne ko) · **[TRADEOFFS](04_HLD/TRADEOFFS.md)** — 15 jode jo har design me ghoomte (A vs B + wajah + bolne-wali line)
+- ★★ **[00_MASTER_SHEET](04_HLD/00_MASTER_SHEET.md) — SABSE PEHLE YE** — 6 archetype + universal rail + block-menu + 6 sawaal + 15 design ka DIL + KHAAS hissa + anjaan-design recipe ("design LinkedIn" worked example). Interview se pehle sirf yahi kaafi.
+- ★ **Delivery-tools:** [01_DELIVERY](04_HLD/01_DELIVERY.md) — "kaise bolna" playbook + SHABD (word-freeze se bachne ko) · **[TRADEOFFS](04_HLD/02_TRADEOFFS.md)** — 15 jode jo har design me ghoomte (A vs B + wajah + bolne-wali line)
 
-- **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — building-blocks (har design inhi se bante) — [01 hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [03 load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) · [05 replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [06 sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) · [08 CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [09 db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) · [10 ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) · [11 reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [13 snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab-ilaaj-hi-bimari-bane](04_HLD/FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) (cascading/metastable — LB, cache, limiter, queue ki ek hi shakal)
+- **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — building-blocks (har design inhi se bante) — [01 hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [03 load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) · [05 replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [06 sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) · [08 CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [09 db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) · [10 ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) · [11 reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [13 snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab-ilaaj-hi-bimari-bane](04_HLD/FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) (HUB: LB, cache, limiter, queue, CAP, SPOF, CDN ki ek hi shakal) · [15 CDN](04_HLD/FOUNDATIONS/15_cdn.md) · [16 DNS](04_HLD/FOUNDATIONS/16_dns.md) · [17 WAF](04_HLD/FOUNDATIONS/17_waf.md) · [18 monitoring](04_HLD/FOUNDATIONS/18_monitoring.md)
 
-- **[RAW_DRILL](04_HLD/RAW_DRILL)** — bolke-practice + reflex — [00 reflex-sheet](04_HLD/RAW_DRILL/00_REFLEX_SHEET.md) (need→block rapid-fire) · [01 design-practice-log](04_HLD/RAW_DRILL/01_DESIGN_PRACTICE_LOG.md) (mock log/archive) · [02 why-how-QA](04_HLD/RAW_DRILL/02_WHY_HOW_QA.md)
+- **[RAW_DRILL](04_HLD/RAW_DRILL)** — bolke-practice + reflex — [00 drill](04_HLD/RAW_DRILL/00_DRILL.md) (need→block reflex + kyun/kaise Q&A) · [01 design-practice-log](04_HLD/RAW_DRILL/01_DESIGN_PRACTICE_LOG.md) (bolke kiye design)
 
 > ★ **DO FOUNDATION FILE ME LIVE HANDS-ON HAI** (padha hua nahi — CHALA KE dekha, har command + asli output):
 > · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) — eviction (`allkeys-lru` vs `volatile-lru`) · replication · read-only replica · haath-se failover → **split brain** · `stop` vs `kill` (RDB) · replica ≠ backup · **Sentinel se khud-b-khud failover 800ms me**
@@ -121,7 +121,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ## [05_INFRA_DEEP](05_INFRA_DEEP)
 **Kya:** network/infra deep-dives + devops commands + chal-ke-dekhe demos. &nbsp; **Kyu:** HLD me "deploy/scale/monitor kaise" ki depth aur STAR ke liye asli material.
 
-- [01 cdn](05_INFRA_DEEP/01_cdn.md) · [02 load-balancer](05_INFRA_DEEP/02_load_balancer.md) · [03 dns](05_INFRA_DEEP/03_dns.md) · [04 waf](05_INFRA_DEEP/04_waf.md) · [05 monitoring (Prometheus/Grafana)](05_INFRA_DEEP/05_monitoring_prometheus_grafana.md) · [load-test demo](05_INFRA_DEEP/LOADTEST_SCALE_DEMO/NOTES.md)
+- Concept notes (CDN · DNS · WAF · monitoring · LB) 26-Sep ko [04_HLD/FOUNDATIONS](04_HLD/FOUNDATIONS) me gaye (15-18, LB = 03). Yahan: [load-test demo](05_INFRA_DEEP/LOADTEST_SCALE_DEMO/NOTES.md)
 - **[DEVOPS](05_INFRA_DEEP/DEVOPS)** — cheat-commands — [AWS](05_INFRA_DEEP/DEVOPS/AWS) · [DOCKER](05_INFRA_DEEP/DEVOPS/DOCKER) · [K8S](05_INFRA_DEEP/DEVOPS/K8S) (helm + setup-journey)
 - **Hands-on demos:** [LB_DEMO](05_INFRA_DEEP/LB_DEMO) (nginx-lb.conf) · [MONITORING_DEMO](05_INFRA_DEEP/MONITORING_DEMO) (prometheus.yml) · [LOADTEST_SCALE_DEMO](05_INFRA_DEEP/LOADTEST_SCALE_DEMO)
 

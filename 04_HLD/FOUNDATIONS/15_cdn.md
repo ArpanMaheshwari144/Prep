@@ -1,5 +1,7 @@
 # CDN — Content Delivery Network
 
+> **NAV** — KYA: CDN (edge cache, invalidation, CDN kaise system girata). UP: [MASTER](../00_MASTER_SHEET.md) · saath: [caching](04_caching.md) · lagta hai: [file-upload](../SYSTEM_DESIGNS/08_file_upload_validate_system/08_file_upload_INTERVIEW.md) · [twitter-feed](../SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md)
+
 ---
 
 ## 1 Problem (1 line)
@@ -412,4 +414,4 @@ Push vs Pull:
    PUSH = eager (pre-warm)
 ```
 
-[← HLD README](../README.md)
+[← MASTER](../00_MASTER_SHEET.md)

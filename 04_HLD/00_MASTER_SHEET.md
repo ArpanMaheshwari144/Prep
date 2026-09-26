@@ -1,6 +1,6 @@
 # HLD MASTER SHEET — koi bhi design ASSEMBLE karne ka tareeka
 
-> **NAV** — KYA: interview-din ki EK file (archetype -> assemble -> bolo). · KAISE-BOLNA: [APPROACH_DELIVERY](HLD_APPROACH_DELIVERY.md) · TRADE-OFF: [TRADEOFFS](TRADEOFFS.md) · SHABD: [SPEAKING_VOCAB](SPEAKING_VOCAB.md) · CONCEPT-detail: [FOUNDATIONS](FOUNDATIONS) · 15 DESIGN: [SYSTEM_DESIGNS](SYSTEM_DESIGNS) · DRILL: [RAW_DRILL](RAW_DRILL)
+> **NAV** — KYA: interview-din ki EK file (archetype -> assemble -> bolo). · KAISE-BOLNA + SHABD: [DELIVERY](01_DELIVERY.md) · A YA B: [TRADEOFFS](02_TRADEOFFS.md) · CONCEPT-detail: [FOUNDATIONS](FOUNDATIONS) · 15 DESIGN: [SYSTEM_DESIGNS](SYSTEM_DESIGNS) · DRILL: [RAW_DRILL/00_DRILL](RAW_DRILL/00_DRILL.md)
 
 > EK file. Interview se pehle sirf YE. (detail chahiye to hi SYSTEM_DESIGNS/* kholo.)
 >
@@ -13,32 +13,38 @@
 
 ---
 
-## 0. KAUNSI FILE KAB — poore 04_HLD ka naksha (har file ka ek hi kaam)
+## 0. KAUNSI FILE KAB — poore 04_HLD ka naksha (26-Sep saaf kiya: har kaam ki EK file)
 
 ```
    INTERVIEW-DIN / REVISE
-     00_MASTER_SHEET.md          <- YE. kya bolna: archetype -> blocks -> rail. (tu abhi yahin hai)
-     HLD_APPROACH_DELIVERY.md    <- KAISE bolna: meta-moves, trade-off saancha, na-pata-ho-to, follow-ups
-     TRADEOFFS.md                <- 15 A-vs-B jode + ready English line
-     SPEAKING_VOCAB.md           <- shabd atak jaaye to
+     00_MASTER_SHEET.md    <- YE. KYA bolna: 6 sawaal · archetype · rail · blocks · 15 design ka DIL
+     01_DELIVERY.md        <- KAISE bolna (meta-moves, na-pata-ho-to, follow-ups) + SHABD (word atke to)
+     02_TRADEOFFS.md       <- A ya B: 15 jode + chhote jode + ready English line
 
    PADHNE / DEPTH
-     FOUNDATIONS/01..13          <- ek-ek concept ka detail (cache, shard, CAP, queue...)
-     SYSTEM_DESIGNS/01..15       <- 15 poore design (05 = concept walkthrough)
+     FOUNDATIONS/01..18    <- ek concept = ek file
+        01 hld · 02 capacity · 03 LB · 04 cache · 05 replication · 06 sharding · 07 queue
+        08 CAP · 09 db kaunsa · 10 microservice baat-cheet · 11 SPOF · 12 search · 13 id
+        14 HUB (bachane wala hi girane wala) · 15 CDN · 16 DNS · 17 WAF · 18 monitoring
+     SYSTEM_DESIGNS/01..15 <- 15 poore design (05 = concept walkthrough)
 
    DRILL / ABHYAS
-     RAW_DRILL/00_REFLEX_SHEET   <- rapid-fire: need -> block (design ke bina)
-     RAW_DRILL/02_WHY_HOW_QA     <- kyun/kaise Q&A, khud se poochho
-     RAW_DRILL/01_PRACTICE_LOG   <- purane mock ka log (archive) + naya mock yahin likho
+     RAW_DRILL/00_DRILL.md                <- PART 1 need -> block reflex · PART 2 kyun/kaise Q&A
+     RAW_DRILL/01_DESIGN_PRACTICE_LOG.md  <- bolke kiye design ka log (naya yahin)
+
+   BAHAR (zaroorat pe)
+     ../06_COMPARES/       <- gehre "farak batao" explainer (TCP/UDP, HTTP versions, JWT/OAuth...)
+     ../05_INFRA_DEEP/     <- sirf DEVOPS commands + hands-on demo folder (LB / monitoring / load-test)
 ```
 ```
    ★ CONFUSION-PROOF NIYAM:
-       "kya bolna"   -> ye file
-       "kaise bolna" -> APPROACH_DELIVERY
-       "A ya B?"     -> TRADEOFFS
+       "kya bolna"         -> ye file
+       "kaise bolna"       -> 01_DELIVERY
+       "A ya B?"           -> 02_TRADEOFFS
        "ye cheez hai kya?" -> FOUNDATIONS
        "poora design"      -> SYSTEM_DESIGNS
-     Har file ke UPAR ek NAV line hai -> wahan se seedha jump. README pe wapas jaane ki zaroorat nahi.
+       "khud ko test"      -> RAW_DRILL/00_DRILL
+     Har file ke UPAR ek NAV line hai -> wahan se seedha jump.
 ```
 
 ---
@@ -56,7 +62,7 @@
 3. BOTTLENECK RATTO MAT -- bolte waqt KHUD USER BANKE dekho:
    wo kya soch raha, kahan cheez phat rahi. Bottleneck khud dikh jaayega.
 ```
-> Detail + misaal = [HLD_APPROACH_DELIVERY](HLD_APPROACH_DELIVERY.md) section 5b.
+> Detail + misaal = [HLD_APPROACH_DELIVERY](01_DELIVERY.md) section 5b.
 
 ---
 
@@ -219,7 +225,7 @@ STEP 7  BOTTLENECK / SCALE-10x (3 min)
 
 ## 4. BLOCK MENU (need -> block -> ek line kyun)
 
-> Detail + 31-row table = RAW_DRILL/00_REFLEX_SHEET.md. Ye compact version interview-din ke liye.
+> Detail + 31-row table = RAW_DRILL/00_DRILL.md. Ye compact version interview-din ke liye.
 
 ```
    read baar-baar          -> CACHE (Redis, cache-aside + TTL)   RAM, disk se 100x tez
@@ -251,7 +257,7 @@ STEP 7  BOTTLENECK / SCALE-10x (3 min)
    message kitni baar      -> at-least-once + IDEMPOTENT         exactly-once ka effect
 ```
 
-TRADE-OFF bolna ho -> `04_HLD/TRADEOFFS.md` (15 jode + ready English lines).
+TRADE-OFF bolna ho -> `04_HLD/02_TRADEOFFS.md` (15 jode + ready English lines).
 
 ---
 
