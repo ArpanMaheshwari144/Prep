@@ -107,7 +107,7 @@ List<String> result = panelists.stream()
 | `sorted()` | Comparable / Comparator | Sort karo |
 | `forEach()` | **Consumer** (void) | Har ek pe action |
 | `collect()` | Collector | Final result pakdo |
-| `reduce()` | BiFunction | Sab ko ek value mein milao |
+| `reduce()` | BinaryOperator (do same-type -> ek same-type) | Sab ko ek value mein milao |
 | `distinct()` | — | Duplicates hatao |
 | `limit(n)` / `skip(n)` | — | Pagination |
 | `count()` | — | Kitne hain |
