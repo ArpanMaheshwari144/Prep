@@ -31,7 +31,7 @@
 │  │  └──────────────────────────────────────────────┘  │  │
 │  │                                                    │  │
 │  │  + JRE extras: Class libraries (java.lang, util)   │  │
-│  │                rt.jar                              │  │
+│  │                rt.jar (Java 8 tak; 9+ me modules)  │  │
 │  └────────────────────────────────────────────────────┘  │
 │                                                          │
 │  + JDK extras: javac (compiler)                          │
@@ -64,6 +64,8 @@
 
 > **Server pe sirf run karna hai → JRE.**
 > **Develop karna hai → JDK.**
+> ★ Java 11+ me Oracle alag JRE download nahi deta — JDK hi lagate ya `jlink` se chhota runtime banate.
+>   (Docker image me aksar "JRE" wali base image = wahi chhota runtime.)
 
 ---
 
