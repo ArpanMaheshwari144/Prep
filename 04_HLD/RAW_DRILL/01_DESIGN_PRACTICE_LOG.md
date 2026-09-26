@@ -85,3 +85,28 @@
    AAJ NAHI HUE: requirements + estimation (seedha growth pe gaye) · API · schema ·
                  like counter · comments · notification · search
 ```
+
+---
+
+## PAYMENT SYSTEM — BOLKE (26-Sep, Arpan ne khud chalaya)
+
+```
+   FR: A se kate, B me jude, paisa na khoye, retry pe do baar na kate · NFR: strong consistency, low latency, 100M users
+   1. beech me crash        -> DB TRANSACTION (debit + credit, dono ya koi nahi)
+   2. retry pe do baar      -> IDEMPOTENCY key + race ke liye DB UNIQUE constraint (KHUD pakda)
+   3. asli paisa bahar      -> PSP (Razorpay) + status state machine + RECONCILIATION
+   4. alag bank / service   -> SAGA (ulta kaam)
+   5. hisaab                -> LEDGER
+   6. data bada             -> shard by account_id (alag shard = phir saga)
+   7. padhai / server bojh  -> read replica · LB + kai box · CACHE balance pe NAHI (stale — KHUD pakda)
+   8. DB choice             -> SQL (har jagah consistency) · abuse -> rate limit · PSP slow -> status
+
+   SUDHAAR / JODNA:
+   - ledger ki wajah = AUDIT (kab/kahan se/kahan gaya); "DB fail ho to ledger" nahi (ledger usi txn me)
+   - PENDING pehle likho, PHIR PSP call · status wapas = webhook (push) + reconciliation (pull)
+   - duplicate key pe error nahi, PEHLE wala result wapas
+   - replica bhi peeche chalti: balance PRIMARY se, history replica se
+
+   AAJ NAHI HUE: ek hi account se do payment ek saath (balance race -> UPDATE ... WHERE balance >= x)
+                 PSP slow pe timeout + circuit breaker · notification / outbox · API · schema · monitoring
+```
