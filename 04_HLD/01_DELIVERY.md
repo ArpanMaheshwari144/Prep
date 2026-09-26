@@ -1,7 +1,7 @@
 # HLD — DELIVERY ("KAISE bolna" + SHABD)
 
 > **NAV** — KYA: interview me KAISE bolna (rail · meta-moves · na-pata-ho-to · follow-ups) + atke to SHABD.
-> KYA bolna = [MASTER](00_MASTER_SHEET.md) · A ya B = [TRADEOFFS](02_TRADEOFFS.md) · drill = [RAW_DRILL/00_DRILL](RAW_DRILL/00_DRILL.md)
+> KYA bolna = [MASTER](00_MASTER_SHEET.md) · A ya B = [02_TRADEOFFS](02_TRADEOFFS.md) · drill = [RAW_DRILL/00_DRILL](RAW_DRILL/00_DRILL.md)
 > (26-Sep: HLD_APPROACH_DELIVERY + SPEAKING_VOCAB is ek file me mile. Purani files git history me.)
 
 ---

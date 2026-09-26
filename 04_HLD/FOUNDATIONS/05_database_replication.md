@@ -459,7 +459,7 @@ stock broker            ek hi seat / ek hi symbol pe 500 log
       -> isliye bookmyshow me lock / atomic conditional UPDATE aaya tha, replica nahi
 ```
 
-> Ye wahi cheez hai jo [TRADEOFFS](../02_TRADEOFFS.md) me "replication vs sharding" ke saath padhni hai:
+> Ye wahi cheez hai jo [02_TRADEOFFS](../02_TRADEOFFS.md) me "replication vs sharding" ke saath padhni hai:
 > **replication = ek hi data ki kai copies (read + survival)** ·
 > **sharding = alag-alag data alag machine pe (data bada hai)**. Dono alag dikkat ke ilaaj hain.
 

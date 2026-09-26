@@ -10,7 +10,7 @@
 > Problem (1 line): long URL -> short 6-7 char code; short pe click -> original pe redirect (302).
 
 ```
-★★ TEEN NIYAM (poori file par lagte — [APPROACH_DELIVERY](../../01_DELIVERY.md) 5b)
+★★ TEEN NIYAM (poori file par lagte — [01_DELIVERY](../../01_DELIVERY.md) 5b)
    1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
    2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
    3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega

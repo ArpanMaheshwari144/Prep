@@ -1,6 +1,6 @@
 # HLD MASTER SHEET — koi bhi design ASSEMBLE karne ka tareeka
 
-> **NAV** — KYA: interview-din ki EK file (archetype -> assemble -> bolo). · KAISE-BOLNA + SHABD: [DELIVERY](01_DELIVERY.md) · A YA B: [TRADEOFFS](02_TRADEOFFS.md) · CONCEPT-detail: [FOUNDATIONS](FOUNDATIONS) · 15 DESIGN: [SYSTEM_DESIGNS](SYSTEM_DESIGNS) · DRILL: [RAW_DRILL/00_DRILL](RAW_DRILL/00_DRILL.md)
+> **NAV** — KYA: interview-din ki EK file (archetype -> assemble -> bolo). · KAISE-BOLNA + SHABD: [01_DELIVERY](01_DELIVERY.md) · A YA B: [02_TRADEOFFS](02_TRADEOFFS.md) · CONCEPT-detail: [FOUNDATIONS](FOUNDATIONS) · 15 DESIGN: [SYSTEM_DESIGNS](SYSTEM_DESIGNS) · DRILL: [RAW_DRILL/00_DRILL](RAW_DRILL/00_DRILL.md)
 
 > EK file. Interview se pehle sirf YE. (detail chahiye to hi SYSTEM_DESIGNS/* kholo.)
 >
@@ -62,7 +62,7 @@
 3. BOTTLENECK RATTO MAT -- bolte waqt KHUD USER BANKE dekho:
    wo kya soch raha, kahan cheez phat rahi. Bottleneck khud dikh jaayega.
 ```
-> Detail + misaal = [HLD_APPROACH_DELIVERY](01_DELIVERY.md) section 5b.
+> Detail + misaal = [01_DELIVERY](01_DELIVERY.md) section 5b.
 
 ---
 

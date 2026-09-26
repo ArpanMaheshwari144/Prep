@@ -2,7 +2,7 @@
 
 > **NAV** — KYA: design ke bina concept drill. PART 1 = rapid-fire need -> block. PART 2 = "kyun / kaise" Q&A
 > with ready ENGLISH line. Interview-din ki compact list = [MASTER](../00_MASTER_SHEET.md) section 4 ·
-> A ya B = [TRADEOFFS](../02_TRADEOFFS.md) · detail = [FOUNDATIONS](../FOUNDATIONS)
+> A ya B = [02_TRADEOFFS](../02_TRADEOFFS.md) · detail = [FOUNDATIONS](../FOUNDATIONS)
 > (26-Sep: 00_REFLEX_SHEET + 02_WHY_HOW_QA is ek file me mile. Kai topic dono part me hain —
 >  PART 1 = yaad ka tez version, PART 2 = wahi topic "kyun" ke saath + English line.
 >  Purana 8-step framework hataya — ab 7-step RAIL = MASTER section 3.)
