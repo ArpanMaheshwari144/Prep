@@ -260,6 +260,11 @@
 
         regulators (RBI / SEC) yahi maangte hain: har paisa kab-kahan-kyun traceable ho
 
+   ★ JAAL (26-Sep, bolte waqt mix hua): ledger "DB fail ho to backup" NAHI hai.
+        ledger USI SQL DB me, USI transaction me likha jaata hai -> DB write fail = ledger bhi fail.
+        "beech me gira, ab kya haal hai?" ka jawab = PENDING pehle likho + webhook + RECONCILIATION
+        (dikkat 4). Ledger ka kaam = HISAAB / AUDIT (kab, kahan se, kahan gaya), crash-recovery nahi.
+
    DATA MODEL isi se banta hai:
         LEDGER (double-entry)   : har txn = debit + credit, IMMUTABLE
         IDEMPOTENCY register    : key -> { status, result }   (TTL ~24h, delete MAT karo)
@@ -321,6 +326,7 @@
            └──► [ RECONCILIATION job ]  pending dhoondho -> PSP se poocho -> resolve
 
       [ LEDGER (append-only, immutable) ]  audit trail — regulators ke liye
+                                           (alag DB NAHI — upar wale SQL DB ki table, usi txn me)
 
      LB/Gateway      : traffic + auth + rate-limit
      Payment Service : stateless -> scale aasan
