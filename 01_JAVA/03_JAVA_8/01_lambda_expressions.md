@@ -6,7 +6,7 @@
 
 ## STORY — Comparator Boilerplate
 
-→ Ek din manager ne bola — **"100 patients ki list age se sort karo."**
+→ Ek din manager ne bola — **"100 patients ki list naam se sort karo."**
 → Purana style mein Comparator likhne baitha
 → — anonymous inner class, `@Override`, `compare` method, **10 lines sirf sorting ke liye**
 → Sochne laga — itna code sirf ek kaam ke liye? **Tab Lambda aaya**
