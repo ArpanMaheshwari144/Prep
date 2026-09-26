@@ -26,13 +26,14 @@ list.forEach(System.out::println);
 
 ---
 
-## 3 Common Types
+## 4 Types (interview me "kitne type?" = 4)
 
 | Type | Lambda | Method Reference |
 |------|--------|------------------|
 | **Static method** | `(x) -> Math.abs(x)` | `Math::abs` |
-| **Instance method** | `(s) -> s.toUpperCase()` | `String::toUpperCase` |
-| **Constructor** | `() -> new Patient()` | `Patient::new` |
+| **Kisi KHAAS object ka method** | `(x) -> System.out.println(x)` | `System.out::println` |
+| **Us TYPE ke kisi bhi object ka method** (jo aaya, usi pe) | `(s) -> s.toUpperCase()` | `String::toUpperCase` |
+| **Constructor** | `(name) -> new Patient(name)` | `Patient::new` |
 
 ---
 
