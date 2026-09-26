@@ -16,15 +16,16 @@
  noticed HikariCP connection-pool exhaustion — repeated pool-timeout errors. I then checked AWS RDS metrics
  and saw database utilization was abnormally high, around 85%.
 
- Tracing it, I found a heavy write query updating a large number of records — not part of normal traffic,
- likely run manually in production. It held a lock for a long time and blocked our flow: our system inserts
- rows into MySQL first and then sends emails via AWS SNS. With the inserts blocked, no emails went out, and
- the held connections exhausted the pool, slowing the whole tool.
+ Tracing it, I found a heavy write query updating a large number of records — not part of normal traffic;
+ it had been run by the dev team during peak hours. It held a lock on the email table for a long time and
+ blocked our flow: our system inserts rows into MySQL first and then sends emails via AWS SNS. With the
+ inserts blocked, no emails went out, and the held connections exhausted the pool, slowing the whole tool.
 
- I coordinated with the DevOps team to stop that runaway query. Once it was killed, the pool recovered, RDS
- normalized, and email delivery was restored — about an hour to an hour and a half from the report, most of
- it spent digging past logs that looked normal. And because the MySQL inserts had never gone through,
- nothing was half-sent or lost — the blocker was entirely on the database side, not on AWS."
+ I didn't have production access to kill it, so I coordinated with the DevOps team to stop it. The query
+ was running in batches, so some batches had already been committed before it was killed — I identified
+ those rows and rolled them back so the data stayed consistent. Once it was stopped, the pool recovered,
+ RDS normalized, and email delivery was restored — about an hour to an hour and a half from the report,
+ most of it spent digging past logs that looked normal."
 ```
 
 ---
@@ -39,6 +40,16 @@
 
 > Ye band-aid nahi hai — har issue ka "perfect code-fix" hota hi nahi. Kabhi asli engineering =
 > **detection + fast response.** Ye honest hai, aur wahi bolna hai.
+
+---
+
+## SPOKEN — follow-up: *"Kill karne pe MySQL khud rollback karta hai, tumne kya rollback kiya?"*
+
+```
+"Killing it only rolls back the batch that was still in progress. The query was committing in batches,
+ so the batches that had already committed stayed in the table — those were the rows I identified and
+ rolled back manually."
+```
 
 ---
 
