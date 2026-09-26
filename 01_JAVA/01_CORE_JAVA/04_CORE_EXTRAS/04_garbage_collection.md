@@ -119,7 +119,7 @@ void method() {
    STACK = references/locals | HEAP = saare objects (new se bane)
 
    2 step:
-   1. MARK  -> GC ROOTS (stack locals, static vars) se shuru -> jitne object tak pahunchа ja sake
+   1. MARK  -> GC ROOTS (stack locals, static vars) se shuru -> jitne object tak pahuncha ja sake
               sabko MARK (reachable = zinda). roots -> A -> B -> C ... sab mark.
    2. SWEEP -> jo MARK nahi hue (kisi root se pahunch nahi) = garbage -> memory FREE.
 
@@ -143,7 +143,8 @@ void method() {
    - naya object -> YOUNG. Young ke kai GC bach jaaye -> OLD mein PROMOTE.
 
    MINOR GC -> sirf YOUNG saaf. CHHOTA+FAST+frequent (90% kachra yahin).
-   MAJOR GC -> OLD/poora heap saaf. BADA+SLOW+kam-baar. "STOP-THE-WORLD" (app ek pal ruk jaati).
+               ye bhi STOP-THE-WORLD hai, par pause bahut chhota (young chhota hai).
+   MAJOR GC -> OLD/poora heap saaf. BADA+SLOW+kam-baar. STOP-THE-WORLD ka LAMBA pause yahin dikhta.
 
    KYUN smart: chote Young ko baar-baar scan (jahan zyada kachra) = fast.
                bada Old kam scan (yahan kam kachra) = mehnga kaam kam baar. -> performance behtar.
