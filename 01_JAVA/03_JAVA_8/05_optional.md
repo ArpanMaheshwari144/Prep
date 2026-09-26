@@ -73,7 +73,7 @@ User u = user.orElseThrow(() -> new RuntimeException("User nahi mila!"));
                 │ User    │  ya  EMPTY
                 └─────────┘
 
-  u.orElse("Unknown")          ← khali toh default
+  u.map(User::getName).orElse("Unknown")   ← khali toh default (orElse ko User chahiye, isliye pehle naam nikala)
   u.orElseThrow(() -> ...)     ← khali toh exception
   u.map(u -> u.getName())      ← bhara hai toh transform, khali toh skip
 
