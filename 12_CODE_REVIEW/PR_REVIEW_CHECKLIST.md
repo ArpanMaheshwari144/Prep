@@ -6,9 +6,32 @@
 ```
 1. KAISE CHALANA      5 kadam
 2. MASTER LIST        jo code me GALAT LIKHA hai — code me kaisa DIKHTA hai -> kya POOCHNA -> sahi kya
-3. AAKHRI 9 TICK      jo code me LIKHA HI NAHI hota — aankh se nahi milta, gin ke milta hai
+3. AAKHRI 10 TICK     jo code me LIKHA HI NAHI hota — aankh se nahi milta, gin ke milta hai
 4. BOLNE KA TARIKA
 ```
+
+## ★★ PEHLE YE 4 — har drill me YAHI chhoote (27-Sep tak ka data)
+
+> Ye sab neeche MASTER LIST me likhe hain. Phir bhi chhoot-te hain kyunki code me koi line
+> "galat" nahi dikhti. Isliye ye 4 **line-by-line TRIGGER** hain: code padhte waqt jo
+> cheez dikhe, uspe turant ye sawaal.
+
+```
+CODE ME YE DIKHA                         TURANT YE POOCHO                        27-Sep drill me
+-------------------------------------------------------------------------------------------------------
+1  request se aaya NUMBER                "-1000 bheju to?"                         points - (-1000)
+   (amount · points · qty)                 check nahi = paisa / points BANTE hain  = points BADHE
+2  DB se koi value NIKALI                 "ye variable NEECHE kahan use hua?"       balance nikala,
+   (balance · limit · billAmount)          use nahi = compare hua hi nahi          use hi nahi kiya
+3  @Transactional dikha                   "PUBLIC hai? BAHAR (doosri bean) se       private + andar se
+                                           call hota hai?" dono me se ek bhi na  = call = koi txn NAHI
+                                           -> transaction hai hi nahi
+4  PADHO -> GHATAO -> SAVE                "do request ek saath aaye to?"            UPDATE ... points - ?
+   ya UPDATE x = x - ? WHERE id = ?        check WHERE me nahi = double spend       WHERE user_id = ?
+                                           sahi: ... WHERE id = ? AND x >= ?       (>= ? nahi tha)
+```
+★ 5th jo aadha aata: id REQUEST BODY se aaya (userId · accountId) = client jo chahe bheje.
+  Isko "authz kisi filter me hoga" maan ke mat chhodo — filter body ka userId nahi jaanta.
 
 ---
 
@@ -29,7 +52,7 @@ KADAM 2   teen sawaal, poori file pe:
 
 KADAM 3   MASTER LIST (hissa 2) pe ek sweep — har category ek baar
 
-KADAM 4   ★ AAKHRI 9 (hissa 3) KAAGAZ PE LIKHO, har ek pe tick ya cross.
+KADAM 4   ★ AAKHRI 10 (hissa 3) KAAGAZ PE LIKHO, har ek pe tick ya cross.
           Ye kadam chhoda to jo "likha hi nahi" hai wo kabhi nahi milega.
 
 KADAM 5   jo dikha, sab LIKH do / bol do — chhota lage tab bhi. Dimaag me pakda par likha nahi = gina nahi jaata.
@@ -128,6 +151,8 @@ CODE ME DIKHE                               POOCHO / BOLO                       
 ---------------------------------------------------------------------------------------------------------
 Connection / Statement / ResultSet /        "close kahan?" — teeno me ek bhi chhoota     try-with-resources
   FileWriter khule
+  ★ JdbcTemplate / JPA repo me ye bug NAHI    connection pool se khud leta aur wapas
+    (27-Sep drill me galat flag hua tha)       deta — close likhne ki zaroorat nahi
 LOOP ke andar repo / DB call                "N+1 — 100 row = 101 query"                  join / findAllById / IN
 findByX(..) jo List lautaaye, Pageable nahi "10 lakh row ho gayi to?"                     pagination
 UPDATE ... WHERE me sirf customer_id        "customer ke DO record hue to galat row"      poori key (loan_id bhi)
@@ -160,7 +185,7 @@ constant / field declare, use kahin nahi    "dead code" (MAX_RETRIES)
 
 ---
 
-## 3. AAKHRI 9 — KAAGAZ PE LIKHO, TICK KARO
+## 3. AAKHRI 10 — KAAGAZ PE LIKHO, TICK KARO
 
 > Ye wo cheezein hain jo code me **likhi hi nahi** hoti — isliye aankh kabhi nahi pakdegi.
 > Dekhne ko kuch hai hi nahi, **ginna** padta hai. Paise ya data badalne wale HAR endpoint pe:
@@ -178,6 +203,8 @@ constant / field declare, use kahin nahi    "dead code" (MAX_RETRIES)
 [ ]   KRAM            do write ke beech bahar ka call?
 [ ]   IDEMPOTENCY     dobara chala to? (aur jo hai wo SACH me kaam karta?)
 [ ]   ERROR CODE      fail pe 4xx/5xx? ya sab 200 OK?
+[ ] ★ RACE            balance / stock / seat PADH ke GHATAYA? do ek saath aaye to?
+                       check UPDATE ke WHERE me hai (x >= ?) ya @Version / FOR UPDATE?
 ```
 
 ★ Koi cheez "hai" dikh rahi hai to bhi ek baar poochho **"ye SACH me kaam karti hai?"**
