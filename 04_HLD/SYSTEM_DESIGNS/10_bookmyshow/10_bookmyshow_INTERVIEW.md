@@ -132,14 +132,49 @@
 
    FAISLA: SEAT HOLD + TTL
 
-        seat select   ──►  status = 'held', held_until = now + 5 min   (SQL me TTL nahi hota —
-                           isliye held_until column; "khali?" = status='available' OR held_until < now,
-                           ya ek sweeper job purane hold wapas 'available' kare)
+        seat select   ──►  status = 'held', held_until = now + 5 min
                               │
               payment SUCCESS ──►  status = 'booked'
-              TTL EXPIRE      ──►  status = 'available'  (wapas sabke liye khuli)
+              TTL EXPIRE      ──►  wapas sabke liye khuli
 
         => na double booking, na hamesha ke liye block
+```
+
+### ★ dikkat 2b — "SQL me TTL hota hi nahi. 5 min baad hold hatata KAUN hai?" (27-Sep, mock me yahi atka)
+
+```
+   ★ FACT: SQL ki row APNE AAP nahi badalti. held_until = 10:05 likha hai to 10:06 pe bhi
+     wahi likha rahega, status bhi 'held' hi rahega — jab tak koi query use na badle.
+     "time nikla -> column null / available ho gaya" = GALAT, ye kisi ko KARNA padta hai.
+
+   Problem: B aaya 10:06 pe. Purana UPDATE ... WHERE status = 'available'
+            -> row me abhi bhi 'held' -> 0 row -> B ko galti se "seat taken".
+
+   RAASTA 1 — booking UPDATE hi expired hold ko KHALI maan le (koi job nahi):
+
+        UPDATE seats
+           SET status = 'held', user_id = 'B', held_until = now() + INTERVAL 5 MINUTE
+         WHERE seat_id = 'A1'
+           AND ( status = 'available'
+                 OR (status = 'held' AND held_until < now()) );   -- purana hold expire
+
+        A ka hold abhi zinda  -> 0 row -> B ko "seat taken"
+        A ka hold expire      -> 1 row -> B jeeta  (ek hi atomic step, race-safe)
+        (seat-map dikhate waqt bhi yahi check: held_until < now() = khali dikhao)
+
+   RAASTA 2 — SWEEPER job (har minute):
+
+        UPDATE seats SET status = 'available', user_id = NULL, held_until = NULL
+         WHERE status = 'held' AND held_until < now();
+
+        phir purana UPDATE (WHERE status = 'available') seedha chal jaata
+        kami: job ke beech ~1 min tak seat 'held' dikhegi
+
+   ★ Asal me DONO saath: UPDATE me check = SAHI-PAN, sweeper = SAFAI.
+
+   TU: "SQL has no TTL, so either the booking UPDATE treats an expired hold as free
+        (status = 'held' AND held_until < now()), or a sweeper job flips expired holds
+        back to available every minute. I'd put the check in the UPDATE for correctness."
 ```
 
 ### dikkat 3 — "payment page pe user ne do baar 'Pay' daba diya"
@@ -303,7 +338,9 @@
 
    ya: SELECT ... FOR UPDATE (row lock -> check -> book -> release)
 
-   + HOLD with TTL: 'held' 5 min -> pay -> 'booked' | expire -> 'available'
+   + HOLD with TTL: 'held' 5 min -> pay -> 'booked' | expire -> khali
+     (SQL me TTL nahi -> UPDATE ke WHERE me "OR (status='held' AND held_until < now())"
+      ya sweeper job — dikkat 2b)
 ```
 
 ## ► "Kahan tootega / 10x pe?"
