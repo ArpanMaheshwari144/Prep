@@ -1439,6 +1439,18 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      ans = open_needed + close_needed                                     (dono bache = utne insert karne).
      TRAP: ')' match ho gaya to open_needed me MAT gino -- match = 0 insertion (nested "(())" -> 0).
 
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ QUEUE USING STACKS (LC 232)  — Walmart R2 me aaya ("fully working code")
+ └──────────────────────────────────────────────────────────────
+     DESIGN: 2 stack -> input (push yahan) · output (pop / peek yahan se).
+     push:        input.push(x).
+     pop / peek:  output KHAALI ho tabhi input ka sab ulta karke output me daalo; phir output.top().
+     empty:       dono khaali.
+     KYUN "khaali ho tabhi": har element zindagi me sirf EK baar input -> output jaata
+        -> pop / peek amortized O(1). (har pop pe palatna = O(n), yahi interviewer poochta.)
+     TRAP: output me kuch bacha ho aur tab input palat diya -> kram toot jaata (naye purano ke upar).
+     (Arpan 27-Sep, pehli baar me 9/9)
+
  broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
 ```
 
