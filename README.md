@@ -22,7 +22,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 08 | [**08_DSA**](08_DSA) | 18 pattern · 171 problem + 89 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | STAR stories | JP ka pura **behavioral round** |
-| 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase | PR-review + daily workflow Qs |
+| 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
 | 12 | [**12_CODE_REVIEW**](12_CODE_REVIEW) | 5-bucket checklist + drills | JP **round-2 code-review** |
 
 > ★ **Roz-revise pinned:** **[DSA Pattern Sheet](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** (gate ki chaabi) · **[HLD Master Sheet](04_HLD/00_MASTER_SHEET.md)** (kya bolna) · [HLD Delivery](04_HLD/01_DELIVERY.md) (kaise bolna)
@@ -201,7 +201,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ## [11_GIT](11_GIT)
 **Kya:** git ke woh corner jo interview/PR me aate. &nbsp; **Kyu:** code-review + daily workflow Qs.
 
-[01 line-endings CRLF-vs-LF](11_GIT/01_line_endings_CRLF_vs_LF.md) · [02 stacked-PRs](11_GIT/02_stacked_PRs.md) · [03 merge-vs-rebase](11_GIT/03_merge_vs_rebase.md)
+[01 line-endings CRLF-vs-LF](11_GIT/01_line_endings_CRLF_vs_LF.md) · [02 stacked-PRs](11_GIT/02_stacked_PRs.md) · [03 merge-vs-rebase](11_GIT/03_merge_vs_rebase.md) · [04 index.lock](11_GIT/04_index_lock.md)
 
 ---
 
