@@ -23,7 +23,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | STAR stories | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
-| 12 | [**12_CODE_REVIEW**](12_CODE_REVIEW) | 5-bucket checklist + drills | JP **round-2 code-review** |
+| 12 | [**12_CODE_REVIEW**](12_CODE_REVIEW) | asli JP round ke hisaab se: correctness · security · quality · design | JP Superday **~10 min PR review** |
 
 > ★ **Roz-revise pinned:** **[DSA Pattern Sheet](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** (gate ki chaabi) · **[HLD Master Sheet](04_HLD/00_MASTER_SHEET.md)** (kya bolna) · [HLD Delivery](04_HLD/01_DELIVERY.md) (kaise bolna)
 
@@ -206,10 +206,10 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ---
 
 ## [12_CODE_REVIEW](12_CODE_REVIEW)
-**Kya:** PR-review round ka framework. &nbsp; **Kyu:** JP round-2 me "is PR me kya galat" — 5-bucket se chalna.
+**Kya:** PR-review round ka framework. &nbsp; **Kyu:** JP Superday me ~10 min ka asli PR — bug + style.
 
-[PR-review checklist](12_CODE_REVIEW/PR_REVIEW_CHECKLIST.md) — **SCAN PROTOCOL** (30-sec padho → 3 behaviour-sawaal → 5-bucket sweep → MUST-HAVE list → structured bolo)
-+ 6 bucket (security · java-traps · resource · db · design · **finance**) + 5 worked example.
+[PR review](12_CODE_REVIEW/PR_REVIEW.md) — net pe candidates ne jo bataya uske hisaab se (27-Sep): context poocho → padho →
+4 dabbe (correctness · security · code quality · design) → paise wala PR ho to bonus dabba → politely bolo.
 
 > ★ **MUST-HAVE LIST kyun** — hunt sirf *galat likhi* line pakadta hai; *gayab* line (auth · validation · error-code) kabhi nahi. Wo ginni padti hai.
 > **Drill ka naapa hua record:** 17-Sep 7/15 · 18-Sep 7/15 · 19-Sep **11/18** (authz + idempotency dono aaye — pehle chhoote the).
