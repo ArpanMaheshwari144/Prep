@@ -382,6 +382,9 @@
 | network toot gaya | **network partition** | "during a *network partition*, we must choose" |
 | response time | **latency** | "this reduces *latency* for the user" |
 | ek saath kitne handle | **throughput** | "it increases the system's *throughput*" |
+| do log ek seat, ek hi jeete | **conditional update** (check WHERE me) | "only one succeeds, because the check is *inside the WHERE*: `UPDATE seats SET status='booked' WHERE seat_id='A1' AND status='available'`" |
+
+★ AADAT (27-Sep, BookMyShow): "atomic" / "race nahi hogi" bole to SAATH me query bhi bolo — haath roz WHERE lagata hai, muh se bhi nikle. `save()` sirf id pe UPDATE karta, status check nahi -> isliye ye line zaroori.
 
 **ONE BREATH:** *"By CAP, during a network partition we choose between consistency and availability. Payments need strong consistency, but for something like a news feed, eventual consistency is acceptable to keep latency low and availability high."*
 
