@@ -12,6 +12,9 @@
 KAB / KITNA    Superday ka coding slot: ~10 MINUTE ek asli PR review, phir LC-medium live
                (techinterview.org, interviewquery)
 KAUN           senior developer lete hain (Blind)
+JP SDE-2 (3 aur experience, 27-Sep Arpan ne diye): teeno me code review ALAG round / hissa tha —
+               "working par ganda code", clean code · OOP · STATIC / VOLATILE · maintainability ·
+               "production me push kar sakte ho?"
 KYA DHOONDHNA  "bugs and style problems"
 PR ME KYA THA  (candidates ne bataya)
                  exception handling · variable ke naam · logging · println
@@ -80,6 +83,8 @@ controller / service (singleton) me    "saare thread share karte — thread-safe
 counter++ shared field pe              "++ atomic nahi — ginti kho jaayegi"        AtomicInteger
 boolean flag ek thread set, doosra     "doosre thread ko dikhega?" -> volatile     volatile / Atomic*
   padhe (bina volatile)                 (visibility, atomicity nahi deta)
+static MUTABLE field (static List /     "saari app me EK copy, sab thread share —   instance / local /
+  static int count / static Map cache)    thread-safe? test me ek doosre ko gande"   Concurrent* / bean
 static SimpleDateFormat                "thread-safe nahi"                          DateTimeFormatter
 ```
 
@@ -175,6 +180,9 @@ KRAM:   bhaari pehle (crash / security) -> phir quality -> phir design
         "Sabse pehle do bade issue: hardcoded password aur SQL injection. Phir kuch chhote:
          naam, println, lamba method..."
 
+★ AAKHIR ME FAISLA (JP me seedha poochha gaya: "ye production me ja sakta hai?"):
+  "Abhi nahi — pehle ye 2-3 bhaari (creds, injection, exception) theek ho. Baaki (naam, println,
+   magic number) isi PR me ya follow-up me."
 ★ Soch bolo, sirf nateeja nahi: "Main ye isliye keh raha hoon ki..."
 ★ Perfect nahi chahiye — soch dikhni chahiye.
 ```
