@@ -17,7 +17,8 @@ public class Q17_SecondHighestSalary {
     }
 
     static int secondHighest(List<Emp> emps) {
-        return 0;
+        Optional<Integer> ans = emps.stream().map(e -> e.salary).distinct().sorted(Comparator.reverseOrder()).skip(1).findFirst();
+        return ans.orElse(-1);
     }
 
     static void check(List<Emp> in, int exp, int t) {
