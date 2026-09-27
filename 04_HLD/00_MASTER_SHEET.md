@@ -231,7 +231,8 @@ STEP 7  BOTTLENECK / SCALE-10x (3 min)
    read baar-baar          -> CACHE (Redis, cache-aside + TTL)   RAM, disk se 100x tez
    read phir bhi DB pe     -> READ REPLICA                       reads baant do
    write/storage nahi sama -> SHARDING (+ shard key)             data tukdon me
-   spike / burst           -> QUEUE                              requests HOLD karo (LB nahi)
+   spike / burst           -> QUEUE                              requests HOLD karo (LB nahi, REPLICA bhi
+                                                                 nahi — replica read-scale hai, write-spike nahi)
    slow kaam, decouple     -> QUEUE + WORKER                     user block na ho
    traffic baantna         -> LOAD BALANCER (L7)                 content-based routing + TLS
    kai service, ek darwaza -> API GATEWAY                        auth+routing+rate-limit ek jagah
@@ -239,6 +240,7 @@ STEP 7  BOTTLENECK / SCALE-10x (3 min)
                                                                  warna server bandwidth marta
    machine mare            -> REPLICATION (leader/follower)      copy se kaam chale
    paisa / seat            -> SQL + LOCK/unique + CP             galat data NEVER
+   consistency vs availab. -> CAP choice                         paisa/booking = CP, social feed = AP
    retry pe double-effect  -> IDEMPOTENCY KEY                    ek hi baar asar
    2 user ek resource      -> ATOMIC check+mark (ya lock)        race khatam
    abuse / flood           -> RATE LIMITER (token bucket, 429)   Redis counter
@@ -256,6 +258,8 @@ STEP 7  BOTTLENECK / SCALE-10x (3 min)
    unique id at scale      -> SNOWFLAKE / range-allocation       DB sequence bottleneck
    message kitni baar      -> at-least-once + IDEMPOTENT         exactly-once ka effect
 ```
+
+NIYAM: pehle NEED dekho, phir block. Har block ka apna kaam — galat jagah mat lagao.
 
 TRADE-OFF bolna ho -> `04_HLD/02_TRADEOFFS.md` (15 jode + ready English lines).
 
