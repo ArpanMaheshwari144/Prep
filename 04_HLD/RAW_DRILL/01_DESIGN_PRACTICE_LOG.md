@@ -110,3 +110,30 @@
    AAJ NAHI HUE: ek hi account se do payment ek saath (balance race -> UPDATE ... WHERE balance >= x)
                  PSP slow pe timeout + circuit breaker · notification / outbox · API · schema · monitoring
 ```
+
+---
+
+## BOOKMYSHOW — BOLKE (27-Sep, Arpan ne khud chalaya)
+
+```
+   SHURU: scope poocha ("kahan focus karun?") · FR: city -> movies/shows -> seat map -> book + pay
+          NFR: HA, low latency, EK SEAT DO LOGON KO NAHI
+   1. load do hisse          -> browse (bahut, baar-baar) = CACHE + REPLICA · booking kam (KHUD baanta)
+   2. simple se shuru        -> User -> App -> DB
+   3. do log ek seat         -> SQL (consistency) + atomic UPDATE
+   4. pay me 3-5 min         -> HOLD + TTL (held_until column)
+   5. double Pay             -> idempotency key
+   6. bada release / spike   -> QUEUE + WORKER, worker ek-ek karke atomic UPDATE
+   7. async pe user ko kya   -> DARWAZE pe GINTI (admission counter) — KHUD NIKAALA, file me nahi tha
+
+   SUDHAAR:
+   - "DB ek hi update karega" ka MATLAB sahi, par ye WHERE status='available' se hota hai,
+     DB apne aap nahi (bina WHERE dono update chalte, dono ko ticket)
+   - status 'held' bolo, 'booked' sirf payment ke baad
+   - SQL me TTL nahi, row apne aap nahi badalti -> UPDATE me "OR held_until < now()" ya sweeper
+     (FILE me adhoora tha — ab dikkat 2b me poora likha)
+   - ginti "total seat" batati, "teri seat" nahi -> "booked" sirf atomic UPDATE jeetne pe;
+     tab tak "in progress" (dikkat 5b)
+
+   Arpan ka nichod (27-Sep): HLD bhi DSA jaisa GATE hai — 45 min job ka andaza nahi deta.
+```

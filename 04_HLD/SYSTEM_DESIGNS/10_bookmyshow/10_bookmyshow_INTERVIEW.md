@@ -236,6 +236,39 @@
      "aapka number 12,340 hai") -> load smooth ho jaata hai
 ```
 
+### ★ dikkat 5b — "queue lagi to booking ASYNC ho gayi. User ko kya dikhe? + DARWAZE pe ginti" (27-Sep, Arpan ka apna idea)
+
+```
+   ARPAN KA IDEA — ADMISSION CONTROL / INVENTORY COUNTER (flash-sale wala asli pattern):
+        seat 3000, user 5000 aaye
+        -> darwaze pe ginti: pehle 3000 andar, baaki 2000 ko TURANT "housefull" / waiting room
+        -> 2000 log bekaar queue me nahi fanste, DB pe bojh ek jhatke me gir jaata
+
+   ★ BookMyShow pe TOOTTA KAHAN: user KHAAS seat chunta (A1), "koi bhi seat" nahi
+        pehle 3000 me X aur Y dono ne A1 chuni
+        dono ko turant "booked" dikha diya -> worker: X jeeta, Y ka UPDATE 0 row
+        -> Y ko "booked" bol ke "sorry, cancel" = sabse bura UX
+        GINTI batati "TOTAL seat bachi?"  — ye nahi batati "TERI wali seat bachi?"
+        => "booked" TABHI bolo jab us seat ka atomic UPDATE jeete
+
+   SAHI JODA (idea + atomic dono):
+        1 GATE      counter: seat jitne hi log andar, baaki "full" / waiting room
+                    (counter bhi ATOMIC — Redis DECR — warna counter pe hi race)
+        2 TURANT    user ko "Booking in progress..."
+        3 WORKER    us seat ka atomic UPDATE (dikkat 1) -> jeeta / haara
+        4 BATAO     jeeta: "confirmed" + email / SMS      haara: "ye seat gayi, doosri chuno"
+                    (app POLL kare, ya WEBSOCKET se push)
+
+   ★ Jahan seat-number NAHI (concert standing, sale ka stock) -> Arpan ka idea JAISA HAI waisa poora sahi.
+   ★ "BookMyShow bhi aise karta" — unka andar ka system public nahi, ye mat bolo.
+     bolo: "a common pattern in flash sales".
+
+   TU: "I'd put a counter at the door so only as many users as there are seats get in,
+        and the rest see 'sold out' right away. But since users pick specific seats, I only
+        confirm a booking after that seat's atomic UPDATE wins - until then the user sees
+        'in progress', and gets the result by polling or a push."
+```
+
 ### dikkat 6 — "Redis restart hua — aur 99% browse traffic seedha primary DB pe gir gaya, jahan booking ke atomic UPDATE chal rahe the"
 
 ```
