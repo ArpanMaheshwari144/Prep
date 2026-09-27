@@ -75,7 +75,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 - **[07_K8S](02_SPRING/07_K8S)** — orchestration basics — [why/arch](02_SPRING/07_K8S/01_why_k8s_and_architecture.md) · [pod](02_SPRING/07_K8S/02_pod.md) · [deployment](02_SPRING/07_K8S/03_deployment.md) · [service](02_SPRING/07_K8S/04_service.md) · [ingress](02_SPRING/07_K8S/05_ingress.md) · [configmap/secret](02_SPRING/07_K8S/06_configmap_secret.md)
 
-- **[08_REVISION_VISUAL](02_SPRING/08_REVISION_VISUAL)** — basics · rest-flow · transactional · jwt · profiles — ek-nazar revise.
+- **[08_VISUAL](02_SPRING/08_VISUAL)** — basics · rest-flow · transactional · jwt · profiles — ek-nazar revise.
 
 - **[09_QUERYDSL](02_SPRING/09_QUERYDSL/01_querydsl.md)** — type-safe dynamic queries (Q-classes).
 - **[10_SPRING_DATA_JPA](02_SPRING/10_SPRING_DATA_JPA/01_custom_queries_dto.md)** — custom @Query · DTO projection.

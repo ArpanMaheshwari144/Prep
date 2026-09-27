@@ -17,7 +17,7 @@
 ## ★ BACHA HUA — PENDING (order me)
 
 ```
-1. Spring MVC request lifecycle   [confirm 08_REVISION_VISUAL/02 ya naya]
+1. Spring MVC request lifecycle   [confirm 08_VISUAL/02 ya naya]
    -> DispatcherServlet -> HandlerMapping -> HandlerAdapter -> HttpMessageConverters -> ViewResolver
    -> @ControllerAdvice/@ExceptionHandler global error, @Valid/Bean-Validation
 
