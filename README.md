@@ -187,7 +187,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ## [09_DATABASE](09_DATABASE)
 **Kya:** DB internals hands-on (index/txn/lock). &nbsp; **Kyu:** backend + HLD ka data-layer — "query slow kyun / deadlock kaise" real Qs.
 
-[01 indexing](09_DATABASE/01_indexing_practical.md) · [02 transaction-internals](09_DATABASE/02_transaction_internals.md) · [03 zero-downtime-add-column](09_DATABASE/03_zero_downtime_add_column.md) · [04 joins](09_DATABASE/04_joins.md) · [05 normalization](09_DATABASE/05_normalization.md) · [06 ACID](09_DATABASE/06_acid.md) · [07 isolation-levels](09_DATABASE/07_isolation_levels.md) · [08 deadlock](09_DATABASE/08_deadlock.md)
+[01 indexing](09_DATABASE/01_indexing_practical.md) · [02 transaction-internals](09_DATABASE/02_transaction_internals.md) · [03 zero-downtime-add-column](09_DATABASE/03_zero_downtime_add_column.md) · [04 joins](09_DATABASE/04_joins.md) · [05 normalization](09_DATABASE/05_normalization.md) · [06 ACID](09_DATABASE/06_acid.md) · [07 isolation-levels](09_DATABASE/07_isolation_levels.md) · [08 deadlock](09_DATABASE/08_deadlock.md) · [09 window-functions](09_DATABASE/09_window_functions.md)
 
 ---
 
