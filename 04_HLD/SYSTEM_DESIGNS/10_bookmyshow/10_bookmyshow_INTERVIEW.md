@@ -138,11 +138,9 @@
               TTL EXPIRE      ──►  wapas sabke liye khuli
 
         => na double booking, na hamesha ke liye block
-```
 
-### ★ dikkat 2b — "SQL me TTL hota hi nahi. 5 min baad hold hatata KAUN hai?" (27-Sep, mock me yahi atka)
+   ─── ★★ PAR SQL me TTL hota hi nahi — 5 min baad hold hatata KAUN hai? (27-Sep, mock me yahi atka) ───
 
-```
    ★ FACT: SQL ki row APNE AAP nahi badalti. held_until = 10:05 likha hai to 10:06 pe bhi
      wahi likha rahega, status bhi 'held' hi rahega — jab tak koi query use na badle.
      "time nikla -> column null / available ho gaya" = GALAT, ye kisi ko KARNA padta hai.
@@ -234,11 +232,9 @@
 
    ★ aage: VIRTUAL WAITING ROOM (bade release pe user ko line me lagana —
      "aapka number 12,340 hai") -> load smooth ho jaata hai
-```
 
-### ★ dikkat 5b — "queue lagi to booking ASYNC ho gayi. User ko kya dikhe? + DARWAZE pe ginti" (27-Sep, Arpan ka apna idea)
+   ─── ★★ queue lagi to booking ASYNC ho gayi — user ko kya dikhe? + DARWAZE pe ginti (27-Sep, Arpan ka apna idea) ───
 
-```
    ARPAN KA IDEA — ADMISSION CONTROL / INVENTORY COUNTER (flash-sale wala asli pattern):
         seat 3000, user 5000 aaye
         -> darwaze pe ginti: pehle 3000 andar, baaki 2000 ko TURANT "housefull" / waiting room
@@ -373,7 +369,7 @@
 
    + HOLD with TTL: 'held' 5 min -> pay -> 'booked' | expire -> khali
      (SQL me TTL nahi -> UPDATE ke WHERE me "OR (status='held' AND held_until < now())"
-      ya sweeper job — dikkat 2b)
+      ya sweeper job — dikkat 2)
 ```
 
 ## ► "Kahan tootega / 10x pe?"

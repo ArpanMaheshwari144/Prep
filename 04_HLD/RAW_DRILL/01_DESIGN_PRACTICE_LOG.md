@@ -131,9 +131,9 @@
      DB apne aap nahi (bina WHERE dono update chalte, dono ko ticket)
    - status 'held' bolo, 'booked' sirf payment ke baad
    - SQL me TTL nahi, row apne aap nahi badalti -> UPDATE me "OR held_until < now()" ya sweeper
-     (FILE me adhoora tha — ab dikkat 2b me poora likha)
+     (FILE me adhoora tha — ab dikkat 2 me poora likha)
    - ginti "total seat" batati, "teri seat" nahi -> "booked" sirf atomic UPDATE jeetne pe;
-     tab tak "in progress" (dikkat 5b)
+     tab tak "in progress" (dikkat 5)
 
    Arpan ka nichod (27-Sep): HLD bhi DSA jaisa GATE hai — 45 min job ka andaza nahi deta.
 ```
