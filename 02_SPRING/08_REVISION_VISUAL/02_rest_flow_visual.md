@@ -75,15 +75,17 @@ ANALOGY: Tu Domino's app pe pizza order karta
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired UserService service;
+    private final UserService service;                 // constructor injection (field @Autowired nahi)
+    public UserController(UserService service) { this.service = service; }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) {
+    public UserResponse getUser(@PathVariable Long id) {   // DTO lautao, entity nahi (section 6)
         return service.findById(id);
     }
 
     @PostMapping
-    public User create(@RequestBody @Valid UserRequest req) {
+    @ResponseStatus(HttpStatus.CREATED)                    // bina iske POST bhi 200 deta
+    public UserResponse create(@RequestBody @Valid UserRequest req) {
         return service.create(req);
     }
 }
@@ -94,17 +96,21 @@ public class UserController {
 @Service
 public class UserService {
 
-    @Autowired UserRepository repo;
+    private final UserRepository repo;
+    public UserService(UserRepository repo) { this.repo = repo; }
 
-    public User findById(Long id) {
-        return repo.findById(id)
-                   .orElseThrow(() -> new UserNotFound(id));
+    @Transactional(readOnly = true)
+    public UserResponse findById(Long id) {
+        User user = repo.findById(id)
+                        .orElseThrow(() -> new UserNotFound(id));
+        return UserResponse.from(user);                    // entity -> DTO (password bahar nahi jaata)
     }
 
-    public User create(UserRequest req) {
+    @Transactional
+    public UserResponse create(UserRequest req) {
         // Business logic yahan
         User user = new User(req.name(), req.email());
-        return repo.save(user);
+        return UserResponse.from(repo.save(user));
     }
 }
 ```
@@ -305,12 +311,22 @@ FLOW:
         │
         ▼
    ┌─────────────────────────┐
-   │ Spring DispatcherServlet│  ← entry point
+   │ Tomcat (embedded)       │  ← HTTP request aayi
    └────────────┬────────────┘
-                │
                 ▼
    ┌─────────────────────────┐
-   │ Validation (@Valid)     │
+   │ Filter chain            │  ← Security (JwtFilter) yahin — Spring MVC se PEHLE
+   │ token galat? → 401      │
+   └────────────┬────────────┘
+                ▼
+   ┌─────────────────────────┐
+   │ DispatcherServlet       │  ← Spring MVC ka front controller
+   │ HandlerMapping          │     URL + method se kaunsa controller method? dhoondha
+   └────────────┬────────────┘
+                ▼
+   ┌─────────────────────────┐
+   │ Argument resolve        │  ← JSON body -> UserRequest (Jackson)
+   │ + Validation (@Valid)   │
    │ Invalid? → 400 Bad Req  │
    └────────────┬────────────┘
                 │ valid
@@ -337,13 +353,17 @@ FLOW:
                 │
                 ▼
    ┌─────────────────────────┐
-   │ Entity → DTO mapping    │
+   │ Entity → DTO mapping    │  ← service me (UserResponse.from)
    └────────────┬────────────┘
                 │
                 ▼
    ┌─────────────────────────┐
-   │ JSON response (201)     │
+   │ Jackson: DTO → JSON     │  ← HttpMessageConverter
+   │ 201 (@ResponseStatus    │     bina iske 200
+   │      CREATED ki wajah)  │
    └─────────────────────────┘
+
+   Kahin bhi exception -> @RestControllerAdvice -> saaf error JSON (404 / 400 ...)
 ```
 
 ---

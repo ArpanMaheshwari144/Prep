@@ -38,7 +38,8 @@ starter-graphql                    ->  GraphQL endpoint + schema wiring
 starter-cache                      ->  @Cacheable chalne laga
 starter-kafka                      ->  KafkaTemplate + listener-container
 starter-actuator + prometheus      ->  /actuator/health, /actuator/prometheus endpoints khud
-starter-security                   ->  filter-chain + BCrypt + login setup
+starter-security                   ->  filter-chain + default login (generated password wala user)
+                                       (BCrypt Spring ne NAHI diya — tere SecurityConfig ka apna @Bean hai)
 ```
 **PUNCH:** tune kisi ka manual setup-code NAHI likha — na Tomcat start, na DB-connection, na Kafka wiring. Bas starter pom me daala, Spring ne almari dekh ke sab khud kiya. **Yahi auto-configuration.**
 
@@ -63,10 +64,13 @@ Tune value/bean diya  -> Spring TERA use karta, apna peeche hata leta
       naya (Boot 2.7+/3): META-INF/spring/...AutoConfiguration.imports
    -> usme "auto-config classes" (jaise DataSourceAutoConfiguration)
 3. Har class @Conditional se GUARDED:
-      @ConditionalOnClass(DataSource.class) -> sirf jab wo class classpath pe (dependency daali)
+      @ConditionalOnClass(...)              -> sirf jab wo class classpath pe (dependency daali)
       @ConditionalOnMissingBean             -> sirf jab TU ne apna bean na banaya ho
       @ConditionalOnProperty("...")         -> sirf jab wo property set ho
-4. starter-data-jpa daali -> DataSource class classpath pe -> @ConditionalOnClass match
+4. starter-data-jpa daali -> spring-jdbc ki class (EmbeddedDatabaseType) classpath pe aayi -> @ConditionalOnClass match
+   (javax.sql.DataSource to JDK me HAMESHA hai — asli trigger spring-jdbc ki class hai;
+    Boot 2/3 me DataSourceAutoConfiguration = @ConditionalOnClass({DataSource.class, EmbeddedDatabaseType.class}).
+    Boot 4 (tera usercrud 4.0.6) me ye class alag module me gayi — exact source check nahi kiya.)
    -> DataSourceAutoConfiguration fire -> DataSource bean bana
    -> par tune apna banaya to @ConditionalOnMissingBean -> Spring peeche hat gaya
 ```
