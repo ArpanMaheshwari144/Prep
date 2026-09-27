@@ -111,7 +111,7 @@ Container mein bean **kitne instances**?
 class TempService { }
 ```
 
-**95% beans singleton** — UserService, Repository, etc. share karte.
+**Zyada tar beans singleton hi hote** — UserService, Repository, etc. share karte.
 
 ---
 
@@ -175,12 +175,12 @@ session (web) -> 1 per user session. logout/timeout = destroy.
 1. INSTANTIATE        -> HR ne hire kiya. bas body, khaali desk. (Spring ne `new` — object bana, khaali)
 2. POPULATE / INJECT  -> laptop+tools+team di. (@Autowired deps bhar di — ab sab hai)
 3. AWARE callbacks    -> "tu IS company ka, ye tera id". (BeanNameAware/ApplicationContextAware — container ka pata)
-4. BeanPostProcessor  -> setup-desk pre-check. YAHI PROXY wrap hota.
-   (BEFORE init)         (@Transactional/@Async ka jaadu yahin — bean ko cover me lapetna)
+4. BeanPostProcessor  -> setup-desk pre-check. (init se PEHLE ka hook — yahan proxy NAHI banta)
+   (BEFORE init)
 5. INIT               -> "pehla din setup". (@PostConstruct / afterPropertiesSet chalta —
    (@PostConstruct)      NOTE: ab tak deps aa CHUKI, isliye yahan safely use kar sakta)
-6. BeanPostProcessor  -> final wrap/proxy laga.
-   (AFTER init)
+6. BeanPostProcessor  -> YAHI PROXY wrap hota (@Transactional/@Async ka jaadu — bean ko cover me lapetna).
+   (AFTER init)          Container me asli bean ki jagah ye PROXY rakha jaata hai.
 7. READY (in use)     -> kaam kar raha, requests serve. (bean live)
 8. DESTROY            -> exit: laptop wapas, cleanup. (@PreDestroy — app shutdown pe, DB conn band waghera)
 ```
@@ -190,9 +190,57 @@ session (web) -> 1 per user session. logout/timeout = destroy.
 1. ORDER: banao -> deps bharo -> init -> ready -> destroy. dependency HAMESHA init se pehle.
 2. @PostConstruct init pe chalta = deps aa chuki -> usme unhe SAFELY use kar sakta
    (constructor me kabhi-kabhi nahi aayi hoti).
-3. BeanPostProcessor = wo jagah jahan AOP PROXY banta (bean ko cover me lapetna)
+3. BeanPostProcessor ka AFTER-init step = wo jagah jahan AOP PROXY banta (bean ko cover me lapetna)
    -> isiliye @Transactional/@Async kaam karte. [[proxy-jdk-vs-cglib]]
 ```
+
+---
+
+## ★★ BPP = BeanPostProcessor — ye hai kya? (27-Sep)
+
+> Spring ka interface. Iske 2 method HAR bean ke banne ke beech chalte — init se ek PEHLE, ek BAAD. Bean ko dekh sakte, badal sakte, ya uski jagah koi aur object (jaise PROXY) lauta sakte.
+
+**Misaal: factory ki conveyor belt pe QC checkpoint**
+```
+ 1 object bana   2 deps bhari   3 Aware
+ ----------------------------------------------------------------
+   [BPP before-init]  ->  4 INIT (@PostConstruct)  ->  [BPP after-init]  ->  container
+     checkpoint 1                                      checkpoint 2
+     dekho / badlo                                     YAHAN proxy lapet do
+ ----------------------------------------------------------------
+Har bean isi belt se guzarta -> ek BPP likho to SAARE beans pe chalta.
+```
+
+**Interface — sirf 2 method**
+```java
+public interface BeanPostProcessor {
+    Object postProcessBeforeInitialization(Object bean, String beanName);  // init se PEHLE
+    Object postProcessAfterInitialization(Object bean, String beanName);   // init ke BAAD
+}
+```
+```
+Jo RETURN karo, container me WAHI rakha jaata:
+  return bean;         -> asli bean
+  return proxy(bean);  -> container me proxy, sabko proxy milega
+```
+
+**Tera khud ka BPP** — `LoggingBeanPostProcessor` (usercrud `demo/SpringInternalsDemo.java`, 11-Sep): dono method me sirf naam print + `return bean`.
+```
+DummyBean (prototype) 2 baar maanga -> 2 baar bana -> before + after = 4 print
+singleton pe getBean -> koi print nahi (startup pe hi belt se guzar chuka, ab cached)
+```
+
+**Spring ke apne BPP (asli kaam yahi karte)**
+```
+AbstractAutoProxyCreator               after-init me @Transactional / @Cacheable wale bean ko PROXY me lapetta
+                                       (tera $$SpringCGLIB$$ yahin se)
+AsyncAnnotationBeanPostProcessor       @Async ke liye proxy
+AutowiredAnnotationBeanPostProcessor   @Autowired dependencies bharta
+CommonAnnotationBeanPostProcessor      @PostConstruct / @PreDestroy chalata
+=> @Transactional, @Async, @Autowired, @PostConstruct — sab andar se BPP ke zariye.
+```
+
+> *"A BeanPostProcessor is a hook Spring calls for every bean, once before and once after initialization. Whatever it returns goes into the container — that's how Spring swaps a bean for its AOP proxy in postProcessAfterInitialization, which is why @Transactional and @Async work."*
 
 ---
 
@@ -215,7 +263,8 @@ session (web) -> 1 per user session. logout/timeout = destroy.
 4. BookRepository INTERFACE hai -> Spring ne KHUD implementation bean bana diya (JpaRepository magic)
 ```
 - **Bean types** = har type ka live example project me
-- **@Repository extra-value** = BookRepository/RefreshTokenRepository (DB exception translation)
+- **@Repository extra-value** = BookRepository/RefreshTokenRepository (DB exception translation).
+  NOTE: JpaRepository extend karne wale interface pe `@Repository` optional hai — Spring Data khud bean banata aur translation lagata. Tere project me laga hai, nuksan nahi.
 - **Singleton** = UserService ek hi copy, saare controllers share
 - **Stateless rule** = services me koi request-data field nahi -> singleton safe
 

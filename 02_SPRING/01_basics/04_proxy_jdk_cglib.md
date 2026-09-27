@@ -14,7 +14,8 @@ Tu -> [SECRETARY / proxy] -> [ASLI bean ka method] -> wapas SECRETARY -> Tu
 @Transactional pe secretary:
    1. DB transaction OPEN (BEGIN)
    2. asli method chalao
-   3. exception nahi -> COMMIT   |   aaya -> ROLLBACK
+   3. exception nahi -> COMMIT   |   RuntimeException / Error aaya -> ROLLBACK
+      (default: CHECKED exception pe rollback NAHI, commit hota — chahiye to rollbackFor = Exception.class)
 ```
 
 **Isiliye @Transactional kaam karta** — tu asli object nahi, PROXY ko call karta. `new` se banaye object me koi secretary nahi -> `new` pe @Transactional bekaar.
@@ -108,7 +109,7 @@ class OrderService {
 }
 ```
 `a()` andar se `b()` seedha call kar raha -> secretary bypass -> `b()` ka transaction lagega hi nahi.
-**Fix:** doosre bean se call, ya self-inject/`AopContext.currentProxy()`, ya method alag bean me nikaalo.
+**Fix:** method alag bean me nikaalo (best), ya self-inject (apna hi proxy inject karke usse call), ya `AopContext.currentProxy()` (isme `@EnableAspectJAutoProxy(exposeProxy = true)` chahiye).
 
 ---
 
@@ -205,12 +206,12 @@ RAAZ 2  SINGLETON  ->  getBean(Dependency.class) 2 baar, obj1==obj2 ?
    print: true
    matlab: container me EK hi copy, har getBean pe wahi. (ye container-level -> proxy se independent)
 
-RAAZ 3  PROTOTYPE  ->  getBean(DummyBeam.class) 2 baar, p1==p2 ?
+RAAZ 3  PROTOTYPE  ->  getBean(DummyBean.class) 2 baar, p1==p2 ?
    print: false
    matlab: @Scope("prototype") -> har getBean pe NAYA object.
 
 RAAZ 4  BeanPostProcessor  ->  LoggingBeanPostProcessor har bean ke init pe naam print karti
-   print: "DummyBeam" 4 baar
+   print: "DummyBean" 4 baar
    matlab: prototype 2 baar maanga -> 2 baar naya bana -> har banne pe BPP before+after = 4.
 ```
 
@@ -255,7 +256,7 @@ OFF: koi secretary nahi -> dependency() = plain Java call -> body chali -> new D
 Dependency/SomeService pe getBean kiya -> koi BPP print NAHI aaya.
    Kyunki SINGLETON startup pe ek baar bane -> BPP tabhi bol chuki ->
    ab getBean sirf CACHED laata -> naya nahi banta -> BPP CHUP.
-DummyBeam PROTOTYPE -> ab-ab naya bana -> BPP ab boli -> 4 print.
+DummyBean PROTOTYPE -> ab-ab naya bana -> BPP ab boli -> 4 print.
 
 => output ne KHUD singleton-vs-prototype ka farak prove kar diya:
    singleton getBean = chup (cached) · prototype getBean = shor (naya banta).
@@ -266,7 +267,7 @@ DummyBeam PROTOTYPE -> ab-ab naya bana -> BPP ab boli -> 4 print.
 ```
 UserService        -> @Service -> proxy chadha (RAAZ 1 ka $$SpringCGLIB$$)
 DemoConfig         -> @Configuration -> inter-bean singleton (RAAZ 2)
-DummyBeam          -> @Scope("prototype") (RAAZ 3)
+DummyBean          -> @Scope("prototype") (RAAZ 3)
 LoggingBeanPostProcessor -> BeanPostProcessor hook (RAAZ 4)
 LifecycleBean      -> constructor -> @Autowired setter -> @PostConstruct -> afterPropertiesSet
                       (startup-log me 1->2->3->4 order dikhta = bean lifecycle LIVE)

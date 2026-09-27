@@ -12,9 +12,9 @@
     <property name="userRepo" ref="userRepo"/>
 </bean>
 ```
-**100 beans = 1000 lines XML hell.**
+**Har bean ke liye XML ki lines — bade app me hazaaron lines ka XML.**
 
-**Spring 2.5+:** Annotations — same kaam, 1/10 code, Java mein hi sab.
+**Spring 2.5+:** Annotations — same kaam, bahut kam code, Java mein hi sab.
 
 ---
 
@@ -43,10 +43,10 @@
 | `@Component` | Generic / utility | None — basic bean |
 | `@Service` | Business logic | None — just semantic |
 | `@Repository` | DB / data access | **Auto translates DB exceptions** to Spring's `DataAccessException` |
-| `@Controller` | Web MVC (returns view names) | None |
+| `@Controller` | Web MVC (returns view names) | Spring MVC isko request handler maanta (`@RequestMapping` methods dhoondhta) |
 | `@RestController` | REST API (returns JSON) | `@Controller + @ResponseBody` |
 
-**Real value-add only `@Repository`** — exception translation. Baki sirf semantic.
+**`@Service` aur `@Component` = sirf label.** `@Repository` = exception translation. `@Controller` / `@RestController` = MVC handler (+ `@ResponseBody`).
 
 ---
 
@@ -123,10 +123,10 @@ class UserService {
 
 | Feature | Field | Setter | Constructor |
 |---------|-------|--------|-------------|
-| `final` field | | | |
+| `final` field | Nahi | Nahi | Haan |
 | Test without Spring | Mushkil | OK | Easy |
-| Required deps enforced | | | |
-| Industry standard | | | YES |
+| Required deps enforced | Nahi | Nahi | Haan |
+| Industry standard | Nahi | Nahi | Haan |
 
 ---
 
@@ -225,7 +225,7 @@ private UserRepository userRepo;
 
 ## POWER PHRASES
 
-> *"`@Component` is the generic Spring-managed bean. `@Service`, `@Repository`, `@Controller` are semantic specializations — only `@Repository` adds real behavior (exception translation to Spring's DataAccessException)."*
+> *"`@Component` is the generic Spring-managed bean. `@Service`, `@Repository`, `@Controller` are specializations — `@Service` is purely semantic, `@Repository` adds exception translation to Spring's DataAccessException, and `@Controller` marks the class as a Spring MVC request handler."*
 
 > *"Constructor injection is recommended in Spring — final fields, easy testing, required dependencies enforced. Field injection via `@Autowired` is discouraged for immutability/testability/null-safety reasons — it hides dependencies and can mask circular-dependency design smells."*
 
@@ -241,3 +241,4 @@ private UserRepository userRepo;
 | "Field injection easy" | Yes but discouraged — final, testing, required-check fail |
 | "Multiple beans = error" | Solve via `@Primary` ya `@Qualifier` |
 | "@Repository = just label" | NO — adds exception translation, real value |
+| "@Controller = just label" | NO — MVC isi se class ko request handler maanta |

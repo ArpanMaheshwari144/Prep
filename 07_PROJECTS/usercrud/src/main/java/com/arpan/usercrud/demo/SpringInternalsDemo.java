@@ -40,8 +40,8 @@ public class SpringInternalsDemo {
         System.out.println(directDep == insideDep);
 
 
-        DummyBeam p1 = applicationContext.getBean(DummyBeam.class);
-        DummyBeam p2 = applicationContext.getBean(DummyBeam.class);
+        DummyBean p1 = applicationContext.getBean(DummyBean.class);
+        DummyBean p2 = applicationContext.getBean(DummyBean.class);
         System.out.println(p1 == p2);
 
 
@@ -131,6 +131,6 @@ class LoggingBeanPostProcessor implements BeanPostProcessor {
 
 @Component
 @Scope("prototype")
-class DummyBeam{
+class DummyBean{
 
 }

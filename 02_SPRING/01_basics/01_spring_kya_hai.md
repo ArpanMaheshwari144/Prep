@@ -124,7 +124,7 @@ Repository OUTSIDE se inject ki gayi.
 | **Server** | Tomcat alag install | Embedded — `java -jar app.jar` |
 | **Config** | Verbose | Convention over configuration |
 
-**Boot = Spring ka "ready-to-run" wrapper.** Modern apps Boot use karte (95%).
+**Boot = Spring ka "ready-to-run" wrapper.** Aaj ke zyada tar naye apps Boot pe hi bante.
 
 ---
 
@@ -210,7 +210,7 @@ public class UserController {
 
 > **Common confusion:** "DI = Dependency Injection = Spring's feature."
 > **Reality:** DI is a **PATTERN** — exists outside Spring. (Manually bhi DI ho sakta — like Java project mein `new AccountService(repo, publisher)` kiya).
-> **Spring just AUTOMATES it** via `@Autowired`.
+> **Spring just AUTOMATES it** — container khud bean dhoondh ke inject karta. Ek hi constructor ho to `@Autowired` likhna bhi zaroori nahi (Spring 4.3+).
 
 ---
 
