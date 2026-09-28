@@ -209,7 +209,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 **Kya:** PR-review round ka framework. &nbsp; **Kyu:** JP Superday me ~10 min ka asli PR — bug + style.
 
 [PR review](12_CODE_REVIEW/PR_REVIEW.md) — sabse upar SHIKAAR LIST: code pe 3 nazar (bhaari 11 cheez · style · production faisla),
-neeche reference dabbe. Drills (code + answer key) bhi isi file me.
+neeche reference dabbe.
 
 > ★ **MUST-HAVE LIST kyun** — hunt sirf *galat likhi* line pakadta hai; *gayab* line (auth · validation · error-code) kabhi nahi. Wo ginni padti hai.
 > **Drill ka naapa hua record:** 17-Sep 7/15 · 18-Sep 7/15 · 19-Sep **11/18** (authz + idempotency dono aaye — pehle chhoote the).
