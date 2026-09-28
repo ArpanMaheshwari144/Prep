@@ -23,7 +23,7 @@ Client → **Controller** (`@GetMapping`, params) → **Service** (logic) → **
 |--|--|--|
 | Likha kis pe | **Entity + field** naam (`User`, `u.age`) | **Asli table + column** (`users`, `age`) |
 | Flag | (default) | `nativeQuery = true` |
-| DTO kaise | `SELECT new pkg.DTO(...)` constructor-expr | **interface projection** (`new DTO()` NAHI chalta) |
+| DTO kaise | `SELECT new pkg.DTO(...)` constructor-expr (interface projection bhi chalta, alias se) | **interface projection** (`new DTO()` NAHI chalta) |
 
 Named param dono me: `:age` + `@Param("age")`.
 
@@ -132,7 +132,7 @@ public interface CustomerOrderSummary {
     String        getName();
     String        getEmail();
     Long          getTotalOrders();
-    Double        getTotalSpent();
+    BigDecimal    getTotalSpent();     // paisa -> BigDecimal, Double nahi
     LocalDateTime getLastOrderDate();
 }
 
@@ -144,10 +144,10 @@ public interface CustomerOrderSummary {
     "       COALESCE(SUM(oi.quantity * p.price),0) AS totalSpent, " +
     "       MAX(o.created_at)                     AS lastOrderDate " +
     "FROM users u " +
-    "LEFT JOIN orders      o  ON o.user_id   = u.id " +
+    "LEFT JOIN orders      o  ON o.user_id   = u.id AND o.created_at >= :fromDate " +
     "LEFT JOIN order_items oi ON oi.order_id = o.id " +
     "LEFT JOIN products    p  ON p.id        = oi.product_id " +
-    "WHERE u.city = :city AND o.created_at >= :fromDate " +
+    "WHERE u.city = :city " +
     "GROUP BY u.id, u.name, u.email " +
     "HAVING COUNT(DISTINCT o.id) > :minOrders " +
     "ORDER BY totalSpent DESC",
@@ -162,6 +162,9 @@ List<CustomerOrderSummary> getCustomerSummaries(@Param("city") String city,
 - **Aggregation** `COUNT/SUM/MAX` — count, total, last-date.
 - **GROUP BY** — per-user ek row · **HAVING** — group-level filter (`WHERE`=row-level).
 - **COALESCE(...,0)** — NULL → 0.
+- ★ **LEFT JOIN ka trap:** right table (orders) ki condition WHERE me daali to NULL wali rows hat jaati
+  -> LEFT JOIN chupchaap INNER JOIN ban jaata (bina order wale users gaayab). Isliye `created_at` wali
+  condition **ON me** hai, WHERE me nahi. (Pehle yahi galti is file me thi — 28-Sep theek ki.)
 
 ---
 
