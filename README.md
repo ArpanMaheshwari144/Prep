@@ -18,7 +18,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 04 | [**04_HLD**](04_HLD) | 18 foundations + 15 designs + delivery + tradeoffs + drill | Tera **strong zone** — JP ka pura ek round |
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
-| 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects | Resume-backing + "kya banaya" ka **live proof** |
+| 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
 | 08 | [**08_DSA**](08_DSA) | 18 pattern · 171 problem + 89 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | STAR stories | JP ka pura **behavioral round** |
@@ -46,11 +46,10 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 - **[06_DESIGN_PATTERNS](01_JAVA/06_DESIGN_PATTERNS)** — GoF patterns (LLD ki bhasha) — [01 builder](01_JAVA/06_DESIGN_PATTERNS/01_builder.md) · [02 singleton](01_JAVA/06_DESIGN_PATTERNS/02_singleton.md) · [03 factory](01_JAVA/06_DESIGN_PATTERNS/03_factory.md) · [04 observer](01_JAVA/06_DESIGN_PATTERNS/04_observer.md) · [05 adapter](01_JAVA/06_DESIGN_PATTERNS/05_adapter.md) · [06 strategy](01_JAVA/06_DESIGN_PATTERNS/06_strategy.md)
 
 
-- **[09_WRITE_PRACTICE](01_JAVA/09_WRITE_PRACTICE)** — streams write-to-learn (filter/map/groupingBy/reduce + REDO files) — likhke pakka karna.
+- **[07_WRITE_PRACTICE](01_JAVA/07_WRITE_PRACTICE)** — streams write-to-learn (filter/map/groupingBy/reduce + REDO files) — likhke pakka karna.
 
-- **[10_TESTING](01_JAVA/10_TESTING)** — [unit testing (JUnit + Mockito)](01_JAVA/10_TESTING/01_unit_testing_mockito.md) — mock/when/assert/verify + tautology-vs-logic + usercrud anchor.
+- **[08_TESTING](01_JAVA/08_TESTING)** — [unit testing (JUnit + Mockito)](01_JAVA/08_TESTING/01_unit_testing_mockito.md) — mock/when/assert/verify + tautology-vs-logic + usercrud anchor.
 
-- **[PROJECT — SimpleBankSystem](01_JAVA/PROJECT/SimpleBankSystem)** — plain-Java bank (factory + observer, layered model/repository/service) — patterns LIVE.
 
 ---
 
@@ -135,7 +134,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ## [07_PROJECTS](07_PROJECTS) — hands-on Spring Boot
 **Kya:** 5 chalne wale projects. &nbsp; **Kyu:** resume-backing + "tumne kya banaya" ka live proof; **usercrud = saara Spring concept ek jagah hands-on**.
 
-- [usercrud](07_PROJECTS/usercrud) — **main sandbox** (sab concept live) · [mini_payment_ms](07_PROJECTS/mini_payment_ms) ([learnings](07_PROJECTS/mini_payment_ms/LEARNINGS.md)) · [todoapp](07_PROJECTS/todoapp) · [Microservices-CRUD](07_PROJECTS/Microservices-CRUD) · [InsuranceManagementSystem](07_PROJECTS/InsuranceManagementSystem)
+- [usercrud](07_PROJECTS/usercrud) — **main sandbox** (sab concept live) · [mini_payment_ms](07_PROJECTS/mini_payment_ms) ([learnings](07_PROJECTS/mini_payment_ms/LEARNINGS.md)) · [todoapp](07_PROJECTS/todoapp) · [Microservices-CRUD](07_PROJECTS/Microservices-CRUD) · [InsuranceManagementSystem](07_PROJECTS/InsuranceManagementSystem) · [SimpleBankSystem](07_PROJECTS/SimpleBankSystem) (plain Java: factory + observer + enum singleton)
 
 > ★ **INFRA bhi isi compose me** ([docker-compose.yml](07_PROJECTS/usercrud/docker-compose.yml)) — MySQL · Kafka · **redis-master + redis-replica + 3 sentinel**.
 > Un pe kiye gaye live demo ke notes HLD foundations me hain (niche 04_HLD dekh), project me nahi — kyunki wo **concept** ka saboot hain, app ka feature nahi.

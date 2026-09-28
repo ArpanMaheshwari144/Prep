@@ -199,9 +199,9 @@ publisher.publish(new TransactionEvent("A1", "A2", 1000, System.currentTimeMilli
 
 ---
 
-## PROJECT USAGE — [`EventPublisher.java`](../PROJECT/SimpleBankSystem/src/com/arpan/bank/observer/EventPublisher.java) (SimpleBankSystem)
+## PROJECT USAGE — [`EventPublisher.java`](../../07_PROJECTS/SimpleBankSystem/src/com/arpan/bank/observer/EventPublisher.java) (SimpleBankSystem)
 
-**Files:** `01_JAVA/07_PROJECT/SimpleBankSystem/src/com/arpan/bank/observer/`
+**Files:** `07_PROJECTS/SimpleBankSystem/src/com/arpan/bank/observer/`
 
 ```java
 // 1. EventPublisher.java
