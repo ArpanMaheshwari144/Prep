@@ -153,6 +153,8 @@
    gira?         -> Redis gira to limiter atke               -> replica + Sentinel auto promote, sab gira -> FAIL-OPEN
    bahar slow?   -> Berlin ki request India wale Redis tak   -> region-wise Redis + user apne region pe chipka
    dobara?       -> ek banda 429 kha ke bhi maarta rahe      -> event QUEUE (async) -> worker pattern -> WAF block
+   bahut zyada?  -> ek Redis saara load na jhele             -> SHARDING (region-wise baanta); region ke andar
+                                                              aur chahiye to Redis Cluster, key = user id
    purana dikha? -> failover pe replica ki ginti peeche      -> chalta hai, thode extra request
    (algo)        -> kaunsa?                                  -> TOKEN BUCKET (burst ok); tokens + last_refill,
                                                                 refill request pe hisaab se, Lua script me (race)
