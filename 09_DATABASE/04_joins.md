@@ -94,6 +94,33 @@ SELECT e.name AS emp, m.name AS manager
 FROM employees e
 JOIN employees m ON e.manager_id = m.id;
 ```
+★ INNER JOIN se CEO (manager_id NULL) gaayab -> sab chahiye to `LEFT JOIN employees m`.
+
+---
+
+## ★★ 2 TRAP jo interview me poochhe jaate (28-Sep joda)
+
+**1. LEFT JOIN + WHERE me right table ki condition = chupchaap INNER JOIN**
+```sql
+-- GALAT: Sia (dept NULL) gaayab, kyunki WHERE me NULL = false
+SELECT e.name, d.dept_name FROM employees e
+LEFT JOIN departments d ON e.dept_id = d.id
+WHERE d.dept_name = 'Backend';
+
+-- SAHI (saare employees chahiye, dept sirf Backend wala dikhe): condition ON me
+LEFT JOIN departments d ON e.dept_id = d.id AND d.dept_name = 'Backend'
+```
+(Ye galti 10_SPRING_DATA_JPA/01 ki badi query me thi, 28-Sep theek ki.)
+
+**2. ANTI-JOIN — "jinka match NAHI hai" (bahut poochha jaata)**
+```sql
+-- kaunse employee kisi dept me nahi?
+SELECT e.name FROM employees e
+LEFT JOIN departments d ON e.dept_id = d.id
+WHERE d.id IS NULL;                 -- -> Sia
+-- ya: WHERE NOT EXISTS (SELECT 1 FROM departments d WHERE d.id = e.dept_id)
+-- NOT IN se bacho: subquery me ek bhi NULL aaya to NOT IN kuch nahi lautata
+```
 
 ---
 
@@ -111,7 +138,7 @@ FULL   = dono circle poore (∪)
 - INNER / LEFT / RIGHT / CROSS → **dono me same** syntax.
 - ★ **FULL OUTER JOIN**: **Postgres = supported. MySQL = NAHI!**
   MySQL me emulate: `LEFT JOIN ... UNION ... RIGHT JOIN`.  ← ye interview me poochte.
-- Postgres = standard-compliant/strict; MySQL kuch quirks (joins ke liye ~95% same).
+- Postgres = standard-compliant/strict; MySQL kuch quirks (joins ke liye lagbhag sab same).
 - Dono me `USING(col)` shorthand (column-naam same ho tab) + `NATURAL JOIN` (auto-match — **avoid**, chhupa bug).
 
 ---

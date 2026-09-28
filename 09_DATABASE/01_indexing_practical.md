@@ -123,6 +123,8 @@ EXPLAIN output (index ke saath):
    = tree na hota to binary search kahan karte? (unsorted = scan)
 ```
 Connection: yeh wahi Binary Search pattern hai (sorted + decide + halve = O(log n)) — DB ke andar chal raha. Actual structure = B-tree (B+ tree) = binary search tree ka multi-way bada bhai.
+★ Upar ka "~17 hops" binary-tree misaal hai. Asli InnoDB B+ tree me ek node me SAIKDON keys hoti -> 1 lakh
+  (balki crore) rows bhi sirf ~3-4 levels -> 3-4 disk page reads. Isliye index itna tez.
 
 ---
 
@@ -225,6 +227,29 @@ ORDER BY TABLE_NAME, INDEX_NAME, SEQ_IN_INDEX;
 Company prod DB: same query, bas TABLE_SCHEMA = 'prod_db_name'. Workbench mein bhi: table expand -> "Indexes" section (GUI).
 
 Raw B-tree nodes/pages = InnoDB ke internal binary files (.ibd) mein -> SQL se directly NAHI dikhte (advanced tool innodb_ruby se, par deep DBA). Metadata + EXPLAIN se confirm ho jaata index kaam kar raha.
+
+---
+
+## ★★ INTERVIEW ME POOCHHE JAATE — 3 cheezein (28-Sep joda)
+
+```
+1. COMPOSITE INDEX + LEFTMOST PREFIX
+   CREATE INDEX idx_city_age ON users(city, age);
+   WHERE city = 'Pune'                 -> index CHALEGA   (leftmost column)
+   WHERE city = 'Pune' AND age > 25    -> CHALEGA         (dono)
+   WHERE age > 25                      -> NAHI chalega    (city chhod diya, leftmost nahi)
+   Kram: pehle EQUALITY wala column, phir RANGE wala.
+
+2. COVERING INDEX
+   SELECT city, age FROM users WHERE city = 'Pune';
+   -> saare column index (city, age) me hi hain -> table ki row padhne hi nahi jaana
+   -> EXPLAIN Extra = "Using index"  (sabse tez)
+
+3. CLUSTERED vs SECONDARY (InnoDB)
+   PRIMARY KEY = CLUSTERED: asli row PK ke B-tree ke leaf me hi rakhi hoti
+   baaki index = SECONDARY: leaf me row nahi, PK hota -> pehle secondary, phir PK tree = 2 lookup
+   -> isliye PK chhota rakho (BIGINT / INT) — har secondary index me PK copy hota
+```
 
 ---
 

@@ -6,6 +6,20 @@
 
 ---
 
+## InnoDB kya hai? (28-Sep, Arpan ka sawaal)
+
+```
+MySQL = gaadi · InnoDB = uska ENGINE
+MySQL ke 2 hisse:
+  upar  SQL layer       query samajhna, plan banana (optimizer)        -> sab engine ke liye same
+  neeche STORAGE ENGINE  data disk pe kaise rakhe, lock, transaction    -> InnoDB (MySQL 5.5 se DEFAULT)
+purana engine MyISAM: transaction NAHI, poori TABLE lock, crash pe data kharab -> ab koi use nahi karta
+InnoDB: transaction (ACID) · ROW lock · foreign key · crash recovery (redo) · MVCC (undo)
+AWS RDS MySQL (tera kaam) bhi InnoDB hi chalata hai
+```
+
+---
+
 ## MENTAL MODEL (pehle ye theek karo)
 
 > UPDATE karte hi change **TURANT ho jaati hai** (memory/buffer pool me), par wo
@@ -30,10 +44,16 @@ Change **REDO LOG me DISK pe** likhi jaati -- data page abhi disk pe permanent n
 Jis row ko UPDATE kar raha, uspe **ROW-LOCK** -> doosri transaction use modify nahi kar sakti
 jab tak tu commit/rollback na kare. = **Isolation**.
 
+★ InnoDB lock asal me **INDEX record** pe lagta hai. UPDATE ke WHERE wale column pe index NAHI ->
+  InnoDB ko jitni rows SCAN karni padti, un sab pe lock (lagbhag poori table) -> baaki INSERT / UPDATE ruk jaate.
+  **Tera HikariCP wala din yahi tha:** badi write query ne email table pe lock pakde rakhe, inserts atke,
+  connections wait me -> pool khatam. Lamba transaction = lamba lock.
+
 ---
 
 ## COMMIT karne pe
 - Redo log **DISK pe FLUSH** -> ab durable, crash-proof.
+  (commit se pehle redo zyada tar memory ke log buffer me hota; commit pe flush = innodb_flush_log_at_trx_commit=1 default)
 - Locks **RELEASE**.
 - Teri change ab **sabko VISIBLE + PERMANENT**. Undo log baad me purge.
 
