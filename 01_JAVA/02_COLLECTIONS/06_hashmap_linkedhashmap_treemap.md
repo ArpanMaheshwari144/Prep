@@ -142,6 +142,19 @@ Operations:      O(log n)
 > **TreeMap null key nahi leta — `NullPointerException`.**
 > Kyu? Sort karta hai → `null.compareTo()` = crash. **HashMap null key allowed hai.**
 
+**TreeMap ke 2 aur trap:**
+```java
+// Apni class key bani, Comparable nahi -> put pe ClassCastException
+TreeMap<Person, Integer> m = new TreeMap<>();                // Person implements Comparable ? nahi -> crash
+TreeMap<Person, Integer> ok = new TreeMap<>(Comparator.comparing(Person::getName));  // fix
+
+// Sort KEY pe hota, VALUE pe nahi
+map.put("Banana", 1); map.put("Apple", 99);   // iteration: Apple=99, Banana=1
+
+// Ulta / apna order
+new TreeMap<String, Integer>(Comparator.reverseOrder());
+```
+
 ## TRAP 2
 
 > **TreeMap = KEYS sort hoti, VALUES nahi.**
