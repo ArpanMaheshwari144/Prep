@@ -282,7 +282,18 @@ INDUSTRY PREFERENCE:
 │ @ManyToMany + extra fields   │ Use junction entity instead  │
 │ Bidirectional toString loop  │ Exclude from toString        │
 │ Bidirectional equals loop    │ Use id only in equals        │
+│ @ManyToMany List (bag)       │ Set use karo                 │
 └──────────────────────────────┴──────────────────────────────┘
+
+★ LIVE TRAP — TERE usercrud me: Author aur Book dono pe Lombok `@Data`.
+   @Data = toString + equals + hashCode SAARE field pe -> Author.toString() -> books ->
+   har Book.toString() -> author -> Author.toString() -> ... = StackOverflowError
+   (log.info(author) ya HashSet me daalte hi). Abhi crash isliye nahi hua ki kisi ne ye call nahi kiya.
+   Fix: entity pe @Data mat lagao -> @Getter @Setter + @ToString(exclude = "books")
+        + equals/hashCode sirf id pe (ya @EqualsAndHashCode(onlyExplicitlyIncluded = true)).
+
+★ @ManyToMany me List (bag) -> ek element hatao to Hibernate saari join rows DELETE karke dobara
+   INSERT karta. Set lagao -> sirf wahi ek row delete.
 ```
 
 ---
@@ -298,8 +309,9 @@ INDUSTRY PREFERENCE:
    • Setting only one side = data inconsistency (use helper methods)
    • @ManyToMany at scale = replace with junction entity for control
 
- At work, I default to @ManyToOne with junction entity for many-to-many
- because we usually need extra fields like enrolledDate, audit timestamps."
+ For many-to-many I'd prefer a junction entity with two @ManyToOne,
+ because real systems usually need extra fields like enrolledDate or audit timestamps."
+ (★ "at work I default to..." mat bolna — ye tera kaam pe kiya hua nahi hai, overclaim)
 ```
 
 ---

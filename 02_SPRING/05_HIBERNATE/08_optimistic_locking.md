@@ -62,7 +62,7 @@ public class OptLockController {
     public String update(@PathVariable Long id, @RequestParam int stock, @RequestParam Long version) {
         Product p = new Product();
         p.setId(id); p.setName("Widget"); p.setStock(stock);
-        p.setVersion(version);              // client ki (shायद stale) version
+        p.setVersion(version);              // client ki (shayad stale) version
         try {
             repo.save(p);                  // merge -> DB-version se match; stale -> exception
             return "OK updated -> stock=" + stock;
@@ -137,13 +137,21 @@ Fix wahi: page dobara load (re-read latest) -> apna change fresh pe -> phir save
 3. Pessimistic (lock-first, SELECT FOR UPDATE) vs Optimistic (version-check-at-write). low-clash = optimistic.
 4. Conflict pe app RETRY kare (dobara padho -> naye version se update).
 5. Real 409 status: ResponseEntity se bhejo (demo me String return kiya -> 200, par exception fire hua).
+6. Naam: JPA ka OptimisticLockException -> Spring ise ObjectOptimisticLockingFailureException me lapet ke deta
+   (isiliye demo me wahi catch kiya).
+
+★ CONNECT — "do request ek saath" ke 3 ilaaj (BookMyShow, payment, PR drill — sab jagah yahi)
+   1 CONDITIONAL UPDATE   UPDATE ... SET x = x - ? WHERE id = ? AND x >= ?   (seat / balance)
+   2 @Version (ye file)   UPDATE ... WHERE id = ? AND version = ?            (entity edit, kam clash)
+   3 PESSIMISTIC          SELECT ... FOR UPDATE, phir update                 (zyada clash)
+   27-Sep PR drill ka "SET outstanding = ?" bug = teeno me se koi nahi laga tha.
 ```
 
 ## INTERVIEW LINE
 ```
 "Optimistic locking @Version se: har row me version counter, update pe UPDATE ... WHERE version=? chalta.
  Beech me kisi ne badla to version match nahi hoti -> 0 rows -> OptimisticLockException -> lost-update ruka.
- Lock nahi lagta (pessimistic ki tरह), isliye low-contention me fast; conflict pe retry karo.
+ Lock nahi lagta (pessimistic ki tarah), isliye low-contention me fast; conflict pe retry karo.
  Pessimistic = lock-first (SELECT FOR UPDATE), optimistic = check-at-write."
 ```
 
