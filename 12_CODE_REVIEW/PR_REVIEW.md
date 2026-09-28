@@ -100,6 +100,8 @@ lamba method / gehri nesting                                   -> chhote method,
 CODE ME DIKHE                          POOCHO / BOLO                              SAHI
 -----------------------------------------------------------------------------------------------------
 catch (Exception e) { } / return null  "exception nigal gaya"                     log + rethrow / sahi code
+catch (Exception e) — sab ek saath     "bahut chauda catch — kaunsi galti?"       specific exception
+(double) map.get(..)                   "null / galat type -> crash"               typed / check
 fail pe ok("FAILED") / 200             "fail hua par 200 OK?"                     400 / 404 / 409 / 500
 findById(..).get()                     "khaali Optional -> crash"                 orElseThrow(NotFound)
 list.get(0) / rows.get(0)              "khaali list -> crash"                     isEmpty check
@@ -133,6 +135,26 @@ log me email / card / token            sensitive data log me                    
 return ok(ENTITY)                      "saare field bahar — password?"            DTO
 password seedha save                   plaintext                                  BCrypt
 id request se, owner check nahi        "bhejne wala iska maalik hai?"             token se owner check
+```
+
+### 3c2. Code quality (padhne / sambhalne layak?) ← JP me sabse zyada yahi
+
+```
+CODE ME DIKHE                          POOCHO / BOLO                              SAHI
+-----------------------------------------------------------------------------------------------------
+naam: a · b · temp · data · x ·        "POOR VARIABLE NAMES" (JP me aaya tha)      kaam batane wala naam
+  flag · obj · list1 · doIt()                                                       (refundAmount, isActive)
+System.out.println                     "println — production me logger"           SLF4J log.info / debug
+log sahi level pe nahi                 "error ko info me? debug ko info me?"      sahi level
+  / log.error("failed") bina e aur id   "stack trace + kaunsi id?"                 log.error("... id={}", id, e)
+magic number / string  (0.01 · 5 ·     "ye 5 kya hai? naam do"                     named constant / config
+  "ACTIVE" baar-baar)
+lamba method (sab kuch ek me)          "method bahut kaam kar raha"                chhote method
+copy-paste code do jagah               "duplicate — ek jagah badla, doosri bhooli" ek method
+dead code (field / constant /          "declare hua, use nahi"                     hatao (ya niyam lagao)
+  import use nahi)
+gehri nesting (if ke andar if ...)     "padhna mushkil"                            early return
+comment galat / purana / bekaar        "comment code se mel nahi khata"            sahi / hatao
 ```
 
 ### 3d. Design
