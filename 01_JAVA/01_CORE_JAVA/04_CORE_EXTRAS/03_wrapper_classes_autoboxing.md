@@ -102,6 +102,27 @@ p.equals(q)            // true
 
 ---
 
+## ★ TRAP — int vs Integer (quick table)
+
+```
+int     = primitive (4 bytes)
+Integer = wrapper class (object)
+
+┌──────────────┬──────────────────────────┬─────────────┐
+│  Aspect      │  int                     │  Integer    │
+├──────────────┼──────────────────────────┼─────────────┤
+│ null         │ NO (null unbox = NPE)    │ YES         │
+│ Collections  │ NO                       │ YES (List)  │
+│ Methods      │ NO                       │ YES         │
+│ Default      │ 0                        │ null        │
+│ Performance  │ Fast                     │ Slower      │
+└──────────────┴──────────────────────────┴─────────────┘
+
+== rule: Strings/Objects → ALWAYS .equals() · Primitives → == hi option
+```
+
+---
+
 ## POWER PHRASE
 
 > *"Wrapper classes wrap primitives as objects — needed for Collections. Autoboxing converts primitive to wrapper automatically via `Integer.valueOf()`. Unboxing does the reverse via `intValue()`. Integer caches -128 to 127 — always use `.equals()` for comparison."*

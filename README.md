@@ -45,8 +45,6 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 - **[06_DESIGN_PATTERNS](01_JAVA/06_DESIGN_PATTERNS)** — GoF patterns (LLD ki bhasha) — [01 builder](01_JAVA/06_DESIGN_PATTERNS/01_builder.md) · [02 singleton](01_JAVA/06_DESIGN_PATTERNS/02_singleton.md) · [03 factory](01_JAVA/06_DESIGN_PATTERNS/03_factory.md) · [04 observer](01_JAVA/06_DESIGN_PATTERNS/04_observer.md) · [05 adapter](01_JAVA/06_DESIGN_PATTERNS/05_adapter.md) · [06 strategy](01_JAVA/06_DESIGN_PATTERNS/06_strategy.md)
 
-- **[07_BRAIN_TICKLERS](01_JAVA/07_BRAIN_TICKLERS)** — 13 gotcha traps (string-intern · equals-trap · immutable · diamond · final-vs-finally-vs-finalize · covariant-return ...) — quick-fire trick Qs.
-
 
 - **[09_WRITE_PRACTICE](01_JAVA/09_WRITE_PRACTICE)** — streams write-to-learn (filter/map/groupingBy/reduce + REDO files) — likhke pakka karna.
 

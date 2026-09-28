@@ -186,6 +186,16 @@ Jira Ticket = Object
 
 ---
 
+## ★ TRAP — Java 100% OOP kyun nahi?
+
+```
+Java mein PRIMITIVES hain (int, long, double...) → ye objects NAHI
+Pure OOP language = sab kuch object (Smalltalk, Ruby)
+Java ka trade-off: primitives PERFORMANCE ke liye → ~95% OOP, 100% nahi
+```
+
+---
+
 ## POWER PHRASE
 
 > **"OOP represents real-world entities as objects — data and behavior bundled together in a class. Solves procedural code's 3 problems: data protection (encapsulation), code reuse (inheritance), and extensibility (polymorphism)."**

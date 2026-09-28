@@ -141,6 +141,85 @@ Kyun: lambda variable ki COPY pakadta; badalne do to "kaunsi value?" confusion -
 
 ---
 
+## ★ TRAP — final vs finally vs finalize (interview classic, naam same, kaam alag)
+
+**3 brothers analogy:** `final` = *lockdown brother* (variable/method/class lock) · `finally` = *cleanup brother* (try-catch ke baad safai) · `finalize` = *funeral brother* (object marne se pehle aata tha — deprecated). Interviewer teeno mila ke confuse karta — teeno alag log hain.
+
+```
+final                  finally                  finalize()
+KEYWORD                BLOCK                    METHOD
+"Lock kar do"          "Cleanup karo"           "GC se pehle call"
+variable/method/class  try-catch ke baad,       object death pe trigger
+                       hamesha chalta
+COMPILE-time check     RUNTIME execution        RUNTIME (rare)
+daily use              daily use                DEPRECATED (Java 9+) — avoid
+```
+
+```java
+// final METHOD — overriding locked
+class Animal { public final void breathe() { ... } }
+class Dog extends Animal {
+    public void breathe() { ... }   // COMPILE ERROR
+}
+```
+
+**`finalize()` — kyun deprecated (Java 9 se):**
+```java
+// DON'T USE
+@Override
+protected void finalize() throws Throwable {
+    cleanup();       // GC se PEHLE call hota tha
+}
+```
+
+| Problem | Reality |
+|---|---|
+| **Unpredictable timing** | GC kab chalega pata nahi — finalize shayad kabhi chale hi na |
+| **Performance hit** | Object ki life lambi (finalize ke liye queue mein) |
+| **Resurrection bug** | finalize mein `this` kahin rakh ke object zinda kar sakte (mess) |
+| **Better alternatives** | `try-with-resources`, `Cleaner` API |
+
+```java
+// Old way (broken)
+public class FileHandler {
+    @Override
+    protected void finalize() { file.close(); }   // unreliable
+}
+
+// Modern way (safe)
+public class FileHandler implements AutoCloseable {
+    @Override
+    public void close() { file.close(); }
+}
+try (FileHandler h = new FileHandler()) {
+    h.use();
+}  // close() guaranteed call
+```
+
+| Property | `final` | `finally` | `finalize()` |
+|---|---|---|---|
+| **Type** | Keyword | Block | Method |
+| **Used with** | variable/method/class | try-catch | Object class (override) |
+| **Purpose** | Prevent change | Cleanup code | GC pre-cleanup (legacy) |
+| **When triggered** | Compile-time enforcement | After try-catch (always) | Before GC (maybe never) |
+| **Modern usage** | Daily | Daily | Avoid (Java 9+) |
+| **Replacement** | N/A | try-with-resources | try-with-resources, Cleaner API |
+
+(`finally` ke return-override / System.exit traps = `05_EXCEPTIONS/02_exception_handling_try_catch_finally.md`)
+
+**Q: "final, finally, finalize mein difference?"**
+> *"Teeno alag concepts — bas naam confuse karta. (1) **final** = keyword: variable pe reassignment, method pe override, class pe extension rokta. Compile-time. (2) **finally** = try-catch ka block jo HAMESHA chalta — cleanup (DB/file close). Modern Java mein try-with-resources zyadatar isko replace kar deta. (3) **finalize()** = Object class ka method jo GC se pehle call hota tha — **Java 9 se deprecated**: unpredictable timing, performance hit, resurrection bug. Aaj try-with-resources + AutoCloseable ya Cleaner API."*
+
+```
+final     → "Final answer — change NAHI"
+finally   → "Finally khatam — cleanup karo"
+finalize  → "GC se pehle cleanup" (DEPRECATED, mat use karo)
+```
+
+> **"`final` keyword hai (lockdown), `finally` block hai (cleanup), `finalize()` deprecated method tha (GC pre-call). Naam similar but functionally completely different — interview classic confusion test."**
+
+---
+
 ## POWER PHRASE
 
 > *"`final` on a variable prevents reassignment. `final` on a class prevents inheritance. `final` on a method prevents overriding — String class is final which is part of why it is immutable."*

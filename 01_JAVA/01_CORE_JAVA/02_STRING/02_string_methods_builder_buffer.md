@@ -42,6 +42,50 @@ System.out.println(s);   // "Hello World"
 
 ---
 
+## ★ TRAP — length / length() / size() — 3 alag cheezein
+
+```java
+int[] arr = {1, 2, 3};
+arr.length;          // 3 — FIELD (no parens)
+
+String s = "Arpan";
+s.length();          // 5 — METHOD (parens)
+
+List<Integer> list = new ArrayList<>();
+list.size();         // METHOD (parens)
+```
+
+```
+Array  → length      (field, no parens)
+String → length()    (method)
+List   → size()      (method)
+
+Trap: array.length()  → compile error
+      string.length   → compile error
+```
+
+**Array ka `length` FIELD kyun, method kyun nahi?**
+```
+Array = SPECIAL JVM object — JVM banata, koi "Array class ka source" nahi (internal construct)
+Length: creation pe decide (new int[5]), kabhi NAHI badalti = fixed size
+FIELD:  arr.length   → direct memory read, O(1) — JVM array HEADER mein store karta
+METHOD: arr.length() → invocation overhead (chhota par bekaar)
+
+   int[] arr = new int[5];
+   ┌──────────────────────────────┐
+   │ Array header: length: 5      │  ← stored field
+   │ data: [0, 0, 0, 0, 0]        │
+   └──────────────────────────────┘
+
+String contrast — String proper class hai, encapsulation ke liye method:
+   class String {
+       private final byte[] value;   // Java 8 tak char[], Java 9+ byte[] (compact strings)
+       public int length() { return value.length; }   ← andar array ka FIELD hi wrap kiya
+   }
+```
+
+---
+
 ## POWER PHRASES
 
 > *"String methods always return a NEW string — original is never modified because String is immutable."*

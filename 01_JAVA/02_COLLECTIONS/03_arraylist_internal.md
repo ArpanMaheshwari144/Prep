@@ -133,6 +133,24 @@ Shift karna padta (saare elements 1 right):
 
 ---
 
+## ★ TRAP — Vector vs ArrayList
+
+```
+┌────────────────┬──────────────┬──────────────┐
+│  Aspect        │  Vector      │  ArrayList   │
+├────────────────┼──────────────┼──────────────┤
+│ Thread-safe    │ YES (sync)   │ NO           │
+│ Growth         │ 2x           │ 1.5x         │
+│ Era            │ Java 1.0     │ Java 1.2+    │
+│ Performance    │ Slow         │ Fast         │
+└────────────────┴──────────────┴──────────────┘
+
+Modern: ArrayList always
+   Thread-safe chahiye? → Collections.synchronizedList()
+```
+
+---
+
 ## POWER PHRASE
 
 > *"ArrayList internally uses a dynamic array with default capacity 10, growing by 1.5x when full. `get()` is O(1) due to index-based access, but add/remove in the middle is O(n) due to shifting. Best for read-heavy operations."*

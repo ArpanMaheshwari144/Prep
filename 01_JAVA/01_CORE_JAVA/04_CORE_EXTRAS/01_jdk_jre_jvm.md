@@ -60,6 +60,25 @@
 
 ---
 
+## ★ TRAP — Platform independent kyun? (WORA visual)
+
+```
+Write Once, Run Anywhere
+
+   .java
+     ↓ javac
+   .class (bytecode — UNIVERSAL)
+     ↓
+   Windows JVM    Linux JVM    Mac JVM
+     ↓               ↓              ↓
+   Windows OS     Linux OS      Mac OS
+
+   Har OS ka APNA JVM · bytecode sab jagah SAME = platform independence
+   (Java platform-independent hai, JVM platform-DEPENDENT hai)
+```
+
+---
+
 ## TRAP
 
 > **Server pe sirf run karna hai → JRE.**

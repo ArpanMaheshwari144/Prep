@@ -103,6 +103,26 @@ Student.school   // object ki zarurat nahi — directly access
 
 ---
 
+## ★ TRAP — Initialization order (static block / instance block / constructor)
+
+```
+Java class loading order:
+
+   1. STATIC fields            (class load pe, ek baar)
+   2. STATIC blocks            (class load pe, ek baar)
+   3. INSTANCE fields          (har object banne pe)
+   4. INSTANCE blocks          (har object banne pe)
+   5. CONSTRUCTOR body
+
+   Parent before Child:
+      Parent.static → Child.static
+      Parent.instance → Child.instance
+```
+
+(Static method "override" = hiding, poora = `01_OOP/04_overloading_vs_overriding.md`)
+
+---
+
 ## POWER PHRASE
 
 > *"Static members belong to the class, not to any instance — shared across all objects and accessible without creating an object."*

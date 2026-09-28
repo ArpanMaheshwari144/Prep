@@ -70,6 +70,144 @@ OVERLOADING (Compile Time)              OVERRIDING (Runtime)
 
 ---
 
+## ★ TRAP — Static method "override"? NAHI, method HIDING hai
+
+```java
+class A { static void show() { System.out.println("A"); } }
+class B extends A { static void show() { System.out.println("B"); } }
+
+A obj = new B();
+obj.show();      // "A" — NOT "B"!
+```
+
+**WHY "A" aaya?**
+→ **Static = class se bind hota hai, object se nahi**
+→ Compiler **reference type dekhta** = `A` → `A.show()` call → "A"
+→ Agar **non-static** hota, runtime pe **object dekhta = B** → "B" (true polymorphism)
+→ **Static mein polymorphism NAHI** — ye **method hiding** hai, overriding nahi
+
+```
+  A obj = new B();
+  ▲             ▲
+  reference     object
+  type = A      type = B
+  (compile-time) (runtime)
+
+                Static               Non-Static
+                (Hiding)             (Overriding)
+                ────────             ────────────
+  Decided:      Compile time         Runtime
+  Looks at:     Reference type       Object type
+  Output:       "A"                  "B"
+  Polymorphism: NO                   YES
+```
+
+| | Method Override | Method Hiding |
+|--|----------------|---------------|
+| Methods | Non-static | Static |
+| Decided | Runtime (object) | Compile-time (reference) |
+| Polymorphism? | YES | NO |
+
+> *"Static methods are bound to the class, not to the object. They can be redeclared in a subclass — but this is method hiding, not overriding. The reference type decides which static method runs at compile time."*
+
+---
+
+## ★ TRAP — Access modifier override rule: SAME ya WIDER, narrow NAHI
+
+```java
+// GALAT — narrower
+class Parent { public void show() { } }
+class Child extends Parent {
+    private void show() { }      // COMPILE ERROR — public se private = narrow
+}
+
+// SAHI — same ya wider
+class Parent { protected void show() { } }
+class Child extends Parent {
+    public void show() { }       // protected → public = WIDER, valid
+}
+```
+
+**WHY?** Caller ne **parent reference se** call kiya:
+```java
+Parent p = new Child();
+p.show();      // public expect kiya
+```
+→ Child ne `private` kar diya → caller ko expected access nahi mila → contract toot gaya
+→ Liskov substitution — child must honour parent's contract
+
+```
+Parent              Child (allowed)
+private          override hi nahi hota
+default      →   default, protected, public
+protected    →   protected, public
+public       →   public ONLY
+```
+
+> *"Override mein child ka access modifier SAME ya WIDER hona chahiye — never narrower. Public can only stay public, protected can widen to public, private cannot be overridden at all."*
+
+---
+
+## ★ TRAP — Covariant return type (override mein return type SUBTYPE ho sakta)
+
+**Simple line:** override karte waqt child ka return type, parent ke return type ka **SUBTYPE** ho sakta hai.
+
+**Analogy:** Parent ka promise "Main tujhe **gaadi** dunga" · Child: "Main tujhe **Honda Car** dunga". Honda Car = gaadi hi hai → promise toota nahi. Code mein: Parent `Animal` return, Child `Dog` return (Dog = Animal hi hai).
+
+```java
+// Before Java 5 — STRICT: return type EXACT same
+class Animal { Animal create() { return new Animal(); } }
+class Dog extends Animal {
+    @Override
+    Animal create() { return new Dog(); }    // allowed — return type EXACT same
+}
+
+// Java 5+ — RELAXED (Covariant)
+class Dog extends Animal {
+    @Override
+    Dog create() { return new Dog(); }       // NOW ALLOWED — Dog IS-A Animal
+}
+```
+
+**Asli faayda — no casting:**
+```java
+// Bina covariant:
+Dog d = new Dog();
+Animal a = d.create();        // Animal mila
+Dog d2 = (Dog) a;             // ugly cast karna pada
+
+// Covariant ke saath:
+Dog d = new Dog();
+Dog d2 = d.create();          // direct Dog mila — NO CAST
+```
+
+**WHY allow hua?** Dog **Animal hai** (IS-A) → caller ne `Animal` expect kiya, Dog mila, Dog bhi Animal → Liskov substitution (child must work where parent expected).
+
+**Kya allowed NAHI** — unrelated type:
+```java
+class Dog extends Animal {
+    String create() { return "..."; }    // INVALID — String Animal nahi hai
+    Cat create() { return new Cat(); }   // INVALID — Cat Animal ka SIBLING, child nahi
+}
+```
+Sirf subtype — parent ki **family** mein hi rehna hai.
+
+**Use case — factory / clone methods:**
+```java
+class Document { Document copy() { ... } }
+class PDFDocument extends Document {
+    @Override
+    PDFDocument copy() { ... }    // PDF return karta — covariant
+}
+PDFDocument duplicate = new PDFDocument().copy();   // no cast — clean
+```
+
+> **Covariant Return Type = override mein return type child ka subtype ho sakta. Caller ko cast nahi karna padta. Java 5+ feature.**
+
+> *"Covariant return type allows an overriding method to return a subtype of the parent's return type — Java 5+ supports this for cleaner factory and clone methods, eliminating the need for explicit casting at the call site."*
+
+---
+
 ## POWER PHRASES
 
 > *"Overloading is compile-time polymorphism — same method name, different parameters in the same class."*

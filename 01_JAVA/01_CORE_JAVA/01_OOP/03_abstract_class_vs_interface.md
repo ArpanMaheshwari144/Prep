@@ -268,6 +268,43 @@ public class C implements A, B {
 }
 ```
 
+**★ Diamond sirf DEFAULT methods mein kyun?**
+```
+Java 8 SE PEHLE:
+  interface A { void show(); }     ← sirf abstract
+  interface B { void show(); }     ← sirf abstract
+  class C implements A, B { }      ← C ko khud implement karna padega
+                                     koi conflict nahi (kyunki body hi nahi)
+
+Java 8 KE BAAD:
+  interface A { default void show() { print("A"); } }   ← body hai
+  interface B { default void show() { print("B"); } }   ← body hai
+  class C implements A, B { }                           ← BOTH bodies? → conflict
+```
+→ `A.super.show()` = A interface ka default method call — class **explicitly bata** rahi kaunsa chahiye (ya `B.super.show()`)
+→ Class extends mein Java ne single inheritance rakhi (diamond avoid karne ke liye); Java 8 default methods ne interface mein naya diamond laaya → Java **force karta** class khud resolve kare
+
+> *"When a class implements two interfaces with the same default method, the compiler can't decide which to use — Diamond Problem. Resolution: override the method explicitly and call the desired one via `InterfaceName.super.method()`."*
+
+### ★ Trap 5: Marker interfaces + `transient`
+
+```
+Marker interface = EMPTY interface — koi method nahi
+Kaam: JVM / library ko SIGNAL dena
+
+   Serializable   → "yeh class serialize ho sakti"
+   Cloneable      → "yeh class clone ho sakti"
+   RandomAccess   → "yeh list O(1) index access support karti" (ArrayList haan, LinkedList nahi)
+```
+
+```java
+class User implements Serializable {
+    String name;
+    transient String password;  // ← serialize karte waqt SKIP
+}
+```
+`transient` = "ye field serialize mat karo" → use: passwords, temp data, cached values.
+
 ---
 
 ## INTERVIEW TALKING POINT

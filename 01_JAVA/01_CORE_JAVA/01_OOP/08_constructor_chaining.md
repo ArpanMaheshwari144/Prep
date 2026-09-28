@@ -69,6 +69,45 @@ Dog(String name, String breed) {
 
 ---
 
+## ★ TRAP — Constructor overload ho sakta, OVERRIDE kabhi nahi
+
+```
+Overload constructor:    YES (different params)
+   public User() { ... }
+   public User(String name) { ... }
+   public User(String name, int age) { ... }
+
+Override constructor:    NEVER POSSIBLE — constructors inherit hi nahi hote
+```
+
+**Kyun?** Override ke liye chahiye: (1) method parent se INHERIT hua ho (2) child SAME signature se redefine kare (3) runtime polymorphism.
+Constructor: (1) inherit NAHI hota (2) naam = CLASS ka naam → Parent() aur Child() = alag naam = alag pehchaan.
+
+```java
+class Animal {
+    public Animal() {           // name: Animal
+    }
+}
+class Dog extends Animal {
+    public Dog() {              // name: Dog (NOT Animal!)
+        super();                // parent ka CALL karta, override nahi
+    }
+}
+```
+
+```
+Constructor ka kaam = APNI class ke fields init karna (per-class concern)
+CAN:    OVERLOAD (same class mein kai) · CHAIN via this()/super()
+CANNOT: Override
+
+Side note — ye bhi override nahi hote:
+   • static method  (class-level → hiding hota hai)
+   • final method   (parent ne lock kiya)
+   • private method (child ko dikhta hi nahi)
+```
+
+---
+
 ## POWER PHRASE
 
 > *"Constructor chaining allows one constructor to call another using `this()` for the same class or `super()` for the parent class — must always be the first statement in the constructor."*

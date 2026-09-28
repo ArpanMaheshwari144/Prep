@@ -724,6 +724,91 @@ contract theek, hash kharab  ->  milti hai par DHEEMA         (performance bug)
 
 ---
 
+### ★ TRAP — ulti haalat (d): sirf `hashCode()` likha, `equals()` NAHI → duplicate ghus gayi
+
+```java
+class Employee {
+    String name;
+    int id;
+    // hashCode() override kiya, equals() NAHI
+    @Override public int hashCode() { return id; }
+}
+
+Employee e1 = new Employee("Arpan", 101);
+Employee e2 = new Employee("Arpan", 101);
+
+e1.hashCode()  →  101
+e2.hashCode()  →  101  (same!)
+e1 == e2       →  false (alag objects)
+e1.equals(e2)  →  false (default = reference check)
+
+map.put(e1, "Dev");   // bucket 5 khaali → store
+map.put(e2, "Dev");   // bucket 5 (SAME) → e1.equals(e2) = false → "alag entries hain" → DONO STORE!
+
+  ┌────┐
+  │ 5  │ → [e1: "Dev"] → [e2: "Dev"]   DONO store! Duplicate!
+  └────┘
+  map.size() = 2  (chahiye tha 1)
+```
+
+**Fix — equals() bhi override:**
+
+```java
+@Override
+public boolean equals(Object o) {
+    Employee other = (Employee) o;
+    return this.id == other.id;
+}
+// hashCode same → bucket 5
+// equals true → REPLACE, naya entry NAHI
+// bucket 5 → [e1: "Dev"]  (e2 ne replace kiya) → map.size() = 1
+```
+
+```
+hashCode = kaunsa bucket (address)
+equals   = same hai ya nahi (identity)
+sirf hashCode = same bucket, par identity check fail → dono ALAG maan liye → duplicate store
+```
+
+**"Reference check" ka matlab — `Object.equals()` ka default source:**
+
+```java
+// Java ne Object class mein literally ye likha
+public boolean equals(Object obj) {
+    return (this == obj);    // ← LITERALLY == hi return karta hai!
+}
+```
+
+```
+e1 → 0x100 [Employee "Arpan", 101]      e2 → 0x200 [Employee "Arpan", 101]
+CONTENT same, par heap mein 2 ALAG objects
+
+REFERENCE check (== / default equals):  0x100 == 0x200? → FALSE
+   "Tu jis object pe point kar raha, mei bhi USI pe?"  → NAHI
+CONTENT check (overridden equals):      101 == 101 AND "Arpan".equals("Arpan") → TRUE
+   "Tera content aur mera content same?"  → HAAN
+```
+
+**Asli confusion:** log sochte "`equals()` matlab content check hota hi hai" — **GALAT**. `equals()` content check TAB karta jab class ne override kiya. Default = `==` jaisa.
+
+| Class | `equals()` override? | Behavior |
+|-------|---------------------|----------|
+| **String** | YES | Content check (chars compare) |
+| **Integer / Wrapper** | YES | Value check |
+| **ArrayList** | YES | Element-wise content check |
+| **Tera custom Employee** | NO (default) | Reference check (== ke barabar) |
+
+```java
+e1.equals(e2)  ≡  e1 == e2     // custom class, no override → dono FALSE
+"Hello".equals("Hello")        // TRUE (String ne override kiya)
+```
+
+> **Reference check = memory address compare. SAME object pe point kar rahe? Content same ya alag — fark nahi padta. Default `Object.equals()` = `==` ke barabar.**
+
+> *"For custom objects used as HashMap keys, both `hashCode()` and `equals()` must be overridden — without `equals()`, two objects in the same bucket are treated as distinct via reference check, causing duplicate entries."*
+
+---
+
 ### ★ IS HANDS-ON KA NICHOD — ek nazar
 
 ```
