@@ -66,10 +66,11 @@
 
 ---
 
-## ★★ HAR DESIGN PE 6 SAWAAL — dikkatein yaad nahi karni, ye nikaal dete hain (26-Sep, Arpan ka sawaal)
+## ★★ HAR DESIGN PE 6 SAWAAL — sirf YAAD DILAANE ki list, rail nahi (28-Sep sudhaar)
 
-> "Itni dikkatein yaad kaise rahengi?" -> yaad sirf YE 6. Har dabbe / har kadam pe inme se ek poochho,
-> dikkat khud nikal aati. SAWAAL har design me SAME, JAWAB design ke hisaab se badalta.
+> 28-Sep (rate limiter ke baad, Arpan): sawaal bhi khud poochna, jawab bhi khud dena — aur JAWAB
+> padhne se aata. Ye 6 koi naya design nahi banwate; sirf PADHE hue dabbe pe dikkat yaad dilaate.
+> Har design ki APNI khaas dikkatein YAAD rakhni padti hain = section 5 (DIL + KHAAS hissa).
 
 ```
                               PAYMENT                              GOOGLE DOCS
