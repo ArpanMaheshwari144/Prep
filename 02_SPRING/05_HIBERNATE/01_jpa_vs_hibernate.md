@@ -5,8 +5,9 @@
 ## 1 Foundation Distinction
 
 ```
-JPA (Java Persistence API):
+JPA (Java Persistence API — ab naam "Jakarta Persistence"):
    = SPEC (interface, rules)
+   = Boot 3+ me package jakarta.persistence.* (pehle javax.persistence.*)
    = "Java mein DB-talk kaise hoga" — standard
 
 Hibernate:
@@ -48,7 +49,7 @@ EclipseLink = another USB cable
                 │ implemented by
                 ▼
    ┌───────────────────────────┐
-   │  Hibernate (90% uses)      │
+   │  Hibernate (sabse zyada)   │
    │  Actual ORM code           │
    │  OR EclipseLink, OpenJPA   │
    └────────────┬──────────────┘
@@ -76,9 +77,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 ```
 Yeh code:
-   JpaRepository  = JPA interface
-   Spring Data    = thin layer on top
-   Underneath     = Hibernate by default
+   JpaRepository  = SPRING DATA ka interface (JPA spec ka NAHI)
+   JPA spec ka    = EntityManager, @Entity, @Id, @OneToMany ...
+   Spring Data    = JPA ke upar patli layer (method naam se query khud banti)
+   Underneath     = Hibernate by default (EntityManager ka implementation)
 
    = Tu JPA likhta, Hibernate execute karta
 ```

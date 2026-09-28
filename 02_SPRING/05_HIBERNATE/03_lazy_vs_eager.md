@@ -126,7 +126,7 @@ public List<Book> getBooks(Long authorId) {
 
 ### Option 2: JOIN FETCH explicit
 ```java
-@Query("SELECT a FROM Author a JOIN FETCH a.books WHERE a.id = :id")
+@Query("SELECT a FROM Author a LEFT JOIN FETCH a.books WHERE a.id = :id")   // LEFT: bina book wala author bhi mile
 Optional<Author> findByIdWithBooks(@Param("id") Long id);
 ```
 
@@ -166,9 +166,9 @@ Tu Author chahta sirf:
 
    Hibernate:
       "EAGER hai publisher — load karo"
-      SELECT * FROM authors WHERE id = 1;
-      SELECT * FROM publishers WHERE id = ?;
-      = 2 queries (even though publisher kaam nahi)
+      findById -> aksar JOIN karke ek hi query (publisher bhi saath)
+      findAll / JPQL -> pehle authors, phir HAR author ka publisher alag SELECT = N+1 !
+      = publisher chahiye tha hi nahi, phir bhi aaya
 
 Deep tree:
    Author → Publisher → Country → Continent (all EAGER)
@@ -184,6 +184,8 @@ Deep tree:
 RULE 1: ALWAYS use LAZY (override defaults)
    @ManyToOne(fetch = FetchType.LAZY)
    @OneToOne(fetch = FetchType.LAZY)
+   ★ @OneToOne ki NON-owning side (mappedBy wali) pe LAZY aksar kaam NAHI karta (Hibernate ko
+     pata nahi null hai ya nahi) — bytecode enhancement / @MapsId chahiye. Owning side pe chalta.
 
 RULE 2: Fetch what you need:
    • Just author → no fetch hint
@@ -315,6 +317,7 @@ Author + books EK query me (LEFT JOIN) -> `getBooks()` pe koi extra DB-trip nahi
 ### Kya hai
 ```
 OSIV = Open-Session-In-View. Spring Boot me DEFAULT = ON (spring.jpa.open-in-view=true).
+   (Boot startup pe WARNING bhi deta hai jab tak tu ise khud set na kare.)
 ON  -> Hibernate session poore HTTP-REQUEST ke end tak khuli rehti (controller/view-render tak).
     -> to controller me LAZY chhuo tab bhi session khuli -> load ho jaata -> koi exception NAHI.
 ```

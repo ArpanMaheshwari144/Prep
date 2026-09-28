@@ -92,9 +92,10 @@ Default: LAZY fetching for @OneToMany
 ## 5 Solution 1 — JOIN FETCH (Most Common)
 
 ```java
-@Query("SELECT a FROM Author a JOIN FETCH a.books")
+@Query("SELECT a FROM Author a LEFT JOIN FETCH a.books")
 List<Author> findAllWithBooks();
 ```
+★ LEFT (sirf JOIN nahi): plain JOIN FETCH = INNER join -> jin authors ki koi book nahi, wo GAAYAB.
 
 ### DB Single Query
 
@@ -182,15 +183,12 @@ Books fetch IN BATCHES of 10:
 ## Production Impact
 
 ```
+(misaal ke number — maan lo har query ~5ms)
 Without fix:
-   100 authors → 101 DB queries
-   Each ~5ms → 505ms latency
-   = SLOW
-
+   100 authors → 101 DB queries → ~505ms
 With JOIN FETCH:
-   100 authors → 1 query
-   Latency = 5ms
-   = 100x faster
+   100 authors → 1 query (thoda bada) → kaafi kam
+   asli farak apne logs / APM me naapo
 ```
 
 ---
@@ -319,7 +317,13 @@ SCALE: 1000 authors -> BAD = 1001 queries (DB tabaah) | GOOD = 1 query. Yehi sil
 1. N+1 ki JAD = LAZY loading + loop me child access. (EAGER bhi fix nahi -> wo har jagah load karega, ulta bura.)
 2. FIX = JOIN FETCH (query me) ya @EntityGraph (annotation) -> ek query me parent+child.
 3. DETECT = SQL logs (show-sql=true) me "same select repeat" dikhe -> N+1 hai. (interview: "kaise pakadoge?" -> logs.)
-4. distinct JOIN FETCH me zaroori -> warna join-multiplication se parent duplicate.
+4. distinct: Hibernate 5 me zaroori (join se parent duplicate). Hibernate 6+ (Boot 3+, tera usercrud)
+   fetch-join ke duplicate parent KHUD hata deta -> DISTINCT likhna nuksaan nahi, par zaroori nahi.
+6. ★ @ManyToOne DEFAULT EAGER hai (@OneToMany LAZY). books.findAll() -> har book ka author alag
+   query = ULTA N+1. Fix: @ManyToOne(fetch = FetchType.LAZY) + zaroorat pe JOIN FETCH.
+7. ★ JOIN FETCH (collection) + Pageable = Hibernate saari rows memory me laake page karta
+   (log warning "firstResult/maxResults specified with collection fetch"). Fix: pehle parent ids
+   ka page, phir un ids pe JOIN FETCH — ya @BatchSize.
 5. Connect: ye query-COUNT ka masla hai (kitni queries), INDEXING = per-query SPEED ka. Dono = DB performance.
 ```
 
@@ -369,6 +373,7 @@ N alag UPDATE -> 1 UPDATE. DB khud saari rows badal deta.
 Bulk JPQL/native UPDATE 1st-level cache ko BYPASS karta -> Hibernate ko pata nahi kaunsi entity badli.
  -> SAME session me us entity ko read + bulk-update MAT karo (stale cache milega).
  -> zaroorat ho to entity DETACH kar / session clear kar.
+ -> Spring Data me: @Modifying(clearAutomatically = true) -> query ke baad context khud clear.
 ```
 
 ### Detection (same as N+1)

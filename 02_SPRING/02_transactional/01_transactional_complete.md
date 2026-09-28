@@ -1,6 +1,6 @@
 # `@Transactional` — Complete Interview Reference
 
-> **Most-asked Spring annotation in interviews.** 90% chances yeh kuch na kuch puchega.
+> **Interview me sabse zyada poochhi jaane wali Spring annotations me se ek.**
 
 ---
 
@@ -99,7 +99,7 @@ try {
 
 ```java
 @Transactional
-public void transferMoney(Long fromId, Long toId, double amount) {
+public void transferMoney(Long fromId, Long toId, BigDecimal amount) {   // paisa = BigDecimal, double nahi
     accountRepo.debit(fromId, amount);
     accountRepo.credit(toId, amount);
 }
@@ -266,13 +266,13 @@ conn.close();
 
 **Answer = Propagation type.**
 
-### Tier 1 (90% interview yahan se)
+### Tier 1 (zyada tar interview yahin se)
 
 | Type | Meaning | Example use case |
 |---|---|---|
 | **REQUIRED** *(default)* | Parent TX hai → join. Nahi hai → naya banao. | Default — 90% cases |
 | **REQUIRES_NEW** | Hamesha NAYA TX. Parent ko suspend kar do. | Audit logs (independent commit) |
-| **NESTED** | Parent ke andar **savepoint**. Sub-fail → savepoint tak rollback. | Try-and-fallback patterns |
+| **NESTED** | Parent ke andar **savepoint**. Sub-fail → savepoint tak rollback. | Try-and-fallback patterns (★ JDBC savepoint chahiye — JpaTransactionManager pe default me NAHI chalta) |
 
 ### Tier 2 (kabhi-kabhi)
 
@@ -443,14 +443,17 @@ Tx-A: SELECT * WHERE age > 18 → 6 rows
           ▲
           │
   ┌───────┴───────────────────────────────┐
-  │ SERIALIZABLE                          │  ← banking/financial
-  │ All locks. All problems blocked.      │     (rare, very slow)
+  │ SERIALIZABLE                          │  ← bahut kam use (bahut slow)
+  │ All locks. All problems blocked.      │     banking me bhi aam taur pe
+  │                                       │     row lock / FOR UPDATE / WHERE check
   ├───────────────────────────────────────┤
   │ REPEATABLE_READ        (MySQL default)│  ← strong by default
-  │ Row locks. Phantom still possible.    │
+  │ Standard: phantom possible. MySQL     │
+  │ InnoDB: snapshot + next-key lock se   │
+  │ zyada tar phantom rok leta.           │
   ├───────────────────────────────────────┤
-  │ READ_COMMITTED   (Postgres/Oracle def)│  ← 90% production
-  │ Read latest committed only.           │     this is enough
+  │ READ_COMMITTED   (Postgres/Oracle def)│  ← zyada tar production me
+  │ Read latest committed only.           │     yahi kaafi
   ├───────────────────────────────────────┤
   │ READ_UNCOMMITTED                      │  ← analytics dashboards
   │ Anything goes. Dirty reads allowed.   │     (rare, super fast)
@@ -490,7 +493,7 @@ public void someMethod() { ... }
 **Default = `Isolation.DEFAULT`** → DB ka apna default use karta.
 
 ### Power phrase
-> **"99% cases mein default chodna best — DB ka level kaafi hai. SERIALIZABLE sirf banking/financial mein. High level = strong consistency but locking zyada → throughput kam."**
+> **"Zyada tar cases me DB ka default kaafi hai. Paise wale race ke liye poora SERIALIZABLE nahi — row lock (SELECT ... FOR UPDATE) ya conditional UPDATE (WHERE balance >= ?). High level = strong consistency but locking zyada → throughput kam."**
 
 ---
 
@@ -582,7 +585,7 @@ public void someMethod() {
 ### TRAP BOX
 
 ```
-90% candidates yeh galat sochte:
+Bahut candidates yeh galat sochte:
    "Saari exceptions pe rollback hota"
 
    NAHI — sirf Unchecked (RuntimeException + Error)
@@ -593,7 +596,7 @@ public void someMethod() {
 
 ## SELF-INVOCATION PITFALL — Deepest Gotcha
 
-> **95% candidates yahin fasate hain. Senior dev filter question.**
+> **Candidates yahin sabse zyada fasate hain. Senior dev filter question.**
 
 ### Setup
 ```java
@@ -710,7 +713,8 @@ public class SaveService {
 ```java
 @Service
 public class UserService {
-    @Autowired private UserService self;   // ← self-injection
+    @Autowired @Lazy private UserService self;   // ← self-injection (★ @Lazy zaroori: Boot 2.6+ me
+                                                 //    circular reference by default BAND hai)
 
     public void doStuff() {
         self.saveUser(new User("Arpan"));   // through proxy
@@ -734,6 +738,7 @@ Bytecode-level injection — self-invocation bhi intercept. Rare in production.
 public class UserService {
     @Transactional
     private void privateMethod() { ... }   // proxy can't intercept private
+    // (Spring 6+ me CGLIB proxy protected / package-private pe chal jaata; PRIVATE pe kabhi nahi)
 
     @Transactional
     public final void finalMethod() { ... }   // proxy can't override final
@@ -864,10 +869,10 @@ public List<Order> findRecentOrders(Long userId) {
 > - **cross-service / multi-DB** (Wallet-DB + Portfolio-DB alag) → ek `@Transactional` 2 DB pe nahi chalti → **SAGA** (compensating undo) ya 2PC.
 > - **low-latency trading** (microseconds) → DB transaction hot-path pe NAHI → in-memory engine + **event-log (WAL)** + async settlement.
 > - **duplicate/retry** → `@Transactional` nahi rokta → **idempotency key + reconciliation job**.
-> Interview line: *'@Transactional ka apna scope hai — single-DB ACID. Distributed/scale pe SAGA + event-sourcing + idempotency. Right tool for right scope.'* (= trading #16 / payment #17 designs)"
+> Interview line: *'@Transactional ka apna scope hai — single-DB ACID. Distributed/scale pe SAGA + event-sourcing + idempotency. Right tool for right scope.'* (= 04_HLD/SYSTEM_DESIGNS/06_stock_broker_trading + 07_payment_system)"
 
 ### Q: "Konsa isolation use karoge?"
-> "99% cases mein DB ka default — Postgres ka READ_COMMITTED kaafi hai. Banking/financial → SERIALIZABLE. High level = strong consistency but locking zyada."
+> "Zyada tar cases me DB ka default kaafi hai (MySQL REPEATABLE_READ, Postgres READ_COMMITTED). Paise wale race ke liye row lock ya conditional UPDATE — poora SERIALIZABLE bahut kam, kyunki slow hai. High level = strong consistency but locking zyada."
 
 ---
 
@@ -908,7 +913,7 @@ Trap 4: "MySQL aur Postgres ka isolation default same hai"
 ```
 @Transactional       =  "Auto try-catch-commit-rollback wrapper"
 
-REQUIRED             =  "Join karo ya naya banao" (default, 90%)
+REQUIRED             =  "Join karo ya naya banao" (default, zyada tar yahi)
 REQUIRES_NEW         =  "Hamesha alag, parent ko suspend"
 NESTED               =  "Parent ke andar savepoint"
 
@@ -919,7 +924,7 @@ PHANTOM READ         =  "New row appeared in range"
 READ_UNCOMMITTED     =  "Sab dikha raha hai, even uncommitted"
 READ_COMMITTED       =  "Sirf committed dikhao" (Postgres default)
 REPEATABLE_READ      =  "Same TX = same answer" (MySQL default)
-SERIALIZABLE         =  "Ek time mein ek hi banda" (banking)
+SERIALIZABLE         =  "Ek time mein ek hi banda" (bahut kam, slow)
 
 ROLLBACK DEFAULT     =  "Sirf RuntimeException + Error"
 SELF-INVOCATION      =  "this.method() = proxy bypass = no TX"
