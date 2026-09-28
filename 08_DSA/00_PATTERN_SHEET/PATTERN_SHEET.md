@@ -548,12 +548,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      KEY  : windowLen - maxFreq = kitne char badalne padenge. <=k -> valid.
      j pe : mp[s[j]]++, maxFreq = max(maxFreq, mp[s[j]]).
      VALID   (windowLen - maxFreq <= k)  -> maxLen = max(maxLen, windowLen).
-     INVALID (windowLen - maxFreq > k)   -> left shrink (mp[s[i]]--, i++).
-     SHRINK PE (Arpan ka REDO_1, 28-Sep):  mp[s[i]]--;  if (mp[s[i]] == 0) mp.erase(s[i]);  i++;
-        -> count 0 hua to key hi HATA do, map me "0 wali" kachra na bache.
-        -> is problem me zaroori nahi (mp.size() use nahi hota), par jahan DISTINCT gino
-           (longest k distinct · fruit baskets · subarrays k distinct) wahan ye ZAROORI hai,
-           warna mp.size() galat. Isliye aadat hi daal lo.
+     INVALID (windowLen - maxFreq > k)   -> left shrink:
+                 mp[s[i]]--;
+                 if (mp[s[i]] == 0) mp.erase(s[i]);   // 0 hua to key hatao (DISTINCT gino to zaroori)
+                 i++;
      CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window best-length
         se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
 
@@ -1454,7 +1452,6 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      KYUN "khaali ho tabhi": har element zindagi me sirf EK baar input -> output jaata
         -> pop / peek amortized O(1). (har pop pe palatna = O(n), yahi interviewer poochta.)
      TRAP: output me kuch bacha ho aur tab input palat diya -> kram toot jaata (naye purano ke upar).
-     (Arpan 27-Sep, pehli baar me 9/9)
 
  broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
 ```
