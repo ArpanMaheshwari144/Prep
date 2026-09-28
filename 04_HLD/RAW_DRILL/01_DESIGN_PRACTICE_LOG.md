@@ -137,3 +137,31 @@
 
    Arpan ka nichod (27-Sep): HLD bhi DSA jaisa GATE hai — 45 min job ka andaza nahi deta.
 ```
+
+---
+
+## RATE LIMITER — BOLKE, 6 SAWAAL SE (28-Sep, Arpan ne khud chalaya)
+
+```
+   SHURU: scope poocha ("kis pe limit, kahan?") · FR: logged-in = user id / API key, anonymous = IP,
+          endpoint-wise limit (login sakht), paar -> 429 + Retry-After
+          NFR: low latency, sab server pe ek ginti, fail-open, HA
+   BASIC: User -> LB -> API Gateway (limiter) -> Server · ginti Redis me
+
+   SAWAAL        -> DIKKAT                                  -> DABBA
+   ek saath?     -> do request ek ginti padh ke dono pass    -> Redis INCR (atomic), check lauti value pe
+   gira?         -> Redis gira to limiter atke               -> replica + Sentinel auto promote, sab gira -> FAIL-OPEN
+   bahar slow?   -> Berlin ki request India wale Redis tak   -> region-wise Redis + user apne region pe chipka
+   dobara?       -> ek banda 429 kha ke bhi maarta rahe      -> event QUEUE (async) -> worker pattern -> WAF block
+   purana dikha? -> failover pe replica ki ginti peeche      -> chalta hai, thode extra request
+   (algo)        -> kaunsa?                                  -> TOKEN BUCKET (burst ok); tokens + last_refill,
+                                                                refill request pe hisaab se, Lua script me (race)
+
+   SUDHAAR:
+   - IP har user pe nahi, sirf anonymous pe (office/WiFi me bahut log ek IP)
+   - GET phir SET = race wapas; INCR ki lauti value pe check
+   - token bucket = padho-hisaab-likho, ek step nahi -> Lua script
+
+   Arpan ka nichod (28-Sep): topic pata, notes kholte hi yaad aata; FR = kaun/kya/phir,
+   NFR = 5 shabd, baaki 6 sawaal round me khud nikaal dete hain.
+```
