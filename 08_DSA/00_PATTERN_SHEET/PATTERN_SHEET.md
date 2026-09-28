@@ -549,6 +549,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      j pe : mp[s[j]]++, maxFreq = max(maxFreq, mp[s[j]]).
      VALID   (windowLen - maxFreq <= k)  -> maxLen = max(maxLen, windowLen).
      INVALID (windowLen - maxFreq > k)   -> left shrink (mp[s[i]]--, i++).
+     SHRINK PE (Arpan ka REDO_1, 28-Sep):  mp[s[i]]--;  if (mp[s[i]] == 0) mp.erase(s[i]);  i++;
+        -> count 0 hua to key hi HATA do, map me "0 wali" kachra na bache.
+        -> is problem me zaroori nahi (mp.size() use nahi hota), par jahan DISTINCT gino
+           (longest k distinct · fruit baskets · subarrays k distinct) wahan ye ZAROORI hai,
+           warna mp.size() galat. Isliye aadat hi daal lo.
      CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window best-length
         se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
 
