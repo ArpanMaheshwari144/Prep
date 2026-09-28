@@ -20,8 +20,12 @@ Imagine office cabinet — sirf TERI desk pe rakhi:
 Hibernate Session = Tera desk
    L1 cache = same session mein DB se ek baar fetch
               → memory mein cache
-              → repeat queries DB hit NAHI karte
+              → ID se dobara maango (findById / em.find) to DB hit NAHI
 ```
+
+★ TRAP: L1 sirf **ID wale lookup** bachata hai. `findByEmail`, `findAll`, koi bhi JPQL / @Query
+**har baar DB pe jaati hai** (query result L1 me nahi rakhta) — bas lautayi gayi entity agar pehle se
+session me hai to wahi same object milta. "same query 5 baar = 1 DB hit" sirf findById pe sach.
 
 ---
 
@@ -87,7 +91,7 @@ public void demo(Long id) {
 ## 4 Important Properties
 
 ```
-1. PER-SESSION (per @Transactional)
+1. PER-SESSION (per @Transactional — aur OSIV ON ho to poori REQUEST)
    Different session = different cache
    No sharing across sessions
 
@@ -97,6 +101,7 @@ public void demo(Long id) {
 
 3. CANNOT DISABLE
    It's how Hibernate works internally
+   (bina L1 ke chahiye to StatelessSession — bulk jobs me)
 
 4. CLEARED on session close
    Transaction end → cache gone
@@ -205,7 +210,7 @@ L1 cache = automatic, transaction-level
 ```
 L1 Cache = desk drawer (per session)
 
-Same query 5 times in transaction = 1 DB hit
+Same ID 5 baar (findById) in transaction = 1 DB hit  (JPQL / findByX har baar DB)
 Session end = cache cleared
 Cannot disable, automatic
 ```

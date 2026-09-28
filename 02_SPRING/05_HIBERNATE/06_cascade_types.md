@@ -58,6 +58,16 @@ authorRepo.save(a);
 CASCADE = "Parent action child pe automatically apply"
 ```
 
+★ TRAP (bidirectional): upar `mappedBy` nahi hai to Hibernate beech me ek JOIN TABLE bana deta.
+Asli code me `@OneToMany(mappedBy = "author", cascade = ...)` hota hai — aur tab list me add karna
+KAAFI NAHI, book.setAuthor(a) bhi karna padta (owning side = @ManyToOne), warna author_id NULL jaata.
+```java
+public void addBook(Book b) {   // helper — dono side ek saath
+    books.add(b);
+    b.setAuthor(this);
+}
+```
+
 ---
 
 ## 4 6 Cascade Types
@@ -87,11 +97,12 @@ CASCADE = "Parent action child pe automatically apply"
       "cascade = PERSIST on books"
         │
         ▼
-   For each book in author.books:
-      → INSERT INTO books (...)
+   PEHLE parent:
+      INSERT INTO authors (...)          ← author ki id chahiye (books ka FK)
         │
         ▼
-   INSERT INTO authors (...)
+   PHIR har book:
+      → INSERT INTO books (..., author_id)
         │
         ▼
    Commit — all saved together

@@ -100,8 +100,8 @@ Magic kya hua?
 3. Before next QUERY in same session
    Auto-flush mode
 
-4. Explicit save() call
-   But not always needed (with @Transactional)
+(★ save() khud FLUSH nahi karta — sirf entity ko managed banata. Turant DB me chahiye to
+   saveAndFlush() / em.flush(). Warna UPDATE commit pe hi jaata.)
 ```
 
 ---
@@ -193,7 +193,7 @@ Tweaking:
 class User { ... }
 
 // Update SQL:
-//   Default:        UPDATE users SET id=?, name=?, email=?, ... WHERE id=?;
+//   Default:        UPDATE users SET name=?, email=?, ... WHERE id=?;   (id ke alawa SAARE column)
 //   @DynamicUpdate: UPDATE users SET name=? WHERE id=?;
 //                   (sirf changed columns)
 ```
@@ -285,10 +285,15 @@ merge(detached)      -> DETACHED -> PERSISTENT (copy)
 **save vs persist vs merge (grill):**
 ```
 persist (JPA)   -> TRANSIENT -> PERSISTENT, return void
-save (Hibernate)-> ~same, generated ID return
+save (Hibernate)-> ~same, generated ID return   (Hibernate 6 me DEPRECATED — persist use karo)
 merge           -> DETACHED ki state ek PERSISTENT COPY me daal deta, MANAGED copy RETURN karta
                    (argument khud detached rehta!). detached-changes DB me chahiye -> merge.
-saveOrUpdate    -> detached attach YA transient save (Hibernate-native)
+saveOrUpdate    -> detached attach YA transient save (Hibernate-native, Hibernate 6 me DEPRECATED)
+
+★ SPRING DATA ka repository.save() (tu yahi use karta hai):
+   entity NAYI hai (id null / isNew)  -> em.persist()
+   nahi to                            -> em.merge()  -> MANAGED copy LAUTATA hai
+   -> isliye hamesha `user = repo.save(user);` — return wala object use karo
 ```
 ★ merge crux (galti-prone): `User managed = session.merge(detached);` -> aage `managed` pe kaam karo, `detached` pe NAHI (wo abhi bhi detached). merge ka RETURN use karo.
 
