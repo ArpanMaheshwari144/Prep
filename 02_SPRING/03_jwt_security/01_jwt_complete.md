@@ -938,6 +938,9 @@ public class JwtFilter extends OncePerRequestFilter {
 - **Matlab:** "jiske paas ye token hai use access mil jaata" — cash-note jaisa (bearer = token-holder).
 - **Prefix KYU:** `Authorization` header **alag-alag type** carry kar sakta — `Basic <base64(user:pass)>` · `Bearer <token>` · `Digest ...`. Prefix **SERVER ko batata konsa scheme** hai -> server jaanta kaise parse/validate kare.
 - **Bina "Bearer" / galat prefix:** server ka `authHeader.startsWith("Bearer ")` **fail** -> "koi token nahi" -> **401** (ya `substring(7)` galat char kaat de). Technically bina-Bearer apna server likh sakte, par **standard toot jaata** + tools/interceptor kaam nahi karte (non-idiomatic).
+- ★ **Security me ZERO farak (29-Sep, Arpan-Q):** "Bearer" sirf LABEL hai, taala nahi. Security poori SIGNATURE se aati.
+  Label hatao to hacker ko kuch nahi milta; lagao to kuch naya nahi bachta. Farak sirf TOOLS ka: Spring resource server,
+  API Gateway, Postman "Bearer Token", Swagger, frontend libs sab `Bearer <token>` maan ke chalte.
 - **One line:** Bearer = standard identifier "ye bearer-token hai, prefix hata ke validate karo".
 
 ---
