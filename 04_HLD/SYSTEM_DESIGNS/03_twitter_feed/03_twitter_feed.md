@@ -1,6 +1,6 @@
 # Twitter Feed — POORA ROUND (4 MOVE, jaise asli me hota hai)
 
-> **NAV** — ARCHETYPE A (read-heavy/feed) · DIL: read SASTA ho. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · trade-off: [fanout write vs read](../../02_TRADEOFFS.md)
+> **NAV** — ARCHETYPE A (read-heavy/feed) · DIL: read SASTA ho. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · trade-off: [MASTER trade-off jode](../../00_MASTER_SHEET.md)
 
 > 15-Sep: asli mock-video ke hisaab se dobara likha — koi 7-step rail nahi, sirf 4 move:
 > POOCHA -> do chhote block LIKHE -> BOXES banaye -> phir bolte-bolte JODTA gaya.
@@ -22,7 +22,7 @@
 ```
 
 ```
-★★ TEEN NIYAM (poori file par lagte — [01_DELIVERY](../../01_DELIVERY.md) 5b)
+★★ TEEN NIYAM (poori file par lagte — [MASTER](../../00_MASTER_SHEET.md) "Kaise bolna")
    1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
    2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
    3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega

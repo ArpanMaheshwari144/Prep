@@ -1,6 +1,6 @@
 # Microservices Communication
 
-> **NAV** — KYA: services aur client baat kaise karte (sync/async, server-push real-time, saga, gateway). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [sync vs async](../02_TRADEOFFS.md) · lagta hai: [payment](../SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [notification](../SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
+> **NAV** — KYA: services aur client baat kaise karte (sync/async, server-push real-time, saga, gateway). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [MASTER trade-off jode](../00_MASTER_SHEET.md) · lagta hai: [payment](../SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [notification](../SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
 
 > **HLD Topic 10 — How services talk in distributed systems**
 
