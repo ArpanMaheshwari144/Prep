@@ -167,3 +167,28 @@
    Arpan ka nichod (28-Sep): topic pata, notes kholte hi yaad aata; FR = kaun/kya/phir,
    NFR = 5 shabd, baaki 6 sawaal round me khud nikaal dete hain.
 ```
+
+---
+
+## NOTIFICATION — BOLKE (29-Sep, Arpan ne khud chalaya, notes bina padhe)
+
+```
+   SHURU: scope poocha ("kis pe focus?") · requirements apne shabdon me dohraye
+   1. basic                 -> Order Svc -> Email Svc -> User
+   2. email band = order fail -> beech me KAFKA (order publish karke laut jaata)
+   3. SMS slow = sab slow   -> har channel ki apni QUEUE + WORKER + rate limit
+   4. jise SMS nahi chahiye -> USER PREF + TEMPLATE + time, fanout se PEHLE (worker pe faltu kaam nahi)
+   5. ack kho gaya          -> idempotency key, Redis SET NX
+   6. provider fail         -> backoff + jitter, retry queue
+   7. bheja != mila         -> status rakho
+   8. OTP fast              -> "Kafka me priority nahi hoti" (sahi)
+   9. DB                    -> Cassandra (tracking, likhna zyada)
+
+   ROUND ME SIKHA / THEEK HUA:
+   - key laga di par provider call fail -> message kho gaya -> "sending" (chhota TTL) -> "sent"
+     (naya point, notes me dikkat 4b)
+   - provider down pe workers timeout me atke -> CIRCUIT BREAKER + doosra provider (notes dikkat 6)
+     fail pe circuit OPEN hota hai (CLOSED nahi): taar toota = call band
+   - status kahan se aata -> provider ka WEBHOOK -> Tracking DB
+   - priority -> alag TOPIC + alag worker pool (PriorityBlockingQueue ek process tak; FILE me galat tha)
+```
