@@ -104,6 +104,75 @@
 > ROZ: 5 sawaal, NEECHE se upar (ulte kram) — taaki kram yaad na ho, sawaal yaad ho. Pehle khud bolo,
 > phir jawab dekho. Design ka naam badal ke poochho ("payment me ye gira to?", "chat me?").
 
+### ★★★ 8 DABBE x 4 LINE (29-Sep, Sonnet ka saancha — cross-question yahin se aate)
+
+> Rail pakka hai (sawaal -> requirement -> number -> chhote se shuru). Fisalna CROSS-QUESTION pe hai,
+> kyunki "KAB lagana" pata hai, "LAGANE KE BAAD KYA TOOTTA" kam pada. Har dabba = 4 line:
+> 1 kya solve · 2 kya NAYI dikkat laata (<- cross-question) · 3 uska fix · 4 iski jagah kya, wo kyun nahi.
+> Atke to kaagaz pe TIMELINE chalao (t=1 likha, t=2 gira ...) — HLD ka copy-pen.
+
+```
+REPLICA
+ 1 padhne ka load baant-ta · primary gire to standby
+ 2 LAG: copy thodi der baad pahunchti (async) -> apna likha turant purana dikhe ·
+   failover pe aakhri writes kho sakti (double booking / paisa)
+ 3 apna likha PRIMARY se padho (read-your-own-writes) · paise/seat pe SYNC / semi-sync standby, alag AZ
+ 4 cache? (taaza data chahiye tha) · shard? (masla likhna nahi, padhna tha)
+
+CACHE (Redis)
+ 1 baar-baar ka read tez, DB ka bojh kam
+ 2 STALE (purana dikhe) · cache gira -> saara load DB pe · hot key expire -> STAMPEDE (1000 miss ek saath)
+ 3 write pe DELETE + TTL (race kam, khatam nahi) · replica/cluster · mutex / soft-TTL · load shedding
+ 4 read replica? (har read ab bhi DB tak jaata) · paisa / balance kabhi cache se nahi
+
+SHARD
+ 1 data ya WRITES ek machine se bade -> baant do
+ 2 HOT SHARD (celebrity / ek key pe bheed) · CROSS-SHARD query / transaction mushkil · RESHARD dard
+ 3 shard key soch ke (userId / chatId: jo query me hamesha ho) · hot key tod do (key+0..9) ·
+   consistent hashing (kam data khiske) · jo saath chahiye wo ek hi shard pe
+ 4 pehle: vertical scaling · read replica (sirf read zyada ho) · purana data archive (size) —
+   sharding AAKHRI hathiyar
+
+QUEUE / KAFKA
+ 1 bhejne wala aur karne wala alag (async) · jhatka sokh le (spike) · ek event -> kai consumer
+ 2 AT-LEAST-ONCE: duplicate aayega · ORDER sirf ek partition ke andar · poison message line rok de ·
+   consumer peeche (lag)
+ 3 idempotent consumer (message-id dedup) · same key -> same partition · retry + DLQ ·
+   lag pe alert, consumer badhao (max = partition ki ginti) · Kafka me priority nahi -> alag topic
+ 4 seedha REST call? (turant jawab chahiye tab) · RabbitMQ? (routing / per-message ack; replay nahi)
+
+LOAD BALANCER
+ 1 traffic kai server me baanto · mara server bahar (health check)
+ 2 LB khud SPOF · STICKY session = ek server pe bojh, wo mare to session gaya · rokta nahi, sirf baant-ta
+ 3 LB ki jodi (active-passive / managed) · server STATELESS rakho (session Redis / JWT) ·
+   bheed rokni ho to queue / rate limit
+ 4 DNS round-robin? (health check dheema, cache ki wajah se) · L4 vs L7: L7 URL / header dekh sakta
+
+IDEMPOTENCY KEY
+ 1 retry / double-click pe kaam do baar na ho (paisa, email)
+ 2 key laga di aur kaam FAIL -> retry pe skip -> kaam kabhi nahi hua ·
+   check aur set alag-alag = race (do request dono andar)
+ 3 SET NX (check + set ek atomic step) · "sending" chhota TTL -> success pe "sent" ·
+   DB me UNIQUE constraint · duplicate pe WAHI purana jawab lautao
+ 4 lock? (bhaari, deadlock) · "exactly-once" ka waada? (distributed me milta nahi — at-least-once + dedup)
+
+CIRCUIT BREAKER
+ 1 mara / dheema provider ko call hi band -> worker timeout me na phase
+ 2 galat threshold -> theek provider bhi band ho jaaye · OPEN ke waqt kaam kahan jaaye?
+ 3 N fail -> OPEN (call band) -> thodi der -> HALF-OPEN (ek test) -> theek to CLOSED ·
+   FALLBACK: doosra provider / queue me rakho / cached jawab
+   (naam yaad: OPEN = taar toota = current nahi = call nahi)
+ 4 sirf timeout? (har call phir bhi intezaar karti) · sirf retry? (marte provider pe aur hathoda)
+
+DB TRANSACTION
+ 1 kai kaam ek saath — ya sab, ya kuch nahi (atomic) · seat / balance sahi
+ 2 do alag service / DB pe transaction nahi chalti · lambi transaction = lock = dheema / deadlock ·
+   transaction ke andar bahar ka call (PSP) = rollback se wapas nahi aata
+ 3 ek DB me: ek transaction · alag service: PENDING -> kaam -> DONE + RECONCILIATION job /
+   SAGA (fail pe ulta kaam: refund) · event ke liye OUTBOX · race pe UPDATE ... WHERE seats >= 1
+ 4 2PC (two-phase commit)? (dheema, coordinator SPOF — isliye saga)
+```
+
 ```
 ★★ JAWAB SE PEHLE 5 SECOND (29-Sep, grill 2.5/5 ke baad nikla)
    Aadat thi: sawaal ka SHABD suna -> pehla jaana-pehchaana dabba bola -> ruk gaya.
