@@ -170,7 +170,7 @@
 
 ---
 
-## NOTIFICATION — BOLKE (29-Sep, Arpan ne khud chalaya, notes bina padhe)
+## NOTIFICATION — BOLKE (29-Sep, Arpan ne khud chalaya, notes khole rakh ke)
 
 ```
    SHURU: scope poocha ("kis pe focus?") · requirements apne shabdon me dohraye
