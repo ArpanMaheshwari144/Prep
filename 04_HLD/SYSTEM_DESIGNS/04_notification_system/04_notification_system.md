@@ -173,6 +173,9 @@
    ★ NX = "set only if absent" = check aur set EK atomic step me.
      Alag-alag EXISTS phir SET karoge to beech me doosri request ghus sakti hai (race).
    ★ ek line: "at-least-once delivery + idempotent worker"
+   ★ BARIKHI (29-Sep): key BHEJNE SE PEHLE lagi, aur provider call FAIL hua -> retry pe key mili -> SKIP
+     -> user ko kabhi nahi pahuncha. Ilaaj: fail pe key HATAO (DEL), ya do haalat rakho:
+     "sending" (chhota EX) -> success pe "sent" (lamba EX). Fail = "sending" expire -> retry chal jaata.
    ★ ye WAHI cheez hai jo payment idempotency me hai — same race, same ilaaj.
 ```
 
@@ -225,7 +228,9 @@
             MEDIUM  order updates    -> kuch second chalega
             LOW     marketing/offers -> minute-ghanta chalega
 
-        implement: alag worker-pool per lane, ya ek PriorityBlockingQueue (priority field)
+        implement: har lane ka ALAG Kafka topic + apna worker pool (notif-high / -medium / -low)
+        ★ Kafka me priority nahi hoti — ek topic me OTP peeche hi lagega. Isliye alag topic.
+          (PriorityBlockingQueue sirf EK process ke andar chalti, distributed system me nahi.)
 ```
 
 ### dikkat 8 — "burst gaya, provider ne 429 de diya, sab fail ho gaye"
