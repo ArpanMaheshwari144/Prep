@@ -971,7 +971,24 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ GROUP ANAGRAMS
  └──────────────────────────────────────────────────────────────
-     anagrams ka SORTED-roop same hota -> har word SORT karo = KEY -> map<sortedKey, list<word>> me daalo -> lists hi groups.
+     "eat","tea","ate" -> teeno ka SORTED roop "aet" = same. Yahi KEY.
+     DERIVE: brute = har jodi check "anagram hai?" O(n² · k) -> baar-baar wahi letters gin rahe
+             -> har word ki ek pehchaan (KEY) bana ke map me CACHE -> O(n · k log k).
+     DS = unordered_map<string, vector<string>>   ·   KEY = sorted(word)
+
+       unordered_map<string, vector<string>> mp;
+       for (auto &w : strs) {
+           string key = w;
+           sort(key.begin(), key.end());      // "tea" -> "aet"
+           mp[key].push_back(w);              // same key = same group
+       }
+       vector<vector<string>> ans;
+       for (auto &p : mp) ans.push_back(p.second);   // map ki har list = ek group
+       return ans;
+
+     ★ KEY ka doosra roop (sirf a-z ho to): 26 ki ginti  "1#0#0#...#"  -> sort nahi, O(n · k).
+       (separator zaroori: bina "#" ke "1,11" aur "11,1" ek jaise dikh sakte)
+     ★ "" (khaali string) bhi chalta: sorted("") = "" -> ek hi group.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBARRAY SUM = K
