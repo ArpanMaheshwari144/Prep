@@ -20,7 +20,7 @@ Beech me DIRECT call NAHI -> **decoupled**. Jodne wala dhaaga = **TOPIC NAME**.
   kafkaTemplate.send(TOPIC,msg)      (Kafka broker :9092)          listen(msg) -> print
 ```
 - Producer: message topic me daal ke BHOOL jaata (kisko jaana = uski tension nahi)
-- Consumer: usne bola "main ye topic sunूंga" (@KafkaListener topics="user-events")
+- Consumer: usne bola "main ye topic sununga" (@KafkaListener topics="user-events")
 - Match = TOPIC NAME same -> pahuncha. Naam alag -> kabhi na milta.
 
 ## 3. Teen CRUX (interview me poochte)
@@ -261,8 +261,11 @@ Consumer ko message mila, process karne gaya, **FAIL** ho gaya. 2 wajah:
 - Message hi kharab (bad data, parse-fail) = "poison message"
 - Ya downstream down tha (DB/API abhi nahi chal raha) = temporary
 
-**Bina DLQ ke:** Kafka wahi message BAAR-BAAR deta rehta (commit nahi hua na) -> consumer usi kharab
-message pe atka -> **poore topic ka flow ruk gaya**. Ek sada aam poore truck ko rok deta.
+**Bina DLQ ke:** consumer usi kharab message pe atka rehta (offset commit nahi hua) -> uske peeche ki
+line ruk jaati. Ek sada aam poore truck ko rok deta.
+★ Barikhi: Spring Kafka ka DEFAULT `DefaultErrorHandler` hamesha atka nahi rakhta — ~10 baar try karke
+  message ko LOG karke CHHOD deta (skip + commit). Flow chalta rehta, par message CHUPCHAAP KHO jaata.
+  DLT ka fayda = kharab message khota nahi, alag topic me park hota, baad me dekh sakte.
 
 **offset/commit ka funda (isiliye same message dobara aata):**
 ```
@@ -464,7 +467,7 @@ Ye decision **PRODUCER** karta hai (bhejne se pehle), 2 tareeke se:
 
 **CASE 1 — KEY ke saath (split hua):** producer ek simple formula lagata:
 ```
-partition = hash(key) % (total partitions)
+partition = murmur2(key bytes) % (total partitions)   (hash = murmur2)
 
 key "h3" -> hash -> % 3 -> P2
 key "h4" -> hash -> % 3 -> P1
