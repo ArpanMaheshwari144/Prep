@@ -165,7 +165,7 @@
 
             worker: "notification:abc123 pehle bhej chuke?"
                         │
-                SET notification:abc123 sent NX EX 86400
+                SET notification:abc123 sent NX EX 86400      (isme ek chhed hai -> dikkat 4b)
                         │
                    ├─ "OK" mila -> naya hai -> BHEJO   (SET ... NX "OK" deta; "1" purane SETNX ka jawab tha)
                    └─ nil mila-> pehle ho chuka -> SKIP
@@ -173,10 +173,33 @@
    ★ NX = "set only if absent" = check aur set EK atomic step me.
      Alag-alag EXISTS phir SET karoge to beech me doosri request ghus sakti hai (race).
    ★ ek line: "at-least-once delivery + idempotent worker"
-   ★ BARIKHI (29-Sep): key BHEJNE SE PEHLE lagi, aur provider call FAIL hua -> retry pe key mili -> SKIP
-     -> user ko kabhi nahi pahuncha. Ilaaj: fail pe key HATAO (DEL), ya do haalat rakho:
-     "sending" (chhota EX) -> success pe "sent" (lamba EX). Fail = "sending" expire -> retry chal jaata.
    ★ ye WAHI cheez hai jo payment idempotency me hai — same race, same ilaaj.
+```
+
+#### ★ dikkat 4b — "key laga di, par provider call FAIL ho gaya" (29-Sep mock me poocha gaya)
+
+```
+        DIKKAT:
+          1. worker:  SET abc-123 NX           -> "OK"  (key lag gayi)
+          2. worker:  email provider ko call   -> FAIL  (provider down)
+          3. retry:   SET abc-123 NX           -> nil   (key pehle se hai) -> SKIP
+          -> email kabhi gaya hi nahi, par system maan raha "bhej diya" = MESSAGE KHO GAYA
+
+        ILAAJ (do me se ek):
+          A) fail hua to key HATA do
+               call fail -> DEL abc-123 -> retry pe key nahi milegi -> dobara bhejega
+
+          B) do haalat rakho   <- ZYADA PAKKA
+               pehle:       SET abc-123 "sending" NX EX 60       (chhoti expiry)
+               success pe:  SET abc-123 "sent"    EX 86400       (lamba)
+               worker beech me hi MAR gaya (A ka DEL chala hi nahi)
+                 -> 60 sec me "sending" khud mit jaata -> retry chal jaata
+
+          A kyun kam pakka: worker crash ho jaaye to DEL chalta hi nahi -> key atki -> message kho gaya.
+
+   TU: "If the provider call fails, I don't want the key to block the retry. So I set it as
+        'sending' with a short TTL, and only mark it 'sent' after the provider accepts it.
+        If the send fails or the worker dies, the key expires and the retry goes through."
 ```
 
 ### dikkat 5 — "provider fail ho raha hai aur hum turant retry maar rahe hain"
