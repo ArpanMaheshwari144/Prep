@@ -32,9 +32,11 @@ LEARNING (end me bol)               -> "data ne baat manwayi, opinion ne nahi"
 
    A (Action)   :
         1. Jira dekha -> kuch nahi mila. Excel dekhi -> IPs REPEAT ho rahi thi (pehla shaq).
-        2. flow trace kiya: request AWS se aati -> AWS apne DATA-CENTER ki IP header me PEHLE lagata,
+        2. flow trace kiya: HAMARE SETUP me header ki PEHLI entry AWS data-center (edge) ki IP thi,
            client ki asli IP uske BAAD. hamara code PEHLI le raha -> matlab AWS ki IP, client ki NAHI.
            (subtle bug — upar se sab normal dikhta.)
+           ★ (29-Sep) "AWS hamesha pehle lagata" MAT bolna: standard X-Forwarded-For me har proxy apni
+             IP PEECHE jodta hai. Bolo "in our setup the first entry was the AWS edge IP" — jo dekha wahi.
         3. proof banaya (ek source pe nahi ruka): CloudWatch logs + Papertrail logs + method KHUD test/dry-run.
            logs me repeating IPs mile jo US data-centers (Arizona etc.) ki thi -> client ki ho hi nahi sakti.
         4. lead + TPM ko dikhaya -> unhone MANA kiya ("saalon se aise hi chal raha hai") -> unka concern fair tha.
@@ -65,6 +67,8 @@ LEARNING (end me bol)               -> "data ne baat manwayi, opinion ne nahi"
      - GEO / location-based logic galat (client US data-center ka dikhta, asli client nahi)
      - RATE-LIMIT / IP-based rules galat (sab requests EK hi AWS-IP se dikhti -> blocking/throttling galat)
      - Client ki di hui Excel me DUPLICATE IPs -> unka apna reporting/analysis bekaar ja raha tha
+   - ★ RESUME wale shabd (yahi poochha jaayega): 300+ VENDOR integrations me FALSE DUPLICATES
+     (alag users ek hi IP pe dikhe) · har AWS WAF IP RULE toota (sab ek AWS IP pe -> block/allow galat)
    ★ Ek line me: "Har IP-based decision -- audit, geo, rate-limiting -- galat data pe le raha tha."
 ```
 
@@ -80,8 +84,9 @@ LEARNING (end me bol)               -> "data ne baat manwayi, opinion ne nahi"
     I wanted to confirm whether we were actually capturing the real client IP, because that IP fed our audit logs,
     geo logic and IP-based rules.
 
-    I traced the flow. Requests came through AWS, and AWS prepends its own data-center IP to the forwarded header,
-    with the real client IP after it — so we were capturing AWS's IP, not the client's. I confirmed it across
+    I traced the flow. In our setup, the first entry in the forwarded header was the AWS edge IP, with the real
+    client IP after it — so we were capturing AWS's IP, not the client's. That caused false duplicates across
+    300+ vendor integrations and broke every IP rule in our AWS WAF. I confirmed it across
     CloudWatch logs, Papertrail, and by testing the method myself. The repeating IPs turned out to be US
     data-center addresses, which couldn't be client IPs.
 
