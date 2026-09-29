@@ -104,6 +104,18 @@
 > ROZ: 5 sawaal, NEECHE se upar (ulte kram) — taaki kram yaad na ho, sawaal yaad ho. Pehle khud bolo,
 > phir jawab dekho. Design ka naam badal ke poochho ("payment me ye gira to?", "chat me?").
 
+```
+★★ JAWAB SE PEHLE 5 SECOND (29-Sep, grill 2.5/5 ke baad nikla)
+   Aadat thi: sawaal ka SHABD suna -> pehla jaana-pehchaana dabba bola -> ruk gaya.
+   ("data badhega" -> shard · "chal raha hai?" -> logs · "crash" -> logs)  — DSA me "sum" -> prefix jaisa.
+
+   1. PEHLE PUCHHO: "asli me kya toot raha hai?"
+        SIZE (data bada) · LOAD (bheed) · GIRA (dabba mara) · SLOW · DOBARA (duplicate) ·
+        EK SAATH (race) · AADHA KAAM (crash beech me) · PATA KAISE CHALE (monitoring)
+   2. PHIR 3 HISSE:   dikkat  ->  ilaaj  ->  BARIKHI ("par dhyan: ...")   <- cross-question yahin aata
+   3. HO SAKE TO:     "At work I ..."  (HikariCP alert · WAF IP block · $0 duplicate write · Fargate IP)
+```
+
 ### A. GIRA / SLOW
 
 ```
