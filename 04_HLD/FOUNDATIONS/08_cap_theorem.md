@@ -489,6 +489,18 @@ Truth bomb (LOCK):
 
 ---
 
+## ★ (drill se) — paise me CP kyun, ek line
+
+```
+   partition pe do hi raaste: purana / galat balance DIKHAO (available) ya REJECT karo
+   paise me galat balance / double-spend = tabahi -> REJECT behtar. "sahi ya kuch nahi."
+   line: "During a partition, money chooses consistency — better to reject than show a stale
+          balance or allow a double-spend. Brief unavailability beats being wrong about money."
+   ★ dhyan: OTP / message der se pahuncha = RELIABILITY / delivery ka sawaal, CAP ka nahi
+```
+
+---
+
 ## Trap Box
 
 ```

@@ -1,6 +1,6 @@
 # HLD MASTER SHEET — koi bhi design ASSEMBLE karne ka tareeka
 
-> **NAV** — KYA: interview-din ki EK file (archetype -> assemble -> bolo). · KAISE-BOLNA + SHABD: [01_DELIVERY](01_DELIVERY.md) · A YA B: [02_TRADEOFFS](02_TRADEOFFS.md) · CONCEPT-detail: [FOUNDATIONS](FOUNDATIONS) · 15 DESIGN: [SYSTEM_DESIGNS](SYSTEM_DESIGNS) · DRILL: [RAW_DRILL/00_DRILL](RAW_DRILL/00_DRILL.md)
+> **NAV** — KYA: interview-din ki EK file (archetype -> assemble -> bolo). · KAISE-BOLNA + SHABD: [01_DELIVERY](01_DELIVERY.md) · A YA B: [02_TRADEOFFS](02_TRADEOFFS.md) · CONCEPT-detail: [FOUNDATIONS](FOUNDATIONS) · 15 DESIGN: [SYSTEM_DESIGNS](SYSTEM_DESIGNS) · LOG: [HLD_PRACTICE_LOG](HLD_PRACTICE_LOG.md)
 
 > EK file. Interview se pehle sirf YE. (detail chahiye to hi SYSTEM_DESIGNS/* kholo.)
 >
@@ -29,8 +29,7 @@
      SYSTEM_DESIGNS/01..15 <- 15 poore design (05 = concept walkthrough)
 
    DRILL / ABHYAS
-     RAW_DRILL/00_DRILL.md                <- PART 1 need -> block reflex · PART 2 kyun/kaise Q&A
-     RAW_DRILL/01_DESIGN_PRACTICE_LOG.md  <- bolke kiye design ka log (naya yahin)
+     HLD_PRACTICE_LOG.md                  <- bolke kiye design ka log (naya yahin)
 
    BAHAR (zaroorat pe)
      ../06_COMPARES/       <- gehre "farak batao" explainer (TCP/UDP, HTTP versions, JWT/OAuth...)
@@ -43,7 +42,7 @@
        "A ya B?"           -> 02_TRADEOFFS
        "ye cheez hai kya?" -> FOUNDATIONS
        "poora design"      -> SYSTEM_DESIGNS
-       "khud ko test"      -> RAW_DRILL/00_DRILL
+       "khud ko test"      -> HLD_PRACTICE_LOG (bolke kiye round)
      Har file ke UPAR ek NAV line hai -> wahan se seedha jump.
 ```
 
@@ -226,7 +225,7 @@ STEP 7  BOTTLENECK / SCALE-10x (3 min)
 
 ## 4. BLOCK MENU (need -> block -> ek line kyun)
 
-> Detail + 31-row table = RAW_DRILL/00_DRILL.md. Ye compact version interview-din ke liye.
+> Ye compact version interview-din ke liye.
 
 ```
    read baar-baar          -> CACHE (Redis, cache-aside + TTL)   RAM, disk se 100x tez
@@ -263,6 +262,47 @@ STEP 7  BOTTLENECK / SCALE-10x (3 min)
 NIYAM: pehle NEED dekho, phir block. Har block ka apna kaam — galat jagah mat lagao.
 
 TRADE-OFF bolna ho -> `04_HLD/02_TRADEOFFS.md` (15 jode + ready English lines).
+
+### ★ (drill se) — menu me jo rows nahi thi
+
+```
+   abhi likha, turant padha,  -> READ-YOUR-OWN-WRITES               likhne wale ko thodi der
+   purana mila (replica lag)                                        PRIMARY se padhao
+   update pe cache stale      -> cache key DELETE (update nahi)     do write ulte kram me = galat value;
+                                                                    delete -> agla read DB se bharega
+   request kis server pe      -> LB ALGO: round-robin (barabar) · weighted (badi machine) ·
+                                 least-conn (request lambi-chhoti) · IP-hash (sticky session)
+   bada app, alag scale       -> MICROSERVICES                      alag scale + deploy, ek gira baaki chalu
+                                                                    (chhota app = monolith, MS over-engineer)
+   login state, kai server    -> JWT (stateless) / session (Redis)  JWT = signature verify, koi store nahi
+   server mara, LB ko pata?   -> HEALTH CHECK (LB pull, /health)    2-3 lagataar fail = hatao, 2-3 pass = wapas
+                                 HEARTBEAT (server push "zinda")    signal band = mara
+   har request naya DB conn   -> CONNECTION POOL (HikariCP)         borrow -> use -> return; size fix -> exhaust
+   "1M user -> kitna server?" -> ESTIMATE                           QPS = req/day / 10^5 · peak x2-3 ·
+                                                                    storage = req/day x size x (saal x 400)
+   frontend alag origin       -> CORS header                        server Access-Control-Allow-Origin
+                                                                    (specific origin, prod me "*" nahi)
+```
+
+```
+   ★ jode, ek line (A ya B):
+     LRU vs LFU          -> LRU = kab aakhri baar use (TIME) · LFU = kitni baar use (COUNT)
+                            A: 100 baar use, aakhri 1 ghanta pehle · B: 2 baar, aakhri 1 sec pehle
+                            -> LRU A hataata, LFU B hataata
+     cache-aside vs W-through -> aside = DB update + cache DELETE · through = cache + DB saath likho
+     session vs JWT      -> session = har request Redis lookup (stateful) · JWT = token khud saboot
+     monolith vs MS      -> chhota / ek team = monolith · alag scale + isolation = MS
+     WebSocket vs Kafka  -> WebSocket = server se USER ke browser tak live · Kafka = backend services ke beech
+```
+
+```
+   ★ design ke waqt 3 reflex (rate-limiter drill se, har shared component pe lagte):
+     A. component HAR request pe baitha (middleware)  -> LATENCY sabse zaroori -> in-memory (Redis)
+     B. shared state, kai server                      -> EK central store; per-server count = limit toot-ti
+     C. wo component mara                             -> default FAIL-OPEN (allow);
+                                                         FAIL-CLOSED sirf payment / auth jaise
+   ★ TRAP: "load baantna" = SHARDING, CDN nahi. CDN sirf static file (img/video/css), counter nahi.
+```
 
 ---
 

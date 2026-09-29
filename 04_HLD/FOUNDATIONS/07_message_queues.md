@@ -135,6 +135,14 @@ QUEUE
      queue             : kaam DISK pe, machine ke BAHAR  -> machine jaaye, kaam bacha rehta
 ```
 
+```
+★ (drill se) SPIKE pe QUEUE, LB kyun nahi:
+     LB  = request BAANTTA hai, ROKTA (buffer) nahi -> load > kul capacity -> baant ke bhi sab gire
+     QUEUE = request HOLD karti hai -> backend apni raftaar se uthaye -> spike absorb
+     line: "An LB distributes but doesn't buffer; if load exceeds capacity it still fails.
+            A queue absorbs the spike and the backend consumes at its own pace."
+```
+
 ---
 
 ## ★★ QUEUE KAB GALAT HAI (keemat)

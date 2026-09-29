@@ -497,6 +497,19 @@ seat booking     500 log EK hi row pe -> ye WRITE ki ladai hai
                  -> lock / atomic UPDATE. Shard/replica dono bekaar.
 ```
 
+**★ (drill se) — S3 ko shard karte ho? NAHI:**
+```
+   shard kyun karte -> ek DB NODE ki had (storage / throughput)
+   S3 = pehle se massively-distributed managed service; AWS khud andar partition + auto-scale karta
+        -> "ek node ki had" wali dikkat hi nahi -> manual shard bekaar
+   S3 me milti-julti cheez (confuse hoti):
+     1. KEY-PREFIX: S3 andar prefix se partition karta; bahut tez throughput -> keys alag prefix me
+        (ab per-prefix auto-scale hota, aksar zaroorat nahi)
+     2. kai BUCKET: region / tenant / type se -> ISOLATION ya region ke liye, SCALE ke liye nahi
+   line: "You don't shard S3 — AWS partitions and scales it for you. The S3 analogue is key-prefix
+          distribution for throughput, or separate buckets for isolation/region, not for scale."
+```
+
 > **★ SABSE BADA FAISLA — shard-key:** aisi chuno ki ROZ-MARRA ki query EK hi shard
 > me nipat jaaye. `userId` pe shard kiya -> "mere saare order" = ek machine (sasta).
 > `orderId` pe kiya -> wahi sawaal chaaron machine se (4 guna mehnga).

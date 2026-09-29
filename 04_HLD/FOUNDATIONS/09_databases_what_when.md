@@ -492,3 +492,50 @@ PER-CRITICALITY (CAP se jod ke) — ek hi app mein dono zones:
    = "polyglot persistence" + CAP per-criticality = same insight.
      (replication "money-path sync, baaki async" ki bhi yahi soch.)
 ```
+
+---
+
+## ★ (drill se) — DB ke aas-paas ke 5 sawaal
+
+```
+1. INDEX (slow query, "WHERE email=x" pe full scan)
+   index = B-tree (sorted) -> full scan O(n) ki jagah O(log n)
+   ★ B-tree binary tree NAHI: har node me sau-hazaar key (high fanout) -> 10 crore row bhi
+     ~3-4 level / page-read me mil jaati (binary hota to ~27 step)
+   KEEMAT: har insert/update pe tree bhi update -> WRITE slow + extra storage
+   -> har column pe nahi, sirf jin pe query filter/sort hota. EXPLAIN se dekho index laga ya nahi.
+   line: "An index is a B-tree giving O(log n) reads, but every write must update it — slower
+          writes and more storage. Index only the columns used in query filters."
+
+2. PAGINATION (crore item ek saath nahi bhej sakte)
+   OFFSET: LIMIT 20 OFFSET N -> DB pehle N row padh ke CHHODTA -> jitna gehra page, utna slow
+           + beech me naya item aaya -> item khisak ke dohre / chhoot jaate
+   CURSOR: "aakhri dekhe id ke BAAD ke 20" -> WHERE id < last_id ORDER BY id DESC LIMIT 20
+           (naya-pehle feed; purana-pehle ho to id > last_id ORDER BY id)
+           -> index se seedha jump, koi skip nahi -> gehra page bhi tez + stable. infinite scroll isi se.
+   line: "Offset scans and skips all earlier rows, so deep pages get slow. Cursor pagination
+          fetches rows after the last seen id using the index — fast and stable."
+
+3. DENORMALIZE ki keemat
+   read tez (join nahi) · par data DUPLICATE (user_name har order me) -> naam badla to SAARI
+   copies update -> write mushkil + inconsistency ka khatra + jagah zyada. "read tez, write bhaari."
+   (analogy: normalize = ingredients alag, har baar jodo · denormalize = ready THALI)
+
+4. S3 hai to DB kyun? (S3 DB ko REPLACE nahi karta)
+   S3 deta: key se file rakho / uthao. Bas.
+     query nahi (WHERE age>25) · transaction nahi · join nahi · partial update nahi (poora object
+     dobara likho) · bahut saare chhote tez read pe dheema
+   DB deta: query · index · ACID · join · in-place update
+   analogy: S3 = bada GODAAM (label se dabba nikaalo, "saare laal shirt wale do" nahi pooch sakte)
+            DB = smart CATALOG (turant filter / jod / atomic update, par bhaari dabbe nahi rakhta)
+   -> DONO saath: badi file S3 me · uska metadata + query wala data + S3 URL DB me
+      (video app: video -> S3, title/user/views -> DB)
+
+5. CONNECTION POOL (HikariCP)
+   naya connection har baar = TCP handshake + auth + setup (~10-100 ms) -> overhead + DB pe churn
+   pool = N connection pehle se khule -> BORROW -> use -> RETURN (band nahi, reuse)
+   EXHAUSTION: pool size FIX (e.g. 10); slow query connection pakde baithi -> naye request WAIT / fail
+   (analogy Arpan ki: hotel me waiter ka set sab guest sambhalta, har guest pe naya waiter nahi)
+   line: "Creating a connection each time needs a TCP handshake, auth and setup. A pool keeps
+          ready connections you borrow, use and return."
+```

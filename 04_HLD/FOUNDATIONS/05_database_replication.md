@@ -457,6 +457,12 @@ stock broker            ek hi seat / ek hi symbol pe 500 log
       do log ek hi row pe lade -> copies badhane se kuch nahi hoga
       (aur copies badhao to lag aur badhega)
       -> isliye bookmyshow me lock / atomic conditional UPDATE aaya tha, replica nahi
+
+★ (drill se) 3. replica READ scale deta, WRITE scale nahi:
+      har write primary pe + phir HAR replica pe apply hota -> write ka bojh ghatta hi nahi
+      write scale chahiye -> SHARD (har shard apne hisse ke writes)
+      line: "Replicas scale reads, not writes — every write still hits the primary and every
+             replica. To scale writes you shard."
 ```
 
 > Ye wahi cheez hai jo [02_TRADEOFFS](../02_TRADEOFFS.md) me "replication vs sharding" ke saath padhni hai:

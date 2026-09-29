@@ -221,6 +221,17 @@ Write:
 **Cons:** First read slow, stale risk
 **Use:** Read-heavy systems
 
+**★ (drill se) — write pe cache DELETE kyun, UPDATE kyun nahi:**
+```
+   do write lagbhag saath: A DB me 10 likhe, B DB me 20 likhe (DB me aakhri = 20)
+   cache UPDATE ulte kram me pahunche -> pehle 20, phir 10 -> cache me 10 = GALAT, TTL tak atka
+   cache-write fail ho jaaye -> bhi galat value pada rehta
+   DELETE -> koi value likhi hi nahi -> agla read DB (source of truth) se bharega
+   ★ par delete bhi 100% race-free NAHI (read-write race neeche "Cache-Aside RACE CONDITION") -> TTL safety-net rakho
+   line: "On write I invalidate the cache instead of updating it — a failed or out-of-order
+          cache write could leave wrong data; delete lets the next read repopulate from the DB."
+```
+
 ### 2. **Write-Through**
 ```
 Write → update CACHE + DB synchronously (both)
@@ -289,6 +300,13 @@ Add F → Evict A (oldest accessed)
 ### **LFU (Least Frequently Used)**
 ```
 Track access count → Evict lowest count
+```
+
+**★ (drill se) — LRU vs LFU ek misaal me:**
+```
+   A = 100 baar use, aakhri baar 1 ghanta pehle · B = 2 baar use, aakhri baar 1 sec pehle
+   LRU (TIME, aakhri kab) -> A hataata · LFU (COUNT, kitni baar) -> B hataata
+   aksar TTL + LRU saath
 ```
 
 ### **FIFO**

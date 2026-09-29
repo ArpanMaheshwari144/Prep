@@ -78,6 +78,14 @@ FIX — POLLING hatao, PUSH karo:
 ```
 
 ```
+★ (drill se) WEBSOCKET vs KAFKA (confuse hota):
+     WEBSOCKET = server <-> USER ke browser ka khula pipe -> server jab chahe PUSH
+     KAFKA     = backend SERVICES ke beech (internal pub-sub) -> user ke browser tak NAHI jaata
+     WhatsApp me do alag cheez: dono online = WebSocket push ·
+                                net band tha = message DB / queue me save, online aaye to do (store-and-forward)
+```
+
+```
 ★ TURANT AANE WALA SAWAAL: "50 lakh ZINDA connection kahan rahenge?"
      ek machine ~50k-100k connection pakadti hai
      -> alag CONNECTION TIER (~50-100 machine), apne se scale hota hua
@@ -274,6 +282,14 @@ States:
 Tools: Resilience4j (Spring Boot), Hystrix (legacy Netflix)
 ```
 
+```
+★ (drill se):
+   OPEN kab hota: fail ek had paar (e.g. aakhri 10 me 50% fail)
+   naam-trick (bijli): CLOSED = taar juda, current behe = normal · OPEN = taar toota = call band
+   FAIL-FAST kyun: OPEN me call bhejo to har call TIMEOUT tak latke -> threads bhar jaate ->
+                   apni service bhi choke (cascade). turant error / fallback -> threads free.
+```
+
 ### 2. Retry + Exponential Backoff
 ```
 1st fail → wait 1s  → retry
@@ -439,6 +455,32 @@ With Gateway:
                 └─→ User/Order/Product services internally
 
 Tools: Kong, AWS API Gateway, Spring Cloud Gateway
+```
+
+```
+★ (drill se) CORS — frontend(myapp.com) -> API(api.myapp.com) = alag origin -> browser BLOCK:
+   KYUN: browser ki SAME-ORIGIN POLICY -> alag origin ki request default block
+   FIX: server response me header -> Access-Control-Allow-Origin: https://myapp.com
+   ★ prod me SPECIFIC origin whitelist, "*" nahi (cookies/credentials ke saath "*" chalta hi nahi)
+   ★ BROWSER lagata hai -> server-to-server / Postman me CORS hota hi nahi
+   (gateway aksar CORS bhi ek jagah sambhalta — auth / rate-limit ki tarah)
+```
+
+```
+★ (drill se) SAGA — kai service, kai DB, ek "transaction":
+   @Transactional sirf EK DB. order + payment + inventory alag DB -> SAGA = LOCAL commits ki chain
+   fail -> pichhle step already COMMIT ho chuke -> rollback nahi hota -> COMPENSATING (ulta) action:
+     payment fail -> "cancel order" + "restore inventory"
+   2 tarike: CHOREOGRAPHY (har service event sun ke khud agla / ulta kare, koi boss nahi)
+             ORCHESTRATION (ek central orchestrator sabko bataye kya karna)
+   line: "A rollback only undoes uncommitted work in one DB. In a saga each service has already
+          committed, so you run a compensating action — an explicit reverse operation."
+
+★ (drill se) MONOLITH ya MS:
+   chhota app / kam log -> MONOLITH (simple, debug aasan)
+   bada / badhta -> MS (alag scale: payment 10 instance, baaki 2 · ek gira baaki chalu · alag deploy)
+   chhote app pe MS = OVER-ENGINEER (network call + distributed debug + cross-service consistency)
+   "monolith se shuru, scale aaye to todo."  (detail: ../../06_COMPARES/04_monolith_vs_microservices.md)
 ```
 
 ---

@@ -228,6 +228,13 @@ Server-2 bypassed until recovers
    = sweet spot: ~3 consecutive fails + 5-10s interval
 ```
 
+**★ (drill se) — HEALTH CHECK (pull) vs HEARTBEAT (push):**
+```
+   HEALTH CHECK = LB PULL karta   -> LB har kuch second GET /health, threshold, recover pe wapas pool
+   HEARTBEAT    = server PUSH karta -> server khud LB / registry ko "main zinda" bhejta; signal band = mara
+   (Arpan analogy threshold pe: ek scratch pe joota nahi phenkte)
+```
+
 ---
 
 ## LB Redundancy — LB Khud SPOF (DEPTH)
@@ -551,6 +558,17 @@ SOLUTION 3: JWT (Stateless tokens)
    Any server validates and serves
    Truly stateless
    Tera UserCRUD use karta yeh
+```
+
+**★ (drill se) — JWT kaise "saboot" hai + analogy:**
+```
+   login -> server token deta: user-info + SIGNATURE (secret key se bana)
+   har request -> server sirf signature VERIFY kare (same secret) -> koi store / Redis lookup nahi
+   saare server ke paas same secret -> koi bhi server verify kar le
+
+   ANALOGY (Arpan ki):
+     JWT     = ID-card pe office ka STAMP -> guard sirf stamp dekhe, kahin bhi ghoomo
+     SESSION = visitor pass -> guard har baar reception ko CALL kare (= Redis lookup)
 ```
 
 

@@ -193,6 +193,25 @@ Process:
 
 ---
 
+## ★ (drill se) — bina calculator math
+
+```
+   1 saal ~ 400 din     (365 ki jagah, guna aasan)
+   peak QPS = avg x 2-3
+   cache    = hot 20% data (80-20 niyam)
+   bandwidth = QPS x response size
+
+   TRICK: har number a x 10^n likho -> number guna, EXPONENT JODO
+     20M x 2KB = (2 x 10^7) x (2 x 10^3) = 4 x 10^10 byte = 40 GB
+     40 GB/din x 3 saal = 40 x (3 x 400) = 40 x 1200 = 48,000 GB ~ 48 TB
+
+   WORKED (5M DAU, 4 req/user, 2KB, 3 saal):
+     20M req/din · avg QPS = 20M / 10^5 = 200 · peak 400-600 · storage ~44-48 TB
+   ★ exact nahi chahiye — mota number + tareeka dikhao, aggressive round karo
+```
+
+---
+
 ## Trap Box
 
 ```
