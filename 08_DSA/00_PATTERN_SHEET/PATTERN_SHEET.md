@@ -987,7 +987,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
        return ans;
 
      ★ KEY ka doosra roop (sirf a-z ho to): 26 ki ginti  "1#0#0#...#"  -> sort nahi, O(n · k).
-       (separator zaroori: bina "#" ke "1,11" aur "11,1" ek jaise dikh sakte)
+       (separator zaroori: bina "#" ke a=1,b=11 aur a=11,b=1 dono "111" ban jaate)
      ★ "" (khaali string) bhi chalta: sorted("") = "" -> ek hi group.
 
  ┌──────────────────────────────────────────────────────────────
