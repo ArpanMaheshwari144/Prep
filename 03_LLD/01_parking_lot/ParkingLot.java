@@ -1,4 +1,5 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 // --- ENUMS ---
 // VehicleType: BIKE, CAR, TRUCK
@@ -225,6 +226,7 @@ class ParkingLot {
             ParkingSpot p = floor.findAvailableSpot(vehicle.vehicleType);
             if(p != null){
                 p.setParkedVehicle(vehicle);
+                p.park(vehicle);
                 return new Ticket(vehicle, p, "now");
             }
         }
