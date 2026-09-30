@@ -54,7 +54,7 @@ D — Dependency Inversion    →  abstraction pe depend, concrete nahi
 
 ## SOLID = Robert C. Martin (Uncle Bob) ka invention
 
-→ 2000 mein paper publish kiya
+→ 2000 mein paper publish kiya (principles unke; "SOLID" naam baad me Michael Feathers ne diya, ~2004)
 → Industry-standard ban gaya
 → **Modern frameworks** (Spring, Angular, etc.) **already SOLID follow karte**
 → Spring Boot mein:

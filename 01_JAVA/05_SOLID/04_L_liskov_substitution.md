@@ -118,8 +118,12 @@ safe    safe
 
 Examples:
 1. Child throws unexpected exception (jaisa upar)
-2. Child accepts kam types of input (parent kuch bhi le, child sirf positive)
-3. Child returns less general type (parent Map return, child sirf TreeMap)
+2. Child input pe ZYADA shart lagaye (parent kuch bhi le, child sirf positive) = precondition kadi
+3. Child parent ke WAADE se kam de (parent: "list kabhi null nahi", child null lautaye) = postcondition kamzor
+
+★ (30-Sep sudhaar) Child ka return type ZYADA specific hona (parent Map, child TreeMap) violation NAHI —
+  ye covariant return hai, Java allow karta aur LSP ke hisaab se safe (TreeMap bhi ek Map hi hai).
+  Pehle yahan ise galti likha tha.
 
 **Fix:** Hierarchy redesign — agar child parent ki jagah safely nahi use ho sakti, **wo child hai hi nahi** us parent ki.
 

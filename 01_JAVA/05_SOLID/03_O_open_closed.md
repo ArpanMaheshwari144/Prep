@@ -137,6 +137,10 @@ class OrderService {
 
 **Spring `@Repository` interface + `@Autowired` = OCP** — App never knows DB impl.
 
+★ TRAP: dono (`MySQL...` aur `Mongo...`) ek saath bean bane to `@Autowired OrderRepository` pe Spring
+  confuse -> `NoUniqueBeanDefinitionException`. Ek chuno: `@Primary`, `@Qualifier("mongo")`, ya
+  `@Profile` se sirf ek hi bean bane.
+
 ---
 
 ## POWER PHRASE
