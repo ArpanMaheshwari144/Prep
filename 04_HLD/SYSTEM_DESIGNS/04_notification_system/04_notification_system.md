@@ -503,4 +503,18 @@ QUEUE      jo abhi nahi ja sakta wo QUEUE me surakshit ruke. Phenkna nahi. Max t
 
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir upar ka apna section padho.
+
+### How Does a Typical Push Notification System Work?
+
+![How Does a Typical Push Notification System Work?](https://assets.bytebytego.com/diagrams/0042-design-a-notification-push-system.png)
+
+- **Is file me kahan juda:** poora naksha: event -> notification service -> queue -> worker -> provider (FCM / APNs / SMS).
+- Source: [How Does a Typical Push Notification System Work?](https://bytebytego.com/guides/how-does-a-typical-push-notification-system-work/)
+
+---
+
 [← MASTER SHEET](../../00_MASTER_SHEET.md)

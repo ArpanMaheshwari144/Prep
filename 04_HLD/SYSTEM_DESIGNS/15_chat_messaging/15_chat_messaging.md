@@ -835,4 +835,18 @@ BOL        "Kafka only orders within a partition, so I key by chat id. All messa
 
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir upar ka apna section padho.
+
+### What is the Journey of a Slack Message?
+
+![What is the Journey of a Slack Message?](https://assets.bytebytego.com/diagrams/0338-slack-message-journey.jpg)
+
+- **Is file me kahan juda:** ek message sender se receiver tak — WebSocket, server, fan-out.
+- Source: [What is the Journey of a Slack Message?](https://bytebytego.com/guides/what-is-the-journey-of-a-slack-message/)
+
+---
+
 [← SYSTEM_DESIGNS](..) · [← Home README](../../../README.md)

@@ -667,3 +667,18 @@ CONCEPT    FOUNDATIONS/05_database_replication.md
 ```
 
 ---
+
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir upar ka apna section padho.
+
+### Read Replica Pattern
+
+![Read Replica Pattern](https://assets.bytebytego.com/diagrams/0312-read-replica-pattern.png)
+
+- **Is file me kahan juda:** GRILL (Q12) — transfer ke baad purana balance = replica lag. Unka ilaaj bhi wahi: turant wala read PRIMARY se.
+- Source: [Read Replica Pattern](https://bytebytego.com/guides/read-replica-pattern/)
+
+---
+
