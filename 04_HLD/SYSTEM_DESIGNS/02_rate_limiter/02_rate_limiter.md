@@ -679,4 +679,82 @@ PS> 1..10 | % { curl.exe -s http://localhost:8080/rate-demo; "" }
 
 ---
 
+## ═══ HANDS-ON #3 — REDIS KO KHUD MAARA: "kaise tootta" (30-Sep) ═══
+> #2 wala counter app ki memory me tha. Ye = asli Redis pe counter (multi-node wala tareeka), aur phir
+> Redis ko beech me maar ke dekha kya tootta hai. Cross-question "Redis down ho gaya to?" ka live jawab.
+> CODE: `04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java` (+ `.cpp` syntax ke liye)
+>        `04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java`
+> Dono Java files me koi library nahi (Redis se seedha socket pe baat), `java File.java` se chalti.
+
+### 0. Redis chalana (Docker)
+```
+docker run -d --name demo-redis -p 6390:6379 redis:7 redis-server --save "" --appendonly no
+   --save ""        -> RDB snapshot band
+   --appendonly no  -> AOF band        => Redis sirf memory me, restart = sab gaya (jaan-boojh ke)
+docker stop demo-redis     (maaro)
+docker start demo-redis    (wapas lao)
+docker rm -f demo-redis    (khatam)
+docker exec demo-redis redis-cli TTL rl:user:1   (key ka timer dekho)
+docker exec demo-redis redis-cli DEL rl:user:1   (key mitao)
+```
+
+### 1. CODE ka dil (niyam: user:1 ko 60 sec me max 5)
+```java
+long count = redis("INCR", KEY);                            // count +1, nayi value
+if (count == 1) redis("EXPIRE", KEY, "60");                 // pehli request pe 60 sec ka timer
+if (count <= 5) ALLOW  else  BLOCK (429)
+catch (IOException e)  -> FAIL_OPEN ? ALLOW : BLOCK          // Redis na mile to faisla
+```
+
+### 2. Kya DEKHA (3 cheez tooti)
+```
+                                          DIKHA                           MATLAB
+CASE A  6-9 request 1 min ke andar        1-5 ALLOW, 6 se 429,            chalta hai (kaise chalta)
+                                          TTL 60 -> 57 -> 44 girta        window pehli request se
+
+CASE B  docker stop demo-redis            "REDIS SE BAAT NAHI HUI"        code ko faisla karna padta:
+                                          FAIL_OPEN=true -> ALLOW         fail-open = site chale, limit nahi
+                                                                          fail-closed = abuse nahi, site band
+                                                                          "server ne haath khade kar diye, sab jao"
+
+CASE C  docker start demo-redis           count phir 1 se shuru           persistence band -> ginti gaayab
+                                                                          BLOCKED user ko 5 nayi request mil gayi
+
+CASE D  INCR ke baad, EXPIRE se pehle     TTL = -1 (koi timer nahi)       key KABHI nahi mitegi
+        app crash (CRASH_AFTER_INCR)      count 6, 7, 8, 9... sab 429     user HAMESHA ke liye block
+                                                                          (jab tak koi haath se DEL na kare)
+
+FIX D   USE_LUA = true                    TTL = 58, 57, 56, 55 girta      1 min me key gayi, user free
+```
+TTL ke number: `-1` = key hai par timer nahi · `-2` = key hai hi nahi · `58` = 58 sec baaki.
+
+### 3. FIX kyun kaam karta
+```
+B  Redis down     -> faisla PEHLE se code me: fail-open (aam API) / fail-closed (login, OTP)
+                     + replica (master gira to failover)
+C  ginti gaayab   -> replica ya AOF on. Rate limiter me aksar chalne dete (sirf 1 min ki ginti,
+                     paisa nahi). Paise ka data hota to nahi chalta.
+D  beech me crash -> Lua script: INCR + EXPIRE ek hi command me Redis ke andar.
+                     Redis single-thread -> script shuru hui to poori hoke hi rukegi, beech me jagah nahi.
+                     (Redis 7+: EXPIRE key 60 NX bhi ek raasta)
+
+   Pehle:  app --INCR--> Redis   [crash yahan]   app --EXPIRE--> Redis
+   Lua:    app --EVAL(INCR + EXPIRE)--> Redis    (ek hi baar)
+```
+```lua
+local c = redis.call('INCR', KEYS[1])
+if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end
+return c
+```
+
+### INTERVIEW LINE
+```
+"Redis down ho to limiter fail-open rakhta hoon taaki site chale, login/OTP jaise endpoint pe fail-closed.
+ Redis restart pe counter reset ho jaata hai - rate limiter me acceptable, replica se kam hota hai.
+ INCR aur EXPIRE alag bheje to beech ke crash se key bina TTL reh jaati aur user hamesha block -
+ isliye dono Lua script me ek saath. Maine ye teeno Docker Redis ko maar ke khud dekhe hain."
+```
+
+---
+
 [← MASTER SHEET](../../00_MASTER_SHEET.md)
