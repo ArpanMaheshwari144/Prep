@@ -109,7 +109,8 @@
 > Rail pakka hai (sawaal -> requirement -> number -> chhote se shuru). Fisalna CROSS-QUESTION pe hai,
 > kyunki "KAB lagana" pata hai, "LAGANE KE BAAD KYA TOOTTA" kam pada. Har dabba = 4 line:
 > 1 kya solve · 2 kya NAYI dikkat laata (<- cross-question) · 3 uska fix · 4 iski jagah kya, wo kyun nahi.
-> Atke to kaagaz pe TIMELINE chalao (t=1 likha, t=2 gira ...) — HLD ka copy-pen.
+> Atke to: pehle PADHO / chala ke DEKHO (jaise Redis ko maar ke dekha, HANDS_ON/), phir wahi sawaal
+> 1/3/7 din baad dobara. Dry-run sirf jaani cheez ka hota hai, anjaan pe nahi.
 
 ```
 REPLICA
