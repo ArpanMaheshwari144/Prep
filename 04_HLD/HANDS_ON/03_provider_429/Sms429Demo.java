@@ -18,7 +18,7 @@ import java.util.*;
 
 public class Sms429Demo {
 
-    static final boolean SMART = false;
+    static final boolean SMART = true;
 
     static final int TOTAL_SMS = 1000;
     static final int OUR_RATE = 100;        // SMART me hum 1 sec me isse zyada nahi bhejte (token bucket)

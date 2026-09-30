@@ -266,6 +266,7 @@
 
         bina throttle -> burst -> 429 -> saare message fail
         FAISLA: worker khud limit maane (token bucket / leaky bucket) -> provider ki raftaar se bhejo
+        (chala ke dekha: neeche HANDS-ON — naive me 1000 me se 700 SMS phenke gaye)
 ```
 
 ### dikkat 9 — "'bhej diya' ka matlab 'mil gaya' nahi hota"
@@ -411,6 +412,53 @@
     Aage badhata to: quiet hours, i18n templates, aur open/click analytics."
 
    (asli duniya me yahi hai: Uber ride notifications, Amazon order updates, Slack, WhatsApp, bank alerts)
+```
+
+---
+
+## ═══ HANDS-ON — PROVIDER NE 429 DIYA: chala ke dekha (30-Sep) ═══
+> Grill me galti hui thi: 429 pe "fail-open" bola. Fail-open HUMARE limiter ka faisla hota hai (Redis gira to);
+> yahan limiter PROVIDER ka hai, uska darwaza hum nahi khol sakte -> dheema HUMEIN hona padega.
+> CODE: `04_HLD/HANDS_ON/03_provider_429/Sms429Demo.java`  (koi Docker nahi, time nakli, turant chalta)
+> Line 21: `SMART = false` / `true`  ->  `java Sms429Demo.java`
+
+### Setup
+```
+1000 SMS ek saath (sale ka din) · provider 100/sec leta · t=3,4 pe provider aur dheema: 50/sec
+NAIVE : sab ek saath bhejo, 429 pe agle second turant retry, 3 baar fail -> PHENK DO
+SMART : apni taraf 100/sec (throttle, token bucket) · 429 pe 1s, 2s, 4s ruko (backoff) · kabhi phenko mat
+```
+
+### Kya DEKHA
+```
+NAIVE                                          SMART
+t=0  bheje 1000 -> 100 OK, 900 ko 429          t=0..2  har second 100 bheje, 100 OK, 0 ko 429
+t=1  bheje  900 -> 100 OK, 800 ko 429          t=3,4   provider 50/sec -> 50 OK, 50 ko 429
+t=2  bheje  800 -> 100 OK, 700 ko 429                  -> wo 50 PHENKE NAHI, backoff me ruke, queue me
+     3rd fail -> 700 PHENK DIYE                t=5..10 100/sec, sab nikal gaye
+
+PAHUNCHE   300 / 1000                          1000 / 1000
+PHENKE     700 (kabhi SMS nahi milega)         0
+CALL       2700 (2400 bekaar 429)              1100 (sirf 100 ko 429)
+TIME       3 sec (jaldi, par galat)            11 sec (dheere, par sab pahunche)
+```
+Misaal: darwaze se 1 sec me 100 nikal sakte. 1000 ek saath dhakka maarein -> har second 100 nikle,
+baaki dhakke khaayein, aur 3 dhakke ke baad ghar chale gaye. SMART = line lagwa do, 100-100 bhejo.
+
+### Nichod
+```
+THROTTLE   apni raftaar provider ki limit pe baandho (1000 ek saath nahi, 100/sec)
+BACKOFF    429 pe turant retry = aur hathoda. 1s, 2s, 4s ruko. Retry-After header aaye to wahi maano.
+JITTER     backoff me thoda random fark, taaki saare worker ek hi pal pe wapas na aayein
+           (simulation me nahi hai — time poore second me hai)
+QUEUE      jo abhi nahi ja sakta wo QUEUE me surakshit ruke. Phenkna nahi. Max try ke baad bhi -> DLQ, drop nahi.
+```
+
+### INTERVIEW LINE
+```
+"Our SMS workers throttle themselves with a token bucket at the provider's rate. On a 429 they back off
+ exponentially with jitter and respect Retry-After. Messages wait in the queue, none are dropped -
+ after max retries they go to a DLQ. I simulated it: naive retry dropped 700 of 1000, throttle + backoff delivered all."
 ```
 
 ---
