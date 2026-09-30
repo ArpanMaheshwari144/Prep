@@ -333,6 +333,7 @@ Q12 "The user updated something but still sees the old value. Why?"
     BOL: "On a write I delete the cache key rather than update it, with a TTL as a backstop; and
           for replica lag, the user who just wrote reads from the primary for a short window."
     kahan aaya: 11 · 01 · 03 · 14 (balance primary se) · 07   (FOUNDATIONS/04, 05)
+    GRILL 30-Sep: 14_banking_system -> "GRILL" section (tera jawab + replica lag timeline)
 
 Q13 "How do you keep messages / events in order?"
     Kafka order sirf EK PARTITION ke andar; global order = ek partition = throughput khatam.
@@ -341,6 +342,7 @@ Q13 "How do you keep messages / events in order?"
     BOL: "I only need per-key ordering, so I key by chat id -- all its messages land in one
           partition and stay in order, while different chats run in parallel."
     kahan aaya: 13 · 15 · 06 (har symbol ek sequencer) · 12 (doc ke ops ek jagah serialize)
+    GRILL 30-Sep: 15_chat_messaging -> "GRILL" section (tera jawab + key = chatId)
 
 Q14 "Consistency or availability — which do you pick?"
     network partition me dono nahi milte. PAISA / SEAT / INVENTORY = CP (reject kar do, galat mat do).
@@ -348,6 +350,7 @@ Q14 "Consistency or availability — which do you pick?"
     BOL: "For the booking itself I'd pick consistency -- I'd rather reject a write than double-book
           a seat. The browse and search path can stay available and eventually consistent."
     kahan aaya: 10 · 07 · 14 · 12 (edits AP, permissions CP) · 03 (AP)
+    GRILL 30-Sep: 10_bookmyshow -> "GRILL" section (tera jawab + booking CP / search AP)
 ```
 
 ### E. KHO GAYA / BEECH ME
@@ -361,6 +364,7 @@ Q15 "How do you make sure no message is lost?"
     BOL: "At-least-once delivery with an idempotent consumer, retries with backoff, and a dead
           letter queue for poison messages. If a DB write and an event must both happen, an outbox."
     kahan aaya: 13 · 04 · 14 (outbox) · 15 (pehle DB, phir bhejo)
+    GRILL 30-Sep: 13_message_queue_kafka -> "HANDS-ON — EVENT KAHAN KHOTA HAI" (chala ke dekha, asli output)
 
 Q16 "What if the server crashes in the middle of the operation?"
     DB me likha, event nahi gaya / PSP ko bheja, jawab nahi aaya -> aadha kaam.
@@ -378,6 +382,7 @@ Q17 "The provider returns 429 — you're sending too fast. What now?"
     BOL: "Workers throttle themselves with a token bucket at the provider's rate, and on a 429
           they back off exponentially with jitter instead of hammering it."
     kahan aaya: 04 (dikkat 8) · 02 (hum khud 429 + Retry-After dete)
+    GRILL 30-Sep: 04_notification_system -> "HANDS-ON — PROVIDER NE 429 DIYA" (chala ke dekha, asli output)
 
 Q18 "How do you prioritize urgent work, like OTPs?"
     ek queue = OTP marketing ke 50,000 ke peeche. ★ Kafka me message priority NAHI hoti.

@@ -415,4 +415,24 @@
 
 ---
 
+## ═══ GRILL — cross-question jo poocha gaya (30-Sep, master sheet Q14) ═══
+
+```
+SAWAAL     "network toot gaya (partition). Aakhri seat pe do log. Consistency ya availability?"
+           (maine pehle 2-data-center ki lambi kahani me poocha tha -> pehchaan nahi aaya.
+            asli round me aise chhota aata hai.)
+
+TERA JAWAB "seat me CONSISTENCY chunoonga -- galat 'seat book ho gayi' nahi dikha sakte."  -> SAHI
+
+JODA       ek hi system me dono:
+             BOOKING = CP   partition me ek side REJECT kare ("abhi nahi ho sakta"), double-book nahi
+             SEARCH  = AP   flights / shows dikhte rahein, seat count 2 sec purana chalega
+
+BOL        "For the booking itself I'd pick consistency: I'd rather reject a write than double-book
+            the seat. The search path stays available and eventually consistent."
+CONCEPT    FOUNDATIONS/08_cap_theorem.md
+```
+
+---
+
 [← MASTER SHEET](../../00_MASTER_SHEET.md)

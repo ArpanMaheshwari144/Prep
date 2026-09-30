@@ -644,3 +644,26 @@ Sasta, aur mukhya DB pe koi bojh nahi.
 ```
 
 ---
+
+## ═══ GRILL — cross-question jo poocha gaya (30-Sep, master sheet Q12) ═══
+
+```
+SAWAAL     "User ne transfer kiya, turant balance dekha to PURANA dikha. Kyun, kya karoge?"
+
+TERA JAWAB wajah: CACHE ya REPLICA. Bank me balance cache se nahi padhte -> replica.   -> SAHI
+           + failover case: write replica tak pahuncha nahi aur wahi promote ho gaya     -> ye bhi ASLI
+             (ilaaj: SYNC replication -- BookMyShow me bhi yahi bola tha)
+
+JODA       sabse AAM wajah -- kuch toota hi nahi, bas REPLICA LAG:
+             t1  transfer -> PRIMARY pe likha            balance = 4000
+             t2  balance dekha -> read gaya REPLICA pe   replica abhi 5000 (copy ~200ms peeche)
+           ILAAJ: READ-YOUR-OWN-WRITES -- jisne abhi likha, uska balance thodi der PRIMARY se.
+                  (balance jaisi zaroori cheez hamesha primary se bhi chalega)
+
+BOL        "Most likely replica lag: the write went to the primary, the read hit a replica that
+            hadn't caught up. For balance I read from the primary, at least for the user who just
+            wrote. If it were a failover losing writes, sync replication fixes that."
+CONCEPT    FOUNDATIONS/05_database_replication.md
+```
+
+---
