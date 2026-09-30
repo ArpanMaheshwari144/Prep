@@ -225,7 +225,6 @@ class ParkingLot {
         for(Floor floor : floors){
             ParkingSpot p = floor.findAvailableSpot(vehicle.vehicleType);
             if(p != null){
-                p.setParkedVehicle(vehicle);
                 p.park(vehicle);
                 return new Ticket(vehicle, p, "now");
             }
