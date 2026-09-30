@@ -728,6 +728,156 @@ FIX D   USE_LUA = true                    TTL = 58, 57, 56, 55 girta      1 min 
 ```
 TTL ke number: `-1` = key hai par timer nahi · `-2` = key hai hi nahi · `58` = 58 sec baaki.
 
+### 2b. ASLI OUTPUT (jo screen pe aaya)
+
+CASE A — `RateLimiterDemo.java`, 9 baar ENTER (tera run, dheere dabaya isliye TTL girta dikha)
+```
+--- request 1 ---
+INCR rl:user:1 -> count = 1
+pehli request -> EXPIRE 60 sec laga
+TTL baaki = 60 sec
+count 1 <= 5 -> ALLOW
+
+--- request 2 ---
+INCR rl:user:1 -> count = 2
+TTL baaki = 57 sec
+count 2 <= 5 -> ALLOW
+
+--- request 3 ---
+INCR rl:user:1 -> count = 3
+TTL baaki = 56 sec
+count 3 <= 5 -> ALLOW
+
+--- request 4 ---
+INCR rl:user:1 -> count = 4
+TTL baaki = 49 sec
+count 4 <= 5 -> ALLOW
+
+--- request 5 ---
+INCR rl:user:1 -> count = 5
+TTL baaki = 48 sec
+count 5 <= 5 -> ALLOW
+
+--- request 6 ---
+INCR rl:user:1 -> count = 6
+TTL baaki = 47 sec
+count 6 > 5 -> BLOCK (429)
+
+--- request 7 ---
+INCR rl:user:1 -> count = 7
+TTL baaki = 45 sec
+count 7 > 5 -> BLOCK (429)
+
+--- request 8 ---
+INCR rl:user:1 -> count = 8
+TTL baaki = 45 sec
+count 8 > 5 -> BLOCK (429)
+
+--- request 9 ---
+INCR rl:user:1 -> count = 9
+TTL baaki = 44 sec
+count 9 > 5 -> BLOCK (429)
+```
+
+CASE B — `docker stop demo-redis`, phir 2 baar ENTER
+```
+--- request 1 ---
+REDIS SE BAAT NAHI HUI: Connection refused: connect
+FAIL_OPEN = true -> ALLOW (bina limit ke)
+
+--- request 2 ---
+REDIS SE BAAT NAHI HUI: Connection refused: connect
+FAIL_OPEN = true -> ALLOW (bina limit ke)
+```
+
+CASE C — `docker start demo-redis` (user pehle count 7 pe BLOCK tha), phir 2 baar ENTER
+```
+> docker exec demo-redis redis-cli GET rl:user:1
+                                             <- khaali: key hi nahi bachi
+
+--- request 1 ---
+INCR rl:user:1 -> count = 1                  <- ginti phir 1 se, blocked user ALLOW
+pehli request -> EXPIRE 60 sec laga
+TTL baaki = 60 sec
+count 1 <= 5 -> ALLOW
+
+--- request 2 ---
+INCR rl:user:1 -> count = 2
+TTL baaki = 60 sec
+count 2 <= 5 -> ALLOW
+```
+
+CASE D — `IncrExpireCrash.java`, `USE_LUA = false`
+```
+RUN 1 (1 ENTER):
+USE_LUA = false   CRASH_AFTER_INCR = true
+--- request 1 ---
+INCR -> count = 1
+CRASH! app EXPIRE se pehle mar gaya
+
+> docker exec demo-redis redis-cli TTL rl:user:1
+-1
+
+RUN 2 (6 ENTER):
+--- request 1 ---
+INCR -> count = 2
+TTL = -1   <- -1 matlab KOI TIMER NAHI, key kabhi nahi mitegi
+count 2 <= 5 -> ALLOW
+
+--- request 2 ---
+INCR -> count = 3
+TTL = -1   <- -1 matlab KOI TIMER NAHI, key kabhi nahi mitegi
+count 3 <= 5 -> ALLOW
+
+--- request 3 ---
+INCR -> count = 4
+TTL = -1   <- -1 matlab KOI TIMER NAHI, key kabhi nahi mitegi
+count 4 <= 5 -> ALLOW
+
+--- request 4 ---
+INCR -> count = 5
+TTL = -1   <- -1 matlab KOI TIMER NAHI, key kabhi nahi mitegi
+count 5 <= 5 -> ALLOW
+
+--- request 5 ---
+INCR -> count = 6
+TTL = -1   <- -1 matlab KOI TIMER NAHI, key kabhi nahi mitegi
+count 6 > 5 -> BLOCK (429)
+
+--- request 6 ---
+INCR -> count = 7
+TTL = -1   <- -1 matlab KOI TIMER NAHI, key kabhi nahi mitegi
+count 7 > 5 -> BLOCK (429)
+```
+
+FIX D — `USE_LUA = true` (tera run, request 10-14)
+```
+--- request 10 ---
+EVAL (INCR + EXPIRE ek saath) -> count = 10
+TTL = 58 sec baaki
+count 10 > 5 -> BLOCK (429)
+
+--- request 11 ---
+EVAL (INCR + EXPIRE ek saath) -> count = 11
+TTL = 57 sec baaki
+count 11 > 5 -> BLOCK (429)
+
+--- request 12 ---
+EVAL (INCR + EXPIRE ek saath) -> count = 12
+TTL = 56 sec baaki
+count 12 > 5 -> BLOCK (429)
+
+--- request 13 ---
+EVAL (INCR + EXPIRE ek saath) -> count = 13
+TTL = 56 sec baaki
+count 13 > 5 -> BLOCK (429)
+
+--- request 14 ---
+EVAL (INCR + EXPIRE ek saath) -> count = 14
+TTL = 55 sec baaki                           <- -1 nahi, timer chal raha -> 1 min me user free
+count 14 > 5 -> BLOCK (429)
+```
+
 ### 3. FIX kyun kaam karta
 ```
 B  Redis down     -> faisla PEHLE se code me: fail-open (aam API) / fail-closed (login, OTP)

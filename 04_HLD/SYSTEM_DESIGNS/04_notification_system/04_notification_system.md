@@ -429,6 +429,46 @@ NAIVE : sab ek saath bhejo, 429 pe agle second turant retry, 3 baar fail -> PHEN
 SMART : apni taraf 100/sec (throttle, token bucket) · 429 pe 1s, 2s, 4s ruko (backoff) · kabhi phenko mat
 ```
 
+### ASLI OUTPUT (jo screen pe aaya)
+
+ROUND 1 — `SMART = false`
+```
+MODE = NAIVE (sab bhej do, turant retry)
+
+  t | provider | queue me | bheje | 200 OK | 429 | chhode | pahunche (kul)
+----+----------+----------+-------+--------+-----+--------+---------------
+  0 |  100/sec |     1000 |  1000 |    100 | 900 |      0 | 100
+  1 |  100/sec |      900 |   900 |    100 | 800 |      0 | 200
+  2 |  100/sec |      800 |   800 |    100 | 700 |    700 | 300
+
+PAHUNCHE      = 300 / 1000
+CHHOD DIYE    = 700   <- ye customers ko SMS kabhi nahi mila
+provider call = 2700  (inme 429 = 2400)
+```
+
+ROUND 2 — `SMART = true`
+```
+MODE = SMART (throttle + backoff)
+
+  t | provider | queue me | bheje | 200 OK | 429 | chhode | pahunche (kul)
+----+----------+----------+-------+--------+-----+--------+---------------
+  0 |  100/sec |     1000 |   100 |    100 |   0 |      0 | 100
+  1 |  100/sec |      900 |   100 |    100 |   0 |      0 | 200
+  2 |  100/sec |      800 |   100 |    100 |   0 |      0 | 300
+  3 |   50/sec |      700 |   100 |     50 |  50 |      0 | 350
+  4 |   50/sec |      650 |   100 |     50 |  50 |      0 | 400
+  5 |  100/sec |      600 |   100 |    100 |   0 |      0 | 500
+  6 |  100/sec |      500 |   100 |    100 |   0 |      0 | 600
+  7 |  100/sec |      400 |   100 |    100 |   0 |      0 | 700
+  8 |  100/sec |      300 |   100 |    100 |   0 |      0 | 800
+  9 |  100/sec |      200 |   100 |    100 |   0 |      0 | 900
+ 10 |  100/sec |      100 |   100 |    100 |   0 |      0 | 1000
+
+PAHUNCHE      = 1000 / 1000
+CHHOD DIYE    = 0   <- ye customers ko SMS kabhi nahi mila
+provider call = 1100  (inme 429 = 100)
+```
+
 ### Kya DEKHA
 ```
 NAIVE                                          SMART
