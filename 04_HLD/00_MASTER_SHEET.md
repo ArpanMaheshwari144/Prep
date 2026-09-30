@@ -37,7 +37,7 @@
 ---
 ---
 
-# ═════════ PART 1 — NAKSHA + NIYAM ═════════
+# PART 1 — NAKSHA + NIYAM
 
 ## 0. KAUNSI FILE KAB — poore 04_HLD ka naksha (26-Sep saaf kiya: har kaam ki EK file)
 
@@ -93,7 +93,7 @@
 ---
 ---
 
-# ═════════ PART 2 — CROSS-QUESTION (roz grill yahin se) ═════════
+# PART 2 — CROSS-QUESTION (roz grill yahin se)
 
 ## ★★ HAR DESIGN PE 6 SAWAAL — sirf YAAD DILAANE ki list, rail nahi (28-Sep sudhaar)
 
@@ -428,7 +428,7 @@ Q22 "What's the single point of failure here?"
 
 ---
 
-# ═════════ PART 3 — DESIGN KHADA KARNA ═════════
+# PART 3 — DESIGN KHADA KARNA
 
 ## 1. TEEN LINE KA METHOD (poora khel isi me hai)
 
@@ -853,7 +853,7 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 ---
 
-# ═════════ PART 4 — ATKE TO / ROUND KA DIN ═════════
+# PART 4 — ATKE TO / ROUND KA DIN
 
 ## 6. ★ ANJAAN DESIGN AA JAAYE TO — 5 MINUTE RECIPE
 
@@ -936,7 +936,7 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 ---
 
-# ═════════ PART 5 — BOLNA ═════════
+# PART 5 — BOLNA
 
 ## ★ KAISE BOLNA (01_DELIVERY PART 1 yahan mila, 29-Sep)
 
