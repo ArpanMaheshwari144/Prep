@@ -25,6 +25,27 @@
 
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
+
+### How Can Cache Systems Go Wrong?
+
+![How Can Cache Systems Go Wrong?](https://assets.bytebytego.com/diagrams/0038-how-caches-can-go-wrong.png)
+
+- **Is file me kahan juda:** thundering herd / penetration / breakdown / crash — cache ke tootne ke tareeke.
+- Source: [How Can Cache Systems Go Wrong?](https://bytebytego.com/guides/how-can-cache-systems-go-wrong/)
+
+### Consistent Hashing Explained
+
+![Consistent Hashing Explained](https://assets.bytebytego.com/diagrams/0151-consistent-hashing.png)
+
+- **Is file me kahan juda:** node jude ya gire to sirf thodi keys khiskein — ring.
+- Source: [Consistent Hashing Explained](https://bytebytego.com/guides/consistent-hashing/)
+
+---
+
 # MOVE 1 — POOCHO (board pe abhi kuch nahi)
 
 ```
@@ -338,27 +359,6 @@
    Sabse mushkil do cheezein: invalidation (TTL + explicit) aur stampede (mutex / soft-TTL).
    Koi system perfect nahi hota — speed vs consistency ka trade-off use-case se tay hota hai."
 ```
-
----
-
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir upar ka apna section padho.
-
-### How Can Cache Systems Go Wrong?
-
-![How Can Cache Systems Go Wrong?](https://assets.bytebytego.com/diagrams/0038-how-caches-can-go-wrong.png)
-
-- **Is file me kahan juda:** thundering herd / penetration / breakdown / crash — cache ke tootne ke tareeke.
-- Source: [How Can Cache Systems Go Wrong?](https://bytebytego.com/guides/how-can-cache-systems-go-wrong/)
-
-### Consistent Hashing Explained
-
-![Consistent Hashing Explained](https://assets.bytebytego.com/diagrams/0151-consistent-hashing.png)
-
-- **Is file me kahan juda:** node jude ya gire to sirf thodi keys khiskein — ring.
-- Source: [Consistent Hashing Explained](https://bytebytego.com/guides/consistent-hashing/)
 
 ---
 

@@ -16,6 +16,27 @@
 
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
+
+### CAP Theorem: One of the Most Misunderstood Terms
+
+![CAP Theorem: One of the Most Misunderstood Terms](https://assets.bytebytego.com/diagrams/0131-cap-theorem.jpeg)
+
+- **Is file me kahan juda:** GRILL (Q14) — booking CP, search AP.
+- Source: [CAP Theorem: One of the Most Misunderstood Terms](https://bytebytego.com/guides/cap-theorem-one-of-the-most-misunderstood-terms/)
+
+### Pessimistic vs Optimistic Locking
+
+![Pessimistic vs Optimistic Locking](https://assets.bytebytego.com/diagrams/0301-pessimistic-vs-optimistic-locking.png)
+
+- **Is file me kahan juda:** ek seat do log = lock kaunsa: SELECT FOR UPDATE (pessimistic) ya version check (optimistic).
+- Source: [Pessimistic vs Optimistic Locking](https://bytebytego.com/guides/pessimistic-vs-optimistic-locking/)
+
+---
+
 # MOVE 1 — POOCHO (board pe abhi kuch nahi)
 
 ```
@@ -432,27 +453,6 @@ BOL        "For the booking itself I'd pick consistency: I'd rather reject a wri
             the seat. The search path stays available and eventually consistent."
 CONCEPT    FOUNDATIONS/08_cap_theorem.md
 ```
-
----
-
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir upar ka apna section padho.
-
-### CAP Theorem: One of the Most Misunderstood Terms
-
-![CAP Theorem: One of the Most Misunderstood Terms](https://assets.bytebytego.com/diagrams/0131-cap-theorem.jpeg)
-
-- **Is file me kahan juda:** GRILL (Q14) — booking CP, search AP.
-- Source: [CAP Theorem: One of the Most Misunderstood Terms](https://bytebytego.com/guides/cap-theorem-one-of-the-most-misunderstood-terms/)
-
-### Pessimistic vs Optimistic Locking
-
-![Pessimistic vs Optimistic Locking](https://assets.bytebytego.com/diagrams/0301-pessimistic-vs-optimistic-locking.png)
-
-- **Is file me kahan juda:** ek seat do log = lock kaunsa: SELECT FOR UPDATE (pessimistic) ya version check (optimistic).
-- Source: [Pessimistic vs Optimistic Locking](https://bytebytego.com/guides/pessimistic-vs-optimistic-locking/)
 
 ---
 

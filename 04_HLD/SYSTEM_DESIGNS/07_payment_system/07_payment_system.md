@@ -24,6 +24,27 @@
 
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
+
+### How to Avoid Double Payment
+
+![How to Avoid Double Payment](https://assets.bytebytego.com/diagrams/0178-double-charge.jpg)
+
+- **Is file me kahan juda:** retry pe do baar paisa na kate = IDEMPOTENCY KEY.
+- Source: [How to Avoid Double Payment](https://bytebytego.com/guides/how-to-avoid-double-payment/)
+
+### Reconciliation in Payment
+
+![Reconciliation in Payment](https://assets.bytebytego.com/diagrams/0298-payment-reconciliation.jpg)
+
+- **Is file me kahan juda:** PENDING / crash ke baad asli haal PSP se milaana = RECONCILIATION job.
+- Source: [Reconciliation in Payment](https://bytebytego.com/guides/reconciliation-in-payment/)
+
+---
+
 # MOVE 1 — POOCHO (board pe abhi kuch nahi)
 
 ```
@@ -530,27 +551,6 @@ ATOMIC (putIfAbsent):
 INTERVIEW: "Idempotency-Key client bhejta; server dekhta already-processed. Naive check-then-put race-prone (concurrent gap me double).
  Fix = atomic putIfAbsent on ConcurrentHashMap -- check+insert ek indivisible step, ek jeet-ta. Prod store = Redis/DB unique-constraint + TTL."
 ```
-
----
-
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir upar ka apna section padho.
-
-### How to Avoid Double Payment
-
-![How to Avoid Double Payment](https://assets.bytebytego.com/diagrams/0178-double-charge.jpg)
-
-- **Is file me kahan juda:** retry pe do baar paisa na kate = IDEMPOTENCY KEY.
-- Source: [How to Avoid Double Payment](https://bytebytego.com/guides/how-to-avoid-double-payment/)
-
-### Reconciliation in Payment
-
-![Reconciliation in Payment](https://assets.bytebytego.com/diagrams/0298-payment-reconciliation.jpg)
-
-- **Is file me kahan juda:** PENDING / crash ke baad asli haal PSP se milaana = RECONCILIATION job.
-- Source: [Reconciliation in Payment](https://bytebytego.com/guides/reconciliation-in-payment/)
 
 ---
 

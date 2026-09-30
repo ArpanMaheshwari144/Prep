@@ -26,6 +26,20 @@
 
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
+
+### How Does a Typical Push Notification System Work?
+
+![How Does a Typical Push Notification System Work?](https://assets.bytebytego.com/diagrams/0042-design-a-notification-push-system.png)
+
+- **Is file me kahan juda:** poora naksha: event -> notification service -> queue -> worker -> provider (FCM / APNs / SMS).
+- Source: [How Does a Typical Push Notification System Work?](https://bytebytego.com/guides/how-does-a-typical-push-notification-system-work/)
+
+---
+
 # MOVE 1 — POOCHO (board pe abhi kuch nahi)
 
 ```
@@ -500,20 +514,6 @@ QUEUE      jo abhi nahi ja sakta wo QUEUE me surakshit ruke. Phenkna nahi. Max t
  exponentially with jitter and respect Retry-After. Messages wait in the queue, none are dropped -
  after max retries they go to a DLQ. I simulated it: naive retry dropped 700 of 1000, throttle + backoff delivered all."
 ```
-
----
-
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir upar ka apna section padho.
-
-### How Does a Typical Push Notification System Work?
-
-![How Does a Typical Push Notification System Work?](https://assets.bytebytego.com/diagrams/0042-design-a-notification-push-system.png)
-
-- **Is file me kahan juda:** poora naksha: event -> notification service -> queue -> worker -> provider (FCM / APNs / SMS).
-- Source: [How Does a Typical Push Notification System Work?](https://bytebytego.com/guides/how-does-a-typical-push-notification-system-work/)
 
 ---
 

@@ -40,6 +40,20 @@ Isse do cheezein paida hoti hain jo aur kisi design me nahi thi:
 ---
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
+
+### What is the Journey of a Slack Message?
+
+![What is the Journey of a Slack Message?](https://assets.bytebytego.com/diagrams/0338-slack-message-journey.jpg)
+
+- **Is file me kahan juda:** ek message sender se receiver tak — WebSocket, server, fan-out.
+- Source: [What is the Journey of a Slack Message?](https://bytebytego.com/guides/what-is-the-journey-of-a-slack-message/)
+
+---
+
 # MOVE 1 — POOCHO (board pe abhi kuch nahi)
 
 Chhe sawaal. In me se **do** aise hain jinka jawab badalte hi poora design badal jaata hai.
@@ -832,20 +846,6 @@ JODA       uska faayda kaise uthao: KEY = chatId
 BOL        "Kafka only orders within a partition, so I key by chat id. All messages of one chat
             land in one partition and stay in order, while different chats run in parallel."
 ```
-
----
-
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir upar ka apna section padho.
-
-### What is the Journey of a Slack Message?
-
-![What is the Journey of a Slack Message?](https://assets.bytebytego.com/diagrams/0338-slack-message-journey.jpg)
-
-- **Is file me kahan juda:** ek message sender se receiver tak — WebSocket, server, fan-out.
-- Source: [What is the Journey of a Slack Message?](https://bytebytego.com/guides/what-is-the-journey-of-a-slack-message/)
 
 ---
 

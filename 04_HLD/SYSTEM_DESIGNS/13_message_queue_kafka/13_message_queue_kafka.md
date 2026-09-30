@@ -17,6 +17,27 @@
 
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
+
+### Can Kafka Lose Messages?
+
+![Can Kafka Lose Messages?](https://assets.bytebytego.com/diagrams/0130-can-kafka-lose-messages.png)
+
+- **Is file me kahan juda:** HANDS-ON — EVENT KAHAN KHOTA HAI: producer / broker / consumer, wahi 3 jagah.
+- Source: [Can Kafka Lose Messages?](https://bytebytego.com/guides/can-kafka-lose-messages/)
+
+### Delivery Semantics
+
+![Delivery Semantics](https://assets.bytebytego.com/diagrams/0165-delivery-semantics.png)
+
+- **Is file me kahan juda:** at-most-once / at-least-once / exactly-once — offset commit PEHLE ya BAAD me.
+- Source: [Delivery Semantics](https://bytebytego.com/guides/delivery-semantics/)
+
+---
+
 # MOVE 1 — POOCHO (board pe abhi kuch nahi)
 
 ```
@@ -601,27 +622,6 @@ SAGA ≠ ye    = saga kaam ULTA karta (refund). Yahan ulta nahi, sirf raste me k
  idempotent on event id, and poison messages go to a DLQ. I simulated a crash at each of the three
  points: without these, 3 of 5 events were lost; with them, none."
 ```
-
----
-
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir upar ka apna section padho.
-
-### Can Kafka Lose Messages?
-
-![Can Kafka Lose Messages?](https://assets.bytebytego.com/diagrams/0130-can-kafka-lose-messages.png)
-
-- **Is file me kahan juda:** HANDS-ON — EVENT KAHAN KHOTA HAI: producer / broker / consumer, wahi 3 jagah.
-- Source: [Can Kafka Lose Messages?](https://bytebytego.com/guides/can-kafka-lose-messages/)
-
-### Delivery Semantics
-
-![Delivery Semantics](https://assets.bytebytego.com/diagrams/0165-delivery-semantics.png)
-
-- **Is file me kahan juda:** at-most-once / at-least-once / exactly-once — offset commit PEHLE ya BAAD me.
-- Source: [Delivery Semantics](https://bytebytego.com/guides/delivery-semantics/)
 
 ---
 

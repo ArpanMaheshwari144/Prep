@@ -25,6 +25,20 @@
 
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
+
+### How Does Redis Persist Data?
+
+![How Does Redis Persist Data?](https://assets.bytebytego.com/diagrams/0214-how-redis-presists-data.png)
+
+- **Is file me kahan juda:** HANDS-ON #3 CASE C — persistence band thi (`--save "" --appendonly no`), isliye restart pe ginti gaayab. RDB / AOF yahi hain.
+- Source: [How Does Redis Persist Data?](https://bytebytego.com/guides/how-does-redis-persist-data/)
+
+---
+
 # MOVE 1 — POOCHO (board pe abhi kuch nahi)
 
 ```
@@ -904,20 +918,6 @@ return c
  INCR aur EXPIRE alag bheje to beech ke crash se key bina TTL reh jaati aur user hamesha block -
  isliye dono Lua script me ek saath. Maine ye teeno Docker Redis ko maar ke khud dekhe hain."
 ```
-
----
-
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir upar ka apna section padho.
-
-### How Does Redis Persist Data?
-
-![How Does Redis Persist Data?](https://assets.bytebytego.com/diagrams/0214-how-redis-presists-data.png)
-
-- **Is file me kahan juda:** HANDS-ON #3 CASE C — persistence band thi (`--save "" --appendonly no`), isliye restart pe ginti gaayab. RDB / AOF yahi hain.
-- Source: [How Does Redis Persist Data?](https://bytebytego.com/guides/how-does-redis-persist-data/)
 
 ---
 

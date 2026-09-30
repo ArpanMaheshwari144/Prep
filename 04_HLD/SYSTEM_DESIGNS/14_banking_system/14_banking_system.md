@@ -29,6 +29,20 @@
 
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
+
+### Read Replica Pattern
+
+![Read Replica Pattern](https://assets.bytebytego.com/diagrams/0312-read-replica-pattern.png)
+
+- **Is file me kahan juda:** GRILL (Q12) — transfer ke baad purana balance = replica lag. Unka ilaaj bhi wahi: turant wala read PRIMARY se.
+- Source: [Read Replica Pattern](https://bytebytego.com/guides/read-replica-pattern/)
+
+---
+
 # MOVE 1 — POOCHO (board pe abhi kuch nahi)
 
 ```
@@ -665,20 +679,6 @@ BOL        "Most likely replica lag: the write went to the primary, the read hit
             wrote. If it were a failover losing writes, sync replication fixes that."
 CONCEPT    FOUNDATIONS/05_database_replication.md
 ```
-
----
-
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir upar ka apna section padho.
-
-### Read Replica Pattern
-
-![Read Replica Pattern](https://assets.bytebytego.com/diagrams/0312-read-replica-pattern.png)
-
-- **Is file me kahan juda:** GRILL (Q12) — transfer ke baad purana balance = replica lag. Unka ilaaj bhi wahi: turant wala read PRIMARY se.
-- Source: [Read Replica Pattern](https://bytebytego.com/guides/read-replica-pattern/)
 
 ---
 
