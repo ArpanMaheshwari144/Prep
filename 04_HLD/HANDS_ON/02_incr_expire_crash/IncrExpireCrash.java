@@ -36,7 +36,7 @@ public class IncrExpireCrash {
     static final int WINDOW_SEC = 60;
 
     static final boolean CRASH_AFTER_INCR = true;   // pehli request pe INCR ke baad app band
-    static final boolean USE_LUA = false;           // true = INCR + EXPIRE ek hi command me (Lua)
+    static final boolean USE_LUA = true;          // true = INCR + EXPIRE ek hi command me (Lua)
 
     // Redis ke andar chalne wali script: dono kaam ek saath, beech me koi ghus nahi sakta
     static final String LUA =
