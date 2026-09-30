@@ -1,5 +1,28 @@
 # HLD MASTER SHEET — koi bhi design ASSEMBLE karne ka tareeka
 
+```
+=====================================================================================
+  KHOLTE HI — IS FILE ME KYA HAI (upar se neeche, 5 hisse)
+=====================================================================================
+  PART 1  NAKSHA + NIYAM        04_HLD me kaunsi file kab · 3 baatein jo sab pe bhaari
+  PART 2  CROSS-QUESTION        6 sawaal (yaad dilaane ko) · 8 dabbe x 4 line ·
+          (roz grill yahin se)  cross-question bank Q1-Q22 (A gira · B dobara · C bheed ·
+                                D purana · E kho gaya · F baaki)
+  PART 3  DESIGN KHADA KARNA    1 teen line method · 2 archetype · 3 rail · 4 block menu ·
+                                A ya B trade-off jode · 5 15 design ka DIL + khaas hissa
+  PART 4  ATKE TO / ROUND DIN   6 anjaan design recipe · 7 kuch na pata ho · 8 checklist
+  PART 5  BOLNA                 kaise bolna · SHABD (word atke to)
+
+  IS FILE ME NAHI HAI (wahan dekho)
+    concept ki detail ("ye cheez hai kya?")     -> FOUNDATIONS/01..18
+    poora design, dikkat by dikkat              -> SYSTEM_DESIGNS/01..15
+    chala ke dekha (asli output)                -> design file ka HANDS-ON section
+                                                   (rate limiter · notification · Kafka)
+    bolke kiye round                            -> HLD_PRACTICE_LOG.md
+    "X vs Y farak batao"                        -> ../06_COMPARES
+=====================================================================================
+```
+
 > **NAV** — KYA: interview-din ki EK file (archetype -> assemble -> bolo). · CROSS-QUESTION BANK · A YA B · KAISE BOLNA · SHABD = isi file me (neeche) · CONCEPT-detail: [FOUNDATIONS](FOUNDATIONS) · 15 DESIGN: [SYSTEM_DESIGNS](SYSTEM_DESIGNS) · LOG: [HLD_PRACTICE_LOG](HLD_PRACTICE_LOG.md)
 
 > EK file. Interview se pehle sirf YE. (detail chahiye to hi SYSTEM_DESIGNS/* kholo.)
@@ -12,6 +35,9 @@
 >   honest line kaam aati hai. Ye kami nahi, ye tareeka hai.
 
 ---
+---
+
+# ═════════ PART 1 — NAKSHA + NIYAM ═════════
 
 ## 0. KAUNSI FILE KAB — poore 04_HLD ka naksha (26-Sep saaf kiya: har kaam ki EK file)
 
@@ -65,6 +91,9 @@
 > Misaal (Spotify / Bitly) = neeche "KAISE BOLNA" section.
 
 ---
+---
+
+# ═════════ PART 2 — CROSS-QUESTION (roz grill yahin se) ═════════
 
 ## ★★ HAR DESIGN PE 6 SAWAAL — sirf YAAD DILAANE ki list, rail nahi (28-Sep sudhaar)
 
@@ -396,6 +425,10 @@ Q22 "What's the single point of failure here?"
 ```
 
 ---
+
+---
+
+# ═════════ PART 3 — DESIGN KHADA KARNA ═════════
 
 ## 1. TEEN LINE KA METHOD (poora khel isi me hai)
 
@@ -818,6 +851,10 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 ---
 
+---
+
+# ═════════ PART 4 — ATKE TO / ROUND KA DIN ═════════
+
 ## 6. ★ ANJAAN DESIGN AA JAAYE TO — 5 MINUTE RECIPE
 
 ```
@@ -896,6 +933,10 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 ```
 
 ---
+
+---
+
+# ═════════ PART 5 — BOLNA ═════════
 
 ## ★ KAISE BOLNA (01_DELIVERY PART 1 yahan mila, 29-Sep)
 
