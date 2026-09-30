@@ -1112,6 +1112,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         right-pass (peeche):  prod=1;  right[i] = prod;  prod *= nums[i];
         combine:              ans[i] = left[i] * right[i].
      ORDER TRAP: pehle ASSIGN (left[i]=prod), PHIR UPDATE (prod*=nums[i]) -> warna khud ka element bhi product me ghus jaata.
+     O(1) extra (follow-up poochhe to): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi).
 
 ┌── (STANDALONE — apni alag trick) ─────────────────────────────
 └───────────────────────────────────────────────────────────────
