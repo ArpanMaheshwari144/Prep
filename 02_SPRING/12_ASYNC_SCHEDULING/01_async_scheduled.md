@@ -87,20 +87,27 @@ mvn spring-boot:run
 2. @Async = teeno email PARALLEL (task-1/2/3), sequential nahi. 3x3=9s ka kaam 3s me + endpoint instant.
 3. 3 ALAG THREAD-POOL ek saath dikhe:
      nio-8080-exec-*  = Tomcat request threads (HTTP)
-     task-*           = @Async default pool (SimpleAsyncTaskExecutor / configurable)
+     task-*           = @Async default pool = Boot ka "applicationTaskExecutor" (ThreadPoolTaskExecutor,
+                        8 thread, queue ki koi hadd nahi). (bina Boot ke Spring SimpleAsyncTaskExecutor leta)
      scheduling-1     = @Scheduled ka single-thread pool
 4. Main/request thread BLOCK nahi hua -> background ne foreground roka nahi. yahi @Async ka point.
 ```
 
 ## ★ TRAP / GOTCHA (interview me poochte)
 ```
-1. SELF-INVOCATION trap: @Async / @Scheduled PROXY se kaam karte. agar SAME class ke andar se
+1. SELF-INVOCATION trap: @Async PROXY se kaam karta. agar SAME class ke andar se
    this.sendEmail() call karo -> proxy bypass -> ASYNC NAHI hota (seedha same thread). isliye
    DemoJobs ko ALAG bean se call kiya (controller -> demoJobs.sendEmail).  [MOST-ASKED]
+   (@Scheduled pe ye jaal nahi: use koi caller call hi nahi karta, scheduler khud method chalata.)
 2. @EnableAsync/@EnableScheduling bhoole -> annotation SILENTLY ignore.
 3. @Async return: void ya CompletableFuture<T> (result chahiye to Future). plain return-value bekaar.
+   ★ void @Async me exception UTHA to caller ko pata hi nahi chalta (wo pehle hi laut gaya) ->
+     sirf log hota (AsyncUncaughtExceptionHandler). Result / error chahiye to CompletableFuture.
 4. @Scheduled options: fixedRate (start-to-start), fixedDelay (end-to-start), cron="0 0 * * * *".
-5. default @Async pool unbounded ho sakta -> production me apna ThreadPoolTaskExecutor bean do (bounded).
+   ★ scheduler ka default EK hi thread hai -> ek lamba job baaki saare scheduled jobs ko rok deta.
+     zaroorat ho to spring.task.scheduling.pool.size badhao.
+5. default @Async pool me 8 thread par QUEUE ki hadd nahi -> bheed me kaam jama hota jaata, memory
+   badhti -> production me apna ThreadPoolTaskExecutor bean do (core / max / queue capacity tay).
 ```
 
 ## ★ CONNECT (resilience/concurrency family)
