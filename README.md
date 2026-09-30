@@ -3,7 +3,7 @@
 Java / Spring backend interview prep — DSA, system design, projects, hands-on notes.
 **Har heading/link click → seedha wahi note ya folder khul jaata.** Har section ke saath **Kya hai** + **Kyu matter karta** likha hai — kholne se pehle hi pata chal jaaye.
 
-> ★ **Abhi (DELIVERY + APPLY phase — build done):** roz Java/Spring DIN (7 din ka chakkar) · DSA 1 redo + grill 5 · PR drill 1 · apply. Bada kaam baari-baari: HLD bolke / STAR bolke. Ab "jaanna" se "bolke nikaalna" pe focus.
+> ★ **Abhi (DELIVERY + APPLY phase — build done):** roz Java/Spring DIN (7 din ka chakkar) · DSA 1 redo + grill 5 · PR drill 1 · HLD cross-question grill · apply. Bada kaam baari-baari: HLD bolke / STAR bolke. Ab "jaanna" se "bolke nikaalna" pe focus.
 > Live state + plan → **[PROGRESS.md](PROGRESS.md)**
 
 ---
@@ -15,7 +15,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 01 | [**01_JAVA**](01_JAVA) | Core · Collections · Java-8 · Multithreading · SOLID · Patterns · Testing | Java grill round ka **core** — collections-internal + multithreading sabse zyada pucha jaata |
 | 02 | [**02_SPRING**](02_SPRING) | Boot internals · @Transactional · Hibernate · JWT · Docker/K8s · Kafka/Async/Cache · QueryDSL/GraphQL | Backend role ka **dil** — proxy / N+1 / tx / Kafka = deep-grill favourites |
 | 03 | [**03_LLD**](03_LLD) | 11 OOP designs, code me | LLD round — class-design + patterns **bolke** |
-| 04 | [**04_HLD**](04_HLD) | master sheet (cross-question bank · trade-off · kaise bolna · SHABD) + 18 foundations + 15 designs + practice log | Tera **strong zone** — JP ka pura ek round |
+| 04 | [**04_HLD**](04_HLD) | master sheet (cross-question bank · trade-off · kaise bolna · SHABD) + 18 foundations + 15 designs + practice log + HANDS_ON (4 demo: chala ke dekha kya tootta) | Tera **strong zone** — JP ka pura ek round |
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
@@ -110,6 +110,15 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 > · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) — eviction (`allkeys-lru` vs `volatile-lru`) · replication · read-only replica · haath-se failover → **split brain** · `stop` vs `kill` (RDB) · replica ≠ backup · **Sentinel se khud-b-khud failover 800ms me**
 > · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) — Kafka **replay** (offset reset) · **rebalance** (1→2→3→4 consumer, chautha khaali) · partition = parallelism ki chhat
 
+- ★ **[HANDS_ON](04_HLD/HANDS_ON)** — cross-question ka "kya tootta" **chala ke dekha** (30-Sep). Code sirf demo hai (yaad nahi rakhna); asli output + nichod + interview line design file me:
+
+| Demo (chalao) | Kya dekha | Notes (asli output) |
+|---------------|-----------|---------------------|
+| [01 rate limiter + asli Redis](04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java) | Redis maara → fail-open · wapas aaya → ginti gaayab, blocked user phir allow | [rate limiter — HANDS-ON #3](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) |
+| [02 INCR ke baad crash](04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java) | TTL -1 → user hamesha block · Lua se INCR+EXPIRE ek saath → theek | [rate limiter — HANDS-ON #3](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) |
+| [03 provider ka 429](04_HLD/HANDS_ON/03_provider_429/Sms429Demo.java) | naive retry: 1000 me 700 SMS phenke · throttle + backoff + queue: 1000/1000 | [notification — HANDS-ON](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) |
+| [04 event kahan khota](04_HLD/HANDS_ON/04_event_loss/EventLossDemo.java) | producer / Kafka / consumer pe crash → 5 me 3 khoye · outbox + acks=all + offset baad me + idempotent → 0 | [Kafka — HANDS-ON](04_HLD/SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md) |
+
 - **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — 15 poore design (roz ek rotate) — [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter-feed](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 url-browser-journey](04_HLD/SYSTEM_DESIGNS/05_url_browser_journey/05_url_browser_journey.md) · [06 stock-broker](04_HLD/SYSTEM_DESIGNS/06_stock_broker_trading/06_stock_broker_trading.md) · [07 payment](04_HLD/SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [08 file-upload](04_HLD/SYSTEM_DESIGNS/08_file_upload_validate_system/08_file_upload_INTERVIEW.md) · [09 news-aggregator](04_HLD/SYSTEM_DESIGNS/09_news_aggregator/09_news_aggregator_INTERVIEW.md) · [10 bookmyshow](04_HLD/SYSTEM_DESIGNS/10_bookmyshow/10_bookmyshow_INTERVIEW.md) · [11 distributed-cache](04_HLD/SYSTEM_DESIGNS/11_distributed_cache/11_distributed_cache.md) · [12 google-docs-collab](04_HLD/SYSTEM_DESIGNS/12_google_docs_collab/12_google_docs_collab.md) · [13 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md) · [★14 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/14_banking_system/14_banking_system.md) · [★15 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/15_chat_messaging/15_chat_messaging.md)
 
 ---
@@ -158,25 +167,25 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 173 problem (+ 97 REDO/BLANK files) = 270 .cpp
+## [08_DSA](08_DSA) — 18 pattern · 173 problem (+ 98 REDO/BLANK files) = 271 .cpp
 **Kya:** pattern-wise solved problems + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + spaced-redo.
 
 - ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi" (har pattern ka saar + template + dry-run) — **roz-glance**.
 
-> Neeche ki ginti = **problem files** (REDO/BLANK alag se gine hain). Jod = 173 (29-Sep gini).
+> Neeche ki ginti = **problem files** (REDO/BLANK alag se gine hain). Jod = 173 (30-Sep gini).
 
 | # | Pattern | Problems | REDO | | # | Pattern | Problems | REDO |
 |---|---------|----------|------|---|---|---------|----------|------|
 | 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 7 | | 10 | [KADANE](08_DSA/10_KADANE) | 8 | 9 |
 | 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 9 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 0 |
 | 03 | [HASHING](08_DSA/03_HASHING) | 10 | 11 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 3 |
-| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 7 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 11 | 5 |
+| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 8 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 11 | 5 |
 | 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 1 | | 14 | [HEAP](08_DSA/14_HEAP) | 8 | 5 |
 | 06 | [STACK](08_DSA/06_STACK) | 12 | 3 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 2 |
 | 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 6 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 6 |
 | 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 4 | | 17 | [DP](08_DSA/17_DP) | 16 | 14 |
 | 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 2 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 3 |
-| | **KUL** | **173** | **97** | | | | **270 .cpp** | |
+| | **KUL** | **173** | **98** | | | | **271 .cpp** | |
 
 ---
 
@@ -207,7 +216,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 [PR review](12_CODE_REVIEW/PR_REVIEW.md) — sabse upar SHIKAAR LIST: code pe 3 nazar (bhaari 11 cheez · style · production faisla),
 neeche reference dabbe.
 
-> **Asli JP jaise drill (bug + style) ka record:** 28-Sep StatementJob 7/17 -> RefundController 9/17 (shikaar list ke baad SQL injection + N+1 pehli nazar me pakde).
+> **Asli JP jaise drill (bug + style) ka record:** 28-Sep StatementJob 7/17 -> RefundController 9/17 (shikaar list ke baad SQL injection + N+1 pehli nazar me pakde) -> 29-Sep UserController 9/15.
 
 ---
 

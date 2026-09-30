@@ -682,7 +682,7 @@ PS> 1..10 | % { curl.exe -s http://localhost:8080/rate-demo; "" }
 ## ═══ HANDS-ON #3 — REDIS KO KHUD MAARA: "kaise tootta" (30-Sep) ═══
 > #2 wala counter app ki memory me tha. Ye = asli Redis pe counter (multi-node wala tareeka), aur phir
 > Redis ko beech me maar ke dekha kya tootta hai. Cross-question "Redis down ho gaya to?" ka live jawab.
-> CODE: `04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java` (+ `.cpp` syntax ke liye)
+> CODE: `04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java`
 >        `04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java`
 > Dono Java files me koi library nahi (Redis se seedha socket pe baat), `java File.java` se chalti.
 
