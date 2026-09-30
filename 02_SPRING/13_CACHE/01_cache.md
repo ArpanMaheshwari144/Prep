@@ -49,6 +49,10 @@ public String getUser(@PathVariable Long id) throws InterruptedException {
 ```
 Live dikha: pehli hit MISS (200ms atka), doosri hit HIT (turant).
 
+★ (29-Sep, PR drill 3 wala hi jaal) Controller SINGLETON hai -> ye `HashMap` saare request-thread share karte ->
+  thread-safe NAHI, aur kabhi saaf nahi hota (memory badhti). Demo ke liye theek; asli me
+  `ConcurrentHashMap` + size/TTL limit, ya seedha `@Cacheable` (neeche).
+
 ---
 
 ## ═══ TAREEKA 2 — @Cacheable (production ka asli tarika) ═══
@@ -94,6 +98,8 @@ ne method me ghusne se pehle hi cached value laut di. Manual `if(containsKey) re
 2. @EnableCaching bhoole -> annotation silently ignore.
 3. spring-boot-starter-cache dep na ho -> koi CacheManager nahi -> error / cache nahi banta.
 4. STALE data: data badla par cache purana de raha -> @CacheEvict / @CachePut se hatao/update karo, ya TTL do.
+   ★ TTL default cache (ConcurrentHashMap) me HOTA HI NAHI — entry hamesha rehti. TTL chahiye to
+     Caffeine (expireAfterWrite) ya Redis (spring.cache.redis.time-to-live) lagao.
 5. default cache = in-memory (ConcurrentHashMap), single-node. multi-node -> REDIS (sab servers ek cache share karein).
 ```
 
