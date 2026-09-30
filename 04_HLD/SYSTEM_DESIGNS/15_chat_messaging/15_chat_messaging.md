@@ -52,6 +52,13 @@ Isse do cheezein paida hoti hain jo aur kisi design me nahi thi:
 - **Is file me kahan juda:** ek message sender se receiver tak — WebSocket, server, fan-out.
 - Source: [What is the Journey of a Slack Message?](https://bytebytego.com/guides/what-is-the-journey-of-a-slack-message/)
 
+### Short/long polling, SSE, WebSocket
+
+![Short/long polling, SSE, WebSocket](https://assets.bytebytego.com/diagrams/0337-short-long-polling-sse-websocket.jpeg)
+
+- **Is file me kahan juda:** chat me WebSocket kyun — polling / long polling / SSE se farak, ek tasveer me.
+- Source: [Short/long polling, SSE, WebSocket](https://bytebytego.com/guides/shortlong-polling-sse-websocket/)
+
 ---
 
 # MOVE 1 — POOCHO (board pe abhi kuch nahi)

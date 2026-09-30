@@ -18,6 +18,27 @@
 
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
+
+### Design Stock Exchange
+
+![Design Stock Exchange](https://assets.bytebytego.com/diagrams/0344-stock-exchange.png)
+
+- **Is file me kahan juda:** order -> sequencer -> matching engine -> order book (RAM me) — tera 'exchange ya broker?' wala sawaal.
+- Source: [Design Stock Exchange](https://bytebytego.com/guides/design-stock-exchange/)
+
+### Low Latency Stock Exchange
+
+![Low Latency Stock Exchange](https://assets.bytebytego.com/diagrams/0265-low-latency-stock-exchange.jpg)
+
+- **Is file me kahan juda:** microseconds kaise — sab RAM me, ek thread, lock nahi (file me 'LOCK kyun nahi' wahi baat).
+- Source: [Low Latency Stock Exchange](https://bytebytego.com/guides/low-latency-stock-exchange/)
+
+---
+
 # MOVE 1 — POOCHO (board pe abhi kuch nahi)
 
 ```

@@ -19,6 +19,20 @@
 
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
+
+### How to Design Google Docs
+
+![How to Design Google Docs](https://assets.bytebytego.com/diagrams/0206-google-doc.png)
+
+- **Is file me kahan juda:** WebSocket + collaboration service + OT/CRDT + ops log — tera poora design ek tasveer me.
+- Source: [How to Design Google Docs](https://bytebytego.com/guides/how-to-design-google-docs/)
+
+---
+
 # MOVE 1 — POOCHO (board pe abhi kuch nahi)
 
 ```

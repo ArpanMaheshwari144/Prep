@@ -6,6 +6,27 @@ Classic interview question (JP / GS / FAANG). What happens between pressing Ente
 
 ---
 
+## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
+
+> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
+> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
+
+### What Happens When You Type a URL Into Your Browser?
+
+![What Happens When You Type a URL Into Your Browser?](https://assets.bytebytego.com/diagrams/0393-type-a-url-into-your-browser.png)
+
+- **Is file me kahan juda:** poora safar ek tasveer me — DNS -> TCP -> TLS -> HTTP -> render. Neeche ka FULL JOURNEY map yahi hai.
+- Source: [What Happens When You Type a URL Into Your Browser?](https://bytebytego.com/guides/what-happens-when-you-type-a-url-into-your-browser/)
+
+### How Does the Domain Name System (DNS) Lookup Work?
+
+![How Does the Domain Name System (DNS) Lookup Work?](https://assets.bytebytego.com/diagrams/0176-dns-look-up.png)
+
+- **Is file me kahan juda:** DNS wala step khol ke — browser cache -> resolver -> root -> TLD -> authoritative.
+- Source: [How Does the Domain Name System (DNS) Lookup Work?](https://bytebytego.com/guides/how-does-the-domain-name-system-dns-lookup-work/)
+
+---
+
 ## FULL JOURNEY — OVERVIEW MAP
 
 ```
