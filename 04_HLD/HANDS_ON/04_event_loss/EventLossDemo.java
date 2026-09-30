@@ -21,7 +21,7 @@ import java.util.*;
 
 public class EventLossDemo {
 
-    static final boolean FIX = false;
+    static final boolean FIX = true;
 
     static List<String> bankDb = new ArrayList<>();      // debit table
     static List<String> outbox = new ArrayList<>();      // FIX: event yahan, debit ke SAATH

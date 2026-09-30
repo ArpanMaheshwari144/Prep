@@ -484,4 +484,124 @@
 
 ---
 
+## ═══ HANDS-ON — EVENT KAHAN KHOTA HAI: 3 jagah crash karwa ke dekha (30-Sep) ═══
+> Grill sawaal (bank): "paisa kata -> event SMS / fraud / statement tak jaata. Ek bhi event kho na jaaye, kaise?"
+> Maine SAGA bola tha -> galat dabba: saga = kai service me faile kaam ko ULTA karna. Yahan kuch ulta nahi
+> karna, event RASTE me kho raha hai. Sahi soch jo thi: "pehle pakka likho" = OUTBOX.
+> CODE: `04_HLD/HANDS_ON/04_event_loss/EventLossDemo.java` (sab nakli, koi Docker nahi, turant chalta)
+> Line 24: `FIX = false` / `true`  ->  `java EventLossDemo.java`
+
+### Setup — 5 debit (e1..e5), 3 jagah jaan-boojh ke crash
+```
+[Bank DB] --1--> [Kafka] --2--> (replica) --3--> [SMS service]
+
+1  e3: paisa kata (DB me likha), event bhejne se PEHLE app crash         (producer)
+2  e4: Kafka leader ne le liya, replica tak pahunchne se PEHLE leader gira (broker)
+3  e2: SMS service ne offset commit kiya, SMS bhejne se PEHLE crash       (consumer)
+```
+
+### ASLI OUTPUT (jo screen pe aaya)
+
+ROUND 1 — `FIX = false`
+```
+=== 1. PRODUCER: paisa kaato + event bhejo ===
+e1: DB me debit likha
+e1: Kafka me pahuncha
+e2: DB me debit likha
+e2: Kafka me pahuncha
+e3: DB me debit likha
+e3: CRASH! event bhejne se pehle app mar gaya -> event kabhi nahi gaya
+e4: DB me debit likha
+e4: Kafka (acks=1) leader ne memory me rakha, turant 'OK' bol diya
+e4: CRASH! leader gira, replica tak pahuncha hi nahi -> e4 GAYA (producer ko lagta hai bhej diya)
+e5: DB me debit likha
+e5: Kafka me pahuncha
+
+=== 3. CONSUMER: SMS service Kafka se padhti hai ===
+e1: offset commit (1)
+e1: SMS bheja
+e2: offset commit (2)
+e2: CRASH! SMS bhejne se pehle -> restart pe offset 2 se aage padhega -> e2 CHHOOT gaya
+e5: offset commit (3)
+e5: SMS bheja
+
+=== NATEEJA ===
+paisa kata (DB)   = [e1, e2, e3, e4, e5]
+Kafka me bacha    = [e1, e2, e5]
+SMS mila          = [e1, e5]
+KHO GAYE          = [e2, e3, e4]   <- paisa kata, customer ko pata nahi
+```
+
+ROUND 2 — `FIX = true`
+```
+=== 1. PRODUCER: paisa kaato + event bhejo ===
+e1: DB debit + OUTBOX row, dono ek transaction me
+e2: DB debit + OUTBOX row, dono ek transaction me
+e3: DB debit + OUTBOX row, dono ek transaction me
+e3: CRASH! bhejne se pehle app mar gaya -> koi baat nahi, outbox me pada hai
+e4: DB debit + OUTBOX row, dono ek transaction me
+e5: DB debit + OUTBOX row, dono ek transaction me
+-- relay process (restart ke baad bhi) outbox padh ke Kafka bhejta hai --
+e1: Kafka me pahuncha
+e2: Kafka me pahuncha
+e3: Kafka me pahuncha
+e4: Kafka (acks=all) leader + replica dono pe likha, TAB 'OK'
+e4: CRASH! leader gira -> replica naya leader, e4 uske paas hai
+e5: Kafka me pahuncha
+
+=== 3. CONSUMER: SMS service Kafka se padhti hai ===
+e1: SMS bheja
+e1: offset commit (1)
+e2: SMS bheja
+e2: CRASH! offset commit se pehle -> restart pe e2 PHIR aayega
+e2: ye pehle ho chuka (eventId dekha) -> DUPLICATE chhoda
+e3: SMS bheja
+e3: offset commit (3)
+e4: SMS bheja
+e4: offset commit (4)
+e5: SMS bheja
+e5: offset commit (5)
+
+=== NATEEJA ===
+paisa kata (DB)   = [e1, e2, e3, e4, e5]
+Kafka me bacha    = [e1, e2, e3, e4, e5]
+SMS mila          = [e1, e2, e3, e4, e5]
+KHO GAYE          = []
+```
+
+### Kya DEKHA
+```
+                 FIX = false                          FIX = true
+e3  producer     debit hua, event bhejne se pehle     debit + outbox EK transaction me,
+                 crash -> KHOYA                        crash ke baad relay ne bheja -> BACHA
+
+e4  Kafka        acks=1: leader ne "OK" bola,         acks=all: replica pe likhne ke baad "OK",
+                 replica se pehle gira -> KHOYA        leader gira, replica ke paas -> BACHA
+
+e2  consumer     pehle offset commit, SMS se pehle    pehle SMS, baad me commit. crash -> e2 phir
+                 crash -> CHHOOT gaya -> KHOYA         aaya -> eventId dekh ke duplicate chhoda -> BACHA
+```
+
+### Nichod — ek hi niyam: "ho gaya" tabhi bolo jab sach me PAKKA ho gaya
+```
+OUTBOX       = chhota LEDGER: kaam se pehle likh do "ye bhejna hai". Crash hua to likha bacha,
+               relay baad me utha ke bhejta. ★ likhna debit ke SAATH, USI EK transaction me ->
+               ya dono (paisa kata + likha) ya dono nahi. "paisa kata, likha nahi" ho hi nahi sakta.
+acks=all     = replica pe likhne ke BAAD hi "OK". (acks=1 = leader ki memory pe "OK" -> leader gira = gaya)
+OFFSET BAAD  = kaam (SMS) PEHLE, offset commit BAAD me. Crash -> event phir aayega (at-least-once).
+IDEMPOTENT   = phir aaya to duplicate SMS na jaaye -> eventId yaad rakho, dobara aaye to chhodo.
+DLQ          = koi event baar-baar fail ho -> retry ke baad DLQ, taaki baaki ko na roke. (simulation me nahi)
+SAGA ≠ ye    = saga kaam ULTA karta (refund). Yahan ulta nahi, sirf raste me khona rokna hai.
+```
+
+### INTERVIEW LINE
+```
+"At-least-once delivery: an outbox so the debit and the event commit in the same transaction, acks=all
+ with replication on Kafka, and consumers that commit the offset only after processing. Consumers are
+ idempotent on event id, and poison messages go to a DLQ. I simulated a crash at each of the three
+ points: without these, 3 of 5 events were lost; with them, none."
+```
+
+---
+
 [← MASTER SHEET](../../00_MASTER_SHEET.md)
