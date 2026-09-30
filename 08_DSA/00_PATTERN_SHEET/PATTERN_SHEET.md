@@ -3127,6 +3127,35 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      crux: MAX-HEAP + har round 2 alag nikaalo + last-1 count>1 = impossible.
 
      FAMILY: heap (top-k-frequent cousin) · greedy-place-most-frequent
+
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ THROTTLING — MIN UTHAO, PADOSI HATAO (Amazon OA)  = MIN-HEAP {val,idx} + vis[] (lazy skip)
+ └──────────────────────────────────────────────────────────────
+     SAAR: har step bache hue me SABSE CHHOTA uthao (tie -> chhota index), total me jodo,
+           use + ORIGINAL padosi (i-1, i+1) hata do. sab hatne tak.
+           [4,2,9,1,7,3] -> 1 (9,7 gaye) -> 2 (4 gaya) -> 3  = 6
+
+     PEHCHAN: kahani hata do -> "baar-baar MIN + beech me cheezein hat-ti" -> HEAP + hat-chuka array.
+     ★ BURST BALLOONS NAHI: wahan KAUNSA phodna TU chunta + padosi badalte -> DP.
+        yahan niyam tay (hamesha min) + padosi ORIGINAL index -> koi choice nahi -> heap se simulate.
+        sawaal: "kya mujhe chunna padta hai?" haan -> DP · nahi -> simulate.
+
+     TEMPLATE:
+        vector<bool> vis(n,false);  long long ans = 0;                    // 1e9 x lakh -> long long
+        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;  // MIN {val,idx}
+        for(i) pq.push({a[i], i});                        // pair -> tie pe chhota idx apne-aap pehle
+        while(!pq.empty()){
+            int i = pq.top().second; pq.pop();
+            if(vis[i]) continue;                          // pehle hi hat chuka -> chhodo (LAZY delete)
+            ans += a[i];  vis[i] = true;
+            if(i-1 >= 0) vis[i-1] = true;                 // padosi hatao (bounds)
+            if(i+1 <  n) vis[i+1] = true;
+        }
+        return ans;
+     O(n log n).  LAZY DELETE = heap se beech ka element nikaal nahi sakte -> vis[] se pop pe skip
+                  (Dijkstra ke "stale-skip" jaisa hi).
+
+     FAMILY: heap (emergency-room: baar-baar min) · visited[] (graph jaisa) · lazy delete
 ```
 
 ---
