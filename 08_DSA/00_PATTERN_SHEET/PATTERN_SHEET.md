@@ -3988,7 +3988,22 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                  coins = solve(i,k-1) + solve(k+1,j) + p[i-1]*p[k]*p[j+1]
                  ans = max(ans, coins)
              return dp[i][j] = ans
-         // caller: solve(1, n) [n = asli balloon count, pad ke baad].
+         // caller:
+         //   int n = balloons.size();                      // n PAD se PEHLE (asli count)
+         //   dp(n+1, vector<int>(n+1, -1));
+         //   balloons.insert(balloons.begin(), 1);         // left pad
+         //   balloons.push_back(1);                        // right pad
+         //   return solve(1, n);                           // asli balloon idx 1..n
+
+     ★ KYUN p[i-1] aur p[j+1]  (k-1, k+1 nahi):
+        k = range i..j me SABSE AAKHRI phootne wala.
+        k ki baari aate hi range ke baaki sab phoot chuke -> range ke andar koi padosi nahi bacha.
+        padosi = jo range ke BAHAR khade:  i-1 (left)  ·  j+1 (right).
+
+           p = [1, 3, 1, 5, 8, 1]     solve(1,4), k=3 (val 5) aakhri
+           pehle :   [1] | 3  1  5  8 | [1]
+                     i-1               j+1
+           3,1,8 phoote -> [1]  5  [1]   ->  coins = p[0] * p[3] * p[5] = 1 * 5 * 1
 
      DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(p1,p3), k=p2 phoda
              val:    1     3     2     5     1
