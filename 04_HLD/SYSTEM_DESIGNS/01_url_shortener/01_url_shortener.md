@@ -535,6 +535,33 @@
        GET/POST swap (banana = POST) . "write replicas" -> SHARDING . KEY = shortCode
 ```
 
+## ► MOCK 1-Oct — bolke, 2 cheez jo pata nahi thi
+
+```
+1. RANDOM vs COUNTER  (dono ek saath nahi)
+
+   counter hai to code RANDOM nahi hota.
+   counter number deta  ->  number ko BASE62 me badlo  ->  wahi 7 char ka code
+
+        counter = 125       ->  base62  ->  "21"      (chhota number, chhota code)
+        counter = 3.5 lakh crore tak  ->  7 char me fit  (62^7)
+
+   bolna: "counter se number, number base62 me -> 7 char code. random nahi, isliye takraav nahi."
+
+
+2. REPLICA SYNC / PRIMARY GIRA TO DATA  ->  Kafka NAHI, DB ka apna LOG
+
+   har DB ka apna log hota hai  (Cassandra = COMMIT LOG, Postgres/MySQL = WAL)
+   write  ->  pehle disk pe LOG me  ->  phir table me
+   DB gira  ->  wapas uthte hi LOG padh ke data wapas  ->  kuch nahi khota
+
+   replica ke liye:  write tabhi "DONE" jab ZYADA replica haan bol dein  (QUORUM)
+        3 replica  ->  2 ne haan bola  ->  done
+        1 gira bhi  ->  baaki 2 ke paas data hai
+
+   bolna: "DB ka commit log hai, aur write quorum se ack karunga. Kafka yahan extra dabba hai."
+```
+
 ---
 
 [← MASTER SHEET](../../00_MASTER_SHEET.md)
