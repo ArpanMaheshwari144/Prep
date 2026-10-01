@@ -3490,7 +3490,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                  solve(index+1, digits, mp, temp, ans);   // explore (agla ank)
                  temp.pop_back();                         // un-choose
              }
-         // caller: digits khaali -> return {} (warna "" wali EK string aa jaati) · solve(0, ...)
+         // caller: digits khaali -> return {} (warna "" wali EK string aa jaati)
+         //         MAP yahan banta (ank -> uske akshar):
+         //           unordered_map<char, string> mp;
+         //           mp['2']="abc"  mp['3']="def"  mp['4']="ghi"  mp['5']="jkl"
+         //           mp['6']="mno"  mp['7']="pqrs" mp['8']="tuv"  mp['9']="wxyz"
+         //         key = char ('2'), kyunki digits[index] char hai -> mp[digits[index]] seedha chalta
+         //         solve(0, ...)
      ★ EDGE: digits "" -> khaali LIST, [""] nahi. isliye pehle hi return {}.
      ★ BUG-TRAP (24-Sep): `ans` ko GLOBAL mat rakho -- ek hi program me function do baar bula to
         pichhle jawab bhi jud jaate ("2" pe 3 ki jagah 12). LeetCode pe chal jaata (har test pe naya object),
