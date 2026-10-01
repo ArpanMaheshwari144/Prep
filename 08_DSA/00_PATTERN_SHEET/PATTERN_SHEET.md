@@ -2411,19 +2411,32 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      preorder[0] = ROOT · inorder me us root pe todo -> LEFT-part | root | RIGHT-part. recurse.
 
-     BF (linear scan)  O(n^2)                    OPTIMIZE (map)  O(n) -- sirf jaha badla
-     -----------------------------------------   -----------------------------------------
-     solve(int& rootIndex, l, r):
-       if (l > r) return NULL;
-       int pivot = l;                            int pivot = mp[preorder[rootIndex]];
-       while (inorder[pivot]                       // while-scan HATA -> map O(1)
-             != preorder[rootIndex]) pivot++;
-       rootIndex++;
-       node = new TreeNode(inorder[pivot]);
-       node->left  = solve(l, pivot-1);
-       node->right = solve(pivot+1, r);
-       return node;
-     buildTree: rootIndex=0; solve(0,n-1);       buildTree: + mp{inorder-val->idx} ek baar
+     MAP wala  O(n)   (inorder me root ka index map se O(1) me)
+     -----------------------------------------
+     TreeNode *solve(int &rootIndex, vector<int> &preorder, vector<int> &inorder,
+                     int l, int r, unordered_map<int, int> &mp)
+     {
+         if (l > r)
+             return NULL;
+
+         int pivot = mp[preorder[rootIndex]];
+         rootIndex++;
+
+         TreeNode *newNode = new TreeNode(inorder[pivot]);
+         newNode->left = solve(rootIndex, preorder, inorder, l, pivot - 1, mp);
+         newNode->right = solve(rootIndex, preorder, inorder, pivot + 1, r, mp);
+         return newNode;
+     }
+
+     TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder)
+     {
+         int rootIndex = 0;
+         unordered_map<int, int> mp;
+         for (int i = 0; i < inorder.size(); i++)
+             mp[inorder[i]] = i;              // inorder val -> idx, ek baar
+
+         return solve(rootIndex, preorder, inorder, 0, inorder.size() - 1, mp);
+     }
 
      ★ rootIndex by-REFERENCE (&): ek moving pointer SAB calls me shared -> LEFT poora consume hone ke
         BAAD hi RIGHT ko sahi agla-root milta (= preorder ka Root,Left,Right order). value-pass -> copy -> galat tree.
@@ -2439,7 +2452,6 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
        solve(0,4): root=3,  pivot=1 | L=solve(0,0)   R=solve(2,4)
          solve(0,0): root=9,  pivot=0 | NULL, NULL   (leaf 9)
          solve(2,4): root=20, pivot=3 | L=solve(2,2)=15   R=solve(4,4)=7
-       ANS = 42   (best path 15-20-7 ; root -10 chhoda -- neg arm skip ka faayda)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ BALANCED TREE (LC-110)  = MAX-DEPTH + (-1 SENTINEL)
