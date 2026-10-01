@@ -2924,21 +2924,21 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          Level 5:  cog == endWord -> 5    [hit hot dot dog cog = 5 WORDS]
 
      TEMPLATE:
-        TERA (level PAIR me)                       │  MERA (per-layer SIZE-loop)
-        ───────────────────────────────────────────┼──────────────────────────────────
-        set = {wordList}   (lookup + visited)      │  set = {wordList}
-        q<pair<w,lvl>>;  push {begin,1}            │  q<w>;  push begin;  level=1
-        while(!q):                                 │  while(!q):
-          {w,lvl} = pop                            │    sz = q.size();  repeat sz baar:
-          w==end -> return lvl                     │      w = pop
-          for pos i:  original = w[i]              │      w==end -> return level
-            for ch 'a'..'z':  w[i] = ch            │      for pos i:  original = w[i]
-              w in set? erase(w) + push {w,lvl+1}  │        for ch 'a'..'z':  w[i] = ch
-            w[i] = original   (RESTORE)            │          w in set? erase(w) + push w
-        return 0                                   │        w[i] = original   (RESTORE)
-                                                   │    level++   (poora layer khatam)
-                                                   │  return 0
-        FARAK sirf level-track: TERA level PAIR me (push me lvl+1) · MERA size-loop + baad me level++.
+        TERA (level PAIR me)                              │  MERA (per-layer SIZE-loop)
+        ──────────────────────────────────────────────────┼──────────────────────────────────────
+        st = {wordList}   (lookup + visited)              │  st = {wordList}
+        q<pair<string,int>>;  push {beginWord,1}          │  q<string>;  push beginWord;  level=1
+        while(!q):                                        │  while(!q):
+          word = front.first; steps = front.second; pop   │    sz = q.size();  repeat sz baar:
+          word==endWord -> return steps                   │      word = pop
+          for pos i:  original = word[i]                  │      word==endWord -> return level
+            for ch 'a'..'z':  word[i] = ch                │      for pos i:  original = word[i]
+              word in st? erase(word) +                   │        for ch 'a'..'z':  word[i] = ch
+                          push {word, steps+1}            │          word in st? erase(word) + push word
+            word[i] = original   (RESTORE)                │        word[i] = original   (RESTORE)
+        return 0                                          │    level++   (poora layer khatam)
+                                                          │  return 0
+        FARAK sirf level-track: TERA steps PAIR me (push me steps+1) · MERA size-loop + baad me level++.
 
      ★ VISITED trick (Arpan): dict-set se word ERASE karo jaise hi use karo -> alag visited-set NAHI chahiye
                               (ek check "dict me hai?" + "visited nahi?" dono serve).
