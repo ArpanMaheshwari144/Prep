@@ -54,6 +54,8 @@ teamblind.com "jp morgan chase superday" · devbrainiac.com JPMorgan SDE-2
 10   log / println me  email · card ·     PII / secret log me             log leak = data leak -> sirf id / mask
      password · token
 11   request se id / amount               owner check? validation?        koi bhi kisi ka data / -ve amount
+     ★ HAR {id} wale method pe ALAG se    ek method me check hai to baaki  owner nahi -> 403 (chup "ok" nahi)
+     poocho "ye kiska hai?"               me bhi hai, ye maan mat lena
 ```
 
 ### NAZAR 2 — STYLE (~3 min). Ek-ek naam lo:
@@ -68,6 +70,8 @@ SRP            ek class: DB + logic + mail/HTTP sab           -> repository / se
 injection      @Autowired field pe · new XService() andar     -> constructor + final, bean inject
 bekaar         nikala par use nahi (list / field / variable)  -> use karo ya hatao
 lamba method / gehri nesting                                   -> chhote method, early return
+return type    ek method String, doosra BigDecimal, teesra    -> sab ResponseEntity + sahi status
+               ResponseEntity
 ```
 
 ### NAZAR 3 — SAMET DO (~1 min). YE LINE HAMESHA:
@@ -196,3 +200,23 @@ KRAM:  bhaari pehle -> style -> faisla
 
 ★ Perfect nahi chahiye — soch dikhni chahiye. "Main ye isliye keh raha hoon ki..."
 ```
+
+---
+
+## 5. DRILL SE NIKLI GALTIYAN (jo chhoota, wahi yahan)
+
+```
+DRILL                 CHHOOTA                                       AGLI BAAR
+30-Sep Address        owner check (IDOR) · faisla line              {id} dikhe -> "kiska hai?"
+1-Oct  CardController owner check: block + getLimit me nahi tha     har {id} method pe alag se dekho
+                        (updateLimit me tha -> baaki me maan liya)
+                      non-owner pe bhi "ok" return (403 chahiye)    fail / mana -> sahi status, 200 nahi
+                      status "BLOCKED" raw String                   magic string -> enum
+                      return type alag-alag                         sab ResponseEntity
+                      faisla line                                   end me NAZAR 3 wali line HAMESHA
+```
+1-Oct pakda (khud): field injection · .get() · String == · card number log me · catch me 200 "blocked" ·
+double/BigDecimal shaq · cardId validation.
+
+★ Owner check ab tak har drill me chhoota hai -> code padhne se PEHLE ek sawaal: "kaunse method {id} lete hain?"
+
