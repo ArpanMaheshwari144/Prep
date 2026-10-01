@@ -175,7 +175,8 @@ while (!pq.isEmpty()) {
 | Cheez | State |
 |-------|-------|
 | **PQ ka internal array** | NOT sorted (heap property only) |
-| **`peek()` / iterate / print** | Heap order — unsorted |
+| **iterate / print** | Heap order — unsorted (`[5, 10, 20, 30, 15]`) |
+| **`peek()`** | HAMESHA sabse chhota (root) — `5`. Ye unsorted NAHI. |
 | **`poll()` ek-ek karke** | SORTED (chhota pehle) |
 | **Saare elements poll karo** | Total O(n log n) — fully sorted output |
 
