@@ -995,6 +995,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      prefix-sum + hashmap {prefixSum -> count}. running sum chalao; count += mp[sum - k], phir mp[sum]++.
      mp[0]=1 se START zaroori (jab sum khud == k ho, tab prefix-0 chahiye). idea: pichla prefix jahan se ab tak k bana.
+     ★ mp[sum - k], k - sum NAHI. ODOMETER: abhi 15 km (sum) - aakhri tukda 5 (k) = 10 km pe tukda shuru -> "10 kitni baar dikha?"
+       BADA (jahan hoon) pehle. Two Sum ka "target - x" ulta yahan mat lagao: x + y = target  vs  sum - pichhla = k.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ COUNT DIVISIBLE PAIRS  = two-sum/hashmap-complement, par KEY = REMAINDER
