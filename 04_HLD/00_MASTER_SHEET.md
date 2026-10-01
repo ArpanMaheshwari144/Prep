@@ -311,6 +311,7 @@ Q10 "The database is too big / takes too many writes. What do you do?"
     BOL: "Replicas only scale reads, so for writes I'd shard by user id -- high cardinality,
           even spread, and it matches how we query, so most requests hit a single shard."
     kahan aaya: 01 · 03 · 12 (docId) · 13 · 14 (account_id) · 15 (chat_id)   (FOUNDATIONS/06)
+    GRILL 1-Oct: 14_banking_system -> "GRILL" section (writes: cache/index = read ilaaj; sasta->mehnga, shard aakhir)
 
 Q11 "What about a hot key / celebrity / hot partition?"
     shard barabar baata, par EK key pe hi saara traffic -> wo ek node mara.

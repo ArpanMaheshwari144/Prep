@@ -680,5 +680,27 @@ BOL        "Most likely replica lag: the write went to the primary, the read hit
 CONCEPT    FOUNDATIONS/05_database_replication.md
 ```
 
+```
+GRILL 1-Oct (master sheet Q10)
+SAWAAL     "Transactions table bahut badi + bahut WRITES. Read replica laga diye, phir bhi DB maar kha raha."
+
+TERA JAWAB replica sirf copy / read baant-ta                                  -> SAHI
+           "sasta pehle, SHARD aakhir me (mehnga)"                            -> BAHUT ACHHA (asli kaam ka kram)
+           partition                                                          -> SAHI (is design me month-wise hai)
+           cache + index                                                      -> ye READ ke ilaaj hain:
+              cache = write ko kuch nahi deta · har naya index = har INSERT pe ek aur likhai = WRITE DHEEMA
+
+JODA       writes ke liye, sasta -> mehnga:
+             1. chhoti transaction (lock kam der)
+             2. BATCH / ASYNC: statement, notification jaise non-critical -> queue, baad me
+             3. PARTITION + ARCHIVE: purane mahine cold storage -> table chhoti
+             4. SHARD by account_id: high cardinality, barabar baat, ek account ke txn ek shard pe
+
+BOL        "Replicas only spread reads, and caching or extra indexes help reads, not writes; more indexes
+            actually slow inserts. For writes I'd go cheapest first: shorter transactions, batch or async
+            the non-critical writes, partition by month and archive old data, and only then shard by
+            account id."
+```
+
 ---
 
