@@ -31,9 +31,12 @@
 ```java
 // Jab tu likhta: new ArrayList<>()
 // Andar ye hota:
-Object[] elementData = new Object[10];     // default size 10
+Object[] elementData = {};                 // Java 8+: KHAALI array (lazy) — abhi 10 nahi bana
 size = 0;                                   // abhi koi element nahi
+// pehla add() hote hi -> array 10 ka banta (DEFAULT_CAPACITY = 10)
+// naya capacity = old + (old >> 1) = 1.5x   (10 -> 15 -> 22 -> 33 ...)
 ```
+★ **Trap:** "`new ArrayList<>()` banate hi 10 ki jagah ban jaati" = **galat** (Java 7 tak aisa tha). Java 8+ me khaali list koi memory nahi leti, jab tak pehla element na aaye. Hazaaron khaali list wale app me ye farak bada hai.
 
 **WHY size 10?**
 → 10 elements ke baad 11th aaya → naya array banao **10 × 1.5 = 15**
@@ -48,7 +51,7 @@ size = 0;                                   // abhi koi element nahi
                 ArrayList Internal — Andar ka Sach
 
 ╔════════════════════════════════════════════════════════════╗
-║ Initial — Default size 10                                  ║
+║ Pehle add() ke baad — Default size 10 (banate waqt khaali {})║
 ╚════════════════════════════════════════════════════════════╝
 
 ArrayList<Integer> list = new ArrayList<>();
@@ -146,7 +149,8 @@ Shift karna padta (saare elements 1 right):
 └────────────────┴──────────────┴──────────────┘
 
 Modern: ArrayList always
-   Thread-safe chahiye? → Collections.synchronizedList()
+   Thread-safe chahiye? → Collections.synchronizedList()  (har call pe ek taala)
+                        → CopyOnWriteArrayList (padhna bahut, likhna kam: har likhai pe POORI copy)
 ```
 
 ---

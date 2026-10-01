@@ -10,7 +10,7 @@
 → HashMap = **key ko number mein convert (hashCode)** → number se index nikalo `((n-1) & hash)` → **seedha us index pe jao**
 → 10 lakh entries mein bhi **TURANT**
 → Capacity **power of 2** KYUN? Bitwise AND = **1 CPU instruction** = modulo se FAST
-→ **Load factor 0.75** = Poisson distribution pe sweet spot
+→ **Load factor 0.75** = time vs memory ka sweet spot (Poisson wali ginti alag cheez batati: 0.75 pe kisi bucket me 8 aana lagbhag namumkin -> isliye TREEIFY 8 pe)
 
 ---
 
@@ -161,6 +161,7 @@ untreeify: tree nodes 6 pe wapas LinkedList. (8 banao/6 todo -> gap taaki border
 
    Red-Black tree = self-balancing BINARY SEARCH TREE -> SORTED (left chhota, right bada).
    Rules (4):
+     0. har node ya RED ya BLACK (khaali null-leaf = black)
      1. root HAMESHA black
      2. RED node ke bachche BLACK (do red lagataar nahi)
      3. har path me BLACK nodes ki count SAME

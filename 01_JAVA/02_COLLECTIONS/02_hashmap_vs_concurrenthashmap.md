@@ -28,13 +28,14 @@
    Thread A                         Thread B
    ─────────                        ─────────
    put("key1", "A")
-        │ read bucket #5            put("key1", "B")
+        │ read bucket #5 -> KHAALI     put("key2", "B")     <- ALAG key, same bucket
         │                                │
-        │                                │ read bucket #5
-        │ write "A" to bucket #5         │ (sees same state as A)
-        │                                │ write "B" to bucket #5
+        │                                │ read bucket #5 -> KHAALI (A ne abhi likha nahi)
+        │ table[5] = Node(key1)          │
+        │                                │ table[5] = Node(key2)   <- key1 ke upar likh diya
         ▼                                ▼
-        LOST UPDATE — only "B" remains
+        LOST ENTRY — key1 GAAYAB, sirf key2 bacha (dono alag key thi!)
+        (same key pe "last write wins" to normal hai — asli bug ALAG key ka gaayab hona hai, C1 dekho)
 
   Non-deterministic data corruption
   Could be: missing entries, infinite loop, ClassCastException
@@ -95,14 +96,14 @@ cmap.put("key", null);         // NullPointerException
 
 - **Ambiguity:** `cmap.get(key) == null` → "key absent" YA "value is null"?
 - Multi-threaded mein **`containsKey()` check** karne ka window mein state badal sakta
-- Doug Lea (author): "Decision was to disallow null to prevent confusion"
+- Doug Lea (CHM ke author) ne yahi wajah batayi thi: concurrent map me "null = nahi hai ya null hai?" ka farak safe tareeke se pakda hi nahi ja sakta, isliye null band (ye unke shabd nahi, saar hai)
 
 ---
 
 ## INTERNAL — Java 8 ConcurrentHashMap
 
 ```
-Pre-Java 7: Segments (16 default) — segment-level lock
+Java 5-7:   Segments (16 default) — segment-level lock
             (16 threads concurrent OK, 17th thread block)
 
 Java 8+:    Per-bucket synchronized + CAS operations
@@ -205,7 +206,8 @@ null behavior:
 
 Iterator:
   HashMap: fail-fast (CME on modify)
-  CHM:     fail-safe (snapshot view)
+  CHM:     fail-safe (WEAKLY CONSISTENT — snapshot NAHI; chalte-chalte badlaav dikh bhi sakta, nahi bhi.
+           snapshot wala = CopyOnWriteArrayList)
 ```
 
 ---
