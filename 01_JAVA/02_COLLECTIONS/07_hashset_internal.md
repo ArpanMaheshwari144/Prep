@@ -10,7 +10,7 @@
 → ArrayList mein add karo — **duplicate aa jaata**
 → **HashSet liya — duplicate automatically reject**
 → **Kyu?** Andar se HashSet **HashMap hi hai** — tera element key ban jaata hai, value ek dummy object
-→ Same key dobara? **Replace hoti, naya entry nahi banta**. **Isliye duplicate impossible**
+→ Same key dobara? **Naya entry nahi banta** — purani KEY wahi rehti, sirf dummy value (PRESENT -> PRESENT) likhi jaati, `add()` **false** lautata. **Isliye duplicate impossible**
 
 ---
 
@@ -20,7 +20,7 @@
 → HashMap **already ye karta hai** keys ke liye
 → Naya data structure banane ki **zarurat hi nahi**
 → Clever reuse — `set.add("X")` = `map.put("X", PRESENT)`
-→ Same key dobara? **Replace** — naya entry nahi → **duplicate rejected**
+→ Same key dobara? **KEY replace NAHI hoti** (pehla object hi rehta) — naya entry nahi → **duplicate rejected**, `add()` = false
 
 ---
 
@@ -68,7 +68,8 @@ HashSet = HashMap Ki Keys (Dummy Value)
   └──────────────────┴────────────┘
 
   3rd add → "arpan@gmail.com" pehle se hai (key match)
-          → HashMap ne REPLACE kiya (naya entry NAHI bana)
+          → naya entry NAHI bana. Purani KEY wahi rahi, sirf value PRESENT->PRESENT
+          → map.put ne purani value lautayi (null nahi) -> add() = FALSE
           → Duplicate avoid
 
 
@@ -91,8 +92,11 @@ HashSet = HashMap Ki Keys (Dummy Value)
   Sahi — hashCode() + equals() DONO override:
   ┌────┐
   │ 5  │ → [obj1: arpan]    ← hashCode same
-  └────┘                       equals true → REPLACE
+  └────┘                       equals true → obj2 ANDAR NAHI GAYA, obj1 hi raha
   size = 1
+
+  ★ Chala ke dekha (1-Oct):  add(PEHLA) = true · add(DOOSRA, same email) = false · set = [PEHLA]
+    -> set PEHLA object hi rakhta hai. Doosre ka "name" badla tha to wo badlaav set me NAHI aaya.
 ```
 
 ---
@@ -139,9 +143,9 @@ public boolean equals(Object o) {
 
 ## POWER PHRASE
 
-> *"HashSet internally uses a HashMap — each element becomes a key with a dummy value. Duplicates are prevented because HashMap replaces existing keys. For custom objects, both `hashCode()` and `equals()` must be overridden — without `hashCode()`, two equal objects may land in different buckets and both get stored."*
+> *"HashSet internally uses a HashMap — each element becomes a key with a dummy value. Duplicates are prevented because put on an existing key keeps the original key and only overwrites the dummy value, so add returns false. For custom objects, both `hashCode()` and `equals()` must be overridden — without `hashCode()`, two equal objects may land in different buckets and both get stored."*
 
 > **Yaad rakh:**
 > HashSet = HashMap ki keys
-> Duplicate nahi kyunki same key replace hoti hai
+> Duplicate nahi kyunki same key pe naya entry banta hi nahi (purana object rehta, add = false)
 > Custom class mein `hashCode() + equals()` dono override

@@ -26,7 +26,9 @@ class Employee implements           class SalaryComparator implements
         Comparable                          Comparator
 
   compareTo(Employee o)               compare(Employee a, Employee b)
-  return this.age - o.age             return a.salary - b.salary
+  return Integer.compare(this.age,    return Integer.compare(a.salary,
+                         o.age)                              b.salary)
+  (minus "this.age - o.age" MAT likho — TRAP 1, overflow)
 
 Class ke ANDAR define                ALAG class mein define
 java.lang.Comparable                 java.util.Comparator
