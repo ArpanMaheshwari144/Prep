@@ -189,6 +189,24 @@
         replica = wahi data ki COPY (bachav + read scale)
 ```
 
+### dikkat 4b — "replica update ho rahi thi, beech me primary DB gir gaya — data gaya?"
+(MOCK 1-Oct: yahan Kafka bola tha -> galat, Kafka extra dabba hai)
+
+```
+   har DB ka apna LOG hota hai   (Cassandra = COMMIT LOG, Postgres/MySQL = WAL)
+
+        write ──► pehle disk pe LOG me ──► phir table me
+        DB gira ──► wapas uthte hi LOG padh ke data wapas ──► kuch nahi khota
+
+   replica ke liye: write tabhi "DONE" jab ZYADA replica haan bol dein  (QUORUM)
+
+        3 replica ──► 2 ne haan bola ──► done
+        1 gira bhi ──► baaki 2 ke paas data hai
+
+   TU: "DB ka apna commit log hai, aur write quorum se ack karunga.
+        Isliye ek machine gire to bhi likha hua data nahi jaata."
+```
+
 ### dikkat 5 — "LB khud gir gaya — saare App zinda hain, par koi unhe traffic de hi nahi raha"
 
 ```
@@ -373,6 +391,18 @@
 ```
 
 ```
+   ★ RANDOM vs COUNTER — dono ek saath NAHI  (MOCK 1-Oct: "random 7 char" + counter dono bol diye the)
+
+        counter hai to code RANDOM nahi hota.
+        counter number deta ──► number ko BASE62 me badlo ──► wahi 7 char ka code
+
+             counter = 125                ──►  base62  ──►  "21"   (chhota number, chhota code)
+             counter = 3.5 lakh crore tak ──►  7 char me fit  (62^7)
+
+   TU: "Counter se number, number base62 me -> 7 char code. Random nahi, isliye takraav nahi."
+```
+
+```
 ★★ WORD-FREEZE FALLBACK (term bhool jaao -> CONCEPT bol do, atko mat):
    "MD5/hash" bhoola -> "long URL ka ek HASH lo, uske first 7 character"
    "Base62"  bhoola  -> "mere paas 62 character hain (a-z, A-Z, 0-9) — ID ko un 62 me
@@ -533,33 +563,6 @@
      (par bilkul SKIP bhi mat karo -> ek banda Zomato me isi wajah se reject hua tha)
    • CORRECTIONS jo ho chuki (soch sahi thi, cheez ulti thi):
        GET/POST swap (banana = POST) . "write replicas" -> SHARDING . KEY = shortCode
-```
-
-## ► MOCK 1-Oct — bolke, 2 cheez jo pata nahi thi
-
-```
-1. RANDOM vs COUNTER  (dono ek saath nahi)
-
-   counter hai to code RANDOM nahi hota.
-   counter number deta  ->  number ko BASE62 me badlo  ->  wahi 7 char ka code
-
-        counter = 125       ->  base62  ->  "21"      (chhota number, chhota code)
-        counter = 3.5 lakh crore tak  ->  7 char me fit  (62^7)
-
-   bolna: "counter se number, number base62 me -> 7 char code. random nahi, isliye takraav nahi."
-
-
-2. REPLICA SYNC / PRIMARY GIRA TO DATA  ->  Kafka NAHI, DB ka apna LOG
-
-   har DB ka apna log hota hai  (Cassandra = COMMIT LOG, Postgres/MySQL = WAL)
-   write  ->  pehle disk pe LOG me  ->  phir table me
-   DB gira  ->  wapas uthte hi LOG padh ke data wapas  ->  kuch nahi khota
-
-   replica ke liye:  write tabhi "DONE" jab ZYADA replica haan bol dein  (QUORUM)
-        3 replica  ->  2 ne haan bola  ->  done
-        1 gira bhi  ->  baaki 2 ke paas data hai
-
-   bolna: "DB ka commit log hai, aur write quorum se ack karunga. Kafka yahan extra dabba hai."
 ```
 
 ---
