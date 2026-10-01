@@ -2790,12 +2790,17 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      TEMPLATE  (normal BFS + map<purana, clone> + 2 kaam)
 
-         mp[node] = new Node(node->val);   q.push(node);        // SEED
+         // SEED
+         Node *clone = new Node();   clone->val = node->val;
+         mp[node] = clone;   q.push(node);
 
          while (q) { curr = pop;
-             for (it : curr->neighbors) {
-                 if (it map me nahi)  { mp[it] = new Node(it->val); q.push(it); }   // (a) BANANA
-                 mp[curr]->neighbors.push_back(mp[it]);                           // (b) JODNA
+             for (auto &it : curr->neighbors) {
+                 if (mp.find(it) == mp.end()) {                          // (a) BANANA
+                     Node *newClone = new Node();   newClone->val = it->val;
+                     mp[it] = newClone;   q.push(it);
+                 }
+                 mp[curr]->neighbors.push_back(mp[it]);                 // (b) JODNA
              }
          }
          return mp[node];
