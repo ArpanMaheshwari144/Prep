@@ -61,6 +61,21 @@ Collections.sort(list);                                 // compareTo() khud use 
 - Zero → equal
 - Positive → `other` pehle
 
+★ **Return number ka matlab — umar se line (Arpan 25, Rahul 30, Priya 25):**
+```
+Sort do logon ko utha ke poochhta: "inme PEHLE kaun?"  Jawab = number ka SIGN (kitna bada, farak nahi)
+
+compare(Arpan, Rahul) = Integer.compare(25, 30) = -1  MINUS -> Arpan pehle   line: Arpan(25), Rahul(30)
+compare(Rahul, Arpan) = Integer.compare(30, 25) = +1  PLUS  -> Rahul baad me line: Arpan(25), Rahul(30)
+compare(Arpan, Priya) = Integer.compare(25, 25) =  0  ZERO  -> barabar, jaise khade waise
+
+YAAD: compare(a, b) ko "a - b" ki tarah socho (sirf SIGN ke liye, likhna Integer.compare hi):
+   a chhota -> a - b = minus -> a AAGE
+   a bada   -> a - b = plus  -> b AAGE
+   barabar  -> 0
+Ulta (bada pehle) -> a, b ki jagah badlo:  Integer.compare(b.age, a.age)
+```
+
 ### 2. Comparator — Class Ke Bahar
 ```java
 // Rule 1 — Age se sort

@@ -34,12 +34,20 @@
 List<String> list = new ArrayList<>();
 list.add("Rahul");
 list.add("Arpan");
+list.add("Priya");      // ★ 3 element — 2 pe exception AATA HI NAHI (neeche dekho)
 
 for (String s : list) {
     list.remove(s);     // ConcurrentModificationException!
                         // modCount badh gaya — iterator ne pakad liya
 }
 ```
+★ **Chala ke dekha (1-Oct):**
+```
+[Rahul, Arpan]          loop me remove -> NO CME, list = [Arpan]   <- Rahul hata, size 1, cursor 1
+                                                                       hasNext() false -> next() chala hi nahi
+[Rahul, Arpan, Priya]   loop me remove -> CME
+```
+CME sirf `next()` pe check hota hai. Hatane ke baad `next()` na chale (aakhri se pehla element) to bug CHUPCHAAP — exception nahi, element chhoot jaata. (Poora = `05_iterator_vs_listiterator.md` TRAP)
 
 ### fail-fast — Sahi Fix (Iterator.remove())
 ```java
@@ -82,18 +90,18 @@ for (String s : list) {
 |--|----------|-----------|
 | **Exception?** | Haan — CME | Nahi |
 | **Collections** | ArrayList, HashMap | CopyOnWriteArrayList, ConcurrentHashMap |
-| **Iterate over** | Original list | **Copy** of list |
-| **Memory** | Less | Zyada (copy banata) |
+| **Iterate over** | Original list | CopyOnWrite = **copy (snapshot)** · ConcurrentHashMap = **original, weakly consistent** (copy NAHI) |
+| **Memory** | Less | CopyOnWrite = zyada (har likhai pe poori copy) · CHM = copy nahi banata |
 
 ---
 
 ## POWER PHRASE
 
-> *"fail-fast iterators throw ConcurrentModificationException as soon as they detect a structural modification during iteration. fail-safe iterators work on a copy of the collection — no exception, but may iterate over stale data."*
+> *"fail-fast iterators throw ConcurrentModificationException as soon as they detect a structural modification during iteration. fail-safe iterators don't throw: CopyOnWriteArrayList iterates over a snapshot, while ConcurrentHashMap is weakly consistent — it walks the live map and may or may not see concurrent changes."*
 
 > **Yaad rakh:**
 > fail-fast = ArrayList, HashMap → CME on modify. `it.remove()` = safe.
-> fail-safe = CopyOnWriteArrayList, ConcurrentHashMap → copy banata, no CME.
+> fail-safe = CopyOnWriteArrayList (copy pe chalta) · ConcurrentHashMap (copy NAHI, weakly consistent) → no CME.
 > `it.remove()` = safe. `list.remove()` inside loop = CME.
 
 ---
@@ -181,21 +189,23 @@ Dono sync → koi mismatch nahi → koi CME nahi.
 ```
 list.add("Rahul")  → modCount = 1
 list.add("Arpan")  → modCount = 2
+list.add("Priya")  → modCount = 3
 
 Iterator banaya:
-   expectedModCount = 2  (snapshot)
+   expectedModCount = 3  (yaad rakha)
 
 Loop:
-  it.next()              → modCount(2) == expectedModCount(2)
-  list.remove("Rahul")   → modCount = 3  (BAHAR SE BADLA)
-  it.next()              → modCount(3) ≠ expectedModCount(2)  CME
+  it.next()              → modCount(3) == expectedModCount(3)   -> "Rahul"
+  list.remove("Rahul")   → modCount = 4  (BAHAR SE BADLA), size 3 -> 2, cursor 1
+  hasNext()              → cursor(1) != size(2) -> true
+  it.next()              → modCount(4) ≠ expectedModCount(3)  CME
 ```
 
 Ab `it.remove()` use kiya:
 
 ```
-  it.remove()   → modCount = 3, expectedModCount = 3   (DONO update)
-  it.next()     → modCount(3) == expectedModCount(3)   pass
+  it.remove()   → modCount = 4, expectedModCount = 4   (DONO update)
+  it.next()     → modCount(4) == expectedModCount(4)   pass
 ```
 
 ### Bottom Line
