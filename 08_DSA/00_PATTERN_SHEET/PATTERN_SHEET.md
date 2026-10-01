@@ -2411,32 +2411,17 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      preorder[0] = ROOT · inorder me us root pe todo -> LEFT-part | root | RIGHT-part. recurse.
 
-     MAP wala  O(n)   (inorder me root ka index map se O(1) me)
-     -----------------------------------------
-     TreeNode *solve(int &rootIndex, vector<int> &preorder, vector<int> &inorder,
-                     int l, int r, unordered_map<int, int> &mp)
-     {
-         if (l > r)
-             return NULL;
+     TEMPLATE  (MAP wala, O(n))
 
-         int pivot = mp[preorder[rootIndex]];
-         rootIndex++;
+         buildTree:  mp[inorder[i]] = i  (ek baar) ;  rootIndex = 0 ;  return solve(0, n-1)
 
-         TreeNode *newNode = new TreeNode(inorder[pivot]);
-         newNode->left = solve(rootIndex, preorder, inorder, l, pivot - 1, mp);
-         newNode->right = solve(rootIndex, preorder, inorder, pivot + 1, r, mp);
-         return newNode;
-     }
-
-     TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder)
-     {
-         int rootIndex = 0;
-         unordered_map<int, int> mp;
-         for (int i = 0; i < inorder.size(); i++)
-             mp[inorder[i]] = i;              // inorder val -> idx, ek baar
-
-         return solve(rootIndex, preorder, inorder, 0, inorder.size() - 1, mp);
-     }
+         solve(int &rootIndex, l, r):
+             if (l > r) return NULL;
+             pivot = mp[preorder[rootIndex]];   rootIndex++;      // root inorder me kahan
+             node  = new TreeNode(inorder[pivot]);
+             node->left  = solve(l, pivot-1);                     // LEFT pehle
+             node->right = solve(pivot+1, r);
+             return node;
 
      ★ rootIndex by-REFERENCE (&): ek moving pointer SAB calls me shared -> LEFT poora consume hone ke
         BAAD hi RIGHT ko sahi agla-root milta (= preorder ka Root,Left,Right order). value-pass -> copy -> galat tree.
@@ -2803,45 +2788,20 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          (2) clones ko JODO:      A' --- B'                    // mp[A]->neighbors += mp[B]
          => naya deep-copy graph  A'-B'  taiyaar
 
-     TEMPLATE (BFS = normal traversal; map<old,new> + 2 special move):
+     TEMPLATE  (normal BFS + map<purana, clone> + 2 kaam)
 
-         Node *cloneGraph(Node *node)
-         {
-             if (!node)
-                 return nullptr;
+         mp[node] = new Node(node->val);   q.push(node);        // SEED
 
-             unordered_map<Node *, Node *> mp;    // purana (A) -> clone (A')
-             queue<Node *> q;
-
-             // SEED: start ka clone map me + start queue me
-             Node *clone = new Node();
-             clone->val = node->val;
-             mp[node] = clone;
-             q.push(node);
-
-             while (!q.empty())
-             {
-                 Node *curr = q.front();
-                 q.pop();
-
-                 for (auto &it : curr->neighbors)
-                 {
-                     // (a) BANANA: it ka clone nahi hai? -> banao + map + queue
-                     if (mp.find(it) == mp.end())
-                     {
-                         Node *newClone = new Node();
-                         newClone->val = it->val;
-                         mp[it] = newClone;            // B -> B'
-                         q.push(it);
-                     }
-                     // (b) JODNA (crux): A' ki list me B'   (mp[curr]=A', mp[it]=B')
-                     mp[curr]->neighbors.push_back(mp[it]);
-                 }
+         while (q) { curr = pop;
+             for (it : curr->neighbors) {
+                 if (it map me nahi)  { mp[it] = new Node(it->val); q.push(it); }   // (a) BANANA
+                 mp[curr]->neighbors.push_back(mp[it]);                           // (b) JODNA
              }
-             return mp[node];                         // A'
          }
+         return mp[node];
 
-     (b) if ke BAHAR -> har edge pe jodna hai, chahe clone naya bana ya pehle se tha.
+     yaad: (a) if ke ANDAR (sirf naya pe) · (b) if ke BAHAR (har edge pe)
+           mp[curr] = A' ,  mp[it] = B'  ->  A' ki list me B'
 
      2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
      DFS: recursion + same map -> node pe: map me hai? return; nahi -> clone+map -> har nbr recurse+jodo -> return.
