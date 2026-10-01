@@ -8,7 +8,7 @@
 
 → Support ticket queue thi — **urgent tickets beech mein insert** karne the
 → ArrayList try kiya — beech mein insert karo toh **saare elements shift hote**. 10,000 tickets? **10,000 shifts**. Slow
-→ **LinkedList beech mein insert ke liye bana hi hai** — sirf pointers badlo, koi shifting nahi → **O(1)**
+→ **LinkedList beech mein insert ke liye bana hi hai** — sirf pointers badlo, koi shifting nahi → **O(1), par sirf jab us node pe pahle se khade ho** (warna wahan tak chalna = O(n), neeche TRAP 2)
 → Lekin tradeoff — **index se seedha access nahi hota**, HEAD se traverse karna padta
 → Rule: **zyada read = ArrayList. Zyada insert/delete beech mein = LinkedList**
 
@@ -38,8 +38,9 @@ null ← [101] ↔ [102] ↔ [103] → null
 |-----------|-----------|------------|------|
 | `get(index)` | **O(1)** | **O(n)** | Array = direct, Node = traverse |
 | `add(end)` | **O(1)** | **O(1)** | Dono fast |
-| `add(middle)` | **O(n)** | **O(1)** | Array = shift, Node = pointers |
-| `remove(middle)` | **O(n)** | **O(1)** | Array = shift, Node = pointers |
+| `add(index, x)` beech me | **O(n)** | **O(n)** | Array = shift · List = pehle us jagah tak CHALNA padta |
+| node pehle se haath me (iterator) | — | **O(1)** | sirf 2-4 pointer badle — LinkedList ka asli faayda YAHI hai |
+| `addFirst / removeFirst` | **O(n)** | **O(1)** | Array me sab khiskaana · List me head badlo |
 | **Memory** | Less | More | Node mein prev + next extra |
 
 ---
@@ -66,13 +67,16 @@ ticketQueue.addFirst(urgentTicket);    // O(1)
 ticketQueue.addLast(normalTicket);     // O(1)
 ```
 
-**Use:** queue/stack, frequent beech-insert/delete.
+**Use:** queue/stack, frequent beech-insert/delete (iterator ke saath).
+
+★ **Queue/stack ke liye bhi `ArrayDeque` aksar LinkedList se TEZ hai** (Java docs khud yahi kehte): array pe chalta, har element ke liye Node object nahi banta, cache-friendly. LinkedList tab, jab beech se iterator pe hatana/jodna ho ya `null` rakhna ho (ArrayDeque null nahi leta).
+`get(i)` me LinkedList aage YA peeche jo paas ho wahan se chalta hai (i < size/2 ? head : tail) — phir bhi O(n).
 
 ---
 
 ## POWER PHRASE
 
-> *"LinkedList uses doubly linked nodes — each node holds data, prev and next pointers. Insert and delete are O(1) since only pointers change, but `get` is O(n) since traversal is needed. Use when frequent insertion and deletion in the middle is required."*
+> *"LinkedList uses doubly linked nodes — each node holds data, prev and next pointers. Insert and delete are O(1) once you are at the node, since only pointers change, but reaching a position by index is O(n). In practice ArrayList usually wins because of cache locality, and ArrayDeque is the better queue or stack."*
 
 > **Yaad rakh:**
 > ArrayList → Zyada READ, index access, end pe add/remove
