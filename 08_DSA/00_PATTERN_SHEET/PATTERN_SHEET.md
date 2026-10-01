@@ -2804,12 +2804,44 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          => naya deep-copy graph  A'-B'  taiyaar
 
      TEMPLATE (BFS = normal traversal; map<old,new> + 2 special move):
-         mp[node] = clone(node);  q.push(node);          // seed: start ka clone map me + queue
-         BFS(q): curr nikalo -> for(it : curr->neighbors):
-             (a) it clone nahi hua? -> mp[it]=clone(it); q.push(it);   // naya clone banao + push
-             (b) mp[curr]->neighbors.push_back(mp[it]);                // mp[curr]=A', mp[it]=B' -> JODO (crux)
-         return mp[node];
-         (clone(x) = new Node(); ->val = x->val)
+
+         Node *cloneGraph(Node *node)
+         {
+             if (!node)
+                 return nullptr;
+
+             unordered_map<Node *, Node *> mp;    // purana (A) -> clone (A')
+             queue<Node *> q;
+
+             // SEED: start ka clone map me + start queue me
+             Node *clone = new Node();
+             clone->val = node->val;
+             mp[node] = clone;
+             q.push(node);
+
+             while (!q.empty())
+             {
+                 Node *curr = q.front();
+                 q.pop();
+
+                 for (auto &it : curr->neighbors)
+                 {
+                     // (a) BANANA: it ka clone nahi hai? -> banao + map + queue
+                     if (mp.find(it) == mp.end())
+                     {
+                         Node *newClone = new Node();
+                         newClone->val = it->val;
+                         mp[it] = newClone;            // B -> B'
+                         q.push(it);
+                     }
+                     // (b) JODNA (crux): A' ki list me B'   (mp[curr]=A', mp[it]=B')
+                     mp[curr]->neighbors.push_back(mp[it]);
+                 }
+             }
+             return mp[node];                         // A'
+         }
+
+     (b) if ke BAHAR -> har edge pe jodna hai, chahe clone naya bana ya pehle se tha.
 
      2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
      DFS: recursion + same map -> node pe: map me hai? return; nahi -> clone+map -> har nbr recurse+jodo -> return.
