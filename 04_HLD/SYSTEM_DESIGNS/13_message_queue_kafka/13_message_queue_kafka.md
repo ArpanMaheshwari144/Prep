@@ -625,4 +625,36 @@ SAGA ≠ ye    = saga kaam ULTA karta (refund). Yahan ulta nahi, sirf raste me k
 
 ---
 
+## ═══ GRILL — outbox pe Arpan ka sawaal (1-Oct, master sheet Q15 / Q16) ═══
+
+```
+SAWAAL (grill)  "E-commerce: order DB me likha gaya, event bhejne se pehle server crash. Ab?"
+TERA JAWAB      OUTBOX.  -> SAHI dabba (30-Sep saga bola tha, aaj seedha outbox)
+JODA            outbox DB se PEHLE nahi, SAATH — EK hi transaction:
+                  BEGIN -> INSERT order -> INSERT outbox_event -> COMMIT
+                  relay -> outbox padhe -> Kafka -> "sent" mark
+                (pehle outbox, phir order alag likha + beech me crash = event bina order ke = ulti dikkat)
+
+TERA SAWAAL     "commit se PEHLE hi crash ho gaya, kuch likha hi nahi — par mujhe 'order placed'
+                 dikh gaya (COD, koi paisa nahi kata). Tab?"
+JAWAB           NIYAM: "order placed" user ko COMMIT ke BAAD hi dikhta. Usse pehle dikhana = asli bug.
+
+  HAALAT 1  commit se PEHLE crash    -> ROLLBACK: order bhi nahi, outbox bhi nahi
+                                       user ko "placed" dikha hi nahi -> error/timeout -> dobara try
+  HAALAT 2  commit ke BAAD, jawab    -> order HAI + outbox HAI -> relay baad me email bhej dega
+            se pehle crash             user ko timeout -> dobara "place order" -> DUPLICATE ka khatra
+                                       ILAAJ: IDEMPOTENCY KEY (checkout pe bani key; dobara aaye to
+                                              wahi purana order lautao, naya nahi)
+  HAALAT 3  sab theek                -> "placed" -> relay -> Kafka -> email + inventory
+
+  COD / prepaid -> koi farak nahi. Order sach me tabhi bana jab COMMIT hua.
+
+BOL   "The API only returns 'order placed' after the transaction commits. A crash before commit rolls
+       back both the order and the outbox row, so the user sees an error and retries. A crash after
+       commit leaves both saved, the relay still sends the event, and an idempotency key stops the
+       retry from creating a duplicate order."
+```
+
+---
+
 [← MASTER SHEET](../../00_MASTER_SHEET.md)

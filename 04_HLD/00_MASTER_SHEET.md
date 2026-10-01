@@ -365,6 +365,7 @@ Q15 "How do you make sure no message is lost?"
           letter queue for poison messages. If a DB write and an event must both happen, an outbox."
     kahan aaya: 13 · 04 · 14 (outbox) · 15 (pehle DB, phir bhejo)
     GRILL 30-Sep: 13_message_queue_kafka -> "HANDS-ON — EVENT KAHAN KHOTA HAI" (chala ke dekha, asli output)
+    GRILL 1-Oct:  13_message_queue_kafka -> "GRILL — outbox pe Arpan ka sawaal" (ek transaction · commit se pehle/baad crash · idempotency key)
 
 Q16 "What if the server crashes in the middle of the operation?"
     DB me likha, event nahi gaya / PSP ko bheja, jawab nahi aaya -> aadha kaam.
