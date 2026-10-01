@@ -8,6 +8,20 @@
 // INPUT format: values[] + pos (cyclePos). pos = -1 -> no cycle; warna last node ka
 //               ->next us index (pos) wale node se jud jaata. Return = ENTRY node ka val.
 //
+// ARRAY ME CYCLE KAISE? -> array me cycle NAHI hoti. array = sirf node ki values (kram se).
+//   cycle "pos" banata hai: AAKHRI node ka next = index pos wala node.
+//   (ye kaam check() karta hai: nodes.back()->next = nodes[pos];)
+//
+//   [3,2,0,-4], pos=1
+//   index:   0     1     2     3
+//            3 ->  2 ->  0 -> -4
+//                  ^            |
+//                  +------------+     -4 ka next = index 1 (val 2)  => entry = 2
+//
+//   [1], pos=0  ->  1 --+   (1 ka next = khud 1 -> self loop)  => entry = 1
+//                   ^---+
+//   pos=-1      ->  aakhri ka next = NULL, koi cycle nahi       => -1 (NULL)
+//
 // TEST CASES (values, pos -> expected entry-val;  -1 = NULL/no-cycle):
 //   [3,2,0,-4], pos=1    -> 2
 //   [1,2],      pos=0    -> 1
