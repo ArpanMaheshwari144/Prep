@@ -320,6 +320,7 @@ Q11 "What about a hot key / celebrity / hot partition?"
     BOL: "Consistent hashing doesn't help a single hot key, so I'd replicate that key and add a
           local cache for reads, or split its writes across buckets like chatId plus 0 to 9."
     kahan aaya: 11 · 03 (celeb) · 15 (viral group) · 13 (bada customer)
+    GRILL 1-Oct: 03_twitter_feed -> "GRILL" section (hot key: kai copy + L1 + hybrid fan-out + key buckets)
 ```
 
 ### D. PURANA / KRAM
