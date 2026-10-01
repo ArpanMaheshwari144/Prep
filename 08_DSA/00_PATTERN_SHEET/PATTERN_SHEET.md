@@ -3552,6 +3552,14 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ DECODE WAYS (LC-91)  = climbing-stairs ka bhai, par har STEP pe VALIDITY check
  └──────────────────────────────────────────────────────────────
+     QUESTION KYA MAANG RAHA:
+        code: A=1, B=2, ... Z=26. kisi ne shabd ko ANKON me badal diya, beech ke khaane hata diye.
+        ab sirf ank mile "226". wapas kitne alag shabd ban sakte? -> GINTI do (shabd nahi).
+
+           "226"   2 | 2 | 6   ->  B B F
+                   22 | 6      ->  V F
+                   2 | 26      ->  B Z            => answer 3
+
      SAAR : "226" -> 1..26 = A..Z. kitne tareeke se decode ho sakta?
         har index i pe 2 CHOICE (climbing-stairs jaisa):  1 ANK lo -> solve(i+1)   ·   2 ANK lo -> solve(i+2)
         FARAK climbing-stairs se: wahan dono choice HAMESHA valid thi.
