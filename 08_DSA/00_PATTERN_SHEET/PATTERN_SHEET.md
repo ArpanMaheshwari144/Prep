@@ -3632,16 +3632,38 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ HOUSE ROBBER II (LC-213)  = House Robber I + CIRCLE -> I ko 2 baar chala
  └──────────────────────────────────────────────────────────────
-     SAAR : ghar CIRCLE me lage -> pehla(0) aur aakhri(n-1) ab ADJACENT -> dono EK-SAATH loot nahi sakte.
-     KEY INSIGHT (poora twist): circle ko 2 LINEAR me tod -> ya 0 chhodo YA n-1 chhodo (dono kabhi saath nahi):
-        run-A = index 1 .. n-1   (ghar 0 hataya)
-        run-B = index 0 .. n-2   (ghar n-1 hataya)
-        answer = max( robI(run-A), robI(run-B) )         // robI = original House Robber, jaisa hai waisa
-     KYUN kaam karta: ek ghar HATAO -> circle TOOT ke line ban jaata -> plain House Robber. 2 case cover:
-        (a) 0 nahi liya  -> baaki 1..n-1 pe azaad  ·  (b) n-1 nahi liya -> baaki 0..n-2 pe azaad. best = max.
-     CONCRETE [2,3,2]: run-A=[3,2]->3 · run-B=[2,3]->3 -> max=3. (seedha 2+2=4 GALAT: ghar 0 & 2 circle me adjacent.)
-     EDGE : n==1 -> nums[0] (warna dono sub-array khaali -> 0 galat aayega).
-     CONNECT: naya DP ZERO -- House Robber I as-is REUSE. twist sirf "circle -> ek ghar hata ke 2 linear". [walk-before-run]
+     SAAR
+        ghar GOL (circle) me lage hain.
+        isliye pehla ghar (0) aur aakhri ghar (n-1) PADOSI ban gaye -> dono ek saath nahi loot sakte.
+
+
+     TASVEER  [2,3,2]
+
+              ghar0(2)
+             /        \
+        ghar2(2) ---- ghar1(3)          0 aur 2 bhi jude hain (gol hai)
+
+
+     TWIST  (gol ko seedhi line me todo)
+
+        RUN-A :  ghar 0 HATAO   ->  index 1 .. n-1   ->  [3,2]  ->  robI = 3
+        RUN-B :  ghar n-1 HATAO ->  index 0 .. n-2   ->  [2,3]  ->  robI = 3
+
+        answer = max( RUN-A , RUN-B ) = 3
+
+        robI = purana House Robber, bina badle.
+
+
+     KYUN CHALTA
+        ek ghar hatao -> gol toot ke seedhi line -> normal House Robber.
+        0 aur n-1 dono kabhi saath nahi chahiye -> ek ko hata ke dono case dekh liye.
+
+        seedha 2 + 2 = 4  GALAT  (ghar 0 aur ghar 2 padosi hain)
+
+
+     EDGE
+        n == 1  ->  return nums[0]
+        (warna dono run khaali -> 0 aa jaata, galat)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ COIN CHANGE (LC-322)  = MIN coins + REUSE (dono form, backtracking jaisa)
