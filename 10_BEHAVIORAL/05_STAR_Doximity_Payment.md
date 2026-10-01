@@ -10,15 +10,18 @@
         manually pay kar rahi thi -> tool ke bahar -> UNTRACKED -> ~$20K ka leak/loss, aur ye kaafi TIME se chal raha tha.
    T (Task)     : pata karo tool Doximity ko kyun nahi pay kar raha, + fix karo -> leak roko + payments tracked ho.
    A (Action)   :
-        1. API TRACES investigate ki -> payment-flow follow kiya.
-        2. ROOT-CAUSE mila: ek IF-condition (uske andar ek specific condition) jo Doximity ki payment ko BLOCK kar rahi thi.
+        1. API TRACES investigate ki -> payment-flow follow kiya (code + repo + logs dekhe -> API -> method tak pahuncha).
+        2. ROOT-CAUSE mila: method me ek IF-condition jisme Doximity ko TEST USER ke saath rakha tha ->
+           "ye survey complete kare to paisa mat bhejo". isliye Doximity ka payment kabhi nahi jaata tha.
         3. INITIATIVE liya -> TPM / tech-lead ko raise kiya, MEETING me uthaya (kisi ne assign nahi kiya tha).
         4. sirf code nahi -> BUSINESS IMPACT dikhaya: tool se pay na hone se company alag se upfront de rahi thi
            -> untracked -> loss. "tool se jaye to har payment TRACK hota; ye nahi jaa raha isliye leak."
         5. CTO ne green-light diya -> "yes, address this."
-        6. wo condition turant FIX ki.
+        6. wo condition turant FIX ki (khud).
+        7. TEST server pe test kiya -> dobara test (flow ab us if-condition me nahi ja raha) -> PROD pe gaya,
+           wahan bhi test -> MONITOR kiya.
    R (Result)   : payment tool ke through wapas flow karne lagi -> Doximity ko sahi pay hone laga -> sab TRACKED
-        -> ~$20K ka leak/loss RUKA. CTO ki recognition mili.
+        -> ~$20K ka leak/loss RUKA. uske baad ye dikkat kabhi nahi aayi. CTO ki recognition mili.
 ```
 
 ## SPOKEN (English — interview me bolna, ~60-90 sec)
@@ -27,16 +30,17 @@
     One vendor, Doximity, wasn't receiving their payments through the tool — so the company had been paying them
     separately and upfront, outside the system. That was untracked and had been leaking around $20K over time.
 
-    I looked into the payment flow through our API traces and found the root cause: an if-condition in the code
-    was blocking Doximity's payments from going through.
+    I traced the payment flow through the code, API traces and logs down to the method, and found the root cause:
+    an if-condition had Doximity grouped with test users, so when they completed a survey, no payment was sent.
 
     Nobody had assigned this to me, but I raised it with our TPM and tech lead and brought it up in a meeting.
     I framed it beyond just the code — I showed the business impact: because the tool wasn't paying them, we were
     paying manually and upfront, which wasn't tracked and was causing a loss. Once payments flow through the tool,
     everything is tracked.
 
-    The CTO agreed it needed to be addressed, and I fixed the condition right away. After that, Doximity's payments
-    flowed correctly through the tool again, everything was tracked, and the leakage stopped."
+    The CTO agreed it needed to be addressed, and I fixed the condition right away. I tested it on our test server,
+    retested, then released to production, tested there and monitored it. After that, Doximity's payments
+    flowed correctly through the tool, everything was tracked, the leakage stopped, and the issue never came back."
 ```
 
 ## KYA DEMONSTRATE karta (interviewer ye dekhta)
@@ -53,4 +57,6 @@
    - asli value = BUSINESS-IMPACT wala framing (untracked upfront -> loss). code-fix chhota tha, IMPACT bada.
    - calm + structured -> S->T->A->R. bolne ki PRACTICE (loud, 2-3 baar).
    - confirm/add: exact $ figure · kitne time se chal raha tha · fix ke baad koi metric.
+   - NUMBER TRICK (1-Oct, bolke dekha, $20K chhoot gaya): number ko "untracked" wali line se chipka ->
+     "it was untracked, around $20K." alag se yaad nahi rakhna.
 ```
