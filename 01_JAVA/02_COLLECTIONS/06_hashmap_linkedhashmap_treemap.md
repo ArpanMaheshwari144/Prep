@@ -16,7 +16,7 @@
 ## STORY — User Database
 
 → **userId se naam fetch** karna tha — HashMap = fastest, no order
-→ Ek baar **LRU cache** banana tha — insertion order maintain karni thi → **LinkedHashMap**
+→ Ek baar **LRU cache** banana tha — "sabse kam haal me use hua" pehle nikle → **LinkedHashMap ACCESS order** (`new LinkedHashMap<>(16, 0.75f, true)` + `removeEldestEntry`). Default = insertion order; LRU ke liye accessOrder = true.
 → Aur ek baar **sorted users by ID** chahiye the — keys auto-sorted → **TreeMap**
 → Teen alag problems, teen alag Maps. Andar se bilkul alag kaam karte
 
@@ -30,7 +30,10 @@ Map<Integer, String> map = new HashMap<>();
 map.put(103, "Priya"); map.put(101, "Arpan"); map.put(102, "Rahul");
 
 System.out.println(map);
-// {102=Rahul, 101=Arpan, 103=Priya} — ORDER KUCH BHI HO SAKTA HAI
+// ASLI output (1-Oct chala ke): {101=Arpan, 102=Rahul, 103=Priya}  <- SANYOG se sorted dikha!
+//   Integer ka hashCode = khud number -> 101&15=5, 102&15=6, 103&15=7 -> bucket kram me hi
+// String keys pe asli bikhra order dikhta:  put Rahul, Arpan, Priya -> {Rahul=2, Priya=3, Arpan=1}
+// ★ TRAP: "chhote int pe sorted aaya to HashMap sorted hai" = GALAT. Order ki koi GUARANTEE nahi.
 // get/put = O(1)
 ```
 
@@ -68,24 +71,21 @@ System.out.println(map);
 
 put(101, "Arpan"); put(103, "Priya"); put(102, "Rahul");
 
-Buckets (hashCode se decide):
+Buckets (hashCode se decide, 16 khaane, index = hash & 15):
 ┌────┐
-│ 0  │ → null
-├────┤
-│ 1  │ → null
-├────┤
-│ 2  │ → [102: Rahul]   ← hashCode(102) % size = 2
-├────┤
-│ 3  │ → [101: Arpan]   ← hashCode(101) % size = 3
-├────┤
 │ 4  │ → null
 ├────┤
-│ 5  │ → [103: Priya]   ← hashCode(103) % size = 5
+│ 5  │ → [101: Arpan]   ← 101 & 15 = 5
 ├────┤
-│ 6  │ → null
+│ 6  │ → [102: Rahul]   ← 102 & 15 = 6
+├────┤
+│ 7  │ → [103: Priya]   ← 103 & 15 = 7
+├────┤
+│ 8  │ → null
 └────┘
 
-Iterate output:  {102=Rahul, 101=Arpan, 103=Priya}  ← bucket order, kuch bhi
+Iterate output:  {101=Arpan, 102=Rahul, 103=Priya}  ← BUCKET kram (0 se 15). Yahan sanyog se sorted.
+                 String keys pe bikhar jaata: {Rahul=2, Priya=3, Arpan=1}
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -209,7 +209,8 @@ TreeMap<String, Integer> byLength = new TreeMap<>(
 Trap: "values sort karni hain"   → TreeMap KEYS sort karta. Value pe sort = entrySet().stream().sorted(...)
 Trap: "TreeMap fast hai"         → O(log n), HashMap O(1) se slow. Trade-off: order vs speed
 Trap: "TreeMap thread-safe"      → NAHI. Collections.synchronizedSortedMap() ya ConcurrentSkipListMap
-Trap: null key + custom Comparator → Comparator bhi null handle nahi karta jab tak explicitly code na karo
+Trap: null key + custom Comparator → natural order pe NPE; par null sambhalne wala Comparator do to CHALTA hai:
+      new TreeMap<>(Comparator.nullsFirst(Comparator.naturalOrder()))  ->  put(null,0) -> {null=0, Arpan=1}  (1-Oct chala ke dekha)
 ```
 
 **Q: "HashMap vs TreeMap — kab konsa?"**
@@ -230,7 +231,7 @@ Trap: null key + custom Comparator → Comparator bhi null handle nahi karta jab
 |-----|-----------|-------------|--------|
 | **HashMap** | 1 allowed | multiple | hashCode special handle (`null` → bucket 0) |
 | **LinkedHashMap** | 1 allowed | multiple | HashMap **extend** karta — same rules |
-| **TreeMap** | NO | allowed (multiple) | sort = `null.compareTo()` = crash |
+| **TreeMap** | NO (natural order) · haan agar `nullsFirst/nullsLast` Comparator | allowed (multiple) | sort = `null.compareTo()` = crash |
 | **ConcurrentHashMap** | NO | NO | thread safety + ambiguity (poora = `02_hashmap_vs_concurrenthashmap.md`) |
 | **Hashtable** (legacy) | NO | NO | thread-safe, null banned |
 

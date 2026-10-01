@@ -38,6 +38,26 @@ while (it.hasNext()) {
 
 > **`it.remove()` = loop ke saath safe. `list.remove()` = exception.**
 
+★★ **TRAP — upar wala GALAT example is list pe exception DETA HI NAHI:**
+```
+surveys = [S100, S101, S102, S103]     S102 = aakhri se PEHLA (index 2)
+
+S100 -> S101 -> S102 mila -> list.remove -> size 4->3
+cursor = 3, size = 3  ->  hasNext() = (cursor != size) = FALSE  ->  loop KHATAM
+next() dobara bula hi nahi -> modCount check hua hi nahi -> NO exception
+S103 kabhi dekha hi nahi gaya  ->  CHUPCHAAP BUG
+```
+Exception tab aata hai jab hatane ke baad `next()` dobara chale. **Chala ke dekha (1-Oct):**
+```
+remove S100 -> CME                       (pehla)
+remove S101 -> CME
+remove S102 -> NO exception, S103 CHHOOTA (aakhri se PEHLA — cursor == size)
+remove S103 -> CME                       (aakhri: cursor 4, size 3 -> hasNext true -> next() -> CME)
+```
+Isliye "exception nahi aaya = code sahi" GALAT hai.
+
+**Java 8+ ka seedha tareeka:** `surveys.removeIf(s -> s.equals("S102"));` — andar se iterator hi, loop likhne ki zarurat nahi.
+
 ---
 
 ## Visualization — Pointer Position
@@ -146,8 +166,10 @@ Iterator banaya → expectedModCount = 3 (snapshot)
 |--------|-----------|
 | `hasPrevious()` | Peeche kuch hai? → true/false |
 | `previous()` | Pichla element lo + peeche jao |
-| `add(e)` | Current position pe naya element daalo |
-| `set(e)` | Current element replace karo |
+| `add(e)` | cursor ki jagah naya daalo (agla `next()` purana element hi dega) |
+| `set(e)` | jo AAKHRI baar `next()`/`previous()` se mila, use badlo |
+
+★ **Cursor element PE nahi, do element ke BEECH hota hai.** `remove()` aur `set()` "abhi wala" nahi, **aakhri lautaya hua** element chhedte hain. Isliye `next()` ke bina `remove()` ya `add()` ke turant baad `set()`/`remove()` = **IllegalStateException**.
 
 ---
 
