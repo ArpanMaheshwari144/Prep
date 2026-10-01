@@ -690,16 +690,20 @@ TERA JAWAB replica sirf copy / read baant-ta                                  ->
            cache + index                                                      -> ye READ ke ilaaj hain:
               cache = write ko kuch nahi deta · har naya index = har INSERT pe ek aur likhai = WRITE DHEEMA
 
-JODA       writes ke liye, sasta -> mehnga:
-             1. chhoti transaction (lock kam der)
-             2. BATCH / ASYNC: statement, notification jaise non-critical -> queue, baad me
-             3. PARTITION + ARCHIVE: purane mahine cold storage -> table chhoti
-             4. SHARD by account_id: high cardinality, barabar baat, ek account ke txn ek shard pe
+JODA       (Arpan ke pushback ke baad, 1-Oct):
+             BAHUT WRITES (asli dikkat) -> SHARD by account_id — PEHLE yahi bolo
+                 high cardinality, barabar baat, ek account ke saare txn EK shard pe (transfer ka hisaab simple)
+             saath me:  non-critical writes (statement, notification) -> queue/async, txn ke raaste se bahar
+             BADI TABLE (size)  -> month-wise PARTITION + purane band mahine ARCHIVE (cold storage).
+                 ARCHIVE = DELETE NAHI — bank data kaanoon se saalon rakhna. Size ghatta, writes nahi.
+             ✗ "badi transaction ko chhoti karo" = galat line (hataya): transfer ka debit+credit EK hi txn
+               me rehna chahiye; ye pattiyan hain, write ka ilaaj nahi.
 
-BOL        "Replicas only spread reads, and caching or extra indexes help reads, not writes; more indexes
-            actually slow inserts. For writes I'd go cheapest first: shorter transactions, batch or async
-            the non-critical writes, partition by month and archive old data, and only then shard by
-            account id."
+BOL        "Replicas only spread reads, and caching or extra indexes help reads, not writes; extra
+            indexes actually slow inserts. For write volume at this scale I'd shard by account id, so
+            each account's transactions live on one shard, and move non-critical writes like
+            statements to a queue. For table size, partition by month and archive closed months to
+            cold storage; nothing is ever deleted."
 ```
 
 ---
