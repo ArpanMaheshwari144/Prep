@@ -61,6 +61,9 @@ OVERLOADING (Compile Time)              OVERRIDING (Runtime)
 | **Polymorphism type** | Static | Dynamic |
 | **Annotation** | None | `@Override` |
 
+★ Overloading me sirf RETURN TYPE alag = compile error — parameters alag hone chahiye.
+★ Overloading child class me bhi ho sakti (parent ka `send(String)` + child ka naya `send(String, int)`).
+
 ---
 
 ## TRAP
@@ -187,10 +190,11 @@ Dog d2 = d.create();          // direct Dog mila — NO CAST
 ```java
 class Dog extends Animal {
     String create() { return "..."; }    // INVALID — String Animal nahi hai
-    Cat create() { return new Cat(); }   // INVALID — Cat Animal ka SIBLING, child nahi
 }
 ```
-Sirf subtype — parent ki **family** mein hi rehna hai.
+Sirf parent ke return type (`Animal`) ka subtype chalega.
+★ Dhyaan: `Cat create()` bhi COMPILE hoga (Cat bhi Animal hai) — rule sirf "Animal ka subtype" hai,
+"apni hi class" nahi. Ajeeb lagega par galat nahi.
 
 **Use case — factory / clone methods:**
 ```java
