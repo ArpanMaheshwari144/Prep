@@ -28,16 +28,15 @@
                   │   Java App   │
                   └──────┬───────┘
                          │
-          ┌──────────────┼──────────────┐
-          │              │              │
-          ▼              ▼              ▼              ▼
-     ┌─────────┐   ┌─────────┐   ┌──────────┐   ┌──────────┐
-     │  ENCAP   │   │  INHERIT │   │  POLY    │   │  ABSTRACT│
-     │  ─────   │   │  ──────  │   │  ────    │   │  ──────  │
-     │ Hide     │   │ Reuse    │   │ Same naam│   │ Show WHAT│
-     │ private  │   │ extends  │   │ alag work│   │ hide HOW │
-     │ + getters│   │          │   │ runtime  │   │          │
-     └─────────┘   └─────────┘   └──────────┘   └──────────┘
+        ┌──────────────┬─────┴────────┬──────────────┐
+        ▼              ▼              ▼              ▼
+   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐
+   │  ENCAP   │   │ INHERIT  │   │  POLY    │   │ ABSTRACT │
+   │  ─────   │   │  ──────  │   │  ────    │   │  ──────  │
+   │ Hide     │   │ Reuse    │   │ Same naam│   │ Show WHAT│
+   │ private  │   │ extends  │   │ alag work│   │ hide HOW │
+   │ + getters│   │          │   │ runtime  │   │          │
+   └──────────┘   └──────────┘   └──────────┘   └──────────┘
 
        LOCK          TREE         MASKS            CURTAIN
 ```
@@ -63,7 +62,7 @@
 
 ```java
 public class BankAccount {
-    private double balance;          // hidden
+    private double balance;          // hidden  (samjhane ke liye double; asli paisa = BigDecimal)
 
     public double getBalance() {     // controlled access
         return balance;
@@ -193,12 +192,12 @@ for (Shape s : shapes) {
               │
               │ s.area() called
               ▼
-   ┌────────────────────────┐
-   │  JVM checks ACTUAL type│
-   │  Circle? → Circle.area()│
-   │  Square? → Square.area()│
-   │  Triangle? → Triangle.area()│
-   └────────────────────────┘
+   ┌──────────────────────────────┐
+   │  JVM checks ACTUAL type      │
+   │  Circle?   → Circle.area()   │
+   │  Square?   → Square.area()   │
+   │  Triangle? → Triangle.area() │
+   └──────────────────────────────┘
 
    "Late binding" / "Runtime polymorphism"
 ```
@@ -349,5 +348,6 @@ Trap 3: "Overloading polymorphism nahi hai"
 
 Trap 4: "Abstract class = interface"
          Different — abstract can have constructors, fields, concrete methods
-         Interface (Java 8+) can have default/static, but no state
+         Interface (Java 8+) can have default/static methods, but no INSTANCE state
+         (fields sirf public static final constants), aur constructor nahi
 ```
