@@ -67,6 +67,9 @@ public List<String> getTxns() {
 
 > **`final` sirf reassign rokta hai. Andar List ho toh content badal sakta hai!**
 
+Java 10+ chhota tareeka: `this.txns = List.copyOf(txns);` → copy BHI, aur wo list khud
+unmodifiable (add() pe exception). Phir getter seedha `return txns;` de sakta.
+
 ---
 
 ## Visualization — Reference Trap
@@ -75,7 +78,7 @@ public List<String> getTxns() {
                   Immutable Class — Reference Trap
 
 ╔════════════════════════════════════════════════════════════╗
-║ BAD — same reference store                              ║
+║ BAD — same reference store                                 ║
 ╚════════════════════════════════════════════════════════════╝
 
 STACK              HEAP
@@ -88,7 +91,7 @@ caller list.add("Python") → student ki "immutable" state BHI badli!
 
 
 ╔════════════════════════════════════════════════════════════╗
-║ FIX — defensive copy                                    ║
+║ FIX — defensive copy                                       ║
 ╚════════════════════════════════════════════════════════════╝
 
 STACK              HEAP
@@ -143,7 +146,8 @@ SHALLOW COPY:
    Object copy — par andar ke (nested) REFERENCES shared
    User u1 = ...
    User u2 = u1.clone()   // shallow (default clone)
-   u2.address = ...        → u1 aur u2 ka SAME address object (shared)
+   u2.address.city = "X"   → u1.address.city bhi "X" (dono ka SAME address object)
+   (u2.address = new Address() karte to sirf u2 ka badalta — dikkat ANDAR badalne me hai)
 
 DEEP COPY:
    Object + SAARE nested objects ki FULL copy
