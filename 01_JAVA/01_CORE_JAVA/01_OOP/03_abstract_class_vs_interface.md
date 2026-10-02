@@ -15,7 +15,7 @@
 > *"What it IS"* (identity) → **abstract class**
 > *"What it CAN DO"* (capability) → **interface**
 >
-> Yeh distinction interview mein 80% candidates mix kar dete.
+> Yeh distinction interview mein bahut log mix kar dete.
 
 ---
 
@@ -53,11 +53,11 @@ public abstract class Notification {
 
     // ─── Shared state ──────────────────
     protected String recipient;
-    protected int retryCount = 0;
     protected static final int MAX_RETRIES = 3;
 
     // ─── Shared concrete method ───────
     public final void sendWithRetry(String message) {
+        int retryCount = 0;   // LOCAL — field hota to doosri call pe 3 se shuru, kabhi send hi nahi
         while (retryCount < MAX_RETRIES) {
             try {
                 send(message);
@@ -110,7 +110,8 @@ public class HighValueTransferNotification extends Notification implements Appro
 }
 
 public class WelcomeEmailNotification extends Notification {
-    // Doesn't need approval — just extends Notification
+    // Doesn't need approval — sirf Notification extend kiya
+    @Override protected void send(String msg) { /* ... */ }   // abstract hai, likhna hi padega
 }
 ```
 
@@ -126,7 +127,7 @@ public class WelcomeEmailNotification extends Notification {
 | **State (fields)** | Any type, instance fields | Only `public static final` (constants) |
 | **Constructor** | Yes (via `super()`) | No |
 | **Methods** | abstract + concrete + static | abstract + default (Java 8+) + static + private (Java 9+) |
-| **Access modifiers** | public/protected/private/default | Public only (effectively) |
+| **Access modifiers** | public/protected/private/default | public by default; private methods Java 9+ |
 | **`final` allowed?** | Yes (prevents override) | Methods can't be final (defeats purpose) |
 | **Object creation** | Can't instantiate directly | Can't instantiate |
 | **Use case** | Animal, Vehicle, Notification | Comparable, Runnable, Iterable |
