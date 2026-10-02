@@ -1255,11 +1255,12 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                  for(int i=bottom; i>=top; i--) ans.push_back(matrix[i][left]);   left++;   // left col B->T
              }
          }
-     GUARD — kis loop pe?
-        sirf un 2 loop pe jo ULTI disha me chhaapte:
-           bottom row  (R -> L)   -> if (top <= bottom)
-           left col    (B -> T)   -> if (left <= right)
-        top row aur right col pe guard NAHI -> unhe while(top<=bottom && left<=right) bacha leta
+     GUARD — jo loop jis row/col pe chal raha, guard USI ka:
+        3rd loop  BOTTOM row chhaap raha  ->  if (top <= bottom)
+                  matlab bottom abhi bhi top se NEECHE/barabar hai -> bottom row bachi hai -> chhaapo
+        4th loop  LEFT col chhaap raha    ->  if (left <= right)
+                  matlab left abhi bhi right se PEHLE/barabar hai -> left col bachi hai -> chhaapo
+        1st/2nd loop (top row, right col) pe guard NAHI -> while(top<=bottom && left<=right) bacha leta
 
      GUARD — kyun?
         sawaal: "jo row / col ab chhaapne ja raha, wo ABHI BACHI hai?"
