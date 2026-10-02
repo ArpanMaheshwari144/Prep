@@ -215,8 +215,9 @@ DRILL                 CHHOOTA                                       AGLI BAAR
                       return type alag-alag                         sab ResponseEntity
                       faisla line                                   end me NAZAR 3 wali line HAMESHA
 ```
-2-Oct  OrderController owner check: getOrder me PAKDA (pehli baar)    har {id} method pe — cancel + updateQty me chhoota
-                        par cancel + updateQty me chhoota             (updateQty: item is order ka hai? bhi)
+2-Oct  OrderController owner check PAKDA (getOrder pe likha)          BOLTE waqt ek line: "same on cancelOrder and
+                        concept poore controller pe laagu             updateQty — no {orderId} endpoint checks owner"
+                      updateQty: item usi order ka hai? (alag check)  child id + parent id dono ho to rishta check
                       cancel = refund + save: @Transactional nahi,  paisa + status = do write -> transaction,
                         do request ek saath = DOUBLE REFUND         WHERE status='PLACED' / @Version / idempotency
                       Integer == Integer (qty)                       127 ke upar false -> equals
