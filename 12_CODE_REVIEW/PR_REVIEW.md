@@ -215,6 +215,16 @@ DRILL                 CHHOOTA                                       AGLI BAAR
                       return type alag-alag                         sab ResponseEntity
                       faisla line                                   end me NAZAR 3 wali line HAMESHA
 ```
+2-Oct  OrderController owner check: getOrder me PAKDA (pehli baar)    har {id} method pe — cancel + updateQty me chhoota
+                        par cancel + updateQty me chhoota             (updateQty: item is order ka hai? bhi)
+                      cancel = refund + save: @Transactional nahi,  paisa + status = do write -> transaction,
+                        do request ek saath = DOUBLE REFUND         WHERE status='PLACED' / @Version / idempotency
+                      Integer == Integer (qty)                       127 ke upar false -> equals
+                      "PLACED"/"CANCELLED" magic · naam x, tmp       enum · kaam batane wala naam
+                      faisla line (3rd baar)                         end me NAZAR 3 wali line
+2-Oct pakda (khud): owner check getOrder · SQLi · secret · static HashMap thread · .get() · catch return null ·
+entity bina DTO · N+1 · println · field injection · SRP (controller me SQL).
+
 1-Oct pakda (khud): field injection · .get() · String == · card number log me · catch me 200 "blocked" ·
 double/BigDecimal shaq · cardId validation.
 
