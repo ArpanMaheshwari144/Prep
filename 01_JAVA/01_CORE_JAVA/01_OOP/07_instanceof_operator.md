@@ -53,8 +53,24 @@ if (a instanceof Dog) {
 }
 ```
 
-> **`instanceof` sirf tab kaam karta jab object bana ho. `extends` sirf blueprint hai.**
-> **Bina object ke `instanceof` ka koi matlab nahi.**
+> **`instanceof` runtime pe ASLI object dekhta hai. `null instanceof Dog` = `false` (exception nahi) —
+> isliye check ke andar null ka darr nahi.**
+
+## Java 16+ — check + cast EK line me (pattern matching)
+
+```java
+if (a instanceof Dog d) {      // true hua to d already Dog hai, alag cast nahi
+    d.bark();
+}
+```
+
+## ★ Design ka trap — instanceof ki lambi chain = polymorphism chhoot gaya
+
+```
+if Dog -> bark · else if Cat -> meow · else if Bird -> ...   (naya animal = ye method badlo)
+behtar: Animal me abstract makeSound(), har child override kare -> a.makeSound()
+```
+Interview me bolna: "instanceof chain dikhe to polymorphism se hata sakte hain." 
 
 ---
 
