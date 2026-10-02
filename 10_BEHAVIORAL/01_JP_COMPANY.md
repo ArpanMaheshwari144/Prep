@@ -5,14 +5,15 @@
 ## KYA HAI
 ```
    - US/duniya ka SABSE BADA bank (assets se). 200+ saal purana.
-   - ★ "a TECH company with a banking license" — ~55,000+ engineers, ~$15-17B/saal tech pe (top tech-employers me).
-   - 4 hisse: Chase (consumer — cards/loans/deposits) · Corporate & Investment Bank (trading/IB/treasury)
-             · Asset & Wealth Management · Commercial Banking.
+   - ★ "a TECH company with a banking license" — 65,000+ technologists, ~$18B tech budget (2025 outlook).
+   - 3 hisse (2024 me Commercial Banking + CIB mila diye):
+             Consumer & Community Banking (Chase — cards/loans/deposits)
+             · Commercial & Investment Bank (trading/IB/payments/treasury) · Asset & Wealth Management.
 ```
 
 ## TECH (kya / kaise)
 ```
-   - PAYMENTS: ~$10 TRILLION/din move. trading (real-time, low-latency). risk · fraud · ledgers · compliance.
+   - PAYMENTS: $10 TRILLION+/din move (kuch jagah ~$12T, 120 currencies). trading (real-time, low-latency). risk · fraud · ledgers · compliance.
    - STACK: Java/Spring HEAVY (isliye interview wahi) · microservices · Kafka · cloud (AWS + apna) · SQL (money=ACID).
 ```
 

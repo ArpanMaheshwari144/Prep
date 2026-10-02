@@ -12,7 +12,7 @@
    2. FIT — "My background is Java/Spring backend + production reliability (nearly 5 years, 700+ production incidents).
       That's JP's core stack and the day-to-day — maintaining and extending large systems. I can contribute early."
 
-   3. SCALE + GROWTH — "JP moves ~$10T/day. Working on systems at that scale, at a top-tier firm,
+   3. SCALE + GROWTH — "JP moves over $10 trillion a day. Working on systems at that scale, at a top-tier firm,
       is where I want to grow as an engineer."
 ```
 
