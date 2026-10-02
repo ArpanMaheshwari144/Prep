@@ -67,6 +67,23 @@ Dog(String name, String breed) {
 
 > **Ek constructor mein dono ek saath nahi aa sakte — ya `this()` ya `super()`.**
 
+(Naya Java: JDK 25 "flexible constructor bodies" — `super()` se pehle kuch statements likh sakte,
+ jaise argument validate karna, par `this` use nahi kar sakte. Interview me classic rule bolo,
+ naya pooche to ye line.)
+
+## ★ TRAP — `super()` na likho to compiler KHUD daal deta
+
+```java
+class Animal {
+    Animal(String name) { }          // sirf ye constructor, no-arg WALA NAHI
+}
+class Dog extends Animal {
+    Dog() { }                        // compiler andar "super();" daalta
+}                                    // -> Animal() hai hi nahi -> COMPILE ERROR
+```
+Fix: `Dog() { super("Tommy"); }` ya Animal me no-arg constructor jodo.
+Kram: `new Dog()` -> pehle Animal ka constructor chalta, phir Dog ka (parent pehle).
+
 ---
 
 ## ★ TRAP — Constructor overload ho sakta, OVERRIDE kabhi nahi
