@@ -12,7 +12,7 @@
 → `Shape` khud area calculate nahi kar sakti
 → — **sirf ye guarantee deti hai ki har shape ka area hoga**
 → **abstract method = body nahi, sirf declaration**
-→ Child implement kare — **warna child bhi abstract ban jayegi**
+→ Child implement kare — **warna compile error, jab tak child ko khud `abstract` na likho**
 → `Shape` → `area()` pata nahi. Circle → `3.14*r*r`. Rectangle → `l*b`
 → `Shape` abstract → body nahi, child implement kare. `new Shape()` → **error**
 
@@ -27,10 +27,12 @@ abstract class Shape {
 }
 
 class Circle extends Shape {
+    double r;
     double area() { return 3.14 * r * r; }   // implement kiya
 }
 
 class Rectangle extends Shape {
+    double l, b;
     double area() { return l * b; }          // implement kiya
 }
 ```
@@ -47,6 +49,16 @@ class Rectangle extends Shape {
 abstract class A {
     static abstract void show();    // COMPILE ERROR
 }
+```
+
+---
+
+## TRAP 1b — `abstract` ke saath ye bhi ILLEGAL
+
+```
+abstract + final    -> final = override mat karo, abstract = override karo -> ulta
+abstract + private  -> private child ko dikhta hi nahi -> implement kaise karega
+abstract + static   -> upar wala Trap 1
 ```
 
 ---
