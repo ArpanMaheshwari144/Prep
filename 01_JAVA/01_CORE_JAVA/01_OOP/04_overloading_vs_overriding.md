@@ -105,6 +105,19 @@ obj.show();      // "A" — NOT "B"!
   Polymorphism: NO                   YES
 ```
 
+**Dabba analogy (2-Oct):**
+```
+A obj = new B();
+  A obj   -> dabbe pe LABEL "A"          new B() -> dabbe ke ANDAR asli saamaan B
+
+  static     -> Java LABEL padhta (compile time)   -> A.show() -> "A"
+  non-static -> Java dabba KHOLTA (runtime)        -> B.show() -> "B"
+
+  dabbe pe "Mithai" likha, andar laddoo:
+     static     = "dabbe pe kya likha?" -> Mithai (A)
+     non-static = "andar kya hai?"      -> Laddoo (B)
+```
+
 | | Method Override | Method Hiding |
 |--|----------------|---------------|
 | Methods | Non-static | Static |
