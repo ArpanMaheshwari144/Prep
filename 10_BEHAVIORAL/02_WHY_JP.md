@@ -9,7 +9,7 @@
       recently built a payment microservice with SAGA + consistency handling — the correctness / no-double-spend
       problems interest me. JP is payments and money at its core."
 
-   2. FIT — "My background is Java/Spring backend + production reliability (4 years, 650+ tickets).
+   2. FIT — "My background is Java/Spring backend + production reliability (nearly 5 years, 700+ production incidents).
       That's JP's core stack and the day-to-day — maintaining and extending large systems. I can contribute early."
 
    3. SCALE + GROWTH — "JP moves ~$10T/day. Working on systems at that scale, at a top-tier firm,
@@ -31,7 +31,7 @@
 
 ## DELIVERY (behavioral = delivery, likhna nahi)
 ```
-   - CONFIDENT + SPECIFIC -> project (SAGA payment-svc) + 650 tickets se back karo, hawa nahi.
+   - CONFIDENT + SPECIFIC -> project (SAGA payment-svc) + 700+ tickets se back karo, hawa nahi.
    - unke DOMAIN se connect -> payments/money/reliability (generic nahi).
    - BOLNE ki practice -> loud, crisp, 30-45 sec. likh ke chhodna nahi.
 ```

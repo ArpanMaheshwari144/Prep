@@ -26,7 +26,7 @@
 ## ★ MERA VALUE-ADD (why-JP / why-hire-me answer)
 ```
    1. Java/Spring backend      -> JP ka CORE stack. strong + ab hands-on MS (Feign/SAGA/gateway).
-   2. Debugging/prod-support   -> JP ke MASSIVE existing systems maintain/extend/debug = roz ka kaam. 650 tickets + 4yr = seedha yehi.
+   2. Debugging/prod-support   -> JP ke MASSIVE existing systems maintain/extend/debug = roz ka kaam. 700+ tickets + ~5 saal = seedha yehi.
    3. Payments + consistency   -> payment-system SAGA/consistency ke saath banaya; "money=SQL/ACID, no-double-spend" samajhta. JP IS payments -> domain-fit.
    4. Reliability mindset       -> prod-bugs + HLD-reliability = "system gir nahi sakta" soch. JP ko yehi chahiye.
 
