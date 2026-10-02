@@ -23,7 +23,7 @@
 ```java
 Animal a = new Dog();      // Upcasting — automatic, koi cast nahi
 a.eat();                   // Animal method — Animal reference se chalega
-a.bark();                  // bark() Animal mein nahi hai!
+a.bark();                  // COMPILE ERROR — bark() Animal mein nahi hai!
 ```
 
 ### Downcasting — Parent reference → Child type. Manual. Cast likhna padta.
@@ -128,11 +128,22 @@ if (a instanceof Dog) {
 
 > **Upcasting mein child ke extra methods access nahi hote.**
 > `a.bark()` → compile error even if Dog andar hai!
+> ★ Par jo method Dog ne OVERRIDE kiya, wo Dog ka hi chalega: `a.eat()` → Dog.eat()
+>   (kaunsa NAAM call ho sakta = reference dekhta · kaunsa CODE chalega = object dekhta)
 
 ## TRAP 2
 
 > **`ClassCastException` runtime pe aata hai — compiler nahi pakdta.**
 > Isliye `instanceof` check **mandatory** hai.
+
+## TRAP 3 — bilkul alag type pe cast = compile error, exception nahi
+
+```java
+Dog d = new Dog();
+String s = (String) d;     // COMPILE ERROR — Dog aur String ka koi rishta nahi
+Cat c = (Cat) d;           // COMPILE ERROR — Dog aur Cat bhai hain, ek doosre ke parent/child nahi
+Animal a = d;  Cat c2 = (Cat) a;   // compile ho jaata, RUNTIME pe ClassCastException
+```
 
 ---
 
