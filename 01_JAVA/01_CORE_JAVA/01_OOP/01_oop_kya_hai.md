@@ -46,13 +46,13 @@
    ┌──────────────────────────┐    ┌──────────────────────────┐
    │  User user1              │    │  User user2              │
    │  ─────────               │    │  ─────────               │
-   │  private name         │    │  private name         │
-   │  private age          │    │  private age          │
-   │  private email        │    │  private email        │
+   │  private name            │    │  private name            │
+   │  private age             │    │  private age             │
+   │  private email           │    │  private email           │
    │                          │    │                          │
-   │  public getName()      │    │  public getName()      │
-   │  public setAge()       │    │  public setAge()       │
-   │     (validation)          │    │     (validation)          │
+   │  public getName()        │    │  public getName()        │
+   │  public setAge()         │    │  public setAge()         │
+   │     (validation)         │    │     (validation)         │
    └──────────────────────────┘    └──────────────────────────┘
 
    Each User = self-contained. Data + behavior together.
@@ -127,7 +127,7 @@ u.setAge(-50);   // Throws exception — protection enforced
 ```
 ┌─────────────┬──────────────┬─────────────┬─────────────┐
 │ENCAPSULATION│ INHERITANCE  │POLYMORPHISM │ ABSTRACTION │
-│  Protect  │  Reuse    │  Flex    │  Simplify │
+│   Protect   │    Reuse     │    Flex     │  Simplify   │
 └─────────────┴──────────────┴─────────────┴─────────────┘
    private +       extends         same name        abstract /
    getters         keyword         alag work        interface
@@ -191,7 +191,8 @@ Jira Ticket = Object
 ```
 Java mein PRIMITIVES hain (int, long, double...) → ye objects NAHI
 Pure OOP language = sab kuch object (Smalltalk, Ruby)
-Java ka trade-off: primitives PERFORMANCE ke liye → ~95% OOP, 100% nahi
+Java ka trade-off: primitives PERFORMANCE ke liye → "pure OOP" nahi
+Doosri wajah: static method / static field — bina object ke chalte (main() bhi static)
 ```
 
 ---
