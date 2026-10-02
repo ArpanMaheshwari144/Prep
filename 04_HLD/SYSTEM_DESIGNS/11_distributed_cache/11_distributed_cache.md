@@ -223,6 +223,18 @@
                           phir sab cache se le lein
         SOFT-TTL       -> expiry se PEHLE background me refresh kar do
         NEVER-EXPIRE   -> bahut hi hot key ko expire hi mat karo, background update karo
+
+   ★ 2-Oct discussion:
+     PATA HO (sale, World Cup final, iPhone launch) -> PRE-WARM: key pehle se cache me bhar do
+                                                       + servers pehle se badha do
+     PATA NA HO (viral tweet, achanak announcement)  -> upar wale teen (mutex / soft-TTL / never-expire)
+     sale zaroori nahi: twitter ka hot-tweet cache TTL 1 hr (03_twitter_feed dikkat 4)
+       -> Virat ke tweet ka TTL khatam + lakhon log padh rahe = wahi stampede
+     asli me kam isliye hota kyunki badi website ye ilaaj PEHLE se lagaati hai (risk afford nahi)
+
+   BOL: "For known events I'd pre-warm the cache and scale up in advance. For unpredictable spikes
+         I still need stampede protection: a lock so only one request rebuilds the key, and early
+         background refresh before the TTL expires."
 ```
 
 ### dikkat 6 — "ek key itni popular hai ki uska SHARD akela mar raha hai"

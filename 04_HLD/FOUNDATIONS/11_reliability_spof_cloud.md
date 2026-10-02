@@ -58,6 +58,25 @@
    sharding = spread/scale + isolation (SPOF khatam) | replication = copies/recovery (data safe).
 ```
 
+### ★ 2-Oct discussion — "gira" ka asli matlab (Arpan ka point)
+
+```
+ANDAR    hazaron machine me koi na koi ROZ girti (disk, memory, network, deploy galti)
+         -> machine girna RARE NAHI
+BAHAR    user ko PATA chalna = rare  -> kyunki replica + failover + no-SPOF pehle se laga
+         -> dikkat khatam nahi hui, ilaaj itna achha ki DIKHTI nahi
+
+100% koi nahi: Google, YouTube, Twitter, AWS — sab kabhi na kabhi DOWN hue
+         -> isliye company "99.99% uptime" bolti, 100% koi nahi bolta
+         -> design ka kaam girna ROKNA nahi, KAM karna + JALDI sambhalna
+
+apna data: HikariCP pool khatam · Fargate subnet IP khatam · 1,800 Lambda throttle
+         -> "kabhi nahi hota" wali cheezein apni hi company me hui
+
+INTERVIEW: wo "kitni baar girta" nahi poochta, "GIRA TO KYA" poochta hai.
+BOL: "Machines fail all the time at scale; the goal of the design is that the user never notices."
+```
+
 ---
 
 ## ★★ DEPTH-PASS (25-Sep) — SPOF kaise DHOONDHO + redundancy KHUD kaise fail hoti hai
