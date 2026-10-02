@@ -21,6 +21,7 @@
    T: migration mera tha -> pata karna mujh pe tha ki kyun tootа.
 
    A (failure OWN karo): meri galti = maine socha version-bump mechanical hai (bas number badlo).
+      ★ yahi MERA FAISLA tha -> "decision caused a problem" wale sawaal me bhi yahi kahani.
       maine ye nahi socha ki Java 11 ne kuch modules HATA diye jo Java 8 me BUNDLED the.
       AI tha nahi -> StackOverflow + docs me dig kiya -> couple removed-modules trace kiye ->
       pom me EXPLICITLY wapas add kiya -> chal gaya.
@@ -32,6 +33,9 @@
            "number badalne ka matlab nahi ki MIGRATE ho gaya"
            ab KISI bhi migration se pehle release-notes me removed/breaking changes UPFRONT padhta hoon,
            runtime pe discover karne ke bajaye.
+
+   ALAG KYA KARTA ("what would you do differently?"):
+           shuru karne se PEHLE release-notes / removed modules padhta -> runtime pe dhoondhne ki naubat hi na aati.
 ```
 
 ---
