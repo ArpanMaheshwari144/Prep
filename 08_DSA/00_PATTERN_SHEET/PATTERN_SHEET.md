@@ -1255,13 +1255,24 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                  for(int i=bottom; i>=top; i--) ans.push_back(matrix[i][left]);   left++;   // left col B->T
              }
          }
-     GUARD kyun: last 2 loops (bottom-row / left-col) se PEHLE check -- warna single row/col bache to DUPLICATE push.
-     GUARD = "jo row / col print karne ja raha, wo ABHI BACHI hai ya pehle hi print ho chuki?"
-        [[1,2,3]]  (ek row):  top row 1 2 3 print -> top++ -> top=1 > bottom=0
-                              -> bottom row = WAHI row jo abhi chhapi -> if(top<=bottom) FALSE -> skip
-                              (guard na ho to 3 2 1 dobara chhap jaata)
-        [[1],[2],[3]] (ek col): right col 1 2 3 print -> right-- -> left=0 > right=-1
-                              -> left col = WAHI col -> if(left<=right) FALSE -> skip
+     GUARD — kis loop pe?
+        sirf un 2 loop pe jo ULTI disha me chhaapte:
+           bottom row  (R -> L)   -> if (top <= bottom)
+           left col    (B -> T)   -> if (left <= right)
+        top row aur right col pe guard NAHI -> unhe while(top<=bottom && left<=right) bacha leta
+
+     GUARD — kyun?
+        sawaal: "jo row / col ab chhaapne ja raha, wo ABHI BACHI hai?"
+        ek hi row ya ek hi col bachi ho to ulti disha wala loop WAHI dobara chhaap deta
+
+        [[1,2,3]]  ek row
+           top row:  1 2 3   ->  top++  ->  top=1, bottom=0
+           bottom row?  top <= bottom ?  1 <= 0  NO  -> skip   (warna 3 2 1 dobara)
+
+        [[1],[2],[3]]  ek col
+           right col: 1 2 3  ->  right--  ->  left=0, right=-1
+           left col?    left <= right ?  0 <= -1 NO  -> skip   (warna 3 2 1 dobara)
+
      index yaad: top-row [top][i] · right-col [i][right] · bottom-row [bottom][i] · left-col [i][left].
 
  ┌──────────────────────────────────────────────────────────────
