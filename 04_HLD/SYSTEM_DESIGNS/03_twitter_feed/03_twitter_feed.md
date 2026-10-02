@@ -453,30 +453,6 @@ BOL        "Sharding by user id is fine for everyone else; the problem is one ho
             use fan-out on read. If writes are hot, I'd split the key into buckets and sum on read."
 ```
 
-## ═══ GRILL — Q11 wapas, naye design me (2-Oct, flash sale) ═══
-
-```
-SAWAAL     "Flash sale, ek product page, 10 lakh log ek saath. Uski Redis key garam, wo node toot raha."
-
-TERA JAWAB hot key pehchana                                                              -> SAHI
-           cache gira -> saari request DB pe -> DB bhi girega                             -> SAHI
-           "EK thread ko andar bhejo, wo DB se laaye, cache bhare, baaki ruk ke wahi le" -> SAHI
-             (iska naam: request coalescing / single-flight / cache STAMPEDE ka ilaaj)
-           "traffic dheere-dheere wapas"                                                 -> SAHI
-
-JODA       tera ilaaj = cache KHAALI ho jaaye tab DB ko bachata (stampede).
-           sawaal = cache BHARA hai par wo EK Redis node 10 lakh read nahi jhel pa raha.
-           us node ka bojh baantna hai:
-             app server pe L1 local cache (2-5 sec TTL) -> zyadatar request Redis tak aati hi nahi
-             key ki KAI copy: iphone#1..#10 alag node pe, read random copy se
-             product page / image CDN pe
-
-BOL        "That's a hot key. First I'd stop the stampede: if the cache entry is missing, only one
-            request goes to the DB and the rest wait for it. Then I'd take load off that one Redis
-            node: a short-lived local cache on each app server, the key copied across several nodes,
-            and the page and images served from a CDN."
-```
-
 ---
 
 [← MASTER SHEET](../../00_MASTER_SHEET.md)

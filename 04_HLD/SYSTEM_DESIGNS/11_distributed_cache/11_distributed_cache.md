@@ -360,6 +360,29 @@
    Koi system perfect nahi hota — speed vs consistency ka trade-off use-case se tay hota hai."
 ```
 
+## ═══ GRILL — cross-question (2-Oct, master sheet Q11 · flash sale) ═══
+
+```
+SAWAAL     "Flash sale, ek product page, 10 lakh log ek saath. Uski Redis key garam, wo node toot raha."
+
+TERA JAWAB hot key pehchana                                                              -> SAHI
+           cache gira -> saari request DB pe -> DB bhi girega                             -> SAHI
+           "EK thread ko andar bhejo, wo DB se laaye, cache bhare, baaki ruk ke wahi le" -> SAHI
+             = upar dikkat 5 ka MUTEX (naam: request coalescing / single-flight)
+           "traffic dheere-dheere wapas"                                                 -> SAHI
+
+JODA       tera ilaaj = dikkat 5 (cache KHAALI -> DB bachao, stampede).
+           sawaal ka doosra hissa = dikkat 6 (cache BHARA, par EK node 10 lakh read nahi jhel raha):
+             app server pe L1 local cache (2-5 sec TTL) -> zyadatar request Redis tak aati hi nahi
+             key ki KAI copy: iphone#1..#10 alag node pe, read random copy se
+             product page / image CDN pe
+
+BOL        "That's a hot key. First I'd stop the stampede: if the cache entry is missing, only one
+            request goes to the DB and the rest wait for it. Then I'd take load off that one Redis
+            node: a short-lived local cache on each app server, the key copied across several nodes,
+            and the page and images served from a CDN."
+```
+
 ---
 
 [← MASTER SHEET](../../00_MASTER_SHEET.md)
