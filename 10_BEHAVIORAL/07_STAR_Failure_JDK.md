@@ -1,7 +1,9 @@
 # STAR — FAILURE: Underestimated a JDK 8 → 11 Migration  [Konovo]
 
 > Q ye cover karta: "tell me about a FAILURE / mistake" · "a time you were WRONG / assumed wrong" ·
-> "something didn't go as planned" · "what did you LEARN from a mistake".
+> "something didn't go as planned" · "what did you LEARN from a mistake" ·
+> ★ "a DECISION you made caused a problem — how did you handle it, what would you do differently?"
+>   (2-Oct Picnic form me yahi sawaal tha — faisla = "version bump mechanical hai" maanna, wo MERA tha)
 > (Resume line: JDK 8→11 migration, zero downtime, resolved dependency conflicts.)
 
 > ★ KEY FRAMING: failure = MERI ASSUMPTION thi (version-bump = mechanical), NOT the exact dependency.
@@ -54,6 +56,29 @@
 > or breaking changes upfront, instead of discovering them at runtime."
 
 ---
+
+## LIKHA HUA VERSION (form ke text box ke liye, ~140 shabd — 2-Oct Picnic)
+
+```
+I owned our JDK 8 to 11 migration, and I treated it as a mostly mechanical
+version bump. The app compiled and even started, but it broke at runtime,
+because Java 11 had removed some modules that were bundled in Java 8. Since
+everything looked fine on the surface, it took me a while to find the cause.
+I dug through the docs and Stack Overflow, traced it to a couple of those
+removed modules, and added them back explicitly in the pom. The migration then
+shipped with zero downtime.
+
+What I'd do differently: read the release notes for removed and breaking
+changes before starting, instead of discovering them at runtime. It taught me
+that "it compiles" doesn't mean "it runs", and changing the version number
+doesn't mean you've migrated.
+```
+
+## RESUME me? NAHI
+```
+resume pe JDK wali line pehle se hai (JDK 8 -> 11, zero downtime, ~15% throughput) = NATIJA.
+failure wala hissa resume ka nahi -> sirf interview / form ke "mistake / decision" sawaal ke liye.
+```
 
 ## PROBE HANDLE (agar poochein "which dependency exactly?")
 ```
