@@ -1256,6 +1256,12 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              }
          }
      GUARD kyun: last 2 loops (bottom-row / left-col) se PEHLE check -- warna single row/col bache to DUPLICATE push.
+     GUARD = "jo row / col print karne ja raha, wo ABHI BACHI hai ya pehle hi print ho chuki?"
+        [[1,2,3]]  (ek row):  top row 1 2 3 print -> top++ -> top=1 > bottom=0
+                              -> bottom row = WAHI row jo abhi chhapi -> if(top<=bottom) FALSE -> skip
+                              (guard na ho to 3 2 1 dobara chhap jaata)
+        [[1],[2],[3]] (ek col): right col 1 2 3 print -> right-- -> left=0 > right=-1
+                              -> left col = WAHI col -> if(left<=right) FALSE -> skip
      index yaad: top-row [top][i] · right-col [i][right] · bottom-row [bottom][i] · left-col [i][left].
 
  ┌──────────────────────────────────────────────────────────────
