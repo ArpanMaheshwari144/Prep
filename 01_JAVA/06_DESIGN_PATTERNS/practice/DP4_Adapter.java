@@ -1,15 +1,3 @@
-// DESIGN PATTERN PRACTICE — DP4 Adapter (Claude ne likha, padh ke chala)
-// Idea: travel plug. Jo class hai (purani / bahar ki) uska shape alag hai, tera code alag shape maangta.
-//       Adapter beech me baithta: TERA interface implement karta, andar PURANI class ko bulata.
-//       Purani class ka code kabhi nahi chhuta.
-//
-// Is file me 3 cheez:
-//   1. purana logger (logMessage) -> naya Logger (info) ke shape me
-//   2. bahar ki payment library (processPayment + currency) -> apna PaymentProcessor (charge)
-//   3. Java ka apna adapter: Arrays.asList -> add() pe crash, set() array ko bhi badal deta
-//
-// compile+run:  javac DP4_Adapter.java && java DP4_Adapter
-
 import java.util.*;
 
 // ─── 1. LOGGER ───
