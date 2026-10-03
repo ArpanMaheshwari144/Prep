@@ -19,7 +19,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · 174 problem + 101 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern + sheet | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | STAR stories | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
@@ -174,7 +174,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 - ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi" (har pattern ka saar + template + dry-run) — **roz-glance**.
 
-> Neeche ki ginti = **problem files** (REDO/BLANK alag se gine hain). Jod = 174 (3-Oct gini).
+> Neeche ki ginti = **problem files** (REDO/BLANK alag se gine hain). Kul upar heading me.
 
 | # | Pattern | Problems | REDO | | # | Pattern | Problems | REDO |
 |---|---------|----------|------|---|---|---------|----------|------|
@@ -187,7 +187,6 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 6 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 6 |
 | 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 4 | | 17 | [DP](08_DSA/17_DP) | 16 | 14 |
 | 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 2 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 3 |
-| | **KUL** | **174** | **101** | | | | **275 .cpp** | |
 
 ---
 
