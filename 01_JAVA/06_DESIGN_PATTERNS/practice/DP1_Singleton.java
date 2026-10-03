@@ -20,7 +20,21 @@ import java.util.concurrent.*;
 class Config {
     static int created = 0;
 
-    
+    private Config() {
+        created++;
+    }
+
+    private static volatile Config instance;
+    public static Config getInstance() {
+        if (instance == null) {
+            synchronized (Config.class) {
+                if (instance == null) {
+                    instance = new Config();
+                }
+            }
+        }
+        return instance;
+    }
 
 }
 
