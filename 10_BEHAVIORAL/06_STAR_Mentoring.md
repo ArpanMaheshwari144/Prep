@@ -17,6 +17,7 @@
       DB layer: kaunsa table kya rakhta, data kaise flow karta, debug me kaise trace karo.
       internal TOOLS: kaunsa kis kaam ka, investigate kaise karte.
       PR REVIEW me follow-up: "kyun" samjhaya, sirf approve/reject nahi.
+      CONFLUENCE page banaya (navigate · trace · queries · tools) -> aage kisi ko phir na atakna pade.
 
    R: wo khud problems solve karne laga -> us area me SELF-SUFFICIENT -> independently contribute.
       ramp-up kam, team ko baar-baar hand-hold nahi karna pada.
@@ -36,7 +37,8 @@
     I set up a proper screen-share session instead of a quick chat. I walked them through the codebase and
     our conventions, explained the database layer, which tables held what and how data flowed when
     debugging, and showed them how to investigate with our internal tools. I followed up through PR reviews,
-    explaining the why, not just approving or rejecting.
+    explaining the why, not just approving or rejecting. I also wrote it up as a Confluence page, so the next
+    person joining that area wouldn't get stuck in the same place.
 
     After that, they solved most of those problems on their own, became self-sufficient in that area and
     started contributing independently, which cut their ramp-up time and freed the team from repeated
