@@ -4,7 +4,7 @@
 
 ## INDEX — click karo, seedha wahan
 
-**Kaise use karo:** doubt aaya -> neeche **DOUBT DHOONDHO** me shabd dhoondho -> click. Har section ke upar `upar INDEX` se wapas yahan.
+**Kaise use karo:** doubt aaya -> neeche **DOUBT DHOONDHO** me shabd dhoondho -> click. Har PART ke upar `upar INDEX` link se wapas yahan. Concept ki detail / poora design / chala ke dekha = doosri file (neeche **DOOSRI FILE**).
 
 | PART | andar kya |
 |---|---|
@@ -83,7 +83,7 @@
 
 - **FOUNDATIONS**: [01 hld kya hai](FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity estimation](FOUNDATIONS/02_capacity_estimation.md) · [03 load balancing](FOUNDATIONS/03_load_balancing.md) · [04 caching](FOUNDATIONS/04_caching.md) · [05 database replication](FOUNDATIONS/05_database_replication.md) · [06 database sharding](FOUNDATIONS/06_database_sharding.md) · [07 message queues](FOUNDATIONS/07_message_queues.md) · [08 cap theorem](FOUNDATIONS/08_cap_theorem.md) · [09 databases what when](FOUNDATIONS/09_databases_what_when.md) · [10 ms communication](FOUNDATIONS/10_ms_communication.md) · [11 reliability spof cloud](FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch search](FOUNDATIONS/12_elasticsearch_search.md) · [13 distributed id snowflake](FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab ilaaj hi bimari bane](FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) · [15 cdn](FOUNDATIONS/15_cdn.md) · [16 dns](FOUNDATIONS/16_dns.md) · [17 waf](FOUNDATIONS/17_waf.md) · [18 monitoring](FOUNDATIONS/18_monitoring.md)
 - **15 DESIGN (poori)**: [01 url shortener](SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate limiter](SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter feed](SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 browser journey](SYSTEM_DESIGNS/05_url_browser_journey/05_url_browser_journey.md) · [06 stock broker](SYSTEM_DESIGNS/06_stock_broker_trading/06_stock_broker_trading.md) · [07 payment](SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [08 file upload](SYSTEM_DESIGNS/08_file_upload_validate_system/08_file_upload_INTERVIEW.md) · [09 news aggregator](SYSTEM_DESIGNS/09_news_aggregator/09_news_aggregator_INTERVIEW.md) · [10 bookmyshow](SYSTEM_DESIGNS/10_bookmyshow/10_bookmyshow_INTERVIEW.md) · [11 distributed cache](SYSTEM_DESIGNS/11_distributed_cache/11_distributed_cache.md) · [12 google docs](SYSTEM_DESIGNS/12_google_docs_collab/12_google_docs_collab.md) · [13 kafka / MQ](SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md) · [14 banking](SYSTEM_DESIGNS/14_banking_system/14_banking_system.md) · [15 chat](SYSTEM_DESIGNS/15_chat_messaging/15_chat_messaging.md)
-- **HANDS_ON**: [01 rate limiter Redis](HANDS_ON/01_rate_limiter_redis) · [02 INCR+EXPIRE crash](HANDS_ON/02_incr_expire_crash) · [03 provider 429](HANDS_ON/03_provider_429) · [04 event loss](HANDS_ON/04_event_loss)
+- **HANDS_ON**: [01 rate limiter Redis](HANDS_ON/01_rate_limiter_redis) · [02 INCR+EXPIRE crash](HANDS_ON/02_incr_expire_crash) · [03 provider 429](HANDS_ON/03_provider_429) · [04 event loss](HANDS_ON/04_event_loss) (code yahan; asli output + nichod = design file ka HANDS-ON section)
 - **LOG**: [HLD_PRACTICE_LOG](HLD_PRACTICE_LOG.md) · **farak batao**: [06_COMPARES](../06_COMPARES)
 
 ### ALEX XU (Vol 1) ka chapter -> is repo me kahan
@@ -108,31 +108,6 @@
 
 ---
 
-
-```
-=====================================================================================
-  KHOLTE HI — IS FILE ME KYA HAI (upar se neeche, 5 hisse)
-=====================================================================================
-  PART 1  NAKSHA + NIYAM        04_HLD me kaunsi file kab · 3 baatein jo sab pe bhaari
-  PART 2  CROSS-QUESTION        6 sawaal (yaad dilaane ko) · 8 dabbe x 4 line ·
-          (roz grill yahin se)  cross-question bank Q1-Q22 (A gira · B dobara · C bheed ·
-                                D purana · E kho gaya · F baaki)
-  PART 3  DESIGN KHADA KARNA    1 teen line method · 2 archetype · 3 rail · 4 block menu ·
-                                A ya B trade-off jode · 5 15 design ka DIL + khaas hissa
-  PART 4  ATKE TO / ROUND DIN   6 anjaan design recipe · 7 kuch na pata ho · 8 checklist
-  PART 5  BOLNA                 kaise bolna · SHABD (word atke to)
-
-  IS FILE ME NAHI HAI (wahan dekho)
-    concept ki detail ("ye cheez hai kya?")     -> FOUNDATIONS/01..18
-    poora design, dikkat by dikkat              -> SYSTEM_DESIGNS/01..15
-    chala ke dekha (asli output)                -> HANDS_ON/01..04 (code) + design file ka
-                                                   HANDS-ON section (rate limiter · notification · Kafka)
-    bolke kiye round                            -> HLD_PRACTICE_LOG.md
-    "X vs Y farak batao"                        -> ../06_COMPARES
-=====================================================================================
-```
-
-> **NAV** — KYA: interview-din ki EK file (archetype -> assemble -> bolo). · CROSS-QUESTION BANK · A YA B · KAISE BOLNA · SHABD = isi file me (neeche) · CONCEPT-detail: [FOUNDATIONS](FOUNDATIONS) · 15 DESIGN: [SYSTEM_DESIGNS](SYSTEM_DESIGNS) · LOG: [HLD_PRACTICE_LOG](HLD_PRACTICE_LOG.md)
 
 > EK file. Interview se pehle sirf YE. (detail chahiye to hi SYSTEM_DESIGNS/* kholo.)
 >
