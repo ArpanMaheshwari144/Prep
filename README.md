@@ -24,6 +24,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | STAR stories | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
 | 12 | [**12_CODE_REVIEW**](12_CODE_REVIEW) | asli JP round ke hisaab se: correctness · security · quality · design | JP Superday **~10 min PR review** |
+| 13 | [**13_TOOLS**](13_TOOLS) | IntelliJ shortcuts + setup (source me ghoomna) | Spring/library ka andar khol ke dekhna, live coding me tez |
 
 > ★ **Roz-revise pinned:** **[DSA Pattern Sheet](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** (gate ki chaabi) · **[HLD Master Sheet](04_HLD/00_MASTER_SHEET.md)** (kya bolna + cross-question bank + SHABD) · **[PR Review](12_CODE_REVIEW/PR_REVIEW.md)** (shikaar list)
 
@@ -218,6 +219,13 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 neeche reference dabbe.
 
 > **Asli JP jaise drill (bug + style) ka record:** 28-Sep StatementJob 7/17 -> RefundController 9/17 (shikaar list ke baad SQL injection + N+1 pehli nazar me pakde) -> 29-Sep UserController 9/15 -> 30-Sep se roz ek drill (log = PR_REVIEW section 5) -> 3-Oct BillReminder 17/23, owner check pakda.
+
+---
+
+## [13_TOOLS](13_TOOLS)
+**Kya:** roz ke tool ki tips. &nbsp; **Kyu:** library / Spring ka asli code khol ke dekhna (interface -> implementation), live coding me tez chalna.
+
+[IntelliJ tips](13_TOOLS/INTELLIJ_TIPS.md) — Ctrl+Alt+B (interface ka asli code) · Ctrl+N (koi bhi class) · Alt+F7 (kahan use hua) · "Cannot find declaration" ka ilaaj · Maven project apne folder se kholo
 
 ---
 
