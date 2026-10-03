@@ -55,7 +55,7 @@ User u = User.builder()
     .age(28)
     .email("x@y.com")
     .role("ADMIN")
-    .isActive(true)
+    .active(true)
     .build();
 ```
 
@@ -298,7 +298,7 @@ User user2 = u.toBuilder()
 
 ### 1 `JwtService.java` — Token generate karte time
 
-**File:** [`02_SPRING/02_PROJECT/usercrud/src/main/java/com/arpan/usercrud/security/JwtService.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/security/JwtService.java)
+**File:** [`07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/security/JwtService.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/security/JwtService.java)
 
 ```java
 public String generateToken(User user) {
@@ -330,7 +330,7 @@ public String generateToken(User user) {
 
 ### 2 `CustomUserDetailsService.java` — Spring UserDetails build karte time
 
-**File:** [`02_SPRING/02_PROJECT/usercrud/src/main/java/com/arpan/usercrud/security/CustomUserDetailsService.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/security/CustomUserDetailsService.java)
+**File:** [`07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/security/CustomUserDetailsService.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/security/CustomUserDetailsService.java)
 
 ```java
 @Override
@@ -456,7 +456,7 @@ String jwt = Jwts.builder()
 > 2. **Static factory methods** (`User.of(...)`) — limited combinations
 > 3. **Builder** — most flexible, immutable, validated
 >
-> Modern Java mein **Records (Java 14+)** + factory methods bhi alternative — but Builder still preferred for >5 fields."*
+> Modern Java mein **Records (Java 16+, 14-15 me preview)** + factory methods bhi alternative — but Builder still preferred for >5 fields."*
 
 **Q: "Lombok @Builder vs manual?"**
 
