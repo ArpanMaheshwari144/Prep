@@ -279,6 +279,24 @@ User user2 = u.toBuilder()
 
 ---
 
+## ★ Import / dependency chahiye kya? (3-Oct)
+
+```
+MANUAL Builder        -> koi import nahi. sab khud likha (andar static class), plain Java.
+
+LOMBOK @Builder       -> 1. pom.xml me lombok dependency
+                         2. import lombok.Builder;
+                         3. IDE me annotation processing ON (warna builder() dikhega hi nahi)
+
+Jwts.builder()        -> jjwt dependency + import io.jsonwebtoken.Jwts;
+
+Spring User.builder() -> spring-security ki class. CustomUserDetailsService me import NAHI kiya,
+                         POORA naam likha: org.springframework.security.core.userdetails.User.builder()
+                         kyunki apna entity bhi "User" hai -> do "User" ek file me takra jaate
+```
+
+---
+
 ## Manual vs Lombok — Comparison
 
 | | Manual Builder | Lombok `@Builder` |
