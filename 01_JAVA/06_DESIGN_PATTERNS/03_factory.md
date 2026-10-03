@@ -154,7 +154,7 @@ AccountFactory.register("crypto", p -> new CryptoAccount(p.id, p.balance));
 ```
 
 **Pros:** Truly OCP-compliant, runtime extensible
-**Cons:** Slightly more complex
+**Cons:** Slightly more complex · runtime pe `register()` alag threads se ho to `HashMap` safe nahi -> `ConcurrentHashMap`
 
 ---
 
@@ -320,7 +320,7 @@ class WindowsUIFactory implements UIFactory {
 > 2. **Factory Method (GoF)** — abstract method, subclass override karte (e.g., Dialog → createButton)
 > 3. **Abstract Factory** — family of related products (Windows UI: Button + Checkbox + Dialog ek consistent set)
 >
-> Real production code mein 80% Simple Factory, 15% Abstract Factory (cross-platform UI/themes), 5% pure Factory Method."*
+> Real code mein sabse zyada Simple Factory dikhta; Abstract Factory jab poora 'set' ek saath badalna ho (UI theme, DB vendor)."*
 
 **Q: "Static factory method advantages over constructor?"**
 
@@ -417,7 +417,7 @@ Trap 5: "Factory Method = Simple Factory"
 WHAT     → Object creation encapsulation
 WHY      → Decouple caller from concrete classes + DRY creation logic
 HOW      → Factory class with create() method that switches on type
-BEST     → Simple Factory for 80% cases, Map registry for true OCP
+BEST     → aam taur pe Simple Factory, naye type bina code chhede chahiye to Map registry
 EXAMPLES → AccountFactory (project), Calendar.getInstance(), Spring BeanFactory
 TRAP     → Don't return concrete type — always abstract/interface
 ```
