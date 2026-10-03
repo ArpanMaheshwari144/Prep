@@ -31,6 +31,9 @@ final void show() { }
 // child override nahi kar sakta
 ```
 
+**★ Blank final:** `final int port;` bina value ke likh sakte — par har constructor me EK baar set karna
+padega, warna compile error. (static final ho to static block me.)
+
 ---
 
 ## TRAP
@@ -59,14 +62,14 @@ list = new ArrayList<>();            // reference change nahi hoga
 STACK                        HEAP
 ┌──────────────┐             ┌─────────────────────────┐
 │ list (final) ├────────────►│ ArrayList               │
-│ LOCKED    │             │ ["Arpan"]               │  ← content modify OK
-└──────────────┘             │ list.add("Rahul")    │
+│ LOCKED       │             │ ["Arpan"]               │  ← content modify OK
+└──────────────┘             │ list.add("Rahul")       │
                              │ ["Arpan", "Rahul"]      │
                              └─────────────────────────┘
 
 ╔════════════════════════════════════════════════════════════╗
-║ list = new ArrayList<>();   →  BLOCKED — reference lock ║
-║ list.add("Rahul");          →  ALLOWED — content change ║
+║ list = new ArrayList<>();   →  BLOCKED — reference lock    ║
+║ list.add("Rahul");          →  ALLOWED — content change    ║
 ╚════════════════════════════════════════════════════════════╝
 
 Ghar ka address final = ghar nahi badlega (reference)
@@ -178,6 +181,7 @@ protected void finalize() throws Throwable {
 | **Performance hit** | Object ki life lambi (finalize ke liye queue mein) |
 | **Resurrection bug** | finalize mein `this` kahin rakh ke object zinda kar sakte (mess) |
 | **Better alternatives** | `try-with-resources`, `Cleaner` API |
+| **Aage** | Java 18 (JEP 421) se "deprecated for REMOVAL" — aage hat jaayega |
 
 ```java
 // Old way (broken)
