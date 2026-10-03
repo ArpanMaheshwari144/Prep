@@ -42,7 +42,7 @@ Student.school   // object ki zarurat nahi — directly access
   }
 
 
-  METHOD AREA (class-level memory)
+  CLASS-LEVEL memory (Java 8+: static field Class object ke saath HEAP me; class ki info METASPACE me)
   ┌──────────────────────────────────┐
   │ Student class                    │
   │   static school = "DPS"   ◄──┐   │   ← ek hi copy, sab access kare
@@ -106,17 +106,21 @@ Student.school   // object ki zarurat nahi — directly access
 ## ★ TRAP — Initialization order (static block / instance block / constructor)
 
 ```
-Java class loading order:
+Ek class ke andar:
+   STATIC fields + STATIC blocks   -> class load pe, EK baar, jis KRAM me likhe hain usi kram me
+   INSTANCE fields + INSTANCE blocks -> har object pe, likhe kram me
+   CONSTRUCTOR body                -> uske baad
 
-   1. STATIC fields            (class load pe, ek baar)
-   2. STATIC blocks            (class load pe, ek baar)
-   3. INSTANCE fields          (har object banne pe)
-   4. INSTANCE blocks          (har object banne pe)
-   5. CONSTRUCTOR body
+Parent + Child (new Child() — chala ke dekha):
+   1 Parent static        (sirf pehli baar)
+   2 Child static         (sirf pehli baar)
+   3 Parent instance block
+   4 Parent constructor
+   5 Child instance block
+   6 Child constructor
 
-   Parent before Child:
-      Parent.static → Child.static
-      Parent.instance → Child.instance
+   doosra new Child()  -> sirf 3,4,5,6 (static dobara nahi)
+   ★ trap: Parent ka CONSTRUCTOR, Child ke instance block se PEHLE chalta (super() pehle)
 ```
 
 (Static method "override" = hiding, poora = `01_OOP/04_overloading_vs_overriding.md`)
