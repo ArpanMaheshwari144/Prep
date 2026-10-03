@@ -114,7 +114,7 @@ Compiler:                          Compiler:
 | **Must handle/declare?** | try-catch OR throws | Optional |
 | **Source typically** | External (file, DB, network) | Internal bugs (null, index) |
 | **Examples** | `IOException`, `SQLException`, `ClassNotFoundException` | `NullPointerException`, `ArrayIndexOutOfBoundsException`, `ArithmeticException`, `IllegalArgumentException` |
-| **Spring `@Transactional` rollback** | NO by default | YES by default |
+| **Spring `@Transactional` rollback** | NO by default | YES by default (aur `Error` pe bhi) |
 | **Method signature pollution** | High (`throws` everywhere) | None (clean signatures) |
 | **Modern Java preference** | Reduced — most prefer Unchecked | Preferred for business logic |
 
@@ -126,7 +126,7 @@ Compiler:                          Compiler:
 
 ```java
 @Transactional
-public void saveUser(User user) {
+public void saveUser(User user) throws IOException {   // checked hai to throws likhna padega
     userRepo.save(user);
 
     if (badThing) {
@@ -270,7 +270,7 @@ public void method() {
 
 **Q: "Custom exception likhna ho — kaunsa parent extend karu?"**
 
-> *"99% cases mein `RuntimeException` — modern preference. Reasons:
+> *"Zyadatar cases mein `RuntimeException` — modern preference. Reasons:
 > 1. Method signatures clean (no `throws` clutter)
 > 2. Spring `@Transactional` default rollback compatible
 > 3. Functional interfaces (Supplier, Function) checked allow nahi karte — Unchecked seamless work karta
@@ -315,7 +315,7 @@ Examples:
 
 ```
 Trap 1: "@Transactional checked exception pe rollback karta"
-         NAHI — sirf RuntimeException by default
+         NAHI — default me sirf RuntimeException aur Error pe
          rollbackFor = Exception.class lagao
 
 Trap 2: "Custom exception Exception extend karu"
