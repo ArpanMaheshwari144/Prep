@@ -31,9 +31,9 @@
 ```
 STACK                          HEAP
 ┌──────────────┐              ┌────────────────┐
-│ main: st  ──┼─────────────►│ Student         │
-│              │              │ name = "Arpan"  │
-│ change: s ──┼─────────────►└────────────────┘
+│ main: st  ───┼─────────────►│ Student        │
+│              │              │ name = "Arpan" │
+│ change: s ───┼─────────────►└────────────────┘
 └──────────────┘
 ```
 
@@ -83,10 +83,16 @@ System.out.println(st.name);                            // "Arpan" — NAHI badl
 
 ## Kahani
 
-> **Dost ko apni notebook ki photocopy di**
-> → Dost ne photocopy pe kuch likha — **teri original nahi badi**
-> → Lekin dost ne **photocopy ke andar ke drawer ka lock khola** aur drawer mein kuch rakha — **original drawer bhi badal gayi!**
-> → Yehi Java hai
+> **Dost ko ghar ke ADDRESS ki parchi ki photocopy di** (ghar nahi diya, parchi di)
+> → Dost us address pe gaya, andar sofa hila diya -> **tera ghar bhi badla** (wahi ghar hai) = `s.name = "X"`
+> → Dost ne apni parchi pe naya address likh diya -> **teri parchi waisi hi** = `s = new Student()`
+> → Parchi = reference, ghar = object. Copy hamesha parchi ki jaati hai, ghar ki nahi.
+
+**Classic sawaal: swap kaam karega?**
+```java
+void swap(Integer a, Integer b) { Integer t = a; a = b; b = t; }
+// caller ke a, b NAHI badlenge -> sirf parchiyon ki copy badli (Case 3 jaisa)
+```
 
 ---
 
