@@ -55,6 +55,7 @@ switch(p) {
 Day.MON.name();        // "MON"  — string naam
 Day.MON.ordinal();     // 0       — index (0 se start)
 Day.valueOf("SAT");    // Day.SAT — string se enum
+Day.valueOf("XYZ");    // IllegalArgumentException — naam na mile to (user input pe try/catch)
 Day.values();          // [MON, SAT, SUN] — sab values array
 ```
 
@@ -62,15 +63,19 @@ Day.values();          // [MON, SAT, SUN] — sab values array
 
 ## TRAP 1
 
-> **Enum constructor `public` nahi ho sakta — `private` ya package-private only.**
+> **Enum constructor `public` / `protected` nahi ho sakta. Modifier na likho tab bhi wo PRIVATE hi hota hai.**
+> (koi bahar se `new Day()` nahi kar sakta — isliye values fixed rehti hain)
 
 ## TRAP 2
 
 > **`ordinal()` pe DB mein depend mat karo — order change kiya toh sab values shift!**
+> DB me `name()` rakho — JPA me `@Enumerated(EnumType.STRING)` (default ORDINAL hai, wahi trap).
 
 ## TRAP 3
 
-> **Enum `==` se compare karo, `.equals()` nahi — enum values singletons hain, `==` safe.**
+> **Enum `==` se compare karo — har constant ek hi object (singleton), isliye `==` sahi.**
+> `.equals()` bhi chalta (andar `==` hi hai), par `==` behtar: null pe NPE nahi deta, aur
+> galat type compare karo to compile error deta.
 
 ## TRAP 4 — Singleton wala best way
 
