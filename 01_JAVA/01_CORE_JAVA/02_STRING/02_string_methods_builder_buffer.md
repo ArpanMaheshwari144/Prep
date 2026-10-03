@@ -30,6 +30,13 @@ System.out.println(s);   // "Hello World"
 | **StringBuilder** | **Mutable**. Thread safe NAHI. **Fast** — mostly yahi use karo |
 | **StringBuffer** | **Mutable**. Thread safe HAI. Thoda slow — **sirf multithreading** mein |
 
+```
+StringBuilder andar se : char/byte ka ARRAY, default capacity 16
+bhar gaya             -> naya array (purana*2 + 2), copy   -> isliye loop me String se tez
+StringBuffer          -> wahi, par har method synchronized  -> lock ka kharcha
+ek line ka a + b + c  -> compiler khud theek kar deta, dikkat sirf LOOP me
+```
+
 ---
 
 ## STORY (V90 ka rule)
@@ -80,8 +87,9 @@ METHOD: arr.length() → invocation overhead (chhota par bekaar)
 String contrast — String proper class hai, encapsulation ke liye method:
    class String {
        private final byte[] value;   // Java 8 tak char[], Java 9+ byte[] (compact strings)
-       public int length() { return value.length; }   ← andar array ka FIELD hi wrap kiya
+       public int length() { return value.length >> coder(); }   ← andar array ka FIELD hi wrap kiya
    }
+   (coder: LATIN1=0 -> 1 byte/char · UTF16=1 -> 2 byte/char, isliye >>)
 ```
 
 ---
