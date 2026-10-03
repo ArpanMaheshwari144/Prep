@@ -31,10 +31,17 @@
 
 | Primitive | Wrapper |
 |-----------|---------|
+| `byte` | `Byte` |
+| `short` | `Short` |
 | `int` | `Integer` |
+| `long` | `Long` |
+| `float` | `Float` |
 | `double` | `Double` |
 | `char` | `Character` |
 | `boolean` | `Boolean` |
+
+Cache kiska: `Byte` `Short` `Integer` `Long` -> -128..127 · `Character` -> 0..127 · `Boolean` -> TRUE/FALSE
+`Float` / `Double` -> koi cache NAHI (har baar naya)
 
 ---
 
@@ -99,6 +106,16 @@ p.equals(q)            // true
 
 > **Integer compare karne mein bhi HAMESHA `.equals()` use karo.**
 > **`==` kabhi true kabhi false dega!**
+> (upar ki seema JVM flag `-XX:AutoBoxCacheMax` se badh sakti hai — isliye 128 pe "pakka false" bhi mat maano)
+
+## ★ TRAP — unboxing pe NPE (prod me sabse zyada yahi aata)
+
+```java
+Map<String, Integer> count = new HashMap<>();
+int c = count.get("x");        // key nahi -> null -> null.intValue() -> NullPointerException
+Integer safe = count.getOrDefault("x", 0);   // fix
+```
+`new Integer(5)` Java 9 se deprecated -> `Integer.valueOf(5)` likho (cache use karta).
 
 ---
 
