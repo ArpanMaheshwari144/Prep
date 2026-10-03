@@ -1,6 +1,6 @@
 # Stream API — Methods Cheatsheet
 
-> Poora toolkit ek jagah. Practice = 01_JAVA/07_WRITE_PRACTICE (Q1-Q16 + REDO).
+> Poora toolkit ek jagah. Practice = 01_JAVA/07_STREAM_API_WRITE (Q1-Q16 + REDO).
 > **CORE mantra:** stream = for + if. Sab methods 3 category: **BADLO → AGGREGATE → COLLECT**. Naam alag, kaam wahi 3.
 
 ---
