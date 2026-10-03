@@ -1,5 +1,114 @@
 # HLD MASTER SHEET — koi bhi design ASSEMBLE karne ka tareeka
 
+<a id="index"></a>
+
+## INDEX — click karo, seedha wahan
+
+**Kaise use karo:** doubt aaya -> neeche **DOUBT DHOONDHO** me shabd dhoondho -> click. Har section ke upar `upar INDEX` se wapas yahan.
+
+| PART | andar kya |
+|---|---|
+| [1 NAKSHA + NIYAM](#part1) | [kaunsi file kab](#naksha) · [teen baatein](#teen-baatein) |
+| [2 CROSS-QUESTION](#part2) | [6 sawaal](#chhe-sawaal) · [8 dabbe](#dabbe) · [jawab se pehle 5 sec](#jawab-se-pehle) · [Q1-Q22 bank](#bank) |
+| [3 DESIGN KHADA KARNA](#part3) | [teen line](#teen-line) · [6 archetype](#archetype) · [rail (7 step)](#rail) · [block menu](#block-menu) · [drill wali rows + jode](#drill-rows) · [A ya B trade-off](#trade-off) · [15 design ka DIL](#designs) |
+| [4 ATKE TO / ROUND DIN](#part4) | [anjaan design](#anjaan) · [LinkedIn misaal](#linkedin) · [kuch na pata](#na-pata) · [checklist](#checklist) |
+| [5 BOLNA](#part5) | [kaise bolna](#kaise-bolna) · [SHABD](#shabd) |
+
+### DOUBT DHOONDHO (doubt -> jawab kahan)
+
+| doubt / shabd | jao |
+|---|---|
+| server / node / DB gira · failover | [Q1](#q1) · [REPLICA](#dabba-replica) · [LB](#dabba-lb) |
+| provider slow · timeout · circuit breaker | [Q2](#q2) · [CIRCUIT BREAKER](#dabba-cb) |
+| cache gira · stampede · hot key expire | [Q3](#q3) · [CACHE](#dabba-cache) |
+| region / data centre gira · multi-AZ | [Q4](#q4) |
+| request do baar · retry · double click · idempotency | [Q5](#q5) · [IDEMPOTENCY KEY](#dabba-idem) |
+| key lagi par bhejna fail | [Q6](#q6) |
+| do user ek saath · race · ek seat · lock | [Q7](#q7) · [DB TRANSACTION](#dabba-txn) · [bookmyshow](#d10) |
+| achanak spike · flash sale · IPL · pre-warm | [Q8](#q8) · [QUEUE](#dabba-queue) |
+| 10x users · scale kaise | [Q9](#q9) · [rail step 7](#rail) |
+| DB bada · writes zyada · shard key · consistent hashing | [Q10](#q10) · [SHARD](#dabba-shard) · [TO9](#to9) |
+| hot key · celebrity · hot partition | [Q11](#q11) · [twitter](#d03) · [cache design](#d11) |
+| purana data · stale · replica lag · read-your-own-writes | [Q12](#q12) · [REPLICA](#dabba-replica) |
+| order / kram · partition key | [Q13](#q13) |
+| CAP · consistency ya availability · network toota | [Q14](#q14) · [TO6](#to6) |
+| event / message kho gaya · offset · DLQ · outbox | [Q15](#q15) · [QUEUE](#dabba-queue) |
+| crash beech me · aadha kaam · PENDING · reconciliation · saga | [Q16](#q16) · [DB TRANSACTION](#dabba-txn) |
+| 429 · throttle · backoff · jitter | [Q17](#q17) |
+| OTP pehle · priority | [Q18](#q18) |
+| monitoring · alert · pata kaise chale | [Q19](#q19) |
+| security · abuse · owner check · WAF | [Q20](#q20) |
+| data badhta jaaye · retention · archive | [Q21](#q21) |
+| SPOF · single point of failure | [Q22](#q22) |
+| SQL ya NoSQL | [TO1](#to1) |
+| sync ya async | [TO2](#to2) |
+| push ya pull | [TO3](#to3) |
+| fanout on write / read | [TO4](#to4) |
+| cache-aside / write-through / write-back | [TO5](#to5) · [jode](#drill-rows) |
+| L4 ya L7 · LB algo | [TO7](#to7) · [drill rows](#drill-rows) |
+| vertical ya horizontal | [TO8](#to8) |
+| replica ya shard | [TO9](#to9) |
+| normalize / denormalize | [TO10](#to10) |
+| WebSocket / SSE / long-poll | [TO11](#to11) |
+| exactly-once | [TO12](#to12) |
+| batch ya stream | [TO13](#to13) |
+| leader / leaderless · quorum W+R>N | [TO14](#to14) |
+| LRU/LFU · session/JWT · monolith/MS · WebSocket/Kafka | [jode](#drill-rows) |
+| health check · connection pool · CORS · estimate formula | [drill rows](#drill-rows) |
+| design kaise shuru karun | [teen line](#teen-line) · [archetype](#archetype) · [rail](#rail) |
+| ye need -> kaunsa block | [block menu](#block-menu) |
+| anjaan design aa gaya | [recipe](#anjaan) · [LinkedIn misaal](#linkedin) |
+| kuch nahi pata · atak gaya | [4 line](#na-pata) · [kaise bolna](#kaise-bolna) |
+| estimate · QPS · storage | [rail step 2](#rail) · [drill rows](#drill-rows) |
+| English word atka | [SHABD](#shabd) |
+| interview ka din | [checklist](#checklist) |
+
+### CROSS-QUESTION Q1-Q22
+
+- **[A. GIRA / SLOW](#grp-a)**: [Q1 server / node / DB gira](#q1) · [Q2 provider slow](#q2) · [Q3 cache gira](#q3) · [Q4 poora region gira](#q4)
+- **[B. DOBARA / SAATH](#grp-b)**: [Q5 request do baar aayi](#q5) · [Q6 key lagi, bhejna fail](#q6) · [Q7 do user ek saath](#q7)
+- **[C. BHEED / BADA](#grp-c)**: [Q8 achanak 10x spike](#q8) · [Q9 10x users](#q9) · [Q10 DB bada / writes zyada](#q10) · [Q11 hot key / celebrity](#q11)
+- **[D. PURANA / KRAM](#grp-d)**: [Q12 user ko purana dikha](#q12) · [Q13 kram (order)](#q13) · [Q14 consistency ya availability](#q14)
+- **[E. KHO GAYA / BEECH ME](#grp-e)**: [Q15 message kho na jaaye](#q15) · [Q16 crash beech me](#q16) · [Q17 provider ne 429 diya](#q17) · [Q18 OTP pehle (priority)](#q18)
+- **[F. BAAKI](#grp-f)**: [Q19 chal raha hai, kaise pata](#q19) · [Q20 security / abuse](#q20) · [Q21 data badhta jaaye](#q21) · [Q22 SPOF kahan hai](#q22)
+
+### 8 DABBE · A ya B · 15 DESIGN
+
+- **8 dabbe**: [REPLICA](#dabba-replica) · [CACHE](#dabba-cache) · [SHARD](#dabba-shard) · [QUEUE / KAFKA](#dabba-queue) · [LOAD BALANCER](#dabba-lb) · [IDEMPOTENCY KEY](#dabba-idem) · [CIRCUIT BREAKER](#dabba-cb) · [DB TRANSACTION](#dabba-txn)
+- **A ya B**: [1 SQL vs NoSQL](#to1) · [2 sync vs async](#to2) · [3 push vs pull](#to3) · [4 fanout write/read](#to4) · [5 write-back](#to5) · [6 strong vs eventual (CAP)](#to6) · [7 L4 vs L7](#to7) · [8 vertical vs horizontal](#to8) · [9 replica vs shard](#to9) · [10 normalize vs denormalize](#to10) · [11 long-poll / WS / SSE](#to11) · [12 at-least vs exactly-once](#to12) · [13 batch vs stream](#to13) · [14 leader / leaderless / quorum](#to14)
+- **15 design**: [01 url shortener](#d01) · [02 rate limiter](#d02) · [03 twitter feed](#d03) · [04 notification](#d04) · [05 browser journey](#d05) · [06 stock broker](#d06) · [07 payment](#d07) · [08 file upload](#d08) · [09 news aggregator](#d09) · [10 bookmyshow](#d10) · [11 distributed cache](#d11) · [12 google docs](#d12) · [13 kafka / MQ](#d13) · [14 banking](#d14) · [15 chat](#d15)
+- **SHABD**: [verbs](#shabd-0) · [rate limiter](#shabd-1) · [caching](#shabd-2) · [LB](#shabd-3) · [replica/shard](#shabd-4) · [queue](#shabd-5) · [CAP](#shabd-6) · [reliability](#shabd-7) · [drill](#shabd-drill)
+
+### DOOSRI FILE (gehrai chahiye to)
+
+- **FOUNDATIONS**: [01 hld kya hai](FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity estimation](FOUNDATIONS/02_capacity_estimation.md) · [03 load balancing](FOUNDATIONS/03_load_balancing.md) · [04 caching](FOUNDATIONS/04_caching.md) · [05 database replication](FOUNDATIONS/05_database_replication.md) · [06 database sharding](FOUNDATIONS/06_database_sharding.md) · [07 message queues](FOUNDATIONS/07_message_queues.md) · [08 cap theorem](FOUNDATIONS/08_cap_theorem.md) · [09 databases what when](FOUNDATIONS/09_databases_what_when.md) · [10 ms communication](FOUNDATIONS/10_ms_communication.md) · [11 reliability spof cloud](FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch search](FOUNDATIONS/12_elasticsearch_search.md) · [13 distributed id snowflake](FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab ilaaj hi bimari bane](FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) · [15 cdn](FOUNDATIONS/15_cdn.md) · [16 dns](FOUNDATIONS/16_dns.md) · [17 waf](FOUNDATIONS/17_waf.md) · [18 monitoring](FOUNDATIONS/18_monitoring.md)
+- **15 DESIGN (poori)**: [01 url shortener](SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate limiter](SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter feed](SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 browser journey](SYSTEM_DESIGNS/05_url_browser_journey/05_url_browser_journey.md) · [06 stock broker](SYSTEM_DESIGNS/06_stock_broker_trading/06_stock_broker_trading.md) · [07 payment](SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [08 file upload](SYSTEM_DESIGNS/08_file_upload_validate_system/08_file_upload_INTERVIEW.md) · [09 news aggregator](SYSTEM_DESIGNS/09_news_aggregator/09_news_aggregator_INTERVIEW.md) · [10 bookmyshow](SYSTEM_DESIGNS/10_bookmyshow/10_bookmyshow_INTERVIEW.md) · [11 distributed cache](SYSTEM_DESIGNS/11_distributed_cache/11_distributed_cache.md) · [12 google docs](SYSTEM_DESIGNS/12_google_docs_collab/12_google_docs_collab.md) · [13 kafka / MQ](SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md) · [14 banking](SYSTEM_DESIGNS/14_banking_system/14_banking_system.md) · [15 chat](SYSTEM_DESIGNS/15_chat_messaging/15_chat_messaging.md)
+- **HANDS_ON**: [01 rate limiter Redis](HANDS_ON/01_rate_limiter_redis) · [02 INCR+EXPIRE crash](HANDS_ON/02_incr_expire_crash) · [03 provider 429](HANDS_ON/03_provider_429) · [04 event loss](HANDS_ON/04_event_loss)
+- **LOG**: [HLD_PRACTICE_LOG](HLD_PRACTICE_LOG.md) · **farak batao**: [06_COMPARES](../06_COMPARES)
+
+### ALEX XU (Vol 1) ka chapter -> is repo me kahan
+
+| chapter | yahan |
+|---|---|
+| 1 Scale from zero to millions | [block menu](#block-menu) · [replica](#dabba-replica) · [cache](#dabba-cache) · [LB](#dabba-lb) |
+| 2 Back-of-the-envelope | [rail step 2](#rail) · [FOUNDATIONS/02](FOUNDATIONS/02_capacity_estimation.md) |
+| 3 Interview framework | [rail](#rail) · [checklist](#checklist) |
+| 4 Rate limiter | [02](#d02) |
+| 5 Consistent hashing | [11 distributed cache](#d11) · [Q10](#q10) |
+| 6 Key-value store | [11](#d11) · [TO14 quorum](#to14) · [Q14 CAP](#q14) |
+| 7 Unique ID | [FOUNDATIONS/13 snowflake](FOUNDATIONS/13_distributed_id_snowflake.md) |
+| 8 URL shortener | [01](#d01) |
+| 9 Web crawler | [09 news aggregator](#d09) (crawl hissa; poora crawler design nahi padha) |
+| 10 Notification | [04](#d04) |
+| 11 News feed | [03 twitter feed](#d03) |
+| 12 Chat | [15](#d15) |
+| 13 Search autocomplete | [archetype E (trie)](#archetype) (alag design file nahi) |
+| 14 YouTube | [08 upload](#d08) + CDN (video transcoding padha nahi) |
+| 15 Google Drive | [08 upload](#d08) + [12 google docs](#d12) (sync hissa padha nahi) |
+
+---
+
+
 ```
 =====================================================================================
   KHOLTE HI — IS FILE ME KYA HAI (upar se neeche, 5 hisse)
@@ -16,8 +125,8 @@
   IS FILE ME NAHI HAI (wahan dekho)
     concept ki detail ("ye cheez hai kya?")     -> FOUNDATIONS/01..18
     poora design, dikkat by dikkat              -> SYSTEM_DESIGNS/01..15
-    chala ke dekha (asli output)                -> design file ka HANDS-ON section
-                                                   (rate limiter · notification · Kafka)
+    chala ke dekha (asli output)                -> HANDS_ON/01..04 (code) + design file ka
+                                                   HANDS-ON section (rate limiter · notification · Kafka)
     bolke kiye round                            -> HLD_PRACTICE_LOG.md
     "X vs Y farak batao"                        -> ../06_COMPARES
 =====================================================================================
@@ -37,7 +146,13 @@
 ---
 ---
 
+[upar INDEX](#index)
+
+<a id="part1"></a>
+
 # PART 1 — NAKSHA + NIYAM
+
+<a id="naksha"></a>
 
 ## 0. KAUNSI FILE KAB — poore 04_HLD ka naksha (26-Sep saaf kiya: har kaam ki EK file)
 
@@ -53,6 +168,8 @@
         08 CAP · 09 db kaunsa · 10 microservice baat-cheet · 11 SPOF · 12 search · 13 id
         14 HUB (bachane wala hi girane wala) · 15 CDN · 16 DNS · 17 WAF · 18 monitoring
      SYSTEM_DESIGNS/01..15 <- 15 poore design (05 = concept walkthrough)
+     HANDS_ON/01..04       <- chala ke dekha: rate limiter Redis · INCR+EXPIRE crash · provider 429 ·
+                              event kahan khota (Java demo, asli output)
 
    DRILL / ABHYAS
      HLD_PRACTICE_LOG.md                  <- bolke kiye design ka log (naya yahin)
@@ -75,6 +192,8 @@
 
 ---
 
+<a id="teen-baatein"></a>
+
 ## ★★ TEEN BAATEIN JO SAB PE BHAARI (Arpan ka apna nichod, 15-Sep — asli mock videos se)
 
 ```
@@ -93,7 +212,13 @@
 ---
 ---
 
+[upar INDEX](#index)
+
+<a id="part2"></a>
+
 # PART 2 — CROSS-QUESTION (roz grill yahin se)
+
+<a id="chhe-sawaal"></a>
 
 ## ★★ HAR DESIGN PE 6 SAWAAL — sirf YAAD DILAANE ki list, rail nahi (28-Sep sudhaar)
 
@@ -124,6 +249,8 @@
 
 ---
 
+<a id="bank"></a>
+
 ## ★★★ CROSS-QUESTION BANK — jo har design me ghoom ke aate hain (roz 5, ulte kram me)
 
 > KYUN: design notes KAHANI ke kram me likhe hain (dikkat 1 -> 2 -> 3). Interviewer kram se nahi
@@ -133,6 +260,8 @@
 > ROZ: 5 sawaal, NEECHE se upar (ulte kram) — taaki kram yaad na ho, sawaal yaad ho. Pehle khud bolo,
 > phir jawab dekho. Design ka naam badal ke poochho ("payment me ye gira to?", "chat me?").
 
+<a id="dabbe"></a>
+
 ### ★★★ 8 DABBE x 4 LINE (29-Sep, Sonnet ka saancha — cross-question yahin se aate)
 
 > Rail pakka hai (sawaal -> requirement -> number -> chhote se shuru). Fisalna CROSS-QUESTION pe hai,
@@ -140,6 +269,11 @@
 > 1 kya solve · 2 kya NAYI dikkat laata (<- cross-question) · 3 uska fix · 4 iski jagah kya, wo kyun nahi.
 > Atke to: pehle PADHO / chala ke DEKHO (jaise Redis ko maar ke dekha, HANDS_ON/), phir wahi sawaal
 > 1/3/7 din baad dobara. Dry-run sirf jaani cheez ka hota hai, anjaan pe nahi.
+
+
+<a id="dabba-replica"></a>
+
+#### DABBA: REPLICA
 
 ```
 REPLICA
@@ -149,12 +283,26 @@ REPLICA
  3 apna likha PRIMARY se padho (read-your-own-writes) · paise/seat pe SYNC / semi-sync standby, alag AZ
  4 cache? (taaza data chahiye tha) · shard? (masla likhna nahi, padhna tha)
 
+```
+
+<a id="dabba-cache"></a>
+
+#### DABBA: CACHE (Redis)
+
+```
 CACHE (Redis)
  1 baar-baar ka read tez, DB ka bojh kam
  2 STALE (purana dikhe) · cache gira -> saara load DB pe · hot key expire -> STAMPEDE (1000 miss ek saath)
  3 write pe DELETE + TTL (race kam, khatam nahi) · replica/cluster · mutex / soft-TTL · load shedding
  4 read replica? (har read ab bhi DB tak jaata) · paisa / balance kabhi cache se nahi
 
+```
+
+<a id="dabba-shard"></a>
+
+#### DABBA: SHARD
+
+```
 SHARD
  1 data ya WRITES ek machine se bade -> baant do
  2 HOT SHARD (celebrity / ek key pe bheed) · CROSS-SHARD query / transaction mushkil · RESHARD dard
@@ -163,6 +311,13 @@ SHARD
  4 pehle: vertical scaling · read replica (sirf read zyada ho) · purana data archive (size) —
    sharding AAKHRI hathiyar
 
+```
+
+<a id="dabba-queue"></a>
+
+#### DABBA: QUEUE / KAFKA
+
+```
 QUEUE / KAFKA
  1 bhejne wala aur karne wala alag (async) · jhatka sokh le (spike) · ek event -> kai consumer
  2 AT-LEAST-ONCE: duplicate aayega · ORDER sirf ek partition ke andar · poison message line rok de ·
@@ -171,6 +326,13 @@ QUEUE / KAFKA
    lag pe alert, consumer badhao (max = partition ki ginti) · Kafka me priority nahi -> alag topic
  4 seedha REST call? (turant jawab chahiye tab) · RabbitMQ? (routing / per-message ack; replay nahi)
 
+```
+
+<a id="dabba-lb"></a>
+
+#### DABBA: LOAD BALANCER
+
+```
 LOAD BALANCER
  1 traffic kai server me baanto · mara server bahar (health check)
  2 LB khud SPOF · STICKY session = ek server pe bojh, wo mare to session gaya · rokta nahi, sirf baant-ta
@@ -178,6 +340,13 @@ LOAD BALANCER
    bheed rokni ho to queue / rate limit
  4 DNS round-robin? (health check dheema, cache ki wajah se) · L4 vs L7: L7 URL / header dekh sakta
 
+```
+
+<a id="dabba-idem"></a>
+
+#### DABBA: IDEMPOTENCY KEY
+
+```
 IDEMPOTENCY KEY
  1 retry / double-click pe kaam do baar na ho (paisa, email)
  2 key laga di aur kaam FAIL -> retry pe skip -> kaam kabhi nahi hua ·
@@ -186,6 +355,13 @@ IDEMPOTENCY KEY
    DB me UNIQUE constraint · duplicate pe WAHI purana jawab lautao
  4 lock? (bhaari, deadlock) · "exactly-once" ka waada? (distributed me milta nahi — at-least-once + dedup)
 
+```
+
+<a id="dabba-cb"></a>
+
+#### DABBA: CIRCUIT BREAKER
+
+```
 CIRCUIT BREAKER
  1 mara / dheema provider ko call hi band -> worker timeout me na phase
  2 galat threshold -> theek provider bhi band ho jaaye · OPEN ke waqt kaam kahan jaaye?
@@ -194,6 +370,13 @@ CIRCUIT BREAKER
    (naam yaad: OPEN = taar toota = current nahi = call nahi)
  4 sirf timeout? (har call phir bhi intezaar karti) · sirf retry? (marte provider pe aur hathoda)
 
+```
+
+<a id="dabba-txn"></a>
+
+#### DABBA: DB TRANSACTION
+
+```
 DB TRANSACTION
  1 kai kaam ek saath — ya sab, ya kuch nahi (atomic) · seat / balance sahi
  2 do alag service / DB pe transaction nahi chalti · lambi transaction = lock = dheema / deadlock ·
@@ -202,6 +385,10 @@ DB TRANSACTION
    SAGA (fail pe ulta kaam: refund) · event ke liye OUTBOX · race pe UPDATE ... WHERE seats >= 1
  4 2PC (two-phase commit)? (dheema, coordinator SPOF — isliye saga)
 ```
+
+<a id="jawab-se-pehle"></a>
+
+#### JAWAB SE PEHLE 5 SECOND
 
 ```
 ★★ JAWAB SE PEHLE 5 SECOND (29-Sep, grill 2.5/5 ke baad nikla)
@@ -215,7 +402,14 @@ DB TRANSACTION
    3. HO SAKE TO:     "At work I ..."  (HikariCP alert · WAF IP block · $0 duplicate write · Fargate IP)
 ```
 
+<a id="grp-a"></a>
+
 ### A. GIRA / SLOW
+
+
+<a id="q1"></a>
+
+#### Q1 — What happens if this server / node / DB goes down?
 
 ```
 Q1  "What happens if this server / node / DB goes down?"
@@ -226,6 +420,13 @@ Q1  "What happens if this server / node / DB goes down?"
           servers, so a dead node is removed from the pool and we fail over to a replica."
     kahan aaya: 01 · 02 · 11 · 13 · 14 · 15   (depth: FOUNDATIONS/11 SPOF)
 
+```
+
+<a id="q2"></a>
+
+#### Q2 — What if the downstream service / provider is slow?
+
+```
 Q2  "What if the downstream service / provider is slow?"
     bina timeout -> har worker 30 sec atka -> poora system thapp (slow = down se BURA).
     ilaaj: chhota TIMEOUT · CIRCUIT BREAKER: N fail -> OPEN = call BAND (fail-fast, timeout me
@@ -235,6 +436,13 @@ Q2  "What if the downstream service / provider is slow?"
           calling the provider at all, fail fast, and route to a backup provider."
     kahan aaya: 04 (dikkat 6) · 07 (PSP) · 09 (har source alag timeout/skip)
 
+```
+
+<a id="q3"></a>
+
+#### Q3 — What if the cache goes down?
+
+```
 Q3  "What if the cache goes down?"
     saara read DB pe -> DB bhi gira (cache ne jo load chhupaya tha wo ek saath aaya).
     ilaaj: cache ka replica/cluster · fallback DB pe PAR load shedding / rate limit ke saath ·
@@ -244,6 +452,13 @@ Q3  "What if the cache goes down?"
           mutex on rebuild so a cold cache doesn't stampede the database."
     kahan aaya: 11 (dikkat 5) · 02 (Redis down) · 01 · 03
 
+```
+
+<a id="q4"></a>
+
+#### Q4 — What if a whole region / data center goes down?
+
+```
 Q4  "What if a whole region / data center goes down?"
     multi-AZ = sasta, lagbhag hamesha. multi-region = MEHNGA (data sync, latency, double infra).
     ilaaj: DNS (Route 53) health check -> mara region hatao, paas wala region do · data async
@@ -253,7 +468,14 @@ Q4  "What if a whole region / data center goes down?"
     kahan aaya: 01 · 03 · 02 (region-sticky)   (depth: FOUNDATIONS/11, 16)
 ```
 
+<a id="grp-b"></a>
+
 ### B. DOBARA / SAATH
+
+
+<a id="q5"></a>
+
+#### Q5 — What if the same request comes twice / the client retries?
 
 ```
 Q5  "What if the same request comes twice / the client retries?"
@@ -264,6 +486,13 @@ Q5  "What if the same request comes twice / the client retries?"
           the same key gets the stored result instead of being processed again."
     kahan aaya: 07 · 04 · 10 (double click) · 13 (eventId) · 15 (clientMsgId)
 
+```
+
+<a id="q6"></a>
+
+#### Q6 — You set the idempotency key, but then the send failed. Now what?
+
+```
 Q6  "You set the idempotency key, but then the send failed. Now what?"
     SET NX lag gaya -> provider FAIL -> retry pe key mili -> SKIP -> message KHO gaya.
     ilaaj: do haalat: SET key "sending" NX EX 60 -> success pe SET key "sent" EX 86400.
@@ -273,6 +502,13 @@ Q6  "You set the idempotency key, but then the send failed. Now what?"
           accepts it, so if the send fails or the worker dies, the key expires and the retry goes through."
     kahan aaya: 04 (dikkat 4b) · 07 (IN_PROGRESS -> DONE wahi soch)
 
+```
+
+<a id="q7"></a>
+
+#### Q7 — Two users do this at the same time — what happens?
+
+```
 Q7  "Two users do this at the same time — what happens?"
     read -> check -> write = do log dono "available" padhte, dono likh dete.
     ilaaj: check WRITE ke ANDAR: UPDATE seats SET status='booked' WHERE seat_id=? AND
@@ -284,7 +520,14 @@ Q7  "Two users do this at the same time — what happens?"
     ★ farak: 2 user ek resource = atomic/lock · 1 user ka retry = idempotency (Q5).
 ```
 
+<a id="grp-c"></a>
+
 ### C. BHEED / BADA
+
+
+<a id="q8"></a>
+
+#### Q8 — What if traffic suddenly spikes 10x?
 
 ```
 Q8  "What if traffic suddenly spikes 10x?"
@@ -292,10 +535,19 @@ Q8  "What if traffic suddenly spikes 10x?"
     AUTOSCALE stateless servers (dhyan: consumer autoscale ne DB maara -> DB ki had pe cap) ·
     RATE LIMIT per user (429 + Retry-After) · ADMISSION CONTROL / LOAD SHEDDING: darwaze pe ginti
     (seat 3000 -> 3000 andar, baaki "full"/waiting room), system ki sehat dekh ke mana.
+    PATA HAI KAB aayega (IPL final, 12 baje sale) -> PEHLE se scale out + cache garam (pre-warm);
+    autoscale ko minute lagte, spike seconds me aata -> uske bharose mat raho.
     BOL: "A queue absorbs the burst, we autoscale the stateless tier, and admission control at the
           edge rejects what we can't serve instead of letting everything slow down."
     kahan aaya: 10 · 02 (load shedding) · 04 (burst) · 03   (FOUNDATIONS/14: ilaaj hi bimari)
 
+```
+
+<a id="q9"></a>
+
+#### Q9 — How would you scale this to 10x users?
+
+```
 Q9  "How would you scale this to 10x users?"
     pehle bolo KYA pehle tootega (DB write? hot key? ek queue?) -> phir wahi ka ilaaj:
     read zyada -> cache + read replica · write/storage nahi sama -> shard · slow kaam -> async queue.
@@ -304,6 +556,13 @@ Q9  "How would you scale this to 10x users?"
     GRILL 3-Oct: shard = data/writes ek DB me na samaayein tab. BURST ka ilaaj NAHI (wo Q8: queue + rate limit).
     kahan aaya: sab (section 3 STEP 7)
 
+```
+
+<a id="q10"></a>
+
+#### Q10 — The database is too big / takes too many writes. What do you do?
+
+```
 Q10 "The database is too big / takes too many writes. What do you do?"
     replica sirf READ baant-ta; write/storage ke liye SHARD.
     SHARD KEY = high cardinality + barabar baat + query pattern se mel (user_id / account_id /
@@ -314,6 +573,13 @@ Q10 "The database is too big / takes too many writes. What do you do?"
     kahan aaya: 01 · 03 · 12 (docId) · 13 · 14 (account_id) · 15 (chat_id)   (FOUNDATIONS/06)
     GRILL 1-Oct: 14_banking_system -> "GRILL" section (writes: cache/index = read ilaaj; sasta->mehnga, shard aakhir)
 
+```
+
+<a id="q11"></a>
+
+#### Q11 — What about a hot key / celebrity / hot partition?
+
+```
 Q11 "What about a hot key / celebrity / hot partition?"
     shard barabar baata, par EK key pe hi saara traffic -> wo ek node mara.
     ★ consistent hashing ye NAHI bachata (wo key phir bhi ek hi node pe).
@@ -326,7 +592,14 @@ Q11 "What about a hot key / celebrity / hot partition?"
     GRILL 2-Oct: 11_distributed_cache -> "GRILL" (flash sale: mutex = stampede · L1 + copies + CDN = garam node)
 ```
 
+<a id="grp-d"></a>
+
 ### D. PURANA / KRAM
+
+
+<a id="q12"></a>
+
+#### Q12 — The user updated something but still sees the old value. Why?
 
 ```
 Q12 "The user updated something but still sees the old value. Why?"
@@ -339,6 +612,13 @@ Q12 "The user updated something but still sees the old value. Why?"
     kahan aaya: 11 · 01 · 03 · 14 (balance primary se) · 07   (FOUNDATIONS/04, 05)
     GRILL 30-Sep: 14_banking_system -> "GRILL" section (tera jawab + replica lag timeline)
 
+```
+
+<a id="q13"></a>
+
+#### Q13 — How do you keep messages / events in order?
+
+```
 Q13 "How do you keep messages / events in order?"
     Kafka order sirf EK PARTITION ke andar; global order = ek partition = throughput khatam.
     ilaaj: key = userId/chatId/accountId -> hash(key) % partitions -> us key ke sab event ek
@@ -348,6 +628,13 @@ Q13 "How do you keep messages / events in order?"
     kahan aaya: 13 · 15 · 06 (har symbol ek sequencer) · 12 (doc ke ops ek jagah serialize)
     GRILL 30-Sep: 15_chat_messaging -> "GRILL" section (tera jawab + key = chatId)
 
+```
+
+<a id="q14"></a>
+
+#### Q14 — Consistency or availability — which do you pick?
+
+```
 Q14 "Consistency or availability — which do you pick?"
     network partition me dono nahi milte. PAISA / SEAT / INVENTORY = CP (reject kar do, galat mat do).
     feed / like-count / search / cache = AP (purana chalega). ek hi system me dono ho sakte.
@@ -357,7 +644,14 @@ Q14 "Consistency or availability — which do you pick?"
     GRILL 30-Sep: 10_bookmyshow -> "GRILL" section (tera jawab + booking CP / search AP)
 ```
 
+<a id="grp-e"></a>
+
 ### E. KHO GAYA / BEECH ME
+
+
+<a id="q15"></a>
+
+#### Q15 — How do you make sure no message is lost?
 
 ```
 Q15 "How do you make sure no message is lost?"
@@ -373,6 +667,13 @@ Q15 "How do you make sure no message is lost?"
     GRILL 3-Oct:  "consumer crash, event khoye nahi" pe status + reconciliation bola = Q16 ka jawab (sahi, par peeche ka jaal).
                   Q15 ka pehla jawab = offset commit kaam ke BAAD -> dobara aayega -> idempotent. Reconciliation upar se.
 
+```
+
+<a id="q16"></a>
+
+#### Q16 — What if the server crashes in the middle of the operation?
+
+```
 Q16 "What if the server crashes in the middle of the operation?"
     DB me likha, event nahi gaya / PSP ko bheja, jawab nahi aaya -> aadha kaam.
     ilaaj: pehle durable STATE likho (PENDING / UPLOADING) -> phir bahar ka call -> webhook (push) +
@@ -382,6 +683,13 @@ Q16 "What if the server crashes in the middle of the operation?"
           finds it and asks the provider what actually happened. Nothing is ever just lost."
     kahan aaya: 07 · 14 · 06 (event log replay) · 08 (status tracking)
 
+```
+
+<a id="q17"></a>
+
+#### Q17 — The provider returns 429 — you're sending too fast. What now?
+
+```
 Q17 "The provider returns 429 — you're sending too fast. What now?"
     bina throttle -> burst -> 429 -> sab fail -> turant retry = aur hathoda.
     ilaaj: apni taraf THROTTLE (token bucket, provider ki raftaar se) · exponential BACKOFF + JITTER
@@ -391,6 +699,13 @@ Q17 "The provider returns 429 — you're sending too fast. What now?"
     kahan aaya: 04 (dikkat 8) · 02 (hum khud 429 + Retry-After dete)
     GRILL 30-Sep: 04_notification_system -> "HANDS-ON — PROVIDER NE 429 DIYA" (chala ke dekha, asli output)
 
+```
+
+<a id="q18"></a>
+
+#### Q18 — How do you prioritize urgent work, like OTPs?
+
+```
 Q18 "How do you prioritize urgent work, like OTPs?"
     ek queue = OTP marketing ke 50,000 ke peeche. ★ Kafka me message priority NAHI hoti.
     ilaaj: har lane ka ALAG topic + apna worker pool (high/medium/low) -> OTP ka pool kabhi khaali.
@@ -400,7 +715,14 @@ Q18 "How do you prioritize urgent work, like OTPs?"
     kahan aaya: 04 (dikkat 7)
 ```
 
+<a id="grp-f"></a>
+
 ### F. BAAKI
+
+
+<a id="q19"></a>
+
+#### Q19 — How do you know the system is working?
 
 ```
 Q19 "How do you know the system is working?"
@@ -411,6 +733,13 @@ Q19 "How do you know the system is working?"
           delivery webhooks and reconciliation to confirm the outcome, not just the send."
     kahan aaya: 04 (dikkat 9) · 07 · 14 · sab   (FOUNDATIONS/18)
 
+```
+
+<a id="q20"></a>
+
+#### Q20 — How do you secure it / stop abuse?
+
+```
 Q20 "How do you secure it / stop abuse?"
     authN (JWT/OAuth) + authZ (ye cheez ISI user ki? ownerId check) · per-user/IP RATE LIMIT ·
     WAF edge pe (SQLi/XSS/bad IP/bot) · TLS · presigned URL chhoti expiry · file ka MAGIC BYTES
@@ -419,6 +748,13 @@ Q20 "How do you secure it / stop abuse?"
           user, and a WAF at the edge for common attacks."
     kahan aaya: 08 · 02 · 01 (abuse) · 07   (FOUNDATIONS/17 WAF)
 
+```
+
+<a id="q21"></a>
+
+#### Q21 — Data keeps growing — what happens in 3 years?
+
+```
 Q21 "Data keeps growing — what happens in 3 years?"
     ilaaj: RETENTION / TTL (jo nahi chahiye wo mita do) · time se PARTITION (mahina) -> purana
     partition DETACH -> COLD storage (S3/Glacier, sasta) · ledger/audit KABHI delete nahi, sirf khiskao.
@@ -427,6 +763,13 @@ Q21 "Data keeps growing — what happens in 3 years?"
           cold storage. Ledger data is never deleted, only archived."
     kahan aaya: 09 · 14 · 15 · 04 · 07
 
+```
+
+<a id="q22"></a>
+
+#### Q22 — What's the single point of failure here?
+
+```
 Q22 "What's the single point of failure here?"
     request ka raasta kheencho, har dabbe pe "ye gira to?" -- aur jo dabba nahi: DNS, TLS cert,
     ek AZ, NAT gateway, third-party, config store. 2 copy kaafi nahi: alag failure domain? TESTED?
@@ -440,7 +783,13 @@ Q22 "What's the single point of failure here?"
 
 ---
 
+[upar INDEX](#index)
+
+<a id="part3"></a>
+
 # PART 3 — DESIGN KHADA KARNA
+
+<a id="teen-line"></a>
 
 ## 1. TEEN LINE KA METHOD (poora khel isi me hai)
 
@@ -452,6 +801,8 @@ Q22 "What's the single point of failure here?"
 ```
 
 ---
+
+<a id="archetype"></a>
 
 ## 2. ★★ 6 ARCHETYPE — koi bhi design in me se hai (ye sabse zaroori table)
 
@@ -513,6 +864,8 @@ Q22 "What's the single point of failure here?"
 
 ---
 
+<a id="rail"></a>
+
 ## 3. UNIVERSAL RAIL — har design pe yahi bolna (design ka naam bas badalta hai)
 
 ```
@@ -571,6 +924,8 @@ STEP 7  BOTTLENECK / SCALE-10x (3 min)
 
 ---
 
+<a id="block-menu"></a>
+
 ## 4. BLOCK MENU (need -> block -> ek line kyun)
 
 > Ye compact version interview-din ke liye.
@@ -610,6 +965,8 @@ STEP 7  BOTTLENECK / SCALE-10x (3 min)
 NIYAM: pehle NEED dekho, phir block. Har block ka apna kaam — galat jagah mat lagao.
 
 TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready English lines).
+
+<a id="drill-rows"></a>
 
 ### ★ (drill se) — menu me jo rows nahi thi
 
@@ -654,6 +1011,8 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 ---
 
+<a id="trade-off"></a>
+
 ## ★ A ya B — TRADE-OFF JODE (02_TRADEOFFS yahan mila, 29-Sep)
 
 > Trade-off koi alag hoshiyari nahi: ek slot pe DO option pata ho + ek wajah. Sirf ek option pata =
@@ -673,6 +1032,11 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
             key-value + horizontal scale + HA."
 ```
 
+
+<a id="to1"></a>
+
+#### TO1 — SQL vs NoSQL
+
 ```
  1 SQL vs NoSQL       SQL = RISHTE + ACID + flexible query (join/report) · NoSQL = bahut data, flat,
                       access FIX (key se uthana: timeline/logs/chat). wajah: POOCHNA hai ya sirf UTHANA?
@@ -680,29 +1044,64 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
    BOL: "The access pattern is a simple key lookup at very high volume, so NoSQL. If we needed
          multi-table transactions, I'd flip to a relational DB."            (01 · 03 · 07/10 = SQL)
 
+```
+
+<a id="to2"></a>
+
+#### TO2 — SYNC vs ASYNC
+
+```
  2 SYNC vs ASYNC      sync = user ko jawab ABHI chahiye (login, payment authorize, seat check) ·
                       async = intezaar nahi (email, analytics, report). wajah: user screen pe rukega?
                       keemat: async -> eventually consistent, duplicate sambhalo, debug mushkil
    BOL: "The user doesn't need to wait for the email, so I'd push it to a queue and return
          immediately. The cost is that the system becomes eventually consistent."  (13 · 04 · 07 · 08)
 
+```
+
+<a id="to3"></a>
+
+#### TO3 — PUSH vs PULL
+
+```
  3 PUSH vs PULL       push = server bheje (WebSocket/SSE), real-time · pull = client apni raftaar se
                       maange (poll), slow client dabta nahi. keemat: push -> slow consumer overload +
                       connection sambhalo · pull -> agle poll tak thodi der
    BOL: "Kafka is pull-based -- consumers poll at their own pace, so a slow consumer never gets
          overwhelmed. The trade-off is a little extra latency."             (13 · 04 · 03)
 
+```
+
+<a id="to4"></a>
+
+#### TO4 — FANOUT WRITE/READ
+
+```
  4 FANOUT WRITE/READ  on-write = post pe sab inbox me daalo, read tez · on-read = maangne pe jodo.
                       keemat: on-write -> celeb pe write-storm · on-read -> har read mehnga. JAWAB = HYBRID
    BOL: "I'd fan out on write for regular users, but for celebrities that means millions of writes
          per post, so for them I'd merge at read time -- a hybrid."          (03 · 09)
 
+```
+
+<a id="to5"></a>
+
+#### TO5 — WRITE-BACK
+
+```
  5 WRITE-BACK         (aside/through section 4 me) write-back = pehle cache, DB baad me (async) ->
                       write sabse tez, crash pe DATA LOSS. keemat: aside -> pehla read slow (miss) ·
                       through -> har write slow · back -> sabse risky
    BOL: "Cache-aside as the default. If reads must never be stale, write-through. I'd avoid
          write-back here because a crash would lose data."                   (11 · 01 · 03)
 
+```
+
+<a id="to6"></a>
+
+#### TO6 — STRONG vs EVENTUAL = CAP CP vs AP
+
+```
  6 STRONG vs EVENTUAL = CAP CP vs AP   (Q14 bank me bhi)
                       strong/CP = paisa, seat, inventory, DB-leader -> partition me REJECT ·
                       eventual/AP = like-count, feed, cache, search-index, DNS, cart -> jawab do, baad me sudhaaro
@@ -712,47 +1111,105 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
    BOL: "During a network partition I'd rather reject the write than double-book a seat -- so
          this component is CP. The browse/search path can stay AP."          (10 · 07 · 06 · 03)
 
+```
+
+<a id="to7"></a>
+
+#### TO7 — L4 vs L7 LB
+
+```
  7 L4 vs L7 LB        L4 = sirf IP/port, bahut TEZ, andar nahi dekhta · L7 = URL/header/cookie ->
                       path routing, sticky session, TLS terminate; thoda slow par samajhdar
    BOL: "I'd use an L7 load balancer because I want to route /api and /static differently and
          terminate TLS there. L4 would be faster but can't see the request."  (har design)
 
+```
+
+<a id="to8"></a>
+
+#### TO8 — VERTICAL vs HORIZ. vertical = badi machine, simple, par CEILING + SPOF · horizontal = zyada machine,
+
+```
  8 VERTICAL vs HORIZ. vertical = badi machine, simple, par CEILING + SPOF · horizontal = zyada machine,
                       HA, par state/shard/coordination ka dard
    BOL: "Vertical scaling is simpler and I'd use it early, but it has a ceiling and it's a single
          point of failure -- past that I'd scale horizontally behind a load balancer."
 
+```
+
+<a id="to9"></a>
+
+#### TO9 — REPLICATION vs SHARDING
+
+```
  9 REPLICATION vs SHARDING   replica = ek data KAI copy -> READ scale + HA · shard = TUKDE -> WRITE
                       scale + storage. keemat: replica -> lag (stale read) · shard -> cross-shard join,
                       re-shard dard, hot shard
    BOL: "Reads are the bottleneck, so read replicas first. If the write volume itself outgrows one
          machine, then I'd shard by userId."                                 (01 · 03 · 07 · 13)
 
+```
+
+<a id="to10"></a>
+
+#### TO10 — NORMALIZE vs DENORM.
+
+```
 10 NORMALIZE vs DENORM.  normalize = ek jagah, update aasan, JOIN chahiye · denormalize = copy saath
                       rakho, read tez, update kai jagah. wajah: read-heavy ya update-heavy?
    BOL: "This is read-heavy and the join was the bottleneck, so I'd denormalize and store the
          author's name with the post. The cost is updating it in two places." (03 · 09 · 10)
 
+```
+
+<a id="to11"></a>
+
+#### TO11 — LONG-POLL vs WS vs SSE
+
+```
 11 LONG-POLL vs WS vs SSE   long-poll = server request rok ke rakhe, simple par mehnga · WebSocket =
                       dono taraf (chat, trading, collab) · SSE = sirf server->client, halka, HTTP pe.
                       keemat: WS -> har connection zinda rakho (memory + sticky LB)
    BOL: "Chat is bidirectional, so WebSocket. If it were only server-to-client updates, SSE
          would be lighter."                                                  (15 · 12 · 06 · 04)
 
+```
+
+<a id="to12"></a>
+
+#### TO12 — AT-LEAST vs EXACTLY-ONCE
+
+```
 12 AT-LEAST vs EXACTLY-ONCE  at-least = kaam pehle, commit baad, duplicate aa sakta (default) ·
                       exactly = mehnga, har jagah possible nahi. JAWAB = at-least-once + idempotent consumer
    BOL: "I'd take at-least-once delivery and make the consumer idempotent using an event id,
          rather than paying for true exactly-once."                          (13 · 07 · 04)
 
+```
+
+<a id="to13"></a>
+
+#### TO13 — BATCH vs STREAM
+
+```
 13 BATCH vs STREAM    batch = raat ko ek saath (report, billing, reconciliation), sasta, DER se ·
                       stream = event aate hi (fraud, live dashboard, alert), turant par mehnga+complex
    BOL: "Daily reconciliation can be a batch job. Fraud detection can't wait, so that one has
          to be a stream."                                                    (07 · 09)
 
+```
+
+<a id="to14"></a>
+
+#### TO14 — SINGLE / MULTI-LEADER / LEADERLESS
+
+```
 14 SINGLE / MULTI-LEADER / LEADERLESS   single = ek jagah write, conflict nahi, par leader bottleneck
                       + SPOF · multi = kai region me local write tez, par CONFLICT · leaderless = kisi
                       ko bhi likho, quorum se padho (Dynamo/Cassandra), HA par version conflict.
                       keemat: conflict resolution likhna (last-write-wins / CRDT)
+                      QUORUM: N copy · W copy pe likho · R copy se padho · W + R > N = padhte waqt
+                      kam se kam EK copy taaza milegi (N=3, W=2, R=2)
    BOL: "I'd keep a single leader for writes so there are no conflicts. If we needed low write
          latency in multiple regions, we'd go multi-leader and pay for conflict resolution."
                                                                              (07 · 11 · 12)
@@ -773,11 +1230,18 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 ---
 
+<a id="designs"></a>
+
 ## 5. 15 PADHE HUE DESIGN — DIL + KHAAS HISSA (jo PADHNA padta hai)
 
 > Common dabbe (LB · replica · cache · shard · queue · CDN · S3) har design me wahi — wo derive ho jaate.
 > Neeche sirf wo jo us design ka APNA hai, jise bina padhe bol nahi sakte (Arpan ka nichod, 25-Sep).
 > Detail = SYSTEM_DESIGNS/<naam>. Revise karte waqt bas ye section.
+
+
+<a id="d01"></a>
+
+#### 01 URL-SHORTENER  ·  [poori file](SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md)
 
 ```
 01 URL-SHORTENER   DIL: chhota unique code + tez redirect
@@ -785,73 +1249,172 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
    . RANGE ALLOCATION: coordinator har server ko block (1..1000) de, server local chalaye; crash = baaki range waste (manzoor)
    . 302 (301 nahi, browser cache kar leta -> click gine nahi jaate) · custom alias = UNIQUE constraint -> 409
 
+```
+
+<a id="d02"></a>
+
+#### 02 RATE-LIMITER  ·  [poori file](SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md)
+
+```
 02 RATE-LIMITER    DIL: over-limit reject, legit allow
    . 4 ALGO: TOKEN bucket (refill, burst OK) · LEAKY bucket (fixed rate nikle) ·
-             FIXED window (edge pe 2x ka bug) · SLIDING window (sahi, par memory zyada)
+             FIXED window (edge pe 2x ka bug) · SLIDING window LOG (har request ka time, sahi, par
+             memory zyada) · SLIDING window COUNTER (pichhli + abhi ki window ka jod, sasta andaaza)
    . Redis INCR atomic; kai step = Lua; EXPIRE sirf PEHLI baar (count==1), warna key kabhi reset nahi
    . 429 + Retry-After · fail-OPEN vs fail-CLOSED · per-user limit bheed se nahi bachata (load shedding alag)
 
+```
+
+<a id="d03"></a>
+
+#### 03 TWITTER-FEED  ·  [poori file](SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md)
+
+```
 03 TWITTER-FEED    DIL: read sasta ho
    . FANOUT ON WRITE: post pe follower ke inbox me sirf tweet_id (LPUSH), LTRIM 800 se capped
    . HYBRID: ~10K se kam follower = push, celeb = pull; read = inbox + celeb tweets -> merge -> sort -> top 50
    . fanout async (Kafka) -> "tweet bana" turant, "sab tak pahuncha" baad me
 
+```
+
+<a id="d04"></a>
+
+#### 04 NOTIFICATION  ·  [poori file](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
+
+```
 04 NOTIFICATION    DIL: ek event -> sahi channel / user / time
    . brain: preference (channel, quiet hours) + template -> per-CHANNEL queue + worker
    . idempotent worker (SET id NX EX) + backoff x 2^n + jitter -> retry queue -> DLQ + circuit breaker
    . PRIORITY lane (OTP alag, promo ke peeche nahi) · "accepted" != "delivered" (webhook)
 
+```
+
+<a id="d05"></a>
+
+#### 05 BROWSER-JOURNEY  ·  [poori file](SYSTEM_DESIGNS/05_url_browser_journey/05_url_browser_journey.md)
+
+```
 05 BROWSER-JOURNEY (design nahi, concept)   URL -> DNS -> TCP -> TLS -> HTTP -> render
 
+```
+
+<a id="d06"></a>
+
+#### 06 STOCK-BROKER  ·  [poori file](SYSTEM_DESIGNS/06_stock_broker_trading/06_stock_broker_trading.md)
+
+```
 06 STOCK-BROKER    DIL: order MATCH + paisa/share sahi
    . MATCHING ENGINE: har symbol ka EK thread, lock nahi; asks sasta-pehle, bids mehnga-pehle;
      best-bid >= best-ask -> match; price-time priority; scale SYMBOL se, ek symbol ke andar kabhi nahi
    . order pe paisa BLOCK, match pe debit · settlement ACID + double-entry
    . EVENT LOG / SEQUENCER: pehle log, phir book; crash = replay (WAL wali soch) · live price = pub/sub
 
+```
+
+<a id="d07"></a>
+
+#### 07 PAYMENT  ·  [poori file](SYSTEM_DESIGNS/07_payment_system/07_payment_system.md)
+
+```
 07 PAYMENT         DIL: paisa DO BAAR na kate
    . IDEMPOTENCY KEY: client har tap pe UUID, retry pe same; server STORED RESULT lautaye (reject nahi)
      claim = UNIQUE constraint / SETNX, IN_PROGRESS -> DONE, key ~24h
    . PENDING pehle likho, phir PSP call -> webhook (push) + reconciliation (pull) dono
    . LEDGER double-entry, immutable (galti = nayi correction entry) · SAGA (compensate) vs 2PC (lock, coordinator atke)
 
+```
+
+<a id="d08"></a>
+
+#### 08 FILE-UPLOAD  ·  [poori file](SYSTEM_DESIGNS/08_file_upload_validate_system/08_file_upload_INTERVIEW.md)
+
+```
 08 FILE-UPLOAD     DIL: upload -> validate -> track
    . PRESIGNED URL: bytes client <-> S3 seedha, server sirf link (GET bhi, 5-15 min)
    . MULTIPART: 5 MB tukde, sirf fail tukda dobara · tmp/ + lifecycle (DINO me) + abort-incomplete
    . trackingId + status UPLOADING -> VALIDATING -> DONE/FAILED · ownerId authz · MAGIC BYTES (naam pe bharosa nahi)
 
+```
+
+<a id="d09"></a>
+
+#### 09 NEWS-AGGREGATOR  ·  [poori file](SYSTEM_DESIGNS/09_news_aggregator/09_news_aggregator_INTERVIEW.md)
+
+```
 09 NEWS-AGGREGATOR DIL: kai source -> ek feed
    . WRITE path (crawl) aur READ path (feed) ALAG, ek doosre ko dheema na karein
    . worker me CLEAN + DEDUPE (ek khabar 5 source) + CATEGORY · har source alag timeout/retry/skip
    . category-wise cache merge (10 lakh fanout se bache) · RETENTION != sharding
 
+```
+
+<a id="d10"></a>
+
+#### 10 BOOKMYSHOW  ·  [poori file](SYSTEM_DESIGNS/10_bookmyshow/10_bookmyshow_INTERVIEW.md)
+
+```
 10 BOOKMYSHOW      DIL: do log EK seat na lein
    . ATOMIC: UPDATE seats SET status='booked' WHERE seat_id=? AND status='available' -> 1 row jeeta, 0 = gayi
    . HOLD: status='held' + held_until (5 min); pay -> booked, time gaya -> available
    . 2 user ek seat = atomic mark · 1 user double click = idempotency · spike = queue + per-show worker
 
+```
+
+<a id="d11"></a>
+
+#### 11 DISTRIBUTED-CACHE  ·  [poori file](SYSTEM_DESIGNS/11_distributed_cache/11_distributed_cache.md)
+
+```
 11 DISTRIBUTED-CACHE DIL: speed + node mare to chale
    . CONSISTENT HASHING: ring, key clockwise agle node pe; node add/remove pe sirf ~K/N keys hilti; VIRTUAL nodes
      (hash % N pe lagbhag sab keys shift)
    . LRU = HashMap + doubly linked list, dono O(1) · stampede: mutex / soft-TTL · hot key: replicate + L1 local
 
+```
+
+<a id="d12"></a>
+
+#### 12 GOOGLE-DOCS  ·  [poori file](SYSTEM_DESIGNS/12_google_docs_collab/12_google_docs_collab.md)
+
+```
 12 GOOGLE-DOCS     DIL: saath edit, kuch na khoye, sab same
    . TEXT nahi, OPERATION bhejo ({insert "X", pos 0})
    . OT: winner mat chuno, TRANSFORM karo (baad wale ki position shift), tie-break deterministic
      CRDT: har char ki unique id, merge apne aap, central server nahi chahiye
    . snapshot + baad ke ops · shard by docId (OT ek jagah serialize) · edits AP, permissions CP
 
+```
+
+<a id="d13"></a>
+
+#### 13 MESSAGE-QUEUE  ·  [poori file](SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md)
+
+```
 13 MESSAGE-QUEUE   DIL: kisi ko roko mat, kuch kho na jaaye
    . APPEND-ONLY LOG + OFFSET (kram-number): padh ke delete nahi, consumer apna offset rakhe -> replay
    . key -> partition = ek key ka ORDER · CONSUMER GROUP: group me baanto, alag group = sabko poora
      parallelism = partition count
    . ISR + acks (0/1/all) · at-least-once + idempotent consumer (eventId) · partition badhane pe order toot sakta
 
+```
+
+<a id="d14"></a>
+
+#### 14 BANKING  ·  [poori file](SYSTEM_DESIGNS/14_banking_system/14_banking_system.md)
+
+```
 14 BANKING         DIL: paisa na bane na mare
    . ek DB = @Transactional (saga NAHI); cross-bank = saga
    . DOUBLE-ENTRY LEDGER (jod hamesha 0) · BALANCE = derived, USI txn me update · raat ko reconciliation (ledger jeete)
    . overdraft: UPDATE ... WHERE balance >= x (0 rows = mana) · deadlock: account-id ke kram me lock · outbox
 
+```
+
+<a id="d15"></a>
+
+#### 15 CHAT  ·  [poori file](SYSTEM_DESIGNS/15_chat_messaging/15_chat_messaging.md)
+
+```
 15 CHAT            DIL: turant pahunche, offline pe na khoye
    . connection + register: kaun kis server pe (Redis me sirf PATA) · pub-sub server-to-server
    . PEHLE DB me likho, PHIR bhejo · catch-up "id X ke baad ka do"
@@ -865,7 +1428,13 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 ---
 
+[upar INDEX](#index)
+
+<a id="part4"></a>
+
 # PART 4 — ATKE TO / ROUND KA DIN
+
+<a id="anjaan"></a>
 
 ## 6. ★ ANJAAN DESIGN AA JAAYE TO — 5 MINUTE RECIPE
 
@@ -878,6 +1447,8 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
    6. Deep-dive = us archetype ka SIGNATURE Q
    7. Bottleneck = hot-key / DB-write / ek queue
 ```
+
+<a id="linkedin"></a>
 
 ### WORKED EXAMPLE — "Design LinkedIn" (bilkul aise bolna)
 
@@ -910,6 +1481,8 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 ---
 
+<a id="na-pata"></a>
+
 ## 7. JAB KUCH NA PATA HO — 4 LINE (ratni hain)
 
 ```
@@ -927,6 +1500,8 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 ```
 
 ---
+
+<a id="checklist"></a>
 
 ## 8. INTERVIEW-DIN CHECKLIST (10 line, bas itna)
 
@@ -948,7 +1523,13 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 ---
 
+[upar INDEX](#index)
+
+<a id="part5"></a>
+
 # PART 5 — BOLNA
+
+<a id="kaise-bolna"></a>
 
 ## ★ KAISE BOLNA (01_DELIVERY PART 1 yahan mila, 29-Sep)
 
@@ -1028,6 +1609,8 @@ MOCK me coach kya dekhta: rail pe chala? · har box kyun? · trade-off saanche m
 
 ---
 
+<a id="shabd"></a>
+
 ## ★ SHABD — word atke to (01_DELIVERY PART 2 yahan mila, 29-Sep — poora rakha)
 
 > **Kyun:** concept 100% aata (Hindi me round faad de). Sirf interview me English **word tongue pe**
@@ -1035,6 +1618,8 @@ MOCK me coach kya dekhta: rail pe chala? · har box kyun? · trade-off saanche m
 > **KAISE:** padho mat — **LOUD BOLO**. Har topic ki "one breath" line 2-3 baar zabaan se nikaalo.
 > **Yaad rakh:** soch tere paas HAI, ye sirf word-swap hai (bucket khatam -> "bucket is empty").
 > Native banna zaroori nahi — clear soch + sahi word kaafi. JP-Bangalore Hinglish-ok.
+
+<a id="shabd-0"></a>
 
 ### 0. UNIVERSAL HLD VERBS (har design me — connective tissue)
 
@@ -1048,6 +1633,8 @@ MOCK me coach kya dekhta: rail pe chala? · har box kyun? · trade-off saanche m
 | fail hone pe bhi chale | **fault-tolerant / failover** | "if a node fails, we *failover* to a replica" |
 | bottleneck / adchan | **bottleneck** | "the database becomes the *bottleneck* at scale" |
 | trade-off | **trade-off** | "there's a *trade-off* between consistency and latency" |
+
+<a id="shabd-1"></a>
 
 ### 1. RATE LIMITER (token bucket)
 
@@ -1064,6 +1651,8 @@ MOCK me coach kya dekhta: rail pe chala? · har box kyun? · trade-off saanche m
 
 **ONE BREATH:** *"A token bucket has a fixed capacity and refills at a steady rate. Each request consumes a token. If tokens are available it's allowed, otherwise it's throttled and rejected with a 429 — this handles short bursts while keeping a steady average rate."*
 
+<a id="shabd-2"></a>
+
 ### 2. CACHING
 
 | tera Hindi | English word | line |
@@ -1078,6 +1667,8 @@ MOCK me coach kya dekhta: rail pe chala? · har box kyun? · trade-off saanche m
 
 **ONE BREATH:** *"We add a cache in front of the database. On a cache hit we return fast; on a miss we read from the DB and populate the cache. Entries have a TTL and are evicted when full. On writes we invalidate the entry to avoid stale data."*
 
+<a id="shabd-3"></a>
+
 ### 3. LOAD BALANCING
 
 | tera Hindi | English word | line |
@@ -1089,6 +1680,8 @@ MOCK me coach kya dekhta: rail pe chala? · har box kyun? · trade-off saanche m
 | ek user ek server pe | **sticky session** | "*sticky sessions* pin a user to one server" |
 
 **ONE BREATH:** *"A load balancer sits in front and distributes incoming requests across servers, using strategies like round robin. It runs health checks and removes unhealthy servers from the pool, so traffic only goes to healthy nodes."*
+
+<a id="shabd-4"></a>
 
 ### 4. DATABASE — REPLICATION & SHARDING
 
@@ -1103,6 +1696,8 @@ MOCK me coach kya dekhta: rail pe chala? · har box kyun? · trade-off saanche m
 
 **ONE BREATH:** *"We use a primary for writes and read replicas for reads to scale reads, accepting some replication lag. For write scale we shard the data across databases using a shard key like user id, being careful to avoid hot partitions."*
 
+<a id="shabd-5"></a>
+
 ### 5. ASYNC / MESSAGE QUEUES
 
 | tera Hindi | English word | line |
@@ -1115,6 +1710,8 @@ MOCK me coach kya dekhta: rail pe chala? · har box kyun? · trade-off saanche m
 | ek hi baar effect ho | **idempotent** | "processing is *idempotent*, so retries are safe" |
 
 **ONE BREATH:** *"Instead of doing it inline, we push the work to a message queue. The producer publishes an event and a consumer processes it asynchronously. This decouples the services and lets the queue absorb traffic spikes. We make processing idempotent so retries are safe."*
+
+<a id="shabd-6"></a>
 
 ### 6. CONSISTENCY / CAP
 
@@ -1131,6 +1728,8 @@ MOCK me coach kya dekhta: rail pe chala? · har box kyun? · trade-off saanche m
 
 **ONE BREATH:** *"By CAP, during a network partition we choose between consistency and availability. Payments need strong consistency, but for something like a news feed, eventual consistency is acceptable to keep latency low and availability high."*
 
+<a id="shabd-7"></a>
+
 ### 7. RELIABILITY / FAILURE
 
 | tera Hindi | English word | line |
@@ -1142,6 +1741,8 @@ MOCK me coach kya dekhta: rail pe chala? · har box kyun? · trade-off saanche m
 | thoda-thoda kaam karta rahe | **graceful degradation** | "the system *degrades gracefully* instead of crashing" |
 
 **ONE BREATH:** *"We avoid single points of failure by replicating components and using failover to standbys. Clients retry with backoff, and a circuit breaker protects against a failing downstream service, so the system degrades gracefully instead of going fully down."*
+
+<a id="shabd-drill"></a>
 
 ### HOW TO DRILL (roz 5 min)
 1. Ek topic uthao -> **one-breath line LOUD bolo** 2-3 baar.
