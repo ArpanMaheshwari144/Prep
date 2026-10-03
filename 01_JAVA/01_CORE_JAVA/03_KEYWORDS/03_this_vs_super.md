@@ -99,9 +99,13 @@ public class Test {
 Animal(name) constructor       ← super("Doggy") triggered this
 this.name = Dog
 super.name = Doggy
-Dog breathing                  ← this.breathe() — Dog.name used
-Doggy breathing                ← super.breathe() — Animal.name used
+Doggy breathing                ← this.breathe()
+Doggy breathing                ← super.breathe()
 ```
+(chala ke dekha.) ★ DONO "Doggy" — "Dog" NAHI.
+breathe() Animal class me likha hai -> uske andar `this.name` = Animal ka field.
+FIELD polymorphic nahi hote (reference/class dekhte, object nahi) -> Dog ka `name` wahan dikhta hi nahi.
+METHOD override hota hai, FIELD sirf chhupta (hide) hai — isi ka live saboot.
 
 ---
 
@@ -242,7 +246,7 @@ class Dog extends Animal {
 | **Access fields** | `this.field` (own) | `super.field` (parent) |
 | **Access methods** | `this.method()` | `super.method()` (parent's version) |
 | **Constructor call** | `this(args)` — same class | `super(args)` — parent class |
-| **Position in constructor** | Any (after super, but only one of this()/super() first) | MUST be first line if called |
+| **Position in constructor** | `this(...)` bhi FIRST line hi | `super(...)` FIRST line |
 | **In static methods?** | NO (no instance) | NO (no instance) |
 | **Use case** | Disambiguation, chaining, return self | Override, hidden field, parent constructor |
 
