@@ -1,13 +1,3 @@
-// DESIGN PATTERN PRACTICE — DP2 Factory (Claude ne likha, padh ke chala)
-// Idea: caller sirf TYPE bolta ("savings"), factory decide karti kaunsi class banegi.
-//       caller ko SavingsAccount / CurrentAccount ka naam pata hi nahi -> sirf Account dikhta.
-//
-// 2 version:
-//   V1  Simple Factory      switch(type)        -> naya type = switch me ek case jodo
-//   V2  Map Registry        Map<type, banane wala> -> naya type = register(), factory ka code CHHUNA nahi (OCP)
-//
-// compile+run:  javac DP2_Factory.java && java DP2_Factory
-
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
