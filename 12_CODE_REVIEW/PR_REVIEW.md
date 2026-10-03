@@ -223,11 +223,22 @@ DRILL                 CHHOOTA                                       AGLI BAAR
                       Integer == Integer (qty)                       127 ke upar false -> equals
                       "PLACED"/"CANCELLED" magic · naam x, tmp       enum · kaam batane wala naam
                       faisla line (3rd baar)                         end me NAZAR 3 wali line
+3-Oct  BillReminder    loop me findById = N+1 · SELECT * bina WHERE      LOOP me repo call dikhe -> N+1 bolo
+                      report = report + .. loop me                   StringBuilder
+                      "DUE", 0.02 magic · naam doIt, x, tmp          enum / constant · kaam batane wala naam
+                      line 14 shaq hua, naam nahi diya              if(flag) return; flag=true = CHECK-THEN-ACT
+                                                                     -> AtomicBoolean.compareAndSet
+                      faisla line (4th baar)                         end me NAZAR 3 wali line
+3-Oct pakda (khud): ★ OWNER CHECK pay() pe (pehli baar bina chhoote) · SQLi · creds dono jagah · connection close ·
+String == · .get() · BigDecimal · PII log · println · khaali catch · fail pe "done" · static + volatile · count++ atomic ·
+field injection · new SmsClient() test nahi hoga · SRP.
+
 2-Oct pakda (khud): owner check getOrder · SQLi · secret · static HashMap thread · .get() · catch return null ·
 entity bina DTO · N+1 · println · field injection · SRP (controller me SQL).
 
 1-Oct pakda (khud): field injection · .get() · String == · card number log me · catch me 200 "blocked" ·
 double/BigDecimal shaq · cardId validation.
 
-★ Owner check ab tak har drill me chhoota hai -> code padhne se PEHLE ek sawaal: "kaunse method {id} lete hain?"
+★ Owner check: 30-Sep / 1-Oct chhoota, 2-Oct / 3-Oct pakda -> code padhne se PEHLE ek sawaal: "kaunse method {id} lete hain?"
+★ Faisla line ab tak har drill me chhooti -> review ka AAKHRI kaam, likh ke rakho.
 
