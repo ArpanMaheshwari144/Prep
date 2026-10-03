@@ -42,6 +42,7 @@ teamblind.com "jp morgan chase superday" · devbrainiac.com JPMorgan SDE-2
      openStream · createStatement         raha to aur bura               -> try-with-resources / pool / JdbcTemplate
  4   LOOP ke andar  query / HTTP / repo   N+1                             1 lakh row = 1 lakh query
      call (seedha ya kisi method se)                                      -> ek JOIN / IN / batch
+     SELECT * bina WHERE, phir Java me if  poori table memory me          -> WHERE DB me lagao
  5   catch                                nigla? sirf println? chauda     prod me pata hi nahi kya toota
                                           (Exception)? return false/null? -> log.error("..id={}", id, e) + specific
  6   static  (jo final nahi)              saari app me EK copy, sab       thread-safe nahi, kabhi saaf nahi,
@@ -56,6 +57,25 @@ teamblind.com "jp morgan chase superday" · devbrainiac.com JPMorgan SDE-2
 11   request se id / amount               owner check? validation?        koi bhi kisi ka data / -ve amount
      ★ HAR {id} wale method pe ALAG se    ek method me check hai to baaki  owner nahi -> 403 (chup "ok" nahi)
      poocho "ye kiska hai?"               me bhi hai, ye maan mat lena
+```
+
+### ★ EK LINE PE EK PAKDA, TO RUKO MAT (3-Oct data se)
+
+```
+3-Oct me jo chhoota, wo usi line pe tha jahan ek bug pehle se pakda tha:
+  line 28  .get() pakda        -> wahi line LOOP me thi = N+1 chhoota
+  line 26  == pakda            -> "DUE" magic chhoota
+  line 30  BigDecimal pakda    -> 0.02 magic + naam tmp chhoota
+Ek bug milte hi dimaag agli line pe chala jaata hai.
+
+ILAAJ: har line pe bug pakadne ke baad wahin 3 sawaal aur:
+  (1) ye LOOP ke andar hai?          -> DB / HTTP call = N+1 · String + = StringBuilder
+  (2) koi "..." ya number likha hai? -> magic -> enum / constant
+  (3) naam kaam batata hai?          -> x · tmp · doIt · data
+
+LOOP dikhe to upar bhi dekho: loop se pehle query SAB utha rahi hai? (SELECT * bina WHERE)
+SHAKAL yaad rakho:  if (flag) return;  flag = true;   = CHECK-THEN-ACT -> AtomicBoolean.compareAndSet
+                    (shaq hua to NAAM bolo, naam bola tabhi gina jaata hai)
 ```
 
 ### NAZAR 2 — STYLE (~3 min). Ek-ek naam lo:
