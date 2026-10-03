@@ -301,6 +301,7 @@ Q9  "How would you scale this to 10x users?"
     read zyada -> cache + read replica · write/storage nahi sama -> shard · slow kaam -> async queue.
     BOL: "First I'd find what breaks first -- usually DB writes or a hot key -- then cache and
           replicas for reads, sharding for writes, and push slow work to a queue."
+    GRILL 3-Oct: shard = data/writes ek DB me na samaayein tab. BURST ka ilaaj NAHI (wo Q8: queue + rate limit).
     kahan aaya: sab (section 3 STEP 7)
 
 Q10 "The database is too big / takes too many writes. What do you do?"
@@ -369,6 +370,8 @@ Q15 "How do you make sure no message is lost?"
     kahan aaya: 13 · 04 · 14 (outbox) · 15 (pehle DB, phir bhejo)
     GRILL 30-Sep: 13_message_queue_kafka -> "HANDS-ON — EVENT KAHAN KHOTA HAI" (chala ke dekha, asli output)
     GRILL 1-Oct:  13_message_queue_kafka -> "GRILL — outbox pe Arpan ka sawaal" (ek transaction · commit se pehle/baad crash · idempotency key)
+    GRILL 3-Oct:  "consumer crash, event khoye nahi" pe status + reconciliation bola = Q16 ka jawab (sahi, par peeche ka jaal).
+                  Q15 ka pehla jawab = offset commit kaam ke BAAD -> dobara aayega -> idempotent. Reconciliation upar se.
 
 Q16 "What if the server crashes in the middle of the operation?"
     DB me likha, event nahi gaya / PSP ko bheja, jawab nahi aaya -> aadha kaam.
