@@ -108,6 +108,9 @@ Reader charReader = new InputStreamReader(byteStream);   // ADAPTER → chars
 String[] arr = {"a", "b", "c"};
 List<String> list = Arrays.asList(arr);   // adapter
 ```
+★ Trap: ye asli ArrayList NAHI — array ke upar ek "view" (adapter) hai.
+`list.add("d")` -> **UnsupportedOperationException** (array ki size fixed) · `list.set(0, "z")` -> chalta, aur ARRAY bhi badal jaata.
+Badalne wali list chahiye -> `new ArrayList<>(Arrays.asList(arr))`.
 
 ### 3. **Spring's `HandlerAdapter`** — different controller types → unified Spring MVC interface
 
