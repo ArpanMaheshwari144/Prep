@@ -67,7 +67,8 @@ Config c1 = Config.getInstance();   // creates
 Config c2 = Config.getInstance();   // returns SAME instance
 Config c3 = Config.getInstance();   // returns SAME instance
 
-c1 == c2 == c3   // true — single instance
+c1 == c2 && c2 == c3   // true — single instance
+// (c1 == c2 == c3 likhoge to COMPILE ERROR: boolean == Config)
 ```
 
 ---
@@ -97,7 +98,7 @@ c1 == c2 == c3   // true — single instance
 
 ---
 
-## 4 Implementation Approaches
+## 5 Implementation Approaches
 
 ### 1 EAGER Initialization (simplest, thread-safe)
 
@@ -205,10 +206,32 @@ String name = Config.INSTANCE.getBankName();
 - **Thread-safe automatic** (JVM enum initialization guarantee)
 - **Serialization-safe** (no broken singletons via deserialization)
 - **Reflection-safe** (can't instantiate enum via reflection)
-- **Lazy initialization** built-in
 - **Concise** — minimal code
+- (Lazy? AADHA: INSTANCE tab banta jab enum class pehli baar use ho — "lazy jaisa", par asli
+  on-demand nahi. Bahut bhaari init ho aur pakka lazy chahiye -> neeche ka HOLDER idiom)
 
 **Joshua Bloch (Effective Java) Item 3:** *"Enum is the BEST way to implement Singleton."*
+
+---
+
+### 5 HOLDER idiom (Bill Pugh) — lazy + thread-safe, bina lock ke
+
+```java
+public class Config {
+    private Config() { }
+
+    private static class Holder {                       // andar ki static class
+        private static final Config INSTANCE = new Config();
+    }
+
+    public static Config getInstance() {
+        return Holder.INSTANCE;   // Holder tabhi load hota jab ye line pehli baar chale
+    }
+}
+```
+**Kyun kaam karta:** JVM class ko LAZY load karta aur class-init thread-safe hoti hai ->
+pehli `getInstance()` pe hi Holder load, INSTANCE bana. No `synchronized`, no `volatile`.
+**Kami:** reflection / serialization se toot sakta (enum nahi tootta).
 
 ---
 
@@ -252,7 +275,8 @@ double limit = BankConfig.INSTANCE.getMaxTransactionLimit();
 | **Eager** | Yes | No | Low | OK for light objects |
 | **Lazy (no sync)** | NO | Yes | Low | NEVER for production |
 | **Double-Checked Locking** | Yes (with volatile) | Yes | High | Industry classic |
-| **Enum** | Yes | Yes | LOWEST | BEST (Bloch's recommendation) |
+| **Holder (Bill Pugh)** | Yes (class-init) | YES (pakka) | Low | Lazy chahiye to best |
+| **Enum** | Yes | Aadha (class pehli baar use pe) | LOWEST | BEST (Bloch's recommendation) |
 
 ---
 
@@ -376,7 +400,8 @@ Singleton = "One President per country"
    1. Eager     → class load pe — simple, not lazy
    2. Lazy      → on-demand — NOT thread-safe
    3. DCL       → industry standard — verbose, needs volatile
-   4. Enum      → BEST (Bloch) — auto-everything
+   4. Holder    → lazy + thread-safe, bina lock (JVM class loading)
+   5. Enum      → BEST (Bloch) — reflection / serialization proof
 
 Key invariant:
    Config.getInstance() == Config.getInstance()  ← always true
