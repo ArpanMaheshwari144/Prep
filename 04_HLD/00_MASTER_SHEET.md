@@ -251,7 +251,6 @@
 #### DABBA: REPLICA
 
 ```
-REPLICA
  1 padhne ka load baant-ta · primary gire to standby
  2 LAG: copy thodi der baad pahunchti (async) -> apna likha turant purana dikhe ·
    failover pe aakhri writes kho sakti (double booking / paisa)
@@ -265,7 +264,6 @@ REPLICA
 #### DABBA: CACHE (Redis)
 
 ```
-CACHE (Redis)
  1 baar-baar ka read tez, DB ka bojh kam
  2 STALE (purana dikhe) · cache gira -> saara load DB pe · hot key expire -> STAMPEDE (1000 miss ek saath)
  3 write pe DELETE + TTL (race kam, khatam nahi) · replica/cluster · mutex / soft-TTL · load shedding
@@ -278,7 +276,6 @@ CACHE (Redis)
 #### DABBA: SHARD
 
 ```
-SHARD
  1 data ya WRITES ek machine se bade -> baant do
  2 HOT SHARD (celebrity / ek key pe bheed) · CROSS-SHARD query / transaction mushkil · RESHARD dard
  3 shard key soch ke (userId / chatId: jo query me hamesha ho) · hot key tod do (key+0..9) ·
@@ -293,7 +290,6 @@ SHARD
 #### DABBA: QUEUE / KAFKA
 
 ```
-QUEUE / KAFKA
  1 bhejne wala aur karne wala alag (async) · jhatka sokh le (spike) · ek event -> kai consumer
  2 AT-LEAST-ONCE: duplicate aayega · ORDER sirf ek partition ke andar · poison message line rok de ·
    consumer peeche (lag)
@@ -308,7 +304,6 @@ QUEUE / KAFKA
 #### DABBA: LOAD BALANCER
 
 ```
-LOAD BALANCER
  1 traffic kai server me baanto · mara server bahar (health check)
  2 LB khud SPOF · STICKY session = ek server pe bojh, wo mare to session gaya · rokta nahi, sirf baant-ta
  3 LB ki jodi (active-passive / managed) · server STATELESS rakho (session Redis / JWT) ·
@@ -322,7 +317,6 @@ LOAD BALANCER
 #### DABBA: IDEMPOTENCY KEY
 
 ```
-IDEMPOTENCY KEY
  1 retry / double-click pe kaam do baar na ho (paisa, email)
  2 key laga di aur kaam FAIL -> retry pe skip -> kaam kabhi nahi hua ·
    check aur set alag-alag = race (do request dono andar)
@@ -337,7 +331,6 @@ IDEMPOTENCY KEY
 #### DABBA: CIRCUIT BREAKER
 
 ```
-CIRCUIT BREAKER
  1 mara / dheema provider ko call hi band -> worker timeout me na phase
  2 galat threshold -> theek provider bhi band ho jaaye · OPEN ke waqt kaam kahan jaaye?
  3 N fail -> OPEN (call band) -> thodi der -> HALF-OPEN (ek test) -> theek to CLOSED ·
@@ -352,7 +345,6 @@ CIRCUIT BREAKER
 #### DABBA: DB TRANSACTION
 
 ```
-DB TRANSACTION
  1 kai kaam ek saath — ya sab, ya kuch nahi (atomic) · seat / balance sahi
  2 do alag service / DB pe transaction nahi chalti · lambi transaction = lock = dheema / deadlock ·
    transaction ke andar bahar ka call (PSP) = rollback se wapas nahi aata
@@ -387,7 +379,6 @@ DB TRANSACTION
 #### Q1 — What happens if this server / node / DB goes down?
 
 ```
-Q1  "What happens if this server / node / DB goes down?"
     app server: stateless + LB health check (2-3 fail = pool se bahar) -> baaki chalte rahe.
     DB primary: replica promote (failover); sync/semi-sync ack warna last writes kho sakti.
     cache/broker node: replica (Redis replica, Kafka ISR). ek copy = SPOF -> copies ALAG AZ me.
@@ -402,7 +393,6 @@ Q1  "What happens if this server / node / DB goes down?"
 #### Q2 — What if the downstream service / provider is slow?
 
 ```
-Q2  "What if the downstream service / provider is slow?"
     bina timeout -> har worker 30 sec atka -> poora system thapp (slow = down se BURA).
     ilaaj: chhota TIMEOUT · CIRCUIT BREAKER: N fail -> OPEN = call BAND (fail-fast, timeout me
     phaste hi nahi) -> thodi der baad HALF-OPEN = ek test call -> theek to CLOSED ·
@@ -418,7 +408,6 @@ Q2  "What if the downstream service / provider is slow?"
 #### Q3 — What if the cache goes down?
 
 ```
-Q3  "What if the cache goes down?"
     saara read DB pe -> DB bhi gira (cache ne jo load chhupaya tha wo ek saath aaya).
     ilaaj: cache ka replica/cluster · fallback DB pe PAR load shedding / rate limit ke saath ·
     STAMPEDE roko (hot key expire = 1000 miss): mutex (ek hi rebuild kare) / soft-TTL.
@@ -434,7 +423,6 @@ Q3  "What if the cache goes down?"
 #### Q4 — What if a whole region / data center goes down?
 
 ```
-Q4  "What if a whole region / data center goes down?"
     multi-AZ = sasta, lagbhag hamesha. multi-region = MEHNGA (data sync, latency, double infra).
     ilaaj: DNS (Route 53) health check -> mara region hatao, paas wala region do · data async
     doosre region me copy (thoda data jaa sakta) · money-path pe soch ke.
@@ -453,7 +441,6 @@ Q4  "What if a whole region / data center goes down?"
 #### Q5 — What if the same request comes twice / the client retries?
 
 ```
-Q5  "What if the same request comes twice / the client retries?"
     network timeout -> user dobara tap -> do baar paisa / do message.
     ilaaj: IDEMPOTENCY KEY (client UUID, retry pe same) -> server claim: UNIQUE constraint ya
     Redis SET key NX EX -> dobara aaye to STORED RESULT lautao (error nahi). queue consumer = eventId.
@@ -468,7 +455,6 @@ Q5  "What if the same request comes twice / the client retries?"
 #### Q6 — You set the idempotency key, but then the send failed. Now what?
 
 ```
-Q6  "You set the idempotency key, but then the send failed. Now what?"
     SET NX lag gaya -> provider FAIL -> retry pe key mili -> SKIP -> message KHO gaya.
     ilaaj: do haalat: SET key "sending" NX EX 60 -> success pe SET key "sent" EX 86400.
     fail ya worker mara -> 60 sec me "sending" khud mit jaata -> retry chal jaata.
@@ -484,7 +470,6 @@ Q6  "You set the idempotency key, but then the send failed. Now what?"
 #### Q7 — Two users do this at the same time — what happens?
 
 ```
-Q7  "Two users do this at the same time — what happens?"
     read -> check -> write = do log dono "available" padhte, dono likh dete.
     ilaaj: check WRITE ke ANDAR: UPDATE seats SET status='booked' WHERE seat_id=? AND
     status='available' (1 row = jeeta, 0 = gaya) · balance: WHERE balance >= x ·
@@ -505,7 +490,6 @@ Q7  "Two users do this at the same time — what happens?"
 #### Q8 — What if traffic suddenly spikes 10x?
 
 ```
-Q8  "What if traffic suddenly spikes 10x?"
     ilaaj: QUEUE spike ko HOLD karti (LB baantta hai, hold nahi; replica sirf READ) ·
     AUTOSCALE stateless servers (dhyan: consumer autoscale ne DB maara -> DB ki had pe cap) ·
     RATE LIMIT per user (429 + Retry-After) · ADMISSION CONTROL / LOAD SHEDDING: darwaze pe ginti
@@ -523,7 +507,6 @@ Q8  "What if traffic suddenly spikes 10x?"
 #### Q9 — How would you scale this to 10x users?
 
 ```
-Q9  "How would you scale this to 10x users?"
     pehle bolo KYA pehle tootega (DB write? hot key? ek queue?) -> phir wahi ka ilaaj:
     read zyada -> cache + read replica · write/storage nahi sama -> shard · slow kaam -> async queue.
     BOL: "First I'd find what breaks first -- usually DB writes or a hot key -- then cache and
@@ -538,7 +521,6 @@ Q9  "How would you scale this to 10x users?"
 #### Q10 — The database is too big / takes too many writes. What do you do?
 
 ```
-Q10 "The database is too big / takes too many writes. What do you do?"
     replica sirf READ baant-ta; write/storage ke liye SHARD.
     SHARD KEY = high cardinality + barabar baat + query pattern se mel (user_id / account_id /
     docId / chat_id). country/date = bura (skew -> ek shard pe sab). cross-shard join mushkil.
@@ -555,7 +537,6 @@ Q10 "The database is too big / takes too many writes. What do you do?"
 #### Q11 — What about a hot key / celebrity / hot partition?
 
 ```
-Q11 "What about a hot key / celebrity / hot partition?"
     shard barabar baata, par EK key pe hi saara traffic -> wo ek node mara.
     ★ consistent hashing ye NAHI bachata (wo key phir bhi ek hi node pe).
     ilaaj: hot key KAI node pe replicate + L1 local cache (read) · key me bucket (chat_id + 0..9),
@@ -577,7 +558,6 @@ Q11 "What about a hot key / celebrity / hot partition?"
 #### Q12 — The user updated something but still sees the old value. Why?
 
 ```
-Q12 "The user updated something but still sees the old value. Why?"
     (a) CACHE stale: DB update hua, cache me purana. ilaaj: write pe cache key DELETE (update nahi --
         do write ulte kram me = galat value), agla read DB se bharega + TTL safety-net.
     (b) REPLICA LAG: write primary pe, turant read replica se. ilaaj: READ-YOUR-OWN-WRITES --
@@ -594,7 +574,6 @@ Q12 "The user updated something but still sees the old value. Why?"
 #### Q13 — How do you keep messages / events in order?
 
 ```
-Q13 "How do you keep messages / events in order?"
     Kafka order sirf EK PARTITION ke andar; global order = ek partition = throughput khatam.
     ilaaj: key = userId/chatId/accountId -> hash(key) % partitions -> us key ke sab event ek
     partition me · order SERVER sequence id se, client time se nahi · partition badhaye to order toot sakta.
@@ -610,7 +589,6 @@ Q13 "How do you keep messages / events in order?"
 #### Q14 — Consistency or availability — which do you pick?
 
 ```
-Q14 "Consistency or availability — which do you pick?"
     network partition me dono nahi milte. PAISA / SEAT / INVENTORY = CP (reject kar do, galat mat do).
     feed / like-count / search / cache = AP (purana chalega). ek hi system me dono ho sakte.
     BOL: "For the booking itself I'd pick consistency -- I'd rather reject a write than double-book
@@ -629,7 +607,6 @@ Q14 "Consistency or availability — which do you pick?"
 #### Q15 — How do you make sure no message is lost?
 
 ```
-Q15 "How do you make sure no message is lost?"
     producer: acks=all + replication (ISR) · consumer: AT-LEAST-ONCE = kaam PEHLE, offset commit
     BAAD me (crash = dobara aayega, khoyega nahi) -> isliye consumer IDEMPOTENT ·
     fail -> backoff retry -> max ke baad DLQ (poison message baaki ko na roke) + alert.
@@ -649,7 +626,6 @@ Q15 "How do you make sure no message is lost?"
 #### Q16 — What if the server crashes in the middle of the operation?
 
 ```
-Q16 "What if the server crashes in the middle of the operation?"
     DB me likha, event nahi gaya / PSP ko bheja, jawab nahi aaya -> aadha kaam.
     ilaaj: pehle durable STATE likho (PENDING / UPLOADING) -> phir bahar ka call -> webhook (push) +
     RECONCILIATION job (pull: pending dhoondho, poocho, resolve) · DB+event = OUTBOX · ek DB = ek
@@ -665,7 +641,6 @@ Q16 "What if the server crashes in the middle of the operation?"
 #### Q17 — The provider returns 429 — you're sending too fast. What now?
 
 ```
-Q17 "The provider returns 429 — you're sending too fast. What now?"
     bina throttle -> burst -> 429 -> sab fail -> turant retry = aur hathoda.
     ilaaj: apni taraf THROTTLE (token bucket, provider ki raftaar se) · exponential BACKOFF + JITTER
     (sab worker ek saath wapas na aayein) · Retry-After maano · queue me rakho, drop nahi.
@@ -681,7 +656,6 @@ Q17 "The provider returns 429 — you're sending too fast. What now?"
 #### Q18 — How do you prioritize urgent work, like OTPs?
 
 ```
-Q18 "How do you prioritize urgent work, like OTPs?"
     ek queue = OTP marketing ke 50,000 ke peeche. ★ Kafka me message priority NAHI hoti.
     ilaaj: har lane ka ALAG topic + apna worker pool (high/medium/low) -> OTP ka pool kabhi khaali.
     (PriorityBlockingQueue sirf EK process ke andar, distributed me nahi)
@@ -700,7 +674,6 @@ Q18 "How do you prioritize urgent work, like OTPs?"
 #### Q19 — How do you know the system is working?
 
 ```
-Q19 "How do you know the system is working?"
     METRICS: p99 latency · error rate · queue lag · cache hit rate · DB connections -> ALERT on had.
     "bheja" != "pahuncha": provider WEBHOOK (delivered/failed/bounced) -> tracking DB.
     paisa: reconciliation (ledger vs bank). logs + trace id se ek request follow.
@@ -715,7 +688,6 @@ Q19 "How do you know the system is working?"
 #### Q20 — How do you secure it / stop abuse?
 
 ```
-Q20 "How do you secure it / stop abuse?"
     authN (JWT/OAuth) + authZ (ye cheez ISI user ki? ownerId check) · per-user/IP RATE LIMIT ·
     WAF edge pe (SQLi/XSS/bad IP/bot) · TLS · presigned URL chhoti expiry · file ka MAGIC BYTES
     check (naam pe bharosa nahi) · secrets vault me, code me nahi.
@@ -730,7 +702,6 @@ Q20 "How do you secure it / stop abuse?"
 #### Q21 — Data keeps growing — what happens in 3 years?
 
 ```
-Q21 "Data keeps growing — what happens in 3 years?"
     ilaaj: RETENTION / TTL (jo nahi chahiye wo mita do) · time se PARTITION (mahina) -> purana
     partition DETACH -> COLD storage (S3/Glacier, sasta) · ledger/audit KABHI delete nahi, sirf khiskao.
     ★ retention != sharding (retention size ghatata, shard load baant-ta).
@@ -745,7 +716,6 @@ Q21 "Data keeps growing — what happens in 3 years?"
 #### Q22 — What's the single point of failure here?
 
 ```
-Q22 "What's the single point of failure here?"
     request ka raasta kheencho, har dabbe pe "ye gira to?" -- aur jo dabba nahi: DNS, TLS cert,
     ek AZ, NAT gateway, third-party, config store. 2 copy kaafi nahi: alag failure domain? TESTED?
     ek hi galat config sab pe? bache hue bojh jhelenge (N+1)?
@@ -914,8 +884,8 @@ STEP 7  BOTTLENECK / SCALE-10x (3 min)
    slow kaam, decouple     -> QUEUE + WORKER                     user block na ho
    traffic baantna         -> LOAD BALANCER (L7)                 content-based routing + TLS
    kai service, ek darwaza -> API GATEWAY                        auth+routing+rate-limit ek jagah
-   bhaari file stream/DL   -> SERVER SIRF LINK DE (presigned)    bytes client<->S3 seedha,
-                                                                 warna server bandwidth marta
+   bade file / stream / DL -> S3 + PRESIGNED URL                 bytes client<->S3 seedha (server sirf link de,
+                                                                 warna bandwidth marta) · DB me sirf link
    machine mare            -> REPLICATION (leader/follower)      copy se kaam chale
    paisa / seat            -> SQL + LOCK/unique + CP             galat data NEVER
    consistency vs availab. -> CAP choice                         paisa/booking = CP, social feed = AP
@@ -930,7 +900,6 @@ STEP 7  BOTTLENECK / SCALE-10x (3 min)
    cache full              -> EVICTION (LRU/LFU/TTL)             jagah banao
    badi list               -> CURSOR PAGINATION                  "last id ke baad"
    text/prefix dhoondhna   -> ELASTICSEARCH / TRIE               inverted index / prefix tree
-   bade file               -> S3 + pre-signed URL                DB me sirf link
    multi-service txn       -> SAGA + compensating                distributed rollback
    dead service hammer     -> CIRCUIT BREAKER                    fail-fast, cascade roko
    unique id at scale      -> SNOWFLAKE / range-allocation       DB sequence bottleneck
