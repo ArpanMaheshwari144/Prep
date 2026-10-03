@@ -48,6 +48,10 @@ s2 ────────►       │   (shared)     │   s3 ───► �
 - `s3 = new String("Arpan")` → **DIFFERENT heap object** (`s1 == s3` → FALSE)
 - `s1.equals(s3)` → TRUE (value same)
 
+**★ Gotcha: `new String("Arpan")` kitne object banata?** → **1 ya 2**
+- "Arpan" literal pool me pehle se nahi tha → pool me 1 + heap me 1 = **2**
+- pool me pehle se tha → sirf heap me 1 = **1**
+
 ---
 
 ## Behaviour
@@ -173,11 +177,12 @@ s1.equals(s3)  // TRUE  — content same
 
 **Case 1 (literal + literal):** javac ne dekha `"Hel"` aur `"lo"` dono constants → **compile time pe hi `"Hello"` bana diya**. Bytecode mein s1 aur s2 dono ko `"Hello"` literal mila → same pool object.
 
-**Case 2 (variable + literal):** `x` ka value runtime tak unknown → fold nahi ho sakta. JVM runtime pe:
-1. Internally `StringBuilder` banata
-2. `x` ka value (`"Hel"`) append karta
-3. `"lo"` append karta
-4. `toString()` → **NAYA String object heap mein** (pool mein NAHI)
+**Case 2 (variable + literal):** `x` ka value runtime tak unknown → fold nahi ho sakta. Runtime pe jodta
+(Java 8 tak `StringBuilder` se; Java 9+ `invokedynamic` / `StringConcatFactory` se — natija same)
+→ **NAYA String object heap mein** (pool mein NAHI)
+
+**★ Case 3 — `final` variable:** `final String fx = "Hel";` → fx compile-time CONSTANT ban jaata
+→ `fx + "lo"` bhi fold hota → `s1 == (fx + "lo")` = **TRUE** (chala ke dekha: true, aur `x + "lo"` = false)
 
 ```
 STACK              HEAP — String Pool         HEAP (pool ke bahar)
