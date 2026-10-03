@@ -373,7 +373,7 @@ public void publish() {
 
 1. **Publisher doesn't know listeners** — only interface contract
 2. **Listeners can be added/removed** at runtime
-3. **Order not guaranteed** — listeners may execute in any order (parallel possible)
+3. **Order** — apni List wale publisher me subscribe() ka kram; Spring `@EventListener` me kram pakka NAHI (chahiye to `@Order`)
 4. **Async option** — publishers can run listeners on separate threads
 5. **Failure isolation** — one listener fail shouldn't break others (try-catch around onEvent)
 
@@ -389,6 +389,19 @@ public void publish(TransactionEvent event) {
     }
 }
 ```
+
+### ★ Listener ne publish ke beech unsubscribe kiya to?
+`ArrayList` pe for-each chal raha aur list badli -> **ConcurrentModificationException**.
+Fix: `CopyOnWriteArrayList` (listener list chhoti, padhi zyada, badli kam -> perfect fit).
+
+### ★ Spring trap — `@EventListener` SAME transaction me, commit se PEHLE chalta
+```
+@Transactional placeOrder() -> publishEvent(OrderPlaced) -> @EventListener email bhej diya
+                            -> baad me DB commit FAIL -> order bana hi nahi, par email chala gaya
+fix: @TransactionalEventListener(phase = AFTER_COMMIT)  -> commit hone ke BAAD hi chale
+(default @EventListener = synchronous, same thread. async chahiye -> @Async)
+```
+Ye wahi dikkat hai jo Kafka outbox me thi: "DB me likha + bahar bheja" dono ek saath pakke nahi.
 
 ---
 
@@ -416,7 +429,7 @@ public void publish(TransactionEvent event) {
 > *"**Push** = publisher full event data send karta listener ko (humara approach). Modern preferred — simple, fast.
 > **Pull** = publisher notify karta, listener publisher se data pull karta. Less coupling for large objects, but more network calls.
 >
-> 90% production code Push use karta — clear, fast, debugging easy."*
+> Zyadatar production code Push use karta — clear, fast, debugging easy."*
 
 **Q: "Failure isolation kaise handle?"**
 
