@@ -1,19 +1,3 @@
-// DESIGN PATTERN PRACTICE — DP1 Singleton (khud likho, phir chalao)
-// Task: Config class ko SINGLETON banao — poori app me sirf EK object.
-//   1. bahar se koi `new Config()` na kar sake
-//   2. Config.getInstance() hamesha WAHI object de
-//   3. LAZY ho (pehli getInstance() pe bane) + 100 thread ek saath maangein tab bhi EK hi bane
-//   constructor ke andar `created++;` zaroor rakhna — test isi se ginta hai kitne object bane
-//
-// Tests (neeche main me, mat chhedna):
-//   T1  100 thread ek saath PEHLI baar getInstance() -> sirf 1 object, created == 1 -> PASS
-//   T2  baad me c1 == c2 (wahi object)                                       -> PASS
-//   (lazy wala bina lock likhoge to T1 kabhi-kabhi FAIL hoga — kai baar chala ke dekhna)
-//
-// Hint (jitna chahiye): yaad "TAALA · DABBA · DARWAAZA". thread-safe + lazy ke 2 tareeke file me hain
-//   (upar wali file: ../02_singleton.md). Ek likh, chala, phir doosra bhi aazma.
-// compile+run:  javac DP1_Singleton.java && java DP1_Singleton
-
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -38,6 +22,32 @@ class Config {
 
 }
 
+// ─── Version 2: HOLDER idiom (Bill Pugh) — lazy + thread-safe, bina lock ───
+class ConfigHolder {
+    static int created = 0;
+
+    private ConfigHolder() {
+        created++;
+    }
+
+    private static class Holder {                 // ye class tabhi load hogi jab pehli baar Holder.INSTANCE chhua
+        private static final ConfigHolder INSTANCE = new ConfigHolder();   // JVM class-init = thread-safe
+    }
+
+    public static ConfigHolder getInstance() {
+        return Holder.INSTANCE;
+    }
+}
+
+// ─── Version 3: ENUM — sabse safe (reflection / serialization / clone proof) ───
+enum ConfigEnum {
+    INSTANCE;                                      // bas yahi. JVM ek hi banata
+
+    private final String appName = "PrepApp";      // config jaisa koi data
+    public String getAppName() { return appName; }
+}
+
+
 public class DP1_Singleton {
     public static void main(String[] args) throws Exception {
         // T1 PEHLE: 100 thread ek saath, bilkul pehli baar getInstance() (abhi koi object nahi bana)
@@ -58,5 +68,31 @@ public class DP1_Singleton {
         Config c1 = Config.getInstance();
         Config c2 = Config.getInstance();
         System.out.println("T2 same object: " + (c1 == c2 && distinct.contains(c1) ? "PASS" : "FAIL"));
+
+        // T3: HOLDER — 100 thread, ek hi object
+        ExecutorService pool2 = Executors.newFixedThreadPool(100);
+        CountDownLatch start2 = new CountDownLatch(1);
+        List<Future<ConfigHolder>> got2 = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            got2.add(pool2.submit(() -> { start2.await(); return ConfigHolder.getInstance(); }));
+        }
+        start2.countDown();
+        Set<ConfigHolder> d2 = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (Future<ConfigHolder> f : got2) d2.add(f.get());
+        pool2.shutdown();
+        System.out.println("T3 holder -> objects=" + d2.size() + ", created=" + ConfigHolder.created
+                + ": " + (d2.size() == 1 && ConfigHolder.created == 1 ? "PASS" : "FAIL"));
+
+        // T4: ENUM — wahi ek object, aur reflection se naya banana NAHI hota
+        System.out.println("T4 enum same: " + (ConfigEnum.INSTANCE == ConfigEnum.INSTANCE ? "PASS" : "FAIL")
+                + " · appName=" + ConfigEnum.INSTANCE.getAppName());
+        try {
+            java.lang.reflect.Constructor<?> k = ConfigEnum.class.getDeclaredConstructors()[0];
+            k.setAccessible(true);
+            k.newInstance("X", 1);
+            System.out.println("T5 enum reflection: FAIL (naya ban gaya)");
+        } catch (Exception e) {
+            System.out.println("T5 enum reflection blocked: PASS (" + e.getClass().getSimpleName() + ")");
+        }
     }
 }
