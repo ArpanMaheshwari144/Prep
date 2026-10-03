@@ -33,6 +33,7 @@ s = new Student("Rahul");              // "Arpan" wala ORPHAN → GC
 void method() {
     Student s = new Student("Arpan");
 }                                      // method khatam → s scope se bahar → GC
+// ★ par agar method ne object RETURN kiya ya kisi field/list me daal diya -> abhi bhi reachable, GC nahi
 ```
 
 ---
@@ -141,6 +142,11 @@ void method() {
    │  YOUNG (naye object)  │  OLD (bach gaye)  │
    └──────────────────────┴──────────────────┘
    - naya object -> YOUNG. Young ke kai GC bach jaaye -> OLD mein PROMOTE.
+
+   YOUNG ke andar 3 dabbe:
+      EDEN  ->  S0  <->  S1  ->  OLD
+      naya object EDEN me · minor GC pe zinda wale ek SURVIVOR (S0/S1) me copy
+      har minor GC pe S0 <-> S1 me ghoomte, umar badhti · umar ~15 (default) paar -> OLD
 
    MINOR GC -> sirf YOUNG saaf. CHHOTA+FAST+frequent (90% kachra yahin).
                ye bhi STOP-THE-WORLD hai, par pause bahut chhota (young chhota hai).
