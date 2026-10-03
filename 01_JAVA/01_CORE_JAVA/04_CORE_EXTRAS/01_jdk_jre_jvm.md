@@ -77,6 +77,15 @@ Write Once, Run Anywhere
    (Java platform-independent hai, JVM platform-DEPENDENT hai)
 ```
 
+## ★ TRAP — Java compiled hai ya interpreted? -> DONO
+
+```
+javac      .java -> .class (bytecode)          <- compile (ek baar)
+JVM        bytecode ko pehle INTERPRET karta     <- shuru me line-by-line
+JIT        jo code baar-baar chale (HOT), use NATIVE machine code me badal deta
+           -> isliye Java app thodi der chalne ke baad TEZ ho jaati ("warm-up")
+```
+
 ---
 
 ## TRAP
