@@ -35,7 +35,7 @@ RECOVER NAHI HOTA               /            \
 → **`try`** mein risky code, **`catch`** mein handle, **`finally`** mein resources close
 → — chaahe exception aaye ya na aaye, **`finally` = maa ki daant**
 → ghar se bhaag bhi jaaye toh bhi padegi
-→ **`System.exit()` ke alawa koi nahi rok sakta**
+→ **sirf `System.exit()`, JVM crash ya try ka kabhi khatam na hona (infinite loop) rok sakta**
 
 ---
 
@@ -61,6 +61,8 @@ try {
     System.out.println(e.getMessage());
 }
 ```
+★ Multi-catch me parent-child saath nahi: `catch (IOException | FileNotFoundException e)` -> COMPILE ERROR
+("Alternatives in a multi-catch statement cannot be related by subclassing" — chala ke dekha). Sirf parent likho.
 
 ---
 
@@ -133,6 +135,17 @@ List<Integer> mutate(List<Integer> input) {
 }
 ```
 Reference try mein return ho gaya, finally ne underlying object badal diya (mutable type).
+
+**Variation — PRIMITIVE return, finally ne variable badla (chala ke dekha):**
+```java
+int t() {
+    int x = 1;
+    try { return x; }      // return ki VALUE (1) usi waqt copy ho gayi
+    finally { x = 5; }     // x badla, par return wali copy nahi
+}
+// Returns: 1   (5 NAHI)
+```
+primitive = value ki copy -> finally ka badlaav nahi dikhta · object = reference -> andar ka badlaav dikhta (upar wala list).
 
 **Variation — throw in finally:**
 ```java
@@ -253,7 +266,7 @@ void process() throws IOException {      // throws = declare (caller handle kare
 
 ## POWER PHRASE
 
-> *"The `finally` block always executes regardless of whether an exception was thrown or a return statement was hit — the only exception is `System.exit()`. Never put a return statement in `finally` as it will silently override the return from `try`."*
+> *"The `finally` block always executes regardless of whether an exception was thrown or a return statement was hit — unless the JVM stops (`System.exit()`, a crash) or the try never finishes. Never put a return statement in `finally` as it will silently override the return from `try`."*
 
 > **Sequence:** try → catch → finally (hamesha).
 > **Multi-catch:** `IOException | SQLException`.
