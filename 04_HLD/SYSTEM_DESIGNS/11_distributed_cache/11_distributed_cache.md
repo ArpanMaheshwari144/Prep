@@ -123,6 +123,7 @@
 
 ```
    FAISLA: EVICTION = LRU (Least Recently Used)
+        (LRU = jo SABSE LAMBE SAMAY SE nahi chhua, wo hatao — "kab" · LFU = jo SABSE KAM BAAR chhua — "kitni baar")
 
         HashMap  +  Doubly-Linked-List          (yahi LC-146 wala dhaancha hai)
 
