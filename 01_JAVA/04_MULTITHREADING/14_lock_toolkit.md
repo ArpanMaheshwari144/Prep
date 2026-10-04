@@ -314,14 +314,20 @@ TASVEER              rocket launch countdown     trek ka checkpoint
 ### ★ Sabse bada gotcha — barrier TOOT jaata hai
 
 ```
-3 parties chahiye. 2 pahunche, teesra CRASH kar gaya (ya interrupt/timeout)
-   ->  BARRIER TOOT GAYA
-   ->  baaki DONO ko BrokenBarrierException
-   ->  poora barrier bekaar, sab gir gaye
+3 parties chahiye. 2 await() me khade hain.
 
-latch me aisa nahi hota — wahan ek worker countDown na kare
-   ->  main bas HAMESHA ke liye khada rahega
-   ->  isliye await ka TIMEOUT version + countDown ka finally, DONO zaroori
+(a) teesra await() tak pahuncha hi nahi (CRASH / exception pehle hi)
+       ->  barrier TOOTTA NAHI (isBroken = false)
+       ->  baaki dono HAMESHA ke liye WAITING   <- latch jaisa hi anant intezaar
+(b) khade hue me se kisi ka TIMEOUT ya INTERRUPT hua (await(500ms) wala)
+       ->  BARRIER TOOT GAYA
+       ->  wo: TimeoutException, baaki sab: BrokenBarrierException
+       ->  poora barrier bekaar (reset() se hi wapas)
+
+★ 4-Oct chala ke dekha: crash pe dono WAITING rahe (toota nahi); await(500ms) pe
+  W1 TimeoutException + W2 BrokenBarrierException.
+-> ISLIYE: latch ho ya barrier, await ka TIMEOUT version zaroori (+ latch me countDown finally me).
+   Timeout hi wo cheez hai jo "chup-chaap anant intezaar" ko shor wali exception bana deti.
 ```
 
 ### Kab kaunsa — asli zindagi me
@@ -343,8 +349,9 @@ BARRIER  ->  round-by-round calculation: sab apna hissa karein, sab milein,
 > **BOLNE WALI LINE:** *"`CountDownLatch` ek baar ka gate hai — koi baahar khada intezaar karta hai
 > jab tak N kaam khatam na hon, aur uske baad wo dobara use nahi hota. `CyclicBarrier` me wahi
 > thread ek doosre ka intezaar karte hain aur har round ke baad wo apne aap reset ho jaata hai.
-> Latch me ek worker `countDown` na kare to intezaar karne wala hamesha atka rehta — isliye
-> `finally` aur timeout. Barrier me ek party gir jaaye to sabko `BrokenBarrierException` milta hai."*
+> Dono me ek party na pahunche to baaki hamesha atke rehte — isliye `await` ka timeout version
+> (aur latch me `countDown` `finally` me). Barrier me kisi ka timeout/interrupt ho to baaki sabko
+> `BrokenBarrierException` milta hai."*
 
 ---
 
@@ -388,8 +395,8 @@ Semaphore         N ek saath (ginti)            maalik nahi hota — extra relea
 CountDownLatch    "N khatam ho, gate khule"     EK BAAR ka — reset nahi
                                                 countDown chhoota -> ANANT intezaar
 
-CyclicBarrier     "sab mile, phir saath"        ek party giri -> SABKO
-                  har round reset                BrokenBarrierException
+CyclicBarrier     "sab mile, phir saath"        ek party pahunchi hi nahi -> baaki ANANT ruke
+                  har round reset                timeout/interrupt -> SABKO BrokenBarrierException
 ```
 
 ### ★ Teen jode jo confuse hote hain
