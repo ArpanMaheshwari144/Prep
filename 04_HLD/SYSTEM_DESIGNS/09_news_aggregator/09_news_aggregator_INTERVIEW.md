@@ -180,6 +180,16 @@
 
    TU: "Ek source ka down hona poore system ko nahi gira sakta —
         ye maine requirement me bhi likha tha."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the downstream service / provider is slow?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       notification   -> SMS provider slow  -> timeout + circuit breaker + fallback provider
+       payment        -> PSP slow           -> timeout, PENDING rakho + reconcile, andha retry nahi
+
+   ► MASTER SHEET SE JODA: CIRCUIT BREAKER per source: N fail -> OPEN = us source ko call hi band
+       (fail-fast) -> thodi der baad HALF-OPEN = ek test call -> theek to CLOSED.
 ```
 
 ### dikkat 5 — "6 mahine me 5 crore row — disk, backup aur kharcha badhta ja raha hai"
@@ -201,6 +211,18 @@
 
    ★ ye SHARDING nahi hai -- ye RETENTION hai. Dono alag cheezein hain,
      aur aksar ek hi saans me bol di jaati hain.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Data keeps growing — what happens in 3 years?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       banking        -> ledger              -> KABHI delete nahi, purana cold storage
+       chat           -> purane messages     -> month se partition, cold storage
+       notification   -> notification log    -> TTL
+       payment        -> payment records     -> archive, delete nahi
+
+   ► MASTER SHEET SE JODA: time se PARTITION (mahina) -> purana partition DETACH -> COLD storage
+       (S3 / Glacier, sasta). jo bilkul nahi chahiye uspe TTL = mita do.
 ```
 
 ### dikkat 6 — (sirf BADE scale pe) "ek DB box likhai + data nahi jhel raha"
@@ -354,6 +376,11 @@
 
    AAGE badhata to: personalized feed (category-wise cache), images CDN pe,
                     ML ranking, breaking news ka real-time push.
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
 ```
 
 ## ► WRAP (ek saans me)

@@ -233,6 +233,14 @@ KEY: encrypted = scrambled with shared key. Sirf jiske paas key (tu + server) un
 ```
    CDN -> static (image/css/js) paas wale edge se (fast, load kam)
    LB  -> ek server crash na ho, traffic baant ke free server pe
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
+
+   ► MASTER SHEET SE JODA: SPOF me wo dabbe bhi gino jo dikhte nahi — DNS (step 2)
+       aur TLS cert (step 4). DNS gira ya cert expire = poori site band, server zinda ho tab bhi.
 ```
 
 ---

@@ -136,6 +136,30 @@
    ★ ye RULE hai, if-condition nahi — har trading system me HONA HI HOGA, warna toot jaayega.
    ★ LINE: "Matching engine is single-threaded PER SYMBOL — orders serialized in one queue,
             no locks, deterministic and replayable. Scale horizontally BY symbol."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Two users do this at the same time — what happens?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       bookmyshow    -> do log ek seat               -> UPDATE ... WHERE status='available'
+       banking       -> do withdrawal ek saath       -> UPDATE ... WHERE balance >= x
+       rate limiter  -> do request ek saath gine     -> Redis INCR / Lua (ek atomic step)
+       payment       -> ek payment do jagah claim    -> UNIQUE constraint
+
+   ► MASTER SHEET SE JODA: jahan DB pe check-phir-write ho (jaise wallet BLOCK, dikkat 2),
+       wahan check WRITE ke andar: UPDATE ... WHERE available >= x (0 row = paisa nahi).
+   ★ farak: 2 user ek cheez = atomic/lock · 1 user ka retry = idempotency (dikkat 5)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you keep messages / events in order?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       kafka        -> order sirf partition ke andar  -> same key = same partition
+       chat         -> message aage-peeche            -> chat_id key + sequence number
+       google docs  -> edits ka kram                  -> ek doc ke ops ek jagah serialize
+
+   ► MASTER SHEET SE JODA: kram SERVER deta (sequencer ka sequence number), client ka time nahi.
+       order sirf PER SYMBOL chahiye, global nahi — isiliye symbols parallel chal sakte.
 ```
 
 ### dikkat 2 — "wallet me 50k hai, banda 30k-30k ke DO order daal deta hai"
@@ -244,6 +268,17 @@
         AUDIT   = regulator ke liye (business: kaun-kya-kab, saalon tak, IMMUTABLE)
         JP / BlackRock dono maangte; audit non-negotiable hai.
         Trading ka event-log itna pakka hota hai ki AUDIT ka kaam bhi de deta hai (ek cheez, do role).
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the server crashes in the middle of the operation?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       payment      -> PSP ko bheja, jawab nahi    -> PENDING pehle + reconciliation job
+       banking      -> debit hua, credit nahi      -> ek DB = @Transactional; kai service = SAGA
+       file upload  -> upload beech me toota       -> status UPLOADING track, resume
+
+   ► MASTER SHEET SE JODA: settlement ke beech crash bhi yahi sawaal hai —
+       ek DB = ACID (dikkat 3), kai service = SAGA + compensate (dikkat 4).
 ```
 
 ### dikkat 7 — "lakhs log live price dekh rahe hain"
@@ -407,6 +442,11 @@
           ├─► settlement  -> beech me crash           -> ATOMIC (ek DB) / SAGA (kai service)
           ├─► book (RAM)  -> server crash             -> EVENT LOG replay
           └─► price feed  -> crore reads              -> WebSocket push + pub/sub (ephemeral)
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
 ```
 
 ## ► WRAP (ek saans me)

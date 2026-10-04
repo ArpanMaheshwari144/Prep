@@ -251,6 +251,21 @@ c. DEPLOY dard ban jaata hai
       REST server restart = kuch retry, kisi ko pata nahi chalta
       chat server restart = 1 lakh log disconnect
       -> thode-thode server, aur connection pehle se hataao (draining)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What happens if this server / node / DB goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener     -> DB primary gira             -> replica promote, redirect cache se chalta rahe
+       rate limiter      -> Redis node gira             -> Redis replica; na mile to fail-open
+       distributed cache -> cache node gira             -> replica + consistent hashing (sirf uski keys hilti)
+       kafka             -> broker gira                 -> ISR ki replica leader ban jaati
+       banking           -> DB primary gira             -> sync replica promote (paisa wali write khoni nahi)
+       bookmyshow        -> App box gira                -> hold DB me hai, LB doosre box pe bhejta
+
+   ► MASTER SHEET SE JODA: server gira to MESSAGE nahi khota — wo pehle DB me likha tha (dikkat 3).
+     client doosre server pe judta + "aakhri id ke baad ka do" se catch-up. Redis / message store
+     ka bhi replica, ALAG AZ me.
 ```
 
 > ★ **DEKHA:** server ki ginti jaan-boojh ke **teen** rakhi thi. Do khuli connection ne
@@ -334,6 +349,17 @@ Kyunki pen hona ya na hona **sanyog** hai, par message kho jaana chalega hi nahi
         juda hai    ->  us server tak bhejo, pen me likho
         juda nahi   ->  kuch mat karo, DB me pada hai
                         + uske phone pe GHANTI bajao (push notification)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you make sure no message is lost?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       kafka             -> consumer crash              -> offset kaam ke BAAD, idempotent, DLQ
+       notification      -> SMS event                   -> at-least-once + idempotent + DLQ
+       banking           -> DB + event dono chahiye     -> OUTBOX
+
+   ► MASTER SHEET SE JODA: beech me queue (Kafka) ho to: producer acks=all · consumer offset
+     kaam ke BAAD commit -> dobara aa sakta -> message id se IDEMPOTENT · baar-baar fail -> DLQ.
 ```
 
 Offline case me "message kho gaya" hota hi nahi. Wo likha ja chuka hai, bas uthaya nahi gaya.
@@ -402,6 +428,17 @@ sort key       =  message_id      <- us dabbe ke andar kis KRAM me
 
 -> EK chat ke saare message EK jagah, time ke kram me
 -> "aakhri 50" EK disk read me
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "The database is too big / takes too many writes. What do you do?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener     -> arabon link                 -> short code se shard
+       twitter feed      -> tweets bahut                -> user_id se shard
+       google docs       -> docs bahut                  -> docId se shard
+       kafka             -> ek partition nahi samaata   -> partitions badhao
+       banking           -> transactions bahut          -> account_id se shard
+       ★ replica sirf READ baantta; write ke liye SHARD. country/date = bura key (skew)
 ```
 
 user_id se baantte to ek hi baatcheet DO jagah tuk jaati — A ke dabbe me bhi, B ke bhi.
@@ -458,6 +495,15 @@ partition key = chat_id + mahina      ->  partition ka SIZE bandha (purana mahin
 ★ SACH: isse abhi ka BOJH nahi batta — is mahine ke saare message phir bhi EK hi (abhi wale) dabbe me.
    hot group ka ilaaj: key me random bucket (chat_id + 0..9), padhte waqt 10 jagah se jodo;
    ya group size / rate pe had.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What about a hot key / celebrity / hot partition?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       distributed cache -> IPL score ek key            -> key kai copy + L1 local cache
+       twitter feed      -> celebrity ke crore follower -> celeb = fanout on READ (hybrid)
+       kafka             -> ek bada customer ek partition -> key me salt / alag topic
+       ★ consistent hashing ek hot key ko nahi bachata
 ```
 
 ### Purana data — yahan MOVE 1 ka sawaal wapas aata hai
@@ -469,6 +515,18 @@ WhatsApp model   pahunchte hi server se DELETE  ->  server storage lagbhag ZERO
 Slack model      hamesha rakho, 3 saal purana bhi search
                  ->  1.2 TB roz wala hisaab
                  ->  purana data COLD storage me khiskao
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Data keeps growing — what happens in 3 years?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       news aggregator   -> purani news                 -> TTL / archive
+       banking           -> ledger                      -> KABHI delete nahi, purana cold storage
+       notification      -> notification log            -> TTL
+       payment           -> payment records             -> archive, delete nahi
+
+   ► MASTER SHEET SE JODA: retention / cold storage != sharding. purana khiskana SIZE ghatata,
+     abhi ka write LOAD shard (chat_id) baant-ta. dono alag dikkat ke ilaaj.
 ```
 
 ★ Isi liye wo sawaal **shuru me** poochha jaata hai. Ek jawab se storage ka dhaancha badal jaata hai.
@@ -618,6 +676,18 @@ Ilaaj bhi wahi — **idempotency key**, jise chat me `clientMsgId` kehte hain.
      kyunki RETRY bhi client hi karta hai.
      server banata to har retry pe NAYI id banti -> duplicate rukta hi nahi.
      Jo cheez DOBARA bhej raha hai, usi ko PEHCHAN bhi deni hogi.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the same request comes twice / the client retries?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       payment           -> Pay timeout, user dobara    -> idempotency key, dobara pe STORED result
+       notification      -> same event do baar          -> eventId/key se dedup, SMS ek hi baar
+       bookmyshow        -> Pay do baar daba            -> idempotency key (bookingId)
+       kafka             -> consumer ko event dobara    -> eventId "processed" table, skip
+
+   ► MASTER SHEET SE JODA: "pehle aayi?" check + insert ek ATOMIC step ho (UNIQUE constraint ya
+     Redis SET key NX EX) — warna do retry ek saath dono "nahi aayi" dekh lenge.
 ```
 
 ### dikkat 10 — "kram kis cheez se tay hoga — aur kiska time maanoge?"
@@ -650,6 +720,17 @@ manmaana hai — par **sabko EK hi dikhta hai**, aur chat me itna hi chahiye.
      ILAAJ client me: B ka app message ko ID ke hisaab se lagata hai, AANE ke hisaab se nahi
      beech ka message gayab pakadna ho to snowflake id se NAHI hoga (wo lagaataar nahi hoti,
      gap normal hai) -> har chat ka apna SEQ number (+1 har message): 15, 17 aaya, 16 nahi -> catch-up
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you keep messages / events in order?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       kafka             -> order sirf partition ke andar -> same key = same partition
+       stock broker      -> order ka kram               -> har symbol ek sequencer
+       google docs       -> edits ka kram               -> ek doc ke ops ek jagah serialize
+
+   ► MASTER SHEET SE JODA: beech me Kafka ho to KEY = chatId -> ek chat ke saare message EK
+     partition me, order pakka; alag chats parallel. (global order = ek partition = throughput khatam)
 ```
 
 > ★★ **"Ye to WhatsApp me hota hai" — haan, aur jaan-boojh ke hota hai** (Arpan ne khud dekha:
@@ -824,6 +905,11 @@ RECONNECT ka toofan   ek server gira -> 1 lakh ek saath wapas
 HOT PARTITION         ek viral group ek hi partition pe -> key me bucket (chat_id + 0..9) / had
                       (chat_id + mahina sirf SIZE baandhta, abhi ka bojh nahi)
 PUSH ka raasta        Google/Apple bahar ki cheez hai -> uska apna retry/queue
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
 ```
 
 ## ► WRAP (ek line har problem ki)

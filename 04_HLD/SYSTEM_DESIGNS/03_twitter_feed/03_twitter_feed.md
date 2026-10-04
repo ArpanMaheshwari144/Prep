@@ -98,6 +98,18 @@
                               pehle se bana ke rakho (PRECOMPUTE)
      celeb 10 crore      ──►  ek tweet pe 10 crore kaam? -> yahi design ka asli mod hai
      eventual OK         ──►  precompute + cache ka raasta khula hai
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Consistency or availability — which do you pick?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       bookmyshow         -> seat                           -> CP (booking), search AP
+       payment            -> paisa                          -> CP
+       banking            -> balance                        -> CP
+       google docs        -> edits AP, permissions CP
+
+   ► MASTER SHEET SE JODA: network partition me dono ek saath nahi milte. feed / like-count = AP:
+       thoda purana dikhe chalega, band nahi hona chahiye.
 ```
 
 ---
@@ -158,6 +170,19 @@
         "sab tak pahuncha"  -> peeche, dheere bhi chale to chalega
    ★ aur ek bachav muft me: worker gir bhi gaya to tweet NAHI khoya --
      event Kafka me pada hai, worker wapas aa ke wahin se uthayega
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "The user updated something but still sees the old value. Why?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       distributed cache  -> cache me purana                -> update pe invalidate + TTL
+       url shortener      -> naya link replica pe nahi      -> naye link ka read primary se
+       banking            -> balance purana                 -> balance hamesha primary se
+       payment            -> status purana                  -> status primary se
+
+   ► MASTER SHEET SE JODA: fanout peeche chalta hai, isliye post karte hi apna tweet apni feed me
+       nahi dikha. ilaaj = READ-YOUR-OWN-WRITES: likhne wale ko apna naya tweet primary se /
+       seedha jod ke dikhao, fanout ka wait nahi.
 ```
 
 ### dikkat 3 — "Bieber ne tweet kiya — 10 CRORE inbox likhne padenge"
@@ -188,6 +213,18 @@
 
    TU: "Dono ka trade-off bol ke chun raha hoon — push read ko instant banata par celeb pe write-storm
         laata; pull write bachata par har read mehnga. Isliye hybrid."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What about a hot key / celebrity / hot partition?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       distributed cache  -> IPL score ek key               -> key kai copy + L1 local cache
+       chat               -> viral group                    -> key bucket (chat_id + 0..9)
+       kafka              -> ek bada customer ek partition  -> key me salt / alag topic
+
+   ► MASTER SHEET SE JODA: hybrid ke saath: hot tweet ki cache KAI node pe copy + har app server pe
+       L1 local cache. likes jaisa hot WRITE -> key ke tukde (tweet123#0..#9), padhte waqt jodo.
+   ★ consistent hashing ek hot key ko nahi bachata
 ```
 
 ### dikkat 4 — "Virat ka tweet 10 crore log ek saath padh rahe hain"
@@ -206,6 +243,17 @@
 
         recent (<1hr) = HOT -> cache (SETEX ... 3600)
         purana        = COLD -> seedha DB
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if traffic suddenly spikes 10x?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       bookmyshow         -> popular release                -> queue + darwaze pe counter / waiting room
+       rate limiter       -> bheed                          -> load shedding, 429 + Retry-After
+       notification       -> sale pe 1 crore SMS            -> queue me rakho, worker apni raftaar se
+
+   ► MASTER SHEET SE JODA: fanout ka burst Kafka queue hold karti. pata ho kab aayega (IPL final)
+       -> PEHLE se scale out + hot-tweet cache garam (pre-warm); autoscale ko minute lagte, spike seconds me aata.
 ```
 
 ### dikkat 5 — "500 million inbox Redis me? memory phat jaayegi"
@@ -226,6 +274,18 @@
 
         INACTIVE USER: 30 din se app nahi khola -> uska inbox Redis se DELETE
                        wapas aaya -> Cassandra se REBUILD (ek baar ka kharcha, memory bach gayi)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the cache goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       distributed cache  -> hot key expire, 1000 miss      -> STAMPEDE: mutex (ek hi rebuild) / soft TTL
+       rate limiter       -> Redis down                     -> default fail-open; payment/auth me fail-closed
+       url shortener      -> redirect cache gira            -> DB pe load: replica + load shedding
+       bookmyshow         -> Redis gira, browse primary pe  -> Redis cluster + browse replica se
+
+   ► MASTER SHEET SE JODA: Redis gira -> har feed Cassandra se banana padega (mehnga) -> DB bhi gir
+       sakta. ilaaj: Redis replica/cluster · load shedding · mutex (ek hi rebuild) · inbox dheere-dheere garam karo.
 ```
 
 ### dikkat 6 — "saare tweets ek DB me nahi aayenge"
@@ -242,6 +302,17 @@
 
    HOT-USER REPLICATION: Bieber ka shard hammer, baaki idle
         -> Bieber ke tweets KAI shard pe replicate -> read bat gaye
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "The database is too big / takes too many writes. What do you do?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener      -> arabon link                    -> short code se shard
+       google docs        -> docs bahut                     -> docId se shard
+       kafka              -> ek partition nahi samaata      -> partitions badhao
+       banking            -> transactions bahut             -> account_id se shard
+       chat               -> messages bahut                 -> chat_id se shard
+   ★ replica sirf READ baantta; write ke liye SHARD. country/date = bura key (skew)
 ```
 
 ### dikkat 7 — "India ka user US ke shard se padh raha hai (200ms)"
@@ -258,6 +329,16 @@
         CROSS-REGION: Indian banda Bieber (US) ko follow karta
                       -> Bieber ke HOT tweets India ke Redis me REPLICATE
                       (production me yahi hota hai — hot data ko paas laao)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if a whole region / data center goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener      -> region gaya                    -> DNS health check, doosra region (async copy)
+       rate limiter       -> region gaya                    -> counter region-sticky, naye region me nayi ginti
+
+   ► MASTER SHEET SE JODA: Route 53 health check mara region hatata, paas wala deta. data doosre region
+       me ASYNC copy hota -> failover pe feed thoda purana dikhega (eventual OK, NFR me pehle se maana).
 ```
 
 ### dikkat 8 — "ab tak sab EK App box me chal raha hai — wo bojh aur SPOF dono hai"
@@ -414,6 +495,11 @@
       ★ REAL TWITTER = MULTI-DIMENSIONAL:
         user_id shard (primary) + time sub-shard + geo replication + hot-data global cache.
         Koi ek strategy akeli kaafi nahi hoti.
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
 ```
 
 ## ► WRAP (aakhir me 3-4 line)

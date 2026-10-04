@@ -81,6 +81,16 @@
    TU: "Yahan consistency hi dil hai — double booking disaster hai, paise jaisa mamla hai.
         Isliye CAP me main CP ki taraf jhukunga: partition me reject kar dunga,
         par ek seat do logon ko kabhi nahi dunga."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Consistency or availability — which do you pick?"
+       poora jawab = neeche GRILL (30-Sep)
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       payment       -> paisa                -> CP
+       banking       -> balance              -> CP
+       google docs   -> edits / permissions  -> edits AP, permissions CP
+       twitter feed  -> feed                 -> AP (purana chalega)
 ```
 
 ```
@@ -142,6 +152,17 @@
 
    TU: "Do step me karne se hamesha gap rahega. Isliye condition ko UPDATE ke andar hi
         daal deta hoon — DB khud tay kar dega ki kaun jeeta."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Two users do this at the same time — what happens?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       banking       -> do withdrawal ek saath     -> UPDATE ... WHERE balance >= x
+       rate limiter  -> do request ek saath gine   -> Redis INCR / Lua (ek atomic step)
+       payment       -> ek payment do jagah claim  -> UNIQUE constraint
+       stock broker  -> do order ek symbol pe      -> har symbol ek thread / sequencer
+
+   ★ farak: 2 user ek cheez = atomic/lock · 1 user ka retry = idempotency (dikkat 3)
 ```
 
 ### dikkat 2 — "user ne seat chuni, ab 3 minute payment kar raha hai"
@@ -216,6 +237,18 @@
 
    (Arpan ki mock-line "seat mark-booked kar do, doosra taken dekhe" bilkul SAHI thi —
     sirf uspe "idempotency" shabd lag gaya tha; wo ATOMIC MARK hai.)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the same request comes twice / the client retries?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       payment       -> Pay timeout, user dobara   -> idempotency key, dobara pe STORED result
+       notification  -> same event do baar         -> eventId/key se dedup, SMS ek hi baar
+       kafka         -> consumer ko event dobara   -> eventId "processed" table, skip
+       chat          -> message retry              -> clientMsgId se dedup
+
+   ► MASTER SHEET SE JODA: key client banata (retry pe SAME) -> server atomic claim kare
+       (UNIQUE constraint ya Redis SET NX) -> dobara aaye to STORED result lautao, error nahi.
 ```
 
 ### dikkat 4 — "book koi-koi karta hai, par seat-map SAB dekh rahe hain"
@@ -284,6 +317,17 @@
         and the rest see 'sold out' right away. But since users pick specific seats, I only
         confirm a booking after that seat's atomic UPDATE wins - until then the user sees
         'in progress', and gets the result by polling or a push."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if traffic suddenly spikes 10x?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       rate limiter  -> bheed                      -> load shedding, 429 + Retry-After
+       notification  -> sale pe 1 crore SMS        -> queue me rakho, worker apni raftaar se
+       twitter feed  -> viral tweet / event        -> cache + queue, pehle se scale (pre-warm)
+
+   ► MASTER SHEET SE JODA: rate limit per user (429) · pata hai kab aayega (12 baje sale)
+       -> pehle se scale out + cache garam; autoscale ko minute lagte, spike seconds me.
 ```
 
 ### dikkat 6 — "Redis restart hua — aur 99% browse traffic seedha primary DB pe gir gaya, jahan booking ke atomic UPDATE chal rahe the"
@@ -302,6 +346,17 @@
                 + SQL pe replica + auto-failover (Patroni / RDS Multi-AZ; Sentinel Redis ka hai)
 
         ★ DONO RAASTE ALAG KARO -- warna halka kaam bhaari kaam ko le doobta hai
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the cache goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       distributed cache -> hot key expire, 1000 miss -> STAMPEDE: mutex (ek hi rebuild) / soft TTL
+       rate limiter      -> Redis down               -> default fail-open; payment/auth me fail-closed
+       url shortener     -> redirect cache gira      -> DB pe load: replica + load shedding
+       twitter feed      -> feed cache gira          -> feed DB se banana mehnga -> shedding, garam karo
+
+   ► MASTER SHEET SE JODA: STAMPEDE -> mutex (ek hi rebuild kare, baaki wait karke cache se lein).
 ```
 
 ### dikkat 7 — "ek App box pe 500 log seat chun rahe the, aur wo box gir gaya"
@@ -318,6 +373,20 @@
         ★ ye SIRF is liye kaam karta hai ki HOLD box ke BAHAR rakha gaya tha --
           wo faisla dikkat 2 me liya gaya tha, aur wahi yahan bacha raha hai
         ★ agar hold app ki memory me hota to box girte hi 500 seat ka pata hi na chalta
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What happens if this server / node / DB goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener     -> DB primary gira    -> replica promote, redirect cache se chalta rahe
+       rate limiter      -> Redis node gira    -> Redis replica; na mile to fail-open
+       distributed cache -> cache node gira    -> replica + consistent hashing (sirf uski keys hilti)
+       kafka             -> broker gira        -> ISR ki replica leader ban jaati
+       banking           -> DB primary gira    -> sync replica promote (paisa wali write khoni nahi)
+       chat              -> chat server gira   -> client doosre server pe reconnect, message DB me safe
+
+   ► MASTER SHEET SE JODA: LB health check (2-3 fail = box pool se bahar) · har stateful copy
+       ALAG AZ me (ek hi AZ me = saath marenge).
 ```
 
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
@@ -411,6 +480,11 @@
       AAGE badhata to: virtual waiting room (bade release ki bheed),
                        distributed lock (Redlock) agar kai DB ho jaayein,
                        seat-TTL tune karna, popular-show analytics.
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
 ```
 
 ## ► WRAP (ek saans me)

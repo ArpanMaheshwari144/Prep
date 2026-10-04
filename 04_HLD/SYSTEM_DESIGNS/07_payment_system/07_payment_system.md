@@ -102,6 +102,18 @@
       correctness chahiye  ──►  SQL / RDBMS (ACID, strong consistency)
                                 + append-only LEDGER (audit ke liye)
       NoSQL nahi           ──►  paisa = strong consistency + multi-row transaction
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Consistency or availability — which do you pick?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       bookmyshow     -> seat               -> CP (booking), search AP
+       banking        -> balance            -> CP
+       google docs    -> edits / permission -> edits AP, permissions CP
+       twitter feed   -> feed               -> AP (purana chalega)
+
+   ► MASTER SHEET SE JODA: network partition me galat jawab dene se behtar REJECT (CP).
+       ek hi system me dono ho sakte: paisa CP, dashboard / report AP.
 ```
 
 ---
@@ -177,6 +189,34 @@
    ★ DSA-connect: idempotency register = hashmap "pehle dekha?" = contains-duplicate
    ★ LINE: "Same key, same outcome — chahe kitni baar aaye, paisa ek hi baar kate.
             Alag intent = alag key = alag payment."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the same request comes twice / the client retries?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       notification   -> same event do baar      -> eventId/key se dedup, SMS ek hi baar
+       bookmyshow     -> Pay do baar daba        -> idempotency key (bookingId)
+       kafka          -> consumer ko event dobara -> eventId "processed" table, skip
+       chat           -> message retry           -> clientMsgId se dedup
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "You set the idempotency key, but then the send failed. Now what?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       notification   -> key lagi, SMS fail      -> "sending" EX 60 -> success pe "sent"
+
+   ► MASTER SHEET SE JODA: DONE sirf PSP ke haan ke BAAD likho. PSP fail ya worker mara ->
+       IN_PROGRESS chhoti TTL se khud mite, warna retry key dekh ke SKIP karega aur payment atki rahegi.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Two users do this at the same time — what happens?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       bookmyshow     -> do log ek seat          -> UPDATE ... WHERE status='available'
+       banking        -> do withdrawal ek saath  -> UPDATE ... WHERE balance >= x
+       rate limiter   -> do request ek saath gine -> Redis INCR / Lua (ek atomic step)
+       stock broker   -> do order ek symbol pe   -> har symbol ek thread / sequencer
+       ★ farak: 2 user ek cheez = atomic/lock · 1 user ka retry = idempotency
 ```
 
 ### dikkat 3 — "asli paisa to hamara server hilata hi nahi"
@@ -195,6 +235,17 @@
    TU: "PSP ka call external aur async hai — isliye ek PENDING state chahiye.
         Naive flow (App -> Service -> Ledger) tab tak simple lagta hai jab tak
         crash, retry aur network beech me na aayein."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the downstream service / provider is slow?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       notification    -> SMS provider slow -> timeout + circuit breaker + fallback provider
+       news aggregator -> ek source slow    -> har source ka timeout, skip karo, baaki dikhao
+
+   ► MASTER SHEET SE JODA: bina timeout har thread atka = poora system thapp (slow = down se BURA).
+       chhota TIMEOUT + CIRCUIT BREAKER (N fail -> call band, fail-fast). paisa hai to PENDING
+       rakho + reconcile, andha retry nahi.
 ```
 
 ### dikkat 4 — "PSP ko call kiya aur crash ho gaya — ab pata hi nahi paisa gaya ya nahi"
@@ -227,6 +278,24 @@
      Courier wala gir gaya to parcel gum nahi hota — status dekho aur resolve karo.
    ★ LINE: "Kabhi assume nahi karta. Har payment ka STATUS record hota hai.
             Crash ho to reconcile. Paisa hamesha done, undone, ya being-checked hota hai — gum kabhi nahi."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the server crashes in the middle of the operation?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       banking        -> debit hua, credit nahi  -> ek DB = @Transactional; kai service = SAGA
+       stock broker   -> crash beech me          -> event log pehle, crash pe replay
+       file upload    -> upload beech me toota   -> status UPLOADING track, resume
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you know the system is working?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       notification   -> "bheja" != "pahuncha"   -> provider webhook
+       banking        -> ledger vs bank          -> reconciliation
+
+   ► MASTER SHEET SE JODA: saath me METRICS (p99 latency · error rate · queue lag) + had pe ALERT;
+       logs + trace id se ek payment shuru se aakhir tak follow.
 ```
 
 ### dikkat 5 — "A aur B alag-alag bank me hain — ek DB transaction possible hi nahi"
@@ -291,6 +360,18 @@
         IDEMPOTENCY register    : key -> { status, result }   (TTL ~24h, delete MAT karo)
         TXN STATUS              : INITIATED -> PENDING -> SUCCESS / FAILED (durable, write-ahead)
         INVARIANT               : sum(debits) == sum(credits)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Data keeps growing — what happens in 3 years?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       news aggregator -> purani news         -> TTL / archive
+       banking         -> ledger              -> KABHI delete nahi, purana cold storage
+       chat            -> purane messages     -> month se partition, cold storage
+       notification    -> notification log    -> TTL
+
+   ► MASTER SHEET SE JODA: time se PARTITION (mahina) -> purana partition DETACH -> COLD storage
+       (S3 / Glacier, sasta). payment record delete nahi, sirf archive. retention != sharding.
 ```
 
 ### dikkat 7 — "festival aaya, 3000 txn/sec — ek Payment Service box ka CPU khatam"
@@ -315,6 +396,15 @@
         ★ par PAYMENT ka read replica se NAHI --
           balance aur txn status HAMESHA primary se
           (replica lag ek rupaye ka farak bhi dikha sakta hai, aur paise me ye chalega nahi)
+
+        ► INTERVIEWER AISE POOCHEGA:
+            "The user updated something but still sees the old value. Why?"
+
+        ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+            distributed cache -> cache me purana        -> update pe invalidate + TTL
+            url shortener     -> naya link replica pe nahi -> naye link ka read primary se
+            twitter feed      -> apna tweet nahi dikha  -> read-your-own-writes (apna data primary se)
+            banking           -> balance purana         -> balance hamesha primary se
 ```
 
 ### dikkat 9 — "ek hi DB me 50 crore txn row, likhai dheemi padne lagi"
@@ -375,6 +465,19 @@
 
    ★ client HAR naye payment ke liye NAYI unique key banata hai;
      RETRY pe WAHI key bhejta hai.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you secure it / stop abuse?"
+
+   ► JAWAB: gateway pe authN (JWT) · har /pay pe OWNER check: "from" account ISI user ka hai?
+       (warna kisi aur ke account se paisa) · per-user RATE LIMIT · WAF edge pe · TLS.
+   ► BOL: "Authentication at the gateway, an ownership check on every resource, rate limiting per
+          user, and a WAF at the edge for common attacks."
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       file upload    -> galat file     -> magic bytes check, presigned URL chhoti expiry
+       rate limiter   -> abuse          -> per user / IP limit
+       url shortener  -> spam link      -> rate limit + bad URL check
 ```
 
 ## ► "Idempotency-Key banti kaise hai?" — TAP vs RETRY (28-Aug ki confusion, ab saaf)
@@ -428,6 +531,11 @@
 
       ★ ASLI BOTTLENECK: distributed transaction (alag banks/DB) — yahi payment ka sabse
         mushkil hissa hai, raw throughput nahi.
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       ("How do you know the system is working?" -> upar dikkat 4, reconciliation ke saath)
 ```
 
 ## ► WRAP (ek line har problem ki)

@@ -97,6 +97,17 @@
 
    ★ SANITY CHECK (bolne layak): "peak 58K event/sec x 3 channel = ~1.75 lakh/sec Kafka me;
      isliye partitions + workers PEAK ke hisaab se, average (5,800/sec) ke nahi."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if traffic suddenly spikes 10x?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       bookmyshow    -> popular release        -> queue + darwaze pe counter / waiting room
+       rate limiter  -> bheed                  -> load shedding, 429 + Retry-After
+       twitter feed  -> viral tweet / event    -> cache + queue, pehle se scale (pre-warm)
+
+   ► MASTER SHEET SE JODA: sale ka time pata hai (12 baje) -> worker PEHLE se badhao;
+       autoscale minute leta, spike seconds me aata. worker badhao to DB/provider ki had pe cap.
 ```
 
 ---
@@ -188,6 +199,18 @@
      Alag-alag EXISTS phir SET karoge to beech me doosri request ghus sakti hai (race).
    ★ ek line: "at-least-once delivery + idempotent worker"
    ★ ye WAHI cheez hai jo payment idempotency me hai — same race, same ilaaj.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the same request comes twice / the client retries?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       payment     -> Pay timeout, user dobara   -> idempotency key, dobara pe STORED result
+       bookmyshow  -> Pay do baar daba           -> idempotency key (bookingId)
+       kafka       -> consumer ko event dobara   -> eventId "processed" table, skip
+       chat        -> message retry              -> clientMsgId se dedup
+
+   ► MASTER SHEET SE JODA: key = event ka apna id (eventId), har retry pe WAHI.
+       naya UUID har baar banaya to dedup kabhi pakdega hi nahi.
 ```
 
 #### ★ dikkat 4b — "key laga di, par provider call FAIL ho gaya" (29-Sep mock me poocha gaya)
@@ -214,6 +237,12 @@
    TU: "If the provider call fails, I don't want the key to block the retry. So I set it as
         'sending' with a short TTL, and only mark it 'sent' after the provider accepts it.
         If the send fails or the worker dies, the key expires and the retry goes through."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "You set the idempotency key, but then the send failed. Now what?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       payment  -> key lagi, PSP fail  -> IN_PROGRESS -> DONE, wahi soch
 ```
 
 ### dikkat 5 — "provider fail ho raha hai aur hum turant retry maar rahe hain"
@@ -234,6 +263,18 @@
 
         DLQ me kya girta hai (poison messages):
             galat email (SES reject) . invalid phone (Twilio fail) . provider ka permanent outage
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you make sure no message is lost?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       kafka    -> consumer crash            -> offset kaam ke BAAD, idempotent, DLQ
+       banking  -> DB + event dono chahiye   -> OUTBOX
+       chat     -> message                   -> pehle DB me, phir bhejo
+
+   ► MASTER SHEET SE JODA: worker Kafka offset commit KAAM (provider call) ke BAAD kare —
+       crash hua to event dobara aayega, khoyega nahi (isiliye worker idempotent, dikkat 4).
+       producer side: acks=all + replication, taaki event Kafka me hi na khoye.
 ```
 
 ### dikkat 6 — "provider slow ho gaya, saare worker uske timeout me phas gaye"
@@ -254,6 +295,16 @@
 
    TU: "Circuit khul jaane pe worker us provider ko call hi nahi karta — isliye wo
         timeout me phasta nahi, aur backup provider chalta rehta hai."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the downstream service / provider is slow?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       payment          -> PSP slow          -> timeout, PENDING rakho + reconcile, andha retry nahi
+       news aggregator  -> ek source slow    -> har source ka timeout, skip karo, baaki dikhao
+
+   ► MASTER SHEET SE JODA: har provider call pe CHHOTA timeout (30 sec nahi).
+       slow = down se BURA — worker phas ke poora pool kha jaata.
 ```
 
 ### dikkat 7 — "OTP marketing ke 50,000 message ke peeche queue me laga hai"
@@ -268,6 +319,11 @@
         implement: har lane ka ALAG Kafka topic + apna worker pool (notif-high / -medium / -low)
         ★ Kafka me priority nahi hoti — ek topic me OTP peeche hi lagega. Isliye alag topic.
           (PriorityBlockingQueue sirf EK process ke andar chalti, distributed system me nahi.)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you prioritize urgent work, like OTPs?"
+
+   ► YE SIRF IS DESIGN ME AATA HAI
 ```
 
 ### dikkat 8 — "burst gaya, provider ne 429 de diya, sab fail ho gaye"
@@ -281,6 +337,15 @@
         bina throttle -> burst -> 429 -> saare message fail
         FAISLA: worker khud limit maane (token bucket / leaky bucket) -> provider ki raftaar se bhejo
         (chala ke dekha: neeche HANDS-ON — naive me 1000 me se 700 SMS phenke gaye)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "The provider returns 429 — you're sending too fast. What now?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       rate limiter  -> hum khud 429 dete  -> 429 + Retry-After header
+
+   ► MASTER SHEET SE JODA: 429 aaya to turant retry nahi — exponential backoff + jitter,
+       Retry-After header maano, message queue me ruke (drop nahi).
 ```
 
 ### dikkat 9 — "'bhej diya' ka matlab 'mil gaya' nahi hota"
@@ -412,6 +477,26 @@
           │                   duplicate           -> idempotency key
           │                   provider 429        -> throttle (token bucket)
           └─► tracking     -> 90 TB/saal          -> Cassandra + purana data cold storage me
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Data keeps growing — what happens in 3 years?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       news aggregator  -> purani news         -> TTL / archive
+       banking          -> ledger              -> KABHI delete nahi, purana cold storage
+       chat             -> purane messages     -> month se partition, cold storage
+       payment          -> payment records     -> archive, delete nahi
+
+   ► MASTER SHEET SE JODA: tracking row pe TTL lagao -> purana log khud mitega.
+       retention != sharding (retention size ghatata, shard load baant-ta).
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
+
+   ► MASTER SHEET SE JODA: yahan "working" = sirf "bheja" nahi — provider webhook se
+       delivered / failed (dikkat 9) + Kafka consumer lag + DLQ size pe alert.
 ```
 
 ## ► WRAP (aakhir me 3-4 line)

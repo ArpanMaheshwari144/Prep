@@ -266,6 +266,17 @@
 
    ★ client ka bheja hua data KABHI sach nahi maana jaata -- naam bhi nahi,
      Content-Type bhi nahi
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you secure it / stop abuse?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       rate limiter   -> abuse                 -> per user / IP limit
+       url shortener  -> spam link             -> rate limit + bad URL check
+       payment        -> kisi aur ka payment   -> owner check + auth
+
+   ► MASTER SHEET SE JODA: per-user / IP RATE LIMIT (upload flood na ho) + WAF edge pe
+       (bot / bad IP) · TLS · secrets vault me, code me nahi.
 ```
 
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
@@ -335,6 +346,17 @@
    ★ status ka matlab: "kahan tak pahuncha" — yahi poore failure-handling ki buniyaad hai
      (crash ho jaaye to bhi pata rahega ki kya adhoora tha)
 
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the server crashes in the middle of the operation?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       payment        -> PSP ko bheja, jawab nahi -> PENDING pehle + reconciliation job
+       banking        -> debit hua, credit nahi   -> ek DB = @Transactional; kai service = SAGA
+       stock broker   -> crash beech me           -> event log pehle, crash pe replay
+
+   ► MASTER SHEET SE JODA: status likhna kaafi nahi, koi use DHOONDHE bhi: sweeper / reconcile job
+       jo der se UPLOADING / VALIDATING me atke dhoondhe -> S3 me bytes hain? -> queue me dobara ya FAILED.
+
    DB choice: simple key-lookup hai, par status ko ACID chahiye -> PostgreSQL (SQL)
         (agar scale bahut bada + pure key-value hota -> NoSQL bhi chalta;
          paisa hota -> hamesha SQL/ACID)
@@ -373,6 +395,11 @@
           │                     cache purana status dikha raha-> write-through / invalidate
           ├─► QUEUE          -> validation ka backlog        -> WORKER auto-scale (queue-depth pe)
           └─► adhoore upload -> ORPHAN bytes                 -> S3 lifecycle rule (auto delete/abort)
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
 ```
 
 ## ► WRAP (ek saans me)

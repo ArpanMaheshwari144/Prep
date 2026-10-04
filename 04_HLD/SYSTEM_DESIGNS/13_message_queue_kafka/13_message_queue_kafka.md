@@ -162,6 +162,17 @@
 
         har partition apna alag append-only log
         -> jagah bhi bat gayi, aur likhne ka load bhi
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "The database is too big / takes too many writes. What do you do?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener     -> arabon link                 -> short code se shard
+       twitter feed      -> tweets bahut                -> user_id se shard
+       google docs       -> docs bahut                  -> docId se shard
+       banking           -> transactions bahut          -> account_id se shard
+       chat              -> messages bahut              -> chat_id se shard
+       ★ replica sirf READ baantta; write ke liye SHARD. country/date = bura key (skew)
 ```
 
 ### dikkat 3 — "user-123 ke teen event teen alag partition me chale gaye"
@@ -180,6 +191,17 @@
 
    TU: "Global ordering chahiye hoti to sirf ek partition rakhni padti — aur tab poora
         throughput khatam ho jaata. Isliye per-key ordering leta hoon, ye kaafi hai."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you keep messages / events in order?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       chat              -> message aage-peeche         -> chat_id key + sequence number
+       stock broker      -> order ka kram               -> har symbol ek sequencer
+       google docs       -> edits ka kram               -> ek doc ke ops ek jagah serialize
+
+   ► MASTER SHEET SE JODA: partition BADHAYE to hash(key) % n badalta -> key doosri partition me
+     -> us key ka order toot sakta. isliye shuru me thode extra partition.
 ```
 
 ### dikkat 4 — "email-service ke 3 instance chala diye — teeno ne padh liya, user ko 3 email"
@@ -249,6 +271,20 @@
 
         "payment/order event ke liye acks=all lunga, click/log ke liye acks=1 —
          keemat ye hai ki acks=all thoda slow karta hai."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What happens if this server / node / DB goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener     -> DB primary gira             -> replica promote, redirect cache se chalta rahe
+       rate limiter      -> Redis node gira             -> Redis replica; na mile to fail-open
+       distributed cache -> cache node gira             -> replica + consistent hashing (sirf uski keys hilti)
+       banking           -> DB primary gira             -> sync replica promote (paisa wali write khoni nahi)
+       chat              -> chat server gira            -> client doosre server pe reconnect, message DB me safe
+       bookmyshow        -> App box gira                -> hold DB me hai, LB doosre box pe bhejta
+
+   ► MASTER SHEET SE JODA: copies ALAG rack / AZ me rakho (broker.rack) — warna ek AZ gaya
+     to leader + saare follower saath me gaye. ek hi copy = SPOF.
 ```
 
 ### dikkat 7 — "kaam ho gaya par commit se pehle consumer crash"
@@ -277,6 +313,27 @@
 
    ★ ye dedup cache QUEUE ke ANDAR nahi, CONSUMER-side hai. Kafka khud cache nahi karta —
      wo disk pe append karta hai aur OS ka page-cache use karta hai (isliye fast).
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the same request comes twice / the client retries?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       payment           -> Pay timeout, user dobara    -> idempotency key, dobara pe STORED result
+       notification      -> same event do baar          -> eventId/key se dedup, SMS ek hi baar
+       bookmyshow        -> Pay do baar daba            -> idempotency key (bookingId)
+       chat              -> message retry               -> clientMsgId se dedup
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you make sure no message is lost?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       notification      -> SMS event                   -> at-least-once + idempotent + DLQ
+       banking           -> DB + event dono chahiye     -> OUTBOX
+       chat              -> message                     -> pehle DB me, phir bhejo
+
+   ► MASTER SHEET SE JODA: poora jawab teen jagah — producer acks=all + ISR (dikkat 6) ·
+     consumer offset kaam ke BAAD + idempotent (yahi dikkat) · baar-baar fail -> DLQ (dikkat 8).
+     DB write + event dono chahiye -> OUTBOX (event usi DB txn me outbox table me, relay bheje).
 ```
 
 ### dikkat 8 — "consumer mar gaya / consumer peeche chal raha hai"
@@ -451,6 +508,20 @@
           │
           └─► PRODUCER side  -> acks=all har jagah -> latency badhi
                                 -> event ke hisaab se knob (payment=all, logs=1)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What about a hot key / celebrity / hot partition?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       distributed cache -> IPL score ek key            -> key kai copy + L1 local cache
+       twitter feed      -> celebrity ke crore follower -> celeb = fanout on READ (hybrid)
+       chat              -> viral group                 -> key bucket (chat_id + 0..9)
+       ★ consistent hashing ek hot key ko nahi bachata
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
 ```
 
 ## ► "Kab Kafka lena chahiye, kab NAHI?"  (trade-off — ye poocha jaata hai)

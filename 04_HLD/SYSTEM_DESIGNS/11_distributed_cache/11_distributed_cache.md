@@ -191,6 +191,19 @@
 
    ★ TRADE-OFF bolna: replication me LAG hota hai -> thodi der inconsistency
      par yahan eventual consistency chal jaati hai, to theek hai.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What happens if this server / node / DB goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener -> DB primary gira    -> replica promote, redirect cache se chalta rahe
+       rate limiter  -> Redis node gira    -> Redis replica; na mile to fail-open
+       kafka         -> broker gira        -> ISR ki replica leader ban jaati
+       banking       -> DB primary gira    -> sync replica promote (paisa wali write khoni nahi)
+       chat          -> chat server gira   -> client doosre server pe reconnect, message DB me safe
+       bookmyshow    -> App box gira       -> hold DB me hai, LB doosre box pe bhejta
+
+   ► MASTER SHEET SE JODA: replica ALAG AZ me rakho (ek hi AZ me = dono saath marenge).
 ```
 
 ### dikkat 4 — "DB me data update ho gaya, cache purana pada hai (STALE)"
@@ -208,6 +221,19 @@
 
    TU: "'Cache invalidation is one of the hardest problems' — isliye main dono lagata hoon:
         explicit invalidate jahan pata hai, aur TTL safety-net ki tarah jahan kuch chhoot jaaye."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "The user updated something but still sees the old value. Why?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener -> naya link replica pe nahi  -> naye link ka read primary se
+       twitter feed  -> apna tweet nahi dikha      -> read-your-own-writes (apna data primary se)
+       banking       -> balance purana             -> balance hamesha primary se
+       payment       -> status purana              -> status primary se
+
+   ► MASTER SHEET SE JODA: cache key DELETE karo, UPDATE nahi (do write ulte kram me pahunche
+       to cache me galat value baith jaati) · doosra kaaran REPLICA LAG: jisne abhi likha wo
+       thodi der PRIMARY se padhe (read-your-own-writes).
 ```
 
 ### dikkat 5 — "ek super-hot key expire hui aur 1000 request ek saath miss ho gayi"
@@ -236,6 +262,18 @@
    BOL: "For known events I'd pre-warm the cache and scale up in advance. For unpredictable spikes
          I still need stampede protection: a lock so only one request rebuilds the key, and early
          background refresh before the TTL expires."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the cache goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       rate limiter  -> Redis down                  -> default fail-open; payment/auth me fail-closed
+       url shortener -> redirect cache gira         -> DB pe load: replica + load shedding
+       twitter feed  -> feed cache gira             -> feed DB se banana mehnga -> shedding, garam karo
+       bookmyshow    -> Redis gira, browse primary pe -> Redis cluster + browse replica se
+
+   ► MASTER SHEET SE JODA: poora cache gaya to DB pe fallback, PAR load shedding / rate limit ke
+       saath -- warna jo load cache chhupa raha tha wo ek saath DB pe girega.
 ```
 
 ### dikkat 6 — "ek key itni popular hai ki uska SHARD akela mar raha hai"
@@ -255,6 +293,19 @@
                  │ miss
                  ▼
         [ DB ]                    milli-second
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What about a hot key / celebrity / hot partition?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       twitter feed  -> celebrity ke crore follower -> celeb = fanout on READ (hybrid)
+       chat          -> viral group                 -> key bucket (chat_id + 0..9)
+       kafka         -> ek bada customer ek partition -> key me salt / alag topic
+
+   ► MASTER SHEET SE JODA: upar ke dono ilaaj READ ke liye. WRITE hot ho to key me bucket
+       (key#0..key#9), likho kisi ek me, padhte waqt jodo.
+
+   ★ consistent hashing ek hot key ko nahi bachata
 ```
 
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
@@ -348,6 +399,11 @@
           └─► DB           -> stale data?                    -> invalidate + TTL combo
 
       + metrics: HIT-RATIO sabse zaroori metric hai (girna shuru hua = kuch toota hai)
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
 ```
 
 ## ► WRAP + MEMORY HOOK (jaldi revise ke liye)

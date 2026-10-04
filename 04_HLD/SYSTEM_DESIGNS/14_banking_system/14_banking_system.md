@@ -158,6 +158,17 @@ Wo case is scope se BAHAR hai (poora treatment: [payment-system](../07_payment_s
    NIYAM (ek line me yaad rakho):
       ek DB      ->  @Transactional
       cross-DB / cross-service / cross-bank  ->  SAGA (compensating undo)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the server crashes in the middle of the operation?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       payment           -> PSP ko bheja, jawab nahi    -> PENDING pehle + reconciliation job
+       stock broker      -> crash beech me              -> event log pehle, crash pe replay
+       file upload       -> upload beech me toota       -> status UPLOADING track, resume
+
+   ► MASTER SHEET SE JODA: kabhi BAHAR call ho (doosra bank) -> pehle durable PENDING state likho,
+     phir call, phir webhook + reconciliation job (pending dhoondho, poocho, resolve) = payment wala tareeka.
 ```
 
 ★★ **AUR YAHIN DB KA FAISLA HO GAYA — RELATIONAL (Postgres / Oracle / MySQL):**
@@ -171,6 +182,18 @@ Wo case is scope se BAHAR hai (poora treatment: [payment-system](../07_payment_s
    Wahan ye poora sambhalna APP ko padta -- yaani wahi SAGA, bina zaroorat ke.
 
    -> MOVE 2 ka SAWAAL 1 yahan JAWAB paa gaya.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Consistency or availability — which do you pick?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       bookmyshow        -> seat                        -> CP (booking), search AP
+       payment           -> paisa                       -> CP
+       google docs       -> edits / permissions         -> edits AP, permissions CP
+       twitter feed      -> feed                        -> AP (purana chalega)
+
+   ► MASTER SHEET SE JODA: ek hi system me dono: transfer / balance = CP (galat dene se accha reject),
+     SMS / statement / analytics = AP (dikkat 2 ka COMMIT ke baad wala raasta, thoda late chalega).
 ```
 (source-confirmed: JP core ledger ke liye relational hi preference deta hai)
 
@@ -223,6 +246,18 @@ Wo case is scope se BAHAR hai (poora treatment: [payment-system](../07_payment_s
         ilaaj = OUTBOX: event ko USI transaction me outbox table me likho, alag process bheje.
       COMMIT  ->  event  ->  notification · fraud-check · analytics · statement
       (yahan eventual consistency chalti hai — SMS 2 second late aaye to koi nahi marta)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you make sure no message is lost?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       kafka             -> consumer crash              -> offset kaam ke BAAD, idempotent, DLQ
+       notification      -> SMS event                   -> at-least-once + idempotent + DLQ
+       chat              -> message                     -> pehle DB me, phir bhejo
+
+   ► MASTER SHEET SE JODA: relay bhej ke "sent" mark karne se pehle gira -> event DOBARA jaayega
+     (at-least-once) -> SMS / fraud consumer eventId se IDEMPOTENT · Kafka pe acks=all ·
+     baar-baar fail -> retry + backoff -> DLQ.
 ```
 
 ---
@@ -285,6 +320,16 @@ dono alag ho jayenge. Jo cheez ek saath honi chahiye, use alag mat karo.
       accounts.balance se milao
       farak mila  ->  ALERT
       ★ chupchap theek MAT karo — pehle pata karo KYUN hua (wo bug abhi bhi zinda hai)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you know the system is working?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       notification      -> "bheja" != "pahuncha"       -> provider webhook
+       payment           -> PSP vs apna record          -> reconciliation
+
+   ► MASTER SHEET SE JODA: reconciliation ke saath METRICS bhi: p99 latency · error rate ·
+     queue lag · DB connections -> had paar = ALERT. logs + trace id se ek transfer follow.
 ```
 
 **★ EK LINE (interview me bolne layak):**
@@ -362,6 +407,16 @@ write(A, bal);            // 500   <- dusra bhi 1000 PADH chuka tha = lost updat
 
    -> dono UPDATE apni baari se chalenge (bilkul jaisa Arpan keh raha), PAR
       CHECK dono ke PEHLE ho chuka tha. Balance -100.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Two users do this at the same time — what happens?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       bookmyshow        -> do log ek seat              -> UPDATE ... WHERE status='available'
+       rate limiter      -> do request ek saath gine    -> Redis INCR / Lua (ek atomic step)
+       payment           -> ek payment do jagah claim   -> UNIQUE constraint
+       stock broker      -> do order ek symbol pe       -> har symbol ek thread / sequencer
+       ★ farak: 2 user ek cheez = atomic/lock · 1 user ka retry = idempotency
 ```
 
 **Ilaaj wahi jo Arpan keh raha — DB se karwao, app se nahi:**
@@ -414,6 +469,21 @@ manual update), par DB ek hi hai. Aur constraint bhi relational ki hi den hai.
 ```
    FAISLA: kai Banking Service instance + aage LOAD BALANCER
            service STATELESS hai (sab DB me) -> koi bhi box koi bhi request le
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What happens if this server / node / DB goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener     -> DB primary gira             -> replica promote, redirect cache se chalta rahe
+       rate limiter      -> Redis node gira             -> Redis replica; na mile to fail-open
+       distributed cache -> cache node gira             -> replica + consistent hashing (sirf uski keys hilti)
+       kafka             -> broker gira                 -> ISR ki replica leader ban jaati
+       chat              -> chat server gira            -> client doosre server pe reconnect, message DB me safe
+       bookmyshow        -> App box gira                -> hold DB me hai, LB doosre box pe bhejta
+
+   ► MASTER SHEET SE JODA: box gira -> LB health check (2-3 fail = pool se bahar).
+     DB PRIMARY gira -> SYNC / semi-sync replica promote (async pe aakhri transfer kho sakta) ·
+     replica ALAG AZ me.
 ```
 
 ### dikkat 7 — "log balance / history baar-baar dekh rahe — sab padhai PRIMARY pe, transfer dheeme"
@@ -423,6 +493,15 @@ manual update), par DB ek hi hai. Aur constraint bhi relational ki hi den hai.
    ★ JAAL: apna abhi-kiya transfer PRIMARY se padho (replica thoda peeche ho sakti)
            warna user ko "paisa gaya hi nahi" dikhega -> dobara bhejega
    (shard abhi NAHI — MOVE 2 ka hisaab: single primary + replica kaafi)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "The user updated something but still sees the old value. Why?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       distributed cache -> cache me purana             -> update pe invalidate + TTL
+       url shortener     -> naya link replica pe nahi   -> naye link ka read primary se
+       twitter feed      -> apna tweet nahi dikha       -> read-your-own-writes (apna data primary se)
+       payment           -> status purana               -> status primary se
 ```
 
 ---
@@ -542,6 +621,18 @@ DELETE nahi kar sakte, wo galat hoga."*
 
       archive = us mahine ki partition DETACH kar do   (meta-data operation -- TURANT)
                 file uthao -> cold storage -> partition drop
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Data keeps growing — what happens in 3 years?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       news aggregator   -> purani news                 -> TTL / archive
+       chat              -> purane messages             -> month se partition, cold storage
+       notification      -> notification log            -> TTL
+       payment           -> payment records             -> archive, delete nahi
+
+   ► MASTER SHEET SE JODA: retention / archive != sharding. archive SIZE ghatata,
+     shard LOAD (writes) baant-ta. dono alag dikkat ke ilaaj.
 ```
 
 ```
@@ -605,6 +696,25 @@ Sasta, aur mukhya DB pe koi bojh nahi.
 
       ★ isi liye hamare number pe (120 write/sec) sharding ka sawaal hi nahi uthta.
         pehle vertical (bada box) + replica. shard tabhi jab ek machine sach me chuk jaaye.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "The database is too big / takes too many writes. What do you do?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener     -> arabon link                 -> short code se shard
+       twitter feed      -> tweets bahut                -> user_id se shard
+       google docs       -> docs bahut                  -> docId se shard
+       kafka             -> ek partition nahi samaata   -> partitions badhao
+       chat              -> messages bahut              -> chat_id se shard
+
+   ► MASTER SHEET SE JODA: interviewer bole "replica laga diye, phir bhi WRITES se DB maar kha raha"
+     -> tab SHARD by account_id pehle bolo (cache / index sirf READ ke ilaaj; har naya index INSERT
+     dheema karta). non-critical writes (statement, SMS) queue pe, txn ke raaste se bahar.
+       ★ replica sirf READ baantta; write ke liye SHARD. country/date = bura key (skew)
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
 ```
 
 ---

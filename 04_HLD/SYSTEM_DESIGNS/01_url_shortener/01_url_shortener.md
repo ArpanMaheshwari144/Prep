@@ -132,6 +132,18 @@
    TU: "Read:write 100:1 hai — isliye cache sabse pehle. Cache-aside, aur TTL link ki
         expiry ke barabar. ~95% read yahin nipat jaayenge."
       + DB me shortCode pe PRIMARY KEY / B-tree index -> O(log n), disk pe bhi tez
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the cache goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       distributed cache  -> hot key expire, 1000 miss      -> STAMPEDE: mutex (ek hi rebuild) / soft TTL
+       rate limiter       -> Redis down                     -> default fail-open; payment/auth me fail-closed
+       twitter feed       -> feed cache gira                -> feed DB se banana mehnga -> shedding, garam karo
+       bookmyshow         -> Redis gira, browse primary pe  -> Redis cluster + browse replica se
+
+   ► MASTER SHEET SE JODA: Redis gira to 95% read seedha DB pe -> DB bhi gir sakta.
+       ilaaj: Redis replica/cluster · DB pe load shedding · mutex (ek hi rebuild, stampede nahi).
 ```
 
 ### dikkat 1b — "ek App box ~1 lakh redirect/sec nahi jhel raha, aur wo gira to poori site band"
@@ -187,6 +199,20 @@
    ★ SHARD aur REPLICA alag cheezein hain:
         shard   = data ke TUKDE   (jagah + write scale)
         replica = wahi data ki COPY (bachav + read scale)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "The database is too big / takes too many writes. What do you do?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       twitter feed       -> tweets bahut                   -> user_id se shard
+       google docs        -> docs bahut                     -> docId se shard
+       kafka              -> ek partition nahi samaata      -> partitions badhao
+       banking            -> transactions bahut             -> account_id se shard
+       chat               -> messages bahut                 -> chat_id se shard
+
+   ► MASTER SHEET SE JODA: naya node joda to hash % N me lagbhag saari key hilti ->
+       consistent hashing (Cassandra ka ring) = sirf ~K/N key hilti.
+   ★ replica sirf READ baantta; write ke liye SHARD. country/date = bura key (skew)
 ```
 
 ### dikkat 4b — "replica update ho rahi thi, beech me primary DB gir gaya — data gaya?"
@@ -205,6 +231,33 @@
 
    TU: "DB ka apna commit log hai, aur write quorum se ack karunga.
         Isliye ek machine gire to bhi likha hua data nahi jaata."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What happens if this server / node / DB goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       rate limiter       -> Redis node gira                -> Redis replica; na mile to fail-open
+       distributed cache  -> cache node gira                -> replica + consistent hashing (sirf uski keys hilti)
+       kafka              -> broker gira                    -> ISR ki replica leader ban jaati
+       banking            -> DB primary gira                -> sync replica promote (paisa wali write khoni nahi)
+       chat               -> chat server gira               -> client doosre server pe reconnect, message DB me safe
+       bookmyshow         -> App box gira                   -> hold DB me hai, LB doosre box pe bhejta
+
+   ► MASTER SHEET SE JODA: teeno copy ALAG AZ me rakho (ek AZ gaya to teeno na jaayein).
+       DB gira bhi to redirect Redis cache se chalta rahe.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "The user updated something but still sees the old value. Why?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       distributed cache  -> cache me purana                -> update pe invalidate + TTL
+       twitter feed       -> apna tweet nahi dikha          -> read-your-own-writes (apna data primary se)
+       banking            -> balance purana                 -> balance hamesha primary se
+       payment            -> status purana                  -> status primary se
+
+   ► MASTER SHEET SE JODA: naya link bana, turant click -> replica tak abhi nahi pahuncha -> 404.
+       ilaaj: naye link ka read primary se (read-your-own-writes); Cassandra me QUORUM write +
+       QUORUM read = taaza value milti. write path link Redis me bhi daalta hai, wo bhi bachata.
 ```
 
 ### dikkat 5 — "LB khud gir gaya — saare App zinda hain, par koi unhe traffic de hi nahi raha"
@@ -220,6 +273,16 @@
    ★ redundancy AKELI kaafi nahi hoti -- do LB rakh bhi diye to
      koi cheez chahiye jo DEKHE ki ek mar gaya aur traffic MOD de
      (Redis me yahi kaam Sentinel karta hai -- wahi shakal)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if a whole region / data center goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       twitter feed       -> region gaya                    -> DNS se doosra region, feed thoda purana chalega
+       rate limiter       -> region gaya                    -> counter region-sticky, naye region me nayi ginti
+
+   ► MASTER SHEET SE JODA: region ke andar multi-AZ (sasta). poora region gaya -> Route 53 doosra
+       region deta; data doosre region me ASYNC copy hota -> aakhri kuch naye link kho sakte (chhota loss window maana).
 ```
 
 ### dikkat 6 — "ek bande ne script chala di — ek raat me 10 lakh short link bana diye"
@@ -235,6 +298,17 @@
      -> isi liye use EK jagah rakhna aasan hai: API GATEWAY
      (auth aur routing bhi wahi ek jagah baith jaate hain)
    ★ poora rate-limiter apne aap me ek design hai -> 02_rate_limiter
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you secure it / stop abuse?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       file upload        -> galat file                     -> magic bytes check, presigned URL chhoti expiry
+       rate limiter       -> abuse                          -> per user / IP limit
+       payment            -> kisi aur ka payment            -> owner check + auth
+
+   ► MASTER SHEET SE JODA: BAD URL check bhi: long_url ko malware / phishing list se milao, spam
+       link short hi na ho. auth gateway pe + WAF edge pe (bot / bad IP).
 ```
 
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
@@ -516,6 +590,11 @@
              shard by shortCode = data ko TUKDON me baantna (jagah + write scale)
              geo replication    = door wale user ko paas se jawab dena (speed)
            dono saath chal sakte hain, par ek doosre ki jagah nahi lete.
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
 ```
 
 ```

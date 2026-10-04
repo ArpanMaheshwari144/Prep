@@ -190,6 +190,21 @@
 
    TU: "Real-time hissa memory/pub-sub se chalta hai; DB me batch me likhta hoon.
         User ko wait nahi karna padta aur DB pe hathoda nahi padta."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "The database is too big / takes too many writes. What do you do?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener -> arabon link                -> short code se shard
+       twitter feed  -> tweets bahut               -> user_id se shard
+       kafka         -> ek partition nahi samaata  -> partitions badhao
+       banking       -> transactions bahut         -> account_id se shard
+       chat          -> messages bahut             -> chat_id se shard
+
+   ► MASTER SHEET SE JODA: batch ke baad bhi edit-log bada / writes zyada -> docId se SHARD
+       (Cassandra partition key = docId, ek doc ke saare ops ek shard pe).
+
+   ★ replica sirf READ baantta; write ke liye SHARD. country/date = bura key (skew)
 ```
 
 ### dikkat 6 — "doc kholne pe 10 lakh operation replay karne padenge"
@@ -224,6 +239,15 @@
         permissions/ownership ->  CP   (strong — hataye gaye user ko TURANT block karna hai)
 
    ★ CAP ka faisla SIRF partition ke waqt maayne rakhta hai; partition nahi hai to dono milte hain.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Consistency or availability — which do you pick?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       bookmyshow    -> seat     -> CP (booking), search AP
+       payment       -> paisa    -> CP
+       banking       -> balance  -> CP
+       twitter feed  -> feed     -> AP (purana chalega)
 ```
 
 ### dikkat 8 — "crore WebSocket connections ek hi server pe?"
@@ -243,6 +267,17 @@
           bachav hai. (routing pakka ho to pub/sub ka kaam bahut kam ho jaata hai)
      3. hot doc bounded hai (Google ~100 editor ki cap rakhta) -> per-doc OT ek server pe theek chalta
      4. spike aaye -> queue absorb kare; Redis pub/sub replicate + horizontally scale
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you keep messages / events in order?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       kafka         -> order sirf partition ke andar -> same key = same partition
+       chat          -> message aage-peeche          -> chat_id key + sequence number
+       stock broker  -> order ka kram                -> har symbol ek sequencer
+
+   ► MASTER SHEET SE JODA: kram SERVER deta (har op ko doc ka agla version / sequence number),
+       client ki ghadi se nahi.
 ```
 
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
@@ -330,6 +365,11 @@
           ├─► Redis pubsub -> spike?                -> replicate + horizontal scale
           ├─► DB writes    -> har keystroke?        -> buffer + batch
           └─► doc load     -> 10 lakh op replay?    -> SNAPSHOT + baad ke ops
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
 ```
 
 ---

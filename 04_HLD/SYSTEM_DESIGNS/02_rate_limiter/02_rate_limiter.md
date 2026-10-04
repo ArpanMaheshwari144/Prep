@@ -157,6 +157,16 @@
       naive containsKey+put ka gap -> 2 request ghus -> double charge.
       Wahan ilaaj = putIfAbsent (atomic), yahan = INCR / Lua (atomic).
       Rate-limiter <-> idempotency = SAME race, same cure: "read+modify+write ko EK unit banao".
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "Two users do this at the same time — what happens?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       bookmyshow         -> do log ek seat                 -> UPDATE ... WHERE status='available'
+       banking            -> do withdrawal ek saath         -> UPDATE ... WHERE balance >= x
+       payment            -> ek payment do jagah claim      -> UNIQUE constraint
+       stock broker       -> do order ek symbol pe          -> har symbol ek thread / sequencer
+   ★ farak: 2 user ek cheez = atomic/lock · 1 user ka retry = idempotency
 ```
 
 ### dikkat 3 — "limiter ko app ke andar rakhoge to request poore system me ghoom chuki hogi"
@@ -196,6 +206,31 @@
      ★ MECHANISM zaroori hai: replicate karna kaafi nahi — koi failure DETECT karke REDIRECT bhi kare
        (Redis = Sentinel, LB = Route53/VIP). Warna replica bekaar pada rahega.
      TOP = DNS (Route 53) globally-managed -> khud single-box nahi -> top-level SPOF nahi.
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What happens if this server / node / DB goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener      -> DB primary gira                -> replica promote, redirect cache se chalta rahe
+       distributed cache  -> cache node gira                -> replica + consistent hashing (sirf uski keys hilti)
+       kafka              -> broker gira                    -> ISR ki replica leader ban jaati
+       banking            -> DB primary gira                -> sync replica promote (paisa wali write khoni nahi)
+       chat               -> chat server gira               -> client doosre server pe reconnect, message DB me safe
+       bookmyshow         -> App box gira                   -> hold DB me hai, LB doosre box pe bhejta
+
+   ► MASTER SHEET SE JODA: Redis replica ALAG AZ me rakho (ek AZ gaya to master + replica dono na jaayein).
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if the cache goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       distributed cache  -> hot key expire, 1000 miss      -> STAMPEDE: mutex (ek hi rebuild) / soft TTL
+       url shortener      -> redirect cache gira            -> DB pe load: replica + load shedding
+       twitter feed       -> feed cache gira                -> feed DB se banana mehnga -> shedding, garam karo
+       bookmyshow         -> Redis gira, browse primary pe  -> Redis cluster + browse replica se
+
+   ► MASTER SHEET SE JODA: fail-open default hai, par payment / auth / OTP endpoint pe FAIL-CLOSED
+       (wahan galat guzarna mehnga).
 ```
 
 ### dikkat 5 — "user Bangalore + Berlin + US-VPN se maar raha hai"
@@ -223,6 +258,16 @@
                     ("3 OTP attempts" . "10 free API calls phir charge" . withdrawal limit)
                     -> CENTRAL ATOMIC (Redis + Lua), latency ki keemat bhugto
       1-LINE: protective/soft limit -> local+async (fast) | money/security limit -> central atomic (exact)
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if a whole region / data center goes down?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       url shortener      -> region gaya                    -> DNS health check, doosra region (async copy)
+       twitter feed       -> region gaya                    -> DNS se doosra region, feed thoda purana chalega
+
+   ► MASTER SHEET SE JODA: home region gaya -> Route 53 user ko doosre region bhejta, wahan counter
+       zero se (nayi ginti, thodi der limit dheeli). rate limiter me chalta hai -- ginti sirf ek window ki hai.
 ```
 
 ### dikkat 6 — "ek hi banda baar-baar maar raha hai, 429 se ruk hi nahi raha"
@@ -240,6 +285,14 @@
       Aur marketing campaign me legit burst aata hai.
       Isliye rate-limit forgiving rakhta hoon (retry kar sakte ho), aur WAF sirf
       verified abuse pe — wo permanent hota hai."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "How do you secure it / stop abuse?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       file upload        -> galat file                     -> magic bytes check, presigned URL chhoti expiry
+       url shortener      -> spam link                      -> rate limit + bad URL check
+       payment            -> kisi aur ka payment            -> owner check + auth
 ```
 
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
@@ -303,6 +356,12 @@
 
    TU: "Client ko sirf 'na' mat bolo — batao kitna bacha hai aur kab dobara try kare.
         Warna wo turant retry maarta rahega."
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "The provider returns 429 — you're sending too fast. What now?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       notification       -> SMS provider 429               -> apna throttle + backoff + jitter + Retry-After
 ```
 
 ## ► "Redis me kya rakhoge?"
@@ -411,6 +470,11 @@
       Algorithm token-bucket. Key rate:{endpoint}:{user} with TTL. Reject = 429 + Retry-After.
       Distributed ke liye region-sticky; reliability ke liye replica + fail-open + shard;
       aur repeat abuse ke liye layered defense — rate-limit, Kafka pattern detection, WAF."
+
+   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
+       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
+       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
 ```
 
 ---
@@ -437,6 +501,17 @@ Limiter ne kuch galat nahi kiya. **Har user niyam ke andar tha.**
 ```
 RATE LIMIT      "kis USER ne kitni bheji"        ->  ABUSE / fairness ke liye
 LOAD SHEDDING   "SYSTEM abhi kitna jhel sakta"   ->  BACHNE ke liye
+
+   ► INTERVIEWER AISE POOCHEGA:
+       "What if traffic suddenly spikes 10x?"
+
+   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
+       bookmyshow         -> popular release                -> queue + darwaze pe counter / waiting room
+       notification       -> sale pe 1 crore SMS            -> queue me rakho, worker apni raftaar se
+       twitter feed       -> viral tweet / event            -> cache + queue, pehle se scale (pre-warm)
+
+   ► MASTER SHEET SE JODA: QUEUE burst ko hold karti · pata ho kab aayega (12 baje sale) -> PEHLE se
+       scale out; autoscale ko minute lagte, spike seconds me aata.
 ```
 
 Ye DO alag cheezein hain aur aksar ek maan li jaati hain. Bheed ke liye chahiye: poore system ka
