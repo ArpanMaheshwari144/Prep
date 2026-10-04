@@ -264,9 +264,6 @@ public class VolatileDemoController {
 
 ### ★ 4-Oct: WAHI MACHINE, plain Java (Spring ke bina) -> is baar HANG HUA
 ```
-static boolean plain = true;            while (plain) c++;   // flag false kiya, 3 sec ruke
-static volatile boolean vol = true;     while (vol) c++;     // flag false kiya, 3 sec ruke
-
 1) plain flag = false kiya
    3 sec baad worker zinda? true          <- HANG, flag ka badalna dikha hi nahi
 2) volatile flag = false kiya
