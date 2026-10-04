@@ -77,7 +77,7 @@ class Buffer {
 }
 ```
 
-> **`notify()` exactly kya karta — deep flow ke liye file 45 padho.**
+> **`notify()` exactly kya karta — deep flow ke liye [09_notify_deep_dive.md](09_notify_deep_dive.md) padho.**
 
 ---
 
