@@ -58,7 +58,7 @@ public class ProducerConsumer {
                 for (int i = 1; i <= 10; i++) {
                     int item = buffer.consume();
                     System.out.println("        Consumed: " + item);
-                    Thread.sleep(150);   // consumer thoda slow -> buffer kabhi FULL hoga (producer wait dekhega)
+                    Thread.sleep(150);   // consumer thoda slow -> buffer me 2-3 jama hote (10 item pe LIMIT=5 tak NAHI pahunchta; producer-wait dekhna ho to LIMIT=2 karo)
                 }
             } catch (InterruptedException e) { e.printStackTrace(); }
         });
