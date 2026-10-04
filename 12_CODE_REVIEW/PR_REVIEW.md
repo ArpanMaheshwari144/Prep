@@ -35,28 +35,39 @@ teamblind.com "jp morgan chase superday" · devbrainiac.com JPMorgan SDE-2
  #   CODE ME DHOONDHO                     DIKKAT                          ASAR (ye bhi bolna)
 ---  -----------------------------------  ------------------------------  ----------------------------------
  1   SQL string me  + "   ya  '" + x + "' SQL INJECTION                   koi bhi data padh / mita de
-     (har query pe, EK bhi mat chhodo)                                    -> PreparedStatement + ?
+     HAR query pe — delete / update /                                     -> PreparedStatement + ?
+     jdbc.execute bhi (4-Oct delete me chhupa tha)
  2   "password" · "admin" · "sk_live" ·   HARDCODED CREDS                 git me prod password
      jdbc:... url string me                                               -> env variable / Vault
- 3   getConnection · new FileReader ·     CLOSE kahan? + LOOP me khul     connection khatam, DB/app girega
-     openStream · createStatement         raha to aur bura               -> try-with-resources / pool / JdbcTemplate
- 4   LOOP ke andar  query / HTTP / repo   N+1                             1 lakh row = 1 lakh query
-     call (seedha ya kisi method se)                                      -> ek JOIN / IN / batch
-     SELECT * bina WHERE, phir Java me if  poori table memory me          -> WHERE DB me lagao
+ 3   getConnection · new FileReader ·     CLOSE kahan?                    connection khatam, DB/app girega
+     openStream · createStatement                                         -> try-with-resources / pool / JdbcTemplate
+     raw JDBC dikhe -> WHERE bhi dekho    SELECT * bina WHERE, filter      poori table memory me
+                                          Java ke if me                   -> WHERE DB me
+ 4   LOOP ke andar  query / HTTP / repo   N+1 (DB) · N HTTP call          1 lakh row = 1 lakh call
+     call / new RestTemplate()                                            -> JOIN / IN / batch / queue, bean inject
  5   catch                                nigla? sirf println? chauda     prod me pata hi nahi kya toota
                                           (Exception)? return false/null? -> log.error("..id={}", id, e) + specific
- 6   static  (jo final nahi)              saari app me EK copy, sab       thread-safe nahi, kabhi saaf nahi,
-     service/controller ka field          thread share                    purane run ka data -> local / Concurrent*
- 7   boolean flag / counter jo doosra     volatile nahi = dikhega nahi;   -> volatile (dikhne ke liye)
-     thread padhe / badhaye               ++ atomic nahi; check-then-set  -> AtomicInteger / AtomicBoolean.compareAndSet
+ 6   static  (jo final nahi)              saari app me EK copy, sab       thread-safe nahi + kabhi saaf nahi
+     · static Map cache                   thread share                    (cache: update ke baad STALE)
+     · static SimpleDateFormat            SimpleDateFormat thread-safe    -> local / Concurrent* / DateTimeFormatter
+                                          nahi
+ 7   boolean flag / counter jo doosra     volatile nahi = dikhega nahi    -> volatile (dikhne ke liye)
+     thread padhe / badhaye               ++ atomic nahi                  -> AtomicInteger
+     SHAKAL: if (flag) return; flag=true; CHECK-THEN-ACT — NAAM BOLO      -> AtomicBoolean.compareAndSet
+     flag = false kahan? finally me?      exception aaya to flag phansa   -> finally
  8   ==  String / Integer / Long pe       reference compare               ASAR bolo: "if kabhi true nahi,
-                                                                          poori job chup-chaap kuch nahi karegi"
+                                          (Integer 127 ke upar false)     poori job chup-chaap kuch nahi karegi"
  9   double / float  me amount            paisa rounding                  -> BigDecimal / long paise
+     amount / qty request se              -ve / 0 check?                  -> @Positive / validation
 10   log / println me  email · card ·     PII / secret log me             log leak = data leak -> sirf id / mask
-     password · token
-11   request se id / amount               owner check? validation?        koi bhi kisi ka data / -ve amount
-     ★ HAR {id} wale method pe ALAG se    ek method me check hai to baaki  owner nahi -> 403 (chup "ok" nahi)
-     poocho "ye kiska hai?"               me bhi hai, ye maan mat lena
+     PAN · password · token
+11   ★ {id} wala HAR method               "ye kiska hai?" — owner check   koi bhi kisi ka data dekhe / mitaye
+     (GET / pay / cancel / DELETE)        ek me hai to baaki me maan mat  -> token se owner, nahi to 403
+     child id + parent id dono?           rishta check (item usi order    (chup "ok" / 200 NAHI)
+                                          ka hai?)
+12   DO write ek method me                @Transactional nahi = aadha     beech me fail -> paisa gaya, status nahi
+     (save + save · refund + status)      likha; do request ek saath =    -> @Transactional + WHERE status=? /
+     ★ ek hi query wale pe NAHI           double refund                   @Version / idempotency
 ```
 
 ### ★ EK LINE PE EK PAKDA, TO RUKO MAT (3-Oct data se)
@@ -80,6 +91,8 @@ SHAKAL yaad rakho:  if (flag) return;  flag = true;   = CHECK-THEN-ACT -> Atomic
 
 ### NAZAR 2 — STYLE (~3 min). Ek-ek naam lo:
 
+> Nazar 1 ke baad yahan ZAROOR aao — 4-Oct ye poori nazar chhooti (magic, naam, return type, SRP).
+
 ```
 naam           a · b · x · e · st · temp · data · doIt()     -> kaam batane wala naam
 println        production me                                  -> SLF4J logger, sahi level
@@ -96,6 +109,8 @@ return type    ek method String, doosra BigDecimal, teesra    -> sab ResponseEnt
 
 ### NAZAR 3 — SAMET DO (~1 min). YE LINE HAMESHA:
 
+> Ab tak 5 drill me 5 baar chhooti. Review ka AAKHRI kaam yahi — bina iske review adhoora.
+
 ```
 "Production me abhi nahi jaana chahiye — sabse bhaari: <1> , <2> , <3>.
  Baaki (naam, println, magic string) isi PR me ya follow-up me."
@@ -108,7 +123,7 @@ return type    ek method String, doosra BigDecimal, teesra    -> sab ResponseEnt
 ```
 0:00  CONTEXT POOCHO   "Ye PR kya karta hai?" (samjhe bina line pe mat kood)
 0:30  EK BAAR PADHO    upar se neeche, chup — code kya kar raha hai
-1:30  NAZAR 1          bhaari (shikaar list 1-11)
+1:30  NAZAR 1          bhaari (shikaar list 1-12)
 5:30  NAZAR 2          style
 8:30  NAZAR 3          faisla line
 ```
@@ -223,54 +238,13 @@ KRAM:  bhaari pehle -> style -> faisla
 
 ---
 
-## 5. DRILL SE NIKLI GALTIYAN (jo chhoota, wahi yahan)
+## 5. DRILL KA HISAAB (sabak upar shikaar list me mila diye — yahan sirf ginti)
 
 ```
-DRILL                 CHHOOTA                                       AGLI BAAR
-30-Sep Address        owner check (IDOR) · faisla line              {id} dikhe -> "kiska hai?"
-1-Oct  CardController owner check: block + getLimit me nahi tha     har {id} method pe alag se dekho
-                        (updateLimit me tha -> baaki me maan liya)
-                      non-owner pe bhi "ok" return (403 chahiye)    fail / mana -> sahi status, 200 nahi
-                      status "BLOCKED" raw String                   magic string -> enum
-                      return type alag-alag                         sab ResponseEntity
-                      faisla line                                   end me NAZAR 3 wali line HAMESHA
+DRILL                  PAKDA (khud)                         SABSE BADA CHHOOTA
+30-Sep Address         -                                    owner check · faisla line
+1-Oct  CardController  field inj · .get() · == · card log   owner check baaki method pe · 403 · faisla
+2-Oct  OrderController owner check · SQLi · N+1 · static    @Transactional (double refund) · Integer == · faisla
+3-Oct  BillReminder    17/23 · owner check pay() pe         N+1 loop me · check-then-act naam · faisla
+4-Oct  EmiController   9 + 6 aadhe / 25 · SimpleDateFormat  SQLi (delete me) · nazar 2 poori · faisla
 ```
-2-Oct  OrderController owner check PAKDA (getOrder pe likha)          BOLTE waqt ek line: "same on cancelOrder and
-                        concept poore controller pe laagu             updateQty — no {orderId} endpoint checks owner"
-                      updateQty: item usi order ka hai? (alag check)  child id + parent id dono ho to rishta check
-                      cancel = refund + save: @Transactional nahi,  paisa + status = do write -> transaction,
-                        do request ek saath = DOUBLE REFUND         WHERE status='PLACED' / @Version / idempotency
-                      Integer == Integer (qty)                       127 ke upar false -> equals
-                      "PLACED"/"CANCELLED" magic · naam x, tmp       enum · kaam batane wala naam
-                      faisla line (3rd baar)                         end me NAZAR 3 wali line
-3-Oct  BillReminder    loop me findById = N+1 · SELECT * bina WHERE      LOOP me repo call dikhe -> N+1 bolo
-                      report = report + .. loop me                   StringBuilder
-                      "DUE", 0.02 magic · naam doIt, x, tmp          enum / constant · kaam batane wala naam
-                      line 14 shaq hua, naam nahi diya              if(flag) return; flag=true = CHECK-THEN-ACT
-                                                                     -> AtomicBoolean.compareAndSet
-                      faisla line (4th baar)                         end me NAZAR 3 wali line
-4-Oct  EmiController   ★ SQLi delete me (jdbc.execute + concat)       HAR query string pe "+" dhoondho, delete/update bhi
-                      owner check getEmi pe (delete pe pakda)        {id} wale HAR method pe alag se
-                      L36 shaq hua, naam nahi (2nd baar)            if(flag) return; flag=true -> naam: AtomicBoolean.compareAndSet
-                      @Transactional delete pe likha (1 query)      DO write kahan hain? -> wahan (pay: loan + payment)
-                      connection close · SELECT * bina WHERE ·       raw JDBC dikhe -> close? WHERE? · loop me HTTP / new X()
-                        loop me HTTP + new RestTemplate · String +
-                      running=false finally me nahi · cache stale    flag reset -> finally · cache -> kab saaf hoga?
-                      NAZAR 2 poori chhooti (magic, naam, return     nazar 1 ke baad ruko mat -> naam/magic/return type
-                        type, SRP) · faisla line (5th baar)
-4-Oct pakda (khud): String == dono · .get() teeno · creds · N+1 · khaali catch · volatile · static HashMap ·
-★ SimpleDateFormat thread-safe nahi (naya) · double paisa · PAN + println · field injection · non-owner pe "ok" · delete owner.
-
-3-Oct pakda (khud): ★ OWNER CHECK pay() pe (pehli baar bina chhoote) · SQLi · creds dono jagah · connection close ·
-String == · .get() · BigDecimal · PII log · println · khaali catch · fail pe "done" · static + volatile · count++ atomic ·
-field injection · new SmsClient() test nahi hoga · SRP.
-
-2-Oct pakda (khud): owner check getOrder · SQLi · secret · static HashMap thread · .get() · catch return null ·
-entity bina DTO · N+1 · println · field injection · SRP (controller me SQL).
-
-1-Oct pakda (khud): field injection · .get() · String == · card number log me · catch me 200 "blocked" ·
-double/BigDecimal shaq · cardId validation.
-
-★ Owner check: 30-Sep / 1-Oct chhoota, 2-Oct / 3-Oct pakda -> code padhne se PEHLE ek sawaal: "kaunse method {id} lete hain?"
-★ Faisla line ab tak har drill me chhooti -> review ka AAKHRI kaam, likh ke rakho.
-
