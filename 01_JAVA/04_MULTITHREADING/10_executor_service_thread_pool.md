@@ -6,9 +6,9 @@
 
 ## STORY — `new Thread()` Ki Problem
 
-→ API ko **1000 requests** aaye. Tune **har request pe `new Thread()`** banaya
-→ **JVM crash** — thread create karna **costly hai**, OS-level resources lagti hain
-→ Memory leak. **Threads garbage collect nahi hote** kabhi-kabhi
+→ API pe **hazaaron requests** aaye. Tune **har request pe `new Thread()`** banaya
+→ Har thread = OS thread + apna stack (~1 MB tak) -> limit pe **`OutOfMemoryError: unable to create native thread`**
+→ Usse pehle hi CPU **context-switch** me hi time kha jaata, kaam kam hota
 → Modern fix: **Thread Pool** — pehle se kuch threads bana lo, **reuse karo**
 → `ExecutorService` = thread pool ka manager
 
@@ -36,7 +36,7 @@
   Request 2  →  new Thread()  →  task done  →  thread DESTROY
   Request 3  →  new Thread()  →  task done  →  thread DESTROY
    ...
-  1000 reqs  →  1000 threads create + destroy  →  JVM crash
+  hazaaron reqs  →  utne threads create + destroy  →  native-thread OOM / context-switch me CPU barbaad
 
 
 ╔════════════════════════════════════════════════════════════╗
