@@ -212,7 +212,8 @@ CompletableFuture.supplyAsync(() -> task(), myExecutor);   // better isolation
 
 ## TRAP 3 — `Future.cancel()` Best Effort
 
-> **Cancellation guarantee nahi** — running task interrupt aata hai, but task usse handle karna padta. Abrupt stop nahi hota.
+> **Cancellation guarantee nahi** — `cancel(true)` pe running task ko sirf interrupt bheja jaata (`cancel(false)` = chal raha task chalta rahega), task ko khud interrupt check karna padta. Abrupt stop nahi hota.
+> (CompletableFuture me `cancel(true)` chalte task ko interrupt bhi NAHI karta — sirf CF ko "cancelled" mark karta.)
 
 ---
 
