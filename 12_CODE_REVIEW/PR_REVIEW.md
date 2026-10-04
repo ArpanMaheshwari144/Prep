@@ -249,6 +249,18 @@ DRILL                 CHHOOTA                                       AGLI BAAR
                       line 14 shaq hua, naam nahi diya              if(flag) return; flag=true = CHECK-THEN-ACT
                                                                      -> AtomicBoolean.compareAndSet
                       faisla line (4th baar)                         end me NAZAR 3 wali line
+4-Oct  EmiController   ★ SQLi delete me (jdbc.execute + concat)       HAR query string pe "+" dhoondho, delete/update bhi
+                      owner check getEmi pe (delete pe pakda)        {id} wale HAR method pe alag se
+                      L36 shaq hua, naam nahi (2nd baar)            if(flag) return; flag=true -> naam: AtomicBoolean.compareAndSet
+                      @Transactional delete pe likha (1 query)      DO write kahan hain? -> wahan (pay: loan + payment)
+                      connection close · SELECT * bina WHERE ·       raw JDBC dikhe -> close? WHERE? · loop me HTTP / new X()
+                        loop me HTTP + new RestTemplate · String +
+                      running=false finally me nahi · cache stale    flag reset -> finally · cache -> kab saaf hoga?
+                      NAZAR 2 poori chhooti (magic, naam, return     nazar 1 ke baad ruko mat -> naam/magic/return type
+                        type, SRP) · faisla line (5th baar)
+4-Oct pakda (khud): String == dono · .get() teeno · creds · N+1 · khaali catch · volatile · static HashMap ·
+★ SimpleDateFormat thread-safe nahi (naya) · double paisa · PAN + println · field injection · non-owner pe "ok" · delete owner.
+
 3-Oct pakda (khud): ★ OWNER CHECK pay() pe (pehli baar bina chhoote) · SQLi · creds dono jagah · connection close ·
 String == · .get() · BigDecimal · PII log · println · khaali catch · fail pe "done" · static + volatile · count++ atomic ·
 field injection · new SmsClient() test nahi hoga · SRP.
