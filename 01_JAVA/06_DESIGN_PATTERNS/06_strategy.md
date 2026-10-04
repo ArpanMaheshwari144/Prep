@@ -141,14 +141,14 @@ users.sort(Comparator.comparing(User::getAge));       // strategy 2 (different a
 @Bean
 public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();   // strategy
-    // OR new PBKDF2PasswordEncoder();    // swap
-    // OR new SCryptPasswordEncoder();
+    // OR Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8();   // swap
+    // OR SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8();
 }
 ```
 
 ### 3. **`AuthenticationProvider`** (Spring Security) — multiple auth strategies (DB, LDAP, OAuth) implement same interface.
 
-### 4. **Compression algorithms** — ZIP, GZIP, BZIP2 → all implement same interface.
+### 4. **Compression algorithms** — ZIP / GZIP: apna `Compressor` interface banao, dono uske peeche (JDK me inka koi common interface nahi, ye design-misaal hai).
 
 ---
 
