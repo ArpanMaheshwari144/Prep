@@ -262,6 +262,20 @@ public class VolatileDemoController {
 - "Hang hota hai" JHOOTH nahi — bahut systems (server-JVM, purane setup) pe genuinely hang hota. Bas **GUARANTEED nahi.**
 - Meri machine ki JIT ne is baar hoist nahi kiya -> isliye demo "flat" gaya (dono version ek jaise ruke).
 
+### ★ 4-Oct: WAHI MACHINE, plain Java (Spring ke bina) -> is baar HANG HUA
+```
+static boolean plain = true;            while (plain) c++;   // flag false kiya, 3 sec ruke
+static volatile boolean vol = true;     while (vol) c++;     // flag false kiya, 3 sec ruke
+
+1) plain flag = false kiya
+   3 sec baad worker zinda? true          <- HANG, flag ka badalna dikha hi nahi
+2) volatile flag = false kiya
+   volatile worker RUKA, count=1701657563
+   3 sec baad worker zinda? false         <- turant ruka
+```
+- 27-Aug (Spring controller) = ruk gaya · 4-Oct (plain Java) = HANG. Same machine, alag setup, alag nateeja.
+- Yahi upar wala lesson LIVE: bina volatile kuch GUARANTEED nahi — kabhi chalega, kabhi hang.
+
 ### ASLI LESSON (yehi interview me bolna)
 > "Without `volatile`, cross-thread visibility is not guaranteed — it's JIT/machine dependent. The same code may
 > work on one JVM and hang on another. `volatile` forces every read/write through main memory, so the flag change
@@ -279,4 +293,4 @@ private volatile boolean running = true;      // <- flag
 /volatile/start -> new Thread(() -> { while(running) { ...count++... } }).start();
 /volatile/stop  -> running = false;           // main thread flag off
 ```
-Classic visibility demo LIVE: `running` volatile na ho -> worker-thread apni CPU-cache me purana `running=true` dekh sakta -> `/volatile/stop` ke baad loop ka rukna **GUARANTEED nahi** (tere machine pe bina volatile bhi ruk gaya tha — upar HANDS-ON dekho, JIT pe depend). volatile lagte hi worker hamesha main-memory se fresh padhta -> rukna GUARANTEED. (endpoints se khud test kiya.)
+Classic visibility demo LIVE: `running` volatile na ho -> worker-thread apni CPU-cache me purana `running=true` dekh sakta -> `/volatile/stop` ke baad loop ka rukna **GUARANTEED nahi** (27-Aug Spring me bina volatile bhi ruk gaya tha, 4-Oct plain Java me HANG hua — upar HANDS-ON dekho, JIT pe depend). volatile lagte hi worker hamesha main-memory se fresh padhta -> rukna GUARANTEED. (endpoints se khud test kiya.)
