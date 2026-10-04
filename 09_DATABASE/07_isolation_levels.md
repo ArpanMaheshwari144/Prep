@@ -2,7 +2,7 @@
 
 > ACID ka **I** = Isolation. "kitna strict" = ISOLATION LEVEL.
 > (06_acid.md ne isi file ko point kiya tha — ye wahi deep-dive.)
-> 2 transaction ek saath -> ek doosre ka aadha-kaam kितna dikhe? Level decide karta.
+> 2 transaction ek saath -> ek doosre ka aadha-kaam kitna dikhe? Level decide karta.
 
 ---
 
@@ -93,7 +93,7 @@ level badal ke (UNCOMMITTED vs COMMITTED) SELECT ka result badalta -> yehi isola
 
 ## INTERVIEW LINE
 ```
-"Isolation levels decide karte 2 concurrent txns ek-doosre ka uncommitted/committed kितna dekhein.
+"Isolation levels decide karte 2 concurrent txns ek-doosre ka uncommitted/committed kitna dekhein.
  3 anomalies: dirty read (uncommitted padh li), non-repeatable read (same row 2 baar alag), phantom (range me nayi rows).
  Ladder: READ UNCOMMITTED (kuch nahi roke) -> READ COMMITTED (dirty roke) -> REPEATABLE READ (MySQL default,
  non-repeatable bhi roke) -> SERIALIZABLE (phantom bhi, sabse strict).
