@@ -26,12 +26,13 @@
         ┌───────────┘          └───────────┐
         ▼                                  ▼
    Thread 1                            Thread 2
-   L1 Cache: count = 1000              L1 Cache: count = 1000
+   padha: count = 1000                 padha: count = 1000     (dono ne SAME purana value padha)
    count++ = 1001                      count++ = 1001
-   write to RAM                        write to RAM
+   write                               write
 
    MAIN MEMORY = 1001  (galat — 1002 hona chahiye!)
    EK update LOST.
+   (asli jad = read -> +1 -> write teen alag kadam, beech me doosra ghus gaya. cache na bhi ho to ye hota.)
 ```
 
 ---
