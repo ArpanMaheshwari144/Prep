@@ -163,6 +163,9 @@
         sab chunk ho gaye ──► S3 ko bolo "complete multipart" ──► wo jod deta hai
 
    => fail hua to sirf wahi tukda dobara, poori file nahi = resumable
+
+   ★ multipart CLIENT aur S3 ke beech hota hai -- server beech me NAHI,
+     server sirf har tukde ka presigned URL deta hai
 ```
 
 ### dikkat 4 — "user ne init to liya, par complete kabhi nahi kiya"
@@ -246,7 +249,7 @@
         link hamesha ke liye chal raha hai  ->  ab kisi ko bhi chalega
         aur humara owner-check beech me aata hi nahi -- S3 seedha de raha hai
 
-   FAISLA: PRE-SIGNED URL, chhoti umar ka (5-15 minute)
+   FAISLA: PRE-SIGNED URL, chhoti umar ka (5-15 MINUTE -- din nahi)
 
    ★ owner-check AB BHI hum karte hain -- URL tabhi BANTA hai jab check paas ho
      URL "chaabi" nahi hai, "5 minute ka PAAS" hai
@@ -338,7 +341,10 @@
 ## ► "DB me kya, aur kaunsa DB?"
 
 ```
-   files:  trackingId (KEY) | fileName | ownerId | status | s3_url | createdAt
+   files:  trackingId (KEY) | fileName | ownerId | status | s3_key | createdAt | updatedAt
+
+   ★ presigned URL DB me NAHI rakhte -- wo 5-15 min me mar jaata.
+     DB me s3_key; URL har maang pe NAYA banta (owner check ke baad)
 
    status =  UPLOADING  ->  VALIDATING  ->  DONE
                                         ->  FAILED
@@ -356,6 +362,7 @@
 
    ► MASTER SHEET SE JODA: status likhna kaafi nahi, koi use DHOONDHE bhi: sweeper / reconcile job
        jo der se UPLOADING / VALIDATING me atke dhoondhe -> S3 me bytes hain? -> queue me dobara ya FAILED.
+   ► "ATKI" KAISE PATA: status VALIDATING + updatedAt 10 min se purana (normal validation 2-3 sec)
 
    DB choice: simple key-lookup hai, par status ko ACID chahiye -> PostgreSQL (SQL)
         (agar scale bahut bada + pure key-value hota -> NoSQL bhi chalta;
@@ -400,6 +407,16 @@
        "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
        "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
        "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
+
+   ► MISAAL (system working): raat ko validator SLOW, queue me 50,000 file atki
+       health check "slow" nahi pakadta (ping ka jawab aa jaata) -> pakadta APNA METRIC:
+         queue depth/lag · validator call p99 + error rate · VALIDATING me purani files ki ginti
+         -> had paar = HUMEIN alert (CloudWatch alarm / PagerDuty), user ke complain se pehle
+       peeche: 3 fail -> validator "dead" = CIRCUIT BREAKER -> BACKUP PROVIDER pe
+         (third-party ki "replica" hum nahi chala sakte -- uska server humara nahi)
+       BOL: "I'd alert on our own metrics - queue depth, p99 latency and error rate of the validator
+             calls, and how many files are stuck in VALIDATING. A health check only tells me it's up,
+             not that it's slow. Behind that, a circuit breaker and a fallback provider."
 ```
 
 ## ► WRAP (ek saans me)
@@ -412,46 +429,6 @@
     aur status read-heavy hai to cache + read replica — par cache ko worker ke update ke
     saath hi invalidate karna padega.
     Aage badhata to: fail pe retry, aur downloads ke liye CDN."
-```
-
----
-
-## ═══ MOCK — poora design bolke (4-Oct) ═══
-
-```
-TUNE KHUD BOLA (file ki saari dikkat, apne kram me):
-   sawaal pehle (size · file/folder · validation time · type) · FR/NFR
-   async + queue + worker + trackingId · bytes seedhe S3 · multipart
-   adhoora upload -> cleanup · polling -> cache + stale (write-through / TTL)
-   authN vs authZ (JWT valid hona kaafi nahi) · link expiry · exe-as-pdf (worker bytes check)
-   SQL kyun (status consistent) · folder = parent/child · kahan tootega (LB, cache, index, shard aakhir)
-
-CHHOTI BAATEIN (agli baar aise bolna):
-   presigned URL DB me NAHI rakhte -> wo 5-15 min me expire hota. DB me trackingId + s3 key + status;
-     URL har maang pe NAYA banta (owner check ke baad)
-   link expiry = MINUTE, din nahi
-   multipart: client + S3 karte, server beech me nahi (server sirf URL deta)
-```
-
-## ═══ GRILL — mock ke end me (4-Oct) ═══
-
-```
-SAWAAL 1   "What if the server crashes in the middle of the operation?"
-           (worker ne validate shuru kiya, crash; DB me abhi bhi VALIDATING)
-TERA JAWAB status DB me hai -> sweeper/job atki files dhoondhe -> dobara try   -> SAHI
-JODA       "atki" kaise pata: VALIDATING + updated_at 10 min se purana (normal 2-3 sec)
-
-SAWAAL 2   "How do you know the system is working?"
-           (raat ko validator slow, queue me 50,000 file atki)
-TERA JAWAB health check (3 fail -> dead) · backup validator · CloudWatch/Papertrail logs  -> SAHI
-           (3 fail -> dead = CIRCUIT BREAKER)
-JODA       health check "slow" nahi pakadta (ping ka jawab aa jaata). Pakadta APNA METRIC:
-             queue depth/lag · validator call p99 + error rate · VALIDATING me purani files ki ginti
-             -> had paar = HUMEIN alert, user ke complain se pehle
-           third-party ki "replica" nahi chala sakte -> BACKUP PROVIDER + circuit breaker
-BOL        "I'd alert on our own metrics - queue depth, p99 latency and error rate of the validator
-            calls, and how many files are stuck in VALIDATING. A health check only tells me it's up,
-            not that it's slow. Behind that, a circuit breaker and a fallback provider."
 ```
 
 ---

@@ -25,7 +25,7 @@
 
 ![CAP Theorem: One of the Most Misunderstood Terms](https://assets.bytebytego.com/diagrams/0131-cap-theorem.jpeg)
 
-- **Is file me kahan juda:** GRILL (Q14) — booking CP, search AP.
+- **Is file me kahan juda:** MOVE 2 ka CP block — booking CP, search AP.
 - Source: [CAP Theorem: One of the Most Misunderstood Terms](https://bytebytego.com/guides/cap-theorem-one-of-the-most-misunderstood-terms/)
 
 ### Pessimistic vs Optimistic Locking
@@ -84,7 +84,14 @@
 
    ► INTERVIEWER AISE POOCHEGA:
        "Consistency or availability — which do you pick?"
-       poora jawab = neeche GRILL (30-Sep)
+       (asli round me aise chhota aata: "network toota, aakhri seat pe do log -- C ya A?")
+
+   ► JAWAB: ek hi system me dono --
+       BOOKING = CP   partition me ek side REJECT kare ("abhi nahi ho sakta"), double-book nahi
+       SEARCH  = AP   shows dikhte rahein, seat count 2 sec purana chalega
+   BOL: "For the booking itself I'd pick consistency: I'd rather reject a write than double-book
+         the seat. The search path stays available and eventually consistent."
+   CONCEPT: FOUNDATIONS/08_cap_theorem.md
 
    ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
        payment       -> paisa                -> CP
@@ -507,26 +514,6 @@
 ---
 
 > Block kab lagana (need -> block) = MASTER SHEET §4 BLOCK MENU.
-
----
-
-## ═══ GRILL — cross-question jo poocha gaya (30-Sep, master sheet Q14) ═══
-
-```
-SAWAAL     "network toot gaya (partition). Aakhri seat pe do log. Consistency ya availability?"
-           (maine pehle 2-data-center ki lambi kahani me poocha tha -> pehchaan nahi aaya.
-            asli round me aise chhota aata hai.)
-
-TERA JAWAB "seat me CONSISTENCY chunoonga -- galat 'seat book ho gayi' nahi dikha sakte."  -> SAHI
-
-JODA       ek hi system me dono:
-             BOOKING = CP   partition me ek side REJECT kare ("abhi nahi ho sakta"), double-book nahi
-             SEARCH  = AP   flights / shows dikhte rahein, seat count 2 sec purana chalega
-
-BOL        "For the booking itself I'd pick consistency: I'd rather reject a write than double-book
-            the seat. The search path stays available and eventually consistent."
-CONCEPT    FOUNDATIONS/08_cap_theorem.md
-```
 
 ---
 

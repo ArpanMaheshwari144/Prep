@@ -731,6 +731,8 @@ manmaana hai — par **sabko EK hi dikhta hai**, aur chat me itna hi chahiye.
 
    ► MASTER SHEET SE JODA: beech me Kafka ho to KEY = chatId -> ek chat ke saare message EK
      partition me, order pakka; alag chats parallel. (global order = ek partition = throughput khatam)
+   BOL: "Kafka only orders within a partition, so I key by chat id. All messages of one chat
+         land in one partition and stay in order, while different chats run in parallel."
 ```
 
 > ★★ **"Ye to WhatsApp me hota hai" — haan, aur jaan-boojh ke hota hai** (Arpan ne khud dekha:
@@ -920,24 +922,6 @@ PUSH ka raasta        Google/Apple bahar ki cheez hai -> uska apna retry/queue
  -> message pehle DB me (wide-column, chat_id ke hisaab se baanta, snowflake id)
  -> offline hua to DB me pada rehta hai + phone pe push notification
  -> wapas aaya to 'mere aakhri id ke baad ka do'."
-```
-
----
-
-## ═══ GRILL — cross-question jo poocha gaya (30-Sep, master sheet Q13) ═══
-
-```
-SAWAAL     "Kafka use kar rahe ho. Ek chat ke messages order me kaise rahenge?"
-
-TERA JAWAB "Kafka poore topic me order nahi rakhta, sirf PARTITION ke andar order hota hai."  -> SAHI
-
-JODA       uska faayda kaise uthao: KEY = chatId
-             hash(chatId) % partitions -> ek chat ke saare message EK partition me -> order pakka
-             alag chats alag partition me -> parallel chalti hain
-             (global order = ek partition = throughput khatam -> nahi chahiye, per-chat kaafi)
-
-BOL        "Kafka only orders within a partition, so I key by chat id. All messages of one chat
-            land in one partition and stay in order, while different chats run in parallel."
 ```
 
 ---

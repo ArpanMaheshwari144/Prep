@@ -306,6 +306,18 @@
        (key#0..key#9), likho kisi ek me, padhte waqt jodo.
 
    ★ consistent hashing ek hot key ko nahi bachata
+
+   ► PEHCHAAN (yahi confuse hota hai):
+       key KHAALI, sab DB pe bhage   = STAMPEDE  -> dikkat 5: mutex (ek hi DB jaaye, baaki wait)
+       key BHARI, par EK node READ se mar raha = HOT KEY -> yahan: L1 local cache + key ki kai copy
+   ► MISAAL: IPL live score / flash sale page -- 5 crore log ek key padh rahe
+       L1 local cache har app server pe (1-2 sec TTL, score thoda purana chalega)
+         -> zyadatar request Redis tak aati hi nahi = hot key ka SABSE bada ilaaj
+       key copies: score#1..#10 alag node pe, read random copy se · page/image CDN pe
+   BOL: "The key is there, one node just can't take the reads. I'd put a 1-2 second local cache
+         on each app server so most reads never reach Redis, and copy the key across replicas
+         so the rest are spread out. A slightly stale score is fine here.
+         If the key were missing instead, that's a stampede - one request rebuilds, the rest wait."
 ```
 
 ### ab poora naksha (jahan pahunche) + har box ka KYUN
@@ -427,48 +439,6 @@
    Cache-aside + LRU + TTL = production ka combo.
    Sabse mushkil do cheezein: invalidation (TTL + explicit) aur stampede (mutex / soft-TTL).
    Koi system perfect nahi hota — speed vs consistency ka trade-off use-case se tay hota hai."
-```
-
-## ═══ GRILL — cross-question (2-Oct, master sheet Q11 · flash sale) ═══
-
-```
-SAWAAL     "Flash sale, ek product page, 10 lakh log ek saath. Uski Redis key garam, wo node toot raha."
-
-TERA JAWAB hot key pehchana                                                              -> SAHI
-           cache gira -> saari request DB pe -> DB bhi girega                             -> SAHI
-           "EK thread ko andar bhejo, wo DB se laaye, cache bhare, baaki ruk ke wahi le" -> SAHI
-             = upar dikkat 5 ka MUTEX (naam: request coalescing / single-flight)
-           "traffic dheere-dheere wapas"                                                 -> SAHI
-
-JODA       tera ilaaj = dikkat 5 (cache KHAALI -> DB bachao, stampede).
-           sawaal ka doosra hissa = dikkat 6 (cache BHARA, par EK node 10 lakh read nahi jhel raha):
-             app server pe L1 local cache (2-5 sec TTL) -> zyadatar request Redis tak aati hi nahi
-             key ki KAI copy: iphone#1..#10 alag node pe, read random copy se
-             product page / image CDN pe
-
-BOL        "That's a hot key. First I'd stop the stampede: if the cache entry is missing, only one
-            request goes to the DB and the rest wait for it. Then I'd take load off that one Redis
-            node: a short-lived local cache on each app server, the key copied across several nodes,
-            and the page and images served from a CDN."
-```
-
-## ═══ GRILL — GALTI WAPAS (4-Oct, Q11 · IPL live score) ═══
-
-```
-SAWAAL     "IPL score key, 5 crore log padh rahe, jis Redis node pe key hai wo akela gir raha."
-
-TERA JAWAB "ek request DB jaaye, Redis me laaye, baaki wahi se"                         -> sahi, par ye STAMPEDE
-             ka ilaaj hai (dikkat 5, key KHAALI ho tab). Yahan key bhari hai, node READ se mar raha.
-           "replica lagaunga, ek Redis pe sab nahi"                                     -> SAHI (dikkat 6)
-             = key ki kai copy, read baant do
-
-JODA       L1 local cache har app server pe (score 1-2 sec purana chalega) -> 5 crore me se
-             zyadatar Redis tak aate hi nahi. Hot key ka SABSE bada ilaaj yahi.
-           key copies: score#1..#10 alag node pe, read random copy se
-
-BOL        "The key is there, one node just can't take the reads. I'd put a 1-2 second local cache
-            on each app server so most reads never reach Redis, and copy the key across replicas
-            so the rest are spread out. A slightly stale score is fine here."
 ```
 
 ---

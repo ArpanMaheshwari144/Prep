@@ -225,6 +225,13 @@
    ► MASTER SHEET SE JODA: hybrid ke saath: hot tweet ki cache KAI node pe copy + har app server pe
        L1 local cache. likes jaisa hot WRITE -> key ke tukde (tweet123#0..#9), padhte waqt jodo.
    ★ consistent hashing ek hot key ko nahi bachata
+   ► GALAT RAASTE (log aksar bolte):
+       "user_id pe shard hi galat"  -> NAHI: baaki crore users ke liye theek; dikkat EK key ki hai
+       "celeb ko alag server pe"     -> NAHI: wo bhi EK server, saara load wahin chala jaayega
+   BOL: "Sharding by user id is fine for everyone else; the problem is one hot key, and consistent
+         hashing doesn't fix that. For reads I'd replicate that key in the cache across many nodes
+         and add a local cache on each app server, with media on a CDN. For the feed, celebrities
+         use fan-out on read. If writes are hot, I'd split the key into buckets and sum on read."
 ```
 
 ### dikkat 4 — "Virat ka tweet 10 crore log ek saath padh rahe hain"
@@ -511,32 +518,6 @@
     Celeb ke liye hybrid push/pull, hot-tweet cache 95% hit,
     shard by user_id + time + geo, aur hot user ko multiple shard pe replicate.
     Aage badhata to: ML ranking, media CDN, trending aur search."
-```
-
----
-
-## ═══ GRILL — cross-question jo poocha gaya (1-Oct, master sheet Q11) ═══
-
-```
-SAWAAL     "user_id se shard. Celebrity ne tweet kiya, lakhon log USI EK tweet ko padhne aaye.
-            Ek shard pe saara traffic. Kya karoge?"
-
-TERA JAWAB dikkat sahi pakdi: ek key pe saara load -> sharding ka faayda khatam.        -> SAHI
-           "celeb alag, normal alag" -> sahi disha (25-Sep tune khud hybrid fan-out nikala tha)
-           "user_id pe shard galat" -> NAHI: baaki crore users ke liye theek. dikkat EK key ki,
-                                        shard key badalne se nahi jaati (consistent hashing bhi nahi)
-           "Salman ko Europe server pe" -> NAHI: wo bhi EK server, load wahin chala jaayega
-
-JODA       ek cheez ki KAI COPY:
-             READ hot  -> cache me rakho + cache KAI node pe replicate + har app server pe L1 local
-                          cache + media CDN pe   => zyadatar request shard tak pahunchti hi nahi
-             FEED      -> HYBRID: normal = fan-out on WRITE, celeb = fan-out on READ
-             WRITE hot -> key ke tukde: tweet123#0..#9 alag likho, padhte waqt jodo (likes count)
-
-BOL        "Sharding by user id is fine for everyone else; the problem is one hot key, and consistent
-            hashing doesn't fix that. For reads I'd replicate that key in the cache across many nodes
-            and add a local cache on each app server, with media on a CDN. For the feed, celebrities
-            use fan-out on read. If writes are hot, I'd split the key into buckets and sum on read."
 ```
 
 ---

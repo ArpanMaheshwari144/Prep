@@ -334,6 +334,26 @@
    ► MASTER SHEET SE JODA: poora jawab teen jagah — producer acks=all + ISR (dikkat 6) ·
      consumer offset kaam ke BAAD + idempotent (yahi dikkat) · baar-baar fail -> DLQ (dikkat 8).
      DB write + event dono chahiye -> OUTBOX (event usi DB txn me outbox table me, relay bheje).
+
+   ► MISAAL 1 (consumer crash): Swiggy -- order_placed uthaya, SMS se pehle notification service crash
+       offset kaam ke BAAD commit -> restart pe event DOBARA aayega, khoyega nahi
+       SMS chala gaya + commit se PEHLE crash -> SMS 2 baar -> consumer IDEMPOTENT (eventId "processed", skip)
+       baar-baar fail (galat number) -> retry + backoff -> DLQ, baaki event na ruke
+       BOL: "I commit the offset only after the SMS is sent, so a crash means the event is redelivered,
+             not lost. That makes it at-least-once, so the consumer is idempotent - it records the
+             event ID and skips duplicates - and a message that keeps failing goes to a DLQ."
+
+   ► MISAAL 2 (producer crash): e-commerce -- order DB me likha, event bhejne se pehle server crash
+       OUTBOX, aur DB se PEHLE nahi, SAATH -- EK hi transaction:
+         BEGIN -> INSERT order -> INSERT outbox_event -> COMMIT ; relay -> outbox padhe -> Kafka -> "sent"
+       NIYAM: "order placed" user ko COMMIT ke BAAD hi dikhta
+         commit se PEHLE crash -> ROLLBACK (order bhi nahi, outbox bhi nahi) -> user ko error -> dobara try
+         commit ke BAAD, jawab se pehle crash -> dono saved, relay email bhej dega; user dobara "place"
+           dabaye -> IDEMPOTENCY KEY (checkout pe bani) -> wahi purana order lautao, naya nahi
+       BOL: "The API only returns 'order placed' after the transaction commits. A crash before commit rolls
+             back both the order and the outbox row, so the user sees an error and retries. A crash after
+             commit leaves both saved, the relay still sends the event, and an idempotency key stops the
+             retry from creating a duplicate order."
 ```
 
 ### dikkat 8 — "consumer mar gaya / consumer peeche chal raha hai"
@@ -692,55 +712,6 @@ SAGA ≠ ye    = saga kaam ULTA karta (refund). Yahan ulta nahi, sirf raste me k
  with replication on Kafka, and consumers that commit the offset only after processing. Consumers are
  idempotent on event id, and poison messages go to a DLQ. I simulated a crash at each of the three
  points: without these, 3 of 5 events were lost; with them, none."
-```
-
----
-
-## ═══ GRILL — outbox pe Arpan ka sawaal (1-Oct, master sheet Q15 / Q16) ═══
-
-```
-SAWAAL (grill)  "E-commerce: order DB me likha gaya, event bhejne se pehle server crash. Ab?"
-TERA JAWAB      OUTBOX.  -> SAHI dabba (30-Sep saga bola tha, aaj seedha outbox)
-JODA            outbox DB se PEHLE nahi, SAATH — EK hi transaction:
-                  BEGIN -> INSERT order -> INSERT outbox_event -> COMMIT
-                  relay -> outbox padhe -> Kafka -> "sent" mark
-                (pehle outbox, phir order alag likha + beech me crash = event bina order ke = ulti dikkat)
-
-TERA SAWAAL     "commit se PEHLE hi crash ho gaya, kuch likha hi nahi — par mujhe 'order placed'
-                 dikh gaya (COD, koi paisa nahi kata). Tab?"
-JAWAB           NIYAM: "order placed" user ko COMMIT ke BAAD hi dikhta. Usse pehle dikhana = asli bug.
-
-  HAALAT 1  commit se PEHLE crash    -> ROLLBACK: order bhi nahi, outbox bhi nahi
-                                       user ko "placed" dikha hi nahi -> error/timeout -> dobara try
-  HAALAT 2  commit ke BAAD, jawab    -> order HAI + outbox HAI -> relay baad me email bhej dega
-            se pehle crash             user ko timeout -> dobara "place order" -> DUPLICATE ka khatra
-                                       ILAAJ: IDEMPOTENCY KEY (checkout pe bani key; dobara aaye to
-                                              wahi purana order lautao, naya nahi)
-  HAALAT 3  sab theek                -> "placed" -> relay -> Kafka -> email + inventory
-
-  COD / prepaid -> koi farak nahi. Order sach me tabhi bana jab COMMIT hua.
-
-BOL   "The API only returns 'order placed' after the transaction commits. A crash before commit rolls
-       back both the order and the outbox row, so the user sees an error and retries. A crash after
-       commit leaves both saved, the relay still sends the event, and an idempotency key stops the
-       retry from creating a duplicate order."
-```
-
-## ═══ GRILL — GALTI WAPAS (4-Oct, Q15 · Swiggy notification) ═══
-
-```
-SAWAAL     "order_placed event uthaya, SMS bhejne se pehle notification service crash. Restart. Event khoya?"
-
-TERA JAWAB "kaam success hua tabhi offset aage, warna offset wahi -> restart pe dobara milega"  -> SAHI
-             (3-Oct reconciliation pe gaya tha, aaj seedha offset pe — wahi asli jawab)
-
-JODA       SMS chala gaya, offset commit se PEHLE crash -> restart pe DOBARA aayega -> SMS 2 baar
-             -> consumer IDEMPOTENT: eventId "processed" table me, pehle se hai to skip
-           baar-baar fail (galat number) -> retry + backoff -> phir DLQ, baaki event na ruke
-
-BOL        "I commit the offset only after the SMS is sent, so a crash means the event is redelivered,
-            not lost. That makes it at-least-once, so the consumer is idempotent - it records the
-            event ID and skips duplicates - and a message that keeps failing goes to a DLQ."
 ```
 
 ---

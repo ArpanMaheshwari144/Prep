@@ -38,7 +38,7 @@
 
 ![Read Replica Pattern](https://assets.bytebytego.com/diagrams/0312-read-replica-pattern.png)
 
-- **Is file me kahan juda:** GRILL (Q12) — transfer ke baad purana balance = replica lag. Unka ilaaj bhi wahi: turant wala read PRIMARY se.
+- **Is file me kahan juda:** dikkat 7 (read replica) — transfer ke baad purana balance = replica lag. Unka ilaaj bhi wahi: turant wala read PRIMARY se.
 - Source: [Read Replica Pattern](https://bytebytego.com/guides/read-replica-pattern/)
 
 ---
@@ -502,6 +502,18 @@ manual update), par DB ek hi hai. Aur constraint bhi relational ki hi den hai.
        url shortener     -> naya link replica pe nahi   -> naye link ka read primary se
        twitter feed      -> apna tweet nahi dikha       -> read-your-own-writes (apna data primary se)
        payment           -> status purana               -> status primary se
+
+   ► MISAAL: transfer kiya, turant balance dekha -> PURANA dikha
+       sabse AAM wajah -- kuch toota nahi, bas REPLICA LAG:
+         t1  transfer -> PRIMARY pe likha            balance = 4000
+         t2  balance dekha -> read gaya REPLICA pe   replica abhi 5000 (copy ~200ms peeche)
+       ILAAJ: READ-YOUR-OWN-WRITES -- jisne abhi likha, uska balance thodi der PRIMARY se
+              (balance jaisi zaroori cheez hamesha primary se bhi chalega)
+       doosri wajah: FAILOVER -- write replica tak pahuncha hi nahi aur wahi promote ho gaya
+              -> ilaaj SYNC replication
+   BOL: "Most likely replica lag: the write went to the primary, the read hit a replica that
+         hadn't caught up. For balance I read from the primary, at least for the user who just
+         wrote. If it were a failover losing writes, sync replication fixes that."
 ```
 
 ---
@@ -711,6 +723,16 @@ Sasta, aur mukhya DB pe koi bojh nahi.
      -> tab SHARD by account_id pehle bolo (cache / index sirf READ ke ilaaj; har naya index INSERT
      dheema karta). non-critical writes (statement, SMS) queue pe, txn ke raaste se bahar.
        ★ replica sirf READ baantta; write ke liye SHARD. country/date = bura key (skew)
+   ► KRAM: sasta pehle, SHARD aakhir (mehnga). writes ka ilaaj = shard by account_id
+       (ek account ke saare txn EK shard pe -> transfer ka hisaab simple)
+       BADI TABLE (size) -> month-wise PARTITION + band mahine ARCHIVE (cold storage)
+         ARCHIVE = DELETE NAHI (bank data kaanoon se saalon rakhna). size ghatta, writes nahi.
+       ✗ "badi transaction ko chhoti karo" = galat: debit + credit EK hi txn me rehna chahiye
+   BOL: "Replicas only spread reads, and caching or extra indexes help reads, not writes; extra
+         indexes actually slow inserts. For write volume at this scale I'd shard by account id, so
+         each account's transactions live on one shard, and move non-critical writes like
+         statements to a queue. For table size, partition by month and archive closed months to
+         cold storage; nothing is ever deleted."
 
    ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
        "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
@@ -768,53 +790,3 @@ Sasta, aur mukhya DB pe koi bojh nahi.
 ```
 
 ---
-
-## ═══ GRILL — cross-question jo poocha gaya (30-Sep, master sheet Q12) ═══
-
-```
-SAWAAL     "User ne transfer kiya, turant balance dekha to PURANA dikha. Kyun, kya karoge?"
-
-TERA JAWAB wajah: CACHE ya REPLICA. Bank me balance cache se nahi padhte -> replica.   -> SAHI
-           + failover case: write replica tak pahuncha nahi aur wahi promote ho gaya     -> ye bhi ASLI
-             (ilaaj: SYNC replication -- BookMyShow me bhi yahi bola tha)
-
-JODA       sabse AAM wajah -- kuch toota hi nahi, bas REPLICA LAG:
-             t1  transfer -> PRIMARY pe likha            balance = 4000
-             t2  balance dekha -> read gaya REPLICA pe   replica abhi 5000 (copy ~200ms peeche)
-           ILAAJ: READ-YOUR-OWN-WRITES -- jisne abhi likha, uska balance thodi der PRIMARY se.
-                  (balance jaisi zaroori cheez hamesha primary se bhi chalega)
-
-BOL        "Most likely replica lag: the write went to the primary, the read hit a replica that
-            hadn't caught up. For balance I read from the primary, at least for the user who just
-            wrote. If it were a failover losing writes, sync replication fixes that."
-CONCEPT    FOUNDATIONS/05_database_replication.md
-```
-
-```
-GRILL 1-Oct (master sheet Q10)
-SAWAAL     "Transactions table bahut badi + bahut WRITES. Read replica laga diye, phir bhi DB maar kha raha."
-
-TERA JAWAB replica sirf copy / read baant-ta                                  -> SAHI
-           "sasta pehle, SHARD aakhir me (mehnga)"                            -> BAHUT ACHHA (asli kaam ka kram)
-           partition                                                          -> SAHI (is design me month-wise hai)
-           cache + index                                                      -> ye READ ke ilaaj hain:
-              cache = write ko kuch nahi deta · har naya index = har INSERT pe ek aur likhai = WRITE DHEEMA
-
-JODA       (Arpan ke pushback ke baad, 1-Oct):
-             BAHUT WRITES (asli dikkat) -> SHARD by account_id — PEHLE yahi bolo
-                 high cardinality, barabar baat, ek account ke saare txn EK shard pe (transfer ka hisaab simple)
-             saath me:  non-critical writes (statement, notification) -> queue/async, txn ke raaste se bahar
-             BADI TABLE (size)  -> month-wise PARTITION + purane band mahine ARCHIVE (cold storage).
-                 ARCHIVE = DELETE NAHI — bank data kaanoon se saalon rakhna. Size ghatta, writes nahi.
-             ✗ "badi transaction ko chhoti karo" = galat line (hataya): transfer ka debit+credit EK hi txn
-               me rehna chahiye; ye pattiyan hain, write ka ilaaj nahi.
-
-BOL        "Replicas only spread reads, and caching or extra indexes help reads, not writes; extra
-            indexes actually slow inserts. For write volume at this scale I'd shard by account id, so
-            each account's transactions live on one shard, and move non-critical writes like
-            statements to a queue. For table size, partition by month and archive closed months to
-            cold storage; nothing is ever deleted."
-```
-
----
-
