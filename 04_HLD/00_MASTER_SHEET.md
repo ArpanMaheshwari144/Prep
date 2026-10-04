@@ -546,6 +546,7 @@
     kahan aaya: 11 · 03 (celeb) · 15 (viral group) · 13 (bada customer)
     GRILL 1-Oct: 03_twitter_feed -> "GRILL" section (hot key: kai copy + L1 + hybrid fan-out + key buckets)
     GRILL 2-Oct: 11_distributed_cache -> "GRILL" (flash sale: mutex = stampede · L1 + copies + CDN = garam node)
+    GRILL 4-Oct: 11_distributed_cache -> "GALTI WAPAS" (IPL score: replica SAHI · L1 local cache joda)
 ```
 
 <a id="grp-d"></a>

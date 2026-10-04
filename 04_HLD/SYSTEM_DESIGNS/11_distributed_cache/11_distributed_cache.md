@@ -396,6 +396,25 @@ BOL        "That's a hot key. First I'd stop the stampede: if the cache entry is
             and the page and images served from a CDN."
 ```
 
+## ═══ GRILL — GALTI WAPAS (4-Oct, Q11 · IPL live score) ═══
+
+```
+SAWAAL     "IPL score key, 5 crore log padh rahe, jis Redis node pe key hai wo akela gir raha."
+
+TERA JAWAB "ek request DB jaaye, Redis me laaye, baaki wahi se"                         -> sahi, par ye STAMPEDE
+             ka ilaaj hai (dikkat 5, key KHAALI ho tab). Yahan key bhari hai, node READ se mar raha.
+           "replica lagaunga, ek Redis pe sab nahi"                                     -> SAHI (dikkat 6)
+             = key ki kai copy, read baant do
+
+JODA       L1 local cache har app server pe (score 1-2 sec purana chalega) -> 5 crore me se
+             zyadatar Redis tak aate hi nahi. Hot key ka SABSE bada ilaaj yahi.
+           key copies: score#1..#10 alag node pe, read random copy se
+
+BOL        "The key is there, one node just can't take the reads. I'd put a 1-2 second local cache
+            on each app server so most reads never reach Redis, and copy the key across replicas
+            so the rest are spread out. A slightly stale score is fine here."
+```
+
 ---
 
 [← MASTER SHEET](../../00_MASTER_SHEET.md)
