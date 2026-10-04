@@ -31,7 +31,7 @@
 ```
 P: produce() call
    → P ne `this` (Buffer) ka LOCK liya
-   → State: RUNNING
+   → State: RUNNABLE (CPU pe chal raha — Java me RUNNING state hoti hi nahi)
    → Queue check: FULL — `wait()` call
 ```
 
@@ -56,7 +56,7 @@ P holding lock?     NO (release kar diya)
 ```
 C: consume() call
    → C ne `this` (Buffer) ka LOCK liya  (P ne chhod diya tha)
-   → State: RUNNING
+   → State: RUNNABLE
    → Queue se item nikaala (poll)
    → ab queue full nahi hai
 ```
@@ -75,7 +75,7 @@ C: consume() call
 ```
 Buffer's Wait Set:  []     ← P nikal gaya
 P state:            BLOCKED  (lock ke liye compete kar raha)
-C state:            RUNNING (lock abhi bhi C ke paas)
+C state:            RUNNABLE (lock abhi bhi C ke paas)
 ```
 
 > **Important:** `notify()` ne sirf **"jaago aur lock ke liye line mein lago"** bola. **Lock immediately P ko nahi mila.**
@@ -96,7 +96,7 @@ C: } method end
 
 ```
 P: lock mil gaya
-   → State: BLOCKED → RUNNABLE → RUNNING
+   → State: BLOCKED → RUNNABLE
    → wait() ke baad continue kar raha
    → while loop re-check: queue full hai abhi? → NAHI
    → loop exit, queue.add() chala, notify() chala...
@@ -107,7 +107,7 @@ P: lock mil gaya
 ## Visual Summary
 
 ```
-WAITING SET                  RUNNING                   LOCK
+WAITING SET                  CHAL RAHA                 LOCK
 
 ┌──────────┐                                         ┌──────┐
 │   P      │  ◄── wait()      C: lock liya          │  C   │
@@ -123,7 +123,7 @@ WAITING SET                  RUNNING                   LOCK
                    ↓ C exits sync (lock release)
 
                                                      ┌──────┐
-                  P: BLOCKED → RUNNING               │  P   │
+                  P: BLOCKED → RUNNABLE              │  P   │
                   P: wait() ke baad chala            └──────┘
 ```
 
