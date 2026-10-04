@@ -619,6 +619,7 @@
     GRILL 1-Oct:  13_message_queue_kafka -> "GRILL — outbox pe Arpan ka sawaal" (ek transaction · commit se pehle/baad crash · idempotency key)
     GRILL 3-Oct:  "consumer crash, event khoye nahi" pe status + reconciliation bola = Q16 ka jawab (sahi, par peeche ka jaal).
                   Q15 ka pehla jawab = offset commit kaam ke BAAD -> dobara aayega -> idempotent. Reconciliation upar se.
+    GRILL 4-Oct:  13_message_queue_kafka -> "GALTI WAPAS" (Swiggy SMS: offset kaam ke BAAD SAHI · idempotent + DLQ joda)
 
 ```
 

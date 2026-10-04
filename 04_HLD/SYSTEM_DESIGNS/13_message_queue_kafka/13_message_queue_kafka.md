@@ -655,6 +655,23 @@ BOL   "The API only returns 'order placed' after the transaction commits. A cras
        retry from creating a duplicate order."
 ```
 
+## ═══ GRILL — GALTI WAPAS (4-Oct, Q15 · Swiggy notification) ═══
+
+```
+SAWAAL     "order_placed event uthaya, SMS bhejne se pehle notification service crash. Restart. Event khoya?"
+
+TERA JAWAB "kaam success hua tabhi offset aage, warna offset wahi -> restart pe dobara milega"  -> SAHI
+             (3-Oct reconciliation pe gaya tha, aaj seedha offset pe — wahi asli jawab)
+
+JODA       SMS chala gaya, offset commit se PEHLE crash -> restart pe DOBARA aayega -> SMS 2 baar
+             -> consumer IDEMPOTENT: eventId "processed" table me, pehle se hai to skip
+           baar-baar fail (galat number) -> retry + backoff -> phir DLQ, baaki event na ruke
+
+BOL        "I commit the offset only after the SMS is sent, so a crash means the event is redelivered,
+            not lost. That makes it at-least-once, so the consumer is idempotent - it records the
+            event ID and skips duplicates - and a message that keeps failing goes to a DLQ."
+```
+
 ---
 
 [← MASTER SHEET](../../00_MASTER_SHEET.md)
