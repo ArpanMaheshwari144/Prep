@@ -86,6 +86,43 @@ JIT        jo code baar-baar chale (HOT), use NATIVE machine code me badal deta
            -> isliye Java app thodi der chalne ke baad TEZ ho jaati ("warm-up")
 ```
 
+**BYTECODE kya dikhta** (`javap -c` se .class ke andar):
+```
+tera code:   return a + b;
+
+bytecode:    iload_0    a uthao
+             iload_1    b uthao
+             iadd       jodo
+             ireturn    lautao
+```
+CPU ise seedha nahi samajhta -> beech me JVM chahiye.
+
+**JIT = TRANSLATOR ki misaal:**
+```
+tu Hindi bolta, saamne wala sirf Japanese samajhta, beech me translator
+
+INTERPRETER = har baar sun ke translate
+   "a+b jodo" 20 lakh baar bola -> 20 lakh baar translate -> DHEEMA
+
+JIT = translator dekhta "ye line to baar-baar aa rahi" (HOT)
+   ek baar Japanese me LIKH ke rakh leta (native code)
+   ab sirf likha hua padhta -> TEZ
+```
+`java -version` me `mixed mode` = dono (shuru me interpreter, HOT code pe JIT).
+
+**Chala ke dekha** (`add()` 20 lakh baar = 1 round; us = microsecond):
+```
+           JIT ON (normal)              JIT BAND (-Xint, sirf translator)
+round 1    3120   translate ho raha     27201
+round 2    2320   JIT likh raha         27653
+round 3     475   likha hua padh raha   26899
+round 4     465   tez                   26616
+round 5     409   tez                   27728
+round 6     421   tez                   26765   <- kabhi tez nahi hua
+```
+Round 3 se ~6x tez = WARM-UP. Aakhri round: JIT ke saath 421 vs bina 26765 = ~60x farak.
+Kaam me: deploy ke turant baad pehli requests dheemi, phir app tez = JIT warm-up.
+
 ---
 
 ## TRAP
