@@ -1,446 +1,297 @@
-# Distributed Cache (Redis-jaisa) — POORA ROUND (4 MOVE)
+# Distributed Cache (Redis-jaisa)
 
-> **NAV** — ARCHETYPE F · DIL: SPEED + node mare to chale. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [replication](../../FOUNDATIONS/05_database_replication.md)
-
-> 15-Sep: asli mock-video ke hisaab se dobara likha — koi 7-step rail nahi, sirf 4 move.
-> Har jagah: **tu kya BOLTA hai · BOARD pe kya banta · FAISLA + KYUN**.
-> Concept detail = FOUNDATIONS/04_caching.md
->
-> Problem (1 line): fast in-memory key-value store jo ek machine se bada ho, aur node mare to bhi chale.
+> Tez in-memory key-value store jo ek machine se bada ho, aur node mare to bhi chale. Concept detail = FOUNDATIONS/04_caching.md
+> Is design ka dil: **SPEED (<1ms)** + **node mare to chale**. Booking ka ULTA: wahan consistency dil, yahan speed.
 
 ```
-★ LIBRARY-DESK ANALOGY (visual anchor):
-   10,000 kitaabein godaam me (DB = slow par poora). Top-100 popular front-desk pe (cache = fast, RAM).
-   Ek desk (1 machine) me saari popular nahi aatin + banda beemar pad gaya (node down)
-   -> kai desk (nodes) + kaunsi kitaab kis desk pe (sharding) + backup banda (replication)
-   = DISTRIBUTED CACHE
-```
-
-```
-★★ TEEN NIYAM (poori file par lagte — [MASTER](../../00_MASTER_SHEET.md) "Kaise bolna")
-   1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
-   2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
-   3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega
+LIBRARY DESK: 10,000 kitaab godaam me (DB = slow, poora) · top-100 front desk pe (cache = RAM, tez)
+   ek desk me saari nahi aati + banda beemar (node down)
+   -> kai desk (nodes) + kaunsi kitaab kis desk (sharding) + backup banda (replication) = DISTRIBUTED CACHE
 ```
 
 ---
 
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
-
-### How Can Cache Systems Go Wrong?
+## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![How Can Cache Systems Go Wrong?](https://assets.bytebytego.com/diagrams/0038-how-caches-can-go-wrong.png)
-
-- **Is file me kahan juda:** thundering herd / penetration / breakdown / crash — cache ke tootne ke tareeke.
-- Source: [How Can Cache Systems Go Wrong?](https://bytebytego.com/guides/how-can-cache-systems-go-wrong/)
-
-### Consistent Hashing Explained
+Source: [How Can Cache Systems Go Wrong?](https://bytebytego.com/guides/how-can-cache-systems-go-wrong/)
+(thundering herd / penetration / breakdown / crash)
 
 ![Consistent Hashing Explained](https://assets.bytebytego.com/diagrams/0151-consistent-hashing.png)
-
-- **Is file me kahan juda:** node jude ya gire to sirf thodi keys khiskein — ring.
-- Source: [Consistent Hashing Explained](https://bytebytego.com/guides/consistent-hashing/)
-
----
-
-# MOVE 1 — POOCHO (board pe abhi kuch nahi)
-
-```
-   TU: "Cache ka design karte waqt do raste hain — ek node ka cache (eviction, TTL),
-        ya distributed cache (sharding, replication). Aap kis pe focus karwana chahenge?"
-
-   TU: "Kuch cheezein confirm kar lun —
-          - kis tarah ka data? read-heavy hai?
-          - STALENESS kitni chalegi — 5 minute purana data chalega, ya real-time chahiye?
-          - eviction policy pe koi pasand hai (LRU / LFU)?
-          - cache DB ke aage hai, ya khud primary store hai?"
-
-   ★ STALENESS wala sawaal zaroori hai — isi se invalidation ka poora hissa tay hota hai.
-```
+Source: [Consistent Hashing Explained](https://bytebytego.com/guides/consistent-hashing/)
+(node jude ya gire to sirf thodi keys khiskein — ring)
 
 ---
 
-# MOVE 2 — DO CHHOTE BLOCK LIKHO
+## SHURU — poocho + numbers
 
 ```
-   ┌──────────────────────┐    ┌────────────────────────────────┐
-   │ Distributed Cache    │    │ Use cases:                     │
-   │   - Key / Value      │    │   - get(key) -> value          │
-   │   - Node             │    │   - put(key, value, ttl)       │
-   │   - TTL              │    │   - delete(key)                │
-   │   - Eviction policy  │    │                                │
-   └──────────────────────┘    │ NOT in scope: persistence,     │
-                               │   pub/sub, transactions        │
-   ┌───────────────────────────┐└────────────────────────────────┘
-   │ Kya chahiye (NFR):        │
-   │  - <1ms LATENCY   <- DIL  │
-   │  - HA: node mare to chale │
-   │  - SCALABLE: TBs data     │
-   │  - CONSISTENCY = EVENTUAL │
-   │    (stale chalega)        │
-   └───────────────────────────┘
+POOCHO:  "Ek node ka cache (eviction, TTL) ya distributed (sharding, replication) — kis pe?"
+         kaisa data, read-heavy? · STALENESS kitni chalegi? (5 min purana?)  <- invalidation isi se tay
+         eviction pasand (LRU / LFU)? · cache DB ke aage ya khud primary store?
 
-   TU: "Cache ka poora point SPEED hai — isliye RAM me rakhunga, disk pe nahi.
-        Aur yahan consistency pe samjhauta kar sakta hoon: asli sach DB me hai,
-        cache uski tez copy hai. Thoda purana data chal jaayega."
+FR:      get(key) · put(key, value, ttl) · delete(key)
+         scope bahar: persistence · pub/sub · transactions
+NFR:     <1ms (dil) · HA (node mare to chale) · TBs data · consistency EVENTUAL (asli sach DB me, cache tez copy)
 
-   ★ BOOKING KA ULTA: wahan consistency = dil (seat double na ho). Yahan SPEED = dil.
-     Ye farak bolna — dikhata hai ki tu requirement se design nikaal raha hai.
-```
-
-```
-   Numbers:
-     - ~1 TB data
-     - ~1 M QPS
-     - READ-HEAVY
-
-   HAR NUMBER SE EK FAISLA (yahi bolna):
-     1 TB       ──►  ek node ki RAM me nahi aayega        -> data TODNA padega (sharding)
-     1 M QPS    ──►  ek node itna throughput nahi degi    -> nodes ke beech baanto
-     node marta ──►  cache gayab = saara load DB pe       -> REPLICATION
-
-   => teeno milke "single node" ko khaarij kar dete hain -> DISTRIBUTED justify ho gaya
+NUMBERS: ~1 TB · ~1M QPS · read-heavy
+         1 TB     -> ek node ki RAM me nahi -> SHARDING
+         1M QPS   -> ek node itna nahi deti -> nodes me baanto
+         node mara -> saara load DB pe -> REPLICATION
+         teeno milke single node khaarij -> DISTRIBUTED justify
 ```
 
 ---
 
-# MOVE 3 — BOXES BANAO (chhota banao, phir dikkat pe badhao)
+## DABBA 0 — sabse simple
 
 ```
-   TU: "Sabse simple cheez se shuru — ek machine, ek HashMap."
-
-        CLIENT ──► [ CACHE (HashMap, RAM) ] ──miss──► [ DB ]
-                         key -> value                  source of truth
-                         O(1) get/put
-
-   TU: "Hit pe DB gaya hi nahi. Ab chala ke dekhte hain."
+SOLUTION: ek machine, ek HashMap (RAM) · O(1) get / put · CACHE-ASIDE: hit -> return · miss -> DB -> cache me PUT -> return
 ```
-
-### dikkat 1 — "RAM bhar gayi. Ab kya hatayein?"
-
 ```
-   FAISLA: EVICTION = LRU (Least Recently Used)
-        (LRU = jo SABSE LAMBE SAMAY SE nahi chhua, wo hatao — "kab" · LFU = jo SABSE KAM BAAR chhua — "kitni baar")
-
-        HashMap  +  Doubly-Linked-List          (yahi LC-146 wala dhaancha hai)
-
-             get(x)        -> node ko list ke FRONT laao (most recently used)
-             jagah nahi    -> TAIL wala hatao (sabse purana access)
-             dono O(1)
-
-        [FRONT] ← most recent                 least recent → [TAIL]
-           x  ←→  b  ←→  a  ←→  z  ←→  ...  ←→  q   (ye nikalega)
-
-   + TTL: har entry ke saath expiry-timestamp
-        lazy   -> access pe dekho "expired?" -> hata do
-        active -> background thread thodi-thodi der me purge kare
-
-   TU: "LRU isliye ki cache me wahi rehna chahiye jo abhi kaam aa raha hai.
-        Agar frequency zyada maayne rakhti ho to LFU bhi chun sakte hain."
-```
-
-### dikkat 2 — "1 TB ek node me nahi aayega — kai node chahiye. Par key kis node pe jaayegi?"
-
-```
-   OPTION 1 — hash(key) % N   (naive)
-        DIKKAT: node add/remove kiya -> N badal gaya -> hash%N badal gaya
-                -> LAGBHAG SAARI keys ka node badal gaya
-                -> massive MISS -> saari request DB pe -> DB CRASH
-        => NAHI
-
-   OPTION 2 — ★ CONSISTENT HASHING (WINNER)
-
-        ek RING (0 .. 2^32), node aur key DONO ring pe hash hote
-
-                    ┌──── Node A ────┐
-                 k1 │                │ k2
-                    │                │
-              Node C│      RING      │Node B
-                    │                │
-                 k4 └────────────────┘ k3
-
-        har key apne CLOCKWISE agle node pe baithti hai
-        node add/remove -> sirf us arc ki K/N keys hilti hain, poora remap NAHI
-
-        ★ VIRTUAL NODES: ek physical node = ring pe kai points
-          -> load even bat jaata (warna ek node pe bheed ho jaati)
-
-        # wahi consistent hashing sharded-DB aur load-balancer me bhi chalti
-          -> ek tool, kai jagah
-
-   OPTION 3 — range shard (A-M / N-Z)
-        simple hai, PAR hot-range imbalance (ek range pe bheed) => NAHI
-
-   FAISLA: OPTION 2 — kam se kam rebalance + even load
-
-        CLIENT ──► [ CACHE CLIENT (routing) ] ──► Node A / Node B / Node C
-                     consistent hashing            (app ko nodes ki ginti se azaad rakhta)
-```
-
-### dikkat 3 — "ek node mar gaya — uske saare key gayab, load seedha DB pe"
-
-```
-   FAISLA: REPLICATION — har shard ka 1-2 replica
-
-        Node A (primary)  ──copy──►  Node A' (replica)
-             │
-          mar gaya  ──►  replica PROMOTE  ──►  cache zinda rehta
-
-   ★ TRADE-OFF bolna: replication me LAG hota hai -> thodi der inconsistency
-     par yahan eventual consistency chal jaati hai, to theek hai.
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What happens if this server / node / DB goes down?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       url shortener -> DB primary gira    -> replica promote, redirect cache se chalta rahe
-       rate limiter  -> Redis node gira    -> Redis replica; na mile to fail-open
-       kafka         -> broker gira        -> ISR ki replica leader ban jaati
-       banking       -> DB primary gira    -> sync replica promote (paisa wali write khoni nahi)
-       chat          -> chat server gira   -> client doosre server pe reconnect, message DB me safe
-       bookmyshow    -> App box gira       -> hold DB me hai, LB doosre box pe bhejta
-
-   ► MASTER SHEET SE JODA: replica ALAG AZ me rakho (ek hi AZ me = dono saath marenge).
-```
-
-### dikkat 4 — "DB me data update ho gaya, cache purana pada hai (STALE)"
-
-```
-   TEEN TAREEKE:
-
-     CACHE-ASIDE     : DB update karo -> cache se entry DELETE (invalidate)
-                       -> agli read fresh laayegi                      <- sabse common
-     WRITE-THROUGH   : cache aur DB dono ek saath likho
-                       -> hamesha fresh, par har write slow
-     TTL             : max-staleness ki hadd baandh do (auto)
-
-   PRODUCTION = TTL + explicit invalidation ka COMBO
-
-   TU: "'Cache invalidation is one of the hardest problems' — isliye main dono lagata hoon:
-        explicit invalidate jahan pata hai, aur TTL safety-net ki tarah jahan kuch chhoot jaaye."
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "The user updated something but still sees the old value. Why?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       url shortener -> naya link replica pe nahi  -> naye link ka read primary se
-       twitter feed  -> apna tweet nahi dikha      -> read-your-own-writes (apna data primary se)
-       banking       -> balance purana             -> balance hamesha primary se
-       payment       -> status purana              -> status primary se
-
-   ► MASTER SHEET SE JODA: cache key DELETE karo, UPDATE nahi (do write ulte kram me pahunche
-       to cache me galat value baith jaati) · doosra kaaran REPLICA LAG: jisne abhi likha wo
-       thodi der PRIMARY se padhe (read-your-own-writes).
-```
-
-### dikkat 5 — "ek super-hot key expire hui aur 1000 request ek saath miss ho gayi"
-
-```
-   STAMPEDE (thundering herd):
-
-        hot key expire
-             │
-        1000 request ek saath MISS  ──►  1000 request seedha DB pe  ──►  DB CRASH
-
-   FIX (teen, koi ek ya mila ke):
-        MUTEX / lock   -> sirf 1 thread DB se rebuild kare, baaki WAIT karein
-                          phir sab cache se le lein
-        SOFT-TTL       -> expiry se PEHLE background me refresh kar do
-        NEVER-EXPIRE   -> bahut hi hot key ko expire hi mat karo, background update karo
-
-   ★ 2-Oct discussion:
-     PATA HO (sale, World Cup final, iPhone launch) -> PRE-WARM: key pehle se cache me bhar do
-                                                       + servers pehle se badha do
-     PATA NA HO (viral tweet, achanak announcement)  -> upar wale teen (mutex / soft-TTL / never-expire)
-     sale zaroori nahi: twitter ka hot-tweet cache TTL 1 hr (03_twitter_feed dikkat 4)
-       -> Virat ke tweet ka TTL khatam + lakhon log padh rahe = wahi stampede
-     asli me kam isliye hota kyunki badi website ye ilaaj PEHLE se lagaati hai (risk afford nahi)
-
-   BOL: "For known events I'd pre-warm the cache and scale up in advance. For unpredictable spikes
-         I still need stampede protection: a lock so only one request rebuilds the key, and early
-         background refresh before the TTL expires."
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What if the cache goes down?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       rate limiter  -> Redis down                  -> default fail-open; payment/auth me fail-closed
-       url shortener -> redirect cache gira         -> DB pe load: replica + load shedding
-       twitter feed  -> feed cache gira             -> feed DB se banana mehnga -> shedding, garam karo
-       bookmyshow    -> Redis gira, browse primary pe -> Redis cluster + browse replica se
-
-   ► MASTER SHEET SE JODA: poora cache gaya to DB pe fallback, PAR load shedding / rate limit ke
-       saath -- warna jo load cache chhupa raha tha wo ek saath DB pe girega.
-```
-
-### dikkat 6 — "ek key itni popular hai ki uska SHARD akela mar raha hai"
-
-```
-   HOT-KEY OVERLOAD: consistent hashing ne key ek node pe daali, par us key pe hi saara traffic
-
-   FIX:
-     1. hot key ko KAI node pe replicate karo -> read bat jaayein
-     2. L1 LOCAL CACHE — app ke andar hi ek mini cache (in-process)
-        -> request Redis tak jaati hi nahi
-
-        [ App + L1 local cache ]  nano-second
-                 │ miss
-                 ▼
-        [ L2 distributed cache ]  micro-second (network)
-                 │ miss
-                 ▼
-        [ DB ]                    milli-second
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What about a hot key / celebrity / hot partition?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       twitter feed  -> celebrity ke crore follower -> celeb = fanout on READ (hybrid)
-       chat          -> viral group                 -> key bucket (chat_id + 0..9)
-       kafka         -> ek bada customer ek partition -> key me salt / alag topic
-
-   ► MASTER SHEET SE JODA: upar ke dono ilaaj READ ke liye. WRITE hot ho to key me bucket
-       (key#0..key#9), likho kisi ek me, padhte waqt jodo.
-
-   ★ consistent hashing ek hot key ko nahi bachata
-
-   ► PEHCHAAN (yahi confuse hota hai):
-       key KHAALI, sab DB pe bhage   = STAMPEDE  -> dikkat 5: mutex (ek hi DB jaaye, baaki wait)
-       key BHARI, par EK node READ se mar raha = HOT KEY -> yahan: L1 local cache + key ki kai copy
-   ► MISAAL: IPL live score / flash sale page -- 5 crore log ek key padh rahe
-       L1 local cache har app server pe (1-2 sec TTL, score thoda purana chalega)
-         -> zyadatar request Redis tak aati hi nahi = hot key ka SABSE bada ilaaj
-       key copies: score#1..#10 alag node pe, read random copy se · page/image CDN pe
-   BOL: "The key is there, one node just can't take the reads. I'd put a 1-2 second local cache
-         on each app server so most reads never reach Redis, and copy the key across replicas
-         so the rest are spread out. A slightly stale score is fine here.
-         If the key were missing instead, that's a stampede - one request rebuilds, the rest wait."
-```
-
-### ab poora naksha (jahan pahunche) + har box ka KYUN
-
-```
-        CLIENT (app servers)   [+ L1 local cache andar]
-           │  get / put
-           ▼
-   ┌─────────────────────────────┐
-   │   CACHE CLIENT (routing)    │  consistent hashing: key -> node
-   └───────────┬─────────────────┘
-       ┌───────┼───────┐
-       ▼       ▼       ▼
-   ┌──────┐ ┌──────┐ ┌──────┐
-   │Node A│ │Node B│ │Node C│   har node: HashMap + DLL (LRU) + TTL
-   │ +rep │ │ +rep │ │ +rep │   har node: primary + replica (HA)
-   └──┬───┘ └──┬───┘ └──┬───┘
-      │  miss  │        │
-      ▼        ▼        ▼
-   ┌─────────────────────────────┐
-   │         DATABASE            │  source of truth (slow)
-   └─────────────────────────────┘
-
-     Cache Client : key ko sahi node pe bhejta (consistent hash);
-                    app ko nodes ki ginti se azaad rakhta
-     Node         : in-memory store — HashMap + DLL(LRU) + TTL; primary + replica
-     DB           : permanent sach; miss pe yahin se aata
-
-   ★ CORE LINE: cache HIT pe DB gaya hi nahi (~90%) -> DB ka load 10x kam
-```
-
-```
-   READ PATH — CACHE-ASIDE:
-        HIT  -> seedha return (~90% baar, DB gaya hi nahi)
-        MISS -> DB se padho -> cache me PUT karo -> return
+  [ App ]
+    │
+    ├──► [ DB ]
+    │
+    ▼
+  [ Cache ]
 ```
 
 ---
 
-# MOVE 4 — BOLTE-BOLTE JODO (jo poocha jaaye, wahi kholo)
-
-## ► "API kya hogi?"
+## DIKKAT 1 — RAM bhar gayi, kya hatayein?
 
 ```
-   GET     key
-   PUT     key  value  ttl
-   DELETE  key
+DIKKAT:   jagah khatam
 
-   TU: "API jaan-boojh ke itni chhoti hai — cache me query nahi karte, sirf key se uthate hain.
-        Isliye koi index ya query-planner ki zaroorat hi nahi, aur yahi isko itna tez banata hai."
-```
+SOLUTION: EVICTION = LRU (jo SABSE LAMBE SAMAY se nahi chhua — "kab") · LFU = SABSE KAM BAAR ("kitni baar")
+          LRU = HashMap + Doubly Linked List (LC-146)
+            get(x) -> FRONT laao · jagah nahi -> TAIL hatao · dono O(1)
+            [FRONT] x <-> b <-> a <-> z <-> ... <-> q [TAIL, ye nikalega]
+          TTL: entry ke saath expiry · LAZY (access pe check) + ACTIVE (background purge)
+          LRU kyunki wahi rahe jo abhi kaam aa raha; frequency zyada maayne rakhe to LFU
 
-## ► "Ek node ke ANDAR data kaise rakha hai?"
-
-```
-   HashMap key -> value        (O(1) get / put)
-
-   EVICTION = LRU = HashMap + Doubly-Linked-List   (LC-146 wala dhaancha)
-        get(x)     -> FRONT laao
-        jagah nahi -> TAIL hatao
-        dono O(1)
-
-   TTL = entry ke saath expiry-timestamp
-        lazy   -> access pe check
-        active -> background purge
-
-   ★ chunaav: in-memory KV (Redis-jaisa), aur DB peeche source of truth.
-     <1ms chahiye -> RAM (disk nahi) . join nahi chahiye -> KV kaafi hai.
-```
-
-## ► "Keys nodes pe kaise baantoge?" (deep-dive ka dil — upar dikkat-2 me poora hai)
-
-```
-   hash % N            -> node badla to sab shift -> DB crash        => NAHI
-   CONSISTENT HASHING  -> ring + clockwise + virtual nodes           => ★ WINNER
-   range shard         -> simple par hot-range imbalance             => NAHI
-```
-
-## ► "Kahan tootega / scale?"
-
-```
-   ★ RATTO MAT — request ka raasta chalao:
-
-      client ne get(key) maara
-          │
-          ├─► cache client -> node add/remove pe sab shift?  -> consistent hashing + virtual nodes
-          ├─► node         -> RAM bhari?                     -> LRU + TTL
-          │                   node mara?                     -> replica promote
-          ├─► hot key      -> ek shard akela mar raha?       -> hot-key replicate . L1 local cache
-          ├─► expiry       -> hot key expire pe bheed?       -> mutex . soft-TTL . never-expire
-          └─► DB           -> stale data?                    -> invalidate + TTL combo
-
-      + metrics: HIT-RATIO sabse zaroori metric hai (girna shuru hua = kuch toota hai)
-
-   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
-       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
-       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
-       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
-```
-
-## ► WRAP + MEMORY HOOK (jaldi revise ke liye)
-
-```
-   SINGLE node : HashMap + DLL (LRU) + TTL
-   DISTRIBUTE  : Consistent Hashing (shard) + Replication (HA — mare to chale)
-   READ        : Cache-Aside (miss -> DB -> populate; ~90% hit)
-   STALE       : TTL + explicit invalidation
-   STAMPEDE    : hot key expire -> mutex / soft-TTL
-   HOTSPOT     : hot key replicate / L1 local cache
-   LAYERS      : L1 app ke andar (nano-sec) -> L2 distributed Redis (micro-sec) -> DB (milli-sec)
-   AAGE        : monitoring (hit-ratio), write-back agar write-heavy ho, multi-region cache
-   TRADE-OFF   : speed vs consistency — use-case pe chunta hai
-                 (= CAP ka hi spirit; cache AP ki taraf jhukta, eventual chal jaata)
-```
-
-```
-★ POWER-CLOSER (aakhir me bolne wali line):
-  "Distributed cache = in-memory KV store, consistent hashing se sharded, HA ke liye replicated.
-   Cache-aside + LRU + TTL = production ka combo.
-   Sabse mushkil do cheezein: invalidation (TTL + explicit) aur stampede (mutex / soft-TTL).
-   Koi system perfect nahi hota — speed vs consistency ka trade-off use-case se tay hota hai."
+NAYA:     koi dabba nahi — node ke andar
 ```
 
 ---
+
+## DIKKAT 2 — 1 TB ek node me nahi: key kis node pe?
+
+```
+DIKKAT:   kai node chahiye, key ka ghar tay karna
+
+SOLUTION: hash(key) % N -> node juda / gaya -> N badla -> LAGBHAG SAARI key ka node badla
+                        -> massive MISS -> sab DB pe -> DB CRASH -> NAHI
+          CONSISTENT HASHING: RING (0 .. 2^32), node + key dono ring pe, key CLOCKWISE agle node pe
+                        node juda / gaya -> sirf us arc ki ~K/N key hilti   <- YAHI
+                        VIRTUAL NODES: ek machine = ring pe kai point -> load even
+                        (wahi sharded DB aur LB me bhi — ek tool, kai jagah)
+          range (A-M / N-Z) -> simple, par hot range -> NAHI
+          CACHE CLIENT (routing) key -> node, app ko nodes ki ginti se azaad rakhta
+
+NAYA:     Cache client
+BADLA:    Cache -> Node A / B / C
+```
+```
+  [ App ]
+    │
+    ├──► [ DB ]
+    │
+    ▼
+  [ Cache client ]
+    │
+    ├──► [ Node A ]
+    ├──► [ Node B ]
+    └──► [ Node C ]
+```
+
+---
+
+## DIKKAT 3 — ek node mara, uski saari key gayab, load DB pe
+
+```
+DIKKAT:   node = ek shard ka akela ghar
+
+SOLUTION: REPLICATION — har shard ka 1-2 replica · primary mara -> replica PROMOTE
+          replica ALAG AZ me (ek AZ me = saath marenge)
+          trade-off: replication LAG -> thodi der purana · cache me eventual chalta
+
+BADLA:    Node A / B / C -> Node + replica
+```
+```
+  [ App ]
+    │
+    ├──► [ DB ]
+    │
+    ▼
+  [ Cache client ]
+    │
+    ├──► [ Node A + replica ]
+    ├──► [ Node B + replica ]
+    └──► [ Node C + replica ]
+```
+```
+POOCHEGA: "What happens if a cache node goes down?"
+BOL:      "Each shard has a replica in another zone that gets promoted, and with consistent hashing only that
+           node's keys are affected."
+```
+
+---
+
+## DIKKAT 4 — DB me update, cache purana (STALE)
+
+```
+DIKKAT:   cache me purani value
+
+SOLUTION: CACHE-ASIDE: DB update -> cache key DELETE (invalidate) -> agli read fresh   <- sabse common
+          WRITE-THROUGH: cache + DB ek saath -> hamesha fresh, har write slow
+          TTL: max staleness ki hadd
+          PRODUCTION = TTL + explicit invalidation ("invalidation is one of the hardest problems")
+          key DELETE karo, UPDATE nahi (do write ulte kram me pahunche -> galat value baith-ti)
+          doosra kaaran REPLICA LAG -> jisne abhi likha wo thodi der PRIMARY se (read-your-own-writes)
+
+NAYA:     koi dabba nahi
+```
+```
+POOCHEGA: "The user updated something but still sees the old value. Why?"
+BOL:      "On update I delete the cache key rather than overwrite it, and keep a TTL as a safety net. If it's
+           replica lag, the writer reads from the primary for a short while."
+```
+
+---
+
+## DIKKAT 5 — super-hot key expire, 1000 request ek saath MISS
+
+```
+DIKKAT:   STAMPEDE (thundering herd): 1000 miss -> 1000 DB pe -> DB CRASH
+
+SOLUTION: MUTEX / lock -> sirf 1 DB se rebuild, baaki WAIT, phir cache se
+          SOFT-TTL -> expiry se PEHLE background refresh
+          NEVER-EXPIRE -> bahut hot key, background update
+          (2-Oct) PATA HO (sale, WC final, iPhone launch) -> PRE-WARM + servers pehle badhao
+                  PATA NA HO (viral tweet) -> upar ke teen
+                  twitter hot-tweet TTL 1 hr khatam + lakhon padh rahe = wahi stampede
+                  asli me kam kyunki badi site ilaaj PEHLE lagaati
+
+NAYA:     koi dabba nahi
+```
+```
+POOCHEGA: "What if the cache goes down / a hot key expires?"
+DHYAAN:   poora cache gaya -> DB fallback, par load shedding / rate limit ke saath — warna chhupa load ek saath DB pe
+BOL:      "For known events I'd pre-warm the cache and scale up in advance. For unpredictable spikes I still
+           need stampede protection: a lock so only one request rebuilds the key, and early background refresh
+           before the TTL expires."
+```
+
+---
+
+## DIKKAT 6 — ek key itni popular, uska shard akela mar raha
+
+```
+DIKKAT:   HOT KEY: consistent hashing ne ek node pe daali, saara traffic us key pe
+          ★ consistent hashing ek hot key ko nahi bachata
+
+SOLUTION: (1) hot key KAI node pe copy -> read bat jaayein (score#1..#10, random copy se padho)
+          (2) L1 LOCAL CACHE — app ke andar mini cache -> request Redis tak jaati hi nahi
+              L1 app (nano-sec) -> L2 distributed (micro-sec) -> DB (milli-sec)
+          WRITE hot -> key me bucket (key#0..#9), kisi ek me likho, padhte waqt jodo
+          PEHCHAAN: key KHAALI, sab DB bhage = STAMPEDE (dikkat 5, mutex)
+                    key BHARI, ek node READ se mar raha = HOT KEY (ye, L1 + copies)
+          MISAAL: IPL live score / flash sale page, 5 crore log ek key
+                  L1 1-2 sec TTL har app server pe (score thoda purana chalega) = sabse bada ilaaj · page / image CDN
+
+NAYA:     L1 local cache
+BADLA:    App -> App + L1 local cache
+```
+```
+  [ App + L1 local cache ]
+    │
+    ├──► [ DB ]
+    │
+    ▼
+  [ Cache client ]
+    │
+    ├──► [ Node A + replica ]
+    ├──► [ Node B + replica ]
+    └──► [ Node C + replica ]
+```
+```
+POOCHEGA: "What about a hot key / celebrity / hot partition?"
+BOL:      "The key is there, one node just can't take the reads. I'd put a 1-2 second local cache on each app
+           server so most reads never reach Redis, and copy the key across replicas so the rest are spread
+           out. A slightly stale score is fine here. If the key were missing instead, that's a stampede — one
+           request rebuilds, the rest wait."
+```
+
+---
+
+## 10x SCALE — har dabba alag
+
+```
+Cache client  -> node juda / gaya -> consistent hashing + virtual nodes
+Node          -> RAM bhari -> LRU + TTL · mara -> replica promote · data badha -> node jodo
+hot key       -> copies + L1 local cache
+expiry        -> mutex · soft-TTL · never-expire · pre-warm
+DB            -> stale -> invalidate + TTL
+AAGE:         write-back (write-heavy ho to) · multi-region cache
+
+POOCHEGA: "How would you scale this to 10x?"      -> request ka raasta chalo
+POOCHEGA: "What's the single point of failure?"   -> node (replica), cache client config (sab app me copy)
+POOCHEGA: "How do you know it's working?"         -> HIT RATIO sabse zaroori (gira = kuch toota) · p99 · evictions · alert
+```
+
+---
+
+## POOCHE TO (deep-dive)
+
+```
+API:      GET key · PUT key value ttl · DELETE key
+          jaan-boojh ke chhoti — query nahi, sirf key se -> index / planner nahi -> isiliye tez
+
+NODE KE ANDAR:  HashMap key -> value (O(1)) · LRU = HashMap + DLL · TTL lazy + active
+                in-memory KV (Redis-jaisa), DB peeche source of truth
+                <1ms -> RAM (disk nahi) · join nahi -> KV kaafi
+
+KEY BAANTNA:    hash % N -> sab shift -> NAHI · CONSISTENT HASHING -> ring + clockwise + virtual nodes <- YAHI
+                range -> hot range -> NAHI
+
+TRADE-OFF:      speed vs consistency — cache AP ki taraf, eventual chalta (CAP ka spirit)
+```
+
+---
+
+## AAKHRI DABBA + WRAP
+
+```
+App + L1 = nano-sec, hot key ka pehla ilaaj · Cache client = consistent hashing, key -> node
+Node = HashMap + DLL (LRU) + TTL, primary + replica (alag AZ) · DB = source of truth, miss pe
+```
+```
+  [ App + L1 local cache ]
+    │
+    ├──► [ DB ]
+    │
+    ▼
+  [ Cache client ]
+    │
+    ├──► [ Node A + replica ]
+    ├──► [ Node B + replica ]
+    └──► [ Node C + replica ]
+```
+```
+SINGLE node : HashMap + DLL (LRU) + TTL
+DISTRIBUTE  : consistent hashing (shard) + replication (HA)
+READ        : cache-aside (~90% hit, DB load 10x kam)
+STALE       : TTL + explicit invalidation
+STAMPEDE    : mutex / soft-TTL
+HOT KEY     : copies / L1 local
+```
+```
+BOL: "A distributed cache is an in-memory key-value store, sharded with consistent hashing and replicated for
+      availability. Cache-aside with LRU and TTL is the production combo. The two hard parts are invalidation —
+      TTL plus explicit deletes — and stampedes — a lock or early refresh. Hot keys get a local L1 cache and
+      copies. It's a speed versus consistency trade-off, decided by the use case."
+```
 
 [← MASTER SHEET](../../00_MASTER_SHEET.md)
