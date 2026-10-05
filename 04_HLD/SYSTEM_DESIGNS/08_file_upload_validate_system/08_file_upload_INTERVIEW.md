@@ -1,436 +1,376 @@
-# File Upload + Validate + Track — POORA ROUND (4 MOVE)
+# File Upload + Validate + Track
 
-> **NAV** — ARCHETYPE B+F · DIL: upload -> validate -> track. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [reliability/SPOF](../../FOUNDATIONS/11_reliability_spof_cloud.md)
-
-> ★ JP ne ye ACTUALLY poocha tha (asli SDE-3 writeup): file/folder lo -> third-party se validate karao
-> (2-3 second lagta hai) -> store karo -> user ko tracking link do. General product design hai, finance nahi.
-> 15-Sep: asli mock-video ke hisaab se dobara likha — koi 7-step rail nahi, sirf 4 move.
-> Har jagah: **tu kya BOLTA hai · BOARD pe kya banta · FAISLA + KYUN**.
-
-```
-★★ TEEN NIYAM (poori file par lagte — [MASTER](../../00_MASTER_SHEET.md) "Kaise bolna")
-   1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
-   2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
-   3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega
-```
+> File / folder lo -> third-party se VALIDATE (2-3 sec) -> store -> user ko TRACKING link do.
+> JP ne ye ACTUALLY poocha tha (asli SDE-3 writeup). General product design, finance nahi.
+> Is design ka dil: **user WAIT na kare** (async + trackingId) + **bytes server se na guzrein** (presigned URL) + **status hamesha pata**.
 
 ---
 
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
-
-### How to Upload a Large File to S3
+## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![How to Upload a Large File to S3](https://assets.bytebytego.com/diagrams/0284-multipart-upload.png)
-
-- **Is file me kahan juda:** bada file -> presigned URL + MULTIPART: tukdon me upload, tukda fail to sirf wahi dobara.
-- Source: [How to Upload a Large File to S3](https://bytebytego.com/guides/how-to-upload-a-large-file-to-s3/)
-
----
-
-# MOVE 1 — POOCHO (board pe abhi kuch nahi)
-
-```
-   TU: "Kuch cheezein confirm kar lun pehle —
-          - file ka SIZE limit kya hai? (10 MB ya 5 GB — design bilkul badal jaata hai)
-          - kaunse file TYPE allow hain?
-          - validation me kitna time lagta hai? (aapne 2-3 second kaha)
-          - sirf FILE, ya FOLDER bhi upload hoga?
-          - user ko result turant chahiye, ya baad me status dekh lega?"
-
-   ★ pehla aur aakhri sawaal sabse zaroori hain:
-        bada file    -> presigned URL + multipart ka raasta
-        turant nahi  -> async + tracking ka raasta
-```
+Source: [How to Upload a Large File to S3](https://bytebytego.com/guides/how-to-upload-a-large-file-to-s3/)
+(bada file -> presigned URL + MULTIPART: tukdon me, tukda fail to sirf wahi dobara)
 
 ---
 
-# MOVE 2 — DO CHHOTE BLOCK LIKHO
+## SHURU — poocho + numbers
 
 ```
-   ┌──────────────────────┐    ┌────────────────────────────────────┐
-   │ File Upload System   │    │ Use cases:                         │
-   │   - File (+ metadata)│    │   - file upload karo               │
-   │   - Upload / Tracking│    │   - third-party se VALIDATE karao  │
-   │   - Validation job   │    │   - store karo                     │
-   │   - Status           │    │   - tracking link / status do      │
-   │   - Owner (user)     │    │                                    │
-   └──────────────────────┘    │ NOT in scope: editing, sharing,    │
-                               │   versioning                       │
-   ┌──────────────────────────┐└────────────────────────────────────┘
-   │ Kya chahiye (NFR):       │
-   │  - user WAIT na kare     │ <- DIL
-   │  - data LOST na ho       │
-   │  - status HAMESHA pata   │
-   │    ho (kahan tak pahuncha│
-   │  - scale + secure        │
-   └──────────────────────────┘
+POOCHO:  file SIZE limit? (10 MB ya 5 GB — design badal jaata)  <- bada = presigned + multipart
+         kaunse TYPE allow? · validation kitna time? (2-3 sec) · sirf FILE ya FOLDER bhi?
+         result turant chahiye ya baad me status?  <- turant nahi = async + tracking
 
-   TU: "Sabse badi baat: validation me 2-3 second lagte hain. Main user ko utni der
-        rukne nahi dunga — usko turant ek tracking id de dunga aur kaam peeche chalta rahega."
-```
+FR:      upload · third-party VALIDATE · store · tracking link / status
+         scope bahar: editing · sharing · versioning
+NFR:     user WAIT na kare (dil) · data LOST na ho · status HAMESHA pata (kahan tak pahuncha) · scale + secure
 
-```
-   Numbers:
-     - maan lo 1 lakh file / day    ->  ~1-2 writes / sec   (zyada nahi)
-     - PAR log status BAAR-BAAR check karte hain -> reads bahut zyada -> READ-HEAVY
-
-     TRICK: 1 din ~ 1,00,000 sec  ->  per-day / 1,00,000 = per-sec
-
-   HAR NUMBER SE EK FAISLA:
-     reads >> writes    ──►  status ke liye CACHE + read replica
-     bada file          ──►  bytes DB me nahi — BLOB (S3) me
-     validation slow    ──►  QUEUE + worker (user ko block mat karo)
+NUMBERS: 1 lakh file / din -> ~1-2 write / sec (kam)       (1 din ~ 1,00,000 sec)
+         par status BAAR-BAAR check -> READ-HEAVY
+         reads >> writes -> status ke liye CACHE + read replica
+         bada file       -> bytes DB me nahi, BLOB (S3)
+         validation slow -> QUEUE + worker
 ```
 
 ---
 
-# MOVE 3 — BOXES BANAO (chhota banao, phir dikkat pe badhao)
+## DABBA 0 — sabse simple
 
 ```
-   TU: "Sabse simple se shuru."
-
-        CLIENT ──► [ App Server ] ──► [ S3 ]
-                        │
-                        └──► third-party validate (2-3 sec) ──► jawab wapas
-
-   TU: "Kaam ho raha hai. Ab isme bada file, slow validation aur bheed daal ke dekhte hain."
+SOLUTION: client file server ko de · server S3 me rakhe · validator call kare (2-3 sec) · jawab wapas
 ```
-
-### dikkat 1 — "user 2-3 second tak ruka hua hai"
-
 ```
-        upload ──► validate (2-3 sec) ──► jawab
-                        │
-                   user tab tak baitha hai, aur server ka thread bhi block hai
-
-   TEEN OPTION (teeno bolna, phir chunna):
-
-     1. SYNCHRONOUS          -> user 2-3 sec ruke, server block  => NAHI
-     2. ★ ASYNC + POLLING    -> upload pe TURANT trackingId + status "VALIDATING"
-                                validation background me (queue + worker)
-                                user GET /status se poll kar le                 => WINNER
-     3. ASYNC + WEBHOOK/push -> kaam khatam hone pe user ko notify
-                                (UX behtar, par setup zyada)
-
-   FAISLA:
-        upload ──► turant trackingId + "VALIDATING" ──► [ QUEUE ] ──► [ WORKER ] ──► validate
-                                                                          │
-                                                          status update (DONE / FAILED)
-                                                                          │
-                                                                  user dekhe / notify
-
-   TU: "User kabhi block nahi hota, aur validation ka load queue se smooth ho jaata hai."
-```
-
-### dikkat 2 — "file ke bytes mere app server se guzar rahe hain"
-
-```
-        CLIENT ──5 GB──► [ App Server ] ──5 GB──► [ S3 ]
-                              │
-                    bandwidth DOUBLE lagi, server ka thread block,
-                    aur app server ko scale karna pada — jabki usne kuch kiya hi nahi
-
-        => ye ANTI-PATTERN hai
-
-   FAISLA: ★ PRESIGNED URL — client SEEDHA S3 pe daale
-
-        1. client ──► server : "ye file upload karni hai"
-        2. server ──► client : short-lived SIGNED URL + trackingId
-        3. client ──► S3     : bytes SEEDHE (server beech me hai hi nahi)
-        4. client ──► server : "ho gaya" (/upload/complete)
-
-   TU: "Server sirf metadata aur URL deta hai — bytes ko haath hi nahi lagata.
-        Bandwidth aadhi, server free, aur S3 apne aap scale karta hai."
-
-   ★ yahi cheez DOWNLOAD me bhi: presigned GET URL -> client seedha S3 se le
-```
-
-### dikkat 3 — "5 GB file 90% pe toot gayi"
-
-```
-        poori file dobara? -> user maar dega
-
-   FAISLA: MULTIPART / RESUMABLE upload
-
-        file ──► chunks me todo (e.g. 5 MB ke tukde)
-                  ├─ chunk 1 ✓
-                  ├─ chunk 2 ✓
-                  ├─ chunk 3 ✗ fail   ──► sirf YE chunk retry
-                  └─ ...
-        sab chunk ho gaye ──► S3 ko bolo "complete multipart" ──► wo jod deta hai
-
-   => fail hua to sirf wahi tukda dobara, poori file nahi = resumable
-
-   ★ multipart CLIENT aur S3 ke beech hota hai -- server beech me NAHI,
-     server sirf har tukde ka presigned URL deta hai
-```
-
-### dikkat 4 — "user ne init to liya, par complete kabhi nahi kiya"
-
-```
-        bytes S3 me padi reh gayi, DB me status adhoora
-        = ORPHAN file (paisa lagta hai, gandagi badhti hai)
-
-   FAISLA: S3 LIFECYCLE RULE
-        upload pehle tmp/ prefix me -> VALIDATE hone pe asli jagah copy
-        lifecycle: "tmp/ me 1 DIN se purana -> auto DELETE"
-        adhoore multipart uploads ke liye bhi "abort incomplete multipart" rule (ye bhi DIN me)
-        ★ lifecycle rule GHANTON me nahi, DINO me chalta (kam se kam 1 din), aur DB ka status
-          nahi dekh sakta. Jaldi saaf karna ho to DB status dekh ke chalne wala sweeper job.
-
-   + validation FAILED wali file -> delete, ya "quarantine" bucket me daal do
-     aur DB me status = FAILED
-
-   ★ ye edge case interviewer zaroor kuredega — khud bol dena achha lagta hai
-```
-
-### dikkat 5 — "user har 2 second status poll kar raha hai (aur sab kar rahe hain)"
-
-```
-        read-heavy ban gaya -> har poll DB pe
-
-   FAISLA: CACHE (Redis) + READ REPLICA
-
-   ★★ PAR EK JAAL HAI — CACHE STALENESS:
-        worker ne status VALIDATING -> DONE kar diya
-        par cache me abhi bhi purana "VALIDATING" pada hai
-        -> user ko galat status dikhta rahega
-
-        FIX: worker jab status update kare, TABHI cache bhi
-             write-through kare ya invalidate kare
-             (ya bahut chhota TTL rakho)
-
-   TU: "Status wala cache normal cache se alag hai — yahan galat purana dikhna
-        seedha user ko dikhega, isliye invalidation update ke saath hi hona chahiye."
-```
-
-### dikkat 6 — "prompt me file YA folder tha — folder ka kya?"
-
-```
-   FOLDER = N files
-
-        PARENT trackingId
-            ├── child trackingId  (file 1)   apna /upload/init
-            ├── child trackingId  (file 2)
-            └── child trackingId  (file 3)
-
-        parent ka status = ROLLUP
-            saare child DONE  -> parent DONE
-            koi FAILED        -> parent PARTIAL / FAILED
-
-   ★ bahut saari chhoti files ho -> client zip kar de -> ek upload -> server unzip kare
-```
-
-### dikkat 7 — "kisi ne DUSRE ka trackingId daal ke file maang li"
-
-```
-        trackingId ek anuman-layak string hai,
-        aur usme "ye kiski file hai" likha hi NAHI
-
-   FAISLA: /upload/init pe user authenticated hai (JWT)
-           -> us waqt record me ownerId LIKH do
-           -> /status aur /download pe check: maangne wala == owner
-
-   ★ AUTHENTICATION vs AUTHORIZATION -- do ALAG cheezein hain:
-        AUTHN  "tum kaun ho"                -> filter / JWT me, EK jagah, dikhta bhi nahi
-        AUTHZ  "IS FILE pe tumhara haq hai?" -> filter ye kar hi NAHI sakta,
-                                                usne trackingId dekha hi nahi
-
-   ★ yahi wo shakal hai jo PR-REVIEW checklist me sabse upar hai:
-     "request me kisi ki CHEEZ ka naam aaye -> maalik ka check kahan hai?"
-```
-
-### dikkat 8 — "owner ko S3 ka SEEDHA link diya, usne wo link aage bhej diya"
-
-```
-        link hamesha ke liye chal raha hai  ->  ab kisi ko bhi chalega
-        aur humara owner-check beech me aata hi nahi -- S3 seedha de raha hai
-
-   FAISLA: PRE-SIGNED URL, chhoti umar ka (5-15 MINUTE -- din nahi)
-
-   ★ owner-check AB BHI hum karte hain -- URL tabhi BANTA hai jab check paas ho
-     URL "chaabi" nahi hai, "5 minute ka PAAS" hai
-```
-
-### dikkat 9 — "naam .pdf tha, Content-Type bhi application/pdf tha, par file asal me exe thi — aur wo S3 me pad chuki hai"
-
-```
-        dono cheezein CLIENT ne bheji hain  ->  dono pe bharosa nahi
-        aur bytes PEHLE HI S3 me hain (direct-to-S3 upload ka natija, dikkat 2)
-        -> "system apne aap reject kar dega" yahan hota hi nahi,
-           file pehle GIRTI hai, pakdi BAAD me jaati hai
-
-   FAISLA: worker file ke PEHLE BYTE padhe (magic number) aur type KHUD tay kare
-              PDF  %PDF-        PNG  \x89PNG        EXE  MZ
-           mel nahi khaya  ->  status REJECTED + file delete
-
-   ★ client ka bheja hua data KABHI sach nahi maana jaata -- naam bhi nahi,
-     Content-Type bhi nahi
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "How do you secure it / stop abuse?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       rate limiter   -> abuse                 -> per user / IP limit
-       url shortener  -> spam link             -> rate limit + bad URL check
-       payment        -> kisi aur ka payment   -> owner check + auth
-
-   ► MASTER SHEET SE JODA: per-user / IP RATE LIMIT (upload flood na ho) + WAF edge pe
-       (bot / bad IP) · TLS · secrets vault me, code me nahi.
-```
-
-### ab poora naksha (jahan pahunche) + har box ka KYUN
-
-```
-                      CLIENT
-                        │  (1) init
-                        ▼
-        ┌──────────────────────────────┐
-        │  API GATEWAY / LB            │
-        └──────────────┬───────────────┘
-                       ▼
-        ┌──────────────────────────────┐        (2) presigned URL + trackingId
-        │      UPLOAD SERVICE          │ ─────────────────────────────────────►  CLIENT
-        │  metadata + URL banata       │                                            │
-        └───────┬──────────────┬───────┘                                            │
-                │              │                                       (3) bytes SEEDHE
-                ▼              ▼                                                    │
-        ┌──────────────┐   ┌──────────────┐                                         ▼
-        │  DB (SQL)    │   │ QUEUE(Kafka) │                                     ┌────────┐
-        │ trackingId,  │   └──────┬───────┘                                     │   S3   │
-        │ status, owner│          ▼                                             └────────┘
-        └──────▲───────┘   ┌──────────────┐                                          ▲
-               │           │   WORKER     │ ──► third-party VALIDATE (2-3 sec)       │
-               └───────────┤ status update│ ──► magic-byte check (type sach me kya hai) │
-                 cache     └──────────────┘ ──► fail? quarantine / delete ───────────┘
-              invalidate
-                  │
-           [ CACHE (Redis) ] + READ REPLICA   <- status polling yahan se
-
-     API GW / LB    : traffic + auth
-     Upload Service : sirf metadata + presigned URL — bytes ko haath nahi lagata
-     S3             : bade bytes ka ghar, khud scalable; download pe aage CDN
-     DB (SQL)       : trackingId + status + owner — chhota data, par status ACID chahiye
-     QUEUE          : 2-3 sec wali slow validation ko user se alag karti hai
-     WORKER         : magic-byte check + validate + status update (+ cache invalidate)
-     CACHE          : status read-heavy hai -> DB bachaya
+  CLIENT
+    │
+    ▼
+  [ Upload Svc ] ──► [ Validator ]
+    │
+    ▼
+  [ S3 ]
 ```
 
 ---
 
-# MOVE 4 — BOLTE-BOLTE JODO (jo poocha jaaye, wahi kholo)
-
-## ► "API kya hogi?"
+## DIKKAT 1 — user 2-3 sec ruka, server ka thread bhi block
 
 ```
-   POST /upload/init      { fileName, size }   ->  presigned S3 URL + trackingId
-                                                   (server SIRF url deta hai)
-        -> phir client SEEDHA S3 pe PUT karta hai (bytes app-server se nahi guzarte)
+DIKKAT:   har upload pe validation ka intezaar
 
-   POST /upload/complete  { trackingId }       ->  "upload ho gaya, ab validate karo"
-                                                   (queue me daal do)
+SOLUTION: teen option bolo, phir chuno:
+          1. SYNC               -> user ruke, server block -> NAHI
+          2. ASYNC + POLLING    -> upload pe TURANT trackingId + status "VALIDATING"
+                                   validation peeche (queue + worker) · user GET /status poll kare  <- YAHI
+          3. ASYNC + WEBHOOK    -> khatam hone pe notify (UX behtar, setup zyada)
+          worker validate kare -> DB me status DONE / FAILED
+          queue se validation ka load smooth
 
-   GET  /status/{trackingId}                   ->  VALIDATING / DONE / FAILED
-   GET  /download/{trackingId}                 ->  presigned GET URL
-                                                   -> client S3 se SEEDHA download kare
+NAYA:     Kafka · Worker · DB (status)
+BADLA:    Validator ab Upload Svc nahi, Worker call karta
 ```
-
-## ► "DB me kya, aur kaunsa DB?"
-
 ```
-   files:  trackingId (KEY) | fileName | ownerId | status | s3_key | createdAt | updatedAt
-
-   ★ presigned URL DB me NAHI rakhte -- wo 5-15 min me mar jaata.
-     DB me s3_key; URL har maang pe NAYA banta (owner check ke baad)
-
-   status =  UPLOADING  ->  VALIDATING  ->  DONE
-                                        ->  FAILED
-
-   ★ status ka matlab: "kahan tak pahuncha" — yahi poore failure-handling ki buniyaad hai
-     (crash ho jaaye to bhi pata rahega ki kya adhoora tha)
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What if the server crashes in the middle of the operation?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       payment        -> PSP ko bheja, jawab nahi -> PENDING pehle + reconciliation job
-       banking        -> debit hua, credit nahi   -> ek DB = @Transactional; kai service = SAGA
-       stock broker   -> crash beech me           -> event log pehle, crash pe replay
-
-   ► MASTER SHEET SE JODA: status likhna kaafi nahi, koi use DHOONDHE bhi: sweeper / reconcile job
-       jo der se UPLOADING / VALIDATING me atke dhoondhe -> S3 me bytes hain? -> queue me dobara ya FAILED.
-   ► "ATKI" KAISE PATA: status VALIDATING + updatedAt 10 min se purana (normal validation 2-3 sec)
-
-   DB choice: simple key-lookup hai, par status ko ACID chahiye -> PostgreSQL (SQL)
-        (agar scale bahut bada + pure key-value hota -> NoSQL bhi chalta;
-         paisa hota -> hamesha SQL/ACID)
-```
-
-## ► "Bade file ka kya karoge?" (deep-dive ka dil — upar dikkat 2 aur 3)
-
-```
-   ★ PRESIGNED URL
-        client server se short-lived signed URL maangta hai -> phir SEEDHA S3 pe upload
-        faayda: bytes app-server se nahi guzarte -> server free, bandwidth aadhi,
-                S3 apne aap scale karta hai
-        server sirf metadata + URL deta hai
-
-   ★ MULTIPART / RESUMABLE
-        file ko chunks me todo (e.g. 5 MB) -> har chunk alag upload -> S3 jod deta hai
-        fail hua -> sirf WO chunk retry (poori file dobara nahi)
-
-   ★ DEDUP (optional, bolne layak)
-        file ke content ka hash (MD5/SHA) nikaalo -> pehle se hai to dobara store mat karo
-        -> storage bachti hai
-```
-
-## ► "Kahan tootega / 10x pe?"
-
-```
-   ★ RATTO MAT — file ka raasta chalao:
-
-      client upload karta hai
-          │
-          ├─► Upload Service -> ek instance kaafi nahi      -> kai instance + LB
-          ├─► S3             -> managed hai, khud scale karta
-          │                     popular download            -> aage CDN (CloudFront)
-          ├─► DB             -> status polling read-heavy    -> CACHE + READ REPLICA
-          │                     bahut files                  -> SHARD (trackingId pe)
-          │                     cache purana status dikha raha-> write-through / invalidate
-          ├─► QUEUE          -> validation ka backlog        -> WORKER auto-scale (queue-depth pe)
-          └─► adhoore upload -> ORPHAN bytes                 -> S3 lifecycle rule (auto delete/abort)
-
-   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
-       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
-       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
-       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
-
-   ► MISAAL (system working): raat ko validator SLOW, queue me 50,000 file atki
-       health check "slow" nahi pakadta (ping ka jawab aa jaata) -> pakadta APNA METRIC:
-         queue depth/lag · validator call p99 + error rate · VALIDATING me purani files ki ginti
-         -> had paar = HUMEIN alert (CloudWatch alarm / PagerDuty), user ke complain se pehle
-       peeche: 3 fail -> validator "dead" = CIRCUIT BREAKER -> BACKUP PROVIDER pe
-         (third-party ki "replica" hum nahi chala sakte -- uska server humara nahi)
-       BOL: "I'd alert on our own metrics - queue depth, p99 latency and error rate of the validator
-             calls, and how many files are stuck in VALIDATING. A health check only tells me it's up,
-             not that it's slow. Behind that, a circuit breaker and a fallback provider."
-```
-
-## ► WRAP (ek saans me)
-
-```
-   "Client -> LB -> Upload Service. File ke bytes presigned URL se SEEDHE S3 me jaate hain,
-    metadata DB me. Validation 2-3 second leti hai isliye wo async hai — queue + worker —
-    aur user ko turant trackingId mil jaata hai jise wo poll kar sakta hai.
-    Bade file ke liye multipart/resumable, adhoore upload ke liye S3 lifecycle rule,
-    aur status read-heavy hai to cache + read replica — par cache ko worker ke update ke
-    saath hi invalidate karna padega.
-    Aage badhata to: fail pe retry, aur downloads ke liye CDN."
+  CLIENT
+    │
+    ▼
+  [ Upload Svc ] ──► [ DB ]
+    │
+    ├──► [ S3 ]
+    │
+    ▼
+  [ Kafka ]
+    │
+    ▼
+  [ Worker ] ──► [ Validator ]
 ```
 
 ---
+
+## DIKKAT 2 — 5 GB file ke bytes mere app server se guzar rahe
+
+```
+DIKKAT:   CLIENT --5 GB--> server --5 GB--> S3 · bandwidth DOUBLE, thread block,
+          server scale karna pada jabki usne kuch kiya hi nahi = ANTI-PATTERN
+
+SOLUTION: PRESIGNED URL — client SEEDHA S3 pe
+          1. client -> server: "ye file upload karni"
+          2. server -> client: short-lived SIGNED URL + trackingId
+          3. client -> S3: bytes SEEDHE
+          4. client -> server: "ho gaya" (/upload/complete) -> queue me
+          server sirf metadata + URL · bandwidth aadhi · S3 khud scale
+          download bhi: presigned GET URL -> seedha S3 se
+
+BADLA:    S3 ka raasta: Upload Svc -> S3  ->  CLIENT -> S3 (seedha)
+```
+```
+  CLIENT
+    │
+    ├──► [ S3 ]
+    │
+    ▼
+  [ Upload Svc ] ──► [ DB ]
+    │
+    ▼
+  [ Kafka ]
+    │
+    ▼
+  [ Worker ] ──► [ Validator ]
+```
+
+---
+
+## DIKKAT 3 — 5 GB file 90% pe toot gayi
+
+```
+DIKKAT:   poori dobara? user maar dega
+
+SOLUTION: MULTIPART / RESUMABLE — chunks (5 MB) · chunk 3 fail -> sirf wahi retry
+          sab ho gaye -> S3 ko "complete multipart" -> wo jodta
+          multipart CLIENT aur S3 ke beech · server sirf har tukde ka presigned URL deta
+
+NAYA:     koi dabba nahi
+```
+
+---
+
+## DIKKAT 4 — init kiya, complete kabhi nahi / beech me crash
+
+```
+DIKKAT:   bytes S3 me padi, DB status adhoora = ORPHAN (paisa + gandagi)
+          VALIDATING me atki file — koi dhoondhe hi nahi
+
+SOLUTION: upload pehle tmp/ prefix me -> VALIDATE hone pe asli jagah copy
+          S3 LIFECYCLE: "tmp/ me 1 DIN se purana -> DELETE" + "abort incomplete multipart" (ye bhi din me)
+          lifecycle GHANTON me nahi, DINO me (kam se kam 1 din), aur DB status nahi dekh sakta
+          -> SWEEPER job: status VALIDATING / UPLOADING + updatedAt 10 min se purana (normal 2-3 sec)
+             -> S3 me bytes hain? -> queue me dobara, warna FAILED
+          validation FAILED -> delete ya QUARANTINE bucket + status FAILED
+          (ye edge case interviewer kuredega — khud bol do)
+
+NAYA:     Sweeper job
+```
+```
+  CLIENT
+    │
+    ├──► [ S3 ]
+    │
+    ▼
+  [ Upload Svc ] ──► [ DB ]
+    │                  ▲
+    │                  │
+    │            [ Sweeper job ]
+    ▼
+  [ Kafka ]
+    │
+    ▼
+  [ Worker ] ──► [ Validator ]
+```
+```
+POOCHEGA: "What if the server crashes in the middle?"
+DHYAAN:   status likhna kaafi nahi — koi use DHOONDHE bhi
+BOL:      "Every file has a status, UPLOADING to VALIDATING to DONE or FAILED. A sweeper finds files stuck
+           too long — VALIDATING for ten minutes when validation takes three seconds — and requeues them
+           or marks them failed. S3 lifecycle rules clean up abandoned uploads."
+```
+
+---
+
+## DIKKAT 5 — sab har 2 sec status poll kar rahe
+
+```
+DIKKAT:   har poll DB pe
+
+SOLUTION: CACHE (Redis) + READ REPLICA
+          ★ JAAL — STALENESS: worker ne VALIDATING -> DONE kiya, cache me purana "VALIDATING"
+            -> worker update ke SAATH cache write-through / invalidate (ya bahut chhota TTL)
+          normal cache se alag: yahan purana = seedha user ko galat status
+
+NAYA:     Redis · Read replica
+```
+```
+  CLIENT
+    │
+    ├──► [ S3 ]
+    │
+    ▼
+  [ Upload Svc ] ──► [ Redis ]
+    │
+    ├──► [ DB ] ──► [ Read replica ]
+    │      ▲
+    │      │
+    │  [ Sweeper job ]
+    ▼
+  [ Kafka ]
+    │
+    ▼
+  [ Worker ] ──► [ Validator ]
+```
+
+---
+
+## DIKKAT 6 — prompt me FOLDER bhi tha
+
+```
+DIKKAT:   folder = N file
+
+SOLUTION: PARENT trackingId -> har file ka child trackingId (apna /upload/init)
+          parent status = ROLLUP: saare DONE -> DONE · koi FAILED -> PARTIAL / FAILED
+          bahut chhoti files -> client zip kare -> ek upload -> server unzip
+
+NAYA:     koi dabba nahi
+```
+
+---
+
+## DIKKAT 7 — kisi ne DOOSRE ka trackingId daal ke file maang li
+
+```
+DIKKAT:   trackingId me "kiski file" likha hi nahi
+
+SOLUTION: /upload/init pe user authenticated (JWT, gateway pe) -> record me ownerId likho
+          /status + /download pe: maangne wala == owner? warna 403
+          AUTHN "tum kaun" -> filter / JWT, ek jagah · AUTHZ "IS file pe haq?" -> filter nahi kar sakta,
+          usne trackingId dekha hi nahi -> service me
+          (PR review checklist me sabse upar: request me kisi ki CHEEZ ka naam -> maalik check kahan?)
+
+NAYA:     API Gateway / LB (auth + traffic)
+```
+```
+  CLIENT
+    │
+    ├──► [ S3 ]
+    │
+    ▼
+  [ API Gateway / LB ]
+    │
+    ▼
+  [ Upload Svc ] ──► [ Redis ]
+    │
+    ├──► [ DB ] ──► [ Read replica ]
+    │      ▲
+    │      │
+    │  [ Sweeper job ]
+    ▼
+  [ Kafka ]
+    │
+    ▼
+  [ Worker ] ──► [ Validator ]
+```
+
+---
+
+## DIKKAT 8 — owner ko S3 ka SEEDHA link diya, usne aage bhej diya
+
+```
+DIKKAT:   link hamesha chalta -> kisi ko bhi · owner check beech me aata hi nahi
+
+SOLUTION: PRESIGNED URL chhoti umar (5-15 MINUTE, din nahi)
+          owner check AB BHI hum karte — URL tabhi banta jab check paas
+          URL "chaabi" nahi, "5 minute ka PAAS"
+          DB me URL NAHI (mar jaata) — s3_key rakho, URL har maang pe NAYA
+
+NAYA:     koi dabba nahi
+```
+
+---
+
+## DIKKAT 9 — naam .pdf, Content-Type application/pdf, par asal me EXE — aur S3 me pad chuki
+
+```
+DIKKAT:   dono client ne bheje -> bharosa nahi · direct-to-S3 me file PEHLE girti, pakdi BAAD me
+
+SOLUTION: worker PEHLE BYTE padhe (magic number), type KHUD tay kare
+            PDF %PDF- · PNG \x89PNG · EXE MZ
+          mel nahi -> REJECTED + delete / quarantine
+          client ka bheja KABHI sach nahi — naam bhi nahi, Content-Type bhi nahi
+
+NAYA:     koi dabba nahi — Worker me check
+```
+```
+POOCHEGA: "How do you secure it / stop abuse?"
+BOL:      "JWT at the gateway and an owner check on every status and download. Short-lived presigned URLs.
+           The worker checks magic bytes instead of trusting the name or Content-Type. Per-user rate limit
+           against upload floods, WAF at the edge, TLS, secrets in a vault."
+```
+
+---
+
+## 10x SCALE — har dabba alag
+
+```
+Upload Svc   -> stateless, kai box + LB
+S3           -> managed, khud scale · popular download -> CDN (CloudFront)
+DB           -> status polling -> CACHE + READ REPLICA · bahut files -> SHARD (trackingId)
+Redis        -> purana status -> write-through / invalidate
+Kafka        -> validation backlog -> WORKER auto-scale (queue depth pe)
+orphan       -> S3 lifecycle + sweeper
+
+POOCHEGA: "How would you scale this to 10x?"      -> file ka raasta chalo, pehle jo toote
+POOCHEGA: "What's the single point of failure?"   -> validator (third-party): circuit breaker + backup provider
+POOCHEGA: "How do you know it's working?"
+          MISAAL: raat ko validator SLOW, queue me 50,000 atki
+          health check "slow" nahi pakadta (ping ka jawab aa jaata) -> APNA METRIC pakadta:
+             queue depth / lag · validator p99 + error rate · VALIDATING me purani files ki ginti
+             -> had paar = alert (CloudWatch alarm / PagerDuty), user ke complain se pehle
+          peeche: 3 fail -> CIRCUIT BREAKER -> BACKUP PROVIDER (third-party ki replica hum nahi chala sakte)
+BOL:      "I'd alert on our own metrics — queue depth, p99 and error rate of validator calls, and files stuck
+           in VALIDATING. A health check only tells me it's up, not that it's slow. Behind that, a circuit
+           breaker and a fallback provider."
+```
+
+---
+
+## POOCHE TO (deep-dive)
+
+```
+API:      POST /upload/init { fileName, size }  -> presigned S3 URL + trackingId (server sirf URL deta)
+          -> client SEEDHA S3 pe PUT
+          POST /upload/complete { trackingId }   -> "ho gaya, validate karo" (queue)
+          GET  /status/{trackingId}              -> VALIDATING / DONE / FAILED
+          GET  /download/{trackingId}            -> presigned GET URL -> seedha S3
+
+DB:       files: trackingId (KEY) | fileName | ownerId | status | s3_key | createdAt | updatedAt
+          status: UPLOADING -> VALIDATING -> DONE / FAILED  ("kahan tak pahuncha" = failure handling ki buniyaad)
+          PostgreSQL: simple key lookup par status ko ACID chahiye
+          (bahut bada + pure key-value -> NoSQL bhi chalta · paisa hota -> hamesha SQL)
+
+DEDUP:    content ka hash (MD5 / SHA) -> pehle se hai to dobara store nahi -> storage bachi
+```
+
+---
+
+## AAKHRI DABBA + WRAP
+
+```
+Gateway / LB = auth · Upload Svc = metadata + presigned URL, bytes ko haath nahi · S3 = bytes, tmp/ + lifecycle
+DB = trackingId + status + owner · Kafka + Worker = slow validation alag, magic bytes · Redis + replica = polling
+Sweeper = atki file
+```
+```
+  CLIENT
+    │
+    ├──► [ S3 ]
+    │
+    ▼
+  [ API Gateway / LB ]
+    │
+    ▼
+  [ Upload Svc ] ──► [ Redis ]
+    │
+    ├──► [ DB ] ──► [ Read replica ]
+    │      ▲
+    │      │
+    │  [ Sweeper job ]
+    ▼
+  [ Kafka ]
+    │
+    ▼
+  [ Worker ] ──► [ Validator ]
+```
+```
+BOL: "The client asks the upload service for a presigned URL and sends the bytes straight to S3 — multipart
+      for big files. Validation takes two to three seconds, so it's async: the user gets a tracking id
+      immediately, a worker validates from a queue, checks magic bytes and updates the status. Status is
+      read-heavy, so Redis and a read replica, invalidated on every update. Owner checks and short-lived
+      URLs secure it, lifecycle rules and a sweeper clean up. Next: retries on failure and a CDN for downloads."
+```
 
 [← MASTER SHEET](../../00_MASTER_SHEET.md)
