@@ -42,19 +42,19 @@ list.forEach(System.out::println);
 ### Static method reference
 ```java
 List<Integer> nums = List.of(-1, -2, 3);
-nums.stream().map(Math::abs);              // [1, 2, 3]
+nums.stream().map(Math::abs).toList();     // [1, 2, 3]   (map lazy hai, toList() pe chalta)
 ```
 
-### Instance method reference
+### Us TYPE ke kisi bhi object ka method (type 3)
 ```java
 List<String> names = List.of("arpan", "rahul");
-names.stream().map(String::toUpperCase);   // [ARPAN, RAHUL]
+names.stream().map(String::toUpperCase).toList();   // [ARPAN, RAHUL]  (har aane wale String pe)
 ```
 
 ### Constructor reference
 ```java
 List<String> names = List.of("Arpan");
-names.stream().map(Patient::new);          // har name se naya Patient
+names.stream().map(Patient::new).toList();   // har name se naya Patient
 ```
 
 ---
@@ -80,5 +80,6 @@ list.forEach(name -> System.out.println("Hello " + name));   // ye Lambda hi rah
 > **Yaad rakh:**
 > Lambda mein sirf method call → `::` use karo
 > Static = `Math::abs`
-> Instance = `String::toUpperCase`
+> Khaas object = `System.out::println`
+> Type ka koi bhi object = `String::toUpperCase`
 > Constructor = `Patient::new`
