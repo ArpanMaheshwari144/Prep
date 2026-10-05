@@ -53,14 +53,13 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 ```
 SOLUTION: Banking Service (business logic) -> SQL DB · jaan-boojh ke seedha
 ```
-```
-  USER
-    │
-    ▼
-  [ Banking Svc ]
-    │
-    ▼
-  [ SQL DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
 ```
 
 ---
@@ -119,14 +118,15 @@ SOLUTION: ★ ARPAN NE LOG aur LEDGER alag bola (bahut kam log karte):
 
 NAYA:     Kafka (outbox relay ke through)
 ```
-```
-  USER
-    │
-    ▼
-  [ Banking Svc ]
-    │
-    ▼
-  [ SQL DB ] ──► [ Kafka ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
 ```
 ```
 POOCHEGA: "How do you make sure the SMS / fraud event is never lost?"
@@ -160,17 +160,17 @@ SOLUTION: DONO RAKHO (19-Sep yahan seekha): ledger_entries = SACH · accounts.ba
 
 NAYA:     Reconciliation job
 ```
-```
-  USER
-    │
-    ▼
-  [ Banking Svc ]
-    │
-    ▼
-  [ SQL DB ] ──► [ Kafka ]
-    ▲
-    │
-  [ Reconciliation job ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
 ```
 ```
 POOCHEGA: "How do you know the system is working?"
@@ -237,22 +237,24 @@ SOLUTION: kai Banking Svc + aage LB · STATELESS (sab DB me) · health check 2-3
           DB PRIMARY gira -> SYNC / semi-sync replica promote (async pe aakhri transfer kho sakta) · replica ALAG AZ
 
 NAYA:     LB
-BADLA:    Banking Svc -> Banking Svc x N
+BADLA:    Banking Svc ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Banking Svc x N ]
-    │
-    ▼
-  [ SQL DB ] ──► [ Kafka ]
-    ▲
-    │
-  [ Reconciliation job ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Banking_Svc_x_N_1["Banking Svc 1"]
+    n_Banking_Svc_x_N_2["Banking Svc 2"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_Banking_Svc_x_N_1
+    n_LB --> n_Banking_Svc_x_N_2
+    n_Banking_Svc_x_N_1 --> n_SQL_DB
+    n_Banking_Svc_x_N_2 --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
 ```
 ```
 POOCHEGA: "What happens if a server or the DB goes down?"
@@ -275,20 +277,25 @@ SOLUTION: READ REPLICA — balance / history replica se, write primary pe (shard
 
 NAYA:     Read replica
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Banking Svc x N ] ──► [ Read replica ]
-    │
-    ▼
-  [ SQL DB ] ──► [ Kafka ]
-    ▲
-    │
-  [ Reconciliation job ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Banking_Svc_x_N_1["Banking Svc 1"]
+    n_Banking_Svc_x_N_2["Banking Svc 2"]
+    n_Read_replica["Read replica"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_Banking_Svc_x_N_1
+    n_LB --> n_Banking_Svc_x_N_2
+    n_Banking_Svc_x_N_1 --> n_Read_replica
+    n_Banking_Svc_x_N_2 --> n_Read_replica
+    n_Banking_Svc_x_N_1 --> n_SQL_DB
+    n_Banking_Svc_x_N_2 --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
 ```
 ```
 POOCHEGA: "I transferred money but my balance still shows the old value. Why?"
@@ -343,21 +350,27 @@ SOLUTION: (a) DELETE se nahi (30 crore row = table lock, txn log full, ghante)
 
 NAYA:     Archive (S3)
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Banking Svc x N ] ──► [ Read replica ]
-    │
-    ▼
-  [ SQL DB ] ──► [ Kafka ]
-    ▲     │
-    │     └──► [ Archive (S3) ]
-    │
-  [ Reconciliation job ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Banking_Svc_x_N_1["Banking Svc 1"]
+    n_Banking_Svc_x_N_2["Banking Svc 2"]
+    n_Read_replica["Read replica"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_Archive_S3["Archive (S3)"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_Banking_Svc_x_N_1
+    n_LB --> n_Banking_Svc_x_N_2
+    n_Banking_Svc_x_N_1 --> n_Read_replica
+    n_Banking_Svc_x_N_2 --> n_Read_replica
+    n_Banking_Svc_x_N_1 --> n_SQL_DB
+    n_Banking_Svc_x_N_2 --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+    n_SQL_DB --> n_Archive_S3
 ```
 ```
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
@@ -413,21 +426,27 @@ LB · Banking Svc = stateless, idempotency check · SQL DB = EK local txn (ledge
 Kafka = commit ke BAAD (SMS / fraud / analytics / statement) · Read replica = balance / history (apna txn primary se)
 Reconciliation = snapshot + live entries vs balance -> ALERT · Archive (S3) = band mahine, delete kabhi nahi
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Banking Svc x N ] ──► [ Read replica ]
-    │
-    ▼
-  [ SQL DB ] ──► [ Kafka ]
-    ▲     │
-    │     └──► [ Archive (S3) ]
-    │
-  [ Reconciliation job ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Banking_Svc_x_N_1["Banking Svc 1"]
+    n_Banking_Svc_x_N_2["Banking Svc 2"]
+    n_Read_replica["Read replica"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_Archive_S3["Archive (S3)"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_Banking_Svc_x_N_1
+    n_LB --> n_Banking_Svc_x_N_2
+    n_Banking_Svc_x_N_1 --> n_Read_replica
+    n_Banking_Svc_x_N_2 --> n_Read_replica
+    n_Banking_Svc_x_N_1 --> n_SQL_DB
+    n_Banking_Svc_x_N_2 --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+    n_SQL_DB --> n_Archive_S3
 ```
 ```
 beech me crash        -> ek local transaction (@Transactional), ek DB me SAGA nahi

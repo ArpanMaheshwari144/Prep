@@ -54,14 +54,13 @@ BOL:      "Kafka absorbs the burst and workers drain at their own pace. Sale tim
 ```
 SOLUTION: Order service seedha email API call kare
 ```
-```
-  [ Order Svc ]
-    │
-    ▼
-  [ Email API ]
-    │
-    ▼
-  USER
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Email_API["Email API"]
+    n_USER["USER"]
+    n_Order_Svc --> n_Email_API
+    n_Email_API --> n_USER
 ```
 
 ---
@@ -76,20 +75,17 @@ SOLUTION: beech me QUEUE — Order event Kafka pe daal ke turant laut-ta
 
 NAYA:     Kafka · Notification Svc
 ```
-```
-  [ Order Svc ]
-    │
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Notification Svc ]
-    │
-    ▼
-  [ Email API ]
-    │
-    ▼
-  USER
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_Email_API["Email API"]
+    n_USER["USER"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_Email_API
+    n_Email_API --> n_USER
 ```
 
 ---
@@ -106,18 +102,31 @@ SOLUTION: Notification Svc FANOUT kare -> HAR CHANNEL KI APNI QUEUE + APNE WORKE
 NAYA:     Push / Email / SMS queue · Push / Email / SMS worker
 BADLA:    Email API -> FCM / SES / Twilio (har channel ka provider)
 ```
-```
-  [ Order Svc ]
-    │
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Notification Svc ]
-    │
-    ├──► [ Push queue ]  ──► [ Push worker ]  ──► [ FCM / APNs ]
-    ├──► [ Email queue ] ──► [ Email worker ] ──► [ SES ]
-    └──► [ SMS queue ]   ──► [ SMS worker ]   ──► [ Twilio ]
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES["SES"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio["Twilio"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio
 ```
 
 ---
@@ -135,20 +144,35 @@ SOLUTION: Notification Svc ke andar 3 kaam:
 
 NAYA:     User-pref DB · Template DB
 ```
-```
-  [ Order Svc ]
-    │
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Notification Svc ] ──► [ User-pref DB ]
-    │         │
-    │         └──► [ Template DB ]
-    │
-    ├──► [ Push queue ]  ──► [ Push worker ]  ──► [ FCM / APNs ]
-    ├──► [ Email queue ] ──► [ Email worker ] ──► [ SES ]
-    └──► [ SMS queue ]   ──► [ SMS worker ]   ──► [ Twilio ]
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES["SES"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio["Twilio"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio
 ```
 
 ---
@@ -167,23 +191,39 @@ SOLUTION: IDEMPOTENT WORKER — "at-least-once delivery + idempotent worker"
 
 NAYA:     Redis (idempotency key)
 ```
-```
-  [ Order Svc ]
-    │
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Notification Svc ] ──► [ User-pref DB ]
-    │         │
-    │         └──► [ Template DB ]
-    │
-    ├──► [ Push queue ]  ──► [ Push worker ]  ──► [ FCM / APNs ]
-    ├──► [ Email queue ] ──► [ Email worker ] ──► [ SES ]
-    └──► [ SMS queue ]   ──► [ SMS worker ]   ──► [ Twilio ]
-                                   │
-                                   ▼
-                              [ Redis ]
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES["SES"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio["Twilio"]
+    n_Redis["Redis"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio
+    n_SMS_worker --> n_Redis
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
 ```
 ```
 POOCHEGA: "What if the same event comes twice / the worker retries?"
@@ -232,23 +272,43 @@ SOLUTION: BACKOFF + JITTER: 1s -> 2s -> 4s -> 8s · wait = base x 2^n + random(0
 
 NAYA:     DLQ
 ```
-```
-  [ Order Svc ]
-    │
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Notification Svc ] ──► [ User-pref DB ]
-    │         │
-    │         └──► [ Template DB ]
-    │
-    ├──► [ Push queue ]  ──► [ Push worker ]  ──► [ FCM / APNs ]
-    ├──► [ Email queue ] ──► [ Email worker ] ──► [ SES ]
-    └──► [ SMS queue ]   ──► [ SMS worker ]   ──► [ Twilio ]
-                                   │
-                                   ├──► [ Redis ]
-                                   └──► [ DLQ ]
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES["SES"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio["Twilio"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
 ```
 ```
 POOCHEGA: "How do you make sure no message is lost?"
@@ -273,23 +333,43 @@ SOLUTION: CHHOTA timeout har provider call pe
 
 BADLA:    har channel ka ek provider -> do (FCM / APNs · SES + SendGrid · Twilio + SNS)
 ```
-```
-  [ Order Svc ]
-    │
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Notification Svc ] ──► [ User-pref DB ]
-    │         │
-    │         └──► [ Template DB ]
-    │
-    ├──► [ Push queue ]  ──► [ Push worker ]  ──► [ FCM / APNs ]
-    ├──► [ Email queue ] ──► [ Email worker ] ──► [ SES + SendGrid ]
-    └──► [ SMS queue ]   ──► [ SMS worker ]   ──► [ Twilio + SNS ]
-                                   │
-                                   ├──► [ Redis ]
-                                   └──► [ DLQ ]
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES_SendGrid["SES + SendGrid"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio_SNS["Twilio + SNS"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES_SendGrid
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio_SNS
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
 ```
 ```
 POOCHEGA: "What if the provider is slow?"
@@ -313,23 +393,43 @@ SOLUTION: PRIORITY LANES — har lane ka ALAG Kafka topic + apna worker pool
 
 BADLA:    Kafka -> 3 topic (high / medium / low)
 ```
-```
-  [ Order Svc ]
-    │
-    ▼
-  [ Kafka high / medium / low ]
-    │
-    ▼
-  [ Notification Svc ] ──► [ User-pref DB ]
-    │         │
-    │         └──► [ Template DB ]
-    │
-    ├──► [ Push queue ]  ──► [ Push worker ]  ──► [ FCM / APNs ]
-    ├──► [ Email queue ] ──► [ Email worker ] ──► [ SES + SendGrid ]
-    └──► [ SMS queue ]   ──► [ SMS worker ]   ──► [ Twilio + SNS ]
-                                   │
-                                   ├──► [ Redis ]
-                                   └──► [ DLQ ]
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka_high_medium_low["Kafka high / medium / low"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES_SendGrid["SES + SendGrid"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio_SNS["Twilio + SNS"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka_high_medium_low
+    n_Kafka_high_medium_low --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES_SendGrid
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio_SNS
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
 ```
 ```
 POOCHEGA: "How do you prioritize urgent work, like OTPs?"
@@ -372,23 +472,47 @@ SOLUTION: provider ka WEBHOOK -> "delivered" / "failed" / "bounced" -> TRACKING 
 
 NAYA:     Tracking DB
 ```
-```
-  [ Order Svc ]
-    │
-    ▼
-  [ Kafka high / medium / low ]
-    │
-    ▼
-  [ Notification Svc ] ──► [ User-pref DB ]
-    │         │
-    │         └──► [ Template DB ]
-    │
-    ├──► [ Push queue ]  ──► [ Push worker ]  ──► [ FCM / APNs ]
-    ├──► [ Email queue ] ──► [ Email worker ] ──► [ SES + SendGrid ]
-    └──► [ SMS queue ]   ──► [ SMS worker ]   ──► [ Twilio + SNS ]
-                                   │                     │
-                                   ├──► [ Redis ]        └──► [ Tracking DB ]
-                                   └──► [ DLQ ]
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka_high_medium_low["Kafka high / medium / low"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES_SendGrid["SES + SendGrid"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio_SNS["Twilio + SNS"]
+    n_Redis["Redis"]
+    n_Tracking_DB["Tracking DB"]
+    n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka_high_medium_low
+    n_Kafka_high_medium_low --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES_SendGrid
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio_SNS
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Twilio_SNS --> n_Tracking_DB
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
+    n_FCM_APNs --> n_Tracking_DB
+    n_SES_SendGrid --> n_Tracking_DB
 ```
 
 ---
@@ -446,23 +570,47 @@ Kafka = decouple + spike + priority topic · Notification Svc = pref + template 
 channel queue = apni speed · worker = idempotent (SET NX) + backoff / jitter + circuit breaker + throttle
 DLQ = poison baaki ko na roke · Tracking DB = "bheja" vs "mila"
 ```
-```
-  [ Order Svc ]
-    │
-    ▼
-  [ Kafka high / medium / low ]
-    │
-    ▼
-  [ Notification Svc ] ──► [ User-pref DB ]
-    │         │
-    │         └──► [ Template DB ]
-    │
-    ├──► [ Push queue ]  ──► [ Push worker ]  ──► [ FCM / APNs ]
-    ├──► [ Email queue ] ──► [ Email worker ] ──► [ SES + SendGrid ]
-    └──► [ SMS queue ]   ──► [ SMS worker ]   ──► [ Twilio + SNS ]
-                                   │                     │
-                                   ├──► [ Redis ]        └──► [ Tracking DB ]
-                                   └──► [ DLQ ]
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka_high_medium_low["Kafka high / medium / low"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES_SendGrid["SES + SendGrid"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio_SNS["Twilio + SNS"]
+    n_Redis["Redis"]
+    n_Tracking_DB["Tracking DB"]
+    n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka_high_medium_low
+    n_Kafka_high_medium_low --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES_SendGrid
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio_SNS
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Twilio_SNS --> n_Tracking_DB
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
+    n_FCM_APNs --> n_Tracking_DB
+    n_SES_SendGrid --> n_Tracking_DB
 ```
 ```
 BOL: "Services publish events to Kafka. The notification service checks preferences, fills the template

@@ -53,14 +53,13 @@ BOL:      "Consistency for money — during a partition I'd rather reject than g
 ```
 SOLUTION: Arpan -= 500 · Merchant += 500
 ```
-```
-  USER
-    │
-    ▼
-  [ Payment Svc ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_DB["DB"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_DB
 ```
 
 ---
@@ -97,14 +96,15 @@ SOLUTION: IDEMPOTENCY KEY — client har NAYE payment pe UUID, RETRY pe WAHI
 
 NAYA:     Idempotency store (Redis + DB unique)
 ```
-```
-  USER
-    │
-    ▼
-  [ Payment Svc ] ──► [ Idempotency store ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_DB["DB"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_DB
 ```
 ```
 POOCHEGA: "What if the same request comes twice / the client retries?"
@@ -135,16 +135,17 @@ SOLUTION: external PSP / GATEWAY (Razorpay / Stripe / bank rails) asli paisa mov
 
 NAYA:     PSP
 ```
-```
-  USER
-    │
-    ▼
-  [ Payment Svc ] ──► [ Idempotency store ]
-    │
-    ├──► [ PSP ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
 ```
 ```
 POOCHEGA: "What if the PSP is slow?"
@@ -170,19 +171,20 @@ SOLUTION: 1. STATUS (write-ahead): kuch karne se PEHLE "PENDING" durable likho -
 
 NAYA:     Reconciliation job · webhook (PSP -> Payment Svc)
 ```
-```
-  USER
-    │
-    ▼
-  [ Payment Svc ] ──► [ Idempotency store ]
-    │
-    ├──► [ PSP ]
-    │
-    ▼
-  [ DB ]
-    ▲
-    │
-  [ Reconciliation job ] ──► [ PSP ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
 ```
 ```
 POOCHEGA: "What if the server crashes in the middle?"
@@ -247,24 +249,29 @@ SOLUTION: Payment Svc pehle se STATELESS (state DB + idempotency store me) -> ka
           har /pay pe OWNER CHECK: "from" account isi user ka? (warna kisi aur ke account se paisa)
 
 NAYA:     LB / API Gateway
-BADLA:    Payment Svc -> Payment Svc x N
+BADLA:    Payment Svc ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
 ```
-```
-  USER
-    │
-    ▼
-  [ LB / API Gateway ]
-    │
-    ▼
-  [ Payment Svc x N ] ──► [ Idempotency store ]
-    │
-    ├──► [ PSP ]
-    │
-    ▼
-  [ DB ]
-    ▲
-    │
-  [ Reconciliation job ] ──► [ PSP ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB_API_Gateway["LB / API Gateway"]
+    n_Payment_Svc_x_N_1["Payment Svc 1"]
+    n_Payment_Svc_x_N_2["Payment Svc 2"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB_API_Gateway
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
+    n_Payment_Svc_x_N_1 --> n_Idempotency_store
+    n_Payment_Svc_x_N_2 --> n_Idempotency_store
+    n_Payment_Svc_x_N_1 --> n_PSP
+    n_Payment_Svc_x_N_2 --> n_PSP
+    n_Payment_Svc_x_N_1 --> n_DB
+    n_Payment_Svc_x_N_2 --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
 ```
 ```
 POOCHEGA: "How do you secure it / stop abuse?"
@@ -285,22 +292,29 @@ SOLUTION: READ REPLICA — dashboard / report replica se
 
 NAYA:     Read replica
 ```
-```
-  USER
-    │
-    ▼
-  [ LB / API Gateway ]
-    │
-    ▼
-  [ Payment Svc x N ] ──► [ Idempotency store ]
-    │
-    ├──► [ PSP ]
-    │
-    ▼
-  [ DB ] ──► [ Read replica ]
-    ▲
-    │
-  [ Reconciliation job ] ──► [ PSP ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB_API_Gateway["LB / API Gateway"]
+    n_Payment_Svc_x_N_1["Payment Svc 1"]
+    n_Payment_Svc_x_N_2["Payment Svc 2"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB_API_Gateway
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
+    n_Payment_Svc_x_N_1 --> n_Idempotency_store
+    n_Payment_Svc_x_N_2 --> n_Idempotency_store
+    n_Payment_Svc_x_N_1 --> n_PSP
+    n_Payment_Svc_x_N_2 --> n_PSP
+    n_Payment_Svc_x_N_1 --> n_DB
+    n_Payment_Svc_x_N_2 --> n_DB
+    n_DB --> n_Read_replica
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
 ```
 ```
 POOCHEGA: "The user paid but still sees the old balance. Why?"
@@ -321,22 +335,29 @@ SOLUTION: SHARD by account_id
 
 BADLA:    DB -> SQL DB (shard by account_id)
 ```
-```
-  USER
-    │
-    ▼
-  [ LB / API Gateway ]
-    │
-    ▼
-  [ Payment Svc x N ] ──► [ Idempotency store ]
-    │
-    ├──► [ PSP ]
-    │
-    ▼
-  [ SQL DB shard by account_id ] ──► [ Read replica ]
-    ▲
-    │
-  [ Reconciliation job ] ──► [ PSP ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB_API_Gateway["LB / API Gateway"]
+    n_Payment_Svc_x_N_1["Payment Svc 1"]
+    n_Payment_Svc_x_N_2["Payment Svc 2"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_SQL_DB_shard_by_account_id["SQL DB shard by account_id"]
+    n_Read_replica["Read replica"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB_API_Gateway
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
+    n_Payment_Svc_x_N_1 --> n_Idempotency_store
+    n_Payment_Svc_x_N_2 --> n_Idempotency_store
+    n_Payment_Svc_x_N_1 --> n_PSP
+    n_Payment_Svc_x_N_2 --> n_PSP
+    n_Payment_Svc_x_N_1 --> n_SQL_DB_shard_by_account_id
+    n_Payment_Svc_x_N_2 --> n_SQL_DB_shard_by_account_id
+    n_SQL_DB_shard_by_account_id --> n_Read_replica
+    n_Reconciliation_job --> n_SQL_DB_shard_by_account_id
+    n_Reconciliation_job --> n_PSP
 ```
 
 ---
@@ -396,22 +417,29 @@ Gateway = auth + rate limit + owner check · Payment Svc = stateless, saga · Id
 SQL DB = ACID debit + credit + ledger, shard by account · PSP = asli paisa, PENDING · webhook = push
 Reconciliation = pull safety net · Read replica = sirf dashboard
 ```
-```
-  USER
-    │
-    ▼
-  [ LB / API Gateway ]
-    │
-    ▼
-  [ Payment Svc x N ] ──► [ Idempotency store ]
-    │
-    ├──► [ PSP ]
-    │
-    ▼
-  [ SQL DB shard by account_id ] ──► [ Read replica ]
-    ▲
-    │
-  [ Reconciliation job ] ──► [ PSP ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB_API_Gateway["LB / API Gateway"]
+    n_Payment_Svc_x_N_1["Payment Svc 1"]
+    n_Payment_Svc_x_N_2["Payment Svc 2"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_SQL_DB_shard_by_account_id["SQL DB shard by account_id"]
+    n_Read_replica["Read replica"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB_API_Gateway
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
+    n_Payment_Svc_x_N_1 --> n_Idempotency_store
+    n_Payment_Svc_x_N_2 --> n_Idempotency_store
+    n_Payment_Svc_x_N_1 --> n_PSP
+    n_Payment_Svc_x_N_2 --> n_PSP
+    n_Payment_Svc_x_N_1 --> n_SQL_DB_shard_by_account_id
+    n_Payment_Svc_x_N_2 --> n_SQL_DB_shard_by_account_id
+    n_SQL_DB_shard_by_account_id --> n_Read_replica
+    n_Reconciliation_job --> n_SQL_DB_shard_by_account_id
+    n_Reconciliation_job --> n_PSP
 ```
 ```
 idempotency  -> same key, paisa EK baar          (hashmap "pehle dekha?")

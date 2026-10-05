@@ -37,14 +37,13 @@ NUMBERS: ~100M user · ~30-40M DAU · edits / sec BAHUT — WRITE-DOMINATED (har
 ```
 SOLUTION: doc ka poora text DB me · "Save" dabao -> poora text overwrite
 ```
-```
-  USER
-    │
-    ▼
-  [ App ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
 ```
 
 ---
@@ -76,14 +75,13 @@ SOLUTION: WEBSOCKET — do-tarfa zinda connection, dono taraf se push
 
 BADLA:    App -> Conn-Server (WebSocket pakadta)
 ```
-```
-  USER A / B
-    │
-    ▼
-  [ Conn-Server ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_Conn_Server["Conn-Server"]
+    n_DB["DB"]
+    n_USER_A_B --> n_Conn_Server
+    n_Conn_Server --> n_DB
 ```
 
 ---
@@ -99,19 +97,23 @@ SOLUTION: REDIS PUB/SUB (server-to-server fanout)
           WebSocket = browser tak · pub/sub = server se server (do alag kaam)
 
 NAYA:     LB · Redis pub/sub
-BADLA:    Conn-Server -> Conn-Server x N
+BADLA:    Conn-Server ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
 ```
-```
-  USER A / B
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Conn-Server x N ] ──► [ Redis pub/sub ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_DB["DB"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_DB
+    n_Conn_Server_x_N_2 --> n_DB
 ```
 
 ---
@@ -155,20 +157,23 @@ SOLUTION: BUFFER + BATCH: op -> Redis buffer me jama -> thodi der me BATCH -> No
 NAYA:     Redis buffer
 BADLA:    DB -> Cassandra edit log (docId shard)
 ```
-```
-  USER A / B
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Conn-Server x N ] ──► [ Redis pub/sub ]
-    │
-    ▼
-  [ Redis buffer ]
-    │
-    ▼
-  [ Cassandra edit log ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_Redis_buffer["Redis buffer"]
+    n_Cassandra_edit_log["Cassandra edit log"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_Redis_buffer
+    n_Conn_Server_x_N_2 --> n_Redis_buffer
+    n_Redis_buffer --> n_Cassandra_edit_log
 ```
 ```
 POOCHEGA: "The database takes too many writes. What do you do?"
@@ -208,21 +213,26 @@ SOLUTION: pehli soch "consistency chahiye -> CP" = GALAT nikli (3-Sep mock)
 
 NAYA:     SQL (permissions / ownership)
 ```
-```
-  USER A / B
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Conn-Server x N ] ──► [ Redis pub/sub ]
-    │         │
-    │         └──► [ SQL permissions ]
-    ▼
-  [ Redis buffer ]
-    │
-    ▼
-  [ Cassandra edit log ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_SQL_permissions["SQL permissions"]
+    n_Redis_buffer["Redis buffer"]
+    n_Cassandra_edit_log["Cassandra edit log"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_Redis_buffer
+    n_Conn_Server_x_N_2 --> n_Redis_buffer
+    n_Conn_Server_x_N_1 --> n_SQL_permissions
+    n_Conn_Server_x_N_2 --> n_SQL_permissions
+    n_Redis_buffer --> n_Cassandra_edit_log
 ```
 ```
 POOCHEGA: "Consistency or availability — which do you pick?"
@@ -252,23 +262,28 @@ SOLUTION: (1) alag CONNECTION TIER — sirf socket pakadne wale, alag scale
 NAYA:     CDN
 BADLA:    LB -> LB (docId se consistent routing)
 ```
-```
-  USER A / B
-    │
-    ├──► [ CDN ]
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Conn-Server x N ] ──► [ Redis pub/sub ]
-    │         │
-    │         └──► [ SQL permissions ]
-    ▼
-  [ Redis buffer ]
-    │
-    ▼
-  [ Cassandra edit log ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_CDN["CDN"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_SQL_permissions["SQL permissions"]
+    n_Redis_buffer["Redis buffer"]
+    n_Cassandra_edit_log["Cassandra edit log"]
+    n_USER_A_B --> n_CDN
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_Redis_buffer
+    n_Conn_Server_x_N_2 --> n_Redis_buffer
+    n_Conn_Server_x_N_1 --> n_SQL_permissions
+    n_Conn_Server_x_N_2 --> n_SQL_permissions
+    n_Redis_buffer --> n_Cassandra_edit_log
 ```
 ```
 POOCHEGA: "How do you keep edits in order?"
@@ -324,23 +339,28 @@ CDN = static app · LB = docId se consistent routing · Conn-Server = WebSocket 
 Redis pub/sub = server-to-server fanout · Redis buffer = batch write · Cassandra = op log (docId, timestamp) + snapshot
 SQL = permissions (CP)
 ```
-```
-  USER A / B
-    │
-    ├──► [ CDN ]
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Conn-Server x N ] ──► [ Redis pub/sub ]
-    │         │
-    │         └──► [ SQL permissions ]
-    ▼
-  [ Redis buffer ]
-    │
-    ▼
-  [ Cassandra edit log ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_CDN["CDN"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_SQL_permissions["SQL permissions"]
+    n_Redis_buffer["Redis buffer"]
+    n_Cassandra_edit_log["Cassandra edit log"]
+    n_USER_A_B --> n_CDN
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_Redis_buffer
+    n_Conn_Server_x_N_2 --> n_Redis_buffer
+    n_Conn_Server_x_N_1 --> n_SQL_permissions
+    n_Conn_Server_x_N_2 --> n_SQL_permissions
+    n_Redis_buffer --> n_Cassandra_edit_log
 ```
 ```
 BOL: "Clients hold a WebSocket to a connection server, routed by doc id. Every keystroke is an operation; the

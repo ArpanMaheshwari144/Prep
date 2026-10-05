@@ -50,14 +50,13 @@ NUMBERS: 100M msg / din -> ~1,200 / sec -> peak 3-5x -> ~5,000 / sec
 ```
 SOLUTION: ek machine, memory me queue
 ```
-```
-  [ Producer ]
-    │
-    ▼
-  [ Queue ]
-    │
-    ▼
-  [ Consumer ]
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Queue["Queue"]
+    n_Consumer["Consumer"]
+    n_Producer --> n_Queue
+    n_Queue --> n_Consumer
 ```
 
 ---
@@ -78,14 +77,13 @@ SOLUTION: queue ko LOG banao — disk pe APPEND-ONLY file + har message ka OFFSE
 
 BADLA:    Queue (memory) -> Log (disk, append-only)
 ```
-```
-  [ Producer ]
-    │
-    ▼
-  [ Log ]
-    │
-    ▼
-  [ Consumer ]
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Log["Log"]
+    n_Consumer["Consumer"]
+    n_Producer --> n_Log
+    n_Log --> n_Consumer
 ```
 
 ---
@@ -100,14 +98,13 @@ SOLUTION: topic ko TUKDON me — PARTITION, alag broker pe (har partition apna a
 
 BADLA:    Log -> Brokers A / B / C (har ek pe ek partition)
 ```
-```
-  [ Producer ]
-    │
-    ▼
-  [ Brokers A / B / C ]
-    │
-    ▼
-  [ Consumer ]
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Consumer["Consumer"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Consumer
 ```
 ```
 POOCHEGA: "One machine can't hold the data or take the writes. What do you do?"
@@ -151,14 +148,13 @@ SOLUTION: CONSUMER GROUP — "ek team hain, kaam BAANT lo"
 
 BADLA:    Consumer -> Group email (C1 / C2 / C3)
 ```
-```
-  [ Producer ]
-    │
-    ▼
-  [ Brokers A / B / C ]
-    │
-    ▼
-  [ Group email ]
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Group_email["Group email"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Group_email
 ```
 
 ---
@@ -175,15 +171,17 @@ SOLUTION: EK topic, TEEN consumer GROUP — har group ko poora topic, har group 
 
 NAYA:     Group analytics · Group dashboard
 ```
-```
-  [ Producer ]
-    │
-    ▼
-  [ Brokers A / B / C ]
-    │
-    ├──► [ Group email ]
-    ├──► [ Group analytics ]
-    └──► [ Group dashboard ]
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Group_email["Group email"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
 ```
 ```
 DHYAAN:   (15-Sep mock galti) "har service ka alag TOPIC" -> NAHI. producer ko ek event TEEN baar bhejna padta
@@ -212,15 +210,19 @@ SOLUTION: REPLICATION — har partition ka LEADER (saara read / write) + FOLLOWE
 NAYA:     Controller (KRaft)
 BADLA:    Brokers A / B / C -> har partition ka leader + 2 follower (alag broker / AZ)
 ```
-```
-  [ Producer ]
-    │
-    ▼
-  [ Brokers A / B / C ] ──► [ Controller (KRaft) ]
-    │
-    ├──► [ Group email ]
-    ├──► [ Group analytics ]
-    └──► [ Group dashboard ]
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
 ```
 ```
 POOCHEGA: "What happens if a broker goes down?"
@@ -252,15 +254,21 @@ SOLUTION: TEEN GUARANTEE:
 
 NAYA:     Redis (dedup, consumer side)
 ```
-```
-  [ Producer ]
-    │
-    ▼
-  [ Brokers A / B / C ] ──► [ Controller (KRaft) ]
-    │
-    ├──► [ Group email ] ──► [ Redis ]
-    ├──► [ Group analytics ]
-    └──► [ Group dashboard ]
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Redis["Redis"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
+    n_Group_email --> n_Redis
 ```
 ```
 POOCHEGA: "How do you make sure no message is lost?"
@@ -305,17 +313,23 @@ SOLUTION: REBALANCE: C1->P0, C2->P1, C3->P2 · C2 mara -> coordinator (ek broker
 
 NAYA:     DLQ
 ```
-```
-  [ Producer ]
-    │
-    ▼
-  [ Brokers A / B / C ] ──► [ Controller (KRaft) ]
-    │
-    ├──► [ Group email ] ──► [ Redis ]
-    │         │
-    │         └──► [ DLQ ]
-    ├──► [ Group analytics ]
-    └──► [ Group dashboard ]
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
+    n_Group_email --> n_Redis
+    n_Group_email --> n_DLQ
 ```
 
 ---
@@ -404,17 +418,23 @@ Producer = key + acks · Brokers = partition (append-only log + offset), leader 
 Controller = metadata, split-brain roko · Groups = ek group me baantna, alag group = broadcast
 Redis = eventId dedup · DLQ = poison alag
 ```
-```
-  [ Producer ]
-    │
-    ▼
-  [ Brokers A / B / C ] ──► [ Controller (KRaft) ]
-    │
-    ├──► [ Group email ] ──► [ Redis ]
-    │         │
-    │         └──► [ DLQ ]
-    ├──► [ Group analytics ]
-    └──► [ Group dashboard ]
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
+    n_Group_email --> n_Redis
+    n_Group_email --> n_DLQ
 ```
 ```
 FLOW: producer -> key se partition -> LEADER pe append (offset) -> follower copy (ISR)

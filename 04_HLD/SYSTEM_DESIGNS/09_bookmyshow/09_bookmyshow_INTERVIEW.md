@@ -47,14 +47,13 @@ BOL:      "For the booking itself I'd pick consistency: I'd rather reject a writ
 ```
 SOLUTION: seats(seat_id, show_id, status) · "book" dabao -> status = 'booked'
 ```
-```
-  USER
-    │
-    ▼
-  [ App ]
-    │
-    ▼
-  [ SQL DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_SQL_DB["SQL DB"]
+    n_USER --> n_App
+    n_App --> n_SQL_DB
 ```
 
 ---
@@ -106,17 +105,15 @@ SOLUTION: SEAT HOLD + TTL: select -> 'held', held_until = now + 5 min · pay SUC
 
 NAYA:     Sweeper job
 ```
-```
-  USER
-    │
-    ▼
-  [ App ]
-    │
-    ▼
-  [ SQL DB ]
-    ▲
-    │
-  [ Sweeper job ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_SQL_DB["SQL DB"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_App
+    n_App --> n_SQL_DB
+    n_Sweeper_job --> n_SQL_DB
 ```
 ```
 POOCHEGA: "Who releases the hold after 5 minutes?"
@@ -142,17 +139,17 @@ SOLUTION: IDEMPOTENCY KEY (payment wala tool) — client banata, retry pe SAME
 
 NAYA:     Payment Svc (external, idempotency key ke saath)
 ```
-```
-  USER
-    │
-    ▼
-  [ App ] ──► [ Payment Svc ]
-    │
-    ▼
-  [ SQL DB ]
-    ▲
-    │
-  [ Sweeper job ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Payment_Svc["Payment Svc"]
+    n_SQL_DB["SQL DB"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_App
+    n_App --> n_Payment_Svc
+    n_App --> n_SQL_DB
+    n_Sweeper_job --> n_SQL_DB
 ```
 ```
 POOCHEGA: "What if the user clicks Pay twice / the client retries?"
@@ -174,20 +171,21 @@ SOLUTION: dono raaste ALAG:
 
 NAYA:     Redis · Read replica
 ```
-```
-  USER
-    │
-    ▼
-  [ App ] ──► [ Payment Svc ]
-    │
-    ├──► [ Redis ]
-    ├──► [ Read replica ]
-    │
-    ▼
-  [ SQL primary ]
-    ▲
-    │
-  [ Sweeper job ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Payment_Svc["Payment Svc"]
+    n_Redis["Redis"]
+    n_Read_replica["Read replica"]
+    n_SQL_primary["SQL primary"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_App
+    n_App --> n_Payment_Svc
+    n_App --> n_Redis
+    n_App --> n_Read_replica
+    n_App --> n_SQL_primary
+    n_Sweeper_job --> n_SQL_primary
 ```
 
 ---
@@ -214,26 +212,25 @@ SOLUTION: QUEUE (Kafka) + PER-SHOW WORKER -> us show ki request ek-ek karke -> a
 
 NAYA:     Kafka · Booking worker · gate counter (Redis me)
 ```
-```
-  USER
-    │
-    ▼
-  [ App ] ──► [ Payment Svc ]
-    │
-    ├──► [ Redis ]
-    ├──► [ Read replica ]
-    │
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Booking worker ]
-    │
-    ▼
-  [ SQL primary ]
-    ▲
-    │
-  [ Sweeper job ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Payment_Svc["Payment Svc"]
+    n_Redis["Redis"]
+    n_Read_replica["Read replica"]
+    n_Kafka["Kafka"]
+    n_Booking_worker["Booking worker"]
+    n_SQL_primary["SQL primary"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_App
+    n_App --> n_Payment_Svc
+    n_App --> n_Redis
+    n_App --> n_Read_replica
+    n_App --> n_Kafka
+    n_Kafka --> n_Booking_worker
+    n_Booking_worker --> n_SQL_primary
+    n_Sweeper_job --> n_SQL_primary
 ```
 ```
 POOCHEGA: "What if traffic suddenly spikes 10x?"
@@ -277,31 +274,35 @@ SOLUTION: HOLD DB me (status 'held' + held_until), box ki memory me NAHI -> seat
           stateful copies ALAG AZ me
 
 NAYA:     LB
-BADLA:    App -> App x N
+BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ App x N ] ──► [ Payment Svc ]
-    │
-    ├──► [ Redis Cluster ]
-    ├──► [ Read replica ]
-    │
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Booking worker ]
-    │
-    ▼
-  [ SQL primary ]
-    ▲
-    │
-  [ Sweeper job ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Payment_Svc["Payment Svc"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Read_replica["Read replica"]
+    n_Kafka["Kafka"]
+    n_Booking_worker["Booking worker"]
+    n_SQL_primary["SQL primary"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Payment_Svc
+    n_App_x_N_2 --> n_Payment_Svc
+    n_App_x_N_1 --> n_Redis_Cluster
+    n_App_x_N_2 --> n_Redis_Cluster
+    n_App_x_N_1 --> n_Read_replica
+    n_App_x_N_2 --> n_Read_replica
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_Kafka --> n_Booking_worker
+    n_Booking_worker --> n_SQL_primary
+    n_Sweeper_job --> n_SQL_primary
 ```
 ```
 POOCHEGA: "What happens if an app server goes down?"
@@ -356,29 +357,33 @@ LB · App = stateless · Redis Cluster = browse 99% · Read replica = baaki brow
 Kafka + Booking worker = spike + per-show serialize · SQL primary = ACID, atomic UPDATE, failover
 Sweeper = expired hold saaf · Payment Svc = external, idempotency key
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ App x N ] ──► [ Payment Svc ]
-    │
-    ├──► [ Redis Cluster ]
-    ├──► [ Read replica ]
-    │
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Booking worker ]
-    │
-    ▼
-  [ SQL primary ]
-    ▲
-    │
-  [ Sweeper job ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Payment_Svc["Payment Svc"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Read_replica["Read replica"]
+    n_Kafka["Kafka"]
+    n_Booking_worker["Booking worker"]
+    n_SQL_primary["SQL primary"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Payment_Svc
+    n_App_x_N_2 --> n_Payment_Svc
+    n_App_x_N_1 --> n_Redis_Cluster
+    n_App_x_N_2 --> n_Redis_Cluster
+    n_App_x_N_1 --> n_Read_replica
+    n_App_x_N_2 --> n_Read_replica
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_Kafka --> n_Booking_worker
+    n_Booking_worker --> n_SQL_primary
+    n_Sweeper_job --> n_SQL_primary
 ```
 ```
 BOL: "Browse goes to Redis and a read replica; booking goes to the SQL primary with an atomic conditional

@@ -78,11 +78,11 @@ SOLUTION: A /connect?user=A (BAND NAHI hoti) -> register A -> penA · B /connect
 ★ DEKHA:  B ki screen pe message aa gaya, B ne kuch maanga hi nahi. Screen pe "JUD GAYA — ye connection ab khuli padi hai",
           console pe `[JUDA] B   register ab = [A, B]`
 ```
-```
-  USER A / B
-    │
-    ▼
-  [ Chat Server ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_Chat_Server["Chat Server"]
+    n_USER_A_B --> n_Chat_Server
 ```
 
 ---
@@ -104,16 +104,17 @@ SOLUTION: (a) THREAD model badlo: event loop (Netty type), kuch thread, laakhon 
           Na error, na crash, CPU khaali. Bas jagah khatam. Khuli connection bina kuch kiye jagah gherti — dekha.
 
 NAYA:     LB
-BADLA:    Chat Server -> Chat Server x ~200 (event loop)
+BADLA:    Chat Server ek se KAI — asal me ~200 (event loop), diagram me 2 dikhaye
 ```
-```
-  USER A / B
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Chat Server x ~200 ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
 ```
 ```
 POOCHEGA: "What happens if a chat server goes down?"
@@ -145,14 +146,18 @@ SOLUTION: teen raaste — ek bekaar, DO asli:
 
 NAYA:     Redis (presence / routing + pub-sub)
 ```
-```
-  USER A / B
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Chat Server x ~200 ] ──► [ Redis ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
 ```
 
 ---
@@ -176,18 +181,24 @@ SOLUTION: SAHI: pehle DB me LIKHO, PHIR bhejne ki koshish
 
 NAYA:     Message store · Push (Google / Apple)
 ```
-```
-  USER A / B
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Chat Server x ~200 ] ──► [ Redis ]
-    │         │
-    │         └──► [ Push (Google / Apple) ]
-    ▼
-  [ Message store ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Message_store["Message store"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Message_store
+    n_Chat_Server_x_200_2 --> n_Message_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
 ```
 ```
 POOCHEGA: "How do you make sure no message is lost?"
@@ -219,18 +230,26 @@ SOLUTION: padhne ka tareeka batata: chat me sirf "is chat ke aakhri 50 do" / "us
 BADLA:    Message store -> Cassandra (chat_id partition, message_id sort)
 NAYA:     Cold storage
 ```
-```
-  USER A / B
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Chat Server x ~200 ] ──► [ Redis ]
-    │         │
-    │         └──► [ Push (Google / Apple) ]
-    ▼
-  [ Cassandra messages ] ──► [ Cold storage ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
 ```
 ```
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
@@ -279,19 +298,29 @@ SOLUTION: A. HAR MESSAGE x HAR MEMBER record ("4417 -> Arpan delivered, Suresh r
 
 NAYA:     Cursor store
 ```
-```
-  USER A / B
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Chat Server x ~200 ] ──► [ Redis ]
-    │         │
-    │         ├──► [ Cursor store ]
-    │         └──► [ Push (Google / Apple) ]
-    ▼
-  [ Cassandra messages ] ──► [ Cold storage ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
 ```
 
 ---
@@ -345,22 +374,31 @@ SOLUTION: IDEMPOTENCY KEY = chat me clientMsgId: { chatId, text, clientMsgId: "a
 
 NAYA:     Idempotency check
 ```
-```
-  USER A / B
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Chat Server x ~200 ] ──► [ Redis ]
-    │         │
-    │         ├──► [ Cursor store ]
-    │         └──► [ Push (Google / Apple) ]
-    ▼
-  [ Idempotency check ]
-    │
-    ▼
-  [ Cassandra messages ] ──► [ Cold storage ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Idempotency_check["Idempotency check"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Idempotency_check
+    n_Chat_Server_x_200_2 --> n_Idempotency_check
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Idempotency_check --> n_Cassandra_messages
+    n_Cassandra_messages --> n_Cold_storage
 ```
 ```
 POOCHEGA: "What if the client retries and sends the same message twice?"
@@ -411,24 +449,33 @@ SOLUTION: client PEHLE blob store (S3) me, phir message me sirf PATA: { type: im
 
 NAYA:     Blob store (S3)
 ```
-```
-  USER A / B
-    │
-    ├──► [ Blob store (S3) ]
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Chat Server x ~200 ] ──► [ Redis ]
-    │         │
-    │         ├──► [ Cursor store ]
-    │         └──► [ Push (Google / Apple) ]
-    ▼
-  [ Idempotency check ]
-    │
-    ▼
-  [ Cassandra messages ] ──► [ Cold storage ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_Blob_store_S3["Blob store (S3)"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Idempotency_check["Idempotency check"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_Blob_store_S3
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Idempotency_check
+    n_Chat_Server_x_200_2 --> n_Idempotency_check
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Idempotency_check --> n_Cassandra_messages
+    n_Cassandra_messages --> n_Cold_storage
 ```
 
 ---
@@ -490,24 +537,33 @@ Redis = kaun kis server (TTL + dhadkan) + pub-sub + presence · Push = app band 
 Idempotency = clientMsgId · Cassandra = chat_id / message_id, pehle LIKHO phir bhejo · Cold storage = purana
 Cursor store = delivered_upto / read_upto · Blob store = media, message me sirf pata
 ```
-```
-  USER A / B
-    │
-    ├──► [ Blob store (S3) ]
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Chat Server x ~200 ] ──► [ Redis ]
-    │         │
-    │         ├──► [ Cursor store ]
-    │         └──► [ Push (Google / Apple) ]
-    ▼
-  [ Idempotency check ]
-    │
-    ▼
-  [ Cassandra messages ] ──► [ Cold storage ]
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_Blob_store_S3["Blob store (S3)"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Idempotency_check["Idempotency check"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_Blob_store_S3
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Idempotency_check
+    n_Chat_Server_x_200_2 --> n_Idempotency_check
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Idempotency_check --> n_Cassandra_messages
+    n_Cassandra_messages --> n_Cold_storage
 ```
 ```
 BOL: "Each user holds an open WebSocket to one of ~200 chat servers, and Redis records which server each user is on.

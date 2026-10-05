@@ -39,17 +39,15 @@ NUMBERS: 10 lakh user x 5 / din = 50 lakh read / din = ~50 / sec (spike 5-10x = 
 ```
 SOLUTION: Fetcher source se kheenche, DB me daale · Feed Svc "latest 20" nikaal ke de
 ```
-```
-  USER
-    │
-    ▼
-  [ Feed Svc ]
-    │
-    ▼
-  [ DB ]
-    ▲
-    │
-  [ Fetcher ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_DB["DB"]
+    n_Fetcher["Fetcher"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_DB
+    n_Fetcher --> n_DB
 ```
 
 ---
@@ -69,20 +67,17 @@ SOLUTION: teen option bolo, phir chuno:
 
 NAYA:     Redis
 ```
-```
-  USER
-    │
-    ▼
-  [ Feed Svc ]
-    │
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ DB ]
-    ▲
-    │
-  [ Fetcher ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Fetcher["Fetcher"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_Fetcher --> n_DB
 ```
 
 ---
@@ -100,29 +95,23 @@ SOLUTION: WRITE PATH aur READ PATH bilkul ALAG (core decision)
 NAYA:     Kafka · Worker
 BADLA:    Fetcher ab seedha DB me nahi, Kafka me daalta
 ```
-```
-  USER
-    │
-    ▼
-  [ Feed Svc ]
-    │
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ DB ]
-    ▲
-    │
-  [ Worker ]
-    ▲
-    │
-  [ Kafka ]
-    ▲
-    │
-  [ Fetcher ]
-    ▲
-    │
-  [ Sources ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_Worker --> n_DB
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
 ```
 
 ---
@@ -175,29 +164,25 @@ SOLUTION: RETENTION: latest ~7 din = garam table (chhoti) · purana = cold stora
 
 NAYA:     Archive (cold storage)
 ```
-```
-  USER
-    │
-    ▼
-  [ Feed Svc ]
-    │
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ DB ] ──► [ Archive ]
-    ▲
-    │
-  [ Worker ]
-    ▲
-    │
-  [ Kafka ]
-    ▲
-    │
-  [ Fetcher ]
-    ▲
-    │
-  [ Sources ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
 ```
 ```
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
@@ -246,37 +231,34 @@ SOLUTION: kai FEED SVC + LB -> spike + ek gire to baaki (stateless, feed cache m
           replica cache ki jagah nahi leti: cache 99% rokti, replica bache 1% ko primary se door rakhti
 
 NAYA:     LB · Read replica
-BADLA:    Feed Svc -> Feed Svc x N
+BADLA:    Feed Svc ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Feed Svc x N ]
-    │
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ Read replica ]
-    ▲
-    │
-  [ DB ] ──► [ Archive ]
-    ▲
-    │
-  [ Worker ]
-    ▲
-    │
-  [ Kafka ]
-    ▲
-    │
-  [ Fetcher ]
-    ▲
-    │
-  [ Sources ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Feed_Svc_x_N_1["Feed Svc 1"]
+    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_Redis["Redis"]
+    n_Read_replica["Read replica"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_LB
+    n_LB --> n_Feed_Svc_x_N_1
+    n_LB --> n_Feed_Svc_x_N_2
+    n_Feed_Svc_x_N_1 --> n_Redis
+    n_Feed_Svc_x_N_2 --> n_Redis
+    n_Redis --> n_Read_replica
+    n_DB --> n_Read_replica
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
 ```
 
 ---
@@ -294,35 +276,35 @@ SOLUTION: alag SEARCH INDEX (Elasticsearch, inverted index)
 
 NAYA:     Elasticsearch
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Feed Svc x N ] ──► [ Elasticsearch ]
-    │
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ Read replica ]
-    ▲
-    │
-  [ DB ] ──► [ Archive ]
-    ▲
-    │
-  [ Worker ]
-    ▲
-    │
-  [ Kafka ]
-    ▲
-    │
-  [ Fetcher ]
-    ▲
-    │
-  [ Sources ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Feed_Svc_x_N_1["Feed Svc 1"]
+    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_Elasticsearch["Elasticsearch"]
+    n_Redis["Redis"]
+    n_Read_replica["Read replica"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_LB
+    n_LB --> n_Feed_Svc_x_N_1
+    n_LB --> n_Feed_Svc_x_N_2
+    n_Feed_Svc_x_N_1 --> n_Elasticsearch
+    n_Feed_Svc_x_N_2 --> n_Elasticsearch
+    n_Feed_Svc_x_N_1 --> n_Redis
+    n_Feed_Svc_x_N_2 --> n_Redis
+    n_Redis --> n_Read_replica
+    n_DB --> n_Read_replica
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
 ```
 
 ---
@@ -365,37 +347,37 @@ DB:       ARTICLE: id | title | content | sourceId | category | publishedAt | ur
 
 ```
 WRITE: Sources -> Fetcher (timeout / retry / skip) -> Kafka (spike) -> Worker (clean + dedupe + category) -> DB + cache
-READ:  LB -> Feed Svc x N -> Redis (99%) -> miss pe Read replica · Elasticsearch = search · Archive = purana
+READ:  LB -> Feed Svc (kai box) -> Redis (99%) -> miss pe Read replica · Elasticsearch = search · Archive = purana
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ Feed Svc x N ] ──► [ Elasticsearch ]
-    │
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ Read replica ]
-    ▲
-    │
-  [ DB ] ──► [ Archive ]
-    ▲
-    │
-  [ Worker ]
-    ▲
-    │
-  [ Kafka ]
-    ▲
-    │
-  [ Fetcher ]
-    ▲
-    │
-  [ Sources ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Feed_Svc_x_N_1["Feed Svc 1"]
+    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_Elasticsearch["Elasticsearch"]
+    n_Redis["Redis"]
+    n_Read_replica["Read replica"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_LB
+    n_LB --> n_Feed_Svc_x_N_1
+    n_LB --> n_Feed_Svc_x_N_2
+    n_Feed_Svc_x_N_1 --> n_Elasticsearch
+    n_Feed_Svc_x_N_2 --> n_Elasticsearch
+    n_Feed_Svc_x_N_1 --> n_Redis
+    n_Feed_Svc_x_N_2 --> n_Redis
+    n_Redis --> n_Read_replica
+    n_DB --> n_Read_replica
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
 ```
 ```
 BOL: "I keep the write path and read path separate. Sources are fetched in the background, go through Kafka

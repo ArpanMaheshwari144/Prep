@@ -52,14 +52,13 @@ BOL:      "For the feed and like counts, availability. A feed a couple of second
 ```
 SOLUTION: tweets table + follows table · feed = jinko follow karta unke tweet nikaalo, time se sort, top 50
 ```
-```
-  USER
-    │
-    ▼
-  [ App ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
 ```
 
 ---
@@ -77,16 +76,17 @@ SOLUTION: read pe mat jodo — POST ke waqt hi har follower ke INBOX me daal do 
 
 NAYA:     Fanout · Redis inbox
 ```
-```
-  USER
-    │
-    ▼
-  [ App ]
-    │
-    ├──► [ Fanout ] ──► [ Redis inbox ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Fanout["Fanout"]
+    n_Redis_inbox["Redis inbox"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Fanout
+    n_App --> n_DB
+    n_Fanout --> n_Redis_inbox
 ```
 
 ---
@@ -105,16 +105,19 @@ SOLUTION: tweet DB me likho -> EVENT Kafka pe -> user ko TURANT "ho gaya"
 NAYA:     Kafka
 BADLA:    Fanout -> Fanout workers (Kafka se padhte)
 ```
-```
-  USER
-    │
-    ▼
-  [ App ]
-    │
-    ├──► [ Kafka ] ──► [ Fanout workers ] ──► [ Redis inbox ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_DB
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
 ```
 ```
 POOCHEGA: "I just tweeted but don't see it in my own feed. Why?"
@@ -164,18 +167,21 @@ SOLUTION: HOT-TWEET CACHE — bestseller front counter pe (cache), baaki kitaab 
 
 NAYA:     Hot-tweet cache
 ```
-```
-  USER
-    │
-    ▼
-  [ App ]
-    │
-    ├──► [ Kafka ] ──► [ Fanout workers ] ──► [ Redis inbox ]
-    │
-    ├──► [ Hot-tweet cache ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_Hot_tweet_cache
+    n_App --> n_DB
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
 ```
 ```
 POOCHEGA: "What if traffic suddenly spikes 10x?"
@@ -222,18 +228,21 @@ SOLUTION: CASSANDRA — write-heavy, LSM tree = fast write, simple key access
 
 BADLA:    DB -> Cassandra (shard by user_id + time)
 ```
-```
-  USER
-    │
-    ▼
-  [ App ]
-    │
-    ├──► [ Kafka ] ──► [ Fanout workers ] ──► [ Redis inbox ]
-    │
-    ├──► [ Hot-tweet cache ]
-    │
-    ▼
-  [ Cassandra ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_Hot_tweet_cache
+    n_App --> n_Cassandra
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
 ```
 ```
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
@@ -272,26 +281,32 @@ SOLUTION: App ke kai box + aage ALB · App stateless (state Redis / DB me)
           ROUTE 53: DNS + health-check, mara hua hatao, paas wala region do
 
 NAYA:     Route 53 · ALB
-BADLA:    App -> App x N
+BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
 ```
-```
-  USER
-    │
-    ▼
-  [ Route 53 ]
-    │
-    ▼
-  [ ALB ]
-    │
-    ▼
-  [ App x N ]
-    │
-    ├──► [ Kafka ] ──► [ Fanout workers ] ──► [ Redis inbox ]
-    │
-    ├──► [ Hot-tweet cache ]
-    │
-    ▼
-  [ Cassandra ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_App_x_N_1
+    n_ALB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Hot_tweet_cache
+    n_App_x_N_2 --> n_Hot_tweet_cache
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
 ```
 
 ---
@@ -306,28 +321,36 @@ SOLUTION: TWEET SERVICE (write, royal scribe) · TIMELINE SERVICE (read, merge p
           graph: 1-hop follow list = simple adjacency table / Cassandra kaafi
                  Neo4j tabhi jab "dost ke dost" jaise kai-hop sawaal
 
-BADLA:    App x N -> Tweet Svc + Timeline Svc + User Svc
+BADLA:    App -> teen ALAG service: Tweet Svc + Timeline Svc + User Svc (har ek ke kai box, diagram me ek-ek)
 NAYA:     Graph DB
 ```
-```
-  USER
-    │
-    ▼
-  [ Route 53 ]
-    │
-    ▼
-  [ ALB ]
-    │
-    ├──► [ Tweet Svc ] ──► [ Cassandra ]
-    │         │
-    │         └──► [ Kafka ] ──► [ Fanout workers ] ──► [ Redis inbox ]
-    │
-    ├──► [ Timeline Svc ] ──► [ Redis inbox ]
-    │         │
-    │         ├──► [ Hot-tweet cache ]
-    │         └──► [ Cassandra ]
-    │
-    └──► [ User Svc ] ──► [ Graph DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_Tweet_Svc["Tweet Svc"]
+    n_Cassandra["Cassandra"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Timeline_Svc["Timeline Svc"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_User_Svc["User Svc"]
+    n_Graph_DB["Graph DB"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_Tweet_Svc
+    n_ALB --> n_Timeline_Svc
+    n_ALB --> n_User_Svc
+    n_Tweet_Svc --> n_Cassandra
+    n_Tweet_Svc --> n_Kafka
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_Timeline_Svc --> n_Redis_inbox
+    n_Timeline_Svc --> n_Hot_tweet_cache
+    n_Timeline_Svc --> n_Cassandra
+    n_User_Svc --> n_Graph_DB
 ```
 
 ---
@@ -341,28 +364,35 @@ SOLUTION: CDN (CloudFront) — media user ke paas wali edge se
 
 NAYA:     CDN
 ```
-```
-  USER
-    │
-    ▼
-  [ Route 53 ]
-    │
-    ▼
-  [ CDN ]
-    │
-    ▼
-  [ ALB ]
-    │
-    ├──► [ Tweet Svc ] ──► [ Cassandra ]
-    │         │
-    │         └──► [ Kafka ] ──► [ Fanout workers ] ──► [ Redis inbox ]
-    │
-    ├──► [ Timeline Svc ] ──► [ Redis inbox ]
-    │         │
-    │         ├──► [ Hot-tweet cache ]
-    │         └──► [ Cassandra ]
-    │
-    └──► [ User Svc ] ──► [ Graph DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_CDN["CDN"]
+    n_ALB["ALB"]
+    n_Tweet_Svc["Tweet Svc"]
+    n_Cassandra["Cassandra"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Timeline_Svc["Timeline Svc"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_User_Svc["User Svc"]
+    n_Graph_DB["Graph DB"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_CDN
+    n_CDN --> n_ALB
+    n_ALB --> n_Tweet_Svc
+    n_ALB --> n_Timeline_Svc
+    n_ALB --> n_User_Svc
+    n_Tweet_Svc --> n_Cassandra
+    n_Tweet_Svc --> n_Kafka
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_Timeline_Svc --> n_Redis_inbox
+    n_Timeline_Svc --> n_Hot_tweet_cache
+    n_Timeline_Svc --> n_Cassandra
+    n_User_Svc --> n_Graph_DB
 ```
 
 ---
@@ -416,28 +446,35 @@ Route 53 = DNS + health · CDN = media · ALB · Tweet Svc = likhna · Kafka = f
 Fanout workers = normal ke inbox, celeb skip · Redis inbox = sirf ID, LTRIM 800 · Hot-tweet cache = celeb read
 Timeline Svc = push + pull merge · Cassandra = sab tweet, user_id + time + geo · User Svc + Graph DB = follow
 ```
-```
-  USER
-    │
-    ▼
-  [ Route 53 ]
-    │
-    ▼
-  [ CDN ]
-    │
-    ▼
-  [ ALB ]
-    │
-    ├──► [ Tweet Svc ] ──► [ Cassandra ]
-    │         │
-    │         └──► [ Kafka ] ──► [ Fanout workers ] ──► [ Redis inbox ]
-    │
-    ├──► [ Timeline Svc ] ──► [ Redis inbox ]
-    │         │
-    │         ├──► [ Hot-tweet cache ]
-    │         └──► [ Cassandra ]
-    │
-    └──► [ User Svc ] ──► [ Graph DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_CDN["CDN"]
+    n_ALB["ALB"]
+    n_Tweet_Svc["Tweet Svc"]
+    n_Cassandra["Cassandra"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Timeline_Svc["Timeline Svc"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_User_Svc["User Svc"]
+    n_Graph_DB["Graph DB"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_CDN
+    n_CDN --> n_ALB
+    n_ALB --> n_Tweet_Svc
+    n_ALB --> n_Timeline_Svc
+    n_ALB --> n_User_Svc
+    n_Tweet_Svc --> n_Cassandra
+    n_Tweet_Svc --> n_Kafka
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_Timeline_Svc --> n_Redis_inbox
+    n_Timeline_Svc --> n_Hot_tweet_cache
+    n_Timeline_Svc --> n_Cassandra
+    n_User_Svc --> n_Graph_DB
 ```
 ```
 BOL: "On write, the Tweet service saves to Cassandra and puts an event on Kafka; fan-out workers push the

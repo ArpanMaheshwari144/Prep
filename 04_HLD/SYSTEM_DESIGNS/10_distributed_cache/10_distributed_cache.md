@@ -48,13 +48,13 @@ NUMBERS: ~1 TB · ~1M QPS · read-heavy
 ```
 SOLUTION: ek machine, ek HashMap (RAM) · O(1) get / put · CACHE-ASIDE: hit -> return · miss -> DB -> cache me PUT -> return
 ```
-```
-  [ App ]
-    │
-    ├──► [ DB ]
-    │
-    ▼
-  [ Cache ]
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache["Cache"]
+    n_App --> n_DB
+    n_App --> n_Cache
 ```
 
 ---
@@ -93,17 +93,19 @@ SOLUTION: hash(key) % N -> node juda / gaya -> N badla -> LAGBHAG SAARI key ka n
 NAYA:     Cache client
 BADLA:    Cache -> Node A / B / C
 ```
-```
-  [ App ]
-    │
-    ├──► [ DB ]
-    │
-    ▼
-  [ Cache client ]
-    │
-    ├──► [ Node A ]
-    ├──► [ Node B ]
-    └──► [ Node C ]
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A["Node A"]
+    n_Node_B["Node B"]
+    n_Node_C["Node C"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A
+    n_Cache_client --> n_Node_B
+    n_Cache_client --> n_Node_C
 ```
 
 ---
@@ -119,17 +121,19 @@ SOLUTION: REPLICATION — har shard ka 1-2 replica · primary mara -> replica PR
 
 BADLA:    Node A / B / C -> Node + replica
 ```
-```
-  [ App ]
-    │
-    ├──► [ DB ]
-    │
-    ▼
-  [ Cache client ]
-    │
-    ├──► [ Node A + replica ]
-    ├──► [ Node B + replica ]
-    └──► [ Node C + replica ]
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
 ```
 ```
 POOCHEGA: "What happens if a cache node goes down?"
@@ -204,17 +208,19 @@ SOLUTION: (1) hot key KAI node pe copy -> read bat jaayein (score#1..#10, random
 NAYA:     L1 local cache
 BADLA:    App -> App + L1 local cache
 ```
-```
-  [ App + L1 local cache ]
-    │
-    ├──► [ DB ]
-    │
-    ▼
-  [ Cache client ]
-    │
-    ├──► [ Node A + replica ]
-    ├──► [ Node B + replica ]
-    └──► [ Node C + replica ]
+```mermaid
+flowchart TD
+    n_App_L1_local_cache["App + L1 local cache"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App_L1_local_cache --> n_DB
+    n_App_L1_local_cache --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
 ```
 ```
 POOCHEGA: "What about a hot key / celebrity / hot partition?"
@@ -267,17 +273,19 @@ TRADE-OFF:      speed vs consistency — cache AP ki taraf, eventual chalta (CAP
 App + L1 = nano-sec, hot key ka pehla ilaaj · Cache client = consistent hashing, key -> node
 Node = HashMap + DLL (LRU) + TTL, primary + replica (alag AZ) · DB = source of truth, miss pe
 ```
-```
-  [ App + L1 local cache ]
-    │
-    ├──► [ DB ]
-    │
-    ▼
-  [ Cache client ]
-    │
-    ├──► [ Node A + replica ]
-    ├──► [ Node B + replica ]
-    └──► [ Node C + replica ]
+```mermaid
+flowchart TD
+    n_App_L1_local_cache["App + L1 local cache"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App_L1_local_cache --> n_DB
+    n_App_L1_local_cache --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
 ```
 ```
 SINGLE node : HashMap + DLL (LRU) + TTL

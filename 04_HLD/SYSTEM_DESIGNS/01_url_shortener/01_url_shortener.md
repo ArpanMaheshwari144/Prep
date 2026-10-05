@@ -47,14 +47,13 @@ KYUN:    Twitter / SMS limit · marketing tracking · QR / print · saaf dikhna
 ```
 SOLUTION: App code banaye, DB me save · click pe DB se nikaal ke redirect
 ```
-```
-  USER
-    │
-    ▼
-  [ App ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
 ```
 
 ---
@@ -71,17 +70,15 @@ SOLUTION: CACHE (Redis) — cache-aside: pehle Redis, miss -> DB -> Redis me daa
 
 NAYA:     Redis
 ```
-```
-  USER
-    │
-    ▼
-  [ App ]
-    │
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Redis
+    n_Redis --> n_DB
 ```
 ```
 POOCHEGA: "What if the cache goes down?"
@@ -101,22 +98,22 @@ SOLUTION: App ke kai box, aage LOAD BALANCER
           App STATELESS (sab Redis / DB me) -> koi bhi box koi bhi request le
 
 NAYA:     LB
-BADLA:    App -> App x N
+BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ App x N ]
-    │
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Redis --> n_DB
 ```
 
 ---
@@ -133,20 +130,23 @@ SOLUTION: RANGE ALLOCATION — COUNTER service (aksar ZooKeeper / ek DB counter-
 
 NAYA:     Counter
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ App x N ] ──► [ Counter ]
-    │
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Redis --> n_DB
 ```
 ```
 POOCHEGA: "That server crashed at 400 — what about the rest of its range?"
@@ -168,23 +168,32 @@ SOLUTION: event KAFKA me daalo, turant 302 do · Analytics service peeche se pad
 
 NAYA:     Kafka · Analytics svc · Analytics DB · DLQ
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ App x N ] ──► [ Counter ]
-    │
-    ├──► [ Kafka ] ──► [ Analytics svc ] ──► [ Analytics DB ]
-    │        │
-    │        └──► [ DLQ ]
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Kafka["Kafka"]
+    n_Analytics_svc["Analytics svc"]
+    n_Analytics_DB["Analytics DB"]
+    n_DLQ["DLQ"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Kafka --> n_Analytics_svc
+    n_Kafka --> n_DLQ
+    n_Analytics_svc --> n_Analytics_DB
+    n_Redis --> n_DB
 ```
 
 ---
@@ -202,23 +211,32 @@ SOLUTION: SHARD by shortCode (data ke TUKDE) + har tukde ki 3 REPLICA (copy)
 
 BADLA:    DB -> Cassandra (shard by shortCode + 3 replica)
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ App x N ] ──► [ Counter ]
-    │
-    ├──► [ Kafka ] ──► [ Analytics svc ] ──► [ Analytics DB ]
-    │        │
-    │        └──► [ DLQ ]
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ Cassandra ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Kafka["Kafka"]
+    n_Analytics_svc["Analytics svc"]
+    n_Analytics_DB["Analytics DB"]
+    n_DLQ["DLQ"]
+    n_Redis["Redis"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Kafka --> n_Analytics_svc
+    n_Kafka --> n_DLQ
+    n_Analytics_svc --> n_Analytics_DB
+    n_Redis --> n_Cassandra
 ```
 ```
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
@@ -278,28 +296,40 @@ SOLUTION: LB do · ROUTE 53 (DNS) + health-check -> mara hua LB hata ke doosre p
           poora region gaya -> Route 53 doosra region · data async copy -> aakhri kuch link kho sakte (maana)
 
 NAYA:     Route 53
-BADLA:    LB -> do LB (copy), ek mare to Route 53 doosre pe bheje — diagram me ek hi dabba
+BADLA:    LB ek se DO — ek mare to Route 53 doosre pe bheje (diagram me 2)
 ```
-```
-  USER
-    │
-    ▼
-  [ Route 53 ]
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ App x N ] ──► [ Counter ]
-    │
-    ├──► [ Kafka ] ──► [ Analytics svc ] ──► [ Analytics DB ]
-    │        │
-    │        └──► [ DLQ ]
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ Cassandra ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_LB_1["LB 1"]
+    n_LB_2["LB 2"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Kafka["Kafka"]
+    n_Analytics_svc["Analytics svc"]
+    n_Analytics_DB["Analytics DB"]
+    n_DLQ["DLQ"]
+    n_Redis["Redis"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_LB_1
+    n_Route_53 --> n_LB_2
+    n_LB_1 --> n_App_x_N_1
+    n_LB_1 --> n_App_x_N_2
+    n_LB_2 --> n_App_x_N_1
+    n_LB_2 --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Kafka --> n_Analytics_svc
+    n_Kafka --> n_DLQ
+    n_Analytics_svc --> n_Analytics_DB
+    n_Redis --> n_Cassandra
 ```
 ```
 POOCHEGA: "What if a whole region goes down?"
@@ -321,29 +351,40 @@ SOLUTION: RATE LIMIT (per user / IP / API key)
 
 NAYA:     API Gateway
 ```
-```
-  USER
-    │
-    ▼
-  [ Route 53 ]
-    │
-    ▼
-  [ API Gateway ]
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ App x N ] ──► [ Counter ]
-    │
-    ├──► [ Kafka ] ──► [ Analytics svc ] ──► [ Analytics DB ]
-    │        │
-    │        └──► [ DLQ ]
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ Cassandra ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_API_Gateway["API Gateway"]
+    n_LB_1["LB 1"]
+    n_LB_2["LB 2"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Kafka["Kafka"]
+    n_Analytics_svc["Analytics svc"]
+    n_Analytics_DB["Analytics DB"]
+    n_DLQ["DLQ"]
+    n_Redis["Redis"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_API_Gateway
+    n_API_Gateway --> n_LB_1
+    n_API_Gateway --> n_LB_2
+    n_LB_1 --> n_App_x_N_1
+    n_LB_1 --> n_App_x_N_2
+    n_LB_2 --> n_App_x_N_1
+    n_LB_2 --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Kafka --> n_Analytics_svc
+    n_Kafka --> n_DLQ
+    n_Analytics_svc --> n_Analytics_DB
+    n_Redis --> n_Cassandra
 ```
 ```
 POOCHEGA: "How do you stop abuse?"
@@ -432,29 +473,40 @@ Route 53 = DNS + health-check + region · API Gateway = rate limit + auth · LB 
 Counter = range + base62 · Redis = 95% read, TTL = expiry · Cassandra = shard by shortCode + 3 replica + quorum
 Kafka = analytics async, DLQ
 ```
-```
-  USER
-    │
-    ▼
-  [ Route 53 ]
-    │
-    ▼
-  [ API Gateway ]
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ App x N ] ──► [ Counter ]
-    │
-    ├──► [ Kafka ] ──► [ Analytics svc ] ──► [ Analytics DB ]
-    │        │
-    │        └──► [ DLQ ]
-    ▼
-  [ Redis ]
-    │
-    ▼
-  [ Cassandra ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_API_Gateway["API Gateway"]
+    n_LB_1["LB 1"]
+    n_LB_2["LB 2"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Kafka["Kafka"]
+    n_Analytics_svc["Analytics svc"]
+    n_Analytics_DB["Analytics DB"]
+    n_DLQ["DLQ"]
+    n_Redis["Redis"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_API_Gateway
+    n_API_Gateway --> n_LB_1
+    n_API_Gateway --> n_LB_2
+    n_LB_1 --> n_App_x_N_1
+    n_LB_1 --> n_App_x_N_2
+    n_LB_2 --> n_App_x_N_1
+    n_LB_2 --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Kafka --> n_Analytics_svc
+    n_Kafka --> n_DLQ
+    n_Analytics_svc --> n_Analytics_DB
+    n_Redis --> n_Cassandra
 ```
 ```
 READ (click):  LB -> App -> Redis hit? -> 302 · miss -> Cassandra -> Redis me daalo -> 302 · async -> Kafka

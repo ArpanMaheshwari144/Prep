@@ -46,11 +46,11 @@ NUMBERS: storage ka hisaab bekaar — per key ek counter + TTL, bas
 ```
 SOLUTION: counter App ki memory me · count++ · limit paar -> 429
 ```
-```
-  USER
-    │
-    ▼
-  [ App ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_USER --> n_App
 ```
 
 ---
@@ -65,19 +65,20 @@ SOLUTION: counter EK central jagah — in-memory, kyunki har request pe hit -> R
           counter + TTL
 
 NAYA:     LB · Redis
-BADLA:    App -> App x N (counter ab App ke andar nahi)
+BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2) · counter ab App ke andar nahi
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ App x N ]
-    │
-    ▼
-  [ Redis ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Redis["Redis"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
 ```
 
 ---
@@ -119,17 +120,19 @@ SOLUTION: limiter SABSE AAGE — API GATEWAY pe, 429 wahin, backend tak jaane hi
 
 NAYA:     API Gateway (limiter iske andar)
 ```
-```
-  USER
-    │
-    ▼
-  [ LB ]
-    │
-    ▼
-  [ API Gateway ] ──► [ Redis ]
-    │
-    ▼
-  [ App x N ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_API_Gateway["API Gateway"]
+    n_Redis["Redis"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_USER --> n_LB
+    n_LB --> n_API_Gateway
+    n_API_Gateway --> n_Redis
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
 ```
 
 ---
@@ -149,20 +152,21 @@ SOLUTION: (1) REPLICA + auto failover (Sentinel / cluster) -> replica ALAG AZ me
 NAYA:     Route 53
 BADLA:    Redis -> Redis Cluster (replica + shard) · LB -> ALB (multi-AZ)
 ```
-```
-  USER
-    │
-    ▼
-  [ Route 53 ]
-    │
-    ▼
-  [ ALB ]
-    │
-    ▼
-  [ API Gateway ] ──► [ Redis Cluster ]
-    │
-    ▼
-  [ App x N ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
 ```
 ```
 POOCHEGA: "What if Redis goes down?"
@@ -210,20 +214,27 @@ SOLUTION: LAYERED: (1) rate limit = soft, 429
 
 NAYA:     Kafka · Pattern Svc · WAF
 ```
-```
-  USER
-    │
-    ▼
-  [ Route 53 ]
-    │
-    ▼
-  [ ALB ]
-    │
-    ▼
-  [ API Gateway ] ──► [ Redis Cluster ] ──► [ Kafka ] ──► [ Pattern Svc ] ──► [ WAF ]
-    │
-    ▼
-  [ App x N ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Kafka["Kafka"]
+    n_Pattern_Svc["Pattern Svc"]
+    n_WAF["WAF"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    n_Redis_Cluster --> n_Kafka
+    n_Kafka --> n_Pattern_Svc
+    n_Pattern_Svc --> n_WAF
 ```
 
 ---
@@ -352,20 +363,27 @@ Route 53 = DNS + health-check · ALB = multi-AZ · API Gateway = limiter sabse a
 Redis Cluster = single source of truth, <1ms, atomic INCR / Lua, replica + shard
 Kafka -> Pattern Svc -> WAF = baar-baar wale ka permanent ban
 ```
-```
-  USER
-    │
-    ▼
-  [ Route 53 ]
-    │
-    ▼
-  [ ALB ]
-    │
-    ▼
-  [ API Gateway ] ──► [ Redis Cluster ] ──► [ Kafka ] ──► [ Pattern Svc ] ──► [ WAF ]
-    │
-    ▼
-  [ App x N ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Kafka["Kafka"]
+    n_Pattern_Svc["Pattern Svc"]
+    n_WAF["WAF"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    n_Redis_Cluster --> n_Kafka
+    n_Kafka --> n_Pattern_Svc
+    n_Pattern_Svc --> n_WAF
 ```
 ```
 BOL: "The limiter sits in the API gateway, in front of everything, so rejected requests never reach the

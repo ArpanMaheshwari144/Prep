@@ -39,14 +39,15 @@ NUMBERS: 1 lakh file / din -> ~1-2 write / sec (kam)       (1 din ~ 1,00,000 sec
 ```
 SOLUTION: client file server ko de · server S3 me rakhe · validator call kare (2-3 sec) · jawab wapas
 ```
-```
-  CLIENT
-    │
-    ▼
-  [ Upload Svc ] ──► [ Validator ]
-    │
-    ▼
-  [ S3 ]
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_Upload_Svc["Upload Svc"]
+    n_Validator["Validator"]
+    n_S3["S3"]
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_Validator
+    n_Upload_Svc --> n_S3
 ```
 
 ---
@@ -67,19 +68,21 @@ SOLUTION: teen option bolo, phir chuno:
 NAYA:     Kafka · Worker · DB (status)
 BADLA:    Validator ab Upload Svc nahi, Worker call karta
 ```
-```
-  CLIENT
-    │
-    ▼
-  [ Upload Svc ] ──► [ DB ]
-    │
-    ├──► [ S3 ]
-    │
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Worker ] ──► [ Validator ]
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_Upload_Svc["Upload Svc"]
+    n_DB["DB"]
+    n_S3["S3"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_S3
+    n_Upload_Svc --> n_Kafka
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
 ```
 
 ---
@@ -100,19 +103,21 @@ SOLUTION: PRESIGNED URL — client SEEDHA S3 pe
 
 BADLA:    S3 ka raasta: Upload Svc -> S3  ->  CLIENT -> S3 (seedha)
 ```
-```
-  CLIENT
-    │
-    ├──► [ S3 ]
-    │
-    ▼
-  [ Upload Svc ] ──► [ DB ]
-    │
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Worker ] ──► [ Validator ]
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_DB["DB"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
 ```
 
 ---
@@ -147,21 +152,23 @@ SOLUTION: upload pehle tmp/ prefix me -> VALIDATE hone pe asli jagah copy
 
 NAYA:     Sweeper job
 ```
-```
-  CLIENT
-    │
-    ├──► [ S3 ]
-    │
-    ▼
-  [ Upload Svc ] ──► [ DB ]
-    │                  ▲
-    │                  │
-    │            [ Sweeper job ]
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Worker ] ──► [ Validator ]
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_DB["DB"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
 ```
 ```
 POOCHEGA: "What if the server crashes in the middle?"
@@ -185,23 +192,27 @@ SOLUTION: CACHE (Redis) + READ REPLICA
 
 NAYA:     Redis · Read replica
 ```
-```
-  CLIENT
-    │
-    ├──► [ S3 ]
-    │
-    ▼
-  [ Upload Svc ] ──► [ Redis ]
-    │
-    ├──► [ DB ] ──► [ Read replica ]
-    │      ▲
-    │      │
-    │  [ Sweeper job ]
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Worker ] ──► [ Validator ]
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
 ```
 
 ---
@@ -233,26 +244,29 @@ SOLUTION: /upload/init pe user authenticated (JWT, gateway pe) -> record me owne
 
 NAYA:     API Gateway / LB (auth + traffic)
 ```
-```
-  CLIENT
-    │
-    ├──► [ S3 ]
-    │
-    ▼
-  [ API Gateway / LB ]
-    │
-    ▼
-  [ Upload Svc ] ──► [ Redis ]
-    │
-    ├──► [ DB ] ──► [ Read replica ]
-    │      ▲
-    │      │
-    │  [ Sweeper job ]
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Worker ] ──► [ Validator ]
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_API_Gateway_LB["API Gateway / LB"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_API_Gateway_LB
+    n_API_Gateway_LB --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
 ```
 
 ---
@@ -344,26 +358,29 @@ Gateway / LB = auth · Upload Svc = metadata + presigned URL, bytes ko haath nah
 DB = trackingId + status + owner · Kafka + Worker = slow validation alag, magic bytes · Redis + replica = polling
 Sweeper = atki file
 ```
-```
-  CLIENT
-    │
-    ├──► [ S3 ]
-    │
-    ▼
-  [ API Gateway / LB ]
-    │
-    ▼
-  [ Upload Svc ] ──► [ Redis ]
-    │
-    ├──► [ DB ] ──► [ Read replica ]
-    │      ▲
-    │      │
-    │  [ Sweeper job ]
-    ▼
-  [ Kafka ]
-    │
-    ▼
-  [ Worker ] ──► [ Validator ]
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_API_Gateway_LB["API Gateway / LB"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_API_Gateway_LB
+    n_API_Gateway_LB --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
 ```
 ```
 BOL: "The client asks the upload service for a presigned URL and sends the bytes straight to S3 — multipart

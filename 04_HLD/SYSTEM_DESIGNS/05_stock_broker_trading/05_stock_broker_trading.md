@@ -39,14 +39,13 @@ NUMBERS: ~50 lakh users · ~50 lakh orders / din · normal ~250 / sec, market kh
 ```
 SOLUTION: order DB me rakho, milta-julta sell dhoondho -> match
 ```
-```
-  USER
-    │
-    ▼
-  [ Order Service ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_DB
 ```
 
 ---
@@ -65,20 +64,17 @@ SOLUTION: har SYMBOL ki EK queue + EK thread (single-threaded per symbol)
 
 NAYA:     Queue per symbol · Matching Engine
 ```
-```
-  USER
-    │
-    ▼
-  [ Order Service ]
-    │
-    ▼
-  [ Queue per symbol ]
-    │
-    ▼
-  [ Matching Engine ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Queue_per_symbol["Queue per symbol"]
+    n_Matching_Engine["Matching Engine"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Queue_per_symbol
+    n_Queue_per_symbol --> n_Matching_Engine
+    n_Matching_Engine --> n_DB
 ```
 ```
 POOCHEGA: "Two users order the same stock at the same time — what happens?"
@@ -101,23 +97,19 @@ SOLUTION: order lagte hi paisa BLOCK karo (kaato nahi) — hotel / petrol pump k
 
 NAYA:     Wallet
 ```
-```
-  USER
-    │
-    ▼
-  [ Order Service ]
-    │
-    ▼
-  [ Wallet ]
-    │
-    ▼
-  [ Queue per symbol ]
-    │
-    ▼
-  [ Matching Engine ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Queue_per_symbol["Queue per symbol"]
+    n_Matching_Engine["Matching Engine"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Queue_per_symbol
+    n_Queue_per_symbol --> n_Matching_Engine
+    n_Matching_Engine --> n_DB
 ```
 
 ---
@@ -135,26 +127,21 @@ SOLUTION: saare step EK transaction me (ACID) — sab ya kuch nahi -> crash = RO
 
 NAYA:     Settlement
 ```
-```
-  USER
-    │
-    ▼
-  [ Order Service ]
-    │
-    ▼
-  [ Wallet ]
-    │
-    ▼
-  [ Queue per symbol ]
-    │
-    ▼
-  [ Matching Engine ]
-    │
-    ▼
-  [ Settlement ]
-    │
-    ▼
-  [ DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Queue_per_symbol["Queue per symbol"]
+    n_Matching_Engine["Matching Engine"]
+    n_Settlement["Settlement"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Queue_per_symbol
+    n_Queue_per_symbol --> n_Matching_Engine
+    n_Matching_Engine --> n_Settlement
+    n_Settlement --> n_DB
 ```
 
 ---
@@ -172,26 +159,23 @@ SOLUTION: SAGA — bade kaam ko chhote LOCAL step me todo; koi step fail -> pich
 
 BADLA:    ek [ DB ] -> do me bata: Wallet DB + Portfolio DB · Settlement ab SAGA chalata
 ```
-```
-  USER
-    │
-    ▼
-  [ Order Service ]
-    │
-    ▼
-  [ Wallet ]
-    │
-    ▼
-  [ Queue per symbol ]
-    │
-    ▼
-  [ Matching Engine ]
-    │
-    ▼
-  [ Settlement ]
-    │
-    ├──► [ Wallet DB ]
-    └──► [ Portfolio DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Queue_per_symbol["Queue per symbol"]
+    n_Matching_Engine["Matching Engine"]
+    n_Settlement["Settlement"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Queue_per_symbol
+    n_Queue_per_symbol --> n_Matching_Engine
+    n_Matching_Engine --> n_Settlement
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
 ```
 
 ---
@@ -207,26 +191,23 @@ SOLUTION: IDEMPOTENCY KEY — har request ke saath ek unique key
 
 NAYA:     koi dabba nahi — Order Service me key check juda
 ```
-```
-  USER
-    │
-    ▼
-  [ Order Service ]
-    │
-    ▼
-  [ Wallet ]
-    │
-    ▼
-  [ Queue per symbol ]
-    │
-    ▼
-  [ Matching Engine ]
-    │
-    ▼
-  [ Settlement ]
-    │
-    ├──► [ Wallet DB ]
-    └──► [ Portfolio DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Queue_per_symbol["Queue per symbol"]
+    n_Matching_Engine["Matching Engine"]
+    n_Settlement["Settlement"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Queue_per_symbol
+    n_Queue_per_symbol --> n_Matching_Engine
+    n_Matching_Engine --> n_Settlement
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
 ```
 
 ---
@@ -251,26 +232,23 @@ SOLUTION: EVENT LOG / SEQUENCER (append-only, disk / Kafka)
 
 BADLA:    Queue per symbol -> Event Log (wahi queue, ab disk pe likhi jaati + seq no. + key = symbol)
 ```
-```
-  USER
-    │
-    ▼
-  [ Order Service ]
-    │
-    ▼
-  [ Wallet ]
-    │
-    ▼
-  [ Event Log ]
-    │
-    ▼
-  [ Matching Engine ]
-    │
-    ▼
-  [ Settlement ]
-    │
-    ├──► [ Wallet DB ]
-    └──► [ Portfolio DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Event_Log["Event Log"]
+    n_Matching_Engine["Matching Engine"]
+    n_Settlement["Settlement"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Event_Log
+    n_Event_Log --> n_Matching_Engine
+    n_Matching_Engine --> n_Settlement
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
 ```
 ```
 POOCHEGA: "How do you keep orders in the right sequence?"
@@ -300,26 +278,29 @@ SOLUTION: WEBSOCKET PUSH + PUB/SUB — connection ek baar, price badle tab serve
 
 NAYA:     Pub/Sub · WebSocket
 ```
-```
-  USER
-    │
-    ▼
-  [ Order Service ]
-    │
-    ▼
-  [ Wallet ]
-    │
-    ▼
-  [ Event Log ]
-    │
-    ▼
-  [ Matching Engine ] ──► [ Pub/Sub ] ──► [ WebSocket ] ──► USERS
-    │
-    ▼
-  [ Settlement ]
-    │
-    ├──► [ Wallet DB ]
-    └──► [ Portfolio DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Event_Log["Event Log"]
+    n_Matching_Engine["Matching Engine"]
+    n_Pub_Sub["Pub/Sub"]
+    n_WebSocket["WebSocket"]
+    n_USERS["USERS"]
+    n_Settlement["Settlement"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Event_Log
+    n_Event_Log --> n_Matching_Engine
+    n_Matching_Engine --> n_Pub_Sub
+    n_Matching_Engine --> n_Settlement
+    n_Pub_Sub --> n_WebSocket
+    n_WebSocket --> n_USERS
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
 ```
 
 ---
@@ -386,26 +367,29 @@ API: POST /order {stock, side, qty, price, type, idempotencyKey} · DELETE /orde
 Order Service = validate + idempotency · Wallet = paisa BLOCK · Event Log = seq no. + replay + audit
 Matching = 1 thread / symbol, book RAM, shard by symbol · Settlement = ek txn / kai DB = SAGA
 ```
-```
-  USER
-    │
-    ▼
-  [ Order Service ]
-    │
-    ▼
-  [ Wallet ]
-    │
-    ▼
-  [ Event Log ]
-    │
-    ▼
-  [ Matching Engine ] ──► [ Pub/Sub ] ──► [ WebSocket ] ──► USERS
-    │
-    ▼
-  [ Settlement ]
-    │
-    ├──► [ Wallet DB ]
-    └──► [ Portfolio DB ]
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Event_Log["Event Log"]
+    n_Matching_Engine["Matching Engine"]
+    n_Pub_Sub["Pub/Sub"]
+    n_WebSocket["WebSocket"]
+    n_USERS["USERS"]
+    n_Settlement["Settlement"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Event_Log
+    n_Event_Log --> n_Matching_Engine
+    n_Matching_Engine --> n_Pub_Sub
+    n_Matching_Engine --> n_Settlement
+    n_Pub_Sub --> n_WebSocket
+    n_WebSocket --> n_USERS
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
 ```
 ```
 BOL: "Order Service validates and checks the idempotency key, Wallet blocks the money, every order
