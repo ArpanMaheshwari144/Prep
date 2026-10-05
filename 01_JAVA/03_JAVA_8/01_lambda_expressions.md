@@ -73,7 +73,8 @@ name -> System.out.println(name)
 → Lambda tabhi likh sakte jab interface pe **sirf EK abstract method** ho (= **functional interface**).
 → Lambda us **akele method ka BODY** deta.
    `Runnable` → 1 method `run()` → `() -> {...}` = us `run()` ka body.
-→ **2 method** hote → lambda **NAHI** chalti (compiler confuse: kaun sa method?).
+→ **2 ABSTRACT method** hote → lambda **NAHI** chalti (compiler confuse: kaun sa method?).
+   (default / static method kitne bhi ho sakte — wo gine nahi jaate, unka body pehle se hai.)
 
 ### 2. Lambda body `{}` = normal code block (kitne bhi operations)
 → `{}` ke andar **jo chahe, jitna chahe** — statements, loops, if-else, synchronized. **ek-operation ki limit NAHI.**
