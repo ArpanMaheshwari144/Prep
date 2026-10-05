@@ -1371,27 +1371,32 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)
  └──────────────────────────────────────────────────────────────
-     MENTAL MODEL: HAR height pe KHADE ho -> dono taraf NEAREST-SMALLER (prev+next) -> width=next-prev-1 -> area=height*width -> MAX. bas.
-     prev-smaller + next-smaller ka COMBO. har bar apni OWN height pe rectangle banata -> left prev-smaller tak, right next-smaller tak (dono usse chhote = boundary). sabka area -> MAX.
-     width = nS[i] - pS[i] - 1 · area = heights[i]*width · ans = max(ans, area).
+   Q: har bar width 1, height = heights[i]. lagatar bars pe SABSE BADA rectangle ka AREA.
+   INPUT: [2,1,5,6,2,3] -> 10   (bars 5,6 -> min 5 * width 2)
 
-     CODE = prev-smaller + next-smaller (INDEX version) + combine loop:
-       pS[i] = prev-smaller INDEX (none -> -1)     // left boundary
-       nS[i] = next-smaller INDEX (none -> n)      // right boundary (sentinel n, NA -1!)
-       int ans = INT_MIN;
-       for (int i=0; i<n; i++) {
-          int width = nS[i] - pS[i] - 1;
-          ans = max(ans, heights[i]*width);
-       }
-       (pS/nS = upar ka Next/Prev-Smaller template -- bas VALUE ki jagah INDEX store + NS ka sentinel = n.)
+   SAAR: HAR bar pe KHADE ho -> left me pehla CHHOTA (PS), right me pehla CHHOTA (NS)
+         = dono STOPPER -> beech ki width -> area = height*width -> sabka MAX.
+   = PREV-SMALLER + NEXT-SMALLER ka WALL, bas DELTA: VALUE nahi INDEX store + combine loop.
 
-     TRICK 1: prev/next-smaller me VALUE nahi, INDEX store karo (width ke liye).
-     TRICK 2: next-smaller "koi chhota nahi" -> sentinel = n (right-edge, bar END tak failta), NA -1. (-1 se width negative -> [2,4]: 2-(-1)-1=-1 galat; n=2 se 2-(-1)-1=2 -> area 4 sahi.) prev-smaller "none" = -1 sahi (left boundary).
+   TEMPLATE:
+     nS = next-smaller INDEX   init n,   i = 0..n-1,   while h[st.top()] > h[i]   // none -> n
+     pS = prev-smaller INDEX   init -1,  i = n-1..0,   while h[st.top()] > h[i]   // none -> -1
+     int ans = INT_MIN;
+     for (int i = 0; i < n; i++) {
+        int width = nS[i] - pS[i] - 1;
+        ans = max(ans, heights[i] * width);
+     }
 
-     width=NS-PS-1 KYUN (derive): dono boundary (smaller) rectangle me NAHI -> bars PS+1 se NS-1 tak. count=last-first+1=(NS-1)-(PS+1)+1=NS-PS-1. (-1 SIRF EK baar, do nahi -- building6: 4-2-1=1 sahi, 4-2-1-1=0 galat.)
+   3 JAGAH DHYAAN:
+     1. INDEX store, value nahi (width index se banti).
+     2. nS ka default = n, NA -1.   [2,4] bar0: -1 -> width -1-(-1)-1 = -1 (galat) · n=2 -> 2-(-1)-1 = 2 -> area 4.
+     3. `>` strictly, `>=` NAHI.   [3,3,3,3]: `>=` -> barabar wala bhi stopper -> har width 1 -> 3 (galat)
+                                               `>`  -> koi stopper nahi -> width 4 -> 12.
 
-     VISUAL (h=[2,1,5,6,2,3])  -- filled bars; ANSWER = dash-box (bars ke andar):
+   width = NS-PS-1 KYUN: stopper khud andar NAHI -> bars PS+1 se NS-1 tak
+         count = (NS-1)-(PS+1)+1 = NS-PS-1   (-1 sirf EK baar)
 
+   DRY-RUN (h=[2,1,5,6,2,3]):
         6 |            ##
           |        +------+
         5 |        |## ##|
@@ -1401,15 +1406,17 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         1 |  ## ## |## ##|  ##  ##
           +--------+------+--------
        idx:  0  1    2 3    4   5
-        h :  2  1    5 6    2   3
 
-       ANSWER (dash-box) = height 5 x width 2 = 10  (sabse bada)
-         i3 ka h=6 ka 6th block box ke UPAR (rectangle sirf 5 tall).
+       idx  :  0   1   2   3   4   5
+       h    :  2   1   5   6   2   3
+       PS   : -1  -1   1   2   1   4
+       NS   :  1   6   4   4   6   6
+       width:  1   6   2   1   4   1
+       area :  2   6 [10]  6   8   3   -> MAX 10
+       bar5 (idx2): PS=1 (h1), NS=4 (h2) -> beech me c2,c3 -> width 2 -> 5*2 = 10.
 
-     TABLE:  idx: 0 1 2 3 4 5 · h: 2 1 5 6 2 3 · PS: -1 -1 1 2 1 4 · NS: 1 6 4 4 6 6 · width(NS-PS-1): 1 6 2 1 4 1 · area: 2 6 [10] 6 8 3 -> MAX 10.
-       bar5(idx2): PS=1(h1),NS=4(h2) -> rectangle DONO stoppers ke BEECH (c2,c3, dono>=5) = 2 chauda. first=PS+1=2, last=NS-1=3 -> 3-2+1=2. stoppers khud andar nahi.
-
-     next-GREATER se NAHI: rectangle taller bar ko include karta, shorter pe rukta -> smaller boundary chahiye. (greater tab jab bada element boundary ho.)
+   FAMILY: next-GREATER se NAHI (rectangle bade bar ko andar leta, CHHOTE pe rukta).
+           2D bhai = MAXIMAL RECTANGLE (har row = histogram, isi ko call).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAXIMAL RECTANGLE (LC-85, 2D)
