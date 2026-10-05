@@ -173,6 +173,17 @@
 
    ► MASTER SHEET SE JODA: kram SERVER deta (sequencer ka sequence number), client ka time nahi.
        order sirf PER SYMBOL chahiye, global nahi — isiliye symbols parallel chal sakte.
+
+   ► ADHA RAASTA: "log / Kafka me likho + TIMESTAMP, jo pehle aaya pehle" -> log sahi, timestamp nahi
+       -> do server ki ghadi alag chalti · do order same millisecond -> timestamp se kram pakka nahi
+   ► MISAAL: Ramesh 10:00:01, Mohan 10:00:02, dono BUY TCS @3000
+       sequencer har aate order ko number deta:  Ramesh = #501, Mohan = #502
+       Kafka me key = symbol (TCS) -> TCS ke saare order EK partition me -> isi kram me padhe jaate
+       matching thread #501 pehle uthata -> Ramesh ko share
+   BOL: "A sequencer stamps every incoming order with an increasing sequence number and writes it
+         to the log, keyed by symbol so all orders for one stock land in one partition. The matching
+         thread reads them in that order. I don't rely on timestamps, because clocks differ across
+         servers and two orders can share a millisecond."
 ```
 
 ### dikkat 2 — "wallet me 50k hai, banda 30k-30k ke DO order daal deta hai"
