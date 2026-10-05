@@ -1,520 +1,390 @@
-# BookMyShow (Ticket Booking) — POORA ROUND (4 MOVE)
+# BookMyShow (Ticket Booking)
 
-> **NAV** — ARCHETYPE C · DIL: do log EK seat na lein. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [payment](../07_payment_system/07_payment_system.md)
-
-> JP-relevant: CONSISTENCY-critical (seat double-book na ho = trading ke no-double-spend jaisa).
-> CONCURRENCY = asli khel.
-> 15-Sep: asli mock-video ke hisaab se dobara likha — koi 7-step rail nahi, sirf 4 move.
-> Har jagah: **tu kya BOLTA hai · BOARD pe kya banta · FAISLA + KYUN**.
-
-```
-★★ TEEN NIYAM (poori file par lagte — [MASTER](../../00_MASTER_SHEET.md) "Kaise bolna")
-   1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
-   2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
-   3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega
-```
+> Movie / show dekho -> seat chuno -> pay -> ticket. JP-relevant: consistency-critical (trading ke no-double-spend jaisa).
+> Is design ka dil: **do log EK seat na lein** (concurrency) + **popular release ki bheed**.
 
 ---
 
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
-
-### CAP Theorem: One of the Most Misunderstood Terms
+## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![CAP Theorem: One of the Most Misunderstood Terms](https://assets.bytebytego.com/diagrams/0131-cap-theorem.jpeg)
-
-- **Is file me kahan juda:** MOVE 2 ka CP block — booking CP, search AP.
-- Source: [CAP Theorem: One of the Most Misunderstood Terms](https://bytebytego.com/guides/cap-theorem-one-of-the-most-misunderstood-terms/)
-
-### Pessimistic vs Optimistic Locking
+Source: [CAP Theorem: One of the Most Misunderstood Terms](https://bytebytego.com/guides/cap-theorem-one-of-the-most-misunderstood-terms/)
+(booking CP, search AP)
 
 ![Pessimistic vs Optimistic Locking](https://assets.bytebytego.com/diagrams/0301-pessimistic-vs-optimistic-locking.png)
-
-- **Is file me kahan juda:** ek seat do log = lock kaunsa: SELECT FOR UPDATE (pessimistic) ya version check (optimistic).
-- Source: [Pessimistic vs Optimistic Locking](https://bytebytego.com/guides/pessimistic-vs-optimistic-locking/)
-
----
-
-# MOVE 1 — POOCHO (board pe abhi kuch nahi)
-
-```
-   TU: "BookMyShow me kai hisse hain — browse/search, seat booking, payment, refunds,
-        recommendations. Aap kis pe focus karwana chahenge?
-        Main seat BOOKING wale hisse pe ja sakta hoon — wahin asli dikkat hai."
-
-   TU: "Kuch cheezein confirm kar lun —
-          - popular release pe ek saath kitne log same show pe aayenge?
-          - payment humein khud handle karna hai ya external gateway?
-          - seat select karne ke baad kitni der HOLD rakhna chahiye?
-          - refund / cancellation scope me hai?"
-
-   ★ pehla sawaal sabse zaroori — spike hi is design ka dusra sabse bada dushman hai
-     (pehla dushman: double booking)
-```
+Source: [Pessimistic vs Optimistic Locking](https://bytebytego.com/guides/pessimistic-vs-optimistic-locking/)
+(ek seat do log = SELECT FOR UPDATE (pessimistic) ya version check (optimistic))
 
 ---
 
-# MOVE 2 — DO CHHOTE BLOCK LIKHO
+## SHURU — poocho + numbers
 
 ```
-   ┌──────────────────────┐    ┌────────────────────────────────────┐
-   │ BookMyShow           │    │ Use cases:                         │
-   │   - Movie            │    │   - movies / shows dekho           │
-   │   - Show (time+hall) │    │   - seat map dekho                 │
-   │   - Seat             │    │   - seat BOOK karo (payment)       │
-   │   - Booking          │    │   - ticket confirm                 │
-   │   - User             │    │                                    │
-   └──────────────────────┘    │ NOT in scope: refunds, recommend-  │
-                               │   ations, reviews                  │
-   ┌──────────────────────────┐└────────────────────────────────────┘
-   │ Kya chahiye (NFR):       │
-   │  - EK seat DO logon ko   │ <- DIL
-   │    na bike (CONSISTENCY) │
-   │  - browse fast ho        │
-   │  - popular show ki bheed │
-   │    jhel sake             │
-   │  - reliable              │
-   └──────────────────────────┘
+POOCHO:  "Browse, booking, payment, refund, recommendation — main seat BOOKING pe, asli dikkat wahin."
+         popular release pe ek saath kitne log same show pe?  <- spike = doosra bada dushman (pehla: double booking)
+         payment khud ya external gateway? · seat chunne ke baad kitni der HOLD? · refund scope me?
 
-   TU: "Yahan consistency hi dil hai — double booking disaster hai, paise jaisa mamla hai.
-        Isliye CAP me main CP ki taraf jhukunga: partition me reject kar dunga,
-        par ek seat do logon ko kabhi nahi dunga."
+FR:      movies / shows dekho · seat map · seat BOOK (payment) · ticket confirm
+         scope bahar: refund · recommendation · review
+NFR:     EK seat DO ko na bike (CONSISTENCY, dil) · browse fast · popular show ki bheed jhele · reliable
 
-   ► INTERVIEWER AISE POOCHEGA:
-       "Consistency or availability — which do you pick?"
-       (asli round me aise chhota aata: "network toota, aakhri seat pe do log -- C ya A?")
-
-   ► JAWAB: ek hi system me dono --
-       BOOKING = CP   partition me ek side REJECT kare ("abhi nahi ho sakta"), double-book nahi
-       SEARCH  = AP   shows dikhte rahein, seat count 2 sec purana chalega
-   BOL: "For the booking itself I'd pick consistency: I'd rather reject a write than double-book
-         the seat. The search path stays available and eventually consistent."
-   CONCEPT: FOUNDATIONS/08_cap_theorem.md
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       payment       -> paisa                -> CP
-       banking       -> balance              -> CP
-       google docs   -> edits / permissions  -> edits AP, permissions CP
-       twitter feed  -> feed                 -> AP (purana chalega)
+NUMBERS: 10M user · DO ALAG load (ek number mat bolo):
+         BROWSE (shows / seat map) = sab karte -> lakhon read -> READ-HEAVY -> CACHE + READ REPLICA
+         BOOKING = kam log, par concurrency-critical + SPIKY (same seat pe ek saath) -> QUEUE
+         data chhota (movies / shows / seats gine-chune) -> SHARDING KI ZAROORAT NAHI (ye bolna)
 ```
-
 ```
-   Numbers — yahan DO ALAG load hain (ye farak bolna, ek number mat bolna):
-
-     10 M users
-
-     1. BROWSE   (shows/seat-map dekhna)   -> SAB karte hain -> lakhs reads -> READ-HEAVY
-     2. BOOKING  (seat book karna)         -> kam log, PAR concurrency-critical + SPIKY
-                                              (popular release -> ek saath SAME seats pe)
-
-   HAR LOAD SE EK FAISLA:
-     browse read-heavy   ──►  CACHE + READ REPLICA
-     booking spiky       ──►  QUEUE (spike absorb)
-     data chhota hai     ──►  SHARDING KI ZAROORAT NAHI
-                              (movies/shows/seats gine-chune hain — ye bolna,
-                               warna log bina soche shard bol dete hain)
+POOCHEGA: "Consistency or availability — which do you pick?"  (chhota: "network toota, aakhri seat pe do log — C ya A?")
+DHYAAN:   ek hi system me dono: BOOKING = CP (partition me ek side REJECT) · SEARCH = AP (seat count 2 sec purana chalega)
+BOL:      "For the booking itself I'd pick consistency: I'd rather reject a write than double-book the seat.
+           The search path stays available and eventually consistent."
 ```
 
 ---
 
-# MOVE 3 — BOXES BANAO (chhota banao, phir dikkat pe badhao)
+## DABBA 0 — sabse simple
 
 ```
-   TU: "Sabse simple se shuru."
-
-        USER ──► [ App ] ──► [ DB ]
-                              seats(seat_id, show_id, status)
-                              "book" dabao -> status = 'booked'
-
-   TU: "Ek akela banda book kar raha ho to chalta hai. Ab do log bithaate hain."
+SOLUTION: seats(seat_id, show_id, status) · "book" dabao -> status = 'booked'
 ```
-
-### dikkat 1 — "do ALAG user ne EK SAATH seat A1 book kar diya"
-
 ```
-        User X: "A1 available hai?" -> haan ──┐
-        User Y: "A1 available hai?" -> haan ──┤   dono ne available dekha
-        User X: book karo -> booked           │
-        User Y: book karo -> booked           ┘   EK seat DO logon ko = DISASTER
-
-        (= wahi "check-then-act RACE" jo payment idempotency me tha,
-           aur trading ke no-double-match me bhi)
-
-   FAISLA 1 — ★ ATOMIC CONDITIONAL UPDATE (sabse accha):
-
-        UPDATE seats
-           SET status = 'booked', user_id = X
-         WHERE seat_id = 'A1' AND status = 'available'
-
-        do request ek saath aayein -> DB me sirf EK ka update lagega (atomic hai)
-        doosre ko WHERE me 'available' milega hi nahi -> 0 rows updated -> FAIL
-        -> "seat ja chuki, doosri chuniye"
-
-        => "check (available?) + mark (booked)" EK ATOMIC step ban gaya -> race khatam
-
-   FAISLA 2 — ya ROW LOCK:  SELECT ... FOR UPDATE
-        (seat row lock -> check -> book -> release)
-
-   TU: "Do step me karne se hamesha gap rahega. Isliye condition ko UPDATE ke andar hi
-        daal deta hoon — DB khud tay kar dega ki kaun jeeta."
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "Two users do this at the same time — what happens?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       banking       -> do withdrawal ek saath     -> UPDATE ... WHERE balance >= x
-       rate limiter  -> do request ek saath gine   -> Redis INCR / Lua (ek atomic step)
-       payment       -> ek payment do jagah claim  -> UNIQUE constraint
-       stock broker  -> do order ek symbol pe      -> har symbol ek thread / sequencer
-
-   ★ farak: 2 user ek cheez = atomic/lock · 1 user ka retry = idempotency (dikkat 3)
-```
-
-### dikkat 2 — "user ne seat chuni, ab 3 minute payment kar raha hai"
-
-```
-        3 minute tak seat ka kya status ho?
-            'available' rakhi     -> beech me koi aur le gaya -> user ka payment bekaar
-            'booked' kar di       -> payment fail hua to seat HAMESHA ke liye block
-
-   FAISLA: SEAT HOLD + TTL
-
-        seat select   ──►  status = 'held', held_until = now + 5 min
-                              │
-              payment SUCCESS ──►  status = 'booked'
-              TTL EXPIRE      ──►  wapas sabke liye khuli
-
-        => na double booking, na hamesha ke liye block
-
-   ─── ★★ PAR SQL me TTL hota hi nahi — 5 min baad hold hatata KAUN hai? (27-Sep, mock me yahi atka) ───
-
-   ★ FACT: SQL ki row APNE AAP nahi badalti. held_until = 10:05 likha hai to 10:06 pe bhi
-     wahi likha rahega, status bhi 'held' hi rahega — jab tak koi query use na badle.
-     "time nikla -> column null / available ho gaya" = GALAT, ye kisi ko KARNA padta hai.
-
-   Problem: B aaya 10:06 pe. Purana UPDATE ... WHERE status = 'available'
-            -> row me abhi bhi 'held' -> 0 row -> B ko galti se "seat taken".
-
-   RAASTA 1 — booking UPDATE hi expired hold ko KHALI maan le (koi job nahi):
-
-        UPDATE seats
-           SET status = 'held', user_id = 'B', held_until = now() + INTERVAL 5 MINUTE
-         WHERE seat_id = 'A1'
-           AND ( status = 'available'
-                 OR (status = 'held' AND held_until < now()) );   -- purana hold expire
-
-        A ka hold abhi zinda  -> 0 row -> B ko "seat taken"
-        A ka hold expire      -> 1 row -> B jeeta  (ek hi atomic step, race-safe)
-        (seat-map dikhate waqt bhi yahi check: held_until < now() = khali dikhao)
-
-   RAASTA 2 — SWEEPER job (har minute):
-
-        UPDATE seats SET status = 'available', user_id = NULL, held_until = NULL
-         WHERE status = 'held' AND held_until < now();
-
-        phir purana UPDATE (WHERE status = 'available') seedha chal jaata
-        kami: job ke beech ~1 min tak seat 'held' dikhegi
-
-   ★ Asal me DONO saath: UPDATE me check = SAHI-PAN, sweeper = SAFAI.
-
-   TU: "SQL has no TTL, so either the booking UPDATE treats an expired hold as free
-        (status = 'held' AND held_until < now()), or a sweeper job flips expired holds
-        back to available every minute. I'd put the check in the UPDATE for correctness."
-```
-
-### dikkat 3 — "payment page pe user ne do baar 'Pay' daba diya"
-
-```
-   FAISLA: IDEMPOTENCY KEY (payment wala tool)
-
-   ★★ YE DO CHEEZEIN ALAG HAIN — ye confuse hota hai, clear rakhna:
-
-      2 ALAG user, EK seat (double booking)
-          -> race BETWEEN users
-          -> ilaaj: ATOMIC mark / row lock                    <- dikkat 1 wala
-
-      1 SAME user, duplicate request (retry / double click "Pay")
-          -> retry ka dedup
-          -> ilaaj: IDEMPOTENCY key                            <- ye wala
-
-      dono booking flow me hote hain, par ALAG problem ke liye.
-      Tool ko problem se match karo.
-
-   (Arpan ki mock-line "seat mark-booked kar do, doosra taken dekhe" bilkul SAHI thi —
-    sirf uspe "idempotency" shabd lag gaya tha; wo ATOMIC MARK hai.)
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What if the same request comes twice / the client retries?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       payment       -> Pay timeout, user dobara   -> idempotency key, dobara pe STORED result
-       notification  -> same event do baar         -> eventId/key se dedup, SMS ek hi baar
-       kafka         -> consumer ko event dobara   -> eventId "processed" table, skip
-       chat          -> message retry              -> clientMsgId se dedup
-
-   ► MASTER SHEET SE JODA: key client banata (retry pe SAME) -> server atomic claim kare
-       (UNIQUE constraint ya Redis SET NX) -> dobara aaye to STORED result lautao, error nahi.
-```
-
-### dikkat 4 — "book koi-koi karta hai, par seat-map SAB dekh rahe hain"
-
-```
-        browse : lakhs reads  (shows, timings, seat map)
-        booking: kam, par nazuk
-
-   FAISLA: dono raaste ALAG kar do
-
-        browse  ──►  [ CACHE (Redis) ]  seat-map + show data  (~99% hit)
-                     [ READ REPLICA ]   baaki reads
-        booking ──►  [ SQL primary ]    atomic update wala raasta
-
-   TU: "Browse ko primary DB tak jaane hi nahi dunga — wo cache aur replica se nipat jaayega.
-        Primary sirf booking ke liye bacha rahega."
-   ★ seat-map thoda purana dikh jaaye to chalega (booking ke waqt atomic check hai hi)
-```
-
-### dikkat 5 — "popular release — ek saath lakhs log, wahi show, wahi seats"
-
-```
-        [ spike ]  ──►  seedha DB pe  ──►  hot row pe contention  ──►  DB thapp
-
-   FAISLA: QUEUE (Kafka) + per-show SERIALIZE
-
-        USER ──► [ App ] ──► [ QUEUE ]  spike yahin absorb ho gaya
-                                 │
-                                 ▼
-                        per-show WORKER  -> us show ke seat-request ek-ek karke
-                                            -> atomic mark race-safe aur contention kam
-
-   ★ QUEUE hi kyun (replica/LB nahi): replica READ scale karta hai,
-     write ka spike QUEUE hi absorb karti hai. Ye farak bolna.
-
-   ★ aage: VIRTUAL WAITING ROOM (bade release pe user ko line me lagana —
-     "aapka number 12,340 hai") -> load smooth ho jaata hai
-
-   ─── ★★ queue lagi to booking ASYNC ho gayi — user ko kya dikhe? + DARWAZE pe ginti (27-Sep, Arpan ka apna idea) ───
-
-   ARPAN KA IDEA — ADMISSION CONTROL / INVENTORY COUNTER (flash-sale wala asli pattern):
-        seat 3000, user 5000 aaye
-        -> darwaze pe ginti: pehle 3000 andar, baaki 2000 ko TURANT "housefull" / waiting room
-        -> 2000 log bekaar queue me nahi fanste, DB pe bojh ek jhatke me gir jaata
-
-   ★ BookMyShow pe TOOTTA KAHAN: user KHAAS seat chunta (A1), "koi bhi seat" nahi
-        pehle 3000 me X aur Y dono ne A1 chuni
-        dono ko turant "booked" dikha diya -> worker: X jeeta, Y ka UPDATE 0 row
-        -> Y ko "booked" bol ke "sorry, cancel" = sabse bura UX
-        GINTI batati "TOTAL seat bachi?"  — ye nahi batati "TERI wali seat bachi?"
-        => "booked" TABHI bolo jab us seat ka atomic UPDATE jeete
-
-   SAHI JODA (idea + atomic dono):
-        1 GATE      counter: seat jitne hi log andar, baaki "full" / waiting room
-                    (counter bhi ATOMIC — Redis DECR — warna counter pe hi race)
-        2 TURANT    user ko "Booking in progress..."
-        3 WORKER    us seat ka atomic UPDATE (dikkat 1) -> jeeta / haara
-        4 BATAO     jeeta: "confirmed" + email / SMS      haara: "ye seat gayi, doosri chuno"
-                    (app POLL kare, ya WEBSOCKET se push)
-
-   ★ Jahan seat-number NAHI (concert standing, sale ka stock) -> Arpan ka idea JAISA HAI waisa poora sahi.
-   ★ "BookMyShow bhi aise karta" — unka andar ka system public nahi, ye mat bolo.
-     bolo: "a common pattern in flash sales".
-
-   TU: "I'd put a counter at the door so only as many users as there are seats get in,
-        and the rest see 'sold out' right away. But since users pick specific seats, I only
-        confirm a booking after that seat's atomic UPDATE wins - until then the user sees
-        'in progress', and gets the result by polling or a push."
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What if traffic suddenly spikes 10x?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       rate limiter  -> bheed                      -> load shedding, 429 + Retry-After
-       notification  -> sale pe 1 crore SMS        -> queue me rakho, worker apni raftaar se
-       twitter feed  -> viral tweet / event        -> cache + queue, pehle se scale (pre-warm)
-
-   ► MASTER SHEET SE JODA: rate limit per user (429) · pata hai kab aayega (12 baje sale)
-       -> pehle se scale out + cache garam; autoscale ko minute lagte, spike seconds me.
-```
-
-### dikkat 6 — "Redis restart hua — aur 99% browse traffic seedha primary DB pe gir gaya, jahan booking ke atomic UPDATE chal rahe the"
-
-```
-        seat-map ka poora read Redis se ja raha tha (dikkat 4 wala faisla)
-        Redis gaya   ->  wahi read ab PRIMARY pe
-                     ->  primary ka CPU bhar gaya
-                     ->  aur ab BOOKING ka atomic update bhi ruk gaya
-
-        = BROWSE ki kharabi ne BOOKING maar di
-          (browse me galti chalegi, booking me nahi -- par yahan halke ne bhaari ko le dooba)
-
-        FAISLA: Redis CLUSTER            ek node mare to baaki chalein
-                + browse ka read REPLICA se, booking ka update PRIMARY pe
-                + SQL pe replica + auto-failover (Patroni / RDS Multi-AZ; Sentinel Redis ka hai)
-
-        ★ DONO RAASTE ALAG KARO -- warna halka kaam bhaari kaam ko le doobta hai
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What if the cache goes down?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       distributed cache -> hot key expire, 1000 miss -> STAMPEDE: mutex (ek hi rebuild) / soft TTL
-       rate limiter      -> Redis down               -> default fail-open; payment/auth me fail-closed
-       url shortener     -> redirect cache gira      -> DB pe load: replica + load shedding
-       twitter feed      -> feed cache gira          -> feed DB se banana mehnga -> shedding, garam karo
-
-   ► MASTER SHEET SE JODA: STAMPEDE -> mutex (ek hi rebuild kare, baaki wait karke cache se lein).
-```
-
-### dikkat 7 — "ek App box pe 500 log seat chun rahe the, aur wo box gir gaya"
-
-```
-        unke 3-minute wale HOLD ka kya hua?
-
-        -> HOLD DB me hai (seats.status='held' + held_until), box ki memory me NAHI
-           -> seat ab bhi hold hai, apne TTL pe hi chhutegi
-           -> user dobara judega to kisi DOOSRE box pe jayega, aur wahi hold dekhega
-
-        FAISLA: kai App instance + LB (App stateless hai, isliye chal jaata hai)
-
-        ★ ye SIRF is liye kaam karta hai ki HOLD box ke BAHAR rakha gaya tha --
-          wo faisla dikkat 2 me liya gaya tha, aur wahi yahan bacha raha hai
-        ★ agar hold app ki memory me hota to box girte hi 500 seat ka pata hi na chalta
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What happens if this server / node / DB goes down?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       url shortener     -> DB primary gira    -> replica promote, redirect cache se chalta rahe
-       rate limiter      -> Redis node gira    -> Redis replica; na mile to fail-open
-       distributed cache -> cache node gira    -> replica + consistent hashing (sirf uski keys hilti)
-       kafka             -> broker gira        -> ISR ki replica leader ban jaati
-       banking           -> DB primary gira    -> sync replica promote (paisa wali write khoni nahi)
-       chat              -> chat server gira   -> client doosre server pe reconnect, message DB me safe
-
-   ► MASTER SHEET SE JODA: LB health check (2-3 fail = box pool se bahar) · har stateful copy
-       ALAG AZ me (ek hi AZ me = saath marenge).
-```
-
-### ab poora naksha (jahan pahunche) + har box ka KYUN
-
-```
-        USER
-          │
-     [ LOAD BALANCER ]
-          │
-     [ APP SERVERS ]
-          ├──► [ CACHE (Redis) ]     seat-map + show data  — browse read-heavy (~99% hit)
-          ├──► [ READ REPLICA ]      baaki browse reads
-          ├──► [ QUEUE (Kafka) ]     booking spike absorb -> per-show worker serialize
-          │             │
-          │             ▼
-          ├──► [ DB (SQL, primary) ] seats + bookings — ACID, row lock, atomic conditional UPDATE
-          │                          (+ replica + failover)
-          └──► [ PAYMENT SERVICE ]   external -> retry + idempotency key
-
-     LB        : traffic baantna
-     App       : stateless -> instance badha do
-     Cache     : browse ko DB tak jaane hi mat do
-     Replica   : bache-khuche read
-     Queue     : write ka SPIKE absorb + per-show serialize (replica ye nahi kar sakti)
-     SQL       : consistency = dil -> ACID + row-lock -> double booking assambhav
-     Payment   : bahar ka -> retry-safe banao
+  USER
+    │
+    ▼
+  [ App ]
+    │
+    ▼
+  [ SQL DB ]
 ```
 
 ---
 
-# MOVE 4 — BOLTE-BOLTE JODO (jo poocha jaaye, wahi kholo)
-
-## ► "API kya hogi?"
+## DIKKAT 1 — do ALAG user ne EK SAATH A1 book kar di
 
 ```
-   GET  /movies?city=BLR                 ->  movies list
-   GET  /shows?movieId=X                 ->  show timings
-   GET  /shows/{id}/seats                ->  seat map (available / held / booked)
-   POST /bookings  {showId, seats, user} ->  seats HOLD (atomic) -> bookingId + TTL
-   POST /bookings/{id}/pay               ->  pay success -> 'booked'  |  fail -> release
+DIKKAT:   X: "A1 available?" haan · Y: "A1 available?" haan · X book · Y book = EK seat DO ko
+          (check-then-act RACE — payment idempotency aur trading no-double-match wala)
+
+SOLUTION: ATOMIC CONDITIONAL UPDATE (sabse accha):
+            UPDATE seats SET status = 'booked', user_id = X
+             WHERE seat_id = 'A1' AND status = 'available'
+          DB me sirf EK ka lagega · doosre ko 0 row -> "seat ja chuki, doosri chuno"
+          check + mark = EK atomic step -> race khatam
+          ya ROW LOCK: SELECT ... FOR UPDATE (lock -> check -> book -> release)
+          ya OPTIMISTIC: version column
+
+NAYA:     koi dabba nahi — SQL ka atomic update
 ```
-
-## ► "DB me kya rakhoge, aur kaunsa DB?"
-
 ```
-   seats(seat_id, show_id, status ['available' / 'held' / 'booked'], user_id, held_until, version)
-   bookings(booking_id, user_id, show_id, seat_ids, status, created_at)
-
-   ★ DB = SQL (NoSQL nahi) — KYUN:
-        consistency = dil hai. ACID + row-lock chahiye atomic seat update ke liye
-        (UPDATE ... WHERE status='available')  -> double booking assambhav
-        NoSQL ki eventual consistency yahan RISKY hai — do node alag-alag "available" keh sakte hain.
-
-   ★ data chhota hai (movies / shows / seats gine-chune) -> SHARDING NAHI
-     (ye bolna — bina zaroorat shard bolna over-engineering hai)
-
-   ★ version column: optimistic locking ke liye (agar row-lock ki jagah wo chunna ho)
-```
-
-## ► "Double booking exactly kaise roka?" (deep-dive ka dil — upar dikkat-1)
-
-```
-   UPDATE seats SET status='booked', user_id=X
-    WHERE seat_id='A1' AND status='available'
-
-        ek request     -> 1 row updated -> SUCCESS
-        doosri request -> 0 rows        -> "seat taken"
-
-   ya: SELECT ... FOR UPDATE (row lock -> check -> book -> release)
-
-   + HOLD with TTL: 'held' 5 min -> pay -> 'booked' | expire -> khali
-     (SQL me TTL nahi -> UPDATE ke WHERE me "OR (status='held' AND held_until < now())"
-      ya sweeper job — dikkat 2)
-```
-
-## ► "Kahan tootega / 10x pe?"
-
-```
-   ★ RATTO MAT — user ka raasta chalao:
-
-      user app kholta hai
-          │
-          ├─► browse       -> lakhs reads         -> CACHE (99%) + READ REPLICA
-          ├─► seat select  -> do log ek seat pe   -> ATOMIC conditional UPDATE / row lock
-          │                   pay me time lag raha-> HOLD + TTL
-          ├─► popular show -> spike, same seats   -> QUEUE absorb + per-show serialize
-          │                   HOT ROW contention  -> serialize + atomic (ek hi jeetega)
-          ├─► payment      -> retry / double tap  -> idempotency key
-          └─► koi box gira -> SPOF                -> replicate: Redis cluster, DB replica + failover
-
-      AAGE badhata to: virtual waiting room (bade release ki bheed),
-                       distributed lock (Redlock) agar kai DB ho jaayein,
-                       seat-TTL tune karna, popular-show analytics.
-
-   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
-       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
-       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
-       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
-```
-
-## ► WRAP (ek saans me)
-
-```
-   "USER -> LB -> App servers.
-    Browse cache (99%) aur read replica se; booking SQL primary pe atomic conditional UPDATE
-    (ya row lock) se — isliye ek seat do logon ko ja hi nahi sakti.
-    Seat select pe 'held' + 5 min TTL — payment aaya to 'booked', warna wapas 'available'.
-    Popular release ka spike queue absorb karti hai, aur per-show worker requests serialize karta hai.
-    Payment external hai to retry + idempotency key.
-    DB SQL rakha kyunki consistency hi dil hai; data chhota hai isliye sharding nahi."
+POOCHEGA: "Two users book the same seat at the same time — what happens?"
+DHYAAN:   2 user ek cheez = atomic / lock · 1 user ka retry = idempotency (dikkat 3)
+BOL:      "Doing it in two steps always leaves a gap, so I put the condition inside the UPDATE — WHERE
+           status is available. The database lets only one win; the other gets zero rows and 'seat taken'."
 ```
 
 ---
 
-> ★ BookMyShow ka TWIST ek line me: CONSISTENCY (no double-book) = concurrency control
-> (atomic mark / lock) + CP. Browse = cache + replica. Spike = queue.
+## DIKKAT 2 — seat chuni, ab 3 min payment kar raha
+
+```
+DIKKAT:   'available' rakhi -> koi aur le gaya · 'booked' kar di -> payment fail = seat HAMESHA block
+
+SOLUTION: SEAT HOLD + TTL: select -> 'held', held_until = now + 5 min · pay SUCCESS -> 'booked' · expire -> khuli
+          ★ PAR SQL me TTL NAHI (27-Sep mock me yahi atka): row apne aap nahi badalti,
+            10:06 pe bhi 'held' likha rahega. "time nikla -> available" = GALAT, kisi ko KARNA padta.
+            B aaya 10:06 -> purana WHERE status = 'available' -> 0 row -> galti se "taken"
+          RAASTA 1 — booking UPDATE hi expired hold ko KHALI maane (job nahi):
+            UPDATE seats SET status = 'held', user_id = 'B', held_until = now() + INTERVAL 5 MINUTE
+             WHERE seat_id = 'A1'
+               AND ( status = 'available' OR (status = 'held' AND held_until < now()) );
+            A ka hold zinda -> 0 row · expire -> 1 row, B jeeta (atomic) · seat map pe bhi yahi check
+          RAASTA 2 — SWEEPER (har minute):
+            UPDATE seats SET status = 'available', user_id = NULL, held_until = NULL
+             WHERE status = 'held' AND held_until < now();
+            kami: ~1 min tak 'held' dikhegi
+          DONO saath: UPDATE ka check = SAHI-PAN · sweeper = SAFAI
+
+NAYA:     Sweeper job
+```
+```
+  USER
+    │
+    ▼
+  [ App ]
+    │
+    ▼
+  [ SQL DB ]
+    ▲
+    │
+  [ Sweeper job ]
+```
+```
+POOCHEGA: "Who releases the hold after 5 minutes?"
+BOL:      "SQL has no TTL, so either the booking UPDATE treats an expired hold as free — status held and
+           held_until before now — or a sweeper job flips expired holds back every minute. I'd put the check
+           in the UPDATE for correctness and keep the sweeper for cleanup."
+```
 
 ---
 
-> Block kab lagana (need -> block) = MASTER SHEET §4 BLOCK MENU.
+## DIKKAT 3 — payment page pe "Pay" do baar daba diya
+
+```
+DIKKAT:   ek booking ka do baar charge
+
+SOLUTION: IDEMPOTENCY KEY (payment wala tool) — client banata, retry pe SAME
+          server atomic claim (UNIQUE constraint / Redis SET NX) -> dobara aaye to STORED result, error nahi
+          ★ DO ALAG CHEEZ (confuse hota):
+            2 ALAG user, EK seat -> race BETWEEN users -> ATOMIC mark / lock (dikkat 1)
+            1 SAME user, duplicate request -> retry dedup -> IDEMPOTENCY (ye)
+          (Arpan ki mock line "seat mark-booked kar do, doosra taken dekhe" SAHI thi — wo ATOMIC MARK hai,
+           sirf "idempotency" shabd lag gaya tha)
+
+NAYA:     Payment Svc (external, idempotency key ke saath)
+```
+```
+  USER
+    │
+    ▼
+  [ App ] ──► [ Payment Svc ]
+    │
+    ▼
+  [ SQL DB ]
+    ▲
+    │
+  [ Sweeper job ]
+```
+```
+POOCHEGA: "What if the user clicks Pay twice / the client retries?"
+BOL:      "The client sends the same idempotency key on a retry; the server claims it atomically with a
+           unique constraint and returns the stored result the second time."
+```
 
 ---
+
+## DIKKAT 4 — book koi-koi karta, seat map SAB dekh rahe
+
+```
+DIKKAT:   browse lakhon read, booking kam par nazuk — ek hi DB pe
+
+SOLUTION: dono raaste ALAG:
+          browse  -> REDIS (seat map + show data, ~99% hit) + READ REPLICA
+          booking -> SQL PRIMARY (atomic update)
+          seat map thoda purana chalega — booking pe atomic check hai hi
+
+NAYA:     Redis · Read replica
+```
+```
+  USER
+    │
+    ▼
+  [ App ] ──► [ Payment Svc ]
+    │
+    ├──► [ Redis ]
+    ├──► [ Read replica ]
+    │
+    ▼
+  [ SQL primary ]
+    ▲
+    │
+  [ Sweeper job ]
+```
+
+---
+
+## DIKKAT 5 — popular release: lakhon log, wahi show, wahi seat
+
+```
+DIKKAT:   spike seedha DB -> hot row contention -> DB thapp
+
+SOLUTION: QUEUE (Kafka) + PER-SHOW WORKER -> us show ki request ek-ek karke -> atomic mark, contention kam
+          QUEUE kyun, replica / LB nahi: replica READ scale karti, write spike QUEUE absorb karti
+          VIRTUAL WAITING ROOM: "aapka number 12,340" -> load smooth
+          ARPAN KA IDEA (27-Sep) = ADMISSION CONTROL: seat 3000, user 5000 -> darwaze pe ginti,
+            pehle 3000 andar, 2000 ko TURANT "housefull" / waiting room (flash sale pattern)
+            counter bhi ATOMIC (Redis DECR), warna counter pe race
+          ★ BMS pe kahan tootta: user KHAAS seat (A1) chunta. pehle 3000 me X aur Y dono A1
+            -> dono ko turant "booked" -> worker: Y ka 0 row -> "sorry, cancel" = sabse bura UX
+            ginti batati "TOTAL bachi?", ye nahi "TERI wali bachi?" -> "booked" TABHI jab us seat ka UPDATE jeete
+          SAHI JODA: 1 GATE counter · 2 TURANT "Booking in progress..." · 3 WORKER atomic UPDATE
+                     4 BATAO: jeeta "confirmed" + email / SMS · haara "ye seat gayi" (poll / WebSocket)
+          seat number NAHI (concert standing, sale stock) -> Arpan ka idea jaisa hai poora sahi
+          "BookMyShow bhi aise karta" MAT bolo (andar public nahi) -> "a common pattern in flash sales"
+
+NAYA:     Kafka · Booking worker · gate counter (Redis me)
+```
+```
+  USER
+    │
+    ▼
+  [ App ] ──► [ Payment Svc ]
+    │
+    ├──► [ Redis ]
+    ├──► [ Read replica ]
+    │
+    ▼
+  [ Kafka ]
+    │
+    ▼
+  [ Booking worker ]
+    │
+    ▼
+  [ SQL primary ]
+    ▲
+    │
+  [ Sweeper job ]
+```
+```
+POOCHEGA: "What if traffic suddenly spikes 10x?"
+BOL:      "I'd put a counter at the door so only as many users as there are seats get in, and the rest see
+           'sold out' right away. But since users pick specific seats, I only confirm a booking after that
+           seat's atomic UPDATE wins — until then the user sees 'in progress' and gets the result by polling
+           or a push. Plus per-user rate limits and pre-scaling before a known release."
+```
+
+---
+
+## DIKKAT 6 — Redis restart: 99% browse seedha primary pe, booking ke update ruk gaye
+
+```
+DIKKAT:   browse ki kharabi ne BOOKING maar di (halke ne bhaari ko le dooba)
+
+SOLUTION: Redis CLUSTER (ek node mare, baaki chalein)
+          browse ka read REPLICA se, booking ka update PRIMARY pe — DONO RAASTE ALAG
+          SQL: replica + auto-failover (Patroni / RDS Multi-AZ; Sentinel Redis ka hai)
+          STAMPEDE: mutex (ek hi rebuild, baaki wait karke cache se)
+
+BADLA:    Redis -> Redis Cluster · SQL primary ab auto-failover ke saath
+```
+```
+POOCHEGA: "What if the cache goes down?"
+BOL:      "Redis runs as a cluster. Browse reads fall back to the read replica, never the primary, so
+           bookings keep working, and one request rebuilds a hot key while others wait."
+```
+
+---
+
+## DIKKAT 7 — ek App box pe 500 log seat chun rahe, box gira
+
+```
+DIKKAT:   unke 3 min ke HOLD ka kya?
+
+SOLUTION: HOLD DB me (status 'held' + held_until), box ki memory me NAHI -> seat abhi bhi held, TTL pe chhutegi
+          user dobara jude -> DOOSRE box pe, wahi hold dikhe
+          kai App + LB (stateless isliye chalta) · health check: 2-3 fail = pool se bahar
+          ye sirf isliye chala ki hold box ke BAHAR rakha (dikkat 2 ka faisla)
+          stateful copies ALAG AZ me
+
+NAYA:     LB
+BADLA:    App -> App x N
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ App x N ] ──► [ Payment Svc ]
+    │
+    ├──► [ Redis Cluster ]
+    ├──► [ Read replica ]
+    │
+    ▼
+  [ Kafka ]
+    │
+    ▼
+  [ Booking worker ]
+    │
+    ▼
+  [ SQL primary ]
+    ▲
+    │
+  [ Sweeper job ]
+```
+```
+POOCHEGA: "What happens if an app server goes down?"
+BOL:      "Holds live in the database, not in the box, so they survive. The load balancer health-checks the
+           box out and the user's next request goes to another instance and sees the same hold."
+```
+
+---
+
+## 10x SCALE — har dabba alag
+
+```
+App          -> stateless, box badhao
+browse       -> Redis cluster (99%) + read replica
+booking      -> atomic conditional UPDATE / row lock · HOLD + TTL
+popular show -> Kafka + per-show serialize + gate counter + waiting room · hot row = ek hi jeete
+payment      -> idempotency key
+SQL          -> replica + auto-failover · data chhota, shard NAHI
+AAGE:        virtual waiting room · Redlock agar kai DB · seat TTL tune · popular show analytics
+
+POOCHEGA: "How would you scale this to 10x?"      -> user ka raasta chalo, pehle jo toote
+POOCHEGA: "What's the single point of failure?"   -> SQL primary (failover), Redis (cluster)
+POOCHEGA: "How do you know it's working?"         -> booking p99 · 0-row (taken) rate · Kafka lag · hold expiry count · alert
+```
+
+---
+
+## POOCHE TO (deep-dive)
+
+```
+API:      GET /movies?city=BLR · GET /shows?movieId=X · GET /shows/{id}/seats (available / held / booked)
+          POST /bookings { showId, seats, user } -> seat HOLD (atomic) -> bookingId + TTL
+          POST /bookings/{id}/pay -> success 'booked' · fail release
+
+DB:       seats(seat_id, show_id, status ['available' / 'held' / 'booked'], user_id, held_until, version)
+          bookings(booking_id, user_id, show_id, seat_ids, status, created_at)
+          SQL kyun: consistency = dil -> ACID + row lock -> double booking assambhav
+                    NoSQL eventual = do node alag-alag "available" keh sakte -> RISKY
+          version = optimistic locking (row lock ki jagah chuno to)
+          data chhota -> SHARDING NAHI (bina zaroorat shard = over-engineering)
+
+DOUBLE BOOKING (dil):  UPDATE ... WHERE seat_id = 'A1' AND status = 'available'
+                       ek -> 1 row SUCCESS · doosra -> 0 row "taken" · ya SELECT ... FOR UPDATE
+```
+
+---
+
+## AAKHRI DABBA + WRAP
+
+```
+LB · App = stateless · Redis Cluster = browse 99% · Read replica = baaki browse
+Kafka + Booking worker = spike + per-show serialize · SQL primary = ACID, atomic UPDATE, failover
+Sweeper = expired hold saaf · Payment Svc = external, idempotency key
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ App x N ] ──► [ Payment Svc ]
+    │
+    ├──► [ Redis Cluster ]
+    ├──► [ Read replica ]
+    │
+    ▼
+  [ Kafka ]
+    │
+    ▼
+  [ Booking worker ]
+    │
+    ▼
+  [ SQL primary ]
+    ▲
+    │
+  [ Sweeper job ]
+```
+```
+BOL: "Browse goes to Redis and a read replica; booking goes to the SQL primary with an atomic conditional
+      UPDATE, so one seat can never go to two people. Selecting a seat holds it for five minutes — the
+      UPDATE treats an expired hold as free and a sweeper cleans up. A queue with per-show workers absorbs
+      the release-day spike, and payment uses an idempotency key. SQL because consistency is the heart of
+      it; the data is small, so no sharding."
+```
 
 [← MASTER SHEET](../../00_MASTER_SHEET.md)
