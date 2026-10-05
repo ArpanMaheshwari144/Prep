@@ -156,6 +156,17 @@ void method() {
                bada Old kam scan (yahan kam kachra) = mehnga kaam kam baar. -> performance behtar.
 ```
 
+**Chala ke dekha** (30 lakh chhote `byte[1024]`, har ek turant kachra, heap 64MB, `-Xlog:gc`):
+```
+Using G1                                                   <- Java 9+ default
+GC(0) Pause Young (Normal) ... 2M->1M(10M)    1.038ms
+GC(4) Pause Young (Normal) ... 18M->1M(30M)   0.809ms
+GC(6) Pause Young (Normal) ... 18M->1M(30M)   0.685ms
+kul 8 Pause Young, MAJOR ek bhi nahi
+```
+`18M->1M` = young me 18MB tha, saafi ke baad 1MB bacha. Pause 1ms se kam.
+Saara kachra YOUNG me hi mar gaya = "zyadatar object jaldi marte" ka live saboot.
+
 ---
 
 ## MEMORY LEAK in JAVA (GC hai phir bhi leak kaise? — JP twist)
@@ -172,6 +183,12 @@ void method() {
 
    FIX: kaam khatam -> reference HATAO (remove/null) | cache -> size-limit+LRU eviction ya WeakHashMap | listener -> unregister.
 ```
+
+**Chala ke dekha** (static List me har baar 1MB daala, remove kabhi nahi, heap 64MB):
+```
+static list me 31 MB pada, kabhi remove nahi -> java.lang.OutOfMemoryError: Java heap space
+```
+static = GC root -> list zinda -> andar ka sab zinda -> GC kuch utha hi nahi saka -> crash.
 
 ---
 
@@ -223,6 +240,13 @@ PHANTOM -> object MAR chuka, bas "mar gaya" ki parchi (cleanup hook).
 
 **GC-aggressiveness order:** Strong (kabhi nahi) → Soft (memory-pressure pe) → Weak (agli GC) → Phantom (already gaya).
 
+**Chala ke dekha** (ek strong, ek WeakReference, beech me `System.gc()`):
+```
+GC se pehle: strong=true  weak.get()=java.lang.Object@2b2fa4f7
+GC ke baad : strong=true  weak.get()=null      <- weak utha liya, strong ko haath nahi
+```
+(`System.gc()` hint hi hai — is run me JVM ne maan liya, har baar ki guarantee nahi.)
+
 ---
 
 ## TRAP
@@ -236,3 +260,13 @@ PHANTOM -> object MAR chuka, bas "mar gaya" ki parchi (cleanup hook).
 ## POWER PHRASE
 
 > *"Garbage Collector automatically frees memory of objects with no live references — you cannot force GC, `System.gc()` is just a hint to the JVM."*
+
+```
+GC frees objects that are no longer reachable from GC roots like stack
+variables and static fields, using mark and sweep, so circular references
+are not a problem. The heap is generational: most objects die young, so
+minor GCs on the young generation are frequent and cheap, and survivors are
+promoted to the old generation. G1 is the default since Java 9. Java can
+still leak memory if references stay alive, for example a static collection
+that only grows.
+```
