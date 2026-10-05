@@ -75,7 +75,7 @@ User u = user.orElseThrow(() -> new RuntimeException("User nahi mila!"));
 
   u.map(User::getName).orElse("Unknown")   ← khali toh default (orElse ko User chahiye, isliye pehle naam nikala)
   u.orElseThrow(() -> ...)     ← khali toh exception
-  u.map(u -> u.getName())      ← bhara hai toh transform, khali toh skip
+  u.map(x -> x.getName())      ← bhara hai toh transform, khali toh skip  (lambda me naam "u" nahi: bahar u pehle se hai = compile error)
 
 
 ╔════════════════════════════════════════════════════════════╗
