@@ -42,9 +42,13 @@ Source: Blind "jp morgan superday" · interviewquery JP SWE · techinterview.org
 
  6   .get() Optional pe · list.get(0) ·     khaali hua to crash (500)        -> orElseThrow(NotFound) / isEmpty check
      rs.next() ka return nahi dekha
+     repo / map / request se aaya obj ->    null hua to NPE                  -> Optional / null check
+     seedha obj.getX()
 
  7   static (jo final nahi) · static Map    EK copy, saare thread share,     thread-safe nahi · cache STALE
      · static SimpleDateFormat              kabhi saaf nahi                  -> local / Concurrent* / DateTimeFormatter
+     @Service / @Controller me FIELD        bean SINGLETON = har request     do user ka data mix
+     Map · List · counter                   wahi field share karti           -> local variable / Concurrent* / Atomic*
 
  8   boolean flag / counter doosra thread   volatile nahi = dikhega nahi     -> volatile (sirf dikhna)
      padhe / badhaye                        ++ atomic nahi                   -> AtomicInteger
@@ -56,20 +60,44 @@ Source: Blind "jp morgan superday" · interviewquery JP SWE · techinterview.org
 
 10   double / float me amount               paisa rounding                   -> BigDecimal / long paise
      request se amount / qty / date         -ve? 0? format?                  -> @Positive / YearMonth / @Valid
+     @RequestBody pe @Valid hi nahi         DTO ke @NotNull bekaar           -> @Valid lagao
 
 11   log / println me email · card · PAN ·  PII / secret log me              log leak = data leak -> sirf id / mask
      password · token
      return ok(ENTITY)                      saare field bahar (password?)    -> DTO
+     password seedha save                   plaintext                        -> BCrypt
+     e.getMessage() / stack trace client    andar ki baat bahar              -> generic message, detail sirf log me
+     ko lauta diya
 
 12   ★ {id} wala HAR method                 "ye kiska hai?" OWNER CHECK      koi bhi kisi ka data dekhe / mitaye
      (GET / pay / cancel / DELETE / export) ek me hai to baaki me maan mat   -> token se owner, nahi to 403
      child id + parent id dono?            rishta check                     (chup "ok" / 200 NAHI)
      ★ dimaag me "koi bhi kuch bhi bhej sakta" aaye = wahi OWNER CHECK -> NAAM se bolo
 
-13   DO write ek method me                  @Transactional nahi = aadha      beech me fail -> paisa gaya, status nahi
-     (save + save · refund + status)        likha · do request = double      -> @Transactional + WHERE status=? /
-     ★ ek hi query wale pe NAHI                                              @Version / idempotency
+13   ★ TRANSACTION — @Transactional dikhe YA do write dikhein, ye SAB dekho:
+     DO write ek method me                  @Transactional nahi = aadha      beech me fail -> paisa gaya, status nahi
+     (save + save · refund + status)        likha                            -> @Transactional
+     ★ ek hi query wale pe NAHI
      @Transactional private / self-call     proxy -> laga hi nahi            -> public, doosri bean se
+     (this.method())
+     @Transactional ke ANDAR try-catch      exception bahar nahi gaya =      aadha data commit
+     ne exception nigal liya                rollback NAHI                    -> rethrow
+     checked exception (IOException ...)    default rollback sirf Runtime    -> rollbackFor = Exception.class
+                                            pe; checked pe COMMIT
+     PADHO -> GHATAO -> SAVE                do request ek saath = DOUBLE     balance minus me
+     (balance / stock / seat)               SPEND (lost update)              -> UPDATE .. WHERE bal >= ? / @Version
+     txn ke ANDAR HTTP / mail / Kafka       DB rollback hua, bahar gaya      paisa kata nahi par mail chala gaya
+                                            kaam wapas nahi · lamba txn =    -> commit ke BAAD bhejo / outbox /
+                                            lock der tak                     PENDING row
+     retry / double click / same request    do baar charge                   -> idempotency key (DB unique)
+     do baar
+
+14   RestTemplate / WebClient / HTTP call   TIMEOUT nahi = thread atka,      ek slow service poori app gira de
+                                            pool khatam                      -> timeout + retry limit (+ circuit breaker)
+     new Thread() har request pe ·          thread bekaabu / request atki    -> ExecutorService / @Async
+     Thread.sleep request me
+
+15   list / findAll lautaya, PAGE nahi      10 lakh row ek saath memory me   -> Pageable / limit
 ```
 
 ### ★ EK BUG PAKDA TO USI LINE PE RUKO — 3 sawaal aur
@@ -110,7 +138,7 @@ if-else type pe ("UPI" / "CARD")                                  -> strategy (n
 ```
 0:00  CONTEXT POOCHO   "Ye PR kya karta hai?"
 0:30  EK BAAR PADHO    upar se neeche, chup
-1:30  NAZAR 1          bhaari (1-13)
+1:30  NAZAR 1          bhaari (1-15)
 5:30  NAZAR 2          style
 8:30  NAZAR 3          faisla line
 ```
