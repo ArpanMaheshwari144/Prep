@@ -303,6 +303,17 @@
 
    ► MASTER SHEET SE JODA: settlement ke beech crash bhi yahi sawaal hai —
        ek DB = ACID (dikkat 3), kai service = SAGA + compensate (dikkat 4).
+
+   ► DO HISSE BOLNA (sirf ek bola to aadha): is design me crash DO jagah ho sakta
+       1. MATCHING ENGINE (RAM) gira -> book gayab -> EVENT LOG REPLAY       <- pehle ye (yahi design ka dil)
+       2. SETTLEMENT (DB) beech me gira -> ek DB = transaction rollback · kai DB = SAGA compensate
+   ► MISAAL: 10:15 pe matching server gira, TCS book me 4,000 pending order the
+       naya server utha -> log ka #1 se #9,87,654 tak replay -> book bilkul waisi (single thread = same result)
+       usi waqt ek settlement aadha tha (buyer -30k ho gaya, seller +30k nahi) -> DB rollback -> dono wapas
+   BOL: "Two places can crash. If the matching engine dies, the in-memory book is rebuilt by
+         replaying the event log - it's single-threaded, so replay gives exactly the same book.
+         If settlement dies midway, a single-DB transaction rolls back; across services a saga
+         runs compensating steps."
 ```
 
 ### dikkat 7 — "lakhs log live price dekh rahe hain"
