@@ -1390,6 +1390,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
    3 JAGAH DHYAAN:
      1. INDEX store, value nahi (width index se banti).
      2. nS ka default = n, NA -1.   [2,4] bar0: -1 -> width -1-(-1)-1 = -1 (galat) · n=2 -> 2-(-1)-1 = 2 -> area 4.
+        KYUN n: -1 aur n = array ke BAHAR ki nakli deewar (dono kinare).
+              idx:  -1 | 0  1 | 2(=n)
+                  deewar| 2  4 |deewar
+              right me koi chhota nahi -> rectangle aakhir tak jaata -> deewar aakhri index ke BAAD = n.
+              left  me koi chhota nahi -> deewar index 0 se PEHLE = -1.
+              n-1 bhi galat: [2,4] bar0 -> 1-(-1)-1 = 1 -> aakhri bar chhoot gaya.
+              isliye NS-PS-1 kinare pe bhi bina if-else chalta.
      3. `>` strictly, `>=` NAHI.   [3,3,3,3]: `>=` -> barabar wala bhi stopper -> har width 1 -> 3 (galat)
                                                `>`  -> koi stopper nahi -> width 4 -> 12.
 
