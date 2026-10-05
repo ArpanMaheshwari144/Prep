@@ -160,7 +160,7 @@ DIKKAT:   bheja -> provider ne liya -> ack raaste me kho gaya -> queue ko laga f
 
 SOLUTION: IDEMPOTENT WORKER — "at-least-once delivery + idempotent worker"
           SET notification:abc123 sent NX EX 86400
-             "OK" -> naya -> BHEJO · nil -> pehle ho chuka -> SKIP
+             "OK" -> naya -> BHEJO · nil -> pehle ho chuka -> SKIP   (SET ... NX "OK" deta; "1" purane SETNX ka jawab tha)
           NX = check + set EK atomic step (EXISTS phir SET = beech me doosra ghus jaata)
           key = event ka APNA id (eventId), har retry pe wahi. har baar naya UUID = dedup kabhi nahi pakdega
           (wahi race + wahi ilaaj jo payment idempotency me)
@@ -470,6 +470,7 @@ BOL: "Services publish events to Kafka. The notification service checks preferen
       jitter, throttle to the provider's limit, use a circuit breaker with a backup provider, and send to
       a DLQ after max retries. OTPs have their own topic. Partitioning by user id keeps per-user order,
       and provider webhooks update the tracking DB. Next: quiet hours, i18n templates, open / click analytics."
+     (asli duniya: Uber ride notification · Amazon order update · Slack · WhatsApp · bank alert)
 ```
 
 ---
@@ -519,4 +520,4 @@ QUEUE     jo abhi nahi ja sakta wo queue me ruke · max try ke baad DLQ, drop na
 BOL: "I simulated it: naive retry dropped 700 of 1000, throttle plus backoff delivered all 1000."
 ```
 
-[← MASTER SHEET](../../00_MASTER_SHEET.md)
+ARCHETYPE B (ingest) · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [ms-communication](../../FOUNDATIONS/10_ms_communication.md) · saath: [13 message-queue](../13_message_queue_kafka/13_message_queue_kafka.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

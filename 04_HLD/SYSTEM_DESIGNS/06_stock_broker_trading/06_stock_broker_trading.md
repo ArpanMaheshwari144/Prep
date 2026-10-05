@@ -2,6 +2,7 @@
 
 > User BUY / SELL order de -> system MATCH kare -> paisa + share sahi move ho -> live price dikhe.
 > Is design ka dil: **paisa = strong consistency** + **matching = microseconds**.
+> Finance interview GOLD (JP / GS): consistency, ACID, idempotency, ledger, audit — FAANG-hyperscale nahi. Konovo fraud-domain se bridge.
 
 ---
 
@@ -25,8 +26,10 @@ POOCHO:  "Trading bada hai — matching, price feed, risk, settlement. Kis pe fo
 FR:      buy / sell · order match · paisa + share move · live price · cancel / status
 NFR:     paisa CONSISTENT (strong, kabhi eventual nahi) · FAST · FAIR (pehle aaya pehle) · audit
 
-NUMBERS: ~50 lakh users · ~50 lakh orders / din · market khulte hi BURST · price dekhne wale crore
-         -> matching RAM me · price feed PUSH · paisa SQL + ACID
+NUMBERS: ~50 lakh users · ~50 lakh orders / din · normal ~250 / sec, market khulte hi PEAK 10,000+ burst
+         price feed = CRORE reads / sec (sab dekh rahe)
+         -> matching RAM me · price feed PUSH (poll nahi) · paisa SQL + ACID
+         speed wala + temporary (order book) = RAM · paisa wala + permanent (wallet / ledger) = SQL / ACID
 ```
 
 ---
@@ -57,6 +60,8 @@ DIKKAT:   Seller ke 10 share. Ramesh aur Mohan dono ek saath BUY 10.
 SOLUTION: har SYMBOL ki EK queue + EK thread (single-threaded per symbol)
           TCS -> T1 · INFY -> T2 · ek ke baad ek -> race ho hi nahi sakti -> lock nahi chahiye
           order book RAM me (microseconds)
+          LOCK kyun nahi: exchange ki speed pe lock = slow + deadlock ka risk · ek line me race possible hi nahi
+          ye RULE hai, if-condition nahi — har trading system me hona hi hoga
 
 NAYA:     Queue per symbol · Matching Engine
 ```
@@ -124,7 +129,9 @@ DIKKAT:   buyer -30k ho gaya, seller +30k hone se pehle crash -> 30k GAYAB
 
 SOLUTION: saare step EK transaction me (ACID) — sab ya kuch nahi -> crash = ROLLBACK
             BEGIN  buyer -30k +10 share · seller +30k -10 share  COMMIT
+          (Spring me @Transactional yahi karta)
           LEDGER double-entry: jitna ek se gaya utna doosre ko mila -> total same = audit
+          STRONG vs EVENTUAL: like-count eventual chalta, PAISA hamesha STRONG
 
 NAYA:     Settlement
 ```
@@ -196,6 +203,7 @@ DIKKAT:   ek order do baar lag gaya -> do baar paisa
 
 SOLUTION: IDEMPOTENCY KEY — har request ke saath ek unique key
           server yaad rakhta "ABC123 ho chuka" -> dobara aaya -> wahi purana result, naya order nahi
+          (GPay pe double-click -> ek hi charge · BookMyShow me ek ticket)
 
 NAYA:     koi dabba nahi — Order Service me key check juda
 ```
@@ -233,6 +241,12 @@ SOLUTION: EVENT LOG / SEQUENCER (append-only, disk / Kafka)
           crash -> naya server log REPLAY kare -> book bilkul waisi (1 thread = same result)
           cricket: scoreboard (RAM) gaya, scorer ka register (log) se sab wapas
           bonus: yahi log = AUDIT TRAIL (kaun, kya, kab — regulator ko chahiye)
+          SEQUENCER: Ramesh 10:00:01, Mohan 10:00:02, dono BUY TCS @3000 -> Ramesh = #501, Mohan = #502
+                     key = symbol -> TCS ke saare order EK partition, isi kram me -> #501 pehle = Ramesh ko share
+                     kram sirf PER SYMBOL chahiye, global nahi -> symbols parallel chal sakte
+          LOGGING vs AUDIT: logging = engineer ke debug ke liye (technical, kuch din, badal sakte)
+                            AUDIT = regulator ke liye (kaun-kya-kab, saalon tak, IMMUTABLE) — JP / BlackRock dono maangte
+                            trading ka event log itna pakka ki audit ka kaam bhi deta (ek cheez, do role)
 
 BADLA:    Queue per symbol -> Event Log (wahi queue, ab disk pe likhi jaati + seq no. + key = symbol)
 ```
@@ -312,7 +326,10 @@ DIKKAT:   "shard by symbol" yahan kaam nahi — TCS ek hi symbol, ek hi thread
 
 SOLUTION: (1) book mat todo — ek book do thread me = double match wapas
               ek thread RAM me, lock ke bina, bahut tez chalta (LMAX ka public design yahi)
-          (2) aage ka EVENT LOG burst sambhaal leta — order line me lagte, thread apni speed se uthata
+          (2) aage ka EVENT LOG burst sambhaal leta — order line me lagte, thread apni speed se uthata (FIFO)
+              = BACKPRESSURE: arrival rate aur process rate DECOUPLE · spike me kuch DROP nahi, bas thodi latency
+          book do thread me kyun nahi: double match wapas + price-time priority toot-ti + lock (slow)
+          -> scale BY symbol across threads, kabhi ek symbol ke andar nahi
 
 NAYA:     koi dabba nahi — Event Log hi kaam aaya
 ```
@@ -345,6 +362,7 @@ ORDER BOOK:  SELLERS: sasta upar (3001, 3003...)   BUYERS: mehnga upar (2998, 29
 
 LIMIT  = "3000 ya behtar, warna rukunga"   -> price pakka
 MARKET = "jo bhav hai, abhi do"             -> time pakka
+kab kya: sahi daam chahiye, jaldi nahi -> LIMIT · turant ghusna / nikalna -> MARKET
 
 PARTIAL FILL: BUY 10, mile 6 -> 6 match, 4 pending -> FILLED / PARTIALLY FILLED / OPEN
 
@@ -387,7 +405,8 @@ Matching = 1 thread / symbol, book RAM, shard by symbol · Settlement = ek txn /
 BOL: "Order Service validates and checks the idempotency key, Wallet blocks the money, every order
       goes into an append-only log with a sequence number, and a single-threaded matching engine per
       symbol keeps the book in memory. Settlement is one transaction, or a saga across services.
-      Prices go out over WebSocket via pub/sub. The log gives crash recovery and an audit trail."
+      Prices go out over WebSocket via pub/sub. The log gives crash recovery and an audit trail.
+      Next: stop-loss, circuit breakers, real-time risk checks, regulatory reporting."
 ```
 
-[← MASTER SHEET](../../00_MASTER_SHEET.md)
+ARCHETYPE C (transactional) · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [payment](../07_payment_system/07_payment_system.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

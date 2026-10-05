@@ -387,4 +387,6 @@ BOL: "Browse goes to Redis and a read replica; booking goes to the SQL primary w
       it; the data is small, so no sharding."
 ```
 
-[← MASTER SHEET](../../00_MASTER_SHEET.md)
+Block kab lagana (need -> block) = MASTER SHEET §4 BLOCK MENU.
+
+ARCHETYPE C · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [payment](../07_payment_system/07_payment_system.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

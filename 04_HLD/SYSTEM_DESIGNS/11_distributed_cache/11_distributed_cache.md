@@ -294,4 +294,4 @@ BOL: "A distributed cache is an in-memory key-value store, sharded with consiste
       copies. It's a speed versus consistency trade-off, decided by the use case."
 ```
 
-[← MASTER SHEET](../../00_MASTER_SHEET.md)
+ARCHETYPE F · CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

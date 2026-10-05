@@ -19,6 +19,7 @@ Source: [Explaining 5 Unique ID Generators](https://bytebytego.com/guides/explai
 POOCHO:  "Link banana, redirect, analytics, custom alias, expiry — kis pe focus karein?"
          -> banana + redirect. Analytics dashboard / custom alias scope se bahar (USSE poocho, khud mat kaato)
          "~100M link / din, read:write 100:1 maan raha hoon — theek?"
+         pata na ho -> "ye maine use nahi kiya" bolna THEEK, wo khud bhar dega (be open about limits)
 
 FR:      long -> short banao · short -> original redirect
 NFR:     redirect p99 < 200ms · hamesha up · read >> write · code UNIQUE
@@ -388,7 +389,9 @@ ROW:      short_code (partition key) · long_url · created_at · expires_at
           GET /abc123 -> seedha ek partition -> point read
 
 KAUNSA DB:  join nahi · transaction nahi · INSERT ek baar + SELECT WHERE short_code = ? · 90 TB
-            -> Cassandra / DynamoDB (key-value at scale). MySQL ~1B tak chal jaata.
+            -> Cassandra / DynamoDB (key-value at scale)
+            MySQL relational ~1B tak chal jaata · Mongo document ~10B tak · Cassandra wide-col / DynamoDB K-V
+            trillions = best · Redis = sirf cache layer, hamesha saath
             "NoSQL powerful hai" MAT bolna — ACCESS PATTERN + SCALE wajah hai (ye write-heavy nahi, read-heavy)
 
 CODE KAISE:
@@ -397,7 +400,11 @@ CODE KAISE:
    counter hai to code RANDOM nahi (1-Oct mock me dono saath bol diye the)
    base62: 0-9 (10) + a-z (26) + A-Z (26) · baar-baar /62, remainder ULTA padho
            1,000,000,000 -> "15FTGg" (6 char) · 125 -> "21"
-   word bhool jaao: "hash ke pehle 7 char" · "62 character me encode" · "global auto-increment ID"
+   WORD-FREEZE FALLBACK (term bhool jaao -> CONCEPT bol do, atko mat):
+      "MD5 / hash" bhoola -> "long URL ka ek HASH lo, uske pehle 7 character"
+      "Base62" bhoola     -> "62 character hain (a-z, A-Z, 0-9) — ID ko un 62 me ENCODE, chhoti string"
+      "Counter" bhoola    -> "ek global auto-increment ID"
+      interviewer ko WORD nahi, SAMAJH chahiye — concept bolo, naam wo khud bol dega
 
 DISTRIBUTED COUNTER:  DB atomic (har write, slow) · Redis INCR (har write) · RANGE (per batch, 1000x kam) <- YAHI
 
@@ -455,4 +462,4 @@ BOL: "Short code is a counter in base62, with ranges handed to each server so th
       Next I'd add custom aliases, expiry cleanup and geo-distribution."
 ```
 
-[← MASTER SHEET](../../00_MASTER_SHEET.md)
+ARCHETYPE F (infra/component) · CONCEPTS: [ID-gen](../../FOUNDATIONS/13_distributed_id_snowflake.md) · [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

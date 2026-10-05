@@ -373,4 +373,4 @@ BOL: "The client asks the upload service for a presigned URL and sends the bytes
       URLs secure it, lifecycle rules and a sweeper clean up. Next: retries on failure and a CDN for downloads."
 ```
 
-[← MASTER SHEET](../../00_MASTER_SHEET.md)
+ARCHETYPE B+F · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [reliability/SPOF](../../FOUNDATIONS/11_reliability_spof_cloud.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

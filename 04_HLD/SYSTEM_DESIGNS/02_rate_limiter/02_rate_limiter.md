@@ -94,7 +94,7 @@ SOLUTION: padho-badhao-likho = EK ATOMIC kaam
             if count == 1 then EXPIRE rate:login:userX 60 end      <- EXPIRE sirf PEHLI baar
           ★ JAAL: har request pe EXPIRE 60 -> TTL har baar 60 pe dhakelta -> key kabhi expire nahi
                   -> user hamesha block. (Redis 7+: EXPIRE key 60 NX bhi yahi)
-          CONNECT: wahi race jo idempotency me (containsKey + put ka gap -> double charge)
+          CONNECT (2-Sep): wahi race jo idempotency me (HDFC double-payment: containsKey + put ka gap -> double charge)
                   wahan putIfAbsent, yahan INCR / Lua — ilaaj same: teen step EK unit
 
 NAYA:     koi dabba nahi — Redis me INCR / Lua
@@ -332,6 +332,12 @@ GINTI vs LOAD:  100 chhoti request (5ms) = 0.5 sec kaam · 100 report query (30 
                 limiter ke liye barabar -> bhaari endpoint pe alag kadi limit / request ko WAZAN
                 (report = 50 token, login = 1) / CONCURRENCY limit ("ek user ki 2 bhaari query ek waqt")
 
+EK HI SHAKAL (poore HLD me ghoomti):
+           LB me      "BACHANE wali cheez ne maara" (health check / retry / sticky)
+           cache me   "TEZ karne wali cheez ne raasta roka" (slow Redis + no timeout)
+           limiter me "ROKNE wali cheez ne bheed roki hi nahi" (per-user vs aggregate) + "attack me khud gayab" (fail-open)
+           poora dhaancha: FOUNDATIONS/03_load_balancing.md "CHHE TARIKE" + 04_caching.md "REDIS LAGATE HI SERVER DOWN"
+
 TIERED:    anonymous 60/hr · free 5,000/hr · pro 10,000/hr · enterprise custom -> tier DB se, Redis me usi limit se compare
 ```
 
@@ -384,7 +390,8 @@ nginx.conf ki 2 asli line:
 
 HAMMER:  for /L %i in (1,1,30) do @curl -s -o nul -w "%{http_code} " http://localhost:8080
 DIKHA:   200 200 200 200 200 200 503 503 503 ...
-LOG:     [error] limiting requests, excess: 5.774 by zone "mylimit", client: 172.17.0.1
+LOG:     (Docker Desktop -> Containers -> rl -> Logs) "GET / HTTP/1.1" 503 197
+         [error] limiting requests, excess: 5.774 by zone "mylimit", client: 172.17.0.1
          (excess = bucket se kitna upar · client = Docker gateway IP, sab ek IP = ek bucket)
 
 GOTCHA:  1. 503 tabhi jab ARRIVAL > rate (rate=2r/s pe dheere loop -> sab 200, refill pakad leta)
@@ -421,6 +428,7 @@ public class RateLimitController {
 ```
 LIVE:  1..10 | % { curl.exe -s http://localhost:8080/rate-demo; "" }
        OK #1..#5 · 429 (6..10) · 1 sec baad window reset -> phir OK
+EDGE:  fixed window boundary: 999ms pe 5 + 1001ms pe 5 = ~2ms me 10
 PROD:  single node memory -> restart pe reset + har server apna count -> Redis INCR + EXPIRE
        per user / IP -> map<key, counter> · lib: Bucket4j (token bucket) / Redis + Lua
 BOL:   "I built a fixed-window counter in usercrud — five OK, then 429. In production I'd use token
@@ -479,4 +487,4 @@ BOL: "If Redis is down the limiter fails open so the site stays up, and fails cl
       in one Lua script. I killed a Docker Redis myself to see all three."
 ```
 
-[← MASTER SHEET](../../00_MASTER_SHEET.md)
+ARCHETYPE F · CONCEPTS: [caching/Redis](../../FOUNDATIONS/04_caching.md) · [load-balancing](../../FOUNDATIONS/03_load_balancing.md) · [SPOF](../../FOUNDATIONS/11_reliability_spof_cloud.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

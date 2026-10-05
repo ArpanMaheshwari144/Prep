@@ -1,6 +1,7 @@
 # Twitter Feed
 
 > App khole -> HOME TIMELINE (jinko follow karta unke tweet, latest pehle). Tweet POST bhi.
+> Misaal: app khola -> Virat "Match great" · Sachin "Watching IPL" · Dhoni "Practice" (jinhe TU follow karta).
 > Is design ka dil: **read SASTA** (50:1, pehle se bana ke rakho) + **CELEB ka tweet** (10 crore follower).
 
 ```
@@ -446,4 +447,4 @@ BOL: "On write, the Tweet service saves to Cassandra and puts an event on Kafka;
       Next I'd add ML ranking, trending and search."
 ```
 
-[← MASTER SHEET](../../00_MASTER_SHEET.md)
+ARCHETYPE A (read-heavy/feed) · CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
