@@ -58,6 +58,14 @@ SOLUTION: poora TEXT mat bhejo — sirf OPERATION bhejo
 
 NAYA:     koi dabba nahi — data ki shakal badli (text -> operation)
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App<br/>operation bhejo, text nahi"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
+```
 ```
 DHYAAN:   Last-Write-Wins (3-Sep mock ki galti) -> kisi ka likha KHO jaata
 ```
@@ -135,6 +143,22 @@ SOLUTION: OPERATIONAL TRANSFORMATION (OT) — winner mat chuno, TRANSFORM karo
 
 NAYA:     koi dabba nahi — Conn-Server me OT
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1<br/>+ OT"]
+    n_Conn_Server_x_N_2["Conn-Server 2<br/>+ OT"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_DB["DB"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_DB
+    n_Conn_Server_x_N_2 --> n_DB
+```
 ```
 POOCHEGA: "Two people type at the same position at the same time — what happens?"
 BOL:      "I send operations, not snapshots, and transform concurrent operations with OT or merge them with a
@@ -194,6 +218,24 @@ SOLUTION: SNAPSHOT (poora text, har X ops baad) + uske baad ke thode ops
           doc load = latest snapshot + baad ke ops apply (append log + periodic compaction ka funda)
 
 NAYA:     koi dabba nahi — edit log ke saath snapshot
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_Redis_buffer["Redis buffer"]
+    n_Cassandra_edit_log["Cassandra edit log<br/>+ snapshot"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_Redis_buffer
+    n_Conn_Server_x_N_2 --> n_Redis_buffer
+    n_Redis_buffer --> n_Cassandra_edit_log
 ```
 
 ---

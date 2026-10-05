@@ -74,6 +74,14 @@ SOLUTION: ATOMIC CONDITIONAL UPDATE (sabse accha):
 
 NAYA:     koi dabba nahi — SQL ka atomic update
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_SQL_DB["SQL DB<br/>atomic UPDATE ... WHERE available"]
+    n_USER --> n_App
+    n_App --> n_SQL_DB
+```
 ```
 POOCHEGA: "Two users book the same seat at the same time — what happens?"
 DHYAAN:   2 user ek cheez = atomic / lock · 1 user ka retry = idempotency (dikkat 3)

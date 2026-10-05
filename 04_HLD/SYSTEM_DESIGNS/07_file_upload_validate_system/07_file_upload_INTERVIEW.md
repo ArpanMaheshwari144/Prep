@@ -298,6 +298,30 @@ SOLUTION: worker PEHLE BYTE padhe (magic number), type KHUD tay kare
 
 NAYA:     koi dabba nahi — Worker me check
 ```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_API_Gateway_LB["API Gateway / LB"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker<br/>+ magic bytes check"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_API_Gateway_LB
+    n_API_Gateway_LB --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+```
 ```
 POOCHEGA: "How do you secure it / stop abuse?"
 BOL:      "JWT at the gateway and an owner check on every status and download. Short-lived presigned URLs.

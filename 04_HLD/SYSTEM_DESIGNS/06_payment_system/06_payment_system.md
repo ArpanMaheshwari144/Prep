@@ -76,6 +76,14 @@ SOLUTION: dono ek ATOMIC step — DB TRANSACTION (ACID)
 
 NAYA:     koi dabba nahi — DB transaction
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_DB["DB<br/>debit + credit EK transaction"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_DB
+```
 
 ---
 
@@ -214,6 +222,21 @@ SOLUTION: SAGA (compensating) — ek DB me rollback FREE, alag DB me apna UNDO k
 
 NAYA:     koi dabba nahi — Payment Svc saga chalata
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc<br/>+ SAGA (compensate)"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
+```
 
 ---
 
@@ -229,6 +252,21 @@ SOLUTION: LEDGER — PERMANENT, IMMUTABLE (delete / edit nahi)
             crash recovery = PENDING + webhook + reconciliation (dikkat 4). ledger = HISAAB / AUDIT.
 
 NAYA:     koi alag dabba nahi — DB me Ledger table (append-only)
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc<br/>+ SAGA (compensate)"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB<br/>+ Ledger table (append-only)"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
 ```
 ```
 POOCHEGA: "Data keeps growing — what happens in 3 years?"

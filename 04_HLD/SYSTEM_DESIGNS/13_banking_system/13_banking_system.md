@@ -87,6 +87,14 @@ SOLUTION: ★ ARPAN KA NIYAM (is design ki reedh): "ek DB me -> @Transactional. 
 
 NAYA:     koi dabba nahi — DB transaction
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB<br/>debit + credit EK transaction"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+```
 ```
 POOCHEGA: "What if the server crashes in the middle of a transfer?"
 BOL:      "Both accounts are in one database, so the debit and credit are one local transaction — it commits
@@ -194,6 +202,18 @@ SOLUTION: IDEMPOTENCY KEY — har POST me Idempotency-Key · pehle dekhi -> pura
           poora + hands-on (20 concurrent, same key): payment dikkat 2 + HANDS-ON
 
 NAYA:     koi dabba nahi — DB me idempotency_keys (UNIQUE)
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB<br/>+ idempotency_keys (UNIQUE)"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
 ```
 
 ---
@@ -325,6 +345,26 @@ SOLUTION: CURSOR / KEYSET — "kahan chhoda" yaad rakho:
           index (account_id, ts DESC, id) ke bina dono nahi chalenge — 11 arab scan
 
 NAYA:     koi dabba nahi — query + index
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Banking_Svc_x_N_1["Banking Svc 1"]
+    n_Banking_Svc_x_N_2["Banking Svc 2"]
+    n_Read_replica["Read replica"]
+    n_SQL_DB["SQL DB<br/>+ index (account_id, ts, id)"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_Banking_Svc_x_N_1
+    n_LB --> n_Banking_Svc_x_N_2
+    n_Banking_Svc_x_N_1 --> n_Read_replica
+    n_Banking_Svc_x_N_2 --> n_Read_replica
+    n_Banking_Svc_x_N_1 --> n_SQL_DB
+    n_Banking_Svc_x_N_2 --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
 ```
 
 ---

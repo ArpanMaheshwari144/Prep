@@ -126,6 +126,14 @@ SOLUTION: KEY do: partition = hash(key) % numPartitions, key = userId
 
 NAYA:     koi dabba nahi — producer key bhejta
 ```
+```mermaid
+flowchart TD
+    n_Producer["Producer<br/>key = userId"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Consumer["Consumer"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Consumer
+```
 ```
 POOCHEGA: "How do you keep messages in order?"
 DHYAAN:   partition BADHAYE to hash(key) % n badla -> key doosri partition -> order toot sakta

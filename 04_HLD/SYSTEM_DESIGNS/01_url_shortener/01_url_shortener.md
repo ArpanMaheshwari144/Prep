@@ -258,6 +258,33 @@ SOLUTION: DB ka apna LOG — write PEHLE disk pe log (Cassandra = commit log, Po
 
 NAYA:     koi dabba nahi — Cassandra ke andar log + quorum
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Kafka["Kafka"]
+    n_Analytics_svc["Analytics svc"]
+    n_Analytics_DB["Analytics DB"]
+    n_DLQ["DLQ"]
+    n_Redis["Redis"]
+    n_Cassandra["Cassandra<br/>+ commit log + quorum"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Kafka --> n_Analytics_svc
+    n_Kafka --> n_DLQ
+    n_Analytics_svc --> n_Analytics_DB
+    n_Redis --> n_Cassandra
+```
 ```
 POOCHEGA: "What happens if a DB node goes down mid-write?"
 DHYAAN:   KAFKA nahi (1-Oct mock me bola tha) — Kafka extra dabba hai, DB ka kaam DB ka log karta

@@ -195,7 +195,7 @@ NAYA:     koi dabba nahi — Order Service me key check juda
 ```mermaid
 flowchart TD
     n_USER["USER"]
-    n_Order_Service["Order Service"]
+    n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
     n_Queue_per_symbol["Queue per symbol"]
     n_Matching_Engine["Matching Engine"]
@@ -319,6 +319,30 @@ SOLUTION: (1) book mat todo — ek book do thread me = double match wapas
           -> scale BY symbol across threads, kabhi ek symbol ke andar nahi
 
 NAYA:     koi dabba nahi — Event Log hi kaam aaya
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Event_Log["Event Log<br/>burst yahin line me lagta"]
+    n_Matching_Engine["Matching Engine"]
+    n_Pub_Sub["Pub/Sub"]
+    n_WebSocket["WebSocket"]
+    n_USERS["USERS"]
+    n_Settlement["Settlement (SAGA)"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Event_Log
+    n_Event_Log --> n_Matching_Engine
+    n_Matching_Engine --> n_Pub_Sub
+    n_Matching_Engine --> n_Settlement
+    n_Pub_Sub --> n_WebSocket
+    n_WebSocket --> n_USERS
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
 ```
 
 ---

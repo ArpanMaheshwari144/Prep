@@ -73,6 +73,14 @@ SOLUTION: EVICTION = LRU (jo SABSE LAMBE SAMAY se nahi chhua — "kab") · LFU =
 
 NAYA:     koi dabba nahi — node ke andar
 ```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache["Cache<br/>LRU + TTL"]
+    n_App --> n_DB
+    n_App --> n_Cache
+```
 
 ---
 

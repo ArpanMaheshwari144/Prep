@@ -100,6 +100,19 @@ SOLUTION: padho-badhao-likho = EK ATOMIC kaam
 
 NAYA:     koi dabba nahi — Redis me INCR / Lua
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Redis["Redis<br/>INCR / Lua (atomic)"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+```
 ```
 POOCHEGA: "Two requests come at the same time — what happens?"
 DHYAAN:   2 user ek cheez = atomic / lock · 1 user ka retry = idempotency (dono alag)
@@ -255,6 +268,28 @@ SOLUTION: RATE LIMIT = "kis USER ne kitni"  (abuse / fairness)
 
 NAYA:     koi dabba nahi — Gateway me global cap + shedding
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway<br/>+ global cap + load shedding"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Kafka["Kafka"]
+    n_Pattern_Svc["Pattern Svc"]
+    n_WAF["WAF"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    n_Redis_Cluster --> n_Kafka
+    n_Kafka --> n_Pattern_Svc
+    n_Pattern_Svc --> n_WAF
+```
 ```
 POOCHEGA: "What if traffic suddenly spikes 10x?"
 DHYAAN:   "rate limiter laga hai" kaafi NAHI — per-user limit bheed nahi rokti
@@ -276,6 +311,28 @@ SOLUTION: fail-open ke SAATH local fallback:
           exact nahi (har node apna ginega), par attack me "kuch nahi" se bahut behtar
 
 NAYA:     koi dabba nahi — App / Gateway me local counter fallback
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway<br/>+ global cap + load shedding<br/>+ local counter fallback"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Kafka["Kafka"]
+    n_Pattern_Svc["Pattern Svc"]
+    n_WAF["WAF"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    n_Redis_Cluster --> n_Kafka
+    n_Kafka --> n_Pattern_Svc
+    n_Pattern_Svc --> n_WAF
 ```
 
 ---

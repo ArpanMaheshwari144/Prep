@@ -341,6 +341,30 @@ SOLUTION: wahi CURSOR: GALAT = har message ka delivered / read flag (50 aaye = 5
 
 NAYA:     koi dabba nahi — Cursor store
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store<br/>delivered_upto / read_upto"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
+```
 
 ---
 
@@ -494,6 +518,34 @@ SOLUTION: 1. TTL SE APNE AAP MARNA: Redis presence:B = online, TTL 30 sec · app
           last-seen CHHUPANE ka option = SETTING: chhupaya hai to data hote hue bhi nahi dikhana (privacy alag layer)
 
 NAYA:     koi dabba nahi — Redis presence
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_Blob_store_S3["Blob store (S3)"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis<br/>+ presence (TTL + heartbeat)"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Idempotency_check["Idempotency check"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_Blob_store_S3
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Idempotency_check
+    n_Chat_Server_x_200_2 --> n_Idempotency_check
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Idempotency_check --> n_Cassandra_messages
+    n_Cassandra_messages --> n_Cold_storage
 ```
 
 ---

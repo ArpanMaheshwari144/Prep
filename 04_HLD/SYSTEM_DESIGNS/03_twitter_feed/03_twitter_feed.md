@@ -143,6 +143,20 @@ SOLUTION: HYBRID
 
 NAYA:     koi dabba nahi — Fanout celeb ko SKIP karta, App read pe merge karta
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App<br/>push + pull merge"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers<br/>celeb SKIP"]
+    n_Redis_inbox["Redis inbox"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_DB
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+```
 ```
 POOCHEGA: "What about a celebrity / hot key / hot partition?"
 DHYAAN:   GALAT RAASTE: "user_id pe shard hi galat" (baaki crore ke liye theek, dikkat EK key ki) ·

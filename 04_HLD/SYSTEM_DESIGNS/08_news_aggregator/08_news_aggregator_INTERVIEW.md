@@ -128,6 +128,24 @@ SOLUTION: WORKER ke andar 3 kaam:
 
 NAYA:     koi dabba nahi — Worker me
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Worker["Worker<br/>clean + dedupe + category"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_Worker --> n_DB
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+```
 
 ---
 
@@ -141,6 +159,24 @@ SOLUTION: har source ka fetch alag (parallel), azaad · TIMEOUT · fail -> RETRY
           queue backlog spike sambhaale
 
 NAYA:     koi dabba nahi — Fetcher me
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Worker["Worker<br/>clean + dedupe + category"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher<br/>timeout + retry + circuit breaker"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_Worker --> n_DB
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
 ```
 ```
 POOCHEGA: "What if a source is slow or down?"
@@ -216,6 +252,26 @@ SOLUTION: CATEGORY-WISE CACHE (beech ka raasta): feed:tech · feed:sports · fee
           user prefs -> 2-3 category ki cached feed MERGE
 
 NAYA:     koi dabba nahi — Redis me category keys
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis<br/>+ category feed (tech / sports)"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
 ```
 
 ---
