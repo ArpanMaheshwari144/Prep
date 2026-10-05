@@ -355,7 +355,7 @@ API:      GET /feed?page=1&category=tech -> latest list (PAGED, infinite scroll;
 DB:       ARTICLE: id | title | content | sourceId | category | publishedAt | url
           SOURCE:  id | name | rssUrl | lastFetchedAt
           USER_PREFS (optional): userId | categories[] | savedArticles[]
-          NoSQL (Mongo / Cassandra): bahut + simple + read-heavy + ACID nahi chahiye -> horizontal scale, eventual chalega
+          NoSQL (Mongo / Cassandra): bahut + simple + read-heavy + ACID nahi chahiye -> horizontal scale + flexible schema, eventual chalega
           CONTRAST: news -> NoSQL · PAISA / ledger -> HAMESHA SQL + ACID ("data ka nature dekho, phir DB")
 ```
 

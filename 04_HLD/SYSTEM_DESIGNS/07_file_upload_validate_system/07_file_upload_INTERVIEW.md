@@ -223,7 +223,7 @@ NAYA:     koi dabba nahi
 ## DIKKAT 7 — kisi ne DOOSRE ka trackingId daal ke file maang li
 
 ```
-DIKKAT:   trackingId me "kiski file" likha hi nahi
+DIKKAT:   trackingId ek anuman-layak (guessable) string, aur usme "kiski file" likha hi nahi
 
 SOLUTION: /upload/init pe user authenticated (JWT, gateway pe) -> record me ownerId likho
           /status + /download pe: maangne wala == owner? warna 403

@@ -138,7 +138,7 @@ SOLUTION: IDEMPOTENCY KEY (payment wala tool) — client banata, retry pe SAME
             2 ALAG user, EK seat -> race BETWEEN users -> ATOMIC mark / lock (dikkat 1)
             1 SAME user, duplicate request -> retry dedup -> IDEMPOTENCY (ye)
           (Arpan ki mock line "seat mark-booked kar do, doosra taken dekhe" SAHI thi — wo ATOMIC MARK hai,
-           sirf "idempotency" shabd lag gaya tha)
+           sirf "idempotency" shabd lag gaya tha) · tool ko problem se match karo
 
 NAYA:     Payment Svc (external, idempotency key ke saath)
 ```
@@ -202,6 +202,7 @@ SOLUTION: QUEUE (Kafka) + PER-SHOW WORKER -> us show ki request ek-ek karke -> a
           VIRTUAL WAITING ROOM: "aapka number 12,340" -> load smooth
           ARPAN KA IDEA (27-Sep) = ADMISSION CONTROL: seat 3000, user 5000 -> darwaze pe ginti,
             pehle 3000 andar, 2000 ko TURANT "housefull" / waiting room (flash sale pattern)
+            -> 2000 log bekaar queue me nahi fanste, DB pe bojh ek jhatke me gir jaata
             counter bhi ATOMIC (Redis DECR), warna counter pe race
           ★ BMS pe kahan tootta: user KHAAS seat (A1) chunta. pehle 3000 me X aur Y dono A1
             -> dono ko turant "booked" -> worker: Y ka 0 row -> "sorry, cancel" = sabse bura UX

@@ -314,6 +314,8 @@ REDIS KEY: rate:{endpoint}:{user} -> count · TTL = window (60 sec) -> key gayab
            rate:login:192.168.1.5 -> 4 · rate:signup:user_456 -> 2 · rate:search:apikey_xyz -> 47
 
 FLOW:      user pehchano (IP / user / key) -> INCR (atomic) + EXPIRE -> count > limit ? 429 + Retry-After : App
+EK LINE:   User -> Route53 -> ALB -> API Gateway rate-limiter -> Redis atomic INCR+EXPIRE ->
+           limit-andar? App | limit-cross? 429 + Retry-After | abuse-pattern? Kafka | repeat-offender? WAF ban
 
 ALGORITHM:
   TOKEN BUCKET  (AWS / Stripe)  bucket me token bharte (1/sec, max N) · request = 1 token · khaali -> reject
@@ -386,9 +388,12 @@ nginx.conf ki 2 asli line:
    limit_req_zone $binary_remote_addr zone=mylimit:10m rate=1r/m;    <- har IP ka bucket, refill 1 / min
    limit_req zone=mylimit burst=5 nodelay;                           <- bucket SIZE 5, burst turant serve
    rate = kis speed se nikalti · burst = kitni ruk sakti
+   + location / { ... root /usr/share/nginx/html; index index.html; }  <- content serve
+   koi program NAHI likha — sirf ready tool (Nginx, rate limiter built-in) on kiya + config + hammer -> 503
    SACH: nginx docs isko LEAKY BUCKET kehte; nodelay se bartaav token bucket JAISA. 503 = limit_req_status default.
 
 HAMMER:  for /L %i in (1,1,30) do @curl -s -o nul -w "%{http_code} " http://localhost:8080
+         (1,1,30) = 30 baar · -s -o nul = chup, body phenk do · -w = sirf status code
 DIKHA:   200 200 200 200 200 200 503 503 503 ...
 LOG:     (Docker Desktop -> Containers -> rl -> Logs) "GET / HTTP/1.1" 503 197
          [error] limiting requests, excess: 5.774 by zone "mylimit", client: 172.17.0.1
@@ -457,6 +462,7 @@ CASE A  chalta kaise  req 1..9:  count 1 TTL 60 ALLOW · 2/57 ALLOW · 3/56 ALLO
 
 CASE B  docker stop   "REDIS SE BAAT NAHI HUI: Connection refused" -> FAIL_OPEN = true -> ALLOW (2 baar)
                       fail-open = site chale, limit nahi · fail-closed = abuse nahi, site band
+                      ("server ne haath khade kar diye, sab jao")
 
 CASE C  docker start  GET rl:user:1 -> khaali · user (pehle count 7, BLOCK) -> count 1 ALLOW, 2 ALLOW
                       persistence band -> ginti gayab -> blocked ko 5 nayi mil gayi

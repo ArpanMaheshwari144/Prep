@@ -23,6 +23,7 @@ POOCHO:  "Link banana, redirect, analytics, custom alias, expiry — kis pe focu
 
 FR:      long -> short banao · short -> original redirect
 NFR:     redirect p99 < 200ms · hamesha up · read >> write · code UNIQUE
+         (in 4 pe ungli rakh ke: "har faisla inhi me se kisi se justify karunga")
 
 NUMBERS: writes 100M / din = 10^8 / 10^5 = ~1,000 / sec      (1 din ~ 10^5 sec)
          reads  100x = ~1 lakh / sec
@@ -31,6 +32,8 @@ NUMBERS: writes 100M / din = 10^8 / 10^5 = ~1,000 / sec      (1 din ~ 10^5 sec)
 
 HAR NUMBER SE FAISLA:  100:1 -> CACHE · 90 TB -> SHARD · 7 char -> lambai ka jhagda khatam
          modest maano (1 billion URL = ~500 GB) -> ek DB me fit, shard NAHI. farak sirf assumption ka.
+         "Asli Bitly ~500 GB hai, single DB me aa jaata — bina zaroorat shard mat karo."
+         scaling ka poora ganit ABHI nahi ("you don't necessarily have to go into the details of scaling at this point")
          estimate SKIP mat karo (Zomato me ek banda isi pe reject), par exact ganit me mat atko.
          ⚠ "100M/din" maana to poora per-DAY raho (3 TB wala galat jawab = per-month maan liya tha)
 
@@ -357,7 +360,7 @@ Route 53       -> GEO-ROUTING, paas wala region
 App            -> stateless -> box badhao · READ aur WRITE App alag (100:1 -> read 20, write 2;
                   ek gire to doosra chale)
 Redis          -> sab URL nahi samaate -> HOT rakho, COLD nikaalo (LRU + TTL)
-                  viral song / WhatsApp forward = HOT -> Redis me · log dekhna band = COLD -> bahar,
+                  (ye example Arpan ka apna) viral song / WhatsApp forward = HOT -> Redis me · log dekhna band = COLD -> bahar,
                   Cassandra me to hai, agli miss pe wapas
 Cassandra      -> SHARD by shortCode + read replica
 Counter        -> coordinator khud SPOF -> 2 node (active-passive); range waise bhi tolerate karti
@@ -377,6 +380,8 @@ POOCHEGA: "How do you know it's working?"              -> p99 · error rate · K
 
 ## POOCHE TO (deep-dive)
 
+Jo wo poochhe wahi kholo — sab ek saath mat bol dena.
+
 ```
 API:      BANANA = POST /api/shorten { long_url, custom_code? } -> { short_url, expires_at }
           LAANA  = GET /abc123 -> 302 Found + Location: <long_url>
@@ -395,7 +400,8 @@ KAUNSA DB:  join nahi · transaction nahi · INSERT ek baar + SELECT WHERE short
             "NoSQL powerful hai" MAT bolna — ACCESS PATTERN + SCALE wajah hai (ye write-heavy nahi, read-heavy)
 
 CODE KAISE:
-   MD5 / random   -> collision -> har baar "exists?" DB read
+   MD5 / random   -> collision -> har baar "exists?" DB read   (length 6-7)
+   counter        -> collision nahi, par length VARIABLE
    counter+base62 -> repeat kabhi nahi -> collision nahi, check nahi   <- YAHI
    counter hai to code RANDOM nahi (1-Oct mock me dono saath bol diye the)
    base62: 0-9 (10) + a-z (26) + A-Z (26) · baar-baar /62, remainder ULTA padho

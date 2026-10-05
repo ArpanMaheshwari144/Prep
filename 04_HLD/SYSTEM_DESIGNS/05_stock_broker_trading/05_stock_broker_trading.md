@@ -20,8 +20,8 @@ Source: [Low Latency Stock Exchange](https://bytebytego.com/guides/low-latency-s
 
 ```
 POOCHO:  "Trading bada hai — matching, price feed, risk, settlement. Kis pe focus karein?"
-         -> order MATCHING + paise / share ka SETTLEMENT. Risk / margin scope me nahi.
-         LIMIT + MARKET dono? · PARTIAL fill chalega?
+         -> order MATCHING + paise / share ka SETTLEMENT. Risk / margin / IPO / mutual funds scope me nahi.
+         LIMIT + MARKET dono? · PARTIAL fill chalega? · hum EXCHANGE hain ya BROKER (jo exchange ko bhejta)?
 
 FR:      buy / sell · order match · paisa + share move · live price · cancel / status
 NFR:     paisa CONSISTENT (strong, kabhi eventual nahi) · FAST · FAIR (pehle aaya pehle) · audit
@@ -94,9 +94,9 @@ BOL:      "Orders for one symbol go into one queue handled by one thread, so the
 ```
 DIKKAT:   dono match -> 60k chahiye, hai 50k
 
-SOLUTION: order lagte hi paisa BLOCK karo (kaato nahi) — hotel deposit jaisa
+SOLUTION: order lagte hi paisa BLOCK karo (kaato nahi) — hotel / petrol pump ke deposit jaisa
           total 50k · blocked 30k · available 20k -> doosra 30k ka order REJECT
-          match -> ab kato · cancel -> unblock
+          match -> ab kato · cancel -> unblock · pending -> blocked pada rahega
           DB me: UPDATE wallet SET blocked = blocked + x WHERE available >= x   (0 row = reject)
 
 NAYA:     Wallet
@@ -239,6 +239,7 @@ DIKKAT:   matching server gira -> book + saare pending order gayab
 SOLUTION: EVENT LOG / SEQUENCER (append-only, disk / Kafka)
           har order PEHLE log me (sequence number ke saath) -> PHIR book me
           crash -> naya server log REPLAY kare -> book bilkul waisi (1 thread = same result)
+          (ye write-ahead log (WAL) ka hi tareeka)
           cricket: scoreboard (RAM) gaya, scorer ka register (log) se sab wapas
           bonus: yahi log = AUDIT TRAIL (kaun, kya, kab — regulator ko chahiye)
           SEQUENCER: Ramesh 10:00:01, Mohan 10:00:02, dono BUY TCS @3000 -> Ramesh = #501, Mohan = #502
@@ -279,6 +280,10 @@ BOL:      "A sequencer stamps every order with an increasing sequence number and
 
 POOCHEGA: "What if the server crashes in the middle?"
 DHYAAN:   DO jagah: (1) matching (RAM) -> log replay   (2) settlement (DB) -> rollback / SAGA
+          sirf ek bola to AADHA · pehle matching (design ka dil)
+MISAAL:   10:15 pe matching server gira, TCS book me 4,000 pending order
+          naya server -> log #1 se #9,87,654 tak replay -> book bilkul waisi (single thread = same result)
+          usi waqt ek settlement aadha (buyer -30k, seller +30k nahi) -> DB rollback -> dono wapas
 BOL:      "If the matching engine dies, I rebuild the book by replaying the event log. If settlement
            dies midway, a single-DB transaction rolls back; across services a saga compensates."
 ```
@@ -364,7 +369,8 @@ LIMIT  = "3000 ya behtar, warna rukunga"   -> price pakka
 MARKET = "jo bhav hai, abhi do"             -> time pakka
 kab kya: sahi daam chahiye, jaldi nahi -> LIMIT · turant ghusna / nikalna -> MARKET
 
-PARTIAL FILL: BUY 10, mile 6 -> 6 match, 4 pending -> FILLED / PARTIALLY FILLED / OPEN
+PARTIAL FILL: BUY 10, mile 6 -> 6 match, 4 pending -> naya seller @3000 aaya -> 4 bhi bhare
+              FILLED / PARTIALLY FILLED / OPEN (Zerodha / Groww / NSE / BSE me yahi)
 
 DB: money / orders = SQL + ACID · order book = RAM · ledger = append-only
 

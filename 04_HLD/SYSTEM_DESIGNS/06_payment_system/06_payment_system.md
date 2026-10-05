@@ -368,6 +368,7 @@ KEY KAB BANTI (28-Aug confusion saaf):
           (A) do baar TU tap -> key 555, key 888 -> 100 + 100 = 200 ✓
           (B) ek tap + network RETRY -> wahi 555 dobara -> "aa chuka" -> pehla result -> 100 ✓
           farak = KAUN dobara bhej raha: TU (nayi key, naya payment) · SYSTEM retry (same key, dedup)
+          (retry me tu button dobara nahi dabata)
           maqsad do baar pay rokna NAHI, sirf network retry ko do baar count hone se rokna
           CHEQUE: key = cheque number · do cheque = dono cash · ek number do baar = nahi
                   bank amount nahi, NUMBER dekhta
