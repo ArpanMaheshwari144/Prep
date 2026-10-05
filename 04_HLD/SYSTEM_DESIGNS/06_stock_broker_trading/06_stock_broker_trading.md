@@ -172,8 +172,8 @@ SOLUTION: SAGA — bade kaam ko chhote LOCAL step me todo; koi step fail -> pich
     ▼
   [ Settlement ]            ab SAGA (kai DB)
     │
-    ├──► [ Wallet DB ]      ★ NAYA
-    └──► [ Portfolio DB ]   ★ NAYA
+    ├──► [ Wallet DB ]      ★ BADLA: pehle ek [ DB ] tha, ab do me bata
+    └──► [ Portfolio DB ]   ★ BADLA
 ```
 
 ---
@@ -231,7 +231,9 @@ SOLUTION: EVENT LOG / SEQUENCER (append-only, disk / Kafka)
   [ Wallet ]
     │
     ▼
-  [ Event Log / Sequencer ] ★ NAYA   (queue ki jagah) seq no. · key = symbol · replay
+  [ Event Log / Sequencer ] ★ BADLA: pehle [ Queue per symbol ] tha
+                                     ab wahi queue DISK pe likhi jaati + har order ko seq no.
+                                     key = symbol · crash pe REPLAY
     │
     ▼
   [ Matching Engine ]
