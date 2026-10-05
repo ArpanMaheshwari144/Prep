@@ -10,7 +10,7 @@
 |---|---|
 | [1 NAKSHA + NIYAM](#part1) | [kaunsi file kab](#naksha) · [teen baatein](#teen-baatein) |
 | [2 CROSS-QUESTION](#part2) | [6 sawaal](#chhe-sawaal) · [8 dabbe](#dabbe) · [jawab se pehle 5 sec](#jawab-se-pehle) · [Q1-Q22 ab design file me](#bank) |
-| [3 DESIGN KHADA KARNA](#part3) | [teen line](#teen-line) · [6 archetype](#archetype) · [rail (7 step)](#rail) · [block menu](#block-menu) · [drill wali rows + jode](#drill-rows) · [A ya B trade-off](#trade-off) · [15 design ka DIL](#designs) |
+| [3 DESIGN KHADA KARNA](#part3) | [teen line](#teen-line) · [6 archetype](#archetype) · [rail (7 step)](#rail) · [block menu](#block-menu) · [drill wali rows + jode](#drill-rows) · [A ya B trade-off](#trade-off) · [14 design ka DIL](#designs) |
 | [4 ATKE TO / ROUND DIN](#part4) | [anjaan design](#anjaan) · [LinkedIn misaal](#linkedin) · [kuch na pata](#na-pata) · [checklist](#checklist) |
 | [5 BOLNA](#part5) | [kaise bolna](#kaise-bolna) · [SHABD](#shabd) |
 
@@ -811,7 +811,7 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 <a id="designs"></a>
 
-## 5. 15 PADHE HUE DESIGN — DIL + KHAAS HISSA (jo PADHNA padta hai)
+## 5. 14 PADHE HUE DESIGN — DIL + KHAAS HISSA (jo PADHNA padta hai)
 
 > Common dabbe (LB · replica · cache · shard · queue · CDN · S3) har design me wahi — wo derive ho jaate.
 > Neeche sirf wo jo us design ka APNA hai, jise bina padhe bol nahi sakte (Arpan ka nichod, 25-Sep).
@@ -925,7 +925,8 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 ```
 09 BOOKMYSHOW      DIL: do log EK seat na lein
    . ATOMIC: UPDATE seats SET status='booked' WHERE seat_id=? AND status='available' -> 1 row jeeta, 0 = gayi
-   . HOLD: status='held' + held_until (5 min); pay -> booked, time gaya -> available
+   . HOLD: status='held' + held_until (5 min); pay -> booked · SQL me TTL NAHI: booking UPDATE expired hold
+     (held_until < now) ko khali maane + sweeper job saaf kare
    . 2 user ek seat = atomic mark · 1 user double click = idempotency · spike = queue + per-show worker
 
 ```
