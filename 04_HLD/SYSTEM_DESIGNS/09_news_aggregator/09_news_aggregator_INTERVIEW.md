@@ -1,404 +1,408 @@
-# News Aggregator — POORA ROUND (4 MOVE)
+# News Aggregator
 
-> **NAV** — ARCHETYPE A+E · DIL: kai source -> ek feed. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [elasticsearch](../../FOUNDATIONS/12_elasticsearch_search.md) · [caching](../../FOUNDATIONS/04_caching.md) · saath: [twitter-feed](../03_twitter_feed/03_twitter_feed.md)
-
-> JP general-product design (Google News / Inshorts jaisa): alag-alag source se news kheencho
-> -> store karo -> user ko ek feed do. READ-HEAVY system.
-> 15-Sep: asli mock-video ke hisaab se dobara likha — koi 7-step rail nahi, sirf 4 move.
-> Har jagah: **tu kya BOLTA hai · BOARD pe kya banta · FAISLA + KYUN**.
-
-```
-★★ TEEN NIYAM (poori file par lagte — [MASTER](../../00_MASTER_SHEET.md) "Kaise bolna")
-   1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
-   2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
-   3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega
-```
+> Alag-alag source se news kheencho -> store -> user ko EK feed (Google News / Inshorts jaisa). JP general-product design.
+> Is design ka dil: **READ >> WRITE** + **WRITE path aur READ path ALAG** + **feed precompute + cache**.
 
 ---
 
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
-
-### How to Avoid Crawling Duplicate URLs at Google Scale?
+## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![How to Avoid Crawling Duplicate URLs at Google Scale?](https://assets.bytebytego.com/diagrams/0089-bloomfilter.png)
-
-- **Is file me kahan juda:** crawler + DEDUPE — BLOOM FILTER: 'ye URL pehle dekha?' kam memory me (kabhi-kabhi galat haan, galat na kabhi nahi).
-- Source: [How to Avoid Crawling Duplicate URLs at Google Scale?](https://bytebytego.com/guides/how-to-avoid-crawling-duplicate-urls-at-google-scale/)
-
----
-
-# MOVE 1 — POOCHO (board pe abhi kuch nahi)
-
-```
-   TU: "News aggregator me do bade hisse hain — news andar laana (ingestion) aur
-        user ko feed dikhana. Aap kis pe focus karwana chahenge?"
-
-   TU: "Kuch cheezein confirm kar lun —
-          - kitne SOURCE? 10 ya 10,000?
-          - news kitni FRESH chahiye — real-time, ya 5 minute purani chalegi?
-          - feed sabko SAME hoga ya PERSONALIZED?
-          - kitne user, kitni news per day?"
-
-   ★ "5 minute purani chalegi?" — is sawaal ka jawab poore design ka raasta khol deta hai.
-     Haan mila -> precompute + cache ka pura raasta khul gaya.
-```
+Source: [How to Avoid Crawling Duplicate URLs at Google Scale?](https://bytebytego.com/guides/how-to-avoid-crawling-duplicate-urls-at-google-scale/)
+(crawler + DEDUPE — BLOOM FILTER: "ye URL pehle dekha?" kam memory me; kabhi galat haan, galat na kabhi nahi)
 
 ---
 
-# MOVE 2 — DO CHHOTE BLOCK LIKHO
+## SHURU — poocho + numbers
 
 ```
-   ┌──────────────────────┐    ┌────────────────────────────────────┐
-   │ News Aggregator      │    │ Use cases:                         │
-   │   - Source (RSS/site)│    │   - sources se articles kheencho   │
-   │   - Article          │    │   - store karo                     │
-   │   - Category         │    │   - user ko FEED do (latest list)  │
-   │   - User (+ prefs)   │    │   - (optional) category / search   │
-   └──────────────────────┘    │                                    │
-                               │ NOT in scope: comments, ML ranking │
-   ┌──────────────────────────┐└────────────────────────────────────┘
-   │ Kya chahiye (NFR):       │
-   │  - feed FAST khule <- DIL│
-   │  - news FRESH rahe       │
-   │  - lakhs user pe chale   │
-   │  - ek SOURCE down ho to  │
-   │    system na gire        │
-   └──────────────────────────┘
+POOCHO:  "Do hisse: news andar laana (ingestion) aur feed dikhana — kis pe focus?"
+         kitne SOURCE? 10 ya 10,000? · kitni FRESH? real-time ya 5 min purani chalegi?  <- haan = precompute + cache
+         feed sabko SAME ya PERSONALIZED? · kitne user, kitni news / din?
 
-   ★ KEY SOCH jo shuru me hi bolni hai:
-     "Har user feed kholta hai, par news to gine-chune source se aati hai —
-      matlab READS >> WRITES. Poora design isi ek baat pe khada hoga."
-```
+FR:      sources se kheencho · store · FEED (latest list) · (optional) category / search
+         scope bahar: comments · ML ranking
+NFR:     feed FAST (dil) · news FRESH · lakhon user · ek SOURCE down ho to system na gire
+         KEY SOCH: "har user feed kholta, news gine-chune source se -> READS >> WRITES"
 
-```
-   Numbers:
-     - 10 lakh user, har user 5 baar/din feed kholta  ->  50 lakh reads/din
-     - 1000 source, har 5 min me nayi news            ->  ~3 lakh writes/din
-
-     TRICK (1 din ~ 1,00,000 sec):
-        reads  = 50,00,000 / 1,00,000 = ~50 / sec     (spike 5-10x = ~500 / sec)
-        writes = 3,00,000  / 1,00,000 = ~3 / sec
-
-   HAR NUMBER SE EK FAISLA:
-     reads >> writes   ──►  CACHE + READ REPLICA (ye design ka dil hai)
-     writes background ──►  QUEUE (user ko intezaar nahi karna)
-     data bada hota ja ──►  SHARD + purana ARCHIVE
+NUMBERS: 10 lakh user x 5 / din = 50 lakh read / din = ~50 / sec (spike 5-10x = ~500 / sec)
+         1000 source, har 5 min = ~3 lakh write / din = ~3 / sec          (1 din ~ 1,00,000 sec)
+         reads >> writes   -> CACHE + READ REPLICA (dil)
+         writes background -> QUEUE
+         data badhta       -> ARCHIVE (+ bade scale pe SHARD)
 ```
 
 ---
 
-# MOVE 3 — BOXES BANAO (chhota banao, phir dikkat pe badhao)
+## DABBA 0 — sabse simple
 
 ```
-   TU: "Sabse simple se shuru."
-
-        [ Fetcher ] ──► [ DB ]  articles
-                          ▲
-        USER ──► [ App ] ─┘   "latest 20 nikaal ke de do"
-
-   TU: "Ye kaam kar raha hai. Ab 10 lakh user aur 1000 source daal ke dekhte hain."
+SOLUTION: Fetcher source se kheenche, DB me daale · Feed Svc "latest 20" nikaal ke de
 ```
-
-### dikkat 1 — "har request pe DB se 'latest 20' query ja rahi hai"
-
 ```
-        50 / sec normal, spike pe 500 / sec — sab DB pe
-        -> DB marr jaayega, aur sabko LAGBHAG WAHI feed chahiye thi
-
-   TEEN OPTION (ye teeno bolna, phir chunna):
-
-     OPTION 1 — ON-THE-FLY (har request pe DB query)
-          simple + hamesha fresh, PAR har request DB pe -> spike pe DB down  => NAHI
-
-     OPTION 2 — ★ PRECOMPUTE + CACHE (WINNER)
-          ready feed (latest 20) Redis me pada ho -> user seedha cache se le
-          nayi news aaye -> cache refresh
-          5 minute purani feed chal jaayegi (news me theek hai; paisa hota to NAHI)
-
-     OPTION 3 — FANOUT (har user ki personalized feed pehle se bana ke rakho)
-          fast + personalized, PAR 10 lakh alag feed banana aur rakhna mehnga
-          => sirf tab jab personalization asli requirement ho
-
-   FAISLA: OPTION 2 — kyunki sabko lagbhag SAME latest feed chahiye
-           -> ek cache sab use karenge -> read-heavy ke liye ekdum fit
-
-        nayi news ──► worker ──► DB + cache refresh
-        user      ──► cache (99%) ──miss──► DB ──► wapas cache me
-
-   ★ trade-off bol ke chunna — asli number yahin milte hain
-```
-
-### dikkat 2 — "1000 source ek saath, aur fetch karna slow hai"
-
-```
-        agar user ki request ke waqt fetch karenge -> user ruka rahega
-        aur 1000 source ek saath aa jaayein -> spike
-
-   FAISLA: WRITE-PATH aur READ-PATH bilkul ALAG kar do
-
-     ── WRITE (news andar aati hai) — slow, background ──
-        Sources(1000) ──► [ Fetcher / Crawler ] ──► [ QUEUE (Kafka) ] ──► [ Worker ] ──► DB + Cache
-
-     ── READ (user padhta hai) — fast ──
-        User ──► [ Feed Service ] ──► [ Cache ] ──miss──► [ DB ]
-                 (LB aur read-replica abhi NAHI — wo dikkat 8 me, jab sach me zaroorat aaye)
-
-   TU: "Ye mera core decision hai — dono raaste alag rakhunga taaki ek doosre ko slow na karein.
-        Crawling background ka kaam hai, feed dikhana foreground ka."
-
-   ★ QUEUE hi kyun: 1000 source ek saath aa gaye -> queue absorb kar legi,
-     worker apni raftaar se khaayega.
-```
-
-### dikkat 3 — "ek hi khabar paanch alag source se aa gayi"
-
-```
-        feed me wahi news 5 baar dikhegi -> bekaar
-
-   FAISLA: WORKER ke andar teen kaam
-
-        raw article ──► [ WORKER ] ──► DB + cache
-                            │
-                            ├─ CLEAN     (ads/HTML hatao, title/content nikaalo)
-                            ├─ DEDUPE    (ek khabar 5 source pe -> ek hi rakho)
-                            └─ CATEGORY  (tech / sports / politics tag karo)
-```
-
-### dikkat 4 — "ek source down hai ya bahut slow"
-
-```
-        fetcher us source pe atak gaya -> baaki 999 source ki news bhi ruk gayi
-
-   FAISLA:
-        - har source ka fetch alag (parallel), ek doosre se azaad
-        - TIMEOUT rakho
-        - fail hua -> RETRY, phir bhi na chale -> SKIP karo aur aage badho
-        - queue ka backlog spike absorb karta rahega
-
-   TU: "Ek source ka down hona poore system ko nahi gira sakta —
-        ye maine requirement me bhi likha tha."
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What if the downstream service / provider is slow?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       notification   -> SMS provider slow  -> timeout + circuit breaker + fallback provider
-       payment        -> PSP slow           -> timeout, PENDING rakho + reconcile, andha retry nahi
-
-   ► MASTER SHEET SE JODA: CIRCUIT BREAKER per source: N fail -> OPEN = us source ko call hi band
-       (fail-fast) -> thodi der baad HALF-OPEN = ek test call -> theek to CLOSED.
-```
-
-### dikkat 5 — "6 mahine me 5 crore row — disk, backup aur kharcha badhta ja raha hai"
-
-```
-        feed ki query hai:   ORDER BY published_at DESC LIMIT 20
-
-        ★ SACH: published_at pe index hai to ye query 5 crore pe bhi MILLISECONDS me
-          (DB index ke aakhri sire se 20 entry padh leta). Query slow NAHI hai.
-        asli dikkat: table, index, backup, restore sab 5 crore ka -> disk + kharcha + dheema restore
-
-        aur dekho: ye 20 row NAYI hain.
-        baaki 4.99 crore row sirf jagah ghere baithi hain, koi padhta hi nahi.
-
-   FAISLA: PURANA data alag karo
-        latest ~7 din   ->  garam table (chhoti, tez)
-        usse purana     ->  cold storage / archive table
-        cache me sirf latest  ->  DB pe load waise hi kam
-
-   ★ ye SHARDING nahi hai -- ye RETENTION hai. Dono alag cheezein hain,
-     aur aksar ek hi saans me bol di jaati hain.
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "Data keeps growing — what happens in 3 years?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       banking        -> ledger              -> KABHI delete nahi, purana cold storage
-       chat           -> purane messages     -> month se partition, cold storage
-       notification   -> notification log    -> TTL
-       payment        -> payment records     -> archive, delete nahi
-
-   ► MASTER SHEET SE JODA: time se PARTITION (mahina) -> purana partition DETACH -> COLD storage
-       (S3 / Glacier, sasta). jo bilkul nahi chahiye uspe TTL = mita do.
-```
-
-### dikkat 6 — (sirf BADE scale pe) "ek DB box likhai + data nahi jhel raha"
-
-```
-        ★ IMAANDARI SE: humare number pe (writes ~3/sec, 7 din garam data) ek DB box aaram se
-          chal jaata hai -> SHARD ki ZAROORAT NAHI. Interview me yahi bolo:
-          "is scale pe shard nahi karunga; source 100x ho jaayein ya user-generated content aaye,
-           tab shard."
-
-   TAB (bade scale pe) FAISLA: SHARD  ->  date (ya category) ke hisaab se
-
-   ★ date se shard karne ka ek ASAR hai:
-     saari NAYI likhai EK hi shard pe girti hai (aaj wala) -> wahi shard garam rahega
-     -> wahi HOT-PARTITION wali baat jo caching aur chat design me bhi aati hai
-```
-
-### dikkat 7 — "user ko apni pasand ki feed chahiye"
-
-```
-        poora per-user fanout mehnga hai (10 lakh alag feed)
-
-   FAISLA (beech ka raasta): CATEGORY-WISE CACHE
-        feed:tech . feed:sports . feed:politics  — har category ki ready feed
-        user ki prefs dekho -> 2-3 category ki cached feed merge kar do
-        -> personalization bhi mil gaya, aur 10 lakh feed banane se bach bhi gaye
-```
-
-### dikkat 8 — "subah 8 baje sab ek saath app kholte hain — ek Feed Service box ka CPU khatam"
-
-```
-        news ka traffic SPIKE wala hota hai (subah, lunch, raat)
-        ek box bhara  ->  request line me  ->  aur wahi box gira to feed POORI band
-
-        aur cache-MISS wali request seedha PRIMARY DB pe ja rahi hai --
-        usi primary pe fetcher 1000 source ki LIKHAI kar raha hai
-        ->  padhne wale ne likhne wale ko dheema kar diya
-
-   FAISLA (do alag cheezein, do alag wajah se):
-        kai FEED SERVICE instance + LB   ->  spike jhelne ke liye, aur ek gire to baaki chalein
-                                             (Feed Service stateless hai -- feed cache me hai,
-                                              box ki memory me nahi)
-        cache-miss ka read  ->  READ REPLICA se, primary se NAHI
-                                ->  padhna aur likhna alag raaston pe chale jaayein
-
-   ★ replica CACHE ki jagah nahi leti -- cache 99% rok leti hai,
-     replica sirf bache hue 1% ko primary se door rakhti hai
-```
-
-### ab poora naksha (jahan pahunche) + har box ka KYUN
-
-```
-   ── WRITE PATH (background, slow chalega) ──
-
-   Sources (1000)
-        │  RSS / poll
-        ▼
-   [ FETCHER / CRAWLER ]  ──► [ QUEUE (Kafka) ] ──► [ WORKER ] ──► [ DB (NoSQL) ]
-        timeout + retry + skip      spike absorb      clean            +
-                                                      dedupe       [ CACHE refresh ]
-                                                      category
-
-   ── READ PATH (fast) ──
-
-   USER ──► [ LB ] ──► [ FEED SERVICE ] ──► [ CACHE (Redis) ] ──miss──► [ DB read-replica ]
-                                                 ~99% hit                      │
-                                                                     wapas cache me daal do
-
-     Fetcher   : source se kheenchta (poll/RSS) — alag rakha taaki feed pe asar na ho
-     Queue     : 1000 source ek saath aa jaayein to spike absorb kare
-     Worker    : raw ganda data -> clean + DEDUPE + category
-     DB        : permanent store
-     Cache     : read-heavy hai -> ready feed RAM me -> DB har baar mat maaro
-     Feed Svc  : feed banata — pehle cache, miss pe REPLICA (primary ko chhua bhi nahi)
-     LB        : subah wale spike pe kai feed-service instance (dikkat 8)
-
-   ★ CORE DECISION (ye line bolni hai): WRITE path aur READ path ALAG hain —
-     ek doosre ko slow nahi karte.
+  USER
+    │
+    ▼
+  [ Feed Svc ]
+    │
+    ▼
+  [ DB ]
+    ▲
+    │
+  [ Fetcher ]
 ```
 
 ---
 
-# MOVE 4 — BOLTE-BOLTE JODO (jo poocha jaaye, wahi kholo)
-
-## ► "API kya hogi?"
+## DIKKAT 1 — har request pe DB se "latest 20"
 
 ```
-   USER ke liye (LAANA = GET):
-     GET /feed?page=1&category=tech    ->  latest news list (PAGED)
-     GET /article/{id}                 ->  ek article ka content
-     GET /search?q=cricket             ->  search
+DIKKAT:   50 / sec, spike 500 / sec sab DB pe · aur sabko LAGBHAG WAHI feed chahiye thi
 
-   ANDAR ke liye (BANANA = POST):
-     POST /ingest { source data }      ->  nayi news daalo (zyadatar background)
+SOLUTION: teen option bolo, phir chuno:
+          1. ON-THE-FLY (har request DB)  -> simple + fresh, spike pe DB down -> NAHI
+          2. PRECOMPUTE + CACHE           -> ready feed (latest 20) Redis me, nayi news pe refresh  <- YAHI
+                                             5 min purani chalegi (news me theek; paisa hota to nahi)
+          3. FANOUT (har user ki feed)    -> fast + personal, par 10 lakh feed mehnga -> sirf tab jab personalization asli
+          sabko same feed -> EK cache sab use karein
+          user -> cache (99%) -> miss -> DB -> wapas cache
 
-   ★ SENIOR SIGNAL: PAGINATION — 10,000 news ek saath mat bhejo;
-     page/limit do -> infinite scroll chalega.
-   ★ GET = padhna | POST = state badalna (swap mat karna)
+NAYA:     Redis
 ```
-
-## ► "DB me kya, aur kaunsa DB?"
-
 ```
-   ARTICLE :  id (KEY) | title | content | sourceId | category | publishedAt | url
-   SOURCE  :  id (KEY) | name | rssUrl | lastFetchedAt
-   (optional) USER_PREFS : userId | categories[] | savedArticles[]
-
-   DB choice -> NoSQL (Mongo / Cassandra):
-        news = bahut zyada (crore, badhta jaayega) + structure simple
-               + read-heavy + ACID ki zaroorat nahi (paisa nahi hai)
-        NoSQL -> horizontal scale aasan + flexible schema + eventual consistency chal jaayegi
-
-   ★ CONTRAST (JP/finance flavour — ye bolna):
-        News  ->  NoSQL
-        PAISA / ledger  ->  HAMESHA SQL + ACID
-     "Data ka nature dekho, phir DB chuno" — ye line poore HLD me kaam aati hai.
-```
-
-## ► "Search kaise karoge?"
-
-```
-   DB me LIKE '%cricket%' -> poora scan -> slow
-
-   FAISLA: alag SEARCH INDEX (Elasticsearch — inverted index)
-        worker jab article store kare -> saath me search index bhi update kare (async)
-        search request -> Elasticsearch -> matching ids -> content DB/cache se
-
-   ★ index thoda peeche ho to chalega (nayi news 1 min baad search me dikhe — theek hai)
-   detail: [FOUNDATIONS/12_elasticsearch_search](../../FOUNDATIONS/12_elasticsearch_search.md)
-```
-
-## ► "Kahan tootega / 10x pe?"
-
-```
-   ★ RATTO MAT — dono raaste alag-alag chalao:
-
-      READ path:
-          user ──► LB          -> ek instance kaafi nahi      -> kai instance + LB
-                ──► feed svc   -> har request DB pe?          -> CACHE (99%)
-                ──► cache      -> Redis gir gaya?             -> cluster + replica,
-                                                                 miss pe DB-replica fallback
-                ──► DB         -> read load                   -> READ REPLICA
-                                  storage badh raha           -> SHARD (category/date) + ARCHIVE
-
-      WRITE path:
-          source ──► fetcher   -> ek source down/slow          -> timeout + retry + skip
-                 ──► queue     -> 1000 source ek saath         -> backlog absorb
-                 ──► worker    -> kaam bahut                   -> kai worker parallel
-
-      SPOF: "ek box gira to poora system gira?" -> wahi cheez replicate karo
-
-   AAGE badhata to: personalized feed (category-wise cache), images CDN pe,
-                    ML ranking, breaking news ka real-time push.
-
-   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
-       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
-       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
-       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
-```
-
-## ► WRAP (ek saans me)
-
-```
-   "WRITE: sources -> fetcher -> queue -> worker (clean + dedupe + category) -> NoSQL DB + cache.
-    READ : user -> LB -> feed service -> cache (99%) -> miss pe DB read-replica.
-    DB NoSQL rakha kyunki data massive aur simple hai aur ACID ki zaroorat nahi;
-    paisa hota to SQL/ACID leta.
-    Deep-dive: feed precompute + cache — kyunki sabko lagbhag same latest feed chahiye.
-    Scale: service LB, DB replica + shard + archive, fetcher parallel + retry, cache cluster."
+  USER
+    │
+    ▼
+  [ Feed Svc ]
+    │
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ DB ]
+    ▲
+    │
+  [ Fetcher ]
 ```
 
 ---
 
-> ★ News ka TWIST ek line me: WRITE-path aur READ-path ALAG + feed precompute + cache (read-heavy).
-> Paisa hota to SQL/ACID hota — data ke nature se DB chunte hain.
+## DIKKAT 2 — 1000 source ek saath, fetch slow
+
+```
+DIKKAT:   user ki request pe fetch -> user ruka · 1000 ek saath -> spike
+
+SOLUTION: WRITE PATH aur READ PATH bilkul ALAG (core decision)
+          WRITE (background, slow): Sources -> Fetcher -> Kafka -> Worker -> DB + cache refresh
+          READ (fast): User -> Feed Svc -> cache -> miss -> DB
+          queue = 1000 ek saath aaye to absorb, worker apni raftaar se
+
+NAYA:     Kafka · Worker
+BADLA:    Fetcher ab seedha DB me nahi, Kafka me daalta
+```
+```
+  USER
+    │
+    ▼
+  [ Feed Svc ]
+    │
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ DB ]
+    ▲
+    │
+  [ Worker ]
+    ▲
+    │
+  [ Kafka ]
+    ▲
+    │
+  [ Fetcher ]
+    ▲
+    │
+  [ Sources ]
+```
 
 ---
+
+## DIKKAT 3 — ek hi khabar paanch source se aa gayi
+
+```
+DIKKAT:   feed me wahi news 5 baar
+
+SOLUTION: WORKER ke andar 3 kaam:
+          CLEAN (ads / HTML hatao, title / content nikaalo)
+          DEDUPE (ek khabar 5 source pe -> ek) · URL dedupe = Bloom filter (tasveer)
+          CATEGORY (tech / sports / politics tag)
+
+NAYA:     koi dabba nahi — Worker me
+```
+
+---
+
+## DIKKAT 4 — ek source down ya bahut slow
+
+```
+DIKKAT:   fetcher us pe atka -> baaki 999 ki news bhi ruki
+
+SOLUTION: har source ka fetch alag (parallel), azaad · TIMEOUT · fail -> RETRY -> phir bhi nahi -> SKIP
+          CIRCUIT BREAKER per source: N fail -> OPEN (call band, fail-fast) -> HALF-OPEN (ek test) -> CLOSED
+          queue backlog spike sambhaale
+
+NAYA:     koi dabba nahi — Fetcher me
+```
+```
+POOCHEGA: "What if a source is slow or down?"
+BOL:      "Each source is fetched independently with a timeout, retries, and a circuit breaker; if it keeps
+           failing I skip it. One bad source can't block the other 999."
+```
+
+---
+
+## DIKKAT 5 — 6 mahine me 5 crore row: disk, backup, kharcha badhta
+
+```
+DIKKAT:   ORDER BY published_at DESC LIMIT 20
+          ★ SACH: published_at pe index -> 5 crore pe bhi MILLISECONDS (index ke sire se 20)
+          query slow NAHI · asli = table + index + backup + restore sab 5 crore ka
+          20 row nayi, baaki 4.99 crore koi padhta hi nahi
+
+SOLUTION: RETENTION: latest ~7 din = garam table (chhoti) · purana = cold storage / archive
+          time se PARTITION (mahina) -> purana DETACH -> S3 / Glacier · bilkul nahi chahiye -> TTL
+          ye SHARDING nahi, RETENTION (aksar ek saans me bol dete)
+
+NAYA:     Archive (cold storage)
+```
+```
+  USER
+    │
+    ▼
+  [ Feed Svc ]
+    │
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ DB ] ──► [ Archive ]
+    ▲
+    │
+  [ Worker ]
+    ▲
+    │
+  [ Kafka ]
+    ▲
+    │
+  [ Fetcher ]
+    ▲
+    │
+  [ Sources ]
+```
+```
+POOCHEGA: "Data keeps growing — what happens in 3 years?"
+BOL:      "Only the last week is hot. I partition by month and move old partitions to cold storage, with a
+           TTL on what we never need. That's retention, not sharding."
+```
+
+---
+
+## DIKKAT 6 — (sirf BADE scale pe) ek DB box likhai + data nahi jhel raha
+
+```
+DIKKAT:   source 100x / user-generated content
+
+SOLUTION: IMAANDARI: humare number (3 write / sec, 7 din garam) pe ek box chal jaata -> SHARD ki zaroorat NAHI
+          bolo: "is scale pe shard nahi; source 100x ya UGC aaye tab"
+          tab: SHARD by date (ya category)
+          date shard ka asar: saari NAYI likhai aaj wale shard pe -> HOT PARTITION
+
+NAYA:     koi dabba nahi
+```
+
+---
+
+## DIKKAT 7 — user ko apni pasand ki feed
+
+```
+DIKKAT:   per-user fanout mehnga (10 lakh feed)
+
+SOLUTION: CATEGORY-WISE CACHE (beech ka raasta): feed:tech · feed:sports · feed:politics
+          user prefs -> 2-3 category ki cached feed MERGE
+
+NAYA:     koi dabba nahi — Redis me category keys
+```
+
+---
+
+## DIKKAT 8 — subah 8 baje sab ek saath: ek Feed Svc ka CPU khatam
+
+```
+DIKKAT:   spike (subah / lunch / raat) · wahi box gira = feed band
+          cache MISS seedha PRIMARY pe -> wahin fetcher 1000 source likh raha -> padhne ne likhne ko dheema kiya
+
+SOLUTION: kai FEED SVC + LB -> spike + ek gire to baaki (stateless, feed cache me)
+          cache-miss read -> READ REPLICA se, primary nahi -> padhna aur likhna alag raaste
+          replica cache ki jagah nahi leti: cache 99% rokti, replica bache 1% ko primary se door rakhti
+
+NAYA:     LB · Read replica
+BADLA:    Feed Svc -> Feed Svc x N
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ Feed Svc x N ]
+    │
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ Read replica ]
+    ▲
+    │
+  [ DB ] ──► [ Archive ]
+    ▲
+    │
+  [ Worker ]
+    ▲
+    │
+  [ Kafka ]
+    ▲
+    │
+  [ Fetcher ]
+    ▲
+    │
+  [ Sources ]
+```
+
+---
+
+## DIKKAT 9 — "cricket" search karna hai
+
+```
+DIKKAT:   LIKE '%cricket%' = poora scan
+
+SOLUTION: alag SEARCH INDEX (Elasticsearch, inverted index)
+          worker article store kare -> saath me index update (async)
+          search -> Elasticsearch -> matching ids -> content DB / cache se
+          index thoda peeche chalega (1 min baad search me dikhe — theek)
+          detail: [FOUNDATIONS/12_elasticsearch_search](../../FOUNDATIONS/12_elasticsearch_search.md)
+
+NAYA:     Elasticsearch
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ Feed Svc x N ] ──► [ Elasticsearch ]
+    │
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ Read replica ]
+    ▲
+    │
+  [ DB ] ──► [ Archive ]
+    ▲
+    │
+  [ Worker ]
+    ▲
+    │
+  [ Kafka ]
+    ▲
+    │
+  [ Fetcher ]
+    ▲
+    │
+  [ Sources ]
+```
+
+---
+
+## 10x SCALE — har dabba alag
+
+```
+READ:   Feed Svc  -> kai box + LB
+        Redis     -> gira? cluster + replica, miss pe read replica
+        DB        -> READ REPLICA · storage -> ARCHIVE (+ bade scale pe shard by date / category)
+WRITE:  Fetcher   -> source down / slow -> timeout + retry + skip + circuit breaker
+        Kafka     -> 1000 ek saath -> backlog absorb, partition badhao
+        Worker    -> kai worker parallel
+AAGE:   personalized (category cache) · images CDN · ML ranking · breaking news real-time push
+
+POOCHEGA: "How would you scale this to 10x?"      -> dono raaste alag chalao, pehle jo toote
+POOCHEGA: "What's the single point of failure?"   -> "ek box gira to sab?" -> wahi replicate
+POOCHEGA: "How do you know it's working?"         -> feed p99 · cache hit rate · Kafka lag · source error rate · alert
+```
+
+---
+
+## POOCHE TO (deep-dive)
+
+```
+API:      GET /feed?page=1&category=tech -> latest list (PAGED, infinite scroll; 10,000 ek saath nahi)
+          GET /article/{id} · GET /search?q=cricket · POST /ingest { source data } (andar, background)
+          GET = padhna · POST = state badalna (swap mat karna)
+
+DB:       ARTICLE: id | title | content | sourceId | category | publishedAt | url
+          SOURCE:  id | name | rssUrl | lastFetchedAt
+          USER_PREFS (optional): userId | categories[] | savedArticles[]
+          NoSQL (Mongo / Cassandra): bahut + simple + read-heavy + ACID nahi chahiye -> horizontal scale, eventual chalega
+          CONTRAST: news -> NoSQL · PAISA / ledger -> HAMESHA SQL + ACID ("data ka nature dekho, phir DB")
+```
+
+---
+
+## AAKHRI DABBA + WRAP
+
+```
+WRITE: Sources -> Fetcher (timeout / retry / skip) -> Kafka (spike) -> Worker (clean + dedupe + category) -> DB + cache
+READ:  LB -> Feed Svc x N -> Redis (99%) -> miss pe Read replica · Elasticsearch = search · Archive = purana
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ Feed Svc x N ] ──► [ Elasticsearch ]
+    │
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ Read replica ]
+    ▲
+    │
+  [ DB ] ──► [ Archive ]
+    ▲
+    │
+  [ Worker ]
+    ▲
+    │
+  [ Kafka ]
+    ▲
+    │
+  [ Fetcher ]
+    ▲
+    │
+  [ Sources ]
+```
+```
+BOL: "I keep the write path and read path separate. Sources are fetched in the background, go through Kafka
+      to workers that clean, dedupe and categorise, and land in a NoSQL store — massive, simple data with no
+      need for ACID; money would be SQL. Everyone wants roughly the same latest feed, so I precompute it in
+      Redis and serve 99% from cache, with a read replica for misses. Feed services scale behind a load
+      balancer, old news goes to cold storage, and search runs on Elasticsearch."
+```
 
 [← MASTER SHEET](../../00_MASTER_SHEET.md)
