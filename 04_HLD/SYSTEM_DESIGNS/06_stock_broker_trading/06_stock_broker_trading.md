@@ -309,7 +309,7 @@
 
      1. THREAD KO MAXIMIZE KARO, BOOK KO MAT TODO
         matching poori in-memory + no-lock hai -> ek thread lakhon/sec nigal leta hai
-        (NASDAQ literally aise hi karta hai). "slow ho jaayega" ka dar zyada hai.
+        (LMAX exchange ka public design yahi hai: ek thread, sab RAM me). "slow ho jaayega" ka dar zyada hai.
 
      2. BURST ko DURABLE QUEUE / EVENT-LOG absorb kare (backpressure)
         order pehle queue me append -> thread apni pace pe FIFO consume kare
