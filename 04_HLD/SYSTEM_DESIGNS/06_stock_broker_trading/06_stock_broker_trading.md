@@ -150,6 +150,19 @@
        wahan check WRITE ke andar: UPDATE ... WHERE available >= x (0 row = paisa nahi).
    ★ farak: 2 user ek cheez = atomic/lock · 1 user ka retry = idempotency (dikkat 5)
 
+   ► GALAT RAASTA: "DB ACID hai, wahi race rok dega"
+       -> matching DB me hota hi NAHI, order book RAM me hai
+       -> aur ACID transaction akela check-phir-write race nahi rokta
+          (do transaction dono "available hai" padh sakte, dono aage badh jaate)
+   ► MISAAL: TCS pe Ramesh aur Mohan dono ek saath BUY 10 @3000, seller ke paas sirf 10
+       TCS ki EK queue -> pehle Ramesh -> 10 match -> book me 0 bache
+                        -> phir Mohan  -> kuch nahi mila -> OPEN / pending
+       paisa wala hissa DB me: UPDATE wallet SET blocked = blocked + x WHERE available >= x
+                               (0 row badli = paisa nahi, order reject)
+   BOL: "Orders for one symbol go into one queue handled by one thread, so two orders on the
+         same stock are matched one after the other, never in parallel - no lock needed.
+         The money block in the DB is a conditional update, so the balance can't go negative."
+
    ► INTERVIEWER AISE POOCHEGA:
        "How do you keep messages / events in order?"
 
