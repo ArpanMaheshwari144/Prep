@@ -74,7 +74,7 @@ SOLUTION: read pe mat jodo — POST ke waqt hi har follower ke INBOX me daal do 
           tweet ek baar banta, 50 baar padha jaata -> mehnat LIKHTE waqt
           (Town Crier har ghar ke Notice Board pe parcha chipkata)
 
-NAYA:     Fanout · Redis inbox
+NAYA:     Fanout (tweet ko har follower ke inbox me daalne wala) · Redis inbox (har user ki ready feed, sirf tweet_id)
 ```
 ```mermaid
 flowchart TD
@@ -165,7 +165,7 @@ SOLUTION: HOT-TWEET CACHE — bestseller front counter pe (cache), baaki kitaab 
           recent celeb tweet, TTL 1 hr (SETEX ... 3600) · 95% HIT · miss -> DB -> cache me daalo
           < 1 hr = HOT -> cache · purana = COLD -> seedha DB
 
-NAYA:     Hot-tweet cache
+NAYA:     Hot-tweet cache (celeb ke naye tweet RAM me, sab wahin se padhein)
 ```
 ```mermaid
 flowchart TD
@@ -322,7 +322,7 @@ SOLUTION: TWEET SERVICE (write, royal scribe) · TIMELINE SERVICE (read, merge p
                  Neo4j tabhi jab "dost ke dost" jaise kai-hop sawaal
 
 BADLA:    App -> teen ALAG service: Tweet Svc + Timeline Svc + User Svc (har ek ke kai box, diagram me ek-ek)
-NAYA:     Graph DB
+NAYA:     Graph DB (kaun kisko follow karta)
 ```
 ```mermaid
 flowchart TD

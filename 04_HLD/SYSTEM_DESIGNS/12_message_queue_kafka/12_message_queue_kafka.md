@@ -207,7 +207,7 @@ SOLUTION: REPLICATION — har partition ka LEADER (saara read / write) + FOLLOWE
           copies ALAG rack / AZ (broker.rack) — warna ek AZ = leader + follower saath gaye
           CONTROLLER metadata (kaun leader, ISR me kaun) = chhota par 100% sahi -> split-brain roko
 
-NAYA:     Controller (KRaft)
+NAYA:     Controller (KRaft) (kaun leader, kaun ISR me — ye hisaab rakhne wala)
 BADLA:    Brokers A / B / C -> har partition ka leader + 2 follower (alag broker / AZ)
 ```
 ```mermaid

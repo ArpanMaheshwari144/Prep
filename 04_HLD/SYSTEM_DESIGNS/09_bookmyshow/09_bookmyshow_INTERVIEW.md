@@ -103,7 +103,7 @@ SOLUTION: SEAT HOLD + TTL: select -> 'held', held_until = now + 5 min · pay SUC
             kami: ~1 min tak 'held' dikhegi
           DONO saath: UPDATE ka check = SAHI-PAN · sweeper = SAFAI
 
-NAYA:     Sweeper job
+NAYA:     Sweeper job (har minute expired hold ko wapas available karne wala)
 ```
 ```mermaid
 flowchart TD
@@ -210,7 +210,7 @@ SOLUTION: QUEUE (Kafka) + PER-SHOW WORKER -> us show ki request ek-ek karke -> a
           seat number NAHI (concert standing, sale stock) -> Arpan ka idea jaisa hai poora sahi
           "BookMyShow bhi aise karta" MAT bolo (andar public nahi) -> "a common pattern in flash sales"
 
-NAYA:     Kafka · Booking worker · gate counter (Redis me)
+NAYA:     Kafka · Booking worker (ek show ki request ek-ek karke atomic update kare) · gate counter (Redis me, darwaze pe ginti)
 ```
 ```mermaid
 flowchart TD

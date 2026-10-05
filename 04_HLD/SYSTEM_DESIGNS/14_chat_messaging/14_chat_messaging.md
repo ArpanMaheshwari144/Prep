@@ -296,7 +296,7 @@ SOLUTION: A. HAR MESSAGE x HAR MEMBER record ("4417 -> Arpan delivered, Suresh r
           offline wali baat hi: padhne wala apna nishaan khud rakhta
           ★ tick ka maamla yahin: "sabko mila" / "sabne padha" ke liye A wala (per message per member) chahiye
 
-NAYA:     Cursor store
+NAYA:     Cursor store (har user ka har chat me "kahan tak padha / mila" wala number)
 ```
 ```mermaid
 flowchart TD
@@ -372,7 +372,7 @@ SOLUTION: IDEMPOTENCY KEY = chat me clientMsgId: { chatId, text, clientMsgId: "a
             "jo dobara bhej raha, usi ko pehchaan deni hogi"
           "pehle aayi?" + insert ek ATOMIC step (UNIQUE constraint / Redis SET key NX EX)
 
-NAYA:     Idempotency check
+NAYA:     Idempotency check (clientMsgId pehle aaya? to naya message mat banao)
 ```
 ```mermaid
 flowchart TD

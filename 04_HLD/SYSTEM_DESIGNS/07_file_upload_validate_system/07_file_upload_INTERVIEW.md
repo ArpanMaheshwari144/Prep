@@ -150,7 +150,7 @@ SOLUTION: upload pehle tmp/ prefix me -> VALIDATE hone pe asli jagah copy
           validation FAILED -> delete ya QUARANTINE bucket + status FAILED
           (ye edge case interviewer kuredega — khud bol do)
 
-NAYA:     Sweeper job
+NAYA:     Sweeper job (der se atki file dhoondh ke dobara chalane / FAILED karne wala)
 ```
 ```mermaid
 flowchart TD

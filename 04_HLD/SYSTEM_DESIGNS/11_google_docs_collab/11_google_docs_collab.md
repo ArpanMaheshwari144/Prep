@@ -73,7 +73,7 @@ SOLUTION: WEBSOCKET — do-tarfa zinda connection, dono taraf se push
           do-tarfa chahiye: user type bhi karta, doosron ke edit receive bhi
           (sirf server -> client hota to SSE halka padta)
 
-BADLA:    App -> Conn-Server (WebSocket pakadta)
+BADLA:    App -> Conn-Server (connection server: user ka WebSocket pakad ke rakhta)
 ```
 ```mermaid
 flowchart TD
@@ -154,7 +154,7 @@ SOLUTION: BUFFER + BATCH: op -> Redis buffer me jama -> thodi der me BATCH -> No
           batch ke baad bhi bada -> docId se SHARD (ek doc ke saare op ek shard)
           replica sirf READ baantti, write ke liye SHARD · country / date = bura key (skew)
 
-NAYA:     Redis buffer
+NAYA:     Redis buffer (edits thodi der jama, phir ek saath DB me)
 BADLA:    DB -> Cassandra edit log (docId shard)
 ```
 ```mermaid

@@ -212,7 +212,7 @@ SOLUTION: LAYERED: (1) rate limit = soft, 429
           turant permanent kyun nahi: asli user tez click · ek NAT IP ke peeche 100 log · sale ka legit burst
           -> limit maafi wali, ban sirf pakke abuse pe
 
-NAYA:     Kafka · Pattern Svc · WAF
+NAYA:     Kafka · Pattern Svc (baar-baar maarne wala pakde) · WAF (edge pe IP / bot ko permanent rokne wali deewar)
 ```
 ```mermaid
 flowchart TD

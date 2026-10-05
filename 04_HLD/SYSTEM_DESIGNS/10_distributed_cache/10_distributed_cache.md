@@ -90,7 +90,7 @@ SOLUTION: hash(key) % N -> node juda / gaya -> N badla -> LAGBHAG SAARI key ka n
           range (A-M / N-Z) -> simple, par hot range -> NAHI
           CACHE CLIENT (routing) key -> node, app ko nodes ki ginti se azaad rakhta
 
-NAYA:     Cache client
+NAYA:     Cache client (app ke andar library, key dekh ke sahi node chunti)
 BADLA:    Cache -> Node A / B / C
 ```
 ```mermaid
@@ -205,7 +205,7 @@ SOLUTION: (1) hot key KAI node pe copy -> read bat jaayein (score#1..#10, random
           MISAAL: IPL live score / flash sale page, 5 crore log ek key
                   L1 1-2 sec TTL har app server pe (score thoda purana chalega) = sabse bada ilaaj · page / image CDN
 
-NAYA:     L1 local cache
+NAYA:     L1 local cache (har App server ki apni memory me chhota cache)
 BADLA:    App -> App + L1 local cache
 ```
 ```mermaid

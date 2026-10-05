@@ -162,7 +162,7 @@ SOLUTION: RETENTION: latest ~7 din = garam table (chhoti) · purana = cold stora
           time se PARTITION (mahina) -> purana DETACH -> S3 / Glacier · bilkul nahi chahiye -> TTL
           ye SHARDING nahi, RETENTION (aksar ek saans me bol dete)
 
-NAYA:     Archive (cold storage)
+NAYA:     Archive (purana data sasti jagah, jaise S3 Glacier)
 ```
 ```mermaid
 flowchart TD

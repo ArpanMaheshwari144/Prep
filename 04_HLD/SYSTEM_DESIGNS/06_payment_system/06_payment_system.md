@@ -94,7 +94,7 @@ SOLUTION: IDEMPOTENCY KEY — client har NAYE payment pe UUID, RETRY pe WAHI
           100 + 100 do genuine payment -> alag key -> dono hote ✓ · retry -> wahi key -> ek baar
           (DSA: register = hashmap "pehle dekha?")
 
-NAYA:     Idempotency store (Redis + DB unique)
+NAYA:     Idempotency store (key -> result yaad rakhne wala; Redis + DB unique)
 ```
 ```mermaid
 flowchart TD
@@ -133,7 +133,7 @@ SOLUTION: external PSP / GATEWAY (Razorpay / Stripe / bank rails) asli paisa mov
           call external + async -> PENDING state chahiye
           STATE: INITIATED -> PENDING (PSP ko bheja) -> SUCCESS / FAILED
 
-NAYA:     PSP
+NAYA:     PSP (Payment Service Provider — Razorpay / Stripe / bank, asli paisa wahi hilata)
 ```
 ```mermaid
 flowchart TD
@@ -169,7 +169,7 @@ SOLUTION: 1. STATUS (write-ahead): kuch karne se PEHLE "PENDING" durable likho -
           push + pull DONO rakhne
           COURIER: har parcel ka tracking number + status — courier gira, parcel gum nahi
 
-NAYA:     Reconciliation job · webhook (PSP -> Payment Svc)
+NAYA:     Reconciliation job (PENDING payment dhoondh ke PSP se asli haal milaane wala) · webhook (PSP khud call karke bataye)
 ```
 ```mermaid
 flowchart TD

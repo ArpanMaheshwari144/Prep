@@ -142,7 +142,7 @@ SOLUTION: Notification Svc ke andar 3 kaam:
           CHANNEL tay karo:  push + email (SMS skip)
           pref / template har event pe -> CACHE kar lo
 
-NAYA:     User-pref DB · Template DB
+NAYA:     User-pref DB (user ko kaunsa channel, quiet hours) · Template DB (message ka saancha, {{orderId}} jaisa)
 ```
 ```mermaid
 flowchart TD
@@ -470,7 +470,7 @@ SOLUTION: provider ka WEBHOOK -> "delivered" / "failed" / "bounced" -> TRACKING 
           Tracking (Cassandra): sent · delivered · opened · clicked · failed
           failed (galat number / bounce) -> retry · doosra channel · ya mark failed
 
-NAYA:     Tracking DB
+NAYA:     Tracking DB (har message ka haal: sent / delivered / failed)
 ```
 ```mermaid
 flowchart TD

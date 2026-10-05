@@ -128,7 +128,7 @@ SOLUTION: RANGE ALLOCATION — COUNTER service (aksar ZooKeeper / ek DB counter-
           coordinator se baat sirf har BLOCK pe, har request pe nahi
           number -> BASE62 -> 7 char code   (detail neeche POOCHE TO)
 
-NAYA:     Counter
+NAYA:     Counter (har App ko number ki range dene wala, aksar ZooKeeper / DB table)
 ```
 ```mermaid
 flowchart TD

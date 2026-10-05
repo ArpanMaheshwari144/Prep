@@ -62,7 +62,7 @@ SOLUTION: har SYMBOL ki EK queue + EK thread (single-threaded per symbol)
           LOCK kyun nahi: exchange ki speed pe lock = slow + deadlock ka risk · ek line me race possible hi nahi
           ye RULE hai, if-condition nahi — har trading system me hona hi hoga
 
-NAYA:     Queue per symbol · Matching Engine
+NAYA:     Queue per symbol · Matching Engine (buy aur sell order milaane wala, order book RAM me)
 ```
 ```mermaid
 flowchart TD
@@ -95,7 +95,7 @@ SOLUTION: order lagte hi paisa BLOCK karo (kaato nahi) — hotel / petrol pump k
           match -> ab kato · cancel -> unblock · pending -> blocked pada rahega
           DB me: UPDATE wallet SET blocked = blocked + x WHERE available >= x   (0 row = reject)
 
-NAYA:     Wallet
+NAYA:     Wallet (user ka paisa: total / blocked / available)
 ```
 ```mermaid
 flowchart TD
@@ -125,7 +125,8 @@ SOLUTION: saare step EK transaction me (ACID) — sab ya kuch nahi -> crash = RO
           LEDGER double-entry: jitna ek se gaya utna doosre ko mila -> total same = audit
           STRONG vs EVENTUAL: like-count eventual chalta, PAISA hamesha STRONG
 
-NAYA:     Settlement
+NAYA:     Settlement (match ke BAAD paisa + share sach me badalne wala dabba — kaam ka naam; yahan wo kaam
+          EK TRANSACTION se hota. dikkat 4 me do DB ho jaate, tab wahi kaam SAGA se. Settlement = KYA, transaction / SAGA = KAISE)
 ```
 ```mermaid
 flowchart TD
@@ -134,7 +135,7 @@ flowchart TD
     n_Wallet["Wallet"]
     n_Queue_per_symbol["Queue per symbol"]
     n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement"]
+    n_Settlement["Settlement (ek transaction)"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -166,7 +167,7 @@ flowchart TD
     n_Wallet["Wallet"]
     n_Queue_per_symbol["Queue per symbol"]
     n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement"]
+    n_Settlement["Settlement (SAGA)"]
     n_Wallet_DB["Wallet DB"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
@@ -198,7 +199,7 @@ flowchart TD
     n_Wallet["Wallet"]
     n_Queue_per_symbol["Queue per symbol"]
     n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement"]
+    n_Settlement["Settlement (SAGA)"]
     n_Wallet_DB["Wallet DB"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
@@ -239,7 +240,7 @@ flowchart TD
     n_Wallet["Wallet"]
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement"]
+    n_Settlement["Settlement (SAGA)"]
     n_Wallet_DB["Wallet DB"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
@@ -276,7 +277,7 @@ DIKKAT:   har client baar-baar poochhe (polling) -> lakhon request / sec -> serv
 SOLUTION: WEBSOCKET PUSH + PUB/SUB — connection ek baar, price badle tab server khud bheje
           price feed = sirf LATEST chahiye (WhatsApp jaisa store nahi; reconnect pe current price)
 
-NAYA:     Pub/Sub · WebSocket
+NAYA:     Pub/Sub (ek price update, sab subscriber tak) · WebSocket (khula connection, server khud price bheje)
 ```
 ```mermaid
 flowchart TD
@@ -288,7 +289,7 @@ flowchart TD
     n_Pub_Sub["Pub/Sub"]
     n_WebSocket["WebSocket"]
     n_USERS["USERS"]
-    n_Settlement["Settlement"]
+    n_Settlement["Settlement (SAGA)"]
     n_Wallet_DB["Wallet DB"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
@@ -377,7 +378,7 @@ flowchart TD
     n_Pub_Sub["Pub/Sub"]
     n_WebSocket["WebSocket"]
     n_USERS["USERS"]
-    n_Settlement["Settlement"]
+    n_Settlement["Settlement (SAGA)"]
     n_Wallet_DB["Wallet DB"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service

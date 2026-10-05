@@ -158,7 +158,7 @@ SOLUTION: DONO RAKHO (19-Sep yahan seekha): ledger_entries = SACH · accounts.ba
           RECONCILIATION (source ka grading point): raat ko har account SUM(ledger) vs balance -> farak = ALERT
           ★ chupchap theek MAT karo — pehle KYUN (bug abhi zinda)
 
-NAYA:     Reconciliation job
+NAYA:     Reconciliation job (raat ko ledger ka jod aur balance milaane wala)
 ```
 ```mermaid
 flowchart TD
