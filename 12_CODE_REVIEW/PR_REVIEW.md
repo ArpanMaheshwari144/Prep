@@ -41,12 +41,16 @@ teamblind.com "jp morgan chase superday" · devbrainiac.com JPMorgan SDE-2
      jdbc:... url string me                                               -> env variable / Vault
  3   getConnection · new FileReader ·     CLOSE kahan?                    connection khatam, DB/app girega
      openStream · createStatement                                         -> try-with-resources / pool / JdbcTemplate
+     ★ new FileWriter / FileOutputStream  close nahi = FLUSH bhi nahi     file KHAALI / adhoori jaati, phir bhi
+       (5-Oct chhoota)                    (data buffer me pada reh gaya)  mail/upload ho jaati -> try-with-resources
      raw JDBC dikhe -> WHERE bhi dekho    SELECT * bina WHERE, filter      poori table memory me
                                           Java ke if me                   -> WHERE DB me
  4   LOOP ke andar  query / HTTP / repo   N+1 (DB) · N HTTP call          1 lakh row = 1 lakh call
      call / new RestTemplate()                                            -> JOIN / IN / batch / queue, bean inject
  5   catch                                nigla? sirf println? chauda     prod me pata hi nahi kya toota
                                           (Exception)? return false/null? -> log.error("..id={}", id, e) + specific
+     ★ catch ke BAAD neeche dekho:        fail hua par phir bhi "OK"/200  client samjha ho gaya -> 500 / rethrow
+       return "OK" / ok() (5-Oct chhoota) lautaya?
  6   static  (jo final nahi)              saari app me EK copy, sab       thread-safe nahi + kabhi saaf nahi
      · static Map cache                   thread share                    (cache: update ke baad STALE)
      · static SimpleDateFormat            SimpleDateFormat thread-safe    -> local / Concurrent* / DateTimeFormatter
@@ -59,12 +63,14 @@ teamblind.com "jp morgan chase superday" · devbrainiac.com JPMorgan SDE-2
                                           (Integer 127 ke upar false)     poori job chup-chaap kuch nahi karegi"
  9   double / float  me amount            paisa rounding                  -> BigDecimal / long paise
      amount / qty request se              -ve / 0 check?                  -> @Positive / validation
+     date / month String me (@RequestParam) format check nahi            -> YearMonth / LocalDate / @Pattern
 10   log / println me  email · card ·     PII / secret log me             log leak = data leak -> sirf id / mask
      PAN · password · token
 11   ★ {id} wala HAR method               "ye kiska hai?" — owner check   koi bhi kisi ka data dekhe / mitaye
      (GET / pay / cancel / DELETE)        ek me hai to baaki me maan mat  -> token se owner, nahi to 403
      child id + parent id dono?           rishta check (item usi order    (chup "ok" / 200 NAHI)
                                           ka hai?)
+     ★ dimaag me aaye "koi bhi kuch bhi bhej sakta" = wahi OWNER CHECK -> NAAM se bolo + 403 (5-Oct)
 12   DO write ek method me                @Transactional nahi = aadha     beech me fail -> paisa gaya, status nahi
      (save + save · refund + status)      likha; do request ek saath =    -> @Transactional + WHERE status=? /
      ★ ek hi query wale pe NAHI           double refund                   @Version / idempotency
