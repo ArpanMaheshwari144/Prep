@@ -1389,9 +1389,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
    3 JAGAH DHYAAN:
      1. INDEX store, value nahi (width index se banti).
-     2. nS ka default = n   (NA -1, NA n-1)
+     2. nS ka default = n   (n = array ka SIZE = kitne bar)   NA -1
 
         KYUN: -1 aur n = array ke BAHAR ki nakli deewar
+
+              [2,4] -> size 2 -> n = 2   (index 0, 1 andar; index 2 bahar)
 
               idx:      -1  |  0   1  |  2 (= n)
                       deewar|  2   4  |deewar
@@ -1399,11 +1401,31 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
               left  me koi chhota nahi  ->  deewar index 0 se PEHLE  ->  pS = -1
               right me koi chhota nahi  ->  deewar aakhri ke BAAD    ->  nS = n
 
-        MISAAL: [2,4], bar0 (height 2), pS = -1
+        MISAAL: [2,4]   (dono bar ko right me koi chhota nahi -> nS dono jagah DEFAULT)
 
-              nS = n = 2     ->  width =  2 - (-1) - 1 =  2  ->  area  4   SAHI
-              nS = -1        ->  width = -1 - (-1) - 1 = -1  ->  area -2   GALAT
-              nS = n-1 = 1   ->  width =  1 - (-1) - 1 =  1  ->  area  2   GALAT (bar1 chhoot gaya)
+          CASE 1: nS default = -1                      GALAT
+
+              idx   :  0    1
+              h     :  2    4
+              pS    : -1    0
+              nS    : -1   -1      <- default -1
+
+              bar0  : -1 - (-1) - 1 = -1   ->  area 2 * -1 = -2
+              bar1  : -1 -  0   - 1 = -2   ->  area 4 * -2 = -8
+              ans   = -2                     (sahi 4)
+              wajah : right ki deewar LEFT me rakh di -> width minus
+
+          CASE 2: nS default = n = 2                   SAHI
+
+              idx   :  0    1
+              h     :  2    4
+              pS    : -1    0
+              nS    :  2    2      <- default n (size)
+
+              bar0  :  2 - (-1) - 1 = 2    ->  area 2 * 2 = 4   (dono bar, height 2)
+              bar1  :  2 -  0   - 1 = 1    ->  area 4 * 1 = 4   (sirf bar1)
+              ans   = 4
+              wajah : right ki deewar RIGHT me bahar -> width sahi
 
         FAYDA: NS - PS - 1 kinare wale bar pe bhi sahi, alag if-else nahi.
      3. `>` strictly, `>=` NAHI.   [3,3,3,3]: `>=` -> barabar wala bhi stopper -> har width 1 -> 3 (galat)
