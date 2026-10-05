@@ -34,13 +34,16 @@ NUMBERS: ~50 lakh users · ~50 lakh orders / din · market khulte hi BURST · pr
 ## DABBA 0 — sabse simple
 
 ```
+SOLUTION: order DB me rakho, milta-julta sell dhoondho -> match
+```
+```
   USER
     │
     ▼
   [ Order Service ]
     │
     ▼
-  [ DB ]          order rakho, milta-julta sell dhoondho -> match
+  [ DB ]
 ```
 
 ---
@@ -54,6 +57,8 @@ DIKKAT:   Seller ke 10 share. Ramesh aur Mohan dono ek saath BUY 10.
 SOLUTION: har SYMBOL ki EK queue + EK thread (single-threaded per symbol)
           TCS -> T1 · INFY -> T2 · ek ke baad ek -> race ho hi nahi sakti -> lock nahi chahiye
           order book RAM me (microseconds)
+
+NAYA:     Queue per symbol · Matching Engine
 ```
 ```
   USER
@@ -62,10 +67,10 @@ SOLUTION: har SYMBOL ki EK queue + EK thread (single-threaded per symbol)
   [ Order Service ]
     │
     ▼
-  [ Queue per symbol ]      ★ NAYA   TCS | INFY | RELIANCE ...
+  [ Queue per symbol ]
     │
     ▼
-  [ Matching Engine ]       ★ NAYA   1 thread / symbol · order book RAM me
+  [ Matching Engine ]
     │
     ▼
   [ DB ]
@@ -88,6 +93,8 @@ SOLUTION: order lagte hi paisa BLOCK karo (kaato nahi) — hotel deposit jaisa
           total 50k · blocked 30k · available 20k -> doosra 30k ka order REJECT
           match -> ab kato · cancel -> unblock
           DB me: UPDATE wallet SET blocked = blocked + x WHERE available >= x   (0 row = reject)
+
+NAYA:     Wallet
 ```
 ```
   USER
@@ -96,7 +103,7 @@ SOLUTION: order lagte hi paisa BLOCK karo (kaato nahi) — hotel deposit jaisa
   [ Order Service ]
     │
     ▼
-  [ Wallet ]                ★ NAYA   paisa BLOCK
+  [ Wallet ]
     │
     ▼
   [ Queue per symbol ]
@@ -118,6 +125,8 @@ DIKKAT:   buyer -30k ho gaya, seller +30k hone se pehle crash -> 30k GAYAB
 SOLUTION: saare step EK transaction me (ACID) — sab ya kuch nahi -> crash = ROLLBACK
             BEGIN  buyer -30k +10 share · seller +30k -10 share  COMMIT
           LEDGER double-entry: jitna ek se gaya utna doosre ko mila -> total same = audit
+
+NAYA:     Settlement
 ```
 ```
   USER
@@ -135,7 +144,7 @@ SOLUTION: saare step EK transaction me (ACID) — sab ya kuch nahi -> crash = RO
   [ Matching Engine ]
     │
     ▼
-  [ Settlement ]            ★ NAYA   ek transaction · double-entry ledger
+  [ Settlement ]
     │
     ▼
   [ DB ]
@@ -153,6 +162,8 @@ SOLUTION: SAGA — bade kaam ko chhote LOCAL step me todo; koi step fail -> pich
           wallet -30k ✓ -> portfolio +10 ✗ -> COMPENSATE: wallet +30k wapas
           (flight ✓ hotel ✗ -> flight cancel + refund)
           ACID = ek DB, turant · SAGA = kai service, code se undo
+
+BADLA:    ek [ DB ] -> do me bata: Wallet DB + Portfolio DB · Settlement ab SAGA chalata
 ```
 ```
   USER
@@ -170,10 +181,10 @@ SOLUTION: SAGA — bade kaam ko chhote LOCAL step me todo; koi step fail -> pich
   [ Matching Engine ]
     │
     ▼
-  [ Settlement ]            ab SAGA (kai DB)
+  [ Settlement ]
     │
-    ├──► [ Wallet DB ]      ★ BADLA: pehle ek [ DB ] tha, ab do me bata
-    └──► [ Portfolio DB ]   ★ BADLA
+    ├──► [ Wallet DB ]
+    └──► [ Portfolio DB ]
 ```
 
 ---
@@ -185,12 +196,14 @@ DIKKAT:   ek order do baar lag gaya -> do baar paisa
 
 SOLUTION: IDEMPOTENCY KEY — har request ke saath ek unique key
           server yaad rakhta "ABC123 ho chuka" -> dobara aaya -> wahi purana result, naya order nahi
+
+NAYA:     koi dabba nahi — Order Service me key check juda
 ```
 ```
-  USER                      ★ request + idempotencyKey
+  USER
     │
     ▼
-  [ Order Service ]         ★ NAYA KAAM: key dekho, duplicate = purana jawab
+  [ Order Service ]
     │
     ▼
   [ Wallet ]
@@ -220,6 +233,8 @@ SOLUTION: EVENT LOG / SEQUENCER (append-only, disk / Kafka)
           crash -> naya server log REPLAY kare -> book bilkul waisi (1 thread = same result)
           cricket: scoreboard (RAM) gaya, scorer ka register (log) se sab wapas
           bonus: yahi log = AUDIT TRAIL (kaun, kya, kab — regulator ko chahiye)
+
+BADLA:    Queue per symbol -> Event Log (wahi queue, ab disk pe likhi jaati + seq no. + key = symbol)
 ```
 ```
   USER
@@ -231,9 +246,7 @@ SOLUTION: EVENT LOG / SEQUENCER (append-only, disk / Kafka)
   [ Wallet ]
     │
     ▼
-  [ Event Log / Sequencer ] ★ BADLA: pehle [ Queue per symbol ] tha
-                                     ab wahi queue DISK pe likhi jaati + har order ko seq no.
-                                     key = symbol · crash pe REPLAY
+  [ Event Log ]
     │
     ▼
   [ Matching Engine ]
@@ -265,6 +278,8 @@ DIKKAT:   har client baar-baar poochhe (polling) -> lakhon request / sec -> serv
 
 SOLUTION: WEBSOCKET PUSH + PUB/SUB — connection ek baar, price badle tab server khud bheje
           price feed = sirf LATEST chahiye (WhatsApp jaisa store nahi; reconnect pe current price)
+
+NAYA:     Pub/Sub · WebSocket
 ```
 ```
   USER
@@ -276,10 +291,10 @@ SOLUTION: WEBSOCKET PUSH + PUB/SUB — connection ek baar, price badle tab serve
   [ Wallet ]
     │
     ▼
-  [ Event Log / Sequencer ]
+  [ Event Log ]
     │
     ▼
-  [ Matching Engine ] ──► [ Pub/Sub ] ──► [ WebSocket servers ] ──► lakhon USER    ★ NAYA
+  [ Matching Engine ] ──► [ Pub/Sub ] ──► [ WebSocket ] ──► USERS
     │
     ▼
   [ Settlement ]
@@ -298,7 +313,8 @@ DIKKAT:   "shard by symbol" yahan kaam nahi — TCS ek hi symbol, ek hi thread
 SOLUTION: (1) book mat todo — ek book do thread me = double match wapas
               ek thread RAM me, lock ke bina, bahut tez chalta (LMAX ka public design yahi)
           (2) aage ka EVENT LOG burst sambhaal leta — order line me lagte, thread apni speed se uthata
-          naya dabba nahi — wahi log kaam aaya
+
+NAYA:     koi dabba nahi — Event Log hi kaam aaya
 ```
 
 ---
@@ -343,22 +359,26 @@ API: POST /order {stock, side, qty, price, type, idempotencyKey} · DELETE /orde
 ## AAKHRI DABBA + WRAP
 
 ```
-  USER  (+ idempotencyKey)
+Order Service = validate + idempotency · Wallet = paisa BLOCK · Event Log = seq no. + replay + audit
+Matching = 1 thread / symbol, book RAM, shard by symbol · Settlement = ek txn / kai DB = SAGA
+```
+```
+  USER
     │
     ▼
-  [ Order Service ]          validate + idempotency
+  [ Order Service ]
     │
     ▼
-  [ Wallet ]                 paisa BLOCK
+  [ Wallet ]
     │
     ▼
-  [ Event Log / Sequencer ]  seq no. · key = symbol · replay · audit
+  [ Event Log ]
     │
     ▼
   [ Matching Engine ] ──► [ Pub/Sub ] ──► [ WebSocket ] ──► USERS
-    │   1 thread / symbol · book RAM · shard by symbol
+    │
     ▼
-  [ Settlement ]             ek txn · kai DB = SAGA
+  [ Settlement ]
     │
     ├──► [ Wallet DB ]
     └──► [ Portfolio DB ]
