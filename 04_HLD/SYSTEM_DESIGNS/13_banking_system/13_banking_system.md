@@ -1,792 +1,453 @@
-# Mini Banking System (accounts · transactions · balances) — POORA ROUND (4 MOVE)
+# Mini Banking System (accounts · transactions · balances)
 
-> **NAV** — ARCHETYPE C · DIL: **ledger sach hai, balance sirf nateeja.** UP: [MASTER](../../00_MASTER_SHEET.md) ·
-> CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) ·
-> [saga/ms-comm](../../FOUNDATIONS/10_ms_communication.md) · [caching](../../FOUNDATIONS/04_caching.md) ·
-> saath: [payment-system](../06_payment_system/06_payment_system.md) (iska bada bhai) · [stock-broker](../05_stock_broker_trading/05_stock_broker_trading.md)
-
-> **KYUN YE DESIGN:** 19-Sep — Arpan ne ek reel se ye sawaal laaya, maine net pe verify kiya.
-> Shakal confirm hui: candidates report karte hain — payment flow · **transaction ledger** ·
-> ATM transactions · **do account ke beech internal transfer** (laakhon/din, sakht correctness, poora audit).
-> Ye JP ka sabse sambhavit HLD sawaal hai, aur Arpan ki sabse majboot zameen bhi.
+> Ek bank ke andar accounts, un pe paisa daalo / nikaalo / bhejo, aur balance dikhao.
+> Is design ka dil: **ledger SACH hai, balance sirf NATEEJA** + paisa na bane na mare.
+> KYUN YE DESIGN (19-Sep): Arpan ek reel se laaya, net pe verify kiya — candidates report karte: payment flow · transaction
+> ledger · ATM · do account ke beech internal transfer. JP ka sabse sambhavit HLD, Arpan ki sabse majboot zameen.
 > (detail: `JP_INTERVIEW_INTEL.md` section 0e)
->
-> Problem (1 line): ek bank ke andar accounts, un pe paisa daalo/nikaalo/bhejo, aur balance bhi dikhao.
 
 ```
-★★ PAANCH CHEEZ JINPE YE ROUND TAY HOTA (source ka shabd: "ye interview INHI se tay hote hain")
-      IDEMPOTENCY · TRANSACTIONS · QUEUES · RECONCILIATION · AUDIT
-   + ACID vs eventual consistency  (partition me CORRECTNESS chunna, availability ki keemat pe)
-   + core ledger ke liye RELATIONAL DB preferred -- NoSQL ko NAHI
-```
-
-```
-★★ TEEN NIYAM (poori file par lagte — [MASTER](../../00_MASTER_SHEET.md) "Kaise bolna")
-   1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
-   2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
-   3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega
+PAANCH CHEEZ JINPE YE ROUND TAY HOTA (source: "ye interview INHI se tay hote hain"):
+   IDEMPOTENCY · TRANSACTIONS · QUEUES · RECONCILIATION · AUDIT
+   + ACID vs eventual (partition me CORRECTNESS chuno, availability ki keemat pe)
+   + core ledger ke liye RELATIONAL DB preferred, NoSQL nahi
 ```
 
 ---
 
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
-
-### Read Replica Pattern
+## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![Read Replica Pattern](https://assets.bytebytego.com/diagrams/0312-read-replica-pattern.png)
-
-- **Is file me kahan juda:** dikkat 7 (read replica) — transfer ke baad purana balance = replica lag. Unka ilaaj bhi wahi: turant wala read PRIMARY se.
-- Source: [Read Replica Pattern](https://bytebytego.com/guides/read-replica-pattern/)
+Source: [Read Replica Pattern](https://bytebytego.com/guides/read-replica-pattern/)
+(dikkat 7 — transfer ke baad purana balance = replica lag; ilaaj: turant wala read PRIMARY se)
 
 ---
 
-# MOVE 1 — POOCHO (board pe abhi kuch nahi)
+## SHURU — poocho + numbers
 
 ```
-   TU: "Banking system bahut bada hai. Pehle use-cases baandh lete hain —
-        kya ye ek hi bank ke andar hai, ya dusre bank ko bhi bhejna hai?"
-```
+POOCHO:  "Bahut bada hai — use-cases baandh lete hain. Ek hi bank ke andar, ya doosre bank ko bhi?"
+         (Arpan ne asli mock me sabse pehle yahi poocha: "let's discuss use cases first" — scope pehle,
+          warna interviewer jitna bada system chaahe sar pe daal dega)
 
-★ **Arpan ne asli mock me sabse pehla yahi poocha** — *"what will be the use cases, let's discuss use cases first"*.
-Sahi pehla kadam: scope pehle baandho, warna interviewer jitna bhi bada system tumhare sar pe daal dega.
+FR:      user ke ek / kai ACCOUNT · DEPOSIT · WITHDRAW · TRANSFER A -> B (DONO isi bank) · BALANCE · HISTORY
+         ★ "dono isi bank" — ye ek shabd poora design badalta (dikkat 1)
+         bahar: doosra bank · loan · interest · card · KYC
+NFR:     CORRECTNESS sabse upar (paisa na GUM, na BANE, hisaab har waqt barabar) · har paisa TRACEABLE (audit)
+         retry pe DOBARA nahi (idempotent) · balance dekhna TEZ (sabse hot read)
 
-**Jawab jo mila (scope):**
+NUMBERS: 5M account · 10M txn / din -> 10^7 / 86400 ~ 120 write / sec · read >> write (balance check zyada)
+         120 / sec = ek theek-thaak Postgres box ka DAS-VA hissa -> SHARDING KI ZAROORAT NAHI, primary + replica kaafi
+         (Arpan khud: "mere number itne bade nahi, normal DB chalega" — SAHI call; log bina zaroorat shard ghusa dete)
 
-```
-ANDAR (karna hai):
-   ek user ke ek ya kai ACCOUNT
-   DEPOSIT   (paisa daalo)
-   WITHDRAW  (paisa nikaalo)
-   TRANSFER  (A -> B, DONO isi bank me)      <- ★ ye ek shabd poora design badal deta (neeche dekh)
-   BALANCE dekho
-   TRANSACTION HISTORY dekho
-
-BAHAR (abhi nahi):
-   dusre bank ko bhejna · loan · interest · card · KYC
-
-SAKHT SHART: paisa na kabhi GUM ho, na kabhi BANE. har waqt hisaab barabar.
+DATA SE TEEN SAWAAL (jawab dikkat me):
+   1. transfer me DO row badalti -> dono ya koi nahi, kaun sambhalega?   (dikkat 1)
+   2. ek account pe do transfer ek saath -> kaun rokega?                 (dikkat 5)
+   3. balance -ve na ho -> niyam kahan likha?                            (dikkat 5)
 ```
 
 ---
 
-# MOVE 2 — DO CHHOTE BLOCK LIKHO
+## DABBA 0 — sabse simple
 
 ```
- ┌── FR (kya karega) ────────────────┐   ┌── NFR (kaisa hona chahiye) ──────────┐
- │  - Account (user ke kai ho sakte) │   │  - CORRECTNESS sabse upar             │
- │  - Deposit / Withdraw             │   │    (paisa na bane na mare)            │
- │  - Transfer A -> B (same bank)    │   │  - har paisa TRACEABLE (audit)        │
- │  - Balance dekho                  │   │  - retry pe DOBARA na ho (idempotent) │
- │  - History dekho                  │   │  - balance dekhna TEZ (sabse hot read)│
- └───────────────────────────────────┘   └───────────────────────────────────────┘
+SOLUTION: Banking Service (business logic) -> SQL DB · jaan-boojh ke seedha
 ```
-
-**NUMBER (bolo, ek faisla nikaalo, aage badho):**
-
 ```
-   5 million account
-   10 million transaction / din   ->  10^7 / 86400  ~=  120 write/sec
-   read >> write                  ->  log balance CHECK karte hain transaction se kahin zyada
-
-   ★ FAISLA: 120 write/sec = ek theek-thaak Postgres box ka DAS-VA hissa.
-     -> SHARDING KI ZAROORAT NAHI. Single primary + read replica kaafi.
-     (Arpan ne khud yahi kaha: "mere number itne bade nahi, normal DB chalega,
-      replication agar zaroorat pade" — ye SAHI call hai. log yahin bina
-      zaroorat sharding ghusa dete hain.)
-```
-
-**DATA SE JO TEEN SAWAAL KHADE HOTE HAIN (jawab abhi nahi — MOVE 3 me):**
-
-```
-   1. ek transfer me DO row badalti hain     ->  dono badlein ya koi nahi. Kaun sambhalega?
-   2. ek hi account pe do transfer ek saath  ->  kaun rokega?
-   3. balance kabhi -ve nahi hona chahiye    ->  ye niyam kahan likha jaayega?
-```
-
-★ DB kaunsa lenge ye ABHI nahi bol raha -- wo MOVE 3 me tay hoga, jab ye teeno
-  sach me TOOTENGE. Board pe abhi sirf sawaal likhe hain.
-
----
-
-# MOVE 3 — BOXES BANAO (chhota banao, phir dikkat pe badhao)
-
-**Shuruaati naksha (jaan-boojh ke seedha):**
-
-```
-   Client  ->  [ Banking Service (business logic) ]  ->  [ SQL DB ]
-```
-
-Bas itna. Ab isme dikkat daalte hain, aur har dikkat pe ek box badhta hai.
-
----
-
-### dikkat 1 — "transfer ke beech me system gir gaya: A ka -500 ho gaya, B ka +500 nahi"
-
-★★ **Arpan ne ye niyam KHUD bola (ye is design ki REEDH hai):**
-
-> *"transaction ek hi DB me ho to `@Transactional` use karo. Agar cross-service ho to SAGA."*
-
-```
-   DONO ACCOUNT EK HI DB ME (hamara scope)  ->  EK LOCAL TRANSACTION. Bas.
-
-      BEGIN;
-        UPDATE accounts SET balance = balance - 500 WHERE id = A;
-        UPDATE accounts SET balance = balance + 500 WHERE id = B;
-      COMMIT;
-
-   -> beech me girne ki JAGAH HI NAHI. DB ya dono karega ya kuch nahi.
-```
-
-★★ **YAHI SABSE BADI GALTI HAI JO LOG KARTE HAIN:** dono account ek hi DB me hote hain,
-phir bhi SAGA / queue / event-driven ghusa dete hain. Us se kya hota hai —
-
-```
-   debit aur credit ALAG ho gaye  ->  ab ye do NAYI dikkat KHUD paida ho gayi:
-      "paisa kat gaya phir fail ho gaya?"
-      "paisa kat gaya aur consumer down hai, juda hi nahi?"
-   -> ye dikkat DESIGN ne banayi, problem ne nahi. Apne liye problem khareedna.
-```
-
-**SAGA kab lagti:** jab do side **alag maalikon** ke paas ho — alag service, alag DB, ya **dusra bank**.
-Tab ek transaction chal hi nahi sakti, isliye compensating-undo likhna padta hai.
-Wo case is scope se BAHAR hai (poora treatment: [payment-system](../06_payment_system/06_payment_system.md) dikkat-5).
-
-```
-   NIYAM (ek line me yaad rakho):
-      ek DB      ->  @Transactional
-      cross-DB / cross-service / cross-bank  ->  SAGA (compensating undo)
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What if the server crashes in the middle of the operation?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       payment           -> PSP ko bheja, jawab nahi    -> PENDING pehle + reconciliation job
-       stock broker      -> crash beech me              -> event log pehle, crash pe replay
-       file upload       -> upload beech me toota       -> status UPLOADING track, resume
-
-   ► MASTER SHEET SE JODA: kabhi BAHAR call ho (doosra bank) -> pehle durable PENDING state likho,
-     phir call, phir webhook + reconciliation job (pending dhoondho, poocho, resolve) = payment wala tareeka.
-```
-
-★★ **AUR YAHIN DB KA FAISLA HO GAYA — RELATIONAL (Postgres / Oracle / MySQL):**
-
-```
-   abhi jo BEGIN..COMMIT likha, wo poora hi ACID ka wada hai --
-   "do row badlein ya koi nahi" wala kaam DB khud karta hai.
-
-   NoSQL me ye kamzor / seemit hai (MongoDB 4.0+ aur DynamoDB TransactWriteItems me hai, par
-   constraints + joins ke saath relational me native hai).
-   Wahan ye poora sambhalna APP ko padta -- yaani wahi SAGA, bina zaroorat ke.
-
-   -> MOVE 2 ka SAWAAL 1 yahan JAWAB paa gaya.
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "Consistency or availability — which do you pick?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       bookmyshow        -> seat                        -> CP (booking), search AP
-       payment           -> paisa                       -> CP
-       google docs       -> edits / permissions         -> edits AP, permissions CP
-       twitter feed      -> feed                        -> AP (purana chalega)
-
-   ► MASTER SHEET SE JODA: ek hi system me dono: transfer / balance = CP (galat dene se accha reject),
-     SMS / statement / analytics = AP (dikkat 2 ka COMMIT ke baad wala raasta, thoda late chalega).
-```
-(source-confirmed: JP core ledger ke liye relational hi preference deta hai)
-
----
-
-### dikkat 2 — "regulator poochhe: ye paisa kahan se aaya kahan gaya?" + "DB dhoka de sakta hai"
-
-★★ **Arpan ne LOG aur LEDGER ko alag-alag bola — ye farak bahut kam log karte hain:**
-
-```
-   LOG     ->  DEBUGGING ke liye. "kya chal raha, kaise chal raha."
-               rotate hota hai, delete hota hai, kisi ko farak nahi padta.
-
-   LEDGER  ->  SACH ka record. APPEND-ONLY.
-               kisne, kab, kitna, kyun. mitega nahi, badlega nahi.
-               (isme ched-chaad ho hi nahi sakti — wahi uski taakat hai)
-```
-
-**LEDGER = DOUBLE-ENTRY (500 saal purana tareeka):**
-
-```
-   har transaction = DO entry, jinka jod hamesha ZERO
-      A ka account   : -500   (debit)
-      B ka account   : +500   (credit)
-                       -----
-                jod  :    0
-
-   -> paisa na BANTA hai na MARTA hai — sirf HILTA hai (conserved).
-   -> kisi bhi waqt poore ledger ka jod = bank me kul paisa. mismatch = turant pakda jaata.
-```
-
-★ **Arpan ka KAFKA wala jod (khud jodaa, aur shakal bilkul sahi hai):**
-
-```
-   Kafka   ->  append-only log, padhne se mitta nahi, sirf aage judta
-   Ledger  ->  append-only, edit nahi, sirf aage judta
-```
-
-**PAR EK HADD — ye interview me phasa sakti hai:**
-
-```
-   LEDGER KA GHAR = DB, Kafka NAHI.  Do wajah:
-      1. ledger pe QUERY karni padti hai ("is account ka pichhle mahine ka hisaab") — Kafka wo nahi deta
-      2. ledger USI transaction me likhna hota hai jisme paisa hila — Kafka us transaction ka hissa nahi ban sakta
-
-   DIKKAT (chhoti): transfer ke baad SMS · fraud-check · statement bhi chahiye —
-                   transfer ko inke liye ROKNA nahi, aur inme se koi gira to transfer na gire
-   KAFKA KA KAAM: COMMIT ke BAAD ki khabar bahar bhejna
-      ★ JAAL: COMMIT hua aur Kafka bhejne se pehle app gira -> event GAYAB.
-        ilaaj = OUTBOX: event ko USI transaction me outbox table me likho, alag process bheje.
-      COMMIT  ->  event  ->  notification · fraud-check · analytics · statement
-      (yahan eventual consistency chalti hai — SMS 2 second late aaye to koi nahi marta)
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "How do you make sure no message is lost?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       kafka             -> consumer crash              -> offset kaam ke BAAD, idempotent, DLQ
-       notification      -> SMS event                   -> at-least-once + idempotent + DLQ
-       chat              -> message                     -> pehle DB me, phir bhejo
-
-   ► MASTER SHEET SE JODA: relay bhej ke "sent" mark karne se pehle gira -> event DOBARA jaayega
-     (at-least-once) -> SMS / fraud consumer eventId se IDEMPOTENT · Kafka pe acks=all ·
-     baar-baar fail -> retry + backoff -> DLQ.
+  USER
+    │
+    ▼
+  [ Banking Svc ]
+    │
+    ▼
+  [ SQL DB ]
 ```
 
 ---
 
-### dikkat 3 — "balance aata kahan se hai?" (is design ka ASLI sawaal)
-
-**Do raaste hain:**
+## DIKKAT 1 — transfer ke beech system gira: A ka -500 hua, B ka +500 nahi
 
 ```
-   (a) accounts.balance ek COLUMN ho, har transaction pe update
-          + padhna sasta (1 row)
-          - ye ek likha hua number hai: galat ho sakta, purana ho sakta, buggy code bigaad sakta
+DIKKAT:   paisa gayab
 
-   (b) balance = SUM(us account ki saari ledger entries)
-          + hamesha SACH (entries se jhooth bolna mushkil)
-          - ★ GINTI DEKH:
-               10M txn/din  ->  3 saal me ~11 ARAB txn = double-entry se ~22 ARAB ledger rows
-               ek purana account  ->  5,000 - 50,000 entries
-               balance dekhna SABSE ZYADA hone wala kaam hai (read >> write)
-            -> har baar app kholne pe 20,000 row jodo, aur lakhon log ek saath. NAHI chalega.
-```
+SOLUTION: ★ ARPAN KA NIYAM (is design ki reedh): "ek DB me -> @Transactional. cross-service -> SAGA."
+          dono account EK DB me -> EK LOCAL TRANSACTION, bas:
+            BEGIN;
+              UPDATE accounts SET balance = balance - 500 WHERE id = A;
+              UPDATE accounts SET balance = balance + 500 WHERE id = B;
+            COMMIT;
+          beech me girne ki jagah hi nahi
+          ★ SABSE BADI GALTI: ek DB me bhi SAGA / queue / event ghusa dena -> debit aur credit alag
+            -> "kata phir fail?" "kata, consumer down?" = dikkat DESIGN ne banayi, problem ne nahi
+          SAGA kab: do side ALAG maalik (alag service / DB / DOOSRA BANK) -> compensating undo
+                    (scope bahar; poora = payment dikkat 5) · bahar call -> PENDING pehle + webhook + reconciliation
+          DB FAISLA: RELATIONAL (Postgres / Oracle / MySQL) — BEGIN..COMMIT = ACID ka wada
+                    NoSQL me kamzor / seemit (Mongo 4.0+, DynamoDB TransactWriteItems hai, par constraints + joins
+                    ke saath relational native) -> wahan app sambhalta = bina zaroorat SAGA
+                    (source-confirmed: JP core ledger ke liye relational) -> SAWAAL 1 band
 
-★ Arpan ne **(b)** chuna — *"ledger main source of truth hai, DB dhoka de sakta hai"* — aur wo soch SAHI hai.
-Banking ka model yahi hai: **balance ek NATEEJA hai, SACH nahi.**
-
-★★ **ASLI JAWAB — DONO RAKHO** (ye hissa Arpan ne nahi bataya tha, yahan seekha — 19-Sep):
-
-```
-   ledger_entries    ->  SACH.  append-only. har entry ka record.
-   accounts.balance  ->  CACHE. ledger ka nateeja, pehle se jod ke rakha hua.
-```
-
-**Aur asli trick — DONO EK HI TRANSACTION ME LIKHO:**
-
-```sql
-BEGIN;
-  INSERT INTO ledger_entries (txn_id, account_id, amount, type, ts);   -- SACH  (A: -500)
-  INSERT INTO ledger_entries (txn_id, account_id, amount, type, ts);   -- SACH  (B: +500)
-  UPDATE accounts SET balance = balance - 500 WHERE id = A;            -- CACHE
-  UPDATE accounts SET balance = balance + 500 WHERE id = B;            -- CACHE
-COMMIT;
-```
-
-```
-   -> balance dekhna = 1 ROW padhna. koi jod nahi, koi 20,000-row scan nahi.
-   -> dono EK SAATH commit hote hain, isliye ALAG HO HI NAHI SAKTE.
-      ("cache stale ho jaayega" wali dikkat yahan hai hi nahi — cache aur sach ek hi commit me chalte hain)
-   -> agar kabhi farak aa gaya (bug, manual DB edit, migration) -> LEDGER JEETEGA.
-      balance column dobara bana lenge, ledger se.
-```
-
-★ **Isi liye yahan MQ/queue NAHI lagti** — queue ka matlab hota "baad me hoga", aur baad me hone se
-dono alag ho jayenge. Jo cheez ek saath honi chahiye, use alag mat karo.
-
-**RECONCILIATION (ye hamesha iske saath jaata hai — aur source ne isi shabd ko grading-point kaha):**
-
-```
-   raat ko ek job chale:
-      har account ke liye  SUM(ledger_entries)  nikaalo
-      accounts.balance se milao
-      farak mila  ->  ALERT
-      ★ chupchap theek MAT karo — pehle pata karo KYUN hua (wo bug abhi bhi zinda hai)
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "How do you know the system is working?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       notification      -> "bheja" != "pahuncha"       -> provider webhook
-       payment           -> PSP vs apna record          -> reconciliation
-
-   ► MASTER SHEET SE JODA: reconciliation ke saath METRICS bhi: p99 latency · error rate ·
-     queue lag · DB connections -> had paar = ALERT. logs + trace id se ek transfer follow.
-```
-
-**★ EK LINE (interview me bolne layak):**
-
-> *"Ledger source of truth hai, balance uska derived cache. Dono ek hi transaction me likhta hoon,
-> isliye kabhi alag nahi hote. Read balance se hota hai — ek row. Aur ek reconciliation job
-> roz dono milata hai; farak mile to ledger jeetega."*
-
----
-
-### dikkat 4 — "user ne do baar tap kar diya / client ne retry maar diya — Rs. 1000 kat gaye"
-
-★ Arpan ne ye pain-point khud pakda tha (mock ka #1): *"idempotency — retry hua to check karke block karo."*
-
-```
-   FAISLA: IDEMPOTENCY KEY
-      client har transfer ke liye ek unique key bhejta hai
-      server: wo key pehle dekhi?  ->  purana result WAPAS BHEJO (naya kaam mat karo)
-                        nahi dekhi?  ->  kaam karo + key record karo
-
-   ★ SABSE ACCHA TAREEKA: DB UNIQUE CONSTRAINT us key pe.
-     (insert khud lock le leta — do concurrent request me se ek hi jeetegi.
-      application-level "pehle check phir insert" me race bach jaati hai.)
-```
-
-★ Dhyan: `@Transactional` idempotency ki jagah nahi leta. Transaction kehta "aadha kaam nahi hoga".
-Idempotency kehti "dobara kaam nahi hoga". **Do alag cheezein, dono chahiye.**
-
-Poora treatment + LIVE hands-on (20 concurrent request, same key):
-[payment-system](../06_payment_system/06_payment_system.md) dikkat-2 aur uska HANDS-ON section.
-
----
-
-### dikkat 5 — "ek hi account pe DO transfer ek saath aa gaye"
-
-★★ **ARPAN KA PUSHBACK (19-Sep) — aur wo SAHI tha. Maine "locking chahiye" bola, usne kaata:**
-
-> *"ye ho hi nahi sakta. hamara DB atomic constraint ke saath hai, wo do transaction ko
-> ek saath modify karne hi nahi dega. race ho sakti hai baat sahi, par DB hone nahi dega."*
-
-**Kyun wo sahi hai:**
-
-```sql
-UPDATE accounts SET balance = balance - 500 WHERE id = A;
+NAYA:     koi dabba nahi — DB transaction
 ```
 ```
-   hisaab DB KHUD kar raha hai, us row pe jo LOCK uske paas hai.
-   do transfer ek saath A ko chhuein -> DB unhe KATAAR me laga deta hai
-      ek chalega, dusra ruk ke uske BAAD.
-   -> LOST UPDATE ho hi nahi sakta. application-level lock ki zaroorat NAHI.
-```
+POOCHEGA: "What if the server crashes in the middle of a transfer?"
+BOL:      "Both accounts are in one database, so the debit and credit are one local transaction — it commits
+           fully or rolls back. A saga only comes in when the two sides belong to different services or banks."
 
-**Race tab hoti jab app PADH ke, JOD ke, WAPAS likhe** — aur wo humne kiya hi nahi:
-
-```java
-int bal = read(A);        // 1000
-bal = bal - 500;          // 500
-write(A, bal);            // 500   <- dusra bhi 1000 PADH chuka tha = lost update
-```
-
-→ **SANSHODHAN: "concurrency ke liye locking chahiye" = GALAT.** Ye baat file me thi, Arpan ne hatayi.
-
----
-
-**PAR DO CHEEZ BACHTI HAI — dono chhoti, aur dono asli:**
-
-### (a) `balance >= 0` ka CHECK KAHAN hai?
-
-```
-   A ke paas 300. do withdrawal, 200-200, ek saath.
-
-   check APP me ho to:
-      if (read(A).balance >= 200) { ... }   // DONO pass -- dono ne 300 dekha
-      update(...);                          // -100
-
-   -> dono UPDATE apni baari se chalenge (bilkul jaisa Arpan keh raha), PAR
-      CHECK dono ke PEHLE ho chuka tha. Balance -100.
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "Two users do this at the same time — what happens?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       bookmyshow        -> do log ek seat              -> UPDATE ... WHERE status='available'
-       rate limiter      -> do request ek saath gine    -> Redis INCR / Lua (ek atomic step)
-       payment           -> ek payment do jagah claim   -> UNIQUE constraint
-       stock broker      -> do order ek symbol pe       -> har symbol ek thread / sequencer
-       ★ farak: 2 user ek cheez = atomic/lock · 1 user ka retry = idempotency
-```
-
-**Ilaaj wahi jo Arpan keh raha — DB se karwao, app se nahi:**
-
-```sql
-UPDATE accounts SET balance = balance - 200
-WHERE id = A AND balance >= 200;
--- rows affected == 0  ->  paisa kam tha, REJECT
-```
-ya seedha `CHECK (balance >= 0)` constraint. **Dono me faisla DB ka, app ka nahi.**
-
-★ **MOVE 2 ka SAWAAL 3 yahan band hua:** "balance -ve na ho" ka niyam CODE me nahi,
-DB me likha jaata hai -- kyunki code ke kai raaste ho sakte hain (API, batch, kisi ka
-manual update), par DB ek hi hai. Aur constraint bhi relational ki hi den hai.
-
-### (b) DEADLOCK — ye atomic UPDATE ke BAAD bhi rehta hai
-
-```
-   Txn1 : A -> B     A ka lock liya, ab B ka INTEZAAR
-   Txn2 : B -> A     B ka lock liya, ab A ka INTEZAAR
-          -> dono ek doosre ka intezaar. koi aage nahi. CIRCULAR WAIT.
-```
-
-```
-   dono UPDATE bilkul SAHI hain, ATOMIC hain -- phir bhi ATAK gaye.
-   DB detect karke EK ko maar deta hai (MySQL error 1213, victim rollback).
-   ★ Arpan ne ye LIVE chala ke dekha hua hai: 09_DATABASE/08_deadlock.md
-```
-
-**Ilaaj: hamesha EK TAY KRAM me lock lo** — account id sort karke chhota pehle.
-
-```
-   Txn1 : A -> B   ->  lock(A) phir lock(B)
-   Txn2 : B -> A   ->  ★ lock(A) phir lock(B)   (kaam ulta hai, LOCK ka kram wahi)
-   -> dono ek hi DISHA me chal rahe -> circle ban hi nahi sakta
+POOCHEGA: "Consistency or availability — which do you pick?"
+BOL:      "Transfer and balance are CP — I'd rather reject than give a wrong balance. SMS, statements and
+           analytics after the commit are AP; a couple of seconds late is fine."
 ```
 
 ---
 
-★ **IS HISSE KA NICHOD (ek line):**
-
-> *"Concurrency ke liye alag locking nahi chahiye — UPDATE me hisaab DB khud karta hai,
-> to lost update hota hi nahi. Jo dhyan dena hai wo do cheez hai: balance ka check
-> DB me ho (app me nahi), aur lock hamesha ek tay kram me liya jaaye warna deadlock."*
-
----
-
-### dikkat 6 — "salary day: ek Banking Service box bhara, aur wahi gira to poora bank band"
+## DIKKAT 2 — regulator: "paisa kahan se aaya, kahan gaya?" + transfer ke baad SMS / fraud / statement
 
 ```
-   FAISLA: kai Banking Service instance + aage LOAD BALANCER
-           service STATELESS hai (sab DB me) -> koi bhi box koi bhi request le
+DIKKAT:   audit chahiye · aur baaki kaam ke liye transfer ruke nahi, unme koi gire to transfer na gire
 
-   ► INTERVIEWER AISE POOCHEGA:
-       "What happens if this server / node / DB goes down?"
+SOLUTION: ★ ARPAN NE LOG aur LEDGER alag bola (bahut kam log karte):
+             LOG    = DEBUGGING ("kya chal raha"), rotate / delete hota, farak nahi
+             LEDGER = SACH, APPEND-ONLY (kisne, kab, kitna, kyun), mitega nahi, badlega nahi
+          DOUBLE-ENTRY: har txn = DO entry, jod hamesha ZERO (A -500, B +500) -> paisa sirf HILTA
+                        poore ledger ka jod = bank ka kul paisa, mismatch turant pakda
+          Arpan ka KAFKA jod: Kafka bhi append-only, padhne se mitta nahi — shakal sahi
+          ★ HADD: LEDGER KA GHAR = DB, Kafka NAHI: (1) ledger pe QUERY ("pichhle mahine ka hisaab")
+                  (2) ledger USI txn me likhna jisme paisa hila — Kafka us txn ka hissa nahi
+          KAFKA KA KAAM: COMMIT ke BAAD khabar bahar -> notification · fraud-check · analytics · statement (eventual chalta)
+          ★ JAAL: commit hua, Kafka se pehle app gira -> event GAYAB -> OUTBOX: event USI txn me outbox table, relay bheje
+                  relay "sent" se pehle gira -> dobara jaayega -> consumers eventId se idempotent · acks=all · fail -> DLQ
 
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       url shortener     -> DB primary gira             -> replica promote, redirect cache se chalta rahe
-       rate limiter      -> Redis node gira             -> Redis replica; na mile to fail-open
-       distributed cache -> cache node gira             -> replica + consistent hashing (sirf uski keys hilti)
-       kafka             -> broker gira                 -> ISR ki replica leader ban jaati
-       chat              -> chat server gira            -> client doosre server pe reconnect, message DB me safe
-       bookmyshow        -> App box gira                -> hold DB me hai, LB doosre box pe bhejta
-
-   ► MASTER SHEET SE JODA: box gira -> LB health check (2-3 fail = pool se bahar).
-     DB PRIMARY gira -> SYNC / semi-sync replica promote (async pe aakhri transfer kho sakta) ·
-     replica ALAG AZ me.
+NAYA:     Kafka (outbox relay ke through)
 ```
-
-### dikkat 7 — "log balance / history baar-baar dekh rahe — sab padhai PRIMARY pe, transfer dheeme"
-
 ```
-   FAISLA: READ REPLICA — balance / history ka read replica se, write primary pe
-   ★ JAAL: apna abhi-kiya transfer PRIMARY se padho (replica thoda peeche ho sakti)
-           warna user ko "paisa gaya hi nahi" dikhega -> dobara bhejega
-   (shard abhi NAHI — MOVE 2 ka hisaab: single primary + replica kaafi)
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "The user updated something but still sees the old value. Why?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       distributed cache -> cache me purana             -> update pe invalidate + TTL
-       url shortener     -> naya link replica pe nahi   -> naye link ka read primary se
-       twitter feed      -> apna tweet nahi dikha       -> read-your-own-writes (apna data primary se)
-       payment           -> status purana               -> status primary se
-
-   ► MISAAL: transfer kiya, turant balance dekha -> PURANA dikha
-       sabse AAM wajah -- kuch toota nahi, bas REPLICA LAG:
-         t1  transfer -> PRIMARY pe likha            balance = 4000
-         t2  balance dekha -> read gaya REPLICA pe   replica abhi 5000 (copy ~200ms peeche)
-       ILAAJ: READ-YOUR-OWN-WRITES -- jisne abhi likha, uska balance thodi der PRIMARY se
-              (balance jaisi zaroori cheez hamesha primary se bhi chalega)
-       doosri wajah: FAILOVER -- write replica tak pahuncha hi nahi aur wahi promote ho gaya
-              -> ilaaj SYNC replication
-   BOL: "Most likely replica lag: the write went to the primary, the read hit a replica that
-         hadn't caught up. For balance I read from the primary, at least for the user who just
-         wrote. If it were a failover losing writes, sync replication fixes that."
+  USER
+    │
+    ▼
+  [ Banking Svc ]
+    │
+    ▼
+  [ SQL DB ] ──► [ Kafka ]
+```
+```
+POOCHEGA: "How do you make sure the SMS / fraud event is never lost?"
+BOL:      "The event is written to an outbox table in the same transaction as the transfer, and a relay
+           publishes it to Kafka with acks=all. Consumers are idempotent on event id and failures go to a DLQ."
 ```
 
 ---
 
-# MOVE 4 — BOLTE-BOLTE JODO (jo poocha jaaye, wahi kholo)
-
-## ► "API kya hogi?"
-
-★ Arpan: *"ye to aasan hai, isme itni badi dikkat nahi hai."* — **sahi hai, yahan ruko mat.**
+## DIKKAT 3 — balance aata kahan se? (is design ka ASLI sawaal)
 
 ```
-GET   /accounts/{id}/balance
-GET   /accounts/{id}/transactions?cursor=...&limit=20     <- ismein pench hai (neeche)
-POST  /transfers                  { from, to, amount }
-POST  /accounts/{id}/deposit      { amount }
-POST  /accounts/{id}/withdraw     { amount }
+DIKKAT:   (a) accounts.balance COLUMN: padhna sasta, par likha hua number (galat / purana / bug)
+          (b) SUM(ledger entries): hamesha sach, par 10M / din -> 3 saal ~11 ARAB txn = ~22 ARAB row,
+              purana account 5,000-50,000 entry, balance sabse zyada dekha jaata -> har baar 20,000 jodna = NAHI
+          Arpan ne (b) chuna — "ledger main source of truth, DB dhoka de sakta" — soch SAHI
+
+SOLUTION: DONO RAKHO (19-Sep yahan seekha): ledger_entries = SACH · accounts.balance = CACHE (pehle se joda nateeja)
+          ★ TRICK — dono EK HI TRANSACTION:
+            BEGIN;
+              INSERT INTO ledger_entries (txn_id, account_id, amount, type, ts);   -- A: -500
+              INSERT INTO ledger_entries (txn_id, account_id, amount, type, ts);   -- B: +500
+              UPDATE accounts SET balance = balance - 500 WHERE id = A;
+              UPDATE accounts SET balance = balance + 500 WHERE id = B;
+            COMMIT;
+          balance = 1 ROW · ek commit me = alag ho hi nahi sakte ("cache stale" yahan hai hi nahi)
+          kabhi farak (bug, manual edit, migration) -> LEDGER JEETEGA, balance ledger se dobara
+          isliye yahan QUEUE NAHI — "baad me" = alag ho jaayenge
+          RECONCILIATION (source ka grading point): raat ko har account SUM(ledger) vs balance -> farak = ALERT
+          ★ chupchap theek MAT karo — pehle KYUN (bug abhi zinda)
+
+NAYA:     Reconciliation job
 ```
-
-Ek hi cheez dhyan dene layak: **har POST me `Idempotency-Key` header jaata hai.** Baaki kuch nahi.
-
----
-
-## ► "11 arab row pe history ka page kaise dikhaoge?"
-
-**Seedha jawab jo log dete hain:**
-
-```sql
-SELECT * FROM ledger_entries WHERE account_id = ?
-ORDER BY ts DESC LIMIT 20 OFFSET 100000;
 ```
-
-★ Arpan ne OFFSET ka matlab sahi bola: *"skip karna — pehle page pe 0, agle pe 10 skip, aise chalta rahega."*
-**Jo chhoot raha tha: DB skip KARTA KAISE hai.** Wo aage KOODTA nahi — **padhta hai, phir phenkta hai:**
-
+  USER
+    │
+    ▼
+  [ Banking Svc ]
+    │
+    ▼
+  [ SQL DB ] ──► [ Kafka ]
+    ▲
+    │
+  [ Reconciliation job ]
 ```
-OFFSET 100000 LIMIT 20
-
-   row 1      padho -> phenko
-   row 2      padho -> phenko
-   ...
-   row 100000 padho -> phenko
-   row 100001 padho -> RAKHO   ... (20 tak)
-
-   = 1,00,020 row ka KAAM, 20 row dene ke liye
 ```
-
-```
-   -> page 1 turant, page 5000 pe request ATAK jaati. jitna aage, utna DHEEMA.
-   -> aur ek chhupi dikkat: page-1 dekhte waqt nayi transaction aa gayi
-      -> saari row khisak gayi -> page-2 pe WAHI entry DOBARA dikhegi
-         (offset GINTI se chalta hai, aur ginti hil gayi)
-```
-
-**ILAAJ — offset ki jagah "kahan chhoda tha" yaad rakho (CURSOR / KEYSET):**
-
-```sql
--- page 1
-SELECT * FROM ledger_entries WHERE account_id = ?
-ORDER BY ts DESC, id DESC LIMIT 20;
--- aakhri row ka (ts, id) yaad rakho -> CURSOR banake client ko bhej do
-
--- page 2  (skip NAHI -- SEEDHA wahan se)
-SELECT * FROM ledger_entries WHERE account_id = ?
-  AND (ts, id) < (:last_ts, :last_id)
-ORDER BY ts DESC, id DESC LIMIT 20;
-```
-
-```
-   -> index (account_id, ts DESC, id) pe DB SEEDHA us jagah koodta hai, 20 row uthata hai
-   -> page 1 ho ya page 5000 -- KHARCHA WAHI
-   -> nayi transaction se kuch khiskta nahi (hum GINTI nahi, JAGAH yaad rakh rahe hain)
-```
-
-★★ **Arpan ka anchor (khud joda):** *"ye cursor based cheez ho gayi, jaise YouTube karta hai."*
-
-```
-   PEHCHAN: jahan PAGE NUMBER nahi dikhte, sirf SCROLL chalta hai -- wahan CURSOR hai.
-            YouTube · Instagram · Twitter -- kisi me "page 5000 pe jao" nahi hota.
-            ★ wo missing feature NAHI, wo FAISLA hai: page-number chhoda taaki har page EK JAISA tez rahe.
-
-   ULTA:    Google search me page number DIKHTE hain -- kyunki wahan top ~1000 se aage jaane hi nahi dete.
-            HADD laga di, to offset chal jaata hai.
-```
-
-**KEEMAT:** "page 500 pe seedha jao" ab nahi ho sakta — sirf agla/pichhla.
-Bank statement ke liye ye theek hai (log scroll karte hain, ya DATE se filter karte hain).
-Admin panel ke liye offset chalega — wahan data chhota hota hai.
-
-★ **Aur ek cheez jiske bina DONO me se kuch nahi chalega:** index `(account_id, ts DESC, id)`.
-Wo na ho to 11 arab ka scan, aur baat yahin khatam.
-
----
-
-## ► "5 saal purana data kahan rakhoge?"
-
-```
-   pichhle 3 mahine   ->  log ROZ dekhte hain
-   3 saal purana      ->  saal me shayad ek baar, ya regulator maange tab
-
-   ek hi table me sab pada hai -- garam bhi, thanda bhi.
-   har query, har index, har backup us 11 arab ke bojh ke saath chal raha hai.
-```
-
-★ **Arpan ka jawab:** *"purana data DB se hatao, archive kar do — on-demand wapas aa sakta.
-DELETE nahi kar sakte, wo galat hoga."*
-
-**DELETE waali baat sabse zaroori thi — bank me delete hota hi nahi. Kanoon saalon tak rakhne ko kehta hai.**
-
-### (a) "Hatao" kaise? — `DELETE` se NAHI
-
-```
-   30 crore row ek-ek karke DELETE  ->  table lock · transaction log full · ghanton ka kaam
-
-   ILAAJ: table ko MAHINE-MAHINE me baanto (PARTITION)
-
-      ledger_2026_07   ledger_2026_08   ledger_2026_09  ...
-
-      archive = us mahine ki partition DETACH kar do   (meta-data operation -- TURANT)
-                file uthao -> cold storage -> partition drop
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "Data keeps growing — what happens in 3 years?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       news aggregator   -> purani news                 -> TTL / archive
-       chat              -> purane messages             -> month se partition, cold storage
-       notification      -> notification log            -> TTL
-       payment           -> payment records             -> archive, delete nahi
-
-   ► MASTER SHEET SE JODA: retention / archive != sharding. archive SIZE ghatata,
-     shard LOAD (writes) baant-ta. dono alag dikkat ke ilaaj.
-```
-
-```
-   DELETE          ->  ROW-BY-ROW kaam karta
-   DETACH PARTITION->  poore TUKDE pe ek nishaan hata deta
-   -> aasmaan-zameen ka farak
-```
-
-**BONUS:** partition se query bhi tez — "pichhle 3 mahine" poochha to DB baaki 33 partition ko **chhuta hi nahi**.
-
-### (b) Archive rakha kahan
-
-S3 (Parquet file) ya ek alag **cold DB**. On-demand wahin se padho (Athena jaisi cheez se, ya restore karke).
-Sasta, aur mukhya DB pe koi bojh nahi.
-
-### (c) ★★ EK CHEEZ JO SAATH ME TOOTEGI — aur ye is design se hi judi hai
-
-```
-   humne kaha tha: reconciliation roz  SUM(ledger)  nikaal ke  accounts.balance  se milayega.
-
-   ab 3 saal purani entries ARCHIVE ho gayin
-      -> SUM(ledger) ab ADHOORA hai (purani entries usme hain hi nahi)
-      -> reconciliation HAR account pe mismatch dikhayega
-```
-
-**ILAAJ — har period ka OPENING BALANCE snapshot rakho:**
-
-```
-   account_balance_snapshot (account_id, period_end, balance)
-
-      31-Mar-2023 ko A ka balance = 45,000    <- ye HAMESHA rahega, kabhi archive nahi hoga
-
-   ab reconciliation:
-      snapshot ka balance  +  uske BAAD wali (live) entries ka jod   =   aaj ka balance
-```
-
-★ Ab purani entries archive ho sakti hain aur hisaab phir bhi barabar rehta hai.
-**Yahi cheez bank statement me bhi dikhti** — har statement ke upar *"opening balance"* likha hota hai. Isi wajah se.
-
----
-
-## ► "Kahan tootega / aur bada ho gaya to?"
-
-★ Arpan: *"dabba bada hua to shard + replication — wo to har design me ho gaya."*
-
-```
-   1. READ REPLICA          <- pehla kadam. read >> write hai, aur balance/history READ hain.
-                               write primary pe, read replica pe.
-                               ★ keemat: replication lag -- transfer ke turant baad balance
-                                  replica se padha to purana dikh sakta
-                                  -> "apna abhi kiya hua transaction" PRIMARY se padho (read-your-own-writes)
-
-   2. PARTITION by month    <- upar wala. archive + query dono ka fayda.
-
-   3. ★ SHARD = AAKHRI raasta, aur yahan uski KEEMAT badi hai:
-
-         shard by account_id  ->  A shard-1 pe, B shard-2 pe
-         -> transfer ab EK LOCAL TRANSACTION NAHI RAHA
-         -> wapas SAGA / 2PC ki duniya me ghus gaye
-         -> yaani dikkat-1 wali saari problem KHUD SE wapas bula li
-
-      ★ isi liye hamare number pe (120 write/sec) sharding ka sawaal hi nahi uthta.
-        pehle vertical (bada box) + replica. shard tabhi jab ek machine sach me chuk jaaye.
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "The database is too big / takes too many writes. What do you do?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       url shortener     -> arabon link                 -> short code se shard
-       twitter feed      -> tweets bahut                -> user_id se shard
-       google docs       -> docs bahut                  -> docId se shard
-       kafka             -> ek partition nahi samaata   -> partitions badhao
-       chat              -> messages bahut              -> chat_id se shard
-
-   ► MASTER SHEET SE JODA: interviewer bole "replica laga diye, phir bhi WRITES se DB maar kha raha"
-     -> tab SHARD by account_id pehle bolo (cache / index sirf READ ke ilaaj; har naya index INSERT
-     dheema karta). non-critical writes (statement, SMS) queue pe, txn ke raaste se bahar.
-       ★ replica sirf READ baantta; write ke liye SHARD. country/date = bura key (skew)
-   ► KRAM: sasta pehle, SHARD aakhir (mehnga). writes ka ilaaj = shard by account_id
-       (ek account ke saare txn EK shard pe -> transfer ka hisaab simple)
-       BADI TABLE (size) -> month-wise PARTITION + band mahine ARCHIVE (cold storage)
-         ARCHIVE = DELETE NAHI (bank data kaanoon se saalon rakhna). size ghatta, writes nahi.
-       ✗ "badi transaction ko chhoti karo" = galat: debit + credit EK hi txn me rehna chahiye
-   BOL: "Replicas only spread reads, and caching or extra indexes help reads, not writes; extra
-         indexes actually slow inserts. For write volume at this scale I'd shard by account id, so
-         each account's transactions live on one shard, and move non-critical writes like
-         statements to a queue. For table size, partition by month and archive closed months to
-         cold storage; nothing is ever deleted."
-
-   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
-       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
-       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
+POOCHEGA: "How do you know the system is working?"
+BOL:      "Ledger is the source of truth and balance is its derived cache; I write both in one transaction, so
+           they never drift. Reads hit the balance — one row. A nightly reconciliation compares them, and on a
+           mismatch the ledger wins. Plus p99, error rate, queue lag, DB connections with alerts, and a trace id
+           per transfer."
 ```
 
 ---
 
-## ► WRAP (ek line har problem ki)
+## DIKKAT 4 — do baar tap / client retry -> Rs. 1000 kat gaye
 
 ```
-   beech me crash               ->  ek local transaction (@Transactional). ek DB hai, SAGA ki zaroorat nahi.
-   dobara tap / retry           ->  Idempotency-Key + DB UNIQUE constraint
-   "paisa kahan se kahan gaya"  ->  append-only LEDGER, double-entry (jod hamesha zero)
-   balance dekhna tez           ->  accounts.balance = derived CACHE, ledger ke SAATH usi txn me likha
-   cache aur sach alag ho gaye  ->  raat ka RECONCILIATION job. farak mile to LEDGER jeetega.
-   overdraft / -ve balance      ->  check DB me (WHERE balance >= x / CHECK constraint), app me nahi
-   do transfer ulte kram me     ->  lock hamesha TAY KRAM me (account id sort) -> deadlock nahi
-   11 arab row pe history       ->  CURSOR pagination + index (account_id, ts DESC, id)
-   purana data                  ->  month PARTITION -> DETACH -> cold storage. DELETE kabhi nahi.
-   archive ke baad hisaab       ->  OPENING BALANCE snapshot (statement ke upar wali line)
-   load badha                   ->  read replica -> partition -> (aakhri me) shard
+DIKKAT:   ek transfer do baar (Arpan ne mock me ye #1 pain point khud pakda)
+
+SOLUTION: IDEMPOTENCY KEY — har POST me Idempotency-Key · pehle dekhi -> purana result · nahi -> kaam + record
+          SABSE ACCHA: DB UNIQUE CONSTRAINT us key pe (insert khud lock, do me se ek jeete;
+          app ka "check phir insert" = race)
+          @Transactional idempotency ki jagah NAHI: txn = "aadha nahi hoga" · idempotency = "dobara nahi hoga" — dono chahiye
+          poora + hands-on (20 concurrent, same key): payment dikkat 2 + HANDS-ON
+
+NAYA:     koi dabba nahi — DB me idempotency_keys (UNIQUE)
 ```
 
 ---
 
-## ★ AB TAK KA NAKSHA
+## DIKKAT 5 — ek hi account pe DO transfer ek saath
 
 ```
-                    ┌──────────────┐
-   Client  ───────► │ LOAD BALANCER│
-                    └──────┬───────┘
-                           │
-                 ┌─────────▼──────────┐
-                 │  Banking Service   │   business logic
-                 │  (kai instance)    │   + idempotency key check
-                 └─────────┬──────────┘
-                           │  EK LOCAL TRANSACTION
-                 ┌─────────▼──────────────────────────┐
-                 │            SQL DB                  │
-                 │  ledger_entries  (SACH, append-only)│
-                 │  accounts.balance (CACHE, derived)  │
-                 │  idempotency_keys (UNIQUE)          │
-                 └─────────┬──────────────────────────┘
-                           │  COMMIT ke BAAD
-                           ▼
-                    ┌─────────────┐
-                    │    KAFKA    │ ──► notification · fraud-check · analytics · statement
-                    └─────────────┘
+DIKKAT:   maine "locking chahiye" bola — Arpan ne kaata (19-Sep), wo SAHI tha:
+          "DB atomic hai, do transaction ko ek saath modify karne hi nahi dega"
+          UPDATE ... SET balance = balance - 500 -> hisaab DB khud, row LOCK ke saath -> KATAAR me
+          LOST UPDATE ho hi nahi sakta · race tab jab app PADHE -> JODE -> LIKHE (bal = read; bal -= 500; write)
+          SANSHODHAN: "concurrency ke liye locking chahiye" = GALAT (file me tha, Arpan ne hatwaya)
 
-      + read replica  (balance/history read)  -- apna abhi-kiya txn PRIMARY se padho
-      + raat ko RECONCILIATION job : snapshot + live entries  vs  accounts.balance -> mismatch = ALERT
-      + ledger_entries MONTH-wise partition  -> purana DETACH -> S3 / cold DB (delete KABHI nahi)
-      + account_balance_snapshot (period_end ka balance) -- archive ke baad bhi hisaab barabar
+SOLUTION: do chhoti par asli cheez bachti:
+          (a) balance >= 0 ka CHECK kahan? A ke paas 300, 200-200 ek saath, check APP me -> dono 300 dekhe -> -100
+              -> DB se: UPDATE accounts SET balance = balance - 200 WHERE id = A AND balance >= 200;  (0 row = REJECT)
+                 ya CHECK (balance >= 0) constraint
+              niyam CODE me nahi DB me (API / batch / manual — raaste kai, DB ek) -> SAWAAL 3 band
+          (b) DEADLOCK atomic UPDATE ke baad bhi: Txn1 A->B (A lock, B ka intezaar) · Txn2 B->A (B lock, A ka) = circular wait
+              DB ek ko maarta (MySQL 1213, victim rollback) — Arpan ne LIVE dekha: 09_DATABASE/08_deadlock.md
+              ilaaj: lock hamesha TAY KRAM (account id sort, chhota pehle) — kaam ulta, lock ka kram wahi
+
+NAYA:     koi dabba nahi
+```
+```
+POOCHEGA: "Two transfers hit the same account at the same time — what happens?"
+DHYAAN:   2 user ek cheez = atomic / lock · 1 user ka retry = idempotency
+BOL:      "Concurrency doesn't need extra locking — the UPDATE does the math inside the database, so there's no
+           lost update. Two things matter: the balance check lives in the database, WHERE balance >= amount, and
+           locks are always taken in a fixed order so transfers can't deadlock."
 ```
 
 ---
+
+## DIKKAT 6 — salary day: ek Banking Svc bhara, wahi gira to bank band
+
+```
+DIKKAT:   bojh + SPOF
+
+SOLUTION: kai Banking Svc + aage LB · STATELESS (sab DB me) · health check 2-3 fail = pool se bahar
+          DB PRIMARY gira -> SYNC / semi-sync replica promote (async pe aakhri transfer kho sakta) · replica ALAG AZ
+
+NAYA:     LB
+BADLA:    Banking Svc -> Banking Svc x N
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ Banking Svc x N ]
+    │
+    ▼
+  [ SQL DB ] ──► [ Kafka ]
+    ▲
+    │
+  [ Reconciliation job ]
+```
+```
+POOCHEGA: "What happens if a server or the DB goes down?"
+BOL:      "Services are stateless behind a load balancer with health checks. The primary has a synchronous
+           replica in another zone that's promoted, so a confirmed transfer is never lost."
+```
+
+---
+
+## DIKKAT 7 — sab balance / history PRIMARY pe padh rahe, transfer dheeme
+
+```
+DIKKAT:   read >> write, ek hi box pe
+
+SOLUTION: READ REPLICA — balance / history replica se, write primary pe (shard abhi NAHI)
+          ★ JAAL: transfer kiya, turant balance -> PURANA (replica ~200ms peeche: primary 4000, replica 5000)
+                  -> user ko "paisa gaya hi nahi" -> dobara bhejega
+          READ-YOUR-OWN-WRITES: jisne abhi likha uska balance PRIMARY se (balance jaisi cheez hamesha primary bhi chalega)
+          doosri wajah FAILOVER (write replica tak nahi pahuncha, wahi promote) -> SYNC replication
+
+NAYA:     Read replica
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ Banking Svc x N ] ──► [ Read replica ]
+    │
+    ▼
+  [ SQL DB ] ──► [ Kafka ]
+    ▲
+    │
+  [ Reconciliation job ]
+```
+```
+POOCHEGA: "I transferred money but my balance still shows the old value. Why?"
+BOL:      "Most likely replica lag: the write went to the primary, the read hit a replica that hadn't caught up.
+           For balance I read from the primary, at least for the user who just wrote. If it were a failover
+           losing writes, sync replication fixes that."
+```
+
+---
+
+## DIKKAT 8 — 11 arab row pe history ka page
+
+```
+DIKKAT:   SELECT * FROM ledger_entries WHERE account_id = ? ORDER BY ts DESC LIMIT 20 OFFSET 100000;
+          Arpan ne OFFSET ka matlab sahi bola ("skip karna"); jo chhoota: DB skip KAISE karta
+          -> koodta NAHI, PADHTA phir PHENKTA: 1,00,020 row ka kaam 20 dene ke liye
+          page 5000 pe atakta · page 1 dekhte nayi txn aayi -> sab khiske -> page 2 pe WAHI entry DOBARA
+
+SOLUTION: CURSOR / KEYSET — "kahan chhoda" yaad rakho:
+            page 1: ... ORDER BY ts DESC, id DESC LIMIT 20;   aakhri (ts, id) = cursor client ko
+            page 2: ... AND (ts, id) < (:last_ts, :last_id) ORDER BY ts DESC, id DESC LIMIT 20;
+          index (account_id, ts DESC, id) pe SEEDHA koodta · page 1 ho ya 5000, kharcha wahi · kuch khiskta nahi
+          ★ Arpan ka anchor: "cursor based, jaise YouTube" — page number nahi, sirf SCROLL = cursor
+             (YouTube / Instagram / Twitter) · wo missing feature nahi, FAISLA (har page ek jaisa tez)
+             ULTA: Google me page number kyunki top ~1000 se aage jaane nahi dete (hadd = offset chalta)
+          KEEMAT: "page 500 pe jao" nahi, sirf agla / pichhla (statement me theek; admin panel me offset chalega)
+          index (account_id, ts DESC, id) ke bina dono nahi chalenge — 11 arab scan
+
+NAYA:     koi dabba nahi — query + index
+```
+
+---
+
+## DIKKAT 9 — 5 saal purana data, sab ek table me
+
+```
+DIKKAT:   3 mahine roz dekhte, 3 saal purana saal me ek baar / regulator maange · har query, index, backup 11 arab ke saath
+          Arpan: "purana hatao, archive, on-demand wapas. DELETE nahi kar sakte" — DELETE wali baat sabse zaroori,
+          bank me delete hota hi nahi (kanoon saalon tak)
+
+SOLUTION: (a) DELETE se nahi (30 crore row = table lock, txn log full, ghante)
+              MAHINE-MAHINE PARTITION (ledger_2026_07, _08 ...) -> archive = partition DETACH (metadata, TURANT)
+              -> file cold storage -> partition drop · DELETE = row-by-row, DETACH = poore tukde pe nishaan
+              BONUS: "pichhle 3 mahine" -> baaki 33 partition chhuta hi nahi
+          (b) ghar: S3 (Parquet) ya alag cold DB · on-demand Athena jaisa / restore
+          (c) ★ SAATH ME TOOTEGA: reconciliation SUM(ledger) ab ADHOORA -> har account mismatch
+              -> OPENING BALANCE SNAPSHOT: account_balance_snapshot (account_id, period_end, balance)
+                 31-Mar-2023 A = 45,000 (kabhi archive nahi)
+                 reconciliation: snapshot + uske BAAD ki live entries = aaj ka balance
+              bank statement ke upar "opening balance" isi wajah se
+          retention / archive != sharding (archive SIZE ghatata, shard WRITES baant-ta)
+
+NAYA:     Archive (S3)
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ Banking Svc x N ] ──► [ Read replica ]
+    │
+    ▼
+  [ SQL DB ] ──► [ Kafka ]
+    ▲     │
+    │     └──► [ Archive (S3) ]
+    │
+  [ Reconciliation job ]
+```
+```
+POOCHEGA: "Data keeps growing — what happens in 3 years?"
+BOL:      "Partition the ledger by month and detach closed months to cold storage — nothing is ever deleted. An
+           opening-balance snapshot per period keeps reconciliation correct after archiving."
+```
+
+---
+
+## 10x SCALE — har dabba alag
+
+```
+Arpan: "dabba bada hua to shard + replication — wo to har design me ho gaya"
+KRAM:  sasta pehle, SHARD aakhir
+  1. READ REPLICA (pehla kadam, read >> write) · keemat lag -> apna abhi-kiya txn PRIMARY se
+  2. PARTITION by month (archive + query dono)
+  3. SHARD by account_id = AAKHRI, keemat badi: A shard-1, B shard-2 -> transfer LOCAL txn NAHI -> wapas SAGA / 2PC
+     -> dikkat 1 ki saari problem khud wapas · humare 120 / sec pe sawaal hi nahi; pehle vertical + replica
+  WRITES se DB maar kha raha (replica ke baad bhi): cache / index sirf READ ilaaj (har naya index INSERT dheema)
+     -> SHARD by account_id (ek account ke saare txn ek shard) · non-critical writes (statement, SMS) queue pe
+  BADI TABLE (size) -> month partition + archive (DELETE nahi)
+  ✗ "badi transaction chhoti karo" = galat: debit + credit EK txn me hi
+  replica sirf READ baantti, write ke liye SHARD · country / date = bura key (skew)
+
+POOCHEGA: "Replicas are in, but writes are still killing the DB. What now?"
+BOL:      "Replicas only spread reads, and caching or extra indexes help reads, not writes; extra indexes actually
+           slow inserts. For write volume at this scale I'd shard by account id, so each account's transactions live
+           on one shard, and move non-critical writes like statements to a queue. For table size, partition by month
+           and archive closed months to cold storage; nothing is ever deleted."
+POOCHEGA: "How would you scale this to 10x?"      -> pehle jo toote (reads -> replica, size -> partition, writes -> shard)
+POOCHEGA: "What's the single point of failure?"   -> DB primary (sync replica), Banking Svc (LB + N)
+```
+
+---
+
+## POOCHE TO (deep-dive)
+
+```
+API:      GET /accounts/{id}/balance · GET /accounts/{id}/transactions?cursor=...&limit=20
+          POST /transfers { from, to, amount } · POST /accounts/{id}/deposit { amount } · POST /accounts/{id}/withdraw { amount }
+          har POST me Idempotency-Key header (Arpan: "ye to aasan hai" — sahi, yahan ruko mat)
+
+DB:       ledger_entries (SACH, append-only, month partition) · accounts.balance (CACHE, derived)
+          idempotency_keys (UNIQUE) · outbox · account_balance_snapshot (period_end ka balance)
+```
+
+---
+
+## AAKHRI DABBA + WRAP
+
+```
+LB · Banking Svc = stateless, idempotency check · SQL DB = EK local txn (ledger + balance + key + outbox)
+Kafka = commit ke BAAD (SMS / fraud / analytics / statement) · Read replica = balance / history (apna txn primary se)
+Reconciliation = snapshot + live entries vs balance -> ALERT · Archive (S3) = band mahine, delete kabhi nahi
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ Banking Svc x N ] ──► [ Read replica ]
+    │
+    ▼
+  [ SQL DB ] ──► [ Kafka ]
+    ▲     │
+    │     └──► [ Archive (S3) ]
+    │
+  [ Reconciliation job ]
+```
+```
+beech me crash        -> ek local transaction (@Transactional), ek DB me SAGA nahi
+dobara tap / retry    -> Idempotency-Key + DB UNIQUE
+paisa kahan gaya      -> append-only LEDGER, double-entry (jod zero)
+balance tez           -> balance = derived CACHE, ledger ke SAATH usi txn
+cache vs sach         -> raat ka RECONCILIATION, ledger jeetega
+-ve balance           -> check DB me (WHERE balance >= x / CHECK)
+ulte kram ke transfer -> lock TAY KRAM (id sort) -> deadlock nahi
+11 arab history       -> CURSOR + index (account_id, ts DESC, id)
+purana data           -> month PARTITION -> DETACH -> cold storage, DELETE kabhi nahi
+archive ke baad       -> OPENING BALANCE snapshot
+load badha            -> replica -> partition -> (aakhir) shard
+```
+```
+BOL: "Everything for a transfer — both ledger entries, both balance updates, the idempotency key and an outbox
+      event — commits in one local transaction in a relational database, so money is never lost or created.
+      The ledger is the truth and balance is a cache of it; a nightly reconciliation checks them. Balance checks
+      and lock ordering live in the database. Reads go to a replica, history uses cursor pagination, old months
+      are archived with opening-balance snapshots, and side effects go out through Kafka after the commit."
+```
+
+ARCHETYPE C · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [saga/ms-comm](../../FOUNDATIONS/10_ms_communication.md) · [caching](../../FOUNDATIONS/04_caching.md) · saath: [payment-system](../06_payment_system/06_payment_system.md) (iska bada bhai) · [stock-broker](../05_stock_broker_trading/05_stock_broker_trading.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
