@@ -485,13 +485,12 @@
 
    ► 10x pe HAR BOX ALAG scale hota (ek hi jawab sab pe nahi):
        order svc (stateless)  -> zyada server + LB                      <- sahi, aam dabba
-       portfolio / history    -> read REPLICA                           <- sahi
+       portfolio / history    -> read REPLICA (AWS RDS read replica)    <- sahi
        MATCHING (stateful)    -> LB + copy NAHI chalega (do copy = do book = double match)
                                  -> SHARD BY SYMBOL: A-M ek server, N-Z doosra; har symbol ek hi jagah
                                  -> ek HOT symbol (TCS) -> thread optimize + aage durable queue, book mat todo
        Kafka                  -> khud auto-scale NAHI hota -> PARTITION badhao (key = symbol)
        price feed             -> WebSocket server badhao + pub/sub fan-out
-   ► GALAT DABBA: "S3 auto-scale" -> S3 is design me hai hi nahi (file-upload design ka dabba)
    BOL: "Stateless services like order intake scale horizontally behind a load balancer, and
          read-heavy data gets replicas. The matching engine is stateful, so I shard it by symbol -
          each symbol lives on exactly one engine. A single hot symbol stays on one thread; a
