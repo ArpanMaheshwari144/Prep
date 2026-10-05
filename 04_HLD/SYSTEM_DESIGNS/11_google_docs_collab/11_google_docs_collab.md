@@ -1,396 +1,352 @@
-# Google Docs (Collaborative Editor) — POORA ROUND (4 MOVE)
+# Google Docs (Collaborative Editor)
 
-> **NAV** — ARCHETYPE D (real-time) · DIL: saath edit, kuch na khoye, sab same. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [pubsub/queues](../../FOUNDATIONS/07_message_queues.md) · trade-off: [MASTER trade-off jode](../../00_MASTER_SHEET.md)
-
-> 3-Sep MOCK me Arpan ne KHUD derive kiya (novel design) — 3 naye tool the:
-> per-component CAP · WebSocket + Redis pub/sub · OT/CRDT.
-> 15-Sep: asli mock-video ke hisaab se dobara likha — 4 move, koi rail nahi.
->
-> PROBLEM (crux): 2+ log ek doc EK SAATH edit karein -> koi clash/override na ho, likha kho na jaaye,
-> turant dikhe, aur aakhir me sabka doc SAME ho.
-> = real-time concurrent edit + no-lost-write + convergence = poore design ka dil.
-
-```
-★★ TEEN NIYAM (poori file par lagte — [MASTER](../../00_MASTER_SHEET.md) "Kaise bolna")
-   1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
-   2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
-   3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega
-```
+> 2+ log ek doc EK SAATH edit karein -> koi clash / override na ho, likha kho na jaaye, turant dikhe, aakhir me sabka doc SAME.
+> Is design ka dil: **real-time concurrent edit + koi write lost nahi + CONVERGENCE**.
+> 3-Sep MOCK me Arpan ne khud derive kiya (novel design) — 3 naye tool: per-component CAP · WebSocket + Redis pub/sub · OT / CRDT.
 
 ---
 
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
-
-### How to Design Google Docs
+## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![How to Design Google Docs](https://assets.bytebytego.com/diagrams/0206-google-doc.png)
-
-- **Is file me kahan juda:** WebSocket + collaboration service + OT/CRDT + ops log — tera poora design ek tasveer me.
-- Source: [How to Design Google Docs](https://bytebytego.com/guides/how-to-design-google-docs/)
-
----
-
-# MOVE 1 — POOCHO (board pe abhi kuch nahi)
-
-```
-   TU: "Google Docs bada hai — editing, comments, sharing/permissions, version history, offline.
-        Aap kis pe focus karwana chahenge? Main real-time collaborative EDITING pe ja sakta hoon."
-
-   TU: "Kuch cheezein confirm kar lun —
-          - ek doc pe ek saath kitne log edit karenge? (2-3, ya 100?)
-          - OFFLINE editing chahiye — net gaya to typing chalti rahe?
-          - permissions/sharing scope me hai?
-          - rich text (bold/image) ya plain text kaafi hai?"
-
-   ★ "offline chahiye?" — is sawaal ka jawab poore CAP faisle ko tay karta hai.
-```
+Source: [How to Design Google Docs](https://bytebytego.com/guides/how-to-design-google-docs/)
+(WebSocket + collaboration service + OT / CRDT + ops log — poora design ek tasveer me)
 
 ---
 
-# MOVE 2 — DO CHHOTE BLOCK LIKHO
+## SHURU — poocho + numbers
 
 ```
-   ┌──────────────────────┐    ┌───────────────────────────────────┐
-   │ Google Docs          │    │ Use cases:                        │
-   │   - Document         │    │   - kai log EK doc saath edit      │
-   │   - User             │    │   - dusron ke edit TURANT dikhein  │
-   │   - Edit (operation) │    │   - koi edit clash/override na ho  │
-   │   - Permission       │    │                                   │
-   └──────────────────────┘    │ NOT in scope: comments . version  │
-                               │   history . rich-text formatting  │
-   ┌──────────────────────────┐└───────────────────────────────────┘
-   │ Kya chahiye (NFR):       │
-   │  - LOW LATENCY (typing   │ <- DIL
-   │    instant lage)         │
-   │  - HIGH AVAILABILITY     │
-   │    (typing kabhi na ruke,│
-   │     offline bhi chale)   │
-   │  - CONVERGENCE (sab       │
-   │    aakhir me same doc pe)│
-   └──────────────────────────┘
+POOCHO:  "Editing, comments, sharing / permissions, version history, offline — main real-time collaborative EDITING pe."
+         ek doc pe ek saath kitne? (2-3 ya 100) · OFFLINE chahiye?  <- iska jawab poora CAP faisla tay karta
+         permissions scope me? · rich text ya plain?
 
-   TU: "Teesri line sabse important hai — main 'sab same doc pe' ko strong consistency se
-        nahi laaunga, CONVERGENCE se laaunga. Kyun, wo aage bataunga."
-```
+FR:      kai log EK doc saath edit · doosron ke edit TURANT dikhein · koi edit clash / override na ho
+         scope bahar: comments · version history · rich-text formatting
+NFR:     LOW LATENCY (typing instant, dil) · HIGH AVAILABILITY (typing kabhi na ruke, offline bhi)
+         CONVERGENCE (sab aakhir me same doc) — strong consistency se NAHI, convergence se
 
-```
-   Numbers (halke se, atkna nahi):
-     ~100 M users . ~30-40 M DAU
-     edits/sec BAHUT zyada — ye WRITE-DOMINATED tool hai (har keystroke ek event)
-
-   FAISLA: write ka bojh bhaari hai -> buffering + sharding chahiye
-           (exact number yahan maayne nahi rakhta)
+NUMBERS: ~100M user · ~30-40M DAU · edits / sec BAHUT — WRITE-DOMINATED (har keystroke ek event)
+         -> buffering + sharding chahiye (exact number yahan maayne nahi rakhta)
 ```
 
 ---
 
-# MOVE 3 — BOXES BANAO (chhota banao, phir dikkat pe badhao)
+## DABBA 0 — sabse simple
 
 ```
-   TU: "Sabse simple se shuru."
-
-        USER ──► [ App ] ──► [ DB ]   doc ka poora text pada hai
-                              "Save" dabao -> poora text overwrite
-
-   TU: "Ek akela banda likh raha ho to chalta hai. Ab do log bithaate hain."
+SOLUTION: doc ka poora text DB me · "Save" dabao -> poora text overwrite
 ```
-
-### dikkat 1 — "do log ne saath save kiya, baad wale ne pehle ka MITA diya"
-
 ```
-        A ne likha: "HELLO WORLD"   ──save──►  DB
-        B ne likha: "HELLO THERE"   ──save──►  DB   (A ka kaam GAYAB)
-
-        ye LAST-WRITE-WINS hai -> collab me ye fail hai
-
-   FAISLA: poora TEXT mat bhejo — sirf OPERATION bhejo
-
-        A ka op:  { insert "X", position 0 }
-        B ka op:  { delete  position 5 }
-
-   TU: "Agar dono poora document bhejenge to ek doosre ko overwrite karenge hi.
-        Isliye main text nahi, EDIT-OPERATION bhejunga — phir dono ko apply kar sakta hoon,
-        kisi ka likha khoyega nahi."
-```
-
-### dikkat 2 — "B ko A ka edit dikhega kab? refresh karne pe?"
-
-```
-        HTTP request-response se nahi hoga — server ko KHUD bhejna padega
-
-   FAISLA: WEBSOCKET (do-tarfa, zinda connection)
-
-        User A ══ WebSocket ══ [ Conn-Server ] ══ WebSocket ══ User B
-                (dono taraf se push, connection khula rehta)
-
-   TU: "Ye do-tarfa chahiye — user type bhi karta hai aur doosron ke edit receive bhi karta hai.
-        Agar sirf server-se-client bhejna hota to SSE halka padta, par yahan dono taraf jaana hai."
-```
-
-### dikkat 3 — "ek Conn-Server itne zinda socket nahi jhel sakta -> kai Conn-Server lagaye -> ab A server-1 pe, B server-2 pe"
-
-```
-        ek box ki memory / file-descriptor ki had -> Conn-Server kai lagao (aage LB)
-        -> par ab ek hi doc ke do editor ALAG box pe ho sakte hain:
-
-        User A ── Conn-Server-1          Conn-Server-2 ── User B
-                        │                      ▲
-                        └── ye dono ek doosre ko jaante hi nahi ──┘
-
-   FAISLA: REDIS PUB/SUB (server-to-server fanout)
-
-        User A ══► Conn-Server-1 ──publish──► [ REDIS PUB/SUB ] ──► Conn-Server-2 ══► User B
-
-   TU: "Client ke saath WebSocket, aur server ke beech pub/sub. Do alag kaam hain —
-        WebSocket browser tak, pub/sub server-se-server."
-```
-
-### dikkat 4 — "dono ne EK SAATH position 0 pe type kiya"
-
-```
-        base doc: "HELLO"
-        A ka op: insert("X", pos 0)        B ka op: insert("Y", pos 0)     [ek hi waqt]
-
-        seedha apply kiya to:
-            A ke paas -> "XHELLO"
-            B ke paas -> "YHELLO"        <- DO ALAG DOC. diverge ho gaya.
-
-   FAISLA: OPERATIONAL TRANSFORMATION (OT) — winner mat chuno, TRANSFORM karo
-
-        A ke paas:                          B ke paas:
-          A apply  -> "XHELLO"                B apply  -> "YHELLO"
-          ab B ka op aaya (pos 0)             ab A ka op aaya (pos 0)
-          A pehle 0 pe daal chuka             tie-break: A pehle tha
-          -> B ka op SHIFT: pos 0 -> 1        -> A ka op pos 0 pe
-          -> insert("Y", pos 1)               -> insert("X", pos 0)
-          -> "XYHELLO"                        -> "XYHELLO"
-
-        => DONO "XYHELLO"  — converge ho gaye, dono ke akshar bache, kuch lost nahi
-
-   ★ order (XY vs YX) ka faisla deterministic tie-break se (userId / timestamp) —
-     par dono akshar zinda rehte hain.
-   ★ CRDT = doosra raasta: har character ko apni unique id/position do -> merge apne aap
-     commutative ho jaata, central transform ki zaroorat hi nahi.
-   ★ BOLNE WALI LINE: "Main operations bhejta hoon, snapshot nahi; concurrent operations ko
-     OT ya CRDT se transform/merge karta hoon — sab converge karte hain, koi write lost nahi hota."
-     (implement nahi karna — bas ye samajh bolni hai.)
-```
-
-### dikkat 5 — "har keystroke pe DB hit? DB mar jaayega"
-
-```
-        har akshar = ek write -> 40M DAU x har keystroke -> DB khatam
-
-   FAISLA: BUFFER + BATCH
-
-        op ──► Redis buffer me jama ──► thodi-thodi der me BATCH ──► NoSQL edit-log
-
-   TU: "Real-time hissa memory/pub-sub se chalta hai; DB me batch me likhta hoon.
-        User ko wait nahi karna padta aur DB pe hathoda nahi padta."
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "The database is too big / takes too many writes. What do you do?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       url shortener -> arabon link                -> short code se shard
-       twitter feed  -> tweets bahut               -> user_id se shard
-       kafka         -> ek partition nahi samaata  -> partitions badhao
-       banking       -> transactions bahut         -> account_id se shard
-       chat          -> messages bahut             -> chat_id se shard
-
-   ► MASTER SHEET SE JODA: batch ke baad bhi edit-log bada / writes zyada -> docId se SHARD
-       (Cassandra partition key = docId, ek doc ke saare ops ek shard pe).
-
-   ★ replica sirf READ baantta; write ke liye SHARD. country/date = bura key (skew)
-```
-
-### dikkat 6 — "doc kholne pe 10 lakh operation replay karne padenge"
-
-```
-        doc = saare ops order me apply karke banta  -> 10 lakh op = doc kholna SLOW
-
-   FAISLA: SNAPSHOT + uske baad ke ops
-
-        [ snapshot: poora text, har X ops baad ]  +  [ uske baad ke thode ops ]
-                            │
-                            ▼
-                doc load = latest snapshot + baad ke ops apply
-
-   (yahi append-log + periodic compaction ka funda hai)
-```
-
-### dikkat 7 — "network ek second ko blip hua — typing ruk jaayegi?"
-
-```
-   ★ CAP — is design ka sabse gehra insight
-
-     Pehli soch: "consistency chahiye -> CP"     <- ye GALAT nikla
-     Sach       : agar CP rakha to partition pe TYPING RUK jaayegi.
-                  Asli Google Docs me tum offline bhi type karte ho, baad me sync hota hai.
-                  => ye AP hai.
-                  "sabko same doc" strong-consistency se nahi, CONVERGENCE (OT/CRDT) se aata hai.
-
-   ★★ PER-COMPONENT CAP (poore system pe ek hi CAP nahi hota):
-
-        doc edits             ->  AP   (available rehna zaroori, append-log, OT se converge)
-        permissions/ownership ->  CP   (strong — hataye gaye user ko TURANT block karna hai)
-
-   ★ CAP ka faisla SIRF partition ke waqt maayne rakhta hai; partition nahi hai to dono milte hain.
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "Consistency or availability — which do you pick?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       bookmyshow    -> seat     -> CP (booking), search AP
-       payment       -> paisa    -> CP
-       banking       -> balance  -> CP
-       twitter feed  -> feed     -> AP (purana chalega)
-```
-
-### dikkat 8 — "crore WebSocket connections ek hi server pe?"
-
-```
-   (dikkat 3 me kai Conn-Server aa chuke; ab crore connection pe unko SAHI tarah baantna hai)
-
-   FAISLA:
-     1. alag CONNECTION TIER — sirf sockets hold karne wale server, alag se scale honge
-        connection STATEFUL hai -> LB ko consistent routing karna padega
-        (user hamesha usi server pe wapas jaaye)
-     2. SHARD KEY = docId — ek doc ke saare editor + op-stream + OT EK shard pe
-        (OT ko serialize karna hota hai -> ek jagah hona zaroori)
-        alag doc -> alag shard -> load bat gaya
-        ★ to pub/sub ab bhi kyun? docId routing ke baad zyadatar editor ek hi box pe aate hain,
-          par reconnect / box badalne ke beech koi doosre box pe aa sakta -> pub/sub us case ka
-          bachav hai. (routing pakka ho to pub/sub ka kaam bahut kam ho jaata hai)
-     3. hot doc bounded hai (Google ~100 editor ki cap rakhta) -> per-doc OT ek server pe theek chalta
-     4. spike aaye -> queue absorb kare; Redis pub/sub replicate + horizontally scale
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "How do you keep messages / events in order?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       kafka         -> order sirf partition ke andar -> same key = same partition
-       chat          -> message aage-peeche          -> chat_id key + sequence number
-       stock broker  -> order ka kram                -> har symbol ek sequencer
-
-   ► MASTER SHEET SE JODA: kram SERVER deta (har op ko doc ka agla version / sequence number),
-       client ki ghadi se nahi.
-```
-
-### ab poora naksha (jahan pahunche) + har box ka KYUN
-
-```
-   User A                                            User B
-     ║  WebSocket (zinda, 2-taraf)                      ║  WebSocket
-     ▼                                                  ▼
-  [ Conn-Server-1 ] ──publish──► [ REDIS PUB/SUB ] ──► [ Conn-Server-2 ]
-     │   OT transform                    │
-     │   edit buffer                     │
-     ▼                                   ▼
-  [ Redis buffer ] ──batch──► [ NoSQL edit-log (Cassandra) ]
-                                   partition = docId, cluster = timestamp
-                              [ SQL store ] permissions/ownership (CP)
-     (aage) [ CDN ] static app file    [ LB ] WebSocket ko consistent-route karta
-
-     CDN         : app ki static files user ke paas se
-     LB          : traffic baantna — par connection stateful hai -> consistent routing
-     Conn-Server : WebSocket pakadta + OT karta + edits buffer karta
-     Redis       : (a) pub/sub server-to-server fanout  (b) write buffer
-     NoSQL log   : saare ops persist (append-only, write-heavy)
-     SQL         : permissions — yahan strong consistency chahiye
-```
-
-```
-   EK EDIT KA POORA SAFAR (end-to-end, bolne layak):
-     1. User A ne ek akshar type kiya -> op bana { docId, userId, insert, pos, char, ts }
-     2. op WebSocket se A ke Conn-Server tak
-     3. server ne OT transform kiya (concurrent ops ke against) -> apply
-     4. op Redis pub/sub pe publish -> baaki Conn-Servers -> unke clients (User B) ko PUSH
-     5. op Redis buffer me jama -> thodi der me BATCH -> NoSQL edit-log
-     6. B ke client ne op liya -> apni taraf transform kiya -> screen update
+  USER
+    │
+    ▼
+  [ App ]
+    │
+    ▼
+  [ DB ]
 ```
 
 ---
 
-# MOVE 4 — BOLTE-BOLTE JODO (jo poocha jaaye, wahi kholo)
-
-## ► "API kya hogi?"
+## DIKKAT 1 — do log ne saath save kiya, baad wale ne pehle ka MITA diya
 
 ```
-   GET       /documents/{docId}          ->  doc laao (snapshot + baad ke ops)
-   POST      /documents/{docId}/edits    ->  ek edit (operation) bhejo
-   WebSocket /documents/{docId}          ->  real-time 2-taraf channel
+DIKKAT:   A "HELLO WORLD" save · B "HELLO THERE" save -> A ka kaam GAYAB = LAST-WRITE-WINS, collab me fail
+
+SOLUTION: poora TEXT mat bhejo — sirf OPERATION bhejo
+          A: { insert "X", position 0 } · B: { delete position 5 } -> dono apply ho sakte, kisi ka khoya nahi
+
+NAYA:     koi dabba nahi — data ki shakal badli (text -> operation)
 ```
-
-## ► "Data model kya, aur kaunsa DB?"
-
 ```
-   Har edit ek OPERATION event hai (snapshot nahi):
-
-       { docId, userId, opType (insert/delete), position, char/text, timestamp }
-
-   doc ka current roop = us doc ke saare ops ORDER me apply karke banta hai
-
-   ACCESS PATTERN: "ek docId ke SAARE edits, TIME order me"
-        -> partition key = docId . clustering = timestamp
-        -> Cassandra ekdum fit (append-heavy log) . Mongo bhi chal jaayega
-
-   ★ DB ka chunaav DATA KI SHAKAL se aata hai, "consistency chahiye" se NAHI.
-     "Relations nahi hain" -> NoSQL ki taraf le jaata hai, SQL ki taraf nahi.
-   ★ permissions/ownership -> alag SQL / strong-consistent store (relations + CP)
-```
-
-## ► "Concurrent edit kaise merge karoge?" (design ka dil — upar dikkat-4 me poora hai)
-
-```
-   OT ka nichod:
-     text nahi, OPERATIONS bhejo -> concurrent ops ko TRANSFORM karo -> dono zinda rahein -> converge
-     "HELLO" + insert(X,0) + insert(Y,0) -> dono taraf "XYHELLO"
-
-   CRDT: har char ko unique id -> merge commutative -> central transform nahi chahiye
-```
-
-## ► "Kahan tootega / scale?"
-
-```
-   ★ RATTO MAT — user ka raasta chalao:
-
-      user doc kholta hai
-          │
-          ├─► WebSocket    -> crore connections?    -> alag CONNECTION TIER + consistent routing
-          ├─► Conn-Server  -> OT kahan hoga?        -> SHARD by docId (ek doc = ek jagah)
-          ├─► Redis pubsub -> spike?                -> replicate + horizontal scale
-          ├─► DB writes    -> har keystroke?        -> buffer + batch
-          └─► doc load     -> 10 lakh op replay?    -> SNAPSHOT + baad ke ops
-
-   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
-       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
-       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
-       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
+DHYAAN:   Last-Write-Wins (3-Sep mock ki galti) -> kisi ka likha KHO jaata
 ```
 
 ---
 
-## ═══ TRAP BOX — mock me jo galtiyan hui (ye sabse kaam ki cheez hai) ═══
+## DIKKAT 2 — B ko A ka edit kab dikhega? refresh pe?
 
 ```
-   GALAT: Last-Write-Wins            -> kisi ka likha KHO jaata. Collab me nahi chalta -> OT/CRDT
-   GALAT: "consistency chahiye = CP" -> asal me AP hai (offline type + converge).
-                                        CP hota to network blip pe typing RUK jaati.
-   GALAT: "consistency chahiye = SQL"-> DB data ki SHAKAL se aata hai; edit-log = NoSQL.
-                                        "relations nahi" -> NoSQL ki taraf.
-   GALAT: har keystroke DB hit       -> nahi; buffer + batch persist
-   GALAT: ek CAP poore system pe     -> PER-COMPONENT (edits AP, permissions CP)
-```
+DIKKAT:   HTTP request-response se server khud nahi bhej sakta
 
-**1-LINE RECALL:** Real-time collab = WebSocket (browser↔server push) + Redis pub/sub (server↔server fanout)
-+ edit-op log NoSQL me + OT/CRDT (concurrent edits merge, koi write lost nahi, sab converge).
-CAP = AP (offline type + converge), aur per-component (edits AP / permissions CP).
-Bottleneck = connection tier + shard by docId.
+SOLUTION: WEBSOCKET — do-tarfa zinda connection, dono taraf se push
+          do-tarfa chahiye: user type bhi karta, doosron ke edit receive bhi
+          (sirf server -> client hota to SSE halka padta)
+
+BADLA:    App -> Conn-Server (WebSocket pakadta)
+```
+```
+  USER A / B
+    │
+    ▼
+  [ Conn-Server ]
+    │
+    ▼
+  [ DB ]
+```
 
 ---
 
-[← MASTER SHEET](../../00_MASTER_SHEET.md)
+## DIKKAT 3 — ek Conn-Server itne socket nahi jhelta -> kai lagaye -> A server-1 pe, B server-2 pe
+
+```
+DIKKAT:   memory / file-descriptor ki had -> kai Conn-Server (aage LB)
+          par ek doc ke do editor ALAG box pe -> dono ek doosre ko jaante hi nahi
+
+SOLUTION: REDIS PUB/SUB (server-to-server fanout)
+          A -> Conn-Server-1 -> publish -> Redis pub/sub -> Conn-Server-2 -> B
+          WebSocket = browser tak · pub/sub = server se server (do alag kaam)
+
+NAYA:     LB · Redis pub/sub
+BADLA:    Conn-Server -> Conn-Server x N
+```
+```
+  USER A / B
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ Conn-Server x N ] ──► [ Redis pub/sub ]
+    │
+    ▼
+  [ DB ]
+```
+
+---
+
+## DIKKAT 4 — dono ne EK SAATH position 0 pe type kiya
+
+```
+DIKKAT:   base "HELLO" · A insert("X", 0) · B insert("Y", 0) ek hi waqt
+          seedha apply -> A ke paas "XHELLO", B ke paas "YHELLO" = DO ALAG DOC, diverge
+
+SOLUTION: OPERATIONAL TRANSFORMATION (OT) — winner mat chuno, TRANSFORM karo
+          A ke paas: A apply "XHELLO" -> B ka op aaya (pos 0), A pehle 0 pe daal chuka
+                     -> B ka op SHIFT pos 0 -> 1 -> insert("Y", 1) -> "XYHELLO"
+          B ke paas: B apply "YHELLO" -> A ka op aaya, tie-break: A pehle -> insert("X", 0) -> "XYHELLO"
+          DONO "XYHELLO" — converge, dono akshar bache, kuch lost nahi
+          XY vs YX = deterministic tie-break (userId / timestamp), par dono zinda
+          CRDT = doosra raasta: har char ki unique id / position -> merge commutative, central transform nahi
+          (implement nahi karna — bas ye samajh bolni hai)
+
+NAYA:     koi dabba nahi — Conn-Server me OT
+```
+```
+POOCHEGA: "Two people type at the same position at the same time — what happens?"
+BOL:      "I send operations, not snapshots, and transform concurrent operations with OT or merge them with a
+           CRDT. Everyone converges to the same document and no write is lost."
+```
+
+---
+
+## DIKKAT 5 — har keystroke pe DB hit
+
+```
+DIKKAT:   har akshar = ek write · 40M DAU x har keystroke -> DB khatam
+
+SOLUTION: BUFFER + BATCH: op -> Redis buffer me jama -> thodi der me BATCH -> NoSQL edit log
+          real-time hissa memory / pub-sub se, DB me batch — user wait nahi, DB pe hathoda nahi
+          EDIT LOG = Cassandra: partition key = docId, clustering = timestamp ("ek doc ke saare edit, time order me")
+          batch ke baad bhi bada -> docId se SHARD (ek doc ke saare op ek shard)
+          replica sirf READ baantti, write ke liye SHARD · country / date = bura key (skew)
+
+NAYA:     Redis buffer
+BADLA:    DB -> Cassandra edit log (docId shard)
+```
+```
+  USER A / B
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ Conn-Server x N ] ──► [ Redis pub/sub ]
+    │
+    ▼
+  [ Redis buffer ]
+    │
+    ▼
+  [ Cassandra edit log ]
+```
+```
+POOCHEGA: "The database takes too many writes. What do you do?"
+DHYAAN:   (mock galti) "consistency chahiye = SQL" -> NAHI, DB data ki SHAKAL se aata · "relations nahi" -> NoSQL ki taraf
+          (mock galti) har keystroke DB hit -> nahi, buffer + batch
+BOL:      "Real-time edits go through memory and pub/sub; I buffer operations in Redis and write them in batches
+           to Cassandra, partitioned by doc id and ordered by time, so one doc's ops stay on one shard."
+```
+
+---
+
+## DIKKAT 6 — doc kholne pe 10 lakh operation replay
+
+```
+DIKKAT:   doc = saare ops kram se apply -> 10 lakh op = kholna SLOW
+
+SOLUTION: SNAPSHOT (poora text, har X ops baad) + uske baad ke thode ops
+          doc load = latest snapshot + baad ke ops apply (append log + periodic compaction ka funda)
+
+NAYA:     koi dabba nahi — edit log ke saath snapshot
+```
+
+---
+
+## DIKKAT 7 — network ek second blip hua: typing ruk jaayegi?
+
+```
+DIKKAT:   CAP — partition pe kya chunein
+
+SOLUTION: pehli soch "consistency chahiye -> CP" = GALAT nikli (3-Sep mock)
+          CP rakha to partition pe TYPING RUKEGI · asli Docs me offline bhi type, baad me sync -> ye AP
+          "sabko same doc" strong consistency se nahi, CONVERGENCE (OT / CRDT) se
+          PER-COMPONENT CAP (poore system pe ek CAP nahi):
+             doc edits             -> AP (available, append log, OT se converge)
+             permissions / owner   -> CP (hataye gaye user ko TURANT block) -> alag SQL store
+          CAP ka faisla SIRF partition ke waqt; partition nahi to dono milte
+
+NAYA:     SQL (permissions / ownership)
+```
+```
+  USER A / B
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ Conn-Server x N ] ──► [ Redis pub/sub ]
+    │         │
+    │         └──► [ SQL permissions ]
+    ▼
+  [ Redis buffer ]
+    │
+    ▼
+  [ Cassandra edit log ]
+```
+```
+POOCHEGA: "Consistency or availability — which do you pick?"
+DHYAAN:   ek CAP poore system pe NAHI — per component
+BOL:      "Per component. Edits are AP: you keep typing through a network blip and OT or CRDTs make everyone
+           converge. Permissions are CP: a removed user must be blocked immediately."
+```
+
+---
+
+## DIKKAT 8 — crore WebSocket connection
+
+```
+DIKKAT:   kai Conn-Server aa chuke, par crore connection sahi baantne hain
+
+SOLUTION: (1) alag CONNECTION TIER — sirf socket pakadne wale, alag scale
+              connection STATEFUL -> LB CONSISTENT ROUTING (user usi server pe wapas)
+          (2) SHARD KEY = docId — ek doc ke saare editor + op stream + OT EK shard pe (OT serialize hona chahiye)
+              alag doc -> alag shard -> load bata
+              pub/sub ab bhi kyun: reconnect / box badalne ke beech koi doosre box pe aa sakta -> uska bachav
+              (routing pakka ho to pub/sub ka kaam bahut kam)
+          (3) hot doc bounded (Google ~100 editor ki cap) -> per-doc OT ek server pe theek
+          (4) spike -> queue absorb · Redis pub/sub replicate + horizontally scale
+          (5) app ki static files -> CDN
+          KRAM: SERVER deta (har op ko doc ka agla version / sequence number), client ki ghadi nahi
+
+NAYA:     CDN
+BADLA:    LB -> LB (docId se consistent routing)
+```
+```
+  USER A / B
+    │
+    ├──► [ CDN ]
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ Conn-Server x N ] ──► [ Redis pub/sub ]
+    │         │
+    │         └──► [ SQL permissions ]
+    ▼
+  [ Redis buffer ]
+    │
+    ▼
+  [ Cassandra edit log ]
+```
+```
+POOCHEGA: "How do you keep edits in order?"
+BOL:      "The server assigns each operation the doc's next version number, never the client clock, and all
+           ops for one doc go to one shard where OT runs serially."
+```
+
+---
+
+## 10x SCALE — har dabba alag
+
+```
+WebSocket      -> crore connection -> alag CONNECTION TIER + consistent routing
+Conn-Server    -> OT kahan? -> SHARD by docId (ek doc = ek jagah)
+Redis pub/sub  -> spike -> replicate + horizontal scale
+DB writes      -> har keystroke? -> buffer + batch, docId shard
+doc load       -> 10 lakh op replay? -> SNAPSHOT + baad ke ops
+
+POOCHEGA: "How would you scale this to 10x?"      -> user ka raasta chalo, pehle jo toote
+POOCHEGA: "What's the single point of failure?"   -> Conn-Server (reconnect doosre pe), Redis (replica)
+POOCHEGA: "How do you know it's working?"         -> edit propagation p99 · WebSocket drop rate · buffer lag · alert
+```
+
+---
+
+## POOCHE TO (deep-dive)
+
+```
+API:      GET /documents/{docId} -> snapshot + baad ke ops · POST /documents/{docId}/edits -> ek operation
+          WebSocket /documents/{docId} -> real-time 2-taraf channel
+
+DATA:     har edit = OPERATION event: { docId, userId, opType (insert / delete), position, char / text, timestamp }
+          current doc = us doc ke saare ops ORDER me apply
+          Cassandra fit (append-heavy log) · Mongo bhi chalega · permissions = alag SQL (relations + CP)
+
+EK EDIT KA SAFAR:
+          1. A ne akshar type -> op { docId, userId, insert, pos, char, ts }
+          2. WebSocket se A ke Conn-Server tak
+          3. OT transform (concurrent ops ke against) -> apply
+          4. Redis pub/sub publish -> baaki Conn-Servers -> unke client (B) ko PUSH
+          5. Redis buffer -> BATCH -> Cassandra edit log
+          6. B ke client ne op liya -> apni taraf transform -> screen update
+
+OT vs CRDT: OT = ops bhejo, concurrent ko TRANSFORM, sab converge · CRDT = har char unique id, merge commutative
+```
+
+---
+
+## AAKHRI DABBA + WRAP
+
+```
+CDN = static app · LB = docId se consistent routing · Conn-Server = WebSocket + OT + buffer
+Redis pub/sub = server-to-server fanout · Redis buffer = batch write · Cassandra = op log (docId, timestamp) + snapshot
+SQL = permissions (CP)
+```
+```
+  USER A / B
+    │
+    ├──► [ CDN ]
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ Conn-Server x N ] ──► [ Redis pub/sub ]
+    │         │
+    │         └──► [ SQL permissions ]
+    ▼
+  [ Redis buffer ]
+    │
+    ▼
+  [ Cassandra edit log ]
+```
+```
+BOL: "Clients hold a WebSocket to a connection server, routed by doc id. Every keystroke is an operation; the
+      server transforms concurrent operations with OT, so nothing is lost and everyone converges, then fans out
+      to other servers through Redis pub/sub. Operations are buffered and batched into Cassandra by doc id, with
+      snapshots so a doc loads fast. Edits are AP — typing never stops — while permissions are CP in SQL."
+```
+
+ARCHETYPE D (real-time) · CONCEPTS: [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [pubsub/queues](../../FOUNDATIONS/07_message_queues.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
