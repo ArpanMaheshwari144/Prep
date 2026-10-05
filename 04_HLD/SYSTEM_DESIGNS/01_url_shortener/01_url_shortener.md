@@ -1,649 +1,458 @@
-# URL Shortener — POORA ROUND (4 MOVE, jaise asli me hota hai)
+# URL Shortener
 
-> **NAV** — ARCHETYPE F (infra/component) · DIL: chhota unique code + tez redirect. UP: [MASTER](../../00_MASTER_SHEET.md) · CONCEPTS: [ID-gen](../../FOUNDATIONS/13_distributed_id_snowflake.md) · [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · trade-off: [MASTER trade-off jode](../../00_MASTER_SHEET.md)
-
-> Arpan-derived 21-Jun · 15-Sep: asli mock-video dekh ke dobara likha.
-> **Asli round me koi 7-step rail nahi chali** — sirf ye 4 move hue:
-> POOCHA -> do chhote block LIKHE -> BOXES banaye -> phir bolte-bolte JODTA gaya.
-> Isliye ye file bhi 4 move me hai. Har jagah: **tu kya BOLTA hai · BOARD pe kya banta · FAISLA + KYUN**.
->
-> Problem (1 line): long URL -> short 6-7 char code; short pe click -> original pe redirect (302).
-
-```
-★★ TEEN NIYAM (poori file par lagte — [MASTER](../../00_MASTER_SHEET.md) "Kaise bolna")
-   1. PERFECT design ek saath mat banao — chhote se shuru, dikkat pe badhao
-   2. NUMBER ke peeche mat bhaago — bolo, ek faisla nikaalo, aage badho
-   3. BOTTLENECK ratto mat — KHUD USER banke raasta chalao, khud dikh jaayega
-   ★ har cheez interviewer se CONFIRM karte chalo. Monologue nahi, BAAT-CHEET hai.
-```
+> Long URL -> chhota 7 char code banao · short pe click -> original pe REDIRECT (302).
+> Is design ka dil: **chhota UNIQUE code** + **redirect tez** (read 100:1).
 
 ---
 
-## ═══ DIAGRAM — tasveer se samjho (ByteByteGo / Alex Xu) ═══
-
-> Tasveer unki site se seedha dikhti hai (copy nahi ki). Credit: ByteByteGo, Alex Xu · License CC BY-NC-ND 4.0.
-> Tareeka: design revise karte waqt tasveer dekho, phir neeche ka apna section padho ("Is file me kahan juda" wahi batata hai).
-
-### Explaining 5 Unique ID Generators
+## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![Explaining 5 Unique ID Generators](https://assets.bytebytego.com/diagrams/0006-explaining-5-unique-id-generators-in-distributed-systems.png)
-
-- **Is file me kahan juda:** chhota unique code kahan se aaye — UUID / Snowflake / DB auto-increment / range. Code = ID ka base62.
-- Source: [Explaining 5 Unique ID Generators](https://bytebytego.com/guides/explaining-5-unique-id-generators-in-distributed-systems/)
-
----
-
-# MOVE 1 — POOCHO (board pe abhi kuch nahi)
-
-```
-   TU: "URL shortener me kai cheezein aati hain — link banana, redirect, analytics,
-        custom alias, expiry. Aap kis pe focus karwana chahenge?"
-   WO: "Bas link banana aur redirect dekh lete hain."
-   TU: "Theek hai — to analytics dashboard aur custom alias scope se bahar,
-        aur redirect-path pe zyada waqt. Sahi hai?"
-
-   TU: "Main ~100 million links per day maan raha hoon, read:write 100:1.
-        Theek hai ya aap alag scale dekhna chahenge?"
-```
-
-```
-   ★ scope TU mat kaato — USSE poochho. Phir scope uska chuna hua hai, aur tu bhar-poor
-     usi hisse pe ja sakta hai.
-   ★ pata na ho -> "ye maine use nahi kiya" bolna THEEK hai, wo khud bhar dega.
-     (feedback-slide: "be open about the limits of your expertise")
-```
+Source: [Explaining 5 Unique ID Generators](https://bytebytego.com/guides/explaining-5-unique-id-generators-in-distributed-systems/)
+(code kahan se aaye — UUID / Snowflake / DB auto-increment / range. Code = ID ka base62.)
 
 ---
 
-# MOVE 2 — DO CHHOTE BLOCK LIKHO
+## SHURU — poocho + numbers
 
 ```
-   TU: "Pehle likh leta hoon system me cheezein kya hain aur humein karna kya hai."
+POOCHO:  "Link banana, redirect, analytics, custom alias, expiry — kis pe focus karein?"
+         -> banana + redirect. Analytics dashboard / custom alias scope se bahar (USSE poocho, khud mat kaato)
+         "~100M link / din, read:write 100:1 maan raha hoon — theek?"
 
-   ┌──────────────────────┐     ┌───────────────────────────────┐
-   │ URL Shortener        │     │ Use cases:                    │
-   │   - Links            │     │   - long URL -> short banao   │
-   │   - Users            │     │   - short -> original redirect│
-   │   - Clicks           │     │                               │
-   └──────────────────────┘     │ NOT in scope (poochh ke chhoda│
-                                │   - analytics dashboard       │
-   ┌──────────────────────┐     │   - custom alias / expiry     │
-   │ Kya chahiye (NFR):   │     └───────────────────────────────┘
-   │  - redirect p99<200ms│ <- ye DIL hai
-   │  - hamesha up        │
-   │  - read >> write     │
-   │  - code UNIQUE       │
-   └──────────────────────┘
+FR:      long -> short banao · short -> original redirect
+NFR:     redirect p99 < 200ms · hamesha up · read >> write · code UNIQUE
 
-   TU (board pe ungli rakh ke): "Ye chaar cheezein main poore design me wapas laata rahunga —
-                                 har faisla inhi me se kisi se justify karunga."
-```
+NUMBERS: writes 100M / din = 10^8 / 10^5 = ~1,000 / sec      (1 din ~ 10^5 sec)
+         reads  100x = ~1 lakh / sec
+         row ~500 B · 5 saal = 100M x 365 x 5 = ~180 billion row = ~90 TB
+         62^7 = ~3.5 trillion -> 7 char kaafi (100+ saal)
 
-```
-   Numbers:
-     - writes : 100M / day = 10^8 / 10^5 = ~1,000 / sec
-     - reads  : 100x       = ~100,000 / sec
-     - row    : ~500 bytes
-     - 5 saal : 100M x 365 x 5 = ~180 billion rows -> ~90 TB
-     - code   : 62^7 = ~3.5 trillion -> 7 char kaafi (100+ saal)
+HAR NUMBER SE FAISLA:  100:1 -> CACHE · 90 TB -> SHARD · 7 char -> lambai ka jhagda khatam
+         modest maano (1 billion URL = ~500 GB) -> ek DB me fit, shard NAHI. farak sirf assumption ka.
+         estimate SKIP mat karo (Zomato me ek banda isi pe reject), par exact ganit me mat atko.
+         ⚠ "100M/din" maana to poora per-DAY raho (3 TB wala galat jawab = per-month maan liya tha)
 
-     TRICK: 1 din ~ 100,000 sec (10^5) -> division aasan
-```
-
-```
-   HAR NUMBER SE EK FAISLA (yahi bolna — number akela bekaar hai):
-     100 : 1 read-heavy  ──►  CACHE hi asli cheez hai
-     ~90 TB              ──►  ek machine me nahi -> aage SHARD
-     7 char kaafi        ──►  lambai ka jhagda khatam, aage badho
-
-   ⚠ SLIP-YAAD (galti ho chuki): "5yr x 12mo x 100M x 500B = 3TB" GALAT tha
-     (wo 100M/MONTH maan ke tha). PER-DAY consistent raho -> ~90 TB.
-
-   ★★ DELIVERY-GEM (over-engineering se bachata):
-      modest maano: 1 billion URLs -> ~500 GB -> SINGLE DB me fit -> shard NAHI
-      aggressive  : 100M/day -> ~90 TB -> shard by shortCode
-      dono sahi — farak sirf ASSUMPTION ka. "Asli Bitly ~500GB hai, single DB me aa jaata —
-      bina zaroorat shard mat karo."
-   ★ scaling ka poora ganit ABHI nahi. (slide: "you don't necessarily have to go into
-     the details of scaling at this point")
-
-   KYUN CHAHIYE ye system (ek line): Twitter/SMS limit . marketing tracking . QR/print . saaf dikhna
+KYUN:    Twitter / SMS limit · marketing tracking · QR / print · saaf dikhna
 ```
 
 ---
 
-# MOVE 3 — BOXES BANAO (chhota banao, phir dikkat pe badhao)
+## DABBA 0 — sabse simple
 
 ```
-   TU: "Sabse simple cheez banata hoon jo kaam kar de, phir dekhte hain kahan tootti hai."
-
-        USER ──► [ App ] ──► [ DB ]
-
-   TU: "Ye dono kaam kar deta hai. Ab main USER ban ke ise chala ke dekhta hoon."
+SOLUTION: App code banaye, DB me save · click pe DB se nikaal ke redirect
 ```
-
-### dikkat 1 — "har click DB pe jaa raha, aur redirect 200ms se tez chahiye"
-
 ```
-        USER ──► [ App ] ──► [ REDIS ] ──miss──► [ DB ]
-                                ▲                   │
-                                └───── populate ────┘
-
-   TU: "Read:write 100:1 hai — isliye cache sabse pehle. Cache-aside, aur TTL link ki
-        expiry ke barabar. ~95% read yahin nipat jaayenge."
-      + DB me shortCode pe PRIMARY KEY / B-tree index -> O(log n), disk pe bhi tez
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What if the cache goes down?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       distributed cache  -> hot key expire, 1000 miss      -> STAMPEDE: mutex (ek hi rebuild) / soft TTL
-       rate limiter       -> Redis down                     -> default fail-open; payment/auth me fail-closed
-       twitter feed       -> feed cache gira                -> feed DB se banana mehnga -> shedding, garam karo
-       bookmyshow         -> Redis gira, browse primary pe  -> Redis cluster + browse replica se
-
-   ► MASTER SHEET SE JODA: Redis gira to 95% read seedha DB pe -> DB bhi gir sakta.
-       ilaaj: Redis replica/cluster · DB pe load shedding · mutex (ek hi rebuild, stampede nahi).
-```
-
-### dikkat 1b — "ek App box ~1 lakh redirect/sec nahi jhel raha, aur wo gira to poori site band"
-
-```
-        USER ──► [ LB ] ──► [ App-1 ]
-                       └──► [ App-2 ] ... (zaroorat pe aur)   ──► Redis ──► DB
-
-   TU: "Ek box pe bojh bhi zyada hai aur wo SPOF bhi hai. Isliye App ke kai box, aage LB.
-        App STATELESS hai (sab Redis / DB me), isliye koi bhi box koi bhi request le sakta."
-```
-
-### dikkat 2 — "ab do server hain — dono ek hi short code bana denge"
-
-```
-        [ App-1 ] ──┐
-                    ├──► [ COUNTER service ]
-        [ App-2 ] ──┘            │
-                                 ▼
-                    App-1 ko range 1..1000 . App-2 ko 1001..2000
-
-   TU: "Har server ko ek RANGE de deta hoon. Ranges alag hain to takraav ka sawaal hi nahi,
-        aur har request pe coordinator se poochna bhi nahi padta."
-      phir number ko base62 -> chhota code   (detail MOVE 4 me)
-```
-
-### dikkat 3 — "har click pe analytics likhna hai"
-
-```
-        [ App ] ══302 redirect══► USER          (turant, kuch ruka nahi)
-            │
-            └──event──► [ KAFKA ] ──► [ Analytics svc ] ──► [ Analytics DB ]
-                              │
-                              └── baar-baar fail ──► [ DLQ ]
-
-   TU: "Sync likhunga to redirect slow ho jaayega — aur latency hi mera dil hai.
-        Isliye event queue me daal kar turant redirect kar deta hoon."
-```
-
-### dikkat 4 — "5 saal ka ~90 TB ek machine me nahi aayega"
-
-```
-        USER ──► [ LB ] ──► [ App x3 ]
-                                │
-                    [ Redis ] ──┘
-                        │ miss
-                        ▼
-                 [ CASSANDRA ]   shard by shortCode + 3x replica
-
-   TU: "90 TB ek machine me aayega hi nahi -> data ke TUKDE karne padenge (shard).
-        Aur wo machine bhi mar sakti hai -> har tukde ki 3 COPY (replica)."
-
-   ★ SHARD aur REPLICA alag cheezein hain:
-        shard   = data ke TUKDE   (jagah + write scale)
-        replica = wahi data ki COPY (bachav + read scale)
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "The database is too big / takes too many writes. What do you do?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       twitter feed       -> tweets bahut                   -> user_id se shard
-       google docs        -> docs bahut                     -> docId se shard
-       kafka              -> ek partition nahi samaata      -> partitions badhao
-       banking            -> transactions bahut             -> account_id se shard
-       chat               -> messages bahut                 -> chat_id se shard
-
-   ► MASTER SHEET SE JODA: naya node joda to hash % N me lagbhag saari key hilti ->
-       consistent hashing (Cassandra ka ring) = sirf ~K/N key hilti.
-   ★ replica sirf READ baantta; write ke liye SHARD. country/date = bura key (skew)
-```
-
-### dikkat 4b — "replica update ho rahi thi, beech me primary DB gir gaya — data gaya?"
-(MOCK 1-Oct: yahan Kafka bola tha -> galat, Kafka extra dabba hai)
-
-```
-   har DB ka apna LOG hota hai   (Cassandra = COMMIT LOG, Postgres/MySQL = WAL)
-
-        write ──► pehle disk pe LOG me ──► phir table me
-        DB gira ──► wapas uthte hi LOG padh ke data wapas ──► kuch nahi khota
-
-   replica ke liye: write tabhi "DONE" jab ZYADA replica haan bol dein  (QUORUM)
-
-        3 replica ──► 2 ne haan bola ──► done
-        1 gira bhi ──► baaki 2 ke paas data hai
-
-   TU: "DB ka apna commit log hai, aur write quorum se ack karunga.
-        Isliye ek machine gire to bhi likha hua data nahi jaata."
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What happens if this server / node / DB goes down?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       rate limiter       -> Redis node gira                -> Redis replica; na mile to fail-open
-       distributed cache  -> cache node gira                -> replica + consistent hashing (sirf uski keys hilti)
-       kafka              -> broker gira                    -> ISR ki replica leader ban jaati
-       banking            -> DB primary gira                -> sync replica promote (paisa wali write khoni nahi)
-       chat               -> chat server gira               -> client doosre server pe reconnect, message DB me safe
-       bookmyshow         -> App box gira                   -> hold DB me hai, LB doosre box pe bhejta
-
-   ► MASTER SHEET SE JODA: teeno copy ALAG AZ me rakho (ek AZ gaya to teeno na jaayein).
-       DB gira bhi to redirect Redis cache se chalta rahe.
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "The user updated something but still sees the old value. Why?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       distributed cache  -> cache me purana                -> update pe invalidate + TTL
-       twitter feed       -> apna tweet nahi dikha          -> read-your-own-writes (apna data primary se)
-       banking            -> balance purana                 -> balance hamesha primary se
-       payment            -> status purana                  -> status primary se
-
-   ► MASTER SHEET SE JODA: naya link bana, turant click -> replica tak abhi nahi pahuncha -> 404.
-       ilaaj: naye link ka read primary se (read-your-own-writes); Cassandra me QUORUM write +
-       QUORUM read = taaza value milti. write path link Redis me bhi daalta hai, wo bhi bachata.
-```
-
-### dikkat 5 — "LB khud gir gaya — saare App zinda hain, par koi unhe traffic de hi nahi raha"
-
-```
-        ab tak sab kuch EK LB ke peeche tha
-        wo gira -> App chal rahe hain, DB chal raha hai, Redis chal raha hai
-                -> aur site DOWN hai
-
-   FAISLA: ROUTE 53 (DNS) + health-check
-           mara hua LB traffic se HATA diya jaata hai, dusre pe chala jaata hai
-
-   ★ redundancy AKELI kaafi nahi hoti -- do LB rakh bhi diye to
-     koi cheez chahiye jo DEKHE ki ek mar gaya aur traffic MOD de
-     (Redis me yahi kaam Sentinel karta hai -- wahi shakal)
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "What if a whole region / data center goes down?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       twitter feed       -> region gaya                    -> DNS se doosra region, feed thoda purana chalega
-       rate limiter       -> region gaya                    -> counter region-sticky, naye region me nayi ginti
-
-   ► MASTER SHEET SE JODA: region ke andar multi-AZ (sasta). poora region gaya -> Route 53 doosra
-       region deta; data doosre region me ASYNC copy hota -> aakhri kuch naye link kho sakte (chhota loss window maana).
-```
-
-### dikkat 6 — "ek bande ne script chala di — ek raat me 10 lakh short link bana diye"
-
-```
-        counter ki range tez khatam hone lagi
-        DB me kachra bhar gaya
-        aur asli user ka create request line me lag gaya
-
-   FAISLA: RATE LIMIT (per user / per IP / per API-key)
-
-   ★ ye limit har App server me alag-alag likhoge to har server apna-apna ginega
-     -> isi liye use EK jagah rakhna aasan hai: API GATEWAY
-     (auth aur routing bhi wahi ek jagah baith jaate hain)
-   ★ poora rate-limiter apne aap me ek design hai -> 02_rate_limiter
-
-   ► INTERVIEWER AISE POOCHEGA:
-       "How do you secure it / stop abuse?"
-
-   ► YAHI SAWAAL DOOSRE DESIGN ME BHI (wahan bhi yahi soch):
-       file upload        -> galat file                     -> magic bytes check, presigned URL chhoti expiry
-       rate limiter       -> abuse                          -> per user / IP limit
-       payment            -> kisi aur ka payment            -> owner check + auth
-
-   ► MASTER SHEET SE JODA: BAD URL check bhi: long_url ko malware / phishing list se milao, spam
-       link short hi na ho. auth gateway pe + WAF edge pe (bot / bad IP).
-```
-
-### ab poora naksha (jahan pahunche) + har box ka KYUN
-
-```
-                            USER
-                             │
-                    ┌────────▼────────┐
-                    │    Route 53     │  DNS + health-check + nearest region
-                    └────────┬────────┘
-                    ┌────────▼────────┐
-                    │  API GATEWAY    │  rate-limit (dikkat 6) + auth + routing
-                    └───┬─────────┬───┘
-              WRITE ┌───▼───┐ ┌───▼────┐ READ
-                    │ App   │ │  App   │   read:write = 100:1
-                    │ write │ │  read  │   -> alag-alag scale (read 20, write 2)
-                    └───┬───┘ └───┬────┘
-             ┌──────────┼─────────┼──────────┬──────────┐
-             ▼          ▼         ▼          ▼          ▼
-       ┌─────────┐ ┌────────┐ ┌───────┐ ┌───────┐
-       │ COUNTER │ │ REDIS  │ │ KAFKA │ │  DLQ  │
-       │ (range) │ │ cache  │ │(async)│ └───────┘
-       └─────────┘ └───┬────┘ └───┬───┘
-                       │ miss     │
-                       ▼          ▼
-                 ┌──────────┐  ┌───────────────┐
-                 │CASSANDRA │  │ Analytics svc │
-                 │shard+repl│  │   + apni DB   │
-                 └──────────┘  └───────────────┘
-
-     Route 53   : mara hua LB hata deta -> SPOF khatam . nearest region
-     API Gateway: rate-limit EK jagah (10 lakh link wali dikkat) + auth + routing
-     App        : stateless -> jitne chahiye utne
-     read/write alag : load 100:1 -> alag scale + ek gire to doosra chalta rahe
-     COUNTER    : range -> takraav bina unique code
-     REDIS      : read-heavy -> 95% yahin . cache-aside . TTL = link expiry
-     KAFKA      : redirect block na ho -> analytics peeche
-     CASSANDRA  : billions rows, key se uthana -> shard by shortCode + replica
-```
-
-```
-   DO RAASTE alag chalao (interviewer ko yahi dekhna hai):
-
-   READ (click)                             WRITE (naya link)
-   ────────────                             ─────────────────
-   USER click                               USER POST
-      │                                        │
-   LB -> App(read)                          LB -> App(write)
-      │                                        │
-   Redis HIT? ──yes──► 302 redirect         Counter (range + base62)
-      │                                        │
-      no                                    123456 -> "8m3"
-      ▼                                        │
-   Cassandra ──► Redis me daal do              ▼
-      │                                     Save: Redis + Cassandra
-      ▼                                        │
-   302 redirect                                ▼
-      │                                     short URL wapas
-      └── async ──► Kafka
+  USER
+    │
+    ▼
+  [ App ]
+    │
+    ▼
+  [ DB ]
 ```
 
 ---
 
-# MOVE 4 — BOLTE-BOLTE JODO (API · data · code-generation · bottleneck — sab yahin)
-
-> Ye alag "step" nahi hain. Interviewer poochta jaata hai, tu jodta jaata hai.
-> Jo wo poochhe wahi kholo — sab ek saath mat bol dena.
-
-## ► "API kya hogi?"
+## DIKKAT 1 — har click DB pe, redirect 200ms se tez chahiye
 
 ```
-     BANANA                                    LAANA
-     ──────                                    ─────
-     USER ──POST /api/shorten──► [App]         USER ──GET /abc123──► [App]
-             { long_url,            │                                   │
-               custom_code? }       │                                   ▼
-                                    ▼                    302 Found + Location: https://amazon...
-             { short_url,  ◄────────┘
-               expires_at }
-                                                YAAD: banana = POST . laana = GET
+DIKKAT:   1 lakh read / sec seedha DB pe -> slow + DB pe bojh
 
-   TU (302 kyun): "302 rakhunga, 301 nahi —
-     1. 301 permanent hai, browser cache kar leta -> hit server tak aata hi nahi -> click count gaya
-     2. link expire/update hua to purana cache toot jaata; 302 har baar fresh hai."
+SOLUTION: CACHE (Redis) — cache-aside: pehle Redis, miss -> DB -> Redis me daalo
+          read:write 100:1 -> ~95% read Redis se hi
+          TTL = link ki expiry (warna expired link bhi serve hota rahega)
+          DB me short_code PRIMARY KEY -> miss pe bhi tez lookup
 
-   ┌──────┬─────────────┬───────────────┐
-   │ 301  │ Cache OK    │ NO tracking   │
-   │ 302  │ No cache    │ Tracks clicks │  <- bit.ly 302 use karta
-   └──────┴─────────────┴───────────────┘
+NAYA:     Redis
 ```
-
-## ► "DB me kya rakhoge, aur kaunsa DB?"
-
 ```
-   ek row:
-   ┌────────────┬──────────────────────┬────────────┬────────────┐
-   │ short_code │ long_url             │ created_at │ expires_at │
-   │  "abc123"  │ https://amazon.in/.. │    ...     │    ...     │
-   └─────┬──────┴──────────────────────┴────────────┴────────────┘
-         │
-         └── ye KEY hai (partition key)
-                  │
-                  ▼
-         GET /abc123 ──► seedha usi ek partition pe ──► O(1)  (poora scan nahi)
-
-   TU: "Redirect hamesha short_code se aata hai, isliye wahi partition key —
-        single-partition point read."
+  USER
+    │
+    ▼
+  [ App ]
+    │
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ DB ]
 ```
-
 ```
-   kaunsa DB — faisla:
-
-        ┌──────────────────┐
-        │ join chahiye?    │── nahi ──┐
-        │ transaction?     │          │
-        └──────────────────┘          ▼
-                             pure KEY-VALUE lookup
-                                      │
-                                      ▼
-                        ┌────────────────────────────┐
-                        │ Cassandra / DynamoDB       │
-                        │ billions + key lookup      │
-                        └────────────────────────────┘
-
-   ┌──────────────┬─────────────┬──────────────┬─────────────┐
-   │  MySQL       │  Relational │  ~1B tak     │  Chal jaata │
-   │  Mongo       │  Document   │  ~10B tak    │  Chal jaata │
-   │  Cassandra   │  Wide-col   │  Trillions   │  Best       │
-   │  DynamoDB    │  K-V (AWS)  │  Trillions   │  Best       │
-   │  Redis       │  In-memory  │  Cache layer │  Hamesha +  │
-   └──────────────┴─────────────┴──────────────┴─────────────┘
-
-   ★ "NoSQL powerful hai" MAT bolna -> ACCESS PATTERN justify karta hai:
-     INSERT ek baar + SELECT WHERE short_code = ? . koi join nahi . HUGE (90 TB) + ek-key lookup
-     (write-heavy NAHI — ye 100:1 READ-heavy hai; NoSQL ki wajah SCALE + simple key-lookup hai)
-```
-
-## ► "short code banate kaise ho?" (design ka DIL — yahin sabse zyada waqt)
-
-```
-   long URL ──► ??? ──► short code
-
-   ┌─────────────────┬──────────┬─────────────────────────┬──────────┐
-   │   Method        │  Speed   │  Collision              │  Length  │
-   ├─────────────────┼──────────┼─────────────────────────┼──────────┤
-   │ MD5 / Random    │  Fast    │  YES (har baar DB check)│  6-7     │
-   │ Counter         │  Fast    │  NO                     │  Variable│
-   │ Counter+Base62  │  Fast    │  NO                     │  Compact │ ★ WINNER
-   └─────────────────┴──────────┴─────────────────────────┴──────────┘
-
-   TU: "Counter + base62 lunga. Counter kabhi repeat nahi hota -> collision ka sawaal hi nahi
-        aur DB check bhi nahi. Random/MD5 me har baar 'already exists?' padhna padta —
-        scale pe wo extra read mehnga hai."
-```
-
-```
-   ★ RANDOM vs COUNTER — dono ek saath NAHI  (MOCK 1-Oct: "random 7 char" + counter dono bol diye the)
-
-        counter hai to code RANDOM nahi hota.
-        counter number deta ──► number ko BASE62 me badlo ──► wahi 7 char ka code
-
-             counter = 125                ──►  base62  ──►  "21"   (chhota number, chhota code)
-             counter = 3.5 lakh crore tak ──►  7 char me fit  (62^7)
-
-   TU: "Counter se number, number base62 me -> 7 char code. Random nahi, isliye takraav nahi."
-```
-
-```
-★★ WORD-FREEZE FALLBACK (term bhool jaao -> CONCEPT bol do, atko mat):
-   "MD5/hash" bhoola -> "long URL ka ek HASH lo, uske first 7 character"
-   "Base62"  bhoola  -> "mere paas 62 character hain (a-z, A-Z, 0-9) — ID ko un 62 me
-                         ENCODE kar do -> chhoti string ban jaati"
-   "Counter" bhoola  -> "ek global auto-increment ID"
-   ★ Interviewer ko WORD nahi, SAMAJH chahiye. Concept bolo -> naam wo khud bol dega.
-```
-
-```
-   base62 — number se code:
-
-      1,000,000,000  ──►  baar-baar / 62, remainders ULTA padho  ──►  "15FTGg"
-
-      0-9 -> '0'-'9' (10) . 10-35 -> 'a'-'z' (26) . 36-61 -> 'A'-'Z' (26)  = 62
-      1 BILLION = sirf 6 char . 62^7 = 3.5 trillion -> 7 char me 100+ saal
-```
-
-```
-   distributed counter ki DIKKAT:
-
-        [S1] counter=5     [S2] counter=5     [S3] counter=5
-              └──── sab ++ ──── sabne "6" banaya ──► 3 URL ka EK code = COLLISION
-
-   ┌────────────────────┬────────────┬──────────────┬───────────┐
-   │ DB atomic counter  │ har write  │ haan (DB)    │ Slow      │
-   │ Redis INCR         │ har write  │ haan (Redis) │ Better    │
-   │ Range allocation   │ per BATCH  │ 1000x kam    │ ★ WINNER  │
-   └────────────────────┴────────────┴──────────────┴───────────┘
-
-   ★ RANGE / BLOCK ALLOCATION:
-
-        ┌──────────────────────────┐
-        │   COORDINATOR            │   aksar ZOOKEEPER
-        │  "agli range kiski?"     │   (ya ek DB counter-table)
-        └───┬───────┬───────┬──────┘
-        1..1000  1001..  2001..
-            │     2000    3000
-            ▼       ▼       ▼
-          [S1]    [S2]    [S3]
-
-   TU: "Har server apni range locally use karta — coordinator se sirf ek baar per block baat
-        hoti hai, har request pe nahi. Ranges alag hain to collision ho hi nahi sakta."
-   ★ vocab: "range / block allocation" + coordinator "Zookeeper"
-
-   ── FOLLOW-UP: "wo server 400 pe CRASH ho gaya — baaki numbers ka kya?" ──
-
-      restart hua server purani range YAAD NAHI rakhta -> coordinator se NAYI range maangta
-      -> 401 se 1000 tak ke numbers BEKAAR chale gaye
-
-      TU: "Kuch numbers waste ho jaayenge, aur main jaan-boojh ke usse theek maan raha hoon —
-           62^7 yaani ~3.5 trillion combination hain, kuch hazaar waste hona kuch nahi bigaadta.
-           Agar main har number ko crash-proof banata to har request pe coordination karni padti,
-           aur range allocation ka poora faayda hi khatam ho jaata."
-
-      => waste karna SOCHA-SAMJHA FAISLA hai, bug nahi — doosra option mehnga hai.
-
-   ★ SUNO KI SAWAAL KIS BOX KA HAI: yahan APP SERVER ka crash pooch sakta hai, ya REDIS ka —
-     dono ke jawab alag hain. Jawab dene se PEHLE dohra do:
-        "Aap us app server ki baat kar rahe hain jiske paas 1-1000 ki range thi, sahi?"
-     do second lagte hain, aur galat box pe jawab jaana ruk jaata hai.
-```
-
-## ► "custom short code allow karoge?"
-
-```
-   POST { custom_code? }
-        │
-        ├─ custom diya ──► validate (lambai . reserved nahi . profanity nahi . unique)
-        │                       │
-        │                  conflict? ──► 409 wapas
-        │
-        └─ nahi diya  ──► AUTO: counter(range) + base62
-                                │
-                                ▼
-                       Save: Redis + Cassandra ──► short URL wapas
-
-   RESERVED WORDS (block — system ke apne route): admin . api . login . settings . help . docs . pricing . blog
-
-   RACE (do log wahi custom code maangein):
-      dono "available?" dekhte -> dono ko haan -> dono save -> DUPLICATE
-      FIX: DB me UNIQUE constraint / INSERT IF NOT EXISTS -> ek ko 409
-```
-
-## ► "kahan tootega / 10x traffic pe?"
-
-```
-   ★ RATTO MAT — USER ka raasta chalao, bottleneck khud nikal aayega:
-
-      user ne short link click kiya
-          │
-          ├─► DNS        -> sab ek region me? door wale slow     -> GEO-ROUTING
-          ├─► LB         -> ek LB gira to sab band               -> health-check + multi-AZ
-          ├─► App        -> stateless hai                        -> instance badha do
-          ├─► Redis      -> saare URL nahi samaenge              -> HOT rakho, COLD nikaalo (neeche)
-          ├─► Cassandra  -> 90 TB ek machine me nahi             -> SHARD by shortCode
-          │                 read zyada                           -> READ REPLICA
-          └─► analytics  -> sync likha to redirect slow          -> KAFKA async (kar diya)
-
-      + abuse / hot-key  -> RATE LIMITING
-      ★ SPOF : counter-coordinator khud -> 2-node (active-passive)
-               ya range-allocation (ye already tolerate karta hai)
-      ★ WRITE ko replica se scale NAHI karte -> write scale = SHARDING
-
-      ★★ SHARD KEY = shortCode, GEO nahi:
-           read HAMESHA short code se aata hai (GET /abc123)
-             shard by shortCode -> seedha ek hi shard pe jaata hai            ✓
-             shard by GEO       -> pata hi nahi chalega code kis region me hai
-                                   -> saare shard poochne padenge (scatter-gather)  ✗
-
-           GEO ka kaam ALAG hai — jagah baantna nahi, LATENCY kam karna:
-             shard by shortCode = data ko TUKDON me baantna (jagah + write scale)
-             geo replication    = door wale user ko paas se jawab dena (speed)
-           dono saath chal sakte hain, par ek doosre ki jagah nahi lete.
-
-   ► INTERVIEWER AISE POOCHEGA (har design me aate hain, jawab = yahi section):
-       "How would you scale this to 10x users?"        -> pehle kya tootega, wahi ka ilaaj
-       "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
-       "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
-```
-
-```
-★★ CACHE HOT/COLD -> LRU EVICTION (ye example Arpan ka apna hai — isliye recall turant hota hai)
-
-   TU (apne example se): "koi YouTube-song viral ho gaya / WhatsApp forward chal pada ->
-     abhi laakhon hit -> wo HOT hai, Redis me rehna chahiye. Dheere-dheere log dekhna band ->
-     COLD -> Redis se nikal jaaye -> jagah bane naye hot URLs ko."
-
-        [ naya hot URL ] ──► Redis me ghusa
-                               │
-        Redis bhar gayi ──► sabse PURANA-access wala bahar (LRU)
-                               │
-                               ▼
-                         Cassandra me to hai hi — agli miss pe wapas aa jaayega
-
-   Redis ki LRU/LFU policy + TTL dono milke ye karte hain.
-   ★ ek line me: "Redis pe LRU eviction + TTL -> hot URLs cache me, cold apne aap nikal jaate."
-```
-
-## ► TEEN GOTCHA (interviewer kuredega)
-
-```
-   1. CACHE-TTL : Redis me expiry na rakhi -> expired URL bhi serve hota rahega = requirement toot gayi
-                  FIX: cache entry ka TTL = URL ki expiry (SET ... EX <expiry>)
-   2. COUNTER BATCHING : ek baar me 1000 count uthao (range), har request pe nahi (= range allocation)
-   3. COLLISION : shortCode pe UNIQUE constraint + retry (pehle "exists?" padhna NAHI).
-                  Counter se waise hi unique -> constraint sirf safety-net
-```
-
-## ► WRAP (aakhir me 3 line)
-
-```
-   "Client -> CDN -> LB/Gateway -> App -> Redis -> Cassandra (shard by shortCode).
-    Short code = counter + base62, distributed ke liye range allocation.
-    Read 100:1 hai isliye cache + read-replica; analytics Kafka se async.
-    Aage badhata to: custom URLs, expiry cleanup, aur geo-distribution."
-```
-
-```
-★ DELIVERY NUGGETS
-   • Har faisle ko REQUIREMENT se jodo (MOVE 2 wale box pe wapas ungli rakho).
-   • HLD = DISCUSSION hai, ratta-script nahi.
-   • ESTIMATE: quick estimate -> scale justify -> aage. Exact number design nahi badalta.
-     (par bilkul SKIP bhi mat karo -> ek banda Zomato me isi wajah se reject hua tha)
-   • CORRECTIONS jo ho chuki (soch sahi thi, cheez ulti thi):
-       GET/POST swap (banana = POST) . "write replicas" -> SHARDING . KEY = shortCode
+POOCHEGA: "What if the cache goes down?"
+DHYAAN:   95% read seedha DB pe -> DB bhi gir sakta. "kuch nahi hoga" mat bolna
+BOL:      "Redis runs as a replicated cluster. If it still goes down, the DB takes the load, so I shed load
+           and let only one request rebuild a hot key, not a thousand at once."
 ```
 
 ---
+
+## DIKKAT 2 — ek App 1 lakh / sec nahi jhel raha, aur wo gira to site band
+
+```
+DIKKAT:   ek box pe bojh + wahi SPOF
+
+SOLUTION: App ke kai box, aage LOAD BALANCER
+          App STATELESS (sab Redis / DB me) -> koi bhi box koi bhi request le
+
+NAYA:     LB
+BADLA:    App -> App x N
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ App x N ]
+    │
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ DB ]
+```
+
+---
+
+## DIKKAT 3 — ab kai App hain, do App ek hi code bana denge
+
+```
+DIKKAT:   S1 counter=5, S2 counter=5 -> dono ne "6" banaya -> do URL ka EK code = COLLISION
+
+SOLUTION: RANGE ALLOCATION — COUNTER service (aksar ZooKeeper / ek DB counter-table)
+          App-1 ko 1..1000 · App-2 ko 1001..2000 -> range alag = takraav ho hi nahi sakta
+          coordinator se baat sirf har BLOCK pe, har request pe nahi
+          number -> BASE62 -> 7 char code   (detail neeche POOCHE TO)
+
+NAYA:     Counter
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ App x N ] ──► [ Counter ]
+    │
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ DB ]
+```
+```
+POOCHEGA: "That server crashed at 400 — what about the rest of its range?"
+DHYAAN:   pehle dohra lo KIS box ka crash: "app server jiske paas 1-1000 thi, sahi?" (Redis ka jawab alag)
+BOL:      "The restarted server asks for a new range, so 401 to 1000 are wasted. I accept that on purpose —
+           3.5 trillion codes, a few thousand lost is nothing. Making every number crash-proof would need
+           coordination on every request and kill the benefit of ranges."
+```
+
+---
+
+## DIKKAT 4 — har click pe analytics likhna hai
+
+```
+DIKKAT:   sync likha -> redirect slow -> aur latency hi dil hai
+
+SOLUTION: event KAFKA me daalo, turant 302 do · Analytics service peeche se padhe
+          baar-baar fail event -> DLQ
+
+NAYA:     Kafka · Analytics svc · Analytics DB · DLQ
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ App x N ] ──► [ Counter ]
+    │
+    ├──► [ Kafka ] ──► [ Analytics svc ] ──► [ Analytics DB ]
+    │        │
+    │        └──► [ DLQ ]
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ DB ]
+```
+
+---
+
+## DIKKAT 5 — 5 saal ka ~90 TB ek machine me nahi aayega
+
+```
+DIKKAT:   ek DB me jagah nahi + wo machine mari to sab gaya
+
+SOLUTION: SHARD by shortCode (data ke TUKDE) + har tukde ki 3 REPLICA (copy)
+          shard   = tukde -> jagah + WRITE scale
+          replica = copy  -> bachav + READ scale   (write ko replica se scale NAHI karte)
+          naya node juda -> consistent hashing (Cassandra ring) -> sirf ~K/N key hilti
+          teeno copy ALAG AZ me
+
+BADLA:    DB -> Cassandra (shard by shortCode + 3 replica)
+```
+```
+  USER
+    │
+    ▼
+  [ LB ]
+    │
+    ▼
+  [ App x N ] ──► [ Counter ]
+    │
+    ├──► [ Kafka ] ──► [ Analytics svc ] ──► [ Analytics DB ]
+    │        │
+    │        └──► [ DLQ ]
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ Cassandra ]
+```
+```
+POOCHEGA: "The database is too big / takes too many writes. What do you do?"
+DHYAAN:   "write replica" NAHI — write scale = SHARDING. key = shortCode (country / date = skew)
+BOL:      "I shard by short code, so every redirect goes to exactly one shard, and keep three replicas
+           of each shard in different zones."
+```
+
+---
+
+## DIKKAT 6 — replica update ho rahi thi, beech me primary gira — data gaya?
+
+```
+DIKKAT:   likha hua data khona nahi chahiye
+
+SOLUTION: DB ka apna LOG — write PEHLE disk pe log (Cassandra = commit log, Postgres / MySQL = WAL)
+          -> phir table · gira -> uthte hi log padh ke wapas
+          write "DONE" tabhi jab ZYADA replica haan bolein (QUORUM): 3 me se 2 -> 1 gira bhi to data safe
+
+NAYA:     koi dabba nahi — Cassandra ke andar log + quorum
+```
+```
+POOCHEGA: "What happens if a DB node goes down mid-write?"
+DHYAAN:   KAFKA nahi (1-Oct mock me bola tha) — Kafka extra dabba hai, DB ka kaam DB ka log karta
+BOL:      "The DB writes to its commit log before applying, and I ack writes on quorum, so losing one
+           node doesn't lose committed data. Redirects keep working from Redis meanwhile."
+```
+
+---
+
+## DIKKAT 7 — naya link banaya, turant click -> 404
+
+```
+DIKKAT:   replica tak abhi pahuncha nahi -> purana / khaali dikha
+
+SOLUTION: write ke saath link Redis me bhi daalo (click Redis se hi mil jaata)
+          naye link ka read primary se (read-your-own-writes)
+          ya QUORUM write + QUORUM read = taaza value
+
+NAYA:     koi dabba nahi
+```
+```
+POOCHEGA: "The user created a link but gets 404 / old value. Why?"
+BOL:      "Replication lag. The write path also puts the link in Redis, and with quorum reads and
+           writes the read always sees the latest write."
+```
+
+---
+
+## DIKKAT 8 — LB khud gir gaya
+
+```
+DIKKAT:   App, Redis, DB sab zinda -> par traffic dene wala hi mara -> site DOWN
+
+SOLUTION: LB do · ROUTE 53 (DNS) + health-check -> mara hua LB hata ke doosre pe bhejo
+          sirf do rakhna kaafi nahi — koi DEKHNE wala chahiye jo traffic mode (Redis me Sentinel yahi)
+          poora region gaya -> Route 53 doosra region · data async copy -> aakhri kuch link kho sakte (maana)
+
+NAYA:     Route 53
+BADLA:    LB -> LB x 2
+```
+```
+  USER
+    │
+    ▼
+  [ Route 53 ]
+    │
+    ▼
+  [ LB x 2 ]
+    │
+    ▼
+  [ App x N ] ──► [ Counter ]
+    │
+    ├──► [ Kafka ] ──► [ Analytics svc ] ──► [ Analytics DB ]
+    │        │
+    │        └──► [ DLQ ]
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ Cassandra ]
+```
+```
+POOCHEGA: "What if a whole region goes down?"
+BOL:      "Inside a region I'm multi-AZ. If the region dies, Route 53 health checks send users to another
+           region; data is copied there asynchronously, so a few of the newest links may be lost."
+```
+
+---
+
+## DIKKAT 9 — ek bande ne script se raat me 10 lakh link bana diye
+
+```
+DIKKAT:   counter range tez khatam · DB me kachra · asli user line me
+
+SOLUTION: RATE LIMIT (per user / IP / API key)
+          har App me alag likha -> har App apna ginega -> EK jagah rakho = API GATEWAY (auth + routing bhi)
+          bad URL check: long_url ko malware / phishing list se milao · WAF edge pe (bot / bad IP)
+          poora rate limiter = alag design -> 02_rate_limiter
+
+NAYA:     API Gateway
+```
+```
+  USER
+    │
+    ▼
+  [ Route 53 ]
+    │
+    ▼
+  [ API Gateway ]
+    │
+    ▼
+  [ LB x 2 ]
+    │
+    ▼
+  [ App x N ] ──► [ Counter ]
+    │
+    ├──► [ Kafka ] ──► [ Analytics svc ] ──► [ Analytics DB ]
+    │        │
+    │        └──► [ DLQ ]
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ Cassandra ]
+```
+```
+POOCHEGA: "How do you stop abuse?"
+BOL:      "Rate limiting per user and IP at the API gateway, auth there too, a WAF at the edge, and I
+           check long URLs against a malware / phishing list before shortening."
+```
+
+---
+
+## 10x SCALE — har dabba alag
+
+```
+Route 53       -> GEO-ROUTING, paas wala region
+App            -> stateless -> box badhao · READ aur WRITE App alag (100:1 -> read 20, write 2;
+                  ek gire to doosra chale)
+Redis          -> sab URL nahi samaate -> HOT rakho, COLD nikaalo (LRU + TTL)
+                  viral song / WhatsApp forward = HOT -> Redis me · log dekhna band = COLD -> bahar,
+                  Cassandra me to hai, agli miss pe wapas
+Cassandra      -> SHARD by shortCode + read replica
+Counter        -> coordinator khud SPOF -> 2 node (active-passive); range waise bhi tolerate karti
+Kafka          -> partition badhao
+
+SHARD KEY = shortCode, GEO NAHI:
+   read hamesha code se (GET /abc123) -> shortCode shard = seedha ek shard
+   geo shard -> code kis region me? pata nahi -> saare shard poocho (scatter-gather)
+   geo ka kaam = LATENCY (geo replication), jagah baantna nahi. dono saath chal sakte.
+
+POOCHEGA: "How would you scale this to 10x?"           -> user ka raasta chalo, pehle jo toote wahi ilaaj
+POOCHEGA: "What's the single point of failure?"        -> har box pe "ye gira to?"
+POOCHEGA: "How do you know it's working?"              -> p99 · error rate · Kafka lag · alert
+```
+
+---
+
+## POOCHE TO (deep-dive)
+
+```
+API:      BANANA = POST /api/shorten { long_url, custom_code? } -> { short_url, expires_at }
+          LAANA  = GET /abc123 -> 302 Found + Location: <long_url>
+          (galti ho chuki: GET / POST ulta bola tha — banana POST, laana GET)
+
+302 vs 301:  301 = permanent, browser cache -> server tak aata hi nahi -> click count gaya, expiry toot-ti
+             302 = har baar server -> analytics chalta (bit.ly 302)
+
+ROW:      short_code (partition key) · long_url · created_at · expires_at
+          GET /abc123 -> seedha ek partition -> point read
+
+KAUNSA DB:  join nahi · transaction nahi · INSERT ek baar + SELECT WHERE short_code = ? · 90 TB
+            -> Cassandra / DynamoDB (key-value at scale). MySQL ~1B tak chal jaata.
+            "NoSQL powerful hai" MAT bolna — ACCESS PATTERN + SCALE wajah hai (ye write-heavy nahi, read-heavy)
+
+CODE KAISE:
+   MD5 / random   -> collision -> har baar "exists?" DB read
+   counter+base62 -> repeat kabhi nahi -> collision nahi, check nahi   <- YAHI
+   counter hai to code RANDOM nahi (1-Oct mock me dono saath bol diye the)
+   base62: 0-9 (10) + a-z (26) + A-Z (26) · baar-baar /62, remainder ULTA padho
+           1,000,000,000 -> "15FTGg" (6 char) · 125 -> "21"
+   word bhool jaao: "hash ke pehle 7 char" · "62 character me encode" · "global auto-increment ID"
+
+DISTRIBUTED COUNTER:  DB atomic (har write, slow) · Redis INCR (har write) · RANGE (per batch, 1000x kam) <- YAHI
+
+CUSTOM CODE:  validate (lambai · reserved nahi · gaali nahi · unique) -> conflict = 409
+              reserved: admin · api · login · settings · help · docs · pricing · blog
+              RACE: do log same code -> dono "available?" haan -> DUPLICATE
+                    -> DB UNIQUE constraint / INSERT IF NOT EXISTS -> ek ko 409
+
+GOTCHA:   cache TTL = link expiry (SET ... EX) · counter range me lo, har request pe nahi ·
+          shortCode UNIQUE constraint = safety net (pehle "exists?" padhna nahi)
+```
+
+---
+
+## AAKHRI DABBA + WRAP
+
+```
+Route 53 = DNS + health-check + region · API Gateway = rate limit + auth · LB x 2 · App = stateless
+Counter = range + base62 · Redis = 95% read, TTL = expiry · Cassandra = shard by shortCode + 3 replica + quorum
+Kafka = analytics async, DLQ
+```
+```
+  USER
+    │
+    ▼
+  [ Route 53 ]
+    │
+    ▼
+  [ API Gateway ]
+    │
+    ▼
+  [ LB x 2 ]
+    │
+    ▼
+  [ App x N ] ──► [ Counter ]
+    │
+    ├──► [ Kafka ] ──► [ Analytics svc ] ──► [ Analytics DB ]
+    │        │
+    │        └──► [ DLQ ]
+    ▼
+  [ Redis ]
+    │
+    ▼
+  [ Cassandra ]
+```
+```
+READ (click):  LB -> App -> Redis hit? -> 302 · miss -> Cassandra -> Redis me daalo -> 302 · async -> Kafka
+WRITE (naya):  LB -> App -> Counter range + base62 (123456 -> "w7e") -> Redis + Cassandra -> short URL wapas
+```
+```
+BOL: "Short code is a counter in base62, with ranges handed to each server so there's no collision.
+      Reads are 100 to 1, so Redis serves most redirects; Cassandra sharded by short code holds the
+      rest with three replicas. Redirect is a 302 and click analytics go async through Kafka. Route 53
+      and two load balancers remove the single points of failure, and the gateway rate-limits abuse.
+      Next I'd add custom aliases, expiry cleanup and geo-distribution."
+```
 
 [← MASTER SHEET](../../00_MASTER_SHEET.md)
