@@ -869,7 +869,7 @@ public List<Order> findRecentOrders(Long userId) {
 > - **cross-service / multi-DB** (Wallet-DB + Portfolio-DB alag) → ek `@Transactional` 2 DB pe nahi chalti → **SAGA** (compensating undo) ya 2PC.
 > - **low-latency trading** (microseconds) → DB transaction hot-path pe NAHI → in-memory engine + **event-log (WAL)** + async settlement.
 > - **duplicate/retry** → `@Transactional` nahi rokta → **idempotency key + reconciliation job**.
-> Interview line: *'@Transactional ka apna scope hai — single-DB ACID. Distributed/scale pe SAGA + event-sourcing + idempotency. Right tool for right scope.'* (= 04_HLD/SYSTEM_DESIGNS/06_stock_broker_trading + 07_payment_system)"
+> Interview line: *'@Transactional ka apna scope hai — single-DB ACID. Distributed/scale pe SAGA + event-sourcing + idempotency. Right tool for right scope.'* (= 04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading + 06_payment_system)"
 
 ### Q: "Konsa isolation use karoge?"
 > "Zyada tar cases me DB ka default kaafi hai (MySQL REPEATABLE_READ, Postgres READ_COMMITTED). Paise wale race ke liye row lock ya conditional UPDATE — poora SERIALIZABLE bahut kam, kyunki slow hai. High level = strong consistency but locking zyada."

@@ -409,4 +409,4 @@ BOL: "Order Service validates and checks the idempotency key, Wallet blocks the 
       Next: stop-loss, circuit breakers, real-time risk checks, regulatory reporting."
 ```
 
-ARCHETYPE C (transactional) · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [payment](../07_payment_system/07_payment_system.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
+ARCHETYPE C (transactional) · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [payment](../06_payment_system/06_payment_system.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

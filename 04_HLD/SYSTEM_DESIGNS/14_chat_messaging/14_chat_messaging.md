@@ -661,7 +661,7 @@ Per-member record 500 pe chal jaata hai. 10 lakh pe nahi chalega.
         -> server ke paas DO message, dono ko alag id -> B ko duplicate
 ```
 
-**Ye bilkul wahi shakal hai jo payment design me thi** (`07_payment_system` dikkat 4).
+**Ye bilkul wahi shakal hai jo payment design me thi** (`06_payment_system` dikkat 4).
 Ilaaj bhi wahi — **idempotency key**, jise chat me `clientMsgId` kehte hain.
 
 ```

@@ -484,4 +484,4 @@ BOL:         "Naive check-then-put races; putIfAbsent on a ConcurrentHashMap mak
               with a TTL. I fired 20 parallel requests: broken version made two orders, atomic made one."
 ```
 
-ARCHETYPE C · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [saga/ms-comm](../../FOUNDATIONS/10_ms_communication.md) · saath: [bookmyshow](../10_bookmyshow/10_bookmyshow_INTERVIEW.md) · [stock-broker](../06_stock_broker_trading/06_stock_broker_trading.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
+ARCHETYPE C · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [saga/ms-comm](../../FOUNDATIONS/10_ms_communication.md) · saath: [bookmyshow](../09_bookmyshow/09_bookmyshow_INTERVIEW.md) · [stock-broker](../05_stock_broker_trading/05_stock_broker_trading.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

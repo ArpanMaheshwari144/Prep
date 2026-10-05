@@ -1,6 +1,6 @@
 # Database Replication
 
-> **NAV** — KYA: replication (leader/follower, lag, failover). UP: [MASTER](../00_MASTER_SHEET.md) · farak: [MASTER trade-off jode](../00_MASTER_SHEET.md) · lagta hai: [distributed-cache](../SYSTEM_DESIGNS/11_distributed_cache/11_distributed_cache.md) · [message-queue](../SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md)
+> **NAV** — KYA: replication (leader/follower, lag, failover). UP: [MASTER](../00_MASTER_SHEET.md) · farak: [MASTER trade-off jode](../00_MASTER_SHEET.md) · lagta hai: [distributed-cache](../SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md) · [message-queue](../SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md)
 
 > **HLD Topic 5 — Read scaling + High Availability**
 

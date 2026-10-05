@@ -1,6 +1,6 @@
 # DNS — Domain Name System
 
-> **NAV** — KYA: DNS (resolution, records, TTL, Route 53, anycast). UP: [MASTER](../00_MASTER_SHEET.md) · saath: [load-balancing](03_load_balancing.md) · lagta hai: [browser-journey](../SYSTEM_DESIGNS/05_url_browser_journey/05_url_browser_journey.md)
+> **NAV** — KYA: DNS (resolution, records, TTL, Route 53, anycast). UP: [MASTER](../00_MASTER_SHEET.md) · saath: [load-balancing](03_load_balancing.md) · lagta hai: [browser-journey](19_url_browser_journey.md)
 
 ---
 

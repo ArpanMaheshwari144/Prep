@@ -520,4 +520,4 @@ QUEUE     jo abhi nahi ja sakta wo queue me ruke · max try ke baad DLQ, drop na
 BOL: "I simulated it: naive retry dropped 700 of 1000, throttle plus backoff delivered all 1000."
 ```
 
-ARCHETYPE B (ingest) · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [ms-communication](../../FOUNDATIONS/10_ms_communication.md) · saath: [13 message-queue](../13_message_queue_kafka/13_message_queue_kafka.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
+ARCHETYPE B (ingest) · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [ms-communication](../../FOUNDATIONS/10_ms_communication.md) · saath: [12 message-queue](../12_message_queue_kafka/12_message_queue_kafka.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

@@ -1,6 +1,6 @@
 # CAP Theorem — The Distributed Systems Classic
 
-> **NAV** — KYA: CAP (CP vs AP kab). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [MASTER trade-off jode](../00_MASTER_SHEET.md) · lagta hai: [bookmyshow](../SYSTEM_DESIGNS/10_bookmyshow/10_bookmyshow_INTERVIEW.md) · [payment](../SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [google-docs](../SYSTEM_DESIGNS/12_google_docs_collab/12_google_docs_collab.md)
+> **NAV** — KYA: CAP (CP vs AP kab). UP: [MASTER](../00_MASTER_SHEET.md) · trade-off: [MASTER trade-off jode](../00_MASTER_SHEET.md) · lagta hai: [bookmyshow](../SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow_INTERVIEW.md) · [payment](../SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [google-docs](../SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md)
 
 > **HLD Topic 8 — Pick 2 of 3 — interview ka favorite**
 > Real talk: "Perfect kuch nahi hota" — YouTube/Uber/Facebook sab kahin na kahin trade-off karte

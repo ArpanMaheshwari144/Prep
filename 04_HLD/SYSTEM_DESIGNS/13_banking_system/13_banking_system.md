@@ -3,7 +3,7 @@
 > **NAV** — ARCHETYPE C · DIL: **ledger sach hai, balance sirf nateeja.** UP: [MASTER](../../00_MASTER_SHEET.md) ·
 > CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) ·
 > [saga/ms-comm](../../FOUNDATIONS/10_ms_communication.md) · [caching](../../FOUNDATIONS/04_caching.md) ·
-> saath: [payment-system](../07_payment_system/07_payment_system.md) (iska bada bhai) · [stock-broker](../06_stock_broker_trading/06_stock_broker_trading.md)
+> saath: [payment-system](../06_payment_system/06_payment_system.md) (iska bada bhai) · [stock-broker](../05_stock_broker_trading/05_stock_broker_trading.md)
 
 > **KYUN YE DESIGN:** 19-Sep — Arpan ne ek reel se ye sawaal laaya, maine net pe verify kiya.
 > Shakal confirm hui: candidates report karte hain — payment flow · **transaction ledger** ·
@@ -152,7 +152,7 @@ phir bhi SAGA / queue / event-driven ghusa dete hain. Us se kya hota hai —
 
 **SAGA kab lagti:** jab do side **alag maalikon** ke paas ho — alag service, alag DB, ya **dusra bank**.
 Tab ek transaction chal hi nahi sakti, isliye compensating-undo likhna padta hai.
-Wo case is scope se BAHAR hai (poora treatment: [payment-system](../07_payment_system/07_payment_system.md) dikkat-5).
+Wo case is scope se BAHAR hai (poora treatment: [payment-system](../06_payment_system/06_payment_system.md) dikkat-5).
 
 ```
    NIYAM (ek line me yaad rakho):
@@ -359,7 +359,7 @@ dono alag ho jayenge. Jo cheez ek saath honi chahiye, use alag mat karo.
 Idempotency kehti "dobara kaam nahi hoga". **Do alag cheezein, dono chahiye.**
 
 Poora treatment + LIVE hands-on (20 concurrent request, same key):
-[payment-system](../07_payment_system/07_payment_system.md) dikkat-2 aur uska HANDS-ON section.
+[payment-system](../06_payment_system/06_payment_system.md) dikkat-2 aur uska HANDS-ON section.
 
 ---
 

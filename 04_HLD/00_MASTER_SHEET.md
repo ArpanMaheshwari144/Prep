@@ -24,21 +24,21 @@
 | region / data centre gira · multi-AZ | [url shortener](SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) dikkat 5 |
 | request do baar · retry · double click · idempotency | [IDEMPOTENCY KEY](#dabba-idem) |
 | key lagi par bhejna fail | [notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) dikkat 4b |
-| do user ek saath · race · ek seat · lock | [DB TRANSACTION](#dabba-txn) · [bookmyshow](#d10) |
+| do user ek saath · race · ek seat · lock | [DB TRANSACTION](#dabba-txn) · [bookmyshow](#d09) |
 | achanak spike · flash sale · IPL · pre-warm | [QUEUE](#dabba-queue) |
 | 10x users · scale kaise | [rail step 7](#rail) |
 | DB bada · writes zyada · shard key · consistent hashing | [SHARD](#dabba-shard) · [TO9](#to9) |
-| hot key · celebrity · hot partition | [twitter](#d03) · [cache design](#d11) |
+| hot key · celebrity · hot partition | [twitter](#d03) · [cache design](#d10) |
 | purana data · stale · replica lag · read-your-own-writes | [REPLICA](#dabba-replica) |
-| order / kram · partition key | [kafka](SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md) dikkat 3 · [chat](SYSTEM_DESIGNS/15_chat_messaging/15_chat_messaging.md) dikkat 10 |
+| order / kram · partition key | [kafka](SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) dikkat 3 · [chat](SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md) dikkat 10 |
 | CAP · consistency ya availability · network toota | [TO6](#to6) |
 | event / message kho gaya · offset · DLQ · outbox | [QUEUE](#dabba-queue) |
 | crash beech me · aadha kaam · PENDING · reconciliation · saga | [DB TRANSACTION](#dabba-txn) |
 | 429 · throttle · backoff · jitter | [notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) dikkat 8 |
 | OTP pehle · priority | [notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) dikkat 7 |
 | monitoring · alert · pata kaise chale | [FOUNDATIONS/18](FOUNDATIONS/18_monitoring.md) |
-| security · abuse · owner check · WAF | [file upload](SYSTEM_DESIGNS/08_file_upload_validate_system/08_file_upload_INTERVIEW.md) dikkat 9 · [FOUNDATIONS/17](FOUNDATIONS/17_waf.md) |
-| data badhta jaaye · retention · archive | [banking](SYSTEM_DESIGNS/14_banking_system/14_banking_system.md) "5 saal purana data" |
+| security · abuse · owner check · WAF | [file upload](SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) dikkat 9 · [FOUNDATIONS/17](FOUNDATIONS/17_waf.md) |
+| data badhta jaaye · retention · archive | [banking](SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) "5 saal purana data" |
 | SPOF · single point of failure | [FOUNDATIONS/11](FOUNDATIONS/11_reliability_spof_cloud.md) |
 | SQL ya NoSQL | [TO1](#to1) |
 | sync ya async | [TO2](#to2) |
@@ -63,17 +63,17 @@
 | English word atka | [SHABD](#shabd) |
 | interview ka din | [checklist](#checklist) |
 
-### 8 DABBE · A ya B · 15 DESIGN
+### 8 DABBE · A ya B · 14 DESIGN
 
 - **8 dabbe**: [REPLICA](#dabba-replica) · [CACHE](#dabba-cache) · [SHARD](#dabba-shard) · [QUEUE / KAFKA](#dabba-queue) · [LOAD BALANCER](#dabba-lb) · [IDEMPOTENCY KEY](#dabba-idem) · [CIRCUIT BREAKER](#dabba-cb) · [DB TRANSACTION](#dabba-txn)
 - **A ya B**: [1 SQL vs NoSQL](#to1) · [2 sync vs async](#to2) · [3 push vs pull](#to3) · [4 fanout write/read](#to4) · [5 write-back](#to5) · [6 strong vs eventual (CAP)](#to6) · [7 L4 vs L7](#to7) · [8 vertical vs horizontal](#to8) · [9 replica vs shard](#to9) · [10 normalize vs denormalize](#to10) · [11 long-poll / WS / SSE](#to11) · [12 at-least vs exactly-once](#to12) · [13 batch vs stream](#to13) · [14 leader / leaderless / quorum](#to14)
-- **15 design**: [01 url shortener](#d01) · [02 rate limiter](#d02) · [03 twitter feed](#d03) · [04 notification](#d04) · [05 browser journey](#d05) · [06 stock broker](#d06) · [07 payment](#d07) · [08 file upload](#d08) · [09 news aggregator](#d09) · [10 bookmyshow](#d10) · [11 distributed cache](#d11) · [12 google docs](#d12) · [13 kafka / MQ](#d13) · [14 banking](#d14) · [15 chat](#d15)
+- **14 design**: [01 url shortener](#d01) · [02 rate limiter](#d02) · [03 twitter feed](#d03) · [04 notification](#d04) · [05 stock broker](#d05) · [06 payment](#d06) · [07 file upload](#d07) · [08 news aggregator](#d08) · [09 bookmyshow](#d09) · [10 distributed cache](#d10) · [11 google docs](#d11) · [12 kafka / MQ](#d12) · [13 banking](#d13) · [14 chat](#d14)
 - **SHABD**: [verbs](#shabd-0) · [rate limiter](#shabd-1) · [caching](#shabd-2) · [LB](#shabd-3) · [replica/shard](#shabd-4) · [queue](#shabd-5) · [CAP](#shabd-6) · [reliability](#shabd-7) · [drill](#shabd-drill)
 
 ### DOOSRI FILE (gehrai chahiye to)
 
-- **FOUNDATIONS**: [01 hld kya hai](FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity estimation](FOUNDATIONS/02_capacity_estimation.md) · [03 load balancing](FOUNDATIONS/03_load_balancing.md) · [04 caching](FOUNDATIONS/04_caching.md) · [05 database replication](FOUNDATIONS/05_database_replication.md) · [06 database sharding](FOUNDATIONS/06_database_sharding.md) · [07 message queues](FOUNDATIONS/07_message_queues.md) · [08 cap theorem](FOUNDATIONS/08_cap_theorem.md) · [09 databases what when](FOUNDATIONS/09_databases_what_when.md) · [10 ms communication](FOUNDATIONS/10_ms_communication.md) · [11 reliability spof cloud](FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch search](FOUNDATIONS/12_elasticsearch_search.md) · [13 distributed id snowflake](FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab ilaaj hi bimari bane](FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) · [15 cdn](FOUNDATIONS/15_cdn.md) · [16 dns](FOUNDATIONS/16_dns.md) · [17 waf](FOUNDATIONS/17_waf.md) · [18 monitoring](FOUNDATIONS/18_monitoring.md)
-- **15 DESIGN (poori)**: [01 url shortener](SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate limiter](SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter feed](SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 browser journey](SYSTEM_DESIGNS/05_url_browser_journey/05_url_browser_journey.md) · [06 stock broker](SYSTEM_DESIGNS/06_stock_broker_trading/06_stock_broker_trading.md) · [07 payment](SYSTEM_DESIGNS/07_payment_system/07_payment_system.md) · [08 file upload](SYSTEM_DESIGNS/08_file_upload_validate_system/08_file_upload_INTERVIEW.md) · [09 news aggregator](SYSTEM_DESIGNS/09_news_aggregator/09_news_aggregator_INTERVIEW.md) · [10 bookmyshow](SYSTEM_DESIGNS/10_bookmyshow/10_bookmyshow_INTERVIEW.md) · [11 distributed cache](SYSTEM_DESIGNS/11_distributed_cache/11_distributed_cache.md) · [12 google docs](SYSTEM_DESIGNS/12_google_docs_collab/12_google_docs_collab.md) · [13 kafka / MQ](SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md) · [14 banking](SYSTEM_DESIGNS/14_banking_system/14_banking_system.md) · [15 chat](SYSTEM_DESIGNS/15_chat_messaging/15_chat_messaging.md)
+- **FOUNDATIONS**: [01 hld kya hai](FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity estimation](FOUNDATIONS/02_capacity_estimation.md) · [03 load balancing](FOUNDATIONS/03_load_balancing.md) · [04 caching](FOUNDATIONS/04_caching.md) · [05 database replication](FOUNDATIONS/05_database_replication.md) · [06 database sharding](FOUNDATIONS/06_database_sharding.md) · [07 message queues](FOUNDATIONS/07_message_queues.md) · [08 cap theorem](FOUNDATIONS/08_cap_theorem.md) · [09 databases what when](FOUNDATIONS/09_databases_what_when.md) · [10 ms communication](FOUNDATIONS/10_ms_communication.md) · [11 reliability spof cloud](FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch search](FOUNDATIONS/12_elasticsearch_search.md) · [13 distributed id snowflake](FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab ilaaj hi bimari bane](FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) · [15 cdn](FOUNDATIONS/15_cdn.md) · [16 dns](FOUNDATIONS/16_dns.md) · [17 waf](FOUNDATIONS/17_waf.md) · [18 monitoring](FOUNDATIONS/18_monitoring.md) · [19 url browser journey (URL -> DNS -> TCP -> TLS -> HTTP -> render)](FOUNDATIONS/19_url_browser_journey.md)
+- **14 DESIGN (poori)**: [01 url shortener](SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate limiter](SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter feed](SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 stock broker](SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md) · [06 payment](SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [07 file upload](SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) · [08 news aggregator](SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator_INTERVIEW.md) · [09 bookmyshow](SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow_INTERVIEW.md) · [10 distributed cache](SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md) · [11 google docs](SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md) · [12 kafka / MQ](SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) · [13 banking](SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) · [14 chat](SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
 - **HANDS_ON**: [01 rate limiter Redis](HANDS_ON/01_rate_limiter_redis) · [02 INCR+EXPIRE crash](HANDS_ON/02_incr_expire_crash) · [03 provider 429](HANDS_ON/03_provider_429) · [04 event loss](HANDS_ON/04_event_loss) (code yahan; asli output + nichod = design file ka HANDS-ON section)
 - **LOG**: [HLD_PRACTICE_LOG](HLD_PRACTICE_LOG.md) · **farak batao**: [06_COMPARES](../06_COMPARES)
 
@@ -85,17 +85,17 @@
 | 2 Back-of-the-envelope | [rail step 2](#rail) · [FOUNDATIONS/02](FOUNDATIONS/02_capacity_estimation.md) |
 | 3 Interview framework | [rail](#rail) · [checklist](#checklist) |
 | 4 Rate limiter | [02](#d02) |
-| 5 Consistent hashing | [11 distributed cache](#d11) · [SHARD](#dabba-shard) |
-| 6 Key-value store | [11](#d11) · [TO14 quorum](#to14) · [TO6 CAP](#to6) |
+| 5 Consistent hashing | [10 distributed cache](#d10) · [SHARD](#dabba-shard) |
+| 6 Key-value store | [10](#d10) · [TO14 quorum](#to14) · [TO6 CAP](#to6) |
 | 7 Unique ID | [FOUNDATIONS/13 snowflake](FOUNDATIONS/13_distributed_id_snowflake.md) |
 | 8 URL shortener | [01](#d01) |
-| 9 Web crawler | [09 news aggregator](#d09) (crawl hissa; poora crawler design nahi padha) |
+| 9 Web crawler | [08 news aggregator](#d08) (crawl hissa; poora crawler design nahi padha) |
 | 10 Notification | [04](#d04) |
 | 11 News feed | [03 twitter feed](#d03) |
-| 12 Chat | [15](#d15) |
+| 12 Chat | [14](#d14) |
 | 13 Search autocomplete | [archetype E (trie)](#archetype) (alag design file nahi) |
-| 14 YouTube | [08 upload](#d08) + CDN (video transcoding padha nahi) |
-| 15 Google Drive | [08 upload](#d08) + [12 google docs](#d12) (sync hissa padha nahi) |
+| 14 YouTube | [07 upload](#d07) + CDN (video transcoding padha nahi) |
+| 15 Google Drive | [07 upload](#d07) + [11 google docs](#d11) (sync hissa padha nahi) |
 
 ---
 
@@ -125,7 +125,7 @@
 ```
    INTERVIEW-DIN / REVISE
      00_MASTER_SHEET.md    <- YE. KYA bolna: 6 sawaal · CROSS-QUESTION BANK · archetype · rail ·
-                              blocks · A ya B jode · 15 design ka DIL · KAISE bolna · SHABD
+                              blocks · A ya B jode · 14 design ka DIL · KAISE bolna · SHABD
                               (29-Sep: 01_DELIVERY + 02_TRADEOFFS isi me mile)
 
    PADHNE / DEPTH
@@ -133,7 +133,7 @@
         01 hld · 02 capacity · 03 LB · 04 cache · 05 replication · 06 sharding · 07 queue
         08 CAP · 09 db kaunsa · 10 microservice baat-cheet · 11 SPOF · 12 search · 13 id
         14 HUB (bachane wala hi girane wala) · 15 CDN · 16 DNS · 17 WAF · 18 monitoring
-     SYSTEM_DESIGNS/01..15 <- 15 poore design (05 = concept walkthrough)
+     SYSTEM_DESIGNS/01..14 <- 14 poore design (browser journey = FOUNDATIONS/19, concept)
      HANDS_ON/01..04       <- chala ke dekha: rate limiter Redis · INCR+EXPIRE crash · provider 429 ·
                               event kahan khota (Java demo, asli output)
 
@@ -870,19 +870,10 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 <a id="d05"></a>
 
-#### 05 BROWSER-JOURNEY  ·  [poori file](SYSTEM_DESIGNS/05_url_browser_journey/05_url_browser_journey.md)
+#### 05 STOCK-BROKER  ·  [poori file](SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md)
 
 ```
-05 BROWSER-JOURNEY (design nahi, concept)   URL -> DNS -> TCP -> TLS -> HTTP -> render
-
-```
-
-<a id="d06"></a>
-
-#### 06 STOCK-BROKER  ·  [poori file](SYSTEM_DESIGNS/06_stock_broker_trading/06_stock_broker_trading.md)
-
-```
-06 STOCK-BROKER    DIL: order MATCH + paisa/share sahi
+05 STOCK-BROKER    DIL: order MATCH + paisa/share sahi
    . MATCHING ENGINE: har symbol ka EK thread, lock nahi; asks sasta-pehle, bids mehnga-pehle;
      best-bid >= best-ask -> match; price-time priority; scale SYMBOL se, ek symbol ke andar kabhi nahi
    . order pe paisa BLOCK, match pe debit · settlement ACID + double-entry
@@ -890,12 +881,12 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 ```
 
-<a id="d07"></a>
+<a id="d06"></a>
 
-#### 07 PAYMENT  ·  [poori file](SYSTEM_DESIGNS/07_payment_system/07_payment_system.md)
+#### 06 PAYMENT  ·  [poori file](SYSTEM_DESIGNS/06_payment_system/06_payment_system.md)
 
 ```
-07 PAYMENT         DIL: paisa DO BAAR na kate
+06 PAYMENT         DIL: paisa DO BAAR na kate
    . IDEMPOTENCY KEY: client har tap pe UUID, retry pe same; server STORED RESULT lautaye (reject nahi)
      claim = UNIQUE constraint / SETNX, IN_PROGRESS -> DONE, key ~24h
    . PENDING pehle likho, phir PSP call -> webhook (push) + reconciliation (pull) dono
@@ -903,60 +894,60 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 ```
 
-<a id="d08"></a>
+<a id="d07"></a>
 
-#### 08 FILE-UPLOAD  ·  [poori file](SYSTEM_DESIGNS/08_file_upload_validate_system/08_file_upload_INTERVIEW.md)
+#### 07 FILE-UPLOAD  ·  [poori file](SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md)
 
 ```
-08 FILE-UPLOAD     DIL: upload -> validate -> track
+07 FILE-UPLOAD     DIL: upload -> validate -> track
    . PRESIGNED URL: bytes client <-> S3 seedha, server sirf link (GET bhi, 5-15 min)
    . MULTIPART: 5 MB tukde, sirf fail tukda dobara · tmp/ + lifecycle (DINO me) + abort-incomplete
    . trackingId + status UPLOADING -> VALIDATING -> DONE/FAILED · ownerId authz · MAGIC BYTES (naam pe bharosa nahi)
 
 ```
 
-<a id="d09"></a>
+<a id="d08"></a>
 
-#### 09 NEWS-AGGREGATOR  ·  [poori file](SYSTEM_DESIGNS/09_news_aggregator/09_news_aggregator_INTERVIEW.md)
+#### 08 NEWS-AGGREGATOR  ·  [poori file](SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator_INTERVIEW.md)
 
 ```
-09 NEWS-AGGREGATOR DIL: kai source -> ek feed
+08 NEWS-AGGREGATOR DIL: kai source -> ek feed
    . WRITE path (crawl) aur READ path (feed) ALAG, ek doosre ko dheema na karein
    . worker me CLEAN + DEDUPE (ek khabar 5 source) + CATEGORY · har source alag timeout/retry/skip
    . category-wise cache merge (10 lakh fanout se bache) · RETENTION != sharding
 
 ```
 
-<a id="d10"></a>
+<a id="d09"></a>
 
-#### 10 BOOKMYSHOW  ·  [poori file](SYSTEM_DESIGNS/10_bookmyshow/10_bookmyshow_INTERVIEW.md)
+#### 09 BOOKMYSHOW  ·  [poori file](SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow_INTERVIEW.md)
 
 ```
-10 BOOKMYSHOW      DIL: do log EK seat na lein
+09 BOOKMYSHOW      DIL: do log EK seat na lein
    . ATOMIC: UPDATE seats SET status='booked' WHERE seat_id=? AND status='available' -> 1 row jeeta, 0 = gayi
    . HOLD: status='held' + held_until (5 min); pay -> booked, time gaya -> available
    . 2 user ek seat = atomic mark · 1 user double click = idempotency · spike = queue + per-show worker
 
 ```
 
-<a id="d11"></a>
+<a id="d10"></a>
 
-#### 11 DISTRIBUTED-CACHE  ·  [poori file](SYSTEM_DESIGNS/11_distributed_cache/11_distributed_cache.md)
+#### 10 DISTRIBUTED-CACHE  ·  [poori file](SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md)
 
 ```
-11 DISTRIBUTED-CACHE DIL: speed + node mare to chale
+10 DISTRIBUTED-CACHE DIL: speed + node mare to chale
    . CONSISTENT HASHING: ring, key clockwise agle node pe; node add/remove pe sirf ~K/N keys hilti; VIRTUAL nodes
      (hash % N pe lagbhag sab keys shift)
    . LRU = HashMap + doubly linked list, dono O(1) · stampede: mutex / soft-TTL · hot key: replicate + L1 local
 
 ```
 
-<a id="d12"></a>
+<a id="d11"></a>
 
-#### 12 GOOGLE-DOCS  ·  [poori file](SYSTEM_DESIGNS/12_google_docs_collab/12_google_docs_collab.md)
+#### 11 GOOGLE-DOCS  ·  [poori file](SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md)
 
 ```
-12 GOOGLE-DOCS     DIL: saath edit, kuch na khoye, sab same
+11 GOOGLE-DOCS     DIL: saath edit, kuch na khoye, sab same
    . TEXT nahi, OPERATION bhejo ({insert "X", pos 0})
    . OT: winner mat chuno, TRANSFORM karo (baad wale ki position shift), tie-break deterministic
      CRDT: har char ki unique id, merge apne aap, central server nahi chahiye
@@ -964,12 +955,12 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 ```
 
-<a id="d13"></a>
+<a id="d12"></a>
 
-#### 13 MESSAGE-QUEUE  ·  [poori file](SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md)
+#### 12 MESSAGE-QUEUE  ·  [poori file](SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md)
 
 ```
-13 MESSAGE-QUEUE   DIL: kisi ko roko mat, kuch kho na jaaye
+12 MESSAGE-QUEUE   DIL: kisi ko roko mat, kuch kho na jaaye
    . APPEND-ONLY LOG + OFFSET (kram-number): padh ke delete nahi, consumer apna offset rakhe -> replay
    . key -> partition = ek key ka ORDER · CONSUMER GROUP: group me baanto, alag group = sabko poora
      parallelism = partition count
@@ -977,24 +968,24 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 ```
 
-<a id="d14"></a>
+<a id="d13"></a>
 
-#### 14 BANKING  ·  [poori file](SYSTEM_DESIGNS/14_banking_system/14_banking_system.md)
+#### 13 BANKING  ·  [poori file](SYSTEM_DESIGNS/13_banking_system/13_banking_system.md)
 
 ```
-14 BANKING         DIL: paisa na bane na mare
+13 BANKING         DIL: paisa na bane na mare
    . ek DB = @Transactional (saga NAHI); cross-bank = saga
    . DOUBLE-ENTRY LEDGER (jod hamesha 0) · BALANCE = derived, USI txn me update · raat ko reconciliation (ledger jeete)
    . overdraft: UPDATE ... WHERE balance >= x (0 rows = mana) · deadlock: account-id ke kram me lock · outbox
 
 ```
 
-<a id="d15"></a>
+<a id="d14"></a>
 
-#### 15 CHAT  ·  [poori file](SYSTEM_DESIGNS/15_chat_messaging/15_chat_messaging.md)
+#### 14 CHAT  ·  [poori file](SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
 
 ```
-15 CHAT            DIL: turant pahunche, offline pe na khoye
+14 CHAT            DIL: turant pahunche, offline pe na khoye
    . connection + register: kaun kis server pe (Redis me sirf PATA) · pub-sub server-to-server
    . PEHLE DB me likho, PHIR bhejo · catch-up "id X ke baad ka do"
    . CURSOR (read_upto / delivered_upto) = unread + ticks ek hi idea · clientMsgId (retry dedup)

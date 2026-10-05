@@ -1,6 +1,6 @@
 # Message Queues
 
-> **NAV** — KYA: queue concept (kyun/kab). POORA DESIGN: [13 message-queue](../SYSTEM_DESIGNS/13_message_queue_kafka/13_message_queue_kafka.md) · UP: [MASTER](../00_MASTER_SHEET.md) · lagta hai: [notification](../SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [payment](../SYSTEM_DESIGNS/07_payment_system/07_payment_system.md)
+> **NAV** — KYA: queue concept (kyun/kab). POORA DESIGN: [12 message-queue](../SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) · UP: [MASTER](../00_MASTER_SHEET.md) · lagta hai: [notification](../SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [payment](../SYSTEM_DESIGNS/06_payment_system/06_payment_system.md)
 
 > **HLD Topic 7 — Async + Decoupling + Spike absorption**
 
