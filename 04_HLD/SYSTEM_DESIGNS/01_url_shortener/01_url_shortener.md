@@ -278,7 +278,7 @@ SOLUTION: LB do · ROUTE 53 (DNS) + health-check -> mara hua LB hata ke doosre p
           poora region gaya -> Route 53 doosra region · data async copy -> aakhri kuch link kho sakte (maana)
 
 NAYA:     Route 53
-BADLA:    LB -> LB x 2
+BADLA:    LB -> do LB (copy), ek mare to Route 53 doosre pe bheje — diagram me ek hi dabba
 ```
 ```
   USER
@@ -287,7 +287,7 @@ BADLA:    LB -> LB x 2
   [ Route 53 ]
     │
     ▼
-  [ LB x 2 ]
+  [ LB ]
     │
     ▼
   [ App x N ] ──► [ Counter ]
@@ -331,7 +331,7 @@ NAYA:     API Gateway
   [ API Gateway ]
     │
     ▼
-  [ LB x 2 ]
+  [ LB ]
     │
     ▼
   [ App x N ] ──► [ Counter ]
@@ -428,7 +428,7 @@ GOTCHA:   cache TTL = link expiry (SET ... EX) · counter range me lo, har reque
 ## AAKHRI DABBA + WRAP
 
 ```
-Route 53 = DNS + health-check + region · API Gateway = rate limit + auth · LB x 2 · App = stateless
+Route 53 = DNS + health-check + region · API Gateway = rate limit + auth · LB = 2 copy (ek mare, doosra chale) · App = stateless
 Counter = range + base62 · Redis = 95% read, TTL = expiry · Cassandra = shard by shortCode + 3 replica + quorum
 Kafka = analytics async, DLQ
 ```
@@ -442,7 +442,7 @@ Kafka = analytics async, DLQ
   [ API Gateway ]
     │
     ▼
-  [ LB x 2 ]
+  [ LB ]
     │
     ▼
   [ App x N ] ──► [ Counter ]
