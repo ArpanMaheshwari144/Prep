@@ -1572,11 +1572,47 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ FIRST & LAST POSITION (LC-34)
  └──────────────────────────────────────────────────────────────
-     sorted + duplicates. target ka {first, last} index. 2 BS, ans(2,-1). mila nahi -> {-1,-1}.
-     CORE: mid==target pe RUKO MAT -> boundary tak ek side aur dhoondo.
-     1st pass (FIRST): nums[mid]==target -> ans[0]=mid; high=mid-1   (aur LEFT dhoondo)
-     2nd pass (LAST):  nums[mid]==target -> ans[1]=mid; low=mid+1    (aur RIGHT dhoondo)
-        baaki dono pass me normal: nums[mid] < target -> low=mid+1 · else -> high=mid-1.
+   Q: sorted array (duplicate ho sakte) me target ka PEHLA aur AAKHRI index.
+      nahi mila -> {-1,-1}. O(log n).
+   INPUT: [5,7,7,8,8,10], target 8 -> {3,4}
+
+   SAAR: normal BS, bas target MILNE pe RUKO MAT -> ans me likho, phir ek taraf aur dhoondo.
+         FIRST ke liye LEFT chalte raho · LAST ke liye RIGHT chalte raho -> 2 alag BS.
+   = BASIC BS ka WALL, bas DELTA: mid==target pe return nahi, ans likho + ek side chalo.
+
+   TEMPLATE:
+     vector<int> ans(2, -1);                    // size fixed 2 -> ans(2,-1), push_back NAHI
+     int low = 0, high = n - 1;
+     while (low <= high) {                      // PASS 1 = FIRST
+        int mid = low + (high - low) / 2;
+        if (nums[mid] == target) { ans[0] = mid; high = mid - 1; }   // mila -> aur LEFT
+        else if (nums[mid] < target) low = mid + 1;
+        else high = mid - 1;
+     }
+     low = 0, high = n - 1;                     // RESET, warna PASS 2 galat jagah se shuru
+     while (low <= high) {                      // PASS 2 = LAST
+        int mid = low + (high - low) / 2;
+        if (nums[mid] == target) { ans[1] = mid; low = mid + 1; }    // mila -> aur RIGHT
+        else if (nums[mid] < target) low = mid + 1;
+        else high = mid - 1;
+     }
+     return ans;
+
+   DRY-RUN ([5,7,7,8,8,10], target 8):
+     idx :  0  1  2  3  4  5
+     val :  5  7  7  8  8 10
+     PASS 1: l0 h5 mid2 (7<8)  -> l=3
+             l3 h5 mid4 (8==8) -> ans[0]=4, h=3
+             l3 h3 mid3 (8==8) -> ans[0]=3, h=2   -> ruk -> FIRST 3
+     PASS 2: l0 h5 mid2 (7<8)  -> l=3
+             l3 h5 mid4 (8==8) -> ans[1]=4, l=5
+             l5 h5 mid5 (10>8) -> h=4             -> ruk -> LAST 4
+     -> {3,4}
+
+   DHYAAN:
+     1. dono pass ke beech low/high RESET.
+     2. mila to sirf EK pointer hilao (FIRST: high=mid-1 · LAST: low=mid+1).
+     3. ans(2,-1) + index set karo, push_back mat milao.
 
 ┌── FAMILY: ROTATED ────────────────────────────────────────────
 │ KYUN SAATH: array rotate hua; ek comparison se pata karo kaunsa half sorted / pivot kis taraf, phir wahi half rakho.
