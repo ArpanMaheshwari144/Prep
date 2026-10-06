@@ -290,6 +290,7 @@ DIKKAT:   spike (subah / lunch / raat) · wahi box gira = feed band
 SOLUTION: kai FEED SVC + LB -> spike + ek gire to baaki (stateless, feed cache me)
           cache-miss read -> READ REPLICA se, primary nahi -> padhna aur likhna alag raaste
           replica cache ki jagah nahi leti: cache 99% rokti, replica bache 1% ko primary se door rakhti
+          ye READ spike hai -> Redis + replica jhelte; Kafka write path pe hai, read spike nahi jhelta
 
 NAYA:     LB · Read replica
 BADLA:    Feed Svc ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
@@ -402,6 +403,7 @@ DB:       ARTICLE: id | title | content | sourceId | category | publishedAt | ur
           USER_PREFS (optional): userId | categories[] | savedArticles[]
           NoSQL (Mongo / Cassandra): bahut + simple + read-heavy + ACID nahi chahiye -> horizontal scale + flexible schema, eventual chalega
           CONTRAST: news -> NoSQL · PAISA / ledger -> HAMESHA SQL + ACID ("data ka nature dekho, phir DB")
+          Cassandra ki asli taakat = LIKHNA (write-heavy, scale); read-heavy hissa Redis aage se sambhaalta
 ```
 
 ---
