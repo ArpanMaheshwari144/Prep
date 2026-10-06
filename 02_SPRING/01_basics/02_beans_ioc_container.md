@@ -163,7 +163,7 @@ session (web) -> 1 per user session. logout/timeout = destroy.
 | `@Bean` | method-level (3rd party objects) |
 | `@Configuration` | class with @Bean methods |
 
-**Internally sab `@Component`** — sirf semantic specialization.
+**Internally sab `@Component`** (isliye sab bean). `@Service` = sirf label; `@Repository` = DB exception translation; `@Controller` = MVC request handler.
 
 ---
 

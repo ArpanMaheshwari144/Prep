@@ -32,7 +32,7 @@
    (business)  (DB layer)    (HTTP MVC)    (REST API)
 ```
 
-**Sab internally `@Component`.** Spring ke liye fark nahi — code readability ke liye semantic specialization.
+**Sab internally `@Component`** — isliye sab bean bante. Par sab sirf label NAHI: `@Service` = sirf label, `@Repository` aur `@Controller` me extra kaam hai (neeche table).
 
 ---
 
