@@ -173,4 +173,5 @@ DRILL                  PAKDA (khud)                          SABSE BADA CHHOOTA
 3-Oct  BillReminder    17/23 · owner check pay() pe          N+1 loop me · check-then-act naam · faisla
 4-Oct  EmiController   9 + 6 aadhe / 25 · SimpleDateFormat   SQLi (delete me) · nazar 2 poori · faisla
 5-Oct  Statement       10 + 3 aadhe / 16 · faisla PEHLI BAAR FileWriter close · "OK" 200 fail pe · owner check NAAM se
+6-Oct  Wallet          10 + 3 aadhe / 19 · owner check teeno pe   withdraw race · idempotency · HTTP txn ke andar · faisla me naam
 ```
