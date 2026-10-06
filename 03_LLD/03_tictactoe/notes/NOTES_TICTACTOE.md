@@ -161,7 +161,7 @@ classDiagram
     class Board {
         -String[][] grid
         +placeMove(int row, int col, String symbol)
-        +checkWin(String symbol) String
+        +checkWin(String symbol) boolean
         +isFull() boolean
         +printBoard()
     }
