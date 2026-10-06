@@ -95,7 +95,9 @@ Spring Boot 2.x+ -> by DEFAULT CGLIB sabpe (proxyTargetClass=true), surprise se 
 ## 2 LIMITATION (interviewer yahi kholega)
 
 **1. `final` pe proxy nahi banta (CGLIB).**
-CGLIB subclass banake override karta -> `final` class extend nahi, `final`/`private`/`static` method override nahi -> un pe proxy/@Transactional lagega hi nahi.
+CGLIB subclass banake override karta ->
+- `final` CLASS extend hi nahi hoti -> proxy ki zaroorat ho to app STARTUP pe hi error (`Cannot subclass final class`).
+- `final`/`private`/`static` METHOD override nahi hota -> un pe @Transactional CHUP-CHAAP nahi lagta (koi error nahi, bas kaam nahi karta).
 
 **2. SELF-INVOCATION trap (famous — @Transactional/@Async/@Cacheable sab me):**
 Secretary DARWAZE pe baithi. Bahar se call -> secretary se ho ke (proxy laga). Par andar baitha aadmi KHUD se baat kare (`this.method()`) -> darwaze wali secretary ko pata hi nahi -> koi extra kaam nahi.
