@@ -14,10 +14,12 @@
     static Map · static SimpleDateFormat    saare thread share, stale                   local / Concurrent* / DateTimeFormatter
     koi bhi non-final field (userId, Map)   bean SINGLETON = do user ka data mix        local variable
     flag / counter doosra thread padhe      dikhega nahi / ++ atomic nahi               volatile / AtomicInteger
+    flag = true kiya, false kahan?          exception pe phansa reh gaya                finally
 
  2. METHOD KI PEHLI LINE (annotation + params)
   ★ {id} · walletId · orderId aaya          OWNER CHECK — HAR method pe alag            token se owner, nahi to 403
     child id + parent id dono               rishta check                                parent ka hai ye child?
+    dimaag me aaye "koi bhi kuch bhi bhej sakta" = wahi OWNER CHECK -> NAAM se bolo
     @RequestBody bina @Valid                DTO ke @NotNull bekaar                      @Valid
   ★ amount · qty · date                     -ve / 0 ? (-ve withdraw = balance BADHTA)   @Positive / YearMonth
     double / float me paisa                 rounding                                    BigDecimal / long paise
@@ -32,6 +34,7 @@
 
  4. IF / COMPARE
     == String / Integer / Long              reference -> if kabhi true nahi, chup       equals
+                                            (Integer 127 ke upar false)
   ★ if (bal >= amt) { ghatao; save }        CHECK-THEN-ACT: 2 request saath = DOUBLE    UPDATE .. WHERE bal >= ? / @Version
                                             SPEND
     if (flag) return; flag = true           check-then-act (NAAM bolo)                  AtomicBoolean.compareAndSet
@@ -41,9 +44,10 @@
     save + save · refund + status           @Transactional nahi = aadha likha           @Transactional
   ★ same request do baar (retry / click)    do baar charge                              idempotency key (DB unique)
     checked exception throw                 rollback sirf Runtime pe                    rollbackFor = Exception.class
+    ek hi query wala method                 yahan @Transactional mat maango             -
 
  6. BAHAR KI CALL (RestTemplate / HTTP / mail / Kafka)
-    timeout nahi                            thread atka, pool khatam, app giri          timeout + retry limit
+    timeout nahi                            thread atka, pool khatam, app giri          timeout + retry limit + circuit breaker
   ★ @Transactional ke ANDAR                 connection pakda + rollback pe bahar ka     commit ke BAAD / outbox
                                             kaam wapas nahi
     new Thread() · Thread.sleep request me  thread bekaabu                              Executor / @Async
@@ -73,10 +77,14 @@
 
 12. STYLE (aakhri nazar)
     naam w · r · res · x · data · doIt · public fields DTO me · magic "ACTIVE" / 5 ·
-    lamba method · copy-paste · nikala par use nahi
+    lamba method / gehri nesting (early return) · copy-paste · nikala par use nahi ·
+    new XService() andar (inject karo) · SRP: ek class me DB + logic + file + mail sab (alag karo)
 
 
 ★ FAISLA — HAMESHA, 3 NAAM ke saath
   "Request changes. Three blockers: <1>, <2>, <3>.
    Then smaller ones: naming, println, magic strings."
+
+  Jo pakda wo BOLO (dimaag me pakda = gina nahi jaata). Har bhaari pe ek line ASAR: kya tootega.
+  Gayab cheez pe sawaal: "I don't see an owner check here — is it handled in a filter?"
 ```
