@@ -10,7 +10,7 @@
 
  1. CLASS KE FIELDS (method ke bahar)
     @Autowired field pe                     hidden dep, test mushkil                    constructor + final
-    "sk_live" · "password" · jdbc · host    HARDCODED CREDS (URL me = log me chhapegi)  env / Vault, header me
+    "sk_live" · "password" · jdbc · smtp    HARDCODED CREDS (URL me = log me chhapegi)  env / Vault, header me
     static Map · static SimpleDateFormat    saare thread share, stale                   local / Concurrent* / DateTimeFormatter
     koi bhi non-final field (userId, Map)   bean SINGLETON = do user ka data mix        local variable
     flag / counter doosra thread padhe      dikhega nahi / ++ atomic nahi               volatile / AtomicInteger
