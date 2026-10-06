@@ -200,6 +200,7 @@ DIKKAT:   ORDER BY published_at DESC LIMIT 20
 SOLUTION: RETENTION: latest ~7 din = garam table (chhoti) · purana = cold storage / archive
           time se PARTITION (mahina) -> purana DETACH -> S3 / Glacier · bilkul nahi chahiye -> TTL
           ye SHARDING nahi, RETENTION (aksar ek saans me bol dete)
+          NoSQL pe: partition DETACH Postgres ka shabd hai; Mongo / Cassandra me har row pe TTL -> purana khud hatta
 
 NAYA:     Archive (purana data sasti jagah, jaise S3 Glacier)
 ```
@@ -404,6 +405,7 @@ DB:       ARTICLE: id | title | content | sourceId | category | publishedAt | ur
           NoSQL (Mongo / Cassandra): bahut + simple + read-heavy + ACID nahi chahiye -> horizontal scale + flexible schema, eventual chalega
           CONTRAST: news -> NoSQL · PAISA / ledger -> HAMESHA SQL + ACID ("data ka nature dekho, phir DB")
           Cassandra ki asli taakat = LIKHNA (write-heavy, scale); read-heavy hissa Redis aage se sambhaalta
+          "primary + read replica" wala dhaancha = Mongo (replica set); Cassandra me primary hota hi nahi, har node padh-likh leta
 ```
 
 ---
