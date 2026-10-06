@@ -109,6 +109,7 @@ flowchart TD
     n_Feed_Svc --> n_Redis
     n_Redis --> n_DB
     n_Worker --> n_DB
+    n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
@@ -142,6 +143,7 @@ flowchart TD
     n_Feed_Svc --> n_Redis
     n_Redis --> n_DB
     n_Worker --> n_DB
+    n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
@@ -174,6 +176,7 @@ flowchart TD
     n_Feed_Svc --> n_Redis
     n_Redis --> n_DB
     n_Worker --> n_DB
+    n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
@@ -216,6 +219,7 @@ flowchart TD
     n_Redis --> n_DB
     n_DB --> n_Archive
     n_Worker --> n_DB
+    n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
@@ -269,6 +273,7 @@ flowchart TD
     n_Redis --> n_DB
     n_DB --> n_Archive
     n_Worker --> n_DB
+    n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
@@ -312,6 +317,7 @@ flowchart TD
     n_DB --> n_Read_replica
     n_DB --> n_Archive
     n_Worker --> n_DB
+    n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
@@ -358,6 +364,7 @@ flowchart TD
     n_DB --> n_Read_replica
     n_DB --> n_Archive
     n_Worker --> n_DB
+    n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
@@ -431,6 +438,7 @@ flowchart TD
     n_DB --> n_Read_replica
     n_DB --> n_Archive
     n_Worker --> n_DB
+    n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
