@@ -105,6 +105,12 @@ SOLUTION: (a) THREAD model badlo: event loop (Netty type), kuch thread, laakhon 
 
 NAYA:     LB
 BADLA:    Chat Server ek se KAI — asal me ~200 (event loop), diagram me 2 dikhaye
+
+KAISE (event loop):
+          thread-per-connection: har connection ka ek thread, zyada time baitha intezaar karta (khaali)
+          event loop: kuch thread (CPU jitne). OS (epoll) batata "in 5 socket pe data aaya" -> sirf unpe kaam
+          -> 1 thread hazaaron socket dekhta, khaali socket pe koi kharcha nahi
+KYUN YE:  thread-per-connection: har thread ka stack ~1 MB -> 1 lakh connection = ~100 GB sirf stack + context switch
 ```
 ```mermaid
 flowchart TD
@@ -121,6 +127,12 @@ POOCHEGA: "What happens if a chat server goes down?"
 BOL:      "Its connections drop and clients reconnect to another server with backoff and jitter, so they don't
            stampede. No message is lost — it was written to the database before delivery — and on reconnect the
            client asks for everything after its last message id."
+
+AGLA SAWAAL (tere jawab se):
+  "LB WebSocket ko kaise bithata (lambi connection)?"
+   -> L4 / L7 LB connection ek baar kisi server pe, phir wahi rehti (sticky by connection). Naya connection = naya chunaav
+  "Server pe kitne connection, kaise pata bhar gaya?"
+   -> metric: open connections + memory; had paar -> LB naye connection doosre servers ko
 ```
 
 ---
@@ -159,6 +171,13 @@ flowchart TD
     n_Chat_Server_x_200_1 --> n_Redis
     n_Chat_Server_x_200_2 --> n_Redis
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Redis routing diary me B ka server galat (B abhi khiska)?"
+   -> server-7 pe B nahi mila -> message DB me pada hi hai -> B ke naye server pe judte hi catch-up
+  "Redis hi gir gaya?"
+   -> replica pe failover; beech me routing nahi -> messages DB me, push + reconnect se pahunchenge
+```
 
 ---
 
@@ -180,6 +199,11 @@ SOLUTION: SAHI: pehle DB me LIKHO, PHIR bhejne ki koshish
                    app band, phone jeb me -> ghanti phir bhi (OS se jaata)
 
 NAYA:     Message store · Push (Google / Apple)
+
+KAISE (push ghanti):
+          app install / login pe phone ka DEVICE TOKEN (FCM / APNs se) server pe user ke saath save
+          B offline -> server us token pe Google / Apple ko bhejta -> wo phone OS tak
+          token badla / app uninstall -> provider 'invalid' bolta -> token hatao
 ```
 ```mermaid
 flowchart TD
@@ -206,6 +230,12 @@ DHYAAN:   beech me Kafka ho: producer acks=all · offset kaam ke BAAD · message
 BOL:      "I write the message to the database first and only then try to deliver it. If the receiver is offline
            it simply waits there and a push notification goes out; when they reconnect they ask for everything
            after their last message id."
+
+AGLA SAWAAL (tere jawab se):
+  "B ke 3 device (phone, laptop, web)?"
+   -> har device ka apna connection + apna cursor; message sab pe, read ek pe hua to baaki pe bhi neeli
+  "Push me poora message bhejoge?"
+   -> chhota preview (ya sirf 'naya message'), privacy ke liye; asli message app khulne pe server se
 ```
 
 ---
@@ -229,6 +259,13 @@ SOLUTION: padhne ka tareeka batata: chat me sirf "is chat ke aakhri 50 do" / "us
 
 BADLA:    Message store -> Cassandra (chat_id partition, message_id sort)
 NAYA:     Cold storage
+
+KAISE (Cassandra me write tez kyun):
+          write -> commit log (disk pe sirf append) + RAM memtable -> 'done'
+          memtable bhari -> disk pe SSTable seedha · purana badla nahi jaata -> sirf append = 46K / sec jhel leta
+KAISE (snowflake id):
+          64 bit = [ time ms (41 bit) | machine id (10 bit) | us ms me ginti (12 bit) ]
+          har server khud banata, kisi se poochhe bina · time aage = id badi = kram
 ```
 ```mermaid
 flowchart TD
@@ -264,6 +301,12 @@ BOL:      "I'd add a random bucket to the key, chat id plus 0 to 9, and merge on
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
 BOL:      "It depends on the model we picked: WhatsApp-style deletes after delivery; Slack-style keeps everything,
            so older months move to cold storage."
+
+AGLA SAWAAL (tere jawab se):
+  "Do server ki ghadi alag, snowflake ka kram?"
+   -> thoda idhar-udhar ho sakta (ms ka farak); ek chat ka kram per-chat seq se pakka (DIKKAT 10)
+  "Ek group ki partition bahut badi (saalon ke message)?"
+   -> partition key = (chat_id, month) -> size bandha
 ```
 
 ---
@@ -280,6 +323,14 @@ SOLUTION: A. HAR MEMBER KE INBOX ME COPY (fan-out on write) -> 500 row, padhna s
           MESSAGE ek baar likho · BHEJNA = register me har member, uske raaste me (500 socket write saste, DB write EK)
 
 NAYA:     koi dabba nahi
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "500 me 300 online, 300 server tak bhejna kaise?"
+   -> routing diary se members ke servers nikaalo -> har server ko EK call 'ye message, in members ko'
+      (server ke hisaab se group karo, 300 alag call nahi)
+  "Naya member juda, purane message dikhenge?"
+   -> uske joining id se pehle wale nahi (cursor joining id pe), ya settings ke hisaab
 ```
 
 ---
@@ -321,6 +372,13 @@ flowchart TD
     n_Chat_Server_x_200_1 --> n_Push_Google_Apple
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Cassandra_messages --> n_Cold_storage
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Unread count kaise (4417 ke baad kitne)?"
+   -> chat ka aakhri seq - mera cursor = unread (ghatao, gino nahi)
+  "Cursor kahan rakhoge?"
+   -> Cassandra (user_id, chat_id) -> read_upto; hot wala Redis me
 ```
 
 ---
@@ -365,6 +423,13 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Cassandra_messages --> n_Cold_storage
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Do tick ka 'mil gaya' ack hi kho gaya?"
+   -> B agli baar judta hai to apna delivered_upto bhejta -> cursor aage, A ko tick
+  "Group me do tick kab?"
+   -> sab members ka delivered_upto >= message id -> sabse chhota cursor dekho
+```
 
 ---
 
@@ -380,6 +445,13 @@ SOLUTION: WhatsApp: group me tick, par size BANDHA (~1000) · do tick = sabko mi
           ★ jawab chaturai nahi: feature utna rakho jitna scale jhele, scale badhe to feature HATAO (SEEMA lagao)
 
 NAYA:     koi dabba nahi
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Channel me 10 lakh ko message pahunchana kaise?"
+   -> fan-out workers (Kafka se) members ke pages me; jo online unhe push, baaki catch-up pe
+  "Seema kaun tay karta?"
+   -> product + engineering saath: feature ki keemat batao (10 lakh x tick = kitne write)
 ```
 
 ---
@@ -428,6 +500,12 @@ flowchart TD
 POOCHEGA: "What if the client retries and sends the same message twice?"
 BOL:      "The client generates a clientMsgId and reuses it on retry; the server claims it atomically and returns
            the existing message instead of creating a second one."
+
+AGLA SAWAAL (tere jawab se):
+  "clientMsgId kitni der yaad rakhoge?"
+   -> retry window (kuch minute-ghante) -> Redis SET NX EX 3600, ya DB me (chat_id, clientMsgId) UNIQUE
+  "Retry pe purana message wapas diya, uska id?"
+   -> pehli baar wala server id -> A ke app me wahi bubble, do nahi
 ```
 
 ---
@@ -450,12 +528,22 @@ SOLUTION: (1) pehle se hal (dikkat 4): snowflake id time se badhti + ek chat ek 
              chuna: kram thoda idhar-udhar, par message ruke nahi (1-2 sec insaan ko chalta)
 
 NAYA:     koi dabba nahi
+
+KAISE (per-chat seq kaun deta):
+          Redis INCR seq:chat123 -> atomic +1 -> 15, 16, 17 (do server ek saath maange to bhi alag number)
+          ya chat ka partition-owner server memory me ginti rakhe (ek chat ek jagah)
 ```
 ```
 POOCHEGA: "How do you keep messages in order?"
 BOL:      "Order comes from a server-assigned id, never the client clock. One chat lives in one partition, and with
            Kafka I key by chat id, so a chat stays in order while different chats run in parallel. A per-chat
            sequence number lets the client spot a gap and catch up."
+
+AGLA SAWAAL (tere jawab se):
+  "Seq wala Redis restart, ginti 0 se?"
+   -> restart pe DB se chat ka max seq padh ke wahan se aage (ya Redis persistence)
+  "16 nahi aaya, client kya kare?"
+   -> chhota intezaar (shayad raste me), phir server se '15 ke baad ke do' -> 16 mil gaya
 ```
 
 ---
@@ -472,6 +560,11 @@ SOLUTION: client PEHLE blob store (S3) me, phir message me sirf PATA: { type: im
           GROUP: file EK baar, 500 ko wahi EK pata (ek copy, kai pahunchai)
 
 NAYA:     Blob store (S3)
+
+KAISE (pre-signed URL):
+          server apni secret key se sign karta: (PUT, bucket/key, expiry 10 min) -> URL
+          client us URL pe seedha S3 me upload, S3 signature + expiry khud check karta
+          client ko AWS ki chaabi nahi milti, sirf is ek file ka chhota paas
 ```
 ```mermaid
 flowchart TD
@@ -500,6 +593,13 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Idempotency_check --> n_Cassandra_messages
     n_Cassandra_messages --> n_Cold_storage
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Same video 1000 log forward kare -> 1000 copy?"
+   -> file ka content hash -> pehle se hai to wahi purani file ka pata (dedup), naya upload nahi
+  "End-to-end encryption me thumbnail server dekh sakta?"
+   -> nahi, client file encrypt karke upload, chaabi message ke saath (server sirf band dabba dekhe)
 ```
 
 ---
@@ -546,6 +646,13 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Idempotency_check --> n_Cassandra_messages
     n_Cassandra_messages --> n_Cold_storage
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Heartbeat har 15 sec = 2 crore / 15 = 13 lakh / sec Redis pe?"
+   -> heartbeat chat server tak hi (connection pe ping); server apne saare users ka presence batch me Redis me
+  "B ka status live badalta dikhe (typing...)?"
+   -> sirf khuli chat ke liye subscribe; typing = chhota event, store nahi, bhej ke bhool jao
 ```
 
 ---
