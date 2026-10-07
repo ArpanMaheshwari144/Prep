@@ -167,6 +167,23 @@ KAISE (multipart):
              tukde PARALLEL bhi ja sakte (tez)
           3. complete(uploadId, [partNumber + ETag list]) -> S3 usi kram me jod ke ek file
 ```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_DB["DB"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+```
 ```
 AGLA SAWAAL (tere jawab se):
   "Client band ho gaya, kal resume?"
@@ -295,6 +312,32 @@ SOLUTION: PARENT trackingId -> har file ka child trackingId (apna /upload/init)
 
 NAYA:     koi dabba nahi
 ```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
+```
 ```
 AGLA SAWAAL (tere jawab se):
   "Rollup kab update hoga?"
@@ -367,6 +410,34 @@ SOLUTION: PRESIGNED URL chhoti umar (5-15 MINUTE, din nahi)
           DB me URL NAHI (mar jaata) — s3_key rakho, URL har maang pe NAYA
 
 NAYA:     koi dabba nahi
+```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_API_Gateway_LB["API Gateway / LB"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_API_Gateway_LB
+    n_API_Gateway_LB --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
 ```
 ```
 AGLA SAWAAL (tere jawab se):

@@ -269,6 +269,18 @@ SOLUTION: do chhoti par asli cheez bachti:
 
 NAYA:     koi dabba nahi
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB<br/>+ idempotency_keys (UNIQUE)"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+```
 ```
 POOCHEGA: "Two transfers hit the same account at the same time — what happens?"
 DHYAAN:   2 user ek cheez = atomic / lock · 1 user ka retry = idempotency

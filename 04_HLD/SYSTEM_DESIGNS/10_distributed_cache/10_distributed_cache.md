@@ -192,6 +192,20 @@ SOLUTION: CACHE-ASIDE: DB update -> cache key DELETE (invalidate) -> agli read f
 
 NAYA:     koi dabba nahi
 ```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
+```
 ```
 POOCHEGA: "The user updated something but still sees the old value. Why?"
 BOL:      "On update I delete the cache key rather than overwrite it, and keep a TTL as a safety net. If it's
@@ -226,6 +240,20 @@ KAISE (mutex):
           jeeta (OK) -> DB se laao, cache bharo, lock DEL
           haara (nil) -> 50-100 ms ruko, cache dobara padho (tab tak jeetne wale ne bhar diya)
           lock pe EX kyun: jeetne wala beech me mara to lock 5 sec me khud chhoote, warna sab hamesha atke
+```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
 ```
 ```
 POOCHEGA: "What if the cache goes down / a hot key expires?"

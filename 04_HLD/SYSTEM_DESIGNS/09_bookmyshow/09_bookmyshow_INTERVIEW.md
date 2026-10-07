@@ -327,6 +327,28 @@ KAISE:    Redis Cluster: keys 16384 hash slots me bati, har master kuch slots ka
           STAMPEDE mutex: SET lock:seatmap:42 1 NX EX 5 -> jo jeeta wo DB se bana ke cache bhare,
           baaki 50-100 ms ruk ke cache dobara padhein. Lock pe EX isliye ki jeetne wala mara to lock khud chhoote
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Payment_Svc["Payment Svc"]
+    n_Redis["Redis"]
+    n_Read_replica["Read replica"]
+    n_Kafka["Kafka"]
+    n_Booking_worker["Booking worker"]
+    n_SQL_primary["SQL primary"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_App
+    n_App --> n_Payment_Svc
+    n_App --> n_Redis
+    n_App --> n_Read_replica
+    n_App --> n_Kafka
+    n_Kafka --> n_Booking_worker
+    n_Booking_worker --> n_SQL_primary
+    n_Sweeper_job --> n_SQL_primary
+    n_App --> n_SQL_primary
+    n_SQL_primary --> n_Read_replica
+```
 ```
 POOCHEGA: "What if the cache goes down?"
 BOL:      "Redis runs as a cluster. Browse reads fall back to the read replica, never the primary, so

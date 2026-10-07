@@ -253,6 +253,23 @@ SOLUTION: DO ALAG CACHE (ghaalmel mat karo):
 
 NAYA:     koi dabba nahi
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_Hot_tweet_cache
+    n_App --> n_DB
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+```
 ```
 POOCHEGA: "What if the cache goes down?"
 DHYAAN:   Redis gira -> har feed DB se banana -> mehnga -> DB bhi gir sakta
@@ -335,6 +352,23 @@ BADLA:    Cassandra ab region-wise (India / EU / US)
 KAISE:    user region tak kaise -> Route 53 latency / geo routing: DNS jawab me paas wale region ka pata
           Bieber ke tweet India tak kaise -> Cassandra multi-DC replication: har region ek DC, likha hua
           doosre DC me async copy (us DC ke liye alag replication factor)
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_Hot_tweet_cache
+    n_App --> n_Cassandra
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
 ```
 ```
 POOCHEGA: "What if a whole region goes down?"

@@ -416,6 +416,24 @@ SOLUTION: RETENTION: time ("7 din", default, sabse common) · size ("partition 1
 
 NAYA:     koi dabba nahi
 ```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
+    n_Group_email --> n_Redis
+    n_Group_email --> n_DLQ
+```
 ```
 AGLA SAWAAL (tere jawab se):
   "Compaction kab?"

@@ -245,6 +245,22 @@ KAISE (region-sticky):
           -> request home region ke gateway / Redis tak forward -> ginti hamesha ek jagah
           keemat: door ke user ko ek cross-region hop (~100-200 ms) har request pe
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+```
 ```
 POOCHEGA: "What if a whole region goes down?"
 BOL:      "Route 53 sends the user to another region and the count starts from zero there, so the limit
@@ -424,6 +440,29 @@ SOLUTION: logged-in -> user_id / API key pe gino, IP pe NAHI
           login / signup se pehle (pehchaan nahi) -> IP majboori -> limit DHEELI + asli faisla WAF / bot detection
 
 NAYA:     koi dabba nahi
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway<br/>+ global cap + load shedding<br/>+ local counter fallback"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Kafka["Kafka"]
+    n_Pattern_Svc["Pattern Svc"]
+    n_WAF["WAF"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Route_53 --> n_ALB
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    n_Kafka --> n_Pattern_Svc
+    n_Pattern_Svc --> n_WAF
+    n_API_Gateway --> n_Kafka
+    n_USER --> n_WAF
+    n_WAF --> n_Route_53
 ```
 ```
 AGLA SAWAAL (tere jawab se):

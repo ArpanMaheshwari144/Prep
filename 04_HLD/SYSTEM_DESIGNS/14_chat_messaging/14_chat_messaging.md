@@ -324,6 +324,27 @@ SOLUTION: A. HAR MEMBER KE INBOX ME COPY (fan-out on write) -> 500 row, padhna s
 
 NAYA:     koi dabba nahi
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
+```
 ```
 AGLA SAWAAL (tere jawab se):
   "500 me 300 online, 300 server tak bhejna kaise?"
@@ -446,6 +467,30 @@ SOLUTION: WhatsApp: group me tick, par size BANDHA (~1000) · do tick = sabko mi
 
 NAYA:     koi dabba nahi
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store<br/>delivered_upto / read_upto"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
+```
 ```
 AGLA SAWAAL (tere jawab se):
   "Channel me 10 lakh ko message pahunchana kaise?"
@@ -532,6 +577,32 @@ NAYA:     koi dabba nahi
 KAISE (per-chat seq kaun deta):
           Redis INCR seq:chat123 -> atomic +1 -> 15, 16, 17 (do server ek saath maange to bhi alag number)
           ya chat ka partition-owner server memory me ginti rakhe (ek chat ek jagah)
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Idempotency_check["Idempotency check"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Idempotency_check
+    n_Chat_Server_x_200_2 --> n_Idempotency_check
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Idempotency_check --> n_Cassandra_messages
+    n_Cassandra_messages --> n_Cold_storage
 ```
 ```
 POOCHEGA: "How do you keep messages in order?"

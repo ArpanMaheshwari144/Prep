@@ -306,6 +306,27 @@ KYUN YE (date ka hot partition kaise theek):
           keemat: "latest 20" ab har shard se thoda-thoda laana padta (scatter-gather) -> par wo Redis se aata hi hai
           date chuna to sirf isliye ki purana shard poora uthake archive (retention aasaan)
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+```
 ```
 AGLA SAWAAL (tere jawab se):
   "Category se shard karo to?"
