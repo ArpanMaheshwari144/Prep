@@ -73,6 +73,14 @@ SOLUTION: ATOMIC CONDITIONAL UPDATE (sabse accha):
           ya OPTIMISTIC: version column
 
 NAYA:     koi dabba nahi — SQL ka atomic update
+
+KAISE (DB andar kya karta):
+          X aur Y ka UPDATE ek saath -> X ne A1 row ka lock liya, Y ruka
+          X commit (status = booked) -> Y ka lock mila, WHERE dobara check: status ab 'available' nahi -> 0 row
+KYUN conditional UPDATE (baaki do kyun nahi):
+          FOR UPDATE -> SELECT + UPDATE = do round-trip, lock poore beech pakda -> dheema, deadlock ka risk
+          OPTIMISTIC (version) -> haara wala retry kare; seat pe retry bekaar (seat gayi to gayi)
+          conditional UPDATE -> EK statement, lock sabse chhota, haara turant "taken" 
 ```
 ```mermaid
 flowchart TD
@@ -87,6 +95,13 @@ POOCHEGA: "Two users book the same seat at the same time — what happens?"
 DHYAAN:   2 user ek cheez = atomic / lock · 1 user ka retry = idempotency (dikkat 3)
 BOL:      "Doing it in two steps always leaves a gap, so I put the condition inside the UPDATE — WHERE
            status is available. The database lets only one win; the other gets zero rows and 'seat taken'."
+
+AGLA SAWAAL (tere jawab se):
+  "User ne 4 seat ek saath chuni, 3 mili 1 nahi?"
+   -> chaaron EK transaction me: UPDATE ... WHERE seat_id IN (...) AND available -> rows 4 nahi to ROLLBACK
+      deadlock na ho isliye seat_id ke kram me lock (A1, A2, A3...)
+  "Ek seat ki row pe itna lock, DB slow?"
+   -> lock milliseconds ka (ek statement); bheed DIKKAT 5 me queue se
 ```
 
 ---
@@ -112,6 +127,11 @@ SOLUTION: SEAT HOLD + TTL: select -> 'held', held_until = now + 5 min · pay SUC
           DONO saath: UPDATE ka check = SAHI-PAN · sweeper = SAFAI
 
 NAYA:     Sweeper job (har minute expired hold ko wapas available karne wala)
+
+KYUN YE (hold Redis SET NX EX 300 se kyun nahi):
+          Redis hold + DB booking = do jagah sach -> Redis ne hold diya, DB me kisi aur ka booked -> farak
+          DB me hold = seat ka haal EK row me, ek atomic UPDATE me -> hamesha ek hi sach
+          Redis tab theek jab sirf hold (waiting room) ho aur booking DB pe dobara check kare
 ```
 ```mermaid
 flowchart TD
@@ -128,6 +148,13 @@ POOCHEGA: "Who releases the hold after 5 minutes?"
 BOL:      "SQL has no TTL, so either the booking UPDATE treats an expired hold as free — status held and
            held_until before now — or a sweeper job flips expired holds back every minute. I'd put the check
            in the UPDATE for correctness and keep the sweeper for cleanup."
+
+AGLA SAWAAL (tere jawab se):
+  "Hold khatam hone ke 1 sec baad payment aayi?"
+   -> payment confirm karte waqt bhi UPDATE ... WHERE status = 'held' AND user = X AND held_until > now()
+      -> 0 row = seat gayi -> paisa refund
+  "User 5 min me 10 seat hold karke chala gaya (seat rokna)?"
+   -> per-user hold limit + rate limit
 ```
 
 ---
@@ -163,6 +190,12 @@ flowchart TD
 POOCHEGA: "What if the user clicks Pay twice / the client retries?"
 BOL:      "The client sends the same idempotency key on a retry; the server claims it atomically with a
            unique constraint and returns the stored result the second time."
+
+AGLA SAWAAL (tere jawab se):
+  "Payment success par booking UPDATE fail (hold gaya)?"
+   -> refund flow (paisa wapas) + user ko batao. Payment aur seat ka faisla saga jaisa
+  "Payment webhook late aaya?"
+   -> booking 'PAYMENT_PENDING', hold thoda badhao ya reconciliation
 ```
 
 ---
@@ -178,6 +211,11 @@ SOLUTION: dono raaste ALAG:
           seat map thoda purana chalega — booking pe atomic check hai hi
 
 NAYA:     Redis · Read replica
+
+KAISE (seat map fresh kaise):
+          read: Redis seatmap:show42 -> miss -> replica se banao -> Redis me (TTL chhota, jaise 5 sec)
+          booking hua -> worker seatmap:show42 ki key DEL (ya us seat ka bit update)
+          agla read naya map bana leta. Thoda purana dikhe to bhi booking ka UPDATE asli check karta
 ```
 ```mermaid
 flowchart TD
@@ -194,6 +232,13 @@ flowchart TD
     n_App --> n_Read_replica
     n_App --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Seat map live update (seat lal ho jaye)?"
+   -> WebSocket / SSE: booking pe event -> us show ke users ko push
+  "Ek popular show ki key pe lakhon read?"
+   -> key ki kai copy + App me 1-2 sec ka local cache
 ```
 
 ---
@@ -219,6 +264,11 @@ SOLUTION: QUEUE (Kafka) + PER-SHOW WORKER -> us show ki request ek-ek karke -> a
           "BookMyShow bhi aise karta" MAT bolo (andar public nahi) -> "a common pattern in flash sales"
 
 NAYA:     Kafka · Booking worker (ek show ki request ek-ek karke atomic update kare) · gate counter (Redis me, darwaze pe ginti)
+
+KAISE (per-show worker):
+          Kafka key = show_id -> ek show ki saari request EK partition me, kram se
+          ek partition = ek consumer -> wo show ki request ek-ek karke chalata -> DB pe us show ka contention khatam
+          alag show = alag partition = parallel
 ```
 ```mermaid
 flowchart TD
@@ -246,6 +296,12 @@ BOL:      "I'd put a counter at the door so only as many users as there are seat
            'sold out' right away. But since users pick specific seats, I only confirm a booking after that
            seat's atomic UPDATE wins — until then the user sees 'in progress' and gets the result by polling
            or a push. Plus per-user rate limits and pre-scaling before a known release."
+
+AGLA SAWAAL (tere jawab se):
+  "Ek hi show itna bada ki ek worker dheema?"
+   -> ek DB UPDATE ~ms -> ek worker hazaar / sec; zyada ho to show ko section (balcony / stall) me baanto
+  "Gate counter Redis restart pe gaya?"
+   -> counter = sirf darwaza; asli sach DB ki seats. Restart pe DB se gin ke counter dobara set
 ```
 
 ---
@@ -261,11 +317,23 @@ SOLUTION: Redis CLUSTER (ek node mare, baaki chalein)
           STAMPEDE: mutex (ek hi rebuild, baaki wait karke cache se)
 
 BADLA:    Redis -> Redis Cluster · SQL primary ab auto-failover ke saath
+
+KAISE:    Redis Cluster: keys 16384 hash slots me bati, har master kuch slots ka malik + har master ka replica
+          master gira -> baaki masters vote se uska replica promote
+          SQL failover: Patroni / RDS health check karta, primary mara -> replica promote + DB endpoint (DNS) naye pe
+          STAMPEDE mutex: SET lock:seatmap:42 1 NX EX 5 -> jo jeeta wo DB se bana ke cache bhare,
+          baaki 50-100 ms ruk ke cache dobara padhein. Lock pe EX isliye ki jeetne wala mara to lock khud chhoote
 ```
 ```
 POOCHEGA: "What if the cache goes down?"
 BOL:      "Redis runs as a cluster. Browse reads fall back to the read replica, never the primary, so
            bookings keep working, and one request rebuilds a hot key while others wait."
+
+AGLA SAWAAL (tere jawab se):
+  "Failover me kitni der booking band?"
+   -> 10-30 sec; us beech booking request retry (idempotent) / 'thodi der me try karein'
+  "Replica pe promote hua par aakhri write replica tak nahi pahunchi?"
+   -> booking DB ke liye sync replica (RDS Multi-AZ) -> committed booking nahi khoti
 ```
 
 ---
@@ -316,6 +384,12 @@ flowchart TD
 POOCHEGA: "What happens if an app server goes down?"
 BOL:      "Holds live in the database, not in the box, so they survive. The load balancer health-checks the
            box out and the user's next request goes to another instance and sees the same hold."
+
+AGLA SAWAAL (tere jawab se):
+  "Health check kya dekhta?"
+   -> GET /health: box zinda + DB / Redis tak pahunch -> 2-3 baar fail = bahar
+  "Box gira tab payment chal rahi thi?"
+   -> payment idempotency key client ke paas -> doosre box pe retry, double charge nahi
 ```
 
 ---
