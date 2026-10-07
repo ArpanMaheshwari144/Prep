@@ -103,6 +103,13 @@ BOL:      "Both accounts are in one database, so the debit and credit are one lo
 POOCHEGA: "Consistency or availability — which do you pick?"
 BOL:      "Transfer and balance are CP — I'd rather reject than give a wrong balance. SMS, statements and
            analytics after the commit are AP; a couple of seconds late is fine."
+
+AGLA SAWAAL (tere jawab se):
+  "Crash pe DB ko kaise pata kya wapas karna hai?"
+   -> DB pehle WAL me likhta ("A -500, B +500, COMMIT"). Uthte hi WAL padhta: COMMIT wala txn poora,
+      bina COMMIT wala undo -> aadha kabhi nahi
+  "A aur B alag bank me?"
+   -> tab ek txn nahi -> PENDING + SAGA / reconciliation (payment wala raasta)
 ```
 
 ---
@@ -125,6 +132,11 @@ SOLUTION: ★ ARPAN NE LOG aur LEDGER alag bola (bahut kam log karte):
                   relay "sent" se pehle gira -> dobara jaayega -> consumers eventId se idempotent · acks=all · fail -> DLQ
 
 NAYA:     Kafka (outbox relay ke through)
+
+KAISE (outbox relay):
+          relay har ~1 sec: SELECT * FROM outbox WHERE sent = false ORDER BY id -> Kafka (acks=all) -> sent = true
+          ya CDC (Debezium): DB ka WAL padh ke outbox ki nayi row seedha Kafka me (polling ka bojh nahi)
+          relay 'sent' likhne se pehle gira -> event dobara -> consumers eventId se idempotent
 ```
 ```mermaid
 flowchart TD
@@ -140,6 +152,12 @@ flowchart TD
 POOCHEGA: "How do you make sure the SMS / fraud event is never lost?"
 BOL:      "The event is written to an outbox table in the same transaction as the transfer, and a relay
            publishes it to Kafka with acks=all. Consumers are idempotent on event id and failures go to a DLQ."
+
+AGLA SAWAAL (tere jawab se):
+  "SMS ka kram (pehle debit SMS, phir credit)?"
+   -> Kafka key = account_id -> ek account ke event ek partition me kram se
+  "Outbox table bhar jaayegi?"
+   -> sent rows roz saaf ya partition drop
 ```
 
 ---
@@ -186,6 +204,12 @@ BOL:      "Ledger is the source of truth and balance is its derived cache; I wri
            they never drift. Reads hit the balance — one row. A nightly reconciliation compares them, and on a
            mismatch the ledger wins. Plus p99, error rate, queue lag, DB connections with alerts, and a trace id
            per transfer."
+
+AGLA SAWAAL (tere jawab se):
+  "Reconciliation me farak mila, kya karoge?"
+   -> alert + us account ko ruk ke dekho (freeze?), KYUN farak (bug) dhoondho, phir ledger se balance theek
+  "11 arab row pe raat ka SUM har account ka?"
+   -> snapshot + sirf aaj ki entries jodo (DIKKAT 9 wala snapshot), poora nahi
 ```
 
 ---
@@ -214,6 +238,13 @@ flowchart TD
     n_Banking_Svc --> n_SQL_DB
     n_SQL_DB --> n_Kafka
     n_Reconciliation_job --> n_SQL_DB
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Same key, par body alag (amount 500 ki jagah 5000)?"
+   -> key ke saath request ka hash bhi rakho -> mismatch = 422 error, purana result nahi
+  "Key table hamesha badhegi?"
+   -> 24-48 ghante baad saaf (retry window ke baad kaam ki nahi)
 ```
 
 ---
@@ -244,6 +275,12 @@ DHYAAN:   2 user ek cheez = atomic / lock · 1 user ka retry = idempotency
 BOL:      "Concurrency doesn't need extra locking — the UPDATE does the math inside the database, so there's no
            lost update. Two things matter: the balance check lives in the database, WHERE balance >= amount, and
            locks are always taken in a fixed order so transfers can't deadlock."
+
+AGLA SAWAAL (tere jawab se):
+  "WHERE balance >= 200 ne 0 row diya, user ko kya?"
+   -> 'insufficient balance' (422), aur txn rollback (credit wala UPDATE bhi nahi)
+  "Deadlock fir bhi aaya (kram ke bawajood)?"
+   -> DB victim ko rollback karta -> app chhota retry (idempotent key ke saath)
 ```
 
 ---
@@ -258,6 +295,11 @@ SOLUTION: kai Banking Svc + aage LB · STATELESS (sab DB me) · health check 2-3
 
 NAYA:     LB
 BADLA:    Banking Svc ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
+
+KAISE (failover kaun karta):
+          Patroni (Postgres) / RDS Multi-AZ: health check primary pe -> mara -> sync replica promote
+          -> app jis DB address (DNS / endpoint) pe likhta wo naye primary pe point -> ~30-60 sec me wapas
+          SYNC kyun: commit tabhi jab replica ne bhi likha -> promote hone wale ke paas har confirmed transfer
 ```
 ```mermaid
 flowchart TD
@@ -280,6 +322,12 @@ flowchart TD
 POOCHEGA: "What happens if a server or the DB goes down?"
 BOL:      "Services are stateless behind a load balancer with health checks. The primary has a synchronous
            replica in another zone that's promoted, so a confirmed transfer is never lost."
+
+AGLA SAWAAL (tere jawab se):
+  "Sync replica = har transfer dheema?"
+   -> haan, thoda (ek network hop). Paisa me ye keemat theek; async me aakhri transfer kho sakta
+  "Failover ke 30 sec me transfer?"
+   -> error -> client retry (same idempotency key) -> double nahi
 ```
 
 ---
@@ -296,6 +344,12 @@ SOLUTION: READ REPLICA — balance / history replica se, write primary pe (shard
           doosri wajah FAILOVER (write replica tak nahi pahuncha, wahi promote) -> SYNC replication
 
 NAYA:     Read replica
+
+KAISE (replica peeche kyun + read-your-own-writes):
+          primary WAL ko replica pe stream karta (async) -> replica thodi peeche (~ms se sec)
+          app ko kaise pata 'ye user abhi likh chuka': session / token me 'last_write_at'
+          -> uske N sec (jaise 5) tak us user ke reads PRIMARY se, baaki replica se
+          (ya replica ka WAL position >= user ke write ka position tabhi replica se)
 ```
 ```mermaid
 flowchart TD
@@ -322,6 +376,12 @@ POOCHEGA: "I transferred money but my balance still shows the old value. Why?"
 BOL:      "Most likely replica lag: the write went to the primary, the read hit a replica that hadn't caught up.
            For balance I read from the primary, at least for the user who just wrote. If it were a failover
            losing writes, sync replication fixes that."
+
+AGLA SAWAAL (tere jawab se):
+  "Doosre device se khola (session alag)?"
+   -> last_write_at user ke account pe (Redis) rakho, device pe nahi
+  "Replica bahut peeche (minute)?"
+   -> lag metric pe alert; had paar -> us replica ko read pool se hatao
 ```
 
 ---
@@ -365,6 +425,13 @@ flowchart TD
     n_Banking_Svc_x_N_2 --> n_SQL_DB
     n_SQL_DB --> n_Kafka
     n_Reconciliation_job --> n_SQL_DB
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Same ts pe do entry, cursor me koi chhoot jaaye?"
+   -> isliye (ts, id) dono cursor me -> id tie todti, kuch nahi chhoota
+  "Cursor client ko kaise doge?"
+   -> (ts, id) ko base64 string bana ke 'next_cursor' -> client agli baar bheje
 ```
 
 ---
@@ -416,6 +483,12 @@ flowchart TD
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
 BOL:      "Partition the ledger by month and detach closed months to cold storage — nothing is ever deleted. An
            opening-balance snapshot per period keeps reconciliation correct after archiving."
+
+AGLA SAWAAL (tere jawab se):
+  "Regulator ne 2021 ka statement maanga?"
+   -> S3 ke Parquet pe Athena query ya us mahine ka partition restore
+  "Archive file badal na sake (audit)?"
+   -> S3 Object Lock (WORM) -> likhi file na delete na badle, saalon tak
 ```
 
 ---
