@@ -66,6 +66,12 @@ SOLUTION: counter EK central jagah — in-memory, kyunki har request pe hit -> R
 
 NAYA:     LB · Redis
 BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2) · counter ab App ke andar nahi
+
+KAISE:    key = rate:{endpoint}:{user}  (jaise rate:login:user42), value = ginti
+          har request -> INCR · pehli baar EXPIRE 60 -> 60 sec baad key apne aap gayab = nayi window, ginti 0
+          ginti > limit -> 429
+KYUN YE:  sticky LB (ek user hamesha ek App pe) kyun nahi -> wo App gira = ginti gayi,
+          naya App juda to users ka bantwara badla = ginti phir bati
 ```
 ```mermaid
 flowchart TD
@@ -79,6 +85,13 @@ flowchart TD
     n_LB --> n_App_x_N_2
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Fixed window me 59th sec pe 100 aur 61st sec pe 100 -> 2 sec me 200?"
+   -> haan, fixed window ki kamzori. Sliding window (pichhle 60 sec ki asli ginti) ya token bucket se theek
+  "Har request pe Redis call = latency?"
+   -> Redis RAM me, ~1ms, App ke paas same AZ me. Itna chalta
 ```
 
 ---
@@ -118,6 +131,13 @@ POOCHEGA: "Two requests come at the same time — what happens?"
 DHYAAN:   2 user ek cheez = atomic / lock · 1 user ka retry = idempotency (dono alag)
 BOL:      "Redis is single-threaded, so INCR is atomic. For token bucket I use a Lua script, so the
            check and the decrement run as one unit and there's no read-modify-write race."
+
+AGLA SAWAAL (tere jawab se):
+  "Token bucket me Redis me kya rakhoge?"
+   -> do cheez: tokens bache + aakhri refill ka time. Lua me: (abhi - last) x rate jitne token jodo,
+      1 ghatao, dono save -> ek hi unit
+  "Lua script dheema / atak gaya to?"
+   -> Redis single thread -> lamba script sabko rokega. Isliye script chhota, koi loop nahi
 ```
 
 ---
@@ -146,6 +166,13 @@ flowchart TD
     n_API_Gateway --> n_Redis
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "429 pe client ko kya bataoge?"
+   -> header Retry-After: 30 (kitni der baad aao) + X-RateLimit-Remaining (kitni bachi)
+  "Gateway khud gir gaya?"
+   -> gateway bhi 2+ box, aage LB (DIKKAT 4 wali SPOF chain)
 ```
 
 ---
@@ -186,6 +213,13 @@ POOCHEGA: "What if Redis goes down?"
 DHYAAN:   faisla PEHLE se code me likha ho — fail-open ya fail-closed, endpoint ke hisaab se
 BOL:      "Redis has a replica with automatic failover in another zone. If the whole layer is gone I
            fail open for normal APIs so the site stays up, and fail closed for login and OTP."
+
+AGLA SAWAAL (tere jawab se):
+  "Sentinel ko kaise pata primary mara, aur kaun promote karta?"
+   -> 3 Sentinel primary ko ping karte. Zyada (2 of 3) bolein "mara" -> vote se ek replica ko primary banate
+      aur clients ko naya pata dete
+  "Failover me aakhri kuch counts gaye?"
+   -> haan, replica async thi -> kuch request ki ginti kho sakti. Rate limit ke liye chalta (paisa nahi)
 ```
 
 ---
@@ -205,11 +239,22 @@ SOLUTION: teen raaste:
              paisa / security ("3 OTP", "10 free call phir charge", withdrawal) -> CENTRAL ATOMIC (Redis + Lua)
 
 NAYA:     koi dabba nahi — routing ka niyam
+
+KAISE (region-sticky):
+          user kisi bhi region me aaye -> wahan ka gateway hash(user_id) se HOME region nikaalta
+          -> request home region ke gateway / Redis tak forward -> ginti hamesha ek jagah
+          keemat: door ke user ko ek cross-region hop (~100-200 ms) har request pe
 ```
 ```
 POOCHEGA: "What if a whole region goes down?"
 BOL:      "Route 53 sends the user to another region and the count starts from zero there, so the limit
            is loose for one window. For a rate limiter that's fine — it's only a minute of counting."
+
+AGLA SAWAAL (tere jawab se):
+  "Har request pe 200ms ka hop to dheema ho gaya?"
+   -> haan, isliye sirf paisa / security wale endpoint pe sticky / central. Baaki pe local + async sync
+  "Local + async sync me kitna over-allow?"
+   -> sync interval jitna (jaise 1 sec) -> us beech har region apni poori limit de sakta. Soft limit ke liye theek
 ```
 
 ---
@@ -226,6 +271,12 @@ SOLUTION: LAYERED: (1) rate limit = soft, 429
           -> limit maafi wali, ban sirf pakke abuse pe
 
 NAYA:     Kafka · Pattern Svc (baar-baar maarne wala pakde) · WAF (edge pe IP / bot ko permanent rokne wali deewar)
+
+KAISE:    Gateway har 429 ka event Kafka me daalta (ip, user, endpoint, time)
+          Pattern svc window me ginta: "is IP ke 10 min me 500 se zyada 429?" -> had paar = WAF blocklist me IP
+          WAF edge pe hai -> agli request server tak pahunchti hi nahi
+KYUN YE:  Gateway se seedha Pattern svc ko call kyun nahi -> har request pe extra call = gateway ka raasta dheema
+          Kafka me daal ke bhool jao, Pattern svc apni speed se padhe
 ```
 ```mermaid
 flowchart TD
@@ -248,6 +299,13 @@ flowchart TD
     n_Redis_Cluster --> n_Kafka
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Galat banda ban ho gaya (office ka NAT IP)?"
+   -> ban pe TTL (jaise 24 ghante), apne aap hatega + manual unblock raasta
+  "Pattern svc peeche reh gaya (Kafka lag)?"
+   -> ban kuch minute late lagega; tab tak rate limit to rok hi raha hai
 ```
 
 ---
@@ -296,6 +354,12 @@ DHYAAN:   "rate limiter laga hai" kaafi NAHI — per-user limit bheed nahi rokti
 BOL:      "A per-user limit doesn't stop a crowd where everyone is under their limit. For that I need a
            global cap and load shedding based on system health, plus a queue for the burst and
            pre-scaling when I know the spike is coming."
+
+AGLA SAWAAL (tere jawab se):
+  "Shedding me kaunsi request phenkoge?"
+   -> priority: login / payment rakho, recommendations / analytics pehle girao
+  "Queue me request kitni der rakhoge?"
+   -> chhota timeout (jaise 2 sec). User wait karke chala gaya to uska kaam karna bekaar
 ```
 
 ---
@@ -311,6 +375,9 @@ SOLUTION: fail-open ke SAATH local fallback:
           exact nahi (har node apna ginega), par attack me "kuch nahi" se bahut behtar
 
 NAYA:     koi dabba nahi — App / Gateway me local counter fallback
+
+KAISE:    har node ki local limit = global limit / kitne node (100 / 10 node = har node 10)
+          node apni RAM me ginta (simple counter + TTL), Redis wapas aaya to phir global
 ```
 ```mermaid
 flowchart TD
@@ -334,6 +401,13 @@ flowchart TD
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Node badh gaye (autoscale), local limit?"
+   -> node count config / service discovery se lo, divide dobara
+  "Ek user ki saari request ek node pe aayi?"
+   -> us node pe 10 pe ruka, doosre node pe aur 10 -> motamoti, exact nahi (maana hua)
+```
 
 ---
 
@@ -347,6 +421,13 @@ SOLUTION: logged-in -> user_id / API key pe gino, IP pe NAHI
           login / signup se pehle (pehchaan nahi) -> IP majboori -> limit DHEELI + asli faisla WAF / bot detection
 
 NAYA:     koi dabba nahi
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Login se pehle botnet (hazaar IP) se password guess?"
+   -> IP limit kaam nahi aayegi -> account pe limit (is username pe 5 galat = thodi der lock / CAPTCHA)
+  "API key chori ho gayi?"
+   -> key pe limit uska nuksaan seemit karti; key rotate / revoke ka raasta
 ```
 
 ---
