@@ -205,6 +205,17 @@ DHYAAN:   (mock galti) "consistency chahiye = SQL" -> NAHI, DB data ki SHAKAL se
           (mock galti) har keystroke DB hit -> nahi, buffer + batch
 BOL:      "Real-time edits go through memory and pub/sub; I buffer operations in Redis and write them in batches
            to Cassandra, partitioned by doc id and ordered by time, so one doc's ops stay on one shard."
+
+POOCHEGA: "An op is in the Redis buffer, not yet in Cassandra, and Redis crashes. Is it lost?"
+          (7-Oct mock: SPOF socha, replica bola = sahi pehla qadam)
+          Replica poora nahi bachata: Redis replica ko ASYNC bhejta -> primary gira to aakhri kuch op replica tak pahunche hi nahi
+          Cassandra log bhi nahi bachata: jo op batch hi nahi hua wo log me hai hi nahi
+          ILAAJ:  (1) client har op apne paas rakhe jab tak server ACK na de -> ack nahi aaya to reconnect pe dobara bhejo
+                  (2) op pe unique opId -> dobara aaya to server skip kare (idempotent, do baar apply nahi)
+                  (3) server ACK tabhi de jab op DURABLE jagah likh gaya (Kafka / Redis AOF), sirf memory me nahi
+          JODA:   yahi client-side pending ops = OFFLINE sync wala hissa bhi (DIKKAT 7)
+BOL:      "Redis is replicated, but replication is async, so I don't ack an op until it's durably written.
+           The client keeps unacked ops and resends them with an op id, so nothing is lost or applied twice."
 ```
 
 ---
