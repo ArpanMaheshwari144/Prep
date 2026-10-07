@@ -68,6 +68,13 @@ flowchart TD
 ```
 ```
 DHYAAN:   Last-Write-Wins (3-Sep mock ki galti) -> kisi ka likha KHO jaata
+
+AGLA SAWAAL (tere jawab se):
+  "Operation me kya-kya bhejoge?"
+   -> { docId, userId, type (insert / delete), position, char, baseVersion }
+      baseVersion = client ne kis version ko dekh ke op banaya -> isi se pata chalta kaun-se ops concurrent the
+  "Delete ka kya? A ne 'L' mitaya, B ne usi jagah type kiya?"
+   -> delete bhi ek op {delete, pos}. OT dono ko transform karta: B ka insert khisakta, A sahi char mitata
 ```
 
 ---
@@ -82,6 +89,18 @@ SOLUTION: WEBSOCKET — do-tarfa zinda connection, dono taraf se push
           (sirf server -> client hota to SSE halka padta)
 
 BADLA:    App -> Conn-Server (connection server: user ka WebSocket pakad ke rakhta)
+
+KAISE:    pehle normal HTTP request "Upgrade: websocket" -> server "101 Switching Protocols"
+          -> wahi TCP connection khula rehta, ab dono taraf kabhi bhi chhota frame bhej sakte
+KYUN YE:  polling (har 1 sec "kuch naya?") = 40M user x har sec bekaar request, phir bhi 1 sec der
+          long polling = har message pe naya request + header ka bojh · SSE = sirf server -> client
+
+AGLA SAWAAL (tere jawab se):
+  "Connection beech me toot gaya to?"
+   -> client reconnect kare (backoff ke saath) + apna aakhri version bataye ("main v120 pe tha")
+      server v121 ke baad ke ops bhej de -> kuch nahi chhoota
+  "Server ko kaise pata client zinda hai?"
+   -> heartbeat (ping / pong) har ~30 sec · jawab nahi = connection band, uski jagah saaf
 ```
 ```mermaid
 flowchart TD
@@ -106,6 +125,25 @@ SOLUTION: REDIS PUB/SUB (server-to-server fanout)
 
 NAYA:     LB · Redis pub/sub
 BADLA:    Conn-Server ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
+
+KAISE:    har doc = ek CHANNEL (doc:123)
+          jis Conn-Server pe us doc ka koi user khula hai -> wo server channel SUBSCRIBE karta
+          A ne type kiya -> Server-1 "doc:123" pe PUBLISH -> Redis turant saare subscribed servers ko deta
+
+            Server-1 --publish doc:123--> [ Redis ] --> Server-2 (subscribed) --> B
+                                                    --> Server-5 (subscribed) --> C
+
+          Redis kuch STORE nahi karta: jo us waqt sun raha tha usi ko mila (fire-and-forget)
+          -> pub/sub sirf "turant dikhana" hai, data bachana nahi (wo buffer / DB ka kaam, DIKKAT 5)
+KYUN YE:  Kafka bhi chal sakta, par Kafka store karta + thoda dheema -> live typing ko replay nahi, speed chahiye
+          servers ek doosre ko seedha HTTP -> kisko bhejna pata nahi, N x N jaal
+
+AGLA SAWAAL (tere jawab se):
+  "Us waqt koi server sun nahi raha tha (restart ho raha tha) -> message gaya?"
+   -> haan, pub/sub me gaya. Par edit DB / log me hai: client reconnect pe apna version bataye,
+      baaki ops wahan se le le (DIKKAT 2 wala reconnect)
+  "Redis pub/sub hi gir gaya?"
+   -> replica pe switch (Sentinel); beech ke kuch second live update ruke, edit kho nahi (log me hai)
 ```
 ```mermaid
 flowchart TD
@@ -163,6 +201,17 @@ flowchart TD
 POOCHEGA: "Two people type at the same position at the same time — what happens?"
 BOL:      "I send operations, not snapshots, and transform concurrent operations with OT or merge them with a
            CRDT. Everyone converges to the same document and no write is lost."
+
+KYUN OT (CRDT nahi):
+          hamare paas central server hai (har op usi se guzarta) -> OT seedha baithta, Google Docs bhi OT
+          CRDT tab jab central server na ho (offline-first, peer-to-peer) · keemat: har char ki id = memory zyada
+
+AGLA SAWAAL (tere jawab se):
+  "Transform kaun karta — client ya server?"
+   -> dono. Server KRAM tay karta (har op ko agla version no.) aur aaye op ko beech ke ops ke against
+      transform karta. Client apne pending ops ko server se aaye ops ke against transform karta.
+  "Do server pe ek doc ka OT alag-alag chala to?"
+   -> kram toot jaayega. Isliye ek doc ke saare ops EK jagah (docId se ek server / shard) -> DIKKAT 8
 ```
 
 ---
@@ -180,6 +229,13 @@ SOLUTION: BUFFER + BATCH: op -> Redis buffer me jama -> thodi der me BATCH -> No
 
 NAYA:     Redis buffer (edits thodi der jama, phir ek saath DB me)
 BADLA:    DB -> Cassandra edit log (docId shard)
+
+KAISE:    op aaya -> Redis LIST me RPUSH (doc ke hisaab se)
+          flusher worker har ~1 sec ya 500 op pe list se uthata -> Cassandra me EK batch write
+          Cassandra write tez kyun: pehle commit log (disk pe sirf append) + RAM ki memtable
+          -> memtable bhari to disk pe SSTable seedha likh deta. Purana data badalta nahi, bas append = tez
+KYUN YE:  MySQL me har op = index update + random disk write -> itne writes pe dheema
+          buffer Kafka me bhi ho sakta (durable bhi) -> crash wala sawaal neeche
 ```
 ```mermaid
 flowchart TD
@@ -206,7 +262,8 @@ DHYAAN:   (mock galti) "consistency chahiye = SQL" -> NAHI, DB data ki SHAKAL se
 BOL:      "Real-time edits go through memory and pub/sub; I buffer operations in Redis and write them in batches
            to Cassandra, partitioned by doc id and ordered by time, so one doc's ops stay on one shard."
 
-POOCHEGA: "An op is in the Redis buffer, not yet in Cassandra, and Redis crashes. Is it lost?"
+AGLA SAWAAL (tere jawab se):
+  "Op abhi Redis buffer me hai, Cassandra me nahi gaya, aur Redis crash ho gaya. Op gaya?"
           (7-Oct mock: SPOF socha, replica bola = sahi pehla qadam)
           Replica poora nahi bachata: Redis replica ko ASYNC bhejta -> primary gira to aakhri kuch op replica tak pahunche hi nahi
           Cassandra log bhi nahi bachata: jo op batch hi nahi hua wo log me hai hi nahi
@@ -229,6 +286,13 @@ SOLUTION: SNAPSHOT (poora text, har X ops baad) + uske baad ke thode ops
           doc load = latest snapshot + baad ke ops apply (append log + periodic compaction ka funda)
 
 NAYA:     koi dabba nahi — edit log ke saath snapshot
+
+AGLA SAWAAL (tere jawab se):
+  "Snapshot banate waqt naye edit aa rahe hon to?"
+   -> snapshot ek version tak ka hota (v1000). Load = snapshot v1000 + v1001 ke baad ke ops.
+      Naye ops log me aate rehte, kuch nahi rukta.
+  "Snapshot kitni baar?"
+   -> har N ops (jaise 1000) ya har kuch minute, jo pehle ho
 ```
 ```mermaid
 flowchart TD
@@ -292,6 +356,13 @@ POOCHEGA: "Consistency or availability — which do you pick?"
 DHYAAN:   ek CAP poore system pe NAHI — per component
 BOL:      "Per component. Edits are AP: you keep typing through a network blip and OT or CRDTs make everyone
            converge. Permissions are CP: a removed user must be blocked immediately."
+
+AGLA SAWAAL (tere jawab se):
+  "Offline 1 ghanta type kiya, wapas aaya — kaise milega?"
+   -> client ke paas pending ops + aakhri version. Wapas aate hi bhejta; server beech ke ops ke against
+      transform karta (OT), client server ke ops apne pe -> dono same
+  "Access hata diya aur wo user offline type kar raha tha?"
+   -> reconnect pe pehle permission check (SQL, CP) -> access nahi to uske pending ops reject
 ```
 
 ---
@@ -314,6 +385,19 @@ SOLUTION: (1) alag CONNECTION TIER — sirf socket pakadne wale, alag scale
 
 NAYA:     CDN
 BADLA:    LB -> LB (docId se consistent routing)
+
+KAISE (docId se routing):
+          URL me docId (/documents/{docId}) -> LB hash(docId) se server chunta
+          consistent hashing ring: server ring pe baithe, doc clockwise agle server pe
+          server juda / gira -> sirf uske hisse ke doc khiskte, baaki wahin
+KYUN YE:  hash(docId) % N -> N badla (server juda) to lagbhag har doc ka server badal jaata = sab reconnect
+
+AGLA SAWAAL (tere jawab se):
+  "Jis server pe doc tha wo gir gaya?"
+   -> ring pe agla server doc le leta. Clients reconnect, naya server doc = snapshot + ops se load,
+      client apna version bata ke baaki ops le leta
+  "Ek doc pe 100 log, server garam?"
+   -> 100 ka cap hai, ek server jhel leta. Zyada ho to sirf-dekhne-wale alag, unhe pub/sub se updates
 ```
 ```mermaid
 flowchart TD
