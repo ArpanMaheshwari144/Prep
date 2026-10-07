@@ -81,6 +81,13 @@ flowchart TD
     n_App --> n_DB
     n_App --> n_Cache
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Redis sach me poora LRU rakhta (har key ki list)?"
+   -> nahi, memory bachane ko 'approximate LRU': kuch random keys uthata, unme sabse purani hatata
+  "LFU me purana famous key hamesha rahega?"
+   -> isliye LFU ginti ko waqt ke saath ghatata (decay) -> kal ka hero aaj nikal sake
+```
 
 ---
 
@@ -115,6 +122,13 @@ flowchart TD
     n_Cache_client --> n_Node_B
     n_Cache_client --> n_Node_C
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Cache client ko kaise pata kaun-se node zinda hain?"
+   -> config service / cluster ka topology (Redis Cluster khud batata: 'ye key us node pe hai, MOVED')
+  "Naya node juda, uski key khaali -> miss?"
+   -> haan, sirf us arc ki ~K/N key ka ek baar miss -> DB pe thoda bojh, poora nahi
+```
 
 ---
 
@@ -128,6 +142,13 @@ SOLUTION: REPLICATION — har shard ka 1-2 replica · primary mara -> replica PR
           trade-off: replication LAG -> thodi der purana · cache me eventual chalta
 
 BADLA:    Node A / B / C -> Node + replica
+
+KAISE (kaun pakadta, kaun promote):
+          Redis Sentinel (alag 3 process) ya Cluster ke baaki masters primary ko ping karte (gossip)
+          zyada (quorum) bolein "mara" -> vote se ek replica ko primary banaya, clients ko naya pata
+KYUN ASYNC replication (sync nahi):
+          sync = har write pe replica ke "haan" ka intezaar -> cache ka <1ms toot jaata
+          keemat: primary mara to aakhri kuch write replica tak nahi pahunche -> cache me chalta (DB me sach hai)
 ```
 ```mermaid
 flowchart TD
@@ -147,6 +168,12 @@ flowchart TD
 POOCHEGA: "What happens if a cache node goes down?"
 BOL:      "Each shard has a replica in another zone that gets promoted, and with consistent hashing only that
            node's keys are affected."
+
+AGLA SAWAAL (tere jawab se):
+  "Network toota, purana primary bhi zinda samjha raha (do primary)?"
+   -> split brain. Quorum + jo minority me hai wo write lena band kare (min-replicas)
+  "Failover me kitni der?"
+   -> ~10-30 sec; us beech us shard ki key DB se (thoda dheema)
 ```
 
 ---
@@ -169,6 +196,12 @@ NAYA:     koi dabba nahi
 POOCHEGA: "The user updated something but still sees the old value. Why?"
 BOL:      "On update I delete the cache key rather than overwrite it, and keep a TTL as a safety net. If it's
            replica lag, the writer reads from the primary for a short while."
+
+AGLA SAWAAL (tere jawab se):
+  "DB update hua, cache DELETE fail ho gaya?"
+   -> TTL bachata (max utni der purana). Pakka chahiye -> DB change event (CDC) se delete ka retry
+  "DELETE ke baad koi purani value phir se cache me daal de (race)?"
+   -> chhota delay ke baad dobara delete (double delete) ya version / TTL se
 ```
 
 ---
@@ -187,6 +220,12 @@ SOLUTION: MUTEX / lock -> sirf 1 DB se rebuild, baaki WAIT, phir cache se
                   asli me kam kyunki badi site ilaaj PEHLE lagaati
 
 NAYA:     koi dabba nahi
+
+KAISE (mutex):
+          miss hua -> SET lock:key 1 NX EX 5
+          jeeta (OK) -> DB se laao, cache bharo, lock DEL
+          haara (nil) -> 50-100 ms ruko, cache dobara padho (tab tak jeetne wale ne bhar diya)
+          lock pe EX kyun: jeetne wala beech me mara to lock 5 sec me khud chhoote, warna sab hamesha atke
 ```
 ```
 POOCHEGA: "What if the cache goes down / a hot key expires?"
@@ -194,6 +233,13 @@ DHYAAN:   poora cache gaya -> DB fallback, par load shedding / rate limit ke saa
 BOL:      "For known events I'd pre-warm the cache and scale up in advance. For unpredictable spikes I still
            need stampede protection: a lock so only one request rebuilds the key, and early background refresh
            before the TTL expires."
+
+AGLA SAWAAL (tere jawab se):
+  "Haarne wale kitni der rukenge?"
+   -> chhota wait + kuch retry; phir bhi nahi to purani value (stale) do, DB pe mat bhejo
+  "Soft-TTL kaise?"
+   -> value ke saath 'refresh_after' time; padhne wala dekhe time nikal gaya -> background me ek refresh,
+      tab tak purani value hi do
 ```
 
 ---
@@ -236,6 +282,12 @@ BOL:      "The key is there, one node just can't take the reads. I'd put a 1-2 s
            server so most reads never reach Redis, and copy the key across replicas so the rest are spread
            out. A slightly stale score is fine here. If the key were missing instead, that's a stampede — one
            request rebuilds, the rest wait."
+
+AGLA SAWAAL (tere jawab se):
+  "Hot key pehchanoge kaise?"
+   -> node ke metrics (ek key pe ops/sec), Redis --hotkeys, client side ginti -> had paar = copy / L1 me
+  "L1 me purana score kitni der?"
+   -> L1 TTL 1-2 sec -> utna purana chalta (score ke liye theek, paisa ke liye nahi)
 ```
 
 ---
