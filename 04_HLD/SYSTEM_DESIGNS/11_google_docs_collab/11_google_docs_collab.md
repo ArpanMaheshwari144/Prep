@@ -94,13 +94,6 @@ KAISE:    pehle normal HTTP request "Upgrade: websocket" -> server "101 Switchin
           -> wahi TCP connection khula rehta, ab dono taraf kabhi bhi chhota frame bhej sakte
 KYUN YE:  polling (har 1 sec "kuch naya?") = 40M user x har sec bekaar request, phir bhi 1 sec der
           long polling = har message pe naya request + header ka bojh · SSE = sirf server -> client
-
-AGLA SAWAAL (tere jawab se):
-  "Connection beech me toot gaya to?"
-   -> client reconnect kare (backoff ke saath) + apna aakhri version bataye ("main v120 pe tha")
-      server v121 ke baad ke ops bhej de -> kuch nahi chhoota
-  "Server ko kaise pata client zinda hai?"
-   -> heartbeat (ping / pong) har ~30 sec · jawab nahi = connection band, uski jagah saaf
 ```
 ```mermaid
 flowchart TD
@@ -109,6 +102,14 @@ flowchart TD
     n_DB["DB"]
     n_USER_A_B --> n_Conn_Server
     n_Conn_Server --> n_DB
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Connection beech me toot gaya to?"
+   -> client reconnect kare (backoff ke saath) + apna aakhri version bataye ("main v120 pe tha")
+      server v121 ke baad ke ops bhej de -> kuch nahi chhoota
+  "Server ko kaise pata client zinda hai?"
+   -> heartbeat (ping / pong) har ~30 sec · jawab nahi = connection band, uski jagah saaf
 ```
 
 ---
@@ -137,13 +138,6 @@ KAISE:    har doc = ek CHANNEL (doc:123)
           -> pub/sub sirf "turant dikhana" hai, data bachana nahi (wo buffer / DB ka kaam, DIKKAT 5)
 KYUN YE:  Kafka bhi chal sakta, par Kafka store karta + thoda dheema -> live typing ko replay nahi, speed chahiye
           servers ek doosre ko seedha HTTP -> kisko bhejna pata nahi, N x N jaal
-
-AGLA SAWAAL (tere jawab se):
-  "Us waqt koi server sun nahi raha tha (restart ho raha tha) -> message gaya?"
-   -> haan, pub/sub me gaya. Par edit DB / log me hai: client reconnect pe apna version bataye,
-      baaki ops wahan se le le (DIKKAT 2 wala reconnect)
-  "Redis pub/sub hi gir gaya?"
-   -> replica pe switch (Sentinel); beech ke kuch second live update ruke, edit kho nahi (log me hai)
 ```
 ```mermaid
 flowchart TD
@@ -160,6 +154,14 @@ flowchart TD
     n_Conn_Server_x_N_2 --> n_Redis_pub_sub
     n_Conn_Server_x_N_1 --> n_DB
     n_Conn_Server_x_N_2 --> n_DB
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Us waqt koi server sun nahi raha tha (restart ho raha tha) -> message gaya?"
+   -> haan, pub/sub me gaya. Par edit DB / log me hai: client reconnect pe apna version bataye,
+      baaki ops wahan se le le (DIKKAT 2 wala reconnect)
+  "Redis pub/sub hi gir gaya?"
+   -> replica pe switch (Sentinel); beech ke kuch second live update ruke, edit kho nahi (log me hai)
 ```
 
 ---
@@ -180,6 +182,10 @@ SOLUTION: OPERATIONAL TRANSFORMATION (OT) — winner mat chuno, TRANSFORM karo
           (implement nahi karna — bas ye samajh bolni hai)
 
 NAYA:     koi dabba nahi — Conn-Server me OT
+
+KYUN OT (CRDT nahi):
+          hamare paas central server hai (har op usi se guzarta) -> OT seedha baithta, Google Docs bhi OT
+          CRDT tab jab central server na ho (offline-first, peer-to-peer) · keemat: har char ki id = memory zyada
 ```
 ```mermaid
 flowchart TD
@@ -201,10 +207,6 @@ flowchart TD
 POOCHEGA: "Two people type at the same position at the same time — what happens?"
 BOL:      "I send operations, not snapshots, and transform concurrent operations with OT or merge them with a
            CRDT. Everyone converges to the same document and no write is lost."
-
-KYUN OT (CRDT nahi):
-          hamare paas central server hai (har op usi se guzarta) -> OT seedha baithta, Google Docs bhi OT
-          CRDT tab jab central server na ho (offline-first, peer-to-peer) · keemat: har char ki id = memory zyada
 
 AGLA SAWAAL (tere jawab se):
   "Transform kaun karta — client ya server?"
@@ -286,13 +288,6 @@ SOLUTION: SNAPSHOT (poora text, har X ops baad) + uske baad ke thode ops
           doc load = latest snapshot + baad ke ops apply (append log + periodic compaction ka funda)
 
 NAYA:     koi dabba nahi — edit log ke saath snapshot
-
-AGLA SAWAAL (tere jawab se):
-  "Snapshot banate waqt naye edit aa rahe hon to?"
-   -> snapshot ek version tak ka hota (v1000). Load = snapshot v1000 + v1001 ke baad ke ops.
-      Naye ops log me aate rehte, kuch nahi rukta.
-  "Snapshot kitni baar?"
-   -> har N ops (jaise 1000) ya har kuch minute, jo pehle ho
 ```
 ```mermaid
 flowchart TD
@@ -311,6 +306,14 @@ flowchart TD
     n_Conn_Server_x_N_1 --> n_Redis_buffer
     n_Conn_Server_x_N_2 --> n_Redis_buffer
     n_Redis_buffer --> n_Cassandra_edit_log
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Snapshot banate waqt naye edit aa rahe hon to?"
+   -> snapshot ek version tak ka hota (v1000). Load = snapshot v1000 + v1001 ke baad ke ops.
+      Naye ops log me aate rehte, kuch nahi rukta.
+  "Snapshot kitni baar?"
+   -> har N ops (jaise 1000) ya har kuch minute, jo pehle ho
 ```
 
 ---
@@ -391,13 +394,6 @@ KAISE (docId se routing):
           consistent hashing ring: server ring pe baithe, doc clockwise agle server pe
           server juda / gira -> sirf uske hisse ke doc khiskte, baaki wahin
 KYUN YE:  hash(docId) % N -> N badla (server juda) to lagbhag har doc ka server badal jaata = sab reconnect
-
-AGLA SAWAAL (tere jawab se):
-  "Jis server pe doc tha wo gir gaya?"
-   -> ring pe agla server doc le leta. Clients reconnect, naya server doc = snapshot + ops se load,
-      client apna version bata ke baaki ops le leta
-  "Ek doc pe 100 log, server garam?"
-   -> 100 ka cap hai, ek server jhel leta. Zyada ho to sirf-dekhne-wale alag, unhe pub/sub se updates
 ```
 ```mermaid
 flowchart TD
@@ -426,6 +422,13 @@ flowchart TD
 POOCHEGA: "How do you keep edits in order?"
 BOL:      "The server assigns each operation the doc's next version number, never the client clock, and all
            ops for one doc go to one shard where OT runs serially."
+
+AGLA SAWAAL (tere jawab se):
+  "Jis server pe doc tha wo gir gaya?"
+   -> ring pe agla server doc le leta. Clients reconnect, naya server doc = snapshot + ops se load,
+      client apna version bata ke baaki ops le leta
+  "Ek doc pe 100 log, server garam?"
+   -> 100 ka cap hai, ek server jhel leta. Zyada ho to sirf-dekhne-wale alag, unhe pub/sub se updates
 ```
 
 ---
