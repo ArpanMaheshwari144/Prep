@@ -171,6 +171,10 @@ flowchart TD
 AGLA SAWAAL (tere jawab se):
   "429 pe client ko kya bataoge?"
    -> header Retry-After: 30 (kitni der baad aao) + X-RateLimit-Remaining (kitni bachi)
+   -> MISAAL: UI pe toast "Too many requests, 30 sec baad try karo". Ye 30 Retry-After header se aata,
+      server ne bucket ka agla refill kab hai usse nikala. Client khud andaza nahi lagata.
+   -> BOL: "We return 429 with a Retry-After header, computed from when the bucket refills,
+      so the client knows exactly when to retry and the UI can show it."
   "Gateway khud gir gaya?"
    -> gateway bhi 2+ box, aage LB (DIKKAT 4 wali SPOF chain)
 ```
