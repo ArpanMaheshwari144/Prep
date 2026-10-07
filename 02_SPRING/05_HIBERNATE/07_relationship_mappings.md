@@ -166,8 +166,8 @@ a.getBooks().add(b);
 // b.setAuthor(a) NAHI kiya!
 
 authorRepo.save(a);
-// books mein book add hua Java memory mein
-// But DB mein author_id NULL (Book owns FK)
+// (cascade PERSIST nahi to book save hi NAHI hoti — sirf author jaata)
+// cascade ho to book save hoti, PAR DB mein author_id NULL (FK Book ki side, wahan set hi nahi kiya)
 // = Inconsistency!
 ```
 
