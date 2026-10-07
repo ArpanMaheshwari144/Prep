@@ -107,7 +107,7 @@ flowchart TD
 AGLA SAWAAL (tere jawab se):
   "Connection beech me toot gaya to?"
    -> client reconnect kare (backoff ke saath) + apna aakhri version bataye ("main v120 pe tha")
-      server v121 ke baad ke ops bhej de -> kuch nahi chhoota
+      server v120 ke baad ke ops (v121 se aage) bhej de -> kuch nahi chhoota
   "Server ko kaise pata client zinda hai?"
    -> heartbeat (ping / pong) har ~30 sec · jawab nahi = connection band, uski jagah saaf
 ```
@@ -225,7 +225,8 @@ DIKKAT:   har akshar = ek write · 40M DAU x har keystroke -> DB khatam
 
 SOLUTION: BUFFER + BATCH: op -> Redis buffer me jama -> thodi der me BATCH -> NoSQL edit log
           real-time hissa memory / pub-sub se, DB me batch — user wait nahi, DB pe hathoda nahi
-          EDIT LOG = Cassandra: partition key = docId, clustering = timestamp ("ek doc ke saare edit, time order me")
+          EDIT LOG = Cassandra: partition key = docId, clustering = version (server ka diya seq no., "ek doc ke saare edit, kram me")
+          timestamp NAHI: same ms pe do op = same key = Cassandra chupchap OVERWRITE (upsert) -> op kho jaata
           batch ke baad bhi bada -> docId se SHARD (ek doc ke saare op ek shard)
           replica sirf READ baantti, write ke liye SHARD · country / date = bura key (skew)
 
@@ -271,7 +272,7 @@ AGLA SAWAAL (tere jawab se):
           Cassandra log bhi nahi bachata: jo op batch hi nahi hua wo log me hai hi nahi
           ILAAJ:  (1) client har op apne paas rakhe jab tak server ACK na de -> ack nahi aaya to reconnect pe dobara bhejo
                   (2) op pe unique opId -> dobara aaya to server skip kare (idempotent, do baar apply nahi)
-                  (3) server ACK tabhi de jab op DURABLE jagah likh gaya (Kafka / Redis AOF), sirf memory me nahi
+                  (3) server ACK tabhi de jab op DURABLE jagah likh gaya (Kafka acks=all, ya Redis AOF fsync always + replica WAIT), sirf memory me nahi
           JODA:   yahi client-side pending ops = OFFLINE sync wala hissa bhi (DIKKAT 7)
 BOL:      "Redis is replicated, but replication is async, so I don't ack an op until it's durably written.
            The client keeps unacked ops and resends them with an op id, so nothing is lost or applied twice."
@@ -310,7 +311,7 @@ flowchart TD
 ```
 AGLA SAWAAL (tere jawab se):
   "Snapshot banate waqt naye edit aa rahe hon to?"
-   -> snapshot ek version tak ka hota (v1000). Load = snapshot v1000 + v1001 ke baad ke ops.
+   -> snapshot ek version tak ka hota (v1000). Load = snapshot v1000 + v1000 ke baad ke ops (v1001 se aage).
       Naye ops log me aate rehte, kuch nahi rukta.
   "Snapshot kitni baar?"
    -> har N ops (jaise 1000) ya har kuch minute, jo pehle ho
@@ -455,7 +456,8 @@ POOCHEGA: "How do you know it's working?"         -> edit propagation p99 · Web
 API:      GET /documents/{docId} -> snapshot + baad ke ops · POST /documents/{docId}/edits -> ek operation
           WebSocket /documents/{docId} -> real-time 2-taraf channel
 
-DATA:     har edit = OPERATION event: { docId, userId, opType (insert / delete), position, char / text, timestamp }
+DATA:     har edit = OPERATION event: { docId, userId, opType (insert / delete), position, char / text, baseVersion }
+          server har op ko agla version deta (kram); timestamp sirf dikhane ke liye
           current doc = us doc ke saare ops ORDER me apply
           Cassandra fit (append-heavy log) · Mongo bhi chalega · permissions = alag SQL (relations + CP)
 

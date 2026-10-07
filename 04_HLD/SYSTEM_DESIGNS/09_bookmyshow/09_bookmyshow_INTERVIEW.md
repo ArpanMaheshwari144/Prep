@@ -232,6 +232,7 @@ flowchart TD
     n_App --> n_Read_replica
     n_App --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
+    n_SQL_primary --> n_Read_replica
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -289,6 +290,8 @@ flowchart TD
     n_Kafka --> n_Booking_worker
     n_Booking_worker --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
+    n_App --> n_SQL_primary
+    n_SQL_primary --> n_Read_replica
 ```
 ```
 POOCHEGA: "What if traffic suddenly spikes 10x?"
@@ -379,6 +382,9 @@ flowchart TD
     n_Kafka --> n_Booking_worker
     n_Booking_worker --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
+    n_App_x_N_1 --> n_SQL_primary
+    n_App_x_N_2 --> n_SQL_primary
+    n_SQL_primary --> n_Read_replica
 ```
 ```
 POOCHEGA: "What happens if an app server goes down?"
@@ -403,7 +409,7 @@ booking      -> atomic conditional UPDATE / row lock · HOLD + TTL
 popular show -> Kafka + per-show serialize + gate counter + waiting room · hot row = ek hi jeete
 payment      -> idempotency key
 SQL          -> replica + auto-failover · data chhota, shard NAHI
-AAGE:        virtual waiting room · Redlock agar kai DB · seat TTL tune · popular show analytics
+AAGE:        virtual waiting room · kai DB / shard ho to seat ka faisla usi shard ke atomic UPDATE se (Redlock = Redis masters ka lock, DB ka nahi) · seat TTL tune · popular show analytics
 
 POOCHEGA: "How would you scale this to 10x?"      -> user ka raasta chalo, pehle jo toote
 POOCHEGA: "What's the single point of failure?"   -> SQL primary (failover), Redis (cluster)
@@ -466,6 +472,9 @@ flowchart TD
     n_Kafka --> n_Booking_worker
     n_Booking_worker --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
+    n_App_x_N_1 --> n_SQL_primary
+    n_App_x_N_2 --> n_SQL_primary
+    n_SQL_primary --> n_Read_replica
 ```
 ```
 BOL: "Browse goes to Redis and a read replica; booking goes to the SQL primary with an atomic conditional

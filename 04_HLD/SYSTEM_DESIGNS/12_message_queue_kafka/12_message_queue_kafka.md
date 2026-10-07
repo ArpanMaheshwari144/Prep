@@ -454,7 +454,7 @@ API:      PRODUCER  send(topic, key, value) -> (partition, offset) receipt · ac
           CONSUMER  subscribe(topic, groupId) · poll(timeout) batch · commit(offset) · seek(partition, offset) = REPLAY
           ADMIN     createTopic(name, partitions, replicationFactor) / deleteTopic / describeTopic
           PULL hai, PUSH nahi: consumer apni raftaar se, slow consumer dab ke nahi marta
-                               keemat: agle poll tak thodi latency (push hota to broker overload karta)
+                               keemat: agle poll tak thodi latency (push hota to broker apni raftaar se dhakelta -> dheema CONSUMER overload)
           send() BATCH karta -> isliye throughput high
           "The queue's own API is deliberately tiny — send, poll, commit, seek. All the business logic lives
            in the consumer, not in the broker. That's why the broker can be so fast."

@@ -222,6 +222,7 @@ flowchart TD
     n_Payment_Svc --> n_DB
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc
 ```
 ```
 POOCHEGA: "What if the server crashes in the middle?"
@@ -271,6 +272,7 @@ flowchart TD
     n_Payment_Svc --> n_DB
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -316,6 +318,7 @@ flowchart TD
     n_Payment_Svc --> n_DB
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc
 ```
 ```
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
@@ -365,6 +368,8 @@ flowchart TD
     n_Payment_Svc_x_N_2 --> n_DB
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
 ```
 POOCHEGA: "How do you secure it / stop abuse?"
@@ -419,6 +424,8 @@ flowchart TD
     n_DB --> n_Read_replica
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
 ```
 POOCHEGA: "The user paid but still sees the old balance. Why?"
@@ -429,7 +436,8 @@ AGLA SAWAAL (tere jawab se):
   "Replica kitni peeche hai, kaise pata?"
    -> replication lag metric (seconds / bytes) pe alert
   "Primary gira?"
-   -> ek replica promote (managed: RDS Multi-AZ khud karta). Paisa ke liye sync replica -> kuch nahi khota
+   -> alag SYNC standby promote (RDS Multi-AZ khud karta) -> kuch nahi khota. Dashboard wali async read replica
+      alag hai; use promote kiya to aakhri write kho sakte
 ```
 
 ---
@@ -475,6 +483,8 @@ flowchart TD
     n_SQL_DB_shard_by_account_id --> n_Read_replica
     n_Reconciliation_job --> n_SQL_DB_shard_by_account_id
     n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -564,6 +574,8 @@ flowchart TD
     n_SQL_DB_shard_by_account_id --> n_Read_replica
     n_Reconciliation_job --> n_SQL_DB_shard_by_account_id
     n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
 ```
 idempotency  -> same key, paisa EK baar          (hashmap "pehle dekha?")

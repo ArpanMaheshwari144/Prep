@@ -343,7 +343,7 @@ DIKKAT:   har member ki apni haalat
 SOLUTION: A. HAR MESSAGE x HAR MEMBER record ("4417 -> Arpan delivered, Suresh read ...")
              500 x 50 = 25,000 record = 500-guna likhai PEECHE DARWAZE se wapas
           B. HAR MEMBER EK NISHAAN (cursor): "Arpan is group me 4417 tak padh chuka" -> 500 row
-             unread = 4417 ke BAAD kitne (sasta, message id ke kram me)   <- YAHI
+             unread = 4417 ke BAAD kitne (sasta; cursor = per-chat SEQ, DIKKAT 10 wala — snowflake id me gap hota, ghatane se ginti nahi milti)   <- YAHI
           offline wali baat hi: padhne wala apna nishaan khud rakhta
           ★ tick ka maamla yahin: "sabko mila" / "sabne padha" ke liye A wala (per message per member) chahiye
 
@@ -376,7 +376,7 @@ flowchart TD
 ```
 AGLA SAWAAL (tere jawab se):
   "Unread count kaise (4417 ke baad kitne)?"
-   -> chat ka aakhri seq - mera cursor = unread (ghatao, gino nahi)
+   -> chat ka aakhri seq - mera read seq = unread (ghatao, gino nahi). Cursor SEQ pe, message id sirf laane ke liye
   "Cursor kahan rakhoge?"
    -> Cassandra (user_id, chat_id) -> read_upto; hot wala Redis me
 ```

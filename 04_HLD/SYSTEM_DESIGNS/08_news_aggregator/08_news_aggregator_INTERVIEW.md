@@ -139,7 +139,7 @@ AGLA SAWAAL (tere jawab se):
    -> scheduler har source ka interval (bade source 1 min, chhote 15 min) + RSS ka ETag / Last-Modified
       -> kuch naya nahi to download hi nahi
   "Worker ne ek article do baar likha (event dobara)?"
-   -> DB me URL / content hash pe UNIQUE -> dobara insert fail = skip
+   -> Mongo: URL / content hash pe unique index -> dobara insert fail = skip · Cassandra: hash ko primary key -> dobara likha = overwrite (idempotent, fail nahi)
 ```
 
 ---
@@ -283,7 +283,8 @@ AGLA SAWAAL (tere jawab se):
   "Koi purani news ka link khole (archive me hai)?"
    -> article page archive / S3 se (dheema chalega) ya chhota 'purana' table
   "Partition DETACH karte waqt table lock?"
-   -> detach turant hota (sirf meta badla), copy pehle se kar lo
+   -> normal DETACH parent table pe chhota ACCESS EXCLUSIVE lock leta (lambi query ke peeche rukega).
+      PG 14+ me DETACH PARTITION ... CONCURRENTLY -> bina block. Copy pehle se kar lo
 ```
 
 ---
@@ -457,6 +458,7 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
+    n_Worker --> n_Elasticsearch
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -540,6 +542,7 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
+    n_Worker --> n_Elasticsearch
 ```
 ```
 BOL: "I keep the write path and read path separate. Sources are fetched in the background, go through Kafka

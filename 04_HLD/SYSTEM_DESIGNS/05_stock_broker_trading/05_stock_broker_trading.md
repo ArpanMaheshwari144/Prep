@@ -99,7 +99,8 @@ DIKKAT:   dono match -> 60k chahiye, hai 50k
 SOLUTION: order lagte hi paisa BLOCK karo (kaato nahi) — hotel / petrol pump ke deposit jaisa
           total 50k · blocked 30k · available 20k -> doosra 30k ka order REJECT
           match -> ab kato · cancel -> unblock · pending -> blocked pada rahega
-          DB me: UPDATE wallet SET blocked = blocked + x WHERE available >= x   (0 row = reject)
+          DB me: UPDATE wallet SET blocked = blocked + x WHERE total - blocked >= x   (0 row = reject)
+              (available = total - blocked, alag column nahi; alag column ho to SET available = available - x bhi)
 
 NAYA:     Wallet (user ka paisa: total / blocked / available)
 ```

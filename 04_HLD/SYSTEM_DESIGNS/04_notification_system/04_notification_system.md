@@ -36,7 +36,7 @@ NFR (core 6): FANOUT (1 event -> kai user + channel) · ASYNC (producer ruke na)
 
 NUMBERS: 100M user x 5 / din = 500M / din = ~5,800 / sec avg · SALE PEAK 10x = ~58,000 / sec
          fanout se aur: 58K x 3 channel = ~1.75 lakh / sec Kafka me -> partition + worker PEAK pe, avg pe nahi
-         1 worker ~1000 / sec -> ~60-100 worker
+         1 worker ~1000 / sec -> peak pe ~175 worker (channel-wise bata)
          tracking ~90 TB / saal (Cassandra) · Kafka 7 din retention ~3 TB
          spiky -> QUEUE (Kafka) · write-heavy tracking -> NoSQL
 ```
@@ -266,7 +266,7 @@ AGLA SAWAAL (tere jawab se):
   "Redis hi gir gaya, idempotency kaise?"
    -> DB me UNIQUE(eventId, channel) wali table, Redis sirf tez raasta
   "24 ghante ke baad wahi event aaya?"
-   -> key expire ho chuki -> dobara bhejega. Kafka retention / retry window 24h se chhoti rakho
+   -> key expire ho chuki -> dobara bhejega. Kafka retention 7 din (replay ke liye) rehne do; pakka dedup = DB UNIQUE(eventId, channel), Redis key sirf tez raasta
 ```
 
 ---
@@ -283,6 +283,8 @@ SOLUTION: A) fail pe key HATAO (DEL) -> retry dobara bhejega
              pehle:      SET abc-123 "sending" NX EX 60     (chhoti expiry)
              success pe: SET abc-123 "sent" EX 86400        (lamba)
              worker beech me mara -> 60 sec me "sending" khud mita -> retry chal gaya
+             send FAIL hua (worker zinda) -> key turant DEL (A + B saath), warna 60 sec ke andar retry ko nil = SKIP = message gaya
+             retry pe value "sending" mili -> SKIP nahi, thoda ruk ke dobara (requeue). SKIP sirf "sent" pe
 
 NAYA:     koi dabba nahi
 ```
@@ -290,14 +292,14 @@ NAYA:     koi dabba nahi
 POOCHEGA: "You set the idempotency key, but then the send failed. Now what?"
 DHYAAN:   payment me bhi yahi: key lagi, PSP fail -> IN_PROGRESS -> DONE
 BOL:      "I don't want the key to block the retry. I set it as 'sending' with a short TTL, and mark it
-           'sent' only after the provider accepts. If the send fails or the worker dies, the key expires
-           and the retry goes through."
+           'sent' only after the provider accepts. If the send fails I delete the key; if the worker dies, the
+           short TTL expires it — either way the retry goes through. I only skip when the key says 'sent'."
 
 AGLA SAWAAL (tere jawab se):
   "60 sec ki 'sending' chhoti ho gayi (provider 70 sec me jawab de)?"
    -> TTL provider timeout se lambi rakho (timeout 10 sec -> TTL 60)
   "Provider ne bheja par humein jawab nahi aaya?"
-   -> phir bhi do email ho sakte. Provider ko apna idempotency key bhejo (SES / Twilio leti hain) -> wo bhi dedup kare
+   -> phir bhi do email ho sakte. jo provider idempotency key leta ho wahan bhejo; SES / Twilio pe ye nahi -> duplicate ka chhota risk maana hua
 ```
 
 ---
@@ -382,7 +384,7 @@ SOLUTION: CHHOTA timeout har provider call pe
                            theek -> CLOSED · fail -> wapas OPEN
           circuit khula -> worker us provider ko call hi nahi karta -> phasta nahi
 
-BADLA:    har channel ka ek provider -> do (FCM / APNs · SES + SendGrid · Twilio + SNS)
+BADLA:    email + SMS ka ek provider -> do (SES + SendGrid · Twilio + SNS); push ka backup nahi (FCM = Android, APNs = iOS, alag platform)
 ```
 ```mermaid
 flowchart TD
@@ -446,6 +448,7 @@ SOLUTION: PRIORITY LANES — har lane ka ALAG Kafka topic + apna worker pool
           MEDIUM order update    -> kuch second  · notif-medium
           LOW    marketing       -> minute-ghanta · notif-low
           Kafka me priority hoti hi nahi, isliye alag topic
+          ★ aage channel queue bhi priority-wise (sms-high / sms-low, alag workers) -> warna OTP SMS phir marketing SMS ke peeche
           (PriorityBlockingQueue sirf EK process ke andar, distributed me nahi)
 
 BADLA:    Kafka -> 3 topic (high / medium / low)
@@ -543,6 +546,8 @@ DIKKAT:   worker ne bheja = ACCEPTED, user tak pahuncha? pata nahi
 SOLUTION: provider ka WEBHOOK -> "delivered" / "failed" / "bounced" -> TRACKING DB
           Tracking (Cassandra): sent · delivered · opened · clicked · failed
           failed (galat number / bounce) -> retry · doosra channel · ya mark failed
+          PUSH me aisa webhook nahi (APNs per-message receipt nahi deta, FCM sirf jodi hui report)
+          -> push ka "delivered" = app khulne pe app khud ack event bheje -> Tracking DB
 
 NAYA:     Tracking DB (har message ka haal: sent / delivered / failed)
 
@@ -590,7 +595,6 @@ flowchart TD
     n_Email_worker --> n_Redis
     n_Push_worker --> n_DLQ
     n_Email_worker --> n_DLQ
-    n_FCM_APNs --> n_Tracking_DB
     n_SES_SendGrid --> n_Tracking_DB
 ```
 ```
@@ -695,7 +699,6 @@ flowchart TD
     n_Email_worker --> n_Redis
     n_Push_worker --> n_DLQ
     n_Email_worker --> n_DLQ
-    n_FCM_APNs --> n_Tracking_DB
     n_SES_SendGrid --> n_Tracking_DB
 ```
 ```

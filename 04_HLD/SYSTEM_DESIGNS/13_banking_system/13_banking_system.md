@@ -208,7 +208,7 @@ BOL:      "Ledger is the source of truth and balance is its derived cache; I wri
 AGLA SAWAAL (tere jawab se):
   "Reconciliation me farak mila, kya karoge?"
    -> alert + us account ko ruk ke dekho (freeze?), KYUN farak (bug) dhoondho, phir ledger se balance theek
-  "11 arab row pe raat ka SUM har account ka?"
+  "~22 arab row (11 arab txn) pe raat ka SUM har account ka?"
    -> snapshot + sirf aaj ki entries jodo (DIKKAT 9 wala snapshot), poora nahi
 ```
 
@@ -386,7 +386,7 @@ AGLA SAWAAL (tere jawab se):
 
 ---
 
-## DIKKAT 8 — 11 arab row pe history ka page
+## DIKKAT 8 — ~22 arab row (11 arab txn) pe history ka page
 
 ```
 DIKKAT:   SELECT * FROM ledger_entries WHERE account_id = ? ORDER BY ts DESC LIMIT 20 OFFSET 100000;
@@ -397,12 +397,12 @@ DIKKAT:   SELECT * FROM ledger_entries WHERE account_id = ? ORDER BY ts DESC LIM
 SOLUTION: CURSOR / KEYSET — "kahan chhoda" yaad rakho:
             page 1: ... ORDER BY ts DESC, id DESC LIMIT 20;   aakhri (ts, id) = cursor client ko
             page 2: ... AND (ts, id) < (:last_ts, :last_id) ORDER BY ts DESC, id DESC LIMIT 20;
-          index (account_id, ts DESC, id) pe SEEDHA koodta · page 1 ho ya 5000, kharcha wahi · kuch khiskta nahi
+          index (account_id, ts DESC, id DESC) pe SEEDHA koodta (ORDER BY ts DESC, id DESC se direction mile, warna DB ko extra sort) · page 1 ho ya 5000, kharcha wahi · kuch khiskta nahi
           ★ Arpan ka anchor: "cursor based, jaise YouTube" — page number nahi, sirf SCROLL = cursor
              (YouTube / Instagram / Twitter) · wo missing feature nahi, FAISLA (har page ek jaisa tez)
              ULTA: Google me page number kyunki top ~1000 se aage jaane nahi dete (hadd = offset chalta)
           KEEMAT: "page 500 pe jao" nahi, sirf agla / pichhla (statement me theek; admin panel me offset chalega)
-          index (account_id, ts DESC, id) ke bina dono nahi chalenge — 11 arab scan
+          index (account_id, ts DESC, id DESC) ke bina dono nahi chalenge — 11 arab scan
 
 NAYA:     koi dabba nahi — query + index
 ```
@@ -569,7 +569,7 @@ balance tez           -> balance = derived CACHE, ledger ke SAATH usi txn
 cache vs sach         -> raat ka RECONCILIATION, ledger jeetega
 -ve balance           -> check DB me (WHERE balance >= x / CHECK)
 ulte kram ke transfer -> lock TAY KRAM (id sort) -> deadlock nahi
-11 arab history       -> CURSOR + index (account_id, ts DESC, id)
+11 arab history       -> CURSOR + index (account_id, ts DESC, id DESC)
 purana data           -> month PARTITION -> DETACH -> cold storage, DELETE kabhi nahi
 archive ke baad       -> OPENING BALANCE snapshot
 load badha            -> replica -> partition -> (aakhir) shard

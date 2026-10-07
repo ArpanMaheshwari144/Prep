@@ -224,9 +224,9 @@ flowchart TD
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
-    n_Kafka --> n_DLQ
     n_Analytics_svc --> n_Analytics_DB
     n_Redis --> n_DB
+    n_Analytics_svc --> n_DLQ
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -279,9 +279,9 @@ flowchart TD
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
-    n_Kafka --> n_DLQ
     n_Analytics_svc --> n_Analytics_DB
     n_Redis --> n_Cassandra
+    n_Analytics_svc --> n_DLQ
 ```
 ```
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
@@ -298,7 +298,7 @@ AGLA SAWAAL (tere jawab se):
 
 ---
 
-## DIKKAT 6 — replica update ho rahi thi, beech me primary gira — data gaya?
+## DIKKAT 6 — write ho rahi thi, beech me ek replica node gira — data gaya?
 
 ```
 DIKKAT:   likha hua data khona nahi chahiye
@@ -332,9 +332,9 @@ flowchart TD
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
-    n_Kafka --> n_DLQ
     n_Analytics_svc --> n_Analytics_DB
     n_Redis --> n_Cassandra
+    n_Analytics_svc --> n_DLQ
 ```
 ```
 POOCHEGA: "What happens if a DB node goes down mid-write?"
@@ -357,7 +357,7 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   replica tak abhi pahuncha nahi -> purana / khaali dikha
 
 SOLUTION: write ke saath link Redis me bhi daalo (click Redis se hi mil jaata)
-          naye link ka read primary se (read-your-own-writes)
+          (Cassandra me "primary" nahi hota — leaderless; read-your-own-writes = QUORUM write + QUORUM read)
           ya QUORUM write + QUORUM read = taaza value
 
 NAYA:     koi dabba nahi
@@ -424,9 +424,9 @@ flowchart TD
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
-    n_Kafka --> n_DLQ
     n_Analytics_svc --> n_Analytics_DB
     n_Redis --> n_Cassandra
+    n_Analytics_svc --> n_DLQ
 ```
 ```
 POOCHEGA: "What if a whole region goes down?"
@@ -485,9 +485,9 @@ flowchart TD
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
-    n_Kafka --> n_DLQ
     n_Analytics_svc --> n_Analytics_DB
     n_Redis --> n_Cassandra
+    n_Analytics_svc --> n_DLQ
 ```
 ```
 POOCHEGA: "How do you stop abuse?"
@@ -613,9 +613,9 @@ flowchart TD
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
-    n_Kafka --> n_DLQ
     n_Analytics_svc --> n_Analytics_DB
     n_Redis --> n_Cassandra
+    n_Analytics_svc --> n_DLQ
 ```
 ```
 READ (click):  LB -> App -> Redis hit? -> 302 · miss -> Cassandra -> Redis me daalo -> 302 · async -> Kafka

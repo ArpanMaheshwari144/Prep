@@ -87,6 +87,7 @@ flowchart TD
     n_App --> n_Fanout
     n_App --> n_DB
     n_Fanout --> n_Redis_inbox
+    n_App --> n_Redis_inbox
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -125,6 +126,7 @@ flowchart TD
     n_App --> n_DB
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
 ```
 ```
 POOCHEGA: "I just tweeted but don't see it in my own feed. Why?"
@@ -135,7 +137,8 @@ BOL:      "Read-your-own-writes: the author's new tweet is added to their own fe
 AGLA SAWAAL (tere jawab se):
   "Fanout worker beech me gira (100 me se 60 inbox likhe)?"
    -> Kafka offset commit nahi hua -> event dobara aata, worker phir se likhta. Inbox me id dobara na aaye
-      -> inbox me daalne se pehle check / ya set jaisa (ZADD same id = ek hi)
+      -> inbox Redis LIST hai (LPUSH dobara = id do baar) -> LPUSH se pehle idempotency check (SET eventId NX)
+      ya inbox ko sorted set banao (ZADD same id = ek hi, score = time)
   "Kafka me partition kaise baante?"
    -> key = author_id -> ek author ke tweet ek partition, kram me; workers partitions baant lete
 ```
@@ -170,6 +173,7 @@ flowchart TD
     n_App --> n_DB
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
 ```
 ```
 POOCHEGA: "What about a celebrity / hot key / hot partition?"
@@ -186,7 +190,7 @@ AGLA SAWAAL (tere jawab se):
    -> Timeline svc me: inbox (50 id) + celeb list (aksar 10-20 celeb, har ek ke latest kuch) -> time se sort
       -> chhota kaam, celeb ke tweet hot cache se
   "Koi 9,999 se 10,001 follower pe aaya-gaya baar-baar?"
-   -> beech me gap rakho (8K pe push band, 12K pe pull) taaki baar-baar palti na ho
+   -> beech me gap rakho (12K se upar gaya to pull · 8K se neeche aaya tabhi wapas push) taaki baar-baar palti na ho
 ```
 
 ---
@@ -220,6 +224,7 @@ flowchart TD
     n_App --> n_DB
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
 ```
 ```
 POOCHEGA: "What if traffic suddenly spikes 10x?"
@@ -300,6 +305,7 @@ flowchart TD
     n_App --> n_Cassandra
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
 ```
 ```
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
@@ -384,6 +390,8 @@ flowchart TD
     n_App_x_N_2 --> n_Cassandra
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
+    n_App_x_N_1 --> n_Redis_inbox
+    n_App_x_N_2 --> n_Redis_inbox
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -435,6 +443,7 @@ flowchart TD
     n_Timeline_Svc --> n_Hot_tweet_cache
     n_Timeline_Svc --> n_Cassandra
     n_User_Svc --> n_Graph_DB
+    n_Fanout_workers --> n_Graph_DB
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -476,9 +485,8 @@ flowchart TD
     n_Hot_tweet_cache["Hot-tweet cache"]
     n_User_Svc["User Svc"]
     n_Graph_DB["Graph DB"]
+    n_S3["S3 media"]
     n_USER --> n_Route_53
-    n_Route_53 --> n_CDN
-    n_CDN --> n_ALB
     n_ALB --> n_Tweet_Svc
     n_ALB --> n_Timeline_Svc
     n_ALB --> n_User_Svc
@@ -490,6 +498,10 @@ flowchart TD
     n_Timeline_Svc --> n_Hot_tweet_cache
     n_Timeline_Svc --> n_Cassandra
     n_User_Svc --> n_Graph_DB
+    n_Fanout_workers --> n_Graph_DB
+    n_Route_53 --> n_ALB
+    n_USER --> n_CDN
+    n_CDN --> n_S3
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -565,9 +577,8 @@ flowchart TD
     n_Hot_tweet_cache["Hot-tweet cache"]
     n_User_Svc["User Svc"]
     n_Graph_DB["Graph DB"]
+    n_S3["S3 media"]
     n_USER --> n_Route_53
-    n_Route_53 --> n_CDN
-    n_CDN --> n_ALB
     n_ALB --> n_Tweet_Svc
     n_ALB --> n_Timeline_Svc
     n_ALB --> n_User_Svc
@@ -579,6 +590,10 @@ flowchart TD
     n_Timeline_Svc --> n_Hot_tweet_cache
     n_Timeline_Svc --> n_Cassandra
     n_User_Svc --> n_Graph_DB
+    n_Fanout_workers --> n_Graph_DB
+    n_Route_53 --> n_ALB
+    n_USER --> n_CDN
+    n_CDN --> n_S3
 ```
 ```
 BOL: "On write, the Tweet service saves to Cassandra and puts an event on Kafka; fan-out workers push the

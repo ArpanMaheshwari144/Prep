@@ -184,10 +184,10 @@ DIKKAT:   har request ka faisla Redis pe tha
 
 SOLUTION: (1) REPLICA + auto failover (Sentinel / cluster) -> replica ALAG AZ me
           (2) poori Redis layer gayi -> FAIL-OPEN (sab allow) · payment / auth / OTP -> FAIL-CLOSED
-          (3) Redis pe bojh -> SHARD (user_id / region: A-M -> R1, N-Z -> R2)
+          (3) Redis pe bojh -> SHARD (Redis Cluster key ko CRC16(key) se 16384 slot me baantta, slot -> node)
               shard = scale + alag-alag · replica = bachav
           SPOF chain: har layer >= 2 + AUTO failover. sirf copy rakhna kaafi nahi — koi DEKHE aur MODE
-              Redis = Sentinel · LB = Route 53 / VIP · cloud ALB khud multi-AZ · Route 53 khud global
+              Redis = Sentinel (bina cluster) / Redis Cluster me masters khud vote se replica promote · LB = Route 53 / VIP · cloud ALB khud multi-AZ · Route 53 khud global
 
 NAYA:     Route 53
 BADLA:    Redis -> Redis Cluster (replica + shard) · LB -> ALB (multi-AZ)
@@ -215,9 +215,9 @@ BOL:      "Redis has a replica with automatic failover in another zone. If the w
            fail open for normal APIs so the site stays up, and fail closed for login and OTP."
 
 AGLA SAWAAL (tere jawab se):
-  "Sentinel ko kaise pata primary mara, aur kaun promote karta?"
-   -> 3 Sentinel primary ko ping karte. Zyada (2 of 3) bolein "mara" -> vote se ek replica ko primary banate
-      aur clients ko naya pata dete
+  "Kaise pata primary mara, aur kaun promote karta?"
+   -> Redis Cluster: baaki masters gossip se dekhte, majority bole "mara" -> vote se uska replica promote
+      (bina cluster wale setup me yahi kaam 3 Sentinel karte: 2 of 3 bolein "mara" -> promote + clients ko naya pata)
   "Failover me aakhri kuch counts gaye?"
    -> haan, replica async thi -> kuch request ki ginti kho sakti. Rate limit ke liye chalta (paisa nahi)
 ```
@@ -290,15 +290,16 @@ flowchart TD
     n_WAF["WAF"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_USER --> n_Route_53
     n_Route_53 --> n_ALB
     n_ALB --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
-    n_Redis_Cluster --> n_Kafka
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
+    n_API_Gateway --> n_Kafka
+    n_USER --> n_WAF
+    n_WAF --> n_Route_53
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -338,15 +339,16 @@ flowchart TD
     n_WAF["WAF"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_USER --> n_Route_53
     n_Route_53 --> n_ALB
     n_ALB --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
-    n_Redis_Cluster --> n_Kafka
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
+    n_API_Gateway --> n_Kafka
+    n_USER --> n_WAF
+    n_WAF --> n_Route_53
 ```
 ```
 POOCHEGA: "What if traffic suddenly spikes 10x?"
@@ -391,15 +393,16 @@ flowchart TD
     n_WAF["WAF"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_USER --> n_Route_53
     n_Route_53 --> n_ALB
     n_ALB --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
-    n_Redis_Cluster --> n_Kafka
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
+    n_API_Gateway --> n_Kafka
+    n_USER --> n_WAF
+    n_WAF --> n_Route_53
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -471,7 +474,8 @@ ALGORITHM:
                                 asli traffic SPIKY -> jama token se burst nikal jaata  <- YAHI LUNGA
   LEAKY BUCKET                  andar girti, neeche se FIXED rate · bhara -> reject · smooth par burst BLOCK
   FIXED WINDOW  (GitHub)        per-minute counter · EDGE BUG: 10:00:59 pe 5 + 10:01:00 pe 5 = 2 sec me 10
-  SLIDING WINDOW (Cloudflare)   "last 60 sec" ke timestamp · sahi + smooth, par memory bhaari
+  SLIDING LOG               "last 60 sec" ke timestamp · sahi + smooth, par memory bhaari
+  SLIDING WINDOW COUNTER (Cloudflare) 2 counter (is minute + pichhla) weighted jod · memory kam, lagbhag sahi
      BUS-STAND: register "last 1 ghanta me 5 max" · 11:00 -> 10:00 ke baad 5 -> REJECT
                 11:10 -> 10:10 ke baad gino, Ramesh (10:05) bahar -> 4 -> ALLOW
                 window SHIFT request aane pe hoti, koi timer / job nahi
@@ -513,15 +517,16 @@ flowchart TD
     n_WAF["WAF"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_USER --> n_Route_53
     n_Route_53 --> n_ALB
     n_ALB --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
-    n_Redis_Cluster --> n_Kafka
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
+    n_API_Gateway --> n_Kafka
+    n_USER --> n_WAF
+    n_WAF --> n_Route_53
 ```
 ```
 BOL: "The limiter sits in the API gateway, in front of everything, so rejected requests never reach the

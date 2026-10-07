@@ -90,6 +90,7 @@ flowchart TD
     n_Upload_Svc --> n_Kafka
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
+    n_Worker --> n_DB
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -137,6 +138,7 @@ flowchart TD
     n_Upload_Svc --> n_Kafka
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
+    n_Worker --> n_DB
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -208,6 +210,8 @@ flowchart TD
     n_Sweeper_job --> n_DB
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Sweeper_job --> n_Kafka
 ```
 ```
 POOCHEGA: "What if the server crashes in the middle?"
@@ -265,6 +269,10 @@ flowchart TD
     n_Sweeper_job --> n_DB
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -333,6 +341,10 @@ flowchart TD
     n_Sweeper_job --> n_DB
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
 ```
 ```
 AGLA SAWAAL (tere jawab se):
@@ -361,7 +373,7 @@ AGLA SAWAAL (tere jawab se):
   "5 min me download poora nahi hua (badi file)?"
    -> expiry sirf SHURU karne ki hai; chalu download beech me nahi kat-ta
   "URL kisi ne 5 min ke andar aage bheja?"
-   -> 5 min ka risk maana; zyada sensitive -> CloudFront signed URL + IP / ek baar use
+   -> 5 min ka risk maana; zyada sensitive -> CloudFront signed URL + IP restriction; ek-baar-use chahiye to apna token check (built-in nahi)
 ```
 
 ---
@@ -401,6 +413,11 @@ flowchart TD
     n_Sweeper_job --> n_DB
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
+    n_Worker --> n_S3
 ```
 ```
 POOCHEGA: "How do you secure it / stop abuse?"
@@ -491,6 +508,11 @@ flowchart TD
     n_Sweeper_job --> n_DB
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
+    n_Worker --> n_S3
 ```
 ```
 BOL: "The client asks the upload service for a presigned URL and sends the bytes straight to S3 — multipart
