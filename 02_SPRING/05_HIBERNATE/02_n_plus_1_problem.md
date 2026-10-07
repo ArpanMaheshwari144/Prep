@@ -374,6 +374,12 @@ Bulk JPQL/native UPDATE 1st-level cache ko BYPASS karta -> Hibernate ko pata nah
  -> SAME session me us entity ko read + bulk-update MAT karo (stale cache milega).
  -> zaroorat ho to entity DETACH kar / session clear kar.
  -> Spring Data me: @Modifying(clearAutomatically = true) -> query ke baad context khud clear.
+
+ ★ HLD CONNECT = wahi CACHE INVALIDATION (04_HLD/FOUNDATIONS/04_caching.md: STALE DATA + Cache Invalidation)
+    Hibernate almaari (1st-level cache) <-> Redis cache:  DB badla, cache ko pata nahi -> purana data
+    HLD ilaaj:  write pe Redis key DELETE (invalidate) + TTL
+    yahan:      bulk UPDATE ke baad context CLEAR (clearAutomatically = true)
+    = ek hi dikkat, do level: app ke andar ka cache vs bahar ka cache.
 ```
 
 ### Detection (same as N+1)
