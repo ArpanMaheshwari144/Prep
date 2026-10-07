@@ -69,6 +69,9 @@ SOLUTION: CACHE (Redis) — cache-aside: pehle Redis, miss -> DB -> Redis me daa
           DB me short_code PRIMARY KEY -> miss pe bhi tez lookup
 
 NAYA:     Redis
+
+KYUN YE:  read replica kyun nahi -> replica bhi DB hai, disk se padhta (ms), Redis RAM se (<1ms)
+          har App me apna local cache kyun nahi -> har box ki alag copy, link badla/expire hua to kahin purana
 ```
 ```mermaid
 flowchart TD
@@ -85,6 +88,12 @@ POOCHEGA: "What if the cache goes down?"
 DHYAAN:   95% read seedha DB pe -> DB bhi gir sakta. "kuch nahi hoga" mat bolna
 BOL:      "Redis runs as a replicated cluster. If it still goes down, the DB takes the load, so I shed load
            and let only one request rebuild a hot key, not a thousand at once."
+
+AGLA SAWAAL (tere jawab se):
+  "Cache me kya rakhoge, sab 180 billion link?"
+   -> nahi, sirf HOT link. LRU: jagah bhari to sabse kam-chhua link nikalo. Miss pe DB se, phir cache me
+  "Link delete / expire ho gaya par cache me pada hai?"
+   -> TTL = expiry, apne aap gayab. Delete pe cache key bhi DEL (pehle DB, phir cache)
 ```
 
 ---
@@ -99,6 +108,10 @@ SOLUTION: App ke kai box, aage LOAD BALANCER
 
 NAYA:     LB
 BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
+
+KAISE:    LB har request ko baari-baari (round-robin) ya jiske paas kam connection (least-conn) bhejta
+          har ~5 sec health check (GET /health) -> jawab nahi = us box ko list se bahar, theek hua to wapas
+KYUN YE:  ek bada server (vertical) kyun nahi -> had hai + wahi ek SPOF; chhote kai box = bojh bhi bata, ek gire chalta
 ```
 ```mermaid
 flowchart TD
@@ -114,6 +127,14 @@ flowchart TD
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
     n_Redis --> n_DB
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Stateless kyun zaroori?"
+   -> agar session App ki RAM me ho to agli request doosre box pe gayi = user ka data gayab
+      sab Redis / DB me -> koi bhi box koi bhi request le sake
+  "Ek box dheema hai (mara nahi), LB ko kaise pata?"
+   -> health check + response time / error rate dekh ke; least-conn khud kam bhejta
 ```
 
 ---
@@ -154,6 +175,12 @@ DHYAAN:   pehle dohra lo KIS box ka crash: "app server jiske paas 1-1000 thi, sa
 BOL:      "The restarted server asks for a new range, so 401 to 1000 are wasted. I accept that on purpose —
            3.5 trillion codes, a few thousand lost is nothing. Making every number crash-proof would need
            coordination on every request and kill the benefit of ranges."
+
+AGLA SAWAAL (tere jawab se):
+  "Counter service khud gir gaya?"
+   -> Apps ke paas abhi ki range bachi hai (1000 number), kaam chalta rehta; tab tak counter ka backup (2 node) uth jaata
+  "Code se pata chal jaayega kitne link bane (sequential)?"
+   -> haan, ye keemat hai. Chahiye to number ko shuffle / XOR karke base62 karo, phir bhi unique
 ```
 
 ---
@@ -167,6 +194,12 @@ SOLUTION: event KAFKA me daalo, turant 302 do · Analytics service peeche se pad
           baar-baar fail event -> DLQ
 
 NAYA:     Kafka · Analytics svc · Analytics DB · DLQ
+
+KAISE:    Kafka = disk pe append-only log. App event ko topic ke end me likh deta (tez, wait nahi)
+          Analytics svc apni jagah (offset) yaad rakhta, wahan se padhta; crash hua to wahin se dobara
+          kai baar fail -> event DLQ topic me daalo, aage badho (ek kharab event poori line na roke)
+KYUN YE:  App ke andar async thread -> App crash = memory ke event gaye
+          SQS bhi chalta; Kafka isliye ki click bahut zyada + replay chahiye (naya report purane clicks pe)
 ```
 ```mermaid
 flowchart TD
@@ -195,6 +228,13 @@ flowchart TD
     n_Analytics_svc --> n_Analytics_DB
     n_Redis --> n_DB
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Kafka hi down hai to redirect rukega?"
+   -> nahi, redirect pehle. Event bhejna fail -> chhota local buffer / chhod do (analytics thoda kam, redirect nahi rukta)
+  "Ek click do baar gina gaya?"
+   -> Kafka at-least-once -> event pe clickId, Analytics svc duplicate skip kare
+```
 
 ---
 
@@ -210,6 +250,11 @@ SOLUTION: SHARD by shortCode (data ke TUKDE) + har tukde ki 3 REPLICA (copy)
           teeno copy ALAG AZ me
 
 BADLA:    DB -> Cassandra (shard by shortCode + 3 replica)
+
+KAISE:    consistent hashing = ek gol RING. Har node ring pe kisi jagah, har shortCode ka hash bhi ring pe
+          key clockwise chal ke jo pehla node mile, uska. Naya node juda -> sirf uske aur pichle node ke
+          beech wali keys khiski
+KYUN YE:  hash % N -> N=3 se 4 kiya to lagbhag har key ka node badla = poora data shift
 ```
 ```mermaid
 flowchart TD
@@ -243,6 +288,12 @@ POOCHEGA: "The database is too big / takes too many writes. What do you do?"
 DHYAAN:   "write replica" NAHI — write scale = SHARDING. key = shortCode (country / date = skew)
 BOL:      "I shard by short code, so every redirect goes to exactly one shard, and keep three replicas
            of each shard in different zones."
+
+AGLA SAWAAL (tere jawab se):
+  "Ek node pe zyada keys aa gayi (ring pe bura bata)?"
+   -> virtual nodes: har machine ring pe 100-200 jagah baithti -> load barabar
+  "Ek link viral (hot key) -> ek shard garam?"
+   -> wo Redis se hi serve hota (cache), shard tak kam aata
 ```
 
 ---
@@ -290,6 +341,12 @@ POOCHEGA: "What happens if a DB node goes down mid-write?"
 DHYAAN:   KAFKA nahi (1-Oct mock me bola tha) — Kafka extra dabba hai, DB ka kaam DB ka log karta
 BOL:      "The DB writes to its commit log before applying, and I ack writes on quorum, so losing one
            node doesn't lose committed data. Redirects keep working from Redis meanwhile."
+
+AGLA SAWAAL (tere jawab se):
+  "Quorum me 3 me se 2 kyun, sab 3 kyun nahi?"
+   -> 3 ka intezaar = ek dheema node sabko dheema kare; 2 = 1 gire tab bhi likh sakte
+  "2 node gir gaye to?"
+   -> quorum nahi bana -> write fail (ya ONE level pe likho, risk ke saath). Tab tak read Redis se
 ```
 
 ---
@@ -304,11 +361,21 @@ SOLUTION: write ke saath link Redis me bhi daalo (click Redis se hi mil jaata)
           ya QUORUM write + QUORUM read = taaza value
 
 NAYA:     koi dabba nahi
+
+KAISE (quorum kyun taaza deta):
+          N=3 copy · write W=2 pe done · read R=2 se padho -> W + R = 4 > 3
+          matlab read wale 2 node me kam se kam 1 wahi hai jisme naya write hai -> wahi latest value
 ```
 ```
 POOCHEGA: "The user created a link but gets 404 / old value. Why?"
 BOL:      "Replication lag. The write path also puts the link in Redis, and with quorum reads and
            writes the read always sees the latest write."
+
+AGLA SAWAAL (tere jawab se):
+  "Quorum read dheema to nahi?"
+   -> haan, 2 node se jawab. Isliye pehle Redis: naya link write pe hi cache me, read wahin se
+  "R=1 rakh do (tez), phir?"
+   -> W=2 + R=1 = 3, overlap pakka nahi -> purana dikh sakta (yahi 404 wali dikkat)
 ```
 
 ---
@@ -324,6 +391,9 @@ SOLUTION: LB do · ROUTE 53 (DNS) + health-check -> mara hua LB hata ke doosre p
 
 NAYA:     Route 53
 BADLA:    LB ek se DO — ek mare to Route 53 doosre pe bheje (diagram me 2)
+
+KYUN YE:  DNS TTL ki wajah se failover turant nahi (TTL 60 sec -> user kuch der purane LB pe)
+          isliye cloud me LB khud multi-AZ managed (AWS ALB) hota; floating IP (keepalived) = data center me
 ```
 ```mermaid
 flowchart TD
@@ -362,6 +432,12 @@ flowchart TD
 POOCHEGA: "What if a whole region goes down?"
 BOL:      "Inside a region I'm multi-AZ. If the region dies, Route 53 health checks send users to another
            region; data is copied there asynchronously, so a few of the newest links may be lost."
+
+AGLA SAWAAL (tere jawab se):
+  "Route 53 ko kaise pata LB mara?"
+   -> har ~30 sec health check, 3 baar fail = unhealthy -> DNS jawab me us LB ka IP hata deta
+  "Region switch me data?"
+   -> doosre region me async copy -> aakhri kuch second ke naye link gaye (maana hua)
 ```
 
 ---
@@ -417,6 +493,12 @@ flowchart TD
 POOCHEGA: "How do you stop abuse?"
 BOL:      "Rate limiting per user and IP at the API gateway, auth there too, a WAF at the edge, and I
            check long URLs against a malware / phishing list before shortening."
+
+AGLA SAWAAL (tere jawab se):
+  "Gateway me limit ginti kahan rakhoge (kai gateway box)?"
+   -> shared Redis counter (INCR + TTL) -> sab box ek hi ginti dekhein (poora 02_rate_limiter)
+  "Bot alag IP se aa raha?"
+   -> IP pe nahi, API key / user_id pe limit + WAF bot rules
 ```
 
 ---
