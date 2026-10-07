@@ -81,6 +81,12 @@ POOCHEGA: "Two users order the same stock at the same time — what happens?"
 DHYAAN:   "DB ACID rok dega" NAHI — matching DB me hai hi nahi, aur ACID akela check-phir-write race nahi rokta
 BOL:      "Orders for one symbol go into one queue handled by one thread, so they're matched one after
            the other, never in parallel — no lock needed."
+
+AGLA SAWAAL (tere jawab se):
+  "Hazaar symbol = hazaar thread?"
+   -> nahi, thode thread, har thread kai symbol (hash(symbol) % threads). Ek symbol hamesha ek hi thread pe
+  "Woh thread hi atak gaya (GC pause)?"
+   -> us symbol ke order line me rukenge; isliye Java me chhoti memory / low-GC, aur ek standby jo log se uth sake
 ```
 
 ---
@@ -110,6 +116,13 @@ flowchart TD
     n_Wallet --> n_Queue_per_symbol
     n_Queue_per_symbol --> n_Matching_Engine
     n_Matching_Engine --> n_DB
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Block kiya, order 3 din pending pada raha?"
+   -> order ki expiry (day order shaam ko khatam) -> unblock
+  "Partial match (10 me se 6 bike)?"
+   -> 6 ka paisa kato, baaki 4 ka blocked wahi rahe
 ```
 
 ---
@@ -144,6 +157,13 @@ flowchart TD
     n_Matching_Engine --> n_Settlement
     n_Settlement --> n_DB
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Double-entry ledger kaise dikhta?"
+   -> har settlement ki do row: buyer DEBIT 30k, seller CREDIT 30k. Sab rows ka jod hamesha 0 -> galti turant dikhe
+  "Balance ledger se har baar jodoge?"
+   -> nahi, balance alag column jo ussi transaction me badalta; ledger = sach ka record / audit
+```
 
 ---
 
@@ -159,6 +179,15 @@ SOLUTION: SAGA — bade kaam ko chhote LOCAL step me todo; koi step fail -> pich
           ACID = ek DB, turant · SAGA = kai service, code se undo
 
 BADLA:    ek [ DB ] -> do me bata: Wallet DB + Portfolio DB · Settlement ab SAGA chalata
+
+KYUN SAGA (2PC nahi):
+          2PC: coordinator dono DB se "ready?" poochta, dono lock pakad ke rukte, phir "commit"
+          -> coordinator beech me gira to dono DB lock pakde atke · har step pe network intezaar = dheema
+          SAGA: har step apna local commit turant, fail pe ulta step -> koi lamba lock nahi
+          keemat: beech me thodi der galat haalat dikh sakti (paisa kata, share abhi nahi)
+KAISE (state kahan):
+          orchestrator (Settlement) har step ka haal apne DB me likhta: STARTED -> WALLET_DONE -> PORTFOLIO_DONE
+          orchestrator gira -> uthte hi DB dekh ke wahin se aage / ulta
 ```
 ```mermaid
 flowchart TD
@@ -178,6 +207,14 @@ flowchart TD
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Compensation (wallet +30k wapas) bhi fail ho gaya?"
+   -> retry karte raho (idempotent step) + alert; paisa ka ulta step chhodna nahi
+  "Orchestration ya choreography?"
+   -> orchestration (ek Settlement sab chalaye) -> paisa me saaf dikhta kaun-sa step kahan atka
+      choreography = har service event sun ke apna kare, simple flow me theek
+```
 
 ---
 
@@ -191,6 +228,11 @@ SOLUTION: IDEMPOTENCY KEY — har request ke saath ek unique key
           (GPay pe double-click -> ek hi charge · BookMyShow me ek ticket)
 
 NAYA:     koi dabba nahi — Order Service me key check juda
+
+KAISE:    client har order pe ek key banata (UUID), retry pe WAHI key
+          server: INSERT idempotency(key, response) -> key UNIQUE constraint
+          naya = insert ho gaya, order lagao, response save · pehle se = UNIQUE fail -> saved response wapas
+          do request ek saath aayi -> DB unique ek ko hi jeetne deta (atomic check-and-set)
 ```
 ```mermaid
 flowchart TD
@@ -209,6 +251,13 @@ flowchart TD
     n_Matching_Engine --> n_Settlement
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Pehli request abhi chal hi rahi thi aur retry aa gaya?"
+   -> key ka status IN_PROGRESS -> retry ko '409 / thoda ruko' -> DONE hone pe saved result
+  "Key kitne din rakhoge?"
+   -> 24 ghante jaisa (retry window), phir saaf
 ```
 
 ---
@@ -265,6 +314,12 @@ MISAAL:   10:15 pe matching server gira, TCS book me 4,000 pending order
           usi waqt ek settlement aadha (buyer -30k, seller +30k nahi) -> DB rollback -> dono wapas
 BOL:      "If the matching engine dies, I rebuild the book by replaying the event log. If settlement
            dies midway, a single-DB transaction rolls back; across services a saga compensates."
+
+AGLA SAWAAL (tere jawab se):
+  "Replay me 1 crore event, kitna time?"
+   -> roz/har kuch minute book ka SNAPSHOT + uske baad ka log -> replay chhota
+  "Hot standby rakhoge?"
+   -> haan, doosra server log padhta rehta (book RAM me taiyaar), primary gira to seconds me le leta
 ```
 
 ---
@@ -278,6 +333,13 @@ SOLUTION: WEBSOCKET PUSH + PUB/SUB — connection ek baar, price badle tab serve
           price feed = sirf LATEST chahiye (WhatsApp jaisa store nahi; reconnect pe current price)
 
 NAYA:     Pub/Sub (ek price update, sab subscriber tak) · WebSocket (khula connection, server khud price bheje)
+
+KAISE:    har symbol = ek channel (price:TCS)
+          WebSocket server pe jis user ne TCS dekha, wo server price:TCS SUBSCRIBE karta
+          price feed -> price:TCS pe PUBLISH -> Redis sab subscribed servers ko deta -> wo apne users ko push
+          Redis kuch store nahi karta -> reconnect pe user current price alag se le leta
+KYUN YE:  Kafka -> store + replay karta, yahan purana price bekaar, sirf latest chahiye
+          SSE bhi chal jaata (sirf server -> client); WebSocket isliye ki order bhi isi connection pe
 ```
 ```mermaid
 flowchart TD
@@ -302,6 +364,13 @@ flowchart TD
     n_WebSocket --> n_USERS
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Price second me 1000 baar badla, sab bhejoge?"
+   -> nahi, conflate: har ~100ms sirf latest bhejo, beech ke chhodo
+  "Ek WebSocket server pe kitne user?"
+   -> lakh ke aas paas (event loop); zyada user = zyada servers, LB se baant
 ```
 
 ---
@@ -343,6 +412,13 @@ flowchart TD
     n_WebSocket --> n_USERS
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Ek thread kitna jhel leta?"
+   -> RAM me, lock ke bina -> lakhon order / sec (LMAX ka design yahi)
+  "Event log me order kitni der line me rahe to user ko kya?"
+   -> order 'ACCEPTED' turant, 'FILLED' jab match hua -> user ko dono status dikhte
 ```
 
 ---
