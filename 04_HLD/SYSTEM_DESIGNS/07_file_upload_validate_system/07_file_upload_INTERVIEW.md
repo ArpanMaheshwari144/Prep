@@ -67,6 +67,13 @@ SOLUTION: teen option bolo, phir chuno:
 
 NAYA:     Kafka · Worker · DB (status)
 BADLA:    Validator ab Upload Svc nahi, Worker call karta
+
+KAISE (Kafka + worker):
+          Upload svc /complete pe event {trackingId, s3_key} topic me likhta, turant laut-ta
+          workers ek consumer group me -> har partition ek worker. Worker validate kare, DB status update
+          ★ offset commit DB update ke BAAD -> worker beech me mara = event dobara aayega, khoyega nahi
+KYUN YE:  1-2 upload / sec ke liye SQS / RabbitMQ bhi poora kaafi (simple, managed)
+          Kafka tab jab bahut zyada event ya replay chahiye; interview me dono bolo + chuno kyun
 ```
 ```mermaid
 flowchart TD
@@ -83,6 +90,13 @@ flowchart TD
     n_Upload_Svc --> n_Kafka
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Ek hi file do baar validate ho gayi (event dobara aaya)?"
+   -> validation idempotent: status pehle se DONE to skip; dobara chalana nuksaan nahi
+  "Polling har 2 sec bahut zyada?"
+   -> backoff (2s, 4s, 8s) ya baad me webhook / SSE (DIKKAT 5 me cache se sasta)
 ```
 
 ---
@@ -102,6 +116,11 @@ SOLUTION: PRESIGNED URL — client SEEDHA S3 pe
           download bhi: presigned GET URL -> seedha S3 se
 
 BADLA:    S3 ka raasta: Upload Svc -> S3  ->  CLIENT -> S3 (seedha)
+
+KAISE (presigned URL):
+          server apni AWS secret key se ek URL SIGN karta = (method PUT + bucket/key + expiry 10 min) ka hash
+          client us URL pe seedha PUT karta -> S3 khud signature dobara bana ke milata + expiry dekhta
+          match -> upload allow. Client ko AWS ki chaabi kabhi nahi milti, sirf ek file ka 10 min ka paas
 ```
 ```mermaid
 flowchart TD
@@ -119,6 +138,13 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Client ne URL se 50 GB daal di (limit 5 GB)?"
+   -> sign karte waqt content-length range / POST policy me max size; S3 bada reject kare
+  "Client ne /complete bola hi nahi?"
+   -> S3 event notification (object created) se bhi trigger kar sakte, ya sweeper (DIKKAT 4)
+```
 
 ---
 
@@ -132,6 +158,19 @@ SOLUTION: MULTIPART / RESUMABLE — chunks (5 MB) · chunk 3 fail -> sirf wahi r
           multipart CLIENT aur S3 ke beech · server sirf har tukde ka presigned URL deta
 
 NAYA:     koi dabba nahi
+
+KAISE (multipart):
+          1. initiate -> S3 ek uploadId deta
+          2. har tukda (partNumber 1..N) apne presigned URL pe -> S3 har part ka ETag lautata
+             tukde PARALLEL bhi ja sakte (tez)
+          3. complete(uploadId, [partNumber + ETag list]) -> S3 usi kram me jod ke ek file
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Client band ho gaya, kal resume?"
+   -> server ke paas uploadId + kaunse part ho chuke (ListParts) -> sirf bache part bhejo
+  "Tukda kitna bada?"
+   -> S3 me kam se kam 5 MB (aakhri chhod ke), max 10,000 part -> badi file = bada tukda
 ```
 
 ---
@@ -176,6 +215,12 @@ DHYAAN:   status likhna kaafi nahi — koi use DHOONDHE bhi
 BOL:      "Every file has a status, UPLOADING to VALIDATING to DONE or FAILED. A sweeper finds files stuck
            too long — VALIDATING for ten minutes when validation takes three seconds — and requeues them
            or marks them failed. S3 lifecycle rules clean up abandoned uploads."
+
+AGLA SAWAAL (tere jawab se):
+  "Sweeper khud do box pe chala, ek file dobara queue me do baar?"
+   -> ek hi sweeper chale (lock / leader) ya requeue idempotent (status check karke)
+  "Quarantine ki file ka kya?"
+   -> alag bucket, koi download nahi, kuch din baad delete / security team dekhe
 ```
 
 ---
@@ -191,6 +236,13 @@ SOLUTION: CACHE (Redis) + READ REPLICA
           normal cache se alag: yahan purana = seedha user ko galat status
 
 NAYA:     Redis · Read replica
+
+KAISE (read ka kram):
+          GET /status -> Redis me hai? -> wahin se · nahi -> replica se padho -> Redis me daalo (TTL chhota)
+          worker DONE likhe -> USI waqt Redis key update / DEL (write-through / invalidate)
+          ★ dusra JAAL: replica bhi peeche (lag) -> miss pe replica ne purana VALIDATING diya, wahi cache me
+            -> status jaisa taaza chahiye wo PRIMARY se, ya worker khud Redis me naya status likhe
+KYUN DONO:  Redis = har 2 sec ke poll ko DB tak jaane se roke · replica = baaki reads (list, history) ka bojh
 ```
 ```mermaid
 flowchart TD
@@ -214,6 +266,13 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Poll ki jagah push?"
+   -> SSE / WebSocket: status badla to server khud bheje -> poll hi khatam
+  "Redis gira to?"
+   -> poll seedha DB (replica) pe -> dheema par chalta; rate limit poll pe
+```
 
 ---
 
@@ -227,6 +286,13 @@ SOLUTION: PARENT trackingId -> har file ka child trackingId (apna /upload/init)
           bahut chhoti files -> client zip kare -> ek upload -> server unzip
 
 NAYA:     koi dabba nahi
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Rollup kab update hoga?"
+   -> har child DONE / FAILED pe parent ka counter badhao (done_count); sab ho gaye to parent final
+  "1000 file ka folder, 1000 /init calls?"
+   -> ek batch init: 1000 presigned URL ek jawab me
 ```
 
 ---
@@ -268,6 +334,13 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "trackingId guess na ho, phir bhi owner check kyun?"
+   -> random id leak ho sakti (log, link share) -> asli rok owner check hai, id ki randomness nahi
+  "Admin ko sab dekhna?"
+   -> role check: owner YA admin role -> warna 403
+```
 
 ---
 
@@ -282,6 +355,13 @@ SOLUTION: PRESIGNED URL chhoti umar (5-15 MINUTE, din nahi)
           DB me URL NAHI (mar jaata) — s3_key rakho, URL har maang pe NAYA
 
 NAYA:     koi dabba nahi
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "5 min me download poora nahi hua (badi file)?"
+   -> expiry sirf SHURU karne ki hai; chalu download beech me nahi kat-ta
+  "URL kisi ne 5 min ke andar aage bheja?"
+   -> 5 min ka risk maana; zyada sensitive -> CloudFront signed URL + IP / ek baar use
 ```
 
 ---
@@ -327,6 +407,12 @@ POOCHEGA: "How do you secure it / stop abuse?"
 BOL:      "JWT at the gateway and an owner check on every status and download. Short-lived presigned URLs.
            The worker checks magic bytes instead of trusting the name or Content-Type. Per-user rate limit
            against upload floods, WAF at the edge, TLS, secrets in a vault."
+
+AGLA SAWAAL (tere jawab se):
+  "Magic bytes PDF jaise, par andar virus / JS?"
+   -> antivirus scan (ClamAV) worker me, ya S3 malware scanning service
+  "5 GB file ke saare byte padhoge?"
+   -> magic bytes ke liye pehle kuch byte kaafi (S3 range GET); virus scan poora
 ```
 
 ---
