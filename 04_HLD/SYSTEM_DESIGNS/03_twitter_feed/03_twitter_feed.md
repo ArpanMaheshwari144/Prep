@@ -88,6 +88,13 @@ flowchart TD
     n_App --> n_DB
     n_Fanout --> n_Redis_inbox
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Inbox me sirf tweet_id, to feed dikhate waqt poora tweet kahan se?"
+   -> inbox se 50 id -> ek saath batch me tweet store / hot cache se laao (MGET), ek-ek nahi
+  "Kisi ko unfollow kiya, uske tweet inbox me pade hain?"
+   -> padhte waqt follow list se filter, ya peeche se saaf. Turant poora inbox nahi badalte
+```
 
 ---
 
@@ -124,6 +131,13 @@ POOCHEGA: "I just tweeted but don't see it in my own feed. Why?"
 DHYAAN:   fanout PEECHE chalta hai — isliye. "bug hai" nahi
 BOL:      "Read-your-own-writes: the author's new tweet is added to their own feed directly, without
            waiting for fan-out."
+
+AGLA SAWAAL (tere jawab se):
+  "Fanout worker beech me gira (100 me se 60 inbox likhe)?"
+   -> Kafka offset commit nahi hua -> event dobara aata, worker phir se likhta. Inbox me id dobara na aaye
+      -> inbox me daalne se pehle check / ya set jaisa (ZADD same id = ek hi)
+  "Kafka me partition kaise baante?"
+   -> key = author_id -> ek author ke tweet ek partition, kram me; workers partitions baant lete
 ```
 
 ---
@@ -166,6 +180,13 @@ BOL:      "Sharding by user id is fine for everyone else; the problem is one hot
            and add a local cache on each app server, with media on a CDN. For the feed, celebrities
            use fan-out on read. If writes are hot, like likes, I'd split the key into buckets
            (tweet123#0..#9) and sum on read."
+
+AGLA SAWAAL (tere jawab se):
+  "Merge kahan hota aur kitna mehnga?"
+   -> Timeline svc me: inbox (50 id) + celeb list (aksar 10-20 celeb, har ek ke latest kuch) -> time se sort
+      -> chhota kaam, celeb ke tweet hot cache se
+  "Koi 9,999 se 10,001 follower pe aaya-gaya baar-baar?"
+   -> beech me gap rakho (8K pe push band, 12K pe pull) taaki baar-baar palti na ho
 ```
 
 ---
@@ -180,6 +201,9 @@ SOLUTION: HOT-TWEET CACHE — bestseller front counter pe (cache), baaki kitaab 
           < 1 hr = HOT -> cache · purana = COLD -> seedha DB
 
 NAYA:     Hot-tweet cache (celeb ke naye tweet RAM me, sab wahin se padhein)
+
+KYUN YE:  Cassandra ke read replica kyun nahi -> wo bhi disk se (ms), cache RAM se (<1ms), aur replica 10 crore read nahi jhelta
+          cache miss pe 1000 request ek saath DB pe na jaayein -> sirf EK DB jaaye, baaki cache bharne ka intezaar (lock)
 ```
 ```mermaid
 flowchart TD
@@ -201,6 +225,12 @@ flowchart TD
 POOCHEGA: "What if traffic suddenly spikes 10x?"
 BOL:      "Kafka holds the fan-out burst. If I know when it's coming, like an IPL final, I scale out and
            pre-warm the hot-tweet cache beforehand — autoscaling takes minutes, the spike takes seconds."
+
+AGLA SAWAAL (tere jawab se):
+  "Virat ne tweet edit / delete kiya, cache purana?"
+   -> delete / edit pe us tweet ki cache key bhi DEL, agla read DB se naya
+  "Ek hi tweet ki key ek Redis node pe -> wahi node garam?"
+   -> us key ki kai copy (tweet:123#1..#5), read random copy se + App me chhota local cache
 ```
 
 ---
@@ -223,6 +253,12 @@ POOCHEGA: "What if the cache goes down?"
 DHYAAN:   Redis gira -> har feed DB se banana -> mehnga -> DB bhi gir sakta
 BOL:      "Redis is a replicated cluster. If it fails, I shed load, let one request rebuild each hot
            key instead of thousands, and warm inboxes back up gradually."
+
+AGLA SAWAAL (tere jawab se):
+  "Inactive user wapas aaya, rebuild me kitna time?"
+   -> pehli baar feed pull se bana do (follows ke latest tweet), phir inbox bhar do -> ek baar dheema, phir tez
+  "LTRIM 800 ke baad purana scroll?"
+   -> 800 ke aage scroll = DB se pull (bahut kam log itna neeche jaate)
 ```
 
 ---
@@ -241,6 +277,13 @@ SOLUTION: CASSANDRA — write-heavy, LSM tree = fast write, simple key access
           replica sirf READ baantta, write ke liye SHARD · country / date = bura key (skew)
 
 BADLA:    DB -> Cassandra (shard by user_id + time)
+
+KAISE (LSM = tez write):
+          write -> pehle commit log (disk pe sirf append) + RAM ki memtable -> user ko "done"
+          memtable bhari -> disk pe SSTable file seedha likh deta. Purana data badalta nahi, bas nayi file
+          peeche se chhoti files mila di jaati (compaction)
+KYUN YE:  MySQL me har write = B-tree index me jagah dhoondh ke badlo (random disk write) -> itne writes pe dheema
+          join / transaction yahan chahiye hi nahi, bas "user ke tweet time ke kram me" 
 ```
 ```mermaid
 flowchart TD
@@ -262,6 +305,12 @@ flowchart TD
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
 BOL:      "Shard by user id so a user's tweets sit together and the profile page is one shard, add time
            as a sub-key so hot users spread out, and replicate the hottest users' tweets for reads."
+
+AGLA SAWAAL (tere jawab se):
+  "LSM me read dheema kyun ho sakta?"
+   -> ek key kai SSTable me bikhri ho sakti -> sab dekhna padta. Bloom filter + compaction se kam
+  "Partition key aur clustering key kya?"
+   -> partition = (user_id, month) -> kis node pe · clustering = tweet time DESC -> andar kram
 ```
 
 ---
@@ -276,12 +325,22 @@ SOLUTION: GEO SHARDING (India / EU / US) — chaaron wajah bolo:
           Indian banda Bieber (US) ko follow -> Bieber ke HOT tweet India ke Redis me copy (hot data paas laao)
 
 BADLA:    Cassandra ab region-wise (India / EU / US)
+
+KAISE:    user region tak kaise -> Route 53 latency / geo routing: DNS jawab me paas wale region ka pata
+          Bieber ke tweet India tak kaise -> Cassandra multi-DC replication: har region ek DC, likha hua
+          doosre DC me async copy (us DC ke liye alag replication factor)
 ```
 ```
 POOCHEGA: "What if a whole region goes down?"
 BOL:      "Route 53 health checks move users to the nearest healthy region. Data is copied there
            asynchronously, so the feed may be a little stale after failover — we already accepted
            eventual consistency."
+
+AGLA SAWAAL (tere jawab se):
+  "India ka user US travel kar raha, data kahan?"
+   -> uska data home region me hi, request wahan forward ya paas wali copy se read (thoda purana chalega)
+  "Do region me ek saath likha (conflict)?"
+   -> tweet naya hi banta (update kam) -> conflict kam. Ho to last-write-wins timestamp se
 ```
 
 ---
@@ -296,6 +355,10 @@ SOLUTION: App ke kai box + aage ALB · App stateless (state Redis / DB me)
 
 NAYA:     Route 53 · ALB
 BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
+
+KAISE:    ALB har box pe health check (GET /health har ~10 sec) -> fail = box list se bahar, theek = wapas
+          Route 53 bhi isi tarah poore region / ALB ko dekhta
+KYUN YE:  ek bada server (vertical) kyun nahi -> ek had ke baad mehnga aur wahi SPOF
 ```
 ```mermaid
 flowchart TD
@@ -321,6 +384,13 @@ flowchart TD
     n_App_x_N_2 --> n_Cassandra
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Naya box juda, uski cache khaali -> pehli requests dheemi?"
+   -> App box me state nahi (Redis alag), isliye farak kam; LB naye box ko dheere-dheere traffic de (slow start)
+  "Deploy karte waqt sab box restart?"
+   -> rolling deploy: ek-ek box nikaalo, update, wapas. Site kabhi band nahi
 ```
 
 ---
@@ -366,6 +436,13 @@ flowchart TD
     n_Timeline_Svc --> n_Cassandra
     n_User_Svc --> n_Graph_DB
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Timeline svc ko follow list kahan se?"
+   -> User/Graph svc se, par har read pe call nahi -> follow list Redis me cache
+  "Fanout ko har baar 10K followers ki list?"
+   -> Graph store se pages me (1000-1000) padh ke inbox likhta
+```
 
 ---
 
@@ -377,6 +454,12 @@ DIKKAT:   media bhaari + door
 SOLUTION: CDN (CloudFront) — media user ke paas wali edge se
 
 NAYA:     CDN
+
+KAISE:    tweet me media ka URL CDN ka hota (cdn.twitter.com/img/abc.jpg)
+          user ki request paas wali EDGE pe -> wahan hai (hit) to wahin se · nahi (miss) -> edge ORIGIN (S3) se
+          laata, apne paas TTL tak rakhta, phir aage sab ko wahin se
+KYUN YE:  seedha S3 se -> door ke user ko dheema + S3 / bandwidth ka kharcha har baar
+          (dhyaan: CDN media ke raaste pe hai, origin S3; API ke raaste pe nahi)
 ```
 ```mermaid
 flowchart TD
@@ -407,6 +490,13 @@ flowchart TD
     n_Timeline_Svc --> n_Hot_tweet_cache
     n_Timeline_Svc --> n_Cassandra
     n_User_Svc --> n_Graph_DB
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Photo delete ki, CDN pe abhi bhi dikh rahi?"
+   -> CDN invalidation call ya chhota TTL; ya URL me version (abc_v2.jpg) -> naya URL = naya file
+  "Private photo CDN pe sabko mil jaayegi?"
+   -> signed URL (expiry ke saath) -> sirf jisko link mila, thodi der ke liye
 ```
 
 ---
