@@ -338,6 +338,8 @@ POOCHEGA: "The order is saved but the server crashes before sending the event. N
 MISAAL 2 (producer crash, e-commerce): OUTBOX, DB ke SAATH, EK transaction:
           BEGIN -> INSERT order -> INSERT outbox_event -> COMMIT ; relay -> outbox padhe -> Kafka -> "sent"
           "order placed" user ko COMMIT ke BAAD hi
+DHYAAN:   yahan OFFSET ka jawab nahi chalta. Offset = CONSUMER side (kaam ke baad aage badhao).
+          Is sawaal me event Kafka tak PAHUNCHA HI NAHI -> koi offset hai hi nahi -> ilaaj PRODUCER side = outbox.
           commit se PEHLE crash -> rollback (dono nahi) -> error -> user dobara
           commit ke BAAD, jawab se pehle crash -> dono saved, relay bhejega; user dobara dabaye -> IDEMPOTENCY KEY
           (checkout pe bani) -> wahi purana order
