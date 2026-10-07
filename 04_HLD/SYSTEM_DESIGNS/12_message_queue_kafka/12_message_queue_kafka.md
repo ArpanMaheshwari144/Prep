@@ -85,6 +85,13 @@ flowchart TD
     n_Producer --> n_Log
     n_Log --> n_Consumer
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Disk pe likhna to dheema hoga?"
+   -> sirf end me append (sequential) -> disk ke liye sabse tez kaam; OS page cache se read RAM jaisa
+  "Offset kaun yaad rakhta?"
+   -> consumer group ka offset Kafka khud ek topic me rakhta (__consumer_offsets)
+```
 
 ---
 
@@ -110,6 +117,12 @@ flowchart TD
 POOCHEGA: "One machine can't hold the data or take the writes. What do you do?"
 DHYAAN:   replica sirf READ baantti, write ke liye SHARD (partition) · country / date = bura key (skew)
 BOL:      "I split the topic into partitions spread across brokers, so both storage and writes scale out."
+
+AGLA SAWAAL (tere jawab se):
+  "Kitne partition rakhoge?"
+   -> jitne consumer parallel chahiye + aage ki growth (jaise 12-30). Baad me badhaye to key ka partition badlega
+  "Ek partition garam (ek key ke bahut event)?"
+   -> us key me thoda tukda jodo (userId#bucket) agar kram us key pe zaroori nahi
 ```
 
 ---
@@ -140,6 +153,12 @@ DHYAAN:   partition BADHAYE to hash(key) % n badla -> key doosri partition -> or
           -> shuru me thode extra partition
 BOL:      "Ordering is per partition, so I key by user id and all of one user's events land in one partition.
            Global order would mean one partition and no throughput."
+
+AGLA SAWAAL (tere jawab se):
+  "Partition badhaye to user-123 ka partition badal gaya?"
+   -> haan, hash % n badla -> naye event naye partition me, kram thodi der toota. Isliye shuru me hi zyada partition
+  "Producer retry me kram ulta (msg 1 fail, msg 2 gaya, phir 1)?"
+   -> idempotent producer (enable.idempotence) -> sequence number se kram + dedup
 ```
 
 ---
@@ -155,6 +174,11 @@ SOLUTION: CONSUMER GROUP — "ek team hain, kaam BAANT lo"
           PARALLELISM KI LIMIT = PARTITION COUNT (3 partition, 5 consumer -> 2 khaali)
 
 BADLA:    Consumer -> Group email (C1 / C2 / C3)
+
+KYUN EK partition = EK consumer:
+          do consumer ek partition padhein to kram toota + kaun-sa message kisne liya, iska har message pe
+          hisaab / lock chahiye. Partition poora ek ko -> ek offset, kram pakka, koi tala-mel nahi
+          RabbitMQ / SQS ulta: har MESSAGE alag consumer ko (competing consumers) -> kram ki guarantee nahi
 ```
 ```mermaid
 flowchart TD
@@ -163,6 +187,13 @@ flowchart TD
     n_Group_email["Group email"]
     n_Producer --> n_Brokers_A_B_C
     n_Brokers_A_B_C --> n_Group_email
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "3 partition, kaam zyada, consumer badhane hain?"
+   -> partition badhao (consumer > partition = khaali baithenge)
+  "Ek message bahut dheema (5 min), poora partition atka?"
+   -> haan, head-of-line. Dheema kaam alag topic / worker pool ko, ya partition ke andar parallel (kram chhod ke)
 ```
 
 ---
@@ -196,6 +227,12 @@ DHYAAN:   (15-Sep mock galti) "har service ka alag TOPIC" -> NAHI. producer ko e
           -> "ek message kai consumer tak" wali requirement hi toot gayi. MQ ka dil, interviewer yahin ungli rakhta
 BOL:      "One topic, one consumer group per service. Within a group partitions are shared; across groups
            everyone gets the whole stream, each with its own offset."
+
+AGLA SAWAAL (tere jawab se):
+  "Naya group aaj juda, purane 7 din ke event padhega?"
+   -> auto.offset.reset = earliest -> shuru se · latest -> sirf ab ke baad ke
+  "Analytics group peeche hai, email ko farak?"
+   -> nahi, har group ka apna offset -> ek dheema, doosra apni speed
 ```
 
 ---
@@ -237,6 +274,12 @@ POOCHEGA: "What happens if a broker goes down?"
 BOL:      "Each partition has a leader and followers on other brokers in different zones. If the leader dies,
            the controller promotes an in-sync follower, so nothing acknowledged is lost. Producers use
            acks=all for important events."
+
+AGLA SAWAAL (tere jawab se):
+  "acks=all aur min.insync.replicas=2 ka matlab?"
+   -> leader + kam se kam 1 follower ke paas likha tab 'done' -> leader mara to bhi data follower pe
+  "ISR me ek hi bacha?"
+   -> min.insync=2 se kam -> producer ko error (likhna band), data kho jaane se behtar
 ```
 
 ---
@@ -261,6 +304,11 @@ SOLUTION: TEEN GUARANTEE:
           poora "kuch na khoye" = producer acks=all + ISR · consumer offset BAAD + idempotent · fail -> DLQ (dikkat 8)
 
 NAYA:     Redis (dedup, consumer side)
+
+KAISE (outbox relay):
+          raasta 1 POLLING: relay har ~1 sec: SELECT * FROM outbox WHERE sent = false -> Kafka bhejo -> sent = true
+          raasta 2 CDC (Debezium): DB ka log (binlog / WAL) padh ke outbox ki nayi row seedha Kafka me
+          relay bheja par 'sent' likhne se pehle mara -> dobara bhejega -> isliye consumer idempotent
 ```
 ```mermaid
 flowchart TD
@@ -300,6 +348,13 @@ BOL:      "The API only returns 'order placed' after the transaction commits. A 
 
 POOCHEGA: "What if the same event comes twice?"
 BOL:      "Expected with at-least-once. The consumer dedups on event id, not on the partition key."
+
+AGLA SAWAAL (tere jawab se):
+  "Exactly-once Kafka me hota hi nahi?"
+   -> Kafka transactions + idempotent producer -> Kafka-se-Kafka exactly-once. Bahar (SMS, DB) ke liye
+      consumer idempotency hi raasta
+  "Outbox table bahut badi?"
+   -> 'sent' rows roz saaf / partition drop
 ```
 
 ---
@@ -339,6 +394,13 @@ flowchart TD
     n_Group_email --> n_Redis
     n_Group_email --> n_DLQ
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Rebalance me sab consumer ruk jaate?"
+   -> purana (eager) haan; cooperative rebalance -> sirf jinke partition badle wahi ruke
+  "Lag badh raha, kya karoge?"
+   -> consumer badhao (partition tak), dheema kaam alag, alert lag pe
+```
 
 ---
 
@@ -353,6 +415,13 @@ SOLUTION: RETENTION: time ("7 din", default, sabse common) · size ("partition 1
           purana SEGMENT poori file delete (row-by-row nahi) -> sasta
 
 NAYA:     koi dabba nahi
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Compaction kab?"
+   -> jab har key ka sirf latest chahiye (user profile, config) -> purani value kaati, aakhri rakhi
+  "7 din ke baad consumer ne padha hi nahi tha?"
+   -> data gaya. Isliye lag pe alert, retention consumer ki sabse lambi chhutti se zyada
 ```
 
 ---
