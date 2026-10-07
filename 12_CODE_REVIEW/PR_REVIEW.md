@@ -1,90 +1,398 @@
 # PR REVIEW — JP SUPERDAY
 
-> Code upar se neeche chalo. Har JAGAH pe ruko, uski list dekho — bug wahi chhupta hai.
-> Ek line pe bug mila to usi line pe aur dekho (loop me hai? magic value? naam?).
-> ★ = drills me baar-baar chhoota.
+Code upar se neeche chalo. Har JAGAH pe ruko, neeche uska section dekho.
+Har bug ki pehchaan = code ki SHAKAL. Shakal dikhi -> naam bolo -> asar bolo -> sahi bolo.
+★ = drills me chhoota tha.
+
+---
+
+## 0. PEHLE YE 10 SAWAAL (har PR pe, isi kram me)
 
 ```
- JAGAH                                      YAHAN KYA PRONE HAI                         SAHI
- ----------------------------------------   -----------------------------------------   ---------------------------------
+ 1  FIELDS     method ke bahar kaun-sa field hai? saare user share karenge kya?
+ 2  ID         {id} / accountId aaya -> ye ID IS USER ki hai, kisne check kiya?
+ 3  INPUT      @Valid hai? amount -ve / 0 aa sakta? paisa double me to nahi?
+ 4  2 REQUEST  ek saath 2 request aayi (ya retry hua) to kya hoga?
+ 5  SAVE       kitne save/update hain? @Transactional hai?
+ 6  BAHAR      HTTP / mail / SMS call kahan hai? timeout? txn ke andar?
+ 7  LOOP       loop ke andar query / HTTP to nahi?
+ 8  CATCH      catch ne kya kiya? uske BAAD kya return hua?
+ 9  LOG        println? log me email / card / token?
+10  RETURN     fail pe bhi 200? entity bahar? list bina page? SQL me + ?
+```
 
- 1. CLASS KE FIELDS (method ke bahar)
-    @Autowired field pe                     hidden dep, test mushkil                    constructor + final
-    "sk_live" · "password" · jdbc · smtp    HARDCODED CREDS (URL me = log me chhapegi)  env / Vault, header me
-    static Map · static SimpleDateFormat    saare thread share, stale                   local / Concurrent* / DateTimeFormatter
-    koi bhi non-final field (userId, Map)   bean SINGLETON = do user ka data mix        local variable
-    flag / counter doosra thread padhe      dikhega nahi / ++ atomic nahi               volatile / AtomicInteger
-    flag = true kiya, false kahan?          exception pe phansa reh gaya                finally
+Aakhir me FAISLA line (neeche section 13). Bina faisla ke review adhoora.
 
- 2. METHOD KI PEHLI LINE (annotation + params)
-  ★ {id} · walletId · orderId aaya          OWNER CHECK — HAR method pe alag            token se owner, nahi to 403
-    child id + parent id dono               rishta check                                parent ka hai ye child?
-    dimaag me aaye "koi bhi kuch bhi bhej sakta" = wahi OWNER CHECK -> NAAM se bolo
-    @RequestBody bina @Valid                DTO ke @NotNull bekaar                      @Valid
-  ★ amount · qty · date                     -ve / 0 ? (-ve withdraw = balance BADHTA)   @Positive / YearMonth
-    double / float me paisa                 rounding                                    BigDecimal / long paise
-    @Transactional controller pe ·          galat layer / proxy laga hi nahi            service pe, public, doosri bean se
-    private · this.method()
+---
 
- 3. DB SE LAANA
-  ★ SQL string me + x                       SQL INJECTION (delete / update pe bhi)      PreparedStatement + ?
-    SELECT * bina WHERE · findAll           poori table memory me                       WHERE / Pageable
-    .get() · list.get(0) · rs.next() chhoda khaali = 500                                orElseThrow(NotFound)
-    obj aaya, seedha obj.getX()             null = NPE                                  Optional / null check
+## 1. CLASS KE FIELDS (method ke bahar)
 
- 4. IF / COMPARE
-    == String / Integer / Long              reference -> if kabhi true nahi, chup       equals
-                                            (Integer 127 ke upar false)
-  ★ if (bal >= amt) { ghatao; save }        CHECK-THEN-ACT: 2 request saath = DOUBLE    UPDATE .. WHERE bal >= ? / @Version
-                                            SPEND
-    if (flag) return; flag = true           check-then-act (NAAM bolo)                  AtomicBoolean.compareAndSet
-    if-else type pe ("UPI" / "CARD")        naya type = method badle                    strategy
+```
+CODE ME DIKHE:   @Autowired private AccountRepository repo;
+NAAM:            field injection
+ASAR:            dependency chhupi, test me mock mushkil
+SAHI:            constructor injection + final
+```
 
- 5. DO WRITE / PAISA BADLA
-    save + save · refund + status           @Transactional nahi = aadha likha           @Transactional
-  ★ same request do baar (retry / click)    do baar charge                              idempotency key (DB unique)
-    checked exception throw                 rollback sirf Runtime pe                    rollbackFor = Exception.class
-    ek hi query wala method                 yahan @Transactional mat maango             -
+```
+CODE ME DIKHE:   private String API_KEY = "sk_live_...";  ·  "password"  ·  jdbc url me pass  ·  smtp creds
+                 rt.post(URL + "?key=" + KEY)
+NAAM:            HARDCODED CREDS
+ASAR:            git me leak; URL me ho to access log me bhi chhapegi
+SAHI:            env / Vault, key header me
+```
 
- 6. BAHAR KI CALL (RestTemplate / HTTP / mail / Kafka)
-    timeout nahi                            thread atka, pool khatam, app giri          timeout + retry limit + circuit breaker
-  ★ @Transactional ke ANDAR                 connection pakda + rollback pe bahar ka     commit ke BAAD / outbox
-                                            kaam wapas nahi
-    new Thread() · Thread.sleep request me  thread bekaabu                              Executor / @Async
+```
+CODE ME DIKHE:   private String currentUser;   (koi bhi non-final field: userId, Map, list)
+NAAM:            singleton bean me state
+ASAR:            controller/service ek hi object, saare user share -> do user ka data mix
+SAHI:            local variable
+★ 7-Oct chhoota (Transfer): tune L5 static final URL pakda, wo constant hai, theek hai.
+  Asli dikkat non-final field hoti hai.
+```
 
- 7. LOOP
-  ★ andar query / HTTP / findById           N+1                                         ek query (IN / JOIN) / batch
-    andar String +                          naya object har baar                        StringBuilder
+```
+CODE ME DIKHE:   static Map cache  ·  static SimpleDateFormat
+NAAM:            shared mutable static
+ASAR:            saare thread share, stale / galat date
+SAHI:            local / ConcurrentHashMap / DateTimeFormatter
+```
 
- 8. try / catch
-    catch(Exception) + println / khaali     nigla, prod me pata nahi                    log.error("id={}", id, e) + specific
-    @Transactional me catch ne nigla        rollback NAHI                               rethrow
-  ★ catch ke BAAD neeche dekho              fail pe bhi "OK" / 200                      500 / rethrow
+```
+CODE ME DIKHE:   boolean running;  count++   (doosra thread padhe)
+NAAM:            visibility / non-atomic
+ASAR:            doosre thread ko dikhega nahi; ++ me ginti khoyegi
+SAHI:            volatile / AtomicInteger
+```
 
- 9. LOG / println
-    card · email · PAN · password · token   PII leak                                    sirf id / mask
-    println                                 prod me                                     SLF4J, sahi level
+```
+CODE ME DIKHE:   flag = true;  ...kaam...  flag = false;
+NAAM:            flag reset finally me nahi
+ASAR:            beech me exception -> flag hamesha true phansa
+SAHI:            finally { flag = false; }
+```
 
-10. RETURN
-    "OK" · "done" String                    status hi nahi                              ResponseEntity + sahi status
-  ★ kaam na hua (kam balance) phir bhi 200  client samjha ho gaya                       400 / 422
-    return ENTITY · List bina page          saare field bahar / 10 lakh row             DTO / Pageable
-    e.getMessage() client ko                andar ki baat bahar                         generic message
-    password seedha save                    plaintext                                   BCrypt
+---
 
-11. FILE / CONNECTION
-    getConnection · FileWriter · openStream close / flush nahi = leak, file adhoori    try-with-resources
+## 2. METHOD KI PEHLI LINE (annotation + params)
 
-12. STYLE (aakhri nazar)
-    naam w · r · res · x · data · doIt · public fields DTO me · magic "ACTIVE" / 5 ·
-    lamba method / gehri nesting (early return) · copy-paste · nikala par use nahi ·
-    new XService() andar (inject karo) · SRP: ek class me DB + logic + file + mail sab (alag karo)
+```
+CODE ME DIKHE:   @GetMapping("/{accountId}")  ·  r.getFromAccountId()  ·  walletId  ·  orderId
+NAAM:            ★ OWNER CHECK nahi (IDOR)
+ASAR:            koi bhi kisi ka bhi account dekh / paisa nikaal sakta
+SAHI:            token se user lo, ye ID usi ki hai? nahi to 403. HAR method pe alag dekho.
+BOL:             "I don't see an owner check here — is it handled in a filter?"
+```
 
+```
+CODE ME DIKHE:   orderId + itemId dono aaye
+NAAM:            parent-child rishta check nahi
+ASAR:            doosre ke order ka item badal diya
+SAHI:            ye item is order ka hai? check
+```
 
-★ FAISLA — HAMESHA, 3 NAAM ke saath
-  "Request changes. Three blockers: <1>, <2>, <3>.
-   Then smaller ones: naming, println, magic strings."
+```
+CODE ME DIKHE:   @RequestBody TransferRequest r      (@Valid nahi)
+NAAM:            validation band
+ASAR:            DTO ke @NotNull / @Positive likhe hain par chalenge hi nahi
+SAHI:            @Valid @RequestBody
+★ 7-Oct chhoota (Transfer)
+```
 
-  Jo pakda wo BOLO (dimaag me pakda = gina nahi jaata). Har bhaari pe ek line ASAR: kya tootega.
-  Gayab cheez pe sawaal: "I don't see an owner check here — is it handled in a filter?"
+```
+CODE ME DIKHE:   double amt = r.getAmount();   (amount · qty · days)
+NAAM:            ★ -ve / 0 check nahi
+ASAR:            -ve withdraw = balance BADHTA; -ve transfer = ulta paisa
+SAHI:            @Positive / if (amt <= 0) 400
+★ 7-Oct chhoota (Transfer)
+```
+
+```
+CODE ME DIKHE:   double balance  ·  float price
+NAAM:            paisa floating point me
+ASAR:            0.1 + 0.2 != 0.3 -> rounding
+SAHI:            BigDecimal / long paise
+```
+
+```
+CODE ME DIKHE:   @Transactional controller pe  ·  private method pe  ·  this.save() se andar ka call
+NAAM:            galat jagah transaction
+ASAR:            proxy laga hi nahi -> transaction chala hi nahi
+SAHI:            service pe, public method, doosri bean se call
+```
+
+---
+
+## 3. DB SE LAANA
+
+```
+CODE ME DIKHE:   "SELECT * FROM t WHERE note LIKE '%" + q + "%'"   (delete / update me bhi)
+NAAM:            ★ SQL INJECTION
+ASAR:            q = "' OR 1=1 --" -> poori table; drop bhi
+SAHI:            PreparedStatement + ?   /   jdbc.query(sql, args)
+```
+
+```
+CODE ME DIKHE:   findAll()  ·  SELECT * bina WHERE
+NAAM:            poori table memory me
+ASAR:            10 lakh row -> OOM / slow
+SAHI:            WHERE / Pageable
+```
+
+```
+CODE ME DIKHE:   repo.findById(id).get()  ·  list.get(0)  ·  rs.next() check nahi
+NAAM:            khaali case nahi socha
+ASAR:            nahi mila -> NoSuchElement -> 500
+SAHI:            orElseThrow(NotFoundException) -> 404
+```
+
+```
+CODE ME DIKHE:   User u = repo.find(id);  u.getName();
+NAAM:            null check nahi
+ASAR:            NPE -> 500
+SAHI:            Optional / null check
+```
+
+---
+
+## 4. IF / COMPARE
+
+```
+CODE ME DIKHE:   if (from.getBalance() >= amt) {
+                     from.setBalance(from.getBalance() - amt);
+                     save(from);
+                 }
+NAAM:            ★ CHECK-THEN-ACT -> DOUBLE SPEND
+ASAR:            2 request ek saath -> dono ko poora balance dikha -> dono ne kaata
+SAHI:            UPDATE acc SET bal = bal - ? WHERE id = ? AND bal >= ?   (rows = 0 -> fail)
+                 ya @Version (optimistic) / SELECT .. FOR UPDATE
+YAAD:            ye RETRY wali idempotency se ALAG hai. Idempotency = same request do baar.
+                 Ye = do alag request ek hi waqt.
+★ 7-Oct chhoota (Transfer)
+```
+
+```
+CODE ME DIKHE:   if (status == "ACTIVE")  ·  Integer a == Integer b  ·  Long == Long
+NAAM:            == se object compare
+ASAR:            reference compare -> chup-chaap false (Integer 127 ke upar false)
+SAHI:            "ACTIVE".equals(status) / enum / equals()
+```
+
+```
+CODE ME DIKHE:   if (running) return;  running = true;
+NAAM:            check-then-act (flag wala)
+ASAR:            do thread dono andar ghus gaye
+SAHI:            AtomicBoolean.compareAndSet(false, true)
+```
+
+```
+CODE ME DIKHE:   if (type.equals("UPI")) ... else if (type.equals("CARD")) ...
+NAAM:            type pe if-else
+ASAR:            naya type = ye method badlo (open-closed toota)
+SAHI:            strategy pattern
+```
+
+---
+
+## 5. DO WRITE / PAISA BADLA
+
+```
+CODE ME DIKHE:   repo.save(from);
+                 repo.save(to);
+                 transferRepo.save(t);          (method pe @Transactional nahi)
+NAAM:            ★ @Transactional nahi
+ASAR:            beech me fail -> from se kata, to me nahi pahuncha = aadha likha
+SAHI:            service method pe @Transactional
+★ 7-Oct: dimaag me aaya, likha nahi -> PR me jo likha wahi gina jaata
+```
+
+```
+CODE ME DIKHE:   POST /transfer  ·  /pay  ·  /refund   (request me koi unique key nahi)
+NAAM:            ★ idempotency nahi
+ASAR:            retry / double click -> do baar charge
+SAHI:            Idempotency-Key header, DB me unique -> doosri baar wahi purana jawab
+```
+
+```
+CODE ME DIKHE:   throws IOException  (checked) @Transactional method se
+NAAM:            checked exception pe rollback nahi
+ASAR:            Spring default sirf RuntimeException pe rollback -> data aadha commit
+SAHI:            @Transactional(rollbackFor = Exception.class)
+```
+
+```
+CODE ME DIKHE:   ek hi query wala method
+NAAM:            -
+SAHI:            yahan @Transactional mat maango
+```
+
+---
+
+## 6. BAHAR KI CALL (RestTemplate / HTTP / mail / SMS / Kafka)
+
+```
+CODE ME DIKHE:   rt.postForObject(SMS_URL, ...)    (timeout set nahi)
+NAAM:            timeout nahi
+ASAR:            vendor atka -> thread atka -> pool khatam -> app giri
+SAHI:            timeout + retry limit + circuit breaker
+★ 7-Oct chhoota (Transfer)
+```
+
+```
+CODE ME DIKHE:   save(from); save(to);  rt.post(SMS...);   (sab ek try / ek txn me)
+NAAM:            ★ bahar ki call paisa wale flow ke andar
+ASAR:            txn me ho: DB connection pakda rehta; rollback pe SMS wapas nahi aata
+                 try me ho: SMS fail -> catch -> transfer fail bata diya jabki paisa gaya
+SAHI:            commit ke BAAD / @Async / outbox
+★ 7-Oct chhoota (Transfer)
+```
+
+```
+CODE ME DIKHE:   new Thread(...)  ·  Thread.sleep() request ke andar
+NAAM:            thread bekaabu
+SAHI:            Executor / @Async
+```
+
+---
+
+## 7. LOOP
+
+```
+CODE ME DIKHE:   for (Transfer t : list) { repo.findById(t.getToId()); }
+NAAM:            ★ N+1
+ASAR:            100 transfer = 101 query
+SAHI:            ek query: IN (...) / JOIN / batch fetch
+```
+
+```
+CODE ME DIKHE:   s = s + x;   loop ke andar
+NAAM:            String concat in loop
+SAHI:            StringBuilder
+```
+
+---
+
+## 8. try / catch
+
+```
+CODE ME DIKHE:   catch (Exception e) { System.out.println(e.getMessage()); }   ·  catch {} khaali
+NAAM:            exception nigla
+ASAR:            prod me pata hi nahi chalega kya toota
+SAHI:            specific exception + log.error("transfer failed id={}", id, e)
+```
+
+```
+CODE ME DIKHE:   @Transactional method ke andar catch (Exception e) { log... }   (rethrow nahi)
+NAAM:            catch ne rollback roka
+ASAR:            exception bahar gaya hi nahi -> commit ho gaya
+SAHI:            rethrow
+```
+
+```
+CODE ME DIKHE:   } catch (Exception e) { ...; return "SUCCESS"; }
+NAAM:            ★ fail pe bhi OK
+ASAR:            client samjha ho gaya, paisa phansa
+SAHI:            500 / rethrow
+```
+
+---
+
+## 9. LOG / println
+
+```
+CODE ME DIKHE:   println("done for " + user.getEmail())  ·  card · PAN · password · token
+NAAM:            PII log me
+ASAR:            log padhne wala har banda data dekh le, compliance toota
+SAHI:            sirf id / masked
+```
+
+```
+CODE ME DIKHE:   System.out.println
+NAAM:            println prod me
+SAHI:            SLF4J logger, sahi level
+```
+
+---
+
+## 10. RETURN
+
+```
+CODE ME DIKHE:   return "OK";  ·  return "done";  ·  public String transfer(...)
+NAAM:            String return
+ASAR:            HTTP status hamesha 200
+SAHI:            ResponseEntity + sahi status
+```
+
+```
+CODE ME DIKHE:   return "FAILED";   /   kam balance pe bhi normal return
+NAAM:            ★ kaam na hua phir bhi 200
+ASAR:            client ne 200 dekha, samjha ho gaya
+SAHI:            400 / 422
+★ 7-Oct chhoota (Transfer)
+```
+
+```
+CODE ME DIKHE:   return List<Transfer>  ·  return userEntity  ·  list bina Pageable
+NAAM:            entity bahar / pagination nahi
+ASAR:            saare field bahar (password hash bhi); 10 lakh row ek saath
+SAHI:            DTO + Pageable
+★ 7-Oct chhoota (Transfer, history)
+```
+
+```
+CODE ME DIKHE:   body(e.getMessage())
+NAAM:            andar ki baat client ko
+SAHI:            generic message, detail sirf log me
+```
+
+```
+CODE ME DIKHE:   user.setPassword(req.getPassword()); save
+NAAM:            plaintext password
+SAHI:            BCrypt
+```
+
+---
+
+## 11. FILE / CONNECTION
+
+```
+CODE ME DIKHE:   getConnection()  ·  new FileWriter()  ·  openStream()   (close nahi)
+NAAM:            resource leak
+ASAR:            connection pool khatam / file adhoori
+SAHI:            try-with-resources
+```
+
+---
+
+## 12. STYLE (aakhri nazar)
+
+```
+naam: w · r · res · t · x · data · doIt          -> kaam batata naam
+public fields DTO me                              -> private + getter
+magic "ACTIVE" / 5                                -> enum / constant
+lamba method / gehri nesting                      -> early return, chhote method
+copy-paste                                        -> ek method
+nikala par use nahi                               -> hatao
+new XService() andar                              -> inject karo
+SRP: controller me DB + logic + mail sab          -> controller / service / repo alag
+```
+
+---
+
+## 13. FAISLA — HAMESHA, 3 NAAM ke saath
+
+```
+"Request changes. Three blockers: <1>, <2>, <3>.
+ Then smaller ones: naming, println, magic strings."
+
+Misaal (Transfer, 7-Oct):
+"Request changes. Three blockers: no owner check on transfer and history,
+ double spend because balance check and update are not atomic and not in a transaction,
+ and SQL injection in search. Then smaller ones: hardcoded key, println with email, naming."
+```
+
+```
+Jo pakda wo LIKHO / BOLO — dimaag me pakda = gina nahi jaata.
+Har bhaari pe ek line ASAR: kya tootega.
+Gayab cheez pe sawaal: "I don't see an owner check here — is it handled in a filter?"
 ```
