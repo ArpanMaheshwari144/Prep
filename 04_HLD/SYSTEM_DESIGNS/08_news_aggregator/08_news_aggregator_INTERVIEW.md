@@ -66,6 +66,11 @@ SOLUTION: teen option bolo, phir chuno:
           user -> cache (99%) -> miss -> DB -> wapas cache
 
 NAYA:     Redis
+
+KAISE (Redis me feed):
+          SORTED SET feed:latest -> member = articleId, score = publishedAt
+          nayi news: ZADD feed:latest <time> <id> · purana kaato: ZREMRANGEBYRANK (sirf top 500 rakho)
+          padhna: ZREVRANGE feed:latest 0 19 -> sabse nayi 20 id -> article ka data alag hash / cache se
 ```
 ```mermaid
 flowchart TD
@@ -78,6 +83,13 @@ flowchart TD
     n_Feed_Svc --> n_Redis
     n_Redis --> n_DB
     n_Fetcher --> n_DB
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "5 min purani chalegi kaha, par breaking news turant chahiye?"
+   -> worker nayi news aate hi ZADD karta -> asal me turant; 5 min = sabse bura haal
+  "Page 2 (21-40)?"
+   -> ZREVRANGE 20 39, ya cursor (aakhri dekhi news ka time) -> uske baad ki 20
 ```
 
 ---
@@ -94,6 +106,13 @@ SOLUTION: WRITE PATH aur READ PATH bilkul ALAG (core decision)
 
 NAYA:     Kafka · Worker
 BADLA:    Fetcher ab seedha DB me nahi, Kafka me daalta
+
+KAISE (Kafka spike kaise jhelta):
+          Fetcher article ko topic me likh ke bhool jaata (disk pe log, ruka hua)
+          workers apne offset se apni speed se padhte -> 1000 ek saath aaye to log lamba hua, kuch gira nahi
+          partitions = kitne worker parallel (10 partition -> 10 worker)
+KYUN YE:  SQS bhi chal jaata (simple); Kafka isliye ki baad me doosra consumer (search index, analytics) bhi
+          wahi stream alag group se padh sake + replay
 ```
 ```mermaid
 flowchart TD
@@ -114,6 +133,14 @@ flowchart TD
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Fetcher ek source ko kitni baar dekhe?"
+   -> scheduler har source ka interval (bade source 1 min, chhote 15 min) + RSS ka ETag / Last-Modified
+      -> kuch naya nahi to download hi nahi
+  "Worker ne ek article do baar likha (event dobara)?"
+   -> DB me URL / content hash pe UNIQUE -> dobara insert fail = skip
+```
 
 ---
 
@@ -128,6 +155,15 @@ SOLUTION: WORKER ke andar 3 kaam:
           CATEGORY (tech / sports / politics tag)
 
 NAYA:     koi dabba nahi — Worker me
+
+KAISE (same khabar, alag URL kaise pakde):
+          title normalize (lowercase, chinh hatao) + hash -> same hash = same khabar
+          thoda alag likha ho -> SimHash / MinHash: milte-julte text ke hash paas-paas -> "90% same" = duplicate
+KAISE (Bloom filter):
+          bit array + k hash function. URL aaya -> k jagah bit 1. Check: k me se koi 0 = pakka naya;
+          sab 1 = SHAYAD dekha (false positive ho sakta, false negative kabhi nahi)
+KYUN YE:  crore URL Redis SET me = bahut RAM; Bloom thodi si memory me. DB UNIQUE = har baar DB call
+          false positive se ek naya URL kabhi chhoot sakta -> news me chalta
 ```
 ```mermaid
 flowchart TD
@@ -147,6 +183,13 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Bloom filter me delete?"
+   -> normal Bloom me nahi. Purane din ka filter hi phenk do (roz naya), ya counting Bloom
+  "Duplicate me kaunsa source dikhaye?"
+   -> pehle aaya / bada source; baaki 'aur sources' me link
 ```
 
 ---
@@ -185,6 +228,12 @@ flowchart TD
 POOCHEGA: "What if a source is slow or down?"
 BOL:      "Each source is fetched independently with a timeout, retries, and a circuit breaker; if it keeps
            failing I skip it. One bad source can't block the other 999."
+
+AGLA SAWAAL (tere jawab se):
+  "Source ne 429 diya (zyada maar rahe)?"
+   -> us source ka interval badhao + Retry-After maano
+  "Source permanent band?"
+   -> kuch din circuit OPEN raha -> alert, source list se hatao
 ```
 
 ---
@@ -229,6 +278,12 @@ flowchart TD
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
 BOL:      "Only the last week is hot. I partition by month and move old partitions to cold storage, with a
            TTL on what we never need. That's retention, not sharding."
+
+AGLA SAWAAL (tere jawab se):
+  "Koi purani news ka link khole (archive me hai)?"
+   -> article page archive / S3 se (dheema chalega) ya chhota 'purana' table
+  "Partition DETACH karte waqt table lock?"
+   -> detach turant hota (sirf meta badla), copy pehle se kar lo
 ```
 
 ---
@@ -244,6 +299,18 @@ SOLUTION: IMAANDARI: humare number (3 write / sec, 7 din garam) pe ek box chal j
           date shard ka asar: saari NAYI likhai aaj wale shard pe -> HOT PARTITION
 
 NAYA:     koi dabba nahi
+
+KYUN YE (date ka hot partition kaise theek):
+          hash(article_id) se shard -> likhai sab shards pe barabar
+          keemat: "latest 20" ab har shard se thoda-thoda laana padta (scatter-gather) -> par wo Redis se aata hi hai
+          date chuna to sirf isliye ki purana shard poora uthake archive (retention aasaan)
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Category se shard karo to?"
+   -> sports / politics bade, baaki chhote -> bojh barabar nahi (skew)
+  "Shard badhane pe data khiskana?"
+   -> consistent hashing -> kam data hilta
 ```
 
 ---
@@ -278,6 +345,13 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Merge kaise (teen category ki 20-20)?"
+   -> teeno sorted set se top 20 lo, time se merge (ya Redis ZUNIONSTORE), top 20 dikhao
+  "Har user ki pasand alag-alag weight?"
+   -> tab asli personalization -> per-user feed / ranking service (abhi scope se bahar)
 ```
 
 ---
@@ -324,6 +398,13 @@ flowchart TD
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Subah 8 baje pata hai spike aayega?"
+   -> 7:45 pe pehle se box badhao (scheduled scaling) + cache warm
+  "Replica kitni peeche?"
+   -> kuch second, news ke liye chalta
+```
 
 ---
 
@@ -339,6 +420,12 @@ SOLUTION: alag SEARCH INDEX (Elasticsearch, inverted index)
           detail: [FOUNDATIONS/12_elasticsearch_search](../../FOUNDATIONS/12_elasticsearch_search.md)
 
 NAYA:     Elasticsearch
+
+KAISE (inverted index):
+          article ke text ko shabdon me todo -> har shabd ki list: "cricket" -> [a12, a45, a90]
+          search "cricket kohli" -> dono list ka intersection -> score (kitni baar, kahan) se sort
+KYUN YE:  Postgres full-text (GIN index) bhi chalta chhote scale pe -> ES isliye ki ranking, typo, bahut data,
+          aur DB pe search ka bojh nahi
 ```
 ```mermaid
 flowchart TD
@@ -370,6 +457,13 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "ES aur DB me data alag-alag ho gaya?"
+   -> DB = sach. ES dobara bana sakte (reindex). Worker ES likhne me fail -> retry queue
+  "Typo (crikcet)?"
+   -> ES fuzzy search (1-2 akshar ka farak)
 ```
 
 ---
