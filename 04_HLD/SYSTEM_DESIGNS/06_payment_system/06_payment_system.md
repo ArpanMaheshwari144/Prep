@@ -84,6 +84,13 @@ flowchart TD
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_DB
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Crash pe DB rollback kaise karta (aadha likha kahan gaya)?"
+   -> DB pehle WAL / undo log me likhta. Uthte hi: COMMIT wale txn redo, bina COMMIT wale undo -> aadha kuch nahi bachta
+  "Do log ek saath Arpan ke account se?"
+   -> row lock / UPDATE ... WHERE balance >= 500 -> ek hi jeetega (DIKKAT 2 ka teesra sawaal)
+```
 
 ---
 
@@ -128,6 +135,12 @@ POOCHEGA: "Two users do this at the same time — what happens?"
 DHYAAN:   2 user ek cheez = atomic / lock · 1 user ka retry = idempotency (alag cheez)
 BOL:      "For a shared balance I use a conditional update — UPDATE ... WHERE balance >= amount — so only
            one of them succeeds."
+
+AGLA SAWAAL (tere jawab se):
+  "Key client kyun banaye, server kyun nahi?"
+   -> retry client karta hai; server ko pata hi nahi ye wahi request hai. Client ki key hi do request ko jodti
+  "Redis aur DB dono kyun?"
+   -> Redis = tez, chal rahi request pakde (IN_PROGRESS) · DB UNIQUE = pakka record, Redis gira tab bhi
 ```
 
 ---
@@ -142,6 +155,11 @@ SOLUTION: external PSP / GATEWAY (Razorpay / Stripe / bank rails) asli paisa mov
           STATE: INITIATED -> PENDING (PSP ko bheja) -> SUCCESS / FAILED
 
 NAYA:     PSP (Payment Service Provider — Razorpay / Stripe / bank, asli paisa wahi hilata)
+
+KAISE (circuit breaker):
+          CLOSED = normal call · lagatar N fail (jaise 5) -> OPEN = PSP ko call hi nahi, turant fail / PENDING
+          kuch der (30 sec) baad HALF-OPEN = ek test call -> chali to CLOSED, fail to wapas OPEN
+          fayda: marte PSP pe hathoda nahi, aur hamare thread intezaar me nahi atakte
 ```
 ```mermaid
 flowchart TD
@@ -160,6 +178,12 @@ POOCHEGA: "What if the PSP is slow?"
 DHYAAN:   bina timeout har thread atka = poora system thapp (slow = down se BURA)
 BOL:      "Short timeout and a circuit breaker. For money I don't blindly retry — I keep it PENDING and let
            reconciliation settle it."
+
+AGLA SAWAAL (tere jawab se):
+  "Timeout hua, to user ko kya dikhaoge?"
+   -> 'processing' (PENDING), 'fail' nahi. Paisa shayad kat chuka ho -> reconciliation pakka karegi
+  "Do PSP rakhoge?"
+   -> haan, ek down to doosra; par ek payment hamesha EK PSP pe, beech me badalna nahi (double charge)
 ```
 
 ---
@@ -178,6 +202,11 @@ SOLUTION: 1. STATUS (write-ahead): kuch karne se PEHLE "PENDING" durable likho -
           COURIER: har parcel ka tracking number + status — courier gira, parcel gum nahi
 
 NAYA:     Reconciliation job (PENDING payment dhoondh ke PSP se asli haal milaane wala) · webhook (PSP khud call karke bataye)
+
+KYUN DONO (push + pull):
+          sirf webhook -> webhook kho sakta / late / hamara server us waqt down -> payment PENDING me atki
+          sirf polling -> der se pata + har pending ke liye PSP pe baar-baar call (limit / kharcha)
+          webhook = tez raasta, reconciliation = jaal jo chhoota hua pakde
 ```
 ```mermaid
 flowchart TD
@@ -203,6 +232,12 @@ BOL:      "I never assume. Every payment is written as PENDING before I call the
 POOCHEGA: "How do you know the system is working?"
 BOL:      "Reconciliation against the PSP and bank, plus p99 latency, error rate and queue lag with alerts,
            and a trace id to follow one payment end to end."
+
+AGLA SAWAAL (tere jawab se):
+  "Webhook do baar aaya?"
+   -> status update idempotent: PENDING -> SUCCESS ek hi baar; SUCCESS pe dobara aaya to ignore
+  "Reconciliation kitni baar chalti?"
+   -> har kuch minute pending (5 min se purane) ke liye + roz raat PSP / bank file se poora milaan
 ```
 
 ---
@@ -237,6 +272,13 @@ flowchart TD
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "SAGA ka state kahan rakhoge (Payment svc beech me gira)?"
+   -> saga table: har step ka haal (DEBITED, CREDIT_PENDING...) -> uthte hi wahan se aage / ulta
+  "Beech ke waqt user ko kya dikhega?"
+   -> 'processing' -> eventual: thodi der me SUCCESS ya paisa wapas
+```
 
 ---
 
@@ -252,6 +294,13 @@ SOLUTION: LEDGER — PERMANENT, IMMUTABLE (delete / edit nahi)
             crash recovery = PENDING + webhook + reconciliation (dikkat 4). ledger = HISAAB / AUDIT.
 
 NAYA:     koi alag dabba nahi — DB me Ledger table (append-only)
+
+KYUN YE (balance column + alag audit_log kyun nahi):
+          balance UPDATE se purana number mit jaata; audit_log alag likha to dono me farak aa sakta
+          (ek likha, doosra fail) -> ledger hi sach: har move ki entry, balance = entries ka jod
+KAISE (balance kaise nikle):
+          har baar jodna mehnga -> balance column USI transaction me update + ledger me 2 entry
+          raat ko job: sum(ledger) == balance? farak = alert
 ```
 ```mermaid
 flowchart TD
@@ -272,6 +321,12 @@ flowchart TD
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
 BOL:      "Partition by month, detach old partitions to cold storage like S3 Glacier. Payment records are
            archived, never deleted."
+
+AGLA SAWAAL (tere jawab se):
+  "Galat entry ho gayi, delete kar doge?"
+   -> nahi, ULTI entry (reversal) likho. Purani rahegi -> audit me dono dikhte
+  "Ledger bahut bada?"
+   -> month partition, purana cold storage (upar POOCHEGA)
 ```
 
 ---
@@ -315,6 +370,12 @@ flowchart TD
 POOCHEGA: "How do you secure it / stop abuse?"
 BOL:      "Authentication at the gateway, an ownership check on every payment, rate limiting per user,
            and a WAF at the edge."
+
+AGLA SAWAAL (tere jawab se):
+  "LB ko kaise pata box mara?"
+   -> health check (GET /health), fail = list se bahar
+  "Owner check kaise?"
+   -> JWT se userId -> "from" account ka owner_id == userId? nahi to 403
 ```
 
 ---
@@ -329,6 +390,11 @@ SOLUTION: READ REPLICA — dashboard / report replica se
             (lag me ek rupaye ka farak bhi nahi chalega)
 
 NAYA:     Read replica
+
+KAISE:    primary har change WAL me likhta -> replica wo WAL stream padh ke apne pe lagati (ASYNC)
+          isliye replica thodi peeche (lag) -> report me 1-2 sec purana chalta, balance me nahi
+KYUN YE:  bahut bhaari report (mahine ka sab) -> replica bhi dhime -> tab alag WAREHOUSE (CDC se data, OLAP)
+          dashboard ke liye replica kaafi, analytics ke liye warehouse
 ```
 ```mermaid
 flowchart TD
@@ -358,6 +424,12 @@ flowchart TD
 POOCHEGA: "The user paid but still sees the old balance. Why?"
 BOL:      "That read came from a lagging replica. Balance and payment status are always read from the
            primary; replicas only serve dashboards."
+
+AGLA SAWAAL (tere jawab se):
+  "Replica kitni peeche hai, kaise pata?"
+   -> replication lag metric (seconds / bytes) pe alert
+  "Primary gira?"
+   -> ek replica promote (managed: RDS Multi-AZ khud karta). Paisa ke liye sync replica -> kuch nahi khota
 ```
 
 ---
@@ -372,6 +444,13 @@ SOLUTION: SHARD by account_id
           asli bottleneck throughput nahi, DISTRIBUTED TRANSACTION
 
 BADLA:    DB -> SQL DB (shard by account_id)
+
+KAISE (request sahi shard tak):
+          shard = hash(account_id) % N, ya lookup table (account -> shard) jo badla ja sake
+          consistent hashing -> shard jude to kam account khiskein
+KYUN account_id (txn_id ya time nahi):
+          ek account ka balance + uski saari history ek shard pe -> debit ek hi jagah atomic
+          txn_id -> ek account ki txn bikhar jaati, balance kahan? · time -> aaj ka shard garam
 ```
 ```mermaid
 flowchart TD
@@ -396,6 +475,13 @@ flowchart TD
     n_SQL_DB_shard_by_account_id --> n_Read_replica
     n_Reconciliation_job --> n_SQL_DB_shard_by_account_id
     n_Reconciliation_job --> n_PSP
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Bada merchant (Amazon) ka account -> ek shard garam?"
+   -> merchant ke kai sub-account (shard me baante), report me jodo
+  "Cross-shard transfer?"
+   -> SAGA (DIKKAT 5) -> debit shard A, credit shard B, fail pe ulta
 ```
 
 ---
