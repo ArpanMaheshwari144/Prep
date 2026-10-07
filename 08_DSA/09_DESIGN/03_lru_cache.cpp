@@ -24,6 +24,17 @@
 //      FULL pe: tail->prev (=LRU) nikaalo + mp.erase.
 //      DUMMY head/tail: koi real node kabhi NULL-padosi na dekhe -> edge-case clean.
 //  =====================================================
+//  ============ INTERVIEWER AAGE POOCHHE (LLD / HLD) ============
+//   "Multi-thread me?"      -> do thread ek saath DLL badlein to list toot jaati hai
+//                              -> get/put pe ek lock (synchronized / ReentrantLock)
+//                              -> Java me jaldi chahiye: LinkedHashMap(cap, 0.75f, true) + removeEldestEntry
+//                                 (accessOrder=true = LRU), upar Collections.synchronizedMap
+//   "Purana data kab hatega?" -> TTL: har node me expiry time; get pe expire mila to hata do
+//   "LRU ya LFU?"            -> LRU = KAB chhua (recent) · LFU = KITNI BAAR chhua (frequency)
+//   "Ek machine ki RAM kam?" -> distributed cache: key -> node (consistent hashing),
+//                              har node apna LRU + TTL, replica alag AZ me, DB = source of truth
+//   Poora HLD = 04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md
+//  ===============================================================
 // ============================================================
 // ============================================================
 
