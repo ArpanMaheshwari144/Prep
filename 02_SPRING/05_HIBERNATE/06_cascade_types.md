@@ -124,8 +124,11 @@ authorRepo.delete(author)
    "cascade REMOVE on books"
         │
         ▼
-   DELETE FROM books WHERE author_id = ?
+   pehle books LOAD (SELECT ... WHERE author_id = ?)
+   DELETE FROM books WHERE id = ?      <- HAR book ki alag DELETE (ek bulk delete NAHI)
+   DELETE FROM books WHERE id = ?
    DELETE FROM authors WHERE id = ?
+   (1000 books = 1000 DELETE -> bade collection pe slow; bulk chahiye to JPQL DELETE / DB ON DELETE CASCADE)
 
    = Author + all books DELETED
 ```
