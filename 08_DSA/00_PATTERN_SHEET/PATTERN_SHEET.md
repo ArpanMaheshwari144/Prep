@@ -2917,20 +2917,53 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ IS BIPARTITE (LC-785)  = 2-colour BFS + outer-loop (CC jaisa)
  └──────────────────────────────────────────────────────────────
-     SAAR : har node 2 rang (0/1); koi 2 ADJACENT same-rang na ho -> bipartite. odd-cycle -> false.
-     idea : input KHUD adj-list. disconnected -> outer-loop (CC jaisa).
-     TRICK (NAYA): 2-COLOUR
-        color[] : -1 = uncolored,  0/1 = do rang.
-        START ko 0 do -> har neighbour OPPOSITE:  color[it] = !color[curr]   (0<->1 flip).
-        neighbour ka rang curr ke SAME nikla -> CONFLICT -> return false.
-     TEMPLATE:
-         color[] = -1 (sab uncolored);
-         outer loop har node i: uncolored mila ->
-         phir BFS(i) us current node se shuru:
-             color[i]=0;  q.push(i);        // START ko color ZAROORI -- warna !color[curr] galat
-             curr nikalo -> for(it : graph[curr]):
-                 uncolored(-1) -> color[it] = !color[curr];  q.push(it);
-                 else color[it]==color[curr]? -> return false;
+     SAAR : har node ko 2 me se ek rang (0/1) do; koi bhi 2 JUDE hue (adjacent) node SAME rang ke na hon.
+            ho gaya -> true.  kahin do jude hue SAME rang pe phans gaye (odd cycle) -> false.
+
+     PEHCHAAN: "DO team / group me baanto + jo JUDE hain (dushman / edge) woh ek group me NAHI" -> bipartite.
+               output me "team A = {..}, team B = {..}" dikhe = 2 rang = yahi pattern.
+               ★ DSU ULTA hai: DSU me jude hue -> SAME group. yahan jude hue -> ALAG group.
+
+     INPUT: graph[i] = node i ke saare neighbours (adj-list KHUD di hai, banani nahi)
+         [[1,3],[0,2],[1,3],[0,2]]  -> true        [[1,2,3],[0,2],[0,1,3],[0,2]] -> false
+             0 --- 1                                    0 --- 1
+             |     |      square = 4-cycle              | \   |      0-1-2 triangle = odd cycle
+             3 --- 2      2 rang ho jaate               3 --- 2
+
+     idea : color[] = -1 (uncolored), 0 / 1 = do rang.
+            START ko 0 do -> har neighbour ko ULTA rang -> pehle se rang hai aur SAME nikla -> false.
+            graph TOOTA (disconnected) ho sakta -> outer loop har uncolored node se naya BFS (CC jaisa).
+
+     TEMPLATE  (BFS alag function, bool lautata; outer loop uska false pakadta)
+
+         bool BFS(graph, int node, vector<int> &color) {
+             queue<int> q;   q.push(node);
+             color[node] = 0;                              // START ko rang ZAROORI -- warna flip galat
+             while (!q.empty()) {
+                 int curr = q.front();  q.pop();
+                 for (auto &it : graph[curr]) {
+                     if (color[it] == -1) {                // (a) uncolored -> ULTA rang + push
+                         color[it] = 1 - color[curr];      //     0->1, 1->0   (ya !color[curr])
+                         q.push(it);
+                     }
+                     else if (color[it] == color[curr])    // (b) pehle se rang + SAME = conflict
+                         return false;
+                 }
+             }
+             return true;                                  // is component me koi conflict nahi
+         }
+
+         bool isBipartite(graph) {
+             vector<int> color(m, -1);
+             for (int i = 0; i < m; i++)
+                 if (color[i] == -1 && BFS(graph, i, color) == false)
+                     return false;                         // ek bhi component fail -> poora false
+             return true;
+         }
+
+     DRY-RUN (triangle 0-1-2):
+         0 ko 0 diya  -> nbr 1 = 1 · nbr 2 = 1
+         curr 1 (rang 1) -> nbr 2 ka rang bhi 1 = SAME -> false        (odd cycle pakda gaya)
 
 ┌── FAMILY: WEIGHTED shortest-path ──────────────────────────────
 │ KYUN SAATH: "edges pe WEIGHT/cost + shortest path?" -> Dijkstra. (kam edges != kam weight -> BFS kaafi nahi)
