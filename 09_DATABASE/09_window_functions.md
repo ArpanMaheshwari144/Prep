@@ -34,9 +34,13 @@ A  day1 100 -> 100 · day2 200 -> 300 · day3 300 -> 600 · B pe naya shuru
 AVG(amount) OVER (PARTITION BY customer ORDER BY day
                   ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)
 
--- last 1 MINUTE ka average (time ke hisaab se khidki; MySQL 8 / Postgres)
+-- last 1 MINUTE ka average (time ke hisaab se khidki)
+-- MySQL 8:
 AVG(price) OVER (ORDER BY ts
                  RANGE BETWEEN INTERVAL 1 MINUTE PRECEDING AND CURRENT ROW)
+-- Postgres (11+): interval quote me
+AVG(price) OVER (ORDER BY ts
+                 RANGE BETWEEN INTERVAL '1 minute' PRECEDING AND CURRENT ROW)
 ```
 ```
 ROWS   = GINTI se khidki (pichhli N row)
