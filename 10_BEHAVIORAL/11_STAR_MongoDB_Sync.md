@@ -21,7 +21,8 @@
          pool size badhaya - DB settings config file se aati (credentials Secrets Manager se),
             file me badla, Lambda ne naya value utha liya
          timeout + retry badhaye - 1-2 se ~5-7 baar
-      atke survey gine (~7, exact 7-10 ke beech) -> MongoDB se data utha ke MySQL me seedha likha.
+      atke survey gine: MongoDB aur MySQL dono DB milaye -> jo survey MySQL tak nahi pahunche the,
+         wahi atke (7-10). MongoDB se unka data utha ke MySQL me seedha likha.
       test server: bid list upload + usi waqt survey launch -> retry 3-4 baar me nikal gaya,
          survey sync hua. Phir production.
 
@@ -45,8 +46,8 @@
     minutes for the big ones. So the sync had to survive that peak. I increased the pool size in the
     config the Lambda reads, and raised the timeout and retries to around five to seven.
 
-    Then I found the stuck surveys - about seven - and re-synced them by taking the data from MongoDB
-    and writing it to MySQL. On the test server I ran a bid list upload and launched a survey at the
+    Then I compared MongoDB and MySQL to find the surveys that never made it across - seven to ten of them -
+    and re-synced them by taking the data from MongoDB and writing it to MySQL. On the test server I ran a bid list upload and launched a survey at the
     same time - it retried a few times and went through. We shipped it to production, and this issue
     hasn't come back since."
 ```
@@ -63,6 +64,7 @@
                                            connection milne tak rukta hai, phir nikal jaata.
    "Kaise pakka kiya ki theek hua?"     -> test server pe wahi load banaya (bid list upload + survey launch
                                            saath), sync chala; phir production pe dobara nahi hua.
-   "Kitne survey atke?"                 -> lagbhag 7 (7-10 ke beech, exact yaad nahi). MongoDB se utha ke
-                                           MySQL me seedha likhe.
+   "Kitne survey atke, kaise gine?"     -> 7-10. MongoDB aur MySQL dono DB milaye - jo survey MongoDB me the
+                                           par MySQL me nahi, wahi atke. Unka data MongoDB se utha ke MySQL me
+                                           seedha likha.
 ```
