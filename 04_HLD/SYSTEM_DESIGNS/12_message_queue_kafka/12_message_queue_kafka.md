@@ -335,26 +335,77 @@ BOL:      "I commit the offset only after the SMS is sent, so a crash means the 
            duplicates - and a message that keeps failing goes to a DLQ."
 
 POOCHEGA: "The order is saved but the server crashes before sending the event. Now what?"
-MISAAL 2 (producer crash, e-commerce, order #101): OUTBOX, DB ke SAATH, EK transaction
-          DB = orders table + outbox table (event_id | payload | sent)      Kafka = topic "order-events"
-          A BEGIN · B INSERT orders(101) · C INSERT outbox(E-101, sent=false) · D COMMIT
-          --- relay (alag thread, har ~1 sec) ---
-          E outbox se sent=false row -> Kafka.send(E-101) · F Kafka ACK · G UPDATE sent=true
-          "order placed" user ko COMMIT (D) ke BAAD hi
+MISAAL 2 (producer crash, e-commerce): OUTBOX — ek order le ke chalte hain, order #101, aur dekhte hain crash kab hua.
 
-CRASH KAHAN HUA -> restart pe server memory se kuch nahi jaanta, sirf DB ka `sent` dekhta:
-          crash kahan          DB me kya              Kafka me kya   restart pe           natija
-          1 D se pehle         kuch nahi (rollback)   kuch nahi      kuch nahi            user ko error, dobara karega
-          2 D ke baad, E se    order + sent=false     kuch nahi      relay bhejta         late, par pahuncha
-            pehle
-          3 F ke baad, G se    order + sent=false     1 copy         relay PHIR bhejta    2 copy -> consumer E-101
-            pehle                                                                         register me dekh ke skip
-          D ke baad, user ko jawab jaane se pehle crash -> user dobara dabaye -> IDEMPOTENCY KEY (checkout pe bani)
-            -> wahi purana order, naya nahi
-          NICHOD: server "yaad" nahi rakhta, DB ka `sent` rakhta. Shaq ho to DOBARA bhejo (khota kabhi nahi,
-            duplicate kabhi kabhi) -> duplicate ka ilaaj CONSUMER pe (event_id dedup).
-          MISAAL: courier register — parcel likha hai par "dispatched" tick nahi -> dobara bhejo; ghar ka guard
-            parcel number dekh ke "ye aa chuka" -> lauta do.
+          Pehle samajh le: server ke paas do jagah hain jahan cheez likhi jaati hai:
+
+          DB (MySQL)                              Kafka
+            orders table                            topic "order-events"
+            outbox table: event_id | payload | sent
+
+          Normal din, koi crash nahi:
+
+          STEP A   BEGIN
+          STEP B   INSERT orders (101)
+          STEP C   INSERT outbox (E-101, "order 101 placed", sent = false)
+          STEP D   COMMIT                       <- yahan dono DB me pakke ho gaye
+          ---- relay (alag thread, har 1 sec) ----
+          STEP E   outbox se sent = false wali row uthai -> Kafka.send(E-101)
+          STEP F   Kafka ka ACK aaya ("mil gaya")
+          STEP G   UPDATE outbox SET sent = true WHERE event_id = E-101
+
+          Ab crash in steps ke beech kahin bhi ho sakta hai. Restart ke baad server sirf DB dekh sakta hai,
+          uski memory saaf ho chuki hai.
+
+          CASE 1: crash STEP D (COMMIT) se pehle
+
+          DB:     orders me 101 NAHI · outbox me E-101 NAHI   (transaction rollback, aadha kuch nahi)
+          Kafka:  kuch nahi
+
+          Restart ke baad DB me kuch hai hi nahi. User ko "order placed" mila hi nahi tha, kyunki ye jawab
+          COMMIT ke baad hi jaata hai. User ko error dikha, wo dobara order karega. Kuch nahi khoya, kyunki
+          kuch bana hi nahi tha.
+
+          CASE 2: crash STEP D ke baad, STEP E (send) se pehle
+
+          DB:     orders me 101 HAI · outbox me E-101, sent = false
+          Kafka:  kuch nahi (bheja hi nahi tha)
+
+          Restart -> relay chalu -> outbox me sent = false wali row dekhi: E-101 -> Kafka bheja -> ACK ->
+          sent = true. Event late gaya, par khoya nahi, kyunki DB me likha pada tha.
+
+          CASE 3: send ho gaya, ACK aa gaya, par STEP G (sent = true) likhne se pehle crash
+
+          DB:     outbox me E-101, sent = false     <- DB ko khabar hi nahi ki bhej diya tha
+          Kafka:  E-101 PAHUNCH CHUKA hai (copy 1)
+
+          Restart -> relay outbox me sent = false dekhta -> "abhi nahi gaya" samajhta -> E-101 DOBARA bhejta:
+
+          Kafka:  E-101 (copy 1), E-101 (copy 2)
+
+          Consumer (jaise email service) ke paas processedIds register hai:
+
+          copy 1 aayi -> E-101 register me nahi -> email bhejo -> register me E-101 likho
+          copy 2 aayi -> E-101 register me HAI   -> skip (dobara email nahi)
+
+          Natija: user ko EK hi email.
+
+          Teeno ek saath:
+
+          crash kahan          DB me kya            Kafka me kya     restart pe        natija
+          1 commit se pehle    kuch nahi            kuch nahi        kuch nahi         user dobara karega
+          2 commit ke baad     order + sent=false   kuch nahi        relay bhejta      late, par pahuncha
+          3 send ke baad       order + sent=false   1 copy           relay phir bhejta 2 copy -> consumer skip
+
+          Nichod:
+            - server kabhi "yaad" nahi rakhta -> DB ka sent column yaad rakhta
+            - shaq ho to DOBARA bhejo -> event kabhi khota nahi, kabhi kabhi duplicate
+            - duplicate ka ilaaj consumer ke paas: event_id dekh ke skip
+          COMMIT ke baad, user ko jawab jaane se pehle crash -> user dobara dabaye -> IDEMPOTENCY KEY
+            (checkout pe bani) -> wahi purana order, naya nahi
+
+          Misaal: courier wala register. Parcel register me likha hai par "dispatched" tick nahi -> dobara
+          bhej deta. Customer ke ghar pe guard (consumer) parcel number dekh ke "ye aa chuka" -> lauta deta.
 DHYAAN:   yahan OFFSET ka jawab nahi chalta. Offset = CONSUMER side (kaam ke baad aage badhao).
           Is sawaal me event Kafka tak PAHUNCHA HI NAHI -> koi offset hai hi nahi -> ilaaj PRODUCER side = outbox.
 BOL:      "The API only returns 'order placed' after the transaction commits. A crash before commit rolls back
