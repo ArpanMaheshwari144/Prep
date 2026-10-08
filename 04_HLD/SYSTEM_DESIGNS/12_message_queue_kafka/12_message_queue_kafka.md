@@ -335,14 +335,28 @@ BOL:      "I commit the offset only after the SMS is sent, so a crash means the 
            duplicates - and a message that keeps failing goes to a DLQ."
 
 POOCHEGA: "The order is saved but the server crashes before sending the event. Now what?"
-MISAAL 2 (producer crash, e-commerce): OUTBOX, DB ke SAATH, EK transaction:
-          BEGIN -> INSERT order -> INSERT outbox_event -> COMMIT ; relay -> outbox padhe -> Kafka -> "sent"
-          "order placed" user ko COMMIT ke BAAD hi
+MISAAL 2 (producer crash, e-commerce, order #101): OUTBOX, DB ke SAATH, EK transaction
+          DB = orders table + outbox table (event_id | payload | sent)      Kafka = topic "order-events"
+          A BEGIN · B INSERT orders(101) · C INSERT outbox(E-101, sent=false) · D COMMIT
+          --- relay (alag thread, har ~1 sec) ---
+          E outbox se sent=false row -> Kafka.send(E-101) · F Kafka ACK · G UPDATE sent=true
+          "order placed" user ko COMMIT (D) ke BAAD hi
+
+CRASH KAHAN HUA -> restart pe server memory se kuch nahi jaanta, sirf DB ka `sent` dekhta:
+          crash kahan          DB me kya              Kafka me kya   restart pe           natija
+          1 D se pehle         kuch nahi (rollback)   kuch nahi      kuch nahi            user ko error, dobara karega
+          2 D ke baad, E se    order + sent=false     kuch nahi      relay bhejta         late, par pahuncha
+            pehle
+          3 F ke baad, G se    order + sent=false     1 copy         relay PHIR bhejta    2 copy -> consumer E-101
+            pehle                                                                         register me dekh ke skip
+          D ke baad, user ko jawab jaane se pehle crash -> user dobara dabaye -> IDEMPOTENCY KEY (checkout pe bani)
+            -> wahi purana order, naya nahi
+          NICHOD: server "yaad" nahi rakhta, DB ka `sent` rakhta. Shaq ho to DOBARA bhejo (khota kabhi nahi,
+            duplicate kabhi kabhi) -> duplicate ka ilaaj CONSUMER pe (event_id dedup).
+          MISAAL: courier register — parcel likha hai par "dispatched" tick nahi -> dobara bhejo; ghar ka guard
+            parcel number dekh ke "ye aa chuka" -> lauta do.
 DHYAAN:   yahan OFFSET ka jawab nahi chalta. Offset = CONSUMER side (kaam ke baad aage badhao).
           Is sawaal me event Kafka tak PAHUNCHA HI NAHI -> koi offset hai hi nahi -> ilaaj PRODUCER side = outbox.
-          commit se PEHLE crash -> rollback (dono nahi) -> error -> user dobara
-          commit ke BAAD, jawab se pehle crash -> dono saved, relay bhejega; user dobara dabaye -> IDEMPOTENCY KEY
-          (checkout pe bani) -> wahi purana order
 BOL:      "The API only returns 'order placed' after the transaction commits. A crash before commit rolls back
            both the order and the outbox row, so the user sees an error and retries. A crash after commit
            leaves both saved, the relay still sends the event, and an idempotency key stops the retry from
