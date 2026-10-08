@@ -51,10 +51,11 @@ flowchart TD
 ## DIKKAT 1 — do log ne saath save kiya, baad wale ne pehle ka MITA diya
 
 ```
-DIKKAT:   A "HELLO WORLD" save · B "HELLO THERE" save -> A ka kaam GAYAB = LAST-WRITE-WINS, collab me fail
+DIKKAT:   do log ne ek saath poora doc save kiya, baad wale ne pehle wale ka kaam mita diya
+          (LAST-WRITE-WINS) — collaboration me nahi chalta
 
-SOLUTION: poora TEXT mat bhejo — sirf OPERATION bhejo
-          A: { insert "X", position 0 } · B: { delete position 5 } -> dono apply ho sakte, kisi ka khoya nahi
+SOLUTION: poora TEXT mat bhejo, sirf OPERATION bhejo ("yahan ye daala", "yahan se ye hataya").
+          Dono ke operation apply ho sakte, kisi ka likha nahi khota.
 
 NAYA:     koi dabba nahi — data ki shakal badli (text -> operation)
 ```
@@ -67,6 +68,9 @@ flowchart TD
     n_App --> n_DB
 ```
 ```
+BOARD PE: A "HELLO WORLD" save · B "HELLO THERE" save -> A ka kaam gayab
+          A: { insert "X", position 0 } · B: { delete position 5 }
+
 DHYAAN:   Last-Write-Wins (3-Sep mock ki galti) -> kisi ka likha KHO jaata
 
 AGLA SAWAAL (tere jawab se):
@@ -82,11 +86,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — B ko A ka edit kab dikhega? refresh pe?
 
 ```
-DIKKAT:   HTTP request-response se server khud nahi bhej sakta
+DIKKAT:   B ko A ka edit kab dikhega — refresh karne pe? Normal HTTP me server khud nahi bhej sakta.
 
-SOLUTION: WEBSOCKET — do-tarfa zinda connection, dono taraf se push
-          do-tarfa chahiye: user type bhi karta, doosron ke edit receive bhi
-          (sirf server -> client hota to SSE halka padta)
+SOLUTION: WEBSOCKET: do-tarfa zinda connection, dono taraf se kabhi bhi bhej sakte. Do-tarfa chahiye
+          kyunki user type bhi karta aur doosron ke edit bhi leta. (Sirf server se client hota to SSE halka
+          padta.)
 
 BADLA:    App -> Conn-Server (connection server: user ka WebSocket pakad ke rakhta)
 
@@ -117,12 +121,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — ek Conn-Server itne socket nahi jhelta -> kai lagaye -> A server-1 pe, B server-2 pe
 
 ```
-DIKKAT:   memory / file-descriptor ki had -> kai Conn-Server (aage LB)
-          par ek doc ke do editor ALAG box pe -> dono ek doosre ko jaante hi nahi
+DIKKAT:   ek Conn-Server itne connection nahi jhelta -> kai lagaye. Par ek doc ke do editor alag box
+          pe — dono box ek doosre ko jaante hi nahi.
 
-SOLUTION: REDIS PUB/SUB (server-to-server fanout)
-          A -> Conn-Server-1 -> publish -> Redis pub/sub -> Conn-Server-2 -> B
-          WebSocket = browser tak · pub/sub = server se server (do alag kaam)
+SOLUTION: REDIS PUB/SUB — server se server tak bhejne ke liye. A ka edit uske server se Redis pe
+          publish hota, Redis us doc ko sun rahe saare servers ko deta, wo apne users ko.
+          WebSocket = browser tak, pub/sub = server se server — do alag kaam.
 
 NAYA:     LB · Redis pub/sub
 BADLA:    Conn-Server ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
@@ -156,6 +160,8 @@ flowchart TD
     n_Conn_Server_x_N_2 --> n_DB
 ```
 ```
+BOARD PE: A -> Conn-Server-1 -> publish -> Redis pub/sub -> Conn-Server-2 -> B
+
 AGLA SAWAAL (tere jawab se):
   "Us waqt koi server sun nahi raha tha (restart ho raha tha) -> message gaya?"
    -> haan, pub/sub me gaya. Par edit DB / log me hai: client reconnect pe apna version bataye,
@@ -169,17 +175,15 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — dono ne EK SAATH position 0 pe type kiya
 
 ```
-DIKKAT:   base "HELLO" · A insert("X", 0) · B insert("Y", 0) ek hi waqt
-          seedha apply -> A ke paas "XHELLO", B ke paas "YHELLO" = DO ALAG DOC, diverge
+DIKKAT:   dono ne ek saath ek hi jagah type kiya -> seedha apply kiya to dono ke paas alag doc ban gaya
+          (diverge)
 
-SOLUTION: OPERATIONAL TRANSFORMATION (OT) — winner mat chuno, TRANSFORM karo
-          A ke paas: A apply "XHELLO" -> B ka op aaya (pos 0), A pehle 0 pe daal chuka
-                     -> B ka op SHIFT pos 0 -> 1 -> insert("Y", 1) -> "XYHELLO"
-          B ke paas: B apply "YHELLO" -> A ka op aaya, tie-break: A pehle -> insert("X", 0) -> "XYHELLO"
-          DONO "XYHELLO" — converge, dono akshar bache, kuch lost nahi
-          XY vs YX = deterministic tie-break (userId / timestamp), par dono zinda
-          CRDT = doosra raasta: har char ki unique id / position -> merge commutative, central transform nahi
-          (implement nahi karna — bas ye samajh bolni hai)
+SOLUTION: OPERATIONAL TRANSFORMATION (OT): kisi ek ko jeetne mat do — doosre ke operation ko TRANSFORM
+          karo. A pehle hi us jagah kuch daal chuka, to B ka operation ek jagah aage khiska do. Dono taraf
+          same niyam -> dono ke paas ek hi doc, dono ke akshar bache.
+          Kiska pehle aaye, ye ek fixed niyam se (userId / time) — par dono zinda rehte.
+          CRDT doosra raasta: har akshar ki apni unique id, merge kisi bhi kram me same nikalta, central
+          transform nahi chahiye. (Implement nahi karna, bas samajh bolni hai.)
 
 NAYA:     koi dabba nahi — Conn-Server me OT
 
@@ -204,6 +208,11 @@ flowchart TD
     n_Conn_Server_x_N_2 --> n_DB
 ```
 ```
+BOARD PE: base "HELLO" · A insert("X", 0) · B insert("Y", 0) ek saath
+          seedha apply -> A: "XHELLO", B: "YHELLO" = diverge
+          A ke paas: B ka op shift 0 -> 1 -> insert("Y", 1) -> "XYHELLO"
+          B ke paas: tie-break A pehle -> insert("X", 0) -> "XYHELLO"   -> dono same
+
 POOCHEGA: "Two people type at the same position at the same time — what happens?"
 BOL:      "I send operations, not snapshots, and transform concurrent operations with OT or merge them with a
            CRDT. Everyone converges to the same document and no write is lost."
@@ -221,14 +230,15 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — har keystroke pe DB hit
 
 ```
-DIKKAT:   har akshar = ek write · 40M DAU x har keystroke -> DB khatam
+DIKKAT:   har keystroke pe DB write -> crore users ke har akshar se DB khatam
 
-SOLUTION: BUFFER + BATCH: op -> Redis buffer me jama -> thodi der me BATCH -> NoSQL edit log
-          real-time hissa memory / pub-sub se, DB me batch — user wait nahi, DB pe hathoda nahi
-          EDIT LOG = Cassandra: partition key = docId, clustering = version (server ka diya seq no., "ek doc ke saare edit, kram me")
-          timestamp NAHI: same ms pe do op = same key = Cassandra chupchap OVERWRITE (upsert) -> op kho jaata
-          batch ke baad bhi bada -> docId se SHARD (ek doc ke saare op ek shard)
-          replica sirf READ baantti, write ke liye SHARD · country / date = bura key (skew)
+SOLUTION: BUFFER + BATCH: operation pehle Redis buffer me jama, thodi der me ek saath batch me DB
+          (edit log) me. Live dikhana memory / pub-sub se, DB me batch — user ruke nahi, DB pe hathoda nahi.
+          Edit log CASSANDRA me: ek doc ke saare edit ek jagah, version number ke kram me (server deta).
+          Timestamp nahi — ek hi millisecond pe do operation = same key = Cassandra chupchap overwrite,
+          operation kho jaata.
+          Batch ke baad bhi bada -> docId se SHARD (ek doc ke saare operation ek shard pe).
+          Replica sirf read baantti, write ke liye shard.
 
 NAYA:     Redis buffer (edits thodi der jama, phir ek saath DB me)
 BADLA:    DB -> Cassandra edit log (docId shard)
@@ -259,6 +269,8 @@ flowchart TD
     n_Redis_buffer --> n_Cassandra_edit_log
 ```
 ```
+BOARD PE: partition key = docId · clustering = version (server ka seq no.)
+
 POOCHEGA: "The database takes too many writes. What do you do?"
 DHYAAN:   (mock galti) "consistency chahiye = SQL" -> NAHI, DB data ki SHAKAL se aata · "relations nahi" -> NoSQL ki taraf
           (mock galti) har keystroke DB hit -> nahi, buffer + batch
@@ -283,10 +295,10 @@ BOL:      "Redis is replicated, but replication is async, so I don't ack an op u
 ## DIKKAT 6 — doc kholne pe 10 lakh operation replay
 
 ```
-DIKKAT:   doc = saare ops kram se apply -> 10 lakh op = kholna SLOW
+DIKKAT:   doc kholne pe shuru se saare operation (laakhon) dobara chalane padte -> kholna slow
 
-SOLUTION: SNAPSHOT (poora text, har X ops baad) + uske baad ke thode ops
-          doc load = latest snapshot + baad ke ops apply (append log + periodic compaction ka funda)
+SOLUTION: SNAPSHOT: har kuch hazaar operation ke baad poora text save kar lo. Doc kholna = aakhri
+          snapshot + uske baad ke thode operation. (Append log + kabhi-kabhi compaction wala funda.)
 
 NAYA:     koi dabba nahi — edit log ke saath snapshot
 ```
@@ -322,15 +334,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — network ek second blip hua: typing ruk jaayegi?
 
 ```
-DIKKAT:   CAP — partition pe kya chunein
+DIKKAT:   network ek second ko toota — typing ruk jaayegi? CAP me kya chunein?
 
-SOLUTION: pehli soch "consistency chahiye -> CP" = GALAT nikli (3-Sep mock)
-          CP rakha to partition pe TYPING RUKEGI · asli Docs me offline bhi type, baad me sync -> ye AP
-          "sabko same doc" strong consistency se nahi, CONVERGENCE (OT / CRDT) se
-          PER-COMPONENT CAP (poore system pe ek CAP nahi):
-             doc edits             -> AP (available, append log, OT se converge)
-             permissions / owner   -> CP (hataye gaye user ko TURANT block) -> alag SQL store
-          CAP ka faisla SIRF partition ke waqt; partition nahi to dono milte
+SOLUTION: pehli soch thi "consistency chahiye -> CP" — galat nikli (3-Sep mock). CP rakha to network
+          toot-te hi typing rukegi. Asli Docs me offline bhi type kar sakte, baad me sync -> ye AP hai.
+          "Sabko ek jaisa doc" strong consistency se nahi, CONVERGENCE (OT / CRDT) se aata hai.
+          Poore system ka ek CAP nahi — har hissa alag: doc edits = AP (available, OT se mil jaate).
+          Permissions / owner = CP (jise hataya use TURANT rokna) -> alag SQL store.
+          CAP ka faisla sirf network toot-ne ke waqt; network theek ho to dono milte.
 
 NAYA:     SQL (permissions / ownership)
 ```
@@ -374,18 +385,17 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — crore WebSocket connection
 
 ```
-DIKKAT:   kai Conn-Server aa chuke, par crore connection sahi baantne hain
+DIKKAT:   crore WebSocket connection sahi tarah baantne hain
 
-SOLUTION: (1) alag CONNECTION TIER — sirf socket pakadne wale, alag scale
-              connection STATEFUL -> LB CONSISTENT ROUTING (user usi server pe wapas)
-          (2) SHARD KEY = docId — ek doc ke saare editor + op stream + OT EK shard pe (OT serialize hona chahiye)
-              alag doc -> alag shard -> load bata
-              pub/sub ab bhi kyun: reconnect / box badalne ke beech koi doosre box pe aa sakta -> uska bachav
-              (routing pakka ho to pub/sub ka kaam bahut kam)
-          (3) hot doc bounded (Google ~100 editor ki cap) -> per-doc OT ek server pe theek
-          (4) spike -> queue absorb · Redis pub/sub replicate + horizontally scale
-          (5) app ki static files -> CDN
-          KRAM: SERVER deta (har op ko doc ka agla version / sequence number), client ki ghadi nahi
+SOLUTION: (1) alag CONNECTION tier — sirf connection pakadne wale servers, alag scale. Connection
+          stateful hai, to LB user ko hamesha usi server pe bheje.
+          (2) docId se baanto: ek doc ke saare editor aur unka OT ek hi server pe (OT ek jagah kram se
+          chalna chahiye). Alag doc alag server -> load bata. Pub/sub ab bhi rakho: reconnect me koi
+          doosre box pe aa gaya to wahi bachata.
+          (3) ek doc pe editor ki had hoti (Google ~100), to ek doc ka OT ek server pe theek.
+          (4) spike -> queue jhele, Redis pub/sub replicate aur scale.
+          (5) app ki static files CDN se.
+          Kram SERVER deta (har operation ka agla version number), client ki ghadi nahi.
 
 NAYA:     CDN
 BADLA:    LB -> LB (docId se consistent routing)
