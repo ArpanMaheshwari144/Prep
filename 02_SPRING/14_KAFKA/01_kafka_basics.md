@@ -351,6 +351,12 @@ public NewTopic deadLetterTopic() {
 }
 ```
 > auto `KafkaAdmin` startup pe `NewTopic` bean khud bana deta.
+>
+> ★ DHYAAN (partition): `DeadLetterPublishingRecoverer` default me message ko DLT ke USI partition number pe bhejta
+>   jis partition se aaya tha (P2 ka message -> `user-events-dlt-2`). Section 7B me `user-events` 3 partition ka
+>   ho gaya, par DLT 1 partition ka hai -> P1 / P2 se gira message publish nahi hoga. Ilaaj: DLT ko bhi utne hi
+>   partition do (`new NewTopic("user-events-dlt", 3, (short) 1)`) ya recoverer me destination resolver de ke
+>   partition 0 pe bhejo. (Spring Kafka docs ka niyam; 7e ka live test 1-partition wale time ka tha.)
 
 ### 7d. ★ GOTCHA — DLT topic ka NAAM (galti jo pakdi)
 Pehle socha default naam `user-events.DLT` hoga. **GALAT.** Log ne sach dikhaya:
