@@ -151,13 +151,11 @@ DIKKAT:   A ek server pe, B doosre server pe. Har server ko sirf apne jude logon
 SOLUTION: teen raaste — ek bekaar, do asli:
           1. har message pe saare servers se poochho -> kharij (bolo aur khud kharij karo — dikhta hai socha).
           2. SAANJHI DIARY (Redis): "B kis server pe" — sirf pata, connection nahi. Mera server Redis se
-          poochhe,
-          us server ko seedha call kare, wo apni local diary se B ki connection pe daale. Connection kabhi Redis
-          me nahi (zinda taar, sirf usi server ki memory me). Server mara aur entry padi reh gayi -> TTL +
-          heartbeat.
+          poochhe, us server ko seedha call kare, wo apni local diary se B ki connection pe daale.
+          Connection kabhi Redis me nahi (zinda taar, sirf usi server ki memory me). Server mara aur entry
+          padi reh gayi -> TTL + heartbeat.
           3. PUB-SUB: B ka server "B" ka channel sunta, mera server us channel pe daalta — bhejne wale ko
-          pata hi
-          nahi chahiye B kahan. Par Redis pub-sub bhej ke bhool jaata (koi na sun raha = gaya), to offline iske
+          pata hi nahi chahiye B kahan. Par Redis pub-sub bhej ke bhool jaata (koi na sun raha = gaya), to offline iske
           bharose nahi.
           Asli me mel: kaun kahan = Redis · server se server = seedhi call / pub-sub · offline = DB + push.
 

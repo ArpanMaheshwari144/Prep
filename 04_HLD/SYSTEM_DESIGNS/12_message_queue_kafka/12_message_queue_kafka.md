@@ -452,8 +452,7 @@ SOLUTION: consumer mara to uski heartbeat band hoti, group coordinator (ek broke
           Purana rebalance poore group ko thodi der rok deta; naya (cooperative) sirf badli partitions
           rokta. Phir bhi baar-baar restart / deploy mat karo.
           Peeche chalna CONSUMER LAG se dikhta (production ka sabse zaroori metric — tera 700-ticket zone):
-          latest offset minus padha hua offset. Badh raha ->
-          consumer badhao (partitions tak) aur alert lagao.
+          latest offset minus padha hua offset. Badh raha -> consumer badhao (partitions tak) aur alert lagao.
           Koi message baar-baar fail -> backoff ke saath retry, N baar ke baad DEAD-LETTER topic me.
           Baaki atke nahi, DLQ alag dekho ya replay karo. (usercrud me khud lagaya hai.)
 
