@@ -2168,13 +2168,18 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      get(key):  mp.count(key)==0 -> -1.  warna: Node* node = mp[key]; removeNode(node); addFront(node); return node->val;
      put(k,v):  hai  -> node->val=v  -> removeNode + addFront.   ★ DONO, get() jaisa (neeche TRAP-4)
-                naya -> FULL? tail->prev(=LRU) removeNode + mp.erase(uski key); phir new node addFront + mp[k]=node.
+                naya -> FULL? Node* lru = tail->prev;  removeNode(lru);
+                              mp.erase(lru->key);          // ★ KEY se (map key se dhoondhta). ->val NAHI (TRAP-5)
+                       phir new node addFront + mp[k]=node.
 
      TRAP: (1) mp[key] missing pe CHUP-CHAAP entry INSERT -> check ke liye mp.count()/find(). (C++ jaal)
            (2) DLL rewire: overwrite se PEHLE temp me pakdo (nxt).  (3) ctor me type-dobara = shadowing (naya local).
            (4) ★ (24-Sep, base + REDO_1 dono me tha) put() me key pehle se ho to sirf addFront kiya, removeNode NAHI
                -> node purani jagah pe BHI juda reh gaya, tail->prev use hi dekhta -> jo abhi update hua wahi evict.
                cap=2: put1, put2, put(1,10), put3 -> get(1) = -1 aaya (sahi 10), get(2) = 2 (sahi -1).
+           (5) mp.erase(lru->val) likha -> map me val naam ki key hi nahi, kuch nahi hata -> gaya hua key
+               get() pe wapas milta (100 aata, sahi -1), mp.size() badhta rehta -> aage evict hi band.
+               test me key == val ho (1,1 · 2,2) to ye chhup jaata -> test me key != val rakho (1,100).
 ```
 
 ---
