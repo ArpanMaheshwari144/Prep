@@ -90,15 +90,15 @@ flowchart TD
 ## DIKKAT 1 — 2 crore connection KHULI, har ek memory kha rahi
 
 ```
-DIKKAT:   har connection: file descriptor (OS khaata, ginti limited) + socket ke DO buffer (kernel) + app object
-          ~10-50 KB · 1 lakh x ~30 KB = ~3 GB sirf HAATH PAKADNE me · 2 crore / 1 lakh = ~200 server
+DIKKAT:   crore connection khuli rehti, aur har ek memory khaati — OS ka file descriptor, socket ke buffer,
+          app ka object. Sirf haath pakad ke rakhne me hi GB chale jaate, isliye sau-do sau server.
 
-SOLUTION: (a) THREAD model badlo: event loop (Netty type), kuch thread, laakhon connection
-          (b) SERVER GIRA -> 1 lakh ek saath wapas -> baaki pe jhatka + register dobara
-              -> client reconnect me BACKOFF + JITTER (recovery spike: FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md)
-          (c) DEPLOY dard: REST restart = kuch retry · chat restart = 1 lakh disconnect
-              -> thode-thode server, connection pehle hatao (DRAINING)
-          aage LB connection ko kisi chat server pe bithaye
+SOLUTION: (a) thread model badlo: EVENT LOOP (Netty jaisa) — kuch hi thread, laakhon connection.
+          (b) server gira to uske lakh user ek saath wapas aate -> baaki servers pe jhatka. Client reconnect
+          me BACKOFF + JITTER. (FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md)
+          (c) deploy ka dard: REST restart me kuch retry, chat restart = lakh disconnect -> thode-thode server
+          karke, pehle connection hatao (DRAINING).
+          Aage LB connection ko kisi chat server pe bithata.
 ★ DEKHA:  server ki ginti jaan-boojh ke TEEN rakhi. Do khuli connection ne do jagah pakdi, teesri bhi bhari —
           send request server tak PAHUNCHI HI NAHI. Console pe `[JUDA]` teen, `[SEND]` EK BHI nahi.
           Na error, na crash, CPU khaali. Bas jagah khatam. Khuli connection bina kuch kiye jagah gherti — dekha.
@@ -123,6 +123,8 @@ flowchart TD
     n_LB --> n_Chat_Server_x_200_2
 ```
 ```
+BOARD PE: ek connection ~10-50 KB · 1 lakh x ~30 KB = ~3 GB · 2 crore / 1 lakh = ~200 server
+
 POOCHEGA: "What happens if a chat server goes down?"
 BOL:      "Its connections drop and clients reconnect to another server with backoff and jitter, so they don't
            stampede. No message is lost — it was written to the database before delivery — and on reconnect the
@@ -140,21 +142,20 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — A server-1 pe, B server-7 pe: server-1 ki diary me B hai hi nahi
 
 ```
-DIKKAT:   server-1 diary {A -> penA} · server-7 {B -> penB} · A ka message server-1 -> "B OFFLINE"
-          jabki B ONLINE hai, bas doosre server pe · har server ko sirf apne judne walon ka pata
+DIKKAT:   A ek server pe, B doosre server pe. Har server ko sirf apne jude logon ka pata — A ke server ko
+          laga B offline hai, jabki B online tha, bas doosre server pe.
 ★ DEKHA:  wahi program do port pe. A pehle pe, B doosre pe. A ki screen `(server bola: B OFFLINE hai)` —
           B us waqt bilkul online, connection khuli. Ek diary me `[A]`, doosri me `[B]`.
 
-SOLUTION: teen raaste — ek bekaar, DO asli:
-          1. SAB SE POOCHHO (har message pe 199 sawaal) -> KHARIJ (bolo aur khud kharij karo — dikhta hai socha)
-          2. SAANJHI DIARY (Redis presence / routing): B -> server-7 (sirf PATA, pen NAHI)
-             server-1 Redis se "B kahan?" -> server-7 -> seedhi call -> server-7 local diary se penB
-             pen KABHI Redis me nahi (zinda taar, sirf usi server ki memory)
-             server-7 mara, entry padi -> TTL + dhadkan
-          3. PUB-SUB (Redis pub-sub / Kafka): server-7 channel "user-B" sunta · server-1 us channel pe daalta
-             faayda: bhejne wale ko pata hi nahi chahiye B kahan · nuksaan: Redis pub-sub bhej ke BHOOLTA
-             (koi na sun raha = gaya) -> OFFLINE iske bharose nahi
-          ASLI = MEL: kaun kahan -> Redis routing · server se server -> seedhi call / pub-sub · offline -> DB + push
+SOLUTION: teen raaste — ek bekaar, do asli:
+          1. har message pe saare servers se poochho -> kharij (bolo aur khud kharij karo — dikhta hai socha).
+          2. SAANJHI DIARY (Redis): "B kis server pe" — sirf pata, connection nahi. Mera server Redis se poochhe,
+          us server ko seedha call kare, wo apni local diary se B ki connection pe daale. Connection kabhi Redis
+          me nahi (zinda taar, sirf usi server ki memory me). Server mara aur entry padi reh gayi -> TTL + heartbeat.
+          3. PUB-SUB: B ka server "B" ka channel sunta, mera server us channel pe daalta — bhejne wale ko pata hi
+          nahi chahiye B kahan. Par Redis pub-sub bhej ke bhool jaata (koi na sun raha = gaya), to offline iske
+          bharose nahi.
+          Asli me mel: kaun kahan = Redis · server se server = seedhi call / pub-sub · offline = DB + push.
 
 NAYA:     Redis (presence / routing + pub-sub)
 ```
@@ -172,6 +173,9 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Redis
 ```
 ```
+BOARD PE: server-1 diary {A -> penA} · server-7 {B -> penB} · A ka message server-1 pe -> "B OFFLINE"
+          Redis: B -> server-7 -> server-1 seedha server-7 ko -> penB
+
 AGLA SAWAAL (tere jawab se):
   "Redis routing diary me B ka server galat (B abhi khiska)?"
    -> server-7 pe B nahi mila -> message DB me pada hi hai -> B ke naye server pe judte hi catch-up
@@ -184,19 +188,16 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — B offline: pen hi nahi, message jaaye kahan?
 
 ```
-DIKKAT:   GALAT soch: pehle B ko bhejo, na pahunche to DB
-          pen hona sanyog hai, message khona chalega hi nahi
+DIKKAT:   B offline hai, connection hi nahi — message jaaye kahan? Galat soch: pehle B ko bhejo, na
+          pahunche to DB. Connection hona sanyog hai, message khona chalega hi nahi.
 
-SOLUTION: SAHI: pehle DB me LIKHO, PHIR bhejne ki koshish
-          /send: 1. ID do + DB me LIKHO (yahan tak PAKKA)
-                 2. B juda -> us server tak, pen me · nahi juda -> DB me pada + phone pe GHANTI (push notification)
-          offline me "kho gaya" hota hi nahi — likha ja chuka, uthaya nahi gaya
-          B WAPAS: "mere paas aakhri id 4417, uske BAAD ka do" -> 4418 se aage · NISHAAN CLIENT rakhta
-                   (Kafka hands-on wala offset — "padhne wala apna nishaan khud rakhta")
-          B poochhta kab: JUDTE waqt EK BAAR (catch-up) · judne ke baad CHUP, server taar me daalta
-                   polling: har 5 sec "kuch aaya?" = 100 request, 1 kaam ki · chat: 1 request, phir jitne message
-          PUSH ALAG RAASTA: pen = tera server -> app (app khula ho) · ghanti = tera server -> Google / Apple -> phone OS
-                   app band, phone jeb me -> ghanti phir bhi (OS se jaata)
+SOLUTION: sahi kram: pehle DB me LIKHO, PHIR bhejne ki koshish. Message ko ID do aur DB me likho — yahan tak
+          pakka. B juda hai to us tak bhejo; nahi juda to DB me pada rahega + phone pe ghanti (push notification).
+          Offline me "kho gaya" hota hi nahi — likha ja chuka, bas uthaya nahi gaya.
+          B wapas aaya to bolta "mere paas aakhri id ye hai, uske baad ka do" — nishaan client rakhta (Kafka offset
+          jaisa). B judte waqt ek baar poochhta (catch-up), uske baad server khud bhejta — polling nahi.
+          Push alag raasta: connection = app khula ho tab. Ghanti = Google / Apple ke through phone OS tak, app
+          band ho tab bhi.
 
 NAYA:     Message store · Push (Google / Apple)
 
@@ -225,6 +226,10 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
 ```
 ```
+BOARD PE: /send: 1 ID + DB me likho (pakka) · 2 B juda -> pen me · nahi -> DB + push
+          B wapas: "aakhri id 4417, uske BAAD ka do" -> 4418 se aage
+          polling: har 5 sec "kuch aaya?" = 100 request, 1 kaam ki
+
 POOCHEGA: "How do you make sure no message is lost?"
 DHYAAN:   beech me Kafka ho: producer acks=all · offset kaam ke BAAD · message id se idempotent · fail -> DLQ
 BOL:      "I write the message to the database first and only then try to deliver it. If the receiver is offline
@@ -243,19 +248,19 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — 1.2 TB roz aur 46,000 write / sec: ek DB box nahi
 
 ```
-DIKKAT:   kis cheez se baantein?
+DIKKAT:   roz ~1 TB aur hazaaron write / sec — ek DB box nahi jhelega. Kis cheez se baantein?
 
-SOLUTION: padhne ka tareeka batata: chat me sirf "is chat ke aakhri 50 do" / "uske pehle 50" — join, report, search nahi
-          PARTITION KEY = chat_id (kis dabbe) · SORT KEY = message_id (dabbe ke andar kram) -> "aakhri 50" EK disk read
-          user_id se baante to ek baatcheet A aur B DO jagah — chat dono ki saanjhi, chat ka apna dabba
-          MESSAGE ID: auto-increment = ek counter, 200 server, bottleneck · SNOWFLAKE = har server khud, time se bada
-                      (FOUNDATIONS/13_distributed_id_snowflake.md) · ek ID = kram + cursor
-                      WHERE chat_id = ? AND id < 4417 ORDER BY id DESC LIMIT 50 (keyset; OFFSET 200000 ghatak, banking wali baat)
-          KAUNSA DB: likhai bahut, padhai saadi · partition key pe SORTED · node jodo -> likhai jhele -> WIDE-COLUMN (Cassandra / Scylla)
-                     relational kyun NAHI (banking me kyun THA): banking = multi-row atomicity + balance >= 0 constraint
-                     chat = ek message ek row, kisi se lena-dena nahi, constraint nahi · 1.2 TB roz table ka index har insert pe
-          PURANA: WhatsApp model = pahunchte hi DELETE (storage ~zero) · Slack = hamesha, COLD storage me khiskao
-                  (isliye ye sawaal SHURU me) · retention != sharding (size vs abhi ka write load)
+SOLUTION: padhne ka tareeka batata: chat me bas "is chat ke aakhri 50" / "uske pehle 50" — join, report,
+          search nahi. To chat_id se baanto (PARTITION KEY), chat ke andar message_id se kram (SORT KEY) —
+          "aakhri 50" ek hi jagah se.
+          user_id se baante to ek baatcheet do jagah. Chat dono ki saanjhi hai, uska apna dabba.
+          Message ID: auto-increment = ek counter, sab server uspe atkenge. SNOWFLAKE = har server khud banata,
+          time ke saath badhta (FOUNDATIONS/13_distributed_id_snowflake.md). Wahi ID kram bhi, cursor bhi.
+          DB: likhai bahut, padhai saadi, key pe sorted, node jodo to likhai jhele -> WIDE-COLUMN (Cassandra /
+          Scylla). Relational kyun nahi (banking me tha): wahan kai rows ek saath atomic + balance constraint.
+          Chat me ek message ek row, kisi se lena-dena nahi.
+          Purana: WhatsApp pahunchte hi delete karta (storage lagbhag zero), Slack hamesha rakhta -> cold storage.
+          Isliye ye sawaal shuru me poochho. Retention != sharding.
 
 BADLA:    Message store -> Cassandra (chat_id partition, message_id sort)
 NAYA:     Cold storage
@@ -289,6 +294,9 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 ```
+BOARD PE: ~1.2 TB roz · ~46,000 write / sec
+          WHERE chat_id = ? AND id < 4417 ORDER BY id DESC LIMIT 50   (keyset; OFFSET 200000 ghatak)
+
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
 BOL:      "Wide-column store partitioned by chat id and sorted by a snowflake message id, so the last fifty messages
            of a chat are one read and writes spread across nodes. Old data moves to cold storage."
@@ -314,13 +322,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — 500 ka group: ek message, likhai 500 baar?
 
 ```
-DIKKAT:   har member ke inbox me copy?
+DIKKAT:   500 logon ka group — ek message ke liye 500 jagah likhna?
 
-SOLUTION: A. HAR MEMBER KE INBOX ME COPY (fan-out on write) -> 500 row, padhna sasta = TWITTER wala tareeka
-          B. EK HI COPY chat_id ke neeche (fan-out on read) -> 1 row, sab wahi padhein   <- CHAT ME B
-          twitter se ULTA kyun: (1) twitter feed = 200 logon ki MILAWAT, pehle banani padti · chat ka group sabke liye
-                                 EK JAISA, copy se kuch nahi milta · (2) twitter 10 crore follower, chat 500
-          MESSAGE ek baar likho · BHEJNA = register me har member, uske raaste me (500 socket write saste, DB write EK)
+SOLUTION: do raaste: (A) har member ke inbox me copy (fan-out on write) — 500 likhai, padhna sasta,
+          Twitter wala tareeka. (B) EK hi copy chat ke neeche (fan-out on read) — sab wahi padhein. Chat me B.
+          Twitter se ulta kyun: Twitter ki feed 200 logon ki milawat hai, pehle banani padti. Chat ka group
+          sabke liye ek jaisa, copy se kuch nahi milta. Aur Twitter me crore follower, chat me 500.
+          Message ek baar likho. Bhejna = register se har member ki connection pe (connection pe likhna sasta,
+          DB likhai ek).
 
 NAYA:     koi dabba nahi
 ```
@@ -359,14 +368,15 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — 500 member: kiske kitne unread, kahan rakhoge?
 
 ```
-DIKKAT:   har member ki apni haalat
+DIKKAT:   500 member — kiske kitne unread, ye kahan rakhoge? Har member ki apni haalat.
 
-SOLUTION: A. HAR MESSAGE x HAR MEMBER record ("4417 -> Arpan delivered, Suresh read ...")
-             500 x 50 = 25,000 record = 500-guna likhai PEECHE DARWAZE se wapas
-          B. HAR MEMBER EK NISHAAN (cursor): "Arpan is group me 4417 tak padh chuka" -> 500 row
-             unread = 4417 ke BAAD kitne (sasta; cursor = per-chat SEQ, DIKKAT 10 wala — snowflake id me gap hota, ghatane se ginti nahi milti)   <- YAHI
-          offline wali baat hi: padhne wala apna nishaan khud rakhta
-          ★ tick ka maamla yahin: "sabko mila" / "sabne padha" ke liye A wala (per message per member) chahiye
+SOLUTION: (A) har message x har member ka record ("ye message Arpan ko mila, Suresh ne padha...") —
+          500-guna likhai peeche ke darwaze se wapas aa gayi.
+          (B) har member ka EK NISHAAN (cursor): "Arpan is group me yahan tak padh chuka". Unread = uske baad
+          kitne. Sasta. Yahi. (Cursor = har chat ka apna +1 wala number, dikkat 10 — snowflake me gap hote,
+          ghatane se ginti nahi milti.)
+          Offline wali hi baat: padhne wala apna nishaan khud rakhta.
+          Tick ke liye ("sabko mila" / "sabne padha") A wala chahiye.
 
 NAYA:     Cursor store (har user ka har chat me "kahan tak padha / mila" wala number)
 ```
@@ -395,6 +405,8 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 ```
+BOARD PE: A: 500 x 50 = 25,000 record · B: 500 row ("Arpan 4417 tak padh chuka")
+
 AGLA SAWAAL (tere jawab se):
   "Unread count kaise (4417 ke baad kitne)?"
    -> chat ka aakhri seq - mera read seq = unread (ghatao, gino nahi). Cursor SEQ pe, message id sirf laane ke liye
@@ -407,16 +419,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — do tick aur neeli tick: server ko pata kaise?
 
 ```
-DIKKAT:   ek tick "server tak" = /send ka JAWAB, sasta
-          do tick "B ke PHONE tak" = server ko KHUD kabhi pata nahi -> B ka app bole "mil gaya"
-          neeli "B ne PADHA" = app tab bole jab chat SCREEN pe khuli
-          EK message = CHHE kaam: A->server · server->B · B->server "mil gaya" · server->A "delivered"
-                                  · B->server "padh liya" · server->A "read" (receipt traffic kai guna)
+DIKKAT:   do tick aur neeli tick — server ko pata kaise? Ek tick (server tak) sasta, wo send ka jawab hai.
+          Do tick (B ke phone tak) server ko khud kabhi pata nahi — B ka app bole "mil gaya". Neeli (padha) —
+          app tab bole jab chat screen pe khuli. Ek message pe chhe kaam — receipt ka traffic kai guna.
 
-SOLUTION: wahi CURSOR: GALAT = har message ka delivered / read flag (50 aaye = 50 ack, 50 push)
-          SAHI = per chat per banda DO number: delivered_upto = 4417 · read_upto = 4410
-          B ne chat kholi, 50 padhe -> EK baat "read_upto 4467" -> A ko EK push -> 50 neeli ek saath
-          ★ teen tick + group unread + offline catch-up = EK hi cheez: ek nishaan aage khiskta
+SOLUTION: wahi CURSOR. Galat: har message ka alag delivered / read flag (50 message = 50 ack, 50 push).
+          Sahi: har chat me har bande ke do number — "yahan tak mila" aur "yahan tak padha". B ne chat kholi,
+          50 padhe -> ek hi baat "yahan tak padha" -> A ko ek push -> 50 neeli ek saath.
+          Teen tick + group unread + offline catch-up = ek hi cheez: ek nishaan aage khiskta.
 
 NAYA:     koi dabba nahi — Cursor store
 ```
@@ -445,6 +455,9 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 ```
+BOARD PE: A->server · server->B · B->server "mil gaya" · server->A "delivered" · B->server "padh liya" · server->A "read"
+          delivered_upto = 4417 · read_upto = 4410 -> B ne 50 padhe -> "read_upto 4467" -> A ko EK push
+
 AGLA SAWAAL (tere jawab se):
   "Do tick ka 'mil gaya' ack hi kho gaya?"
    -> B agli baar judta hai to apna delivered_upto bhejta -> cursor aage, A ko tick
@@ -457,13 +470,13 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — 10 lakh ka broadcast group: tick ka kya?
 
 ```
-DIKKAT:   per-member record 500 pe chalta, 10 lakh pe nahi
+DIKKAT:   10 lakh ka broadcast group — tick ka kya? Har member ka record 500 pe chalta, 10 lakh pe nahi.
 
-SOLUTION: WhatsApp: group me tick, par size BANDHA (~1000) · do tick = sabko mila, neeli = sabne padha
-                    (bade group me neeli dikhti hi nahi) · "Info" me har banda alag = mehnga record SACH me rakhte
-          Channel / broadcast: tick BAND
-          Slack: per-message receipt HAI HI NAHI, sirf per-channel unread (ek cursor)
-          ★ jawab chaturai nahi: feature utna rakho jitna scale jhele, scale badhe to feature HATAO (SEEMA lagao)
+SOLUTION: WhatsApp: group me tick hai, par group ka size bandha hua (~1000). Do tick = sabko mila, neeli =
+          sabne padha (bade group me neeli dikhti hi nahi). "Info" me har banda alag = mehnga record sach me
+          rakhte. Channel / broadcast me tick band. Slack me har message ki receipt hai hi nahi, sirf channel
+          ka unread (ek cursor).
+          Jawab chaturai nahi: feature utna rakho jitna scale jhele; scale badhe to feature hatao (seema lagao).
 
 NAYA:     koi dabba nahi
 ```
@@ -504,14 +517,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 9 — A ka net slow, app ne dobara bheja, B ko EK baat DO baar
 
 ```
-DIKKAT:   5 sec timeout -> DOBARA bheja, pehla pahunch chuka -> do message, do id -> duplicate
-          wahi shakal jo payment me (06_payment_system dikkat 2)
+DIKKAT:   A ka net slow, timeout pe app ne dobara bheja, pehla pahunch chuka tha -> B ko ek baat do baar
+          (do message, do id). Wahi shakal jo payment me.
 
-SOLUTION: IDEMPOTENCY KEY = chat me clientMsgId: { chatId, text, clientMsgId: "a7f3-91" }
-          server: pehle aayi? haan -> naya MAT, purana wapas · nahi -> naya
-          ★ ID CLIENT KYUN BANATA: RETRY bhi client karta. server banata to har retry pe NAYI id -> duplicate rukta hi nahi
-            "jo dobara bhej raha, usi ko pehchaan deni hogi"
-          "pehle aayi?" + insert ek ATOMIC step (UNIQUE constraint / Redis SET key NX EX)
+SOLUTION: IDEMPOTENCY KEY = chat me clientMsgId. Server: ye pehle aayi? Haan -> naya mat banao, purana
+          lautao. Nahi -> naya.
+          ID client kyun banata: retry bhi client karta. Server banata to har retry pe nayi ID -> duplicate
+          rukta hi nahi. "Jo dobara bhej raha, usi ko pehchaan deni hogi."
+          "Pehle aayi?" + insert ek atomic step (unique constraint / Redis SET NX).
 
 NAYA:     Idempotency check (clientMsgId pehle aaya? to naya message mat banao)
 ```
@@ -542,6 +555,8 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 ```
+BOARD PE: { chatId, text, clientMsgId: "a7f3-91" }
+
 POOCHEGA: "What if the client retries and sends the same message twice?"
 BOL:      "The client generates a clientMsgId and reuses it on retry; the server claims it atomically and returns
            the existing message instead of creating a second one."
@@ -558,19 +573,20 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 10 — kram kis se tay hoga, kiska time maanoge?
 
 ```
-DIKKAT:   DO alag sawaal (log milate): (1) EK chat ke andar kram (A ke teen, isi kram me)
-                                        (2) DO logon ke beech (A aur B saath — kiska pehle?)
-          (2) asal me sawaal hi nahi: jo server pe pehle pahuncha — manmaana, par sabko EK dikhta, itna kaafi
+DIKKAT:   kram kis se tay hoga, kiska time maanoge? Do alag sawaal hain: (1) ek chat ke andar kram
+          (A ke teen message isi kram me). (2) do logon ke beech kiska pehle — ye asal me sawaal hi nahi: jo
+          server pe pehle pahuncha, sabko ek jaisa dikhe, itna kaafi.
 
-SOLUTION: (1) pehle se hal (dikkat 4): snowflake id time se badhti + ek chat ek partition -> ek jagah, ek kram
-          ★ JAAL: kram CLIENT ke time se MAT: phone ki ghadi galat · koi time aage kare -> hamesha UPAR chipke
-             kram SERVER ki ID se · client time sirf DIKHANE ("10:42 AM")
-          ULTE KRAM me pahunche (retry se teesra pehle) -> B ka app ID se lagaye, aane se nahi
-          beech ka GAYAB pakadna -> snowflake se nahi (gap normal) -> har chat ka SEQ (+1): 15, 17 aaya, 16 nahi -> catch-up
-          beech me Kafka -> KEY = chatId (ek chat ek partition, order pakka; alag chats parallel; global = ek partition)
-          ★ "Ye to WhatsApp me hota hai" (Arpan ne dekha: doosra pehle chala gaya) — jaan-boojh ke:
-             strict kram = pehla atke to doosra bhi roko = HEAD-OF-LINE BLOCKING (Kafka wali)
-             chuna: kram thoda idhar-udhar, par message ruke nahi (1-2 sec insaan ko chalta)
+SOLUTION: (1) pehle hi hal ho chuka (dikkat 4): snowflake ID time se badhti + ek chat ek partition -> ek jagah,
+          ek kram.
+          Jaal: kram client ke time se MAT — phone ki ghadi galat ho sakti, koi time aage kar de to uska message
+          hamesha upar chipka rahe. Kram server ki ID se; client ka time sirf dikhane ke liye.
+          Ulte kram me pahunche (retry se) -> B ka app ID se lagaye, aane ke kram se nahi.
+          Beech ka gayab pakadna snowflake se nahi (gap normal hai) — har chat ka apna +1 number; beech ka number
+          nahi aaya to catch-up.
+          Beech me Kafka ho to key = chatId (ek chat ek partition).
+          WhatsApp me kabhi doosra pehle chala jaata — jaan-boojh ke: strict kram = pehla atka to doosra bhi
+          roko (head-of-line blocking). Chuna: kram thoda idhar-udhar, par message ruke nahi.
 
 NAYA:     koi dabba nahi
 
@@ -605,6 +621,8 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 ```
+BOARD PE: per-chat seq: 15, 17 aaya, 16 nahi -> catch-up
+
 POOCHEGA: "How do you keep messages in order?"
 BOL:      "Order comes from a server-assigned id, never the client clock. One chat lives in one partition, and with
            Kafka I key by chat id, so a chat stays in order while different chats run in parallel. A per-chat
@@ -622,13 +640,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 11 — 5 MB ka video bhi isi raaste se?
 
 ```
-DIKKAT:   chat server ke through -> connection + thread block · 200 server ka tier jo CHHOTE message ke liye, BYTES dho raha
+DIKKAT:   5 MB ka video bhi chat server ke raaste se? Connection aur thread atkenge — jo server chhote
+          message ke liye bane, wo bytes dho rahe.
 
-SOLUTION: client PEHLE blob store (S3) me, phir message me sirf PATA: { type: image, url, size, thumbnail }
-          upload = 07_file_upload jaisa PRE-SIGNED URL (bytes app server ko chhute nahi)
-          download = CHHOTI UMAR ka pre-signed URL (link aage bhejne se kaam na chale — 07_file_upload dikkat 8)
-          THUMBNAIL client banata, kuch KB, message ke SAATH -> B ko TURANT kuch dikhe
-          GROUP: file EK baar, 500 ko wahi EK pata (ek copy, kai pahunchai)
+SOLUTION: client pehle file S3 (blob store) me daale, message me sirf PATA bheje (type, url, size, thumbnail).
+          Upload = presigned URL (07_file_upload jaisa), bytes app server ko chhoote hi nahi. Download = chhoti
+          umar ka presigned URL (link aage bhejne se kaam na chale).
+          Thumbnail client banata (kuch KB), message ke saath — B ko turant kuch dikhe.
+          Group me file ek baar, 500 ko wahi ek pata.
 
 NAYA:     Blob store (S3)
 
@@ -666,6 +685,8 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 ```
+BOARD PE: { type: image, url, size, thumbnail }
+
 AGLA SAWAAL (tere jawab se):
   "Same video 1000 log forward kare -> 1000 copy?"
    -> file ka content hash -> pehle se hai to wahi purani file ka pata (dedup), naya upload nahi
@@ -678,15 +699,16 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 12 — online / last-seen: sabko sabka status
 
 ```
-DIKKAT:   sabse mehnga "chhota" feature: message kabhi-kabhi, status HAR WAQT badalta, aur sabke contacts ko
-          NAIVE: har connect / disconnect pe saare contacts ko -> 2 crore x 500 = bakwaas
+DIKKAT:   online / last-seen — sabse mehnga "chhota" feature. Message kabhi-kabhi aata, status har waqt
+          badalta, aur sabke contacts ko chahiye. Seedha socha: har connect / disconnect pe saare contacts ko
+          batao -> crore x 500 = bakwaas.
 
-SOLUTION: 1. TTL SE APNE AAP MARNA: Redis presence:B = online, TTL 30 sec · app har 15 sec heartbeat -> refresh
-             app band / net gaya -> heartbeat ruka -> TTL khatam -> APNE AAP offline
-             "offline" ka message bhejna hi NAHI — CHUP ho jaana hi signal (design ka sabse saaf hissa)
-          2. POOCHO, BATAO MAT (pull): A ko B ka status tabhi jab B ki chat KHULI -> sirf unhi ka maange
-          LAST SEEN = wahi key ka aakhri update time, alag rakha
-          last-seen CHHUPANE ka option = SETTING: chhupaya hai to data hote hue bhi nahi dikhana (privacy alag layer)
+SOLUTION: (1) TTL se apne aap marna: Redis me "B online" chhoti TTL ke saath, app thodi-thodi der me heartbeat
+          bhej ke refresh kare. App band / net gaya -> heartbeat ruka -> TTL khatam -> apne aap offline.
+          "Offline" ka message bhejna hi nahi — chup ho jaana hi signal (design ka sabse saaf hissa).
+          (2) poocho, batao mat: A ko B ka status tabhi jab B ki chat khuli ho — sirf unhi ka maange.
+          Last seen = usi key ka aakhri update time, alag rakha.
+          Last seen chhupana = setting: chhupaya hai to data hote hue bhi mat dikhao (privacy alag layer).
 
 NAYA:     koi dabba nahi — Redis presence
 ```
@@ -719,6 +741,8 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 ```
+BOARD PE: presence:B = online, TTL 30 sec · app har 15 sec heartbeat
+
 AGLA SAWAAL (tere jawab se):
   "Heartbeat har 15 sec = 2 crore / 15 = 13 lakh / sec Redis pe?"
    -> heartbeat chat server tak hi (connection pe ping); server apne saare users ka presence batch me Redis me
