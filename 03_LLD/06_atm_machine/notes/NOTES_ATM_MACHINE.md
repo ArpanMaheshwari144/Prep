@@ -1,4 +1,4 @@
-# LLD 07: ATM Machine Design
+# LLD 06: ATM Machine Design
 
 ## Problem:
 "Design an ATM Machine" — card daalo, PIN enter, withdraw/deposit/balance check.
