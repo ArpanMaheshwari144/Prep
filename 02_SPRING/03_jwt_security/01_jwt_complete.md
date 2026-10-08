@@ -651,7 +651,7 @@ Hacker payload modify kare:
    ... (har request access token bhejta) ...
 ```
 
-Server: signature + exp se verify. **NO DB hit** — pure stateless.
+Server: signature + exp se verify. Pure stateless (tarika B) me **NO DB hit**. Is note ke JwtFilter (tarika A) me `loadUserByUsername` = DB hit, sirf fresh data ke liye (neeche "no-DB ka NUANCE").
 
 ---
 
@@ -779,12 +779,13 @@ HTTP Request
  │  └────────────┬───────────────┘      │
  │               │                      │
  │  ┌────────────▼───────────────┐      │
- │  │  Authorization Filter      │      │ ← @PreAuthorize check
+ │  │  Authorization Filter      │      │ ← URL rules (authorizeHttpRequests)
  │  └────────────┬───────────────┘      │
  │               │                      │
  └───────────────┼──────────────────────┘
                  ▼
             Controller method runs
+            (@PreAuthorize yahan, method pe AOP proxy -> filter nahi)
                  ▼
               Response
 ```
