@@ -30,12 +30,13 @@ interface Repository {
 
 ```java
 class ReadOnlyRepository implements Repository {
-    void save()       { /* dangerous + useless */ }
-    void delete()     { /* dangerous! */ }
-    void update()     { /* dangerous! */ }
-    void generatePDF() { ... }
-    void sendEmail()   { ... }
+    public void save()       { /* dangerous + useless */ }
+    public void delete()     { /* dangerous! */ }
+    public void update()     { /* dangerous! */ }
+    public void generatePDF() { ... }
+    public void sendEmail()   { ... }
 }
+// (interface ke method implement karte waqt `public` zaroori — bina public compile error: weaker access)
 ```
 
 → **Useless + dangerous methods implement karne pad rahe** — fat interface ka dard
