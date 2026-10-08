@@ -46,9 +46,10 @@
     minutes for the big ones. So the sync had to survive that peak. I increased the pool size in the
     config the Lambda reads, and raised the timeout and retries to around five to seven.
 
-    Then I compared MongoDB and MySQL to find the surveys that never made it across - seven to ten of them -
-    and re-synced them by taking the data from MongoDB and writing it to MySQL. On the test server I ran a bid list upload and launched a survey at the
-    same time - it retried a few times and went through. We shipped it to production, and this issue
+    Then I compared MongoDB and MySQL to find the surveys that never made it across - seven to ten
+    of them - and re-synced them by taking the data from MongoDB and writing it to MySQL. On the test
+    server I ran a bid list upload and launched a survey at the same time - it retried a few times
+    and went through. We shipped it to production, and this issue
     hasn't come back since."
 ```
 
