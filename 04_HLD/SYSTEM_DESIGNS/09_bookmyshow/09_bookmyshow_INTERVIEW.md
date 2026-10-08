@@ -61,16 +61,13 @@ flowchart TD
 ## DIKKAT 1 — do ALAG user ne EK SAATH A1 book kar di
 
 ```
-DIKKAT:   X: "A1 available?" haan · Y: "A1 available?" haan · X book · Y book = EK seat DO ko
-          (check-then-act RACE — payment idempotency aur trading no-double-match wala)
+DIKKAT:   do alag user ne ek saath ek hi seat book kar di — dono ne dekha "khali hai", dono ne book
+          kiya = ek seat do ko (check-then-act race)
 
-SOLUTION: ATOMIC CONDITIONAL UPDATE (sabse accha):
-            UPDATE seats SET status = 'booked', user_id = X
-             WHERE seat_id = 'A1' AND status = 'available'
-          DB me sirf EK ka lagega · doosre ko 0 row -> "seat ja chuki, doosri chuno"
-          check + mark = EK atomic step -> race khatam
-          ya ROW LOCK: SELECT ... FOR UPDATE (lock -> check -> book -> release)
-          ya OPTIMISTIC: version column
+SOLUTION: check aur book ek hi ATOMIC step me: ek conditional UPDATE — "seat book karo, SIRF agar abhi
+          bhi available hai". DB me sirf ek ka lagega, doosre ka 0 row badlega -> "seat ja chuki, doosri chuno".
+          Doosre raaste: row lock (SELECT ... FOR UPDATE) ya optimistic (version column). Conditional update
+          sabse accha.
 
 NAYA:     koi dabba nahi — SQL ka atomic update
 
@@ -91,6 +88,10 @@ flowchart TD
     n_App --> n_SQL_DB
 ```
 ```
+BOARD PE: X: "A1 available?" haan · Y: "A1 available?" haan · X book · Y book = A1 do ko
+          UPDATE seats SET status = 'booked', user_id = X
+           WHERE seat_id = 'A1' AND status = 'available'      -> doosre ko 0 row
+
 POOCHEGA: "Two users book the same seat at the same time — what happens?"
 DHYAAN:   2 user ek cheez = atomic / lock · 1 user ka retry = idempotency (dikkat 3)
 BOL:      "Doing it in two steps always leaves a gap, so I put the condition inside the UPDATE — WHERE
@@ -109,22 +110,17 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — seat chuni, ab 3 min payment kar raha
 
 ```
-DIKKAT:   'available' rakhi -> koi aur le gaya · 'booked' kar di -> payment fail = seat HAMESHA block
+DIKKAT:   seat chuni, user 3 min payment kar raha. Available rakhi to koi aur le gaya; booked kar di to
+          payment fail hone pe seat hamesha ke liye block.
 
-SOLUTION: SEAT HOLD + TTL: select -> 'held', held_until = now + 5 min · pay SUCCESS -> 'booked' · expire -> khuli
-          ★ PAR SQL me TTL NAHI (27-Sep mock me yahi atka): row apne aap nahi badalti,
-            10:06 pe bhi 'held' likha rahega. "time nikla -> available" = GALAT, kisi ko KARNA padta.
-            B aaya 10:06 -> purana WHERE status = 'available' -> 0 row -> galti se "taken"
-          RAASTA 1 — booking UPDATE hi expired hold ko KHALI maane (job nahi):
-            UPDATE seats SET status = 'held', user_id = 'B', held_until = now() + INTERVAL 5 MINUTE
-             WHERE seat_id = 'A1'
-               AND ( status = 'available' OR (status = 'held' AND held_until < now()) );
-            A ka hold zinda -> 0 row · expire -> 1 row, B jeeta (atomic) · seat map pe bhi yahi check
-          RAASTA 2 — SWEEPER (har minute):
-            UPDATE seats SET status = 'available', user_id = NULL, held_until = NULL
-             WHERE status = 'held' AND held_until < now();
-            kami: ~1 min tak 'held' dikhegi
-          DONO saath: UPDATE ka check = SAHI-PAN · sweeper = SAFAI
+SOLUTION: SEAT HOLD + expiry: chunte hi 'held' aur kab tak (5 min). Payment ho gaya -> 'booked', time
+          nikla -> seat wapas khuli.
+          Par SQL me TTL nahi hota — row apne aap nahi badalti, time nikalne ke baad bhi 'held' likha rahega.
+          Kisi ko karna padta.
+          Raasta 1: booking ka UPDATE hi expire hua hold khaali maane — "available ho, YA held ho par time
+          nikal gaya". Ye atomic hai, sahi-pan yahi deta.
+          Raasta 2: SWEEPER job har minute expire hue hold wapas available kare — safai ke liye.
+          Dono saath: update ka check = sahi-pan, sweeper = safai.
 
 NAYA:     Sweeper job (har minute expired hold ko wapas available karne wala)
 
@@ -144,6 +140,12 @@ flowchart TD
     n_Sweeper_job --> n_SQL_DB
 ```
 ```
+BOARD PE: UPDATE seats SET status = 'held', user_id = 'B', held_until = now() + INTERVAL 5 MINUTE
+           WHERE seat_id = 'A1'
+             AND ( status = 'available' OR (status = 'held' AND held_until < now()) );
+          sweeper: UPDATE seats SET status = 'available', user_id = NULL, held_until = NULL
+                    WHERE status = 'held' AND held_until < now();
+
 POOCHEGA: "Who releases the hold after 5 minutes?"
 BOL:      "SQL has no TTL, so either the booking UPDATE treats an expired hold as free — status held and
            held_until before now — or a sweeper job flips expired holds back every minute. I'd put the check
@@ -162,15 +164,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — payment page pe "Pay" do baar daba diya
 
 ```
-DIKKAT:   ek booking ka do baar charge
+DIKKAT:   payment page pe "Pay" do baar daba diya -> ek booking ka do baar charge
 
-SOLUTION: IDEMPOTENCY KEY (payment wala tool) — client banata, retry pe SAME
-          server atomic claim (UNIQUE constraint / Redis SET NX) -> dobara aaye to STORED result, error nahi
-          ★ DO ALAG CHEEZ (confuse hota):
-            2 ALAG user, EK seat -> race BETWEEN users -> ATOMIC mark / lock (dikkat 1)
-            1 SAME user, duplicate request -> retry dedup -> IDEMPOTENCY (ye)
-          (Arpan ki mock line "seat mark-booked kar do, doosra taken dekhe" SAHI thi — wo ATOMIC MARK hai,
-           sirf "idempotency" shabd lag gaya tha) · tool ko problem se match karo
+SOLUTION: IDEMPOTENCY KEY (payment wala tool): client key banata, retry pe wahi. Server atomic claim
+          karta (unique constraint / Redis SET NX); dobara aaye to saved result, error nahi.
+          Do alag cheez, confuse mat karna: do ALAG user, ek seat = users ke beech race -> atomic mark
+          (dikkat 1). Ek hi user, duplicate request = retry -> idempotency (ye).
+          (Mock me "seat mark-booked kar do, doosra taken dekhe" sahi thi — wo atomic mark hai, bas
+          "idempotency" shabd galat lag gaya tha.)
 
 NAYA:     Payment Svc (external, idempotency key ke saath)
 ```
@@ -203,12 +204,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — book koi-koi karta, seat map SAB dekh rahe
 
 ```
-DIKKAT:   browse lakhon read, booking kam par nazuk — ek hi DB pe
+DIKKAT:   book koi-koi karta, par seat map sab dekh rahe — lakhon read aur nazuk booking ek hi DB pe
 
-SOLUTION: dono raaste ALAG:
-          browse  -> REDIS (seat map + show data, ~99% hit) + READ REPLICA
-          booking -> SQL PRIMARY (atomic update)
-          seat map thoda purana chalega — booking pe atomic check hai hi
+SOLUTION: dono raaste alag: browse -> Redis (seat map + show data) + read replica. Booking -> SQL primary
+          (atomic update). Seat map thoda purana dikhe to chalega, booking pe asli check hota hi hai.
 
 NAYA:     Redis · Read replica
 
@@ -235,6 +234,8 @@ flowchart TD
     n_SQL_primary --> n_Read_replica
 ```
 ```
+BOARD PE: browse ~99% Redis hit
+
 AGLA SAWAAL (tere jawab se):
   "Seat map live update (seat lal ho jaye)?"
    -> WebSocket / SSE: booking pe event -> us show ke users ko push
@@ -247,22 +248,19 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — popular release: lakhon log, wahi show, wahi seat
 
 ```
-DIKKAT:   spike seedha DB -> hot row contention -> DB thapp
+DIKKAT:   popular release: lakhon log, wahi show, wahi seats -> spike seedha DB pe, ek hi rows pe
+          ladaai, DB thapp
 
-SOLUTION: QUEUE (Kafka) + PER-SHOW WORKER -> us show ki request ek-ek karke -> atomic mark, contention kam
-          QUEUE kyun, replica / LB nahi: replica READ scale karti, write spike QUEUE absorb karti
-          VIRTUAL WAITING ROOM: "aapka number 12,340" -> load smooth
-          ARPAN KA IDEA (27-Sep) = ADMISSION CONTROL: seat 3000, user 5000 -> darwaze pe ginti,
-            pehle 3000 andar, 2000 ko TURANT "housefull" / waiting room (flash sale pattern)
-            -> 2000 log bekaar queue me nahi fanste, DB pe bojh ek jhatke me gir jaata
-            counter bhi ATOMIC (Redis DECR), warna counter pe race
-          ★ BMS pe kahan tootta: user KHAAS seat (A1) chunta. pehle 3000 me X aur Y dono A1
-            -> dono ko turant "booked" -> worker: Y ka 0 row -> "sorry, cancel" = sabse bura UX
-            ginti batati "TOTAL bachi?", ye nahi "TERI wali bachi?" -> "booked" TABHI jab us seat ka UPDATE jeete
-          SAHI JODA: 1 GATE counter · 2 TURANT "Booking in progress..." · 3 WORKER atomic UPDATE
-                     4 BATAO: jeeta "confirmed" + email / SMS · haara "ye seat gayi" (poll / WebSocket)
-          seat number NAHI (concert standing, sale stock) -> Arpan ka idea jaisa hai poora sahi
-          "BookMyShow bhi aise karta" MAT bolo (andar public nahi) -> "a common pattern in flash sales"
+SOLUTION: QUEUE (Kafka) + har show ka worker: us show ki requests ek-ek karke, atomic update, ladaai kam.
+          Queue kyun, replica / LB kyun nahi: replica READ scale karti, likhne ka spike queue jhelti.
+          VIRTUAL WAITING ROOM ("aapka number 12,340") se load smooth.
+          Darwaze pe ginti (admission control, mera idea): jitni seat utne andar, baaki ko turant
+          "housefull" / waiting room — log bekaar line me nahi phanste. Counter bhi atomic (Redis DECR).
+          Par BookMyShow me user KHAAS seat chunta: ginti batati "kitni bachi", ye nahi "teri wali bachi".
+          Isliye turant "booked" mat bolo — pehle "booking in progress", worker ka update jeete tab
+          "confirmed", haare to "ye seat gayi".
+          Seat number nahi (concert standing, sale stock) -> darwaze wala idea poora sahi.
+          "BookMyShow aise karta" mat bolo — bolo "a common pattern in flash sales".
 
 NAYA:     Kafka · Booking worker (ek show ki request ek-ek karke atomic update kare) · gate counter (Redis me, darwaze pe ginti)
 
@@ -294,6 +292,10 @@ flowchart TD
     n_SQL_primary --> n_Read_replica
 ```
 ```
+BOARD PE: seat 3000, user 5000 -> pehle 3000 andar, 2000 ko turant housefull
+          pehle 3000 me X aur Y dono A1 -> Y ka UPDATE 0 row
+          1 gate counter · 2 "Booking in progress..." · 3 worker atomic UPDATE · 4 confirmed / ye seat gayi
+
 POOCHEGA: "What if traffic suddenly spikes 10x?"
 BOL:      "I'd put a counter at the door so only as many users as there are seats get in, and the rest see
            'sold out' right away. But since users pick specific seats, I only confirm a booking after that
@@ -312,12 +314,13 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — Redis restart: 99% browse seedha primary pe, booking ke update ruk gaye
 
 ```
-DIKKAT:   browse ki kharabi ne BOOKING maar di (halke ne bhaari ko le dooba)
+DIKKAT:   Redis restart hua -> saara browse seedha primary pe -> booking ke update ruk gaye.
+          Browse ki kharabi ne booking maar di (halke ne bhaari ko dooba diya).
 
-SOLUTION: Redis CLUSTER (ek node mare, baaki chalein)
-          browse ka read REPLICA se, booking ka update PRIMARY pe — DONO RAASTE ALAG
-          SQL: replica + auto-failover (Patroni / RDS Multi-AZ; Sentinel Redis ka hai)
-          STAMPEDE: mutex (ek hi rebuild, baaki wait karke cache se)
+SOLUTION: Redis CLUSTER — ek node mare, baaki chalein. Browse ka read replica se, booking primary pe —
+          dono raaste alag rakho. SQL me replica + auto-failover (Patroni / RDS Multi-AZ).
+          Cache khaali hone pe sab ek saath DB pe na toot padein (stampede): sirf EK rebuild kare, baaki
+          ruk ke cache se padhein (mutex).
 
 BADLA:    Redis -> Redis Cluster · SQL primary ab auto-failover ke saath
 
@@ -366,13 +369,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — ek App box pe 500 log seat chun rahe, box gira
 
 ```
-DIKKAT:   unke 3 min ke HOLD ka kya?
+DIKKAT:   ek App box pe 500 log seat chun rahe the, box gira — unke hold ka kya?
 
-SOLUTION: HOLD DB me (status 'held' + held_until), box ki memory me NAHI -> seat abhi bhi held, TTL pe chhutegi
-          user dobara jude -> DOOSRE box pe, wahi hold dikhe
-          kai App + LB (stateless isliye chalta) · health check: 2-3 fail = pool se bahar
-          ye sirf isliye chala ki hold box ke BAHAR rakha (dikkat 2 ka faisla)
-          stateful copies ALAG AZ me
+SOLUTION: hold DB me hai (held + kab tak), box ki memory me nahi — seat abhi bhi held, time pe chhutegi.
+          User dobara aaya to doosre box pe wahi hold dikhega.
+          Kai App + LB (stateless hai isliye chalta), health check fail = pool se bahar.
+          Ye sirf isliye chala ki hold box ke BAHAR rakha tha (dikkat 2 ka faisla). Copies alag AZ me.
 
 NAYA:     LB
 BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
