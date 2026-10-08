@@ -525,6 +525,14 @@ rebalance storm-> baar-baar deploy -> session-timeout tuning · static membershi
 producer       -> acks=all har jagah = latency -> event ke hisaab se (payment = all, logs = 1)
 
 POOCHEGA: "What about a hot key / hot partition?"   -> upar HOT PARTITION
+          TERA JAWAB: "pehle bada karo (vertical), phir usi dabbe ko kai hisson me todo" -> TODNA = sahi direction
+          VERTICAL KYUN KAAFI NAHI: group me ek partition ko EK hi consumer padhta -> machine badi, padhne wala phir bhi ek
+          MISAAL: user-9 ke saare event P2 pe -> key = "user-9#" + (eventId % 4) -> 4 partition, 4 consumer saath padhein
+          KEEMAT: user-9 ka POORA strict order gaya (har tukde ke andar bacha)
+                  order sach me chahiye -> key chhoti cheez pe rakho (orderId / accountId), jahan order chahiye bas wahan
+          BOL: "A hot key pins one partition and one consumer, so a bigger box doesn't help much.
+                I'd salt that key into N sub-keys to spread it over N partitions, accepting that strict
+                ordering for that one customer is lost — or key by a finer id where ordering actually matters."
 POOCHEGA: "How would you scale this to 10x?"        -> message ka raasta chalo
 POOCHEGA: "What's the single point of failure?"     -> leader (ISR promote), controller (KRaft quorum)
 POOCHEGA: "How do you know it's working?"           -> CONSUMER LAG · under-replicated partitions · DLQ size · alert
