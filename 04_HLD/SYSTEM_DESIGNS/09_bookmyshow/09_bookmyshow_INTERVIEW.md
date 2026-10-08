@@ -115,11 +115,14 @@ DIKKAT:   seat chuni, user 3 min payment kar raha. Available rakhi to koi aur le
 
 SOLUTION: SEAT HOLD + expiry: chunte hi 'held' aur kab tak (5 min). Payment ho gaya -> 'booked', time
           nikla -> seat wapas khuli.
-          Par SQL me TTL nahi hota — row apne aap nahi badalti, time nikalne ke baad bhi 'held' likha rahega.
+          ★ Par SQL me TTL nahi hota (27-Sep mock me yahi atka) — row apne aap nahi badalti, time nikalne
+          ke baad bhi 'held' likha rahega.
           Kisi ko karna padta.
           Raasta 1: booking ka UPDATE hi expire hua hold khaali maane — "available ho, YA held ho par time
           nikal gaya". Ye atomic hai, sahi-pan yahi deta.
-          Raasta 2: SWEEPER job har minute expire hue hold wapas available kare — safai ke liye.
+          Raasta 2: SWEEPER job har minute expire hue hold wapas available kare — safai ke liye. Kami: ~1
+          min tak
+          'held' dikh sakti.
           Dono saath: update ka check = sahi-pan, sweeper = safai.
 
 NAYA:     Sweeper job (har minute expired hold ko wapas available karne wala)
@@ -143,6 +146,7 @@ flowchart TD
 BOARD PE: UPDATE seats SET status = 'held', user_id = 'B', held_until = now() + INTERVAL 5 MINUTE
            WHERE seat_id = 'A1'
              AND ( status = 'available' OR (status = 'held' AND held_until < now()) );
+          B aaya 10:06 -> purana WHERE status = 'available' -> 0 row -> galti se "taken" (27-Sep atka)
           sweeper: UPDATE seats SET status = 'available', user_id = NULL, held_until = NULL
                     WHERE status = 'held' AND held_until < now();
 
@@ -168,9 +172,9 @@ DIKKAT:   payment page pe "Pay" do baar daba diya -> ek booking ka do baar charg
 
 SOLUTION: IDEMPOTENCY KEY (payment wala tool): client key banata, retry pe wahi. Server atomic claim
           karta (unique constraint / Redis SET NX); dobara aaye to saved result, error nahi.
-          Do alag cheez, confuse mat karna: do ALAG user, ek seat = users ke beech race -> atomic mark
+          ★ Do alag cheez, confuse mat karna: do ALAG user, ek seat = users ke beech race -> atomic mark
           (dikkat 1). Ek hi user, duplicate request = retry -> idempotency (ye).
-          (Mock me "seat mark-booked kar do, doosra taken dekhe" sahi thi — wo atomic mark hai, bas
+          (Arpan ki mock line "seat mark-booked kar do, doosra taken dekhe" sahi thi — wo atomic mark hai, bas
           "idempotency" shabd galat lag gaya tha.)
 
 NAYA:     Payment Svc (external, idempotency key ke saath)
@@ -254,12 +258,13 @@ DIKKAT:   popular release: lakhon log, wahi show, wahi seats -> spike seedha DB 
 SOLUTION: QUEUE (Kafka) + har show ka worker: us show ki requests ek-ek karke, atomic update, ladaai kam.
           Queue kyun, replica / LB kyun nahi: replica READ scale karti, likhne ka spike queue jhelti.
           VIRTUAL WAITING ROOM ("aapka number 12,340") se load smooth.
-          Darwaze pe ginti (admission control, mera idea): jitni seat utne andar, baaki ko turant
+          ARPAN KA IDEA (27-Sep) = darwaze pe ginti (admission control): jitni seat utne andar, baaki ko turant
           "housefull" / waiting room — log bekaar line me nahi phanste. Counter bhi atomic (Redis DECR).
-          Par BookMyShow me user KHAAS seat chunta: ginti batati "kitni bachi", ye nahi "teri wali bachi".
-          Isliye turant "booked" mat bolo — pehle "booking in progress", worker ka update jeete tab
+          ★ Par BookMyShow me user KHAAS seat chunta: ginti batati "kitni bachi", ye nahi "teri wali bachi".
+          Isliye turant "booked" mat bolo (warna baad me "sorry, cancel" = sabse bura UX) — pehle "booking
+          in progress", worker ka update jeete tab
           "confirmed", haare to "ye seat gayi".
-          Seat number nahi (concert standing, sale stock) -> darwaze wala idea poora sahi.
+          Seat number nahi (concert standing, sale stock) -> Arpan ka idea jaisa hai poora sahi.
           "BookMyShow aise karta" mat bolo — bolo "a common pattern in flash sales".
 
 NAYA:     Kafka · Booking worker (ek show ki request ek-ek karke atomic update kare) · gate counter (Redis me, darwaze pe ginti)

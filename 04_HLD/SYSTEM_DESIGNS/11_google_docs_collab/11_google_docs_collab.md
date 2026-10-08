@@ -391,7 +391,7 @@ SOLUTION: (1) alag CONNECTION tier — sirf connection pakadne wale servers, ala
           stateful hai, to LB user ko hamesha usi server pe bheje.
           (2) docId se baanto: ek doc ke saare editor aur unka OT ek hi server pe (OT ek jagah kram se
           chalna chahiye). Alag doc alag server -> load bata. Pub/sub ab bhi rakho: reconnect me koi
-          doosre box pe aa gaya to wahi bachata.
+          doosre box pe aa gaya to wahi bachata (routing pakka ho to pub/sub ka kaam bahut kam).
           (3) ek doc pe editor ki had hoti (Google ~100), to ek doc ka OT ek server pe theek.
           (4) spike -> queue jhele, Redis pub/sub replicate aur scale.
           (5) app ki static files CDN se.

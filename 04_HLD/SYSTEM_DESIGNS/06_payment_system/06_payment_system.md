@@ -110,6 +110,7 @@ SOLUTION: IDEMPOTENCY KEY: client har naye payment pe ek UUID banata, retry pe W
           Jaal: kaam ke baad key delete mat karo — late retry aaya to dobara charge. Key ko ~24 ghante
           result ke saath rakho.
           Do sacche alag payment = alag key, dono honge. Retry = wahi key, ek baar.
+          (DSA: register = hashmap "pehle dekha?")
 
 NAYA:     Idempotency store (key -> result yaad rakhne wala; Redis + DB unique)
 ```
@@ -299,8 +300,10 @@ DIKKAT:   regulator poochta: ye paisa kahan se aaya, kahan gaya? Har paisa kab-k
 
 SOLUTION: LEDGER: permanent aur immutable — delete / edit nahi. DOUBLE-ENTRY: har transaction = ek debit
           + ek credit, dono ka jod barabar.
-          Pen ki diary jaisa: galti hui to NAYI correction entry, purani mat mitao — poori history = audit trail.
-          Jaal: ledger "DB fail ho to backup" nahi hai. Wo usi SQL DB me, usi transaction me likha jaata.
+          Pen ki diary jaisa: galti hui to NAYI correction entry, purani mat mitao — poori history = audit
+          trail.
+          ★ JAAL (26-Sep mix hua): ledger "DB fail ho to backup" nahi hai. Wo usi SQL DB me, usi
+          transaction me likha jaata.
           Crash recovery = PENDING + webhook + reconciliation (dikkat 4). Ledger = hisaab / audit.
 
 NAYA:     koi alag dabba nahi — DB me Ledger table (append-only)
@@ -403,7 +406,7 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   merchant dashboard ki bhaari report usi DB pe chal rahi -> asli payment ka write ruk raha
 
 SOLUTION: READ REPLICA: dashboard aur report replica se padho.
-          Par PAYMENT ka read replica se kabhi nahi — balance aur payment status hamesha primary se.
+          ★ Par PAYMENT ka read replica se kabhi nahi — balance aur payment status hamesha primary se.
           Replica thoda peeche chalti; report me chalta hai, paise me ek rupaye ka farak bhi nahi chalega.
 
 NAYA:     Read replica

@@ -234,7 +234,8 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   user ne BUY do baar daba diya, ya network ne retry maara -> ek order do baar laga, do baar paisa
 
 SOLUTION: IDEMPOTENCY KEY: har request ke saath ek unique key. Server yaad rakhta "ye key ho chuki" —
-          dobara aayi to wahi purana result, naya order nahi. (GPay pe double click = ek hi charge.)
+          dobara aayi to wahi purana result, naya order nahi. (GPay pe double click = ek hi charge ·
+          BookMyShow me ek ticket.)
 
 NAYA:     koi dabba nahi — Order Service me key check juda
 
@@ -283,7 +284,8 @@ SOLUTION: EVENT LOG / SEQUENCER: har order PEHLE append-only log me (disk / Kafk
           Order sirf ek stock ke andar chahiye, poore market ka nahi — isliye key = symbol, alag stocks
           parallel chal sakte.
           Bonus: yahi log AUDIT trail bhi hai. Logging = engineer ke debug ke liye, kuch din, badal sakte.
-          Audit = regulator ke liye, kaun-kya-kab, saalon tak, badla nahi ja sakta. Ek log, do kaam.
+          Audit = regulator ke liye, kaun-kya-kab, saalon tak, badla nahi ja sakta —
+          JP / BlackRock dono maangte. Ek log, do kaam.
 
 BADLA:    Queue per symbol -> Event Log (wahi queue, ab disk pe likhi jaati + seq no. + key = symbol)
 ```
@@ -394,7 +396,8 @@ DIKKAT:   market khulte hi akele ek hi stock pe lakhon order — "stock ke hisaa
 SOLUTION: book ko mat todo — ek book do thread me = double match wapas, aur pehle-aaya-pehle-paaya kram
           toot jaata. Ek thread RAM me, bina lock ke, bahut tez chalta (LMAX ka design yahi).
           Aage ka event log burst sambhaal leta: order line me lagte, thread apni speed se uthata
-          (BACKPRESSURE). Spike me kuch drop nahi hota, bas thodi latency.
+          (BACKPRESSURE: aane ki raftaar aur kaam ki raftaar alag). Spike me kuch drop nahi hota, bas thodi
+          latency.
           Scale stocks ke beech karo (alag thread), ek stock ke andar kabhi nahi.
 
 NAYA:     koi dabba nahi — Event Log hi kaam aaya

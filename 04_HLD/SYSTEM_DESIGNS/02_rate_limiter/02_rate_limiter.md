@@ -106,9 +106,10 @@ DIKKAT:   do request ek saath aayi, dono ne purani ginti padhi, dono ne +1 likha
 
 SOLUTION: padho-badhao-likho ko EK atomic kaam banao. Redis single-threaded hai, to INCR apne aap atomic.
           Token bucket jaise kai step (refill + check + ghatao) ho to LUA script — poora ek unit me chalta.
-          Jaal: EXPIRE sirf pehli baar lagao. Har request pe lagaya to TTL har baar aage khisakta,
+          ★ JAAL: EXPIRE sirf pehli baar lagao. Har request pe lagaya to TTL har baar aage khisakta,
           key kabhi expire nahi hoti, user hamesha block.
-          Yahi race idempotency me bhi thi (check aur put ke beech gap -> double charge) — ilaaj same:
+          CONNECT (2-Sep): yahi race idempotency me bhi thi (HDFC double-payment: containsKey + put ke
+          beech gap -> double charge) — ilaaj same:
           teen step ek unit.
 
 NAYA:     koi dabba nahi — Redis me INCR / Lua

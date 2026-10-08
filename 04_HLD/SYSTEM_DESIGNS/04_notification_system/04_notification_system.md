@@ -496,7 +496,7 @@ DIKKAT:   ek hi topic me sab -> OTP marketing ke 50,000 message ke peeche line m
 SOLUTION: PRIORITY LANES: har lane ka alag Kafka topic aur apna worker pool — OTP / 2FA (milliseconds
           me chahiye), order update (kuch second), marketing (minute-ghanta).
           Kafka me priority hoti hi nahi, isliye alag topic.
-          Aage channel queue bhi priority-wise rakho (SMS high / low, alag workers), warna OTP ka SMS phir
+          ★ Aage channel queue bhi priority-wise rakho (SMS high / low, alag workers), warna OTP ka SMS phir
           marketing SMS ke peeche atak jaayega.
           (Java ki PriorityBlockingQueue sirf ek process ke andar kaam karti, distributed me nahi.)
 
@@ -640,7 +640,8 @@ DIKKAT:   worker ne bheja = provider ne le liya. User tak pahuncha ya nahi, pata
 SOLUTION: provider WEBHOOK se batata hai — delivered / failed / bounced — wo TRACKING DB me likho
           (sent, delivered, opened, clicked, failed). Failed hua (galat number / bounce) -> retry, doosra
           channel, ya failed mark.
-          Push me aisa webhook nahi milta, to push ka "delivered" = app khulne pe app khud ek ack event
+          Push me aisa webhook nahi milta (APNs per-message receipt nahi deta, FCM sirf jodi hui
+          report), to push ka "delivered" = app khulne pe app khud ek ack event
           bheje.
 
 NAYA:     Tracking DB (har message ka haal: sent / delivered / failed)

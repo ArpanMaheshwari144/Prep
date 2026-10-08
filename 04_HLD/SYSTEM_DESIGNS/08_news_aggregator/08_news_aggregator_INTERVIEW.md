@@ -245,7 +245,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — 6 mahine me 5 crore row: disk, backup, kharcha badhta
 
 ```
-DIKKAT:   6 mahine me crore-on rows — disk, backup, kharcha sab badhta. Query slow NAHI hai: published_at
+DIKKAT:   6 mahine me crore-on rows — disk, backup, kharcha sab badhta. ★ SACH: query slow NAHI hai:
+          published_at
           pe index hai, to latest 20 milliseconds me. Asli bojh = poori table, index, backup, restore.
           Aur latest 20 ke alawa purana koi padhta hi nahi.
 
@@ -398,8 +399,10 @@ DIKKAT:   subah 8 baje sab ek saath -> ek Feed service ka CPU khatam, wahi gira 
 
 SOLUTION: kai Feed service box + LB (stateless hai, feed cache me) — spike bhi jhele, ek gire to baaki.
           Cache miss wala read READ REPLICA se, primary se nahi — padhna aur likhna alag raaste.
-          Replica cache ki jagah nahi leti: cache zyada-tar read rokti, replica bache hue ko primary se door rakhti.
-          Ye read ka spike hai — Redis aur replica jhelte; Kafka likhne ke raaste pe hai, read spike nahi jhelta.
+          Replica cache ki jagah nahi leti: cache zyada-tar read rokti, replica bache hue ko primary se
+          door rakhti.
+          Ye read ka spike hai — Redis aur replica jhelte; Kafka likhne ke raaste pe hai, read spike nahi
+          jhelta.
 
 NAYA:     LB · Read replica
 BADLA:    Feed Svc ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)

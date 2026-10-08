@@ -235,8 +235,11 @@ DIKKAT:   bahut garam key expire hui, hazaar request ek saath miss -> sab DB pe 
 SOLUTION: MUTEX: sirf EK request DB se dobara banaye, baaki ruk ke cache se padhein.
           SOFT-TTL: expire hone se PEHLE hi background me refresh.
           Bahut garam key ko expire hi mat hone do, background me update karo.
-          Pata ho kab aayega (sale, final match, launch) -> pehle se cache bharo (pre-warm) aur servers
+          (2-Oct) Pata ho kab aayega (sale, WC final, iPhone launch) -> pehle se cache bharo (pre-warm) aur
+          servers
           pehle badhao. Pata na ho (viral tweet) -> upar ke teen.
+          Twitter ka hot tweet TTL khatam + lakhon padh rahe = wahi stampede; asli me kam dikhta kyunki
+          badi site ilaaj pehle lagaati.
 
 NAYA:     koi dabba nahi
 
@@ -281,7 +284,7 @@ AGLA SAWAAL (tere jawab se):
 
 ```
 DIKKAT:   ek key itni popular ki uska node akela mar raha (HOT KEY). Consistent hashing ne use ek
-          node pe daala — consistent hashing ek hot key ko nahi bachata.
+          node pe daala — ★ consistent hashing ek hot key ko nahi bachata.
 
 SOLUTION: (1) hot key ki kai node pe copy, padhte waqt koi bhi random copy — read bat gaye.
           (2) L1 LOCAL CACHE: app ke andar hi chhota cache, request Redis tak jaati hi nahi.

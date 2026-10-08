@@ -70,7 +70,8 @@ SOLUTION: queue ko memory se hata ke disk pe LOG banao — append-only file, nay
           Har message ka ek number hota hai (OFFSET), consumer bas yaad rakhta "kahan tak padha".
           Padhne ke baad delete nahi hota, to restart pe wahin se chalu, aur offset peeche karke
           dobara bhi padh sakte (REPLAY).
-          DB kyun nahi: DB me har insert pe index + lock = random write, slow. Append = hamesha end me
+          ★ DB kyun nahi (sabse bada trap): DB me har insert pe index + lock = random write, slow. Append =
+          hamesha end me
           = sequential write, disk ka sabse tez kaam. Queue me kuch dhoondhna (WHERE) hota hi nahi,
           bas "offset X ke baad do".
 
@@ -306,9 +307,10 @@ DIKKAT:   kaam karke commit se pehle crash -> restart pe wahi event dobara -> em
 
 SOLUTION: teen raaste: AT-MOST-ONCE (pehle commit, phir kaam -> kho sakta) · AT-LEAST-ONCE (pehle kaam,
           phir commit -> duplicate aa sakta, Kafka ka default) · EXACTLY-ONCE (dono nahi, mehnga + slow).
-          Hum at-least-once lete aur consumer ko IDEMPOTENT banate: har event ka eventId, pehle dekh
+          ★ Hum at-least-once lete aur consumer ko IDEMPOTENT banate: har event ka eventId, pehle dekh
           liya to skip. Asar exactly-once jaisa.
-          Dhyaan: order ke liye key = userId, duplicate pakadne ke liye key = eventId — dono alag.
+          ★ DO ALAG KEY (kam log bolte): order ke liye key = userId, duplicate pakadne ke liye key =
+          eventId — dono alag.
           userId se dedup kiya to us user ka doosra sahi event bhi skip ho jaayega.
           Producer side: DB me save + event bhejna dono chahiye -> OUTBOX: event usi DB transaction me
           outbox table me likho, ek relay use Kafka bheje.
@@ -450,7 +452,8 @@ SOLUTION: consumer mara to uski heartbeat band hoti, group coordinator (ek broke
           baaki consumers me dobara baant deta = REBALANCE. Kaam rukta nahi.
           Purana rebalance poore group ko thodi der rok deta; naya (cooperative) sirf badli partitions
           rokta. Phir bhi baar-baar restart / deploy mat karo.
-          Peeche chalna CONSUMER LAG se dikhta: latest offset minus padha hua offset. Badh raha ->
+          Peeche chalna CONSUMER LAG se dikhta (production ka sabse zaroori metric — tera 700-ticket zone):
+          latest offset minus padha hua offset. Badh raha ->
           consumer badhao (partitions tak) aur alert lagao.
           Koi message baar-baar fail -> backoff ke saath retry, N baar ke baad DEAD-LETTER topic me.
           Baaki atke nahi, DLQ alag dekho ya replay karo. (usercrud me khud lagaya hai.)

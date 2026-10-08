@@ -256,7 +256,7 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   sab har 2 sec status poll kar rahe, aur har poll DB pe
 
 SOLUTION: aage CACHE (Redis) aur baaki reads ke liye READ REPLICA.
-          Jaal = purana status: worker ne DONE kar diya par cache me abhi "VALIDATING". Isliye worker
+          ★ JAAL = purana status: worker ne DONE kar diya par cache me abhi "VALIDATING". Isliye worker
           update ke saath hi cache bhi update / delete kare (ya bahut chhota TTL).
           Normal cache se alag: yahan purana = user ko seedha galat status.
 

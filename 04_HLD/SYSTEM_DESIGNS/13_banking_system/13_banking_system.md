@@ -69,15 +69,17 @@ flowchart TD
 ```
 DIKKAT:   transfer ke beech system gira: A se paisa kat gaya, B ko mila nahi -> paisa gayab
 
-SOLUTION: mera niyam (is design ki reedh): ek DB me -> @Transactional. Alag service / bank -> SAGA.
+SOLUTION: ★ ARPAN KA NIYAM (is design ki reedh): ek DB me -> @Transactional. Alag service / bank -> SAGA.
           Dono account ek DB me hain, to bas EK local transaction: debit aur credit dono ek saath commit
           ya dono rollback. Beech me girne ki jagah hi nahi.
-          Sabse badi galti: ek DB me bhi SAGA / queue / event ghusa dena — debit aur credit alag ho jaate,
+          ★ Sabse badi galti: ek DB me bhi SAGA / queue / event ghusa dena — debit aur credit alag ho jaate,
           phir "kata par fail?" jaisi dikkat design ne banayi, problem ne nahi.
           SAGA tab jab do side ke alag maalik hon (alag service / DB / doosra bank) — undo khud likhna.
           Bahar call ho to pehle PENDING + webhook + reconciliation.
           DB: RELATIONAL (Postgres / Oracle / MySQL) — transaction ka pakka wada. NoSQL me transaction
-          kamzor / seemit, wahan app ko sambhalna padta = bina zaroorat SAGA.
+          kamzor / seemit (Mongo 4.0+, DynamoDB TransactWriteItems hain, par constraints + joins ke
+          saath relational native), wahan app ko sambhalna padta = bina zaroorat SAGA.
+          (Source-confirmed: JP core ledger ke liye relational -> SAWAAL 1 band.)
 
 NAYA:     koi dabba nahi — DB transaction
 ```
@@ -119,14 +121,17 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   regulator poochta "paisa kahan se aaya, kahan gaya?" Aur transfer ke baad SMS / fraud check /
           statement — inke liye transfer ruke nahi, aur inme koi gire to transfer na gire.
 
-SOLUTION: LOG aur LEDGER alag cheez: log = debugging, ghoomta / mit-ta rehta. Ledger = sach, append-only
+SOLUTION: ★ ARPAN NE LOG aur LEDGER alag bola (bahut kam log karte): log = debugging, ghoomta / mit-ta
+          rehta. Ledger = sach, append-only
           (kisne, kab, kitna, kyun), na mit-ta na badalta.
           DOUBLE-ENTRY: har transaction ki do entry, jod hamesha zero — paisa sirf hilta. Poore ledger ka
           jod = bank ka kul paisa, mismatch turant pakda jaata.
-          Ledger ka ghar DB hai, Kafka nahi: ledger pe query chahiye, aur ledger usi transaction me likhna
+          Arpan ka Kafka jod: Kafka bhi append-only, padhne se mit-ta nahi — shakal sahi.
+          ★ HADD: ledger ka ghar DB hai, Kafka nahi: ledger pe query chahiye, aur ledger usi transaction me
+          likhna
           jisme paisa hila — Kafka us transaction ka hissa nahi.
           Kafka ka kaam: commit ke BAAD baaki sab ko khabar (notification, fraud, analytics, statement).
-          Jaal: commit hua, Kafka bhejne se pehle app gira -> event gayab -> OUTBOX: event usi transaction me
+          ★ JAAL: commit hua, Kafka bhejne se pehle app gira -> event gayab -> OUTBOX: event usi transaction me
           outbox table me, relay Kafka bheje. Relay dobara bhi bhej sakta, to consumers eventId se idempotent.
 
 NAYA:     Kafka (outbox relay ke through)
@@ -169,12 +174,14 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   balance aata kahan se? (a) account me balance ka column — padhna sasta, par sirf ek likha hua
           number, galat bhi ho sakta. (b) ledger ki saari entries ka jod — hamesha sach, par arabon rows,
           aur balance sabse zyada dekha jaata, har baar hazaaron entries jodna nahi chalega.
+          Arpan ne (b) chuna — "ledger main source of truth, DB dhoka de sakta" — soch SAHI.
 
-SOLUTION: DONO rakho: ledger = sach, balance column = pehle se joda hua nateeja (cache).
-          Trick: ledger ki entries aur balance update — sab EK hi transaction me. Ek commit me hain, to alag
+SOLUTION: DONO rakho (19-Sep yahan seekha): ledger = sach, balance column = pehle se joda hua nateeja (cache).
+          ★ TRICK: ledger ki entries aur balance update — sab EK hi transaction me. Ek commit me hain, to alag
           ho hi nahi sakte. Isliye yahan queue nahi — "baad me" kiya to alag ho jaayenge.
           Kabhi farak aaya (bug, manual edit, migration) to LEDGER jeetega, balance usse dobara banta.
-          RECONCILIATION: raat ko har account ka ledger jod vs balance — farak = ALERT. Chupchap theek mat
+          RECONCILIATION (source ka grading point): raat ko har account ka ledger jod vs balance — farak =
+          ALERT. ★ Chupchap theek mat
           karo, pehle pata karo KYUN (bug abhi zinda hai).
 
 NAYA:     Reconciliation job (raat ko ledger ka jod aur balance milaane wala)
@@ -219,6 +226,7 @@ AGLA SAWAAL (tere jawab se):
 
 ```
 DIKKAT:   do baar tap / client retry -> ek transfer do baar, paisa do baar kata
+          (Arpan ne mock me ye #1 pain point khud pakda)
 
 SOLUTION: IDEMPOTENCY KEY: har transfer request ke saath ek key. Pehle dekhi hai -> purana result. Nahi
           -> kaam karo aur record karo.
@@ -226,6 +234,7 @@ SOLUTION: IDEMPOTENCY KEY: har transfer request ke saath ek key. Pehle dekhi hai
           App me "check phir insert" likha to race.
           @Transactional idempotency ki jagah nahi leta: transaction = "aadha nahi hoga", idempotency =
           "dobara nahi hoga" — dono chahiye.
+          Poora + hands-on (20 concurrent, same key): payment dikkat 2 + HANDS-ON.
 
 NAYA:     koi dabba nahi — DB me idempotency_keys (UNIQUE)
 ```
@@ -254,15 +263,19 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — ek hi account pe DO transfer ek saath
 
 ```
-DIKKAT:   ek hi account pe do transfer ek saath. Pehle maine "locking chahiye" bola — galat tha.
+DIKKAT:   ek hi account pe do transfer ek saath. Arpan: "DB atomic hai, do transaction ko ek saath
+          modify karne hi nahi dega". Maine (Claude) "locking chahiye" bola tha — Arpan ne kaata (19-Sep),
+          wo SAHI tha.
           DB ka atomic update (balance = balance - 500) row lock leta, dono line me lagte, lost update hota
           hi nahi. Race tab hoti jab app padhe, jode, phir likhe.
 
 SOLUTION: do chhoti par asli cheez bachti:
           (a) balance minus me na jaaye, ye check kahan? App me check kiya to dono transfer purana balance
           dekh lete. Isliye check DB me, usi update ke andar ("tabhi ghatao jab balance kaafi ho" — 0 row =
-          reject), ya DB constraint. Niyam code me nahi DB me, kyunki raaste kai (API / batch / manual), DB ek.
-          (b) DEADLOCK: A->B aur B->A ek saath — dono ek doosre ke lock ka intezaar. DB ek ko maar deta.
+          reject), ya DB constraint. Niyam code me nahi DB me, kyunki raaste kai (API / batch / manual), DB
+          ek -> SAWAAL 3 band.
+          (b) DEADLOCK: A->B aur B->A ek saath — dono ek doosre ke lock ka intezaar. DB ek ko maar deta
+          (Arpan ne LIVE dekha).
           Ilaaj: lock hamesha ek tay kram me lo (chhoti account id pehle).
 
 NAYA:     koi dabba nahi
@@ -354,11 +367,13 @@ DIKKAT:   sab balance / history primary se padh rahe -> transfer dheeme. Padhna 
           sab ek hi box pe.
 
 SOLUTION: READ REPLICA: balance / history replica se, write primary pe. (Shard abhi nahi.)
-          Jaal: transfer kiya, turant balance dekha -> PURANA dikha (replica thodi peeche) -> user sochega paisa
+          ★ JAAL: transfer kiya, turant balance dekha -> PURANA dikha (replica thodi peeche) -> user
+          sochega paisa
           gaya hi nahi, dobara bhejega.
           READ-YOUR-OWN-WRITES: jisne abhi likha uska balance primary se. (Balance jaisi cheez hamesha primary
           se bhi chal jaati.)
-          Doosri wajah failover: write replica tak pahuncha hi nahi aur wahi promote ho gayi -> sync replication.
+          Doosri wajah failover: write replica tak pahuncha hi nahi aur wahi promote ho gayi -> sync
+          replication.
 
 NAYA:     Read replica
 
@@ -408,14 +423,17 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — ~22 arab row (11 arab txn) pe history ka page
 
 ```
-DIKKAT:   arabon rows me history ka page — OFFSET se. DB skip karta nahi koodta, PADHTA aur PHENKTA:
+DIKKAT:   arabon rows me history ka page — OFFSET se. Arpan ne OFFSET ka matlab sahi bola
+          ("skip karna"); jo chhoota: DB skip karta nahi koodta, PADHTA aur PHENKTA:
           aage ke page pe lakh row padh ke 20 deta, page 5000 pe atakta. Aur page 1 dekhte waqt nayi
           transaction aayi to sab khisak gaya — page 2 pe wahi entry dobara.
 
 SOLUTION: CURSOR / KEYSET pagination: "kahan chhoda" yaad rakho — pichhle page ki aakhri entry, aur
           agla page "usse purana" se shuru. Index pe seedha wahan koodta: page 1 ho ya 5000, kharcha wahi,
           aur kuch khiskta nahi.
-          Jaise YouTube / Instagram — page number nahi, sirf scroll. Ye kami nahi, faisla hai.
+          ★ Arpan ka anchor: "cursor based, jaise YouTube" — page number nahi, sirf scroll. Ye kami
+          nahi, faisla hai. Ulta: Google me page number kyunki top ~1000 se aage jaane nahi dete
+          (hadd = offset chalta).
           Keemat: "page 500 pe jao" nahi kar sakte, sirf agla / pichhla (statement me theek; admin panel me
           offset chal jaayega).
           Index (account_id, ts DESC, id DESC) ke bina dono nahi chalenge.
@@ -461,14 +479,15 @@ AGLA SAWAAL (tere jawab se):
 
 ```
 DIKKAT:   5 saal ka data ek hi table me. Pichhle kuch mahine roz dekhte, purana saal me ek baar ya
-          regulator maange. Har query, index, backup arabon rows ke saath. Aur bank me DELETE hota hi nahi —
+          regulator maange. Har query, index, backup arabon rows ke saath. Arpan: "purana hatao, archive,
+          on-demand wapas. DELETE nahi kar sakte" — bank me DELETE hota hi nahi —
           kanoon saalon tak rakhwata.
 
 SOLUTION: (a) DELETE se nahi (crore rows = table lock, ghante). Table ko MAHINE-MAHINE partition karo;
           purana partition alag (detach) karna turant hota, phir cold storage. "Pichhle 3 mahine" ki query
           baaki partitions chhooti hi nahi.
           (b) purana ghar: S3 (Parquet) ya alag cold DB, zaroorat pe query / restore.
-          (c) saath me ye tootega: reconciliation ab ledger ka jod adhoora dekhega -> har account mismatch.
+          (c) ★ saath me ye tootega: reconciliation ab ledger ka jod adhoora dekhega -> har account mismatch.
           Ilaaj: OPENING BALANCE SNAPSHOT — har period ke end ka balance (kabhi archive nahi). Reconciliation =
           snapshot + uske baad ki entries. Bank statement ke upar "opening balance" isi wajah se.
           Archive != sharding: archive size ghatata, shard likhne ka load baant-ta.
