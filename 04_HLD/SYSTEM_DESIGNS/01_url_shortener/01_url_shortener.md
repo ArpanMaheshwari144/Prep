@@ -61,12 +61,12 @@ flowchart TD
 ## DIKKAT 1 — har click DB pe, redirect 200ms se tez chahiye
 
 ```
-DIKKAT:   1 lakh read / sec seedha DB pe -> slow + DB pe bojh
+DIKKAT:   har click seedha DB pe -> 1 lakh read / sec, DB pe bojh, redirect slow
 
-SOLUTION: CACHE (Redis) — cache-aside: pehle Redis, miss -> DB -> Redis me daalo
-          read:write 100:1 -> ~95% read Redis se hi
-          TTL = link ki expiry (warna expired link bhi serve hota rahega)
-          DB me short_code PRIMARY KEY -> miss pe bhi tez lookup
+SOLUTION: aage CACHE (Redis) lagao, cache-aside: pehle Redis me dekho, na mile to DB se lo aur Redis
+          me daal do. Yahan padhna likhne se bahut zyada hai, to lagbhag saare clicks Redis se hi nikalte.
+          Redis entry ki TTL = link ki expiry, warna expire hua link bhi chalta rahega.
+          DB me shortCode primary key, to cache miss pe bhi lookup tez.
 
 NAYA:     Redis
 
@@ -84,6 +84,8 @@ flowchart TD
     n_Redis --> n_DB
 ```
 ```
+BOARD PE: read : write = 100 : 1 -> ~95% read Redis se
+
 POOCHEGA: "What if the cache goes down?"
 DHYAAN:   95% read seedha DB pe -> DB bhi gir sakta. "kuch nahi hoga" mat bolna
 BOL:      "Redis runs as a replicated cluster. If it still goes down, the DB takes the load, so I shed load
@@ -101,10 +103,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — ek App 1 lakh / sec nahi jhel raha, aur wo gira to site band
 
 ```
-DIKKAT:   ek box pe bojh + wahi SPOF
+DIKKAT:   ek App box pe saara bojh, aur wahi gira to poori site band (SPOF)
 
-SOLUTION: App ke kai box, aage LOAD BALANCER
-          App STATELESS (sab Redis / DB me) -> koi bhi box koi bhi request le
+SOLUTION: App ke kai box lagao, aage LOAD BALANCER. App STATELESS rakho (saara data Redis / DB me),
+          taaki koi bhi box koi bhi request le sake.
 
 NAYA:     LB
 BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
@@ -142,12 +144,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — ab kai App hain, do App ek hi code bana denge
 
 ```
-DIKKAT:   S1 counter=5, S2 counter=5 -> dono ne "6" banaya -> do URL ka EK code = COLLISION
+DIKKAT:   kai App box hain aur har ek apna counter chala raha -> do box ek hi number se code bana
+          dete -> do URL ka ek hi code (COLLISION)
 
-SOLUTION: RANGE ALLOCATION — COUNTER service (aksar ZooKeeper / ek DB counter-table)
-          App-1 ko 1..1000 · App-2 ko 1001..2000 -> range alag = takraav ho hi nahi sakta
-          coordinator se baat sirf har BLOCK pe, har request pe nahi
-          number -> BASE62 -> 7 char code   (detail neeche POOCHE TO)
+SOLUTION: RANGE ALLOCATION: ek COUNTER service (ZooKeeper / DB table) har App ko numbers ki ek range
+          de deti. Range alag-alag, to takraav ho hi nahi sakta. Counter se baat sirf range khatam hone
+          pe, har request pe nahi. Number ko BASE62 me badlo -> 7 char ka code (detail neeche POOCHE TO).
 
 NAYA:     Counter (har App ko number ki range dene wala, aksar ZooKeeper / DB table)
 ```
@@ -170,6 +172,9 @@ flowchart TD
     n_Redis --> n_DB
 ```
 ```
+BOARD PE: bina range: S1 counter=5, S2 counter=5 -> dono ne "6" banaya
+          range se: App-1 ko 1..1000 · App-2 ko 1001..2000
+
 POOCHEGA: "That server crashed at 400 — what about the rest of its range?"
 DHYAAN:   pehle dohra lo KIS box ka crash: "app server jiske paas 1-1000 thi, sahi?" (Redis ka jawab alag)
 BOL:      "The restarted server asks for a new range, so 401 to 1000 are wasted. I accept that on purpose —
@@ -188,10 +193,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — har click pe analytics likhna hai
 
 ```
-DIKKAT:   sync likha -> redirect slow -> aur latency hi dil hai
+DIKKAT:   har click pe analytics likhna hai; usi request me likha to redirect slow — aur yahan
+          latency hi sab kuch hai
 
-SOLUTION: event KAFKA me daalo, turant 302 do · Analytics service peeche se padhe
-          baar-baar fail event -> DLQ
+SOLUTION: click ka event KAFKA me daal do aur turant 302 de do. Analytics service peeche se aaram se
+          padhe. Koi event baar-baar fail ho to DLQ me.
 
 NAYA:     Kafka · Analytics svc · Analytics DB · DLQ
 
@@ -241,13 +247,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — 5 saal ka ~90 TB ek machine me nahi aayega
 
 ```
-DIKKAT:   ek DB me jagah nahi + wo machine mari to sab gaya
+DIKKAT:   5 saal ka ~90 TB data ek machine me nahi aayega, aur wo machine mari to sab gaya
 
-SOLUTION: SHARD by shortCode (data ke TUKDE) + har tukde ki 3 REPLICA (copy)
-          shard   = tukde -> jagah + WRITE scale
-          replica = copy  -> bachav + READ scale   (write ko replica se scale NAHI karte)
-          naya node juda -> consistent hashing (Cassandra ring) -> sirf ~K/N key hilti
-          teeno copy ALAG AZ me
+SOLUTION: data ko shortCode ke hisaab se tukdon me baanto (SHARD), aur har tukde ki 3 copy (REPLICA),
+          teeno alag AZ me. Shard = jagah aur likhne ka load baantta. Replica = bachav aur padhne ka load.
+          Likhne ka load replica se nahi bant-ta.
+          Naya node jode to consistent hashing, taaki saara data na hile, thodi si keys hi khiskein.
 
 BADLA:    DB -> Cassandra (shard by shortCode + 3 replica)
 
@@ -284,6 +289,8 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 ```
+BOARD PE: naya node -> sirf ~K/N keys hilti (K = keys, N = nodes)
+
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
 DHYAAN:   "write replica" NAHI — write scale = SHARDING. key = shortCode (country / date = skew)
 BOL:      "I shard by short code, so every redirect goes to exactly one shard, and keep three replicas
@@ -301,11 +308,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — write ho rahi thi, beech me ek replica node gira — data gaya?
 
 ```
-DIKKAT:   likha hua data khona nahi chahiye
+DIKKAT:   likh hi raha tha aur ek replica node gir gaya — likha hua data khona nahi chahiye
 
-SOLUTION: DB ka apna LOG — write PEHLE disk pe log (Cassandra = commit log, Postgres / MySQL = WAL)
-          -> phir table · gira -> uthte hi log padh ke wapas
-          write "DONE" tabhi jab ZYADA replica haan bolein (QUORUM): 3 me se 2 -> 1 gira bhi to data safe
+SOLUTION: DB har write pehle apne LOG me disk pe likhta (Cassandra me commit log, Postgres / MySQL me
+          WAL), phir table me. Node gira to uthte hi log padh ke wapas.
+          Aur write ko "done" tabhi maano jab zyada replica haan bolein (QUORUM) — ek gira bhi to data safe.
 
 NAYA:     koi dabba nahi — Cassandra ke andar log + quorum
 ```
@@ -337,6 +344,8 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 ```
+BOARD PE: 3 replica me se 2 ne haan bola = done -> 1 gira, data 2 pe phir bhi hai
+
 POOCHEGA: "What happens if a DB node goes down mid-write?"
 DHYAAN:   KAFKA nahi (1-Oct mock me bola tha) — Kafka extra dabba hai, DB ka kaam DB ka log karta
 BOL:      "The DB writes to its commit log before applying, and I ack writes on quorum, so losing one
@@ -354,11 +363,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — naya link banaya, turant click -> 404
 
 ```
-DIKKAT:   replica tak abhi pahuncha nahi -> purana / khaali dikha
+DIKKAT:   naya link banaya, turant click -> 404, kyunki copy abhi replica tak pahunchi hi nahi
 
-SOLUTION: write ke saath link Redis me bhi daalo (click Redis se hi mil jaata)
-          (Cassandra me "primary" nahi hota — leaderless; read-your-own-writes = QUORUM write + QUORUM read)
-          ya QUORUM write + QUORUM read = taaza value
+SOLUTION: link banate hi Redis me bhi daal do, to click Redis se mil jaata.
+          Ya QUORUM write + QUORUM read: likhne aur padhne wale node me kam se kam ek common hoga,
+          to taaza value milegi. (Cassandra me primary hota hi nahi, sab node barabar — leaderless.)
 
 NAYA:     koi dabba nahi
 
@@ -410,11 +419,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — LB khud gir gaya
 
 ```
-DIKKAT:   App, Redis, DB sab zinda -> par traffic dene wala hi mara -> site DOWN
+DIKKAT:   App, Redis, DB sab zinda, par traffic dene wala LB hi mar gaya -> site DOWN
 
-SOLUTION: LB do · ROUTE 53 (DNS) + health-check -> mara hua LB hata ke doosre pe bhejo
-          sirf do rakhna kaafi nahi — koi DEKHNE wala chahiye jo traffic mode (Redis me Sentinel yahi)
-          poora region gaya -> Route 53 doosra region · data async copy -> aakhri kuch link kho sakte (maana)
+SOLUTION: do LB rakho, aage DNS (Route 53) health-check ke saath: mara hua LB hata ke doosre pe bhejo.
+          Sirf do rakhna kaafi nahi — koi dekhne wala chahiye jo traffic mode (Redis me Sentinel yahi).
+          Poora region gaya to Route 53 doosre region pe bheje. Data async copy hota, to aakhri kuch
+          link kho sakte — ye maan ke chalte.
 
 NAYA:     Route 53
 BADLA:    LB ek se DO — ek mare to Route 53 doosre pe bheje (diagram me 2)
@@ -472,12 +482,13 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 9 — ek bande ne script se raat me 10 lakh link bana diye
 
 ```
-DIKKAT:   counter range tez khatam · DB me kachra · asli user line me
+DIKKAT:   ek bande ne script se raat me 10 lakh link bana diye -> counter ranges tez khatam,
+          DB me kachra, asli user line me
 
-SOLUTION: RATE LIMIT (per user / IP / API key)
-          har App me alag likha -> har App apna ginega -> EK jagah rakho = API GATEWAY (auth + routing bhi)
-          bad URL check: long_url ko malware / phishing list se milao · WAF edge pe (bot / bad IP)
-          poora rate limiter = alag design -> 02_rate_limiter
+SOLUTION: RATE LIMIT lagao (per user / IP / API key). Har App me alag lagaya to har App apna alag
+          ginega, isliye ek jagah rakho = API GATEWAY (auth aur routing bhi wahi).
+          Link banate waqt long URL ko malware / phishing list se milao, aur edge pe WAF bots / bad IP
+          rokta. Poora rate limiter = alag design (02_rate_limiter).
 
 NAYA:     API Gateway
 ```
