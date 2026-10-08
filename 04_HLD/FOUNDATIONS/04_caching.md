@@ -317,9 +317,29 @@ Evict oldest insertion (regardless of access)
 
 ### **TTL (Time To Live)**
 ```
-Each entry has expiry → auto-evicted
+Each entry has expiry → expire hone pe hata di jaati
 ```
 **Use:** Sessions, OTPs, time-sensitive data
+
+**Redis ko kaise pata ki key expire ho gayi? — har key ka alag TIMER NAHI chalta** (lakhon key = lakhon timer, bahut mehenga).
+Redis key ke saath bas uska **expiry ka time** likh ke rakhta hai. Misaal: doodh ke packet pe date chhapi hai, alarm nahi bajta.
+```
+SET otp 1234 EX 60   ->  alag table me likha:  expires["otp"] = abhi + 60 sec  (jaise 10:00:60)
+
+1) LAZY (jab koi maange tab check):
+   GET otp  ->  abhi ka time > 10:00:60 ?
+                haan -> key wahin delete, jawab nil
+                na   -> 1234 de deta
+
+2) ACTIVE (background safai, second me ~10 baar):
+   TTL wali keys me se ~20 random uthao -> jo expire ho gayi, hata do
+   inme 25% se zyada expired nikli -> turant ek round aur
+```
+Lazy akela kaafi nahi: jo key koi kabhi maange hi nahi, wo memory gherti padi rahegi -> isliye active safai bhi.
+Doodh wala: packet uthate waqt date dekhta (lazy) + din me kuch baar shelf se random packet utha ke purane phenkta (active).
+
+**BOL:** "Redis doesn't run a timer per key. It stores the expiry timestamp. Expired keys are removed lazily when
+someone accesses them, and by a periodic background job that samples random keys with a TTL."
 
 ---
 
