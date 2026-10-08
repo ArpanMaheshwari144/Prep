@@ -6,7 +6,7 @@
 ## STAR (Hinglish)
 
 ```
-   S: do DB: survey MongoDB me banta, ek sync Lambda use MySQL me daalta (aur MySQL se MongoDB),
+   S: do DB: survey MongoDB me banta, ek sync Lambda use MySQL me daalta,
       kyunki baaki services MySQL se padhti. Ek din sync toota -> kuch survey launch nahi hue.
 
    T: wajah nikaalo, atke survey wapas laao, aur ye dobara na ho.
@@ -23,7 +23,7 @@
          timeout + retry badhaye - 1-2 se ~5-7 baar
       atke survey gine (~7, exact 7-10 ke beech) -> MongoDB se data utha ke MySQL me seedha likha.
       test server: bid list upload + usi waqt survey launch -> retry 3-4 baar me nikal gaya,
-         survey Cint pe launch hoke complete hua. Phir production.
+         survey sync hua. Phir production.
 
    R: atke survey wapas, production pe uske baad ye dikkat dobara nahi aayi.
       LEARNING: shared DB pe heavy kaam ke peak ko rok nahi sakte -> jo usi DB pe hai use
