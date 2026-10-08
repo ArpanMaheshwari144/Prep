@@ -69,8 +69,8 @@ flowchart TD
 ```
 DIKKAT:   beech me crash — mere account se paisa kat gaya, merchant ko pahuncha nahi -> paisa GAYAB
 
-SOLUTION: debit aur credit dono EK atomic step me — DB TRANSACTION (ACID): dono honge ya koi nahi,
-          crash pe rollback.
+SOLUTION: debit aur credit dono EK atomic step me — DB TRANSACTION (ACID): dono honge ya koi nahi, crash
+          pe rollback.
           See-saw jaisa: debit aur credit saath hilte, paisa na banta na marta, sirf jagah badalta.
           Niyam (invariant): saare debit ka jod = saare credit ka jod, hamesha. Na mile to turant pakdo.
 
@@ -298,8 +298,8 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   regulator poochta: ye paisa kahan se aaya, kahan gaya? Har paisa kab-kahan-kyun traceable
           chahiye (RBI / SEC)
 
-SOLUTION: LEDGER: permanent aur immutable — delete / edit nahi. DOUBLE-ENTRY: har transaction = ek debit
-          + ek credit, dono ka jod barabar.
+SOLUTION: LEDGER: permanent aur immutable — delete / edit nahi. DOUBLE-ENTRY: har transaction = ek debit +
+          ek credit, dono ka jod barabar.
           Pen ki diary jaisa: galti hui to NAYI correction entry, purani mat mitao — poori history = audit
           trail.
           ★ JAAL (26-Sep mix hua): ledger "DB fail ho to backup" nahi hai. Wo usi SQL DB me, usi

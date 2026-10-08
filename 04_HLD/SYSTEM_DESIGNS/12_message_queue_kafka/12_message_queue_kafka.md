@@ -68,12 +68,11 @@ DIKKAT:   message memory me tha -> consumer restart hua -> sab gayab
 
 SOLUTION: queue ko memory se hata ke disk pe LOG banao — append-only file, naya message hamesha end me.
           Har message ka ek number hota hai (OFFSET), consumer bas yaad rakhta "kahan tak padha".
-          Padhne ke baad delete nahi hota, to restart pe wahin se chalu, aur offset peeche karke
-          dobara bhi padh sakte (REPLAY).
-          ★ DB kyun nahi (sabse bada trap): DB me har insert pe index + lock = random write, slow. Append =
-          hamesha end me
-          = sequential write, disk ka sabse tez kaam. Queue me kuch dhoondhna (WHERE) hota hi nahi,
-          bas "offset X ke baad do".
+          Padhne ke baad delete nahi hota, to restart pe wahin se chalu, aur offset peeche karke dobara
+          bhi padh sakte (REPLAY).
+          ★ DB kyun nahi (sabse bada trap): DB me har insert pe index + lock = random write, slow. Append
+          = hamesha end me = sequential write, disk ka sabse tez kaam. Queue me kuch dhoondhna (WHERE)
+          hota hi nahi, bas "offset X ke baad do".
 
 BADLA:    Queue (memory) -> Log (disk, append-only)
 ```
@@ -101,8 +100,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — ek machine me 2 TB aur 5,000 / sec nahi aayega
 
 ```
-DIKKAT:   ek machine me itna data (2 TB) nahi samaata, aur 5,000 / sec likhna bhi akeli machine
-          nahi jhel paati
+DIKKAT:   ek machine me itna data (2 TB) nahi samaata, aur 5,000 / sec likhna bhi akeli machine nahi jhel
+          paati
 
 SOLUTION: topic ko tukdon me baant do, har tukda = PARTITION. Har partition alag machine (broker) pe,
           aur har partition ka apna append-only log. Ab data aur likhne ka load dono kai machines me
@@ -214,8 +213,8 @@ AGLA SAWAAL (tere jawab se):
 ```
 DIKKAT:   ek hi event email, analytics, dashboard teeno ko chahiye (broadcast)
 
-SOLUTION: topic ek hi rakho, har service ka apna CONSUMER GROUP. Har group ko poora topic milta,
-          apne alag offset ke saath.
+SOLUTION: topic ek hi rakho, har service ka apna CONSUMER GROUP. Har group ko poora topic milta, apne alag
+          offset ke saath.
           Yaad rakhne ka niyam: SAME group = kaam baanto · ALAG group = sabko poora.
           Offset Kafka khud rakhta hai, ek internal topic me, group + partition ke hisaab se.
 
@@ -256,8 +255,8 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   har partition ki ek hi copy -> Broker A ki disk gayi, us partition ka saara data gaya
 
 SOLUTION: REPLICATION: har partition ka ek LEADER (saare read / write) aur followers, jo leader se copy
-          kheenchte. Leader mara to ek follower naya leader banta — ye faisla CONTROLLER leta
-          (pehle Zookeeper, ab KRaft).
+          kheenchte. Leader mara to ek follower naya leader banta — ye faisla CONTROLLER leta (pehle
+          Zookeeper, ab KRaft).
           Naya leader sirf unme se jo saath-saath chal rahe (ISR). Peeche wala leader bana to uske paas
           kuch events hi nahi = data loss.
           Producer kab maane "likh gaya" (acks): payment / order pe acks=all (leader + saare ISR),
@@ -499,8 +498,8 @@ DIKKAT:   Kafka padhne ke baad delete nahi karta (ye queue nahi, LOG hai) -> 7 d
 SOLUTION: RETENTION: purana data time se kaato (7 din, sabse common) ya size se (partition 100 GB se bada).
           Jahan sirf latest value chahiye (user ka current address) wahan COMPACTION: har key ka sirf
           aakhri message bachta.
-          Isi rakhe hue data se REPLAY hota: naya group shuru se padhe, ya bug fix ke baad offset
-          peeche karke dobara.
+          Isi rakhe hue data se REPLAY hota: naya group shuru se padhe, ya bug fix ke baad offset peeche
+          karke dobara.
           Delete poori purani file (segment) ka hota, row-by-row nahi — isliye sasta.
 
 NAYA:     koi dabba nahi

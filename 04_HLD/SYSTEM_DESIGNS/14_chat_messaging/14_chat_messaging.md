@@ -96,8 +96,8 @@ DIKKAT:   crore connection khuli rehti, aur har ek memory khaati — OS ka file 
 SOLUTION: (a) thread model badlo: EVENT LOOP (Netty jaisa) — kuch hi thread, laakhon connection.
           (b) server gira to uske lakh user ek saath wapas aate -> baaki servers pe jhatka. Client reconnect
           me BACKOFF + JITTER. (FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md)
-          (c) deploy ka dard: REST restart me kuch retry, chat restart = lakh disconnect -> thode-thode server
-          karke, pehle connection hatao (DRAINING).
+          (c) deploy ka dard: REST restart me kuch retry, chat restart = lakh disconnect -> thode-thode
+          server karke, pehle connection hatao (DRAINING).
           Aage LB connection ko kisi chat server pe bithata.
 ★ DEKHA:  server ki ginti jaan-boojh ke TEEN rakhi. Do khuli connection ne do jagah pakdi, teesri bhi bhari —
           send request server tak PAHUNCHI HI NAHI. Console pe `[JUDA]` teen, `[SEND]` EK BHI nahi.
@@ -200,10 +200,10 @@ SOLUTION: sahi kram: pehle DB me LIKHO, PHIR bhejne ki koshish. Message ko ID do
           notification).
           Offline me "kho gaya" hota hi nahi — likha ja chuka, bas uthaya nahi gaya.
           B wapas aaya to bolta "mere paas aakhri id ye hai, uske baad ka do" — nishaan client rakhta
-          (Kafka offset
-          jaisa). B judte waqt ek baar poochhta (catch-up), uske baad server khud bhejta — polling nahi.
-          Push alag raasta: connection = app khula ho tab. Ghanti = Google / Apple ke through phone OS tak, app
-          band ho tab bhi.
+          (Kafka offset jaisa). B judte waqt ek baar poochhta (catch-up), uske baad server khud bhejta —
+          polling nahi.
+          Push alag raasta: connection = app khula ho tab. Ghanti = Google / Apple ke through phone OS
+          tak, app band ho tab bhi.
 
 NAYA:     Message store · Push (Google / Apple)
 
@@ -335,8 +335,8 @@ SOLUTION: do raaste: (A) har member ke inbox me copy (fan-out on write) — 500 
           Twitter wala tareeka. (B) EK hi copy chat ke neeche (fan-out on read) — sab wahi padhein. Chat me B.
           Twitter se ulta kyun: Twitter ki feed 200 logon ki milawat hai, pehle banani padti. Chat ka group
           sabke liye ek jaisa, copy se kuch nahi milta. Aur Twitter me crore follower, chat me 500.
-          Message ek baar likho. Bhejna = register se har member ki connection pe (connection pe likhna sasta,
-          DB likhai ek).
+          Message ek baar likho. Bhejna = register se har member ki connection pe (connection pe likhna
+          sasta, DB likhai ek).
 
 NAYA:     koi dabba nahi
 ```
@@ -380,8 +380,8 @@ DIKKAT:   500 member — kiske kitne unread, ye kahan rakhoge? Har member ki apn
 SOLUTION: (A) har message x har member ka record ("ye message Arpan ko mila, Suresh ne padha...") —
           500-guna likhai peeche ke darwaze se wapas aa gayi.
           (B) har member ka EK NISHAAN (cursor): "Arpan is group me yahan tak padh chuka". Unread = uske baad
-          kitne. Sasta. Yahi. (Cursor = har chat ka apna +1 wala number, dikkat 10 — snowflake me gap hote,
-          ghatane se ginti nahi milti.)
+          kitne. Sasta. Yahi. (Cursor = har chat ka apna +1 wala number, dikkat 10 — snowflake me gap
+          hote, ghatane se ginti nahi milti.)
           Offline wali hi baat: padhne wala apna nishaan khud rakhta.
           ★ Tick ke liye ("sabko mila" / "sabne padha") A wala chahiye.
 
@@ -481,8 +481,8 @@ DIKKAT:   10 lakh ka broadcast group — tick ka kya? Har member ka record 500 p
 
 SOLUTION: WhatsApp: group me tick hai, par group ka size bandha hua (~1000). Do tick = sabko mila, neeli =
           sabne padha (bade group me neeli dikhti hi nahi). "Info" me har banda alag = mehnga record sach me
-          rakhte. Channel / broadcast me tick band. Slack me har message ki receipt hai hi nahi, sirf channel
-          ka unread (ek cursor).
+          rakhte. Channel / broadcast me tick band. Slack me har message ki receipt hai hi nahi, sirf
+          channel ka unread (ek cursor).
           ★ Jawab chaturai nahi: feature utna rakho jitna scale jhele; scale badhe to feature hatao (seema
           lagao).
 
@@ -585,19 +585,17 @@ DIKKAT:   kram kis se tay hoga, kiska time maanoge? Do alag sawaal hain: (1) ek 
           (A ke teen message isi kram me). (2) do logon ke beech kiska pehle — ye asal me sawaal hi nahi: jo
           server pe pehle pahuncha, sabko ek jaisa dikhe, itna kaafi.
 
-SOLUTION: (1) pehle hi hal ho chuka (dikkat 4): snowflake ID time se badhti + ek chat ek partition -> ek jagah,
-          ek kram.
+SOLUTION: (1) pehle hi hal ho chuka (dikkat 4): snowflake ID time se badhti + ek chat ek partition -> ek
+          jagah, ek kram.
           ★ JAAL: kram client ke time se MAT — phone ki ghadi galat ho sakti, koi time aage kar de to uska
-          message
-          hamesha upar chipka rahe. Kram server ki ID se; client ka time sirf dikhane ke liye.
+          message hamesha upar chipka rahe. Kram server ki ID se; client ka time sirf dikhane ke liye.
           Ulte kram me pahunche (retry se) -> B ka app ID se lagaye, aane ke kram se nahi.
           Beech ka gayab pakadna snowflake se nahi (gap normal hai) — har chat ka apna +1 number; beech ka
-          number
-          nahi aaya to catch-up.
+          number nahi aaya to catch-up.
           Beech me Kafka ho to key = chatId (ek chat ek partition).
           "Ye to WhatsApp me hota hai" (Arpan ne dekha: doosra pehle chala gaya) — jaan-boojh ke: strict
-          kram = pehla atka to doosra bhi
-          roko (head-of-line blocking). Chuna: kram thoda idhar-udhar, par message ruke nahi.
+          kram = pehla atka to doosra bhi roko (head-of-line blocking). Chuna: kram thoda idhar-udhar, par
+          message ruke nahi.
 
 NAYA:     koi dabba nahi
 
@@ -711,8 +709,8 @@ AGLA SAWAAL (tere jawab se):
 
 ```
 DIKKAT:   online / last-seen — sabse mehnga "chhota" feature. Message kabhi-kabhi aata, status har waqt
-          badalta, aur sabke contacts ko chahiye. Seedha socha: har connect / disconnect pe saare contacts ko
-          batao -> crore x 500 = bakwaas.
+          badalta, aur sabke contacts ko chahiye. Seedha socha: har connect / disconnect pe saare contacts
+          ko batao -> crore x 500 = bakwaas.
 
 SOLUTION: (1) TTL se apne aap marna: Redis me "B online" chhoti TTL ke saath, app thodi-thodi der me heartbeat
           bhej ke refresh kare. App band / net gaya -> heartbeat ruka -> TTL khatam -> apne aap offline.

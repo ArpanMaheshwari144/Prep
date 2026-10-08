@@ -96,8 +96,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — wallet me 50k, banda 30k-30k ke DO order daal de (DOUBLE SPEND)
 
 ```
-DIKKAT:   wallet me jitna paisa hai usse zyada ke do order ek saath daal diye, dono match ho gaye
-          = DOUBLE SPEND
+DIKKAT:   wallet me jitna paisa hai usse zyada ke do order ek saath daal diye, dono match ho gaye = DOUBLE
+          SPEND
 
 SOLUTION: order lagte hi paisa BLOCK karo, kaato nahi — hotel / petrol pump ke deposit jaisa. Available
           = total minus blocked; kam pada to doosra order reject. Match hua tab sach me kato, cancel hua to
@@ -136,8 +136,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — settlement ke beech crash
 
 ```
-DIKKAT:   settlement ke beech crash — buyer ka paisa kat gaya, seller ko milne se pehle crash
-          -> paisa gayab
+DIKKAT:   settlement ke beech crash — buyer ka paisa kat gaya, seller ko milne se pehle crash -> paisa
+          gayab
 
 SOLUTION: saare step EK transaction me (ACID) — sab hoga ya kuch nahi, crash hua to rollback.
           Spring me @Transactional yahi karta.
@@ -182,8 +182,8 @@ DIKKAT:   paisa Wallet DB me, share Portfolio DB me — do alag DB pe ek transac
           Wallet se paisa kata, portfolio me share dalne se pehle crash = paisa gaya, share nahi.
 
 SOLUTION: SAGA: bada kaam chhote local steps me todo, har step apne DB me commit. Koi step fail hua to
-          pichhle steps ka ULTA step chalao (compensate) — jaise flight ho gayi, hotel nahi mila, to flight
-          cancel + refund.
+          pichhle steps ka ULTA step chalao (compensate) — jaise flight ho gayi, hotel nahi mila, to
+          flight cancel + refund.
           ACID = ek DB, turant · SAGA = kai service, code se undo.
 
 BADLA:    ek [ DB ] -> do me bata: Wallet DB + Portfolio DB · Settlement ab SAGA chalata
@@ -337,8 +337,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — lakhon log live price dekh rahe
 
 ```
-DIKKAT:   lakhon log live price dekh rahe, har client baar-baar poochh raha (polling) -> lakhon
-          request / sec -> server dead
+DIKKAT:   lakhon log live price dekh rahe, har client baar-baar poochh raha (polling) -> lakhon request /
+          sec -> server dead
 
 SOLUTION: WEBSOCKET + PUB/SUB: connection ek baar khulta, price badle tab server khud bhejta.
           Price me sirf LATEST chahiye, purana store nahi karna (WhatsApp jaisa nahi) — reconnect pe user
@@ -390,14 +390,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — market khulte hi AKELE TCS pe lakhon order
 
 ```
-DIKKAT:   market khulte hi akele ek hi stock pe lakhon order — "stock ke hisaab se baanto" yahan kaam
-          nahi aata, ek stock = ek thread
+DIKKAT:   market khulte hi akele ek hi stock pe lakhon order — "stock ke hisaab se baanto" yahan kaam nahi
+          aata, ek stock = ek thread
 
 SOLUTION: book ko mat todo — ek book do thread me = double match wapas, aur pehle-aaya-pehle-paaya kram
           toot jaata. Ek thread RAM me, bina lock ke, bahut tez chalta (LMAX ka design yahi).
           Aage ka event log burst sambhaal leta: order line me lagte, thread apni speed se uthata
-          (BACKPRESSURE: aane ki raftaar aur kaam ki raftaar alag). Spike me kuch drop nahi hota, bas thodi
-          latency.
+          (BACKPRESSURE: aane ki raftaar aur kaam ki raftaar alag). Spike me kuch drop nahi hota, bas
+          thodi latency.
           Scale stocks ke beech karo (alag thread), ek stock ke andar kabhi nahi.
 
 NAYA:     koi dabba nahi — Event Log hi kaam aaya

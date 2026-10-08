@@ -64,10 +64,10 @@ flowchart TD
 ```
 DIKKAT:   RAM bhar gayi — naya daalne ke liye kya hatayein?
 
-SOLUTION: EVICTION policy: LRU = jo sabse lambe samay se nahi chhua wo hatao ("kab"). LFU = jo sabse
-          kam baar chhua wo hatao ("kitni baar").
-          LRU banta HashMap + doubly linked list se: jo chhua wo aage, jagah chahiye to peeche wala hatao —
-          dono O(1). (LeetCode 146.)
+SOLUTION: EVICTION policy: LRU = jo sabse lambe samay se nahi chhua wo hatao ("kab"). LFU = jo sabse kam
+          baar chhua wo hatao ("kitni baar").
+          LRU banta HashMap + doubly linked list se: jo chhua wo aage, jagah chahiye to peeche wala hatao
+          — dono O(1). (LeetCode 146.)
           Saath me TTL: har entry ki expiry. Do tareeke se hatti — access pe check (lazy) aur background
           me safai (active).
           LRU isliye ki wahi bache jo abhi kaam aa raha; frequency zyada maayne rakhe to LFU.
@@ -229,15 +229,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — super-hot key expire, 1000 request ek saath MISS
 
 ```
-DIKKAT:   bahut garam key expire hui, hazaar request ek saath miss -> sab DB pe -> DB crash
-          (STAMPEDE / thundering herd)
+DIKKAT:   bahut garam key expire hui, hazaar request ek saath miss -> sab DB pe -> DB crash (STAMPEDE /
+          thundering herd)
 
 SOLUTION: MUTEX: sirf EK request DB se dobara banaye, baaki ruk ke cache se padhein.
           SOFT-TTL: expire hone se PEHLE hi background me refresh.
           Bahut garam key ko expire hi mat hone do, background me update karo.
-          (2-Oct) Pata ho kab aayega (sale, WC final, iPhone launch) -> pehle se cache bharo (pre-warm) aur
-          servers
-          pehle badhao. Pata na ho (viral tweet) -> upar ke teen.
+          (2-Oct) Pata ho kab aayega (sale, WC final, iPhone launch) -> pehle se cache bharo (pre-warm)
+          aur servers pehle badhao. Pata na ho (viral tweet) -> upar ke teen.
           Twitter ka hot tweet TTL khatam + lakhon padh rahe = wahi stampede; asli me kam dikhta kyunki
           badi site ilaaj pehle lagaati.
 

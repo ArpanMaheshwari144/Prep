@@ -105,8 +105,8 @@ AGLA SAWAAL (tere jawab se):
 ```
 DIKKAT:   ek App box pe saara bojh, aur wahi gira to poori site band (SPOF)
 
-SOLUTION: App ke kai box lagao, aage LOAD BALANCER. App STATELESS rakho (saara data Redis / DB me),
-          taaki koi bhi box koi bhi request le sake.
+SOLUTION: App ke kai box lagao, aage LOAD BALANCER. App STATELESS rakho (saara data Redis / DB me), taaki
+          koi bhi box koi bhi request le sake.
 
 NAYA:     LB
 BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
@@ -144,8 +144,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — ab kai App hain, do App ek hi code bana denge
 
 ```
-DIKKAT:   kai App box hain aur har ek apna counter chala raha -> do box ek hi number se code bana
-          dete -> do URL ka ek hi code (COLLISION)
+DIKKAT:   kai App box hain aur har ek apna counter chala raha -> do box ek hi number se code bana dete ->
+          do URL ka ek hi code (COLLISION)
 
 SOLUTION: RANGE ALLOCATION: ek COUNTER service (ZooKeeper / DB table) har App ko numbers ki ek range
           de deti. Range alag-alag, to takraav ho hi nahi sakta. Counter se baat sirf range khatam hone
@@ -193,8 +193,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — har click pe analytics likhna hai
 
 ```
-DIKKAT:   har click pe analytics likhna hai; usi request me likha to redirect slow — aur yahan
-          latency hi sab kuch hai
+DIKKAT:   har click pe analytics likhna hai; usi request me likha to redirect slow — aur yahan latency hi
+          sab kuch hai
 
 SOLUTION: click ka event KAFKA me daal do aur turant 302 de do. Analytics service peeche se aaram se
           padhe. Koi event baar-baar fail ho to DLQ me.
@@ -423,8 +423,8 @@ DIKKAT:   App, Redis, DB sab zinda, par traffic dene wala LB hi mar gaya -> site
 
 SOLUTION: do LB rakho, aage DNS (Route 53) health-check ke saath: mara hua LB hata ke doosre pe bhejo.
           Sirf do rakhna kaafi nahi — koi dekhne wala chahiye jo traffic mode (Redis me Sentinel yahi).
-          Poora region gaya to Route 53 doosre region pe bheje. Data async copy hota, to aakhri kuch
-          link kho sakte — ye maan ke chalte.
+          Poora region gaya to Route 53 doosre region pe bheje. Data async copy hota, to aakhri kuch link
+          kho sakte — ye maan ke chalte.
 
 NAYA:     Route 53
 BADLA:    LB ek se DO — ek mare to Route 53 doosre pe bheje (diagram me 2)
@@ -482,8 +482,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 9 — ek bande ne script se raat me 10 lakh link bana diye
 
 ```
-DIKKAT:   ek bande ne script se raat me 10 lakh link bana diye -> counter ranges tez khatam,
-          DB me kachra, asli user line me
+DIKKAT:   ek bande ne script se raat me 10 lakh link bana diye -> counter ranges tez khatam, DB me kachra,
+          asli user line me
 
 SOLUTION: RATE LIMIT lagao (per user / IP / API key). Har App me alag lagaya to har App apna alag
           ginega, isliye ek jagah rakho = API GATEWAY (auth aur routing bhi wahi).

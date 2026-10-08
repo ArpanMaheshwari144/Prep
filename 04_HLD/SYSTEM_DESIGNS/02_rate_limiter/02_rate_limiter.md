@@ -109,8 +109,7 @@ SOLUTION: padho-badhao-likho ko EK atomic kaam banao. Redis single-threaded hai,
           ★ JAAL: EXPIRE sirf pehli baar lagao. Har request pe lagaya to TTL har baar aage khisakta,
           key kabhi expire nahi hoti, user hamesha block.
           CONNECT (2-Sep): yahi race idempotency me bhi thi (HDFC double-payment: containsKey + put ke
-          beech gap -> double charge) — ilaaj same:
-          teen step ek unit.
+          beech gap -> double charge) — ilaaj same: teen step ek unit.
 
 NAYA:     koi dabba nahi — Redis me INCR / Lua
 ```
@@ -151,8 +150,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — limiter App ke andar: reject hone wali request bhi poore system me ghoom aayi
 
 ```
-DIKKAT:   limiter App ke andar hai -> jise reject hona hai wo request bhi poore system me ghoom ke
-          aayi, backend ka compute bekaar jala
+DIKKAT:   limiter App ke andar hai -> jise reject hona hai wo request bhi poore system me ghoom ke aayi,
+          backend ka compute bekaar jala
 
 SOLUTION: limiter sabse aage rakho — API GATEWAY pe. 429 wahin se, backend tak jaaye hi nahi.
           Limiter teen jagah ho sakta (gateway · alag service · app library), gateway sabse common.
@@ -195,7 +194,7 @@ DIKKAT:   har request ka faisla Redis pe tha, aur Redis hi gir gaya
 
 SOLUTION: (1) Redis ki replica alag AZ me + auto failover (Sentinel / Redis Cluster).
           (2) poori Redis layer hi gayi -> normal endpoints pe FAIL-OPEN (sab allow), par payment / auth /
-              OTP pe FAIL-CLOSED (sab rok do).
+          OTP pe FAIL-CLOSED (sab rok do).
           (3) Redis pe bojh -> SHARD (Redis Cluster). Shard = scale, replica = bachav.
           Har layer pe kam se kam 2 + AUTO failover. Sirf copy rakhna kaafi nahi, koi dekhne wala chahiye
           jo traffic mode: Redis me Sentinel / Cluster ka vote, LB ke liye Route 53, cloud ALB khud multi-AZ.
@@ -240,8 +239,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — ek user Bangalore + Berlin + US-VPN se maar raha
 
 ```
-DIKKAT:   ek user teen region se maar raha (Bangalore + Berlin + US VPN) -> har region ko sirf apni
-          ginti dikhi, total limit se bahut upar
+DIKKAT:   ek user teen region se maar raha (Bangalore + Berlin + US VPN) -> har region ko sirf apni ginti
+          dikhi, total limit se bahut upar
 
 SOLUTION: teen raaste: (1) ek CENTRAL Redis — exact, par door wale region ko latency.
           (2) har region local + async sync — tez, par thoda zyada allow ho jaata.
@@ -346,8 +345,8 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   limiter sahi chal raha, har user apni limit ke andar — phir bhi itne saare asli user aaye
           ki server gir gaya. Limiter ne kuch galat nahi kiya.
 
-SOLUTION: RATE LIMIT = "kis USER ne kitni" (abuse / fairness). LOAD SHEDDING = "SYSTEM abhi kitna
-          jhel sakta" (bachna) — ye alag cheez hai.
+SOLUTION: RATE LIMIT = "kis USER ne kitni" (abuse / fairness). LOAD SHEDDING = "SYSTEM abhi kitna jhel
+          sakta" (bachna) — ye alag cheez hai.
           Poore system ka global cap / concurrency limit lagao, aur sehat dekh ke nayi requests chhodo
           (CPU 90% -> nayi mat lo). Queue burst pakad leti. Pata ho kab aayega (12 baje sale) to PEHLE
           scale out karo — autoscale ko minute lagte, spike second me aata.
@@ -403,8 +402,8 @@ DIKKAT:   attack aaya -> Redis pe bhi utna hi bojh -> Redis down -> fail-open ->
           Limiter thik usi waqt gaya jab sabse zyada zaroorat thi.
 
 SOLUTION: fail-open ke saath LOCAL fallback: Redis zinda -> poori global ginti. Redis gaya -> har node
-          apni memory me motamoti ginti karke roke. Exact nahi (har node apna ginta), par attack me
-          "kuch nahi" se bahut behtar.
+          apni memory me motamoti ginti karke roke. Exact nahi (har node apna ginta), par attack me "kuch
+          nahi" se bahut behtar.
 
 NAYA:     koi dabba nahi — App / Gateway me local counter fallback
 

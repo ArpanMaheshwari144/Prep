@@ -354,8 +354,8 @@ DIKKAT:   India ka user US ke shard se padh raha -> har request door jaati, dhee
 
 SOLUTION: GEO SHARDING (India / EU / US). Chaar wajah bolo: latency (paas = tez), compliance (GDPR —
           EU ka data EU me), load (har region ka peak alag waqt), failure (ek region gira, baaki chale).
-          Indian user kisi US celeb ko follow karta -> us celeb ke hot tweet India ke cache me copy
-          (hot data paas laao).
+          Indian user kisi US celeb ko follow karta -> us celeb ke hot tweet India ke cache me copy (hot
+          data paas laao).
 
 BADLA:    Cassandra ab region-wise (India / EU / US)
 
@@ -400,8 +400,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — sab EK App box me: bojh bhi, SPOF bhi
 
 ```
-DIKKAT:   sab ek hi App box me: lakhon user nahi jhelta, aur gira to sab band. Ek LB / region gira
-          to bhi site gayi.
+DIKKAT:   sab ek hi App box me: lakhon user nahi jhelta, aur gira to sab band. Ek LB / region gira to bhi
+          site gayi.
 
 SOLUTION: App ke kai box, aage ALB. App stateless (state Redis / DB me), to koi bhi box koi bhi request
           le. Uske aage ROUTE 53 (DNS + health check): mara hua hatao, user ko paas wala region do.
@@ -506,8 +506,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 10 — photo / video duniya bhar se, har baar humare server se
 
 ```
-DIKKAT:   photo / video bhaari hain aur duniya bhar se aate — har baar apne server se dena dheema
-          aur mehnga
+DIKKAT:   photo / video bhaari hain aur duniya bhar se aate — har baar apne server se dena dheema aur
+          mehnga
 
 SOLUTION: CDN (CloudFront): media user ke paas wali edge se milta.
 

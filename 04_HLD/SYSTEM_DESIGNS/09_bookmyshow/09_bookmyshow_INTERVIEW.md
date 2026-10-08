@@ -61,13 +61,13 @@ flowchart TD
 ## DIKKAT 1 — do ALAG user ne EK SAATH A1 book kar di
 
 ```
-DIKKAT:   do alag user ne ek saath ek hi seat book kar di — dono ne dekha "khali hai", dono ne book
-          kiya = ek seat do ko (check-then-act race)
+DIKKAT:   do alag user ne ek saath ek hi seat book kar di — dono ne dekha "khali hai", dono ne book kiya =
+          ek seat do ko (check-then-act race)
 
 SOLUTION: check aur book ek hi ATOMIC step me: ek conditional UPDATE — "seat book karo, SIRF agar abhi
           bhi available hai". DB me sirf ek ka lagega, doosre ka 0 row badlega -> "seat ja chuki, doosri chuno".
-          Doosre raaste: row lock (SELECT ... FOR UPDATE) ya optimistic (version column). Conditional update
-          sabse accha.
+          Doosre raaste: row lock (SELECT ... FOR UPDATE) ya optimistic (version column). Conditional
+          update sabse accha.
 
 NAYA:     koi dabba nahi — SQL ka atomic update
 
@@ -121,8 +121,7 @@ SOLUTION: SEAT HOLD + expiry: chunte hi 'held' aur kab tak (5 min). Payment ho g
           Raasta 1: booking ka UPDATE hi expire hua hold khaali maane — "available ho, YA held ho par time
           nikal gaya". Ye atomic hai, sahi-pan yahi deta.
           Raasta 2: SWEEPER job har minute expire hue hold wapas available kare — safai ke liye. Kami: ~1
-          min tak
-          'held' dikh sakti.
+          min tak 'held' dikh sakti.
           Dono saath: update ka check = sahi-pan, sweeper = safai.
 
 NAYA:     Sweeper job (har minute expired hold ko wapas available karne wala)
@@ -174,8 +173,8 @@ SOLUTION: IDEMPOTENCY KEY (payment wala tool): client key banata, retry pe wahi.
           karta (unique constraint / Redis SET NX); dobara aaye to saved result, error nahi.
           ★ Do alag cheez, confuse mat karna: do ALAG user, ek seat = users ke beech race -> atomic mark
           (dikkat 1). Ek hi user, duplicate request = retry -> idempotency (ye).
-          (Arpan ki mock line "seat mark-booked kar do, doosra taken dekhe" sahi thi — wo atomic mark hai, bas
-          "idempotency" shabd galat lag gaya tha.)
+          (Arpan ki mock line "seat mark-booked kar do, doosra taken dekhe" sahi thi — wo atomic mark hai,
+          bas "idempotency" shabd galat lag gaya tha.)
 
 NAYA:     Payment Svc (external, idempotency key ke saath)
 ```
@@ -252,8 +251,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — popular release: lakhon log, wahi show, wahi seat
 
 ```
-DIKKAT:   popular release: lakhon log, wahi show, wahi seats -> spike seedha DB pe, ek hi rows pe
-          ladaai, DB thapp
+DIKKAT:   popular release: lakhon log, wahi show, wahi seats -> spike seedha DB pe, ek hi rows pe ladaai,
+          DB thapp
 
 SOLUTION: QUEUE (Kafka) + har show ka worker: us show ki requests ek-ek karke, atomic update, ladaai kam.
           Queue kyun, replica / LB kyun nahi: replica READ scale karti, likhne ka spike queue jhelti.
@@ -262,8 +261,7 @@ SOLUTION: QUEUE (Kafka) + har show ka worker: us show ki requests ek-ek karke, a
           "housefull" / waiting room — log bekaar line me nahi phanste. Counter bhi atomic (Redis DECR).
           ★ Par BookMyShow me user KHAAS seat chunta: ginti batati "kitni bachi", ye nahi "teri wali bachi".
           Isliye turant "booked" mat bolo (warna baad me "sorry, cancel" = sabse bura UX) — pehle "booking
-          in progress", worker ka update jeete tab
-          "confirmed", haare to "ye seat gayi".
+          in progress", worker ka update jeete tab "confirmed", haare to "ye seat gayi".
           Seat number nahi (concert standing, sale stock) -> Arpan ka idea jaisa hai poora sahi.
           "BookMyShow aise karta" mat bolo — bolo "a common pattern in flash sales".
 

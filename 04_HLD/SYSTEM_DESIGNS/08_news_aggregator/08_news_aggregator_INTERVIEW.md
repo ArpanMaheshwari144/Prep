@@ -98,8 +98,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — 1000 source ek saath, fetch slow
 
 ```
-DIKKAT:   1000 source se news laana slow. User ki request pe laaye to user ruka, aur 1000 ek saath
-          aaye to spike.
+DIKKAT:   1000 source se news laana slow. User ki request pe laaye to user ruka, aur 1000 ek saath aaye to
+          spike.
 
 SOLUTION: LIKHNE ka raasta aur PADHNE ka raasta bilkul alag (yahi core faisla).
           Likhna peeche chalta, dheere bhi chalega: sources -> fetcher -> Kafka -> worker -> DB + cache refresh.
@@ -152,8 +152,8 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   ek hi khabar paanch source se aa gayi -> feed me wahi news 5 baar
 
 SOLUTION: worker ke andar teen kaam: CLEAN (ads / HTML hatao, title aur content nikaalo), DEDUPE (ek
-          khabar kai source pe -> ek; URL dedupe ke liye Bloom filter), aur CATEGORY tag
-          (tech / sports / politics).
+          khabar kai source pe -> ek; URL dedupe ke liye Bloom filter), aur CATEGORY tag (tech / sports /
+          politics).
 
 NAYA:     koi dabba nahi — Worker me
 
@@ -200,8 +200,8 @@ AGLA SAWAAL (tere jawab se):
 ```
 DIKKAT:   ek source down ya bahut slow -> fetcher us pe atka, baaki sab ki news bhi ruki
 
-SOLUTION: har source ka fetch alag aur parallel, ek doosre se azaad. Timeout lagao, fail pe retry,
-          phir bhi nahi to skip.
+SOLUTION: har source ka fetch alag aur parallel, ek doosre se azaad. Timeout lagao, fail pe retry, phir
+          bhi nahi to skip.
           Har source pe CIRCUIT BREAKER: baar-baar fail -> us source ko call band (turant fail), thodi der
           baad ek test call, theek to wapas chalu. Queue ka backlog spike sambhaal leta.
 
@@ -245,9 +245,9 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — 6 mahine me 5 crore row: disk, backup, kharcha badhta
 
 ```
-DIKKAT:   6 mahine me crore-on rows — disk, backup, kharcha sab badhta. ★ SACH: query slow NAHI hai:
-          published_at
-          pe index hai, to latest 20 milliseconds me. Asli bojh = poori table, index, backup, restore.
+DIKKAT:   6 mahine me crore-on rows — disk, backup, kharcha sab badhta.
+          ★ SACH: query slow NAHI hai: published_at pe index hai, to latest 20 milliseconds me.
+          Asli bojh = poori table, index, backup, restore.
           Aur latest 20 ke alawa purana koi padhta hi nahi.
 
 SOLUTION: RETENTION: sirf haal ka data (jaise 7 din) garam table me, purana sasti jagah (archive).
@@ -300,13 +300,13 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — (sirf BADE scale pe) ek DB box likhai + data nahi jhel raha
 
 ```
-DIKKAT:   (sirf bade scale pe) ek DB box likhna aur data nahi jhel raha — jaise source 100 guna ho
-          gaye ya log khud content daalne lage
+DIKKAT:   (sirf bade scale pe) ek DB box likhna aur data nahi jhel raha — jaise source 100 guna ho gaye ya
+          log khud content daalne lage
 
 SOLUTION: imaandari se bolo: humare number pe ek box chal jaata, SHARD ki zaroorat NAHI. "Is scale pe
           shard nahi; source 100x ya user content aaye tab."
-          Tab date (ya category) se shard. Par date se shard kiya to saari nayi likhai aaj wale shard pe
-          = ek tukda garam (hot partition).
+          Tab date (ya category) se shard. Par date se shard kiya to saari nayi likhai aaj wale shard pe =
+          ek tukda garam (hot partition).
 
 NAYA:     koi dabba nahi
 
@@ -353,8 +353,8 @@ AGLA SAWAAL (tere jawab se):
 ```
 DIKKAT:   user ko apni pasand ki feed chahiye, par har user ki alag feed (fanout) bahut mehngi
 
-SOLUTION: beech ka raasta: har CATEGORY ki alag cached feed (tech, sports, politics). User ki pasand
-          ki 2-3 category ki feed utha ke milao.
+SOLUTION: beech ka raasta: har CATEGORY ki alag cached feed (tech, sports, politics). User ki pasand ki
+          2-3 category ki feed utha ke milao.
 
 NAYA:     koi dabba nahi — Redis me category keys
 ```

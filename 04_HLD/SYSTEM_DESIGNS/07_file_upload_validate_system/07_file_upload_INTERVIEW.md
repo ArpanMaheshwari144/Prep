@@ -355,8 +355,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — kisi ne DOOSRE ka trackingId daal ke file maang li
 
 ```
-DIKKAT:   kisi ne doosre ka trackingId daal ke uski file maang li — trackingId guess ho sakta, aur
-          usme likha hi nahi ki file kiski hai
+DIKKAT:   kisi ne doosre ka trackingId daal ke uski file maang li — trackingId guess ho sakta, aur usme
+          likha hi nahi ki file kiski hai
 
 SOLUTION: upload shuru hote waqt user logged-in (JWT, gateway pe) -> record me ownerId likho.
           Status aur download pe: maangne wala = owner? Warna 403.
@@ -407,8 +407,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — owner ko S3 ka SEEDHA link diya, usne aage bhej diya
 
 ```
-DIKKAT:   owner ko S3 ka seedha link diya, usne aage bhej diya -> link hamesha chalta, kisi ke bhi
-          haath me, owner check beech me aata hi nahi
+DIKKAT:   owner ko S3 ka seedha link diya, usne aage bhej diya -> link hamesha chalta, kisi ke bhi haath
+          me, owner check beech me aata hi nahi
 
 SOLUTION: presigned URL ki umar chhoti (kuch minute, din nahi). Owner check ab bhi hum karte — URL
           tabhi banta jab check paas ho. URL "chaabi" nahi, "5 minute ka paas" hai.

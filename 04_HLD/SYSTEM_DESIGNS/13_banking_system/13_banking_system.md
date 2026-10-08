@@ -122,14 +122,12 @@ DIKKAT:   regulator poochta "paisa kahan se aaya, kahan gaya?" Aur transfer ke b
           statement — inke liye transfer ruke nahi, aur inme koi gire to transfer na gire.
 
 SOLUTION: ★ ARPAN NE LOG aur LEDGER alag bola (bahut kam log karte): log = debugging, ghoomta / mit-ta
-          rehta. Ledger = sach, append-only
-          (kisne, kab, kitna, kyun), na mit-ta na badalta.
+          rehta. Ledger = sach, append-only (kisne, kab, kitna, kyun), na mit-ta na badalta.
           DOUBLE-ENTRY: har transaction ki do entry, jod hamesha zero — paisa sirf hilta. Poore ledger ka
           jod = bank ka kul paisa, mismatch turant pakda jaata.
           Arpan ka Kafka jod: Kafka bhi append-only, padhne se mit-ta nahi — shakal sahi.
-          ★ HADD: ledger ka ghar DB hai, Kafka nahi: ledger pe query chahiye, aur ledger usi transaction me
-          likhna
-          jisme paisa hila — Kafka us transaction ka hissa nahi.
+          ★ HADD: ledger ka ghar DB hai, Kafka nahi: ledger pe query chahiye, aur ledger usi transaction
+          me likhna jisme paisa hila — Kafka us transaction ka hissa nahi.
           Kafka ka kaam: commit ke BAAD baaki sab ko khabar (notification, fraud, analytics, statement).
           ★ JAAL: commit hua, Kafka bhejne se pehle app gira -> event gayab -> OUTBOX: event usi transaction me
           outbox table me, relay Kafka bheje. Relay dobara bhi bhej sakta, to consumers eventId se idempotent.
@@ -181,8 +179,7 @@ SOLUTION: DONO rakho (19-Sep yahan seekha): ledger = sach, balance column = pehl
           ho hi nahi sakte. Isliye yahan queue nahi — "baad me" kiya to alag ho jaayenge.
           Kabhi farak aaya (bug, manual edit, migration) to LEDGER jeetega, balance usse dobara banta.
           RECONCILIATION (source ka grading point): raat ko har account ka ledger jod vs balance — farak =
-          ALERT. ★ Chupchap theek mat
-          karo, pehle pata karo KYUN (bug abhi zinda hai).
+          ALERT. ★ Chupchap theek mat karo, pehle pata karo KYUN (bug abhi zinda hai).
 
 NAYA:     Reconciliation job (raat ko ledger ka jod aur balance milaane wala)
 ```
@@ -228,8 +225,8 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   do baar tap / client retry -> ek transfer do baar, paisa do baar kata
           (Arpan ne mock me ye #1 pain point khud pakda)
 
-SOLUTION: IDEMPOTENCY KEY: har transfer request ke saath ek key. Pehle dekhi hai -> purana result. Nahi
-          -> kaam karo aur record karo.
+SOLUTION: IDEMPOTENCY KEY: har transfer request ke saath ek key. Pehle dekhi hai -> purana result. Nahi ->
+          kaam karo aur record karo.
           Sabse accha: us key pe DB UNIQUE constraint — insert khud lock jaisa, do me se ek hi jeetega.
           App me "check phir insert" likha to race.
           @Transactional idempotency ki jagah nahi leta: transaction = "aadha nahi hoga", idempotency =
@@ -272,8 +269,8 @@ DIKKAT:   ek hi account pe do transfer ek saath. Arpan: "DB atomic hai, do trans
 SOLUTION: do chhoti par asli cheez bachti:
           (a) balance minus me na jaaye, ye check kahan? App me check kiya to dono transfer purana balance
           dekh lete. Isliye check DB me, usi update ke andar ("tabhi ghatao jab balance kaafi ho" — 0 row =
-          reject), ya DB constraint. Niyam code me nahi DB me, kyunki raaste kai (API / batch / manual), DB
-          ek -> SAWAAL 3 band.
+          reject), ya DB constraint. Niyam code me nahi DB me, kyunki raaste kai (API / batch / manual),
+          DB ek -> SAWAAL 3 band.
           (b) DEADLOCK: A->B aur B->A ek saath — dono ek doosre ke lock ka intezaar. DB ek ko maar deta
           (Arpan ne LIVE dekha).
           Ilaaj: lock hamesha ek tay kram me lo (chhoti account id pehle).
@@ -318,8 +315,8 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   salary day: ek Banking service bhar gayi, aur wahi giri to bank band
 
 SOLUTION: kai Banking service box + aage LB. Service stateless (sab DB me), health check fail = pool se bahar.
-          DB primary gira to SYNC (ya semi-sync) replica ko promote karo — async hoti to aakhri transfer kho
-          sakta. Replica alag AZ me.
+          DB primary gira to SYNC (ya semi-sync) replica ko promote karo — async hoti to aakhri transfer
+          kho sakta. Replica alag AZ me.
 
 NAYA:     LB
 BADLA:    Banking Svc ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
@@ -363,15 +360,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — sab balance / history PRIMARY pe padh rahe, transfer dheeme
 
 ```
-DIKKAT:   sab balance / history primary se padh rahe -> transfer dheeme. Padhna likhne se bahut zyada,
-          sab ek hi box pe.
+DIKKAT:   sab balance / history primary se padh rahe -> transfer dheeme. Padhna likhne se bahut zyada, sab
+          ek hi box pe.
 
 SOLUTION: READ REPLICA: balance / history replica se, write primary pe. (Shard abhi nahi.)
           ★ JAAL: transfer kiya, turant balance dekha -> PURANA dikha (replica thodi peeche) -> user
-          sochega paisa
-          gaya hi nahi, dobara bhejega.
-          READ-YOUR-OWN-WRITES: jisne abhi likha uska balance primary se. (Balance jaisi cheez hamesha primary
-          se bhi chal jaati.)
+          sochega paisa gaya hi nahi, dobara bhejega.
+          READ-YOUR-OWN-WRITES: jisne abhi likha uska balance primary se. (Balance jaisi cheez hamesha
+          primary se bhi chal jaati.)
           Doosri wajah failover: write replica tak pahuncha hi nahi aur wahi promote ho gayi -> sync
           replication.
 
@@ -432,10 +428,10 @@ SOLUTION: CURSOR / KEYSET pagination: "kahan chhoda" yaad rakho — pichhle page
           agla page "usse purana" se shuru. Index pe seedha wahan koodta: page 1 ho ya 5000, kharcha wahi,
           aur kuch khiskta nahi.
           ★ Arpan ka anchor: "cursor based, jaise YouTube" — page number nahi, sirf scroll. Ye kami
-          nahi, faisla hai. Ulta: Google me page number kyunki top ~1000 se aage jaane nahi dete
-          (hadd = offset chalta).
-          Keemat: "page 500 pe jao" nahi kar sakte, sirf agla / pichhla (statement me theek; admin panel me
-          offset chal jaayega).
+          nahi, faisla hai. Ulta: Google me page number kyunki top ~1000 se aage jaane nahi dete (hadd =
+          offset chalta).
+          Keemat: "page 500 pe jao" nahi kar sakte, sirf agla / pichhla (statement me theek; admin panel
+          me offset chal jaayega).
           Index (account_id, ts DESC, id DESC) ke bina dono nahi chalenge.
 
 NAYA:     koi dabba nahi — query + index
@@ -480,8 +476,8 @@ AGLA SAWAAL (tere jawab se):
 ```
 DIKKAT:   5 saal ka data ek hi table me. Pichhle kuch mahine roz dekhte, purana saal me ek baar ya
           regulator maange. Har query, index, backup arabon rows ke saath. Arpan: "purana hatao, archive,
-          on-demand wapas. DELETE nahi kar sakte" — bank me DELETE hota hi nahi —
-          kanoon saalon tak rakhwata.
+          on-demand wapas. DELETE nahi kar sakte" — bank me DELETE hota hi nahi — kanoon saalon tak
+          rakhwata.
 
 SOLUTION: (a) DELETE se nahi (crore rows = table lock, ghante). Table ko MAHINE-MAHINE partition karo;
           purana partition alag (detach) karna turant hota, phir cold storage. "Pichhle 3 mahine" ki query

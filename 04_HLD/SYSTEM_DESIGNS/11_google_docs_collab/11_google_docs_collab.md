@@ -89,8 +89,8 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   B ko A ka edit kab dikhega — refresh karne pe? Normal HTTP me server khud nahi bhej sakta.
 
 SOLUTION: WEBSOCKET: do-tarfa zinda connection, dono taraf se kabhi bhi bhej sakte. Do-tarfa chahiye
-          kyunki user type bhi karta aur doosron ke edit bhi leta. (Sirf server se client hota to SSE halka
-          padta.)
+          kyunki user type bhi karta aur doosron ke edit bhi leta. (Sirf server se client hota to SSE
+          halka padta.)
 
 BADLA:    App -> Conn-Server (connection server: user ka WebSocket pakad ke rakhta)
 
@@ -121,8 +121,8 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — ek Conn-Server itne socket nahi jhelta -> kai lagaye -> A server-1 pe, B server-2 pe
 
 ```
-DIKKAT:   ek Conn-Server itne connection nahi jhelta -> kai lagaye. Par ek doc ke do editor alag box
-          pe — dono box ek doosre ko jaante hi nahi.
+DIKKAT:   ek Conn-Server itne connection nahi jhelta -> kai lagaye. Par ek doc ke do editor alag box pe —
+          dono box ek doosre ko jaante hi nahi.
 
 SOLUTION: REDIS PUB/SUB — server se server tak bhejne ke liye. A ka edit uske server se Redis pe
           publish hota, Redis us doc ko sun rahe saare servers ko deta, wo apne users ko.
