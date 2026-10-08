@@ -1,4 +1,4 @@
-# LLD 06: Elevator System Design
+# LLD 05: Elevator System Design
 
 ## Problem:
 "Design an Elevator System" — building mein multiple lifts, multiple floors, requests manage.
@@ -62,7 +62,7 @@ Soch tu office building mein hai.
 Tu 5th floor pe khada → button dabaya (UP chahiye).
 Controller dekhta — kaunsi lift sabse paas?
   Lift A → 2nd floor pe hai (distance 3)
-  Lift B → 7th floor pe hai (distance 2)  ← WINNER
+  Lift B → 7th floor pe hai (distance 2)
   Lift C → 4th floor pe hai (distance 1)  ← WINNER (closest!)
 Lift C assign hoti → tere paas aati.
 ```
