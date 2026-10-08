@@ -68,10 +68,12 @@ flowchart TD
 ## DIKKAT 1 — Order email ke intezaar me ruka, email down = ORDER fail
 
 ```
-DIKKAT:   tight coupling · order ka response email bhejne tak ruka · koi retry nahi
+DIKKAT:   Order service email bhejne tak ruki rehti; email service down = order hi fail.
+          Dono aapas me kase hue, aur koi retry nahi.
 
-SOLUTION: beech me QUEUE — Order event Kafka pe daal ke turant laut-ta
-          email down -> event queue me pada, wapas aane pe nikal jaayega · order kabhi fail nahi
+SOLUTION: beech me QUEUE lagao: Order service event Kafka pe daal ke turant laut jaaye.
+          Email service down ho to event queue me pada rahega, wapas aane pe nikal jaayega.
+          Order kabhi email ki wajah se fail nahi hoga.
 
 NAYA:     Kafka · Notification Svc
 
@@ -107,11 +109,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — teen channel, SMS slow to push / email bhi atke
 
 ```
-DIKKAT:   har channel ki speed + rate limit alag, ek line me sab
+DIKKAT:   push, email, SMS teeno ek hi line me. Har channel ki speed aur limit alag — SMS slow hua
+          to push aur email bhi uske peeche atke.
 
-SOLUTION: Notification Svc FANOUT kare -> HAR CHANNEL KI APNI QUEUE + APNE WORKER
-          Push -> FCM / APNs · Email -> SES / SendGrid · SMS -> Twilio / AWS SNS
-          ek slow channel baaki ko nahi rokta
+SOLUTION: Notification service FANOUT kare: har channel ki apni queue aur apne worker.
+          Push -> FCM / APNs, email -> SES / SendGrid, SMS -> Twilio / SNS.
+          Ab ek slow channel baaki ko nahi rokta.
 
 NAYA:     Push / Email / SMS queue · Push / Email / SMS worker
 BADLA:    Email API -> FCM / SES / Twilio (har channel ka provider)
@@ -159,13 +162,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — user ko SMS chahiye hi nahi tha, aur raat 2 baje bhej diya
 
 ```
-DIKKAT:   user ki marzi nahi dekhi
+DIKKAT:   user ne SMS band kar rakha tha, phir bhi bhej diya — aur raat 2 baje. User ki marzi dekhi
+          hi nahi.
 
-SOLUTION: Notification Svc ke andar 3 kaam:
-          USER-PREF dekho:   123 = push ON · email ON · SMS OFF · quiet 10pm-8am · unsubscribed topics
-          TEMPLATE lo:       "Order #{{orderId}} confirmed" + i18n (Hindi / English)
-          CHANNEL tay karo:  push + email (SMS skip)
-          pref / template har event pe -> CACHE kar lo
+SOLUTION: Notification service bhejne se pehle teen kaam kare: (1) user ki PREFERENCE dekhe — kaunse
+          channel on, quiet hours, kis topic se unsubscribe. (2) TEMPLATE le — message ka saancha, user
+          ki bhasha me. (3) CHANNEL tay kare. Preference aur template har event pe chahiye, to cache kar lo.
 
 NAYA:     User-pref DB (user ko kaunsa channel, quiet hours) · Template DB (message ka saancha, {{orderId}} jaisa)
 ```
@@ -200,6 +202,9 @@ flowchart TD
     n_SMS_worker --> n_Twilio
 ```
 ```
+BOARD PE: user 123 = push ON · email ON · SMS OFF · quiet 10pm-8am
+          template: "Order #{{orderId}} confirmed" (Hindi / English) -> channel: push + email (SMS skip)
+
 AGLA SAWAAL (tere jawab se):
   "Quiet hours me aaya notification phenk doge?"
    -> nahi. Marketing -> subah tak rok (delay queue / schedule). OTP / security -> quiet hours me bhi
@@ -212,14 +217,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — ack kho gaya, retry hua, user ko DO email
 
 ```
-DIKKAT:   bheja -> provider ne liya -> ack raaste me kho gaya -> queue ko laga fail -> RETRY -> 2 email
+DIKKAT:   message bhej diya, provider ne le liya, par uska "ho gaya" raaste me kho gaya -> queue ko
+          laga fail -> retry -> user ko do email
 
-SOLUTION: IDEMPOTENT WORKER — "at-least-once delivery + idempotent worker"
-          SET notification:abc123 sent NX EX 86400
-             "OK" -> naya -> BHEJO · nil -> pehle ho chuka -> SKIP   (SET ... NX "OK" deta; "1" purane SETNX ka jawab tha)
-          NX = check + set EK atomic step (EXISTS phir SET = beech me doosra ghus jaata)
-          key = event ka APNA id (eventId), har retry pe wahi. har baar naya UUID = dedup kabhi nahi pakdega
-          (wahi race + wahi ilaaj jo payment idempotency me)
+SOLUTION: worker ko IDEMPOTENT banao: queue at-least-once deti, worker dedup kare.
+          Bhejne se pehle Redis me event ki ID "set if not exists" se likho — naya hai to bhejo, pehle se
+          hai to skip. Check aur set ek hi atomic step me, warna beech me doosra ghus jaata.
+          Key = event ki apni ID, jo har retry pe wahi rahe; har baar naya UUID banaya to dedup kabhi
+          nahi pakdega. (Wahi race aur wahi ilaaj jo payment idempotency me.)
 
 NAYA:     Redis (idempotency key)
 ```
@@ -258,6 +263,9 @@ flowchart TD
     n_Email_worker --> n_Redis
 ```
 ```
+BOARD PE: SET notification:abc123 sent NX EX 86400
+          "OK" -> naya -> BHEJO · nil -> pehle ho chuka -> SKIP   (SET ... NX "OK" deta; "1" purane SETNX ka jawab)
+
 POOCHEGA: "What if the same event comes twice / the worker retries?"
 BOL:      "Delivery is at-least-once, so the worker is idempotent: it does SET NX on the event id in Redis
            and skips if the key already exists."
@@ -274,17 +282,15 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — key laga di, par provider call FAIL (29-Sep mock me poocha)
 
 ```
-DIKKAT:   SET NX -> "OK" · provider call FAIL · retry: SET NX -> nil -> SKIP
-          email kabhi gaya hi nahi, system maan raha "bhej diya" = MESSAGE KHO GAYA
+DIKKAT:   dedup key laga di, phir provider call FAIL hua. Retry aaya to key pehle se hai -> skip.
+          Email kabhi gaya hi nahi, par system maan raha "bhej diya" = MESSAGE KHO GAYA.
 
-SOLUTION: A) fail pe key HATAO (DEL) -> retry dobara bhejega
-             kam pakka: worker crash -> DEL chala hi nahi -> key atki
-          B) DO HAALAT  <- zyada pakka
-             pehle:      SET abc-123 "sending" NX EX 60     (chhoti expiry)
-             success pe: SET abc-123 "sent" EX 86400        (lamba)
-             worker beech me mara -> 60 sec me "sending" khud mita -> retry chal gaya
-             send FAIL hua (worker zinda) -> key turant DEL (A + B saath), warna 60 sec ke andar retry ko nil = SKIP = message gaya
-             retry pe value "sending" mili -> SKIP nahi, thoda ruk ke dobara (requeue). SKIP sirf "sent" pe
+SOLUTION: do raaste. (A) fail hone pe key hata do, taaki retry dobara bheje — par worker hi crash ho
+          gaya to key hatane wala koi nahi, key atki rahegi.
+          (B) zyada pakka: key ki DO haalat. Bhejne se pehle "sending" chhoti expiry ke saath, success pe
+          "sent" lambi expiry ke saath. Worker beech me mara to "sending" khud mit jaata, retry chal jaata.
+          Send fail hua aur worker zinda hai to key turant hata do (A + B saath).
+          Retry ko "sending" mile to skip nahi — thoda ruk ke dobara. Skip sirf "sent" pe.
 
 NAYA:     koi dabba nahi
 ```
@@ -323,6 +329,10 @@ flowchart TD
     n_Email_worker --> n_Redis
 ```
 ```
+BOARD PE: SET NX -> "OK" · provider FAIL · retry: SET NX -> nil -> SKIP -> message kho gaya
+          pehle:      SET abc-123 "sending" NX EX 60     (chhoti expiry)
+          success pe: SET abc-123 "sent" EX 86400        (lambi)
+
 POOCHEGA: "You set the idempotency key, but then the send failed. Now what?"
 DHYAAN:   payment me bhi yahi: key lagi, PSP fail -> IN_PROGRESS -> DONE
 BOL:      "I don't want the key to block the retry. I set it as 'sending' with a short TTL, and mark it
@@ -341,14 +351,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — provider fail ho raha, hum turant retry maar rahe
 
 ```
-DIKKAT:   marte hue provider pe aur hathoda
+DIKKAT:   provider fail ho raha aur hum turant retry maar rahe -> marte hue provider pe aur hathoda
 
-SOLUTION: BACKOFF + JITTER: 1s -> 2s -> 4s -> 8s · wait = base x 2^n + random(0..1000ms)
-          jitter = saare worker ek saath wapas na aayein (thundering herd)
-          main queue -> fail -> retry queue (delayed) -> max retry paar -> DLQ -> manual review + ops alert
-          DLQ me (poison): galat email (SES reject) · invalid phone · provider ka permanent outage
-          Kafka offset commit KAAM (provider call) ke BAAD -> crash = event dobara aayega, khoyega nahi
-          producer: acks=all + replication -> event Kafka me hi na khoye
+SOLUTION: retry ke beech BACKOFF (har baar dugna intezaar) + JITTER (thoda random), taaki saare worker
+          ek saath wapas na aayein (thundering herd).
+          Fail -> retry queue (deri se) -> had paar -> DLQ -> manual review + ops alert.
+          DLQ me aate: galat email, invalid phone, provider ka permanent band hona.
+          Kafka offset kaam (provider call) ke BAAD commit karo — crash hua to event dobara aayega,
+          khoyega nahi. Producer pe acks=all, taaki event Kafka me hi na khoye.
 
 NAYA:     DLQ
 ```
@@ -391,6 +401,9 @@ flowchart TD
     n_Email_worker --> n_DLQ
 ```
 ```
+BOARD PE: 1s -> 2s -> 4s -> 8s · wait = base x 2^n + random(0..1000ms)
+          main queue -> fail -> retry queue (delayed) -> max retry -> DLQ
+
 POOCHEGA: "How do you make sure no message is lost?"
 BOL:      "Producers write with acks=all to replicated Kafka. Workers commit the offset only after the
            provider call, so a crash means a redelivery, not a loss — and that's why they're idempotent.
@@ -409,14 +422,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — provider slow, saare worker uske 30 sec timeout me phase
 
 ```
-DIKKAT:   har call 30 sec atka -> poora worker pool kha liya -> system thapp
-          slow = down se BURA
+DIKKAT:   provider slow ho gaya, har call 30 sec atki -> saare worker usi me phase, system thapp.
+          Slow provider down provider se bhi BURA.
 
-SOLUTION: CHHOTA timeout har provider call pe
-          MULTI-PROVIDER: SMS = Twilio + AWS SNS · email = SES + SendGrid -> ek down, doosre pe
-          CIRCUIT BREAKER: CLOSED --N fail--> OPEN (call band, backup pe) --thodi der--> HALF-OPEN (ek test call)
-                           theek -> CLOSED · fail -> wapas OPEN
-          circuit khula -> worker us provider ko call hi nahi karta -> phasta nahi
+SOLUTION: har provider call pe CHHOTA timeout. Har channel ke do provider (SMS: Twilio + SNS, email:
+          SES + SendGrid) — ek down to doosre pe.
+          CIRCUIT BREAKER: kai baar fail -> circuit khula, us provider ko call hi band, backup pe bhejo.
+          Thodi der baad ek test call; theek nikla to wapas chalu, warna phir band. Circuit khula hai to
+          worker us provider pe phasta hi nahi.
 
 BADLA:    email + SMS ka ek provider -> do (SES + SendGrid · Twilio + SNS); push ka backup nahi (FCM = Android, APNs = iOS, alag platform)
 ```
@@ -459,6 +472,9 @@ flowchart TD
     n_Email_worker --> n_DLQ
 ```
 ```
+BOARD PE: CLOSED --N fail--> OPEN (call band, backup pe) --thodi der--> HALF-OPEN (ek test call)
+          theek -> CLOSED · fail -> wapas OPEN
+
 POOCHEGA: "What if the provider is slow?"
 BOL:      "Short timeouts, a circuit breaker per provider, and a second provider per channel. When the
            circuit opens, workers stop calling it and route to the backup instead of hanging."
@@ -475,15 +491,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — OTP marketing ke 50,000 message ke peeche
 
 ```
-DIKKAT:   ek topic me OTP bhi line me
+DIKKAT:   ek hi topic me sab -> OTP marketing ke 50,000 message ke peeche line me khada
 
-SOLUTION: PRIORITY LANES — har lane ka ALAG Kafka topic + apna worker pool
-          HIGH   OTP / 2FA       -> millisecond · notif-high
-          MEDIUM order update    -> kuch second  · notif-medium
-          LOW    marketing       -> minute-ghanta · notif-low
-          Kafka me priority hoti hi nahi, isliye alag topic
-          ★ aage channel queue bhi priority-wise (sms-high / sms-low, alag workers) -> warna OTP SMS phir marketing SMS ke peeche
-          (PriorityBlockingQueue sirf EK process ke andar, distributed me nahi)
+SOLUTION: PRIORITY LANES: har lane ka alag Kafka topic aur apna worker pool — OTP / 2FA (milliseconds
+          me chahiye), order update (kuch second), marketing (minute-ghanta).
+          Kafka me priority hoti hi nahi, isliye alag topic.
+          Aage channel queue bhi priority-wise rakho (SMS high / low, alag workers), warna OTP ka SMS phir
+          marketing SMS ke peeche atak jaayega.
+          (Java ki PriorityBlockingQueue sirf ek process ke andar kaam karti, distributed me nahi.)
 
 BADLA:    Kafka -> 3 topic (high / medium / low)
 ```
@@ -526,6 +541,9 @@ flowchart TD
     n_Email_worker --> n_DLQ
 ```
 ```
+BOARD PE: HIGH OTP / 2FA -> notif-high · MEDIUM order update -> notif-medium · LOW marketing -> notif-low
+          sms-high / sms-low (alag workers)
+
 POOCHEGA: "How do you prioritize urgent work, like OTPs?"
 BOL:      "Separate topics per priority with their own worker pools, so an OTP never waits behind a
            marketing blast."
@@ -542,13 +560,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 9 — burst gaya, provider ne 429 diya, sab fail
 
 ```
-DIKKAT:   provider limit: FCM ~6 lakh / min per project (~10K / sec) · SES ~14 / sec (naye account
-          ka shuruaati default, badhwa sakte) · Twilio short code ~100 / sec, long code ~1 / sec
+DIKKAT:   ek saath bahut message gaye, provider ne apni limit pe 429 de diya, sab fail. Har provider
+          ki limit hoti hai.
 
-SOLUTION: worker KHUD throttle (token bucket) -> provider ki raftaar se bhejo
-          429 pe turant retry NAHI -> backoff + jitter · Retry-After maano · message QUEUE me ruke, drop NAHI
-          (FAIL-OPEN yahan galat — wo HUMARE limiter ka faisla, provider ka darwaza hum nahi khol sakte)
-          chala ke dekha -> HANDS-ON neeche (naive me 1000 me se 700 phenke)
+SOLUTION: worker khud apni raftaar kam kare (token bucket) — provider ki limit ke andar bhejo.
+          429 aaye to turant retry nahi: backoff + jitter, provider ka Retry-After maano. Message queue me
+          rukta hai, drop nahi hota.
+          Yahan fail-open galat hai — wo humare limiter ka faisla tha, provider ka darwaza hum nahi khol sakte.
+          Chala ke dekha tha -> HANDS-ON neeche.
 
 NAYA:     koi dabba nahi — worker me throttle
 
@@ -596,6 +615,9 @@ flowchart TD
     n_Email_worker --> n_DLQ
 ```
 ```
+BOARD PE: FCM ~6 lakh / min per project (~10K / sec) · SES ~14 / sec (naye account ka default, badhwa sakte)
+          Twilio short code ~100 / sec, long code ~1 / sec · naive me 1000 me se 700 phenke
+
 POOCHEGA: "The provider returns 429 — you're sending too fast. What now?"
 BOL:      "Workers throttle themselves with a token bucket at the provider's rate. On a 429 they back off
            with jitter and respect Retry-After; messages wait in the queue and go to a DLQ after max
@@ -613,13 +635,13 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 10 — "bhej diya" ka matlab "mil gaya" nahi
 
 ```
-DIKKAT:   worker ne bheja = ACCEPTED, user tak pahuncha? pata nahi
+DIKKAT:   worker ne bheja = provider ne le liya. User tak pahuncha ya nahi, pata hi nahi.
 
-SOLUTION: provider ka WEBHOOK -> "delivered" / "failed" / "bounced" -> TRACKING DB
-          Tracking (Cassandra): sent · delivered · opened · clicked · failed
-          failed (galat number / bounce) -> retry · doosra channel · ya mark failed
-          PUSH me aisa webhook nahi (APNs per-message receipt nahi deta, FCM sirf jodi hui report)
-          -> push ka "delivered" = app khulne pe app khud ack event bheje -> Tracking DB
+SOLUTION: provider WEBHOOK se batata hai — delivered / failed / bounced — wo TRACKING DB me likho
+          (sent, delivered, opened, clicked, failed). Failed hua (galat number / bounce) -> retry, doosra
+          channel, ya failed mark.
+          Push me aisa webhook nahi milta, to push ka "delivered" = app khulne pe app khud ek ack event
+          bheje.
 
 NAYA:     Tracking DB (har message ka haal: sent / delivered / failed)
 
