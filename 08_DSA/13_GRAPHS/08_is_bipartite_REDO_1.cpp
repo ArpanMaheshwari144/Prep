@@ -24,10 +24,47 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+bool BFS(vector<vector<int>> &graph, vector<int> &color, int node)
+{
+    queue<int> q;
+    q.push(node);
+    color[node] = 0;
+    while (!q.empty())
+    {
+        int curr = q.front();
+        q.pop();
+
+        for (auto &it : graph[curr])
+        {
+            if (color[it] == -1)
+            {
+                color[it] = 1 - color[curr];
+                q.push(it);
+            }
+            else if (color[it] == color[curr])
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 bool isBipartite(vector<vector<int>> &graph)
 {
-    // TODO: tu likh
-    return false;
+    int m = graph.size();
+    vector<int> color(m, -1);
+    for (int i = 0; i < m; i++)
+    {
+        if (color[i] == -1)
+        {
+            if (BFS(graph, color, i) == false)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 // ---- test helper ----
