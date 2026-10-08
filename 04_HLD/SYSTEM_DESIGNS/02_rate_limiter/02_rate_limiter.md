@@ -58,11 +58,11 @@ flowchart TD
 ## DIKKAT 1 — teen server, ginti bat gayi
 
 ```
-DIKKAT:   LB ne baanta: App-1 = 3, App-2 = 4, App-3 = 2 -> total 9, limit 5
-          par kisi EK ko 5 paar dikha hi nahi -> LIMIT TOOT GAYI
+DIKKAT:   LB ne requests teen App me baant di, har App apni ginti alag rakh raha -> kisi ek ko
+          limit paar hoti dikhi hi nahi, total limit se upar chala gaya -> LIMIT TOOT GAYI
 
-SOLUTION: counter EK central jagah — in-memory, kyunki har request pe hit -> REDIS (single source of truth)
-          counter + TTL
+SOLUTION: ginti ek hi central jagah rakho. Har request pe padhni hai, to tez chahiye -> REDIS
+          (single source of truth). Counter ke saath TTL, taaki window khatam hote hi ginti apne aap 0.
 
 NAYA:     LB · Redis
 BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2) · counter ab App ke andar nahi
@@ -87,6 +87,8 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
 ```
 ```
+BOARD PE: App-1 = 3, App-2 = 4, App-3 = 2 -> total 9, limit 5
+
 AGLA SAWAAL (tere jawab se):
   "Fixed window me 59th sec pe 100 aur 61st sec pe 100 -> 2 sec me 200?"
    -> haan, fixed window ki kamzori. Sliding window (pichhle 60 sec ki asli ginti) ya token bucket se theek
@@ -99,17 +101,15 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — do request ek saath, dono ko jagah mil gayi
 
 ```
-DIKKAT:   A padha 4 -> +1 -> likha 5 · B padha 4 -> +1 -> likha 5 -> limit 5, 6 ghus gayi
+DIKKAT:   do request ek saath aayi, dono ne purani ginti padhi, dono ne +1 likha
+          -> ek hi ginti badhi, limit se zyada request ghus gayi
 
-SOLUTION: padho-badhao-likho = EK ATOMIC kaam
-          Redis single-threaded -> INCR apne aap atomic
-          token bucket jaisa kai step (refill + check + ghatao) -> LUA SCRIPT (poora ek unit)
-            count = INCR rate:login:userX
-            if count == 1 then EXPIRE rate:login:userX 60 end      <- EXPIRE sirf PEHLI baar
-          ★ JAAL: har request pe EXPIRE 60 -> TTL har baar 60 pe dhakelta -> key kabhi expire nahi
-                  -> user hamesha block. (Redis 7+: EXPIRE key 60 NX bhi yahi)
-          CONNECT (2-Sep): wahi race jo idempotency me (HDFC double-payment: containsKey + put ka gap -> double charge)
-                  wahan putIfAbsent, yahan INCR / Lua — ilaaj same: teen step EK unit
+SOLUTION: padho-badhao-likho ko EK atomic kaam banao. Redis single-threaded hai, to INCR apne aap atomic.
+          Token bucket jaise kai step (refill + check + ghatao) ho to LUA script — poora ek unit me chalta.
+          Jaal: EXPIRE sirf pehli baar lagao. Har request pe lagaya to TTL har baar aage khisakta,
+          key kabhi expire nahi hoti, user hamesha block.
+          Yahi race idempotency me bhi thi (check aur put ke beech gap -> double charge) — ilaaj same:
+          teen step ek unit.
 
 NAYA:     koi dabba nahi — Redis me INCR / Lua
 ```
@@ -127,6 +127,11 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
 ```
 ```
+BOARD PE: A padha 4 -> +1 -> likha 5 · B padha 4 -> +1 -> likha 5 -> limit 5, 6 ghus gayi
+          count = INCR rate:login:userX
+          if count == 1 then EXPIRE rate:login:userX 60 end      <- EXPIRE sirf PEHLI baar
+          (Redis 7+: EXPIRE key 60 NX bhi yahi)
+
 POOCHEGA: "Two requests come at the same time — what happens?"
 DHYAAN:   2 user ek cheez = atomic / lock · 1 user ka retry = idempotency (dono alag)
 BOL:      "Redis is single-threaded, so INCR is atomic. For token bucket I use a Lua script, so the
@@ -145,11 +150,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — limiter App ke andar: reject hone wali request bhi poore system me ghoom aayi
 
 ```
-DIKKAT:   jise reject karna hai uspe backend ka compute kyun jale
+DIKKAT:   limiter App ke andar hai -> jise reject hona hai wo request bhi poore system me ghoom ke
+          aayi, backend ka compute bekaar jala
 
-SOLUTION: limiter SABSE AAGE — API GATEWAY pe, 429 wahin, backend tak jaane hi nahi
-          3 jagah ho sakti: gateway · alag service · app library -> GATEWAY sabse common
-          (chaaho to gateway pe mota global limit + service ke andar baarik limit)
+SOLUTION: limiter sabse aage rakho — API GATEWAY pe. 429 wahin se, backend tak jaaye hi nahi.
+          Limiter teen jagah ho sakta (gateway · alag service · app library), gateway sabse common.
+          Chaaho to gateway pe mota global limit + service ke andar baarik limit.
 
 NAYA:     API Gateway (limiter iske andar)
 ```
@@ -184,14 +190,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — Redis hi gir gaya
 
 ```
-DIKKAT:   har request ka faisla Redis pe tha
+DIKKAT:   har request ka faisla Redis pe tha, aur Redis hi gir gaya
 
-SOLUTION: (1) REPLICA + auto failover (Sentinel / cluster) -> replica ALAG AZ me
-          (2) poori Redis layer gayi -> FAIL-OPEN (sab allow) · payment / auth / OTP -> FAIL-CLOSED
-          (3) Redis pe bojh -> SHARD (Redis Cluster key ko CRC16(key) se 16384 slot me baantta, slot -> node)
-              shard = scale + alag-alag · replica = bachav
-          SPOF chain: har layer >= 2 + AUTO failover. sirf copy rakhna kaafi nahi — koi DEKHE aur MODE
-              Redis = Sentinel (bina cluster) / Redis Cluster me masters khud vote se replica promote · LB = Route 53 / VIP · cloud ALB khud multi-AZ · Route 53 khud global
+SOLUTION: (1) Redis ki replica alag AZ me + auto failover (Sentinel / Redis Cluster).
+          (2) poori Redis layer hi gayi -> normal endpoints pe FAIL-OPEN (sab allow), par payment / auth /
+              OTP pe FAIL-CLOSED (sab rok do).
+          (3) Redis pe bojh -> SHARD (Redis Cluster). Shard = scale, replica = bachav.
+          Har layer pe kam se kam 2 + AUTO failover. Sirf copy rakhna kaafi nahi, koi dekhne wala chahiye
+          jo traffic mode: Redis me Sentinel / Cluster ka vote, LB ke liye Route 53, cloud ALB khud multi-AZ.
 
 NAYA:     Route 53
 BADLA:    Redis -> Redis Cluster (replica + shard) · LB -> ALB (multi-AZ)
@@ -213,6 +219,8 @@ flowchart TD
     n_API_Gateway --> n_App_x_N_2
 ```
 ```
+BOARD PE: Redis Cluster: CRC16(key) -> 16384 slot -> har slot ek node pe
+
 POOCHEGA: "What if Redis goes down?"
 DHYAAN:   faisla PEHLE se code me likha ho — fail-open ya fail-closed, endpoint ke hisaab se
 BOL:      "Redis has a replica with automatic failover in another zone. If the whole layer is gone I
@@ -231,16 +239,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — ek user Bangalore + Berlin + US-VPN se maar raha
 
 ```
-DIKKAT:   INDIA 50 + EU 50 + US 50 = 150, limit 100 -> har region ko apna hi dikha
+DIKKAT:   ek user teen region se maar raha (Bangalore + Berlin + US VPN) -> har region ko sirf apni
+          ginti dikhi, total limit se bahut upar
 
-SOLUTION: teen raaste:
-          1. CENTRAL Redis        -> exact, par ek jagah + door wale region ko latency
-          2. LOCAL + async sync   -> tez, par thoda OVER-ALLOW
-          3. REGION-STICKY (best) -> hash(user_id) % regions = HOME region, uske saare raaste wahin
-                                     -> local Redis ke paas poori ginti
-          ACCURACY vs LATENCY:
-             soft / server bachana          -> local + async chalega
-             paisa / security ("3 OTP", "10 free call phir charge", withdrawal) -> CENTRAL ATOMIC (Redis + Lua)
+SOLUTION: teen raaste: (1) ek CENTRAL Redis — exact, par door wale region ko latency.
+          (2) har region local + async sync — tez, par thoda zyada allow ho jaata.
+          (3) REGION-STICKY (best): user ka ek HOME region tay, uski saari requests wahin ginti hoti.
+          Faisla accuracy vs latency pe: server bachana / soft limit -> local chalega;
+          paisa / security (3 OTP, withdrawal, free calls) -> central atomic (Redis + Lua).
 
 NAYA:     koi dabba nahi — routing ka niyam
 
@@ -266,6 +272,9 @@ flowchart TD
     n_API_Gateway --> n_App_x_N_2
 ```
 ```
+BOARD PE: INDIA 50 + EU 50 + US 50 = 150, limit 100
+          home region = hash(user_id) % regions
+
 POOCHEGA: "What if a whole region goes down?"
 BOL:      "Route 53 sends the user to another region and the count starts from zero there, so the limit
            is loose for one window. For a rate limiter that's fine — it's only a minute of counting."
@@ -282,13 +291,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — ek hi banda baar-baar maar raha, 429 se ruk hi nahi raha
 
 ```
-DIKKAT:   rate limit = sirf "60 sec baad aao", wo phir aa jaata
+DIKKAT:   ek hi banda baar-baar maar raha — rate limit sirf "60 sec baad aao" bolta, wo phir aa jaata
 
-SOLUTION: LAYERED: (1) rate limit = soft, 429
-                   (2) event KAFKA -> Pattern service ("ye baar-baar?")
-                   (3) WAF / IP blocklist = PERMANENT ban
-          turant permanent kyun nahi: asli user tez click · ek NAT IP ke peeche 100 log · sale ka legit burst
-          -> limit maafi wali, ban sirf pakke abuse pe
+SOLUTION: teen layer: (1) rate limit = soft, 429. (2) har 429 ka event Kafka me, ek Pattern service
+          dekhti "ye baar-baar?". (3) pakka abuse -> WAF / IP blocklist = permanent ban.
+          Turant permanent ban kyun nahi: asli user bhi tez click karta, ek NAT IP ke peeche 100 log,
+          sale me legit burst. Isliye limit maafi wali, ban sirf pakke abuse pe.
 
 NAYA:     Kafka · Pattern Svc (baar-baar maarne wala pakde) · WAF (edge pe IP / bot ko permanent rokne wali deewar)
 
@@ -334,16 +342,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — limiter sahi chal raha, phir bhi server gira (BHEED)
 
 ```
-DIKKAT:   limit 100 / min per user · server ki had 5,000 / sec
-          ek abuser -> 100 pe ruka ✓
-          10,000 ASLI user, har ek limit ke ANDAR -> 12,000 / sec -> SERVER GIRA ✗
-          limiter ne kuch galat nahi kiya — har user niyam me tha
+DIKKAT:   limiter sahi chal raha, har user apni limit ke andar — phir bhi itne saare asli user aaye
+          ki server gir gaya. Limiter ne kuch galat nahi kiya.
 
-SOLUTION: RATE LIMIT = "kis USER ne kitni"  (abuse / fairness)
-          LOAD SHEDDING = "SYSTEM abhi kitna jhel sakta" (bachna)  <- ye alag cheez hai
-          poore system ka GLOBAL CAP / concurrency limit · sehat dekh ke shedding ("CPU 90% -> nayi mat lo")
-          QUEUE burst pakad leti · pata ho kab aayega (12 baje sale) -> PEHLE scale out
-          (autoscale ko minute lagte, spike second me aata)
+SOLUTION: RATE LIMIT = "kis USER ne kitni" (abuse / fairness). LOAD SHEDDING = "SYSTEM abhi kitna
+          jhel sakta" (bachna) — ye alag cheez hai.
+          Poore system ka global cap / concurrency limit lagao, aur sehat dekh ke nayi requests chhodo
+          (CPU 90% -> nayi mat lo). Queue burst pakad leti. Pata ho kab aayega (12 baje sale) to PEHLE
+          scale out karo — autoscale ko minute lagte, spike second me aata.
 
 NAYA:     koi dabba nahi — Gateway me global cap + shedding
 ```
@@ -371,6 +377,9 @@ flowchart TD
     n_WAF --> n_Route_53
 ```
 ```
+BOARD PE: limit 100 / min per user · server ki had 5,000 / sec
+          ek abuser -> 100 pe ruka  ·  10,000 asli user, sab limit ke andar -> 12,000 / sec -> SERVER GIRA
+
 POOCHEGA: "What if traffic suddenly spikes 10x?"
 DHYAAN:   "rate limiter laga hai" kaafi NAHI — per-user limit bheed nahi rokti
 BOL:      "A per-user limit doesn't stop a crowd where everyone is under their limit. For that I need a
@@ -389,12 +398,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — attack aaya, aur limiter USI WAQT gayab
 
 ```
-DIKKAT:   attack -> traffic 50x -> Redis pe bhi 50x -> Redis down -> FAIL-OPEN -> sab allow
-          limiter tabhi gaya jab sabse zyada zaroorat thi
+DIKKAT:   attack aaya -> Redis pe bhi utna hi bojh -> Redis down -> fail-open -> sab allow.
+          Limiter thik usi waqt gaya jab sabse zyada zaroorat thi.
 
-SOLUTION: fail-open ke SAATH local fallback:
-          Redis zinda -> poori global ginti · Redis gaya -> har node APNI memory se motamoti rok
-          exact nahi (har node apna ginega), par attack me "kuch nahi" se bahut behtar
+SOLUTION: fail-open ke saath LOCAL fallback: Redis zinda -> poori global ginti. Redis gaya -> har node
+          apni memory me motamoti ginti karke roke. Exact nahi (har node apna ginta), par attack me
+          "kuch nahi" se bahut behtar.
 
 NAYA:     koi dabba nahi — App / Gateway me local counter fallback
 
@@ -425,6 +434,8 @@ flowchart TD
     n_WAF --> n_Route_53
 ```
 ```
+BOARD PE: attack -> traffic 50x -> Redis pe 50x -> Redis down -> FAIL-OPEN -> sab allow
+
 AGLA SAWAAL (tere jawab se):
   "Node badh gaye (autoscale), local limit?"
    -> node count config / service discovery se lo, divide dobara
@@ -437,11 +448,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 9 — IP pe gin rahe the
 
 ```
-DIKKAT:   NAT: ek office / mobile network ke HAZAAR log ek IP -> ek ne limit khaayi, sab block
-          BOTNET: hazaar IP, har IP se 5 -> kisi ki limit nahi tooti -> ruka hi nahi
+DIKKAT:   IP pe gin rahe the. NAT: ek office / mobile network ke hazaar log ek IP pe -> ek ne limit
+          khaayi, sab block. BOTNET: hazaar IP, har IP se thoda -> kisi ki limit nahi tooti, ruka hi nahi.
 
-SOLUTION: logged-in -> user_id / API key pe gino, IP pe NAHI
-          login / signup se pehle (pehchaan nahi) -> IP majboori -> limit DHEELI + asli faisla WAF / bot detection
+SOLUTION: logged-in user ho to user_id / API key pe gino, IP pe nahi.
+          Login / signup se pehle pehchaan hai hi nahi -> IP majboori hai, to limit dheeli rakho aur asli
+          faisla WAF / bot detection pe chhodo.
 
 NAYA:     koi dabba nahi
 ```
