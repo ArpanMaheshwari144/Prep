@@ -63,6 +63,7 @@
                                            connection milne tak rukta hai, phir nikal jaata.
    "Kaise pakka kiya ki theek hua?"     -> test server pe wahi load banaya (bid list upload + survey launch
                                            saath), sync chala; phir production pe dobara nahi hua.
-   "Kitne survey atke?"                 -> lagbhag 7 (7-10 ke beech, exact yaad nahi). MongoDB se utha ke
+   "Kitne survey atke?"                 -> lagbhag 7 (7-10 ke beech, isse zyada nahi - hamare tool pe
+                                           ek saath 10 se zyada launch hote hi nahi). MongoDB se utha ke
                                            MySQL me seedha likhe.
 ```
