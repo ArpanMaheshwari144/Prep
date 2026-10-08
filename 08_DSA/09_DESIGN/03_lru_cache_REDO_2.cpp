@@ -47,17 +47,55 @@ public:
         tail->prev = head;
     }
 
-    // tere helper methods (jo chahiye) yahan
+    void removeNode(Node *node)
+    {
+        node->next->prev = node->prev;
+        node->prev->next = node->next;
+    }
+
+    void addFront(Node *node)
+    {
+        Node *nxt = head->next;
+        head->next = node;
+        node->prev = head;
+
+        node->next = nxt;
+        nxt->prev = node;
+    }
 
     int get(int key)
     {
-        // TODO: tu likh
+        if (mp.count(key) > 0)
+        {
+            Node *node = mp[key];
+            removeNode(node);
+            addFront(node);
+            return node->val;
+        }
         return -1;
     }
 
     void put(int key, int value)
     {
-        // TODO: tu likh
+        if (mp.count(key) > 0)
+        {
+            Node *node = mp[key];
+            node->val = value;
+            removeNode(node);
+            addFront(node);
+        }
+        else
+        {
+            if (mp.size() == cap)
+            {
+                Node *toBeRemoved = tail->prev;
+                removeNode(toBeRemoved);
+                mp.erase(toBeRemoved->key);
+            }
+            Node *newNode = new Node(key, value);
+            addFront(newNode);
+            mp[key] = newNode;
+        }
     }
 };
 
