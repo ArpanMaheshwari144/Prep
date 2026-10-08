@@ -117,6 +117,53 @@ distributed cache (REDIS/Memcached)             -> saare servers ek cache share 
 LB + cache: request -> LB -> koi server -> cache-check -> (miss) DB.  (aage full HLD me jodenge)
 ```
 
+## ★ CACHE vs REDIS — koi pooche "dono me farak? dono kyun?"
+Seedha jawab: cache ek KAAM hai, Redis ek TOOL hai. Dono ek hi level ki cheez nahi.
+```
+CACHE = role / concept: "mehnga result kahin tez jagah rakh lo, agli baar wahi se do"
+REDIS = ek alag server (in-memory key-value store) jo ye role nibha sakta hai, aur bhi kaam kar sakta hai
+```
+Misaal: "gaadi" aur "Maruti". Gaadi ek kaam hai (le jaana), Maruti ek cheez hai jo ye kaam karti hai.
+Cache = gaadi, Redis = Maruti.
+
+Cache kahan-kahan rakh sakte hain:
+```
+1 app ki apni memory    @Cacheable default (ConcurrentHashMap), Caffeine    -> local / L1
+2 alag cache server     Redis, Memcached                                     -> distributed / L2
+3 aur bhi               browser cache, CDN
+```
+
+Local cache vs Redis (jab dono cache ka kaam kar rahe hon):
+```
+                     local (app memory)           Redis (alag server)
+speed                sabse tez (network nahi)     tez (~1 ms, network ek hop)
+kitne server share   sirf wahi ek server          SAARE servers ek hi copy dekhte
+server restart       sab udd gaya                 bacha rehta
+TTL / eviction       default me nahi (Caffeine me haan)   haan (EX, LRU)
+size                 us server ki RAM tak         alag machine, cluster se badha sakte
+```
+
+Dono saath kyun:
+```
+3 server, local cache only -> user ne naam badla -> server A ka cache evict hua, B aur C purana dikha rahe
+Redis                      -> sab ek hi jagah dekhte -> evict ek baar, sab ko fresh
+dono (L1 + L2)             -> hot key (IPL score) pe Redis bhi garam ho jaaye -> 1-2 sec ka L1 aage lagao
+```
+
+Redis sirf cache nahi (isliye rate limiter / chat / notification me bhi aata):
+```
+cache · rate limiter counter (INCR) · lock (SET NX EX) · dedup / idempotency key
+leaderboard (sorted set) · pub/sub · session store
+```
+
+BOL:
+```
+"Cache is the idea, Redis is one tool to do it. An in-process cache like Caffeine is fastest but
+ per-server and lost on restart, so with many servers they go stale. Redis is a separate in-memory
+ server all instances share, with TTL and eviction, so it's our distributed cache, and for very hot
+ keys we put a short-TTL local cache in front of it."
+```
+
 ## INTERVIEW LINE
 ```
 "Caching se baar-baar wahi mehnga read (DB call) bachta -- pehli baar ka result memory me rakh lete,
