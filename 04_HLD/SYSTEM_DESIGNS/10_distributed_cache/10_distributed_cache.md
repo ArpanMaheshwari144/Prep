@@ -62,15 +62,13 @@ flowchart TD
 ## DIKKAT 1 — RAM bhar gayi, kya hatayein?
 
 ```
-DIKKAT:   RAM bhar gayi — naya daalne ke liye kya hatayein?
+DIKKAT:   RAM bhar gayi -> naya daalne ke liye kya hatayein?
 
-SOLUTION: EVICTION policy: LRU = jo sabse lambe samay se nahi chhua wo hatao ("kab"). LFU = jo sabse kam
-          baar chhua wo hatao ("kitni baar").
-          LRU banta HashMap + doubly linked list se: jo chhua wo aage, jagah chahiye to peeche wala hatao
-          — dono O(1). (LeetCode 146.)
-          Saath me TTL: har entry ki expiry. Do tareeke se hatti — access pe check (lazy) aur background
-          me safai (active).
-          LRU isliye ki wahi bache jo abhi kaam aa raha; frequency zyada maayne rakhe to LFU.
+SOLUTION: (1) EVICTION: LRU = jo sabse lambe samay se nahi chhua ("kab") · LFU = jo sabse kam baar chhua
+              ("kitni baar"). Default LRU: wahi bache jo abhi kaam aa raha.
+          (2) LRU = HashMap + doubly linked list: chhua -> aage, jagah chahiye -> peeche wala hatao, dono O(1).
+              (LeetCode 146.)
+          (3) TTL har entry pe: access pe check (lazy) + background safai (active).
 
 NAYA:     koi dabba nahi — node ke andar
 ```
@@ -98,16 +96,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — 1 TB ek node me nahi: key kis node pe?
 
 ```
-DIKKAT:   1 TB ek node me nahi aata, kai node chahiye — har key kis node pe jaaye, ye tay karna
+DIKKAT:   1 TB ek node me nahi, kai node chahiye -> har key kis node pe jaaye?
 
-SOLUTION: seedha hash % N kiya to node juda ya gaya -> N badla -> lagbhag saari keys ka node badal gaya
-          -> sab miss -> sab DB pe -> DB crash. Isliye nahi.
-          CONSISTENT HASHING: ek gol ring, node aur key dono ring pe; key ghadi ki disha me jo pehla node
-          mile uska. Node juda / gaya to sirf uske hisse ki thodi keys hilti. Yahi chunte.
-          VIRTUAL NODES: ek machine ring pe kai jagah, taaki load barabar bate.
-          (Wahi tool sharded DB aur LB me bhi.)
-          Range se baantna (A-M / N-Z) simple hai, par ek range garam ho jaati — nahi.
-          App ke andar CACHE CLIENT library key dekh ke sahi node chunti, app ko nodes ginne nahi padte.
+SOLUTION: ★ hash % N nahi: node juda / gaya -> N badla -> lagbhag saari keys ka node badla -> sab miss -> DB crash.
+          (1) CONSISTENT HASHING: gol ring, node + key dono ring pe; key ghadi ki disha me pehla node.
+              Node juda / gaya -> sirf uske hisse ki thodi keys hilti.
+          (2) VIRTUAL NODES: ek machine ring pe kai jagah -> load barabar.
+          (3) App ke andar CACHE CLIENT library key dekh ke sahi node chunti.
+          (Range A-M / N-Z = ek range garam ho jaati, nahi.)
 
 NAYA:     Cache client (app ke andar library, key dekh ke sahi node chunti)
 BADLA:    Cache -> Node A / B / C
@@ -141,11 +137,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — ek node mara, uski saari key gayab, load DB pe
 
 ```
-DIKKAT:   ek node mara, uski saari keys gayab, saara load DB pe — node ek shard ka akela ghar tha
+DIKKAT:   ek node mara, uski saari keys gayab, saara load DB pe (node ek shard ka akela ghar tha).
 
-SOLUTION: REPLICATION: har shard ki 1-2 copy. Primary mara to replica ko primary bana do (promote).
-          Replica alag AZ me, warna ek AZ gaya to dono saath gaye.
-          Keemat: replica thoda peeche chalti (lag), thodi der purana data — cache me eventual chal jaata.
+SOLUTION: (1) REPLICATION: har shard ki 1-2 copy, alag AZ me. Primary mara -> replica promote.
+          Keemat: replica thoda peeche (lag) -> thodi der purana data, cache me chal jaata.
 
 BADLA:    Node A / B / C -> Node + replica
 
@@ -187,14 +182,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — DB me update, cache purana (STALE)
 
 ```
-DIKKAT:   DB me value update hui, par cache me abhi bhi purani (STALE)
+DIKKAT:   DB me value update hui, cache me abhi bhi purani (STALE).
 
-SOLUTION: CACHE-ASIDE: DB update karo, phir cache ki key DELETE karo — agli read DB se taaza laayegi.
-          Sabse common. WRITE-THROUGH: cache aur DB dono ek saath — hamesha taaza, par har write slow.
-          TTL = kitna purana chalega uski had.
-          Production me TTL + khud invalidate dono ("cache invalidation is one of the hardest problems").
-          Key DELETE karo, UPDATE nahi — do write ulte kram me pahunche to galat value baith jaati.
-          Doosri wajah replica lag: jisne abhi likha use thodi der primary se padhao (read-your-own-writes).
+SOLUTION: (1) CACHE-ASIDE: DB update, phir cache key DELETE -> agli read DB se taaza. (Sabse common.)
+          (2) WRITE-THROUGH: cache + DB dono saath -> hamesha taaza, par har write slow.
+          (3) TTL = kitna purana chalega uski had. Production me TTL + khud invalidate dono.
+          ★ Key DELETE karo, UPDATE nahi: do write ulte kram me pahunche to galat value baith jaati.
 
 NAYA:     koi dabba nahi
 ```
@@ -229,16 +222,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — super-hot key expire, 1000 request ek saath MISS
 
 ```
-DIKKAT:   bahut garam key expire hui, hazaar request ek saath miss -> sab DB pe -> DB crash (STAMPEDE /
-          thundering herd)
+DIKKAT:   bahut garam key expire, hazaar request ek saath miss -> sab DB pe -> DB crash (STAMPEDE).
 
-SOLUTION: MUTEX: sirf EK request DB se dobara banaye, baaki ruk ke cache se padhein.
-          SOFT-TTL: expire hone se PEHLE hi background me refresh.
-          Bahut garam key ko expire hi mat hone do, background me update karo.
-          Pata ho kab aayega (sale, WC final, iPhone launch) -> pehle se cache bharo (pre-warm)
-          aur servers pehle badhao. Pata na ho (viral tweet) -> upar ke teen.
-          Twitter ka hot tweet TTL khatam + lakhon padh rahe = wahi stampede; asli me kam dikhta kyunki
-          badi site ilaaj pehle lagaati.
+SOLUTION: (1) MUTEX: sirf EK request DB se dobara banaye, baaki ruk ke cache se padhein.
+          (2) SOFT-TTL: expire hone se PEHLE background me refresh. Bahut garam key ko expire hi mat hone do.
+          (3) Pata ho kab aayega (sale, WC final) -> pehle se cache bharo (pre-warm) + servers badhao.
 
 NAYA:     koi dabba nahi
 
@@ -282,16 +270,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — ek key itni popular, uska shard akela mar raha
 
 ```
-DIKKAT:   ek key itni popular ki uska node akela mar raha (HOT KEY). Consistent hashing ne use ek
-          node pe daala — ★ consistent hashing ek hot key ko nahi bachata.
+DIKKAT:   ek key itni popular ki uska node akela mar raha (HOT KEY).
+          ★ Consistent hashing ek hot key ko nahi bachata (wo ek hi node pe jaati).
 
-SOLUTION: (1) hot key ki kai node pe copy, padhte waqt koi bhi random copy — read bat gaye.
-          (2) L1 LOCAL CACHE: app ke andar hi chhota cache, request Redis tak jaati hi nahi.
-          Garam LIKHNA ho to key ko tukdon me baanto, kisi ek me likho, padhte waqt jodo.
-          Pehchaan: key KHAALI aur sab DB bhage = stampede (dikkat 5, mutex). Key BHARI aur ek node read
-          se mar raha = hot key (ye, L1 + copies).
-          Misaal: IPL live score — crore log ek key. Har app server pe 1-2 sec ka L1 sabse bada ilaaj
-          (score thoda purana chalega). Page / image CDN se.
+SOLUTION: (1) Hot key ki kai node pe copy, padhte waqt random copy -> read bat gaye.
+          (2) L1 LOCAL CACHE: app ke andar chhota cache (1-2 sec), request Redis tak jaati hi nahi.
+          (3) Garam LIKHNA ho -> key tukdon me baanto, kisi ek me likho, padhte waqt jodo.
+          Pehchaan: key KHAALI + sab DB bhage = stampede (mutex). Key BHARI + ek node read se mar raha = hot key.
+          Misaal: IPL live score, crore log ek key -> L1 sabse bada ilaaj.
 
 NAYA:     L1 local cache (har App server ki apni memory me chhota cache)
 BADLA:    App -> App + L1 local cache
