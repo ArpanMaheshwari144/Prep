@@ -53,13 +53,11 @@ flowchart TD
 ## DIKKAT 1 — do order ek hi stock pe ek saath (RACE)
 
 ```
-DIKKAT:   do log ek hi stock pe ek saath order daalte — do thread dono ko match kar dein to jitne
-          share the usse zyada bik jaate = DOUBLE MATCH
+DIKKAT:   do log ek hi stock pe ek saath order -> do thread dono ko match kar dein to jitne share the usse
+          zyada bik jaate = DOUBLE MATCH.
 
-SOLUTION: har stock (symbol) ki EK queue aur EK thread — orders ek ke baad ek match hote, to race ho hi
-          nahi sakti, lock bhi nahi chahiye. Order book RAM me, microseconds me kaam.
-          Lock kyun nahi: exchange ki speed pe lock = slow + deadlock ka darr; ek line me race possible hi
-          nahi. Ye har trading system ka niyam hai.
+SOLUTION: (1) Har stock (symbol) ki EK queue + EK thread -> order ek ke baad ek match, race ho hi nahi sakti.
+          (2) Order book RAM me, microseconds me kaam. Lock nahi chahiye (lock = slow + deadlock ka darr).
 
 NAYA:     Queue per symbol · Matching Engine (buy aur sell order milaane wala, order book RAM me)
 ```
@@ -96,13 +94,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — wallet me 50k, banda 30k-30k ke DO order daal de (DOUBLE SPEND)
 
 ```
-DIKKAT:   wallet me jitna paisa hai usse zyada ke do order ek saath daal diye, dono match ho gaye = DOUBLE
-          SPEND
+DIKKAT:   wallet me jitna paisa usse zyada ke do order ek saath, dono match ho gaye = DOUBLE SPEND.
 
-SOLUTION: order lagte hi paisa BLOCK karo, kaato nahi — hotel / petrol pump ke deposit jaisa. Available
-          = total minus blocked; kam pada to doosra order reject. Match hua tab sach me kato, cancel hua to
-          unblock, pending hai to blocked hi pada rahe.
-          DB me ek hi atomic update: block tabhi badhe jab available bacha ho — 0 row badli = reject.
+SOLUTION: (1) Order lagte hi paisa BLOCK karo, kaato nahi (hotel deposit jaisa). Available = total - blocked.
+          (2) DB me EK atomic update: block tabhi badhe jab available bacha ho (0 row = reject).
+          (3) Match hua -> sach me kato · cancel -> unblock.
 
 NAYA:     Wallet (user ka paisa: total / blocked / available)
 ```
@@ -136,13 +132,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — settlement ke beech crash
 
 ```
-DIKKAT:   settlement ke beech crash — buyer ka paisa kat gaya, seller ko milne se pehle crash -> paisa
-          gayab
+DIKKAT:   settlement ke beech crash: buyer ka paisa kata, seller ko milne se pehle crash -> paisa gayab.
 
-SOLUTION: saare step EK transaction me (ACID) — sab hoga ya kuch nahi, crash hua to rollback.
-          Spring me @Transactional yahi karta.
-          LEDGER double-entry: jitna ek se gaya utna doosre ko mila, total same — audit ke liye.
-          Like-count jaisi cheez eventual chal jaati, PAISA hamesha strong consistency.
+SOLUTION: (1) Saare step EK transaction me (ACID, @Transactional) -> sab ya kuch nahi.
+          (2) LEDGER double-entry: jitna ek se gaya utna doosre ko mila (audit).
+          Paisa = hamesha strong consistency (like-count jaisa eventual nahi).
 
 NAYA:     Settlement (match ke BAAD paisa + share sach me badalne wala dabba — kaam ka naam; yahan wo kaam
           EK TRANSACTION se hota. dikkat 4 me do DB ho jaate, tab wahi kaam SAGA se. Settlement = KYA, transaction / SAGA = KAISE)
@@ -178,13 +172,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — paisa Wallet DB me, share Portfolio DB me (alag DB)
 
 ```
-DIKKAT:   paisa Wallet DB me, share Portfolio DB me — do alag DB pe ek transaction chal hi nahi sakti.
-          Wallet se paisa kata, portfolio me share dalne se pehle crash = paisa gaya, share nahi.
+DIKKAT:   paisa Wallet DB me, share Portfolio DB me -> do alag DB pe ek transaction chal hi nahi sakti.
+          Paisa kata, share dalne se pehle crash = paisa gaya, share nahi.
 
-SOLUTION: SAGA: bada kaam chhote local steps me todo, har step apne DB me commit. Koi step fail hua to
-          pichhle steps ka ULTA step chalao (compensate) — jaise flight ho gayi, hotel nahi mila, to
-          flight cancel + refund.
-          ACID = ek DB, turant · SAGA = kai service, code se undo.
+SOLUTION: SAGA: (1) Kaam chhote local steps me, har step apne DB me commit.
+                (2) Koi step fail -> pichhle steps ka ULTA step (compensate): paisa wapas.
+          ACID = ek DB, turant · SAGA = kai DB / service, code se undo.
 
 BADLA:    ek [ DB ] -> do me bata: Wallet DB + Portfolio DB · Settlement ab SAGA chalata
 
@@ -231,11 +224,9 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — user ne BUY do baar daba diya / network ne retry maara
 
 ```
-DIKKAT:   user ne BUY do baar daba diya, ya network ne retry maara -> ek order do baar laga, do baar paisa
+DIKKAT:   user ne BUY do baar daba diya / network ne retry maara -> ek order do baar, do baar paisa.
 
-SOLUTION: IDEMPOTENCY KEY: har request ke saath ek unique key. Server yaad rakhta "ye key ho chuki" —
-          dobara aayi to wahi purana result, naya order nahi. (GPay pe double click = ek hi charge ·
-          BookMyShow me ek ticket.)
+SOLUTION: IDEMPOTENCY KEY har request ke saath. Key ho chuki -> wahi purana result, naya order nahi.
 
 NAYA:     koi dabba nahi — Order Service me key check juda
 
@@ -275,17 +266,13 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — order book RAM me hai, server crash = sab gayab
 
 ```
-DIKKAT:   order book RAM me hai — matching server gira to book aur saare pending order gayab
+DIKKAT:   order book RAM me -> matching server gira to book aur saare pending order gayab.
 
-SOLUTION: EVENT LOG / SEQUENCER: har order PEHLE append-only log me (disk / Kafka), sequence number ke
-          saath, PHIR book me. Crash hua to naya server log dobara chalata (replay) — ek thread hai, to book
-          bilkul waisi hi ban jaati. Ye wahi write-ahead log wala tareeka hai.
-          (Cricket: scoreboard gaya, scorer ke register se sab wapas.)
-          Order sirf ek stock ke andar chahiye, poore market ka nahi — isliye key = symbol, alag stocks
-          parallel chal sakte.
-          Bonus: yahi log AUDIT trail bhi hai. Logging = engineer ke debug ke liye, kuch din, badal sakte.
-          Audit = regulator ke liye, kaun-kya-kab, saalon tak, badla nahi ja sakta —
-          JP / BlackRock dono maangte. Ek log, do kaam.
+SOLUTION: (1) EVENT LOG / SEQUENCER: har order PEHLE append-only log me (disk / Kafka, seq number ke saath),
+              PHIR book me.
+          (2) Crash -> naya server log REPLAY karta -> ek thread hai, to book bilkul waisi ban jaati.
+          (3) Key = symbol -> alag stocks parallel.
+          Bonus: yahi log AUDIT trail bhi (regulator: kaun-kya-kab, saalon tak, badla nahi ja sakta).
 
 BADLA:    Queue per symbol -> Event Log (wahi queue, ab disk pe likhi jaati + seq no. + key = symbol)
 ```
@@ -337,12 +324,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — lakhon log live price dekh rahe
 
 ```
-DIKKAT:   lakhon log live price dekh rahe, har client baar-baar poochh raha (polling) -> lakhon request /
-          sec -> server dead
+DIKKAT:   lakhon log live price dekh rahe, har client baar-baar poochh raha (polling) -> server dead.
 
 SOLUTION: WEBSOCKET + PUB/SUB: connection ek baar khulta, price badle tab server khud bhejta.
-          Price me sirf LATEST chahiye, purana store nahi karna (WhatsApp jaisa nahi) — reconnect pe user
-          current price le leta.
+          Sirf LATEST price chahiye, purana store nahi; reconnect pe current price le lo.
 
 NAYA:     Pub/Sub (ek price update, sab subscriber tak) · WebSocket (khula connection, server khud price bheje)
 
@@ -390,15 +375,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — market khulte hi AKELE TCS pe lakhon order
 
 ```
-DIKKAT:   market khulte hi akele ek hi stock pe lakhon order — "stock ke hisaab se baanto" yahan kaam nahi
-          aata, ek stock = ek thread
+DIKKAT:   market khulte hi akele ek stock pe lakhon order. Ek stock = ek thread, to baant nahi sakte.
 
-SOLUTION: book ko mat todo — ek book do thread me = double match wapas, aur pehle-aaya-pehle-paaya kram
-          toot jaata. Ek thread RAM me, bina lock ke, bahut tez chalta (LMAX ka design yahi).
-          Aage ka event log burst sambhaal leta: order line me lagte, thread apni speed se uthata
-          (BACKPRESSURE: aane ki raftaar aur kaam ki raftaar alag). Spike me kuch drop nahi hota, bas
-          thodi latency.
-          Scale stocks ke beech karo (alag thread), ek stock ke andar kabhi nahi.
+SOLUTION: (1) Book mat todo: do thread = double match wapas + kram toot-ta. Ek thread RAM me, bina lock, bahut tez.
+          (2) Aage ka event log burst sambhaalta (BACKPRESSURE): order line me, thread apni speed se.
+              Spike me drop nahi, bas thodi latency.
+          Scale stocks ke BEECH (alag thread), ek stock ke andar kabhi nahi.
 
 NAYA:     koi dabba nahi — Event Log hi kaam aaya
 ```

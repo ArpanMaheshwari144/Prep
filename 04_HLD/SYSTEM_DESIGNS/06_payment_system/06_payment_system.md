@@ -67,12 +67,10 @@ flowchart TD
 ## DIKKAT 1 — beech me crash: Arpan -500 hua, merchant +500 nahi
 
 ```
-DIKKAT:   beech me crash — mere account se paisa kat gaya, merchant ko pahuncha nahi -> paisa GAYAB
+DIKKAT:   beech me crash: mere account se paisa kat gaya, merchant ko pahuncha nahi -> paisa GAYAB.
 
-SOLUTION: debit aur credit dono EK atomic step me — DB TRANSACTION (ACID): dono honge ya koi nahi, crash
-          pe rollback.
-          See-saw jaisa: debit aur credit saath hilte, paisa na banta na marta, sirf jagah badalta.
-          Niyam (invariant): saare debit ka jod = saare credit ka jod, hamesha. Na mile to turant pakdo.
+SOLUTION: (1) Debit + credit EK DB TRANSACTION (ACID): dono honge ya koi nahi, crash pe rollback.
+          (2) Niyam: saare debit ka jod = saare credit ka jod, hamesha. Na mile to turant pakdo.
 
 NAYA:     koi dabba nahi — DB transaction
 ```
@@ -100,17 +98,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — do baar tap / app ne retry maara -> Rs. 1000 kate
 
 ```
-DIKKAT:   user ne do baar tap kiya ya app ne retry maara -> do baar paisa kata = DOUBLE CHARGE
+DIKKAT:   user ne do baar tap kiya ya app ne retry maara -> do baar paisa kata = DOUBLE CHARGE.
 
-SOLUTION: IDEMPOTENCY KEY: client har naye payment pe ek UUID banata, retry pe WAHI bhejta.
-          Server: key nayi -> payment karo, key aur result dono save. Key pehle se -> dobara mat karo,
-          saved result wapas do (block nahi, dedup).
-          Race: same key ki do request ek saath aayi to dono ko "nayi" lagegi -> check aur save ek hi
-          atomic step: DB unique constraint (pakka) + Redis SETNX (tez), status IN_PROGRESS -> DONE.
-          Jaal: kaam ke baad key delete mat karo — late retry aaya to dobara charge. Key ko ~24 ghante
-          result ke saath rakho.
-          Do sacche alag payment = alag key, dono honge. Retry = wahi key, ek baar.
-          (DSA: register = hashmap "pehle dekha?")
+SOLUTION: (1) IDEMPOTENCY KEY: client har naye payment pe ek UUID banata, retry pe WAHI bhejta.
+          (2) Key nayi -> payment karo, key + result save · key pehle se -> saved result wapas.
+          (3) Same key ki do request ek saath -> check + save EK atomic step: DB UNIQUE constraint (pakka)
+              + Redis SETNX (tez). Status IN_PROGRESS -> DONE.
+          ★ Kaam ke baad key delete mat karo (late retry = dobara charge). ~24 ghante rakho.
+          Do sacche alag payment = alag key, dono honge.
 
 NAYA:     Idempotency store (key -> result yaad rakhne wala; Redis + DB unique)
 ```
@@ -154,11 +149,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — asli paisa hamara server hilata hi nahi
 
 ```
-DIKKAT:   asli paisa hamara server hilata hi nahi — settlement bank rails pe hota
+DIKKAT:   asli paisa hamara server hilata hi nahi, settlement bank rails pe hota.
 
-SOLUTION: bahar ka PSP / gateway (Razorpay / Stripe / bank) asli paisa move karta. Call bahar ki aur
-          async hai, to beech ki haalat chahiye: PENDING.
-          Haalat: INITIATED -> PENDING (PSP ko bheja) -> SUCCESS / FAILED.
+SOLUTION: (1) Bahar ka PSP (Razorpay / Stripe / bank) paisa move karta. Call bahar ki + async.
+          (2) Isliye beech ki haalat: INITIATED -> PENDING (PSP ko bheja) -> SUCCESS / FAILED.
 
 NAYA:     PSP (Payment Service Provider — Razorpay / Stripe / bank, asli paisa wahi hilata)
 
@@ -197,15 +191,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — PSP call kiya aur crash: paisa gaya ya nahi, pata hi nahi
 
 ```
-DIKKAT:   PSP ko call kiya aur crash — paisa gaya ya sirf jawab kho gaya, pata hi nahi. "Bas rollback
-          kar do" safe nahi. Niyam: kabhi ASSUME mat karo — pehle RECORD, phir RESOLVE.
+DIKKAT:   PSP ko call kiya aur crash -> paisa gaya ya sirf jawab kho gaya, pata hi nahi.
+          "Bas rollback" safe nahi. Kabhi ASSUME mat karo: pehle RECORD, phir RESOLVE.
 
-SOLUTION: teen cheez: (1) kuch bhi karne se PEHLE "PENDING" durable likho — koi payment gum nahi hoga.
-          (2) WEBHOOK: PSP kaam hote hi khud call karke batata — tez raasta.
-          (3) RECONCILIATION job: atke hue PENDING dhoondho, PSP se poocho — hua to SUCCESS, nahi hua to
-          retry (idempotent hai), pakka fail to FAILED + refund. Ye safety net hai.
-          Push (webhook) aur pull (reconciliation) dono rakhne.
-          (Courier: har parcel ka tracking number + status — courier gira, parcel gum nahi.)
+SOLUTION: (1) Kuch bhi karne se PEHLE "PENDING" durable likho -> koi payment gum nahi.
+          (2) WEBHOOK: PSP kaam hote hi khud batata (tez raasta).
+          (3) RECONCILIATION job: atke PENDING dhoondho, PSP se poocho -> hua = SUCCESS · nahi = retry
+              (idempotent) · pakka fail = FAILED + refund.
+          Push (webhook) + pull (reconciliation) dono.
 
 NAYA:     Reconciliation job (PENDING payment dhoondh ke PSP se asli haal milaane wala) · webhook (PSP khud call karke bataye)
 
@@ -252,14 +245,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — A aur B alag bank me: ek DB transaction possible hi nahi
 
 ```
-DIKKAT:   bhejne wala aur lene wala alag bank me — ek DB transaction possible hi nahi
+DIKKAT:   bhejne wala aur lene wala alag bank me -> ek DB transaction possible hi nahi.
 
-SOLUTION: SAGA: ek DB me rollback muft milta; alag DB me apna UNDO khud likho. Har step apna commit,
-          koi step fail to pichhle steps ulte kram me undo (trip: cab nahi mili -> hotel cancel -> flight
-          cancel). Ye loose aur scalable, par eventual — beech me thodi der farak dikh sakta.
-          2PC: sab participant pehle "ready" bolte aur lock pakad ke rukte, phir commit. Coordinator gira
-          to sab atke. Isliye scale pe SAGA.
-          Trade-off: 2PC = strict, sync, locking, slow · SAGA = async undo, eventual, lamba lock nahi.
+SOLUTION: (1) SAGA: har step apna commit; koi fail -> pichhle steps ULTE kram me undo (khud likhna).
+              Async, eventual (thodi der farak dikh sakta), lamba lock nahi -> scale pe yahi.
+          (2) 2PC nahi: sab "ready" bol ke lock pakad ke rukte, coordinator gira to sab atke, slow.
 
 NAYA:     koi dabba nahi — Payment Svc saga chalata
 ```
@@ -295,16 +285,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — regulator: "ye paisa kahan se aaya, kahan gaya?"
 
 ```
-DIKKAT:   regulator poochta: ye paisa kahan se aaya, kahan gaya? Har paisa kab-kahan-kyun traceable
-          chahiye (RBI / SEC)
+DIKKAT:   regulator: ye paisa kahan se aaya, kahan gaya? Har paisa kab-kahan-kyun traceable (RBI / SEC).
 
-SOLUTION: LEDGER: permanent aur immutable — delete / edit nahi. DOUBLE-ENTRY: har transaction = ek debit +
-          ek credit, dono ka jod barabar.
-          Pen ki diary jaisa: galti hui to NAYI correction entry, purani mat mitao — poori history = audit
-          trail.
-          ★ JAAL: ledger "DB fail ho to backup" nahi hai. Wo usi SQL DB me, usi
-          transaction me likha jaata.
-          Crash recovery = PENDING + webhook + reconciliation (dikkat 4). Ledger = hisaab / audit.
+SOLUTION: (1) LEDGER = DB ki table, USI transaction me jisme paisa hila. Sirf INSERT, delete / edit nahi.
+          (2) DOUBLE-ENTRY: har transaction = ek debit + ek credit, jod barabar.
+          (3) Galti hui -> NAYI correction entry, purani mat mitao.
+          ★ Ledger = hisaab / audit. Crash recovery ka kaam PENDING + webhook + reconciliation ka (dikkat 4).
 
 NAYA:     koi alag dabba nahi — DB me Ledger table (append-only)
 
@@ -348,14 +334,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — festival, 3000 txn / sec, ek Payment Svc box ka CPU khatam
 
 ```
-DIKKAT:   festival pe bahut zyada payment, ek Payment Svc box ka CPU khatam -> timeout -> user ne
-          DOBARA tap kiya. Aur wahi box gira to poora payment band.
+DIKKAT:   festival pe ek Payment Svc box ka CPU khatam -> timeout -> user ne DOBARA tap. Wahi gira to band.
 
-SOLUTION: Payment Svc pehle se STATELESS hai (state DB aur idempotency store me), to kai box lagao, aage
-          LB / API Gateway. (Stateless na hoti to LB se kuch na hota — isliye wo faisla pehle liya.)
-          Gateway pe: login check (JWT), har user ki rate limit, edge pe WAF, TLS.
-          Har payment pe OWNER CHECK: jis account se paisa ja raha, wo isi user ka hai? Warna kisi aur ke
-          account se paisa nikal jaayega.
+SOLUTION: (1) Payment Svc STATELESS (state DB + idempotency store me) -> kai box + aage LB / API Gateway.
+          (2) Gateway pe: JWT login check, per-user rate limit, WAF, TLS.
+          (3) Har payment pe OWNER CHECK: jis account se paisa ja raha, wo isi user ka hai?
 
 NAYA:     LB / API Gateway
 BADLA:    Payment Svc ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
@@ -403,11 +386,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — merchant dashboard ki report query usi DB pe, asli txn ka write ruk raha
 
 ```
-DIKKAT:   merchant dashboard ki bhaari report usi DB pe chal rahi -> asli payment ka write ruk raha
+DIKKAT:   merchant dashboard ki bhaari report usi DB pe -> asli payment ka write ruk raha.
 
-SOLUTION: READ REPLICA: dashboard aur report replica se padho.
-          ★ Par PAYMENT ka read replica se kabhi nahi — balance aur payment status hamesha primary se.
-          Replica thoda peeche chalti; report me chalta hai, paise me ek rupaye ka farak bhi nahi chalega.
+SOLUTION: (1) READ REPLICA: dashboard / report replica se.
+          ★ PAYMENT ka read (balance, status) hamesha PRIMARY se. Replica peeche chalti, report me chalta hai,
+            paise me nahi.
 
 NAYA:     Read replica
 
@@ -460,11 +443,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 9 — ek DB me 50 crore txn row, likhai dheemi
 
 ```
-DIKKAT:   ek hi DB me crore-on payment rows aur saare write ek primary pe -> likhai dheemi
+DIKKAT:   ek DB me crore-on payment rows, saare write ek primary pe -> likhai dheemi.
 
-SOLUTION: account_id ke hisaab se SHARD karo.
-          Naya dard: bhejne wala aur lene wala alag shard pe ho sakte -> transfer ab ek local transaction
-          nahi -> wapas SAGA (dikkat 5). Asli mushkil throughput nahi, distributed transaction hai.
+SOLUTION: (1) SHARD by account_id.
+          (2) ★ Naya dard: bhejne / lene wala alag shard pe -> ek local transaction nahi -> wapas SAGA (dikkat 5).
 
 BADLA:    DB -> SQL DB (shard by account_id)
 
