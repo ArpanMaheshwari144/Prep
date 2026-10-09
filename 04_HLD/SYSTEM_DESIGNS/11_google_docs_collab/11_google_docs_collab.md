@@ -51,11 +51,10 @@ flowchart TD
 ## DIKKAT 1 — do log ne saath save kiya, baad wale ne pehle ka MITA diya
 
 ```
-DIKKAT:   do log ne ek saath poora doc save kiya, baad wale ne pehle wale ka kaam mita diya
-          (LAST-WRITE-WINS) — collaboration me nahi chalta
+DIKKAT:   do log ne ek saath poora doc save kiya -> baad wale ne pehle wale ka kaam mita diya (LAST-WRITE-WINS).
 
-SOLUTION: poora TEXT mat bhejo, sirf OPERATION bhejo ("yahan ye daala", "yahan se ye hataya").
-          Dono ke operation apply ho sakte, kisi ka likha nahi khota.
+SOLUTION: Poora TEXT mat bhejo, sirf OPERATION bhejo ("yahan ye daala", "yahan se ye hataya").
+          Dono ke operation apply hote, kisi ka likha nahi khota.
 
 NAYA:     koi dabba nahi — data ki shakal badli (text -> operation)
 ```
@@ -86,11 +85,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — B ko A ka edit kab dikhega? refresh pe?
 
 ```
-DIKKAT:   B ko A ka edit kab dikhega — refresh karne pe? Normal HTTP me server khud nahi bhej sakta.
+DIKKAT:   B ko A ka edit kab dikhega, refresh pe? Normal HTTP me server khud nahi bhej sakta.
 
-SOLUTION: WEBSOCKET: do-tarfa zinda connection, dono taraf se kabhi bhi bhej sakte. Do-tarfa chahiye
-          kyunki user type bhi karta aur doosron ke edit bhi leta. (Sirf server se client hota to SSE
-          halka padta.)
+SOLUTION: WEBSOCKET: do-tarfa zinda connection (user type bhi karta, doosron ke edit bhi leta).
+          (Sirf server -> client hota to SSE halka padta.)
 
 BADLA:    App -> Conn-Server (connection server: user ka WebSocket pakad ke rakhta)
 
@@ -121,12 +119,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — ek Conn-Server itne socket nahi jhelta -> kai lagaye -> A server-1 pe, B server-2 pe
 
 ```
-DIKKAT:   ek Conn-Server itne connection nahi jhelta -> kai lagaye. Par ek doc ke do editor alag box pe —
-          dono box ek doosre ko jaante hi nahi.
+DIKKAT:   ek Conn-Server itne connection nahi jhelta -> kai lagaye. Par ek doc ke do editor alag box pe,
+          box ek doosre ko jaante hi nahi.
 
-SOLUTION: REDIS PUB/SUB — server se server tak bhejne ke liye. A ka edit uske server se Redis pe
-          publish hota, Redis us doc ko sun rahe saare servers ko deta, wo apne users ko.
-          WebSocket = browser tak, pub/sub = server se server — do alag kaam.
+SOLUTION: REDIS PUB/SUB: A ka edit uske server se Redis pe publish -> us doc ko sun rahe saare servers ->
+          apne users ko. WebSocket = browser tak · pub/sub = server se server.
 
 NAYA:     LB · Redis pub/sub
 BADLA:    Conn-Server ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
@@ -175,15 +172,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — dono ne EK SAATH position 0 pe type kiya
 
 ```
-DIKKAT:   dono ne ek saath ek hi jagah type kiya -> seedha apply kiya to dono ke paas alag doc ban gaya
-          (diverge)
+DIKKAT:   dono ne ek saath ek hi jagah type kiya -> seedha apply = dono ke paas alag doc (diverge).
 
-SOLUTION: OPERATIONAL TRANSFORMATION (OT): kisi ek ko jeetne mat do — doosre ke operation ko TRANSFORM
-          karo. A pehle hi us jagah kuch daal chuka, to B ka operation ek jagah aage khiska do. Dono taraf
-          same niyam -> dono ke paas ek hi doc, dono ke akshar bache.
-          Kiska pehle aaye, ye ek fixed niyam se (userId / time) — par dono zinda rehte.
-          CRDT doosra raasta: har akshar ki apni unique id, merge kisi bhi kram me same nikalta, central
-          transform nahi chahiye. (Implement nahi karna, bas samajh bolni hai.)
+SOLUTION: (1) OPERATIONAL TRANSFORMATION (OT): doosre ke operation ko TRANSFORM karo. A pehle us jagah daal
+              chuka -> B ka operation ek jagah aage khiska do. Dono taraf same niyam -> ek hi doc, dono ke akshar.
+              Pehle kaun: fixed niyam (userId / time).
+          (2) CRDT doosra raasta: har akshar ki unique id, merge kisi bhi kram me same.
 
 NAYA:     koi dabba nahi — Conn-Server me OT
 
@@ -230,15 +224,13 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — har keystroke pe DB hit
 
 ```
-DIKKAT:   har keystroke pe DB write -> crore users ke har akshar se DB khatam
+DIKKAT:   har keystroke pe DB write -> crore users ke har akshar se DB khatam.
 
-SOLUTION: BUFFER + BATCH: operation pehle Redis buffer me jama, thodi der me ek saath batch me DB
-          (edit log) me. Live dikhana memory / pub-sub se, DB me batch — user ruke nahi, DB pe hathoda nahi.
-          Edit log CASSANDRA me: ek doc ke saare edit ek jagah, version number ke kram me (server deta).
-          Timestamp nahi — ek hi millisecond pe do operation = same key = Cassandra chupchap overwrite,
-          operation kho jaata.
-          Batch ke baad bhi bada -> docId se SHARD (ek doc ke saare operation ek shard pe).
-          Replica sirf read baantti, write ke liye shard.
+SOLUTION: (1) BUFFER + BATCH: operation Redis buffer me jama, thodi der me batch me DB (edit log) me.
+              Live dikhana memory / pub-sub se.
+          (2) Edit log CASSANDRA me, ek doc ke saare edit ek jagah, SERVER ke version number ke kram me.
+              ★ Timestamp nahi: ek millisecond pe do op = same key = chupchap overwrite, op kho jaata.
+          (3) Phir bhi bada -> docId se SHARD.
 
 NAYA:     Redis buffer (edits thodi der jama, phir ek saath DB me)
 BADLA:    DB -> Cassandra edit log (docId shard)
@@ -294,10 +286,9 @@ BOL:      "Redis is replicated, but replication is async, so I don't ack an op u
 ## DIKKAT 6 — doc kholne pe 10 lakh operation replay
 
 ```
-DIKKAT:   doc kholne pe shuru se saare operation (laakhon) dobara chalane padte -> kholna slow
+DIKKAT:   doc kholne pe shuru se laakhon operation dobara chalane padte -> kholna slow.
 
-SOLUTION: SNAPSHOT: har kuch hazaar operation ke baad poora text save kar lo. Doc kholna = aakhri
-          snapshot + uske baad ke thode operation. (Append log + kabhi-kabhi compaction wala funda.)
+SOLUTION: SNAPSHOT: har kuch hazaar operation ke baad poora text save. Kholna = aakhri snapshot + baad ke thode op.
 
 NAYA:     koi dabba nahi — edit log ke saath snapshot
 ```
@@ -333,14 +324,13 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — network ek second blip hua: typing ruk jaayegi?
 
 ```
-DIKKAT:   network ek second ko toota — typing ruk jaayegi? CAP me kya chunein?
+DIKKAT:   network ek second ko toota -> typing ruk jaayegi? CAP me kya chunein?
 
-SOLUTION: "consistency chahiye -> CP" galat soch hai. CP rakha to network
-          toot-te hi typing rukegi. Asli Docs me offline bhi type kar sakte, baad me sync -> ye AP hai.
-          "Sabko ek jaisa doc" strong consistency se nahi, CONVERGENCE (OT / CRDT) se aata hai.
-          Poore system ka ek CAP nahi — har hissa alag: doc edits = AP (available, OT se mil jaate).
-          Permissions / owner = CP (jise hataya use TURANT rokna) -> alag SQL store.
-          CAP ka faisla sirf network toot-ne ke waqt; network theek ho to dono milte.
+SOLUTION: (1) Doc edits = AP: network toote to bhi type karo, baad me sync. "Sabko ek jaisa doc"
+              CONVERGENCE (OT / CRDT) se aata, strong consistency se nahi.
+          (2) Permissions / owner = CP (jise hataya use TURANT rokna) -> alag SQL store.
+          ★ "Consistency chahiye -> CP" galat: CP me network toot-te hi typing rukegi.
+          Poore system ka ek CAP nahi, har hissa alag. CAP faisla sirf network toot-ne ke waqt.
 
 NAYA:     SQL (permissions / ownership)
 ```
@@ -384,17 +374,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — crore WebSocket connection
 
 ```
-DIKKAT:   crore WebSocket connection sahi tarah baantne hain
+DIKKAT:   crore WebSocket connection sahi tarah baantne hain.
 
-SOLUTION: (1) alag CONNECTION tier — sirf connection pakadne wale servers, alag scale. Connection
-          stateful hai, to LB user ko hamesha usi server pe bheje.
-          (2) docId se baanto: ek doc ke saare editor aur unka OT ek hi server pe (OT ek jagah kram se
-          chalna chahiye). Alag doc alag server -> load bata. Pub/sub ab bhi rakho: reconnect me koi
-          doosre box pe aa gaya to wahi bachata (routing pakka ho to pub/sub ka kaam bahut kam).
-          (3) ek doc pe editor ki had hoti (Google ~100), to ek doc ka OT ek server pe theek.
-          (4) spike -> queue jhele, Redis pub/sub replicate aur scale.
-          (5) app ki static files CDN se.
-          Kram SERVER deta (har operation ka agla version number), client ki ghadi nahi.
+SOLUTION: (1) Alag CONNECTION tier (stateful) -> LB user ko hamesha usi server pe bheje.
+          (2) docId se baanto: ek doc ke saare editor + unka OT ek server pe (OT kram se chalna chahiye).
+              Pub/sub ab bhi rakho: reconnect pe koi doosre box pe aa gaya to wahi bachata.
+          (3) Ek doc pe editor ki had (~100) -> ek doc ka OT ek server pe theek.
+          (4) App ki static files CDN se.
+          Kram SERVER deta (version number), client ki ghadi nahi.
 
 NAYA:     CDN
 BADLA:    LB -> LB (docId se consistent routing)
