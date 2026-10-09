@@ -2,8 +2,8 @@
 
 > Ek bank ke andar accounts, un pe paisa daalo / nikaalo / bhejo, aur balance dikhao.
 > Is design ka dil: **ledger SACH hai, balance sirf NATEEJA** + paisa na bane na mare.
-> KYUN YE DESIGN (19-Sep): Arpan ek reel se laaya, net pe verify kiya — candidates report karte: payment flow · transaction
-> ledger · ATM · do account ke beech internal transfer. JP ka sabse sambhavit HLD, Arpan ki sabse majboot zameen.
+> KYUN YE DESIGN: candidates report karte: payment flow · transaction ledger · ATM · do account ke beech
+> internal transfer. JP ka sabse sambhavit HLD.
 > (detail: `JP_INTERVIEW_INTEL.md` section 0e)
 
 ```
@@ -27,7 +27,7 @@ Source: [Read Replica Pattern](https://bytebytego.com/guides/read-replica-patter
 
 ```
 POOCHO:  "Bahut bada hai — use-cases baandh lete hain. Ek hi bank ke andar, ya doosre bank ko bhi?"
-         (Arpan ne asli mock me sabse pehle yahi poocha: "let's discuss use cases first" — scope pehle,
+         ("let's discuss use cases first" — scope pehle,
           warna interviewer jitna bada system chaahe sar pe daal dega)
 
 FR:      user ke ek / kai ACCOUNT · DEPOSIT · WITHDRAW · TRANSFER A -> B (DONO isi bank) · BALANCE · HISTORY
@@ -38,7 +38,6 @@ NFR:     CORRECTNESS sabse upar (paisa na GUM, na BANE, hisaab har waqt barabar)
 
 NUMBERS: 5M account · 10M txn / din -> 10^7 / 86400 ~ 120 write / sec · read >> write (balance check zyada)
          120 / sec = ek theek-thaak Postgres box ka DAS-VA hissa -> SHARDING KI ZAROORAT NAHI, primary + replica kaafi
-         (Arpan khud: "mere number itne bade nahi, normal DB chalega" — SAHI call; log bina zaroorat shard ghusa dete)
 
 DATA SE TEEN SAWAAL (jawab dikkat me):
    1. transfer me DO row badalti -> dono ya koi nahi, kaun sambhalega?   (dikkat 1)
@@ -69,7 +68,7 @@ flowchart TD
 ```
 DIKKAT:   transfer ke beech system gira: A se paisa kat gaya, B ko mila nahi -> paisa gayab
 
-SOLUTION: ★ ARPAN KA NIYAM (is design ki reedh): ek DB me -> @Transactional. Alag service / bank -> SAGA.
+SOLUTION: ★ NIYAM (is design ki reedh): ek DB me -> @Transactional. Alag service / bank -> SAGA.
           Dono account ek DB me hain, to bas EK local transaction: debit aur credit dono ek saath commit
           ya dono rollback. Beech me girne ki jagah hi nahi.
           ★ Sabse badi galti: ek DB me bhi SAGA / queue / event ghusa dena — debit aur credit alag ho jaate,
@@ -121,11 +120,11 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   regulator poochta "paisa kahan se aaya, kahan gaya?" Aur transfer ke baad SMS / fraud check /
           statement — inke liye transfer ruke nahi, aur inme koi gire to transfer na gire.
 
-SOLUTION: ★ ARPAN NE LOG aur LEDGER alag bola (bahut kam log karte): log = debugging, ghoomta / mit-ta
+SOLUTION: ★ LOG aur LEDGER alag: log = debugging, ghoomta / mit-ta
           rehta. Ledger = sach, append-only (kisne, kab, kitna, kyun), na mit-ta na badalta.
           DOUBLE-ENTRY: har transaction ki do entry, jod hamesha zero — paisa sirf hilta. Poore ledger ka
           jod = bank ka kul paisa, mismatch turant pakda jaata.
-          Arpan ka Kafka jod: Kafka bhi append-only, padhne se mit-ta nahi — shakal sahi.
+          Kafka bhi append-only, padhne se mit-ta nahi — shakal milti hai.
           ★ HADD: ledger ka ghar DB hai, Kafka nahi: ledger pe query chahiye, aur ledger usi transaction
           me likhna jisme paisa hila — Kafka us transaction ka hissa nahi.
           Kafka ka kaam: commit ke BAAD baaki sab ko khabar (notification, fraud, analytics, statement).
@@ -176,9 +175,8 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   balance aata kahan se? (a) account me balance ka column — padhna sasta, par sirf ek likha hua
           number, galat bhi ho sakta. (b) ledger ki saari entries ka jod — hamesha sach, par arabon rows,
           aur balance sabse zyada dekha jaata, har baar hazaaron entries jodna nahi chalega.
-          Arpan ne (b) chuna — "ledger main source of truth, DB dhoka de sakta" — soch SAHI.
 
-SOLUTION: DONO rakho (19-Sep yahan seekha): ledger = sach, balance column = pehle se joda hua nateeja (cache).
+SOLUTION: DONO rakho: ledger = sach, balance column = pehle se joda hua nateeja (cache).
           ★ TRICK: ledger ki entries aur balance update — sab EK hi transaction me. Ek commit me hain, to alag
           ho hi nahi sakte. Isliye yahan queue nahi — "baad me" kiya to alag ho jaayenge.
           Kabhi farak aaya (bug, manual edit, migration) to LEDGER jeetega, balance usse dobara banta.
@@ -227,7 +225,6 @@ AGLA SAWAAL (tere jawab se):
 
 ```
 DIKKAT:   do baar tap / client retry -> ek transfer do baar, paisa do baar kata
-          (Arpan ne mock me ye #1 pain point khud pakda)
 
 SOLUTION: IDEMPOTENCY KEY: har transfer request ke saath ek key. Pehle dekhi hai -> purana result. Nahi ->
           kaam karo aur record karo.
@@ -264,9 +261,7 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — ek hi account pe DO transfer ek saath
 
 ```
-DIKKAT:   ek hi account pe do transfer ek saath. Arpan: "DB atomic hai, do transaction ko ek saath
-          modify karne hi nahi dega". Maine (Claude) "locking chahiye" bola tha — Arpan ne kaata (19-Sep),
-          wo SAHI tha.
+DIKKAT:   ek hi account pe do transfer ek saath.
           DB ka atomic update (balance = balance - 500) row lock leta, dono line me lagte, lost update hota
           hi nahi. Race tab hoti jab app padhe, jode, phir likhe.
 
@@ -275,8 +270,7 @@ SOLUTION: do chhoti par asli cheez bachti:
           dekh lete. Isliye check DB me, usi update ke andar ("tabhi ghatao jab balance kaafi ho" — 0 row =
           reject), ya DB constraint. Niyam code me nahi DB me, kyunki raaste kai (API / batch / manual),
           DB ek -> SAWAAL 3 band.
-          (b) DEADLOCK: A->B aur B->A ek saath — dono ek doosre ke lock ka intezaar. DB ek ko maar deta
-          (Arpan ne LIVE dekha).
+          (b) DEADLOCK: A->B aur B->A ek saath — dono ek doosre ke lock ka intezaar. DB ek ko maar deta.
           Ilaaj: lock hamesha ek tay kram me lo (chhoti account id pehle).
 
 NAYA:     koi dabba nahi
@@ -423,15 +417,15 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — ~22 arab row (11 arab txn) pe history ka page
 
 ```
-DIKKAT:   arabon rows me history ka page — OFFSET se. Arpan ne OFFSET ka matlab sahi bola
-          ("skip karna"); jo chhoota: DB skip karta nahi koodta, PADHTA aur PHENKTA:
+DIKKAT:   arabon rows me history ka page — OFFSET se. OFFSET = "skip karna", par DB skip karke
+          koodta nahi, PADHTA aur PHENKTA:
           aage ke page pe lakh row padh ke 20 deta, page 5000 pe atakta. Aur page 1 dekhte waqt nayi
           transaction aayi to sab khisak gaya — page 2 pe wahi entry dobara.
 
 SOLUTION: CURSOR / KEYSET pagination: "kahan chhoda" yaad rakho — pichhle page ki aakhri entry, aur
           agla page "usse purana" se shuru. Index pe seedha wahan koodta: page 1 ho ya 5000, kharcha wahi,
           aur kuch khiskta nahi.
-          ★ Arpan ka anchor: "cursor based, jaise YouTube" — page number nahi, sirf scroll. Ye kami
+          ★ Anchor: "cursor based, jaise YouTube" — page number nahi, sirf scroll. Ye kami
           nahi, faisla hai. Ulta: Google me page number kyunki top ~1000 se aage jaane nahi dete (hadd =
           offset chalta).
           Keemat: "page 500 pe jao" nahi kar sakte, sirf agla / pichhla (statement me theek; admin panel
@@ -479,8 +473,8 @@ AGLA SAWAAL (tere jawab se):
 
 ```
 DIKKAT:   5 saal ka data ek hi table me. Pichhle kuch mahine roz dekhte, purana saal me ek baar ya
-          regulator maange. Har query, index, backup arabon rows ke saath. Arpan: "purana hatao, archive,
-          on-demand wapas. DELETE nahi kar sakte" — bank me DELETE hota hi nahi — kanoon saalon tak
+          regulator maange. Har query, index, backup arabon rows ke saath. Purana hatao, archive,
+          on-demand wapas — bank me DELETE hota hi nahi — kanoon saalon tak
           rakhwata.
 
 SOLUTION: (a) DELETE se nahi (crore rows = table lock, ghante). Table ko MAHINE-MAHINE partition karo;
@@ -536,7 +530,6 @@ AGLA SAWAAL (tere jawab se):
 ## 10x SCALE — har dabba alag
 
 ```
-Arpan: "dabba bada hua to shard + replication — wo to har design me ho gaya"
 KRAM:  sasta pehle, SHARD aakhir
   1. READ REPLICA (pehla kadam, read >> write) · keemat lag -> apna abhi-kiya txn PRIMARY se
   2. PARTITION by month (archive + query dono)
@@ -564,7 +557,7 @@ POOCHEGA: "What's the single point of failure?"   -> DB primary (sync replica), 
 ```
 API:      GET /accounts/{id}/balance · GET /accounts/{id}/transactions?cursor=...&limit=20
           POST /transfers { from, to, amount } · POST /accounts/{id}/deposit { amount } · POST /accounts/{id}/withdraw { amount }
-          har POST me Idempotency-Key header (Arpan: "ye to aasan hai" — sahi, yahan ruko mat)
+          har POST me Idempotency-Key header
 
 DB:       ledger_entries (SACH, append-only, month partition) · accounts.balance (CACHE, derived)
           idempotency_keys (UNIQUE) · outbox · account_balance_snapshot (period_end ka balance)

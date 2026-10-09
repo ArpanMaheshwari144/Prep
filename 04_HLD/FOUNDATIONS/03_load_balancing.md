@@ -232,7 +232,7 @@ Server-2 bypassed until recovers
 ```
    HEALTH CHECK = LB PULL karta   -> LB har kuch second GET /health, threshold, recover pe wapas pool
    HEARTBEAT    = server PUSH karta -> server khud LB / registry ko "main zinda" bhejta; signal band = mara
-   (Arpan analogy threshold pe: ek scratch pe joota nahi phenkte)
+   (analogy threshold pe: ek scratch pe joota nahi phenkte)
 ```
 
 ---
@@ -433,13 +433,13 @@ backlog PHENK ke, system ko zabardasti reset karna padta hai.
 
 > ★ IMAANDARI (20-Sep, jo likha wo ye hai):
 > upar likha SAB technology ka behaviour hai — ye aise hi kaam karta hai, ispe khade raho.
-> "interview me aisa poocha JAATA hai" — ye writeups se hai, Claude ne na interview diya na liya.
+> "interview me aisa poocha JAATA hai" — ye writeups se hai.
 > Itna kaafi hai: senior-backend design round me "X fail hua to?" wale sawaal writeups me
-> aksar milte hain, aur 700-ticket wale background ke saath ye Arpan ka sabse aasan zone hai.
+> aksar milte hain, aur prod-support background ke saath ye sabse aasan zone hai.
 
 ---
 
-## ★★ "LB LAGA HAI, PHIR BHI SAB EK SERVER PE" — ho sakta hai? (25-Sep, Arpan ne poochha)
+## ★★ "LB LAGA HAI, PHIR BHI SAB EK SERVER PE" — ho sakta hai?
 
 > Haan, ho sakta hai. Round robin ka code nahi bigadta, wo 1, 2, 3, 1, 2, 3 hi ghumata hai.
 > Bigadta tab hai jab LB jo GIN raha hai (server / connection / IP) wo asli bojh nahi hota.
@@ -566,7 +566,7 @@ SOLUTION 3: JWT (Stateless tokens)
    har request -> server sirf signature VERIFY kare (same secret) -> koi store / Redis lookup nahi
    saare server ke paas same secret -> koi bhi server verify kar le
 
-   ANALOGY (Arpan ki):
+   ANALOGY:
      JWT     = ID-card pe office ka STAMP -> guard sirf stamp dekhe, kahin bhi ghoomo
      SESSION = visitor pass -> guard har baar reception ko CALL kare (= Redis lookup)
 ```

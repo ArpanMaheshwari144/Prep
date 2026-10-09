@@ -347,7 +347,7 @@ flowchart TD
 BOARD PE: 3 replica me se 2 ne haan bola = done -> 1 gira, data 2 pe phir bhi hai
 
 POOCHEGA: "What happens if a DB node goes down mid-write?"
-DHYAAN:   KAFKA nahi (1-Oct mock me bola tha) — Kafka extra dabba hai, DB ka kaam DB ka log karta
+DHYAAN:   KAFKA nahi — Kafka extra dabba hai, DB ka kaam DB ka log karta
 BOL:      "The DB writes to its commit log before applying, and I ack writes on quorum, so losing one
            node doesn't lose committed data. Redirects keep working from Redis meanwhile."
 
@@ -548,7 +548,7 @@ Route 53       -> GEO-ROUTING, paas wala region
 App            -> stateless -> box badhao · READ aur WRITE App alag (100:1 -> read 20, write 2;
                   ek gire to doosra chale)
 Redis          -> sab URL nahi samaate -> HOT rakho, COLD nikaalo (LRU + TTL)
-                  (ye example Arpan ka apna) viral song / WhatsApp forward = HOT -> Redis me · log dekhna band = COLD -> bahar,
+                  viral song / WhatsApp forward = HOT -> Redis me · log dekhna band = COLD -> bahar,
                   Cassandra me to hai, agli miss pe wapas
 Cassandra      -> SHARD by shortCode + read replica
 Counter        -> coordinator khud SPOF -> 2 node (active-passive); range waise bhi tolerate karti
@@ -573,7 +573,7 @@ Jo wo poochhe wahi kholo — sab ek saath mat bol dena.
 ```
 API:      BANANA = POST /api/shorten { long_url, custom_code? } -> { short_url, expires_at }
           LAANA  = GET /abc123 -> 302 Found + Location: <long_url>
-          (galti ho chuki: GET / POST ulta bola tha — banana POST, laana GET)
+          (ulta mat bolna: banana POST, laana GET)
 
 302 vs 301:  301 = permanent, browser cache -> server tak aata hi nahi -> click count gaya, expiry toot-ti
              302 = har baar server -> analytics chalta (bit.ly 302)
@@ -591,7 +591,7 @@ CODE KAISE:
    MD5 / random   -> collision -> har baar "exists?" DB read   (length 6-7)
    counter        -> collision nahi, par length VARIABLE
    counter+base62 -> repeat kabhi nahi -> collision nahi, check nahi   <- YAHI
-   counter hai to code RANDOM nahi (1-Oct mock me dono saath bol diye the)
+   counter hai to code RANDOM nahi
    base62: 0-9 (10) + a-z (26) + A-Z (26) · baar-baar /62, remainder ULTA padho
            1,000,000,000 -> "15FTGg" (6 char) · 125 -> "21"
    WORD-FREEZE FALLBACK (term bhool jaao -> CONCEPT bol do, atko mat):

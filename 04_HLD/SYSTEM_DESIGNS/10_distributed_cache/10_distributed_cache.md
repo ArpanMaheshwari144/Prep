@@ -235,7 +235,7 @@ DIKKAT:   bahut garam key expire hui, hazaar request ek saath miss -> sab DB pe 
 SOLUTION: MUTEX: sirf EK request DB se dobara banaye, baaki ruk ke cache se padhein.
           SOFT-TTL: expire hone se PEHLE hi background me refresh.
           Bahut garam key ko expire hi mat hone do, background me update karo.
-          (2-Oct) Pata ho kab aayega (sale, WC final, iPhone launch) -> pehle se cache bharo (pre-warm)
+          Pata ho kab aayega (sale, WC final, iPhone launch) -> pehle se cache bharo (pre-warm)
           aur servers pehle badhao. Pata na ho (viral tweet) -> upar ke teen.
           Twitter ka hot tweet TTL khatam + lakhon padh rahe = wahi stampede; asli me kam dikhta kyunki
           badi site ilaaj pehle lagaati.

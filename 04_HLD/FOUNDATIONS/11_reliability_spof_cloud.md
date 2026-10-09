@@ -2,7 +2,7 @@
 
 > **NAV** — KYA: SPOF / reliability basics. UP: [MASTER](../00_MASTER_SHEET.md) · lagta hai: [file-upload](../SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) · [rate-limiter](../SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md)
 
-> Arpan ke apne sawaal se bana (3-Jul) — "AWS bhi to physical machine, girta hoga na?" wali samajh.
+> Sawaal: "AWS bhi to physical machine, girta hoga na?"
 
 ---
 
@@ -58,7 +58,7 @@
    sharding = spread/scale + isolation (SPOF khatam) | replication = copies/recovery (data safe).
 ```
 
-### ★ 2-Oct discussion — "gira" ka asli matlab (Arpan ka point)
+### ★ 2-Oct discussion — "gira" ka asli matlab
 
 ```
 ANDAR    hazaron machine me koi na koi ROZ girti (disk, memory, network, deploy galti)

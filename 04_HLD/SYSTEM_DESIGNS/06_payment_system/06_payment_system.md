@@ -302,7 +302,7 @@ SOLUTION: LEDGER: permanent aur immutable — delete / edit nahi. DOUBLE-ENTRY: 
           ek credit, dono ka jod barabar.
           Pen ki diary jaisa: galti hui to NAYI correction entry, purani mat mitao — poori history = audit
           trail.
-          ★ JAAL (26-Sep mix hua): ledger "DB fail ho to backup" nahi hai. Wo usi SQL DB me, usi
+          ★ JAAL: ledger "DB fail ho to backup" nahi hai. Wo usi SQL DB me, usi
           transaction me likha jaata.
           Crash recovery = PENDING + webhook + reconciliation (dikkat 4). Ledger = hisaab / audit.
 
@@ -548,7 +548,7 @@ KEY KAB BANTI (28-Aug confusion saaf):
 DATA:     LEDGER double-entry, immutable · IDEMPOTENCY key -> { status, result } TTL ~24h ·
           TXN STATUS INITIATED -> PENDING -> SUCCESS / FAILED · INVARIANT debits == credits
 
-SCAM 1992 (Arpan ne khud joda — ledger ka asli wazan):
+SCAM 1992 (ledger ka asli wazan):
           1990-91 PAPER ledger + manual Bank Receipt (BR) -> editable, forge, koi real-time check nahi
           FAKE / khaali BR + settlement ka "float" market me + der se pakda (~Rs. 4000 cr)
           fake entry       -> INVARIANT + backed-only
@@ -612,7 +612,7 @@ BOL: "Every payment carries an idempotency key, stored with its result under a u
 
 ## HANDS-ON — Idempotency LIVE (usercrud, 27-Aug)
 
-> Arpan ki line: "map me key hai? -> kuch mat karo, wahi wapas. Nahi? -> process + map me daal do."
+> Ek line me: "map me key hai? -> kuch mat karo, wahi wapas. Nahi? -> process + map me daal do."
 
 ```java
 @RestController

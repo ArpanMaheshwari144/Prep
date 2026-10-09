@@ -6,7 +6,7 @@
 > Ye file ek hi sawaal ki hai: *sab kuch sahi laga hua tha, sab chal raha tha — phir bhi system gir
 > gaya. Kyun?*
 >
-> Ye poora section Arpan ke sawaal se bana (20-Sep): *"maan le LB lagaya taaki server pe dabaav na
+> Sawaal: *"maan le LB lagaya taaki server pe dabaav na
 > pade, phir bhi dabaav aa gaya — us case me kya? Redis lagaya aur lagte hi server down.
 > Rate limiter lagaya par usne kaam nahi kiya. Queue spike absorb karne ki jagah traffic badha de
 > to?"* — chaaron ka jawab chaar alag file me hai; ye page unhe ek shakal me jodta hai.
@@ -131,7 +131,7 @@ FACT   upar likha sab technology ka BEHAVIOUR hai — ye aise hi kaam karta hai.
 GUESS  "interview me aisa poocha JAATA hai" — ye writeups se hai.
        Itna kaafi hai: senior-backend design round me "X fail hua to?" wale sawaal
        writeups me aksar milte hain, aur 700-ticket wale background ke saath
-       ye Arpan ka sabse AASAN zone hai — ye cheezein usne asli me dekhi hain.
+       ye sabse AASAN zone hai — prod me asli me dekhi cheezein.
 ```
 
 ---

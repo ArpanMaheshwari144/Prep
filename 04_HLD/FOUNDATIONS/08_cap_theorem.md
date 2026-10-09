@@ -314,7 +314,7 @@ MESSAGE QUEUES (already done):
 ```
 
 ```
-PER-CRITICALITY, not whole-system (Arpan's insight 2026-06-06):
+PER-CRITICALITY, not whole-system:
    CAP choice ek poore system pe nahi — DATA ki criticality pe hota.
 
    FINANCE bhi pura CP nahi:

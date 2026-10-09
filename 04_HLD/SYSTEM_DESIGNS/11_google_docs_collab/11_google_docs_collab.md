@@ -2,7 +2,7 @@
 
 > 2+ log ek doc EK SAATH edit karein -> koi clash / override na ho, likha kho na jaaye, turant dikhe, aakhir me sabka doc SAME.
 > Is design ka dil: **real-time concurrent edit + koi write lost nahi + CONVERGENCE**.
-> 3-Sep MOCK me Arpan ne khud derive kiya (novel design) — 3 naye tool: per-component CAP · WebSocket + Redis pub/sub · OT / CRDT.
+> 3 khaas tool: per-component CAP · WebSocket + Redis pub/sub · OT / CRDT.
 
 ---
 
@@ -71,7 +71,7 @@ flowchart TD
 BOARD PE: A "HELLO WORLD" save · B "HELLO THERE" save -> A ka kaam gayab
           A: { insert "X", position 0 } · B: { delete position 5 }
 
-DHYAAN:   Last-Write-Wins (3-Sep mock ki galti) -> kisi ka likha KHO jaata
+DHYAAN:   Last-Write-Wins -> kisi ka likha KHO jaata
 
 AGLA SAWAAL (tere jawab se):
   "Operation me kya-kya bhejoge?"
@@ -272,14 +272,13 @@ flowchart TD
 BOARD PE: partition key = docId · clustering = version (server ka seq no.)
 
 POOCHEGA: "The database takes too many writes. What do you do?"
-DHYAAN:   (mock galti) "consistency chahiye = SQL" -> NAHI, DB data ki SHAKAL se aata · "relations nahi" -> NoSQL ki taraf
-          (mock galti) har keystroke DB hit -> nahi, buffer + batch
+DHYAAN:   "consistency chahiye = SQL" -> NAHI, DB data ki SHAKAL se aata · "relations nahi" -> NoSQL ki taraf
+          har keystroke DB hit -> nahi, buffer + batch
 BOL:      "Real-time edits go through memory and pub/sub; I buffer operations in Redis and write them in batches
            to Cassandra, partitioned by doc id and ordered by time, so one doc's ops stay on one shard."
 
 AGLA SAWAAL (tere jawab se):
   "Op abhi Redis buffer me hai, Cassandra me nahi gaya, aur Redis crash ho gaya. Op gaya?"
-          (7-Oct mock: SPOF socha, replica bola = sahi pehla qadam)
           Replica poora nahi bachata: Redis replica ko ASYNC bhejta -> primary gira to aakhri kuch op replica tak pahunche hi nahi
           Cassandra log bhi nahi bachata: jo op batch hi nahi hua wo log me hai hi nahi
           ILAAJ:  (1) client har op apne paas rakhe jab tak server ACK na de -> ack nahi aaya to reconnect pe dobara bhejo
@@ -336,7 +335,7 @@ AGLA SAWAAL (tere jawab se):
 ```
 DIKKAT:   network ek second ko toota — typing ruk jaayegi? CAP me kya chunein?
 
-SOLUTION: pehli soch thi "consistency chahiye -> CP" — galat nikli (3-Sep mock). CP rakha to network
+SOLUTION: "consistency chahiye -> CP" galat soch hai. CP rakha to network
           toot-te hi typing rukegi. Asli Docs me offline bhi type kar sakte, baad me sync -> ye AP hai.
           "Sabko ek jaisa doc" strong consistency se nahi, CONVERGENCE (OT / CRDT) se aata hai.
           Poore system ka ek CAP nahi — har hissa alag: doc edits = AP (available, OT se mil jaate).

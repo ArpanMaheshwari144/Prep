@@ -6,7 +6,7 @@
 
 ---
 
-## ★★ QUEUE · KAFKA · WORKER — TEEN ALAG CHEEZEIN HAIN (22-Sep, Arpan ne poochha)
+## ★★ QUEUE · KAFKA · WORKER — TEEN ALAG CHEEZEIN HAIN
 
 > Sawaal jaayaz hai — teeno naam hamesha SAATH aate hain, isliye ek jaisi lagti hain.
 > Par ye ek cheez ke teen naam NAHI hain. Ye teen ALAG cheezein hain.

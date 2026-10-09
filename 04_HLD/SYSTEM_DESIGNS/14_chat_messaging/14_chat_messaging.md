@@ -591,7 +591,7 @@ SOLUTION: (1) pehle hi hal ho chuka (dikkat 4): snowflake ID time se badhti + ek
           Beech ka gayab pakadna snowflake se nahi (gap normal hai) — har chat ka apna +1 number; beech ka
           number nahi aaya to catch-up.
           Beech me Kafka ho to key = chatId (ek chat ek partition).
-          "Ye to WhatsApp me hota hai" (Arpan ne dekha: doosra pehle chala gaya) — jaan-boojh ke: strict
+          "Ye to WhatsApp me hota hai" (doosra pehle chala gaya) — jaan-boojh ke: strict
           kram = pehla atka to doosra bhi roko (head-of-line blocking). Chuna: kram thoda idhar-udhar, par
           message ruke nahi.
 

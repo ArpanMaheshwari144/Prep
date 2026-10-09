@@ -31,7 +31,7 @@ NFR:     DURABILITY · HA · HIGH THROUGHPUT (lakhon / sec, dil) · LOW LATENCY 
          ORDERING per key · RETENTION / REPLAY · CONSISTENCY = EVENTUAL
          (consistency yahan = message khoye nahi + order na toote; consumer thoda peeche (lag) THEEK)
 
-★ "DUPLICATE NA HO" MAT BOLNA (15-Sep mock me phasa): baad me "at-least-once, duplicate aayega" bola
+★ "DUPLICATE NA HO" MAT BOLNA: baad me "at-least-once, duplicate aayega" bola
   -> dono kaatte -> "aapne no-duplicate bola tha?"
   SAHI: "No message loss. Duplicates ARE possible, and we handle them with idempotent consumers —
          so the EFFECT is exactly-once."
@@ -39,7 +39,6 @@ NFR:     DURABILITY · HA · HIGH THROUGHPUT (lakhon / sec, dil) · LOW LATENCY 
 NUMBERS: 100M msg / din -> ~1,200 / sec -> peak 3-5x -> ~5,000 / sec
          ~1 KB -> ~1.2 MB / sec -> ~100 GB / din · retention 7 din ~700 GB · x3 replication ~2 TB
          ~2 TB -> ek broker ~1-2 TB -> 3-4 BROKER  ·  parallelism ki ikai partition -> har topic 3-6 PARTITION
-         (ye aakhri do line 15-Sep me chhoot gayi thi)
          MQ ka asli number STORAGE (Kafka delete nahi karta, RAKHTA) — log ise sirf "pipe" samajh lete
 ```
 
@@ -235,7 +234,7 @@ flowchart TD
 ```
 BOARD PE: __consumer_offsets: key = (group, topic, partition) -> value = offset (compaction, sirf latest)
 
-DHYAAN:   (15-Sep mock galti) "har service ka alag TOPIC" -> NAHI. producer ko ek event TEEN baar bhejna padta
+DHYAAN:   "har service ka alag TOPIC" -> NAHI. producer ko ek event TEEN baar bhejna padta
           -> "ek message kai consumer tak" wali requirement hi toot gayi. MQ ka dil, interviewer yahin ungli rakhta
 BOL:      "One topic, one consumer group per service. Within a group partitions are shared; across groups
            everyone gets the whole stream, each with its own offset."
@@ -536,7 +535,7 @@ AGLA SAWAAL (tere jawab se):
 ```
 partitions     -> consumer badhaye par partition 3 hi -> extra KHAALI, lag badhta -> PARTITION BADHAO
                   ★ "Adding partitions changes hash(key) % n, so an existing key can move to a different partition
-                     and its ordering can break — that's why we start with a few extra partitions." (15-Sep chhooti thi)
+                     and its ordering can break — that's why we start with a few extra partitions."
 slow consumer  -> downstream (email API / DB) slow -> consumer scale (partition tak) · batch · bhaari kaam alag topic
 HOT PARTITION  -> ek bade customer ki key pe saara -> key todo (userId#1..4), us key ka strict order chhodo
                   (ya us tenant ka alag topic) · consistent hashing ek hot key ko nahi bachata
@@ -647,10 +646,10 @@ BOL: "Producers write keyed events to partitioned, append-only logs spread acros
 
 ---
 
-## HANDS-ON — EVENT KAHAN KHOTA HAI: 3 jagah crash karwa ke dekha (30-Sep)
+## HANDS-ON — EVENT KAHAN KHOTA HAI: 3 jagah crash karwa ke dekha
 
 > Grill sawaal (bank): "paisa kata -> event SMS / fraud / statement tak. Ek bhi event kho na jaaye, kaise?"
-> Maine SAGA bola tha -> galat dabba: saga = faile kaam ko ULTA karna. Yahan ulta nahi, event RASTE me kho raha.
+> SAGA nahi: saga = faile kaam ko ULTA karna. Yahan ulta nahi, event RASTE me kho raha.
 > Sahi soch jo thi: "pehle pakka likho" = OUTBOX.
 > CODE: `04_HLD/HANDS_ON/04_event_loss/EventLossDemo.java` (nakli, Docker nahi) · line 24 `FIX = false / true` -> `java EventLossDemo.java`
 

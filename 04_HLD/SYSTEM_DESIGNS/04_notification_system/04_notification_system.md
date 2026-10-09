@@ -279,7 +279,7 @@ AGLA SAWAAL (tere jawab se):
 
 ---
 
-## DIKKAT 5 — key laga di, par provider call FAIL (29-Sep mock me poocha)
+## DIKKAT 5 — key laga di, par provider call FAIL
 
 ```
 DIKKAT:   dedup key laga di, phir provider call FAIL hua. Retry aaya to key pehle se hai -> skip.
@@ -806,7 +806,7 @@ BOL: "Services publish events to Kafka. The notification service checks preferen
 
 ---
 
-## HANDS-ON — provider ne 429 diya: chala ke dekha (30-Sep)
+## HANDS-ON — provider ne 429 diya: chala ke dekha
 
 > Grill me galti: 429 pe "fail-open" bola. Fail-open HUMARE limiter ka faisla (Redis gira to); yahan limiter
 > PROVIDER ka, uska darwaza hum nahi khol sakte -> dheema HUMEIN hona padega.

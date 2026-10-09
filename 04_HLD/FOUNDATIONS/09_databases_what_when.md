@@ -476,7 +476,7 @@ SQL vs NoSQL ka choice CAP se SEEDHA judta:
 ```
 
 ```
-ARPAN'S CASE (finance/JP) — THE takeaway (his own):
+FINANCE / JP CASE — THE takeaway:
    "Mere case mein ACID ka khayal → SQL."
 
    Ledger / account balance / transaction  =  SQL (ACID + strong consistency)
@@ -535,7 +535,7 @@ PER-CRITICALITY (CAP se jod ke) — ek hi app mein dono zones:
    naya connection har baar = TCP handshake + auth + setup (~10-100 ms) -> overhead + DB pe churn
    pool = N connection pehle se khule -> BORROW -> use -> RETURN (band nahi, reuse)
    EXHAUSTION: pool size FIX (e.g. 10); slow query connection pakde baithi -> naye request WAIT / fail
-   (analogy Arpan ki: hotel me waiter ka set sab guest sambhalta, har guest pe naya waiter nahi)
+   (analogy: hotel me waiter ka set sab guest sambhalta, har guest pe naya waiter nahi)
    line: "Creating a connection each time needs a TCP handshake, auth and setup. A pool keeps
           ready connections you borrow, use and return."
 ```

@@ -108,7 +108,7 @@ SOLUTION: padho-badhao-likho ko EK atomic kaam banao. Redis single-threaded hai,
           Token bucket jaise kai step (refill + check + ghatao) ho to LUA script — poora ek unit me chalta.
           ★ JAAL: EXPIRE sirf pehli baar lagao. Har request pe lagaya to TTL har baar aage khisakta,
           key kabhi expire nahi hoti, user hamesha block.
-          CONNECT (2-Sep): yahi race idempotency me bhi thi (HDFC double-payment: containsKey + put ke
+          CONNECT: yahi race idempotency me bhi thi (HDFC double-payment: containsKey + put ke
           beech gap -> double charge) — ilaaj same: teen step ek unit.
 
 NAYA:     koi dabba nahi — Redis me INCR / Lua
@@ -658,7 +658,7 @@ BOL:   "I built a fixed-window counter in usercrud — five OK, then 429. In pro
 
 ---
 
-## HANDS-ON #3 — Redis KHUD maara: kaise tootta (30-Sep)
+## HANDS-ON #3 — Redis KHUD maara: kaise tootta
 
 CODE: `04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java` · `04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java`
 (koi library nahi, socket se Redis, `java File.java`)

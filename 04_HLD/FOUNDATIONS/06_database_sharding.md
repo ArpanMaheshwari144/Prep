@@ -284,7 +284,7 @@ kyunki us range ke saare users aage chal ke ushi pe pohochte:
    => add/remove sasta + smooth. Yehi consistent hashing ka point.
 ```
 
-### ★★ DIKKAT JO RING ME HAI — arcs BARABAR NAHI hote (Arpan-pakdi)
+### ★★ DIKKAT JO RING ME HAI — arcs BARABAR NAHI hote
 
 > Ring ka rule hai "aage chal, jo pehla shard mile wahi". Par shard ring pe **apne naam ke hash**
 > se baithte hain — barabar doori pe baithne ki koi guarantee NAHI.

@@ -160,7 +160,7 @@
 
 <a id="teen-baatein"></a>
 
-## ★★ TEEN BAATEIN JO SAB PE BHAARI (Arpan ka apna nichod, 15-Sep — asli mock videos se)
+## ★★ TEEN BAATEIN JO SAB PE BHAARI (asli mock videos se)
 
 ```
 1. PERFECT DESIGN HOTA HI NAHI -- chhote se shuru, phir scale ke baare me socho.
@@ -188,7 +188,7 @@
 
 ## ★★ HAR DESIGN PE 6 SAWAAL — sirf YAAD DILAANE ki list, rail nahi (28-Sep sudhaar)
 
-> 28-Sep (rate limiter ke baad, Arpan): sawaal bhi khud poochna, jawab bhi khud dena — aur JAWAB
+> Sawaal bhi khud poochna, jawab bhi khud dena — aur JAWAB
 > padhne se aata. Ye 6 koi naya design nahi banwate; sirf PADHE hue dabbe pe dikkat yaad dilaate.
 > Har design ki APNI khaas dikkatein YAAD rakhni padti hain = section 5 (DIL + KHAAS hissa).
 
@@ -814,7 +814,7 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 ## 5. 14 PADHE HUE DESIGN — DIL + KHAAS HISSA (jo PADHNA padta hai)
 
 > Common dabbe (LB · replica · cache · shard · queue · CDN · S3) har design me wahi — wo derive ho jaate.
-> Neeche sirf wo jo us design ka APNA hai, jise bina padhe bol nahi sakte (Arpan ka nichod, 25-Sep).
+> Neeche sirf wo jo us design ka APNA hai, jise bina padhe bol nahi sakte.
 > Detail = SYSTEM_DESIGNS/<naam>. Revise karte waqt bas ye section.
 
 
