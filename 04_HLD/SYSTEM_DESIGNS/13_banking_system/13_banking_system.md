@@ -162,6 +162,10 @@ AGLA SAWAAL (tere jawab se):
    -> Kafka key = account_id -> ek account ke event ek partition me kram se
   "Outbox table bhar jaayegi?"
    -> sent rows roz saaf ya partition drop
+  "Ledger Kafka me pehle likha, phir DB txn rollback (balance kam tha) -> ledger kya bolega?"
+   -> isiliye ledger Kafka me NAHI, DB ki table me, usi txn me (rollback = ledger entry bhi gayab).
+      Kafka + DB ek txn me ho hi nahi sakte (do alag system) -> Kafka sirf commit ke BAAD, outbox se.
+      BOL pehli line me hi: "ledger is a table in the same DB transaction; Kafka only gets the event after commit"
 ```
 
 ---
