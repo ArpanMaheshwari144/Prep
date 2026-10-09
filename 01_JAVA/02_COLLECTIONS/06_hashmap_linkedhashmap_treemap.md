@@ -96,11 +96,11 @@ put(101, "Arpan"); put(103, "Priya"); put(102, "Rahul");
 
 Buckets (HashMap jaisa):       Insertion-Order Linked List:
 ┌────┐
-│ 2  │ → [102: Rahul]           HEAD → [101] ↔ [103] ↔ [102] ← TAIL
+│ 5  │ → [101: Arpan]           HEAD → [101] ↔ [103] ↔ [102] ← TAIL
 ├────┤                                  Arpan   Priya  Rahul
-│ 3  │ → [101: Arpan]
+│ 6  │ → [102: Rahul]
 ├────┤                          Iterate output:
-│ 5  │ → [103: Priya]            {101=Arpan, 103=Priya, 102=Rahul}
+│ 7  │ → [103: Priya]            {101=Arpan, 103=Priya, 102=Rahul}
 └────┘                            (insertion order maintained )
 
 
