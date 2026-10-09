@@ -151,6 +151,7 @@ DIKKAT:   limiter App ke andar -> jise reject hona hai wo bhi poore system me gh
 
 SOLUTION: (1) Limiter sabse aage: API GATEWAY pe. 429 wahin se, backend tak jaaye hi nahi.
           (2) Chaaho to gateway pe mota global limit + service ke andar baarik limit.
+          (Limiter teen jagah ho sakta: gateway · alag service · app library. Gateway sabse common.)
 
 NAYA:     API Gateway (limiter iske andar)
 ```
@@ -190,7 +191,8 @@ DIKKAT:   har request ka faisla Redis pe tha, aur Redis hi gir gaya.
 SOLUTION: (1) Redis replica alag AZ me + AUTO failover (Sentinel / Redis Cluster).
           (2) Poori Redis layer gayi -> normal endpoints FAIL-OPEN (allow), payment / auth / OTP FAIL-CLOSED (rok).
           (3) Redis pe bojh -> SHARD (Redis Cluster). Shard = scale, replica = bachav.
-          LB ke liye: do LB + Route 53 health-check.
+          Har layer pe kam se kam 2 + AUTO failover. Sirf copy kaafi nahi, koi dekhne wala chahiye jo traffic
+          mode: Redis me Sentinel / Cluster vote · LB ke liye Route 53 · cloud ALB khud multi-AZ.
 
 NAYA:     Route 53
 BADLA:    Redis -> Redis Cluster (replica + shard) · LB -> ALB (multi-AZ)
@@ -288,7 +290,8 @@ DIKKAT:   ek hi banda baar-baar maar raha. 429 sirf "60 sec baad aao" bolta, wo 
 SOLUTION: (1) Rate limit = soft, 429.
           (2) Har 429 ka event Kafka me -> Pattern service dekhe "ye baar-baar?"
           (3) Pakka abuse -> WAF / IP blocklist = permanent ban.
-          Turant ban kyun nahi: asli user bhi tez click karta, ek NAT IP ke peeche 100 log.
+          Turant ban kyun nahi: asli user bhi tez click karta, ek NAT IP ke peeche 100 log, sale me legit burst.
+          Limit maafi wali, ban sirf pakke abuse pe.
 
 NAYA:     Kafka · Pattern Svc (baar-baar maarne wala pakde) · WAF (edge pe IP / bot ko permanent rokne wali deewar)
 

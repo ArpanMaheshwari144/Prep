@@ -94,10 +94,13 @@ DIKKAT:   crore connection khuli rehti, har ek memory khaati (file descriptor, s
           Sirf haath pakad ke rakhne me GB chale jaate -> sau-do sau server.
 ★ DEKHA:  server ki ginti jaan-boojh ke TEEN rakhi. Teen connection ne jagah bhar di -> send request server tak
           PAHUNCHI HI NAHI. Console pe `[JUDA]` teen, `[SEND]` EK BHI nahi. Na error, na crash, CPU khaali.
+          Khuli connection bina kuch kiye jagah gherti.
 
 SOLUTION: (1) EVENT LOOP (Netty jaisa): kuch hi thread, laakhon connection.
           (2) Server gira -> uske lakh user ek saath wapas -> client reconnect me BACKOFF + JITTER.
-          (3) Deploy: thode-thode server karke, pehle connection hatao (DRAINING).
+              (FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md)
+          (3) Deploy: REST restart me kuch retry, chat restart = lakh disconnect -> thode-thode server karke,
+              pehle connection hatao (DRAINING).
           Aage LB connection ko kisi chat server pe bithata.
 
 NAYA:     LB
@@ -145,6 +148,7 @@ DIKKAT:   A ek server pe, B doosre pe. Har server ko sirf apne jude logon ka pat
 
 SOLUTION: (1) SAANJHI DIARY (Redis): "B kis server pe" (sirf pata, connection nahi). Mera server Redis se
               poochhe, us server ko seedha call kare, wo local connection pe daale.
+              Connection kabhi Redis me nahi (zinda taar, sirf usi server ki memory me).
               Server mara, entry padi -> TTL + heartbeat.
           (2) PUB-SUB: B ka server "B" channel sunta, mera server us pe daalta. Par pub-sub bhej ke bhool
               jaata -> offline iske bharose nahi.
@@ -557,7 +561,8 @@ SOLUTION: (1) Snowflake ID time se badhti + ek chat ek partition -> ek kram (dik
             client time sirf dikhane ke liye. Ulta pahunche -> B ka app ID se lagaye.
           (2) Gayab pakadna: har chat ka apna +1 number; beech ka nahi aaya -> catch-up.
           (3) Kafka beech me ho -> key = chatId.
-          Strict kram nahi chuna: pehla atka to doosra bhi rukta (head-of-line blocking).
+          "Ye to WhatsApp me hota hai" (doosra pehle chala gaya) -> jaan-boojh ke: strict kram = pehla atka
+          to doosra bhi roko (head-of-line blocking). Chuna: kram thoda idhar-udhar, par message ruke nahi.
 
 NAYA:     koi dabba nahi
 

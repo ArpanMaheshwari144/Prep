@@ -60,7 +60,8 @@ DIKKAT:   har request pe DB se "latest 20" -> spike me DB pe bojh. Aur sabko lag
 SOLUTION: PRECOMPUTE + CACHE:
           (1) Ready feed Redis me, nayi news aane pe refresh. Sab EK cache use karein.
           (2) user -> cache -> miss -> DB -> wapas cache.
-          Thodi purani feed news me chal jaati. (Har user ki alag feed = mehngi, sirf personalization pe.)
+          Thodi purani feed news me chal jaati (paisa hota to nahi).
+          (Har request pe DB = spike pe gira · har user ki alag feed = mehngi, sirf personalization pe.)
 
 NAYA:     Redis
 

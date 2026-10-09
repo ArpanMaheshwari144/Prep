@@ -186,8 +186,10 @@ DIKKAT:   DB me value update hui, cache me abhi bhi purani (STALE).
 
 SOLUTION: (1) CACHE-ASIDE: DB update, phir cache key DELETE -> agli read DB se taaza. (Sabse common.)
           (2) WRITE-THROUGH: cache + DB dono saath -> hamesha taaza, par har write slow.
-          (3) TTL = kitna purana chalega uski had. Production me TTL + khud invalidate dono.
+          (3) TTL = kitna purana chalega uski had. Production me TTL + khud invalidate dono
+              ("cache invalidation is one of the hardest problems").
           ★ Key DELETE karo, UPDATE nahi: do write ulte kram me pahunche to galat value baith jaati.
+          Replica lag bhi wajah: jisne abhi likha use thodi der primary se padhao (read-your-own-writes).
 
 NAYA:     koi dabba nahi
 ```

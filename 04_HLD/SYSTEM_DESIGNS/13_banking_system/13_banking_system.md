@@ -256,6 +256,7 @@ SOLUTION: (1) balance = balance - 500 DB ke andar hota -> row lock, dono line me
               (Race tab hoti jab app padhe, jode, phir likhe.)
           (2) -ve balance ka check DB me: ... WHERE balance >= 500 (0 row = reject).
               App me check kiya to dono transfer purana balance dekh lete.
+              Niyam code me nahi DB me: raaste kai (API / batch / manual), DB ek.
           (3) DEADLOCK (A->B aur B->A ek saath): lock hamesha tay kram me lo (chhoti account id pehle).
 
 NAYA:     koi dabba nahi
@@ -451,9 +452,11 @@ DIKKAT:   5 saal ka data ek table me. Roz sirf pichhle kuch mahine dekhte, par h
 
 SOLUTION: (1) Table ko MAHINE-MAHINE partition. Purana partition DETACH (turant) -> cold storage
               (S3 Parquet), zaroorat pe query / restore. DELETE nahi (crore rows = ghanton lock).
+              "Pichhle 3 mahine" ki query baaki partitions chhooti hi nahi.
           (2) ★ Archive ke baad reconciliation ledger adhoora dekhega -> har account mismatch.
               Ilaaj: OPENING BALANCE SNAPSHOT, har period ke end ka (kabhi archive nahi).
-              Reconciliation = snapshot + uske baad ki entries.
+              Reconciliation = snapshot + uske baad ki entries. (Bank statement ke upar "opening balance" isi wajah se.)
+          Archive != sharding: archive size ghatata, shard likhne ka load baant-ta.
 
 NAYA:     Archive (S3)
 ```

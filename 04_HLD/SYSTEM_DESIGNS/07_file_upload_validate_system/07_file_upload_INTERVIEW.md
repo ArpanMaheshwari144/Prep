@@ -109,7 +109,7 @@ DIKKAT:   5 GB file ke bytes mere app server se guzar rahe (client -> server -> 
 SOLUTION: PRESIGNED URL:
           (1) Client: "ye file daalni hai" -> server chhoti umar ka signed URL + trackingId deta.
           (2) Client bytes SEEDHE S3 pe bhejta, phir server ko "ho gaya" -> queue me.
-          Server sirf metadata + URL. Download bhi presigned GET URL se.
+          Server sirf metadata + URL, bandwidth aadhi, S3 khud scale. Download bhi presigned GET URL se.
 
 BADLA:    S3 ka raasta: Upload Svc -> S3  ->  CLIENT -> S3 (seedha)
 
@@ -201,7 +201,8 @@ DIKKAT:   upload shuru hua, "complete" kabhi nahi aaya / crash -> bytes S3 me pa
           VALIDATING me atki file koi dhoondhta hi nahi.
 
 SOLUTION: (1) Upload pehle TMP jagah me, validate hone pe hi asli jagah.
-          (2) S3 LIFECYCLE rule: tmp ki purani file + adhoore multipart apne aap delete (par dino me chalta).
+          (2) S3 LIFECYCLE rule: tmp ki purani file + adhoore multipart apne aap delete.
+              Par lifecycle dino me chalta, ghanton me nahi, aur DB status nahi dekh sakta. Isliye:
           (3) SWEEPER job: der se VALIDATING / UPLOADING me atki file -> S3 me bytes hain? Haan = queue me
               dobara · nahi = FAILED.
           Validation fail -> delete ya quarantine bucket + FAILED.
@@ -356,6 +357,7 @@ DIKKAT:   kisi ne doosre ka trackingId daal ke uski file maang li (ID guess ho s
 SOLUTION: (1) Upload shuru pe user logged-in (JWT, gateway pe) -> record me ownerId likho.
           (2) Status / download pe: maangne wala = owner? Warna 403.
           AUTHN ("tum kaun") = filter / JWT. AUTHZ ("is file pe haq?") = service me (filter ID dekhta hi nahi).
+          (PR review me sabse upar: request me kisi cheez ki ID aayi -> owner check kahan hai?)
 
 NAYA:     API Gateway / LB (auth + traffic)
 ```
@@ -403,6 +405,7 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   owner ko S3 ka seedha link diya, usne aage bhej diya -> link hamesha chalta, kisi ke bhi haath me.
 
 SOLUTION: (1) Presigned URL ki umar chhoti (kuch minute). URL tabhi banta jab owner check paas ho.
+              URL "chaabi" nahi, "5 minute ka paas" hai.
           (2) DB me URL nahi, file ki S3 KEY rakho; URL har maang pe naya.
 
 NAYA:     koi dabba nahi

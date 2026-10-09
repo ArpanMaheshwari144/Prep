@@ -67,6 +67,7 @@ DIKKAT:   do alag user ne ek saath ek hi seat book kar di: dono ne dekha "khali"
 SOLUTION: (1) Check + book EK atomic step: conditional UPDATE "book karo, SIRF agar abhi available".
               Ek ka lagega, doosre ka 0 row -> "seat ja chuki, doosri chuno".
           (2) Doosre raaste: row lock (SELECT ... FOR UPDATE) ya optimistic (version column).
+              Conditional update sabse accha.
 
 NAYA:     koi dabba nahi — SQL ka atomic update
 
@@ -116,7 +117,8 @@ SOLUTION: SEAT HOLD + expiry: chunte hi 'held' + kab tak (5 min). Payment hua ->
           ★ SQL me TTL nahi hota: time nikalne ke baad bhi 'held' likha rahega. Isliye:
           (1) Booking ka UPDATE hi expire hua hold khaali maane: "available ho, YA held par time nikal gaya".
               Atomic, sahi-pan yahi deta.
-          (2) SWEEPER job har minute expire hue hold wapas available kare (safai).
+          (2) SWEEPER job har minute expire hue hold wapas available kare (safai; ~1 min tak 'held' dikh sakti).
+          Dono saath: update ka check = sahi-pan, sweeper = safai.
 
 NAYA:     Sweeper job (har minute expired hold ko wapas available karne wala)
 
@@ -251,6 +253,8 @@ SOLUTION: (1) QUEUE (Kafka) + har show ka worker: us show ki requests ek-ek kark
           (3) Darwaze pe ginti (Redis DECR): jitni seat utne andar, baaki ko turant "housefull".
           ★ User KHAAS seat chunta, ginti sirf "kitni bachi" batati. Isliye turant "booked" mat bolo:
             "booking in progress" -> worker jeete to "confirmed", haare to "ye seat gayi".
+          Seat number nahi (concert standing, sale stock) -> darwaze ki ginti hi poora jawab.
+          "BookMyShow aise karta" mat bolo, bolo "a common pattern in flash sales".
 
 NAYA:     Kafka · Booking worker (ek show ki request ek-ek karke atomic update kare) · gate counter (Redis me, darwaze pe ginti)
 
@@ -307,7 +311,8 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   Redis restart -> saara browse seedha primary pe -> booking ke update ruk gaye.
 
 SOLUTION: (1) Redis CLUSTER: ek node mare, baaki chalein.
-          (2) Browse ka read replica se, booking primary pe (raaste alag). SQL me replica + auto-failover.
+          (2) Browse ka read replica se, booking primary pe (raaste alag).
+              SQL me replica + auto-failover (Patroni / RDS Multi-AZ).
           (3) Cache khaali -> sab ek saath DB pe na toot padein (stampede): sirf EK rebuild kare (mutex).
 
 BADLA:    Redis -> Redis Cluster · SQL primary ab auto-failover ke saath
@@ -361,6 +366,7 @@ DIKKAT:   ek App box pe 500 log seat chun rahe the, box gira -> unke hold ka kya
 
 SOLUTION: (1) Hold DB me hai (held + kab tak), box ki memory me nahi -> seat abhi bhi held, time pe chhutegi.
           (2) Kai App (stateless) + LB, health check fail = pool se bahar. User doosre box pe wahi hold dekhega.
+          Ye sirf isliye chala ki hold box ke BAHAR rakha tha (dikkat 2 ka faisla). Copies alag AZ me.
 
 NAYA:     LB
 BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)

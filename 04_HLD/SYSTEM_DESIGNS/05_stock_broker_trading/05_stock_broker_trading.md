@@ -177,6 +177,7 @@ DIKKAT:   paisa Wallet DB me, share Portfolio DB me -> do alag DB pe ek transact
 
 SOLUTION: SAGA: (1) Kaam chhote local steps me, har step apne DB me commit.
                 (2) Koi step fail -> pichhle steps ka ULTA step (compensate): paisa wapas.
+              (Flight ho gayi, hotel nahi mila -> flight cancel + refund.)
           ACID = ek DB, turant · SAGA = kai DB / service, code se undo.
 
 BADLA:    ek [ DB ] -> do me bata: Wallet DB + Portfolio DB · Settlement ab SAGA chalata
@@ -271,8 +272,10 @@ DIKKAT:   order book RAM me -> matching server gira to book aur saare pending or
 SOLUTION: (1) EVENT LOG / SEQUENCER: har order PEHLE append-only log me (disk / Kafka, seq number ke saath),
               PHIR book me.
           (2) Crash -> naya server log REPLAY karta -> ek thread hai, to book bilkul waisi ban jaati.
+              (Cricket: scoreboard gaya, scorer ke register se sab wapas.)
           (3) Key = symbol -> alag stocks parallel.
-          Bonus: yahi log AUDIT trail bhi (regulator: kaun-kya-kab, saalon tak, badla nahi ja sakta).
+          Bonus: yahi log AUDIT trail bhi. Logging = engineer ke debug ke liye, kuch din, badal sakte.
+          Audit = regulator ke liye, kaun-kya-kab, saalon tak, badla nahi ja sakta. Ek log, do kaam.
 
 BADLA:    Queue per symbol -> Event Log (wahi queue, ab disk pe likhi jaati + seq no. + key = symbol)
 ```
@@ -377,7 +380,8 @@ AGLA SAWAAL (tere jawab se):
 ```
 DIKKAT:   market khulte hi akele ek stock pe lakhon order. Ek stock = ek thread, to baant nahi sakte.
 
-SOLUTION: (1) Book mat todo: do thread = double match wapas + kram toot-ta. Ek thread RAM me, bina lock, bahut tez.
+SOLUTION: (1) Book mat todo: do thread = double match wapas + kram toot-ta. Ek thread RAM me, bina lock,
+              bahut tez (LMAX ka design yahi).
           (2) Aage ka event log burst sambhaalta (BACKPRESSURE): order line me, thread apni speed se.
               Spike me drop nahi, bas thodi latency.
           Scale stocks ke BEECH (alag thread), ek stock ke andar kabhi nahi.

@@ -71,6 +71,7 @@ DIKKAT:   beech me crash: mere account se paisa kat gaya, merchant ko pahuncha n
 
 SOLUTION: (1) Debit + credit EK DB TRANSACTION (ACID): dono honge ya koi nahi, crash pe rollback.
           (2) Niyam: saare debit ka jod = saare credit ka jod, hamesha. Na mile to turant pakdo.
+          (See-saw: debit aur credit saath hilte, paisa na banta na marta, sirf jagah badalta.)
 
 NAYA:     koi dabba nahi — DB transaction
 ```
@@ -105,7 +106,7 @@ SOLUTION: (1) IDEMPOTENCY KEY: client har naye payment pe ek UUID banata, retry 
           (3) Same key ki do request ek saath -> check + save EK atomic step: DB UNIQUE constraint (pakka)
               + Redis SETNX (tez). Status IN_PROGRESS -> DONE.
           ★ Kaam ke baad key delete mat karo (late retry = dobara charge). ~24 ghante rakho.
-          Do sacche alag payment = alag key, dono honge.
+          Do sacche alag payment = alag key, dono honge. (DSA: register = hashmap "pehle dekha?")
 
 NAYA:     Idempotency store (key -> result yaad rakhne wala; Redis + DB unique)
 ```
@@ -199,6 +200,7 @@ SOLUTION: (1) Kuch bhi karne se PEHLE "PENDING" durable likho -> koi payment gum
           (3) RECONCILIATION job: atke PENDING dhoondho, PSP se poocho -> hua = SUCCESS · nahi = retry
               (idempotent) · pakka fail = FAILED + refund.
           Push (webhook) + pull (reconciliation) dono.
+          (Courier: har parcel ka tracking number + status -> courier gira, parcel gum nahi.)
 
 NAYA:     Reconciliation job (PENDING payment dhoondh ke PSP se asli haal milaane wala) · webhook (PSP khud call karke bataye)
 
@@ -248,6 +250,7 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   bhejne wala aur lene wala alag bank me -> ek DB transaction possible hi nahi.
 
 SOLUTION: (1) SAGA: har step apna commit; koi fail -> pichhle steps ULTE kram me undo (khud likhna).
+              (Trip: cab nahi mili -> hotel cancel -> flight cancel.)
               Async, eventual (thodi der farak dikh sakta), lamba lock nahi -> scale pe yahi.
           (2) 2PC nahi: sab "ready" bol ke lock pakad ke rukte, coordinator gira to sab atke, slow.
 
@@ -289,7 +292,7 @@ DIKKAT:   regulator: ye paisa kahan se aaya, kahan gaya? Har paisa kab-kahan-kyu
 
 SOLUTION: (1) LEDGER = DB ki table, USI transaction me jisme paisa hila. Sirf INSERT, delete / edit nahi.
           (2) DOUBLE-ENTRY: har transaction = ek debit + ek credit, jod barabar.
-          (3) Galti hui -> NAYI correction entry, purani mat mitao.
+          (3) Galti hui -> NAYI correction entry, purani mat mitao (pen ki diary jaisa).
           ★ Ledger = hisaab / audit. Crash recovery ka kaam PENDING + webhook + reconciliation ka (dikkat 4).
 
 NAYA:     koi alag dabba nahi — DB me Ledger table (append-only)
@@ -447,6 +450,7 @@ DIKKAT:   ek DB me crore-on payment rows, saare write ek primary pe -> likhai dh
 
 SOLUTION: (1) SHARD by account_id.
           (2) ★ Naya dard: bhejne / lene wala alag shard pe -> ek local transaction nahi -> wapas SAGA (dikkat 5).
+              Asli mushkil throughput nahi, distributed transaction hai.
 
 BADLA:    DB -> SQL DB (shard by account_id)
 

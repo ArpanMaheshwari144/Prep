@@ -72,6 +72,7 @@ DIKKAT:   app kholte hi jitne logon ko follow karta, sabke tweet laao, jodo, sor
 SOLUTION: (1) FAN-OUT ON WRITE: tweet POST hote hi har follower ke INBOX me daal do (precompute).
           (2) App khuli -> sirf apna ready inbox padho -> turant.
           Kyun: tweet ek baar banta, kai baar padha jaata -> mehnat likhte waqt sasti.
+          (Town Crier har ghar ke notice board pe parcha chipkata.)
 
 NAYA:     Fanout (tweet ko har follower ke inbox me daalne wala) · Redis inbox (har user ki ready feed, sirf tweet_id)
 ```
@@ -155,6 +156,7 @@ SOLUTION: HYBRID:
           (1) Normal user (kam followers) -> PUSH: inbox me daalo.
           (2) Celebrity (bahut followers) -> PULL: tweet sirf apne store me, fanout nahi.
           (3) Feed padhte waqt: apna inbox + followed celebs ke naye tweet -> milao, time se sort.
+          Trade-off: push = read turant, par celeb pe likhne ka toofan · pull = likhna bacha, par har read mehnga.
           Kaun celeb: followers ki ek had (threshold) se tay.
 
 NAYA:     koi dabba nahi — Fanout celeb ko SKIP karta, App read pe merge karta
@@ -204,6 +206,7 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   celeb ka tweet crore log ek saath padh rahe -> pull wale saare read seedha tweet DB pe -> DB crash.
 
 SOLUTION: HOT-TWEET CACHE: celeb ke naye tweet RAM me (TTL ke saath), sab wahin se padhein.
+          (Bestseller kitaab front counter pe, baaki peeche shelf pe.)
           Purane (cold) seedha DB se. Miss -> DB se laake cache me.
 
 NAYA:     Hot-tweet cache (celeb ke naye tweet RAM me, sab wahin se padhein)

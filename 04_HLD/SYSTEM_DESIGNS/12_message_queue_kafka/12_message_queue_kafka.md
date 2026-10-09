@@ -437,6 +437,7 @@ SOLUTION: (1) Consumer mara -> heartbeat band -> group coordinator partitions ba
           (2) CONSUMER LAG = latest offset - padha hua offset. Badh raha -> consumer badhao (partitions tak)
               + alert.
           (3) Baar-baar fail -> backoff retry, N baar ke baad DEAD-LETTER topic. Baaki atke nahi.
+              (usercrud project me DLQ lagaya hai.)
 
 NAYA:     DLQ
 ```

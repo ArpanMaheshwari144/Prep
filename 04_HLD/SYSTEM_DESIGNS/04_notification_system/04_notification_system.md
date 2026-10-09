@@ -219,6 +219,7 @@ DIKKAT:   provider ne message le liya, par uska "ho gaya" raaste me kho gaya -> 
 SOLUTION: (1) Worker IDEMPOTENT: bhejne se pehle Redis me event ID "set if not exists" (atomic).
               Naya -> bhejo · pehle se -> skip.
           (2) Key = event ki APNI ID (har retry pe wahi). Har baar naya UUID = dedup kabhi nahi pakdega.
+          (Wahi race aur wahi ilaaj jo payment idempotency me.)
 
 NAYA:     Redis (idempotency key)
 ```
@@ -279,7 +280,8 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   dedup key laga di, phir provider call FAIL. Retry aaya, key pehle se -> skip.
           Email gaya hi nahi, par system maan raha "bhej diya" = MESSAGE KHO GAYA.
 
-SOLUTION: Key ki DO haalat:
+SOLUTION: (Sirf "fail pe key hata do" kaafi nahi: worker hi crash hua to key hatane wala koi nahi.)
+          Key ki DO haalat:
           (1) Bhejne se pehle "sending" (chhoti expiry). Success pe "sent" (lambi expiry).
           (2) Worker beech me mara -> "sending" khud mit jaata -> retry chal jaata.
           (3) Send fail + worker zinda -> key turant hatao.
@@ -484,6 +486,7 @@ DIKKAT:   ek hi topic me sab -> OTP marketing ke 50,000 message ke peeche khada.
 
 SOLUTION: (1) PRIORITY LANES: alag Kafka topic + alag worker pool -> OTP (ms) · order update (sec) ·
               marketing (minute). Kafka me priority hoti hi nahi, isliye alag topic.
+              (Java PriorityBlockingQueue sirf ek process ke andar, distributed me nahi.)
           (2) Channel queue bhi priority-wise (SMS high / low), warna OTP SMS phir peeche atkega.
 
 BADLA:    Kafka -> 3 topic (high / medium / low)
@@ -620,7 +623,8 @@ AGLA SAWAAL (tere jawab se):
 ```
 DIKKAT:   worker ne bheja = provider ne le liya. User tak pahuncha ya nahi, pata hi nahi.
 
-SOLUTION: (1) Provider WEBHOOK (delivered / failed / bounced) -> TRACKING DB me likho.
+SOLUTION: (1) Provider WEBHOOK (delivered / failed / bounced) -> TRACKING DB me likho
+              (sent, delivered, opened, clicked, failed).
           (2) Failed (galat number / bounce) -> retry, doosra channel, ya failed mark.
           (3) Push me webhook nahi -> app khulne pe app khud ack event bheje.
 

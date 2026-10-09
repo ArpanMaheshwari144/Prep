@@ -482,6 +482,7 @@ AGLA SAWAAL (tere jawab se):
 DIKKAT:   ek bande ne script se raat me 10 lakh link bana diye -> counter ranges khatam, DB me kachra.
 
 SOLUTION: (1) RATE LIMIT per user / IP / API key, EK jagah = API GATEWAY (har App me alag = alag ginti).
+              Auth aur routing bhi gateway pe.
           (2) Long URL ko malware / phishing list se milao; edge pe WAF bots / bad IP roke.
           (Poora rate limiter = 02_rate_limiter.)
 

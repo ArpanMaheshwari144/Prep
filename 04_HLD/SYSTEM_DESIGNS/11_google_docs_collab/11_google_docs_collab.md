@@ -178,6 +178,7 @@ SOLUTION: (1) OPERATIONAL TRANSFORMATION (OT): doosre ke operation ko TRANSFORM 
               chuka -> B ka operation ek jagah aage khiska do. Dono taraf same niyam -> ek hi doc, dono ke akshar.
               Pehle kaun: fixed niyam (userId / time).
           (2) CRDT doosra raasta: har akshar ki unique id, merge kisi bhi kram me same.
+          (Implement nahi karna, bas samajh bolni hai.)
 
 NAYA:     koi dabba nahi — Conn-Server me OT
 
