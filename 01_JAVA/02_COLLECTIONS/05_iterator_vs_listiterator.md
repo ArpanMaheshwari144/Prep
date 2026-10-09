@@ -124,21 +124,24 @@ it.remove() →  abhi jo pointer pe hai (S101) hata do — SAFE
                                  └────┴────┴────┴────┴────┘
                                   ▲
 
-  it.set(S99)     →  current element replace karo
+  it.set(S99)     →  aakhri next()/previous() wala element replace
+                     ★ yahan (add ke turant baad) set = IllegalStateException.
+                       pehle next() ya previous() chalao, phir set.
 
 
 ╔════════════════════════════════════════════════════════════╗
 ║ ConcurrentModificationException — modCount mismatch        ║
 ╚════════════════════════════════════════════════════════════╝
 
-Iterator banaya → expectedModCount = 3 (snapshot)
+4 add hue → modCount = 4  (har badlaav pe +1, ye size NAHI hai)
+Iterator banaya → expectedModCount = 4 (copy)
 
-  list.remove(...)  → modCount badha → 4
-                       expectedModCount = 3 (purana)
-                       MISMATCH → exception
+  list.remove(...)  → modCount badha → 5
+                       expectedModCount = 4 (purana)
+                       agle next() pe MISMATCH → exception
 
-  it.remove()       → modCount badha → 4
-                       expectedModCount BHI → 4 (sync)
+  it.remove()       → modCount badha → 5
+                       expectedModCount BHI → 5 (sync)
                        SAFE
 ```
 
