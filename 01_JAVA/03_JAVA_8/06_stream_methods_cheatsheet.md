@@ -83,6 +83,8 @@ Pehle POORE object pe group, naam sirf bucket ke ANDAR (mapping) nikaalo.
 - **Stream ke andar** (`map/filter`) → lambda param ka type **stream se aata** → likhna nahi (`e -> e.name`).
 - **Comparator/collector jo ALAG + chained ban raha** → context nahi → type khud likho (`Comparator.comparing((Emp e) -> e.dept)`).
 - Rule: context (stream) hai → na likho; standalone+chained → likho. (= C++ `auto`)
+- **`reversed()` kahan lage:** `thenComparing(comparingInt(salary).reversed())` = sirf salary ulti ·
+  `thenComparing(comparingInt(salary)).reversed()` = POORI chain ulti (dept bhi Z-A). (Q16)
 
 ## 6. boxed vs mapToInt (confuse mat)
 ```
