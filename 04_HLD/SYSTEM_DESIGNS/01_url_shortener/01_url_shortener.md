@@ -61,12 +61,12 @@ flowchart TD
 ## DIKKAT 1 — har click DB pe, redirect 200ms se tez chahiye
 
 ```
-DIKKAT:   har click seedha DB pe -> 1 lakh read / sec, DB pe bojh, redirect slow
+DIKKAT:   har click seedha DB pe -> 1 lakh read / sec, DB pe bojh, redirect slow.
 
-SOLUTION: aage CACHE (Redis) lagao, cache-aside: pehle Redis me dekho, na mile to DB se lo aur Redis
-          me daal do. Yahan padhna likhne se bahut zyada hai, to lagbhag saare clicks Redis se hi nikalte.
-          Redis entry ki TTL = link ki expiry, warna expire hua link bhi chalta rahega.
-          DB me shortCode primary key, to cache miss pe bhi lookup tez.
+SOLUTION: (1) CACHE (Redis), cache-aside: pehle Redis, na mile to DB se lo aur Redis me daal do.
+              Read >> write, to lagbhag saare click Redis se nikalte.
+          (2) Redis TTL = link ki expiry (warna expire hua link bhi chalta rahega).
+          (3) DB me shortCode = primary key -> miss pe bhi lookup tez.
 
 NAYA:     Redis
 
@@ -144,12 +144,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — ab kai App hain, do App ek hi code bana denge
 
 ```
-DIKKAT:   kai App box hain aur har ek apna counter chala raha -> do box ek hi number se code bana dete ->
-          do URL ka ek hi code (COLLISION)
+DIKKAT:   kai App box, har ek apna counter -> do box ek hi number se code bana dete -> COLLISION.
 
-SOLUTION: RANGE ALLOCATION: ek COUNTER service (ZooKeeper / DB table) har App ko numbers ki ek range
-          de deti. Range alag-alag, to takraav ho hi nahi sakta. Counter se baat sirf range khatam hone
-          pe, har request pe nahi. Number ko BASE62 me badlo -> 7 char ka code (detail neeche POOCHE TO).
+SOLUTION: (1) RANGE ALLOCATION: COUNTER service (ZooKeeper / DB table) har App ko numbers ki ALAG range
+              deti -> takraav ho hi nahi sakta. Counter se baat sirf range khatam hone pe.
+          (2) Number -> BASE62 -> 7 char ka code (detail neeche POOCHE TO).
 
 NAYA:     Counter (har App ko number ki range dene wala, aksar ZooKeeper / DB table)
 ```
@@ -247,12 +246,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — 5 saal ka ~90 TB ek machine me nahi aayega
 
 ```
-DIKKAT:   5 saal ka ~90 TB data ek machine me nahi aayega, aur wo machine mari to sab gaya
+DIKKAT:   5 saal ka ~90 TB ek machine me nahi aayega, aur wo machine mari to sab gaya.
 
-SOLUTION: data ko shortCode ke hisaab se tukdon me baanto (SHARD), aur har tukde ki 3 copy (REPLICA),
-          teeno alag AZ me. Shard = jagah aur likhne ka load baantta. Replica = bachav aur padhne ka load.
-          Likhne ka load replica se nahi bant-ta.
-          Naya node jode to consistent hashing, taaki saara data na hile, thodi si keys hi khiskein.
+SOLUTION: (1) SHARD by shortCode -> jagah + likhne ka load bant-ta.
+          (2) Har shard ki 3 REPLICA, alag AZ me -> bachav + padhne ka load. (Replica likhne ka load nahi baantti.)
+          (3) Naya node jode -> consistent hashing, thodi keys hi khiskti.
 
 BADLA:    DB -> Cassandra (shard by shortCode + 3 replica)
 
@@ -308,11 +306,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — write ho rahi thi, beech me ek replica node gira — data gaya?
 
 ```
-DIKKAT:   likh hi raha tha aur ek replica node gir gaya — likha hua data khona nahi chahiye
+DIKKAT:   likh hi raha tha aur ek replica node gir gaya -> likha hua data khona nahi chahiye.
 
-SOLUTION: DB har write pehle apne LOG me disk pe likhta (Cassandra me commit log, Postgres / MySQL me
-          WAL), phir table me. Node gira to uthte hi log padh ke wapas.
-          Aur write ko "done" tabhi maano jab zyada replica haan bolein (QUORUM) — ek gira bhi to data safe.
+SOLUTION: (1) DB har write pehle LOG me disk pe likhta (Cassandra commit log / Postgres WAL), phir table me.
+              Node gira -> uthte hi log padh ke wapas.
+          (2) Write "done" tabhi jab zyada replica haan bolein (QUORUM) -> ek gira to bhi data safe.
 
 NAYA:     koi dabba nahi — Cassandra ke andar log + quorum
 ```
@@ -363,11 +361,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — naya link banaya, turant click -> 404
 
 ```
-DIKKAT:   naya link banaya, turant click -> 404, kyunki copy abhi replica tak pahunchi hi nahi
+DIKKAT:   naya link banaya, turant click -> 404, kyunki copy abhi replica tak pahunchi hi nahi.
 
-SOLUTION: link banate hi Redis me bhi daal do, to click Redis se mil jaata.
-          Ya QUORUM write + QUORUM read: likhne aur padhne wale node me kam se kam ek common hoga,
-          to taaza value milegi. (Cassandra me primary hota hi nahi, sab node barabar — leaderless.)
+SOLUTION: (1) Link banate hi Redis me bhi daal do -> click Redis se mil jaata.
+          (2) Ya QUORUM write + QUORUM read -> kam se kam ek node common -> taaza value.
+              (Cassandra leaderless hai, primary hota hi nahi.)
 
 NAYA:     koi dabba nahi
 
@@ -419,12 +417,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — LB khud gir gaya
 
 ```
-DIKKAT:   App, Redis, DB sab zinda, par traffic dene wala LB hi mar gaya -> site DOWN
+DIKKAT:   App, Redis, DB sab zinda, par traffic dene wala LB hi mar gaya -> site DOWN.
 
-SOLUTION: do LB rakho, aage DNS (Route 53) health-check ke saath: mara hua LB hata ke doosre pe bhejo.
-          Sirf do rakhna kaafi nahi — koi dekhne wala chahiye jo traffic mode (Redis me Sentinel yahi).
-          Poora region gaya to Route 53 doosre region pe bheje. Data async copy hota, to aakhri kuch link
-          kho sakte — ye maan ke chalte.
+SOLUTION: (1) Do LB + aage DNS (Route 53) health-check: mara LB hata ke doosre pe bhejo.
+              (Sirf do rakhna kaafi nahi, koi dekhne wala chahiye jo traffic mode.)
+          (2) Poora region gaya -> Route 53 doosre region pe. Data async copy, to aakhri kuch link kho sakte.
 
 NAYA:     Route 53
 BADLA:    LB ek se DO — ek mare to Route 53 doosre pe bheje (diagram me 2)
@@ -482,13 +479,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 9 — ek bande ne script se raat me 10 lakh link bana diye
 
 ```
-DIKKAT:   ek bande ne script se raat me 10 lakh link bana diye -> counter ranges tez khatam, DB me kachra,
-          asli user line me
+DIKKAT:   ek bande ne script se raat me 10 lakh link bana diye -> counter ranges khatam, DB me kachra.
 
-SOLUTION: RATE LIMIT lagao (per user / IP / API key). Har App me alag lagaya to har App apna alag
-          ginega, isliye ek jagah rakho = API GATEWAY (auth aur routing bhi wahi).
-          Link banate waqt long URL ko malware / phishing list se milao, aur edge pe WAF bots / bad IP
-          rokta. Poora rate limiter = alag design (02_rate_limiter).
+SOLUTION: (1) RATE LIMIT per user / IP / API key, EK jagah = API GATEWAY (har App me alag = alag ginti).
+          (2) Long URL ko malware / phishing list se milao; edge pe WAF bots / bad IP roke.
+          (Poora rate limiter = 02_rate_limiter.)
 
 NAYA:     API Gateway
 ```

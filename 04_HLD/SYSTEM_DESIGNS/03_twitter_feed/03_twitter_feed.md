@@ -66,13 +66,12 @@ flowchart TD
 ## DIKKAT 1 — har baar app kholne pe 200 logon ka data joda ja raha
 
 ```
-DIKKAT:   app kholte hi jitne logon ko follow karta, sabke tweet laao, jodo, sort karo — har user, har
-          baar. Padhna likhne se bahut zyada hai -> FEED SLOW
+DIKKAT:   app kholte hi jitne logon ko follow karta, sabke tweet laao, jodo, sort karo -> har user, har baar.
+          Read >> write -> FEED SLOW.
 
-SOLUTION: padhte waqt mat jodo — tweet POST hote hi har follower ke INBOX me daal do (precompute /
-          fan-out on write). App khuli to sirf apna ready inbox padho -> turant.
-          Tweet ek baar banta, kai baar padha jaata, to mehnat likhte waqt karna sasta.
-          (Town Crier har ghar ke notice board pe parcha chipkata.)
+SOLUTION: (1) FAN-OUT ON WRITE: tweet POST hote hi har follower ke INBOX me daal do (precompute).
+          (2) App khuli -> sirf apna ready inbox padho -> turant.
+          Kyun: tweet ek baar banta, kai baar padha jaata -> mehnat likhte waqt sasti.
 
 NAYA:     Fanout (tweet ko har follower ke inbox me daalne wala) · Redis inbox (har user ki ready feed, sirf tweet_id)
 ```
@@ -105,12 +104,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — tweet ka button 3 sec ghoomta raha (200 inbox likhe ja rahe the)
 
 ```
-DIKKAT:   saare followers ke inbox likhne ka kaam POST karne wale ki request me hi -> button ghoomta
-          raha; Redis zara slow hua to POST hi fail, jabki tweet ban chuka tha, sirf baantna baaki tha
+DIKKAT:   saare followers ke inbox likhna POST ki request me hi -> button ghoomta raha; Redis slow hua to
+          POST hi fail, jabki tweet ban chuka tha.
 
-SOLUTION: tweet DB me likho, ek EVENT Kafka pe daalo, user ko turant "ho gaya". FANOUT WORKERS peeche
-          se inbox bharte. Post ab do hisse: "tweet bana" (turant) aur "sab tak pahuncha" (peeche, thoda
-          dheere bhi chalega). Worker gira bhi to tweet nahi khoya — event Kafka me hai, wapas aa ke wahin se.
+SOLUTION: (1) Tweet DB me likho + EVENT Kafka pe -> user ko turant "ho gaya".
+          (2) FANOUT WORKERS peeche se inbox bharte.
+          Worker gira -> tweet nahi khoya, event Kafka me hai, wahin se wapas.
 
 NAYA:     Kafka
 BADLA:    Fanout -> Fanout workers (Kafka se padhte)
@@ -150,14 +149,13 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — Bieber ne tweet kiya: 10 CRORE inbox
 
 ```
-DIKKAT:   celebrity ka ek tweet = 10 crore inbox me likhna -> fanout atak gaya, poora system atka
+DIKKAT:   celebrity ka ek tweet = 10 crore inbox me likhna -> fanout atak gaya, poora system atka.
 
-SOLUTION: HYBRID: normal user (kam followers) -> PUSH, yaani inbox me daalo. Celebrity (bahut followers)
-          -> PULL, yaani tweet sirf apne store me, fanout nahi.
-          Feed padhte waqt: apna inbox (push wale) + jin celebs ko follow karta unke naye tweet (pull)
-          -> dono milao, time se sort.
-          Trade-off: push = read turant, par celeb pe likhne ka toofan. Pull = likhna bacha, par har read
-          mehnga. Kaun celeb hai, ye ek had (threshold) se tay, system khud dekhta rehta.
+SOLUTION: HYBRID:
+          (1) Normal user (kam followers) -> PUSH: inbox me daalo.
+          (2) Celebrity (bahut followers) -> PULL: tweet sirf apne store me, fanout nahi.
+          (3) Feed padhte waqt: apna inbox + followed celebs ke naye tweet -> milao, time se sort.
+          Kaun celeb: followers ki ek had (threshold) se tay.
 
 NAYA:     koi dabba nahi — Fanout celeb ko SKIP karta, App read pe merge karta
 ```
@@ -203,12 +201,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — Virat ka tweet 10 crore log ek saath padh rahe
 
 ```
-DIKKAT:   celeb ka tweet crore log ek saath padh rahe, pull wale saare read seedha tweet store (DB)
-          pe -> DB crash
+DIKKAT:   celeb ka tweet crore log ek saath padh rahe -> pull wale saare read seedha tweet DB pe -> DB crash.
 
-SOLUTION: HOT-TWEET CACHE: celeb ke naye tweet RAM me, sab wahin se padhein. Bestseller kitaab front
-          counter pe, baaki peeche shelf pe. Naye (hot) tweet cache me TTL ke saath, purane (cold)
-          seedha DB se. Miss hua to DB se laake cache me daal do.
+SOLUTION: HOT-TWEET CACHE: celeb ke naye tweet RAM me (TTL ke saath), sab wahin se padhein.
+          Purane (cold) seedha DB se. Miss -> DB se laake cache me.
 
 NAYA:     Hot-tweet cache (celeb ke naye tweet RAM me, sab wahin se padhein)
 
@@ -251,12 +247,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — 500M inbox Redis me? memory phat jaayegi
 
 ```
-DIKKAT:   har user ka poora feed memory me rakhna -> crore users, memory phat jaayegi
+DIKKAT:   har user ka poora feed memory me -> crore users, memory phat jaayegi.
 
-SOLUTION: do ALAG cache, ghaalmel mat karo:
-          INBOX (har user ka, push): sirf tweet ka ID rakho, poora tweet nahi, aur aakhri kuch sau hi.
-          HOT-TWEET (sabka shared, pull): sirf naye celeb tweet — chhota, ek node me aa jaata.
-          Jo user mahine bhar se nahi aaya uska inbox hata do; wapas aaya to DB se ek baar dobara bana do.
+SOLUTION: (1) INBOX (har user ka): sirf tweet_id, poora tweet nahi, aur aakhri kuch sau hi.
+          (2) HOT-TWEET cache (shared): sirf naye celeb tweet, chhota.
+          (3) Mahine bhar se nahi aaya -> inbox hatao; wapas aaya to DB se ek baar bana do.
 
 NAYA:     koi dabba nahi
 ```
@@ -298,14 +293,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — saare tweets ek DB me nahi aayenge
 
 ```
-DIKKAT:   saare tweets ek DB me nahi aayenge — petabytes data aur bahut zyada writes
+DIKKAT:   saare tweets ek DB me nahi aayenge: petabytes data, bahut zyada writes.
 
-SOLUTION: CASSANDRA: likhna bahut tez (LSM), aur access simple key se hi chahiye.
-          SHARD kis pe: tweet_id pe -> load barabar, par ek user ke tweet bikhre, profile kholna mehnga.
-          user_id pe -> user ke saare tweet ek jagah, profile tez (pehla chunaav), par celeb ka shard garam.
-          user_id + time pe -> celeb bhi time se bat jaata, purana data cold storage me.
-          Celeb ke tweet kai shard pe copy, taaki read bat jaayein. Replica sirf read baantta, write ke liye
-          shard. Country / date jaisi key = bura chunaav (ek tukda bhari).
+SOLUTION: (1) CASSANDRA: likhna bahut tez (LSM), access simple key se.
+          (2) SHARD by user_id + time: user ke tweet ek jagah (profile tez), celeb bhi time se bat jaata.
+              (tweet_id pe = load barabar par profile mehnga · country / date = bura key, ek tukda bhari)
+          (3) Celeb ke tweet kai shard pe copy -> read bat jaate.
 
 BADLA:    DB -> Cassandra (shard by user_id + time)
 
@@ -350,12 +343,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — India ka user US ke shard se padh raha (200ms)
 
 ```
-DIKKAT:   India ka user US ke shard se padh raha -> har request door jaati, dheema
+DIKKAT:   India ka user US ke shard se padh raha -> har request door, dheema.
 
-SOLUTION: GEO SHARDING (India / EU / US). Chaar wajah bolo: latency (paas = tez), compliance (GDPR —
-          EU ka data EU me), load (har region ka peak alag waqt), failure (ek region gira, baaki chale).
-          Indian user kisi US celeb ko follow karta -> us celeb ke hot tweet India ke cache me copy (hot
-          data paas laao).
+SOLUTION: GEO SHARDING (India / EU / US). Kyun: latency (paas = tez) · compliance (GDPR, EU data EU me) ·
+          load (har region ka peak alag) · failure (ek region gira, baaki chale).
+          US celeb ko India se follow -> uske hot tweet India ke cache me copy.
 
 BADLA:    Cassandra ab region-wise (India / EU / US)
 
@@ -400,11 +392,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — sab EK App box me: bojh bhi, SPOF bhi
 
 ```
-DIKKAT:   sab ek hi App box me: lakhon user nahi jhelta, aur gira to sab band. Ek LB / region gira to bhi
-          site gayi.
+DIKKAT:   sab ek App box me: lakhon user nahi jhelta, aur gira to sab band.
 
-SOLUTION: App ke kai box, aage ALB. App stateless (state Redis / DB me), to koi bhi box koi bhi request
-          le. Uske aage ROUTE 53 (DNS + health check): mara hua hatao, user ko paas wala region do.
+SOLUTION: (1) App ke kai box (stateless) + aage ALB.
+          (2) Uske aage ROUTE 53 (DNS + health check): mara hatao, user ko paas wala region do.
 
 NAYA:     Route 53 · ALB
 BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
@@ -453,13 +444,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 9 — likhna aur padhna ek hi box me (1:50)
 
 ```
-DIKKAT:   likhna aur padhna ek hi service me -> feed padhne ki bheed tweet post karna bhi dheema
-          kar deti. Aur follow-list har fanout pe chahiye.
+DIKKAT:   likhna aur padhna ek service me -> feed padhne ki bheed post karna bhi dheema kar deti.
 
-SOLUTION: alag service: TWEET SERVICE (likhna) aur TIMELINE SERVICE (padhna, push + pull milana) —
-          dono apne hisaab se scale. USER SERVICE + GRAPH (kaun kisko follow karta).
-          Seedha follow-list ke liye simple table / Cassandra kaafi. Graph DB (Neo4j) tabhi jab
-          "dost ke dost" jaise kai-kadam wale sawaal hon.
+SOLUTION: (1) TWEET SERVICE (likhna) + TIMELINE SERVICE (padhna, push + pull milana) -> alag scale.
+          (2) USER SERVICE + GRAPH (kaun kisko follow karta). Seedha follow-list ke liye table / Cassandra
+              kaafi; Graph DB tabhi jab "dost ke dost" jaise sawaal hon.
 
 BADLA:    App -> teen ALAG service: Tweet Svc + Timeline Svc + User Svc (har ek ke kai box, diagram me ek-ek)
 NAYA:     Graph DB (kaun kisko follow karta)
@@ -506,10 +495,9 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 10 — photo / video duniya bhar se, har baar humare server se
 
 ```
-DIKKAT:   photo / video bhaari hain aur duniya bhar se aate — har baar apne server se dena dheema aur
-          mehnga
+DIKKAT:   photo / video bhaari, duniya bhar se -> har baar apne server se dena dheema aur mehnga.
 
-SOLUTION: CDN (CloudFront): media user ke paas wali edge se milta.
+SOLUTION: CDN (CloudFront): media user ke paas wali edge se.
 
 NAYA:     CDN
 
