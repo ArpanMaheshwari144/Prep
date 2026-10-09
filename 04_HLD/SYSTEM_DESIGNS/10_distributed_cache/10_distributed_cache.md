@@ -72,14 +72,6 @@ SOLUTION: (1) EVICTION: LRU = jo sabse lambe samay se nahi chhua ("kab") · LFU 
 
 NAYA:     koi dabba nahi — node ke andar
 ```
-```mermaid
-flowchart TD
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache["Cache<br/>LRU + TTL"]
-    n_App --> n_DB
-    n_App --> n_Cache
-```
 ```
 BOARD PE: get(x) -> FRONT laao · jagah nahi -> TAIL hatao
           [FRONT] x <-> b <-> a <-> z <-> ... <-> q [TAIL, ye nikalega]
@@ -89,6 +81,14 @@ AGLA SAWAAL (tere jawab se):
    -> nahi, memory bachane ko 'approximate LRU': kuch random keys uthata, unme sabse purani hatata
   "LFU me purana famous key hamesha rahega?"
    -> isliye LFU ginti ko waqt ke saath ghatata (decay) -> kal ka hero aaj nikal sake
+```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache["Cache<br/>LRU + TTL"]
+    n_App --> n_DB
+    n_App --> n_Cache
 ```
 
 ---
@@ -108,6 +108,15 @@ SOLUTION: ★ hash % N nahi: node juda / gaya -> N badla -> lagbhag saari keys k
 NAYA:     Cache client (app ke andar library, key dekh ke sahi node chunti)
 BADLA:    Cache -> Node A / B / C
 ```
+```
+BOARD PE: RING 0 .. 2^32 · node juda / gaya -> sirf us arc ki ~K/N keys hilti
+
+AGLA SAWAAL (tere jawab se):
+  "Cache client ko kaise pata kaun-se node zinda hain?"
+   -> config service / cluster ka topology (Redis Cluster khud batata: 'ye key us node pe hai, MOVED')
+  "Naya node juda, uski key khaali -> miss?"
+   -> haan, sirf us arc ki ~K/N key ka ek baar miss -> DB pe thoda bojh, poora nahi
+```
 ```mermaid
 flowchart TD
     n_App["App"]
@@ -121,15 +130,6 @@ flowchart TD
     n_Cache_client --> n_Node_A
     n_Cache_client --> n_Node_B
     n_Cache_client --> n_Node_C
-```
-```
-BOARD PE: RING 0 .. 2^32 · node juda / gaya -> sirf us arc ki ~K/N keys hilti
-
-AGLA SAWAAL (tere jawab se):
-  "Cache client ko kaise pata kaun-se node zinda hain?"
-   -> config service / cluster ka topology (Redis Cluster khud batata: 'ye key us node pe hai, MOVED')
-  "Naya node juda, uski key khaali -> miss?"
-   -> haan, sirf us arc ki ~K/N key ka ek baar miss -> DB pe thoda bojh, poora nahi
 ```
 
 ---
@@ -151,6 +151,17 @@ KYUN ASYNC replication (sync nahi):
           sync = har write pe replica ke "haan" ka intezaar -> cache ka <1ms toot jaata
           keemat: primary mara to aakhri kuch write replica tak nahi pahunche -> cache me chalta (DB me sach hai)
 ```
+```
+POOCHEGA: "What happens if a cache node goes down?"
+BOL:      "Each shard has a replica in another zone that gets promoted, and with consistent hashing only that
+           node's keys are affected."
+
+AGLA SAWAAL (tere jawab se):
+  "Network toota, purana primary bhi zinda samjha raha (do primary)?"
+   -> split brain. Quorum + jo minority me hai wo write lena band kare (min-replicas)
+  "Failover me kitni der?"
+   -> ~10-30 sec; us beech us shard ki key DB se (thoda dheema)
+```
 ```mermaid
 flowchart TD
     n_App["App"]
@@ -164,17 +175,6 @@ flowchart TD
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
-```
-```
-POOCHEGA: "What happens if a cache node goes down?"
-BOL:      "Each shard has a replica in another zone that gets promoted, and with consistent hashing only that
-           node's keys are affected."
-
-AGLA SAWAAL (tere jawab se):
-  "Network toota, purana primary bhi zinda samjha raha (do primary)?"
-   -> split brain. Quorum + jo minority me hai wo write lena band kare (min-replicas)
-  "Failover me kitni der?"
-   -> ~10-30 sec; us beech us shard ki key DB se (thoda dheema)
 ```
 
 ---
@@ -193,6 +193,17 @@ SOLUTION: (1) CACHE-ASIDE: DB update, phir cache key DELETE -> agli read DB se t
 
 NAYA:     koi dabba nahi
 ```
+```
+POOCHEGA: "The user updated something but still sees the old value. Why?"
+BOL:      "On update I delete the cache key rather than overwrite it, and keep a TTL as a safety net. If it's
+           replica lag, the writer reads from the primary for a short while."
+
+AGLA SAWAAL (tere jawab se):
+  "DB update hua, cache DELETE fail ho gaya?"
+   -> TTL bachata (max utni der purana). Pakka chahiye -> DB change event (CDC) se delete ka retry
+  "DELETE ke baad koi purani value phir se cache me daal de (race)?"
+   -> chhota delay ke baad dobara delete (double delete) ya version / TTL se
+```
 ```mermaid
 flowchart TD
     n_App["App"]
@@ -206,17 +217,6 @@ flowchart TD
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
-```
-```
-POOCHEGA: "The user updated something but still sees the old value. Why?"
-BOL:      "On update I delete the cache key rather than overwrite it, and keep a TTL as a safety net. If it's
-           replica lag, the writer reads from the primary for a short while."
-
-AGLA SAWAAL (tere jawab se):
-  "DB update hua, cache DELETE fail ho gaya?"
-   -> TTL bachata (max utni der purana). Pakka chahiye -> DB change event (CDC) se delete ka retry
-  "DELETE ke baad koi purani value phir se cache me daal de (race)?"
-   -> chhota delay ke baad dobara delete (double delete) ya version / TTL se
 ```
 
 ---
@@ -238,20 +238,6 @@ KAISE (mutex):
           haara (nil) -> 50-100 ms ruko, cache dobara padho (tab tak jeetne wale ne bhar diya)
           lock pe EX kyun: jeetne wala beech me mara to lock 5 sec me khud chhoote, warna sab hamesha atke
 ```
-```mermaid
-flowchart TD
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App --> n_DB
-    n_App --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-```
 ```
 POOCHEGA: "What if the cache goes down / a hot key expires?"
 DHYAAN:   poora cache gaya -> DB fallback, par load shedding / rate limit ke saath — warna chhupa load ek saath DB pe
@@ -265,6 +251,20 @@ AGLA SAWAAL (tere jawab se):
   "Soft-TTL kaise?"
    -> value ke saath 'refresh_after' time; padhne wala dekhe time nikal gaya -> background me ek refresh,
       tab tak purani value hi do
+```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
 ```
 
 ---
@@ -284,20 +284,6 @@ SOLUTION: (1) Hot key ki kai node pe copy, padhte waqt random copy -> read bat g
 NAYA:     L1 local cache (har App server ki apni memory me chhota cache)
 BADLA:    App -> App + L1 local cache
 ```
-```mermaid
-flowchart TD
-    n_App_L1_local_cache["App + L1 local cache"]
-    n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App_L1_local_cache --> n_DB
-    n_App_L1_local_cache --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-```
 ```
 BOARD PE: read copies: score#1..#10 · write buckets: key#0..#9
           L1 app (nano-sec) -> L2 distributed (micro-sec) -> DB (milli-sec)
@@ -313,6 +299,20 @@ AGLA SAWAAL (tere jawab se):
    -> node ke metrics (ek key pe ops/sec), Redis --hotkeys, client side ginti -> had paar = copy / L1 me
   "L1 me purana score kitni der?"
    -> L1 TTL 1-2 sec -> utna purana chalta (score ke liye theek, paisa ke liye nahi)
+```
+```mermaid
+flowchart TD
+    n_App_L1_local_cache["App + L1 local cache"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App_L1_local_cache --> n_DB
+    n_App_L1_local_cache --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
 ```
 
 ---
@@ -358,20 +358,6 @@ TRADE-OFF:      speed vs consistency — cache AP ki taraf, eventual chalta (CAP
 App + L1 = nano-sec, hot key ka pehla ilaaj · Cache client = consistent hashing, key -> node
 Node = HashMap + DLL (LRU) + TTL, primary + replica (alag AZ) · DB = source of truth, miss pe
 ```
-```mermaid
-flowchart TD
-    n_App_L1_local_cache["App + L1 local cache"]
-    n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App_L1_local_cache --> n_DB
-    n_App_L1_local_cache --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-```
 ```
 SINGLE node : HashMap + DLL (LRU) + TTL
 DISTRIBUTE  : consistent hashing (shard) + replication (HA)
@@ -385,6 +371,20 @@ BOL: "A distributed cache is an in-memory key-value store, sharded with consiste
       availability. Cache-aside with LRU and TTL is the production combo. The two hard parts are invalidation —
       TTL plus explicit deletes — and stampedes — a lock or early refresh. Hot keys get a local L1 cache and
       copies. It's a speed versus consistency trade-off, decided by the use case."
+```
+```mermaid
+flowchart TD
+    n_App_L1_local_cache["App + L1 local cache"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App_L1_local_cache --> n_DB
+    n_App_L1_local_cache --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
 ```
 
 ARCHETYPE F · CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

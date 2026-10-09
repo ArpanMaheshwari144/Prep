@@ -58,14 +58,6 @@ SOLUTION: Poora TEXT mat bhejo, sirf OPERATION bhejo ("yahan ye daala", "yahan s
 
 NAYA:     koi dabba nahi — data ki shakal badli (text -> operation)
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App<br/>operation bhejo, text nahi"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_DB
-```
 ```
 BOARD PE: A "HELLO WORLD" save · B "HELLO THERE" save -> A ka kaam gayab
           A: { insert "X", position 0 } · B: { delete position 5 }
@@ -78,6 +70,14 @@ AGLA SAWAAL (tere jawab se):
       baseVersion = client ne kis version ko dekh ke op banaya -> isi se pata chalta kaun-se ops concurrent the
   "Delete ka kya? A ne 'L' mitaya, B ne usi jagah type kiya?"
    -> delete bhi ek op {delete, pos}. OT dono ko transform karta: B ka insert khisakta, A sahi char mitata
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App<br/>operation bhejo, text nahi"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
 ```
 
 ---
@@ -97,14 +97,6 @@ KAISE:    pehle normal HTTP request "Upgrade: websocket" -> server "101 Switchin
 KYUN YE:  polling (har 1 sec "kuch naya?") = 40M user x har sec bekaar request, phir bhi 1 sec der
           long polling = har message pe naya request + header ka bojh · SSE = sirf server -> client
 ```
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_Conn_Server["Conn-Server"]
-    n_DB["DB"]
-    n_USER_A_B --> n_Conn_Server
-    n_Conn_Server --> n_DB
-```
 ```
 AGLA SAWAAL (tere jawab se):
   "Connection beech me toot gaya to?"
@@ -112,6 +104,14 @@ AGLA SAWAAL (tere jawab se):
       server v120 ke baad ke ops (v121 se aage) bhej de -> kuch nahi chhoota
   "Server ko kaise pata client zinda hai?"
    -> heartbeat (ping / pong) har ~30 sec · jawab nahi = connection band, uski jagah saaf
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_Conn_Server["Conn-Server"]
+    n_DB["DB"]
+    n_USER_A_B --> n_Conn_Server
+    n_Conn_Server --> n_DB
 ```
 
 ---
@@ -140,6 +140,16 @@ KAISE:    har doc = ek CHANNEL (doc:123)
 KYUN YE:  Kafka bhi chal sakta, par Kafka store karta + thoda dheema -> live typing ko replay nahi, speed chahiye
           servers ek doosre ko seedha HTTP -> kisko bhejna pata nahi, N x N jaal
 ```
+```
+BOARD PE: A -> Conn-Server-1 -> publish -> Redis pub/sub -> Conn-Server-2 -> B
+
+AGLA SAWAAL (tere jawab se):
+  "Us waqt koi server sun nahi raha tha (restart ho raha tha) -> message gaya?"
+   -> haan, pub/sub me gaya. Par edit DB / log me hai: client reconnect pe apna version bataye,
+      baaki ops wahan se le le (DIKKAT 2 wala reconnect)
+  "Redis pub/sub hi gir gaya?"
+   -> replica pe switch (Sentinel); beech ke kuch second live update ruke, edit kho nahi (log me hai)
+```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -155,16 +165,6 @@ flowchart TD
     n_Conn_Server_x_N_2 --> n_Redis_pub_sub
     n_Conn_Server_x_N_1 --> n_DB
     n_Conn_Server_x_N_2 --> n_DB
-```
-```
-BOARD PE: A -> Conn-Server-1 -> publish -> Redis pub/sub -> Conn-Server-2 -> B
-
-AGLA SAWAAL (tere jawab se):
-  "Us waqt koi server sun nahi raha tha (restart ho raha tha) -> message gaya?"
-   -> haan, pub/sub me gaya. Par edit DB / log me hai: client reconnect pe apna version bataye,
-      baaki ops wahan se le le (DIKKAT 2 wala reconnect)
-  "Redis pub/sub hi gir gaya?"
-   -> replica pe switch (Sentinel); beech ke kuch second live update ruke, edit kho nahi (log me hai)
 ```
 
 ---
@@ -186,22 +186,6 @@ KYUN OT (CRDT nahi):
           hamare paas central server hai (har op usi se guzarta) -> OT seedha baithta, Google Docs bhi OT
           CRDT tab jab central server na ho (offline-first, peer-to-peer) · keemat: har char ki id = memory zyada
 ```
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Conn_Server_x_N_1["Conn-Server 1<br/>+ OT"]
-    n_Conn_Server_x_N_2["Conn-Server 2<br/>+ OT"]
-    n_Redis_pub_sub["Redis pub/sub"]
-    n_DB["DB"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Conn_Server_x_N_1
-    n_LB --> n_Conn_Server_x_N_2
-    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_1 --> n_DB
-    n_Conn_Server_x_N_2 --> n_DB
-```
 ```
 BOARD PE: base "HELLO" · A insert("X", 0) · B insert("Y", 0) ek saath
           seedha apply -> A: "XHELLO", B: "YHELLO" = diverge
@@ -218,6 +202,22 @@ AGLA SAWAAL (tere jawab se):
       transform karta. Client apne pending ops ko server se aaye ops ke against transform karta.
   "Do server pe ek doc ka OT alag-alag chala to?"
    -> kram toot jaayega. Isliye ek doc ke saare ops EK jagah (docId se ek server / shard) -> DIKKAT 8
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1<br/>+ OT"]
+    n_Conn_Server_x_N_2["Conn-Server 2<br/>+ OT"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_DB["DB"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_DB
+    n_Conn_Server_x_N_2 --> n_DB
 ```
 
 ---
@@ -243,24 +243,6 @@ KAISE:    op aaya -> Redis LIST me RPUSH (doc ke hisaab se)
 KYUN YE:  MySQL me har op = index update + random disk write -> itne writes pe dheema
           buffer Kafka me bhi ho sakta (durable bhi) -> crash wala sawaal neeche
 ```
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Conn_Server_x_N_1["Conn-Server 1"]
-    n_Conn_Server_x_N_2["Conn-Server 2"]
-    n_Redis_pub_sub["Redis pub/sub"]
-    n_Redis_buffer["Redis buffer"]
-    n_Cassandra_edit_log["Cassandra edit log"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Conn_Server_x_N_1
-    n_LB --> n_Conn_Server_x_N_2
-    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_1 --> n_Redis_buffer
-    n_Conn_Server_x_N_2 --> n_Redis_buffer
-    n_Redis_buffer --> n_Cassandra_edit_log
-```
 ```
 BOARD PE: partition key = docId · clustering = version (server ka seq no.)
 
@@ -281,6 +263,24 @@ AGLA SAWAAL (tere jawab se):
 BOL:      "Redis is replicated, but replication is async, so I don't ack an op until it's durably written.
            The client keeps unacked ops and resends them with an op id, so nothing is lost or applied twice."
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_Redis_buffer["Redis buffer"]
+    n_Cassandra_edit_log["Cassandra edit log"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_Redis_buffer
+    n_Conn_Server_x_N_2 --> n_Redis_buffer
+    n_Redis_buffer --> n_Cassandra_edit_log
+```
 
 ---
 
@@ -292,6 +292,14 @@ DIKKAT:   doc kholne pe shuru se laakhon operation dobara chalane padte -> kholn
 SOLUTION: SNAPSHOT: har kuch hazaar operation ke baad poora text save. Kholna = aakhri snapshot + baad ke thode op.
 
 NAYA:     koi dabba nahi — edit log ke saath snapshot
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Snapshot banate waqt naye edit aa rahe hon to?"
+   -> snapshot ek version tak ka hota (v1000). Load = snapshot v1000 + v1000 ke baad ke ops (v1001 se aage).
+      Naye ops log me aate rehte, kuch nahi rukta.
+  "Snapshot kitni baar?"
+   -> har N ops (jaise 1000) ya har kuch minute, jo pehle ho
 ```
 ```mermaid
 flowchart TD
@@ -311,14 +319,6 @@ flowchart TD
     n_Conn_Server_x_N_2 --> n_Redis_buffer
     n_Redis_buffer --> n_Cassandra_edit_log
 ```
-```
-AGLA SAWAAL (tere jawab se):
-  "Snapshot banate waqt naye edit aa rahe hon to?"
-   -> snapshot ek version tak ka hota (v1000). Load = snapshot v1000 + v1000 ke baad ke ops (v1001 se aage).
-      Naye ops log me aate rehte, kuch nahi rukta.
-  "Snapshot kitni baar?"
-   -> har N ops (jaise 1000) ya har kuch minute, jo pehle ho
-```
 
 ---
 
@@ -334,6 +334,19 @@ SOLUTION: (1) Doc edits = AP: network toote to bhi type karo, baad me sync. "Sab
           Poore system ka ek CAP nahi, har hissa alag. CAP faisla sirf network toot-ne ke waqt.
 
 NAYA:     SQL (permissions / ownership)
+```
+```
+POOCHEGA: "Consistency or availability — which do you pick?"
+DHYAAN:   ek CAP poore system pe NAHI — per component
+BOL:      "Per component. Edits are AP: you keep typing through a network blip and OT or CRDTs make everyone
+           converge. Permissions are CP: a removed user must be blocked immediately."
+
+AGLA SAWAAL (tere jawab se):
+  "Offline 1 ghanta type kiya, wapas aaya — kaise milega?"
+   -> client ke paas pending ops + aakhri version. Wapas aate hi bhejta; server beech ke ops ke against
+      transform karta (OT), client server ke ops apne pe -> dono same
+  "Access hata diya aur wo user offline type kar raha tha?"
+   -> reconnect pe pehle permission check (SQL, CP) -> access nahi to uske pending ops reject
 ```
 ```mermaid
 flowchart TD
@@ -355,19 +368,6 @@ flowchart TD
     n_Conn_Server_x_N_1 --> n_SQL_permissions
     n_Conn_Server_x_N_2 --> n_SQL_permissions
     n_Redis_buffer --> n_Cassandra_edit_log
-```
-```
-POOCHEGA: "Consistency or availability — which do you pick?"
-DHYAAN:   ek CAP poore system pe NAHI — per component
-BOL:      "Per component. Edits are AP: you keep typing through a network blip and OT or CRDTs make everyone
-           converge. Permissions are CP: a removed user must be blocked immediately."
-
-AGLA SAWAAL (tere jawab se):
-  "Offline 1 ghanta type kiya, wapas aaya — kaise milega?"
-   -> client ke paas pending ops + aakhri version. Wapas aate hi bhejta; server beech ke ops ke against
-      transform karta (OT), client server ke ops apne pe -> dono same
-  "Access hata diya aur wo user offline type kar raha tha?"
-   -> reconnect pe pehle permission check (SQL, CP) -> access nahi to uske pending ops reject
 ```
 
 ---
@@ -393,6 +393,18 @@ KAISE (docId se routing):
           server juda / gira -> sirf uske hisse ke doc khiskte, baaki wahin
 KYUN YE:  hash(docId) % N -> N badla (server juda) to lagbhag har doc ka server badal jaata = sab reconnect
 ```
+```
+POOCHEGA: "How do you keep edits in order?"
+BOL:      "The server assigns each operation the doc's next version number, never the client clock, and all
+           ops for one doc go to one shard where OT runs serially."
+
+AGLA SAWAAL (tere jawab se):
+  "Jis server pe doc tha wo gir gaya?"
+   -> ring pe agla server doc le leta. Clients reconnect, naya server doc = snapshot + ops se load,
+      client apna version bata ke baaki ops le leta
+  "Ek doc pe 100 log, server garam?"
+   -> 100 ka cap hai, ek server jhel leta. Zyada ho to sirf-dekhne-wale alag, unhe pub/sub se updates
+```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -415,18 +427,6 @@ flowchart TD
     n_Conn_Server_x_N_1 --> n_SQL_permissions
     n_Conn_Server_x_N_2 --> n_SQL_permissions
     n_Redis_buffer --> n_Cassandra_edit_log
-```
-```
-POOCHEGA: "How do you keep edits in order?"
-BOL:      "The server assigns each operation the doc's next version number, never the client clock, and all
-           ops for one doc go to one shard where OT runs serially."
-
-AGLA SAWAAL (tere jawab se):
-  "Jis server pe doc tha wo gir gaya?"
-   -> ring pe agla server doc le leta. Clients reconnect, naya server doc = snapshot + ops se load,
-      client apna version bata ke baaki ops le leta
-  "Ek doc pe 100 log, server garam?"
-   -> 100 ka cap hai, ek server jhel leta. Zyada ho to sirf-dekhne-wale alag, unhe pub/sub se updates
 ```
 
 ---
@@ -478,6 +478,12 @@ CDN = static app · LB = docId se consistent routing · Conn-Server = WebSocket 
 Redis pub/sub = server-to-server fanout · Redis buffer = batch write · Cassandra = op log (docId, timestamp) + snapshot
 SQL = permissions (CP)
 ```
+```
+BOL: "Clients hold a WebSocket to a connection server, routed by doc id. Every keystroke is an operation; the
+      server transforms concurrent operations with OT, so nothing is lost and everyone converges, then fans out
+      to other servers through Redis pub/sub. Operations are buffered and batched into Cassandra by doc id, with
+      snapshots so a doc loads fast. Edits are AP — typing never stops — while permissions are CP in SQL."
+```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -500,12 +506,6 @@ flowchart TD
     n_Conn_Server_x_N_1 --> n_SQL_permissions
     n_Conn_Server_x_N_2 --> n_SQL_permissions
     n_Redis_buffer --> n_Cassandra_edit_log
-```
-```
-BOL: "Clients hold a WebSocket to a connection server, routed by doc id. Every keystroke is an operation; the
-      server transforms concurrent operations with OT, so nothing is lost and everyone converges, then fans out
-      to other servers through Redis pub/sub. Operations are buffered and batched into Cassandra by doc id, with
-      snapshots so a doc loads fast. Edits are AP — typing never stops — while permissions are CP in SQL."
 ```
 
 ARCHETYPE D (real-time) · CONCEPTS: [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [pubsub/queues](../../FOUNDATIONS/07_message_queues.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

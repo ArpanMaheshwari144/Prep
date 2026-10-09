@@ -75,14 +75,6 @@ SOLUTION: (1) Debit + credit EK DB TRANSACTION (ACID): dono honge ya koi nahi, c
 
 NAYA:     koi dabba nahi — DB transaction
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc"]
-    n_DB["DB<br/>debit + credit EK transaction"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_DB
-```
 ```
 BOARD PE: BEGIN  Arpan -= 500 · Merchant += 500  COMMIT   (dono ya koi nahi -> ROLLBACK)
           sum(debits) == sum(credits)
@@ -92,6 +84,14 @@ AGLA SAWAAL (tere jawab se):
    -> DB pehle WAL / undo log me likhta. Uthte hi: COMMIT wale txn redo, bina COMMIT wale undo -> aadha kuch nahi bachta
   "Do log ek saath Arpan ke account se?"
    -> row lock / UPDATE ... WHERE balance >= 500 -> ek hi jeetega (DIKKAT 2 ka teesra sawaal)
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_DB["DB<br/>debit + credit EK transaction"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_DB
 ```
 
 ---
@@ -109,16 +109,6 @@ SOLUTION: (1) IDEMPOTENCY KEY: client har naye payment pe ek UUID banata, retry 
           Do sacche alag payment = alag key, dono honge. (DSA: register = hashmap "pehle dekha?")
 
 NAYA:     Idempotency store (key -> result yaad rakhne wala; Redis + DB unique)
-```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc"]
-    n_Idempotency_store["Idempotency store"]
-    n_DB["DB"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_Idempotency_store
-    n_Payment_Svc --> n_DB
 ```
 ```
 BOARD PE: tap 1 -> 500 · tap 2 -> 500 aur = Rs. 1000 kate
@@ -144,6 +134,16 @@ AGLA SAWAAL (tere jawab se):
   "Redis aur DB dono kyun?"
    -> Redis = tez, chal rahi request pakde (IN_PROGRESS) · DB UNIQUE = pakka record, Redis gira tab bhi
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_DB["DB"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_DB
+```
 
 ---
 
@@ -162,18 +162,6 @@ KAISE (circuit breaker):
           kuch der (30 sec) baad HALF-OPEN = ek test call -> chali to CLOSED, fail to wapas OPEN
           fayda: marte PSP pe hathoda nahi, aur hamare thread intezaar me nahi atakte
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc"]
-    n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP"]
-    n_DB["DB"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_Idempotency_store
-    n_Payment_Svc --> n_PSP
-    n_Payment_Svc --> n_DB
-```
 ```
 POOCHEGA: "What if the PSP is slow?"
 DHYAAN:   bina timeout har thread atka = poora system thapp (slow = down se BURA)
@@ -185,6 +173,18 @@ AGLA SAWAAL (tere jawab se):
    -> 'processing' (PENDING), 'fail' nahi. Paisa shayad kat chuka ho -> reconciliation pakka karegi
   "Do PSP rakhoge?"
    -> haan, ek down to doosra; par ek payment hamesha EK PSP pe, beech me badalna nahi (double charge)
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
 ```
 
 ---
@@ -209,22 +209,6 @@ KYUN DONO (push + pull):
           sirf polling -> der se pata + har pending ke liye PSP pe baar-baar call (limit / kharcha)
           webhook = tez raasta, reconciliation = jaal jo chhoota hua pakde
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc"]
-    n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP"]
-    n_DB["DB"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_Idempotency_store
-    n_Payment_Svc --> n_PSP
-    n_Payment_Svc --> n_DB
-    n_Reconciliation_job --> n_DB
-    n_Reconciliation_job --> n_PSP
-    n_PSP -.->|webhook| n_Payment_Svc
-```
 ```
 POOCHEGA: "What if the server crashes in the middle?"
 BOL:      "I never assume. Every payment is written as PENDING before I call the PSP. The PSP's webhook
@@ -241,6 +225,22 @@ AGLA SAWAAL (tere jawab se):
   "Reconciliation kitni baar chalti?"
    -> har kuch minute pending (5 min se purane) ke liye + roz raat PSP / bank file se poora milaan
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc
+```
 
 ---
 
@@ -255,6 +255,16 @@ SOLUTION: (1) SAGA: har step apna commit; koi fail -> pichhle steps ULTE kram me
           (2) 2PC nahi: sab "ready" bol ke lock pakad ke rukte, coordinator gira to sab atke, slow.
 
 NAYA:     koi dabba nahi — Payment Svc saga chalata
+```
+```
+BOARD PE: BankA -500 ✓ · BankB +500 ✗ -> COMPENSATE: BankA +500 wapas
+          2PC: PREPARE (sab lock + YES / NO) -> COMMIT / ABORT
+
+AGLA SAWAAL (tere jawab se):
+  "SAGA ka state kahan rakhoge (Payment svc beech me gira)?"
+   -> saga table: har step ka haal (DEBITED, CREDIT_PENDING...) -> uthte hi wahan se aage / ulta
+  "Beech ke waqt user ko kya dikhega?"
+   -> 'processing' -> eventual: thodi der me SUCCESS ya paisa wapas
 ```
 ```mermaid
 flowchart TD
@@ -271,16 +281,6 @@ flowchart TD
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc
-```
-```
-BOARD PE: BankA -500 ✓ · BankB +500 ✗ -> COMPENSATE: BankA +500 wapas
-          2PC: PREPARE (sab lock + YES / NO) -> COMMIT / ABORT
-
-AGLA SAWAAL (tere jawab se):
-  "SAGA ka state kahan rakhoge (Payment svc beech me gira)?"
-   -> saga table: har step ka haal (DEBITED, CREDIT_PENDING...) -> uthte hi wahan se aage / ulta
-  "Beech ke waqt user ko kya dikhega?"
-   -> 'processing' -> eventual: thodi der me SUCCESS ya paisa wapas
 ```
 
 ---
@@ -304,6 +304,17 @@ KAISE (balance kaise nikle):
           har baar jodna mehnga -> balance column USI transaction me update + ledger me 2 entry
           raat ko job: sum(ledger) == balance? farak = alert
 ```
+```
+POOCHEGA: "Data keeps growing — what happens in 3 years?"
+BOL:      "Partition by month, detach old partitions to cold storage like S3 Glacier. Payment records are
+           archived, never deleted."
+
+AGLA SAWAAL (tere jawab se):
+  "Galat entry ho gayi, delete kar doge?"
+   -> nahi, ULTI entry (reversal) likho. Purani rahegi -> audit me dono dikhte
+  "Ledger bahut bada?"
+   -> month partition, purana cold storage (upar POOCHEGA)
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -320,17 +331,6 @@ flowchart TD
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc
 ```
-```
-POOCHEGA: "Data keeps growing — what happens in 3 years?"
-BOL:      "Partition by month, detach old partitions to cold storage like S3 Glacier. Payment records are
-           archived, never deleted."
-
-AGLA SAWAAL (tere jawab se):
-  "Galat entry ho gayi, delete kar doge?"
-   -> nahi, ULTI entry (reversal) likho. Purani rahegi -> audit me dono dikhte
-  "Ledger bahut bada?"
-   -> month partition, purana cold storage (upar POOCHEGA)
-```
 
 ---
 
@@ -345,6 +345,19 @@ SOLUTION: (1) Payment Svc STATELESS (state DB + idempotency store me) -> kai box
 
 NAYA:     LB / API Gateway
 BADLA:    Payment Svc ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
+```
+```
+BOARD PE: ~3000 txn / sec (festival)
+
+POOCHEGA: "How do you secure it / stop abuse?"
+BOL:      "Authentication at the gateway, an ownership check on every payment, rate limiting per user,
+           and a WAF at the edge."
+
+AGLA SAWAAL (tere jawab se):
+  "LB ko kaise pata box mara?"
+   -> health check (GET /health), fail = list se bahar
+  "Owner check kaise?"
+   -> JWT se userId -> "from" account ka owner_id == userId? nahi to 403
 ```
 ```mermaid
 flowchart TD
@@ -370,19 +383,6 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc_x_N_1
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
-```
-BOARD PE: ~3000 txn / sec (festival)
-
-POOCHEGA: "How do you secure it / stop abuse?"
-BOL:      "Authentication at the gateway, an ownership check on every payment, rate limiting per user,
-           and a WAF at the edge."
-
-AGLA SAWAAL (tere jawab se):
-  "LB ko kaise pata box mara?"
-   -> health check (GET /health), fail = list se bahar
-  "Owner check kaise?"
-   -> JWT se userId -> "from" account ka owner_id == userId? nahi to 403
-```
 
 ---
 
@@ -401,6 +401,18 @@ KAISE:    primary har change WAL me likhta -> replica wo WAL stream padh ke apne
           isliye replica thodi peeche (lag) -> report me 1-2 sec purana chalta, balance me nahi
 KYUN YE:  bahut bhaari report (mahine ka sab) -> replica bhi dhime -> tab alag WAREHOUSE (CDC se data, OLAP)
           dashboard ke liye replica kaafi, analytics ke liye warehouse
+```
+```
+POOCHEGA: "The user paid but still sees the old balance. Why?"
+BOL:      "That read came from a lagging replica. Balance and payment status are always read from the
+           primary; replicas only serve dashboards."
+
+AGLA SAWAAL (tere jawab se):
+  "Replica kitni peeche hai, kaise pata?"
+   -> replication lag metric (seconds / bytes) pe alert
+  "Primary gira?"
+   -> alag SYNC standby promote (RDS Multi-AZ khud karta) -> kuch nahi khota. Dashboard wali async read replica
+      alag hai; use promote kiya to aakhri write kho sakte
 ```
 ```mermaid
 flowchart TD
@@ -428,18 +440,6 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc_x_N_1
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
-```
-POOCHEGA: "The user paid but still sees the old balance. Why?"
-BOL:      "That read came from a lagging replica. Balance and payment status are always read from the
-           primary; replicas only serve dashboards."
-
-AGLA SAWAAL (tere jawab se):
-  "Replica kitni peeche hai, kaise pata?"
-   -> replication lag metric (seconds / bytes) pe alert
-  "Primary gira?"
-   -> alag SYNC standby promote (RDS Multi-AZ khud karta) -> kuch nahi khota. Dashboard wali async read replica
-      alag hai; use promote kiya to aakhri write kho sakte
-```
 
 ---
 
@@ -460,6 +460,15 @@ KAISE (request sahi shard tak):
 KYUN account_id (txn_id ya time nahi):
           ek account ka balance + uski saari history ek shard pe -> debit ek hi jagah atomic
           txn_id -> ek account ki txn bikhar jaati, balance kahan? · time -> aaj ka shard garam
+```
+```
+BOARD PE: ~50 crore txn rows · shard = hash(account_id) % N
+
+AGLA SAWAAL (tere jawab se):
+  "Bada merchant (Amazon) ka account -> ek shard garam?"
+   -> merchant ke kai sub-account (shard me baante), report me jodo
+  "Cross-shard transfer?"
+   -> SAGA (DIKKAT 5) -> debit shard A, credit shard B, fail pe ulta
 ```
 ```mermaid
 flowchart TD
@@ -486,15 +495,6 @@ flowchart TD
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc_x_N_1
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
-```
-```
-BOARD PE: ~50 crore txn rows · shard = hash(account_id) % N
-
-AGLA SAWAAL (tere jawab se):
-  "Bada merchant (Amazon) ka account -> ek shard garam?"
-   -> merchant ke kai sub-account (shard me baante), report me jodo
-  "Cross-shard transfer?"
-   -> SAGA (DIKKAT 5) -> debit shard A, credit shard B, fail pe ulta
 ```
 
 ---
@@ -554,6 +554,19 @@ Gateway = auth + rate limit + owner check · Payment Svc = stateless, saga · Id
 SQL DB = ACID debit + credit + ledger, shard by account · PSP = asli paisa, PENDING · webhook = push
 Reconciliation = pull safety net · Read replica = sirf dashboard
 ```
+```
+idempotency  -> same key, paisa EK baar          (hashmap "pehle dekha?")
+consistency  -> debit + credit ek atomic flip    (see-saw; ACID ya SAGA)
+failure      -> PENDING + webhook + RECONCILE    (courier tracking — gum kabhi nahi)
+ledger       -> immutable double-entry           (permanent diary)
+```
+```
+BOL: "Every payment carries an idempotency key, stored with its result under a unique constraint, so a
+      retry never charges twice. Debit and credit happen in one ACID transaction with a double-entry
+      ledger; across banks or shards I use a saga with compensation. The PSP moves the real money, so I
+      write PENDING first and resolve it through webhooks and a reconciliation job. Next: fraud checks,
+      multi-currency and chargebacks."
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -579,19 +592,6 @@ flowchart TD
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc_x_N_1
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
-```
-```
-idempotency  -> same key, paisa EK baar          (hashmap "pehle dekha?")
-consistency  -> debit + credit ek atomic flip    (see-saw; ACID ya SAGA)
-failure      -> PENDING + webhook + RECONCILE    (courier tracking — gum kabhi nahi)
-ledger       -> immutable double-entry           (permanent diary)
-```
-```
-BOL: "Every payment carries an idempotency key, stored with its result under a unique constraint, so a
-      retry never charges twice. Debit and credit happen in one ACID transaction with a double-entry
-      ledger; across banks or shards I use a saga with compensation. The PSP moves the real money, so I
-      write PENDING first and resolve it through webhooks and a reconciliation job. Next: fraud checks,
-      multi-currency and chargebacks."
 ```
 
 ---

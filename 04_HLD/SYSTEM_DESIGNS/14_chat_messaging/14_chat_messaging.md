@@ -112,16 +112,6 @@ KAISE (event loop):
           -> 1 thread hazaaron socket dekhta, khaali socket pe koi kharcha nahi
 KYUN YE:  thread-per-connection: har thread ka stack ~1 MB -> 1 lakh connection = ~100 GB sirf stack + context switch
 ```
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-```
 ```
 BOARD PE: ek connection ~10-50 KB · 1 lakh x ~30 KB = ~3 GB · 2 crore / 1 lakh = ~200 server
 
@@ -135,6 +125,16 @@ AGLA SAWAAL (tere jawab se):
    -> L4 / L7 LB connection ek baar kisi server pe, phir wahi rehti (sticky by connection). Naya connection = naya chunaav
   "Server pe kitne connection, kaise pata bhar gaya?"
    -> metric: open connections + memory; had paar -> LB naye connection doosre servers ko
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
 ```
 
 ---
@@ -157,6 +157,16 @@ SOLUTION: (1) SAANJHI DIARY (Redis): "B kis server pe" (sirf pata, connection na
 
 NAYA:     Redis (presence / routing + pub-sub)
 ```
+```
+BOARD PE: server-1 diary {A -> penA} · server-7 {B -> penB} · A ka message server-1 pe -> "B OFFLINE"
+          Redis: B -> server-7 -> server-1 seedha server-7 ko -> penB
+
+AGLA SAWAAL (tere jawab se):
+  "Redis routing diary me B ka server galat (B abhi khiska)?"
+   -> server-7 pe B nahi mila -> message DB me pada hi hai -> B ke naye server pe judte hi catch-up
+  "Redis hi gir gaya?"
+   -> replica pe failover; beech me routing nahi -> messages DB me, push + reconnect se pahunchenge
+```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -169,16 +179,6 @@ flowchart TD
     n_LB --> n_Chat_Server_x_200_2
     n_Chat_Server_x_200_1 --> n_Redis
     n_Chat_Server_x_200_2 --> n_Redis
-```
-```
-BOARD PE: server-1 diary {A -> penA} · server-7 {B -> penB} · A ka message server-1 pe -> "B OFFLINE"
-          Redis: B -> server-7 -> server-1 seedha server-7 ko -> penB
-
-AGLA SAWAAL (tere jawab se):
-  "Redis routing diary me B ka server galat (B abhi khiska)?"
-   -> server-7 pe B nahi mila -> message DB me pada hi hai -> B ke naye server pe judte hi catch-up
-  "Redis hi gir gaya?"
-   -> replica pe failover; beech me routing nahi -> messages DB me, push + reconnect se pahunchenge
 ```
 
 ---
@@ -202,6 +202,23 @@ KAISE (push ghanti):
           B offline -> server us token pe Google / Apple ko bhejta -> wo phone OS tak
           token badla / app uninstall -> provider 'invalid' bolta -> token hatao
 ```
+```
+BOARD PE: /send: 1 ID + DB me likho (pakka) · 2 B juda -> pen me · nahi -> DB + push
+          B wapas: "aakhri id 4417, uske BAAD ka do" -> 4418 se aage
+          polling: har 5 sec "kuch aaya?" = 100 request, 1 kaam ki
+
+POOCHEGA: "How do you make sure no message is lost?"
+DHYAAN:   beech me Kafka ho: producer acks=all · offset kaam ke BAAD · message id se idempotent · fail -> DLQ
+BOL:      "I write the message to the database first and only then try to deliver it. If the receiver is offline
+           it simply waits there and a push notification goes out; when they reconnect they ask for everything
+           after their last message id."
+
+AGLA SAWAAL (tere jawab se):
+  "B ke 3 device (phone, laptop, web)?"
+   -> har device ka apna connection + apna cursor; message sab pe, read ek pe hua to baaki pe bhi neeli
+  "Push me poora message bhejoge?"
+   -> chhota preview (ya sirf 'naya message'), privacy ke liye; asli message app khulne pe server se
+```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -220,23 +237,6 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Message_store
     n_Chat_Server_x_200_1 --> n_Push_Google_Apple
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-```
-```
-BOARD PE: /send: 1 ID + DB me likho (pakka) · 2 B juda -> pen me · nahi -> DB + push
-          B wapas: "aakhri id 4417, uske BAAD ka do" -> 4418 se aage
-          polling: har 5 sec "kuch aaya?" = 100 request, 1 kaam ki
-
-POOCHEGA: "How do you make sure no message is lost?"
-DHYAAN:   beech me Kafka ho: producer acks=all · offset kaam ke BAAD · message id se idempotent · fail -> DLQ
-BOL:      "I write the message to the database first and only then try to deliver it. If the receiver is offline
-           it simply waits there and a push notification goes out; when they reconnect they ask for everything
-           after their last message id."
-
-AGLA SAWAAL (tere jawab se):
-  "B ke 3 device (phone, laptop, web)?"
-   -> har device ka apna connection + apna cursor; message sab pe, read ek pe hua to baaki pe bhi neeli
-  "Push me poora message bhejoge?"
-   -> chhota preview (ya sirf 'naya message'), privacy ke liye; asli message app khulne pe server se
 ```
 
 ---
@@ -264,27 +264,6 @@ KAISE (snowflake id):
           64 bit = [ time ms (41 bit) | machine id (10 bit) | us ms me ginti (12 bit) ]
           har server khud banata, kisi se poochhe bina · time aage = id badi = kram
 ```
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Cassandra_messages
-    n_Chat_Server_x_200_2 --> n_Cassandra_messages
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Cassandra_messages --> n_Cold_storage
-```
 ```
 BOARD PE: ~1.2 TB roz · ~46,000 write / sec
           WHERE chat_id = ? AND id < 4417 ORDER BY id DESC LIMIT 50   (keyset; OFFSET 200000 ghatak)
@@ -308,6 +287,27 @@ AGLA SAWAAL (tere jawab se):
   "Ek group ki partition bahut badi (saalon ke message)?"
    -> partition key = (chat_id, month) -> size bandha
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
+```
 
 ---
 
@@ -322,6 +322,14 @@ SOLUTION: EK hi copy chat ke neeche (fan-out on READ), sab wahi padhein.
           Group sabke liye ek jaisa, 500 member.
 
 NAYA:     koi dabba nahi
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "500 me 300 online, 300 server tak bhejna kaise?"
+   -> routing diary se members ke servers nikaalo -> har server ko EK call 'ye message, in members ko'
+      (server ke hisaab se group karo, 300 alag call nahi)
+  "Naya member juda, purane message dikhenge?"
+   -> uske joining id se pehle wale nahi (cursor joining id pe), ya settings ke hisaab
 ```
 ```mermaid
 flowchart TD
@@ -344,14 +352,6 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Cassandra_messages --> n_Cold_storage
 ```
-```
-AGLA SAWAAL (tere jawab se):
-  "500 me 300 online, 300 server tak bhejna kaise?"
-   -> routing diary se members ke servers nikaalo -> har server ko EK call 'ye message, in members ko'
-      (server ke hisaab se group karo, 300 alag call nahi)
-  "Naya member juda, purane message dikhenge?"
-   -> uske joining id se pehle wale nahi (cursor joining id pe), ya settings ke hisaab
-```
 
 ---
 
@@ -365,6 +365,15 @@ SOLUTION: Har member ka EK NISHAAN (cursor): "Arpan is group me yahan tak padh c
           (Har message x har member ka record = 500-guna likhai wapas. Sirf tick ke liye chahiye.)
 
 NAYA:     Cursor store (har user ka har chat me "kahan tak padha / mila" wala number)
+```
+```
+BOARD PE: A: 500 x 50 = 25,000 record · B: 500 row ("Arpan 4417 tak padh chuka")
+
+AGLA SAWAAL (tere jawab se):
+  "Unread count kaise (4417 ke baad kitne)?"
+   -> chat ka aakhri seq - mera read seq = unread (ghatao, gino nahi). Cursor SEQ pe, message id sirf laane ke liye
+  "Cursor kahan rakhoge?"
+   -> Cassandra (user_id, chat_id) -> read_upto; hot wala Redis me
 ```
 ```mermaid
 flowchart TD
@@ -390,15 +399,6 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Cassandra_messages --> n_Cold_storage
 ```
-```
-BOARD PE: A: 500 x 50 = 25,000 record · B: 500 row ("Arpan 4417 tak padh chuka")
-
-AGLA SAWAAL (tere jawab se):
-  "Unread count kaise (4417 ke baad kitne)?"
-   -> chat ka aakhri seq - mera read seq = unread (ghatao, gino nahi). Cursor SEQ pe, message id sirf laane ke liye
-  "Cursor kahan rakhoge?"
-   -> Cassandra (user_id, chat_id) -> read_upto; hot wala Redis me
-```
 
 ---
 
@@ -415,6 +415,16 @@ SOLUTION: Wahi CURSOR: har chat me har bande ke do number, "yahan tak mila" aur 
 
 NAYA:     koi dabba nahi — Cursor store
 ```
+```
+BOARD PE: A->server · server->B · B->server "mil gaya" · server->A "delivered" · B->server "padh liya" · server->A "read"
+          delivered_upto = 4417 · read_upto = 4410 -> B ne 50 padhe -> "read_upto 4467" -> A ko EK push
+
+AGLA SAWAAL (tere jawab se):
+  "Do tick ka 'mil gaya' ack hi kho gaya?"
+   -> B agli baar judta hai to apna delivered_upto bhejta -> cursor aage, A ko tick
+  "Group me do tick kab?"
+   -> sab members ka delivered_upto >= message id -> sabse chhota cursor dekho
+```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -438,16 +448,6 @@ flowchart TD
     n_Chat_Server_x_200_1 --> n_Push_Google_Apple
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Cassandra_messages --> n_Cold_storage
-```
-```
-BOARD PE: A->server · server->B · B->server "mil gaya" · server->A "delivered" · B->server "padh liya" · server->A "read"
-          delivered_upto = 4417 · read_upto = 4410 -> B ne 50 padhe -> "read_upto 4467" -> A ko EK push
-
-AGLA SAWAAL (tere jawab se):
-  "Do tick ka 'mil gaya' ack hi kho gaya?"
-   -> B agli baar judta hai to apna delivered_upto bhejta -> cursor aage, A ko tick
-  "Group me do tick kab?"
-   -> sab members ka delivered_upto >= message id -> sabse chhota cursor dekho
 ```
 
 ---
@@ -463,6 +463,13 @@ SOLUTION: Feature utna rakho jitna scale jhele:
 
 NAYA:     koi dabba nahi
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Channel me 10 lakh ko message pahunchana kaise?"
+   -> fan-out workers (Kafka se) members ke pages me; jo online unhe push, baaki catch-up pe
+  "Seema kaun tay karta?"
+   -> product + engineering saath: feature ki keemat batao (10 lakh x tick = kitne write)
+```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -487,13 +494,6 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Cassandra_messages --> n_Cold_storage
 ```
-```
-AGLA SAWAAL (tere jawab se):
-  "Channel me 10 lakh ko message pahunchana kaise?"
-   -> fan-out workers (Kafka se) members ke pages me; jo online unhe push, baaki catch-up pe
-  "Seema kaun tay karta?"
-   -> product + engineering saath: feature ki keemat batao (10 lakh x tick = kitne write)
-```
 
 ---
 
@@ -507,6 +507,19 @@ SOLUTION: (1) IDEMPOTENCY KEY = clientMsgId. Pehle aayi -> purana lautao · nahi
           (3) "Pehle aayi?" + insert = ek atomic step (unique constraint / Redis SET NX).
 
 NAYA:     Idempotency check (clientMsgId pehle aaya? to naya message mat banao)
+```
+```
+BOARD PE: { chatId, text, clientMsgId: "a7f3-91" }
+
+POOCHEGA: "What if the client retries and sends the same message twice?"
+BOL:      "The client generates a clientMsgId and reuses it on retry; the server claims it atomically and returns
+           the existing message instead of creating a second one."
+
+AGLA SAWAAL (tere jawab se):
+  "clientMsgId kitni der yaad rakhoge?"
+   -> retry window (kuch minute-ghante) -> Redis SET NX EX 3600, ya DB me (chat_id, clientMsgId) UNIQUE
+  "Retry pe purana message wapas diya, uska id?"
+   -> pehli baar wala server id -> A ke app me wahi bubble, do nahi
 ```
 ```mermaid
 flowchart TD
@@ -533,19 +546,6 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Idempotency_check --> n_Cassandra_messages
     n_Cassandra_messages --> n_Cold_storage
-```
-```
-BOARD PE: { chatId, text, clientMsgId: "a7f3-91" }
-
-POOCHEGA: "What if the client retries and sends the same message twice?"
-BOL:      "The client generates a clientMsgId and reuses it on retry; the server claims it atomically and returns
-           the existing message instead of creating a second one."
-
-AGLA SAWAAL (tere jawab se):
-  "clientMsgId kitni der yaad rakhoge?"
-   -> retry window (kuch minute-ghante) -> Redis SET NX EX 3600, ya DB me (chat_id, clientMsgId) UNIQUE
-  "Retry pe purana message wapas diya, uska id?"
-   -> pehli baar wala server id -> A ke app me wahi bubble, do nahi
 ```
 
 ---
@@ -570,6 +570,20 @@ KAISE (per-chat seq kaun deta):
           Redis INCR seq:chat123 -> atomic +1 -> 15, 16, 17 (do server ek saath maange to bhi alag number)
           ya chat ka partition-owner server memory me ginti rakhe (ek chat ek jagah)
 ```
+```
+BOARD PE: per-chat seq: 15, 17 aaya, 16 nahi -> catch-up
+
+POOCHEGA: "How do you keep messages in order?"
+BOL:      "Order comes from a server-assigned id, never the client clock. One chat lives in one partition, and with
+           Kafka I key by chat id, so a chat stays in order while different chats run in parallel. A per-chat
+           sequence number lets the client spot a gap and catch up."
+
+AGLA SAWAAL (tere jawab se):
+  "Seq wala Redis restart, ginti 0 se?"
+   -> restart pe DB se chat ka max seq padh ke wahan se aage (ya Redis persistence)
+  "16 nahi aaya, client kya kare?"
+   -> chhota intezaar (shayad raste me), phir server se '15 ke baad ke do' -> 16 mil gaya
+```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -596,20 +610,6 @@ flowchart TD
     n_Idempotency_check --> n_Cassandra_messages
     n_Cassandra_messages --> n_Cold_storage
 ```
-```
-BOARD PE: per-chat seq: 15, 17 aaya, 16 nahi -> catch-up
-
-POOCHEGA: "How do you keep messages in order?"
-BOL:      "Order comes from a server-assigned id, never the client clock. One chat lives in one partition, and with
-           Kafka I key by chat id, so a chat stays in order while different chats run in parallel. A per-chat
-           sequence number lets the client spot a gap and catch up."
-
-AGLA SAWAAL (tere jawab se):
-  "Seq wala Redis restart, ginti 0 se?"
-   -> restart pe DB se chat ka max seq padh ke wahan se aage (ya Redis persistence)
-  "16 nahi aaya, client kya kare?"
-   -> chhota intezaar (shayad raste me), phir server se '15 ke baad ke do' -> 16 mil gaya
-```
 
 ---
 
@@ -628,6 +628,15 @@ KAISE (pre-signed URL):
           server apni secret key se sign karta: (PUT, bucket/key, expiry 10 min) -> URL
           client us URL pe seedha S3 me upload, S3 signature + expiry khud check karta
           client ko AWS ki chaabi nahi milti, sirf is ek file ka chhota paas
+```
+```
+BOARD PE: { type: image, url, size, thumbnail }
+
+AGLA SAWAAL (tere jawab se):
+  "Same video 1000 log forward kare -> 1000 copy?"
+   -> file ka content hash -> pehle se hai to wahi purani file ka pata (dedup), naya upload nahi
+  "End-to-end encryption me thumbnail server dekh sakta?"
+   -> nahi, client file encrypt karke upload, chaabi message ke saath (server sirf band dabba dekhe)
 ```
 ```mermaid
 flowchart TD
@@ -657,15 +666,6 @@ flowchart TD
     n_Idempotency_check --> n_Cassandra_messages
     n_Cassandra_messages --> n_Cold_storage
 ```
-```
-BOARD PE: { type: image, url, size, thumbnail }
-
-AGLA SAWAAL (tere jawab se):
-  "Same video 1000 log forward kare -> 1000 copy?"
-   -> file ka content hash -> pehle se hai to wahi purani file ka pata (dedup), naya upload nahi
-  "End-to-end encryption me thumbnail server dekh sakta?"
-   -> nahi, client file encrypt karke upload, chaabi message ke saath (server sirf band dabba dekhe)
-```
 
 ---
 
@@ -681,6 +681,15 @@ SOLUTION: (1) TTL se apne aap marna: Redis me "B online" chhoti TTL, app heartbe
           Last seen = usi key ka aakhri update time. Chhupaya hai to mat dikhao (privacy layer).
 
 NAYA:     koi dabba nahi — Redis presence
+```
+```
+BOARD PE: presence:B = online, TTL 30 sec · app har 15 sec heartbeat
+
+AGLA SAWAAL (tere jawab se):
+  "Heartbeat har 15 sec = 2 crore / 15 = 13 lakh / sec Redis pe?"
+   -> heartbeat chat server tak hi (connection pe ping); server apne saare users ka presence batch me Redis me
+  "B ka status live badalta dikhe (typing...)?"
+   -> sirf khuli chat ke liye subscribe; typing = chhota event, store nahi, bhej ke bhool jao
 ```
 ```mermaid
 flowchart TD
@@ -709,15 +718,6 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Idempotency_check --> n_Cassandra_messages
     n_Cassandra_messages --> n_Cold_storage
-```
-```
-BOARD PE: presence:B = online, TTL 30 sec · app har 15 sec heartbeat
-
-AGLA SAWAAL (tere jawab se):
-  "Heartbeat har 15 sec = 2 crore / 15 = 13 lakh / sec Redis pe?"
-   -> heartbeat chat server tak hi (connection pe ping); server apne saare users ka presence batch me Redis me
-  "B ka status live badalta dikhe (typing...)?"
-   -> sirf khuli chat ke liye subscribe; typing = chhota event, store nahi, bhej ke bhool jao
 ```
 
 ---
@@ -761,6 +761,13 @@ Redis = kaun kis server (TTL + dhadkan) + pub-sub + presence · Push = app band 
 Idempotency = clientMsgId · Cassandra = chat_id / message_id, pehle LIKHO phir bhejo · Cold storage = purana
 Cursor store = delivered_upto / read_upto · Blob store = media, message me sirf pata
 ```
+```
+BOL: "Each user holds an open WebSocket to one of ~200 chat servers, and Redis records which server each user is on.
+      A message is deduped on clientMsgId, written first to Cassandra partitioned by chat id with a snowflake id,
+      then routed to the receiver's server; if they're offline it waits and a push notification goes out, and on
+      reconnect they ask for everything after their last id. Receipts and unread counts are just cursors per user per
+      chat, presence is a TTL key kept alive by heartbeats, and media goes to S3 with only a link in the message."
+```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -788,13 +795,6 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Idempotency_check --> n_Cassandra_messages
     n_Cassandra_messages --> n_Cold_storage
-```
-```
-BOL: "Each user holds an open WebSocket to one of ~200 chat servers, and Redis records which server each user is on.
-      A message is deduped on clientMsgId, written first to Cassandra partitioned by chat id with a snowflake id,
-      then routed to the receiver's server; if they're offline it waits and a push notification goes out, and on
-      reconnect they ask for everything after their last id. Receipts and unread counts are just cursors per user per
-      chat, presence is a TTL key kept alive by heartbeats, and media goes to S3 with only a link in the message."
 ```
 
 [← SYSTEM_DESIGNS](..) · [← Home README](../../../README.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

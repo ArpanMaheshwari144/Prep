@@ -73,16 +73,6 @@ NAYA:     Redis
 KYUN YE:  read replica kyun nahi -> replica bhi DB hai, disk se padhta (ms), Redis RAM se (<1ms)
           har App me apna local cache kyun nahi -> har box ki alag copy, link badla/expire hua to kahin purana
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Redis
-    n_Redis --> n_DB
-```
 ```
 BOARD PE: read : write = 100 : 1 -> ~95% read Redis se
 
@@ -96,6 +86,16 @@ AGLA SAWAAL (tere jawab se):
    -> nahi, sirf HOT link. LRU: jagah bhari to sabse kam-chhua link nikalo. Miss pe DB se, phir cache me
   "Link delete / expire ho gaya par cache me pada hai?"
    -> TTL = expiry, apne aap gayab. Delete pe cache key bhi DEL (pehle DB, phir cache)
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Redis
+    n_Redis --> n_DB
 ```
 
 ---
@@ -115,6 +115,14 @@ KAISE:    LB har request ko baari-baari (round-robin) ya jiske paas kam connecti
           har ~5 sec health check (GET /health) -> jawab nahi = us box ko list se bahar, theek hua to wapas
 KYUN YE:  ek bada server (vertical) kyun nahi -> had hai + wahi ek SPOF; chhote kai box = bojh bhi bata, ek gire chalta
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Stateless kyun zaroori?"
+   -> agar session App ki RAM me ho to agli request doosre box pe gayi = user ka data gayab
+      sab Redis / DB me -> koi bhi box koi bhi request le sake
+  "Ek box dheema hai (mara nahi), LB ko kaise pata?"
+   -> health check + response time / error rate dekh ke; least-conn khud kam bhejta
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -130,14 +138,6 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
     n_Redis --> n_DB
 ```
-```
-AGLA SAWAAL (tere jawab se):
-  "Stateless kyun zaroori?"
-   -> agar session App ki RAM me ho to agli request doosre box pe gayi = user ka data gayab
-      sab Redis / DB me -> koi bhi box koi bhi request le sake
-  "Ek box dheema hai (mara nahi), LB ko kaise pata?"
-   -> health check + response time / error rate dekh ke; least-conn khud kam bhejta
-```
 
 ---
 
@@ -151,6 +151,22 @@ SOLUTION: (1) RANGE ALLOCATION: COUNTER service (ZooKeeper / DB table) har App k
           (2) Number -> BASE62 -> 7 char ka code (detail neeche POOCHE TO).
 
 NAYA:     Counter (har App ko number ki range dene wala, aksar ZooKeeper / DB table)
+```
+```
+BOARD PE: bina range: S1 counter=5, S2 counter=5 -> dono ne "6" banaya
+          range se: App-1 ko 1..1000 · App-2 ko 1001..2000
+
+POOCHEGA: "That server crashed at 400 — what about the rest of its range?"
+DHYAAN:   pehle dohra lo KIS box ka crash: "app server jiske paas 1-1000 thi, sahi?" (Redis ka jawab alag)
+BOL:      "The restarted server asks for a new range, so 401 to 1000 are wasted. I accept that on purpose —
+           3.5 trillion codes, a few thousand lost is nothing. Making every number crash-proof would need
+           coordination on every request and kill the benefit of ranges."
+
+AGLA SAWAAL (tere jawab se):
+  "Counter service khud gir gaya?"
+   -> Apps ke paas abhi ki range bachi hai (1000 number), kaam chalta rehta; tab tak counter ka backup (2 node) uth jaata
+  "Code se pata chal jaayega kitne link bane (sequential)?"
+   -> haan, ye keemat hai. Chahiye to number ko shuffle / XOR karke base62 karo, phir bhi unique
 ```
 ```mermaid
 flowchart TD
@@ -169,22 +185,6 @@ flowchart TD
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
     n_Redis --> n_DB
-```
-```
-BOARD PE: bina range: S1 counter=5, S2 counter=5 -> dono ne "6" banaya
-          range se: App-1 ko 1..1000 · App-2 ko 1001..2000
-
-POOCHEGA: "That server crashed at 400 — what about the rest of its range?"
-DHYAAN:   pehle dohra lo KIS box ka crash: "app server jiske paas 1-1000 thi, sahi?" (Redis ka jawab alag)
-BOL:      "The restarted server asks for a new range, so 401 to 1000 are wasted. I accept that on purpose —
-           3.5 trillion codes, a few thousand lost is nothing. Making every number crash-proof would need
-           coordination on every request and kill the benefit of ranges."
-
-AGLA SAWAAL (tere jawab se):
-  "Counter service khud gir gaya?"
-   -> Apps ke paas abhi ki range bachi hai (1000 number), kaam chalta rehta; tab tak counter ka backup (2 node) uth jaata
-  "Code se pata chal jaayega kitne link bane (sequential)?"
-   -> haan, ye keemat hai. Chahiye to number ko shuffle / XOR karke base62 karo, phir bhi unique
 ```
 
 ---
@@ -205,6 +205,13 @@ KAISE:    Kafka = disk pe append-only log. App event ko topic ke end me likh det
           kai baar fail -> event DLQ topic me daalo, aage badho (ek kharab event poori line na roke)
 KYUN YE:  App ke andar async thread -> App crash = memory ke event gaye
           SQS bhi chalta; Kafka isliye ki click bahut zyada + replay chahiye (naya report purane clicks pe)
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Kafka hi down hai to redirect rukega?"
+   -> nahi, redirect pehle. Event bhejna fail -> chhota local buffer / chhod do (analytics thoda kam, redirect nahi rukta)
+  "Ek click do baar gina gaya?"
+   -> Kafka at-least-once -> event pe clickId, Analytics svc duplicate skip kare
 ```
 ```mermaid
 flowchart TD
@@ -233,13 +240,6 @@ flowchart TD
     n_Redis --> n_DB
     n_Analytics_svc --> n_DLQ
 ```
-```
-AGLA SAWAAL (tere jawab se):
-  "Kafka hi down hai to redirect rukega?"
-   -> nahi, redirect pehle. Event bhejna fail -> chhota local buffer / chhod do (analytics thoda kam, redirect nahi rukta)
-  "Ek click do baar gina gaya?"
-   -> Kafka at-least-once -> event pe clickId, Analytics svc duplicate skip kare
-```
 
 ---
 
@@ -258,6 +258,20 @@ KAISE:    consistent hashing = ek gol RING. Har node ring pe kisi jagah, har sho
           key clockwise chal ke jo pehla node mile, uska. Naya node juda -> sirf uske aur pichle node ke
           beech wali keys khiski
 KYUN YE:  hash % N -> N=3 se 4 kiya to lagbhag har key ka node badla = poora data shift
+```
+```
+BOARD PE: naya node -> sirf ~K/N keys hilti (K = keys, N = nodes)
+
+POOCHEGA: "The database is too big / takes too many writes. What do you do?"
+DHYAAN:   "write replica" NAHI — write scale = SHARDING. key = shortCode (country / date = skew)
+BOL:      "I shard by short code, so every redirect goes to exactly one shard, and keep three replicas
+           of each shard in different zones."
+
+AGLA SAWAAL (tere jawab se):
+  "Ek node pe zyada keys aa gayi (ring pe bura bata)?"
+   -> virtual nodes: har machine ring pe 100-200 jagah baithti -> load barabar
+  "Ek link viral (hot key) -> ek shard garam?"
+   -> wo Redis se hi serve hota (cache), shard tak kam aata
 ```
 ```mermaid
 flowchart TD
@@ -286,20 +300,6 @@ flowchart TD
     n_Redis --> n_Cassandra
     n_Analytics_svc --> n_DLQ
 ```
-```
-BOARD PE: naya node -> sirf ~K/N keys hilti (K = keys, N = nodes)
-
-POOCHEGA: "The database is too big / takes too many writes. What do you do?"
-DHYAAN:   "write replica" NAHI — write scale = SHARDING. key = shortCode (country / date = skew)
-BOL:      "I shard by short code, so every redirect goes to exactly one shard, and keep three replicas
-           of each shard in different zones."
-
-AGLA SAWAAL (tere jawab se):
-  "Ek node pe zyada keys aa gayi (ring pe bura bata)?"
-   -> virtual nodes: har machine ring pe 100-200 jagah baithti -> load barabar
-  "Ek link viral (hot key) -> ek shard garam?"
-   -> wo Redis se hi serve hota (cache), shard tak kam aata
-```
 
 ---
 
@@ -313,6 +313,20 @@ SOLUTION: (1) DB har write pehle LOG me disk pe likhta (Cassandra commit log / P
           (2) Write "done" tabhi jab zyada replica haan bolein (QUORUM) -> ek gira to bhi data safe.
 
 NAYA:     koi dabba nahi — Cassandra ke andar log + quorum
+```
+```
+BOARD PE: 3 replica me se 2 ne haan bola = done -> 1 gira, data 2 pe phir bhi hai
+
+POOCHEGA: "What happens if a DB node goes down mid-write?"
+DHYAAN:   KAFKA nahi — Kafka extra dabba hai, DB ka kaam DB ka log karta
+BOL:      "The DB writes to its commit log before applying, and I ack writes on quorum, so losing one
+           node doesn't lose committed data. Redirects keep working from Redis meanwhile."
+
+AGLA SAWAAL (tere jawab se):
+  "Quorum me 3 me se 2 kyun, sab 3 kyun nahi?"
+   -> 3 ka intezaar = ek dheema node sabko dheema kare; 2 = 1 gire tab bhi likh sakte
+  "2 node gir gaye to?"
+   -> quorum nahi bana -> write fail (ya ONE level pe likho, risk ke saath). Tab tak read Redis se
 ```
 ```mermaid
 flowchart TD
@@ -340,20 +354,6 @@ flowchart TD
     n_Analytics_svc --> n_Analytics_DB
     n_Redis --> n_Cassandra
     n_Analytics_svc --> n_DLQ
-```
-```
-BOARD PE: 3 replica me se 2 ne haan bola = done -> 1 gira, data 2 pe phir bhi hai
-
-POOCHEGA: "What happens if a DB node goes down mid-write?"
-DHYAAN:   KAFKA nahi — Kafka extra dabba hai, DB ka kaam DB ka log karta
-BOL:      "The DB writes to its commit log before applying, and I ack writes on quorum, so losing one
-           node doesn't lose committed data. Redirects keep working from Redis meanwhile."
-
-AGLA SAWAAL (tere jawab se):
-  "Quorum me 3 me se 2 kyun, sab 3 kyun nahi?"
-   -> 3 ka intezaar = ek dheema node sabko dheema kare; 2 = 1 gire tab bhi likh sakte
-  "2 node gir gaye to?"
-   -> quorum nahi bana -> write fail (ya ONE level pe likho, risk ke saath). Tab tak read Redis se
 ```
 
 ---
@@ -373,6 +373,17 @@ KAISE (quorum kyun taaza deta):
           N=3 copy · write W=2 pe done · read R=2 se padho -> W + R = 4 > 3
           matlab read wale 2 node me kam se kam 1 wahi hai jisme naya write hai -> wahi latest value
 ```
+```
+POOCHEGA: "The user created a link but gets 404 / old value. Why?"
+BOL:      "Replication lag. The write path also puts the link in Redis, and with quorum reads and
+           writes the read always sees the latest write."
+
+AGLA SAWAAL (tere jawab se):
+  "Quorum read dheema to nahi?"
+   -> haan, 2 node se jawab. Isliye pehle Redis: naya link write pe hi cache me, read wahin se
+  "R=1 rakh do (tez), phir?"
+   -> W=2 + R=1 = 3, overlap pakka nahi -> purana dikh sakta (yahi 404 wali dikkat)
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -400,17 +411,6 @@ flowchart TD
     n_Redis --> n_Cassandra
     n_Analytics_svc --> n_DLQ
 ```
-```
-POOCHEGA: "The user created a link but gets 404 / old value. Why?"
-BOL:      "Replication lag. The write path also puts the link in Redis, and with quorum reads and
-           writes the read always sees the latest write."
-
-AGLA SAWAAL (tere jawab se):
-  "Quorum read dheema to nahi?"
-   -> haan, 2 node se jawab. Isliye pehle Redis: naya link write pe hi cache me, read wahin se
-  "R=1 rakh do (tez), phir?"
-   -> W=2 + R=1 = 3, overlap pakka nahi -> purana dikh sakta (yahi 404 wali dikkat)
-```
 
 ---
 
@@ -428,6 +428,17 @@ BADLA:    LB ek se DO — ek mare to Route 53 doosre pe bheje (diagram me 2)
 
 KYUN YE:  DNS TTL ki wajah se failover turant nahi (TTL 60 sec -> user kuch der purane LB pe)
           isliye cloud me LB khud multi-AZ managed (AWS ALB) hota; floating IP (keepalived) = data center me
+```
+```
+POOCHEGA: "What if a whole region goes down?"
+BOL:      "Inside a region I'm multi-AZ. If the region dies, Route 53 health checks send users to another
+           region; data is copied there asynchronously, so a few of the newest links may be lost."
+
+AGLA SAWAAL (tere jawab se):
+  "Route 53 ko kaise pata LB mara?"
+   -> har ~30 sec health check, 3 baar fail = unhealthy -> DNS jawab me us LB ka IP hata deta
+  "Region switch me data?"
+   -> doosre region me async copy -> aakhri kuch second ke naye link gaye (maana hua)
 ```
 ```mermaid
 flowchart TD
@@ -462,17 +473,6 @@ flowchart TD
     n_Redis --> n_Cassandra
     n_Analytics_svc --> n_DLQ
 ```
-```
-POOCHEGA: "What if a whole region goes down?"
-BOL:      "Inside a region I'm multi-AZ. If the region dies, Route 53 health checks send users to another
-           region; data is copied there asynchronously, so a few of the newest links may be lost."
-
-AGLA SAWAAL (tere jawab se):
-  "Route 53 ko kaise pata LB mara?"
-   -> har ~30 sec health check, 3 baar fail = unhealthy -> DNS jawab me us LB ka IP hata deta
-  "Region switch me data?"
-   -> doosre region me async copy -> aakhri kuch second ke naye link gaye (maana hua)
-```
 
 ---
 
@@ -487,6 +487,17 @@ SOLUTION: (1) RATE LIMIT per user / IP / API key, EK jagah = API GATEWAY (har Ap
           (Poora rate limiter = 02_rate_limiter.)
 
 NAYA:     API Gateway
+```
+```
+POOCHEGA: "How do you stop abuse?"
+BOL:      "Rate limiting per user and IP at the API gateway, auth there too, a WAF at the edge, and I
+           check long URLs against a malware / phishing list before shortening."
+
+AGLA SAWAAL (tere jawab se):
+  "Gateway me limit ginti kahan rakhoge (kai gateway box)?"
+   -> shared Redis counter (INCR + TTL) -> sab box ek hi ginti dekhein (poora 02_rate_limiter)
+  "Bot alag IP se aa raha?"
+   -> IP pe nahi, API key / user_id pe limit + WAF bot rules
 ```
 ```mermaid
 flowchart TD
@@ -522,17 +533,6 @@ flowchart TD
     n_Analytics_svc --> n_Analytics_DB
     n_Redis --> n_Cassandra
     n_Analytics_svc --> n_DLQ
-```
-```
-POOCHEGA: "How do you stop abuse?"
-BOL:      "Rate limiting per user and IP at the API gateway, auth there too, a WAF at the edge, and I
-           check long URLs against a malware / phishing list before shortening."
-
-AGLA SAWAAL (tere jawab se):
-  "Gateway me limit ginti kahan rakhoge (kai gateway box)?"
-   -> shared Redis counter (INCR + TTL) -> sab box ek hi ginti dekhein (poora 02_rate_limiter)
-  "Bot alag IP se aa raha?"
-   -> IP pe nahi, API key / user_id pe limit + WAF bot rules
 ```
 
 ---
@@ -616,6 +616,17 @@ Route 53 = DNS + health-check + region · API Gateway = rate limit + auth · LB 
 Counter = range + base62 · Redis = 95% read, TTL = expiry · Cassandra = shard by shortCode + 3 replica + quorum
 Kafka = analytics async, DLQ
 ```
+```
+READ (click):  LB -> App -> Redis hit? -> 302 · miss -> Cassandra -> Redis me daalo -> 302 · async -> Kafka
+WRITE (naya):  LB -> App -> Counter range + base62 (123456 -> "w7e") -> Redis + Cassandra -> short URL wapas
+```
+```
+BOL: "Short code is a counter in base62, with ranges handed to each server so there's no collision.
+      Reads are 100 to 1, so Redis serves most redirects; Cassandra sharded by short code holds the
+      rest with three replicas. Redirect is a 302 and click analytics go async through Kafka. Route 53
+      and two load balancers remove the single points of failure, and the gateway rate-limits abuse.
+      Next I'd add custom aliases, expiry cleanup and geo-distribution."
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -650,17 +661,6 @@ flowchart TD
     n_Analytics_svc --> n_Analytics_DB
     n_Redis --> n_Cassandra
     n_Analytics_svc --> n_DLQ
-```
-```
-READ (click):  LB -> App -> Redis hit? -> 302 · miss -> Cassandra -> Redis me daalo -> 302 · async -> Kafka
-WRITE (naya):  LB -> App -> Counter range + base62 (123456 -> "w7e") -> Redis + Cassandra -> short URL wapas
-```
-```
-BOL: "Short code is a counter in base62, with ranges handed to each server so there's no collision.
-      Reads are 100 to 1, so Redis serves most redirects; Cassandra sharded by short code holds the
-      rest with three replicas. Redirect is a 302 and click analytics go async through Kafka. Route 53
-      and two load balancers remove the single points of failure, and the gateway rate-limits abuse.
-      Next I'd add custom aliases, expiry cleanup and geo-distribution."
 ```
 
 ARCHETYPE F (infra/component) · CONCEPTS: [ID-gen](../../FOUNDATIONS/13_distributed_id_snowflake.md) · [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

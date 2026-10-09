@@ -76,6 +76,16 @@ SOLUTION: (1) FAN-OUT ON WRITE: tweet POST hote hi har follower ke INBOX me daal
 
 NAYA:     Fanout (tweet ko har follower ke inbox me daalne wala) · Redis inbox (har user ki ready feed, sirf tweet_id)
 ```
+```
+BOARD PE: app khuli -> 200 follow -> sabke tweet -> sort -> top 50 · read : write = 50 : 1
+          Virat tweet -> Fanout -> redis:inbox:arpan = [t9, t7, t3, ...]
+
+AGLA SAWAAL (tere jawab se):
+  "Inbox me sirf tweet_id, to feed dikhate waqt poora tweet kahan se?"
+   -> inbox se 50 id -> ek saath batch me tweet store / hot cache se laao (MGET), ek-ek nahi
+  "Kisi ko unfollow kiya, uske tweet inbox me pade hain?"
+   -> padhte waqt follow list se filter, ya peeche se saaf. Turant poora inbox nahi badalte
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -88,16 +98,6 @@ flowchart TD
     n_App --> n_DB
     n_Fanout --> n_Redis_inbox
     n_App --> n_Redis_inbox
-```
-```
-BOARD PE: app khuli -> 200 follow -> sabke tweet -> sort -> top 50 · read : write = 50 : 1
-          Virat tweet -> Fanout -> redis:inbox:arpan = [t9, t7, t3, ...]
-
-AGLA SAWAAL (tere jawab se):
-  "Inbox me sirf tweet_id, to feed dikhate waqt poora tweet kahan se?"
-   -> inbox se 50 id -> ek saath batch me tweet store / hot cache se laao (MGET), ek-ek nahi
-  "Kisi ko unfollow kiya, uske tweet inbox me pade hain?"
-   -> padhte waqt follow list se filter, ya peeche se saaf. Turant poora inbox nahi badalte
 ```
 
 ---
@@ -115,6 +115,20 @@ SOLUTION: (1) Tweet DB me likho + EVENT Kafka pe -> user ko turant "ho gaya".
 NAYA:     Kafka
 BADLA:    Fanout -> Fanout workers (Kafka se padhte)
 ```
+```
+POOCHEGA: "I just tweeted but don't see it in my own feed. Why?"
+DHYAAN:   fanout PEECHE chalta hai — isliye. "bug hai" nahi
+BOL:      "Read-your-own-writes: the author's new tweet is added to their own feed directly, without
+           waiting for fan-out."
+
+AGLA SAWAAL (tere jawab se):
+  "Fanout worker beech me gira (100 me se 60 inbox likhe)?"
+   -> Kafka offset commit nahi hua -> event dobara aata, worker phir se likhta. Inbox me id dobara na aaye
+      -> inbox Redis LIST hai (LPUSH dobara = id do baar) -> LPUSH se pehle idempotency check (SET eventId NX)
+      ya inbox ko sorted set banao (ZADD same id = ek hi, score = time)
+  "Kafka me partition kaise baante?"
+   -> key = author_id -> ek author ke tweet ek partition, kram me; workers partitions baant lete
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -129,20 +143,6 @@ flowchart TD
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
-```
-```
-POOCHEGA: "I just tweeted but don't see it in my own feed. Why?"
-DHYAAN:   fanout PEECHE chalta hai — isliye. "bug hai" nahi
-BOL:      "Read-your-own-writes: the author's new tweet is added to their own feed directly, without
-           waiting for fan-out."
-
-AGLA SAWAAL (tere jawab se):
-  "Fanout worker beech me gira (100 me se 60 inbox likhe)?"
-   -> Kafka offset commit nahi hua -> event dobara aata, worker phir se likhta. Inbox me id dobara na aaye
-      -> inbox Redis LIST hai (LPUSH dobara = id do baar) -> LPUSH se pehle idempotency check (SET eventId NX)
-      ya inbox ko sorted set banao (ZADD same id = ek hi, score = time)
-  "Kafka me partition kaise baante?"
-   -> key = author_id -> ek author ke tweet ek partition, kram me; workers partitions baant lete
 ```
 
 ---
@@ -160,21 +160,6 @@ SOLUTION: HYBRID:
           Kaun celeb: followers ki ek had (threshold) se tay.
 
 NAYA:     koi dabba nahi — Fanout celeb ko SKIP karta, App read pe merge karta
-```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App<br/>push + pull merge"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers<br/>celeb SKIP"]
-    n_Redis_inbox["Redis inbox"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_DB
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
 ```
 ```
 BOARD PE: ek tweet -> 100,000,000 inbox write
@@ -197,6 +182,21 @@ AGLA SAWAAL (tere jawab se):
   "Koi 9,999 se 10,001 follower pe aaya-gaya baar-baar?"
    -> beech me gap rakho (12K se upar gaya to pull · 8K se neeche aaya tabhi wapas push) taaki baar-baar palti na ho
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App<br/>push + pull merge"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers<br/>celeb SKIP"]
+    n_Redis_inbox["Redis inbox"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_DB
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+```
 
 ---
 
@@ -214,6 +214,19 @@ NAYA:     Hot-tweet cache (celeb ke naye tweet RAM me, sab wahin se padhein)
 KYUN YE:  Cassandra ke read replica kyun nahi -> wo bhi disk se (ms), cache RAM se (<1ms), aur replica 10 crore read nahi jhelta
           cache miss pe 1000 request ek saath DB pe na jaayein -> sirf EK DB jaaye, baaki cache bharne ka intezaar (lock)
 ```
+```
+BOARD PE: SETEX ... 3600 (1 hr) · ~95% hit · < 1 hr = HOT -> cache · purana = COLD -> DB
+
+POOCHEGA: "What if traffic suddenly spikes 10x?"
+BOL:      "Kafka holds the fan-out burst. If I know when it's coming, like an IPL final, I scale out and
+           pre-warm the hot-tweet cache beforehand — autoscaling takes minutes, the spike takes seconds."
+
+AGLA SAWAAL (tere jawab se):
+  "Virat ne tweet edit / delete kiya, cache purana?"
+   -> delete / edit pe us tweet ki cache key bhi DEL, agla read DB se naya
+  "Ek hi tweet ki key ek Redis node pe -> wahi node garam?"
+   -> us key ki kai copy (tweet:123#1..#5), read random copy se + App me chhota local cache
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -230,19 +243,6 @@ flowchart TD
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
-```
-```
-BOARD PE: SETEX ... 3600 (1 hr) · ~95% hit · < 1 hr = HOT -> cache · purana = COLD -> DB
-
-POOCHEGA: "What if traffic suddenly spikes 10x?"
-BOL:      "Kafka holds the fan-out burst. If I know when it's coming, like an IPL final, I scale out and
-           pre-warm the hot-tweet cache beforehand — autoscaling takes minutes, the spike takes seconds."
-
-AGLA SAWAAL (tere jawab se):
-  "Virat ne tweet edit / delete kiya, cache purana?"
-   -> delete / edit pe us tweet ki cache key bhi DEL, agla read DB se naya
-  "Ek hi tweet ki key ek Redis node pe -> wahi node garam?"
-   -> us key ki kai copy (tweet:123#1..#5), read random copy se + App me chhota local cache
 ```
 
 ---
@@ -258,6 +258,21 @@ SOLUTION: (1) INBOX (har user ka): sirf tweet_id, poora tweet nahi, aur aakhri k
 
 NAYA:     koi dabba nahi
 ```
+```
+BOARD PE: inbox: LTRIM 800 -> ~6.4 KB · 500M x 6.4 KB = ~3.2 TB -> Redis cluster
+          hot-tweet: ~500K x 500 B = ~250 MB -> ek node · inactive = 30 din
+
+POOCHEGA: "What if the cache goes down?"
+DHYAAN:   Redis gira -> har feed DB se banana -> mehnga -> DB bhi gir sakta
+BOL:      "Redis is a replicated cluster. If it fails, I shed load, let one request rebuild each hot
+           key instead of thousands, and warm inboxes back up gradually."
+
+AGLA SAWAAL (tere jawab se):
+  "Inactive user wapas aaya, rebuild me kitna time?"
+   -> pehli baar feed pull se bana do (follows ke latest tweet), phir inbox bhar do -> ek baar dheema, phir tez
+  "LTRIM 800 ke baad purana scroll?"
+   -> 800 ke aage scroll = DB se pull (bahut kam log itna neeche jaate)
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -274,21 +289,6 @@ flowchart TD
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
-```
-```
-BOARD PE: inbox: LTRIM 800 -> ~6.4 KB · 500M x 6.4 KB = ~3.2 TB -> Redis cluster
-          hot-tweet: ~500K x 500 B = ~250 MB -> ek node · inactive = 30 din
-
-POOCHEGA: "What if the cache goes down?"
-DHYAAN:   Redis gira -> har feed DB se banana -> mehnga -> DB bhi gir sakta
-BOL:      "Redis is a replicated cluster. If it fails, I shed load, let one request rebuild each hot
-           key instead of thousands, and warm inboxes back up gradually."
-
-AGLA SAWAAL (tere jawab se):
-  "Inactive user wapas aaya, rebuild me kitna time?"
-   -> pehli baar feed pull se bana do (follows ke latest tweet), phir inbox bhar do -> ek baar dheema, phir tez
-  "LTRIM 800 ke baad purana scroll?"
-   -> 800 ke aage scroll = DB se pull (bahut kam log itna neeche jaate)
 ```
 
 ---
@@ -312,6 +312,17 @@ KAISE (LSM = tez write):
 KYUN YE:  MySQL me har write = B-tree index me jagah dhoondh ke badlo (random disk write) -> itne writes pe dheema
           join / transaction yahan chahiye hi nahi, bas "user ke tweet time ke kram me" 
 ```
+```
+POOCHEGA: "The database is too big / takes too many writes. What do you do?"
+BOL:      "Shard by user id so a user's tweets sit together and the profile page is one shard, add time
+           as a sub-key so hot users spread out, and replicate the hottest users' tweets for reads."
+
+AGLA SAWAAL (tere jawab se):
+  "LSM me read dheema kyun ho sakta?"
+   -> ek key kai SSTable me bikhri ho sakti -> sab dekhna padta. Bloom filter + compaction se kam
+  "Partition key aur clustering key kya?"
+   -> partition = (user_id, month) -> kis node pe · clustering = tweet time DESC -> andar kram
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -328,17 +339,6 @@ flowchart TD
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
-```
-```
-POOCHEGA: "The database is too big / takes too many writes. What do you do?"
-BOL:      "Shard by user id so a user's tweets sit together and the profile page is one shard, add time
-           as a sub-key so hot users spread out, and replicate the hottest users' tweets for reads."
-
-AGLA SAWAAL (tere jawab se):
-  "LSM me read dheema kyun ho sakta?"
-   -> ek key kai SSTable me bikhri ho sakti -> sab dekhna padta. Bloom filter + compaction se kam
-  "Partition key aur clustering key kya?"
-   -> partition = (user_id, month) -> kis node pe · clustering = tweet time DESC -> andar kram
 ```
 
 ---
@@ -358,6 +358,20 @@ KAISE:    user region tak kaise -> Route 53 latency / geo routing: DNS jawab me 
           Bieber ke tweet India tak kaise -> Cassandra multi-DC replication: har region ek DC, likha hua
           doosre DC me async copy (us DC ke liye alag replication factor)
 ```
+```
+BOARD PE: latency 5 ms (paas) vs 200 ms (door)
+
+POOCHEGA: "What if a whole region goes down?"
+BOL:      "Route 53 health checks move users to the nearest healthy region. Data is copied there
+           asynchronously, so the feed may be a little stale after failover — we already accepted
+           eventual consistency."
+
+AGLA SAWAAL (tere jawab se):
+  "India ka user US travel kar raha, data kahan?"
+   -> uska data home region me hi, request wahan forward ya paas wali copy se read (thoda purana chalega)
+  "Do region me ek saath likha (conflict)?"
+   -> tweet naya hi banta (update kam) -> conflict kam. Ho to last-write-wins timestamp se
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -374,20 +388,6 @@ flowchart TD
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
-```
-```
-BOARD PE: latency 5 ms (paas) vs 200 ms (door)
-
-POOCHEGA: "What if a whole region goes down?"
-BOL:      "Route 53 health checks move users to the nearest healthy region. Data is copied there
-           asynchronously, so the feed may be a little stale after failover — we already accepted
-           eventual consistency."
-
-AGLA SAWAAL (tere jawab se):
-  "India ka user US travel kar raha, data kahan?"
-   -> uska data home region me hi, request wahan forward ya paas wali copy se read (thoda purana chalega)
-  "Do region me ek saath likha (conflict)?"
-   -> tweet naya hi banta (update kam) -> conflict kam. Ho to last-write-wins timestamp se
 ```
 
 ---
@@ -406,6 +406,13 @@ BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroo
 KAISE:    ALB har box pe health check (GET /health har ~10 sec) -> fail = box list se bahar, theek = wapas
           Route 53 bhi isi tarah poore region / ALB ko dekhta
 KYUN YE:  ek bada server (vertical) kyun nahi -> ek had ke baad mehnga aur wahi SPOF
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Naya box juda, uski cache khaali -> pehli requests dheemi?"
+   -> App box me state nahi (Redis alag), isliye farak kam; LB naye box ko dheere-dheere traffic de (slow start)
+  "Deploy karte waqt sab box restart?"
+   -> rolling deploy: ek-ek box nikaalo, update, wapas. Site kabhi band nahi
 ```
 ```mermaid
 flowchart TD
@@ -434,13 +441,6 @@ flowchart TD
     n_App_x_N_1 --> n_Redis_inbox
     n_App_x_N_2 --> n_Redis_inbox
 ```
-```
-AGLA SAWAAL (tere jawab se):
-  "Naya box juda, uski cache khaali -> pehli requests dheemi?"
-   -> App box me state nahi (Redis alag), isliye farak kam; LB naye box ko dheere-dheere traffic de (slow start)
-  "Deploy karte waqt sab box restart?"
-   -> rolling deploy: ek-ek box nikaalo, update, wapas. Site kabhi band nahi
-```
 
 ---
 
@@ -455,6 +455,13 @@ SOLUTION: (1) TWEET SERVICE (likhna) + TIMELINE SERVICE (padhna, push + pull mil
 
 BADLA:    App -> teen ALAG service: Tweet Svc + Timeline Svc + User Svc (har ek ke kai box, diagram me ek-ek)
 NAYA:     Graph DB (kaun kisko follow karta)
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Timeline svc ko follow list kahan se?"
+   -> User/Graph svc se, par har read pe call nahi -> follow list Redis me cache
+  "Fanout ko har baar 10K followers ki list?"
+   -> Graph store se pages me (1000-1000) padh ke inbox likhta
 ```
 ```mermaid
 flowchart TD
@@ -485,13 +492,6 @@ flowchart TD
     n_User_Svc --> n_Graph_DB
     n_Fanout_workers --> n_Graph_DB
 ```
-```
-AGLA SAWAAL (tere jawab se):
-  "Timeline svc ko follow list kahan se?"
-   -> User/Graph svc se, par har read pe call nahi -> follow list Redis me cache
-  "Fanout ko har baar 10K followers ki list?"
-   -> Graph store se pages me (1000-1000) padh ke inbox likhta
-```
 
 ---
 
@@ -509,6 +509,13 @@ KAISE:    tweet me media ka URL CDN ka hota (cdn.twitter.com/img/abc.jpg)
           laata, apne paas TTL tak rakhta, phir aage sab ko wahin se
 KYUN YE:  seedha S3 se -> door ke user ko dheema + S3 / bandwidth ka kharcha har baar
           (dhyaan: CDN media ke raaste pe hai, origin S3; API ke raaste pe nahi)
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Photo delete ki, CDN pe abhi bhi dikh rahi?"
+   -> CDN invalidation call ya chhota TTL; ya URL me version (abc_v2.jpg) -> naya URL = naya file
+  "Private photo CDN pe sabko mil jaayegi?"
+   -> signed URL (expiry ke saath) -> sirf jisko link mila, thodi der ke liye
 ```
 ```mermaid
 flowchart TD
@@ -542,13 +549,6 @@ flowchart TD
     n_Route_53 --> n_ALB
     n_USER --> n_CDN
     n_CDN --> n_S3
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "Photo delete ki, CDN pe abhi bhi dikh rahi?"
-   -> CDN invalidation call ya chhota TTL; ya URL me version (abc_v2.jpg) -> naya URL = naya file
-  "Private photo CDN pe sabko mil jaayegi?"
-   -> signed URL (expiry ke saath) -> sirf jisko link mila, thodi der ke liye
 ```
 
 ---
@@ -602,6 +602,13 @@ Route 53 = DNS + health · CDN = media · ALB · Tweet Svc = likhna · Kafka = f
 Fanout workers = normal ke inbox, celeb skip · Redis inbox = sirf ID, LTRIM 800 · Hot-tweet cache = celeb read
 Timeline Svc = push + pull merge · Cassandra = sab tweet, user_id + time + geo · User Svc + Graph DB = follow
 ```
+```
+BOL: "On write, the Tweet service saves to Cassandra and puts an event on Kafka; fan-out workers push the
+      tweet id into each normal follower's Redis inbox. On read, the Timeline service takes the inbox,
+      pulls celebrity tweets from a hot-tweet cache, merges, sorts, hydrates and returns the top 50.
+      Hybrid push / pull handles celebrities, Cassandra is sharded by user id and time with geo copies.
+      Next I'd add ML ranking, trending and search."
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -634,13 +641,6 @@ flowchart TD
     n_Route_53 --> n_ALB
     n_USER --> n_CDN
     n_CDN --> n_S3
-```
-```
-BOL: "On write, the Tweet service saves to Cassandra and puts an event on Kafka; fan-out workers push the
-      tweet id into each normal follower's Redis inbox. On read, the Timeline service takes the inbox,
-      pulls celebrity tweets from a hot-tweet cache, merges, sorts, hydrates and returns the top 50.
-      Hybrid push / pull handles celebrities, Cassandra is sharded by user id and time with geo copies.
-      Next I'd add ML ranking, trending and search."
 ```
 
 ARCHETYPE A (read-heavy/feed) · CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

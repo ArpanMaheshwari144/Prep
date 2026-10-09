@@ -61,18 +61,6 @@ SOLUTION: (1) Har stock (symbol) ki EK queue + EK thread -> order ek ke baad ek 
 
 NAYA:     Queue per symbol · Matching Engine (buy aur sell order milaane wala, order book RAM me)
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Order_Service["Order Service"]
-    n_Queue_per_symbol["Queue per symbol"]
-    n_Matching_Engine["Matching Engine"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Queue_per_symbol
-    n_Queue_per_symbol --> n_Matching_Engine
-    n_Matching_Engine --> n_DB
-```
 ```
 BOARD PE: seller ke 10 share · Ramesh BUY 10 + Mohan BUY 10 ek saath -> 20 bik gaye, the 10
           TCS -> T1 · INFY -> T2
@@ -88,6 +76,18 @@ AGLA SAWAAL (tere jawab se):
   "Woh thread hi atak gaya (GC pause)?"
    -> us symbol ke order line me rukenge; isliye Java me chhoti memory / low-GC, aur ek standby jo log se uth sake
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Queue_per_symbol["Queue per symbol"]
+    n_Matching_Engine["Matching Engine"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Queue_per_symbol
+    n_Queue_per_symbol --> n_Matching_Engine
+    n_Matching_Engine --> n_DB
+```
 
 ---
 
@@ -102,6 +102,16 @@ SOLUTION: (1) Order lagte hi paisa BLOCK karo, kaato nahi (hotel deposit jaisa).
 
 NAYA:     Wallet (user ka paisa: total / blocked / available)
 ```
+```
+BOARD PE: total 50k · blocked 30k · available 20k -> 30k ka doosra order REJECT
+          UPDATE wallet SET blocked = blocked + x WHERE total - blocked >= x   (0 row = reject)
+
+AGLA SAWAAL (tere jawab se):
+  "Block kiya, order 3 din pending pada raha?"
+   -> order ki expiry (day order shaam ko khatam) -> unblock
+  "Partial match (10 me se 6 bike)?"
+   -> 6 ka paisa kato, baaki 4 ka blocked wahi rahe
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -115,16 +125,6 @@ flowchart TD
     n_Wallet --> n_Queue_per_symbol
     n_Queue_per_symbol --> n_Matching_Engine
     n_Matching_Engine --> n_DB
-```
-```
-BOARD PE: total 50k · blocked 30k · available 20k -> 30k ka doosra order REJECT
-          UPDATE wallet SET blocked = blocked + x WHERE total - blocked >= x   (0 row = reject)
-
-AGLA SAWAAL (tere jawab se):
-  "Block kiya, order 3 din pending pada raha?"
-   -> order ki expiry (day order shaam ko khatam) -> unblock
-  "Partial match (10 me se 6 bike)?"
-   -> 6 ka paisa kato, baaki 4 ka blocked wahi rahe
 ```
 
 ---
@@ -141,6 +141,15 @@ SOLUTION: (1) Saare step EK transaction me (ACID, @Transactional) -> sab ya kuch
 NAYA:     Settlement (match ke BAAD paisa + share sach me badalne wala dabba — kaam ka naam; yahan wo kaam
           EK TRANSACTION se hota. dikkat 4 me do DB ho jaate, tab wahi kaam SAGA se. Settlement = KYA, transaction / SAGA = KAISE)
 ```
+```
+BOARD PE: BEGIN  buyer -30k +10 share · seller +30k -10 share  COMMIT
+
+AGLA SAWAAL (tere jawab se):
+  "Double-entry ledger kaise dikhta?"
+   -> har settlement ki do row: buyer DEBIT 30k, seller CREDIT 30k. Sab rows ka jod hamesha 0 -> galti turant dikhe
+  "Balance ledger se har baar jodoge?"
+   -> nahi, balance alag column jo ussi transaction me badalta; ledger = sach ka record / audit
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -156,15 +165,6 @@ flowchart TD
     n_Queue_per_symbol --> n_Matching_Engine
     n_Matching_Engine --> n_Settlement
     n_Settlement --> n_DB
-```
-```
-BOARD PE: BEGIN  buyer -30k +10 share · seller +30k -10 share  COMMIT
-
-AGLA SAWAAL (tere jawab se):
-  "Double-entry ledger kaise dikhta?"
-   -> har settlement ki do row: buyer DEBIT 30k, seller CREDIT 30k. Sab rows ka jod hamesha 0 -> galti turant dikhe
-  "Balance ledger se har baar jodoge?"
-   -> nahi, balance alag column jo ussi transaction me badalta; ledger = sach ka record / audit
 ```
 
 ---
@@ -191,6 +191,16 @@ KAISE (state kahan):
           orchestrator (Settlement) har step ka haal apne DB me likhta: STARTED -> WALLET_DONE -> PORTFOLIO_DONE
           orchestrator gira -> uthte hi DB dekh ke wahin se aage / ulta
 ```
+```
+BOARD PE: wallet -30k ✓ -> portfolio +10 ✗ -> COMPENSATE: wallet +30k wapas
+
+AGLA SAWAAL (tere jawab se):
+  "Compensation (wallet +30k wapas) bhi fail ho gaya?"
+   -> retry karte raho (idempotent step) + alert; paisa ka ulta step chhodna nahi
+  "Orchestration ya choreography?"
+   -> orchestration (ek Settlement sab chalaye) -> paisa me saaf dikhta kaun-sa step kahan atka
+      choreography = har service event sun ke apna kare, simple flow me theek
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -209,16 +219,6 @@ flowchart TD
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
 ```
-```
-BOARD PE: wallet -30k ✓ -> portfolio +10 ✗ -> COMPENSATE: wallet +30k wapas
-
-AGLA SAWAAL (tere jawab se):
-  "Compensation (wallet +30k wapas) bhi fail ho gaya?"
-   -> retry karte raho (idempotent step) + alert; paisa ka ulta step chhodna nahi
-  "Orchestration ya choreography?"
-   -> orchestration (ek Settlement sab chalaye) -> paisa me saaf dikhta kaun-sa step kahan atka
-      choreography = har service event sun ke apna kare, simple flow me theek
-```
 
 ---
 
@@ -235,6 +235,13 @@ KAISE:    client har order pe ek key banata (UUID), retry pe WAHI key
           server: INSERT idempotency(key, response) -> key UNIQUE constraint
           naya = insert ho gaya, order lagao, response save · pehle se = UNIQUE fail -> saved response wapas
           do request ek saath aayi -> DB unique ek ko hi jeetne deta (atomic check-and-set)
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Pehli request abhi chal hi rahi thi aur retry aa gaya?"
+   -> key ka status IN_PROGRESS -> retry ko '409 / thoda ruko' -> DONE hone pe saved result
+  "Key kitne din rakhoge?"
+   -> 24 ghante jaisa (retry window), phir saaf
 ```
 ```mermaid
 flowchart TD
@@ -254,13 +261,6 @@ flowchart TD
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
 ```
-```
-AGLA SAWAAL (tere jawab se):
-  "Pehli request abhi chal hi rahi thi aur retry aa gaya?"
-   -> key ka status IN_PROGRESS -> retry ko '409 / thoda ruko' -> DONE hone pe saved result
-  "Key kitne din rakhoge?"
-   -> 24 ghante jaisa (retry window), phir saaf
-```
 
 ---
 
@@ -278,24 +278,6 @@ SOLUTION: (1) EVENT LOG / SEQUENCER: har order PEHLE append-only log me (disk / 
           Audit = regulator ke liye, kaun-kya-kab, saalon tak, badla nahi ja sakta. Ek log, do kaam.
 
 BADLA:    Queue per symbol -> Event Log (wahi queue, ab disk pe likhi jaati + seq no. + key = symbol)
-```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Order_Service["Order Service"]
-    n_Wallet["Wallet"]
-    n_Event_Log["Event Log"]
-    n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement (SAGA)"]
-    n_Wallet_DB["Wallet DB"]
-    n_Portfolio_DB["Portfolio DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Event_Log
-    n_Event_Log --> n_Matching_Engine
-    n_Matching_Engine --> n_Settlement
-    n_Settlement --> n_Wallet_DB
-    n_Settlement --> n_Portfolio_DB
 ```
 ```
 BOARD PE: Ramesh 10:00:01, Mohan 10:00:02, dono BUY TCS @3000 -> Ramesh = #501, Mohan = #502
@@ -321,6 +303,24 @@ AGLA SAWAAL (tere jawab se):
   "Hot standby rakhoge?"
    -> haan, doosra server log padhta rehta (book RAM me taiyaar), primary gira to seconds me le leta
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Event_Log["Event Log"]
+    n_Matching_Engine["Matching Engine"]
+    n_Settlement["Settlement (SAGA)"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Event_Log
+    n_Event_Log --> n_Matching_Engine
+    n_Matching_Engine --> n_Settlement
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
+```
 
 ---
 
@@ -340,6 +340,13 @@ KAISE:    har symbol = ek channel (price:TCS)
           Redis kuch store nahi karta -> reconnect pe user current price alag se le leta
 KYUN YE:  Kafka -> store + replay karta, yahan purana price bekaar, sirf latest chahiye
           SSE bhi chal jaata (sirf server -> client); WebSocket isliye ki order bhi isi connection pe
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Price second me 1000 baar badla, sab bhejoge?"
+   -> nahi, conflate: har ~100ms sirf latest bhejo, beech ke chhodo
+  "Ek WebSocket server pe kitne user?"
+   -> lakh ke aas paas (event loop); zyada user = zyada servers, LB se baant
 ```
 ```mermaid
 flowchart TD
@@ -365,13 +372,6 @@ flowchart TD
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
 ```
-```
-AGLA SAWAAL (tere jawab se):
-  "Price second me 1000 baar badla, sab bhejoge?"
-   -> nahi, conflate: har ~100ms sirf latest bhejo, beech ke chhodo
-  "Ek WebSocket server pe kitne user?"
-   -> lakh ke aas paas (event loop); zyada user = zyada servers, LB se baant
-```
 
 ---
 
@@ -387,6 +387,13 @@ SOLUTION: (1) Book mat todo: do thread = double match wapas + kram toot-ta. Ek t
           Scale stocks ke BEECH (alag thread), ek stock ke andar kabhi nahi.
 
 NAYA:     koi dabba nahi — Event Log hi kaam aaya
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Ek thread kitna jhel leta?"
+   -> RAM me, lock ke bina -> lakhon order / sec (LMAX ka design yahi)
+  "Event log me order kitni der line me rahe to user ko kya?"
+   -> order 'ACCEPTED' turant, 'FILLED' jab match hua -> user ko dono status dikhte
 ```
 ```mermaid
 flowchart TD
@@ -411,13 +418,6 @@ flowchart TD
     n_WebSocket --> n_USERS
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "Ek thread kitna jhel leta?"
-   -> RAM me, lock ke bina -> lakhon order / sec (LMAX ka design yahi)
-  "Event log me order kitni der line me rahe to user ko kya?"
-   -> order 'ACCEPTED' turant, 'FILLED' jab match hua -> user ko dono status dikhte
 ```
 
 ---
@@ -467,6 +467,13 @@ API: POST /order {stock, side, qty, price, type, idempotencyKey} · DELETE /orde
 Order Service = validate + idempotency · Wallet = paisa BLOCK · Event Log = seq no. + replay + audit
 Matching = 1 thread / symbol, book RAM, shard by symbol · Settlement = ek txn / kai DB = SAGA
 ```
+```
+BOL: "Order Service validates and checks the idempotency key, Wallet blocks the money, every order
+      goes into an append-only log with a sequence number, and a single-threaded matching engine per
+      symbol keeps the book in memory. Settlement is one transaction, or a saga across services.
+      Prices go out over WebSocket via pub/sub. The log gives crash recovery and an audit trail.
+      Next: stop-loss, circuit breakers, real-time risk checks, regulatory reporting."
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -490,13 +497,6 @@ flowchart TD
     n_WebSocket --> n_USERS
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
-```
-```
-BOL: "Order Service validates and checks the idempotency key, Wallet blocks the money, every order
-      goes into an append-only log with a sequence number, and a single-threaded matching engine per
-      symbol keeps the book in memory. Settlement is one transaction, or a saga across services.
-      Prices go out over WebSocket via pub/sub. The log gives crash recovery and an audit trail.
-      Next: stop-loss, circuit breakers, real-time risk checks, regulatory reporting."
 ```
 
 ARCHETYPE C (transactional) · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [payment](../06_payment_system/06_payment_system.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

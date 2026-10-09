@@ -76,14 +76,6 @@ SOLUTION: (1) Dono account EK DB me -> EK local transaction (@Transactional): de
 
 NAYA:     koi dabba nahi — DB transaction
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Banking_Svc["Banking Svc"]
-    n_SQL_DB["SQL DB<br/>debit + credit EK transaction"]
-    n_USER --> n_Banking_Svc
-    n_Banking_Svc --> n_SQL_DB
-```
 ```
 BOARD PE: BEGIN;
             UPDATE accounts SET balance = balance - 500 WHERE id = A;
@@ -104,6 +96,14 @@ AGLA SAWAAL (tere jawab se):
       bina COMMIT wala undo -> aadha kabhi nahi
   "A aur B alag bank me?"
    -> tab ek txn nahi -> PENDING + SAGA / reconciliation (payment wala raasta)
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB<br/>debit + credit EK transaction"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
 ```
 
 ---
@@ -132,16 +132,6 @@ KAISE (outbox relay):
           ya CDC (Debezium): DB ka WAL padh ke outbox ki nayi row seedha Kafka me (polling ka bojh nahi)
           relay 'sent' likhne se pehle gira -> event dobara -> consumers eventId se idempotent
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Banking_Svc["Banking Svc"]
-    n_SQL_DB["SQL DB"]
-    n_Kafka["Kafka"]
-    n_USER --> n_Banking_Svc
-    n_Banking_Svc --> n_SQL_DB
-    n_SQL_DB --> n_Kafka
-```
 ```
 BOARD PE: A -500, B +500 -> jod = 0
           commit -> outbox row -> relay -> Kafka (acks=all) -> SMS / fraud / statement · fail -> DLQ
@@ -160,6 +150,16 @@ AGLA SAWAAL (tere jawab se):
       Kafka + DB ek txn me ho hi nahi sakte (do alag system) -> Kafka sirf commit ke BAAD, outbox se.
       BOL pehli line me hi: "ledger is a table in the same DB transaction; Kafka only gets the event after commit"
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+```
 
 ---
 
@@ -175,18 +175,6 @@ SOLUTION: (1) DONO rakho: ledger = sach, balance column = uska joda hua nateeja 
               Chupchap theek mat karo, pehle KYUN dhoondo (bug abhi zinda hai).
 
 NAYA:     Reconciliation job (raat ko ledger ka jod aur balance milaane wala)
-```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Banking_Svc["Banking Svc"]
-    n_SQL_DB["SQL DB"]
-    n_Kafka["Kafka"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_Banking_Svc
-    n_Banking_Svc --> n_SQL_DB
-    n_SQL_DB --> n_Kafka
-    n_Reconciliation_job --> n_SQL_DB
 ```
 ```
 BOARD PE: 10M / din -> 3 saal ~11 arab txn = ~22 arab row · purana account 5,000-50,000 entry
@@ -209,6 +197,18 @@ AGLA SAWAAL (tere jawab se):
   "~22 arab row (11 arab txn) pe raat ka SUM har account ka?"
    -> snapshot + sirf aaj ki entries jodo (DIKKAT 9 wala snapshot), poora nahi
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+```
 
 ---
 
@@ -225,6 +225,13 @@ SOLUTION: (1) IDEMPOTENCY KEY har transfer ke saath. Key pehle dekhi -> purana r
 
 NAYA:     koi dabba nahi — DB me idempotency_keys (UNIQUE)
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Same key, par body alag (amount 500 ki jagah 5000)?"
+   -> key ke saath request ka hash bhi rakho -> mismatch = 422 error, purana result nahi
+  "Key table hamesha badhegi?"
+   -> 24-48 ghante baad saaf (retry window ke baad kaam ki nahi)
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -236,13 +243,6 @@ flowchart TD
     n_Banking_Svc --> n_SQL_DB
     n_SQL_DB --> n_Kafka
     n_Reconciliation_job --> n_SQL_DB
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "Same key, par body alag (amount 500 ki jagah 5000)?"
-   -> key ke saath request ka hash bhi rakho -> mismatch = 422 error, purana result nahi
-  "Key table hamesha badhegi?"
-   -> 24-48 ghante baad saaf (retry window ke baad kaam ki nahi)
 ```
 
 ---
@@ -261,18 +261,6 @@ SOLUTION: (1) balance = balance - 500 DB ke andar hota -> row lock, dono line me
 
 NAYA:     koi dabba nahi
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Banking_Svc["Banking Svc"]
-    n_SQL_DB["SQL DB<br/>+ idempotency_keys (UNIQUE)"]
-    n_Kafka["Kafka"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_Banking_Svc
-    n_Banking_Svc --> n_SQL_DB
-    n_SQL_DB --> n_Kafka
-    n_Reconciliation_job --> n_SQL_DB
-```
 ```
 BOARD PE: A ke paas 300, 200-200 ek saath, check app me -> dono 300 dekhe -> -100
           UPDATE accounts SET balance = balance - 200 WHERE id = A AND balance >= 200;  (0 row = REJECT)
@@ -289,6 +277,18 @@ AGLA SAWAAL (tere jawab se):
    -> 'insufficient balance' (422), aur txn rollback (credit wala UPDATE bhi nahi)
   "Deadlock fir bhi aaya (kram ke bawajood)?"
    -> DB victim ko rollback karta -> app chhota retry (idempotent key ke saath)
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB<br/>+ idempotency_keys (UNIQUE)"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
 ```
 
 ---
@@ -310,6 +310,17 @@ KAISE (failover kaun karta):
           -> app jis DB address (DNS / endpoint) pe likhta wo naye primary pe point -> ~30-60 sec me wapas
           SYNC kyun: commit tabhi jab replica ne bhi likha -> promote hone wale ke paas har confirmed transfer
 ```
+```
+POOCHEGA: "What happens if a server or the DB goes down?"
+BOL:      "Services are stateless behind a load balancer with health checks. The primary has a synchronous
+           replica in another zone that's promoted, so a confirmed transfer is never lost."
+
+AGLA SAWAAL (tere jawab se):
+  "Sync replica = har transfer dheema?"
+   -> haan, thoda (ek network hop). Paisa me ye keemat theek; async me aakhri transfer kho sakta
+  "Failover ke 30 sec me transfer?"
+   -> error -> client retry (same idempotency key) -> double nahi
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -326,17 +337,6 @@ flowchart TD
     n_Banking_Svc_x_N_2 --> n_SQL_DB
     n_SQL_DB --> n_Kafka
     n_Reconciliation_job --> n_SQL_DB
-```
-```
-POOCHEGA: "What happens if a server or the DB goes down?"
-BOL:      "Services are stateless behind a load balancer with health checks. The primary has a synchronous
-           replica in another zone that's promoted, so a confirmed transfer is never lost."
-
-AGLA SAWAAL (tere jawab se):
-  "Sync replica = har transfer dheema?"
-   -> haan, thoda (ek network hop). Paisa me ye keemat theek; async me aakhri transfer kho sakta
-  "Failover ke 30 sec me transfer?"
-   -> error -> client retry (same idempotency key) -> double nahi
 ```
 
 ---
@@ -359,6 +359,20 @@ KAISE (replica peeche kyun + read-your-own-writes):
           -> uske N sec (jaise 5) tak us user ke reads PRIMARY se, baaki replica se
           (ya replica ka WAL position >= user ke write ka position tabhi replica se)
 ```
+```
+BOARD PE: replica ~200 ms peeche: primary 4000, replica 5000
+
+POOCHEGA: "I transferred money but my balance still shows the old value. Why?"
+BOL:      "Most likely replica lag: the write went to the primary, the read hit a replica that hadn't caught up.
+           For balance I read from the primary, at least for the user who just wrote. If it were a failover
+           losing writes, sync replication fixes that."
+
+AGLA SAWAAL (tere jawab se):
+  "Doosre device se khola (session alag)?"
+   -> last_write_at user ke account pe (Redis) rakho, device pe nahi
+  "Replica bahut peeche (minute)?"
+   -> lag metric pe alert; had paar -> us replica ko read pool se hatao
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -379,20 +393,6 @@ flowchart TD
     n_SQL_DB --> n_Kafka
     n_Reconciliation_job --> n_SQL_DB
 ```
-```
-BOARD PE: replica ~200 ms peeche: primary 4000, replica 5000
-
-POOCHEGA: "I transferred money but my balance still shows the old value. Why?"
-BOL:      "Most likely replica lag: the write went to the primary, the read hit a replica that hadn't caught up.
-           For balance I read from the primary, at least for the user who just wrote. If it were a failover
-           losing writes, sync replication fixes that."
-
-AGLA SAWAAL (tere jawab se):
-  "Doosre device se khola (session alag)?"
-   -> last_write_at user ke account pe (Redis) rakho, device pe nahi
-  "Replica bahut peeche (minute)?"
-   -> lag metric pe alert; had paar -> us replica ko read pool se hatao
-```
 
 ---
 
@@ -408,6 +408,18 @@ SOLUTION: (1) CURSOR / KEYSET pagination: pichhle page ki aakhri entry (ts, id) 
           Keemat: "page 500 pe jao" nahi, sirf agla / pichhla (jaise YouTube scroll). Statement me theek.
 
 NAYA:     koi dabba nahi — query + index
+```
+```
+BOARD PE: SELECT * FROM ledger_entries WHERE account_id = ? ORDER BY ts DESC LIMIT 20 OFFSET 100000;
+            -> 1,00,020 row padhi, 20 di
+          page 1: ... ORDER BY ts DESC, id DESC LIMIT 20;   aakhri (ts, id) = cursor
+          page 2: ... AND (ts, id) < (:last_ts, :last_id) ORDER BY ts DESC, id DESC LIMIT 20;
+
+AGLA SAWAAL (tere jawab se):
+  "Same ts pe do entry, cursor me koi chhoot jaaye?"
+   -> isliye (ts, id) dono cursor me -> id tie todti, kuch nahi chhoota
+  "Cursor client ko kaise doge?"
+   -> (ts, id) ko base64 string bana ke 'next_cursor' -> client agli baar bheje
 ```
 ```mermaid
 flowchart TD
@@ -429,18 +441,6 @@ flowchart TD
     n_SQL_DB --> n_Kafka
     n_Reconciliation_job --> n_SQL_DB
 ```
-```
-BOARD PE: SELECT * FROM ledger_entries WHERE account_id = ? ORDER BY ts DESC LIMIT 20 OFFSET 100000;
-            -> 1,00,020 row padhi, 20 di
-          page 1: ... ORDER BY ts DESC, id DESC LIMIT 20;   aakhri (ts, id) = cursor
-          page 2: ... AND (ts, id) < (:last_ts, :last_id) ORDER BY ts DESC, id DESC LIMIT 20;
-
-AGLA SAWAAL (tere jawab se):
-  "Same ts pe do entry, cursor me koi chhoot jaaye?"
-   -> isliye (ts, id) dono cursor me -> id tie todti, kuch nahi chhoota
-  "Cursor client ko kaise doge?"
-   -> (ts, id) ko base64 string bana ke 'next_cursor' -> client agli baar bheje
-```
 
 ---
 
@@ -459,6 +459,20 @@ SOLUTION: (1) Table ko MAHINE-MAHINE partition. Purana partition DETACH (turant)
           Archive != sharding: archive size ghatata, shard likhne ka load baant-ta.
 
 NAYA:     Archive (S3)
+```
+```
+BOARD PE: ledger_2026_07, ledger_2026_08 ... -> DETACH (metadata, turant) -> cold storage -> drop
+          account_balance_snapshot (account_id, period_end, balance) · 31-Mar-2023 A = 45,000
+
+POOCHEGA: "Data keeps growing — what happens in 3 years?"
+BOL:      "Partition the ledger by month and detach closed months to cold storage — nothing is ever deleted. An
+           opening-balance snapshot per period keeps reconciliation correct after archiving."
+
+AGLA SAWAAL (tere jawab se):
+  "Regulator ne 2021 ka statement maanga?"
+   -> S3 ke Parquet pe Athena query ya us mahine ka partition restore
+  "Archive file badal na sake (audit)?"
+   -> S3 Object Lock (WORM) -> likhi file na delete na badle, saalon tak
 ```
 ```mermaid
 flowchart TD
@@ -481,20 +495,6 @@ flowchart TD
     n_SQL_DB --> n_Kafka
     n_Reconciliation_job --> n_SQL_DB
     n_SQL_DB --> n_Archive_S3
-```
-```
-BOARD PE: ledger_2026_07, ledger_2026_08 ... -> DETACH (metadata, turant) -> cold storage -> drop
-          account_balance_snapshot (account_id, period_end, balance) · 31-Mar-2023 A = 45,000
-
-POOCHEGA: "Data keeps growing — what happens in 3 years?"
-BOL:      "Partition the ledger by month and detach closed months to cold storage — nothing is ever deleted. An
-           opening-balance snapshot per period keeps reconciliation correct after archiving."
-
-AGLA SAWAAL (tere jawab se):
-  "Regulator ne 2021 ka statement maanga?"
-   -> S3 ke Parquet pe Athena query ya us mahine ka partition restore
-  "Archive file badal na sake (audit)?"
-   -> S3 Object Lock (WORM) -> likhi file na delete na badle, saalon tak
 ```
 
 ---
@@ -544,6 +544,26 @@ LB · Banking Svc = stateless, idempotency check · SQL DB = EK local txn (ledge
 Kafka = commit ke BAAD (SMS / fraud / analytics / statement) · Read replica = balance / history (apna txn primary se)
 Reconciliation = snapshot + live entries vs balance -> ALERT · Archive (S3) = band mahine, delete kabhi nahi
 ```
+```
+beech me crash        -> ek local transaction (@Transactional), ek DB me SAGA nahi
+dobara tap / retry    -> Idempotency-Key + DB UNIQUE
+paisa kahan gaya      -> append-only LEDGER, double-entry (jod zero)
+balance tez           -> balance = derived CACHE, ledger ke SAATH usi txn
+cache vs sach         -> raat ka RECONCILIATION, ledger jeetega
+-ve balance           -> check DB me (WHERE balance >= x / CHECK)
+ulte kram ke transfer -> lock TAY KRAM (id sort) -> deadlock nahi
+11 arab history       -> CURSOR + index (account_id, ts DESC, id DESC)
+purana data           -> month PARTITION -> DETACH -> cold storage, DELETE kabhi nahi
+archive ke baad       -> OPENING BALANCE snapshot
+load badha            -> replica -> partition -> (aakhir) shard
+```
+```
+BOL: "Everything for a transfer — both ledger entries, both balance updates, the idempotency key and an outbox
+      event — commits in one local transaction in a relational database, so money is never lost or created.
+      The ledger is the truth and balance is a cache of it; a nightly reconciliation checks them. Balance checks
+      and lock ordering live in the database. Reads go to a replica, history uses cursor pagination, old months
+      are archived with opening-balance snapshots, and side effects go out through Kafka after the commit."
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -565,26 +585,6 @@ flowchart TD
     n_SQL_DB --> n_Kafka
     n_Reconciliation_job --> n_SQL_DB
     n_SQL_DB --> n_Archive_S3
-```
-```
-beech me crash        -> ek local transaction (@Transactional), ek DB me SAGA nahi
-dobara tap / retry    -> Idempotency-Key + DB UNIQUE
-paisa kahan gaya      -> append-only LEDGER, double-entry (jod zero)
-balance tez           -> balance = derived CACHE, ledger ke SAATH usi txn
-cache vs sach         -> raat ka RECONCILIATION, ledger jeetega
--ve balance           -> check DB me (WHERE balance >= x / CHECK)
-ulte kram ke transfer -> lock TAY KRAM (id sort) -> deadlock nahi
-11 arab history       -> CURSOR + index (account_id, ts DESC, id DESC)
-purana data           -> month PARTITION -> DETACH -> cold storage, DELETE kabhi nahi
-archive ke baad       -> OPENING BALANCE snapshot
-load badha            -> replica -> partition -> (aakhir) shard
-```
-```
-BOL: "Everything for a transfer — both ledger entries, both balance updates, the idempotency key and an outbox
-      event — commits in one local transaction in a relational database, so money is never lost or created.
-      The ledger is the truth and balance is a cache of it; a nightly reconciliation checks them. Balance checks
-      and lock ordering live in the database. Reads go to a replica, history uses cursor pagination, old months
-      are archived with opening-balance snapshots, and side effects go out through Kafka after the commit."
 ```
 
 ARCHETYPE C · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [saga/ms-comm](../../FOUNDATIONS/10_ms_communication.md) · [caching](../../FOUNDATIONS/04_caching.md) · saath: [payment-system](../06_payment_system/06_payment_system.md) (iska bada bhai) · [stock-broker](../05_stock_broker_trading/05_stock_broker_trading.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

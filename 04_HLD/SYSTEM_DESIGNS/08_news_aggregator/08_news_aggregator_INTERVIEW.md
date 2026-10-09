@@ -70,6 +70,15 @@ KAISE (Redis me feed):
           nayi news: ZADD feed:latest <time> <id> · purana kaato: ZREMRANGEBYRANK (sirf top 500 rakho)
           padhna: ZREVRANGE feed:latest 0 19 -> sabse nayi 20 id -> article ka data alag hash / cache se
 ```
+```
+BOARD PE: 50 / sec, spike 500 / sec · cache hit ~99% · feed 5 min purani chalegi
+
+AGLA SAWAAL (tere jawab se):
+  "5 min purani chalegi kaha, par breaking news turant chahiye?"
+   -> worker nayi news aate hi ZADD karta -> asal me turant; 5 min = sabse bura haal
+  "Page 2 (21-40)?"
+   -> ZREVRANGE 20 39, ya cursor (aakhri dekhi news ka time) -> uske baad ki 20
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -81,15 +90,6 @@ flowchart TD
     n_Feed_Svc --> n_Redis
     n_Redis --> n_DB
     n_Fetcher --> n_DB
-```
-```
-BOARD PE: 50 / sec, spike 500 / sec · cache hit ~99% · feed 5 min purani chalegi
-
-AGLA SAWAAL (tere jawab se):
-  "5 min purani chalegi kaha, par breaking news turant chahiye?"
-   -> worker nayi news aate hi ZADD karta -> asal me turant; 5 min = sabse bura haal
-  "Page 2 (21-40)?"
-   -> ZREVRANGE 20 39, ya cursor (aakhri dekhi news ka time) -> uske baad ki 20
 ```
 
 ---
@@ -114,6 +114,14 @@ KAISE (Kafka spike kaise jhelta):
 KYUN YE:  SQS bhi chal jaata (simple); Kafka isliye ki baad me doosra consumer (search index, analytics) bhi
           wahi stream alag group se padh sake + replay
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Fetcher ek source ko kitni baar dekhe?"
+   -> scheduler har source ka interval (bade source 1 min, chhote 15 min) + RSS ka ETag / Last-Modified
+      -> kuch naya nahi to download hi nahi
+  "Worker ne ek article do baar likha (event dobara)?"
+   -> Mongo: URL / content hash pe unique index -> dobara insert fail = skip · Cassandra: hash ko primary key -> dobara likha = overwrite (idempotent, fail nahi)
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -132,14 +140,6 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "Fetcher ek source ko kitni baar dekhe?"
-   -> scheduler har source ka interval (bade source 1 min, chhote 15 min) + RSS ka ETag / Last-Modified
-      -> kuch naya nahi to download hi nahi
-  "Worker ne ek article do baar likha (event dobara)?"
-   -> Mongo: URL / content hash pe unique index -> dobara insert fail = skip · Cassandra: hash ko primary key -> dobara likha = overwrite (idempotent, fail nahi)
 ```
 
 ---
@@ -165,6 +165,13 @@ KAISE (Bloom filter):
 KYUN YE:  crore URL Redis SET me = bahut RAM; Bloom thodi si memory me. DB UNIQUE = har baar DB call
           false positive se ek naya URL kabhi chhoot sakta -> news me chalta
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Bloom filter me delete?"
+   -> normal Bloom me nahi. Purane din ka filter hi phenk do (roz naya), ya counting Bloom
+  "Duplicate me kaunsa source dikhaye?"
+   -> pehle aaya / bada source; baaki 'aur sources' me link
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -184,13 +191,6 @@ flowchart TD
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
 ```
-```
-AGLA SAWAAL (tere jawab se):
-  "Bloom filter me delete?"
-   -> normal Bloom me nahi. Purane din ka filter hi phenk do (roz naya), ya counting Bloom
-  "Duplicate me kaunsa source dikhaye?"
-   -> pehle aaya / bada source; baaki 'aur sources' me link
-```
 
 ---
 
@@ -203,6 +203,19 @@ SOLUTION: (1) Har source ka fetch alag + parallel. Timeout, fail pe retry, phir 
           (2) Har source pe CIRCUIT BREAKER: baar-baar fail -> call band, thodi der baad test call.
 
 NAYA:     koi dabba nahi — Fetcher me
+```
+```
+BOARD PE: CLOSED --N fail--> OPEN (fail-fast) --> HALF-OPEN (ek test) --> CLOSED
+
+POOCHEGA: "What if a source is slow or down?"
+BOL:      "Each source is fetched independently with a timeout, retries, and a circuit breaker; if it keeps
+           failing I skip it. One bad source can't block the other 999."
+
+AGLA SAWAAL (tere jawab se):
+  "Source ne 429 diya (zyada maar rahe)?"
+   -> us source ka interval badhao + Retry-After maano
+  "Source permanent band?"
+   -> kuch din circuit OPEN raha -> alert, source list se hatao
 ```
 ```mermaid
 flowchart TD
@@ -223,19 +236,6 @@ flowchart TD
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
 ```
-```
-BOARD PE: CLOSED --N fail--> OPEN (fail-fast) --> HALF-OPEN (ek test) --> CLOSED
-
-POOCHEGA: "What if a source is slow or down?"
-BOL:      "Each source is fetched independently with a timeout, retries, and a circuit breaker; if it keeps
-           failing I skip it. One bad source can't block the other 999."
-
-AGLA SAWAAL (tere jawab se):
-  "Source ne 429 diya (zyada maar rahe)?"
-   -> us source ka interval badhao + Retry-After maano
-  "Source permanent band?"
-   -> kuch din circuit OPEN raha -> alert, source list se hatao
-```
 
 ---
 
@@ -251,6 +251,21 @@ SOLUTION: RETENTION (ye sharding nahi):
           NoSQL (Mongo / Cassandra) me har row pe TTL.
 
 NAYA:     Archive (purana data sasti jagah, jaise S3 Glacier)
+```
+```
+BOARD PE: ORDER BY published_at DESC LIMIT 20 -> index se ms me (5 crore pe bhi)
+          partition by month -> purana DETACH -> S3 / Glacier
+
+POOCHEGA: "Data keeps growing — what happens in 3 years?"
+BOL:      "Only the last week is hot. I partition by month and move old partitions to cold storage, with a
+           TTL on what we never need. That's retention, not sharding."
+
+AGLA SAWAAL (tere jawab se):
+  "Koi purani news ka link khole (archive me hai)?"
+   -> article page archive / S3 se (dheema chalega) ya chhota 'purana' table
+  "Partition DETACH karte waqt table lock?"
+   -> normal DETACH parent table pe chhota ACCESS EXCLUSIVE lock leta (lambi query ke peeche rukega).
+      PG 14+ me DETACH PARTITION ... CONCURRENTLY -> bina block. Copy pehle se kar lo
 ```
 ```mermaid
 flowchart TD
@@ -272,21 +287,6 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
-```
-```
-BOARD PE: ORDER BY published_at DESC LIMIT 20 -> index se ms me (5 crore pe bhi)
-          partition by month -> purana DETACH -> S3 / Glacier
-
-POOCHEGA: "Data keeps growing — what happens in 3 years?"
-BOL:      "Only the last week is hot. I partition by month and move old partitions to cold storage, with a
-           TTL on what we never need. That's retention, not sharding."
-
-AGLA SAWAAL (tere jawab se):
-  "Koi purani news ka link khole (archive me hai)?"
-   -> article page archive / S3 se (dheema chalega) ya chhota 'purana' table
-  "Partition DETACH karte waqt table lock?"
-   -> normal DETACH parent table pe chhota ACCESS EXCLUSIVE lock leta (lambi query ke peeche rukega).
-      PG 14+ me DETACH PARTITION ... CONCURRENTLY -> bina block. Copy pehle se kar lo
 ```
 
 ---
@@ -307,6 +307,15 @@ KYUN YE (date ka hot partition kaise theek):
           keemat: "latest 20" ab har shard se thoda-thoda laana padta (scatter-gather) -> par wo Redis se aata hi hai
           date chuna to sirf isliye ki purana shard poora uthake archive (retention aasaan)
 ```
+```
+BOARD PE: ~3 write / sec · 7 din garam -> ek box kaafi
+
+AGLA SAWAAL (tere jawab se):
+  "Category se shard karo to?"
+   -> sports / politics bade, baaki chhote -> bojh barabar nahi (skew)
+  "Shard badhane pe data khiskana?"
+   -> consistent hashing -> kam data hilta
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -328,15 +337,6 @@ flowchart TD
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
 ```
-```
-BOARD PE: ~3 write / sec · 7 din garam -> ek box kaafi
-
-AGLA SAWAAL (tere jawab se):
-  "Category se shard karo to?"
-   -> sports / politics bade, baaki chhote -> bojh barabar nahi (skew)
-  "Shard badhane pe data khiskana?"
-   -> consistent hashing -> kam data hilta
-```
 
 ---
 
@@ -348,6 +348,15 @@ DIKKAT:   user ko apni pasand ki feed chahiye, par har user ki alag feed (fanout
 SOLUTION: Har CATEGORY ki alag cached feed (tech, sports...). User ki 2-3 category utha ke milao.
 
 NAYA:     koi dabba nahi — Redis me category keys
+```
+```
+BOARD PE: feed:tech · feed:sports · feed:politics -> user prefs -> 2-3 merge
+
+AGLA SAWAAL (tere jawab se):
+  "Merge kaise (teen category ki 20-20)?"
+   -> teeno sorted set se top 20 lo, time se merge (ya Redis ZUNIONSTORE), top 20 dikhao
+  "Har user ki pasand alag-alag weight?"
+   -> tab asli personalization -> per-user feed / ranking service (abhi scope se bahar)
 ```
 ```mermaid
 flowchart TD
@@ -370,15 +379,6 @@ flowchart TD
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
 ```
-```
-BOARD PE: feed:tech · feed:sports · feed:politics -> user prefs -> 2-3 merge
-
-AGLA SAWAAL (tere jawab se):
-  "Merge kaise (teen category ki 20-20)?"
-   -> teeno sorted set se top 20 lo, time se merge (ya Redis ZUNIONSTORE), top 20 dikhao
-  "Har user ki pasand alag-alag weight?"
-   -> tab asli personalization -> per-user feed / ranking service (abhi scope se bahar)
-```
 
 ---
 
@@ -394,6 +394,13 @@ SOLUTION: (1) Kai Feed service box (stateless) + LB.
 
 NAYA:     LB · Read replica
 BADLA:    Feed Svc ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "Subah 8 baje pata hai spike aayega?"
+   -> 7:45 pe pehle se box badhao (scheduled scaling) + cache warm
+  "Replica kitni peeche?"
+   -> kuch second, news ke liye chalta
 ```
 ```mermaid
 flowchart TD
@@ -423,13 +430,6 @@ flowchart TD
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
 ```
-```
-AGLA SAWAAL (tere jawab se):
-  "Subah 8 baje pata hai spike aayega?"
-   -> 7:45 pe pehle se box badhao (scheduled scaling) + cache warm
-  "Replica kitni peeche?"
-   -> kuch second, news ke liye chalta
-```
 
 ---
 
@@ -449,6 +449,13 @@ KAISE (inverted index):
           search "cricket kohli" -> dono list ka intersection -> score (kitni baar, kahan) se sort
 KYUN YE:  Postgres full-text (GIN index) bhi chalta chhote scale pe -> ES isliye ki ranking, typo, bahut data,
           aur DB pe search ka bojh nahi
+```
+```
+AGLA SAWAAL (tere jawab se):
+  "ES aur DB me data alag-alag ho gaya?"
+   -> DB = sach. ES dobara bana sakte (reindex). Worker ES likhne me fail -> retry queue
+  "Typo (crikcet)?"
+   -> ES fuzzy search (1-2 akshar ka farak)
 ```
 ```mermaid
 flowchart TD
@@ -481,13 +488,6 @@ flowchart TD
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
     n_Worker --> n_Elasticsearch
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "ES aur DB me data alag-alag ho gaya?"
-   -> DB = sach. ES dobara bana sakte (reindex). Worker ES likhne me fail -> retry queue
-  "Typo (crikcet)?"
-   -> ES fuzzy search (1-2 akshar ka farak)
 ```
 
 ---
@@ -534,6 +534,13 @@ DB:       ARTICLE: id | title | content | sourceId | category | publishedAt | ur
 WRITE: Sources -> Fetcher (timeout / retry / skip) -> Kafka (spike) -> Worker (clean + dedupe + category) -> DB + cache
 READ:  LB -> Feed Svc (kai box) -> Redis (99%) -> miss pe Read replica · Elasticsearch = search · Archive = purana
 ```
+```
+BOL: "I keep the write path and read path separate. Sources are fetched in the background, go through Kafka
+      to workers that clean, dedupe and categorise, and land in a NoSQL store — massive, simple data with no
+      need for ACID; money would be SQL. Everyone wants roughly the same latest feed, so I precompute it in
+      Redis and serve 99% from cache, with a read replica for misses. Feed services scale behind a load
+      balancer, old news goes to cold storage, and search runs on Elasticsearch."
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -565,13 +572,6 @@ flowchart TD
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
     n_Worker --> n_Elasticsearch
-```
-```
-BOL: "I keep the write path and read path separate. Sources are fetched in the background, go through Kafka
-      to workers that clean, dedupe and categorise, and land in a NoSQL store — massive, simple data with no
-      need for ACID; money would be SQL. Everyone wants roughly the same latest feed, so I precompute it in
-      Redis and serve 99% from cache, with a read replica for misses. Feed services scale behind a load
-      balancer, old news goes to cold storage, and search runs on Elasticsearch."
 ```
 
 ARCHETYPE A+E · CONCEPTS: [elasticsearch](../../FOUNDATIONS/12_elasticsearch_search.md) · [caching](../../FOUNDATIONS/04_caching.md) · saath: [twitter-feed](../03_twitter_feed/03_twitter_feed.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

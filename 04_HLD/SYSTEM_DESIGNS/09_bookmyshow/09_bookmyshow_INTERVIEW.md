@@ -79,14 +79,6 @@ KYUN conditional UPDATE (baaki do kyun nahi):
           OPTIMISTIC (version) -> haara wala retry kare; seat pe retry bekaar (seat gayi to gayi)
           conditional UPDATE -> EK statement, lock sabse chhota, haara turant "taken" 
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_SQL_DB["SQL DB<br/>atomic UPDATE ... WHERE available"]
-    n_USER --> n_App
-    n_App --> n_SQL_DB
-```
 ```
 BOARD PE: X: "A1 available?" haan · Y: "A1 available?" haan · X book · Y book = A1 do ko
           UPDATE seats SET status = 'booked', user_id = X
@@ -103,6 +95,14 @@ AGLA SAWAAL (tere jawab se):
       deadlock na ho isliye seat_id ke kram me lock (A1, A2, A3...)
   "Ek seat ki row pe itna lock, DB slow?"
    -> lock milliseconds ka (ek statement); bheed DIKKAT 5 me queue se
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_SQL_DB["SQL DB<br/>atomic UPDATE ... WHERE available"]
+    n_USER --> n_App
+    n_App --> n_SQL_DB
 ```
 
 ---
@@ -127,16 +127,6 @@ KYUN YE (hold Redis SET NX EX 300 se kyun nahi):
           DB me hold = seat ka haal EK row me, ek atomic UPDATE me -> hamesha ek hi sach
           Redis tab theek jab sirf hold (waiting room) ho aur booking DB pe dobara check kare
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_SQL_DB["SQL DB"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_App
-    n_App --> n_SQL_DB
-    n_Sweeper_job --> n_SQL_DB
-```
 ```
 BOARD PE: UPDATE seats SET status = 'held', user_id = 'B', held_until = now() + INTERVAL 5 MINUTE
            WHERE seat_id = 'A1'
@@ -157,6 +147,16 @@ AGLA SAWAAL (tere jawab se):
   "User 5 min me 10 seat hold karke chala gaya (seat rokna)?"
    -> per-user hold limit + rate limit
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_SQL_DB["SQL DB"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_App
+    n_App --> n_SQL_DB
+    n_Sweeper_job --> n_SQL_DB
+```
 
 ---
 
@@ -171,6 +171,17 @@ SOLUTION: IDEMPOTENCY KEY: client key banata, retry pe wahi. Server atomic claim
 
 NAYA:     Payment Svc (external, idempotency key ke saath)
 ```
+```
+POOCHEGA: "What if the user clicks Pay twice / the client retries?"
+BOL:      "The client sends the same idempotency key on a retry; the server claims it atomically with a
+           unique constraint and returns the stored result the second time."
+
+AGLA SAWAAL (tere jawab se):
+  "Payment success par booking UPDATE fail (hold gaya)?"
+   -> refund flow (paisa wapas) + user ko batao. Payment aur seat ka faisla saga jaisa
+  "Payment webhook late aaya?"
+   -> booking 'PAYMENT_PENDING', hold thoda badhao ya reconciliation
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -182,17 +193,6 @@ flowchart TD
     n_App --> n_Payment_Svc
     n_App --> n_SQL_DB
     n_Sweeper_job --> n_SQL_DB
-```
-```
-POOCHEGA: "What if the user clicks Pay twice / the client retries?"
-BOL:      "The client sends the same idempotency key on a retry; the server claims it atomically with a
-           unique constraint and returns the stored result the second time."
-
-AGLA SAWAAL (tere jawab se):
-  "Payment success par booking UPDATE fail (hold gaya)?"
-   -> refund flow (paisa wapas) + user ko batao. Payment aur seat ka faisla saga jaisa
-  "Payment webhook late aaya?"
-   -> booking 'PAYMENT_PENDING', hold thoda badhao ya reconciliation
 ```
 
 ---
@@ -213,6 +213,15 @@ KAISE (seat map fresh kaise):
           booking hua -> worker seatmap:show42 ki key DEL (ya us seat ka bit update)
           agla read naya map bana leta. Thoda purana dikhe to bhi booking ka UPDATE asli check karta
 ```
+```
+BOARD PE: browse ~99% Redis hit
+
+AGLA SAWAAL (tere jawab se):
+  "Seat map live update (seat lal ho jaye)?"
+   -> WebSocket / SSE: booking pe event -> us show ke users ko push
+  "Ek popular show ki key pe lakhon read?"
+   -> key ki kai copy + App me 1-2 sec ka local cache
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -229,15 +238,6 @@ flowchart TD
     n_App --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
-```
-```
-BOARD PE: browse ~99% Redis hit
-
-AGLA SAWAAL (tere jawab se):
-  "Seat map live update (seat lal ho jaye)?"
-   -> WebSocket / SSE: booking pe event -> us show ke users ko push
-  "Ek popular show ki key pe lakhon read?"
-   -> key ki kai copy + App me 1-2 sec ka local cache
 ```
 
 ---
@@ -263,6 +263,23 @@ KAISE (per-show worker):
           ek partition = ek consumer -> wo show ki request ek-ek karke chalata -> DB pe us show ka contention khatam
           alag show = alag partition = parallel
 ```
+```
+BOARD PE: seat 3000, user 5000 -> pehle 3000 andar, 2000 ko turant housefull
+          pehle 3000 me X aur Y dono A1 -> Y ka UPDATE 0 row
+          1 gate counter · 2 "Booking in progress..." · 3 worker atomic UPDATE · 4 confirmed / ye seat gayi
+
+POOCHEGA: "What if traffic suddenly spikes 10x?"
+BOL:      "I'd put a counter at the door so only as many users as there are seats get in, and the rest see
+           'sold out' right away. But since users pick specific seats, I only confirm a booking after that
+           seat's atomic UPDATE wins — until then the user sees 'in progress' and gets the result by polling
+           or a push. Plus per-user rate limits and pre-scaling before a known release."
+
+AGLA SAWAAL (tere jawab se):
+  "Ek hi show itna bada ki ek worker dheema?"
+   -> ek DB UPDATE ~ms -> ek worker hazaar / sec; zyada ho to show ko section (balcony / stall) me baanto
+  "Gate counter Redis restart pe gaya?"
+   -> counter = sirf darwaza; asli sach DB ki seats. Restart pe DB se gin ke counter dobara set
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -284,23 +301,6 @@ flowchart TD
     n_Sweeper_job --> n_SQL_primary
     n_App --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
-```
-```
-BOARD PE: seat 3000, user 5000 -> pehle 3000 andar, 2000 ko turant housefull
-          pehle 3000 me X aur Y dono A1 -> Y ka UPDATE 0 row
-          1 gate counter · 2 "Booking in progress..." · 3 worker atomic UPDATE · 4 confirmed / ye seat gayi
-
-POOCHEGA: "What if traffic suddenly spikes 10x?"
-BOL:      "I'd put a counter at the door so only as many users as there are seats get in, and the rest see
-           'sold out' right away. But since users pick specific seats, I only confirm a booking after that
-           seat's atomic UPDATE wins — until then the user sees 'in progress' and gets the result by polling
-           or a push. Plus per-user rate limits and pre-scaling before a known release."
-
-AGLA SAWAAL (tere jawab se):
-  "Ek hi show itna bada ki ek worker dheema?"
-   -> ek DB UPDATE ~ms -> ek worker hazaar / sec; zyada ho to show ko section (balcony / stall) me baanto
-  "Gate counter Redis restart pe gaya?"
-   -> counter = sirf darwaza; asli sach DB ki seats. Restart pe DB se gin ke counter dobara set
 ```
 
 ---
@@ -323,6 +323,17 @@ KAISE:    Redis Cluster: keys 16384 hash slots me bati, har master kuch slots ka
           STAMPEDE mutex: SET lock:seatmap:42 1 NX EX 5 -> jo jeeta wo DB se bana ke cache bhare,
           baaki 50-100 ms ruk ke cache dobara padhein. Lock pe EX isliye ki jeetne wala mara to lock khud chhoote
 ```
+```
+POOCHEGA: "What if the cache goes down?"
+BOL:      "Redis runs as a cluster. Browse reads fall back to the read replica, never the primary, so
+           bookings keep working, and one request rebuilds a hot key while others wait."
+
+AGLA SAWAAL (tere jawab se):
+  "Failover me kitni der booking band?"
+   -> 10-30 sec; us beech booking request retry (idempotent) / 'thodi der me try karein'
+  "Replica pe promote hua par aakhri write replica tak nahi pahunchi?"
+   -> booking DB ke liye sync replica (RDS Multi-AZ) -> committed booking nahi khoti
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -345,17 +356,6 @@ flowchart TD
     n_App --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
 ```
-```
-POOCHEGA: "What if the cache goes down?"
-BOL:      "Redis runs as a cluster. Browse reads fall back to the read replica, never the primary, so
-           bookings keep working, and one request rebuilds a hot key while others wait."
-
-AGLA SAWAAL (tere jawab se):
-  "Failover me kitni der booking band?"
-   -> 10-30 sec; us beech booking request retry (idempotent) / 'thodi der me try karein'
-  "Replica pe promote hua par aakhri write replica tak nahi pahunchi?"
-   -> booking DB ke liye sync replica (RDS Multi-AZ) -> committed booking nahi khoti
-```
 
 ---
 
@@ -370,6 +370,17 @@ SOLUTION: (1) Hold DB me hai (held + kab tak), box ki memory me nahi -> seat abh
 
 NAYA:     LB
 BADLA:    App ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
+```
+```
+POOCHEGA: "What happens if an app server goes down?"
+BOL:      "Holds live in the database, not in the box, so they survive. The load balancer health-checks the
+           box out and the user's next request goes to another instance and sees the same hold."
+
+AGLA SAWAAL (tere jawab se):
+  "Health check kya dekhta?"
+   -> GET /health: box zinda + DB / Redis tak pahunch -> 2-3 baar fail = bahar
+  "Box gira tab payment chal rahi thi?"
+   -> payment idempotency key client ke paas -> doosre box pe retry, double charge nahi
 ```
 ```mermaid
 flowchart TD
@@ -401,17 +412,6 @@ flowchart TD
     n_App_x_N_1 --> n_SQL_primary
     n_App_x_N_2 --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
-```
-```
-POOCHEGA: "What happens if an app server goes down?"
-BOL:      "Holds live in the database, not in the box, so they survive. The load balancer health-checks the
-           box out and the user's next request goes to another instance and sees the same hold."
-
-AGLA SAWAAL (tere jawab se):
-  "Health check kya dekhta?"
-   -> GET /health: box zinda + DB / Redis tak pahunch -> 2-3 baar fail = bahar
-  "Box gira tab payment chal rahi thi?"
-   -> payment idempotency key client ke paas -> doosre box pe retry, double charge nahi
 ```
 
 ---
@@ -461,6 +461,13 @@ LB · App = stateless · Redis Cluster = browse 99% · Read replica = baaki brow
 Kafka + Booking worker = spike + per-show serialize · SQL primary = ACID, atomic UPDATE, failover
 Sweeper = expired hold saaf · Payment Svc = external, idempotency key
 ```
+```
+BOL: "Browse goes to Redis and a read replica; booking goes to the SQL primary with an atomic conditional
+      UPDATE, so one seat can never go to two people. Selecting a seat holds it for five minutes — the
+      UPDATE treats an expired hold as free and a sweeper cleans up. A queue with per-show workers absorbs
+      the release-day spike, and payment uses an idempotency key. SQL because consistency is the heart of
+      it; the data is small, so no sharding."
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -491,13 +498,6 @@ flowchart TD
     n_App_x_N_1 --> n_SQL_primary
     n_App_x_N_2 --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
-```
-```
-BOL: "Browse goes to Redis and a read replica; booking goes to the SQL primary with an atomic conditional
-      UPDATE, so one seat can never go to two people. Selecting a seat holds it for five minutes — the
-      UPDATE treats an expired hold as free and a sweeper cleans up. A queue with per-show workers absorbs
-      the release-day spike, and payment uses an idempotency key. SQL because consistency is the heart of
-      it; the data is small, so no sharding."
 ```
 
 Block kab lagana (need -> block) = MASTER SHEET §4 BLOCK MENU.

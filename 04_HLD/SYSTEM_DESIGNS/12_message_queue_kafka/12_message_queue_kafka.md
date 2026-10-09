@@ -73,14 +73,6 @@ SOLUTION: (1) Queue memory se hata ke disk pe LOG: append-only file, naya messag
 
 BADLA:    Queue (memory) -> Log (disk, append-only)
 ```
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Log["Log"]
-    n_Consumer["Consumer"]
-    n_Producer --> n_Log
-    n_Log --> n_Consumer
-```
 ```
 BOARD PE: P0: [0][1][2][3][4][5] -> naya hamesha END me · consumer ka offset = 2
           offset = kram-number (0, 1, 2), byte nahi · chhota .index file offset -> byte bata deta
@@ -90,6 +82,14 @@ AGLA SAWAAL (tere jawab se):
    -> sirf end me append (sequential) -> disk ke liye sabse tez kaam; OS page cache se read RAM jaisa
   "Offset kaun yaad rakhta?"
    -> consumer group ka offset Kafka khud ek topic me rakhta (__consumer_offsets)
+```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Log["Log"]
+    n_Consumer["Consumer"]
+    n_Producer --> n_Log
+    n_Log --> n_Consumer
 ```
 
 ---
@@ -104,14 +104,6 @@ SOLUTION: Topic ko tukdon me baanto = PARTITION. Har partition alag machine (bro
 
 BADLA:    ek Log -> kai Brokers
 ```
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Consumer["Consumer"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Consumer
-```
 ```
 BOARD PE: TOPIC user-signup: P0 -> Broker A · P1 -> Broker B · P2 -> Broker C
 
@@ -124,6 +116,14 @@ AGLA SAWAAL (tere jawab se):
    -> jitne consumer parallel chahiye + aage ki growth (jaise 12-30). Baad me badhaye to key ka partition badlega
   "Ek partition garam (ek key ke bahut event)?"
    -> us key me thoda tukda jodo (userId#bucket) agar kram us key pe zaroori nahi
+```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Consumer["Consumer"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Consumer
 ```
 
 ---
@@ -139,14 +139,6 @@ SOLUTION: (1) Producer har message ke saath KEY (userId) bheje -> hash -> partit
           (2) Poore topic ka order = ek hi partition = throughput khatam. Per-user order kaafi.
 
 NAYA:     koi dabba nahi — producer key bhejta
-```
-```mermaid
-flowchart TD
-    n_Producer["Producer<br/>key = userId"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Consumer["Consumer"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Consumer
 ```
 ```
 BOARD PE: bina key: signup -> P0 · profile-update -> P2 · delete -> P1
@@ -164,6 +156,14 @@ AGLA SAWAAL (tere jawab se):
   "Producer retry me kram ulta (msg 1 fail, msg 2 gaya, phir 1)?"
    -> idempotent producer (enable.idempotence) -> sequence number se kram + dedup
 ```
+```mermaid
+flowchart TD
+    n_Producer["Producer<br/>key = userId"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Consumer["Consumer"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Consumer
+```
 
 ---
 
@@ -179,14 +179,6 @@ SOLUTION: (1) Teeno ek CONSUMER GROUP me: group ke andar ek partition ko sirf EK
 
 BADLA:    Consumer -> Group email (C1 / C2 / C3)
 ```
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Group_email["Group email"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Group_email
-```
 ```
 BOARD PE: GROUP email-service: P0 -> C1 · P1 -> C2 · P2 -> C3
           3 partition + 5 consumer -> 2 consumer khaali
@@ -196,6 +188,14 @@ AGLA SAWAAL (tere jawab se):
    -> partition badhao (consumer > partition = khaali baithenge)
   "Ek message bahut dheema (5 min), poora partition atka?"
    -> haan, head-of-line. Dheema kaam alag topic / worker pool ko, ya partition ke andar parallel (kram chhod ke)
+```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Group_email["Group email"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Group_email
 ```
 
 ---
@@ -211,18 +211,6 @@ SOLUTION: Topic ek, har service ka apna CONSUMER GROUP -> har group ko poora top
 
 NAYA:     Group analytics · Group dashboard
 ```
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Group_email["Group email"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-```
 ```
 BOARD PE: __consumer_offsets: key = (group, topic, partition) -> value = offset (compaction, sirf latest)
 
@@ -236,6 +224,18 @@ AGLA SAWAAL (tere jawab se):
    -> auto.offset.reset = earliest -> shuru se · latest -> sirf ab ke baad ke
   "Analytics group peeche hai, email ko farak?"
    -> nahi, har group ka apna offset -> ek dheema, doosra apni speed
+```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Group_email["Group email"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
 ```
 
 ---
@@ -254,20 +254,6 @@ SOLUTION: (1) REPLICATION: har partition ka LEADER (saare read / write) + follow
 NAYA:     Controller (KRaft) (kaun leader, kaun ISR me — ye hisaab rakhne wala)
 BADLA:    Brokers A / B / C -> har partition ka leader + 2 follower (alag broker / AZ)
 ```
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-```
 ```
 BOARD PE: acks=0 daal ke bhaaga (tez, kho sakta) · acks=1 leader ne likha · acks=all leader + saare ISR
           broker.rack = AZ · controller ka metadata chhota par 100% sahi -> split-brain roko
@@ -282,6 +268,20 @@ AGLA SAWAAL (tere jawab se):
    -> leader + kam se kam 1 follower ke paas likha tab 'done' -> leader mara to bhi data follower pe
   "ISR me ek hi bacha?"
    -> min.insync=2 se kam -> producer ko error (likhna band), data kho jaane se behtar
+```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
 ```
 
 ---
@@ -306,22 +306,6 @@ KAISE (outbox relay):
           raasta 1 POLLING: relay har ~1 sec: SELECT * FROM outbox WHERE sent = false -> Kafka bhejo -> sent = true
           raasta 2 CDC (Debezium): DB ka log (binlog / WAL) padh ke outbox ki nayi row seedha Kafka me
           relay bheja par 'sent' likhne se pehle mara -> dobara bhejega -> isliye consumer idempotent
-```
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Redis["Redis"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-    n_Group_email --> n_Redis
 ```
 ```
 BOARD PE: A) padha offset 5 -> email bheja -> CRASH (commit nahi) -> restart pe phir 5 -> email do baar
@@ -424,6 +408,22 @@ AGLA SAWAAL (tere jawab se):
   "Outbox table bahut badi?"
    -> 'sent' rows roz saaf / partition drop
 ```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Redis["Redis"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
+    n_Group_email --> n_Redis
+```
 
 ---
 
@@ -441,6 +441,16 @@ SOLUTION: (1) Consumer mara -> heartbeat band -> group coordinator partitions ba
 
 NAYA:     DLQ
 ```
+```
+BOARD PE: C1->P0, C2->P1, C3->P2 · C2 mara -> C1->P0,P1 · C3->P2
+          lag = latest offset - group ka committed offset · cooperative rebalance = Kafka 2.4+
+
+AGLA SAWAAL (tere jawab se):
+  "Rebalance me sab consumer ruk jaate?"
+   -> purana (eager) haan; cooperative rebalance -> sirf jinke partition badle wahi ruke
+  "Lag badh raha, kya karoge?"
+   -> consumer badhao (partition tak), dheema kaam alag, alert lag pe
+```
 ```mermaid
 flowchart TD
     n_Producer["Producer"]
@@ -458,16 +468,6 @@ flowchart TD
     n_Brokers_A_B_C --> n_Group_dashboard
     n_Group_email --> n_Redis
     n_Group_email --> n_DLQ
-```
-```
-BOARD PE: C1->P0, C2->P1, C3->P2 · C2 mara -> C1->P0,P1 · C3->P2
-          lag = latest offset - group ka committed offset · cooperative rebalance = Kafka 2.4+
-
-AGLA SAWAAL (tere jawab se):
-  "Rebalance me sab consumer ruk jaate?"
-   -> purana (eager) haan; cooperative rebalance -> sirf jinke partition badle wahi ruke
-  "Lag badh raha, kya karoge?"
-   -> consumer badhao (partition tak), dheema kaam alag, alert lag pe
 ```
 
 ---
@@ -483,6 +483,13 @@ SOLUTION: (1) RETENTION: time se (7 din) ya size se kaato. Poori purani file (se
 
 NAYA:     koi dabba nahi
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Compaction kab?"
+   -> jab har key ka sirf latest chahiye (user profile, config) -> purani value kaati, aakhri rakhi
+  "7 din ke baad consumer ne padha hi nahi tha?"
+   -> data gaya. Isliye lag pe alert, retention consumer ki sabse lambi chhutti se zyada
+```
 ```mermaid
 flowchart TD
     n_Producer["Producer"]
@@ -500,13 +507,6 @@ flowchart TD
     n_Brokers_A_B_C --> n_Group_dashboard
     n_Group_email --> n_Redis
     n_Group_email --> n_DLQ
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "Compaction kab?"
-   -> jab har key ka sirf latest chahiye (user profile, config) -> purani value kaati, aakhri rakhi
-  "7 din ke baad consumer ne padha hi nahi tha?"
-   -> data gaya. Isliye lag pe alert, retention consumer ki sabse lambi chhutti se zyada
 ```
 
 ---
@@ -588,24 +588,6 @@ Producer = key + acks · Brokers = partition (append-only log + offset), leader 
 Controller = metadata, split-brain roko · Groups = ek group me baantna, alag group = broadcast
 Redis = eventId dedup · DLQ = poison alag
 ```
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Redis["Redis"]
-    n_DLQ["DLQ"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-    n_Group_email --> n_Redis
-    n_Group_email --> n_DLQ
-```
 ```
 FLOW: producer -> key se partition -> LEADER pe append (offset) -> follower copy (ISR)
       -> har group apne offset se padhe -> kaam -> commit -> event 7 din pada (replay)
@@ -623,6 +605,24 @@ BOL: "Producers write keyed events to partitioned, append-only logs spread acros
       events use acks=all. Each service is its own consumer group, so one event reaches all of them. Delivery
       is at-least-once: consumers commit after processing, are idempotent on event id, and send poison
       messages to a DLQ. Retention keeps the log so we can replay."
+```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
+    n_Group_email --> n_Redis
+    n_Group_email --> n_DLQ
 ```
 
 ---

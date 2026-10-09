@@ -73,6 +73,13 @@ KAISE (Kafka + worker):
 KYUN YE:  1-2 upload / sec ke liye SQS / RabbitMQ bhi poora kaafi (simple, managed)
           Kafka tab jab bahut zyada event ya replay chahiye; interview me dono bolo + chuno kyun
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Ek hi file do baar validate ho gayi (event dobara aaya)?"
+   -> validation idempotent: status pehle se DONE to skip; dobara chalana nuksaan nahi
+  "Polling har 2 sec bahut zyada?"
+   -> backoff (2s, 4s, 8s) ya baad me webhook / SSE (DIKKAT 5 me cache se sasta)
+```
 ```mermaid
 flowchart TD
     n_CLIENT["CLIENT"]
@@ -89,13 +96,6 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
     n_Worker --> n_DB
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "Ek hi file do baar validate ho gayi (event dobara aaya)?"
-   -> validation idempotent: status pehle se DONE to skip; dobara chalana nuksaan nahi
-  "Polling har 2 sec bahut zyada?"
-   -> backoff (2s, 4s, 8s) ya baad me webhook / SSE (DIKKAT 5 me cache se sasta)
 ```
 
 ---
@@ -118,6 +118,17 @@ KAISE (presigned URL):
           client us URL pe seedha PUT karta -> S3 khud signature dobara bana ke milata + expiry dekhta
           match -> upload allow. Client ko AWS ki chaabi kabhi nahi milti, sirf ek file ka 10 min ka paas
 ```
+```
+BOARD PE: pehle: CLIENT --5 GB--> server --5 GB--> S3
+          ab: 1 client -> server "upload karni" · 2 server -> signed URL + trackingId
+              3 client -> S3 bytes seedhe · 4 client -> server /upload/complete -> queue
+
+AGLA SAWAAL (tere jawab se):
+  "Client ne URL se 50 GB daal di (limit 5 GB)?"
+   -> sign karte waqt content-length range / POST policy me max size; S3 bada reject kare
+  "Client ne /complete bola hi nahi?"
+   -> S3 event notification (object created) se bhi trigger kar sakte, ya sweeper (DIKKAT 4)
+```
 ```mermaid
 flowchart TD
     n_CLIENT["CLIENT"]
@@ -134,17 +145,6 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
     n_Worker --> n_DB
-```
-```
-BOARD PE: pehle: CLIENT --5 GB--> server --5 GB--> S3
-          ab: 1 client -> server "upload karni" · 2 server -> signed URL + trackingId
-              3 client -> S3 bytes seedhe · 4 client -> server /upload/complete -> queue
-
-AGLA SAWAAL (tere jawab se):
-  "Client ne URL se 50 GB daal di (limit 5 GB)?"
-   -> sign karte waqt content-length range / POST policy me max size; S3 bada reject kare
-  "Client ne /complete bola hi nahi?"
-   -> S3 event notification (object created) se bhi trigger kar sakte, ya sweeper (DIKKAT 4)
 ```
 
 ---
@@ -165,6 +165,15 @@ KAISE (multipart):
              tukde PARALLEL bhi ja sakte (tez)
           3. complete(uploadId, [partNumber + ETag list]) -> S3 usi kram me jod ke ek file
 ```
+```
+BOARD PE: tukde 5 MB · tukda 3 fail -> sirf 3 dobara
+
+AGLA SAWAAL (tere jawab se):
+  "Client band ho gaya, kal resume?"
+   -> server ke paas uploadId + kaunse part ho chuke (ListParts) -> sirf bache part bhejo
+  "Tukda kitna bada?"
+   -> S3 me kam se kam 5 MB (aakhri chhod ke), max 10,000 part -> badi file = bada tukda
+```
 ```mermaid
 flowchart TD
     n_CLIENT["CLIENT"]
@@ -181,15 +190,6 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
     n_Worker --> n_DB
-```
-```
-BOARD PE: tukde 5 MB · tukda 3 fail -> sirf 3 dobara
-
-AGLA SAWAAL (tere jawab se):
-  "Client band ho gaya, kal resume?"
-   -> server ke paas uploadId + kaunse part ho chuke (ListParts) -> sirf bache part bhejo
-  "Tukda kitna bada?"
-   -> S3 me kam se kam 5 MB (aakhri chhod ke), max 10,000 part -> badi file = bada tukda
 ```
 
 ---
@@ -208,6 +208,22 @@ SOLUTION: (1) Upload pehle TMP jagah me, validate hone pe hi asli jagah.
           Validation fail -> delete ya quarantine bucket + FAILED.
 
 NAYA:     Sweeper job (der se atki file dhoondh ke dobara chalane / FAILED karne wala)
+```
+```
+BOARD PE: tmp/ me 1 din se purana -> DELETE · abort incomplete multipart (din me)
+          sweeper: VALIDATING / UPLOADING + updatedAt 10 min se purana
+
+POOCHEGA: "What if the server crashes in the middle?"
+DHYAAN:   status likhna kaafi nahi — koi use DHOONDHE bhi
+BOL:      "Every file has a status, UPLOADING to VALIDATING to DONE or FAILED. A sweeper finds files stuck
+           too long — VALIDATING for ten minutes when validation takes three seconds — and requeues them
+           or marks them failed. S3 lifecycle rules clean up abandoned uploads."
+
+AGLA SAWAAL (tere jawab se):
+  "Sweeper khud do box pe chala, ek file dobara queue me do baar?"
+   -> ek hi sweeper chale (lock / leader) ya requeue idempotent (status check karke)
+  "Quarantine ki file ka kya?"
+   -> alag bucket, koi download nahi, kuch din baad delete / security team dekhe
 ```
 ```mermaid
 flowchart TD
@@ -228,22 +244,6 @@ flowchart TD
     n_Worker --> n_Validator
     n_Worker --> n_DB
     n_Sweeper_job --> n_Kafka
-```
-```
-BOARD PE: tmp/ me 1 din se purana -> DELETE · abort incomplete multipart (din me)
-          sweeper: VALIDATING / UPLOADING + updatedAt 10 min se purana
-
-POOCHEGA: "What if the server crashes in the middle?"
-DHYAAN:   status likhna kaafi nahi — koi use DHOONDHE bhi
-BOL:      "Every file has a status, UPLOADING to VALIDATING to DONE or FAILED. A sweeper finds files stuck
-           too long — VALIDATING for ten minutes when validation takes three seconds — and requeues them
-           or marks them failed. S3 lifecycle rules clean up abandoned uploads."
-
-AGLA SAWAAL (tere jawab se):
-  "Sweeper khud do box pe chala, ek file dobara queue me do baar?"
-   -> ek hi sweeper chale (lock / leader) ya requeue idempotent (status check karke)
-  "Quarantine ki file ka kya?"
-   -> alag bucket, koi download nahi, kuch din baad delete / security team dekhe
 ```
 
 ---
@@ -266,6 +266,13 @@ KAISE (read ka kram):
             -> status jaisa taaza chahiye wo PRIMARY se, ya worker khud Redis me naya status likhe
 KYUN DONO:  Redis = har 2 sec ke poll ko DB tak jaane se roke · replica = baaki reads (list, history) ka bojh
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Poll ki jagah push?"
+   -> SSE / WebSocket: status badla to server khud bheje -> poll hi khatam
+  "Redis gira to?"
+   -> poll seedha DB (replica) pe -> dheema par chalta; rate limit poll pe
+```
 ```mermaid
 flowchart TD
     n_CLIENT["CLIENT"]
@@ -291,13 +298,6 @@ flowchart TD
     n_Worker --> n_Redis
     n_Upload_Svc --> n_Read_replica
     n_Sweeper_job --> n_Kafka
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "Poll ki jagah push?"
-   -> SSE / WebSocket: status badla to server khud bheje -> poll hi khatam
-  "Redis gira to?"
-   -> poll seedha DB (replica) pe -> dheema par chalta; rate limit poll pe
 ```
 
 ---
@@ -313,6 +313,13 @@ SOLUTION: (1) Ek PARENT trackingId + har file ka child trackingId.
 
 NAYA:     koi dabba nahi
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "Rollup kab update hoga?"
+   -> har child DONE / FAILED pe parent ka counter badhao (done_count); sab ho gaye to parent final
+  "1000 file ka folder, 1000 /init calls?"
+   -> ek batch init: 1000 presigned URL ek jawab me
+```
 ```mermaid
 flowchart TD
     n_CLIENT["CLIENT"]
@@ -338,13 +345,6 @@ flowchart TD
     n_Worker --> n_Redis
     n_Upload_Svc --> n_Read_replica
     n_Sweeper_job --> n_Kafka
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "Rollup kab update hoga?"
-   -> har child DONE / FAILED pe parent ka counter badhao (done_count); sab ho gaye to parent final
-  "1000 file ka folder, 1000 /init calls?"
-   -> ek batch init: 1000 presigned URL ek jawab me
 ```
 
 ---
@@ -361,6 +361,13 @@ SOLUTION: (1) Upload shuru pe user logged-in (JWT, gateway pe) -> record me owne
 
 NAYA:     API Gateway / LB (auth + traffic)
 ```
+```
+AGLA SAWAAL (tere jawab se):
+  "trackingId guess na ho, phir bhi owner check kyun?"
+   -> random id leak ho sakti (log, link share) -> asli rok owner check hai, id ki randomness nahi
+  "Admin ko sab dekhna?"
+   -> role check: owner YA admin role -> warna 403
+```
 ```mermaid
 flowchart TD
     n_CLIENT["CLIENT"]
@@ -388,13 +395,6 @@ flowchart TD
     n_Worker --> n_Redis
     n_Upload_Svc --> n_Read_replica
     n_Sweeper_job --> n_Kafka
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "trackingId guess na ho, phir bhi owner check kyun?"
-   -> random id leak ho sakti (log, link share) -> asli rok owner check hai, id ki randomness nahi
-  "Admin ko sab dekhna?"
-   -> role check: owner YA admin role -> warna 403
 ```
 
 ---
@@ -410,6 +410,15 @@ SOLUTION: (1) Presigned URL ki umar chhoti (kuch minute). URL tabhi banta jab ow
 
 NAYA:     koi dabba nahi
 ```
+```
+BOARD PE: presigned URL umar 5-15 MINUTE
+
+AGLA SAWAAL (tere jawab se):
+  "5 min me download poora nahi hua (badi file)?"
+   -> expiry sirf SHURU karne ki hai; chalu download beech me nahi kat-ta
+  "URL kisi ne 5 min ke andar aage bheja?"
+   -> 5 min ka risk maana; zyada sensitive -> CloudFront signed URL + IP restriction; ek-baar-use chahiye to apna token check (built-in nahi)
+```
 ```mermaid
 flowchart TD
     n_CLIENT["CLIENT"]
@@ -438,15 +447,6 @@ flowchart TD
     n_Upload_Svc --> n_Read_replica
     n_Sweeper_job --> n_Kafka
 ```
-```
-BOARD PE: presigned URL umar 5-15 MINUTE
-
-AGLA SAWAAL (tere jawab se):
-  "5 min me download poora nahi hua (badi file)?"
-   -> expiry sirf SHURU karne ki hai; chalu download beech me nahi kat-ta
-  "URL kisi ne 5 min ke andar aage bheja?"
-   -> 5 min ka risk maana; zyada sensitive -> CloudFront signed URL + IP restriction; ek-baar-use chahiye to apna token check (built-in nahi)
-```
 
 ---
 
@@ -460,6 +460,20 @@ SOLUTION: (1) Worker file ke PEHLE kuch BYTE padhe (magic number), type khud tay
           Client ka bheja kabhi sach mat maano, na naam na type.
 
 NAYA:     koi dabba nahi — Worker me check
+```
+```
+BOARD PE: PDF %PDF- · PNG \x89PNG · EXE MZ
+
+POOCHEGA: "How do you secure it / stop abuse?"
+BOL:      "JWT at the gateway and an owner check on every status and download. Short-lived presigned URLs.
+           The worker checks magic bytes instead of trusting the name or Content-Type. Per-user rate limit
+           against upload floods, WAF at the edge, TLS, secrets in a vault."
+
+AGLA SAWAAL (tere jawab se):
+  "Magic bytes PDF jaise, par andar virus / JS?"
+   -> antivirus scan (ClamAV) worker me, ya S3 malware scanning service
+  "5 GB file ke saare byte padhoge?"
+   -> magic bytes ke liye pehle kuch byte kaafi (S3 range GET); virus scan poora
 ```
 ```mermaid
 flowchart TD
@@ -489,20 +503,6 @@ flowchart TD
     n_Upload_Svc --> n_Read_replica
     n_Sweeper_job --> n_Kafka
     n_Worker --> n_S3
-```
-```
-BOARD PE: PDF %PDF- · PNG \x89PNG · EXE MZ
-
-POOCHEGA: "How do you secure it / stop abuse?"
-BOL:      "JWT at the gateway and an owner check on every status and download. Short-lived presigned URLs.
-           The worker checks magic bytes instead of trusting the name or Content-Type. Per-user rate limit
-           against upload floods, WAF at the edge, TLS, secrets in a vault."
-
-AGLA SAWAAL (tere jawab se):
-  "Magic bytes PDF jaise, par andar virus / JS?"
-   -> antivirus scan (ClamAV) worker me, ya S3 malware scanning service
-  "5 GB file ke saare byte padhoge?"
-   -> magic bytes ke liye pehle kuch byte kaafi (S3 range GET); virus scan poora
 ```
 
 ---
@@ -558,6 +558,13 @@ Gateway / LB = auth · Upload Svc = metadata + presigned URL, bytes ko haath nah
 DB = trackingId + status + owner · Kafka + Worker = slow validation alag, magic bytes · Redis + replica = polling
 Sweeper = atki file
 ```
+```
+BOL: "The client asks the upload service for a presigned URL and sends the bytes straight to S3 — multipart
+      for big files. Validation takes two to three seconds, so it's async: the user gets a tracking id
+      immediately, a worker validates from a queue, checks magic bytes and updates the status. Status is
+      read-heavy, so Redis and a read replica, invalidated on every update. Owner checks and short-lived
+      URLs secure it, lifecycle rules and a sweeper clean up. Next: retries on failure and a CDN for downloads."
+```
 ```mermaid
 flowchart TD
     n_CLIENT["CLIENT"]
@@ -586,13 +593,6 @@ flowchart TD
     n_Upload_Svc --> n_Read_replica
     n_Sweeper_job --> n_Kafka
     n_Worker --> n_S3
-```
-```
-BOL: "The client asks the upload service for a presigned URL and sends the bytes straight to S3 — multipart
-      for big files. Validation takes two to three seconds, so it's async: the user gets a tracking id
-      immediately, a worker validates from a queue, checks magic bytes and updates the status. Status is
-      read-heavy, so Redis and a read replica, invalidated on every update. Owner checks and short-lived
-      URLs secure it, lifecycle rules and a sweeper clean up. Next: retries on failure and a CDN for downloads."
 ```
 
 ARCHETYPE B+F · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [reliability/SPOF](../../FOUNDATIONS/11_reliability_spof_cloud.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
