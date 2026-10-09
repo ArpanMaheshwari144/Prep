@@ -63,6 +63,14 @@ groupingBy(dept, averagingInt(salary))    -> eng=125.0            average (Doubl
 ```
 Loop me = `map[dept] += salary`; stream me ek line.
 
+**mapping kyun AAKHRI me?** Na lagao to bucket me POORA object aata:
+```
+groupingBy(dept, groupingBy(gender))                          -> eng={M=[Person, Person], F=[Person]}
+groupingBy(dept, groupingBy(gender, mapping(name, toList()))) -> eng={M=[arpan, bob], F=[cara]}
+```
+collect se PEHLE `.map(p -> p.name)` nahi: stream me sirf String bachega, dept/gender kho jaayenge -> group kis pe?
+Pehle POORE object pe group, naam sirf bucket ke ANDAR (mapping) nikaalo.
+
 ---
 
 ## 4. Bonus — number range (for-loop ka stream roop)
