@@ -24,7 +24,9 @@
          client ko bola badi file ko chhote tukdon me tod ke upload karo.
          code me khud tukde NAHI kiye -> false positive ka risk nahi le sakte the,
             aur file me sensitive info hoti hai.
-      jo jobs atke the -> unhe FAIL kiya, aur client ko bola wo file dobara upload kare.
+      do tarah ke jobs:
+         IP na milne se FAIL hue jobs -> humne khud dobara chalaye.
+         badi file pe ATKE jobs       -> unhe fail kiya, client ko bola file (tod ke) dobara upload kare.
 
    R: jobs wapas chalu, load subnets me bata, lambi job ab khud timeout hoke baaki ko nahi rokti.
       LEARNING: ek bhaari job poore shared resource (IP) ko gher sakti hai -> har job pe had (timeout)
@@ -47,7 +49,8 @@
 
     For the large files, we asked the client to split them into smaller files before uploading. We didn't
     split them in code, because we couldn't risk false positives and the files contain sensitive data.
-    The jobs that were stuck, we marked as failed and asked the client to upload those files again.
+    I re-ran every job that had failed for lack of IPs. The ones stuck on huge files, we marked as failed
+    and asked the client to upload those files again, split into smaller ones.
 
     My learning was that one heavy job can hold a shared resource like IPs, so every job needs a limit,
     and big inputs should be made smaller before they come in."
@@ -59,7 +62,8 @@
    "IP kyun chahiye thi?"            -> har Fargate task ko subnet se ek IP milti hai, bina IP task start nahi hota.
    "AWS me tumne kya badla?"         -> kuch nahi, write access infra ke paas tha. infra ne subnet / IP badhaye.
    "Tumhara role kya tha?"           -> logs + metrics se wajah pakdi, infra ko diya, code me timeout lagaya,
-                                        client ko file todne ko bola, atke jobs fail karke client se dobara upload karwaya.
+                                        client ko file todne ko bola, IP wale failed jobs khud dobara chalaye,
+                                        badi file pe atke jobs fail karke client se dobara upload karwaya.
    "Code me file kyun nahi todi?"    -> false positive ka risk + file me sensitive info.
    "Badi file aati kyun thi?"        -> client khud file nahi banate, kahin aur se milti hai, bina dekhe upload kar dete.
                                         hamare paas aisi file upload karne ke niyam (algorithm) hain, par sab follow nahi karte.
