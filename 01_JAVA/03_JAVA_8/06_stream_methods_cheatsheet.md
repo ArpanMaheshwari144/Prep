@@ -51,6 +51,18 @@
 
 **Nested downstream:** `groupingBy(k1, groupingBy(k2, mapping(fn, toList())))` = 2-level buckets.
 
+**Downstream = groupingBy ka DOOSRA argument -> har bucket ke ANDAR kya banega.** Ek hi slot, collector badlo:
+```
+data: (arpan,eng,100) (bob,sales,200) (cara,eng,150) (dev,sales,50)
+
+groupingBy(dept)                          -> eng=[Emp, Emp]       poori list (default)
+groupingBy(dept, counting())              -> eng=2                ginti      (Q6)
+groupingBy(dept, mapping(name, toList())) -> eng=[arpan, cara]    sirf naam  (Q13)
+groupingBy(dept, summingInt(salary))      -> eng=250              jod        (Q14)
+groupingBy(dept, averagingInt(salary))    -> eng=125.0            average (Double)
+```
+Loop me = `map[dept] += salary`; stream me ek line.
+
 ---
 
 ## 4. Bonus — number range (for-loop ka stream roop)
