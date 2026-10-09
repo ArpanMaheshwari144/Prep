@@ -31,10 +31,10 @@ int maxAbsoluteSum(vector<int> &nums)
         return abs(nums[0]);
     }
 
-    int mini = nums[0];
-    int maxi = nums[0];
+    int mini = 0;
+    int maxi = 0;
     int ans = 0;
-    for (int i = 1; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
         int temp = max({nums[i], mini + nums[i], maxi + nums[i]});
         mini = min({nums[i], mini + nums[i], maxi + nums[i]});
