@@ -55,14 +55,12 @@ flowchart TD
 ## DIKKAT 1 — har request pe DB se "latest 20"
 
 ```
-DIKKAT:   har request pe DB se "latest 20" — spike me DB pe bojh. Aur sabko lagbhag WAHI feed chahiye thi.
+DIKKAT:   har request pe DB se "latest 20" -> spike me DB pe bojh. Aur sabko lagbhag WAHI feed chahiye.
 
-SOLUTION: teen option bolo, phir chuno. (1) har request pe DB — simple aur taaza, par spike pe DB gira.
-          (2) PRECOMPUTE + CACHE — ready feed Redis me, nayi news aane pe refresh. Yahi chunte: thodi purani
-          feed news me chal jaati (paisa hota to nahi).
-          (3) har user ki alag feed (fanout) — tez aur personal, par lakhon feed mehngi; sirf tab jab sach
-          me personalization chahiye.
-          Sabko same feed hai to EK cache sab use karein: user -> cache -> miss -> DB -> wapas cache.
+SOLUTION: PRECOMPUTE + CACHE:
+          (1) Ready feed Redis me, nayi news aane pe refresh. Sab EK cache use karein.
+          (2) user -> cache -> miss -> DB -> wapas cache.
+          Thodi purani feed news me chal jaati. (Har user ki alag feed = mehngi, sirf personalization pe.)
 
 NAYA:     Redis
 
@@ -98,13 +96,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — 1000 source ek saath, fetch slow
 
 ```
-DIKKAT:   1000 source se news laana slow. User ki request pe laaye to user ruka, aur 1000 ek saath aaye to
-          spike.
+DIKKAT:   1000 source se news laana slow. User ki request pe laaye to user ruka; 1000 ek saath = spike.
 
-SOLUTION: LIKHNE ka raasta aur PADHNE ka raasta bilkul alag (yahi core faisla).
-          Likhna peeche chalta, dheere bhi chalega: sources -> fetcher -> Kafka -> worker -> DB + cache refresh.
-          Padhna tez: user -> feed service -> cache -> miss -> DB.
-          Queue 1000 ek saath aayi news ko jhel leti, worker apni raftaar se uthata.
+SOLUTION: LIKHNE aur PADHNE ka raasta ALAG (core faisla):
+          (1) Likhna peeche: sources -> fetcher -> Kafka -> worker -> DB + cache refresh.
+          (2) Padhna tez: user -> feed service -> cache -> miss -> DB.
+          Queue 1000 ek saath aayi news jhel leti, worker apni raftaar se.
 
 NAYA:     Kafka · Worker
 BADLA:    Fetcher ab seedha DB me nahi, Kafka me daalta
@@ -149,11 +146,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — ek hi khabar paanch source se aa gayi
 
 ```
-DIKKAT:   ek hi khabar paanch source se aa gayi -> feed me wahi news 5 baar
+DIKKAT:   ek hi khabar paanch source se aa gayi -> feed me wahi news 5 baar.
 
-SOLUTION: worker ke andar teen kaam: CLEAN (ads / HTML hatao, title aur content nikaalo), DEDUPE (ek
-          khabar kai source pe -> ek; URL dedupe ke liye Bloom filter), aur CATEGORY tag (tech / sports /
-          politics).
+SOLUTION: Worker ke andar:
+          (1) CLEAN: ads / HTML hatao, title + content nikaalo.
+          (2) DEDUPE: ek khabar kai source pe -> ek (URL dedupe ke liye Bloom filter).
+          (3) CATEGORY tag: tech / sports / politics.
 
 NAYA:     koi dabba nahi — Worker me
 
@@ -198,12 +196,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — ek source down ya bahut slow
 
 ```
-DIKKAT:   ek source down ya bahut slow -> fetcher us pe atka, baaki sab ki news bhi ruki
+DIKKAT:   ek source down / bahut slow -> fetcher us pe atka, baaki sab ki news bhi ruki.
 
-SOLUTION: har source ka fetch alag aur parallel, ek doosre se azaad. Timeout lagao, fail pe retry, phir
-          bhi nahi to skip.
-          Har source pe CIRCUIT BREAKER: baar-baar fail -> us source ko call band (turant fail), thodi der
-          baad ek test call, theek to wapas chalu. Queue ka backlog spike sambhaal leta.
+SOLUTION: (1) Har source ka fetch alag + parallel. Timeout, fail pe retry, phir bhi nahi to skip.
+          (2) Har source pe CIRCUIT BREAKER: baar-baar fail -> call band, thodi der baad test call.
 
 NAYA:     koi dabba nahi — Fetcher me
 ```
@@ -245,16 +241,13 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — 6 mahine me 5 crore row: disk, backup, kharcha badhta
 
 ```
-DIKKAT:   6 mahine me crore-on rows — disk, backup, kharcha sab badhta.
-          ★ SACH: query slow NAHI hai: published_at pe index hai, to latest 20 milliseconds me.
-          Asli bojh = poori table, index, backup, restore.
-          Aur latest 20 ke alawa purana koi padhta hi nahi.
+DIKKAT:   6 mahine me crore-on rows -> disk, backup, kharcha badhta. (Query slow NAHI: published_at pe
+          index hai.) Latest 20 ke alawa purana koi padhta hi nahi.
 
-SOLUTION: RETENTION: sirf haal ka data (jaise 7 din) garam table me, purana sasti jagah (archive).
-          Table ko time se PARTITION karo (mahine wise), purana partition alag karke S3 / Glacier me;
-          bilkul nahi chahiye to TTL se hata do.
-          Ye SHARDING nahi, RETENTION hai — dono ko ek saans me mat bolna.
-          NoSQL (Mongo / Cassandra) me har row pe TTL, purana apne aap hatta.
+SOLUTION: RETENTION (ye sharding nahi):
+          (1) Haal ka data (jaise 7 din) garam table me.
+          (2) Table time se PARTITION (mahine wise), purana partition -> S3 / Glacier; nahi chahiye to TTL.
+          NoSQL (Mongo / Cassandra) me har row pe TTL.
 
 NAYA:     Archive (purana data sasti jagah, jaise S3 Glacier)
 ```
@@ -300,13 +293,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — (sirf BADE scale pe) ek DB box likhai + data nahi jhel raha
 
 ```
-DIKKAT:   (sirf bade scale pe) ek DB box likhna aur data nahi jhel raha — jaise source 100 guna ho gaye ya
-          log khud content daalne lage
+DIKKAT:   (sirf bade scale pe) ek DB box likhai + data nahi jhel raha (source 100x / user content).
 
-SOLUTION: imaandari se bolo: humare number pe ek box chal jaata, SHARD ki zaroorat NAHI. "Is scale pe
-          shard nahi; source 100x ya user content aaye tab."
-          Tab date (ya category) se shard. Par date se shard kiya to saari nayi likhai aaj wale shard pe =
-          ek tukda garam (hot partition).
+SOLUTION: (1) Humare number pe ek box chal jaata, SHARD ki zaroorat NAHI. Ye imaandari se bolo.
+          (2) Zaroorat aaye tab date / category se shard. ★ Date se shard = saari nayi likhai aaj wale
+              shard pe (hot partition).
 
 NAYA:     koi dabba nahi
 
@@ -351,10 +342,9 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — user ko apni pasand ki feed
 
 ```
-DIKKAT:   user ko apni pasand ki feed chahiye, par har user ki alag feed (fanout) bahut mehngi
+DIKKAT:   user ko apni pasand ki feed chahiye, par har user ki alag feed (fanout) bahut mehngi.
 
-SOLUTION: beech ka raasta: har CATEGORY ki alag cached feed (tech, sports, politics). User ki pasand ki
-          2-3 category ki feed utha ke milao.
+SOLUTION: Har CATEGORY ki alag cached feed (tech, sports...). User ki 2-3 category utha ke milao.
 
 NAYA:     koi dabba nahi — Redis me category keys
 ```
@@ -394,15 +384,12 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — subah 8 baje sab ek saath: ek Feed Svc ka CPU khatam
 
 ```
-DIKKAT:   subah 8 baje sab ek saath -> ek Feed service ka CPU khatam, wahi gira to feed band.
-          Aur cache miss seedha primary pe, jahan fetcher likh raha — padhne ne likhne ko dheema kiya.
+DIKKAT:   subah 8 baje sab ek saath -> ek Feed service ka CPU khatam, wahi gira to band.
+          Cache miss seedha primary pe, jahan fetcher likh raha -> padhne ne likhne ko dheema kiya.
 
-SOLUTION: kai Feed service box + LB (stateless hai, feed cache me) — spike bhi jhele, ek gire to baaki.
-          Cache miss wala read READ REPLICA se, primary se nahi — padhna aur likhna alag raaste.
-          Replica cache ki jagah nahi leti: cache zyada-tar read rokti, replica bache hue ko primary se
-          door rakhti.
-          Ye read ka spike hai — Redis aur replica jhelte; Kafka likhne ke raaste pe hai, read spike nahi
-          jhelta.
+SOLUTION: (1) Kai Feed service box (stateless) + LB.
+          (2) Cache miss wala read READ REPLICA se, primary se nahi.
+          Cache zyada-tar read rokta, replica bache hue ko primary se door rakhti. (Kafka read spike nahi jhelta.)
 
 NAYA:     LB · Read replica
 BADLA:    Feed Svc ek se DO — bojh bat gaya, ek gire to doosra chale (asal me zaroorat jitne, diagram me 2)
@@ -448,11 +435,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 9 — "cricket" search karna hai
 
 ```
-DIKKAT:   "cricket" search karna hai — DB me LIKE '%cricket%' = poori table scan
+DIKKAT:   "cricket" search -> DB me LIKE '%cricket%' = poori table scan.
 
-SOLUTION: alag SEARCH INDEX (Elasticsearch, inverted index). Worker article save kare, saath me index
-          bhi update (async). Search Elasticsearch se matching IDs laata, content DB / cache se.
-          Index thoda peeche chalega — news minute baad search me dikhe, theek hai.
+SOLUTION: (1) Alag SEARCH INDEX (Elasticsearch, inverted index). Worker save ke saath index bhi update (async).
+          (2) Search ES se matching IDs, content DB / cache se. Index thoda peeche, theek hai.
           Detail: [FOUNDATIONS/12_elasticsearch_search](../../FOUNDATIONS/12_elasticsearch_search.md)
 
 NAYA:     Elasticsearch

@@ -55,13 +55,13 @@ flowchart TD
 ## DIKKAT 1 — user 2-3 sec ruka, server ka thread bhi block
 
 ```
-DIKKAT:   har upload pe validation ka intezaar — user 2-3 sec ruka, server ka thread bhi block
+DIKKAT:   har upload pe validation ka intezaar -> user 2-3 sec ruka, server ka thread bhi block.
 
-SOLUTION: teen option bolo, phir chuno. (1) SYNC — user ruke, server block, nahi.
-          (2) ASYNC + POLLING — upload pe turant ek trackingId aur status "VALIDATING", validation peeche
-          queue + worker me, user status poochta rahe. Yahi chunte.
-          (3) ASYNC + WEBHOOK — khatam hone pe khud batao; UX behtar, setup zyada.
-          Worker validate karke DB me DONE / FAILED likhta. Queue validation ka load bhi smooth karti.
+SOLUTION: ASYNC + POLLING:
+          (1) Upload pe turant trackingId + status "VALIDATING".
+          (2) Validation peeche queue + worker me; worker DB me DONE / FAILED likhta.
+          (3) User status poochta rahe.
+          (SYNC = user ruke, nahi · WEBHOOK = UX behtar, setup zyada.)
 
 NAYA:     Kafka · Worker · DB (status)
 BADLA:    Validator ab Upload Svc nahi, Worker call karta
@@ -103,14 +103,13 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 2 — 5 GB file ke bytes mere app server se guzar rahe
 
 ```
-DIKKAT:   5 GB file ke bytes mere app server se guzar rahe — client se server, server se S3.
-          Bandwidth double, thread block, aur server ko scale karna pada jabki usne kuch kiya hi nahi.
+DIKKAT:   5 GB file ke bytes mere app server se guzar rahe (client -> server -> S3).
+          Bandwidth double, thread block, server scale karna pada bina kuch kiye.
 
-SOLUTION: PRESIGNED URL: client seedha S3 pe daale. Client server se kehta "ye file daalni hai", server
-          ek chhoti umar ka signed URL aur trackingId deta, client bytes seedhe S3 pe bhejta, phir server
-          ko "ho gaya" bolta -> queue me.
-          Server sirf metadata aur URL sambhalta, bandwidth aadhi, S3 khud scale hota.
-          Download bhi aise hi: presigned GET URL, seedha S3 se.
+SOLUTION: PRESIGNED URL:
+          (1) Client: "ye file daalni hai" -> server chhoti umar ka signed URL + trackingId deta.
+          (2) Client bytes SEEDHE S3 pe bhejta, phir server ko "ho gaya" -> queue me.
+          Server sirf metadata + URL. Download bhi presigned GET URL se.
 
 BADLA:    S3 ka raasta: Upload Svc -> S3  ->  CLIENT -> S3 (seedha)
 
@@ -153,11 +152,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 3 — 5 GB file 90% pe toot gayi
 
 ```
-DIKKAT:   5 GB file 90% pe toot gayi — poori dobara? user maar dega
+DIKKAT:   5 GB file 90% pe toot gayi -> poori dobara? user maar dega.
 
-SOLUTION: MULTIPART / RESUMABLE upload: file ko chhote tukdon me bhejo, jo tukda fail ho sirf wahi
-          dobara. Saare pahunch gaye to S3 ko "complete" bolo, S3 khud jod deta.
-          Ye client aur S3 ke beech hota; server sirf har tukde ka presigned URL deta.
+SOLUTION: MULTIPART / RESUMABLE: file chhote tukdon me, jo tukda fail sirf wahi dobara.
+          Saare pahunche -> S3 ko "complete", S3 khud jodta. Server sirf har tukde ka presigned URL deta.
 
 NAYA:     koi dabba nahi
 
@@ -199,15 +197,14 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 4 — init kiya, complete kabhi nahi / beech me crash
 
 ```
-DIKKAT:   upload shuru hua par "complete" kabhi nahi aaya, ya beech me crash -> bytes S3 me padi,
-          DB me status adhoora = ORPHAN (paisa bhi, gandagi bhi). VALIDATING me atki file koi dhoondhta hi nahi.
+DIKKAT:   upload shuru hua, "complete" kabhi nahi aaya / crash -> bytes S3 me padi, DB status adhoora = ORPHAN.
+          VALIDATING me atki file koi dhoondhta hi nahi.
 
-SOLUTION: upload pehle ek tmp jagah, validate hone pe hi asli jagah copy.
-          S3 LIFECYCLE rule: tmp me purani file aur adhoore multipart apne aap delete. Par lifecycle dino me
-          chalta, ghanton me nahi, aur DB status nahi dekh sakta.
-          Isliye SWEEPER job: jo file kaafi der se VALIDATING / UPLOADING me atki (normal 2-3 sec), dekho S3
-          me bytes hain? Hain to queue me dobara, nahi to FAILED.
-          Validation fail -> delete ya quarantine bucket + FAILED. (Ye edge case khud bol do.)
+SOLUTION: (1) Upload pehle TMP jagah me, validate hone pe hi asli jagah.
+          (2) S3 LIFECYCLE rule: tmp ki purani file + adhoore multipart apne aap delete (par dino me chalta).
+          (3) SWEEPER job: der se VALIDATING / UPLOADING me atki file -> S3 me bytes hain? Haan = queue me
+              dobara · nahi = FAILED.
+          Validation fail -> delete ya quarantine bucket + FAILED.
 
 NAYA:     Sweeper job (der se atki file dhoondh ke dobara chalane / FAILED karne wala)
 ```
@@ -253,12 +250,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 5 — sab har 2 sec status poll kar rahe
 
 ```
-DIKKAT:   sab har 2 sec status poll kar rahe, aur har poll DB pe
+DIKKAT:   sab har 2 sec status poll kar rahe, har poll DB pe.
 
-SOLUTION: aage CACHE (Redis) aur baaki reads ke liye READ REPLICA.
-          ★ JAAL = purana status: worker ne DONE kar diya par cache me abhi "VALIDATING". Isliye worker
-          update ke saath hi cache bhi update / delete kare (ya bahut chhota TTL).
-          Normal cache se alag: yahan purana = user ko seedha galat status.
+SOLUTION: (1) CACHE (Redis) + baaki reads ke liye READ REPLICA.
+          ★ JAAL: worker ne DONE kiya, cache me abhi "VALIDATING" -> worker update ke saath cache bhi
+            update / delete kare (ya bahut chhota TTL).
 
 NAYA:     Redis · Read replica
 
@@ -308,11 +304,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 6 — prompt me FOLDER bhi tha
 
 ```
-DIKKAT:   upload me ek file nahi, poora FOLDER bhi aa sakta (yaani kai files)
+DIKKAT:   upload me ek file nahi, poora FOLDER bhi aa sakta (kai files).
 
-SOLUTION: ek PARENT trackingId, aur har file ka apna child trackingId. Parent ka status bachchon se
-          banta: sab DONE to DONE, koi FAILED to PARTIAL / FAILED.
-          Bahut saari chhoti files ho to client zip karke ek upload kare, server unzip kare.
+SOLUTION: (1) Ek PARENT trackingId + har file ka child trackingId.
+          (2) Parent ka status bachchon se: sab DONE = DONE · koi FAILED = PARTIAL / FAILED.
+          Bahut chhoti files -> client zip kare, server unzip.
 
 NAYA:     koi dabba nahi
 ```
@@ -355,14 +351,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 7 — kisi ne DOOSRE ka trackingId daal ke file maang li
 
 ```
-DIKKAT:   kisi ne doosre ka trackingId daal ke uski file maang li — trackingId guess ho sakta, aur usme
-          likha hi nahi ki file kiski hai
+DIKKAT:   kisi ne doosre ka trackingId daal ke uski file maang li (ID guess ho sakta).
 
-SOLUTION: upload shuru hote waqt user logged-in (JWT, gateway pe) -> record me ownerId likho.
-          Status aur download pe: maangne wala = owner? Warna 403.
-          AUTHN ("tum kaun") filter / JWT ek jagah kar deta. AUTHZ ("is file pe haq?") filter nahi kar
-          sakta, usne trackingId dekha hi nahi — wo service me.
-          (PR review me sabse upar: request me kisi cheez ki ID aayi -> owner check kahan hai?)
+SOLUTION: (1) Upload shuru pe user logged-in (JWT, gateway pe) -> record me ownerId likho.
+          (2) Status / download pe: maangne wala = owner? Warna 403.
+          AUTHN ("tum kaun") = filter / JWT. AUTHZ ("is file pe haq?") = service me (filter ID dekhta hi nahi).
 
 NAYA:     API Gateway / LB (auth + traffic)
 ```
@@ -407,12 +400,10 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 8 — owner ko S3 ka SEEDHA link diya, usne aage bhej diya
 
 ```
-DIKKAT:   owner ko S3 ka seedha link diya, usne aage bhej diya -> link hamesha chalta, kisi ke bhi haath
-          me, owner check beech me aata hi nahi
+DIKKAT:   owner ko S3 ka seedha link diya, usne aage bhej diya -> link hamesha chalta, kisi ke bhi haath me.
 
-SOLUTION: presigned URL ki umar chhoti (kuch minute, din nahi). Owner check ab bhi hum karte — URL
-          tabhi banta jab check paas ho. URL "chaabi" nahi, "5 minute ka paas" hai.
-          DB me URL mat rakho (wo mar jaata), file ki S3 key rakho; URL har maang pe naya.
+SOLUTION: (1) Presigned URL ki umar chhoti (kuch minute). URL tabhi banta jab owner check paas ho.
+          (2) DB me URL nahi, file ki S3 KEY rakho; URL har maang pe naya.
 
 NAYA:     koi dabba nahi
 ```
@@ -459,12 +450,11 @@ AGLA SAWAAL (tere jawab se):
 ## DIKKAT 9 — naam .pdf, Content-Type application/pdf, par asal me EXE — aur S3 me pad chuki
 
 ```
-DIKKAT:   naam .pdf, type bhi PDF bataya, par andar asal me EXE — aur wo S3 me pahunch bhi chuki.
-          Naam aur type dono client ne bheje, bharosa nahi. Seedha S3 upload me file pehle girti, pakdi baad me.
+DIKKAT:   naam .pdf, type bhi PDF, par andar EXE, aur S3 me pahunch bhi chuki. Naam + type client ne bheje.
 
-SOLUTION: worker file ke PEHLE kuch BYTE padhe (magic number) aur type khud tay kare.
-          Mel nahi khaata to REJECTED + delete / quarantine.
-          Client ka bheja kabhi sach mat maano — na naam, na type.
+SOLUTION: (1) Worker file ke PEHLE kuch BYTE padhe (magic number), type khud tay kare.
+          (2) Mel nahi -> REJECTED + delete / quarantine.
+          Client ka bheja kabhi sach mat maano, na naam na type.
 
 NAYA:     koi dabba nahi — Worker me check
 ```
