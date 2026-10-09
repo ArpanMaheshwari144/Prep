@@ -64,5 +64,6 @@
    "Badi file aati kyun thi?"        -> client khud file nahi banate, kahin aur se milti hai, bina dekhe upload kar dete.
                                         hamare paas aisi file upload karne ke niyam (algorithm) hain, par sab follow nahi karte.
    "Timeout ke baad kya?"            -> job khud fail, server / IP free; phir us file ki dikkat dekhte.
-   "Kitni IP badhi?"                 -> exact number yaad nahi.
+   "Kitni IP badhi?"                 -> kitni IP / subnet badhane ka faisla VP + senior engineer ka tha, kaam DevOps ka.
+                                        mera kaam nahi tha, isliye number mere paas nahi.
 ```
