@@ -4,9 +4,184 @@
 > aur fail -> retry -> dead-letter. Ye note = jaise humne kiya, waisa hi (code + steps + why + jo dikkat aayi).
 > Theory-compare alag: 06_COMPARES/14_kafka_vs_rabbitmq.md
 >
-> INDEX: 1 saar · 2 flow · 3 crux · 4 setup(clean) · **4B broker-infra(KRaft/localhost-vs-kafka/retry-spam)**
+> INDEX: **0 KYUN Kafka + har shabd kis dikkat se (pehle ye padho)** · 1 saar · 2 flow · 3 crux · 4 setup(clean)
+>        · **4B broker-infra(KRaft/localhost-vs-kafka/retry-spam)**
 >        · 5 config(autoconfig) · 6 Boot-4 gotcha(root-cause+fix) · 7 DLQ(retry+DLT) · 7B consumer-group/partitions
 >        · 7C idempotent · 8 interview · 9 rerun · 10 aage
+
+---
+
+## 0. KYUN KAFKA + HAR SHABD KIS DIKKAT SE PAIDA HUA
+
+> Poore section me ek hi misaal: **Order Service** har order pe event bhejti hai,
+> **SMS / Email / Fraud / Analytics** use padhte hain.
+
+### 0A. Kafka ke BINA — seedhi call ki 3 dikkat
+```
+User "order place"
+   |
+[Order Service] --call--> [Payment]
+               --call--> [Inventory]
+               --call--> [SMS]
+               --call--> [Email]
+               --call--> [Analytics]
+```
+```
+1. SLOW            user tab tak ruka jab tak paanchon jawab na de. SMS 3 sec le -> order bhi 3 sec ka.
+2. EK GIRA SAB GIRA SMS down -> order bhi fail, jabki SMS order ke liye zaroori hi nahi tha.
+3. JAKDA HUA       kal "Fraud" chahiye -> Order Service ka code badlo + deploy. Order ko har sunne wale ka pata ho.
++  JHATKA          sale me 1 lakh order / min -> neeche wali services seedha dab jaati.
+```
+
+### 0B. Kafka ke SAATH — beech me ek dabba
+```
+[Order Service] --"order placed" event--> [ KAFKA  topic "order-events" ]
+                                            |       |        |        |
+                                          [SMS]  [Email] [Analytics] [Fraud]    (har koi khud padhta)
+```
+```
+1. TEZ             event daala -> user ko turant "order ho gaya". baaki kaam peeche.
+2. EK GIRA TO BAAKI CHALTE  SMS down -> uske events Kafka me pade rehte, wapas aaya to wahin se padh leta.
+3. KHULA HUA       Fraud jodna = bas topic sunna shuru kare. Order Service ka code nahi chhoona.
++  JHATKA SAMBHALTA 1 lakh order Kafka me jama, consumer apni speed se nikaalte.
+```
+**EK LINE:** Kafka = services ke beech ka dabba, taaki BHEJNE wala aur SUNNE wala ek-doosre pe tike na rahein.
+
+### 0C. Kya Kafka "MQ" hai? — bolchaal me haan, asal me LOG
+```
+RabbitMQ (asli QUEUE) = POST OFFICE
+   chitthi di -> pahunchi -> ack -> GAYAB
+
+Kafka (LOG)           = TAPE RECORDER / diary
+   har event LIKHA jaata aur RUKTA hai (retention tak, jaise 7 din)
+   har sunne wala apna BOOKMARK (offset) rakhta
+   chahe to peeche jaake dobara padhe (REPLAY)
+```
+Isi wajah se: ek hi event SMS, Email, Fraud **teeno alag-alag** padh paate (har group ka apna bookmark),
+aur crash ke baad service bookmark se wapas shuru karti, message khota nahi.
+```
+bahut events, kai sunne wale, replay chahiye        -> KAFKA
+ek kaam ek worker ko, complex routing, deliver+khatam -> RABBITMQ   (poora: 06_COMPARES/14_kafka_vs_rabbitmq.md)
+```
+
+### 0D. Har shabd = ek dikkat ka ilaaj
+
+**YAAD KI TASVEER = AKHBAAR (newspaper):**
+```
+reporter khabar bhejta            = PRODUCER
+akhbaar ka daftar (chhapta + archive rakhta) = BROKER
+section: sports / business        = TOPIC
+ek section ke kai printing machine = PARTITION
+page number                       = OFFSET
+padhne wala                       = CONSUMER
+ek GHAR ke log ek akhbaar BAANT ke padhte (papa sports, mummy business) = CONSUMER GROUP
+alag ghar = apni POORI copy        = alag groupId
+```
+
+**1. PRODUCER = bhejne wala**
+```
+[Order Service]  --"order #101 placed"-->
+```
+Jo event Kafka me DAALTA. Sirf ROLE hai, alag machine nahi — tera Spring app `kafkaTemplate.send(...)` karke producer ban jaata.
+Kyun: bhejne wala event daal ke aage badhe, rukna na pade.
+
+**2. CONSUMER = padhne wala**
+```
+              --> [SMS Service]    (@KafkaListener)
+              --> [Fraud Service]
+```
+Jo event Kafka se PADHTA (khud PULL / poll karta, broker push nahi karta). Ye bhi ROLE — ek app producer + consumer dono ho sakta.
+Kyun: har service apni speed se padhe.
+
+**3. BROKER = beech ka server, events disk pe rakhta**
+DIKKAT: producer ne bheja, consumer us waqt band hai — event rakhega kaun?
+```
+[Producer] ---> [ BROKER (Kafka server :9092) ] ---> [Consumer]
+                  events DISK pe likhe rehte
+```
+Broker = Kafka ka asli server (Docker wala container). Producer / consumer sirf broker se baat karte, ek-doosre se KABHI nahi.
+Asli setup = 3+ broker (CLUSTER). Ek mara -> doosre ke paas COPY (replication), event nahi khota.
+
+**4. TOPIC = events ka naamzad khaana**
+DIKKAT: broker me order, payment, user sab aa raha. SMS ko sirf order wale chahiye.
+```
+BROKER
+  topic "order-events"    : #101 #102 #103 ...
+  topic "payment-events"  : ...
+  topic "user-events"     : ...
+```
+Producer: "order-events me daalo". Consumer: "main order-events sunta hoon". Jodne wala dhaaga = sirf NAAM.
+
+**5. PARTITION = ek topic ke andar kai LINE**
+DIKKAT: 1 lakh order / sec. Ek hi line = ek machine likhe + ek consumer padhe = BOTTLENECK.
+```
+topic "order-events"
+  P0: #101 #104 #107 ...
+  P1: #102 #105 #108 ...
+  P2: #103 #106 #109 ...
+```
+3 line -> alag broker pe reh sakti + 3 consumer ek saath padhein = 3 guna tez.
+KEEMAT: order sirf EK LINE ke andar pakka, poore topic me nahi.
+-> ek user ke saare events ek line me chahiye? **key = userId** do. Same key -> same partition -> order bana rehta.
+(partition kaun chunta + bina key kya hota = 7B-e)
+
+**6. OFFSET = line me event ka NUMBER (bookmark)**
+DIKKAT: consumer crash hua, wapas aaya — kahan se padhe? Shuru se = SMS dobara jaayega. Aage se = beech ke chhoot jaayenge.
+```
+P0:  [0] #101   [1] #104   [2] #107   [3] #110
+                             ^
+                 SMS group ne yahan tak padha -> offset 2 COMMIT kiya
+                 crash -> wapas -> 3 se shuru
+```
+Har event ko line me number: 0, 1, 2... Consumer padh ke bolta "2 tak pahuncha" (COMMIT).
+Isliye Kafka padhne ke baad event DELETE nahi karta — har reader apna bookmark rakhta.
+
+**7. CONSUMER GROUP = ek kaam karne wali TEAM**
+DIKKAT (do alag):
+```
+(a) SMS ka ek instance 1 lakh/sec nahi jhel sakta -> 3 instance chahiye.
+    par teeno ko wahi event mila to 3 SMS jaayenge.
+(b) SMS aur Fraud DONO ko HAR event chahiye.
+```
+```
+group "sms-service"  (3 instance)          group "fraud-service" (1 instance)
+   A <- P0   B <- P1   C <- P2                X <- P0, P1, P2
+   kaam BAANTA, har event ek hi baar          ise bhi SAB events, apni copy
+```
+```
+group ke ANDAR -> partition baante, ek partition = EK hi member -> duplicate nahi   = (a) ka ilaaj
+ALAG groups    -> har group SAB padhta, apne offset ke saath                     = (b) ka ilaaj
+-> isliye OFFSET har GROUP ka alag: SMS group P0 me 2 pe, Fraud group 50 pe ho sakta.
+```
+
+### 0E. Poori tasveer ek saath
+```
+[Order Service]                      BROKER CLUSTER
+  PRODUCER  --key=userId-->   topic "order-events"
+                                P0: 0 1 2 3 ...   --> group sms:  A   | group fraud: X
+                                P1: 0 1 2 ...     --> group sms:  B   | group fraud: X
+                                P2: 0 1 2 3 4 ... --> group sms:  C   | group fraud: X
+                              (har group ka har partition pe APNA offset)
+```
+
+### 0F. Ek-ek line (revise ke liye bas ye)
+```
+producer  = event daalne wala               -> bhejne wala ruke nahi
+consumer  = event padhne wala (pull)        -> apni speed se padhe
+broker    = beech ka server, disk pe rakhta -> koi band ho to bhi event bacha rahe
+topic     = events ki category              -> sirf apne kaam ka sune
+partition = topic ki kai line               -> load baante, parallel chale (order sirf line ke andar)
+offset    = line me event ka number         -> crash ke baad wahin se shuru
+group     = ek kaam karne wali team         -> andar baanto, alag group ko poori copy
+```
+
+### 0G. BOL (interview)
+```
+"Kafka decouples services. The producer writes an event and moves on, and every interested service
+ reads it independently, at its own speed. If a consumer goes down, the events stay in Kafka and it
+ resumes from its offset. Technically it's a distributed append-only log, not a classic queue:
+ messages are retained, so multiple consumer groups can read the same events, and they can be replayed."
+```
 
 ---
 
