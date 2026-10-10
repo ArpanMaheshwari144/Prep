@@ -678,6 +678,28 @@ KEY nahi hai -> sticky: ek partition pakad ke batch -> burst me sab ek jagah
 ```
 **Anchor:** parcel pe **pincode (key)** likha -> alag pincode alag area (partition). Pincode na ho -> courier "abhi sab ek truck me daal do" -> ek area.
 
+### 7B-f. ★★ "Message kis CONSUMER ko?" — DO KADAM (groupId akela jawab NAHI)
+```
+KADAM 1: kaunsa PARTITION?  -> KEY tay karti, faisla PRODUCER karta (broker NAHI)
+  producer bhejne se PEHLE hisaab: key hai -> hash(key) % 3 ("user42" -> P1) · key nahi -> sticky
+  phir seedha us partition wale broker ko bhejta. BROKER sirf RAKHTA, chunta nahi.
+
+KADAM 2: us partition se kaunsa CONSUMER?  -> GROUP tay karta
+  group "sms" (A,B,C):  A <- P0   B <- P1   C <- P2
+  P1 me aaya -> group "sms" me P1 kiske paas? B -> B padhega
+  group "fraud" (X):    X <- P0,P1,P2  -> wahi message X ko BHI, apni copy
+```
+groupId ka kaam = **kaun-kaun si TEAM** ko milega (har group ko poori copy). Team ke **andar kaun member** = partition tay karta.
+**YAAD:** key se PARTITION · partition se CONSUMER · groupId se TEAM.
+**BOL:**
+```
+"Two steps. First, the producer picks the partition: hash of the key mod the number of partitions,
+ or the sticky partitioner if there's no key. The broker just stores it.
+ Second, inside each consumer group, every partition is owned by exactly one consumer,
+ so the consumer that owns that partition reads it. The group id decides which group,
+ and every group gets its own copy of the message."
+```
+
 ---
 
 ## 7C. IDEMPOTENT CONSUMER (duplicate se bachao)
@@ -689,6 +711,34 @@ Consumer process karta -> offset COMMIT se PEHLE crash/rebalance
    -> Kafka "commit nahi hua, dobara bhejta hoon" -> SAME message dobara -> DOUBLE process
 ```
 Dikkat jab side-effect ho: "$100 add" -> $200 (double-charge!) · "email" -> 2 email · "order" -> 2 order.
+
+**COMMIT KAB? — kaam se PEHLE ya BAAD (ye hi duplicate ki jad)**
+Misaal: SMS consumer, event #107 (offset 2).
+```
+TAREEKA 1: PEHLE commit, PHIR kaam
+  padha #107 -> commit "2 ho gaya" -> SMS bhejna shuru -> CRASH (SMS gaya hi nahi)
+  wapas -> bookmark bolta 2 ho gaya -> 3 se shuru -> #107 ka SMS KABHI nahi gaya = KHO GAYA
+  = AT-MOST-ONCE (zyada se zyada ek baar, kabhi ZERO)
+
+TAREEKA 2: PEHLE kaam, PHIR commit
+  padha #107 -> SMS bhej diya -> commit se pehle CRASH
+  wapas -> bookmark abhi 1 pe -> #107 DOBARA -> SMS DOBARA = DUPLICATE
+  = AT-LEAST-ONCE (EK BAAR TO JAAYEGA HI, kabhi do baar)
+```
+**Chunte = TAREEKA 2.** Khona zyada bura (payment event kho gaya = paisa gaya, pata bhi nahi). Duplicate rokna aasan -> neeche 7C-b.
+**Spring:** `@KafkaListener` method poora chal ke return ho, TAB Spring offset commit karta = default hi Tareeka 2.
+**YAAD:**
+```
+pehle commit   -> kho sakta        (at-most-once)
+baad me commit -> dobara aa sakta  (at-least-once) + dedup = asli duniya ka default
+```
+**BOL:**
+```
+"We commit the offset only after processing, so a crash means the message is redelivered, not lost.
+ That's at-least-once, so the consumer has to be idempotent: we store the event ID and skip
+ anything we've already processed."
+```
+"Exactly-once" (Kafka transactions) poochhe -> "at-least-once plus idempotent consumer is the common practical approach."
 
 ### 7C-b. Ilaaj — dedup by unique ID (ESSENCE, Arpan-line)
 ```
