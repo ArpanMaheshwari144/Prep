@@ -420,7 +420,15 @@ group "usercrud-group", 3 consumer, 3 partition:
 ```
 consumers <= partitions -> sab busy (achha)
 consumers >  partitions -> extra consumer KHAALI (partition hi nahi bacha)
+consumers <  partitions -> ek consumer KAI partition padhta (2 consumer, 3 partition -> A: P0,P1 · B: P2)
 ```
+**ALAG groupId = ALAG group = us group ko BHI saare messages** (har group apni copy padhta, aapas me nahi baant-te).
+```
+topic "payment-events"
+  group "sms-service"   -> saare messages padhta
+  group "fraud-service" -> wahi saare messages ALAG se padhta
+```
+Interview sawaal "3 partition, message kis consumer ko?" -> key se partition, partition se us GROUP ka ek consumer.
 Parallelism ki max limit = **partition count**. **Anchor:** dukaan (topic), 3 counter (partition), 3 cashier (consumer) -> 3x tez; 4th cashier ko counter nahi -> khaali.
 **Rebalance (1 line):** consumer aaya/gaya -> Kafka partitions dobara baant deta (auto).
 
