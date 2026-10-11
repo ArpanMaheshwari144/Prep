@@ -2269,46 +2269,51 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  │ ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)   = do array (bestLeft + bestRight) + WALL
  └──────────────────────────────────────────────────────────────
      ESSENCE: har wall pe -> [0..i] ka best + [i+1..n-1] ka best -> in sab ka MAX. bas yehi.
-       val       : [  1   2  -7   8   6  -4 ]
-       bestLeft  : [  1   3   3  (8) 14  14 ]   (0..i)          <- aage
-       bestRight : [ 14  14  14 (14) 6  -4 ]   (i+1..n-1)      <- peeche
-       overlap dekh: index 3 pe bestLeft ka 8 AUR bestRight ka 14 -- dono me index 3 COMMON = do baar count (jhootha).
-       isliye: left = [0..i], right = [i+1..n-1] -> ek AAGE shift -> index 3 dono me nahi. (ya left [0..i-1], right [i..n-1])
 
-     CONNECT: ye KADANE + PREFIX/SUFFIX ka COMBO hai (do pattern jud rahe).
-        05 (kadane per-index) -> maxEndingAt array -> uska PREFIX-max (aage) = bestLeft,
-        SUFFIX-max (peeche) = bestRight -> phir WALL se jodo.  (var = code jaisa: ans/temp)
-        KYUN kadane+prefix: har index tak ka running SUM = prefix-sum; uska MAX (neg aaye to reset) = kadane.
-        eg [2,1,-99,3,3]=9 -> wall index-1 pe: LEFT best=3 ([2,1]) + RIGHT best=6 ([3,3]) = 9.
+     IDEA:
+        CONNECT: ye KADANE + PREFIX/SUFFIX ka COMBO hai (do pattern jud rahe).
+           05 (kadane per-index) -> maxEndingAt array -> uska PREFIX-max (aage) = bestLeft,
+           SUFFIX-max (peeche) = bestRight -> phir WALL se jodo.  (var = code jaisa: ans/temp)
+           KYUN kadane+prefix: har index tak ka running SUM = prefix-sum; uska MAX (neg aaye to reset) = kadane.
+           eg [2,1,-99,3,3]=9 -> wall index-1 pe: LEFT best=3 ([2,1]) + RIGHT best=6 ([3,3]) = 9.
 
-       maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)
-           ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // Kadane per-index (=05, prefix-sum+reset)
-              |__ ye jo array RETURN hua  -->  neeche bestLeftPrefix me 'temp' ban jaata
+     TEMPLATE:
+         maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)
+             ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // Kadane per-index (=05, prefix-sum+reset)
+                |__ ye jo array RETURN hua  -->  neeche bestLeftPrefix me 'temp' ban jaata
 
-       bestLeftPrefix       (temp = UPAR wale ka RETURN;  base ans[0]=temp[0];   loop i=1..n-1  AAGE)
-           ans[i] = max( ans[i-1] , temp[i] )                            // PREFIX-max (=06)
+         bestLeftPrefix       (temp = UPAR wale ka RETURN;  base ans[0]=temp[0];   loop i=1..n-1  AAGE)
+             ans[i] = max( ans[i-1] , temp[i] )                            // PREFIX-max (=06)
 
-       maxEndingAtForRight  (base ans[n-1]=nums[n-1];    loop i=n-2..0  PEECHE)
-           ans[i] = max( nums[i] , ans[i+1] + nums[i] )                  // 05 ka MIRROR
-              |__ ye jo array RETURN hua  -->  neeche bestRightPrefix me 'temp' ban jaata
+         maxEndingAtForRight  (base ans[n-1]=nums[n-1];    loop i=n-2..0  PEECHE)
+             ans[i] = max( nums[i] , ans[i+1] + nums[i] )                  // 05 ka MIRROR
+                |__ ye jo array RETURN hua  -->  neeche bestRightPrefix me 'temp' ban jaata
 
-       bestRightPrefix      (temp = UPAR wale ka RETURN;  base ans[n-1]=temp[n-1];  loop i=n-2..0  PEECHE)
-           ans[i] = max( ans[i+1] , temp[i] )                           // SUFFIX-max (=06 ulta)
+         bestRightPrefix      (temp = UPAR wale ka RETURN;  base ans[n-1]=temp[n-1];  loop i=n-2..0  PEECHE)
+             ans[i] = max( ans[i+1] , temp[i] )                           // SUFFIX-max (=06 ulta)
 
-       maxTwoNonOverlap     (bestLeft=bestLeftPrefix, bestRight=bestRightPrefix;  ans=INT_MIN)
-           for i = 0..n-2 :  ans = max( ans , bestLeft[i] + bestRight[i+1] )    // WALL, i+1 = non-overlap
+         maxTwoNonOverlap     (bestLeft=bestLeftPrefix, bestRight=bestRightPrefix;  ans=INT_MIN)
+             for i = 0..n-2 :  ans = max( ans , bestLeft[i] + bestRight[i+1] )    // WALL, i+1 = non-overlap
 
-     VISUAL [1,2,-7,8,6,-4]:
-       val       : [ 1    2   -7    8    6   -4 ]
-       maxEndAt  : [ 1    3   -4    8   14   10 ]   (05)
-       bestLeft  : [ 1    3    3    8   14   14 ]   (06)
-       bestRight : [ 14   14   14   14   6   -4 ]   (06 ka mirror)
-       i=1: bestLeft[1]=3 + bestRight[2]=14 = 17
+     DRY-RUN:
+        VISUAL [1,2,-7,8,6,-4]:
+          val       : [ 1    2   -7    8    6   -4 ]
+          maxEndAt  : [ 1    3   -4    8   14   10 ]   (05)
+          bestLeft  : [ 1    3    3    8   14   14 ]   (06)
+          bestRight : [ 14   14   14   14   6   -4 ]   (06 ka mirror)
+          i=1: bestLeft[1]=3 + bestRight[2]=14 = 17
 
-     i+1 KYUN (non-overlap ki JAAN): right ko i se lo (bestRight[i]) -> shared index DONO subarray me -> DO BAAR count -> OVERLAP.
-       e.g. bestLeft[3]=8 + bestRight[3]=14 = 22, index 3 DONO me = jhootha. i+1 (ya i-1, loop i=1->n-1) se dono ALAG.
+     EDGE:
+        i+1 KYUN (non-overlap ki JAAN): right ko i se lo (bestRight[i]) -> shared index DONO subarray me -> DO BAAR count -> OVERLAP.
+          e.g. bestLeft[3]=8 + bestRight[3]=14 = 22, index 3 DONO me = jhootha. i+1 (ya i-1, loop i=1->n-1) se dono ALAG.
 
-     loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
+          val       : [  1   2  -7   8   6  -4 ]
+          bestLeft  : [  1   3   3  (8) 14  14 ]   (0..i)          <- aage
+          bestRight : [ 14  14  14 (14) 6  -4 ]   (i+1..n-1)      <- peeche
+          overlap dekh: index 3 pe bestLeft ka 8 AUR bestRight ka 14 -- dono me index 3 COMMON = do baar count (jhootha).
+          isliye: left = [0..i], right = [i+1..n-1] -> ek AAGE shift -> index 3 dono me nahi. (ya left [0..i-1], right [i..n-1])
+
+        loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
 
 ```
 
