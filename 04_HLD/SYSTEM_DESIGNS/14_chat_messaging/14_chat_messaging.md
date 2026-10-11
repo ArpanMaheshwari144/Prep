@@ -78,6 +78,22 @@ SOLUTION: A /connect?user=A (BAND NAHI hoti) -> register A -> penA · B /connect
 ★ DEKHA:  B ki screen pe message aa gaya, B ne kuch maanga hi nahi. Screen pe "JUD GAYA — ye connection ab khuli padi hai",
           console pe `[JUDA] B   register ab = [A, B]`
 ```
+```
+POOCHEGA: "B never asked for anything. How does the server push A's message to B?"
+DHYAAN:   "client aur server thodi-thodi der me baat karte rehte" = ye POLLING hai, galat shabd.
+          WebSocket = ek baar judo, connection KHULA rehta. Server ko jab bhi kuch dena ho, usi
+          khule taar pe TURANT bhej deta. Client ko poochna nahi padta.
+BOL:      "Each client opens a WebSocket once and keeps it open. The server can push to it at any time
+           over that same connection, so the receiver never has to ask. Polling would waste requests and
+           add delay."
+
+AGLA SAWAAL (tere jawab se):
+  "WebSocket kyun, polling / long polling / SSE kyun nahi?"
+   -> polling = har 5 sec "kuch aaya?", 100 me 1 kaam ki · long polling = har message ke baad naya request
+      · SSE = sirf server -> client (ek taraf) · chat me dono taraf, turant -> WebSocket
+  "Connection chupchaap toot gaya (net gaya), server ko kaise pata?"
+   -> ping / pong heartbeat; jawab na aaye to connection band, register se hatao
+```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -271,6 +287,14 @@ BOARD PE: ~1.2 TB roz · ~46,000 write / sec
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
 BOL:      "Wide-column store partitioned by chat id and sorted by a snowflake message id, so the last fifty messages
            of a chat are one read and writes spread across nodes. Old data moves to cold storage."
+
+POOCHEGA: "What's your partition key, and why?"
+DHYAAN:   user_id GALAT: A-B ki ek chat -> A ke bheje A ke partition me, B ke bheje B ke me
+          -> "aakhri 50" ke liye DO jagah padho aur jodo · 500 ka group = 500 jagah.
+          Chat kholte hi chahiye "IS CHAT ke aakhri 50" -> key wahi jis pe padhte ho = chat_id.
+BOL:      "Partition by chat id, because reads are always 'the latest messages of this chat'. One chat
+           lives in one partition, sorted by message id, so it's a single read. User id would split one
+           conversation across partitions."
 
 POOCHEGA: "What about a hot partition — one very active group?"
 DHYAAN:   chat_id + MAHINA sirf partition ka SIZE baandhta, abhi ka BOJH nahi (is mahine sab ek dabbe me)
@@ -630,7 +654,14 @@ KAISE (pre-signed URL):
           client ko AWS ki chaabi nahi milti, sirf is ek file ka chhota paas
 ```
 ```
-BOARD PE: { type: image, url, size, thumbnail }
+BOARD PE: { type: image, s3Key, size, thumbnail }
+
+POOCHEGA: "What do you store in the message for the media?"
+DHYAAN:   DB me PRESIGNED URL MAT rakho: wo 10 min me expire -> kal chat kholi to link mara hua.
+          DB me S3 KEY (+ type, size, thumbnail). Jab koi kholta hai -> server usi waqt NAYA chhota
+          presigned URL banata. Key hamesha zinda, URL har baar taaza.
+BOL:      "The message stores the S3 object key, not a URL. When someone opens it, the server signs a
+           fresh short-lived download URL, so links never go stale and access is checked every time."
 
 AGLA SAWAAL (tere jawab se):
   "Same video 1000 log forward kare -> 1000 copy?"
