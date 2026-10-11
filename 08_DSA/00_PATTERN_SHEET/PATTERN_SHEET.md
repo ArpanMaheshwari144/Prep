@@ -1032,34 +1032,34 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST CONSECUTIVE SEQ (LC-128)
  └──────────────────────────────────────────────────────────────
-   Q: unsorted array -> sabse LAMBI consecutive-integers ki chain ki LENGTH. (order matter nahi)
-   INPUT: [100,4,200,1,3,2] -> 4   (1,2,3,4 = chain; 100/200 akele)
+     Q: unsorted array -> sabse LAMBI consecutive-integers ki chain ki LENGTH. (order matter nahi)
+     INPUT: [100,4,200,1,3,2] -> 4   (1,2,3,4 = chain; 100/200 akele)
 
-   SAAR: sort(O(nlogn)) mat karo -> SET me daal ke O(1) lookup. har CHAIN sirf uske START se gino.
-   KEY: num START hai TAB HI jab (num-1) set me NAHI -> warna wo kisi chain ke BEECH ka -> skip.
-        -> har element zindagi me 1 hi baar visit -> O(n)  (warna har num se ginti = O(n^2)).
+     SAAR: sort(O(nlogn)) mat karo -> SET me daal ke O(1) lookup. har CHAIN sirf uske START se gino.
+     KEY: num START hai TAB HI jab (num-1) set me NAHI -> warna wo kisi chain ke BEECH ka -> skip.
+          -> har element zindagi me 1 hi baar visit -> O(n)  (warna har num se ginti = O(n^2)).
 
-   TEMPLATE:
-     unordered_set<int> st(nums.begin(), nums.end());
-     int ans = 0;
-     for (auto &num : nums) {
-        if (!st.count(num-1)) {                 // chain ka START
-           int currNum = num, count = 1;
-           while (st.count(currNum+1)) { currNum++; count++; }
-           ans = max(ans, count);
-        }
-     }
-     return ans;                                // khali array -> 0
+     TEMPLATE:
+       unordered_set<int> st(nums.begin(), nums.end());
+       int ans = 0;
+       for (auto &num : nums) {
+          if (!st.count(num-1)) {                 // chain ka START
+             int currNum = num, count = 1;
+             while (st.count(currNum+1)) { currNum++; count++; }
+             ans = max(ans, count);
+          }
+       }
+       return ans;                                // khali array -> 0
 
-   DRY-RUN [100,4,200,1,3,2]  set={1,2,3,4,100,200}:
-     100 -> 99 nahi -> START -> 101? nahi        -> count=1
-     4   -> 3 HAI   -> beech ka -> skip
-     200 -> 199 nahi-> START -> 201? nahi         -> count=1
-     1   -> 0 nahi  -> START -> 2,3,4 hai         -> count=4   <= ans=4
-     3,2 -> (num-1) HAI -> skip
-     => ans = 4
+     DRY-RUN [100,4,200,1,3,2]  set={1,2,3,4,100,200}:
+       100 -> 99 nahi -> START -> 101? nahi        -> count=1
+       4   -> 3 HAI   -> beech ka -> skip
+       200 -> 199 nahi-> START -> 201? nahi         -> count=1
+       1   -> 0 nahi  -> START -> 2,3,4 hai         -> count=4   <= ans=4
+       3,2 -> (num-1) HAI -> skip
+       => ans = 4
 
-   FAMILY: hashing/SET (O(1) lookup se sort bachao). trick = "har group sirf START se process".
+     FAMILY: hashing/SET (O(1) lookup se sort bachao). trick = "har group sirf START se process".
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAJORITY ELEMENT (LC-169, >n/2)
@@ -1071,21 +1071,21 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ FIND DISAPPEARED NUMBERS (LC-448)  = ARRAY-KHUD-hashmap · index-negation, O(1) space
  └──────────────────────────────────────────────────────────────
-   Q: nums[] size n, values 1..n (repeat ho sakte, kuch missing). [1..n] me se jo MISSING wo sab return.
-   INPUT: [4,3,2,7,8,2,3,1] -> [5,6]
+     Q: nums[] size n, values 1..n (repeat ho sakte, kuch missing). [1..n] me se jo MISSING wo sab return.
+     INPUT: [4,3,2,7,8,2,3,1] -> [5,6]
 
-   SAAR: extra set/map nahi -> ARRAY KHUD ko hashmap banao. "value v dikha" ka nishaan = index (v-1) ko NEGATIVE.
-   KEY: value v -> uska ghar = index v-1. jo value dikhi us index ko -ve mark. end me jo index abhi bhi +ve
-        -> us index+1 kabhi mark nahi hua -> MISSING. (abs() lo kyunki value pehle -ve ho chuki ho sakti.)
+     SAAR: extra set/map nahi -> ARRAY KHUD ko hashmap banao. "value v dikha" ka nishaan = index (v-1) ko NEGATIVE.
+     KEY: value v -> uska ghar = index v-1. jo value dikhi us index ko -ve mark. end me jo index abhi bhi +ve
+          -> us index+1 kabhi mark nahi hua -> MISSING. (abs() lo kyunki value pehle -ve ho chuki ho sakti.)
 
-   TEMPLATE:
-     for (int i=0;i<n;i++){ int idx = abs(nums[i])-1; if (nums[idx]>0) nums[idx] = -nums[idx]; }
-     for (int i=0;i<n;i++) if (nums[i]>0) ans.push_back(i+1);
+     TEMPLATE:
+       for (int i=0;i<n;i++){ int idx = abs(nums[i])-1; if (nums[idx]>0) nums[idx] = -nums[idx]; }
+       for (int i=0;i<n;i++) if (nums[i]>0) ans.push_back(i+1);
 
-   DRY-RUN [4,3,2,7,8,2,3,1]: mark index 3,2,1,6,7,1(already),2(already),0 -ve
-     -> +ve bache index 4,5 -> missing = 5,6.
-   FAMILY: array-as-hashmap (index-marking). SAME trick: find-duplicate(287)/first-missing-positive(41)/single-in-pairs.
-   ★ CONNECT: "values 1..n + O(1) space" = index-marking ka signal. (agar array modify NA kar sakta -> Floyd cycle.)
+     DRY-RUN [4,3,2,7,8,2,3,1]: mark index 3,2,1,6,7,1(already),2(already),0 -ve
+       -> +ve bache index 4,5 -> missing = 5,6.
+     FAMILY: array-as-hashmap (index-marking). SAME trick: find-duplicate(287)/first-missing-positive(41)/single-in-pairs.
+     ★ CONNECT: "values 1..n + O(1) space" = index-marking ka signal. (agar array modify NA kar sakta -> Floyd cycle.)
 ```
 
 ---
@@ -1284,22 +1284,22 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ COUNT SERVERS THAT COMMUNICATE (LC-1267, JP)  = SET MATRIX ZEROES ka cousin (row/col COUNT 2-pass)
  └──────────────────────────────────────────────────────────────
-   Q: grid me 1=server. server "communicate" karta agar uski ROW ya COL me koi DOOSRA server ho.
-      count kitne communicate (jo apni row+col DONO me akela -> nahi ginte).
-   INPUT: [[1,0],[1,1]] -> 3   ·   [[1,0],[0,1]] -> 0 (dono akele)
+     Q: grid me 1=server. server "communicate" karta agar uski ROW ya COL me koi DOOSRA server ho.
+        count kitne communicate (jo apni row+col DONO me akela -> nahi ginte).
+     INPUT: [[1,0],[1,1]] -> 3   ·   [[1,0],[0,1]] -> 0 (dono akele)
 
-   SAAR: = SET-MATRIX-ZEROES wali 2-marker trick, bas MARK ki jagah COUNT.
-         rowCount[i], colCount[j]. akela pehchano -> count==1 dono me.
-   TEMPLATE:
-       vector<int> rowCount(m,0), colCount(n,0);
-       for i,j: if(grid[i][j]==1){ rowCount[i]++; colCount[j]++; }              // pass-1 COUNT
-       for i,j: if(grid[i][j]==1 && (rowCount[i]>1 || colCount[j]>1)) ans++;    // pass-2 CHECK
-   DRY-RUN [[1,0],[1,1]]:
-       pass-1:  rowCount=[1,2]  colCount=[2,1]
-       (0,0): row0=1, col0=2>1 -> YES
-       (1,0): row1=2>1          -> YES
-       (1,1): row1=2>1          -> YES     => 3
-   FAMILY: = SET MATRIX ZEROES (zeroRow/zeroCol -> yahan rowCount/colCount). counting-family. O(m*n).
+     SAAR: = SET-MATRIX-ZEROES wali 2-marker trick, bas MARK ki jagah COUNT.
+           rowCount[i], colCount[j]. akela pehchano -> count==1 dono me.
+     TEMPLATE:
+         vector<int> rowCount(m,0), colCount(n,0);
+         for i,j: if(grid[i][j]==1){ rowCount[i]++; colCount[j]++; }              // pass-1 COUNT
+         for i,j: if(grid[i][j]==1 && (rowCount[i]>1 || colCount[j]>1)) ans++;    // pass-2 CHECK
+     DRY-RUN [[1,0],[1,1]]:
+         pass-1:  rowCount=[1,2]  colCount=[2,1]
+         (0,0): row0=1, col0=2>1 -> YES
+         (1,0): row1=2>1          -> YES
+         (1,1): row1=2>1          -> YES     => 3
+     FAMILY: = SET MATRIX ZEROES (zeroRow/zeroCol -> yahan rowCount/colCount). counting-family. O(m*n).
 ```
 
 ---
@@ -1332,129 +1332,129 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NEXT GREATER ELEMENT
  └──────────────────────────────────────────────────────────────
-   Q: har element ke DAAYE pehla BADA. koi nahi -> -1.
-   INPUT: [2,1,2,4,3] -> [4,2,4,-1,-1]
+     Q: har element ke DAAYE pehla BADA. koi nahi -> -1.
+     INPUT: [2,1,2,4,3] -> [4,2,4,-1,-1]
 
-   SAAR: MONOTONIC stack (INDEX ka). left->right. jise abhi tak apna "bada" nahi mila wo stack me pade
-         (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
-   TEMPLATE:
-     vector<int> ans(nums.size(), -1);
-     stack<int> st;                                       // INDEX stack
-     for (int i = 0; i < nums.size(); i++) {
-        while (!st.empty() && nums[st.top()] < nums[i]) { // top se curr BADA -> top ko answer mila
-           ans[st.top()] = nums[i];  st.pop();
-        }
-        st.push(i);
-     }                                                    // end tak bache -> koi bada nahi -> -1 (init)
-   DRY-RUN [2,1,2,4,3]:
-     i0(2): push            st=[0]
-     i1(1): 2<1? no; push   st=[0,1]
-     i2(2): 1<2 ans[1]=2 pop; 2<2? no; push  st=[0,2]
-     i3(4): 2<4 ans[2]=4; 2<4 ans[0]=4; push st=[3]
-     i4(3): 4<3? no; push   st=[3,4]
-     => ans=[4,2,4,-1,-1]
-   FAMILY: monotonic-stack ka BASE. Next-Smaller / Prev-Smaller = isi ka DELTA (neeche).
+     SAAR: MONOTONIC stack (INDEX ka). left->right. jise abhi tak apna "bada" nahi mila wo stack me pade
+           (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
+     TEMPLATE:
+       vector<int> ans(nums.size(), -1);
+       stack<int> st;                                       // INDEX stack
+       for (int i = 0; i < nums.size(); i++) {
+          while (!st.empty() && nums[st.top()] < nums[i]) { // top se curr BADA -> top ko answer mila
+             ans[st.top()] = nums[i];  st.pop();
+          }
+          st.push(i);
+       }                                                    // end tak bache -> koi bada nahi -> -1 (init)
+     DRY-RUN [2,1,2,4,3]:
+       i0(2): push            st=[0]
+       i1(1): 2<1? no; push   st=[0,1]
+       i2(2): 1<2 ans[1]=2 pop; 2<2? no; push  st=[0,2]
+       i3(4): 2<4 ans[2]=4; 2<4 ans[0]=4; push st=[3]
+       i4(3): 4<3? no; push   st=[3,4]
+       => ans=[4,2,4,-1,-1]
+     FAMILY: monotonic-stack ka BASE. Next-Smaller / Prev-Smaller = isi ka DELTA (neeche).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NEXT SMALLER ELEMENT
  └──────────────────────────────────────────────────────────────
-   = NEXT GREATER, bas DELTA: condition ULTA -> while nums[st.top()] > nums[i]  (bada -> chhota).
-     strictly (> , >= nahi) -> [2,2,2] -> saare -1. baaki (index-stack, left->right, push, init -1) sab wahi.
+     = NEXT GREATER, bas DELTA: condition ULTA -> while nums[st.top()] > nums[i]  (bada -> chhota).
+       strictly (> , >= nahi) -> [2,2,2] -> saare -1. baaki (index-stack, left->right, push, init -1) sab wahi.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PREVIOUS SMALLER ELEMENT
  └──────────────────────────────────────────────────────────────
-   = NEXT SMALLER, bas DELTA: for-loop ULTA (right->left, i=n-1..0). condition wahi (>).
-     (peeche se dekho -> "right ka next-smaller" = "left ka previous-smaller".)
-   USE: prev-smaller + next-smaller = Largest-Rectangle-in-Histogram ka building block.
+     = NEXT SMALLER, bas DELTA: for-loop ULTA (right->left, i=n-1..0). condition wahi (>).
+       (peeche se dekho -> "right ka next-smaller" = "left ka previous-smaller".)
+     USE: prev-smaller + next-smaller = Largest-Rectangle-in-Histogram ka building block.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)
  └──────────────────────────────────────────────────────────────
-   Q: har bar width 1, height = heights[i]. lagatar bars pe SABSE BADA rectangle ka AREA.
-   INPUT: [2,1,5,6,2,3] -> 10   (bars 5,6 -> min 5 * width 2)
+     Q: har bar width 1, height = heights[i]. lagatar bars pe SABSE BADA rectangle ka AREA.
+     INPUT: [2,1,5,6,2,3] -> 10   (bars 5,6 -> min 5 * width 2)
 
-   SAAR: HAR bar pe KHADE ho -> left me pehla CHHOTA (PS), right me pehla CHHOTA (NS)
-         = dono STOPPER -> beech ki width -> area = height*width -> sabka MAX.
-   = PREV-SMALLER + NEXT-SMALLER ka WALL, bas DELTA: VALUE nahi INDEX store + combine loop.
+     SAAR: HAR bar pe KHADE ho -> left me pehla CHHOTA (PS), right me pehla CHHOTA (NS)
+           = dono STOPPER -> beech ki width -> area = height*width -> sabka MAX.
+     = PREV-SMALLER + NEXT-SMALLER ka WALL, bas DELTA: VALUE nahi INDEX store + combine loop.
 
-   TEMPLATE:
-     nS = next-smaller INDEX   init n,   i = 0..n-1,   while h[st.top()] > h[i]   // none -> n
-     pS = prev-smaller INDEX   init -1,  i = n-1..0,   while h[st.top()] > h[i]   // none -> -1
-     int ans = INT_MIN;
-     for (int i = 0; i < n; i++) {
-        int width = nS[i] - pS[i] - 1;
-        ans = max(ans, heights[i] * width);
-     }
+     TEMPLATE:
+       nS = next-smaller INDEX   init n,   i = 0..n-1,   while h[st.top()] > h[i]   // none -> n
+       pS = prev-smaller INDEX   init -1,  i = n-1..0,   while h[st.top()] > h[i]   // none -> -1
+       int ans = INT_MIN;
+       for (int i = 0; i < n; i++) {
+          int width = nS[i] - pS[i] - 1;
+          ans = max(ans, heights[i] * width);
+       }
 
-   3 JAGAH DHYAAN:
-     1. INDEX store, value nahi (width index se banti).
-     2. nS ka default = n   (n = array ka SIZE = kitne bar)   NA -1
+     3 JAGAH DHYAAN:
+       1. INDEX store, value nahi (width index se banti).
+       2. nS ka default = n   (n = array ka SIZE = kitne bar)   NA -1
 
-        KYUN: -1 aur n = array ke BAHAR ki nakli deewar
+          KYUN: -1 aur n = array ke BAHAR ki nakli deewar
 
-              [2,4] -> size 2 -> n = 2   (index 0, 1 andar; index 2 bahar)
+                [2,4] -> size 2 -> n = 2   (index 0, 1 andar; index 2 bahar)
 
-              idx:      -1  |  0   1  |  2 (= n)
-                      deewar|  2   4  |deewar
+                idx:      -1  |  0   1  |  2 (= n)
+                        deewar|  2   4  |deewar
 
-              left  me koi chhota nahi  ->  deewar index 0 se PEHLE  ->  pS = -1
-              right me koi chhota nahi  ->  deewar aakhri ke BAAD    ->  nS = n
+                left  me koi chhota nahi  ->  deewar index 0 se PEHLE  ->  pS = -1
+                right me koi chhota nahi  ->  deewar aakhri ke BAAD    ->  nS = n
 
-        MISAAL: [2,4]   (dono bar ko right me koi chhota nahi -> nS dono jagah DEFAULT)
+          MISAAL: [2,4]   (dono bar ko right me koi chhota nahi -> nS dono jagah DEFAULT)
 
-          CASE 1: nS default = -1                      GALAT
+            CASE 1: nS default = -1                      GALAT
 
-              idx   :  0    1
-              h     :  2    4
-              pS    : -1    0
-              nS    : -1   -1      <- default -1
+                idx   :  0    1
+                h     :  2    4
+                pS    : -1    0
+                nS    : -1   -1      <- default -1
 
-              bar0  : -1 - (-1) - 1 = -1   ->  area 2 * -1 = -2
-              bar1  : -1 -  0   - 1 = -2   ->  area 4 * -2 = -8
-              ans   = -2                     (sahi 4)
-              wajah : right ki deewar LEFT me rakh di -> width minus
+                bar0  : -1 - (-1) - 1 = -1   ->  area 2 * -1 = -2
+                bar1  : -1 -  0   - 1 = -2   ->  area 4 * -2 = -8
+                ans   = -2                     (sahi 4)
+                wajah : right ki deewar LEFT me rakh di -> width minus
 
-          CASE 2: nS default = n = 2                   SAHI
+            CASE 2: nS default = n = 2                   SAHI
 
-              idx   :  0    1
-              h     :  2    4
-              pS    : -1    0
-              nS    :  2    2      <- default n (size)
+                idx   :  0    1
+                h     :  2    4
+                pS    : -1    0
+                nS    :  2    2      <- default n (size)
 
-              bar0  :  2 - (-1) - 1 = 2    ->  area 2 * 2 = 4   (dono bar, height 2)
-              bar1  :  2 -  0   - 1 = 1    ->  area 4 * 1 = 4   (sirf bar1)
-              ans   = 4
-              wajah : right ki deewar RIGHT me bahar -> width sahi
+                bar0  :  2 - (-1) - 1 = 2    ->  area 2 * 2 = 4   (dono bar, height 2)
+                bar1  :  2 -  0   - 1 = 1    ->  area 4 * 1 = 4   (sirf bar1)
+                ans   = 4
+                wajah : right ki deewar RIGHT me bahar -> width sahi
 
-        FAYDA: NS - PS - 1 kinare wale bar pe bhi sahi, alag if-else nahi.
-     3. `>` strictly, `>=` NAHI.   [3,3,3,3]: `>=` -> barabar wala bhi stopper -> har width 1 -> 3 (galat)
-                                               `>`  -> koi stopper nahi -> width 4 -> 12.
+          FAYDA: NS - PS - 1 kinare wale bar pe bhi sahi, alag if-else nahi.
+       3. `>` strictly, `>=` NAHI.   [3,3,3,3]: `>=` -> barabar wala bhi stopper -> har width 1 -> 3 (galat)
+                                                 `>`  -> koi stopper nahi -> width 4 -> 12.
 
-   width = NS-PS-1 KYUN: stopper khud andar NAHI -> bars PS+1 se NS-1 tak
-         count = (NS-1)-(PS+1)+1 = NS-PS-1   (-1 sirf EK baar)
+     width = NS-PS-1 KYUN: stopper khud andar NAHI -> bars PS+1 se NS-1 tak
+           count = (NS-1)-(PS+1)+1 = NS-PS-1   (-1 sirf EK baar)
 
-   DRY-RUN (h=[2,1,5,6,2,3]):
-        6 |            ##
-          |        +------+
-        5 |        |## ##|
-        4 |        |## ##|
-        3 |        |## ##|
-        2 |  ##    |## ##|  ##  ##
-        1 |  ## ## |## ##|  ##  ##
-          +--------+------+--------
-       idx:  0  1    2 3    4   5
+     DRY-RUN (h=[2,1,5,6,2,3]):
+          6 |            ##
+            |        +------+
+          5 |        |## ##|
+          4 |        |## ##|
+          3 |        |## ##|
+          2 |  ##    |## ##|  ##  ##
+          1 |  ## ## |## ##|  ##  ##
+            +--------+------+--------
+         idx:  0  1    2 3    4   5
 
-       idx  :  0   1   2   3   4   5
-       h    :  2   1   5   6   2   3
-       PS   : -1  -1   1   2   1   4
-       NS   :  1   6   4   4   6   6
-       width:  1   6   2   1   4   1
-       area :  2   6 [10]  6   8   3   -> MAX 10
-       bar5 (idx2): PS=1 (h1), NS=4 (h2) -> beech me c2,c3 -> width 2 -> 5*2 = 10.
+         idx  :  0   1   2   3   4   5
+         h    :  2   1   5   6   2   3
+         PS   : -1  -1   1   2   1   4
+         NS   :  1   6   4   4   6   6
+         width:  1   6   2   1   4   1
+         area :  2   6 [10]  6   8   3   -> MAX 10
+         bar5 (idx2): PS=1 (h1), NS=4 (h2) -> beech me c2,c3 -> width 2 -> 5*2 = 10.
 
-   FAMILY: next-GREATER se NAHI (rectangle bade bar ko andar leta, CHHOTE pe rukta).
-           2D bhai = MAXIMAL RECTANGLE (har row = histogram, isi ko call).
+     FAMILY: next-GREATER se NAHI (rectangle bade bar ko andar leta, CHHOTE pe rukta).
+             2D bhai = MAXIMAL RECTANGLE (har row = histogram, isi ko call).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAXIMAL RECTANGLE (LC-85, 2D)
@@ -1480,19 +1480,19 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ONLINE STOCK SPAN (LC-901)  = monotonic-stack + SUM-span DELTA
  └──────────────────────────────────────────────────────────────
-   Q: STREAMING (next(price) call). span = aaj samet peeche kitne LAGATAAR din price <= aaj.
-   INPUT: next(100,80,60,70,60,75,85) -> 1,1,1,2,1,4,6
-   = monotonic stack ka DELTA -- 2 farak: (1) stack me INDEX nahi, PAIR {price, span}.
-     (2) top.price <= aaj -> pop karke uska span APNE span me JODO (index-answer nahi, SUM).
-   TEMPLATE:
-     int next(int price){
-        int span = 1;
-        while(!st.empty() && st.top().first <= price){ span += st.top().second; st.pop(); }
-        st.push({price, span});   return span;
-     }
-   DRY-RUN 75 (stack top pe ...60,70,60): 60<=75 span=2 pop · 70<=75 span=4 pop · (bacha) · 80>75 ruk -> span=4, push{75,4}.
-   KYUN span-JODO: pop hue chhote din KHUD apne peeche ka span nigal chuke -> unka span add = un sab din bhi cover (dobara peeche nahi jaana).
-   FAMILY: monotonic-stack (next-greater base) + "answer = accumulated SPAN" delta (index nahi, running count).
+     Q: STREAMING (next(price) call). span = aaj samet peeche kitne LAGATAAR din price <= aaj.
+     INPUT: next(100,80,60,70,60,75,85) -> 1,1,1,2,1,4,6
+     = monotonic stack ka DELTA -- 2 farak: (1) stack me INDEX nahi, PAIR {price, span}.
+       (2) top.price <= aaj -> pop karke uska span APNE span me JODO (index-answer nahi, SUM).
+     TEMPLATE:
+       int next(int price){
+          int span = 1;
+          while(!st.empty() && st.top().first <= price){ span += st.top().second; st.pop(); }
+          st.push({price, span});   return span;
+       }
+     DRY-RUN 75 (stack top pe ...60,70,60): 60<=75 span=2 pop · 70<=75 span=4 pop · (bacha) · 80>75 ruk -> span=4, push{75,4}.
+     KYUN span-JODO: pop hue chhote din KHUD apne peeche ka span nigal chuke -> unka span add = un sab din bhi cover (dobara peeche nahi jaana).
+     FAMILY: monotonic-stack (next-greater base) + "answer = accumulated SPAN" delta (index nahi, running count).
 
 ┌── (STANDALONE — apni alag trick) ─────────────────────────────
 └───────────────────────────────────────────────────────────────
@@ -1572,47 +1572,47 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ FIRST & LAST POSITION (LC-34)
  └──────────────────────────────────────────────────────────────
-   Q: sorted array (duplicate ho sakte) me target ka PEHLA aur AAKHRI index.
-      nahi mila -> {-1,-1}. O(log n).
-   INPUT: [5,7,7,8,8,10], target 8 -> {3,4}
+     Q: sorted array (duplicate ho sakte) me target ka PEHLA aur AAKHRI index.
+        nahi mila -> {-1,-1}. O(log n).
+     INPUT: [5,7,7,8,8,10], target 8 -> {3,4}
 
-   SAAR: normal BS, bas target MILNE pe RUKO MAT -> ans me likho, phir ek taraf aur dhoondo.
-         FIRST ke liye LEFT chalte raho · LAST ke liye RIGHT chalte raho -> 2 alag BS.
-   = BASIC BS ka WALL, bas DELTA: mid==target pe return nahi, ans likho + ek side chalo.
+     SAAR: normal BS, bas target MILNE pe RUKO MAT -> ans me likho, phir ek taraf aur dhoondo.
+           FIRST ke liye LEFT chalte raho · LAST ke liye RIGHT chalte raho -> 2 alag BS.
+     = BASIC BS ka WALL, bas DELTA: mid==target pe return nahi, ans likho + ek side chalo.
 
-   TEMPLATE:
-     vector<int> ans(2, -1);                    // size fixed 2 -> ans(2,-1), push_back NAHI
-     int low = 0, high = n - 1;
-     while (low <= high) {                      // PASS 1 = FIRST
-        int mid = low + (high - low) / 2;
-        if (nums[mid] == target) { ans[0] = mid; high = mid - 1; }   // mila -> aur LEFT
-        else if (nums[mid] < target) low = mid + 1;
-        else high = mid - 1;
-     }
-     low = 0, high = n - 1;                     // RESET, warna PASS 2 galat jagah se shuru
-     while (low <= high) {                      // PASS 2 = LAST
-        int mid = low + (high - low) / 2;
-        if (nums[mid] == target) { ans[1] = mid; low = mid + 1; }    // mila -> aur RIGHT
-        else if (nums[mid] < target) low = mid + 1;
-        else high = mid - 1;
-     }
-     return ans;
+     TEMPLATE:
+       vector<int> ans(2, -1);                    // size fixed 2 -> ans(2,-1), push_back NAHI
+       int low = 0, high = n - 1;
+       while (low <= high) {                      // PASS 1 = FIRST
+          int mid = low + (high - low) / 2;
+          if (nums[mid] == target) { ans[0] = mid; high = mid - 1; }   // mila -> aur LEFT
+          else if (nums[mid] < target) low = mid + 1;
+          else high = mid - 1;
+       }
+       low = 0, high = n - 1;                     // RESET, warna PASS 2 galat jagah se shuru
+       while (low <= high) {                      // PASS 2 = LAST
+          int mid = low + (high - low) / 2;
+          if (nums[mid] == target) { ans[1] = mid; low = mid + 1; }    // mila -> aur RIGHT
+          else if (nums[mid] < target) low = mid + 1;
+          else high = mid - 1;
+       }
+       return ans;
 
-   DRY-RUN ([5,7,7,8,8,10], target 8):
-     idx :  0  1  2  3  4  5
-     val :  5  7  7  8  8 10
-     PASS 1: l0 h5 mid2 (7<8)  -> l=3
-             l3 h5 mid4 (8==8) -> ans[0]=4, h=3
-             l3 h3 mid3 (8==8) -> ans[0]=3, h=2   -> ruk -> FIRST 3
-     PASS 2: l0 h5 mid2 (7<8)  -> l=3
-             l3 h5 mid4 (8==8) -> ans[1]=4, l=5
-             l5 h5 mid5 (10>8) -> h=4             -> ruk -> LAST 4
-     -> {3,4}
+     DRY-RUN ([5,7,7,8,8,10], target 8):
+       idx :  0  1  2  3  4  5
+       val :  5  7  7  8  8 10
+       PASS 1: l0 h5 mid2 (7<8)  -> l=3
+               l3 h5 mid4 (8==8) -> ans[0]=4, h=3
+               l3 h3 mid3 (8==8) -> ans[0]=3, h=2   -> ruk -> FIRST 3
+       PASS 2: l0 h5 mid2 (7<8)  -> l=3
+               l3 h5 mid4 (8==8) -> ans[1]=4, l=5
+               l5 h5 mid5 (10>8) -> h=4             -> ruk -> LAST 4
+       -> {3,4}
 
-   DHYAAN:
-     1. dono pass ke beech low/high RESET.
-     2. mila to sirf EK pointer hilao (FIRST: high=mid-1 · LAST: low=mid+1).
-     3. ans(2,-1) + index set karo, push_back mat milao.
+     DHYAAN:
+       1. dono pass ke beech low/high RESET.
+       2. mila to sirf EK pointer hilao (FIRST: high=mid-1 · LAST: low=mid+1).
+       3. ans(2,-1) + index set karo, push_back mat milao.
 
 ┌── FAMILY: ROTATED ────────────────────────────────────────────
 │ KYUN SAATH: array rotate hua; ek comparison se pata karo kaunsa half sorted / pivot kis taraf, phir wahi half rakho.
@@ -1747,58 +1747,58 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MEDIAN OF 2 SORTED ARRAYS (LC-4, Hard)
  └──────────────────────────────────────────────────────────────
-   SAAR: 2 sorted arrays ka COMBINED median, O(log). MERGE mat karo -> ek CUT dhoondo:
-         LEFT aadha | RIGHT aadha, aur left ka HAR element <= right ka HAR. Cut ke 4 kinaare = median.
+     SAAR: 2 sorted arrays ka COMBINED median, O(log). MERGE mat karo -> ek CUT dhoondo:
+           LEFT aadha | RIGHT aadha, aur left ka HAR element <= right ka HAR. Cut ke 4 kinaare = median.
 
-   Q: A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> median?  (total 11, odd)
+     Q: A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> median?  (total 11, odd)
 
-   CUT idea (chhote array A pe BS -> Px; Py auto):
-      A:  1  3  8  9 | 15            Px = A-left count (BS ISI pe, chhote array pe)
-      B:  7 11       | 18 19 21 25   Py = (m+n+1)/2 - Px
-      yahan:  Px = 4  (A-left = {1,3,8,9})  = binary-search ka MID jahan cut VALID nikla
-              Py = (11+1)/2 - 4 = 6 - 4 = 2   (B-left = {7,11})
-              [Px = BS variable "mid" hi hai · A[Px-1]=x1 left-kinaara · A[Px]=x3 right-kinaara]
-             x1=9  x3=15
-             x2=11 x4=18
-      |___ LEFT = 6 (half) ___|___ RIGHT = 5 ___|
+     CUT idea (chhote array A pe BS -> Px; Py auto):
+        A:  1  3  8  9 | 15            Px = A-left count (BS ISI pe, chhote array pe)
+        B:  7 11       | 18 19 21 25   Py = (m+n+1)/2 - Px
+        yahan:  Px = 4  (A-left = {1,3,8,9})  = binary-search ka MID jahan cut VALID nikla
+                Py = (11+1)/2 - 4 = 6 - 4 = 2   (B-left = {7,11})
+                [Px = BS variable "mid" hi hai · A[Px-1]=x1 left-kinaara · A[Px]=x3 right-kinaara]
+               x1=9  x3=15
+               x2=11 x4=18
+        |___ LEFT = 6 (half) ___|___ RIGHT = 5 ___|
 
-      4 KINAARE (baaki se matlab NAHI, sorted isliye apne-aap sahi):
-        x1=A[Px-1] Aleft   x3=A[Px] Aright   (edge Px==0->-INF, Px==m->+INF)
-        x2=B[Py-1] Bleft   x4=B[Py] Bright   (edge Py==0->-INF, Py==n->+INF)
+        4 KINAARE (baaki se matlab NAHI, sorted isliye apne-aap sahi):
+          x1=A[Px-1] Aleft   x3=A[Px] Aright   (edge Px==0->-INF, Px==m->+INF)
+          x2=B[Py-1] Bleft   x4=B[Py] Bright   (edge Py==0->-INF, Py==n->+INF)
 
-      SAHI cut:  x1<=x4  &&  x2<=x3        (left-max <= right-min, dono-taraf cross-check)
-        galat -> x1>x4 (A ne ZYADA liya) -> high=Px-1  |  warna -> low=Px+1
-      MEDIAN: odd -> max(x1,x2)  |  even -> (max(x1,x2)+min(x3,x4))/2.0
+        SAHI cut:  x1<=x4  &&  x2<=x3        (left-max <= right-min, dono-taraf cross-check)
+          galat -> x1>x4 (A ne ZYADA liya) -> high=Px-1  |  warna -> low=Px+1
+        MEDIAN: odd -> max(x1,x2)  |  even -> (max(x1,x2)+min(x3,x4))/2.0
 
-      "= BS PAR array-value pe nahi -> CUT-POSITION (Px) pe. condition monotonic -> BS chalti."
-      KYUN sirf 4 number: sorted -> Px se pehle sab <=x1, aage sab >=x3. har step O(1), Px pe BS = O(log(min(m,n))).
+        "= BS PAR array-value pe nahi -> CUT-POSITION (Px) pe. condition monotonic -> BS chalti."
+        KYUN sirf 4 number: sorted -> Px se pehle sab <=x1, aage sab >=x3. har step O(1), Px pe BS = O(log(min(m,n))).
 
-   TEMPLATE:
-      if(A.size()>B.size()) return solve(B,A);            // chhote pe BS -> Py kabhi -ve nahi
-      low=0, high=m;
-      while(low<=high){
-        Px=low+(high-low)/2;  Py=(m+n+1)/2 - Px;
-        x1=Px==0?INT_MIN:A[Px-1];  x2=Py==0?INT_MIN:B[Py-1];
-        x3=Px==m?INT_MAX:A[Px];    x4=Py==n?INT_MAX:B[Py];
-        if(x1<=x4 && x2<=x3)
-           return (m+n)%2==0 ? (max(x1,x2)+min(x3,x4))/2.0 : (double)max(x1,x2);
-        if(x1>x4) high=Px-1; else low=Px+1;
-      }
+     TEMPLATE:
+        if(A.size()>B.size()) return solve(B,A);            // chhote pe BS -> Py kabhi -ve nahi
+        low=0, high=m;
+        while(low<=high){
+          Px=low+(high-low)/2;  Py=(m+n+1)/2 - Px;
+          x1=Px==0?INT_MIN:A[Px-1];  x2=Py==0?INT_MIN:B[Py-1];
+          x3=Px==m?INT_MAX:A[Px];    x4=Py==n?INT_MAX:B[Py];
+          if(x1<=x4 && x2<=x3)
+             return (m+n)%2==0 ? (max(x1,x2)+min(x3,x4))/2.0 : (double)max(x1,x2);
+          if(x1>x4) high=Px-1; else low=Px+1;
+        }
 
-   ── DRY-RUN (A=[1,3,8,9,15] m=5, B=[7,11,18,19,21,25] n=6, half=6) ──
+     ── DRY-RUN (A=[1,3,8,9,15] m=5, B=[7,11,18,19,21,25] n=6, half=6) ──
 
-     TRY Px=2:   A:  1  3 | 8  9  15          x1=3   x3=8
-                 B:  7 11 18 19 | 21 25       x2=19  x4=21   (Py=4)
-         x2(19) <= x3(8) ?  NAHI  -> A ne KAM liya -> low = Px+1 = 3
+       TRY Px=2:   A:  1  3 | 8  9  15          x1=3   x3=8
+                   B:  7 11 18 19 | 21 25       x2=19  x4=21   (Py=4)
+           x2(19) <= x3(8) ?  NAHI  -> A ne KAM liya -> low = Px+1 = 3
 
-     TRY Px=4:   A:  1  3  8  9 | 15          x1=9   x3=15
-                 B:  7 11 | 18 19 21 25       x2=11  x4=18   (Py=2)
-         x1(9)<=x4(18)  &&  x2(11)<=x3(15)  -> SAHI cut
-         odd -> median = max(x1,x2) = max(9,11) = 11   ANS=11
+       TRY Px=4:   A:  1  3  8  9 | 15          x1=9   x3=15
+                   B:  7 11 | 18 19 21 25       x2=11  x4=18   (Py=2)
+           x1(9)<=x4(18)  &&  x2(11)<=x3(15)  -> SAHI cut
+           odd -> median = max(x1,x2) = max(9,11) = 11   ANS=11
 
-     GOTCHA: even -> /2.0 + (double) cast (int-div se 3.5 bug) | edge ±INF warna out-of-bounds.
+       GOTCHA: even -> /2.0 + (double) cast (int-div se 3.5 bug) | edge ±INF warna out-of-bounds.
 
-   FAMILY: BS-on-PARTITION (naya). cousin = BS-on-ANSWER (koko/ship) -> wahan VALUE pe BS, yahan CUT-position pe.
+     FAMILY: BS-on-PARTITION (naya). cousin = BS-on-ANSWER (koko/ship) -> wahan VALUE pe BS, yahan CUT-position pe.
 ```
 
 ---
@@ -2263,7 +2263,6 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      CONNECT: [[house-robber-II]] jaisa "circular twist" par MECHANISM alag
               (HR-II = exclude-first/last · ye = total − minKadane).
 
-
  ┌──────────────────────────────────────────────────────────────
  │ ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)   = do array (bestLeft + bestRight) + WALL
  └──────────────────────────────────────────────────────────────
@@ -2478,37 +2477,37 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX PATH SUM (LC-124, Hard)  = DIAMETER ka SUM-version
  └──────────────────────────────────────────────────────────────
-   CONNECTION -- diameter ki HAR line ke saamne, kya badla (side-by-side):
+     CONNECTION -- diameter ki HAR line ke saamne, kya badla (side-by-side):
 
-     DIAMETER (upar)                      MAX PATH SUM
-     -------------------------            -------------------------------------
-     left  = height(L, maxDia)            left  = max(0, solve(L, maxi))   <- neg arm -> 0
-     right = height(R, maxDia)            right = max(0, solve(R, maxi))
-     maxDia = max(maxDia, left+right)     maxi  = max(maxi, left + node->val + right)  <- +node
-     return 1 + max(left,right)           return node->val + max(left,right)           <- val, 1 nahi
+       DIAMETER (upar)                      MAX PATH SUM
+       -------------------------            -------------------------------------
+       left  = height(L, maxDia)            left  = max(0, solve(L, maxi))   <- neg arm -> 0
+       right = height(R, maxDia)            right = max(0, solve(R, maxi))
+       maxDia = max(maxDia, left+right)     maxi  = max(maxi, left + node->val + right)  <- +node
+       return 1 + max(left,right)           return node->val + max(left,right)           <- val, 1 nahi
 
-   => skeleton HUBAHU: return-EK-arm / record-DONO-arm / post-order / global-max.
-      SIRF 3 jagah badla:  (1) arm = height -> GAIN(sum)   [1 ki jagah node->val]
-                           (2) record me + node->val        [junction pe node bhi ginta]
-                           (3) max(0,..) neg-arm SKIP        [diameter me sab positive the]
-      + maxi = INT_MIN (0 NAHI!): akela -3 bhi valid path (khaali/0 se galat).
+     => skeleton HUBAHU: return-EK-arm / record-DONO-arm / post-order / global-max.
+        SIRF 3 jagah badla:  (1) arm = height -> GAIN(sum)   [1 ki jagah node->val]
+                             (2) record me + node->val        [junction pe node bhi ginta]
+                             (3) max(0,..) neg-arm SKIP        [diameter me sab positive the]
+        + maxi = INT_MIN (0 NAHI!): akela -3 bhi valid path (khaali/0 se galat).
 
-   VISUAL (junction):
-            node
-           /    \
-       Lgain    Rgain      parent ko : node + max(L,R)   [EK sadak hi upar ja sakti]
-                           answer me : L + node + R      [junction pe DONO sadak, upar nahi]
+     VISUAL (junction):
+              node
+             /    \
+         Lgain    Rgain      parent ko : node + max(L,R)   [EK sadak hi upar ja sakti]
+                             answer me : L + node + R      [junction pe DONO sadak, upar nahi]
 
-   DRY-RUN:
-              -10
-             /   \
-            9     20
-                 /  \
-               15    7
-       @15 -> return 15   |   @7 -> return 7
-       @20 : maxi = 15 + 20 + 7 = 42 ;   return 20 + max(15,7) = 35
-       @9  -> return 9
-       @-10: maxi = max(42, 9 + (-10) + 35) = 42 ;   return -10 + max(9,35) = 25
+     DRY-RUN:
+                -10
+               /   \
+              9     20
+                   /  \
+                 15    7
+         @15 -> return 15   |   @7 -> return 7
+         @20 : maxi = 15 + 20 + 7 = 42 ;   return 20 + max(15,7) = 35
+         @9  -> return 9
+         @-10: maxi = max(42, 9 + (-10) + 35) = 42 ;   return -10 + max(9,35) = 25
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ BUILD TREE from PREORDER + INORDER (LC-105)
@@ -2808,18 +2807,18 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
  └──────────────────────────────────────────────────────────────
-   = ISLANDS ka SAME skeleton (base + sink), bas DFS ab void nahi -> AREA return. 2 DELTA:
+     = ISLANDS ka SAME skeleton (base + sink), bas DFS ab void nahi -> AREA return. 2 DELTA:
 
-     (1) DFS ko INT banao -> khud(1) + chaaron dir ka area jodo:
-           int dfs(i,j){
-              if(i<0||i>=m||j<0||j>=n||grid[i][j]==0) return 0;   // base: bounds/paani -> 0
-              grid[i][j]=0;                                        // sink (visited mark)
-              return 1 + dfs(i+1,j)+dfs(i-1,j)+dfs(i,j+1)+dfs(i,j-1);
-           }
-     (2) outer count++ nahi -> har island ka area le ke MAX:
-           for(i,j) if(grid[i][j]==1) ans = max(ans, dfs(i,j));
+       (1) DFS ko INT banao -> khud(1) + chaaron dir ka area jodo:
+             int dfs(i,j){
+                if(i<0||i>=m||j<0||j>=n||grid[i][j]==0) return 0;   // base: bounds/paani -> 0
+                grid[i][j]=0;                                        // sink (visited mark)
+                return 1 + dfs(i+1,j)+dfs(i-1,j)+dfs(i,j+1)+dfs(i,j-1);
+             }
+       (2) outer count++ nahi -> har island ka area le ke MAX:
+             for(i,j) if(grid[i][j]==1) ans = max(ans, dfs(i,j));
 
-   ans=0 se start (area hamesha >=0; koi island nahi -> ans 0). ISLANDS ka void-DFS = yahi, bas return-value ADD hui.
+     ans=0 se start (area hamesha >=0; koi island nahi -> ans 0). ISLANDS ka void-DFS = yahi, bas return-value ADD hui.
 
 ┌── FAMILY: MULTI-SOURCE / level-BFS ──────────────────────────
 │ KYUN SAATH: saare sources EK saath queue (level-0); per-level sz-snapshot -> ek level = ek step/minute. (level-order ka cousin.)
@@ -3775,13 +3774,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         ghar GOL (circle) me lage hain.
         isliye pehla ghar (0) aur aakhri ghar (n-1) PADOSI ban gaye -> dono ek saath nahi loot sakte.
 
-
      TASVEER  [2,3,2]
 
               ghar0(2)
              /        \
         ghar2(2) ---- ghar1(3)          0 aur 2 bhi jude hain (gol hai)
-
 
      TWIST  (gol ko seedhi line me todo)
 
@@ -3792,13 +3789,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
         robI = purana House Robber, bina badle.
 
-
      KYUN CHALTA
         ek ghar hatao -> gol toot ke seedhi line -> normal House Robber.
         0 aur n-1 dono kabhi saath nahi chahiye -> ek ko hata ke dono case dekh liye.
 
         seedha 2 + 2 = 4  GALAT  (ghar 0 aur ghar 2 padosi hain)
-
 
      EDGE
         n == 1  ->  return nums[0]
@@ -4075,7 +4070,6 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          (3 matrices -> ek side single, ek block. 4 hote -> dono block. formula wahi.)
 
      real: DB JOIN-order optimization · ML/graphics compute. interval-DP FAMILY: burst-balloons, stone-merge, optimal-BST.
-
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ BURST BALLOONS (LC 312)  = INTERVAL-DP  = MCM WALL + loop + recurse
