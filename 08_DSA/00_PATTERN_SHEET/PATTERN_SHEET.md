@@ -2872,6 +2872,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                    for(nbr:adj[node]){ indegree[nbr]--; if(indegree[nbr]==0) q.push(nbr); } }  // prereq pura -> ghatao; 0 hua -> push
          return topo.size() == numCourses;                     // sab process = no cycle
      indegree = "kitne prereq BACHE"; 0 = ready-to-take. cycle-wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
+     ★ VARIANT: "ready me se SABSE CHHOTA pehle" (order maanga) -> queue ki jagah
+       priority_queue<int, vector<int>, greater<int>> (id string ho to <string>). indegree / adj / ghatana same.
 
 ┌── FAMILY: CLONE / deep-copy (hashmap old->new) ────────────────
 │ KYUN SAATH: "graph ka DEEP COPY / naya-graph banao" -> traversal (BFS/DFS) + map(purana->naya). map = cycle-rok + clone-dhundo.
