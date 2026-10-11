@@ -81,7 +81,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 - **[11_GRAPHQL](02_SPRING/11_GRAPHQL/01_graphql.md)** — schema · @QueryMapping · client-picks-fields.
 - **[12_ASYNC_SCHEDULING](02_SPRING/12_ASYNC_SCHEDULING/01_async_scheduled.md)** — @Async · @Scheduled (proxy pe tika).
 - **[13_CACHE](02_SPRING/13_CACHE/01_cache.md)** — @Cacheable · @CacheEvict.
-- **[14_KAFKA](02_SPRING/14_KAFKA/01_kafka_basics.md)** — producer/consumer · DLQ · idempotency (event-driven ka core).
+- **[14_KAFKA](02_SPRING/14_KAFKA/01_kafka_basics.md)** — section 0 = **KYUN Kafka** (seedhi call ki dikkat · MQ vs log · har shabd kis dikkat se: broker / topic / partition / offset / group, akhbaar misaal) · message kis consumer ko (key se partition, group se consumer) · commit kab (at-least-once + idempotent) · producer/consumer · DLQ (event-driven ka core).
 
 ---
 
@@ -102,7 +102,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 └──────────────┘   └──────────┘   └─────┘   └────────────┘   └───────────┘   └────────────┘   └─────────────┘
 ```
 
-- ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — 14 poore design, ROZ EK KA MOCK. Har dikkat ke neeche **"INTERVIEWER AISE POOCHEGA"** (English sawaal) + **"YAHI SAWAAL DOOSRE DESIGN ME BHI"** (connect) + GRILL (jo poocha gaya) — design padho to cross-question bhi saath me — [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter-feed](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 stock-broker](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md) · [06 payment](04_HLD/SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) · [08 news-aggregator](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator_INTERVIEW.md) · [09 bookmyshow](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow_INTERVIEW.md) · [10 distributed-cache](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md) · [11 google-docs-collab](04_HLD/SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md) · [12 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) · [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) · [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
+- ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — 14 poore design, ROZ EK KA MOCK. Har design: upar ByteByteGo tasveer + SHURU (sawaal · FR/NFR · numbers) -> DABBA 0 -> har **DIKKAT**: SOLUTION -> NAYA / BADLA -> KAISE / KYUN YE -> **BOARD PE · POOCHEGA · DHYAAN · BOL** (interviewer ka English sawaal + bolne layak line) -> **AGLA SAWAAL** (tere jawab se agla) -> diagram (mermaid). Mock me jo atka wo usi dikkat ke neeche — design padho to cross-question bhi saath me — [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter-feed](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 stock-broker](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md) · [06 payment](04_HLD/SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) · [08 news-aggregator](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator_INTERVIEW.md) · [09 bookmyshow](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow_INTERVIEW.md) · [10 distributed-cache](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md) · [11 google-docs-collab](04_HLD/SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md) · [12 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) · [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) · [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
 
 - ★★ **[00_MASTER_SHEET](04_HLD/00_MASTER_SHEET.md)** — doubt aaye to yahan dhoondho: sabse upar **clickable INDEX + DOUBT DHOONDHO** (doubt likha -> click -> seedha jawab; Alex Xu ke chapter ka map bhi) · 8 dabbe x 4 line · 6 archetype · universal rail · block-menu · A-ya-B trade-off jode · 14 design ka DIL + KHAAS hissa · anjaan-design recipe · kaise bolna · SHABD (word atke to). Cross-question (Q1-Q22) ab yahan nahi, design files me (4-Oct).
 
@@ -170,7 +170,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 174 problem (+ 101 REDO/BLANK files) = 275 .cpp
+## [08_DSA](08_DSA) — 18 pattern · 176 problem (+ 109 REDO/BLANK files) = 285 .cpp
 **Kya:** pattern-wise solved problems + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + spaced-redo.
 
 - ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi" (har pattern ka saar + template + dry-run) — **roz-glance**.
@@ -179,15 +179,15 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 | # | Pattern | Problems | REDO | | # | Pattern | Problems | REDO |
 |---|---------|----------|------|---|---|---------|----------|------|
-| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 7 | | 10 | [KADANE](08_DSA/10_KADANE) | 8 | 9 |
-| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 9 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 0 |
-| 03 | [HASHING](08_DSA/03_HASHING) | 10 | 11 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 3 |
-| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 8 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 11 | 5 |
-| 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 3 | | 14 | [HEAP](08_DSA/14_HEAP) | 9 | 5 |
-| 06 | [STACK](08_DSA/06_STACK) | 12 | 4 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 2 |
-| 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 6 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 6 |
-| 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 4 | | 17 | [DP](08_DSA/17_DP) | 16 | 14 |
-| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 2 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 3 |
+| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 7 | | 10 | [KADANE](08_DSA/10_KADANE) | 9 | 9 |
+| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 10 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 1 |
+| 03 | [HASHING](08_DSA/03_HASHING) | 11 | 10 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 4 |
+| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 8 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 11 | 6 |
+| 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 4 | | 14 | [HEAP](08_DSA/14_HEAP) | 9 | 5 |
+| 06 | [STACK](08_DSA/06_STACK) | 12 | 5 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 2 |
+| 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 7 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 6 |
+| 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 5 | | 17 | [DP](08_DSA/17_DP) | 16 | 14 |
+| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 3 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 3 |
 
 ---
 
@@ -201,7 +201,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ## [10_BEHAVIORAL](10_BEHAVIORAL) — STAR
 **Kya:** JP-fit STAR kahaniyaan. &nbsp; **Kyu:** pura behavioral round; "tell me about a time" — bolke ready rakhni.
 
-[01 JP-company](10_BEHAVIORAL/01_JP_COMPANY.md) · [02 why-JP](10_BEHAVIORAL/02_WHY_JP.md) · [03 STAR: HikariCP](10_BEHAVIORAL/03_STAR_HikariCP.md) · [04 STAR: WAF-IP](10_BEHAVIORAL/04_STAR_WAF_IP.md) · [05 STAR: payment](10_BEHAVIORAL/05_STAR_Doximity_Payment.md) · [06 STAR: mentoring](10_BEHAVIORAL/06_STAR_Mentoring.md) · [07 STAR: failure-JDK](10_BEHAVIORAL/07_STAR_Failure_JDK.md) · [08 STAR: SQLi-WAF](10_BEHAVIORAL/08_STAR_SQLi_WAF.md) · [09 STAR: SMS opt-out](10_BEHAVIORAL/09_STAR_SMS_OptOut.md) · [10 STAR: email dedup](10_BEHAVIORAL/10_STAR_Email_Dedup.md) · [11 STAR: MongoDB sync](10_BEHAVIORAL/11_STAR_MongoDB_Sync.md)
+[01 JP-company](10_BEHAVIORAL/01_JP_COMPANY.md) · [02 why-JP](10_BEHAVIORAL/02_WHY_JP.md) · [03 STAR: HikariCP](10_BEHAVIORAL/03_STAR_HikariCP.md) · [04 STAR: WAF-IP](10_BEHAVIORAL/04_STAR_WAF_IP.md) · [05 STAR: payment](10_BEHAVIORAL/05_STAR_Doximity_Payment.md) · [06 STAR: mentoring](10_BEHAVIORAL/06_STAR_Mentoring.md) · [07 STAR: failure-JDK](10_BEHAVIORAL/07_STAR_Failure_JDK.md) · [08 STAR: SQLi-WAF](10_BEHAVIORAL/08_STAR_SQLi_WAF.md) · [09 STAR: SMS opt-out](10_BEHAVIORAL/09_STAR_SMS_OptOut.md) · [10 STAR: email dedup](10_BEHAVIORAL/10_STAR_Email_Dedup.md) · [11 STAR: MongoDB sync](10_BEHAVIORAL/11_STAR_MongoDB_Sync.md) · [12 STAR: Fargate subnets](10_BEHAVIORAL/12_STAR_Fargate_Subnets.md)
 
 ---
 
@@ -215,10 +215,9 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ## [12_CODE_REVIEW](12_CODE_REVIEW)
 **Kya:** PR-review round ka framework. &nbsp; **Kyu:** JP Superday me ~10 min ka asli PR — bug + style.
 
-[PR review](12_CODE_REVIEW/PR_REVIEW.md) — sabse upar SHIKAAR LIST: code pe 3 nazar (bhaari 11 cheez · style · production faisla),
-neeche reference dabbe.
+[PR review](12_CODE_REVIEW/PR_REVIEW.md) — sabse upar **10 SAWAAL** (fields · ID kiski · input · 2 request · save · bahar ki call · loop · catch · log · return), phir code ki har JAGAH ka section (class fields -> method params -> DB -> if -> write -> HTTP -> loop -> catch -> log -> return): code ki SHAKAL -> NAAM -> ASAR -> SAHI. End me **FAISLA** line, 3 blocker naam ke saath.
 
-> **Asli JP jaise drill (bug + style) ka record:** 28-Sep StatementJob 7/17 -> RefundController 9/17 (shikaar list ke baad SQL injection + N+1 pehli nazar me pakde) -> 29-Sep UserController 9/15 -> 30-Sep se roz ek drill (log = PR_REVIEW section 5) -> 3-Oct BillReminder 17/23, owner check pakda.
+> **Asli JP jaise drill (bug + style) ka record:** 28-Sep StatementJob 7/17 -> RefundController 9/17 -> 29-Sep UserController 9/15 -> 3-Oct BillReminder 17/23 (owner check pakda) -> Transfer 12+1/20 -> Refund 16+1/25 -> FD 18/27 -> 11-Oct Rewards 14/21 (owner check + FAISLA line dono aaye).
 
 ---
 
