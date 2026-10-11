@@ -763,20 +763,23 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD
  └──────────────────────────────────────────────────────────────
-     = LC-76 ka SAME minWindow() -- literally REUSE: numberOfSubstrings(s) = minWindow(s, "abc").
-       farak SIRF answer-line:
-           LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (MIN track)
-           LC-1358 : while ke BAAD  -> ans += i                        (COUNT)
-       WHY ans += i: shrink INVALID tak -> i = kitne valid left-starts. hand-trace "abcabc": i = 0,0,1,2,3,4 -> sum 10.
-     t = "abc"  (count = 3 = t.size()).
-     while (j < n) {                                 // OUTER: j (right) aage
-         if(mp[s[j]]>0) count--;  mp[s[j]]--;        // EXPAND (same)
-         while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   // INNER: shrink to INVALID
-         ans += i;                                   // outer ke ANDAR, inner-while ke BAAD -> har j pe
-         j++;
-     }
-     WHY ans += i: shrink window INVALID tak le jaata -> ab [0..i-1] SAARE valid left-starts -> ginti = i.
-     CODE: numberOfSubstrings(s) = minWindow(s, "abc")  -- wahi SW function reuse, bas t="abc" pass.
+     IDEA:
+        = LC-76 ka SAME minWindow() -- literally REUSE: numberOfSubstrings(s) = minWindow(s, "abc").
+          farak SIRF answer-line:
+              LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (MIN track)
+              LC-1358 : while ke BAAD  -> ans += i                        (COUNT)
+          WHY ans += i: shrink INVALID tak -> i = kitne valid left-starts. hand-trace "abcabc": i = 0,0,1,2,3,4 -> sum 10.
+        WHY ans += i: shrink window INVALID tak le jaata -> ab [0..i-1] SAARE valid left-starts -> ginti = i.
+
+     TEMPLATE:
+        t = "abc"  (count = 3 = t.size()).
+        while (j < n) {                                 // OUTER: j (right) aage
+            if(mp[s[j]]>0) count--;  mp[s[j]]--;        // EXPAND (same)
+            while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   // INNER: shrink to INVALID
+            ans += i;                                   // outer ke ANDAR, inner-while ke BAAD -> har j pe
+            j++;
+        }
+        CODE: numberOfSubstrings(s) = minWindow(s, "abc")  -- wahi SW function reuse, bas t="abc" pass.
 
 ┌── FAMILY: ANAGRAM-window ─────────────────────────────────────
 │ KYUN SAATH: fixed p-length window + har position pe anagram-check (isAnagram helper reuse).
@@ -2020,22 +2023,6 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      PEHCHAN: "random pointer / deep copy" sunte hi -> MAP (old->new).
               (k-group se ALAG: yahan naye node BANANA, ulatna NAHI.)
 
-     VISUAL ( [x]=node · -> next · ~> random ):
-       ORIG:  [7] -> [13] -> [11] -> [10] -> [1]
-       rand:   7~>NULL   13~>7   11~>1   10~>11   1~>7      (random kahin bhi)
-       mp (clone ka pata):  7=>7'   13=>13'   11=>11'   10=>10'   1=>1'
-
-       PASS 1 (har orig ka clone + next jodo; ~> abhi KHAALI):
-       COPY:  [7']-> [13']-> [11']-> [10']-> [1']
-
-       PASS 2 (orig se rand padho -> UPAR mp me dekho -> naya utha ke copy pe lagao):
-         13' ~>  mp[ 13.rand=7 ]  = 7'         (orig-7 ka naya = 7')
-         11' ~>  mp[ 11.rand=1 ]  = 1'
-         10' ~>  mp[ 10.rand=11]  = 11'
-          1' ~>  mp[ 1.rand=7  ]  = 7'
-          7' ~>  NULL
-       => saare copy-random COPY ke andar (original pe nahi) = DEEP
-
      TEMPLATE:
        // PASS 1: clone + next + map
        curr=head; prev=NULL; newHead=NULL;
@@ -2052,6 +2039,22 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
           curr=curr->next; currRand=currRand->next;
        }
        return newHead;
+
+     VISUAL ( [x]=node · -> next · ~> random ):
+       ORIG:  [7] -> [13] -> [11] -> [10] -> [1]
+       rand:   7~>NULL   13~>7   11~>1   10~>11   1~>7      (random kahin bhi)
+       mp (clone ka pata):  7=>7'   13=>13'   11=>11'   10=>10'   1=>1'
+
+       PASS 1 (har orig ka clone + next jodo; ~> abhi KHAALI):
+       COPY:  [7']-> [13']-> [11']-> [10']-> [1']
+
+       PASS 2 (orig se rand padho -> UPAR mp me dekho -> naya utha ke copy pe lagao):
+         13' ~>  mp[ 13.rand=7 ]  = 7'         (orig-7 ka naya = 7')
+         11' ~>  mp[ 11.rand=1 ]  = 1'
+         10' ~>  mp[ 10.rand=11]  = 11'
+          1' ~>  mp[ 1.rand=7  ]  = 7'
+          7' ~>  NULL
+       => saare copy-random COPY ke andar (original pe nahi) = DEEP
 
      KEY: currRand->random = mp[curr->random] = old-random ka NAYA-copy -> DEEP.
      ★ SAMAJH: "13 ka random 7 pe hai" -> ye ORIGINAL batata (curr->random padho).
@@ -3293,17 +3296,17 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      KYUN POP-TWO: 1 nikaal turant wapas -> phir wahi top -> "aa".
         isliye har round DO alag (top-2) nikaalo, dono lagao -> safe.
 
-     VISUAL ( "aaabbb" ):        heap (3,a)(3,b)
-        R1: pop a,b -> "ab"   -> (2,a)(2,b)
-        R2: pop a,b -> "abab" -> (1,a)(1,b)
-        R3: pop a,b -> "ababab" -> empty      => "ababab"
-       ( "aaab": (3,a)(1,b) -> R1 "ab",(2,a) -> size1, count2>1 -> "" )
-
      TEMPLATE:
         while(heap.size()>1){ t1=pop; t2=pop; ans+=t1.ch; ans+=t2.ch;
            if(--t1.cnt) push(t1); if(--t2.cnt) push(t2); }
         if(heap.size()==1) return top.cnt>1 ? "" : ans+top.ch;
         return ans;
+
+     VISUAL ( "aaabbb" ):        heap (3,a)(3,b)
+        R1: pop a,b -> "ab"   -> (2,a)(2,b)
+        R2: pop a,b -> "abab" -> (1,a)(1,b)
+        R3: pop a,b -> "ababab" -> empty      => "ababab"
+       ( "aaab": (3,a)(1,b) -> R1 "ab",(2,a) -> size1, count2>1 -> "" )
 
      crux: MAX-HEAP + har round 2 alag nikaalo + last-1 count>1 = impossible.
 
@@ -3716,8 +3719,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              return dp[n] = solve(n-1,dp) + solve(n-2,dp);   // compute + STORE
          }
          // caller: vector<int> dp(n+1, -1); return solve(n, dp);
+         BOTTOM-UP bhi: dp[0]=dp[1]=1; for(i=2..n) dp[i]=dp[i-1]+dp[i-2]; return dp[n].
      plain recursion = solve(n-2) BAAR-BAAR (overlap) -> exponential. memo se O(n).
-     BOTTOM-UP bhi: dp[0]=dp[1]=1; for(i=2..n) dp[i]=dp[i-1]+dp[i-2]; return dp[n].
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ DECODE WAYS (LC-91)  = climbing-stairs ka bhai, par har STEP pe VALIDITY check
