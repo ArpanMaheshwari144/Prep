@@ -480,7 +480,8 @@ NAYA:     Elasticsearch
 
 KAISE (inverted index):
           article ke text ko shabdon me todo -> har shabd ki list: "cricket" -> [a12, a45, a90]
-          search "cricket kohli" -> dono list ka intersection -> score (kitni baar, kahan) se sort
+          search "cricket kohli" -> dono list ka union (default OR) -> score (kitni baar, kahan) se sort, dono shabd wale upar
+          (sirf dono shabd wale chahiye -> operator AND = intersection)
 KYUN YE:  Postgres full-text (GIN index) bhi chalta chhote scale pe -> ES isliye ki ranking, typo, bahut data,
           aur DB pe search ka bojh nahi
 ```

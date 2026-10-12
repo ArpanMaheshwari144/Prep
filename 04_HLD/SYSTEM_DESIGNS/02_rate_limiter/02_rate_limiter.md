@@ -358,7 +358,6 @@ flowchart TD
     n_WAF["WAF"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Route_53 --> n_ALB
     n_ALB --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
@@ -366,8 +365,9 @@ flowchart TD
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
-    n_USER --> n_WAF
-    n_WAF --> n_Route_53
+    n_USER --> n_Route_53
+    n_Route_53 --> n_WAF
+    n_WAF --> n_ALB
 ```
 
 ---
@@ -420,7 +420,6 @@ flowchart TD
     n_WAF["WAF"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Route_53 --> n_ALB
     n_ALB --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
@@ -428,8 +427,9 @@ flowchart TD
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
-    n_USER --> n_WAF
-    n_WAF --> n_Route_53
+    n_USER --> n_Route_53
+    n_Route_53 --> n_WAF
+    n_WAF --> n_ALB
 ```
 
 ---
@@ -470,7 +470,6 @@ flowchart TD
     n_WAF["WAF"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Route_53 --> n_ALB
     n_ALB --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
@@ -478,8 +477,9 @@ flowchart TD
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
-    n_USER --> n_WAF
-    n_WAF --> n_Route_53
+    n_USER --> n_Route_53
+    n_Route_53 --> n_WAF
+    n_WAF --> n_ALB
 ```
 
 ---
@@ -516,7 +516,6 @@ flowchart TD
     n_WAF["WAF"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Route_53 --> n_ALB
     n_ALB --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
@@ -524,8 +523,9 @@ flowchart TD
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
-    n_USER --> n_WAF
-    n_WAF --> n_Route_53
+    n_USER --> n_Route_53
+    n_Route_53 --> n_WAF
+    n_WAF --> n_ALB
 ```
 
 ---
@@ -620,7 +620,6 @@ flowchart TD
     n_WAF["WAF"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Route_53 --> n_ALB
     n_ALB --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
@@ -628,8 +627,9 @@ flowchart TD
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
-    n_USER --> n_WAF
-    n_WAF --> n_Route_53
+    n_USER --> n_Route_53
+    n_Route_53 --> n_WAF
+    n_WAF --> n_ALB
 ```
 
 ---

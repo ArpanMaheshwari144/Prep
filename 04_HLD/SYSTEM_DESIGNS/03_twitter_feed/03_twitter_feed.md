@@ -236,7 +236,7 @@ SOLUTION: HOT-TWEET CACHE: celeb ke naye tweet RAM me (TTL ke saath), sab wahin 
 
 NAYA:     Hot-tweet cache (celeb ke naye tweet RAM me, sab wahin se padhein)
 
-KYUN YE:  Cassandra ke read replica kyun nahi -> wo bhi disk se (ms), cache RAM se (<1ms), aur replica 10 crore read nahi jhelta
+KYUN YE:  Cassandra ki aur copies (RF badhao) kyun nahi -> wo bhi disk se (ms), cache RAM se (<1ms), aur ek garam partition ki copies 10 crore read nahi jheltin
           cache miss pe 1000 request ek saath DB pe na jaayein -> sirf EK DB jaaye, baaki cache bharne ka intezaar (lock)
 ```
 ```

@@ -113,7 +113,7 @@ flowchart TD
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_Redis
-    n_Redis --> n_DB
+    n_App --> n_DB
 ```
 
 ---
@@ -156,7 +156,8 @@ flowchart TD
     n_LB --> n_App_x_N_2
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
-    n_Redis --> n_DB
+    n_App_x_N_1 --> n_DB
+    n_App_x_N_2 --> n_DB
 ```
 
 ---
@@ -206,7 +207,8 @@ flowchart TD
     n_App_x_N_2 --> n_Counter
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
-    n_Redis --> n_DB
+    n_App_x_N_1 --> n_DB
+    n_App_x_N_2 --> n_DB
 ```
 
 ---
@@ -261,7 +263,8 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
     n_Analytics_svc --> n_Analytics_DB
-    n_Redis --> n_DB
+    n_App_x_N_1 --> n_DB
+    n_App_x_N_2 --> n_DB
     n_Analytics_svc --> n_DLQ
 ```
 
@@ -323,7 +326,8 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
     n_Analytics_svc --> n_Analytics_DB
-    n_Redis --> n_Cassandra
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
     n_Analytics_svc --> n_DLQ
 ```
 
@@ -380,7 +384,8 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
     n_Analytics_svc --> n_Analytics_DB
-    n_Redis --> n_Cassandra
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
     n_Analytics_svc --> n_DLQ
 ```
 
@@ -438,7 +443,8 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
     n_Analytics_svc --> n_Analytics_DB
-    n_Redis --> n_Cassandra
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
     n_Analytics_svc --> n_DLQ
 ```
 
@@ -502,7 +508,8 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
     n_Analytics_svc --> n_Analytics_DB
-    n_Redis --> n_Cassandra
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
     n_Analytics_svc --> n_DLQ
 ```
 
@@ -550,13 +557,12 @@ flowchart TD
     n_Redis["Redis"]
     n_Cassandra["Cassandra"]
     n_USER --> n_Route_53
-    n_Route_53 --> n_API_Gateway
-    n_API_Gateway --> n_LB_1
-    n_API_Gateway --> n_LB_2
-    n_LB_1 --> n_App_x_N_1
-    n_LB_1 --> n_App_x_N_2
-    n_LB_2 --> n_App_x_N_1
-    n_LB_2 --> n_App_x_N_2
+    n_Route_53 --> n_LB_1
+    n_Route_53 --> n_LB_2
+    n_LB_1 --> n_API_Gateway
+    n_LB_2 --> n_API_Gateway
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
     n_App_x_N_1 --> n_Counter
     n_App_x_N_2 --> n_Counter
     n_App_x_N_1 --> n_Kafka
@@ -565,7 +571,8 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
     n_Analytics_svc --> n_Analytics_DB
-    n_Redis --> n_Cassandra
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
     n_Analytics_svc --> n_DLQ
 ```
 
@@ -580,7 +587,7 @@ App            -> stateless -> box badhao · READ aur WRITE App alag (100:1 -> r
 Redis          -> sab URL nahi samaate -> HOT rakho, COLD nikaalo (LRU + TTL)
                   viral song / WhatsApp forward = HOT -> Redis me · log dekhna band = COLD -> bahar,
                   Cassandra me to hai, agli miss pe wapas
-Cassandra      -> SHARD by shortCode + read replica
+Cassandra      -> SHARD by shortCode + RF 3 (leaderless: har copy read + write leti; read bojh = aur node / copy)
 Counter        -> coordinator khud SPOF -> 2 node (active-passive); range waise bhi tolerate karti
 Kafka          -> partition badhao
 
@@ -606,7 +613,7 @@ API:      BANANA = POST /api/shorten { long_url, custom_code? } -> { short_url, 
           (ulta mat bolna: banana POST, laana GET)
 
 302 vs 301:  301 = permanent, browser cache -> server tak aata hi nahi -> click count gaya, expiry toot-ti
-             302 = har baar server -> analytics chalta (bit.ly 302)
+             302 = har baar server -> analytics chalta (bit.ly khud 301 deta, caching ka trade-off maan ke)
 
 ROW:      short_code (partition key) · long_url · created_at · expires_at
           GET /abc123 -> seedha ek partition -> point read
@@ -678,13 +685,12 @@ flowchart TD
     n_Redis["Redis"]
     n_Cassandra["Cassandra"]
     n_USER --> n_Route_53
-    n_Route_53 --> n_API_Gateway
-    n_API_Gateway --> n_LB_1
-    n_API_Gateway --> n_LB_2
-    n_LB_1 --> n_App_x_N_1
-    n_LB_1 --> n_App_x_N_2
-    n_LB_2 --> n_App_x_N_1
-    n_LB_2 --> n_App_x_N_2
+    n_Route_53 --> n_LB_1
+    n_Route_53 --> n_LB_2
+    n_LB_1 --> n_API_Gateway
+    n_LB_2 --> n_API_Gateway
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
     n_App_x_N_1 --> n_Counter
     n_App_x_N_2 --> n_Counter
     n_App_x_N_1 --> n_Kafka
@@ -693,7 +699,8 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
     n_Kafka --> n_Analytics_svc
     n_Analytics_svc --> n_Analytics_DB
-    n_Redis --> n_Cassandra
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
     n_Analytics_svc --> n_DLQ
 ```
 

@@ -275,7 +275,7 @@ POOCHEGA: "The database takes too many writes. What do you do?"
 DHYAAN:   "consistency chahiye = SQL" -> NAHI, DB data ki SHAKAL se aata · "relations nahi" -> NoSQL ki taraf
           har keystroke DB hit -> nahi, buffer + batch
 BOL:      "Real-time edits go through memory and pub/sub; I buffer operations in Redis and write them in batches
-           to Cassandra, partitioned by doc id and ordered by time, so one doc's ops stay on one shard."
+           to Cassandra, partitioned by doc id and ordered by the server-assigned version number, so one doc's ops stay on one shard."
 
 AGLA SAWAAL (tere jawab se):
   "Op abhi Redis buffer me hai, Cassandra me nahi gaya, aur Redis crash ho gaya. Op gaya?"
@@ -490,7 +490,7 @@ DATA:     har edit = OPERATION event: { docId, userId, opType (insert / delete),
           Cassandra fit (append-heavy log) · Mongo bhi chalega · permissions = alag SQL (relations + CP)
 
 EK EDIT KA SAFAR:
-          1. A ne akshar type -> op { docId, userId, insert, pos, char, ts }
+          1. A ne akshar type -> op { docId, userId, insert, pos, char, baseVersion }
           2. WebSocket se A ke Conn-Server tak
           3. OT transform (concurrent ops ke against) -> apply
           4. Redis pub/sub publish -> baaki Conn-Servers -> unke client (B) ko PUSH
@@ -506,7 +506,7 @@ OT vs CRDT: OT = ops bhejo, concurrent ko TRANSFORM, sab converge · CRDT = har 
 
 ```
 CDN = static app · LB = docId se consistent routing · Conn-Server = WebSocket + OT + buffer
-Redis pub/sub = server-to-server fanout · Redis buffer = batch write · Cassandra = op log (docId, timestamp) + snapshot
+Redis pub/sub = server-to-server fanout · Redis buffer = batch write · Cassandra = op log (docId, version) + snapshot
 SQL = permissions (CP)
 ```
 ```

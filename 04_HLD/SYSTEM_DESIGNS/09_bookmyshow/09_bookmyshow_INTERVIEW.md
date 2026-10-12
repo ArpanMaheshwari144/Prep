@@ -51,7 +51,7 @@ BOL:      "For the booking itself I'd pick consistency: I'd rather reject a writ
 | [3](#d3) | "Pay" do baar daba | client key banaye, retry pe wahi; dobara aaye to saved result |
 | [4](#d4) | book koi-koi, seat map sab dekh rahe | dekhna Redis + replica se, booking primary pe |
 | [5](#d5) | popular release, lakhon log ek seat pe | Kafka + har show ka worker ek-ek karke; waiting room; darwaze pe Redis ginti, baaki "housefull" |
-| [6](#d6) | Redis restart, sab primary pe | Redis cluster; dekhna replica se; cache khaali ho to sirf ek rebuild kare |
+| [6](#d6) | Redis restart, saara browse DB pe | Redis cluster; dekhna replica se; cache khaali ho to sirf ek rebuild kare |
 | [7](#d7) | App box gira, 500 logon ka hold | hold DB me hai, box me nahi; kai App (stateless) + LB |
 
 ---
@@ -331,10 +331,11 @@ flowchart TD
 
 <a id="d6"></a>
 
-## DIKKAT 6 — Redis restart: 99% browse seedha primary pe, booking ke update ruk gaye
+## DIKKAT 6 — Redis restart: saara browse ek saath DB pe, booking ke update ruk gaye
 
 ```
-DIKKAT:   Redis restart -> saara browse seedha primary pe -> booking ke update ruk gaye.
+DIKKAT:   Redis restart -> saara browse ek saath DB pe (replica itna nahi jhelti; replica nahi ya replica gayi to
+          seedha primary pe) -> booking ke update ruk gaye.
 
 SOLUTION: (1) Redis CLUSTER: ek node mare, baaki chalein.
           (2) Browse ka read replica se, booking primary pe (raaste alag).

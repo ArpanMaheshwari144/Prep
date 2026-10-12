@@ -145,7 +145,8 @@ BOARD PE: pehle: CLIENT --5 GB--> server --5 GB--> S3
 
 AGLA SAWAAL (tere jawab se):
   "Client ne URL se 50 GB daal di (limit 5 GB)?"
-   -> sign karte waqt content-length range / POST policy me max size; S3 bada reject kare
+   -> presigned POST ki policy me content-length-range (max size), ya presigned PUT me exact Content-Length sign;
+      S3 bada reject kare. Ek PUT waise bhi max 5 GB; multipart me server utne hi part URL de + complete pe size check
   "Client ne /complete bola hi nahi?"
    -> S3 event notification (object created) se bhi trigger kar sakte, ya sweeper (DIKKAT 4)
 ```

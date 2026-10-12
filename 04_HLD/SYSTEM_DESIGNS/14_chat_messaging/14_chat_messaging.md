@@ -474,7 +474,7 @@ NAYA:     koi dabba nahi — Cursor store
 ```
 ```
 BOARD PE: A->server · server->B · B->server "mil gaya" · server->A "delivered" · B->server "padh liya" · server->A "read"
-          delivered_upto = 4417 · read_upto = 4410 -> B ne 50 padhe -> "read_upto 4467" -> A ko EK push
+          delivered_upto = 4467 · read_upto = 4417 -> B ne 50 padhe -> "read_upto 4467" -> A ko EK push
 
 AGLA SAWAAL (tere jawab se):
   "Do tick ka 'mil gaya' ack hi kho gaya?"
