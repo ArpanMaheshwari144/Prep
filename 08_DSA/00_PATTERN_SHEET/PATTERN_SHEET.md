@@ -2905,9 +2905,28 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      indegree = "kitne prereq BACHE";  0 = ready-to-take.
      cycle wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
 
-     ★ VARIANT: "ready me se SABSE CHHOTA pehle" (order maanga)
-         queue ki jagah  priority_queue<int, vector<int>, greater<int>>   (id string ho to <string>)
-         indegree / adj / ghatana same.
+     ★ VARIANT: BUILD ORDER — "ready me se SABSE CHHOTA pehle" (order maanga)
+         PEHCHAAN: dependency / pehle-ye-phir-wo -> TOPO.  PHIR output wali line padho:
+                   "koi bhi valid order"            -> queue
+                   "sabse chhota / lexicographic"   -> MIN-HEAP
+         KYUN: topo ke KAI sahi order hote. [5->2,5->0,4->0,4->1,2->3,3->1] me
+               "4 5 0 2 3 1" bhi sahi, "5 4 2 0 3 1" bhi.  sawaal ek KHAAS order maange -> heap.
+               queue = jo PEHLE ready hua wo pehle  ·  heap = ready me jo CHHOTA wo pehle.
+
+         BADLAAV (bas itna):
+             queue<int> q;     ->   priority_queue<int, vector<int>, greater<int>> pq;   (id string -> <string>)
+             q.front()         ->   pq.top()
+             indegree / adj / ghatana / end-check  SAME.
+
+         DRY-RUN  n=4, [0->1]:
+             heap {0,2,3} -> 0 nikla -> 1 ready -> heap {1,2,3} -> 1 -> 2 -> 3    = 0 1 2 3
+             (1 baad me ready hua, phir bhi 2 se pehle, kyunki chhota)
+             queue hota to: 0 2 3 1   -> GALAT
+
+         EDGE:
+             ans KHAALI se shuru:  vector<int> ans;      (ans(n,0) + push_back = size 2n, galat)
+             loop  -> ans.size() < n -> return {}  (khaali)
+             self-loop [0->0] -> indegree kabhi 0 nahi -> khaali
 
 ┌── FAMILY: CLONE / deep-copy (hashmap old->new) ────────────────
 │ KYUN SAATH: "graph ka DEEP COPY / naya-graph banao" -> traversal (BFS/DFS) + map(purana->naya). map = cycle-rok + clone-dhundo.
