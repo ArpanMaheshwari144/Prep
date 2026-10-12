@@ -375,7 +375,7 @@ public class OrderService {
     @Transactional   // default = REQUIRED
     public void createOrder(Order order) {
         orderRepo.save(order);
-        auditService.log(order);   // joins same TX
+        auditService.log(order);   // REQUIRES_NEW -> outer TX suspend, alag TX me commit
     }
 }
 

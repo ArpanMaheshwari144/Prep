@@ -99,7 +99,7 @@ public class AuthorService {
         Author a = repo.findById(authorId).orElseThrow();
         // session CLOSE ho gayi yahaan
 
-        return a.getBooks();    // LazyInitializationException!
+        return a.getBooks();    // abhi sirf proxy lauta; caller ne list CHHUI (loop / JSON) -> LazyInitializationException!
     }
 }
 ```
@@ -120,7 +120,9 @@ Why?
 @Transactional
 public List<Book> getBooks(Long authorId) {
     Author a = repo.findById(authorId).orElseThrow();
-    return a.getBooks();   // works — session active
+    List<Book> books = a.getBooks();
+    books.size();          // session ke ANDAR chhua -> load ho gaya (Hibernate.initialize(books) bhi chalega)
+    return books;          // sirf return karna kaafi NAHI: proxy bahar jaake chhua to phir exception
 }
 ```
 

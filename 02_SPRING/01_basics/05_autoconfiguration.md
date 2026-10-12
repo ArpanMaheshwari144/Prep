@@ -35,7 +35,7 @@ starter-webmvc                     ->  embedded TOMCAT (port 8080 khud chalu) + 
 h2 + mysql-connector-j             ->  DB driver dekh ke DataSource us DB ka (properties me url daalo -> wahi)
 starter-validation                 ->  @Valid/@NotNull/@Email chalne lage
 starter-graphql                    ->  GraphQL endpoint + schema wiring
-starter-cache                      ->  @Cacheable chalne laga
+starter-cache + @EnableCaching     ->  CacheManager auto-config, @Cacheable chalne laga
 starter-kafka                      ->  KafkaTemplate + listener-container
 starter-actuator + prometheus      ->  /actuator/health, /actuator/prometheus endpoints khud
 starter-security                   ->  filter-chain + default login (generated password wala user)

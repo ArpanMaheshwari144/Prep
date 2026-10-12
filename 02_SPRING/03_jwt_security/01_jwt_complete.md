@@ -1008,6 +1008,7 @@ public class AuthController {
     private final RefreshTokenRepository refreshTokenRepo;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    // constructor (ya Lombok @RequiredArgsConstructor) yahan chhota karne ke liye nahi likha
 
     // ─── LOGIN ──────────────────────────────────
     @PostMapping("/login")
@@ -1317,16 +1318,16 @@ AuthController /auth/login: authManager.authenticate -> CustomUserDetailsService
 UPAF = Spring ka DEFAULT form-login guard (session-based):
    POST /login intercept -> username+password form se -> AuthenticationManager verify -> success -> SecurityContext + SESSION.
 Bahut apps (form-login/server-rendered) me ye ASLI workhorse.
-JWT app me tu form-login use hi nahi karta -> UPAF idle (sirf POST /login pe react karta).
+JWT app me apna SecurityFilterChain banaya aur formLogin() nahi likha -> UPAF chain me HAI HI NAHI.
 ```
 "JwtFilter ko UPAF se PEHLE kyun":
 ```
 1. JwtFilter jaldi chale -> SecurityContext PEHLE set (taaki aage AuthorizationFilter ko authenticated dikhe)
 2. UPAF = position-ANCHOR: addFilterBefore ko reference-filter chahiye; UPAF chain me authentication ki jaani-pehchani jagah
    -> "before UPAF" = saaf, conventional "auth-stage pe rakho"
-3. JwtFilter context set -> UPAF dekhta "/login POST nahi + already set" -> kuch nahi karta, pass-through
+3. addFilterBefore(.., UPAF.class) sirf UPAF ki ORDER position ko nishaan ki tarah use karta (UPAF chain me na ho tab bhi)
 ```
-★ Hataana zaroori NAHI (harmless, idle, ~0 cost + anchor). chaho to `http.formLogin(f -> f.disable())`. UPAF khud bekaar nahi — bas TERE JWT app me use nahi ho raha (framework general hai, zyadatar apps ko form-login chahiye).
+★ formLogin(disable) likhne ki zaroorat NAHI (wo chain me hai hi nahi). UPAF khud bekaar nahi — bas TERE JWT app me use nahi ho raha (framework general hai, zyadatar apps ko form-login chahiye).
 
 ### ★ METHOD-SECURITY (barik authorization)
 ```

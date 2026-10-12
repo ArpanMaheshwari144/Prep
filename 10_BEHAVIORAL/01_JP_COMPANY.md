@@ -4,7 +4,7 @@
 
 ## KYA HAI
 ```
-   - US/duniya ka SABSE BADA bank (assets se). 200+ saal purana.
+   - US ka SABSE BADA bank (assets se); duniya me market-cap se sabse bada. 200+ saal purana.
    - ★ "a TECH company with a banking license" — 65,000+ technologists, ~$18B tech budget (2025 outlook).
    - 3 hisse (2024 me Commercial Banking + CIB mila diye):
              Consumer & Community Banking (Chase — cards/loans/deposits)

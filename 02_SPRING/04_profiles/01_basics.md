@@ -124,8 +124,8 @@ Useful for CI/CD, Docker, K8s deployment.
 ```
 1. Command line argument          ← strongest
 2. Environment variable
-3. application.properties value
-4. Profile-specific file
+3. Profile-specific file (application-local.properties)
+4. application.properties value
 5. Default values in code         ← weakest
 ```
 
@@ -182,7 +182,8 @@ src/main/resources/
 ### `application.properties` (MASTER):
 ```properties
 spring.application.name=usercrud
-spring.profiles.active=local                        # Default profile
+# Default profile (.properties me comment line ke SHURU me hi; line ke beech # value ka hissa ban jaata)
+spring.profiles.active=local
 
 # JPA (common to all profiles)
 spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect

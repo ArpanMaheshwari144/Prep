@@ -109,7 +109,7 @@ spring.datasource.password=rootpass
 
 ```
 DOCKER-COMPOSE ka role:
-   Spring config files load karna
+   (Spring config files load NAHI karta — wo Spring ka kaam)
    Container start pe ENV VAR inject karna
    Network/volume setup
    Service ordering (depends_on)
@@ -193,7 +193,7 @@ Behavior: DIFFERENT (env var driven)
 2. Command line argument         (override)
    java -jar app.jar --spring.profiles.active=docker
 
-3. OS Environment variable       (highest, useful in shells)
+3. OS Environment variable       (CLI se neeche, properties file se upar)
    set SPRING_PROFILES_ACTIVE=docker
    java -jar app.jar
 
