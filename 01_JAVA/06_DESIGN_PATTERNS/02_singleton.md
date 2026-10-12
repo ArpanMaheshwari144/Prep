@@ -354,9 +354,9 @@ public class Config implements Cloneable {
 
 ### 4. Multiple ClassLoaders
 Different classloaders = different `Config.class` = different singletons.
-**Defense:** Specify classloader explicitly OR use enum (less affected).
+**Defense:** class ko ek hi (parent / shared) classloader se load karwao. **Enum bhi yahan NAHI bachata** — do classloader = enum class do baar load = do INSTANCE.
 
-**Conclusion:** **Enum Singleton bypasses ALL 4 attacks automatically** — yahin reason hai Bloch's recommendation.
+**Conclusion:** **Enum pehle 3 (reflection, serialization, clone) apne aap rokta** — yahin reason hai Bloch's recommendation. Classloader wali dikkat kisi bhi singleton ki hai, enum ki bhi.
 
 ---
 
@@ -416,7 +416,7 @@ Attack vectors (need defense):
    1. Reflection      → enum proof
    2. Serialization   → enum proof
    3. Clone           → enum proof
-   4. Multi-classloader → enum mostly proof
+   4. Multi-classloader → enum bhi NAHI bachata (ek classloader rakho)
 ```
 
 ---
