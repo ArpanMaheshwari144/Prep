@@ -61,17 +61,6 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 | [8](#d8) | 22 arab row, history ka page | pichhle page ki aakhri entry (ts, id) yaad, agla page "usse purana", index se seedha |
 | [9](#d9) | 5 saal purana data ek table me | table mahine-mahine baanto, purana tukda alag karke S3 me (DELETE nahi) |
 
----|---|---|
-| [1](#d1) | transfer beech me gira: -500, +500 nahi | dono account ek DB, ek @Transactional |
-| [2](#d2) | regulator + SMS / fraud / statement | ledger (sirf INSERT, jod 0) + outbox -> Kafka, ek transaction |
-| [3](#d3) | balance aata kahan se | ledger = sach, balance column = cache, dono ek transaction |
-| [4](#d4) | do baar tap / retry | idempotency key, DB UNIQUE constraint |
-| [5](#d5) | ek account pe do transfer saath | balance = balance - 500 DB me (row lock) |
-| [6](#d6) | salary day, ek service bhara | kai stateless service + LB, DB sync replica alag AZ |
-| [7](#d7) | sab read primary pe, transfer dheema | read replica, transfer ke turant baad balance primary se |
-| [8](#d8) | 22 arab row, history ka page | cursor / keyset pagination (ts, id) |
-| [9](#d9) | 5 saal purana data ek table me | mahine-wise partition, purana DETACH -> S3 |
-
 ---
 
 ## DABBA 0 — sabse simple

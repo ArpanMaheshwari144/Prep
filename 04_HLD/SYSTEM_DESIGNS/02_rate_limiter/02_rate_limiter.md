@@ -55,17 +55,6 @@ NUMBERS: storage ka hisaab bekaar — per key ek counter + TTL, bas
 | [8](#d8) | attack aaya, limiter gayab | Redis gaya to har node apni memory me motamoti gine |
 | [9](#d9) | IP pe gin rahe the | login wale ko user_id / API key se gino; login se pehle IP, dheeli limit + WAF |
 
----|---|---|
-| [1](#d1) | teen server, ginti bat gayi | ek central Redis, counter pe TTL |
-| [2](#d2) | do request saath, dono ko jagah | INCR atomic, kai step ho to Lua script (EXPIRE sirf pehli baar) |
-| [3](#d3) | reject wali request bhi andar ghoom aayi | limiter API Gateway pe, 429 wahin se |
-| [4](#d4) | Redis gir gaya | replica + auto failover; normal fail-open, payment / OTP fail-closed |
-| [5](#d5) | ek user teen region se | region-sticky: request kahin se, ginti user ke HOME region me |
-| [6](#d6) | baar-baar maar raha, 429 se nahi rukta | 429 event Kafka -> pattern service -> WAF / IP ban |
-| [7](#d7) | limiter sahi, phir bhi server gira | load shedding (bijli jaisa: system kitna jhele, baaki 503) |
-| [8](#d8) | attack aaya, limiter gayab | local fallback: har node apni memory me motamoti ginti |
-| [9](#d9) | IP pe gin rahe the | logged-in pe user_id / API key, login se pehle IP dheela + WAF |
-
 ---
 
 ## DABBA 0 — sabse simple

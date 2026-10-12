@@ -62,18 +62,6 @@ BOL:      "For the feed and like counts, availability. A feed a couple of second
 | [9](#d9) | padhna likhna ek box me | likhne ki Tweet service, padhne ki Timeline service, alag-alag badhao |
 | [10](#d10) | photo video bhaari | CDN: media user ke paas wali edge se |
 
----|---|---|
-| [1](#d1) | har baar 200 logon ka data jodna | inbox pehle se bharo (fan-out on write) |
-| [2](#d2) | tweet button 3 sec ghooma | Kafka, inbox baad me async |
-| [3](#d3) | Bieber = 10 crore inbox | celeb ka pull, padhte waqt merge |
-| [4](#d4) | Virat ka tweet crore log padh rahe | hot tweet cache, TTL |
-| [5](#d5) | 500M inbox, memory phategi | sirf tweet_id, LTRIM |
-| [6](#d6) | saare tweet ek DB me nahi | Cassandra, user_id shard |
-| [7](#d7) | India user, US shard (200ms) | region me copy |
-| [8](#d8) | ek App box: bojh + SPOF | LB + kai App, JWT stateless |
-| [9](#d9) | padhna likhna ek box me | read / write service alag |
-| [10](#d10) | photo video bhaari | CDN + S3 |
-
 ---
 
 ## DABBA 0 — sabse simple

@@ -86,20 +86,6 @@ DO BLOCK JO DESIGN CHALATE:
 | [11](#d11) | 5 MB video isi raaste? | file S3 me (presigned URL), message me sirf pata |
 | [12](#d12) | online / last-seen | Redis me "online" chhoti TTL, app heartbeat se badhaye; band hua to apne aap offline |
 
----|---|---|
-| [1](#d1) | 2 crore connection khuli, memory | event loop (Netty), reconnect pe backoff + jitter |
-| [2](#d2) | A server-1, B server-7 | Redis me "B kis server pe", us server ko call |
-| [3](#d3) | B offline, message kahan | pehle DB me likho, phir bhejo + push notification |
-| [4](#d4) | 1.2 TB roz, 46k write/sec | partition key chat_id, sort key message_id |
-| [5](#d5) | 500 ka group, 500 baar likhai? | ek copy chat ke neeche (fan-out on read) |
-| [6](#d6) | kiske kitne unread | har member ka cursor, unread = uske baad |
-| [7](#d7) | do tick / neeli tick | wahi cursor: "yahan tak mila" + "yahan tak padha" |
-| [8](#d8) | 10 lakh broadcast, tick ka kya | group size bandho, broadcast me tick nahi |
-| [9](#d9) | retry, B ko ek baat do baar | clientMsgId idempotency, ID client banata |
-| [10](#d10) | kram kiska time | server ki Snowflake ID, phone ki ghadi nahi |
-| [11](#d11) | 5 MB video isi raaste? | presigned URL se S3, message me sirf pata |
-| [12](#d12) | online / last-seen | Redis TTL + heartbeat, apne aap offline |
-
 ---
 
 ## DABBA 0 — sabse simple: EK server, do user
