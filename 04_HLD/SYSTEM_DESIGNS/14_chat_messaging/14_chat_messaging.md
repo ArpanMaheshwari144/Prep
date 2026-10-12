@@ -71,20 +71,20 @@ DO BLOCK JO DESIGN CHALATE:
 
 ## MOCK CUE — pehle ye, phir mock
 
-```
-  1  2 crore connection khuli, memory          -> event loop (Netty), reconnect pe backoff + jitter
-  2  A server-1, B server-7                    -> Redis me "B kis server pe", us server ko call
-  3  B offline, message kahan                  -> pehle DB me likho, phir bhejo + push notification
-  4  1.2 TB roz, 46k write/sec                 -> partition key chat_id, sort key message_id
-  5  500 ka group, 500 baar likhai?            -> ek copy chat ke neeche (fan-out on read)
-  6  kiske kitne unread                        -> har member ka cursor, unread = uske baad
-  7  do tick / neeli tick                      -> wahi cursor: "yahan tak mila" + "yahan tak padha"
-  8  10 lakh broadcast, tick ka kya            -> group size bandho, broadcast me tick nahi
-  9  retry, B ko ek baat do baar               -> clientMsgId idempotency, ID client banata
- 10  kram kiska time                           -> server ki Snowflake ID, phone ki ghadi nahi
- 11  5 MB video isi raaste?                    -> presigned URL se S3, message me sirf pata
- 12  online / last-seen                        -> Redis TTL + heartbeat, apne aap offline
-```
+| # | dikkat | cue |
+|---|---|---|
+| [1](#d1) | 2 crore connection khuli, memory | event loop (Netty), reconnect pe backoff + jitter |
+| [2](#d2) | A server-1, B server-7 | Redis me "B kis server pe", us server ko call |
+| [3](#d3) | B offline, message kahan | pehle DB me likho, phir bhejo + push notification |
+| [4](#d4) | 1.2 TB roz, 46k write/sec | partition key chat_id, sort key message_id |
+| [5](#d5) | 500 ka group, 500 baar likhai? | ek copy chat ke neeche (fan-out on read) |
+| [6](#d6) | kiske kitne unread | har member ka cursor, unread = uske baad |
+| [7](#d7) | do tick / neeli tick | wahi cursor: "yahan tak mila" + "yahan tak padha" |
+| [8](#d8) | 10 lakh broadcast, tick ka kya | group size bandho, broadcast me tick nahi |
+| [9](#d9) | retry, B ko ek baat do baar | clientMsgId idempotency, ID client banata |
+| [10](#d10) | kram kiska time | server ki Snowflake ID, phone ki ghadi nahi |
+| [11](#d11) | 5 MB video isi raaste? | presigned URL se S3, message me sirf pata |
+| [12](#d12) | online / last-seen | Redis TTL + heartbeat, apne aap offline |
 
 ---
 
@@ -121,6 +121,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d1"></a>
 
 ## DIKKAT 1 — 2 crore connection KHULI, har ek memory kha rahi
 
@@ -174,6 +176,8 @@ flowchart TD
 
 ---
 
+<a id="d2"></a>
+
 ## DIKKAT 2 — A server-1 pe, B server-7 pe: server-1 ki diary me B hai hi nahi
 
 ```
@@ -217,6 +221,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d3"></a>
 
 ## DIKKAT 3 — B offline: pen hi nahi, message jaaye kahan?
 
@@ -275,6 +281,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d4"></a>
 
 ## DIKKAT 4 — 1.2 TB roz aur 46,000 write / sec: ek DB box nahi
 
@@ -354,6 +362,8 @@ flowchart TD
 
 ---
 
+<a id="d5"></a>
+
 ## DIKKAT 5 — 500 ka group: ek message, likhai 500 baar?
 
 ```
@@ -397,6 +407,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d6"></a>
 
 ## DIKKAT 6 — 500 member: kiske kitne unread, kahan rakhoge?
 
@@ -444,6 +456,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d7"></a>
 
 ## DIKKAT 7 — do tick aur neeli tick: server ko pata kaise?
 
@@ -495,6 +509,8 @@ flowchart TD
 
 ---
 
+<a id="d8"></a>
+
 ## DIKKAT 8 — 10 lakh ka broadcast group: tick ka kya?
 
 ```
@@ -539,6 +555,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d9"></a>
 
 ## DIKKAT 9 — A ka net slow, app ne dobara bheja, B ko EK baat DO baar
 
@@ -592,6 +610,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d10"></a>
 
 ## DIKKAT 10 — kram kis se tay hoga, kiska time maanoge?
 
@@ -656,6 +676,8 @@ flowchart TD
 
 ---
 
+<a id="d11"></a>
+
 ## DIKKAT 11 — 5 MB ka video bhi isi raaste se?
 
 ```
@@ -718,6 +740,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d12"></a>
 
 ## DIKKAT 12 — online / last-seen: sabko sabka status
 

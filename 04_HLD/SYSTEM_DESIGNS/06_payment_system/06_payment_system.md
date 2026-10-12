@@ -50,17 +50,17 @@ BOL:      "Consistency for money — during a partition I'd rather reject than g
 
 ## MOCK CUE — pehle ye, phir mock
 
-```
-  1  beech me crash: -500 hua, +500 nahi     -> debit + credit EK DB transaction (ACID)
-  2  do baar tap / retry = double charge      -> idempotency key (UUID), dobara aaye to saved result
-  3  asli paisa hamara server nahi hilata     -> PSP (Razorpay / Stripe), INITIATED -> PENDING -> SUCCESS / FAILED
-  4  PSP call ke baad crash, paisa gaya?      -> pehle PENDING likho, webhook + reconcile, assume nahi
-  5  A aur B alag bank, ek transaction nahi   -> SAGA, fail pe ulte kram me undo
-  6  regulator: paisa kahan se kahan          -> ledger, sirf INSERT, double-entry (debit = credit)
-  7  festival 3000 txn/sec, ek box            -> stateless Payment Svc, kai box + LB / Gateway
-  8  report query se asli write ruk raha      -> read replica pe report, payment read PRIMARY se
-  9  50 crore row, likhai dheemi              -> shard by account_id (alag shard = phir SAGA)
-```
+| # | dikkat | cue |
+|---|---|---|
+| [1](#d1) | beech me crash: -500 hua, +500 nahi | debit + credit EK DB transaction (ACID) |
+| [2](#d2) | do baar tap / retry = double charge | idempotency key (UUID), dobara aaye to saved result |
+| [3](#d3) | asli paisa hamara server nahi hilata | PSP (Razorpay / Stripe), INITIATED -> PENDING -> SUCCESS / FAILED |
+| [4](#d4) | PSP call ke baad crash, paisa gaya? | pehle PENDING likho, webhook + reconcile, assume nahi |
+| [5](#d5) | A aur B alag bank, ek transaction nahi | SAGA, fail pe ulte kram me undo |
+| [6](#d6) | regulator: paisa kahan se kahan | ledger, sirf INSERT, double-entry (debit = credit) |
+| [7](#d7) | festival 3000 txn/sec, ek box | stateless Payment Svc, kai box + LB / Gateway |
+| [8](#d8) | report query se asli write ruk raha | read replica pe report, payment read PRIMARY se |
+| [9](#d9) | 50 crore row, likhai dheemi | shard by account_id (alag shard = phir SAGA) |
 
 ---
 
@@ -79,6 +79,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d1"></a>
 
 ## DIKKAT 1 — beech me crash: Arpan -500 hua, merchant +500 nahi
 
@@ -111,6 +113,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d2"></a>
 
 ## DIKKAT 2 — do baar tap / app ne retry maara -> Rs. 1000 kate
 
@@ -163,6 +167,8 @@ flowchart TD
 
 ---
 
+<a id="d3"></a>
+
 ## DIKKAT 3 — asli paisa hamara server hilata hi nahi
 
 ```
@@ -204,6 +210,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d4"></a>
 
 ## DIKKAT 4 — PSP call kiya aur crash: paisa gaya ya nahi, pata hi nahi
 
@@ -260,6 +268,8 @@ flowchart TD
 
 ---
 
+<a id="d5"></a>
+
 ## DIKKAT 5 — A aur B alag bank me: ek DB transaction possible hi nahi
 
 ```
@@ -300,6 +310,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d6"></a>
 
 ## DIKKAT 6 — regulator: "ye paisa kahan se aaya, kahan gaya?"
 
@@ -349,6 +361,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d7"></a>
 
 ## DIKKAT 7 — festival, 3000 txn / sec, ek Payment Svc box ka CPU khatam
 
@@ -401,6 +415,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d8"></a>
 
 ## DIKKAT 8 — merchant dashboard ki report query usi DB pe, asli txn ka write ruk raha
 
@@ -458,6 +474,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d9"></a>
 
 ## DIKKAT 9 — ek DB me 50 crore txn row, likhai dheemi
 

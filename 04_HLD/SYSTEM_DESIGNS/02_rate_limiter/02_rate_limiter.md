@@ -43,17 +43,17 @@ NUMBERS: storage ka hisaab bekaar — per key ek counter + TTL, bas
 
 ## MOCK CUE — pehle ye, phir mock
 
-```
-  1  teen server, ginti bat gayi               -> ek central Redis, counter pe TTL
-  2  do request saath, dono ko jagah           -> INCR atomic, kai step ho to Lua script (EXPIRE sirf pehli baar)
-  3  reject wali request bhi andar ghoom aayi  -> limiter API Gateway pe, 429 wahin se
-  4  Redis gir gaya                            -> replica + auto failover; normal fail-open, payment / OTP fail-closed
-  5  ek user teen region se                    -> region-sticky: request kahin se, ginti user ke HOME region me
-  6  baar-baar maar raha, 429 se nahi rukta    -> 429 event Kafka -> pattern service -> WAF / IP ban
-  7  limiter sahi, phir bhi server gira        -> load shedding (bijli jaisa: system kitna jhele, baaki 503)
-  8  attack aaya, limiter gayab                -> local fallback: har node apni memory me motamoti ginti
-  9  IP pe gin rahe the                        -> logged-in pe user_id / API key, login se pehle IP dheela + WAF
-```
+| # | dikkat | cue |
+|---|---|---|
+| [1](#d1) | teen server, ginti bat gayi | ek central Redis, counter pe TTL |
+| [2](#d2) | do request saath, dono ko jagah | INCR atomic, kai step ho to Lua script (EXPIRE sirf pehli baar) |
+| [3](#d3) | reject wali request bhi andar ghoom aayi | limiter API Gateway pe, 429 wahin se |
+| [4](#d4) | Redis gir gaya | replica + auto failover; normal fail-open, payment / OTP fail-closed |
+| [5](#d5) | ek user teen region se | region-sticky: request kahin se, ginti user ke HOME region me |
+| [6](#d6) | baar-baar maar raha, 429 se nahi rukta | 429 event Kafka -> pattern service -> WAF / IP ban |
+| [7](#d7) | limiter sahi, phir bhi server gira | load shedding (bijli jaisa: system kitna jhele, baaki 503) |
+| [8](#d8) | attack aaya, limiter gayab | local fallback: har node apni memory me motamoti ginti |
+| [9](#d9) | IP pe gin rahe the | logged-in pe user_id / API key, login se pehle IP dheela + WAF |
 
 ---
 
@@ -70,6 +70,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d1"></a>
 
 ## DIKKAT 1 — teen server, ginti bat gayi
 
@@ -113,6 +115,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d2"></a>
 
 ## DIKKAT 2 — do request ek saath, dono ko jagah mil gayi
 
@@ -160,6 +164,8 @@ flowchart TD
 
 ---
 
+<a id="d3"></a>
+
 ## DIKKAT 3 — limiter App ke andar: reject hone wali request bhi poore system me ghoom aayi
 
 ```
@@ -198,6 +204,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d4"></a>
 
 ## DIKKAT 4 — Redis hi gir gaya
 
@@ -246,6 +254,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d5"></a>
 
 ## DIKKAT 5 — ek user Bangalore + Berlin + US-VPN se maar raha
 
@@ -308,6 +318,8 @@ flowchart TD
 
 ---
 
+<a id="d6"></a>
+
 ## DIKKAT 6 — ek hi banda baar-baar maar raha, 429 se ruk hi nahi raha
 
 ```
@@ -359,6 +371,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d7"></a>
 
 ## DIKKAT 7 — limiter sahi chal raha, phir bhi server gira (BHEED)
 
@@ -420,6 +434,8 @@ flowchart TD
 
 ---
 
+<a id="d8"></a>
+
 ## DIKKAT 8 — attack aaya, aur limiter USI WAQT gayab
 
 ```
@@ -467,6 +483,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d9"></a>
 
 ## DIKKAT 9 — IP pe gin rahe the
 

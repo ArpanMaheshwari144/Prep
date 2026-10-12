@@ -49,17 +49,17 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 
 ## MOCK CUE — pehle ye, phir mock
 
-```
-  1  transfer beech me gira: -500, +500 nahi   -> dono account ek DB, ek @Transactional
-  2  regulator + SMS / fraud / statement       -> ledger (sirf INSERT, jod 0) + outbox -> Kafka, ek transaction
-  3  balance aata kahan se                     -> ledger = sach, balance column = cache, dono ek transaction
-  4  do baar tap / retry                       -> idempotency key, DB UNIQUE constraint
-  5  ek account pe do transfer saath           -> balance = balance - 500 DB me (row lock)
-  6  salary day, ek service bhara              -> kai stateless service + LB, DB sync replica alag AZ
-  7  sab read primary pe, transfer dheema      -> read replica, transfer ke turant baad balance primary se
-  8  22 arab row, history ka page              -> cursor / keyset pagination (ts, id)
-  9  5 saal purana data ek table me            -> mahine-wise partition, purana DETACH -> S3
-```
+| # | dikkat | cue |
+|---|---|---|
+| [1](#d1) | transfer beech me gira: -500, +500 nahi | dono account ek DB, ek @Transactional |
+| [2](#d2) | regulator + SMS / fraud / statement | ledger (sirf INSERT, jod 0) + outbox -> Kafka, ek transaction |
+| [3](#d3) | balance aata kahan se | ledger = sach, balance column = cache, dono ek transaction |
+| [4](#d4) | do baar tap / retry | idempotency key, DB UNIQUE constraint |
+| [5](#d5) | ek account pe do transfer saath | balance = balance - 500 DB me (row lock) |
+| [6](#d6) | salary day, ek service bhara | kai stateless service + LB, DB sync replica alag AZ |
+| [7](#d7) | sab read primary pe, transfer dheema | read replica, transfer ke turant baad balance primary se |
+| [8](#d8) | 22 arab row, history ka page | cursor / keyset pagination (ts, id) |
+| [9](#d9) | 5 saal purana data ek table me | mahine-wise partition, purana DETACH -> S3 |
 
 ---
 
@@ -78,6 +78,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d1"></a>
 
 ## DIKKAT 1 — transfer ke beech system gira: A ka -500 hua, B ka +500 nahi
 
@@ -123,6 +125,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d2"></a>
 
 ## DIKKAT 2 — regulator: "paisa kahan se aaya, kahan gaya?" + transfer ke baad SMS / fraud / statement
 
@@ -179,6 +183,8 @@ flowchart TD
 
 ---
 
+<a id="d3"></a>
+
 ## DIKKAT 3 — balance aata kahan se? (is design ka ASLI sawaal)
 
 ```
@@ -228,6 +234,8 @@ flowchart TD
 
 ---
 
+<a id="d4"></a>
+
 ## DIKKAT 4 — do baar tap / client retry -> Rs. 1000 kat gaye
 
 ```
@@ -262,6 +270,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d5"></a>
 
 ## DIKKAT 5 — ek hi account pe DO transfer ek saath
 
@@ -308,6 +318,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d6"></a>
 
 ## DIKKAT 6 — salary day: ek Banking Svc bhara, wahi gira to bank band
 
@@ -356,6 +368,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d7"></a>
 
 ## DIKKAT 7 — sab balance / history PRIMARY pe padh rahe, transfer dheeme
 
@@ -412,6 +426,8 @@ flowchart TD
 
 ---
 
+<a id="d8"></a>
+
 ## DIKKAT 8 — ~22 arab row (11 arab txn) pe history ka page
 
 ```
@@ -459,6 +475,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d9"></a>
 
 ## DIKKAT 9 — 5 saal purana data, sab ek table me
 
