@@ -16,7 +16,7 @@ class Elevator {
     public Elevator(int id, int currentFloor) {
         this.id = id;
         this.currentFloor = currentFloor;
-        this.direction = Direction.UP;
+        this.direction = Direction.IDLE;   // khada lift = IDLE (pehle UP tha -> IDLE branch kabhi nahi chalti)
         this.requests = new ArrayList<>();
     }
 
