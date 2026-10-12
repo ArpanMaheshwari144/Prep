@@ -322,6 +322,9 @@ AGLA SAWAAL (tere jawab se):
    -> ek key kai SSTable me bikhri ho sakti -> sab dekhna padta. Bloom filter + compaction se kam
   "Partition key aur clustering key kya?"
    -> partition = (user_id, month) -> kis node pe · clustering = tweet time DESC -> andar kram
+  "Cassandra ke read replica / write replica?"
+   -> Cassandra me LEADER nahi: har replica read bhi leta, write bhi (replication factor, jaise 3 copy).
+      read/write replica = MySQL jaisa leader-follower model. Yahan bolo: "RF 3, quorum se read/write"
 ```
 ```mermaid
 flowchart TD
