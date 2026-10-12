@@ -42,6 +42,20 @@ BOL:      "For the booking itself I'd pick consistency: I'd rather reject a writ
 
 ---
 
+## MOCK CUE — pehle ye, phir mock
+
+| # | dikkat | cue |
+|---|---|---|
+| [1](#d1) | do alag user ne ek saath A1 book ki | check + book ek hi UPDATE: "book karo SIRF agar available"; doosre ko 0 row |
+| [2](#d2) | seat chuni, 3 min payment | seat 'held' + kab tak (5 min); booking ka UPDATE time nikle hold ko khaali maane |
+| [3](#d3) | "Pay" do baar daba | client key banaye, retry pe wahi; dobara aaye to saved result |
+| [4](#d4) | book koi-koi, seat map sab dekh rahe | dekhna Redis + replica se, booking primary pe |
+| [5](#d5) | popular release, lakhon log ek seat pe | Kafka + har show ka worker ek-ek karke; waiting room; darwaze pe Redis ginti, baaki "housefull" |
+| [6](#d6) | Redis restart, sab primary pe | Redis cluster; dekhna replica se; cache khaali ho to sirf ek rebuild kare |
+| [7](#d7) | App box gira, 500 logon ka hold | hold DB me hai, box me nahi; kai App (stateless) + LB |
+
+---
+
 ## DABBA 0 — sabse simple
 
 ```
@@ -57,6 +71,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d1"></a>
 
 ## DIKKAT 1 — do ALAG user ne EK SAATH A1 book kar di
 
@@ -106,6 +122,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d2"></a>
 
 ## DIKKAT 2 — seat chuni, ab 3 min payment kar raha
 
@@ -160,6 +178,8 @@ flowchart TD
 
 ---
 
+<a id="d3"></a>
+
 ## DIKKAT 3 — payment page pe "Pay" do baar daba diya
 
 ```
@@ -196,6 +216,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d4"></a>
 
 ## DIKKAT 4 — book koi-koi karta, seat map SAB dekh rahe
 
@@ -241,6 +263,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d5"></a>
 
 ## DIKKAT 5 — popular release: lakhon log, wahi show, wahi seat
 
@@ -305,6 +329,8 @@ flowchart TD
 
 ---
 
+<a id="d6"></a>
+
 ## DIKKAT 6 — Redis restart: 99% browse seedha primary pe, booking ke update ruk gaye
 
 ```
@@ -358,6 +384,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d7"></a>
 
 ## DIKKAT 7 — ek App box pe 500 log seat chun rahe, box gira
 
