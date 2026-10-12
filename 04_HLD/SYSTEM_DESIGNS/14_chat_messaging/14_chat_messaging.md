@@ -69,6 +69,25 @@ DO BLOCK JO DESIGN CHALATE:
 
 ---
 
+## MOCK CUE — pehle ye, phir mock
+
+```
+  1  2 crore connection khuli, memory          -> event loop (Netty), reconnect pe backoff + jitter
+  2  A server-1, B server-7                    -> Redis me "B kis server pe", us server ko call
+  3  B offline, message kahan                  -> pehle DB me likho, phir bhejo + push notification
+  4  1.2 TB roz, 46k write/sec                 -> partition key chat_id, sort key message_id
+  5  500 ka group, 500 baar likhai?            -> ek copy chat ke neeche (fan-out on read)
+  6  kiske kitne unread                        -> har member ka cursor, unread = uske baad
+  7  do tick / neeli tick                      -> wahi cursor: "yahan tak mila" + "yahan tak padha"
+  8  10 lakh broadcast, tick ka kya            -> group size bandho, broadcast me tick nahi
+  9  retry, B ko ek baat do baar               -> clientMsgId idempotency, ID client banata
+ 10  kram kiska time                           -> server ki Snowflake ID, phone ki ghadi nahi
+ 11  5 MB video isi raaste?                    -> presigned URL se S3, message me sirf pata
+ 12  online / last-seen                        -> Redis TTL + heartbeat, apne aap offline
+```
+
+---
+
 ## DABBA 0 — sabse simple: EK server, do user
 
 ```
