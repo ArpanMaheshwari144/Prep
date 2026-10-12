@@ -34,6 +34,21 @@ NUMBERS: ~50 lakh users · ~50 lakh orders / din · normal ~250 / sec, market kh
 
 ---
 
+## MOCK CUE — pehle ye, phir mock
+
+| # | dikkat | cue |
+|---|---|---|
+| [1](#d1) | do order ek hi stock pe ek saath | har stock ki ek queue + ek thread, order ek ke baad ek; order book RAM me, lock nahi |
+| [2](#d2) | wallet 50k, 30k-30k ke do order | order lagte hi paisa block karo (hotel deposit); DB me ek update, available bacha tabhi block |
+| [3](#d3) | settlement ke beech crash | saare step ek transaction me (@Transactional) + ledger: jitna gaya utna mila |
+| [4](#d4) | paisa Wallet DB, share Portfolio DB | SAGA: har step apne DB me commit, fail pe ulta step (paisa wapas) |
+| [5](#d5) | BUY do baar daba / retry | har request ke saath key; key ho chuki to purana result, naya order nahi |
+| [6](#d6) | order book RAM me, crash = gayab | har order pehle log me (seq number ke saath), phir book; crash pe log dobara chala ke book wapas (scorer ka register) |
+| [7](#d7) | lakhon log live price dekh rahe | WebSocket + pub/sub: price badle tab server khud bheje, sirf latest |
+| [8](#d8) | market khulte hi akele TCS pe lakhon order | book mat todo, ek thread hi; aage ka log bheed ko line me rakhe, drop nahi, thodi der |
+
+---
+
 ## DABBA 0 — sabse simple
 
 ```
@@ -49,6 +64,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d1"></a>
 
 ## DIKKAT 1 — do order ek hi stock pe ek saath (RACE)
 
@@ -91,6 +108,8 @@ flowchart TD
 
 ---
 
+<a id="d2"></a>
+
 ## DIKKAT 2 — wallet me 50k, banda 30k-30k ke DO order daal de (DOUBLE SPEND)
 
 ```
@@ -128,6 +147,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d3"></a>
 
 ## DIKKAT 3 — settlement ke beech crash
 
@@ -168,6 +189,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d4"></a>
 
 ## DIKKAT 4 — paisa Wallet DB me, share Portfolio DB me (alag DB)
 
@@ -222,6 +245,8 @@ flowchart TD
 
 ---
 
+<a id="d5"></a>
+
 ## DIKKAT 5 — user ne BUY do baar daba diya / network ne retry maara
 
 ```
@@ -263,6 +288,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d6"></a>
 
 ## DIKKAT 6 — order book RAM me hai, server crash = sab gayab
 
@@ -324,6 +351,8 @@ flowchart TD
 
 ---
 
+<a id="d7"></a>
+
 ## DIKKAT 7 — lakhon log live price dekh rahe
 
 ```
@@ -374,6 +403,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d8"></a>
 
 ## DIKKAT 8 — market khulte hi AKELE TCS pe lakhon order
 
