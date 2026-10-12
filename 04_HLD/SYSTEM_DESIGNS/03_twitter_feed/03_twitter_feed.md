@@ -47,6 +47,23 @@ BOL:      "For the feed and like counts, availability. A feed a couple of second
 
 ---
 
+## MOCK CUE — pehle ye, phir mock
+
+```
+  1  har baar 200 logon ka data jodna       -> inbox pehle se bharo (fan-out on write)
+  2  tweet button 3 sec ghooma              -> Kafka, inbox baad me async
+  3  Bieber = 10 crore inbox                -> celeb ka pull, padhte waqt merge
+  4  Virat ka tweet crore log padh rahe     -> hot tweet cache, TTL
+  5  500M inbox, memory phategi             -> sirf tweet_id, LTRIM
+  6  saare tweet ek DB me nahi              -> Cassandra, user_id shard
+  7  India user, US shard (200ms)           -> region me copy
+  8  ek App box: bojh + SPOF                -> LB + kai App, JWT stateless
+  9  padhna likhna ek box me                -> read / write service alag
+ 10  photo video bhaari                     -> CDN + S3
+```
+
+---
+
 ## DABBA 0 — sabse simple
 
 ```
