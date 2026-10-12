@@ -137,7 +137,7 @@ Layer 7 = Office receptionist
 |---|---|---|
 | Sees | IP/port | Full HTTP |
 | Speed | Faster | Slower |
-| Routing | Round-robin only | URL-based, header-based, smart |
+| Routing | IP/port pe algo (round-robin, least-conn, hash) — URL/header nahi dekh sakta | URL-based, header-based, smart |
 | SSL termination | | |
 | Sticky sessions | Limited | Cookie-based |
 | Use | TCP services, gaming, IoT | Web apps (90% case) |

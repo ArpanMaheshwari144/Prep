@@ -15,8 +15,9 @@
 
    teri machine = EK -> crash -> sab khatam (SPOF).
    AWS = LAKHS servers, AVAILABILITY ZONES (alag datacenters) + REGIONS (alag geography) me faile ->
-         ek gira -> doosra apne aap le leta (failover) -> tu UP rehta.
-   poora ek datacenter gir jaaye (aag/power/flood) -> doosri AZ pick kar leti.
+         par apne aap nahi: TU kai AZ me box + LB lagaye tabhi ek gira to doosra le leta (failover).
+   poora ek datacenter gir jaaye (aag/power/flood) -> doosri AZ ka box chalta (agar tune wahan rakha).
+   Ek hi EC2 rakha aur wo gira = tu down. Sirf managed cheezein (S3, DynamoDB, multi-AZ RDS) ye khud karti.
 
    -> cloud "reliable" isliye nahi ki girta NAHI -> balki itni redundancy ki girna DIKHTA nahi.
 ```

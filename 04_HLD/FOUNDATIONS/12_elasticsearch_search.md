@@ -80,7 +80,7 @@ search ─→ lookup ─→ [3. BM25 scoring: RANK]      → best-first results
           (4. DISTRIBUTED: shards[scale] + replicas[reliability])
 ```
 
-1. **Analyzer** (write pe): text → tokens + stemming. **Typo/synonym/stemming ka jaadu yahin** (index banane se pehle).
+1. **Analyzer** (write + search dono pe): text → tokens + lowercase + stemming (synonym bhi yahan lag sakta). **Typo** = search ke waqt fuzzy query (edit distance), analyzer nahi.
 2. **Inverted Index** (core): word → docs.
 3. **BM25 / TF-IDF** (search pe): 1000 docs mile to kaunsa UPAR? score (word-frequency + rarity) → **ranking**.
 4. **Distributed**: sharding (scale — data bada to alag machines) + replication (reliability). [inverted-index ≠ sharding: index = STRUCTURE/fast, shard = SPLIT/scale — alag layer.]
@@ -137,7 +137,7 @@ Core:   Inverted Index = word → docs (reverse HashMap)
 Fast:   get(word) O(1), scan NAHI = DB-index ka text-version
 
 4 layer:
-   Analyzer   → tokenize + stem (typo/synonym yahin)
+   Analyzer   → tokenize + stem (index + search dono pe; typo = fuzzy query)
    Inverted   → word → docs (CORE)
    BM25       → relevance ranking
    Distributed→ shard (scale) + replica (reliability)

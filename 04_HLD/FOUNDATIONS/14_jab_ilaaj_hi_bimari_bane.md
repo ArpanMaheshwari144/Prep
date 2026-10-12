@@ -91,7 +91,7 @@ METASTABLE FAILURE   (tedha roop)
       aur retry sirf wahan jahan dobara chalana safe ho
 
 6. JAGAH CHHOD KE CHALO (N+1)
-      ek server ke marne pe jeena hai -> normal me har server 100/(N-1) se NEECHE
+      ek server ke marne pe jeena hai -> normal me har server (N-1)/N x 100% se NEECHE
       3 server = ~66% se neeche, warna pehla marte hi baaki bhi jaayenge
 
 7. AADHI KHARABI KO POORI KHARABI MAT BANNE DO

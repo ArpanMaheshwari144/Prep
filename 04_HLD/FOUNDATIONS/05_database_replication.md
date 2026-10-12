@@ -298,10 +298,10 @@ User: GET /profile (read)
 Briefly read from primary post-write.
 
 #### 2. Sticky sessions
-User-A → same replica always.
+User-A → same replica always. (Isse data PEECHE nahi jaata dikhta; par wo replica bhi lag me ho sakti, to apna naya write phir bhi na dikhe — read-your-own-writes ke liye #1 / #3.)
 
 #### 3. Force primary for critical reads
-Write-after-read paths.
+Read-after-write paths.
 
 #### 4. Synchronous for critical
 Slower but consistent.

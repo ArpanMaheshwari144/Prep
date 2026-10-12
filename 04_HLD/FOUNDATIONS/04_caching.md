@@ -721,7 +721,7 @@ sentinel parallel-syncs mymaster 1
 ```
 - `2` = quorum (3 me se 2 haan kahein tabhi failover)
 - `down-after 5000` — chhota rakho to network ke ek jhatke pe faltu failover; bada rakho to downtime lamba
-- `parallel-syncs 1` — ek waqt me ek hi replica sync kare, warna sab milke naye master ko bitha denge
+- `parallel-syncs 1` — ek waqt me ek hi replica naye master se sync kare; sync ke beech replica read nahi de paati, sab ek saath sync = saari replica ek saath read ke liye band
 
 ★ **Jo log bhool jaate hain — APP ko bhi badalna padta hai.** Master ka IP hardcoded hai to failover ke
 baad app mare hue IP pe hi jaati rahegi. App ko Sentinel se POOCHNA padta hai "abhi master kaun hai":
@@ -1225,7 +1225,7 @@ Monitor in production — Spring Boot Actuator + Micrometer.
 
 **Q: "Cache stampede?"**
 
-> *"Cache expire pe 1000 requests simultaneously → DB crash. Fixes: **mutex** (1 thread refresh, baaki wait), **refresh-ahead** (proactive), **soft TTL** (small jitter prevents simultaneous expiry)."*
+> *"Cache expire pe 1000 requests simultaneously → DB crash. Fixes: **mutex** (1 thread refresh, baaki wait), **refresh-ahead** (proactive), **soft TTL** (expire se pehle background refresh). Bahut keys ek saath expire (avalanche) -> TTL me thoda random (jitter)."*
 
 ---
 

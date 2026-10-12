@@ -93,7 +93,8 @@ Real deployment order:
 ```
 OWASP = Open Worldwide Application Security Project
 Top 10 = Most common web attacks
-WAF defends against most of these
+List = OWASP Top 10 (2021). WAF in me se KUCH pe madad karta (injection, XSS, brute force);
+baaki (access control / IDOR, crypto, design, purani library) app / design me theek hote
 ```
 
 ```
@@ -143,7 +144,7 @@ XSS (Cross-Site Scripting)
 
 CSRF (Cross-Site Request Forgery)
    Attack: Tricks user into action via 3rd party site
-   WAF rule: validate origin/referer headers
+   WAF rule: origin/referer check (sirf thoda; asli ilaaj app me: CSRF token + SameSite cookie)
 
 PATH TRAVERSAL
    Attack: /api/file?path=../../etc/passwd
@@ -271,7 +272,7 @@ WAF mein Rate Limiter INTEGRATED hota hai.
 ```
 
 ```
-= Rate Limiter concept (12_rate_limiter.md) USE hota WAF mein
+= Rate Limiter concept (SYSTEM_DESIGNS/02_rate_limiter) USE hota WAF mein
 = WAF aur Rate Limiter alag bhi ho sakte hain
   ya WAF mein bundled
 ```
@@ -382,7 +383,7 @@ SOLUTION — Tuning Process:
 "WAF is a Layer 7 firewall sitting in front of web apps.
 
  Inspects every HTTP request and blocks malicious ones
- — SQL injection, XSS, CSRF, path traversal, bad bots,
+ — SQL injection, XSS, path traversal, bad bots,
  OWASP Top 10 attacks.
 
  Detection: signature-based (known patterns),
@@ -413,7 +414,7 @@ PLACEMENT:
    Anomaly (behavior)
    Custom (your rules)
 
-OWASP TOP 10 — WAF defends against most:
+OWASP TOP 10 (2021) — WAF in me madad karta:
    #3 Injection (SQL, NoSQL)
    #7 Auth failures (brute force)
    #10 SSRF

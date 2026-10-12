@@ -249,11 +249,10 @@ Soch — Twitter tweets database:
    • Har tweet ka row
    • Storage scale = petabytes
 
-   Relational DB (PostgreSQL) yeh handle nahi kar paayega.
-   Cassandra-type DB chahiye = scale-out
+   Ek relational box yeh nahi jhelega -> ya to SQL ko shard karo (Twitter ne MySQL shard kiya, phir apna Manhattan)
+   ya Cassandra-type DB jo shuru se scale-out ho
 
 Real-world examples:
-   • Twitter tweets storage (Cassandra)
    • Netflix viewing history (Cassandra)
    • Discord messages (Cassandra)
    • IoT sensor data (millions writes/sec)
@@ -295,9 +294,8 @@ Graph DB exactly yahi:
 PRODUCTION USE — OWN EXPERIENCE:
 
 YouTube "Next video" / "You might like":
-   Tu ne video X dekha
-   Graph DB query: "X dekhne wale ne aur kya dekha?"
-   → Y, Z videos suggest
+   ye asal me ML recommender (collaborative filtering / neural net) se aata, Graph DB query se nahi
+   (soch "X dekhne wale ne aur kya dekha?" graph jaisi hai, par production me ML)
 
 Instagram "You might know":
    Tera dost A
@@ -307,7 +305,7 @@ Instagram "You might know":
 
 Netflix recommendations:
    "Because you watched Stranger Things, here's Dark"
-   = Content graph + user behavior graph
+   = ML recommender (collaborative filtering), Graph DB nahi
 
 LinkedIn connections:
    "Mohit is 2nd degree connection"

@@ -28,7 +28,7 @@ THEOREM SAYS:
 ```
 TUNE SAHI BOLA — every big system somewhere trade-off karta:
 
-   YouTube down ho gaya     → AVAILABILITY lose
+   Ticket "booking abhi band, baad me" → AVAILABILITY lose (network toota to jawab hi nahi)
    Uber surge flicker       → CONSISTENCY trade
    Facebook stale feed       → CONSISTENCY trade
    Bank "system unavailable" → AVAILABILITY lose
@@ -483,7 +483,7 @@ PACELC = CAP + Else case
 
 Truth bomb (LOCK):
    "Perfect kuch nahi hota — sab somewhere trade-off"
-   YouTube down, Facebook stale, Uber flicker
+   Bank "unavailable", Facebook stale, Uber flicker (sab network toot-ne ke waqt ki choice; poora down = outage, CAP nahi)
    = production reality
 ```
 

@@ -172,15 +172,15 @@ TTL (Time To Live) — kitne der cache valid
   CACHING LAYERS:
 
   ┌──────────────────────┐
-  │  BROWSER cache       │  TTL: short (seconds)
+  │  BROWSER cache       │  TTL: record wala (browser aksar ~1 min tak kaat deta)
   └──────────┬───────────┘
              ▼
   ┌──────────────────────┐
-  │  OS cache (DNS)      │  TTL: longer (minutes)
+  │  OS cache (DNS)      │  TTL: wahi record wala
   └──────────┬───────────┘
              ▼
   ┌──────────────────────┐
-  │  LOCAL RESOLVER (ISP)│  TTL: hours
+  │  LOCAL RESOLVER (ISP)│  TTL: wahi record wala (TTL record ka maalik tay karta, har layer ulti ginti)
   └──────────┬───────────┘
              ▼
   ┌──────────────────────┐
@@ -283,7 +283,7 @@ Client picks first (or rotates)
 = Simple load balancing via DNS
 
 Limitations:
-   • No health check at DNS level
+   • Simple round-robin DNS me health check nahi (Route 53 jaisi managed DNS me hai)
    • TTL caching = dead server kept being tried
    • No advanced routing logic
 

@@ -331,8 +331,8 @@ ring pe ab 600 nishaan, aur har shard ke 150 tukde POORE ring me BIKHRE hue:
 hash % N        ->  ~16 TB network pe sarkega  (~80%)
 ring + vnodes   ->  ~4 TB  sarkega             (~1/N = 20%)
 
-aur baaki teen machine ko CHHUA BHI NAHI GAYA — wo chalti rahengi,
-unke users ko pata bhi nahi chalega ki kuch hua.
+vnodes ke saath ye ~20% har purani machine se THODA-THODA aata (isi se load barabar rehta).
+Bina vnodes: sirf ek padosi deta, baaki chhuye nahi jaate — par load tedha.
 ```
 
 ---

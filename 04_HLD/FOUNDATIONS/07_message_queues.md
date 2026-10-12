@@ -556,7 +556,7 @@ Flag tha hi nahi. Parchi 0 pe thi, isliye shuru se mila. **Faisla hamesha PARCHI
 1. PEHLE --describe chala ke purane number LIKH LO   -> wahi teri "undo" hai
                                                         (--to-offset 12 se wapas ja sakte ho)
 2. --dry-run pehle, --execute baad me
-   (Kafka sakht hai: dono me se ek diye bina command chalta hi nahi)
+   (--execute ke bina kuch lagu nahi hota: Kafka sirf WARN deke dry-run jaisa plan dikhata)
 ```
 ★ Reset tabhi chalta hai jab group ka **koi consumer chal na raha ho** — isi liye har baar
 `has no active members` dikh raha tha. Chalta hua consumer apna purana offset wapas likh deta.

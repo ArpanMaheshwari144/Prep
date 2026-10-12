@@ -59,8 +59,8 @@ DIKKAT — POLLING:
    app har 2 second me poochti hai "naya kuch hai?"
    50 lakh user x har 2 sec = 25 lakh request/sec
    aur 99% baar jawab WAHI hota hai jo pichhli baar tha
-   -> network bill phatta, CPU 100%, aur PHIR BHI data 6-7 second late
-      (kyunki update 2-second wale agle poll ka intezaar karta hai)
+   -> network bill phatta, CPU 100%, aur PHIR BHI data ~2 second tak late
+      (kyunki update agle poll ka intezaar karta hai, average ~1 sec)
 
 FIX — POLLING hatao, PUSH karo:
    connection ek baar bane, aur naya data hone par SERVER khud bhej de
@@ -378,7 +378,7 @@ K8s mein Eureka ki zaroorat NAHI:
       )
 
    "user-service" = K8s Service name
-   K8s DNS resolves to right pod IP
+   K8s DNS -> Service ka ClusterIP -> kube-proxy aage kisi pod pe bhejta
    = Built-in service discovery
 ```
 
@@ -425,7 +425,7 @@ User clicks "Buy Now":
 ```
 Critical path SYNC:
    Must complete before response
-   Failure = transaction rollback
+   Failure = compensating action (SAGA: payment refund, stock wapas) — alag service, ek transaction nahi
    User experience direct impact
 
 Side effects ASYNC:

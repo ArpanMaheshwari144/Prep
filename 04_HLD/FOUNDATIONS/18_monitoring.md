@@ -3,7 +3,7 @@
 > **NAV** — KYA: monitoring (Prometheus + Grafana, usercrud hands-on). UP: [MASTER](../00_MASTER_SHEET.md) · demo files: [MONITORING_DEMO](../../05_INFRA_DEEP/MONITORING_DEMO) · [LOADTEST_SCALE_DEMO](../../05_INFRA_DEEP/LOADTEST_SCALE_DEMO)
 
 > "App theek chal rahi?" ka jawab NUMBERS + GRAPHS se. Actuator metrics deta -> Prometheus scrape+store karta
-> -> Grafana graph banata. Netflix/Uber ka standard monitoring stack. (hands-on: usercrud pe live spike dekha)
+> -> Grafana graph banata. Industry ka common open-source monitoring stack. (hands-on: usercrud pe live spike dekha)
 
 ---
 
@@ -88,7 +88,8 @@ Grafana:   line UPAR chad gayi (request-rate spike). load ruka -> neeche.
 http_server_requests_seconds_count   = total requests (COUNTER, sirf badhta)
 rate(...[1m])                        = per-second rate last-1-min ki (COUNTER -> rate se "kitni req/sec" milti)
    -> counter ko seedha graph mat karo (bas upar jaata); rate() se "speed" nikaalo.
-Aur: histogram_quantile(0.95, ...) = p95 LATENCY. sum by (status)(...) = status-wise.
+Aur: histogram_quantile(0.95, ...) = p95 LATENCY (iske liye
+   management.metrics.distribution.percentiles-histogram.http.server.requests=true chahiye; default me _bucket nahi aata). sum by (status)(...) = status-wise.
 ```
 
 ## ★★ GEMS / interview
