@@ -160,8 +160,9 @@ class Board{
 // SRP = har class ka ek hi kaam
 // Yahan kyu: Game sirf turn-flow orchestrate karta — move decide Board/Dice se aata
 //
-// Composition = "has-a" relationship (strong ownership)
-// Yahan kyu: Game HAS-A Players, Board, Dice — in ke bina Game exist nahi
+// Aggregation = "has-a" relationship (weak ownership)
+// Yahan kyu: Game HAS-A Players, Board, Dice — par teeno main() me bahar bane, constructor me aaye;
+// Game khatam ho to bhi ye bache rehte. (Game khud new Board() kare to Composition)
 //
 // Facade Pattern = complex subsystem simple API ke piche
 // Yahan kyu: Client sirf playGame() call kare, dice roll + board lookup + player update hidden

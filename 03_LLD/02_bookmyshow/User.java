@@ -79,8 +79,9 @@ class Seat {
 // SRP = har class ka ek hi kaam
 // Yahan kyu: Show sirf (movie + time + seats) grouping rakhta
 //
-// Composition = "has-a" relationship (strong ownership)
-// Yahan kyu: Show HAS-A Movie aur Seats — Show delete hua toh seat mapping bhi gone
+// Aggregation = "has-a" relationship (weak ownership)
+// Yahan kyu: Show HAS-A Movie aur Seats — dono bahar bane, constructor me aaye;
+// Show hata to bhi Movie bachi rehti (doosre show me chalti). (Show khud seats new kare to Composition)
 class Show{
     Movie movie;
     String time;

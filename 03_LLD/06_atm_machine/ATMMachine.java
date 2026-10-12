@@ -43,8 +43,9 @@ class Card{
 // SRP = har class ka ek hi kaam
 // Yahan kyu: User sirf identity info (name + associated card) rakhta
 //
-// Composition = "has-a" relationship
-// Yahan kyu: User HAS-A Card (ownership clear, User gaya to Card bhi context gone)
+// Aggregation = "has-a" relationship (weak ownership)
+// Yahan kyu: User HAS-A Card — Card main() me bahar bana, constructor me aaya;
+// User object gaya to bhi Card object bacha rehta
 class User{
     private String name;
     private Card card;

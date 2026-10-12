@@ -96,8 +96,9 @@ class Board {
 // SRP = har class ka ek hi kaam
 // Yahan kyu: Game sirf turn-flow orchestrate karta, actual win check Board karta
 //
-// Composition = "has-a" relationship
-// Yahan kyu: Game HAS-A Board aur 2 Players — ownership clear
+// Composition + Aggregation = dono "has-a"
+// Yahan kyu: Board = Composition (Game khud new Board() karta, Game gaya to Board gaya)
+// Players = Aggregation (bahar bane, constructor me aaye, Game ke baad bhi bache)
 //
 // Facade Pattern = complex internals ko simple API ke piche chhupa
 // Yahan kyu: Client sirf playGame() call kare, Board/Player coordination hide
