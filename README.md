@@ -3,7 +3,7 @@
 Java / Spring backend interview prep — DSA, system design, projects, hands-on notes.
 **Har heading/link click → seedha wahi note ya folder khul jaata.** Har section ke saath **Kya hai** + **Kyu matter karta** likha hai — kholne se pehle hi pata chal jaaye.
 
-> ★ **Abhi (DELIVERY + APPLY phase — build done):** roz Java/Spring DIN (7 din ka chakkar) · DSA 1 redo + grill 5 · PR drill 1 · apply. Bada kaam roz DONO: HLD mock (ek design, end me usi file ke cross-question) + STAR ek kahani bolke. Ab "jaanna" se "bolke nikaalna" pe focus.
+> ★ **Abhi (DELIVERY + APPLY phase — build done):** roz Java/Spring DIN (7 din ka chakkar) · DSA 1 redo + grill 5 · PR drill 1 · apply. Bada kaam roz DONO: HLD mock (design ka MOCK CUE padho -> file band karke bolo -> 2-3 cross-question) + STAR ek kahani bolke. Ab "jaanna" se "bolke nikaalna" pe focus.
 > Live state + plan → **[PROGRESS.md](PROGRESS.md)**
 
 ---
@@ -15,7 +15,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 01 | [**01_JAVA**](01_JAVA) | Core · Collections · Java-8 · Multithreading · SOLID · Patterns · Testing | Java grill round ka **core** — collections-internal + multithreading sabse zyada pucha jaata |
 | 02 | [**02_SPRING**](02_SPRING) | Boot internals · @Transactional · Hibernate · JWT · Docker/K8s · Kafka/Async/Cache · QueryDSL/GraphQL | Backend role ka **dil** — proxy / N+1 / tx / Kafka = deep-grill favourites |
 | 03 | [**03_LLD**](03_LLD) | 11 OOP designs, code me | LLD round — class-design + patterns **bolke** |
-| 04 | [**04_HLD**](04_HLD) | 14 designs (har dikkat ke neeche interviewer ka cross-question) + master sheet (8 dabbe · trade-off · kaise bolna · SHABD) + 19 foundations + practice log + HANDS_ON (4 demo: chala ke dekha kya tootta) | Tera **strong zone** — JP ka pura ek round |
+| 04 | [**04_HLD**](04_HLD) | 14 designs (har design ke upar MOCK CUE table: har dikkat ek line, click = wo dikkat · har dikkat ke neeche interviewer ka cross-question) + master sheet (8 dabbe · trade-off · kaise bolna · SHABD) + 19 foundations + practice log + HANDS_ON (4 demo: chala ke dekha kya tootta) | Tera **strong zone** — JP ka pura ek round |
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
@@ -177,7 +177,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 176 problem (+ 109 REDO/BLANK files) = 285 .cpp
+## [08_DSA](08_DSA) — 18 pattern · 177 problem (+ 110 REDO/BLANK files) = 287 .cpp
 **Kya:** pattern-wise solved problems + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + spaced-redo.
 
 - ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi" (har pattern ka saar + template + dry-run) — **roz-glance**.
@@ -189,7 +189,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 7 | | 10 | [KADANE](08_DSA/10_KADANE) | 9 | 9 |
 | 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 10 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 1 |
 | 03 | [HASHING](08_DSA/03_HASHING) | 11 | 10 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 4 |
-| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 8 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 11 | 6 |
+| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 8 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 12 | 7 |
 | 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 4 | | 14 | [HEAP](08_DSA/14_HEAP) | 9 | 5 |
 | 06 | [STACK](08_DSA/06_STACK) | 12 | 5 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 2 |
 | 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 7 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 6 |
@@ -208,7 +208,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ## [10_BEHAVIORAL](10_BEHAVIORAL) — STAR
 **Kya:** JP-fit STAR kahaniyaan. &nbsp; **Kyu:** pura behavioral round; "tell me about a time" — bolke ready rakhni.
 
-[01 JP-company](10_BEHAVIORAL/01_JP_COMPANY.md) · [02 why-JP](10_BEHAVIORAL/02_WHY_JP.md) · [03 STAR: HikariCP](10_BEHAVIORAL/03_STAR_HikariCP.md) · [04 STAR: WAF-IP](10_BEHAVIORAL/04_STAR_WAF_IP.md) · [05 STAR: payment](10_BEHAVIORAL/05_STAR_Doximity_Payment.md) · [06 STAR: mentoring](10_BEHAVIORAL/06_STAR_Mentoring.md) · [07 STAR: failure-JDK](10_BEHAVIORAL/07_STAR_Failure_JDK.md) · [08 STAR: SQLi-WAF](10_BEHAVIORAL/08_STAR_SQLi_WAF.md) · [09 STAR: SMS opt-out](10_BEHAVIORAL/09_STAR_SMS_OptOut.md) · [10 STAR: email dedup](10_BEHAVIORAL/10_STAR_Email_Dedup.md) · [11 STAR: MongoDB sync](10_BEHAVIORAL/11_STAR_MongoDB_Sync.md) · [12 STAR: Fargate subnets](10_BEHAVIORAL/12_STAR_Fargate_Subnets.md)
+[01 JP-company](10_BEHAVIORAL/01_JP_COMPANY.md) · [02 why-JP](10_BEHAVIORAL/02_WHY_JP.md) · [03 STAR: HikariCP](10_BEHAVIORAL/03_STAR_HikariCP.md) · [04 STAR: WAF-IP](10_BEHAVIORAL/04_STAR_WAF_IP.md) · [05 STAR: payment](10_BEHAVIORAL/05_STAR_Doximity_Payment.md) · [06 STAR: mentoring](10_BEHAVIORAL/06_STAR_Mentoring.md) · [07 STAR: failure-JDK](10_BEHAVIORAL/07_STAR_Failure_JDK.md) · [08 STAR: SQLi-WAF](10_BEHAVIORAL/08_STAR_SQLi_WAF.md) · [09 STAR: SMS opt-out](10_BEHAVIORAL/09_STAR_SMS_OptOut.md) · [10 STAR: email dedup](10_BEHAVIORAL/10_STAR_Email_Dedup.md) · [11 STAR: MongoDB sync](10_BEHAVIORAL/11_STAR_MongoDB_Sync.md) · [12 STAR: Fargate subnets](10_BEHAVIORAL/12_STAR_Fargate_Subnets.md) · [13 STAR: $0 pricing](10_BEHAVIORAL/13_STAR_Zero_Pricing.md)
 
 ---
 
@@ -224,7 +224,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 [PR review](12_CODE_REVIEW/PR_REVIEW.md) — sabse upar **10 SAWAAL** (fields · ID kiski · input · 2 request · save · bahar ki call · loop · catch · log · return), phir code ki har JAGAH ka section (class fields -> method params -> DB -> if -> write -> HTTP -> loop -> catch -> log -> return): code ki SHAKAL -> NAAM -> ASAR -> SAHI. End me **FAISLA** line, 3 blocker naam ke saath.
 
-> **Asli JP jaise drill (bug + style) ka record:** 28-Sep StatementJob 7/17 -> RefundController 9/17 -> 29-Sep UserController 9/15 -> 3-Oct BillReminder 17/23 (owner check pakda) -> Transfer 12+1/20 -> Refund 16+1/25 -> FD 18/27 -> 11-Oct Rewards 14/21 (owner check + FAISLA line dono aaye).
+> **Asli JP jaise drill (bug + style) ka record:** 28-Sep StatementJob 7/17 -> RefundController 9/17 -> 29-Sep UserController 9/15 -> 3-Oct BillReminder 17/23 (owner check pakda) -> Transfer 12+1/20 -> Refund 16+1/25 -> FD 18/27 -> 11-Oct Rewards 14/21 (owner check + FAISLA line dono aaye) -> 12-Oct Beneficiary 11+1/20 + FAISLA.
 
 ---
 
