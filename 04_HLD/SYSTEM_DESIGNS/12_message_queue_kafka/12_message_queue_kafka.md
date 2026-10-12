@@ -44,6 +44,22 @@ NUMBERS: 100M msg / din -> ~1,200 / sec -> peak 3-5x -> ~5,000 / sec
 
 ---
 
+## MOCK CUE — pehle ye, phir mock
+
+| # | dikkat | cue |
+|---|---|---|
+| [1](#d1) | consumer restart, message gayab | disk pe append-only log; har message ka number (offset), padh ke delete nahi -> wahin se dobara |
+| [2](#d2) | ek machine me 2 TB + 5,000/sec nahi | topic ke tukde (partition), har tukda alag broker pe |
+| [3](#d3) | user-123 ke teen event teen partition me | message ke saath key (userId) -> ek user ke saare event ek partition me, kram pakka |
+| [4](#d4) | 3 instance, user ko 3 email | teeno ek consumer group me: ek partition ko group me sirf ek padhe |
+| [5](#d5) | ek event teeno service ko chahiye | har service ka apna group; same group = kaam baanto, alag group = sabko poora |
+| [6](#d6) | broker ki disk gayi, data gaya | har partition ka leader + copies; leader mara to saath chal rahi copy leader; paise pe acks=all |
+| [7](#d7) | kaam ke baad commit se pehle crash | pehle kaam phir commit + consumer eventId se dobara wala skip kare; dedup key = eventId, order key = userId |
+| [8](#d8) | consumer mara / peeche chal raha | uske partition baaki me bant jaate (rebalance); lag dekho, consumer badhao; baar-baar fail -> DLQ |
+| [9](#d9) | 7 din rakhoge to disk bharegi | time / size se purani file kaato; sirf latest chahiye to har key ka aakhri message rakho |
+
+---
+
 ## DABBA 0 — sabse simple
 
 ```
@@ -59,6 +75,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d1"></a>
 
 ## DIKKAT 1 — consumer band tha, restart hua, message gayab
 
@@ -94,6 +112,8 @@ flowchart TD
 
 ---
 
+<a id="d2"></a>
+
 ## DIKKAT 2 — ek machine me 2 TB aur 5,000 / sec nahi aayega
 
 ```
@@ -127,6 +147,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d3"></a>
 
 ## DIKKAT 3 — user-123 ke teen event teen partition me
 
@@ -167,6 +189,8 @@ flowchart TD
 
 ---
 
+<a id="d4"></a>
+
 ## DIKKAT 4 — email-service ke 3 instance: teeno ne padha, user ko 3 email
 
 ```
@@ -199,6 +223,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d5"></a>
 
 ## DIKKAT 5 — ek hi event email, analytics, dashboard TEENO ko chahiye
 
@@ -239,6 +265,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d6"></a>
 
 ## DIKKAT 6 — Broker A ki disk gayi, us partition ka SAARA data gaya
 
@@ -285,6 +313,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d7"></a>
 
 ## DIKKAT 7 — kaam ho gaya par commit se pehle crash (ya ulta)
 
@@ -427,6 +457,8 @@ flowchart TD
 
 ---
 
+<a id="d8"></a>
+
 ## DIKKAT 8 — consumer mar gaya / peeche chal raha
 
 ```
@@ -471,6 +503,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d9"></a>
 
 ## DIKKAT 9 — 7 din ka data rakhoge to disk bharegi
 
