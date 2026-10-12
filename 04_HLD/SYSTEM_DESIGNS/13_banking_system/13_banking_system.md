@@ -47,6 +47,22 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 
 ---
 
+## MOCK CUE — pehle ye, phir mock
+
+```
+  1  transfer beech me gira: -500, +500 nahi   -> dono account ek DB, ek @Transactional
+  2  regulator + SMS / fraud / statement       -> ledger (sirf INSERT, jod 0) + outbox -> Kafka, ek transaction
+  3  balance aata kahan se                     -> ledger = sach, balance column = cache, dono ek transaction
+  4  do baar tap / retry                       -> idempotency key, DB UNIQUE constraint
+  5  ek account pe do transfer saath           -> balance = balance - 500 DB me (row lock)
+  6  salary day, ek service bhara              -> kai stateless service + LB, DB sync replica alag AZ
+  7  sab read primary pe, transfer dheema      -> read replica, transfer ke turant baad balance primary se
+  8  22 arab row, history ka page              -> cursor / keyset pagination (ts, id)
+  9  5 saal purana data ek table me            -> mahine-wise partition, purana DETACH -> S3
+```
+
+---
+
 ## DABBA 0 — sabse simple
 
 ```
