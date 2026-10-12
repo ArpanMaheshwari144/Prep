@@ -100,6 +100,13 @@ SAHI:            @Valid @RequestBody
 ```
 
 ```
+CODE ME DIKHE:   @RequestParam String otp  ·  ?password=  ·  ?apiKey=   (secret URL me)
+NAAM:            secret URL / query me
+ASAR:            URL access log / proxy / browser history me chhap jaata
+SAHI:            body ya header me
+```
+
+```
 CODE ME DIKHE:   double amt = r.getAmount();   (amount · qty · days)
 NAAM:            ★ -ve / 0 check nahi
 ASAR:            -ve withdraw = balance BADHTA; -ve transfer = ulta paisa
@@ -119,6 +126,7 @@ CODE ME DIKHE:   @Transactional controller pe  ·  private method pe  ·  this.s
 NAAM:            galat jagah transaction
 ASAR:            proxy laga hi nahi -> transaction chala hi nahi
 SAHI:            service pe, public method, doosri bean se call
+★ 12-Oct chhoota (Beneficiary: @Transactional private updateLimit)
 ```
 
 ---
@@ -176,6 +184,7 @@ CODE ME DIKHE:   if (status == "ACTIVE")  ·  Integer a == Integer b  ·  Long =
 NAAM:            == se object compare
 ASAR:            reference compare -> chup-chaap false (Integer 127 ke upar false)
 SAHI:            "ACTIVE".equals(status) / enum / equals()
+★ 12-Oct chhoota (Beneficiary: otp == lastOtp -> hamesha FAILED)
 ```
 
 ```
@@ -211,6 +220,21 @@ CODE ME DIKHE:   POST /transfer  ·  /pay  ·  /refund   (request me koi unique 
 NAAM:            ★ idempotency nahi
 ASAR:            retry / double click -> do baar charge
 SAHI:            Idempotency-Key header, DB me unique -> doosri baar wahi purana jawab
+```
+
+```
+CODE ME DIKHE:   otpService.send(...);  b.setActive(true);  repo.save(b);   (verify alag endpoint pe)
+NAAM:            ★ status PEHLE, verify BAAD
+ASAR:            OTP verify hone se pehle hi beneficiary / payee ACTIVE -> bina OTP paisa bhej do
+SAHI:            PENDING save, verify sahi ho tab ACTIVE
+★ 12-Oct chhoota (Beneficiary)
+```
+
+```
+CODE ME DIKHE:   if (newLimit > 200000) newLimit = 200000;   (limit / amount chupchaap badla)
+NAAM:            galat input chupchaap theek kiya + limit badhana bina OTP
+ASAR:            user ko pata hi nahi kya save hua · chori ka login limit badha de
+SAHI:            400 lautao · limit badhane pe OTP / cooling period
 ```
 
 ```
