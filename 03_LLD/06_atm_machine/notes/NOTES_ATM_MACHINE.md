@@ -378,7 +378,7 @@ class Main {
 
         System.out.println("PIN correct? " + atm.checkPin(card.getPin(), 1234));
         System.out.println("PIN correct? " + atm.checkPin(card.getPin(), 9999));
-        System.out.println("Balance: " + atm.checkBalace(card));
+        System.out.println("Balance: " + atm.checkBalance(card));
 
         atm.withdraw(card, 3000);
         System.out.println("After withdraw 3000 → Balance: " + card.getBalance() + ", ATM cash: " + atm.getCashAvailable());
@@ -389,7 +389,7 @@ class Main {
         atm.deposit(card, 5000);
         System.out.println("After deposit 5000 → Balance: " + card.getBalance() + ", ATM cash: " + atm.getCashAvailable());
 
-        System.out.println("Final balance: " + atm.checkBalace(card));
+        System.out.println("Final balance: " + atm.checkBalance(card));
         System.out.println("Total transactions: " + atm.getTransactions().size());
         for (Transaction t : atm.getTransactions()) {
             System.out.println("  " + t.getType() + " → " + t.getAmount());

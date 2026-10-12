@@ -311,7 +311,7 @@ class ParkingSpot {
         this.spotNumber = spotNumber;
         this.parkedVehicle = parkedVehicle;
         this.spotType = spotType;
-        this.isAvailable = true;
+        this.isAvailable = isAvailable;   // pehle 'true' tha — bheja gaya value ignore ho raha tha
     }
 
     String getSpotNumber() { return spotNumber; }
@@ -391,7 +391,7 @@ class ParkingLot {
         for(Floor floor : floors){
             ParkingSpot p = floor.findAvailableSpot(vehicle.vehicleType);
             if(p != null){
-                p.setParkedVehicle(vehicle);
+                p.park(vehicle);   // pehle setParkedVehicle tha — spot bhara (isAvailable=false) hi nahi hota tha
                 return new Ticket(vehicle, p, "now");
             }
         }
