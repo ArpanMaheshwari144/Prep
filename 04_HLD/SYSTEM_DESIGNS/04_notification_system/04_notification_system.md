@@ -63,6 +63,7 @@ BOL:      "Kafka absorbs the burst and workers drain at their own pace. Sale tim
 | [8](#d8) | OTP marketing ke 50,000 ke peeche | alag Kafka topic + alag worker: OTP / order / marketing |
 | [9](#d9) | burst, provider ne 429 diya | worker khud raftaar kam kare (provider ki limit ke andar), 429 pe ruk ke retry, drop nahi |
 | [10](#d10) | "bhej diya" != "mil gaya" | provider webhook (delivered / bounced) -> tracking DB; push me app khud ack bheje |
+| [11](#d11) | 1 crore logon ko ek saath offer | turant 202; batch job 1000-1000 ke tukde Kafka me; preference + low lane + provider ki raftaar; key (campaign_id, user_id); push me FCM topic |
 
 ---
 
@@ -698,6 +699,98 @@ flowchart TD
     n_Redis["Redis"]
     n_Tracking_DB["Tracking DB"]
     n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka_high_medium_low
+    n_Kafka_high_medium_low --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES_SendGrid
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio_SNS
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Twilio_SNS --> n_Tracking_DB
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
+    n_SES_SendGrid --> n_Tracking_DB
+```
+
+---
+
+<a id="d11"></a>
+
+## DIKKAT 11 — 1 crore logon ko ek saath offer (campaign)
+
+```
+DIKKAT:   "Diwali offer sabko" -> 1 crore user. API ek-ek ko bheje to request ghanton atki,
+          Kafka me 1 crore event, provider ki limit tooti, OTP bhi peeche.
+
+SOLUTION: (1) Campaign Svc turant 202 + DB me campaign row (id, kisko, template). Kaam peeche.
+          (2) Batch job users ko 1000-1000 ke tukdon me padhe -> har tukda EK Kafka message
+              (1 crore nahi, 10,000 message). Kai fanout worker parallel.
+          (3) Har worker: opt-out / quiet hours hatao (dikkat 3) -> template -> MARKETING low lane (dikkat 8).
+          (4) Provider ki raftaar se bhejo (dikkat 9): 10,000 / sec ho to 1 crore ~17 min, jaan-boojh ke phailao.
+          (5) Dobara na jaaye: key = (campaign_id, user_id) (dikkat 4). Ginti: campaign ka sent / failed.
+          Push me sabko SAME message -> FCM TOPIC: sab "offers" topic ke subscriber, hum EK call,
+          aage Google pahunchata. SMS / email me topic nahi, wahan batch wala raasta.
+
+NAYA:     Campaign Svc (campaign banaye, turant laute) · Campaign DB (campaign + uska haal) ·
+          Batch job (users tukdon me padh ke Kafka me)
+
+KAISE:    batch job: SELECT user_id ... WHERE segment = 'all' AND id > last_id ORDER BY id LIMIT 1000
+          -> Kafka message {campaign_id, [1000 user_id]} -> last_id aage -> repeat (cursor, OFFSET nahi)
+          job gira -> campaign row me last_id saved -> wahin se aage
+KYUN YE:  1 crore alag event -> Kafka + workers pe bojh, aur ek-ek ki processing mehngi
+          ek bada message (1 crore id) -> ek worker pe atka, fail hua to sab dobara
+          1000 ka tukda = beech ka raasta: parallel bhi, retry chhota bhi
+```
+```
+BOARD PE: 1 crore / 1000 = 10,000 Kafka message · 10,000 / sec raftaar -> ~17 min
+
+POOCHEGA: "How would you send a notification to 10 million users?"
+BOL:      "I'd treat it as a campaign: the API returns right away, a batch job reads users in pages of
+           a thousand and puts each page on Kafka, and fanout workers filter preferences, render the
+           template and send on a low-priority lane at the provider's rate limit. For push I'd use
+           FCM topics so one call reaches every subscriber."
+
+AGLA SAWAAL (tere jawab se):
+  "Campaign beech me rukwana ho (galat offer chala gaya)?"
+   -> campaign row me status = CANCELLED; worker har tukde se pehle status dekhe, cancelled to skip
+  "Ek worker 1000 me se 600 bhej ke gira?"
+   -> tukda dobara aayega (offset commit baad me), (campaign_id, user_id) key se pehle wale 600 skip
+```
+```mermaid
+flowchart TD
+    n_Admin["Admin"]
+    n_Campaign_Svc["Campaign Svc"]
+    n_Campaign_DB["Campaign DB"]
+    n_Order_Svc["Order Svc"]
+    n_Kafka_high_medium_low["Kafka high / medium / low"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES_SendGrid["SES + SendGrid"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio_SNS["Twilio + SNS"]
+    n_Redis["Redis"]
+    n_Tracking_DB["Tracking DB"]
+    n_DLQ["DLQ"]
+    n_Admin --> n_Campaign_Svc
+    n_Campaign_Svc --> n_Campaign_DB
+    n_Campaign_Svc --> n_Kafka_high_medium_low
     n_Order_Svc --> n_Kafka_high_medium_low
     n_Kafka_high_medium_low --> n_Notification_Svc
     n_Notification_Svc --> n_User_pref_DB
