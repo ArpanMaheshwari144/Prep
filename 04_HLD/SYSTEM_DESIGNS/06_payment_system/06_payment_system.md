@@ -52,6 +52,17 @@ BOL:      "Consistency for money — during a partition I'd rather reject than g
 
 | # | dikkat | cue |
 |---|---|---|
+| [1](#d1) | beech me crash: -500 hua, +500 nahi | debit + credit ek hi DB transaction: dono honge ya koi nahi |
+| [2](#d2) | do baar tap / retry = double charge | client har payment pe ek key banaye, retry pe wahi bheje; key pehle dekhi to purana result |
+| [3](#d3) | asli paisa hamara server nahi hilata | paisa bahar ka PSP (Razorpay / Stripe) hilata; haalat INITIATED -> PENDING -> SUCCESS / FAILED |
+| [4](#d4) | PSP call ke baad crash, paisa gaya? | pehle PENDING likho; PSP webhook se bataye, atke PENDING ko job PSP se poochhe |
+| [5](#d5) | A aur B alag bank, ek transaction nahi | SAGA: har step apna commit, fail pe pichhle steps ulte kram me undo (trip: cab nahi -> hotel, flight cancel) |
+| [6](#d6) | regulator: paisa kahan se kahan | ledger table usi transaction me, sirf INSERT; har txn = ek debit + ek credit, jod barabar |
+| [7](#d7) | festival 3000 txn/sec, ek box | Payment service stateless, kai box + aage LB / API Gateway |
+| [8](#d8) | report query se asli write ruk raha | report copy (replica) se; payment ka balance / status primary se hi |
+| [9](#d9) | 50 crore row, likhai dheemi | account_id se tukde; bhejne-lene wale alag tukde pe = phir SAGA |
+
+---|---|---|
 | [1](#d1) | beech me crash: -500 hua, +500 nahi | debit + credit EK DB transaction (ACID) |
 | [2](#d2) | do baar tap / retry = double charge | idempotency key (UUID), dobara aaye to saved result |
 | [3](#d3) | asli paisa hamara server nahi hilata | PSP (Razorpay / Stripe), INITIATED -> PENDING -> SUCCESS / FAILED |

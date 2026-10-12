@@ -73,6 +73,20 @@ DO BLOCK JO DESIGN CHALATE:
 
 | # | dikkat | cue |
 |---|---|---|
+| [1](#d1) | 2 crore connection khuli, memory | kuch hi thread, laakhon connection (event loop); server gira to log alag-alag der baad wapas judein |
+| [2](#d2) | A server-1, B server-7 | Redis me "B kis server pe", mera server us server ko call kare |
+| [3](#d3) | B offline, message kahan | pehle DB me likho, phir bhejo; B juda nahi to push notification |
+| [4](#d4) | 1.2 TB roz, 46k write/sec | chat_id se tukde, chat ke andar message_id se kram |
+| [5](#d5) | 500 ka group, 500 baar likhai? | ek hi copy chat ke neeche, sab wahi padhein |
+| [6](#d6) | kiske kitne unread | har member ka nishaan "yahan tak padha", unread = uske baad kitne |
+| [7](#d7) | do tick / neeli tick | wahi nishaan, do number: "yahan tak mila" + "yahan tak padha" |
+| [8](#d8) | 10 lakh broadcast, tick ka kya | group size bandha (~1000); channel / broadcast me tick band |
+| [9](#d9) | retry, B ko ek baat do baar | message ID client banaye, wahi ID dobara aaye to purana lautao |
+| [10](#d10) | kram kiska time | kram server ki ID se (time se badhti), phone ki ghadi se nahi |
+| [11](#d11) | 5 MB video isi raaste? | file S3 me (presigned URL), message me sirf pata |
+| [12](#d12) | online / last-seen | Redis me "online" chhoti TTL, app heartbeat se badhaye; band hua to apne aap offline |
+
+---|---|---|
 | [1](#d1) | 2 crore connection khuli, memory | event loop (Netty), reconnect pe backoff + jitter |
 | [2](#d2) | A server-1, B server-7 | Redis me "B kis server pe", us server ko call |
 | [3](#d3) | B offline, message kahan | pehle DB me likho, phir bhejo + push notification |

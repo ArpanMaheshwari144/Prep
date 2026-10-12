@@ -45,6 +45,17 @@ NUMBERS: storage ka hisaab bekaar — per key ek counter + TTL, bas
 
 | # | dikkat | cue |
 |---|---|---|
+| [1](#d1) | teen server, ginti bat gayi | ginti ek jagah Redis me, counter pe TTL (window khatam -> 0) |
+| [2](#d2) | do request saath, dono ko jagah | padho-badhao-likho ek hi kaam: Redis INCR; kai step ho to Lua script; EXPIRE sirf pehli baar |
+| [3](#d3) | reject wali request bhi andar ghoom aayi | limiter sabse aage API Gateway pe, 429 wahin se |
+| [4](#d4) | Redis gir gaya | Redis ki copy alag AZ, apne aap badle; poora gaya to normal API chalne do, payment / OTP roko |
+| [5](#d5) | ek user teen region se | user ka ek HOME region; request kahin se aaye, ginti wahin |
+| [6](#d6) | baar-baar maar raha, 429 se nahi rukta | har 429 Kafka me, pattern service baar-baar wala pakde, WAF me ban |
+| [7](#d7) | limiter sahi, phir bhi server gira | system kitna jhele uski had; CPU 90% pe nayi request 503 (bijli wala load shedding) |
+| [8](#d8) | attack aaya, limiter gayab | Redis gaya to har node apni memory me motamoti gine |
+| [9](#d9) | IP pe gin rahe the | login wale ko user_id / API key se gino; login se pehle IP, dheeli limit + WAF |
+
+---|---|---|
 | [1](#d1) | teen server, ginti bat gayi | ek central Redis, counter pe TTL |
 | [2](#d2) | do request saath, dono ko jagah | INCR atomic, kai step ho to Lua script (EXPIRE sirf pehli baar) |
 | [3](#d3) | reject wali request bhi andar ghoom aayi | limiter API Gateway pe, 429 wahin se |

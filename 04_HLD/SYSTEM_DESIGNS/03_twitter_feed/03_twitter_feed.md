@@ -51,6 +51,18 @@ BOL:      "For the feed and like counts, availability. A feed a couple of second
 
 | # | dikkat | cue |
 |---|---|---|
+| [1](#d1) | har baar 200 logon ka data jodna | tweet aate hi har follower ke inbox me daalo, app khule to sirf apna inbox padho |
+| [2](#d2) | tweet button 3 sec ghooma | tweet DB me + event Kafka pe, user ko turant "ho gaya"; worker peeche se inbox bhare |
+| [3](#d3) | Bieber = 10 crore inbox | celeb ka tweet inbox me nahi; feed padhte waqt apna inbox + celeb ke tweet milao |
+| [4](#d4) | Virat ka tweet crore log padh rahe | celeb ke naye tweet RAM cache me (TTL), sab wahin se padhein |
+| [5](#d5) | 500M inbox, memory phategi | inbox me sirf tweet_id, aakhri kuch sau; mahine bhar nahi aaya to inbox hatao |
+| [6](#d6) | saare tweet ek DB me nahi | Cassandra (likhna tez), user_id + time se tukde |
+| [7](#d7) | India user, US shard (200ms) | India / EU / US alag tukde, user paas wale se padhe |
+| [8](#d8) | ek App box: bojh + SPOF | kai App box (stateless) + ALB, aage Route 53 health check |
+| [9](#d9) | padhna likhna ek box me | likhne ki Tweet service, padhne ki Timeline service, alag-alag badhao |
+| [10](#d10) | photo video bhaari | CDN: media user ke paas wali edge se |
+
+---|---|---|
 | [1](#d1) | har baar 200 logon ka data jodna | inbox pehle se bharo (fan-out on write) |
 | [2](#d2) | tweet button 3 sec ghooma | Kafka, inbox baad me async |
 | [3](#d3) | Bieber = 10 crore inbox | celeb ka pull, padhte waqt merge |

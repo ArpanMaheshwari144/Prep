@@ -51,6 +51,17 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 
 | # | dikkat | cue |
 |---|---|---|
+| [1](#d1) | transfer beech me gira: -500, +500 nahi | dono account ek DB, ek @Transactional: dono ya koi nahi |
+| [2](#d2) | regulator + SMS / fraud / statement | ledger table (A -500, B +500, sirf INSERT) + outbox table, ek transaction; outbox se Kafka -> SMS / fraud |
+| [3](#d3) | balance aata kahan se | ledger = sach, balance column = uska joda hua nateeja, dono ek transaction me |
+| [4](#d4) | do baar tap / retry | har transfer ke saath ek key, key pe DB UNIQUE; dobara aayi to purana result |
+| [5](#d5) | ek account pe do transfer saath | "balance = balance - 500" DB ke andar, row lock se dono line me |
+| [6](#d6) | salary day, ek service bhara | kai Banking service (stateless) + LB; DB primary gira to doosre AZ ki copy upar |
+| [7](#d7) | sab read primary pe, transfer dheema | balance / history copy (replica) se; transfer ke turant baad wala balance primary se |
+| [8](#d8) | 22 arab row, history ka page | pichhle page ki aakhri entry (ts, id) yaad, agla page "usse purana", index se seedha |
+| [9](#d9) | 5 saal purana data ek table me | table mahine-mahine baanto, purana tukda alag karke S3 me (DELETE nahi) |
+
+---|---|---|
 | [1](#d1) | transfer beech me gira: -500, +500 nahi | dono account ek DB, ek @Transactional |
 | [2](#d2) | regulator + SMS / fraud / statement | ledger (sirf INSERT, jod 0) + outbox -> Kafka, ek transaction |
 | [3](#d3) | balance aata kahan se | ledger = sach, balance column = cache, dono ek transaction |

@@ -42,6 +42,22 @@ KYUN:    Twitter / SMS limit · marketing tracking · QR / print · saaf dikhna
 
 ---
 
+## MOCK CUE — pehle ye, phir mock
+
+| # | dikkat | cue |
+|---|---|---|
+| [1](#d1) | har click DB pe, 200ms se tez chahiye | pehle Redis, na mile to DB se laake Redis me; TTL = link ki expiry |
+| [2](#d2) | ek App 1 lakh/sec nahi jhele, gira to band | kai App box (stateless) + LB |
+| [3](#d3) | kai App, do App ek hi code bana denge | counter service har App ko alag number range de; number -> base62, 7 char |
+| [4](#d4) | har click pe analytics likhna | click ka event Kafka me, turant 302; baar-baar fail -> DLQ |
+| [5](#d5) | 5 saal ka ~90 TB ek machine me nahi | shortCode se tukde, har tukde ki 3 copy alag AZ |
+| [6](#d6) | write ke beech copy wala node gira | DB pehle disk ki log file me likhe, phir table (gira to log se wapas); done tab jab 3 me se 2 copy ne haan bola |
+| [7](#d7) | naya link, turant click -> 404 | banate hi Redis me bhi daalo; ya 2 copy me likho + 2 se padho, ek common milegi |
+| [8](#d8) | LB khud gir gaya | do LB + Route 53 health check; region gaya to doosra region |
+| [9](#d9) | script se raat me 10 lakh link | API Gateway pe user / IP se limit; long URL malware list se milao + WAF |
+
+---
+
 ## DABBA 0 — sabse simple
 
 ```
@@ -57,6 +73,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d1"></a>
 
 ## DIKKAT 1 — har click DB pe, redirect 200ms se tez chahiye
 
@@ -100,6 +118,8 @@ flowchart TD
 
 ---
 
+<a id="d2"></a>
+
 ## DIKKAT 2 — ek App 1 lakh / sec nahi jhel raha, aur wo gira to site band
 
 ```
@@ -140,6 +160,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d3"></a>
 
 ## DIKKAT 3 — ab kai App hain, do App ek hi code bana denge
 
@@ -188,6 +210,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d4"></a>
 
 ## DIKKAT 4 — har click pe analytics likhna hai
 
@@ -242,6 +266,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d5"></a>
 
 ## DIKKAT 5 — 5 saal ka ~90 TB ek machine me nahi aayega
 
@@ -303,6 +329,8 @@ flowchart TD
 
 ---
 
+<a id="d6"></a>
+
 ## DIKKAT 6 — write ho rahi thi, beech me ek replica node gira — data gaya?
 
 ```
@@ -357,6 +385,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d7"></a>
 
 ## DIKKAT 7 — naya link banaya, turant click -> 404
 
@@ -413,6 +443,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d8"></a>
 
 ## DIKKAT 8 — LB khud gir gaya
 
@@ -475,6 +507,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d9"></a>
 
 ## DIKKAT 9 — ek bande ne script se raat me 10 lakh link bana diye
 
