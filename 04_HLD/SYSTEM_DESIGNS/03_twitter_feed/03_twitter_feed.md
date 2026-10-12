@@ -49,18 +49,18 @@ BOL:      "For the feed and like counts, availability. A feed a couple of second
 
 ## MOCK CUE — pehle ye, phir mock
 
-```
-  1  har baar 200 logon ka data jodna       -> inbox pehle se bharo (fan-out on write)
-  2  tweet button 3 sec ghooma              -> Kafka, inbox baad me async
-  3  Bieber = 10 crore inbox                -> celeb ka pull, padhte waqt merge
-  4  Virat ka tweet crore log padh rahe     -> hot tweet cache, TTL
-  5  500M inbox, memory phategi             -> sirf tweet_id, LTRIM
-  6  saare tweet ek DB me nahi              -> Cassandra, user_id shard
-  7  India user, US shard (200ms)           -> region me copy
-  8  ek App box: bojh + SPOF                -> LB + kai App, JWT stateless
-  9  padhna likhna ek box me                -> read / write service alag
- 10  photo video bhaari                     -> CDN + S3
-```
+| # | dikkat | cue |
+|---|---|---|
+| [1](#d1) | har baar 200 logon ka data jodna | inbox pehle se bharo (fan-out on write) |
+| [2](#d2) | tweet button 3 sec ghooma | Kafka, inbox baad me async |
+| [3](#d3) | Bieber = 10 crore inbox | celeb ka pull, padhte waqt merge |
+| [4](#d4) | Virat ka tweet crore log padh rahe | hot tweet cache, TTL |
+| [5](#d5) | 500M inbox, memory phategi | sirf tweet_id, LTRIM |
+| [6](#d6) | saare tweet ek DB me nahi | Cassandra, user_id shard |
+| [7](#d7) | India user, US shard (200ms) | region me copy |
+| [8](#d8) | ek App box: bojh + SPOF | LB + kai App, JWT stateless |
+| [9](#d9) | padhna likhna ek box me | read / write service alag |
+| [10](#d10) | photo video bhaari | CDN + S3 |
 
 ---
 
@@ -79,6 +79,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d1"></a>
 
 ## DIKKAT 1 — har baar app kholne pe 200 logon ka data joda ja raha
 
@@ -118,6 +120,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d2"></a>
 
 ## DIKKAT 2 — tweet ka button 3 sec ghoomta raha (200 inbox likhe ja rahe the)
 
@@ -163,6 +167,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d3"></a>
 
 ## DIKKAT 3 — Bieber ne tweet kiya: 10 CRORE inbox
 
@@ -217,6 +223,8 @@ flowchart TD
 
 ---
 
+<a id="d4"></a>
+
 ## DIKKAT 4 — Virat ka tweet 10 crore log ek saath padh rahe
 
 ```
@@ -264,6 +272,8 @@ flowchart TD
 
 ---
 
+<a id="d5"></a>
+
 ## DIKKAT 5 — 500M inbox Redis me? memory phat jaayegi
 
 ```
@@ -309,6 +319,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d6"></a>
 
 ## DIKKAT 6 — saare tweets ek DB me nahi aayenge
 
@@ -363,6 +375,8 @@ flowchart TD
 
 ---
 
+<a id="d7"></a>
+
 ## DIKKAT 7 — India ka user US ke shard se padh raha (200ms)
 
 ```
@@ -411,6 +425,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d8"></a>
 
 ## DIKKAT 8 — sab EK App box me: bojh bhi, SPOF bhi
 
@@ -464,6 +480,8 @@ flowchart TD
 
 ---
 
+<a id="d9"></a>
+
 ## DIKKAT 9 — likhna aur padhna ek hi box me (1:50)
 
 ```
@@ -514,6 +532,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d10"></a>
 
 ## DIKKAT 10 — photo / video duniya bhar se, har baar humare server se
 
