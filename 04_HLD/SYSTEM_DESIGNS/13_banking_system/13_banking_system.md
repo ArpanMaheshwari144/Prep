@@ -56,7 +56,7 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 | [3](#d3) | balance aata kahan se | ledger = sach, balance column = uska joda hua nateeja, dono ek transaction me |
 | [4](#d4) | do baar tap / retry | har transfer ke saath ek key, key pe DB UNIQUE; dobara aayi to purana result |
 | [5](#d5) | ek account pe do transfer saath | "balance = balance - 500" DB ke andar, row lock se dono line me |
-| [6](#d6) | salary day, ek service bhara | kai Banking service (stateless) + LB; DB primary gira to doosre AZ ki copy upar |
+| [6](#d6) | salary day, ek service bhara | kai Banking service (stateless) + LB; DB primary gira to doosre AZ ki SYNC copy upar (async me aakhri transfer kho sakta) |
 | [7](#d7) | sab read primary pe, transfer dheema | balance / history copy (replica) se; transfer ke turant baad wala balance primary se |
 | [8](#d8) | 22 arab row, history ka page | pichhle page ki aakhri entry (ts, id) yaad, agla page "usse purana", index se seedha |
 | [9](#d9) | 5 saal purana data ek table me | table mahine-mahine baanto, purana tukda alag karke S3 me (DELETE nahi) |
