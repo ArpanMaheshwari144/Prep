@@ -32,6 +32,21 @@ NUMBERS: ~100M user · ~30-40M DAU · edits / sec BAHUT — WRITE-DOMINATED (har
 
 ---
 
+## MOCK CUE — pehle ye, phir mock
+
+| # | dikkat | cue |
+|---|---|---|
+| [1](#d1) | do log ne saath save kiya, baad wale ne pehle ka mitaya | poora text nahi, sirf operation bhejo ("yahan ye daala / hataya") |
+| [2](#d2) | B ko A ka edit kab dikhega | WebSocket: do-tarfa khula connection |
+| [3](#d3) | A server-1, B server-2 | Redis pub/sub: A ka edit Redis pe, us doc ko sun rahe saare servers tak |
+| [4](#d4) | dono ne ek saath position 0 pe type kiya | OT: doosre ka operation khiska do, dono taraf same niyam (ya CRDT) |
+| [5](#d5) | har keystroke pe DB hit | Redis me jama karo, thodi der me batch me DB; edit log Cassandra me server ke version number ke kram me |
+| [6](#d6) | doc kholne pe 10 lakh operation | har kuch hazaar op pe poora text save (snapshot); kholna = snapshot + baad ke op |
+| [7](#d7) | network ek second toota, typing rukegi? | doc edit = AP (type karte raho, baad me sync); permission = CP, alag SQL |
+| [8](#d8) | crore WebSocket connection | alag connection server; docId se baanto, ek doc ke saare editor ek server pe |
+
+---
+
 ## DABBA 0 — sabse simple
 
 ```
@@ -47,6 +62,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d1"></a>
 
 ## DIKKAT 1 — do log ne saath save kiya, baad wale ne pehle ka MITA diya
 
@@ -82,6 +99,8 @@ flowchart TD
 
 ---
 
+<a id="d2"></a>
+
 ## DIKKAT 2 — B ko A ka edit kab dikhega? refresh pe?
 
 ```
@@ -115,6 +134,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d3"></a>
 
 ## DIKKAT 3 — ek Conn-Server itne socket nahi jhelta -> kai lagaye -> A server-1 pe, B server-2 pe
 
@@ -169,6 +190,8 @@ flowchart TD
 
 ---
 
+<a id="d4"></a>
+
 ## DIKKAT 4 — dono ne EK SAATH position 0 pe type kiya
 
 ```
@@ -221,6 +244,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d5"></a>
 
 ## DIKKAT 5 — har keystroke pe DB hit
 
@@ -284,6 +309,8 @@ flowchart TD
 
 ---
 
+<a id="d6"></a>
+
 ## DIKKAT 6 — doc kholne pe 10 lakh operation replay
 
 ```
@@ -321,6 +348,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d7"></a>
 
 ## DIKKAT 7 — network ek second blip hua: typing ruk jaayegi?
 
@@ -371,6 +400,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d8"></a>
 
 ## DIKKAT 8 — crore WebSocket connection
 
