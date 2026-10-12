@@ -49,6 +49,23 @@ BOL:      "Kafka absorbs the burst and workers drain at their own pace. Sale tim
 
 ---
 
+## MOCK CUE — pehle ye, phir mock
+
+| # | dikkat | cue |
+|---|---|---|
+| [1](#d1) | order email ke intezaar me ruka, email down = order fail | Order event Kafka pe daal ke turant laute; email down ho to event queue me pada rahe |
+| [2](#d2) | teen channel, SMS slow to push / email bhi atke | har channel ki apni queue + apne worker (push FCM, email SES, SMS Twilio) |
+| [3](#d3) | SMS band tha, phir bhi raat 2 baje bheja | bhejne se pehle preference dekho (channel on? quiet hours?), template, phir channel |
+| [4](#d4) | ack kho gaya, retry, user ko do email | bhejne se pehle Redis me event ki apni ID "set if not exists"; pehle se hai to skip |
+| [5](#d5) | key laga di, par provider call fail | key ki do haalat: "sending" (chhoti expiry) -> success pe "sent"; worker mara to "sending" khud mite |
+| [6](#d6) | provider fail, hum turant retry maar rahe | retry ke beech dugna intezaar + thoda random; had paar -> DLQ + alert |
+| [7](#d7) | provider slow, saare worker 30 sec me phase | chhota timeout, har channel ke do provider, kai baar fail to circuit khulo -> backup |
+| [8](#d8) | OTP marketing ke 50,000 ke peeche | alag Kafka topic + alag worker: OTP / order / marketing |
+| [9](#d9) | burst, provider ne 429 diya | worker khud raftaar kam kare (provider ki limit ke andar), 429 pe ruk ke retry, drop nahi |
+| [10](#d10) | "bhej diya" != "mil gaya" | provider webhook (delivered / bounced) -> tracking DB; push me app khud ack bheje |
+
+---
+
 ## DABBA 0 — sabse simple
 
 ```
@@ -64,6 +81,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d1"></a>
 
 ## DIKKAT 1 — Order email ke intezaar me ruka, email down = ORDER fail
 
@@ -103,6 +122,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d2"></a>
 
 ## DIKKAT 2 — teen channel, SMS slow to push / email bhi atke
 
@@ -154,6 +175,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d3"></a>
 
 ## DIKKAT 3 — user ko SMS chahiye hi nahi tha, aur raat 2 baje bhej diya
 
@@ -210,6 +233,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d4"></a>
 
 ## DIKKAT 4 — ack kho gaya, retry hua, user ko DO email
 
@@ -273,6 +298,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d5"></a>
 
 ## DIKKAT 5 — key laga di, par provider call FAIL
 
@@ -343,6 +370,8 @@ flowchart TD
 
 ---
 
+<a id="d6"></a>
+
 ## DIKKAT 6 — provider fail ho raha, hum turant retry maar rahe
 
 ```
@@ -410,6 +439,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d7"></a>
 
 ## DIKKAT 7 — provider slow, saare worker uske 30 sec timeout me phase
 
@@ -479,6 +510,8 @@ flowchart TD
 
 ---
 
+<a id="d8"></a>
+
 ## DIKKAT 8 — OTP marketing ke 50,000 message ke peeche
 
 ```
@@ -545,6 +578,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d9"></a>
 
 ## DIKKAT 9 — burst gaya, provider ne 429 diya, sab fail
 
@@ -617,6 +652,8 @@ flowchart TD
 ```
 
 ---
+
+<a id="d10"></a>
 
 ## DIKKAT 10 — "bhej diya" ka matlab "mil gaya" nahi
 
