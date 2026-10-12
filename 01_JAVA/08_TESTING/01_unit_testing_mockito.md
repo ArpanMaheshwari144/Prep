@@ -34,7 +34,7 @@ User result = service.getById(1L);                            //    scene chalao
 assertEquals(user, result);                                   // 2. OUTPUT check: jo mila == expected?
 verify(repository).findById(1L);                              // 3. INTERACTION check: method call hua?
 ```
-- **when(x).thenReturn(y)** = mock ko sikhao "jab ye call aaye -> ye lauta". SETUP hai (verify nahi). Bina iske mock null lautaata.
+- **when(x).thenReturn(y)** = mock ko sikhao "jab ye call aaye -> ye lauta". SETUP hai (verify nahi). Bina iske mock default lautaata (Optional.empty() / khaali collection / 0 / false; baaki objects pe null).
 - **assertEquals(exp, actual)** = OUTPUT sahi aaya? barabar->PASS, nahi->FAIL. ("kya MILA")
 - **verify(mock).method()** = mock ka wo method sach me CALL hua? ("kya HUA / interaction"). count: `times(2)`, `never()`.
 

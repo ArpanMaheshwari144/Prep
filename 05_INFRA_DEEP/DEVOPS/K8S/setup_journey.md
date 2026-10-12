@@ -38,7 +38,7 @@ kind load docker-image todoapp-app:latest --name todoapp
 ```
 - Host Docker se image nikalo
 - kind container ke andar push
-- Without this = pod "ImagePullBackOff"
+- Without this = pod "ErrImageNeverPull" (imagePullPolicy: Never hai; pull karne deta to ImagePullBackOff)
 
 
 ## STEP 6: Create YAML manifests in k8s/ folder

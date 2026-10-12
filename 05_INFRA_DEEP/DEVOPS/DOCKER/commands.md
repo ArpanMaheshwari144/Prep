@@ -145,7 +145,7 @@ Building analogy:
 Different ports possible — useful for parallel containers:
 ```
 -p 3306:3306   primary MySQL
--p 3307:3306   secondary MySQL (different host port, same container)
+-p 3307:3306   secondary MySQL (alag container, host port alag, andar wahi 3306)
 ```
 
 

@@ -15,12 +15,12 @@ Tu Deployment chalaya — 3 pods running:
    Pod2: IP 10.244.0.7
    Pod3: IP 10.244.0.9
 
-Pod1 crashed → K8s ne naya banaya:
+Pod1 delete hua / node gaya → Deployment ne naya banaya:
    Pod1 (NEW): IP 10.244.0.12     ← IP BADAL GAYA!
 
 Issue:
    Other apps Pod1 ke OLD IP pe call kar rahe → BROKEN
-   Pods are EPHEMERAL — IPs change on every restart
+   Pods are EPHEMERAL — naya pod = naya IP
 ```
 
 ---

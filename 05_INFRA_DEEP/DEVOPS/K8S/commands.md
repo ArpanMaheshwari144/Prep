@@ -299,8 +299,8 @@ spec:
   ports:
   - port: 8080                   # service-level port
     targetPort: 8080             # container's port
-    nodePort: 30080              # external port (NodePort only)
-  type: ClusterIP                # or NodePort, LoadBalancer
+    nodePort: 30080              # external port (sirf type NodePort me; ClusterIP ke saath reject)
+  type: NodePort                 # ClusterIP ho to nodePort line hatao
 ```
 
 Port fields:

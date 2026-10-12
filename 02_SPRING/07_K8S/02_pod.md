@@ -56,7 +56,7 @@ Pod       = apartment unit
    Tightly coupled
 
 4. EPHEMERAL by default
-   Pod crash → DELETED (no auto-restore alone)
+   Container crash → kubelet USI pod me restart (restartPolicy Always); pod DELETE / node gaya → akela pod wapas nahi
    For resilience → DEPLOYMENT manages pods (next topic)
 ```
 
@@ -186,7 +186,7 @@ ADVANCED: sidecar pattern (production patterns)
 ## Pod is EPHEMERAL — Important
 
 ```
-Pod CRASH → simply gone (no auto-replace)
+Container CRASH → same pod me restart · Pod DELETE / node gaya → simply gone (no auto-replace)
 Pod DELETE → no recovery
 Node down → all pods on that node gone
 Memory limit hit → killed

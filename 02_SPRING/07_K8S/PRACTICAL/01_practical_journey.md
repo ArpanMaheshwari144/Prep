@@ -744,7 +744,7 @@ Spring Boot ko env vars chahiye:
    • SPRING_PROFILES_ACTIVE=compose
      (mysql:3306 service-name use karega)
    • JAVA_OPTS=-Xms256m -Xmx512m
-     (JVM memory tuning)
+     (JVM memory tuning — exec-form ENTRYPOINT me java ise khud nahi padhta; JAVA_TOOL_OPTIONS padhta)
 
 ConfigMap = K8s ka "non-sensitive config injection"
          = Same pattern as docker-compose environment block

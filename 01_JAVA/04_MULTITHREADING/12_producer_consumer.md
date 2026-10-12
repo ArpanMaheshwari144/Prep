@@ -182,8 +182,13 @@ BlockingQueue<Order> orderQueue = new LinkedBlockingQueue<>(1000);
 // Producer thread
 new Thread(() -> {
     while (true) {
-        Order order = receiveOrder();
-        orderQueue.put(order);   // blocks if 1000 full
+        try {
+            Order order = receiveOrder();
+            orderQueue.put(order);   // blocks if 1000 full (InterruptedException checked hai)
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            break;
+        }
     }
 }).start();
 

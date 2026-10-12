@@ -188,7 +188,7 @@ docker volume inspect mysql_data
 REM Delete a specific volume (must have no containers using it)
 docker volume rm mysql_data
 
-REM Cleanup ALL unused (orphaned) volumes
+REM Cleanup unused ANONYMOUS volumes (Docker 23+; named ke liye prune -a)
 docker volume prune -f
 
 REM Run container WITH volume mount
@@ -224,7 +224,7 @@ Modern syntax (--mount, more verbose):
 │                                                                  │
 │     ┌──────────────────┐                                        │
 │     │ Docker manages   │  → easy reuse, easy backup             │
-│     │ Location: hidden │  → portable across hosts               │
+│     │ Location: hidden │  → Docker khud sambhale (ek host pe)   │
 │     │ Name: friendly   │  → BEST for production DBs             │
 │     └──────────────────┘                                        │
 │                                                                  │
@@ -340,7 +340,7 @@ Trap 12: Mount path container ke andar mismatch
 
 Trap 13: Volume + container delete cleanup
          docker rm container → volume orphan ho jata
-         docker rm -v container        (volume bhi delete)
+         docker rm -v container        (sirf ANONYMOUS volume delete; named nahi)
             Or: explicit `docker volume rm X` baad mein
 
 Trap 14: Permissions issue (Linux containers)

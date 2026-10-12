@@ -100,7 +100,7 @@ Spring AUTO loads matching profile based on:
    spring.profiles.active=prod
 
 2. JVM argument:
-   java -jar app.jar -Dspring.profiles.active=prod
+   java -Dspring.profiles.active=prod -jar app.jar   (-D jar ke PEHLE; baad me = program arg)
 
 3. Environment variable:
    export SPRING_PROFILES_ACTIVE=prod

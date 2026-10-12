@@ -172,7 +172,7 @@ docker-compose.yml
 
 ```
 DOCKER-COMPOSE ka role:
-   Spring config files load karna
+   (Spring config files load NAHI karta — wo Spring karta)
    Container start pe ENV VAR inject karna
    Network/volume setup
    Service ordering (depends_on)
@@ -403,7 +403,7 @@ docker-compose stop                # stop containers (keep images, volumes)
 docker-compose start               # restart stopped
 docker-compose restart             # stop + start
 docker-compose down                # stop + remove containers + remove network
-docker-compose down -v             # also remove volumes (DATA GONE — careful!)
+docker-compose down -v             # compose ke banaye volumes bhi hatao (DATA GONE); external: true wala (mysql_data) BACHTA
 
 REM Inside container
 docker-compose exec mysql bash     # shell into mysql service
@@ -423,7 +423,7 @@ services:                  # Each service = one container type
 
   mysql:                    # Service name (DNS-able)
     image: mysql:8           # Pre-built image use
-    container_name: ...      # Actual container name (default: <project>_<service>)
+    container_name: ...      # Actual container name (default Compose v2: <project>-<service>-1)
     environment: {...}       # Env vars (compose ke time inject)
     ports: ["host:cont"]     # Port mapping (optional)
     volumes: [...]           # Mounts

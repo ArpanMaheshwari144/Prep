@@ -229,7 +229,7 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
 
 **Q: "Spring Boot 3 → 4 migration mein kya breaks?"**
 
-> *"Hibernate version jump 6→7. Sabse common: dialect classes removed (MySQL8Dialect, PostgreSQL10Dialect etc.). Solution: universal dialect (MySQLDialect, PostgreSQLDialect) — auto-detects version. Also Jakarta EE 11 (javax → jakarta), some deprecated APIs gone."*
+> *"Hibernate version jump 6→7. Sabse common: dialect classes removed (MySQL8Dialect, PostgreSQL10Dialect etc.). Solution: universal dialect (MySQLDialect, PostgreSQLDialect) — auto-detects version. Also Jakarta EE 11 baseline (javax → jakarta to Boot 2 → 3 me ho chuka), some deprecated APIs gone."*
 
 ---
 

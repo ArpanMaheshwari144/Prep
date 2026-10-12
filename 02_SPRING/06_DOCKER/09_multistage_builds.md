@@ -24,7 +24,7 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
    → BUT runtime mein sirf java -jar chahiye
    → JDK = JRE + javac + tools = WASTED in production
 
-2. Build leftovers in final image
+2. Image me build karte (RUN mvn) to leftovers bhi aate
    → Maven cache, downloaded deps
    → Bigger attack surface (security)
 
@@ -78,8 +78,8 @@ SINGLE-STAGE (current):
 ┌────────────────────────────┐
 │  eclipse-temurin:17-JDK     │  ← 250 MB base (heavy)
 │  + jar (50 MB)              │
-│  + Maven leftovers           │
-│  + build tools               │
+│  + (andar build kiya to)     │
+│    Maven cache + tools       │
 │  = ~256 MB FINAL CONTENT     │
 └────────────────────────────┘
    ↓
@@ -297,7 +297,7 @@ Trap 1: COPY . . in early stage
          COPY pom.xml first, then COPY src — split layers
 
 Trap 2: Forgetting --from=stage
-         COPY /target/jar app.jar (from current stage — empty)
+         COPY /target/jar app.jar (bina --from = host ke build context se; wahan jar nahi = fail)
          COPY --from=builder /build/target/*.jar app.jar
 
 Trap 3: Using JDK in runtime stage

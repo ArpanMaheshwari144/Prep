@@ -90,7 +90,7 @@
 
   pool.submit(task)           ──►  task chala
   pool.shutdown()             ──►  naya kaam nahi loga, current finish karega
-  pool.shutdownNow()          ──►  force kill — running tasks bhi rok dega
+  pool.shutdownNow()          ──►  running tasks ko interrupt() (best effort, ignore kare to chalta rahega) + queue ke pending tasks ki list lautata
   pool.awaitTermination(...)  ──►  wait jab tak sab khatam
 ```
 
@@ -131,7 +131,7 @@ Future<Integer> future = pool.submit(() -> {
 System.out.println(future.get());      // 42 (block jab tak result na aaye)
 
 pool.shutdown();                        // graceful shutdown — naya kaam nahi loga
-// pool.shutdownNow();                  // force kill — running tasks bhi rok dega
+// pool.shutdownNow();                  // running ko interrupt (best effort) + pending list lautata
 ```
 
 ---

@@ -204,7 +204,7 @@
    Stack LIVE
 
    docker-compose down → all containers stop + clean
-   docker-compose down -v → also volumes (DATA GONE)
+   docker-compose down -v → compose ke volumes bhi (DATA GONE); external bachta
 ```
 
 ---

@@ -95,10 +95,13 @@ ENV (Runtime):
 # ─────────────────────────────────────
 # ARG — build-time only
 # ─────────────────────────────────────
-ARG JAVA_VERSION=17                     # default value
+# default value (Dockerfile me comment sirf line ke SHURU me; line ke beech # = value ka hissa)
+ARG JAVA_VERSION=17
 ARG APP_VERSION=0.0.1-SNAPSHOT
 
 FROM eclipse-temurin:${JAVA_VERSION}-jdk-jammy
+# FROM se pehle wala ARG FROM ke baad khaali -> dobara declare
+ARG APP_VERSION
 WORKDIR /app
 COPY target/usercrud-${APP_VERSION}.jar app.jar
 
@@ -106,9 +109,12 @@ COPY target/usercrud-${APP_VERSION}.jar app.jar
 # ─────────────────────────────────────
 # ENV — available in running container
 # ─────────────────────────────────────
-ENV SPRING_PROFILES_ACTIVE=docker       # default profile
-ENV TZ=Asia/Kolkata                      # timezone
-ENV JAVA_OPTS="-Xms256m -Xmx512m"        # JVM options
+# default profile
+ENV SPRING_PROFILES_ACTIVE=docker
+# timezone
+ENV TZ=Asia/Kolkata
+# JVM options: java launcher JAVA_TOOL_OPTIONS khud padhta (JAVA_OPTS sirf tab jab shell entrypoint me $JAVA_OPTS likho)
+ENV JAVA_TOOL_OPTIONS="-Xms256m -Xmx512m"
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
@@ -220,7 +226,8 @@ docker build --build-arg JAVA_VERSION=21 -t myapp:java21 .
 ### Pattern 2 — ARG → ENV bridge
 ```dockerfile
 ARG APP_VERSION=0.0.1-SNAPSHOT
-ENV APP_VERSION=${APP_VERSION}    # bridge: build-time → runtime
+# bridge: build-time → runtime
+ENV APP_VERSION=${APP_VERSION}
 ```
 **Use case:** Want build-time value visible at runtime too (e.g., version endpoint).
 
@@ -228,7 +235,8 @@ ENV APP_VERSION=${APP_VERSION}    # bridge: build-time → runtime
 
 ### Pattern 3 — Runtime defaults with override
 ```dockerfile
-ENV SPRING_PROFILES_ACTIVE=docker     # default if not overridden
+# default if not overridden
+ENV SPRING_PROFILES_ACTIVE=docker
 ```
 ```yaml
 # docker-compose.yml
@@ -247,7 +255,8 @@ FROM maven:3.9-eclipse-temurin-${JAVA_VERSION} AS builder
 # ... build ...
 
 FROM eclipse-temurin:${JAVA_VERSION}-jre-jammy
-ARG JAVA_VERSION    # MUST RE-DECLARE — ARG scope is per stage
+# MUST RE-DECLARE — ARG scope is per stage
+ARG JAVA_VERSION
 # ... runtime ...
 ```
 **Use case:** Same version across stages.

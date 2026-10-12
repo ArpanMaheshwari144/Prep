@@ -119,7 +119,7 @@ public class UserService {
 │ @Component  │ Generic bean                      │
 │ @Service    │ Business logic                    │
 │ @Repository │ DB access                         │
-│ @Controller │ REST API                          │
+│ @Controller │ MVC view (HTML page)              │
 │ @RestCtrl   │ REST API + JSON response          │
 └─────────────┴──────────────────────────────────┘
 

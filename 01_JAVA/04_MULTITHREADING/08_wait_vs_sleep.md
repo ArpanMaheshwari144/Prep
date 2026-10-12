@@ -161,8 +161,8 @@ for (Request req : requests) {
 
 **wait() synchronized ke bahar — code:**
 ```java
-public void test() {
-    wait();   // IllegalMonitorStateException! wait() needs lock context
+public void test() throws InterruptedException {
+    wait();   // compile ho jaata, RUN pe IllegalMonitorStateException! wait() needs lock context
 }
 
 // Correct

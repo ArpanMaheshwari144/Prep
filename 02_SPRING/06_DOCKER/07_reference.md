@@ -135,7 +135,7 @@ docker volume create mysql_data      # create named volume
 docker volume ls                     # list all volumes
 docker volume inspect mysql_data     # details (location, mount points)
 docker volume rm mysql_data          # delete (no containers using)
-docker volume prune -f               # cleanup all unused (orphans)
+docker volume prune -f               # unused ANONYMOUS volumes (named ke liye -a)
 ```
 
 ---
@@ -163,7 +163,7 @@ docker-compose stop                  # stop (keep images, volumes)
 docker-compose start                 # restart stopped
 docker-compose restart               # stop + start
 docker-compose down                  # stop + remove containers + network
-docker-compose down -v               # also remove volumes (DATA GONE!)
+docker-compose down -v               # compose ke volumes bhi (DATA GONE!); external wala bachta
 
 # Inside container
 docker-compose exec mysql bash       # shell into mysql service
@@ -337,7 +337,7 @@ Trap 12: Mount path container ke andar mismatch
 
 Trap 13: Volume + container delete cleanup
          docker rm container → volume orphan ho jata
-         docker rm -v container        (volume bhi delete)
+         docker rm -v container        (sirf ANONYMOUS volume delete; named nahi)
 
 Trap 14: Linux containers permissions issue
          Bind mount Windows folder → Linux container
@@ -455,7 +455,7 @@ DAY 2 — Networks + Compose
 
 36. ENTRYPOINT pattern (Dockerfile updated):
        CMD ["java", "-jar"] → ENTRYPOINT ["java", "-jar"]
-       Production-grade, signals work properly
+       Command fix ho jaata (run args aage judte). Signal (SIGTERM) sahi = EXEC form ["..."], CMD me bhi
 ```
 
 ---

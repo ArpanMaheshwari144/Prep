@@ -311,7 +311,7 @@ class WindowsUIFactory implements UIFactory {
 
 > *"Factory creational pattern jo **object creation logic encapsulate** karta. Caller bolta 'mujhe SAVINGS chahiye' — factory decide karta kaunsa concrete class instantiate karna. Tightly coupled `new SavingsAccount()` calls remove ho jate caller side se.
 >
-> Mere SimpleBankSystem mein **AccountFactory** banaya — `create("savings", ...)` se SavingsAccount, CurrentAccount, FixedDeposit return karta. Caller `Account` (abstract type) pe depend karta, concrete classes hidden. **OCP + DIP** dono follow karta — naya account type add karne mein factory mein switch case add bus, caller code unchanged. Real-world Spring BeanFactory same concept hai automated."*
+> Mere SimpleBankSystem mein **AccountFactory** banaya — `create("savings", ...)` se SavingsAccount, CurrentAccount, FixedDeposit return karta. Caller `Account` (abstract type) pe depend karta, concrete classes hidden. **DIP** follow karta — caller code unchanged; naya type = factory ka switch badalna (strict OCP chahiye to Map registry). Real-world Spring BeanFactory same concept hai automated."*
 
 **Q: "3 factory variants mein difference?"**
 
@@ -325,7 +325,7 @@ class WindowsUIFactory implements UIFactory {
 **Q: "Static factory method advantages over constructor?"**
 
 > *"4 main:
-> 1. **Naam de sakte** — `BigInteger.probablePrime()` clearer than `new BigInteger(...)` with 10 args
+> 1. **Naam de sakte** — `BigInteger.probablePrime()` clearer than `new BigInteger(...)` with 3 args (bitLength, certainty, Random)
 > 2. **Caching possible** — `Boolean.valueOf()` returns cached instances (TRUE/FALSE)
 > 3. **Subtype return** — `Calendar.getInstance()` returns specific subclass based on locale
 > 4. **Reduces constructor count** — multiple factory methods cleaner than telescoping constructors
@@ -346,7 +346,7 @@ class WindowsUIFactory implements UIFactory {
 
 ## POWER PHRASE
 
-> **"Factory pattern object creation logic encapsulate karta — caller `new` directly nahi karta, factory decide karta kaunsa concrete class. SimpleBankSystem mein AccountFactory implement kiya — OCP + DIP follow. Spring BeanFactory same concept automate karta production mein."**
+> **"Factory pattern object creation logic encapsulate karta — caller `new` directly nahi karta, factory decide karta kaunsa concrete class. SimpleBankSystem mein AccountFactory implement kiya — caller untouched (DIP); strict OCP ke liye Map registry. Spring BeanFactory same concept automate karta production mein."**
 
 ---
 

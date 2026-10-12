@@ -170,7 +170,7 @@ kind: Ingress
 metadata:
   name: usercrud-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # rewrite-target: / mat lagao — har path / ban jaata (/users/5 -> /)
 spec:
   ingressClassName: nginx
 
@@ -328,7 +328,7 @@ Trap 3: TLS cert in wrong namespace
 
 Trap 4: Path conflict
          Multiple paths overlap (/users vs /users/profile)
-         Order matters; specific paths first
+         YAML ka order nahi: sabse LAMBA matching path jeetta (Exact > Prefix)
 
 Trap 5: HTTPS expected without TLS section
          rules.host: api.com but no tls: block

@@ -130,10 +130,10 @@ DIKKAT: consumer crash hua, wapas aaya — kahan se padhe? Shuru se = SMS dobara
 ```
 P0:  [0] #101   [1] #104   [2] #107   [3] #110
                              ^
-                 SMS group ne yahan tak padha -> offset 2 COMMIT kiya
+                 SMS group ne #107 (offset 2) kar liya -> COMMIT 3 ("agla 3 padhna")
                  crash -> wapas -> 3 se shuru
 ```
-Har event ko line me number: 0, 1, 2... Consumer padh ke bolta "2 tak pahuncha" (COMMIT).
+Har event ko line me number: 0, 1, 2... Consumer padh ke bolta "agla 3 padhna" (COMMIT = agle ka number).
 Isliye Kafka padhne ke baad event DELETE nahi karta — har reader apna bookmark rakhta.
 
 **7. CONSUMER GROUP = ek kaam karne wali TEAM**
@@ -716,17 +716,17 @@ Dikkat jab side-effect ho: "$100 add" -> $200 (double-charge!) · "email" -> 2 e
 Misaal: SMS consumer, event #107 (offset 2).
 ```
 TAREEKA 1: PEHLE commit, PHIR kaam
-  padha #107 -> commit "2 ho gaya" -> SMS bhejna shuru -> CRASH (SMS gaya hi nahi)
-  wapas -> bookmark bolta 2 ho gaya -> 3 se shuru -> #107 ka SMS KABHI nahi gaya = KHO GAYA
+  padha #107 -> commit 3 ("agla 3") -> SMS bhejna shuru -> CRASH (SMS gaya hi nahi)
+  wapas -> bookmark 3 -> 3 se shuru -> #107 ka SMS KABHI nahi gaya = KHO GAYA
   = AT-MOST-ONCE (zyada se zyada ek baar, kabhi ZERO)
 
 TAREEKA 2: PEHLE kaam, PHIR commit
   padha #107 -> SMS bhej diya -> commit se pehle CRASH
-  wapas -> bookmark abhi 1 pe -> #107 DOBARA -> SMS DOBARA = DUPLICATE
+  wapas -> bookmark abhi 2 pe -> #107 DOBARA -> SMS DOBARA = DUPLICATE
   = AT-LEAST-ONCE (EK BAAR TO JAAYEGA HI, kabhi do baar)
 ```
 **Chunte = TAREEKA 2.** Khona zyada bura (payment event kho gaya = paisa gaya, pata bhi nahi). Duplicate rokna aasan -> neeche 7C-b.
-**Spring:** `@KafkaListener` method poora chal ke return ho, TAB Spring offset commit karta = default hi Tareeka 2.
+**Spring:** `@KafkaListener` ke kaam ke BAAD Spring offset commit karta (default BATCH: ek poll ke saare record ho jaane pe) = default hi Tareeka 2.
 **YAAD:**
 ```
 pehle commit   -> kho sakta        (at-most-once)
@@ -819,7 +819,7 @@ curl -X POST "http://localhost:8080/kafka/send?message=failme"   # -> 3 try -> D
 # app-log me "partitions assigned: [user-events-0/1/2]" = connected+working
 ```
 
-## 10. AAGE (baaki - TO_STUDY / jab man kare)
+## 10. AAGE (baaki - jab man kare)
 - ~~Consumer-group / partitions (load-split)~~ -> DONE (section 7B, LIVE demo)
 - ~~Idempotent consumer (same message dobara -> duplicate na ho)~~ -> DONE (section 7C, LIVE demo)
 - Manual vs auto commit, offsets deep (ek level aur; jab man kare)

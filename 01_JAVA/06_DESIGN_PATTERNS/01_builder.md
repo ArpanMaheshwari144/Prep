@@ -263,6 +263,7 @@ User u = User.builder()
 @Builder(toBuilder = true)   // Allow rebuild from existing
 public class User {
     private String name;
+    private int age;
 
     @Builder.Default
     private String role = "USER";        // default if not set
@@ -303,7 +304,7 @@ Spring User.builder() -> spring-security ki class. CustomUserDetailsService me i
 |---|---|---|
 | **Code size** | ~80 lines for User | ~10 lines |
 | **Maintenance** | Add field → update Builder | Auto-updated |
-| **Custom validation** | Easy (add in setter/build) | Limited (use `@Builder.toBuilder` + custom build) |
+| **Custom validation** | Easy (add in setter/build) | Limited (builder class me apna `build()` likho, ya validate karne wale constructor pe `@Builder`) |
 | **Default values** | Easy in Builder fields | `@Builder.Default` annotation |
 | **Production preference** | Avoid (boilerplate) | Industry standard |
 | **Interview demonstration** | Good — shows pattern understanding | "Lombok use karta production" |
@@ -410,7 +411,7 @@ public class User { ... }
 User u = User.builder().name("Arpan").age(28).build();
 ```
 
-### 4. **Spring `RestTemplate`/`HttpClient` builders**
+### 4. **JDK 11 `HttpClient` / `HttpRequest` builder** (Spring me: `RestClient.builder()` / `WebClient.builder()`)
 ```java
 HttpRequest request = HttpRequest.newBuilder()
     .uri(URI.create("https://api.com"))

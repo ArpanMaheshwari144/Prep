@@ -249,7 +249,7 @@ CloudWatch  - 10 metrics, 10 alarms
 
 HIDDEN TRAPS (BILL EXPLODE):
 ```
-Data transfer OUT       - 1 GB/month free, beyond = paid
+Data transfer OUT       - 100 GB/month free (Dec 2021 se), beyond = paid
 EBS snapshots           - charged separately
 Elastic IP (unused)     - charged if not attached
 NAT Gateway             - $32/month FROM DAY 1 (no free tier)
