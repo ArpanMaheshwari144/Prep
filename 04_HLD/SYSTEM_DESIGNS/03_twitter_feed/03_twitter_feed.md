@@ -94,6 +94,12 @@ SOLUTION: (1) FAN-OUT ON WRITE: tweet POST hote hi har follower ke INBOX me daal
           (Town Crier har ghar ke notice board pe parcha chipkata.)
 
 NAYA:     Fanout (tweet ko har follower ke inbox me daalne wala) · Redis inbox (har user ki ready feed, sirf tweet_id)
+
+FANOUT kya: ek cheez ko kai jagah phailana (haath ka pankha: ek jagah se khul ke kai taraf).
+                  ┌──► follower 1 ka inbox
+          tweet ──┼──► follower 2 ka inbox
+                  └──► ... follower 200 ka inbox
+          on WRITE (push) = tweet aate hi sabke inbox me · on READ (pull) = padhte waqt laake milao
 ```
 ```
 BOARD PE: app khuli -> 200 follow -> sabke tweet -> sort -> top 50 · read : write = 50 : 1
