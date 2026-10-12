@@ -41,6 +41,22 @@ NUMBERS: storage ka hisaab bekaar — per key ek counter + TTL, bas
 
 ---
 
+## MOCK CUE — pehle ye, phir mock
+
+```
+  1  teen server, ginti bat gayi               -> ek central Redis, counter pe TTL
+  2  do request saath, dono ko jagah           -> INCR atomic, kai step ho to Lua script (EXPIRE sirf pehli baar)
+  3  reject wali request bhi andar ghoom aayi  -> limiter API Gateway pe, 429 wahin se
+  4  Redis gir gaya                            -> replica + auto failover; normal fail-open, payment / OTP fail-closed
+  5  ek user teen region se                    -> region-sticky: request kahin se, ginti user ke HOME region me
+  6  baar-baar maar raha, 429 se nahi rukta    -> 429 event Kafka -> pattern service -> WAF / IP ban
+  7  limiter sahi, phir bhi server gira        -> load shedding (bijli jaisa: system kitna jhele, baaki 503)
+  8  attack aaya, limiter gayab                -> local fallback: har node apni memory me motamoti ginti
+  9  IP pe gin rahe the                        -> logged-in pe user_id / API key, login se pehle IP dheela + WAF
+```
+
+---
+
 ## DABBA 0 — sabse simple
 
 ```
@@ -248,6 +264,16 @@ KAISE (region-sticky):
           user kisi bhi region me aaye -> wahan ka gateway hash(user_id) se HOME region nikaalta
           -> request home region ke gateway / Redis tak forward -> ginti hamesha ek jagah
           keemat: door ke user ko ek cross-region hop (~100-200 ms) har request pe
+
+          Arpan ka home = India (hash(user_id) se tay)
+            Bangalore se -> India gateway                   -> India Redis me ginti
+            Berlin se    -> Berlin gateway -> forward        -> India Redis me ginti
+            US VPN se    -> US gateway     -> forward        -> India Redis me ginti
+          teeno ek hi counter me -> limit nahi tootti
+
+          ★ GALAT SAMAJH: "India ka India me, US ka US me" = option (2) local, sticky NAHI.
+            Usme har region ko sirf apna hissa dikhta -> jod ke limit se upar (yahi is dikkat ki jad).
+            Sticky = request KAHIN se aaye, ginti USER ke home region me.
 ```
 ```
 BOARD PE: INDIA 50 + EU 50 + US 50 = 150, limit 100
@@ -345,6 +371,12 @@ SOLUTION: RATE LIMIT = "kis USER ne kitni". LOAD SHEDDING = "SYSTEM abhi kitna j
           (3) Pata ho kab aayega (12 baje sale) -> PEHLE scale out (autoscale minute leta, spike second me).
 
 NAYA:     koi dabba nahi — Gateway me global cap + shedding
+
+LOAD SHEDDING kya: bijli wala load shedding. Demand > supply -> kuch mohallon ki bijli kaato, poora grid na gire.
+          Server: CPU 90% -> NAYI request ko seedha 503, jo chal rahi wo poori hone do.
+          Kuch log 503 dekhenge, par system zinda.
+          RATE LIMIT    = ek USER ne kitni maari       -> 429
+          LOAD SHEDDING = poora SYSTEM kitna jhel sakta -> 503
 ```
 ```
 BOARD PE: limit 100 / min per user · server ki had 5,000 / sec
