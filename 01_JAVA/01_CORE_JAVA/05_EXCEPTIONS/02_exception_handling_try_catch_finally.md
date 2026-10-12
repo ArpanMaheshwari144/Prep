@@ -186,7 +186,7 @@ try (Connection conn = ds.getConnection()) {
 > *"`finally` ka return try ka return override kar deta. Java spec: jab method `return X` se exit hone wala ho, finally PEHLE chalta — agar finally mein bhi `return Y` hai, woh last word ban jata. Original X silently lost. Ye anti-pattern hai — exception bhi suppress kar sakta. Production mein finally sirf cleanup ke liye, return/throw kabhi nahi. Modern Java mein try-with-resources — close() automatic, override risk nahi."*
 
 **Q: "finally mein exception throw kare?"**
-> *"Same problem — original exception suppress ho jati. Java 7+ mein suppressed exceptions track kar sakte (`Throwable.getSuppressed()`), but practice mein avoid karte. Cleanup karna hai toh chup-chaap karo, propagate na karo."*
+> *"Same problem — original exception poora KHO jaati (plain finally me wo `getSuppressed()` me bhi nahi aati). Java 7+ try-with-resources me close() ka exception original ke `getSuppressed()` me jud jaata — original bachti. Isliye cleanup ke liye try-with-resources; finally se throw mat karo."*
 
 **Q: "Production debugging mein issue?"**
 > *"Log mein result inconsistent dikhta — try ne `return success` kiya, finally ne `return failure` kar diya. Exception suppress hua to stack trace bhi gone. Code review mein pakadte — static analyzers (SonarQube, SpotBugs) ye pattern flag karte hain."*
