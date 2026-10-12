@@ -17,7 +17,7 @@ ENROLLMENTS (bad -- sab ek table me)
 Same data repeat → 3 problem:
 - **UPDATE anomaly:** Rao ka phone badla → HAR row me badalna padega. Ek miss = data inconsistent.
 - **INSERT anomaly:** naya course "AI" (abhi koi student nahi) add NAHI kar sakte (student_id chahiye).
-- **DELETE anomaly:** Ravi ki last row hataayi → uske saath DBMS course ka data bhi GUM.
+- **DELETE anomaly:** Arpan ki C2 (OS) row hataayi → uske saath OS course + Iyer ka phone bhi GUM (koi aur row me nahi tha).
 
 ---
 

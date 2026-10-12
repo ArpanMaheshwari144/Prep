@@ -111,8 +111,8 @@ prefix + hashmap (sum == K)   map[0] = 1  SE SHURU karo                [3], K=3:
                               (running-K milne se pehle)               poore-array wala case chhoot jaata
 
 binary search ON ANSWER       lo = max(arr)   (isse kam me sabse        ship-in-D-days:
-                              hi bhaari item uth nahi payega)          lo=0 rakha to bekaar
-                              hi = sum(arr)                            aadhe chakkar lagenge
+                              hi bhaari item uth nahi payega)          lo=0 rakha to GALAT ans
+                              hi = sum(arr)                            ([3,10], D=2 -> 5 aata, sahi 10)
 
 sliding window (variable)     shrink ke baad map se ERASE karo         count 0 ho gaya par key
                               jab count 0 ho jaye                      padi rahi -> map.size() jhooth
@@ -1045,7 +1045,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      TEMPLATE:
        unordered_set<int> st(nums.begin(), nums.end());
        int ans = 0;
-       for (auto &num : nums) {
+       for (auto &num : st) {     // set pe ghoomo (nums pe = duplicate start baar-baar -> O(n^2))
           if (!st.count(num-1)) {                 // chain ka START
              int currNum = num, count = 1;
              while (st.count(currNum+1)) { currNum++; count++; }
@@ -1087,7 +1087,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      DRY-RUN [4,3,2,7,8,2,3,1]: mark index 3,2,1,6,7,1(already),2(already),0 -ve
        -> +ve bache index 4,5 -> missing = 5,6.
-     FAMILY: array-as-hashmap (index-marking). SAME trick: find-duplicate(287)/first-missing-positive(41)/single-in-pairs.
+     FAMILY: array-as-hashmap (index-marking). SAME trick: find-duplicate(287, sirf jab array badal sakte; asli 287 = Floyd)/first-missing-positive(41)/single-in-pairs.
      ★ CONNECT: "values 1..n + O(1) space" = index-marking ka signal. (agar array modify NA kar sakta -> Floyd cycle.)
 ```
 
@@ -1271,11 +1271,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
         [[1,2,3]]  ek row
            top row:  1 2 3   ->  top++  ->  top=1, bottom=0
-           bottom row?  top <= bottom ?  1 <= 0  NO  -> skip   (warna 3 2 1 dobara)
+           right col: (i=1..0) kuch nahi  ->  right--  ->  right=1
+           bottom row?  top <= bottom ?  1 <= 0  NO  -> skip   (warna 2 1 dobara)
 
         [[1],[2],[3]]  ek col
-           right col: 1 2 3  ->  right--  ->  left=0, right=-1
-           left col?    left <= right ?  0 <= -1 NO  -> skip   (warna 3 2 1 dobara)
+           top row: 1  ->  top=1  ·  right col: 2 3  ->  right--  ->  left=0, right=-1
+           bottom row: guard paas, par (i=-1..0) kuch nahi  ->  bottom=1
+           left col?    left <= right ?  0 <= -1 NO  -> skip   (warna 2 dobara)
 
      index yaad: top-row [top][i] · right-col [i][right] · bottom-row [bottom][i] · left-col [i][left].
 

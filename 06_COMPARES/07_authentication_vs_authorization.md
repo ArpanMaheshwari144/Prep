@@ -54,7 +54,8 @@ STEP 2: AUTHORIZATION (at floor doors)
 │ Where stored     │ User DB            │ Role/permission DB│
 │                  │ (passwords hashed) │ (RBAC tables)     │
 ├──────────────────┼──────────────────┼──────────────────┤
-│ Frequency        │ Once per session   │ Every request      │
+│ Frequency        │ Login ek baar;     │ Every request      │
+│                  │ token har request  │                    │
 └──────────────────┴──────────────────┴──────────────────┘
 ```
 

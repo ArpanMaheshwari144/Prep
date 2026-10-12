@@ -124,7 +124,7 @@ SAHI:            BigDecimal / long paise
 ```
 CODE ME DIKHE:   @Transactional controller pe  ·  private method pe  ·  this.save() se andar ka call
 NAAM:            galat jagah transaction
-ASAR:            proxy laga hi nahi -> transaction chala hi nahi
+ASAR:            private / this.save() = proxy bypass -> transaction chala hi nahi · controller pe = chalta hai, par galat layer
 SAHI:            service pe, public method, doosri bean se call
 ★ 12-Oct chhoota (Beneficiary: @Transactional private updateLimit)
 ```

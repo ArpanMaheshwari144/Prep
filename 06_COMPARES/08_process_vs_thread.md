@@ -104,15 +104,14 @@ THREADS = ROOMS IN SAME BUILDING (Process)
 Chrome browser:
    • Each TAB = separate PROCESS (since 2008)
    • Within a tab = multiple THREADS:
-      - UI thread (render page)
+      - Main thread (JavaScript + layout + paint)
       - Network thread (HTTP calls)
-      - JavaScript thread (V8 engine)
       - GPU thread
       - Compositor thread
 
    Why?
    • One tab crashes → other tabs survive (process isolation)
-   • UI smooth → JavaScript in separate thread (no block)
+   • Scroll / animation smooth → compositor thread alag (lamba JS phir bhi page atkata -> Web Worker)
 ```
 
 ```
@@ -173,17 +172,18 @@ PROCESS SWITCH:
    3. Flush TLB (translation cache)
    4. Load new process's mappings
    5. Restore registers
-   = ~1000+ ns
+   = few µs + TLB / cache thanda
    = "EXPENSIVE"
 
 THREAD SWITCH:
    1. Save register state
    2. Restore other thread's registers
    3. Same memory mappings (already there)
-   = ~100 ns
+   = bhi kernel switch (~µs), par TLB / cache garam
    = "CHEAP"
 
-= Threads can switch 10x faster
+= Thread switch SASTA (same memory), process switch mehnga
+= (~100 ns wala switch user-space / virtual threads ka)
 = Why thread pools are efficient
 ```
 

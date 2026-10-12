@@ -87,7 +87,7 @@ UDP USE WHEN:
    • Real-time matters more than accuracy
 
    Examples:
-   • Live video streaming (Twitch, sports)
+   • Live video CALL / low-latency WebRTC stream
    • Online gaming (Counter-Strike, Fortnite)
    • VoIP (Zoom, WhatsApp call audio)
    • DNS queries (small, fast)
@@ -101,9 +101,10 @@ UDP USE WHEN:
 ```
 Video streaming case:
 
-LIVE STREAM (Twitch, sports):
+VIDEO CALL / WebRTC (Zoom, Meet):
    UDP — late frame useless, drop it
    Better stutter than 5-sec delay
+   (Twitch / sports live = HLS over TCP: kuch sec ki der chalti hai)
 
 ON-DEMAND (Netflix):
    TCP — buffer ahead, no rush

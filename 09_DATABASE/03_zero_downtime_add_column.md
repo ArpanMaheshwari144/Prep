@@ -44,13 +44,13 @@ Naive `ALTER TABLE users ADD COLUMN ...` purane DB/versions me:
 ---
 
 ## KEY DON'Ts
-- Huge table pe **NOT NULL + default EK-SHOT me NAHI** (rewrite/lock)
+- Huge table pe **NOT NULL + computed/volatile default (ya purana MySQL/PG) EK-SHOT me NAHI** (rewrite/lock). Constant default PG 11+ / MySQL 8.0.12+ pe instant.
 - Backfill **ek bade UPDATE me NAHI** — hamesha **BATCH** (1k-10k rows at a time; warna lock + replica-lag)
 
 ---
 
 ## POWER LINE (interview)
-> *"Add the column as nullable — on MySQL 8 / Postgres 11 that's an instant metadata change, no rewrite. For large tables or backfills, use gh-ost / pt-online-schema-change (shadow table + batched copy + live sync + atomic swap), or the expand-contract pattern: add nullable → backfill in batches → then add constraints. Never a single big ALTER with NOT NULL default on a hot table."*
+> *"Add the column as nullable — on MySQL 8 / Postgres 11 that's an instant metadata change, no rewrite. For large tables or backfills, use gh-ost / pt-online-schema-change (shadow table + batched copy + live sync + atomic swap), or the expand-contract pattern: add nullable → backfill in batches → then add constraints. Never a single big ALTER with a computed NOT NULL default on a hot table."*
 
 > **Yaad rakh:**
 > nullable-add = instant (modern DB) · badi table = gh-ost/pt-osc (shadow+batch+swap)

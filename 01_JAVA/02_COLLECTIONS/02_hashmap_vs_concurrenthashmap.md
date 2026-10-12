@@ -281,7 +281,7 @@ expected 2000, mila 1791
   1. **Almari badalte waqt.** HashMap bharne pe nayi badi array banata hai aur purani ki saari entry
      usme shift karta hai. Thread-1 shift kar raha tha, aur usi beech thread-2 ne **purani** array me
      entry rakh di. Shift khatam, purani array phenk di — wo entry saath hi chali gayi.
-     2000 put me ye shift 7-8 baar hota hai (16 → 32 → 64 ... 2048), isliye itna maal gira.
+     2000 put me ye shift 8 baar hota hai (16 → 32 → 64 ... → 4096), isliye itna maal gira.
   2. **`size` ek saada `int` hai.** Har put pe `size++` hota hai, jo teen kaam hai — padho, jodo,
      likho. Do thread ek saath 800 padh lein to dono 801 likhenge. Do put hue, ginti ek badhi.
 - ★ Java 7 me isi resize ke dauraan chain me **circle** ban jaata tha aur `get()` hamesha ke liye

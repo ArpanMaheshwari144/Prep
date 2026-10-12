@@ -42,7 +42,7 @@ here          ╱       ╲
           REPLACE    ADD to chain
           value     (LinkedList / Tree)
 
-Java 8: chain 8+ nodes + table 64+  →  Red-Black Tree
+Java 8: chain 8 se ZYADA (9th node aate hi) + table 64+  →  Red-Black Tree
 Average: O(1)  |  Worst: O(log n) tree, O(n) chain
 ```
 
@@ -58,7 +58,7 @@ Average: O(1)  |  Worst: O(log n) tree, O(n) chain
 → `put("name","Arpan")` → hashCode → index → store
 → `get("name")` → same index → **O(1)**
 → **Collision:** do keys ka same index → LinkedList us bucket mein
-→ Java 8: 8+ entries → LinkedList → **Red-Black Tree** → O(n) se O(log n)
+→ Java 8: 8 se zyada entries → LinkedList → **Red-Black Tree** → O(n) se O(log n)
 
 ---
 
@@ -126,7 +126,7 @@ i+16 hamesha upar wale aadhe me girta -> isiliye +oldCap. Aur 16+16=32 = pura ar
 
 ### treeify / untreeify (2 number)
 ```
-treeify:   bucket 8+ nodes -> TREE, PAR sirf jab table size >= 64
+treeify:   bucket me 8 se ZYADA (9th node) -> TREE, PAR sirf jab table size >= 64
            (table <64 + bucket bhara -> tree nahi, RESIZE karo -> usse hi collision kam)
 untreeify: tree nodes 6 pe wapas LinkedList. (8 banao/6 todo -> gap taaki border pe flip-flop na ho)
 ```
@@ -149,7 +149,7 @@ untreeify: tree nodes 6 pe wapas LinkedList. (8 banao/6 todo -> gap taaki border
 
 > *"HashMap uses hashCode() to find the bucket index and equals() to resolve collisions in the LinkedList. Java 8 converts the bucket to a Red-Black Tree when it has more than 8 entries — O(n) becomes O(log n)."*
 
-**Yaad rakh:** hashCode → index → store. Collision = LinkedList. Java 8: 8+ entries → Tree.
+**Yaad rakh:** hashCode → index → store. Collision = LinkedList. Java 8: 8 se zyada entries → Tree.
 
 ---
 
@@ -194,7 +194,7 @@ untreeify: tree nodes 6 pe wapas LinkedList. (8 banao/6 todo -> gap taaki border
 > **Chalane ka tareeka:**
 > ```
 > cd C:\DSA_PRACTICE\01_JAVA\02_COLLECTIONS\demo
-> java H1_IndexKaise.java
+> java hashmap/H1_IndexKaise.java
 > ```
 
 | # | File | Kya sawaal uthaya |
@@ -244,7 +244,7 @@ Arpan
 **12 kahan se aaya:**
 ```
 15         =  ... 0000 0000 0000 1111      <- sirf 4 bit ON
-hashCode   =  ... 0011 1100 1010 1100
+hashCode   =  ... 0111 1010 1010 1100
    &          ------------------------
 index      =  ... 0000 0000 0000 1100  =  12
                                  ^^^^  sirf 4 bit bache, upar ke 28 MAR gaye

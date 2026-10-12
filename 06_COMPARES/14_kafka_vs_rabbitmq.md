@@ -1,6 +1,6 @@
 # Kafka vs RabbitMQ
 
-> Dono message-passing, par DO alag philosophy: Kafka = LOG (rakho + replay) · RabbitMQ = QUEUE (route + deliver-once).
+> Dono message-passing, par DO alag philosophy: Kafka = LOG (rakho + replay) · RabbitMQ = QUEUE (route + deliver + ack pe delete).
 
 ---
 
@@ -22,7 +22,7 @@ Kafka = TAPE-RECORDER / newspaper archive
 
 RabbitMQ = POST-OFFICE / courier
    message queue me daalo -> jise dena hai use DELIVER -> deliver ho gaya to GAYAB (ack).
-   smart routing (kaunsa exchange, kis address). "route + deliver-once".
+   smart routing (kaunsa exchange, kis address). "route + deliver + ack pe delete".
 ```
 
 ---
@@ -54,7 +54,7 @@ KAFKA    -> event-streaming, log-aggregation, analytics, REPLAY chahiye, bahut z
 RABBITMQ -> task-queue, RPC, COMPLEX routing, per-message low-latency, transactional workflows.
 
 RULE: "stream / replay / high-volume"   -> Kafka
-      "route / deliver-once / task-queue" -> RabbitMQ
+      "route / deliver + ack pe delete / task-queue" -> RabbitMQ
 ```
 
 ---
@@ -65,7 +65,7 @@ RULE: "stream / replay / high-volume"   -> Kafka
 "Kafka ek distributed LOG hai -- messages retain hote, consumer PULL + offset se replay kar sakta,
  high-throughput event-streaming ke liye. RabbitMQ traditional broker/QUEUE hai -- smart routing
  (exchanges), message ack ke baad delete, task-queue/complex-routing ke liye.
- Kafka = 'stream + replay', RabbitMQ = 'route + deliver-once'."
+ Kafka = 'stream + replay', RabbitMQ = 'route + deliver + ack pe delete'."
 ```
 
 ---
@@ -74,7 +74,7 @@ RULE: "stream / replay / high-volume"   -> Kafka
 
 ```
 Kafka    = LOG  -> rakho + REPLAY (pull, offset, high-throughput)   -> "tape recorder"
-RabbitMQ = QUEUE -> route + DELIVER-ONCE (push, ack-delete, smart)  -> "post office"
+RabbitMQ = QUEUE -> route + DELIVER + ACK-DELETE (push, ack-delete, smart)  -> "post office"
 ```
 
 [← COMPARES README](../README.md)

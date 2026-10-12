@@ -26,7 +26,7 @@ Ek baar **commit** ho gaya → power-cut/crash bhi ho, data **bacha rehta** (dis
 ---
 
 ## ★ Interview CONNECT
-- **Spring `@Transactional`** = yahi deta: method me exception → **rollback** (Atomicity), aur `isolation=` param se **Isolation-level** set.
+- **Spring `@Transactional`** = yahi deta: method me unchecked exception → **rollback** (Atomicity; checked ke liye `rollbackFor`), aur `isolation=` param se **Isolation-level** set.
 - **CAP theorem ka C** (consistency) ≠ **ACID ka C** — CAP = distributed nodes me sab same data; ACID = single-DB constraints valid. (naam same, matlab alag — interview trap.)
 - **NoSQL** aksar full-ACID nahi deta (eventual consistency); **RDBMS** (Postgres/MySQL-InnoDB) full-ACID. Isliye banking/payments = RDBMS.
   (MongoDB 4.0+ multi-document transaction deta hai, par mehenga — design embed karke usse bachta.)

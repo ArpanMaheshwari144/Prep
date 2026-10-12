@@ -145,13 +145,14 @@ Think of it as:
 
 ```
 CONCURRENT (non-parallel) — single thread:
-   // Async on single thread
-   CompletableFuture.supplyAsync(() -> task1())
-       .thenApply(result -> task2(result))
-       .thenApply(result -> task3(result));
+   ExecutorService one = Executors.newSingleThreadExecutor();
+   one.submit(() -> task1());
+   one.submit(() -> task2());
+   one.submit(() -> task3());
 
-   = Multiple tasks structured concurrently
+   = 3 kaam ek saath 'chal rahe' (baari-baari, ek thread)
    = But on 1 thread = no parallelism
+   (supplyAsync bina executor ke = ForkJoinPool, single thread NAHI)
 
 PARALLEL — multiple threads:
    List<Integer> data = ...;

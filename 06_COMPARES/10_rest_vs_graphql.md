@@ -81,9 +81,7 @@ POST /graphql
     name              ← only fields needed
     tweets {
       content
-      likes {
-        count
-      }
+      likes
     }
   }
 }
@@ -171,7 +169,7 @@ GraphQL SCHEMA (mandatory):
      id: ID!
      name: String!
      email: String
-     tweets: [Tweet!]!
+     tweets(limit: Int): [Tweet!]!
    }
 
    type Tweet {
@@ -260,7 +258,6 @@ GRAPHQL CHOOSE WHEN:
    • Facebook (invented it)
    • GitHub API v4
    • Shopify
-   • Twitter v2 (GraphQL)
 ```
 
 ---
@@ -280,7 +277,7 @@ Facebook 2012:
    • Frontend devs autonomous (pick fields)
 
    2015: Open-sourced
-   Now: GitHub, Shopify, Airbnb, Twitter, Pinterest
+   Now: GitHub, Shopify, Airbnb, Pinterest
 ```
 
 ---

@@ -18,7 +18,7 @@ WebSocket    = Phone call (two-way always-on)
 ┌────────────────┬───────────┬───────────┬──────────────┐
 │  Feature       │ Long Poll │ SSE        │ WebSocket    │
 ├────────────────┼───────────┼───────────┼──────────────┤
-│ Direction      │ Client→S   │ Server→C  │ Bidirectional│
+│ Direction      │ Server→C   │ Server→C  │ Bidirectional│
 ├────────────────┼───────────┼───────────┼──────────────┤
 │ Protocol       │ HTTP       │ HTTP       │ WS / WSS     │
 ├────────────────┼───────────┼───────────┼──────────────┤

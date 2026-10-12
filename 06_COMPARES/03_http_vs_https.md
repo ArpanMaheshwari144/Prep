@@ -82,7 +82,7 @@ Scenario: Coffee shop WiFi pe HTTP banking
 
    Encryption = symmetric (AES) after handshake
    Keys never travel plain
-   Tampering detectable (HMAC)
+   Tampering detectable (TLS 1.3 me AEAD: AES-GCM / ChaCha20; purane TLS me HMAC)
 ```
 
 ---
@@ -98,14 +98,15 @@ Scenario: Coffee shop WiFi pe HTTP banking
       │                                │
       │  2. ServerHello + Cert + key   │
       │  ◄───────────────────────────│  "Use TLS 1.3,
-      │     (chosen cipher, cert)     │   here's my cert + public key"
+      │     (cipher, cert, key share) │   here's my cert + my key share"
       │                                │
       │  3. Verify cert with CA        │
       │     Trusted (or block)   │
       │                                │
-      │  4. Generate session key       │
-      │  ───────────────────────────►│  "Encrypted with your public key,
-      │     (encrypted with pub key)  │   only you can decrypt"
+      │  4. Dono apni taraf se SAME     │
+      │     session key nikaalte       │  (ECDHE: key share se; key kabhi
+      │     (key network pe nahi jaata)│   network pe nahi jaati. Public key
+      │                                │   se key bhejna = purana TLS 1.2 RSA)
       │                                │
       │  ===== SECURE CHANNEL =====   │
       │                                │
@@ -209,7 +210,7 @@ HTTPS = HTTP + TLS (encryption layer)
 Port: 80 (HTTP), 443 (HTTPS)
 
 TLS handshake:
-   ClientHello → ServerHello + Cert → Key exchange → Encrypted channel
+   ClientHello (+key share) → ServerHello (+key share) + Cert → dono key nikaalte (ECDHE) → Encrypted channel
 
 CA = Certificate Authority (DigiCert, Let's Encrypt)
 TLS 1.3 = current standard

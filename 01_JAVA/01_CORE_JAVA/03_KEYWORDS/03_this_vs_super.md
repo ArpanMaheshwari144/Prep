@@ -333,7 +333,7 @@ class Dog extends Animal {
 
 **Q: "Hidden field kya hota?"**
 
-> *"Jab child class mein same naam ka field declare karte parent ke field jaisa — child's version 'hides' parent's. `this.name` child ka, `super.name` parent ka. Yeh **shadowing** kehlata. Methods mein 'overriding' hota (different from hiding for fields)."*
+> *"Jab child class mein same naam ka field declare karte parent ke field jaisa — child's version 'hides' parent's. `this.name` child ka, `super.name` parent ka. Yeh field **hiding** kehlata (shadowing = local variable / parameter ka field ko dhakna, jaise `this.name = name`). Methods mein 'overriding' hota (different from hiding for fields)."*
 
 ---
 
@@ -386,7 +386,7 @@ Trap 3: "Static method mein this use ho sakta"
          Static methods class-level, not object-level
 
 Trap 4: "super.field overridden hota"
-         Fields HIDDEN hote (shadowing)
+         Fields HIDDEN hote (field hiding)
          Methods overridden hote, fields hidden
 
 Trap 5: "Implicit super() always works"

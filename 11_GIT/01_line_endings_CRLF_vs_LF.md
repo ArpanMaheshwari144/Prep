@@ -32,7 +32,8 @@ Aur do systems ise DO ALAG tareeke se likhte:
 
 ## KYUN "modified" dikha (28-Jul ka case)
 1. Git ne files repo me **LF** (1-char) me store ki hui thi.
-2. Windows me folder move/copy hone pe copy ke line-endings **CRLF** (2-char) ban gaye.
+2. Working copy me files **CRLF** (2-char) ho gayi — git ke `core.autocrlf` checkout ne ya editor ke save ne kiya.
+   (Windows me sirf move/copy file ke bytes NAHI badalta.)
 3. Wo Windows-copy wapas laane pe git ne compare kiya:
    > "stored = LF, ye file = CRLF -> ALAG -> **modified**"
 4. Par asli code (letters/words/logic) = **bilkul same.** Sirf invisible nishaan badla.
