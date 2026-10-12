@@ -48,6 +48,22 @@ BOL:      "Consistency for money — during a partition I'd rather reject than g
 
 ---
 
+## MOCK CUE — pehle ye, phir mock
+
+```
+  1  beech me crash: -500 hua, +500 nahi     -> debit + credit EK DB transaction (ACID)
+  2  do baar tap / retry = double charge      -> idempotency key (UUID), dobara aaye to saved result
+  3  asli paisa hamara server nahi hilata     -> PSP (Razorpay / Stripe), INITIATED -> PENDING -> SUCCESS / FAILED
+  4  PSP call ke baad crash, paisa gaya?      -> pehle PENDING likho, webhook + reconcile, assume nahi
+  5  A aur B alag bank, ek transaction nahi   -> SAGA, fail pe ulte kram me undo
+  6  regulator: paisa kahan se kahan          -> ledger, sirf INSERT, double-entry (debit = credit)
+  7  festival 3000 txn/sec, ek box            -> stateless Payment Svc, kai box + LB / Gateway
+  8  report query se asli write ruk raha      -> read replica pe report, payment read PRIMARY se
+  9  50 crore row, likhai dheemi              -> shard by account_id (alag shard = phir SAGA)
+```
+
+---
+
 ## DABBA 0 — sabse simple
 
 ```
