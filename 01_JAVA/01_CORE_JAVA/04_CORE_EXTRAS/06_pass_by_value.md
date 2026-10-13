@@ -101,6 +101,9 @@ void swap(Integer a, Integer b) { Integer t = a; a = b; b = t; }
 > **"Java pass by reference hai" — GALAT.**
 > **Java HAMESHA pass by value. Object pe reference ki COPY pass hoti hai.**
 
+> **Field ko `int` me nikaala = COPY:** `int bal = w.balance; bal -= amt;` -> sirf copy ghati, `w.balance` wahi.
+> Asli badalna hai to seedha field pe: `w.balance -= amt;`  (map me `Integer` ho to: `map.put(id, map.get(id) - amt);`)
+
 ---
 
 ## POWER PHRASE
