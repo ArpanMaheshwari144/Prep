@@ -39,6 +39,8 @@ NFR:     PAISE KE 4 NIYAM: KHO na sake (debit hua credit nahi) · ATAK na sake (
 NUMBERS: ~100M user · avg low-hundreds / sec · peak few-thousand / sec (sale / festival)
          ★ "Payment high-THROUGHPUT nahi, high-CORRECTNESS problem hai. Scale se pehle ATOMIC + IDEMPOTENT + LEDGER."
          -> SQL / RDBMS (ACID, strong consistency, multi-row txn) + append-only LEDGER · NoSQL nahi
+         DHYAAN: "NoSQL ACID follow nahi karta / sab key-value hai" mat bolo -- kai NoSQL ek row / document pe atomic hain.
+                 sahi farak: debit + credit + ledger = KAI ROW ek transaction me -> SQL me ye natural aur pakka.
 ```
 ```
 POOCHEGA: "Consistency or availability — which do you pick?"
