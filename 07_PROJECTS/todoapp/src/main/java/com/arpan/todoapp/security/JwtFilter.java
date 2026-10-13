@@ -64,6 +64,7 @@ import java.io.IOException;
 //    Per-request user identity
 //    Controllers iss se current user nikal sakte
 //    Request end pe auto-clear
+//       (pool ka thread reuse hota — clear na ho to agli request ko purana user mile)
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
