@@ -38,15 +38,15 @@ NUMBERS: 10 lakh user x 5 / din = 50 lakh read / din = ~50 / sec (spike 5-10x = 
 
 | # | dikkat | cue |
 |---|---|---|
-| [1](#d1) | har request pe DB se "latest 20" | ready feed Redis me, nayi news pe refresh; sab ek hi cache padhein |
-| [2](#d2) | 1000 source ek saath, fetch slow | likhna aur padhna alag: fetcher -> Kafka -> worker -> DB + cache; user sirf cache se padhe |
-| [3](#d3) | ek khabar paanch source se | worker me saaf karo, ek khabar ek baar (dedupe), category tag |
-| [4](#d4) | ek source down / slow | har source alag + parallel, timeout; baar-baar fail to us source pe call band |
-| [5](#d5) | 6 mahine me crore row, kharcha | haal ka data garam table me; mahine-wise tukde, purana S3 me ya TTL se hatao |
-| [6](#d6) | (bada scale) ek DB box nahi jhele | humare number pe ek box kaafi, ye imaandari se bolo; zaroorat pe date / category se tukde |
-| [7](#d7) | user ko apni pasand ki feed | har category ki alag cached feed, user ki 2-3 category milao |
-| [8](#d8) | subah 8 baje sab ek saath | kai Feed service box (stateless) + LB; cache miss replica se padho |
-| [9](#d9) | "cricket" search | alag search index (Elasticsearch); worker save ke saath index bhi bhare |
+| [1](#d1) | har request pe DB se "latest 20" | **CACHE (ready feed)**: ready feed Redis me, nayi news pe refresh; sab ek hi cache padhein |
+| [2](#d2) | 1000 source ek saath, fetch slow | **ASYNC (Fetcher -> Kafka -> Worker)**: likhna aur padhna alag: fetcher -> Kafka -> worker -> DB + cache; user sirf cache se padhe |
+| [3](#d3) | ek khabar paanch source se | **DEDUPE**: worker me saaf karo, ek khabar ek baar (dedupe), category tag |
+| [4](#d4) | ek source down / slow | **TIMEOUT + CIRCUIT BREAKER**: har source alag + parallel, timeout; baar-baar fail to us source pe call band |
+| [5](#d5) | 6 mahine me crore row, kharcha | **PARTITION + ARCHIVE**: haal ka data garam table me; mahine-wise tukde, purana S3 me ya TTL se hatao |
+| [6](#d6) | (bada scale) ek DB box nahi jhele | **SHARDING (zaroorat pe)**: humare number pe ek box kaafi, ye imaandari se bolo; zaroorat pe date / category se tukde |
+| [7](#d7) | user ko apni pasand ki feed | **CATEGORY CACHE**: har category ki alag cached feed, user ki 2-3 category milao |
+| [8](#d8) | subah 8 baje sab ek saath | **STATELESS + LB + REPLICA**: kai Feed service box (stateless) + LB; cache miss replica se padho |
+| [9](#d9) | "cricket" search | **SEARCH INDEX (Elasticsearch)**: alag search index (Elasticsearch); worker save ke saath index bhi bhare |
 
 ---
 

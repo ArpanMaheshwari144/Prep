@@ -46,15 +46,15 @@ KYUN:    Twitter / SMS limit · marketing tracking · QR / print · saaf dikhna
 
 | # | dikkat | cue |
 |---|---|---|
-| [1](#d1) | har click DB pe, 200ms se tez chahiye | pehle Redis, na mile to DB se laake Redis me; TTL = link ki expiry |
-| [2](#d2) | ek App 1 lakh/sec nahi jhele, gira to band | kai App box (stateless) + LB |
-| [3](#d3) | kai App, do App ek hi code bana denge | counter service har App ko alag number range de; number -> base62, 7 char |
-| [4](#d4) | har click pe analytics likhna | click ka event Kafka me, turant 302; baar-baar fail -> DLQ |
-| [5](#d5) | 5 saal ka ~90 TB ek machine me nahi | shortCode se tukde, har tukde ki 3 copy alag AZ |
-| [6](#d6) | write ke beech copy wala node gira | DB pehle disk ki log file me likhe, phir table (gira to log se wapas); done tab jab 3 me se 2 copy ne haan bola |
-| [7](#d7) | naya link, turant click -> 404 | banate hi Redis me bhi daalo; ya 2 copy me likho + 2 se padho, ek common milegi |
-| [8](#d8) | LB khud gir gaya | do LB + Route 53 health check; region gaya to doosra region |
-| [9](#d9) | script se raat me 10 lakh link | API Gateway pe user / IP se limit; long URL malware list se milao + WAF |
+| [1](#d1) | har click DB pe, 200ms se tez chahiye | **CACHE (Redis)**: pehle Redis, na mile to DB se laake Redis me; TTL = link ki expiry |
+| [2](#d2) | ek App 1 lakh/sec nahi jhele, gira to band | **STATELESS + LB**: kai App box (stateless) + LB |
+| [3](#d3) | kai App, do App ek hi code bana denge | **COUNTER SERVICE + BASE62**: counter service har App ko alag number range de; number -> base62, 7 char |
+| [4](#d4) | har click pe analytics likhna | **KAFKA + DLQ**: click ka event Kafka me, turant 302; baar-baar fail -> DLQ |
+| [5](#d5) | 5 saal ka ~90 TB ek machine me nahi | **SHARDING + REPLICATION**: shortCode se tukde, har tukde ki 3 copy alag AZ |
+| [6](#d6) | write ke beech copy wala node gira | **WAL + QUORUM**: DB pehle disk ki log file me likhe, phir table (gira to log se wapas); done tab jab 3 me se 2 copy ne haan bola |
+| [7](#d7) | naya link, turant click -> 404 | **404 FIX (Redis me turant)**: banate hi Redis me bhi daalo; ya 2 copy me likho + 2 se padho, ek common milegi |
+| [8](#d8) | LB khud gir gaya | **ROUTE 53 FAILOVER**: do LB + Route 53 health check; region gaya to doosra region |
+| [9](#d9) | script se raat me 10 lakh link | **RATE LIMIT + WAF**: API Gateway pe user / IP se limit; long URL malware list se milao + WAF |
 
 ---
 

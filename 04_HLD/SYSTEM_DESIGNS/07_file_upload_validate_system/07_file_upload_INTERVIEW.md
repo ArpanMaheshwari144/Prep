@@ -38,15 +38,15 @@ NUMBERS: 1 lakh file / din -> ~1-2 write / sec (kam)       (1 din ~ 1,00,000 sec
 
 | # | dikkat | cue |
 |---|---|---|
-| [1](#d1) | user 2-3 sec ruka, thread block | turant trackingId + "VALIDATING"; validation peeche queue + worker; user status poochhe |
-| [2](#d2) | 5 GB ke bytes mere server se | presigned URL: client seedha S3 pe bheje, server sirf URL + metadata |
-| [3](#d3) | 5 GB file 90% pe tooti | file chhote tukdon me, jo tukda fail sirf wahi dobara; S3 khud jode |
-| [4](#d4) | upload shuru, complete kabhi nahi (adhoori) | pehle tmp jagah, S3 rule se purani tmp apne aap hate; sweeper job atki file dekhe |
-| [5](#d5) | sab har 2 sec status poll | Redis cache + read replica; worker DONE kare to cache bhi badle |
-| [6](#d6) | file nahi, poora folder | ek parent trackingId + har file ka child; parent ka status bachchon se |
-| [7](#d7) | doosre ka trackingId daal ke file maangi | record me ownerId; maangne wala owner nahi to 403 (service me check) |
-| [8](#d8) | S3 ka seedha link aage bhej diya | link ki umar kuch minute, owner check ke baad hi bane; DB me S3 key, URL nahi |
-| [9](#d9) | naam .pdf, andar EXE | worker file ke pehle kuch byte padhe, type khud tay kare; mel nahi to reject |
+| [1](#d1) | user 2-3 sec ruka, thread block | **ASYNC (queue + worker)**: turant trackingId + "VALIDATING"; validation peeche queue + worker; user status poochhe |
+| [2](#d2) | 5 GB ke bytes mere server se | **PRESIGNED URL**: presigned URL: client seedha S3 pe bheje, server sirf URL + metadata |
+| [3](#d3) | 5 GB file 90% pe tooti | **MULTIPART UPLOAD**: file chhote tukdon me, jo tukda fail sirf wahi dobara; S3 khud jode |
+| [4](#d4) | upload shuru, complete kabhi nahi (adhoori) | **LIFECYCLE RULE + SWEEPER**: pehle tmp jagah, S3 rule se purani tmp apne aap hate; sweeper job atki file dekhe |
+| [5](#d5) | sab har 2 sec status poll | **CACHE + READ REPLICA**: Redis cache + read replica; worker DONE kare to cache bhi badle |
+| [6](#d6) | file nahi, poora folder | **PARENT + CHILD trackingId**: ek parent trackingId + har file ka child; parent ka status bachchon se |
+| [7](#d7) | doosre ka trackingId daal ke file maangi | **OWNER CHECK (403)**: record me ownerId; maangne wala owner nahi to 403 (service me check) |
+| [8](#d8) | S3 ka seedha link aage bhej diya | **CHHOTI EXPIRY wala link**: link ki umar kuch minute, owner check ke baad hi bane; DB me S3 key, URL nahi |
+| [9](#d9) | naam .pdf, andar EXE | **MAGIC BYTES**: worker file ke pehle kuch byte padhe, type khud tay kare; mel nahi to reject |
 
 ---
 

@@ -46,13 +46,13 @@ BOL:      "For the booking itself I'd pick consistency: I'd rather reject a writ
 
 | # | dikkat | cue |
 |---|---|---|
-| [1](#d1) | do alag user ne ek saath A1 book ki | check + book ek hi UPDATE: "book karo SIRF agar available"; doosre ko 0 row |
-| [2](#d2) | seat chuni, 3 min payment | seat 'held' + kab tak (5 min); booking ka UPDATE time nikle hold ko khaali maane |
-| [3](#d3) | "Pay" do baar daba | client key banaye, retry pe wahi; dobara aaye to saved result |
-| [4](#d4) | book koi-koi, seat map sab dekh rahe | dekhna Redis + replica se, booking primary pe |
-| [5](#d5) | popular release, lakhon log ek seat pe | Kafka + har show ka worker ek-ek karke; waiting room; darwaze pe Redis ginti, baaki "housefull" |
-| [6](#d6) | Redis restart, saara browse DB pe | Redis cluster; dekhna replica se; cache khaali ho to sirf ek rebuild kare |
-| [7](#d7) | App box gira, 500 logon ka hold | hold DB me hai, box me nahi; kai App (stateless) + LB |
+| [1](#d1) | do alag user ne ek saath A1 book ki | **ATOMIC UPDATE**: check + book ek hi UPDATE: "book karo SIRF agar available"; doosre ko 0 row |
+| [2](#d2) | seat chuni, 3 min payment | **HOLD + EXPIRY**: seat 'held' + kab tak (5 min); booking ka UPDATE time nikle hold ko khaali maane |
+| [3](#d3) | "Pay" do baar daba | **IDEMPOTENCY KEY**: client key banaye, retry pe wahi; dobara aaye to saved result |
+| [4](#d4) | book koi-koi, seat map sab dekh rahe | **CACHE + READ REPLICA**: dekhna Redis + replica se, booking primary pe |
+| [5](#d5) | popular release, lakhon log ek seat pe | **QUEUE + WAITING ROOM**: Kafka + har show ka worker ek-ek karke; waiting room; darwaze pe Redis ginti, baaki "housefull" |
+| [6](#d6) | Redis restart, saara browse DB pe | **REDIS CLUSTER + STAMPEDE**: Redis cluster; dekhna replica se; cache khaali ho to sirf ek rebuild kare |
+| [7](#d7) | App box gira, 500 logon ka hold | **STATELESS + LB**: hold DB me hai, box me nahi; kai App (stateless) + LB |
 
 ---
 

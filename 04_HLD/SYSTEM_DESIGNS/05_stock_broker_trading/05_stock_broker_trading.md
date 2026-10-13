@@ -38,14 +38,14 @@ NUMBERS: ~50 lakh users · ~50 lakh orders / din · normal ~250 / sec, market kh
 
 | # | dikkat | cue |
 |---|---|---|
-| [1](#d1) | do order ek hi stock pe ek saath | har stock ki ek queue + ek thread, order ek ke baad ek; order book RAM me, lock nahi |
-| [2](#d2) | wallet 50k, 30k-30k ke do order | order lagte hi paisa block karo (hotel deposit); DB me ek update, available bacha tabhi block |
-| [3](#d3) | settlement ke beech crash | saare step ek transaction me (@Transactional) + ledger: jitna gaya utna mila |
-| [4](#d4) | paisa Wallet DB, share Portfolio DB | SAGA: har step apne DB me commit, fail pe ulta step (paisa wapas) |
-| [5](#d5) | BUY do baar daba / retry | har request ke saath key; key ho chuki to purana result, naya order nahi |
-| [6](#d6) | order book RAM me, crash = gayab | har order pehle log me (seq number ke saath), phir book; crash pe log dobara chala ke book wapas (scorer ka register) |
-| [7](#d7) | lakhon log live price dekh rahe | WebSocket + pub/sub: price badle tab server khud bheje, sirf latest |
-| [8](#d8) | market khulte hi akele TCS pe lakhon order | book mat todo, ek thread hi; aage ka log bheed ko line me rakhe, drop nahi, thodi der |
+| [1](#d1) | do order ek hi stock pe ek saath | **SINGLE THREAD per stock (order book RAM)**: har stock ki ek queue + ek thread, order ek ke baad ek; order book RAM me, lock nahi |
+| [2](#d2) | wallet 50k, 30k-30k ke do order | **FUNDS BLOCK**: order lagte hi paisa block karo (hotel deposit); DB me ek update, available bacha tabhi block |
+| [3](#d3) | settlement ke beech crash | **@Transactional + LEDGER**: saare step ek transaction me (@Transactional) + ledger: jitna gaya utna mila |
+| [4](#d4) | paisa Wallet DB, share Portfolio DB | **SAGA**: SAGA: har step apne DB me commit, fail pe ulta step (paisa wapas) |
+| [5](#d5) | BUY do baar daba / retry | **IDEMPOTENCY KEY**: har request ke saath key; key ho chuki to purana result, naya order nahi |
+| [6](#d6) | order book RAM me, crash = gayab | **WAL / LOG REPLAY**: har order pehle log me (seq number ke saath), phir book; crash pe log dobara chala ke book wapas (scorer ka register) |
+| [7](#d7) | lakhon log live price dekh rahe | **WEBSOCKET + PUB/SUB**: WebSocket + pub/sub: price badle tab server khud bheje, sirf latest |
+| [8](#d8) | market khulte hi akele TCS pe lakhon order | **QUEUE (backpressure)**: book mat todo, ek thread hi; aage ka log bheed ko line me rakhe, drop nahi, thodi der |
 
 ---
 

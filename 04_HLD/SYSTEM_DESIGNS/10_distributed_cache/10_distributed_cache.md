@@ -47,12 +47,12 @@ NUMBERS: ~1 TB · ~1M QPS · read-heavy
 
 | # | dikkat | cue |
 |---|---|---|
-| [1](#d1) | RAM bhar gayi, kya hatayein | LRU: jo sabse der se nahi chhua wo hatao (HashMap + doubly linked list); har entry pe TTL |
-| [2](#d2) | 1 TB ek node me nahi, key kis node pe | hash % N nahi; gol ring (consistent hashing) + ek machine ring pe kai jagah; app ki library sahi node chune |
-| [3](#d3) | ek node mara, load DB pe | har tukde ki 1-2 copy alag AZ, primary mara to copy upar (copy thodi peeche, cache me chalta) |
-| [4](#d4) | DB update, cache purana | DB update phir cache key DELETE (update nahi) + TTL |
-| [5](#d5) | garam key expire, 1000 request ek saath DB pe | sirf ek DB se laaye (lock), baaki ruk ke cache se; garam key ko expire se pehle refresh |
-| [6](#d6) | ek key itni popular, uska node mar raha | us key ki kai node pe copy; app ke andar 1-2 sec ka chhota cache (L1) |
+| [1](#d1) | RAM bhar gayi, kya hatayein | **LRU + TTL**: LRU: jo sabse der se nahi chhua wo hatao (HashMap + doubly linked list); har entry pe TTL |
+| [2](#d2) | 1 TB ek node me nahi, key kis node pe | **CONSISTENT HASHING**: hash % N nahi; gol ring (consistent hashing) + ek machine ring pe kai jagah; app ki library sahi node chune |
+| [3](#d3) | ek node mara, load DB pe | **REPLICATION + FAILOVER**: har tukde ki 1-2 copy alag AZ, primary mara to copy upar (copy thodi peeche, cache me chalta) |
+| [4](#d4) | DB update, cache purana | **INVALIDATION (delete)**: DB update phir cache key DELETE (update nahi) + TTL |
+| [5](#d5) | garam key expire, 1000 request ek saath DB pe | **STAMPEDE (lock)**: sirf ek DB se laaye (lock), baaki ruk ke cache se; garam key ko expire se pehle refresh |
+| [6](#d6) | ek key itni popular, uska node mar raha | **HOT KEY + L1 CACHE**: us key ki kai node pe copy; app ke andar 1-2 sec ka chhota cache (L1) |
 
 ---
 

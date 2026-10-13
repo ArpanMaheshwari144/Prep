@@ -53,17 +53,17 @@ BOL:      "Kafka absorbs the burst and workers drain at their own pace. Sale tim
 
 | # | dikkat | cue |
 |---|---|---|
-| [1](#d1) | order email ke intezaar me ruka, email down = order fail | Order event Kafka pe daal ke turant laute; email down ho to event queue me pada rahe |
-| [2](#d2) | teen channel, SMS slow to push / email bhi atke | har channel ki apni queue + apne worker (push FCM, email SES, SMS Twilio) |
-| [3](#d3) | SMS band tha, phir bhi raat 2 baje bheja | bhejne se pehle preference dekho (channel on? quiet hours?), template, phir channel |
-| [4](#d4) | ack kho gaya, retry, user ko do email | bhejne se pehle Redis me event ki apni ID "set if not exists"; pehle se hai to skip |
-| [5](#d5) | key laga di, par provider call fail | key ki do haalat: "sending" (chhoti expiry) -> success pe "sent"; worker mara to "sending" khud mite |
-| [6](#d6) | provider fail, hum turant retry maar rahe | retry ke beech dugna intezaar + thoda random; had paar -> DLQ + alert |
-| [7](#d7) | provider slow, saare worker 30 sec me phase | chhota timeout, har channel ke do provider, kai baar fail to circuit khulo -> backup |
-| [8](#d8) | OTP marketing ke 50,000 ke peeche | alag Kafka topic + alag worker: OTP / order / marketing |
-| [9](#d9) | burst, provider ne 429 diya | worker khud raftaar kam kare (provider ki limit ke andar), 429 pe ruk ke retry, drop nahi |
-| [10](#d10) | "bhej diya" != "mil gaya" | provider webhook (delivered / bounced) -> tracking DB; push me app khud ack bheje |
-| [11](#d11) | 1 crore logon ko ek saath offer | turant 202; batch job 1000-1000 ke tukde Kafka me; preference + low lane + provider ki raftaar; key (campaign_id, user_id); push me FCM topic |
+| [1](#d1) | order email ke intezaar me ruka, email down = order fail | **ASYNC (Kafka)**: Order event Kafka pe daal ke turant laute; email down ho to event queue me pada rahe |
+| [2](#d2) | teen channel, SMS slow to push / email bhi atke | **CHANNEL-WISE QUEUE**: har channel ki apni queue + apne worker (push FCM, email SES, SMS Twilio) |
+| [3](#d3) | SMS band tha, phir bhi raat 2 baje bheja | **PREFERENCE + TEMPLATE**: bhejne se pehle preference dekho (channel on? quiet hours?), template, phir channel |
+| [4](#d4) | ack kho gaya, retry, user ko do email | **IDEMPOTENCY (Redis SETNX)**: bhejne se pehle Redis me event ki apni ID "set if not exists"; pehle se hai to skip |
+| [5](#d5) | key laga di, par provider call fail | **IDEMPOTENCY: SENDING -> SENT**: key ki do haalat: "sending" (chhoti expiry) -> success pe "sent"; worker mara to "sending" khud mite |
+| [6](#d6) | provider fail, hum turant retry maar rahe | **BACKOFF + JITTER + DLQ**: retry ke beech dugna intezaar + thoda random; had paar -> DLQ + alert |
+| [7](#d7) | provider slow, saare worker 30 sec me phase | **TIMEOUT + CIRCUIT BREAKER + BACKUP PROVIDER**: chhota timeout, har channel ke do provider, kai baar fail to circuit khulo -> backup |
+| [8](#d8) | OTP marketing ke 50,000 ke peeche | **PRIORITY (alag topic)**: alag Kafka topic + alag worker: OTP / order / marketing |
+| [9](#d9) | burst, provider ne 429 diya | **RAFTAAR (provider rate limit)**: worker khud raftaar kam kare (provider ki limit ke andar), 429 pe ruk ke retry, drop nahi |
+| [10](#d10) | "bhej diya" != "mil gaya" | **DELIVERY TRACKING (webhook)**: provider webhook (delivered / bounced) -> tracking DB; push me app khud ack bheje |
+| [11](#d11) | 1 crore logon ko ek saath offer | **CAMPAIGN (batch + low lane)**: turant 202; batch job 1000-1000 ke tukde Kafka me; preference + low lane + provider ki raftaar; key (campaign_id, user_id); push me FCM topic |
 
 ---
 

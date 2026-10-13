@@ -36,14 +36,14 @@ NUMBERS: ~100M user · ~30-40M DAU · edits / sec BAHUT — WRITE-DOMINATED (har
 
 | # | dikkat | cue |
 |---|---|---|
-| [1](#d1) | do log ne saath save kiya, baad wale ne pehle ka mitaya | poora text nahi, sirf operation bhejo ("yahan ye daala / hataya") |
-| [2](#d2) | B ko A ka edit kab dikhega | WebSocket: do-tarfa khula connection |
-| [3](#d3) | A server-1, B server-2 | Redis pub/sub: A ka edit Redis pe, us doc ko sun rahe saare servers tak |
-| [4](#d4) | dono ne ek saath position 0 pe type kiya | OT: doosre ka operation khiska do, dono taraf same niyam (ya CRDT) |
-| [5](#d5) | har keystroke pe DB hit | Redis me jama karo, thodi der me batch me DB; edit log Cassandra me server ke version number ke kram me |
-| [6](#d6) | doc kholne pe 10 lakh operation | har kuch hazaar op pe poora text save (snapshot); kholna = snapshot + baad ke op |
-| [7](#d7) | network ek second toota, typing rukegi? | doc edit = AP (type karte raho, baad me sync); permission = CP, alag SQL |
-| [8](#d8) | crore WebSocket connection | alag connection server; docId se baanto, ek doc ke saare editor ek server pe |
+| [1](#d1) | do log ne saath save kiya, baad wale ne pehle ka mitaya | **OPERATION bhejo**: poora text nahi, sirf operation bhejo ("yahan ye daala / hataya") |
+| [2](#d2) | B ko A ka edit kab dikhega | **WEBSOCKET**: WebSocket: do-tarfa khula connection |
+| [3](#d3) | A server-1, B server-2 | **REDIS PUB/SUB**: Redis pub/sub: A ka edit Redis pe, us doc ko sun rahe saare servers tak |
+| [4](#d4) | dono ne ek saath position 0 pe type kiya | **OT (ya CRDT)**: OT: doosre ka operation khiska do, dono taraf same niyam (ya CRDT) |
+| [5](#d5) | har keystroke pe DB hit | **BATCH + EDIT LOG (Cassandra)**: Redis me jama karo, thodi der me batch me DB; edit log Cassandra me server ke version number ke kram me |
+| [6](#d6) | doc kholne pe 10 lakh operation | **SNAPSHOT**: har kuch hazaar op pe poora text save (snapshot); kholna = snapshot + baad ke op |
+| [7](#d7) | network ek second toota, typing rukegi? | **CAP: doc = AP, permission = CP**: doc edit = AP (type karte raho, baad me sync); permission = CP, alag SQL |
+| [8](#d8) | crore WebSocket connection | **CONNECTION SERVER (docId)**: alag connection server; docId se baanto, ek doc ke saare editor ek server pe |
 
 ---
 
