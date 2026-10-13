@@ -1859,7 +1859,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      VISUAL: nums=[3,1,3,4,2]:  0->3->4->2->3->4->2...  (loop; entry=3=dup)
      TEMPLATE:
         int slow=0, fast=0;
-        slow=nums[slow]; fast=nums[nums[fast]];
+        slow=nums[slow]; fast=nums[nums[fast]];   // ★ PEHLE ek kadam chalao — dono 0 pe hi rahe to slow==fast, PHASE-1 loop chalega hi nahi
         while(slow!=fast){ slow=nums[slow]; fast=nums[nums[fast]]; }   // PHASE-1 meet
         slow=0;
         while(slow!=fast){ slow=nums[slow]; fast=nums[fast]; }          // PHASE-2 entry
