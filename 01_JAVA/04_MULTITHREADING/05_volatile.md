@@ -201,7 +201,7 @@ synchronized  -> VISIBILITY + ATOMICITY (lock)          | multi-line   | Slowest
 
 **KYUN badhta:** `count++` = 3 step (read/add/write). volatile sirf READ-latest deta -> 3-step atomic nahi -> race rahega. Atomicity ke liye atomic (CAS) ya synchronized (lock).
 
-> Project: `running` flag hota to volatile; `orderCounter` = AtomicInteger (CAS); poora 3-line block atomic chahiye hota to synchronized.
+> Project: `running` flag hota to volatile; `count` (order counter) = AtomicInteger (CAS); poora 3-line block atomic chahiye hota to synchronized.
 > optimistic (volatile/atomic/CHM/@Version) vs pessimistic (synchronized/SELECT-FOR-UPDATE) — wahi payment wali family.
 
 ---

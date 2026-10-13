@@ -261,7 +261,7 @@ Pessimistic DB lock   -> SELECT...FOR UPDATE (row lock pehle)     | pessimistic
 - **High-contention** (clash bahut) -> pessimistic (lock-pehle, warna retry-storm).
 - **Low-contention** (clash rare) -> optimistic (CAS/@Version) — fast.
 
-> Idempotency me `orderCounter.incrementAndGet()` = CAS (counter), `putIfAbsent` = bucket-atomic (map).
+> Idempotency me `count.incrementAndGet()` = CAS (counter), `putIfAbsent` = bucket-atomic (map).
 > Agar poore 3-4 line ek atomic block chahiye hote to `synchronized` lagta.
 
 ---

@@ -126,11 +126,11 @@ count.incrementAndGet();      // andar CAS -- atomic, taala nahi
 
 ```
 IdempotencyController /pay:
-  private AtomicInteger orderCounter;                  // asli order counter
-  private ConcurrentHashMap<String,String> processed;  // Idempotency-Key -> result
+  private AtomicInteger count;                         // asli order counter
+  private ConcurrentHashMap<String,String> map;        // Idempotency-Key -> result
 
-  orderCounter.incrementAndGet();   // <- andar CAS chal raha (isiliye 20 concurrent me counter sahi, gayab nahi)
-  processed.putIfAbsent(key, "PROCESSING");  // <- ConcurrentHashMap = BUCKET-level lock/CAS -> ATOMIC claim
+  count.incrementAndGet();          // <- andar CAS chal raha (isiliye 20 concurrent me counter sahi, gayab nahi)
+  map.putIfAbsent(Key, "PROCESSING");  // <- ConcurrentHashMap = BUCKET-level lock/CAS -> ATOMIC claim
 ```
 
 **LIVE dekha (20 parallel same-key):**
