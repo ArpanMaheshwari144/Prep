@@ -56,6 +56,8 @@ KYUN:    Twitter / SMS limit · marketing tracking · QR / print · saaf dikhna
 | [8](#d8) | LB khud gir gaya | **ROUTE 53 FAILOVER**: do LB + Route 53 health check; region gaya to doosra region |
 | [9](#d9) | script se raat me 10 lakh link | **RATE LIMIT + WAF**: API Gateway pe user / IP se limit; long URL malware list se milao + WAF |
 
+REDIRECT kaunsa? -> **302** (301 nahi): 301 pe browser cache kar leta, server tak aata hi nahi -> click gine nahi jaate, expiry toot-ti
+
 ---
 
 ## DABBA 0 — sabse simple

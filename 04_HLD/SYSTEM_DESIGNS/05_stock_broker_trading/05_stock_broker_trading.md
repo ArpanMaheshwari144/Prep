@@ -47,6 +47,8 @@ NUMBERS: ~50 lakh users · ~50 lakh orders / din · normal ~250 / sec, market kh
 | [7](#d7) | lakhon log live price dekh rahe | **WEBSOCKET + PUB/SUB**: WebSocket + pub/sub: price badle tab server khud bheje, sirf latest |
 | [8](#d8) | market khulte hi akele TCS pe lakhon order | **QUEUE (backpressure)**: book mat todo, ek thread hi; aage ka log bheed ko line me rakhe, drop nahi, thodi der |
 
+ORDER BOOK kaise? -> **PRICE-TIME priority**: SELLERS sasta upar, BUYERS mehnga upar · match jab best-bid >= best-ask · same price -> jo pehle aaya
+
 ---
 
 ## DABBA 0 — sabse simple

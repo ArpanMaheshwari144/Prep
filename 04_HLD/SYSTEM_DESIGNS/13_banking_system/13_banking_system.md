@@ -55,7 +55,7 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 | [2](#d2) | regulator + SMS / fraud / statement | **LEDGER + OUTBOX**: ledger table (A -500, B +500, sirf INSERT) + outbox table, ek transaction; outbox se Kafka -> SMS / fraud |
 | [3](#d3) | balance aata kahan se | **LEDGER = SACH**: ledger = sach, balance column = uska joda hua nateeja, dono ek transaction me |
 | [4](#d4) | do baar tap / retry | **IDEMPOTENCY KEY**: har transfer ke saath ek key, key pe DB UNIQUE; dobara aayi to purana result |
-| [5](#d5) | ek account pe do transfer saath | **ATOMIC UPDATE + ROW LOCK**: "balance = balance - 500" DB ke andar, row lock se dono line me |
+| [5](#d5) | ek account pe do transfer saath | **ATOMIC UPDATE + ROW LOCK**: "balance = balance - 500" DB ke andar, row lock se dono line me · A->B aur B->A saath = deadlock -> lock hamesha tay kram (chhoti account id pehle) |
 | [6](#d6) | salary day, ek service bhara | **STATELESS + LB + SYNC copy**: kai Banking service (stateless) + LB; DB primary gira to doosre AZ ki SYNC copy upar (async me aakhri transfer kho sakta) |
 | [7](#d7) | sab read primary pe, transfer dheema | **READ REPLICA**: balance / history copy (replica) se; transfer ke turant baad wala balance primary se |
 | [8](#d8) | 22 arab row, history ka page | **KEYSET PAGINATION**: pichhle page ki aakhri entry (ts, id) yaad, agla page "usse purana", index se seedha |
