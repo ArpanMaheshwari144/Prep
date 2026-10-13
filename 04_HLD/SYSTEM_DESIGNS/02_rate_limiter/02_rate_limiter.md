@@ -55,6 +55,8 @@ NUMBERS: storage ka hisaab bekaar — per key ek counter + TTL, bas
 | [8](#d8) | attack aaya, limiter gayab | **LOCAL FALLBACK**: Redis gaya to har node apni memory me motamoti gine |
 | [9](#d9) | IP pe gin rahe the | **KEY = user_id / API key**: login wale ko user_id / API key se gino; login se pehle IP, dheeli limit + WAF |
 
+ALGO kaunsa? -> **TOKEN BUCKET**: bucket me token bharte (1/sec, max N), request = 1 token, khaali -> 429 · asli traffic spiky, jama token se burst nikal jaata. Doosre: LEAKY (fixed rate, burst block) · FIXED WINDOW (edge pe double) · SLIDING (sahi, memory zyada)
+
 ---
 
 ## DABBA 0 — sabse simple
