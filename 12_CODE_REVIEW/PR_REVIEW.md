@@ -6,25 +6,30 @@ Har bug ki pehchaan = code ki SHAKAL. Shakal dikhi -> naam bolo -> asar bolo -> 
 
 ---
 
-## 0. PEHLE YE 10 SAWAAL (har PR pe, isi kram me)
+## 0. MOCK CUE — drill se pehle SIRF ye padho (number click = wo section)
 
-```
- 1  FIELDS     method ke bahar kaun-sa field hai? saare user share karenge kya?
- 2  ID / ROLE  {id} / accountId aaya -> ye ID IS USER ki hai? approve / admin wala kaam -> role check hai?
- 3  INPUT      @Valid hai? amount -ve / 0 aa sakta? paisa double me to nahi?
- 4  2 REQUEST  ek saath 2 request aayi (ya retry hua) to kya hoga?
- 5  SAVE       kitne save/update hain? @Transactional hai?
- 6  BAHAR      HTTP / mail / SMS call kahan hai? timeout? txn ke andar?
- 7  LOOP       loop ke andar query / HTTP to nahi?
- 8  CATCH      catch ne kya kiya? uske BAAD kya return hua?
- 9  LOG        println? log me email / card / token?
-10  RETURN     fail pe bhi 200? entity bahar? list bina page? SQL me + ?
-```
+| # | sawaal | kya dekhna (cue) |
+|---|--------|------------------|
+| [1](#s1) | FIELDS | method ke bahar non-final field? request ka data, volatile counter, secret, static SimpleDateFormat |
+| [2](#s2) | ID / ROLE | {id} aaya -> IS user ka hai? approve / admin -> role check? |
+| [3](#s2) | INPUT | @Valid hai? amount -ve / 0? paisa double me? |
+| [4](#s4) | 2 REQUEST | pehle check phir save (exists / balance) -> 2 request saath = dono andar · retry = 2 baar |
+| [5](#s5) | SAVE | 2+ save -> @Transactional? public, service pe? status PEHLE verify BAAD? |
+| [6](#s6) | BAHAR | HTTP / SMS / S3 call -> timeout? txn ke andar? DB fail to file / SMS anaath? |
+| [7](#s7) | LOOP | loop me query / HTTP? string += ? |
+| [8](#s8) | CATCH | catch ne nigla? uske baad "SUCCESS" / 200? rollback ruka? |
+| [9](#s9) | LOG | println? PAN / Aadhaar / card / token log me? |
+| [10](#s10) | RETURN | fail pe 200? entity bahar (full data)? list bina page? · .get() -> 500 = [§3](#s3) |
+| [11](#s12) | STYLE (1 min) | naam · magic string -> enum · URL me verb · SRP · field injection · date String |
+| [12](#s13) | FAISLA | Request changes + 3 bhaari naam + chhote |
+
+Tareeka: ye table padho -> file band -> PR pe 1 se 12 ek-ek -> jo chhoota sirf uska section kholo.
 
 Aakhir me FAISLA line (neeche section 13). Bina faisla ke review adhoora.
 
 ---
 
+<a id="s1"></a>
 ## 1. CLASS KE FIELDS (method ke bahar)
 
 ```
@@ -79,6 +84,7 @@ SAHI:            finally { flag = false; }
 
 ---
 
+<a id="s2"></a>
 ## 2. METHOD KI PEHLI LINE (annotation + params)
 
 ```
@@ -145,6 +151,7 @@ BOL:             "Who is allowed to call approve? I don't see a role check."
 
 ---
 
+<a id="s3"></a>
 ## 3. DB SE LAANA
 
 ```
@@ -177,6 +184,7 @@ SAHI:            Optional / null check
 
 ---
 
+<a id="s4"></a>
 ## 4. IF / COMPARE
 
 ```
@@ -225,6 +233,7 @@ SAHI:            strategy pattern
 
 ---
 
+<a id="s5"></a>
 ## 5. DO WRITE / PAISA BADLA
 
 ```
@@ -274,6 +283,7 @@ SAHI:            yahan @Transactional mat maango
 
 ---
 
+<a id="s6"></a>
 ## 6. BAHAR KI CALL (RestTemplate / HTTP / mail / SMS / Kafka)
 
 ```
@@ -309,6 +319,7 @@ SAHI:            Executor / @Async
 
 ---
 
+<a id="s7"></a>
 ## 7. LOOP
 
 ```
@@ -326,6 +337,7 @@ SAHI:            StringBuilder
 
 ---
 
+<a id="s8"></a>
 ## 8. try / catch
 
 ```
@@ -352,6 +364,7 @@ SAHI:            500 / rethrow
 
 ---
 
+<a id="s9"></a>
 ## 9. LOG / println
 
 ```
@@ -369,6 +382,7 @@ SAHI:            SLF4J logger, sahi level
 
 ---
 
+<a id="s10"></a>
 ## 10. RETURN
 
 ```
@@ -409,6 +423,7 @@ SAHI:            BCrypt
 
 ---
 
+<a id="s11"></a>
 ## 11. FILE / CONNECTION
 
 ```
@@ -420,6 +435,7 @@ SAHI:            try-with-resources
 
 ---
 
+<a id="s12"></a>
 ## 12. STYLE (aakhri nazar)
 
 ```
@@ -435,6 +451,7 @@ SRP: controller me DB + logic + mail sab          -> controller / service / repo
 
 ---
 
+<a id="s13"></a>
 ## 13. FAISLA — HAMESHA, 3 NAAM ke saath
 
 ```
