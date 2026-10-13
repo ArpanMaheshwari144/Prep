@@ -10,7 +10,7 @@ Har bug ki pehchaan = code ki SHAKAL. Shakal dikhi -> naam bolo -> asar bolo -> 
 
 ```
  1  FIELDS     method ke bahar kaun-sa field hai? saare user share karenge kya?
- 2  ID         {id} / accountId aaya -> ye ID IS USER ki hai, kisne check kiya?
+ 2  ID / ROLE  {id} / accountId aaya -> ye ID IS USER ki hai? approve / admin wala kaam -> role check hai?
  3  INPUT      @Valid hai? amount -ve / 0 aa sakta? paisa double me to nahi?
  4  2 REQUEST  ek saath 2 request aayi (ya retry hua) to kya hoga?
  5  SAVE       kitne save/update hain? @Transactional hai?
