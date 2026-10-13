@@ -25,22 +25,53 @@ import java.util.*;
 public class L1_Wallet {
 
     static class Wallet {
-        // TODO: tu likh (field + 4 method)
-
+       HashMap<String, Integer> map = new HashMap<>();
         boolean createAccount(String id) {
-            return false;
+            if(map.containsKey(id) == true){
+                return false;
+            }
+            map.put(id, 0);
+            return true;
         }
 
         Optional<Integer> deposit(String id, int amount) {
-            return Optional.empty();
+            if(map.containsKey(id) == false){
+                return Optional.empty();
+            }
+            if(amount <= 0){
+                return Optional.empty();
+            }
+            map.put(id, map.get(id) + amount);
+            return Optional.of(map.get(id));
         }
 
         Optional<Integer> transfer(String fromId, String toId, int amount) {
-            return Optional.empty();
+            if(map.containsKey(fromId) == false){
+                return Optional.empty();
+            }
+            else if(map.containsKey(toId) == false){
+                return Optional.empty();
+            }
+            else if(amount <= 0){
+                return Optional.empty();
+            }
+            else if(fromId.equals(toId)){
+                return Optional.empty();
+            }
+            else if(map.get(fromId) < amount){
+                return Optional.empty();
+            }
+            map.put(fromId, map.get(fromId) - amount);
+            map.put(toId, map.get(toId) + amount);
+
+            return Optional.of(map.get(fromId));
         }
 
         Optional<Integer> getBalance(String id) {
-            return Optional.empty();
+            if(map.containsKey(id) == false){
+                return Optional.empty();
+            }
+            return Optional.of(map.get(id));
         }
     }
 
