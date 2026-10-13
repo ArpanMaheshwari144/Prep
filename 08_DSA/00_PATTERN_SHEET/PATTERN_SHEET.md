@@ -4258,16 +4258,38 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ GAS STATION (LC-134)  = greedy running-tank + reset-start
  └──────────────────────────────────────────────────────────────
-     N pump CIRCLE me. gas[i]=milta, cost[i]=agle pump tak kharcha. kaha se shuru karu
-     ki poora ghoom ke wapas wahin aa jau? koi start possible nahi -> -1.
+     Q: N pump CIRCLE me. gas[i] = pump i pe milta, cost[i] = i se agle pump (i+1) tak kharcha.
+        tank khaali se shuru. kis pump se chalu ki poora ghoom ke wapas wahin aa jau? koi nahi -> -1.
+
      har pump ka NET = gas[i] - cost[i]. Ek pass, DO accumulator:
-        kyaNegativeHua  += gas[i]-cost[i];   // KABHI reset nahi -> ant me <0 -> -1 (petrol hi kam)
-        meriGaddiKaTank += gas[i]-cost[i];   // running; jaha doobta wahan se aage nahi ja sakte
-        if (meriGaddiKaTank < 0) { meriGaddiKaTank = 0; index = i+1; }   // start ko AGLE pump pe khiska do
-     return  kyaNegativeHua < 0 ? -1 : index;
-     ★ KEY: kyaNegativeHua>=0 ho to jo LAST reset-index bacha wahi ANSWER (unique). kyun: jis pump pe
-       tank dooba, us-se-pehle kisi bhi start se wahan pahucha ja HI nahi sakta -> start hamesha aage hi.
-     ★ cookies/jump/interval se FARAK: yahan sort NAHI. circular + 2-accumulator (feasibility + start-track).
+        kyaNegativeHua  = poore circle ka total   -> KABHI reset nahi  -> sirf "possible hai ya nahi"
+        meriGaddiKaTank = abhi wale start se tank -> doobe to reset     -> "start kahan hai"
+
+     int index = 0, meriGaddiKaTank = 0, kyaNegativeHua = 0;
+     for (int i = 0; i < gas.size(); i++) {
+         meriGaddiKaTank += gas[i] - cost[i];
+         kyaNegativeHua  += gas[i] - cost[i];
+         if (meriGaddiKaTank < 0) {          // is start se pump i+1 tak nahi pahunche
+             meriGaddiKaTank = 0;            // naya start, khaali tank
+             index = i + 1;                  // start AGLE pump pe khiska do
+         }
+     }
+     return kyaNegativeHua < 0 ? -1 : index;  // total kam = petrol hi kam -> -1
+
+     DRY-RUN  gas=[1,2,3,4,5]  cost=[3,4,5,1,2]
+        idx:   p0  p1  p2  p3  p4
+        net:   -2  -2  -2  +3  +3
+        p0: tank -2 <0 -> tank=0, index=1     total -2
+        p1: tank -2 <0 -> tank=0, index=2     total -4
+        p2: tank -2 <0 -> tank=0, index=3     total -6
+        p3: tank +3                           total -3
+        p4: tank +6                           total  0
+        total 0 >= 0 -> return index = 3
+
+     ★ KEY: total >= 0 ho to LAST reset wala index hi answer. kyun: start s se pump i pe tank dooba
+       -> s aur i ke beech ka koi bhi pump start bana ke bhi i paar nahi hota (beech ka tank >= 0 hi tha,
+       uske bina aur kam padta) -> seedha i+1 pe kood.
+     ★ cookies / jump / interval se FARAK: yahan sort NAHI. circular + 2 accumulator (possible? + start kahan).
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ TASK SCHEDULER (LC-621)  = greedy IDLE-SLOTS (most-frequent frame)   [11-Sep, self-solved 6/6]
