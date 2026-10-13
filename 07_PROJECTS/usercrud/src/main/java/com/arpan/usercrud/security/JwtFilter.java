@@ -94,14 +94,36 @@ import jakarta.servlet.http.HttpServletResponse;
 //    Imagine office WHITEBOARD:
 //       "Right now logged in: Arpan, role: ADMIN"
 //
-//    Thread-local = har request ka apna whiteboard
+//    Thread-local = har THREAD ka apna whiteboard (locker)
+//    1 request = 1 thread (Tomcat pool se)
 //
 //    Downstream code uses:
 //       SecurityContextHolder.getContext().getAuthentication()
 //       → returns logged-in user info
 //
+//    EK REQUEST KA SAFAR:
+//       Rahul ki request -> Tomcat ne pool se Thread-7 diya
+//       1. JwtFilter (Thread-7):  token valid -> setAuthentication(auth)
+//             = Thread-7 ke locker me "ye Rahul hai"        (ThreadLocal.set)
+//       2. Controller -> Service (wahi Thread-7):
+//             getAuthentication() -> locker khola -> Rahul  (ThreadLocal.get)
+//             userId har method me param bana ke bhejna nahi pada
+//       3. Response gaya -> Spring ki filter chain locker SAAF karti  (ThreadLocal.remove)
+//       4. Thread-7 wapas pool me, locker khaali
+//
+//    Usi waqt Sita -> Thread-9 -> uska alag locker. Ek doosre ka nahi dikhta.
+//
+//    STEP 3 KYUN ZAROORI (pool reuse):
+//       saaf na hota -> agli request (bina token) ko wahi Thread-7 mila
+//       -> locker me abhi bhi "Rahul" -> doosre ka account khul jaata
+//       Spring khud clear karta = wahi finally { remove(); }
+//
 //    Without filter: EMPTY (anonymous)
 //    With filter:    FULL (authenticated)
+//
+//    @Transactional bhi yahi tareeka: DB connection thread ke locker me,
+//    andar ke saare repo call wahi connection uthate, end pe saaf.
+//    (isliye @Transactional ke andar naya thread = transaction ke BAHAR)
 //
 // UsernamePasswordAuthenticationToken — 3 PIECES:
 //    new UsernamePasswordAuthenticationToken(
