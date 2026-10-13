@@ -47,7 +47,7 @@ NUMBERS: ~1 TB · ~1M QPS · read-heavy
 
 | # | dikkat | cue |
 |---|---|---|
-| [1](#d1) | RAM bhar gayi, kya hatayein | **LRU + TTL**: LRU: jo sabse der se nahi chhua wo hatao (HashMap + doubly linked list); har entry pe TTL |
+| [1](#d1) | RAM bhar gayi, kya hatayein | **LRU + TTL**: jo sabse der se nahi chhua wo hatao (HashMap + doubly linked list); har entry pe TTL |
 | [2](#d2) | 1 TB ek node me nahi, key kis node pe | **CONSISTENT HASHING**: hash % N nahi; gol ring (consistent hashing) + ek machine ring pe kai jagah; app ki library sahi node chune |
 | [3](#d3) | ek node mara, load DB pe | **REPLICATION + FAILOVER**: har tukde ki 1-2 copy alag AZ, primary mara to copy upar (copy thodi peeche, cache me chalta) |
 | [4](#d4) | DB update, cache purana | **INVALIDATION (delete)**: DB update phir cache key DELETE (update nahi) + TTL |
