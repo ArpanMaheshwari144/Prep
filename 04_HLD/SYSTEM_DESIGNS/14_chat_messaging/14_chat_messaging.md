@@ -319,6 +319,9 @@ POOCHEGA: "What's your partition key, and why?"
 DHYAAN:   user_id GALAT: A-B ki ek chat -> A ke bheje A ke partition me, B ke bheje B ke me
           -> "aakhri 50" ke liye DO jagah padho aur jodo · 500 ka group = 500 jagah.
           Chat kholte hi chahiye "IS CHAT ke aakhri 50" -> key wahi jis pe padhte ho = chat_id.
+          message_id partition = har message alag dabba -> "aakhri 50" = 50 jagah. message_id = SORT key.
+          "kisne kahan tak padha" = alag table (user_id, chat_id) -> read_upto, partition ka hissa nahi.
+          Cassandra me partition key = shard key (hash -> token -> node). India/EU data alag = region level, key nahi.
 BOL:      "Partition by chat id, because reads are always 'the latest messages of this chat'. One chat
            lives in one partition, sorted by message id, so it's a single read. User id would split one
            conversation across partitions."
