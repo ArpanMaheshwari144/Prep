@@ -1,5 +1,5 @@
 // JAVA SYSTEM-WRITE — L1 WALLET  (CodeSignal / Airbnb jaisa: class ke method likho, tests pass karo)
-// IDE nahi, debugger nahi maan ke likh. Atke to System.out.println se value dekh.
+// Atke aur galti na dikhe to System.out.println se value dekh.
 //
 // Ek in-memory wallet system. Account = id (String) + balance (int, shuru 0).
 //
