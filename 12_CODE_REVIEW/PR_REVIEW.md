@@ -49,6 +49,7 @@ ASAR:            controller/service ek hi object, saare user share -> do user ka
 SAHI:            local variable
 ★ 7-Oct chhoota (Transfer): tune L5 static final URL pakda, wo constant hai, theek hai.
   Asli dikkat non-final field hoti hai.
+★ 13-Oct chhoota (KYC: private KycRequest current; current = r;)
 ```
 
 ```
@@ -56,13 +57,17 @@ CODE ME DIKHE:   static Map cache  ·  static SimpleDateFormat
 NAAM:            shared mutable static
 ASAR:            saare thread share, stale / galat date
 SAHI:            local / ConcurrentHashMap / DateTimeFormatter
+DHYAAN:          static field class ke NEECHE likha ho to bhi chalega (class load pe pehle ban jaata).
+                 dikkat jagah nahi, thread-unsafe hona hai.
 ```
 
 ```
-CODE ME DIKHE:   boolean running;  count++   (doosra thread padhe)
+CODE ME DIKHE:   boolean running;  count++   ·  private volatile int pendingCount;  pendingCount++
 NAAM:            visibility / non-atomic
 ASAR:            doosre thread ko dikhega nahi; ++ me ginti khoyegi
-SAHI:            volatile / AtomicInteger
+SAHI:            flag -> volatile · counter -> AtomicInteger
+                 (volatile int ++ / -- = ab bhi race, volatile sirf DIKHATA hai, atomic nahi banata)
+★ 13-Oct chhoota (KYC: volatile pendingCount++ / --)
 ```
 
 ```
@@ -129,6 +134,15 @@ SAHI:            service pe, public method, doosri bean se call
 ★ 12-Oct chhoota (Beneficiary: @Transactional private updateLimit)
 ```
 
+```
+CODE ME DIKHE:   /approve  ·  /admin/...  ·  status / limit / role badalne wala endpoint   (@PreAuthorize nahi)
+NAAM:            ★ ROLE CHECK nahi
+ASAR:            normal user apna hi KYC / refund / limit khud approve kar le
+SAHI:            @PreAuthorize("hasRole('ADMIN')") / maker-checker (banane wala approve na kare)
+BOL:             "Who is allowed to call approve? I don't see a role check."
+★ 13-Oct chhoota (KYC: approveKyc)
+```
+
 ---
 
 ## 3. DB SE LAANA
@@ -177,6 +191,14 @@ SAHI:            UPDATE acc SET bal = bal - ? WHERE id = ? AND bal >= ?   (rows 
 YAAD:            ye RETRY wali idempotency se ALAG hai. Idempotency = same request do baar.
                  Ye = do alag request ek hi waqt.
 ★ 7-Oct chhoota (Transfer)
+```
+
+```
+CODE ME DIKHE:   if (repo.existsByUserId(id)) return "already";  ...  repo.save(new X(id));
+NAAM:            ★ CHECK-THEN-ACT (insert wala)
+ASAR:            2 request ek saath -> dono ko "nahi hai" dikha -> 2 row ban gayi
+SAHI:            DB UNIQUE(user_id) + DuplicateKey pakdo -> 409
+★ 13-Oct chhoota (KYC: existsByUserId -> save)
 ```
 
 ```
@@ -272,6 +294,14 @@ SAHI:            commit ke BAAD / @Async / outbox
 ```
 
 ```
+CODE ME DIKHE:   s3.putObject(...);  repo.save(k);     (file pehle, DB baad)
+NAAM:            bahar likha, DB fail
+ASAR:            save fail -> S3 me file anaath padi, kisi row se judi nahi
+SAHI:            DB pehle (PENDING) phir upload, ya fail pe file delete / cleanup job
+★ 13-Oct chhoota (KYC)
+```
+
+```
 CODE ME DIKHE:   new Thread(...)  ·  Thread.sleep() request ke andar
 NAAM:            thread bekaabu
 SAHI:            Executor / @Async
@@ -317,6 +347,7 @@ CODE ME DIKHE:   } catch (Exception e) { ...; return "SUCCESS"; }
 NAAM:            ★ fail pe bhi OK
 ASAR:            client samjha ho gaya, paisa phansa
 SAHI:            500 / rethrow
+★ 13-Oct chhoota (KYC: catch printStackTrace, phir bhi "approved")
 ```
 
 ---
@@ -361,6 +392,7 @@ NAAM:            entity bahar / pagination nahi
 ASAR:            saare field bahar (password hash bhi); 10 lakh row ek saath
 SAHI:            DTO + Pageable
 ★ 7-Oct chhoota (Transfer, history)
+★ 13-Oct chhoota (KYC: poora Kyc entity, full Aadhaar ke saath -> DTO + mask)
 ```
 
 ```
