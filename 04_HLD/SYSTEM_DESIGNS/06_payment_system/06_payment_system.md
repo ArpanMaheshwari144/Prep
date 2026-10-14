@@ -52,17 +52,17 @@ BOL:      "Consistency for money — during a partition I'd rather reject than g
 
 ## MOCK CUE — pehle ye, phir mock
 
-| # | dikkat | cue |
-|---|---|---|
-| [1](#d1) | beech me crash: -500 hua, +500 nahi | **DB TRANSACTION (ACID)**: debit + credit ek saath, fail = rollback |
-| [2](#d2) | do baar tap / retry = double charge | **IDEMPOTENCY KEY**: client banaye, retry pe wahi · DB UNIQUE = ek hi jeete · chal rahi ho to IN_PROGRESS |
-| [3](#d3) | asli paisa hamara server nahi hilata | **PSP** (Razorpay / bank) hilata · status INITIATED -> PENDING -> SUCCESS / FAILED · PSP slow = timeout + **CIRCUIT BREAKER** |
-| [4](#d4) | PSP call ke baad crash / timeout | **PENDING PEHLE** likho -> **WEBHOOK** (PSP bataye) + **RECONCILIATION JOB** (atke PENDING PSP se poochhe) · retry wahi key se |
-| [5](#d5) | alag bank / alag DB | **SAGA**: har step apna commit, fail pe ulte kram me undo (compensate) · 2PC nahi (lock + coordinator gira = sab atke) |
-| [6](#d6) | regulator: paisa kahan se kahan | **LEDGER (append-only)**: har txn = debit + credit, usi transaction me · galti = nayi ulti entry |
-| [7](#d7) | festival 3000 / sec | **STATELESS** service, kai box + **LB / API GATEWAY** (auth, rate limit, owner check) |
-| [8](#d8) | report query write rok rahi | **READ REPLICA** se report · balance / status hamesha **PRIMARY** se |
-| [9](#d9) | 50 crore row | **SHARD by account_id** · alag shard ka transfer = phir SAGA |
+| # | dikkat | cue | POOCHEGA -> jawab |
+|---|---|---|---|
+| [1](#d1) | beech me crash: -500 hua, +500 nahi | **DB TRANSACTION (ACID)**: debit + credit ek saath, fail = rollback | "crash pe DB rollback kaise?" -> DB pehle WAL / undo log me likhta; uthte hi COMMIT wale redo, bina COMMIT wale undo |
+| [2](#d2) | do baar tap / retry = double charge | **IDEMPOTENCY KEY**: client banaye, retry pe wahi · DB UNIQUE = ek hi jeete · chal rahi ho to IN_PROGRESS | "key client kyun banaye, server kyun nahi?" -> retry client karta, server ko pata hi nahi ye wahi request; client ki key hi dono ko jodti |
+| [3](#d3) | asli paisa hamara server nahi hilata | **PSP** (Razorpay / bank) hilata · status INITIATED -> PENDING -> SUCCESS / FAILED · PSP slow = timeout + **CIRCUIT BREAKER** | "timeout hua, user ko kya?" -> 'processing' (PENDING), 'fail' nahi; paisa shayad kat chuka, reconciliation pakka karegi |
+| [4](#d4) | PSP call ke baad crash / timeout | **PENDING PEHLE** likho -> **WEBHOOK** (PSP bataye) + **RECONCILIATION JOB** (atke PENDING PSP se poochhe) · retry wahi key se | "webhook do baar aaya?" -> status update idempotent: PENDING -> SUCCESS ek hi baar; SUCCESS pe dobara aaya to ignore |
+| [5](#d5) | alag bank / alag DB | **SAGA**: har step apna commit, fail pe ulte kram me undo (compensate) · 2PC nahi (lock + coordinator gira = sab atke) | "SAGA ka state kahan (Payment svc beech me gira)?" -> saga table me har step ka haal (DEBITED, CREDIT_PENDING...); uthte hi wahan se aage / ulta |
+| [6](#d6) | regulator: paisa kahan se kahan | **LEDGER (append-only)**: har txn = debit + credit, usi transaction me · galti = nayi ulti entry | "galat entry, delete kar doge?" -> nahi, ULTI entry (reversal); purani rahegi, audit me dono dikhte |
+| [7](#d7) | festival 3000 / sec | **STATELESS** service, kai box + **LB / API GATEWAY** (auth, rate limit, owner check) | "owner check kaise?" -> JWT se userId -> "from" account ka owner_id == userId? nahi to 403 |
+| [8](#d8) | report query write rok rahi | **READ REPLICA** se report · balance / status hamesha **PRIMARY** se | "primary gira?" -> SYNC standby promote (RDS Multi-AZ), kuch nahi khota; async read replica promote ki to aakhri write kho sakte |
+| [9](#d9) | 50 crore row | **SHARD by account_id** · alag shard ka transfer = phir SAGA | "bada merchant, ek shard garam?" -> merchant ke kai sub-account, shard me baante, report me jodo |
 
 DB kaunsa? -> **SQL** (Postgres / MySQL): kai row ek transaction (ACID). NoSQL nahi.
 
