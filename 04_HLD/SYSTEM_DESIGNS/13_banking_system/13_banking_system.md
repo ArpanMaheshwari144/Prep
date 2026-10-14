@@ -49,17 +49,17 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 
 ## MOCK CUE — pehle ye, phir mock
 
-| # | dikkat | cue |
-|---|---|---|
-| [1](#d1) | transfer beech me gira: -500, +500 nahi | **@Transactional (ACID)**: dono account ek DB, ek @Transactional: dono ya koi nahi |
-| [2](#d2) | regulator + SMS / fraud / statement | **LEDGER + OUTBOX**: ledger table (A -500, B +500, sirf INSERT) + outbox table, ek transaction; outbox se Kafka -> SMS / fraud |
-| [3](#d3) | balance aata kahan se | **LEDGER = SACH**: ledger = sach, balance column = uska joda hua nateeja, dono ek transaction me |
-| [4](#d4) | do baar tap / retry | **IDEMPOTENCY KEY**: har transfer ke saath ek key, key pe DB UNIQUE; dobara aayi to purana result |
-| [5](#d5) | ek account pe do transfer saath | **ATOMIC UPDATE + ROW LOCK**: "balance = balance - 500" DB ke andar, row lock se dono line me · A->B aur B->A saath = deadlock -> lock hamesha tay kram (chhoti account id pehle) |
-| [6](#d6) | salary day, ek service bhara | **STATELESS + LB + SYNC copy**: kai Banking service (stateless) + LB; DB primary gira to doosre AZ ki SYNC copy upar (async me aakhri transfer kho sakta) |
-| [7](#d7) | sab read primary pe, transfer dheema | **READ REPLICA**: balance / history copy (replica) se; transfer ke turant baad wala balance primary se |
-| [8](#d8) | 22 arab row, history ka page | **KEYSET PAGINATION**: pichhle page ki aakhri entry (ts, id) yaad, agla page "usse purana", index se seedha |
-| [9](#d9) | 5 saal purana data ek table me | **PARTITION + ARCHIVE**: table mahine-mahine baanto, purana tukda alag karke S3 me (DELETE nahi) |
+| # | dikkat | cue | POOCHEGA -> jawab |
+|---|---|---|---|
+| [1](#d1) | transfer beech me gira: -500, +500 nahi | **@Transactional (ACID)**: dono account ek DB, ek @Transactional: dono ya koi nahi | "A aur B alag bank me?" -> ek txn nahi -> PENDING + SAGA / reconciliation (payment wala raasta) |
+| [2](#d2) | regulator + SMS / fraud / statement | **LEDGER + OUTBOX**: ledger table (A -500, B +500, sirf INSERT) + outbox table, ek transaction; outbox se Kafka -> SMS / fraud | "ledger kahan, Kafka kab?" -> ledger DB ki table me usi txn me (rollback = entry bhi gayab); Kafka sirf commit ke BAAD, outbox se |
+| [3](#d3) | balance aata kahan se | **LEDGER = SACH**: ledger = sach, balance column = uska joda hua nateeja, dono ek transaction me | "reconciliation me farak mila?" -> alert + account freeze karke dekho, KYUN farak (bug) dhoondho, phir ledger se balance theek |
+| [4](#d4) | do baar tap / retry | **IDEMPOTENCY KEY**: har transfer ke saath ek key, key pe DB UNIQUE; dobara aayi to purana result | "same key, body alag (500 ki jagah 5000)?" -> key ke saath request ka hash; mismatch = 422, purana result nahi |
+| [5](#d5) | ek account pe do transfer saath | **ATOMIC UPDATE + ROW LOCK**: "balance = balance - 500" DB ke andar, row lock se dono line me · A->B aur B->A saath = deadlock -> lock hamesha tay kram (chhoti account id pehle) | "WHERE balance >= 200 ne 0 row diya?" -> 'insufficient balance' (422) + txn rollback (credit wala UPDATE bhi nahi) |
+| [6](#d6) | salary day, ek service bhara | **STATELESS + LB + SYNC copy**: kai Banking service (stateless) + LB; DB primary gira to doosre AZ ki SYNC copy upar (async me aakhri transfer kho sakta) | "failover ke 30 sec me transfer?" -> error -> client retry same idempotency key -> double nahi |
+| [7](#d7) | sab read primary pe, transfer dheema | **READ REPLICA**: balance / history copy (replica) se; transfer ke turant baad wala balance primary se | "replica bahut peeche (minute)?" -> lag metric pe alert; had paar -> us replica ko read pool se hatao |
+| [8](#d8) | 22 arab row, history ka page | **KEYSET PAGINATION**: pichhle page ki aakhri entry (ts, id) yaad, agla page "usse purana", index se seedha | "same ts pe do entry, koi chhoot jaaye?" -> cursor me (ts, id) dono, id tie todti |
+| [9](#d9) | 5 saal purana data ek table me | **PARTITION + ARCHIVE**: table mahine-mahine baanto, purana tukda alag karke S3 me (DELETE nahi) | "regulator ne 2021 ka statement maanga?" -> S3 ke Parquet pe Athena query ya us mahine ka partition restore |
 
 ---
 
