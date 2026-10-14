@@ -49,17 +49,17 @@ BOL:      "For the feed and like counts, availability. A feed a couple of second
 
 ## MOCK CUE — pehle ye, phir mock
 
-| # | dikkat | cue |
-|---|---|---|
-| [1](#d1) | har baar 200 logon ka data jodna | **FANOUT ON WRITE**: tweet aate hi har follower ke inbox me daalo, app khule to sirf apna inbox padho |
-| [2](#d2) | tweet button 3 sec ghooma | **ASYNC (Kafka + worker)**: tweet DB me + event Kafka pe, user ko turant "ho gaya"; worker peeche se inbox bhare |
-| [3](#d3) | Bieber = 10 crore inbox | **HYBRID (celeb = fanout on read)**: celeb ka tweet inbox me nahi; feed padhte waqt apna inbox + celeb ke tweet milao |
-| [4](#d4) | Virat ka tweet crore log padh rahe | **CACHE (hot tweet)**: celeb ke naye tweet RAM cache me (TTL), sab wahin se padhein |
-| [5](#d5) | 500M inbox, memory phategi | **INBOX = sirf tweet_id**: inbox me sirf tweet_id, aakhri kuch sau; mahine bhar nahi aaya to inbox hatao |
-| [6](#d6) | saare tweet ek DB me nahi | **CASSANDRA + SHARDING**: Cassandra (likhna tez), user_id + time se tukde |
-| [7](#d7) | India user, US shard (200ms) | **REGION-WISE**: India / EU / US alag tukde, user paas wale se padhe |
-| [8](#d8) | ek App box: bojh + SPOF | **STATELESS + ALB + ROUTE 53**: kai App box (stateless) + ALB, aage Route 53 health check |
-| [9](#d9) | padhna likhna ek box me | **READ / WRITE ALAG**: likhne ki Tweet service, padhne ki Timeline service, alag-alag badhao |
+| # | dikkat | cue | POOCHEGA -> jawab |
+|---|---|---|---|
+| [1](#d1) | har baar 200 logon ka data jodna | **FANOUT ON WRITE**: tweet aate hi har follower ke inbox me daalo, app khule to sirf apna inbox padho | "inbox me sirf tweet_id, poora tweet kahan se?" -> 50 id ek saath batch me tweet store / hot cache se (MGET), ek-ek nahi |
+| [2](#d2) | tweet button 3 sec ghooma | **ASYNC (Kafka + worker)**: tweet DB me + event Kafka pe, user ko turant "ho gaya"; worker peeche se inbox bhare | "worker beech me gira (100 me 60 inbox likhe)?" -> offset commit nahi -> event dobara; id do baar na aaye -> SET eventId NX ya sorted set (ZADD same id = ek) |
+| [3](#d3) | Bieber = 10 crore inbox | **HYBRID (celeb = fanout on read)**: celeb ka tweet inbox me nahi; feed padhte waqt apna inbox + celeb ke tweet milao | "merge kahan, kitna mehnga?" -> Timeline svc me: inbox 50 id + 10-20 celeb ke latest -> time se sort; chhota kaam, celeb tweet hot cache se |
+| [4](#d4) | Virat ka tweet crore log padh rahe | **CACHE (hot tweet)**: celeb ke naye tweet RAM cache me (TTL), sab wahin se padhein | "ek tweet ki key ek Redis node pe garam?" -> key ki kai copy (tweet:123#1..#5), random copy se read + App me local cache |
+| [5](#d5) | 500M inbox, memory phategi | **INBOX = sirf tweet_id**: inbox me sirf tweet_id, aakhri kuch sau; mahine bhar nahi aaya to inbox hatao | "inactive user wapas aaya?" -> pehli baar feed pull se bana do, phir inbox bhar do; ek baar dheema, phir tez |
+| [6](#d6) | saare tweet ek DB me nahi | **CASSANDRA + SHARDING**: Cassandra (likhna tez), user_id + time se tukde | "Cassandra ke read / write replica?" -> Cassandra me leader nahi, har replica read bhi write bhi; bolo "RF 3, quorum se read/write" |
+| [7](#d7) | India user, US shard (200ms) | **REGION-WISE**: India / EU / US alag tukde, user paas wale se padhe | "India user US travel kar raha?" -> data home region me hi; request wahan forward ya paas wali copy se read (thoda purana chalega) |
+| [8](#d8) | ek App box: bojh + SPOF | **STATELESS + ALB + ROUTE 53**: kai App box (stateless) + ALB, aage Route 53 health check | "deploy me sab box restart?" -> rolling deploy: ek-ek box nikaalo, update, wapas; site kabhi band nahi |
+| [9](#d9) | padhna likhna ek box me | **READ / WRITE ALAG**: likhne ki Tweet service, padhne ki Timeline service, alag-alag badhao | "Timeline svc ko follow list kahan se?" -> User/Graph svc se, par har read pe call nahi -> follow list Redis me cache |
 | [10](#d10) | photo video bhaari | **CDN**: CDN: media user ke paas wali edge se |
 
 ---
