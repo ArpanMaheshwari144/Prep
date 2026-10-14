@@ -45,14 +45,14 @@ NUMBERS: ~1 TB · ~1M QPS · read-heavy
 
 ## MOCK CUE — pehle ye, phir mock
 
-| # | dikkat | cue |
-|---|---|---|
-| [1](#d1) | RAM bhar gayi, kya hatayein | **LRU + TTL**: jo sabse der se nahi chhua wo hatao (HashMap + doubly linked list); har entry pe TTL |
-| [2](#d2) | 1 TB ek node me nahi, key kis node pe | **CONSISTENT HASHING**: hash % N nahi; gol ring (consistent hashing) + ek machine ring pe kai jagah; app ki library sahi node chune |
-| [3](#d3) | ek node mara, load DB pe | **REPLICATION + FAILOVER**: har tukde ki 1-2 copy alag AZ, primary mara to copy upar (copy thodi peeche, cache me chalta) |
-| [4](#d4) | DB update, cache purana | **INVALIDATION (delete)**: DB update phir cache key DELETE (update nahi) + TTL |
-| [5](#d5) | garam key expire, 1000 request ek saath DB pe | **STAMPEDE (lock)**: sirf ek DB se laaye (lock), baaki ruk ke cache se; garam key ko expire se pehle refresh |
-| [6](#d6) | ek key itni popular, uska node mar raha | **HOT KEY + L1 CACHE**: us key ki kai node pe copy; app ke andar 1-2 sec ka chhota cache (L1) |
+| # | dikkat | cue | POOCHEGA -> jawab |
+|---|---|---|---|
+| [1](#d1) | RAM bhar gayi, kya hatayein | **LRU + TTL**: jo sabse der se nahi chhua wo hatao (HashMap + doubly linked list); har entry pe TTL | "Redis sach me poora LRU rakhta?" -> nahi, approximate LRU: kuch random keys uthata, unme sabse purani hatata |
+| [2](#d2) | 1 TB ek node me nahi, key kis node pe | **CONSISTENT HASHING**: hash % N nahi; gol ring (consistent hashing) + ek machine ring pe kai jagah; app ki library sahi node chune | "naya node juda, uski key khaali -> miss?" -> haan, sirf us arc ki ~K/N key ka ek baar miss, poora nahi |
+| [3](#d3) | ek node mara, load DB pe | **REPLICATION + FAILOVER**: har tukde ki 1-2 copy alag AZ, primary mara to copy upar (copy thodi peeche, cache me chalta) | "network toota, purana primary bhi zinda samjhe (do primary)?" -> split brain; quorum + minority wala write band kare (min-replicas) |
+| [4](#d4) | DB update, cache purana | **INVALIDATION (delete)**: DB update phir cache key DELETE (update nahi) + TTL | "DB update hua, cache DELETE fail?" -> TTL bachata (max utni der purana); pakka chahiye -> CDC event se delete ka retry |
+| [5](#d5) | garam key expire, 1000 request ek saath DB pe | **STAMPEDE (lock)**: sirf ek DB se laaye (lock), baaki ruk ke cache se; garam key ko expire se pehle refresh | "haarne wale kitni der rukenge?" -> chhota wait + kuch retry; phir bhi nahi to purani value do, DB pe mat bhejo |
+| [6](#d6) | ek key itni popular, uska node mar raha | **HOT KEY + L1 CACHE**: us key ki kai node pe copy; app ke andar 1-2 sec ka chhota cache (L1) | "hot key pehchanoge kaise?" -> node metrics (ek key pe ops/sec), redis-cli --hotkeys; had paar = copy / L1 me |
 
 ---
 
