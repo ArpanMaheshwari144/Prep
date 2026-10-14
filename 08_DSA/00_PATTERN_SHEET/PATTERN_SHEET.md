@@ -3641,15 +3641,38 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      SAAR : grid me `word` adjacent (4-dir) cells se banta hai? har cell EK-BAAR. har cell se DFS, mark→recurse→un-mark.
      TEMPLATE:
-         bool dfs(m,n, i,j, board,word,index, vis):
-             if(i>=m||i<0||j>=n||j<0 || vis[i][j] || board[i][j]!=word[index]) return false;  // ★ bounds+VISITED+mismatch = EK check (top pe)
+         bool solve(board, word, index, i, j, m, n, vis&):          // vis REFERENCE (&) — copy nahi
+             if(i<0||i>=m||j<0||j>=n || vis[i][j] || board[i][j]!=word[index]) return false;  // ★ bounds+VISITED+mismatch = EK check
              vis[i][j]=true; index++;
-             if(dfs(i+1,j..) || dfs(i-1,j..) || dfs(i,j-1..) || dfs(i,j+1..)) return true;  // 4-dir || SHORT-CIRCUIT (ek true→baaki call NAHI)
-             vis[i][j]=false;                                     // BACKTRACK (un-mark)
-             return index==word.size() ? true : false;           // base: poora word mila
-         exist(): har cell jaha board[i][j]==word[0] se dfs; koi true -> return true.
-     ★ CRUX (yehi atkaata tha): (1) 4 DFS ko || me JODO — SHORT-CIRCUIT (ek direction true → baaki call hi nahi) (2) visited-check EK-hi if me (bounds+mismatch ke saath) (3) base = index==word.size().
-     islands-DFS se FARAK: islands = bas fill/count. word-search = mark + recurse + UN-mark (path dobara use na ho) + return-bubble. yehi backtracking-twist.
+             if(solve(..i+1,j..) || solve(..i,j+1..) || solve(..i-1,j..) || solve(..i,j-1..)) return true;  // 4-dir || SHORT-CIRCUIT
+             vis[i][j]=false;                                       // BACKTRACK (un-mark)
+             return index==word.size();                             // base: poora word mila
+
+         bool exist(board, word):
+             vector<vector<bool>> vis(m, vector<bool>(n,false));    // m x n (m+1 nahi)
+             for(i..m) for(j..n)
+                 if(board[i][j]==word[0])
+                     if(solve(board, word, 0, i, j, m, n, vis)) return true;   // ★ EK mila = kaafi
+             return false;                                          // ★ SAARE start try, kahin nahi -> tab false
+
+     ★ CRUX: (1) 4 DFS ko || me JODO — ek direction true → baaki call hi nahi
+             (2) visited-check EK-hi if me (bounds+mismatch ke saath)
+             (3) base = index==word.size()
+             (4) exist() = "KOI EK" sawaal -> loop me sirf TRUE pe return, FALSE loop ke BAAD.
+
+     ★ BUG-TRAP: loop me `if(solve(...)==false) return false;` -> PEHLA start fail hote hi poora false,
+        baaki start dekhe hi nahi.  DRY-RUN "AAB":
+              C A A        loop pehle (0,1) wala A -> paas me B nahi -> fail -> purana code yahin FALSE
+              A A A        jabki (1,1)->(1,0)->(2,0) = A A B  -> start bacha hi nahi try karne ko
+              B C D
+        + ulta bug: word[0] kahin na mila -> loop kuch nahi karta -> end me `return true` = jhootha "mila".
+
+     ANY vs ALL (har jagah yahi):
+        "KOI EK bhi?" (any)  -> loop me: mila to return true   · loop ke BAAD: return false
+        "SAB ke SAB?" (all)  -> loop me: fail to return false  · loop ke BAAD: return true
+        (= stream ka anyMatch / allMatch, andar yahi loop)
+
+     islands-DFS se FARAK: islands = bas fill/count. word-search = mark + recurse + UN-mark (path dobara use na ho) + return-bubble.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ GENERATE PARENTHESES (LC-22)  = CONSTRAINT-guided backtracking (open/close count)
