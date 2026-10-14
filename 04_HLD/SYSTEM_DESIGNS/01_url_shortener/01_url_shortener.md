@@ -44,17 +44,17 @@ KYUN:    Twitter / SMS limit · marketing tracking · QR / print · saaf dikhna
 
 ## MOCK CUE — pehle ye, phir mock
 
-| # | dikkat | cue |
-|---|---|---|
-| [1](#d1) | har click DB pe, 200ms se tez chahiye | **CACHE (Redis)**: pehle Redis, na mile to DB se laake Redis me; TTL = link ki expiry |
-| [2](#d2) | ek App 1 lakh/sec nahi jhele, gira to band | **STATELESS + LB**: kai App box (stateless) + LB |
-| [3](#d3) | kai App, do App ek hi code bana denge | **COUNTER SERVICE + BASE62**: counter service har App ko alag number range de; number -> base62, 7 char |
-| [4](#d4) | har click pe analytics likhna | **KAFKA + DLQ**: click ka event Kafka me, turant 302; baar-baar fail -> DLQ |
-| [5](#d5) | 5 saal ka ~90 TB ek machine me nahi | **SHARDING + REPLICATION**: shortCode se tukde, har tukde ki 3 copy alag AZ |
-| [6](#d6) | write ke beech copy wala node gira | **WAL + QUORUM**: DB pehle disk ki log file me likhe, phir table (gira to log se wapas); done tab jab 3 me se 2 copy ne haan bola |
-| [7](#d7) | naya link, turant click -> 404 | **404 FIX (Redis me turant)**: banate hi Redis me bhi daalo; ya 2 copy me likho + 2 se padho, ek common milegi |
-| [8](#d8) | LB khud gir gaya | **ROUTE 53 FAILOVER**: do LB + Route 53 health check; region gaya to doosra region |
-| [9](#d9) | script se raat me 10 lakh link | **RATE LIMIT + WAF**: API Gateway pe user / IP se limit; long URL malware list se milao + WAF |
+| # | dikkat | cue | POOCHEGA -> jawab |
+|---|---|---|---|
+| [1](#d1) | har click DB pe, 200ms se tez chahiye | **CACHE (Redis)**: pehle Redis, na mile to DB se laake Redis me; TTL = link ki expiry | "cache me sab 180 billion link?" -> nahi, sirf HOT link; jagah bhari to LRU (sabse kam chhua nikalo), miss pe DB se laake cache me |
+| [2](#d2) | ek App 1 lakh/sec nahi jhele, gira to band | **STATELESS + LB**: kai App box (stateless) + LB | "stateless kyun zaroori?" -> session App ki RAM me = agli request doosre box pe gayi to data gayab; sab Redis / DB me -> koi bhi box koi bhi request |
+| [3](#d3) | kai App, do App ek hi code bana denge | **COUNTER SERVICE + BASE62**: counter service har App ko alag number range de; number -> base62, 7 char | "counter service khud gira?" -> Apps ke paas abhi ki range bachi (1000 number), kaam chalta; tab tak counter ka backup uth jaata |
+| [4](#d4) | har click pe analytics likhna | **KAFKA + DLQ**: click ka event Kafka me, turant 302; baar-baar fail -> DLQ | "302 ya 301?" -> 302: 301 pe browser cache kar leta, server tak aata hi nahi -> click gine nahi jaate, expiry tootti |
+| [5](#d5) | 5 saal ka ~90 TB ek machine me nahi | **SHARDING + REPLICATION**: shortCode se tukde, har tukde ki 3 copy alag AZ | "ek link viral, ek shard garam?" -> wo Redis se hi serve hota, shard tak kam aata |
+| [6](#d6) | write ke beech copy wala node gira | **WAL + QUORUM**: DB pehle disk ki log file me likhe, phir table (gira to log se wapas); done tab jab 3 me se 2 copy ne haan bola | "3 me se 2 kyun, sab 3 kyun nahi?" -> 3 ka intezaar = ek dheema node sabko dheema kare; 2 = ek gire tab bhi likh sakte |
+| [7](#d7) | naya link, turant click -> 404 | **404 FIX (Redis me turant)**: banate hi Redis me bhi daalo; ya 2 copy me likho + 2 se padho, ek common milegi | "R=1 rakh do (tez), phir?" -> W=2 + R=1 = 3, overlap pakka nahi -> purana dikh sakta (yahi 404) |
+| [8](#d8) | LB khud gir gaya | **ROUTE 53 FAILOVER**: do LB + Route 53 health check; region gaya to doosra region | "Route 53 ko kaise pata LB mara?" -> har ~30 sec health check, 3 baar fail -> DNS jawab se us LB ka IP hata deta |
+| [9](#d9) | script se raat me 10 lakh link | **RATE LIMIT + WAF**: API Gateway pe user / IP se limit; long URL malware list se milao + WAF | "kai gateway box, ginti kahan?" -> shared Redis counter (INCR + TTL), sab box ek hi ginti dekhein |
 
 REDIRECT kaunsa? -> **302** (301 nahi): 301 pe browser cache kar leta, server tak aata hi nahi -> click gine nahi jaate, expiry toot-ti
 
