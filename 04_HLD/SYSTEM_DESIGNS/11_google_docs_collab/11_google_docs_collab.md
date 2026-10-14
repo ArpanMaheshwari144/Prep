@@ -34,16 +34,16 @@ NUMBERS: ~100M user · ~30-40M DAU · edits / sec BAHUT — WRITE-DOMINATED (har
 
 ## MOCK CUE — pehle ye, phir mock
 
-| # | dikkat | cue |
-|---|---|---|
-| [1](#d1) | do log ne saath save kiya, baad wale ne pehle ka mitaya | **OPERATION bhejo**: poora text nahi, sirf operation bhejo ("yahan ye daala / hataya") |
-| [2](#d2) | B ko A ka edit kab dikhega | **WEBSOCKET**: WebSocket: do-tarfa khula connection |
-| [3](#d3) | A server-1, B server-2 | **REDIS PUB/SUB**: Redis pub/sub: A ka edit Redis pe, us doc ko sun rahe saare servers tak |
-| [4](#d4) | dono ne ek saath position 0 pe type kiya | **OT (ya CRDT)**: OT: doosre ka operation khiska do, dono taraf same niyam (ya CRDT) |
-| [5](#d5) | har keystroke pe DB hit | **BATCH + EDIT LOG (Cassandra)**: Redis me jama karo, thodi der me batch me DB; edit log Cassandra me server ke version number ke kram me |
-| [6](#d6) | doc kholne pe 10 lakh operation | **SNAPSHOT**: har kuch hazaar op pe poora text save (snapshot); kholna = snapshot + baad ke op |
-| [7](#d7) | network ek second toota, typing rukegi? | **CAP: doc = AP, permission = CP**: doc edit = AP (type karte raho, baad me sync); permission = CP, alag SQL |
-| [8](#d8) | crore WebSocket connection | **CONNECTION SERVER (docId)**: alag connection server; docId se baanto, ek doc ke saare editor ek server pe |
+| # | dikkat | cue | POOCHEGA -> jawab |
+|---|---|---|---|
+| [1](#d1) | do log ne saath save kiya, baad wale ne pehle ka mitaya | **OPERATION bhejo**: poora text nahi, sirf operation bhejo ("yahan ye daala / hataya") | "operation me kya-kya?" -> { docId, userId, type, position, char, baseVersion }; baseVersion se pata kaun-se ops concurrent the |
+| [2](#d2) | B ko A ka edit kab dikhega | **WEBSOCKET**: WebSocket: do-tarfa khula connection | "connection beech me toota?" -> reconnect (backoff) + aakhri version bataye ("v120 pe tha") -> server v121 se aage ke ops bheje |
+| [3](#d3) | A server-1, B server-2 | **REDIS PUB/SUB**: Redis pub/sub: A ka edit Redis pe, us doc ko sun rahe saare servers tak | "Redis pub/sub hi gira?" -> replica pe switch (Sentinel); kuch second live update ruke, edit kho nahi (log me hai) |
+| [4](#d4) | dono ne ek saath position 0 pe type kiya | **OT (ya CRDT)**: OT: doosre ka operation khiska do, dono taraf same niyam (ya CRDT) | "transform kaun karta, client ya server?" -> dono: server kram tay kare (version no.) + aaye op ko transform; client apne pending ops ko |
+| [5](#d5) | har keystroke pe DB hit | **BATCH + EDIT LOG (Cassandra)**: Redis me jama karo, thodi der me batch me DB; edit log Cassandra me server ke version number ke kram me | "op Redis buffer me, Redis crash -> op gaya?" -> client op apne paas rakhe jab tak ACK na aaye, reconnect pe dobara; opId se server skip kare |
+| [6](#d6) | doc kholne pe 10 lakh operation | **SNAPSHOT**: har kuch hazaar op pe poora text save (snapshot); kholna = snapshot + baad ke op | "snapshot banate waqt naye edit?" -> snapshot ek version tak (v1000); load = snapshot + v1001 se aage ke ops, kuch nahi rukta |
+| [7](#d7) | network ek second toota, typing rukegi? | **CAP: doc = AP, permission = CP**: doc edit = AP (type karte raho, baad me sync); permission = CP, alag SQL | "access hata diya, wo offline type kar raha tha?" -> reconnect pe pehle permission check (SQL, CP), access nahi to pending ops reject |
+| [8](#d8) | crore WebSocket connection | **CONNECTION SERVER (docId)**: alag connection server; docId se baanto, ek doc ke saare editor ek server pe | "doc wala server gira?" -> ring pe agla server doc le leta; clients reconnect, snapshot + ops se load, version bata ke baaki ops |
 
 ---
 
