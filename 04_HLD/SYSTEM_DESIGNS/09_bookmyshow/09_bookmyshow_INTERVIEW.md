@@ -44,15 +44,15 @@ BOL:      "For the booking itself I'd pick consistency: I'd rather reject a writ
 
 ## MOCK CUE — pehle ye, phir mock
 
-| # | dikkat | cue |
-|---|---|---|
-| [1](#d1) | do alag user ne ek saath A1 book ki | **ATOMIC UPDATE**: check + book ek hi UPDATE: "book karo SIRF agar available"; doosre ko 0 row |
-| [2](#d2) | seat chuni, 3 min payment | **HOLD + EXPIRY**: seat 'held' + kab tak (5 min); booking ka UPDATE time nikle hold ko khaali maane |
-| [3](#d3) | "Pay" do baar daba | **IDEMPOTENCY KEY**: client key banaye, retry pe wahi; dobara aaye to saved result |
-| [4](#d4) | book koi-koi, seat map sab dekh rahe | **CACHE + READ REPLICA**: dekhna Redis + replica se, booking primary pe |
-| [5](#d5) | popular release, lakhon log ek seat pe | **QUEUE + WAITING ROOM**: Kafka + har show ka worker ek-ek karke; waiting room; darwaze pe Redis ginti, baaki "housefull" |
-| [6](#d6) | Redis restart, saara browse DB pe | **REDIS CLUSTER + STAMPEDE**: Redis cluster; dekhna replica se; cache khaali ho to sirf ek rebuild kare |
-| [7](#d7) | App box gira, 500 logon ka hold | **STATELESS + LB**: hold DB me hai, box me nahi; kai App (stateless) + LB |
+| # | dikkat | cue | POOCHEGA -> jawab |
+|---|---|---|---|
+| [1](#d1) | do alag user ne ek saath A1 book ki | **ATOMIC UPDATE**: check + book ek hi UPDATE: "book karo SIRF agar available"; doosre ko 0 row | "4 seat chuni, 3 mili 1 nahi?" -> chaaron EK transaction me; rows != 4 -> ROLLBACK; seat_id ke kram me lock (deadlock nahi) |
+| [2](#d2) | seat chuni, 3 min payment | **HOLD + EXPIRY**: seat 'held' + kab tak (5 min); booking ka UPDATE time nikle hold ko khaali maane | "hold Redis me ya DB me?" -> DB column held_until: hold + booking ek row = ek sach; SQL me TTL nahi -> UPDATE me held_until < now() = khaali, sweeper sirf safai |
+| [3](#d3) | "Pay" do baar daba | **IDEMPOTENCY KEY**: client key banaye, retry pe wahi; dobara aaye to saved result | "key kaun banaye?" -> CLIENT; server banaye to retry = nayi request = nayi key = double charge |
+| [4](#d4) | book koi-koi, seat map sab dekh rahe | **CACHE + READ REPLICA**: dekhna Redis + replica se, booking primary pe | "seat book hui, map purana dikha?" -> WebSocket / SSE push us show ke users ko; screen 1-2 sec purani chale, asli faisla booking UPDATE |
+| [5](#d5) | popular release, lakhon log ek seat pe | **QUEUE + WAITING ROOM**: Kafka + har show ka worker ek-ek karke; waiting room; darwaze pe Redis ginti, baaki "housefull" | "show 1 ki request ek-ek karke kaise?" -> Kafka key = show_id -> ek partition -> ek consumer; alag show = parallel |
+| [6](#d6) | Redis restart, saara browse DB pe | **REDIS CLUSTER + STAMPEDE**: Redis cluster; dekhna replica se; cache khaali ho to sirf ek rebuild kare | "Redis poora gira, browse kahan?" -> read replica pe (replica badhao), primary pe KABHI nahi; SQL failover 10-30 sec, us beech retry |
+| [7](#d7) | App box gira, 500 logon ka hold | **STATELESS + LB**: hold DB me hai, box me nahi; kai App (stateless) + LB | "box gira tab payment chal rahi thi?" -> idempotency key client ke paas -> doosre box pe retry, double charge nahi |
 
 ---
 
