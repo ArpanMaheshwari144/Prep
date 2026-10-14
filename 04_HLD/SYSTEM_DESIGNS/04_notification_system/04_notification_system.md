@@ -51,17 +51,17 @@ BOL:      "Kafka absorbs the burst and workers drain at their own pace. Sale tim
 
 ## MOCK CUE — pehle ye, phir mock
 
-| # | dikkat | cue |
-|---|---|---|
-| [1](#d1) | order email ke intezaar me ruka, email down = order fail | **ASYNC (Kafka)**: Order event Kafka pe daal ke turant laute; email down ho to event queue me pada rahe |
-| [2](#d2) | teen channel, SMS slow to push / email bhi atke | **CHANNEL-WISE QUEUE**: har channel ki apni queue + apne worker (push FCM, email SES, SMS Twilio) |
-| [3](#d3) | SMS band tha, phir bhi raat 2 baje bheja | **PREFERENCE + TEMPLATE**: bhejne se pehle preference dekho (channel on? quiet hours?), template, phir channel |
-| [4](#d4) | ack kho gaya, retry, user ko do email | **IDEMPOTENCY (Redis SETNX)**: bhejne se pehle Redis me event ki apni ID "set if not exists"; pehle se hai to skip |
-| [5](#d5) | key laga di, par provider call fail | **IDEMPOTENCY: SENDING -> SENT**: key ki do haalat: "sending" (chhoti expiry) -> success pe "sent"; worker mara to "sending" khud mite |
-| [6](#d6) | provider fail, hum turant retry maar rahe | **BACKOFF + JITTER + DLQ**: retry ke beech dugna intezaar + thoda random; had paar -> DLQ + alert |
-| [7](#d7) | provider slow, saare worker 30 sec me phase | **TIMEOUT + CIRCUIT BREAKER + BACKUP PROVIDER**: chhota timeout, har channel ke do provider, kai baar fail to circuit khulo -> backup |
-| [8](#d8) | OTP marketing ke 50,000 ke peeche | **PRIORITY (alag topic)**: alag Kafka topic + alag worker: OTP / order / marketing |
-| [9](#d9) | burst, provider ne 429 diya | **RAFTAAR (provider rate limit)**: worker khud raftaar kam kare (provider ki limit ke andar), 429 pe ruk ke retry, drop nahi |
+| # | dikkat | cue | POOCHEGA -> jawab |
+|---|---|---|---|
+| [1](#d1) | order email ke intezaar me ruka, email down = order fail | **ASYNC (Kafka)**: Order event Kafka pe daal ke turant laute; email down ho to event queue me pada rahe | "Kafka me likhne se pehle Order svc gira (order DB me ban gaya)?" -> outbox: order + event EK DB transaction me, relay baad me Kafka bheje |
+| [2](#d2) | teen channel, SMS slow to push / email bhi atke | **CHANNEL-WISE QUEUE**: har channel ki apni queue + apne worker (push FCM, email SES, SMS Twilio) | "ek event, teen channel -> teen baar banega?" -> Notification svc ek event se teen message, har topic me ek; key = eventId + channel |
+| [3](#d3) | SMS band tha, phir bhi raat 2 baje bheja | **PREFERENCE + TEMPLATE**: bhejne se pehle preference dekho (channel on? quiet hours?), template, phir channel | "quiet hours me aaya, phenk doge?" -> nahi; marketing subah tak rok (delay queue), OTP / security quiet hours me bhi |
+| [4](#d4) | ack kho gaya, retry, user ko do email | **IDEMPOTENCY (Redis SETNX)**: bhejne se pehle Redis me event ki apni ID "set if not exists"; pehle se hai to skip | "Redis hi gira, idempotency kaise?" -> DB me UNIQUE(eventId, channel), Redis sirf tez raasta |
+| [5](#d5) | key laga di, par provider call fail | **IDEMPOTENCY: SENDING -> SENT**: key ki do haalat: "sending" (chhoti expiry) -> success pe "sent"; worker mara to "sending" khud mite | "provider ne bheja par jawab nahi aaya?" -> do email ho sakte; SES / Twilio idempotency key nahi lete -> chhota risk maana hua |
+| [6](#d6) | provider fail, hum turant retry maar rahe | **BACKOFF + JITTER + DLQ**: retry ke beech dugna intezaar + thoda random; had paar -> DLQ + alert | "Kafka me delay nahi, retry queue kaise?" -> alag retry topics (retry-1m, retry-10m); worker 'kab chalana' dekhe, abhi nahi to ruke |
+| [7](#d7) | provider slow, saare worker 30 sec me phase | **TIMEOUT + CIRCUIT BREAKER + BACKUP PROVIDER**: chhota timeout, har channel ke do provider, kai baar fail to circuit khulo -> backup | "OPEN se HALF-OPEN kab?" -> tay waqt (~30 sec) baad 1-2 test call; chali to CLOSED, fail to phir OPEN |
+| [8](#d8) | OTP marketing ke 50,000 ke peeche | **PRIORITY (alag topic)**: alag Kafka topic + alag worker: OTP / order / marketing | "OTP ka bhi provider limit laga?" -> OTP ke liye alag provider account / short code, marketing usse kha na sake |
+| [9](#d9) | burst, provider ne 429 diya | **RAFTAAR (provider rate limit)**: worker khud raftaar kam kare (provider ki limit ke andar), 429 pe ruk ke retry, drop nahi | "workers badhe (autoscale), hissa kaun badlega?" -> shared Redis bucket: kitne bhi worker, total rate wahi |
 | [10](#d10) | "bhej diya" != "mil gaya" | **DELIVERY TRACKING (webhook)**: provider webhook (delivered / bounced) -> tracking DB; push me app khud ack bheje |
 | [11](#d11) | 1 crore logon ko ek saath offer | **CAMPAIGN (batch + low lane)**: turant 202; batch job 1000-1000 ke tukde Kafka me; preference + low lane + provider ki raftaar; key (campaign_id, user_id); push me FCM topic |
 
