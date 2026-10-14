@@ -71,17 +71,17 @@ DO BLOCK JO DESIGN CHALATE:
 
 ## MOCK CUE — pehle ye, phir mock
 
-| # | dikkat | cue |
-|---|---|---|
-| [1](#d1) | 2 crore connection khuli, memory | **WEBSOCKET + EVENT LOOP**: kuch hi thread, laakhon connection (event loop); server gira to log alag-alag der baad wapas judein |
-| [2](#d2) | A server-1, B server-7 | **Redis: B KIS SERVER pe**: Redis me "B kis server pe", mera server us server ko call kare |
-| [3](#d3) | B offline, message kahan | **OFFLINE: DB pehle + PUSH NOTIFICATION**: pehle DB me likho, phir bhejo; B juda nahi to push notification |
-| [4](#d4) | 1.2 TB roz, 46k write/sec | **PARTITION KEY chat_id + SORT message_id**: chat_id se tukde, chat ke andar message_id se kram |
-| [5](#d5) | 500 ka group, 500 baar likhai? | **EK COPY (fanout nahi)**: ek hi copy chat ke neeche, sab wahi padhein |
-| [6](#d6) | kiske kitne unread | **NISHAAN (read_upto)**: har member ka nishaan "yahan tak padha", unread = uske baad kitne |
-| [7](#d7) | do tick / neeli tick | **delivered_upto + read_upto**: wahi nishaan, do number: "yahan tak mila" + "yahan tak padha" |
-| [8](#d8) | 10 lakh broadcast, tick ka kya | **GROUP SIZE LIMIT**: group size bandha (~1000); channel / broadcast me tick band |
-| [9](#d9) | retry, B ko ek baat do baar | **IDEMPOTENCY (clientMsgId)**: message ID client banaye, wahi ID dobara aaye to purana lautao |
+| # | dikkat | cue | POOCHEGA -> jawab |
+|---|---|---|---|
+| [1](#d1) | 2 crore connection khuli, memory | **WEBSOCKET + EVENT LOOP**: kuch hi thread, laakhon connection (event loop); server gira to log alag-alag der baad wapas judein | "WebSocket kyun, polling / SSE kyun nahi?" -> polling = har 5 sec "kuch aaya?" (100 me 1 kaam ki) · SSE = sirf server -> client · chat dono taraf + turant -> WebSocket |
+| [2](#d2) | A server-1, B server-7 | **Redis: B KIS SERVER pe**: Redis me "B kis server pe", mera server us server ko call kare | "Redis diary me B ka server galat (B khiska)?" -> server-7 pe B nahi mila -> message DB me pada hai -> B naye server pe judte hi catch-up |
+| [3](#d3) | B offline, message kahan | **OFFLINE: DB pehle + PUSH NOTIFICATION**: pehle DB me likho, phir bhejo; B juda nahi to push notification | "B ke 3 device?" -> har device ka apna connection + cursor; message sab pe, ek pe padha to baaki pe bhi neeli |
+| [4](#d4) | 1.2 TB roz, 46k write/sec | **PARTITION KEY chat_id + SORT message_id**: chat_id se tukde, chat ke andar message_id se kram | "partition user_id se kyun nahi?" -> ek chat do jagah bat-ti (A ke bheje A ke, B ke B ke) -> aakhri 50 ke liye do jagah padho; chat_id = ek read |
+| [5](#d5) | 500 ka group, 500 baar likhai? | **EK COPY (fanout nahi)**: ek hi copy chat ke neeche, sab wahi padhein | "500 me 300 online, bhejna kaise?" -> routing diary se members ke servers nikaalo, har server ko EK call 'ye message, in members ko' |
+| [6](#d6) | kiske kitne unread | **NISHAAN (read_upto)**: har member ka nishaan "yahan tak padha", unread = uske baad kitne | "unread count kaise?" -> chat ka aakhri seq - mera read seq (ghatao, gino nahi) |
+| [7](#d7) | do tick / neeli tick | **delivered_upto + read_upto**: wahi nishaan, do number: "yahan tak mila" + "yahan tak padha" | "group me do tick kab?" -> sab members ka delivered_upto >= message id -> sabse chhota cursor dekho |
+| [8](#d8) | 10 lakh broadcast, tick ka kya | **GROUP SIZE LIMIT**: group size bandha (~1000); channel / broadcast me tick band | "channel me 10 lakh ko kaise?" -> Kafka se fan-out workers members ke pages me; online ko push, baaki catch-up pe |
+| [9](#d9) | retry, B ko ek baat do baar | **IDEMPOTENCY (clientMsgId)**: message ID client banaye, wahi ID dobara aaye to purana lautao | "clientMsgId kitni der yaad?" -> retry window: Redis SET NX EX 3600, ya DB me (chat_id, clientMsgId) UNIQUE |
 | [10](#d10) | kram kiska time | **SERVER SEQUENCE ID**: kram server ki ID se (time se badhti), phone ki ghadi se nahi |
 | [11](#d11) | 5 MB video isi raaste? | **PRESIGNED URL (S3)**: file S3 me (presigned URL), message me sirf pata |
 | [12](#d12) | online / last-seen | **PRESENCE (heartbeat + TTL)**: Redis me "online" chhoti TTL, app heartbeat se badhaye; band hua to apne aap offline |
