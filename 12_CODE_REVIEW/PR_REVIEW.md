@@ -55,7 +55,7 @@ SAHI:            local variable
 ★ 7-Oct chhoota (Transfer): tune L5 static final URL pakda, wo constant hai, theek hai.
   Asli dikkat non-final field hoti hai.
 ★ 13-Oct chhoota (KYC: private KycRequest current; current = r;)
-★ 14-Oct chhoota (Loan: private Loan loan; loan = findById(..))
+★ 14-Oct (Loan: private Loan loan) dekha tha, LIKHNA bhoola -> jo dikhe usi line pe turant comment
 ```
 
 ```
