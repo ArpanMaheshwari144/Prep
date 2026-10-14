@@ -24,6 +24,12 @@
 → **Lambda = anonymous function** — naam nahi, class nahi, sirf `(parameters) -> { body }`
 → Boilerplate hatao → code readable banao → **Streams API** use kar pao
 
+### ★ ASLI FARAK — line ginti NAHI
+→ Lambda koi nayi taakat nahi deti (jo lambda kare, anonymous class bhi kar leti). Tez bhi nahi chalta.
+→ "5 line ki jagah 1 line" sirf chhote example me. Asli code (group + average + sort + top 3) me loop ~16 line, stream ~10 line — farak kam.
+→ Asli fayda = **LOGIC ko argument ki tarah bhejo** (filter / groupingBy / sorted) -> temp map, index, `Math.min` jaisi cheezein library sambhalti -> bug ki jagah kam.
+→ Nuksaan bhi sach: lambi stream chain debug mushkil (`peek` lagana padta, loop me seedha breakpoint) · generic syntax bhaari (`Map.Entry.<String, Double>comparingByValue()`). Chain lambi ho to loop / helper method me todo.
+
 ---
 
 ## Old vs New
