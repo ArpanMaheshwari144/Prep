@@ -43,15 +43,15 @@ NUMBERS: storage ka hisaab bekaar — per key ek counter + TTL, bas
 
 ## MOCK CUE — pehle ye, phir mock
 
-| # | dikkat | cue |
-|---|---|---|
-| [1](#d1) | teen server, ginti bat gayi | **CENTRAL COUNTER (Redis)**: ginti ek jagah Redis me, counter pe TTL (window khatam -> 0) |
-| [2](#d2) | do request saath, dono ko jagah | **ATOMIC (INCR / Lua)**: padho-badhao-likho ek hi kaam: Redis INCR; kai step ho to Lua script; EXPIRE sirf pehli baar |
-| [3](#d3) | reject wali request bhi andar ghoom aayi | **API GATEWAY**: limiter sabse aage API Gateway pe, 429 wahin se |
-| [4](#d4) | Redis gir gaya | **REDIS REPLICA + FAIL OPEN**: Redis ki copy alag AZ, apne aap badle; poora gaya to normal API chalne do, payment / OTP roko |
-| [5](#d5) | ek user teen region se | **HOME REGION**: user ka ek HOME region; request kahin se aaye, ginti wahin |
-| [6](#d6) | baar-baar maar raha, 429 se nahi rukta | **KAFKA + WAF**: har 429 Kafka me, pattern service baar-baar wala pakde, WAF me ban |
-| [7](#d7) | limiter sahi, phir bhi server gira | **LOAD SHEDDING (503)**: system kitna jhele uski had; CPU 90% pe nayi request 503 (bijli wala load shedding) |
+| # | dikkat | cue | POOCHEGA -> jawab |
+|---|---|---|---|
+| [1](#d1) | teen server, ginti bat gayi | **CENTRAL COUNTER (Redis)**: ginti ek jagah Redis me, counter pe TTL (window khatam -> 0) | "59th sec pe 100, 61st pe 100 -> 2 sec me 200?" -> haan, fixed window ki kamzori; sliding window (pichhle 60 sec ki asli ginti) ya token bucket |
+| [2](#d2) | do request saath, dono ko jagah | **ATOMIC (INCR / Lua)**: padho-badhao-likho ek hi kaam: Redis INCR; kai step ho to Lua script; EXPIRE sirf pehli baar | "token bucket me Redis me kya?" -> tokens bache + aakhri refill ka time; Lua me (abhi - last) x rate jodo, 1 ghatao, dono save |
+| [3](#d3) | reject wali request bhi andar ghoom aayi | **API GATEWAY**: limiter sabse aage API Gateway pe, 429 wahin se | "429 pe client ko kya?" -> Retry-After header (bucket ka agla refill kab) + X-RateLimit-Remaining |
+| [4](#d4) | Redis gir gaya | **REDIS REPLICA + FAIL OPEN**: Redis ki copy alag AZ, apne aap badle; poora gaya to normal API chalne do, payment / OTP roko | "failover me aakhri counts gaye?" -> haan, replica async; rate limit ke liye chalta (paisa nahi) |
+| [5](#d5) | ek user teen region se | **HOME REGION**: user ka ek HOME region; request kahin se aaye, ginti wahin | "local + async sync me kitna over-allow?" -> sync interval jitna (~1 sec), us beech har region poori limit de sakta; soft limit ke liye theek |
+| [6](#d6) | baar-baar maar raha, 429 se nahi rukta | **KAFKA + WAF**: har 429 Kafka me, pattern service baar-baar wala pakde, WAF me ban | "galat banda ban (office NAT IP)?" -> ban pe TTL (~24 ghante) + manual unblock |
+| [7](#d7) | limiter sahi, phir bhi server gira | **LOAD SHEDDING (503)**: system kitna jhele uski had; CPU 90% pe nayi request 503 (bijli wala load shedding) | "kaunsi request phenkoge?" -> priority: login / payment rakho, recommendations / analytics pehle girao |
 | [8](#d8) | attack aaya, limiter gayab | **LOCAL FALLBACK**: Redis gaya to har node apni memory me motamoti gine |
 | [9](#d9) | IP pe gin rahe the | **KEY = user_id / API key**: login wale ko user_id / API key se gino; login se pehle IP, dheeli limit + WAF |
 
