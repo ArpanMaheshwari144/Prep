@@ -55,6 +55,7 @@ SAHI:            local variable
 ★ 7-Oct chhoota (Transfer): tune L5 static final URL pakda, wo constant hai, theek hai.
   Asli dikkat non-final field hoti hai.
 ★ 13-Oct chhoota (KYC: private KycRequest current; current = r;)
+★ 14-Oct chhoota (Loan: private Loan loan; loan = findById(..))
 ```
 
 ```
@@ -93,6 +94,7 @@ NAAM:            ★ OWNER CHECK nahi (IDOR)
 ASAR:            koi bhi kisi ka bhi account dekh / paisa nikaal sakta
 SAHI:            token se user lo, ye ID usi ki hai? nahi to 403. HAR method pe alag dekho.
 BOL:             "I don't see an owner check here — is it handled in a filter?"
+★ 14-Oct: GET /loan/{id} pe pakda · doPrepay(loanId) + close(id) pe chhoota -> HAR method alag
 ```
 
 ```
@@ -199,6 +201,7 @@ SAHI:            UPDATE acc SET bal = bal - ? WHERE id = ? AND bal >= ?   (rows 
 YAAD:            ye RETRY wali idempotency se ALAG hai. Idempotency = same request do baar.
                  Ye = do alag request ek hi waqt.
 ★ 7-Oct chhoota (Transfer)
+★ 14-Oct chhoota (Loan: if (acc.getBalance() >= amt) -> setBalance)
 ```
 
 ```
@@ -251,6 +254,7 @@ CODE ME DIKHE:   POST /transfer  ·  /pay  ·  /refund   (request me koi unique 
 NAAM:            ★ idempotency nahi
 ASAR:            retry / double click -> do baar charge
 SAHI:            Idempotency-Key header, DB me unique -> doosri baar wahi purana jawab
+★ 14-Oct chhoota (Loan: POST /doPrepay)
 ```
 
 ```
