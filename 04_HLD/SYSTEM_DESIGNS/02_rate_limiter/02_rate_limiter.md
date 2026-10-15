@@ -59,7 +59,7 @@ ALGO kaunsa? -> **TOKEN BUCKET**: bucket me token bharte (1/sec, max N), request
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
-  User -> Route 53 -> ALB (multi-AZ) -> API Gateway me limiter (sabse aage, jaldi reject)
+  User -> Route 53 -> WAF (ban list) -> ALB (multi-AZ) -> API Gateway me limiter (sabse aage, jaldi reject)
   -> Redis Cluster (atomic INCR + EXPIRE / Lua, key = endpoint + user) -> limit andar? App : 429 + Retry-After
   abuse pattern -> Kafka -> Pattern Svc -> WAF ban
 

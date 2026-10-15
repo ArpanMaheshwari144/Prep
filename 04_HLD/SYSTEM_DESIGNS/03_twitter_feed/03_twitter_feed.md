@@ -67,7 +67,7 @@ AAKHRI DABBE (sab dikkat ke baad):
   WRITE: Route 53 -> ALB -> Tweet Svc -> Cassandra save -> Kafka -> Fanout workers
          -> normal follower ke Redis inbox me sirf tweet_id (LPUSH, LTRIM 800), celeb skip
   READ:  Timeline Svc -> Redis inbox (push) + celeb tweets hot-tweet cache se (pull)
-         -> merge + sort -> hydrate (id -> content) -> top 50 · media -> CDN
+         -> merge + sort -> hydrate (id -> content) -> top 50 · media S3 me, user tak CDN se
   follow: User Svc + Graph DB
 
 DB:  Tweet = Cassandra (bahut zyada, simple, write-heavy, user_id + time shard)

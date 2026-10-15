@@ -51,9 +51,10 @@ ORDER BOOK kaise? -> **PRICE-TIME priority**: SELLERS sasta upar, BUYERS mehnga 
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
-  User -> LB -> Order Svc (validate + idempotency key) -> Wallet (paisa BLOCK)
+  User -> Order Svc (validate + idempotency key) -> Wallet (paisa BLOCK)
   -> Event Log / Kafka (seq no., key = symbol) -> Matching engine (1 thread / symbol, order book RAM)
-  -> Settlement (ek txn, ya kai DB me SAGA) -> Ledger (append-only) · prices -> WebSocket (pub/sub)
+  -> Settlement (ek txn, ya kai DB me SAGA) -> Wallet DB + Portfolio DB
+  prices: Matching -> Pub/Sub -> WebSocket -> users
 
 DB:  paisa / orders = SQL + ACID · order book = RAM · ledger = append-only
      portfolio / history = read replica

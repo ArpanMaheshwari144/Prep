@@ -60,9 +60,10 @@ REDIRECT kaunsa? -> **302** (301 nahi): 301 pe browser cache kar leta, server ta
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
-  Route 53 -> API Gateway (rate limit + auth) -> 2 LB -> App (stateless, read / write alag)
+  User -> Route 53 -> 2 LB -> API Gateway (rate limit + auth) -> App (stateless, read / write alag)
   -> Redis (95% read, TTL = expiry) -> Cassandra (shard by shortCode, RF 3)
-  WRITE: Counter range + base62 -> Redis + Cassandra · click -> Kafka (analytics async, DLQ)
+  WRITE: Counter range + base62 -> Redis + Cassandra
+  click -> Kafka -> Analytics svc -> Analytics DB (fail -> DLQ), redirect ruke bina
 
 DB:  Cassandra / DynamoDB -> join nahi, transaction nahi, ek key se point read, 90 TB
      (wajah ACCESS PATTERN + SCALE hai, "NoSQL powerful" nahi; ye read-heavy hai) · Redis sirf cache

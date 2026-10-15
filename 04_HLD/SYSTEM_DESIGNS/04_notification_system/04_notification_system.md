@@ -85,6 +85,9 @@ AAKHRI DABBE ki tasveer:
 
 ```mermaid
 flowchart TD
+    n_Admin["Admin"]
+    n_Campaign_Svc["Campaign Svc"]
+    n_Campaign_DB["Campaign DB"]
     n_Order_Svc["Order Svc"]
     n_Kafka_high_medium_low["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
@@ -102,6 +105,9 @@ flowchart TD
     n_Redis["Redis"]
     n_Tracking_DB["Tracking DB"]
     n_DLQ["DLQ"]
+    n_Admin --> n_Campaign_Svc
+    n_Campaign_Svc --> n_Campaign_DB
+    n_Campaign_Svc --> n_Kafka_high_medium_low
     n_Order_Svc --> n_Kafka_high_medium_low
     n_Kafka_high_medium_low --> n_Notification_Svc
     n_Notification_Svc --> n_User_pref_DB
@@ -939,6 +945,9 @@ BOL: "Services publish events to Kafka. The notification service checks preferen
 ```
 ```mermaid
 flowchart TD
+    n_Admin["Admin"]
+    n_Campaign_Svc["Campaign Svc"]
+    n_Campaign_DB["Campaign DB"]
     n_Order_Svc["Order Svc"]
     n_Kafka_high_medium_low["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
@@ -956,6 +965,9 @@ flowchart TD
     n_Redis["Redis"]
     n_Tracking_DB["Tracking DB"]
     n_DLQ["DLQ"]
+    n_Admin --> n_Campaign_Svc
+    n_Campaign_Svc --> n_Campaign_DB
+    n_Campaign_Svc --> n_Kafka_high_medium_low
     n_Order_Svc --> n_Kafka_high_medium_low
     n_Kafka_high_medium_low --> n_Notification_Svc
     n_Notification_Svc --> n_User_pref_DB
