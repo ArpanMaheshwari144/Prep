@@ -48,6 +48,25 @@ NUMBERS: 1 lakh file / din -> ~1-2 write / sec (kam)       (1 din ~ 1,00,000 sec
 | [8](#d8) | S3 ka seedha link aage bhej diya | **CHHOTI EXPIRY wala link**: link ki umar kuch minute, owner check ke baad hi bane; DB me S3 key, URL nahi | "5 min me download poora nahi hua?" -> expiry sirf SHURU karne ki; chalu download beech me nahi katta |
 | [9](#d9) | naam .pdf, andar EXE | **MAGIC BYTES**: worker file ke pehle kuch byte padhe, type khud tay kare; mel nahi to reject | "magic bytes PDF jaise, andar virus?" -> antivirus scan (ClamAV) worker me, ya S3 malware scanning |
 
+```
+DABBA CHAIN (end state):
+  User -> Gateway / LB (auth) -> Upload Svc (metadata + presigned URL, bytes ko haath nahi)
+  -> client SEEDHA S3 pe PUT (tmp/, bade me multipart) -> complete -> Kafka -> Worker (validation, magic bytes)
+  -> DB status update -> Redis + read replica (status polling) · download = owner check + chhota presigned GET
+  Sweeper + S3 lifecycle = atki / orphan file
+
+DB:  PostgreSQL -> key lookup simple hai, par status (UPLOADING -> VALIDATING -> DONE / FAILED) ko ACID chahiye
+     files: trackingId (KEY) | ownerId | status | s3_key
+
+END ME POOCHEGA:
+  "Bytes server se kyun nahi?" -> presigned URL: server pe bojh nahi, seedha S3
+  "10x?"            -> Upload Svc box + LB · S3 khud scale · download CDN · status cache + replica
+                       · DB shard (trackingId) · worker auto-scale (queue depth pe)
+  "SPOF?"           -> validator (third-party): circuit breaker + backup provider
+  "Chal raha, kaise pata?" -> apne metric: queue depth · validator p99 + error rate · VALIDATING me atki files
+                       (health check sirf "zinda" batata, "slow" nahi)
+```
+
 ---
 
 ## DABBA 0 — sabse simple
