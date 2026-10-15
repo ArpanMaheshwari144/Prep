@@ -61,6 +61,25 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 | [8](#d8) | 22 arab row, history ka page | **KEYSET PAGINATION**: pichhle page ki aakhri entry (ts, id) yaad, agla page "usse purana", index se seedha | "same ts pe do entry, koi chhoot jaaye?" -> cursor me (ts, id) dono, id tie todti |
 | [9](#d9) | 5 saal purana data ek table me | **PARTITION + ARCHIVE**: table mahine-mahine baanto, purana tukda alag karke S3 me (DELETE nahi) | "regulator ne 2021 ka statement maanga?" -> S3 ke Parquet pe Athena query ya us mahine ka partition restore |
 
+```
+DABBA CHAIN (end state):
+  User -> LB -> Banking Svc (stateless, idempotency check)
+  -> SQL DB: EK local txn (dono ledger entry + dono balance + idempotency key + outbox)
+  -> Kafka (commit ke BAAD: SMS / fraud / analytics / statement) · Read replica = balance / history
+  Reconciliation (raat ko: snapshot + live entries vs balance -> ALERT) · Archive S3 (band mahine, delete kabhi nahi)
+
+DB:  SQL -> paisa na khoye na bane: EK local transaction (ek DB me SAGA nahi)
+     ledger = SACH (append-only, double-entry, month partition) · balance = CACHE (derived, usi txn me)
+
+END ME POOCHEGA:
+  "Ledger kahan, Kafka kab?" -> ledger SQL me usi txn me; Kafka sirf commit ke baad (outbox se)
+  "-ve balance / ulta transfer?" -> check DB me (WHERE balance >= x) · lock id ke kram me -> deadlock nahi
+  "Writes DB maar rahe (replica ke baad bhi)?" -> replica / cache sirf read; write -> SHARD by account_id
+                       (aakhri kadam, keemat: transfer local txn nahi rehta -> SAGA)
+  "10x?"            -> pehle jo toote: reads -> replica · size -> month partition · writes -> shard
+  "SPOF?"           -> DB primary (sync replica) · Banking Svc (LB + N)
+```
+
 ---
 
 ## DABBA 0 — sabse simple
