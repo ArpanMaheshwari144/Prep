@@ -49,6 +49,23 @@ NUMBERS: ~50 lakh users · ~50 lakh orders / din · normal ~250 / sec, market kh
 
 ORDER BOOK kaise? -> **PRICE-TIME priority**: SELLERS sasta upar, BUYERS mehnga upar · match jab best-bid >= best-ask · same price -> jo pehle aaya
 
+```
+DABBA CHAIN (end state):
+  User -> LB -> Order Svc (validate + idempotency key) -> Wallet (paisa BLOCK)
+  -> Event Log / Kafka (seq no., key = symbol) -> Matching engine (1 thread / symbol, order book RAM)
+  -> Settlement (ek txn, ya kai DB me SAGA) -> Ledger (append-only) · prices -> WebSocket (pub/sub)
+
+DB:  paisa / orders = SQL + ACID · order book = RAM · ledger = append-only
+     portfolio / history = read replica
+
+END ME POOCHEGA:
+  "10x?"            -> Order Svc stateless (box + LB) · read replica · Matching ko copy NAHI, SHARD BY SYMBOL
+                       · Kafka partition (key = symbol) · WebSocket box badhao
+  "Matching engine kyun ek thread?" -> do copy = do book = double match; ek symbol ek engine pe
+  "Engine crash?"   -> event log me seq no. se replay, book wapas ban jaati (audit bhi wahi)
+  "Limit ya market?" -> LIMIT = price pakka · MARKET = time pakka
+```
+
 ---
 
 ## DABBA 0 — sabse simple
