@@ -54,6 +54,24 @@ NUMBERS: ~1 TB · ~1M QPS · read-heavy
 | [5](#d5) | garam key expire, 1000 request ek saath DB pe | **STAMPEDE (lock)**: sirf ek DB se laaye (lock), baaki ruk ke cache se; garam key ko expire se pehle refresh | "haarne wale kitni der rukenge?" -> chhota wait + kuch retry; phir bhi nahi to purani value do, DB pe mat bhejo |
 | [6](#d6) | ek key itni popular, uska node mar raha | **HOT KEY + L1 CACHE**: us key ki kai node pe copy; app ke andar 1-2 sec ka chhota cache (L1) | "hot key pehchanoge kaise?" -> node metrics (ek key pe ops/sec), redis-cli --hotkeys; had paar = copy / L1 me |
 
+```
+DABBA CHAIN (end state):
+  App + L1 local cache (nano-sec, hot key ka pehla ilaaj) -> Cache client (consistent hashing: key -> node)
+  -> Node (HashMap + DLL = LRU, + TTL) primary + replica (alag AZ) -> miss pe DB (source of truth)
+  READ = cache-aside
+
+DB:  cache = in-memory KV (RAM, <1ms, join nahi, sirf key se) · DB peeche source of truth
+     cache AP ki taraf: speed > consistency, eventual chalta
+
+END ME POOCHEGA:
+  "Key kis node pe?"  -> hash % N nahi (node juda to sab shift) -> CONSISTENT HASHING + virtual nodes
+  "Stale data?"       -> TTL + explicit invalidation
+  "Stampede?"         -> mutex / soft-TTL / pre-warm
+  "Hot key?"          -> copies + L1 local cache
+  "SPOF?"             -> node (replica promote) · cache client config (har app me copy)
+  "Chal raha, kaise pata?" -> HIT RATIO sabse zaroori (gira = kuch toota) · p99 · evictions · alert
+```
+
 ---
 
 ## DABBA 0 — sabse simple
