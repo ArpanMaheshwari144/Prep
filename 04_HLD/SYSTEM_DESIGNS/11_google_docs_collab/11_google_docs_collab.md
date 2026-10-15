@@ -45,6 +45,24 @@ NUMBERS: ~100M user · ~30-40M DAU · edits / sec BAHUT — WRITE-DOMINATED (har
 | [7](#d7) | network ek second toota, typing rukegi? | **CAP: doc = AP, permission = CP**: doc edit = AP (type karte raho, baad me sync); permission = CP, alag SQL | "access hata diya, wo offline type kar raha tha?" -> reconnect pe pehle permission check (SQL, CP), access nahi to pending ops reject |
 | [8](#d8) | crore WebSocket connection | **CONNECTION SERVER (docId)**: alag connection server; docId se baanto, ek doc ke saare editor ek server pe | "doc wala server gira?" -> ring pe agla server doc le leta; clients reconnect, snapshot + ops se load, version bata ke baaki ops |
 
+```
+DABBA CHAIN (end state):
+  CDN (static app) -> LB (docId se consistent routing) -> Conn-Server (WebSocket + OT + buffer)
+  -> Redis pub/sub (doosre Conn-Servers tak fanout) -> unke client ko PUSH
+  -> Redis buffer -> BATCH -> Cassandra op log (docId, version) + snapshot · permissions = SQL
+
+DB:  op log = Cassandra (append-heavy log; Mongo bhi chalega) · snapshot taaki doc jaldi khule
+     permissions = alag SQL (relations + CP) · edits AP (typing kabhi na ruke)
+
+END ME POOCHEGA:
+  "Do log ek jagah type?" -> OT: concurrent ops ko transform, sab converge · (CRDT = har char unique id)
+  "Kram kaun tay kare?"   -> server version deta; timestamp sirf dikhane ke liye
+  "10x?"            -> alag connection tier · Conn-Server SHARD by docId · Redis replicate
+                       · DB write buffer + batch · doc load = snapshot + baad ke ops
+  "SPOF?"           -> Conn-Server (doosre pe reconnect), Redis (replica)
+  "Chal raha, kaise pata?" -> edit propagation p99 · WebSocket drop rate · buffer lag · alert
+```
+
 ---
 
 ## DABBA 0 — sabse simple
