@@ -48,6 +48,24 @@ NUMBERS: 10 lakh user x 5 / din = 50 lakh read / din = ~50 / sec (spike 5-10x = 
 | [8](#d8) | subah 8 baje sab ek saath | **STATELESS + LB + REPLICA**: kai Feed service box (stateless) + LB; cache miss replica se padho | "pata hai 8 baje spike aayega?" -> 7:45 pe pehle se box badhao (scheduled scaling) + cache warm |
 | [9](#d9) | "cricket" search | **SEARCH INDEX (Elasticsearch)**: alag search index (Elasticsearch); worker save ke saath index bhi bhare | "ES aur DB alag ho gaye?" -> DB = sach, ES dobara bana sakte (reindex); ES likhne me fail -> retry queue |
 
+```
+DABBA CHAIN (end state):
+  WRITE: Sources -> Fetcher (timeout / retry / skip) -> Kafka (spike sambhaale) -> Worker (clean + dedupe + category)
+         -> DB + cache
+  READ:  LB -> Feed Svc (kai box) -> Redis (99%, latest feed precompute) -> miss pe read replica
+         search = Elasticsearch · purani khabar = Archive
+
+DB:  NoSQL (Mongo / Cassandra) -> bahut data, simple, ACID nahi chahiye, eventual chalega
+     (paisa hota to hamesha SQL; "data ka nature dekho, phir DB") · read-heavy hissa Redis aage se sambhaalta
+
+END ME POOCHEGA:
+  "Write aur read alag kyun?" -> fetch background me, user ko hamesha cache se taiyaar feed
+  "10x?"            -> Feed Svc box + LB · Redis cluster + replica · DB read replica + archive
+                       · Kafka partition · worker parallel
+  "SPOF?"           -> "ek box gira to sab?" -> wahi replicate · source down -> circuit breaker + skip
+  "Chal raha, kaise pata?" -> feed p99 · cache hit rate · Kafka lag · source error rate · alert
+```
+
 ---
 
 ## DABBA 0 — sabse simple
