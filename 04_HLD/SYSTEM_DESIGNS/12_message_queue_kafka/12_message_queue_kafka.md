@@ -58,6 +58,25 @@ NUMBERS: 100M msg / din -> ~1,200 / sec -> peak 3-5x -> ~5,000 / sec
 | [8](#d8) | consumer mara / peeche chal raha | **REBALANCE + LAG + DLQ**: uske partition baaki me bant jaate (rebalance); lag dekho, consumer badhao; baar-baar fail -> DLQ | "lag badh raha, kya karoge?" -> consumer badhao (partition tak), dheema kaam alag, lag pe alert |
 | [9](#d9) | 7 din rakhoge to disk bharegi | **RETENTION + COMPACTION**: time / size se purani file kaato; sirf latest chahiye to har key ka aakhri message rakho | "7 din ke baad consumer ne padha hi nahi?" -> data gaya; isliye lag pe alert + retention consumer ki sabse lambi chhutti se zyada |
 
+```
+DABBA CHAIN (end state):
+  Producer (key + acks) -> key se partition -> LEADER broker pe append (offset) -> follower copy (ISR)
+  -> har consumer group apne offset se padhe -> kaam -> commit · event retention tak pada (replay)
+  Controller (KRaft) = metadata, split-brain roke · Redis = eventId dedup · DLQ = poison alag
+
+DB:  messages = append-only file (segment ~1 GB + index), DB nahi; safety = replication + acks
+     metadata = strongly consistent (KRaft / Zookeeper) · offsets = __consumer_offsets
+
+END ME POOCHEGA:
+  "Order?"          -> sirf PER-PARTITION (same key = same partition), global nahi
+  "Exactly-once?"   -> at-least-once + idempotent consumer (eventId) = exactly-once EFFECT
+  "Hot partition?"  -> key todo (user-9#0..3) -> 4 partition; us key ka strict order jaata
+  "10x?"            -> partition badhao (pehle se extra rakho, baad me badhane se key ka partition badalta)
+                       · consumer scale (partition tak) · broker disk: retention / tiered storage
+  "SPOF?"           -> leader (ISR se promote), controller (KRaft quorum)
+  "Chal raha, kaise pata?" -> CONSUMER LAG · under-replicated partitions · DLQ size · alert
+```
+
 ---
 
 ## DABBA 0 — sabse simple
