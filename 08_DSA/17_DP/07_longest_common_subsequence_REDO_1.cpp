@@ -23,7 +23,6 @@ using namespace std;
 
 int solve(string s1, string s2, int i, int j, vector<vector<int>> &dp)
 {
-
     if (i < 0 || j < 0)
     {
         return 0;
