@@ -796,6 +796,18 @@ public class UserService {
 
 **Most specific wins.** Method-level beats class-level.
 
+**Class pe kyun nahi, method pe kyun (zyada tar):**
+```
+1. Har method ki zaroorat alag: read -> readOnly, write -> rollbackFor / propagation.
+   Class pe ek hi setting sab pe chipak jaati.
+2. Transaction = DB connection method khatam hone tak pakda rehta:
+      @Transactional void placeOrder() { repo.save(o); paymentClient.call(); }  // 3 sec HTTP
+      -> connection 3 sec pakda, 50 aisi request = pool khaali, baaki sab atke (HikariCP exhaustion)
+   Isliye transaction sirf DB wale hisse pe, slow external call uske BAHAR.
+3. Method pe dikhta hai kaunsa atomic hai.
+Dono chalte: class pe @Transactional(readOnly = true) default + write methods pe @Transactional.
+```
+
 ---
 
 ## BONUS — `readOnly = true`
