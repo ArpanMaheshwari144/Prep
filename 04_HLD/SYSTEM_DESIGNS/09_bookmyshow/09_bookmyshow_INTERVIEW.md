@@ -54,6 +54,25 @@ BOL:      "For the booking itself I'd pick consistency: I'd rather reject a writ
 | [6](#d6) | Redis restart, saara browse DB pe | **REDIS CLUSTER + STAMPEDE**: Redis cluster; dekhna replica se; cache khaali ho to sirf ek rebuild kare | "Redis poora gira, browse kahan?" -> read replica pe (replica badhao), primary pe KABHI nahi; SQL failover 10-30 sec, us beech retry |
 | [7](#d7) | App box gira, 500 logon ka hold | **STATELESS + LB**: hold DB me hai, box me nahi; kai App (stateless) + LB | "box gira tab payment chal rahi thi?" -> idempotency key client ke paas -> doosre box pe retry, double charge nahi |
 
+```
+DABBA CHAIN (end state):
+  BROWSE:  LB -> App (stateless) -> Redis Cluster (99%) -> read replica
+  BOOKING: App -> Kafka + Booking worker (per-show serialize, spike sambhaale)
+           -> SQL primary: atomic conditional UPDATE (HOLD + TTL) -> Payment Svc (idempotency key) -> booked
+  Sweeper = expired hold saaf (sirf safai; asli faisla UPDATE ke WHERE me)
+
+DB:  SQL -> consistency hi dil: ACID + row lock -> double booking assambhav
+     (NoSQL eventual me do node alag-alag "available" bol sakte) · data chhota -> shard NAHI
+
+END ME POOCHEGA:
+  "Do log ek seat?"   -> UPDATE ... WHERE status = 'available' -> ek ko 1 row, doosre ko 0 row "taken"
+  "4 seat, 1 nahi mili?" -> chaaron EK transaction me, rows != 4 -> ROLLBACK (A4 koi aur le sakta hai)
+  "Hold expire hua?"  -> UPDATE ke WHERE me expired hold = khaali maano; sweeper sirf safai
+  "10x?"              -> App box · Redis + replica · Kafka per-show + waiting room · SQL replica + failover
+  "SPOF?"             -> SQL primary (failover), Redis (cluster)
+  "Chal raha, kaise pata?" -> booking p99 · 0-row (taken) rate · Kafka lag · hold expiry count · alert
+```
+
 ---
 
 ## DABBA 0 — sabse simple
