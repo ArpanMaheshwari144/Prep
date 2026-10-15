@@ -57,13 +57,29 @@ BOL:      "Kafka absorbs the burst and workers drain at their own pace. Sale tim
 | [2](#d2) | teen channel, SMS slow to push / email bhi atke | **CHANNEL-WISE QUEUE**: har channel ki apni queue + apne worker (push FCM, email SES, SMS Twilio) | "ek event, teen channel -> teen baar banega?" -> Notification svc ek event se teen message, har topic me ek; key = eventId + channel |
 | [3](#d3) | SMS band tha, phir bhi raat 2 baje bheja | **PREFERENCE + TEMPLATE**: bhejne se pehle preference dekho (channel on? quiet hours?), template, phir channel | "quiet hours me aaya, phenk doge?" -> nahi; marketing subah tak rok (delay queue), OTP / security quiet hours me bhi |
 | [4](#d4) | ack kho gaya, retry, user ko do email | **IDEMPOTENCY (Redis SETNX)**: bhejne se pehle Redis me event ki apni ID "set if not exists"; pehle se hai to skip | "Redis hi gira, idempotency kaise?" -> DB me UNIQUE(eventId, channel), Redis sirf tez raasta |
-| [5](#d5) | key laga di, par provider call fail | **IDEMPOTENCY: SENDING -> SENT**: key ki do haalat: "sending" (chhoti expiry) -> success pe "sent"; worker mara to "sending" khud mite | "provider ne bheja par jawab nahi aaya?" -> do email ho sakte; SES / Twilio idempotency key nahi lete -> chhota risk maana hua |
+| [5](#d5) | key laga di, par provider call fail | **IDEMPOTENCY: SENDING -> SENT**: bhejne se pehle "sending" (chhoti expiry), success pe "sent". Expire = worker beech me mara -> retry CHALEGA. Skip sirf "sent" pe | "provider ne bheja par jawab nahi aaya?" -> do email ho sakte; SES / Twilio idempotency key nahi lete -> chhota risk maana hua |
 | [6](#d6) | provider fail, hum turant retry maar rahe | **BACKOFF + JITTER + DLQ**: retry ke beech dugna intezaar + thoda random; had paar -> DLQ + alert | "Kafka me delay nahi, retry queue kaise?" -> alag retry topics (retry-1m, retry-10m); worker 'kab chalana' dekhe, abhi nahi to ruke |
 | [7](#d7) | provider slow, saare worker 30 sec me phase | **TIMEOUT + CIRCUIT BREAKER + BACKUP PROVIDER**: chhota timeout, har channel ke do provider, kai baar fail to circuit khulo -> backup | "OPEN se HALF-OPEN kab?" -> tay waqt (~30 sec) baad 1-2 test call; chali to CLOSED, fail to phir OPEN |
 | [8](#d8) | OTP marketing ke 50,000 ke peeche | **PRIORITY (alag topic)**: alag Kafka topic + alag worker: OTP / order / marketing | "OTP ka bhi provider limit laga?" -> OTP ke liye alag provider account / short code, marketing usse kha na sake |
 | [9](#d9) | burst, provider ne 429 diya | **RAFTAAR (provider rate limit)**: worker khud raftaar kam kare (provider ki limit ke andar), 429 pe ruk ke retry, drop nahi | "workers badhe (autoscale), hissa kaun badlega?" -> shared Redis bucket: kitne bhi worker, total rate wahi |
-| [10](#d10) | "bhej diya" != "mil gaya" | **DELIVERY TRACKING (webhook)**: provider webhook (delivered / bounced) -> tracking DB; push me app khud ack bheje |
-| [11](#d11) | 1 crore logon ko ek saath offer | **CAMPAIGN (batch + low lane)**: turant 202; batch job 1000-1000 ke tukde Kafka me; preference + low lane + provider ki raftaar; key (campaign_id, user_id); push me FCM topic |
+| [10](#d10) | "bhej diya" != "mil gaya" | **DELIVERY TRACKING (webhook)**: provider webhook (delivered / bounced) -> tracking DB; push me app khud ack bheje | "Webhook aaya hi nahi?" -> kuch ghante baad 'sent' pe atke messages ke liye status API se ek baar poll (sirf bache hue) |
+| [11](#d11) | 1 crore logon ko ek saath offer | **CAMPAIGN (batch + low lane)**: turant 202; batch job 1000-1000 ke tukde Kafka me; preference + low lane + provider ki raftaar; key (campaign_id, user_id); push me FCM topic | "Ek worker 1000 me se 600 bhej ke gira?" -> tukda dobara aayega, (campaign_id, user_id) key se pehle wale 600 skip |
+
+```
+DABBA CHAIN (end state):
+  Order / Campaign Svc -> Kafka (high / med / low) -> Notification Svc (pref + template, cache)
+  -> push / email / SMS queue -> worker (Redis SET NX · backoff · circuit breaker · throttle)
+  -> 2 provider -> user · webhook -> Tracking DB · fail -> DLQ
+
+DB:  Tracking = Cassandra -> write bahut, simple row, strong consistency nahi chahiye, aaram se scale
+     Pref / Template = chhota, har event pe padha jaata -> cache (dikkat 3)
+
+END ME POOCHEGA:
+  "10x?"                   -> Kafka partition pehle se extra · worker badhao · provider ki limit pe throttle
+  "SPOF?"                  -> provider (do provider), Kafka (replication), Redis (DB UNIQUE backup)
+  "Chal raha, kaise pata?" -> webhook delivered / failed · Kafka consumer lag · DLQ size pe alert
+  "Ek user ka order?"      -> partition key = user_id -> 'placed' kabhi 'shipped' ke baad nahi
+```
 
 ---
 
