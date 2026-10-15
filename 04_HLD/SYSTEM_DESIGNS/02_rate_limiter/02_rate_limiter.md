@@ -52,8 +52,8 @@ NUMBERS: storage ka hisaab bekaar — per key ek counter + TTL, bas
 | [5](#d5) | ek user teen region se | **HOME REGION**: user ka ek HOME region; request kahin se aaye, ginti wahin | "local + async sync me kitna over-allow?" -> sync interval jitna (~1 sec), us beech har region poori limit de sakta; soft limit ke liye theek |
 | [6](#d6) | baar-baar maar raha, 429 se nahi rukta | **KAFKA + WAF**: har 429 Kafka me, pattern service baar-baar wala pakde, WAF me ban | "galat banda ban (office NAT IP)?" -> ban pe TTL (~24 ghante) + manual unblock |
 | [7](#d7) | limiter sahi, phir bhi server gira | **LOAD SHEDDING (503)**: system kitna jhele uski had; CPU 90% pe nayi request 503 (bijli wala load shedding) | "kaunsi request phenkoge?" -> priority: login / payment rakho, recommendations / analytics pehle girao |
-| [8](#d8) | attack aaya, limiter gayab | **LOCAL FALLBACK**: Redis gaya to har node apni memory me motamoti gine |
-| [9](#d9) | IP pe gin rahe the | **KEY = user_id / API key**: login wale ko user_id / API key se gino; login se pehle IP, dheeli limit + WAF |
+| [8](#d8) | attack aaya, limiter gayab | **LOCAL FALLBACK**: Redis gaya to har node apni memory me motamoti gine | "Node badh gaye (autoscale), local limit?" -> node count config / service discovery se lo, divide dobara |
+| [9](#d9) | IP pe gin rahe the | **KEY = user_id / API key**: login wale ko user_id / API key se gino; login se pehle IP, dheeli limit + WAF | "Login se pehle botnet (hazaar IP) se password guess?" -> account pe limit (is username pe 5 galat = thodi der lock / CAPTCHA) |
 
 ALGO kaunsa? -> **TOKEN BUCKET**: bucket me token bharte (1/sec, max N), request = 1 token, khaali -> 429 · asli traffic spiky, jama token se burst nikal jaata. Doosre: LEAKY (fixed rate, burst block) · FIXED WINDOW (edge pe double) · SLIDING (sahi, memory zyada)
 

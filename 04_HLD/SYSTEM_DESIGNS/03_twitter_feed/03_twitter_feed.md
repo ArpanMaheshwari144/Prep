@@ -60,7 +60,7 @@ BOL:      "For the feed and like counts, availability. A feed a couple of second
 | [7](#d7) | India user, US shard (200ms) | **REGION-WISE**: India / EU / US alag tukde, user paas wale se padhe | "India user US travel kar raha?" -> data home region me hi; request wahan forward ya paas wali copy se read (thoda purana chalega) |
 | [8](#d8) | ek App box: bojh + SPOF | **STATELESS + ALB + ROUTE 53**: kai App box (stateless) + ALB, aage Route 53 health check | "deploy me sab box restart?" -> rolling deploy: ek-ek box nikaalo, update, wapas; site kabhi band nahi |
 | [9](#d9) | padhna likhna ek box me | **READ / WRITE ALAG**: likhne ki Tweet service, padhne ki Timeline service, alag-alag badhao | "Timeline svc ko follow list kahan se?" -> User/Graph svc se, par har read pe call nahi -> follow list Redis me cache |
-| [10](#d10) | photo video bhaari | **CDN**: CDN: media user ke paas wali edge se |
+| [10](#d10) | photo video bhaari | **CDN**: CDN: media user ke paas wali edge se | "Photo delete ki, CDN pe abhi bhi dikh rahi?" -> CDN invalidation ya chhota TTL; ya URL me version (abc_v2.jpg) |
 
 ---
 

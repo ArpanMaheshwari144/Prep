@@ -82,9 +82,9 @@ DO BLOCK JO DESIGN CHALATE:
 | [7](#d7) | do tick / neeli tick | **delivered_upto + read_upto**: wahi nishaan, do number: "yahan tak mila" + "yahan tak padha" | "group me do tick kab?" -> sab members ka delivered_upto >= message id -> sabse chhota cursor dekho |
 | [8](#d8) | 10 lakh broadcast, tick ka kya | **GROUP SIZE LIMIT**: group size bandha (~1000); channel / broadcast me tick band | "channel me 10 lakh ko kaise?" -> Kafka se fan-out workers members ke pages me; online ko push, baaki catch-up pe |
 | [9](#d9) | retry, B ko ek baat do baar | **IDEMPOTENCY (clientMsgId)**: message ID client banaye, wahi ID dobara aaye to purana lautao | "clientMsgId kitni der yaad?" -> retry window: Redis SET NX EX 3600, ya DB me (chat_id, clientMsgId) UNIQUE |
-| [10](#d10) | kram kiska time | **SERVER SEQUENCE ID**: kram server ki ID se (time se badhti), phone ki ghadi se nahi |
-| [11](#d11) | 5 MB video isi raaste? | **PRESIGNED URL (S3)**: file S3 me (presigned URL), message me sirf pata |
-| [12](#d12) | online / last-seen | **PRESENCE (heartbeat + TTL)**: Redis me "online" chhoti TTL, app heartbeat se badhaye; band hua to apne aap offline |
+| [10](#d10) | kram kiska time | **SERVER SEQUENCE ID**: kram server ki ID se (time se badhti), phone ki ghadi se nahi | "16 nahi aaya, client kya kare?" -> chhota intezaar, phir server se '15 ke baad ke' maango |
+| [11](#d11) | 5 MB video isi raaste? | **PRESIGNED URL (S3)**: file S3 me (presigned URL), message me sirf pata | "Message me kya store?" -> S3 KEY, presigned URL nahi (wo expire); kholne pe server naya URL banata |
+| [12](#d12) | online / last-seen | **PRESENCE (heartbeat + TTL)**: Redis me "online" chhoti TTL, app heartbeat se badhaye; band hua to apne aap offline | "Har 15 sec heartbeat = Redis pe 13 lakh / sec?" -> heartbeat chat server tak; server presence batch me Redis me |
 
 ---
 
