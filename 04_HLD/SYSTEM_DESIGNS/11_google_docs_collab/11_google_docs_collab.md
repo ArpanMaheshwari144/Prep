@@ -46,7 +46,7 @@ NUMBERS: ~100M user · ~30-40M DAU · edits / sec BAHUT — WRITE-DOMINATED (har
 | [8](#d8) | crore WebSocket connection | **CONNECTION SERVER (docId)**: alag connection server; docId se baanto, ek doc ke saare editor ek server pe | "doc wala server gira?" -> ring pe agla server doc le leta; clients reconnect, snapshot + ops se load, version bata ke baaki ops |
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   CDN (static app) -> LB (docId se consistent routing) -> Conn-Server (WebSocket + OT + buffer)
   -> Redis pub/sub (doosre Conn-Servers tak fanout) -> unke client ko PUSH
   -> Redis buffer -> BATCH -> Cassandra op log (docId, version) + snapshot · permissions = SQL
@@ -61,6 +61,32 @@ END ME POOCHEGA:
                        · DB write buffer + batch · doc load = snapshot + baad ke ops
   "SPOF?"           -> Conn-Server (doosre pe reconnect), Redis (replica)
   "Chal raha, kaise pata?" -> edit propagation p99 · WebSocket drop rate · buffer lag · alert
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_CDN["CDN"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_SQL_permissions["SQL permissions"]
+    n_Redis_buffer["Redis buffer"]
+    n_Cassandra_edit_log["Cassandra edit log"]
+    n_USER_A_B --> n_CDN
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_Redis_buffer
+    n_Conn_Server_x_N_2 --> n_Redis_buffer
+    n_Conn_Server_x_N_1 --> n_SQL_permissions
+    n_Conn_Server_x_N_2 --> n_SQL_permissions
+    n_Redis_buffer --> n_Cassandra_edit_log
 ```
 
 ---

@@ -55,7 +55,7 @@ NUMBERS: ~1 TB · ~1M QPS · read-heavy
 | [6](#d6) | ek key itni popular, uska node mar raha | **HOT KEY + L1 CACHE**: us key ki kai node pe copy; app ke andar 1-2 sec ka chhota cache (L1) | "hot key pehchanoge kaise?" -> node metrics (ek key pe ops/sec), redis-cli --hotkeys; had paar = copy / L1 me |
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   App + L1 local cache (nano-sec, hot key ka pehla ilaaj) -> Cache client (consistent hashing: key -> node)
   -> Node (HashMap + DLL = LRU, + TTL) primary + replica (alag AZ) -> miss pe DB (source of truth)
   READ = cache-aside
@@ -70,6 +70,23 @@ END ME POOCHEGA:
   "Hot key?"          -> copies + L1 local cache
   "SPOF?"             -> node (replica promote) · cache client config (har app me copy)
   "Chal raha, kaise pata?" -> HIT RATIO sabse zaroori (gira = kuch toota) · p99 · evictions · alert
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_App_L1_local_cache["App + L1 local cache"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App_L1_local_cache --> n_DB
+    n_App_L1_local_cache --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
 ```
 
 ---

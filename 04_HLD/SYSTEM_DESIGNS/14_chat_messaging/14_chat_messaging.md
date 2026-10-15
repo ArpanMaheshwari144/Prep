@@ -87,7 +87,7 @@ DO BLOCK JO DESIGN CHALATE:
 | [12](#d12) | online / last-seen | **PRESENCE (heartbeat + TTL)**: Redis me "online" chhoti TTL, app heartbeat se badhaye; band hua to apne aap offline | "Har 15 sec heartbeat = Redis pe 13 lakh / sec?" -> heartbeat chat server tak; server presence batch me Redis me |
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   User -> LB -> Chat Server (khuli WebSocket + local register, event loop)
   -> idempotency (clientMsgId) -> Cassandra (chat_id partition, pehle LIKHO phir bhejo)
   -> Redis (kaun kis server pe: TTL + dhadkan, pub-sub) -> receiver ke Chat Server -> receiver
@@ -104,6 +104,37 @@ END ME POOCHEGA:
                        · hot group -> bucket (chat_id + 0..9) · Push ka apna retry / queue
   "SPOF?"           -> chat server (reconnect), Redis (replica, alag AZ)
   "Chal raha, kaise pata?" -> delivery p99 · open connections per box · reconnect rate · push failures · alert
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_Blob_store_S3["Blob store (S3)"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Idempotency_check["Idempotency check"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_Blob_store_S3
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Idempotency_check
+    n_Chat_Server_x_200_2 --> n_Idempotency_check
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Idempotency_check --> n_Cassandra_messages
+    n_Cassandra_messages --> n_Cold_storage
 ```
 
 ---

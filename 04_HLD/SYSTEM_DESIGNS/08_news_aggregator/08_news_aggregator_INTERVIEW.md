@@ -49,7 +49,7 @@ NUMBERS: 10 lakh user x 5 / din = 50 lakh read / din = ~50 / sec (spike 5-10x = 
 | [9](#d9) | "cricket" search | **SEARCH INDEX (Elasticsearch)**: alag search index (Elasticsearch); worker save ke saath index bhi bhare | "ES aur DB alag ho gaye?" -> DB = sach, ES dobara bana sakte (reindex); ES likhne me fail -> retry queue |
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   WRITE: Sources -> Fetcher (timeout / retry / skip) -> Kafka (spike sambhaale) -> Worker (clean + dedupe + category)
          -> DB + cache
   READ:  LB -> Feed Svc (kai box) -> Redis (99%, latest feed precompute) -> miss pe read replica
@@ -64,6 +64,41 @@ END ME POOCHEGA:
                        · Kafka partition · worker parallel
   "SPOF?"           -> "ek box gira to sab?" -> wahi replicate · source down -> circuit breaker + skip
   "Chal raha, kaise pata?" -> feed p99 · cache hit rate · Kafka lag · source error rate · alert
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Feed_Svc_x_N_1["Feed Svc 1"]
+    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_Elasticsearch["Elasticsearch"]
+    n_Redis["Redis"]
+    n_Read_replica["Read replica"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_LB
+    n_LB --> n_Feed_Svc_x_N_1
+    n_LB --> n_Feed_Svc_x_N_2
+    n_Feed_Svc_x_N_1 --> n_Elasticsearch
+    n_Feed_Svc_x_N_2 --> n_Elasticsearch
+    n_Feed_Svc_x_N_1 --> n_Redis
+    n_Feed_Svc_x_N_2 --> n_Redis
+    n_Redis --> n_Read_replica
+    n_DB --> n_Read_replica
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+    n_Worker --> n_Elasticsearch
 ```
 
 ---

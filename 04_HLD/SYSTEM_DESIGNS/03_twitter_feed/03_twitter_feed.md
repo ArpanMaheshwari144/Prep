@@ -63,7 +63,7 @@ BOL:      "For the feed and like counts, availability. A feed a couple of second
 | [10](#d10) | photo video bhaari | **CDN**: CDN: media user ke paas wali edge se | "Photo delete ki, CDN pe abhi bhi dikh rahi?" -> CDN invalidation ya chhota TTL; ya URL me version (abc_v2.jpg) |
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   WRITE: Route 53 -> ALB -> Tweet Svc -> Cassandra save -> Kafka -> Fanout workers
          -> normal follower ke Redis inbox me sirf tweet_id (LPUSH, LTRIM 800), celeb skip
   READ:  Timeline Svc -> Redis inbox (push) + celeb tweets hot-tweet cache se (pull)
@@ -79,6 +79,42 @@ END ME POOCHEGA:
   "10x?"            -> inbox precompute + LTRIM + inactive hatao · hot-tweet cache + L1 · Cassandra shard + geo · Kafka partition
   "SPOF?"           -> har box pe "ye gira to?"
   "Chal raha, kaise pata?" -> feed p99 · error rate · Kafka lag (fanout peeche?) · alert
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_CDN["CDN"]
+    n_ALB["ALB"]
+    n_Tweet_Svc["Tweet Svc"]
+    n_Cassandra["Cassandra"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Timeline_Svc["Timeline Svc"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_User_Svc["User Svc"]
+    n_Graph_DB["Graph DB"]
+    n_S3["S3 media"]
+    n_USER --> n_Route_53
+    n_ALB --> n_Tweet_Svc
+    n_ALB --> n_Timeline_Svc
+    n_ALB --> n_User_Svc
+    n_Tweet_Svc --> n_Cassandra
+    n_Tweet_Svc --> n_Kafka
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_Timeline_Svc --> n_Redis_inbox
+    n_Timeline_Svc --> n_Hot_tweet_cache
+    n_Timeline_Svc --> n_Cassandra
+    n_User_Svc --> n_Graph_DB
+    n_Fanout_workers --> n_Graph_DB
+    n_Route_53 --> n_ALB
+    n_USER --> n_CDN
+    n_CDN --> n_S3
 ```
 
 ---

@@ -58,7 +58,7 @@ NUMBERS: storage ka hisaab bekaar — per key ek counter + TTL, bas
 ALGO kaunsa? -> **TOKEN BUCKET**: bucket me token bharte (1/sec, max N), request = 1 token, khaali -> 429 · asli traffic spiky, jama token se burst nikal jaata. Doosre: LEAKY (fixed rate, burst block) · FIXED WINDOW (edge pe double) · SLIDING (sahi, memory zyada)
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   User -> Route 53 -> ALB (multi-AZ) -> API Gateway me limiter (sabse aage, jaldi reject)
   -> Redis Cluster (atomic INCR + EXPIRE / Lua, key = endpoint + user) -> limit andar? App : 429 + Retry-After
   abuse pattern -> Kafka -> Pattern Svc -> WAF ban
@@ -71,6 +71,32 @@ END ME POOCHEGA:
   "10x?"            -> gateway box badhao · Redis shard + replica · region-sticky · global cap + load shedding
   "SPOF?"           -> Redis (cluster + failover; normal API fail-open, login / OTP fail-closed) · LB (Route 53)
   "Chal raha, kaise pata?" -> p99 limiter latency · 429 rate · Redis errors · alert
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Kafka["Kafka"]
+    n_Pattern_Svc["Pattern Svc"]
+    n_WAF["WAF"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    n_Kafka --> n_Pattern_Svc
+    n_Pattern_Svc --> n_WAF
+    n_API_Gateway --> n_Kafka
+    n_USER --> n_Route_53
+    n_Route_53 --> n_WAF
+    n_WAF --> n_ALB
 ```
 
 ---

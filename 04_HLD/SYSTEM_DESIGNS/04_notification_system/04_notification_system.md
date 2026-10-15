@@ -66,7 +66,7 @@ BOL:      "Kafka absorbs the burst and workers drain at their own pace. Sale tim
 | [11](#d11) | 1 crore logon ko ek saath offer | **CAMPAIGN (batch + low lane)**: turant 202; batch job 1000-1000 ke tukde Kafka me; preference + low lane + provider ki raftaar; key (campaign_id, user_id); push me FCM topic | "Ek worker 1000 me se 600 bhej ke gira?" -> tukda dobara aayega, (campaign_id, user_id) key se pehle wale 600 skip |
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   Order / Campaign Svc -> Kafka (high / med / low) -> Notification Svc (pref + template, cache)
   -> push / email / SMS queue -> worker (Redis SET NX · backoff · circuit breaker · throttle)
   -> 2 provider -> user · webhook -> Tracking DB · fail -> DLQ
@@ -79,6 +79,50 @@ END ME POOCHEGA:
   "SPOF?"                  -> provider (do provider), Kafka (replication), Redis (DB UNIQUE backup)
   "Chal raha, kaise pata?" -> webhook delivered / failed · Kafka consumer lag · DLQ size pe alert
   "Ek user ka order?"      -> partition key = user_id -> 'placed' kabhi 'shipped' ke baad nahi
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka_high_medium_low["Kafka high / medium / low"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES_SendGrid["SES + SendGrid"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio_SNS["Twilio + SNS"]
+    n_Redis["Redis"]
+    n_Tracking_DB["Tracking DB"]
+    n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka_high_medium_low
+    n_Kafka_high_medium_low --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES_SendGrid
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio_SNS
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Twilio_SNS --> n_Tracking_DB
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
+    n_SES_SendGrid --> n_Tracking_DB
 ```
 
 ---

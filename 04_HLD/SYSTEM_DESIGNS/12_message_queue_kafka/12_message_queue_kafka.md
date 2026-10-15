@@ -59,7 +59,7 @@ NUMBERS: 100M msg / din -> ~1,200 / sec -> peak 3-5x -> ~5,000 / sec
 | [9](#d9) | 7 din rakhoge to disk bharegi | **RETENTION + COMPACTION**: time / size se purani file kaato; sirf latest chahiye to har key ka aakhri message rakho | "7 din ke baad consumer ne padha hi nahi?" -> data gaya; isliye lag pe alert + retention consumer ki sabse lambi chhutti se zyada |
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   Producer (key + acks) -> key se partition -> LEADER broker pe append (offset) -> follower copy (ISR)
   -> har consumer group apne offset se padhe -> kaam -> commit · event retention tak pada (replay)
   Controller (KRaft) = metadata, split-brain roke · Redis = eventId dedup · DLQ = poison alag
@@ -75,6 +75,27 @@ END ME POOCHEGA:
                        · consumer scale (partition tak) · broker disk: retention / tiered storage
   "SPOF?"           -> leader (ISR se promote), controller (KRaft quorum)
   "Chal raha, kaise pata?" -> CONSUMER LAG · under-replicated partitions · DLQ size · alert
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
+    n_Group_email --> n_Redis
+    n_Group_email --> n_DLQ
 ```
 
 ---

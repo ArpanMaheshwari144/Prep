@@ -50,7 +50,7 @@ NUMBERS: ~50 lakh users · ~50 lakh orders / din · normal ~250 / sec, market kh
 ORDER BOOK kaise? -> **PRICE-TIME priority**: SELLERS sasta upar, BUYERS mehnga upar · match jab best-bid >= best-ask · same price -> jo pehle aaya
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   User -> LB -> Order Svc (validate + idempotency key) -> Wallet (paisa BLOCK)
   -> Event Log / Kafka (seq no., key = symbol) -> Matching engine (1 thread / symbol, order book RAM)
   -> Settlement (ek txn, ya kai DB me SAGA) -> Ledger (append-only) · prices -> WebSocket (pub/sub)
@@ -64,6 +64,33 @@ END ME POOCHEGA:
   "Matching engine kyun ek thread?" -> do copy = do book = double match; ek symbol ek engine pe
   "Engine crash?"   -> event log me seq no. se replay, book wapas ban jaati (audit bhi wahi)
   "Limit ya market?" -> LIMIT = price pakka · MARKET = time pakka
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Event_Log["Event Log"]
+    n_Matching_Engine["Matching Engine"]
+    n_Pub_Sub["Pub/Sub"]
+    n_WebSocket["WebSocket"]
+    n_USERS["USERS"]
+    n_Settlement["Settlement (SAGA)"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Event_Log
+    n_Event_Log --> n_Matching_Engine
+    n_Matching_Engine --> n_Pub_Sub
+    n_Matching_Engine --> n_Settlement
+    n_Pub_Sub --> n_WebSocket
+    n_WebSocket --> n_USERS
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
 ```
 
 ---

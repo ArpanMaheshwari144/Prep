@@ -49,7 +49,7 @@ NUMBERS: 1 lakh file / din -> ~1-2 write / sec (kam)       (1 din ~ 1,00,000 sec
 | [9](#d9) | naam .pdf, andar EXE | **MAGIC BYTES**: worker file ke pehle kuch byte padhe, type khud tay kare; mel nahi to reject | "magic bytes PDF jaise, andar virus?" -> antivirus scan (ClamAV) worker me, ya S3 malware scanning |
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   User -> Gateway / LB (auth) -> Upload Svc (metadata + presigned URL, bytes ko haath nahi)
   -> client SEEDHA S3 pe PUT (tmp/, bade me multipart) -> complete -> Kafka -> Worker (validation, magic bytes)
   -> DB status update -> Redis + read replica (status polling) · download = owner check + chhota presigned GET
@@ -65,6 +65,38 @@ END ME POOCHEGA:
   "SPOF?"           -> validator (third-party): circuit breaker + backup provider
   "Chal raha, kaise pata?" -> apne metric: queue depth · validator p99 + error rate · VALIDATING me atki files
                        (health check sirf "zinda" batata, "slow" nahi)
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_API_Gateway_LB["API Gateway / LB"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_API_Gateway_LB
+    n_API_Gateway_LB --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
+    n_Worker --> n_S3
 ```
 
 ---

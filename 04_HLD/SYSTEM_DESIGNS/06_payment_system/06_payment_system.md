@@ -67,7 +67,7 @@ BOL:      "Consistency for money — during a partition I'd rather reject than g
 DB kaunsa? -> **SQL** (Postgres / MySQL): kai row ek transaction (ACID). NoSQL nahi.
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   User -> Gateway (auth + rate limit + owner check) -> Payment Svc (stateless, saga)
   -> Idempotency (same key ek baar, unique constraint) -> SQL DB (ACID: debit + credit + ledger, shard by account)
   -> PSP (asli paisa, pehle PENDING) -> webhook (push) · Reconciliation job (pull, safety net)
@@ -82,6 +82,35 @@ END ME POOCHEGA:
   "10x?"            -> Payment Svc box badhao · read replica · write shard by account_id
                        · asli bottleneck distributed txn (alag bank / shard) -> SAGA
   "SPOF?"           -> DB primary (sync replica promote) · PSP (second PSP)
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB_API_Gateway["LB / API Gateway"]
+    n_Payment_Svc_x_N_1["Payment Svc 1"]
+    n_Payment_Svc_x_N_2["Payment Svc 2"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_SQL_DB_shard_by_account_id["SQL DB shard by account_id"]
+    n_Read_replica["Read replica"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB_API_Gateway
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
+    n_Payment_Svc_x_N_1 --> n_Idempotency_store
+    n_Payment_Svc_x_N_2 --> n_Idempotency_store
+    n_Payment_Svc_x_N_1 --> n_PSP
+    n_Payment_Svc_x_N_2 --> n_PSP
+    n_Payment_Svc_x_N_1 --> n_SQL_DB_shard_by_account_id
+    n_Payment_Svc_x_N_2 --> n_SQL_DB_shard_by_account_id
+    n_SQL_DB_shard_by_account_id --> n_Read_replica
+    n_Reconciliation_job --> n_SQL_DB_shard_by_account_id
+    n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
 
 ---

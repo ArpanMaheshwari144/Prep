@@ -55,7 +55,7 @@ BOL:      "For the booking itself I'd pick consistency: I'd rather reject a writ
 | [7](#d7) | App box gira, 500 logon ka hold | **STATELESS + LB**: hold DB me hai, box me nahi; kai App (stateless) + LB | "box gira tab payment chal rahi thi?" -> idempotency key client ke paas -> doosre box pe retry, double charge nahi |
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   BROWSE:  LB -> App (stateless) -> Redis Cluster (99%) -> read replica
   BOOKING: App -> Kafka + Booking worker (per-show serialize, spike sambhaale)
            -> SQL primary: atomic conditional UPDATE (HOLD + TTL) -> Payment Svc (idempotency key) -> booked
@@ -71,6 +71,40 @@ END ME POOCHEGA:
   "10x?"              -> App box · Redis + replica · Kafka per-show + waiting room · SQL replica + failover
   "SPOF?"             -> SQL primary (failover), Redis (cluster)
   "Chal raha, kaise pata?" -> booking p99 · 0-row (taken) rate · Kafka lag · hold expiry count · alert
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Payment_Svc["Payment Svc"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Read_replica["Read replica"]
+    n_Kafka["Kafka"]
+    n_Booking_worker["Booking worker"]
+    n_SQL_primary["SQL primary"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Payment_Svc
+    n_App_x_N_2 --> n_Payment_Svc
+    n_App_x_N_1 --> n_Redis_Cluster
+    n_App_x_N_2 --> n_Redis_Cluster
+    n_App_x_N_1 --> n_Read_replica
+    n_App_x_N_2 --> n_Read_replica
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_Kafka --> n_Booking_worker
+    n_Booking_worker --> n_SQL_primary
+    n_Sweeper_job --> n_SQL_primary
+    n_App_x_N_1 --> n_SQL_primary
+    n_App_x_N_2 --> n_SQL_primary
+    n_SQL_primary --> n_Read_replica
 ```
 
 ---

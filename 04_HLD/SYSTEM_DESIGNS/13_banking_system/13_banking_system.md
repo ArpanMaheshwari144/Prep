@@ -62,7 +62,7 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 | [9](#d9) | 5 saal purana data ek table me | **PARTITION + ARCHIVE**: table mahine-mahine baanto, purana tukda alag karke S3 me (DELETE nahi) | "regulator ne 2021 ka statement maanga?" -> S3 ke Parquet pe Athena query ya us mahine ka partition restore |
 
 ```
-DABBA CHAIN (end state):
+AAKHRI DABBE (sab dikkat ke baad):
   User -> LB -> Banking Svc (stateless, idempotency check)
   -> SQL DB: EK local txn (dono ledger entry + dono balance + idempotency key + outbox)
   -> Kafka (commit ke BAAD: SMS / fraud / analytics / statement) · Read replica = balance / history
@@ -78,6 +78,31 @@ END ME POOCHEGA:
                        (aakhri kadam, keemat: transfer local txn nahi rehta -> SAGA)
   "10x?"            -> pehle jo toote: reads -> replica · size -> month partition · writes -> shard
   "SPOF?"           -> DB primary (sync replica) · Banking Svc (LB + N)
+```
+
+AAKHRI DABBE ki tasveer:
+
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Banking_Svc_x_N_1["Banking Svc 1"]
+    n_Banking_Svc_x_N_2["Banking Svc 2"]
+    n_Read_replica["Read replica"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_Archive_S3["Archive (S3)"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_Banking_Svc_x_N_1
+    n_LB --> n_Banking_Svc_x_N_2
+    n_Banking_Svc_x_N_1 --> n_Read_replica
+    n_Banking_Svc_x_N_2 --> n_Read_replica
+    n_Banking_Svc_x_N_1 --> n_SQL_DB
+    n_Banking_Svc_x_N_2 --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+    n_SQL_DB --> n_Archive_S3
 ```
 
 ---
