@@ -62,6 +62,25 @@ BOL:      "For the feed and like counts, availability. A feed a couple of second
 | [9](#d9) | padhna likhna ek box me | **READ / WRITE ALAG**: likhne ki Tweet service, padhne ki Timeline service, alag-alag badhao | "Timeline svc ko follow list kahan se?" -> User/Graph svc se, par har read pe call nahi -> follow list Redis me cache |
 | [10](#d10) | photo video bhaari | **CDN**: CDN: media user ke paas wali edge se | "Photo delete ki, CDN pe abhi bhi dikh rahi?" -> CDN invalidation ya chhota TTL; ya URL me version (abc_v2.jpg) |
 
+```
+DABBA CHAIN (end state):
+  WRITE: Route 53 -> ALB -> Tweet Svc -> Cassandra save -> Kafka -> Fanout workers
+         -> normal follower ke Redis inbox me sirf tweet_id (LPUSH, LTRIM 800), celeb skip
+  READ:  Timeline Svc -> Redis inbox (push) + celeb tweets hot-tweet cache se (pull)
+         -> merge + sort -> hydrate (id -> content) -> top 50 · media -> CDN
+  follow: User Svc + Graph DB
+
+DB:  Tweet = Cassandra (bahut zyada, simple, write-heavy, user_id + time shard)
+     Inbox = Redis list per user, sirf ID (poora tweet copy kiya to memory phategi)
+     Graph = Neo4j ya Cassandra (followers / following)
+
+END ME POOCHEGA:
+  "Push ya pull?"   -> HYBRID: normal push, celeb pull, read pe merge
+  "10x?"            -> inbox precompute + LTRIM + inactive hatao · hot-tweet cache + L1 · Cassandra shard + geo · Kafka partition
+  "SPOF?"           -> har box pe "ye gira to?"
+  "Chal raha, kaise pata?" -> feed p99 · error rate · Kafka lag (fanout peeche?) · alert
+```
+
 ---
 
 ## DABBA 0 — sabse simple
