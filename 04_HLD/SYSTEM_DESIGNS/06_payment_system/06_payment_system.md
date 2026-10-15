@@ -66,6 +66,24 @@ BOL:      "Consistency for money — during a partition I'd rather reject than g
 
 DB kaunsa? -> **SQL** (Postgres / MySQL): kai row ek transaction (ACID). NoSQL nahi.
 
+```
+DABBA CHAIN (end state):
+  User -> Gateway (auth + rate limit + owner check) -> Payment Svc (stateless, saga)
+  -> Idempotency (same key ek baar, unique constraint) -> SQL DB (ACID: debit + credit + ledger, shard by account)
+  -> PSP (asli paisa, pehle PENDING) -> webhook (push) · Reconciliation job (pull, safety net)
+  Read replica = sirf dashboard
+
+DB:  SQL + ACID -> paisa me debit aur credit ek saath hi hone chahiye · ledger double-entry, immutable
+     idempotency key -> { status, result }, TTL ~24h
+
+END ME POOCHEGA:
+  "Do baar charge?" -> Idempotency-Key header (Pay TAP pe bani) + unique constraint -> retry = pehla result
+  "PSP ne jawab nahi diya?" -> PENDING rakho -> webhook + reconcile, kabhi gum nahi
+  "10x?"            -> Payment Svc box badhao · read replica · write shard by account_id
+                       · asli bottleneck distributed txn (alag bank / shard) -> SAGA
+  "SPOF?"           -> DB primary (sync replica promote) · PSP (second PSP)
+```
+
 ---
 
 ## DABBA 0 — sabse simple
