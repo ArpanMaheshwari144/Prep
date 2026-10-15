@@ -59,7 +59,7 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 | [6](#d6) | salary day, ek service bhara | **STATELESS + LB + SYNC copy**: kai Banking service (stateless) + LB; DB primary gira to doosre AZ ki SYNC copy upar (async me aakhri transfer kho sakta) | "failover ke 30 sec me transfer?" -> error -> client retry same idempotency key -> double nahi |
 | [7](#d7) | sab read primary pe, transfer dheema | **READ REPLICA**: balance / history copy (replica) se; transfer ke turant baad wala balance primary se | "replica bahut peeche (minute)?" -> lag metric pe alert; had paar -> us replica ko read pool se hatao |
 | [8](#d8) | 22 arab row, history ka page | **KEYSET PAGINATION**: pichhle page ki aakhri entry (ts, id) yaad, agla page "usse purana", index se seedha | "same ts pe do entry, koi chhoot jaaye?" -> cursor me (ts, id) dono, id tie todti |
-| [9](#d9) | 5 saal purana data ek table me | **PARTITION + ARCHIVE**: table mahine-mahine baanto, purana tukda alag karke S3 me (DELETE nahi) | "regulator ne 2021 ka statement maanga?" -> S3 ke Parquet pe Athena query ya us mahine ka partition restore |
+| [9](#d9) | 5 saal purana data ek table me | **PARTITION + ARCHIVE**: table mahine-mahine baanto, purana tukda alag karke S3 me (DELETE nahi); har period ka OPENING BALANCE snapshot, warna reconciliation adhoora | "regulator ne 2021 ka statement maanga?" -> S3 ke Parquet pe Athena query ya us mahine ka partition restore |
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):

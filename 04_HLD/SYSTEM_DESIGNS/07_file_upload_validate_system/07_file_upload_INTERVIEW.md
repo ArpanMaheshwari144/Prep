@@ -39,7 +39,7 @@ NUMBERS: 1 lakh file / din -> ~1-2 write / sec (kam)       (1 din ~ 1,00,000 sec
 | # | dikkat | cue | POOCHEGA -> jawab |
 |---|---|---|---|
 | [1](#d1) | user 2-3 sec ruka, thread block | **ASYNC (queue + worker)**: turant trackingId + "VALIDATING"; validation peeche queue + worker; user status poochhe | "ek file do baar validate (event dobara)?" -> validation idempotent: status pehle se DONE to skip |
-| [2](#d2) | 5 GB ke bytes mere server se | **PRESIGNED URL**: presigned URL: client seedha S3 pe bheje, server sirf URL + metadata | "client ne URL se 50 GB daal di (limit 5 GB)?" -> presigned POST policy me content-length-range (max size), S3 bada reject kare |
+| [2](#d2) | 5 GB ke bytes mere server se | **PRESIGNED URL**: client seedha S3 pe bheje, server sirf URL + metadata | "client ne URL se 50 GB daal di (limit 5 GB)?" -> presigned POST policy me content-length-range (max size), S3 bada reject kare |
 | [3](#d3) | 5 GB file 90% pe tooti | **MULTIPART UPLOAD**: file chhote tukdon me, jo tukda fail sirf wahi dobara; S3 khud jode | "client band, kal resume?" -> server ke paas uploadId + kaunse part ho chuke (ListParts) -> sirf bache part bhejo |
 | [4](#d4) | upload shuru, complete kabhi nahi (adhoori) | **LIFECYCLE RULE + SWEEPER**: pehle tmp jagah, S3 rule se purani tmp apne aap hate; sweeper job atki file dekhe | "sweeper do box pe chala, file do baar queue me?" -> ek hi sweeper (lock / leader) ya requeue idempotent (status check) |
 | [5](#d5) | sab har 2 sec status poll | **CACHE + READ REPLICA**: Redis cache + read replica; worker DONE kare to cache bhi badle | "poll ki jagah push?" -> SSE / WebSocket: status badla to server khud bheje, poll khatam |

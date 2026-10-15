@@ -83,7 +83,7 @@ DO BLOCK JO DESIGN CHALATE:
 | [8](#d8) | 10 lakh broadcast, tick ka kya | **GROUP SIZE LIMIT**: group size bandha (~1000); channel / broadcast me tick band | "channel me 10 lakh ko kaise?" -> Kafka se fan-out workers members ke pages me; online ko push, baaki catch-up pe |
 | [9](#d9) | retry, B ko ek baat do baar | **IDEMPOTENCY (clientMsgId)**: message ID client banaye, wahi ID dobara aaye to purana lautao | "clientMsgId kitni der yaad?" -> retry window: Redis SET NX EX 3600, ya DB me (chat_id, clientMsgId) UNIQUE |
 | [10](#d10) | kram kiska time | **SERVER SEQUENCE ID**: kram server ki ID se (time se badhti), phone ki ghadi se nahi | "16 nahi aaya, client kya kare?" -> chhota intezaar, phir server se '15 ke baad ke' maango |
-| [11](#d11) | 5 MB video isi raaste? | **PRESIGNED URL (S3)**: file S3 me (presigned URL), message me sirf pata | "Message me kya store?" -> S3 KEY, presigned URL nahi (wo expire); kholne pe server naya URL banata |
+| [11](#d11) | 5 MB video isi raaste? | **PRESIGNED URL (S3)**: file S3 me (presigned URL), message me sirf S3 KEY (URL nahi, wo expire hota) | "Message me kya store?" -> S3 KEY, presigned URL nahi (wo expire); kholne pe server naya URL banata |
 | [12](#d12) | online / last-seen | **PRESENCE (heartbeat + TTL)**: Redis me "online" chhoti TTL, app heartbeat se badhaye; band hua to apne aap offline | "Har 15 sec heartbeat = Redis pe 13 lakh / sec?" -> heartbeat chat server tak; server presence batch me Redis me |
 
 ```
@@ -737,7 +737,7 @@ flowchart TD
 ```
 DIKKAT:   5 MB ka video bhi chat server ke raaste se? Connection + thread atkenge.
 
-SOLUTION: (1) Client file S3 me daale (presigned URL), message me sirf PATA (type, url, size, thumbnail).
+SOLUTION: (1) Client file S3 me daale (presigned URL), message me sirf PATA (type, S3 key, size, thumbnail).
           (2) Download = chhoti umar ka presigned URL.
           (3) Thumbnail client banata (kuch KB) -> B ko turant kuch dikhe. Group me file ek baar, 500 ko wahi pata.
 
