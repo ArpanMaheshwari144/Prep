@@ -58,6 +58,22 @@ KYUN:    Twitter / SMS limit · marketing tracking · QR / print · saaf dikhna
 
 REDIRECT kaunsa? -> **302** (301 nahi): 301 pe browser cache kar leta, server tak aata hi nahi -> click gine nahi jaate, expiry toot-ti
 
+```
+DABBA CHAIN (end state):
+  Route 53 -> API Gateway (rate limit + auth) -> 2 LB -> App (stateless, read / write alag)
+  -> Redis (95% read, TTL = expiry) -> Cassandra (shard by shortCode, RF 3)
+  WRITE: Counter range + base62 -> Redis + Cassandra · click -> Kafka (analytics async, DLQ)
+
+DB:  Cassandra / DynamoDB -> join nahi, transaction nahi, ek key se point read, 90 TB
+     (wajah ACCESS PATTERN + SCALE hai, "NoSQL powerful" nahi; ye read-heavy hai) · Redis sirf cache
+
+END ME POOCHEGA:
+  "10x?"           -> App box badhao · read / write App alag · Redis me HOT rakho (LRU + TTL) · Cassandra shard
+  "SPOF?"          -> LB (do copy) · Counter coordinator (active-passive) · Route 53 health-check
+  "Chal raha, kaise pata?" -> p99 · error rate · Kafka lag · alert
+  "301 ya 302?"    -> 302: har baar server tak aata, analytics chalta; 301 browser cache, click gaya
+```
+
 ---
 
 ## DABBA 0 — sabse simple
