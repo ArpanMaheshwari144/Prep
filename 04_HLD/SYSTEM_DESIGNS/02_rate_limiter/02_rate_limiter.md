@@ -57,6 +57,22 @@ NUMBERS: storage ka hisaab bekaar — per key ek counter + TTL, bas
 
 ALGO kaunsa? -> **TOKEN BUCKET**: bucket me token bharte (1/sec, max N), request = 1 token, khaali -> 429 · asli traffic spiky, jama token se burst nikal jaata. Doosre: LEAKY (fixed rate, burst block) · FIXED WINDOW (edge pe double) · SLIDING (sahi, memory zyada)
 
+```
+DABBA CHAIN (end state):
+  User -> Route 53 -> ALB (multi-AZ) -> API Gateway me limiter (sabse aage, jaldi reject)
+  -> Redis Cluster (atomic INCR + EXPIRE / Lua, key = endpoint + user) -> limit andar? App : 429 + Retry-After
+  abuse pattern -> Kafka -> Pattern Svc -> WAF ban
+
+DB:  Redis = single source of truth, <1ms, TTL = window (key gayab = reset, cleanup job nahi)
+     tier (free / pro) DB se, Redis me usi limit se compare
+
+END ME POOCHEGA:
+  "Kaunsa algo?"    -> TOKEN BUCKET: asli traffic spiky, jama token se burst nikal jaata
+  "10x?"            -> gateway box badhao · Redis shard + replica · region-sticky · global cap + load shedding
+  "SPOF?"           -> Redis (cluster + failover; normal API fail-open, login / OTP fail-closed) · LB (Route 53)
+  "Chal raha, kaise pata?" -> p99 limiter latency · 429 rate · Redis errors · alert
+```
+
 ---
 
 ## DABBA 0 — sabse simple
