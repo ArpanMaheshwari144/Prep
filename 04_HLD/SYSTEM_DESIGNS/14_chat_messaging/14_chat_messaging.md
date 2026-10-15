@@ -86,6 +86,26 @@ DO BLOCK JO DESIGN CHALATE:
 | [11](#d11) | 5 MB video isi raaste? | **PRESIGNED URL (S3)**: file S3 me (presigned URL), message me sirf pata | "Message me kya store?" -> S3 KEY, presigned URL nahi (wo expire); kholne pe server naya URL banata |
 | [12](#d12) | online / last-seen | **PRESENCE (heartbeat + TTL)**: Redis me "online" chhoti TTL, app heartbeat se badhaye; band hua to apne aap offline | "Har 15 sec heartbeat = Redis pe 13 lakh / sec?" -> heartbeat chat server tak; server presence batch me Redis me |
 
+```
+DABBA CHAIN (end state):
+  User -> LB -> Chat Server (khuli WebSocket + local register, event loop)
+  -> idempotency (clientMsgId) -> Cassandra (chat_id partition, pehle LIKHO phir bhejo)
+  -> Redis (kaun kis server pe: TTL + dhadkan, pub-sub) -> receiver ke Chat Server -> receiver
+  offline -> Push (app band pe ghanti) · reconnect pe "last id ke baad sab" maango
+  Cursor store = delivered_upto / read_upto · media -> S3, message me sirf pata · purana -> cold storage
+
+DB:  message = Cassandra (chat_id partition, server ka id time se badhta) -> ek chat ek jagah, kram bana rahe
+     zinda taar (connection) = server ki memory · pakka maal (message) = DB
+
+END ME POOCHEGA:
+  "Kram?"           -> server ki sequence id, phone ki ghadi nahi · Kafka key = chat_id
+  "Read receipt / unread?" -> har user har chat ka cursor (delivered_upto / read_upto)
+  "10x?"            -> ~200 chat server, event loop · Redis TTL register · reconnect pe backoff + jitter
+                       · hot group -> bucket (chat_id + 0..9) · Push ka apna retry / queue
+  "SPOF?"           -> chat server (reconnect), Redis (replica, alag AZ)
+  "Chal raha, kaise pata?" -> delivery p99 · open connections per box · reconnect rate · push failures · alert
+```
+
 ---
 
 ## DABBA 0 — sabse simple: EK server, do user
