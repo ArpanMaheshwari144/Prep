@@ -189,6 +189,9 @@ AGLA SAWAAL (tere jawab se):
   "Token bucket me Redis me kya rakhoge?"
    -> do cheez: tokens bache + aakhri refill ka time. Lua me: (abhi - last) x rate jitne token jodo,
       1 ghatao, dono save -> ek hi unit
+  "Har endpoint ki limit alag, aur bina deploy badalni ho (sale me login 5 -> 10)?"
+   -> rules ek CONFIG store me (DB / AWS AppConfig), code me nahi. Gateway unhe memory me rakhta,
+      har ~30 sec naya padh leta. Badalna = config me ek row badli, deploy nahi.
   "Lua script dheema / atak gaya to?"
    -> Redis single thread -> lamba script sabko rokega. Isliye script chhota, koi loop nahi
   "10 crore users ke bucket har second bharne ko koi job chalaoge?"
