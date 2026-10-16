@@ -42,17 +42,129 @@ BOL:      "For the booking itself I'd pick consistency: I'd rather reject a writ
 
 ---
 
-## MOCK CUE — pehle ye, phir mock
+## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-| # | dikkat | cue | POOCHEGA -> jawab |
-|---|---|---|---|
-| [1](#d1) | do alag user ne ek saath A1 book ki | **ATOMIC UPDATE**: check + book ek hi UPDATE: "book karo SIRF agar available"; doosre ko 0 row | "4 seat chuni, 3 mili 1 nahi?" -> chaaron EK transaction me; rows != 4 -> ROLLBACK; seat_id ke kram me lock (deadlock nahi) |
-| [2](#d2) | seat chuni, 3 min payment | **HOLD + EXPIRY**: seat 'held' + kab tak (5 min); booking ka UPDATE time nikle hold ko khaali maane | "hold Redis me ya DB me?" -> DB column held_until: hold + booking ek row = ek sach; SQL me TTL nahi -> UPDATE me held_until < now() = khaali, sweeper sirf safai |
-| [3](#d3) | "Pay" do baar daba | **IDEMPOTENCY KEY**: client key banaye, retry pe wahi; dobara aaye to saved result | "key kaun banaye?" -> CLIENT; server banaye to retry = nayi request = nayi key = double charge |
-| [4](#d4) | book koi-koi, seat map sab dekh rahe | **CACHE + READ REPLICA**: dekhna Redis + replica se, booking primary pe | "seat book hui, map purana dikha?" -> WebSocket / SSE push us show ke users ko; screen 1-2 sec purani chale, asli faisla booking UPDATE |
-| [5](#d5) | popular release, lakhon log ek seat pe | **QUEUE + WAITING ROOM**: Kafka + har show ka worker ek-ek karke; waiting room; darwaze pe Redis ginti, baaki "housefull" | "show 1 ki request ek-ek karke kaise?" -> Kafka key = show_id -> ek partition -> ek consumer; alag show = parallel |
-| [6](#d6) | Redis restart, saara browse DB pe | **REDIS CLUSTER + STAMPEDE**: Redis cluster; dekhna replica se; cache khaali ho to sirf ek rebuild kare | "Redis poora gira, browse kahan?" -> read replica pe (replica badhao), primary pe KABHI nahi; SQL failover 10-30 sec, us beech retry |
-| [7](#d7) | App box gira, 500 logon ka hold | **STATELESS + LB**: hold DB me hai, box me nahi; kai App (stateless) + LB | "box gira tab payment chal rahi thi?" -> idempotency key client ke paas -> doosre box pe retry, double charge nahi |
+## MOCK CUE — har dikkat ek card
+
+> Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
+> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
+
+#### [1](#d1) DO ALAG USER NE EK SAATH A1 BOOK KI
+```
+KAHANI:  X ne dekha "A1 khaali", Y ne bhi dekha "A1 khaali". Dono ne book kiya -> A1 do logon ko.
+ILAAJ:   check + book EK hi UPDATE:
+         UPDATE seats SET status = 'booked', user_id = X WHERE seat_id = 'A1' AND status = 'available'
+         -> ek ka lagega, doosre ko 0 row -> "seat ja chuki".
+ANDAR KAISE:
+         X aur Y ek saath -> X ne A1 row ka lock liya, Y ruka. X commit -> Y ko lock mila, WHERE dobara
+         check -> ab 'available' nahi -> 0 row.
+ISKE BAAD KYA TOOTEGA:
+  - 4 seat chuni, 3 mili 1 nahi?
+      -> chaaron EK transaction: WHERE seat_id IN (...) AND available -> rows != 4 -> ROLLBACK.
+         deadlock na ho -> seat_id ke kram me lock (A1, A2, A3 ...).
+  - SELECT FOR UPDATE ya version column kyun nahi?
+      -> FOR UPDATE = do round-trip, lock lamba, deadlock risk. Version = haara retry kare, par seat gayi to gayi.
+         Conditional UPDATE = ek statement, lock sabse chhota.
+  - do user vs ek user ka retry?
+      -> do ALAG user ek seat = atomic UPDATE (ye card). EK user ka retry = idempotency (card 3).
+```
+
+#### [2](#d2) SEAT CHUNI, 3 MIN PAYMENT
+```
+KAHANI:  seat chuni, payment me 3 min. Available rakhi = koi aur le gaya. Booked kar di = payment fail pe hamesha block.
+ILAAJ:   HOLD + expiry: chunte hi 'held' + held_until (5 min). Payment hua -> 'booked'. Time nikla -> khuli.
+ANDAR KAISE:
+         SQL me TTL nahi -> time ke baad bhi 'held' likha rahega. Isliye:
+         (1) booking ka UPDATE hi expire hua hold khaali maane:
+             WHERE status = 'available' OR (status = 'held' AND held_until < now())     <- sahi-pan yahi
+         (2) SWEEPER har minute expire hue hold wapas available kare                     <- sirf safai
+ISKE BAAD KYA TOOTEGA:
+  - hold Redis (SET NX EX 300) me kyun nahi?
+      -> Redis hold + DB booking = do jagah sach -> farak aa sakta. DB me = ek row, ek UPDATE, ek sach.
+  - hold khatam hone ke 1 sec baad payment aayi?
+      -> confirm pe bhi WHERE status = 'held' AND user = X AND held_until > now() -> 0 row = seat gayi -> refund.
+  - ek user ne 10 seat hold karke chhod di?
+      -> per-user hold limit + rate limit.
+```
+
+#### [3](#d3) "PAY" DO BAAR DABA
+```
+KAHANI:  payment page pe "Pay" do baar daba -> ek booking ka do baar charge.
+ILAAJ:   IDEMPOTENCY KEY: client banaye, retry pe wahi. Server atomic claim (UNIQUE / SET NX), dobara = saved result.
+ANDAR KAISE:
+         key CLIENT banata. Server banaye to retry = nayi request = nayi key = double charge.
+ISKE BAAD KYA TOOTEGA:
+  - payment success, par booking UPDATE fail (hold gaya)?
+      -> refund + user ko batao. Payment aur seat ka faisla saga jaisa.
+  - payment webhook late aaya?
+      -> booking 'PAYMENT_PENDING', hold thoda badhao ya reconciliation.
+```
+
+#### [4](#d4) BOOK KOI-KOI KARTA, SEAT MAP SAB DEKH RAHE
+```
+KAHANI:  ek show pe 1 lakh log seat map dekh rahe, book shayad 500. Sab read + nazuk booking ek DB pe.
+ILAAJ:   dekhna -> REDIS (seat map) + READ REPLICA. Booking -> SQL PRIMARY (atomic update).
+ANDAR KAISE:
+         Redis seatmap:show42 -> miss -> replica se banao -> Redis (TTL ~5 sec).
+         booking hua -> seatmap key DEL. Map thoda purana dikhe to bhi asli check booking UPDATE me.
+ISKE BAAD KYA TOOTEGA:
+  - seat book hui, map purana dikha?
+      -> WebSocket / SSE push us show ke users ko. Screen 1-2 sec purani chale, faisla UPDATE ka.
+  - ek popular show ki key pe lakhon read?
+      -> key ki kai copy + App me 1-2 sec local cache.
+```
+
+#### [5](#d5) POPULAR RELEASE, LAKHON LOG EK SHOW PE
+```
+KAHANI:  bada release, 5000 log, 3000 seat, ek hi show. Spike seedha DB pe, wahi rows pe ladaai.
+ILAAJ:   (1) darwaze pe GINTI (Redis DECR): 3000 andar, 2000 ko turant "housefull".
+         (2) KAFKA + har show ka WORKER: us show ki request ek-ek karke atomic UPDATE.
+         (3) VIRTUAL WAITING ROOM ("aapka number 12,340").
+ANDAR KAISE:
+         Kafka key = show_id -> ek show ek partition -> ek consumer -> contention khatam. Alag show = parallel.
+         user KHAAS seat chunta, ginti sirf "kitni bachi" batati -> turant "booked" mat bolo:
+         "booking in progress" -> worker jeeta = confirmed · haara = "ye seat gayi".
+ISKE BAAD KYA TOOTEGA:
+  - ek show itna bada ki ek worker dheema?
+      -> ek UPDATE ~ms -> worker hazaar / sec. Zyada -> show ko section (balcony / stall) me baanto.
+  - gate counter Redis restart pe gaya?
+      -> counter sirf darwaza, sach DB ki seats. Restart pe DB se gin ke dobara set.
+  - read replica se kaam nahi chalega?
+      -> replica READ scale karti. Likhne ka spike queue jhelti.
+  - (bolne me) "BookMyShow aise karta"?
+      -> mat bolo. "A common pattern in flash sales" bolo.
+```
+
+#### [6](#d6) REDIS RESTART, SAARA BROWSE DB PE
+```
+KAHANI:  Redis restart -> saara browse ek saath DB pe -> booking ke update ruk gaye.
+ILAAJ:   REDIS CLUSTER (ek node mare, baaki chalein). Browse REPLICA se, booking PRIMARY pe (raaste alag).
+         Cache khaali -> sirf EK rebuild kare (lock).
+ANDAR KAISE:
+         Redis Cluster: 16384 slot, har master kuch slot + apna replica. Master gira -> vote se replica promote.
+         lock: SET lock:seatmap:42 1 NX EX 5 -> jeeta = DB se bana ke bhare, baaki 50-100 ms ruk ke cache padhein.
+ISKE BAAD KYA TOOTEGA:
+  - Redis poora gira, browse kahan?
+      -> read replica pe (badhao), primary pe KABHI nahi.
+  - SQL failover me booking kitni der band?
+      -> 10-30 sec. Us beech retry (idempotent) / "thodi der me try karein".
+  - promote hua, aakhri booking replica tak nahi pahunchi?
+      -> booking DB ke liye SYNC replica (RDS Multi-AZ) -> committed booking nahi khoti.
+```
+
+#### [7](#d7) APP BOX GIRA, 500 LOGON KA HOLD
+```
+KAHANI:  ek App box pe 500 log seat chun rahe the, box gira. Unke hold ka kya?
+ILAAJ:   hold DB me hai, box me nahi -> seat abhi bhi held, time pe chhutegi. Kai App (stateless) + LB.
+ANDAR KAISE:
+         LB health check fail -> box bahar. User agli request doosre box pe -> wahi hold dikhega.
+         ye isliye chala ki hold box ke BAHAR rakha tha (card 2 ka faisla).
+ISKE BAAD KYA TOOTEGA:
+  - box gira tab payment chal rahi thi?
+      -> idempotency key client ke paas -> doosre box pe retry, double charge nahi.
+  - health check kya dekhta?
+      -> GET /health: box zinda + DB / Redis tak pahunch. 2-3 baar fail = bahar.
+```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
@@ -106,6 +218,12 @@ flowchart TD
     n_App_x_N_2 --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
 ```
+
+---
+
+## ════ DETAIL: HAR DIKKAT KA POORA EXPLANATION ════
+
+> Card me koi baat samajh na aaye, to uska poora "kaise / kyun" aur diagram yahan hai.
 
 ---
 
