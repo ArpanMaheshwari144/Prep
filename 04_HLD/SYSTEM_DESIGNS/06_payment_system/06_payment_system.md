@@ -50,21 +50,174 @@ BOL:      "Consistency for money — during a partition I'd rather reject than g
 
 ---
 
-## MOCK CUE — pehle ye, phir mock
+## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-| # | dikkat | cue | POOCHEGA -> jawab |
-|---|---|---|---|
-| [1](#d1) | beech me crash: -500 hua, +500 nahi | **DB TRANSACTION (ACID)**: debit + credit ek saath, fail = rollback | "crash pe DB rollback kaise?" -> DB pehle WAL / undo log me likhta; uthte hi COMMIT wale redo, bina COMMIT wale undo |
-| [2](#d2) | do baar tap / retry = double charge | **IDEMPOTENCY KEY**: client banaye, retry pe wahi · DB UNIQUE = ek hi jeete · chal rahi ho to IN_PROGRESS | "key client kyun banaye, server kyun nahi?" -> retry client karta, server ko pata hi nahi ye wahi request; client ki key hi dono ko jodti |
-| [3](#d3) | asli paisa hamara server nahi hilata | **PSP** (Razorpay / bank) hilata · status INITIATED -> PENDING -> SUCCESS / FAILED · PSP slow = timeout + **CIRCUIT BREAKER** | "timeout hua, user ko kya?" -> 'processing' (PENDING), 'fail' nahi; paisa shayad kat chuka, reconciliation pakka karegi |
-| [4](#d4) | PSP call ke baad crash / timeout | **PENDING PEHLE** likho -> **WEBHOOK** (PSP bataye) + **RECONCILIATION JOB** (atke PENDING PSP se poochhe) · retry wahi key se | "webhook do baar aaya?" -> status update idempotent: PENDING -> SUCCESS ek hi baar; SUCCESS pe dobara aaya to ignore |
-| [5](#d5) | alag bank / alag DB | **SAGA**: har step apna commit, fail pe ulte kram me undo (compensate) · 2PC nahi (lock + coordinator gira = sab atke) | "SAGA ka state kahan (Payment svc beech me gira)?" -> saga table me har step ka haal (DEBITED, CREDIT_PENDING...); uthte hi wahan se aage / ulta |
-| [6](#d6) | regulator: paisa kahan se kahan | **LEDGER (append-only)**: har txn = debit + credit, usi transaction me · galti = nayi ulti entry | "galat entry, delete kar doge?" -> nahi, ULTI entry (reversal); purani rahegi, audit me dono dikhte |
-| [7](#d7) | festival 3000 / sec | **STATELESS** service, kai box + **LB / API GATEWAY** (auth, rate limit, owner check) | "owner check kaise?" -> JWT se userId -> "from" account ka owner_id == userId? nahi to 403 |
-| [8](#d8) | report query write rok rahi | **READ REPLICA** se report · balance / status hamesha **PRIMARY** se | "primary gira?" -> SYNC standby promote (RDS Multi-AZ), kuch nahi khota; async read replica promote ki to aakhri write kho sakte |
-| [9](#d9) | 50 crore row | **SHARD by account_id** · alag shard ka transfer = phir SAGA | "bada merchant, ek shard garam?" -> merchant ke kai sub-account, shard me baante, report me jodo |
+## MOCK CUE — har dikkat ek card
 
-DB kaunsa? -> **SQL** (Postgres / MySQL): kai row ek transaction (ACID). NoSQL nahi.
+> Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
+> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
+
+#### 0 DB KAUNSA? SQL
+```
+KAHANI:  ek payment = Arpan -500 + merchant +500 + ledger ki 2 row. Ye sab ek saath hone chahiye.
+ILAAJ:   SQL (Postgres / MySQL): kai row EK transaction me (ACID). NoSQL nahi.
+ISKE BAAD KYA TOOTEGA:
+  - NoSQL kyun nahi?
+      -> kai row / table pe ek saath "sab ya kuch nahi" chahiye + strong consistency. Paise me eventual nahi.
+```
+
+#### [1](#d1) BEECH ME CRASH: -500 HUA, +500 NAHI
+```
+KAHANI:  Arpan ke 500 kate, merchant ko pahunchne se pehle server crash -> 500 GAYAB.
+ILAAJ:   debit + credit EK DB TRANSACTION. Dono ya koi nahi, crash pe rollback.
+ANDAR KAISE:
+         BEGIN  Arpan -= 500 · Merchant += 500  COMMIT
+         niyam: sum(debit) == sum(credit) hamesha. Na mile -> turant alert.
+ISKE BAAD KYA TOOTEGA:
+  - crash pe DB rollback kaise karta?
+      -> DB pehle WAL / undo log me likhta. Uthte hi: COMMIT wale redo, bina COMMIT wale undo.
+  - do log ek saath Arpan ke account se?
+      -> UPDATE ... SET balance = balance - 500 WHERE id = ? AND balance >= 500 -> ek hi jeetega.
+```
+
+#### [2](#d2) DO BAAR TAP / RETRY = DOUBLE CHARGE
+```
+KAHANI:  user ne do baar tap kiya, ya app ne retry maara -> 1000 kate, 500 ka tha.
+ILAAJ:   IDEMPOTENCY KEY: client har naye payment pe UUID, retry pe WAHI. Pehle se hai -> purana result.
+ANDAR KAISE:
+         check + save EK atomic step: DB UNIQUE (pakka) + Redis SETNX (tez).
+         status IN_PROGRESS (chhoti expiry) -> DONE sirf PSP ke haan ke BAAD. ~24 ghante rakho.
+         do sacche alag payment (100 + 100) = alag key -> dono honge.
+ISKE BAAD KYA TOOTEGA:
+  - key client kyun banaye, server kyun nahi?
+      -> retry client karta. Server ko pata hi nahi ye wahi request. Client ki key hi dono ko jodti.
+  - key lagi, PSP call FAIL?
+      -> IN_PROGRESS chhoti expiry se khud mite / fail pe hatao -> retry chale. DONE pe hi skip.
+  - kaam ke baad key delete?
+      -> nahi. Late retry aaya to dobara charge.
+  - Redis aur DB dono kyun?
+      -> Redis tez + chal rahi request pakde. DB UNIQUE pakka, Redis gira tab bhi.
+  - idempotency vs do user ek saath?
+      -> idempotency = EK user ka retry. Do user ek balance pe = atomic / lock (WHERE balance >= x).
+```
+
+#### [3](#d3) ASLI PAISA HAMARA SERVER NAHI HILATA
+```
+KAHANI:  hamara server sirf "kaho". Asli paisa bank rails pe hilta.
+ILAAJ:   bahar ka PSP (Razorpay / Stripe / bank). Status: INITIATED -> PENDING -> SUCCESS / FAILED.
+         PSP dheema -> chhota TIMEOUT + CIRCUIT BREAKER.
+ANDAR KAISE:
+         CLOSED (normal) --5 fail--> OPEN (call hi nahi, PENDING) --30 sec--> HALF-OPEN (1 test call)
+         -> chali to CLOSED, fail to OPEN. Bina timeout har thread atka = poora system thapp.
+ISKE BAAD KYA TOOTEGA:
+  - timeout hua, user ko kya?
+      -> "processing" (PENDING), "fail" NAHI. Paisa shayad kat chuka. Reconciliation pakka karegi.
+  - do PSP rakhoge?
+      -> haan, ek down to doosra. Par EK payment hamesha EK PSP pe, beech me badalna nahi (double charge).
+  - PSP fail, turant retry?
+      -> paise me andha retry nahi. PENDING rakho, reconciliation tay kare.
+```
+
+#### [4](#d4) PSP CALL KE BAAD CRASH: PAISA GAYA YA NAHI?
+```
+KAHANI:  PSP ko call kiya aur crash. Paisa gaya ya sirf jawab kho gaya, pata hi nahi. "Bas rollback" galat.
+ILAAJ:   PSP call se PEHLE "PENDING" DB me. Phir WEBHOOK (PSP khud bataye) + RECONCILIATION job (atke PENDING
+         PSP se poochhe). Kabhi ASSUME nahi: pehle RECORD, phir RESOLVE.
+ANDAR KAISE:
+         reconciliation: PENDING 5 min se purane -> PSP se poochho -> hua = SUCCESS · nahi = retry (wahi key)
+         · pakka fail = FAILED + refund. Roz raat PSP / bank file se poora milaan.
+         (courier: har parcel ka tracking number -> courier gira, parcel gum nahi.)
+ISKE BAAD KYA TOOTEGA:
+  - webhook do baar aaya?
+      -> update idempotent: PENDING -> SUCCESS ek hi baar. SUCCESS pe dobara aaya = ignore.
+  - sirf webhook kaafi nahi?
+      -> webhook kho sakta / late / hamara server us waqt down. Reconciliation jaal hai jo chhoota pakde.
+  - sirf polling?
+      -> der + har pending pe baar-baar PSP call (limit / kharcha).
+  - chal raha, kaise pata?
+      -> reconciliation farak + p99 + error rate + queue lag pe alert + trace id se ek payment ka poora raasta.
+```
+
+#### [5](#d5) ALAG BANK / ALAG DB: EK TRANSACTION NAHI
+```
+KAHANI:  bhejne wala Bank A, lene wala Bank B. Ek DB transaction possible hi nahi.
+ILAAJ:   SAGA: har step apna commit. Koi fail -> pichhle ULTE kram me undo (khud likhna).
+         (trip: cab nahi mili -> hotel cancel -> flight cancel.)
+ANDAR KAISE:
+         BankA -500 OK -> BankB +500 FAIL -> COMPENSATE: BankA +500 wapas.
+         saga table me har step ka haal (DEBITED, CREDIT_PENDING ...).
+ISKE BAAD KYA TOOTEGA:
+  - 2PC kyun nahi?
+      -> sab "ready" bol ke lock pakad ke ruke. Coordinator gira = sab atke + dheema.
+  - Payment svc beech me gira?
+      -> uthte hi saga table dekh ke wahin se aage, ya ulta.
+  - beech ke waqt user ko?
+      -> "processing", thodi der me SUCCESS ya paisa wapas (eventual).
+```
+
+#### [6](#d6) REGULATOR: PAISA KAHAN SE KAHAN
+```
+KAHANI:  RBI: "ye 500 kahan se aaya, kahan gaya, kab?" Balance column bas aaj ka number batata.
+ILAAJ:   LEDGER table, USI transaction me jisme paisa hila. Sirf INSERT. Double-entry: debit + credit.
+ANDAR KAISE:
+         galti hui -> NAYI ulti entry (reversal), purani mat mitao (pen ki diary).
+         balance column usi transaction me update + ledger me 2 entry. Raat ko: sum(ledger) == balance? farak = alert.
+ISKE BAAD KYA TOOTEGA:
+  - galat entry delete kar doge?
+      -> nahi, ULTI entry. Audit me dono dikhte.
+  - balance + alag audit_log kyun nahi?
+      -> UPDATE se purana number mit jaata. Alag log me ek likha, doosra fail = farak. Ledger hi sach.
+  - 3 saal me ledger bahut bada?
+      -> month se partition, purane partition cold storage (S3 Glacier). Archive, delete kabhi nahi.
+  - ledger crash recovery karta?
+      -> nahi, wo hisaab / audit hai. Recovery = PENDING + webhook + reconciliation.
+```
+
+#### [7](#d7) FESTIVAL 3000 / SEC
+```
+KAHANI:  festival pe ek Payment svc box ka CPU khatam -> timeout -> user ne DOBARA tap. Wahi gira to sab band.
+ILAAJ:   Payment svc STATELESS, kai box + aage LB / API GATEWAY (JWT, rate limit, WAF, TLS).
+ANDAR KAISE:
+         state sab DB + idempotency store me -> koi bhi box koi bhi payment.
+         har payment pe OWNER CHECK: JWT se userId -> "from" account ka owner_id == userId? nahi to 403.
+ISKE BAAD KYA TOOTEGA:
+  - userId request body se le lo?
+      -> nahi! Body me koi bhi kuch likh de (spoof). Hamesha JWT se. (PR drill ka baar-baar wala.)
+  - LB ko kaise pata box mara?
+      -> health check (GET /health), fail = list se bahar.
+```
+
+#### [8](#d8) REPORT QUERY WRITE ROK RAHI
+```
+KAHANI:  merchant dashboard ki bhaari report usi DB pe -> asli payment ka write ruk raha.
+ILAAJ:   READ REPLICA se report. Balance / payment status hamesha PRIMARY se.
+ANDAR KAISE:
+         primary har change WAL me -> replica WAL stream padh ke lagati (ASYNC) -> thodi peeche (lag).
+         report me 1-2 sec purana chalta, balance me nahi. Bahut bhaari analytics -> alag warehouse (CDC se).
+ISKE BAAD KYA TOOTEGA:
+  - user ne pay kiya, purana balance dikha?
+      -> wo read lagging replica se aaya. Balance / status PRIMARY se hi.
+  - primary gira?
+      -> SYNC standby promote (RDS Multi-AZ) -> kuch nahi khota. Async read replica promote ki = aakhri write kho sakte.
+  - replica kitni peeche, kaise pata?
+      -> replication lag metric pe alert.
+```
+
+#### [9](#d9) 50 CRORE ROW, LIKHAI DHEEMI
+```
+KAHANI:  crore-on payment rows, saare write ek primary pe -> likhai dheemi.
+ILAAJ:   SHARD by account_id. Naya dard: bhejne / lene wala alag shard -> wapas SAGA.
+ANDAR KAISE:
+         account -> shard: consistent hashing ya lookup table (account -> shard, badla ja sake).
+         ek account ka balance + history ek shard pe -> debit ek jagah atomic.
+ISKE BAAD KYA TOOTEGA:
+  - txn_id ya time pe kyun nahi?
+      -> txn_id: ek account ki txn bikhri, balance kahan? · time: aaj ka shard garam.
+  - bada merchant (Amazon) -> ek shard garam?
+      -> merchant ke kai sub-account, shard me baanto, report me jodo.
+  - cross-shard transfer?
+      -> SAGA: debit shard A, credit shard B, fail pe ulta. Asli mushkil yahi hai, throughput nahi.
+```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
@@ -112,6 +265,12 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc_x_N_1
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
+
+---
+
+## ════ DETAIL: HAR DIKKAT KA POORA EXPLANATION ════
+
+> Card me koi baat samajh na aaye, to uska poora "kaise / kyun" aur diagram yahan hai.
 
 ---
 
