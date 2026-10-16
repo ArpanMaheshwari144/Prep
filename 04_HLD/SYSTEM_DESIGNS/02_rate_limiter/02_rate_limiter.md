@@ -191,6 +191,10 @@ AGLA SAWAAL (tere jawab se):
       1 ghatao, dono save -> ek hi unit
   "Lua script dheema / atak gaya to?"
    -> Redis single thread -> lamba script sabko rokega. Isliye script chhota, koi loop nahi
+  "10 crore users ke bucket har second bharne ko koi job chalaoge?"
+   -> NAHI. Bharna request AANE pe hi hota (lazy): (abhi - last) x rate jodo, max tak. Koi job nahi.
+      Key pe TTL -> jo user aa hi nahi raha uski key khud udd jaati -> memory sirf ACTIVE users ki,
+      aur ek bucket = sirf 2 number (tokens + last). Sliding LOG ulta bhaari (har request ka timestamp).
 ```
 ```mermaid
 flowchart TD
