@@ -69,22 +69,203 @@ DO BLOCK JO DESIGN CHALATE:
 
 ---
 
-## MOCK CUE — pehle ye, phir mock
+## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-| # | dikkat | cue | POOCHEGA -> jawab |
-|---|---|---|---|
-| [1](#d1) | 2 crore connection khuli, memory | **WEBSOCKET + EVENT LOOP**: kuch hi thread, laakhon connection (event loop); server gira to log alag-alag der baad wapas judein | "WebSocket kyun, polling / SSE kyun nahi?" -> polling = har 5 sec "kuch aaya?" (100 me 1 kaam ki) · SSE = sirf server -> client · chat dono taraf + turant -> WebSocket |
-| [2](#d2) | A server-1, B server-7 | **Redis: B KIS SERVER pe**: Redis me "B kis server pe", mera server us server ko call kare | "Redis diary me B ka server galat (B khiska)?" -> server-7 pe B nahi mila -> message DB me pada hai -> B naye server pe judte hi catch-up |
-| [3](#d3) | B offline, message kahan | **OFFLINE: DB pehle + PUSH NOTIFICATION**: pehle DB me likho, phir bhejo; B juda nahi to push notification | "B ke 3 device?" -> har device ka apna connection + cursor; message sab pe, ek pe padha to baaki pe bhi neeli |
-| [4](#d4) | 1.2 TB roz, 46k write/sec | **PARTITION KEY chat_id + SORT message_id**: chat_id se tukde, chat ke andar message_id se kram | "partition user_id se kyun nahi?" -> ek chat do jagah bat-ti (A ke bheje A ke, B ke B ke) -> aakhri 50 ke liye do jagah padho; chat_id = ek read |
-| [5](#d5) | 500 ka group, 500 baar likhai? | **EK COPY (fanout nahi)**: ek hi copy chat ke neeche, sab wahi padhein | "500 me 300 online, bhejna kaise?" -> routing diary se members ke servers nikaalo, har server ko EK call 'ye message, in members ko' |
-| [6](#d6) | kiske kitne unread | **NISHAAN (read_upto)**: har member ka nishaan "yahan tak padha", unread = uske baad kitne | "unread count kaise?" -> chat ka aakhri seq - mera read seq (ghatao, gino nahi) |
-| [7](#d7) | do tick / neeli tick | **delivered_upto + read_upto**: wahi nishaan, do number: "yahan tak mila" + "yahan tak padha" | "group me do tick kab?" -> sab members ka delivered_upto >= message id -> sabse chhota cursor dekho |
-| [8](#d8) | 10 lakh broadcast, tick ka kya | **GROUP SIZE LIMIT**: group size bandha (~1000); channel / broadcast me tick band | "channel me 10 lakh ko kaise?" -> Kafka se fan-out workers members ke pages me; online ko push, baaki catch-up pe |
-| [9](#d9) | retry, B ko ek baat do baar | **IDEMPOTENCY (clientMsgId)**: message ID client banaye, wahi ID dobara aaye to purana lautao | "clientMsgId kitni der yaad?" -> retry window: Redis SET NX EX 3600, ya DB me (chat_id, clientMsgId) UNIQUE |
-| [10](#d10) | kram kiska time | **SERVER SEQUENCE ID**: kram server ki ID se (time se badhti), phone ki ghadi se nahi | "16 nahi aaya, client kya kare?" -> chhota intezaar, phir server se '15 ke baad ke' maango |
-| [11](#d11) | 5 MB video isi raaste? | **PRESIGNED URL (S3)**: file S3 me (presigned URL), message me sirf S3 KEY (URL nahi, wo expire hota) | "Message me kya store?" -> S3 KEY, presigned URL nahi (wo expire); kholne pe server naya URL banata |
-| [12](#d12) | online / last-seen | **PRESENCE (heartbeat + TTL)**: Redis me "online" chhoti TTL, app heartbeat se badhaye; band hua to apne aap offline | "Har 15 sec heartbeat = Redis pe 13 lakh / sec?" -> heartbeat chat server tak; server presence batch me Redis me |
+## MOCK CUE — har dikkat ek card
+
+> Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
+> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
+
+#### [1](#d1) 2 CRORE CONNECTION KHULI, MEMORY
+```
+KAHANI:  har user ki connection hamesha khuli. Ek connection ~30 KB -> 1 lakh = ~3 GB sirf pakad ke rakhne me.
+         (tere demo me 3 connection ne jagah bhar di, [SEND] server tak pahuncha hi nahi.)
+ILAAJ:   WEBSOCKET + EVENT LOOP (Netty jaisa): kuch hi thread, laakhon connection. ~200 chat server, aage LB.
+ANDAR KAISE:
+         thread-per-connection: har thread ~1 MB stack -> 1 lakh = ~100 GB + switching.
+         event loop: OS (epoll) batata "in 5 socket pe data aaya" -> sirf unpe kaam. Khaali socket = koi kharcha nahi.
+ISKE BAAD KYA TOOTEGA:
+  - WebSocket kyun, polling / SSE kyun nahi?
+      -> polling: har 5 sec "kuch aaya?" (100 me 1 kaam ki). SSE sirf server -> client. Chat dono taraf + turant.
+  - chat server gira?
+      -> uske lakh user reconnect -> BACKOFF + JITTER (warna sab ek saath). Message DB me pehle se, reconnect pe
+         "meri aakhri id ke baad ka do".
+  - deploy?
+      -> thode-thode server, pehle connection hatao (DRAINING). Ek saath restart = lakh disconnect.
+  - LB lambi connection kaise bithata?
+      -> connection ek baar kisi server pe, phir wahi. Naya connection = naya chunaav.
+```
+
+#### [2](#d2) A SERVER-1 PE, B SERVER-7 PE
+```
+KAHANI:  A server-1 pe, B server-7 pe. Server-1 ki diary me sirf apne log -> bola "B OFFLINE", jabki B online tha.
+ILAAJ:   SAANJHI DIARY (Redis): "B -> server-7". Mera server Redis se poochhe, server-7 ko seedha call kare,
+         wo apni local connection pe B ko de.
+ANDAR KAISE:
+         connection kabhi Redis me nahi (zinda taar, sirf usi server ki memory me). Redis me sirf PATA.
+         server mara, entry padi -> TTL + heartbeat. (har message pe saare server se poochhna = bekaar.)
+ISKE BAAD KYA TOOTEGA:
+  - diary me B ka server galat (B abhi khiska)?
+      -> server-7 pe B nahi mila -> message DB me hai -> B naye server pe judte hi catch-up.
+  - Redis hi gira?
+      -> replica pe failover. Beech me routing nahi, par message DB me -> push + reconnect se pahunchenge.
+  - pub-sub se kyun nahi?
+      -> pub-sub bhej ke bhool jaata. Offline uske bharose nahi.
+```
+
+#### [3](#d3) B OFFLINE, MESSAGE KAHAN?
+```
+KAHANI:  B offline, connection hi nahi. Galat soch: "pehle B ko bhejo, na pahunche to DB".
+ILAAJ:   PEHLE DB me LIKHO (id ke saath), PHIR bhejne ki koshish. B nahi -> DB me pada + PUSH notification.
+ANDAR KAISE:
+         B wapas: "aakhri id 4417, uske BAAD ka do" (nishaan client rakhta, Kafka offset jaisa). Phir server khud bhejta.
+         push: login pe phone ka device token (FCM / APNs) save -> Google / Apple ke through phone OS tak, app band ho tab bhi.
+ISKE BAAD KYA TOOTEGA:
+  - B ke 3 device?
+      -> har device ka apna connection + cursor. Message sab pe, ek pe padha to baaki pe bhi neeli.
+  - push me poora message?
+      -> chhota preview / "naya message" (privacy). Asli message app khulne pe server se.
+  - kuch na khoye, poora?
+      -> DB pehle + Kafka ho to acks=all, offset kaam ke baad, message id se idempotent, fail -> DLQ.
+```
+
+#### [4](#d4) 1.2 TB ROZ, 46,000 WRITE / SEC
+```
+KAHANI:  roz ~1.2 TB, 46,000 write / sec. Ek DB box nahi. Kis cheez se baantein?
+ILAAJ:   Cassandra / Scylla. PARTITION KEY = chat_id, SORT KEY = message_id (SNOWFLAKE).
+ANDAR KAISE:
+         padhna hamesha "IS CHAT ke aakhri 50" -> ek partition, ek read:
+         WHERE chat_id = ? AND id < 4417 ORDER BY id DESC LIMIT 50 (keyset, OFFSET nahi).
+         snowflake 64 bit = [time ms | machine id | us ms me ginti] -> har server khud banata, time ke saath badhta.
+         Cassandra write tez: commit log (append) + RAM memtable.
+ISKE BAAD KYA TOOTEGA:
+  - partition user_id se kyun nahi?
+      -> A-B ki ek chat do jagah (A ke bheje A ke, B ke B ke) -> "aakhri 50" ke liye do jagah jodo. Group = 500 jagah.
+  - message_id se partition?
+      -> har message alag dabba -> aakhri 50 = 50 jagah. message_id SORT key hai.
+  - ek bahut active group (hot partition)?
+      -> key me random bucket (chat_id + 0..9), padhte waqt jodo. Ya group size / rate cap.
+  - ek group ki partition saalon me bahut badi?
+      -> key = (chat_id, month) -> size bandha. (Bojh nahi baantta, sirf size.)
+  - 3 saal baad?
+      -> pehle poochho: WhatsApp jaisa (pahunchte hi delete) ya Slack jaisa (sab rakho -> purana cold storage).
+  - relational kyun nahi?
+      -> ek message ek row, multi-row transaction / constraint chahiye hi nahi. Likhai bahut.
+```
+
+#### [5](#d5) 500 KA GROUP, 500 BAAR LIKHAI?
+```
+KAHANI:  500 ka group, ek message -> 500 inbox me likhein?
+ILAAJ:   EK hi copy chat ke neeche (fanout on READ). Sab wahi padhein. Bhejna = connection pe (sasta), DB likhai ek.
+ANDAR KAISE:
+         Twitter se ulta kyun: Twitter feed 200 logon ki milawat + crore follower. Group sabke liye ek jaisa, 500 member.
+ISKE BAAD KYA TOOTEGA:
+  - 500 me 300 online, bhejna kaise?
+      -> diary se members ke servers nikaalo, har SERVER ko EK call "ye message, in members ko" (300 alag nahi).
+  - naya member juda, purane message?
+      -> joining id se pehle wale nahi (cursor joining id pe), ya settings ke hisaab.
+```
+
+#### [6](#d6) KISKE KITNE UNREAD
+```
+KAHANI:  500 member, kiske kitne unread? Har message x har member ka record = 500 x 50 = 25,000 likhai.
+ILAAJ:   har member ka EK NISHAAN (cursor): "Arpan is group me 4417 tak padh chuka". 500 row bas.
+ANDAR KAISE:
+         unread = chat ka aakhri seq - mera read seq (GHATAO, gino nahi).
+         cursor per-chat SEQ pe (+1 wala number, card 10). Snowflake me gap hote, isliye seq.
+ISKE BAAD KYA TOOTEGA:
+  - cursor kahan?
+      -> Cassandra (user_id, chat_id) -> read_upto. Garam wala Redis me.
+```
+
+#### [7](#d7) DO TICK / NEELI TICK
+```
+KAHANI:  ek tick = server tak. Do tick = B ke app ne "mil gaya" bola. Neeli = B ne chat khol ke dekha.
+ILAAJ:   wahi CURSOR, do number: delivered_upto ("yahan tak mila") + read_upto ("yahan tak padha").
+ANDAR KAISE:
+         B ne 50 padhe -> ek hi baat "read_upto 4467" -> A ko EK push -> 50 neeli ek saath. (50 alag ack nahi.)
+         tick + unread + offline catch-up = ek hi cheez: ek nishaan aage khiskta.
+ISKE BAAD KYA TOOTEGA:
+  - "mil gaya" ack kho gaya?
+      -> B agli baar judta hai to apna delivered_upto bhejta -> cursor aage, A ko tick.
+  - group me do tick kab?
+      -> sab members ka delivered_upto >= message id -> sabse CHHOTA cursor dekho.
+```
+
+#### [8](#d8) 10 LAKH BROADCAST, TICK KA KYA
+```
+KAHANI:  10 lakh ka broadcast group. Har member ka cursor + tick 500 pe chalta, 10 lakh pe nahi.
+ILAAJ:   feature utna jitna scale jhele: group size bandha (~1000). Channel / broadcast me tick band.
+ANDAR KAISE:
+         Slack channel me sirf channel ka unread (ek cursor).
+ISKE BAAD KYA TOOTEGA:
+  - channel me 10 lakh ko pahunchana?
+      -> fanout workers (Kafka se) members ke pages me. Online ko push, baaki catch-up pe.
+  - seema kaun tay kare?
+      -> product + engineering: feature ki keemat batao (10 lakh x tick = kitne write).
+```
+
+#### [9](#d9) RETRY, B KO EK BAAT DO BAAR
+```
+KAHANI:  A ka net dheema, timeout pe app ne dobara bheja, pehla pahunch chuka tha -> B ko ek baat do baar.
+ILAAJ:   clientMsgId (CLIENT banaye, retry pe wahi). Pehle aaya -> purana message lautao.
+ANDAR KAISE:
+         "pehle aaya?" + insert = EK atomic step: (chat_id, clientMsgId) UNIQUE, ya Redis SET NX EX 3600.
+         server banata to har retry nayi id = duplicate.
+ISKE BAAD KYA TOOTEGA:
+  - kitni der yaad?
+      -> retry window (minute-ghante).
+  - retry pe kaunsi id lautegi?
+      -> pehli baar wali server id -> A ke app me ek hi bubble.
+```
+
+#### [10](#d10) KRAM KISKA TIME?
+```
+KAHANI:  A ka phone 5 min aage chal raha. Uske message kram me upar chadh gaye.
+ILAAJ:   kram SERVER ki id se (snowflake, ek chat ek partition). Phone ki ghadi sirf dikhane ke liye.
+         + har chat ka apna +1 SEQ -> 15, 17 aaya, 16 nahi -> gap pakda -> catch-up.
+ANDAR KAISE:
+         seq: Redis INCR seq:chat123 (atomic) ya chat ka owner server memory me ginta.
+         Kafka beech me -> key = chatId -> ek chat kram me, alag chat parallel.
+         jaan-boojh ke: strict kram = pehla atka to doosra bhi roko (head-of-line). Chuna: thoda idhar-udhar, par ruke nahi.
+ISKE BAAD KYA TOOTEGA:
+  - 16 nahi aaya, client kya kare?
+      -> chhota intezaar (raaste me ho), phir server se "15 ke baad ke do".
+  - seq wala Redis restart, ginti 0 se?
+      -> DB se chat ka max seq padh ke wahan se aage (ya Redis persistence).
+  - do server ki ghadi alag, snowflake?
+      -> ms ka farak ho sakta. Ek chat ka pakka kram per-chat seq se.
+```
+
+#### [11](#d11) 5 MB VIDEO ISI RAASTE SE?
+```
+KAHANI:  5 MB video chat server ke raaste se -> connection + thread atkenge.
+ILAAJ:   client file seedha S3 me (PRESIGNED URL). Message me sirf PATA: { type, S3 KEY, size, thumbnail }.
+ANDAR KAISE:
+         server sign kare (PUT, key, 10 min) -> client seedha S3. Thumbnail client banata (kuch KB) -> turant dikhe.
+         group me file ek baar, 500 ko wahi pata.
+ISKE BAAD KYA TOOTEGA:
+  - message me kya store, URL?
+      -> NAHI, S3 KEY. URL 10 min me expire -> kal link mara. Kholne pe server naya chhota URL banaye.
+  - same video 1000 log forward?
+      -> content hash -> pehle se hai to wahi file (dedup), naya upload nahi.
+  - end-to-end encryption me thumbnail?
+      -> server nahi dekh sakta. Client encrypt karke upload, chaabi message ke saath.
+```
+
+#### [12](#d12) ONLINE / LAST-SEEN
+```
+KAHANI:  har connect / disconnect pe saare contacts ko batao = crore x 500 = bakwaas.
+ILAAJ:   Redis me "B online" chhoti TTL (30 sec), app heartbeat (15 sec) se badhaye. App band -> TTL khatam -> apne aap offline.
+         POOCHHO, batao mat: B ka status tabhi jab B ki chat khuli ho.
+ANDAR KAISE:
+         "offline" message bhejna hi nahi. Last seen = usi key ka aakhri update. Chhupaya hai to mat dikhao.
+ISKE BAAD KYA TOOTEGA:
+  - 2 crore / 15 sec = 13 lakh heartbeat / sec Redis pe?
+      -> heartbeat chat server tak (connection pe ping). Server apne users ka presence BATCH me Redis me.
+  - typing... live?
+      -> sirf khuli chat ke liye. Typing = chhota event, store nahi, bhej ke bhool jao.
+```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
@@ -136,6 +317,12 @@ flowchart TD
     n_Idempotency_check --> n_Cassandra_messages
     n_Cassandra_messages --> n_Cold_storage
 ```
+
+---
+
+## ════ DETAIL: HAR DIKKAT KA POORA EXPLANATION ════
+
+> Card me koi baat samajh na aaye, to uska poora "kaise / kyun" aur diagram yahan hai.
 
 ---
 
