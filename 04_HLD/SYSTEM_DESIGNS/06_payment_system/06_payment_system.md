@@ -57,6 +57,19 @@ BOL:      "Consistency for money — during a partition I'd rather reject than g
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: Arpan -= 500 · Merchant += 500
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_DB["DB"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_DB
+```
+
 #### 0 DB KAUNSA? SQL
 ```
 KAHANI:  ek payment = Arpan -500 + merchant +500 + ledger ki 2 row. Ye sab ek saath hone chahiye.

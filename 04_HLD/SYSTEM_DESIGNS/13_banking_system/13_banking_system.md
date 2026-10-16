@@ -54,6 +54,19 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: Banking Service (business logic) -> SQL DB · jaan-boojh ke seedha
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+```
+
 #### [1](#d1) TRANSFER BEECH ME GIRA: -500 HUA, +500 NAHI
 ```
 KAHANI:  A se B ko 500. A ke kate, B ko milne se pehle server gira -> 500 gayab.

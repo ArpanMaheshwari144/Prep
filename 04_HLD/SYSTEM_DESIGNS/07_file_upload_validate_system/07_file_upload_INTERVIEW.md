@@ -41,6 +41,21 @@ NUMBERS: 1 lakh file / din -> ~1-2 write / sec (kam)       (1 din ~ 1,00,000 sec
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: client file server ko de · server S3 me rakhe · validator call kare (2-3 sec) · jawab wapas
+```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_Upload_Svc["Upload Svc"]
+    n_Validator["Validator"]
+    n_S3["S3"]
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_Validator
+    n_Upload_Svc --> n_S3
+```
+
 #### [1](#d1) USER 2-3 SEC RUKA, THREAD BLOCK
 ```
 KAHANI:  upload kiya, third-party validation 2-3 sec. User ruka, server ka thread bhi block.

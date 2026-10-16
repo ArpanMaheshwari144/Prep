@@ -48,6 +48,17 @@ NUMBERS: storage ka hisaab bekaar — per key ek counter + TTL, bas
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: counter App ki memory me · count++ · limit paar -> 429
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_USER --> n_App
+```
+
 #### [1](#d1) TEEN SERVER, GINTI BAT GAYI
 ```
 KAHANI:  LB ne request 3 App me baanti. App-1 ne 3 gini, App-2 ne 4, App-3 ne 2 -> total 9, limit 5.

@@ -49,6 +49,19 @@ BOL:      "For the booking itself I'd pick consistency: I'd rather reject a writ
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: seats(seat_id, show_id, status) · "book" dabao -> status = 'booked'
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_SQL_DB["SQL DB"]
+    n_USER --> n_App
+    n_App --> n_SQL_DB
+```
+
 #### [1](#d1) DO ALAG USER NE EK SAATH A1 BOOK KI
 ```
 KAHANI:  X ne dekha "A1 khaali", Y ne bhi dekha "A1 khaali". Dono ne book kiya -> A1 do logon ko.

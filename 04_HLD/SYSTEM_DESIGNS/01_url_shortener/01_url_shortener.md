@@ -49,6 +49,19 @@ KYUN:    Twitter / SMS limit · marketing tracking · QR / print · saaf dikhna
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: App code banaye, DB me save · click pe DB se nikaal ke redirect
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
+```
+
 #### 0 SHURU: CODE KAISE BANE (dil ka hissa)
 ```
 KAHANI:  "https://amazon.in/....../lamba-sa-link" -> "bit.ly/w7e". Har link ka chhota code UNIQUE chahiye.

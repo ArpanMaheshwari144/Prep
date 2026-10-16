@@ -54,6 +54,19 @@ BOL:      "For the feed and like counts, availability. A feed a couple of second
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: tweets table + follows table · feed = jinko follow karta unke tweet nikaalo, time se sort, top 50
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
+```
+
 #### [1](#d1) HAR BAAR APP KHOLNE PE 200 LOGON KA DATA JODNA
 ```
 KAHANI:  Arpan 200 log follow karta. App khola -> 200 logon ke tweet laao, jodo, time se sort, top 50.

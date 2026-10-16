@@ -56,6 +56,19 @@ BOL:      "Kafka absorbs the burst and workers drain at their own pace. Sale tim
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: Order service seedha email API call kare
+```
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Email_API["Email API"]
+    n_USER["USER"]
+    n_Order_Svc --> n_Email_API
+    n_Email_API --> n_USER
+```
+
 #### [1](#d1) ORDER EMAIL KE INTEZAAR ME RUKA, EMAIL DOWN = ORDER FAIL
 ```
 KAHANI:  Order svc email bhejne tak ruki. Email service down -> order hi fail. Retry koi nahi.

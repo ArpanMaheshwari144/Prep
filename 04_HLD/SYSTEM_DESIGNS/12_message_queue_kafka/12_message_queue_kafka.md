@@ -51,6 +51,19 @@ NUMBERS: 100M msg / din -> ~1,200 / sec -> peak 3-5x -> ~5,000 / sec
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: ek machine, memory me queue
+```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Queue["Queue"]
+    n_Consumer["Consumer"]
+    n_Producer --> n_Queue
+    n_Queue --> n_Consumer
+```
+
 #### [1](#d1) CONSUMER RESTART, MESSAGE GAYAB
 ```
 KAHANI:  message memory ki queue me the. Consumer restart hua -> sab gayab.

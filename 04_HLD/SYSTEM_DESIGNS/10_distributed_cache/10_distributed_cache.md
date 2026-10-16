@@ -50,6 +50,19 @@ NUMBERS: ~1 TB · ~1M QPS · read-heavy
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: ek machine, ek HashMap (RAM) · O(1) get / put · CACHE-ASIDE: hit -> return · miss -> DB -> cache me PUT -> return
+```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache["Cache"]
+    n_App --> n_DB
+    n_App --> n_Cache
+```
+
 #### 0 SHURU: CACHE-ASIDE (cache kaam kaise karta)
 ```
 KAHANI:  DB har read pe disk pe jaata, ~10 ms. 1M read / sec -> DB ghutno pe.

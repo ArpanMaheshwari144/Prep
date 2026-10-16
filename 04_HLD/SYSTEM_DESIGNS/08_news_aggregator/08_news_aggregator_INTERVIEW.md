@@ -41,6 +41,21 @@ NUMBERS: 10 lakh user x 5 / din = 50 lakh read / din = ~50 / sec (spike 5-10x = 
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: Fetcher source se kheenche, DB me daale · Feed Svc "latest 20" nikaal ke de
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_DB["DB"]
+    n_Fetcher["Fetcher"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_DB
+    n_Fetcher --> n_DB
+```
+
 #### [1](#d1) HAR REQUEST PE DB SE "LATEST 20"
 ```
 KAHANI:  subah 500 request / sec, har ek DB se "ORDER BY published_at DESC LIMIT 20". Aur sabko lagbhag WAHI feed.

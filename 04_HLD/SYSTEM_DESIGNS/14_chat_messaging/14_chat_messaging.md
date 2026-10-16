@@ -76,6 +76,38 @@ DO BLOCK JO DESIGN CHALATE:
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE, EK SERVER DO USER (yahan se shuru, phir "kahan tootega")
+
+```
+SOLUTION: A /connect?user=A (BAND NAHI hoti) -> register A -> penA · B /connect -> B -> penB
+          A /send?to=B&text=hi (normal request) -> register.get("B") -> penB me likho -> B ko "A: hi"
+          `pen` DATA nahi, B tak PAHUNCHNE KA RAASTA · message B ke PURANE khule taar se gaya · B ne kabhi nahi poocha
+★ DEKHA:  B ki screen pe message aa gaya, B ne kuch maanga hi nahi. Screen pe "JUD GAYA — ye connection ab khuli padi hai",
+          console pe `[JUDA] B   register ab = [A, B]`
+```
+```
+POOCHEGA: "B never asked for anything. How does the server push A's message to B?"
+DHYAAN:   "client aur server thodi-thodi der me baat karte rehte" = ye POLLING hai, galat shabd.
+          WebSocket = ek baar judo, connection KHULA rehta. Server ko jab bhi kuch dena ho, usi
+          khule taar pe TURANT bhej deta. Client ko poochna nahi padta.
+BOL:      "Each client opens a WebSocket once and keeps it open. The server can push to it at any time
+           over that same connection, so the receiver never has to ask. Polling would waste requests and
+           add delay."
+
+AGLA SAWAAL (tere jawab se):
+  "WebSocket kyun, polling / long polling / SSE kyun nahi?"
+   -> polling = har 5 sec "kuch aaya?", 100 me 1 kaam ki · long polling = har message ke baad naya request
+      · SSE = sirf server -> client (ek taraf) · chat me dono taraf, turant -> WebSocket
+  "Connection chupchaap toot gaya (net gaya), server ko kaise pata?"
+   -> ping / pong heartbeat; jawab na aaye to connection band, register se hatao
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_Chat_Server["Chat Server"]
+    n_USER_A_B --> n_Chat_Server
+```
+
 #### [1](#d1) 2 CRORE CONNECTION KHULI, MEMORY
 ```
 KAHANI:  har user ki connection hamesha khuli. Ek connection ~30 KB -> 1 lakh = ~3 GB sirf pakad ke rakhne me.

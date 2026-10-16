@@ -41,6 +41,19 @@ NUMBERS: ~50 lakh users · ~50 lakh orders / din · normal ~250 / sec, market kh
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: order DB me rakho, milta-julta sell dhoondho -> match
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_DB
+```
+
 #### 0 SHURU: ORDER BOOK KAISE MATCH KARTA
 ```
 KAHANI:  TCS ke liye bechne wale aur khareedne wale line me. Kaun kisse milega?

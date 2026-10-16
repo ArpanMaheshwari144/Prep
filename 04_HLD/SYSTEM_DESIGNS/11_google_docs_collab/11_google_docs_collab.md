@@ -39,6 +39,19 @@ NUMBERS: ~100M user · ~30-40M DAU · edits / sec BAHUT — WRITE-DOMINATED (har
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
 
+#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
+```
+SOLUTION: doc ka poora text DB me · "Save" dabao -> poora text overwrite
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
+```
+
 #### [1](#d1) DO LOG NE SAATH SAVE KIYA, BAAD WALE NE PEHLE KA MITAYA
 ```
 KAHANI:  A ne "HELLO WORLD" save kiya, B ne usi waqt "HELLO THERE". B ka baad me pahuncha -> A ka kaam gayab
