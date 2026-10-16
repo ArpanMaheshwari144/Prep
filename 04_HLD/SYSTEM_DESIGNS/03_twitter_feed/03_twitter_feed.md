@@ -47,7 +47,7 @@ BOL:      "For the feed and like counts, availability. A feed a couple of second
 
 ---
 
-## ════ UPAR = REVISION (mock se pehle SIRF ye padho) ════
+## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 ## MOCK CUE — har dikkat ek card
 
@@ -282,9 +282,9 @@ flowchart TD
 
 ---
 
-## ════ NEECHE = DETAIL + HANDS-ON (samajhne ke liye) ════
+## ════ DETAIL: HAR DIKKAT KA POORA EXPLANATION ════
 
-> Upar ke card + aakhri dabbe = revision. Neeche tab aao jab kisi card ka poora "kaise / kyun" ya diagram dekhna ho.
+> Card me koi baat samajh na aaye, to uska poora "kaise / kyun" aur diagram yahan hai.
 
 ---
 
