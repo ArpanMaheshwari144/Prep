@@ -45,14 +45,146 @@ NUMBERS: ~1 TB · ~1M QPS · read-heavy
 
 ## MOCK CUE — pehle ye, phir mock
 
-| # | dikkat | cue | POOCHEGA -> jawab |
-|---|---|---|---|
-| [1](#d1) | RAM bhar gayi, kya hatayein | **LRU + TTL**: jo sabse der se nahi chhua wo hatao (HashMap + doubly linked list); har entry pe TTL | "Redis sach me poora LRU rakhta?" -> nahi, approximate LRU: kuch random keys uthata, unme sabse purani hatata |
-| [2](#d2) | 1 TB ek node me nahi, key kis node pe | **CONSISTENT HASHING**: hash % N nahi; gol ring (consistent hashing) + ek machine ring pe kai jagah; app ki library sahi node chune | "naya node juda, uski key khaali -> miss?" -> haan, sirf us arc ki ~K/N key ka ek baar miss, poora nahi |
-| [3](#d3) | ek node mara, load DB pe | **REPLICATION + FAILOVER**: har tukde ki 1-2 copy alag AZ, primary mara to copy upar (copy thodi peeche, cache me chalta) | "network toota, purana primary bhi zinda samjhe (do primary)?" -> split brain; quorum + minority wala write band kare (min-replicas) |
-| [4](#d4) | DB update, cache purana | **INVALIDATION (delete)**: DB update phir cache key DELETE (update nahi) + TTL | "DB update hua, cache DELETE fail?" -> TTL bachata (max utni der purana); pakka chahiye -> CDC event se delete ka retry |
-| [5](#d5) | garam key expire, 1000 request ek saath DB pe | **STAMPEDE (lock)**: sirf ek DB se laaye (lock), baaki ruk ke cache se; garam key ko expire se pehle refresh | "haarne wale kitni der rukenge?" -> chhota wait + kuch retry; phir bhi nahi to purani value do, DB pe mat bhejo |
-| [6](#d6) | ek key itni popular, uska node mar raha | **HOT KEY + L1 CACHE**: us key ki kai node pe copy; app ke andar 1-2 sec ka chhota cache (L1) | "hot key pehchanoge kaise?" -> node metrics (ek key pe ops/sec), redis-cli --hotkeys; had paar = copy / L1 me |
+> Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
+> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
+
+#### 0 SHURU: CACHE-ASIDE (cache kaam kaise karta)
+```
+KAHANI:  DB har read pe disk pe jaata, ~10 ms. 1M read / sec -> DB ghutno pe.
+ILAAJ:   aage RAM wala cache. App pehle cache se poochhe.
+ANDAR KAISE:
+         HIT  -> cache se value, <1 ms.
+         MISS -> DB se laao -> cache me PUT (TTL ke saath) -> return.
+         App khud cache sambhalta = CACHE-ASIDE (sabse common).
+ISKE BAAD KYA TOOTEGA:
+  - write kaise? cache-aside / write-through / write-back?
+      -> cache-aside: DB me likho, cache key DELETE. write-through: dono me saath (taaza, par write dheema).
+         write-back: pehle cache, DB baad me (tez, par cache mara to data gaya -> paisa pe kabhi nahi).
+  - poora cache hi gir gaya?
+      -> sab DB pe. DB ke aage rate limit / load shedding, warna chhupa load DB ko gira deta.
+  - chal raha hai, kaise pata?
+      -> HIT RATIO sabse pehle (gira = kuch toota) + p99 latency + evictions.
+```
+
+#### [1](#d1) RAM BHAR GAYI, KYA HATAYEIN
+```
+KAHANI:  RAM 64 GB bhar gayi. Naya daalna hai, kuch nikaalna padega. Kya?
+ILAAJ:   LRU: jo sabse LAMBE samay se nahi chhua, wo bahar. Har entry pe TTL bhi.
+ANDAR KAISE:
+         HashMap (key -> node) + doubly linked list. Chhua -> list ke aage.
+         jagah chahiye -> list ki POONCH wala hatao. Dono O(1). (LeetCode 146, tera LRU REDO.)
+         TTL: padhte waqt check (lazy) + background me thodi-thodi safai (active).
+ISKE BAAD KYA TOOTEGA:
+  - LRU kyun, LFU kyun nahi?
+      -> LRU = "kab chhua", LFU = "kitni baar". LFU me kal ka famous key aaj bhi baitha rehta -> isliye
+         LFU ginti ko waqt ke saath ghatata (decay). Default LRU.
+  - Redis sach me har key ki list rakhta?
+      -> nahi, memory bachane ko APPROXIMATE LRU: kuch random key uthata, unme sabse purani hatata.
+  - memory bhari aur eviction band (noeviction)?
+      -> naye write pe ERROR. Cache ke liye allkeys-lru rakho.
+```
+
+#### [2](#d2) 1 TB EK NODE ME NAHI: KEY KIS NODE PE
+```
+KAHANI:  data 1 TB, ek node me 64 GB. 16+ node chahiye. "user:42" kis node pe jaaye?
+ILAAJ:   CONSISTENT HASHING (hash % N nahi).
+ANDAR KAISE:
+         hash % N: 4 se 5 node kiye -> N badla -> ~80% key ka node badla -> sab MISS -> DB gira.
+         RING: 0 se 2^32 ka gola. node bhi ring pe, key bhi. key ghadi ki disha me jo pehla node mile, wahin.
+         node juda / gaya -> sirf uske paas ki thodi key hilti (~K/N).
+         VIRTUAL NODES: ek machine ring pe 100 jagah -> load barabar baante.
+         App ke andar CACHE CLIENT library ye hisaab karke sahi node pe bhejti.
+ISKE BAAD KYA TOOTEGA:
+  - naya node juda, uski key khaali -> miss?
+      -> haan, sirf us hisse ki ~K/N key ek baar miss. Poora nahi.
+  - client ko kaise pata kaun node zinda?
+      -> cluster topology / config service. Galat node pe gaya to Redis bolta "MOVED, wahan jao".
+  - Redis Cluster ring use karta?
+      -> nahi, 16384 SLOT: CRC16(key) % 16384 -> slot -> node. Node juda to kuch slot khiskao. Kaam wahi.
+  - range se baanto (A-M, N-Z)?
+      -> ek range garam ho jaati (sab "a" wale), ek node pe bojh. Isliye hash.
+```
+
+#### [3](#d3) EK NODE MARA, LOAD DB PE
+```
+KAHANI:  Node B mara. Uske hisse ki saari key gayi. Wo saari read seedha DB pe -> DB pe achanak bojh.
+ILAAJ:   har node ki 1-2 COPY (replica) alag AZ me. Primary mara -> replica primary bana.
+ANDAR KAISE:
+         write primary pe, replica ko copy thodi der baad (ASYNC).
+         Sentinel / cluster ke baaki node ping karte, zyada (quorum) bolein "mara" -> vote se replica promote,
+         client ko naya pata.
+ISKE BAAD KYA TOOTEGA:
+  - async kyun, sync kyun nahi?
+      -> sync = har write pe replica ke "haan" ka intezaar -> <1 ms gaya. Keemat: aakhri kuch write kho sakte.
+         Cache me chalta, asli sach DB me hai.
+  - failover me kitni der?
+      -> ~10-30 sec. Us beech us hisse ki key DB se (thoda dheema).
+  - network toota, purana primary bhi khud ko primary samjhe (do primary)?
+      -> SPLIT BRAIN. Quorum se faisla + jo akela (minority) me hai wo write lena band kare (min-replicas).
+  - replica se padh sakte?
+      -> haan, read baant jaate. Par thoda purana mil sakta (lag). Cache me chalta.
+```
+
+#### [4](#d4) DB UPDATE, CACHE PURANA (STALE)
+```
+KAHANI:  user ne naam "Ravi" se "Ravi K" kiya. DB me naya, cache me abhi bhi "Ravi". Profile purani dikh rahi.
+ILAAJ:   DB update -> phir cache key DELETE (update nahi) + TTL suraksha jaal.
+ANDAR KAISE:
+         delete ke baad agli read MISS -> DB se taaza -> cache me.
+         UPDATE kyun nahi: do write ulte kram me pahunche (A ne "X" likha, B ne "Y", cache me pehle Y phir X)
+         -> cache me galat value baith gayi. DELETE me ye dikkat nahi.
+ISKE BAAD KYA TOOTEGA:
+  - DB update hua, cache DELETE fail?
+      -> TTL bachata (max utni der purana). Pakka chahiye -> DB change event (CDC) se delete ka retry.
+  - delete ke baad koi purani value wapas daal de (race)?
+      -> thodi der baad dobara delete (double delete), ya version ke saath likho.
+  - maine likha, mujhe hi purana dikha?
+      -> replica lag. Likhne wale ko thodi der primary se padhao (read-your-own-writes).
+  - TTL kitna?
+      -> jitna purana business jhel sake. Profile: minutes. Price / stock: seconds ya invalidate.
+```
+
+#### [5](#d5) GARAM KEY EXPIRE, 1000 REQUEST EK SAATH DB PE (STAMPEDE)
+```
+KAHANI:  "home page" key expire hui. Usi second 1000 request -> sab MISS -> sab DB pe -> DB gira.
+ILAAJ:   LOCK: sirf EK request DB se laaye, baaki ruk ke cache se padhein.
+         + SOFT-TTL: expire se PEHLE background me refresh.
+ANDAR KAISE:
+         miss -> SET lock:key 1 NX EX 5
+            jeeta -> DB se laao, cache bharo, lock hatao
+            haara -> 50-100 ms ruko, cache dobara padho (tab tak jeetne wale ne bhar diya)
+         EX 5 kyun: jeetne wala beech me mara to lock 5 sec me khud chhoote.
+ISKE BAAD KYA TOOTEGA:
+  - haarne wale kitni der rukenge?
+      -> chhota wait + 2-3 retry. Phir bhi nahi -> purani value do, DB pe mat bhejo.
+  - bahut saari key EK SAATH expire (sab ka TTL 1 ghanta, sab ek saath bhari thi)?
+      -> AVALANCHE. TTL me random jitter (60 min +- 5) -> expire bikhar jaate.
+  - key DB me HAI hi nahi, attacker baar-baar wahi maange?
+      -> PENETRATION: har baar miss -> DB. "nahi hai" (null) ko bhi chhote TTL ke saath cache karo,
+         ya Bloom filter: "ye key ho hi nahi sakti" -> DB tak jao hi mat.
+  - pata ho kab aayega (sale, final)?
+      -> pehle se cache bharo (pre-warm) + servers badhao.
+```
+
+#### [6](#d6) EK KEY ITNI POPULAR, USKA NODE AKELA MAR RAHA (HOT KEY)
+```
+KAHANI:  IPL final, "live:score" key. Crore log ek saath. Key ek hi node pe -> wo node akela mar raha.
+         Consistent hashing yahan kuch nahi karta: ek key = ek node.
+ILAAJ:   (1) L1 LOCAL CACHE: har App server ki apni memory me 1-2 sec ka chhota cache -> Redis tak jaata hi nahi.
+         (2) us key ki kai copy (score#1 .. #10), padhte waqt random copy.
+ANDAR KAISE:
+         L1 (App ki RAM, nano-sec) -> L2 Redis (micro / milli) -> DB (milli-sec).
+         1000 App server, har ek 1 sec me EK baar Redis se -> Redis pe 1000 / sec, crore nahi.
+ISKE BAAD KYA TOOTEGA:
+  - hot key pehchanoge kaise?
+      -> node metrics (ek key pe ops / sec), redis-cli --hotkeys, client side ginti. Had paar -> copy / L1.
+  - L1 me purana score kitni der?
+      -> L1 TTL jitna (1-2 sec). Score ke liye theek, paisa / stock ke liye nahi.
+  - hot key LIKHNI bhi ho (like counter)?
+      -> key ke tukde (like#0..#9), kisi ek me likho, padhte waqt jodo.
+  - stampede aur hot key me farak?
+      -> stampede = key KHAALI, sab DB bhage (lock). Hot key = key BHARI, ek node read se mar raha (L1 / copy).
+```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
