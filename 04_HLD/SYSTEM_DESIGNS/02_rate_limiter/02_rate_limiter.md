@@ -41,7 +41,9 @@ NUMBERS: storage ka hisaab bekaar — per key ek counter + TTL, bas
 
 ---
 
-## MOCK CUE — pehle ye, phir mock
+## ════ UPAR = REVISION (mock se pehle SIRF ye padho) ════
+
+## MOCK CUE — har dikkat ek card
 
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
@@ -249,6 +251,12 @@ flowchart TD
     n_Route_53 --> n_WAF
     n_WAF --> n_ALB
 ```
+
+---
+
+## ════ NEECHE = DETAIL + HANDS-ON (samajhne ke liye) ════
+
+> Upar ke card + aakhri dabbe = revision. Neeche tab aao jab kisi card ka poora "kaise / kyun" ya diagram dekhna ho.
 
 ---
 

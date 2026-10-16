@@ -43,7 +43,9 @@ NUMBERS: ~1 TB · ~1M QPS · read-heavy
 
 ---
 
-## MOCK CUE — pehle ye, phir mock
+## ════ UPAR = REVISION (mock se pehle SIRF ye padho) ════
+
+## MOCK CUE — har dikkat ek card
 
 > Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
 > ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
@@ -87,20 +89,38 @@ ISKE BAAD KYA TOOTEGA:
 #### [2](#d2) 1 TB EK NODE ME NAHI: KEY KIS NODE PE
 ```
 KAHANI:  data 1 TB, ek node me 64 GB. 16+ node chahiye. "user:42" kis node pe jaaye?
-ILAAJ:   CONSISTENT HASHING (hash % N nahi).
+ILAAJ:   CONSISTENT HASHING (ring). hash % N NAHI. Dono ALAG cheez hain, mila ke mat bolna.
+
+GALAT RAASTA = hash % N   (pehle ye bolo, phir kyun toota)
+         node = hash(key) % N
+         key hash 10, 11, 12, 13, 14
+           N = 4 -> node 2, 3, 0, 1, 2
+           N = 5 -> node 0, 1, 2, 3, 4      <- ek node joda, PAANCHON ka node badal gaya
+         asal me 4 -> 5 node = ~80% key ka node badalta -> sab MISS -> saara load DB pe -> DB gira
+
+SAHI RAASTA = RING (consistent hashing)   (ismein "% N" kahin nahi)
+         gol ring 0 .. 360 (asal me 0 .. 2^32). NODE bhi ring pe, KEY bhi ring pe.
+         key ghadi ki disha me chale, jo PEHLA node mile wahin.
+           A = 100, B = 200, C = 300
+           key 150 -> B,  key 250 -> C,  key 350 -> A (ghoom ke)
+         naya node D = 250 joda:
+           sirf 201 .. 250 wali key C se D pe gayi. Baaki sab wahin.
+         -> node juda / gaya = sirf PADOS ki thodi key hilti (~K/N), poora nahi
+
 ANDAR KAISE:
-         hash % N: 4 se 5 node kiye -> N badla -> ~80% key ka node badla -> sab MISS -> DB gira.
-         RING: 0 se 2^32 ka gola. node bhi ring pe, key bhi. key ghadi ki disha me jo pehla node mile, wahin.
-         node juda / gaya -> sirf uske paas ki thodi key hilti (~K/N).
-         VIRTUAL NODES: ek machine ring pe 100 jagah -> load barabar baante.
+         VIRTUAL NODES: ek machine ring pe 100 jagah -> load barabar baante (warna kisi ka arc bada).
          App ke andar CACHE CLIENT library ye hisaab karke sahi node pe bhejti.
+
 ISKE BAAD KYA TOOTEGA:
+  - hash % N me kya dikkat, ring me kyun nahi?
+      -> % N me N badla = lagbhag SAB key hili. Ring me N kahin nahi, sirf pados wala arc hila.
   - naya node juda, uski key khaali -> miss?
       -> haan, sirf us hisse ki ~K/N key ek baar miss. Poora nahi.
   - client ko kaise pata kaun node zinda?
       -> cluster topology / config service. Galat node pe gaya to Redis bolta "MOVED, wahan jao".
   - Redis Cluster ring use karta?
-      -> nahi, 16384 SLOT: CRC16(key) % 16384 -> slot -> node. Node juda to kuch slot khiskao. Kaam wahi.
+      -> nahi, 16384 SLOT: CRC16(key) % 16384 -> slot -> node. Yahan 16384 FIXED hai (node count nahi),
+         isliye node badhne pe sab nahi hilta: bas kuch slot naye node pe khiskao. Kaam ring jaisa.
   - range se baanto (A-M, N-Z)?
       -> ek range garam ho jaati (sab "a" wale), ek node pe bojh. Isliye hash.
 ```
@@ -220,6 +240,12 @@ flowchart TD
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
 ```
+
+---
+
+## ════ NEECHE = DETAIL + HANDS-ON (samajhne ke liye) ════
+
+> Upar ke card + aakhri dabbe = revision. Neeche tab aao jab kisi card ka poora "kaise / kyun" ya diagram dekhna ho.
 
 ---
 
