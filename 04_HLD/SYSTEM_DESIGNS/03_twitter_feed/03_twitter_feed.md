@@ -47,20 +47,183 @@ BOL:      "For the feed and like counts, availability. A feed a couple of second
 
 ---
 
-## MOCK CUE — pehle ye, phir mock
+## ════ UPAR = REVISION (mock se pehle SIRF ye padho) ════
 
-| # | dikkat | cue | POOCHEGA -> jawab |
-|---|---|---|---|
-| [1](#d1) | har baar 200 logon ka data jodna | **FANOUT ON WRITE**: tweet aate hi har follower ke inbox me daalo, app khule to sirf apna inbox padho | "inbox me sirf tweet_id, poora tweet kahan se?" -> 50 id ek saath batch me tweet store / hot cache se (MGET), ek-ek nahi |
-| [2](#d2) | tweet button 3 sec ghooma | **ASYNC (Kafka + worker)**: tweet DB me + event Kafka pe, user ko turant "ho gaya"; worker peeche se inbox bhare | "worker beech me gira (100 me 60 inbox likhe)?" -> offset commit nahi -> event dobara; id do baar na aaye -> SET eventId NX ya sorted set (ZADD same id = ek) |
-| [3](#d3) | Bieber = 10 crore inbox | **HYBRID (celeb = fanout on read)**: celeb ka tweet inbox me nahi; feed padhte waqt apna inbox + celeb ke tweet milao | "merge kahan, kitna mehnga?" -> Timeline svc me: inbox 50 id + 10-20 celeb ke latest -> time se sort; chhota kaam, celeb tweet hot cache se |
-| [4](#d4) | Virat ka tweet crore log padh rahe | **CACHE (hot tweet)**: celeb ke naye tweet RAM cache me (TTL), sab wahin se padhein | "ek tweet ki key ek Redis node pe garam?" -> key ki kai copy (tweet:123#1..#5), random copy se read + App me local cache |
-| [5](#d5) | 500M inbox, memory phategi | **INBOX = sirf tweet_id**: inbox me sirf tweet_id, aakhri kuch sau; mahine bhar nahi aaya to inbox hatao | "inactive user wapas aaya?" -> pehli baar feed pull se bana do, phir inbox bhar do; ek baar dheema, phir tez |
-| [6](#d6) | saare tweet ek DB me nahi | **CASSANDRA + SHARDING**: Cassandra (likhna tez), user_id + time se tukde | "Cassandra ke read / write replica?" -> Cassandra me leader nahi, har replica read bhi write bhi; bolo "RF 3, quorum se read/write" |
-| [7](#d7) | India user, US shard (200ms) | **REGION-WISE**: India / EU / US alag tukde, user paas wale se padhe | "India user US travel kar raha?" -> data home region me hi; request wahan forward ya paas wali copy se read (thoda purana chalega) |
-| [8](#d8) | ek App box: bojh + SPOF | **STATELESS + ALB + ROUTE 53**: kai App box (stateless) + ALB, aage Route 53 health check | "deploy me sab box restart?" -> rolling deploy: ek-ek box nikaalo, update, wapas; site kabhi band nahi |
-| [9](#d9) | padhna likhna ek box me | **READ / WRITE ALAG**: likhne ki Tweet service, padhne ki Timeline service, alag-alag badhao | "Timeline svc ko follow list kahan se?" -> User/Graph svc se, par har read pe call nahi -> follow list Redis me cache |
-| [10](#d10) | photo video bhaari | **CDN**: media S3 me, user tak paas wali CDN edge se | "Photo delete ki, CDN pe abhi bhi dikh rahi?" -> CDN invalidation ya chhota TTL; ya URL me version (abc_v2.jpg) |
+## MOCK CUE — har dikkat ek card
+
+> Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
+> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
+
+#### [1](#d1) HAR BAAR APP KHOLNE PE 200 LOGON KA DATA JODNA
+```
+KAHANI:  Arpan 200 log follow karta. App khola -> 200 logon ke tweet laao, jodo, time se sort, top 50.
+         Har user, har baar. Read : write = 50 : 1 -> feed dheema.
+ILAAJ:   FANOUT ON WRITE: tweet aate hi har follower ke INBOX (Redis) me daalo. App khule -> sirf apna inbox.
+ANDAR KAISE:
+         Virat tweet -> Fanout -> redis inbox:arpan = [t9, t7, t3 ...] (sirf tweet_id).
+         tweet ek baar banta, 50 baar padha jaata -> mehnat likhte waqt sasti.
+ISKE BAAD KYA TOOTEGA:
+  - inbox me sirf id, poora tweet kahan se?
+      -> 50 id ek saath batch me tweet store / hot cache se (MGET). Ek-ek nahi.
+  - kisi ko unfollow kiya, uske tweet inbox me pade?
+      -> padhte waqt follow list se filter, ya peeche se saaf. Turant poora inbox nahi badalte.
+  - maine tweet kiya, apni feed me nahi dikha?
+      -> fanout peeche chalta. Apna tweet seedha apni feed me jodo (read-your-own-writes). "bug" nahi.
+```
+
+#### [2](#d2) TWEET BUTTON 3 SEC GHOOMTA RAHA
+```
+KAHANI:  POST ki request me hi 200 inbox likhe ja rahe the -> button ghoomta raha. Redis dheema -> POST fail,
+         jabki tweet ban chuka tha.
+ILAAJ:   tweet DB me + event KAFKA pe -> user ko turant "ho gaya". FANOUT WORKERS peeche se inbox bharte.
+ANDAR KAISE:
+         Kafka key = author_id -> ek author ke tweet ek partition me, kram me. Workers partitions baant lete.
+         worker gira -> event Kafka me hai, wahin se dobara.
+ISKE BAAD KYA TOOTEGA:
+  - worker beech me gira (100 me se 60 inbox likhe)?
+      -> offset commit nahi hua -> event dobara aata. Id do baar na aaye: LPUSH se pehle SET eventId NX,
+         ya inbox = sorted set (ZADD same id = ek hi, score = time).
+  - Kafka hi kyun, seedha thread?
+      -> thread = App crash pe kaam gaya. Kafka disk pe, dobara padh sakte.
+```
+
+#### [3](#d3) BIEBER = 10 CRORE INBOX (CELEBRITY)
+```
+KAHANI:  celeb ka EK tweet = 10 crore inbox me likhna -> fanout atka, poora system atka.
+ILAAJ:   HYBRID: normal user = PUSH (inbox). Celeb = PULL (inbox me nahi, sirf apne store me).
+         Feed padhte waqt: apna inbox + jin celebs ko follow karta unke naye tweet -> milao, time se sort.
+ANDAR KAISE:
+         < 10K follower = push, > 10K = pull. Arpan: Suresh inbox se, Virat tweet store / hot cache se.
+         Merge Timeline svc me: inbox 50 id + 10-20 celeb ke latest -> sort. Chhota kaam.
+ISKE BAAD KYA TOOTEGA:
+  - koi 9,999 <-> 10,001 baar-baar palta?
+      -> beech me gap: 12K se upar = pull, 8K se neeche aaye tabhi wapas push.
+  - celeb ko alag server / user_id pe shard hi galat?
+      -> nahi. Shard baaki crore ke liye theek. Dikkat EK garam key ki, consistent hashing wo nahi bachata.
+  - like count jaisa garam WRITE?
+      -> key tukdon me (tweet123#0..#9), kisi ek me likho, padhte waqt jodo.
+```
+
+#### [4](#d4) VIRAT KA TWEET CRORE LOG EK SAATH PADH RAHE
+```
+KAHANI:  celeb pull pe hai -> crore read seedha tweet DB pe -> DB crash.
+ILAAJ:   HOT-TWEET CACHE: celeb ke naye tweet RAM me (TTL ~1 ghanta), sab wahin se. Purane DB se.
+ANDAR KAISE:
+         bestseller kitaab front counter pe. ~95% hit. Miss -> sirf EK request DB jaaye (lock), baaki ruke.
+ISKE BAAD KYA TOOTEGA:
+  - ek tweet ki key ek Redis node pe garam?
+      -> kai copy (tweet:123#1..#5), random copy se read + App me 1-2 sec ka local cache.
+  - Virat ne edit / delete kiya?
+      -> us tweet ki cache key DEL, agla read DB se naya.
+  - Cassandra ki copies badha do?
+      -> wo bhi disk (ms), aur ek garam partition ki copies crore read nahi jheltin. Cache RAM (<1 ms).
+  - IPL final me 10x achanak?
+      -> Kafka fanout ka burst pakad leta. Pata ho kab -> pehle scale + cache garam (autoscale minute leta).
+```
+
+#### [5](#d5) 500M INBOX, MEMORY PHATEGI
+```
+KAHANI:  har user ka poora feed RAM me -> 500M user, memory phat jaayegi.
+ILAAJ:   inbox me SIRF tweet_id, aakhri ~800 (LTRIM). Mahine bhar se nahi aaya -> inbox hatao.
+ANDAR KAISE:
+         800 id x 8 B = ~6.4 KB / user. 500M x 6.4 KB = ~3.2 TB -> Redis cluster.
+         hot-tweet cache chhota: ~500K tweet x 500 B = ~250 MB.
+ISKE BAAD KYA TOOTEGA:
+  - inactive user wapas aaya?
+      -> pehli baar feed PULL se bana do, phir inbox bhar do. Ek baar dheema, phir tez.
+  - 800 ke aage scroll?
+      -> DB se pull (bahut kam log itna neeche jaate).
+  - Redis hi gir gaya?
+      -> har feed DB se banana = mehnga. Redis cluster + replica; gira to load shedding, ek request
+         ek key banaye, inbox dheere-dheere garam.
+```
+
+#### [6](#d6) SAARE TWEET EK DB ME NAHI
+```
+KAHANI:  petabytes data, 5,800 tweet / sec likhe ja rahe. Ek DB nahi jhelega.
+ILAAJ:   CASSANDRA, shard by (user_id + time). Celeb ke tweet kai shard pe copy.
+ANDAR KAISE:
+         Cassandra write tez (LSM): pehle commit log (sirf append) + RAM memtable -> "done".
+         memtable bhari -> disk pe nayi SSTable file. Purana badalta nahi, peeche chhoti files milti (compaction).
+         partition key = (user_id, month) -> kis node pe · clustering key = time DESC -> andar kram.
+ISKE BAAD KYA TOOTEGA:
+  - MySQL kyun nahi?
+      -> har write = B-tree me jagah dhoondh ke badlo (random disk write) -> itne write pe dheema.
+         Join / transaction chahiye hi nahi.
+  - LSM me read dheema kyun ho sakta?
+      -> ek key kai SSTable me bikhri -> sab dekho. Bloom filter + compaction se kam.
+  - tweet_id pe shard kyun nahi?
+      -> load barabar, par profile page (ek user ke saare tweet) kai shard se jodna padta.
+  - Cassandra ke read / write replica?
+      -> leader hi nahi. Har replica read + write leti. Bolo: "RF 3, quorum se read / write".
+```
+
+#### [7](#d7) INDIA USER, US SHARD SE PADH RAHA (200 MS)
+```
+KAHANI:  India ka user har request pe US jaata -> 200 ms. Paas wale se 5 ms.
+ILAAJ:   REGION-WISE (India / EU / US). User paas wale region se.
+ANDAR KAISE:
+         Route 53 geo / latency routing -> DNS paas wale region ka pata deta.
+         Cassandra multi-DC: likha hua doosre region me async copy. US celeb ke hot tweet India cache me bhi.
+         Fayde: latency · GDPR (EU data EU me) · har region ka peak alag · ek region gira to baaki chalein.
+ISKE BAAD KYA TOOTEGA:
+  - India user US travel kar raha?
+      -> data home region me. Request wahan forward, ya paas wali copy se read (thoda purana chalega).
+  - poora region gira?
+      -> Route 53 paas wale healthy region pe. Copy async thi -> feed thoda purana. Eventual pehle hi maana.
+  - do region me ek saath likha (conflict)?
+      -> tweet naya hi banta (update kam). Ho to last-write-wins (timestamp).
+```
+
+#### [8](#d8) EK APP BOX: BOJH BHI, SPOF BHI
+```
+KAHANI:  sab ek App box me. Lakhon user nahi jhelta, gira to sab band.
+ILAAJ:   kai App box (stateless) + ALB. Aage ROUTE 53 health check.
+ANDAR KAISE:
+         ALB har ~10 sec GET /health -> fail = box bahar, theek = wapas. Route 53 isi tarah region / ALB dekhta.
+ISKE BAAD KYA TOOTEGA:
+  - deploy me sab box restart?
+      -> rolling deploy: ek-ek box nikaalo, update, wapas. Site kabhi band nahi.
+  - naya box juda, pehli request dheemi?
+      -> box me state nahi (Redis alag), farak kam. LB naye box ko dheere traffic de (slow start).
+```
+
+#### [9](#d9) PADHNA AUR LIKHNA EK HI BOX ME (1 : 50)
+```
+KAHANI:  feed padhne ki bheed ne tweet post karna bhi dheema kar diya.
+ILAAJ:   TWEET svc (likhna) + TIMELINE svc (padhna, push + pull milana) + USER svc + GRAPH (kaun kisko follow).
+         Har ek alag badhao.
+ANDAR KAISE:
+         read 50x zyada -> Timeline svc ke box zyada, Tweet svc ke kam.
+ISKE BAAD KYA TOOTEGA:
+  - Timeline svc ko follow list kahan se?
+      -> User / Graph svc se, par har read pe call nahi -> follow list Redis me cache.
+  - fanout ko 10K followers ki list?
+      -> Graph store se pages me (1000-1000) padh ke inbox likhe.
+  - Graph DB zaroori?
+      -> seedhi follow list ke liye table / Cassandra kaafi. Graph DB tab jab "dost ke dost" jaise sawaal.
+```
+
+#### [10](#d10) PHOTO / VIDEO BHAARI
+```
+KAHANI:  photo / video duniya bhar se, har baar apne server se -> dheema + mehnga.
+ILAAJ:   media S3 me, user tak paas wali CDN EDGE se (CloudFront).
+ANDAR KAISE:
+         tweet me media ka CDN URL. Edge pe hai (hit) -> wahin se. Nahi (miss) -> edge S3 se laata, TTL tak
+         rakhta, phir sabko wahin se. CDN media ke raaste pe, API ke raaste pe nahi.
+ISKE BAAD KYA TOOTEGA:
+  - photo delete ki, CDN pe abhi bhi dikh rahi?
+      -> CDN invalidation / chhota TTL, ya URL me version (abc_v2.jpg) -> naya URL = nayi file.
+  - private photo CDN pe sabko?
+      -> signed URL (expiry ke saath): sirf jisko link mila, thodi der ke liye.
+```
+
+#### PUSH YA PULL? (end me pakka poochega)
+```
+PUSH (fanout on write): read turant, par celeb pe likhne ka toofan.
+PULL (fanout on read):  likhna sasta, par har read mehnga.
+HYBRID: normal push, celeb pull, read pe merge. Consistency vs availability -> availability (2 sec purani feed chalegi).
+```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
@@ -116,6 +279,12 @@ flowchart TD
     n_USER --> n_CDN
     n_CDN --> n_S3
 ```
+
+---
+
+## ════ NEECHE = DETAIL + HANDS-ON (samajhne ke liye) ════
+
+> Upar ke card + aakhri dabbe = revision. Neeche tab aao jab kisi card ka poora "kaise / kyun" ya diagram dekhna ho.
 
 ---
 
