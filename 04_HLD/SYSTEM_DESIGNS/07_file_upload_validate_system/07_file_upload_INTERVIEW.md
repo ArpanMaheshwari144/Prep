@@ -34,19 +34,146 @@ NUMBERS: 1 lakh file / din -> ~1-2 write / sec (kam)       (1 din ~ 1,00,000 sec
 
 ---
 
-## MOCK CUE — pehle ye, phir mock
+## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-| # | dikkat | cue | POOCHEGA -> jawab |
-|---|---|---|---|
-| [1](#d1) | user 2-3 sec ruka, thread block | **ASYNC (queue + worker)**: turant trackingId + "VALIDATING"; validation peeche queue + worker; user status poochhe | "ek file do baar validate (event dobara)?" -> validation idempotent: status pehle se DONE to skip |
-| [2](#d2) | 5 GB ke bytes mere server se | **PRESIGNED URL**: client seedha S3 pe bheje, server sirf URL + metadata | "client ne URL se 50 GB daal di (limit 5 GB)?" -> presigned POST policy me content-length-range (max size), S3 bada reject kare |
-| [3](#d3) | 5 GB file 90% pe tooti | **MULTIPART UPLOAD**: file chhote tukdon me, jo tukda fail sirf wahi dobara; S3 khud jode | "client band, kal resume?" -> server ke paas uploadId + kaunse part ho chuke (ListParts) -> sirf bache part bhejo |
-| [4](#d4) | upload shuru, complete kabhi nahi (adhoori) | **LIFECYCLE RULE + SWEEPER**: pehle tmp jagah, S3 rule se purani tmp apne aap hate; sweeper job atki file dekhe | "sweeper do box pe chala, file do baar queue me?" -> ek hi sweeper (lock / leader) ya requeue idempotent (status check) |
-| [5](#d5) | sab har 2 sec status poll | **CACHE + READ REPLICA**: Redis cache + read replica; worker DONE kare to cache bhi badle | "poll ki jagah push?" -> SSE / WebSocket: status badla to server khud bheje, poll khatam |
-| [6](#d6) | file nahi, poora folder | **PARENT + CHILD trackingId**: ek parent trackingId + har file ka child; parent ka status bachchon se | "parent ka status kab update?" -> har child DONE / FAILED pe parent ka done_count badhao; sab ho gaye to parent final |
-| [7](#d7) | doosre ka trackingId daal ke file maangi | **OWNER CHECK (403)**: record me ownerId; maangne wala owner nahi to 403 (service me check) | "id random hai, phir bhi owner check kyun?" -> id leak ho sakti (log, link share); asli rok owner check, randomness nahi |
-| [8](#d8) | S3 ka seedha link aage bhej diya | **CHHOTI EXPIRY wala link**: link ki umar kuch minute, owner check ke baad hi bane; DB me S3 key, URL nahi | "5 min me download poora nahi hua?" -> expiry sirf SHURU karne ki; chalu download beech me nahi katta |
-| [9](#d9) | naam .pdf, andar EXE | **MAGIC BYTES**: worker file ke pehle kuch byte padhe, type khud tay kare; mel nahi to reject | "magic bytes PDF jaise, andar virus?" -> antivirus scan (ClamAV) worker me, ya S3 malware scanning |
+## MOCK CUE — har dikkat ek card
+
+> Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
+> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
+
+#### [1](#d1) USER 2-3 SEC RUKA, THREAD BLOCK
+```
+KAHANI:  upload kiya, third-party validation 2-3 sec. User ruka, server ka thread bhi block.
+ILAAJ:   ASYNC: turant trackingId + "VALIDATING". Validation peeche QUEUE + WORKER. User status poochhe.
+ANDAR KAISE:
+         Upload svc /complete pe event {trackingId, s3_key} queue me, turant laute.
+         worker validate kare -> DB me DONE / FAILED. Offset commit DB update ke BAAD -> worker mara = event dobara.
+ISKE BAAD KYA TOOTEGA:
+  - ek file do baar validate (event dobara)?
+      -> idempotent: status pehle se DONE to skip.
+  - Kafka hi kyun?
+      -> 1-2 upload / sec ke liye SQS / RabbitMQ kaafi (simple, managed). Kafka tab jab bahut event / replay.
+  - har 2 sec poll bahut?
+      -> backoff (2s, 4s, 8s), ya SSE / webhook (card 5).
+```
+
+#### [2](#d2) 5 GB KE BYTES MERE SERVER SE GUZAR RAHE
+```
+KAHANI:  client -> server -> S3. 5 GB do baar network pe, thread block, server bina wajah badhana pada.
+ILAAJ:   PRESIGNED URL: server sirf chhoti umar ka signed URL + trackingId de. Client bytes SEEDHE S3 pe.
+ANDAR KAISE:
+         1 client -> server "upload karni" · 2 server -> signed URL + trackingId
+         3 client -> S3 bytes seedhe · 4 client -> server /complete -> queue
+         sign = apni AWS secret se (PUT + bucket/key + expiry 10 min) ka hash. S3 khud dobara bana ke milata.
+         client ko AWS ki chaabi kabhi nahi, sirf EK file ka 10 min ka paas.
+ISKE BAAD KYA TOOTEGA:
+  - client ne 50 GB daal di (limit 5 GB)?
+      -> presigned POST policy me content-length-range (max), ya PUT me exact size sign. S3 bada reject.
+  - client ne /complete bola hi nahi?
+      -> S3 event notification (object created) se trigger, ya sweeper (card 4).
+```
+
+#### [3](#d3) 5 GB FILE 90% PE TOOTI
+```
+KAHANI:  4.5 GB chadh gaya, network gaya. Poori dobara? User maar dega.
+ILAAJ:   MULTIPART: file chhote tukdon me, jo tukda fail sirf wahi dobara. Saare pahunche -> S3 khud jode.
+ANDAR KAISE:
+         1 initiate -> S3 uploadId deta
+         2 har part (1..N) apne presigned URL pe, PARALLEL bhi -> S3 har part ka ETag lautata
+         3 complete(uploadId, [part + ETag]) -> S3 kram se jod ke ek file
+ISKE BAAD KYA TOOTEGA:
+  - client band, kal resume?
+      -> server ke paas uploadId + kaunse part ho chuke (ListParts) -> sirf bache part.
+  - tukda kitna bada?
+      -> S3 me kam se kam 5 MB (aakhri chhod ke), max 10,000 part -> badi file = bada tukda.
+```
+
+#### [4](#d4) UPLOAD SHURU, COMPLETE KABHI NAHI (ADHOORI)
+```
+KAHANI:  upload shuru, "complete" kabhi nahi aaya / crash. Bytes S3 me padi, DB me VALIDATING atka, koi dhoondhta nahi.
+ILAAJ:   pehle TMP jagah, validate hone pe asli jagah. S3 LIFECYCLE rule purani tmp + adhoore multipart hataye.
+         + SWEEPER job: der se atki file dhoondhe.
+ANDAR KAISE:
+         sweeper: VALIDATING / UPLOADING + updatedAt 10 min se purana (validation 3 sec ki hai)
+         -> S3 me bytes hain? haan = queue me dobara · nahi = FAILED.
+         lifecycle dino me chalta + DB nahi dekhta -> isliye sweeper bhi.
+ISKE BAAD KYA TOOTEGA:
+  - sweeper do box pe chala, file do baar queue me?
+      -> ek hi sweeper (lock / leader), ya requeue idempotent (status check).
+  - validation fail file ka kya?
+      -> quarantine bucket (koi download nahi), kuch din baad delete / security team dekhe.
+  - status likh diya, kaafi?
+      -> nahi. Koi use DHOONDHE bhi (sweeper) tabhi kaam ka.
+```
+
+#### [5](#d5) SAB HAR 2 SEC STATUS POLL KAR RAHE
+```
+KAHANI:  hazaar user, har ek har 2 sec "status?" -> har poll DB pe.
+ILAAJ:   REDIS cache + baaki reads ke liye READ REPLICA. Worker DONE kare to cache bhi update / DEL.
+ANDAR KAISE:
+         GET /status -> Redis? -> wahin se · nahi -> replica -> Redis me (chhota TTL).
+         JAAL 1: worker ne DONE kiya, cache me abhi VALIDATING -> worker usi waqt Redis update kare.
+         JAAL 2: replica peeche (lag) -> purana VALIDATING cache me baith gaya -> status primary se, ya worker khud Redis me likhe.
+ISKE BAAD KYA TOOTEGA:
+  - poll ki jagah push?
+      -> SSE / WebSocket: status badla to server khud bheje. Poll khatam.
+  - Redis gira?
+      -> poll seedha replica pe, dheema par chalta. Poll pe rate limit.
+```
+
+#### [6](#d6) FILE NAHI, POORA FOLDER
+```
+KAHANI:  user ne 1000 file ka folder daala. Ek trackingId kaafi nahi.
+ILAAJ:   ek PARENT trackingId + har file ka CHILD. Parent ka status bachchon se.
+ANDAR KAISE:
+         sab DONE = DONE · koi FAILED = PARTIAL / FAILED. Bahut chhoti files -> client zip, server unzip.
+ISKE BAAD KYA TOOTEGA:
+  - parent ka status kab update?
+      -> har child DONE / FAILED pe parent ka done_count badhao. Sab ho gaye -> parent final.
+  - 1000 file = 1000 /init call?
+      -> batch init: 1000 presigned URL ek jawab me.
+```
+
+#### [7](#d7) DOOSRE KA trackingId DAAL KE FILE MAANGI
+```
+KAHANI:  Ravi ne Arpan ka trackingId daala -> Arpan ki file Ravi ko mil gayi.
+ILAAJ:   upload pe record me ownerId (JWT se). Status / download pe: maangne wala owner? Nahi -> 403.
+ANDAR KAISE:
+         AUTHN ("tum kaun") = gateway / JWT. AUTHZ ("is file pe haq?") = SERVICE me (filter ID dekhta hi nahi).
+ISKE BAAD KYA TOOTEGA:
+  - id random hai, phir bhi owner check kyun?
+      -> id leak ho sakti (log, link share). Asli rok owner check, randomness nahi.
+  - admin ko sab dekhna?
+      -> owner YA admin role, warna 403.
+  - (PR review me sabse pehle yahi): request me kisi ki ID aayi -> owner check kahan hai?
+```
+
+#### [8](#d8) S3 KA SEEDHA LINK AAGE BHEJ DIYA
+```
+KAHANI:  owner ko S3 ka permanent link diya, usne WhatsApp pe aage bhej diya -> hamesha chalta, kisi ke bhi haath.
+ILAAJ:   presigned GET URL, umar 5-15 MINUTE, owner check ke BAAD hi bane. DB me S3 KEY, URL nahi.
+ANDAR KAISE:
+         URL "chaabi" nahi, "5 minute ka paas". Har maang pe naya.
+ISKE BAAD KYA TOOTEGA:
+  - 5 min me download poora nahi hua?
+      -> expiry sirf SHURU karne ki. Chalu download beech me nahi katta.
+  - 5 min ke andar aage bhej diya?
+      -> 5 min ka risk maana. Zyada sensitive -> CloudFront signed URL + IP restriction.
+```
+
+#### [9](#d9) NAAM .PDF, ANDAR EXE
+```
+KAHANI:  naam report.pdf, Content-Type PDF, par andar EXE. S3 me pahunch bhi gayi. Naam + type client ne bheje.
+ILAAJ:   worker file ke PEHLE kuch BYTE padhe (magic number), type khud tay kare. Mel nahi -> REJECT + quarantine.
+ANDAR KAISE:
+         PDF = %PDF- · PNG = \x89PNG · EXE = MZ. Pehle kuch byte S3 range GET se, poori file nahi.
+         client ka bheja kabhi sach mat maano (na naam, na type).
+ISKE BAAD KYA TOOTEGA:
+  - magic bytes PDF jaise, andar virus / JS?
+      -> antivirus scan (ClamAV) worker me, ya S3 malware scanning.
+  - abuse / flood?
+      -> per-user rate limit, WAF, TLS, secrets vault me.
+```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
@@ -98,6 +225,12 @@ flowchart TD
     n_Sweeper_job --> n_Kafka
     n_Worker --> n_S3
 ```
+
+---
+
+## ════ DETAIL: HAR DIKKAT KA POORA EXPLANATION ════
+
+> Card me koi baat samajh na aaye, to uska poora "kaise / kyun" aur diagram yahan hai.
 
 ---
 
