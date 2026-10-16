@@ -44,19 +44,152 @@ NUMBERS: 100M msg / din -> ~1,200 / sec -> peak 3-5x -> ~5,000 / sec
 
 ---
 
-## MOCK CUE — pehle ye, phir mock
+## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-| # | dikkat | cue | POOCHEGA -> jawab |
-|---|---|---|---|
-| [1](#d1) | consumer restart, message gayab | **APPEND-ONLY LOG + OFFSET**: disk pe append-only log; har message ka number (offset), padh ke delete nahi -> wahin se dobara | "offset kaun yaad rakhta?" -> group ka offset Kafka khud ek topic me rakhta (__consumer_offsets) |
-| [2](#d2) | ek machine me 2 TB + 5,000/sec nahi | **PARTITION**: topic ke tukde (partition), har tukda alag broker pe | "kitne partition rakhoge?" -> jitne consumer parallel chahiye + growth (12-30); baad me badhaye to key ka partition badlega |
-| [3](#d3) | user-123 ke teen event teen partition me | **KEY -> PARTITION (kram)**: message ke saath key (userId) -> ek user ke saare event ek partition me, kram pakka | "producer retry me kram ulta (1 fail, 2 gaya, phir 1)?" -> idempotent producer (enable.idempotence), sequence number se kram + dedup |
-| [4](#d4) | 3 instance, user ko 3 email | **CONSUMER GROUP**: teeno ek consumer group me: ek partition ko group me sirf ek padhe | "3 partition, consumer badhane hain?" -> partition badhao; consumer > partition = khaali baithenge |
-| [5](#d5) | ek event teeno service ko chahiye | **ALAG GROUP = sabko poora**: har service ka apna group; same group = kaam baanto, alag group = sabko poora | "naya group aaj juda, purane 7 din padhega?" -> auto.offset.reset = earliest -> shuru se · latest -> sirf ab ke baad |
-| [6](#d6) | broker ki disk gayi, data gaya | **REPLICATION (leader + ISR, acks=all)**: har partition ka leader + copies; leader mara to saath chal rahi copy leader; paise pe acks=all | "acks=all + min.insync.replicas=2 ka matlab?" -> leader + kam se kam 1 follower ke paas likha tab 'done'; leader mara to bhi data follower pe |
-| [7](#d7) | kaam ke baad commit se pehle crash | **AT-LEAST-ONCE + DEDUP (eventId)**: pehle kaam phir commit + consumer eventId se dobara wala skip kare; dedup key = eventId, order key = userId; producer side DB save + event = OUTBOX | "exactly-once Kafka me hota hi nahi?" -> Kafka transactions + idempotent producer = Kafka-se-Kafka; bahar (SMS, DB) ke liye consumer idempotency hi raasta |
-| [8](#d8) | consumer mara / peeche chal raha | **REBALANCE + LAG + DLQ**: uske partition baaki me bant jaate (rebalance); lag dekho, consumer badhao; baar-baar fail -> DLQ | "lag badh raha, kya karoge?" -> consumer badhao (partition tak), dheema kaam alag, lag pe alert |
-| [9](#d9) | 7 din rakhoge to disk bharegi | **RETENTION + COMPACTION**: time / size se purani file kaato; sirf latest chahiye to har key ka aakhri message rakho | "7 din ke baad consumer ne padha hi nahi?" -> data gaya; isliye lag pe alert + retention consumer ki sabse lambi chhutti se zyada |
+## MOCK CUE — har dikkat ek card
+
+> Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
+> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
+
+#### [1](#d1) CONSUMER RESTART, MESSAGE GAYAB
+```
+KAHANI:  message memory ki queue me the. Consumer restart hua -> sab gayab.
+ILAAJ:   disk pe APPEND-ONLY LOG. Har message ka number = OFFSET. Padh ke delete NAHI -> wahin se dobara, ya peeche (REPLAY).
+ANDAR KAISE:
+         P0: [0][1][2][3][4][5] -> naya hamesha END me. Consumer ka offset = 2 -> agla 3.
+         offset = kram number (byte nahi), chhota .index file offset -> byte bata deta.
+ISKE BAAD KYA TOOTEGA:
+  - disk pe likhna dheema nahi?
+      -> sirf end me append (sequential) = disk ka sabse tez kaam. Read OS page cache se RAM jaisa.
+  - DB me queue kyun nahi?
+      -> DB insert = index + lock = random write. Queue me WHERE hota hi nahi, bas "offset X ke baad do".
+  - offset kaun yaad rakhta?
+      -> Kafka khud, internal topic __consumer_offsets me: key (group, topic, partition) -> offset.
+```
+
+#### [2](#d2) EK MACHINE ME 2 TB + 5,000 / SEC NAHI
+```
+KAHANI:  ek broker me 2 TB nahi samaata, 5,000 / sec likhna bhi akela nahi jhelta.
+ILAAJ:   topic ke tukde = PARTITION, har partition alag broker pe, apna log.
+ANDAR KAISE:
+         user-signup: P0 -> Broker A · P1 -> Broker B · P2 -> Broker C. Load badhe -> aur broker + partition.
+ISKE BAAD KYA TOOTEGA:
+  - kitne partition?
+      -> jitne consumer parallel chahiye + growth (12-30). Baad me badhaye to key ka partition badlega (card 3).
+  - replica se write scale?
+      -> nahi. Replica bachav. Write scale = partition.
+  - ek partition garam (ek key ke bahut event)?
+      -> key me tukda (userId#bucket), agar us key pe kram zaroori nahi.
+```
+
+#### [3](#d3) USER-123 KE TEEN EVENT TEEN PARTITION ME
+```
+KAHANI:  signup P0 me, profile-update P2 me, delete P1 me -> delete pehle process, signup baad me. Ulta.
+         Kafka kram sirf EK partition ke andar deta.
+ILAAJ:   producer har message ke saath KEY (userId) bheje -> ek user ke saare event ek partition -> kram pakka.
+ANDAR KAISE:
+         partition = hash(userId) % numPartitions. Poore topic ka kram = ek partition = throughput khatam.
+ISKE BAAD KYA TOOTEGA:
+  - partition badhaye to user-123 ka partition badla?
+      -> haan, % n badla -> naye event naye partition, kram thodi der toota. Isliye shuru me hi zyada partition.
+  - producer retry me kram ulta (1 fail, 2 gaya, phir 1)?
+      -> idempotent producer (enable.idempotence): sequence number se kram + dedup.
+```
+
+#### [4](#d4) 3 INSTANCE, USER KO 3 EMAIL
+```
+KAHANI:  email-service ke 3 instance, teeno poora topic padh rahe -> user ko 3 email.
+ILAAJ:   teeno EK CONSUMER GROUP me: group ke andar ek partition ko sirf EK consumer.
+ANDAR KAISE:
+         P0 -> C1 · P1 -> C2 · P2 -> C3. 3 partition + 5 consumer = 2 khaali.
+         (RabbitMQ / SQS me har message alag consumer ko, kram guarantee nahi.)
+ISKE BAAD KYA TOOTEGA:
+  - kaam zyada, consumer badhane?
+      -> partition bhi badhao. Consumer > partition = khaali baithe.
+  - ek message 5 min ka, poora partition atka?
+      -> haan (head-of-line). Dheema kaam alag topic / worker pool ko.
+```
+
+#### [5](#d5) EK EVENT TEENO SERVICE KO CHAHIYE
+```
+KAHANI:  signup event email, analytics, dashboard teeno ko chahiye.
+ILAAJ:   topic EK, har service ka APNA GROUP. SAME group = kaam baanto · ALAG group = sabko poora.
+ANDAR KAISE:
+         har group ka apna offset. Analytics peeche hai to email ko farak nahi.
+ISKE BAAD KYA TOOTEGA:
+  - har service ka alag topic bana do?
+      -> NAHI. Producer ko ek event teen baar bhejna padega -> "ek message kai consumer" hi toota. MQ ka dil.
+  - naya group aaj juda, purane 7 din padhega?
+      -> auto.offset.reset = earliest -> shuru se · latest -> sirf ab ke baad.
+```
+
+#### [6](#d6) BROKER KI DISK GAYI, DATA GAYA
+```
+KAHANI:  har partition ki ek hi copy. Broker A ki disk gayi -> us partition ka saara data gaya.
+ILAAJ:   REPLICATION: har partition ka LEADER (saare read / write) + 2 FOLLOWER (alag broker / AZ).
+         Leader mara -> ISR (saath chal raha) follower naya leader. Faisla CONTROLLER (KRaft, pehle ZooKeeper).
+ANDAR KAISE:
+         acks=0 bhej ke bhaaga (kho sakta) · acks=1 leader ne likha · acks=all leader + saare ISR.
+         paisa / order = acks=all · click / log = acks=1.
+ISKE BAAD KYA TOOTEGA:
+  - acks=all + min.insync.replicas=2?
+      -> leader + kam se kam 1 follower ke paas tab "done". Leader mara to bhi data follower pe.
+  - ISR me ek hi bacha?
+      -> min.insync se kam -> producer ko error (likhna band). Data khone se behtar.
+  - ISR ke bahar wala leader bana?
+      -> wo peeche tha -> data loss. Isliye sirf ISR wala.
+```
+
+#### [7](#d7) KAAM KE BAAD, COMMIT SE PEHLE CRASH (+ OUTBOX)
+```
+KAHANI:  A) offset 5 padha -> SMS bheja -> commit se pehle CRASH -> restart pe phir 5 -> 2 SMS.
+         B) commit pehle -> kaam se pehle CRASH -> restart 6 se -> event 5 KHO gaya.
+ILAAJ:   pehle KAAM, phir COMMIT (at-least-once) + consumer IDEMPOTENT: eventId Redis me? hai = skip.
+         DO alag key: KRAM ke liye userId (partition key) · DEDUP ke liye eventId. userId se dedup = sahi event bhi skip.
+ANDAR KAISE (producer side = OUTBOX, GALTI WAPAS wala):
+         order + outbox row EK DB transaction me. Relay (har 1 sec / CDC) sent = false wali Kafka bheje, phir sent = true.
+         crash COMMIT se pehle     -> DB me kuch nahi, user ko error, dobara karega
+         crash COMMIT ke baad      -> outbox me sent = false -> relay restart pe bhejega (late, khoya nahi)
+         crash send ke baad, sent = true se pehle -> relay DOBARA bhejega -> 2 copy -> consumer eventId se skip
+         nichod: shaq ho to dobara bhejo, duplicate ka ilaaj consumer pe.
+ISKE BAAD KYA TOOTEGA:
+  - exactly-once Kafka me nahi hota?
+      -> Kafka transactions + idempotent producer = Kafka-se-Kafka. Bahar (SMS, DB) ke liye consumer idempotency.
+  - "event Kafka tak pahuncha hi nahi" pe offset ka jawab?
+      -> nahi chalta. Offset = consumer side. Ye producer side -> OUTBOX.
+  - outbox table badi?
+      -> sent rows roz saaf / partition drop.
+  - kuch na khoye, poora?
+      -> acks=all + kaam ke baad commit + idempotent consumer + DLQ.
+```
+
+#### [8](#d8) CONSUMER MARA / PEECHE CHAL RAHA
+```
+KAHANI:  C2 mara -> P1 pe koi nahi padh raha. Ya consumer dheema, lag badhta ja raha.
+ILAAJ:   REBALANCE: heartbeat band -> coordinator C2 ke partition baaki me baante. LAG dekho, consumer badhao.
+         baar-baar fail -> backoff, N baar ke baad DLQ (dead-letter topic). Baaki atke nahi.
+ANDAR KAISE:
+         C1->P0, C2->P1, C3->P2 · C2 mara -> C1->P0,P1 · C3->P2.
+         lag = latest offset - group ka committed offset.
+ISKE BAAD KYA TOOTEGA:
+  - rebalance me sab consumer ruk jaate?
+      -> purana (eager) haan. Cooperative rebalance (Kafka 2.4+) -> sirf jinke partition badle.
+  - lag badh raha?
+      -> consumer badhao (partition tak), dheema kaam alag, lag pe alert.
+```
+
+#### [9](#d9) 7 DIN RAKHOGE TO DISK BHAREGI
+```
+KAHANI:  Kafka padh ke delete nahi karta (log hai, queue nahi) -> disk bharti ja rahi.
+ILAAJ:   RETENTION: time (7 din) / size se purani SEGMENT file poori delete. Sirf latest chahiye -> COMPACTION
+         (har key ka aakhri message).
+ANDAR KAISE:
+         segment file poori delete = sasta. Compaction: user profile / config jaisa -> purani value kaati.
+         Rakhe data se REPLAY: naya group shuru se, ya bug fix ke baad offset peeche.
+ISKE BAAD KYA TOOTEGA:
+  - 7 din me consumer ne padha hi nahi?
+      -> data gaya. Isliye lag pe alert + retention consumer ki sabse lambi chhutti se zyada.
+```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
@@ -97,6 +230,12 @@ flowchart TD
     n_Group_email --> n_Redis
     n_Group_email --> n_DLQ
 ```
+
+---
+
+## ════ DETAIL: HAR DIKKAT KA POORA EXPLANATION ════
+
+> Card me koi baat samajh na aaye, to uska poora "kaise / kyun" aur diagram yahan hai.
 
 ---
 
