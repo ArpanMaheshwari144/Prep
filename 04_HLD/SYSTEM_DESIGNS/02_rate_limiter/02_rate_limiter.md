@@ -283,6 +283,10 @@ AGLA SAWAAL (tere jawab se):
       (bina cluster wale setup me yahi kaam 3 Sentinel karte: 2 of 3 bolein "mara" -> promote + clients ko naya pata)
   "Failover me aakhri kuch counts gaye?"
    -> haan, replica async thi -> kuch request ki ginti kho sakti. Rate limit ke liye chalta (paisa nahi)
+  "Redis gira nahi, par DHEEMA hai (CPU full, 1 lakh req/sec)?"
+   -> replica se nahi bachega: INCR = WRITE, write sirf master pe jaata (replica = bachav, scale nahi).
+      ilaaj = SHARD (Redis Cluster): key (user / IP) ke hash se alag-alag master -> bojh bant gaya.
+      load shedding (recommendation / analytics pehle giraao) = saath ka safety valve, ilaaj nahi.
 ```
 ```mermaid
 flowchart TD
