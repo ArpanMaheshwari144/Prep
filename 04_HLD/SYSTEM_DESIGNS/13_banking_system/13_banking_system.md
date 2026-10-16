@@ -47,19 +47,169 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 
 ---
 
-## MOCK CUE — pehle ye, phir mock
+## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-| # | dikkat | cue | POOCHEGA -> jawab |
-|---|---|---|---|
-| [1](#d1) | transfer beech me gira: -500, +500 nahi | **@Transactional (ACID)**: dono account ek DB, ek @Transactional: dono ya koi nahi | "A aur B alag bank me?" -> ek txn nahi -> PENDING + SAGA / reconciliation (payment wala raasta) |
-| [2](#d2) | regulator + SMS / fraud / statement | **LEDGER + OUTBOX**: ledger table (A -500, B +500, sirf INSERT) + outbox table, ek transaction; outbox se Kafka -> SMS / fraud | "ledger kahan, Kafka kab?" -> ledger DB ki table me usi txn me (rollback = entry bhi gayab); Kafka sirf commit ke BAAD, outbox se |
-| [3](#d3) | balance aata kahan se | **LEDGER = SACH**: ledger = sach, balance column = uska joda hua nateeja, dono ek transaction me | "reconciliation me farak mila?" -> alert + account freeze karke dekho, KYUN farak (bug) dhoondho, phir ledger se balance theek |
-| [4](#d4) | do baar tap / retry | **IDEMPOTENCY KEY**: har transfer ke saath ek key, key pe DB UNIQUE; dobara aayi to purana result | "same key, body alag (500 ki jagah 5000)?" -> key ke saath request ka hash; mismatch = 422, purana result nahi |
-| [5](#d5) | ek account pe do transfer saath | **ATOMIC UPDATE + ROW LOCK**: "balance = balance - 500" DB ke andar, row lock se dono line me · A->B aur B->A saath = deadlock -> lock hamesha tay kram (chhoti account id pehle) | "WHERE balance >= 200 ne 0 row diya?" -> 'insufficient balance' (422) + txn rollback (credit wala UPDATE bhi nahi) |
-| [6](#d6) | salary day, ek service bhara | **STATELESS + LB + SYNC copy**: kai Banking service (stateless) + LB; DB primary gira to doosre AZ ki SYNC copy upar (async me aakhri transfer kho sakta) | "failover ke 30 sec me transfer?" -> error -> client retry same idempotency key -> double nahi |
-| [7](#d7) | sab read primary pe, transfer dheema | **READ REPLICA**: balance / history copy (replica) se; transfer ke turant baad wala balance primary se | "replica bahut peeche (minute)?" -> lag metric pe alert; had paar -> us replica ko read pool se hatao |
-| [8](#d8) | 22 arab row, history ka page | **KEYSET PAGINATION**: pichhle page ki aakhri entry (ts, id) yaad, agla page "usse purana", index se seedha | "same ts pe do entry, koi chhoot jaaye?" -> cursor me (ts, id) dono, id tie todti |
-| [9](#d9) | 5 saal purana data ek table me | **PARTITION + ARCHIVE**: table mahine-mahine baanto, purana tukda alag karke S3 me (DELETE nahi); har period ka OPENING BALANCE snapshot, warna reconciliation adhoora | "regulator ne 2021 ka statement maanga?" -> S3 ke Parquet pe Athena query ya us mahine ka partition restore |
+## MOCK CUE — har dikkat ek card
+
+> Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
+> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
+
+#### [1](#d1) TRANSFER BEECH ME GIRA: -500 HUA, +500 NAHI
+```
+KAHANI:  A se B ko 500. A ke kate, B ko milne se pehle server gira -> 500 gayab.
+ILAAJ:   dono account EK DB me -> EK @Transactional: debit + credit dono commit, ya dono rollback.
+         DB = Postgres / MySQL (transaction + constraint native).
+ANDAR KAISE:
+         BEGIN; UPDATE A -500; UPDATE B +500; COMMIT;
+         DB pehle WAL me likhta. Uthte hi: COMMIT wala poora, bina COMMIT wala undo.
+ISKE BAAD KYA TOOTEGA:
+  - SAGA / queue lagao?
+      -> ek DB me NAHI. Debit-credit alag ho jaate, dikkat khud ban jaati. SAGA sirf alag service / DB / bank.
+  - A aur B alag bank me?
+      -> ek txn nahi -> PENDING + SAGA / reconciliation (payment wala raasta).
+  - CP ya AP?
+      -> transfer / balance = CP (galat balance se reject behtar). SMS / statement / analytics = AP (2 sec late chalta).
+```
+
+#### [2](#d2) LEDGER KAHAN, KAFKA KAB? (GALTI WAPAS wala)
+```
+KAHANI:  regulator: "paisa kahan se aaya, kahan gaya?" + transfer ke baad SMS / fraud / statement chahiye.
+         SMS service gire to transfer na ruke.
+ILAAJ:   LEDGER = DB ki TABLE (Kafka nahi). Har transfer ki 2 entry: A -500, B +500 (jod 0). Sirf INSERT.
+         OUTBOX = DB ki table, event usme. ledger + balance + outbox = EK transaction.
+         commit ke BAAD relay outbox se Kafka bheje -> SMS / fraud / statement.
+ANDAR KAISE:
+         relay har ~1 sec: SELECT * FROM outbox WHERE sent = false -> Kafka (acks=all) -> sent = true.
+         ya CDC (Debezium): DB ka WAL padh ke seedha Kafka.
+         relay "sent" likhne se pehle gira -> event dobara -> consumers eventId se idempotent.
+ISKE BAAD KYA TOOTEGA:
+  - ledger Kafka me pehle likha, phir DB txn rollback (balance kam tha)?
+      -> ledger galat bolega. ISILIYE ledger DB table me, usi txn me (rollback = entry bhi gayi).
+         Kafka + DB ek txn me ho hi nahi sakte -> Kafka sirf commit ke BAAD, outbox se.
+         BOL pehli line me: "ledger is a table in the same DB transaction; Kafka only gets the event after commit."
+  - commit ke baad seedha Kafka kyun nahi?
+      -> beech me app gira = event gayab. Outbox usi txn me hai, kho nahi sakta.
+  - SMS ka kram (debit SMS pehle)?
+      -> Kafka key = account_id -> ek account ke event ek partition, kram me.
+  - outbox bhar jaayegi?
+      -> sent rows roz saaf / partition drop.
+```
+
+#### [3](#d3) BALANCE AATA KAHAN SE? (design ka asli sawaal)
+```
+KAHANI:  (a) balance column: padhna sasta, par galat bhi ho sakta. (b) ledger ka jod: hamesha sach, par
+         purane account ki 50,000 entry har baar jodna dheema.
+ILAAJ:   DONO: LEDGER = SACH, balance column = uska joda hua nateeja (cache). Dono EK transaction me.
+         Raat ko RECONCILIATION: ledger jod vs balance.
+ANDAR KAISE:
+         BEGIN; INSERT ledger A -500; INSERT ledger B +500; UPDATE A; UPDATE B; COMMIT;
+         read = sirf balance (ek row).
+ISKE BAAD KYA TOOTEGA:
+  - reconciliation me farak mila?
+      -> alert + account rok ke dekho. Chupchaap theek MAT karo: pehle KYUN (bug abhi zinda). Phir ledger jeetega.
+  - 22 arab row pe raat ka SUM?
+      -> opening balance snapshot + sirf uske baad ki entries (card 9). Poora nahi.
+  - chal raha, kaise pata?
+      -> reconciliation + p99 + error rate + queue lag + DB connections pe alert + trace id per transfer.
+```
+
+#### [4](#d4) DO BAAR TAP / RETRY
+```
+KAHANI:  "Send" do baar daba / client ne retry maara -> 1000 kate.
+ILAAJ:   IDEMPOTENCY KEY har transfer ke saath. Key pe DB UNIQUE -> do server pe bhi ek hi jeetega.
+ANDAR KAISE:
+         key pehle dekhi -> purana result. App me "check phir insert" = race. UNIQUE insert khud lock jaisa.
+         @Transactional = "aadha nahi hoga". Idempotency = "dobara nahi hoga". Dono chahiye.
+ISKE BAAD KYA TOOTEGA:
+  - same key, body alag (500 ki jagah 5000)?
+      -> key ke saath request ka hash. Mismatch = 422, purana result nahi.
+  - key table hamesha badhegi?
+      -> 24-48 ghante baad saaf.
+```
+
+#### [5](#d5) EK ACCOUNT PE DO TRANSFER EK SAATH
+```
+KAHANI:  A ke paas 300. Ek saath 200-200 ke do transfer. Check app me -> dono ne 300 dekha -> A = -100.
+ILAAJ:   hisaab aur check DB ke ANDAR:
+         UPDATE accounts SET balance = balance - 200 WHERE id = A AND balance >= 200     -> 0 row = REJECT
+         DEADLOCK se bachne: lock hamesha tay kram me (chhoti account id pehle).
+ANDAR KAISE:
+         UPDATE row lock leta -> dono line me -> lost update nahi.
+         A->B aur B->A ek saath: Txn1 A lock, B ka intezaar · Txn2 B lock, A ka -> deadlock (MySQL 1213).
+         kram tay = dono pehle A (chhoti id) -> ek ruka, doosra poora.
+ISKE BAAD KYA TOOTEGA:
+  - 0 row aaya, user ko?
+      -> "insufficient balance" (422) + poora txn rollback (credit wala bhi nahi).
+  - niyam code me kyun nahi?
+      -> raaste kai (API / batch / manual), DB ek. Niyam DB me.
+  - kram ke bawajood deadlock?
+      -> DB victim ko rollback karta -> app chhota retry (same idempotency key).
+```
+
+#### [6](#d6) SALARY DAY, EK SERVICE BHARA
+```
+KAHANI:  salary day, sab transfer ek saath. Ek Banking svc bhara, wahi gira to bank band.
+ILAAJ:   kai Banking svc (stateless) + LB. DB primary gira -> doosre AZ ki SYNC replica promote.
+ANDAR KAISE:
+         Patroni / RDS Multi-AZ: primary mara -> sync replica promote -> DB endpoint naye pe -> ~30-60 sec.
+         SYNC: commit tabhi jab replica ne bhi likha -> promote wale ke paas har confirmed transfer.
+ISKE BAAD KYA TOOTEGA:
+  - sync = har transfer dheema?
+      -> haan, ek network hop. Paise me ye keemat theek. Async me aakhri transfer kho sakta.
+  - failover ke 30 sec me transfer?
+      -> error -> client retry, same idempotency key -> double nahi.
+```
+
+#### [7](#d7) SAB READ PRIMARY PE, TRANSFER DHEEMA
+```
+KAHANI:  balance / history sab primary se -> read ki bheed me transfer dheeme.
+ILAAJ:   READ REPLICA se balance / history. Par jisne ABHI transfer kiya, uska balance PRIMARY se.
+ANDAR KAISE:
+         replica WAL stream se ~200 ms peeche. Transfer ke turant baad replica se padha -> purana (5000, asal 4000)
+         -> user sochega paisa gaya hi nahi, dobara bhejega.
+         READ-YOUR-OWN-WRITES: last_write_at (Redis me, account pe) -> N sec tak us user ke reads primary se.
+ISKE BAAD KYA TOOTEGA:
+  - doosre device se khola?
+      -> last_write_at account pe rakho (Redis), device pe nahi.
+  - replica minute bhar peeche?
+      -> lag metric pe alert. Had paar -> us replica ko read pool se hatao.
+```
+
+#### [8](#d8) 22 ARAB ROW, HISTORY KA PAGE
+```
+KAHANI:  history page 5000: LIMIT 20 OFFSET 100000 -> DB 1,00,020 row PADH ke phenkta, 20 deta.
+         Beech me nayi entry aayi -> sab khisak gaya, ek entry dobara dikhi.
+ILAAJ:   KEYSET (cursor): pichhle page ki aakhri (ts, id) yaad, agla page "usse purana". Index se seedha wahan.
+ANDAR KAISE:
+         page 2: ... WHERE account_id = ? AND (ts, id) < (:last_ts, :last_id) ORDER BY ts DESC, id DESC LIMIT 20
+         index (account_id, ts DESC, id DESC). Page 1 ho ya 5000, kharcha wahi.
+ISKE BAAD KYA TOOTEGA:
+  - same ts pe do entry, koi chhoot jaaye?
+      -> isliye (ts, id) dono. id tie todti.
+  - "page 500 pe jao"?
+      -> keyset me nahi hota, sirf agla / pichhla. Statement me theek.
+  - cursor client ko kaise?
+      -> (ts, id) ko base64 karke next_cursor.
+```
+
+#### [9](#d9) 5 SAAL KA DATA EK TABLE ME
+```
+KAHANI:  5 saal ka ledger ek table me. Roz sirf 3 mahine dekhte, par har query / backup arabon row ke saath.
+         Bank me DELETE nahi kar sakte (kanoon).
+ILAAJ:   mahine-mahine PARTITION. Purana partition DETACH (turant) -> S3 (Parquet). DELETE nahi.
+         + har period ka OPENING BALANCE SNAPSHOT (kabhi archive nahi).
+ANDAR KAISE:
+         archive ke baad reconciliation ko ledger adhoora dikhega -> har account mismatch!
+         ilaaj: reconciliation = snapshot (31-Mar A = 45,000) + uske baad ki entries.
+         (bank statement ke upar "opening balance" isi wajah se.)
+ISKE BAAD KYA TOOTEGA:
+  - regulator ne 2021 ka statement maanga?
+      -> S3 Parquet pe Athena query, ya us mahine ka partition restore.
+  - archive file koi badal na de?
+      -> S3 Object Lock (WORM): na delete na badle, saalon tak.
+  - archive aur sharding ek hi?
+      -> nahi. Archive size ghatata, shard likhne ka load baantta.
+```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
@@ -104,6 +254,12 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
     n_SQL_DB --> n_Archive_S3
 ```
+
+---
+
+## ════ DETAIL: HAR DIKKAT KA POORA EXPLANATION ════
+
+> Card me koi baat samajh na aaye, to uska poora "kaise / kyun" aur diagram yahan hai.
 
 ---
 
