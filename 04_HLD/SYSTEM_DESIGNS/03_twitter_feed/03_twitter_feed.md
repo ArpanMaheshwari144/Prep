@@ -49,8 +49,10 @@ NUMBER SE FAISLA:
 POOCHEGA: "Consistency or availability — which do you pick?"
           (Consistency ya availability, kya chunoge?)
 
-JAWAB:    Feed aur like ginti ke liye availability (chalta rahe). Do second purani
-          feed chalegi, khulti hi nahi wo nahi chalegi.
+JAWAB:    Feed ke liye: chalta rahe, chahe thoda purana ho.
+          Arpan ko 2 second purani feed dikhi to koi farak nahi. Par feed khuli hi nahi to wo app band
+          kar dega.
+          Isliye network toote to bhi jo hai wo dikhao, sahi wala thodi der me aa jaayega.
 ```
 
 ---
@@ -382,12 +384,11 @@ flowchart TD
 ## DIKKAT 1 — har baar feed kholne pe 200 logon ka data jodna
 
 ```
-JAWAB:    Padhai likhai se 50 guna, isliye har baar feed khole pe feed nahi banata.
-          Likhte waqt baant do (fan-out on write): koi tweet kare to uski id har follower ke Redis inbox
-          me daal do. App khulte hi bas wo inbox padho aur tweets ek saath le aao.
-
-SHABD:    fan-out on write = likhte waqt hi sabke inbox me daal dena · inbox = har
-          user ki taiyaar feed list
+JAWAB:    Log feed padhte zyada hain, tweet kam karte hain (50 baar padhna, 1 baar likhna).
+          Isliye feed padhte waqt nahi banate, tweet hote hi bana dete hain: Virat ne tweet kiya to uski
+          tweet id har follower ki Redis list (inbox) me daal do.
+          Arpan ne app khola to bas uski list padho aur un id ke tweet ek saath le aao. Kaam pehle ho
+          chuka, khulna turant.
 ```
 ```mermaid
 flowchart TD
@@ -413,8 +414,10 @@ flowchart TD
 POOCHEGA: "I just tweeted but don't see it in my own feed. Why?"
           (Maine abhi tweet kiya par apni feed me nahi dikh raha. Kyun?)
 
-JAWAB:    Fan-out me thoda time lagta. Ilaaj: likhne wale ka apna naya tweet seedha uski apni feed me
-          daal do, fan-out ka intezaar mat karo (read-your-own-writes).
+JAWAB:    Followers ki list me daalne me thoda time lagta hai, to Arpan ka apna tweet uski feed me der
+          se pahunchta.
+          Ilaaj: Arpan ka tweet uski apni feed me seedha turant daal do, baaki followers ke liye baad me
+          chalta rahe.
 ```
 ```mermaid
 flowchart TD
@@ -442,13 +445,14 @@ flowchart TD
 POOCHEGA: "What about a celebrity / hot key / hot partition?"
           (Celebrity / garam key / garam partition ka kya?)
 
-JAWAB:    Baaki sab ke liye user id se baantna theek hai. Dikkat sirf EK garam key ki hai, aur
-          consistent hashing usme madad nahi karta.
-          Padhai ke liye: us key ki cache me kai copy + har app server me local
-          cache + photo / video CDN se.
-          Feed ke liye: celebrity ka tweet sabke inbox me nahi daalte, padhte waqt
-          alag se laate (fan-out on read).
-          Likhai garam ho (jaise like): key ke tukde (tweet123#0..#9), padhte waqt sab jodo.
+JAWAB:    Baaki sab users ke liye user id se baantna theek hai. Dikkat sirf ek bahut famous banda
+          (Bieber) hai jise crore log padhte.
+          Padhne ke liye: uska tweet cache me kai jagah rakho, har app server apne paas bhi 1-2 second
+          rakhe, photo-video CDN se.
+          Feed ke liye: Bieber ka tweet 10 crore logon ki list me nahi daalte. Jab koi feed khole,
+          Bieber ke naye tweet alag se laake mila do.
+          Like bahut aa rahe hon: ek counter ki jagah 10 chhote counter, kisi ek me +1 karo, padhte waqt
+          sab jod do.
 ```
 ```mermaid
 flowchart TD
@@ -476,9 +480,10 @@ flowchart TD
 POOCHEGA: "What if traffic suddenly spikes 10x?"
           (Traffic achanak 10 guna ho gaya to?)
 
-JAWAB:    Fan-out ka jhatka Kafka sambhaal leta. Pata ho kab aayega (IPL final), to
-          pehle se machine badhao aur garam tweet ki cache bhar do. Machine apne aap
-          badhne me minute lagte, jhatka second me aata.
+JAWAB:    Tweet ke baad followers ki list me daalne ka kaam Kafka ki line me jaata hai, to jhatka line
+          sambhaal leti hai, worker apni speed se nikaalte.
+          Pata ho kab bheed aayegi (IPL final), to pehle hi machine badha do aur famous tweets cache me
+          bhar do. Machine apne aap badhne me minute lagte, jhatka second me aata hai.
 ```
 ```mermaid
 flowchart TD
@@ -508,8 +513,10 @@ flowchart TD
 POOCHEGA: "What if the cache goes down?"
           (Cache gir gaya to?)
 
-JAWAB:    Redis ki copy hai. Phir bhi gire to faltu request mana karo (load shedding), har garam key ko
-          sirf EK request DB se bhare, hazaar nahi, aur inbox dheere-dheere wapas bharo.
+JAWAB:    Redis ki copy hai, ek gira to copy sambhaal leti.
+          Poora gira to DB pe bheed: jitna DB jhel sake utna lo, baaki ko 'thodi der baad' bolo. Ek
+          famous tweet ke liye 1000 log aaye to sirf pehla DB jaaye, baaki ruk ke cache se lein.
+          Phir dheere-dheere logon ki feed lists wapas bharo.
 ```
 ```mermaid
 flowchart TD
@@ -539,9 +546,10 @@ flowchart TD
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
           (DB bahut bada ho gaya / likhai bahut. Kya karoge?)
 
-JAWAB:    User id se baanto: ek user ke saare tweet ek jagah, profile page ek hi
-          tukde se. Saath me time bhi key me, taaki garam user ka data bikhar jaaye.
-          Sabse garam users ke tweet ki padhai ke liye copy.
+JAWAB:    User id ke hisaab se baanto: Arpan ke saare tweet ek hi jagah, to Arpan ki profile ek jagah se
+          khul jaati.
+          Famous banda ho to uska data ek jagah bahut bhaari: key me time bhi jod do (user + mahina),
+          taaki uske tweet alag jagah bat jaayein. Uske tweet padhne ke liye copy bhi.
 ```
 ```mermaid
 flowchart TD
@@ -571,9 +579,10 @@ flowchart TD
 POOCHEGA: "What if a whole region goes down?"
           (Poora region band ho gaya to?)
 
-JAWAB:    Route 53 user ko paas wale chalte region bhej deta. Data wahan thodi der
-          baad pahunchta (async), to switch ke baad feed thodi purani dikh sakti. Ye
-          hum pehle hi maan chuke (thodi der baad sahi chalega).
+JAWAB:    Route 53 dekhta hai ki region jawab nahi de raha aur users ko paas wale chalte region bhej
+          deta.
+          Data wahan thodi der baad pahunchta, to feed thodi purani dikh sakti. Feed me ye chalta hai,
+          humne pehle hi maana tha.
 ```
 ```mermaid
 flowchart TD
@@ -600,8 +609,9 @@ flowchart TD
 ## DIKKAT 8 — ek App box: bojh bhi, SPOF bhi
 
 ```
-JAWAB:    App server kuch yaad nahi rakhte, aage load balancer health check ke saath, sabse aage Route
-          53. Naya code ek-ek machine pe daalte, to site kabhi band nahi hoti.
+JAWAB:    App server kuch yaad nahi rakhte, koi bhi request kahin bhi jaa sakti. Aage load balancer har
+          server se 'zinda ho?' poochhta rehta, mara hua list se bahar.
+          Naya code ek-ek server pe daalte, sab ek saath nahi, to site kabhi band nahi hoti.
 ```
 ```mermaid
 flowchart TD
@@ -638,9 +648,10 @@ flowchart TD
 ## DIKKAT 9 — padhna aur likhna ek hi box me
 
 ```
-JAWAB:    Kaam alag service me: likhne ke liye Tweet service, padhne ke liye Timeline service, aur User
-          + Graph (kaun kisko follow) service. Har ek apni zaroorat se badhti: padhai 50 guna, to
-          Timeline service ki machine bahut zyada. Follow list Redis me.
+JAWAB:    Kaam alag-alag service me: tweet likhne wali, feed padhne wali, user wali, aur 'kaun kisko
+          follow karta' wali.
+          Padhna 50 guna zyada hai, to sirf feed wali service ki machines bahut zyada rakho, baaki kam.
+          Follow list Redis me, baar-baar chahiye hoti hai.
 ```
 ```mermaid
 flowchart TD
@@ -679,10 +690,10 @@ flowchart TD
 ## DIKKAT 10 — photo / video bhaari
 
 ```
-JAWAB:    Photo / video S3 me, user tak CDN se. Tweet me CDN ka URL. Delete karna ho to CDN se hatwao ya
-          URL me version badlo. Private media ke liye signed URL jo kuch der me expire ho jaata.
-
-SHABD:    CDN = user ke paas wale server jo file ki copy rakhte · signed URL = kuch der ka paas
+JAWAB:    Photo / video S3 me rakho, user tak CDN se pahunche (uske paas wale server se, tez). Tweet me
+          sirf uska link.
+          Photo delete ki to CDN se bhi hatwao, ya link me version badal do. Private photo ke liye link
+          jo kuch minute me band ho jaaye.
 ```
 ```mermaid
 flowchart TD
@@ -763,12 +774,13 @@ Timeline Svc = push + pull milao · Cassandra = saare tweet,
 user_id + time + region · User Svc + Graph DB = follow
 ```
 ```
-JAWAB:    Likhna: Tweet service Cassandra me save kare, khabar Kafka me. Fan-out worker har aam follower
-          ke Redis inbox me tweet id daale.
-          Padhna: Timeline service inbox le, celebrity ke tweet garam-tweet cache se, dono milaye, time
-          se sort, poora data bhare, top 50 de.
-          Celebrity ke liye push + pull dono. Cassandra user id + time se baanta, alag desh me copy.
-          Aage: ML ranking, trending, search.
+JAWAB:    Likhna: tweet Cassandra me save, aur 'naya tweet' Kafka me. Worker aam followers ki Redis list
+          me tweet id daalte.
+          Padhna: Arpan ki list lo, famous logon ke naye tweet alag cache se lo, dono milao, time se
+          sort, top 50 bhejo.
+          Famous ke liye 'padhte waqt laao', baaki ke liye 'pehle se daal do'. Cassandra user id + time
+          se baanta, doosre desh me copy.
+          Aage: ML se ranking, trending, search.
 ```
 ```mermaid
 flowchart TD
