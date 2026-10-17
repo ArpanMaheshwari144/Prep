@@ -100,7 +100,8 @@ ANDAR KAISE:
          Ye wahi LRU cache hai jo tune DSA me khud banaya (09_DESIGN, LeetCode 146).
          HashMap = key turant dhoondho. Doubly linked list = kaun kab chhua, uski line.
          get(key)  -> key mili, uska node line ke AAGE (head ke paas) kar do = abhi chhuya.
-         put(key)  -> naya node AAGE. RAM bhar gayi -> line ke PEECHE wala (tail ke paas) hatao = sabse purana.
+         put(key)  -> naya node AAGE. RAM bhar gayi -> line
+         ke PEECHE wala (tail ke paas) hatao = sabse purana.
          Bas wahi code, ab cache machine ke andar chal raha hai.
          Saath me har key ki umar (TTL): umar khatam to key bekaar, padhne aaye tab check + peeche safai.
 
@@ -139,7 +140,8 @@ SAHI RAASTA = RING (consistent hashing)   (isme "% N" kahin nahi)
          -> machine judi / gayi = sirf PADOS ki thodi key hilti (~K/N), poori nahi
 
 ANDAR KAISE:
-         RING = tera circular array (Next Greater Element II me i % n): aakhri ke baad wapas pehle pe aate the,
+         RING = tera circular array (Next Greater Element II
+         me i % n): aakhri ke baad wapas pehle pe aate the,
          waise hi key ghadi ki disha me chalti, ant pe pahunch ke ghoom ke pehli machine pe.
          VIRTUAL NODES: ek machine ring pe 100 jagah baithti -> bojh barabar (warna kisi ka hissa bahut bada).
          App ke andar CACHE CLIENT library ye hisaab karke sahi machine pe bhejti.
@@ -165,7 +167,8 @@ KAHANI:  Machine B mar gayi. Uske hisse ki saari key gayab. Un key
          ki saari padhai ab seedha DB pe -> DB pe achanak bojh.
 
 ILAAJ:   Har machine (B) ki ek copy doosri building me. B jo likhti, wo copy tak bhi jaata.
-         B giri -> copy naya B ban jaati, app ko naya pata mil jaata. Sirf B ki keys pe asar, baaki machines aaram se.
+         B giri -> copy naya B ban jaati, app ko naya pata mil
+         jaata. Sirf B ki keys pe asar, baaki machines aaram se.
 
 ANDAR KAISE:
          Likhna primary pe, copy ko thodi der baad pahunchta (ASYNC).
@@ -217,10 +220,12 @@ KAHANI:  "home page" ki key ki umar khatam hui. Usi second 1000 log aaye -> cach
 ILAAJ:   Sirf PEHLE wale ko DB jaane do. Baaki 999 ko bolo "thoda ruko".
          Pehla DB se laake cache me rakh dega, phir baaki 999 cache se hi le lenge.
          DB pe 1000 ki jagah sirf 1 request gayi.
-         Aur umar khatam hone se thoda pehle hi key ko peeche se taaza kar do, khaali hone ka mauka hi na aaye.
+         Aur umar khatam hone se thoda pehle hi key ko peeche
+         se taaza kar do, khaali hone ka mauka hi na aaye.
 
 ANDAR KAISE (pehla kaun, Redis se):
-         SET lock:home 1 NX EX 5   -> jo pehle pahuncha usi ka lock laga (NX = sirf tab jab koi aur na laga ho)
+         SET lock:home 1 NX EX 5   -> jo pehle pahuncha usi
+         ka lock laga (NX = sirf tab jab koi aur na laga ho)
          EX 5: pehla beech me mar gaya to lock 5 second me khud chhoot jaaye, baaki atke na rahein.
 
 ISKE BAAD KYA TOOTEGA:
