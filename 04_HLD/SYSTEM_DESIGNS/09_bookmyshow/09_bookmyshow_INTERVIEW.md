@@ -41,8 +41,9 @@ POOCHEGA: "Consistency or availability — which do you pick?"
 
 DHYAAN:   ek hi system me dono: BOOKING = CP (network toota to ek taraf
           REJECT) · SEARCH = AP (seat ginti 2 sec purani chalegi)
-JAWAB:    Booking ke liye consistency: ek seat do ko bechne se behtar likhna mana kar do. Search wala
-          hissa chalta rahe, thoda purana bhi chalega.
+JAWAB:    Booking me sahi hona pehle: network toota aur pakka nahi pata seat khaali hai, to booking mana
+          kar do. Ek seat do logon ko bechna usse bura hai.
+          Movie list / search thodi purani bhi dikhe to chalega, wo chalta rahe.
 ```
 
 ---
@@ -300,8 +301,11 @@ flowchart TD
 POOCHEGA: "Two users book the same seat at the same time — what happens?"
           (Do log ek hi seat ek saath book karein to?)
 
-JAWAB:    Do kadam me (pehle dekho, phir likho) hamesha beech me jagah rehti. Isliye condition UPDATE ke
-          andar: WHERE status = available. DB ek ko hi jeetne deta, doosre ko 0 row aur 'seat ja chuki'.
+JAWAB:    Pehle 'khaali hai?' dekho aur phir 'book karo', to beech me Ravi ghus jaata hai.
+          Isliye ek hi query: 'A1 ko booked karo, SIRF agar abhi bhi khaali ho'. DB ek waqt me ek ko hi
+          ye karne deta.
+          Arpan pehle -> A1 booked. Ravi ki query ko A1 khaali nahi mili -> kuch nahi badla -> 'seat ja
+          chuki'.
 ```
 ```mermaid
 flowchart TD
@@ -322,9 +326,11 @@ flowchart TD
 POOCHEGA: "Who releases the hold after 5 minutes?"
           (5 minute baad hold kaun chhodega?)
 
-JAWAB:    SQL me TTL nahi. Do raaste: booking ka UPDATE hi purane hold ko khaali maane (status held aur
-          held_until abhi se pehle), ya sweeper har minute purane hold wapas khaali kare.
-          Sahi hona UPDATE wali condition se, sweeper sirf safai.
+JAWAB:    Arpan ne A1 chuni to row me likho 'held, 5 minute tak'. SQL khud 5 minute baad hatata nahi,
+          isliye:
+          1) Booking ki query hi purane hold ko khaali maane: 'khaali ho, YA held ho par 5 minute nikal
+          gaye'.
+          2) Ek job har minute purane hold ko wapas khaali kar deti, taaki seat map pe sahi dikhe.
 ```
 ```mermaid
 flowchart TD
@@ -347,8 +353,9 @@ flowchart TD
 POOCHEGA: "What if the user clicks Pay twice / the client retries?"
           (User ne Pay do baar dabaya / app ne dobara bheja to?)
 
-JAWAB:    App dobara bhejne pe wahi idempotency key bhejta. Server key ko UNIQUE se ek baar hi lene
-          deta, doosri baar rakha hua jawab.
+JAWAB:    Arpan ka app 'Pay' pe ek id banata aur dobara bhejne pe wahi id bhejta.
+          Server id pehle dekh chuka -> purana jawab, doosri baar paisa nahi katta. (usercrud /pay wala
+          hi tareeka.)
 ```
 ```mermaid
 flowchart TD
@@ -370,8 +377,10 @@ flowchart TD
 ## DIKKAT 4 — book koi-koi karta, seat map sab dekh rahe
 
 ```
-JAWAB:    Seat map Redis aur read replica se, chhoti umar ke saath, booking hote hi hatao. Booking
-          hamesha SQL primary pe. Map thoda purana dikhe to chalega, faisla UPDATE karta.
+JAWAB:    Seat map dekhne wale 1 lakh, book karne wale 500. To seat map Redis se aur DB ki copy se do, 5
+          second purana bhi chalega.
+          Booking hamesha main DB pe, kyunki faisla wahi query karti hai. Booking hui to Redis wala map
+          hata do, agli baar naya banega.
 ```
 ```mermaid
 flowchart TD
@@ -401,10 +410,10 @@ flowchart TD
 POOCHEGA: "What if traffic suddenly spikes 10x?"
           (Traffic achanak 10 guna ho gaya to?)
 
-JAWAB:    Darwaze pe ginti: jitni seat, utne log andar, baaki ko turant 'housefull'.
-          Par log KHAAS seat chunte, isliye booking tabhi pakki jab us seat ka atomic UPDATE jeete. Tab
-          tak user ko 'ho rahi hai', nateeja poochh ke ya push se.
-          Saath me har user ki had, aur pata ho kab release to pehle se machine badhao.
+JAWAB:    Darwaze pe ginti: 3000 seat hain to 3000 log andar, baaki ko turant 'housefull'.
+          Andar walon ki booking 'ho rahi hai' dikhao, pakki tab jab us seat ki query jeete. Har show ki
+          booking ek line me, ek worker ek-ek karke, to ladaai nahi.
+          Pata ho kab release hai to pehle se machine badhao, har user ki had.
 ```
 ```mermaid
 flowchart TD
@@ -439,8 +448,10 @@ flowchart TD
 POOCHEGA: "What if the cache goes down?"
           (Cache gir gaya to?)
 
-JAWAB:    Redis cluster me chalta. Seat map dekhna read replica pe chala jaata, primary pe kabhi nahi,
-          to booking chalti rehti. Garam key sirf ek request dobara bharti, baaki rukte.
+JAWAB:    Redis ki copy hai. Poora gira to seat map DB ki copy se dikhao, main DB pe kabhi nahi, taaki
+          booking chalti rahe.
+          Ek show ka map 1000 log maangein to sirf pehla bana ke Redis me rakhe, baaki ruk ke wahi le
+          lein.
 ```
 ```mermaid
 flowchart TD
@@ -475,8 +486,9 @@ flowchart TD
 POOCHEGA: "What happens if an app server goes down?"
           (Ek app server gir gaya to?)
 
-JAWAB:    Hold DB me hai, machine me nahi, to bacha rehta. Load balancer us machine ko bahar kar deta,
-          user ki agli request doosri machine pe, wahi hold dikhta.
+JAWAB:    Hold DB me likha hai, server ki memory me nahi. To server gira to bhi hold bacha hai.
+          Load balancer us server ko hata deta, Arpan ki agli request doosre server pe, wahi hold
+          dikhta. Payment beech me tha to app wahi id ke saath dobara bhejta, do baar nahi katega.
 ```
 ```mermaid
 flowchart TD
@@ -559,11 +571,12 @@ Kafka + Booking worker = bheed + har show ek line · SQL primary = ACID, atomic 
 Sweeper = purane hold saaf · Payment Svc = bahar wala, idempotency key
 ```
 ```
-JAWAB:    Dekhna Redis + read replica se. Booking SQL primary pe atomic condition
-          wale UPDATE se, to ek seat kabhi do ko nahi.
-          Seat chuni = 5 min ka hold. UPDATE purane hold ko khaali maanta, sweeper safai karta.
-          Release ke din ki bheed queue + har show ka worker sambhaalta, payment pe idempotency key.
-          SQL kyunki sahi hona hi dil hai; data chhota, sharding nahi.
+JAWAB:    Seat map Redis aur copy se, booking main DB pe ek query se ('khaali ho tabhi book') -> ek seat
+          kabhi do ko nahi.
+          Seat chuni = 5 minute hold, query purana hold khaali maanti, job safai karti.
+          Release ke din ki bheed: darwaze pe ginti + har show ki ek line. Payment pe id, do baar nahi
+          katega.
+          SQL kyunki sahi hona sabse zaroori, data chhota to baantna nahi.
 ```
 ```mermaid
 flowchart TD

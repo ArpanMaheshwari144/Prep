@@ -325,9 +325,12 @@ flowchart TD
 ## DIKKAT 1 — user 2-3 sec ruka, thread bhi atka
 
 ```
-JAWAB:    Jaanch dheemi hai, isliye async: user ko turant tracking id, worker line
-          se kaam uthata, jaanchta, haal update karta. Worker 'padh liya' DB update
-          ke BAAD bolta, to crash me bhi kaam nahi khota.
+JAWAB:    Jaanch 3 second leti hai, to Arpan ko rukwate nahi. Upload hote hi use tracking id (T-101) aur
+          'jaanch ho rahi hai' de do, wo chala jaaye.
+          Kaam line (queue) me jaata, worker uthata, jaanchta, DB me 'DONE' ya 'FAILED' likhta. Arpan
+          jab chahe T-101 se haal dekh le.
+          Worker 'kaam le liya' tabhi bolta jab DB me likh diya, to beech me mara to kaam dobara milega,
+          khoyega nahi.
 ```
 ```mermaid
 flowchart TD
@@ -354,11 +357,10 @@ flowchart TD
 ## DIKKAT 2 — 5 GB ke bytes hamare server se guzar rahe
 
 ```
-JAWAB:    Upload service sirf kuch minute ka signed URL aur tracking id deti. App
-          file ke bytes seedhe S3 pe bhejta. Hamare server file kabhi nahi dhote,
-          aur app ke haath AWS ki chaabi kabhi nahi aati.
-
-SHABD:    presigned URL = ek file ka kuch minute ka paas
+JAWAB:    5 GB file hamare server se hoke jaaye to server ghanto atka rahe. Isliye server sirf ek 10
+          minute ka 'paas' (signed URL) deta hai, saath me T-101.
+          Arpan ka app us paas se file seedha S3 me daal deta, hamare server ke beech se nahi.
+          Arpan ke paas AWS ki chaabi kabhi nahi aati, sirf us ek file ka 10 minute ka paas.
 ```
 ```mermaid
 flowchart TD
@@ -385,8 +387,10 @@ flowchart TD
 ## DIKKAT 3 — 5 GB file 90% pe tooti
 
 ```
-JAWAB:    Badi file S3 multipart se: file tukdon me jaati, fail tukda akela dobara, aur complete pe S3
-          sab jod deta. Upload id hamare paas, to app band hoke wapas aaye to wahin se aage.
+JAWAB:    File ko 100 tukdon me bhejo. 90 tukde chale gaye aur wifi gaya, to sirf bache 10 dobara bhejo,
+          poori 5 GB nahi.
+          Sab tukde pahunche to S3 khud jod ke ek file bana deta. Upload ki id hamare paas hai, to app
+          band karke kal aaye to bhi wahin se aage.
 ```
 ```mermaid
 flowchart TD
@@ -416,10 +420,10 @@ flowchart TD
 POOCHEGA: "What if the server crashes in the middle?"
           (Server beech me crash ho gaya to?)
 
-JAWAB:    Har file ka haal: UPLOADING -> VALIDATING -> DONE / FAILED. Sweeper job wo
-          files dhoondhta jo bahut der se atki (VALIDATING pe 10 min, jabki jaanch 3
-          sec ki hai), aur unhe dobara line me daalta ya FAILED karta.
-          S3 lifecycle rule chhodi hui adhoori upload saaf karta.
+JAWAB:    Har file ka haal likha hai: UPLOAD HO RAHI -> JAANCH HO RAHI -> DONE / FAILED.
+          Ek job har kuch minute dekhti: koi file 10 minute se 'jaanch ho rahi' pe atki hai (jabki
+          jaanch 3 second ki hai)? To use dobara line me daalo, ya FAILED kar do.
+          Aur S3 ka niyam purani adhoori uploads apne aap hata deta.
 ```
 ```mermaid
 flowchart TD
@@ -449,9 +453,11 @@ flowchart TD
 ## DIKKAT 5 — sab har 2 sec haal poochh rahe
 
 ```
-JAWAB:    Haal poochhna bahut zyada, isliye Redis + read replica se. Worker jab haal
-          badle, Redis bhi saath me update kare.
-          Baar-baar poochhna hi band karna ho to SSE / WebSocket se server khud bataye.
+JAWAB:    Log baar-baar 'T-101 ka haal?' poochhte, to haal Redis se do, DB tak mat jaao. Redis me na ho
+          to DB ki copy se.
+          Worker jab haal badle (DONE), Redis me bhi usi waqt badal de, warna Arpan ko purana 'jaanch ho
+          rahi' dikhta rahega.
+          Poochhna hi band karna ho to server khud Arpan ko bata de jab haal badle (SSE / WebSocket).
 ```
 ```mermaid
 flowchart TD
@@ -487,8 +493,9 @@ flowchart TD
 ## DIKKAT 6 — file nahi, poora folder
 
 ```
-JAWAB:    Folder ka ek parent tracking id, har file ka child id. Parent ka haal bachchon se banta. Shuru
-          me ek hi call me saare signed URL.
+JAWAB:    Folder ka ek bada id (P-1), andar har file ka apna chhota id. Sab chhote DONE to P-1 DONE, koi
+          FAILED to P-1 'kuch fail'.
+          1000 file ke liye 1000 baar paas nahi maangte, ek hi baar me saare paas mil jaate.
 ```
 ```mermaid
 flowchart TD
@@ -524,8 +531,10 @@ flowchart TD
 ## DIKKAT 7 — Ravi ne Arpan ka trackingId daala
 
 ```
-JAWAB:    'Tum kaun ho' (login) gateway pe. 'Is file pe haq hai?' service me: haal ya download ki har
-          maang pe JWT wala user hi file ka owner hai? Nahi to 403.
+JAWAB:    Login darwaze pe hota hai: wo batata ye Ravi hai. Par 'T-101 Ravi ki file hai?' ye darwaza
+          nahi jaanta.
+          Isliye service me check: T-101 ka maalik Arpan, maangne wala Ravi -> 403. Har haal / download
+          pe ye check.
 ```
 ```mermaid
 flowchart TD
@@ -563,8 +572,9 @@ flowchart TD
 ## DIKKAT 8 — S3 ka seedha link aage bhej diya
 
 ```
-JAWAB:    Download ke liye kuch minute ka signed GET URL, owner check ke BAAD hi banta. DB me S3 ki file
-          ka naam (key) rakhte, pakka URL kabhi nahi.
+JAWAB:    Download ke liye bhi 5 minute ka paas, aur wo bhi maalik check ke baad hi banta.
+          DB me file ka naam (key) rakhte, pakka link nahi. Arpan ne link WhatsApp pe bheja to 5 minute
+          baad wo band.
 ```
 ```mermaid
 flowchart TD
@@ -605,11 +615,10 @@ flowchart TD
 POOCHEGA: "How do you secure it / stop abuse?"
           (Safe kaise rakhoge / galat istemaal kaise rokoge?)
 
-JAWAB:    Gateway pe JWT, aur haal / download pe owner check. Chhoti umar ke signed URL. Worker naam ya
-          Content-Type pe bharosa nahi karta, file ke pehle byte (magic bytes) dekhta.
-          Upload ki bheed rokne ke liye har user ki had, sabse aage WAF, HTTPS, aur secrets vault me.
-
-SHABD:    magic bytes = file ke shuru ke kuch byte jo batate asal me kis type ki file hai
+JAWAB:    Login darwaze pe, maalik check har maang pe. Chhote time ke paas.
+          File ka naam ya type (jo app bhejta) pe bharosa nahi: worker file ke pehle kuch byte padh ke
+          dekhta asal me kya hai (PDF '%PDF' se shuru, EXE 'MZ' se).
+          Ek user kitni file daal sakta uski had, sabse aage WAF, HTTPS, aur passwords vault me.
 ```
 ```mermaid
 flowchart TD
@@ -662,10 +671,11 @@ POOCHEGA: "How do you know it's working?"
 
              -> had paar = alert (CloudWatch alarm / PagerDuty), user ke shikayat karne se pehle
           peeche: 3 fail -> fuse (CIRCUIT BREAKER) -> doosri company (bahar wale ki copy hum nahi chala sakte)
-JAWAB:    Apne number pe alert: line kitni lambi, Validator ke jawab ka time (p99)
-          aur error rate, aur VALIDATING pe atki files.
-          Health check sirf 'zinda hai' batata, 'dheema hai' nahi. Peeche fuse
-          (circuit breaker) aur doosri company.
+JAWAB:    Health check sirf batata 'zinda hai', 'dheema hai' nahi batata. Isliye apne teen number dekho:
+          line kitni lambi, jaanch wali company kitni der me jawab de rahi aur kitni baar fail, aur
+          kitni files 10 minute se 'jaanch ho rahi' pe atki.
+          Had paar = alert, user ke shikayat karne se pehle. Company baar-baar fail ho to us pe call
+          band (fuse) aur doosri company.
 ```
 
 ---
@@ -699,12 +709,12 @@ jaanch alag, magic bytes · Redis + replica = haal poochhna
 Sweeper = atki file
 ```
 ```
-JAWAB:    App upload service se signed URL leta aur bytes seedhe S3 pe, badi file multipart me.
-          Jaanch 2-3 sec ki, isliye async: user ko turant tracking id, worker line se jaanchta, magic
-          bytes dekhta, haal update karta.
-          Haal bahut padha jaata, to Redis + read replica, har update pe Redis bhi. Owner check aur
-          chhote URL se safe, lifecycle rule + sweeper se safai.
-          Aage: fail pe dobara koshish aur download ke liye CDN.
+JAWAB:    Server sirf paas deta, file seedha S3 me (badi ho to tukdon me).
+          Jaanch 3 second ki, to Arpan ko turant T-101, worker line se jaanchta, file ke pehle byte
+          dekhta, haal likhta.
+          Haal baar-baar poochha jaata, to Redis + copy, haal badle to Redis bhi. Maalik check aur
+          chhote paas se safe, S3 niyam + atki file wali job se safai.
+          Aage: fail pe dobara koshish, download ke liye CDN.
 ```
 ```mermaid
 flowchart TD

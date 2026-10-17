@@ -318,8 +318,10 @@ flowchart TD
 ## DIKKAT 1 — har request pe DB se taazi 20
 
 ```
-JAWAB:    Sabko lagbhag wahi taazi feed dikhti, isliye pehle se bana ke Redis sorted set me rakhte
-          (score = kab chhapi). Nayi khabar aate hi update. ~99% padhai cache se.
+JAWAB:    Sabko lagbhag wahi taazi 20 khabar dikhti hain. To har baar DB se mat nikaalo: ek baar list
+          bana ke Redis me rakh do, time ke kram se.
+          Nayi khabar aayi -> list me apni jagah daal do. Koi bhi app khole -> list se upar ki 20 de do.
+          100 me se 99 log Redis se hi laut jaate.
 ```
 ```mermaid
 flowchart TD
@@ -341,8 +343,10 @@ flowchart TD
 ## DIKKAT 2 — 1000 source se khabar laana dheema
 
 ```
-JAWAB:    Likhne aur padhne ka raasta alag: fetcher peeche se sources padh ke Kafka me daalte, worker
-          apni speed se kaam karte, aur user hamesha cache me taiyaar feed hi padhta.
+JAWAB:    1000 sites se khabar laana dheema hai, to user ke aane pe nahi laate.
+          Peeche ek fetcher apne aap har kuch minute sites se khabar laake Kafka me daalta, worker saaf
+          karke DB aur Redis me rakhte.
+          User hamesha Redis me taiyaar list padhta, use is sab ka intezaar nahi karna padta.
 ```
 ```mermaid
 flowchart TD
@@ -371,12 +375,12 @@ flowchart TD
 ## DIKKAT 3 — ek khabar paanch source se
 
 ```
-JAWAB:    Worker har khabar saaf karta, dedupe karta, category lagata. Bilkul same
-          khabar = saaf kiye title ka hash. Thodi alag likhi = SimHash. Pehle dekha
-          URL = Bloom filter, jo bahut kam memory leta.
-
-SHABD:    SimHash = milte-julte text ka hash paas-paas aata · Bloom filter = 'pehle dekha?' batane wala
-          chhota dabba, kabhi galat haan, galat na kabhi nahi
+JAWAB:    Ek hi khabar 5 site pe: title chhote akshar me karke uska hash nikalo, same hash = same
+          khabar, ek hi rakho.
+          Thoda alag likha ho ('India wins' / 'India won') to milte-julte text wala hash (SimHash)
+          paas-paas aata, use bhi same maano.
+          Ye URL pehle aaya? Ek chhota dabba (Bloom filter) jo kam jagah me 'shayad dekha' / 'pakka
+          naya' batata.
 ```
 ```mermaid
 flowchart TD
@@ -408,8 +412,9 @@ flowchart TD
 POOCHEGA: "What if a source is slow or down?"
           (Koi source dheema / band ho to?)
 
-JAWAB:    Har source alag se, timeout + dobara koshish + fuse (circuit breaker). Baar-baar fail to chhod
-          do. Ek kharab source baaki 999 ko nahi rokta.
+JAWAB:    Har site alag se lao. 2-3 second me jawab nahi to chhod do, thodi baar dobara koshish.
+          Koi site baar-baar fail ho to kuch der usko bulao hi mat (fuse). Ek kharab site baaki 999 ko
+          nahi rokti.
 ```
 ```mermaid
 flowchart TD
@@ -441,8 +446,9 @@ flowchart TD
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
           (Data badhta ja raha, 3 saal baad?)
 
-JAWAB:    Sirf aakhri hafta garam. Mahine ke hisaab se tukde, purane tukde sasti jagah, jo kabhi nahi
-          chahiye uspe umar (TTL). Ye purana hatana (retention) hai, sharding nahi.
+JAWAB:    Log sirf aakhri hafte ki khabar padhte. Table ko mahine ke tukdon me rakho, purane tukde sasti
+          jagah bhej do, jo kabhi nahi chahiye uski umar khatam.
+          Ye purana hatana hai, data baantna (sharding) nahi.
 ```
 ```mermaid
 flowchart TD
@@ -473,8 +479,9 @@ flowchart TD
 ## DIKKAT 6 — bahut bade scale pe ek DB machine nahi jhelti
 
 ```
-JAWAB:    Hamare number pe ek DB kaafi. Na ho to article id ke hash se baanto, taaki likhai barabar
-          bate. Date se nahi, warna aaj wala tukda akela garam.
+JAWAB:    Hamare number pe ek DB kaafi hai.
+          Zaroorat pade to khabar ki id ke hash se baanto, taaki likhai sab jagah barabar bate. Date se
+          nahi baant-te, warna aaj ki saari likhai ek hi jagah aur wahi garam.
 ```
 ```mermaid
 flowchart TD
@@ -505,8 +512,9 @@ flowchart TD
 ## DIKKAT 7 — Arpan ko sirf tech + sports
 
 ```
-JAWAB:    Har user ki alag feed nahi, har category ki ek feed cache me. User ki
-          pasand wali category padhte waqt time se mila do.
+JAWAB:    Har user ki alag list banana mehnga. Har category (tech, sports) ki ek list rakho.
+          Arpan ko tech + sports pasand -> dono list se upar ki khabar lo, time se mila do, top 20 dikha
+          do.
 ```
 ```mermaid
 flowchart TD
@@ -537,9 +545,9 @@ flowchart TD
 ## DIKKAT 8 — subah 8 baje sab ek saath
 
 ```
-JAWAB:    Feed service kuch yaad nahi rakhti, kai machine + load balancer. Cache me
-          na mile to read replica se, primary se nahi. Subah ki bheed pata hai, to
-          pehle se machine badhao aur cache bhar do.
+JAWAB:    Feed service kuch yaad nahi rakhti, kai machine + load balancer.
+          Redis me na mile to DB ki copy se padho, main DB se nahi (wahan khabar likhi ja rahi).
+          Subah 8 baje ki bheed pata hai, to 7:45 tak machine badha do aur Redis bhar do.
 ```
 ```mermaid
 flowchart TD
@@ -577,10 +585,11 @@ flowchart TD
 ## DIKKAT 9 — Arpan ne cricket dhoondha
 
 ```
-JAWAB:    Search Elasticsearch pe, inverted index (shabd -> kis khabar me), jo worker peeche se update
-          karte. Sach DB hai, isliye index kabhi bhi dobara bana sakte.
-
-SHABD:    inverted index = kitaab ke peeche ki index: shabd -> kis page pe
+JAWAB:    Har shabd ke saath likh lo wo kin khabron me aaya, jaise kitaab ke peeche ki index: 'cricket'
+          -> [khabar 12, 45, 90].
+          Ye ek HashMap hi hai: shabd -> list. 'cricket kohli' dhoondha to dono list nikaalo, jo dono me
+          hain wo upar.
+          Ye kaam Elasticsearch karta. Asli data DB me, index kabhi bhi dobara bana sakte.
 ```
 ```mermaid
 flowchart TD
@@ -664,11 +673,10 @@ PADHNA: LB -> Feed Svc (kai machine) -> Redis (99%) -> nahi mila to
         Read replica · Elasticsearch = search · Archive = purana
 ```
 ```
-JAWAB:    Likhne aur padhne ka raasta alag. Sources peeche se, Kafka ke through
-          worker tak, jo saaf + dedupe + category karke NoSQL me daalte (bahut saara
-          seedha data, ACID ki zaroorat nahi; paisa hota to SQL).
-          Sabko lagbhag same taazi feed, to Redis me pehle se bani, 99% cache se, miss pe read replica.
-          Feed service load balancer ke peeche, purani khabar sasti jagah, search Elasticsearch pe.
+JAWAB:    Khabar laana aur khabar dikhana alag raaste. Peeche fetcher sites se laata, Kafka se worker
+          tak, worker saaf karke, ek khabar ek baar, category laga ke DB me rakhta.
+          Sabko lagbhag wahi feed, to Redis me pehle se bani, 99% wahin se. Feed service kai machine pe,
+          purani khabar sasti jagah, search Elasticsearch pe.
 ```
 ```mermaid
 flowchart TD
