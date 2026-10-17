@@ -358,14 +358,16 @@ flowchart TD
 POOCHEGA: "What if the server crashes in the middle of a transfer?"
           (Transfer ke beech server gir gaya to?)
 
-JAWAB:    Dono account ek hi DB me, to kaatna aur daalna ek transaction: poora hoga ya poora wapas. Saga
-          tabhi aata jab dono taraf alag service ya alag bank ho.
+JAWAB:    Arpan aur Ravi dono ka account ek hi DB me. To 'Arpan se 500 kaato' aur 'Ravi ko 500 do' ek hi
+          transaction me: beech me crash hua to dono wapas, aadha nahi.
+          Step-step wala tareeka (saga) tab chahiye jab dono alag bank ya alag system me hon.
 
 POOCHEGA: "Consistency or availability — which do you pick?"
           (Consistency ya availability, kya chunoge?)
 
-JAWAB:    Transfer aur balance CP: galat balance dikhane se mana karna behtar. Commit ke baad SMS,
-          statement, analytics AP: do second late chalega.
+JAWAB:    Transfer aur balance me sahi hona pehle: pakka nahi to mana kar do, galat balance dikhana
+          bura.
+          Transfer ke baad SMS, statement 2 second late chale to chalta hai.
 ```
 ```mermaid
 flowchart TD
@@ -386,8 +388,10 @@ flowchart TD
 POOCHEGA: "How do you make sure the SMS / fraud event is never lost?"
           (SMS / fraud wala event kabhi na khoye, kaise?)
 
-JAWAB:    Event outbox table me, transfer wale transaction me hi likhta. Relay use acks=all se Kafka
-          bhejta. Consumer event id se dobara-safe, fail wale DLQ me.
+JAWAB:    'SMS bhejo' wali khabar outbox table me, usi transaction me jisme paisa hila. Paisa hila to
+          khabar bhi pakki, nahi hila to khabar bhi nahi.
+          Ek relay outbox se khabar Kafka bhejta. SMS service khabar ki id se do baar nahi bhejti, fail
+          wali DLQ me.
 ```
 ```mermaid
 flowchart TD
@@ -410,11 +414,10 @@ flowchart TD
 POOCHEGA: "How do you know the system is working?"
           (System theek chal raha, kaise pata?)
 
-JAWAB:    Khaata (ledger) sach, balance uska jod (cache), dono ek transaction me
-          likhe, to alag nahi hote. Padhna balance se, ek row. Raat ko milaan
-          (reconciliation), farak mila to khaata jeetega.
-          Saath me p99, error rate, line ki lambai, DB connection pe alert, aur har
-          transfer ka trace id.
+JAWAB:    Khaata (ledger) asli sach hai, balance column uska jod. Dono ek hi transaction me likhte, to
+          alag nahi hote. Balance dekhna = ek row padhna, tez.
+          Raat ko milaan: khaate ka jod == balance? Farak mila to alert, aur khaata jeetega.
+          Saath me dekhte raho: transfer kitni der me, kitne fail, line kitni lambi.
 ```
 ```mermaid
 flowchart TD
@@ -436,8 +439,9 @@ flowchart TD
 ## DIKKAT 4 — Send do baar daba
 
 ```
-JAWAB:    Har transfer ke saath idempotency key, DB me UNIQUE. Dobara bhejne pe pehla jawab. Transaction
-          aadha likhne se bachata, key do baar se bachati.
+JAWAB:    Arpan ka app har transfer ke saath ek id bhejta, DB me wo id unique.
+          Dobara bheja to wahi id -> pehla jawab, paisa doosri baar nahi katta. Transaction aadha hone
+          se rokta, id do baar hone se.
 ```
 ```mermaid
 flowchart TD
@@ -462,11 +466,10 @@ flowchart TD
 POOCHEGA: "Two transfers hit the same account at the same time — what happens?"
           (Ek account pe do transfer ek saath aaye to?)
 
-JAWAB:    Alag lock ki zaroorat nahi: UPDATE hisaab DB ke andar karta, to koi update kho nahi sakta. Do
-          baat zaroori: balance check DB me (WHERE balance >= amount), aur lock hamesha ek tay kram me
-          (chhoti id pehle), taaki deadlock na ho.
-
-SHABD:    deadlock = do transaction ek doosre ka intezaar karte reh jaayein
+JAWAB:    Hisaab DB ke andar karo: 'balance >= 200 ho tabhi 200 kaato', ek hi query me. Do transfer ek
+          saath aaye to DB ek-ek karke chalata, doosre ke time balance kam ho chuka to wo fail.
+          Arpan->Ravi aur Ravi->Arpan ek saath ho to dono ek doosre ka intezaar karte reh jaate
+          (deadlock). Ilaaj: hamesha chhoti account id pehle lock karo, dono same kram me.
 ```
 ```mermaid
 flowchart TD
@@ -491,8 +494,9 @@ flowchart TD
 POOCHEGA: "What happens if a server or the DB goes down?"
           (Server ya DB gir gaya to?)
 
-JAWAB:    Service kuch yaad nahi rakhti, load balancer ke peeche health check ke saath. Primary ki
-          doosri building me SYNC copy, jo primary ban jaati, to pakka hua transfer kabhi nahi khota.
+JAWAB:    Service kuch yaad nahi rakhti, kai machine + load balancer, mari hui list se bahar.
+          Main DB ki copy doosri building me, aur har transfer copy me bhi likh ke hi 'done'. Main DB
+          gira to copy main ban jaati, koi pakka transfer nahi khota.
 ```
 ```mermaid
 flowchart TD
@@ -522,9 +526,10 @@ flowchart TD
 POOCHEGA: "I transferred money but my balance still shows the old value. Why?"
           (Maine paisa bheja par balance purana dikh raha. Kyun?)
 
-JAWAB:    Zyadatar copy peeche thi: likhai primary pe gayi, padhai us copy se aayi jo abhi pahunchi nahi
-          thi. Balance primary se padho, kam se kam jisne abhi likha uske liye.
-          Agar failover me likhai khoi ho, to wo SYNC copy se theek hota.
+JAWAB:    Transfer main DB pe hua, par balance us copy se padha jo abhi peeche thi.
+          Ilaaj: balance main DB se padho, kam se kam us user ke liye jisne abhi paisa bheja (kuch
+          second tak).
+          Copy hi peeche reh gayi ho to wahi 'har transfer copy me bhi likho' wala tareeka.
 ```
 ```mermaid
 flowchart TD
@@ -554,8 +559,9 @@ flowchart TD
 ## DIKKAT 8 — 22 arab line me history ka page 5000
 
 ```
-JAWAB:    History keyset se (time + id) aur usi ka index, to har page ka kharcha same, aur nayi entry
-          aane pe kuch khiskta ya dobara nahi dikhta.
+JAWAB:    Page 5000 ke liye DB 1 lakh line padh ke phenkta hai (OFFSET). Uski jagah: pichhle page ki
+          aakhri line ka time + id yaad rakho, agla page 'isse purani 20'.
+          Index se seedha wahan pahunch jaata, page 1 ho ya 5000, ek jaisa tez.
 ```
 ```mermaid
 flowchart TD
@@ -588,8 +594,9 @@ flowchart TD
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
           (Data badhta ja raha, 3 saal baad?)
 
-JAWAB:    Khaate ke mahine ke hisaab se tukde, band mahine sasti jagah. Delete kabhi nahi. Har mahine ka
-          opening balance snapshot, taaki archive ke baad bhi milaan sahi rahe.
+JAWAB:    Khaata mahine ke tukdon me. Band mahine sasti jagah (S3) bhej do, delete kabhi nahi.
+          Har mahine ke aakhir ka balance likh ke rakho, taaki purane tukde chale jaane ke baad bhi
+          milaan sahi ho.
 ```
 ```mermaid
 flowchart TD
@@ -635,11 +642,11 @@ KRAM:  sasta pehle, SHARD aakhir me
 POOCHEGA: "Replicas are in, but writes are still killing the DB. What now?"
           (Copy laga di, par likhai abhi bhi DB ko maar rahi. Ab?)
 
-JAWAB:    Copy sirf padhai baantti. Cache ya naye index bhi sirf padhai ki madad,
-          naye index to INSERT dheema karte.
-          Itni likhai pe account id se baanto (shard), ek account ke saare transfer ek tukde pe. Zaroori
-          nahi wali likhai (statement) queue pe.
-          Table ki jagah ke liye mahine ke tukde + band mahine sasti jagah. Delete kabhi nahi.
+JAWAB:    Copy sirf padhai ka bojh baantti, likhai sab main DB pe hi jaati. Index bhi sirf padhai tez
+          karta, likhai ulta dheemi.
+          Likhai bahut ho to account id se baanto: Arpan ke saare transfer ek tukde pe. SMS / statement
+          jaisa kaam line me daal do.
+          Jagah ke liye mahine ke tukde, purane sasti jagah. Delete kabhi nahi.
 POOCHEGA: "How would you scale this to 10x?"      -> pehle jo toote
           (padhai -> replica, jagah -> tukde, likhai -> shard)
 POOCHEGA: "What's the single point of failure?"   -> DB primary (sync copy), Banking Svc (LB + kai machine)
@@ -683,11 +690,11 @@ archive ke baad       -> OPENING BALANCE snapshot
 bojh badha            -> replica -> tukde -> (aakhir me) shard
 ```
 ```
-JAWAB:    Ek transfer ka sab kuch (dono khaata line, dono balance, idempotency key, outbox event) ek
-          transaction me, SQL DB me. Paisa na khota, na banta.
-          Khaata sach, balance uska cache, raat ko milaan. Balance check aur lock ka kram DB me.
-          Padhai copy se, history cursor se, purane mahine opening balance ke saath archive, aur SMS
-          jaise kaam commit ke baad Kafka se.
+JAWAB:    Ek transfer ka sab kuch (dono khaata line, dono balance, id, SMS wali khabar) ek transaction
+          me, SQL me. Paisa na khota na banta.
+          Khaata sach, balance uska jod, raat ko milaan. Balance check aur lock ka kram DB me.
+          Padhai copy se, history 'pichhli line ke baad se', purane mahine sasti jagah, SMS commit ke
+          baad Kafka se.
 ```
 ```mermaid
 flowchart TD

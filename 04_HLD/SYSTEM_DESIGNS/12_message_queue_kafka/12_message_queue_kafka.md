@@ -321,8 +321,10 @@ flowchart TD
 ## DIKKAT 1 — consumer restart hua, message gayab
 
 ```
-JAWAB:    Message disk pe sirf-jodne-wale log me, har ek ka number (offset). Padhne se delete nahi hote.
-          Consumer restart ho to apne aakhri offset se aage, ya peeche jaake dobara padh sakta.
+JAWAB:    Message memory me nahi, disk pe ek register me likhte, sirf neeche jodte jaate. Har message ka
+          number (offset).
+          Padhne se message mit-ta nahi. Email service ne 2 tak padha aur restart hui, to 3 se aage padh
+          leti. Chahe to peeche jaake dobara bhi.
 ```
 ```mermaid
 flowchart TD
@@ -343,7 +345,8 @@ flowchart TD
 POOCHEGA: "One machine can't hold the data or take the writes. What do you do?"
           (Ek machine na data rakh sakti, na itni likhai jhel sakti. Kya karoge?)
 
-JAWAB:    Topic ko tukdon (partition) me todo, alag-alag broker pe. Jagah aur likhai dono bat jaate.
+JAWAB:    Ek topic ko tukdon (partition) me todo, har tukda alag machine pe. Jagah bhi bat gayi, likhai
+          bhi.
 ```
 ```mermaid
 flowchart TD
@@ -364,8 +367,9 @@ flowchart TD
 POOCHEGA: "How do you keep messages in order?"
           (Message ka kram kaise rakhoge?)
 
-JAWAB:    Kram sirf ek partition ke andar hota. Isliye key = user id, to ek user ke saare event ek
-          partition me. Poore topic ka kram = ek hi partition = speed khatam.
+JAWAB:    Kram sirf ek tukde ke andar milta hai. Isliye Arpan ke saare event ek hi tukde me bhejo (key =
+          Arpan ki id). signup, update, delete kram se rahenge.
+          Poore topic ka kram chahiye to ek hi tukda rakhna padega, phir sab dheema.
 ```
 ```mermaid
 flowchart TD
@@ -383,8 +387,8 @@ flowchart TD
 ## DIKKAT 4 — email ke 3 instance, Arpan ko 3 email
 
 ```
-JAWAB:    Ek service ki saari machine ek consumer group me. Group ke andar har partition ko sirf EK
-          consumer padhta, to us service me har event ek hi baar chalta.
+JAWAB:    Email service ki 3 machine ek team (group) me. Team ke andar har tukda sirf ek machine padhti.
+          Arpan ka event jis tukde me hai, use sirf ek machine padhegi, to Arpan ko ek hi email.
 ```
 ```mermaid
 flowchart TD
@@ -402,8 +406,9 @@ flowchart TD
 ## DIKKAT 5 — signup teeno service ko chahiye
 
 ```
-JAWAB:    Topic ek, har service ka apna group. Group ke andar partition bat-te, alag group me har group
-          ko poori khabar milti, sabka apna offset.
+JAWAB:    Topic ek hi, par email, analytics, dashboard teeno ki apni-apni team.
+          Ek team ke andar kaam bat-ta hai, alag team ho to har team ko poori khabar milti. Har team
+          apna 'kahan tak padha' alag rakhti.
 ```
 ```mermaid
 flowchart TD
@@ -428,12 +433,10 @@ flowchart TD
 POOCHEGA: "What happens if a broker goes down?"
           (Ek broker gir gaya to?)
 
-JAWAB:    Har partition ka ek leader aur alag broker / building me follower. Leader
-          mara to controller saath chal rahe follower (ISR) ko leader banata, to jo
-          pakka ho chuka tha wo nahi khota. Zaroori event acks=all se.
-
-SHABD:    ISR = jo follower leader ke saath poore chal rahe · acks=all = saari ISR
-          copy me likha tab 'done'
+JAWAB:    Har tukde ka ek leader (likhna-padhna isi pe) aur 2 copy alag machine pe. Leader gira to jo
+          copy poori saath chal rahi thi, wo leader ban jaati.
+          Zaroori khabar ke liye 'saari copy me likh gaya tabhi done', to leader gira to bhi khabar copy
+          pe hai.
 ```
 ```mermaid
 flowchart TD
@@ -460,23 +463,26 @@ flowchart TD
 POOCHEGA: "How do you make sure no message is lost?"
           (Koi message khoye nahi, kaise pakka karoge?)
 
-JAWAB:    Offset 'padh liya' tabhi jab SMS chala gaya. Crash hua to event dobara aayega, khoyega nahi.
-          Isse 'kam se kam ek baar' milta, isliye consumer dobara-safe: event id yaad rakhta, dobara
-          aaya to skip. Baar-baar fail wala DLQ me.
+JAWAB:    Worker 'padh liya' tab bole jab SMS chala gaya. Beech me mara to khabar dobara aayegi, khoyegi
+          nahi.
+          Dobara aa sakti hai, isliye worker khabar ki id yaad rakhta, dobara aayi to skip. Baar-baar
+          fail wali khabar alag line (DLQ) me.
 
 POOCHEGA: "The order is saved but the server crashes before sending the event. Now what?"
           (Order DB me save ho gaya, par event bhejne se pehle server gir gaya. Ab?)
 
-JAWAB:    API 'order ho gaya' tabhi bolti jab transaction commit ho gaya.
-          Commit se pehle crash: order aur outbox row dono wapas, user ko error, wo dobara karega.
-          Commit ke baad crash: dono save, relay baad me bhi event bhej dega, aur user dobara dabaye to
-          idempotency key doosra order nahi banne deti.
+JAWAB:    App 'order ho gaya' tabhi bolta jab order DB me pakka ho gaya.
+          Order aur 'order hua' khabar dono DB me ek saath likhte (outbox table).
+          Pakka hone se pehle crash: dono gaye, user ko error, wo dobara karega.
+          Pakka hone ke baad crash: dono DB me hain, relay khabar baad me Kafka bhej dega. User ne
+          dobara dabaya to order id se doosra order nahi banega.
 
 POOCHEGA: "What if the same event comes twice?"
           (Wahi event do baar aa gaya to?)
 
-JAWAB:    'Kam se kam ek baar' me ye hota hi hai. Consumer event id se dedup karta,
-          partition key se nahi.
+JAWAB:    Kafka me khabar kabhi do baar aa hi jaati hai. Worker khabar ki id yaad rakhta aur dobara aayi
+          to skip karta. Id khabar ki dekhte, Arpan ki id nahi (warna Arpan ki agli sahi khabar bhi skip
+          ho jaati).
 ```
 ```mermaid
 flowchart TD
@@ -502,9 +508,9 @@ flowchart TD
 ## DIKKAT 8 — consumer mara / peeche chal raha
 
 ```
-JAWAB:    Consumer mara to uske partition group ke baaki consumers me bat jaate
-          (rebalance). Peeche-chalne (lag) pe alert, aur baar-baar fail wala message
-          kuch koshish ke baad DLQ me, taaki partition na atke.
+JAWAB:    Team ki ek machine mari to uske tukde team ki baaki machines me bat jaate.
+          Dekhte raho 'kitna peeche chal rahe' (lag), badhe to alert. Koi khabar baar-baar fail ho to
+          kuch koshish ke baad DLQ me, taaki poora tukda na atke.
 ```
 ```mermaid
 flowchart TD
@@ -532,9 +538,9 @@ flowchart TD
 ## DIKKAT 9 — 7 din rakhoge to disk bharegi
 
 ```
-JAWAB:    Retention: time ya size se purani segment file poori delete. Compacted
-          topic me har key ka sirf aakhri message. Jo log rakha hai usi se naya
-          group ya theek kiya consumer dobara padh sakta.
+JAWAB:    Kafka padh ke delete nahi karta, 7 din rakhta, phir purani file poori uda deta.
+          Kuch topic me har key ki sirf aakhri khabar rakhte (jaise Arpan ki profile ka aakhri roop).
+          Jo rakha hai usse naya team shuru se padh sakti, ya bug theek karke dobara padh sakte.
 ```
 ```mermaid
 flowchart TD
@@ -659,12 +665,11 @@ RAASTA: producer -> key se partition -> LEADER pe jodo (offset) -> follower copy
 6 TRADE-OFF   async + sabko + replay -> Kafka · turant jawab / poora kram -> Kafka NAHI
 ```
 ```
-JAWAB:    Producer key wale event partition wale, sirf-jodne-wale log me likhte,
-          broker me baante; kram ek key ke andar.
-          Har partition ki copy, naya leader sirf ISR se, zaroori event acks=all.
-          Har service ka apna group, to ek event sab tak.
-          'Kam se kam ek baar': kaam ke baad commit, event id se dobara-safe, kharab message DLQ me.
-          Retention se dobara padh sakte.
+JAWAB:    Bhejne wala khabar key ke saath bhejta, key se tukda tay hota, tukde ke andar kram.
+          Har tukde ki copy, leader gira to saath chal rahi copy leader. Zaroori khabar 'saari copy me
+          likh gaya tabhi done'.
+          Har service ki apni team, to ek khabar sab tak. Worker kaam ke baad 'padh liya' bolta, id se
+          dobara skip, kharab khabar DLQ me. 7 din rakhte, dobara padh sakte.
 ```
 ```mermaid
 flowchart TD
@@ -734,10 +739,12 @@ IDEMPOTENT  eventId yaad, dobara aaye to chhodo
 DLQ         baar-baar fail -> retry ke baad DLQ, baaki na ruke (simulation me nahi)
 SAGA ≠ ye   saga kaam ULTA karta (refund). Yahan sirf raste me khona rokna.
 
-JAWAB:    'Kam se kam ek baar' pahunchana: outbox se paisa katna aur event ek hi
-          transaction me, Kafka me acks=all + copy, consumer kaam ke baad commit.
-          Consumer event id se dobara-safe, kharab message DLQ me.
-          Teeno jagah crash karwa ke dekha: bina iske 5 me se 3 event kho gaye, iske saath ek bhi nahi.
+JAWAB:    Teen jagah se khabar khoti thi, teeno band ki:
+          1) Paisa kata aur khabar ek saath DB me (outbox), to bhejne se pehle crash me khabar nahi
+          khoti.
+          2) Kafka me 'saari copy me likh gaya tabhi done'.
+          3) Worker kaam ke baad 'padh liya' bolta, id se dobara skip, kharab khabar DLQ me.
+          Chala ke dekha: bina iske 5 me se 3 khabar kho gayi, iske saath ek bhi nahi.
 ```
 
 ARCHETYPE B/F · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · [sharding/partition](../../FOUNDATIONS/06_database_sharding.md) · saath: [notification](../04_notification_system/04_notification_system.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

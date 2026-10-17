@@ -289,9 +289,10 @@ flowchart TD
 ## DIKKAT 1 — dono ne saath save kiya, baad wale ne mita diya
 
 ```
-JAWAB:    Poora doc save karne ki jagah sirf kya badla wo bhejo (operation): 'is
-          jagah ye daala', 'is jagah se mitaya', saath me kis version ko dekh ke
-          banaya. Isse ek saath ke badlaav jud jaate, ek doosre ko mitate nahi.
+JAWAB:    Poora doc bhej ke save karo to baad wala pehle wale ka likha mita deta.
+          Isliye sirf ye bhejo ki kya badla: 'position 5 pe WORLD daala'. Saath me 'maine doc ka version
+          7 dekh ke likha'.
+          Arpan aur Ravi dono ke badlaav lag jaate, kisi ka likha nahi mitta.
 ```
 ```mermaid
 flowchart TD
@@ -309,9 +310,10 @@ flowchart TD
 ## DIKKAT 2 — Ravi ko Arpan ka likha kab dikhega
 
 ```
-JAWAB:    Har user ka connection server se WebSocket khula rehta, to likha turant
-          dono taraf jaata. Connection toot ke wapas jude to app apna aakhri version
-          batata, aur uske baad ke saare operation mil jaate.
+JAWAB:    Har user ka server se ek connection khula rehta (WebSocket). Arpan likhe to turant server tak,
+          aur Ravi ka likha turant Arpan tak.
+          Connection toota aur wapas juda to app bolta 'main version 120 tak tha', server 121 se aage ke
+          saare badlaav bhej deta.
 ```
 ```mermaid
 flowchart TD
@@ -329,8 +331,10 @@ flowchart TD
 ## DIKKAT 3 — Arpan server-1 pe, Ravi server-2 pe
 
 ```
-JAWAB:    Connection server badlaav Redis pub/sub se aage dete, har doc ka ek channel. Pub/sub sirf
-          turant dikhane ke liye. Jo chhoot gaya wo dobara judne pe operation log se mil jaata.
+JAWAB:    Arpan server-1 pe, Ravi server-2 pe. Server-1 Arpan ka badlaav Redis pe 'doc:123' channel me
+          daal deta, server-2 us channel ko sun raha hai, to Ravi tak pahuncha deta.
+          Redis ye kahin save nahi karta, sirf aage bhejta. Kuch chhoot gaya to dobara judne pe log se
+          mil jaata.
 ```
 ```mermaid
 flowchart TD
@@ -359,11 +363,11 @@ flowchart TD
 POOCHEGA: "Two people type at the same position at the same time — what happens?"
           (Do log ek hi jagah ek saath type karein to?)
 
-JAWAB:    Poora doc nahi, sirf operation bhejta. Ek saath bane operation ko OT se khiskata (ya CRDT se
-          jodta). Sabka doc aakhir me same, kisi ka likha nahi khota.
-
-SHABD:    OT = doosre ka badlaav apne badlaav ke hisaab se khiska do · CRDT = har akshar ki apni id,
-          kisi bhi kram me jodo nateeja same
+JAWAB:    Doc 'HELLO'. Arpan ne 0 pe X likha, Ravi ne bhi 0 pe Y. Seedha lagao to dono ki screen pe alag
+          doc.
+          Niyam: same jagah pe dono ne likha to Arpan ka pehle. Ravi ka Y ek aage khisak jaata. Dono ki
+          screen pe 'XYHELLO'.
+          Ye khiskana OT hai. Kisi ka likha nahi khota aur aakhir me sabka doc same.
 ```
 ```mermaid
 flowchart TD
@@ -392,13 +396,15 @@ flowchart TD
 POOCHEGA: "The database takes too many writes. What do you do?"
           (DB pe likhai bahut zyada. Kya karoge?)
 
-JAWAB:    Live badlaav memory aur pub/sub se jaate. Operation Redis me jama karke ek saath (batch)
-          Cassandra me likhte, doc id se baante aur server ke diye version number se kram me. Ek doc ke
-          saare operation ek hi tukde pe.
+JAWAB:    Har akshar pe DB me likhna mehnga. Live dikhana to Redis se ho hi raha hai.
+          Isliye badlaav pehle Redis me jama karo, har 1 second ek saath Cassandra me likh do. Ek doc ke
+          saare badlaav ek jagah, server ke diye number ke kram me.
 
-JAWAB:    Redis ki copy hai par wo thodi der baad pahunchti, isliye operation ko 'mil gaya' (ack) tabhi
-          bolta jab wo pakka likh liya. App bina ack wale operation apne paas rakhta aur op id ke saath
-          dobara bhejta, to na kuch khota, na do baar lagta.
+JAWAB:    Redis ki copy thodi der baad pahunchti, to Redis gira to kuch badlaav ja sakte.
+          Isliye Arpan ka app badlaav apne paas rakhta jab tak server 'mil gaya' na bole, aur server
+          'mil gaya' tab hi bolta jab pakka likh liya.
+          Redis gira -> app wahi badlaav (wahi id ke saath) dobara bhejta, server pehle se dekha hua
+          skip kar deta.
 ```
 ```mermaid
 flowchart TD
@@ -426,8 +432,9 @@ flowchart TD
 ## DIKKAT 6 — doc khola, 10 lakh op chalane pade
 
 ```
-JAWAB:    Har 1000 operation pe doc ki photo (snapshot). Doc kholna = aakhri photo +
-          uske baad ke thode operation.
+JAWAB:    2 saal purana doc kholne pe 10 lakh badlaav shuru se chalana dheema.
+          Isliye har 1000 badlaav pe doc ki photo le lo. Kholte waqt aakhri photo + uske baad ke thode
+          badlaav.
 ```
 ```mermaid
 flowchart TD
@@ -458,8 +465,10 @@ flowchart TD
 POOCHEGA: "Consistency or availability — which do you pick?"
           (Consistency ya availability, kya chunoge?)
 
-JAWAB:    Har hisse ka alag. Likhna AP: network jaaye tab bhi type karte raho, OT / CRDT se sab aakhir
-          me same. Permission CP: jise hataya use turant roko.
+JAWAB:    Likhne ke liye: network jaaye to bhi type karte raho, baad me sab mil jaayega aur doc same ho
+          jaayega.
+          Permission ke liye ulta: kisi ka access hataya to turant rokna hai, chahe kuch der system
+          ruke.
 ```
 ```mermaid
 flowchart TD
@@ -493,8 +502,8 @@ flowchart TD
 POOCHEGA: "How do you keep edits in order?"
           (Badlaav ka kram kaise rakhoge?)
 
-JAWAB:    Server har operation ko doc ka agla version number deta, app ki ghadi kabhi nahi. Ek doc ke
-          saare operation ek hi tukde pe, jahan OT ek-ek karke chalta.
+JAWAB:    Kram server tay karta: har badlaav ko doc ka agla number deta, app ki ghadi pe bharosa nahi.
+          Ek doc ke saare badlaav ek hi server pe, wahi ek-ek karke lagata, to kram kabhi nahi bigadta.
 ```
 ```mermaid
 flowchart TD
@@ -573,12 +582,12 @@ likhna · Cassandra = op log (docId, version) + snapshot
 SQL = permission (CP)
 ```
 ```
-JAWAB:    App doc id ke hisaab se ek connection server se WebSocket pe juda. Har
-          akshar ek operation. Server ek saath bane operation ko OT se khiskata, to
-          kuch nahi khota aur sab same, phir Redis pub/sub se baaki servers tak.
-          Operation Redis me jama hoke batch me Cassandra (doc id se), saath me
-          photo taaki doc jaldi khule.
-          Likhna AP (typing kabhi na ruke), permission CP SQL me.
+JAWAB:    Har user doc ke hisaab se ek server se juda (ek doc ke sab log ek server pe). Har akshar ek
+          badlaav.
+          Server ek saath wale badlaav khiska ke lagata, kisi ka likha nahi khota, sabka doc same.
+          Doosre servers tak Redis se.
+          Badlaav jama karke Cassandra me, photo ke saath taaki doc jaldi khule. Likhna kabhi na ruke,
+          permission turant lage (SQL).
 ```
 ```mermaid
 flowchart TD
