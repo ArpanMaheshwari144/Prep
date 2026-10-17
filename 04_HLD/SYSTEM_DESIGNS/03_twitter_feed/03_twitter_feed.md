@@ -294,7 +294,7 @@ flowchart LR
 DIKKAT     6 baje DB alert: har second ~5,000 naye tweet, 5 saal me ~0.5 PB. Ek DB na itna rakh sakta,
            na itna likh sakta.
 HAL        CASSANDRA, user_id se baanto: mere saare tweet ek jagah -> profile ek jagah se. Famous = key me
-           mahina bhi (user + mahina). Andar time ulta (naya pehle). Likhna = commit log ke aakhir + RAM.
+           mahina bhi (user + mahina). Andar time ulta (naya pehle). Likhna = diary (commit log) ke aakhir + RAM.
 NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; join / transaction chahiye nahi.
 ```
 ```
@@ -376,7 +376,7 @@ flowchart LR
 ```
 ```
 DIKKAT     Raat 8 baje: sab kuch ek App machine pe. Laakhon log nahi jhelti, aur wahi giri -> sab band (SPOF).
-HAL        STATELESS App x N + ALB: machine kuch yaad nahi rakhti, koi bhi request kahin bhi. ALB har ~10 sec
+HAL        STATELESS App x N + ALB (AWS ka LB): machine kuch yaad nahi rakhti, request kahin bhi. ALB har ~10 sec
            "zinda?": jawab nahi = bahar, theek = wapas. Route 53 isi tarah region / ALB ko dekhta.
 ```
 ```
