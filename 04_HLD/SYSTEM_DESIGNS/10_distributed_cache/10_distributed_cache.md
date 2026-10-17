@@ -130,7 +130,8 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Data 1 TB, ek machine me 64 GB. 16+ machine chahiye. "user:42" kis machine pe jaaye,
          aur App ko har baar kaise pata chale?
 
-ILAAJ:   CONSISTENT HASHING (ring). hash % N NAHI. Dono ALAG cheez hain, mila ke mat bolna.
+ILAAJ:   Machine aur key dono ko ek gol ring pe rakho. Key ghadi ki disha me chale, jo pehli machine mile wahin rahe.
+         Machine judi ya gayi to sirf pados ki thodi key hilti (neeche: galat raasta vs sahi raasta).
 ```
 ```mermaid
 flowchart TD

@@ -62,8 +62,6 @@ flowchart TD
 ```
 KAHANI:  TCS ka share. Kuch log bechna chahte (SELL), kuch khareedna (BUY). Kaun kisse milega?
 
-ILAAJ:   ORDER BOOK: do line, aur "pehle daam, phir waqt" ka niyam (price-time priority).
-
 ANDAR KAISE:
          Bechne walon ki line: sabse SASTA upar (3000, 3001, 3005 ...)
          Khareedne walon ki line: sabse MEHNGA upar (2999, 2998 ...)
