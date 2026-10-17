@@ -42,8 +42,8 @@ NUMBERS (andaaza):
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-> Har dikkat ek card: KAHANI (kya hua, kaun, kitna) -> ILAAJ -> ANDAR KAISE (ilaaj kyun kaam karta) ->
-> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta hai: dabba lagaya, ab kya?).
+> Har card: DIKKAT (kya toota) -> HAL (kya kiya) -> diagram -> SAWAAL / JAWAB (interviewer yahin ghusta).
+> Revise: sirf baayein column padho (DIKKAT, HAL, SAWAAL) -> jawab apne aap yaad aata.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
@@ -60,32 +60,34 @@ flowchart TD
 
 #### 0 SHURU: ORDER BOOK KAISE MATCH KARTA
 ```
-KAHANI:  TCS ka share. Kuch log bechna chahte (SELL), kuch khareedna (BUY). Kaun kisse milega?
+DIKKAT   TCS ka share. Kuch log bechna chahte (SELL), kuch khareedna (BUY). Kaun kisse milega?
 
-ANDAR KAISE:
-         Bechne walon ki line: sabse SASTA upar (3000, 3001, 3005 ...)
-         Khareedne walon ki line: sabse MEHNGA upar (2999, 2998 ...)
-         = tere DSA ke do heap: bechne wale min-heap (sasta top pe), khareedne wale max-heap (mehnga top pe).
-         Jab sabse mehnga khareedar >= sabse sasta bechne wala -> sauda ho gaya.
-         Do log same daam pe -> jo PEHLE aaya (uska number chhota) wo pehle.
+HAL      Do line (order book):
+           Bechne wale   : sabse SASTA upar     3000, 3001, 3005 ...   (min-heap)
+           Khareedne wale: sabse MEHNGA upar    2999, 2998 ...         (max-heap)
+         Sauda -> jab top khareedar >= top bechne wala.
+         Daam  -> jo order pehle se book me pada tha, uska.
+         Same daam pe -> jo PEHLE aaya (chhota number) wo pehle.
+```
+```
+SAWAAL   Book DB me rakhoge?
+JAWAB    Nahi, RAM me. DB = milliseconds har order, RAM = microseconds.
 
-ISKE BAAD KYA TOOTEGA:
-  - Book kahan rakhoge, DB me?
-      -> nahi, RAM me. DB me har order likhna-padhna milliseconds leta, matching dheema ho jaata.
-         RAM me microseconds.
-  - Ramesh ko 10 chahiye, bechne wale ke paas sirf 6?
-      -> 6 ka sauda ho gaya, Ramesh ke baaki 4 book me pade rehte (aur un 4 ka paisa ruka rehta).
+SAWAAL   RAM me hai, server gira to book gayi?
+JAWAB    Nahi, log se wapas banti (card 6).
+
+SAWAAL   Ramesh ko 10 chahiye, bechne wale ke paas sirf 6?
+JAWAB    6 ka sauda. Ramesh ke baaki 4 book me pade rehte, un 4 ka paisa ruka rehta.
 ```
 
 #### 1 DO ORDER EK HI STOCK PE EK SAATH (RACE)
 ```
-KAHANI:  Seller ke paas TCS ke sirf 10 share. Ramesh ne BUY 10 maara, usi pal Mohan ne bhi BUY 10.
-         Do thread ne ek saath book dekhi, dono ko "10 available" dikha, dono ka sauda kar diya.
-         20 share bik gaye, jabki the sirf 10.
+DIKKAT   Seller ke paas TCS ke 10 share. Ramesh aur Mohan ne ek saath BUY 10 maara.
+         Do thread ne book dekhi, dono ko "10 hai" dikha -> 20 bik gaye, the sirf 10.
 
-ILAAJ:   TCS ke saare order ek hi line me lagte hain, aur us line ko sirf EK thread chalata hai.
-         Ramesh aur Mohan ne ek saath BUY kiya, to bhi thread pehle Ramesh ka match karega, phir Mohan ka.
-         Do order kabhi ek saath match nahi hote, isliye lock ki zaroorat hi nahi.
+HAL      TCS ke saare order ek line me, us line ko sirf EK thread chalata (TCS -> T1, INFY -> T2).
+         Pehle Ramesh -> 10 mil gaye. Phir Mohan -> 0 bache -> uska order line me ruka.
+         Do order kabhi ek saath match nahi hote -> lock ki zaroorat hi nahi.
 ```
 ```mermaid
 flowchart TD
@@ -100,32 +102,26 @@ flowchart TD
     n_Matching_Engine --> n_DB
 ```
 ```
-ANDAR KAISE:
-         TCS ke saare order thread T1 pe, INFY ke T2 pe. Ramesh pehle aaya -> T1 ne 10 de diye.
-         Phir Mohan -> book me 0 bache -> Mohan ka order line
-         me pada rahe. Do thread ek stock ko chhoote hi nahi.
+SAWAAL   5000 stock = 5000 thread?
+JAWAB    Nahi. Thode thread, har thread kai stock (stock ke naam ka hash % threads). Ek stock = ek thread.
 
-ISKE BAAD KYA TOOTEGA:
-  - 5000 stock = 5000 thread?
-      -> nahi. Thode thread, har thread kai stock sambhale (stock ke naam ka hash % thread ginti).
-         Bas ek stock hamesha ek hi thread pe.
-  - "DB ka ACID ye rok dega"?
-      -> nahi. Matching DB me hai hi nahi (RAM me). Aur ACID
-         akela "pehle padho, phir likho" wali race nahi rokta.
-  - Wo thread atak gaya (Java ka GC pause)?
-      -> us stock ke order line me ruk jaate. Ilaaj: kam GC wala
-         Java setup + ek standby jo log padh ke uth sake (card 6).
+SAWAAL   "DB ka ACID ye rok dega"?
+JAWAB    Nahi. Matching DB me hai hi nahi, RAM me hai.
+
+SAWAAL   Wo thread atak gaya (Java ka GC pause)?
+JAWAB    Us stock ke order line me ruk jaate. Kam GC wala Java setup + standby jo log padh ke
+         uth sake (card 6).
 ```
 
 #### 2 WALLET ME 50K, 30K-30K KE DO ORDER (DOUBLE SPEND)
 ```
-KAHANI:  Ramesh ke wallet me 50,000. Usne ek saath 30,000 ke DO order daal diye.
-         Dono order ne wallet dekha, dono ko 50k dikha, dono pass. Dono match -> 60k kharch, the 50k.
+DIKKAT   Ramesh ke wallet me 50k. Usne ek saath 30k ke DO order daale.
+         Dono ne wallet dekha, dono ko 50k dikha, dono pass -> 60k kharch, the 50k.
 
-ILAAJ:   Ramesh ke paas 50k hai. Order lagte hi uske paise block karo, aur check + block ek hi query me:
-         'bacha paisa 30k se zyada hai to 30k block karo'.
-         Pehle order ne 30k block kiya, ab bacha 20k. Doosre order ke liye 30k nahi bacha -> query ne kuch
-         nahi badla -> order reject.
+HAL      Order lagte hi paisa BLOCK karo, aur check + block EK hi query me:
+           UPDATE wallet SET blocked = blocked + 30000 WHERE total - blocked >= 30000
+         Pehla order -> 30k block, bacha 20k. Doosra -> 0 row badli -> reject.
+         Sauda hua -> paisa sach me kato · order cancel -> block hatao.
 ```
 ```mermaid
 flowchart TD
@@ -142,36 +138,29 @@ flowchart TD
     n_Matching_Engine --> n_DB
 ```
 ```
-ANDAR KAISE:
-         Pehla order: 30k block -> blocked = 30k, bacha 20k.
-         Doosra order: 30k chahiye, bacha sirf 20k -> REJECT.
-         Ye check aur block EK hi query me, taaki beech me koi ghus na sake:
-           UPDATE wallet SET blocked = blocked + 30000 WHERE total - blocked >= 30000
-           0 row badli = paisa nahi = order reject.
-         Sauda hua -> paisa sach me kato · order cancel -> block hatao.
+SAWAAL   Pehle SELECT se balance padho, phir UPDATE?
+JAWAB    Dono order ek saath 50k padh lenge, dono pass. Isliye check + update ek hi query me.
 
-ISKE BAAD KYA TOOTEGA:
-  - Pehle SELECT se balance padh ke phir UPDATE karein to?
-      -> dono order ne ek saath 50k padha, dono pass ho gaye. Isliye check + update EK hi query me.
-  - 10 me se sirf 6 ka sauda hua?
-      -> 6 ka paisa kato, baaki 4 ka blocked rahe.
-  - Paisa block kiya, order 3 din pada raha?
-      -> order ki umar hoti hai (day order shaam ko khatam) -> khatam hote hi block hatao.
-  - Ramesh ne order CANCEL kiya, usi pal match ho raha tha?
-      -> cancel bhi usi stock ki line (log) me jaata, order ke peeche. Engine kram se dekhta:
-         match pehle ho chuka -> "pura ho gaya, cancel nahi" · book me pada hai -> book se hatao
-         -> block hatao (sirf jo hissa nahi bika). Do jagah se faisla nahi hota, isliye ladaai nahi.
+SAWAAL   10 me se sirf 6 ka sauda hua?
+JAWAB    6 ka paisa kato, baaki 4 ka blocked rahe.
+
+SAWAAL   Paisa block, order 3 din pada raha?
+JAWAB    Order ki umar hoti (day order shaam ko khatam) -> khatam hote hi block hatao.
+
+SAWAAL   Ramesh ne CANCEL kiya, usi pal match ho raha tha?
+JAWAB    Cancel bhi usi stock ki line me, order ke peeche jaata. Engine kram se dekhta:
+         match pehle ho chuka -> "pura ho gaya" · book me pada -> hatao + jo nahi bika uska block hatao.
 ```
 
 #### 3 SAUDE KE BEECH CRASH (SETTLEMENT)
 ```
-KAHANI:  Ramesh ne Suresh se 10 TCS khareede, 30,000 me. Ramesh ka 30k kata, aur Suresh ko milne se
-         PEHLE server gir gaya. 30k na Ramesh ke paas, na Suresh ke paas. Hawa me.
+DIKKAT   Ramesh ne Suresh se 10 TCS khareede (30k). Ramesh ka 30k kata, Suresh ko milne se PEHLE
+         server gira -> 30k hawa me.
 
-ILAAJ:   Sauda hua to Ramesh se paisa kato aur Suresh ko do, share ulta. Ye sab ek hi transaction me:
-         beech me crash hua to sab wapas, aadha kuch nahi.
-         Khaate (ledger) me do line: Ramesh -30k, Suresh +30k. Saari line ka jod hamesha 0, matlab paisa
-         na bana na gayab hua.
+HAL      Ek hi transaction:
+           BEGIN  Ramesh -30k +10 share · Suresh +30k -10 share  COMMIT
+         Beech me crash -> DB sab wapas (rollback). Aadha kabhi nahi.
+         Khaate (ledger) me 2 line: Ramesh -30k, Suresh +30k -> jod hamesha 0.
 ```
 ```mermaid
 flowchart TD
@@ -190,37 +179,26 @@ flowchart TD
     n_Settlement --> n_DB
 ```
 ```
-ANDAR KAISE:
-         BEGIN
-           Ramesh: -30k, +10 share · Suresh: +30k, -10 share
-         COMMIT
-         Beech me crash -> DB sab wapas pehle jaisa kar deta (rollback). Aadha kaam kabhi nahi bachta.
-         Ledger me do line: Ramesh DEBIT 30k, Suresh CREDIT 30k. Saari line ka jod hamesha 0
-         -> paisa na bana, na gayab hua.
+SAWAAL   Har baar balance ledger jod ke nikaloge?
+JAWAB    Nahi, dheema. Balance alag column, usi transaction me badalta. Ledger = record + audit.
 
-ISKE BAAD KYA TOOTEGA:
-  - Har baar balance ledger jod ke nikaloge?
-      -> nahi, dheema hoga. Balance alag column me, usi
-         transaction me badalta. Ledger = sach ka record + audit.
-  - Paise me "thodi der baad sahi" (eventual) chalega, like count jaisa?
-      -> nahi. Paisa hamesha turant sahi (strong consistency).
-  - Asli market me share aur paisa usi pal milte hain?
-      -> nahi. India me T+1: asli len-den agle din clearing house (NSE ka NSCCL) karta.
-         Hamara turant wala hisaab broker ke apne khaate me hai; clearing ka paisa baad me milaate.
+SAWAAL   Paise me "thodi der baad sahi" chalega?
+JAWAB    Nahi. Paisa hamesha turant sahi (strong consistency).
+
+SAWAAL   Asli market me paisa aur share usi pal milte?
+JAWAB    Nahi. India me T+1: asli len-den agle din clearing house (NSE ka NSCCL).
+         Hamara turant wala hisaab broker ke apne khaate me.
 ```
 
 #### 4 PAISA WALLET DB ME, SHARE PORTFOLIO DB ME (ALAG DB)
 ```
-KAHANI:  System bada hua: paisa ab Wallet DB me, share Portfolio
-         DB me. Do alag DB pe ek transaction nahi chalta.
-         Ramesh ka 30k Wallet DB se kata, Portfolio DB me 10 share
-         daalne se PEHLE crash. Paisa gaya, share nahi aaye.
+DIKKAT   Paisa Wallet DB me, share Portfolio DB me. Do DB pe ek transaction nahi chalta.
+         30k Wallet se kata, share daalne se PEHLE crash -> paisa gaya, share nahi aaye.
 
-ILAAJ:   Paisa ek DB me, share doosre DB me, to ek transaction dono pe nahi chalta.
-         Ek service (Settlement) step-step chalati aur har step ke baad likh leti kahan tak hua: pehle
-         paisa kata, phir share daale.
-         Share daalna fail hua -> ulta kaam: Ramesh ko paisa wapas. Settlement khud gir gaya to uthke apna
-         likha dekhta aur wahin se aage ya ulta.
+HAL      Settlement service step-step chalati, har step ka haal apne DB me likhti:
+           STARTED -> WALLET_DONE -> PORTFOLIO_DONE
+         Share daalna fail -> ulta kaam: Ramesh ko 30k wapas (SAGA).
+         Settlement khud gira -> uth ke likha haal dekhti, wahin se aage ya ulta.
 ```
 ```mermaid
 flowchart TD
@@ -241,33 +219,25 @@ flowchart TD
     n_Settlement --> n_Portfolio_DB
 ```
 ```
-ANDAR KAISE:
-         Ek Settlement service (orchestrator, sab steps chalane wala) har step ka haal apne DB me likhta:
-           STARTED -> WALLET_DONE -> PORTFOLIO_DONE
-         Ramesh ka 30k kata (WALLET_DONE) -> share daalna fail -> Settlement Ramesh ko 30k wapas deta.
-         Settlement khud gir gaya -> uthte hi DB me likha haal dekhta, wahin se aage ya ulta.
+SAWAAL   2PC kyun nahi?
+JAWAB    2PC me dono DB lock pakad ke intezaar karte. Coordinator gira = dono atke, har sauda dheema.
+         SAGA me lamba lock nahi. Keemat: thodi der galat haalat dikh sakti.
 
-ISKE BAAD KYA TOOTEGA:
-  - 2PC (two phase commit) kyun nahi?
-      -> 2PC me dono DB lock pakad ke "commit karun?" ka intezaar karte. Coordinator gira = dono DB atke,
-         aur har sauda dheema. SAGA me lamba lock nahi.
-         Keemat: thodi der galat haalat dikh sakti (paisa kata, share abhi nahi aaye).
-  - Ulta kaam (paisa wapas) bhi fail ho gaya?
-      -> baar-baar koshish karo (step aisa ho ki do baar chale to bhi ek hi baar ka asar) + alert.
-         Paisa wapas dena kabhi chhodna nahi.
-  - Ek service sab chalaye (orchestration) ya har service agle ko bataye (choreography)?
-      -> orchestration: paise me saaf dikhta kaunsa step kahan atka.
+SAWAAL   Ulta kaam (paisa wapas) bhi fail?
+JAWAB    Baar-baar koshish (do baar chale to bhi asar ek baar) + alert. Paisa wapas kabhi chhodna nahi.
+
+SAWAAL   Orchestration ya choreography?
+JAWAB    Orchestration: paise me saaf dikhta kaunsa step kahan atka.
 ```
 
 #### 5 BUY DO BAAR DABA / NETWORK NE DOBARA BHEJA
 ```
-KAHANI:  Ramesh ne BUY dabaya, app ghoomta raha, usne phir daba diya. Ya network ne khud dobara bhej diya.
-         Server ko do request mili -> do order bane, paisa do baar block.
+DIKKAT   Ramesh ne BUY dabaya, app ghooma, phir daba diya (ya network ne dobara bheja).
+         Do order bane, paisa do baar block.
 
-ILAAJ:   Ramesh ka app har order ke saath ek id bhejta (abc-123), dobara bhejne pe bhi wahi id.
-         Server ke paas wo id pehle se hai -> naya order nahi, pehle wala jawab wapas. Pehla abhi chal hi
-         raha ho to 'thoda ruko'.
-         Ye wahi hai jo usercrud me /pay pe banaya tha.
+HAL      App har order pe ek id banata (abc-123), dobara bhejne pe bhi WAHI id.
+         Server: id table me UNIQUE. Pehli baar -> order lagao + jawab save.
+         Doosri baar -> id pehle se -> saved jawab wapas, naya order nahi. (usercrud /pay wala tareeka)
 ```
 ```mermaid
 flowchart TD
@@ -288,29 +258,22 @@ flowchart TD
     n_Settlement --> n_Portfolio_DB
 ```
 ```
-ANDAR KAISE:
-         App har order pe ek UUID banata (abc-123), dobara bhejne pe bhi WAHI abc-123.
-         Server: idempotency table me abc-123 daalo (key UNIQUE).
-           pehli baar -> daal diya -> order lagao -> jawab save.
-           doosri baar -> UNIQUE ki wajah se daal nahi paaya -> saved jawab wapas, naya order nahi.
-         Dono request bilkul ek saath aayi -> DB sirf ek ko daalne deta, doosri haar jaati.
+SAWAAL   Pehli request abhi chal hi rahi, dobara wali aa gayi?
+JAWAB    Id ka haal IN_PROGRESS -> "thoda ruko" (409). DONE -> saved jawab.
 
-ISKE BAAD KYA TOOTEGA:
-  - Pehli request abhi chal hi rahi, aur dobara wali aa gayi?
-      -> key ka haal IN_PROGRESS -> dobara wale ko "thoda ruko" (409). DONE ho gaya to saved jawab.
-  - Key kitne din rakhoge?
-      -> ~24 ghante (itne me hi koi dobara bhejta), phir saaf.
+SAWAAL   Id kitne din rakhoge?
+JAWAB    ~24 ghante, phir saaf.
 ```
 
 #### 6 ORDER BOOK RAM ME, SERVER GIRA = SAB GAYAB
 ```
-KAHANI:  10:15 baje matching server gir gaya. TCS ki book me 4,000 order pade the, sab RAM me.
-         RAM gayi -> 4,000 order gayab. Logon ka paisa block hai par order ka koi pata nahi.
+DIKKAT   10:15 baje matching server gira. TCS ki book me 4,000 order the, sab RAM me -> sab gayab.
+         Logon ka paisa block hai, order ka pata nahi.
 
-ILAAJ:   Har order PEHLE ek append-only LOG (sirf neeche jodte
-         jao, kabhi badlo mat) me likho, number ke saath.
-         PHIR book me daalo. Server gira -> naya server log shuru se padh ke book dobara bana leta (replay).
-         Jaise cricket: scoreboard toot gaya, scorer ke register se poora score wapas.
+HAL      Har order PEHLE log me likho (sirf neeche jodo, kabhi badlo mat), number ke saath (#501, #502).
+         PHIR book me daalo. Server gira -> naya server log #1 se kram me chala ke wahi book bana leta.
+         Jaise cricket: scoreboard toota, scorer ke register se poora score wapas.
+         Yahi log audit bhi hai.
 ```
 ```mermaid
 flowchart TD
@@ -331,34 +294,28 @@ flowchart TD
     n_Settlement --> n_Portfolio_DB
 ```
 ```
-ANDAR KAISE:
-         SEQUENCER har order pe badhta number lagata: Ramesh #501, Mohan #502.
-         Naya server log #1 se aakhri tak wahi kram me chalata.
-         Thread ek hi hai, to book bilkul pehle jaisi banti.
-         Log me key = stock ka naam -> ek stock ke order ek hi line (partition) me, kram me.
-         Yahi log AUDIT bhi hai: regulator saalon baad bhi dekh sakta, isme kuch badla nahi ja sakta.
+SAWAAL   Number ki jagah time se kram kyun nahi?
+JAWAB    Do server ki ghadi alag, aur do order same millisecond me aa sakte. Number pakka.
 
-ISKE BAAD KYA TOOTEGA:
-  - Number ki jagah time (timestamp) se kram kyun nahi?
-      -> do server ki ghadi alag chalti, aur do order same millisecond me aa sakte. Number pakka hai.
-  - Log me 1 crore order, shuru se padhne me kitna time?
-      -> har kuch minute book ki photo (SNAPSHOT) lo. Gira to photo + uske baad ka log -> chhota replay.
-  - Seconds me wapas chahiye?
-      -> HOT STANDBY: doosra server saath-saath log padhta rehta,
-         book RAM me taiyaar, par khud sauda nahi karta. Pehla gira, tab ye turant chalne lagta.
-  - Crash pe kya-kya bachaoge? (DO jagah bolna)
-      -> matching (RAM) = log se replay · settlement (DB) = rollback / SAGA. Sirf ek bola to aadha jawab.
+SAWAAL   Log me 1 crore order, shuru se padhne me der?
+JAWAB    Har kuch minute book ki photo (snapshot). Gira -> photo + uske baad ka log.
+
+SAWAAL   Seconds me wapas chahiye?
+JAWAB    Standby server saath-saath log padhta, book RAM me taiyaar, khud sauda nahi karta.
+         Pehla gira, tab ye chalne lagta.
+
+SAWAAL   Crash pe kya-kya bachaoge?
+JAWAB    Do jagah: matching (RAM) = log se replay · paisa (DB) = rollback / SAGA.
 ```
 
 #### 7 LAKHON LOG LIVE PRICE DEKH RAHE
 ```
-KAHANI:  10 lakh log app khol ke baithe. Har app har second poochh raha "TCS ka price kya hai?" (polling).
-         10 lakh sawaal har second -> server mar gaya, aur zyadatar baar jawab tha "wahi purana".
+DIKKAT   10 lakh log har second poochh rahe "TCS ka price kya hai?" -> server mar gaya,
+         aur zyadatar jawab tha "wahi purana".
 
-ILAAJ:   Ramesh ka app server se ek connection khula rakhta (WebSocket). TCS ka price badla -> matching
-         engine Redis pe 'TCS = 3005' daalta -> jo server TCS dekhne walon se jude hain, wo apne users ko
-         bhej dete.
-         Price second me 1000 baar badle to sab nahi bhejte, har 100 ms sirf aakhri price.
+HAL      App ka server se ek connection khula rehta (WebSocket).
+         Price badla -> matching Redis pe "price:TCS = 3005" bhejta -> jo server TCS dekhne walon se jude,
+         wo apne users ko bhej dete. Har 100 ms sirf aakhri price.
 ```
 ```mermaid
 flowchart TD
@@ -385,34 +342,26 @@ flowchart TD
     n_Settlement --> n_Portfolio_DB
 ```
 ```
-ANDAR KAISE:
-         Har stock ka ek channel (price:TCS). Ramesh TCS dekh raha, wo WebSocket server WS-1 se juda.
-         WS-1 Redis me "price:TCS" SUBSCRIBE karta.
-         Sauda hua, TCS 3005 -> Matching Redis pe PUBLISH -> Redis sab subscribed servers ko deta
-         -> WS-1 Ramesh ko bhej deta.
-         Redis pub/sub kuch store nahi karta -> Ramesh ka connection
-         toota aur wapas juda to abhi ka price alag se do.
+SAWAAL   Price second me 1000 baar badla, sab bhejoge?
+JAWAB    Nahi. Har ~100 ms sirf aakhri price, beech wale bekaar.
 
-ISKE BAAD KYA TOOTEGA:
-  - TCS ka price ek second me 1000 baar badla, sab bhejoge?
-      -> nahi. CONFLATE: har ~100 ms sirf aakhri price bhejo. Beech wale kisi kaam ke nahi.
-  - Kafka kyun nahi?
-      -> Kafka sab store karta aur dobara padhne deta. Yahan purana price bekaar, sirf abhi wala chahiye.
-  - SSE kyun nahi?
-      -> SSE bhi chalta (sirf server -> app). WebSocket isliye ki order bhi isi connection pe bhej sakte.
-  - Ek WebSocket server kitne user sambhale?
-      -> lakh ke aas-paas. Zyada user -> aur server, LB se baanto.
+SAWAAL   Kafka kyun nahi?
+JAWAB    Kafka sab store karta. Yahan purana price bekaar, sirf abhi wala chahiye.
+
+SAWAAL   Connection toota, wapas juda?
+JAWAB    Redis pub/sub kuch store nahi karta -> abhi ka price alag se de do.
+
+SAWAAL   Ek WebSocket server kitne user?
+JAWAB    Lakh ke aas-paas. Zyada -> aur server, LB se baanto.
 ```
 
 #### 8 9:15 BAJE AKELE TCS PE LAKHON ORDER
 ```
-KAHANI:  Market khulte hi akele TCS pe lakhon order aa gaye. Card 1 me niyam tha: ek stock = ek thread.
-         To TCS ko do thread me baant bhi nahi sakte.
+DIKKAT   9:15 baje akele TCS pe lakhon order. Ek stock = ek thread (card 1), to TCS ko baant bhi nahi sakte.
 
-ILAAJ:   TCS ki book ko do thread me nahi baant-te, warna ek share do baar bik sakta. Ek hi thread, RAM
-         me, bina lock ke second me lakhon order nikal leta.
-         Bheed zyada to aage ka log order ko line me rok leta, koi phenka nahi jaata, bas thoda der se match.
-         Badhana stocks ke beech: TCS ek thread, INFY doosra.
+HAL      Baantna nahi. Ek thread, RAM me, bina lock -> lakhon order / second nikal leta.
+         Bheed zyada -> log order ko line me rok leta, koi phenka nahi jaata, bas thoda der se match.
+         Badhana stocks ke BEECH: TCS ek thread, INFY doosra.
 ```
 ```mermaid
 flowchart TD
@@ -439,13 +388,8 @@ flowchart TD
     n_Settlement --> n_Portfolio_DB
 ```
 ```
-ANDAR KAISE:
-         Ek thread, RAM me, bina lock -> lakhon order / second nikal leta (LMAX exchange ka design yahi).
-         Scale stocks ke BEECH hota (TCS ek thread pe, INFY doosre pe), ek stock ke andar kabhi nahi.
-
-ISKE BAAD KYA TOOTEGA:
-  - Order line me pada hai, Ramesh ko app me kya dikhe?
-      -> do status: "ACCEPTED" turant (order mil gaya), "FILLED" jab sauda ho jaaye.
+SAWAAL   Order line me pada, Ramesh ko app me kya dikhe?
+JAWAB    Do status: ACCEPTED turant (order mil gaya), FILLED jab sauda ho jaaye.
 ```
 
 ```
