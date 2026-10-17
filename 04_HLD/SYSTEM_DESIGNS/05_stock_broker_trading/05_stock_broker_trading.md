@@ -218,7 +218,7 @@ OPTION     1. har order pe lock                 -> haara: race Suresh ke 10 shar
                                                    dono BUY apna-apna lock lete, dono ko 10 dikhte
            2. poore engine pe ek bada lock      -> haara: TCS ke chakkar me INFY bhi ruka, sab line me
            3. har stock ki ek line, ek thread   -> ek waqt ek hi order book chhoota, lock ki zaroorat nahi
-HAL        TCS ke saare order ek line me, us line ko sirf EK thread chalata (TCS -> T1, INFY -> T2).
+HAL        TCS ke saare order ek line me, us line ko sirf EK thread chalata (TCS -> T3, INFY -> T5).
            Pehle main -> 10 mile. Phir Mohan -> 0 bache -> line me ruka.
 ```
 ```mermaid
