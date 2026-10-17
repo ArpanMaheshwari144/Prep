@@ -117,8 +117,9 @@ flowchart LR
 ```
 DIKKAT     Diwali subah maine order kiya. Order service email bhej ke jawab ka intezaar karti rahi; email
            company band thi -> order hi fail. Aur email dobara bhejne wala koi nahi.
-HAL        KAFKA (async): Order service "order hua" Kafka me daal ke turant jawab de; Notification service
-           peeche se padh ke bheje. Email band -> wo ruki, wapas aayi -> wahin se (offset).
+HAL        KAFKA (disk pe diary, async): Order service "order hua" Kafka me daal ke turant jawab de;
+           Notification service peeche se padh ke bheje. Email band -> wo ruki, wapas aayi -> wahin se,
+           kyunki yaad hai kahan tak padha (offset).
 NAHI       Order service me hi retry: request utni der atki, aur Order service giri to retry bhi gaya.
 ```
 ```
@@ -314,7 +315,7 @@ flowchart LR
 ```
 DIKKAT     Usi waqt SMS company pareshaan, aur hum har second dobara bhej ke uspe aur hathoda maar rahe.
 HAL        BACKOFF + JITTER: har baar zyada ruko 1, 2, 4, 8 sec (shuru ka time x 2^koshish) + thoda random,
-           taaki sab worker ek saath na lautein. Had paar -> DLQ + alert.
+           taaki sab worker ek saath na lautein. Had paar -> DLQ (fail khabaron ki alag line) + alert.
 NAHI       turant dobara: giri hui company pe aur bojh.
 ```
 ```
@@ -367,8 +368,9 @@ flowchart LR
 ```
 DIKKAT     Phir SMS company band nahi hui, bas dheemi: har call 30 sec atki. Saare worker usi me phanse,
            baaki kaam ruka. Dheemi company band company se bhi buri.
-HAL        TIMEOUT 2-3 sec + FUSE har company ka alag: 5 baar fail -> OPEN (call mat karo, seedha doosri
-           company) -> 30 sec baad HALF-OPEN (ek test call) -> chali to CLOSED. Twilio ka fuse uda -> SNS.
+HAL        TIMEOUT 2-3 sec + FUSE (circuit breaker) har company ka alag: 5 baar fail -> OPEN (call mat karo,
+           seedha doosri company) -> 30 sec baad HALF-OPEN (ek test call) -> chali to CLOSED.
+           Twilio ka fuse uda -> SNS.
 NAHI       bina timeout intezaar: ek dheemi company saare worker kha jaati.
 ```
 ```
