@@ -6,25 +6,23 @@
 
 ---
 
-## KAHANI (ek din, mera ek TCS order, subah se shaam)
+## KAHANI (ek din, mera ek TCS order; har dikkat se design me ek dabba judta)
 
 ```
-1  Maine ek baar dabaya, order do lag gaye
-   CUE: order screen pe id bani, dobara bhejo to wahi id (idempotency key)
-2  Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
-   CUE: bank jaise: check aur block ek hi jhatke me (ek atomic query)
-3  Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
-   CUE: ek symbol ek thread
-4  9:15 baje sab TCS pe toot pade
-   CUE: baanto mat: ek thread kaafi (lakhon / sec), bheed line me
-5  Server gira, poori order book gayab
-   CUE: scoreboard toota, scorer ka register bacha (log pehle, replay)
-6  Mera paisa kat gaya, Suresh ko mila hi nahi
-   CUE: chaaron entry ek saath ya koi nahi (ek transaction)
-7  Paisa kat gaya, share aaye hi nahi (do alag DB)
-   CUE: har kadam ka haal likho, aage badho, ulta nahi (step + forward)
-8  10 lakh log ek saath price poochh rahe, server baith gaya
-   CUE: TV ki tarah bhejo, har koi phone na kare (push, WebSocket)
+   KYA HUA                                     ILAAJ                                DABBA JUDA
+1  ek tap, network gaya, do order lag gaye  -> IDEMPOTENCY KEY (wahi id dobara)     Order Service
+2  wallet 50k, 30k-30k dono order pass      -> check + block EK atomic query        Wallet
+3  Suresh ke 10, mujhe aur Mohan dono ko    -> ek symbol ek thread, book RAM me     Matching Engine
+4  9:15 sab TCS pe toot pade                -> baanto mat, ek thread kaafi, line    (line / queue)
+5  10:15 server gira, book gayab            -> pehle log, phir book; gira = replay  Event Log
+6  mera 30k kata, Suresh ko mila nahi       -> ek transaction: chaaron ya koi nahi  Settlement
+7  paisa aur share alag DB me               -> har step ka haal, aage badho         Wallet DB + Portfolio DB
+8  10 lakh log price poochh rahe            -> push (TV jaisa), WebSocket           Pub/Sub + WebSocket
+
+POORA DESIGN (upar ke dabbe kram se):
+   User -> Order Service (id) -> Wallet (block) -> Event Log -> Matching (ek stock ek thread)
+        -> Settlement -> Wallet DB + Portfolio DB
+   price: Matching -> Pub/Sub -> WebSocket -> users
 ```
 
 ---
