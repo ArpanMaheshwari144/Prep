@@ -37,10 +37,12 @@ NUMBERS (andaaza): 1 crore user · DO ALAG bojh (ek number mat bolo):
 ```
 POOCHEGA: "Consistency or availability — which do you pick?"
           (chhota: "network toota, aakhri seat pe do log — C ya A?")
+          (Consistency ya availability, kya chunoge?)
+
 DHYAAN:   ek hi system me dono: BOOKING = CP (network toota to ek taraf
           REJECT) · SEARCH = AP (seat ginti 2 sec purani chalegi)
-BOL:      "For the booking itself I'd pick consistency: I'd rather reject a write than
-           double-book the seat. The search path stays available and eventually consistent."
+JAWAB:    Booking ke liye consistency: ek seat do ko bechne se behtar likhna mana kar do. Search wala
+          hissa chalta rahe, thoda purana bhi chalega.
 ```
 
 ---
@@ -296,8 +298,10 @@ flowchart TD
 
 ```
 POOCHEGA: "Two users book the same seat at the same time — what happens?"
-BOL:      "Doing it in two steps always leaves a gap, so I put the condition inside the UPDATE — WHERE
-           status is available. The database lets only one win; the other gets zero rows and 'seat taken'."
+          (Do log ek hi seat ek saath book karein to?)
+
+JAWAB:    Do kadam me (pehle dekho, phir likho) hamesha beech me jagah rehti. Isliye condition UPDATE ke
+          andar: WHERE status = available. DB ek ko hi jeetne deta, doosre ko 0 row aur 'seat ja chuki'.
 ```
 ```mermaid
 flowchart TD
@@ -316,9 +320,11 @@ flowchart TD
 
 ```
 POOCHEGA: "Who releases the hold after 5 minutes?"
-BOL:      "SQL has no TTL, so either the booking UPDATE treats an expired hold as free — status
-           held and held_until before now — or a sweeper job flips expired holds back every minute.
-           I'd put the check in the UPDATE for correctness and keep the sweeper for cleanup."
+          (5 minute baad hold kaun chhodega?)
+
+JAWAB:    SQL me TTL nahi. Do raaste: booking ka UPDATE hi purane hold ko khaali maane (status held aur
+          held_until abhi se pehle), ya sweeper har minute purane hold wapas khaali kare.
+          Sahi hona UPDATE wali condition se, sweeper sirf safai.
 ```
 ```mermaid
 flowchart TD
@@ -339,8 +345,10 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the user clicks Pay twice / the client retries?"
-BOL:      "The client sends the same idempotency key on a retry; the server claims it
-           atomically with a unique constraint and returns the stored result the second time."
+          (User ne Pay do baar dabaya / app ne dobara bheja to?)
+
+JAWAB:    App dobara bhejne pe wahi idempotency key bhejta. Server key ko UNIQUE se ek baar hi lene
+          deta, doosri baar rakha hua jawab.
 ```
 ```mermaid
 flowchart TD
@@ -362,9 +370,8 @@ flowchart TD
 ## DIKKAT 4 — book koi-koi karta, seat map sab dekh rahe
 
 ```
-BOL:      "Seat maps are served from Redis and read replicas with a short TTL
-           and invalidated on booking, while bookings always go to the SQL
-           primary, so a slightly stale map is fine because the UPDATE decides."
+JAWAB:    Seat map Redis aur read replica se, chhoti umar ke saath, booking hote hi hatao. Booking
+          hamesha SQL primary pe. Map thoda purana dikhe to chalega, faisla UPDATE karta.
 ```
 ```mermaid
 flowchart TD
@@ -392,10 +399,12 @@ flowchart TD
 
 ```
 POOCHEGA: "What if traffic suddenly spikes 10x?"
-BOL:      "I'd put a counter at the door so only as many users as there are seats get in, and the rest
-           see 'sold out' right away. But since users pick specific seats, I only confirm a booking after
-           that seat's atomic UPDATE wins — until then the user sees 'in progress' and gets the result by
-           polling or a push. Plus per-user rate limits and pre-scaling before a known release."
+          (Traffic achanak 10 guna ho gaya to?)
+
+JAWAB:    Darwaze pe ginti: jitni seat, utne log andar, baaki ko turant 'housefull'.
+          Par log KHAAS seat chunte, isliye booking tabhi pakki jab us seat ka atomic UPDATE jeete. Tab
+          tak user ko 'ho rahi hai', nateeja poochh ke ya push se.
+          Saath me har user ki had, aur pata ho kab release to pehle se machine badhao.
 ```
 ```mermaid
 flowchart TD
@@ -428,8 +437,10 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the cache goes down?"
-BOL:      "Redis runs as a cluster. Browse reads fall back to the read replica, never the primary,
-           so bookings keep working, and one request rebuilds a hot key while others wait."
+          (Cache gir gaya to?)
+
+JAWAB:    Redis cluster me chalta. Seat map dekhna read replica pe chala jaata, primary pe kabhi nahi,
+          to booking chalti rehti. Garam key sirf ek request dobara bharti, baaki rukte.
 ```
 ```mermaid
 flowchart TD
@@ -462,8 +473,10 @@ flowchart TD
 
 ```
 POOCHEGA: "What happens if an app server goes down?"
-BOL:      "Holds live in the database, not in the box, so they survive. The load balancer health-checks
-           the box out and the user's next request goes to another instance and sees the same hold."
+          (Ek app server gir gaya to?)
+
+JAWAB:    Hold DB me hai, machine me nahi, to bacha rehta. Load balancer us machine ko bahar kar deta,
+          user ki agli request doosri machine pe, wahi hold dikhta.
 ```
 ```mermaid
 flowchart TD
@@ -546,11 +559,11 @@ Kafka + Booking worker = bheed + har show ek line · SQL primary = ACID, atomic 
 Sweeper = purane hold saaf · Payment Svc = bahar wala, idempotency key
 ```
 ```
-BOL:      "Browse goes to Redis and a read replica; booking goes to the SQL primary with an atomic
-           conditional UPDATE, so one seat can never go to two people. Selecting a seat holds it for
-           five minutes — the UPDATE treats an expired hold as free and a sweeper cleans up. A queue
-           with per-show workers absorbs the release-day spike, and payment uses an idempotency key.
-           SQL because consistency is the heart of it; the data is small, so no sharding."
+JAWAB:    Dekhna Redis + read replica se. Booking SQL primary pe atomic condition
+          wale UPDATE se, to ek seat kabhi do ko nahi.
+          Seat chuni = 5 min ka hold. UPDATE purane hold ko khaali maanta, sweeper safai karta.
+          Release ke din ki bheed queue + har show ka worker sambhaalta, payment pe idempotency key.
+          SQL kyunki sahi hona hi dil hai; data chhota, sharding nahi.
 ```
 ```mermaid
 flowchart TD

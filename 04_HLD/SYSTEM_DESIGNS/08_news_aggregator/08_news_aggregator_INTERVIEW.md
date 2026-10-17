@@ -318,8 +318,8 @@ flowchart TD
 ## DIKKAT 1 — har request pe DB se taazi 20
 
 ```
-BOL:      "Everyone sees roughly the same latest feed, so I precompute it in a Redis sorted set scored
-           by publish time, update it as articles arrive, and serve about 99% of reads from cache."
+JAWAB:    Sabko lagbhag wahi taazi feed dikhti, isliye pehle se bana ke Redis sorted set me rakhte
+          (score = kab chhapi). Nayi khabar aate hi update. ~99% padhai cache se.
 ```
 ```mermaid
 flowchart TD
@@ -341,8 +341,8 @@ flowchart TD
 ## DIKKAT 2 — 1000 source se khabar laana dheema
 
 ```
-BOL:      "I separate the write path from the read path: fetchers pull sources in the background into Kafka,
-           workers process at their own pace, and users only ever read the prepared feed from cache."
+JAWAB:    Likhne aur padhne ka raasta alag: fetcher peeche se sources padh ke Kafka me daalte, worker
+          apni speed se kaam karte, aur user hamesha cache me taiyaar feed hi padhta.
 ```
 ```mermaid
 flowchart TD
@@ -371,9 +371,12 @@ flowchart TD
 ## DIKKAT 3 — ek khabar paanch source se
 
 ```
-BOL:      "Workers clean, dedupe and categorise every article: exact duplicates
-           by a normalised title hash, near-duplicates by SimHash, and
-           already-seen URLs with a Bloom filter that uses very little memory."
+JAWAB:    Worker har khabar saaf karta, dedupe karta, category lagata. Bilkul same
+          khabar = saaf kiye title ka hash. Thodi alag likhi = SimHash. Pehle dekha
+          URL = Bloom filter, jo bahut kam memory leta.
+
+SHABD:    SimHash = milte-julte text ka hash paas-paas aata · Bloom filter = 'pehle dekha?' batane wala
+          chhota dabba, kabhi galat haan, galat na kabhi nahi
 ```
 ```mermaid
 flowchart TD
@@ -403,8 +406,10 @@ flowchart TD
 
 ```
 POOCHEGA: "What if a source is slow or down?"
-BOL:      "Each source is fetched independently with a timeout, retries, and a circuit
-           breaker; if it keeps failing I skip it. One bad source can't block the other 999."
+          (Koi source dheema / band ho to?)
+
+JAWAB:    Har source alag se, timeout + dobara koshish + fuse (circuit breaker). Baar-baar fail to chhod
+          do. Ek kharab source baaki 999 ko nahi rokta.
 ```
 ```mermaid
 flowchart TD
@@ -434,8 +439,10 @@ flowchart TD
 
 ```
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
-BOL:      "Only the last week is hot. I partition by month and move old partitions to cold
-           storage, with a TTL on what we never need. That's retention, not sharding."
+          (Data badhta ja raha, 3 saal baad?)
+
+JAWAB:    Sirf aakhri hafta garam. Mahine ke hisaab se tukde, purane tukde sasti jagah, jo kabhi nahi
+          chahiye uspe umar (TTL). Ye purana hatana (retention) hai, sharding nahi.
 ```
 ```mermaid
 flowchart TD
@@ -466,8 +473,8 @@ flowchart TD
 ## DIKKAT 6 — bahut bade scale pe ek DB machine nahi jhelti
 
 ```
-BOL:      "At our numbers one database is enough; if it is not, I shard by a hash of the article
-           id so writes spread evenly, not by date, which would make today's shard hot."
+JAWAB:    Hamare number pe ek DB kaafi. Na ho to article id ke hash se baanto, taaki likhai barabar
+          bate. Date se nahi, warna aaj wala tukda akela garam.
 ```
 ```mermaid
 flowchart TD
@@ -498,8 +505,8 @@ flowchart TD
 ## DIKKAT 7 — Arpan ko sirf tech + sports
 
 ```
-BOL:      "Instead of one feed per user I keep one cached feed per category
-           and merge the user's chosen categories by time at read time."
+JAWAB:    Har user ki alag feed nahi, har category ki ek feed cache me. User ki
+          pasand wali category padhte waqt time se mila do.
 ```
 ```mermaid
 flowchart TD
@@ -530,8 +537,9 @@ flowchart TD
 ## DIKKAT 8 — subah 8 baje sab ek saath
 
 ```
-BOL:      "Feed services are stateless behind a load balancer, cache misses go to a read replica instead of
-           the primary, and since the morning spike is predictable I scale up and warm the cache before it."
+JAWAB:    Feed service kuch yaad nahi rakhti, kai machine + load balancer. Cache me
+          na mile to read replica se, primary se nahi. Subah ki bheed pata hai, to
+          pehle se machine badhao aur cache bhar do.
 ```
 ```mermaid
 flowchart TD
@@ -569,8 +577,10 @@ flowchart TD
 ## DIKKAT 9 — Arpan ne cricket dhoondha
 
 ```
-BOL:      "Search runs on Elasticsearch with an inverted index that workers update asynchronously;
-           the database stays the source of truth, so the index can always be rebuilt."
+JAWAB:    Search Elasticsearch pe, inverted index (shabd -> kis khabar me), jo worker peeche se update
+          karte. Sach DB hai, isliye index kabhi bhi dobara bana sakte.
+
+SHABD:    inverted index = kitaab ke peeche ki index: shabd -> kis page pe
 ```
 ```mermaid
 flowchart TD
@@ -654,11 +664,11 @@ PADHNA: LB -> Feed Svc (kai machine) -> Redis (99%) -> nahi mila to
         Read replica · Elasticsearch = search · Archive = purana
 ```
 ```
-BOL:      "I keep the write path and read path separate. Sources are fetched in the background, go through
-           Kafka to workers that clean, dedupe and categorise, and land in a NoSQL store — massive, simple
-           data with no need for ACID; money would be SQL. Everyone wants roughly the same latest feed, so
-           I precompute it in Redis and serve 99% from cache, with a read replica for misses. Feed services
-           scale behind a load balancer, old news goes to cold storage, and search runs on Elasticsearch."
+JAWAB:    Likhne aur padhne ka raasta alag. Sources peeche se, Kafka ke through
+          worker tak, jo saaf + dedupe + category karke NoSQL me daalte (bahut saara
+          seedha data, ACID ki zaroorat nahi; paisa hota to SQL).
+          Sabko lagbhag same taazi feed, to Redis me pehle se bani, 99% cache se, miss pe read replica.
+          Feed service load balancer ke peeche, purani khabar sasti jagah, search Elasticsearch pe.
 ```
 ```mermaid
 flowchart TD

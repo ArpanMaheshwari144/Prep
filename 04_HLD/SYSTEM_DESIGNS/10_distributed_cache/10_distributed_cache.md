@@ -306,8 +306,10 @@ flowchart TD
 ## DIKKAT 1 — RAM bhar gayi, kya hatayein
 
 ```
-BOL:      "Each node evicts with LRU, a hash map plus a doubly linked list so both lookup and eviction
-           are O(1), and every key also has a TTL cleaned lazily on read and actively in the background."
+JAWAB:    Har machine LRU se nikaalti: HashMap + doubly linked list, to dhoondhna aur nikaalna dono
+          O(1). Har key ki umar (TTL) bhi: padhte waqt check, aur peeche thodi-thodi safai.
+
+SHABD:    LRU = jise sabse lambe time se kisi ne nahi chhua, wo bahar
 ```
 ```mermaid
 flowchart TD
@@ -325,8 +327,8 @@ flowchart TD
 ## DIKKAT 2 — 1 TB ek machine me nahi: key kis machine pe
 
 ```
-BOL:      "I place keys with consistent hashing on a ring with virtual nodes, not hash mod N, so
-           adding or removing a node moves only about K over N keys instead of almost all of them."
+JAWAB:    Key kis machine pe = consistent hashing ki ring + virtual nodes, hash % N nahi. Machine judi
+          ya gayi to sirf thodi keys (K/N) hilti, lagbhag saari nahi.
 ```
 ```mermaid
 flowchart TD
@@ -351,8 +353,10 @@ flowchart TD
 
 ```
 POOCHEGA: "What happens if a cache node goes down?"
-BOL:      "Each shard has a replica in another zone that gets promoted, and
-           with consistent hashing only that node's keys are affected."
+          (Cache ki ek machine gir gayi to?)
+
+JAWAB:    Har tukde ki copy doosri building me, wo primary ban jaati. Ring ki wajah
+          se sirf usi machine ki keys pe asar.
 ```
 ```mermaid
 flowchart TD
@@ -377,8 +381,10 @@ flowchart TD
 
 ```
 POOCHEGA: "The user updated something but still sees the old value. Why?"
-BOL:      "On update I delete the cache key rather than overwrite it, and keep a TTL as a safety
-           net. If it's replica lag, the writer reads from the primary for a short while."
+          (User ne kuch badla par purana dikh raha. Kyun?)
+
+JAWAB:    Badalne pe cache ki key hata do (delete), upar likho nahi, aur umar (TTL) suraksha jaal. Copy
+          peeche ho to likhne wale ko thodi der primary se padhao.
 ```
 ```mermaid
 flowchart TD
@@ -403,9 +409,13 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the cache goes down / a hot key expires?"
-BOL:      "For known events I'd pre-warm the cache and scale up in advance. For
-           unpredictable spikes I still need stampede protection: a lock so only one
-           request rebuilds the key, and early background refresh before the TTL expires."
+          (Cache gir gaya / garam key khatam ho gayi to?)
+
+JAWAB:    Pata ho kab bheed (event), to pehle se cache bharo aur machine badhao.
+          Anjaan jhatke ke liye bhi stampede se bachao: lock taaki sirf ek request key dobara bhare, aur
+          umar khatam hone se pehle peeche se taaza kar do.
+
+SHABD:    stampede = key khatam hote hi hazaar request ek saath DB pe
 ```
 ```mermaid
 flowchart TD
@@ -430,10 +440,12 @@ flowchart TD
 
 ```
 POOCHEGA: "What about a hot key / celebrity / hot partition?"
-BOL:      "The key is there, one node just can't take the reads. I'd put a 1-2 second local
-           cache on each app server so most reads never reach Redis, and copy the key across
-           replicas so the rest are spread out. A slightly stale score is fine here. If the
-           key were missing instead, that's a stampede — one request rebuilds, the rest wait."
+          (Garam key / celebrity / garam partition ka kya?)
+
+JAWAB:    Key maujood hai, bas ek machine itni padhai nahi jhel pa rahi. Har app server me 1-2 sec ka
+          local cache, to zyadatar padhai Redis tak jaati hi nahi. Aur key ki copies alag machine pe,
+          baaki padhai bat jaati. Score thoda purana chalega.
+          Key hi khaali hoti to wo stampede hai: ek bhare, baaki ruke.
 ```
 ```mermaid
 flowchart TD
@@ -503,10 +515,11 @@ STAMPEDE   : lock / soft-TTL
 HOT KEY    : copies / L1 local
 ```
 ```
-BOL:      "A distributed cache is an in-memory key-value store, sharded with consistent hashing and replicated
-           for availability. Cache-aside with LRU and TTL is the production combo. The two hard parts are
-           invalidation — TTL plus explicit deletes — and stampedes — a lock or early refresh. Hot keys get a
-           local L1 cache and copies. It's a speed versus consistency trade-off, decided by the use case."
+JAWAB:    Distributed cache = RAM wala key-value store, consistent hashing se
+          baanta, copy se chalta rahe.
+          Cache-aside + LRU + TTL = asli system ka jod. Do mushkil cheez: purana data (TTL + likhne pe
+          delete) aur stampede (lock ya pehle se taaza).
+          Garam key ke liye local L1 cache + copies. Tezi vs sahi hona, use-case dekh ke tay.
 ```
 ```mermaid
 flowchart TD

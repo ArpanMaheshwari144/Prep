@@ -325,9 +325,9 @@ flowchart TD
 ## DIKKAT 1 — user 2-3 sec ruka, thread bhi atka
 
 ```
-BOL:      "Validation is slow, so I make it async: the user gets a tracking id immediately,
-           a worker picks the job from a queue, validates and updates the status, and
-           commits the offset only after the DB update so a crash never loses the job."
+JAWAB:    Jaanch dheemi hai, isliye async: user ko turant tracking id, worker line
+          se kaam uthata, jaanchta, haal update karta. Worker 'padh liya' DB update
+          ke BAAD bolta, to crash me bhi kaam nahi khota.
 ```
 ```mermaid
 flowchart TD
@@ -354,9 +354,11 @@ flowchart TD
 ## DIKKAT 2 — 5 GB ke bytes hamare server se guzar rahe
 
 ```
-BOL:      "The upload service only returns a short-lived presigned URL and a
-           tracking id; the client uploads the bytes straight to S3, so my servers
-           never carry the file and the client never gets AWS credentials."
+JAWAB:    Upload service sirf kuch minute ka signed URL aur tracking id deti. App
+          file ke bytes seedhe S3 pe bhejta. Hamare server file kabhi nahi dhote,
+          aur app ke haath AWS ki chaabi kabhi nahi aati.
+
+SHABD:    presigned URL = ek file ka kuch minute ka paas
 ```
 ```mermaid
 flowchart TD
@@ -383,8 +385,8 @@ flowchart TD
 ## DIKKAT 3 — 5 GB file 90% pe tooti
 
 ```
-BOL:      "Large files use S3 multipart upload: the file goes in parts, failed parts are retried alone,
-           and S3 stitches them together on complete; I keep the upload id so the client can resume."
+JAWAB:    Badi file S3 multipart se: file tukdon me jaati, fail tukda akela dobara, aur complete pe S3
+          sab jod deta. Upload id hamare paas, to app band hoke wapas aaye to wahin se aage.
 ```
 ```mermaid
 flowchart TD
@@ -412,9 +414,12 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the server crashes in the middle?"
-BOL:      "Every file has a status, UPLOADING to VALIDATING to DONE or FAILED. A sweeper finds
-           files stuck too long — VALIDATING for ten minutes when validation takes three seconds —
-           and requeues them or marks them failed. S3 lifecycle rules clean up abandoned uploads."
+          (Server beech me crash ho gaya to?)
+
+JAWAB:    Har file ka haal: UPLOADING -> VALIDATING -> DONE / FAILED. Sweeper job wo
+          files dhoondhta jo bahut der se atki (VALIDATING pe 10 min, jabki jaanch 3
+          sec ki hai), aur unhe dobara line me daalta ya FAILED karta.
+          S3 lifecycle rule chhodi hui adhoori upload saaf karta.
 ```
 ```mermaid
 flowchart TD
@@ -444,8 +449,9 @@ flowchart TD
 ## DIKKAT 5 — sab har 2 sec haal poochh rahe
 
 ```
-BOL:      "Status reads are heavy, so they go through Redis and a read replica, and the worker updates Redis
-           when it changes the status; to remove polling entirely I can push updates with SSE or WebSocket."
+JAWAB:    Haal poochhna bahut zyada, isliye Redis + read replica se. Worker jab haal
+          badle, Redis bhi saath me update kare.
+          Baar-baar poochhna hi band karna ho to SSE / WebSocket se server khud bataye.
 ```
 ```mermaid
 flowchart TD
@@ -481,8 +487,8 @@ flowchart TD
 ## DIKKAT 6 — file nahi, poora folder
 
 ```
-BOL:      "A folder gets a parent tracking id with one child per file; the parent status is
-           derived from the children, and init is batched so one call returns all presigned URLs."
+JAWAB:    Folder ka ek parent tracking id, har file ka child id. Parent ka haal bachchon se banta. Shuru
+          me ek hi call me saare signed URL.
 ```
 ```mermaid
 flowchart TD
@@ -518,8 +524,8 @@ flowchart TD
 ## DIKKAT 7 — Ravi ne Arpan ka trackingId daala
 
 ```
-BOL:      "Authentication happens at the gateway, but authorization happens in the service: every
-           status or download request checks that the user from the JWT owns the file, otherwise 403."
+JAWAB:    'Tum kaun ho' (login) gateway pe. 'Is file pe haq hai?' service me: haal ya download ki har
+          maang pe JWT wala user hi file ka owner hai? Nahi to 403.
 ```
 ```mermaid
 flowchart TD
@@ -557,8 +563,8 @@ flowchart TD
 ## DIKKAT 8 — S3 ka seedha link aage bhej diya
 
 ```
-BOL:      "Downloads use a presigned GET URL valid for a few minutes, generated
-           only after the owner check; I store the S3 key, never a permanent URL."
+JAWAB:    Download ke liye kuch minute ka signed GET URL, owner check ke BAAD hi banta. DB me S3 ki file
+          ka naam (key) rakhte, pakka URL kabhi nahi.
 ```
 ```mermaid
 flowchart TD
@@ -597,9 +603,13 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you secure it / stop abuse?"
-BOL:      "JWT at the gateway and an owner check on every status and download. Short-lived presigned
-           URLs. The worker checks magic bytes instead of trusting the name or Content-Type.
-           Per-user rate limit against upload floods, WAF at the edge, TLS, secrets in a vault."
+          (Safe kaise rakhoge / galat istemaal kaise rokoge?)
+
+JAWAB:    Gateway pe JWT, aur haal / download pe owner check. Chhoti umar ke signed URL. Worker naam ya
+          Content-Type pe bharosa nahi karta, file ke pehle byte (magic bytes) dekhta.
+          Upload ki bheed rokne ke liye har user ki had, sabse aage WAF, HTTPS, aur secrets vault me.
+
+SHABD:    magic bytes = file ke shuru ke kuch byte jo batate asal me kis type ki file hai
 ```
 ```mermaid
 flowchart TD
@@ -648,11 +658,14 @@ POOCHEGA: "How do you know it's working?"
           MISAAL: raat ko Validator DHEEMA, line me 50,000 file atki
           health check "dheema" nahi pakadta (ping ka jawab aa jaata) -> APNA METRIC pakadta:
              line ki lambai · Validator p99 + error rate · VALIDATING me purani files ki ginti
+          (Chal raha hai, kaise pata?)
+
              -> had paar = alert (CloudWatch alarm / PagerDuty), user ke shikayat karne se pehle
           peeche: 3 fail -> fuse (CIRCUIT BREAKER) -> doosri company (bahar wale ki copy hum nahi chala sakte)
-BOL:      "I'd alert on our own metrics — queue depth, p99 and error rate of validator
-           calls, and files stuck in VALIDATING. A health check only tells me it's up,
-           not that it's slow. Behind that, a circuit breaker and a fallback provider."
+JAWAB:    Apne number pe alert: line kitni lambi, Validator ke jawab ka time (p99)
+          aur error rate, aur VALIDATING pe atki files.
+          Health check sirf 'zinda hai' batata, 'dheema hai' nahi. Peeche fuse
+          (circuit breaker) aur doosri company.
 ```
 
 ---
@@ -686,12 +699,12 @@ jaanch alag, magic bytes · Redis + replica = haal poochhna
 Sweeper = atki file
 ```
 ```
-BOL:      "The client asks the upload service for a presigned URL and sends the bytes straight to
-           S3 — multipart for big files. Validation takes two to three seconds, so it's async:
-           the user gets a tracking id immediately, a worker validates from a queue, checks magic
-           bytes and updates the status. Status is read-heavy, so Redis and a read replica,
-           invalidated on every update. Owner checks and short-lived URLs secure it, lifecycle
-           rules and a sweeper clean up. Next: retries on failure and a CDN for downloads."
+JAWAB:    App upload service se signed URL leta aur bytes seedhe S3 pe, badi file multipart me.
+          Jaanch 2-3 sec ki, isliye async: user ko turant tracking id, worker line se jaanchta, magic
+          bytes dekhta, haal update karta.
+          Haal bahut padha jaata, to Redis + read replica, har update pe Redis bhi. Owner check aur
+          chhote URL se safe, lifecycle rule + sweeper se safai.
+          Aage: fail pe dobara koshish aur download ke liye CDN.
 ```
 ```mermaid
 flowchart TD
