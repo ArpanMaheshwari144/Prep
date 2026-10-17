@@ -208,8 +208,9 @@ flowchart LR
 ```
 DIKKAT     10 baje salary 50,000 aayi, 1 min baad Ravi ko 20,000 rent bheja. Har transfer ke baad SMS, fraud,
            statement chahiye. Par SMS service giri hui hai -> transfer na ruke, aur SMS khoye bhi nahi.
-HAL        OUTBOX: har khaata line ki ek row, usi transaction me: E-77a Arpan debit, E-77b Ravi credit,
-           sent = false. COMMIT ke BAAD relay har ~1 sec: sent = false -> Kafka (acks=all) -> sent = true.
+HAL        OUTBOX = DB ki ek aur table, usi transaction me likhi: har khaata line ki ek row,
+           E-77a Arpan debit, E-77b Ravi credit, sent = false. COMMIT ke BAAD ek chhota job (relay)
+           har ~1 sec: sent = false wali -> Kafka (acks=all: saari copies ne liya tabhi OK) -> sent = true.
 NAHI       commit ke baad seedha Kafka: commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi.
 ```
 ```
@@ -424,7 +425,8 @@ flowchart LR
 ```
 DIKKAT     5 saal ka khaata (~36 arab line) ek table me. Log roz sirf 3 mahine dekhte, par har query / backup
            arabon line ke saath. Aur kanoon (PMLA / RBI) kam se kam 5 saal rakhwata, bank 8-10.
-HAL        MAHINE KE TUKDE: khaata mahine ke partition me; band mahina DETACH -> sasti jagah (S3).
+HAL        MAHINE KE TUKDE: khaata mahine ke partition (alag tukde) me; band mahina DETACH (table se alag)
+           -> sasti jagah (S3).
            Had (PMLA min 5 saal) se pehle delete nahi.
 NAHI       "archive = sharding": archive jagah ghatata, shard likhne ka bojh baantta.
 ```
