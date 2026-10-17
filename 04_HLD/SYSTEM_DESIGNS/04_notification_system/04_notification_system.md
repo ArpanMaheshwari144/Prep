@@ -204,7 +204,8 @@ DIKKAT 1   Worker ne Arpan ka email bhej diya, par Kafka ko "padh liya" (offset)
            Kafka ne wahi khabar doosre worker ko di -> dobara bheja -> Arpan ko DO email.
 HAL        Bhejne se pehle Redis me khabar ki APNI id se parchi: SET NX (sirf tab lagao jab pehle se na ho).
            Parchi pehle se mili = ye khabar pehle aa chuki -> skip. (usercrud /pay wala hi tareeka.)
-           Id khabar ki apni, jo har baar wahi rehti. Har baar naya random id = dohraav kabhi pakda nahi jaata.
+           Id khabar ki apni, jo har baar wahi rehti.
+           Har baar naya random id banaya to dohraav kabhi pakda nahi jaata.
 ```
 ```mermaid
 flowchart TD
