@@ -269,7 +269,7 @@ CUE        scoreboard toota, scorer ka register bacha (log pehle, replay)
 
 DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
 HAL        Har order PEHLE log me (number ke saath), PHIR book. Gira -> log #1 se replay, wahi book.
-NAHI       time se kram: do server ki ghadi alag, same millisecond me do order.
+NAHI       RAM ki chalti copy (replica): do book = ek share do baar bike. Standby sirf log padhta, chalta nahi.
 ```
 ```mermaid
 flowchart TD
@@ -290,6 +290,8 @@ AAGE POOCHEGA (wahi WAJAH B):
   "Number kaun deta?"
      -> Log / sequencer (ek stock ki ek line, Kafka offset jaisa). Order Svc nahi, warna uski do
         machine same number de dein. Yahi log audit bhi.
+  "Number ki jagah time se kram?"
+     -> Nahi: do server ki ghadi alag, same millisecond me do order aa sakte. Number pakka.
   "Sirf har kuch minute RAM ki photo (snapshot) kaafi?"
      -> Nahi: photo ke baad ke order gaye, aur photo lete waqt crash = aadhi book.
   "Log me 1 crore order, shuru se padhne me der?"
