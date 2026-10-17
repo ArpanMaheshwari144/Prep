@@ -67,6 +67,7 @@ ILAAJ:   ORDER BOOK: do line, aur "pehle daam, phir waqt" ka niyam (price-time p
 ANDAR KAISE:
          Bechne walon ki line: sabse SASTA upar (3000, 3001, 3005 ...)
          Khareedne walon ki line: sabse MEHNGA upar (2999, 2998 ...)
+         = tere DSA ke do heap: bechne wale min-heap (sasta top pe), khareedne wale max-heap (mehnga top pe).
          Jab sabse mehnga khareedar >= sabse sasta bechne wala -> sauda ho gaya.
          Do log same daam pe -> jo PEHLE aaya (uska number chhota) wo pehle.
 
@@ -339,8 +340,9 @@ flowchart TD
 POOCHEGA: "Two users order the same stock at the same time — what happens?"
           (Do log ek hi stock pe ek saath order kare to?)
 
-JAWAB:    Ek stock ke saare order ek line me, aur us line ko EK hi thread chalata. Order ek ke baad ek
-          match hote, kabhi ek saath nahi. Lock ki zaroorat hi nahi.
+JAWAB:    TCS ke saare order ek hi line me lagte hain, aur us line ko sirf EK thread chalata hai.
+          Ramesh aur Mohan ne ek saath BUY kiya, to bhi thread pehle Ramesh ka match karega, phir Mohan
+          ka. Do order kabhi ek saath match nahi hote, isliye lock ki zaroorat hi nahi.
 ```
 ```mermaid
 flowchart TD
@@ -362,8 +364,10 @@ flowchart TD
 ## DIKKAT 2 — wallet 50k, 30k-30k ke do order (double spend)
 
 ```
-JAWAB:    Order lagte hi paisa block, EK query me: bacha paisa check bhi aur blocked badhana bhi. Koi
-          row nahi badli = paisa nahi = order reject.
+JAWAB:    Ramesh ke paas 50k hai. Order lagte hi uske paise block karo, aur check + block ek hi query
+          me: 'bacha paisa 30k se zyada hai to 30k block karo'.
+          Pehle order ne 30k block kiya, ab bacha 20k. Doosre order ke liye 30k nahi bacha -> query ne
+          kuch nahi badla -> order reject.
 ```
 ```mermaid
 flowchart TD
@@ -387,10 +391,10 @@ flowchart TD
 ## DIKKAT 3 — saude ke beech crash
 
 ```
-JAWAB:    Settlement ek DB transaction me: crash hua to sab wapas. Har sauda double-entry khaate
-          (ledger) me: ek taraf kata, ek taraf juda, jod hamesha zero.
-
-SHABD:    double-entry = har len-den do jagah likha: kisi se gaya, kisi ko aaya
+JAWAB:    Sauda hua to Ramesh se paisa kato aur Suresh ko do, share ulta. Ye sab ek hi transaction me:
+          beech me crash hua to sab wapas, aadha kuch nahi.
+          Khaate (ledger) me do line: Ramesh -30k, Suresh +30k. Saari line ka jod hamesha 0, matlab
+          paisa na bana na gayab hua.
 ```
 ```mermaid
 flowchart TD
@@ -416,12 +420,11 @@ flowchart TD
 ## DIKKAT 4 — paisa Wallet DB me, share Portfolio DB me
 
 ```
-JAWAB:    Alag-alag DB pe SAGA, ek service chalati (orchestrator): har step apne DB me commit, haal DB
-          me likha. Koi step fail -> ulta kaam (paisa wapas).
-          2PC nahi, kyunki wo sab DB pe lock pakad ke rukta aur coordinator gira to sab atak jaate.
-
-SHABD:    SAGA = step-step karo, fail pe pichhle ulte karo · 2PC = sab 'ready'
-          bolein tab hi commit, beech me sab ruke
+JAWAB:    Paisa ek DB me, share doosre DB me, to ek transaction dono pe nahi chalta.
+          Ek service (Settlement) step-step chalati aur har step ke baad likh leti kahan tak hua: pehle
+          paisa kata, phir share daale.
+          Share daalna fail hua -> ulta kaam: Ramesh ko paisa wapas. Settlement khud gir gaya to uthke
+          apna likha dekhta aur wahin se aage ya ulta.
 ```
 ```mermaid
 flowchart TD
@@ -449,8 +452,10 @@ flowchart TD
 ## DIKKAT 5 — BUY do baar daba / network retry
 
 ```
-JAWAB:    App har order ke saath ek key bhejta. Key DB me UNIQUE, to dobara aayi request ko pehla jawab
-          milta, doosra order nahi banta. Pehla abhi chal raha ho to 409 ('thoda ruko').
+JAWAB:    Ramesh ka app har order ke saath ek id bhejta (abc-123), dobara bhejne pe bhi wahi id.
+          Server ke paas wo id pehle se hai -> naya order nahi, pehle wala jawab wapas. Pehla abhi chal
+          hi raha ho to 'thoda ruko'.
+          Ye wahi hai jo usercrud me /pay pe banaya tha.
 ```
 ```mermaid
 flowchart TD
@@ -481,15 +486,18 @@ flowchart TD
 POOCHEGA: "How do you keep orders in the right sequence?"
           (Order ka kram sahi kaise rakhoge?)
 
-JAWAB:    Sequencer har order pe badhta number lagata aur log me likhta. Log me key = stock, to ek stock
-          ke saare order ek partition me, kram me.
+JAWAB:    Har order aate hi ek badhta number lagta: Ramesh #501, Mohan #502. Phir order log me likhe
+          jaate.
+          TCS ke saare order log ki ek hi line me, number ke kram se. Time pe bharosa nahi kyunki do
+          machine ki ghadi alag ho sakti, number pakka hai.
 
 POOCHEGA: "What if the server crashes in the middle?"
           (Server beech me crash ho gaya to?)
 
-JAWAB:    Matching engine gira: log shuru se dobara chala ke book wapas bana lo.
-          Settlement beech me gira: ek DB hai to transaction wapas. Alag service
-          hain to saga ulta kaam karta.
+JAWAB:    Matching server gira to RAM wali book gayi. Naya server log ko shuru se (ya aakhri photo se)
+          number ke kram me chalata, book bilkul waisi ban jaati.
+          Settlement beech me gira: ek DB me ho to transaction khud wapas. Alag DB ho to Settlement apna
+          likha dekh ke ulta kaam karta.
 ```
 ```mermaid
 flowchart TD
@@ -517,9 +525,10 @@ flowchart TD
 ## DIKKAT 7 — lakhon log live price dekh rahe
 
 ```
-JAWAB:    App ka WebSocket khula rehta. Matching engine har stock ka naya price Redis pub/sub pe daalta,
-          us stock ko sun rahe WebSocket server apne users ko bhej dete.
-          Price second me 1000 baar badle to sab nahi: har 100 ms sirf aakhri price (conflate).
+JAWAB:    Ramesh ka app server se ek connection khula rakhta (WebSocket). TCS ka price badla -> matching
+          engine Redis pe 'TCS = 3005' daalta -> jo server TCS dekhne walon se jude hain, wo apne users
+          ko bhej dete.
+          Price second me 1000 baar badle to sab nahi bhejte, har 100 ms sirf aakhri price.
 ```
 ```mermaid
 flowchart TD
@@ -553,11 +562,11 @@ flowchart TD
 ## DIKKAT 8 — 9:15 baje akele TCS pe lakhon order
 
 ```
-JAWAB:    Ek stock ki book kabhi do me nahi baant-ta. Ek thread, RAM me, bina lock,
-          second me lakhon order nikal leta. Aage ka log bheed ko line me rokta
-          (backpressure). Badhana stocks ke beech, ek stock ke andar nahi.
-
-SHABD:    backpressure = aage wala dheema ho to peeche wale ko line me rok ke rakhna
+JAWAB:    TCS ki book ko do thread me nahi baant-te, warna ek share do baar bik sakta. Ek hi thread, RAM
+          me, bina lock ke second me lakhon order nikal leta.
+          Bheed zyada to aage ka log order ko line me rok leta, koi phenka nahi jaata, bas thoda der se
+          match.
+          Badhana stocks ke beech: TCS ek thread, INFY doosra.
 ```
 ```mermaid
 flowchart TD
@@ -598,10 +607,10 @@ Price                -> WebSocket server badhao
 POOCHEGA: "How would you scale this to 10x users?"
           (10 guna users ho gaye to kaise badhaoge?)
 
-JAWAB:    Jo service kuch yaad nahi rakhti, uski machine badhao + load balancer.
-          Padhne wale data ki copy (replica).
-          Matching engine book yaad rakhta, uski copy nahi bana sakte. Use stock ke
-          hisaab se baanto: har stock ek engine pe.
+JAWAB:    Jo service kuch yaad nahi rakhti (order service), uski machine badhao + load balancer. Padhne
+          wale data (portfolio, history) ki copy.
+          Matching engine book yaad rakhta, uski copy nahi bana sakte (do book = gadbad). Use stock ke
+          hisaab se baanto: TCS ek machine, INFY doosri.
 ```
 
 ---
@@ -636,11 +645,12 @@ Matching = ek stock ek thread, book RAM me, stock ke hisaab
 se baanto · Settlement = ek transaction / alag DB = SAGA
 ```
 ```
-JAWAB:    Order service check karti + idempotency key, Wallet paisa block karta, har order number ke
-          saath log me, har stock ka ek-thread matching engine book RAM me rakhta.
-          Settlement ek transaction, ya alag service ho to saga. Price WebSocket + pub/sub se. Log se
-          crash ke baad wapasi aur audit dono.
-          Aage: stop-loss, circuit breaker, turant risk check, regulator ki report.
+JAWAB:    Order service check karti aur dobara order rokti (id se). Wallet paisa block karta. Order
+          number ke saath log me, phir har stock ka ek-thread matching engine RAM wali book me match
+          karta.
+          Sauda = ek transaction, alag DB ho to step-step + ulta kaam. Price WebSocket se. Log se crash
+          ke baad book wapas, aur hisaab ka record bhi.
+          Aage: stop-loss, risk check, regulator ki report.
 ```
 ```mermaid
 flowchart TD
