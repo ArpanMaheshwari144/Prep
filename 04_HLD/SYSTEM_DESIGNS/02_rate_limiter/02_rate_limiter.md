@@ -237,8 +237,9 @@ flowchart LR
 ```
 ```
 DIKKAT     Dopahar Redis mar gaya. Saari ginti wahin thi -> kisi ko pata hi nahi kisne kitni bheji.
-HAL        REPLICA + FAIL-OPEN / FAIL-CLOSED: copy doosri building me; main mara -> vote se copy main
-           (Cluster / Sentinel). Poora gaya: aam cheezein (feed, search) jaane do, login / OTP roko.
+HAL        REPLICA: Redis ki copy doosri building me; main mara -> vote se copy main (Cluster / Sentinel).
+           Poora hi gaya to FAIL-OPEN (sab jaane do) ya FAIL-CLOSED (sab roko), endpoint ke hisaab se:
+           aam cheezein (feed, search) jaane do, login / OTP roko.
 NAHI       sab fail-open: login khula = koi bina had password guess karta rahega.
 ```
 ```
