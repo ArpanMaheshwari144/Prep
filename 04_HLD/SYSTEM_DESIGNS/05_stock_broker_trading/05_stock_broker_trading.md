@@ -16,8 +16,7 @@
 3  Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
    CUE: ek symbol ek thread
 4  9:15 baje sab TCS pe toot pade
-   CUE: 9:15 ki bheed: baabu mat badhao, sabko token do; ek baabu lakhon / sec nipta leta
-        (baanto mat, line me rakho)
+   CUE: baanto mat: ek thread kaafi (lakhon / sec), bheed line me
 5  Server gira, poori order book gayab
    CUE: scoreboard toota, scorer ka register bacha (log pehle, replay)
 6  Mera paisa kat gaya, Suresh ko mila hi nahi
@@ -235,8 +234,7 @@ AAGE POOCHEGA (wahi WAJAH A):
 
 #### 4 9:15 baje sab TCS pe toot pade
 ```
-CUE        9:15 ki bheed: baabu mat badhao, sabko token do; ek baabu lakhon / sec nipta leta
-           (baanto mat, line me rakho)
+CUE        baanto mat: ek thread kaafi (lakhon / sec), bheed line me
 
 DIKKAT     Usi 9:15 pe poora market TCS pe toot pada: hazaaron order / second.
 HAL        Baanto mat: ek thread, RAM, lakhon / sec. Bheed log ki line me rukti;
