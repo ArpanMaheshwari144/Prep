@@ -39,8 +39,8 @@ KAISA CHALE (NFR): paisa KHOYE nahi (kata par pahuncha nahi) · ATKE nahi (beech
 
 NUMBERS (andaaza):
    ~10 crore user · aam din kuch sau payment / second · festival / sale pe kuch hazaar / second
-   ★ "Payment me bheed badi dikkat nahi, SAHI hona badi dikkat
-   hai. Pehle sab-ya-kuch-nahi + do-baar-nahi + ledger."
+   ★ "Payment me bheed badi dikkat nahi, SAHI hona badi dikkat hai.
+      Pehle sab-ya-kuch-nahi + do-baar-nahi + ledger."
    -> SQL DB (ACID: kai row ek transaction me) + ledger jisme sirf jodte hain
    DHYAAN: "NoSQL me ACID hota hi nahi" mat bolo -- kai NoSQL ek row / document pe atomic hain.
            sahi farak: debit + credit + ledger = KAI ROW ek saath -> SQL me ye seedha aur pakka.
@@ -133,11 +133,10 @@ HAL        Check aur kaatna ek hi query me:
 DIKKAT 1   Arpan ne Pay dabaya, app ghoomta raha, usne phir daba diya. Ya network ne khud dobara bheja.
            Server ko do request mili, dono process -> 1000 kate, dene the 500.
 HAL        IDEMPOTENCY KEY: "Pay" dabate hi app ek random UUID banata (key-555), dobara bhejne pe WAHI.
-           Key ko "dekha?" aur "daal do" EK hi step me: DB me key UNIQUE (pakka) + Redis SETNX (tez).
+           Key ko "dekha?" aur "daal do" EK hi step me: DB me key UNIQUE.
              pehli request: key-555 daali, haal IN_PROGRESS -> kaato + daalo -> haal DONE + jawab save
              doosri request: key-555 pehle se -> saved jawab wapas. Paisa ek hi baar.
            Arpan ne sach me do alag payment kiye (100 + 100) -> do tap = do alag key -> dono honge.
-           Key ~24 ghante rakho.
 ```
 ```mermaid
 flowchart TD
@@ -158,10 +157,10 @@ HAL        Sirf PAKKA fail (transaction rollback, paisa hila hi nahi) pe key hat
            sake. PENDING (pata nahi kata ya nahi) pe key rahe, andha dobara nahi.
 
 DIKKAT 4   Kaam ke baad key delete kar do?
-HAL        Nahi. Der se dobara wali request aayi to dobara kat jaayega.
+HAL        Nahi. Der se dobara wali request aayi to dobara kat jaayega. ~24 ghante rakho, phir saaf.
 
 DIKKAT 5   Redis aur DB dono kyun?
-HAL        Redis tez, chal rahi request turant pakadta. DB UNIQUE pakka, Redis gira tab bhi.
+HAL        Redis SETNX tez, chal rahi request turant pakadta. DB UNIQUE pakka, Redis gira tab bhi.
 
 DIKKAT 6   Idempotency aur "do log ek balance pe" same cheez?
 HAL        Nahi. Idempotency = EK user ki dobara request. Do log ek balance pe = atomic query
@@ -176,7 +175,6 @@ DIKKAT 1   Arpan apne bank se wallet me 2000 daal raha (top-up). Ya merchant din
 HAL        PSP ko TIMEOUT 2-3 sec. Na ho to har thread PSP me atka rehta -> saare phanse -> system band.
            Baar-baar fail -> FUSE: CLOSED --5 baar fail--> OPEN (call hi mat bhejo, payment PENDING)
            --30 sec baad--> HALF-OPEN (ek test call) -> chali to CLOSED, fail to wapas OPEN.
-           Paise me andha dobara nahi (shayad pehli baar kat chuka) -> payment PENDING, baad me pakka.
 ```
 ```mermaid
 flowchart TD
@@ -245,10 +243,10 @@ HAL        Hisaab ka farak, p99, error rate, line ki lambai pe alert + trace id 
 
 #### 5 ALAG BANK / ALAG DB: EK TRANSACTION NAHI CHAL SAKTA
 ```
-DIKKAT 1   Arpan ka account Bank A me, merchant ka Bank B me. Do alag system pe ek DB transaction hota hi
-           nahi. Bank A se 500 kata, Bank B me daalna fail -> paisa beech me latka.
+DIKKAT 1   Arpan ka wallet hamare paas, merchant ka account Bank B me. Do alag system pe ek DB transaction
+           hota hi nahi. Wallet se 500 kata, Bank B me daalna (PSP payout) fail -> paisa beech me latka.
 HAL        SAGA = step-step, har step ke baad likh lo kahan tak hua (saga table: DEBITED, CREDIT_PENDING..).
-           Bank A -500 OK -> Bank B +500 FAIL -> ulta kaam: Bank A +500 wapas.
+           Wallet -500 OK -> Bank B +500 FAIL -> ulta kaam: wallet me 500 wapas.
            Service beech me giri -> uthke saga table dekhti, wahin se aage ya ulta.
 ```
 ```mermaid
@@ -282,7 +280,6 @@ DIKKAT 1   RBI: "Arpan ke ye 500 kahan se aaye, kahan gaye, kab?"
 HAL        LEDGER table, USI transaction me jisme paisa hila. Sirf INSERT, kabhi UPDATE / DELETE nahi.
            Double-entry: Arpan -> merchant 500 = "Arpan DEBIT 500" + "merchant CREDIT 500" (jod 0).
            Balance column bhi usi transaction me badalta.
-           Galti -> purani line mat mitao, NAYI ulti line likho (pen ki diary, kaat-peet nahi).
            Raat ko jaancho: ledger ka jod == balance? Farak = alert.
 ```
 ```mermaid
@@ -303,7 +300,8 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Galat entry delete kar do?
-HAL        Nahi, ulti entry. Audit me dono dikhni chahiye.
+HAL        Nahi. Purani line mat mitao, NAYI ulti line likho (pen ki diary, kaat-peet nahi).
+           Audit me dono dikhni chahiye.
 
 DIKKAT 3   Balance + alag audit_log table kyun nahi?
 HAL        audit_log me kuch bhi likh sakte, koi niyam nahi jaanchta. Ledger me har len-den DEBIT + CREDIT,
@@ -327,8 +325,7 @@ HAL        Purani payment ko chhedo mat. Nayi ulti payment: merchant -500, Arpan
 DIKKAT 1   Diwali pe 3000 payment / second. Ek hi Payment service machine ka CPU bhar gaya -> timeout ->
            log ghabra ke DOBARA tap kar rahe -> aur bojh. Wo machine giri to sab payment band.
 HAL        Payment service STATELESS (saari yaad DB + idempotency store me), kai machine -> koi bhi machine
-           koi bhi payment le sakti, ek giri baaki chalti.
-           Aage LB / API GATEWAY: login check (JWT), rate limit, WAF, HTTPS.
+           koi bhi payment le sakti, ek giri baaki chalti. Aage LB.
 ```
 ```mermaid
 flowchart TD
@@ -371,7 +368,7 @@ HAL        LB har kuch second GET /health maarta, jawab nahi = list se bahar.
 ```
 DIKKAT 1   Ek bada merchant dashboard pe "is mahine ki saari payment" report chala raha. Wo bhaari query usi
            DB pe -> DB busy -> Arpan ka 500 ka payment likhne me atak gaya.
-HAL        Report READ REPLICA (DB ki padhne wali copy) se. Balance aur payment ka haal hamesha PRIMARY se.
+HAL        Report READ REPLICA (DB ki padhne wali copy) se, primary sirf payment ke liye free.
            Primary har badlaav diary (WAL) me likhta -> replica wo diary padh ke wahi lagati, peeche-peeche
            (1-2 sec purani). Report me chalta, balance me nahi.
            Bahut bhaari analytics -> alag warehouse me (CDC se data jaata).
@@ -404,7 +401,7 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Arpan ne pay kiya, use purana balance dikha?
-HAL        Wo replica se padha gaya jo peeche thi. Isliye balance / haal PRIMARY se hi.
+HAL        Balance / payment ka haal hamesha PRIMARY se padho. Replica sirf report ke liye (wo peeche hoti).
 
 DIKKAT 3   Primary gira?
 HAL        SYNC standby (har likhai uspe bhi pakki) ko primary banao (RDS Multi-AZ) -> kuch nahi khota.
@@ -414,7 +411,7 @@ DIKKAT 4   Replica kitni peeche hai, kaise pata?
 HAL        Replication lag metric pe alert.
 ```
 
-#### 9 50 CRORE ROW, LIKHAI DHEEMI
+#### 9 ~1000 CRORE ROW / SAAL, LIKHAI DHEEMI
 ```
 DIKKAT 1   Kuch sau payment / second x saal = ~1000 crore payment row saal me. Saari likhai ek primary pe
            -> likhai dheemi.
