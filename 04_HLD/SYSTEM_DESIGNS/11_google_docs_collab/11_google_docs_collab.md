@@ -139,8 +139,9 @@ flowchart LR
 ```
 DIKKAT     11 baje meeting, doc "HELLO", dono sabse upar likhne lage. Mera "X" (pos 0) ~200 ms me Ravi tak,
            usse pehle Ravi ka "Y" (pos 0) -> meri screen "YXHELLO", Ravi ki "XYHELLO". Do alag doc.
-HAL        OT: doosre ka op aaya to apne op ke hisaab se khiskao. Tie: jiska op server pe pehle (mera),
-           uska pehle -> meri screen Y ko 1 pe, Ravi ki X 0 pe hi -> dono ke paas "XYHELLO".
+HAL        OT (Operational Transformation): doosre ka op aaya to apne op ke hisaab se khiskao.
+           Tie: jiska op server pe pehle (mera), uska pehle -> meri screen Y ko 1 pe, Ravi ki X 0 pe hi
+           -> dono ke paas "XYHELLO".
 NAHI       jaisa aaya waisa seedha lagao: do screen pe do alag doc (diverge).
 ```
 ```

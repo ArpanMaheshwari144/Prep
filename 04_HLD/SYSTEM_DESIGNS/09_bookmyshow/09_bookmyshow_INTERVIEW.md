@@ -283,6 +283,7 @@ DIKKAT     2 baje Redis restart hua -> cache khaali -> 1 lakh log ka seat map ek
            dheemi, seat map atak gaya.
 HAL        SET NX LOCK: map 1000 log maangein to sirf PEHLA banaye: SET lock:seatmap:42 1 NX EX 5 -> jeeta wo
            bana ke Redis me daale, baaki 50-100 ms ruk ke Redis se. 1000 ki jagah 1 request DB pe.
+           (NX = koi aur pehle na laga ho tabhi · EX 5 = 5 sec me lock khud hate, banane wala mar jaaye to.)
 ```
 ```
 AAGE POOCHEGA:

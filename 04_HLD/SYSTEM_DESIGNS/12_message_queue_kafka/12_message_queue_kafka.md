@@ -237,7 +237,8 @@ flowchart LR
 ```
 DIKKAT     Dopahar Broker A ki disk mari. Har partition ki ek hi copy thi -> P0 ka data hamesha ke liye gaya.
 HAL        LEADER + ISR: har partition ka LEADER (likhna-padhna) + 2 copy (follower) alag machine pe.
-           Saath chalti copy = ISR; leader gira -> ISR wali leader. Zaroori khabar: acks=all.
+           Saath chalti copy = ISR; leader gira -> ISR wali leader. Zaroori khabar: acks=all
+           (saari ISR copies ne liya tabhi "OK").
 NAHI       acks=1 sab jagah: leader ne "OK" bola, copy se pehle gira -> khabar gayi.
 ```
 ```
@@ -305,7 +306,8 @@ flowchart LR
 ```
 ```
 DIKKAT     Ravi ka order #101 DB me bana, Kafka bhejne se pehle order server gira -> event gaya hi nahi.
-HAL        OUTBOX: BEGIN · INSERT orders(101) · INSERT outbox(E-101, sent = false) · COMMIT.
+HAL        OUTBOX (DB ki ek table, order ke saath usi transaction me):
+           BEGIN · INSERT orders(101) · INSERT outbox(E-101, sent = false) · COMMIT.
            Relay (alag thread, har 1 sec) sent = false wali row Kafka bheje, ACK aaye to sent = true.
 NAHI       "offset bachayega": nahi, offset consumer ki taraf hai; ye producer ki taraf ki dikkat.
 ```

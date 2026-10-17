@@ -265,8 +265,8 @@ flowchart LR
 ```
 DIKKAT     Shaam tak 10,000 log ka "Meri files" page khula, har 2 sec saari files ka haal
            -> 5,000 sawaal / sec DB pe. Likhai 1-2 / sec thi, padhai ne DB ghera.
-HAL        CACHE: GET /status/T-101 -> Redis me? wahin se · nahi -> read replica -> Redis me (chhoti umar).
-           Worker haal badle (DONE) to DB ke saath Redis me bhi usi waqt naya haal.
+HAL        CACHE: GET /status/T-101 -> Redis me? wahin se · nahi -> read replica (DB ki padhne wali copy)
+           -> Redis me (chhoti umar). Worker haal badle (DONE) to DB ke saath Redis me bhi usi waqt naya haal.
 NAHI       har sawaal primary DB pe: likhai 1-2 / sec, padhai 5,000 / sec.
 ```
 ```

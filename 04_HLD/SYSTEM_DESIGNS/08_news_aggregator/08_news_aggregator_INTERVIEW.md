@@ -133,8 +133,8 @@ flowchart LR
 ```
 DIKKAT     7:30 maine feed kholi, khabar 20 min purani. Ek fetcher 1000 source ek-ek (har ek ~1 sec) laata
            aur khud DB me likhta -> ek chakkar ~20 min, likhne me bhi atka.
-HAL        KAFKA: kai fetcher ek saath laake Kafka me daal ke bhool jaate. Workers apni speed se (offset),
-           saaf karke DB + Redis me. 10 partition = 10 worker ek saath.
+HAL        KAFKA (disk pe diary): kai fetcher ek saath laake Kafka me daal ke bhool jaate. Workers apni speed
+           se, kahan tak padha yaad (offset), saaf karke DB + Redis me. 10 partition (tukde) = 10 worker.
 ```
 ```
 AAGE POOCHEGA:
@@ -461,8 +461,8 @@ flowchart LR
 ```
 DIKKAT     Source 100 guna ya log khud content daalne lage -> ek DB machine likhai aur data nahi jhelti.
            (Hamare number pe ek DB kaafi hai, ye sirf bahut bade scale pe.)
-HAL        SHARD hash(article_id) se -> likhai sab shard pe barabar. Keemat: "taazi 20" ke liye har shard se
-           thoda (scatter-gather), par wo to Redis se aata hi hai.
+HAL        SHARD (data tukdon me, alag machine) hash(article_id) se -> likhai sab tukdon pe barabar.
+           Keemat: "taazi 20" ke liye har tukde se thoda (scatter-gather), par wo to Redis se aata hi hai.
 NAHI       date se baanto: aaj ki saari likhai aaj wale shard pe -> wo akela garam.
 ```
 ```
