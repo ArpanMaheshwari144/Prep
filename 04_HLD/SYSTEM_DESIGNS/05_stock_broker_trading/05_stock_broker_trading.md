@@ -180,7 +180,7 @@ HAL        Nahi, dheema. Balance alag column, usi transaction me badalta. Ledger
 
 DIKKAT 3   Paise me "thodi der baad sahi" chalega?
 HAL        Nahi. Balance kabhi galat number nahi dikhata (strong consistency).
-           Alag DB wale step-step kaam (card 4) me bhi beech ka haal "PENDING" dikhao, galat number nahi.
+           Alag DB wale step-step kaam (SAGA) me bhi beech ka haal "PENDING" dikhao, galat number nahi.
 
 DIKKAT 4   Asli market me paisa aur share usi pal milte?
 HAL        Nahi. India me T+1: asli len-den agle din clearing house (NSE Clearing, purana naam NSCCL) karta.
