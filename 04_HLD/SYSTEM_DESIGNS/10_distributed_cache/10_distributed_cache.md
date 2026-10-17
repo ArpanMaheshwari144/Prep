@@ -97,11 +97,12 @@ KAHANI:  Cache machine ki 64 GB RAM bhar gayi. Nayi key daalni hai, to koi puran
 ILAAJ:   LRU: jise sabse LAMBE samay se kisi ne nahi chhua, wo bahar. Saath me har key ki umar (TTL).
 
 ANDAR KAISE:
-         HashMap (key -> list ka dabba) + doubly linked list.
-         Koi key padhi -> uska dabba list ke AAGE. Jagah chahiye
-         -> list ki POONCH wala hatao (sabse purana chhua).
-         Dono kaam O(1). (LeetCode 146, tera LRU REDO.)
-         TTL: padhte waqt dekho umar khatam? (lazy) + peeche thodi-thodi safai (active).
+         Ye wahi LRU cache hai jo tune DSA me khud banaya (09_DESIGN, LeetCode 146).
+         HashMap = key turant dhoondho. Doubly linked list = kaun kab chhua, uski line.
+         get(key)  -> key mili, uska node line ke AAGE (head ke paas) kar do = abhi chhuya.
+         put(key)  -> naya node AAGE. RAM bhar gayi -> line ke PEECHE wala (tail ke paas) hatao = sabse purana.
+         Bas wahi code, ab cache machine ke andar chal raha hai.
+         Saath me har key ki umar (TTL): umar khatam to key bekaar, padhne aaye tab check + peeche safai.
 
 ISKE BAAD KYA TOOTEGA:
   - LRU kyun, LFU kyun nahi?
@@ -306,11 +307,10 @@ flowchart TD
 ## DIKKAT 1 — RAM bhar gayi, kya hatayein
 
 ```
-JAWAB:    RAM bhar gayi to wo key nikaalo jise sabse lambe time se kisi ne nahi chhua.
-          Iske liye ek line rakho: jo key abhi padhi, use line ke aage kar do. Purani apne aap peeche
-          khisakti jaati hain. Jagah chahiye to line ki sabse peeche wali key nikaal do.
-          Saath me har key ki umar: umar khatam to key bekaar. Koi padhne aaye tab dekh lo, aur peeche
-          thodi-thodi safai bhi chalti rahe.
+JAWAB:    Ye tera LRU cache hi hai (DSA me banaya, LeetCode 146).
+          HashMap se key turant milti, aur linked list me AAGE = abhi chhui, PEECHE = sabse purani.
+          RAM bhar gayi -> PEECHE wali nikaal do.
+          Upar se har key ki umar (TTL): umar poori to key apne aap bekaar.
 ```
 ```mermaid
 flowchart TD
