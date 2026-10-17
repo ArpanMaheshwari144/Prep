@@ -24,6 +24,8 @@ POOCHO:  "Trading bada hai: matching, price feed, risk, settlement. Kis pe focus
             Risk / margin / IPO / mutual fund scope me nahi.
          LIMIT aur MARKET dono order? · aadha bhara (partial fill) chalega?
          hum EXCHANGE hain (khud match karte) ya BROKER (exchange ko order bhejte)?
+         Is design me: hum broker + apna matching (exchange jaisa). Asli India me Groww / Zerodha order
+         NSE ko bhejte, matching NSE karta; wallet block broker ka kaam.
 
 KYA KARE (FR):    buy / sell · order match · paisa + share move · live price · cancel / status
 KAISA CHALE (NFR): paisa hamesha sahi (strong, kabhi "thodi der baad sahi" nahi) · tez
@@ -196,10 +198,9 @@ DIKKAT 1   Paisa Wallet DB me, share Portfolio DB me. Do DB pe ek transaction na
            30k kata, share daalne se PEHLE crash -> paisa gaya, share nahi aaye.
 HAL        Settlement service step-step chalati, har step ka haal likhti:
              STARTED -> WALLET_DONE -> PORTFOLIO_DONE
-           Share daalna fail -> pehle baar-baar koshish (share dena hi sahi raasta).
-           Phir bhi na ho -> jo step hua wo ulta (SAGA). WALLET step me Ramesh -30k, Suresh +30k hua tha
-           -> Ramesh ko 30k wapas, Suresh se 30k wapas. Share hile hi nahi, unka kuch ulta nahi.
-           Settlement khud gira -> uth ke likha haal dekhti, wahin se aage ya ulta.
+           Share daalna fail -> baar-baar koshish (do baar chale to bhi asar ek baar). Sauda match ho
+           chuka = pakka, ulta nahi hota -> AAGE hi badho, share dena hi sahi raasta.
+           Settlement khud gira -> uth ke likha haal dekhti, wahin se aage.
 ```
 ```mermaid
 flowchart TD
@@ -208,7 +209,7 @@ flowchart TD
     n_Wallet["Wallet"]
     n_Queue_per_symbol["Queue per symbol"]
     n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement (SAGA)"]
+    n_Settlement["Settlement"]
     n_Wallet_DB["Wallet DB"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
@@ -222,20 +223,26 @@ flowchart TD
 ```
 DIKKAT 2   2PC kyun nahi?
 HAL        2PC me dono DB lock pakad ke intezaar karte. Coordinator gira = dono atke, har sauda dheema.
-           SAGA me lamba lock nahi. Keemat: beech me haal PENDING dikhta (galat number nahi).
+           Step-step me lamba lock nahi. Keemat: beech me haal PENDING dikhta (galat number nahi).
 
-DIKKAT 3   Ulta kaam (paisa wapas) bhi fail?
-HAL        Baar-baar koshish (do baar chale to bhi asar ek baar) + alert. Paisa wapas kabhi chhodna nahi.
+DIKKAT 3   Share daalna ghanton fail hi hota rahe?
+HAL        Haal PORTFOLIO_PENDING + alert. Ops team / shaam ka reconciliation share daalta.
+           Ramesh ka paisa wapas NAHI: sauda pakka hai (Suresh bech chuka, use 30k mil chuke).
 
-DIKKAT 4   Ek service sab chalaye (orchestration) ya har service agle ko bataye (choreography)?
+DIKKAT 4   To ulta (SAGA) kabhi nahi?
+HAL        Sirf match se PEHLE ke step pe: paisa block hua, par order book tak pahuncha hi nahi
+           -> block hatao, paisa wapas. Match ke baad sirf aage.
+
+DIKKAT 5   Ek service sab chalaye (orchestration) ya har service agle ko bataye (choreography)?
 HAL        Orchestration: paise me saaf dikhta kaunsa step kahan atka.
 ```
 
-#### 5 BUY DO BAAR DABA / NETWORK NE DOBARA BHEJA
+#### 5 NETWORK GAYA, APP NE BUY DOBARA BHEJA
 ```
-DIKKAT 1   Ramesh ne BUY dabaya, app ghooma, phir daba diya (ya network ne dobara bheja).
-           Do order bane, paisa do baar block.
-HAL        App har order pe ek id banata (abc-123), dobara bhejne pe bhi WAHI id. Server pe id UNIQUE.
+DIKKAT 1   Ramesh ne BUY dabaya, order server tak pahuncha, par jawab aate waqt network gaya. App ne
+           timeout pe khud dobara bheja -> do order bane, paisa do baar block.
+HAL        Order screen khulte hi app ek id banata (abc-123), dobara bhejne pe bhi WAHI id. BUY button
+           pehli tap pe band. Server pe id UNIQUE.
            Pehli baar -> order lagao + jawab save. Doosri baar -> saved jawab wapas, naya order nahi.
 ```
 ```mermaid
@@ -245,7 +252,7 @@ flowchart TD
     n_Wallet["Wallet"]
     n_Queue_per_symbol["Queue per symbol"]
     n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement (SAGA)"]
+    n_Settlement["Settlement"]
     n_Wallet_DB["Wallet DB"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
@@ -280,7 +287,7 @@ flowchart TD
     n_Wallet["Wallet"]
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement (SAGA)"]
+    n_Settlement["Settlement"]
     n_Wallet_DB["Wallet DB"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
@@ -303,7 +310,7 @@ HAL        Standby server saath-saath log padhta, book RAM me taiyaar, khud saud
            Pehla gira, tab ye chalne lagta.
 
 DIKKAT 5   Crash pe kya-kya bachaoge?
-HAL        Do jagah: matching (RAM) = log se replay · paisa (DB) = rollback / SAGA.
+HAL        Do jagah: matching (RAM) = log se replay · paisa (DB) = rollback / step ka likha haal.
 ```
 
 #### 7 LAKHON LOG LIVE PRICE DEKH RAHE
@@ -323,7 +330,7 @@ flowchart TD
     n_Pub_Sub["Pub/Sub"]
     n_WebSocket["WebSocket"]
     n_USERS["USERS"]
-    n_Settlement["Settlement (SAGA)"]
+    n_Settlement["Settlement"]
     n_Wallet_DB["Wallet DB"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
@@ -368,7 +375,7 @@ flowchart TD
     n_Pub_Sub["Pub/Sub"]
     n_WebSocket["WebSocket"]
     n_USERS["USERS"]
-    n_Settlement["Settlement (SAGA)"]
+    n_Settlement["Settlement"]
     n_Wallet_DB["Wallet DB"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
@@ -391,7 +398,7 @@ HAL        Do status: ACCEPTED turant (order mil gaya), FILLED jab sauda ho jaay
 AAKHRI DABBE (sab dikkat ke baad):
   User -> Order Svc (check + idempotency key) -> Wallet (paisa BLOCK)
   -> Event Log / Kafka (number lagta, key = stock) -> Matching engine (ek stock ek thread, book RAM me)
-  -> Settlement (ek transaction, ya alag DB ho to SAGA) -> Wallet DB + Portfolio DB
+  -> Settlement (ek transaction, ya alag DB ho to step-step, aage hi) -> Wallet DB + Portfolio DB
   price: Matching -> Pub/Sub -> WebSocket -> users
 
 DB:  paisa / order = SQL + ACID · order book = RAM · ledger = append-only (sirf jodo)
@@ -419,7 +426,7 @@ flowchart TD
     n_Pub_Sub["Pub/Sub"]
     n_WebSocket["WebSocket"]
     n_USERS["USERS"]
-    n_Settlement["Settlement (SAGA)"]
+    n_Settlement["Settlement"]
     n_Wallet_DB["Wallet DB"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
@@ -485,13 +492,13 @@ API: POST /order {stock, side, qty, price, type, idempotencyKey} · DELETE /orde
 ```
 Order Service = check + idempotency · Wallet = paisa BLOCK · Event Log = number + replay + audit
 Matching = ek stock ek thread, book RAM me, stock ke hisaab se baanto
-Settlement = ek transaction / alag DB = SAGA
+Settlement = ek transaction / alag DB = step-step, match ke baad ulta nahi
 ```
 ```
 JAWAB:    Order service check karti aur dobara order rokti (id se). Wallet paisa block karta. Order
           number ke saath log me, phir har stock ka ek-thread matching engine RAM wali book me match karta.
-          Sauda = ek transaction, alag DB ho to step-step + ulta kaam. Price WebSocket se. Log se crash
-          ke baad book wapas, aur hisaab ka record bhi.
+          Sauda = ek transaction, alag DB ho to step-step, match ke baad sirf aage. Price WebSocket se.
+          Log se crash ke baad book wapas, aur hisaab ka record bhi.
           Aage: stop-loss, risk check, regulator ki report.
 ```
 ```mermaid
@@ -504,7 +511,7 @@ flowchart TD
     n_Pub_Sub["Pub/Sub"]
     n_WebSocket["WebSocket"]
     n_USERS["USERS"]
-    n_Settlement["Settlement (SAGA)"]
+    n_Settlement["Settlement"]
     n_Wallet_DB["Wallet DB"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service

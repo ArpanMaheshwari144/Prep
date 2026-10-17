@@ -180,11 +180,12 @@ DIKKAT 4   Chal raha hai, kaise pata?
 HAL        Reconciliation + p99 + error rate + queue lag + DB connection pe alert + har transfer ka trace id.
 ```
 
-#### 4 "SEND" DO BAAR DABA / APP NE DOBARA BHEJA
+#### 4 NETWORK GAYA, APP NE "SEND" DOBARA BHEJA
 ```
-DIKKAT 1   Arpan ne Send dabaya, app ghooma, phir daba diya. Ya app ne khud dobara bheja -> 1000 kat gaye,
-           bhejne the 500.
-HAL        App har transfer ke saath ek id (idempotency key) bhejta, DB me wo id UNIQUE.
+DIKKAT 1   Arpan ne Send dabaya, 500 kat bhi gaye, par jawab aate waqt network gaya. App ne timeout pe
+           khud dobara bheja -> 1000 kat gaye, bhejne the 500.
+HAL        Transfer screen khulte hi app ek id (idempotency key) banata, dobara bhejne pe WAHI. Send
+           button pehli tap pe band. DB me wo id UNIQUE.
            Dobara bheja to wahi id -> pehla jawab wapas, paisa doosri baar nahi katta.
            App me "pehle dekho, phir daalo" = race (dono ne dekha "nahi hai", dono ne daala).
            UNIQUE insert khud taala jaisa.
@@ -532,7 +533,7 @@ Archive (S3) = band mahine, had se pehle delete nahi
 ```
 ```
 beech me crash        -> ek transaction (@Transactional), ek DB me SAGA nahi
-dobara tap / retry    -> Idempotency-Key + DB UNIQUE
+app ka retry         -> Idempotency-Key + DB UNIQUE
 paisa kahan gaya      -> sirf-jodo KHAATA, double-entry (jod zero)
 balance tez           -> balance = khaate ka CACHE, usi transaction me
 cache vs sach         -> raat ka RECONCILIATION, khaata jeetega
