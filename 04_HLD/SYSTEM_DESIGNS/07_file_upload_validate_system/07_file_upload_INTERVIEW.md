@@ -105,7 +105,7 @@ DIKKAT     31 March, maine report.pdf daali. Server Validator ke 3 sec jawab tak
            Aakhri ghante ~300 upload / sec x 3 sec = ~900 thread atke, Tomcat ke 200 khatam.
 HAL        ASYNC + TRACKING ID: upload hote hi T-101 + "jaanch ho rahi"; khabar {T-101, file kahan} queue me.
            Worker uthaye -> Validator ko call -> DB me T-101 = DONE / FAILED. Main T-101 se haal dekhun.
-NAHI       request me hi Validator ka intezaar: 3 sec x 300 / sec = thread khatam.
+NAHI       thread pool 200 se 2000: jaanch tab bhi 3 sec, bas memory khatam hone tak der.
 ```
 ```
 AAGE POOCHEGA:
@@ -146,7 +146,7 @@ DIKKAT     Report ke baad maine 5 GB video daali: client -> hamara server -> S3.
            thread minuton atka, sirf bytes aage badhane ko server badhane pade.
 HAL        PRESIGNED URL: server sirf 10 min ka paas (signed URL) + naya id T-102 de; bytes seedha S3 me.
            Phir main "/complete T-102" bolun -> server queue me daale.
-NAHI       bytes server se guzaro, server badhao: 5 GB do baar network pe, thread atka.
+NAHI       S3 ki access key app me daal do: app se key nikli = poora bucket khula.
 ```
 ```
 AAGE POOCHEGA:
@@ -182,7 +182,7 @@ flowchart LR
 DIKKAT     Usi video ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB shuru se?
 HAL        MULTIPART: file tukdon me, har tukda apne signed URL pe, S3 har tukde ki rasid (ETag) deta.
            Wifi gaya -> 90 tukde pahunch chuke, sirf bache 10 bhejo.
-NAHI       ek hi PUT me poori file: 90% pe toota to shuru se.
+NAHI       server ka timeout badha do: wifi gaya to connection hi toota, timeout kuch nahi bachata.
 ```
 ```
 AAGE POOCHEGA:
@@ -261,7 +261,7 @@ DIKKAT     Shaam tak 10,000 log ka "Meri files" page khula, har 2 sec saari file
            -> 5,000 sawaal / sec DB pe. Likhai 1-2 / sec thi, padhai ne DB ghera.
 HAL        CACHE: GET /status/T-101 -> Redis me? wahin se · nahi -> read replica (DB ki padhne wali copy)
            -> Redis me (chhoti umar). Worker haal badle (DONE) to DB ke saath Redis me bhi usi waqt naya haal.
-NAHI       har sawaal primary DB pe: likhai 1-2 / sec, padhai 5,000 / sec.
+NAHI       DB me index daalo: sawaal tez, par 5,000 / sec phir bhi primary pe.
 ```
 ```
 AAGE POOCHEGA:
@@ -379,7 +379,7 @@ DIKKAT     Mujhe S3 ka pakka link mila tha. Maine dost ko WhatsApp pe bheja, dos
            Link hamesha chalta -> file kisi ke bhi haath.
 HAL        SIGNED GET: DB me sirf S3 key. Download maanga -> maalik check -> 5 min ka naya paas, har baar.
            Group me 1 ghante baad kisi ne khola -> paas expire -> nahi khula.
-NAHI       DB me pakka S3 link rakho: hamesha chalta, aage ghoomta.
+NAHI       link me lamba random naam (koi andaza na lagaye): ek baar bahar gaya to hamesha chalta.
 ```
 ```
 AAGE POOCHEGA:
@@ -419,7 +419,7 @@ DIKKAT     Raat ko kisi ne virus.exe ka naam report.pdf kiya, type "application/
            Naam aur type dono client ne bheje, jo jhooth bol sakta.
 HAL        MAGIC BYTES: file khud batati wo kya hai: PDF = "%PDF-" · PNG = "\x89PNG" · EXE = "MZ".
            Worker S3 se sirf pehle kuch byte (range GET). Naam .pdf, shuru "MZ" -> EXE -> reject.
-NAHI       naam / Content-Type se type maano: dono client bhejta.
+NAHI       type ke liye poori file padho: 5 GB S3 se laana; pehle kuch byte kaafi.
 ```
 ```
 AAGE POOCHEGA:

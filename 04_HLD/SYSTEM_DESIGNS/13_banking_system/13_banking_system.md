@@ -154,7 +154,7 @@ DIKKAT     Mere paas 300. 9:00 Netflix ka 200 ka auto-debit chala, usi second ma
 HAL        CHECK + KAATNA EK QUERY:
              UPDATE account SET balance = balance - 200 WHERE id = 'Arpan' AND balance >= 200
            Row pe taala -> dono line me. Pehla: 300 -> 100. Doosra: 100 >= 200? nahi -> 0 row -> reject.
-NAHI       pehle SELECT balance, phir code me check: dono ne 300 dekha, dono pass.
+NAHI       Java synchronized: Banking Svc ki kai machine, lock sirf ek ke andar.
 ```
 ```
 AAGE POOCHEGA:
@@ -366,7 +366,7 @@ DIKKAT     Ravi ki dukaan: roz ~500 UPI, 3 saal = ~5 lakh line. CA ka tool 20-20
 HAL        KEYSET: pichhle page ki aakhri line ka (ts, id) yaad, agla page "isse purani 20":
              WHERE account_id = ? AND (ts, id) < (:last_ts, :last_id) ORDER BY ts DESC, id DESC LIMIT 20
            Index (account_id, ts DESC, id DESC) se seedha wahan -> page 1 ho ya 5000, ek jaisa tez.
-NAHI       OFFSET: chhode hue sab padh ke phenko, aur khiskne pe line dobara.
+NAHI       saari 5 lakh line ek baar me bhejo: memory bhari, request timeout.
 ```
 ```
 AAGE POOCHEGA:

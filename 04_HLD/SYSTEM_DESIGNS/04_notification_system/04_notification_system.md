@@ -156,7 +156,7 @@ DIKKAT     Usi order ki khabar push, email, SMS teeno se. Teeno ek line me; SMS 
            atke, unke peeche mera push aur email bhi khade.
 HAL        ALAG LINE: teeno raaste ki alag line aur alag worker. SMS dheema -> sirf SMS ki line lambi.
            Worker alag ginti me (email ke 10, SMS ke 3) -> jis raaste pe kaam, wahi badhao.
-NAHI       teeno ek line me: sabse dheema raasta sabko rokta.
+NAHI       SMS worker badha do: company khud dheemi, line phir bhi ek, push / email phir bhi peeche.
 ```
 ```
 AAGE POOCHEGA:
@@ -214,7 +214,7 @@ DIKKAT     Login ka OTP: Worker-A ne parchi "bhej diya" lagayi, SMS call FAIL (y
            dobara di, Worker-B ne "bhej diya" dekh ke chhoda -> OTP kho gaya. Koshish ko pakka maan liya.
 HAL        SENDING / SENT: bhejne se PEHLE "BHEJ RAHA HOON" (SENDING, 60 sec umar), company OK pe
            "BHEJ DIYA" (SENT, 1 din). CHHODNA sirf SENT pe; SENDING = adhoora.
-NAHI       call se pehle hi "bhej diya" ki parchi: call fail = khabar kho gayi.
+NAHI       parchi hi hata do: worker mara to Kafka dobara deta -> OTP / email do baar (card 3 wapas).
 ```
 ```
 AAGE POOCHEGA:
@@ -248,7 +248,7 @@ flowchart LR
 DIKKAT     Usi waqt SMS company pareshaan, aur hum har second dobara bhej ke uspe aur hathoda maar rahe.
 HAL        BACKOFF + JITTER: har baar zyada ruko 1, 2, 4, 8 sec (shuru ka time x 2^koshish) + thoda random,
            taaki sab worker ek saath na lautein. Had paar -> DLQ (fail khabaron ki alag line) + alert.
-NAHI       turant dobara: giri hui company pe aur bojh.
+NAHI       retry band, ek fail = chhodo: company 2 sec hili to OTP hamesha ke liye gaya.
 ```
 ```
 AAGE POOCHEGA:
@@ -287,7 +287,7 @@ DIKKAT     SMS company abhi bhi dheemi: line alag ho gayi, par har call 30 sec a
 HAL        TIMEOUT 2-3 sec + FUSE (circuit breaker) har company ka alag: 5 baar fail -> OPEN (call mat karo,
            seedha doosri company) -> 30 sec baad HALF-OPEN (ek test call) -> chali to CLOSED.
            Twilio ka fuse uda -> SNS.
-NAHI       bina timeout intezaar: ek dheemi company saare worker kha jaati.
+NAHI       worker badha do: naye worker bhi 30 sec me phanse, dheemi company pe aur bojh.
 ```
 ```
 AAGE POOCHEGA:

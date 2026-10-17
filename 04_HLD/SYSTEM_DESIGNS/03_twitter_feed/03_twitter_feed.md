@@ -120,7 +120,7 @@ DIKKAT     Subah 8 baje maine app khola. Main 200 ko follow karta -> 200 logon k
            upar ke 50. Har user ke saath, har baar app kholne pe 200 ka jod -> feed dheemi.
 HAL        PUSH (FANOUT): tweet hote hi feed bana do. Suresh ne tweet kiya -> Fanout har follower ke INBOX
            me tweet_id. Inbox = Redis SORTED SET (score = time); app khola -> bas inbox padho.
-NAHI       har baar khulne pe jodo: padhna 50 guna zyada, har khulna mehnga.
+NAHI       DB pe index / read replica: thoda tez, par har khulne pe 200 ka jod wahi ka wahi.
 ```
 ```
 AAGE POOCHEGA:

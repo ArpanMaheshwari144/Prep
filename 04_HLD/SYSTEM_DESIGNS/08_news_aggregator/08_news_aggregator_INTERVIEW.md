@@ -273,7 +273,7 @@ flowchart LR
 DIKKAT     Shaam ko mujhe sirf tech aur sports pasand. Har user ki alag feed (10 lakh feed) bahut mehngi.
 HAL        CATEGORY FEED: har category ki ek list (feed:tech, feed:sports). Mere liye dono ke top 20, time se
            mila ke (ya Redis ZUNIONSTORE) top 20. 10 lakh feed ki jagah sirf ~20 category feed.
-NAHI       har user ki alag feed: 10 lakh feed; sabki lagbhag same, list category ki kaafi.
+NAHI       har baar DB se WHERE category IN (tech, sports): har khulne pe DB, cache ka fayda gaya.
 ```
 ```
 AAGE POOCHEGA:

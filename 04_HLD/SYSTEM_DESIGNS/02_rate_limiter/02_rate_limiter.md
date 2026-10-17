@@ -411,7 +411,7 @@ DIKKAT     Raat 11 baje office ki night shift: 1000 log ek IP (NAT) ke peeche, e
            1000 block. Ulta, botnet ke paas 1000 IP, har IP se thoda -> kisi IP ki limit nahi tooti.
 HAL        KEY = USER_ID: login ke baad (JWT se) rate:<user_id>:<endpoint> -> 1000 log = 1000 alag ginti.
            Login se pehle user_id hai hi nahi: rate:<IP>:login (dheeli had) + WAF.
-NAHI       sirf IP pe had: NAT ke peeche sab ek, aur botnet ke paas hazaar IP.
+NAHI       IP ki had badha do (100 se 5,000): office bach gaya, par botnet ko bhi utni hi zyada chhoot.
 ```
 ```
 AAGE POOCHEGA:

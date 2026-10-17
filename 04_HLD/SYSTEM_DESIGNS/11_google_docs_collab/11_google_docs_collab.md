@@ -89,7 +89,7 @@ DIKKAT     Doc me "HELLO". Maine "HELLO WORLD" karke 10:05 pe save kiya, Ravi ne
            "HELLO THERE" 10:07 pe -> poora text upar likha -> mera "WORLD" gayab (LAST-WRITE-WINS).
 HAL        OPERATION: poora doc nahi, sirf KYA badla: { docId, userId, type, position, char, baseVersion }.
            baseVersion = "v7 dekh ke likha"; dono v7 pe bane -> server khiska ke dono lagata, koi nahi mitta.
-NAHI       poora text save (overwrite): jo baad me aaya wo jeeta, doosre ka likha gaya.
+NAHI       doc pe lock, ek likhe baaki ruke: saath likhna hi khatam.
 ```
 ```
 AAGE POOCHEGA:
@@ -142,7 +142,7 @@ DIKKAT     11 baje meeting, doc "HELLO", dono sabse upar likhne lage. Mera "X" (
 HAL        OT (Operational Transformation): doosre ka op aaya to apne op ke hisaab se khiskao.
            Tie: jiska op server pe pehle (mera), uska pehle -> meri screen Y ko 1 pe, Ravi ki X 0 pe hi
            -> dono ke paas "XYHELLO".
-NAHI       jaisa aaya waisa seedha lagao: do screen pe do alag doc (diverge).
+NAHI       phone ke time se kram: ghadi alag, aur position phir bhi khiskani padti.
 ```
 ```
 AAGE POOCHEGA:

@@ -101,7 +101,7 @@ DIKKAT     10 baje badi movie ki booking khuli. Maine aur Ravi ne 10:00:01 pe "A
            App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
 HAL        ATOMIC UPDATE: check aur likhna EK query me ("SIRF agar abhi bhi khaali ho"):
            UPDATE seats SET status = 'booked' WHERE seat_id = 'A1' AND status = 'available'
-NAHI       pehle SELECT (khaali hai?), phir UPDATE: beech me doosra ghus jaata.
+NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke andar.
 ```
 ```
 AAGE POOCHEGA:
