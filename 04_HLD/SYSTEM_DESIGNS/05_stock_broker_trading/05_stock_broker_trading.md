@@ -139,7 +139,8 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Pehle SELECT se balance padha, phir UPDATE kiya?
-HAL        Dono ne ek saath 50k padha, dono pass. Isliye check + update ek hi query me.
+HAL        Race: SELECT aur UPDATE ke beech doosra order ghus jaata, dono 50k dekh ke pass.
+           Isliye check + block ek hi query me (upar wali).
 
 DIKKAT 3   10 me se sirf 6 ka sauda hua?
 HAL        6 ka paisa kato, baaki 4 ka blocked rahe.
@@ -182,7 +183,7 @@ HAL        Nahi, dheema. Balance alag column, usi transaction me badalta. Ledger
 
 DIKKAT 3   Paise me "thodi der baad sahi" chalega?
 HAL        Nahi. Balance kabhi galat number nahi dikhata (strong consistency).
-           Alag DB wale step-step kaam (SAGA) me bhi beech ka haal "PENDING" dikhao, galat number nahi.
+           Alag DB wale step-step kaam me bhi (agla card) beech ka haal "PENDING" dikhao, galat number nahi.
 
 DIKKAT 4   Asli market me paisa aur share usi pal milte?
 HAL        Nahi. India me T+1: asli len-den agle din clearing house (NSE Clearing, purana naam NSCCL) karta.
@@ -196,7 +197,8 @@ DIKKAT 1   Paisa Wallet DB me, share Portfolio DB me. Do DB pe ek transaction na
 HAL        Settlement service step-step chalati, har step ka haal likhti:
              STARTED -> WALLET_DONE -> PORTFOLIO_DONE
            Share daalna fail -> pehle baar-baar koshish (share dena hi sahi raasta).
-           Phir bhi na ho -> jo-jo step hua SAB ulta: Ramesh ka 30k wapas, Suresh ke share wapas (SAGA).
+           Phir bhi na ho -> jo step hua wo ulta (SAGA). WALLET step me Ramesh -30k, Suresh +30k hua tha
+           -> Ramesh ko 30k wapas, Suresh se 30k wapas. Share hile hi nahi, unka kuch ulta nahi.
            Settlement khud gira -> uth ke likha haal dekhti, wahin se aage ya ulta.
 ```
 ```mermaid
@@ -220,7 +222,7 @@ flowchart TD
 ```
 DIKKAT 2   2PC kyun nahi?
 HAL        2PC me dono DB lock pakad ke intezaar karte. Coordinator gira = dono atke, har sauda dheema.
-           SAGA me lamba lock nahi. Keemat: thodi der galat haalat dikh sakti.
+           SAGA me lamba lock nahi. Keemat: beech me haal PENDING dikhta (galat number nahi).
 
 DIKKAT 3   Ulta kaam (paisa wapas) bhi fail?
 HAL        Baar-baar koshish (do baar chale to bhi asar ek baar) + alert. Paisa wapas kabhi chhodna nahi.
@@ -482,8 +484,8 @@ API: POST /order {stock, side, qty, price, type, idempotencyKey} · DELETE /orde
 
 ```
 Order Service = check + idempotency · Wallet = paisa BLOCK · Event Log = number + replay + audit
-Matching = ek stock ek thread, book RAM me, stock ke hisaab
-se baanto · Settlement = ek transaction / alag DB = SAGA
+Matching = ek stock ek thread, book RAM me, stock ke hisaab se baanto
+Settlement = ek transaction / alag DB = SAGA
 ```
 ```
 JAWAB:    Order service check karti aur dobara order rokti (id se). Wallet paisa block karta. Order
