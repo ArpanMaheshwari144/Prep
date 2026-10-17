@@ -65,29 +65,6 @@ NUMBERS (andaaza):
 
 ---
 
-## 4 WAJAH -> 4 FIX (poori file ki chaabi)
-
-> Interviewer kuch bhi poochhe, pehle pakdo "ye kaunsi WAJAH hai". Jawab us wajah ka FIX hai.
-> 35 jawab yaad nahi rakhne, ye 4 rakhne hain.
-
-```
-WAJAH                                    FIX                                          CARD
-A  do thread / server ek hi cheez ko     check + badlo EK atomic query me, ya ek     2, 3
-   ek saath badal rahe (race)            stock ka ek hi thread (kram = lock)
-B  cheez RAM me thi, server gira         pehle log me likho (sirf jodo), phir RAM;   5
-   (sab gayab)                           gira to log se replay
-C  do jagah likhna, beech me crash       ek transaction; alag DB ho to har step ka   6, 7
-   (aadha likha)                         haal likho + aage badho, match ke baad ulta nahi
-D  ek hi request do baar aayi            app ki id + server pe UNIQUE                1
-   (duplicate)
-
-SCALE ke 2 sawaal in 4 me nahi:
-   9:15 ka jhatka = stocks ke BEECH baanto, ek stock ke andar nahi (card 4)
-   price  = PUSH karo, har user ka poochhna (poll) nahi            (card 8)
-```
-
----
-
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card bas: CUE -> DIKKAT -> HAL -> NAHI (jo galat jawab log pehle bolte). Diagram aur AAGE POOCHEGA
@@ -144,7 +121,7 @@ flowchart TD
     n_Order_Service --> n_DB
 ```
 ```
-AAGE POOCHEGA (wahi WAJAH D):
+AAGE POOCHEGA:
   "Button pehli tap pe band?"
      -> Haan, aur id order screen khulte banti. Pehli baar order + jawab save, doosri baar saved jawab.
   "Pehli request abhi chal hi rahi, dobara wali aa gayi?"
@@ -174,7 +151,7 @@ flowchart TD
     n_Wallet --> n_DB
 ```
 ```
-AAGE POOCHEGA (wahi WAJAH A, ya block ka hisaab):
+AAGE POOCHEGA:
   "Java me synchronized?"
      -> Sirf ek machine ke andar; yahan do server hain.
   "SELL pe? Mere paas 10 TCS, laptop aur phone dono se SELL 10."
@@ -217,7 +194,7 @@ flowchart TD
     n_Matching_Engine --> n_DB
 ```
 ```
-AAGE POOCHEGA (wahi WAJAH A):
+AAGE POOCHEGA:
   "Har order pe lock?"
      -> Race Suresh ke 10 share pe hai, order pe nahi; dono BUY apna-apna lock lete, dono ko 10 dikhte.
   "5000 stock = 5000 thread?"
@@ -285,7 +262,7 @@ flowchart TD
     n_Matching_Engine --> n_DB
 ```
 ```
-AAGE POOCHEGA (wahi WAJAH B):
+AAGE POOCHEGA:
   "Number kaun deta?"
      -> Log / sequencer (ek stock ki ek line, Kafka offset jaisa). Order Svc nahi, warna uski do
         machine same number de dein. Yahi log audit bhi.
@@ -328,7 +305,7 @@ flowchart TD
     n_Settlement --> n_DB
 ```
 ```
-AAGE POOCHEGA (wahi WAJAH C):
+AAGE POOCHEGA:
   "Sab likho, phir 'done' flag?"
      -> Flag se pehle gira to kitna likha pata hi nahi.
   "Ledger?"
@@ -372,7 +349,7 @@ flowchart TD
     n_Settlement --> n_Portfolio_DB
 ```
 ```
-AAGE POOCHEGA (wahi WAJAH C):
+AAGE POOCHEGA:
   "Step-step ki keemat?"
      -> Beech me haal PENDING dikhta (galat number nahi). 2PC jaisa lamba lock nahi.
   "Mera paisa wapas kyun nahi?"
