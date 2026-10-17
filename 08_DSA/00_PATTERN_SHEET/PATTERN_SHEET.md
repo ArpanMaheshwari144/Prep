@@ -407,6 +407,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          }
      CRUX = DUPLICATE skip 3 JAGAH: (1) fixed i (i>0 && nums[i]==nums[i-1]) (2) match ke baad LOW (3) match ke baad HIGH.
      sum = -nums[i] (fixed ko doosri taraf) -> sorted pe 2-pointer (= 2SUM-II).
+    ★ && (|| nahi): pehle low<high dekho, jhooth ho to nums[low+1] padho hi mat (bahar nahi jaana).
+    ★ skip ke BAAD bhi low++ / high--: skip loop AAKHRI copy pe rukta, naye number pe nahi.
+      bina ++ ke wahi triplet dobara.  ([-2,0,0,2,2] me L idx2 = 0, H idx3 = 2 pe rukte)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ IS SUBSEQUENCE
