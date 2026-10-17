@@ -12,12 +12,12 @@
 1  subah 7, sabko wahi 20, har baar DB pe     -> FEED CACHE (Redis SORTED SET)         Redis
 2  meri feed me khabar 20 min purani          -> KAFKA: laana aur likhna alag          Kafka + Worker
 3  8 baje election result, 40 guna bheed      -> LB + READ REPLICA                     LB + Read replica
-4  dopahar "India ne match jeeta" 5 baar      -> DEDUPE (hash + SimHash) + BLOOM       (Worker me dedupe)
-5  ek chhota source 30 sec atka               -> TIMEOUT + CIRCUIT BREAKER (fuse)      (Fetcher me fuse)
+4  dopahar "India ne match jeeta" 5 baar      -> DEDUPE (title hash + SimHash)         (Worker me dedupe)
+5  dopahar baad ek source 30 sec atka         -> TIMEOUT + CIRCUIT BREAKER (fuse)      (Fetcher me fuse)
 6  shaam ko mujhe sirf tech + sports          -> CATEGORY FEED, padhte waqt milao      (Redis me feed:tech)
 7  raat ko maine "cricket" dhoondha           -> INVERTED INDEX                        Elasticsearch
-8  6 mahine me ~2 crore row, kharcha          -> mahine ka PARTITION, purana ARCHIVE   Archive (S3)
-9  source 100 guna, ek DB nahi jhelti         -> SHARD hash(article_id)                (DB ke tukde)
+8  raat DBA mail: 2 crore row, kharcha        -> mahine ka PARTITION, purana ARCHIVE   Archive (S3)
+9  mail aage: 100 guna, ek DB nahi jhelegi    -> SHARD hash(article_id)                (DB ke tukde)
 
 POORA DESIGN (upar ke dabbe kram se):
    LIKHNA: Sources -> Fetcher (timeout + fuse) -> Kafka -> Worker (saaf + dedupe + category)
@@ -231,7 +231,7 @@ AAGE POOCHEGA:
   "5 me se kaunsa source dikhao?"  -> jo pehle aaya / bada source; baaki "aur sources" me link.
 ```
 
-#### 5 Ek chhota source 30 second atka, baaki 999 bhi ruke
+#### 5 Dopahar baad meri feed ruki: ek chhota source 30 sec atka, baaki 999 bhi ruke
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -360,7 +360,7 @@ AAGE POOCHEGA:
                                       bahut data, DB pe bojh nahi.
 ```
 
-#### 8 6 mahine me ~2 crore row, kharcha badhta ja raha
+#### 8 Raat ko DBA ka mail: 6 mahine me ~2 crore row, kharcha badhta ja raha
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -396,8 +396,8 @@ flowchart LR
     style n_Archive fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     6 mahine me ~2 crore khabar ki row: disk, backup, kharcha badhta ja raha. Taazi 20 ke alawa purana
-           koi padhta hi nahi. (Query dheemi NAHI hui: published_at pe index hai.)
+DIKKAT     Usi raat DBA ka mail: 6 mahine me ~2 crore khabar ki row, disk / backup ka kharcha badh raha.
+           Taazi 20 ke alawa purana koi padhta hi nahi. (Query dheemi NAHI hui: published_at pe index hai.)
 HAL        PARTITION + ARCHIVE: Postgres me har mahine ka alag tukda. Purana -> DETACH -> S3 archive.
            Jo kabhi nahi chahiye -> tukda DROP (ek pal ka kaam).
 NAHI       "sharding karo": ye purana hatana (retention) hai, data baantna (sharding) nahi.
@@ -411,7 +411,7 @@ AAGE POOCHEGA:
   "3 saal baad?"                   -> wahi: hafta garam, baaki thanda.
 ```
 
-#### 9 Source 100 guna, ek DB machine nahi jhel rahi
+#### 9 Mail ka doosra hissa: source 100 guna hue to ek DB machine nahi jhelegi
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -447,7 +447,7 @@ flowchart LR
     style n_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Source 100 guna ya log khud content daalne lage -> ek DB machine likhai aur data nahi jhelti.
+DIKKAT     Mail aage: "source 100 guna ya log khud content daalne lage to ek DB likhai aur data nahi jhelegi."
            (Hamare number pe ek DB kaafi hai, ye sirf bahut bade scale pe.)
 HAL        SHARD (data tukdon me, alag machine) hash(article_id) se -> likhai sab tukdon pe barabar.
            Keemat: "taazi 20" ke liye har tukde se thoda (scatter-gather), par wo to Redis se aata hi hai.
@@ -470,7 +470,7 @@ LIKHNA: Sources -> Fetcher (timeout / dobara / skip + fuse) -> Kafka (bheed samb
 PADHNA: LB -> Feed Svc (kai machine) -> Redis (99%, taazi feed pehle se bani) -> nahi mila to read replica
         search = Elasticsearch · purani khabar = Archive
 
-DB:  Postgres (primary + read replica + mahine ke tukde) -> likhai sirf ~3 / second, ek machine kaafi;
+DB:  Postgres (primary + read replica + mahine ke tukde) -> likhai sirf ~1 / second, ek machine kaafi;
      "taazi 20" index se seedha; padhai Redis aage se sambhaalta
      (likhai 100 guna ho jaaye tab hi Cassandra jaisa / shard socho)
 ```
@@ -546,7 +546,7 @@ API:      GET /feed?page=1&category=tech -> taazi list (page me, neeche scroll; 
 DB:       ARTICLE: id | title | content | sourceId | category | publishedAt | url
           SOURCE:  id | name | rssUrl | lastFetchedAt
           USER_PREFS (optional): userId | categories[] | savedArticles[]
-          Postgres: likhai ~3 / second (chhoti), "ORDER BY published_at DESC LIMIT 20" index se,
+          Postgres: likhai ~1 / second (chhoti), "ORDER BY published_at DESC LIMIT 20" index se,
                     primary + read replica, mahine ke tukde (partition) -> purana archive
           Mongo bhi chal jaata (replica set + TTL). Cassandra tab jab likhai bahut badi ho jaaye;
           par Cassandra me primary-replica nahi (sab node barabar, leaderless)
