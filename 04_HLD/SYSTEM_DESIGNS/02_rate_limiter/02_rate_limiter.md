@@ -13,6 +13,27 @@ DESI MISAAL: park me nal. Normal banda 1 bottle bharta, ek pagal banda 10 truck 
 
 ---
 
+## KAHANI (ek din, mera login aur ek bot; har dikkat se design me ek dabba judta)
+
+```
+   KYA HUA                                     ILAAJ                                DABBA JUDA
+1  password bhoola, 9 login, sab andar      -> Redis me EK ginti (INCR + EXPIRE)    LB + App x2 + Redis
+2  bot ke 20 login ek pal me, 6 ghuse       -> ATOMIC: INCR / LUA script            (Redis atomic)
+3  bot ki 429 wali bhi App tak ghoomi       -> LIMITER GATEWAY pe, sabse aage       API Gateway
+4  dopahar Redis gira, limiter andha        -> REPLICA + FAIL-OPEN / FAIL-CLOSED    Redis Cluster + R53 + ALB
+5  meri script 3 region se, 150 nikli       -> HOME REGION me ginti                 (ginti ghar wale Redis me)
+6  bot har 60 sec phir aa jaata             -> KAFKA -> PATTERN -> WAF BAN          Kafka + Pattern Svc + WAF
+7  shaam sale, sab limit me, server gira    -> GLOBAL CAP + LOAD SHEDDING (503)     (gateway pe system ki had)
+8  raat attack, Redis gira, sab allow       -> LOCAL COUNTER FALLBACK               (gateway ki memory)
+9  office ka ek IP, 1000 log block          -> KEY = USER_ID (JWT), IP sirf login   (key badli)
+
+POORA DESIGN (upar ke dabbe kram se):
+   User -> Route 53 -> WAF -> ALB -> API Gateway (limiter) -> Redis Cluster (token bucket Lua) -> App
+   baar-baar wala: Gateway -> Kafka -> Pattern Svc -> WAF ban
+```
+
+---
+
 ## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![How Does Redis Persist Data?](https://assets.bytebytego.com/diagrams/0214-how-redis-presists-data.png)
@@ -50,113 +71,123 @@ NUMBERS:  jagah ka hisaab bekaar hai: har user ki ek ginti + expiry, bas.
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-> Har card: DIKKAT 1 (kya toota) -> HAL (kya kiya) -> diagram -> DIKKAT 2, 3 ... (interviewer ke
-> agle sawaal) har ek ke neeche uska HAL. Revise: sirf baayein column padho.
+> Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
+> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 App ki memory me ek ginti. Har request pe ginti + 1. Had paar -> 429.
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_USER --> n_App
 ```
 
-#### 1 DO SERVER, GINTI BAT GAYI
+#### 0 SHURU: TOKEN BUCKET KAISE CHALTA (yahi algo chuna)
 ```
-DIKKAT 1   Limit hai "ek minute me 5 login". App ki 2 machine, LB request baant raha.
-           Arpan ne 9 baar login try kiya: App-1 pe 5, App-2 pe 4 gayi.
-           Har App ne apni ginti dekhi: 5, 4 -> kisi ko 5 PAAR nahi dikha. 9 andar ghus gayi.
-HAL        Ginti sab machines ki EK jagah: Redis. Key = "rate:Arpan:login".
-           Har request pe +1 (INCR). Pehli request pe key ki umar 60 sec (EXPIRE) -> 60 sec baad key khud
-           mit jaati -> naya minute, ginti 0. Ginti 5 se upar -> 429.
-           (Ye "har minute ka dabba" = fixed window, samajhne ke liye sabse simple.
-            Asli chuna TOKEN BUCKET hai, wo Redis me kaise -> neeche ALGO card.)
+SCENE      Ek baalti me token hain (max 10). Har second 1 token bharta hai. Har request 1 token leti hai.
+           Baalti khaali -> 429. Baalti bhari ho to 10 request ek saath bhi nikal jaati hain (burst),
+           aur asli traffic aisa hi hota hai. Redis me sirf 2 number, bharna request aane pe.
+
+           REDIS ME KAISE (ek HASH, ek Lua script; had 10, bharna 1 token / second):
+             key tb:Arpan:login -> tokens = 7, last = 10:00:05
+             Request aayi 10:00:08 -> 3 second beete x 1 = 3 token bharo -> 7 + 3 = 10 (had 10 se upar nahi)
+             -> token >= 1? haan -> 1 ghatao -> tokens = 9, last = 10:00:08 -> ALLOW
+             Khaali (tokens 0) -> 429, Retry-After = agla token kab bharega.
+             Padhna + hisaab + likhna EK Lua script me (HMGET -> hisaab -> HSET + EXPIRE), to do request
+             ek saath aake aakhri token dono nahi le sakti. Time app se bhejo ya Redis ka TIME, ek hi rakho.
+
+DIKKAT 1   Fixed window (har minute ka ek dabba) kyun nahi?
+HAL        Sasta, par kinare pe double (59th + 61st second).
+
+DIKKAT 2   Sliding log?
+HAL        Har request ka time likho, pichhle 60 second ki gino. Bilkul sahi, par memory bahut.
+
+DIKKAT 3   Sliding counter?
+HAL        Is minute ki + pichhle minute ka hissa (jaise 70%) jodo. 2 number, lagbhag sahi.
+
+DIKKAT 4   Leaky bucket?
+HAL        Request line me, nikalti ek fixed speed se. Smooth, par burst nahi nikalne deta.
+
+DIKKAT 5   Token bucket hi kyun?
+HAL        Burst chahiye + memory kam + Redis me 2 number. (AWS / Stripe yahi lete hain.)
 ```
+
+#### 1 Password bhool gaya, 9 baar login kiya, saari andar chali gayi
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Redis["Redis"]
+    n_Redis["Redis<br/>do App, ginti bat gayi<br/>-> ek ginti, INCR + EXPIRE"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
+    style n_Redis fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Minute ke aakhri second pe 5, agle minute ke pehle second pe 5 -> 2 second me 10?
-HAL        Haan, fixed window ki kamzori, kinare pe double nikal jaata.
-           Token bucket / sliding window se theek.
+DIKKAT     Subah 9 baje password bhool gaya, 9 baar login (limit 5 / min). LB ne baanta: App-1 pe 5, App-2
+           pe 4. Har App ne apni ginti dekhi -> kisi ko 5 PAAR nahi dikha, 9 andar.
+HAL        REDIS me EK ginti: key "rate:Arpan:login", har request +1 (INCR). Pehli pe umar 60 sec (EXPIRE)
+           -> 60 sec baad key khud mitti, naya minute, ginti 0. Ginti 5 se upar -> 429.
+NAHI       ek user hamesha ek App pe (sticky LB): wo App gira to ginti gayi; App badhe / ghate to phir bati.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: ginti sab machines ki ek jagah; key ki umar = window, umar khatam = ginti reset.
+  "Ye kaunsa algo hua?"            -> fixed window (har minute ka dabba), samajhne ko sabse simple;
+                                      asli chuna token bucket, wo bhi isi Redis me.
+  "Aakhri sec 5 + agle ke pehle 5?" -> haan, 2 second me 10: fixed window ki kamzori, kinare pe double.
+                                      Token bucket / sliding window se theek.
+  "Har request Redis tak = time?"  -> Redis RAM me, paas ke data center me ~1 ms. Chalta hai.
+  "DB me ginti kyun nahi?"         -> har request pe DB me likhna; disk + lock = dheema. Redis RAM = tez.
+```
 
-DIKKAT 3   Har request pe Redis tak jaana = time?
-HAL        Redis RAM me hai, paas ke data center me ~1 ms. Chalta hai.
-
-DIKKAT 4   DB me ginti kyun nahi?
-HAL        Har request pe DB me likhna padega. DB disk pe likhta + lock lagata = dheema. Redis RAM = tez.
-
-DIKKAT 5   Ek user ko hamesha ek hi App pe bhejo (sticky LB)?
-HAL        Wo App gira to ginti gayi. App badhe / ghate to bantwara badla, ginti phir bat gayi.
-```
-
-#### 2 DO REQUEST EK SAATH, DONO GHUS GAYI
-```
-DIKKAT 1   Ginti 4 pe hai, limit 5. Bot ne Arpan ke account pe ek hi pal me 20 login parallel bheje,
-           LB ne do App pe baante. App-1 ne Redis se padha "4", App-2 ne bhi "4".
-           Dono ne +1 kiya aur "5" likha -> andar 6 ghus gayi.
-HAL        Redis ek hi line (single thread) me kaam karta: ek command poora hone tak doosra shuru hi
-           nahi hota. Isliye INCR ek saath aaye to bhi +1, +1 sahi.
-           Token bucket me do kaam ("token bacha?" dekhna + "ek ghatao") -> dono ek LUA script me.
-           Lua bhi ek command ki tarah poora chalta, beech me doosri request aakhri token nahi le sakti.
-```
+#### 2 Bot ne mere account pe 20 login ek saath bheje, 6 ghus gaye
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Redis["Redis<br/>INCR / Lua (atomic)"]
+    n_Redis["Redis<br/>do ne 4 padha, 6 ghuse<br/>-> INCR / Lua (atomic)"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
+    style n_Redis fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Key ki umar (EXPIRE) har request pe laga di?
-HAL        Har baar umar phir 60 se shuru -> key kabhi mitegi hi nahi. Umar sirf pehli request pe (ginti 1).
-           Aur INCR ke baad, EXPIRE se pehle App crash -> key bina umar ke -> user hamesha block.
-           Isliye dono ek Lua script me.
+DIKKAT     10 baje bot ne mere account pe ek hi pal me 20 login parallel bheje; ginti 4, limit 5.
+           App-1 ne Redis se "4" padha, App-2 ne bhi "4". Dono ne +1 karke "5" likha -> andar 6.
+HAL        ATOMIC: Redis ek hi line (single thread) me, ek command poora hone tak doosra shuru nahi -> INCR
+           +1, +1 sahi. Token bucket ke do kaam (dekhna + ghatana) ek LUA script me, beech me koi nahi.
+NAHI       App me padho, +1, phir likho: padhne aur likhne ke beech doosra ghus jaata.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: dekhna + badalna ek hi kadam, Redis ke andar; beech me koi request nahi ghus sakti.
+  "EXPIRE har request pe?"         -> umar phir 60 se, key kabhi nahi mitegi; sirf pehli pe (ginti 1).
+  "INCR ke baad, EXPIRE se pehle crash?" -> key bina umar ke, user hamesha block; isliye dono ek Lua me.
+  "Token bucket, Redis me kya?"    -> sirf 2 number: kitne token bache + aakhri baar kab dekha.
+  "10 crore bucket bharne ka job?" -> koi job nahi; request AANE pe: beeta time x speed utne jodo (had tak),
+                                      phir 1 ghatao. Jo aa hi nahi raha, uski key umar se khud mitti.
+  "Lua dheema ya atak gaya?"       -> poora Redis rukega (ek line me); isliye script chhota, koi loop nahi.
+  "Ek line me = dheema nahi?"      -> RAM, ek machine lagbhag lakh command / sec (andaza); zyada -> SHARD.
+```
 
-DIKKAT 3   Token bucket me Redis me kya rakhoge? 10 crore user ke bucket bharne ko koi job?
-HAL        Sirf 2 number: kitne token bache + aakhri baar kab dekha. Koi job nahi.
-           Bharna request AANE pe: "pichhli baar se kitna time beeta x bharne ki speed" utne token jodo
-           (had tak), phir 1 ghatao. Jo user aa hi nahi raha, uski key umar se khud mit jaati.
-
-DIKKAT 4   Lua script dheema ho gaya ya atak gaya?
-HAL        Redis ek hi line me chalta -> poora Redis ruk jaayega. Isliye script chhota, koi loop nahi.
-
-DIKKAT 5   Ek hi line me chalta hai, to dheema nahi?
-HAL        RAM me hai, ek machine lagbhag lakh command / second (andaza, machine pe depend).
-           Zyada chahiye -> SHARD.
-```
-
-#### 3 REJECT WALI REQUEST BHI ANDAR GHOOM AAYI
-```
-DIKKAT 1   Limiter App ke andar tha. Bot ki jis request ko 429 milna tha, wo bhi LB se App tak ghoom ke
-           aayi, tab jaake mana hui. Machines ka kaam bekaar gaya.
-HAL        Limiter sabse aage, darwaze (API gateway) pe. Gateway har request pe Redis se poochhta:
-           had ke andar -> aage App ko · bahar -> wahin 429. Mana wali request andar pahunchti hi nahi.
-```
+#### 3 Bot ki 429 wali request bhi App tak ghoom ke aayi
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_API_Gateway["API Gateway"]
+    n_API_Gateway["API Gateway<br/>429 wali bhi andar ghoomi<br/>-> limiter sabse aage"]
     n_Redis["Redis"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
@@ -165,40 +196,33 @@ flowchart TD
     n_API_Gateway --> n_Redis
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
+    style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   429 ke saath client ko kya bataoge?
-HAL        "Kab dobara aao" (Retry-After: 30) aur "kitni bachi" (X-RateLimit-Remaining).
-           Retry-After me thoda aage-peeche (jitter, jaise 28, 33), warna sab theek 30 sec baad ek saath
-           aayenge -> nayi laher.
+DIKKAT     11 baje wahi bot. Limiter App ke andar tha -> jis request ko 429 milna tha, wo bhi LB se App tak
+           ghoom ke aayi, tab jaake mana. Machines ka kaam bekaar gaya.
+HAL        LIMITER GATEWAY PE: sabse aage, gateway har request pe Redis se poochhta: had ke andar -> App ko,
+           bahar -> wahin 429. Mana wali request andar pahunchti hi nahi.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: jitna aage roko, utna kam kaam bekaar; aur client ko batao kab aaye.
+  "429 ke saath kya bataoge?"      -> kab dobara aao (Retry-After: 30) + kitni bachi (X-RateLimit-Remaining).
+  "Sab theek 30 sec baad aaye?"    -> nayi laher; isliye Retry-After me jitter (jaise 28, 33).
+  "Gateway khud gira?"             -> gateway ki bhi 2+ machine, aage LB.
+  "Limit bina naya code badalni?"  -> niyam CONFIG me (DB / AWS AppConfig); gateway memory me, har ~30 sec
+                                      naye padh leta (sale me login 5 se 10).
+  "Sirf gateway, ya service bhi?"  -> gateway pe sabke liye ek moti limit, service ke andar apni baarik.
+```
 
-DIKKAT 3   Gateway khud gira?
-HAL        Gateway ki bhi 2+ machine, aage LB.
-
-DIKKAT 4   Har endpoint ki limit alag ho, aur bina naya code daale badalni ho (sale me login 5 se 10)?
-HAL        Niyam CONFIG me rakho (DB / AWS AppConfig). Gateway unhe memory me rakhta, har ~30 sec naye
-           padh leta.
-
-DIKKAT 5   Limit sirf gateway pe, ya service ke andar bhi?
-HAL        Gateway pe sabke liye ek moti limit, service ke andar uski apni baarik limit.
-```
-
-#### 4 REDIS GIR GAYA
-```
-DIKKAT 1   Saari ginti Redis me thi. Redis mar gaya -> kisi ko pata hi nahi kisne kitni bheji.
-           Limiter andha.
-HAL        Redis ki copy doosri building me. Likhna main pe, copy thodi der baad. Main mara -> baaki
-           machines vote karke copy ko main bana deti (Redis Cluster / Sentinel).
-           Poora Redis hi chala gaya: aam cheezein (feed, search) sabko jaane do (FAIL-OPEN), login / OTP
-           sabko roko (FAIL-CLOSED), warna koi bina had password guess karta rahega.
-```
+#### 4 Dopahar Redis gira, limiter andha ho gaya
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
     n_ALB["ALB"]
     n_API_Gateway["API Gateway"]
-    n_Redis_Cluster["Redis Cluster"]
+    n_Redis_Cluster["Redis Cluster<br/>Redis gira, limiter andha<br/>-> copy + fail-open / closed"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
     n_USER --> n_Route_53
@@ -207,44 +231,36 @@ flowchart TD
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
+    style n_Redis_Cluster fill:#f9a825,color:#000
+    style n_Route_53 fill:#f9a825,color:#000
+    style n_ALB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Switch ke beech aakhri kuch ginti kho gayi?
-HAL        Haan, copy thodi peeche thi. Rate limit me chalta hai, ye paisa nahi.
-
-DIKKAT 3   Redis gira nahi, bas bojh se dheema hai (CPU full)?
-HAL        Copy se nahi bachega: har request pe INCR = LIKHNA, aur likhna sirf main pe. Ilaaj = SHARD
-           (Redis Cluster): user ke hisaab se keys 3-4 main machine me baanto, har ek pe 1/4 bojh.
-           Yaad rakh: copy = bachav + padhne ka bojh. Shard = likhne ka bojh.
-
-DIKKAT 4   Fail-open ya fail-closed, kab tay karoge?
-HAL        PEHLE se, code me, har endpoint ke hisaab se. Redis gire tab sochne ka time nahi hota.
-
-DIKKAT 5   Lua script me 2 key hain aur Redis Cluster hai?
-HAL        Cluster me Lua ki saari key EK hi machine pe honi chahiye. Key ke naam me {Arpan} jaisa tag:
-           rate:{Arpan}:min aur rate:{Arpan}:day -> sirf {} ke andar se machine tay -> dono ek jagah.
-
-DIKKAT 6   Diagram me Route 53 aur ALB kyun aaye?
-HAL        Redis ki tarah LB bhi ek hi ho to wahi gira = sab gira. ALB kai zone me, Route 53 dekhta
-           kaunsa zinda, usi pe bhejta.
+DIKKAT     Dopahar Redis mar gaya. Saari ginti wahin thi -> kisi ko pata hi nahi kisne kitni bheji.
+HAL        REPLICA + FAIL-OPEN / FAIL-CLOSED: copy doosri building me; main mara -> vote se copy main
+           (Cluster / Sentinel). Poora gaya: aam cheezein (feed, search) jaane do, login / OTP roko.
+NAHI       sab fail-open: login khula = koi bina had password guess karta rahega.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: faisla pehle se, endpoint ke hisaab se; copy = bachav + padhne ka bojh, shard = likhne ka bojh.
+  "Switch me aakhri ginti khoi?"   -> haan, copy thodi peeche thi. Rate limit me chalta, ye paisa nahi.
+  "Gira nahi, CPU full?"           -> copy se nahi: INCR = LIKHNA, sirf main pe. SHARD (Redis Cluster):
+                                      user ke hisaab se keys 3-4 main me, har ek pe 1/4 bojh.
+  "Fail-open ya closed, kab tay?"  -> PEHLE se, code me, har endpoint ke hisaab se; gire tab time nahi.
+  "Cluster me Lua ki 2 key?"       -> saari key EK machine pe: tag, rate:{Arpan}:min + rate:{Arpan}:day
+                                      -> sirf {} ke andar se machine tay -> dono ek jagah.
+  "Route 53 aur ALB kyun aaye?"    -> ek hi LB = wahi gira sab gira; ALB kai zone me, Route 53 zinda pe bheje.
 ```
 
-#### 5 EK API KEY TEEN REGION SE
-```
-DIKKAT 1   Limit 100 / minute ek API key pe. Arpan ki script 3 cloud server pe chal rahi: Mumbai, Frankfurt,
-           US. Har server paas wale region pe gaya, har region ka apna Redis, har ek ne 50 gina
-           -> kisi ko 100 paar nahi dikha. 150 nikal gayi.
-HAL        Har user ka ek HOME region (user_id se). Request kahin se aaye, ginti HOME region me hi.
-           Arpan ka home = India. Frankfurt ka gateway dekhta "iska ghar India" -> India ke Redis tak bhejta.
-           Teeno region ki request ek hi ginti me -> 100 pe ruk jaata.
-```
+#### 5 Meri script 3 region se chali, 100 ki jagah 150 nikal gayi
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
     n_ALB["ALB"]
     n_API_Gateway["API Gateway"]
-    n_Redis_Cluster["Redis Cluster"]
+    n_Redis_Cluster["Redis Cluster<br/>3 region, 150 nikli<br/>-> ginti home region me"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
     n_USER --> n_Route_53
@@ -253,32 +269,72 @@ flowchart TD
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
+    style n_Redis_Cluster fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Har request pe India tak jaana = 100-200 ms extra?
-HAL        Haan. Isliye home region sirf paisa / security wale endpoint pe.
-           Baaki pe har region apni ginti + har second aapas me milaate rehna (sync).
+DIKKAT     2 baje meri script 3 cloud server pe (Mumbai, Frankfurt, US), limit 100 / min ek API key pe.
+           Har region ka apna Redis, har ek ne 50 gina -> kisi ko 100 paar nahi dikha, 150 nikal gayi.
+HAL        HOME REGION (user_id se): request kahin se aaye, ginti ghar me. Mera ghar India -> Frankfurt ka
+           gateway India ke Redis tak bhejta. Teeno region ek ginti me -> 100 pe ruka.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: ek user ki ek ginti, ek ghar me; door jaane ka kharcha sirf zaroori endpoint pe.
+  "Har request India = 100-200 ms?" -> haan; isliye home region sirf paisa / security wale endpoint pe.
+                                      Baaki pe har region apni ginti + har second aapas me milaao (sync).
+  "Apni ginti + sync, kitna zyada?" -> milaane ke beech (~1 sec) har region poori limit de sakta; halki
+                                      limit ke liye chalta.
+  "Mera home region hi gira?"      -> Route 53 doosre region, ginti wahan 0 se. Ek minute dheela, chalta hai.
+```
 
-DIKKAT 3   Har region apni ginti rakhe aur baad me milaaye, to kitna zyada nikal jaata?
-HAL        Milaane ke beech (~1 sec) har region apni poori limit de sakta. Halki limit ke liye chalta.
-
-DIKKAT 4   Arpan ka home region hi gira?
-HAL        Route 53 doosre region bhejta, ginti wahan 0 se. Ek minute dheela, chalta hai.
-```
-
-#### 6 BAAR-BAAR MAAR RAHA, 429 SE NAHI RUKTA
-```
-DIKKAT 1   429 sirf bolta "60 second baad aao". Bot 60 second baad phir aa jaata, din bhar, roz.
-HAL        Har 429 pe ek khabar Kafka me. Pattern service dekhti: "is IP ko 10 minute me 500 se zyada 429
-           mile?" -> haan -> WAF ki block list me kuch der ke liye.
-           WAF sabse aage (edge pe) baitha, us IP ki agli request server tak pahunchti hi nahi.
-```
+#### 6 Wahi bot har 60 sec baad phir aa jaata, din bhar
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
     n_ALB["ALB"]
     n_API_Gateway["API Gateway"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Kafka["Kafka<br/>bot har 60 sec phir<br/>-> pattern dekh ke WAF ban"]
+    n_Pattern_Svc["Pattern Svc"]
+    n_WAF["WAF"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    n_Kafka --> n_Pattern_Svc
+    n_Pattern_Svc --> n_WAF
+    n_API_Gateway --> n_Kafka
+    n_USER --> n_Route_53
+    n_Route_53 --> n_WAF
+    n_WAF --> n_ALB
+    style n_Kafka fill:#f9a825,color:#000
+    style n_Pattern_Svc fill:#f9a825,color:#000
+    style n_WAF fill:#f9a825,color:#000
+```
+```
+DIKKAT     4 baje bhi wahi bot. 429 sirf bolta "60 second baad aao" -> bot 60 sec baad phir, din bhar, roz.
+HAL        KAFKA -> PATTERN -> WAF BAN: har 429 ki khabar Kafka me; Pattern svc: "IP ko 10 min me 500+ 429?"
+           -> WAF ki block list me kuch der. WAF sabse aage (edge), agli request server tak aati hi nahi.
+NAHI       turant ban: asli user bhi tez click karta, office ke 100 log ek IP (NAT), sale me asli bheed.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: limit maafi wali; ban sirf pakke gunde pe, pattern dekh ke, aur apne aap hatne wala.
+  "Galat banda ban (office ka IP)?" -> ban ki umar (~24 ghante), apne aap hatta, haath se hatane ka raasta.
+  "Gateway seedha Pattern call?"   -> har request pe ek aur call = gateway dheema; Kafka me daal ke bhool jao.
+  "Kafka peeche reh gaya?"         -> ban kuch minute late lagega; tab tak rate limit to rok hi raha.
+```
+
+#### 7 Shaam ki sale, har koi limit me, phir bhi server gira
+```mermaid
+flowchart LR
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway<br/>sab limit me, server gira<br/>-> global cap + load shedding"]
     n_Redis_Cluster["Redis Cluster"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
@@ -295,38 +351,30 @@ flowchart TD
     n_USER --> n_Route_53
     n_Route_53 --> n_WAF
     n_WAF --> n_ALB
+    style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Turant ban kyun nahi?
-HAL        Asli user bhi kabhi tez click karta. Ek office ke 100 log ek hi IP (NAT) ke peeche hote.
-           Sale me asli bheed bhi aati. Isliye limit maafi wali, ban sirf pakke gunde pe.
+DIKKAT     Shaam ko sale: 10,000 asli log, har koi 100 / min ke andar, par mila ke 12,000 / sec. Server 5,000
+           jhelta -> gira. Limiter ne kuch nahi roka, kisi ek ne galti ki hi nahi.
+HAL        GLOBAL CAP + LOAD SHEDDING: gateway pe poore system ki ek had; CPU 90% paar -> kuch request 503.
+           RATE LIMIT = ek USER ne kitni bheji (429) · LOAD SHEDDING = poora SYSTEM kitna jhel sake (503).
+```
+```
+AAGE POOCHEGA:
+  NIYAM: user ki had aur system ki had alag cheez; dono chahiye.
+  "Kaunsi request chhodoge?"       -> login / payment rakho; recommendation / analytics pehle chhodo.
+  "Machine apne aap badhe?"        -> nayi machine me minute lagte, bheed second me; pata ho (12 baje sale)
+                                      to pehle se badha do.
+  "Line (queue) me rok lo?"        -> chhota time (~2 sec); user chala gaya to uska kaam bekaar.
+```
 
-DIKKAT 3   Galat banda ban ho gaya (office ka IP)?
-HAL        Ban ki umar (~24 ghante), apne aap hat jaata, aur haath se hatane ka raasta bhi.
-
-DIKKAT 4   Gateway seedha Pattern service ko call kyun nahi karta?
-HAL        Har request pe ek aur call = gateway dheema. Kafka me daal ke bhool jao.
-
-DIKKAT 5   Kafka peeche reh gaya?
-HAL        Ban kuch minute late lagega. Tab tak rate limit to rok hi raha hai.
-```
-
-#### 7 LIMITER SAHI, PHIR BHI SERVER GIRA
-```
-DIKKAT 1   Har user ki limit 100 / minute, aur server ek second me 5,000 jhel sakta.
-           Sale shuru hui, 10,000 asli log aaye. Har koi apni limit ke andar, par sab mila ke 12,000 / sec.
-           Server gir gaya. Limiter ne kuch nahi roka, kyunki kisi ek ne galti ki hi nahi.
-HAL        (1) Gateway pe poore system ki ek had (global cap).
-           (2) LOAD SHEDDING: system thakne lage (CPU 90% paar) to kuch request seedha mana (503).
-             RATE LIMIT    = ek USER ne kitni bheji       -> 429
-             LOAD SHEDDING = poora SYSTEM kitna jhel sake  -> 503
-```
+#### 8 Raat ko attack aaya, usi waqt Redis gira, sab allow
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
     n_ALB["ALB"]
-    n_API_Gateway["API Gateway<br/>+ global cap + load shedding"]
+    n_API_Gateway["API Gateway<br/>attack me Redis gira, sab allow<br/>-> local counter fallback"]
     n_Redis_Cluster["Redis Cluster"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
@@ -343,33 +391,29 @@ flowchart TD
     n_USER --> n_Route_53
     n_Route_53 --> n_WAF
     n_WAF --> n_ALB
+    style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Kaunsi request chhodoge?
-HAL        Login / payment rakho. Recommendation / analytics pehle chhodo.
-
-DIKKAT 3   Machine apne aap badh jaayein (autoscale)?
-HAL        Nayi machine aane me minute lagte, bheed second me aati. Pata ho kab aayegi (12 baje sale) to
-           pehle se badha do.
-
-DIKKAT 4   Request ko line (queue) me rok lo?
-HAL        Chhota time (~2 sec). User chala gaya to uska kaam karna bekaar.
-```
-
-#### 8 ATTACK AAYA, USI WAQT LIMITER GAYAB
-```
-DIKKAT 1   Attack aaya -> Redis pe 50 guna bojh -> Redis gir gaya -> fail-open -> sab allow.
+DIKKAT     Raat ko attack -> Redis pe 50 guna bojh -> Redis gira -> fail-open -> sab allow.
            Jis waqt limiter sabse zyada chahiye tha, usi waqt gayab.
-HAL        Har server apni memory me ginti karne lage, had baant ke: poori had 100, 4 server -> har server
-           25 tak. Bilkul sahi nahi, par bina had se kahin achha. Redis wapas aaya -> phir sabki ek ginti.
+HAL        LOCAL COUNTER FALLBACK: har server apni memory me gine, had baant ke: 100, 4 server -> har ek 25.
+           Bilkul sahi nahi, par bina had se kahin achha. Redis wapas aaya -> phir sabki ek ginti.
 ```
+```
+AAGE POOCHEGA:
+  NIYAM: thodi galat had, bina had se behtar.
+  "Machine badh gayi, kitna baanto?" -> machines ki ginti config / service discovery se lo, dobara baanto.
+  "Ek user alag-alag machine pe?"  -> har machine 25 = motamoti, exact nahi; attack me "kuch nahi" se behtar.
+```
+
+#### 9 Office ki night shift: ek IP block, 1000 log atke
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
     n_ALB["ALB"]
-    n_API_Gateway["API Gateway<br/>+ global cap + load shedding<br/>+ local counter fallback"]
-    n_Redis_Cluster["Redis Cluster"]
+    n_API_Gateway["API Gateway"]
+    n_Redis_Cluster["Redis Cluster<br/>ek IP pe 1000 log<br/>-> key = user_id"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
     n_WAF["WAF"]
@@ -385,102 +429,48 @@ flowchart TD
     n_USER --> n_Route_53
     n_Route_53 --> n_WAF
     n_WAF --> n_ALB
+    style n_Redis_Cluster fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Machine badh gayi (autoscale), ab kitna baantoge?
-HAL        Machines ki ginti config / service discovery se lo, dobara baanto.
-
-DIKKAT 3   Ek user ki request alag-alag machine pe gayi?
-HAL        Har machine pe 25 -> motamoti, exact nahi. Par attack me "kuch nahi" se bahut behtar.
-```
-
-#### 9 IP PE GIN RAHE THE
-```
-DIKKAT 1   Office ke 1000 log ek hi IP ke peeche (NAT). Ek ne galti ki, IP block, saare 1000 block.
-           Ulta, ek botnet ke paas 1000 IP, har IP se thoda-thoda -> kisi IP ki limit nahi tooti.
-HAL        Login ke baad had user_id pe (JWT se): key = rate:<user_id>:<endpoint>.
-           Office ke 1000 log = 1000 alag ginti, ek ki galti se baaki nahi rukte.
+DIKKAT     Raat 11 baje office ki night shift: 1000 log ek IP (NAT) ke peeche, ek ki galti -> IP block, sab
+           1000 block. Ulta, botnet ke paas 1000 IP, har IP se thoda -> kisi IP ki limit nahi tooti.
+HAL        KEY = USER_ID: login ke baad (JWT se) rate:<user_id>:<endpoint> -> 1000 log = 1000 alag ginti.
            Login se pehle user_id hai hi nahi: rate:<IP>:login (dheeli had) + WAF.
-```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
-    n_API_Gateway["API Gateway<br/>+ global cap + load shedding<br/>+ local counter fallback"]
-    n_Redis_Cluster["Redis Cluster"]
-    n_Kafka["Kafka"]
-    n_Pattern_Svc["Pattern Svc"]
-    n_WAF["WAF"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_ALB --> n_API_Gateway
-    n_API_Gateway --> n_Redis_Cluster
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
-    n_Kafka --> n_Pattern_Svc
-    n_Pattern_Svc --> n_WAF
-    n_API_Gateway --> n_Kafka
-    n_USER --> n_Route_53
-    n_Route_53 --> n_WAF
-    n_WAF --> n_ALB
+NAHI       sirf IP pe had: NAT ke peeche sab ek, aur botnet ke paas hazaar IP.
 ```
 ```
-DIKKAT 2   Login se pehle botnet 1000 IP se password guess kar raha?
-HAL        IP limit bekaar. ACCOUNT pe limit: rate:<username>:login_fail
-           -> 5 galat password -> thodi der lock / CAPTCHA.
-
-DIKKAT 3   API key chori ho gayi?
-HAL        Key pe limit nuksaan seemit karti, aur key badalne / band karne ka raasta.
+AAGE POOCHEGA:
+  NIYAM: had us pehchaan pe jo ek insaan ki ho; IP sirf tab jab aur kuch na ho.
+  "Login se pehle botnet 1000 IP?" -> IP limit bekaar; ACCOUNT pe: rate:<username>:login_fail
+                                      -> 5 galat password -> thodi der lock / CAPTCHA.
+  "API key chori ho gayi?"         -> key pe limit nuksaan seemit karti; key badalne / band karne ka raasta.
 ```
 
-#### ALGO: kaunsa aur kyun
-```
-TOKEN BUCKET (yahi chuna):
-   Ek baalti me token hain (max 10). Har second 1 token bharta hai. Har request 1 token leti hai.
-   Baalti khaali -> 429. Baalti bhari hai to 10 request ek saath bhi nikal jaati hain (burst),
-   aur asli traffic aisa hi hota hai. Redis me sirf 2 number, bharna request aane pe.
+---
 
-   REDIS ME KAISE (ek HASH, ek Lua script):
-     key tb:Arpan:login -> tokens = 7, last = 10:00:05        (had 10, bharna 1 token / second)
-     Request aayi 10:00:08 -> 3 second beete x 1 = 3 token bharo -> 7 + 3 = 10 (had 10 se upar nahi)
-     -> token >= 1? haan -> 1 ghatao -> tokens = 9, last = 10:00:08 -> ALLOW
-     Khaali (tokens 0) -> 429, Retry-After = agla token kab bharega.
-     Padhna + hisaab + likhna EK Lua script me (HMGET -> hisaab -> HSET + EXPIRE), to do request ek
-     saath aake aakhri token dono nahi le sakti. Time app se bhejo ya Redis ka TIME lo, ek hi rakho.
-
-FIXED WINDOW:   har minute ka ek dabba. Sasta, par kinare pe double (59th + 61st second).
-SLIDING LOG:    har request ka time likho, pichhle 60 second ki gino. Bilkul sahi, par memory bahut.
-SLIDING COUNTER: is minute ki + pichhle minute ka hissa (jaise 70%) jodo. 2 number, lagbhag sahi.
-LEAKY BUCKET:   request line me, nikalti ek fixed speed se. Smooth, par burst nahi nikalne deta.
-
-"Token bucket hi kyun?" -> burst chahiye + memory kam + Redis me 2 number. (AWS / Stripe yahi lete hain.)
-```
+## AAKHRI DABBA + WRAP (ek hi baar)
 
 ```
-AAKHRI DABBE (sab dikkat ke baad):
-  User -> Route 53 -> WAF (ban list) -> ALB (kai data center)
-  -> API Gateway me limiter (sabse aage, jaldi mana)
-  -> Redis Cluster (token bucket ek Lua script me: tokens + last, key = user + endpoint)
-     -> had ke andar? App : 429 + Retry-After
-  baar-baar wala -> Kafka -> Pattern Svc -> WAF ban
+User -> Route 53 (kaunsa LB zinda) -> WAF (ban list) -> ALB (kai data center)
+-> API Gateway me limiter (sabse aage, jaldi mana · global cap + load shedding · Redis gire to local ginti)
+-> Redis Cluster (token bucket ek Lua script me: tokens + last, key = user + endpoint, copy + shard)
+   -> had ke andar? App : 429 + Retry-After
+baar-baar wala -> Kafka -> Pattern Svc -> WAF ban
 
 DB:  Redis = ginti ki ek hi sachchi jagah, 1 ms, key ki umar
      = window (umar khatam = ginti reset, safai ka job nahi)
      user ka plan (free / pro) DB se, Redis me usi limit se milao
-
-END ME POOCHEGA:
-  "Kaunsa algo?"     -> TOKEN BUCKET: asli traffic jhatke me aata, jama token se burst nikal jaata
-  "10 guna?"         -> gateway machine badhao · Redis shard + copy · home region · global cap + load shedding
-  "Kahan se sab gir sakta?" -> Redis (cluster + switch; aam API fail-open, login / OTP fail-closed)
-                               · LB (Route 53)
-  "Chal raha, kaise pata?"  -> limiter ka time (p99) · kitne 429 · Redis ki galtiyan · alert
 ```
-
-AAKHRI DABBE ki tasveer:
-
+```
+JAWAB:    Limiter darwaze (API gateway) pe, mana hui request andar jaati hi nahi.
+          Ginti Redis me, sab servers ki ek jagah, ek kadam me (token bucket ki Lua script).
+          Key = kaun user + kaunsa kaam, umar = window.
+          Token bucket isliye ki asli user jhatke me request bhejta. Had paar = 429 + kitni der baad aao.
+          Redis ki copy. Redis band: aam cheez khuli, login / OTP band. Baar-baar wale hamlawar ko WAF
+          se block, aur badi asli bheed ke liye poore system ki had.
+```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
     n_ALB["ALB"]
@@ -513,6 +503,10 @@ Redis         -> SHARD (user / region ke hisaab se) + COPY (switch ke saath) + f
 kai region    -> har user ka HOME region
 gunda         -> Kafka -> Pattern service -> WAF ban
 asli bheed    -> global cap + load shedding + line (queue) + pehle se scale
+
+POOCHEGA: "Kahan se sab gir sakta?"   -> Redis (cluster + switch; aam API fail-open, login / OTP
+                                         fail-closed) · LB (Route 53)
+POOCHEGA: "Chal raha, kaise pata?"    -> limiter ka time (p99) · kitne 429 · Redis ki galtiyan · alert
 ```
 
 ---
@@ -558,24 +552,6 @@ EK HI SHAKAL (poore HLD me ghoomti):
    cache me   tez karne wali cheez ne raasta roka (dheema Redis, timeout nahi)
    limiter me rokne wali cheez ne bheed roki hi nahi (per-user
    vs poora system) + attack me khud gayab (fail-open)
-```
-
----
-
-## AAKHRI DABBA + WRAP
-
-```
-Route 53 = kaunsa LB zinda · ALB = kai data center · API Gateway = limiter sabse aage, jaldi mana
-Redis Cluster = ginti ki ek jagah, 1 ms, token bucket ek Lua script me, copy + shard
-Kafka -> Pattern Svc -> WAF = baar-baar wale ka pakka ban
-```
-```
-JAWAB:    Limiter darwaze (API gateway) pe, mana hui request andar jaati hi nahi.
-          Ginti Redis me, sab servers ki ek jagah, ek kadam me (token bucket ki Lua script).
-          Key = kaun user + kaunsa kaam, umar = window.
-          Token bucket isliye ki asli user jhatke me request bhejta. Had paar = 429 + kitni der baad aao.
-          Redis ki copy. Redis band: aam cheez khuli, login / OTP band. Baar-baar wale hamlawar ko WAF
-          se block, aur badi asli bheed ke liye poore system ki had.
 ```
 
 ---

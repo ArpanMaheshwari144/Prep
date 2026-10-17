@@ -5,6 +5,26 @@
 
 ---
 
+## KAHANI (ek din, mera sale wala link; har dikkat se design me ek dabba judta)
+
+```
+   KYA HUA                                     ILAAJ                                DABBA JUDA
+1  mera sale link viral, DB baith gaya      -> REDIS CACHE (cache-aside)            Redis
+2  usi bheed me ek App giri, site band      -> STATELESS App x N + LOAD BALANCER    LB + App x N
+3  main aur Ravi, dono ko ek hi code        -> COUNTER RANGE (thaila) + base62      Counter
+4  click ginti likhi, redirect dheema       -> KAFKA, ginti peeche                  Kafka + Analytics + DLQ
+5  DB team: 5 saal me 90 TB                 -> SHARD by code (RING)                 Cassandra
+6  naya link banaya, turant khola, 404      -> QUORUM (2 me likho, 2 se padho)      (Cassandra quorum)
+7  shaam ko LB hi gira                      -> ROUTE 53 + 2 LB (health check)       Route 53 + LB x2
+8  raat ko spammer, 5,000 link / sec        -> RATE LIMIT darwaze pe + WAF          API Gateway
+
+POORA DESIGN (upar ke dabbe kram se):
+   User -> Route 53 -> LB x2 -> API Gateway -> App x N (Counter ka thaila) -> Redis -> Cassandra
+   click ki khabar: App -> Kafka -> Analytics (fail -> DLQ)
+```
+
+---
+
 ## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![Explaining 5 Unique ID Generators](https://assets.bytebytego.com/diagrams/0006-explaining-5-unique-id-generators-in-distributed-systems.png)
@@ -47,8 +67,8 @@ KYUN CHAHIYE:  Twitter / SMS me jagah kam · marketing me kis link se kitne aaye
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-> Har card: DIKKAT 1 (kya toota) -> HAL (kya kiya) -> diagram -> DIKKAT 2, 3 ... (interviewer ke
-> agle sawaal) har ek ke neeche uska HAL. Revise: sirf baayein column padho.
+> Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
+> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
@@ -56,7 +76,7 @@ User link deta -> App ek code banata -> DB me (code, lamba link) save.
 Click aaya -> App DB me code dhoondhta -> asli link pe bhej deta.
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_DB["DB"]
@@ -66,7 +86,7 @@ flowchart TD
 
 #### 0 SHURU: CODE KAISE BANE (dil ka hissa)
 ```
-DIKKAT 1   User ne diya "https://amazon.in/....../bahut-lamba-link". Use chahiye "bit.ly/w7e".
+DIKKAT 1   Maine diya "https://amazon.in/....../bahut-lamba-link". Mujhe chahiye "bit.ly/w7e".
            Har link ka code alag hona chahiye, warna do link ek hi jagah khulenge.
 HAL        Ek ginti (counter) rakho: 1, 2, 3 ... Har naye link ko agla number do, aur us number ko
            BASE62 me likh do. Wahi code hai.
@@ -75,16 +95,14 @@ HAL        Ek ginti (counter) rakho: 1, 2, 3 ... Har naye link ko agla number do
            Number ko baar-baar 62 se bhaag do, jo bachta (remainder) wo ek akshar, aakhir me ulta padho.
            Misaal: 125 = 2 x 62 + 1 -> "21".   100 crore -> "15FTGg" (6 akshar).
            Counter kabhi dohraata nahi -> code kabhi dohraata nahi. Check karne ki zaroorat hi nahi.
-```
-```
+
 DIKKAT 2   Counter kyun, lambe link ka MD5 / random code kyun nahi?
-HAL        MD5 / random me do link ka code same aa sakta hai.
-           Har baar DB se poochna padega "ye code pehle se hai?"
-           Counter me ye dikkat hi nahi.
+HAL        MD5 / random me do link ka code same aa sakta hai. Har baar DB se poochna padega
+           "ye code pehle se hai?" Counter me ye dikkat hi nahi.
 
 DIKKAT 3   Counter se code ka andaza nahi lag jaayega? (abc124 ke baad abc125)
-HAL        Haan, ye keemat hai. Chahiye to number ko pehle shuffle
-           / XOR karo, phir base62. Phir bhi unique rahega.
+HAL        Haan, ye keemat hai. Chahiye to number ko pehle shuffle / XOR karo, phir base62.
+           Phir bhi unique rahega.
 
 DIKKAT 4   User apna code maange ("bit.ly/arpan")?
 HAL        Check karo: lambai theek, "admin" / "login" jaisa reserved shabd nahi, pehle se liya hua nahi.
@@ -95,57 +113,41 @@ HAL        302. 301 pe browser link yaad kar leta hai, agli baar server tak aata
            Tab click gin nahi paate aur expiry bhi kaam nahi karti.
 ```
 
-#### 1 HAR CLICK DB PE, REDIRECT 200 MS SE TEZ CHAHIYE
-```
-DIKKAT 1   Ek second me 1 lakh click aa rahe hain. Har click DB tak ja raha hai, aur DB disk se padhta hai.
-           DB pe bojh badhta gaya, redirect dheema hua. Ek viral link pe to DB hi baith gaya.
-HAL        DB ke aage REDIS (cache). Click aaya -> pehle Redis dekho.
-           Mila -> wahin se bhej do. Nahi mila -> DB se laao, Redis me rakh do, phir bhejo (cache-aside).
-           Redis me link ki expiry (TTL) wahi jo link ki hai.
-           Redis RAM se, 1 ms se kam. Log zyadatar wahi link baar-baar kholte -> ~100 me se 95 click
-           Redis se hi nikal jaate. DB bach gaya.
-```
+#### 1 Mera sale wala link viral hua, har click DB pe, DB baith gaya
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Redis["Redis"]
+    n_Redis["Redis<br/>link viral, DB baitha<br/>-> cache-aside"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_Redis
     n_App --> n_DB
+    style n_Redis fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Redis me saare 180 arab link rakhoge?
-HAL        Nahi, sirf jo abhi garam (zyada khul rahe) hain. Jagah bhar gayi to jo link sabse der se nahi
-           khula use nikaalo (LRU). Wo baad me khula to DB se wapas aa jaayega.
+DIKKAT     10 baje maine sale ka chhota link College Gang me daala, viral -> ~1 lakh click / sec, har click
+           DB (disk) tak. Redirect dheema hua, phir DB hi baith gaya.
+HAL        REDIS CACHE (cache-aside): pehle Redis; mila -> bhejo, nahi -> DB se laao, Redis me rakho, bhejo.
+           RAM, 1 ms se kam; ~100 me se 95 click Redis se. Redis me expiry (TTL) = link ki expiry.
+NAHI       DB ki read copy: wo bhi disk se, dheemi · har App apna cache: link badla to kisi pe purana.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: garam link RAM me; DB tak sirf wo jo Redis me nahi mila.
+  "Saare 180 arab Redis me?"       -> nahi, sirf garam; bhara to sabse der se na khula nikaalo (LRU).
+  "LRU wala baad me khula?"        -> DB se wapas Redis me aa jaayega.
+  "Link delete / expire hua?"      -> expiry pe Redis khud hatata; delete pe pehle DB se, phir Redis se.
+  "Redis hi gira?"                 -> isliye cluster + replica, warna 95% click ek saath DB pe, DB bhi gire.
+  "Phir bhi gira to?"              -> kuch request mana (load shedding), garam link ko EK request DB se
+                                      laaye, baaki ruke. "Kuch nahi hoga" kabhi mat bolna.
+```
 
-DIKKAT 3   Link delete / expire ho gaya, par Redis me abhi pada hai?
-HAL        Expiry pe Redis khud hata deta hai. Delete pe pehle DB se hatao, phir Redis se.
-
-DIKKAT 4   Redis hi gir gaya?
-HAL        Redis ki bhi copies (cluster + replica), warna 95% click ek saath DB pe -> DB bhi gir sakta.
-           Phir bhi gira to kuch request mana karo (load shedding), aur garam link
-           ko sirf EK request DB se laaye, baaki ruke. "Kuch nahi hoga" kabhi mat bolna.
-
-DIKKAT 5   DB ki read copy (replica) kyun nahi, ya har App apna cache rakhe?
-HAL        Replica bhi disk se padhti, dheemi. Har App ka apna cache = sabke paas alag copy, link badla to
-           kisi App pe purana dikhta rahega.
-```
-
-#### 2 EK APP 1 LAKH / SEC NAHI JHELTA, GIRA TO SITE BAND
-```
-DIKKAT 1   Saari request ek hi App machine pe. Bojh se wo dheema hua, aur ek din wahi gir gaya
-           -> poori site band. Ek cheez jiske girne se sab ruk jaaye = SPOF (single point of failure).
-HAL        Kai App machine (STATELESS) -> koi bhi request kisi bhi machine pe ja sakti.
-           Aage LOAD BALANCER: request baari-baari (round-robin) ya jiske paas kam kaam (least-conn).
-           Har ~5 sec har machine se "zinda ho?" (GET /health). Jawab nahi -> list se hatao, theek hui
-           -> wapas jodo.
-```
+#### 2 Usi bheed me ek App machine giri, poori site band
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
-    n_LB["LB"]
+    n_LB["LB<br/>ek App giri, site band<br/>-> stateless App x N + LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
     n_Redis["Redis"]
@@ -157,34 +159,32 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
     n_App_x_N_1 --> n_DB
     n_App_x_N_2 --> n_DB
+    style n_LB fill:#f9a825,color:#000
+    style n_App_x_N_1 fill:#f9a825,color:#000
+    style n_App_x_N_2 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Stateless kyun zaroori hai?
-HAL        User ki baat App-1 ki memory me ho aur agli request App-2 pe jaaye, to App-2 ko kuch pata nahi.
-           Sab Redis / DB me ho to koi bhi machine koi bhi request le sakti.
+DIKKAT     11 baje wahi bheed ek hi App machine pe. Wo dheemi hui, phir giri -> poori site band.
+           Ek cheez jiske girne se sab ruk jaaye = SPOF (single point of failure).
+HAL        STATELESS App x N + LOAD BALANCER: request baari-baari (round-robin) ya kam kaam wale (least-conn).
+           Har ~5 sec GET /health; jawab nahi -> list se bahar, theek hui -> wapas.
+NAHI       ek bahut badi machine (vertical scale): uski bhi had, aur akeli -> wahi giri to sab band.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: App kuch yaad nahi rakhta, sab Redis / DB me; tabhi koi bhi machine koi bhi request le.
+  "Stateless kyun zaroori?"        -> baat App-1 ki memory me, agli request App-2 pe -> App-2 ko pata nahi.
+  "Machine mari nahi, dheemi hai?" -> LB jawab ka time + galtiyon ki ginti dekhta; least-conn kam bhejta.
+```
 
-DIKKAT 3   Ek bahut badi machine le lo (vertical scale)?
-HAL        Uski bhi ek had hai, aur wo akeli hai -> phir wahi gire to sab band.
-
-DIKKAT 4   Machine mari nahi, bas dheemi hai?
-HAL        LB jawab ka time aur galtiyon ki ginti bhi dekhta hai. Least-conn khud usko kam bhejta hai.
-```
-
-#### 3 KAI APP, DO APP EK HI CODE BANA DENGE
-```
-DIKKAT 1   App ki 2 machine, dono apna-apna counter chala rahi. Dono ka counter 5 pe.
-           Dono ne naya link banaya -> dono ka number 6 -> do alag link, ek hi code (COLLISION).
-HAL        Ek COUNTER service (ZooKeeper ya DB ki ek table) har App ko numbers ka ALAG thaila (range)
-           deti: App-1 ko 1-1000, App-2 ko 1001-2000. Number kabhi takrayenge hi nahi.
-           App thaile me se khud ginti. Counter service se baat sirf thaila khatam hone pe.
-```
+#### 3 Maine aur Ravi ne link banaya, dono ko ek hi code mila
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Counter["Counter"]
+    n_Counter["Counter<br/>do App, ek hi code<br/>-> har App ko alag range"]
     n_Redis["Redis"]
     n_DB["DB"]
     n_USER --> n_LB
@@ -196,38 +196,32 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
     n_App_x_N_1 --> n_DB
     n_App_x_N_2 --> n_DB
+    style n_Counter fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   App-1 number 400 pe crash ho gaya. 401 se 1000 ka kya?
-HAL        Wo bekaar gaye, jaan-boojh ke maana. 3.5 lakh crore code hain, kuch hazaar jaane se farak nahi.
-           Har number bachana ho to har link pe coordination lagega, range ka fayda khatam.
+DIKKAT     12 baje maine aur Ravi ne usi second link banaya, do App pe. Dono ka apna counter 5 pe
+           -> dono ko 6 -> do alag link, ek hi code (COLLISION). Ravi ka link mere code pe.
+HAL        COUNTER RANGE (thaila): Counter service (ZooKeeper / DB ki table) har App ko alag range deti:
+           App-1 ko 1-1000, App-2 ko 1001-2000. App khud ginta, counter se baat sirf thaila khatam pe.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: number ek hi jagah se, thaile me baante jaate; ek thaila kabhi do App ko nahi.
+  "App-1 400 pe crash, 401-1000?"  -> bekaar gaye, jaan-boojh ke; 3.5 lakh crore me kuch hazaar se farak nahi.
+  "Har number bachana ho?"         -> har link pe coordination lagega, range ka fayda khatam.
+  "Counter service giri?"          -> App ke paas thaila (1000) bacha, kaam chalta; tab tak doosri copy uthti.
+  "Redis INCR kyun nahi?"          -> chal jaata, par har link pe ek call; range me 1000 link pe ek.
+```
 
-DIKKAT 3   Counter service khud gir gayi?
-HAL        App ke paas abhi thaila (1000 number) bacha hai, kaam chalta rehta. Tab tak counter ki doosri
-           copy uth jaati.
-
-DIKKAT 4   Redis ka INCR (ek-ek badhao) kyun nahi?
-HAL        Chal jaata, par har link pe ek call. Range me 1000 link pe ek call.
-```
-
-#### 4 HAR CLICK PE ANALYTICS LIKHNA
-```
-DIKKAT 1   User ne click kiya. Usi request me "click hua" analytics DB me likhne lage, phir redirect.
-           Analytics DB dheema tha -> user ko redirect ke liye rukna pada. Yahan har milisecond keemti hai.
-HAL        Redirect turant (302), saath me "ek click hua" ki khabar Kafka me daal ke aage.
-           Kafka = disk pe diary, App bas aakhri page pe likh ke aage badh jaata.
-           Analytics service apni speed se padhti, yaad rakhti kahan tak padha (offset), crash pe wahin se.
-           Click id se dobara aaya click do baar nahi ginti. Kharab khabar alag line (DLQ), baaki nahi rukti.
-           Kafka band -> redirect phir bhi chalta, bas kuch click ginti me nahi aate.
-```
+#### 4 Maine click ginti chahi, redirect hi dheema ho gaya
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
     n_Counter["Counter"]
-    n_Kafka["Kafka"]
+    n_Kafka["Kafka<br/>ginti likhi, redirect dheema<br/>-> khabar peeche"]
     n_Analytics_svc["Analytics svc"]
     n_Analytics_DB["Analytics DB"]
     n_DLQ["DLQ"]
@@ -247,30 +241,31 @@ flowchart TD
     n_App_x_N_1 --> n_DB
     n_App_x_N_2 --> n_DB
     n_Analytics_svc --> n_DLQ
+    style n_Kafka fill:#f9a825,color:#000
+    style n_Analytics_svc fill:#f9a825,color:#000
+    style n_Analytics_DB fill:#f9a825,color:#000
+    style n_DLQ fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   App ke andar hi peeche ek thread se likh do?
-HAL        App crash = memory me padi khabarein gayi. Kafka disk pe hai, purane click dobara bhi padh sakte.
+DIKKAT     2 baje mujhe ginti chahiye thi kitne click aaye. Usi request me analytics DB me likhne lage,
+           phir redirect. Analytics DB dheema -> har user redirect ke liye ruka.
+HAL        KAFKA: redirect turant (302), "ek click hua" ki khabar Kafka me. Analytics svc apni speed se
+           padhti, offset yaad (crash pe wahin se); kharab khabar alag line (DLQ), baaki nahi rukti.
+NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein gayi.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: redirect kisi ka intezaar nahi karta; ginti peeche, apni speed se, disk pe.
+  "Kafka hai kya?"                 -> disk pe diary; App bas aakhri page pe likh ke aage badh jaata.
+  "Ek click do baar aaya?"         -> click id se, do baar nahi ginti.
+  "Kafka band?"                    -> redirect phir bhi chalta, bas kuch click ginti me nahi aate.
+  "SQS kyun nahi?"                 -> chal jaata; Kafka: click bahut + naya report = purane click dobara
+                                      padho (replay). SQS padhne ke baad message hata deta.
+```
 
-DIKKAT 3   Kafka kyun, SQS kyun nahi?
-HAL        SQS bhi chal jaata. Kafka isliye ki click bahut zyada hain, aur naya report banana ho to purane
-           click dobara padh sakte (replay). SQS padhne ke baad message hata deta.
-```
-
-#### 5 5 SAAL KA ~90 TB EK MACHINE ME NAHI
-```
-DIKKAT 1   10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Itna ek machine me nahi aata.
-           Aur wo ek machine mari to saare link gaye.
-HAL        Data short code ke hisaab se tukdon (shard) me baanto. Click hamesha code ke saath aata
-           (GET /abc123) -> code se seedha pata kaunsi machine.
-           RING: ek gol ghadi. Machines ghadi pe kahin-kahin, har code bhi ghadi pe ek jagah. Code ghadi
-           ki disha me chale, jo pehli machine mile wahi uski. Nayi machine aayi -> sirf uske theek
-           peeche wale code usko jaate. ("code % machine ki ginti" karte to 3 se 4 machine hote hi lagbhag
-           har code ki jagah badal jaati.)
-           Har tukde ki 3 copy, alag building me -> ek gire to bhi data rahe.
-```
+#### 5 DB team boli: 5 saal me 90 TB, ek machine me nahi
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_App_x_N_1["App 1"]
@@ -281,7 +276,7 @@ flowchart TD
     n_Analytics_DB["Analytics DB"]
     n_DLQ["DLQ"]
     n_Redis["Redis"]
-    n_Cassandra["Cassandra"]
+    n_Cassandra["Cassandra<br/>5 saal me 90 TB<br/>-> code se baanto (ring)"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2
@@ -296,39 +291,31 @@ flowchart TD
     n_App_x_N_1 --> n_Cassandra
     n_App_x_N_2 --> n_Cassandra
     n_Analytics_svc --> n_DLQ
+    style n_Cassandra fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Country ya date ke hisaab se kyun nahi baanta?
-HAL        Ek country / aaj ka din garam ho jaata, ek machine pe saara bojh.
-           Aur code dekh ke pata hi nahi kis country ka -> saari machine poochni padti.
-
-DIKKAT 3   Copies (replica) badha do, likhna bhi tez ho jaayega?
-HAL        Nahi. Har copy pe likhna to padta hi hai. Likhne ka bojh baantna = SHARD.
-           Copy = bachav + padhne ka bojh.
-
-DIKKAT 4   Ek machine pe zyada code aa gaye?
-HAL        Har machine ko ghadi pe 100-200 jagah baitha do (virtual nodes) -> bojh barabar bat jaata.
-
-DIKKAT 5   Ek link viral, uski machine garam?
-HAL        Wo link Redis se hi nikal jaata, machine tak kam aata.
-
-DIKKAT 6   Cassandra kyun, MySQL kyun nahi?
-HAL        Join / transaction chahiye hi nahi, bas "code se link nikaalo" + 90 TB.
-           Wajah = kaam ka dhaancha + size, "NoSQL zyada powerful" nahi.
-           Chhota maana (~500 GB) to ek MySQL kaafi, shard bhi nahi.
+DIKKAT     4 baje DB team: 10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Ek machine me nahi aata,
+           aur wo ek machine mari to saare link gaye.
+HAL        SHARD by short code: click code ke saath aata (GET /abc123) -> code se seedha kaunsi machine.
+           Machine RING (gol ghadi) se; har tukde ki 3 copy, alag building me.
+NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se country pata hi nahi.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: jis cheez se padhte ho (code), usi se baanto.
+  "Ring kaise?"                    -> machine aur code dono ghadi pe; code ghadi ki disha me, pehli machine.
+  "Nayi machine aayi?"             -> sirf uske theek peeche wale code usko; "code % machine" me 3 se 4
+                                      hote hi lagbhag har code ki jagah badal jaati.
+  "Copy badha do, likhna tez?"     -> nahi, har copy pe likhna padta; likhne ka bojh = SHARD, copy = bachav.
+  "Ek machine pe zyada code?"      -> har machine ghadi pe 100-200 jagah (virtual nodes) -> bojh barabar.
+  "Ek link viral, machine garam?"  -> wo link Redis se hi nikal jaata, machine tak kam aata.
+  "Cassandra kyun, MySQL nahi?"    -> join / transaction nahi, bas code se link + 90 TB; "NoSQL powerful" nahi
+  "Chhota maana (~500 GB)?"        -> ek MySQL kaafi, shard bhi nahi.
 ```
 
-#### 6 WRITE KE BEECH EK COPY WALA NODE GIRA
-```
-DIKKAT 1   User ne link banaya. Cassandra use 3 copy me likh raha tha, beech me ek copy wali machine gir
-           gayi. Jo likh diya, wo khona nahi chahiye.
-HAL        Link tab hi "save ho gaya" jab 3 me se kam se kam 2 copy ne likh liya -> ek giri to baaki do ke
-           paas hai. Us beech redirect waise bhi Redis se chal rahe.
-           Har machine likhne se pehle apni diary (commit log) me note karti. Giri machine wapas uthi
-           -> diary padh ke jo adhoora tha wo poora kar leti.
-```
+#### 6 Maine naya link banaya, turant khola, 404 aaya
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_App_x_N_1["App 1"]
@@ -339,7 +326,7 @@ flowchart TD
     n_Analytics_DB["Analytics DB"]
     n_DLQ["DLQ"]
     n_Redis["Redis"]
-    n_Cassandra["Cassandra<br/>+ commit log + quorum"]
+    n_Cassandra["Cassandra<br/>naya link, turant 404<br/>-> 2 me likho, 2 se padho"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2
@@ -354,81 +341,33 @@ flowchart TD
     n_App_x_N_1 --> n_Cassandra
     n_App_x_N_2 --> n_Cassandra
     n_Analytics_svc --> n_DLQ
+    style n_Cassandra fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   2 ka hi intezaar kyun, teeno ka kyun nahi?
-HAL        Teeno ka intezaar = ek dheemi machine sabko dheema kar degi. 2 me ek gire tab bhi likh sakte.
+DIKKAT     5 baje maine naya link banaya. Copy A, B me pahunch gaya, C tak abhi nahi (aam taur pe ms,
+           bheed me second tak). Isi beech mera click C pe -> "mere paas nahi" -> 404.
+HAL        QUORUM + REDIS: banate hi Redis me bhi daalo, click wahin milta. DB me "2 me likho, 2 se padho":
+           koi bhi 2 copy uthao (A+C, B+C, A+B), har jodi me A ya B aayegi hi.
+NAHI       tez karne ko sirf 1 copy se padho: wo C ho sakti hai -> phir 404.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: "2 me likha + 2 se padha" -> dono me ek copy common pakki; jo likha wo khona nahi.
+  "Likhte waqt ek copy giri?"      -> 3 me se 2 ne likha tabhi "save"; us beech redirect Redis se.
+  "Giri machine wapas uthi?"       -> har machine pehle apni diary (commit log) me note karti; wo padh ke
+                                      adhoora poora kar leti.
+  "2 ka hi intezaar, 3 ka kyun?"   -> teeno = ek dheemi machine sabko dheema; 2 me ek gire tab bhi likh sakte.
+  "2 machine gir gayi?"            -> 2 "haan" nahi -> likhna fail (ya 1 pe, risk ke saath); click Redis se.
+  "2 se padhna dheema nahi?"       -> haan, thoda; isliye pehla ilaaj Redis, zyada click wahin se.
+  "Kafka laga do data bachane?"    -> nahi; ye DB ki apni diary ka kaam, extra dabba mat lagao.
+  "Cassandra me main copy?"        -> nahi; teeno copy barabar, koi bhi likh aur padh sakti.
+```
 
-DIKKAT 3   2 machine gir gayi?
-HAL        2 "haan" nahi milenge -> likhna fail (ya 1 pe likh lo, risk ke saath). Click tab tak Redis se.
-
-DIKKAT 4   Kafka laga do data bachane ke liye?
-HAL        Nahi. Ye DB ki apni diary ka kaam hai, extra dabba mat lagao.
-```
-
-#### 7 NAYA LINK BANAYA, TURANT CLICK -> 404
-```
-DIKKAT 1   Tune link banaya. Cassandra har link ko 3 jagah rakhta: copy A, copy B, copy C.
-           Link A aur B me pahunch gaya, C tak pahunchne me thoda time (aam taur pe milisecond, bheed me
-           second tak). Isi beech click C pe gaya. C bola "ye link mere paas nahi" -> 404.
-HAL        Raasta 1 (aasaan): link banate hi Redis me bhi daal do. Click pehle Redis dekhta, wahan mil
-           jaata. C tak jaana hi nahi padta.
-           Raasta 2 (DB ke andar): likhte waqt "ho gaya" tabhi jab 2 copy me likh jaaye, padhte waqt bhi
-           2 copy se poochho. Link A aur B me hai -> koi bhi 2 copy uthao (A+C, B+C, A+B), har jodi me
-           A ya B aayegi hi. Khaali haath kabhi nahi.
-           Isi ko QUORUM kehte: "2 me likha + 2 se padha" -> dono me ek copy common pakki.
-```
+#### 7 Shaam ko LB hi gir gaya, koi request andar nahi
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
-    n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Counter["Counter"]
-    n_Kafka["Kafka"]
-    n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
-    n_DLQ["DLQ"]
-    n_Redis["Redis"]
-    n_Cassandra["Cassandra<br/>+ commit log + quorum"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Analytics_svc --> n_DLQ
-```
-```
-DIKKAT 2   Tez karne ke liye sirf 1 copy se padh lo?
-HAL        Wo 1 copy C ho sakti hai, jisme abhi link aaya hi nahi -> phir 404.
-
-DIKKAT 3   2 copy se padhna dheema nahi hoga?
-HAL        Haan, thoda. Isliye pehla ilaaj Redis hai: zyada click Redis se hi nikal jaate.
-
-DIKKAT 4   Cassandra me koi "main copy" hoti hai?
-HAL        Nahi. Teeno copy barabar, koi bhi likh sakti hai aur koi bhi padh sakti hai.
-```
-
-#### 8 LB KHUD GIR GAYA
-```
-DIKKAT 1   App, Redis, DB sab zinda. Par request baantne wala Load Balancer hi mar gaya.
-           Ab koi request andar aa hi nahi rahi -> site band.
-HAL        Do LB, aur unke aage ROUTE 53 (AWS ka DNS). Wo har ~30 sec har LB se "zinda ho?" poochhta.
-           3 baar jawab nahi -> us LB ka pata (IP) user ko dena band -> sab doosre LB pe.
-           Poora region (shehar ka data center) gaya -> doosre region pe.
-```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
+    n_Route_53["Route 53<br/>LB hi gira<br/>-> 2 LB + health check"]
     n_LB_1["LB 1"]
     n_LB_2["LB 2"]
     n_App_x_N_1["App 1"]
@@ -458,32 +397,31 @@ flowchart TD
     n_App_x_N_1 --> n_Cassandra
     n_App_x_N_2 --> n_Cassandra
     n_Analytics_svc --> n_DLQ
+    style n_Route_53 fill:#f9a825,color:#000
+    style n_LB_1 fill:#f9a825,color:#000
+    style n_LB_2 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Switch turant ho jaata hai?
-HAL        Nahi. User ka phone purana pata ~60 sec yaad rakhta (DNS TTL), tab tak kuch log purane LB pe.
-           Isliye cloud me LB khud kai data center me phaila hota hai (AWS ALB).
+DIKKAT     Shaam ko App, Redis, DB sab zinda. Par request baantne wala Load Balancer hi mar gaya
+           -> koi request andar aa hi nahi rahi, site band.
+HAL        ROUTE 53 + 2 LB: Route 53 (AWS ka DNS) har ~30 sec har LB se "zinda ho?". 3 baar jawab nahi
+           -> us LB ka pata (IP) dena band, sab doosre pe. Poora region gaya -> doosre region pe.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: koi dabba akela nahi; aage wala health check se sirf zinda wale pe bheje.
+  "Switch turant?"                 -> nahi; phone purana pata ~60 sec yaad (DNS TTL), tab tak purane LB pe.
+                                      Isliye cloud me LB khud kai data center me phaila (AWS ALB).
+  "Region gaya, naye link?"        -> doosre region me copy peeche-peeche; aakhri kuch second ke kho sakte.
+                                      Ye maana hua risk hai.
+```
 
-DIKKAT 3   Poora region gaya, to naye link ka kya?
-HAL        Doosre region me data thoda peeche-peeche copy hota. Aakhri kuch second ke naye link kho sakte.
-           Ye maana hua risk hai.
-```
-
-#### 9 SPAMMER KI SCRIPT, HAR SECOND 5,000 LINK
-```
-DIKKAT 1   Ek spammer ne script chala di: ek hi API key se har second 5,000 link (phishing ke liye).
-           Aam din me poore system pe ~1,000 / sec aate -> likhne wale App + DB pe 5 guna bojh, asli users
-           ka link banana dheema. Upar se Gmail / WhatsApp ne hamara domain "spam" maan liya.
-HAL        Darwaze (API gateway) pe hi rok: har user / IP kitni baar link bana sakta, uski had.
-           Login check bhi wahin. Uske bhi aage WAF jo jaane-pehchaane hamle rokta.
-           Lamba URL chhota karne se pehle check: virus / dhokhe wali site to nahi, warna hamara chhota
-           link bura kaam karega.
-```
+#### 8 Raat ko spammer ki script, har second 5,000 link
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
-    n_API_Gateway["API Gateway"]
+    n_API_Gateway["API Gateway<br/>spammer 5,000 link / sec<br/>-> rate limit + WAF"]
     n_LB_1["LB 1"]
     n_LB_2["LB 2"]
     n_App_x_N_1["App 1"]
@@ -513,40 +451,49 @@ flowchart TD
     n_App_x_N_1 --> n_Cassandra
     n_App_x_N_2 --> n_Cassandra
     n_Analytics_svc --> n_DLQ
+    style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Gateway ki kai machine hain, ginti kahan?
-HAL        Ek shared Redis me (INCR + expiry), sab gateway wahi ek ginti dekhein. Har machine apni gine to
-           banda har machine pe limit tak bana lega. (Poora design = 02_rate_limiter.)
-
-DIKKAT 3   Bot har baar naye IP se aa raha?
-HAL        IP pe nahi, API key / user_id pe limit, aur WAF ke bot rules.
+DIKKAT     Raat ko spammer: ek API key se har second 5,000 link (phishing). Aam din poore system pe ~1,000
+           -> 5 guna bojh, asli users dheeme; Gmail / WhatsApp ne hamara domain "spam" maana.
+HAL        RATE LIMIT darwaze (API gateway) pe: har user / IP ki had + login check; uske aage WAF.
+           Chhota karne se pehle lamba URL check: virus / dhokhe wali site to nahi.
+NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana lega.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: rokna darwaze pe, sabki ek ginti se, us pehchaan pe jo bot badal na sake.
+  "Gateway ki kai machine, ginti?" -> ek shared Redis (INCR + expiry), sab wahi ek ginti dekhein.
+                                      (Poora design = 02_rate_limiter.)
+  "Bot har baar naye IP se?"       -> IP pe nahi, API key / user_id pe limit, aur WAF ke bot rules.
 ```
 
+---
+
+## AAKHRI DABBA + WRAP (ek hi baar)
+
 ```
-AAKHRI DABBE (sab dikkat ke baad):
-  User -> Route 53 -> 2 LB -> API Gateway (rate limit + login) -> App (stateless)
-  -> Redis (95% click yahin se, expiry = link ki expiry) -> Cassandra (code se baanta, har tukde ki 3 copy)
-  NAYA LINK:  Counter ka thaila + base62 -> Redis + Cassandra me likho
-  CLICK:      Redis / Cassandra se link -> 302. Click ki khabar -> Kafka -> Analytics (fail -> DLQ),
-              redirect ruke bina
+User -> Route 53 (kaunsa LB zinda + kaunsa region) -> 2 LB -> API Gateway (rate limit + login)
+-> App (stateless) -> Redis (95% click, expiry = link ki expiry)
+-> Cassandra (code se baanta, har tukde ki 3 copy, 2 me likha 2 se padha)
+NAYA LINK: App -> thaile se agla number -> base62 (123456 -> "w7e") -> Redis + Cassandra -> chhota link
+CLICK:     App -> Redis me mila? -> 302 · nahi -> Cassandra -> Redis me rakho -> 302
+           · click ki khabar -> Kafka -> Analytics (fail -> DLQ), redirect ruke bina
 
-DB KYUN:  Cassandra / DynamoDB -> join nahi, transaction nahi, ek code se ek link, 90 TB.
-          Wajah = kaam ka dhaancha + size, "NoSQL powerful" nahi. Redis sirf cache.
-
-END ME POOCHEGA:
-  "10 guna traffic?"        -> App machine badhao · padhne aur likhne wale App alag
-                               · Redis me garam link (LRU + expiry) · Cassandra aur baanto
-  "Kahan se sab gir sakta?" -> LB (2 copy) · Counter (2 copy, ek chalu ek taiyaar) · Route 53 health check
-  "Chal raha hai, kaise pata?" -> redirect ka time (p99) · galtiyon ki ginti · Kafka me kitna pending · alert
-  "301 ya 302?"             -> 302: har click server tak aata, gin paate.
-                               301 pe browser yaad kar leta, click gaya
+DB:  Cassandra / DynamoDB -> join nahi, transaction nahi, ek code se ek link, 90 TB.
+     Wajah = kaam ka dhaancha + size, "NoSQL powerful" nahi. Redis sirf cache.
 ```
-
-AAKHRI DABBE ki tasveer:
-
+```
+JAWAB:    Short code = ek badhta number, jise 62 akshar (a-z, A-Z, 0-9) me likha. Har server ko numbers
+          ki apni range milti, to do server kabhi same code nahi banate.
+          100 me 1 baar link banta, 99 baar khulta. Isliye khulna zyadatar Redis se, baaki Cassandra se
+          (short code se baanta, har tukde ki 3 copy).
+          Redirect turant, click ki ginti peeche Kafka se. Do load balancer + Route 53, taaki koi ek
+          gire to sab na gire. Darwaze pe had.
+          Aage: apna naam wala link, purane link hatana, doosre desh me copy.
+```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
     n_API_Gateway["API Gateway"]
@@ -603,6 +550,11 @@ BAANTNA CODE SE, COUNTRY SE NAHI:
    country se baanta -> code dekh ke pata nahi kis country ka -> saari machine poochni padti
    country / region ka kaam = user ke paas data rakhna (jaldi jawab), data baantna nahi.
    Dono saath chal sakte hain.
+
+POOCHEGA: "Kahan se sab gir sakta?"     -> LB (2 copy) · Counter (2 copy, ek chalu ek taiyaar)
+                                           · Route 53 health check
+POOCHEGA: "Chal raha hai, kaise pata?"  -> redirect ka time (p99) · galtiyon ki ginti · Kafka me kitna
+                                           pending · alert
 ```
 
 ---
@@ -637,29 +589,5 @@ SHABD BHOOL JAO TO SEEDHI BAAT BOLO (atko mat):
 ```
 
 ---
-
-## AAKHRI DABBA + WRAP
-
-```
-Route 53 = kaunsa LB zinda + kaunsa region · API Gateway = rate limit + login · LB = 2 copy · App = stateless
-Counter = thaila + base62 · Redis = 95% click, expiry = link ki expiry
-Cassandra = code se baanta + 3 copy + 2 me likha 2 se padha
-Kafka = click ki ginti peeche se, fail -> DLQ
-```
-```
-CLICK:     LB -> App -> Redis me mila? -> 302 · nahi mila -> Cassandra -> Redis me rakho -> 302
-           · click ki khabar -> Kafka
-NAYA LINK: LB -> App -> thaile se agla number -> base62 (123456 -> "w7e") -> Redis + Cassandra
-           -> chhota link wapas
-```
-```
-JAWAB:    Short code = ek badhta number, jise 62 akshar (a-z, A-Z, 0-9) me likha. Har server ko numbers
-          ki apni range milti, to do server kabhi same code nahi banate.
-          100 me 1 baar link banta, 99 baar khulta. Isliye khulna zyadatar Redis se, baaki Cassandra se
-          (short code se baanta, har tukde ki 3 copy).
-          Redirect turant, click ki ginti peeche Kafka se. Do load balancer + Route 53, taaki koi ek
-          gire to sab na gire. Darwaze pe had.
-          Aage: apna naam wala link, purane link hatana, doosre desh me copy.
-```
 
 ARCHETYPE F (infra/component) · CONCEPTS: [ID-gen](../../FOUNDATIONS/13_distributed_id_snowflake.md) · [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
