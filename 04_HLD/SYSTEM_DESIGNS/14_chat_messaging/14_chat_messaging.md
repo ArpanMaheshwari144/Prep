@@ -35,8 +35,8 @@ POOCHO (6, inme 2 poora design badalte):
    2. ★ HISTORY kahan, kitni der? WhatsApp = phone pe, pahunchte hi server se DELETE (server = DAAK-GHAR)
                                   Slack = server pe HAMESHA, 3 saal purana bhi search
                                   -> ye EK jawab jagah 100 GB se 100 TB kar deta
-   3. ★ END-TO-END encryption? haan -> server message PADH hi nahi sakta -> server pe search khatam · naya
-      member
+   3. ★ END-TO-END encryption? haan -> server message PADH
+      hi nahi sakta -> server pe search khatam · naya member
         purane message nahi dekh sakta · chaabi ka poora system — sabse bada scope badalne wala
    4. TICK? ek tick (server tak) · do tick (phone tak) · neeli (padh li) · online / last-seen
       har tick ek ULTA message -> traffic kai guna
@@ -61,8 +61,8 @@ NUMBERS (andaaza):
 TEEN FAISLE:
    1. CONNECTION ki apni line: 2 crore / ~1 lakh har machine = ~200 CHAT SERVER (sirf taar pakadte)
       -> API / business server se ALAG · event loop (Netty jaisa), "ek connection = ek thread" nahi
-   2. JAGAH ek machine ki NAHI (banking ka ulta: wahan 120 / sec, yahan 46,000 / sec + 1.2 TB roz) — DB card 4
-      me
+   2. JAGAH ek machine ki NAHI (banking ka ulta: wahan 120 /
+      sec, yahan 46,000 / sec + 1.2 TB roz) — DB card 4 me
    3. HISTORY kahan (sawaal 2) se jagah ka dhaancha tay hota — yahan SLACK jaisa
 
 DO CHEEZ JO DESIGN CHALATI:
@@ -80,18 +80,18 @@ DO CHEEZ JO DESIGN CHALATI:
 #### DABBA 0: SABSE SIMPLE, EK SERVER DO USER (yahan se shuru, phir "kahan tootega")
 ```
 KAHANI:  Ek hi chat server. Arpan aur Ravi dono usse jude.
-         Ravi ne kabhi nahi poochha "koi message aaya?", phir bhi Arpan ka "hi" Ravi ki screen pe aa gaya.
-         Kaise?
+         Ravi ne kabhi nahi poochha "koi message aaya?", phir
+         bhi Arpan ka "hi" Ravi ki screen pe aa gaya. Kaise?
 
 ANDAR KAISE:
-         Arpan ne /connect?user=Arpan khola -> ye connection BAND NAHI hota -> server ki register me: Arpan ->
-         penArpan
+         Arpan ne /connect?user=Arpan khola -> ye connection BAND
+         NAHI hota -> server ki register me: Arpan -> penArpan
          Ravi ne /connect?user=Ravi khola -> register: Ravi -> penRavi
          Arpan ne /send?to=Ravi&text=hi (normal request) -> server: register.get("Ravi") -> penRavi me likho
          -> Ravi ki screen pe "Arpan: hi".
          pen = data nahi, Ravi tak PAHUNCHNE KA RAASTA. Message Ravi ke PURANE khule taar se gaya.
-★ DEKHA:  Ravi ki screen pe message aa gaya, Ravi ne kuch maanga hi nahi. Screen pe "JUD GAYA — ye connection
-          ab khuli padi hai",
+★ DEKHA:  Ravi ki screen pe message aa gaya, Ravi ne kuch maanga hi
+          nahi. Screen pe "JUD GAYA — ye connection ab khuli padi hai",
           console pe `[JUDA] Ravi   register ab = [Arpan, Ravi]`
 
 ISKE BAAD KYA TOOTEGA:
@@ -113,11 +113,11 @@ flowchart TD
 
 #### [1](#d1) 2 CRORE CONNECTION KHULI, MEMORY KHATAM
 ```
-KAHANI:  Har online user ka connection hamesha khula. Ek connection ~30 KB -> 1 lakh connection = ~3 GB sirf
-         pakad ke rakhne me.
+KAHANI:  Har online user ka connection hamesha khula. Ek connection
+         ~30 KB -> 1 lakh connection = ~3 GB sirf pakad ke rakhne me.
          Aur purane tareeke me har connection ka ek thread (~1 MB) -> 1 lakh = ~100 GB. Server khatam.
-★ DEKHA:  server ki thread ginti jaan-boojh ke TEEN rakhi. Teen connection ne jagah bhar di, chautha "send"
-          server tak pahuncha hi nahi.
+★ DEKHA:  server ki thread ginti jaan-boojh ke TEEN rakhi. Teen connection
+          ne jagah bhar di, chautha "send" server tak pahuncha hi nahi.
 
 ILAAJ:   WEBSOCKET + EVENT LOOP (Netty jaisa): kuch hi thread, lakhon connection. ~200 chat server, aage LB.
 
@@ -127,12 +127,12 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - Ek chat server gir gaya?
-      -> uske 1 lakh user ek saath dobara judenge -> RUK-RUK ke + thoda random (backoff + jitter), warna sab
-         ek saath doosre server pe tootein.
+      -> uske 1 lakh user ek saath dobara judenge -> RUK-RUK ke + thoda random
+         (backoff + jitter), warna sab ek saath doosre server pe tootein.
          Message DB me pehle se hai, dobara jud ke "meri aakhri id ke baad ka do".
   - Naya code deploy karna?
-      -> thode-thode server, pehle unke connection dheere hatao (DRAINING). Sab ek saath restart = lakh log ek
-         saath toote.
+      -> thode-thode server, pehle unke connection dheere hatao
+         (DRAINING). Sab ek saath restart = lakh log ek saath toote.
   - LB lambi connection kaise bithata?
       -> connection ek baar kisi server pe baitha, phir wahi rehta. Naya connection = naya chunaav.
 ```
@@ -140,25 +140,25 @@ ISKE BAAD KYA TOOTEGA:
 #### [2](#d2) ARPAN SERVER-1 PE, RAVI SERVER-7 PE
 ```
 KAHANI:  Ab 200 chat server. Arpan server-1 se juda, Ravi server-7 se.
-         Arpan ne "hi" bheja -> server-1 ne apni register dekhi -> usme sirf apne log -> bola "Ravi OFFLINE",
-         jabki Ravi online tha.
-★ DEKHA:  wahi program do port pe chalaya. Arpan ki screen `(server bola: Ravi OFFLINE hai)`, Ravi us waqt
-          online.
+         Arpan ne "hi" bheja -> server-1 ne apni register dekhi -> usme
+         sirf apne log -> bola "Ravi OFFLINE", jabki Ravi online tha.
+★ DEKHA:  wahi program do port pe chalaya. Arpan ki screen
+          `(server bola: Ravi OFFLINE hai)`, Ravi us waqt online.
 
 ILAAJ:   SAANJHI REGISTER (Redis): "Ravi -> server-7". Server-1 Redis se poochhe, server-7 ko seedha bole,
          server-7 apne khule taar pe Ravi ko de.
 
 ANDAR KAISE:
-         Connection (zinda taar) kabhi Redis me nahi ja sakta, wo sirf server-7 ki memory me hai. Redis me
-         sirf PATA.
-         Server-7 mar gaya aur Redis me "Ravi -> server-7" pada reh gaya? -> entry pe TTL + dhadkan se badhti
-         rahe.
+         Connection (zinda taar) kabhi Redis me nahi ja sakta,
+         wo sirf server-7 ki memory me hai. Redis me sirf PATA.
+         Server-7 mar gaya aur Redis me "Ravi -> server-7" pada
+         reh gaya? -> entry pe TTL + dhadkan se badhti rahe.
          (har message pe saare 200 server se "Ravi tumhare paas hai?" poochhna = bekaar.)
 
 ISKE BAAD KYA TOOTEGA:
   - Register me Ravi ka server galat (Ravi abhi doosre pe khiska)?
-      -> server-7 pe Ravi nahi mila -> koi baat nahi, message DB me hai -> Ravi naye server pe judte hi le
-         lega.
+      -> server-7 pe Ravi nahi mila -> koi baat nahi, message
+         DB me hai -> Ravi naye server pe judte hi le lega.
   - Redis hi gir gaya?
       -> copy pe switch. Beech me seedha bhejna ruka, par message DB me -> push + dobara judne pe pahunchega.
   - Pub-sub se kyun nahi bhejte?
@@ -167,19 +167,19 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [3](#d3) RAVI OFFLINE, MESSAGE KAHAN JAAYE?
 ```
-KAHANI:  Ravi ka phone band, koi connection hi nahi. Galat soch: "pehle Ravi ko bhejo, na pahunche to DB me
-         daal do"
+KAHANI:  Ravi ka phone band, koi connection hi nahi. Galat soch:
+         "pehle Ravi ko bhejo, na pahunche to DB me daal do"
          -> bhejne aur DB ke beech server gira = message gaya.
 
-ILAAJ:   PEHLE DB me LIKHO (id ke saath), PHIR bhejne ki koshish. Ravi nahi mila -> DB me pada rahe + PUSH
-         notification.
+ILAAJ:   PEHLE DB me LIKHO (id ke saath), PHIR bhejne ki koshish.
+         Ravi nahi mila -> DB me pada rahe + PUSH notification.
 
 ANDAR KAISE:
-         Ravi wapas aaya: "meri aakhri id 4417, uske BAAD ke do" (nishaan Ravi ka app rakhta, Kafka offset
-                          jaisa).
+         Ravi wapas aaya: "meri aakhri id 4417, uske BAAD ke do" (nishaan
+                          Ravi ka app rakhta, Kafka offset jaisa).
          Server 4418 se aage sab bhej deta.
-         Push: login pe phone ka device token (FCM / APNs) save -> Google / Apple ke through phone tak, app
-               band ho tab bhi ghanti.
+         Push: login pe phone ka device token (FCM / APNs) save -> Google
+               / Apple ke through phone tak, app band ho tab bhi ghanti.
 
 ISKE BAAD KYA TOOTEGA:
   - Ravi ke 3 device (phone, laptop, tab)?
@@ -199,14 +199,14 @@ ILAAJ:   Cassandra / Scylla. PARTITION KEY = chat_id, uske andar kram = message_
 ANDAR KAISE:
          Padhna hamesha "IS CHAT ke aakhri 50" -> chat_id se ek hi jagah, ek baar padhna:
            WHERE chat_id = ? AND id < 4417 ORDER BY id DESC LIMIT 50 (keyset, OFFSET nahi).
-         Snowflake 64 bit = [time ms | machine id | us ms me ginti] -> har server khud bana leta, time ke
-         saath badhta.
+         Snowflake 64 bit = [time ms | machine id | us ms me ginti]
+         -> har server khud bana leta, time ke saath badhta.
          Cassandra likhne me tez: pehle commit log (sirf neeche jodna) + RAM (memtable).
 
 ISKE BAAD KYA TOOTEGA:
   - Partition user_id se kyun nahi?
-      -> Arpan-Ravi ki ek chat do jagah (Arpan ke bheje Arpan ke paas, Ravi ke Ravi ke) -> "aakhri 50" ke liye
-         do jagah jodo. Group = 500 jagah.
+      -> Arpan-Ravi ki ek chat do jagah (Arpan ke bheje Arpan ke paas, Ravi
+         ke Ravi ke) -> "aakhri 50" ke liye do jagah jodo. Group = 500 jagah.
   - message_id se partition?
       -> har message alag dabba -> aakhri 50 = 50 jagah se. message_id andar ka kram hai, partition nahi.
   - Ek bahut active group (ek partition garam)?
@@ -221,8 +221,8 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [5](#d5) 500 KA GROUP, EK MESSAGE 500 BAAR LIKHEIN?
 ```
-KAHANI:  "College Gang" group me 500 log. Arpan ne ek message bheja -> kya 500 logon ke inbox me 500 baar
-         likhein?
+KAHANI:  "College Gang" group me 500 log. Arpan ne ek message
+         bheja -> kya 500 logon ke inbox me 500 baar likhein?
 
 ILAAJ:   EK hi copy, group ki chat ke neeche (fanout on READ). Sab wahi ek padhein.
          Bhejna = connection pe (sasta), DB me likhai sirf ek.
@@ -233,16 +233,16 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - 500 me 300 online, unhe bhejna kaise?
-      -> register se members ke servers nikaalo, har SERVER ko EK baar "ye message, in members ko" (300 alag
-         call nahi).
+      -> register se members ke servers nikaalo, har SERVER ko EK
+         baar "ye message, in members ko" (300 alag call nahi).
   - Naya member juda, purane message dikhein?
       -> judne ke waqt ki id se pehle wale nahi (nishaan judne wali id pe), ya group ki setting ke hisaab.
 ```
 
 #### [6](#d6) KISKE KITNE UNREAD?
 ```
-KAHANI:  500 member. "Kiske kitne unread" ke liye har message x har member ka record = 500 x 50 = 25,000
-         likhai. Bekaar.
+KAHANI:  500 member. "Kiske kitne unread" ke liye har message x
+         har member ka record = 500 x 50 = 25,000 likhai. Bekaar.
 
 ILAAJ:   Har member ka EK NISHAAN (cursor): "Arpan is group me 4417 tak padh chuka". 500 row, bas.
 
@@ -257,15 +257,15 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [7](#d7) DO TICK AUR NEELI TICK: SERVER KO PATA KAISE?
 ```
-KAHANI:  Ek tick = message server tak pahuncha. Do tick = Ravi ke phone ne "mil gaya" bola. Neeli = Ravi ne
-         chat khol ke dekha.
+KAHANI:  Ek tick = message server tak pahuncha. Do tick = Ravi ke
+         phone ne "mil gaya" bola. Neeli = Ravi ne chat khol ke dekha.
          Har message ke liye alag "mil gaya / padh liya" message? Bahut traffic.
 
 ILAAJ:   Wahi NISHAAN, do number: delivered_upto ("yahan tak mila") + read_upto ("yahan tak padha").
 
 ANDAR KAISE:
-         Ravi ne chat kholi, 50 message padhe -> ek hi baat: "read_upto 4467" -> Arpan ko EK push -> 50 neeli
-         ek saath.
+         Ravi ne chat kholi, 50 message padhe -> ek hi baat:
+         "read_upto 4467" -> Arpan ko EK push -> 50 neeli ek saath.
          (50 alag "padh liya" nahi.)
          Tick + unread + offline ke baad wapas lena = ek hi cheez: ek nishaan aage khisakta.
 
@@ -278,8 +278,8 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [8](#d8) 10 LAKH KA BROADCAST GROUP: TICK KA KYA?
 ```
-KAHANI:  10 lakh ka broadcast group. Har member ka nishaan + tick 500 pe chalta, 10 lakh pe nahi (har message
-         pe 10 lakh tick).
+KAHANI:  10 lakh ka broadcast group. Har member ka nishaan + tick 500
+         pe chalta, 10 lakh pe nahi (har message pe 10 lakh tick).
 
 ILAAJ:   Feature utna hi jitna scale jhele: group ka size bandha (~1000). Channel / broadcast me tick band.
 
@@ -295,12 +295,12 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [9](#d9) ARPAN KA NET DHEEMA, APP NE DOBARA BHEJA, RAVI KO DO BAAR
 ```
-KAHANI:  Arpan ka net dheema. App ne "hi" bheja, jawab nahi aaya (timeout), to dobara bheja. Pehla pahunch
-         chuka tha.
+KAHANI:  Arpan ka net dheema. App ne "hi" bheja, jawab nahi aaya
+         (timeout), to dobara bheja. Pehla pahunch chuka tha.
          Ravi ko "hi" do baar dikha.
 
-ILAAJ:   clientMsgId: Arpan ka APP har message ki id banata, dobara bhejne pe WAHI. Pehle aa chuki -> purana
-         message lautao.
+ILAAJ:   clientMsgId: Arpan ka APP har message ki id banata, dobara
+         bhejne pe WAHI. Pehle aa chuki -> purana message lautao.
 
 ANDAR KAISE:
          "pehle aaya?" + daalna = EK atomic kadam: (chat_id, clientMsgId) UNIQUE, ya Redis SET NX EX 3600.
@@ -315,8 +315,8 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [10](#d10) KRAM KISKE TIME SE?
 ```
-KAHANI:  Arpan ke phone ki ghadi 5 min aage chal rahi. Uske message chat me upar chadh gaye, Ravi ke jawab se
-         pehle dikhne lage.
+KAHANI:  Arpan ke phone ki ghadi 5 min aage chal rahi. Uske message
+         chat me upar chadh gaye, Ravi ke jawab se pehle dikhne lage.
 
 ILAAJ:   Kram SERVER ki id se (snowflake, ek chat ek partition). Phone ki ghadi sirf dikhane ke liye.
          + har chat ka apna +1 number (SEQ) -> 15, 17 aaya, 16 nahi -> gap pakda -> server se maango.
@@ -324,8 +324,8 @@ ILAAJ:   Kram SERVER ki id se (snowflake, ek chat ek partition). Phone ki ghadi 
 ANDAR KAISE:
          Seq: Redis INCR seq:chat123 (atomic), ya chat ka maalik server memory me ginta.
          Kafka beech me ho -> key = chatId -> ek chat kram me, alag chat ek saath.
-         Jaan-boojh ke: pakka kram = pehla atka to doosra bhi roko (head-of-line). Chuna: thoda idhar-udhar
-                        chalega, par ruke nahi.
+         Jaan-boojh ke: pakka kram = pehla atka to doosra bhi roko (head-of-line).
+                        Chuna: thoda idhar-udhar chalega, par ruke nahi.
 
 ISKE BAAD KYA TOOTEGA:
   - 16 nahi aaya, app kya kare?
@@ -338,14 +338,14 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [11](#d11) 5 MB KA VIDEO BHI ISI RAASTE SE?
 ```
-KAHANI:  Arpan ne 5 MB video bheja chat server ke raaste se -> connection aur thread atak gaye, baaki message
-         bhi ruke.
+KAHANI:  Arpan ne 5 MB video bheja chat server ke raaste se ->
+         connection aur thread atak gaye, baaki message bhi ruke.
 
 ILAAJ:   App file seedha S3 me (PRESIGNED URL). Message me sirf PATA: { type, S3 KEY, size, thumbnail }.
 
 ANDAR KAISE:
-         Server sign kare (PUT, key, 10 min) -> app seedha S3 pe. Thumbnail app khud banata (kuch KB) ->
-         turant dikhe.
+         Server sign kare (PUT, key, 10 min) -> app seedha S3 pe.
+         Thumbnail app khud banata (kuch KB) -> turant dikhe.
          Group me file ek baar upload, 500 ko wahi pata.
 
 ISKE BAAD KYA TOOTEGA:
@@ -366,8 +366,8 @@ ILAAJ:   Redis me "Ravi online" chhoti umar (30 sec), app ki dhadkan (har 15 sec
          POOCHHO, batao mat: Ravi ka status tabhi jab Arpan ne Ravi ki chat kholi ho.
 
 ANDAR KAISE:
-         "offline" ka message bhejna hi nahi padta. Last seen = usi key ka aakhri update. Ravi ne chhupaya hai
-         to mat dikhao.
+         "offline" ka message bhejna hi nahi padta. Last seen = usi
+         key ka aakhri update. Ravi ne chhupaya hai to mat dikhao.
 
 ISKE BAAD KYA TOOTEGA:
   - 2 crore / 15 sec = 13 lakh dhadkan / second Redis pe?
@@ -384,19 +384,19 @@ AAKHRI DABBE (sab dikkat ke baad):
   offline -> Push (app band pe ghanti) · dobara judne pe "aakhri id ke baad sab" maango
   Nishaan = delivered_upto / read_upto · media -> S3, message me sirf pata · purana -> sasti jagah
 
-DB:  message = Cassandra (chat_id partition, server ki id time ke saath badhti) -> ek chat ek jagah, kram bana
-     rahe
+DB:  message = Cassandra (chat_id partition, server ki id time
+     ke saath badhti) -> ek chat ek jagah, kram bana rahe
      zinda taar (connection) = server ki memory · pakka maal (message) = DB
 
 END ME POOCHEGA:
   "Kram?"           -> server ki sequence id, phone ki ghadi nahi · Kafka key = chat_id
   "Tick / unread?"  -> har user har chat ka nishaan (delivered_upto / read_upto)
-  "10x?"            -> ~200 chat server, event loop · Redis register umar ke saath · dobara judne pe backoff +
-  jitter
+  "10x?"            -> ~200 chat server, event loop · Redis
+  register umar ke saath · dobara judne pe backoff + jitter
                        · garam group -> tukde (chat_id + 0..9) · Push ka apna retry / queue
   "SPOF?"           -> chat server (dobara judo), Redis (copy)
-  "Chal raha, kaise pata?" -> pahunchne ka p99 · har machine pe khuli connection · dobara judne ki dar · push
-  fail · alert
+  "Chal raha, kaise pata?" -> pahunchne ka p99 · har machine pe
+  khuli connection · dobara judne ki dar · push fail · alert
 ```
 
 AAKHRI DABBE ki tasveer:
@@ -444,10 +444,9 @@ flowchart TD
 
 ```
 POOCHEGA: "What happens if a chat server goes down?"
-BOL:      "Its connections drop and clients reconnect to another server with backoff and jitter, so they don't
-           stampede. No message is lost — it was written to the database before delivery — and on reconnect
-           the
-           client asks for everything after its last message id."
+BOL:      "Its connections drop and clients reconnect to another server with backoff and jitter,
+           so they don't stampede. No message is lost — it was written to the database before
+           delivery — and on reconnect the client asks for everything after its last message id."
 ```
 ```mermaid
 flowchart TD
@@ -467,9 +466,9 @@ flowchart TD
 ## DIKKAT 2 — Arpan server-1 pe, Ravi server-7 pe
 
 ```
-BOL:      "Each chat server keeps its own connections in memory, and Redis holds a shared registry of which
-          server each user is on, with a TTL refreshed by heartbeats; the sender's server looks it up and
-          forwards to that server."
+BOL:      "Each chat server keeps its own connections in memory, and Redis holds a
+           shared registry of which server each user is on, with a TTL refreshed by
+           heartbeats; the sender's server looks it up and forwards to that server."
 ```
 ```mermaid
 flowchart TD
@@ -493,10 +492,9 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you make sure no message is lost?"
-BOL:      "I write the message to the database first and only then try to deliver it. If the receiver is
-          offline
-           it simply waits there and a push notification goes out; when they reconnect they ask for everything
-           after their last message id."
+BOL:      "I write the message to the database first and only then try to deliver it. If
+           the receiver is offline it simply waits there and a push notification goes
+           out; when they reconnect they ask for everything after their last message id."
 ```
 ```mermaid
 flowchart TD
@@ -527,22 +525,20 @@ flowchart TD
 ```
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
 BOL:      "Wide-column store partitioned by chat id and sorted by a snowflake message id, so the last fifty
-          messages
-           of a chat are one read and writes spread across nodes. Old data moves to cold storage."
+           messages of a chat are one read and writes spread across nodes. Old data moves to cold storage."
 
 POOCHEGA: "What's your partition key, and why?"
-BOL:      "Partition by chat id, because reads are always 'the latest messages of this chat'. One chat
-           lives in one partition, sorted by message id, so it's a single read. User id would split one
-           conversation across partitions."
+BOL:      "Partition by chat id, because reads are always 'the latest messages of
+           this chat'. One chat lives in one partition, sorted by message id, so it's
+           a single read. User id would split one conversation across partitions."
 
 POOCHEGA: "What about a hot partition — one very active group?"
-BOL:      "I'd add a random bucket to the key, chat id plus 0 to 9, and merge on read, or cap group size and
-          rate."
+BOL:      "I'd add a random bucket to the key, chat id plus 0 to
+           9, and merge on read, or cap group size and rate."
 
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
-BOL:      "It depends on the model we picked: WhatsApp-style deletes after delivery; Slack-style keeps
-          everything,
-           so older months move to cold storage."
+BOL:      "It depends on the model we picked: WhatsApp-style deletes after delivery;
+           Slack-style keeps everything, so older months move to cold storage."
 ```
 ```mermaid
 flowchart TD
@@ -573,8 +569,8 @@ flowchart TD
 ## DIKKAT 5 — 500 ka group, 500 baar likhein
 
 ```
-BOL:      "A group message is stored once under the group's chat id and read by every member, and delivery
-          sends one call per chat server that has online members, not one per member."
+BOL:      "A group message is stored once under the group's chat id and read by every member, and
+           delivery sends one call per chat server that has online members, not one per member."
 ```
 ```mermaid
 flowchart TD
@@ -605,8 +601,8 @@ flowchart TD
 ## DIKKAT 6 — kiske kitne unread
 
 ```
-BOL:      "Each member has one read cursor per chat, so unread count is just the chat's latest sequence
-          minus the member's cursor, instead of a row per message per member."
+BOL:      "Each member has one read cursor per chat, so unread count is just the chat's latest
+           sequence minus the member's cursor, instead of a row per message per member."
 ```
 ```mermaid
 flowchart TD
@@ -640,8 +636,8 @@ flowchart TD
 ## DIKKAT 7 — do tick aur neeli tick
 
 ```
-BOL:      "Delivered and read ticks are two cursors per user per chat; when the receiver reads fifty
-          messages it sends one read-up-to update and the sender gets one push."
+BOL:      "Delivered and read ticks are two cursors per user per chat; when the receiver
+           reads fifty messages it sends one read-up-to update and the sender gets one push."
 ```
 ```mermaid
 flowchart TD
@@ -675,8 +671,8 @@ flowchart TD
 ## DIKKAT 8 — 10 lakh ka broadcast group
 
 ```
-BOL:      "Per-member ticks don't scale to a million members, so I cap group size and turn off ticks for
-          broadcast channels, which keep a single unread cursor."
+BOL:      "Per-member ticks don't scale to a million members, so I cap group size and
+           turn off ticks for broadcast channels, which keep a single unread cursor."
 ```
 ```mermaid
 flowchart TD
@@ -711,9 +707,8 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the client retries and sends the same message twice?"
-BOL:      "The client generates a clientMsgId and reuses it on retry; the server claims it atomically and
-          returns
-           the existing message instead of creating a second one."
+BOL:      "The client generates a clientMsgId and reuses it on retry; the server claims it
+           atomically and returns the existing message instead of creating a second one."
 ```
 ```mermaid
 flowchart TD
@@ -750,10 +745,9 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you keep messages in order?"
-BOL:      "Order comes from a server-assigned id, never the client clock. One chat lives in one partition, and
-          with
-           Kafka I key by chat id, so a chat stays in order while different chats run in parallel. A per-chat
-           sequence number lets the client spot a gap and catch up."
+BOL:      "Order comes from a server-assigned id, never the client clock. One chat lives in one
+           partition, and with Kafka I key by chat id, so a chat stays in order while different chats
+           run in parallel. A per-chat sequence number lets the client spot a gap and catch up."
 ```
 ```mermaid
 flowchart TD
@@ -829,9 +823,8 @@ flowchart TD
 ## DIKKAT 12 — online / last-seen
 
 ```
-BOL:      "Presence is a Redis key with a short TTL kept alive by heartbeats batched by the chat servers,
-          and status is fetched only when someone opens that chat instead of being broadcast to every
-          contact."
+BOL:      "Presence is a Redis key with a short TTL kept alive by heartbeats batched by the chat servers, and
+           status is fetched only when someone opens that chat instead of being broadcast to every contact."
 ```
 ```mermaid
 flowchart TD
@@ -868,16 +861,16 @@ flowchart TD
 ```
 Chat Server   -> 2 crore khuli = ~200 machine sirf taar pakadne · event loop, warna thread khatam
 REGISTER      -> memory me, server gira to gaya -> Redis me umar wali entry + dhadkan
-DOBARA JUDNA  -> ek server gira = 1 lakh ek saath -> ruk-ruk ke + random (backoff + jitter) · deploy pe
-draining
+DOBARA JUDNA  -> ek server gira = 1 lakh ek saath ->
+ruk-ruk ke + random (backoff + jitter) · deploy pe draining
 Cassandra     -> chat_id partition · garam group -> tukde (chat_id + 0..9) / had · purana sasti jagah
 Push          -> Google / Apple bahar ki cheez -> apna retry / queue
 Redis         -> copy, ALAG AZ · message store ki bhi copy, alag AZ
 
 POOCHEGA: "How would you scale this to 10x?"      -> user ka raasta chalo, pehle jo toote
 POOCHEGA: "What's the single point of failure?"   -> chat server (dobara judo), Redis (copy)
-POOCHEGA: "How do you know it's working?"         -> pahunchne ka p99 · har machine pe khuli connection ·
-          dobara judne ki dar · push fail · alert
+POOCHEGA: "How do you know it's working?"         -> pahunchne ka p99 · har
+          machine pe khuli connection · dobara judne ki dar · push fail · alert
 ```
 
 ---
@@ -905,16 +898,12 @@ Idempotency = clientMsgId · Cassandra = chat_id / message_id, pehle LIKHO phir 
 Cursor store = delivered_upto / read_upto · Blob store = media, message me sirf pata
 ```
 ```
-BOL: "Each user holds an open WebSocket to one of ~200 chat servers, and Redis records which server each user
-     is on.
-      A message is deduped on clientMsgId, written first to Cassandra partitioned by chat id with a snowflake
-      id,
-      then routed to the receiver's server; if they're offline it waits and a push notification goes out, and
-      on
-      reconnect they ask for everything after their last id. Receipts and unread counts are just cursors per
-      user per
-      chat, presence is a TTL key kept alive by heartbeats, and media goes to S3 with only a link in the
-      message."
+BOL:      "Each user holds an open WebSocket to one of ~200 chat servers, and Redis records which server
+           each user is on. A message is deduped on clientMsgId, written first to Cassandra partitioned
+           by chat id with a snowflake id, then routed to the receiver's server; if they're offline it
+           waits and a push notification goes out, and on reconnect they ask for everything after their
+           last id. Receipts and unread counts are just cursors per user per chat, presence is a TTL key
+           kept alive by heartbeats, and media goes to S3 with only a link in the message."
 ```
 ```mermaid
 flowchart TD

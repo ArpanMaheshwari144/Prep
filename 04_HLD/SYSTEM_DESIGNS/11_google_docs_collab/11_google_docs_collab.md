@@ -18,15 +18,15 @@ Source: [How to Design Google Docs](https://bytebytego.com/guides/how-to-design-
 
 ```
 POOCHO:  "Editing, comments, sharing / permission, version history, offline — main ek saath EDITING pe."
-         ek doc pe ek saath kitne log? (2-3 ya 100) · OFFLINE chahiye?  <- iska jawab poora CAP faisla tay
-         karta
+         ek doc pe ek saath kitne log? (2-3 ya 100) · OFFLINE
+         chahiye?  <- iska jawab poora CAP faisla tay karta
          permission scope me? · rich text ya plain?
 
 KYA KARE (FR):    kai log EK doc saath edit · doosron ka likha TURANT dikhe · kisi ka likha na mite
                   scope bahar: comments · version history · formatting
 KAISA CHALE (NFR): typing TURANT (dil) · typing KABHI na ruke (offline bhi)
-                   aakhir me sabka doc same — "turant sab same" (strong) se NAHI, "aakhir me same"
-                   (convergence) se
+                   aakhir me sabka doc same — "turant sab same"
+                   (strong) se NAHI, "aakhir me same" (convergence) se
 
 NUMBERS (andaaza):
    ~10 crore user · ~3-4 crore roz · har akshar ek event -> LIKHNA bahut zyada
@@ -65,55 +65,55 @@ ILAAJ:   Poora text mat bhejo, sirf kya badla wo bhejo (OPERATION): "position 5 
 ANDAR KAISE:
          op = { docId, userId, type (insert / delete), position, char, baseVersion }
          baseVersion = Arpan ne doc ka kaunsa version dekh ke ye op banaya.
-         Arpan aur Ravi dono ne v7 dekh ke op banaya -> server ko pata ye do op ek saath (concurrent) bane ->
-         card 4 sambhaalta.
+         Arpan aur Ravi dono ne v7 dekh ke op banaya -> server ko pata
+         ye do op ek saath (concurrent) bane -> card 4 sambhaalta.
 
 ISKE BAAD KYA TOOTEGA:
   - Arpan ne "L" mitaya, Ravi ne usi jagah type kiya?
-      -> mitana bhi ek op hai. OT dono ko adjust karta: Ravi ka akshar sahi jagah khisakta, Arpan sahi "L"
-         mitata (card 4).
+      -> mitana bhi ek op hai. OT dono ko adjust karta: Ravi ka
+         akshar sahi jagah khisakta, Arpan sahi "L" mitata (card 4).
 ```
 
 #### [2](#d2) RAVI KO ARPAN KA LIKHA KAB DIKHEGA?
 ```
-KAHANI:  Normal HTTP me server khud kuch nahi bhej sakta, sirf jawab de sakta. To Ravi refresh kare tab Arpan
-         ka likha dikhe? Bekaar.
+KAHANI:  Normal HTTP me server khud kuch nahi bhej sakta, sirf jawab de
+         sakta. To Ravi refresh kare tab Arpan ka likha dikhe? Bekaar.
 
 ILAAJ:   WEBSOCKET: ek connection jo khula rehta aur dono taraf chalta.
          Arpan usi se type bhejta, aur usi se Ravi ka likha aata.
 
 ANDAR KAISE:
-         Pehle ek HTTP request "Upgrade: websocket" -> server "101 Switching Protocols" -> wahi connection
-         khula rehta,
+         Pehle ek HTTP request "Upgrade: websocket" -> server "101
+         Switching Protocols" -> wahi connection khula rehta,
          ab dono taraf chhote-chhote message.
 
 ISKE BAAD KYA TOOTEGA:
   - Connection beech me toot gaya?
-      -> dobara judo (ruk-ruk ke) + bolo "main v120 tak tha" -> server v121 se aage ke saare op bhej deta.
-         Kuch nahi chhoota.
+      -> dobara judo (ruk-ruk ke) + bolo "main v120 tak tha" -> server
+         v121 se aage ke saare op bhej deta. Kuch nahi chhoota.
   - Arpan abhi bhi hai, kaise pata?
       -> har ~30 sec ping / pong. Jawab nahi = connection band, jagah khaali.
   - Baar-baar poochhna (polling) ya SSE kyun nahi?
-      -> polling = crore log x har second bekaar sawaal + 1 sec der. SSE sirf server -> user, yahan dono taraf
-         chahiye.
+      -> polling = crore log x har second bekaar sawaal + 1 sec
+         der. SSE sirf server -> user, yahan dono taraf chahiye.
 ```
 
 #### [3](#d3) ARPAN SERVER-1 PE, RAVI SERVER-2 PE
 ```
-KAHANI:  Ek connection server itne connection nahi jhelta, to kai lagaye. Arpan server-1 se juda, Ravi
-         server-2 se, dono ek hi doc pe.
-         Arpan ne type kiya -> server-1 ko pata, par server-2 ko kaise pata chale? Server ek doosre ko jaante
-         hi nahi.
+KAHANI:  Ek connection server itne connection nahi jhelta, to kai lagaye.
+         Arpan server-1 se juda, Ravi server-2 se, dono ek hi doc pe.
+         Arpan ne type kiya -> server-1 ko pata, par server-2 ko
+         kaise pata chale? Server ek doosre ko jaante hi nahi.
 
-ILAAJ:   REDIS PUB/SUB: server-1 Arpan ka op Redis pe PUBLISH kare -> jo servers us doc ko sun rahe, sabko
-         pahunch jaata
+ILAAJ:   REDIS PUB/SUB: server-1 Arpan ka op Redis pe PUBLISH kare
+         -> jo servers us doc ko sun rahe, sabko pahunch jaata
          -> server-2 Ravi ko bhej deta.
 
 ANDAR KAISE:
          Har doc ek channel (doc:123). Jis server pe doc:123 ka koi user hai, wo SUBSCRIBE karta.
          Server-1 --publish doc:123--> Redis --> Server-2 --> Ravi
-         Redis pub/sub kuch STORE nahi karta (bheja aur bhool gaya). Iska kaam sirf turant dikhana, data
-         bachana nahi.
+         Redis pub/sub kuch STORE nahi karta (bheja aur bhool
+         gaya). Iska kaam sirf turant dikhana, data bachana nahi.
 
 ISKE BAAD KYA TOOTEGA:
   - Us waqt server-2 restart ho raha tha, sun hi nahi raha?
@@ -127,8 +127,8 @@ ISKE BAAD KYA TOOTEGA:
 #### [4](#d4) DONO NE EK SAATH POSITION 0 PE TYPE KIYA
 ```
 KAHANI:  Doc "HELLO". Arpan ne position 0 pe "X" likha, usi pal Ravi ne position 0 pe "Y".
-         Seedha lagaya -> Arpan ki screen pe "XHELLO" phir Y -> "YXHELLO"; Ravi ki pe "YHELLO" phir X ->
-         "XYHELLO".
+         Seedha lagaya -> Arpan ki screen pe "XHELLO" phir Y ->
+         "YXHELLO"; Ravi ki pe "YHELLO" phir X -> "XYHELLO".
          Do alag doc ban gaye (diverge).
 
 ILAAJ:   OT (Operational Transformation): doosre ka op aane pe usko apne op ke hisaab se khiska do.
@@ -137,15 +137,15 @@ ILAAJ:   OT (Operational Transformation): doosre ka op aane pe usko apne op ke h
 
 ANDAR KAISE:
          Niyam (tie-break): same jagah pe dono ne likha to Arpan ka pehle.
-         Arpan ki screen: XHELLO. Ravi ka "Y at 0" aaya -> Arpan ka X pehle hai -> Y ko 1 pe khiskao ->
-                          "XYHELLO"
+         Arpan ki screen: XHELLO. Ravi ka "Y at 0" aaya -> Arpan ka X
+                          pehle hai -> Y ko 1 pe khiskao -> "XYHELLO"
          Ravi ki screen:  YHELLO. Arpan ka "X at 0" aaya -> Arpan pehle -> X 0 pe hi -> "XYHELLO"
          Dono ke paas "XYHELLO". Same.
 
 ISKE BAAD KYA TOOTEGA:
   - Khiskana kaun karta, app ya server?
-      -> dono. Server KRAM tay karta (har op ko agla version number) + aaye op ko khiskata. App apne pending
-         op ko.
+      -> dono. Server KRAM tay karta (har op ko agla version
+         number) + aaye op ko khiskata. App apne pending op ko.
   - OT kyun, CRDT kyun nahi?
       -> beech me server hai (har op usi se guzarta) -> OT seedha baithta, Google Docs bhi OT.
          CRDT = bina server (offline-first, phone se phone). Keemat: har akshar ki id = memory zyada.
@@ -162,14 +162,14 @@ ILAAJ:   Op pehle Redis BUFFER me jama, har ~1 sec / 500 op pe ek saath (BATCH) 
 
 ANDAR KAISE:
          Edit log: partition key = docId, uske andar kram = version (SERVER ka number).
-         Timestamp se kram NAHI: ek hi millisecond pe do op = same key = ek ne doosre ko chupchaap mita diya,
-                                 op gaya.
+         Timestamp se kram NAHI: ek hi millisecond pe do op = same key = ek
+                                 ne doosre ko chupchaap mita diya, op gaya.
          Cassandra likhne me tez: pehle commit log (sirf neeche jodna) + RAM (memtable).
 
 ISKE BAAD KYA TOOTEGA:
   - Arpan ka op Redis buffer me tha, Redis gir gaya -> op gaya?
-      -> Redis ki copy async thi, poora nahi bachati. Ilaaj: Arpan ka app op apne paas rakhe jab tak server
-         "mil gaya" (ACK) na bole,
+      -> Redis ki copy async thi, poora nahi bachati. Ilaaj: Arpan ka
+         app op apne paas rakhe jab tak server "mil gaya" (ACK) na bole,
          dobara jude to phir bheje (opId ke saath, server ke paas pehle se hai to skip).
          Server ACK tabhi de jab op pakka likh liya ho.
   - "Sahi hona chahiye to SQL lo"?
@@ -178,8 +178,8 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [6](#d6) DOC KHOLA, 10 LAKH OP SHURU SE CHALANE PADE
 ```
-KAHANI:  Arpan ne 2 saal purana doc khola. Server ne pehle op se 10 lakh op dobara chalaye tab doc bana ->
-         kholne me bahut der.
+KAHANI:  Arpan ne 2 saal purana doc khola. Server ne pehle op se 10
+         lakh op dobara chalaye tab doc bana -> kholne me bahut der.
 
 ILAAJ:   SNAPSHOT: har ~1000 op pe poore doc ki photo save. Kholna = aakhri photo + uske baad ke thode op.
 
@@ -211,14 +211,14 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [8](#d8) CRORE WEBSOCKET CONNECTION
 ```
-KAHANI:  Crore connection khule. Ek doc ke 5 editor alag-alag 5 server pe bikhre -> har server apna OT chala
-         raha -> kram toota.
+KAHANI:  Crore connection khule. Ek doc ke 5 editor alag-alag 5 server
+         pe bikhre -> har server apna OT chala raha -> kram toota.
 
 ILAAJ:   Alag CONNECTION server ki line. docId se baanto: ek doc ke saare editor + uska OT EK hi server pe.
 
 ANDAR KAISE:
-         URL me docId -> LB consistent hashing RING se server chunta. Server juda / gira -> sirf uske hisse ke
-         doc hilte.
+         URL me docId -> LB consistent hashing RING se server
+         chunta. Server juda / gira -> sirf uske hisse ke doc hilte.
          (hash(docId) % N NAHI: N badla to lagbhag har doc ka server badla = sab dobara jude.)
          Ek doc pe ~100 editor tak ek server jhel leta. App ki static files CDN se.
 
@@ -246,8 +246,8 @@ END ME POOCHEGA:
   "10x?"            -> alag connection line · Conn-Server docId se baanto · Redis copy
                        · DB buffer + batch · doc kholna = snapshot + baad ke op
   "SPOF?"           -> Conn-Server (doosre pe dobara judo), Redis (copy)
-  "Chal raha, kaise pata?" -> likha doosre tak kitni der me pahuncha (p99) · WebSocket toot-ne ki dar · buffer
-  lag · alert
+  "Chal raha, kaise pata?" -> likha doosre tak kitni der me
+  pahuncha (p99) · WebSocket toot-ne ki dar · buffer lag · alert
 ```
 
 AAKHRI DABBE ki tasveer:
@@ -289,9 +289,9 @@ flowchart TD
 ## DIKKAT 1 — dono ne saath save kiya, baad wale ne mita diya
 
 ```
-BOL:      "Instead of saving the whole document, clients send operations like insert at position or delete
-          at position, each with the base version it was made on, so concurrent edits are merged instead of
-          overwritten."
+BOL:      "Instead of saving the whole document, clients send operations like
+           insert at position or delete at position, each with the base version it
+           was made on, so concurrent edits are merged instead of overwritten."
 ```
 ```mermaid
 flowchart TD
@@ -309,8 +309,8 @@ flowchart TD
 ## DIKKAT 2 — Ravi ko Arpan ka likha kab dikhega
 
 ```
-BOL:      "Each client keeps a WebSocket open to a connection server, so edits flow both ways instantly; on
-          reconnect the client sends its last version and receives every operation after it."
+BOL:      "Each client keeps a WebSocket open to a connection server, so edits flow both ways instantly;
+           on reconnect the client sends its last version and receives every operation after it."
 ```
 ```mermaid
 flowchart TD
@@ -329,7 +329,7 @@ flowchart TD
 
 ```
 BOL:      "Connection servers fan out edits through Redis pub/sub with one channel per document; pub/sub is
-          only for live delivery, and anything missed is recovered from the operation log on reconnect."
+           only for live delivery, and anything missed is recovered from the operation log on reconnect."
 ```
 ```mermaid
 flowchart TD
@@ -356,8 +356,8 @@ flowchart TD
 
 ```
 POOCHEGA: "Two people type at the same position at the same time — what happens?"
-BOL:      "I send operations, not snapshots, and transform concurrent operations with OT or merge them with a
-           CRDT. Everyone converges to the same document and no write is lost."
+BOL:      "I send operations, not snapshots, and transform concurrent operations with OT or merge
+           them with a CRDT. Everyone converges to the same document and no write is lost."
 ```
 ```mermaid
 flowchart TD
@@ -384,10 +384,9 @@ flowchart TD
 
 ```
 POOCHEGA: "The database takes too many writes. What do you do?"
-BOL:      "Real-time edits go through memory and pub/sub; I buffer operations in Redis and write them in
-          batches
-           to Cassandra, partitioned by doc id and ordered by the server-assigned version number, so one doc's
-           ops stay on one shard."
+BOL:      "Real-time edits go through memory and pub/sub; I buffer operations in Redis
+           and write them in batches to Cassandra, partitioned by doc id and ordered
+           by the server-assigned version number, so one doc's ops stay on one shard."
 
 BOL:      "Redis is replicated, but replication is async, so I don't ack an op until it's durably written.
            The client keeps unacked ops and resends them with an op id, so nothing is lost or applied twice."
@@ -418,8 +417,8 @@ flowchart TD
 ## DIKKAT 6 — doc khola, 10 lakh op chalane pade
 
 ```
-BOL:      "I store a snapshot every thousand operations, so opening a document loads the latest snapshot
-          plus only the operations after it."
+BOL:      "I store a snapshot every thousand operations, so opening a document
+           loads the latest snapshot plus only the operations after it."
 ```
 ```mermaid
 flowchart TD
@@ -448,8 +447,8 @@ flowchart TD
 
 ```
 POOCHEGA: "Consistency or availability — which do you pick?"
-BOL:      "Per component. Edits are AP: you keep typing through a network blip and OT or CRDTs make everyone
-           converge. Permissions are CP: a removed user must be blocked immediately."
+BOL:      "Per component. Edits are AP: you keep typing through a network blip and OT or CRDTs make
+           everyone converge. Permissions are CP: a removed user must be blocked immediately."
 ```
 ```mermaid
 flowchart TD
@@ -481,8 +480,8 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you keep edits in order?"
-BOL:      "The server assigns each operation the doc's next version number, never the client clock, and all
-           ops for one doc go to one shard where OT runs serially."
+BOL:      "The server assigns each operation the doc's next version number, never the
+           client clock, and all ops for one doc go to one shard where OT runs serially."
 ```
 ```mermaid
 flowchart TD
@@ -520,8 +519,8 @@ doc kholna     -> 10 lakh op? -> SNAPSHOT + baad ke op
 
 POOCHEGA: "How would you scale this to 10x?"      -> user ka raasta chalo, pehle jo toote
 POOCHEGA: "What's the single point of failure?"   -> Conn-Server (doosre pe dobara judo), Redis (copy)
-POOCHEGA: "How do you know it's working?"         -> likha pahunchne ka p99 · WebSocket toot-ne ki dar ·
-          buffer lag · alert
+POOCHEGA: "How do you know it's working?"         -> likha pahunchne
+          ka p99 · WebSocket toot-ne ki dar · buffer lag · alert
 ```
 
 ---
@@ -532,8 +531,8 @@ POOCHEGA: "How do you know it's working?"         -> likha pahunchne ka p99 · W
 API:      GET /documents/{docId} -> snapshot + baad ke op · POST /documents/{docId}/edits -> ek op
           WebSocket /documents/{docId} -> live, dono taraf
 
-DATA:     har badlaav = OPERATION: { docId, userId, opType (insert / delete), position, char / text,
-          baseVersion }
+DATA:     har badlaav = OPERATION: { docId, userId, opType
+          (insert / delete), position, char / text, baseVersion }
           server har op ko agla version deta (kram); timestamp sirf dikhane ke liye
           abhi ka doc = us doc ke saare op KRAM se lagao
           Cassandra theek (bahut saara jodna) · Mongo bhi chalega · permission = alag SQL (rishte + CP)
@@ -546,8 +545,8 @@ EK AKSHAR KA SAFAR:
           5. Redis buffer -> BATCH -> Cassandra edit log
           6. Ravi ke app ne op liya -> apni taraf khiskaya -> screen update
 
-OT vs CRDT: OT = op bhejo, ek saath wale ko KHISKAO, sab same · CRDT = har akshar ki unique id, kisi bhi kram
-            me jodo same
+OT vs CRDT: OT = op bhejo, ek saath wale ko KHISKAO, sab same · CRDT
+            = har akshar ki unique id, kisi bhi kram me jodo same
 ```
 
 ---
@@ -556,17 +555,16 @@ OT vs CRDT: OT = op bhejo, ek saath wale ko KHISKAO, sab same · CRDT = har aksh
 
 ```
 CDN = app ki files · LB = docId se same server · Conn-Server = WebSocket + OT + buffer
-Redis pub/sub = server se server · Redis buffer = batch likhna · Cassandra = op log (docId, version) +
-snapshot
+Redis pub/sub = server se server · Redis buffer = batch
+likhna · Cassandra = op log (docId, version) + snapshot
 SQL = permission (CP)
 ```
 ```
-BOL: "Clients hold a WebSocket to a connection server, routed by doc id. Every keystroke is an operation; the
-      server transforms concurrent operations with OT, so nothing is lost and everyone converges, then fans
-      out
-      to other servers through Redis pub/sub. Operations are buffered and batched into Cassandra by doc id,
-      with
-      snapshots so a doc loads fast. Edits are AP — typing never stops — while permissions are CP in SQL."
+BOL:      "Clients hold a WebSocket to a connection server, routed by doc id. Every keystroke is
+           an operation; the server transforms concurrent operations with OT, so nothing is lost
+           and everyone converges, then fans out to other servers through Redis pub/sub.
+           Operations are buffered and batched into Cassandra by doc id, with snapshots so a doc
+           loads fast. Edits are AP — typing never stops — while permissions are CP in SQL."
 ```
 ```mermaid
 flowchart TD

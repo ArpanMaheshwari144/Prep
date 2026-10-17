@@ -31,24 +31,24 @@ POOCHO:  "P2P, merchant, refund, settlement, fraud — kis pe? Main ek user se d
            ek DB -> ek TRANSACTION (ACID) kaafi · alag bank -> SAGA ka khel
          refund scope me? · bahar ka PSP (Razorpay / Stripe) ya khud? · audit / RBI ka hisaab?
 
-KYA KARE (FR):    A se B ko bhejo · dobara bhejne pe dobara na kate · fail ho to paisa wapas · har paisa
-                  traceable
+KYA KARE (FR):    A se B ko bhejo · dobara bhejne pe dobara na kate
+                  · fail ho to paisa wapas · har paisa traceable
                   scope bahar: fraud engine · kai currency · chargeback
 KAISA CHALE (NFR): paisa KHOYE nahi (kata par pahuncha nahi) · ATKE nahi (beech me network gaya)
                    DO BAAR na kate (500 ki jagah 1000) · har paisa TRACE ho (audit)
 
 NUMBERS (andaaza):
    ~10 crore user · aam din kuch sau payment / second · festival / sale pe kuch hazaar / second
-   ★ "Payment me bheed badi dikkat nahi, SAHI hona badi dikkat hai. Pehle sab-ya-kuch-nahi + do-baar-nahi +
-   ledger."
+   ★ "Payment me bheed badi dikkat nahi, SAHI hona badi dikkat
+   hai. Pehle sab-ya-kuch-nahi + do-baar-nahi + ledger."
    -> SQL DB (ACID: kai row ek transaction me) + ledger jisme sirf jodte hain
    DHYAAN: "NoSQL me ACID hota hi nahi" mat bolo -- kai NoSQL ek row / document pe atomic hain.
            sahi farak: debit + credit + ledger = KAI ROW ek saath -> SQL me ye seedha aur pakka.
 ```
 ```
 POOCHEGA: "Consistency or availability — which do you pick?"
-BOL:      "Consistency for money — during a partition I'd rather reject than give a wrong answer. The same
-           system can keep dashboards and reports available and eventually consistent."
+BOL:      "Consistency for money — during a partition I'd rather reject than give a wrong answer.
+           The same system can keep dashboards and reports available and eventually consistent."
 ```
 
 ---
@@ -138,16 +138,16 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Hamara server sirf "bhejo" kehta hai. Asli paisa bank ke raaste (bank rails) pe hilta.
          Wo bahar ka raasta kabhi dheema, kabhi band.
 
-ILAAJ:   Bahar ka PSP (Razorpay / Stripe / bank). Har payment ka haal: INITIATED -> PENDING -> SUCCESS /
-         FAILED.
+ILAAJ:   Bahar ka PSP (Razorpay / Stripe / bank). Har payment
+         ka haal: INITIATED -> PENDING -> SUCCESS / FAILED.
          PSP dheema -> chhota TIMEOUT + CIRCUIT BREAKER (fuse).
 
 ANDAR KAISE:
          Fuse teen haal me:
            CLOSED (sab theek, call jao) --5 baar fail--> OPEN (call bhejo hi mat, payment PENDING)
            --30 sec baad--> HALF-OPEN (ek test call) -> chali to CLOSED, fail to wapas OPEN.
-         Timeout na ho to har thread PSP ke jawab me atka rehta -> saare thread phans gaye -> poora system
-         band.
+         Timeout na ho to har thread PSP ke jawab me atka rehta
+         -> saare thread phans gaye -> poora system band.
 
 ISKE BAAD KYA TOOTEGA:
   - Timeout hua, Arpan ko kya dikhao?
@@ -179,8 +179,8 @@ ISKE BAAD KYA TOOTEGA:
   - Webhook do baar aa gaya?
       -> PENDING -> SUCCESS sirf ek baar. Pehle se SUCCESS hai aur phir aaya -> ignore.
   - Sirf webhook kaafi kyun nahi?
-      -> webhook kho sakta, der se aa sakta, ya us waqt hamara server band tha. Job wo jaal hai jo chhoota
-         pakde.
+      -> webhook kho sakta, der se aa sakta, ya us waqt hamara
+         server band tha. Job wo jaal hai jo chhoota pakde.
   - Sirf job (baar-baar poochhna)?
       -> der lagti + har PENDING pe baar-baar PSP call (limit / kharcha). Isliye dono.
   - Kaise pata sab theek chal raha?
@@ -218,8 +218,8 @@ ILAAJ:   LEDGER table, USI transaction me jisme paisa hila. Isme sirf INSERT, ka
          Double-entry: har len-den ki do line, ek DEBIT ek CREDIT.
 
 ANDAR KAISE:
-         Arpan -> merchant 500: ledger me "Arpan DEBIT 500" + "merchant CREDIT 500". Balance column bhi usi
-         transaction me.
+         Arpan -> merchant 500: ledger me "Arpan DEBIT 500" +
+         "merchant CREDIT 500". Balance column bhi usi transaction me.
          Galti ho gayi -> purani line mat mitao, NAYI ulti line likho (pen ki diary, kaat-peet nahi).
          Raat ko jaancho: ledger ka jod == balance? Farak = alert.
 
@@ -229,8 +229,8 @@ ISKE BAAD KYA TOOTEGA:
   - Balance + alag audit_log table kyun nahi?
       -> UPDATE se purana number mit jaata. Aur alag table me ek likha, doosra fail = farak. Ledger hi sach.
   - 3 saal me ledger bahut bada?
-      -> mahine ke hisaab se tukde (partition), purane tukde sasti jagah (S3 Glacier). Archive, delete kabhi
-         nahi.
+      -> mahine ke hisaab se tukde (partition), purane tukde
+         sasti jagah (S3 Glacier). Archive, delete kabhi nahi.
   - Ledger crash se bachaata hai?
       -> nahi, wo hisaab / audit hai. Crash se bachaate PENDING + webhook + reconciliation (card 4).
 ```
@@ -244,15 +244,15 @@ ILAAJ:   Payment service STATELESS (kuch yaad nahi rakhti), kai machine, aage LB
          (login check JWT, rate limit, WAF, HTTPS).
 
 ANDAR KAISE:
-         Saari yaad DB aur idempotency store me -> koi bhi machine koi bhi payment le sakti. Ek giri, baaki
-         chalti.
-         Har payment pe OWNER CHECK: JWT se Arpan ka userId -> "from" account ka owner Arpan hi hai? Nahi ->
-         403.
+         Saari yaad DB aur idempotency store me -> koi bhi
+         machine koi bhi payment le sakti. Ek giri, baaki chalti.
+         Har payment pe OWNER CHECK: JWT se Arpan ka userId ->
+         "from" account ka owner Arpan hi hai? Nahi -> 403.
 
 ISKE BAAD KYA TOOTEGA:
   - userId request body se le lo?
-      -> nahi! Body me koi bhi kisi ka bhi userId likh de (spoof). Hamesha JWT se. (PR drill me baar-baar
-         aata.)
+      -> nahi! Body me koi bhi kisi ka bhi userId likh de
+         (spoof). Hamesha JWT se. (PR drill me baar-baar aata.)
   - LB ko kaise pata machine mar gayi?
       -> LB har kuch second GET /health maarta, jawab nahi = list se bahar.
 ```
@@ -293,8 +293,8 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - txn_id ya time se kyun nahi baanta?
-      -> txn_id: Arpan ki payment alag-alag shard pe bikhri, balance kahan dekhoge? · time: aaj wala shard
-         garam.
+      -> txn_id: Arpan ki payment alag-alag shard pe bikhri,
+         balance kahan dekhoge? · time: aaj wala shard garam.
   - Amazon jaisa bada merchant -> uska shard garam?
       -> merchant ke kai sub-account, alag shard pe; report me jod do.
   - Do shard ke beech transfer?
@@ -361,8 +361,8 @@ flowchart TD
 ## DIKKAT 1 — beech me crash: Arpan -500 hua, merchant +500 nahi
 
 ```
-BOL:      "Debit and credit happen in one ACID transaction, so a crash rolls both back, and the debit uses a
-          conditional update so two concurrent payments can never overdraw the balance."
+BOL:      "Debit and credit happen in one ACID transaction, so a crash rolls both back, and the debit
+           uses a conditional update so two concurrent payments can never overdraw the balance."
 ```
 ```mermaid
 flowchart TD
@@ -385,12 +385,12 @@ BOL:      "Same key, same outcome. The client sends an idempotency key, the serv
            result under a unique constraint, and a retry gets the stored result instead of a second charge."
 
 POOCHEGA: "You set the idempotency key, but then the PSP call failed. Now what?"
-BOL:      "The key goes in as IN_PROGRESS with a short expiry and becomes DONE only after the PSP confirms,
-           so a failed or crashed attempt doesn't block the retry."
+BOL:      "The key goes in as IN_PROGRESS with a short expiry and becomes DONE only after
+           the PSP confirms, so a failed or crashed attempt doesn't block the retry."
 
 POOCHEGA: "Two users do this at the same time — what happens?"
-BOL:      "For a shared balance I use a conditional update — UPDATE ... WHERE balance >= amount — so only
-           one of them succeeds."
+BOL:      "For a shared balance I use a conditional update — UPDATE ...
+           WHERE balance >= amount — so only one of them succeeds."
 ```
 ```mermaid
 flowchart TD
@@ -411,8 +411,8 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the PSP is slow?"
-BOL:      "Short timeout and a circuit breaker. For money I don't blindly retry — I keep it PENDING and let
-           reconciliation settle it."
+BOL:      "Short timeout and a circuit breaker. For money I don't blindly
+           retry — I keep it PENDING and let reconciliation settle it."
 ```
 ```mermaid
 flowchart TD
@@ -435,13 +435,13 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the server crashes in the middle?"
-BOL:      "I never assume. Every payment is written as PENDING before I call the PSP. The PSP's webhook
-           updates it, and a reconciliation job checks anything still pending. Money is always done,
-           undone, or being checked — never lost."
+BOL:      "I never assume. Every payment is written as PENDING before I call the PSP.
+           The PSP's webhook updates it, and a reconciliation job checks anything still
+           pending. Money is always done, undone, or being checked — never lost."
 
 POOCHEGA: "How do you know the system is working?"
-BOL:      "Reconciliation against the PSP and bank, plus p99 latency, error rate and queue lag with alerts,
-           and a trace id to follow one payment end to end."
+BOL:      "Reconciliation against the PSP and bank, plus p99 latency, error rate and
+           queue lag with alerts, and a trace id to follow one payment end to end."
 ```
 ```mermaid
 flowchart TD
@@ -467,9 +467,9 @@ flowchart TD
 ## DIKKAT 5 — alag bank / alag DB: ek transaction nahi
 
 ```
-BOL:      "Across banks or databases I use a saga: each step commits locally and a failure runs compensating
-          steps in reverse, with the saga state persisted so a restarted service can continue. I avoid 2PC
-          because it holds locks and blocks if the coordinator dies."
+BOL:      "Across banks or databases I use a saga: each step commits locally and a failure runs
+           compensating steps in reverse, with the saga state persisted so a restarted service
+           can continue. I avoid 2PC because it holds locks and blocks if the coordinator dies."
 ```
 ```mermaid
 flowchart TD
@@ -496,8 +496,8 @@ flowchart TD
 
 ```
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
-BOL:      "Partition by month, detach old partitions to cold storage like S3 Glacier. Payment records are
-           archived, never deleted."
+BOL:      "Partition by month, detach old partitions to cold storage like
+           S3 Glacier. Payment records are archived, never deleted."
 ```
 ```mermaid
 flowchart TD
@@ -524,8 +524,8 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you secure it / stop abuse?"
-BOL:      "Authentication at the gateway, an ownership check on every payment, rate limiting per user,
-           and a WAF at the edge."
+BOL:      "Authentication at the gateway, an ownership check on every
+           payment, rate limiting per user, and a WAF at the edge."
 ```
 ```mermaid
 flowchart TD
@@ -560,8 +560,8 @@ flowchart TD
 
 ```
 POOCHEGA: "The user paid but still sees the old balance. Why?"
-BOL:      "That read came from a lagging replica. Balance and payment status are always read from the
-           primary; replicas only serve dashboards."
+BOL:      "That read came from a lagging replica. Balance and payment status
+           are always read from the primary; replicas only serve dashboards."
 ```
 ```mermaid
 flowchart TD
@@ -597,8 +597,8 @@ flowchart TD
 ## DIKKAT 9 — 50 crore row, likhai dheemi
 
 ```
-BOL:      "I shard by account id so one account's balance and history live on one shard and debits stay
-          atomic; transfers across shards become a saga."
+BOL:      "I shard by account id so one account's balance and history live on one
+           shard and debits stay atomic; transfers across shards become a saga."
 ```
 ```mermaid
 flowchart TD
@@ -669,10 +669,10 @@ SCAM 1992 (ledger kyun itna zaroori):
           paisa gaya, share nahi -> sab-ya-kuch-nahi settlement (ACID / SAGA)
           badli ja sakne wali BR -> kabhi na badalne wala double-entry + audit
           beech ka paisa       -> turant RECONCILIATION
-          kaagaz se digital: ledger nahi mara, sirf kaagaz gaya · blockchain = sabse pakka na-badalne-wala
-          ledger
-          baad me: SEBI ko kanooni taakat (1992) · NSE screen trading (1994) · NSDL demat (1996) · T+2 (2003)
-          · T+1 (2021-23)
+          kaagaz se digital: ledger nahi mara, sirf kaagaz gaya
+          · blockchain = sabse pakka na-badalne-wala ledger
+          baad me: SEBI ko kanooni taakat (1992) · NSE screen trading
+          (1994) · NSDL demat (1996) · T+2 (2003) · T+1 (2021-23)
 ```
 
 ---
@@ -681,8 +681,8 @@ SCAM 1992 (ledger kyun itna zaroori):
 
 ```
 Gateway = login + rate limit + owner check · Payment Svc = stateless, saga · Idempotency = ek key ek baar
-SQL DB = ACID kaato + daalo + ledger, shard by account · PSP = asli paisa, pehle PENDING · webhook = PSP
-batata
+SQL DB = ACID kaato + daalo + ledger, shard by account ·
+PSP = asli paisa, pehle PENDING · webhook = PSP batata
 Reconciliation = hum poochhte, jaal · Read replica = sirf dashboard
 ```
 ```
@@ -692,11 +692,11 @@ failure      -> PENDING + webhook + RECONCILE  (courier tracking — gum kabhi n
 ledger       -> double-entry, kabhi badla nahi (pen ki diary)
 ```
 ```
-BOL: "Every payment carries an idempotency key, stored with its result under a unique constraint, so a
-      retry never charges twice. Debit and credit happen in one ACID transaction with a double-entry
-      ledger; across banks or shards I use a saga with compensation. The PSP moves the real money, so I
-      write PENDING first and resolve it through webhooks and a reconciliation job. Next: fraud checks,
-      multi-currency and chargebacks."
+BOL:      "Every payment carries an idempotency key, stored with its result under a unique constraint,
+           so a retry never charges twice. Debit and credit happen in one ACID transaction with a
+           double-entry ledger; across banks or shards I use a saga with compensation. The PSP moves
+           the real money, so I write PENDING first and resolve it through webhooks and a
+           reconciliation job. Next: fraud checks, multi-currency and chargebacks."
 ```
 ```mermaid
 flowchart TD
@@ -769,20 +769,20 @@ SEQUENTIAL:  A key abc-123, 100 -> OK Order #1, total 1
 
 RACE:        naive containsKey + put = 2 step, GAP -> A "nahi", B "nahi" -> dono order = DOUBLE
              putIfAbsent = 1 ATOMIC step -> sirf ek jeet-ta
-             atomicity NAAM se nahi, ConcurrentHashMap se (bucket lock / CAS). plain HashMap = thread-safe
-             nahi
+             atomicity NAAM se nahi, ConcurrentHashMap se (bucket
+             lock / CAS). plain HashMap = thread-safe nahi
 
 20 PARALLEL, same key "race-1":
-             1..20 | ForEach-Object { Start-Job { curl.exe -s -X POST ".../pay?amount=100" -H
-             "Idempotency-Key: race-1" } } | Wait-Job | Receive-Job
+             1..20 | ForEach-Object { Start-Job { curl.exe -s -X POST ".../pay?amount=100"
+             -H "Idempotency-Key: race-1" } } | Wait-Job | Receive-Job
              BROKEN (containsKey + put + sleep 50) -> Order #1 AUR #2 -> total 2 = DOUBLE CHARGE live
              ATOMIC (putIfAbsent) -> 1 OK, 19 DUPLICATE -> total 1
              pehli DUPLICATE "-> PROCESSING" = reserve-then-fill live dikha
 
 PROD:        Redis / DB unique constraint (memory restart pe udti) + key TTL · PROCESSING placeholder
-BOL:         "Naive check-then-put races; putIfAbsent on a ConcurrentHashMap makes check and insert one
-              step, so only one request wins. In production the store is Redis or a DB unique constraint
-              with a TTL. I fired 20 parallel requests: broken version made two orders, atomic made one."
+BOL:      "Naive check-then-put races; putIfAbsent on a ConcurrentHashMap makes check and insert one
+           step, so only one request wins. In production the store is Redis or a DB unique constraint
+           with a TTL. I fired 20 parallel requests: broken version made two orders, atomic made one."
 ```
 
 ARCHETYPE C · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [saga/ms-comm](../../FOUNDATIONS/10_ms_communication.md) · saath: [bookmyshow](../09_bookmyshow/09_bookmyshow_INTERVIEW.md) · [stock-broker](../05_stock_broker_trading/05_stock_broker_trading.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

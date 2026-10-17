@@ -37,8 +37,8 @@ NUMBER SE FAISLA:
    90 TB                          -> ek machine me nahi aayega, SHARD karna padega
    7 akshar                       -> code kitna lamba ho, ye jhagda khatam
    Agar interviewer chhota maane (1 arab link = ~500 GB) -> ek hi DB me aa jaata, shard ki zaroorat nahi.
-   Estimate chhodna mat, par exact ganit me mat atakna. Din ka maana to poora din ka hi rakho, mahine se mat
-   milao.
+   Estimate chhodna mat, par exact ganit me mat atakna. Din
+   ka maana to poora din ka hi rakho, mahine se mat milao.
 
 KYUN CHAHIYE:  Twitter / SMS me jagah kam · marketing me kis link se kitne aaye · QR / print · saaf dikhta
 ```
@@ -80,12 +80,12 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - Counter kyun, lambe link ka MD5 / random code kyun nahi?
-      -> MD5 / random me do link ka code same aa sakta hai. Har baar DB se poochna padega "ye code pehle se
-         hai?"
+      -> MD5 / random me do link ka code same aa sakta hai.
+         Har baar DB se poochna padega "ye code pehle se hai?"
          Counter me ye dikkat hi nahi.
   - Counter se code ka andaza nahi lag jaayega? (abc124 ke baad abc125)
-      -> haan, ye keemat hai. Chahiye to number ko pehle shuffle / XOR karo, phir base62. Phir bhi unique
-         rahega.
+      -> haan, ye keemat hai. Chahiye to number ko pehle shuffle
+         / XOR karo, phir base62. Phir bhi unique rahega.
   - User apna code maange ("bit.ly/arpan")?
       -> check karo: lambai theek, "admin" / "login" jaisa reserved shabd nahi, pehle se liya hua nahi.
          Do log ek saath same code maangein -> DB me UNIQUE rule, ek ko 409 (pehle se hai).
@@ -100,14 +100,14 @@ KAHANI:  Ek second me 1 lakh click aa rahe hain. Har click DB tak ja raha hai, a
          DB pe bojh badhta gaya, redirect dheema hua. Ek viral link pe to DB hi baith gaya.
 
 ILAAJ:   DB ke aage REDIS (cache). Click aaya -> pehle Redis dekho.
-         Mila -> wahi se bhej do. Nahi mila -> DB se laao, Redis me rakh do, phir bhejo. (Isi ko cache-aside
-         kehte hain.)
+         Mila -> wahi se bhej do. Nahi mila -> DB se laao, Redis
+         me rakh do, phir bhejo. (Isi ko cache-aside kehte hain.)
          Redis me link ki expiry (TTL) wahi rakho jo link ki hai.
 
 ANDAR KAISE:
          Redis RAM me rakhta hai, ek milisecond se kam me jawab. DB disk se padhta hai, kai milisecond.
-         Log zyadatar wahi link baar-baar kholte hain -> ~95 me se 95 click Redis se hi nikal jaate. DB bach
-         gaya.
+         Log zyadatar wahi link baar-baar kholte hain -> ~95
+         me se 95 click Redis se hi nikal jaate. DB bach gaya.
 
 ISKE BAAD KYA TOOTEGA:
   - Redis me saare 180 arab link rakhoge?
@@ -116,8 +116,8 @@ ISKE BAAD KYA TOOTEGA:
   - Link delete / expire ho gaya, par Redis me abhi pada hai?
       -> expiry pe Redis khud hata deta hai. Delete pe pehle DB se hatao, phir Redis se.
   - Redis hi gir gaya?
-      -> wo 95% click ek saath DB pe girenge, DB bhi gir sakta hai. Isliye Redis ki bhi copies (cluster +
-         replica).
+      -> wo 95% click ek saath DB pe girenge, DB bhi gir sakta
+         hai. Isliye Redis ki bhi copies (cluster + replica).
          Phir bhi gira to kuch request mana karo (load shedding), aur garam link ko sirf EK request
          DB se laaye, baaki ruke. "kuch nahi hoga" kabhi mat bolna.
   - DB ki read copy (replica) kyun nahi, ya har App apna cache rakhe?
@@ -127,8 +127,8 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [2](#d2) EK APP 1 LAKH / SEC NAHI JHELTA, GIRA TO SITE BAND
 ```
-KAHANI:  Saari request ek hi App machine pe. Bojh se wo dheema hua, aur ek din wahi gir gaya -> poori site
-         band.
+KAHANI:  Saari request ek hi App machine pe. Bojh se wo dheema
+         hua, aur ek din wahi gir gaya -> poori site band.
          Ek cheez jiske girne se sab ruk jaaye, use SPOF (single point of failure) kehte hain.
 
 ILAAJ:   App ki kai machine lagao, aur aage LOAD BALANCER (LB) jo request baante.
@@ -152,8 +152,8 @@ ISKE BAAD KYA TOOTEGA:
 #### [3](#d3) KAI APP, DO APP EK HI CODE BANA DENGE
 ```
 KAHANI:  Ab App ki 2 machine hain, dono apna-apna counter chala rahi hain.
-         App-1 ka counter 5 pe hai, App-2 ka bhi 5 pe. Dono ne naya link banaya -> dono ka number 6 -> dono ka
-         code same.
+         App-1 ka counter 5 pe hai, App-2 ka bhi 5 pe. Dono ne naya
+         link banaya -> dono ka number 6 -> dono ka code same.
          Do alag link, ek hi code. Ise COLLISION kehte hain.
 
 ILAAJ:   Ek COUNTER service (ZooKeeper ya DB ki ek table) har App ko numbers ka ALAG thaila (range) deti hai.
@@ -165,8 +165,8 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - App-1 number 400 pe crash ho gaya. 401 se 1000 ka kya?
-      -> wo bekaar gaye, aur ye jaan-boojh ke maana hai. 3.5 lakh crore code hain, kuch hazaar jaane se farak
-         nahi.
+      -> wo bekaar gaye, aur ye jaan-boojh ke maana hai. 3.5
+         lakh crore code hain, kuch hazaar jaane se farak nahi.
          Har number bachana ho to har link pe coordination lagega, range ka fayda hi khatam.
   - Counter service khud gir gayi?
       -> App ke paas abhi apna thaila (1000 number) bacha hai, kaam chalta rehta hai.
@@ -185,8 +185,8 @@ ILAAJ:   Click ki khabar KAFKA me daal do aur user ko turant 302 de do.
          Koi khabar baar-baar fail ho -> use alag DLQ (dead letter queue) me daal do.
 
 ANDAR KAISE:
-         Kafka ek diary jaisa hai: disk pe likha jaata hai, App bas aakhri page pe likh ke aage badh jaata
-                                   hai.
+         Kafka ek diary jaisa hai: disk pe likha jaata hai, App bas aakhri
+                                   page pe likh ke aage badh jaata hai.
          Analytics service yaad rakhti hai kahan tak padha (offset). Crash hui to wahin se dobara.
          Ek kharab khabar DLQ me chali jaati hai, baaki line nahi rukti.
 
@@ -195,11 +195,11 @@ ISKE BAAD KYA TOOTEGA:
       -> redirect pehle. Khabar na jaaye to thoda App me rakh lo ya chhod do.
          Analytics thoda kam ginega, par user ka redirect nahi rukega.
   - Ek click do baar gina gaya?
-      -> Kafka ek khabar kabhi-kabhi do baar de deta hai. Har click ka ek id (clickId), Analytics dohraav
-         chhod de.
+      -> Kafka ek khabar kabhi-kabhi do baar de deta hai. Har
+         click ka ek id (clickId), Analytics dohraav chhod de.
   - App ke andar hi peeche ek thread se likh do?
-      -> App crash = memory me padi khabarein gayi. Kafka disk pe hai, aur purane click dobara padh bhi sakte
-         hain.
+      -> App crash = memory me padi khabarein gayi. Kafka disk
+         pe hai, aur purane click dobara padh bhi sakte hain.
   - Kafka kyun, SQS kyun nahi?
       -> SQS bhi chal jaata. Kafka isliye ki click bahut zyada hain, aur naya report banana ho to
          purane click dobara padh sakte hain (replay). SQS padhne ke baad message hata deta hai.
@@ -214,13 +214,13 @@ ILAAJ:   Data ko kai machine me baanto (SHARD), code ke hisaab se. Cassandra ye 
          Har tukde ki 3 copy, 3 alag data center (AZ) me. Nayi machine jodni ho -> consistent hashing.
 
 ANDAR KAISE:
-         Click hamesha code ke saath aata hai (GET /abc123). Code se seedha pata chal jaata hai kaunsi
-         machine.
+         Click hamesha code ke saath aata hai (GET /abc123).
+         Code se seedha pata chal jaata hai kaunsi machine.
          RING: ek gol ghadi socho. Machines ghadi pe kahin-kahin baithi hain, har code bhi ghadi pe ek jagah.
          Code ghadi ki disha me chalta hai, jo pehli machine mile wahi uski.
          Nayi machine aayi -> sirf uske theek peeche wale codes usko jaate, baaki apni jagah.
-         (Agar "code % machine ki ginti" karte, to 3 se 4 machine hote hi lagbhag har code ki jagah badal
-         jaati.)
+         (Agar "code % machine ki ginti" karte, to 3 se 4
+         machine hote hi lagbhag har code ki jagah badal jaati.)
 
 ISKE BAAD KYA TOOTEGA:
   - Country ya date ke hisaab se kyun nahi baanta?
@@ -241,8 +241,8 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [6](#d6) WRITE KE BEECH EK COPY WALA NODE GIRA
 ```
-KAHANI:  User ne link banaya. Cassandra use 3 copy me likh raha tha, aur beech me ek copy wali machine gir
-         gayi.
+KAHANI:  User ne link banaya. Cassandra use 3 copy me likh
+         raha tha, aur beech me ek copy wali machine gir gayi.
          Jo likh diya, wo khona nahi chahiye.
 
 ILAAJ:   (1) DB har cheez pehle ek LOG (diary) me likhta hai, phir asli table me.
@@ -257,8 +257,8 @@ ISKE BAAD KYA TOOTEGA:
   - 2 ka hi intezaar kyun, teeno ka kyun nahi?
       -> teeno ka intezaar = ek dheemi machine sabko dheema kar degi. 2 me ek gire tab bhi likh sakte.
   - 2 machine gir gayi?
-      -> 2 haan nahi milenge -> likhna fail (ya 1 pe likh lo, risk ke saath). Click tab tak Redis se chalte
-         rahenge.
+      -> 2 haan nahi milenge -> likhna fail (ya 1 pe likh lo,
+         risk ke saath). Click tab tak Redis se chalte rahenge.
   - Kafka laga do data bachane ke liye?
       -> nahi. Ye DB ki apni diary ka kaam hai, extra dabba mat lagao.
 ```
@@ -308,8 +308,8 @@ ISKE BAAD KYA TOOTEGA:
       -> nahi. User ka phone purana pata ~60 second yaad rakhta hai (DNS TTL), tab tak kuch log purane LB pe.
          Isliye cloud me LB khud kai data center me phaila hota hai (AWS ALB).
   - Poora region gaya, to naye link ka kya?
-      -> doosre region me data thoda peeche-peeche copy hota hai. Aakhri kuch second ke naye link kho sakte
-         hain.
+      -> doosre region me data thoda peeche-peeche copy hota
+         hai. Aakhri kuch second ke naye link kho sakte hain.
          Ye maana hua risk hai.
 ```
 
@@ -337,19 +337,19 @@ AAKHRI DABBE (sab dikkat ke baad):
   User -> Route 53 -> 2 LB -> API Gateway (rate limit + login) -> App (stateless)
   -> Redis (95% click yahin se, expiry = link ki expiry) -> Cassandra (code se baanta, har tukde ki 3 copy)
   NAYA LINK:  Counter ka thaila + base62 -> Redis + Cassandra me likho
-  CLICK:      Redis / Cassandra se link -> 302. Click ki khabar -> Kafka -> Analytics (fail -> DLQ), redirect
-              ruke bina
+  CLICK:      Redis / Cassandra se link -> 302. Click ki khabar ->
+              Kafka -> Analytics (fail -> DLQ), redirect ruke bina
 
 DB KYUN:  Cassandra / DynamoDB -> join nahi, transaction nahi, ek code se ek link, 90 TB.
           Wajah = kaam ka dhaancha + size, "NoSQL powerful" nahi. Redis sirf cache.
 
 END ME POOCHEGA:
-  "10 guna traffic?"        -> App machine badhao · padhne aur likhne wale App alag · Redis me garam link (LRU
-  + expiry) · Cassandra aur baanto
+  "10 guna traffic?"        -> App machine badhao · padhne aur likhne wale
+  App alag · Redis me garam link (LRU + expiry) · Cassandra aur baanto
   "Kahan se sab gir sakta?" -> LB (2 copy) · Counter (2 copy, ek chalu ek taiyaar) · Route 53 health check
   "Chal raha hai, kaise pata?" -> redirect ka time (p99) · galtiyon ki ginti · Kafka me kitna pending · alert
-  "301 ya 302?"             -> 302: har click server tak aata, gin paate. 301 pe browser yaad kar leta, click
-  gaya
+  "301 ya 302?"             -> 302: har click server tak
+  aata, gin paate. 301 pe browser yaad kar leta, click gaya
 ```
 
 AAKHRI DABBE ki tasveer:
@@ -403,8 +403,8 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the cache goes down?"
-BOL:      "Redis runs as a replicated cluster. If it still goes down, the DB takes the load, so I shed load
-           and let only one request rebuild a hot key, not a thousand at once."
+BOL:      "Redis runs as a replicated cluster. If it still goes down, the DB takes the load,
+           so I shed load and let only one request rebuild a hot key, not a thousand at once."
 ```
 ```mermaid
 flowchart TD
@@ -424,9 +424,8 @@ flowchart TD
 ## DIKKAT 2 — ek App sab nahi jhelta, gira to site band
 
 ```
-BOL:      "I run several stateless app servers behind a load balancer, so any server can take any request.
-          The load balancer health-checks every few seconds and takes a dead or slow server out of
-          rotation."
+BOL:      "I run several stateless app servers behind a load balancer, so any server can take any request. The
+           load balancer health-checks every few seconds and takes a dead or slow server out of rotation."
 ```
 ```mermaid
 flowchart TD
@@ -453,9 +452,9 @@ flowchart TD
 
 ```
 POOCHEGA: "That server crashed at 400 — what about the rest of its range?"
-BOL:      "The restarted server asks for a new range, so 401 to 1000 are wasted. I accept that on purpose —
-           3.5 trillion codes, a few thousand lost is nothing. Making every number crash-proof would need
-           coordination on every request and kill the benefit of ranges."
+BOL:      "The restarted server asks for a new range, so 401 to 1000 are wasted. I accept that
+           on purpose — 3.5 trillion codes, a few thousand lost is nothing. Making every number
+           crash-proof would need coordination on every request and kill the benefit of ranges."
 ```
 ```mermaid
 flowchart TD
@@ -485,8 +484,8 @@ flowchart TD
 
 ```
 BOL:      "The redirect returns a 302 immediately and puts a click event on Kafka; an analytics service
-          consumes it in the background, de-duplicates by click id, and sends repeated failures to a dead-
-          letter queue. If Kafka is down, the redirect still works and we only lose some analytics."
+           consumes it in the background, de-duplicates by click id, and sends repeated failures to a dead-
+           letter queue. If Kafka is down, the redirect still works and we only lose some analytics."
 ```
 ```mermaid
 flowchart TD
@@ -525,8 +524,8 @@ flowchart TD
 
 ```
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
-BOL:      "I shard by short code, so every redirect goes to exactly one shard, and keep three replicas
-           of each shard in different zones."
+BOL:      "I shard by short code, so every redirect goes to exactly one
+           shard, and keep three replicas of each shard in different zones."
 ```
 ```mermaid
 flowchart TD
@@ -565,8 +564,8 @@ flowchart TD
 
 ```
 POOCHEGA: "What happens if a DB node goes down mid-write?"
-BOL:      "The DB writes to its commit log before applying, and I ack writes on quorum, so losing one
-           node doesn't lose committed data. Redirects keep working from Redis meanwhile."
+BOL:      "The DB writes to its commit log before applying, and I ack writes on quorum, so losing
+           one node doesn't lose committed data. Redirects keep working from Redis meanwhile."
 ```
 ```mermaid
 flowchart TD
@@ -605,8 +604,8 @@ flowchart TD
 
 ```
 POOCHEGA: "The user created a link but gets 404 / old value. Why?"
-BOL:      "Replication lag. The write path also puts the link in Redis, and with quorum reads and
-           writes the read always sees the latest write."
+BOL:      "Replication lag. The write path also puts the link in Redis, and
+           with quorum reads and writes the read always sees the latest write."
 ```
 ```mermaid
 flowchart TD
@@ -691,8 +690,8 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you stop abuse?"
-BOL:      "Rate limiting per user and IP at the API gateway, auth there too, a WAF at the edge, and I
-           check long URLs against a malware / phishing list before shortening."
+BOL:      "Rate limiting per user and IP at the API gateway, auth there too, a WAF at the
+           edge, and I check long URLs against a malware / phishing list before shortening."
 ```
 ```mermaid
 flowchart TD
@@ -742,15 +741,15 @@ Redis       -> saare link nahi samaate. Garam rakho, thande nikaalo (LRU + expir
                (Cassandra me to hai hi, agli baar khula to wapas aa jaayega)
 Cassandra   -> code se baanto + har tukde ki 3 copy. Koi "main copy" nahi, har copy padh / likh sakti hai.
                padhne ka bojh badha = aur machine / copy
-Counter     -> ye bhi gir sakta hai -> 2 copy (ek chalu, ek taiyaar). Range waise bhi thodi der chala leti
-hai.
+Counter     -> ye bhi gir sakta hai -> 2 copy (ek chalu,
+ek taiyaar). Range waise bhi thodi der chala leti hai.
 Kafka       -> partition badhao
 
 BAANTNA CODE SE, COUNTRY SE NAHI:
    click hamesha code ke saath aata hai -> code se seedha ek machine
    country se baanta -> code dekh ke pata nahi kis country ka -> saari machine poochni padti
-   country / region ka kaam = user ke paas data rakhna (jaldi jawab), data baantna nahi. Dono saath chal sakte
-   hain.
+   country / region ka kaam = user ke paas data rakhna (jaldi
+   jawab), data baantna nahi. Dono saath chal sakte hain.
 ```
 
 ---
@@ -778,8 +777,8 @@ COUNTER KE 3 TAREEKE:
 
 SHABD BHOOL JAO TO SEEDHI BAAT BOLO (atko mat):
           "MD5" yaad nahi   -> "lambe link ka hash lo, uske pehle 7 akshar"
-          "Base62" yaad nahi -> "62 akshar hain (0-9, a-z, A-Z), number ko unme likh do, chhoti string ban
-          jaati"
+          "Base62" yaad nahi -> "62 akshar hain (0-9, a-z, A-Z),
+          number ko unme likh do, chhoti string ban jaati"
           "Counter" yaad nahi -> "ek badhta hua number, har link ko agla"
           interviewer ko shabd nahi, samajh chahiye. Naam wo khud bol dega.
 ```
@@ -790,22 +789,22 @@ SHABD BHOOL JAO TO SEEDHI BAAT BOLO (atko mat):
 
 ```
 Route 53 = kaunsa LB zinda + kaunsa region · API Gateway = rate limit + login · LB = 2 copy · App = stateless
-Counter = thaila + base62 · Redis = 95% click, expiry = link ki expiry · Cassandra = code se baanta + 3 copy +
-2 me likha 2 se padha
+Counter = thaila + base62 · Redis = 95% click, expiry = link ki
+expiry · Cassandra = code se baanta + 3 copy + 2 me likha 2 se padha
 Kafka = click ki ginti peeche se, fail -> DLQ
 ```
 ```
-CLICK:     LB -> App -> Redis me mila? -> 302 · nahi mila -> Cassandra -> Redis me rakho -> 302 · click ki
-           khabar -> Kafka
-NAYA LINK: LB -> App -> thaile se agla number -> base62 (123456 -> "w7e") -> Redis + Cassandra -> chhota link
-           wapas
+CLICK:     LB -> App -> Redis me mila? -> 302 · nahi mila -> Cassandra
+           -> Redis me rakho -> 302 · click ki khabar -> Kafka
+NAYA LINK: LB -> App -> thaile se agla number -> base62 (123456
+           -> "w7e") -> Redis + Cassandra -> chhota link wapas
 ```
 ```
-BOL: "The short code is a counter in base62, with ranges handed to each server so there's no collision.
-      Reads are 100 to 1, so Redis serves most redirects; Cassandra, sharded by short code with three
-      replicas, holds the rest. Redirect is a 302 and click analytics go async through Kafka. Route 53
-      and two load balancers remove the single points of failure, and the gateway rate-limits abuse.
-      Next I'd add custom aliases, expiry cleanup and geo-distribution."
+BOL:      "The short code is a counter in base62, with ranges handed to each server so there's no
+           collision. Reads are 100 to 1, so Redis serves most redirects; Cassandra, sharded by short
+           code with three replicas, holds the rest. Redirect is a 302 and click analytics go async
+           through Kafka. Route 53 and two load balancers remove the single points of failure, and the
+           gateway rate-limits abuse. Next I'd add custom aliases, expiry cleanup and geo-distribution."
 ```
 
 ARCHETYPE F (infra/component) · CONCEPTS: [ID-gen](../../FOUNDATIONS/13_distributed_id_snowflake.md) · [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
