@@ -29,29 +29,6 @@
 
 ---
 
-## KAHANI (ek din, mera ek TCS order, subah se shaam)
-
-```
-1  Maine ek baar dabaya, order do lag gaye
-   CUE: order screen pe id bani, dobara bhejo to wahi id (idempotency key)
-2  Mere paas 50k the, maine 60k ke order laga diye
-   CUE: bank jaise: check aur block ek hi jhatke me (ek atomic query)
-3  Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
-   CUE: TCS ki ek line, ek hi aadmi chalata (ek symbol ek thread)
-4  9:15 baje sab TCS pe toot pade
-   CUE: TCS ki line lambi ho jaaye, par ek hi counter (baanto mat, line me rakho)
-5  Server gira, poori order book gayab
-   CUE: scoreboard toota, scorer ka register bacha (log pehle, replay)
-6  Mera paisa kat gaya, Suresh ko mila hi nahi
-   CUE: chaaron entry ek saath ya koi nahi (ek transaction)
-7  Paisa kat gaya, share aaye hi nahi (do alag DB)
-   CUE: har kadam ka haal likho, aage badho, ulta nahi (step + forward)
-8  10 lakh log ek saath price poochh rahe, server baith gaya
-   CUE: TV ki tarah bhejo, har koi phone na kare (push, WebSocket)
-```
-
----
-
 ## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![Design Stock Exchange](https://assets.bytebytego.com/diagrams/0344-stock-exchange.png)
