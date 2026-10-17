@@ -235,9 +235,9 @@ AAGE POOCHEGA:
   NIYAM: farak mile to khaata jeetega, par pehle KYUN.
   "Kaise kaam karta?"              -> har baar khaata jodo = sach par 10 saal ki 50,000 line = dheema. Isliye
                                       balance column = uska jod (CACHE), khaata line ke saath EK transaction
-                                      me. Raat ko RECONCILIATION: mera khaata jod = 30,100, column me
-                                      30,100 -> theek.
-  "Raat ko farak (30,100 vs 30,600)?" -> alert + account rok ke dekho; chupchaap theek MAT karo (bug zinda),
+                                      me. Raat ko RECONCILIATION: mera khaata jod = 29,800 (din ki
+                                      sab line), column me 29,800 -> theek.
+  "Raat ko farak (29,800 vs 30,300)?" -> alert + account rok ke dekho; chupchaap theek MAT karo (bug zinda),
                                       pehle KYUN, phir khaata jeetega.
   "Chal raha hai, kaise pata?"     -> reconciliation + p99 + error rate + queue lag + DB connection pe alert
                                       + har transfer ka trace id.

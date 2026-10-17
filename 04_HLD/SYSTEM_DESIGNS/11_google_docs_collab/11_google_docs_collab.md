@@ -347,7 +347,8 @@ AAGE POOCHEGA:
   "Kaise kaam karta?"              -> har 1000 badlaav pe doc ki photo (docId, version, poora text) -> S3 /
                                       Cassandra. Khola -> aakhri photo (v9,99,000) + log ke uske baad wale op
                                       kram se -> ~1000 op, 10 lakh nahi.
-  "Photo ke waqt koi likh raha?"   -> photo v1000 tak; kholna = v1000 photo + v1001 se aage; kuch nahi rukta.
+  "Photo ke waqt koi likh raha?"   -> photo v9,99,000 tak; kholna = wahi photo + v9,99,001 se aage; kuch
+                                      nahi rukta.
   "Kitni baar photo?"              -> har 1000 op ya har kuch minute, jo pehle ho.
 ```
 
@@ -358,7 +359,7 @@ AAGE POOCHEGA:
 ```
 CDN (app ki files) -> LB (editor: docId se owner server · viewer: koi bhi) -> Conn-Server (WebSocket + OT)
 -> editors ko seedha PUSH · Redis pub/sub sirf un dekhne walon tak jo doosre server pe hain
--> Redis buffer (+ copy, phir ACK) -> BATCH -> Cassandra op log (docId, version) + snapshot · permission = SQL
+-> Redis buffer (+ copy, phir ACK) -> BATCH -> Cassandra op log (docId, version) + snapshot · permission SQL
 
 DB:  op log = Cassandra (bahut saara jodna; Mongo bhi chalega) · snapshot taaki doc jaldi khule
      permission = alag SQL (rishte + CP) · edit AP (typing kabhi na ruke)

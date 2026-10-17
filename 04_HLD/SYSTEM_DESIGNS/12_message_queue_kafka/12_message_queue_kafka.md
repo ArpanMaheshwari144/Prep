@@ -125,8 +125,8 @@ flowchart LR
     style n_B fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     10 baje sale: "order-events" pe 5,000 khabar / sec. SMS worker ~500 / sec hi bhej paata (har SMS ek
-           API call). Topic ek line -> ek hi worker kram se padhe -> peeche ghanton ki line (lag).
+DIKKAT     10 baje sale: "order-events" pe 5,000 khabar / sec. Email worker ~500 / sec hi bhej paata
+           (har email ek API call). Topic ek line -> ek hi worker kram se padhe -> peeche ghanton ki line (lag).
 HAL        PARTITION: topic ke 10 tukde (P0-P9), teen broker A / B / C pe bate; har tukda
            alag worker -> 10 tukde = 10 worker = ~5,000 / sec. Likhai aur jagah bhi bat gayi.
 NAHI       copy (replica) badhao: copy sirf bachav ke liye, padhna bhi leader se hi; padhne wale = partition.

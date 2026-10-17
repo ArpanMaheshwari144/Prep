@@ -168,7 +168,7 @@ DIKKAT     10 baje bot ne mere account pe ek hi pal me 20 login parallel bheje; 
            App-1 ne Redis se "4" padha (GET), App-2 ne bhi "4"; dono ne +1 karke "5" likha (SET) -> andar 6.
 HAL        ATOMIC: Redis ek hi line (single thread) me, ek command poora hone tak doosra shuru nahi -> INCR
            +1, +1 sahi. Token bucket ke do kaam (dekhna + ghatana) ek LUA script me, beech me koi nahi.
-NAHI       App me padho, +1, phir likho: padhne aur likhne ke beech doosra ghus jaata.
+NAHI       App me synchronized / lock: sirf ek machine ke andar; do App me race wahi ki wahi.
 ```
 ```
 AAGE POOCHEGA:
@@ -229,8 +229,6 @@ flowchart LR
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
     style n_Redis_Cluster fill:#f9a825,color:#000
-    style n_Route_53 fill:#f9a825,color:#000
-    style n_ALB fill:#f9a825,color:#000
 ```
 ```
 DIKKAT     Dopahar Redis mar gaya. Saari ginti wahin thi -> kisi ko pata hi nahi kisne kitni bheji.
@@ -242,6 +240,7 @@ NAHI       sab fail-open: login khula = koi bina had password guess karta rahega
 ```
 AAGE POOCHEGA:
   NIYAM: faisla pehle se, endpoint ke hisaab se; copy = bachav + padhne ka bojh, shard = likhne ka bojh.
+  "LB / gateway bhi akela?"        -> nahi; Route 53 + ALB (kai zone), Redis jaisa wo bhi akela nahi.
   "Switch me aakhri ginti khoi?"   -> haan, copy thodi peeche thi. Rate limit me chalta, ye paisa nahi.
   "Gira nahi, CPU full?"           -> copy se nahi: INCR = LIKHNA, sirf main pe. SHARD (Redis Cluster):
                                       user ke hisaab se keys 3-4 main me, har ek pe 1/4 bojh.

@@ -561,7 +561,7 @@ flowchart LR
     n_Twilio["Twilio + SNS"]
     n_Redis["Redis (parchi + baalti)"]
     n_DLQ["DLQ"]
-    n_Webhook_Svc["Webhook Svc<br/>signature check"]
+    n_Webhook_Svc["Webhook Svc"]
     n_Tracking_DB["Tracking DB"]
     n_Admin --> n_Campaign_Svc
     n_Campaign_Svc --> n_Campaign_DB
@@ -632,7 +632,7 @@ flowchart LR
     n_Twilio["Twilio + SNS"]
     n_Redis["Redis (parchi + baalti)"]
     n_DLQ["DLQ"]
-    n_Webhook_Svc["Webhook Svc<br/>signature check"]
+    n_Webhook_Svc["Webhook Svc"]
     n_Tracking_DB["Tracking DB"]
     n_Admin --> n_Campaign_Svc
     n_Campaign_Svc --> n_Campaign_DB
@@ -718,7 +718,7 @@ flowchart LR
     n_Twilio["Twilio + SNS"]
     n_Redis["Redis"]
     n_DLQ["DLQ"]
-    n_Webhook_Svc["Webhook Svc<br/>signature check"]
+    n_Webhook_Svc["Webhook Svc"]
     n_Tracking_DB["Tracking DB"]
     n_Admin --> n_Campaign_Svc
     n_Campaign_Svc --> n_Campaign_DB

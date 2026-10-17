@@ -343,7 +343,7 @@ AAGE POOCHEGA:
   "Do region me ek saath likha?"   -> tweet aksar naya banta; takraav -> jiska time baad ka (last write wins).
 ```
 
-#### 8 Raat ko akeli App machine giri, sab band
+#### 8 Raat ko har region me ek hi App machine; India wali giri, India band
 ```mermaid
 flowchart LR
     n_USER["USER"]

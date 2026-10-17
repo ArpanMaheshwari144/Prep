@@ -241,7 +241,6 @@ flowchart LR
     n_Analytics_svc --> n_DLQ
     style n_Kafka fill:#f9a825,color:#000
     style n_Analytics_svc fill:#f9a825,color:#000
-    style n_Analytics_DB fill:#f9a825,color:#000
     style n_DLQ fill:#f9a825,color:#000
 ```
 ```
@@ -294,7 +293,7 @@ flowchart LR
 ```
 DIKKAT     4 baje DB team: 10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Ek machine me nahi aata,
            aur wo ek machine mari to saare link gaye.
-HAL        SHARD (data ko tukdon me baanto) short code se: click code ke saath aata (GET /abc123) -> code
+HAL        CASSANDRA, SHARD (tukdon me baanto) short code se: click code ke saath (GET /abc123) -> code
            se seedha kaunsi machine. RING = ek gol ghadi: machine bhi ghadi pe, code bhi; code ghadi ki
            disha me chale, jo pehli machine mile wahi uski. Har tukde ki 3 copy, alag building me.
 NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se country pata hi nahi.
