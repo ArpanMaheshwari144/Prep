@@ -5,13 +5,6 @@
 > KYUN YE DESIGN: candidates batate: payment flow · transaction ledger · ATM · do account ke beech
 > bank ke andar transfer. JP ka sabse sambhavit HLD.
 
-```
-PAANCH CHEEZ JINPE YE ROUND TAY HOTA (source: "ye interview INHI se tay hote hain"):
-   IDEMPOTENCY · TRANSACTIONS · QUEUES · RECONCILIATION · AUDIT
-   + ACID vs eventual (network toote to SAHI hona chuno, chalte rehne ki keemat pe)
-   + asli khaate ke liye RELATIONAL DB, NoSQL nahi
-```
-
 ---
 
 ## KAHANI (ek din, 1 tareekh = salary day, main aur Ravi; har dikkat se design me ek dabba judta)
@@ -242,8 +235,9 @@ AAGE POOCHEGA:
   NIYAM: farak mile to khaata jeetega, par pehle KYUN.
   "Kaise kaam karta?"              -> har baar khaata jodo = sach par 10 saal ki 50,000 line = dheema. Isliye
                                       balance column = uska jod (CACHE), khaata line ke saath EK transaction
-                                      me. Raat ko RECONCILIATION: khaata jod = column?
-  "Raat ko farak (4,500 vs 5,000)?" -> alert + account rok ke dekho; chupchaap theek MAT karo (bug zinda),
+                                      me. Raat ko RECONCILIATION: mera khaata jod = 30,100, column me
+                                      30,100 -> theek.
+  "Raat ko farak (30,100 vs 30,600)?" -> alert + account rok ke dekho; chupchaap theek MAT karo (bug zinda),
                                       pehle KYUN, phir khaata jeetega.
   "Chal raha hai, kaise pata?"     -> reconciliation + p99 + error rate + queue lag + DB connection pe alert
                                       + har transfer ka trace id.
@@ -277,8 +271,6 @@ AAGE POOCHEGA:
                                       Patroni / RDS Multi-AZ: copy promote, DB ka pata nayi pe, ~1-2 min.
   "Sync = har transfer dheema?"    -> haan, ek network chakkar; paise me theek. Async me aakhri kho sakta.
   "Failover ke 1-2 min me?"        -> error -> app dobara bheje, same idempotency key -> do baar nahi katega.
-  "Ravi: 'Arpan ke account se 500'?" -> OWNER CHECK har request pe: userId JWT se (body / URL se nahi);
-                                      from_account ka maalik yahi? nahi -> 403. Balance / history pe bhi.
 ```
 
 #### 8 Salary ki bheed me sab balance dekh rahe, transfer dheeme
@@ -510,9 +502,16 @@ API:      GET /accounts/{id}/balance · GET /accounts/{id}/transactions?cursor=.
           POST /transfers { from, to, amount }
           POST /accounts/{id}/deposit { amount } · POST /accounts/{id}/withdraw { amount }
           har POST me Idempotency-Key header
+          har request pe OWNER CHECK: userId JWT se (body / URL se nahi); from_account ka maalik
+          nahi -> 403 (Ravi "Arpan ke account se 500" bheje to). Balance / history pe bhi.
 
 DB:       ledger_entries (SACH, sirf jodo, mahine ke tukde) · accounts.balance (CACHE, jod)
           idempotency_keys (UNIQUE) · outbox · account_balance_snapshot (mahine ke aakhir ka balance)
+
+PAANCH CHEEZ JINPE YE ROUND TAY HOTA (source: "ye interview INHI se tay hote hain"):
+   IDEMPOTENCY · TRANSACTIONS · QUEUES · RECONCILIATION · AUDIT
+   + ACID vs eventual (network toote to SAHI hona chuno, chalte rehne ki keemat pe)
+   + asli khaate ke liye RELATIONAL DB, NoSQL nahi
 ```
 
 ---
