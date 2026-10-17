@@ -344,10 +344,12 @@ flowchart LR
     style n_Cassandra fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     5 baje maine naya link banaya. Copy A, B me pahunch gaya, C tak abhi nahi (aam taur pe ms,
-           bheed me second tak). Isi beech mera click C pe -> "mere paas nahi" -> 404.
-HAL        QUORUM + REDIS: banate hi Redis me bhi daalo, click wahin milta. DB me "2 me likho, 2 se padho":
-           koi bhi 2 copy uthao (A+C, B+C, A+B), har jodi me A ya B aayegi hi.
+DIKKAT     5 baje maine naya link banaya. Cassandra har link 3 alag machine pe rakhta: copy A, B, C.
+           Link A aur B me pahunch gaya, C tak abhi nahi (aam taur pe ms, bheed me second tak).
+           Isi beech mera click C pe gaya -> C bola "ye link mere paas nahi" -> 404.
+HAL        QUORUM (matlab "zyadatar": 3 me se 2): likhte waqt "ho gaya" tabhi jab 2 copy me likh jaaye,
+           padhte waqt bhi 2 copy se poochho. Koi bhi 2 uthao (A+C, B+C, A+B), har jodi me A ya B aayegi
+           hi -> khaali haath kabhi nahi. Saath me link banate hi Redis me bhi daalo, zyadatar click wahin.
 NAHI       tez karne ko sirf 1 copy se padho: wo C ho sakti hai -> phir 404.
 ```
 ```
