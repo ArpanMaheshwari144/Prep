@@ -12,6 +12,24 @@ LIBRARY DESK: 10,000 kitaab godaam me (DB = dheema, sab kuch) · top-100 front d
 
 ---
 
+## KAHANI (ek din, mere app ka cache, IPL final wala; har dikkat se design me ek dabba judta)
+
+```
+   KYA HUA                                       ILAAJ                                 DABBA JUDA
+1  subah 64 GB RAM bhar gayi, kya hatayein    -> LRU + TTL (HashMap + DLL)             Cache (LRU + TTL)
+2  data 1 TB, "user:42" kis machine pe        -> CONSISTENT HASHING + virtual nodes    Cache client + Nodes
+3  dopahar machine B mari, bojh DB pe         -> REPLICA (async) + quorum failover     Node + replica
+4  Ravi ne naam badla, cache me purana        -> DB me likho, cache key DELETE         (App: likhne pe delete)
+5  7 baje "home page" key khatam, 1000 DB pe  -> LOCK: SET NX EX, sirf pehla DB jaaye  (App: SET NX lock)
+6  raat IPL final, "live:score" pe crore log  -> L1 LOCAL CACHE + key ki copies        App + L1 local cache
+
+POORA DESIGN (upar ke dabbe kram se):
+   App + L1 -> Cache client (consistent hashing: key -> machine) -> Node (LRU + TTL) primary + copy
+   miss -> DB (asli sach) · padhna = cache-aside · likhna = DB + cache key DELETE
+```
+
+---
+
 ## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![How Can Cache Systems Go Wrong?](https://assets.bytebytego.com/diagrams/0038-how-caches-can-go-wrong.png)
@@ -49,8 +67,8 @@ NUMBERS (andaaza):
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-> Har card: DIKKAT 1 (kya toota) -> HAL (kya kiya) -> diagram -> DIKKAT 2, 3 ... (interviewer ke
-> agle sawaal) har ek ke neeche uska HAL. Revise: sirf baayein column padho.
+> Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
+> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
@@ -58,7 +76,7 @@ Ek machine, uski RAM me ek HashMap. get / put O(1).
 App pehle cache se poochhe: mila -> wahi do · nahi mila -> DB se laao -> cache me daalo -> do (CACHE-ASIDE).
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_App["App"]
     n_DB["DB"]
     n_Cache["Cache"]
@@ -68,7 +86,7 @@ flowchart TD
 
 #### 0 SHURU: CACHE-ASIDE (cache kaam kaise karta)
 ```
-DIKKAT 1   Arpan ki profile DB se padhne me ~10 ms (disk). 10 lakh log / second profile khol rahe
+DIKKAT 1   Meri profile DB se padhne me ~10 ms (disk). 10 lakh log / second profile khol rahe
            -> DB ghutno pe.
 HAL        DB ke aage RAM wala cache. App pehle cache se poochhe:
              mili (HIT) -> <1 ms me wapas
@@ -89,101 +107,122 @@ DIKKAT 4   Chal raha hai, kaise pata?
 HAL        HIT RATIO sabse pehle (achanak gira = kuch toota) + p99 + kitni key nikaali ja rahi (evictions).
 ```
 
-#### 1 RAM BHAR GAYI, KYA HATAYEIN
-```
-DIKKAT 1   Cache machine ki 64 GB RAM bhar gayi. Nayi key daalni hai, to koi purani nikaalni padegi. Kaunsi?
-HAL        LRU: jise sabse LAMBE samay se kisi ne nahi chhua, wo bahar.
-           Ye wahi LRU cache hai jo tune DSA me khud banaya (09_DESIGN, LeetCode 146):
-             HashMap = key turant dhoondho · Doubly linked list = kaun kab chhua, uski line
-             get(key) -> key mili, uska node line ke AAGE (head ke paas) = abhi chhuya
-             put(key) -> naya node AAGE · RAM bhari -> line ke PEECHE wala (tail ke paas) hatao
-           Saath me har key ki umar (TTL): umar khatam to key bekaar, padhne aaye tab check + peeche safai.
-```
+#### 1 Subah cache machine ki RAM bhar gayi, kya hatayein
 ```mermaid
-flowchart TD
+flowchart LR
     n_App["App"]
     n_DB["DB"]
-    n_Cache["Cache<br/>LRU + TTL"]
+    n_Cache["Cache<br/>64 GB RAM bhar gayi<br/>-> LRU + TTL"]
     n_App --> n_DB
     n_App --> n_Cache
+    style n_Cache fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   LRU kyun, LFU kyun nahi?
-HAL        LRU = "aakhri baar KAB chhua", LFU = "KITNI baar chhua". LFU me kal ki famous key aaj bhi baithi
-           rehti, isliye LFU ginti waqt ke saath ghatata (decay). Default LRU.
+DIKKAT     Subah cache machine ki 64 GB RAM bhar gayi. Nayi key daalni, koi purani nikaalni padegi. Kaunsi?
+HAL        LRU: jise sabse LAMBE samay se kisi ne nahi chhua, wo bahar. Wahi LRU cache jo tune DSA me khud
+           banaya (09_DESIGN, LeetCode 146). Saath me har key ki umar (TTL).
+```
+```
+AAGE POOCHEGA:
+  NIYAM: sabse purana chhua hua pehle jaaye; umar khatam = key bekaar.
+  "LRU andar kaise?"               -> HashMap = key turant · Doubly linked list = kaun kab chhua ki line
+                                      get -> node AAGE (head ke paas) · put -> naya AAGE, RAM bhari -> PEECHE
+                                      (tail ke paas) wala hatao.
+  "TTL wali key kab hatti?"        -> padhne aaye tab check (lazy) + peeche safai (active).
+  "LRU kyun, LFU kyun nahi?"       -> LRU = "aakhri baar KAB chhua", LFU = "KITNI baar"; LFU me kal ki
+                                      famous key aaj bhi baithi rehti -> ginti waqt ke saath ghatao (decay).
+                                      Default LRU.
+  "Redis sach me list rakhta?"     -> nahi, memory bachane ko ANDAAZE wala LRU: kuch random key, sabse purani.
+  "RAM bhari, hatana band?"        -> noeviction = naya likhna ERROR; cache ke liye allkeys-lru rakho.
+```
 
-DIKKAT 3   Redis sach me har key ki list rakhta?
-HAL        Nahi, memory bachane ko ANDAAZE wala LRU: kuch random key uthata, unme sabse purani hata deta.
-
-DIKKAT 4   RAM bhari aur hatana band (noeviction)?
-HAL        Naya likhna ERROR dega. Cache ke liye allkeys-lru rakho.
-```
-
-#### 2 1 TB EK MACHINE ME NAHI: "user:42" KIS MACHINE PE?
-```
-DIKKAT 1   Data 1 TB, ek machine me 64 GB. 16+ machine chahiye. "user:42" kis machine pe jaaye, aur App ko
-           har baar kaise pata chale?
-HAL        RING (consistent hashing): ek gol ring 0 .. 360 (asal me 0 .. 2^32). Machine bhi ring pe, key bhi.
-           Key ghadi ki disha me chale, jo PEHLI machine mile wahin rahe.
-             A = 100, B = 200, C = 300 -> key 150 -> B, key 250 -> C, key 350 -> A (ghoom ke)
-             nayi machine D = 250 jodi -> sirf 201 .. 250 wali key C se D pe gayi. Baaki sab wahin.
-           RING = tera circular array (Next Greater Element II me i % n): ant pe pahunch ke ghoom ke pehle pe.
-           VIRTUAL NODES: ek machine ring pe 100 jagah baithti -> bojh barabar.
-           App ke andar CACHE CLIENT library ye hisaab karke sahi machine pe bhejti.
-```
+#### 2 Data 1 TB ho gaya: "user:42" kis machine pe?
 ```mermaid
-flowchart TD
+flowchart LR
     n_App["App"]
     n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A["Node A"]
-    n_Node_B["Node B"]
-    n_Node_C["Node C"]
+    n_Cache_client["Cache client<br/>user:42 kis machine pe<br/>-> consistent hashing"]
+    n_Node_A["Node A (LRU + TTL)"]
+    n_Node_B["Node B (LRU + TTL)"]
+    n_Node_C["Node C (LRU + TTL)"]
     n_App --> n_DB
     n_App --> n_Cache_client
     n_Cache_client --> n_Node_A
     n_Cache_client --> n_Node_B
     n_Cache_client --> n_Node_C
+    style n_Cache_client fill:#f9a825,color:#000
+    style n_Node_A fill:#f9a825,color:#000
+    style n_Node_B fill:#f9a825,color:#000
+    style n_Node_C fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Seedha hash(key) % N kyun nahi?
-HAL        N badla to lagbhag SAB key ki machine badal jaati:
-             key ka hash 10, 11, 12, 13, 14
-             N = 4 -> machine 2, 3, 0, 1, 2
-             N = 5 -> machine 0, 1, 2, 3, 4      <- ek machine jodi, PAANCHON key hil gayi
-           Asal me 4 -> 5 machine = ~80% key hilti -> sab MISS -> saara bojh DB pe -> DB gira.
-           Ring me N kahin nahi: sirf pados ki ~K/N key hilti (K = saari key, N = machine).
-           (Interview me dono mila ke mat bolna.)
-
-DIKKAT 3   Nayi machine judi, uski key khaali -> miss?
-HAL        Haan, sirf us hisse ki ~K/N key ek baar miss. Poora cache nahi.
-
-DIKKAT 4   App ko kaise pata kaunsi machine zinda?
-HAL        Cluster ka naksha (topology / config service). Galat machine pe gaya to Redis bolta
-           "MOVED, wahan jao".
-
-DIKKAT 5   Redis Cluster ring use karta?
-HAL        Nahi, 16384 SLOT: CRC16(key) % 16384 -> slot -> machine. Yahan 16384 PAKKA hai (machine ginti
-           nahi), isliye machine badhne pe sab nahi hilta: bas kuch slot nayi machine pe khiskao.
-           Kaam ring jaisa.
-
-DIKKAT 6   Range se baanto (A-M, N-Z)?
-HAL        Ek range garam ho jaati (sab "a" wale), ek machine pe bojh. Isliye hash.
+DIKKAT     Data 1 TB ho gaya, ek machine me 64 GB -> 16+ machine. "user:42" kis machine pe jaaye, aur App ko
+           har baar kaise pata chale?
+HAL        CONSISTENT HASHING: ring (0 .. 2^32) pe machine bhi, key bhi; key ghadi ki disha me chale,
+           PEHLI machine pe rahe. VIRTUAL NODES se bojh barabar; App ki CACHE CLIENT library hisaab karti.
+NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: machine jude / jaaye to sirf pados ki ~K/N key hilein (K = saari key, N = machine).
+  "Ring ka misaal?"                -> ring 0 .. 360: A = 100, B = 200, C = 300 -> key 150 -> B, 250 -> C,
+                                      350 -> A (ghoom ke). D = 250 jodi -> sirf 201 .. 250 C se D pe.
+  "Ring jaisa kahin dekha?"        -> tera circular array (Next Greater Element II me i % n):
+                                      ant pe pahunch ke ghoom ke pehle pe.
+  "% N me kitna hilta?"            -> hash 10, 11, 12, 13, 14: N = 4 -> 2, 3, 0, 1, 2 · N = 5 -> 0, 1, 2, 3, 4
+                                      = ek machine jodi, PAANCHON hili; asal me 4 -> 5 = ~80% key.
+                                      Ring me N kahin nahi. (Interview me dono mila ke mat bolna.)
+  "Virtual nodes?"                 -> ek machine ring pe 100 jagah baithti -> bojh barabar.
+  "Nayi machine, key khaali?"      -> haan, sirf us hisse ki ~K/N key ek baar miss; poora cache nahi.
+  "Kaunsi machine zinda, kaise?"   -> cluster ka naksha (topology / config service);
+                                      galat machine pe gaya to Redis bolta "MOVED, wahan jao".
+  "Redis Cluster ring use karta?"  -> nahi, 16384 SLOT: CRC16(key) % 16384 -> slot -> machine.
+                                      16384 PAKKA (machine ginti nahi): machine badhe to kuch slot khiskao.
+                                      Kaam ring jaisa.
+  "Range se baanto (A-M, N-Z)?"    -> ek range garam ho jaati (sab "a" wale), ek machine pe bojh; isliye hash.
 ```
 
-#### 3 MACHINE B MARI, USKI KEY KA BOJH DB PE
-```
-DIKKAT 1   Machine B mar gayi. Uske hisse ki saari key gayab. Un key ki saari padhai ab seedha DB pe
-           -> DB pe achanak bojh.
-HAL        Har machine (B) ki ek COPY doosri building me. Likhna B pe, copy tak thodi der baad (ASYNC).
-           Baaki machine B ko ping karti rehti. Zyadatar (quorum) bolein "B mari" -> vote se copy naya B
-           -> App ko naya pata mil jaata. Sirf B ki keys pe asar, baaki machines aaram se.
-```
+#### 3 Dopahar machine B mar gayi, uski key ka bojh DB pe
 ```mermaid
-flowchart TD
+flowchart LR
     n_App["App"]
     n_DB["DB"]
-    n_Cache_client["Cache client"]
+    n_Cache_client["Cache client (ring)"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica<br/>B mari, bojh DB pe<br/>-> copy + quorum failover"]
+    n_Node_C_replica["Node C + replica"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
+    style n_Node_A_replica fill:#f9a825,color:#000
+    style n_Node_B_replica fill:#f9a825,color:#000
+    style n_Node_C_replica fill:#f9a825,color:#000
+```
+```
+DIKKAT     Dopahar machine B mar gayi. Uske hisse ki saari key gayab -> un key ki saari padhai seedha DB pe.
+HAL        REPLICA: har machine ki COPY doosri building me, likhna B pe, copy tak thodi der baad (ASYNC).
+           Baaki B ko ping karti; zyadatar (quorum) bolein "B mari" -> vote se copy naya B, App ko naya pata.
+NAHI       sync copy: har likhai pe copy ke "haan" ka intezaar -> <1 ms gaya.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: cache me tezi pehle; aakhri kuch likhai kho jaaye to chalta, asli sach DB me.
+  "Async ki keemat?"               -> aakhri kuch likhai kho sakti; cache me chalta, asli sach DB me hai.
+  "Baaki machines pe asar?"        -> sirf B ki keys pe asar, baaki machines aaram se.
+  "Copy ko primary banane me?"     -> ~10-30 sec; us beech us hisse ki key DB se aati (thoda dheema).
+  "Network toota, do primary?"     -> SPLIT BRAIN: faisla zyadatar (quorum) se
+                                      + jo akeli pad gayi (minority) wo likhna band kare (min-replicas).
+  "Copy se padh sakte?"            -> haan, padhai bat jaati; thoda purana mil sakta (lag), cache me chalta.
+```
+
+#### 4 Ravi ne naam badla, sabko purana dikh raha
+```mermaid
+flowchart LR
+    n_App["App<br/>DB naya, cache purana<br/>-> likho DB, cache DELETE"]
+    n_DB["DB"]
+    n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
     n_Node_B_replica["Node B + replica"]
     n_Node_C_replica["Node C + replica"]
@@ -192,37 +231,33 @@ flowchart TD
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
+    style n_App fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Copy async kyun, sync kyun nahi?
-HAL        Sync = har likhai pe copy ke "haan" ka intezaar -> <1 ms gaya. Keemat: aakhri kuch likhai kho
-           sakti. Cache me chalta, asli sach DB me hai.
+DIKKAT     Shaam ko Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya, cache me abhi bhi "Ravi"
+           -> sabko purana naam dikh raha.
+HAL        DELETE ON WRITE: DB update karo -> phir cache ki key DELETE (update nahi). Agli padhai MISS
+           -> DB se "Ravi K" -> cache me.
+NAHI       cache UPDATE: "X" phir "Y" likha, cache me pehle Y pahuncha phir X -> galat "X" baith gaya.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: likho DB me, cache se hatao; kuch bhi pahunche, key khaali hi hogi. Umar = suraksha jaal.
+  "DB hua, cache DELETE fail?"     -> TTL: zyada se zyada utni der purana;
+                                      pakka chahiye -> DB ke badlaav (CDC) se delete dobara.
+  "Delete ke baad purani wapas?"   -> (race) thodi der baad phir delete (double delete), ya version se likho.
+  "Ravi ko khud purana dikha?"     -> copy peeche thi (replica lag);
+                                      likhne wale ko thodi der primary se padhao (read-your-own-writes).
+  "TTL kitna?"                     -> jitna purana business jhel sake: profile minute, price / stock second ya
+                                      turant delete.
+```
 
-DIKKAT 3   Copy ko primary banane me kitni der?
-HAL        ~10-30 sec. Us beech us hisse ki key DB se aati (thoda dheema).
-
-DIKKAT 4   Network toota, purani B bhi khud ko primary samjhe (do primary)?
-HAL        SPLIT BRAIN. Faisla zyadatar (quorum) se + jo akeli pad gayi (minority) wo likhna band kare
-           (min-replicas).
-
-DIKKAT 5   Copy se padh sakte?
-HAL        Haan, padhai bat jaati. Par thoda purana mil sakta (lag). Cache me chalta.
-```
-
-#### 4 DB ME NAYA NAAM, CACHE ME PURANA (STALE)
-```
-DIKKAT 1   Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya, cache me abhi bhi "Ravi".
-           Sabko purana naam dikh raha.
-HAL        DB update karo -> phir cache ki key DELETE (update nahi). Agli padhai MISS -> DB se "Ravi K"
-           -> cache me.
-           UPDATE kyun nahi: Ravi ne "X" likha, phir "Y". Cache me pehle Y pahuncha, phir X -> galat "X" baith
-           gaya. DELETE me ye dikkat nahi: kuch bhi pahunche, key khaali hi hogi.
-```
+#### 5 7 baje "home page" key khatam, 1000 log ek saath DB pe (stampede)
 ```mermaid
-flowchart TD
-    n_App["App"]
+flowchart LR
+    n_App["App<br/>key khatam, 1000 DB pe<br/>-> SET NX EX lock"]
     n_DB["DB"]
-    n_Cache_client["Cache client"]
+    n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
     n_Node_B_replica["Node B + replica"]
     n_Node_C_replica["Node C + replica"]
@@ -231,76 +266,31 @@ flowchart TD
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
+    style n_App fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   DB update hua, par cache DELETE fail?
-HAL        TTL suraksha jaal: zyada se zyada utni der purana. Pakka chahiye -> DB ke badlaav (CDC) se delete
-           dobara.
+DIKKAT     "Home page" banana = 20 table ka join, ~1 sec. 7 baje key ki umar khatam, usi 1 sec me 1000 request
+           -> 1000 bhaari join DB pe -> CPU 100%, baaki query bhi atki -> DB gira.
+HAL        LOCK: sirf PEHLE ko DB jaane do: SET lock:home 1 NX EX 5 (NX = sirf tab jab koi aur na laga ho).
+           Baaki 999 "thoda ruko", phir cache se. EX 5 = pehla beech me mara to lock khud chhoote.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: khaali key pe ek hi DB jaaye; baaki ruke ya purani value le.
+  "Khatam hi kyun hone do?"        -> umar khatam hone se thoda pehle hi peeche se taaza kar do.
+  "Pata tha kab bheed (sale 12 baje, IPL final)?" -> uske pehle hi cache bhar do aur machine badha do.
+  "Baaki 999 kitni der rukenge?"   -> 50-100 ms, 2-3 baar; soft-TTL ho (purani value + "taaza karo" nishaan)
+                                      to purani value de do, DB pe mat bhejo.
+  "Sab ek saath bhari, ek saath khatam?" -> umar me thoda random (60 min +- 5), khatam hona bikhar jaata.
+  "Key DB me hai hi nahi?"         -> "nahi hai" ko bhi chhoti umar ke saath cache me, DB tak jaane mat do.
+```
 
-DIKKAT 3   Delete ke baad kisi ne purani value wapas daal di (race)?
-HAL        Thodi der baad dobara delete (double delete), ya version ke saath likho.
-
-DIKKAT 4   Ravi ne khud naam badla, aur use hi purana dikha?
-HAL        Copy peeche thi (replica lag). Likhne wale ko thodi der primary se padhao (read-your-own-writes).
-
-DIKKAT 5   TTL kitna?
-HAL        Jitna purana business jhel sake. Profile: minute. Price / stock: second, ya turant delete.
-```
-
-#### 5 GARAM KEY KHATAM, 1000 LOG EK SAATH DB PE (STAMPEDE)
-```
-DIKKAT 1   "home page" banana = 20 table ka join, ~1 sec. Key ki umar khatam hui, usi 1 sec me 1000
-           request aayi -> 1000 bhaari join ek saath DB pe -> DB ka CPU 100%, baaki query bhi atki
-           -> DB gira.
-HAL        Sirf PEHLE wale ko DB jaane do, baaki 999 "thoda ruko", phir cache se le lenge.
-           Pehla kaun, Redis se:
-             SET lock:home 1 NX EX 5   -> jo pehle pahuncha usi ka lock (NX = sirf tab jab koi aur na laga ho)
-             EX 5 -> pehla beech me mar gaya to lock 5 sec me khud chhoote, baaki atke na rahein
-           DB pe 1000 ki jagah 1 request. Aur umar khatam hone se thoda pehle hi peeche se taaza kar do.
-```
+#### 6 Raat IPL final, "live:score" key ki machine akeli mar rahi (hot key)
 ```mermaid
-flowchart TD
-    n_App["App"]
+flowchart LR
+    n_App_L1_local_cache["App + L1 local cache<br/>crore log ek key pe<br/>-> L1 local + copies"]
     n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App --> n_DB
-    n_App --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-```
-```
-DIKKAT 2   Pata tha bheed kab aayegi (sale 12 baje, IPL final)?
-HAL        Uske pehle hi cache bhar do aur machine badha do.
-
-DIKKAT 3   Baaki 999 kitni der rukenge?
-HAL        50-100 ms, 2-3 baar. Soft-TTL rakhi ho (purani value bhi rakho, bas "taaza karo" ka nishaan) to
-           purani value de do, DB pe mat bhejo.
-
-DIKKAT 4   Bahut saari key EK SAATH khatam (sab ek saath bhari thi)?
-HAL        Umar me thoda random (60 min +- 5), to khatam hona bikhar jaata.
-
-DIKKAT 5   Key DB me HAI hi nahi, koi baar-baar wahi maange?
-HAL        "Nahi hai" ko bhi chhoti umar ke saath cache me rakho, DB tak jaane hi mat do.
-```
-
-#### 6 EK KEY ITNI POPULAR, USKI MACHINE AKELI MAR RAHI (HOT KEY)
-```
-DIKKAT 1   IPL final, "live:score" key. Crore log ek saath padh rahe. Key ek hi machine pe -> wo machine
-           akeli mar rahi. Consistent hashing yahan kuch nahi karta: ek key = ek machine.
-HAL        (1) L1 LOCAL CACHE: har App server ki apni RAM me 1-2 sec ka chhota cache.
-               1000 App server, har ek 1 sec me EK baar Redis se -> Redis pe 1000 / sec, crore nahi.
-           (2) Us key ki kai copy (score#1 .. #10) alag machine pe, padhte waqt koi bhi ek.
-           L1 (App ki RAM, nano-sec) -> L2 Redis (micro / milli) -> DB (milli-sec).
-```
-```mermaid
-flowchart TD
-    n_App_L1_local_cache["App + L1 local cache"]
-    n_DB["DB"]
-    n_Cache_client["Cache client"]
+    n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
     n_Node_B_replica["Node B + replica"]
     n_Node_C_replica["Node C + replica"]
@@ -309,48 +299,53 @@ flowchart TD
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
+    style n_App_L1_local_cache fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Garam key pehchanoge kaise?
-HAL        App me har key ki ginti (sabse pakka) + machine ka metric (ek machine pe ops / sec achanak upar).
-           Had paar -> copy / L1. (redis-cli --hotkeys sirf LFU policy pe chalta, hum LRU pe hain.)
-
-DIKKAT 3   L1 me purana score kitni der?
-HAL        L1 ki umar jitna (1-2 sec). Score ke liye theek, paisa / stock ke liye nahi.
-
-DIKKAT 4   Garam key pe LIKHNA bhi ho (like counter)?
-HAL        Key ke tukde (like#0..#9), kisi ek me likho, padhte waqt sab jodo.
-
-DIKKAT 5   Stampede aur hot key me farak?
-HAL        Stampede = key KHAALI, sab DB bhaage (lock). Hot key = key BHARI, ek machine padhai se mar rahi
-           (L1 / copy).
+DIKKAT     Raat IPL final, "live:score" key crore log ek saath padh rahe. Key ek hi machine pe -> wo akeli mar
+           rahi. Consistent hashing yahan kuch nahi karta: ek key = ek machine.
+HAL        L1 LOCAL CACHE: har App server ki RAM me 1-2 sec ka cache; 1000 server, har ek 1 sec me EK baar
+           Redis se -> Redis pe 1000 / sec, crore nahi. Saath me key ki kai copy (score#1 .. #10), koi bhi ek.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: garam key ko faila do: App ke paas chhoti copy, ya alag machine pe copies.
+  "Kitni parat?"                   -> L1 (App ki RAM, nano-sec) -> L2 Redis (micro / milli) -> DB (milli-sec).
+  "Garam key pehchanoge kaise?"    -> App me har key ki ginti (sabse pakka) + machine ka metric
+                                      (ops / sec achanak upar); had paar -> copy / L1.
+                                      (redis-cli --hotkeys sirf LFU policy pe chalta, hum LRU pe hain.)
+  "L1 me purana score kitni der?"  -> L1 ki umar jitna (1-2 sec); score ke liye theek, paisa / stock nahi.
+  "Garam key pe LIKHNA (like)?"    -> key ke tukde (like#0..#9), kisi ek me likho, padhte waqt sab jodo.
+  "Stampede aur hot key me farak?" -> stampede = key KHAALI, sab DB bhaage (lock)
+                                      · hot key = key BHARI, ek machine padhai se mar rahi (L1 / copy).
 ```
 
+---
+
+## AAKHRI DABBA + WRAP (ek hi baar)
+
 ```
-AAKHRI DABBE (sab dikkat ke baad):
-  App + L1 local cache (nano-sec, hot key ka pehla ilaaj) -> Cache client (consistent hashing: key -> machine)
-  -> Machine (HashMap + DLL = LRU, + TTL) primary + copy (alag AZ) -> miss pe DB (asli sach)
-  PADHNA = cache-aside
+App + L1 local cache (nano-sec, hot key ka pehla ilaaj) -> Cache client (consistent hashing: key -> machine)
+-> Machine (HashMap + DLL = LRU, + TTL) primary + copy (alag AZ) -> miss pe DB (asli sach)
+PADHNA = cache-aside (~90% hit, DB pe bojh 10 guna kam) · PURANA = TTL + likhne pe delete
+STAMPEDE = lock / soft-TTL · HOT KEY = copies / L1 local
 
 DB:  cache = RAM wala key-value (<1 ms, join nahi, sirf key se) · DB peeche asli sach
      cache AP ki taraf: tezi > sahi hona, "thodi der baad sahi" chalta
-
-END ME POOCHEGA:
-  "Key kis machine pe?" -> hash % N nahi (machine judi to sab khiski) -> CONSISTENT HASHING + virtual nodes
-  "Purana data?"      -> TTL + likhne pe delete
-  "Stampede?"         -> lock / soft-TTL / pehle se bharo
-  "Hot key?"          -> copies + L1 local cache
-  "SPOF?"             -> machine (copy promote) · cache client ka config (har app me copy)
-  "Chal raha, kaise pata?" -> HIT RATIO sabse zaroori (gira = kuch toota) · p99 · evictions · alert
 ```
-
-AAKHRI DABBE ki tasveer:
-
+```
+JAWAB:    Cache = RAM me rakhi key-value, kai machines me baanti (ring se), har machine ki copy.
+          App pehle cache se poochhta, na mile to DB se laake cache me rakhta. RAM bhare to purani key
+          nikalti, har key ki umar hoti.
+          Do dikkat dhyaan rakhni: purana data (badalne pe key hatao + umar) aur key khatam hote hi
+          bheed (ek laaye, baaki ruke).
+          Bahut garam key: har app server apne paas 1-2 second rakhe.
+```
 ```mermaid
-flowchart TD
+flowchart LR
     n_App_L1_local_cache["App + L1 local cache"]
     n_DB["DB"]
-    n_Cache_client["Cache client"]
+    n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
     n_Node_B_replica["Node B + replica"]
     n_Node_C_replica["Node C + replica"]
@@ -399,42 +394,5 @@ TRADE-OFF:      tezi vs sahi hona — cache AP ki taraf, "thodi der baad sahi" c
 ```
 
 ---
-
-## AAKHRI DABBA + WRAP
-
-```
-App + L1 = nano-sec, hot key ka pehla ilaaj · Cache client = consistent hashing, key -> machine
-Machine = HashMap + DLL (LRU) + TTL, primary + copy (alag AZ) · DB = asli sach, miss pe
-```
-```
-EK MACHINE : HashMap + DLL (LRU) + TTL
-BAANTNA    : consistent hashing (shard) + copy (replication)
-PADHNA     : cache-aside (~90% hit, DB pe bojh 10 guna kam)
-PURANA     : TTL + likhne pe delete
-STAMPEDE   : lock / soft-TTL
-HOT KEY    : copies / L1 local
-```
-```
-JAWAB:    Cache = RAM me rakhi key-value, kai machines me baanti (ring se), har machine ki copy.
-          App pehle cache se poochhta, na mile to DB se laake cache me rakhta. RAM bhare to purani key
-          nikalti, har key ki umar hoti.
-          Do dikkat dhyaan rakhni: purana data (badalne pe key hatao + umar) aur key khatam hote hi
-          bheed (ek laaye, baaki ruke).
-          Bahut garam key: har app server apne paas 1-2 second rakhe.
-```
-```mermaid
-flowchart TD
-    n_App_L1_local_cache["App + L1 local cache"]
-    n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App_L1_local_cache --> n_DB
-    n_App_L1_local_cache --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-```
 
 ARCHETYPE F · CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
