@@ -131,22 +131,6 @@ KAHANI:  Data 1 TB, ek machine me 64 GB. 16+ machine chahiye. "user:42" kis mach
          aur App ko har baar kaise pata chale?
 
 ILAAJ:   CONSISTENT HASHING (ring). hash % N NAHI. Dono ALAG cheez hain, mila ke mat bolna.
-
-GALAT RAASTA = hash % N   (pehle ye bolo, phir kyun toota)
-         machine = hash(key) % N
-         key ka hash 10, 11, 12, 13, 14
-           N = 4 -> machine 2, 3, 0, 1, 2
-           N = 5 -> machine 0, 1, 2, 3, 4      <- ek machine jodi, PAANCHON key ki machine badal gayi
-         asal me 4 -> 5 machine = ~80% key ki machine badalti -> sab MISS -> saara bojh DB pe -> DB gira
-
-SAHI RAASTA = RING (consistent hashing)   (isme "% N" kahin nahi)
-         ek gol ring 0 .. 360 (asal me 0 .. 2^32). MACHINE bhi ring pe, KEY bhi ring pe.
-         key ghadi ki disha me chale, jo PEHLI machine mile wahin rahe.
-           A = 100, B = 200, C = 300
-           key 150 -> B,  key 250 -> C,  key 350 -> A (ghoom ke)
-         nayi machine D = 250 jodi:
-           sirf 201 .. 250 wali key C se D pe gayi. Baaki sab wahin.
-         -> machine judi / gayi = sirf PADOS ki thodi key hilti (~K/N), poori nahi
 ```
 ```mermaid
 flowchart TD
@@ -163,6 +147,22 @@ flowchart TD
     n_Cache_client --> n_Node_C
 ```
 ```
+GALAT RAASTA = hash % N   (pehle ye bolo, phir kyun toota)
+         machine = hash(key) % N
+         key ka hash 10, 11, 12, 13, 14
+           N = 4 -> machine 2, 3, 0, 1, 2
+           N = 5 -> machine 0, 1, 2, 3, 4      <- ek machine jodi, PAANCHON key ki machine badal gayi
+         asal me 4 -> 5 machine = ~80% key ki machine badalti -> sab MISS -> saara bojh DB pe -> DB gira
+
+SAHI RAASTA = RING (consistent hashing)   (isme "% N" kahin nahi)
+         ek gol ring 0 .. 360 (asal me 0 .. 2^32). MACHINE bhi ring pe, KEY bhi ring pe.
+         key ghadi ki disha me chale, jo PEHLI machine mile wahin rahe.
+           A = 100, B = 200, C = 300
+           key 150 -> B,  key 250 -> C,  key 350 -> A (ghoom ke)
+         nayi machine D = 250 jodi:
+           sirf 201 .. 250 wali key C se D pe gayi. Baaki sab wahin.
+         -> machine judi / gayi = sirf PADOS ki thodi key hilti (~K/N), poori nahi
+
 ANDAR KAISE:
          RING = tera circular array (Next Greater Element II
          me i % n): aakhri ke baad wapas pehle pe aate the,
