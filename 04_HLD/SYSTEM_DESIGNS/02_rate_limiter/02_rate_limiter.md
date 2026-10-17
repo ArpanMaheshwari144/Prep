@@ -425,8 +425,8 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Login se pehle botnet 1000 IP se password guess kar raha?
-HAL        IP limit bekaar. ACCOUNT pe limit: rate:<username>:login_fail -> 5 galat password -> thodi der lock /
-           CAPTCHA.
+HAL        IP limit bekaar. ACCOUNT pe limit: rate:<username>:login_fail
+           -> 5 galat password -> thodi der lock / CAPTCHA.
 
 DIKKAT 3   API key chori ho gayi?
 HAL        Key pe limit nuksaan seemit karti, aur key badalne / band karne ka raasta.

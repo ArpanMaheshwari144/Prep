@@ -541,7 +541,8 @@ HAL        Had badhwao + kai account / company. Tab tak line dheere-dheere khaal
 DIKKAT 1   SMS company ne message le liya. Par Arpan ke phone tak pahuncha ya nahi, humein pata hi nahi.
 HAL        Company "pahuncha / fail" baad me batati (WEBHOOK: company khud hamein call karti).
            Bhejte waqt company ka message number (SES MessageId / Twilio SID) apne notification ke saath save.
-           Webhook aaya -> us number se row dhoondho -> haalat badlo. Hisaab = Cassandra (likhna bahut, seedhi row).
+           Webhook aaya -> us number se row dhoondho -> haalat badlo.
+           Hisaab = Cassandra (likhna bahut, seedhi row).
 ```
 ```mermaid
 flowchart TD
