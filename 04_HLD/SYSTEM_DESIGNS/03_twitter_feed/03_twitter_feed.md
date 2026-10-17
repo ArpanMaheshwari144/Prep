@@ -133,14 +133,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Bieber ke 10 crore follower hain. Usne ek tweet kiya -> fanout ko 10 crore inbox me likhna pada.
          Fanout atak gaya, aur uske peeche baaki sabke tweet bhi atak gaye.
 
-ILAAJ:   Baaki sab users ke liye user id se baantna theek hai. Dikkat sirf ek bahut famous banda (Bieber)
-         hai jise crore log padhte.
-         Padhne ke liye: uska tweet cache me kai jagah rakho, har app server apne paas bhi 1-2 second
-         rakhe, photo-video CDN se.
-         Feed ke liye: Bieber ka tweet 10 crore logon ki list me nahi daalte. Jab koi feed khole, Bieber
-         ke naye tweet alag se laake mila do.
-         Like bahut aa rahe hon: ek counter ki jagah 10 chhote counter, kisi ek me +1 karo, padhte waqt
-         sab jod do.
+ILAAJ:   Aam log (jinke kam follower): tweet aate hi followers ki list me daal do (push).
+         Bieber jaise famous: 10 crore list me mat daalo. Jab Arpan feed khole, Bieber ke naye tweet alag
+         se laake uski list me mila do (pull).
+         Ise HYBRID kehte hain: aam ke liye push, famous ke liye pull.
 
 ANDAR KAISE:
          10,000 se kam follower = push, zyada = pull.
