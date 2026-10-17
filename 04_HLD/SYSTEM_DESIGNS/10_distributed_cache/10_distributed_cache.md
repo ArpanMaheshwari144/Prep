@@ -306,10 +306,11 @@ flowchart TD
 ## DIKKAT 1 — RAM bhar gayi, kya hatayein
 
 ```
-JAWAB:    Har machine LRU se nikaalti: HashMap + doubly linked list, to dhoondhna aur nikaalna dono
-          O(1). Har key ki umar (TTL) bhi: padhte waqt check, aur peeche thodi-thodi safai.
-
-SHABD:    LRU = jise sabse lambe time se kisi ne nahi chhua, wo bahar
+JAWAB:    RAM bhar gayi to wo key nikaalo jise sabse lambe time se kisi ne nahi chhua.
+          Iske liye ek line rakho: jo key abhi padhi, use line ke aage kar do. Purani apne aap peeche
+          khisakti jaati hain. Jagah chahiye to line ki sabse peeche wali key nikaal do.
+          Saath me har key ki umar: umar khatam to key bekaar. Koi padhne aaye tab dekh lo, aur peeche
+          thodi-thodi safai bhi chalti rahe.
 ```
 ```mermaid
 flowchart TD
@@ -327,8 +328,12 @@ flowchart TD
 ## DIKKAT 2 — 1 TB ek machine me nahi: key kis machine pe
 
 ```
-JAWAB:    Key kis machine pe = consistent hashing ki ring + virtual nodes, hash % N nahi. Machine judi
-          ya gayi to sirf thodi keys (K/N) hilti, lagbhag saari nahi.
+JAWAB:    Ek gol ring socho. Machine bhi ring pe baithi, key bhi ring pe. Key ghadi ki disha me chalti
+          hai aur jo pehli machine mile, wahin rehti hai.
+          Nayi machine aayi to sirf uske theek peeche wali thodi keys uske paas jaati hain, baaki sab
+          wahin rehti hain.
+          hash % N me aisa nahi hota: N badla to lagbhag har key ki machine badal jaati, sab cache
+          khaali, saara bojh DB pe.
 ```
 ```mermaid
 flowchart TD
@@ -355,8 +360,9 @@ flowchart TD
 POOCHEGA: "What happens if a cache node goes down?"
           (Cache ki ek machine gir gayi to?)
 
-JAWAB:    Har tukde ki copy doosri building me, wo primary ban jaati. Ring ki wajah
-          se sirf usi machine ki keys pe asar.
+JAWAB:    Har machine ki ek copy doosri building me hoti hai. Machine giri to copy uski jagah le leti
+          hai.
+          Aur sirf usi machine ki keys pe asar padta hai, baaki machines aaram se chalti rehti hain.
 ```
 ```mermaid
 flowchart TD
@@ -383,8 +389,12 @@ flowchart TD
 POOCHEGA: "The user updated something but still sees the old value. Why?"
           (User ne kuch badla par purana dikh raha. Kyun?)
 
-JAWAB:    Badalne pe cache ki key hata do (delete), upar likho nahi, aur umar (TTL) suraksha jaal. Copy
-          peeche ho to likhne wale ko thodi der primary se padhao.
+JAWAB:    Ravi ne naam badla. DB me naya likha, aur cache me se purani key hata di (delete).
+          Agli baar koi Ravi ki profile maange to cache me nahi milegi, DB se naya naam aayega aur cache
+          me baith jaayega.
+          Key ki umar bhi rakho, taaki delete kabhi fail ho jaaye to bhi kuch der baad purana naam khud
+          hat jaaye.
+          Ravi ko khud purana dikhe (copy peeche thi) to Ravi ko thodi der primary se padhao.
 ```
 ```mermaid
 flowchart TD
@@ -411,11 +421,14 @@ flowchart TD
 POOCHEGA: "What if the cache goes down / a hot key expires?"
           (Cache gir gaya / garam key khatam ho gayi to?)
 
-JAWAB:    Pata ho kab bheed (event), to pehle se cache bharo aur machine badhao.
-          Anjaan jhatke ke liye bhi stampede se bachao: lock taaki sirf ek request key dobara bhare, aur
-          umar khatam hone se pehle peeche se taaza kar do.
-
-SHABD:    stampede = key khatam hote hi hazaar request ek saath DB pe
+JAWAB:    Do case hain.
+          1) Pata hai bheed kab aayegi (sale 12 baje, IPL final 7:30): uske pehle hi cache me data bhar
+          do aur machine badha do.
+          2) Pata nahi tha, key achanak khatam ho gayi aur 1000 log ek saath aaye: sirf PEHLE wale ko DB
+          jaane do. Baaki 999 ko bolo 'thoda ruko'. Pehla DB se laake cache me rakh dega, phir baaki 999
+          cache se hi le lenge. DB pe 1000 ki jagah sirf 1 request gayi.
+          Aur umar khatam hone se thoda pehle hi key ko peeche se taaza kar do, taaki khaali hone ka
+          mauka hi na aaye.
 ```
 ```mermaid
 flowchart TD
@@ -442,10 +455,12 @@ flowchart TD
 POOCHEGA: "What about a hot key / celebrity / hot partition?"
           (Garam key / celebrity / garam partition ka kya?)
 
-JAWAB:    Key maujood hai, bas ek machine itni padhai nahi jhel pa rahi. Har app server me 1-2 sec ka
-          local cache, to zyadatar padhai Redis tak jaati hi nahi. Aur key ki copies alag machine pe,
-          baaki padhai bat jaati. Score thoda purana chalega.
-          Key hi khaali hoti to wo stampede hai: ek bhare, baaki ruke.
+JAWAB:    Yahan key cache me hai, dikkat ye hai ki ek hi machine pe crore log padh rahe.
+          Ilaaj: har app server apne paas 1-2 second ke liye wo value rakh le. Har second sirf ek baar
+          Redis se poochhe, baaki sab apne paas se de de.
+          Aur us key ki kai copy alag machines pe rakh do, taaki padhne wale bat jaayein. Score 1 second
+          purana hua to chalta hai.
+          Key khaali hoti to wo upar wali dikkat (stampede) hai: ek laaye, baaki ruke.
 ```
 ```mermaid
 flowchart TD
@@ -515,11 +530,12 @@ STAMPEDE   : lock / soft-TTL
 HOT KEY    : copies / L1 local
 ```
 ```
-JAWAB:    Distributed cache = RAM wala key-value store, consistent hashing se
-          baanta, copy se chalta rahe.
-          Cache-aside + LRU + TTL = asli system ka jod. Do mushkil cheez: purana data (TTL + likhne pe
-          delete) aur stampede (lock ya pehle se taaza).
-          Garam key ke liye local L1 cache + copies. Tezi vs sahi hona, use-case dekh ke tay.
+JAWAB:    Cache = RAM me rakhi key-value, kai machines me baanti (ring se), har machine ki copy.
+          App pehle cache se poochhta, na mile to DB se laake cache me rakhta. RAM bhare to purani key
+          nikalti, har key ki umar hoti.
+          Do dikkat dhyaan rakhni: purana data (badalne pe key hatao + umar) aur key khatam hote hi
+          bheed (ek laaye, baaki ruke).
+          Bahut garam key: har app server apne paas 1-2 second rakhe.
 ```
 ```mermaid
 flowchart TD
