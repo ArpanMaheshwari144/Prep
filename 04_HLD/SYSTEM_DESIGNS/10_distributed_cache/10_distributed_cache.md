@@ -139,6 +139,8 @@ SAHI RAASTA = RING (consistent hashing)   (isme "% N" kahin nahi)
          -> machine judi / gayi = sirf PADOS ki thodi key hilti (~K/N), poori nahi
 
 ANDAR KAISE:
+         RING = tera circular array (Next Greater Element II me i % n): aakhri ke baad wapas pehle pe aate the,
+         waise hi key ghadi ki disha me chalti, ant pe pahunch ke ghoom ke pehli machine pe.
          VIRTUAL NODES: ek machine ring pe 100 jagah baithti -> bojh barabar (warna kisi ka hissa bahut bada).
          App ke andar CACHE CLIENT library ye hisaab karke sahi machine pe bhejti.
 
@@ -328,12 +330,11 @@ flowchart TD
 ## DIKKAT 2 — 1 TB ek machine me nahi: key kis machine pe
 
 ```
-JAWAB:    Ek gol ring socho. Machine bhi ring pe baithi, key bhi ring pe. Key ghadi ki disha me chalti
-          hai aur jo pehli machine mile, wahin rehti hai.
-          Nayi machine aayi to sirf uske theek peeche wali thodi keys uske paas jaati hain, baaki sab
-          wahin rehti hain.
-          hash % N me aisa nahi hota: N badla to lagbhag har key ki machine badal jaati, sab cache
-          khaali, saara bojh DB pe.
+JAWAB:    hash % N tu jaanta hai (hashing me index nikaalne wala). Dikkat: machine 4 se 5 hui to % 4 se
+          % 5 ho gaya, lagbhag har key ka ghar badal gaya -> cache khaali -> saara bojh DB pe.
+          Ring: gol ghera, tera circular array jaisa. Machine bhi ghere pe, key bhi. Key ghadi ki disha me
+          chal ke jo pehli machine mile wahin rehti hai.
+          Nayi machine aayi to sirf uske theek peeche wali thodi keys uske paas jaati hain, baaki sab wahin.
 ```
 ```mermaid
 flowchart TD
