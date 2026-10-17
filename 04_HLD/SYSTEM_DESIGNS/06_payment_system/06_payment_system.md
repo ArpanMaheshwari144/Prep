@@ -21,7 +21,7 @@ CHAAR MUSHKIL BAAT (poori file inhi ke ird-gird):
 4   bank se 2000 top-up, PSP dheema         -> TIMEOUT + FUSE, PENDING dikhao        PSP
 5   PSP ko call kiya, jawab se pehle crash  -> PENDING pehle + WEBHOOK + RECONCILE   Reconciliation job
 6   merchant ka account Bank B me           -> SAGA (step-step, fail pe ulta)        Payment Svc + SAGA
-7   "kal 2200, aaj 1200 kaise?"             -> LEDGER double-entry, sirf INSERT      Ledger table
+7   "kal raat 2200, subah 1100 kaise?"      -> LEDGER double-entry, sirf INSERT      Ledger table
 8   shaam Diwali, 3000 payment / sec        -> STATELESS, kai machine + LB           LB / Gateway + Svc x N
 9   merchant ki report ne payment roke      -> READ REPLICA (sirf report)            Read replica
 10  ~1000 crore row / saal, likhai dheemi   -> SHARD by account_id                   SQL DB shard
@@ -175,8 +175,8 @@ flowchart LR
     style n_Idempotency_store fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Metro me maine Pay dabaya. 500 kat gaye, par jawab aate waqt network gaya. App ne timeout pe khud
-           DOBARA bheja -> server ko do request, dono process -> 1000 kate.
+DIKKAT     Metro me (Rahul ne 2000 bheje the) maine Pay dabaya. 500 kat gaye, par jawab aate waqt network
+           gaya. App ne timeout pe khud DOBARA bheja -> server ko do request, dono process -> 1000 kate.
 HAL        IDEMPOTENCY KEY: payment screen khulte app UUID banata (key-555), dobara bhejne pe WAHI.
            Pay button pehli tap pe band. DB me key UNIQUE: doosri request = saved jawab, paisa ek baar.
 NAHI       server key banaye: server ko pata hi nahi ye wahi request hai.
@@ -297,14 +297,14 @@ AAGE POOCHEGA:
   "Beech me mujhe kya dikhe?"      -> "processing", thodi der me SUCCESS ya paisa wapas (eventual).
 ```
 
-#### 7 Maine poochha: kal 2200 tha, aaj 1200 kaise?
+#### 7 Maine poochha: kal raat 2200 tha, subah 1100 kaise?
 ```mermaid
 flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc + SAGA"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
-    n_DB["SQL DB + Ledger table<br/>2200 se 1200 kaise<br/>-> double-entry, sirf INSERT"]
+    n_DB["SQL DB + Ledger table<br/>kal 2200, subah 1100 kaise<br/>-> double-entry, sirf INSERT"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store
@@ -316,8 +316,8 @@ flowchart LR
     style n_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Dopahar maine support se poochha "kal 2200 tha, aaj 1200 kaise?" (RBI audit bhi yahi poochhe).
-           Balance column sirf aaj ka number batata, 1200 kaise bana uska record nahi.
+DIKKAT     Dopahar maine support se poochha "kal raat 2200, subah 1100 kaise?" (RBI audit bhi yahi poochhe).
+           Balance column sirf aaj ka number batata, 1100 kaise bana uska record nahi.
 HAL        LEDGER, USI transaction me jisme paisa hila, sirf INSERT. Double-entry: "Arpan DEBIT 500"
            + "merchant CREDIT 500" (jod 0). Balance column bhi usi transaction me badalta.
 NAHI       balance + alag audit_log table: usme kuch bhi likh sakte, koi niyam nahi jaanchta.
