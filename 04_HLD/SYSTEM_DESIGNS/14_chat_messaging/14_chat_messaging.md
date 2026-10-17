@@ -2,16 +2,7 @@
 
 > Arpan ne message bheja -> Ravi tak TURANT, chahe Ravi ne kuch na maanga ho · Ravi offline ho to baad me mile · kuch na khoye.
 > Is design ka dil: **"banda KAHAN juda hai"** (baaki designs me "data kahan rakhein") + **khuli connection**.
-> Ye design ek chhota server aur do browser tab chala ke bana (21-Sep; demo ka code repo me nahi rakha). Jahan aankh se dekha, wahan **★ DEKHA:**
-
-```
-JAD KI BAAT — chat baaki har design se KYUN alag:
-   ab tak (url shortener, feed, payment, banking): user ne MAANGA -> server ne diya -> connection BAND
-   chat: Arpan ne bheja -> Ravi ne kuch nahi maanga -> phir bhi Ravi tak TURANT
-   HTTP me server sirf JAWAB de sakta, khud AWAAZ nahi laga sakta -> do nayi cheez:
-   1. CONNECTION KHULI rakhni (WebSocket — ek baar judo, dono taraf baat)
-   2. REGISTER "kaun kis server se juda hai" (200 chat server, Ravi kis se?) -> yahi chat ka DIL
-```
+> Ye design ek chhota server aur do browser tab chala ke bana (21-Sep; demo ka code repo me nahi rakha).
 
 ---
 
@@ -136,6 +127,7 @@ flowchart LR
     n_U --> n_LB
     n_LB --> n_CS
     style n_CS fill:#f9a825,color:#000
+    style n_LB fill:#f9a825,color:#000
 ```
 ```
 DIKKAT     Subah 9 baje 2 crore log app khol ke jude, sabka taar hamesha khula. Ek taar = ek thread (~1 MB)
@@ -143,7 +135,7 @@ DIKKAT     Subah 9 baje 2 crore log app khol ke jude, sabka taar hamesha khula. 
 HAL        EVENT LOOP (Netty jaisa): kuch hi thread, lakhon taar. OS (epoll) batata "in 5 taar pe data aaya"
            -> thread sirf unpe kaam karta; baaki chup baithe taar ka kharcha sirf thodi memory.
            ~200 chat server (sirf taar pakadte), aage LB.
-NAHI       ek connection = ek thread: 1 lakh x 1 MB = 100 GB.
+NAHI       badi machine lo (zyada RAM): thread ka kharcha wahi, bas thodi der baad tootega.
 ```
 ```
 AAGE POOCHEGA:
@@ -189,8 +181,8 @@ flowchart LR
     n_LB["LB"]
     n_CS["Chat Server x200"]
     n_R["Redis (register)"]
-    n_DB["Message DB<br/>Ravi offline<br/>-> pehle DB, phir bhejo"]
-    n_P["Push<br/>app band<br/>-> ghanti"]
+    n_DB["Message DB<br/>Ravi ka phone band, taar nahi<br/>-> pehle DB likho, phir bhejo"]
+    n_P["Push<br/>app band, khabar kaise<br/>-> FCM / APNs se ghanti"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
@@ -203,9 +195,8 @@ flowchart LR
 DIKKAT     Ravi ka phone band, koi taar nahi. "Pehle bhejo, na pahunche to DB me daalo" -> beech me server
            gira = message gaya.
 HAL        PEHLE DB me likho, phir bhejne ki koshish. Ravi offline -> PUSH (Google FCM / Apple APNs) se
-           ghanti, app band ho tab bhi. Har chat me har message ka ek +1 number (SEQ, server deta).
-           Ravi wapas: "meri aakhri seq 4417" -> server 4418 se aage sab deta.
-NAHI       pehle bhejo, phir DB: beech me gira to message gaya.
+           ghanti, app band ho tab bhi. Ravi wapas: "aakhri jo mila, uske baad sab do" -> server baaki deta.
+NAHI       sirf Push bhej do, DB nahi: push sirf ghanti hai, pahunchne ki guarantee nahi, history bhi nahi.
 ```
 ```
 AAGE POOCHEGA:
@@ -222,7 +213,7 @@ flowchart LR
     n_LB["LB"]
     n_CS["Chat Server x200"]
     n_R["Redis (register)"]
-    n_CA["Cassandra<br/>roz 1.2 TB<br/>-> chat_id se baanto"]
+    n_CA["Cassandra<br/>roz 1.2 TB, ek DB nahi jhelta<br/>-> chat_id se baanto"]
     n_P["Push (Google / Apple)"]
     n_U --> n_LB
     n_LB --> n_CS
@@ -233,9 +224,9 @@ flowchart LR
 ```
 ```
 DIKKAT     Roz ~1.2 TB message, 46,000 likhai / second. Ek DB machine nahi jhelegi. Kis cheez se baantein?
-HAL        CASSANDRA, partition (kis machine pe jaaye) = chat_id, andar kram = seq. Ek chat ke saare message
-           ek jagah. Padhna hamesha "is chat ke aakhri 50" = ek jagah, ek baar ("4417 se pehle ke 50"):
-             WHERE chat_id = ? AND seq < 4417 ORDER BY seq DESC LIMIT 50   (OFFSET nahi)
+HAL        CASSANDRA, partition (kis machine pe jaaye) = chat_id, andar kram = msg_ts (phone ka waqt).
+           Ek chat ke saare message ek jagah. Padhna hamesha "is chat ke aakhri 50" = ek jagah, ek baar:
+             WHERE chat_id = ? AND msg_ts < ? ORDER BY msg_ts DESC LIMIT 50   (keyset, OFFSET nahi)
 NAHI       user_id se baanto: ek chat do jagah, group 500 jagah.
 ```
 ```
@@ -256,7 +247,7 @@ flowchart LR
     n_LB["LB"]
     n_CS["Chat Server x200"]
     n_R["Redis (register)"]
-    n_I["Idempotency<br/>dobara bheja, do hi<br/>-> clientMsgId"]
+    n_I["Idempotency<br/>net dheema, hi do baar<br/>-> clientMsgId, dobara = skip"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
     n_U --> n_LB
@@ -293,7 +284,7 @@ flowchart LR
     n_I["Idempotency check"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
-    n_SQ["Seq<br/>ghadi 5 min aage<br/>-> server ka +1 number"]
+    n_SQ["Seq<br/>ghadi 5 min aage, kram ulta<br/>-> server ka +1 number"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
@@ -305,8 +296,9 @@ flowchart LR
 ```
 ```
 DIKKAT     Meri phone ki ghadi 5 min aage. Mere message chat me upar chadh gaye, Ravi ke jawab se pehle.
-HAL        SEQ: kram server ka number tay karta, phone ki ghadi nahi. Har chat ka apna +1 number:
+HAL        SEQ: kram server ka number tay karta, phone ki ghadi (msg_ts) nahi. Har chat ka apna +1 number:
            Redis INCR seq:chat123 (atomic: do message ek saath aayein to bhi dono ko alag number).
+           Cassandra me andar kram ab seq; Ravi wapas: "meri aakhri seq 4417" -> 4418 se aage sab.
 NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
 ```
 ```
@@ -326,7 +318,7 @@ flowchart LR
     n_CS["Chat Server x200"]
     n_R["Redis (register)"]
     n_I["Idempotency check"]
-    n_CA["Cassandra<br/>500 ka group<br/>-> ek copy, sab padhein"]
+    n_CA["Cassandra<br/>500 ka group, 500 copy?<br/>-> ek copy, sab padhein"]
     n_P["Push (Google / Apple)"]
     n_SQ["Seq (Redis INCR)"]
     n_U --> n_LB
@@ -362,7 +354,7 @@ flowchart LR
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
     n_SQ["Seq (Redis INCR)"]
-    n_NS["Nishaan<br/>unread / tick<br/>-> read_upto"]
+    n_NS["Nishaan<br/>50 padhe, 25,000 likhai<br/>-> read_upto ek number"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
@@ -378,7 +370,7 @@ DIKKAT     Shaam ko Ravi ne chat khol ke 50 message padhe. Har message x har mem
            = 500 x 50 = 25,000 likhai. Bekaar.
 HAL        NISHAAN: read_upto 4467 ("kahan tak padha"). Unread = aakhri seq - nishaan (ghatao, gino nahi).
            Neeli tick = ek push "read_upto 4467" -> 50 ek saath neeli.
-NAHI       har message x har member ka record: 25,000 likhai.
+NAHI       unread COUNT column badhao-ghatao: har message pe 500 member x 1 UPDATE, phir bhi 25,000 likhai.
 ```
 ```
 AAGE POOCHEGA:
@@ -459,7 +451,7 @@ flowchart LR
 DIKKAT     Raat ko main online aaya, gaya. Har baar mere saare contacts ko batao = crore x 500 message.
 HAL        UMAR (TTL): "Arpan online" Redis me 30 sec; app har 15 sec "hoon". Band = umar khatam = offline.
            Status tabhi dekho jab koi meri chat khole.
-NAHI       har baar sabko batao: crore x 500.
+NAHI       DB me online column, har dhadkan pe UPDATE: crore log x har 15 sec = DB baith jaata.
 ```
 ```
 AAGE POOCHEGA:
@@ -547,8 +539,15 @@ DO DUNIYA:  ZINDA TAAR (memory, ek server ki, mar sakti) = register
             PAKKA MAAL (DB, sab jagah se dikhta) = message
             taar ko Redis me rakhne ki koshish — ho hi nahi sakta, Redis me sirf PATA
             ek user -> KAI taar (phone + laptop + tab)
+
+JAD KI BAAT — chat baaki har design se KYUN alag:
+   ab tak (url shortener, feed, payment, banking): user ne MAANGA -> server ne diya -> connection BAND
+   chat: Arpan ne bheja -> Ravi ne kuch nahi maanga -> phir bhi Ravi tak TURANT
+   HTTP me server sirf JAWAB de sakta, khud AWAAZ nahi laga sakta -> do nayi cheez:
+   1. CONNECTION KHULI rakhni (WebSocket — ek baar judo, dono taraf baat)
+   2. REGISTER "kaun kis server se juda hai" (200 chat server, Ravi kis se?) -> yahi chat ka DIL
 ```
 
 ---
 
-[← SYSTEM_DESIGNS](..) · [← Home README](../../../README.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
+ARCHETYPE D (real-time) · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [Snowflake id](../../FOUNDATIONS/13_distributed_id_snowflake.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [← SYSTEM_DESIGNS](..) · [← Home README](../../../README.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
