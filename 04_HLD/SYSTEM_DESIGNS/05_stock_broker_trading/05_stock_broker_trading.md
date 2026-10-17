@@ -113,7 +113,7 @@ HAL        IDEMPOTENCY KEY: screen khulte id, dobara wahi id. Server pe UNIQUE -
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_Order_Service["Order Service<br/>+ idempotency key check"]
+    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> idempotency key"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_DB
@@ -143,7 +143,7 @@ NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
 flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet"]
+    n_Wallet["Wallet<br/>50k the, 30k-30k dono pass<br/>-> check + block EK query"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -185,7 +185,7 @@ flowchart LR
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
     n_Queue_per_symbol["Queue per symbol"]
-    n_Matching_Engine["Matching Engine"]
+    n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek symbol ek thread"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -225,7 +225,7 @@ flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Queue_per_symbol["Queue per symbol<br/>burst yahin line me lagta"]
+    n_Queue_per_symbol["Queue per symbol<br/>9:15 sab TCS pe toot pade<br/>-> baanto mat, line me"]
     n_Matching_Engine["Matching Engine"]
     n_DB["DB"]
     n_USER --> n_Order_Service
@@ -255,7 +255,7 @@ flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Event_Log["Event Log"]
+    n_Event_Log["Event Log<br/>server gira, book gayab<br/>-> pehle log, phir replay"]
     n_Matching_Engine["Matching Engine"]
     n_DB["DB"]
     n_USER --> n_Order_Service
@@ -299,7 +299,7 @@ flowchart LR
     n_Wallet["Wallet"]
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement (ek transaction)"]
+    n_Settlement["Settlement<br/>paisa kata, Suresh ko nahi<br/>-> ek transaction"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -343,7 +343,7 @@ flowchart LR
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
     n_Settlement["Settlement"]
-    n_Wallet_DB["Wallet DB"]
+    n_Wallet_DB["Wallet DB<br/>do DB, share nahi aaye<br/>-> step ka haal, aage badho"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -385,7 +385,7 @@ flowchart LR
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
     n_Pub_Sub["Pub/Sub"]
-    n_WebSocket["WebSocket"]
+    n_WebSocket["WebSocket<br/>10 lakh log price poochh rahe<br/>-> push, TV jaisa"]
     n_USERS["USERS"]
     n_Settlement["Settlement"]
     n_Wallet_DB["Wallet DB"]
