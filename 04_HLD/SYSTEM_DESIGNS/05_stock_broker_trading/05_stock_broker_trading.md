@@ -117,7 +117,8 @@ HAL        Us stock ke order line me ruk jaate.
 DIKKAT 1   Ramesh ke wallet me 50k. Ek saath 30k ke DO order.
            Dono ne 50k dekha, dono pass -> 60k kharch, the 50k.
 HAL        Order lagte hi paisa BLOCK, check + block EK query me:
-             UPDATE wallet SET blocked = blocked + 30000 WHERE total - blocked >= 30000
+             UPDATE wallet SET blocked = blocked + 30000
+             WHERE user_id = 'Ramesh' AND total - blocked >= 30000
            Pehla -> 30k block, bacha 20k. Doosra -> 0 row badli -> reject.
 ```
 ```mermaid
@@ -178,10 +179,11 @@ DIKKAT 2   Har baar balance ledger jod ke nikaloge?
 HAL        Nahi, dheema. Balance alag column, usi transaction me badalta. Ledger = record + audit.
 
 DIKKAT 3   Paise me "thodi der baad sahi" chalega?
-HAL        Nahi. Paisa hamesha turant sahi (strong consistency).
+HAL        Nahi. Balance kabhi galat number nahi dikhata (strong consistency).
+           Alag DB wale step-step kaam (card 4) me bhi beech ka haal "PENDING" dikhao, galat number nahi.
 
 DIKKAT 4   Asli market me paisa aur share usi pal milte?
-HAL        Nahi. India me T+1: asli len-den agle din clearing house (NSE ka NSCCL) karta.
+HAL        Nahi. India me T+1: asli len-den agle din clearing house (NSE Clearing, purana naam NSCCL) karta.
            Hamara turant wala hisaab broker ke apne khaate me.
 ```
 
@@ -191,7 +193,8 @@ DIKKAT 1   Paisa Wallet DB me, share Portfolio DB me. Do DB pe ek transaction na
            30k kata, share daalne se PEHLE crash -> paisa gaya, share nahi aaye.
 HAL        Settlement service step-step chalati, har step ka haal likhti:
              STARTED -> WALLET_DONE -> PORTFOLIO_DONE
-           Share daalna fail -> ulta kaam: 30k wapas (SAGA).
+           Share daalna fail -> pehle baar-baar koshish (share dena hi sahi raasta).
+           Phir bhi na ho -> jo-jo step hua SAB ulta: Ramesh ka 30k wapas, Suresh ke share wapas (SAGA).
            Settlement khud gira -> uth ke likha haal dekhti, wahin se aage ya ulta.
 ```
 ```mermaid
@@ -261,6 +264,8 @@ HAL        ~24 ghante, phir saaf.
 ```
 DIKKAT 1   10:15 baje matching server gira. TCS ki book me 4,000 order, sab RAM me -> sab gayab.
 HAL        Har order PEHLE log me likho (sirf neeche jodo), number ke saath (#501, #502). PHIR book me.
+           Number log / sequencer deta (ek stock ki ek line, Kafka offset jaisa). Order Svc nahi deta,
+           warna uski do machine same number de dein.
            Server gira -> naya server log #1 se kram me chala ke wahi book bana leta.
            Jaise cricket: scoreboard toota, scorer ke register se poora score wapas. Yahi log audit bhi.
 ```
@@ -342,9 +347,9 @@ DIKKAT 5   Ek WebSocket server kitne user?
 HAL        Lakh ke aas-paas. Zyada -> aur server, LB se baanto.
 ```
 
-#### 8 9:15 BAJE AKELE TCS PE LAKHON ORDER
+#### 8 9:15 BAJE AKELE TCS PE HAZAARON ORDER / SECOND
 ```
-DIKKAT 1   9:15 baje akele TCS pe lakhon order. Ek stock = ek thread, to TCS ko baant bhi nahi sakte.
+DIKKAT 1   9:15 baje akele TCS pe hazaaron order / second. Ek stock = ek thread, TCS baant nahi sakte.
 HAL        Baanto mat. Ek thread, RAM me, bina lock -> lakhon order / second nikal leta.
            Bheed zyada -> log order ko line me rok leta, koi phenka nahi jaata, bas thoda der se match.
            Badhana stocks ke BEECH: TCS ek thread, INFY doosra.
