@@ -64,7 +64,7 @@ flowchart TD
     n_Queue --> n_Consumer
 ```
 
-#### 1 CONSUMER RESTART HUA, MESSAGE GAYAB
+#### 1 QUEUE MACHINE RESTART HUI, 500 MESSAGE GAYAB
 ```
 DIKKAT 1   Queue machine ki memory me 500 signup message pade the. Machine restart -> memory saaf -> 500
            gayab. Email service ko pata hi nahi chala ki 500 log aaye the.
