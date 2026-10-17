@@ -17,7 +17,7 @@ DESI MISAAL: park me nal. Normal banda 1 bottle bharta, ek pagal banda 10 truck 
 
 ```
    KYA HUA                                     ILAAJ                                DABBA JUDA
-1  password bhoola, 9 login, sab andar      -> Redis me EK ginti, 60 sec umar       Redis (LB + App x2 pehle se)
+1  password bhoola, 9 login, sab andar      -> Redis me EK ginti, 60 sec umar       Redis (LB + App x2 pehle)
 2  bot ke 20 login ek pal me, 6 ghuse       -> ATOMIC: INCR / LUA script            (Redis atomic)
 3  bot ki 429 wali bhi App tak ghoomi       -> LIMITER GATEWAY pe, sabse aage       API Gateway
 4  dopahar Redis gira, limiter andha        -> REPLICA + FAIL-OPEN / FAIL-CLOSED    Redis Cluster + R53 + ALB
@@ -395,8 +395,8 @@ flowchart LR
     style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat ko attack -> Redis pe 50 guna bojh -> Redis gira -> aam API fail-open -> wahan bot ko khuli chhoot.
-           Jis waqt limiter sabse zyada chahiye tha, usi waqt gayab.
+DIKKAT     Raat ko attack -> Redis pe 50 guna bojh -> Redis gira -> aam API fail-open
+           -> wahan bot ko khuli chhoot. Jis waqt limiter sabse zyada chahiye tha, usi waqt gayab.
 HAL        LOCAL COUNTER FALLBACK: har server apni memory me gine, had baant ke: 100, 4 server -> har ek 25.
            Bilkul sahi nahi, par bina had se kahin achha. Redis wapas aaya -> phir sabki ek ginti.
 ```

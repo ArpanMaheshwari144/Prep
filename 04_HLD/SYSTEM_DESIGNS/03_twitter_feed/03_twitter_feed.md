@@ -20,10 +20,10 @@ RAJA KA RAJYA (poori file isi se yaad rakho):
 ```
     KYA HUA                                    ILAAJ                                DABBA JUDA
 1   subah app khola, 200 ka jod, feed dheemi -> PUSH: tweet hote hi INBOX me id     Fanout + Redis inbox
-2   maine tweet kiya, button 3 sec ghooma    -> KAFKA, fanout peeche                Kafka + Fanout workers
+2   maine tweet kiya, button 5 sec ghooma    -> KAFKA, fanout peeche                Kafka + Fanout workers
 3   Bieber ka tweet = 10 crore inbox         -> HYBRID: aam push, celeb pull        (celeb skip, merge)
 4   match khatam, Virat ka tweet, DB gira    -> HOT-TWEET CACHE (RAM)               Hot-tweet cache
-5   Redis alert: 50 crore inbox, RAM bhari   -> SIRF ID, aakhri 800                 (inbox chhota)
+5   Redis alert: 50 crore inbox, RAM bhari   -> AAKHRI 800 + soye hue hatao         (inbox chhota)
 6   5,000 tweet / sec, 0.5 PB                -> CASSANDRA, user_id se baanto        Cassandra
 7   main Bangalore, data US, 200 ms          -> REGION-WISE + Route 53              Route 53
 8   akeli App machine giri, sab band         -> STATELESS App x N + ALB             ALB + App x N
@@ -130,7 +130,7 @@ AAGE POOCHEGA:
                                       turant poora inbox nahi badalte.
 ```
 
-#### 2 Maine tweet kiya, button 3 sec ghoomta raha
+#### 2 Maine tweet kiya, button 5 sec ghoomta raha
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -149,8 +149,8 @@ flowchart LR
     style n_Fanout_workers fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     9 baje maine tweet kiya (5,000 follower) -> usi request me 5,000 inbox. Redis dheema (~10 ms har)
-           -> 50 second, timeout, "fail" dikha, par tweet DB me ban chuka tha.
+DIKKAT     9 baje maine tweet kiya (5,000 follower) -> usi request me 5,000 inbox, ~1 ms har -> 5+ sec,
+           timeout, "fail" dikha, par tweet DB me ban chuka tha.
 HAL        KAFKA + FANOUT WORKERS: tweet DB me + khabar Kafka me -> turant "ho gaya". Workers peeche inbox
            bharte; key = author_id -> ek aadmi ke tweet ek line me, kram se.
 NAHI       App me peeche ek thread: App crash = thread ka kaam gaya; Kafka disk pe, dobara padh sakte.
@@ -220,7 +220,7 @@ flowchart LR
     style n_Hot_tweet_cache fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     3:30 wala IPL match khatam, Virat ne tweet kiya. Virat pull pe -> har feed me DB se. Crore log
+DIKKAT     Dopahar ka match 4:30 pe khatam, Virat ne tweet kiya. Virat pull pe -> har feed me DB se. Crore log
            ek saath app khole -> crore read DB pe -> DB gira.
 HAL        HOT-TWEET CACHE: celebs ke naye tweet RAM me (~1 ghanta), ~100 me 95 read wahin se; purane DB se.
            Cache me nahi mila -> sirf EK request DB jaaye (taala), baaki ruk ke wahi jawab lein.
@@ -243,7 +243,7 @@ flowchart LR
     n_App["App"]
     n_Kafka["Kafka"]
     n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox<br/>50 crore inbox, RAM bhari<br/>-> sirf id, aakhri 800"]
+    n_Redis_inbox["Redis inbox<br/>50 crore inbox, RAM bhari<br/>-> aakhri 800, sirf zinda log"]
     n_Hot_tweet_cache["Hot-tweet cache"]
     n_DB["DB"]
     n_USER --> n_App
@@ -256,9 +256,10 @@ flowchart LR
     style n_Redis_inbox fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Shaam 5 baje Redis alert: har user ka poora feed RAM me rakha tha -> 50 crore user, RAM bhar rahi.
-HAL        SIRF ID, AAKHRI 800: inbox me sirf tweet number, aakhri ~800, purane kaat. 800 = ~60 KB, 50 crore
-           x 60 KB = ~30 TB -> sirf jo mahine me aaye unka inbox, baaki hata do.
+DIKKAT     Shaam 5 baje Redis alert: har inbox me saare id, kabhi kaate nahi, soye users ke bhi
+           -> RAM bhar rahi.
+HAL        AAKHRI 800 + SIRF ZINDA LOG: har inbox me aakhri ~800 id, purane kaato (ZREMRANGEBYRANK).
+           800 = ~60 KB, 50 crore x 60 KB = ~30 TB -> sirf jo mahine me aaye unka inbox, baaki hata do.
 NAHI       inbox me poora tweet: ek tweet 200 jagah copy, RAM phategi.
 ```
 ```
@@ -376,7 +377,8 @@ flowchart LR
     style n_App_x_N_2 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat 8 baje: sab kuch ek App machine pe. Laakhon log nahi jhelti, aur wahi giri -> sab band (SPOF).
+DIKKAT     Raat 8 baje: har region me ek hi App machine. Laakhon log nahi jhelti, aur wahi giri
+           -> sab band (SPOF).
 HAL        STATELESS App x N + ALB (AWS ka LB): machine kuch yaad nahi rakhti, request kahin bhi.
            ALB har ~10 sec "zinda?": jawab nahi = bahar, theek = wapas. Route 53 isi tarah region / ALB ko.
 ```
@@ -424,7 +426,7 @@ flowchart LR
 ```
 DIKKAT     Raat 9 baje highlights ki bheed: feed padhne wale laakhon, likhne wale hazaron, dono ek service me
            -> padhne ki bheed ne mera tweet daalna bhi dheema kar diya.
-HAL        ALAG SERVICE: Tweet Svc (likhna), Timeline Svc (feed), User Svc, Graph (follow). Gateway raasta:
+HAL        ALAG SERVICE: Tweet Svc (likhna), Timeline Svc (feed), User Svc, Graph (follow). ALB path se:
            POST /tweet -> Tweet Svc · GET /feed -> Timeline Svc. Har ek ki apni machine, LB, autoscale.
 ```
 ```
