@@ -57,6 +57,8 @@ flowchart TD
     n_Fetcher --> n_DB
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) HAR REQUEST PE DB SE "TAAZI 20"
 ```
 KAHANI:  Subah 8 baje 500 log / second app khol rahe. Har ek ke liye DB se
@@ -82,6 +84,20 @@ ISKE BAAD KYA TOOTEGA:
   - Har user ki alag feed kyun nahi banate?
       -> mehngi. Sabki lagbhag same, ek cache kaafi. Pasand wali feed = card 7.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Fetcher["Fetcher"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_Fetcher --> n_DB
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) 1000 SOURCE SE KHABAR LAANA DHEEMA
 ```
@@ -109,6 +125,27 @@ ISKE BAAD KYA TOOTEGA:
       -> SQS bhi chalta. Kafka isliye ki search index / analytics bhi
          wahi khabar apne alag group se padh sakein, aur dobara bhi.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) EK HI KHABAR PAANCH SOURCE SE
 ```
@@ -138,6 +175,27 @@ ISKE BAAD KYA TOOTEGA:
   - 5 me se kaunsa source dikhao?
       -> jo pehle aaya / bada source. Baaki "aur sources" me link.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Worker["Worker<br/>clean + dedupe + category"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) EK SOURCE BAND / BAHUT DHEEMA
 ```
@@ -159,6 +217,27 @@ ISKE BAAD KYA TOOTEGA:
   - Source hamesha ke liye band ho gaya?
       -> kuch din OPEN raha -> alert, list se hatao.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Worker["Worker<br/>clean + dedupe + category"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher<br/>timeout + retry + circuit breaker"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) 6 MAHINE ME 5 CRORE ROW, KHARCHA BADHTA
 ```
@@ -182,6 +261,29 @@ ISKE BAAD KYA TOOTEGA:
   - 3 saal baad?
       -> wahi: hafta garam, baaki thanda (cold). "Ye retention hai, sharding nahi."
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) (SIRF BAHUT BADE SCALE PE) EK DB MACHINE NAHI JHEL RAHI
 ```
@@ -204,6 +306,29 @@ ISKE BAAD KYA TOOTEGA:
   - Shard badhaye to data kitna khiske?
       -> consistent hashing -> thoda sa data hilta.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) ARPAN KO SIRF TECH + SPORTS CHAHIYE
 ```
@@ -222,6 +347,29 @@ ISKE BAAD KYA TOOTEGA:
   - Har user ki pasand ka alag wazan (Arpan ko tech zyada)?
       -> tab asli personalization -> har user ki ranking service (abhi scope se bahar).
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis<br/>+ category feed (tech / sports)"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Redis --> n_DB
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+```
+
+<a id="d8"></a>
 
 #### [8](#d8) SUBAH 8 BAJE SAB EK SAATH
 ```
@@ -242,6 +390,36 @@ ISKE BAAD KYA TOOTEGA:
   - Replica kitni peeche?
       -> kuch second, news me chalta.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Feed_Svc_x_N_1["Feed Svc 1"]
+    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_Redis["Redis"]
+    n_Read_replica["Read replica"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_LB
+    n_LB --> n_Feed_Svc_x_N_1
+    n_LB --> n_Feed_Svc_x_N_2
+    n_Feed_Svc_x_N_1 --> n_Redis
+    n_Feed_Svc_x_N_2 --> n_Redis
+    n_Redis --> n_Read_replica
+    n_DB --> n_Read_replica
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+```
+
+<a id="d9"></a>
 
 #### [9](#d9) ARPAN NE "CRICKET" DHOONDHA
 ```
@@ -268,6 +446,38 @@ ISKE BAAD KYA TOOTEGA:
   - Postgres se kaam nahi chalega?
       -> chhote scale pe Postgres full-text (GIN) chalta. ES =
          ranking, galat spelling, bahut data, DB pe bojh nahi.
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Feed_Svc_x_N_1["Feed Svc 1"]
+    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_Elasticsearch["Elasticsearch"]
+    n_Redis["Redis"]
+    n_Read_replica["Read replica"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_LB
+    n_LB --> n_Feed_Svc_x_N_1
+    n_LB --> n_Feed_Svc_x_N_2
+    n_Feed_Svc_x_N_1 --> n_Elasticsearch
+    n_Feed_Svc_x_N_2 --> n_Elasticsearch
+    n_Feed_Svc_x_N_1 --> n_Redis
+    n_Feed_Svc_x_N_2 --> n_Redis
+    n_Redis --> n_Read_replica
+    n_DB --> n_Read_replica
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+    n_Worker --> n_Elasticsearch
 ```
 
 ```
@@ -326,266 +536,6 @@ flowchart TD
 
 ---
 
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
-
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — har request pe DB se taazi 20
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Fetcher["Fetcher"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
-    n_Fetcher --> n_DB
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — 1000 source se khabar laana dheema
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Worker["Worker"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher"]
-    n_Sources["Sources"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — ek khabar paanch source se
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Worker["Worker<br/>clean + dedupe + category"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher"]
-    n_Sources["Sources"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — ek source band / dheema
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Worker["Worker<br/>clean + dedupe + category"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher<br/>timeout + retry + circuit breaker"]
-    n_Sources["Sources"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — 6 mahine me 5 crore row
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Archive["Archive"]
-    n_Worker["Worker"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher"]
-    n_Sources["Sources"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
-    n_DB --> n_Archive
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — bahut bade scale pe ek DB machine nahi jhelti
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Archive["Archive"]
-    n_Worker["Worker"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher"]
-    n_Sources["Sources"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
-    n_DB --> n_Archive
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — Arpan ko sirf tech + sports
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis<br/>+ category feed (tech / sports)"]
-    n_DB["DB"]
-    n_Archive["Archive"]
-    n_Worker["Worker"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher"]
-    n_Sources["Sources"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
-    n_DB --> n_Archive
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
-```
-
----
-
-<a id="d8"></a>
-
-## DIKKAT 8 — subah 8 baje sab ek saath
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Feed_Svc_x_N_1["Feed Svc 1"]
-    n_Feed_Svc_x_N_2["Feed Svc 2"]
-    n_Redis["Redis"]
-    n_Read_replica["Read replica"]
-    n_DB["DB"]
-    n_Archive["Archive"]
-    n_Worker["Worker"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher"]
-    n_Sources["Sources"]
-    n_USER --> n_LB
-    n_LB --> n_Feed_Svc_x_N_1
-    n_LB --> n_Feed_Svc_x_N_2
-    n_Feed_Svc_x_N_1 --> n_Redis
-    n_Feed_Svc_x_N_2 --> n_Redis
-    n_Redis --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_DB --> n_Archive
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
-```
-
----
-
-<a id="d9"></a>
-
-## DIKKAT 9 — Arpan ne cricket dhoondha
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Feed_Svc_x_N_1["Feed Svc 1"]
-    n_Feed_Svc_x_N_2["Feed Svc 2"]
-    n_Elasticsearch["Elasticsearch"]
-    n_Redis["Redis"]
-    n_Read_replica["Read replica"]
-    n_DB["DB"]
-    n_Archive["Archive"]
-    n_Worker["Worker"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher"]
-    n_Sources["Sources"]
-    n_USER --> n_LB
-    n_LB --> n_Feed_Svc_x_N_1
-    n_LB --> n_Feed_Svc_x_N_2
-    n_Feed_Svc_x_N_1 --> n_Elasticsearch
-    n_Feed_Svc_x_N_2 --> n_Elasticsearch
-    n_Feed_Svc_x_N_1 --> n_Redis
-    n_Feed_Svc_x_N_2 --> n_Redis
-    n_Redis --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_DB --> n_Archive
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
-    n_Worker --> n_Elasticsearch
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

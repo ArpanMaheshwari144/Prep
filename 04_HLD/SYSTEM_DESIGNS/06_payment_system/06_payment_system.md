@@ -87,6 +87,8 @@ ISKE BAAD KYA TOOTEGA:
          Paise me "thodi der baad sahi" (eventual) nahi chalta.
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) BEECH ME CRASH: ARPAN -500 HUA, MERCHANT +500 NAHI
 ```
 KAHANI:  Arpan ke 500 kat gaye. Merchant ke account me daalne se PEHLE server gir gaya.
@@ -110,6 +112,16 @@ ISKE BAAD KYA TOOTEGA:
       -> UPDATE ... SET balance = balance - 500 WHERE id = ? AND balance >= 500
          check aur kaatna ek hi query me -> pehla jeeta (bacha 100), doosre ki 0 row badli = reject.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_DB["DB<br/>debit + credit EK transaction"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_DB
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) DO BAAR TAP / APP NE DOBARA BHEJA = 1000 KATE
 ```
@@ -138,6 +150,18 @@ ISKE BAAD KYA TOOTEGA:
   - Idempotency aur "do log ek balance pe" same cheez?
       -> nahi. Idempotency = EK user ki dobara request. Do log ek balance pe = atomic query (card 1).
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_DB["DB"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_DB
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) ASLI PAISA HAMARA SERVER NAHI HILATA
 ```
@@ -163,6 +187,20 @@ ISKE BAAD KYA TOOTEGA:
   - PSP fail, turant dobara bhejo?
       -> paise me andha dobara nahi. PENDING rakho, reconciliation tay kare.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) PSP KO CALL KIYA AUR CRASH: PAISA GAYA YA NAHI?
 ```
@@ -192,6 +230,24 @@ ISKE BAAD KYA TOOTEGA:
   - Kaise pata sab theek chal raha?
       -> hisaab ka farak, p99, error rate, line ki lambai pe alert + trace id se ek payment ka poora raasta.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) ALAG BANK / ALAG DB: EK TRANSACTION NAHI CHAL SAKTA
 ```
@@ -215,6 +271,24 @@ ISKE BAAD KYA TOOTEGA:
   - Beech ke waqt Arpan ko kya dikhe?
       -> "processing", thodi der me SUCCESS ya paisa wapas (eventual).
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc<br/>+ SAGA (compensate)"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) RBI POOCHHE: YE PAISA KAHAN SE AAYA, KAHAN GAYA?
 ```
@@ -241,6 +315,24 @@ ISKE BAAD KYA TOOTEGA:
   - Ledger crash se bachaata hai?
       -> nahi, wo hisaab / audit hai. Crash se bachaate PENDING + webhook + reconciliation (card 4).
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc<br/>+ SAGA (compensate)"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB<br/>+ Ledger table (append-only)"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) FESTIVAL PE 3000 PAYMENT / SECOND
 ```
@@ -267,6 +359,32 @@ ISKE BAAD KYA TOOTEGA:
   - LB ko kaise pata machine mar gayi?
       -> LB har kuch second GET /health maarta, jawab nahi = list se bahar.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB_API_Gateway["LB / API Gateway"]
+    n_Payment_Svc_x_N_1["Payment Svc 1"]
+    n_Payment_Svc_x_N_2["Payment Svc 2"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB_API_Gateway
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
+    n_Payment_Svc_x_N_1 --> n_Idempotency_store
+    n_Payment_Svc_x_N_2 --> n_Idempotency_store
+    n_Payment_Svc_x_N_1 --> n_PSP
+    n_Payment_Svc_x_N_2 --> n_PSP
+    n_Payment_Svc_x_N_1 --> n_DB
+    n_Payment_Svc_x_N_2 --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
+```
+
+<a id="d8"></a>
 
 #### [8](#d8) MERCHANT KI REPORT NE ASLI PAYMENT ROKE
 ```
@@ -290,6 +408,34 @@ ISKE BAAD KYA TOOTEGA:
   - Replica kitni peeche hai, kaise pata?
       -> replication lag metric pe alert.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB_API_Gateway["LB / API Gateway"]
+    n_Payment_Svc_x_N_1["Payment Svc 1"]
+    n_Payment_Svc_x_N_2["Payment Svc 2"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB_API_Gateway
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
+    n_Payment_Svc_x_N_1 --> n_Idempotency_store
+    n_Payment_Svc_x_N_2 --> n_Idempotency_store
+    n_Payment_Svc_x_N_1 --> n_PSP
+    n_Payment_Svc_x_N_2 --> n_PSP
+    n_Payment_Svc_x_N_1 --> n_DB
+    n_Payment_Svc_x_N_2 --> n_DB
+    n_DB --> n_Read_replica
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
+```
+
+<a id="d9"></a>
 
 #### [9](#d9) 50 CRORE ROW, LIKHAI DHEEMI
 ```
@@ -311,6 +457,32 @@ ISKE BAAD KYA TOOTEGA:
       -> merchant ke kai sub-account, alag shard pe; report me jod do.
   - Do shard ke beech transfer?
       -> SAGA: shard A se kaato, shard B me daalo, fail pe ulta. Asli mushkil yahi hai, bheed nahi.
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB_API_Gateway["LB / API Gateway"]
+    n_Payment_Svc_x_N_1["Payment Svc 1"]
+    n_Payment_Svc_x_N_2["Payment Svc 2"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_SQL_DB_shard_by_account_id["SQL DB shard by account_id"]
+    n_Read_replica["Read replica"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB_API_Gateway
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
+    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
+    n_Payment_Svc_x_N_1 --> n_Idempotency_store
+    n_Payment_Svc_x_N_2 --> n_Idempotency_store
+    n_Payment_Svc_x_N_1 --> n_PSP
+    n_Payment_Svc_x_N_2 --> n_PSP
+    n_Payment_Svc_x_N_1 --> n_SQL_DB_shard_by_account_id
+    n_Payment_Svc_x_N_2 --> n_SQL_DB_shard_by_account_id
+    n_SQL_DB_shard_by_account_id --> n_Read_replica
+    n_Reconciliation_job --> n_SQL_DB_shard_by_account_id
+    n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
+    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
 
 ```
@@ -362,228 +534,6 @@ flowchart TD
 
 ---
 
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
-
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — beech me crash: Arpan -500 hua, merchant +500 nahi
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc"]
-    n_DB["DB<br/>debit + credit EK transaction"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_DB
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — do baar tap / retry = 1000 kate
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc"]
-    n_Idempotency_store["Idempotency store"]
-    n_DB["DB"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_Idempotency_store
-    n_Payment_Svc --> n_DB
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — asli paisa hamara server nahi hilata
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc"]
-    n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP"]
-    n_DB["DB"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_Idempotency_store
-    n_Payment_Svc --> n_PSP
-    n_Payment_Svc --> n_DB
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — PSP call ke baad crash: paisa gaya ya nahi
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc"]
-    n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP"]
-    n_DB["DB"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_Idempotency_store
-    n_Payment_Svc --> n_PSP
-    n_Payment_Svc --> n_DB
-    n_Reconciliation_job --> n_DB
-    n_Reconciliation_job --> n_PSP
-    n_PSP -.->|webhook| n_Payment_Svc
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — alag bank / alag DB: ek transaction nahi
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc<br/>+ SAGA (compensate)"]
-    n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP"]
-    n_DB["DB"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_Idempotency_store
-    n_Payment_Svc --> n_PSP
-    n_Payment_Svc --> n_DB
-    n_Reconciliation_job --> n_DB
-    n_Reconciliation_job --> n_PSP
-    n_PSP -.->|webhook| n_Payment_Svc
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — RBI: paisa kahan se kahan
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc<br/>+ SAGA (compensate)"]
-    n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP"]
-    n_DB["DB<br/>+ Ledger table (append-only)"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_Idempotency_store
-    n_Payment_Svc --> n_PSP
-    n_Payment_Svc --> n_DB
-    n_Reconciliation_job --> n_DB
-    n_Reconciliation_job --> n_PSP
-    n_PSP -.->|webhook| n_Payment_Svc
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — festival 3000 / sec
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB_API_Gateway["LB / API Gateway"]
-    n_Payment_Svc_x_N_1["Payment Svc 1"]
-    n_Payment_Svc_x_N_2["Payment Svc 2"]
-    n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP"]
-    n_DB["DB"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_LB_API_Gateway
-    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
-    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
-    n_Payment_Svc_x_N_1 --> n_Idempotency_store
-    n_Payment_Svc_x_N_2 --> n_Idempotency_store
-    n_Payment_Svc_x_N_1 --> n_PSP
-    n_Payment_Svc_x_N_2 --> n_PSP
-    n_Payment_Svc_x_N_1 --> n_DB
-    n_Payment_Svc_x_N_2 --> n_DB
-    n_Reconciliation_job --> n_DB
-    n_Reconciliation_job --> n_PSP
-    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
-    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
-```
-
----
-
-<a id="d8"></a>
-
-## DIKKAT 8 — merchant ki report ne asli payment roke
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB_API_Gateway["LB / API Gateway"]
-    n_Payment_Svc_x_N_1["Payment Svc 1"]
-    n_Payment_Svc_x_N_2["Payment Svc 2"]
-    n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP"]
-    n_DB["DB"]
-    n_Read_replica["Read replica"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_LB_API_Gateway
-    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
-    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
-    n_Payment_Svc_x_N_1 --> n_Idempotency_store
-    n_Payment_Svc_x_N_2 --> n_Idempotency_store
-    n_Payment_Svc_x_N_1 --> n_PSP
-    n_Payment_Svc_x_N_2 --> n_PSP
-    n_Payment_Svc_x_N_1 --> n_DB
-    n_Payment_Svc_x_N_2 --> n_DB
-    n_DB --> n_Read_replica
-    n_Reconciliation_job --> n_DB
-    n_Reconciliation_job --> n_PSP
-    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
-    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
-```
-
----
-
-<a id="d9"></a>
-
-## DIKKAT 9 — 50 crore row, likhai dheemi
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB_API_Gateway["LB / API Gateway"]
-    n_Payment_Svc_x_N_1["Payment Svc 1"]
-    n_Payment_Svc_x_N_2["Payment Svc 2"]
-    n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP"]
-    n_SQL_DB_shard_by_account_id["SQL DB shard by account_id"]
-    n_Read_replica["Read replica"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_LB_API_Gateway
-    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
-    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
-    n_Payment_Svc_x_N_1 --> n_Idempotency_store
-    n_Payment_Svc_x_N_2 --> n_Idempotency_store
-    n_Payment_Svc_x_N_1 --> n_PSP
-    n_Payment_Svc_x_N_2 --> n_PSP
-    n_Payment_Svc_x_N_1 --> n_SQL_DB_shard_by_account_id
-    n_Payment_Svc_x_N_2 --> n_SQL_DB_shard_by_account_id
-    n_SQL_DB_shard_by_account_id --> n_Read_replica
-    n_Reconciliation_job --> n_SQL_DB_shard_by_account_id
-    n_Reconciliation_job --> n_PSP
-    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
-    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

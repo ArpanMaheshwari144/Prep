@@ -66,6 +66,8 @@ flowchart TD
     n_App --> n_SQL_DB
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) ARPAN AUR RAVI NE EK SAATH A1 BOOK KI
 ```
 KAHANI:  Arpan ne dekha "A1 khaali", usi pal Ravi ne bhi dekha "A1 khaali". Dono ne Book dabaya.
@@ -93,6 +95,16 @@ ISKE BAAD KYA TOOTEGA:
   - Do alag log vs ek hi aadmi ka dobara bhejna?
       -> do ALAG log ek seat = atomic UPDATE (ye card). EK aadmi ka dobara bhejna = idempotency (card 3).
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_SQL_DB["SQL DB<br/>atomic UPDATE ... WHERE available"]
+    n_USER --> n_App
+    n_App --> n_SQL_DB
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) SEAT CHUNI, AB 3 MIN PAYMENT KAR RAHA
 ```
@@ -122,6 +134,18 @@ ISKE BAAD KYA TOOTEGA:
   - Ek aadmi ne 10 seat hold karke chhod di?
       -> ek user kitni hold kar sake uski limit + rate limit.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_SQL_DB["SQL DB"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_App
+    n_App --> n_SQL_DB
+    n_Sweeper_job --> n_SQL_DB
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) PAYMENT PAGE PE "PAY" DO BAAR DABA
 ```
@@ -142,6 +166,20 @@ ISKE BAAD KYA TOOTEGA:
   - Payment wale ka jawab (webhook) der se aaya?
       -> booking 'PAYMENT_PENDING' rakho, hold thoda badhao, ya reconciliation se pakka karo.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Payment_Svc["Payment Svc"]
+    n_SQL_DB["SQL DB"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_App
+    n_App --> n_Payment_Svc
+    n_App --> n_SQL_DB
+    n_Sweeper_job --> n_SQL_DB
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) BOOK KOI-KOI KARTA, SEAT MAP SAB DEKH RAHE
 ```
@@ -165,6 +203,25 @@ ISKE BAAD KYA TOOTEGA:
   - Ek bade show ki ek hi Redis key pe lakhon padhai?
       -> us key ki kai copy + App ke andar 1-2 sec ka local cache.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Payment_Svc["Payment Svc"]
+    n_Redis["Redis"]
+    n_Read_replica["Read replica"]
+    n_SQL_primary["SQL primary"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_App
+    n_App --> n_Payment_Svc
+    n_App --> n_Redis
+    n_App --> n_Read_replica
+    n_App --> n_SQL_primary
+    n_Sweeper_job --> n_SQL_primary
+    n_SQL_primary --> n_Read_replica
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) BADI MOVIE KA PEHLA DIN, LAKHON LOG EK SHOW PE
 ```
@@ -193,6 +250,30 @@ ISKE BAAD KYA TOOTEGA:
   - (bolne me) "BookMyShow aise karta hai"?
       -> mat bolo. "A common pattern in flash sales" bolo.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Payment_Svc["Payment Svc"]
+    n_Redis["Redis"]
+    n_Read_replica["Read replica"]
+    n_Kafka["Kafka"]
+    n_Booking_worker["Booking worker"]
+    n_SQL_primary["SQL primary"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_App
+    n_App --> n_Payment_Svc
+    n_App --> n_Redis
+    n_App --> n_Read_replica
+    n_App --> n_Kafka
+    n_Kafka --> n_Booking_worker
+    n_Booking_worker --> n_SQL_primary
+    n_Sweeper_job --> n_SQL_primary
+    n_App --> n_SQL_primary
+    n_SQL_primary --> n_Read_replica
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) REDIS RESTART, SAARA DEKHNA EK SAATH DB PE
 ```
@@ -219,6 +300,30 @@ ISKE BAAD KYA TOOTEGA:
       -> booking DB ke liye SYNC replica (RDS Multi-AZ, har
          likhai dono jagah pakki) -> pakki booking nahi khoti.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Payment_Svc["Payment Svc"]
+    n_Redis["Redis"]
+    n_Read_replica["Read replica"]
+    n_Kafka["Kafka"]
+    n_Booking_worker["Booking worker"]
+    n_SQL_primary["SQL primary"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_App
+    n_App --> n_Payment_Svc
+    n_App --> n_Redis
+    n_App --> n_Read_replica
+    n_App --> n_Kafka
+    n_Kafka --> n_Booking_worker
+    n_Booking_worker --> n_SQL_primary
+    n_Sweeper_job --> n_SQL_primary
+    n_App --> n_SQL_primary
+    n_SQL_primary --> n_Read_replica
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) EK APP MACHINE GIRI, 500 LOGON KA HOLD
 ```
@@ -238,6 +343,37 @@ ISKE BAAD KYA TOOTEGA:
       -> idempotency key app ke paas -> doosri machine pe dobara bhejo, do baar nahi katega.
   - Health check kya dekhta?
       -> GET /health: machine zinda + DB / Redis tak pahunch rahi. 2-3 baar fail = bahar.
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Payment_Svc["Payment Svc"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Read_replica["Read replica"]
+    n_Kafka["Kafka"]
+    n_Booking_worker["Booking worker"]
+    n_SQL_primary["SQL primary"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Payment_Svc
+    n_App_x_N_2 --> n_Payment_Svc
+    n_App_x_N_1 --> n_Redis_Cluster
+    n_App_x_N_2 --> n_Redis_Cluster
+    n_App_x_N_1 --> n_Read_replica
+    n_App_x_N_2 --> n_Read_replica
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_Kafka --> n_Booking_worker
+    n_Booking_worker --> n_SQL_primary
+    n_Sweeper_job --> n_SQL_primary
+    n_App_x_N_1 --> n_SQL_primary
+    n_App_x_N_2 --> n_SQL_primary
+    n_SQL_primary --> n_Read_replica
 ```
 
 ```
@@ -297,182 +433,6 @@ flowchart TD
 
 ---
 
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
-
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — Arpan aur Ravi ne ek saath A1 book ki
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_SQL_DB["SQL DB<br/>atomic UPDATE ... WHERE available"]
-    n_USER --> n_App
-    n_App --> n_SQL_DB
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — seat chuni, ab 3 min payment
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_SQL_DB["SQL DB"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_App
-    n_App --> n_SQL_DB
-    n_Sweeper_job --> n_SQL_DB
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — Pay do baar daba
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Payment_Svc["Payment Svc"]
-    n_SQL_DB["SQL DB"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_App
-    n_App --> n_Payment_Svc
-    n_App --> n_SQL_DB
-    n_Sweeper_job --> n_SQL_DB
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — book koi-koi karta, seat map sab dekh rahe
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Payment_Svc["Payment Svc"]
-    n_Redis["Redis"]
-    n_Read_replica["Read replica"]
-    n_SQL_primary["SQL primary"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_App
-    n_App --> n_Payment_Svc
-    n_App --> n_Redis
-    n_App --> n_Read_replica
-    n_App --> n_SQL_primary
-    n_Sweeper_job --> n_SQL_primary
-    n_SQL_primary --> n_Read_replica
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — badi movie, lakhon log ek show pe
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Payment_Svc["Payment Svc"]
-    n_Redis["Redis"]
-    n_Read_replica["Read replica"]
-    n_Kafka["Kafka"]
-    n_Booking_worker["Booking worker"]
-    n_SQL_primary["SQL primary"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_App
-    n_App --> n_Payment_Svc
-    n_App --> n_Redis
-    n_App --> n_Read_replica
-    n_App --> n_Kafka
-    n_Kafka --> n_Booking_worker
-    n_Booking_worker --> n_SQL_primary
-    n_Sweeper_job --> n_SQL_primary
-    n_App --> n_SQL_primary
-    n_SQL_primary --> n_Read_replica
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — Redis restart, saara dekhna DB pe
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Payment_Svc["Payment Svc"]
-    n_Redis["Redis"]
-    n_Read_replica["Read replica"]
-    n_Kafka["Kafka"]
-    n_Booking_worker["Booking worker"]
-    n_SQL_primary["SQL primary"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_App
-    n_App --> n_Payment_Svc
-    n_App --> n_Redis
-    n_App --> n_Read_replica
-    n_App --> n_Kafka
-    n_Kafka --> n_Booking_worker
-    n_Booking_worker --> n_SQL_primary
-    n_Sweeper_job --> n_SQL_primary
-    n_App --> n_SQL_primary
-    n_SQL_primary --> n_Read_replica
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — App machine giri, 500 logon ka hold
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Payment_Svc["Payment Svc"]
-    n_Redis_Cluster["Redis Cluster"]
-    n_Read_replica["Read replica"]
-    n_Kafka["Kafka"]
-    n_Booking_worker["Booking worker"]
-    n_SQL_primary["SQL primary"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Payment_Svc
-    n_App_x_N_2 --> n_Payment_Svc
-    n_App_x_N_1 --> n_Redis_Cluster
-    n_App_x_N_2 --> n_Redis_Cluster
-    n_App_x_N_1 --> n_Read_replica
-    n_App_x_N_2 --> n_Read_replica
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_Kafka --> n_Booking_worker
-    n_Booking_worker --> n_SQL_primary
-    n_Sweeper_job --> n_SQL_primary
-    n_App_x_N_1 --> n_SQL_primary
-    n_App_x_N_2 --> n_SQL_primary
-    n_SQL_primary --> n_Read_replica
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

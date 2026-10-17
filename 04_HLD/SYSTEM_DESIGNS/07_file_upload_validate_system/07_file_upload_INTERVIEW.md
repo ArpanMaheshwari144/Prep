@@ -57,6 +57,8 @@ flowchart TD
     n_Upload_Svc --> n_S3
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) USER 2-3 SEC RUKA, SERVER KA THREAD BHI ATKA
 ```
 KAHANI:  Arpan ne report.pdf daali. Server ne Validator ko call kiya, 3 second jawab ka intezaar.
@@ -93,6 +95,25 @@ ISKE BAAD KYA TOOTEGA:
          number: queue ki lambai · Validator ka time + error rate
          · 10 min se VALIDATING me atki files -> had paar = alert, user ki shikayat se pehle.
 ```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_Upload_Svc["Upload Svc"]
+    n_DB["DB"]
+    n_S3["S3"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_S3
+    n_Upload_Svc --> n_Kafka
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) 5 GB FILE KE BYTES HAMARE SERVER SE GUZAR RAHE
 ```
@@ -119,6 +140,25 @@ ISKE BAAD KYA TOOTEGA:
   - Arpan ne "/complete" bola hi nahi (app band)?
       -> S3 khud batata "file aa gayi" (S3 event notification), ya sweeper pakde (card 4).
 ```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_DB["DB"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) 5 GB FILE 90% PE TOOT GAYI
 ```
@@ -141,6 +181,25 @@ ISKE BAAD KYA TOOTEGA:
   - Tukda kitna bada?
       -> S3 me kam se kam 5 MB (aakhri chhod ke), zyada se zyada 10,000 tukde -> badi file = bada tukda.
 ```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_DB["DB"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) UPLOAD SHURU HUA, "COMPLETE" KABHI NAHI AAYA (ADHOORI FILE)
 ```
@@ -166,6 +225,28 @@ ISKE BAAD KYA TOOTEGA:
   - Bas haal likh diya, kaafi?
       -> nahi. Koi us atke haal ko DHOONDHE bhi (sweeper), tabhi kaam ka.
 ```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_DB["DB"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Sweeper_job --> n_Kafka
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) SAB HAR 2 SEC HAAL POOCHH RAHE
 ```
@@ -192,6 +273,34 @@ ISKE BAAD KYA TOOTEGA:
   - Redis gira?
       -> sawaal seedha replica pe, dheema par chalta. Poochhne pe rate limit.
 ```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) FILE NAHI, POORA FOLDER
 ```
@@ -211,6 +320,34 @@ ISKE BAAD KYA TOOTEGA:
   - 1000 file = 1000 baar "/init"?
       -> ek hi call me 1000 signed URL (batch init).
 ```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) RAVI NE ARPAN KA trackingId DAAL KE FILE MAANG LI
 ```
@@ -234,6 +371,36 @@ ISKE BAAD KYA TOOTEGA:
       -> owner YA admin role, warna 403.
   - (PR review me sabse pehle yahi): request me kisi ki id aayi -> owner check kahan hai?
 ```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_API_Gateway_LB["API Gateway / LB"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_API_Gateway_LB
+    n_API_Gateway_LB --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
+```
+
+<a id="d8"></a>
 
 #### [8](#d8) ARPAN NE S3 KA SEEDHA LINK WHATSAPP PE BHEJ DIYA
 ```
@@ -254,6 +421,36 @@ ISKE BAAD KYA TOOTEGA:
   - 5 min ke andar aage bhej diya?
       -> 5 min ka risk maana. Zyada sensitive -> CloudFront signed URL + IP restriction.
 ```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_API_Gateway_LB["API Gateway / LB"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_API_Gateway_LB
+    n_API_Gateway_LB --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
+```
+
+<a id="d9"></a>
 
 #### [9](#d9) NAAM REPORT.PDF, ANDAR EXE
 ```
@@ -277,6 +474,35 @@ ISKE BAAD KYA TOOTEGA:
       -> antivirus scan (ClamAV) worker me, ya S3 malware scanning.
   - Koi bheed / hamla?
       -> har user pe rate limit, WAF, HTTPS, secrets vault me.
+```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_API_Gateway_LB["API Gateway / LB"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker<br/>+ magic bytes check"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_API_Gateway_LB
+    n_API_Gateway_LB --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
+    n_Worker --> n_S3
 ```
 
 ```
@@ -334,282 +560,6 @@ flowchart TD
 
 ---
 
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
-
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — user 2-3 sec ruka, thread bhi atka
-
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_Upload_Svc["Upload Svc"]
-    n_DB["DB"]
-    n_S3["S3"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_S3
-    n_Upload_Svc --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — 5 GB ke bytes hamare server se guzar rahe
-
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_Upload_Svc["Upload Svc"]
-    n_DB["DB"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — 5 GB file 90% pe tooti
-
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_Upload_Svc["Upload Svc"]
-    n_DB["DB"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — upload shuru, complete kabhi nahi
-
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_Upload_Svc["Upload Svc"]
-    n_DB["DB"]
-    n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_Sweeper_job --> n_DB
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Sweeper_job --> n_Kafka
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — sab har 2 sec haal poochh rahe
-
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_Upload_Svc["Upload Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Read_replica["Read replica"]
-    n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_DB --> n_Read_replica
-    n_Sweeper_job --> n_DB
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Upload_Svc --> n_Read_replica
-    n_Sweeper_job --> n_Kafka
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — file nahi, poora folder
-
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_Upload_Svc["Upload Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Read_replica["Read replica"]
-    n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_DB --> n_Read_replica
-    n_Sweeper_job --> n_DB
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Upload_Svc --> n_Read_replica
-    n_Sweeper_job --> n_Kafka
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — Ravi ne Arpan ka trackingId daala
-
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_API_Gateway_LB["API Gateway / LB"]
-    n_Upload_Svc["Upload Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Read_replica["Read replica"]
-    n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_API_Gateway_LB
-    n_API_Gateway_LB --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_DB --> n_Read_replica
-    n_Sweeper_job --> n_DB
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Upload_Svc --> n_Read_replica
-    n_Sweeper_job --> n_Kafka
-```
-
----
-
-<a id="d8"></a>
-
-## DIKKAT 8 — S3 ka seedha link aage bhej diya
-
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_API_Gateway_LB["API Gateway / LB"]
-    n_Upload_Svc["Upload Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Read_replica["Read replica"]
-    n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_API_Gateway_LB
-    n_API_Gateway_LB --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_DB --> n_Read_replica
-    n_Sweeper_job --> n_DB
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Upload_Svc --> n_Read_replica
-    n_Sweeper_job --> n_Kafka
-```
-
----
-
-<a id="d9"></a>
-
-## DIKKAT 9 — naam .pdf, andar EXE
-
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_API_Gateway_LB["API Gateway / LB"]
-    n_Upload_Svc["Upload Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Read_replica["Read replica"]
-    n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker<br/>+ magic bytes check"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_API_Gateway_LB
-    n_API_Gateway_LB --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_DB --> n_Read_replica
-    n_Sweeper_job --> n_DB
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Upload_Svc --> n_Read_replica
-    n_Sweeper_job --> n_Kafka
-    n_Worker --> n_S3
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

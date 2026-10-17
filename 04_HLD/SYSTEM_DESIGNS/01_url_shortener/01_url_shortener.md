@@ -94,6 +94,8 @@ ISKE BAAD KYA TOOTEGA:
          Tab click gin nahi paate aur expiry bhi kaam nahi karti.
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) HAR CLICK DB PE, REDIRECT 200 MS SE TEZ CHAHIYE
 ```
 KAHANI:  Ek second me 1 lakh click aa rahe hain. Har click DB tak ja raha hai, aur DB disk se padhta hai.
@@ -124,6 +126,18 @@ ISKE BAAD KYA TOOTEGA:
       -> replica bhi disk se padhti hai, dheemi. Har App ka apna cache = sabke paas alag copy,
          link badla to kisi App pe purana dikhta rahega.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Redis
+    n_App --> n_DB
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) EK APP 1 LAKH / SEC NAHI JHELTA, GIRA TO SITE BAND
 ```
@@ -150,6 +164,24 @@ ISKE BAAD KYA TOOTEGA:
   - Machine mari nahi, bas dheemi hai?
       -> LB jawab ka time aur galtiyon ki ginti bhi dekhta hai. Least-conn khud usko kam bhejta hai.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_App_x_N_1 --> n_DB
+    n_App_x_N_2 --> n_DB
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) KAI APP, DO APP EK HI CODE BANA DENGE
 ```
@@ -176,6 +208,27 @@ ISKE BAAD KYA TOOTEGA:
   - Redis ka INCR (ek-ek badhao) kyun nahi?
       -> chal jaata, par har link pe ek call. Range me 1000 link pe ek call.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_App_x_N_1 --> n_DB
+    n_App_x_N_2 --> n_DB
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) HAR CLICK PE ANALYTICS LIKHNA
 ```
@@ -202,6 +255,36 @@ ISKE BAAD KYA TOOTEGA:
       -> SQS bhi chal jaata. Kafka isliye ki click bahut zyada hain, aur naya report banana ho to
          purane click dobara padh sakte hain (replay). SQS padhne ke baad message hata deta hai.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Kafka["Kafka"]
+    n_Analytics_svc["Analytics svc"]
+    n_Analytics_DB["Analytics DB"]
+    n_DLQ["DLQ"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Kafka --> n_Analytics_svc
+    n_Analytics_svc --> n_Analytics_DB
+    n_App_x_N_1 --> n_DB
+    n_App_x_N_2 --> n_DB
+    n_Analytics_svc --> n_DLQ
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) 5 SAAL KA ~90 TB EK MACHINE ME NAHI
 ```
@@ -237,6 +320,36 @@ ISKE BAAD KYA TOOTEGA:
          Wajah = kaam ka dhaancha + size. "NoSQL zyada powerful" wajah nahi.
          Chhota maana (~500 GB) to ek MySQL kaafi, shard bhi nahi.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Kafka["Kafka"]
+    n_Analytics_svc["Analytics svc"]
+    n_Analytics_DB["Analytics DB"]
+    n_DLQ["DLQ"]
+    n_Redis["Redis"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Kafka --> n_Analytics_svc
+    n_Analytics_svc --> n_Analytics_DB
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
+    n_Analytics_svc --> n_DLQ
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) WRITE KE BEECH EK COPY WALA NODE GIRA
 ```
@@ -263,6 +376,36 @@ ISKE BAAD KYA TOOTEGA:
   - Kafka laga do data bachane ke liye?
       -> nahi. Ye DB ki apni diary ka kaam hai, extra dabba mat lagao.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Kafka["Kafka"]
+    n_Analytics_svc["Analytics svc"]
+    n_Analytics_DB["Analytics DB"]
+    n_DLQ["DLQ"]
+    n_Redis["Redis"]
+    n_Cassandra["Cassandra<br/>+ commit log + quorum"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Kafka --> n_Analytics_svc
+    n_Analytics_svc --> n_Analytics_DB
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
+    n_Analytics_svc --> n_DLQ
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) NAYA LINK BANAYA, TURANT CLICK -> 404
 ```
@@ -291,6 +434,36 @@ ISKE BAAD KYA TOOTEGA:
   - Cassandra me koi "main copy" hoti hai?
       -> nahi. Teeno copy barabar hain, koi bhi likh sakti hai aur koi bhi padh sakti hai.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Kafka["Kafka"]
+    n_Analytics_svc["Analytics svc"]
+    n_Analytics_DB["Analytics DB"]
+    n_DLQ["DLQ"]
+    n_Redis["Redis"]
+    n_Cassandra["Cassandra<br/>+ commit log + quorum"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Kafka --> n_Analytics_svc
+    n_Analytics_svc --> n_Analytics_DB
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
+    n_Analytics_svc --> n_DLQ
+```
+
+<a id="d8"></a>
 
 #### [8](#d8) LB KHUD GIR GAYA
 ```
@@ -313,6 +486,42 @@ ISKE BAAD KYA TOOTEGA:
          hai. Aakhri kuch second ke naye link kho sakte hain.
          Ye maana hua risk hai.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_LB_1["LB 1"]
+    n_LB_2["LB 2"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Kafka["Kafka"]
+    n_Analytics_svc["Analytics svc"]
+    n_Analytics_DB["Analytics DB"]
+    n_DLQ["DLQ"]
+    n_Redis["Redis"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_LB_1
+    n_Route_53 --> n_LB_2
+    n_LB_1 --> n_App_x_N_1
+    n_LB_1 --> n_App_x_N_2
+    n_LB_2 --> n_App_x_N_1
+    n_LB_2 --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Kafka --> n_Analytics_svc
+    n_Analytics_svc --> n_Analytics_DB
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
+    n_Analytics_svc --> n_DLQ
+```
+
+<a id="d9"></a>
 
 #### [9](#d9) SCRIPT SE RAAT ME 10 LAKH LINK
 ```
@@ -334,6 +543,41 @@ ISKE BAAD KYA TOOTEGA:
       -> shared Redis me, sab ek hi ginti dekhein. (Poora design = 02_rate_limiter.)
   - Bot har baar naye IP se aa raha?
       -> IP pe nahi, API key / user_id pe limit, aur WAF ke bot rules.
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_API_Gateway["API Gateway"]
+    n_LB_1["LB 1"]
+    n_LB_2["LB 2"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Counter["Counter"]
+    n_Kafka["Kafka"]
+    n_Analytics_svc["Analytics svc"]
+    n_Analytics_DB["Analytics DB"]
+    n_DLQ["DLQ"]
+    n_Redis["Redis"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_LB_1
+    n_Route_53 --> n_LB_2
+    n_LB_1 --> n_API_Gateway
+    n_LB_2 --> n_API_Gateway
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    n_App_x_N_1 --> n_Counter
+    n_App_x_N_2 --> n_Counter
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+    n_Kafka --> n_Analytics_svc
+    n_Analytics_svc --> n_Analytics_DB
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
+    n_Analytics_svc --> n_DLQ
 ```
 
 ```
@@ -395,300 +639,7 @@ flowchart TD
 ```
 
 ---
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — har click DB pe, redirect tez chahiye
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Redis
-    n_App --> n_DB
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — ek App sab nahi jhelta, gira to site band
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_App_x_N_1 --> n_DB
-    n_App_x_N_2 --> n_DB
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — kai App, ek hi code ban sakta
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Counter["Counter"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_App_x_N_1 --> n_DB
-    n_App_x_N_2 --> n_DB
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — click ginna redirect ko dheema na kare
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Counter["Counter"]
-    n_Kafka["Kafka"]
-    n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
-    n_DLQ["DLQ"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_DB
-    n_App_x_N_2 --> n_DB
-    n_Analytics_svc --> n_DLQ
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — 90 TB ek machine me nahi
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Counter["Counter"]
-    n_Kafka["Kafka"]
-    n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
-    n_DLQ["DLQ"]
-    n_Redis["Redis"]
-    n_Cassandra["Cassandra"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Analytics_svc --> n_DLQ
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — likhte waqt ek copy wali machine giri
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Counter["Counter"]
-    n_Kafka["Kafka"]
-    n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
-    n_DLQ["DLQ"]
-    n_Redis["Redis"]
-    n_Cassandra["Cassandra<br/>+ commit log + quorum"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Analytics_svc --> n_DLQ
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — naya link, turant click, 404
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Counter["Counter"]
-    n_Kafka["Kafka"]
-    n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
-    n_DLQ["DLQ"]
-    n_Redis["Redis"]
-    n_Cassandra["Cassandra<br/>+ commit log + quorum"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Analytics_svc --> n_DLQ
-```
-
----
-
-<a id="d8"></a>
-
-## DIKKAT 8 — LB khud gira
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_LB_1["LB 1"]
-    n_LB_2["LB 2"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Counter["Counter"]
-    n_Kafka["Kafka"]
-    n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
-    n_DLQ["DLQ"]
-    n_Redis["Redis"]
-    n_Cassandra["Cassandra"]
-    n_USER --> n_Route_53
-    n_Route_53 --> n_LB_1
-    n_Route_53 --> n_LB_2
-    n_LB_1 --> n_App_x_N_1
-    n_LB_1 --> n_App_x_N_2
-    n_LB_2 --> n_App_x_N_1
-    n_LB_2 --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Analytics_svc --> n_DLQ
-```
-
----
-
-<a id="d9"></a>
-
-## DIKKAT 9 — script se laakhon link
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_API_Gateway["API Gateway"]
-    n_LB_1["LB 1"]
-    n_LB_2["LB 2"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Counter["Counter"]
-    n_Kafka["Kafka"]
-    n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
-    n_DLQ["DLQ"]
-    n_Redis["Redis"]
-    n_Cassandra["Cassandra"]
-    n_USER --> n_Route_53
-    n_Route_53 --> n_LB_1
-    n_Route_53 --> n_LB_2
-    n_LB_1 --> n_API_Gateway
-    n_LB_2 --> n_API_Gateway
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Analytics_svc --> n_DLQ
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

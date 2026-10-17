@@ -53,6 +53,8 @@ flowchart TD
     n_App --> n_DB
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) DONO NE SAATH SAVE KIYA, BAAD WALE NE PEHLE KA MITA DIYA
 ```
 KAHANI:  Doc me "HELLO" tha. Arpan ne "HELLO WORLD" karke save kiya, usi waqt Ravi ne "HELLO THERE".
@@ -75,6 +77,16 @@ ISKE BAAD KYA TOOTEGA:
       -> mitana bhi ek op hai. OT dono ko adjust karta: Ravi ka
          akshar sahi jagah khisakta, Arpan sahi "L" mitata (card 4).
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App<br/>operation bhejo, text nahi"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) RAVI KO ARPAN KA LIKHA KAB DIKHEGA?
 ```
@@ -101,6 +113,16 @@ ISKE BAAD KYA TOOTEGA:
       -> polling = crore log x har second bekaar sawaal + 1 sec
          der. SSE sirf server -> user, yahan dono taraf chahiye.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_Conn_Server["Conn-Server"]
+    n_DB["DB"]
+    n_USER_A_B --> n_Conn_Server
+    n_Conn_Server --> n_DB
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) ARPAN SERVER-1 PE, RAVI SERVER-2 PE
 ```
@@ -128,6 +150,24 @@ ISKE BAAD KYA TOOTEGA:
   - Kafka kyun nahi?
       -> Kafka store karta + thoda dheema. Live typing ko dobara padhna nahi chahiye, tezi chahiye.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_DB["DB"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_DB
+    n_Conn_Server_x_N_2 --> n_DB
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) DONO NE EK SAATH POSITION 0 PE TYPE KIYA
 ```
@@ -157,6 +197,24 @@ ISKE BAAD KYA TOOTEGA:
   - Ek doc ka OT do server pe chala?
       -> kram toot gaya. Isliye ek doc ke saare op EK server pe (card 8).
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1<br/>+ OT"]
+    n_Conn_Server_x_N_2["Conn-Server 2<br/>+ OT"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_DB["DB"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_DB
+    n_Conn_Server_x_N_2 --> n_DB
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) HAR AKSHAR PE DB ME LIKHNA
 ```
@@ -181,6 +239,26 @@ ISKE BAAD KYA TOOTEGA:
   - "Sahi hona chahiye to SQL lo"?
       -> nahi. DB data ki shakal se chuno: rishte (join) nahi, bas bahut saara jodna -> Cassandra.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_Redis_buffer["Redis buffer"]
+    n_Cassandra_edit_log["Cassandra edit log"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_Redis_buffer
+    n_Conn_Server_x_N_2 --> n_Redis_buffer
+    n_Redis_buffer --> n_Cassandra_edit_log
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) DOC KHOLA, 10 LAKH OP SHURU SE CHALANE PADE
 ```
@@ -197,6 +275,26 @@ ISKE BAAD KYA TOOTEGA:
   - Kitni baar photo?
       -> har 1000 op ya har kuch minute, jo pehle ho.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_Redis_buffer["Redis buffer"]
+    n_Cassandra_edit_log["Cassandra edit log<br/>+ snapshot"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_Redis_buffer
+    n_Conn_Server_x_N_2 --> n_Redis_buffer
+    n_Redis_buffer --> n_Cassandra_edit_log
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) NETWORK EK SECOND GAYA, TYPING RUKEGI? (CAP)
 ```
@@ -216,6 +314,29 @@ ISKE BAAD KYA TOOTEGA:
   - Arpan ka access hata diya, aur wo offline type kar raha tha?
       -> dobara jude to pehle permission check (SQL, CP). Access nahi -> pending op reject.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_SQL_permissions["SQL permissions"]
+    n_Redis_buffer["Redis buffer"]
+    n_Cassandra_edit_log["Cassandra edit log"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_Redis_buffer
+    n_Conn_Server_x_N_2 --> n_Redis_buffer
+    n_Conn_Server_x_N_1 --> n_SQL_permissions
+    n_Conn_Server_x_N_2 --> n_SQL_permissions
+    n_Redis_buffer --> n_Cassandra_edit_log
+```
+
+<a id="d8"></a>
 
 #### [8](#d8) CRORE WEBSOCKET CONNECTION
 ```
@@ -237,6 +358,29 @@ ISKE BAAD KYA TOOTEGA:
       -> SERVER: har op ko doc ka agla version number. App ki ghadi kabhi nahi.
   - Ek doc pe 1000 log?
       -> jo sirf dekh rahe (likh nahi rahe) unhe alag rakho, pub/sub se updates.
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_CDN["CDN"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_SQL_permissions["SQL permissions"]
+    n_Redis_buffer["Redis buffer"]
+    n_Cassandra_edit_log["Cassandra edit log"]
+    n_USER_A_B --> n_CDN
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_Redis_buffer
+    n_Conn_Server_x_N_2 --> n_Redis_buffer
+    n_Conn_Server_x_N_1 --> n_SQL_permissions
+    n_Conn_Server_x_N_2 --> n_SQL_permissions
+    n_Redis_buffer --> n_Cassandra_edit_log
 ```
 
 ```
@@ -286,195 +430,6 @@ flowchart TD
 
 ---
 
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
-
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — dono ne saath save kiya, baad wale ne mita diya
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App<br/>operation bhejo, text nahi"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_DB
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — Ravi ko Arpan ka likha kab dikhega
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_Conn_Server["Conn-Server"]
-    n_DB["DB"]
-    n_USER_A_B --> n_Conn_Server
-    n_Conn_Server --> n_DB
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — Arpan server-1 pe, Ravi server-2 pe
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Conn_Server_x_N_1["Conn-Server 1"]
-    n_Conn_Server_x_N_2["Conn-Server 2"]
-    n_Redis_pub_sub["Redis pub/sub"]
-    n_DB["DB"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Conn_Server_x_N_1
-    n_LB --> n_Conn_Server_x_N_2
-    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_1 --> n_DB
-    n_Conn_Server_x_N_2 --> n_DB
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — dono ne ek saath position 0 pe type kiya
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Conn_Server_x_N_1["Conn-Server 1<br/>+ OT"]
-    n_Conn_Server_x_N_2["Conn-Server 2<br/>+ OT"]
-    n_Redis_pub_sub["Redis pub/sub"]
-    n_DB["DB"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Conn_Server_x_N_1
-    n_LB --> n_Conn_Server_x_N_2
-    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_1 --> n_DB
-    n_Conn_Server_x_N_2 --> n_DB
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — har akshar pe DB me likhna
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Conn_Server_x_N_1["Conn-Server 1"]
-    n_Conn_Server_x_N_2["Conn-Server 2"]
-    n_Redis_pub_sub["Redis pub/sub"]
-    n_Redis_buffer["Redis buffer"]
-    n_Cassandra_edit_log["Cassandra edit log"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Conn_Server_x_N_1
-    n_LB --> n_Conn_Server_x_N_2
-    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_1 --> n_Redis_buffer
-    n_Conn_Server_x_N_2 --> n_Redis_buffer
-    n_Redis_buffer --> n_Cassandra_edit_log
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — doc khola, 10 lakh op chalane pade
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Conn_Server_x_N_1["Conn-Server 1"]
-    n_Conn_Server_x_N_2["Conn-Server 2"]
-    n_Redis_pub_sub["Redis pub/sub"]
-    n_Redis_buffer["Redis buffer"]
-    n_Cassandra_edit_log["Cassandra edit log<br/>+ snapshot"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Conn_Server_x_N_1
-    n_LB --> n_Conn_Server_x_N_2
-    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_1 --> n_Redis_buffer
-    n_Conn_Server_x_N_2 --> n_Redis_buffer
-    n_Redis_buffer --> n_Cassandra_edit_log
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — network ek second gaya, typing rukegi
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Conn_Server_x_N_1["Conn-Server 1"]
-    n_Conn_Server_x_N_2["Conn-Server 2"]
-    n_Redis_pub_sub["Redis pub/sub"]
-    n_SQL_permissions["SQL permissions"]
-    n_Redis_buffer["Redis buffer"]
-    n_Cassandra_edit_log["Cassandra edit log"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Conn_Server_x_N_1
-    n_LB --> n_Conn_Server_x_N_2
-    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_1 --> n_Redis_buffer
-    n_Conn_Server_x_N_2 --> n_Redis_buffer
-    n_Conn_Server_x_N_1 --> n_SQL_permissions
-    n_Conn_Server_x_N_2 --> n_SQL_permissions
-    n_Redis_buffer --> n_Cassandra_edit_log
-```
-
----
-
-<a id="d8"></a>
-
-## DIKKAT 8 — crore WebSocket connection
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_CDN["CDN"]
-    n_LB["LB"]
-    n_Conn_Server_x_N_1["Conn-Server 1"]
-    n_Conn_Server_x_N_2["Conn-Server 2"]
-    n_Redis_pub_sub["Redis pub/sub"]
-    n_SQL_permissions["SQL permissions"]
-    n_Redis_buffer["Redis buffer"]
-    n_Cassandra_edit_log["Cassandra edit log"]
-    n_USER_A_B --> n_CDN
-    n_USER_A_B --> n_LB
-    n_LB --> n_Conn_Server_x_N_1
-    n_LB --> n_Conn_Server_x_N_2
-    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_1 --> n_Redis_buffer
-    n_Conn_Server_x_N_2 --> n_Redis_buffer
-    n_Conn_Server_x_N_1 --> n_SQL_permissions
-    n_Conn_Server_x_N_2 --> n_SQL_permissions
-    n_Redis_buffer --> n_Cassandra_edit_log
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

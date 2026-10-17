@@ -79,6 +79,8 @@ ISKE BAAD KYA TOOTEGA:
       -> 6 ka sauda ho gaya, Ramesh ke baaki 4 book me pade rehte (aur un 4 ka paisa ruka rehta).
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) DO ORDER EK HI STOCK PE EK SAATH (RACE)
 ```
 KAHANI:  Seller ke paas TCS ke sirf 10 share. Ramesh ne BUY 10 maara, usi pal Mohan ne bhi BUY 10.
@@ -105,6 +107,20 @@ ISKE BAAD KYA TOOTEGA:
       -> us stock ke order line me ruk jaate. Ilaaj: kam GC wala
          Java setup + ek standby jo log padh ke uth sake (card 6).
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Queue_per_symbol["Queue per symbol"]
+    n_Matching_Engine["Matching Engine"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Queue_per_symbol
+    n_Queue_per_symbol --> n_Matching_Engine
+    n_Matching_Engine --> n_DB
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) WALLET ME 50K, 30K-30K KE DO ORDER (DOUBLE SPEND)
 ```
@@ -132,6 +148,22 @@ ISKE BAAD KYA TOOTEGA:
   - Paisa block kiya, order 3 din pada raha?
       -> order ki umar hoti hai (day order shaam ko khatam) -> khatam hote hi block hatao.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Queue_per_symbol["Queue per symbol"]
+    n_Matching_Engine["Matching Engine"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Queue_per_symbol
+    n_Queue_per_symbol --> n_Matching_Engine
+    n_Matching_Engine --> n_DB
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) SAUDE KE BEECH CRASH (SETTLEMENT)
 ```
@@ -158,6 +190,24 @@ ISKE BAAD KYA TOOTEGA:
   - Paise me "thodi der baad sahi" (eventual) chalega, like count jaisa?
       -> nahi. Paisa hamesha turant sahi (strong consistency).
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Queue_per_symbol["Queue per symbol"]
+    n_Matching_Engine["Matching Engine"]
+    n_Settlement["Settlement (ek transaction)"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Queue_per_symbol
+    n_Queue_per_symbol --> n_Matching_Engine
+    n_Matching_Engine --> n_Settlement
+    n_Settlement --> n_DB
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) PAISA WALLET DB ME, SHARE PORTFOLIO DB ME (ALAG DB)
 ```
@@ -189,6 +239,26 @@ ISKE BAAD KYA TOOTEGA:
   - Ek service sab chalaye (orchestration) ya har service agle ko bataye (choreography)?
       -> orchestration: paise me saaf dikhta kaunsa step kahan atka.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Queue_per_symbol["Queue per symbol"]
+    n_Matching_Engine["Matching Engine"]
+    n_Settlement["Settlement (SAGA)"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Queue_per_symbol
+    n_Queue_per_symbol --> n_Matching_Engine
+    n_Matching_Engine --> n_Settlement
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) BUY DO BAAR DABA / NETWORK NE DOBARA BHEJA
 ```
@@ -213,6 +283,26 @@ ISKE BAAD KYA TOOTEGA:
   - Key kitne din rakhoge?
       -> ~24 ghante (itne me hi koi dobara bhejta), phir saaf.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service<br/>+ idempotency key check"]
+    n_Wallet["Wallet"]
+    n_Queue_per_symbol["Queue per symbol"]
+    n_Matching_Engine["Matching Engine"]
+    n_Settlement["Settlement (SAGA)"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Queue_per_symbol
+    n_Queue_per_symbol --> n_Matching_Engine
+    n_Matching_Engine --> n_Settlement
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) ORDER BOOK RAM ME, SERVER GIRA = SAB GAYAB
 ```
@@ -242,6 +332,26 @@ ISKE BAAD KYA TOOTEGA:
   - Crash pe kya-kya bachaoge? (DO jagah bolna)
       -> matching (RAM) = log se replay · settlement (DB) = rollback / SAGA. Sirf ek bola to aadha jawab.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Event_Log["Event Log"]
+    n_Matching_Engine["Matching Engine"]
+    n_Settlement["Settlement (SAGA)"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Event_Log
+    n_Event_Log --> n_Matching_Engine
+    n_Matching_Engine --> n_Settlement
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) LAKHON LOG LIVE PRICE DEKH RAHE
 ```
@@ -271,6 +381,32 @@ ISKE BAAD KYA TOOTEGA:
   - Ek WebSocket server kitne user sambhale?
       -> lakh ke aas-paas. Zyada user -> aur server, LB se baanto.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Event_Log["Event Log"]
+    n_Matching_Engine["Matching Engine"]
+    n_Pub_Sub["Pub/Sub"]
+    n_WebSocket["WebSocket"]
+    n_USERS["USERS"]
+    n_Settlement["Settlement (SAGA)"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Event_Log
+    n_Event_Log --> n_Matching_Engine
+    n_Matching_Engine --> n_Pub_Sub
+    n_Matching_Engine --> n_Settlement
+    n_Pub_Sub --> n_WebSocket
+    n_WebSocket --> n_USERS
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
+```
+
+<a id="d8"></a>
 
 #### [8](#d8) 9:15 BAJE AKELE TCS PE LAKHON ORDER
 ```
@@ -290,6 +426,30 @@ ANDAR KAISE:
 ISKE BAAD KYA TOOTEGA:
   - Order line me pada hai, Ramesh ko app me kya dikhe?
       -> do status: "ACCEPTED" turant (order mil gaya), "FILLED" jab sauda ho jaaye.
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Order_Service["Order Service"]
+    n_Wallet["Wallet"]
+    n_Event_Log["Event Log<br/>burst yahin line me lagta"]
+    n_Matching_Engine["Matching Engine"]
+    n_Pub_Sub["Pub/Sub"]
+    n_WebSocket["WebSocket"]
+    n_USERS["USERS"]
+    n_Settlement["Settlement (SAGA)"]
+    n_Wallet_DB["Wallet DB"]
+    n_Portfolio_DB["Portfolio DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Event_Log
+    n_Event_Log --> n_Matching_Engine
+    n_Matching_Engine --> n_Pub_Sub
+    n_Matching_Engine --> n_Settlement
+    n_Pub_Sub --> n_WebSocket
+    n_WebSocket --> n_USERS
+    n_Settlement --> n_Wallet_DB
+    n_Settlement --> n_Portfolio_DB
 ```
 
 ```
@@ -340,211 +500,6 @@ flowchart TD
 
 ---
 
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
-
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — do order ek hi stock pe ek saath (race)
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Order_Service["Order Service"]
-    n_Queue_per_symbol["Queue per symbol"]
-    n_Matching_Engine["Matching Engine"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Queue_per_symbol
-    n_Queue_per_symbol --> n_Matching_Engine
-    n_Matching_Engine --> n_DB
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — wallet 50k, 30k-30k ke do order (double spend)
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Order_Service["Order Service"]
-    n_Wallet["Wallet"]
-    n_Queue_per_symbol["Queue per symbol"]
-    n_Matching_Engine["Matching Engine"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Queue_per_symbol
-    n_Queue_per_symbol --> n_Matching_Engine
-    n_Matching_Engine --> n_DB
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — saude ke beech crash
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Order_Service["Order Service"]
-    n_Wallet["Wallet"]
-    n_Queue_per_symbol["Queue per symbol"]
-    n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement (ek transaction)"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Queue_per_symbol
-    n_Queue_per_symbol --> n_Matching_Engine
-    n_Matching_Engine --> n_Settlement
-    n_Settlement --> n_DB
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — paisa Wallet DB me, share Portfolio DB me
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Order_Service["Order Service"]
-    n_Wallet["Wallet"]
-    n_Queue_per_symbol["Queue per symbol"]
-    n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement (SAGA)"]
-    n_Wallet_DB["Wallet DB"]
-    n_Portfolio_DB["Portfolio DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Queue_per_symbol
-    n_Queue_per_symbol --> n_Matching_Engine
-    n_Matching_Engine --> n_Settlement
-    n_Settlement --> n_Wallet_DB
-    n_Settlement --> n_Portfolio_DB
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — BUY do baar daba / network retry
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet"]
-    n_Queue_per_symbol["Queue per symbol"]
-    n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement (SAGA)"]
-    n_Wallet_DB["Wallet DB"]
-    n_Portfolio_DB["Portfolio DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Queue_per_symbol
-    n_Queue_per_symbol --> n_Matching_Engine
-    n_Matching_Engine --> n_Settlement
-    n_Settlement --> n_Wallet_DB
-    n_Settlement --> n_Portfolio_DB
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — order book RAM me, crash = sab gayab
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Order_Service["Order Service"]
-    n_Wallet["Wallet"]
-    n_Event_Log["Event Log"]
-    n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement (SAGA)"]
-    n_Wallet_DB["Wallet DB"]
-    n_Portfolio_DB["Portfolio DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Event_Log
-    n_Event_Log --> n_Matching_Engine
-    n_Matching_Engine --> n_Settlement
-    n_Settlement --> n_Wallet_DB
-    n_Settlement --> n_Portfolio_DB
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — lakhon log live price dekh rahe
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Order_Service["Order Service"]
-    n_Wallet["Wallet"]
-    n_Event_Log["Event Log"]
-    n_Matching_Engine["Matching Engine"]
-    n_Pub_Sub["Pub/Sub"]
-    n_WebSocket["WebSocket"]
-    n_USERS["USERS"]
-    n_Settlement["Settlement (SAGA)"]
-    n_Wallet_DB["Wallet DB"]
-    n_Portfolio_DB["Portfolio DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Event_Log
-    n_Event_Log --> n_Matching_Engine
-    n_Matching_Engine --> n_Pub_Sub
-    n_Matching_Engine --> n_Settlement
-    n_Pub_Sub --> n_WebSocket
-    n_WebSocket --> n_USERS
-    n_Settlement --> n_Wallet_DB
-    n_Settlement --> n_Portfolio_DB
-```
-
----
-
-<a id="d8"></a>
-
-## DIKKAT 8 — 9:15 baje akele TCS pe lakhon order
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Order_Service["Order Service"]
-    n_Wallet["Wallet"]
-    n_Event_Log["Event Log<br/>burst yahin line me lagta"]
-    n_Matching_Engine["Matching Engine"]
-    n_Pub_Sub["Pub/Sub"]
-    n_WebSocket["WebSocket"]
-    n_USERS["USERS"]
-    n_Settlement["Settlement (SAGA)"]
-    n_Wallet_DB["Wallet DB"]
-    n_Portfolio_DB["Portfolio DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Event_Log
-    n_Event_Log --> n_Matching_Engine
-    n_Matching_Engine --> n_Pub_Sub
-    n_Matching_Engine --> n_Settlement
-    n_Pub_Sub --> n_WebSocket
-    n_WebSocket --> n_USERS
-    n_Settlement --> n_Wallet_DB
-    n_Settlement --> n_Portfolio_DB
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

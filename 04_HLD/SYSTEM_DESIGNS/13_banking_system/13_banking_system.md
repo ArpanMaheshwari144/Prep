@@ -70,6 +70,8 @@ flowchart TD
     n_Banking_Svc --> n_SQL_DB
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) TRANSFER KE BEECH SERVER GIRA: ARPAN -500 HUA, RAVI +500 NAHI
 ```
 KAHANI:  Arpan ne Ravi ko 500 bheje. Arpan ke 500 kat gaye,
@@ -95,6 +97,16 @@ ISKE BAAD KYA TOOTEGA:
       -> transfer / balance = CP (galat balance dikhane se mana karna
          behtar). SMS / statement / analytics = AP (2 sec late chalta).
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB<br/>debit + credit EK transaction"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) KHAATA (LEDGER) KAHAN LIKHO, KAFKA KAB? (GALTI WAPAS wala)
 ```
@@ -135,6 +147,18 @@ ISKE BAAD KYA TOOTEGA:
   - Outbox table bhar jaayegi?
       -> sent wali rows roz saaf / partition drop.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) BALANCE AATA KAHAN SE? (is design ka asli sawaal)
 ```
@@ -160,6 +184,20 @@ ISKE BAAD KYA TOOTEGA:
   - Chal raha hai, kaise pata?
       -> reconciliation + p99 + error rate + queue lag + DB connection pe alert + har transfer ka trace id.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) "SEND" DO BAAR DABA / APP NE DOBARA BHEJA
 ```
@@ -182,6 +220,20 @@ ISKE BAAD KYA TOOTEGA:
   - Key table hamesha badhti rahegi?
       -> 24-48 ghante baad saaf.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB<br/>+ idempotency_keys (UNIQUE)"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) EK ACCOUNT SE DO TRANSFER EK SAATH
 ```
@@ -211,6 +263,20 @@ ISKE BAAD KYA TOOTEGA:
   - Kram ke bawajood deadlock?
       -> DB ek ko wapas kar deta -> app thoda ruk ke dobara (same idempotency key).
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB<br/>+ idempotency_keys (UNIQUE)"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) SALARY DAY, EK SERVICE BHAR GAYI
 ```
@@ -232,6 +298,25 @@ ISKE BAAD KYA TOOTEGA:
   - Failover ke 30 sec me transfer aaya?
       -> error -> app dobara bheje, same idempotency key -> do baar nahi katega.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Banking_Svc_x_N_1["Banking Svc 1"]
+    n_Banking_Svc_x_N_2["Banking Svc 2"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_Banking_Svc_x_N_1
+    n_LB --> n_Banking_Svc_x_N_2
+    n_Banking_Svc_x_N_1 --> n_SQL_DB
+    n_Banking_Svc_x_N_2 --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) SAB BALANCE PRIMARY SE PADH RAHE, TRANSFER DHEEME
 ```
@@ -255,6 +340,28 @@ ISKE BAAD KYA TOOTEGA:
   - Replica minute bhar peeche?
       -> lag pe alert. Had paar -> us replica ko padhne wali list se hatao.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Banking_Svc_x_N_1["Banking Svc 1"]
+    n_Banking_Svc_x_N_2["Banking Svc 2"]
+    n_Read_replica["Read replica"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_Banking_Svc_x_N_1
+    n_LB --> n_Banking_Svc_x_N_2
+    n_Banking_Svc_x_N_1 --> n_Read_replica
+    n_Banking_Svc_x_N_2 --> n_Read_replica
+    n_Banking_Svc_x_N_1 --> n_SQL_DB
+    n_Banking_Svc_x_N_2 --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+```
+
+<a id="d8"></a>
 
 #### [8](#d8) 22 ARAB LINE ME HISTORY KA PAGE 5000
 ```
@@ -279,6 +386,28 @@ ISKE BAAD KYA TOOTEGA:
   - Cursor app ko kaise do?
       -> (ts, id) ko base64 karke next_cursor.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Banking_Svc_x_N_1["Banking Svc 1"]
+    n_Banking_Svc_x_N_2["Banking Svc 2"]
+    n_Read_replica["Read replica"]
+    n_SQL_DB["SQL DB<br/>+ index (account_id, ts, id)"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_Banking_Svc_x_N_1
+    n_LB --> n_Banking_Svc_x_N_2
+    n_Banking_Svc_x_N_1 --> n_Read_replica
+    n_Banking_Svc_x_N_2 --> n_Read_replica
+    n_Banking_Svc_x_N_1 --> n_SQL_DB
+    n_Banking_Svc_x_N_2 --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+```
+
+<a id="d9"></a>
 
 #### [9](#d9) 5 SAAL KA DATA EK HI TABLE ME
 ```
@@ -302,6 +431,28 @@ ISKE BAAD KYA TOOTEGA:
       -> S3 Object Lock (WORM): na delete na badal, saalon tak.
   - Archive aur sharding ek hi cheez?
       -> nahi. Archive jagah ghatata, shard likhne ka bojh baantta.
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Banking_Svc_x_N_1["Banking Svc 1"]
+    n_Banking_Svc_x_N_2["Banking Svc 2"]
+    n_Read_replica["Read replica"]
+    n_SQL_DB["SQL DB"]
+    n_Kafka["Kafka"]
+    n_Archive_S3["Archive (S3)"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_Banking_Svc_x_N_1
+    n_LB --> n_Banking_Svc_x_N_2
+    n_Banking_Svc_x_N_1 --> n_Read_replica
+    n_Banking_Svc_x_N_2 --> n_Read_replica
+    n_Banking_Svc_x_N_1 --> n_SQL_DB
+    n_Banking_Svc_x_N_2 --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+    n_SQL_DB --> n_Archive_S3
 ```
 
 ```
@@ -351,207 +502,6 @@ flowchart TD
 
 ---
 
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
-
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — transfer ke beech server gira
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Banking_Svc["Banking Svc"]
-    n_SQL_DB["SQL DB<br/>debit + credit EK transaction"]
-    n_USER --> n_Banking_Svc
-    n_Banking_Svc --> n_SQL_DB
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — khaata kahan, Kafka kab
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Banking_Svc["Banking Svc"]
-    n_SQL_DB["SQL DB"]
-    n_Kafka["Kafka"]
-    n_USER --> n_Banking_Svc
-    n_Banking_Svc --> n_SQL_DB
-    n_SQL_DB --> n_Kafka
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — balance aata kahan se
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Banking_Svc["Banking Svc"]
-    n_SQL_DB["SQL DB"]
-    n_Kafka["Kafka"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_Banking_Svc
-    n_Banking_Svc --> n_SQL_DB
-    n_SQL_DB --> n_Kafka
-    n_Reconciliation_job --> n_SQL_DB
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — Send do baar daba
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Banking_Svc["Banking Svc"]
-    n_SQL_DB["SQL DB<br/>+ idempotency_keys (UNIQUE)"]
-    n_Kafka["Kafka"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_Banking_Svc
-    n_Banking_Svc --> n_SQL_DB
-    n_SQL_DB --> n_Kafka
-    n_Reconciliation_job --> n_SQL_DB
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — ek account se do transfer ek saath
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Banking_Svc["Banking Svc"]
-    n_SQL_DB["SQL DB<br/>+ idempotency_keys (UNIQUE)"]
-    n_Kafka["Kafka"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_Banking_Svc
-    n_Banking_Svc --> n_SQL_DB
-    n_SQL_DB --> n_Kafka
-    n_Reconciliation_job --> n_SQL_DB
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — salary day, ek service bhar gayi
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Banking_Svc_x_N_1["Banking Svc 1"]
-    n_Banking_Svc_x_N_2["Banking Svc 2"]
-    n_SQL_DB["SQL DB"]
-    n_Kafka["Kafka"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_LB
-    n_LB --> n_Banking_Svc_x_N_1
-    n_LB --> n_Banking_Svc_x_N_2
-    n_Banking_Svc_x_N_1 --> n_SQL_DB
-    n_Banking_Svc_x_N_2 --> n_SQL_DB
-    n_SQL_DB --> n_Kafka
-    n_Reconciliation_job --> n_SQL_DB
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — sab balance primary se, transfer dheeme
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Banking_Svc_x_N_1["Banking Svc 1"]
-    n_Banking_Svc_x_N_2["Banking Svc 2"]
-    n_Read_replica["Read replica"]
-    n_SQL_DB["SQL DB"]
-    n_Kafka["Kafka"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_LB
-    n_LB --> n_Banking_Svc_x_N_1
-    n_LB --> n_Banking_Svc_x_N_2
-    n_Banking_Svc_x_N_1 --> n_Read_replica
-    n_Banking_Svc_x_N_2 --> n_Read_replica
-    n_Banking_Svc_x_N_1 --> n_SQL_DB
-    n_Banking_Svc_x_N_2 --> n_SQL_DB
-    n_SQL_DB --> n_Kafka
-    n_Reconciliation_job --> n_SQL_DB
-```
-
----
-
-<a id="d8"></a>
-
-## DIKKAT 8 — 22 arab line me history ka page 5000
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Banking_Svc_x_N_1["Banking Svc 1"]
-    n_Banking_Svc_x_N_2["Banking Svc 2"]
-    n_Read_replica["Read replica"]
-    n_SQL_DB["SQL DB<br/>+ index (account_id, ts, id)"]
-    n_Kafka["Kafka"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_LB
-    n_LB --> n_Banking_Svc_x_N_1
-    n_LB --> n_Banking_Svc_x_N_2
-    n_Banking_Svc_x_N_1 --> n_Read_replica
-    n_Banking_Svc_x_N_2 --> n_Read_replica
-    n_Banking_Svc_x_N_1 --> n_SQL_DB
-    n_Banking_Svc_x_N_2 --> n_SQL_DB
-    n_SQL_DB --> n_Kafka
-    n_Reconciliation_job --> n_SQL_DB
-```
-
----
-
-<a id="d9"></a>
-
-## DIKKAT 9 — 5 saal ka data ek table me
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Banking_Svc_x_N_1["Banking Svc 1"]
-    n_Banking_Svc_x_N_2["Banking Svc 2"]
-    n_Read_replica["Read replica"]
-    n_SQL_DB["SQL DB"]
-    n_Kafka["Kafka"]
-    n_Archive_S3["Archive (S3)"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_LB
-    n_LB --> n_Banking_Svc_x_N_1
-    n_LB --> n_Banking_Svc_x_N_2
-    n_Banking_Svc_x_N_1 --> n_Read_replica
-    n_Banking_Svc_x_N_2 --> n_Read_replica
-    n_Banking_Svc_x_N_1 --> n_SQL_DB
-    n_Banking_Svc_x_N_2 --> n_SQL_DB
-    n_SQL_DB --> n_Kafka
-    n_Reconciliation_job --> n_SQL_DB
-    n_SQL_DB --> n_Archive_S3
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

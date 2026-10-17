@@ -76,6 +76,8 @@ flowchart TD
     n_Email_API --> n_USER
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) ORDER EMAIL KE INTEZAAR ME RUKA, EMAIL DOWN = ORDER FAIL
 ```
 KAHANI:  Arpan ne order kiya. Order service ne email bheja aur jawab ka intezaar karti rahi.
@@ -105,6 +107,20 @@ ISKE BAAD KYA TOOTEGA:
   - Order service me hi dobara koshish (retry) kyun nahi?
       -> order ki request utni der atki rehti. Aur Order service giri to retry bhi gaya.
 ```
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_Email_API["Email API"]
+    n_USER["USER"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_Email_API
+    n_Email_API --> n_USER
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) TEEN RAASTE, SMS DHEEMA TO PUSH / EMAIL BHI ATKE
 ```
@@ -127,6 +143,34 @@ ISKE BAAD KYA TOOTEGA:
   - Push kis phone pe bhejein?
       -> app install hote hi phone ka pata (device token) user ke saath save. Pata bekaar nikla -> hata do.
 ```
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES["SES"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio["Twilio"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) SMS BAND THA, PHIR BHI RAAT 2 BAJE BHEJA
 ```
@@ -149,6 +193,38 @@ ISKE BAAD KYA TOOTEGA:
   - Arpan ne pasand badli, cache purana hai?
       -> pasand badalte hi cache se hatao, aur cache ki umar chhoti rakho.
 ```
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES["SES"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio["Twilio"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) JAWAB KHO GAYA, DOBARA BHEJA, USER KO DO EMAIL
 ```
@@ -170,6 +246,42 @@ ISKE BAAD KYA TOOTEGA:
   - Parchi 24 ghante me mit gayi, aur wahi khabar phir aa gayi?
       -> dobara chali jaayegi. Pakka rokna DB ka UNIQUE niyam karta hai.
 ```
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES["SES"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio["Twilio"]
+    n_Redis["Redis"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio
+    n_SMS_worker --> n_Redis
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) PARCHI LAGA DI, PAR BHEJNA FAIL HO GAYA
 ```
@@ -203,6 +315,42 @@ ISKE BAAD KYA TOOTEGA:
       -> tab do baar ja sakta hai. SES / Twilio aisi parchi khud nahi rakhte, to ye chhota risk maana hua hai.
          OTP do baar aana chalega, par na aana nahi chalega.
 ```
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES["SES"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio["Twilio"]
+    n_Redis["Redis"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio
+    n_SMS_worker --> n_Redis
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) COMPANY GIR RAHI, HUM TURANT DOBARA MAAR RAHE
 ```
@@ -228,6 +376,46 @@ ISKE BAAD KYA TOOTEGA:
   - Khabar kabhi khoye nahi, kaise pakka?
       -> saari copies ne liya tabhi OK + kaam ke baad offset + parchi + DLQ. Phenkna kabhi nahi.
 ```
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES["SES"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio["Twilio"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) COMPANY DHEEMI, SAARE WORKER 30 SEC ME PHANSE
 ```
@@ -245,6 +433,46 @@ ISKE BAAD KYA TOOTEGA:
   - Push ki doosri company?
       -> nahi hoti. Android = FCM, iPhone = APNs, alag-alag.
 ```
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES_SendGrid["SES + SendGrid"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio_SNS["Twilio + SNS"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES_SendGrid
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio_SNS
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
+```
+
+<a id="d8"></a>
 
 #### [8](#d8) OTP OFFER KE 50,000 MESSAGE KE PEECHE
 ```
@@ -265,6 +493,46 @@ ISKE BAAD KYA TOOTEGA:
   - OTP bhi company ki limit me phans gaya?
       -> OTP ke liye company ka alag account / alag number, offer use kha na sake.
 ```
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka_high_medium_low["Kafka high / medium / low"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES_SendGrid["SES + SendGrid"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio_SNS["Twilio + SNS"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka_high_medium_low
+    n_Kafka_high_medium_low --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES_SendGrid
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio_SNS
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
+```
+
+<a id="d9"></a>
 
 #### [9](#d9) EK SAATH BAHUT, COMPANY NE 429 DIYA
 ```
@@ -286,6 +554,46 @@ ISKE BAAD KYA TOOTEGA:
   - Limit hi kam hai (SES 14 / second) aur 1 lakh email bhejne hain?
       -> limit badhwao + kai account / company. Tab tak line dheere-dheere khaali.
 ```
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka_high_medium_low["Kafka high / medium / low"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES_SendGrid["SES + SendGrid"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio_SNS["Twilio + SNS"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka_high_medium_low
+    n_Kafka_high_medium_low --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES_SendGrid
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio_SNS
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
+```
+
+<a id="d10"></a>
 
 #### [10](#d10) "BHEJ DIYA" KA MATLAB "MIL GAYA" NAHI
 ```
@@ -310,6 +618,49 @@ ISKE BAAD KYA TOOTEGA:
   - Webhook ki jagah baar-baar khud poochte raho?
       -> laakhon message x har kuch second = limit + kharcha. Webhook tabhi aata jab kuch badla.
 ```
+```mermaid
+flowchart TD
+    n_Order_Svc["Order Svc"]
+    n_Kafka_high_medium_low["Kafka high / medium / low"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES_SendGrid["SES + SendGrid"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio_SNS["Twilio + SNS"]
+    n_Redis["Redis"]
+    n_Tracking_DB["Tracking DB"]
+    n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka_high_medium_low
+    n_Kafka_high_medium_low --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES_SendGrid
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio_SNS
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Twilio_SNS --> n_Tracking_DB
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
+    n_SES_SendGrid --> n_Tracking_DB
+```
+
+<a id="d11"></a>
 
 #### [11](#d11) 1 CRORE LOGON KO EK SAATH OFFER
 ```
@@ -337,6 +688,53 @@ ISKE BAAD KYA TOOTEGA:
          worker pe atka. 1000 = saath-saath bhi, dobara bhi chhota.
   - Ek user ke message ka kram ("order hua" ke baad "ship hua")?
       -> line ka chunaav user_id se -> ek user ki saari khabar ek line me, kram se.
+```
+```mermaid
+flowchart TD
+    n_Admin["Admin"]
+    n_Campaign_Svc["Campaign Svc"]
+    n_Campaign_DB["Campaign DB"]
+    n_Order_Svc["Order Svc"]
+    n_Kafka_high_medium_low["Kafka high / medium / low"]
+    n_Notification_Svc["Notification Svc"]
+    n_User_pref_DB["User-pref DB"]
+    n_Template_DB["Template DB"]
+    n_Push_queue["Push queue"]
+    n_Push_worker["Push worker"]
+    n_FCM_APNs["FCM / APNs"]
+    n_Email_queue["Email queue"]
+    n_Email_worker["Email worker"]
+    n_SES_SendGrid["SES + SendGrid"]
+    n_SMS_queue["SMS queue"]
+    n_SMS_worker["SMS worker"]
+    n_Twilio_SNS["Twilio + SNS"]
+    n_Redis["Redis"]
+    n_Tracking_DB["Tracking DB"]
+    n_DLQ["DLQ"]
+    n_Admin --> n_Campaign_Svc
+    n_Campaign_Svc --> n_Campaign_DB
+    n_Campaign_Svc --> n_Kafka_high_medium_low
+    n_Order_Svc --> n_Kafka_high_medium_low
+    n_Kafka_high_medium_low --> n_Notification_Svc
+    n_Notification_Svc --> n_User_pref_DB
+    n_Notification_Svc --> n_Push_queue
+    n_Notification_Svc --> n_Email_queue
+    n_Notification_Svc --> n_SMS_queue
+    n_Notification_Svc --> n_Template_DB
+    n_Push_queue --> n_Push_worker
+    n_Push_worker --> n_FCM_APNs
+    n_Email_queue --> n_Email_worker
+    n_Email_worker --> n_SES_SendGrid
+    n_SMS_queue --> n_SMS_worker
+    n_SMS_worker --> n_Twilio_SNS
+    n_SMS_worker --> n_Redis
+    n_SMS_worker --> n_DLQ
+    n_Twilio_SNS --> n_Tracking_DB
+    n_Push_worker --> n_Redis
+    n_Email_worker --> n_Redis
+    n_Push_worker --> n_DLQ
+    n_Email_worker --> n_DLQ
+    n_SES_SendGrid --> n_Tracking_DB
 ```
 
 ```
@@ -406,464 +804,7 @@ flowchart TD
 ```
 
 ---
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — order email ke intezaar me ruka
-
-```mermaid
-flowchart TD
-    n_Order_Svc["Order Svc"]
-    n_Kafka["Kafka"]
-    n_Notification_Svc["Notification Svc"]
-    n_Email_API["Email API"]
-    n_USER["USER"]
-    n_Order_Svc --> n_Kafka
-    n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_Email_API
-    n_Email_API --> n_USER
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — teen raaste, SMS dheema to sab atke
-
-```mermaid
-flowchart TD
-    n_Order_Svc["Order Svc"]
-    n_Kafka["Kafka"]
-    n_Notification_Svc["Notification Svc"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio"]
-    n_Order_Svc --> n_Kafka
-    n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — SMS band tha, phir bhi raat 2 baje
-
-```mermaid
-flowchart TD
-    n_Order_Svc["Order Svc"]
-    n_Kafka["Kafka"]
-    n_Notification_Svc["Notification Svc"]
-    n_User_pref_DB["User-pref DB"]
-    n_Template_DB["Template DB"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio"]
-    n_Order_Svc --> n_Kafka
-    n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_User_pref_DB
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Notification_Svc --> n_Template_DB
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — jawab kho gaya, user ko do email
-
-```mermaid
-flowchart TD
-    n_Order_Svc["Order Svc"]
-    n_Kafka["Kafka"]
-    n_Notification_Svc["Notification Svc"]
-    n_User_pref_DB["User-pref DB"]
-    n_Template_DB["Template DB"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio"]
-    n_Redis["Redis"]
-    n_Order_Svc --> n_Kafka
-    n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_User_pref_DB
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Notification_Svc --> n_Template_DB
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    n_SMS_worker --> n_Redis
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — parchi laga di, par bhejna fail
-
-```mermaid
-flowchart TD
-    n_Order_Svc["Order Svc"]
-    n_Kafka["Kafka"]
-    n_Notification_Svc["Notification Svc"]
-    n_User_pref_DB["User-pref DB"]
-    n_Template_DB["Template DB"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio"]
-    n_Redis["Redis"]
-    n_Order_Svc --> n_Kafka
-    n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_User_pref_DB
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Notification_Svc --> n_Template_DB
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    n_SMS_worker --> n_Redis
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — company gir rahi, hum turant dobara maar rahe
-
-```mermaid
-flowchart TD
-    n_Order_Svc["Order Svc"]
-    n_Kafka["Kafka"]
-    n_Notification_Svc["Notification Svc"]
-    n_User_pref_DB["User-pref DB"]
-    n_Template_DB["Template DB"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio"]
-    n_Redis["Redis"]
-    n_DLQ["DLQ"]
-    n_Order_Svc --> n_Kafka
-    n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_User_pref_DB
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Notification_Svc --> n_Template_DB
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    n_SMS_worker --> n_Redis
-    n_SMS_worker --> n_DLQ
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — company dheemi, saare worker phanse
-
-```mermaid
-flowchart TD
-    n_Order_Svc["Order Svc"]
-    n_Kafka["Kafka"]
-    n_Notification_Svc["Notification Svc"]
-    n_User_pref_DB["User-pref DB"]
-    n_Template_DB["Template DB"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES_SendGrid["SES + SendGrid"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio_SNS["Twilio + SNS"]
-    n_Redis["Redis"]
-    n_DLQ["DLQ"]
-    n_Order_Svc --> n_Kafka
-    n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_User_pref_DB
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Notification_Svc --> n_Template_DB
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES_SendGrid
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio_SNS
-    n_SMS_worker --> n_Redis
-    n_SMS_worker --> n_DLQ
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-```
-
----
-
-<a id="d8"></a>
-
-## DIKKAT 8 — OTP offer ke peeche
-
-```mermaid
-flowchart TD
-    n_Order_Svc["Order Svc"]
-    n_Kafka_high_medium_low["Kafka high / medium / low"]
-    n_Notification_Svc["Notification Svc"]
-    n_User_pref_DB["User-pref DB"]
-    n_Template_DB["Template DB"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES_SendGrid["SES + SendGrid"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio_SNS["Twilio + SNS"]
-    n_Redis["Redis"]
-    n_DLQ["DLQ"]
-    n_Order_Svc --> n_Kafka_high_medium_low
-    n_Kafka_high_medium_low --> n_Notification_Svc
-    n_Notification_Svc --> n_User_pref_DB
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Notification_Svc --> n_Template_DB
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES_SendGrid
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio_SNS
-    n_SMS_worker --> n_Redis
-    n_SMS_worker --> n_DLQ
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-```
-
----
-
-<a id="d9"></a>
-
-## DIKKAT 9 — company ne 429 diya
-
-```mermaid
-flowchart TD
-    n_Order_Svc["Order Svc"]
-    n_Kafka_high_medium_low["Kafka high / medium / low"]
-    n_Notification_Svc["Notification Svc"]
-    n_User_pref_DB["User-pref DB"]
-    n_Template_DB["Template DB"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES_SendGrid["SES + SendGrid"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio_SNS["Twilio + SNS"]
-    n_Redis["Redis"]
-    n_DLQ["DLQ"]
-    n_Order_Svc --> n_Kafka_high_medium_low
-    n_Kafka_high_medium_low --> n_Notification_Svc
-    n_Notification_Svc --> n_User_pref_DB
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Notification_Svc --> n_Template_DB
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES_SendGrid
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio_SNS
-    n_SMS_worker --> n_Redis
-    n_SMS_worker --> n_DLQ
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-```
-
----
-
-<a id="d10"></a>
-
-## DIKKAT 10 — bhej diya ka matlab mil gaya nahi
-
-```mermaid
-flowchart TD
-    n_Order_Svc["Order Svc"]
-    n_Kafka_high_medium_low["Kafka high / medium / low"]
-    n_Notification_Svc["Notification Svc"]
-    n_User_pref_DB["User-pref DB"]
-    n_Template_DB["Template DB"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES_SendGrid["SES + SendGrid"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio_SNS["Twilio + SNS"]
-    n_Redis["Redis"]
-    n_Tracking_DB["Tracking DB"]
-    n_DLQ["DLQ"]
-    n_Order_Svc --> n_Kafka_high_medium_low
-    n_Kafka_high_medium_low --> n_Notification_Svc
-    n_Notification_Svc --> n_User_pref_DB
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Notification_Svc --> n_Template_DB
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES_SendGrid
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio_SNS
-    n_SMS_worker --> n_Redis
-    n_SMS_worker --> n_DLQ
-    n_Twilio_SNS --> n_Tracking_DB
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-    n_SES_SendGrid --> n_Tracking_DB
-```
-
----
-
-<a id="d11"></a>
-
-## DIKKAT 11 — 1 crore ko ek saath offer
-
-```mermaid
-flowchart TD
-    n_Admin["Admin"]
-    n_Campaign_Svc["Campaign Svc"]
-    n_Campaign_DB["Campaign DB"]
-    n_Order_Svc["Order Svc"]
-    n_Kafka_high_medium_low["Kafka high / medium / low"]
-    n_Notification_Svc["Notification Svc"]
-    n_User_pref_DB["User-pref DB"]
-    n_Template_DB["Template DB"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES_SendGrid["SES + SendGrid"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio_SNS["Twilio + SNS"]
-    n_Redis["Redis"]
-    n_Tracking_DB["Tracking DB"]
-    n_DLQ["DLQ"]
-    n_Admin --> n_Campaign_Svc
-    n_Campaign_Svc --> n_Campaign_DB
-    n_Campaign_Svc --> n_Kafka_high_medium_low
-    n_Order_Svc --> n_Kafka_high_medium_low
-    n_Kafka_high_medium_low --> n_Notification_Svc
-    n_Notification_Svc --> n_User_pref_DB
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Notification_Svc --> n_Template_DB
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES_SendGrid
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio_SNS
-    n_SMS_worker --> n_Redis
-    n_SMS_worker --> n_DLQ
-    n_Twilio_SNS --> n_Tracking_DB
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-    n_SES_SendGrid --> n_Tracking_DB
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

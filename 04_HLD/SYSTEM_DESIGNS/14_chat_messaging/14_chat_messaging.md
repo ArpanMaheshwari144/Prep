@@ -111,6 +111,8 @@ flowchart TD
     n_USER_A_B --> n_Chat_Server
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) 2 CRORE CONNECTION KHULI, MEMORY KHATAM
 ```
 KAHANI:  Har online user ka connection hamesha khula. Ek connection
@@ -136,6 +138,18 @@ ISKE BAAD KYA TOOTEGA:
   - LB lambi connection kaise bithata?
       -> connection ek baar kisi server pe baitha, phir wahi rehta. Naya connection = naya chunaav.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) ARPAN SERVER-1 PE, RAVI SERVER-7 PE
 ```
@@ -167,6 +181,21 @@ ISKE BAAD KYA TOOTEGA:
   - Pub-sub se kyun nahi bhejte?
       -> pub-sub bhej ke bhool jaata. Offline wale ka bharosa uspe nahi.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) RAVI OFFLINE, MESSAGE KAHAN JAAYE?
 ```
@@ -193,6 +222,27 @@ ISKE BAAD KYA TOOTEGA:
   - Kuch na khoye, poora jawab?
       -> DB pehle + Kafka ho to acks=all, kaam ke baad offset, message id se dobara-safe, fail -> DLQ.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Message_store["Message store"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Message_store
+    n_Chat_Server_x_200_2 --> n_Message_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) ROZ 1.2 TB, 46,000 LIKHAI / SECOND
 ```
@@ -224,6 +274,29 @@ ISKE BAAD KYA TOOTEGA:
   - SQL kyun nahi?
       -> ek message ek row, kai row ka transaction / rishte chahiye hi nahi. Likhai bahut.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) 500 KA GROUP, EK MESSAGE 500 BAAR LIKHEIN?
 ```
@@ -245,6 +318,29 @@ ISKE BAAD KYA TOOTEGA:
   - Naya member juda, purane message dikhein?
       -> judne ke waqt ki id se pehle wale nahi (nishaan judne wali id pe), ya group ki setting ke hisaab.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) KISKE KITNE UNREAD?
 ```
@@ -263,6 +359,32 @@ ISKE BAAD KYA TOOTEGA:
   - Nishaan kahan rakhoge?
       -> Cassandra (user_id, chat_id) -> read_upto. Jo baar-baar chahiye wo Redis me.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) DO TICK AUR NEELI TICK: SERVER KO PATA KAISE?
 ```
@@ -285,6 +407,32 @@ ISKE BAAD KYA TOOTEGA:
   - Group me do tick kab?
       -> sab members ka delivered_upto >= message id -> sabse CHHOTA nishaan dekho.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store<br/>delivered_upto / read_upto"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
+```
+
+<a id="d8"></a>
 
 #### [8](#d8) 10 LAKH KA BROADCAST GROUP: TICK KA KYA?
 ```
@@ -303,6 +451,32 @@ ISKE BAAD KYA TOOTEGA:
   - Ye had kaun tay kare?
       -> product + engineering saath: feature ki keemat batao (10 lakh x tick = kitni likhai).
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store<br/>delivered_upto / read_upto"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
+```
+
+<a id="d9"></a>
 
 #### [9](#d9) ARPAN KA NET DHEEMA, APP NE DOBARA BHEJA, RAVI KO DO BAAR
 ```
@@ -324,6 +498,34 @@ ISKE BAAD KYA TOOTEGA:
   - Dobara bhejne pe kaunsi id lautegi?
       -> pehli baar wali server id -> Arpan ke app me ek hi bubble.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Idempotency_check["Idempotency check"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Idempotency_check
+    n_Chat_Server_x_200_2 --> n_Idempotency_check
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Idempotency_check --> n_Cassandra_messages
+    n_Cassandra_messages --> n_Cold_storage
+```
+
+<a id="d10"></a>
 
 #### [10](#d10) KRAM KISKE TIME SE?
 ```
@@ -348,6 +550,34 @@ ISKE BAAD KYA TOOTEGA:
   - Do server ki ghadi alag, snowflake ka kya?
       -> ms ka farak ho sakta. Ek chat ka pakka kram per-chat seq se.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Idempotency_check["Idempotency check"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Idempotency_check
+    n_Chat_Server_x_200_2 --> n_Idempotency_check
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Idempotency_check --> n_Cassandra_messages
+    n_Cassandra_messages --> n_Cold_storage
+```
+
+<a id="d11"></a>
 
 #### [11](#d11) 5 MB KA VIDEO BHI ISI RAASTE SE?
 ```
@@ -369,6 +599,36 @@ ISKE BAAD KYA TOOTEGA:
   - End-to-end encryption me thumbnail?
       -> server dekh nahi sakta. App encrypt karke upload, chaabi message ke saath.
 ```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_Blob_store_S3["Blob store (S3)"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Idempotency_check["Idempotency check"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_Blob_store_S3
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Idempotency_check
+    n_Chat_Server_x_200_2 --> n_Idempotency_check
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Idempotency_check --> n_Cassandra_messages
+    n_Cassandra_messages --> n_Cold_storage
+```
+
+<a id="d12"></a>
 
 #### [12](#d12) ONLINE / LAST-SEEN: SABKO SABKA STATUS
 ```
@@ -387,6 +647,34 @@ ISKE BAAD KYA TOOTEGA:
       -> dhadkan chat server tak (connection pe ping). Server apne users ka status BATCH me Redis me daale.
   - "typing..." live?
       -> sirf khuli chat ke liye. Typing = chhota event, store nahi, bhej ke bhool jao.
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_Blob_store_S3["Blob store (S3)"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis<br/>+ presence (TTL + heartbeat)"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Idempotency_check["Idempotency check"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_Blob_store_S3
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Idempotency_check
+    n_Chat_Server_x_200_2 --> n_Idempotency_check
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Idempotency_check --> n_Cassandra_messages
+    n_Cassandra_messages --> n_Cold_storage
 ```
 
 ```
@@ -445,359 +733,6 @@ flowchart TD
 
 ---
 
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
-
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — 2 crore connection khuli, memory khatam
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — Arpan server-1 pe, Ravi server-7 pe
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — Ravi offline, message kahan
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Message_store["Message store"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Message_store
-    n_Chat_Server_x_200_2 --> n_Message_store
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — roz 1.2 TB, 46,000 likhai / sec
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Cassandra_messages
-    n_Chat_Server_x_200_2 --> n_Cassandra_messages
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Cassandra_messages --> n_Cold_storage
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — 500 ka group, 500 baar likhein
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Cassandra_messages
-    n_Chat_Server_x_200_2 --> n_Cassandra_messages
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Cassandra_messages --> n_Cold_storage
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — kiske kitne unread
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Cursor_store["Cursor store"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Cassandra_messages
-    n_Chat_Server_x_200_2 --> n_Cassandra_messages
-    n_Chat_Server_x_200_1 --> n_Cursor_store
-    n_Chat_Server_x_200_2 --> n_Cursor_store
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Cassandra_messages --> n_Cold_storage
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — do tick aur neeli tick
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Cursor_store["Cursor store<br/>delivered_upto / read_upto"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Cassandra_messages
-    n_Chat_Server_x_200_2 --> n_Cassandra_messages
-    n_Chat_Server_x_200_1 --> n_Cursor_store
-    n_Chat_Server_x_200_2 --> n_Cursor_store
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Cassandra_messages --> n_Cold_storage
-```
-
----
-
-<a id="d8"></a>
-
-## DIKKAT 8 — 10 lakh ka broadcast group
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Cursor_store["Cursor store<br/>delivered_upto / read_upto"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Cassandra_messages
-    n_Chat_Server_x_200_2 --> n_Cassandra_messages
-    n_Chat_Server_x_200_1 --> n_Cursor_store
-    n_Chat_Server_x_200_2 --> n_Cursor_store
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Cassandra_messages --> n_Cold_storage
-```
-
----
-
-<a id="d9"></a>
-
-## DIKKAT 9 — net dheema, dobara bheja, do baar dikha
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Cursor_store["Cursor store"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Idempotency_check["Idempotency check"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Idempotency_check
-    n_Chat_Server_x_200_2 --> n_Idempotency_check
-    n_Chat_Server_x_200_1 --> n_Cursor_store
-    n_Chat_Server_x_200_2 --> n_Cursor_store
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Idempotency_check --> n_Cassandra_messages
-    n_Cassandra_messages --> n_Cold_storage
-```
-
----
-
-<a id="d10"></a>
-
-## DIKKAT 10 — kram kiske time se
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Cursor_store["Cursor store"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Idempotency_check["Idempotency check"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Idempotency_check
-    n_Chat_Server_x_200_2 --> n_Idempotency_check
-    n_Chat_Server_x_200_1 --> n_Cursor_store
-    n_Chat_Server_x_200_2 --> n_Cursor_store
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Idempotency_check --> n_Cassandra_messages
-    n_Cassandra_messages --> n_Cold_storage
-```
-
----
-
-<a id="d11"></a>
-
-## DIKKAT 11 — 5 MB ka video isi raaste se
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_Blob_store_S3["Blob store (S3)"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Cursor_store["Cursor store"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Idempotency_check["Idempotency check"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_Blob_store_S3
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Idempotency_check
-    n_Chat_Server_x_200_2 --> n_Idempotency_check
-    n_Chat_Server_x_200_1 --> n_Cursor_store
-    n_Chat_Server_x_200_2 --> n_Cursor_store
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Idempotency_check --> n_Cassandra_messages
-    n_Cassandra_messages --> n_Cold_storage
-```
-
----
-
-<a id="d12"></a>
-
-## DIKKAT 12 — online / last-seen
-
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_Blob_store_S3["Blob store (S3)"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis<br/>+ presence (TTL + heartbeat)"]
-    n_Cursor_store["Cursor store"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Idempotency_check["Idempotency check"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_Blob_store_S3
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Idempotency_check
-    n_Chat_Server_x_200_2 --> n_Idempotency_check
-    n_Chat_Server_x_200_1 --> n_Cursor_store
-    n_Chat_Server_x_200_2 --> n_Cursor_store
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Idempotency_check --> n_Cassandra_messages
-    n_Cassandra_messages --> n_Cold_storage
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

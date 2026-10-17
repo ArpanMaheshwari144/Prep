@@ -63,6 +63,8 @@ flowchart TD
     n_Queue --> n_Consumer
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) CONSUMER RESTART HUA, MESSAGE GAYAB
 ```
 KAHANI:  Queue machine ki memory me thi, 500 signup message
@@ -88,6 +90,16 @@ ISKE BAAD KYA TOOTEGA:
   - Offset yaad kaun rakhta?
       -> Kafka khud, ek andar wale topic __consumer_offsets me: (group, topic, partition) -> offset.
 ```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Log["Log"]
+    n_Consumer["Consumer"]
+    n_Producer --> n_Log
+    n_Log --> n_Consumer
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) EK MACHINE ME 2 TB AUR 5,000 / SEC NAHI AAYEGA
 ```
@@ -109,6 +121,16 @@ ISKE BAAD KYA TOOTEGA:
   - Ek partition garam (ek key ki bahut khabar)?
       -> key ko tukdon me todo (userId#bucket), agar us key pe kram zaroori nahi.
 ```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Consumer["Consumer"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Consumer
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) ARPAN KE TEEN EVENT TEEN PARTITION ME (KRAM ULTA)
 ```
@@ -132,6 +154,16 @@ ISKE BAAD KYA TOOTEGA:
       -> idempotent producer (enable.idempotence): har message
          ka sequence number -> kram + duplicate dono theek.
 ```
+```mermaid
+flowchart TD
+    n_Producer["Producer<br/>key = userId"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Consumer["Consumer"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Consumer
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) EMAIL SERVICE KE 3 INSTANCE, ARPAN KO 3 EMAIL
 ```
@@ -152,6 +184,16 @@ ISKE BAAD KYA TOOTEGA:
   - Ek message 5 min ka kaam, poora partition atka?
       -> haan (aage wala atka to peeche sab atke). Dheema kaam alag topic / worker pool ko do.
 ```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Group_email["Group email"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Group_email
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) ARPAN KA SIGNUP TEENO SERVICE KO CHAHIYE
 ```
@@ -173,6 +215,20 @@ ISKE BAAD KYA TOOTEGA:
   - Naya group aaj juda, purane 7 din padhega?
       -> auto.offset.reset = earliest -> shuru se · latest -> sirf ab ke baad ka.
 ```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Group_email["Group email"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) BROKER A KI DISK GAYI, DATA GAYA
 ```
@@ -198,6 +254,22 @@ ISKE BAAD KYA TOOTEGA:
   - Peeche chal raha follower (ISR se bahar) leader ban gaya?
       -> uske paas aakhri message nahi -> data gaya. Isliye sirf ISR wala hi leader.
 ```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) KAAM HO GAYA PAR COMMIT SE PEHLE CRASH (+ OUTBOX)
 ```
@@ -237,6 +309,24 @@ ISKE BAAD KYA TOOTEGA:
   - Kuch na khoye, poora jawab?
       -> acks=all + kaam ke baad commit + idempotent consumer + DLQ.
 ```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Redis["Redis"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
+    n_Group_email --> n_Redis
+```
+
+<a id="d8"></a>
 
 #### [8](#d8) CONSUMER MARA / PEECHE CHAL RAHA
 ```
@@ -258,6 +348,26 @@ ISKE BAAD KYA TOOTEGA:
   - Lag badhta ja raha?
       -> consumer badhao (partition tak), dheema kaam alag, lag pe alert.
 ```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
+    n_Group_email --> n_Redis
+    n_Group_email --> n_DLQ
+```
+
+<a id="d9"></a>
 
 #### [9](#d9) 7 DIN RAKHOGE TO DISK BHAREGI
 ```
@@ -275,6 +385,24 @@ ANDAR KAISE:
 ISKE BAAD KYA TOOTEGA:
   - 7 din me consumer ne padha hi nahi (band tha)?
       -> data gaya. Isliye lag pe alert + retention consumer ki sabse lambi band-hone ki der se zyada.
+```
+```mermaid
+flowchart TD
+    n_Producer["Producer"]
+    n_Brokers_A_B_C["Brokers A / B / C"]
+    n_Controller_KRaft["Controller (KRaft)"]
+    n_Group_email["Group email"]
+    n_Redis["Redis"]
+    n_DLQ["DLQ"]
+    n_Group_analytics["Group analytics"]
+    n_Group_dashboard["Group dashboard"]
+    n_Producer --> n_Brokers_A_B_C
+    n_Brokers_A_B_C --> n_Controller_KRaft
+    n_Brokers_A_B_C --> n_Group_email
+    n_Brokers_A_B_C --> n_Group_analytics
+    n_Brokers_A_B_C --> n_Group_dashboard
+    n_Group_email --> n_Redis
+    n_Group_email --> n_DLQ
 ```
 
 ```
@@ -319,184 +447,6 @@ flowchart TD
 
 ---
 
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
-
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — consumer restart hua, message gayab
-
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Log["Log"]
-    n_Consumer["Consumer"]
-    n_Producer --> n_Log
-    n_Log --> n_Consumer
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — ek machine me 2 TB aur 5,000 / sec nahi
-
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Consumer["Consumer"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Consumer
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — Arpan ke teen event teen partition me
-
-```mermaid
-flowchart TD
-    n_Producer["Producer<br/>key = userId"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Consumer["Consumer"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Consumer
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — email ke 3 instance, Arpan ko 3 email
-
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Group_email["Group email"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Group_email
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — signup teeno service ko chahiye
-
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Group_email["Group email"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — Broker A ki disk gayi
-
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — kaam ke baad, commit se pehle crash
-
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Redis["Redis"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-    n_Group_email --> n_Redis
-```
-
----
-
-<a id="d8"></a>
-
-## DIKKAT 8 — consumer mara / peeche chal raha
-
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Redis["Redis"]
-    n_DLQ["DLQ"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-    n_Group_email --> n_Redis
-    n_Group_email --> n_DLQ
-```
-
----
-
-<a id="d9"></a>
-
-## DIKKAT 9 — 7 din rakhoge to disk bharegi
-
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Redis["Redis"]
-    n_DLQ["DLQ"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-    n_Group_email --> n_Redis
-    n_Group_email --> n_DLQ
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

@@ -64,6 +64,8 @@ flowchart TD
     n_USER --> n_App
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) TEEN SERVER, GINTI BAT GAYI
 ```
 KAHANI:  Limit hai "ek minute me 5 login". Ab App ki 3 machine hain, LB request baant raha hai.
@@ -93,6 +95,21 @@ ISKE BAAD KYA TOOTEGA:
   - Ek user ko hamesha ek hi App pe bhejo (sticky LB)?
       -> wo App gira to ginti gayi. App badhe / ghate to bantwara badla, ginti phir bat gayi.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Redis["Redis"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) DO REQUEST EK SAATH, DONO GHUS GAYI
 ```
@@ -128,6 +145,21 @@ ISKE BAAD KYA TOOTEGA:
       -> RAM me hai, ek machine lagbhag lakh command / second
          (andaza, machine pe depend). Zyada chahiye -> SHARD.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Redis["Redis<br/>INCR / Lua (atomic)"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Redis
+    n_App_x_N_2 --> n_Redis
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) REJECT WALI REQUEST BHI ANDAR GHOOM AAYI
 ```
@@ -156,6 +188,22 @@ ISKE BAAD KYA TOOTEGA:
   - Limit sirf gateway pe, ya service ke andar bhi?
       -> gateway pe sabke liye ek moti limit, service ke andar uski apni baarik limit.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_LB["LB"]
+    n_API_Gateway["API Gateway"]
+    n_Redis["Redis"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_USER --> n_LB
+    n_LB --> n_API_Gateway
+    n_API_Gateway --> n_Redis
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) REDIS GIR GAYA
 ```
@@ -180,6 +228,24 @@ ISKE BAAD KYA TOOTEGA:
   - Fail-open ya fail-closed, kab tay karoge?
       -> PEHLE se, code me, har endpoint ke hisaab se. Redis gire tab sochne ka time nahi hota.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) EK USER TEEN REGION SE
 ```
@@ -204,6 +270,24 @@ ISKE BAAD KYA TOOTEGA:
   - Arpan ka home region hi gira?
       -> Route 53 doosre region bhejta, ginti wahan 0 se. Ek minute dheela, chalta hai.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) BAAR-BAAR MAAR RAHA, 429 SE NAHI RUKTA
 ```
@@ -230,6 +314,31 @@ ISKE BAAD KYA TOOTEGA:
   - Kafka peeche reh gaya?
       -> ban kuch minute late lagega. Tab tak rate limit to rok hi raha hai.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Kafka["Kafka"]
+    n_Pattern_Svc["Pattern Svc"]
+    n_WAF["WAF"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    n_Kafka --> n_Pattern_Svc
+    n_Pattern_Svc --> n_WAF
+    n_API_Gateway --> n_Kafka
+    n_USER --> n_Route_53
+    n_Route_53 --> n_WAF
+    n_WAF --> n_ALB
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) LIMITER SAHI, PHIR BHI SERVER GIRA
 ```
@@ -256,6 +365,31 @@ ISKE BAAD KYA TOOTEGA:
   - Request ko line (queue) me rok lo?
       -> chhota time (~2 second). User chala gaya to uska kaam karna bekaar.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway<br/>+ global cap + load shedding"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Kafka["Kafka"]
+    n_Pattern_Svc["Pattern Svc"]
+    n_WAF["WAF"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    n_Kafka --> n_Pattern_Svc
+    n_Pattern_Svc --> n_WAF
+    n_API_Gateway --> n_Kafka
+    n_USER --> n_Route_53
+    n_Route_53 --> n_WAF
+    n_WAF --> n_ALB
+```
+
+<a id="d8"></a>
 
 #### [8](#d8) ATTACK AAYA, USI WAQT LIMITER GAYAB
 ```
@@ -276,6 +410,31 @@ ISKE BAAD KYA TOOTEGA:
   - Ek user ki request alag-alag machine pe gayi?
       -> har machine pe 10 -> motamoti, exact nahi. Par attack me "kuch nahi" se bahut behtar.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway<br/>+ global cap + load shedding<br/>+ local counter fallback"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Kafka["Kafka"]
+    n_Pattern_Svc["Pattern Svc"]
+    n_WAF["WAF"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    n_Kafka --> n_Pattern_Svc
+    n_Pattern_Svc --> n_WAF
+    n_API_Gateway --> n_Kafka
+    n_USER --> n_Route_53
+    n_Route_53 --> n_WAF
+    n_WAF --> n_ALB
+```
+
+<a id="d9"></a>
 
 #### [9](#d9) IP PE GIN RAHE THE
 ```
@@ -292,6 +451,29 @@ ISKE BAAD KYA TOOTEGA:
       -> IP limit bekaar. ACCOUNT pe limit: is username pe 5 galat password -> thodi der lock / CAPTCHA.
   - API key chori ho gayi?
       -> key pe limit nuksaan seemit karti, aur key badalne / band karne ka raasta.
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway<br/>+ global cap + load shedding<br/>+ local counter fallback"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Kafka["Kafka"]
+    n_Pattern_Svc["Pattern Svc"]
+    n_WAF["WAF"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    n_Kafka --> n_Pattern_Svc
+    n_Pattern_Svc --> n_WAF
+    n_API_Gateway --> n_Kafka
+    n_USER --> n_Route_53
+    n_Route_53 --> n_WAF
+    n_WAF --> n_ALB
 ```
 
 #### ALGO: kaunsa aur kyun
@@ -355,238 +537,7 @@ flowchart TD
 ```
 
 ---
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — teen server, ginti bat gayi
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Redis["Redis"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — do request ek saath, dono ghus gayi
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Redis["Redis<br/>INCR / Lua (atomic)"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — reject wali request bhi andar ghoom aayi
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_LB["LB"]
-    n_API_Gateway["API Gateway"]
-    n_Redis["Redis"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_USER --> n_LB
-    n_LB --> n_API_Gateway
-    n_API_Gateway --> n_Redis
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — Redis gir gaya
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
-    n_API_Gateway["API Gateway"]
-    n_Redis_Cluster["Redis Cluster"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_USER --> n_Route_53
-    n_Route_53 --> n_ALB
-    n_ALB --> n_API_Gateway
-    n_API_Gateway --> n_Redis_Cluster
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — ek user teen region se
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
-    n_API_Gateway["API Gateway"]
-    n_Redis_Cluster["Redis Cluster"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_USER --> n_Route_53
-    n_Route_53 --> n_ALB
-    n_ALB --> n_API_Gateway
-    n_API_Gateway --> n_Redis_Cluster
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — baar-baar maar raha, 429 se nahi rukta
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
-    n_API_Gateway["API Gateway"]
-    n_Redis_Cluster["Redis Cluster"]
-    n_Kafka["Kafka"]
-    n_Pattern_Svc["Pattern Svc"]
-    n_WAF["WAF"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_ALB --> n_API_Gateway
-    n_API_Gateway --> n_Redis_Cluster
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
-    n_Kafka --> n_Pattern_Svc
-    n_Pattern_Svc --> n_WAF
-    n_API_Gateway --> n_Kafka
-    n_USER --> n_Route_53
-    n_Route_53 --> n_WAF
-    n_WAF --> n_ALB
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — limiter sahi, phir bhi server gira
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
-    n_API_Gateway["API Gateway<br/>+ global cap + load shedding"]
-    n_Redis_Cluster["Redis Cluster"]
-    n_Kafka["Kafka"]
-    n_Pattern_Svc["Pattern Svc"]
-    n_WAF["WAF"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_ALB --> n_API_Gateway
-    n_API_Gateway --> n_Redis_Cluster
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
-    n_Kafka --> n_Pattern_Svc
-    n_Pattern_Svc --> n_WAF
-    n_API_Gateway --> n_Kafka
-    n_USER --> n_Route_53
-    n_Route_53 --> n_WAF
-    n_WAF --> n_ALB
-```
-
----
-
-<a id="d8"></a>
-
-## DIKKAT 8 — attack aaya, usi waqt limiter gayab
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
-    n_API_Gateway["API Gateway<br/>+ global cap + load shedding<br/>+ local counter fallback"]
-    n_Redis_Cluster["Redis Cluster"]
-    n_Kafka["Kafka"]
-    n_Pattern_Svc["Pattern Svc"]
-    n_WAF["WAF"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_ALB --> n_API_Gateway
-    n_API_Gateway --> n_Redis_Cluster
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
-    n_Kafka --> n_Pattern_Svc
-    n_Pattern_Svc --> n_WAF
-    n_API_Gateway --> n_Kafka
-    n_USER --> n_Route_53
-    n_Route_53 --> n_WAF
-    n_WAF --> n_ALB
-```
-
----
-
-<a id="d9"></a>
-
-## DIKKAT 9 — IP pe gin rahe the
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
-    n_API_Gateway["API Gateway<br/>+ global cap + load shedding<br/>+ local counter fallback"]
-    n_Redis_Cluster["Redis Cluster"]
-    n_Kafka["Kafka"]
-    n_Pattern_Svc["Pattern Svc"]
-    n_WAF["WAF"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_ALB --> n_API_Gateway
-    n_API_Gateway --> n_Redis_Cluster
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
-    n_Kafka --> n_Pattern_Svc
-    n_Pattern_Svc --> n_WAF
-    n_API_Gateway --> n_Kafka
-    n_USER --> n_Route_53
-    n_Route_53 --> n_WAF
-    n_WAF --> n_ALB
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

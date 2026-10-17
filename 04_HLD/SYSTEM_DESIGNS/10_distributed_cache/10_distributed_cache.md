@@ -90,6 +90,8 @@ ISKE BAAD KYA TOOTEGA:
       -> HIT RATIO sabse pehle (achanak gira = kuch toota) + p99 + kitni key nikaali ja rahi (evictions).
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) RAM BHAR GAYI, KYA HATAYEIN
 ```
 KAHANI:  Cache machine ki 64 GB RAM bhar gayi. Nayi key daalni hai, to koi purani nikaalni padegi. Kaunsi?
@@ -115,6 +117,16 @@ ISKE BAAD KYA TOOTEGA:
   - RAM bhari aur hatana band (noeviction)?
       -> naya likhna ERROR dega. Cache ke liye allkeys-lru rakho.
 ```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache["Cache<br/>LRU + TTL"]
+    n_App --> n_DB
+    n_App --> n_Cache
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) 1 TB EK MACHINE ME NAHI: "user:42" KIS MACHINE PE?
 ```
@@ -160,6 +172,22 @@ ISKE BAAD KYA TOOTEGA:
   - Range se baanto (A-M, N-Z)?
       -> ek range garam ho jaati (sab "a" wale), ek machine pe bojh. Isliye hash.
 ```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A["Node A"]
+    n_Node_B["Node B"]
+    n_Node_C["Node C"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A
+    n_Cache_client --> n_Node_B
+    n_Cache_client --> n_Node_C
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) MACHINE B MARI, USKI KEY KA BOJH DB PE
 ```
@@ -187,6 +215,22 @@ ISKE BAAD KYA TOOTEGA:
   - Copy se padh sakte?
       -> haan, padhai bat jaati. Par thoda purana mil sakta (lag). Cache me chalta.
 ```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) DB ME NAYA NAAM, CACHE ME PURANA (STALE)
 ```
@@ -211,6 +255,22 @@ ISKE BAAD KYA TOOTEGA:
   - TTL kitna?
       -> jitna purana business jhel sake. Profile: minute. Price / stock: second, ya turant delete.
 ```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) GARAM KEY KHATAM, 1000 LOG EK SAATH DB PE (STAMPEDE)
 ```
@@ -238,6 +298,22 @@ ISKE BAAD KYA TOOTEGA:
   - Key DB me HAI hi nahi, koi baar-baar wahi maange?
       -> "nahi hai" ko bhi chhoti umar ke saath cache me rakho, DB tak jaane hi mat do.
 ```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) EK KEY ITNI POPULAR, USKI MACHINE AKELI MAR RAHI (HOT KEY)
 ```
@@ -263,6 +339,20 @@ ISKE BAAD KYA TOOTEGA:
   - Stampede aur hot key me farak?
       -> stampede = key KHAALI, sab DB bhaage (lock). Hot key =
          key BHARI, ek machine padhai se mar rahi (L1 / copy).
+```
+```mermaid
+flowchart TD
+    n_App_L1_local_cache["App + L1 local cache"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App_L1_local_cache --> n_DB
+    n_App_L1_local_cache --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
 ```
 
 ```
@@ -302,131 +392,6 @@ flowchart TD
 
 ---
 
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
-
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — RAM bhar gayi, kya hatayein
-
-```mermaid
-flowchart TD
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache["Cache<br/>LRU + TTL"]
-    n_App --> n_DB
-    n_App --> n_Cache
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — 1 TB ek machine me nahi: key kis machine pe
-
-```mermaid
-flowchart TD
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A["Node A"]
-    n_Node_B["Node B"]
-    n_Node_C["Node C"]
-    n_App --> n_DB
-    n_App --> n_Cache_client
-    n_Cache_client --> n_Node_A
-    n_Cache_client --> n_Node_B
-    n_Cache_client --> n_Node_C
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — machine mari, bojh DB pe
-
-```mermaid
-flowchart TD
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App --> n_DB
-    n_App --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — DB me naya, cache me purana
-
-```mermaid
-flowchart TD
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App --> n_DB
-    n_App --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — garam key khatam, 1000 request DB pe
-
-```mermaid
-flowchart TD
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App --> n_DB
-    n_App --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — ek key itni popular, machine akeli mar rahi
-
-```mermaid
-flowchart TD
-    n_App_L1_local_cache["App + L1 local cache"]
-    n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App_L1_local_cache --> n_DB
-    n_App_L1_local_cache --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```

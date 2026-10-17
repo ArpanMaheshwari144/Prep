@@ -76,6 +76,8 @@ flowchart TD
     n_App --> n_DB
 ```
 
+<a id="d1"></a>
+
 #### [1](#d1) HAR BAAR APP KHOLNE PE 200 LOGON KA DATA JODNA
 ```
 KAHANI:  Arpan 200 logon ko follow karta hai. Usne app khola -> App ko 200 logon ke tweet laane pade,
@@ -103,6 +105,21 @@ ISKE BAAD KYA TOOTEGA:
   - Arpan ne khud tweet kiya, apni feed me nahi dikha?
       -> fanout peeche chal raha hai. Apna tweet seedha apni feed me jod do. Ye bug nahi, aisa hi banate hain.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Fanout["Fanout"]
+    n_Redis_inbox["Redis inbox"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Fanout
+    n_App --> n_DB
+    n_Fanout --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+```
+
+<a id="d2"></a>
 
 #### [2](#d2) TWEET BUTTON 3 SEC GHOOMTA RAHA
 ```
@@ -127,6 +144,23 @@ ISKE BAAD KYA TOOTEGA:
   - Kafka kyun, App me peeche ek thread chala do?
       -> App crash = thread ka kaam gaya. Kafka disk pe hai, dobara padh sakte hain.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_DB
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+```
+
+<a id="d3"></a>
 
 #### [3](#d3) BIEBER = 10 CRORE INBOX (CELEBRITY)
 ```
@@ -152,6 +186,23 @@ ISKE BAAD KYA TOOTEGA:
   - Like ki ginti jaisa garam LIKHNA (ek tweet pe laakhon like)?
       -> ginti ko 10 tukdon me baant do (tweet123#0 se #9), har like kisi ek tukde me, padhte waqt sab jodo.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App<br/>push + pull merge"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers<br/>celeb SKIP"]
+    n_Redis_inbox["Redis inbox"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_DB
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+```
+
+<a id="d4"></a>
 
 #### [4](#d4) VIRAT KA TWEET CRORE LOG EK SAATH PADH RAHE
 ```
@@ -179,6 +230,25 @@ ISKE BAAD KYA TOOTEGA:
       -> fanout ka toofan Kafka pakad leta hai. Pata ho kab
          aayega -> pehle se machine badhao aur cache garam karo.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_Hot_tweet_cache
+    n_App --> n_DB
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+```
+
+<a id="d5"></a>
 
 #### [5](#d5) 50 CRORE INBOX, MEMORY PHATEGI
 ```
@@ -201,6 +271,25 @@ ISKE BAAD KYA TOOTEGA:
          Phir bhi gira -> kuch request mana karo, har inbox
          ko ek hi request banaye, dheere-dheere wapas bharo.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_Hot_tweet_cache
+    n_App --> n_DB
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+```
+
+<a id="d6"></a>
 
 #### [6](#d6) SAARE TWEET EK DB ME NAHI
 ```
@@ -232,6 +321,25 @@ ISKE BAAD KYA TOOTEGA:
   - Cassandra me padhne / likhne ki alag copy hoti hai?
       -> nahi, koi main copy nahi. Har copy padh bhi sakti, likh bhi. Bolo: "3 copy, 2 me likho, 2 se padho".
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_Hot_tweet_cache
+    n_App --> n_Cassandra
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+```
+
+<a id="d7"></a>
 
 #### [7](#d7) INDIA USER, US SE PADH RAHA (200 MS)
 ```
@@ -256,6 +364,25 @@ ISKE BAAD KYA TOOTEGA:
       -> tweet aksar naya hi banta hai, badalta kam. Takraav
          ho to jiska time baad ka, wo jeeta (last write wins).
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_Hot_tweet_cache
+    n_App --> n_Cassandra
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+```
+
+<a id="d8"></a>
 
 #### [8](#d8) EK APP BOX: BOJH BHI, SPOF BHI
 ```
@@ -275,6 +402,35 @@ ISKE BAAD KYA TOOTEGA:
   - Nayi machine judi, pehli request dheemi?
       -> machine me apna data nahi (sab Redis me), to farak kam. ALB nayi machine ko dheere-dheere traffic de.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_App_x_N_1
+    n_ALB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Kafka
+    n_App_x_N_2 --> n_Kafka
+    n_App_x_N_1 --> n_Hot_tweet_cache
+    n_App_x_N_2 --> n_Hot_tweet_cache
+    n_App_x_N_1 --> n_Cassandra
+    n_App_x_N_2 --> n_Cassandra
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App_x_N_1 --> n_Redis_inbox
+    n_App_x_N_2 --> n_Redis_inbox
+```
+
+<a id="d9"></a>
 
 #### [9](#d9) PADHNA AUR LIKHNA EK HI BOX ME
 ```
@@ -298,6 +454,37 @@ ISKE BAAD KYA TOOTEGA:
       -> seedhi follow list ke liye ek table / Cassandra kaafi.
          Graph DB tab jab "dost ke dost" jaise sawaal hon.
 ```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_Tweet_Svc["Tweet Svc"]
+    n_Cassandra["Cassandra"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Timeline_Svc["Timeline Svc"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_User_Svc["User Svc"]
+    n_Graph_DB["Graph DB"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_Tweet_Svc
+    n_ALB --> n_Timeline_Svc
+    n_ALB --> n_User_Svc
+    n_Tweet_Svc --> n_Cassandra
+    n_Tweet_Svc --> n_Kafka
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_Timeline_Svc --> n_Redis_inbox
+    n_Timeline_Svc --> n_Hot_tweet_cache
+    n_Timeline_Svc --> n_Cassandra
+    n_User_Svc --> n_Graph_DB
+    n_Fanout_workers --> n_Graph_DB
+```
+
+<a id="d10"></a>
 
 #### [10](#d10) PHOTO / VIDEO BHAARI
 ```
@@ -319,6 +506,39 @@ ISKE BAAD KYA TOOTEGA:
          version daalo (abc_v2.jpg) -> naya link = nayi file.
   - Private photo CDN se sabko dikh jaayegi?
       -> link pe hastakshar aur expiry (signed URL): sirf jisko link mila, thodi der ke liye.
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_CDN["CDN"]
+    n_ALB["ALB"]
+    n_Tweet_Svc["Tweet Svc"]
+    n_Cassandra["Cassandra"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Timeline_Svc["Timeline Svc"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_User_Svc["User Svc"]
+    n_Graph_DB["Graph DB"]
+    n_S3["S3 media"]
+    n_USER --> n_Route_53
+    n_ALB --> n_Tweet_Svc
+    n_ALB --> n_Timeline_Svc
+    n_ALB --> n_User_Svc
+    n_Tweet_Svc --> n_Cassandra
+    n_Tweet_Svc --> n_Kafka
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_Timeline_Svc --> n_Redis_inbox
+    n_Timeline_Svc --> n_Hot_tweet_cache
+    n_Timeline_Svc --> n_Cassandra
+    n_User_Svc --> n_Graph_DB
+    n_Fanout_workers --> n_Graph_DB
+    n_Route_53 --> n_ALB
+    n_USER --> n_CDN
+    n_CDN --> n_S3
 ```
 
 #### PUSH YA PULL? (end me pakka poochega)
@@ -386,281 +606,7 @@ flowchart TD
 ```
 
 ---
-## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
-
----
-
-<a id="d1"></a>
-
-## DIKKAT 1 — har baar feed kholne pe 200 logon ka data jodna
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Fanout["Fanout"]
-    n_Redis_inbox["Redis inbox"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Fanout
-    n_App --> n_DB
-    n_Fanout --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-```
-
----
-
-<a id="d2"></a>
-
-## DIKKAT 2 — tweet button 3 sec ghoomta raha
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_DB
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-```
-
----
-
-<a id="d3"></a>
-
-## DIKKAT 3 — Bieber = 10 crore inbox
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App<br/>push + pull merge"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers<br/>celeb SKIP"]
-    n_Redis_inbox["Redis inbox"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_DB
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-```
-
----
-
-<a id="d4"></a>
-
-## DIKKAT 4 — Virat ka tweet crore log ek saath padh rahe
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_Hot_tweet_cache
-    n_App --> n_DB
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-```
-
----
-
-<a id="d5"></a>
-
-## DIKKAT 5 — 50 crore inbox, memory phategi
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_Hot_tweet_cache
-    n_App --> n_DB
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-```
-
----
-
-<a id="d6"></a>
-
-## DIKKAT 6 — saare tweet ek DB me nahi
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_Cassandra["Cassandra"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_Hot_tweet_cache
-    n_App --> n_Cassandra
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-```
-
----
-
-<a id="d7"></a>
-
-## DIKKAT 7 — India user, US se padh raha
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_Cassandra["Cassandra"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_Hot_tweet_cache
-    n_App --> n_Cassandra
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-```
-
----
-
-<a id="d8"></a>
-
-## DIKKAT 8 — ek App box: bojh bhi, SPOF bhi
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_Cassandra["Cassandra"]
-    n_USER --> n_Route_53
-    n_Route_53 --> n_ALB
-    n_ALB --> n_App_x_N_1
-    n_ALB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Hot_tweet_cache
-    n_App_x_N_2 --> n_Hot_tweet_cache
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App_x_N_1 --> n_Redis_inbox
-    n_App_x_N_2 --> n_Redis_inbox
-```
-
----
-
-<a id="d9"></a>
-
-## DIKKAT 9 — padhna aur likhna ek hi box me
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
-    n_Tweet_Svc["Tweet Svc"]
-    n_Cassandra["Cassandra"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Timeline_Svc["Timeline Svc"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_User_Svc["User Svc"]
-    n_Graph_DB["Graph DB"]
-    n_USER --> n_Route_53
-    n_Route_53 --> n_ALB
-    n_ALB --> n_Tweet_Svc
-    n_ALB --> n_Timeline_Svc
-    n_ALB --> n_User_Svc
-    n_Tweet_Svc --> n_Cassandra
-    n_Tweet_Svc --> n_Kafka
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_Timeline_Svc --> n_Redis_inbox
-    n_Timeline_Svc --> n_Hot_tweet_cache
-    n_Timeline_Svc --> n_Cassandra
-    n_User_Svc --> n_Graph_DB
-    n_Fanout_workers --> n_Graph_DB
-```
-
----
-
-<a id="d10"></a>
-
-## DIKKAT 10 — photo / video bhaari
-
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_CDN["CDN"]
-    n_ALB["ALB"]
-    n_Tweet_Svc["Tweet Svc"]
-    n_Cassandra["Cassandra"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Timeline_Svc["Timeline Svc"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_User_Svc["User Svc"]
-    n_Graph_DB["Graph DB"]
-    n_S3["S3 media"]
-    n_USER --> n_Route_53
-    n_ALB --> n_Tweet_Svc
-    n_ALB --> n_Timeline_Svc
-    n_ALB --> n_User_Svc
-    n_Tweet_Svc --> n_Cassandra
-    n_Tweet_Svc --> n_Kafka
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_Timeline_Svc --> n_Redis_inbox
-    n_Timeline_Svc --> n_Hot_tweet_cache
-    n_Timeline_Svc --> n_Cassandra
-    n_User_Svc --> n_Graph_DB
-    n_Fanout_workers --> n_Graph_DB
-    n_Route_53 --> n_ALB
-    n_USER --> n_CDN
-    n_CDN --> n_S3
-```
-
----
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```
