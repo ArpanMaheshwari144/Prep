@@ -5,6 +5,29 @@
 
 ---
 
+## KAHANI (ek din, main = order team ka engineer, aaj SALE; har dikkat se design me ek dabba judta)
+
+```
+    KYA HUA                                   ILAAJ                                 DABBA JUDA
+1   subah queue restart, 500 signup gayab  -> LOG disk pe + OFFSET                  Log
+2   10 baje sale, 5,000 / sec, worker 500  -> PARTITION (tukde, alag machine)       Brokers A / B / C
+3   Ravi ne naam do baar badla, ulta laga  -> KEY = userId (ek partition, kram)     Producer (key)
+4   email ki 3 machine, Ravi ko 3 email    -> CONSUMER GROUP (ek team)              Group email
+5   analytics + dashboard ko bhi chahiye   -> HAR SERVICE KA APNA GROUP             Group analytics, dashboard
+6   dopahar Broker A ki disk mari          -> LEADER + ISR, acks=all                Controller (KRaft)
+7   email bheja, commit se pehle crash     -> PEHLE KAAM PHIR COMMIT + IDEMPOTENT   Redis (eventId)
+8   order DB me bana, Kafka se pehle gira  -> OUTBOX + relay                        Producer + Outbox
+9   shaam ko C2 mara, lag badhta gaya      -> REBALANCE + LAG alert + DLQ           DLQ
+10  raat ko broker ki disk bhar rahi       -> RETENTION 7 din + COMPACTION          Brokers (retention)
+
+POORA DESIGN (upar ke dabbe kram se):
+   Producer (key + acks, outbox) -> key se partition -> LEADER broker (offset) -> ISR copy
+   -> har service ka apna group, apne offset se -> kaam -> commit · Redis = eventId dedup · DLQ
+   Controller (KRaft) = naksha · khabar 7 din padi (replay)
+```
+
+---
+
 ## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![Can Kafka Lose Messages?](https://assets.bytebytego.com/diagrams/0130-can-kafka-lose-messages.png)
@@ -48,358 +71,361 @@ NUMBERS (andaaza):
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-> Har card: DIKKAT 1 (kya toota) -> HAL (kya kiya) -> diagram -> DIKKAT 2, 3 ... (interviewer ke
-> agle sawaal) har ek ke neeche uska HAL. Revise: sirf baayein column padho.
+> Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
+> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 Ek machine, uski memory me ek queue. Producer daale, consumer uthaye.
 ```
 ```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Queue["Queue"]
-    n_Consumer["Consumer"]
-    n_Producer --> n_Queue
-    n_Queue --> n_Consumer
+flowchart LR
+    n_P["Producer"]
+    n_Q["Queue"]
+    n_C["Consumer"]
+    n_P --> n_Q
+    n_Q --> n_C
 ```
 
-#### 1 QUEUE MACHINE RESTART HUI, 500 MESSAGE GAYAB
-```
-DIKKAT 1   Queue machine ki memory me 500 signup message pade the. Machine restart -> memory saaf -> 500
-           gayab. Email service ko pata hi nahi chala ki 500 log aaye the.
-HAL        Message memory me nahi, DISK pe ek register (log) me, sirf neeche jodte:
-             P0: [0][1][2][3][4][5] -> naya hamesha AAKHIR me
-           Har message ka number = OFFSET. Padhne se message mit-ta nahi.
-           Email service ne 2 tak padha (offset = 2) -> restart -> "3 se do" -> kuch nahi khoya.
-           Chahe to peeche jaake dobara bhi padh sakti.
-```
+#### 1 Subah queue machine restart hui, 500 signup gayab
 ```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Log["Log"]
-    n_Consumer["Consumer"]
-    n_Producer --> n_Log
-    n_Log --> n_Consumer
+flowchart LR
+    n_P["Producer"]
+    n_L["Log<br/>restart, 500 message gayab<br/>-> disk pe log + offset"]
+    n_C["Consumer"]
+    n_P --> n_L
+    n_L --> n_C
+    style n_L fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Disk pe likhna dheema nahi?
-HAL        Sirf aakhir me jodna (sequential) = disk ka sabse tez kaam. Padhna OS ke page cache se, RAM jaisa.
+DIKKAT     Subah, sale se pehle signup khule. Queue machine ki memory me 500 signup message, machine restart
+           -> memory saaf -> 500 gayab. Email service ko pata hi nahi chala ki 500 log aaye.
+HAL        LOG + OFFSET: message DISK pe register (log) me, sirf aakhir me jodo: P0: [0][1][2][3][4][5].
+           Har message ka number = OFFSET, padhne se mit-ta nahi. Email ne 2 tak padha -> restart -> "3 se".
+NAHI       DB me queue: insert = index + lock = idhar-udhar likhna; queue me WHERE nahi, bas "X ke baad do".
+```
+```
+AAGE POOCHEGA:
+  NIYAM: message mit-ta nahi; har padhne wala sirf apna number (offset) yaad rakhta.
+  "Disk pe likhna dheema nahi?"    -> sirf aakhir me jodna (sequential) = disk ka sabse tez kaam;
+                                      padhna OS ke page cache se, RAM jaisa.
+  "Offset yaad kaun rakhta?"       -> Kafka khud, __consumer_offsets me: (group, topic, partition) -> offset
+  "Offset = byte?"                 -> nahi, kram number; chhoti .index file batati "offset 3 file me kahan".
+  "Peeche jaake dobara padhe?"     -> haan, padh sakti (replay).
+```
 
-DIKKAT 3   DB me queue kyun nahi bana lete?
-HAL        DB insert = index + lock = idhar-udhar likhna. Queue me WHERE hota hi nahi, bas "offset X ke
-           baad do".
-
-DIKKAT 4   Offset yaad kaun rakhta?
-HAL        Kafka khud, ek andar wale topic __consumer_offsets me: (group, topic, partition) -> offset.
-           Offset = kram number (byte nahi). Ek chhoti .index file batati "offset 3 file me kis jagah".
-```
-
-#### 2 SALE PE 5,000 / SEC, EK WORKER 500 HI BHEJ PAATA
-```
-DIKKAT 1   Sale ke din "order-events" topic pe 5,000 khabar / second. SMS worker ek second me ~500 hi
-           bhej paata (har SMS ek API call). Topic ek hi line ho to use ek hi worker kram se padhta
-           -> peeche ghanton ki line (lag).
-HAL        Topic ko tukdon (PARTITION) me todo, har tukda alag machine pe:
-             topic "order-events": P0 -> Broker A · P1 -> Broker B · P2 -> Broker C
-           Har tukda alag worker padhe -> 10 tukde = 10 worker = ~5,000 / sec. Likhai aur jagah bhi
-           bat gayi. Aur badhe -> aur partition.
-```
+#### 2 10 baje sale shuru, 5,000 / sec aaye, ek worker 500 hi bhej paata
 ```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Consumer["Consumer"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Consumer
+flowchart LR
+    n_P["Producer"]
+    n_B["Brokers A / B / C<br/>5,000 / sec, worker 500<br/>-> partition, tukde"]
+    n_C["Consumer"]
+    n_P --> n_B
+    n_B --> n_C
+    style n_B fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Kitne partition rakhoge?
-HAL        Jitne consumer ek saath chahiye: abhi 3-6 kaafi. Shuru me hi 2-4 guna zyada rakho (~12),
-           kyunki baad me badhaye to key ka partition badlega.
+DIKKAT     10 baje sale: "order-events" pe 5,000 khabar / sec. SMS worker ~500 / sec hi bhej paata (har SMS ek
+           API call). Topic ek line -> ek hi worker kram se padhe -> peeche ghanton ki line (lag).
+HAL        PARTITION: topic ke tukde, har tukda alag machine (P0 -> Broker A · P1 -> B · P2 -> C), har tukda
+           alag worker -> 10 tukde = 10 worker = ~5,000 / sec. Likhai aur jagah bhi bat gayi.
+NAHI       copy (replica) badhao: copy sirf bachav ke liye; likhna partition se scale hota.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: partition = kitne ek saath padh sakein; aur badhe -> aur partition.
+  "Kitne partition?"               -> jitne consumer ek saath chahiye, abhi 3-6; shuru me 2-4 guna (~12),
+                                      kyunki baad me badhaye to key ka partition badlega.
+  "Ek partition garam?"            -> key tukdon me todo (userId#bucket), agar us key pe kram zaroori nahi.
+```
 
-DIKKAT 3   Copy (replica) se likhna scale hoga?
-HAL        Nahi. Copy sirf bachav ke liye. Likhna partition se scale hota.
-
-DIKKAT 4   Ek partition garam (ek key ki bahut khabar)?
-HAL        Key ko tukdon me todo (userId#bucket), agar us key pe kram zaroori nahi.
-```
-
-#### 3 ARPAN KE DO BADLAAV DO PARTITION ME (KRAM ULTA)
-```
-DIKKAT 1   Arpan ne naam "Arpan M" kiya, 1 min baad "Arpan Maheshwari". Pehla event P0 me, doosra P1 me.
-           P0 ka consumer 10 min peeche (lag), P1 wala time pe -> pehle "Arpan Maheshwari" laga, phir
-           "Arpan M" -> galat naam reh gaya.
-HAL        Kafka kram sirf EK partition ke andar deta. Isliye key = Arpan ki userId:
-             partition = hash(userId) % 3 -> hamesha P2 -> dono badlaav P2 me, kram se.
-           Poore topic ka kram = sirf ek partition = speed khatam. Isliye kram sirf key ke andar.
-```
+#### 3 Ravi ne naam do baar badla, purana naam reh gaya
 ```mermaid
-flowchart TD
-    n_Producer["Producer<br/>key = userId"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Consumer["Consumer"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Consumer
+flowchart LR
+    n_P["Producer<br/>do badlaav do partition me<br/>-> key = userId"]
+    n_B["Brokers A / B / C"]
+    n_C["Consumer"]
+    n_P --> n_B
+    n_B --> n_C
+    style n_P fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Partition 3 se 6 kiye to Arpan ka partition badla?
-HAL        Haan, % 3 se % 6 hua -> naye event naye partition me, thodi der kram toota. Isliye shuru me hi
-           zyada partition.
+DIKKAT     Ravi ne naam "Ravi K" kiya, 1 min baad "Ravi Kumar". Pehla P0 me, doosra P1 me. P0 ka consumer
+           10 min peeche (lag) -> pehle "Ravi Kumar" laga, phir "Ravi K" -> galat naam reh gaya.
+HAL        KEY = userId: Kafka kram sirf EK partition ke andar deta. hash(userId) % 3 -> hamesha P2
+           -> dono badlaav P2 me, kram se.
+NAHI       poore topic ka kram: matlab sirf ek partition = speed khatam. Kram sirf key ke andar.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: jiska kram chahiye wahi key; same key = same partition.
+  "Partition 3 se 6 kiye?"         -> % 3 se % 6 -> naye event naye partition, thodi der kram toota;
+                                      isliye shuru me hi zyada partition.
+  "Producer retry kram ulta kare?" -> (1 fail, 2 gaya, phir 1) idempotent producer (enable.idempotence):
+                                      har message ka sequence number -> kram + duplicate dono theek.
+```
 
-DIKKAT 3   Producer ka dobara bhejna kram ulta kare (1 fail, 2 gaya, phir 1)?
-HAL        Idempotent producer (enable.idempotence): har message ka sequence number -> kram + duplicate
-           dono theek.
-```
-
-#### 4 EMAIL SERVICE KE 3 INSTANCE, ARPAN KO 3 EMAIL
-```
-DIKKAT 1   Email service ki 3 machine (C1, C2, C3). Config me group.id = machine ka naam daal diya
-           -> teeno alag team ban gayi, teeno poora topic padh rahi. Arpan ka signup teeno ne padha
-           -> Arpan ko 3 welcome email.
-HAL        Teeno ek CONSUMER GROUP (team) me. Team ke andar har partition sirf EK machine padhti:
-             P0 -> C1 · P1 -> C2 · P2 -> C3. Arpan ka event P2 me -> sirf C3 -> ek email.
-```
+#### 4 Email service ki 3 machine, Ravi ko 3 welcome email
 ```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Group_email["Group email"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Group_email
+flowchart LR
+    n_P["Producer (key = userId)"]
+    n_B["Brokers A / B / C"]
+    n_GE["Group email<br/>3 machine, 3 email<br/>-> consumer group, ek team"]
+    n_P --> n_B
+    n_B --> n_GE
+    style n_GE fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Kaam zyada, consumer badhaane hain?
-HAL        Partition bhi badhao. 3 partition + 5 consumer = 2 khaali baithe (consumer > partition bekaar).
+DIKKAT     Email service ki 3 machine (C1, C2, C3). Config me group.id = machine ka naam -> teeno alag team,
+           teeno poora topic padh rahi. Ravi ka signup teeno ne padha -> Ravi ko 3 welcome email.
+HAL        CONSUMER GROUP: teeno EK team. Team ke andar har partition sirf EK machine padhti:
+           P0 -> C1 · P1 -> C2 · P2 -> C3. Ravi ka event P2 me -> sirf C3 -> ek email.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: ek team ke andar ek partition = ek machine.
+  "Consumer badhaane hain?"        -> partition bhi badhao; 3 partition + 5 consumer = 2 khaali baithe.
+  "Ek message 5 min ka kaam?"      -> poora partition atka (aage wala atka to peeche sab); dheema kaam alag
+                                      topic / worker pool ko do.
+  "RabbitMQ / SQS me?"             -> standard me kai consumer ek line se -> kram ki guarantee nahi;
+                                      SQS FIFO ya ek hi consumer ho to kram, par speed kam.
+```
 
-DIKKAT 3   Ek message 5 min ka kaam, poora partition atka?
-HAL        Haan (aage wala atka to peeche sab atke). Dheema kaam alag topic / worker pool ko do.
-
-DIKKAT 4   RabbitMQ / SQS me ye kaise?
-HAL        Standard me kai consumer ek line se lete -> kram ki guarantee nahi. SQS FIFO ya ek hi consumer
-           ho to kram milta, par tab speed kam.
-```
-
-#### 5 ARPAN KA SIGNUP TEENO SERVICE KO CHAHIYE
-```
-DIKKAT 1   Arpan ka signup event email service ko bhi chahiye, analytics ko bhi, dashboard ko bhi.
-           Ek group lagaya to sirf ek ko milega.
-HAL        Topic ek, par har service ki APNI team (group): email group, analytics group, dashboard group.
-           Team ke andar kaam bat-ta, alag team = har team ko poori khabar.
-           Har group ka apna offset: analytics 1 ghanta peeche hai to email ko koi farak nahi.
-```
+#### 5 Ravi ka signup analytics aur dashboard ko bhi chahiye
 ```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Group_email["Group email"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
+flowchart LR
+    n_P["Producer (key = userId)"]
+    n_B["Brokers A / B / C"]
+    n_GE["Group email"]
+    n_GA["Group analytics<br/>teeno service ko chahiye<br/>-> har service ka apna group"]
+    n_GD["Group dashboard"]
+    n_P --> n_B
+    n_B --> n_GE
+    n_B --> n_GA
+    n_B --> n_GD
+    style n_GA fill:#f9a825,color:#000
+    style n_GD fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Har service ka alag topic bana do?
-HAL        NAHI. Producer ko ek event teen baar bhejna padega -> "ek message kai service" hi toota.
-           Ye MQ ka dil hai.
+DIKKAT     Ravi ka signup email ko bhi chahiye, analytics ko bhi, dashboard ko bhi. Ek group = sirf ek ko.
+HAL        HAR SERVICE KA APNA GROUP: topic ek; email, analytics, dashboard group alag. Team ke andar kaam
+           bat-ta, alag team = poori khabar. Har group ka apna offset (analytics peeche, email pe asar nahi).
+NAHI       har service ka alag topic: producer ek event teen baar bheje -> "ek message kai service" hi toota.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: group ke andar baanto, alag group = sabko; ye MQ ka dil hai.
+  "Naya group aaj juda, 7 din?"    -> auto.offset.reset = earliest -> shuru se · latest -> sirf ab ke baad ka.
+```
 
-DIKKAT 3   Naya group aaj juda, purane 7 din padhega?
-HAL        auto.offset.reset = earliest -> shuru se · latest -> sirf ab ke baad ka.
-```
-
-#### 6 BROKER A KI DISK GAYI, DATA GAYA
-```
-DIKKAT 1   Har partition ki ek hi copy thi. Broker A ki disk mar gayi -> P0 ka saara data hamesha ke liye
-           gaya.
-HAL        Har partition ka ek LEADER (likhna-padhna isi pe) + 2 copy (follower) alag machine pe.
-           Saath chal rahi copies = ISR. Leader gira -> ISR wali copy leader.
-           Producer kitna pakka chahta (acks):
-             acks=0   bhej ke bhaag gaya (kho sakta)
-             acks=1   leader ne likh liya tab "done"
-             acks=all leader + saath chal rahi saari copy (ISR) ne likh liya tab "done"
-           paisa / order = acks=all · click / log = acks=1.
-```
+#### 6 Dopahar Broker A ki disk mar gayi, data gaya
 ```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
+flowchart LR
+    n_P["Producer (key = userId)"]
+    n_B["Brokers A / B / C"]
+    n_K["Controller (KRaft)<br/>Broker A ki disk gayi<br/>-> leader + ISR, acks=all"]
+    n_GE["Group email"]
+    n_GA["Group analytics"]
+    n_GD["Group dashboard"]
+    n_P --> n_B
+    n_B --> n_K
+    n_B --> n_GE
+    n_B --> n_GA
+    n_B --> n_GD
+    style n_K fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   acks=all + min.insync.replicas=2 ka matlab?
-HAL        Leader + kam se kam 1 follower ke paas likha tab "done". Leader mara to bhi data follower pe.
+DIKKAT     Dopahar Broker A ki disk mari. Har partition ki ek hi copy thi -> P0 ka data hamesha ke liye gaya.
+HAL        LEADER + ISR: har partition ka LEADER (likhna-padhna) + 2 copy (follower) alag machine pe.
+           Saath chalti copy = ISR; leader gira -> ISR wali leader. Zaroori khabar: acks=all.
+NAHI       acks=1 sab jagah: leader ne "OK" bola, copy se pehle gira -> khabar gayi.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: "done" tabhi jab copy pe bhi likha; naya leader sirf ISR se.
+  "acks ke teen?"                  -> 0 bhej ke bhaag gaya (kho sakta) · 1 leader ne likha · all saari ISR ne.
+  "Kab kaunsa?"                    -> paisa / order = acks=all · click / log = acks=1.
+  "min.insync.replicas=2?"         -> leader + min 1 follower pe likha tab "done"; leader mara, data bacha
+  "ISR me sirf leader bacha?"      -> 2 se kam -> acks=all producer ko error (likhna band); khone se behtar.
+  "Peeche wala follower leader?"   -> uske paas aakhri message nahi -> data gaya; isliye sirf ISR wala leader.
+  "Leader kaun tay kare?"          -> Controller (KRaft): naksha pakka sahi, do leader nahi (split-brain).
+```
 
-DIKKAT 3   ISR me sirf leader bacha?
-HAL        2 se kam -> acks=all wale producer ko error (likhna band). Data khone se behtar.
-
-DIKKAT 4   Peeche chal raha follower (ISR se bahar) leader ban gaya?
-HAL        Uske paas aakhri message nahi -> data gaya. Isliye sirf ISR wala hi leader.
-```
-
-#### 7 KAAM HO GAYA PAR COMMIT SE PEHLE CRASH (+ OUTBOX)
-```
-DIKKAT 1   SMS service ne offset 5 padha (Arpan ka order).
-           A) SMS bheja -> "padh liya" (commit) se pehle CRASH -> restart pe phir 5 -> Arpan ko 2 SMS.
-           B) pehle commit -> SMS bhejne se pehle CRASH -> restart 6 se -> event 5 KHO gaya.
-HAL        Pehle KAAM, phir COMMIT (at-least-once: khoyega nahi, kabhi do baar aa sakta)
-           + consumer IDEMPOTENT: eventId Redis me hai? hai = skip.
-           DO alag key: KRAM ke liye userId (partition key) · DEDUP ke liye eventId.
-           (userId se dedup kiya to Arpan ka agla sahi event bhi skip ho jaata.)
-```
+#### 7 Email bheja, "padh liya" bolne se pehle crash
 ```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Redis["Redis"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-    n_Group_email --> n_Redis
+flowchart LR
+    n_P["Producer (key = userId)"]
+    n_B["Brokers A / B / C"]
+    n_K["Controller (KRaft)"]
+    n_GE["Group email"]
+    n_R["Redis<br/>commit se pehle crash<br/>-> kaam phir commit, eventId"]
+    n_GA["Group analytics"]
+    n_GD["Group dashboard"]
+    n_P --> n_B
+    n_B --> n_K
+    n_B --> n_GE
+    n_B --> n_GA
+    n_B --> n_GD
+    n_GE --> n_R
+    style n_R fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Exactly-once Kafka me hota hi nahi?
-HAL        Kafka transactions + idempotent producer = Kafka se Kafka tak. Bahar (SMS, DB) ke liye consumer
-           idempotency.
+DIKKAT     Email service ne offset 5 padha (Ravi ka order). Email bheja -> "padh liya" (commit) se pehle CRASH
+           -> restart pe phir 5 -> Ravi ko 2 email.
+HAL        PEHLE KAAM, PHIR COMMIT (at-least-once: khoyega nahi, kabhi do baar) + consumer IDEMPOTENT:
+           eventId Redis me hai? hai = skip.
+NAHI       pehle commit, phir kaam: email se pehle CRASH -> restart 6 se -> event 5 KHO gaya.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: khona kabhi nahi; dobara aaye to eventId se pehchano.
+  "Dedup kis key se?"              -> eventId. DO key: KRAM ke liye userId (partition) · DEDUP ke liye eventId
+                                      userId se dedup kiya to Ravi ka agla sahi event bhi skip.
+  "Exactly-once Kafka me nahi?"    -> Kafka transactions + idempotent producer = Kafka se Kafka tak;
+                                      bahar (email, DB) ke liye consumer idempotency.
+```
 
-DIKKAT 3   Order #101 DB me bana, Kafka bhejne se pehle server gira -> event gaya hi nahi. Offset bachayega?
-HAL        Nahi, offset consumer ki taraf hai. Ye producer ki taraf -> OUTBOX:
-             BEGIN · INSERT orders(101) · INSERT outbox(E-101, sent = false) · COMMIT
+#### 8 Order #101 DB me bana, Kafka bhejne se pehle server gira
+```mermaid
+flowchart LR
+    n_P["Producer + Outbox<br/>DB me bana, event nahi gaya<br/>-> outbox, relay"]
+    n_B["Brokers A / B / C"]
+    n_K["Controller (KRaft)"]
+    n_GE["Group email"]
+    n_R["Redis (eventId)"]
+    n_GA["Group analytics"]
+    n_GD["Group dashboard"]
+    n_P --> n_B
+    n_B --> n_K
+    n_B --> n_GE
+    n_B --> n_GA
+    n_B --> n_GD
+    n_GE --> n_R
+    style n_P fill:#f9a825,color:#000
+```
+```
+DIKKAT     Ravi ka order #101 DB me bana, Kafka bhejne se pehle order server gira -> event gaya hi nahi.
+HAL        OUTBOX: BEGIN · INSERT orders(101) · INSERT outbox(E-101, sent = false) · COMMIT.
            Relay (alag thread, har 1 sec) sent = false wali row Kafka bheje, ACK aaye to sent = true.
-           Crash kahan hua, teen case:
-             1 COMMIT se pehle          -> DB me kuch nahi, Arpan ko error, wo dobara karega.
-             2 COMMIT ke baad, bhejne se pehle -> sent = false -> relay uthte hi bhejta. Late, khoya nahi.
-             3 bhej diya, sent = true se pehle -> relay phir bhejta -> Kafka me 2 copy
-               -> consumer E-101 dekh ke doosri skip -> Arpan ko EK SMS.
-           Server kuch yaad nahi rakhta, DB ka sent column yaad rakhta.
-
-DIKKAT 4   Outbox table badi ho gayi?
-HAL        Sent wali rows roz saaf / partition drop.
-
-DIKKAT 5   Kuch na khoye, poora jawab?
-HAL        Outbox + acks=all + kaam ke baad commit + idempotent consumer + DLQ.
+NAHI       "offset bachayega": nahi, offset consumer ki taraf hai; ye producer ki taraf ki dikkat.
+```
+```
+AAGE POOCHEGA:
+  NIYAM: server kuch yaad nahi rakhta, DB ka sent column yaad rakhta.
+  "COMMIT se pehle crash?"         -> DB me kuch nahi, Ravi ko error, wo dobara karega.
+  "COMMIT ke baad, bhejne se pehle?" -> sent = false -> relay uthte hi bhejta. Late, khoya nahi.
+  "Bhej diya, sent = true se pehle?" -> relay phir bhejta -> Kafka me 2 copy -> consumer E-101 dekh ke doosri
+                                      skip -> Ravi ko EK email.
+  "Outbox table badi ho gayi?"     -> sent wali rows roz saaf / partition drop.
+  "Kuch na khoye, poora jawab?"    -> outbox + acks=all + kaam ke baad commit + idempotent consumer + DLQ.
 ```
 
-#### 8 CONSUMER MARA / PEECHE CHAL RAHA
+#### 9 Shaam ko C2 mar gaya, lag badhta ja raha
+```mermaid
+flowchart LR
+    n_P["Producer (key + outbox)"]
+    n_B["Brokers A / B / C"]
+    n_K["Controller (KRaft)"]
+    n_GE["Group email"]
+    n_R["Redis (eventId)"]
+    n_DLQ["DLQ<br/>C2 mara, lag badha<br/>-> rebalance, lag alert, DLQ"]
+    n_GA["Group analytics"]
+    n_GD["Group dashboard"]
+    n_P --> n_B
+    n_B --> n_K
+    n_B --> n_GE
+    n_B --> n_GA
+    n_B --> n_GD
+    n_GE --> n_R
+    n_GE --> n_DLQ
+    style n_DLQ fill:#f9a825,color:#000
 ```
-DIKKAT 1   C2 mar gaya -> P1 ko koi padh hi nahi raha, khabar jama ho rahi.
-           Ya consumer dheema -> peeche-peeche (lag) badhta ja raha.
-HAL        REBALANCE: team ki ek machine mari -> uske partition baaki me bat jaate:
-             pehle C1->P0, C2->P1, C3->P2 · C2 mara -> C1->P0,P1 · C3->P2
+```
+DIKKAT     Shaam ko C2 mar gaya -> P1 ko koi padh hi nahi raha, khabar jama ho rahi. Ya consumer dheema
+           -> peeche-peeche (lag) badhta ja raha.
+HAL        REBALANCE: mari machine ke partition baaki me (C1->P0, C2->P1, C3->P2 -> C1->P0,P1 · C3->P2).
            LAG = partition ka aakhri offset - group ne kahan tak padha -> badhe to alert.
-           Koi khabar baar-baar fail -> kuch koshish ke baad DLQ, taaki poora partition na atke.
 ```
+```
+AAGE POOCHEGA:
+  NIYAM: koi partition bina padhne wale ke nahi, koi kharab khabar poori line na roke.
+  "Ek khabar baar-baar fail?"      -> kuch koshish ke baad DLQ, taaki poora partition na atke.
+  "Rebalance me sab ruk jaate?"    -> purana tareeka (eager) haan; cooperative rebalance (Kafka 2.4+)
+                                      -> sirf jinke partition badle wo rukte.
+  "Lag badhta ja raha?"            -> consumer badhao (partition tak), dheema kaam alag, lag pe alert.
+```
+
+#### 10 Raat ko broker ki disk bharti ja rahi
 ```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Redis["Redis"]
+flowchart LR
+    n_P["Producer (key + outbox)"]
+    n_B["Brokers A / B / C<br/>disk bharti ja rahi<br/>-> 7 din retention, compaction"]
+    n_K["Controller (KRaft)"]
+    n_GE["Group email"]
+    n_R["Redis (eventId)"]
     n_DLQ["DLQ"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-    n_Group_email --> n_Redis
-    n_Group_email --> n_DLQ
+    n_GA["Group analytics"]
+    n_GD["Group dashboard"]
+    n_P --> n_B
+    n_B --> n_K
+    n_B --> n_GE
+    n_B --> n_GA
+    n_B --> n_GD
+    n_GE --> n_R
+    n_GE --> n_DLQ
+    style n_B fill:#f9a825,color:#000
 ```
 ```
-DIKKAT 2   Rebalance me saare consumer ruk jaate?
-HAL        Purana tareeka (eager) haan. Cooperative rebalance (Kafka 2.4+) -> sirf jinke partition badle
-           wo rukte.
-
-DIKKAT 3   Lag badhta ja raha?
-HAL        Consumer badhao (partition tak), dheema kaam alag, lag pe alert.
-```
-
-#### 9 7 DIN RAKHOGE TO DISK BHAREGI
-```
-DIKKAT 1   Kafka padh ke delete nahi karta (ye log hai, queue nahi) -> disk bharti ja rahi.
-HAL        7 din rakhta, phir purani segment file (~1 GB) poori uda deta = sasta.
-           COMPACTION: kuch topic me har key ki sirf aakhri khabar (Arpan ki profile 10 baar badli -> sirf
-           aakhri wali; profile / config jaisa data).
-           Jo rakha hai usse REPLAY: naya group shuru se padhe, ya bug theek karke offset peeche le jao.
-```
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Redis["Redis"]
-    n_DLQ["DLQ"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-    n_Group_email --> n_Redis
-    n_Group_email --> n_DLQ
+DIKKAT     Raat tak sale ki saari khabar padi hai. Kafka padh ke delete nahi karta (ye log hai, queue nahi)
+           -> disk bharti ja rahi.
+HAL        RETENTION: 7 din rakhta, phir purani segment file (~1 GB) poori uda deta = sasta.
+           COMPACTION: kuch topic me har key ki sirf aakhri khabar (Ravi ki profile 10 baar badli -> aakhri).
 ```
 ```
-DIKKAT 2   7 din me consumer ne padha hi nahi (band tha)?
-HAL        Data gaya. Isliye lag pe alert + retention consumer ki sabse lambi band-hone ki der se zyada.
+AAGE POOCHEGA:
+  NIYAM: jo rakha hai usi se REPLAY; rakhna consumer ki sabse lambi chhutti se lamba.
+  "Rakhe ka fayda?"                -> REPLAY: naya group shuru se padhe, ya bug theek karke offset peeche.
+  "7 din consumer band raha?"      -> data gaya; isliye lag pe alert + retention consumer ki sabse lambi
+                                      band-hone ki der se zyada.
+  "Compaction kis data pe?"        -> profile / config jaisa (har key ka bas aakhri haal chahiye).
 ```
 
+---
+
+## AAKHRI DABBA + WRAP (ek hi baar)
+
 ```
-AAKHRI DABBE (sab dikkat ke baad):
-  Producer (key + acks) -> key se partition -> LEADER broker pe jodo (offset) -> follower copy (ISR)
-  -> har consumer group apne offset se padhe -> kaam -> commit · khabar retention tak padi (replay)
-  Controller (KRaft) = naksha, do leader na banein · Redis = eventId dedup · DLQ = kharab message alag
+Producer (key + acks, outbox) -> key se partition -> LEADER broker pe jodo (offset) -> follower copy (ISR)
+-> har consumer group apne offset se padhe -> kaam -> commit · khabar retention tak padi (replay)
+Controller (KRaft) = naksha, do leader na banein · Redis = eventId dedup · DLQ = kharab message alag
 
 DB:  message = append-only file (segment ~1 GB + index), DB nahi; bachav = copy + acks
      naksha (kaun leader) = pakka sahi (KRaft / Zookeeper) · offset = __consumer_offsets
-
-END ME POOCHEGA:
-  "Kram?"           -> sirf EK PARTITION ke andar (same key = same partition), poore topic ka nahi
-  "Exactly-once?"   -> at-least-once + idempotent consumer (eventId) = asar exactly-once
-  "Garam partition?" -> key todo (user-9#0..3) -> 4 partition; us key ka pakka kram jaata
-  "10x?"            -> partition badhao (shuru me extra rakho, baad me badhane se key ka partition badalta)
-                       · consumer badhao (partition tak) · broker disk: retention / tiered storage
-  "SPOF?"           -> leader (ISR se promote), controller (KRaft quorum)
-  "Chal raha, kaise pata?" -> CONSUMER LAG · under-replicated partitions · DLQ size · alert
 ```
-
-AAKHRI DABBE ki tasveer:
-
+```
+JAWAB:    Bhejne wala khabar key ke saath bhejta, key se tukda tay hota, tukde ke andar kram.
+          Har tukde ki copy, leader gira to saath chal rahi copy leader.
+          Zaroori khabar 'saath chal rahi saari copy (ISR) me likh gaya tabhi done'.
+          Har service ki apni team, to ek khabar sab tak. Worker kaam ke baad 'padh liya' bolta, id se
+          dobara skip, kharab khabar DLQ me. 7 din rakhte, dobara padh sakte.
+```
 ```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Redis["Redis"]
+flowchart LR
+    n_P["Producer (key + outbox)"]
+    n_B["Brokers A / B / C"]
+    n_K["Controller (KRaft)"]
+    n_GE["Group email"]
+    n_R["Redis (eventId)"]
     n_DLQ["DLQ"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-    n_Group_email --> n_Redis
-    n_Group_email --> n_DLQ
+    n_GA["Group analytics"]
+    n_GD["Group dashboard"]
+    n_P --> n_B
+    n_B --> n_K
+    n_B --> n_GE
+    n_B --> n_GA
+    n_B --> n_GD
+    n_GE --> n_R
+    n_GE --> n_DLQ
 ```
 
 ---
@@ -483,52 +509,14 @@ SHABD ATKE TO (bina shabd ke bolo):
    idempotent     -> "even if the same event comes twice, the work happens only once,
                       because we store the event id"
    compaction     -> "for each key we keep only the latest value and throw away the older ones"
-```
 
----
-
-## AAKHRI DABBA + WRAP
-
-```
-Producer = key + acks · Brokers = partition (append-only log + offset), leader + ISR follower, retention
-Controller = naksha, do leader na banein · Groups = ek group me baanto, alag group = sabko
-Redis = eventId dedup · DLQ = kharab message alag
-```
-```
-RAASTA: producer -> key se partition -> LEADER pe jodo (offset) -> follower copy (ISR)
-        -> har group apne offset se padhe -> kaam -> commit -> khabar 7 din padi (replay)
-
-1 KYUN        ek doosre ka intezaar todna -> producer bhej ke aage, consumer apni speed
-2 TOPIC/PART  partition = scale + append-only log + offset · key -> kram EK PARTITION me (poore topic me nahi)
-3 GROUP       group ke andar baanto · alag group = sabko · kitne ek saath = partition ginti tak
-4 COPY        leader / follower · naya leader sirf ISR se · acks 0 / 1 / all = tezi vs bachav
-5 DELIVERY    at-least-once + idempotent consumer = asar exactly-once · retention -> replay
-6 TRADE-OFF   async + sabko + replay -> Kafka · turant jawab / poora kram -> Kafka NAHI
-```
-```
-JAWAB:    Bhejne wala khabar key ke saath bhejta, key se tukda tay hota, tukde ke andar kram.
-          Har tukde ki copy, leader gira to saath chal rahi copy leader.
-          Zaroori khabar 'saath chal rahi saari copy (ISR) me likh gaya tabhi done'.
-          Har service ki apni team, to ek khabar sab tak. Worker kaam ke baad 'padh liya' bolta, id se
-          dobara skip, kharab khabar DLQ me. 7 din rakhte, dobara padh sakte.
-```
-```mermaid
-flowchart TD
-    n_Producer["Producer"]
-    n_Brokers_A_B_C["Brokers A / B / C"]
-    n_Controller_KRaft["Controller (KRaft)"]
-    n_Group_email["Group email"]
-    n_Redis["Redis"]
-    n_DLQ["DLQ"]
-    n_Group_analytics["Group analytics"]
-    n_Group_dashboard["Group dashboard"]
-    n_Producer --> n_Brokers_A_B_C
-    n_Brokers_A_B_C --> n_Controller_KRaft
-    n_Brokers_A_B_C --> n_Group_email
-    n_Brokers_A_B_C --> n_Group_analytics
-    n_Brokers_A_B_C --> n_Group_dashboard
-    n_Group_email --> n_Redis
-    n_Group_email --> n_DLQ
+CHHE BAAT (poora design ek-ek line me):
+   1 KYUN        ek doosre ka intezaar todna -> producer bhej ke aage, consumer apni speed
+   2 TOPIC/PART  partition = scale + append-only log + offset · key -> kram EK PARTITION me (poore topic nahi)
+   3 GROUP       group ke andar baanto · alag group = sabko · kitne ek saath = partition ginti tak
+   4 COPY        leader / follower · naya leader sirf ISR se · acks 0 / 1 / all = tezi vs bachav
+   5 DELIVERY    at-least-once + idempotent consumer = asar exactly-once · retention -> replay
+   6 TRADE-OFF   async + sabko + replay -> Kafka · turant jawab / poora kram -> Kafka NAHI
 ```
 
 ---
