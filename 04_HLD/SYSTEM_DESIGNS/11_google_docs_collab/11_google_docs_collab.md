@@ -341,14 +341,11 @@ flowchart LR
     style n_CAS fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat ko maine 2 saal purana doc khola. Server ne pehle op se 10 lakh op dobara chalaye tab doc bana
-           -> kholne me bahut der.
-HAL        SNAPSHOT: har 1000 badlaav pe doc ki photo (docId, version 5000, poora text) -> S3 / Cassandra.
-           Khola -> aakhri photo (v5000) + log ke "version > 5000" wale op kram se -> ~1000 op, 10 lakh nahi.
-```
-```
 AAGE POOCHEGA:
   NIYAM: photo ek version tak; kholna = photo + uske baad ke op.
+  "Kaise kaam karta?"              -> har 1000 badlaav pe doc ki photo (docId, version, poora text) -> S3 /
+                                      Cassandra. Khola -> aakhri photo (v9,99,000) + log ke uske baad wale op
+                                      kram se -> ~1000 op, 10 lakh nahi.
   "Photo ke waqt koi likh raha?"   -> photo v1000 tak; kholna = v1000 photo + v1001 se aage; kuch nahi rukta.
   "Kitni baar photo?"              -> har 1000 op ya har kuch minute, jo pehle ho.
 ```

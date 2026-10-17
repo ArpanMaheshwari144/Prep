@@ -162,14 +162,11 @@ flowchart LR
     style n_Payment_Svc fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Maine Pay dabaya, UPI app khula, paisa kata. Lautte waqt network gaya, BMS app ne jawab na milne
-           pe dobara bheja -> ek hi booking ke do baar paise kate.
-HAL        IDEMPOTENCY KEY: bookingId (B-77) hi key. Dobara wahi B-77 -> "B-77 ka payment ho chuka" -> purana
-           jawab, paisa nahi katta (usercrud /pay wala). Pay button bhi pehli tap pe band.
-```
-```
 AAGE POOCHEGA:
   NIYAM: ek booking = ek payment; wahi id dobara aaye to kaam nahi, purana jawab.
+  "Kaise kaam karta?"              -> key = bookingId (POST /bookings/B-77/pay). Dobara wahi B-77 -> "payment
+                                      ho chuka" -> purana jawab, paisa nahi katta. Pay button bhi pehli tap pe
+                                      band.
   "Paisa kata, seat UPDATE fail?"  -> (hold khatam ho chuka) refund + mujhe batao; payment aur seat ka faisla
                                       saga jaisa (ek fail to doosra ulta).
   "Webhook der se aaya?"           -> 'PAYMENT_PENDING' rakho, hold thoda badhao, ya reconciliation se pakka.
@@ -196,14 +193,11 @@ flowchart LR
     style n_Read_replica fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     11 baje main shaam ka show dhoondh raha. Release hafte me 1 lakh log seat map dekh rahe, book
-           shayad 5000 (dekho, time badlo, phir dekho). Padhai + nazuk booking ek DB pe -> dheemi.
-HAL        CACHE + READ REPLICA: "seatmap:show42" Redis me (~5 sec umar), miss -> replica se bana ke rakho.
-           Seat book hui -> "seatmap:show42" DEL -> agli baar taaza. Booking hamesha main DB pe.
-```
-```
 AAGE POOCHEGA:
   NIYAM: dekhna copy se, faisla main DB ka UPDATE; map thoda purana dikhe to chalta.
+  "Kaise kaam karta?"              -> "seatmap:show42" Redis me (~5 sec umar), miss -> replica se bana ke
+                                      rakho. Seat book hui -> DEL -> agli baar taaza. Booking hamesha main DB
+                                      pe.
   "A1 bik gayi, map me khaali?"    -> chalta, asli faisla UPDATE karta; turant dikhana ho to WebSocket /
                                       SSE se us show ke dekhne walon ko bhejo.
   "Ek key pe lakhon padhai?"       -> us key ki kai copy + App ke andar 1-2 sec ka local cache.
@@ -279,15 +273,12 @@ flowchart LR
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     2 baje Redis restart hua -> cache khaali -> 1 lakh log ka seat map ek saath replica pe -> replica
-           dheemi, seat map atak gaya.
-HAL        SET NX LOCK: map 1000 log maangein to sirf PEHLA banaye: SET lock:seatmap:42 1 NX EX 5 -> jeeta wo
-           bana ke Redis me daale, baaki 50-100 ms ruk ke Redis se. 1000 ki jagah 1 request DB pe.
-           (NX = koi aur pehle na laga ho tabhi · EX 5 = 5 sec me lock khud hate, banane wala mar jaaye to.)
-```
-```
 AAGE POOCHEGA:
   NIYAM: khaali cache pe ek banaye, baaki ruke; jo gir sakta uski copy pehle se taiyaar.
+  "Kaise kaam karta?"              -> SET lock:seatmap:42 1 NX EX 5 -> jeeta wo bana ke Redis me daale, baaki
+                                      50-100 ms ruk ke Redis se. 1000 ki jagah 1 request DB pe. (NX = koi aur
+                                      pehle na laga ho tabhi · EX 5 = 5 sec me lock khud hate, banane wala mar
+                                      jaaye to.)
   "Redis gire hi na, kaise?"       -> Redis Cluster: keys 16384 slot me, har master ke paas kuch slot +
                                       apni copy; master gira -> baaki vote karke copy ko master bana dete.
   "SQL primary gira, kitni der?"   -> 30-120 sec (failover: RDS Multi-AZ ~1-2 min, Aurora ~30 sec); app dobara
@@ -332,13 +323,11 @@ flowchart LR
     style n_App_x_N_2 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Shaam ko main seat chun raha tha, meri App machine (500 log) gir gayi. Held seats ka kya?
-HAL        STATELESS APP + LB: hold DB me, machine ki memory me nahi -> bacha. LB ka health check fail
-           -> machine list se bahar; meri agli request doosri machine pe -> wahi hold.
-```
-```
 AAGE POOCHEGA:
   NIYAM: App kuch yaad nahi rakhta; sab DB me, isliye koi bhi machine sambhaal le.
+  "Kaise kaam karta?"              -> hold DB me, machine ki memory me nahi -> bacha. LB ka health check fail
+                                      -> machine list se bahar; meri agli request doosri machine pe -> wahi
+                                      hold.
   "Machine giri, payment chal raha?" -> idempotency id app ke paas -> doosri machine pe dobara bhejo, do baar
                                       nahi katega.
   "Health check kya dekhta?"       -> GET /health: zinda + DB / Redis tak pahunch; 2-3 baar fail = bahar.

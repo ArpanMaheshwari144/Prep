@@ -238,14 +238,11 @@ flowchart LR
     style n_REC fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Maine balance khola. Har baar khaata jodo = hamesha sach, par 10 saal ki 50,000 line = dheema.
-           Sirf balance column = ek row, tez, par kabhi galat bhi ho sakta.
-HAL        DONO: KHAATA = SACH, balance column = uska jod (CACHE), dono EK transaction me. Dekhna = column.
-           Raat ko RECONCILIATION job: mera khaata jod = 4,500, column me 4,500 -> theek.
-```
-```
 AAGE POOCHEGA:
   NIYAM: farak mile to khaata jeetega, par pehle KYUN.
+  "Kaise kaam karta?"              -> har baar khaata jodo = sach par 10 saal ki 50,000 line = dheema. Isliye
+                                      balance column = uska jod (CACHE), khaata line ke saath EK transaction
+                                      me. Raat ko RECONCILIATION: khaata jod = column?
   "Raat ko farak (4,500 vs 5,000)?" -> alert + account rok ke dekho; chupchaap theek MAT karo (bug zinda),
                                       pehle KYUN, phir khaata jeetega.
   "Chal raha hai, kaise pata?"     -> reconciliation + p99 + error rate + queue lag + DB connection pe alert
@@ -272,11 +269,6 @@ flowchart LR
     style n_LB fill:#f9a825,color:#000
     style n_S1 fill:#f9a825,color:#000
     style n_S2 fill:#f9a825,color:#000
-```
-```
-DIKKAT     11 baje tak sabki salary aa gayi, sab ek saath transfer kar rahe. Ek Banking service machine bhar
-           gayi. Wo giri to poora bank band.
-HAL        KAI MACHINE + LB: Banking service kuch yaad nahi rakhti -> kai machine + LB, mari list se bahar.
 ```
 ```
 AAGE POOCHEGA:
@@ -312,14 +304,11 @@ flowchart LR
     style n_RR fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Salary ki bheed: har koi balance + "pichhle 3 mahine" history dekh raha, upar se mahine ka
-           statement job. Ye bhaari padhai primary pe -> transfer dheeme.
-HAL        READ REPLICA: padhna DB ki copy se, likhna (transfer) sirf primary pe. Primary ki diary (WAL) copy
-           tak jaati, copy wahi badlaav lagati. Primary sirf likhne ke liye free.
-```
-```
 AAGE POOCHEGA:
   NIYAM: copy thodi peeche hoti; jisne abhi likha, wo kuch der primary se padhe.
+  "Kaise kaam karta?"              -> padhna DB ki copy se, likhna (transfer) sirf primary pe. Primary ki
+                                      diary (WAL) copy tak jaati, copy wahi badlaav lagati. Primary sirf
+                                      likhne ke liye free.
   "Copy 5 sec peeche, purana balance?" -> maine 1000 bheje, purana dikha -> sochunga gaya hi nahi -> dobara!
                                       Read-your-own-writes: mere ACCOUNT pe last_write_at (Redis, phone nahi)
                                       -> kuch second kisi bhi phone se mera padhna PRIMARY se.
@@ -349,14 +338,11 @@ flowchart LR
     style n_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Dopahar maine Ravi ki dukaan ko 500 bheje, usi second dukaan ke refund batch ne mera 200 lautaya.
-           Txn1 ne mujh pe taala, Ravi ka intezaar · Txn2 ne Ravi pe, mera intezaar -> deadlock (MySQL 1213).
-HAL        CHHOTI ACCOUNT ID PEHLE LOCK: dono transfer same kram me, dono pehle wahi ek account maangte
-           -> ek ruka, doosra poora, phir pehla. Gol ghera banta hi nahi.
-```
-```
 AAGE POOCHEGA:
   NIYAM: taala hamesha tay kram me (id sort).
+  "Kaise kaam karta?"              -> Txn1 ne mujh pe taala, Ravi ka intezaar · Txn2 ne Ravi pe, mera intezaar
+                                      -> gol ghera (MySQL 1213). Dono transfer chhoti id pehle lock karein ->
+                                      dono wahi ek maangte, ek ruka, doosra poora.
   "Kram ke bawajood deadlock?"     -> DB ek ko wapas kar deta -> app ruk ke dobara (same idempotency key).
 ```
 

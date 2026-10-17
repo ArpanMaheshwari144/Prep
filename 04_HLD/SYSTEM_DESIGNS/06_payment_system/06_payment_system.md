@@ -364,14 +364,11 @@ flowchart LR
     style n_Payment_Svc_x_N_2 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Shaam Diwali pe 3000 payment / sec. Ek Payment service machine ka CPU bhara -> timeout -> log
-           ghabra ke DOBARA tap -> aur bojh. Wo machine giri to sab payment band.
-HAL        STATELESS: saari yaad DB + idempotency store me, kai machine; koi bhi machine koi bhi payment le,
-           ek giri baaki chalti. Aage LB.
-```
-```
 AAGE POOCHEGA:
   NIYAM: machine kuch yaad na rakhe, to koi bhi machine badlo / badhao.
+  "Kaise kaam karta?"              -> saari yaad DB + idempotency store me, kai machine, aage LB. Koi bhi
+                                      machine koi bhi payment le, ek giri baaki chalti. (Pehle: CPU bhara ->
+                                      timeout -> log ghabra ke dobara tap -> aur bojh.)
   "Safe kaise, galat istemaal?"    -> gateway pe login; Payment Svc me OWNER CHECK: JWT se userId -> "from"
                                       account ka maalik wahi? nahi -> 403. userId JWT se, body se kabhi nahi.
                                       Har user ki had, sabse aage WAF.

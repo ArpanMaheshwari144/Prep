@@ -308,13 +308,10 @@ flowchart LR
     style n_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Phir maine 1000 file ka folder daala. Ek trackingId se 1000 file ka haal kaise?
-HAL        PARENT + CHILD ID: folder ka bada id (P-1), har file ka apna chhota id (child).
-           Saare child DONE = P-1 DONE · koi FAILED = P-1 PARTIAL / FAILED.
-```
-```
 AAGE POOCHEGA:
   NIYAM: parent ka haal = bachchon ka jod.
+  "Kaise kaam karta?"              -> folder ka bada id (P-1), har file ka apna chhota id (child). Saare child
+                                      DONE = P-1 DONE · koi FAILED = P-1 PARTIAL / FAILED.
   "Parent ka haal kab badle?"      -> har child DONE / FAILED pe P-1 ka done_count badhao;
                                       sab ho gaye -> P-1 final.
   "1000 file = 1000 baar /init?"   -> nahi; ek call me 1000 signed URL (batch init).

@@ -96,14 +96,12 @@ flowchart LR
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Subah 7 baje maine app khola, saath me 500 log / second. Har ek ke liye DB pe
-           "ORDER BY published_at DESC LIMIT 20", aur sabko lagbhag WAHI 20 khabar.
-HAL        FEED CACHE: Redis SORTED SET "feed:latest" (score = kab chhapi). Nayi khabar ZADD, top 500 rakho.
-           Maine khola -> ZREVRANGE feed:latest 0 19 -> 20 id, text alag cache se. ~99% DB tak nahi jaate.
-```
-```
 AAGE POOCHEGA:
   NIYAM: sabko ek jaisa = ek baar bana ke Redis me; nayi khabar aate hi list me apni jagah.
+  "Kaise kaam karta?"              -> pehle har user pe DB "ORDER BY published_at DESC LIMIT 20". Ab Redis
+                                      SORTED SET "feed:latest" (score = kab chhapi): nayi khabar ZADD, top 500
+                                      rakho. Maine khola -> ZREVRANGE feed:latest 0 19 -> 20 id, text alag
+                                      cache se. ~99% DB tak nahi jaate.
   "Breaking turant chahiye?"       -> aate hi ZADD, asal me turant dikhti; "5 min" sirf sabse bura haal.
   "Neeche scroll (21-40)?"         -> ZREVRANGE 20 39, ya cursor (aakhri dekhi ke time se pehle ki 20).
 ```
@@ -131,14 +129,12 @@ flowchart LR
     style n_Worker fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     7:30 maine feed kholi, khabar 20 min purani. Ek fetcher 1000 source ek-ek (har ek ~1 sec) laata
-           aur khud DB me likhta -> ek chakkar ~20 min, likhne me bhi atka.
-HAL        KAFKA (disk pe diary): kai fetcher ek saath laake Kafka me daal ke bhool jaate. Workers apni speed
-           se, kahan tak padha yaad (offset), saaf karke DB + Redis me. 10 partition (tukde) = 10 worker.
-```
-```
 AAGE POOCHEGA:
   NIYAM: khabar laana peeche apni speed se; main sirf Redis ki taiyaar list padhta.
+  "Kaise kaam karta?"              -> pehle ek fetcher 1000 source ek-ek (har ~1 sec) laata + khud DB me
+                                      likhta = ~20 min ka chakkar. Ab kai fetcher laake KAFKA (disk pe diary)
+                                      me daal ke bhool jaate. Workers apni speed se, kahan tak padha yaad
+                                      (OFFSET), saaf karke DB + Redis me. 10 PARTITION (tukde) = 10 worker.
   "Likhna, padhna alag kyun?"      -> khabar laana peeche, user ko hamesha cache se taiyaar feed.
   "1000 ki khabar ek saath aayi?"  -> Kafka ki line lambi hui, kuch gira nahi.
   "Ek source kitni baar dekhe?"    -> har source ka apna samay (NDTV har 1 min, chhota blog har 15 min).
@@ -222,14 +218,11 @@ flowchart LR
     style n_Worker fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Dopahar India ne match jeeta: NDTV, TOI, HT, BBC, ESPN sabne likha -> meri feed me wahi khabar
-           5 baar (5 alag URL).
-HAL        DEDUPE: title chhote akshar + chinh hatao -> hash, same hash = same khabar. Thoda alag
-           ("India wins" vs "India won") -> SimHash / MinHash, "90% same" = duplicate. Ek hi rakho.
-```
-```
 AAGE POOCHEGA:
   NIYAM: ek khabar ek baar: pehchaan (hash) same = khabar same, URL chahe alag.
+  "Kaise kaam karta?"              -> title chhote akshar + chinh hatao -> hash, same hash = same khabar.
+                                      Thoda alag ("India wins" vs "India won") -> SimHash / MinHash, "90%
+                                      same" = duplicate. Ek hi rakho.
   "Wahi URL dobara le aaya?"       -> BLOOM FILTER: lambi bit-line + kuch hash; URL ke hash wali jagah dekho:
                                       koi 0 = pakka naya · saare 1 = SHAYAD dekha (galat "na" kabhi nahi).
   "Bloom kyun, Redis SET nahi?"    -> crore URL = bahut RAM; Bloom thodi memory. Galat "haan" se kabhi ek
@@ -268,13 +261,11 @@ flowchart LR
     style n_Fetcher fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Ek chhota source 30 sec me jawab de raha. Fetcher us pe atka -> baaki 999 ki khabar bhi ruki.
-HAL        CIRCUIT BREAKER: har site alag, 2-3 sec me jawab nahi to chhodo, thodi baar retry. Baar-baar fail
-           -> fuse OPEN, us source ko call hi mat karo. Baaki 999 apne raaste.
-```
-```
 AAGE POOCHEGA:
   NIYAM: ek beemar source baaki ko na roke: had tak intezaar, phir fuse.
+  "Kaise kaam karta?"              -> har site alag, 2-3 sec me jawab nahi to chhodo, thodi baar retry.
+                                      Baar-baar fail -> fuse OPEN, us source ko call hi mat karo. Baaki 999
+                                      apne raaste.
   "Fuse wapas kab judta?"          -> CLOSED --kai fail--> OPEN --thodi der--> HALF-OPEN (ek test call)
                                       --chali--> CLOSED.
   "Source ne 429 diya?"            -> us source ka samay badhao + uska Retry-After maano.
@@ -356,14 +347,11 @@ flowchart LR
     style n_Elasticsearch fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat ko maine search me "cricket" likha -> DB me LIKE '%cricket%' -> poori table ek-ek row padhi
-           (full scan).
-HAL        INVERTED INDEX (kitaab ke peeche ki index jaisi, ek HashMap): shabd -> kis-kis khabar me.
-           Ye kaam Elasticsearch karta; ES se sirf id, khabar ka text DB / cache se.
-```
-```
 AAGE POOCHEGA:
   NIYAM: ES sirf dhoondhta (id deta), sach DB me; ES hamesha dobara ban sakta.
+  "Kaise kaam karta?"              -> pehle LIKE '%cricket%' = poori table ek-ek row (full scan). INVERTED
+                                      INDEX = kitaab ke peeche ki index jaisi (HashMap): shabd -> kis-kis
+                                      khabar me. ES se sirf id, text DB / cache se.
   "'cricket kohli' kaise?"         -> "cricket" -> [a12, a45, a90] · "kohli" -> [a45, a77]
                                       OR = dono jodo, AND = jo dono me (a45) -> score se sort.
   "ES aur DB me alag data?"        -> DB = sach; ES dobara bana lo (reindex); likhna fail -> retry ki line.

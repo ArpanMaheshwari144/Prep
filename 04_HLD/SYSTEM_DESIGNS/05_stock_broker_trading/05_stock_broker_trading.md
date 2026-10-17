@@ -114,13 +114,11 @@ flowchart LR
     style n_Order_Service fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     9:15, maine TCS ka BUY dabaya. Network gaya, app ne khud dobara bheja -> do order lag gaye.
-HAL        IDEMPOTENCY KEY: screen khulte id, dobara wahi id. Server pe UNIQUE -> doosri baar purana jawab.
-```
-```
 AAGE POOCHEGA:
   NIYAM: ek id = ek kaam; wahi id dobara aaye to kaam nahi, purana jawab.
-  "Button pehli tap pe band?"      -> haan; id screen khulte bani, doosri baar saved jawab.
+  "Kaise kaam karta?"              -> network gaya, app ne khud dobara bheja. Id screen khulte banti, dobara
+                                      wahi id; server pe UNIQUE -> doosri baar purana jawab.
+  "Button pehli tap pe band?"      -> haan; par network pe retry app khud karta, isliye key phir bhi chahiye.
   "Pehli abhi chal rahi, dobara?"  -> process nahi; IN_PROGRESS -> "thoda ruko" (409), DONE -> saved jawab.
   "Id kitne din?"                  -> ~24 ghante, phir saaf.
 ```

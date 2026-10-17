@@ -118,13 +118,10 @@ flowchart LR
     style n_Cache fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Subah cache machine ki 64 GB RAM bhar gayi. Nayi key daalni, koi purani nikaalni padegi. Kaunsi?
-HAL        LRU: jise sabse LAMBE samay se kisi ne nahi chhua, wo bahar. Wahi LRU cache jo tune DSA me khud
-           banaya (09_DESIGN, LeetCode 146). Saath me har key ki umar (TTL).
-```
-```
 AAGE POOCHEGA:
   NIYAM: sabse purana chhua hua pehle jaaye; umar khatam = key bekaar.
+  "Kaise kaam karta?"              -> jise sabse LAMBE samay se kisi ne nahi chhua, wo bahar (wahi LRU jo tune
+                                      DSA me banaya, 09_DESIGN, LeetCode 146). Saath me har key ki umar (TTL).
   "LRU andar kaise?"               -> HashMap = key turant · Doubly linked list = kaun kab chhua ki line
                                       get -> node AAGE (head ke paas) · put -> naya AAGE, RAM bhari -> PEECHE
                                       (tail ke paas) wala hatao.
@@ -269,14 +266,11 @@ flowchart LR
     style n_App fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     "Home page" banana = 20 table ka join, ~1 sec. 7 baje key ki umar khatam, usi 1 sec me 1000 request
-           -> 1000 bhaari join DB pe -> CPU 100%, baaki query bhi atki -> DB gira.
-HAL        LOCK: sirf PEHLE ko DB jaane do: SET lock:home 1 NX EX 5 (NX = sirf tab jab koi aur na laga ho).
-           Baaki 999 "thoda ruko", phir cache se. EX 5 = pehla beech me mara to lock khud chhoote.
-```
-```
 AAGE POOCHEGA:
   NIYAM: khaali key pe ek hi DB jaaye; baaki ruke ya purani value le.
+  "Kaise kaam karta?"              -> "home page" = 20 table ka join, ~1 sec. Sirf PEHLA DB jaaye: SET
+                                      lock:home 1 NX EX 5 (NX = koi aur na laga ho tabhi · EX 5 = pehla beech
+                                      me mara to lock khud chhoote). Baaki 999 "thoda ruko", phir cache se.
   "Khatam hi kyun hone do?"        -> umar khatam hone se thoda pehle hi peeche se taaza kar do.
   "Pata tha kab bheed (sale 12 baje, IPL final)?" -> uske pehle hi cache bhar do aur machine badha do.
   "Baaki 999 kitni der rukenge?"   -> 50-100 ms, 2-3 baar; soft-TTL ho (purani value + "taaza karo" nishaan)
@@ -302,14 +296,12 @@ flowchart LR
     style n_App_L1_local_cache fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat IPL final, "live:score" key crore log ek saath padh rahe. Key ek hi machine pe -> wo akeli mar
-           rahi. Consistent hashing yahan kuch nahi karta: ek key = ek machine.
-HAL        L1 LOCAL CACHE: har App server ki RAM me 1-2 sec ka cache; 1000 server, har ek 1 sec me EK baar
-           Redis se -> Redis pe 1000 / sec, crore nahi. Saath me key ki kai copy (score#1 .. #10), koi bhi ek.
-```
-```
 AAGE POOCHEGA:
   NIYAM: garam key ko faila do: App ke paas chhoti copy, ya alag machine pe copies.
+  "Kaise kaam karta?"              -> har App server ki RAM me 1-2 sec ka cache: 1000 server, har ek 1 sec me
+                                      EK baar Redis se -> Redis pe 1000 / sec, crore nahi. Saath me key ki kai
+                                      copy (score#1 .. #10), koi bhi ek.
+  "Consistent hashing nahi bachata?" -> nahi; ek key hamesha ek hi machine pe.
   "Kitni parat?"                   -> L1 (App ki RAM, nano-sec) -> L2 Redis (micro / milli) -> DB (milli-sec).
   "Garam key pehchanoge kaise?"    -> App me har key ki ginti (sabse pakka) + machine ka metric
                                       (ops / sec achanak upar); had paar -> copy / L1.

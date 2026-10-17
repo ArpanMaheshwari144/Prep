@@ -199,14 +199,11 @@ flowchart LR
     style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     11 baje wahi bot. Limiter App ke andar tha -> jis request ko 429 milna tha, wo bhi LB se App tak
-           ghoom ke aayi, tab jaake mana. Machines ka kaam bekaar gaya.
-HAL        LIMITER GATEWAY PE: sabse aage, gateway har request pe Redis se poochhta: had ke andar -> App ko,
-           bahar -> wahin 429. Mana wali request andar pahunchti hi nahi.
-```
-```
 AAGE POOCHEGA:
   NIYAM: jitna aage roko, utna kam kaam bekaar; aur client ko batao kab aaye.
+  "Kaise kaam karta?"              -> gateway sabse aage, har request pe Redis se poochhta: had ke andar ->
+                                      App ko, bahar -> wahin 429. Mana wali request LB / App tak pahunchti hi
+                                      nahi.
   "429 ke saath kya bataoge?"      -> kab dobara aao (Retry-After: 30) + kitni bachi (X-RateLimit-Remaining).
   "Sab theek 30 sec baad aaye?"    -> nayi laher; isliye Retry-After me jitter (jaise 28, 33).
   "Gateway khud gira?"             -> gateway ki bhi 2+ machine, aage LB.
@@ -273,14 +270,11 @@ flowchart LR
     style n_Redis_Cluster fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     2 baje meri script 3 cloud server pe (Mumbai, Frankfurt, US), limit 100 / min ek API key pe.
-           Har region ka apna Redis, har ek ne 50 gina -> kisi ko 100 paar nahi dikha, 150 nikal gayi.
-HAL        HOME REGION (user_id se): request kahin se aaye, ginti ghar me. Mera ghar India -> Frankfurt ka
-           gateway India ke Redis tak bhejta. Teeno region ek ginti me -> 100 pe ruka.
-```
-```
 AAGE POOCHEGA:
   NIYAM: ek user ki ek ginti, ek ghar me; door jaane ka kharcha sirf zaroori endpoint pe.
+  "Kaise kaam karta?"              -> pehle har region ka apna Redis, sabne 50 gina, kisi ko 100 paar nahi
+                                      dikha. Ab ghar user_id se (mera India): Frankfurt ka gateway bhi India
+                                      ke Redis me ginta -> teeno ek ginti, 100 pe ruka.
   "Har request India = 100-200 ms?" -> haan; isliye home region sirf paisa / security wale endpoint pe.
                                       Baaki pe har region apni ginti + har second aapas me milaao (sync).
   "Apni ginti + sync, kitna zyada?" -> milaane ke beech (~1 sec) har region poori limit de sakta; halki
@@ -355,14 +349,11 @@ flowchart LR
     style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Shaam ko sale: 10,000 asli log, har koi 100 / min ke andar, par mila ke 12,000 / sec. Server 5,000
-           jhelta -> gira. Limiter ne kuch nahi roka, kisi ek ne galti ki hi nahi.
-HAL        GLOBAL CAP + LOAD SHEDDING: gateway pe poore system ki ek had; CPU 90% paar -> kuch request 503.
-           RATE LIMIT = ek USER ne kitni bheji (429) · LOAD SHEDDING = poora SYSTEM kitna jhel sake (503).
-```
-```
 AAGE POOCHEGA:
   NIYAM: user ki had aur system ki had alag cheez; dono chahiye.
+  "Kaise kaam karta?"              -> gateway pe poore system ki ek had (server 5,000 / sec jhelta); CPU 90%
+                                      paar -> kuch request 503. RATE LIMIT = ek USER ne kitni bheji (429) ·
+                                      LOAD SHEDDING = poora SYSTEM kitna jhel sake (503).
   "Kaunsi request chhodoge?"       -> login / payment rakho; recommendation / analytics pehle chhodo.
   "Machine apne aap badhe?"        -> nayi machine me minute lagte, bheed second me; pata ho (12 baje sale)
                                       to pehle se badha do.
@@ -395,14 +386,10 @@ flowchart LR
     style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat ko attack -> Redis pe 50 guna bojh -> Redis gira -> aam API fail-open
-           -> wahan bot ko khuli chhoot. Jis waqt limiter sabse zyada chahiye tha, usi waqt gayab.
-HAL        LOCAL COUNTER FALLBACK: har server apni memory me gine, had baant ke: 100, 4 server -> har ek 25.
-           Bilkul sahi nahi, par bina had se kahin achha. Redis wapas aaya -> phir sabki ek ginti.
-```
-```
 AAGE POOCHEGA:
   NIYAM: thodi galat had, bina had se behtar.
+  "Kaise kaam karta?"              -> har server apni memory me gine, had baant ke: 100, 4 server -> har ek
+                                      25. Redis wapas aaya -> phir sabki ek ginti.
   "Machine badh gayi, kitna baanto?" -> machines ki ginti config / service discovery se lo, dobara baanto.
   "Ek user alag-alag machine pe?"  -> har machine 25 = motamoti, exact nahi; attack me "kuch nahi" se behtar.
 ```

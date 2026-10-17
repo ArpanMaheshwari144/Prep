@@ -200,14 +200,11 @@ flowchart LR
     style n_Counter fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     12 baje maine aur Ravi ne usi second link banaya, do App pe. Dono ka apna counter 5 pe
-           -> dono ko 6 -> do alag link, ek hi code (COLLISION). Ravi ka link mere code pe.
-HAL        COUNTER RANGE (thaila): Counter service (ZooKeeper / DB ki table) har App ko alag range deti:
-           App-1 ko 1-1000, App-2 ko 1001-2000. App khud ginta, counter se baat sirf thaila khatam pe.
-```
-```
 AAGE POOCHEGA:
   NIYAM: number ek hi jagah se, thaile me baante jaate; ek thaila kabhi do App ko nahi.
+  "Kaise kaam karta?"              -> Counter service (ZooKeeper / DB ki table) har App ko alag thaila
+                                      (range): App-1 ko 1-1000, App-2 ko 1001-2000. App khud ginta, counter se
+                                      baat sirf thaila khatam pe.
   "App-1 400 pe crash, 401-1000?"  -> bekaar gaye, jaan-boojh ke; 3.5 lakh crore me kuch hazaar se farak nahi.
   "Har number bachana ho?"         -> har link pe coordination lagega, range ka fayda khatam.
   "Counter service giri?"          -> App ke paas thaila (1000) bacha, kaam chalta; tab tak doosri copy uthti.
@@ -405,14 +402,11 @@ flowchart LR
     style n_LB_2 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Shaam ko App, Redis, DB sab zinda. Par request baantne wala Load Balancer hi mar gaya
-           -> koi request andar aa hi nahi rahi, site band.
-HAL        ROUTE 53 + 2 LB: Route 53 (AWS ka DNS) har ~30 sec har LB se "zinda ho?". 3 baar jawab nahi
-           -> us LB ka pata (IP) dena band, sab doosre pe. Poora region gaya -> doosre region pe.
-```
-```
 AAGE POOCHEGA:
   NIYAM: koi dabba akela nahi; aage wala health check se sirf zinda wale pe bheje.
+  "Kaise kaam karta?"              -> Route 53 (AWS ka DNS) har ~30 sec har LB se "zinda ho?"; 3 baar jawab
+                                      nahi -> us LB ka pata (IP) dena band, sab doosre pe. Poora region gaya
+                                      -> doosre region pe.
   "Switch turant?"                 -> nahi; phone purana pata ~60 sec yaad (DNS TTL), tab tak purane LB pe.
                                       Isliye cloud me LB khud kai data center me phaila (AWS ALB).
   "Region gaya, naye link?"        -> doosre region me copy peeche-peeche; aakhri kuch second ke kho sakte.

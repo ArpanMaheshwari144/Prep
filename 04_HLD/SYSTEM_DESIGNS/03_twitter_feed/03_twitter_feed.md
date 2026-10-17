@@ -331,13 +331,11 @@ flowchart LR
     style n_Route_53 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Shaam 7 baje India me sab online. Main Bangalore me, data US me -> har request 200 ms (paas 5 ms).
-HAL        REGION-WISE (India / Europe / US): Route 53 paas wale region ka pata deta. Cassandra ek region ka
-           likha doosre me thoda baad copy; US celebs ke garam tweet India ke cache me bhi.
-```
-```
 AAGE POOCHEGA:
   NIYAM: data user ke paas; copy thodi peeche chalegi (2 second purani feed chalti).
+  "Kaise kaam karta?"              -> Route 53 paas wale region ka pata deta. Cassandra ek region ka likha
+                                      doosre me thoda baad copy karta; US celebs ke garam tweet India ke cache
+                                      me bhi.
   "Fayde kya?"                     -> tez · Europe ka data Europe me (GDPR) · har region ki bheed ka time
                                       alag · ek gira to baaki chalein.
   "Main US ghoomne gaya?"          -> data India me; request India bhejo, ya paas ki copy se (thoda purana).
@@ -377,14 +375,11 @@ flowchart LR
     style n_App_x_N_2 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat 8 baje: har region me ek hi App machine. Laakhon log nahi jhelti, aur wahi giri
-           -> sab band (SPOF).
-HAL        STATELESS App x N + ALB (AWS ka LB): machine kuch yaad nahi rakhti, request kahin bhi.
-           ALB har ~10 sec "zinda?": jawab nahi = bahar, theek = wapas. Route 53 isi tarah region / ALB ko.
-```
-```
 AAGE POOCHEGA:
   NIYAM: machine kuch yaad nahi rakhti, isliye koi bhi hate ya jude, farak nahi.
+  "Kaise kaam karta?"              -> machine kuch yaad nahi rakhti, request kahin bhi. ALB (AWS ka LB) har
+                                      ~10 sec "zinda?": jawab nahi = bahar, theek = wapas. Route 53 isi tarah
+                                      region / ALB ko dekhta.
   "Naya code, saari restart?"      -> ek-ek karke (rolling deploy): nikaalo, naya daalo, jodo; site band nahi.
   "Nayi machine, pehli dheemi?"    -> apna data nahi (sab Redis me), farak kam; ALB use dheere traffic de.
 ```
@@ -424,14 +419,11 @@ flowchart LR
     style n_Graph_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat 9 baje highlights ki bheed: feed padhne wale laakhon, likhne wale hazaron, dono ek service me
-           -> padhne ki bheed ne mera tweet daalna bhi dheema kar diya.
-HAL        ALAG SERVICE: Tweet Svc (likhna), Timeline Svc (feed), User Svc, Graph (follow). ALB path se:
-           POST /tweet -> Tweet Svc · GET /feed -> Timeline Svc. Har ek ki apni machine, LB, autoscale.
-```
-```
 AAGE POOCHEGA:
   NIYAM: jiski bheed badhi, sirf wahi badhao; doosre pe asar nahi.
+  "Kaise kaam karta?"              -> Tweet Svc (likhna), Timeline Svc (feed), User Svc, Graph (follow). ALB
+                                      path se: POST /tweet -> Tweet Svc · GET /feed -> Timeline Svc. Har ek ki
+                                      apni machine, LB, autoscale.
   "Feed ki bheed badhi?"           -> sirf Timeline ki machine badhti, Tweet Svc pe asar nahi.
   "Main kisko follow, kahan se?"   -> Graph / User service se, par har baar call nahi; follow list Redis me.
   "Fanout ko 10,000 followers?"    -> Graph store se 1000-1000 ke panne me padh ke inbox likho.
@@ -476,14 +468,10 @@ flowchart LR
     style n_S3 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat 10 baje maine match ki video daali. Duniya bhar ko har baar hamare server se -> dheema bhi,
-           mehnga bhi.
-HAL        S3 + CDN: video S3 me, user tak CDN se (uske paas wala server); tweet me sirf CDN link. CDN ke paas
-           nahi -> S3 se laata, kuch der rakhta, phir sabko wahin se. CDN sirf media ke raaste, API ke nahi.
-```
-```
 AAGE POOCHEGA:
   NIYAM: bhaari maal S3 me, user ke paas CDN se; tweet me sirf link.
+  "Kaise kaam karta?"              -> tweet me sirf CDN link. CDN ke paas nahi -> S3 se laata, kuch der
+                                      rakhta, phir sabko wahin se. CDN sirf media ke raaste, API ke nahi.
   "Photo delete, CDN pe dikh rahi?" -> CDN ko "ye hatao" (invalidation), ya link me version (abc_v2.jpg)
                                       -> naya link = nayi file.
   "Private photo sabko dikhegi?"   -> link pe hastakshar + expiry (signed URL): sirf jisko mila, thodi der.
