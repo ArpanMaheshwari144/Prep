@@ -152,7 +152,8 @@ HAL        N badla to lagbhag SAB key ki machine badal jaati:
              N = 4 -> machine 2, 3, 0, 1, 2
              N = 5 -> machine 0, 1, 2, 3, 4      <- ek machine jodi, PAANCHON key hil gayi
            Asal me 4 -> 5 machine = ~80% key hilti -> sab MISS -> saara bojh DB pe -> DB gira.
-           Ring me N kahin nahi, sirf pados ki ~K/N key hilti. (Interview me dono mila ke mat bolna.)
+           Ring me N kahin nahi: sirf pados ki ~K/N key hilti (K = saari key, N = machine).
+           (Interview me dono mila ke mat bolna.)
 
 DIKKAT 3   Nayi machine judi, uski key khaali -> miss?
 HAL        Haan, sirf us hisse ki ~K/N key ek baar miss. Poora cache nahi.
@@ -213,7 +214,7 @@ HAL        Haan, padhai bat jaati. Par thoda purana mil sakta (lag). Cache me ch
 DIKKAT 1   Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya, cache me abhi bhi "Ravi".
            Sabko purana naam dikh raha.
 HAL        DB update karo -> phir cache ki key DELETE (update nahi). Agli padhai MISS -> DB se "Ravi K"
-           -> cache me. Upar se TTL suraksha jaal.
+           -> cache me.
            UPDATE kyun nahi: Ravi ne "X" likha, phir "Y". Cache me pehle Y pahuncha, phir X -> galat "X" baith
            gaya. DELETE me ye dikkat nahi: kuch bhi pahunche, key khaali hi hogi.
 ```
@@ -233,7 +234,7 @@ flowchart TD
 ```
 ```
 DIKKAT 2   DB update hua, par cache DELETE fail?
-HAL        TTL bachata (zyada se zyada utni der purana). Pakka chahiye -> DB ke badlaav (CDC) se delete
+HAL        TTL suraksha jaal: zyada se zyada utni der purana. Pakka chahiye -> DB ke badlaav (CDC) se delete
            dobara.
 
 DIKKAT 3   Delete ke baad kisi ne purani value wapas daal di (race)?

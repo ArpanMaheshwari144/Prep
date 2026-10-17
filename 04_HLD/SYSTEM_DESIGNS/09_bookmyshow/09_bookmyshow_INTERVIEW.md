@@ -165,7 +165,7 @@ DIKKAT 1   Ek show ka seat map 1 lakh log dekh rahe, book shayad 500 karenge.
            1 lakh padhai aur nazuk booking dono ek hi DB pe -> booking dheemi.
 HAL        Seat map Redis me "seatmap:show42" -> nahi mila to DB ki copy (replica) se banao -> Redis me
            rakho (~5 sec umar). Koi seat book hui -> "seatmap:show42" DEL -> agli baar taaza banta.
-           Booking hamesha main DB pe. Map thoda purana dikhe to chalta, asli faisla booking ka UPDATE karta.
+           Booking hamesha main DB pe.
 ```
 ```mermaid
 flowchart TD
@@ -186,8 +186,8 @@ flowchart TD
 ```
 ```
 DIKKAT 2   A1 book ho gayi, par Arpan ko map me abhi bhi khaali dikh rahi?
-HAL        WebSocket / SSE se us show ke dekhne walon ko turant bhejo. Screen 1-2 sec purani chale,
-           faisla UPDATE ka.
+HAL        Map thoda purana dikhe to chalta, asli faisla booking ka UPDATE karta. Turant dikhana ho to
+           WebSocket / SSE se us show ke dekhne walon ko bhejo.
 
 DIKKAT 3   Ek bade show ki ek hi Redis key pe lakhon padhai?
 HAL        Us key ki kai copy + App ke andar 1-2 sec ka local cache.
@@ -243,12 +243,11 @@ DIKKAT 6   (bolne me) "BookMyShow aise karta hai"?
 HAL        Mat bolo. "A common pattern in flash sales" bolo.
 ```
 
-#### 6 REDIS RESTART, SAARA DEKHNA EK SAATH DB PE
+#### 6 REDIS RESTART, SAARA DEKHNA EK SAATH REPLICA PE
 ```
-DIKKAT 1   Redis restart hua -> cache khaali -> 1 lakh log ka seat map dekhna ek saath DB pe
-           -> booking ke UPDATE bhi ruk gaye.
-HAL        Seat map DB ki COPY (replica) se banao, main DB pe kabhi nahi -> booking chalti rahe.
-           Ek show ka map 1000 log ek saath maangein to sirf pehla banaye:
+DIKKAT 1   Redis restart hua -> cache khaali -> 1 lakh log ka seat map ek saath DB ki copy (replica) pe
+           -> replica dheemi, seat map atak gaya.
+HAL        Ek show ka map 1000 log ek saath maangein to sirf PEHLA banaye:
              SET lock:seatmap:42 1 NX EX 5 -> jo jeeta wo map bana ke Redis me daale,
              baaki 50-100 ms ruk ke Redis se padhein. 1000 ki jagah 1 request DB pe.
 ```
@@ -429,7 +428,7 @@ DB:       seats(seat_id, show_id, status ['available' / 'held' / 'booked'], user
 
 EK SEAT DO KO (dil):  UPDATE ... WHERE seat_id = 'A1' AND status = 'available'
                       ek -> 1 row SUCCESS · doosra -> 0 row "ja chuki"
-                      (SELECT ... FOR UPDATE bhi chalta, par card 1 me nahi chuna)
+                      (SELECT ... FOR UPDATE bhi chalta, par card 1 D3 me nahi chuna)
 ```
 
 ---
