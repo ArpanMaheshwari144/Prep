@@ -215,11 +215,10 @@ flowchart TD
 DIKKAT 2   Arpan ka op Redis buffer me tha, Redis gir gaya -> op gaya?
 HAL        Arpan ka app op apne paas rakhe jab tak server "mil gaya" (ACK) na bole. Dobara jude to phir
            bheje (opId ke saath, server ke paas pehle se hai to skip).
-           Server ACK tab deta jab op Redis buffer me + uski copy me likh gaya (Redis WAIT 1, ~1 ms).
-           Cassandra ka 1 second wala batch ACK ke raaste me nahi -> typing turant.
 
 DIKKAT 3   Redis gira, ACK ho chuka tha?
-HAL        Op copy me bhi likha tha, copy main ban gayi, op bacha. ACK se pehle gira -> app dobara bhejta.
+HAL        Server ACK tabhi deta jab op Redis buffer + uski copy dono me likh gaya (Redis WAIT 1, ~1 ms).
+           To copy main ban gayi, op bacha. Cassandra ka 1 sec batch ACK ke raaste me nahi -> typing turant.
 
 DIKKAT 4   "Sahi hona chahiye to SQL lo"?
 HAL        Nahi. DB data ki shakal se chuno: rishte (join) nahi, bas bahut saara jodna -> Cassandra.
@@ -300,9 +299,9 @@ HAL        Dobara jude to pehle permission check (SQL, CP). Access nahi -> pendi
 ```
 DIKKAT 1   Crore WebSocket connection khule. Ek server ~1 lakh hi jhelta. Kis doc ka user kis server pe
            jaaye, taaki ek doc ke saare editor ek hi (owner) server pe milein?
-HAL        Alag CONNECTION server ki line. URL me docId -> LB consistent hashing RING se server chunta
-           -> ek doc ke saare editor + uska OT EK server pe (OWNER), wahi har op ko version number deta.
-           Server juda / gira -> sirf uske hisse ke doc hilte.
+HAL        Alag CONNECTION server ki line. EDITOR: URL me docId -> LB consistent hashing RING se server
+           chunta -> ek doc ke saare editor + uska OT EK server pe (OWNER). Server juda / gira -> sirf uske
+           hisse ke doc hilte. VIEWER (sirf dekh raha) kisi bhi server pe, Redis pub/sub se updates.
            (hash(docId) % N NAHI: N badla to lagbhag har doc ka server badla = sab dobara jude.)
            Ek doc pe ~100 editor tak ek server jhel leta. App ki static files CDN se.
 ```
@@ -331,18 +330,19 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Doc wala server gir gaya?
-HAL        Ring pe agla server le leta. Sab dobara jude, photo + op se doc bana, version bata ke baaki op.
+HAL        Ring pe agla server le leta. Sab dobara jude. Doc = photo + Cassandra ke op + Redis buffer ke
+           bache op (aakhri ~1 sec wale). Phir har app version bata ke baaki op le.
 
 DIKKAT 3   Likhe hue ka kram kaun tay kare?
-HAL        SERVER: har op ko doc ka agla version number. App ki ghadi kabhi nahi.
+HAL        Owner SERVER: har op ko doc ka agla version number. App ki ghadi kabhi nahi.
 
 DIKKAT 4   Ek doc pe 1000 log?
-HAL        Jo sirf dekh rahe (likh nahi rahe) unhe doosre server pe rakho, Redis pub/sub se updates.
+HAL        100 editor tak owner server jhel leta. Baaki 900 viewer doosre servers pe, Redis pub/sub se.
 ```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
-  CDN (app ki files) -> LB (docId se same server = doc ka owner) -> Conn-Server (WebSocket + OT + version)
+  CDN (app ki files) -> LB (editor: docId se owner server · viewer: koi bhi) -> Conn-Server (WebSocket + OT)
   -> editors ko seedha PUSH · Redis pub/sub sirf un dekhne walon tak jo doosre server pe hain
   -> Redis buffer -> BATCH -> Cassandra op log (docId, version) + snapshot · permission = SQL
 
@@ -355,8 +355,8 @@ END ME POOCHEGA:
   "10x?"            -> alag connection line · Conn-Server docId se baanto · Redis copy
                        · DB buffer + batch · doc kholna = snapshot + baad ke op
   "SPOF?"           -> Conn-Server (doosre pe dobara judo), Redis (copy)
-  "Chal raha, kaise pata?" -> likha doosre tak kitni der me
-  pahuncha (p99) · WebSocket toot-ne ki dar · buffer lag · alert
+  "Chal raha, kaise pata?" -> likha doosre tak kitni der me pahuncha (p99) · WebSocket toot-ne ki dar
+                              · buffer lag · alert
 ```
 
 AAKHRI DABBE ki tasveer:
@@ -433,9 +433,9 @@ OT vs CRDT: OT = op bhejo, ek saath wale ko KHISKAO, sab same · CRDT
 ## AAKHRI DABBA + WRAP
 
 ```
-CDN = app ki files · LB = docId se same server · Conn-Server = WebSocket + OT + buffer
-Redis pub/sub = server se server · Redis buffer = batch
-likhna · Cassandra = op log (docId, version) + snapshot
+CDN = app ki files · LB = editor docId se owner pe · Conn-Server = WebSocket + OT + buffer
+Redis pub/sub = viewer wale servers tak · Redis buffer = batch likhna
+Cassandra = op log (docId, version) + snapshot
 SQL = permission (CP)
 ```
 ```
