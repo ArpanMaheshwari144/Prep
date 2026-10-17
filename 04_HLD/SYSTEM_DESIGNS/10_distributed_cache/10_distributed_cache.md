@@ -164,7 +164,8 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Machine B mar gayi. Uske hisse ki saari key gayab. Un key
          ki saari padhai ab seedha DB pe -> DB pe achanak bojh.
 
-ILAAJ:   Har machine ki 1-2 COPY (replica) alag AZ (alag building) me. Primary mari -> copy primary ban jaati.
+ILAAJ:   Har machine (B) ki ek copy doosri building me. B jo likhti, wo copy tak bhi jaata.
+         B giri -> copy naya B ban jaati, app ko naya pata mil jaata. Sirf B ki keys pe asar, baaki machines aaram se.
 
 ANDAR KAISE:
          Likhna primary pe, copy ko thodi der baad pahunchta (ASYNC).
@@ -208,31 +209,29 @@ ISKE BAAD KYA TOOTEGA:
       -> jitna purana business jhel sake. Profile: minute. Price / stock: second, ya turant delete.
 ```
 
-#### [5](#d5) GARAM KEY KHATAM, 1000 REQUEST EK SAATH DB PE (STAMPEDE)
+#### [5](#d5) GARAM KEY KHATAM, 1000 LOG EK SAATH DB PE (STAMPEDE)
 ```
-KAHANI:  "home page" ki key ki umar khatam hui. Usi second 1000
-         log aaye -> sabko MISS -> 1000 ek saath DB pe -> DB gira.
+KAHANI:  "home page" ki key ki umar khatam hui. Usi second 1000 log aaye -> cache me nahi mili
+         -> 1000 ek saath DB pe -> DB gira.
 
-ILAAJ:   LOCK: sirf EK request DB se laaye, baaki ruk ke cache se padhein.
-         + SOFT-TTL: umar khatam hone se PEHLE peeche se taaza kar do.
+ILAAJ:   Sirf PEHLE wale ko DB jaane do. Baaki 999 ko bolo "thoda ruko".
+         Pehla DB se laake cache me rakh dega, phir baaki 999 cache se hi le lenge.
+         DB pe 1000 ki jagah sirf 1 request gayi.
+         Aur umar khatam hone se thoda pehle hi key ko peeche se taaza kar do, khaali hone ka mauka hi na aaye.
 
-ANDAR KAISE:
-         miss -> SET lock:home 1 NX EX 5
-            jeeta (pehla) -> DB se laao, cache bharo, lock hatao
-            haara (baaki 999) -> 50-100 ms ruko, cache dobara padho (tab tak pehle ne bhar diya)
-         EX 5 kyun: pehla beech me mar gaya to lock 5 sec me khud chhoot jaaye.
-         1000 ki jagah 1 request DB pe.
+ANDAR KAISE (pehla kaun, Redis se):
+         SET lock:home 1 NX EX 5   -> jo pehle pahuncha usi ka lock laga (NX = sirf tab jab koi aur na laga ho)
+         EX 5: pehla beech me mar gaya to lock 5 second me khud chhoot jaaye, baaki atke na rahein.
 
 ISKE BAAD KYA TOOTEGA:
-  - Haarne wale kitni der rukenge?
-      -> chhota intezaar + 2-3 baar. Phir bhi nahi -> purani value do, DB pe mat bhejo.
-  - Bahut saari key EK SAATH khatam (sabki umar 1 ghanta, sab ek saath bhari thi)?
-      -> AVALANCHE. Umar me thoda random (60 min +- 5) -> khatam hona bikhar jaata.
-  - Key DB me HAI hi nahi, attacker baar-baar wahi maange?
-      -> PENETRATION: har baar miss -> DB. "nahi hai" (null) ko bhi chhoti umar ke saath cache karo,
-         ya Bloom filter: "ye key ho hi nahi sakti" -> DB tak jao hi mat.
-  - Pata hai bheed kab aayegi (sale, final)?
-      -> pehle se cache bharo (pre-warm) + machine badhao.
+  - Pata tha bheed kab aayegi (sale 12 baje, IPL final)?
+      -> uske pehle hi cache bhar do aur machine badha do.
+  - Baaki 999 kitni der rukenge?
+      -> 50-100 ms, 2-3 baar. Phir bhi nahi mila to purani value de do, DB pe mat bhejo.
+  - Bahut saari key EK SAATH khatam (sab ek saath bhari thi)?
+      -> umar me thoda random (60 min +- 5), to khatam hona bikhar jaata.
+  - Key DB me HAI hi nahi, koi baar-baar wahi maange?
+      -> "nahi hai" ko bhi chhoti umar ke saath cache me rakho, DB tak jaane hi mat do.
 ```
 
 #### [6](#d6) EK KEY ITNI POPULAR, USKI MACHINE AKELI MAR RAHI (HOT KEY)
@@ -298,9 +297,9 @@ flowchart TD
 
 ---
 
-## ════ DETAIL: HAR DIKKAT KI INTERVIEW LINE + TASVEER ════
+## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Card me poori kahani hai. Yahan har dikkat ki ek English line (interview me bolne ke liye) aur us waqt tak ka diagram.
+> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
 
 ---
 
@@ -308,12 +307,6 @@ flowchart TD
 
 ## DIKKAT 1 — RAM bhar gayi, kya hatayein
 
-```
-JAWAB:    Ye tera LRU cache hi hai (DSA me banaya, LeetCode 146).
-          HashMap se key turant milti, aur linked list me AAGE = abhi chhui, PEECHE = sabse purani.
-          RAM bhar gayi -> PEECHE wali nikaal do.
-          Upar se har key ki umar (TTL): umar poori to key apne aap bekaar.
-```
 ```mermaid
 flowchart TD
     n_App["App"]
@@ -329,13 +322,6 @@ flowchart TD
 
 ## DIKKAT 2 — 1 TB ek machine me nahi: key kis machine pe
 
-```
-JAWAB:    hash % N tu jaanta hai (hashing me index nikaalne wala). Dikkat: machine 4 se 5 hui to % 4 se
-          % 5 ho gaya, lagbhag har key ka ghar badal gaya -> cache khaali -> saara bojh DB pe.
-          Ring: gol ghera, tera circular array jaisa. Machine bhi ghere pe, key bhi. Key ghadi ki disha me
-          chal ke jo pehli machine mile wahin rehti hai.
-          Nayi machine aayi to sirf uske theek peeche wali thodi keys uske paas jaati hain, baaki sab wahin.
-```
 ```mermaid
 flowchart TD
     n_App["App"]
@@ -357,16 +343,6 @@ flowchart TD
 
 ## DIKKAT 3 — machine mari, bojh DB pe
 
-```
-POOCHEGA: "What happens if a cache node goes down?"
-          (Cache ki ek machine gir gayi to?)
-
-JAWAB:    Har machine (B) ki ek copy doosri building me hoti hai. B jo likhti hai, wo copy tak bhi jaata hai.
-          B giri -> baaki machines dekhti hain ki B jawab nahi de rahi, milke faisla karti hain -> B ki copy
-          naya B ban jaati hai, aur app ko naya pata bata diya jaata.
-          Beech ke 10-30 second us hisse ki keys DB se aati hain (thoda dheema), baaki machines pe koi asar nahi.
-          Copy thodi peeche hoti hai, to aakhri kuch likhai kho sakti hai. Cache me chalta, asli data DB me hai.
-```
 ```mermaid
 flowchart TD
     n_App["App"]
@@ -388,17 +364,6 @@ flowchart TD
 
 ## DIKKAT 4 — DB me naya, cache me purana
 
-```
-POOCHEGA: "The user updated something but still sees the old value. Why?"
-          (User ne kuch badla par purana dikh raha. Kyun?)
-
-JAWAB:    Ravi ne naam badla. DB me naya likha, aur cache me se purani key hata di (delete).
-          Agli baar koi Ravi ki profile maange to cache me nahi milegi, DB se naya naam aayega aur cache
-          me baith jaayega.
-          Key ki umar bhi rakho, taaki delete kabhi fail ho jaaye to bhi kuch der baad purana naam khud
-          hat jaaye.
-          Ravi ko khud purana dikhe (copy peeche thi) to Ravi ko thodi der primary se padhao.
-```
 ```mermaid
 flowchart TD
     n_App["App"]
@@ -420,19 +385,6 @@ flowchart TD
 
 ## DIKKAT 5 — garam key khatam, 1000 request DB pe
 
-```
-POOCHEGA: "What if the cache goes down / a hot key expires?"
-          (Cache gir gaya / garam key khatam ho gayi to?)
-
-JAWAB:    Do case hain.
-          1) Pata hai bheed kab aayegi (sale 12 baje, IPL final 7:30): uske pehle hi cache me data bhar
-          do aur machine badha do.
-          2) Pata nahi tha, key achanak khatam ho gayi aur 1000 log ek saath aaye: sirf PEHLE wale ko DB
-          jaane do. Baaki 999 ko bolo 'thoda ruko'. Pehla DB se laake cache me rakh dega, phir baaki 999
-          cache se hi le lenge. DB pe 1000 ki jagah sirf 1 request gayi.
-          Aur umar khatam hone se thoda pehle hi key ko peeche se taaza kar do, taaki khaali hone ka
-          mauka hi na aaye.
-```
 ```mermaid
 flowchart TD
     n_App["App"]
@@ -454,17 +406,6 @@ flowchart TD
 
 ## DIKKAT 6 — ek key itni popular, machine akeli mar rahi
 
-```
-POOCHEGA: "What about a hot key / celebrity / hot partition?"
-          (Garam key / celebrity / garam partition ka kya?)
-
-JAWAB:    Yahan key cache me hai, dikkat ye hai ki ek hi machine pe crore log padh rahe.
-          Ilaaj: har app server apne paas 1-2 second ke liye wo value rakh le. Har second sirf ek baar
-          Redis se poochhe, baaki sab apne paas se de de.
-          Aur us key ki kai copy alag machines pe rakh do, taaki padhne wale bat jaayein. Score 1 second
-          purana hua to chalta hai.
-          Key khaali hoti to wo upar wali dikkat (stampede) hai: ek laaye, baaki ruke.
-```
 ```mermaid
 flowchart TD
     n_App_L1_local_cache["App + L1 local cache"]
