@@ -246,9 +246,8 @@ flowchart LR
 ```
 DIKKAT     Usi top-up me server ne PSP ko call kiya aur jawab se pehle gira. Paisa kat gaya aur jawab kho
            gaya, ya kata hi nahi? Pata nahi.
-HAL        PENDING PEHLE: call se pehle DB me 'PENDING', phir call. WEBHOOK = PSP khud baad me hamein call
-           karke batata "ho gaya / fail". RECONCILIATION (milaan) job har kuch minute 5 min purane PENDING
-           PSP se poochhe; roz raat PSP ki poori file se milao.
+HAL        PENDING PEHLE: call se pehle DB me 'PENDING'. WEBHOOK = PSP baad me khud batata "ho gaya / fail".
+           RECONCILIATION (milaan): har kuch min 5 min purane PENDING PSP se poochho + raat PSP ki file se.
 NAHI       "bas rollback kar do": PSP me shayad paisa sach me kat chuka.
 ```
 ```

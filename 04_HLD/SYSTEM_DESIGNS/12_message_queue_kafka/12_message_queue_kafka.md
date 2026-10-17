@@ -234,9 +234,8 @@ flowchart LR
 ```
 ```
 DIKKAT     Dopahar Broker A ki disk mari. Har partition ki ek hi copy thi -> P0 ka data hamesha ke liye gaya.
-HAL        LEADER + ISR: har partition ka LEADER (likhna-padhna) + 2 copy (follower) alag machine pe.
-           Saath chalti copy = ISR; leader gira -> Controller (KRaft) ISR se naya leader chunta.
-           Zaroori khabar: acks=all (saari ISR copies ne liya tabhi "OK").
+HAL        LEADER + ISR: har partition ka LEADER + 2 follower copy alag machine pe; saath chalti copy = ISR.
+           Leader gira -> Controller (KRaft) ISR se naya chunta. Zaroori: acks=all (saari ISR ne liya tab OK).
 NAHI       acks=1 sab jagah: leader ne "OK" bola, copy se pehle gira -> khabar gayi.
 ```
 ```

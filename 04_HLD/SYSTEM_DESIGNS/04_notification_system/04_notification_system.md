@@ -117,9 +117,8 @@ flowchart LR
 ```
 DIKKAT     Diwali subah maine order kiya. Order service email bhej ke jawab ka intezaar karti rahi; email
            company band thi -> order hi fail. Aur email dobara bhejne wala koi nahi.
-HAL        KAFKA (disk pe diary, async): Order service "order hua" Kafka me daal ke turant jawab de;
-           Notification service peeche se padh ke bheje. Email band -> wo ruki, wapas aayi -> wahin se,
-           kyunki yaad hai kahan tak padha (offset).
+HAL        KAFKA (disk pe diary, async): Order service "order hua" Kafka me daal ke turant jawab de.
+           Notification service peeche se padh ke bheje; email band -> wapas aaye to wahin se (offset yaad).
 NAHI       Order service me hi retry: request utni der atki, aur Order service giri to retry bhi gaya.
 ```
 ```
@@ -284,9 +283,8 @@ flowchart LR
 ```
 DIKKAT     SMS company abhi bhi dheemi: line alag ho gayi, par har call 30 sec atki. Saare SMS worker
            usi me phanse, OTP bhi ruka. Dheemi company band company se bhi buri.
-HAL        TIMEOUT 2-3 sec + FUSE (circuit breaker) har company ka alag: 5 baar fail -> OPEN (call mat karo,
-           seedha doosri company) -> 30 sec baad HALF-OPEN (ek test call) -> chali to CLOSED.
-           Twilio ka fuse uda -> SNS.
+HAL        TIMEOUT 2-3 sec + FUSE har company ka alag: 5 fail -> OPEN (call nahi, Twilio ki jagah SNS)
+           -> 30 sec baad HALF-OPEN (ek test call) -> chali to CLOSED. FUSE = circuit breaker.
 NAHI       worker badha do: naye worker bhi 30 sec me phanse, dheemi company pe aur bojh.
 ```
 ```

@@ -236,9 +236,8 @@ flowchart LR
 ```
 DIKKAT     2 baje mujhe ginti chahiye thi kitne click aaye. Usi request me analytics DB me likhne lage,
            phir redirect. Analytics DB dheema -> har user redirect ke liye ruka.
-HAL        KAFKA (disk pe diary, App bas aakhri page pe likh ke aage): redirect turant (302), "ek click hua"
-           ki khabar Kafka me. Analytics svc apni speed se padhti, kahan tak padha yaad (offset), crash pe
-           wahin se; kharab khabar alag line (DLQ), baaki nahi rukti.
+HAL        KAFKA (disk pe diary): redirect turant (302), "ek click hua" ki khabar Kafka me, App aage.
+           Analytics svc apni speed se, kahan tak padha yaad (offset, crash pe wahin se); kharab khabar DLQ.
 NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein gayi.
 ```
 ```
@@ -271,9 +270,8 @@ flowchart LR
 ```
 DIKKAT     4 baje DB team: 10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Ek machine me nahi aata,
            aur wo ek machine mari to saare link gaye.
-HAL        CASSANDRA, SHARD (tukdon me baanto) short code se: click code ke saath (GET /abc123) -> code
-           se seedha kaunsi machine. RING = ek gol ghadi: machine bhi ghadi pe, code bhi; code ghadi ki
-           disha me chale, jo pehli machine mile wahi uski. Har tukde ki 3 copy, alag building me.
+HAL        CASSANDRA, SHARD (tukdon me baanto) short code se: GET /abc123 -> code se seedha machine.
+           RING = gol ghadi, machine + code dono us pe; code aage chale, pehli machine uski. Har tukda 3 copy.
 NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se country pata hi nahi.
 ```
 ```
@@ -310,14 +308,14 @@ flowchart LR
 DIKKAT     5 baje maine naya link banaya. Cassandra har link 3 alag machine pe rakhta: copy A, B, C.
            Link A aur B me pahunch gaya, C tak abhi nahi (aam taur pe ms, bheed me second tak).
            Isi beech mera click C pe gaya -> C bola "ye link mere paas nahi" -> 404.
-HAL        QUORUM (matlab "zyadatar": 3 me se 2): likhte waqt "ho gaya" tabhi jab 2 copy me likh jaaye,
-           padhte waqt bhi 2 copy se poochho. Koi bhi 2 uthao (A+C, B+C, A+B), har jodi me A ya B aayegi
-           hi -> khaali haath kabhi nahi. Saath me link banate hi Redis me bhi daalo, zyadatar click wahin.
+HAL        QUORUM (matlab "zyadatar": 3 me se 2): likhna "done" jab 2 copy me, padhna bhi 2 copy se.
+           Koi bhi 2 uthao (A+C, B+C, A+B), har jodi me A ya B aayegi hi -> khaali haath kabhi nahi.
 NAHI       tez karne ko sirf 1 copy se padho: wo C ho sakti hai -> phir 404.
 ```
 ```
 AAGE POOCHEGA:
   NIYAM: "2 me likha + 2 se padha" -> dono me ek copy common pakki; jo likha wo khona nahi.
+  "Redis ka kya?"                  -> link banate hi Redis me bhi daalo; zyadatar click wahin se.
   "Likhte waqt ek copy giri?"      -> 3 me se 2 ne likha tabhi "save"; us beech redirect Redis se.
   "Giri machine wapas uthi?"       -> girne ke beech ki likhai zinda machine ne note rakhi (hinted handoff),
                                       uthte hi de di; padhte waqt copies me farak mile to theek (read repair).
@@ -384,9 +382,8 @@ flowchart LR
 ```
 DIKKAT     Raat ko spammer: ek API key se har second 5,000 link (phishing). Aam din poore system pe ~1,000
            -> 5 guna bojh, asli users dheeme; Gmail / WhatsApp ne hamara domain "spam" maana.
-HAL        RATE LIMIT darwaze (API gateway) pe: har user / IP kitni baar bana sakta, uski had + login check.
-           Uske aage WAF (jaane-pehchaane hamle rokne wala). Chhota karne se pehle lamba URL check: virus /
-           dhokhe wali site to nahi, warna hamara chhota link bura kaam karega.
+HAL        RATE LIMIT gateway pe: har user / IP ki had + login check; aage WAF (jaane-pehchaane hamle roke).
+           Chhota karne se pehle lamba URL check: virus / dhokhe ki site to nahi (link bura kaam na kare).
 NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana lega.
 ```
 ```

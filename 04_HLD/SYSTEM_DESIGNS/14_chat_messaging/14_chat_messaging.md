@@ -132,9 +132,8 @@ flowchart LR
 ```
 DIKKAT     Subah 9 baje 2 crore log app khol ke jude, sabka taar hamesha khula. Ek taar = ek thread (~1 MB)
            -> 1 lakh taar = ~100 GB. Server khatam.
-HAL        EVENT LOOP (Netty jaisa): kuch hi thread, lakhon taar. OS (epoll) batata "in 5 taar pe data aaya"
-           -> thread sirf unpe kaam karta; baaki chup baithe taar ka kharcha sirf thodi memory.
-           ~200 chat server (sirf taar pakadte), aage LB.
+HAL        EVENT LOOP (Netty jaisa): kuch thread, lakhon taar; OS (epoll) batata "in 5 taar pe data aaya".
+           Thread sirf unpe kaam karta, chup taar = thodi memory. ~200 chat server (sirf taar), aage LB.
 NAHI       badi machine lo (zyada RAM): thread ka kharcha wahi, bas thodi der baad tootega.
 ```
 ```
@@ -160,9 +159,8 @@ flowchart LR
 ```
 DIKKAT     Main server-1 pe, Ravi server-7 pe. Maine "hi" bheja, server-1 ki register me sirf apne log
            -> bola "Ravi offline", jabki Ravi online tha.
-HAL        REGISTER (kaun kis server se juda) Redis me: "Ravi -> server-7". Har server apne jude log likhta,
-           umar (TTL) ke saath; server zinda to dhadkan se umar badhata, mara to entry khud hat jaati.
-           Server-1 Redis se poochhta, server-7 ko deta, server-7 Ravi ko. Redis me sirf PATA, taar nahi.
+HAL        REGISTER Redis me: "Ravi -> server-7" + umar (TTL); server zinda = umar badhe, mara = khud hate.
+           Server-1 Redis se poochhta, server-7 ko deta, wo Ravi ko. Redis me sirf PATA, taar nahi.
 NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
 ```
 ```
@@ -296,8 +294,7 @@ flowchart LR
 ```
 ```
 DIKKAT     Meri phone ki ghadi 5 min aage. Mere message chat me upar chadh gaye, Ravi ke jawab se pehle.
-HAL        SEQ: kram server ka number tay karta, phone ki ghadi (msg_ts) nahi. Har chat ka apna +1 number:
-           Redis INCR seq:chat123 (atomic: do message ek saath aayein to bhi dono ko alag number).
+HAL        SEQ: kram server ka +1 number, phone ki ghadi nahi: Redis INCR seq:chat123 (atomic, har ek alag).
            Cassandra me andar kram ab seq; Ravi wapas: "meri aakhri seq 4417" -> 4418 se aage sab.
 NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
 ```

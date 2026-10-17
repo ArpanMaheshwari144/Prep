@@ -140,8 +140,7 @@ flowchart LR
 DIKKAT     11 baje meeting, doc "HELLO", dono sabse upar likhne lage. Mera "X" (pos 0) ~200 ms me Ravi tak,
            usse pehle Ravi ka "Y" (pos 0) -> meri screen "YXHELLO", Ravi ki "XYHELLO". Do alag doc.
 HAL        OT (Operational Transformation): doosre ka op aaya to apne op ke hisaab se khiskao.
-           Tie: jiska op server pe pehle (mera), uska pehle -> meri screen Y ko 1 pe, Ravi ki X 0 pe hi
-           -> dono ke paas "XYHELLO".
+           Tie: server pe pehle mera -> meri screen Y ko 1 pe, Ravi ki X 0 pe hi -> dono ke paas "XYHELLO".
 NAHI       phone ke time se kram: ghadi alag, aur position phir bhi khiskani padti.
 ```
 ```
@@ -252,9 +251,8 @@ flowchart LR
 ```
 ```
 DIKKAT     3 baje DB alert: ~20 lakh log type, har ek ~3 akshar / sec -> ~60 lakh DB write / sec -> DB khatam.
-HAL        REDIS BUFFER + BATCH: badlaav pehle Redis me jama, har 1 second ek saath Cassandra me.
-           ACK tabhi jab op buffer + uski copy me (Redis WAIT 1). Edit log: partition key = docId,
-           andar kram = version (SERVER ka number).
+HAL        REDIS BUFFER + BATCH: op Redis me, har 1 sec ek saath Cassandra me; ACK jab copy me bhi (WAIT 1).
+           Edit log: partition key = docId, andar kram = version (SERVER ka number).
 NAHI       "sahi chahiye to SQL lo": DB data ki shakal se chuno; join nahi, bas bahut jodna -> Cassandra.
 ```
 ```

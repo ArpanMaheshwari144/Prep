@@ -294,9 +294,8 @@ flowchart LR
 ```
 DIKKAT     6 baje DB alert: har second ~5,000 naye tweet, 5 saal me ~0.5 PB. Ek DB na itna rakh sakta,
            na itna likh sakta.
-HAL        CASSANDRA, user_id se baanto: mere saare tweet ek jagah -> profile ek jagah se. Famous = key me
-           mahina bhi (user + mahina). Andar time ulta (naya pehle).
-           Likhna = diary (commit log) ke aakhir + RAM.
+HAL        CASSANDRA, user_id se baanto: mere tweet ek jagah, andar naya pehle. Famous = key me user + mahina.
+           Likhna = diary (commit log) ke aakhir + RAM, isliye likhai tez.
 NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; join / transaction chahiye nahi.
 ```
 ```
