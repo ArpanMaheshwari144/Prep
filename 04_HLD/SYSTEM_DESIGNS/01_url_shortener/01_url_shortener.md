@@ -124,8 +124,8 @@ DIKKAT 3   Link delete / expire ho gaya, par Redis me abhi pada hai?
 HAL        Expiry pe Redis khud hata deta hai. Delete pe pehle DB se hatao, phir Redis se.
 
 DIKKAT 4   Redis hi gir gaya?
-HAL        Wo 95% click ek saath DB pe girenge, DB bhi gir sakta hai. Isliye Redis ki bhi copies
-           (cluster + replica). Phir bhi gira to kuch request mana karo (load shedding), aur garam link
+HAL        Redis ki bhi copies (cluster + replica), warna 95% click ek saath DB pe -> DB bhi gir sakta.
+           Phir bhi gira to kuch request mana karo (load shedding), aur garam link
            ko sirf EK request DB se laaye, baaki ruke. "Kuch nahi hoga" kabhi mat bolna.
 
 DIKKAT 5   DB ki read copy (replica) kyun nahi, ya har App apna cache rakhe?
@@ -137,8 +137,7 @@ HAL        Replica bhi disk se padhti, dheemi. Har App ka apna cache = sabke paa
 ```
 DIKKAT 1   Saari request ek hi App machine pe. Bojh se wo dheema hua, aur ek din wahi gir gaya
            -> poori site band. Ek cheez jiske girne se sab ruk jaaye = SPOF (single point of failure).
-HAL        Kai App machine, aur koi bhi user ka kuch yaad nahi rakhti (sab Redis / DB me) -> koi bhi
-           request kisi bhi machine pe ja sakti.
+HAL        Kai App machine (STATELESS) -> koi bhi request kisi bhi machine pe ja sakti.
            Aage LOAD BALANCER: request baari-baari (round-robin) ya jiske paas kam kaam (least-conn).
            Har ~5 sec har machine se "zinda ho?" (GET /health). Jawab nahi -> list se hatao, theek hui
            -> wapas jodo.
@@ -177,8 +176,7 @@ DIKKAT 1   App ki 2 machine, dono apna-apna counter chala rahi. Dono ka counter 
            Dono ne naya link banaya -> dono ka number 6 -> do alag link, ek hi code (COLLISION).
 HAL        Ek COUNTER service (ZooKeeper ya DB ki ek table) har App ko numbers ka ALAG thaila (range)
            deti: App-1 ko 1-1000, App-2 ko 1001-2000. Number kabhi takrayenge hi nahi.
-           App thaile me se khud ginti. Counter service se baat sirf thaila khatam hone pe -> har link pe
-           network call nahi, 1000 link me ek baar.
+           App thaile me se khud ginti. Counter service se baat sirf thaila khatam hone pe.
 ```
 ```mermaid
 flowchart TD
