@@ -60,10 +60,10 @@ KAISA CHALE (NFR): khoye nahi · ek machine gire to chale · lakhon / second (di
          so the EFFECT is exactly-once."
 
 NUMBERS (andaaza):
-   10 crore message / din, din me ~1 lakh second -> ~1,200 / second -> bheed me 3-5 guna -> ~5,000 / second
+   10 crore message / din, ~86,400 second -> ~1,200 / second -> bheed me 3-5 guna -> ~5,000 / second
    ~1 KB ek message -> ~100 GB / din · 7 din rakho ~700 GB · 3 copy ~2 TB
-   3 copy = kam se kam 3 BROKER (har copy alag machine) · har topic abhi 3-6 PARTITION kaafi,
-     shuru me 2-4 guna zyada rakho (partition = kitne ek saath padh sakein)
+   3 copy = kam se kam 3 BROKER (har copy alag machine) · order topic ~10 PARTITION (5,000 / sec,
+     ek worker 500); shuru me thoda zyada rakho (partition = kitne ek saath padh sakein)
    MQ ka asli number JAGAH hai (Kafka padh ke delete nahi karta, RAKHTA) — log ise sirf "pipe" samajh lete
 ```
 
@@ -127,14 +127,14 @@ flowchart LR
 ```
 DIKKAT     10 baje sale: "order-events" pe 5,000 khabar / sec. SMS worker ~500 / sec hi bhej paata (har SMS ek
            API call). Topic ek line -> ek hi worker kram se padhe -> peeche ghanton ki line (lag).
-HAL        PARTITION: topic ke tukde, har tukda alag machine (P0 -> Broker A · P1 -> B · P2 -> C), har tukda
+HAL        PARTITION: topic ke 10 tukde (P0-P9), teen broker A / B / C pe bate; har tukda
            alag worker -> 10 tukde = 10 worker = ~5,000 / sec. Likhai aur jagah bhi bat gayi.
-NAHI       copy (replica) badhao: copy sirf bachav ke liye; likhna partition se scale hota.
+NAHI       copy (replica) badhao: copy sirf bachav ke liye, padhna bhi leader se hi; padhne wale = partition.
 ```
 ```
 AAGE POOCHEGA:
   NIYAM: partition = kitne ek saath padh sakein; aur badhe -> aur partition.
-  "Kitne partition?"               -> jitne consumer ek saath chahiye, abhi 3-6; shuru me 2-4 guna (~12),
+  "Kitne partition?"               -> jitne consumer ek saath chahiye (abhi 10); shuru me thoda zyada,
                                       kyunki baad me badhaye to key ka partition badlega.
   "Ek partition garam?"            -> key tukdon me todo (userId#bucket), agar us key pe kram zaroori nahi.
 ```
@@ -152,20 +152,20 @@ flowchart LR
 ```
 DIKKAT     Ravi ne naam "Ravi K" kiya, 1 min baad "Ravi Kumar". Pehla P0 me, doosra P1 me. P0 ka consumer
            10 min peeche (lag) -> pehle "Ravi Kumar" laga, phir "Ravi K" -> galat naam reh gaya.
-HAL        KEY = userId: Kafka kram sirf EK partition ke andar deta. hash(userId) % 3 -> hamesha P2
-           -> dono badlaav P2 me, kram se.
+HAL        KEY = userId: Kafka kram sirf EK partition ke andar deta. hash(userId) % 10 -> hamesha P7
+           -> dono badlaav P7 me, kram se.
 NAHI       poore topic ka kram: matlab sirf ek partition = speed khatam. Kram sirf key ke andar.
 ```
 ```
 AAGE POOCHEGA:
   NIYAM: jiska kram chahiye wahi key; same key = same partition.
-  "Partition 3 se 6 kiye?"         -> % 3 se % 6 -> naye event naye partition, thodi der kram toota;
+  "Partition 10 se 20 kiye?"       -> % 10 se % 20 -> naye event naye partition, thodi der kram toota;
                                       isliye shuru me hi zyada partition.
   "Producer retry kram ulta kare?" -> (1 fail, 2 gaya, phir 1) idempotent producer (enable.idempotence):
                                       har message ka sequence number -> kram + duplicate dono theek.
 ```
 
-#### 4 Email service ki 3 machine, Ravi ko 3 welcome email
+#### 4 Email service ki 3 machine, Ravi ko 3 order email
 ```mermaid
 flowchart LR
     n_P["Producer (key = userId)"]
@@ -176,22 +176,20 @@ flowchart LR
     style n_GE fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Email service ki 3 machine (C1, C2, C3). Config me group.id = machine ka naam -> teeno alag team,
-           teeno poora topic padh rahi. Ravi ka signup teeno ne padha -> Ravi ko 3 welcome email.
-HAL        CONSUMER GROUP: teeno EK team. Team ke andar har partition sirf EK machine padhti:
-           P0 -> C1 · P1 -> C2 · P2 -> C3. Ravi ka event P2 me -> sirf C3 -> ek email.
-```
-```
 AAGE POOCHEGA:
   NIYAM: ek team ke andar ek partition = ek machine.
-  "Consumer badhaane hain?"        -> partition bhi badhao; 3 partition + 5 consumer = 2 khaali baithe.
+  "Kaise kaam karta?"              -> pehle group.id = machine ka naam -> teeno alag team, teeno poora topic
+                                      padh rahi. Ab teeno EK group.id: team me har partition sirf EK machine:
+                                      P0-3 -> C1 · P4-6 -> C2 · P7-9 -> C3. Ravi ka order P7 me -> sirf C3 ->
+                                      ek email.
+  "Consumer badhaane hain?"        -> partition bhi badhao; 10 partition + 12 consumer = 2 khaali baithe.
   "Ek message 5 min ka kaam?"      -> poora partition atka (aage wala atka to peeche sab); dheema kaam alag
                                       topic / worker pool ko do.
   "RabbitMQ / SQS me?"             -> standard me kai consumer ek line se -> kram ki guarantee nahi;
                                       SQS FIFO ya ek hi consumer ho to kram, par speed kam.
 ```
 
-#### 5 Ravi ka signup analytics aur dashboard ko bhi chahiye
+#### 5 Ravi ka order analytics aur dashboard ko bhi chahiye
 ```mermaid
 flowchart LR
     n_P["Producer (key = userId)"]
@@ -207,7 +205,7 @@ flowchart LR
     style n_GD fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Ravi ka signup email ko bhi chahiye, analytics ko bhi, dashboard ko bhi. Ek group = sirf ek ko.
+DIKKAT     Ravi ka order email ko bhi chahiye, analytics ko bhi, dashboard ko bhi. Ek group = sirf ek ko.
 HAL        HAR SERVICE KA APNA GROUP: topic ek; email, analytics, dashboard group alag. Team ke andar kaam
            bat-ta, alag team = poori khabar. Har group ka apna offset (analytics peeche, email pe asar nahi).
 NAHI       har service ka alag topic: producer ek event teen baar bheje -> "ek message kai service" hi toota.
@@ -237,8 +235,8 @@ flowchart LR
 ```
 DIKKAT     Dopahar Broker A ki disk mari. Har partition ki ek hi copy thi -> P0 ka data hamesha ke liye gaya.
 HAL        LEADER + ISR: har partition ka LEADER (likhna-padhna) + 2 copy (follower) alag machine pe.
-           Saath chalti copy = ISR; leader gira -> ISR wali leader. Zaroori khabar: acks=all
-           (saari ISR copies ne liya tabhi "OK").
+           Saath chalti copy = ISR; leader gira -> Controller (KRaft) ISR se naya leader chunta.
+           Zaroori khabar: acks=all (saari ISR copies ne liya tabhi "OK").
 NAHI       acks=1 sab jagah: leader ne "OK" bola, copy se pehle gira -> khabar gayi.
 ```
 ```
@@ -343,14 +341,10 @@ flowchart LR
     style n_DLQ fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Shaam ko C2 mar gaya -> P1 ko koi padh hi nahi raha, khabar jama ho rahi. Ya consumer dheema
-           -> peeche-peeche (lag) badhta ja raha.
-HAL        REBALANCE: mari machine ke partition baaki me (C1->P0, C2->P1, C3->P2 -> C1->P0,P1 · C3->P2).
-           LAG = partition ka aakhri offset - group ne kahan tak padha -> badhe to alert.
-```
-```
 AAGE POOCHEGA:
   NIYAM: koi partition bina padhne wale ke nahi, koi kharab khabar poori line na roke.
+  "Kaise kaam karta?"              -> REBALANCE: C2 ke P4-6 -> C1 aur C3 me bat gaye. LAG = partition ka
+                                      aakhri offset - group ne kahan tak padha -> badhe to alert.
   "Ek khabar baar-baar fail?"      -> kuch koshish ke baad DLQ, taaki poora partition na atke.
   "Rebalance me sab ruk jaate?"    -> purana tareeka (eager) haan; cooperative rebalance (Kafka 2.4+)
                                       -> sirf jinke partition badle wo rukte.
@@ -378,14 +372,12 @@ flowchart LR
     style n_B fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat tak sale ki saari khabar padi hai. Kafka padh ke delete nahi karta (ye log hai, queue nahi)
-           -> disk bharti ja rahi.
-HAL        RETENTION: 7 din rakhta, phir purani segment file (~1 GB) poori uda deta = sasta.
-           COMPACTION: kuch topic me har key ki sirf aakhri khabar (Ravi ki profile 10 baar badli -> aakhri).
-```
-```
 AAGE POOCHEGA:
   NIYAM: jo rakha hai usi se REPLAY; rakhna consumer ki sabse lambi chhutti se lamba.
+  "Kaise kaam karta?"              -> Kafka padh ke delete nahi karta (ye log hai, queue nahi). RETENTION: 7
+                                      din rakhta, phir purani segment file (~1 GB) poori uda deta = sasta.
+                                      COMPACTION: kuch topic me har key ki sirf aakhri khabar (Ravi ki profile
+                                      10 baar badli -> aakhri).
   "Rakhe ka fayda?"                -> REPLAY: naya group shuru se padhe, ya bug theek karke offset peeche.
   "7 din consumer band raha?"      -> data gaya; isliye lag pe alert + retention consumer ki sabse lambi
                                       band-hone ki der se zyada.
@@ -435,7 +427,7 @@ flowchart LR
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```
-partition      -> consumer badhaye par partition 3 hi -> extra KHAALI baithe, lag badhta -> PARTITION BADHAO
+partition      -> consumer badhaye par partition 10 hi -> extra KHAALI baithe, lag badhta -> PARTITION BADHAO
                   ★ "Adding partitions changes hash(key) % n, so an existing key can move to a different
                     partition and its ordering can break — that's why we start with a few extra partitions."
 dheema consumer -> aage wala (email API / DB) dheema -> consumer badhao (partition tak) · batch
