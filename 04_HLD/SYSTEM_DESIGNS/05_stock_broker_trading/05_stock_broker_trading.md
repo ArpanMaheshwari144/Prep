@@ -256,7 +256,7 @@ AAGE POOCHEGA:
   "Time se kram kyun nahi?"        -> do machine ki ghadi alag, ek second me do order, pehla kaun pata nahi.
   "Sirf photo kaafi?"              -> nahi; photo ke baad wale order kahin likhe hi nahi, gire to gaye.
   "Register 1 crore ka, der?"      -> shuru se nahi: aakhri photo + uske baad ke panne.
-  "Seconds me wapas?"              -> doosra scorer saath register padhta, board taiyaar; pehla gire tab chalu.
+  "Seconds me wapas?"              -> doosra scorer register padhta, board taiyaar; pehla gire tab chalu.
   "Crash pe kya bachaoge?"         -> scoreboard register se wapas; paisa DB me, wahan rollback.
 ```
 
