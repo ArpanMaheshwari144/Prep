@@ -275,7 +275,7 @@ flowchart LR
 ```
 DIKKAT     11 baje tak sabki salary aa gayi, sab ek saath transfer kar rahe. Ek Banking service machine bhar
            gayi. Wo giri to poora bank band.
-HAL        KAI MACHINE + LB: Banking service kuch yaad nahi rakhti -> kai machine + LB, mari hui list se bahar.
+HAL        KAI MACHINE + LB: Banking service kuch yaad nahi rakhti -> kai machine + LB, mari list se bahar.
 ```
 ```
 AAGE POOCHEGA:
