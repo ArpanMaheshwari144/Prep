@@ -65,8 +65,8 @@ NUMBERS (andaaza):
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-> Har card bas: CUE -> DIKKAT -> HAL -> NAHI (jo galat jawab log pehle bolte). Diagram aur AAGE POOCHEGA
-> abhi mat padho, wo sirf jab interviewer aage kuch poochhe.
+> Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
+> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
@@ -82,6 +82,15 @@ flowchart LR
 ```
 
 #### 0 SHURU: ORDER BOOK KAISE MATCH KARTA
+```mermaid
+flowchart LR
+    n_USER["USER"]
+    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> idempotency key"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_DB
+    style n_Order_Service fill:#f9a825,color:#000
+```
 ```
 SCENE      TCS ka share. Kuch bechna chahte (SELL), kuch khareedna (BUY).
 
@@ -105,19 +114,9 @@ HAL        6 ka sauda. Mere baaki 4 book me pade rehte, un 4 ka paisa ruka rehta
 
 #### 1 Maine ek baar dabaya, order do lag gaye
 ```
-CUE        order screen pe id bani, dobara bhejo to wahi id (idempotency key)
 
 DIKKAT     9:15, maine TCS ka BUY dabaya. Network gaya, app ne khud dobara bheja -> do order lag gaye.
 HAL        IDEMPOTENCY KEY: screen khulte id, dobara wahi id. Server pe UNIQUE -> doosri baar purana jawab.
-```
-```mermaid
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> idempotency key"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_DB
-    style n_Order_Service fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -128,15 +127,6 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
-```
-CUE        bank jaise: check aur block ek hi jhatke me (ek atomic query)
-
-DIKKAT     Order ek laga, ab paisa? Wallet me 50k. Laptop se 30k, phone se 30k, same second.
-           Do server, dono ne 50k dekha, dono pass.
-HAL        Check + block EK query: UPDATE wallet SET blocked = blocked + 30000
-           WHERE user_id = 'Arpan' AND total - blocked >= 30000   (doosre ko 0 row -> reject)
-NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
-```
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -147,6 +137,13 @@ flowchart LR
     n_Order_Service --> n_Wallet
     n_Wallet --> n_DB
     style n_Wallet fill:#f9a825,color:#000
+```
+```
+DIKKAT     Order ek laga, ab paisa? Wallet me 50k. Laptop se 30k, phone se 30k, same second.
+           Do server, dono ne 50k dekha, dono pass.
+HAL        Check + block EK query: UPDATE wallet SET blocked = blocked + 30000
+           WHERE user_id = 'Arpan' AND total - blocked >= 30000   (doosre ko 0 row -> reject)
+NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
 ```
 ```
 AAGE POOCHEGA:
@@ -162,14 +159,6 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
-```
-CUE        ek symbol ek thread
-
-DIKKAT     Mera order book me pahuncha. Suresh 10 bech raha, usi pal Mohan ne bhi BUY 10.
-           Do thread, dono ko "10 hai" dikha -> 20 bik gaye.
-HAL        TCS ke saare order ek line, ek hi thread (TCS -> T3). Pehle main 10, phir Mohan ko 0.
-NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
-```
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -187,6 +176,12 @@ flowchart LR
     style n_Matching_Engine fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     Mera order book me pahuncha. Suresh 10 bech raha, usi pal Mohan ne bhi BUY 10.
+           Do thread, dono ko "10 hai" dikha -> 20 bik gaye.
+HAL        TCS ke saare order ek line, ek hi thread (TCS -> T3). Pehle main 10, phir Mohan ko 0.
+NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
+```
+```
 AAGE POOCHEGA:
   NIYAM: TCS ki book ko ek waqt ek hi haath chhoota; doosra chahiye to line me ruke.
   "Har order pe lock?"             -> race share pe hai, order pe nahi; dono lock le ke dono ko 10 dikhte.
@@ -196,14 +191,6 @@ AAGE POOCHEGA:
 ```
 
 #### 4 9:15 baje sab TCS pe toot pade
-```
-CUE        baanto mat: ek thread kaafi (lakhon / sec), bheed line me
-
-DIKKAT     Usi 9:15 pe poora market TCS pe toot pada: hazaaron order / second.
-HAL        Baanto mat. Sab ek line me lago, ek-ek karke; ek thread RAM me lakhon / sec nipta leta.
-           App me ACCEPTED turant (line me lag gaya), FILLED jab sauda ho.
-NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
-```
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -220,20 +207,18 @@ flowchart LR
     style n_Queue_per_symbol fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     Usi 9:15 pe poora market TCS pe toot pada: hazaaron order / second.
+HAL        Baanto mat. Sab ek line me lago, ek-ek karke; ek thread RAM me lakhon / sec nipta leta.
+           App me ACCEPTED turant (line me lag gaya), FILLED jab sauda ho.
+NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
+```
+```
 AAGE POOCHEGA:
   NIYAM: ek stock = ek line; badhana stocks ke BEECH, ek stock ke andar kabhi nahi.
   "Badhana kaise?"                 -> stocks ke BEECH: TCS ek thread, INFY doosra.
 ```
 
 #### 5 Server gira, poori order book gayab
-```
-CUE        scoreboard toota, scorer ka register bacha (log pehle, replay)
-
-DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
-HAL        Har order PEHLE log me (number ke saath), PHIR book. Gira -> log #1 se replay, wahi book.
-NAHI       doosra server saath chalao (replica): do book = ek share do baar bike.
-           Sahi: STANDBY sirf log padhta, book taiyaar; pehla gire tab chalu.
-```
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -250,6 +235,12 @@ flowchart LR
     style n_Event_Log fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
+HAL        Har order PEHLE log me (number ke saath), PHIR book. Gira -> log #1 se replay, wahi book.
+NAHI       doosra server saath chalao (replica): do book = ek share do baar bike.
+           Sahi: STANDBY sirf log padhta, book taiyaar; pehla gire tab chalu.
+```
+```
 AAGE POOCHEGA:
   NIYAM: register (log) hi sach hai, scoreboard (book) uski photo. Do chalte scoreboard = do sach = galat.
   "Number kaun deta?"              -> register wala (log) har order ko #501, #502; Order Service nahi.
@@ -261,14 +252,6 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Mera paisa kat gaya, Suresh ko mila hi nahi
-```
-CUE        chaaron entry ek saath ya koi nahi (ek transaction)
-
-DIKKAT     Mera sauda 9:15 pe match hua tha (Suresh se 10 TCS, 30k). Ab paisa-share hilana:
-           mera 30k kata, Suresh ko milne se PEHLE crash.
-HAL        Ek transaction: BEGIN Arpan -30k +10 share · Suresh +30k -10 share COMMIT. Crash -> rollback.
-NAHI       chaar alag UPDATE: beech me gira to aadha likha.
-```
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -287,6 +270,12 @@ flowchart LR
     style n_Settlement fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     Mera sauda 9:15 pe match hua tha (Suresh se 10 TCS, 30k). Ab paisa-share hilana:
+           mera 30k kata, Suresh ko milne se PEHLE crash.
+HAL        Ek transaction: BEGIN Arpan -30k +10 share · Suresh +30k -10 share COMMIT. Crash -> rollback.
+NAHI       chaar alag UPDATE: beech me gira to aadha likha.
+```
+```
 AAGE POOCHEGA:
   NIYAM: paisa ek jagah: chaaron likhai ek transaction me; ledger ka jod hamesha 0.
   "Sab likho, phir done flag?"     -> flag se pehle gira to kitna likha pata hi nahi.
@@ -297,15 +286,6 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Paisa kat gaya, share aaye hi nahi (do alag DB)
-```
-CUE        har kadam ka haal likho, aage badho, ulta nahi (step + forward)
-
-DIKKAT     Paisa Wallet DB me, share Portfolio DB me ho to ek transaction nahi chalti.
-           Mera 30k kata, share daalne se PEHLE crash.
-HAL        STATUS LOG: wallet done -> portfolio done. Fail -> retry, aage hi badho (match ke baad ulta nahi).
-           Ghanton fail -> PENDING + alert, ops share daalta.
-NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
-```
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -327,6 +307,13 @@ flowchart LR
     style n_Portfolio_DB fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     Paisa Wallet DB me, share Portfolio DB me ho to ek transaction nahi chalti.
+           Mera 30k kata, share daalne se PEHLE crash.
+HAL        STATUS LOG: wallet done -> portfolio done. Fail -> retry, aage hi badho (match ke baad ulta nahi).
+           Ghanton fail -> PENDING + alert, ops share daalta.
+NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
+```
+```
 AAGE POOCHEGA:
   NIYAM: match ke baad sirf aage; ulta sirf match se pehle.
   "Step-step ki keemat?"           -> beech me PENDING dikhta; 2PC jaisa lamba lock nahi.
@@ -336,13 +323,6 @@ AAGE POOCHEGA:
 ```
 
 #### 8 10 lakh log ek saath price poochh rahe, server baith gaya
-```
-CUE        Twitter feed jaisa: maango mat, khud aaye (push, WebSocket)
-
-DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
-HAL        WebSocket: connection khula, price badla tabhi push (Redis pub/sub se servers tak).
-NAHI       polling: 10 lakh bekaar sawaal / sec · Kafka: sab store karta, purana price bekaar.
-```
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -369,6 +349,11 @@ flowchart LR
     style n_Pub_Sub fill:#f9a825,color:#000
     style n_WebSocket fill:#f9a825,color:#000
     style n_USERS fill:#f9a825,color:#000
+```
+```
+DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
+HAL        WebSocket: connection khula, price badla tabhi push (Redis pub/sub se servers tak).
+NAHI       polling: 10 lakh bekaar sawaal / sec · Kafka: sab store karta, purana price bekaar.
 ```
 ```
 AAGE POOCHEGA:

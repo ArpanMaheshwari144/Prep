@@ -96,8 +96,8 @@ DO CHEEZ JO DESIGN CHALATI:
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-> Har card bas: CUE -> DIKKAT -> HAL -> NAHI (jo galat jawab log pehle bolte). Diagram aur AAGE POOCHEGA
-> abhi mat padho, wo sirf jab interviewer aage kuch poochhe.
+> Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
+> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE, EK SERVER DO USER (yahan se shuru, phir "kahan tootega")
 ```
@@ -111,6 +111,15 @@ flowchart LR
 ```
 
 #### 0 SHURU: KHULA TAAR (WEBSOCKET) AUR REGISTER
+```mermaid
+flowchart LR
+    n_U["USER"]
+    n_LB["LB"]
+    n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> event loop"]
+    n_U --> n_LB
+    n_LB --> n_CS
+    style n_CS fill:#f9a825,color:#000
+```
 ```
 SCENE      Ravi ne kabhi nahi poochha "koi message aaya?", phir bhi mera "hi" uski screen pe.
            Ravi ne /connect khola -> ye connection BAND nahi hota (WEBSOCKET).
@@ -129,22 +138,12 @@ HAL        Ping / pong (dhadkan); jawab nahi to taar band, register se hatao.
 
 #### 1 Subah 2 crore log jude, server ki memory khatam
 ```
-CUE        ek waiter, poora hall: kuch thread, lakhon khule taar (event loop)
 
 DIKKAT     Subah 9 baje 2 crore log app khol ke jude, sabka taar hamesha khula. Ek taar = ek thread (~1 MB)
            -> 1 lakh taar = ~100 GB. Server khatam.
 HAL        EVENT LOOP (Netty jaisa): kuch hi thread, lakhon taar; OS batata kis taar pe data aaya.
            ~200 chat server (sirf taar pakadte), aage LB.
 NAHI       ek connection = ek thread: 1 lakh x 1 MB = 100 GB.
-```
-```mermaid
-flowchart LR
-    n_U["USER"]
-    n_LB["LB"]
-    n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> event loop"]
-    n_U --> n_LB
-    n_LB --> n_CS
-    style n_CS fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -155,15 +154,6 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Maine Ravi ko "hi" bheja, server bola Ravi offline
-```
-CUE        phone directory: Redis me likha Ravi kis server pe (register)
-
-DIKKAT     Main server-1 pe, Ravi server-7 pe. Maine "hi" bheja, server-1 ki register me sirf apne log
-           -> bola "Ravi offline", jabki Ravi online tha.
-HAL        REGISTER Redis me: "Ravi -> server-7" (har server apne log likhta, umar + dhadkan ke saath).
-           Server-1 Redis se poochhta, server-7 ko deta, server-7 Ravi ko.
-NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
-```
 ```mermaid
 flowchart LR
     n_U["USER"]
@@ -176,6 +166,13 @@ flowchart LR
     style n_R fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     Main server-1 pe, Ravi server-7 pe. Maine "hi" bheja, server-1 ki register me sirf apne log
+           -> bola "Ravi offline", jabki Ravi online tha.
+HAL        REGISTER Redis me: "Ravi -> server-7" (har server apne log likhta, umar + dhadkan ke saath).
+           Server-1 Redis se poochhta, server-7 ko deta, server-7 Ravi ko.
+NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
+```
+```
 AAGE POOCHEGA:
   NIYAM: Redis me sirf PATA, taar nahi; message DB me pakka, pata galat ho to bhi kuch nahi khota.
   "Pata galat (Ravi khiska)?"      -> message DB me hai; Ravi naye server pe judte hi le lega.
@@ -185,15 +182,6 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Ravi ka phone band tha, message kahan jaaye
-```
-CUE        pehle diary me likho, phir bhejo; Ravi offline -> push ghanti
-
-DIKKAT     Ravi ka phone band, koi taar nahi. "Pehle bhejo, na pahunche to DB me daalo" -> beech me server
-           gira = message gaya.
-HAL        PEHLE DB me likho, phir bhejne ki koshish. Ravi offline -> PUSH (FCM / APNs) se ghanti.
-           Ravi wapas: "meri aakhri seq 4417" -> server 4418 se aage sab deta.
-NAHI       pehle bhejo, phir DB: beech me gira to message gaya.
-```
 ```mermaid
 flowchart LR
     n_U["USER"]
@@ -211,6 +199,13 @@ flowchart LR
     style n_P fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     Ravi ka phone band, koi taar nahi. "Pehle bhejo, na pahunche to DB me daalo" -> beech me server
+           gira = message gaya.
+HAL        PEHLE DB me likho, phir bhejne ki koshish. Ravi offline -> PUSH (FCM / APNs) se ghanti.
+           Ravi wapas: "meri aakhri seq 4417" -> server 4418 se aage sab deta.
+NAHI       pehle bhejo, phir DB: beech me gira to message gaya.
+```
+```
 AAGE POOCHEGA:
   NIYAM: DB pehle, bhejna baad me; jo DB me hai wo kabhi nahi khota.
   "Ravi ke 3 device?"              -> har device ka apna taar + nishaan; ek pe padha to sab pe neeli.
@@ -219,14 +214,6 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Roz 1.2 TB message, ek DB nahi jhelta
-```
-CUE        ek chat ek almaari: chat_id se baanto (Cassandra)
-
-DIKKAT     Roz ~1.2 TB message, 46,000 likhai / second. Ek DB machine nahi jhelegi. Kis cheez se baantein?
-HAL        CASSANDRA, partition = chat_id, andar kram = seq. Padhna hamesha "is chat ke aakhri 50" = ek jagah:
-             WHERE chat_id = ? AND seq < 4417 ORDER BY seq DESC LIMIT 50   (keyset, OFFSET nahi)
-NAHI       user_id se baanto: ek chat do jagah, group 500 jagah.
-```
 ```mermaid
 flowchart LR
     n_U["USER"]
@@ -243,6 +230,12 @@ flowchart LR
     style n_CA fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     Roz ~1.2 TB message, 46,000 likhai / second. Ek DB machine nahi jhelegi. Kis cheez se baantein?
+HAL        CASSANDRA, partition = chat_id, andar kram = seq. Padhna hamesha "is chat ke aakhri 50" = ek jagah:
+             WHERE chat_id = ? AND seq < 4417 ORDER BY seq DESC LIMIT 50   (keyset, OFFSET nahi)
+NAHI       user_id se baanto: ek chat do jagah, group 500 jagah.
+```
+```
 AAGE POOCHEGA:
   NIYAM: jo saath padha jaata, wo saath rakho: ek chat ek partition.
   "message_id se partition?"       -> har message alag jagah; aakhri 50 = 50 jagah se.
@@ -254,15 +247,6 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Net dheema, app ne dobara bheja, Ravi ko "hi" do baar
-```
-CUE        message ki apni id, dobara wahi id (idempotency)
-
-DIKKAT     Metro me net dheema. App ne "hi" bheja, timeout aaya, dobara bheja. Pehla pahunch chuka tha
-           -> Ravi ko "hi" do baar.
-HAL        IDEMPOTENCY: app har message ki apni id (clientMsgId), dobara bhejne pe WAHI.
-           Server pe "pehle aaya?" + daalna EK kadam -> dobara aaya to naya message nahi.
-NAHI       server id banaye: har dobara bhejna = nayi id = duplicate.
-```
 ```mermaid
 flowchart LR
     n_U["USER"]
@@ -281,6 +265,13 @@ flowchart LR
     style n_I fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     Metro me net dheema. App ne "hi" bheja, timeout aaya, dobara bheja. Pehla pahunch chuka tha
+           -> Ravi ko "hi" do baar.
+HAL        IDEMPOTENCY: app har message ki apni id (clientMsgId), dobara bhejne pe WAHI.
+           Server pe "pehle aaya?" + daalna EK kadam -> dobara aaya to naya message nahi.
+NAHI       server id banaye: har dobara bhejna = nayi id = duplicate.
+```
+```
 AAGE POOCHEGA:
   NIYAM: id APP banata, server sirf "pehle dekha?" poochhta.
   "Ek kadam kaise?"                -> Cassandra INSERT ... IF NOT EXISTS (LWT), ya Redis SET NX.
@@ -289,13 +280,6 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Meri ghadi 5 min aage, mere message upar chadh gaye
-```
-CUE        kram server ka +1 number (seq), phone ki ghadi nahi
-
-DIKKAT     Meri phone ki ghadi 5 min aage. Mere message chat me upar chadh gaye, Ravi ke jawab se pehle.
-HAL        SEQ: kram server ka number tay karta, har chat ka +1 (Redis INCR seq:chat123, atomic).
-NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
-```
 ```mermaid
 flowchart LR
     n_U["USER"]
@@ -316,6 +300,11 @@ flowchart LR
     style n_SQ fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     Meri phone ki ghadi 5 min aage. Mere message chat me upar chadh gaye, Ravi ke jawab se pehle.
+HAL        SEQ: kram server ka number tay karta, har chat ka +1 (Redis INCR seq:chat123, atomic).
+NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
+```
+```
 AAGE POOCHEGA:
   NIYAM: kram = server ka +1 number, har chat ka alag.
   "16 nahi aaya, app kya kare?"    -> 15 ke baad 17 = 16 chhoota; thoda ruko, phir "15 ke baad ke do".
@@ -325,14 +314,6 @@ AAGE POOCHEGA:
 ```
 
 #### 7 College Gang (500) me ek message, 500 baar likhein?
-```
-CUE        group = notice board: ek baar likho, sab padhein
-
-DIKKAT     "College Gang" me 500 log. Maine ek message bheja -> 500 logon ke inbox me 500 baar likhein?
-HAL        Group ka message EK baar, group chat ke neeche. Sab wahi padhte.
-           Online members: unke servers nikaalo, har SERVER ko ek baar "ye message, in members ko".
-NAHI       Twitter jaisa har inbox me copy: wahan feed sabki alag + crore follower, group sabka ek.
-```
 ```mermaid
 flowchart LR
     n_U["USER"]
@@ -353,6 +334,12 @@ flowchart LR
     style n_CA fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     "College Gang" me 500 log. Maine ek message bheja -> 500 logon ke inbox me 500 baar likhein?
+HAL        Group ka message EK baar, group chat ke neeche. Sab wahi padhte.
+           Online members: unke servers nikaalo, har SERVER ko ek baar "ye message, in members ko".
+NAHI       Twitter jaisa har inbox me copy: wahan feed sabki alag + crore follower, group sabka ek.
+```
+```
 AAGE POOCHEGA:
   NIYAM: sabke liye ek jaisa = ek copy; har kisi ka alag = alag copy.
   "300 online ko kaise?"           -> har server ko EK call, 300 alag call nahi.
@@ -360,15 +347,6 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Ravi ne 50 padhe: unread aur neeli tick kaise
-```
-CUE        bookmark: kahan tak padha (read_upto); unread = aakhri - bookmark
-
-DIKKAT     Shaam ko Ravi ne chat khol ke 50 message padhe. Har message x har member ka "padha" record
-           = 500 x 50 = 25,000 likhai. Bekaar.
-HAL        NISHAAN: read_upto 4467 ("kahan tak padha"). Unread = aakhri seq - nishaan (ghatao, gino nahi).
-           Neeli tick = ek push "read_upto 4467" -> 50 ek saath neeli.
-NAHI       har message x har member ka record: 25,000 likhai.
-```
 ```mermaid
 flowchart LR
     n_U["USER"]
@@ -391,6 +369,13 @@ flowchart LR
     style n_NS fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     Shaam ko Ravi ne chat khol ke 50 message padhe. Har message x har member ka "padha" record
+           = 500 x 50 = 25,000 likhai. Bekaar.
+HAL        NISHAAN: read_upto 4467 ("kahan tak padha"). Unread = aakhri seq - nishaan (ghatao, gino nahi).
+           Neeli tick = ek push "read_upto 4467" -> 50 ek saath neeli.
+NAHI       har message x har member ka record: 25,000 likhai.
+```
+```
 AAGE POOCHEGA:
   NIYAM: nishaan khisakta hai, ginti nahi hoti; unread, tick, offline ke baad lena sab isi se.
   "Nishaan kahan?"                 -> Cassandra (user_id, chat_id) -> read_upto; baar-baar wala Redis me.
@@ -401,15 +386,6 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Shaadi ka 200 MB video chat ke raaste
-```
-CUE        video S3 me, message me sirf pata (presigned URL)
-
-DIKKAT     Maine College Gang me 200 MB shaadi ka video chat server se bheja -> 2 min taar atka,
-           server 500 x 200 MB = ~100 GB bheje.
-HAL        PRESIGNED URL: app video seedha S3 me (server sign kare PUT, 10 min). Message me sirf S3 key +
-           thumbnail. Group me ek upload, 500 ko wahi key.
-NAHI       message me URL rakho: 10 min me khatam, kal link mara; KEY rakho.
-```
 ```mermaid
 flowchart LR
     n_S3["S3<br/>200 MB video<br/>-> presigned, message me pata"]
@@ -434,6 +410,13 @@ flowchart LR
     style n_S3 fill:#f9a825,color:#000
 ```
 ```
+DIKKAT     Maine College Gang me 200 MB shaadi ka video chat server se bheja -> 2 min taar atka,
+           server 500 x 200 MB = ~100 GB bheje.
+HAL        PRESIGNED URL: app video seedha S3 me (server sign kare PUT, 10 min). Message me sirf S3 key +
+           thumbnail. Group me ek upload, 500 ko wahi key.
+NAHI       message me URL rakho: 10 min me khatam, kal link mara; KEY rakho.
+```
+```
 AAGE POOCHEGA:
   NIYAM: bhaari maal S3 me, message me sirf pata.
   "Kholne pe link?"                -> server key se naya chhota URL banaye.
@@ -442,14 +425,6 @@ AAGE POOCHEGA:
 ```
 
 #### 10 Raat ko online / last seen sabko kaise
-```
-CUE        online = 30 sec ki umar; app "hoon" bolta rahe (TTL)
-
-DIKKAT     Raat ko main online aaya, gaya. Har baar mere saare contacts ko batao = crore x 500 message.
-HAL        UMAR (TTL): "Arpan online" Redis me 30 sec; app har 15 sec "hoon". Band = umar khatam = offline.
-           Status tabhi dekho jab koi meri chat khole.
-NAHI       har baar sabko batao: crore x 500.
-```
 ```mermaid
 flowchart LR
     n_S3["S3"]
@@ -474,6 +449,12 @@ flowchart LR
     n_CS --> n_NS
     n_CS --> n_PR
     style n_PR fill:#f9a825,color:#000
+```
+```
+DIKKAT     Raat ko main online aaya, gaya. Har baar mere saare contacts ko batao = crore x 500 message.
+HAL        UMAR (TTL): "Arpan online" Redis me 30 sec; app har 15 sec "hoon". Band = umar khatam = offline.
+           Status tabhi dekho jab koi meri chat khole.
+NAHI       har baar sabko batao: crore x 500.
 ```
 ```
 AAGE POOCHEGA:
