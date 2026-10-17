@@ -246,8 +246,9 @@ flowchart LR
 ```
 DIKKAT     Usi top-up me server ne PSP ko call kiya aur jawab se pehle gira. Paisa kat gaya aur jawab kho
            gaya, ya kata hi nahi? Pata nahi.
-HAL        PENDING PEHLE: call se pehle DB me 'PENDING', phir call. PSP WEBHOOK batata "ho gaya / fail".
-           RECONCILIATION job har kuch minute 5 min purane PENDING PSP se poochhe; roz raat poori file milao.
+HAL        PENDING PEHLE: call se pehle DB me 'PENDING', phir call. WEBHOOK = PSP khud baad me hamein call
+           karke batata "ho gaya / fail". RECONCILIATION (milaan) job har kuch minute 5 min purane PENDING
+           PSP se poochhe; roz raat PSP ki poori file se milao.
 NAHI       "bas rollback kar do": PSP me shayad paisa sach me kat chuka.
 ```
 ```
@@ -454,8 +455,8 @@ flowchart LR
 ```
 DIKKAT     ~1000 crore payment row saal me. Table + index RAM me nahi samaate, har likhai pe index disk se
            -> Diwali ke 3000 / sec pe ek primary ki likhai dheemi.
-HAL        SHARD by account_id: mera balance aur meri saari history ek hi shard pe -> mujhse kaatna ek jagah,
-           ek transaction, atomic.
+HAL        SHARD (data tukdon me, alag machine) account_id se: mera balance aur meri saari history ek hi
+           tukde pe -> mujhse kaatna ek jagah, ek transaction, atomic.
 NAHI       txn_id se baanto: meri payment alag shard pe, balance kahan? · time se: aaj wala shard garam.
 ```
 ```
