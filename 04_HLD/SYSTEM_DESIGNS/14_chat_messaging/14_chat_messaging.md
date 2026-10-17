@@ -140,7 +140,8 @@ flowchart LR
 ```
 DIKKAT     Subah 9 baje 2 crore log app khol ke jude, sabka taar hamesha khula. Ek taar = ek thread (~1 MB)
            -> 1 lakh taar = ~100 GB. Server khatam.
-HAL        EVENT LOOP (Netty jaisa): kuch hi thread, lakhon taar; OS batata kis taar pe data aaya.
+HAL        EVENT LOOP (Netty jaisa): kuch hi thread, lakhon taar. OS (epoll) batata "in 5 taar pe data aaya"
+           -> thread sirf unpe kaam karta; baaki chup baithe taar ka kharcha sirf thodi memory.
            ~200 chat server (sirf taar pakadte), aage LB.
 NAHI       ek connection = ek thread: 1 lakh x 1 MB = 100 GB.
 ```
@@ -167,8 +168,9 @@ flowchart LR
 ```
 DIKKAT     Main server-1 pe, Ravi server-7 pe. Maine "hi" bheja, server-1 ki register me sirf apne log
            -> bola "Ravi offline", jabki Ravi online tha.
-HAL        REGISTER Redis me: "Ravi -> server-7" (har server apne log likhta, umar + dhadkan ke saath).
-           Server-1 Redis se poochhta, server-7 ko deta, server-7 Ravi ko.
+HAL        REGISTER (kaun kis server se juda) Redis me: "Ravi -> server-7". Har server apne jude log likhta,
+           umar (TTL) ke saath; server zinda to dhadkan se umar badhata, mara to entry khud hat jaati.
+           Server-1 Redis se poochhta, server-7 ko deta, server-7 Ravi ko. Redis me sirf PATA, taar nahi.
 NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
 ```
 ```
@@ -200,7 +202,8 @@ flowchart LR
 ```
 DIKKAT     Ravi ka phone band, koi taar nahi. "Pehle bhejo, na pahunche to DB me daalo" -> beech me server
            gira = message gaya.
-HAL        PEHLE DB me likho, phir bhejne ki koshish. Ravi offline -> PUSH (FCM / APNs) se ghanti.
+HAL        PEHLE DB me likho, phir bhejne ki koshish. Ravi offline -> PUSH (Google FCM / Apple APNs) se
+           ghanti, app band ho tab bhi. Har chat me har message ka ek +1 number (SEQ, server deta).
            Ravi wapas: "meri aakhri seq 4417" -> server 4418 se aage sab deta.
 NAHI       pehle bhejo, phir DB: beech me gira to message gaya.
 ```
@@ -230,8 +233,9 @@ flowchart LR
 ```
 ```
 DIKKAT     Roz ~1.2 TB message, 46,000 likhai / second. Ek DB machine nahi jhelegi. Kis cheez se baantein?
-HAL        CASSANDRA, partition = chat_id, andar kram = seq. Padhna hamesha "is chat ke aakhri 50" = ek jagah:
-             WHERE chat_id = ? AND seq < 4417 ORDER BY seq DESC LIMIT 50   (keyset, OFFSET nahi)
+HAL        CASSANDRA, partition (kis machine pe jaaye) = chat_id, andar kram = seq. Ek chat ke saare message
+           ek jagah. Padhna hamesha "is chat ke aakhri 50" = ek jagah, ek baar ("4417 se pehle ke 50"):
+             WHERE chat_id = ? AND seq < 4417 ORDER BY seq DESC LIMIT 50   (OFFSET nahi)
 NAHI       user_id se baanto: ek chat do jagah, group 500 jagah.
 ```
 ```
@@ -273,7 +277,8 @@ NAHI       server id banaye: har dobara bhejna = nayi id = duplicate.
 ```
 AAGE POOCHEGA:
   NIYAM: id APP banata, server sirf "pehle dekha?" poochhta.
-  "Ek kadam kaise?"                -> Cassandra INSERT ... IF NOT EXISTS (LWT), ya Redis SET NX.
+  "Ek kadam kaise?"                -> Cassandra INSERT ... IF NOT EXISTS ("pehle nahi hai tabhi daalo", LWT),
+                                      ya Redis SET NX (wahi kaam Redis me).
   "Kitni der yaad rakhoge?"        -> jitni der me koi dobara bhejta, jaise Redis EX 3600 = 1 ghanta.
   "Dobara pe kaunsi id lautegi?"   -> pehli baar wali; mere app me ek hi bubble.
 ```
@@ -300,7 +305,8 @@ flowchart LR
 ```
 ```
 DIKKAT     Meri phone ki ghadi 5 min aage. Mere message chat me upar chadh gaye, Ravi ke jawab se pehle.
-HAL        SEQ: kram server ka number tay karta, har chat ka +1 (Redis INCR seq:chat123, atomic).
+HAL        SEQ: kram server ka number tay karta, phone ki ghadi nahi. Har chat ka apna +1 number:
+           Redis INCR seq:chat123 (atomic: do message ek saath aayein to bhi dono ko alag number).
 NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
 ```
 ```
@@ -411,7 +417,7 @@ flowchart LR
 ```
 DIKKAT     Maine College Gang me 200 MB shaadi ka video chat server se bheja -> 2 min taar atka,
            server 500 x 200 MB = ~100 GB bheje.
-HAL        PRESIGNED URL: app video seedha S3 me (server sign kare PUT, 10 min). Message me sirf S3 key +
+HAL        PRESIGNED URL (server ka sign kiya 10 min ka paas): app video seedha S3 me daalta. Message me sirf S3 key +
            thumbnail. Group me ek upload, 500 ko wahi key.
 NAHI       message me URL rakho: 10 min me khatam, kal link mara; KEY rakho.
 ```
