@@ -455,6 +455,12 @@ flowchart TD
     n_Email_worker --> n_DLQ
 ```
 ```
+ANDAR KAISE:
+         Timeout 2 sec: SMS worker company ko call karta, 2 sec me jawab nahi -> chhodo, worker free.
+         Fuse har company ka alag: CLOSED (sab theek) --5 baar fail--> OPEN (call hi mat karo, seedha
+         doosri company) --30 sec baad--> HALF-OPEN (ek test call) --chali--> CLOSED.
+         Twilio ka fuse uda -> SNS se jaata. Push / email ke worker pe koi asar nahi (alag line).
+
 ISKE BAAD KYA TOOTEGA:
   - Dono company band?
       -> khabar line me ruki rahe (phenko nahi), backoff se koshish. OTP ke liye alert.
