@@ -82,15 +82,6 @@ flowchart LR
 ```
 
 #### 0 SHURU: ORDER BOOK KAISE MATCH KARTA
-```mermaid
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> idempotency key"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_DB
-    style n_Order_Service fill:#f9a825,color:#000
-```
 ```
 SCENE      TCS ka share. Kuch bechna chahte (SELL), kuch khareedna (BUY).
 
@@ -113,8 +104,16 @@ HAL        6 ka sauda. Mere baaki 4 book me pade rehte, un 4 ka paisa ruka rehta
 ```
 
 #### 1 Maine ek baar dabaya, order do lag gaye
+```mermaid
+flowchart LR
+    n_USER["USER"]
+    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> idempotency key"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_DB
+    style n_Order_Service fill:#f9a825,color:#000
 ```
-
+```
 DIKKAT     9:15, maine TCS ka BUY dabaya. Network gaya, app ne khud dobara bheja -> do order lag gaye.
 HAL        IDEMPOTENCY KEY: screen khulte id, dobara wahi id. Server pe UNIQUE -> doosri baar purana jawab.
 ```

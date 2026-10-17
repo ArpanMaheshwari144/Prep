@@ -111,15 +111,6 @@ flowchart LR
 ```
 
 #### 0 SHURU: KHULA TAAR (WEBSOCKET) AUR REGISTER
-```mermaid
-flowchart LR
-    n_U["USER"]
-    n_LB["LB"]
-    n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> event loop"]
-    n_U --> n_LB
-    n_LB --> n_CS
-    style n_CS fill:#f9a825,color:#000
-```
 ```
 SCENE      Ravi ne kabhi nahi poochha "koi message aaya?", phir bhi mera "hi" uski screen pe.
            Ravi ne /connect khola -> ye connection BAND nahi hota (WEBSOCKET).
@@ -137,8 +128,16 @@ HAL        Ping / pong (dhadkan); jawab nahi to taar band, register se hatao.
 ```
 
 #### 1 Subah 2 crore log jude, server ki memory khatam
+```mermaid
+flowchart LR
+    n_U["USER"]
+    n_LB["LB"]
+    n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> event loop"]
+    n_U --> n_LB
+    n_LB --> n_CS
+    style n_CS fill:#f9a825,color:#000
 ```
-
+```
 DIKKAT     Subah 9 baje 2 crore log app khol ke jude, sabka taar hamesha khula. Ek taar = ek thread (~1 MB)
            -> 1 lakh taar = ~100 GB. Server khatam.
 HAL        EVENT LOOP (Netty jaisa): kuch hi thread, lakhon taar; OS batata kis taar pe data aaya.
