@@ -321,8 +321,8 @@ flowchart TD
 ## DIKKAT 1 — consumer restart hua, message gayab
 
 ```
-BOL:      "Messages go to an append-only log on disk, each with an offset, and reading does not delete
-           them, so a restarted consumer continues from its committed offset or replays from earlier."
+JAWAB:    Message disk pe sirf-jodne-wale log me, har ek ka number (offset). Padhne se delete nahi hote.
+          Consumer restart ho to apne aakhri offset se aage, ya peeche jaake dobara padh sakta.
 ```
 ```mermaid
 flowchart TD
@@ -341,7 +341,9 @@ flowchart TD
 
 ```
 POOCHEGA: "One machine can't hold the data or take the writes. What do you do?"
-BOL:      "I split the topic into partitions spread across brokers, so both storage and writes scale out."
+          (Ek machine na data rakh sakti, na itni likhai jhel sakti. Kya karoge?)
+
+JAWAB:    Topic ko tukdon (partition) me todo, alag-alag broker pe. Jagah aur likhai dono bat jaate.
 ```
 ```mermaid
 flowchart TD
@@ -360,8 +362,10 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you keep messages in order?"
-BOL:      "Ordering is per partition, so I key by user id and all of one user's events land
-           in one partition. Global order would mean one partition and no throughput."
+          (Message ka kram kaise rakhoge?)
+
+JAWAB:    Kram sirf ek partition ke andar hota. Isliye key = user id, to ek user ke saare event ek
+          partition me. Poore topic ka kram = ek hi partition = speed khatam.
 ```
 ```mermaid
 flowchart TD
@@ -379,8 +383,8 @@ flowchart TD
 ## DIKKAT 4 — email ke 3 instance, Arpan ko 3 email
 
 ```
-BOL:      "Instances of one service form a consumer group, and within a group each partition
-           is read by exactly one consumer, so each event is processed once by that service."
+JAWAB:    Ek service ki saari machine ek consumer group me. Group ke andar har partition ko sirf EK
+          consumer padhta, to us service me har event ek hi baar chalta.
 ```
 ```mermaid
 flowchart TD
@@ -398,8 +402,8 @@ flowchart TD
 ## DIKKAT 5 — signup teeno service ko chahiye
 
 ```
-BOL:      "One topic, one consumer group per service. Within a group partitions are shared;
-           across groups everyone gets the whole stream, each with its own offset."
+JAWAB:    Topic ek, har service ka apna group. Group ke andar partition bat-te, alag group me har group
+          ko poori khabar milti, sabka apna offset.
 ```
 ```mermaid
 flowchart TD
@@ -422,9 +426,14 @@ flowchart TD
 
 ```
 POOCHEGA: "What happens if a broker goes down?"
-BOL:      "Each partition has a leader and followers on other brokers in different
-           zones. If the leader dies, the controller promotes an in-sync follower, so
-           nothing acknowledged is lost. Producers use acks=all for important events."
+          (Ek broker gir gaya to?)
+
+JAWAB:    Har partition ka ek leader aur alag broker / building me follower. Leader
+          mara to controller saath chal rahe follower (ISR) ko leader banata, to jo
+          pakka ho chuka tha wo nahi khota. Zaroori event acks=all se.
+
+SHABD:    ISR = jo follower leader ke saath poore chal rahe · acks=all = saari ISR
+          copy me likha tab 'done'
 ```
 ```mermaid
 flowchart TD
@@ -449,18 +458,25 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you make sure no message is lost?"
-BOL:      "I commit the offset only after the SMS is sent, so a crash means the event is redelivered,
-           not lost. That makes it at-least-once, so the consumer is idempotent - it records the
-           event ID and skips duplicates - and a message that keeps failing goes to a DLQ."
+          (Koi message khoye nahi, kaise pakka karoge?)
+
+JAWAB:    Offset 'padh liya' tabhi jab SMS chala gaya. Crash hua to event dobara aayega, khoyega nahi.
+          Isse 'kam se kam ek baar' milta, isliye consumer dobara-safe: event id yaad rakhta, dobara
+          aaya to skip. Baar-baar fail wala DLQ me.
 
 POOCHEGA: "The order is saved but the server crashes before sending the event. Now what?"
-BOL:      "The API only returns 'order placed' after the transaction commits. A crash before
-           commit rolls back both the order and the outbox row, so the user sees an error
-           and retries. A crash after commit leaves both saved, the relay still sends the
-           event, and an idempotency key stops the retry from creating a duplicate order."
+          (Order DB me save ho gaya, par event bhejne se pehle server gir gaya. Ab?)
+
+JAWAB:    API 'order ho gaya' tabhi bolti jab transaction commit ho gaya.
+          Commit se pehle crash: order aur outbox row dono wapas, user ko error, wo dobara karega.
+          Commit ke baad crash: dono save, relay baad me bhi event bhej dega, aur user dobara dabaye to
+          idempotency key doosra order nahi banne deti.
 
 POOCHEGA: "What if the same event comes twice?"
-BOL:      "Expected with at-least-once. The consumer dedups on event id, not on the partition key."
+          (Wahi event do baar aa gaya to?)
+
+JAWAB:    'Kam se kam ek baar' me ye hota hi hai. Consumer event id se dedup karta,
+          partition key se nahi.
 ```
 ```mermaid
 flowchart TD
@@ -486,9 +502,9 @@ flowchart TD
 ## DIKKAT 8 — consumer mara / peeche chal raha
 
 ```
-BOL:      "When a consumer dies its partitions are rebalanced to the rest of the
-           group; I alert on consumer lag, and a message that keeps failing goes
-           to a DLQ after a few retries so it does not block the partition."
+JAWAB:    Consumer mara to uske partition group ke baaki consumers me bat jaate
+          (rebalance). Peeche-chalne (lag) pe alert, aur baar-baar fail wala message
+          kuch koshish ke baad DLQ me, taaki partition na atke.
 ```
 ```mermaid
 flowchart TD
@@ -516,8 +532,9 @@ flowchart TD
 ## DIKKAT 9 — 7 din rakhoge to disk bharegi
 
 ```
-BOL:      "Retention deletes whole old segment files by time or size, and compacted topics keep only the
-           latest value per key; the retained log is what lets a new group or a fixed consumer replay."
+JAWAB:    Retention: time ya size se purani segment file poori delete. Compacted
+          topic me har key ka sirf aakhri message. Jo log rakha hai usi se naya
+          group ya theek kiya consumer dobara padh sakta.
 ```
 ```mermaid
 flowchart TD
@@ -566,10 +583,6 @@ POOCHEGA: "What about a hot key / hot partition?"   -> upar GARAM PARTITION
           KEEMAT: user-9 ka POORA pakka kram gaya (har tukde ke andar bacha)
                   kram sach me chahiye -> key chhoti cheez pe rakho
                   (orderId / accountId), jahan kram chahiye bas wahan
-          BOL: "A hot key pins one partition and one consumer, so a bigger box doesn't help much.
-                I'd salt that key into N sub-keys to spread it over N partitions, accepting that strict
-                ordering for that one customer is lost — or key
-                by a finer id where ordering actually matters."
 POOCHEGA: "How would you scale this to 10x?"        -> message ka raasta chalo
 POOCHEGA: "What's the single point of failure?"     -> leader (ISR promote), controller (KRaft quorum)
 POOCHEGA: "How do you know it's working?"           -> CONSUMER
@@ -646,11 +659,12 @@ RAASTA: producer -> key se partition -> LEADER pe jodo (offset) -> follower copy
 6 TRADE-OFF   async + sabko + replay -> Kafka · turant jawab / poora kram -> Kafka NAHI
 ```
 ```
-BOL:      "Producers write keyed events to partitioned, append-only logs spread across brokers, so ordering
-           is per key. Each partition is replicated; a new leader comes only from the in-sync replicas, and
-           important events use acks=all. Each service is its own consumer group, so one event reaches all
-           of them. Delivery is at-least-once: consumers commit after processing, are idempotent on event
-           id, and send poison messages to a DLQ. Retention keeps the log so we can replay."
+JAWAB:    Producer key wale event partition wale, sirf-jodne-wale log me likhte,
+          broker me baante; kram ek key ke andar.
+          Har partition ki copy, naya leader sirf ISR se, zaroori event acks=all.
+          Har service ka apna group, to ek event sab tak.
+          'Kam se kam ek baar': kaam ke baad commit, event id se dobara-safe, kharab message DLQ me.
+          Retention se dobara padh sakte.
 ```
 ```mermaid
 flowchart TD
@@ -720,10 +734,10 @@ IDEMPOTENT  eventId yaad, dobara aaye to chhodo
 DLQ         baar-baar fail -> retry ke baad DLQ, baaki na ruke (simulation me nahi)
 SAGA ≠ ye   saga kaam ULTA karta (refund). Yahan sirf raste me khona rokna.
 
-BOL:      "At-least-once delivery: an outbox so the debit and the event commit in the same transaction,
-           acks=all with replication on Kafka, and consumers that commit the offset only after
-           processing. Consumers are idempotent on event id, and poison messages go to a DLQ. I simulated
-           a crash at each of the three points: without these, 3 of 5 events were lost; with them, none."
+JAWAB:    'Kam se kam ek baar' pahunchana: outbox se paisa katna aur event ek hi
+          transaction me, Kafka me acks=all + copy, consumer kaam ke baad commit.
+          Consumer event id se dobara-safe, kharab message DLQ me.
+          Teeno jagah crash karwa ke dekha: bina iske 5 me se 3 event kho gaye, iske saath ek bhi nahi.
 ```
 
 ARCHETYPE B/F · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · [sharding/partition](../../FOUNDATIONS/06_database_sharding.md) · saath: [notification](../04_notification_system/04_notification_system.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

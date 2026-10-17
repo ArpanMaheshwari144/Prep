@@ -444,9 +444,16 @@ flowchart TD
 
 ```
 POOCHEGA: "What happens if a chat server goes down?"
-BOL:      "Its connections drop and clients reconnect to another server with backoff and jitter,
-           so they don't stampede. No message is lost — it was written to the database before
-           delivery — and on reconnect the client asks for everything after its last message id."
+          (Ek chat server gir gaya to kya hoga?)
+
+JAWAB:    Us server ke saare connection toot jaate hain. Sab user doosre server se dobara judte hain,
+          par ek saath nahi: thoda ruk-ruk ke (backoff) aur har koi thoda alag time pe (jitter), taaki 1
+          lakh log ek hi second me toot na padein (stampede).
+          Koi message nahi khota, kyunki bhejne se PEHLE hi DB me likh diya tha.
+          Dobara judne pe app bolta hai: 'meri aakhri message id ye thi, iske baad ke sab do.'
+
+SHABD:    backoff = har baar thoda zyada ruk ke dobara koshish · jitter = rukne ka time thoda random ·
+          stampede = sab ek saath toot padna
 ```
 ```mermaid
 flowchart TD
@@ -466,9 +473,9 @@ flowchart TD
 ## DIKKAT 2 — Arpan server-1 pe, Ravi server-7 pe
 
 ```
-BOL:      "Each chat server keeps its own connections in memory, and Redis holds a
-           shared registry of which server each user is on, with a TTL refreshed by
-           heartbeats; the sender's server looks it up and forwards to that server."
+JAWAB:    Har chat server apne connection apni memory me rakhta. Redis me saanjha register: kaun user
+          kis server pe, umar (TTL) ke saath jo dhadkan (heartbeat) se badhti. Bhejne wale ka server
+          Redis se dekh ke us server ko de deta.
 ```
 ```mermaid
 flowchart TD
@@ -492,9 +499,10 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you make sure no message is lost?"
-BOL:      "I write the message to the database first and only then try to deliver it. If
-           the receiver is offline it simply waits there and a push notification goes
-           out; when they reconnect they ask for everything after their last message id."
+          (Koi message khoye nahi, kaise pakka karoge?)
+
+JAWAB:    Message pehle DB me likhta, phir bhejne ki koshish. Lene wala offline hai to message DB me
+          pada rahta aur push notification jaati. Wo jude to 'meri aakhri id ke baad ke sab do'.
 ```
 ```mermaid
 flowchart TD
@@ -524,21 +532,28 @@ flowchart TD
 
 ```
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
-BOL:      "Wide-column store partitioned by chat id and sorted by a snowflake message id, so the last fifty
-           messages of a chat are one read and writes spread across nodes. Old data moves to cold storage."
+          (DB bahut bada / likhai bahut. Kya karoge?)
+
+JAWAB:    Cassandra jaisa store, chat id se baanta, andar snowflake message id se kram. Ek chat ke
+          aakhri 50 message ek hi baar padhne me, likhai machines me bat-ti. Purana data sasti jagah.
 
 POOCHEGA: "What's your partition key, and why?"
-BOL:      "Partition by chat id, because reads are always 'the latest messages of
-           this chat'. One chat lives in one partition, sorted by message id, so it's
-           a single read. User id would split one conversation across partitions."
+          (Partition key kya rakhoge, aur kyun?)
+
+JAWAB:    Chat id, kyunki padhna hamesha 'is chat ke naye message'. Ek chat ek partition me, message id
+          se kram, to ek hi padhai. User id rakhte to ek baatcheet do jagah bat jaati.
 
 POOCHEGA: "What about a hot partition — one very active group?"
-BOL:      "I'd add a random bucket to the key, chat id plus 0 to
-           9, and merge on read, or cap group size and rate."
+          (Ek bahut active group, partition garam ho gaya to?)
+
+JAWAB:    Key me random tukda (chat id + 0..9), padhte waqt sab jodo. Ya group ka
+          size aur message ki speed pe had.
 
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
-BOL:      "It depends on the model we picked: WhatsApp-style deletes after delivery;
-           Slack-style keeps everything, so older months move to cold storage."
+          (Data badhta ja raha, 3 saal baad?)
+
+JAWAB:    Shuru me jo model chuna us pe: WhatsApp jaisa = pahunchte hi server se delete. Slack jaisa =
+          sab rakho, purane mahine sasti jagah.
 ```
 ```mermaid
 flowchart TD
@@ -569,8 +584,8 @@ flowchart TD
 ## DIKKAT 5 — 500 ka group, 500 baar likhein
 
 ```
-BOL:      "A group message is stored once under the group's chat id and read by every member, and
-           delivery sends one call per chat server that has online members, not one per member."
+JAWAB:    Group ka message ek hi baar, group ki chat id ke neeche. Sab member wahi padhte. Bhejte waqt
+          har chat server ko ek call (jis pe online member hain), har member ko alag nahi.
 ```
 ```mermaid
 flowchart TD
@@ -601,8 +616,8 @@ flowchart TD
 ## DIKKAT 6 — kiske kitne unread
 
 ```
-BOL:      "Each member has one read cursor per chat, so unread count is just the chat's latest
-           sequence minus the member's cursor, instead of a row per message per member."
+JAWAB:    Har member ka har chat me ek nishaan (cursor). Unread = chat ka aakhri number - mera nishaan.
+          Har message x har member ka record nahi banana padta.
 ```
 ```mermaid
 flowchart TD
@@ -636,8 +651,8 @@ flowchart TD
 ## DIKKAT 7 — do tick aur neeli tick
 
 ```
-BOL:      "Delivered and read ticks are two cursors per user per chat; when the receiver
-           reads fifty messages it sends one read-up-to update and the sender gets one push."
+JAWAB:    Do tick aur neeli tick = har user har chat ke do nishaan (kahan tak mila, kahan tak padha).
+          Lene wale ne 50 padhe to ek hi baat 'yahan tak padh liya', aur bhejne wale ko ek push.
 ```
 ```mermaid
 flowchart TD
@@ -671,8 +686,8 @@ flowchart TD
 ## DIKKAT 8 — 10 lakh ka broadcast group
 
 ```
-BOL:      "Per-member ticks don't scale to a million members, so I cap group size and
-           turn off ticks for broadcast channels, which keep a single unread cursor."
+JAWAB:    Har member ka tick 10 lakh member pe nahi chalta. Isliye group ka size had me, aur broadcast
+          channel me tick band, sirf ek unread nishaan.
 ```
 ```mermaid
 flowchart TD
@@ -707,8 +722,10 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the client retries and sends the same message twice?"
-BOL:      "The client generates a clientMsgId and reuses it on retry; the server claims it
-           atomically and returns the existing message instead of creating a second one."
+          (App ne dobara bheja, wahi message do baar aa gaya to?)
+
+JAWAB:    App clientMsgId banata aur dobara bhejne pe wahi bhejta. Server use ek hi baar lene deta,
+          dobara aaya to pehle wala message lauta deta, naya nahi banata.
 ```
 ```mermaid
 flowchart TD
@@ -745,9 +762,12 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you keep messages in order?"
-BOL:      "Order comes from a server-assigned id, never the client clock. One chat lives in one
-           partition, and with Kafka I key by chat id, so a chat stays in order while different chats
-           run in parallel. A per-chat sequence number lets the client spot a gap and catch up."
+          (Message ka kram kaise rakhoge?)
+
+JAWAB:    Kram server ki di hui id se, phone ki ghadi se kabhi nahi. Ek chat ek partition me, Kafka me
+          key = chat id, to ek chat kram me aur alag chat ek saath chalti.
+          Har chat ka +1 number (seq): beech me koi number gayab = app samajh jaata
+          kuch chhoota, aur maang leta.
 ```
 ```mermaid
 flowchart TD
@@ -784,8 +804,10 @@ flowchart TD
 
 ```
 POOCHEGA: "What do you store in the message for the media?"
-BOL:      "The message stores the S3 object key, not a URL. When someone opens it, the server signs a
-           fresh short-lived download URL, so links never go stale and access is checked every time."
+          (Media ke liye message me kya rakhoge?)
+
+JAWAB:    S3 ki file ka naam (key), URL nahi. Koi khole tab server naya, kuch minute ka download URL
+          banata. Link kabhi purana nahi hota, aur har baar 'dekh sakta hai?' check hota.
 ```
 ```mermaid
 flowchart TD
@@ -823,8 +845,8 @@ flowchart TD
 ## DIKKAT 12 — online / last-seen
 
 ```
-BOL:      "Presence is a Redis key with a short TTL kept alive by heartbeats batched by the chat servers, and
-           status is fetched only when someone opens that chat instead of being broadcast to every contact."
+JAWAB:    Online status = Redis key, chhoti umar, chat server dhadkan batch me bhej ke zinda rakhte.
+          Status tabhi dekha jaata jab koi us chat ko khole, sabko har baar batate nahi.
 ```
 ```mermaid
 flowchart TD
@@ -898,12 +920,11 @@ Idempotency = clientMsgId · Cassandra = chat_id / message_id, pehle LIKHO phir 
 Cursor store = delivered_upto / read_upto · Blob store = media, message me sirf pata
 ```
 ```
-BOL:      "Each user holds an open WebSocket to one of ~200 chat servers, and Redis records which server
-           each user is on. A message is deduped on clientMsgId, written first to Cassandra partitioned
-           by chat id with a snowflake id, then routed to the receiver's server; if they're offline it
-           waits and a push notification goes out, and on reconnect they ask for everything after their
-           last id. Receipts and unread counts are just cursors per user per chat, presence is a TTL key
-           kept alive by heartbeats, and media goes to S3 with only a link in the message."
+JAWAB:    Har user ~200 chat server me se ek se WebSocket pe juda, Redis me likha kaun kis server pe.
+          Message clientMsgId se dedup, pehle Cassandra me (chat id se baanta, snowflake id), phir lene
+          wale ke server tak. Offline ho to DB me pada rahe + push, jude to 'aakhri id ke baad sab'.
+          Tick aur unread = har user har chat ka nishaan, online status = umar wali
+          Redis key, media S3 me, message me sirf naam.
 ```
 ```mermaid
 flowchart TD

@@ -356,13 +356,16 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the server crashes in the middle of a transfer?"
-BOL:      "Both accounts are in one database, so the debit and credit are one
-           local transaction — it commits fully or rolls back. A saga only
-           comes in when the two sides belong to different services or banks."
+          (Transfer ke beech server gir gaya to?)
+
+JAWAB:    Dono account ek hi DB me, to kaatna aur daalna ek transaction: poora hoga ya poora wapas. Saga
+          tabhi aata jab dono taraf alag service ya alag bank ho.
 
 POOCHEGA: "Consistency or availability — which do you pick?"
-BOL:      "Transfer and balance are CP — I'd rather reject than give a wrong balance. SMS,
-           statements and analytics after the commit are AP; a couple of seconds late is fine."
+          (Consistency ya availability, kya chunoge?)
+
+JAWAB:    Transfer aur balance CP: galat balance dikhane se mana karna behtar. Commit ke baad SMS,
+          statement, analytics AP: do second late chalega.
 ```
 ```mermaid
 flowchart TD
@@ -381,9 +384,10 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you make sure the SMS / fraud event is never lost?"
-BOL:      "The event is written to an outbox table in the same transaction
-           as the transfer, and a relay publishes it to Kafka with acks=all.
-           Consumers are idempotent on event id and failures go to a DLQ."
+          (SMS / fraud wala event kabhi na khoye, kaise?)
+
+JAWAB:    Event outbox table me, transfer wale transaction me hi likhta. Relay use acks=all se Kafka
+          bhejta. Consumer event id se dobara-safe, fail wale DLQ me.
 ```
 ```mermaid
 flowchart TD
@@ -404,10 +408,13 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you know the system is working?"
-BOL:      "Ledger is the source of truth and balance is its derived cache; I write both in
-           one transaction, so they never drift. Reads hit the balance — one row. A nightly
-           reconciliation compares them, and on a mismatch the ledger wins. Plus p99, error
-           rate, queue lag, DB connections with alerts, and a trace id per transfer."
+          (System theek chal raha, kaise pata?)
+
+JAWAB:    Khaata (ledger) sach, balance uska jod (cache), dono ek transaction me
+          likhe, to alag nahi hote. Padhna balance se, ek row. Raat ko milaan
+          (reconciliation), farak mila to khaata jeetega.
+          Saath me p99, error rate, line ki lambai, DB connection pe alert, aur har
+          transfer ka trace id.
 ```
 ```mermaid
 flowchart TD
@@ -429,8 +436,8 @@ flowchart TD
 ## DIKKAT 4 — Send do baar daba
 
 ```
-BOL:      "Every transfer carries an idempotency key with a unique constraint in the database, so a retry
-           returns the original result; the transaction stops partial writes and the key stops duplicates."
+JAWAB:    Har transfer ke saath idempotency key, DB me UNIQUE. Dobara bhejne pe pehla jawab. Transaction
+          aadha likhne se bachata, key do baar se bachati.
 ```
 ```mermaid
 flowchart TD
@@ -453,9 +460,13 @@ flowchart TD
 
 ```
 POOCHEGA: "Two transfers hit the same account at the same time — what happens?"
-BOL:      "Concurrency doesn't need extra locking — the UPDATE does the math inside the database, so
-           there's no lost update. Two things matter: the balance check lives in the database, WHERE
-           balance >= amount, and locks are always taken in a fixed order so transfers can't deadlock."
+          (Ek account pe do transfer ek saath aaye to?)
+
+JAWAB:    Alag lock ki zaroorat nahi: UPDATE hisaab DB ke andar karta, to koi update kho nahi sakta. Do
+          baat zaroori: balance check DB me (WHERE balance >= amount), aur lock hamesha ek tay kram me
+          (chhoti id pehle), taaki deadlock na ho.
+
+SHABD:    deadlock = do transaction ek doosre ka intezaar karte reh jaayein
 ```
 ```mermaid
 flowchart TD
@@ -478,8 +489,10 @@ flowchart TD
 
 ```
 POOCHEGA: "What happens if a server or the DB goes down?"
-BOL:      "Services are stateless behind a load balancer with health checks. The primary has a
-           synchronous replica in another zone that's promoted, so a confirmed transfer is never lost."
+          (Server ya DB gir gaya to?)
+
+JAWAB:    Service kuch yaad nahi rakhti, load balancer ke peeche health check ke saath. Primary ki
+          doosri building me SYNC copy, jo primary ban jaati, to pakka hua transfer kabhi nahi khota.
 ```
 ```mermaid
 flowchart TD
@@ -507,9 +520,11 @@ flowchart TD
 
 ```
 POOCHEGA: "I transferred money but my balance still shows the old value. Why?"
-BOL:      "Most likely replica lag: the write went to the primary, the read hit a replica
-           that hadn't caught up. For balance I read from the primary, at least for the user
-           who just wrote. If it were a failover losing writes, sync replication fixes that."
+          (Maine paisa bheja par balance purana dikh raha. Kyun?)
+
+JAWAB:    Zyadatar copy peeche thi: likhai primary pe gayi, padhai us copy se aayi jo abhi pahunchi nahi
+          thi. Balance primary se padho, kam se kam jisne abhi likha uske liye.
+          Agar failover me likhai khoi ho, to wo SYNC copy se theek hota.
 ```
 ```mermaid
 flowchart TD
@@ -539,8 +554,8 @@ flowchart TD
 ## DIKKAT 8 — 22 arab line me history ka page 5000
 
 ```
-BOL:      "History uses keyset pagination on timestamp and id with a matching index, so
-           every page costs the same and new entries never shift or duplicate results."
+JAWAB:    History keyset se (time + id) aur usi ka index, to har page ka kharcha same, aur nayi entry
+          aane pe kuch khiskta ya dobara nahi dikhta.
 ```
 ```mermaid
 flowchart TD
@@ -571,8 +586,10 @@ flowchart TD
 
 ```
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
-BOL:      "Partition the ledger by month and detach closed months to cold storage — nothing is ever
-           deleted. An opening-balance snapshot per period keeps reconciliation correct after archiving."
+          (Data badhta ja raha, 3 saal baad?)
+
+JAWAB:    Khaate ke mahine ke hisaab se tukde, band mahine sasti jagah. Delete kabhi nahi. Har mahine ka
+          opening balance snapshot, taaki archive ke baad bhi milaan sahi rahe.
 ```
 ```mermaid
 flowchart TD
@@ -616,10 +633,13 @@ KRAM:  sasta pehle, SHARD aakhir me
   replica sirf PADHAI baantti, likhai ke liye SHARD · desh / date = bura key (ek garam)
 
 POOCHEGA: "Replicas are in, but writes are still killing the DB. What now?"
-BOL:      "Replicas only spread reads, and caching or extra indexes help reads, not writes; extra indexes
-           actually slow inserts. For write volume at this scale I'd shard by account id, so each account's
-           transactions live on one shard, and move non-critical writes like statements to a queue. For table
-           size, partition by month and archive closed months to cold storage; nothing is ever deleted."
+          (Copy laga di, par likhai abhi bhi DB ko maar rahi. Ab?)
+
+JAWAB:    Copy sirf padhai baantti. Cache ya naye index bhi sirf padhai ki madad,
+          naye index to INSERT dheema karte.
+          Itni likhai pe account id se baanto (shard), ek account ke saare transfer ek tukde pe. Zaroori
+          nahi wali likhai (statement) queue pe.
+          Table ki jagah ke liye mahine ke tukde + band mahine sasti jagah. Delete kabhi nahi.
 POOCHEGA: "How would you scale this to 10x?"      -> pehle jo toote
           (padhai -> replica, jagah -> tukde, likhai -> shard)
 POOCHEGA: "What's the single point of failure?"   -> DB primary (sync copy), Banking Svc (LB + kai machine)
@@ -663,12 +683,11 @@ archive ke baad       -> OPENING BALANCE snapshot
 bojh badha            -> replica -> tukde -> (aakhir me) shard
 ```
 ```
-BOL:      "Everything for a transfer — both ledger entries, both balance updates, the idempotency
-           key and an outbox event — commits in one local transaction in a relational database, so
-           money is never lost or created. The ledger is the truth and balance is a cache of it; a
-           nightly reconciliation checks them. Balance checks and lock ordering live in the
-           database. Reads go to a replica, history uses cursor pagination, old months are archived
-           with opening-balance snapshots, and side effects go out through Kafka after the commit."
+JAWAB:    Ek transfer ka sab kuch (dono khaata line, dono balance, idempotency key, outbox event) ek
+          transaction me, SQL DB me. Paisa na khota, na banta.
+          Khaata sach, balance uska cache, raat ko milaan. Balance check aur lock ka kram DB me.
+          Padhai copy se, history cursor se, purane mahine opening balance ke saath archive, aur SMS
+          jaise kaam commit ke baad Kafka se.
 ```
 ```mermaid
 flowchart TD

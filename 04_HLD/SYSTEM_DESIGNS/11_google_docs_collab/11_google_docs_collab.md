@@ -289,9 +289,9 @@ flowchart TD
 ## DIKKAT 1 — dono ne saath save kiya, baad wale ne mita diya
 
 ```
-BOL:      "Instead of saving the whole document, clients send operations like
-           insert at position or delete at position, each with the base version it
-           was made on, so concurrent edits are merged instead of overwritten."
+JAWAB:    Poora doc save karne ki jagah sirf kya badla wo bhejo (operation): 'is
+          jagah ye daala', 'is jagah se mitaya', saath me kis version ko dekh ke
+          banaya. Isse ek saath ke badlaav jud jaate, ek doosre ko mitate nahi.
 ```
 ```mermaid
 flowchart TD
@@ -309,8 +309,9 @@ flowchart TD
 ## DIKKAT 2 — Ravi ko Arpan ka likha kab dikhega
 
 ```
-BOL:      "Each client keeps a WebSocket open to a connection server, so edits flow both ways instantly;
-           on reconnect the client sends its last version and receives every operation after it."
+JAWAB:    Har user ka connection server se WebSocket khula rehta, to likha turant
+          dono taraf jaata. Connection toot ke wapas jude to app apna aakhri version
+          batata, aur uske baad ke saare operation mil jaate.
 ```
 ```mermaid
 flowchart TD
@@ -328,8 +329,8 @@ flowchart TD
 ## DIKKAT 3 — Arpan server-1 pe, Ravi server-2 pe
 
 ```
-BOL:      "Connection servers fan out edits through Redis pub/sub with one channel per document; pub/sub is
-           only for live delivery, and anything missed is recovered from the operation log on reconnect."
+JAWAB:    Connection server badlaav Redis pub/sub se aage dete, har doc ka ek channel. Pub/sub sirf
+          turant dikhane ke liye. Jo chhoot gaya wo dobara judne pe operation log se mil jaata.
 ```
 ```mermaid
 flowchart TD
@@ -356,8 +357,13 @@ flowchart TD
 
 ```
 POOCHEGA: "Two people type at the same position at the same time — what happens?"
-BOL:      "I send operations, not snapshots, and transform concurrent operations with OT or merge
-           them with a CRDT. Everyone converges to the same document and no write is lost."
+          (Do log ek hi jagah ek saath type karein to?)
+
+JAWAB:    Poora doc nahi, sirf operation bhejta. Ek saath bane operation ko OT se khiskata (ya CRDT se
+          jodta). Sabka doc aakhir me same, kisi ka likha nahi khota.
+
+SHABD:    OT = doosre ka badlaav apne badlaav ke hisaab se khiska do · CRDT = har akshar ki apni id,
+          kisi bhi kram me jodo nateeja same
 ```
 ```mermaid
 flowchart TD
@@ -384,12 +390,15 @@ flowchart TD
 
 ```
 POOCHEGA: "The database takes too many writes. What do you do?"
-BOL:      "Real-time edits go through memory and pub/sub; I buffer operations in Redis
-           and write them in batches to Cassandra, partitioned by doc id and ordered
-           by the server-assigned version number, so one doc's ops stay on one shard."
+          (DB pe likhai bahut zyada. Kya karoge?)
 
-BOL:      "Redis is replicated, but replication is async, so I don't ack an op until it's durably written.
-           The client keeps unacked ops and resends them with an op id, so nothing is lost or applied twice."
+JAWAB:    Live badlaav memory aur pub/sub se jaate. Operation Redis me jama karke ek saath (batch)
+          Cassandra me likhte, doc id se baante aur server ke diye version number se kram me. Ek doc ke
+          saare operation ek hi tukde pe.
+
+JAWAB:    Redis ki copy hai par wo thodi der baad pahunchti, isliye operation ko 'mil gaya' (ack) tabhi
+          bolta jab wo pakka likh liya. App bina ack wale operation apne paas rakhta aur op id ke saath
+          dobara bhejta, to na kuch khota, na do baar lagta.
 ```
 ```mermaid
 flowchart TD
@@ -417,8 +426,8 @@ flowchart TD
 ## DIKKAT 6 — doc khola, 10 lakh op chalane pade
 
 ```
-BOL:      "I store a snapshot every thousand operations, so opening a document
-           loads the latest snapshot plus only the operations after it."
+JAWAB:    Har 1000 operation pe doc ki photo (snapshot). Doc kholna = aakhri photo +
+          uske baad ke thode operation.
 ```
 ```mermaid
 flowchart TD
@@ -447,8 +456,10 @@ flowchart TD
 
 ```
 POOCHEGA: "Consistency or availability — which do you pick?"
-BOL:      "Per component. Edits are AP: you keep typing through a network blip and OT or CRDTs make
-           everyone converge. Permissions are CP: a removed user must be blocked immediately."
+          (Consistency ya availability, kya chunoge?)
+
+JAWAB:    Har hisse ka alag. Likhna AP: network jaaye tab bhi type karte raho, OT / CRDT se sab aakhir
+          me same. Permission CP: jise hataya use turant roko.
 ```
 ```mermaid
 flowchart TD
@@ -480,8 +491,10 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you keep edits in order?"
-BOL:      "The server assigns each operation the doc's next version number, never the
-           client clock, and all ops for one doc go to one shard where OT runs serially."
+          (Badlaav ka kram kaise rakhoge?)
+
+JAWAB:    Server har operation ko doc ka agla version number deta, app ki ghadi kabhi nahi. Ek doc ke
+          saare operation ek hi tukde pe, jahan OT ek-ek karke chalta.
 ```
 ```mermaid
 flowchart TD
@@ -560,11 +573,12 @@ likhna · Cassandra = op log (docId, version) + snapshot
 SQL = permission (CP)
 ```
 ```
-BOL:      "Clients hold a WebSocket to a connection server, routed by doc id. Every keystroke is
-           an operation; the server transforms concurrent operations with OT, so nothing is lost
-           and everyone converges, then fans out to other servers through Redis pub/sub.
-           Operations are buffered and batched into Cassandra by doc id, with snapshots so a doc
-           loads fast. Edits are AP — typing never stops — while permissions are CP in SQL."
+JAWAB:    App doc id ke hisaab se ek connection server se WebSocket pe juda. Har
+          akshar ek operation. Server ek saath bane operation ko OT se khiskata, to
+          kuch nahi khota aur sab same, phir Redis pub/sub se baaki servers tak.
+          Operation Redis me jama hoke batch me Cassandra (doc id se), saath me
+          photo taaki doc jaldi khule.
+          Likhna AP (typing kabhi na ruke), permission CP SQL me.
 ```
 ```mermaid
 flowchart TD
