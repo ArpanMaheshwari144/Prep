@@ -76,8 +76,9 @@ KAHANI:  Arpan ne Ravi ko 500 bheje. Arpan ke 500 kat gaye,
          Ravi ke account me daalne se PEHLE server gir gaya.
          500 na Arpan ke paas, na Ravi ke paas. Gayab.
 
-ILAAJ:   Dono account EK hi DB me -> EK @Transactional: kaatna + daalna dono commit, ya dono wapas (rollback).
-         DB = Postgres / MySQL (transaction + niyam / constraint andar se aate).
+ILAAJ:   Arpan aur Ravi dono ka account ek hi DB me. To 'Arpan se 500 kaato' aur 'Ravi ko 500 do' ek hi
+         transaction me: beech me crash hua to dono wapas, aadha nahi.
+         Step-step wala tareeka (saga) tab chahiye jab dono alag bank ya alag system me hon.
 
 ANDAR KAISE:
          BEGIN; UPDATE Arpan -500; UPDATE Ravi +500; COMMIT;
@@ -165,8 +166,9 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Arpan ne Send dabaya, app ghooma, phir daba diya. Ya app
          ne khud dobara bheja -> 1000 kat gaye, bhejne the 500.
 
-ILAAJ:   IDEMPOTENCY KEY har transfer ke saath. DB me key UNIQUE
-         -> do server pe ek saath aaye tab bhi ek hi jeetega.
+ILAAJ:   Arpan ka app har transfer ke saath ek id bhejta, DB me wo id unique.
+         Dobara bheja to wahi id -> pehla jawab, paisa doosri baar nahi katta. Transaction aadha hone se
+         rokta, id do baar hone se.
 
 ANDAR KAISE:
          Key pehle aa chuki -> pehla jawab wapas, naya transfer nahi.
@@ -187,10 +189,10 @@ KAHANI:  Arpan ke paas 300. Ek saath 200-200 ke do transfer
          chale. App ne dono baar balance padha (300), dono pass
          -> dono kate -> Arpan = -100.
 
-ILAAJ:   Hisaab aur check DB ke ANDAR, ek hi query me:
-           UPDATE accounts SET balance = balance - 200 WHERE
-           id = Arpan AND balance >= 200     -> 0 row = REJECT
-         DEADLOCK se bachne: taala hamesha ek tay kram me (chhoti account id pehle).
+ILAAJ:   Hisaab DB ke andar karo: 'balance >= 200 ho tabhi 200 kaato', ek hi query me. Do transfer ek
+         saath aaye to DB ek-ek karke chalata, doosre ke time balance kam ho chuka to wo fail.
+         Arpan->Ravi aur Ravi->Arpan ek saath ho to dono ek doosre ka intezaar karte reh jaate (deadlock).
+         Ilaaj: hamesha chhoti account id pehle lock karo, dono same kram me.
 
 ANDAR KAISE:
          UPDATE row pe taala leta -> dono transfer line me lagte. Pehla:
@@ -216,8 +218,9 @@ KAHANI:  1 tareekh, sabki salary aayi, sab ek saath transfer
          kar rahe. Ek hi Banking service machine bhar gayi.
          Wo giri to poora bank band.
 
-ILAAJ:   Kai Banking service machine (stateless) + LB. DB primary
-         gira -> doosri building (AZ) ki SYNC copy primary bane.
+ILAAJ:   Service kuch yaad nahi rakhti, kai machine + load balancer, mari hui list se bahar.
+         Main DB ki copy doosri building me, aur har transfer copy me bhi likh ke hi 'done'. Main DB gira
+         to copy main ban jaati, koi pakka transfer nahi khota.
 
 ANDAR KAISE:
          Patroni / RDS Multi-AZ: primary mara -> sync copy promote -> DB ka pata nayi pe -> ~30-60 sec.
@@ -234,7 +237,10 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  Lakhon log balance / history dekh rahe, sab primary se. Padhne ki bheed me transfer dheeme.
 
-ILAAJ:   Balance / history READ REPLICA se. Par jisne ABHI transfer kiya, uska balance PRIMARY se.
+ILAAJ:   Transfer main DB pe hua, par balance us copy se padha jo abhi peeche thi.
+         Ilaaj: balance main DB se padho, kam se kam us user ke liye jisne abhi paisa bheja (kuch second
+         tak).
+         Copy hi peeche reh gayi ho to wahi 'har transfer copy me bhi likho' wala tareeka.
 
 ANDAR KAISE:
          Replica primary ki diary padh ke chalti, ~200 ms peeche.
@@ -256,8 +262,9 @@ KAHANI:  Arpan history ke page 5000 pe: LIMIT 20 OFFSET 100000 ->
          DB 1,00,020 line PADH ke phenkta, 20 deta. Bahut dheema.
          Beech me nayi line aayi -> sab ek khisak gaya -> ek line dobara dikhi.
 
-ILAAJ:   KEYSET (cursor): pichhle page ki aakhri line ka (ts, id) yaad rakho, agla page "usse purani 20".
-         Index se seedha wahan pahunch jaata.
+ILAAJ:   Page 5000 ke liye DB 1 lakh line padh ke phenkta hai (OFFSET). Uski jagah: pichhle page ki aakhri
+         line ka time + id yaad rakho, agla page 'isse purani 20'.
+         Index se seedha wahan pahunch jaata, page 1 ho ya 5000, ek jaisa tez.
 
 ANDAR KAISE:
          page 2: ... WHERE account_id = ? AND (ts, id) <
@@ -279,9 +286,9 @@ KAHANI:  5 saal ka khaata ek table me. Log roz sirf 3 mahine
          dekhte, par har query / backup arabon line ke saath.
          Aur bank me DELETE nahi kar sakte (kanoon).
 
-ILAAJ:   Mahine-mahine ke tukde (PARTITION). Purana tukda alag
-         karo (DETACH, turant) -> S3 (Parquet). DELETE nahi.
-         + har mahine ke aakhir ka balance (OPENING BALANCE SNAPSHOT), ye kabhi archive nahi.
+ILAAJ:   Khaata mahine ke tukdon me. Band mahine sasti jagah (S3) bhej do, delete kabhi nahi.
+         Har mahine ke aakhir ka balance likh ke rakho, taaki purane tukde chale jaane ke baad bhi milaan
+         sahi ho.
 
 ANDAR KAISE:
          Purane tukde S3 gaye -> raat ka reconciliation khaata jodega to adhoora -> har account me farak!
@@ -344,9 +351,9 @@ flowchart TD
 
 ---
 
-## ════ DETAIL: HAR DIKKAT KI INTERVIEW LINE + TASVEER ════
+## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Card me poori kahani hai. Yahan har dikkat ki ek English line (interview me bolne ke liye) aur us waqt tak ka diagram.
+> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
 
 ---
 
@@ -354,21 +361,6 @@ flowchart TD
 
 ## DIKKAT 1 — transfer ke beech server gira
 
-```
-POOCHEGA: "What if the server crashes in the middle of a transfer?"
-          (Transfer ke beech server gir gaya to?)
-
-JAWAB:    Arpan aur Ravi dono ka account ek hi DB me. To 'Arpan se 500 kaato' aur 'Ravi ko 500 do' ek hi
-          transaction me: beech me crash hua to dono wapas, aadha nahi.
-          Step-step wala tareeka (saga) tab chahiye jab dono alag bank ya alag system me hon.
-
-POOCHEGA: "Consistency or availability — which do you pick?"
-          (Consistency ya availability, kya chunoge?)
-
-JAWAB:    Transfer aur balance me sahi hona pehle: pakka nahi to mana kar do, galat balance dikhana
-          bura.
-          Transfer ke baad SMS, statement 2 second late chale to chalta hai.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -384,15 +376,6 @@ flowchart TD
 
 ## DIKKAT 2 — khaata kahan, Kafka kab
 
-```
-POOCHEGA: "How do you make sure the SMS / fraud event is never lost?"
-          (SMS / fraud wala event kabhi na khoye, kaise?)
-
-JAWAB:    'SMS bhejo' wali khabar outbox table me, usi transaction me jisme paisa hila. Paisa hila to
-          khabar bhi pakki, nahi hila to khabar bhi nahi.
-          Ek relay outbox se khabar Kafka bhejta. SMS service khabar ki id se do baar nahi bhejti, fail
-          wali DLQ me.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -410,15 +393,6 @@ flowchart TD
 
 ## DIKKAT 3 — balance aata kahan se
 
-```
-POOCHEGA: "How do you know the system is working?"
-          (System theek chal raha, kaise pata?)
-
-JAWAB:    Khaata (ledger) asli sach hai, balance column uska jod. Dono ek hi transaction me likhte, to
-          alag nahi hote. Balance dekhna = ek row padhna, tez.
-          Raat ko milaan: khaate ka jod == balance? Farak mila to alert, aur khaata jeetega.
-          Saath me dekhte raho: transfer kitni der me, kitne fail, line kitni lambi.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -438,11 +412,6 @@ flowchart TD
 
 ## DIKKAT 4 — Send do baar daba
 
-```
-JAWAB:    Arpan ka app har transfer ke saath ek id bhejta, DB me wo id unique.
-          Dobara bheja to wahi id -> pehla jawab, paisa doosri baar nahi katta. Transaction aadha hone
-          se rokta, id do baar hone se.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -462,15 +431,6 @@ flowchart TD
 
 ## DIKKAT 5 — ek account se do transfer ek saath
 
-```
-POOCHEGA: "Two transfers hit the same account at the same time — what happens?"
-          (Ek account pe do transfer ek saath aaye to?)
-
-JAWAB:    Hisaab DB ke andar karo: 'balance >= 200 ho tabhi 200 kaato', ek hi query me. Do transfer ek
-          saath aaye to DB ek-ek karke chalata, doosre ke time balance kam ho chuka to wo fail.
-          Arpan->Ravi aur Ravi->Arpan ek saath ho to dono ek doosre ka intezaar karte reh jaate
-          (deadlock). Ilaaj: hamesha chhoti account id pehle lock karo, dono same kram me.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -490,14 +450,6 @@ flowchart TD
 
 ## DIKKAT 6 — salary day, ek service bhar gayi
 
-```
-POOCHEGA: "What happens if a server or the DB goes down?"
-          (Server ya DB gir gaya to?)
-
-JAWAB:    Service kuch yaad nahi rakhti, kai machine + load balancer, mari hui list se bahar.
-          Main DB ki copy doosri building me, aur har transfer copy me bhi likh ke hi 'done'. Main DB
-          gira to copy main ban jaati, koi pakka transfer nahi khota.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -522,15 +474,6 @@ flowchart TD
 
 ## DIKKAT 7 — sab balance primary se, transfer dheeme
 
-```
-POOCHEGA: "I transferred money but my balance still shows the old value. Why?"
-          (Maine paisa bheja par balance purana dikh raha. Kyun?)
-
-JAWAB:    Transfer main DB pe hua, par balance us copy se padha jo abhi peeche thi.
-          Ilaaj: balance main DB se padho, kam se kam us user ke liye jisne abhi paisa bheja (kuch
-          second tak).
-          Copy hi peeche reh gayi ho to wahi 'har transfer copy me bhi likho' wala tareeka.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -558,11 +501,6 @@ flowchart TD
 
 ## DIKKAT 8 — 22 arab line me history ka page 5000
 
-```
-JAWAB:    Page 5000 ke liye DB 1 lakh line padh ke phenkta hai (OFFSET). Uski jagah: pichhle page ki
-          aakhri line ka time + id yaad rakho, agla page 'isse purani 20'.
-          Index se seedha wahan pahunch jaata, page 1 ho ya 5000, ek jaisa tez.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -590,14 +528,6 @@ flowchart TD
 
 ## DIKKAT 9 — 5 saal ka data ek table me
 
-```
-POOCHEGA: "Data keeps growing — what happens in 3 years?"
-          (Data badhta ja raha, 3 saal baad?)
-
-JAWAB:    Khaata mahine ke tukdon me. Band mahine sasti jagah (S3) bhej do, delete kabhi nahi.
-          Har mahine ke aakhir ka balance likh ke rakho, taaki purane tukde chale jaane ke baad bhi
-          milaan sahi ho.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]

@@ -145,8 +145,11 @@ KAHANI:  Ab 200 chat server. Arpan server-1 se juda, Ravi server-7 se.
 ★ DEKHA:  wahi program do port pe chalaya. Arpan ki screen
           `(server bola: Ravi OFFLINE hai)`, Ravi us waqt online.
 
-ILAAJ:   SAANJHI REGISTER (Redis): "Ravi -> server-7". Server-1 Redis se poochhe, server-7 ko seedha bole,
-         server-7 apne khule taar pe Ravi ko de.
+ILAAJ:   Har server apne jude users ko apni memory me rakhta. Redis me saanjha register: 'Ravi ->
+         server-7'.
+         Arpan ka server Redis se poochhta Ravi kahan hai, server-7 ko message deta, server-7 Ravi ko.
+         Register ki entry ki umar hoti, server zinda hai to badhata rehta. Server mara to entry apne aap
+         hat jaati.
 
 ANDAR KAISE:
          Connection (zinda taar) kabhi Redis me nahi ja sakta,
@@ -171,8 +174,9 @@ KAHANI:  Ravi ka phone band, koi connection hi nahi. Galat soch:
          "pehle Ravi ko bhejo, na pahunche to DB me daal do"
          -> bhejne aur DB ke beech server gira = message gaya.
 
-ILAAJ:   PEHLE DB me LIKHO (id ke saath), PHIR bhejne ki koshish.
-         Ravi nahi mila -> DB me pada rahe + PUSH notification.
+ILAAJ:   Message pehle DB me likho, phir Ravi ko bhejne ki koshish.
+         Ravi offline -> message DB me pada rahega, Ravi ke phone pe push notification.
+         Ravi aaya -> app bolta 'aakhri id ke baad ke do', server de deta.
 
 ANDAR KAISE:
          Ravi wapas aaya: "meri aakhri id 4417, uske BAAD ke do" (nishaan
@@ -194,7 +198,9 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  Roz ~1.2 TB message, 46,000 likhai / second. Ek DB machine nahi jhelegi. Kis cheez se baantein?
 
-ILAAJ:   Cassandra / Scylla. PARTITION KEY = chat_id, uske andar kram = message_id (SNOWFLAKE).
+ILAAJ:   Cassandra jaisa DB, chat ke hisaab se baanta. Ek chat ke saare message ek jagah, id ke kram me.
+         'Is chat ke aakhri 50' = ek jagah se ek baar padhna. Likhai sab machines pe bat jaati. Purana
+         data sasti jagah.
 
 ANDAR KAISE:
          Padhna hamesha "IS CHAT ke aakhri 50" -> chat_id se ek hi jagah, ek baar padhna:
@@ -224,8 +230,9 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  "College Gang" group me 500 log. Arpan ne ek message
          bheja -> kya 500 logon ke inbox me 500 baar likhein?
 
-ILAAJ:   EK hi copy, group ki chat ke neeche (fanout on READ). Sab wahi ek padhein.
-         Bhejna = connection pe (sasta), DB me likhai sirf ek.
+ILAAJ:   500 logon ke group me message ek hi baar likho, group ki chat ke neeche. Sab wahi padhte.
+         Bhejte waqt har server ko ek baar bolo 'ye message, tere paas jude in members ko', har member ko
+         alag call nahi.
 
 ANDAR KAISE:
          Twitter se ulta kyun: Twitter ki feed 200 logon ka milan + crore follower, har user ki alag.
@@ -244,7 +251,9 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  500 member. "Kiske kitne unread" ke liye har message x
          har member ka record = 500 x 50 = 25,000 likhai. Bekaar.
 
-ILAAJ:   Har member ka EK NISHAAN (cursor): "Arpan is group me 4417 tak padh chuka". 500 row, bas.
+ILAAJ:   Har member ka har chat me ek nishaan: 'Arpan 4417 tak padh chuka'.
+         Unread = chat ka aakhri number - Arpan ka nishaan. Har message ka har member ke liye alag record
+         nahi.
 
 ANDAR KAISE:
          Arpan ke unread = group ka aakhri number - Arpan ka nishaan (GHATAO, gino nahi).
@@ -261,7 +270,8 @@ KAHANI:  Ek tick = message server tak pahuncha. Do tick = Ravi ke
          phone ne "mil gaya" bola. Neeli = Ravi ne chat khol ke dekha.
          Har message ke liye alag "mil gaya / padh liya" message? Bahut traffic.
 
-ILAAJ:   Wahi NISHAAN, do number: delivered_upto ("yahan tak mila") + read_upto ("yahan tak padha").
+ILAAJ:   Do nishaan: 'kahan tak mila' aur 'kahan tak padha'. Ravi ne 50 message padhe to ek hi baat bhejta
+         'yahan tak padha', Arpan ko ek push aur 50 neeli tick ek saath.
 
 ANDAR KAISE:
          Ravi ne chat kholi, 50 message padhe -> ek hi baat:
@@ -281,7 +291,8 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  10 lakh ka broadcast group. Har member ka nishaan + tick 500
          pe chalta, 10 lakh pe nahi (har message pe 10 lakh tick).
 
-ILAAJ:   Feature utna hi jitna scale jhele: group ka size bandha (~1000). Channel / broadcast me tick band.
+ILAAJ:   10 lakh member ke group me har message pe 10 lakh tick nahi chal sakte. Isliye group size ki had,
+         aur bade channel me tick band, sirf unread ginti.
 
 ANDAR KAISE:
          Slack channel me sirf channel ka unread (ek nishaan), "kisne padha" nahi.
@@ -299,8 +310,9 @@ KAHANI:  Arpan ka net dheema. App ne "hi" bheja, jawab nahi aaya
          (timeout), to dobara bheja. Pehla pahunch chuka tha.
          Ravi ko "hi" do baar dikha.
 
-ILAAJ:   clientMsgId: Arpan ka APP har message ki id banata, dobara
-         bhejne pe WAHI. Pehle aa chuki -> purana message lautao.
+ILAAJ:   Arpan ka app har message ki apni id banata aur dobara bhejne pe wahi id bhejta.
+         Server id pehle dekh chuka -> wahi purana message lautata, naya nahi banata. Ravi ko 'hi' ek hi
+         baar dikhta.
 
 ANDAR KAISE:
          "pehle aaya?" + daalna = EK atomic kadam: (chat_id, clientMsgId) UNIQUE, ya Redis SET NX EX 3600.
@@ -318,8 +330,9 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Arpan ke phone ki ghadi 5 min aage chal rahi. Uske message
          chat me upar chadh gaye, Ravi ke jawab se pehle dikhne lage.
 
-ILAAJ:   Kram SERVER ki id se (snowflake, ek chat ek partition). Phone ki ghadi sirf dikhane ke liye.
-         + har chat ka apna +1 number (SEQ) -> 15, 17 aaya, 16 nahi -> gap pakda -> server se maango.
+ILAAJ:   Kram server ka diya number tay karta, phone ki ghadi nahi (Arpan ki ghadi 5 min aage ho sakti).
+         Ek chat ek jagah, har chat ka +1 number. App ko 15 ke baad 17 mila to samajh jaata 16 chhoot
+         gaya, aur maang leta.
 
 ANDAR KAISE:
          Seq: Redis INCR seq:chat123 (atomic), ya chat ka maalik server memory me ginta.
@@ -361,9 +374,9 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  Har baar koi juda / gaya, uske saare contacts ko batao = crore x 500 = bakwaas.
 
-ILAAJ:   Redis me "Ravi online" chhoti umar (30 sec), app ki dhadkan (har 15 sec) se badhti rahe.
-         App band -> umar khatam -> apne aap offline.
-         POOCHHO, batao mat: Ravi ka status tabhi jab Arpan ne Ravi ki chat kholi ho.
+ILAAJ:   'Ravi online' Redis me 30 second ki umar ke saath. Ravi ka app har 15 second batata 'hoon', umar
+         badh jaati. App band = umar khatam = apne aap offline.
+         Sabko har baar batate nahi. Arpan ne Ravi ki chat kholi tabhi Ravi ka status dekhte.
 
 ANDAR KAISE:
          "offline" ka message bhejna hi nahi padta. Last seen = usi
@@ -432,9 +445,9 @@ flowchart TD
 
 ---
 
-## ════ DETAIL: HAR DIKKAT KI INTERVIEW LINE + TASVEER ════
+## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Card me poori kahani hai. Yahan har dikkat ki ek English line (interview me bolne ke liye) aur us waqt tak ka diagram.
+> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
 
 ---
 
@@ -442,16 +455,6 @@ flowchart TD
 
 ## DIKKAT 1 — 2 crore connection khuli, memory khatam
 
-```
-POOCHEGA: "What happens if a chat server goes down?"
-          (Ek chat server gir gaya to kya hoga?)
-
-JAWAB:    Us server ke saare connection toot jaate. Sab user doosre server se dobara judte, par ek saath
-          nahi: har koi thoda ruk ke, thoda alag time pe, taaki 1 lakh log ek hi second me na toot
-          padein.
-          Koi message nahi khota, kyunki bhejne se PEHLE DB me likh diya tha. Jud ke app bolta 'meri
-          aakhri message id ye thi, iske baad ke do'.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -469,13 +472,6 @@ flowchart TD
 
 ## DIKKAT 2 — Arpan server-1 pe, Ravi server-7 pe
 
-```
-JAWAB:    Har server apne jude users ko apni memory me rakhta. Redis me saanjha register: 'Ravi ->
-          server-7'.
-          Arpan ka server Redis se poochhta Ravi kahan hai, server-7 ko message deta, server-7 Ravi ko.
-          Register ki entry ki umar hoti, server zinda hai to badhata rehta. Server mara to entry apne
-          aap hat jaati.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -496,14 +492,6 @@ flowchart TD
 
 ## DIKKAT 3 — Ravi offline, message kahan
 
-```
-POOCHEGA: "How do you make sure no message is lost?"
-          (Koi message khoye nahi, kaise pakka karoge?)
-
-JAWAB:    Message pehle DB me likho, phir Ravi ko bhejne ki koshish.
-          Ravi offline -> message DB me pada rahega, Ravi ke phone pe push notification.
-          Ravi aaya -> app bolta 'aakhri id ke baad ke do', server de deta.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -530,36 +518,6 @@ flowchart TD
 
 ## DIKKAT 4 — roz 1.2 TB, 46,000 likhai / sec
 
-```
-POOCHEGA: "The database is too big / takes too many writes. What do you do?"
-          (DB bahut bada / likhai bahut. Kya karoge?)
-
-JAWAB:    Cassandra jaisa DB, chat ke hisaab se baanta. Ek chat ke saare message ek jagah, id ke kram
-          me.
-          'Is chat ke aakhri 50' = ek jagah se ek baar padhna. Likhai sab machines pe bat jaati. Purana
-          data sasti jagah.
-
-POOCHEGA: "What's your partition key, and why?"
-          (Partition key kya rakhoge, aur kyun?)
-
-JAWAB:    Chat id se, kyunki padhna hamesha 'is chat ke naye message' hota hai. Ek chat ek jagah, ek
-          baar padhna.
-          User id se baant-te to Arpan-Ravi ki ek chat do jagah bat jaati, aur dikhane ke liye dono
-          jodne padte.
-
-POOCHEGA: "What about a hot partition — one very active group?"
-          (Ek bahut active group, partition garam ho gaya to?)
-
-JAWAB:    Ek group bahut active hai to uski key me 0-9 ka tukda jod do, message 10 jagah bat jaate.
-          Padhte waqt sab jod do.
-          Ya group size aur message speed pe had.
-
-POOCHEGA: "Data keeps growing — what happens in 3 years?"
-          (Data badhta ja raha, 3 saal baad?)
-
-JAWAB:    Shuru me jo chuna us pe depend: WhatsApp jaisa = pahunchte hi server se mita do. Slack jaisa =
-          sab rakho, purane mahine sasti jagah.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -588,11 +546,6 @@ flowchart TD
 
 ## DIKKAT 5 — 500 ka group, 500 baar likhein
 
-```
-JAWAB:    500 logon ke group me message ek hi baar likho, group ki chat ke neeche. Sab wahi padhte.
-          Bhejte waqt har server ko ek baar bolo 'ye message, tere paas jude in members ko', har member
-          ko alag call nahi.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -621,11 +574,6 @@ flowchart TD
 
 ## DIKKAT 6 — kiske kitne unread
 
-```
-JAWAB:    Har member ka har chat me ek nishaan: 'Arpan 4417 tak padh chuka'.
-          Unread = chat ka aakhri number - Arpan ka nishaan. Har message ka har member ke liye alag
-          record nahi.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -657,10 +605,6 @@ flowchart TD
 
 ## DIKKAT 7 — do tick aur neeli tick
 
-```
-JAWAB:    Do nishaan: 'kahan tak mila' aur 'kahan tak padha'. Ravi ne 50 message padhe to ek hi baat
-          bhejta 'yahan tak padha', Arpan ko ek push aur 50 neeli tick ek saath.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -692,10 +636,6 @@ flowchart TD
 
 ## DIKKAT 8 — 10 lakh ka broadcast group
 
-```
-JAWAB:    10 lakh member ke group me har message pe 10 lakh tick nahi chal sakte. Isliye group size ki
-          had, aur bade channel me tick band, sirf unread ginti.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -727,14 +667,6 @@ flowchart TD
 
 ## DIKKAT 9 — net dheema, dobara bheja, do baar dikha
 
-```
-POOCHEGA: "What if the client retries and sends the same message twice?"
-          (App ne dobara bheja, wahi message do baar aa gaya to?)
-
-JAWAB:    Arpan ka app har message ki apni id banata aur dobara bhejne pe wahi id bhejta.
-          Server id pehle dekh chuka -> wahi purana message lautata, naya nahi banata. Ravi ko 'hi' ek
-          hi baar dikhta.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -768,15 +700,6 @@ flowchart TD
 
 ## DIKKAT 10 — kram kiske time se
 
-```
-POOCHEGA: "How do you keep messages in order?"
-          (Message ka kram kaise rakhoge?)
-
-JAWAB:    Kram server ka diya number tay karta, phone ki ghadi nahi (Arpan ki ghadi 5 min aage ho
-          sakti).
-          Ek chat ek jagah, har chat ka +1 number. App ko 15 ke baad 17 mila to samajh jaata 16 chhoot
-          gaya, aur maang leta.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -810,14 +733,6 @@ flowchart TD
 
 ## DIKKAT 11 — 5 MB ka video isi raaste se
 
-```
-POOCHEGA: "What do you store in the message for the media?"
-          (Media ke liye message me kya rakhoge?)
-
-JAWAB:    Message me S3 me file ka naam rakhte, link nahi. Koi khole tab server naya, kuch minute ka
-          link banata.
-          Link kabhi purana nahi hota, aur har baar check hota ki dekhne wala dekh sakta hai.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -853,11 +768,6 @@ flowchart TD
 
 ## DIKKAT 12 — online / last-seen
 
-```
-JAWAB:    'Ravi online' Redis me 30 second ki umar ke saath. Ravi ka app har 15 second batata 'hoon',
-          umar badh jaati. App band = umar khatam = apne aap offline.
-          Sabko har baar batate nahi. Arpan ne Ravi ki chat kholi tabhi Ravi ka status dekhte.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -964,6 +874,5 @@ flowchart TD
     n_Idempotency_check --> n_Cassandra_messages
     n_Cassandra_messages --> n_Cold_storage
 ```
-
 
 [← SYSTEM_DESIGNS](..) · [← Home README](../../../README.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
