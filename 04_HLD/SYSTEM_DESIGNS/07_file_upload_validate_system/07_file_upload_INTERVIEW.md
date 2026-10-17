@@ -65,8 +65,7 @@ DIKKAT 1   Arpan ne report.pdf daali. Server ne Validator ko call kiya, 3 second
 HAL        Arpan ko rukwao mat. Upload hote hi tracking id (T-101) + "jaanch ho rahi hai" de do.
            Upload Svc queue me khabar daale {T-101, file kahan hai} aur turant laut aaye.
            Worker queue se uthaye -> Validator ko call -> DB me T-101 = DONE / FAILED.
-           Worker "padh liya" (offset commit) DB me likhne ke BAAD bole -> beech me mara to khabar
-           dobara milegi, khoyegi nahi. Arpan jab chahe T-101 se haal dekh le.
+           Arpan jab chahe T-101 se haal dekh le.
 ```
 ```mermaid
 flowchart TD
@@ -94,10 +93,11 @@ HAL        1-2 upload / second ke liye SQS / RabbitMQ bhi kaafi (simple, AWS cha
            Kafka tab jab bahut khabar ho ya dobara padhni ho.
 
 DIKKAT 4   Arpan har 2 sec haal poochhe, bahut nahi?
-HAL        Dheere-dheere gap badhao (2s, 4s, 8s), ya server khud bataye (SSE / WebSocket).
+HAL        Dheere-dheere gap badhao (2s, 4s, 8s).
 
 DIKKAT 5   Raat 2 baje Validator 1 ghanta band, 4,000 file VALIDATING pe atki. Kya hoga?
-HAL        Kuch nahi khoyega: khabar Kafka me padi, worker DONE likhne ke baad hi "padh liya" bolta.
+HAL        Kuch nahi khoyega: khabar Kafka me padi, worker "padh liya" (offset commit) DB me DONE likhne
+           ke BAAD hi bolta.
            Validator wapas aaya to line nikalti. Beech me: FUSE (3-5 fail pe call band, thodi der baad ek
            test call) + DOOSRI COMPANY (bahar wale ki copy hum nahi chala sakte).
 
@@ -515,11 +515,7 @@ POOCHEGA: "How would you scale this to 10x?"      -> file ka raasta chalo, pehle
 POOCHEGA: "What's the single point of failure?"   -> Validator (bahar wala): fuse + doosri company
 POOCHEGA: "How do you know it's working?"
           (Chal raha hai, kaise pata?)
-          MISAAL: raat ko Validator DHEEMA, line me ~5,000 file atki
-          health check "dheema" nahi pakadta (ping ka jawab aa jaata) -> APNA METRIC pakadta:
-             line ki lambai · Validator p99 + error rate · VALIDATING me purani files ki ginti
-             -> had paar = alert (CloudWatch alarm / PagerDuty), user ke shikayat karne se pehle
-          peeche: 3 fail -> fuse (CIRCUIT BREAKER) -> doosri company (bahar wale ki copy hum nahi chala sakte)
+          MISAAL: raat ko Validator DHEEMA, line me ~5,000 file atki -> alert CloudWatch / PagerDuty se.
 JAWAB:    Health check sirf batata 'zinda hai', 'dheema hai' nahi batata. Isliye apne teen number dekho:
           line kitni lambi, jaanch wali company kitni der me jawab de rahi aur kitni baar fail, aur
           kitni files 10 minute se 'jaanch ho rahi' pe atki.
@@ -533,7 +529,7 @@ JAWAB:    Health check sirf batata 'zinda hai', 'dheema hai' nahi batata. Isliye
 
 ```
 API:      POST /upload/init { fileName, size }  -> signed S3 URL + trackingId (server sirf URL deta)
-          -> client SEEDHA S3 pe PUT
+          -> client SEEDHA S3 pe (presigned POST, size ki had ke saath; ya PUT)
           POST /upload/complete { trackingId }   -> "ho gaya, jaancho" (queue)
           GET  /status/{trackingId}              -> VALIDATING / DONE / FAILED
           GET  /download/{trackingId}            -> signed GET URL -> seedha S3

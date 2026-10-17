@@ -83,7 +83,7 @@ DIKKAT 1   Arpan 200 logon ko follow karta hai. Usne app khola -> 200 logon ke t
 HAL        Feed padhte waqt nahi, tweet hote hi bana do (padhna 50 guna zyada, likhna kam).
            Suresh ne tweet kiya -> Fanout service Suresh ke har follower ke INBOX me tweet_id daalti.
            Inbox = Redis SORTED SET (tweet_id, score = time), sirf number, poora tweet nahi.
-           Same id dobara aaye to ek hi rehta. Arpan ne app khola -> bas inbox padho -> khulna turant.
+           Arpan ne app khola -> bas inbox padho -> khulna turant.
 ```
 ```mermaid
 flowchart TD
@@ -112,8 +112,7 @@ DIKKAT 1   Arpan ne tweet dabaya. Usi request me 200 followers ke inbox likhe ja
            -> button 3 second ghoomta raha. Ek din Redis dheema tha -> tweet ban chuka tha, par "fail" dikha.
 HAL        Tweet DB me save + ek khabar KAFKA me -> user ko turant "ho gaya".
            FANOUT WORKERS peeche se Kafka padh ke inbox bharte. Khabar author_id ki key se -> ek aadmi ke
-           tweet ek hi line me, kram se. Kai worker lines baant lete. Worker gira -> khabar Kafka me
-           padi, wahin se dobara.
+           tweet ek hi line me, kram se. Kai worker lines baant lete.
 ```
 ```mermaid
 flowchart TD
@@ -574,7 +573,7 @@ DB:       TWEET  -> Cassandra (bahut zyada, seedha, likhna bahut, user_id se baa
                     sirf number. Poora tweet daala to ek tweet 200 jagah copy, RAM phategi
           GRAPH  -> Neo4j ya Cassandra (followers / following)
 
-LIKHNA:   Virat -> Tweet Svc -> Cassandra me save (tweet_id, user_id, content, time)
+LIKHNA:   Suresh -> Tweet Svc -> Cassandra me save (tweet_id, user_id, content, time)
                              -> Kafka -> Fanout: followers nikaalo, celeb
                                 chhodo, har aam follower ke inbox me tweet_id
 PADHNA:   Timeline Svc -> Redis inbox (push) + celebs ke tweet (cache / Cassandra, pull)

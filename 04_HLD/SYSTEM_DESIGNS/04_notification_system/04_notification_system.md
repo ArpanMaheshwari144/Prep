@@ -204,7 +204,6 @@ DIKKAT 1   Worker ne Arpan ka email bhej diya, par Kafka ko "padh liya" (offset)
            Kafka ne wahi khabar doosre worker ko di -> dobara bheja -> Arpan ko DO email.
 HAL        Bhejne se pehle Redis me khabar ki APNI id se parchi: SET NX (sirf tab lagao jab pehle se na ho).
            Parchi pehle se mili = ye khabar pehle aa chuki -> skip. (usercrud /pay wala hi tareeka.)
-           Id khabar ki apni, jo har baar wahi rehti.
            Har baar naya random id banaya to dohraav kabhi pakda nahi jaata.
 ```
 ```mermaid
@@ -542,8 +541,7 @@ HAL        Had badhwao + kai account / company. Tab tak line dheere-dheere khaal
 DIKKAT 1   SMS company ne message le liya. Par Arpan ke phone tak pahuncha ya nahi, humein pata hi nahi.
 HAL        Company "pahuncha / fail" baad me batati (WEBHOOK: company khud hamein call karti).
            Bhejte waqt company ka message number (SES MessageId / Twilio SID) apne notification ke saath save.
-           Webhook aaya -> pehle check sach me company ka hai (signature) -> us number se row dhoondho
-           -> haalat badlo. Hisaab = Cassandra (likhna bahut, seedhi row).
+           Webhook aaya -> us number se row dhoondho -> haalat badlo. Hisaab = Cassandra (likhna bahut, seedhi row).
 ```
 ```mermaid
 flowchart TD
