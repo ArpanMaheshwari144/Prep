@@ -6,7 +6,8 @@
 ```
 LIBRARY DESK: 10,000 kitaab godaam me (DB = dheema, sab kuch) · top-100 front desk pe (cache = RAM, tez)
    ek desk pe saari kitaab nahi aati + desk wala beemar pad sakta (machine band)
-   -> kai desk (nodes) + kaunsi kitaab kis desk (sharding) + har desk ka backup banda (replication) = DISTRIBUTED CACHE
+   -> kai desk (nodes) + kaunsi kitaab kis desk (sharding) + har desk ka backup banda (replication) =
+      DISTRIBUTED CACHE
 ```
 
 ---
@@ -27,7 +28,8 @@ Source: [Consistent Hashing Explained](https://bytebytego.com/guides/consistent-
 
 ```
 POOCHO:  "Ek machine ka cache (kya hatayein, TTL) ya kai machine wala (baantna, copy) — kis pe?"
-         kaisa data, padhai zyada? · kitna PURANA chalega? (5 min purana?)  <- isi se tay hota cache kab saaf karna
+         kaisa data, padhai zyada? · kitna PURANA chalega? (5 min purana?)  <- isi se tay hota cache kab saaf
+         karna
          kya hatane ka tareeka (LRU / LFU)? · cache DB ke aage hai ya khud asli store?
 
 KYA KARE (FR):    get(key) · put(key, value, ttl) · delete(key)
@@ -66,7 +68,8 @@ flowchart TD
 
 #### 0 SHURU: CACHE-ASIDE (cache kaam kaise karta)
 ```
-KAHANI:  Arpan ki profile DB se padhne me ~10 ms (disk). 10 lakh log / second profile khol rahe -> DB ghutno pe.
+KAHANI:  Arpan ki profile DB se padhne me ~10 ms (disk). 10 lakh log / second profile khol rahe -> DB ghutno
+         pe.
 
 ILAAJ:   DB ke aage RAM wala cache. App pehle cache se poochhe.
 
@@ -79,7 +82,8 @@ ISKE BAAD KYA TOOTEGA:
   - Likhna kaise? cache-aside / write-through / write-back?
       -> cache-aside: DB me likho, cache ki key DELETE.
          write-through: DB aur cache dono me saath (hamesha taaza, par likhna dheema).
-         write-back: pehle sirf cache, DB me baad me (tez, par cache mara to data gaya -> paise pe kabhi nahi).
+         write-back: pehle sirf cache, DB me baad me (tez, par cache mara to data gaya -> paise pe kabhi
+         nahi).
   - Poora cache hi gir gaya?
       -> saari padhai DB pe. DB ke aage rate limit / load shedding (faltu request mana), warna DB bhi girega.
   - Chal raha hai, kaise pata?
@@ -94,13 +98,15 @@ ILAAJ:   LRU: jise sabse LAMBE samay se kisi ne nahi chhua, wo bahar. Saath me h
 
 ANDAR KAISE:
          HashMap (key -> list ka dabba) + doubly linked list.
-         Koi key padhi -> uska dabba list ke AAGE. Jagah chahiye -> list ki POONCH wala hatao (sabse purana chhua).
+         Koi key padhi -> uska dabba list ke AAGE. Jagah chahiye -> list ki POONCH wala hatao (sabse purana
+         chhua).
          Dono kaam O(1). (LeetCode 146, tera LRU REDO.)
          TTL: padhte waqt dekho umar khatam? (lazy) + peeche thodi-thodi safai (active).
 
 ISKE BAAD KYA TOOTEGA:
   - LRU kyun, LFU kyun nahi?
-      -> LRU = "aakhri baar KAB chhua", LFU = "KITNI baar chhua". LFU me kal ki famous key aaj bhi baithi rehti
+      -> LRU = "aakhri baar KAB chhua", LFU = "KITNI baar chhua". LFU me kal ki famous key aaj bhi baithi
+         rehti
          -> isliye LFU ginti waqt ke saath ghatata (decay). Default LRU.
   - Redis sach me har key ki list rakhta?
       -> nahi, memory bachane ko ANDAAZE wala LRU: kuch random key uthata, unme sabse purani hata deta.
@@ -141,7 +147,8 @@ ISKE BAAD KYA TOOTEGA:
   - Nayi machine judi, uski key khaali -> miss?
       -> haan, sirf us hisse ki ~K/N key ek baar miss. Poora cache nahi.
   - App ko kaise pata kaunsi machine zinda?
-      -> cluster ka naksha (topology / config service). Galat machine pe gaya to Redis bolta "MOVED, wahan jao".
+      -> cluster ka naksha (topology / config service). Galat machine pe gaya to Redis bolta "MOVED, wahan
+         jao".
   - Redis Cluster ring use karta?
       -> nahi, 16384 SLOT: CRC16(key) % 16384 -> slot -> machine. Yahan 16384 PAKKA hai (machine ginti nahi),
          isliye machine badhne pe sab nahi hilta: bas kuch slot nayi machine pe khiskao. Kaam ring jaisa.
@@ -151,7 +158,8 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [3](#d3) MACHINE B MARI, USKI KEY KA BOJH DB PE
 ```
-KAHANI:  Machine B mar gayi. Uske hisse ki saari key gayab. Un key ki saari padhai ab seedha DB pe -> DB pe achanak bojh.
+KAHANI:  Machine B mar gayi. Uske hisse ki saari key gayab. Un key ki saari padhai ab seedha DB pe -> DB pe
+         achanak bojh.
 
 ILAAJ:   Har machine ki 1-2 COPY (replica) alag AZ (alag building) me. Primary mari -> copy primary ban jaati.
 
@@ -167,14 +175,16 @@ ISKE BAAD KYA TOOTEGA:
   - Copy ko primary banane me kitni der?
       -> ~10-30 sec. Us beech us hisse ki key DB se aati (thoda dheema).
   - Network toota, purani B bhi khud ko primary samjhe (do primary)?
-      -> SPLIT BRAIN. Faisla zyadatar (quorum) se + jo akeli pad gayi (minority) wo likhna band kare (min-replicas).
+      -> SPLIT BRAIN. Faisla zyadatar (quorum) se + jo akeli pad gayi (minority) wo likhna band kare
+         (min-replicas).
   - Copy se padh sakte?
       -> haan, padhai bat jaati. Par thoda purana mil sakta (lag). Cache me chalta.
 ```
 
 #### [4](#d4) DB ME NAYA NAAM, CACHE ME PURANA (STALE)
 ```
-KAHANI:  Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya, cache me abhi bhi "Ravi". Sabko purana naam dikh raha.
+KAHANI:  Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya, cache me abhi bhi "Ravi". Sabko purana naam
+         dikh raha.
 
 ILAAJ:   DB update karo -> phir cache ki key DELETE (update nahi). + TTL suraksha jaal.
 
@@ -197,7 +207,8 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [5](#d5) GARAM KEY KHATAM, 1000 REQUEST EK SAATH DB PE (STAMPEDE)
 ```
-KAHANI:  "home page" ki key ki umar khatam hui. Usi second 1000 log aaye -> sabko MISS -> 1000 ek saath DB pe -> DB gira.
+KAHANI:  "home page" ki key ki umar khatam hui. Usi second 1000 log aaye -> sabko MISS -> 1000 ek saath DB pe
+         -> DB gira.
 
 ILAAJ:   LOCK: sirf EK request DB se laaye, baaki ruk ke cache se padhein.
          + SOFT-TTL: umar khatam hone se PEHLE peeche se taaza kar do.
@@ -223,7 +234,8 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [6](#d6) EK KEY ITNI POPULAR, USKI MACHINE AKELI MAR RAHI (HOT KEY)
 ```
-KAHANI:  IPL final, "live:score" key. Crore log ek saath padh rahe. Key ek hi machine pe -> wo machine akeli mar rahi.
+KAHANI:  IPL final, "live:score" key. Crore log ek saath padh rahe. Key ek hi machine pe -> wo machine akeli
+         mar rahi.
          Consistent hashing yahan kuch nahi karta: ek key = ek machine.
 
 ILAAJ:   (1) L1 LOCAL CACHE: har App server ki apni RAM me 1-2 sec ka chhota cache -> Redis tak jaata hi nahi.
@@ -235,13 +247,15 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - Garam key pehchanoge kaise?
-      -> machine ke metric (ek key pe kitne ops / sec), redis-cli --hotkeys, App me ginti. Had paar -> copy / L1.
+      -> machine ke metric (ek key pe kitne ops / sec), redis-cli --hotkeys, App me ginti. Had paar -> copy /
+         L1.
   - L1 me purana score kitni der?
       -> L1 ki umar jitna (1-2 sec). Score ke liye theek, paisa / stock ke liye nahi.
   - Garam key pe LIKHNA bhi ho (like counter)?
       -> key ke tukde (like#0..#9), kisi ek me likho, padhte waqt sab jodo.
   - Stampede aur hot key me farak?
-      -> stampede = key KHAALI, sab DB bhaage (lock). Hot key = key BHARI, ek machine padhai se mar rahi (L1 / copy).
+      -> stampede = key KHAALI, sab DB bhaage (lock). Hot key = key BHARI, ek machine padhai se mar rahi (L1 /
+         copy).
 ```
 
 ```
@@ -292,7 +306,8 @@ flowchart TD
 ## DIKKAT 1 — RAM bhar gayi, kya hatayein
 
 ```
-BOL: "Each node evicts with LRU, a hash map plus a doubly linked list so both lookup and eviction are O(1), and every key also has a TTL cleaned lazily on read and actively in the background."
+BOL:      "Each node evicts with LRU, a hash map plus a doubly linked list so both lookup and eviction are
+          O(1), and every key also has a TTL cleaned lazily on read and actively in the background."
 ```
 ```mermaid
 flowchart TD
@@ -310,7 +325,8 @@ flowchart TD
 ## DIKKAT 2 — 1 TB ek machine me nahi: key kis machine pe
 
 ```
-BOL: "I place keys with consistent hashing on a ring with virtual nodes, not hash mod N, so adding or removing a node moves only about K over N keys instead of almost all of them."
+BOL:      "I place keys with consistent hashing on a ring with virtual nodes, not hash mod N, so adding or
+          removing a node moves only about K over N keys instead of almost all of them."
 ```
 ```mermaid
 flowchart TD
@@ -334,7 +350,9 @@ flowchart TD
 ## DIKKAT 3 — machine mari, bojh DB pe
 
 ```
-BOL: "Every shard has one or two async replicas in other availability zones; on failure a quorum promotes a replica, and I accept losing the last few writes because the database is the source of truth."
+POOCHEGA: "What happens if a cache node goes down?"
+BOL:      "Each shard has a replica in another zone that gets promoted, and with consistent hashing only that
+           node's keys are affected."
 ```
 ```mermaid
 flowchart TD
@@ -358,7 +376,9 @@ flowchart TD
 ## DIKKAT 4 — DB me naya, cache me purana
 
 ```
-BOL: "On a write I update the database and then delete the cache key rather than updating it, with a TTL as the safety net and CDC-driven retries if a delete fails."
+POOCHEGA: "The user updated something but still sees the old value. Why?"
+BOL:      "On update I delete the cache key rather than overwrite it, and keep a TTL as a safety net. If it's
+           replica lag, the writer reads from the primary for a short while."
 ```
 ```mermaid
 flowchart TD
@@ -382,7 +402,10 @@ flowchart TD
 ## DIKKAT 5 — garam key khatam, 1000 request DB pe
 
 ```
-BOL: "When a hot key expires, a lock lets only one request rebuild it from the database while the rest wait briefly and read the cache; I also refresh early and add jitter to TTLs to avoid avalanches."
+POOCHEGA: "What if the cache goes down / a hot key expires?"
+BOL:      "For known events I'd pre-warm the cache and scale up in advance. For unpredictable spikes I still
+           need stampede protection: a lock so only one request rebuilds the key, and early background refresh
+           before the TTL expires."
 ```
 ```mermaid
 flowchart TD
@@ -406,7 +429,11 @@ flowchart TD
 ## DIKKAT 6 — ek key itni popular, machine akeli mar rahi
 
 ```
-BOL: "For a hot key I add a one or two second local L1 cache in every app server and keep several copies of the key across nodes, so the shard holding it never sees the full traffic."
+POOCHEGA: "What about a hot key / celebrity / hot partition?"
+BOL:      "The key is there, one node just can't take the reads. I'd put a 1-2 second local cache on each app
+           server so most reads never reach Redis, and copy the key across replicas so the rest are spread
+           out. A slightly stale score is fine here. If the key were missing instead, that's a stampede — one
+           request rebuilds, the rest wait."
 ```
 ```mermaid
 flowchart TD
@@ -436,7 +463,8 @@ AAGE:         write-back (likhna bahut ho to) · kai region me cache
 
 POOCHEGA: "How would you scale this to 10x?"      -> request ka raasta chalo
 POOCHEGA: "What's the single point of failure?"   -> machine (copy), cache client config (sab app me copy)
-POOCHEGA: "How do you know it's working?"         -> HIT RATIO sabse zaroori (gira = kuch toota) · p99 · evictions · alert
+POOCHEGA: "How do you know it's working?"         -> HIT RATIO sabse zaroori (gira = kuch toota) · p99 ·
+          evictions · alert
 ```
 
 ---
@@ -451,7 +479,8 @@ MACHINE KE ANDAR: HashMap key -> value (O(1)) · LRU = HashMap + DLL · TTL lazy
                   RAM wala key-value (Redis-jaisa), DB peeche asli sach
                   <1 ms -> RAM (disk nahi) · join nahi -> key-value kaafi
 
-KEY BAANTNA:    hash % N -> sab khiskti -> NAHI · CONSISTENT HASHING -> ring + ghadi ki disha + virtual nodes <- YAHI
+KEY BAANTNA:    hash % N -> sab khiskti -> NAHI · CONSISTENT HASHING -> ring + ghadi ki disha + virtual nodes
+                <- YAHI
                 range -> ek range garam -> NAHI
 
 TRADE-OFF:      tezi vs sahi hona — cache AP ki taraf, "thodi der baad sahi" chalta (CAP)
@@ -475,7 +504,8 @@ HOT KEY    : copies / L1 local
 ```
 ```
 BOL: "A distributed cache is an in-memory key-value store, sharded with consistent hashing and replicated for
-      availability. Cache-aside with LRU and TTL is the production combo. The two hard parts are invalidation —
+      availability. Cache-aside with LRU and TTL is the production combo. The two hard parts are invalidation
+      —
       TTL plus explicit deletes — and stampedes — a lock or early refresh. Hot keys get a local L1 cache and
       copies. It's a speed versus consistency trade-off, decided by the use case."
 ```

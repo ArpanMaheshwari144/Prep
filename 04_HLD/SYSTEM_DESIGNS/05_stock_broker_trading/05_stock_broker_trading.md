@@ -89,16 +89,19 @@ ILAAJ:   Har STOCK ki EK line (queue) aur us line ko EK hi thread chalaye.
 
 ANDAR KAISE:
          TCS ke saare order thread T1 pe, INFY ke T2 pe. Ramesh pehle aaya -> T1 ne 10 de diye.
-         Phir Mohan -> book me 0 bache -> Mohan ka order line me pada rahe. Do thread ek stock ko chhoote hi nahi.
+         Phir Mohan -> book me 0 bache -> Mohan ka order line me pada rahe. Do thread ek stock ko chhoote hi
+         nahi.
 
 ISKE BAAD KYA TOOTEGA:
   - 5000 stock = 5000 thread?
       -> nahi. Thode thread, har thread kai stock sambhale (stock ke naam ka hash % thread ginti).
          Bas ek stock hamesha ek hi thread pe.
   - "DB ka ACID ye rok dega"?
-      -> nahi. Matching DB me hai hi nahi (RAM me). Aur ACID akela "pehle padho, phir likho" wali race nahi rokta.
+      -> nahi. Matching DB me hai hi nahi (RAM me). Aur ACID akela "pehle padho, phir likho" wali race nahi
+         rokta.
   - Wo thread atak gaya (Java ka GC pause)?
-      -> us stock ke order line me ruk jaate. Ilaaj: kam GC wala Java setup + ek standby jo log padh ke uth sake (card 6).
+      -> us stock ke order line me ruk jaate. Ilaaj: kam GC wala Java setup + ek standby jo log padh ke uth
+         sake (card 6).
 ```
 
 #### [2](#d2) WALLET ME 50K, 30K-30K KE DO ORDER (DOUBLE SPEND)
@@ -144,15 +147,18 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - Har baar balance ledger jod ke nikaloge?
-      -> nahi, dheema hoga. Balance alag column me, usi transaction me badalta. Ledger = sach ka record + audit.
+      -> nahi, dheema hoga. Balance alag column me, usi transaction me badalta. Ledger = sach ka record +
+         audit.
   - Paise me "thodi der baad sahi" (eventual) chalega, like count jaisa?
       -> nahi. Paisa hamesha turant sahi (strong consistency).
 ```
 
 #### [4](#d4) PAISA WALLET DB ME, SHARE PORTFOLIO DB ME (ALAG DB)
 ```
-KAHANI:  System bada hua: paisa ab Wallet DB me, share Portfolio DB me. Do alag DB pe ek transaction nahi chalta.
-         Ramesh ka 30k Wallet DB se kata, Portfolio DB me 10 share daalne se PEHLE crash. Paisa gaya, share nahi aaye.
+KAHANI:  System bada hua: paisa ab Wallet DB me, share Portfolio DB me. Do alag DB pe ek transaction nahi
+         chalta.
+         Ramesh ka 30k Wallet DB se kata, Portfolio DB me 10 share daalne se PEHLE crash. Paisa gaya, share
+         nahi aaye.
 
 ILAAJ:   SAGA: har step apne DB me khud commit. Koi step fail -> pichhle step ka ULTA kaam (paisa wapas).
          Jaise trip booking: flight book hui, hotel nahi mila -> flight cancel + refund.
@@ -202,13 +208,15 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  10:15 baje matching server gir gaya. TCS ki book me 4,000 order pade the, sab RAM me.
          RAM gayi -> 4,000 order gayab. Logon ka paisa block hai par order ka koi pata nahi.
 
-ILAAJ:   Har order PEHLE ek append-only LOG (sirf neeche jodte jao, kabhi badlo mat) me likho, number ke saath.
+ILAAJ:   Har order PEHLE ek append-only LOG (sirf neeche jodte jao, kabhi badlo mat) me likho, number ke
+         saath.
          PHIR book me daalo. Server gira -> naya server log shuru se padh ke book dobara bana leta (replay).
          Jaise cricket: scoreboard toot gaya, scorer ke register se poora score wapas.
 
 ANDAR KAISE:
          SEQUENCER har order pe badhta number lagata: Ramesh #501, Mohan #502.
-         Naya server log #1 se aakhri tak wahi kram me chalata. Thread ek hi hai, to book bilkul pehle jaisi banti.
+         Naya server log #1 se aakhri tak wahi kram me chalata. Thread ek hi hai, to book bilkul pehle jaisi
+         banti.
          Log me key = stock ka naam -> ek stock ke order ek hi line (partition) me, kram me.
          Yahi log AUDIT bhi hai: regulator saalon baad bhi dekh sakta, isme kuch badla nahi ja sakta.
 
@@ -218,7 +226,8 @@ ISKE BAAD KYA TOOTEGA:
   - Log me 1 crore order, shuru se padhne me kitna time?
       -> har kuch minute book ki photo (SNAPSHOT) lo. Gira to photo + uske baad ka log -> chhota replay.
   - Seconds me wapas chahiye?
-      -> HOT STANDBY: doosra server saath-saath log padhta rehta, book RAM me taiyaar. Pehla gira, ye turant le leta.
+      -> HOT STANDBY: doosra server saath-saath log padhta rehta, book RAM me taiyaar. Pehla gira, ye turant
+         le leta.
   - Crash pe kya-kya bachaoge? (DO jagah bolna)
       -> matching (RAM) = log se replay · settlement (DB) = rollback / SAGA. Sirf ek bola to aadha jawab.
 ```
@@ -236,7 +245,8 @@ ANDAR KAISE:
          WS-1 Redis me "price:TCS" SUBSCRIBE karta.
          Sauda hua, TCS 3005 -> Matching Redis pe PUBLISH -> Redis sab subscribed servers ko deta
          -> WS-1 Ramesh ko bhej deta.
-         Redis pub/sub kuch store nahi karta -> Ramesh ka connection toota aur wapas juda to abhi ka price alag se do.
+         Redis pub/sub kuch store nahi karta -> Ramesh ka connection toota aur wapas juda to abhi ka price
+         alag se do.
 
 ISKE BAAD KYA TOOTEGA:
   - TCS ka price ek second me 1000 baar badla, sab bhejoge?
@@ -255,7 +265,8 @@ KAHANI:  Market khulte hi akele TCS pe lakhon order aa gaye. Card 1 me niyam tha
          To TCS ko do thread me baant bhi nahi sakte.
 
 ILAAJ:   Book ko mat todo (do thread = ek share do baar bike + kram toote).
-         Aage ka LOG bheed ko line me rok ke rakhta (BACKPRESSURE). Koi order phenka nahi jaata, bas thoda der se match.
+         Aage ka LOG bheed ko line me rok ke rakhta (BACKPRESSURE). Koi order phenka nahi jaata, bas thoda der
+         se match.
 
 ANDAR KAISE:
          Ek thread, RAM me, bina lock -> lakhon order / second nikal leta (LMAX exchange ka design yahi).
@@ -325,7 +336,9 @@ flowchart TD
 ## DIKKAT 1 — do order ek hi stock pe ek saath (race)
 
 ```
-BOL: "All orders for one symbol go into one queue handled by a single thread, so they are matched one after another, never in parallel, and no lock is needed."
+POOCHEGA: "Two users order the same stock at the same time — what happens?"
+BOL:      "Orders for one symbol go into one queue handled by one thread, so they're matched one after
+           the other, never in parallel — no lock needed."
 ```
 ```mermaid
 flowchart TD
@@ -347,7 +360,8 @@ flowchart TD
 ## DIKKAT 2 — wallet 50k, 30k-30k ke do order (double spend)
 
 ```
-BOL: "When an order is placed I block the money with one atomic update that checks the available balance and increases the blocked amount together; if no row is updated, the order is rejected."
+BOL:      "When an order is placed I block the money with one atomic update that checks the available
+          balance and increases the blocked amount together; if no row is updated, the order is rejected."
 ```
 ```mermaid
 flowchart TD
@@ -371,7 +385,8 @@ flowchart TD
 ## DIKKAT 3 — saude ke beech crash
 
 ```
-BOL: "Settlement runs in one database transaction, so a crash rolls everything back, and every trade is written to a double-entry ledger whose entries always sum to zero."
+BOL:      "Settlement runs in one database transaction, so a crash rolls everything back, and every trade is
+          written to a double-entry ledger whose entries always sum to zero."
 ```
 ```mermaid
 flowchart TD
@@ -397,7 +412,9 @@ flowchart TD
 ## DIKKAT 4 — paisa Wallet DB me, share Portfolio DB me
 
 ```
-BOL: "Across separate databases I use an orchestrated saga: each step commits locally, the state is persisted, and a failure triggers compensating steps like refunding the wallet. I avoid 2PC because it holds locks and blocks if the coordinator dies."
+BOL:      "Across separate databases I use an orchestrated saga: each step commits locally, the state is
+          persisted, and a failure triggers compensating steps like refunding the wallet. I avoid 2PC
+          because it holds locks and blocks if the coordinator dies."
 ```
 ```mermaid
 flowchart TD
@@ -425,7 +442,9 @@ flowchart TD
 ## DIKKAT 5 — BUY do baar daba / network retry
 
 ```
-BOL: "The client sends an idempotency key with every order; a unique constraint on the key means a retry gets the saved response instead of creating a second order, and an in-progress key returns 409."
+BOL:      "The client sends an idempotency key with every order; a unique constraint on the key means a
+          retry gets the saved response instead of creating a second order, and an in-progress key returns
+          409."
 ```
 ```mermaid
 flowchart TD
@@ -453,7 +472,13 @@ flowchart TD
 ## DIKKAT 6 — order book RAM me, crash = sab gayab
 
 ```
-BOL: "A sequencer stamps every order with an increasing number and writes it to an append-only log before matching. On a crash I rebuild the book from the latest snapshot plus the log, and a hot standby keeps recovery to seconds. The same log is the audit trail."
+POOCHEGA: "How do you keep orders in the right sequence?"
+BOL:      "A sequencer stamps every order with an increasing sequence number and writes it to the log,
+           keyed by symbol so one stock's orders stay in one partition, in order."
+
+POOCHEGA: "What if the server crashes in the middle?"
+BOL:      "If the matching engine dies, I rebuild the book by replaying the event log. If settlement
+           dies midway, a single-DB transaction rolls back; across services a saga compensates."
 ```
 ```mermaid
 flowchart TD
@@ -481,7 +506,9 @@ flowchart TD
 ## DIKKAT 7 — lakhon log live price dekh rahe
 
 ```
-BOL: "Clients keep a WebSocket open; the matching engine publishes price changes to Redis pub/sub per symbol, the WebSocket servers subscribed to that symbol push them to users, and I conflate updates to the latest price every 100 ms."
+BOL:      "Clients keep a WebSocket open; the matching engine publishes price changes to Redis pub/sub per
+          symbol, the WebSocket servers subscribed to that symbol push them to users, and I conflate updates
+          to the latest price every 100 ms."
 ```
 ```mermaid
 flowchart TD
@@ -515,7 +542,9 @@ flowchart TD
 ## DIKKAT 8 — 9:15 baje akele TCS pe lakhon order
 
 ```
-BOL: "I never split one symbol's book. A single lock-free thread in memory handles hundreds of thousands of orders a second, the log in front gives backpressure, and I scale across symbols, not within one."
+BOL:      "I never split one symbol's book. A single lock-free thread in memory handles hundreds of
+          thousands of orders a second, the log in front gives backpressure, and I scale across symbols, not
+          within one."
 ```
 ```mermaid
 flowchart TD
@@ -586,7 +615,8 @@ API: POST /order {stock, side, qty, price, type, idempotencyKey} · DELETE /orde
 
 ```
 Order Service = check + idempotency · Wallet = paisa BLOCK · Event Log = number + replay + audit
-Matching = ek stock ek thread, book RAM me, stock ke hisaab se baanto · Settlement = ek transaction / alag DB = SAGA
+Matching = ek stock ek thread, book RAM me, stock ke hisaab se baanto · Settlement = ek transaction / alag DB
+= SAGA
 ```
 ```
 BOL: "Order Service validates and checks the idempotency key, Wallet blocks the money, every order

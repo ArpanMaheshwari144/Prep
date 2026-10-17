@@ -23,7 +23,8 @@ POOCHO:  file kitni badi? (10 MB ya 5 GB — design badal jaata)  <- badi = pres
 
 KYA KARE (FR):    upload · bahar wale se JAANCH · store · tracking link / haal
                   scope bahar: editing · sharing · versions
-KAISA CHALE (NFR): user ruke nahi (dil) · file khoye nahi · haal HAMESHA pata (kahan tak pahunchi) · bheed + safe
+KAISA CHALE (NFR): user ruke nahi (dil) · file khoye nahi · haal HAMESHA pata (kahan tak pahunchi) · bheed +
+                   safe
 
 NUMBERS (andaaza):
    1 lakh file / din, din me ~1 lakh second -> ~1-2 upload / second (kam)
@@ -42,7 +43,8 @@ NUMBERS (andaaza):
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
-Client file Upload service ko de. Service file S3 me rakhe, jaanch wale (Validator) ko call kare (2-3 sec), jawab wapas.
+Client file Upload service ko de. Service file S3 me rakhe, jaanch wale (Validator) ko call kare (2-3 sec),
+jawab wapas.
 ```
 ```mermaid
 flowchart TD
@@ -74,13 +76,17 @@ ISKE BAAD KYA TOOTEGA:
   - Khabar dobara mili, file do baar jaanchi gayi?
       -> pehle dekho: T-101 pehle se DONE hai? -> skip (idempotent).
   - Kafka hi kyun?
-      -> 1-2 upload / second ke liye SQS / RabbitMQ bhi kaafi (simple, AWS chalaye). Kafka tab jab bahut khabar ho ya dobara padhni ho.
+      -> 1-2 upload / second ke liye SQS / RabbitMQ bhi kaafi (simple, AWS chalaye). Kafka tab jab bahut
+         khabar ho ya dobara padhni ho.
   - Arpan har 2 sec haal poochhe, bahut nahi?
       -> dheere-dheere gap badhao (2s, 4s, 8s), ya server khud bataye (card 5).
   - Raat 2 baje Validator 1 ghanta band, 4,000 file VALIDATING pe atki. Kya hoga, pata kaise chalega?
-      -> khoyega kuch nahi: khabar Kafka me padi, worker DB me DONE ke baad hi "padh liya" bolta. Wapas aaya to line nikalti.
-         ilaaj: FUSE (3-5 fail pe call band, thodi der baad ek test call) + DOOSRI COMPANY (bahar wale ki copy hum nahi chala sakte).
-         pata: health check nahi pakadta (wo "zinda" bolta). Apne number: queue ki lambai · Validator ka time + error rate
+      -> khoyega kuch nahi: khabar Kafka me padi, worker DB me DONE ke baad hi "padh liya" bolta. Wapas aaya
+         to line nikalti.
+         ilaaj: FUSE (3-5 fail pe call band, thodi der baad ek test call) + DOOSRI COMPANY (bahar wale ki copy
+         hum nahi chala sakte).
+         pata: health check nahi pakadta (wo "zinda" bolta). Apne number: queue ki lambai · Validator ka time
+         + error rate
          · 10 min se VALIDATING me atki files -> had paar = alert, user ki shikayat se pehle.
 ```
 
@@ -89,7 +95,8 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Arpan ki 5 GB video: client -> hamara server -> S3. 5 GB do baar network pe chala,
          server ka thread minuton tak atka, aur sirf bytes aage badhane ke liye server badhane pade.
 
-ILAAJ:   PRESIGNED URL: server sirf ek chhoti umar ka signed URL + trackingId de. Client bytes SEEDHE S3 pe bheje.
+ILAAJ:   PRESIGNED URL: server sirf ek chhoti umar ka signed URL + trackingId de. Client bytes SEEDHE S3 pe
+         bheje.
 
 ANDAR KAISE:
          1  Arpan -> server: "5 GB upload karni hai"
@@ -111,7 +118,8 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  Arpan ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB shuru se? Arpan pagal ho jaayega.
 
-ILAAJ:   MULTIPART: file chhote tukdon me bhejo. Jo tukda fail, sirf wahi dobara. Saare pahunche -> S3 khud jodta.
+ILAAJ:   MULTIPART: file chhote tukdon me bhejo. Jo tukda fail, sirf wahi dobara. Saare pahunche -> S3 khud
+         jodta.
 
 ANDAR KAISE:
          1  "shuru" -> S3 ek uploadId deta (U-9)
@@ -136,7 +144,8 @@ ILAAJ:   File pehle TMP jagah, jaanch pass hone pe asli jagah.
          + SWEEPER job: der se atki file dhoondhe.
 
 ANDAR KAISE:
-         Sweeper har kuch minute: haal VALIDATING / UPLOADING aur 10 min se nahi badla (jaanch to 3 sec ki hai)
+         Sweeper har kuch minute: haal VALIDATING / UPLOADING aur 10 min se nahi badla (jaanch to 3 sec ki
+                                  hai)
            -> S3 me bytes hain? haan = queue me dobara daalo · nahi = FAILED.
          Lifecycle din me ek baar chalta aur DB nahi dekhta -> isliye sweeper bhi chahiye.
 
@@ -157,7 +166,8 @@ KAHANI:  10,000 log upload karke baithe, har ek har 2 sec "T-101 ka haal?" -> 5,
 ILAAJ:   REDIS cache + baaki padhai READ REPLICA se. Worker DONE kare to Redis bhi usi waqt update.
 
 ANDAR KAISE:
-         GET /status/T-101 -> Redis me hai? -> wahin se · nahi -> replica se padho -> Redis me rakh do (chhoti umar).
+         GET /status/T-101 -> Redis me hai? -> wahin se · nahi -> replica se padho -> Redis me rakh do (chhoti
+         umar).
          JAAL 1: worker ne DB me DONE kiya, Redis me abhi bhi VALIDATING -> Arpan ko purana haal.
                  Ilaaj: worker DB ke saath Redis bhi update kare.
          JAAL 2: replica thodi peeche -> replica se purana VALIDATING padha aur Redis me baith gaya.
@@ -189,9 +199,11 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [7](#d7) RAVI NE ARPAN KA trackingId DAAL KE FILE MAANG LI
 ```
-KAHANI:  Ravi ne kahin se Arpan ka T-101 dekh liya, GET /download/T-101 maara -> Arpan ki file Ravi ko mil gayi.
+KAHANI:  Ravi ne kahin se Arpan ka T-101 dekh liya, GET /download/T-101 maara -> Arpan ki file Ravi ko mil
+         gayi.
 
-ILAAJ:   Upload pe record me ownerId (JWT se) likho. Haal / download pe: maangne wala hi owner hai? Nahi -> 403.
+ILAAJ:   Upload pe record me ownerId (JWT se) likho. Haal / download pe: maangne wala hi owner hai? Nahi ->
+         403.
 
 ANDAR KAISE:
          "Tum kaun ho?" (AUTHN) = gateway / JWT batata: ye Ravi hai.
@@ -227,10 +239,12 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [9](#d9) NAAM REPORT.PDF, ANDAR EXE
 ```
-KAHANI:  Kisi ne virus.exe ka naam badal ke report.pdf kiya aur type bhi "application/pdf" bheja. S3 me pahunch bhi gayi.
+KAHANI:  Kisi ne virus.exe ka naam badal ke report.pdf kiya aur type bhi "application/pdf" bheja. S3 me
+         pahunch bhi gayi.
          Naam aur type dono client ne bheje the, jo jhooth bol sakta hai.
 
-ILAAJ:   Worker file ke PEHLE kuch byte padhe (magic number), type khud tay kare. Mel nahi -> REJECT + quarantine.
+ILAAJ:   Worker file ke PEHLE kuch byte padhe (magic number), type khud tay kare. Mel nahi -> REJECT +
+         quarantine.
 
 ANDAR KAISE:
          Har type ki file shuru me apni pehchaan likhti: PDF = "%PDF-" · PNG = "\x89PNG" · EXE = "MZ".
@@ -252,7 +266,8 @@ AAKHRI DABBE (sab dikkat ke baad):
   -> DB me haal -> Redis + read replica (haal poochhna) · download = owner check + chhota signed GET
   Sweeper + S3 lifecycle = atki / adhoori file
 
-DB:  PostgreSQL -> trackingId se seedha dhoondhna simple, par haal (UPLOADING -> VALIDATING -> DONE / FAILED) ko ACID chahiye
+DB:  PostgreSQL -> trackingId se seedha dhoondhna simple, par haal (UPLOADING -> VALIDATING -> DONE / FAILED)
+     ko ACID chahiye
      files: trackingId (KEY) | ownerId | status | s3_key
 
 END ME POOCHEGA:
@@ -260,7 +275,8 @@ END ME POOCHEGA:
   "10x?"            -> Upload Svc machine + LB · S3 khud scale · download CDN · haal cache + replica
                        · DB shard (trackingId) · worker queue ki lambai dekh ke badhao
   "SPOF?"           -> Validator (bahar wala): fuse (circuit breaker) + doosri company
-  "Chal raha, kaise pata?" -> apne metric: queue ki lambai · Validator p99 + error rate · VALIDATING me atki files
+  "Chal raha, kaise pata?" -> apne metric: queue ki lambai · Validator p99 + error rate · VALIDATING me atki
+  files
                        (health check sirf "zinda hai" batata, "dheema hai" nahi)
 ```
 
@@ -309,7 +325,9 @@ flowchart TD
 ## DIKKAT 1 — user 2-3 sec ruka, thread bhi atka
 
 ```
-BOL: "Validation is slow, so I make it async: the user gets a tracking id immediately, a worker picks the job from a queue, validates and updates the status, and commits the offset only after the DB update so a crash never loses the job."
+BOL:      "Validation is slow, so I make it async: the user gets a tracking id immediately, a worker picks
+          the job from a queue, validates and updates the status, and commits the offset only after the DB
+          update so a crash never loses the job."
 ```
 ```mermaid
 flowchart TD
@@ -336,7 +354,9 @@ flowchart TD
 ## DIKKAT 2 — 5 GB ke bytes hamare server se guzar rahe
 
 ```
-BOL: "The upload service only returns a short-lived presigned URL and a tracking id; the client uploads the bytes straight to S3, so my servers never carry the file and the client never gets AWS credentials."
+BOL:      "The upload service only returns a short-lived presigned URL and a tracking id; the client uploads
+          the bytes straight to S3, so my servers never carry the file and the client never gets AWS
+          credentials."
 ```
 ```mermaid
 flowchart TD
@@ -363,7 +383,8 @@ flowchart TD
 ## DIKKAT 3 — 5 GB file 90% pe tooti
 
 ```
-BOL: "Large files use S3 multipart upload: the file goes in parts, failed parts are retried alone, and S3 stitches them together on complete; I keep the upload id so the client can resume."
+BOL:      "Large files use S3 multipart upload: the file goes in parts, failed parts are retried alone, and
+          S3 stitches them together on complete; I keep the upload id so the client can resume."
 ```
 ```mermaid
 flowchart TD
@@ -390,7 +411,10 @@ flowchart TD
 ## DIKKAT 4 — upload shuru, complete kabhi nahi
 
 ```
-BOL: "Files land in a temp prefix, S3 lifecycle rules clean old temp objects and incomplete multipart uploads, and a sweeper job finds records stuck in VALIDATING and requeues or fails them."
+POOCHEGA: "What if the server crashes in the middle?"
+BOL:      "Every file has a status, UPLOADING to VALIDATING to DONE or FAILED. A sweeper finds files stuck
+           too long — VALIDATING for ten minutes when validation takes three seconds — and requeues them
+           or marks them failed. S3 lifecycle rules clean up abandoned uploads."
 ```
 ```mermaid
 flowchart TD
@@ -420,7 +444,8 @@ flowchart TD
 ## DIKKAT 5 — sab har 2 sec haal poochh rahe
 
 ```
-BOL: "Status reads are heavy, so they go through Redis and a read replica, and the worker updates Redis when it changes the status; to remove polling entirely I can push updates with SSE or WebSocket."
+BOL:      "Status reads are heavy, so they go through Redis and a read replica, and the worker updates Redis
+          when it changes the status; to remove polling entirely I can push updates with SSE or WebSocket."
 ```
 ```mermaid
 flowchart TD
@@ -456,7 +481,8 @@ flowchart TD
 ## DIKKAT 6 — file nahi, poora folder
 
 ```
-BOL: "A folder gets a parent tracking id with one child per file; the parent status is derived from the children, and init is batched so one call returns all presigned URLs."
+BOL:      "A folder gets a parent tracking id with one child per file; the parent status is derived from the
+          children, and init is batched so one call returns all presigned URLs."
 ```
 ```mermaid
 flowchart TD
@@ -492,7 +518,8 @@ flowchart TD
 ## DIKKAT 7 — Ravi ne Arpan ka trackingId daala
 
 ```
-BOL: "Authentication happens at the gateway, but authorization happens in the service: every status or download request checks that the user from the JWT owns the file, otherwise 403."
+BOL:      "Authentication happens at the gateway, but authorization happens in the service: every status or
+          download request checks that the user from the JWT owns the file, otherwise 403."
 ```
 ```mermaid
 flowchart TD
@@ -530,7 +557,8 @@ flowchart TD
 ## DIKKAT 8 — S3 ka seedha link aage bhej diya
 
 ```
-BOL: "Downloads use a presigned GET URL valid for a few minutes, generated only after the owner check; I store the S3 key, never a permanent URL."
+BOL:      "Downloads use a presigned GET URL valid for a few minutes, generated only after the owner check;
+          I store the S3 key, never a permanent URL."
 ```
 ```mermaid
 flowchart TD
@@ -568,7 +596,10 @@ flowchart TD
 ## DIKKAT 9 — naam .pdf, andar EXE
 
 ```
-BOL: "I never trust the client's file name or content type; the worker reads the first bytes with a range GET, checks the magic number, and rejects and quarantines mismatches, with an antivirus scan on top."
+POOCHEGA: "How do you secure it / stop abuse?"
+BOL:      "JWT at the gateway and an owner check on every status and download. Short-lived presigned URLs.
+           The worker checks magic bytes instead of trusting the name or Content-Type. Per-user rate limit
+           against upload floods, WAF at the edge, TLS, secrets in a vault."
 ```
 ```mermaid
 flowchart TD
@@ -636,7 +667,8 @@ API:      POST /upload/init { fileName, size }  -> signed S3 URL + trackingId (s
           GET  /download/{trackingId}            -> signed GET URL -> seedha S3
 
 DB:       files: trackingId (KEY) | fileName | ownerId | status | s3_key | createdAt | updatedAt
-          haal: UPLOADING -> VALIDATING -> DONE / FAILED  ("kahan tak pahunchi" = gadbad sambhalne ki buniyaad)
+          haal: UPLOADING -> VALIDATING -> DONE / FAILED  ("kahan tak pahunchi" = gadbad sambhalne ki
+          buniyaad)
           PostgreSQL: dhoondhna simple par haal ko ACID chahiye
           (bahut bada + sirf key-value -> NoSQL bhi chalta · paisa hota -> hamesha SQL)
 
@@ -649,7 +681,8 @@ DEDUP:    file ka hash (MD5 / SHA) -> pehle se hai to dobara store nahi -> jagah
 
 ```
 Gateway / LB = login · Upload Svc = jaankari + signed URL, bytes ko haath nahi · S3 = bytes, tmp/ + lifecycle
-DB = trackingId + haal + owner · Kafka + Worker = dheemi jaanch alag, magic bytes · Redis + replica = haal poochhna
+DB = trackingId + haal + owner · Kafka + Worker = dheemi jaanch alag, magic bytes · Redis + replica = haal
+poochhna
 Sweeper = atki file
 ```
 ```
@@ -657,7 +690,8 @@ BOL: "The client asks the upload service for a presigned URL and sends the bytes
       for big files. Validation takes two to three seconds, so it's async: the user gets a tracking id
       immediately, a worker validates from a queue, checks magic bytes and updates the status. Status is
       read-heavy, so Redis and a read replica, invalidated on every update. Owner checks and short-lived
-      URLs secure it, lifecycle rules and a sweeper clean up. Next: retries on failure and a CDN for downloads."
+      URLs secure it, lifecycle rules and a sweeper clean up. Next: retries on failure and a CDN for
+      downloads."
 ```
 ```mermaid
 flowchart TD

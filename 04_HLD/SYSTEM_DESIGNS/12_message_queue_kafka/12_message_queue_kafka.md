@@ -25,7 +25,8 @@ POOCHO:  "Kram, khona-nahi, delivery guarantee, dobara padhna — kis pe focus?"
          ek message KAI service ko (sabko) ya kisi ek ko? · purana dobara padhna (replay)?
          (pehla aur teesra sawaal poora design badalte)
 
-KYA KARE (FR):    producer DAALE · consumer UTHAYE · EK message KAI service tak (email + dashboard + analytics)
+KYA KARE (FR):    producer DAALE · consumer UTHAYE · EK message KAI service tak (email + dashboard +
+                  analytics)
                   purana dobara padh sakein · ek user ki khabar KRAM me
 KAISA CHALE (NFR): khoye nahi · ek machine gire to chale · lakhon / second (dil) · daalna ms me
                    ek key ka kram · 7 din rakho (replay) · consumer thoda peeche chale (lag) to THEEK
@@ -64,7 +65,8 @@ flowchart TD
 
 #### [1](#d1) CONSUMER RESTART HUA, MESSAGE GAYAB
 ```
-KAHANI:  Queue machine ki memory me thi, 500 signup message pade the. Machine restart -> memory saaf -> 500 gayab.
+KAHANI:  Queue machine ki memory me thi, 500 signup message pade the. Machine restart -> memory saaf -> 500
+         gayab.
          Email service ko pata hi nahi chala ki 500 log aaye the.
 
 ILAAJ:   Disk pe APPEND-ONLY LOG (sirf neeche jodte jao). Har message ka number = OFFSET.
@@ -79,7 +81,8 @@ ISKE BAAD KYA TOOTEGA:
   - Disk pe likhna dheema nahi?
       -> sirf aakhir me jodna (sequential) = disk ka sabse tez kaam. Padhna OS ke page cache se, RAM jaisa.
   - DB me queue kyun nahi bana lete?
-      -> DB insert = index + lock = idhar-udhar likhna. Queue me WHERE hota hi nahi, bas "offset X ke baad do".
+      -> DB insert = index + lock = idhar-udhar likhna. Queue me WHERE hota hi nahi, bas "offset X ke baad
+         do".
   - Offset yaad kaun rakhta?
       -> Kafka khud, ek andar wale topic __consumer_offsets me: (group, topic, partition) -> offset.
 ```
@@ -96,7 +99,8 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - Kitne partition rakhoge?
-      -> jitne consumer ek saath chahiye + aage ki badhat (12-30). Baad me badhaye to key ka partition badlega (card 3).
+      -> jitne consumer ek saath chahiye + aage ki badhat (12-30). Baad me badhaye to key ka partition badlega
+         (card 3).
   - Copy (replica) se likhna scale hoga?
       -> nahi. Copy sirf bachav ke liye. Likhna partition se scale hota.
   - Ek partition garam (ek key ki bahut khabar)?
@@ -109,7 +113,8 @@ KAHANI:  Arpan ke teen event: signup P0 me gaya, profile-update P2 me, delete-ac
          P1 jaldi padha gaya -> delete pehle hua, signup baad me. Ulta.
          Kafka kram sirf EK partition ke andar deta, partitions ke beech nahi.
 
-ILAAJ:   Producer har message ke saath KEY bheje (userId). Ek user ke saare event ek hi partition me -> kram pakka.
+ILAAJ:   Producer har message ke saath KEY bheje (userId). Ek user ke saare event ek hi partition me -> kram
+         pakka.
 
 ANDAR KAISE:
          partition = hash(Arpan ka userId) % 3 -> hamesha P2 -> signup, update, delete teeno P2 me, kram se.
@@ -117,14 +122,17 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - Partition 3 se 6 kiye to Arpan ka partition badla?
-      -> haan, % 3 se % 6 hua -> naye event naye partition me, thodi der kram toota. Isliye shuru me hi zyada partition.
+      -> haan, % 3 se % 6 hua -> naye event naye partition me, thodi der kram toota. Isliye shuru me hi zyada
+         partition.
   - Producer ka dobara bhejna kram ulta kare (1 fail, 2 gaya, phir 1)?
-      -> idempotent producer (enable.idempotence): har message ka sequence number -> kram + duplicate dono theek.
+      -> idempotent producer (enable.idempotence): har message ka sequence number -> kram + duplicate dono
+         theek.
 ```
 
 #### [4](#d4) EMAIL SERVICE KE 3 INSTANCE, ARPAN KO 3 EMAIL
 ```
-KAHANI:  Email service ki 3 machine (C1, C2, C3), teeno poora topic padh rahi. Arpan ka signup teeno ne padha -> Arpan ko 3 welcome email.
+KAHANI:  Email service ki 3 machine (C1, C2, C3), teeno poora topic padh rahi. Arpan ka signup teeno ne padha
+         -> Arpan ko 3 welcome email.
 
 ILAAJ:   Teeno EK CONSUMER GROUP me. Group ke andar ek partition ko sirf EK consumer padhta.
 
@@ -153,7 +161,8 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - Har service ka alag topic bana do?
-      -> NAHI. Producer ko ek event teen baar bhejna padega -> "ek message kai service" hi toota. Ye MQ ka dil hai.
+      -> NAHI. Producer ko ek event teen baar bhejna padega -> "ek message kai service" hi toota. Ye MQ ka dil
+         hai.
   - Naya group aaj juda, purane 7 din padhega?
       -> auto.offset.reset = earliest -> shuru se · latest -> sirf ab ke baad ka.
 ```
@@ -163,7 +172,8 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Har partition ki ek hi copy thi. Broker A ki disk mar gayi -> P0 ka saara data hamesha ke liye gaya.
 
 ILAAJ:   REPLICATION: har partition ka ek LEADER (saara padhna / likhna) + 2 FOLLOWER (alag broker / alag AZ).
-         Leader mara -> jo follower saath-saath chal raha tha (ISR) wo naya leader. Faisla CONTROLLER karta (KRaft, pehle ZooKeeper).
+         Leader mara -> jo follower saath-saath chal raha tha (ISR) wo naya leader. Faisla CONTROLLER karta
+         (KRaft, pehle ZooKeeper).
 
 ANDAR KAISE:
          Producer kitna pakka chahta (acks):
@@ -185,7 +195,8 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  SMS service ne offset 5 padha (Arpan ka order).
          A) SMS bheja -> "padh liya" (commit) bolne se pehle CRASH -> restart pe phir 5 -> Arpan ko 2 SMS.
-         B) pehle commit kiya -> SMS bhejne se pehle CRASH -> restart 6 se -> event 5 KHO gaya, SMS gaya hi nahi.
+         B) pehle commit kiya -> SMS bhejne se pehle CRASH -> restart 6 se -> event 5 KHO gaya, SMS gaya hi
+         nahi.
 
 ILAAJ:   Pehle KAAM, phir COMMIT (at-least-once: khoyega nahi, kabhi do baar aa sakta)
          + consumer IDEMPOTENT: eventId Redis me hai? hai = skip.
@@ -198,8 +209,10 @@ ANDAR KAISE (producer ki taraf = OUTBOX):
            BEGIN · INSERT orders(101) · INSERT outbox(E-101, sent = false) · COMMIT
          Relay (alag thread, har 1 sec) sent = false wali row Kafka bheje, ACK aaye to sent = true.
          Crash kahan hua, teen case:
-           1 COMMIT se pehle         -> DB me kuch nahi, Arpan ko error dikha, wo dobara karega. Kuch bana hi nahi.
-           2 COMMIT ke baad, bhejne se pehle -> outbox me sent = false -> relay uthte hi bhej deta. Late, khoya nahi.
+           1 COMMIT se pehle         -> DB me kuch nahi, Arpan ko error dikha, wo dobara karega. Kuch bana hi
+             nahi.
+           2 COMMIT ke baad, bhejne se pehle -> outbox me sent = false -> relay uthte hi bhej deta. Late,
+             khoya nahi.
            3 bhej diya, sent = true likhne se pehle -> relay phir bhejta -> Kafka me 2 copy
              -> consumer E-101 dekh ke doosri skip -> Arpan ko EK email.
          Nichod: server kuch yaad nahi rakhta, DB ka sent column yaad rakhta. Shaq ho to dobara bhejo,
@@ -207,7 +220,8 @@ ANDAR KAISE (producer ki taraf = OUTBOX):
 
 ISKE BAAD KYA TOOTEGA:
   - Exactly-once Kafka me hota hi nahi?
-      -> Kafka transactions + idempotent producer = Kafka se Kafka tak. Bahar (SMS, DB) ke liye consumer idempotency.
+      -> Kafka transactions + idempotent producer = Kafka se Kafka tak. Bahar (SMS, DB) ke liye consumer
+         idempotency.
   - "Event Kafka tak pahuncha hi nahi" pe offset ka jawab do?
       -> nahi chalta. Offset = consumer ki taraf. Ye producer ki taraf hai -> OUTBOX.
   - Outbox table badi ho gayi?
@@ -222,7 +236,8 @@ KAHANI:  C2 mar gaya -> P1 ko koi padh hi nahi raha, khabar jama ho rahi.
          Ya consumer dheema -> peeche-peeche (lag) badhta ja raha.
 
 ILAAJ:   REBALANCE: C2 ki dhadkan (heartbeat) band -> coordinator C2 ke partition baaki me baant deta.
-         LAG dekho, consumer badhao. Baar-baar fail wala message -> ruk ke dobara, N baar ke baad DLQ (alag topic). Baaki na atkein.
+         LAG dekho, consumer badhao. Baar-baar fail wala message -> ruk ke dobara, N baar ke baad DLQ (alag
+         topic). Baaki na atkein.
 
 ANDAR KAISE:
          Pehle: C1->P0, C2->P1, C3->P2 · C2 mara -> C1->P0,P1 · C3->P2.
@@ -230,7 +245,8 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - Rebalance me saare consumer ruk jaate?
-      -> purana tareeka (eager) haan. Cooperative rebalance (Kafka 2.4+) -> sirf jinke partition badle wo rukte.
+      -> purana tareeka (eager) haan. Cooperative rebalance (Kafka 2.4+) -> sirf jinke partition badle wo
+         rukte.
   - Lag badhta ja raha?
       -> consumer badhao (partition tak), dheema kaam alag, lag pe alert.
 ```
@@ -305,7 +321,8 @@ flowchart TD
 ## DIKKAT 1 — consumer restart hua, message gayab
 
 ```
-BOL: "Messages go to an append-only log on disk, each with an offset, and reading does not delete them, so a restarted consumer continues from its committed offset or replays from earlier."
+BOL:      "Messages go to an append-only log on disk, each with an offset, and reading does not delete them,
+          so a restarted consumer continues from its committed offset or replays from earlier."
 ```
 ```mermaid
 flowchart TD
@@ -323,7 +340,8 @@ flowchart TD
 ## DIKKAT 2 — ek machine me 2 TB aur 5,000 / sec nahi
 
 ```
-BOL: "A topic is split into partitions spread across brokers, so storage and write throughput scale with the number of partitions; replicas are for safety, not for scaling writes."
+POOCHEGA: "One machine can't hold the data or take the writes. What do you do?"
+BOL:      "I split the topic into partitions spread across brokers, so both storage and writes scale out."
 ```
 ```mermaid
 flowchart TD
@@ -341,7 +359,9 @@ flowchart TD
 ## DIKKAT 3 — Arpan ke teen event teen partition me
 
 ```
-BOL: "Ordering only exists within a partition, so the producer sends a key like the user id and all events for that user land in the same partition, in order."
+POOCHEGA: "How do you keep messages in order?"
+BOL:      "Ordering is per partition, so I key by user id and all of one user's events land in one partition.
+           Global order would mean one partition and no throughput."
 ```
 ```mermaid
 flowchart TD
@@ -359,7 +379,8 @@ flowchart TD
 ## DIKKAT 4 — email ke 3 instance, Arpan ko 3 email
 
 ```
-BOL: "Instances of one service form a consumer group, and within a group each partition is read by exactly one consumer, so each event is processed once by that service."
+BOL:      "Instances of one service form a consumer group, and within a group each partition is read by
+          exactly one consumer, so each event is processed once by that service."
 ```
 ```mermaid
 flowchart TD
@@ -377,7 +398,8 @@ flowchart TD
 ## DIKKAT 5 — signup teeno service ko chahiye
 
 ```
-BOL: "One topic, and each service has its own consumer group with its own offset, so the same event reaches email, analytics and the dashboard independently."
+BOL:      "One topic, one consumer group per service. Within a group partitions are shared; across groups
+           everyone gets the whole stream, each with its own offset."
 ```
 ```mermaid
 flowchart TD
@@ -399,7 +421,10 @@ flowchart TD
 ## DIKKAT 6 — Broker A ki disk gayi
 
 ```
-BOL: "Each partition has a leader and followers on other brokers; only an in-sync replica can become the new leader, and critical events use acks=all with min.insync.replicas=2 so a write survives losing the leader."
+POOCHEGA: "What happens if a broker goes down?"
+BOL:      "Each partition has a leader and followers on other brokers in different zones. If the leader dies,
+           the controller promotes an in-sync follower, so nothing acknowledged is lost. Producers use
+           acks=all for important events."
 ```
 ```mermaid
 flowchart TD
@@ -423,7 +448,20 @@ flowchart TD
 ## DIKKAT 7 — kaam ke baad, commit se pehle crash
 
 ```
-BOL: "Consumers commit the offset only after the work is done, so a crash means redelivery, not loss, and they dedupe on event id. On the producer side the outbox pattern writes the event in the same DB transaction as the data, and a relay publishes it."
+POOCHEGA: "How do you make sure no message is lost?"
+BOL:      "I commit the offset only after the SMS is sent, so a crash means the event is redelivered, not
+          lost.
+           That makes it at-least-once, so the consumer is idempotent - it records the event ID and skips
+           duplicates - and a message that keeps failing goes to a DLQ."
+
+POOCHEGA: "The order is saved but the server crashes before sending the event. Now what?"
+BOL:      "The API only returns 'order placed' after the transaction commits. A crash before commit rolls back
+           both the order and the outbox row, so the user sees an error and retries. A crash after commit
+           leaves both saved, the relay still sends the event, and an idempotency key stops the retry from
+           creating a duplicate order."
+
+POOCHEGA: "What if the same event comes twice?"
+BOL:      "Expected with at-least-once. The consumer dedups on event id, not on the partition key."
 ```
 ```mermaid
 flowchart TD
@@ -449,7 +487,9 @@ flowchart TD
 ## DIKKAT 8 — consumer mara / peeche chal raha
 
 ```
-BOL: "When a consumer dies its partitions are rebalanced to the rest of the group; I alert on consumer lag, and a message that keeps failing goes to a DLQ after a few retries so it does not block the partition."
+BOL:      "When a consumer dies its partitions are rebalanced to the rest of the group; I alert on consumer
+          lag, and a message that keeps failing goes to a DLQ after a few retries so it does not block the
+          partition."
 ```
 ```mermaid
 flowchart TD
@@ -477,7 +517,8 @@ flowchart TD
 ## DIKKAT 9 — 7 din rakhoge to disk bharegi
 
 ```
-BOL: "Retention deletes whole old segment files by time or size, and compacted topics keep only the latest value per key; the retained log is what lets a new group or a fixed consumer replay."
+BOL:      "Retention deletes whole old segment files by time or size, and compacted topics keep only the
+          latest value per key; the retained log is what lets a new group or a fixed consumer replay."
 ```
 ```mermaid
 flowchart TD
@@ -503,27 +544,37 @@ flowchart TD
 
 ```
 partition      -> consumer badhaye par partition 3 hi -> extra KHAALI baithe, lag badhta -> PARTITION BADHAO
-                  ★ "Adding partitions changes hash(key) % n, so an existing key can move to a different partition
+                  ★ "Adding partitions changes hash(key) % n, so an existing key can move to a different
+                  partition
                      and its ordering can break — that's why we start with a few extra partitions."
-dheema consumer -> aage wala (email API / DB) dheema -> consumer badhao (partition tak) · batch · bhaari kaam alag topic
-GARAM PARTITION -> ek bade customer ki key pe saara bojh -> key todo (userId#1..4), us key ka pakka kram chhodo
+dheema consumer -> aage wala (email API / DB) dheema -> consumer badhao (partition tak) · batch · bhaari kaam
+alag topic
+GARAM PARTITION -> ek bade customer ki key pe saara bojh -> key todo (userId#1..4), us key ka pakka kram
+chhodo
                   (ya us customer ka alag topic) · consistent hashing ek garam key ko nahi bachata
-broker disk    -> 2 TB tha, 10 guna = 20 TB -> retention 7 se 2-3 din · compaction · broker jodo · tiered storage / S3
+broker disk    -> 2 TB tha, 10 guna = 20 TB -> retention 7 se 2-3 din · compaction · broker jodo · tiered
+storage / S3
 rebalance ki aandhi -> baar-baar deploy -> session-timeout theek karo · static membership · ek-ek karke deploy
 producer       -> har jagah acks=all = dheema -> khabar ke hisaab se (payment = all, log = 1)
 
 POOCHEGA: "What about a hot key / hot partition?"   -> upar GARAM PARTITION
-          TERA JAWAB: "pehle machine badi karo, phir usi dabbe ko kai hisson me todo" -> TODNA = sahi direction
-          BADI MACHINE KAAFI KYUN NAHI: group me ek partition ko EK hi consumer padhta -> machine badi, padhne wala phir bhi ek
-          MISAAL: user-9 ke saare event P2 pe -> key = "user-9#" + (eventId % 4) -> 4 partition, 4 consumer saath padhein
+          TERA JAWAB: "pehle machine badi karo, phir usi dabbe ko kai hisson me todo" -> TODNA = sahi
+                      direction
+          BADI MACHINE KAAFI KYUN NAHI: group me ek partition ko EK hi consumer padhta -> machine badi, padhne
+          wala phir bhi ek
+          MISAAL: user-9 ke saare event P2 pe -> key = "user-9#" + (eventId % 4) -> 4 partition, 4 consumer
+                  saath padhein
           KEEMAT: user-9 ka POORA pakka kram gaya (har tukde ke andar bacha)
-                  kram sach me chahiye -> key chhoti cheez pe rakho (orderId / accountId), jahan kram chahiye bas wahan
+                  kram sach me chahiye -> key chhoti cheez pe rakho (orderId / accountId), jahan kram chahiye
+                  bas wahan
           BOL: "A hot key pins one partition and one consumer, so a bigger box doesn't help much.
                 I'd salt that key into N sub-keys to spread it over N partitions, accepting that strict
-                ordering for that one customer is lost — or key by a finer id where ordering actually matters."
+                ordering for that one customer is lost — or key by a finer id where ordering actually
+                matters."
 POOCHEGA: "How would you scale this to 10x?"        -> message ka raasta chalo
 POOCHEGA: "What's the single point of failure?"     -> leader (ISR promote), controller (KRaft quorum)
-POOCHEGA: "How do you know it's working?"           -> CONSUMER LAG · under-replicated partitions · DLQ size · alert
+POOCHEGA: "How do you know it's working?"           -> CONSUMER LAG · under-replicated partitions · DLQ size ·
+          alert
 ```
 
 ---
@@ -532,15 +583,18 @@ POOCHEGA: "How do you know it's working?"           -> CONSUMER LAG · under-rep
 
 ```
 API:      PRODUCER  send(topic, key, value) -> (partition, offset) rasid · acks = 0 / 1 / all
-          CONSUMER  subscribe(topic, groupId) · poll(timeout) ek saath kai · commit(offset) · seek(partition, offset) = REPLAY
+          CONSUMER  subscribe(topic, groupId) · poll(timeout) ek saath kai · commit(offset) · seek(partition,
+          offset) = REPLAY
           ADMIN     createTopic(name, partitions, replicationFactor) / deleteTopic / describeTopic
           PULL hai, PUSH nahi: consumer apni speed se maangta, dheema consumer dab ke nahi marta
-                               keemat: agle poll tak thodi der (push hota to broker dhakelta -> dheema consumer doob jaata)
+                               keemat: agle poll tak thodi der (push hota to broker dhakelta -> dheema
+                               consumer doob jaata)
           send() ek saath kai bhejta (batch) -> isliye bahut tez
           "The queue's own API is deliberately tiny — send, poll, commit, seek. All the business logic lives
            in the consumer, not in the broker. That's why the broker can be so fast."
 
-MESSAGE:  offset (BROKER deta) · timestamp · key (hash(key) % n) · value (JSON / Avro) · headers (traceId, eventType, retryCount)
+MESSAGE:  offset (BROKER deta) · timestamp · key (hash(key) % n) · value (JSON / Avro) · headers (traceId,
+          eventType, retryCount)
 DISK:     /topic-user-signup/partition-0/
              00000000000000000000.log     message, sirf jodte (segment ~1 GB)
              00000000000000000000.index   offset -> file me jagah
@@ -552,18 +606,23 @@ DATA 3 KISM:  MESSAGE (bahut, tez) -> append-only file, bachav = copy + acks (DB
               CONSUMER OFFSET -> __consumer_offsets
 
 KAB KAFKA:    bhejne wale ko jawab ka intezaar nahi (signup ke baad email / analytics) · EK khabar KAI service
-              bahut saari khabar + replay (log, clickstream, audit) · bhejne / lene wale ki speed alag (bheed ka buffer)
-KAB NAHI:     TURANT jawab chahiye -> REST / gRPC · poore system ka pakka kram · simple kaam ki line + har message ka retry
-              -> RabbitMQ / SQS (Kafka bahut bhaari) · chhota system, 2 service -> ek aur cheez sambhaalna mehnga
+              bahut saari khabar + replay (log, clickstream, audit) · bhejne / lene wale ki speed alag (bheed
+              ka buffer)
+KAB NAHI:     TURANT jawab chahiye -> REST / gRPC · poore system ka pakka kram · simple kaam ki line + har
+              message ka retry
+              -> RabbitMQ / SQS (Kafka bahut bhaari) · chhota system, 2 service -> ek aur cheez sambhaalna
+                 mehnga
 KEEMAT:       "thodi der baad sahi" (LAG) · duplicate sambhaalna padta · debug mushkil (flow bikhra)
               · ek aur cluster paalna (partition / retention / lag dekhna)
 
 SHABD ATKE TO (bina shabd ke bolo):
    partition      -> "the topic is split into parts, and each part sits on a different machine"
-   offset         -> "each part is like a numbered list, and every consumer remembers which number it has read up to"
+   offset         -> "each part is like a numbered list, and every consumer remembers which number it has read
+   up to"
    consumer group -> "a set of consumers that act as one team and divide the parts among themselves"
    ISR            -> "the copies that are fully caught up with the main one"
-   idempotent     -> "even if the same event comes twice, the work happens only once, because we store the event id"
+   idempotent     -> "even if the same event comes twice, the work happens only once, because we store the
+   event id"
    compaction     -> "for each key we keep only the latest value and throw away the older ones"
 ```
 
@@ -633,14 +692,17 @@ ROUND 1  FIX = false
   e1 DB + Kafka · e2 DB + Kafka · e3 DB, CRASH bhejne se pehle -> event kabhi nahi gaya
   e4 DB, Kafka acks=1 leader memory me "OK", CRASH replica se pehle -> e4 GAYA (producer ko laga bhej diya)
   e5 DB + Kafka
-  consumer: e1 commit(1) SMS · e2 commit(2) CRASH SMS se pehle -> restart 2 ke aage -> e2 CHHOOTA · e5 commit(3) SMS
+  consumer: e1 commit(1) SMS · e2 commit(2) CRASH SMS se pehle -> restart 2 ke aage -> e2 CHHOOTA · e5
+  commit(3) SMS
   NATEEJA: DB [e1..e5] · Kafka [e1, e2, e5] · SMS [e1, e5] · KHOYE [e2, e3, e4]
 
 ROUND 2  FIX = true
   e1..e5 DB debit + OUTBOX row, ek transaction · e3 CRASH bhejne se pehle -> outbox me pada
   relay (restart ke baad bhi) outbox -> Kafka: e1, e2, e3 pahunche
-  e4 acks=all leader + replica dono pe, TAB "OK" · CRASH leader -> replica naya leader, e4 uske paas · e5 pahuncha
-  consumer: e1 SMS, commit(1) · e2 SMS, CRASH commit se pehle -> e2 PHIR aaya -> eventId dekha -> DUPLICATE chhoda
+  e4 acks=all leader + replica dono pe, TAB "OK" · CRASH leader -> replica naya leader, e4 uske paas · e5
+  pahuncha
+  consumer: e1 SMS, commit(1) · e2 SMS, CRASH commit se pehle -> e2 PHIR aaya -> eventId dekha -> DUPLICATE
+  chhoda
             e3 SMS commit(3) · e4 SMS commit(4) · e5 SMS commit(5)
   NATEEJA: DB [e1..e5] · Kafka [e1..e5] · SMS [e1..e5] · KHOYE []
 ```
@@ -651,7 +713,8 @@ e4 Kafka       acks=1 leader "OK", replica se pehle -> KHOYA acks=all replica ke
 e2 consumer    pehle commit, SMS se pehle crash -> KHOYA     pehle SMS, baad commit, phir aaya, dedup -> BACHA
 
 EK NIYAM: "ho gaya" tabhi bolo jab sach me PAKKA
-OUTBOX      chhota LEDGER: "ye bhejna hai" debit ke SAATH, USI ek txn -> "paisa kata, likha nahi" ho hi nahi sakta
+OUTBOX      chhota LEDGER: "ye bhejna hai" debit ke SAATH, USI ek txn -> "paisa kata, likha nahi" ho hi nahi
+                           sakta
 acks=all    replica pe likhne ke BAAD "OK" (acks=1 = leader ki memory pe "OK" -> leader gira = gaya)
 OFFSET BAAD kaam PEHLE, commit BAAD -> crash = event phir aayega (at-least-once)
 IDEMPOTENT  eventId yaad, dobara aaye to chhodo

@@ -30,16 +30,19 @@ POOCHO:  "Bahut bada hai — use-cases baandh lete hain. Ek hi bank ke andar, ya
          ("let's discuss use cases first" — scope pehle,
           warna interviewer jitna bada system chaahe sar pe daal dega)
 
-KYA KARE (FR):    user ke ek / kai ACCOUNT · DEPOSIT · WITHDRAW · TRANSFER A -> B (DONO isi bank) · BALANCE · HISTORY
+KYA KARE (FR):    user ke ek / kai ACCOUNT · DEPOSIT · WITHDRAW · TRANSFER A -> B (DONO isi bank) · BALANCE ·
+                  HISTORY
                   ★ "dono isi bank" — ye ek shabd poora design badalta (dikkat 1)
                   bahar: doosra bank · loan · byaaj · card · KYC
-KAISA CHALE (NFR): SAHI hona sabse upar (paisa na GUM, na BANE, hisaab har waqt barabar) · har paisa TRACE ho (audit)
+KAISA CHALE (NFR): SAHI hona sabse upar (paisa na GUM, na BANE, hisaab har waqt barabar) · har paisa TRACE ho
+                   (audit)
                    dobara bhejne pe DOBARA na kate (idempotent) · balance dekhna TEZ (sabse zyada padha jaata)
 
 NUMBERS (andaaza):
    50 lakh account · 1 crore transaction / din, din me ~86,400 second -> ~120 likhai / second
    padhna >> likhna (log balance baar-baar dekhte)
-   120 / second = ek theek-thaak Postgres machine ka DASVA hissa -> SHARDING KI ZAROORAT NAHI, primary + replica kaafi
+   120 / second = ek theek-thaak Postgres machine ka DASVA hissa -> SHARDING KI ZAROORAT NAHI, primary +
+       replica kaafi
 
 DATA SE TEEN SAWAAL (jawab dikkat me):
    1. transfer me DO row badalti -> dono ya koi nahi, kaun sambhalega?   (dikkat 1)
@@ -69,7 +72,8 @@ flowchart TD
 
 #### [1](#d1) TRANSFER KE BEECH SERVER GIRA: ARPAN -500 HUA, RAVI +500 NAHI
 ```
-KAHANI:  Arpan ne Ravi ko 500 bheje. Arpan ke 500 kat gaye, Ravi ke account me daalne se PEHLE server gir gaya.
+KAHANI:  Arpan ne Ravi ko 500 bheje. Arpan ke 500 kat gaye, Ravi ke account me daalne se PEHLE server gir
+         gaya.
          500 na Arpan ke paas, na Ravi ke paas. Gayab.
 
 ILAAJ:   Dono account EK hi DB me -> EK @Transactional: kaatna + daalna dono commit, ya dono wapas (rollback).
@@ -82,20 +86,25 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - SAGA / queue laga do?
-      -> ek DB me NAHI. Kaatna aur daalna alag-alag ho jaate, dikkat khud ban jaati. SAGA sirf alag service / DB / bank pe.
+      -> ek DB me NAHI. Kaatna aur daalna alag-alag ho jaate, dikkat khud ban jaati. SAGA sirf alag service /
+         DB / bank pe.
   - Arpan aur Ravi alag bank me?
       -> ek transaction nahi ho sakta -> PENDING + SAGA / reconciliation (payment design wala raasta).
   - CP ya AP?
-      -> transfer / balance = CP (galat balance dikhane se mana karna behtar). SMS / statement / analytics = AP (2 sec late chalta).
+      -> transfer / balance = CP (galat balance dikhane se mana karna behtar). SMS / statement / analytics =
+         AP (2 sec late chalta).
 ```
 
 #### [2](#d2) KHAATA (LEDGER) KAHAN LIKHO, KAFKA KAB? (GALTI WAPAS wala)
 ```
 KAHANI:  Do zaroorat:
-         (1) RBI poochhta "Arpan ke 500 kahan se aaye, kahan gaye, kab?" -> har len-den ka pakka khaata chahiye.
-         (2) Transfer ke baad Arpan ko SMS, fraud check, statement -> par SMS service giri to transfer nahi rukna chahiye.
+         (1) RBI poochhta "Arpan ke 500 kahan se aaye, kahan gaye, kab?" -> har len-den ka pakka khaata
+         chahiye.
+         (2) Transfer ke baad Arpan ko SMS, fraud check, statement -> par SMS service giri to transfer nahi
+         rukna chahiye.
 
-ILAAJ:   KHAATA (ledger) = DB ki ek TABLE (Kafka nahi). Har transfer ki 2 line: Arpan -500, Ravi +500 (jod 0). Sirf INSERT.
+ILAAJ:   KHAATA (ledger) = DB ki ek TABLE (Kafka nahi). Har transfer ki 2 line: Arpan -500, Ravi +500 (jod 0).
+         Sirf INSERT.
          OUTBOX = DB ki ek aur table, "SMS bhejo" wala event usme.
          khaata + balance + outbox = EK hi transaction.
          COMMIT ke BAAD ek relay outbox se event Kafka bhejta -> SMS / fraud / statement.
@@ -115,9 +124,11 @@ ISKE BAAD KYA TOOTEGA:
       -> Kafka me likha "Arpan -500", jabki asal me kuch hua hi nahi -> khaata jhooth bolega.
          ISILIYE khaata DB table me, usi transaction me (rollback hua = khaata bhi gaya).
          Kafka aur DB ek transaction me ho hi nahi sakte -> Kafka sirf commit ke BAAD, outbox se.
-         BOL pehli line me: "ledger is a table in the same DB transaction; Kafka only gets the event after commit."
+         BOL pehli line me: "ledger is a table in the same DB transaction; Kafka only gets the event after
+                            commit."
   - Commit ke baad seedha Kafka ko kyun nahi bhej dete?
-      -> commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi gaya. Outbox usi transaction me hai, kho nahi sakta.
+      -> commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi gaya. Outbox usi transaction me
+         hai, kho nahi sakta.
   - Arpan ke SMS ulte kram me (pehle "credit", phir "debit")?
       -> Kafka key = account_id -> ek account ke event ek partition, kram me.
   - Outbox table bhar jaayegi?
@@ -128,7 +139,8 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  Do raaste:
          (a) balance ek column me rakho: padhna sasta (ek row), par kabhi galat bhi ho sakta.
-         (b) har baar khaata jodo: hamesha sach, par Arpan ke 10 saal purane account ki 50,000 line har baar jodna = dheema.
+         (b) har baar khaata jodo: hamesha sach, par Arpan ke 10 saal purane account ki 50,000 line har baar
+         jodna = dheema.
 
 ILAAJ:   DONO: KHAATA = SACH, balance column = uska jod (cache). Dono EK transaction me badalte.
          Raat ko RECONCILIATION: khaate ka jod == balance column?
@@ -140,7 +152,8 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - Raat ko farak mila (khaata 4,500, column 5,000)?
-      -> alert + account rok ke dekho. Chupchaap theek MAT karo: pehle KYUN hua (bug abhi bhi zinda hai). Phir khaata jeetega.
+      -> alert + account rok ke dekho. Chupchaap theek MAT karo: pehle KYUN hua (bug abhi bhi zinda hai). Phir
+         khaata jeetega.
   - 22 arab line pe raat ka SUM?
       -> pichhle mahine ke aakhir ka balance (snapshot) + sirf uske baad ki line (card 9). Poora nahi.
   - Chal raha hai, kaise pata?
@@ -149,13 +162,16 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [4](#d4) "SEND" DO BAAR DABA / APP NE DOBARA BHEJA
 ```
-KAHANI:  Arpan ne Send dabaya, app ghooma, phir daba diya. Ya app ne khud dobara bheja -> 1000 kat gaye, bhejne the 500.
+KAHANI:  Arpan ne Send dabaya, app ghooma, phir daba diya. Ya app ne khud dobara bheja -> 1000 kat gaye,
+         bhejne the 500.
 
-ILAAJ:   IDEMPOTENCY KEY har transfer ke saath. DB me key UNIQUE -> do server pe ek saath aaye tab bhi ek hi jeetega.
+ILAAJ:   IDEMPOTENCY KEY har transfer ke saath. DB me key UNIQUE -> do server pe ek saath aaye tab bhi ek hi
+         jeetega.
 
 ANDAR KAISE:
          Key pehle aa chuki -> pehla jawab wapas, naya transfer nahi.
-         App me "pehle dekho, phir daalo" = race (dono ne dekha "nahi hai", dono ne daala). UNIQUE insert khud taala jaisa.
+         App me "pehle dekho, phir daalo" = race (dono ne dekha "nahi hai", dono ne daala). UNIQUE insert khud
+         taala jaisa.
          @Transactional = "aadha nahi hoga". Idempotency = "do baar nahi hoga". Dono chahiye.
 
 ISKE BAAD KYA TOOTEGA:
@@ -167,18 +183,23 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [5](#d5) EK ACCOUNT SE DO TRANSFER EK SAATH
 ```
-KAHANI:  Arpan ke paas 300. Ek saath 200-200 ke do transfer chale. App ne dono baar balance padha (300), dono pass
+KAHANI:  Arpan ke paas 300. Ek saath 200-200 ke do transfer chale. App ne dono baar balance padha (300), dono
+         pass
          -> dono kate -> Arpan = -100.
 
 ILAAJ:   Hisaab aur check DB ke ANDAR, ek hi query me:
-           UPDATE accounts SET balance = balance - 200 WHERE id = Arpan AND balance >= 200     -> 0 row = REJECT
+           UPDATE accounts SET balance = balance - 200 WHERE id = Arpan AND balance >= 200     -> 0 row =
+           REJECT
          DEADLOCK se bachne: taala hamesha ek tay kram me (chhoti account id pehle).
 
 ANDAR KAISE:
-         UPDATE row pe taala leta -> dono transfer line me lagte. Pehla: 300 -> 100. Doosra: 100 >= 200? nahi -> 0 row -> reject.
+         UPDATE row pe taala leta -> dono transfer line me lagte. Pehla: 300 -> 100. Doosra: 100 >= 200? nahi
+         -> 0 row -> reject.
          Deadlock kaise hota: Arpan->Ravi aur Ravi->Arpan ek saath.
-           Txn1 ne Arpan pe taala, Ravi ka intezaar · Txn2 ne Ravi pe taala, Arpan ka intezaar -> dono atke (MySQL 1213).
-         Kram tay (chhoti id pehle) -> dono pehle wahi ek account maangte -> ek ruka, doosra poora, phir pehla.
+           Txn1 ne Arpan pe taala, Ravi ka intezaar · Txn2 ne Ravi pe taala, Arpan ka intezaar -> dono atke
+           (MySQL 1213).
+         Kram tay (chhoti id pehle) -> dono pehle wahi ek account maangte -> ek ruka, doosra poora, phir
+         pehla.
 
 ISKE BAAD KYA TOOTEGA:
   - 0 row aaya, Arpan ko kya?
@@ -191,10 +212,12 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [6](#d6) SALARY DAY, EK SERVICE BHAR GAYI
 ```
-KAHANI:  1 tareekh, sabki salary aayi, sab ek saath transfer kar rahe. Ek hi Banking service machine bhar gayi.
+KAHANI:  1 tareekh, sabki salary aayi, sab ek saath transfer kar rahe. Ek hi Banking service machine bhar
+         gayi.
          Wo giri to poora bank band.
 
-ILAAJ:   Kai Banking service machine (stateless) + LB. DB primary gira -> doosri building (AZ) ki SYNC copy primary bane.
+ILAAJ:   Kai Banking service machine (stateless) + LB. DB primary gira -> doosri building (AZ) ki SYNC copy
+         primary bane.
 
 ANDAR KAISE:
          Patroni / RDS Multi-AZ: primary mara -> sync copy promote -> DB ka pata nayi pe -> ~30-60 sec.
@@ -217,7 +240,8 @@ ANDAR KAISE:
          Replica primary ki diary padh ke chalti, ~200 ms peeche.
          Arpan ne 1000 bheje, turant balance dekha replica se -> purana 5000 dikha (asal 4000)
          -> Arpan sochega paisa gaya hi nahi -> dobara bhejega!
-         READ-YOUR-OWN-WRITES: Arpan ke account pe last_write_at (Redis me) -> kuch second tak Arpan ka padhna primary se.
+         READ-YOUR-OWN-WRITES: Arpan ke account pe last_write_at (Redis me) -> kuch second tak Arpan ka padhna
+                               primary se.
 
 ISKE BAAD KYA TOOTEGA:
   - Arpan ne doosre phone se khola?
@@ -228,14 +252,16 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [8](#d8) 22 ARAB LINE ME HISTORY KA PAGE 5000
 ```
-KAHANI:  Arpan history ke page 5000 pe: LIMIT 20 OFFSET 100000 -> DB 1,00,020 line PADH ke phenkta, 20 deta. Bahut dheema.
+KAHANI:  Arpan history ke page 5000 pe: LIMIT 20 OFFSET 100000 -> DB 1,00,020 line PADH ke phenkta, 20 deta.
+         Bahut dheema.
          Beech me nayi line aayi -> sab ek khisak gaya -> ek line dobara dikhi.
 
 ILAAJ:   KEYSET (cursor): pichhle page ki aakhri line ka (ts, id) yaad rakho, agla page "usse purani 20".
          Index se seedha wahan pahunch jaata.
 
 ANDAR KAISE:
-         page 2: ... WHERE account_id = ? AND (ts, id) < (:last_ts, :last_id) ORDER BY ts DESC, id DESC LIMIT 20
+         page 2: ... WHERE account_id = ? AND (ts, id) < (:last_ts, :last_id) ORDER BY ts DESC, id DESC LIMIT
+         20
          index (account_id, ts DESC, id DESC). Page 1 ho ya 5000, kharcha wahi.
 
 ISKE BAAD KYA TOOTEGA:
@@ -249,10 +275,12 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [9](#d9) 5 SAAL KA DATA EK HI TABLE ME
 ```
-KAHANI:  5 saal ka khaata ek table me. Log roz sirf 3 mahine dekhte, par har query / backup arabon line ke saath.
+KAHANI:  5 saal ka khaata ek table me. Log roz sirf 3 mahine dekhte, par har query / backup arabon line ke
+         saath.
          Aur bank me DELETE nahi kar sakte (kanoon).
 
-ILAAJ:   Mahine-mahine ke tukde (PARTITION). Purana tukda alag karo (DETACH, turant) -> S3 (Parquet). DELETE nahi.
+ILAAJ:   Mahine-mahine ke tukde (PARTITION). Purana tukda alag karo (DETACH, turant) -> S3 (Parquet). DELETE
+         nahi.
          + har mahine ke aakhir ka balance (OPENING BALANCE SNAPSHOT), ye kabhi archive nahi.
 
 ANDAR KAISE:
@@ -274,7 +302,8 @@ AAKHRI DABBE (sab dikkat ke baad):
   User -> LB -> Banking Svc (stateless, idempotency check)
   -> SQL DB: EK transaction (dono khaata line + dono balance + idempotency key + outbox)
   -> Kafka (commit ke BAAD: SMS / fraud / analytics / statement) · Read replica = balance / history
-  Reconciliation (raat ko: snapshot + baad ki line vs balance -> ALERT) · Archive S3 (band mahine, delete kabhi nahi)
+  Reconciliation (raat ko: snapshot + baad ki line vs balance -> ALERT) · Archive S3 (band mahine, delete
+                           kabhi nahi)
 
 DB:  SQL -> paisa na khoye na bane: EK transaction (ek DB me SAGA nahi)
      khaata = SACH (sirf jodo, double-entry, mahine ke tukde) · balance = CACHE (jod, usi transaction me)
@@ -326,7 +355,14 @@ flowchart TD
 ## DIKKAT 1 — transfer ke beech server gira
 
 ```
-BOL: "Both accounts are in one relational database, so debit and credit run in one local transaction and a crash rolls both back; a saga is only for separate services or banks."
+POOCHEGA: "What if the server crashes in the middle of a transfer?"
+BOL:      "Both accounts are in one database, so the debit and credit are one local transaction — it commits
+           fully or rolls back. A saga only comes in when the two sides belong to different services or
+           banks."
+
+POOCHEGA: "Consistency or availability — which do you pick?"
+BOL:      "Transfer and balance are CP — I'd rather reject than give a wrong balance. SMS, statements and
+           analytics after the commit are AP; a couple of seconds late is fine."
 ```
 ```mermaid
 flowchart TD
@@ -344,7 +380,10 @@ flowchart TD
 ## DIKKAT 2 — khaata kahan, Kafka kab
 
 ```
-BOL: "The ledger is a table in the same database transaction as the balances, and the event goes into an outbox table in that same transaction; Kafka only gets the event after commit, through a relay or CDC, and consumers dedupe on event id."
+POOCHEGA: "How do you make sure the SMS / fraud event is never lost?"
+BOL:      "The event is written to an outbox table in the same transaction as the transfer, and a relay
+           publishes it to Kafka with acks=all. Consumers are idempotent on event id and failures go to a
+           DLQ."
 ```
 ```mermaid
 flowchart TD
@@ -364,7 +403,12 @@ flowchart TD
 ## DIKKAT 3 — balance aata kahan se
 
 ```
-BOL: "The ledger is the truth and the balance column is a cache of it, updated in the same transaction; a nightly reconciliation compares them, alerts on any mismatch, and the ledger wins."
+POOCHEGA: "How do you know the system is working?"
+BOL:      "Ledger is the source of truth and balance is its derived cache; I write both in one transaction, so
+           they never drift. Reads hit the balance — one row. A nightly reconciliation compares them, and on a
+           mismatch the ledger wins. Plus p99, error rate, queue lag, DB connections with alerts, and a trace
+           id
+           per transfer."
 ```
 ```mermaid
 flowchart TD
@@ -386,7 +430,8 @@ flowchart TD
 ## DIKKAT 4 — Send do baar daba
 
 ```
-BOL: "Every transfer carries an idempotency key with a unique constraint in the database, so a retry returns the original result; the transaction stops partial writes and the key stops duplicates."
+BOL:      "Every transfer carries an idempotency key with a unique constraint in the database, so a retry
+          returns the original result; the transaction stops partial writes and the key stops duplicates."
 ```
 ```mermaid
 flowchart TD
@@ -408,7 +453,12 @@ flowchart TD
 ## DIKKAT 5 — ek account se do transfer ek saath
 
 ```
-BOL: "The balance check lives in the database as a conditional update, WHERE balance is at least the amount, so concurrent transfers cannot overdraw, and I lock accounts in id order to avoid deadlocks."
+POOCHEGA: "Two transfers hit the same account at the same time — what happens?"
+BOL:      "Concurrency doesn't need extra locking — the UPDATE does the math inside the database, so there's
+          no
+           lost update. Two things matter: the balance check lives in the database, WHERE balance >= amount,
+           and
+           locks are always taken in a fixed order so transfers can't deadlock."
 ```
 ```mermaid
 flowchart TD
@@ -430,7 +480,9 @@ flowchart TD
 ## DIKKAT 6 — salary day, ek service bhar gayi
 
 ```
-BOL: "Banking services are stateless behind a load balancer, and the primary has a synchronous standby in another zone, so failover loses no committed transfer and retries are safe with the idempotency key."
+POOCHEGA: "What happens if a server or the DB goes down?"
+BOL:      "Services are stateless behind a load balancer with health checks. The primary has a synchronous
+           replica in another zone that's promoted, so a confirmed transfer is never lost."
 ```
 ```mermaid
 flowchart TD
@@ -457,7 +509,11 @@ flowchart TD
 ## DIKKAT 7 — sab balance primary se, transfer dheeme
 
 ```
-BOL: "Balance and history reads go to read replicas, but for a few seconds after a user writes, their reads go to the primary so they never see a stale balance and retry."
+POOCHEGA: "I transferred money but my balance still shows the old value. Why?"
+BOL:      "Most likely replica lag: the write went to the primary, the read hit a replica that hadn't caught
+          up.
+           For balance I read from the primary, at least for the user who just wrote. If it were a failover
+           losing writes, sync replication fixes that."
 ```
 ```mermaid
 flowchart TD
@@ -487,7 +543,8 @@ flowchart TD
 ## DIKKAT 8 — 22 arab line me history ka page 5000
 
 ```
-BOL: "History uses keyset pagination on timestamp and id with a matching index, so every page costs the same and new entries never shift or duplicate results."
+BOL:      "History uses keyset pagination on timestamp and id with a matching index, so every page costs the
+          same and new entries never shift or duplicate results."
 ```
 ```mermaid
 flowchart TD
@@ -517,7 +574,10 @@ flowchart TD
 ## DIKKAT 9 — 5 saal ka data ek table me
 
 ```
-BOL: "The ledger is partitioned by month; closed months are detached and archived to S3 with object lock, never deleted, and opening-balance snapshots keep reconciliation correct after archiving."
+POOCHEGA: "Data keeps growing — what happens in 3 years?"
+BOL:      "Partition the ledger by month and detach closed months to cold storage — nothing is ever deleted.
+          An
+           opening-balance snapshot per period keeps reconciliation correct after archiving."
 ```
 ```mermaid
 flowchart TD
@@ -549,20 +609,27 @@ flowchart TD
 KRAM:  sasta pehle, SHARD aakhir me
   1. READ REPLICA (pehla kadam, padhna >> likhna) · keemat: thoda peeche -> apna abhi-kiya transfer PRIMARY se
   2. MAHINE ke tukde (archive + query dono ke liye)
-  3. SHARD by account_id = AAKHRI, keemat badi: Arpan shard-1, Ravi shard-2 -> transfer ek transaction NAHI -> wapas SAGA / 2PC
+  3. SHARD by account_id = AAKHRI, keemat badi: Arpan shard-1, Ravi shard-2 -> transfer ek transaction NAHI ->
+     wapas SAGA / 2PC
      -> dikkat 1 ki saari dikkat wapas · hamare 120 / sec pe ye sawaal hi nahi; pehle badi machine + replica
-  LIKHAI se DB maar kha raha (replica ke baad bhi): cache / index sirf PADHAI ka ilaaj (har naya index INSERT dheema karta)
-     -> SHARD by account_id (ek account ke saare transfer ek shard pe) · zaroori-nahi wali likhai (statement, SMS) queue pe
+  LIKHAI se DB maar kha raha (replica ke baad bhi): cache / index sirf PADHAI ka ilaaj (har naya index INSERT
+  dheema karta)
+     -> SHARD by account_id (ek account ke saare transfer ek shard pe) · zaroori-nahi wali likhai (statement,
+        SMS) queue pe
   BADI TABLE (jagah) -> mahine ke tukde + archive (DELETE nahi)
   ✗ "badi transaction chhoti karo" = galat: kaatna + daalna EK transaction me hi
   replica sirf PADHAI baantti, likhai ke liye SHARD · desh / date = bura key (ek garam)
 
 POOCHEGA: "Replicas are in, but writes are still killing the DB. What now?"
-BOL:      "Replicas only spread reads, and caching or extra indexes help reads, not writes; extra indexes actually
-           slow inserts. For write volume at this scale I'd shard by account id, so each account's transactions live
-           on one shard, and move non-critical writes like statements to a queue. For table size, partition by month
+BOL:      "Replicas only spread reads, and caching or extra indexes help reads, not writes; extra indexes
+          actually
+           slow inserts. For write volume at this scale I'd shard by account id, so each account's
+           transactions live
+           on one shard, and move non-critical writes like statements to a queue. For table size, partition by
+           month
            and archive closed months to cold storage; nothing is ever deleted."
-POOCHEGA: "How would you scale this to 10x?"      -> pehle jo toote (padhai -> replica, jagah -> tukde, likhai -> shard)
+POOCHEGA: "How would you scale this to 10x?"      -> pehle jo toote (padhai -> replica, jagah -> tukde, likhai
+          -> shard)
 POOCHEGA: "What's the single point of failure?"   -> DB primary (sync copy), Banking Svc (LB + kai machine)
 ```
 
@@ -572,7 +639,8 @@ POOCHEGA: "What's the single point of failure?"   -> DB primary (sync copy), Ban
 
 ```
 API:      GET /accounts/{id}/balance · GET /accounts/{id}/transactions?cursor=...&limit=20
-          POST /transfers { from, to, amount } · POST /accounts/{id}/deposit { amount } · POST /accounts/{id}/withdraw { amount }
+          POST /transfers { from, to, amount } · POST /accounts/{id}/deposit { amount } · POST
+          /accounts/{id}/withdraw { amount }
           har POST me Idempotency-Key header
 
 DB:       ledger_entries (SACH, sirf jodo, mahine ke tukde) · accounts.balance (CACHE, jod)
@@ -585,7 +653,8 @@ DB:       ledger_entries (SACH, sirf jodo, mahine ke tukde) · accounts.balance 
 
 ```
 LB · Banking Svc = stateless, idempotency check · SQL DB = EK transaction (khaata + balance + key + outbox)
-Kafka = commit ke BAAD (SMS / fraud / analytics / statement) · Read replica = balance / history (apna transfer primary se)
+Kafka = commit ke BAAD (SMS / fraud / analytics / statement) · Read replica = balance / history (apna transfer
+primary se)
 Reconciliation = snapshot + baad ki line vs balance -> ALERT · Archive (S3) = band mahine, delete kabhi nahi
 ```
 ```
@@ -604,8 +673,10 @@ bojh badha            -> replica -> tukde -> (aakhir me) shard
 ```
 BOL: "Everything for a transfer — both ledger entries, both balance updates, the idempotency key and an outbox
       event — commits in one local transaction in a relational database, so money is never lost or created.
-      The ledger is the truth and balance is a cache of it; a nightly reconciliation checks them. Balance checks
-      and lock ordering live in the database. Reads go to a replica, history uses cursor pagination, old months
+      The ledger is the truth and balance is a cache of it; a nightly reconciliation checks them. Balance
+      checks
+      and lock ordering live in the database. Reads go to a replica, history uses cursor pagination, old
+      months
       are archived with opening-balance snapshots, and side effects go out through Kafka after the commit."
 ```
 ```mermaid

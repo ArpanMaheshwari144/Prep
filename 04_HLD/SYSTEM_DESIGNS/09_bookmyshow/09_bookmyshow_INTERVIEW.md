@@ -21,7 +21,8 @@ Source: [Pessimistic vs Optimistic Locking](https://bytebytego.com/guides/pessim
 
 ```
 POOCHO:  "Browse, booking, payment, refund, recommendation — main seat BOOKING pe, asli dikkat wahin."
-         badi movie ke din ek saath kitne log ek hi show pe?  <- bheed = doosra bada dushman (pehla: ek seat do ko)
+         badi movie ke din ek saath kitne log ek hi show pe?  <- bheed = doosra bada dushman (pehla: ek seat
+         do ko)
          payment khud ya bahar ka gateway? · seat chunne ke baad kitni der rokni (HOLD)? · refund scope me?
 
 KYA KARE (FR):    movies / shows dekho · seat map · seat BOOK (payment) · ticket pakka
@@ -34,8 +35,10 @@ NUMBERS (andaaza): 1 crore user · DO ALAG bojh (ek number mat bolo):
    data chhota (movies / shows / seats gine-chune) -> SHARDING KI ZAROORAT NAHI (ye bolna)
 ```
 ```
-POOCHEGA: "Consistency or availability — which do you pick?"  (chhota: "network toota, aakhri seat pe do log — C ya A?")
-DHYAAN:   ek hi system me dono: BOOKING = CP (network toota to ek taraf REJECT) · SEARCH = AP (seat ginti 2 sec purani chalegi)
+POOCHEGA: "Consistency or availability — which do you pick?"  (chhota: "network toota, aakhri seat pe do log —
+          C ya A?")
+DHYAAN:   ek hi system me dono: BOOKING = CP (network toota to ek taraf REJECT) · SEARCH = AP (seat ginti 2
+          sec purani chalegi)
 BOL:      "For the booking itself I'd pick consistency: I'd rather reject a write than double-book the seat.
            The search path stays available and eventually consistent."
 ```
@@ -80,7 +83,8 @@ ISKE BAAD KYA TOOTEGA:
       -> chaaron EK transaction me: WHERE seat_id IN (A1..A4) AND available -> badli rows 4 nahi -> ROLLBACK.
          Deadlock na ho isliye seat_id ke kram me lock (A1, A2, A3 ...).
   - SELECT FOR UPDATE ya version column kyun nahi?
-      -> FOR UPDATE = do baar DB jaana, lock lamba, deadlock ka khatra. Version = haarne wala dobara try kare, par seat gayi to gayi.
+      -> FOR UPDATE = do baar DB jaana, lock lamba, deadlock ka khatra. Version = haarne wala dobara try kare,
+         par seat gayi to gayi.
          Conditional UPDATE = ek hi statement, lock sabse chhota.
   - Do alag log vs ek hi aadmi ka dobara bhejna?
       -> do ALAG log ek seat = atomic UPDATE (ye card). EK aadmi ka dobara bhejna = idempotency (card 3).
@@ -92,7 +96,8 @@ KAHANI:  Arpan ne A1 chuni, payment me 3 min lag rahe.
          A1 'available' hi rehne di -> beech me Ravi le gaya.
          A1 seedha 'booked' kar di -> Arpan ka payment fail hua to A1 hamesha ke liye band.
 
-ILAAJ:   HOLD + umar: chunte hi A1 = 'held' + held_until (5 min baad). Payment hua -> 'booked'. 5 min nikle -> wapas khaali.
+ILAAJ:   HOLD + umar: chunte hi A1 = 'held' + held_until (5 min baad). Payment hua -> 'booked'. 5 min nikle ->
+         wapas khaali.
 
 ANDAR KAISE:
          SQL me TTL nahi hota -> 5 min baad bhi row me 'held' hi likha rahega. Isliye do kaam:
@@ -102,7 +107,8 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - Hold Redis me (SET NX EX 300) kyun nahi?
-      -> hold Redis me + booking DB me = do jagah sach -> dono me farak aa sakta. DB me = ek row, ek UPDATE, ek sach.
+      -> hold Redis me + booking DB me = do jagah sach -> dono me farak aa sakta. DB me = ek row, ek UPDATE,
+         ek sach.
   - Hold khatam hone ke 1 second baad Arpan ka payment aaya?
       -> confirm pe bhi WHERE status = 'held' AND user = Arpan AND held_until > now()
          -> 0 row = seat ja chuki -> paisa wapas (refund).
@@ -123,7 +129,8 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - Paisa kat gaya, par seat ka UPDATE fail (hold khatam ho chuka)?
-      -> paisa wapas (refund) + Arpan ko batao. Payment aur seat ka faisla saga jaisa (ek fail to doosra ulta).
+      -> paisa wapas (refund) + Arpan ko batao. Payment aur seat ka faisla saga jaisa (ek fail to doosra
+         ulta).
   - Payment wale ka jawab (webhook) der se aaya?
       -> booking 'PAYMENT_PENDING' rakho, hold thoda badhao, ya reconciliation se pakka karo.
 ```
@@ -142,7 +149,8 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - A1 book ho gayi, par Arpan ko map me abhi bhi khaali dikh rahi?
-      -> WebSocket / SSE se us show ke dekhne walon ko turant bhejo. Screen 1-2 sec purani chale, faisla UPDATE ka.
+      -> WebSocket / SSE se us show ke dekhne walon ko turant bhejo. Screen 1-2 sec purani chale, faisla
+         UPDATE ka.
   - Ek bade show ki ek hi Redis key pe lakhon padhai?
       -> us key ki kai copy + App ke andar 1-2 sec ka local cache.
 ```
@@ -164,7 +172,8 @@ ANDAR KAISE:
 
 ISKE BAAD KYA TOOTEGA:
   - Ek show itna bada ki ek worker dheema?
-      -> ek UPDATE ~ms -> ek worker hazaar / second. Zyada chahiye -> show ko hisson (balcony / stall) me baanto.
+      -> ek UPDATE ~ms -> ek worker hazaar / second. Zyada chahiye -> show ko hisson (balcony / stall) me
+         baanto.
   - Darwaze wali ginti Redis restart me gayi?
       -> ginti sirf darwaza hai, sach DB ki seats. Restart pe DB se gin ke dobara set karo.
   - Read replica se kaam nahi chalega?
@@ -175,13 +184,16 @@ ISKE BAAD KYA TOOTEGA:
 
 #### [6](#d6) REDIS RESTART, SAARA DEKHNA EK SAATH DB PE
 ```
-KAHANI:  Redis restart hua -> cache khaali -> 1 lakh log ka seat map dekhna ek saath DB pe -> booking ke UPDATE bhi ruk gaye.
+KAHANI:  Redis restart hua -> cache khaali -> 1 lakh log ka seat map dekhna ek saath DB pe -> booking ke
+         UPDATE bhi ruk gaye.
 
-ILAAJ:   REDIS CLUSTER (ek machine mare, baaki chalti rahein). Dekhna REPLICA se, booking PRIMARY pe (raaste alag).
+ILAAJ:   REDIS CLUSTER (ek machine mare, baaki chalti rahein). Dekhna REPLICA se, booking PRIMARY pe (raaste
+         alag).
          Cache khaali ho to sirf EK request DB se bana ke bhare (lock), baaki ruk ke cache padhein.
 
 ANDAR KAISE:
-         Redis Cluster: saari keys 16384 hisson (slot) me, har master ke paas kuch hisse + apni copy (replica).
+         Redis Cluster: saari keys 16384 hisson (slot) me, har master ke paas kuch hisse + apni copy
+                        (replica).
          Master gira -> baaki vote karke uski copy ko master bana dete.
          Lock: SET lock:seatmap:42 1 NX EX 5 -> jo jeeta wo DB se map bana ke Redis me daale,
          baaki 50-100 ms ruk ke Redis se padhein. 1 lakh ki jagah 1 request DB pe.
@@ -192,7 +204,8 @@ ISKE BAAD KYA TOOTEGA:
   - SQL primary gira, booking kitni der band?
       -> 10-30 sec (failover). Us beech dobara koshish (idempotent) / "thodi der me try karein".
   - Copy ko primary banaya, par aakhri booking copy tak pahunchi hi nahi thi?
-      -> booking DB ke liye SYNC replica (RDS Multi-AZ, har likhai dono jagah pakki) -> pakki booking nahi khoti.
+      -> booking DB ke liye SYNC replica (RDS Multi-AZ, har likhai dono jagah pakki) -> pakki booking nahi
+         khoti.
 ```
 
 #### [7](#d7) EK APP MACHINE GIRI, 500 LOGON KA HOLD
@@ -203,7 +216,8 @@ ILAAJ:   Hold DB me hai, machine me nahi -> seat abhi bhi held, apne time pe chh
          Kai App machine (stateless) + LB.
 
 ANDAR KAISE:
-         LB ka health check fail -> machine list se bahar. Arpan ki agli request doosri machine pe -> wahi hold dikhega.
+         LB ka health check fail -> machine list se bahar. Arpan ki agli request doosri machine pe -> wahi
+         hold dikhega.
          Ye isliye chala kyunki hold machine ke BAHAR (DB me) rakha tha (card 2 ka faisla).
 
 ISKE BAAD KYA TOOTEGA:
@@ -227,9 +241,11 @@ END ME POOCHEGA:
   "Do log ek seat?"   -> UPDATE ... WHERE status = 'available' -> ek ko 1 row, doosre ko 0 row "ja chuki"
   "4 seat, 1 nahi mili?" -> chaaron EK transaction, rows 4 nahi -> ROLLBACK (A4 koi aur le sakta)
   "Hold khatam hua?"  -> UPDATE ke WHERE me purana hold = khaali; sweeper sirf safai
-  "10x?"              -> App machine · Redis + replica · Kafka har show + waiting room · SQL replica + failover
+  "10x?"              -> App machine · Redis + replica · Kafka har show + waiting room · SQL replica +
+  failover
   "SPOF?"             -> SQL primary (failover), Redis (cluster)
-  "Chal raha, kaise pata?" -> booking p99 · 0-row ("ja chuki") rate · Kafka lag · kitne hold khatam hue · alert
+  "Chal raha, kaise pata?" -> booking p99 · 0-row ("ja chuki") rate · Kafka lag · kitne hold khatam hue ·
+  alert
 ```
 
 AAKHRI DABBE ki tasveer:
@@ -279,7 +295,9 @@ flowchart TD
 ## DIKKAT 1 — Arpan aur Ravi ne ek saath A1 book ki
 
 ```
-BOL: "Check and book happen in one conditional UPDATE, WHERE the seat is still available; the row lock lets only one transaction win, and the loser sees zero rows updated and is told the seat is taken."
+POOCHEGA: "Two users book the same seat at the same time — what happens?"
+BOL:      "Doing it in two steps always leaves a gap, so I put the condition inside the UPDATE — WHERE
+           status is available. The database lets only one win; the other gets zero rows and 'seat taken'."
 ```
 ```mermaid
 flowchart TD
@@ -297,7 +315,10 @@ flowchart TD
 ## DIKKAT 2 — seat chuni, ab 3 min payment
 
 ```
-BOL: "Selecting a seat puts it on hold with an expiry time in the same row; the booking UPDATE treats an expired hold as free, and a sweeper only cleans up old holds for display."
+POOCHEGA: "Who releases the hold after 5 minutes?"
+BOL:      "SQL has no TTL, so either the booking UPDATE treats an expired hold as free — status held and
+           held_until before now — or a sweeper job flips expired holds back every minute. I'd put the check
+           in the UPDATE for correctness and keep the sweeper for cleanup."
 ```
 ```mermaid
 flowchart TD
@@ -317,7 +338,9 @@ flowchart TD
 ## DIKKAT 3 — Pay do baar daba
 
 ```
-BOL: "The client sends an idempotency key with the payment; the server claims it atomically, so a second tap returns the first result instead of charging again."
+POOCHEGA: "What if the user clicks Pay twice / the client retries?"
+BOL:      "The client sends the same idempotency key on a retry; the server claims it atomically with a
+           unique constraint and returns the stored result the second time."
 ```
 ```mermaid
 flowchart TD
@@ -339,7 +362,9 @@ flowchart TD
 ## DIKKAT 4 — book koi-koi karta, seat map sab dekh rahe
 
 ```
-BOL: "Seat maps are served from Redis and read replicas with a short TTL and invalidated on booking, while bookings always go to the SQL primary, so a slightly stale map is fine because the UPDATE decides."
+BOL:      "Seat maps are served from Redis and read replicas with a short TTL and invalidated on booking,
+          while bookings always go to the SQL primary, so a slightly stale map is fine because the UPDATE
+          decides."
 ```
 ```mermaid
 flowchart TD
@@ -366,7 +391,11 @@ flowchart TD
 ## DIKKAT 5 — badi movie, lakhon log ek show pe
 
 ```
-BOL: "For release-day spikes I put a Redis counter at the door, a virtual waiting room, and a Kafka topic keyed by show id so one worker serialises bookings per show and contention disappears."
+POOCHEGA: "What if traffic suddenly spikes 10x?"
+BOL:      "I'd put a counter at the door so only as many users as there are seats get in, and the rest see
+           'sold out' right away. But since users pick specific seats, I only confirm a booking after that
+           seat's atomic UPDATE wins — until then the user sees 'in progress' and gets the result by polling
+           or a push. Plus per-user rate limits and pre-scaling before a known release."
 ```
 ```mermaid
 flowchart TD
@@ -398,7 +427,9 @@ flowchart TD
 ## DIKKAT 6 — Redis restart, saara dekhna DB pe
 
 ```
-BOL: "Redis runs as a cluster with replicas, browse falls back to read replicas and never the primary, and a lock lets only one request rebuild a missing cache entry."
+POOCHEGA: "What if the cache goes down?"
+BOL:      "Redis runs as a cluster. Browse reads fall back to the read replica, never the primary, so
+           bookings keep working, and one request rebuilds a hot key while others wait."
 ```
 ```mermaid
 flowchart TD
@@ -430,7 +461,9 @@ flowchart TD
 ## DIKKAT 7 — App machine giri, 500 logon ka hold
 
 ```
-BOL: "App servers are stateless behind a load balancer; holds live in the database, so if a server dies the user's next request lands on another server and sees the same hold."
+POOCHEGA: "What happens if an app server goes down?"
+BOL:      "Holds live in the database, not in the box, so they survive. The load balancer health-checks the
+           box out and the user's next request goes to another instance and sees the same hold."
 ```
 ```mermaid
 flowchart TD
@@ -479,7 +512,8 @@ AAGE:        virtual waiting room · kai DB / shard ho to seat ka faisla usi sha
 
 POOCHEGA: "How would you scale this to 10x?"      -> user ka raasta chalo, pehle jo toote
 POOCHEGA: "What's the single point of failure?"   -> SQL primary (failover), Redis (cluster)
-POOCHEGA: "How do you know it's working?"         -> booking p99 · 0-row rate · Kafka lag · kitne hold khatam · alert
+POOCHEGA: "How do you know it's working?"         -> booking p99 · 0-row rate · Kafka lag · kitne hold khatam
+          · alert
 ```
 
 ---
