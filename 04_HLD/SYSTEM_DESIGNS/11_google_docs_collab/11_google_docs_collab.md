@@ -56,16 +56,12 @@ flowchart TD
 #### 1 DONO NE SAATH SAVE KIYA, BAAD WALE NE PEHLE KA MITA DIYA
 ```
 DIKKAT 1   Doc me "HELLO" tha. Arpan ne "HELLO WORLD" karke save kiya, usi waqt Ravi ne "HELLO THERE".
-           Ravi ka save baad me pahuncha, usne poora text upar likh diya -> Arpan ka "WORLD" gayab (jo baad
-           me aaya wo jeeta = LAST-WRITE-WINS).
-HAL        Poora doc bhej ke save karo to baad wala pehle wale ka likha mita deta.
-           Isliye sirf ye bhejo ki kya badla: 'position 5 pe WORLD daala'. Saath me 'maine
-           doc ka version 7 dekh ke likha'.
-           Arpan aur Ravi dono ke badlaav lag jaate, kisi ka likha nahi mitta.
-           op = { docId, userId, type (insert / delete), position, char, baseVersion }
-           baseVersion = Arpan ne doc ka kaunsa version dekh ke ye op banaya.
-           Arpan aur Ravi dono ne v7 dekh ke op banaya -> server ko pata ye do op ek saath
-           (concurrent) bane -> OT khiska ke dono lagata.
+           Ravi ka save baad me pahuncha, usne poora text upar likh diya -> Arpan ka "WORLD" gayab
+           (jo baad me aaya wo jeeta = LAST-WRITE-WINS).
+HAL        Poora doc mat bhejo, sirf ye bhejo ki KYA badla (operation):
+             op = { docId, userId, type (insert / delete), position, char, baseVersion }
+           baseVersion = "maine doc ka version 7 dekh ke likha". Arpan aur Ravi dono ne v7 dekh ke op
+           banaya -> server ko pata ye do op ek saath bane -> OT khiska ke dono lagata. Kisi ka nahi mitta.
 ```
 ```mermaid
 flowchart TD
@@ -77,20 +73,17 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Arpan ne "L" mitaya, Ravi ne usi jagah type kiya?
-HAL        Mitana bhi ek op hai. OT dono ko adjust karta: Ravi ka akshar sahi jagah khisakta,
-           Arpan sahi "L" mitata.
+HAL        Mitana bhi ek op hai. OT dono ko adjust karta: Ravi ka akshar sahi jagah khisakta, Arpan sahi "L"
+           mitata.
 ```
 
 #### 2 RAVI KO ARPAN KA LIKHA KAB DIKHEGA?
 ```
-DIKKAT 1   Normal HTTP me server khud kuch nahi bhej sakta, sirf jawab de sakta. To Ravi refresh kare
-           tab Arpan ka likha dikhe? Bekaar.
-HAL        Har user ka server se ek connection khula rehta (WebSocket). Arpan likhe to turant server tak,
-           aur Ravi ka likha turant Arpan tak.
-           Connection toota aur wapas juda to app bolta 'main version 120 tak tha', server 121 se
-           aage ke saare badlaav bhej deta.
-           Pehle ek HTTP request "Upgrade: websocket" -> server "101
-           Switching Protocols" -> wahi connection khula rehta, ab dono taraf chhote-chhote message.
+DIKKAT 1   Normal HTTP me server khud kuch nahi bhej sakta, sirf jawab de sakta. To Ravi refresh kare tab
+           Arpan ka likha dikhe? Bekaar.
+HAL        Har user ka server se ek connection khula rehta (WEBSOCKET): pehle ek HTTP request
+           "Upgrade: websocket" -> server "101 Switching Protocols" -> wahi connection khula rehta.
+           Ab dono taraf chhote-chhote message: Arpan likhe to turant server tak, server turant Ravi tak.
 ```
 ```mermaid
 flowchart TD
@@ -102,34 +95,26 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Connection beech me toot gaya?
-HAL        Dobara judo (ruk-ruk ke) + bolo "main v120 tak tha" -> server v121 se aage ke saare
-           op bhej deta. Kuch nahi chhoota.
+HAL        Dobara judo (ruk-ruk ke) + bolo "main v120 tak tha" -> server v121 se aage ke saare op bhej deta.
+           Kuch nahi chhoota.
 
 DIKKAT 3   Arpan abhi bhi hai, kaise pata?
 HAL        Har ~30 sec ping / pong. Jawab nahi = connection band, jagah khaali.
 
 DIKKAT 4   Baar-baar poochhna (polling) ya SSE kyun nahi?
-HAL        Polling = crore log x har second bekaar sawaal + 1 sec der. SSE sirf server ->
-           user, yahan dono taraf chahiye.
+HAL        Polling = crore log x har second bekaar sawaal + 1 sec der. SSE sirf server -> user, yahan dono
+           taraf chahiye.
 ```
 
 #### 3 ARPAN SERVER-1 PE, RAVI SERVER-2 PE
 ```
-DIKKAT 1   Ek connection server itne connection nahi jhelta, to kai lagaye.
-           Arpan server-1 se juda, Ravi server-2 se, dono ek hi doc pe.
-           Arpan ne type kiya -> server-1 ko pata, par server-2 ko kaise pata chale?
-           Server ek doosre ko jaante hi nahi.
-HAL        Arpan server-1 pe, Ravi server-2 pe. Server-1 Arpan ka badlaav Redis pe 'doc:123' channel me daal
-           deta, server-2 us channel ko sun raha hai, to Ravi tak pahuncha deta.
-           Redis ye kahin save nahi karta, sirf aage bhejta. Kuch chhoot gaya to
-           dobara judne pe log se mil jaata.
-           Dhyaan: badlaav ka KRAM aur khiskana (OT) sirf doc ke EK owner server pe hota
-           (docId se sab editor usi server pe).
-           Pub/sub sirf aage pahunchata hai, faisla nahi karta.
-           Har doc ek channel (doc:123). Jis server pe doc:123 ka koi user hai, wo SUBSCRIBE karta.
-           Server-1 --publish doc:123--> Redis --> Server-2 --> Ravi
-           Redis pub/sub kuch STORE nahi karta (bheja aur bhool gaya). Iska kaam sirf
-           turant dikhana, data bachana nahi.
+DIKKAT 1   Ek connection server itne connection nahi jhelta, to kai lagaye. Arpan (likh raha) doc ke owner
+           server-1 pe hai. Ravi sirf dekh raha (likh nahi raha), wo server-2 se juda.
+           Arpan ne type kiya -> server-1 ko pata, server-2 ko kaise pata chale?
+HAL        REDIS PUB/SUB: har doc ek channel (doc:123). Jis server pe doc:123 ka koi user, wo SUBSCRIBE karta.
+             Server-1 --publish doc:123--> Redis --> Server-2 --> Ravi
+           Pub/sub kuch STORE nahi karta (bheja aur bhool gaya): kaam sirf turant dikhana, data bachana nahi.
+           Kram aur khiskana (OT) owner server-1 hi karta, pub/sub sirf aage pahunchata.
 ```
 ```mermaid
 flowchart TD
@@ -161,16 +146,13 @@ HAL        Kafka store karta + thoda dheema. Live typing ko dobara padhna nahi c
 #### 4 DONO NE EK SAATH POSITION 0 PE TYPE KIYA
 ```
 DIKKAT 1   Doc "HELLO". Arpan ne position 0 pe "X" likha, usi pal Ravi ne position 0 pe "Y".
-           Seedha lagaya -> Arpan ki screen pe "XHELLO" phir Y ->
-           "YXHELLO"; Ravi ki pe "YHELLO" phir X -> "XYHELLO".
-           Do alag doc ban gaye (diverge).
+           Seedha lagaya -> Arpan ki screen "XHELLO" phir Y -> "YXHELLO"; Ravi ki "YHELLO" phir X
+           -> "XYHELLO". Do alag doc ban gaye (diverge).
 HAL        OT (Operational Transformation): doosre ka op aane pe usko apne op ke hisaab se khiska do.
-           Dono taraf ek hi niyam -> dono ka doc same.
-           (CRDT doosra raasta: har akshar ki apni unique id, kisi bhi kram me jodo, nateeja same.)
-           Niyam (tie-break): same jagah pe dono ne likha to Arpan ka pehle.
-           Arpan ki screen: XHELLO. Ravi ka "Y at 0" aaya -> Arpan ka X
-                            pehle hai -> Y ko 1 pe khiskao -> "XYHELLO"
-           Ravi ki screen:  YHELLO. Arpan ka "X at 0" aaya -> Arpan pehle -> X 0 pe hi -> "XYHELLO"
+           Tie-break niyam: same jagah pe dono ne likha to jiska op server pe pehle pahuncha (yahan Arpan)
+           uska pehle.
+             Arpan ki screen: XHELLO. Ravi ka "Y at 0" aaya -> X pehle -> Y ko 1 pe -> "XYHELLO"
+             Ravi ki screen:  YHELLO. Arpan ka "X at 0" aaya -> X pehle -> X 0 pe hi -> "XYHELLO"
            Dono ke paas "XYHELLO". Same.
 ```
 ```mermaid
@@ -191,12 +173,13 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Khiskana kaun karta, app ya server?
-HAL        Dono. Server KRAM tay karta (har op ko agla version number) + aaye op ko
-           khiskata. App apne pending op ko.
+HAL        Dono. Server KRAM tay karta (har op ko agla version number) + aaye op ko khiskata. App apne
+           pending op ko server ke op ke hisaab se khiskata.
 
 DIKKAT 3   OT kyun, CRDT kyun nahi?
 HAL        Beech me server hai (har op usi se guzarta) -> OT seedha baithta, Google Docs bhi OT.
-           CRDT = bina server (offline-first, phone se phone). Keemat: har akshar ki id = memory zyada.
+           CRDT = har akshar ki apni unique id, kisi bhi kram me jodo nateeja same; use server ki zaroorat
+           nahi padti (offline-first, phone se phone). Keemat: har akshar ki id = memory zyada.
 
 DIKKAT 4   Ek doc ka OT do server pe chala?
 HAL        Kram toot gaya. Isliye ek doc ke saare op EK server pe (docId se chunna).
@@ -205,13 +188,10 @@ HAL        Kram toot gaya. Isliye ek doc ke saare op EK server pe (docId se chun
 #### 5 HAR AKSHAR PE DB ME LIKHNA
 ```
 DIKKAT 1   Crore log type kar rahe, har akshar pe ek DB write -> DB khatam.
-HAL        Har akshar pe DB me likhna mehnga. Live dikhana to Redis se ho hi raha hai.
-           Isliye badlaav pehle Redis me jama karo, har 1 second ek saath Cassandra me likh do. Ek doc ke
-           saare badlaav ek jagah, server ke diye number ke kram me.
-           Edit log: partition key = docId, uske andar kram = version (SERVER ka number).
-           Timestamp se kram NAHI: ek hi millisecond pe do op = same key = ek
-                                   ne doosre ko chupchaap mita diya, op gaya.
-           Cassandra likhne me tez: pehle commit log (sirf neeche jodna) + RAM (memtable).
+HAL        Badlaav pehle Redis me jama karo, har 1 second ek saath (batch) Cassandra me.
+           Edit log: partition key = docId, andar kram = version (SERVER ka number).
+           Timestamp se kram NAHI: ek hi millisecond pe do op = same key = ek ne doosre ko chupchaap mita
+           diya. Cassandra likhne me tez: commit log (sirf neeche jodna) + RAM (memtable).
 ```
 ```mermaid
 flowchart TD
@@ -233,9 +213,8 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Arpan ka op Redis buffer me tha, Redis gir gaya -> op gaya?
-HAL        Redis ki copy async thi, poora nahi bachati. Ilaaj: Arpan ka app op apne paas rakhe jab tak
-           server "mil gaya" (ACK) na bole, dobara jude to phir bheje (opId ke saath, server
-           ke paas pehle se hai to skip).
+HAL        Arpan ka app op apne paas rakhe jab tak server "mil gaya" (ACK) na bole. Dobara jude to phir
+           bheje (opId ke saath, server ke paas pehle se hai to skip).
            Server ACK tab deta jab op Redis buffer me + uski copy me likh gaya (Redis WAIT 1, ~1 ms).
            Cassandra ka 1 second wala batch ACK ke raaste me nahi -> typing turant.
 
@@ -248,14 +227,11 @@ HAL        Nahi. DB data ki shakal se chuno: rishte (join) nahi, bas bahut saara
 
 #### 6 DOC KHOLA, 10 LAKH OP SHURU SE CHALANE PADE
 ```
-DIKKAT 1   Arpan ne 2 saal purana doc khola. Server ne pehle op se 10 lakh op dobara chalaye tab
-           doc bana -> kholne me bahut der.
-HAL        2 saal purana doc kholne pe 10 lakh badlaav shuru se chalana dheema.
-           Isliye har 1000 badlaav pe doc ki photo le lo. Kholte waqt aakhri
-           photo + uske baad ke thode badlaav.
-           Snapshot table: (docId, version 5000, poora text) -> S3 / Cassandra me.
-           Arpan ne doc khola -> aakhri photo (v5000) + edit log se "version > 5000" wale op (thode se)
-           -> unhe kram se lagao -> doc taiyaar. 10 lakh ki jagah ~1000 op.
+DIKKAT 1   Arpan ne 2 saal purana doc khola. Server ne pehle op se 10 lakh op dobara chalaye tab doc bana
+           -> kholne me bahut der.
+HAL        Har 1000 badlaav pe doc ki PHOTO (snapshot): (docId, version 5000, poora text) -> S3 / Cassandra.
+           Doc khola -> aakhri photo (v5000) + edit log se "version > 5000" wale op -> kram se lagao.
+           10 lakh ki jagah ~1000 op.
 ```
 ```mermaid
 flowchart TD
@@ -286,11 +262,10 @@ HAL        Har 1000 op ya har kuch minute, jo pehle ho.
 #### 7 NETWORK EK SECOND GAYA, TYPING RUKEGI? (CAP)
 ```
 DIKKAT 1   Arpan ka network 1 second ke liye gaya. Typing ruk jaaye, ya wo type karta rahe?
-HAL        Likhne ke liye: network jaaye to bhi type karte raho, baad me sab mil
-           jaayega aur doc same ho jaayega.
-           Permission ke liye ulta: kisi ka access hataya to turant rokna hai, chahe kuch der system ruke.
-           "Doc sahi chahiye -> CP" bolna galat: CP me network jaate hi typing ruk jaati.
-           Yahan sahi hona "aakhir me sab same" se aata, typing rok ke nahi.
+HAL        Likhna = AP: network jaaye to bhi type karte raho, baad me sab mil ke doc same.
+           "Doc sahi chahiye -> CP" bolna galat: CP me network jaate hi typing ruk jaati. Yahan sahi hona
+           "aakhir me sab same" se aata.
+           Permission = CP: kisi ka access hataya to turant rokna, chahe kuch der system ruke.
 ```
 ```mermaid
 flowchart TD
@@ -323,13 +298,11 @@ HAL        Dobara jude to pehle permission check (SQL, CP). Access nahi -> pendi
 
 #### 8 CRORE WEBSOCKET CONNECTION
 ```
-DIKKAT 1   Crore connection khule. Ek doc ke 5 editor alag-alag 5 server pe bikhre -> har server
-           apna OT chala raha -> kram toota.
-HAL        Alag CONNECTION server ki line. docId se baanto: ek doc ke saare editor + uska OT EK hi server pe
-           (wo us doc ka OWNER). Wahi har op ko version number deta, to kram kabhi do jagah tay nahi hota.
-           Sirf dekhne wale (likh nahi rahe) doosre server pe ho sakte, unhe Redis pub/sub se badlaav.
-           URL me docId -> LB consistent hashing RING se server chunta. Server juda / gira
-           -> sirf uske hisse ke doc hilte.
+DIKKAT 1   Crore WebSocket connection khule. Ek server ~1 lakh hi jhelta. Kis doc ka user kis server pe
+           jaaye, taaki ek doc ke saare editor ek hi (owner) server pe milein?
+HAL        Alag CONNECTION server ki line. URL me docId -> LB consistent hashing RING se server chunta
+           -> ek doc ke saare editor + uska OT EK server pe (OWNER), wahi har op ko version number deta.
+           Server juda / gira -> sirf uske hisse ke doc hilte.
            (hash(docId) % N NAHI: N badla to lagbhag har doc ka server badla = sab dobara jude.)
            Ek doc pe ~100 editor tak ek server jhel leta. App ki static files CDN se.
 ```
@@ -364,7 +337,7 @@ DIKKAT 3   Likhe hue ka kram kaun tay kare?
 HAL        SERVER: har op ko doc ka agla version number. App ki ghadi kabhi nahi.
 
 DIKKAT 4   Ek doc pe 1000 log?
-HAL        Jo sirf dekh rahe (likh nahi rahe) unhe alag rakho, pub/sub se updates.
+HAL        Jo sirf dekh rahe (likh nahi rahe) unhe doosre server pe rakho, Redis pub/sub se updates.
 ```
 
 ```
