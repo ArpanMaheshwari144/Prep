@@ -122,12 +122,9 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: ek id = ek kaam; wahi id dobara aaye to kaam nahi, purana jawab.
-  "Button pehli tap pe band?"
-     -> Haan, aur id order screen khulte banti. Pehli baar order + jawab save, doosri baar saved jawab.
-  "Pehli request abhi chal hi rahi, dobara wali aa gayi?"
-     -> Dobara process NAHI. Id ka haal IN_PROGRESS -> jawab "thoda ruko" (409). DONE -> saved jawab.
-  "Id kitne din rakhoge?"
-     -> ~24 ghante, phir saaf.
+  "Button pehli tap pe band?"      -> haan; id screen khulte bani, doosri baar saved jawab.
+  "Pehli abhi chal rahi, dobara?"  -> process nahi; IN_PROGRESS -> "thoda ruko" (409), DONE -> saved jawab.
+  "Id kitne din?"                  -> ~24 ghante, phir saaf.
 ```
 
 #### 2 Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
@@ -154,22 +151,14 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: 'blocked' ek number hai: naya order use badhata; sauda (paisa kata), cancel, umar khatam use ghatate.
-  "Java me synchronized?"
-     -> Sirf ek machine ke andar; yahan do server hain.
-  "SELL pe? Mere paas 10 TCS, laptop aur phone dono se SELL 10."
-     -> Wahi tareeka share pe, ek query me:
-          UPDATE portfolio SET blocked_qty = blocked_qty + 10
-          WHERE user_id = 'Arpan' AND stock = 'TCS' AND qty - blocked_qty >= 10
-        Pehla -> 10 block. Doosra -> 0 row badli -> reject.
-  "10 me se sirf 6 ka sauda hua?"
-     -> 6 ka paisa kato, baaki 4 ka blocked rahe.
-  "Paisa block, order 3 din pada raha?"
-     -> Order ki umar (day order shaam ko khatam) -> khatam hote hi block hatao.
-  "Maine CANCEL kiya, usi pal match ho raha tha?"
-     -> Cancel bhi usi stock ki line me, order ke peeche jaata. Engine kram se dekhta:
-        match ho chuka -> "pura ho gaya" · book me pada -> hatao + jo nahi bika uska block hatao.
-  "MARKET BUY me daam pata hi nahi, kitna block karoge?"
-     -> Aakhri bhav + thoda upar (buffer) block. Sauda hone ke baad jo bacha, wo block hatao.
+  "Java synchronized?"             -> sirf ek machine ke andar; yahan do server hain.
+  "SELL pe, laptop + phone?"       -> wahi query share pe:
+       UPDATE portfolio SET blocked_qty = blocked_qty + 10
+       WHERE user_id = 'Arpan' AND stock = 'TCS' AND qty - blocked_qty >= 10
+  "10 me se 6 ka sauda?"           -> 6 ka paisa kata, baaki 4 ka blocked rahe.
+  "Order 3 din pada?"              -> day order shaam ko khatam -> block hatao.
+  "CANCEL, usi pal match?"         -> cancel bhi usi line me; jo nahi bika uska block hatao.
+  "MARKET BUY, kitna block?"       -> aakhri bhav + thoda upar; sauda ke baad bacha hatao.
 ```
 
 #### 3 Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
@@ -200,18 +189,10 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: TCS ki book ko ek waqt ek hi haath chhoota; doosra chahiye to line me ruke.
-  "Har order pe lock?"
-     -> Race Suresh ke 10 share pe hai, order pe nahi; dono BUY apna-apna lock lete, dono ko 10 dikhte.
-  "5000 stock = 5000 thread?"
-     -> Nahi. Maan lo machine pe 8 thread (8 core). Stock ka naam -> number -> % 8 -> thread tay:
-        TCS -> T3 · INFY -> T5 · WIPRO -> T3
-        T3 pe TCS aur WIPRO dono, par TCS ka HAR order hamesha T3 pe hi -> kram pakka, lock nahi.
-        5000 thread banate to zyadatar khaali baithe memory khaate, CPU unke beech switch karte thakta.
-  "DB ka ACID ye rok dega?"
-     -> Nahi. Matching DB me hai hi nahi, RAM me hai.
-  "Wo thread atak gaya (Java ka GC pause)?"
-     -> Us stock ke order line me ruk jaate. Kam GC wala Java setup + ek standby server jo log padh ke
-        turant chal sake.
+  "Har order pe lock?"             -> race share pe hai, order pe nahi; dono lock le ke dono ko 10 dikhte.
+  "5000 stock = 5000 thread?"      -> nahi; 8 core = 8 thread, stock % 8 -> ek stock hamesha ek thread.
+  "DB ka ACID?"                    -> matching DB me hai hi nahi, RAM me.
+  "Thread atka (GC pause)?"        -> us stock ki line rukti; standby server log se taiyaar.
 ```
 
 #### 4 9:15 baje sab TCS pe toot pade
@@ -241,8 +222,7 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: ek stock = ek line; badhana stocks ke BEECH, ek stock ke andar kabhi nahi.
-  "Badhana kaise?"
-     -> Stocks ke BEECH: TCS ek thread, INFY doosra. Ek stock ke andar nahi.
+  "Badhana kaise?"                 -> stocks ke BEECH: TCS ek thread, INFY doosra.
 ```
 
 #### 5 Server gira, poori order book gayab
@@ -272,20 +252,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: log hi sach hai, book uski photo; do chalti book = do sach = galat.
-  "Number kaun deta?"
-     -> Log / sequencer (ek stock ki ek line, Kafka offset jaisa). Order Svc nahi, warna uski do
-        machine same number de dein. Yahi log audit bhi.
-  "Number ki jagah time se kram?"
-     -> Nahi: do server ki ghadi alag, same millisecond me do order aa sakte. Number pakka.
-  "Sirf har kuch minute RAM ki photo (snapshot) kaafi?"
-     -> Nahi: photo ke baad ke order gaye, aur photo lete waqt crash = aadhi book.
-  "Log me 1 crore order, shuru se padhne me der?"
-     -> Har kuch minute book ki photo (snapshot). Gira -> photo + uske baad ka log.
-  "Seconds me wapas chahiye?"
-     -> Standby server saath-saath log padhta, book RAM me taiyaar, khud sauda nahi karta.
-        Pehla gira, tab ye chalne lagta.
-  "Crash pe kya-kya bachaoge?"
-     -> Do jagah: matching (RAM) = log se replay · paisa (DB) = rollback / step ka likha haal.
+  "Number kaun deta?"              -> log / sequencer; Order Svc nahi (uski do machine same number de dein).
+  "Time se kram?"                  -> nahi; do server ki ghadi alag, same ms me do order.
+  "Sirf photo (snapshot) kaafi?"   -> nahi; photo ke baad ke order gaye.
+  "Log me 1 crore, der?"           -> har kuch minute photo; gira -> photo + uske baad ka log.
+  "Seconds me wapas?"              -> standby log padhta, book taiyaar; pehla gire tab chalu.
+  "Crash pe kya bachaoge?"         -> matching = log se replay · paisa = DB rollback / step ka haal.
 ```
 
 #### 6 Mera paisa kat gaya, Suresh ko mila hi nahi
@@ -317,18 +289,11 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: paisa ek jagah: chaaron likhai ek transaction me; ledger ka jod hamesha 0.
-  "Sab likho, phir 'done' flag?"
-     -> Flag se pehle gira to kitna likha pata hi nahi.
-  "Ledger?"
-     -> Khaate me 2 line: Arpan -30k, Suresh +30k -> jod hamesha 0.
-  "Har baar balance ledger jod ke nikaloge?"
-     -> Nahi, dheema. Balance alag column, usi transaction me badalta. Ledger = record + audit.
-  "Paise me 'thodi der baad sahi' chalega?"
-     -> Nahi. Balance kabhi galat number nahi dikhata (strong consistency).
-        Alag DB wale step-step kaam me bhi beech ka haal "PENDING" dikhao, galat number nahi.
-  "Asli market me paisa aur share usi pal milte?"
-     -> Nahi. India me T+1: asli len-den agle din clearing house (NSE Clearing, purana naam NSCCL)
-        karta. Hamara turant wala hisaab broker ke apne khaate me.
+  "Sab likho, phir done flag?"     -> flag se pehle gira to kitna likha pata hi nahi.
+  "Ledger?"                        -> 2 line: Arpan -30k, Suresh +30k; jod hamesha 0.
+  "Balance ledger jod ke?"         -> nahi, dheema; balance alag column, usi transaction me.
+  "Thodi der baad sahi chalega?"   -> paise me nahi; beech me PENDING dikhao, galat number nahi.
+  "Asli me usi pal milte?"         -> nahi, T+1; NSE Clearing karta, ye broker ka apna khaata.
 ```
 
 #### 7 Paisa kat gaya, share aaye hi nahi (do alag DB)
@@ -364,16 +329,10 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: match ke baad sirf aage; ulta sirf match se pehle.
-  "Step-step ki keemat?"
-     -> Beech me haal PENDING dikhta (galat number nahi). 2PC jaisa lamba lock nahi.
-  "Mera paisa wapas kyun nahi?"
-     -> Sauda pakka hai (Suresh bech chuka, use 30k mil chuke). Settlement gira -> likha haal dekh ke
-        wahin se aage.
-  "To ulta (SAGA) kabhi nahi?"
-     -> Sirf match se PEHLE ke step pe: paisa block hua, par order book tak pahuncha hi nahi
-        -> block hatao, paisa wapas. Match ke baad sirf aage.
-  "Ek service sab chalaye (orchestration) ya har service agle ko bataye (choreography)?"
-     -> Orchestration: paise me saaf dikhta kaunsa step kahan atka.
+  "Step-step ki keemat?"           -> beech me PENDING dikhta; 2PC jaisa lamba lock nahi.
+  "Mera paisa wapas kyun nahi?"    -> sauda pakka (Suresh ko 30k mil chuke); gira -> likha haal se aage.
+  "To SAGA kabhi nahi?"            -> sirf match se pehle: block hua, book tak nahi pahuncha -> block hatao.
+  "Orchestration ya choreography?" -> orchestration: paise me saaf dikhe kaunsa step atka.
 ```
 
 #### 8 10 lakh log ek saath price poochh rahe, server baith gaya
@@ -414,12 +373,9 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: price = sirf abhi ka; purana bekaar, isliye store nahi, push.
-  "Price second me 1000 baar badla, sab bhejoge?"
-     -> Nahi. Har ~100 ms sirf aakhri price, beech wale bekaar.
-  "Connection toota, wapas juda?"
-     -> Redis pub/sub kuch store nahi karta -> abhi ka price alag se de do.
-  "Ek WebSocket server kitne user?"
-     -> Lakh ke aas-paas. Zyada -> aur server, LB se baanto.
+  "Second me 1000 baar badla?"     -> har ~100 ms sirf aakhri price.
+  "Connection toota, wapas juda?"  -> pub/sub kuch store nahi karta -> abhi ka price alag se do.
+  "Ek WebSocket server kitne?"     -> lakh ke aas-paas; zyada -> aur server + LB.
 ```
 
 ---
