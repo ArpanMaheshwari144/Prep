@@ -349,12 +349,11 @@ flowchart TD
 ## DIKKAT 1 — teen server, ginti bat gayi
 
 ```
-JAWAB:    Har server apni-apni ginti kare to user server badal-badal ke had paar kar
-          leta. Isliye ginti EK jagah: Redis.
-          Key = endpoint + user. Har request pe INCR (ginti +1). Pehli request pe key ki umar (TTL) =
-          window, to window khatam hote hi key apne aap gayab aur ginti zero.
-
-SHABD:    INCR = Redis me ginti ek badhao · TTL = key ki umar, khatam hote hi key mit jaati
+JAWAB:    Har server apni ginti kare to user har baar alag server pe jaake 5 ki had ko 5 x 3 = 15 bana
+          leta.
+          Isliye ginti sab servers ki EK jagah: Redis. Key = 'login:Arpan', har request pe ginti +1.
+          Pehli request pe key ki umar 1 minute rakh do. Minute khatam, key apne aap mit gayi, ginti
+          phir zero se.
 ```
 ```mermaid
 flowchart TD
@@ -380,13 +379,11 @@ flowchart TD
 POOCHEGA: "Two requests come at the same time — what happens?"
           (Do request bilkul ek saath aayi to?)
 
-JAWAB:    Redis ek hi thread pe chalta, to INCR ek ke baad ek hota (atomic), beech
-          me koi ghus nahi sakta.
-          Token bucket me 'check karo + token ghatao' do kaam hain, isliye dono ek
-          Lua script me -> ek hi kadam me, race nahi.
-
-SHABD:    atomic = beech me koi aur ghus nahi sakta · Lua script = Redis ke andar
-          chalne wala chhota code, poora ek saath chalta
+JAWAB:    Redis ek-ek karke kaam karta hai, do kaam ek saath nahi. Isliye do request ek saath aayi to
+          bhi ginti +1, +1 sahi se hoti, koi beech me nahi ghusta.
+          Token bucket me do kaam hain: 'token bacha hai?' dekhna, phir 'ek token ghatao'. Ye dono ek
+          Lua script me daal do, to Redis dono ek hi kadam me karta. Beech me doosri request ghus ke
+          wahi aakhri token nahi le sakti.
 ```
 ```mermaid
 flowchart TD
@@ -409,12 +406,12 @@ flowchart TD
 ## DIKKAT 3 — reject wali request bhi andar ghoom aayi
 
 ```
-JAWAB:    Limiter API gateway me, sabse aage. Mana hui request backend tak pahunchti hi nahi.
-          Jawab 429, saath me Retry-After (kitni der baad aao), jo bucket bharne ke
-          time se nikalta, thoda random milake.
-          Had ke niyam alag config store me, to had badalne ke liye code deploy nahi karna padta.
-
-SHABD:    429 = 'bahut zyada request, ruk ke aao' · Retry-After = kitne second baad dobara aana
+JAWAB:    Limiter sabse aage, darwaze (API gateway) pe. Jo request mana hui, wo andar ke server tak
+          pahunchti hi nahi.
+          User ko 429 jaata, saath me 'itne second baad aana' (Retry-After), thoda alag-alag time taaki
+          sab ek saath wapas na aayein.
+          Had ke niyam alag jagah (config) likhe hain, to had badalni ho to code dobara daalna nahi
+          padta.
 ```
 ```mermaid
 flowchart TD
@@ -441,11 +438,9 @@ flowchart TD
 POOCHEGA: "What if Redis goes down?"
           (Redis gir gaya to?)
 
-JAWAB:    Redis ki copy doosri building (zone) me, gire to copy apne aap le leti.
-          Poora Redis hi chala gaya: aam API ke liye darwaza khula (fail open), taaki site chalti rahe.
-          Login aur OTP pe darwaza band (fail closed), kyunki wahan bina had ke hamla ho sakta.
-
-SHABD:    fail open = limiter band to sabko jaane do · fail closed = limiter band to sabko roko
+JAWAB:    Redis ki copy doosri building me hoti, Redis gira to copy uski jagah le leti.
+          Poora Redis hi chala gaya to: aam cheezon (feed, search) ke liye sabko jaane do, site chalti
+          rahe. Login aur OTP pe sabko roko, kyunki wahan bina had ke koi password guess karta rahega.
 ```
 ```mermaid
 flowchart TD
@@ -474,9 +469,9 @@ flowchart TD
 POOCHEGA: "What if a whole region goes down?"
           (Poora region band ho gaya to?)
 
-JAWAB:    Route 53 user ko doosre region bhej deta. Wahan ginti zero se shuru hoti,
-          to ek window ke liye had thodi dheeli.
-          Rate limiter me ye theek hai, sirf ek minute ki ginti ka mamla hai.
+JAWAB:    Route 53 user ko doosre region bhej deta. Wahan ginti zero se shuru hoti, to us ek minute ke
+          liye user ko thodi zyada request mil jaati hain.
+          Chalta hai, sirf ek minute ki baat hai.
 ```
 ```mermaid
 flowchart TD
@@ -502,10 +497,11 @@ flowchart TD
 ## DIKKAT 6 — baar-baar maar raha, 429 se nahi rukta
 
 ```
-JAWAB:    Har 429 ki khabar Kafka me. Ek service dekhti kaunsa IP baar-baar mana ho raha, aur use WAF ki
-          block list me kuch der ke liye daal deti -> baar-baar wala hamlawar darwaze pe hi ruk jaata.
-          Pehle 429 pe ban nahi karta, kyunki office me sab ek IP se aate aur asli
-          user bhi kabhi jhatke me request bhejte.
+JAWAB:    Jab bhi kisi ko 429 mile, ek khabar Kafka me jaati. Ek service ye khabarein dekhti: koi IP
+          minute me 500 baar mana ho raha hai? To use WAF ki block list me kuch der ke liye daal do, wo
+          darwaze pe hi ruk jaayega.
+          Pehli baar mana hone pe block nahi karte, kyunki office me 100 log ek hi IP se aate hain aur
+          asli user bhi kabhi jaldi-jaldi click karta hai.
 ```
 ```mermaid
 flowchart TD
@@ -541,11 +537,9 @@ flowchart TD
 POOCHEGA: "What if traffic suddenly spikes 10x?"
           (Traffic achanak 10 guna ho gaya to?)
 
-JAWAB:    Har user ki had us bheed ko nahi rokti jahan har koi apni had ke andar hai.
-          Uske liye: poore system ki ek had (global cap) + system ki sehat dekh ke faltu request mana
-          karna (load shedding) + bheed ke liye queue + pata ho kab aayegi to pehle se machine badhao.
-
-SHABD:    global cap = sab users milake kitni request, uski had
+JAWAB:    Har user ki had tab kaam nahi aati jab 1 crore log aayein aur har koi apni had ke andar ho.
+          Uske liye: (1) poore system ki ek had, (2) system thakne lage to kuch request seedha mana
+          karo, (3) bheed ko line me rakho, (4) pata ho kab aayegi (sale) to pehle se machine badhao.
 ```
 ```mermaid
 flowchart TD
@@ -578,9 +572,9 @@ flowchart TD
 ## DIKKAT 8 — attack aaya, usi waqt limiter gayab
 
 ```
-JAWAB:    Hamle ke beech Redis gir gaya aur darwaza khula chhoda (fail open) to sab andar aa jaayega.
-          Isliye har machine apni memory me ginti karne lagti, had = poori had / machine ki ginti.
-          Bilkul sahi nahi, par had na hone se kahin behtar.
+JAWAB:    Hamle ke beech Redis gir gaya. Ab sabko jaane diya to hamla seedha andar.
+          Isliye har server apni memory me ginti karne lage. Had baant do: poori had 100 thi, 4 server
+          hain, to har server 25 tak. Bilkul sahi nahi, par bina had se kahin achha.
 ```
 ```mermaid
 flowchart TD
@@ -613,12 +607,10 @@ flowchart TD
 ## DIKKAT 9 — IP pe gin rahe the
 
 ```
-JAWAB:    Login wale user ki had user id ya API key se, IP se nahi. Kyunki office me sab ek IP pe hote,
-          aur botnet hazaaron IP se aata.
-          Login se pehle: IP pe dheeli had + WAF. Aur galat password pe har account
-          ki had, zyada galat to account lock ya CAPTCHA.
-
-SHABD:    botnet = hazaaron hack kiye computer jo milke hamla karte
+JAWAB:    Login ke baad had user id se lagao, IP se nahi. Kyunki office me sab ek IP pe hote (sab ek
+          saath ruk jaate), aur hamlawar hazaaron IP se aata (IP had se bach jaata).
+          Login se pehle user id hai hi nahi, to IP pe dheeli had + WAF. Aur ek account pe baar-baar
+          galat password -> account lock ya CAPTCHA.
 ```
 ```mermaid
 flowchart TD
@@ -712,13 +704,13 @@ Redis Cluster = ginti ki ek jagah, 1 ms, ek jhatke me INCR / Lua, copy + shard
 Kafka -> Pattern Svc -> WAF = baar-baar wale ka pakka ban
 ```
 ```
-JAWAB:    Limiter API gateway me sabse aage, mana hui request backend tak jaati hi nahi.
-          Ginti Redis me, INCR ya Lua script se ek kadam me, key = endpoint + user, TTL = window. Token
-          bucket isliye ki asli traffic jhatke me aata.
-          Had paar = 429 + Retry-After. Redis ki copy + tukde; aam API pe fail open,
-          login / OTP pe fail closed.
-          User apne ghar wale region pe, baar-baar wale hamlawar Kafka se WAF ban, aur asli bheed se
-          bachane ke liye global cap + load shedding.
+JAWAB:    Limiter darwaze (API gateway) pe, mana hui request andar jaati hi nahi.
+          Ginti Redis me, sab servers ki ek jagah, ek kadam me (INCR ya Lua). Key = kaunsa kaam + kaun
+          user, umar = window.
+          Token bucket isliye ki asli user jhatke me request bhejta. Had paar = 429 + kitni der baad
+          aao.
+          Redis ki copy. Redis band: aam cheez khuli, login / OTP band. Baar-baar wale hamlawar ko WAF
+          se block, aur badi asli bheed ke liye poore system ki had.
 ```
 
 ---
@@ -783,9 +775,9 @@ LIVE:  1..10 | % { curl.exe -s http://localhost:8080/rate-demo; "" }
 EDGE:  fixed window boundary: 999ms pe 5 + 1001ms pe 5 = ~2ms me 10
 PROD:  single node memory -> restart pe reset + har server apna count -> Redis INCR + EXPIRE
        per user / IP -> map<key, counter> · lib: Bucket4j (token bucket) / Redis + Lua
-JAWAB:    usercrud me fixed-window counter khud banaya: 5 request theek, chhathi pe 429.
-          Asli system me token bucket (Bucket4j) + saanjha Redis counter. Nginx ka limit_req ye kaam
-          sabse aage (edge) pe kar deta.
+JAWAB:    usercrud me khud banaya: 5 request theek, chhathi pe 429.
+          Asli system me token bucket (Bucket4j library) + sab servers ka saanjha Redis counter. Nginx
+          bhi ye kaam sabse aage kar sakta (limit_req).
 ```
 
 ---
@@ -836,11 +828,11 @@ if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end
 return c
 ```
 ```
-JAWAB:    Redis band: aam API pe darwaza khula (site chalti rahe), login / OTP pe band.
-          Redis restart = ginti zero, limiter me chalta hai, copy rakhne se kam hota.
-          INCR aur EXPIRE alag-alag bheje aur beech me crash -> key bina umar ke reh gayi -> user
-          hamesha ke liye block. Isliye dono ek Lua script me.
-          Teeno cheez maine Docker Redis khud maar ke dekhi.
+JAWAB:    Docker Redis khud band karke teen cheez dekhi:
+          1) Redis band: aam API chalti rahi, login / OTP ruk gaye.
+          2) Redis restart: saari ginti zero ho gayi. Limiter me chalta hai, copy rakho to kam hota.
+          3) Ginti +1 aur 'umar lagao' alag-alag bheje aur beech me crash hua: key bina umar ke reh
+          gayi, user hamesha ke liye block. Isliye dono ek Lua script me ek saath.
 ```
 
 ARCHETYPE F · CONCEPTS: [caching/Redis](../../FOUNDATIONS/04_caching.md) · [load-balancing](../../FOUNDATIONS/03_load_balancing.md) · [SPOF](../../FOUNDATIONS/11_reliability_spof_cloud.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
