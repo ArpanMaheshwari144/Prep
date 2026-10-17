@@ -73,7 +73,7 @@ NUMBERS (andaaza):
 Order service har order DB me likhe, aur DB me milta-julta SELL dhoondh ke match kare.
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service"]
     n_DB["DB"]
@@ -111,12 +111,13 @@ DIKKAT     9:15, maine TCS ka BUY dabaya. Network gaya, app ne khud dobara bheja
 HAL        IDEMPOTENCY KEY: screen khulte id, dobara wahi id. Server pe UNIQUE -> doosri baar purana jawab.
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_DB
+    style n_Order_Service fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -139,7 +140,7 @@ HAL        Check + block EK query: UPDATE wallet SET blocked = blocked + 30000
 NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
@@ -147,6 +148,7 @@ flowchart TD
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
     n_Wallet --> n_DB
+    style n_Wallet fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -178,7 +180,7 @@ HAL        TCS ke saare order ek line, ek hi thread (TCS -> T3). Pehle main 10, 
 NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
@@ -190,6 +192,8 @@ flowchart TD
     n_Wallet --> n_Queue_per_symbol
     n_Queue_per_symbol --> n_Matching_Engine
     n_Matching_Engine --> n_DB
+    style n_Queue_per_symbol fill:#f9a825,color:#000
+    style n_Matching_Engine fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -217,7 +221,7 @@ HAL        Baanto mat: ek thread, RAM, lakhon / sec. Bheed log ki line me rukti;
 NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
@@ -229,6 +233,7 @@ flowchart TD
     n_Wallet --> n_Queue_per_symbol
     n_Queue_per_symbol --> n_Matching_Engine
     n_Matching_Engine --> n_DB
+    style n_Queue_per_symbol fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -246,7 +251,7 @@ NAHI       RAM ki chalti copy (replica): do book = ek share do baar bike.
            Standby sirf log padhta, chalta nahi.
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
@@ -258,6 +263,7 @@ flowchart TD
     n_Wallet --> n_Event_Log
     n_Event_Log --> n_Matching_Engine
     n_Matching_Engine --> n_DB
+    style n_Event_Log fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -287,7 +293,7 @@ HAL        Ek transaction: BEGIN Arpan -30k +10 share · Suresh +30k -10 share C
 NAHI       chaar alag UPDATE: beech me gira to aadha likha.
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
@@ -301,6 +307,7 @@ flowchart TD
     n_Event_Log --> n_Matching_Engine
     n_Matching_Engine --> n_Settlement
     n_Settlement --> n_DB
+    style n_Settlement fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -329,7 +336,7 @@ HAL        Har step ka haal likho (WALLET_DONE -> PORTFOLIO_DONE), fail pe retry
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
@@ -345,6 +352,8 @@ flowchart TD
     n_Matching_Engine --> n_Settlement
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
+    style n_Wallet_DB fill:#f9a825,color:#000
+    style n_Portfolio_DB fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -369,7 +378,7 @@ HAL        WebSocket: connection khula, price badla tabhi push (Redis pub/sub se
 NAHI       polling: 10 lakh bekaar sawaal / sec · Kafka: sab store karta, purana price bekaar.
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
@@ -391,6 +400,9 @@ flowchart TD
     n_Matching_Engine --> n_Pub_Sub
     n_Pub_Sub --> n_WebSocket
     n_WebSocket --> n_USERS
+    style n_Pub_Sub fill:#f9a825,color:#000
+    style n_WebSocket fill:#f9a825,color:#000
+    style n_USERS fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -423,7 +435,7 @@ JAWAB:    Order service check karti aur dobara order rokti (id se). Wallet paisa
           Aage: stop-loss, risk check, regulator ki report.
 ```
 ```mermaid
-flowchart TD
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service"]
     n_Wallet["Wallet"]
