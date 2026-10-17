@@ -77,6 +77,11 @@ ISKE BAAD KYA TOOTEGA:
       -> 1-2 upload / second ke liye SQS / RabbitMQ bhi kaafi (simple, AWS chalaye). Kafka tab jab bahut khabar ho ya dobara padhni ho.
   - Arpan har 2 sec haal poochhe, bahut nahi?
       -> dheere-dheere gap badhao (2s, 4s, 8s), ya server khud bataye (card 5).
+  - Raat 2 baje Validator 1 ghanta band, 4,000 file VALIDATING pe atki. Kya hoga, pata kaise chalega?
+      -> khoyega kuch nahi: khabar Kafka me padi, worker DB me DONE ke baad hi "padh liya" bolta. Wapas aaya to line nikalti.
+         ilaaj: FUSE (3-5 fail pe call band, thodi der baad ek test call) + DOOSRI COMPANY (bahar wale ki copy hum nahi chala sakte).
+         pata: health check nahi pakadta (wo "zinda" bolta). Apne number: queue ki lambai · Validator ka time + error rate
+         · 10 min se VALIDATING me atki files -> had paar = alert, user ki shikayat se pehle.
 ```
 
 #### [2](#d2) 5 GB FILE KE BYTES HAMARE SERVER SE GUZAR RAHE
