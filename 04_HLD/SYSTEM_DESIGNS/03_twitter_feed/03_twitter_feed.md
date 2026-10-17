@@ -173,7 +173,8 @@ HAL        Beech me jagah chhodo: 12,000 se upar gaya to pull, 8,000 se neeche a
 
 DIKKAT 3   Celeb itna garam, to user_id pe baantna hi galat hai?
 HAL        Nahi. Baantna baaki crore logon ke liye theek. Dikkat sirf EK bahut garam aadmi ki hai, aur
-           consistent hashing ek garam key ko nahi bachata -> uske liye alag ilaaj (uske tweet ka alag RAM cache).
+           consistent hashing ek garam key ko nahi bachata
+           -> uske liye alag ilaaj (uske tweet ka alag RAM cache).
 
 DIKKAT 4   Like ki ginti jaisa garam LIKHNA (ek tweet pe laakhon like)?
 HAL        Ginti ko 10 tukdon me baant do (tweet123#0 se #9), har like kisi ek tukde me, padhte waqt sab jodo.
