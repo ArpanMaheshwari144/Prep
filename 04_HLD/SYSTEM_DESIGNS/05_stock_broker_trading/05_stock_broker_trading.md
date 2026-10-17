@@ -51,7 +51,7 @@ NUMBERS (andaaza):
 WAJAH                                    FIX                                          CARD
 A  do thread / server ek hi cheez ko     check + badlo EK atomic query me, ya ek     1, 2
    ek saath badal rahe (race)            stock ka ek hi thread (kram = lock)
-B  cheez RAM me thi, server gira         pehle log me likho (sirf jodo), phir RAM;   0, 6
+B  cheez RAM me thi, server gira         pehle log me likho (sirf jodo), phir RAM;   6
    (sab gayab)                           gira to log se replay
 C  do jagah likhna, beech me crash       ek transaction; alag DB ho to har step ka   3, 4
    (aadha likha)                         haal likho + aage badho, match ke baad ulta nahi
@@ -97,7 +97,7 @@ SCENE      TCS ka share. Kuch bechna chahte (SELL), kuch khareedna (BUY).
 DIKKAT 1   Book DB me rakhi to (DABBA 0 jaisa)?
 HAL        RAM me rakho. DB = milliseconds har order, RAM = microseconds.
 
-DIKKAT 2   RAM me hai, server crash hua -> book gayi?   (WAJAH B)
+DIKKAT 2   RAM me hai, server crash hua -> book gayi?
 HAL        Har order match se PEHLE log me likho (sirf neeche jodo).
            Crash pe log shuru se chalao -> wahi book wapas (same kram = same nateeja).
 
@@ -113,7 +113,8 @@ DIKKAT     Seller ke paas TCS ke 10 share. Ramesh aur Mohan ne ek saath BUY 10 m
            Do thread ne book dekhi, dono ko "10 hai" dikha -> 20 bik gaye, the 10.
 WAJAH      A — do thread ek hi book ko ek saath padh ke badal rahe.
 
-OPTION     1. har order pe DB row lock          -> haara: book DB me hai hi nahi, RAM me hai
+OPTION     1. har order pe lock                 -> haara: race seller ke 10 share pe hai, order pe nahi;
+                                                   dono BUY apna-apna lock lete, dono ko 10 dikhte
            2. poore engine pe ek bada lock      -> haara: TCS ke chakkar me INFY bhi ruka, sab line me
            3. har stock ki ek line, ek thread   -> ek waqt ek hi order book chhoota, lock ki zaroorat nahi
 HAL        TCS ke saare order ek line me, us line ko sirf EK thread chalata (TCS -> T1, INFY -> T2).
@@ -337,8 +338,8 @@ DIKKAT     10:15 baje matching server gira. TCS ki book me 4,000 order, sab RAM 
 WAJAH      B — cheez RAM me thi, server gira.
 
 OPTION     1. book DB me rakho                  -> haara: har order milliseconds, matching dheema
-           2. log me kram time se               -> haara: do server ki ghadi alag, do order same
-                                                   millisecond me aa sakte
+           2. sirf har kuch minute RAM ki photo -> haara: photo ke baad ke order gaye, aur photo lete
+              (snapshot)                           waqt crash = aadhi book
            3. pehle log (number ke saath), phir RAM -> gira to log se replay, wahi book
 HAL        Har order PEHLE log me likho (sirf neeche jodo), number ke saath (#501, #502). PHIR book me.
            Number log / sequencer deta (ek stock ki ek line, Kafka offset jaisa). Order Svc nahi deta,
@@ -366,6 +367,8 @@ flowchart TD
 ```
 ```
 AAGE POOCHEGA (wahi WAJAH B):
+  "Number ki jagah time se kram kyun nahi?"
+     -> Do server ki ghadi alag, do order same millisecond me aa sakte. Number pakka.
   "Log me 1 crore order, shuru se padhne me der?"
      -> Har kuch minute book ki photo (snapshot). Gira -> photo + uske baad ka log.
   "Seconds me wapas chahiye?"
