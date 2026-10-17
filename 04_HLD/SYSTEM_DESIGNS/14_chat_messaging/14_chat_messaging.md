@@ -349,11 +349,10 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis (register)"]
+    n_R["Redis (register, seq)"]
     n_I["Idempotency check"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
-    n_SQ["Seq (Redis INCR)"]
     n_NS["Nishaan<br/>50 padhe, 25,000 likhai<br/>-> read_upto ek number"]
     n_U --> n_LB
     n_LB --> n_CS
@@ -361,7 +360,6 @@ flowchart LR
     n_CS --> n_I
     n_I --> n_CA
     n_CS --> n_P
-    n_CS --> n_SQ
     n_CS --> n_NS
     style n_NS fill:#f9a825,color:#000
 ```
@@ -388,21 +386,17 @@ flowchart LR
     n_S3["S3<br/>200 MB video<br/>-> presigned, message me pata"]
     n_U["USER"]
     n_LB["LB"]
-    n_CS["Chat Server x200"]
-    n_R["Redis (register)"]
-    n_I["Idempotency check"]
+    n_CS["Chat Server x200 (+ idempotency)"]
+    n_R["Redis (register, seq)"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
-    n_SQ["Seq (Redis INCR)"]
     n_NS["Nishaan store"]
     n_U --> n_S3
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
-    n_CS --> n_I
-    n_I --> n_CA
+    n_CS --> n_CA
     n_CS --> n_P
-    n_CS --> n_SQ
     n_CS --> n_NS
     style n_S3 fill:#f9a825,color:#000
 ```
@@ -427,23 +421,17 @@ flowchart LR
     n_S3["S3"]
     n_U["USER"]
     n_LB["LB"]
-    n_CS["Chat Server x200"]
-    n_R["Redis (register)"]
-    n_I["Idempotency check"]
-    n_CA["Cassandra (chat_id)"]
+    n_CS["Chat Server x200 (+ idempotency)"]
+    n_R["Redis (register, seq)"]
+    n_CA["Cassandra (chat_id) + Nishaan"]
     n_P["Push (Google / Apple)"]
-    n_SQ["Seq (Redis INCR)"]
-    n_NS["Nishaan store"]
     n_PR["Presence<br/>online / last seen<br/>-> 30 sec umar (TTL)"]
     n_U --> n_S3
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
-    n_CS --> n_I
-    n_I --> n_CA
+    n_CS --> n_CA
     n_CS --> n_P
-    n_CS --> n_SQ
-    n_CS --> n_NS
     n_CS --> n_PR
     style n_PR fill:#f9a825,color:#000
 ```

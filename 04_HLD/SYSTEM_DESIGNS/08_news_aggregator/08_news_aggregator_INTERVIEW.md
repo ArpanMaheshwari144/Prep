@@ -149,28 +149,20 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_Feed_Svc_x_N_1["Feed Svc 1"]
-    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_Feed_Svc_xN["Feed Svc x N"]
     n_Redis["Redis (taazi feed)"]
     n_Read_replica["Read replica<br/>result ki subah 40 guna<br/>-> LB + read replica"]
     n_DB["DB"]
-    n_Worker["Worker"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher"]
-    n_Sources["Sources"]
+    n_KW["Kafka -> Worker"]
+    n_SF["Sources -> Fetcher"]
     n_USER --> n_LB
-    n_LB --> n_Feed_Svc_x_N_1
-    n_LB --> n_Feed_Svc_x_N_2
-    n_Feed_Svc_x_N_1 --> n_Redis
-    n_Feed_Svc_x_N_2 --> n_Redis
-    n_Feed_Svc_x_N_1 --> n_Read_replica
-    n_Feed_Svc_x_N_2 --> n_Read_replica
+    n_LB --> n_Feed_Svc_xN
+    n_Feed_Svc_xN --> n_Redis
+    n_Feed_Svc_xN --> n_Read_replica
     n_DB --> n_Read_replica
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
+    n_KW --> n_DB
+    n_KW --> n_Redis
+    n_SF --> n_KW
     style n_LB fill:#f9a825,color:#000
     style n_Read_replica fill:#f9a825,color:#000
 ```
@@ -193,28 +185,20 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_Feed_Svc_x_N_1["Feed Svc 1"]
-    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_Feed_Svc_xN["Feed Svc x N"]
     n_Redis["Redis (taazi feed)"]
-    n_Read_replica["Read replica"]
-    n_DB["DB"]
+    n_DBR["DB + Read replica"]
     n_Worker["Worker<br/>ek khabar 5 baar<br/>-> hash + SimHash dedupe"]
     n_Kafka["Kafka"]
-    n_Fetcher["Fetcher"]
-    n_Sources["Sources"]
+    n_SF["Sources -> Fetcher"]
     n_USER --> n_LB
-    n_LB --> n_Feed_Svc_x_N_1
-    n_LB --> n_Feed_Svc_x_N_2
-    n_Feed_Svc_x_N_1 --> n_Redis
-    n_Feed_Svc_x_N_2 --> n_Redis
-    n_Feed_Svc_x_N_1 --> n_Read_replica
-    n_Feed_Svc_x_N_2 --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_Worker --> n_DB
+    n_LB --> n_Feed_Svc_xN
+    n_Feed_Svc_xN --> n_Redis
+    n_Feed_Svc_xN --> n_DBR
+    n_Worker --> n_DBR
     n_Worker --> n_Redis
     n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
+    n_SF --> n_Kafka
     style n_Worker fill:#f9a825,color:#000
 ```
 ```
@@ -236,28 +220,20 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_Feed_Svc_x_N_1["Feed Svc 1"]
-    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_Feed_Svc_xN["Feed Svc x N"]
     n_Redis["Redis (taazi feed)"]
     n_Read_replica["Read replica"]
     n_DB["DB"]
-    n_Worker["Worker (saaf + dedupe)"]
-    n_Kafka["Kafka"]
+    n_KW["Kafka -> Worker"]
     n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> timeout + circuit breaker"]
-    n_Sources["Sources"]
     n_USER --> n_LB
-    n_LB --> n_Feed_Svc_x_N_1
-    n_LB --> n_Feed_Svc_x_N_2
-    n_Feed_Svc_x_N_1 --> n_Redis
-    n_Feed_Svc_x_N_2 --> n_Redis
-    n_Feed_Svc_x_N_1 --> n_Read_replica
-    n_Feed_Svc_x_N_2 --> n_Read_replica
+    n_LB --> n_Feed_Svc_xN
+    n_Feed_Svc_xN --> n_Redis
+    n_Feed_Svc_xN --> n_Read_replica
     n_DB --> n_Read_replica
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
+    n_KW --> n_DB
+    n_KW --> n_Redis
+    n_Fetcher --> n_KW
     style n_Fetcher fill:#f9a825,color:#000
 ```
 ```
@@ -277,28 +253,20 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_Feed_Svc_x_N_1["Feed Svc 1"]
-    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_Feed_Svc_xN["Feed Svc x N"]
     n_Redis["Redis<br/>sirf tech + sports<br/>-> category feed"]
     n_Read_replica["Read replica"]
     n_DB["DB"]
-    n_Worker["Worker (saaf + dedupe)"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher (timeout + fuse)"]
-    n_Sources["Sources"]
+    n_KW["Kafka -> Worker"]
+    n_SF["Sources -> Fetcher"]
     n_USER --> n_LB
-    n_LB --> n_Feed_Svc_x_N_1
-    n_LB --> n_Feed_Svc_x_N_2
-    n_Feed_Svc_x_N_1 --> n_Redis
-    n_Feed_Svc_x_N_2 --> n_Redis
-    n_Feed_Svc_x_N_1 --> n_Read_replica
-    n_Feed_Svc_x_N_2 --> n_Read_replica
+    n_LB --> n_Feed_Svc_xN
+    n_Feed_Svc_xN --> n_Redis
+    n_Feed_Svc_xN --> n_Read_replica
     n_DB --> n_Read_replica
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
+    n_KW --> n_DB
+    n_KW --> n_Redis
+    n_SF --> n_KW
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
@@ -318,32 +286,21 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_Feed_Svc_x_N_1["Feed Svc 1"]
-    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_Feed_Svc_xN["Feed Svc x N"]
     n_Elasticsearch["Elasticsearch<br/>cricket = full scan<br/>-> inverted index"]
     n_Redis["Redis (feed + category)"]
-    n_Read_replica["Read replica"]
-    n_DB["DB"]
-    n_Worker["Worker (saaf + dedupe)"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher (timeout + fuse)"]
-    n_Sources["Sources"]
+    n_DBR["DB + Read replica"]
+    n_KW["Kafka -> Worker"]
+    n_SF["Sources -> Fetcher"]
     n_USER --> n_LB
-    n_LB --> n_Feed_Svc_x_N_1
-    n_LB --> n_Feed_Svc_x_N_2
-    n_Feed_Svc_x_N_1 --> n_Elasticsearch
-    n_Feed_Svc_x_N_2 --> n_Elasticsearch
-    n_Feed_Svc_x_N_1 --> n_Redis
-    n_Feed_Svc_x_N_2 --> n_Redis
-    n_Feed_Svc_x_N_1 --> n_Read_replica
-    n_Feed_Svc_x_N_2 --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Worker --> n_Elasticsearch
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
+    n_LB --> n_Feed_Svc_xN
+    n_Feed_Svc_xN --> n_Elasticsearch
+    n_Feed_Svc_xN --> n_Redis
+    n_Feed_Svc_xN --> n_DBR
+    n_KW --> n_DBR
+    n_KW --> n_Redis
+    n_KW --> n_Elasticsearch
+    n_SF --> n_KW
     style n_Elasticsearch fill:#f9a825,color:#000
 ```
 ```
@@ -364,35 +321,22 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_LB["LB"]
-    n_Feed_Svc_x_N_1["Feed Svc 1"]
-    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_LF["LB -> Feed Svc x N"]
     n_Elasticsearch["Elasticsearch"]
     n_Redis["Redis (feed + category)"]
-    n_Read_replica["Read replica"]
-    n_DB["DB"]
+    n_DBR["DB + Read replica"]
     n_Archive["Archive<br/>2 crore row, kharcha<br/>-> mahine ka partition"]
-    n_Worker["Worker (saaf + dedupe)"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher (timeout + fuse)"]
-    n_Sources["Sources"]
-    n_USER --> n_LB
-    n_LB --> n_Feed_Svc_x_N_1
-    n_LB --> n_Feed_Svc_x_N_2
-    n_Feed_Svc_x_N_1 --> n_Elasticsearch
-    n_Feed_Svc_x_N_2 --> n_Elasticsearch
-    n_Feed_Svc_x_N_1 --> n_Redis
-    n_Feed_Svc_x_N_2 --> n_Redis
-    n_Feed_Svc_x_N_1 --> n_Read_replica
-    n_Feed_Svc_x_N_2 --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_DB --> n_Archive
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Worker --> n_Elasticsearch
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
+    n_KW["Kafka -> Worker"]
+    n_SF["Sources -> Fetcher"]
+    n_USER --> n_LF
+    n_LF --> n_Elasticsearch
+    n_LF --> n_Redis
+    n_LF --> n_DBR
+    n_DBR --> n_Archive
+    n_KW --> n_DBR
+    n_KW --> n_Redis
+    n_KW --> n_Elasticsearch
+    n_SF --> n_KW
     style n_Archive fill:#f9a825,color:#000
 ```
 ```
@@ -415,35 +359,21 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_LB["LB"]
-    n_Feed_Svc_x_N_1["Feed Svc 1"]
-    n_Feed_Svc_x_N_2["Feed Svc 2"]
-    n_Elasticsearch["Elasticsearch"]
-    n_Redis["Redis (feed + category)"]
+    n_LF["LB -> Feed Svc x N"]
+    n_RES["Redis + Elasticsearch"]
     n_Read_replica["Read replica"]
     n_DB["DB<br/>ek machine nahi jhelti<br/>-> article_id hash se shard"]
     n_Archive["Archive"]
-    n_Worker["Worker (saaf + dedupe)"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher (timeout + fuse)"]
-    n_Sources["Sources"]
-    n_USER --> n_LB
-    n_LB --> n_Feed_Svc_x_N_1
-    n_LB --> n_Feed_Svc_x_N_2
-    n_Feed_Svc_x_N_1 --> n_Elasticsearch
-    n_Feed_Svc_x_N_2 --> n_Elasticsearch
-    n_Feed_Svc_x_N_1 --> n_Redis
-    n_Feed_Svc_x_N_2 --> n_Redis
-    n_Feed_Svc_x_N_1 --> n_Read_replica
-    n_Feed_Svc_x_N_2 --> n_Read_replica
+    n_KW["Kafka -> Worker"]
+    n_SF["Sources -> Fetcher"]
+    n_USER --> n_LF
+    n_LF --> n_RES
+    n_LF --> n_Read_replica
     n_DB --> n_Read_replica
     n_DB --> n_Archive
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Worker --> n_Elasticsearch
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
+    n_KW --> n_DB
+    n_KW --> n_RES
+    n_SF --> n_KW
     style n_DB fill:#f9a825,color:#000
 ```
 ```

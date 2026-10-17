@@ -236,20 +236,16 @@ flowchart LR
     n_App["App (op bhejo)"]
     n_CDN["CDN (app ki files)"]
     n_LB["LB (docId se ring)"]
-    n_CS1["Conn-Server 1 (owner + OT)"]
-    n_CS2["Conn-Server 2"]
+    n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
     n_BUF["Redis buffer<br/>har akshar pe DB write<br/>-> jama karo, 1 sec batch"]
     n_CAS["Cassandra edit log"]
     n_USER --> n_App
     n_App --> n_CDN
     n_App --> n_LB
-    n_LB --> n_CS1
-    n_LB --> n_CS2
-    n_CS1 --> n_PS
-    n_CS2 --> n_PS
-    n_CS1 --> n_BUF
-    n_CS2 --> n_BUF
+    n_LB --> n_Conn_Server_xN
+    n_Conn_Server_xN --> n_PS
+    n_Conn_Server_xN --> n_BUF
     n_BUF --> n_CAS
     style n_BUF fill:#f9a825,color:#000
     style n_CAS fill:#f9a825,color:#000
@@ -277,26 +273,19 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_CDN["CDN (app ki files)"]
+    n_App["App (op bhejo, files CDN se)"]
     n_LB["LB (docId se ring)"]
-    n_CS1["Conn-Server 1 (owner + OT)"]
-    n_CS2["Conn-Server 2"]
+    n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
     n_SQL["SQL permissions<br/>net gaya, typing ruke?<br/>-> likhna AP, permission CP"]
     n_BUF["Redis buffer"]
     n_CAS["Cassandra edit log"]
     n_USER --> n_App
-    n_App --> n_CDN
     n_App --> n_LB
-    n_LB --> n_CS1
-    n_LB --> n_CS2
-    n_CS1 --> n_PS
-    n_CS2 --> n_PS
-    n_CS1 --> n_BUF
-    n_CS2 --> n_BUF
-    n_CS1 --> n_SQL
-    n_CS2 --> n_SQL
+    n_LB --> n_Conn_Server_xN
+    n_Conn_Server_xN --> n_PS
+    n_Conn_Server_xN --> n_BUF
+    n_Conn_Server_xN --> n_SQL
     n_BUF --> n_CAS
     style n_SQL fill:#f9a825,color:#000
 ```
@@ -318,26 +307,19 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_CDN["CDN (app ki files)"]
+    n_App["App (op bhejo, files CDN se)"]
     n_LB["LB (docId se ring)"]
-    n_CS1["Conn-Server 1 (owner + OT)"]
-    n_CS2["Conn-Server 2"]
+    n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
     n_SQL["SQL permissions"]
     n_BUF["Redis buffer"]
     n_CAS["Cassandra edit log + snapshot<br/>purana doc, 10 lakh op<br/>-> photo + baad ke op"]
     n_USER --> n_App
-    n_App --> n_CDN
     n_App --> n_LB
-    n_LB --> n_CS1
-    n_LB --> n_CS2
-    n_CS1 --> n_PS
-    n_CS2 --> n_PS
-    n_CS1 --> n_BUF
-    n_CS2 --> n_BUF
-    n_CS1 --> n_SQL
-    n_CS2 --> n_SQL
+    n_LB --> n_Conn_Server_xN
+    n_Conn_Server_xN --> n_PS
+    n_Conn_Server_xN --> n_BUF
+    n_Conn_Server_xN --> n_SQL
     n_BUF --> n_CAS
     style n_CAS fill:#f9a825,color:#000
 ```

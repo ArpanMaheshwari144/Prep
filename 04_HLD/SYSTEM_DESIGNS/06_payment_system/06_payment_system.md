@@ -381,27 +381,21 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB_API_Gateway["LB / API Gateway"]
-    n_Payment_Svc_x_N_1["Payment Svc 1"]
-    n_Payment_Svc_x_N_2["Payment Svc 2"]
+    n_Payment_Svc_xN["Payment Svc x N"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
     n_DB["SQL DB + Ledger"]
     n_Read_replica["Read replica<br/>report ne DB ghera<br/>-> report copy se"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_LB_API_Gateway
-    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
-    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
-    n_Payment_Svc_x_N_1 --> n_Idempotency_store
-    n_Payment_Svc_x_N_2 --> n_Idempotency_store
-    n_Payment_Svc_x_N_1 --> n_PSP
-    n_Payment_Svc_x_N_2 --> n_PSP
-    n_Payment_Svc_x_N_1 --> n_DB
-    n_Payment_Svc_x_N_2 --> n_DB
+    n_LB_API_Gateway --> n_Payment_Svc_xN
+    n_Payment_Svc_xN --> n_Idempotency_store
+    n_Payment_Svc_xN --> n_PSP
+    n_Payment_Svc_xN --> n_DB
     n_DB --> n_Read_replica
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
-    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
-    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
+    n_PSP -.-> |webhook| n_Payment_Svc_xN
     style n_Read_replica fill:#f9a825,color:#000
 ```
 ```
@@ -426,27 +420,21 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB_API_Gateway["LB / API Gateway"]
-    n_Payment_Svc_x_N_1["Payment Svc 1"]
-    n_Payment_Svc_x_N_2["Payment Svc 2"]
+    n_Payment_Svc_xN["Payment Svc x N"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
     n_SQL_DB_shard_by_account_id["SQL DB shard<br/>1000 crore row, likhai dheemi<br/>-> shard by account_id"]
     n_Read_replica["Read replica"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_LB_API_Gateway
-    n_LB_API_Gateway --> n_Payment_Svc_x_N_1
-    n_LB_API_Gateway --> n_Payment_Svc_x_N_2
-    n_Payment_Svc_x_N_1 --> n_Idempotency_store
-    n_Payment_Svc_x_N_2 --> n_Idempotency_store
-    n_Payment_Svc_x_N_1 --> n_PSP
-    n_Payment_Svc_x_N_2 --> n_PSP
-    n_Payment_Svc_x_N_1 --> n_SQL_DB_shard_by_account_id
-    n_Payment_Svc_x_N_2 --> n_SQL_DB_shard_by_account_id
+    n_LB_API_Gateway --> n_Payment_Svc_xN
+    n_Payment_Svc_xN --> n_Idempotency_store
+    n_Payment_Svc_xN --> n_PSP
+    n_Payment_Svc_xN --> n_SQL_DB_shard_by_account_id
     n_SQL_DB_shard_by_account_id --> n_Read_replica
     n_Reconciliation_job --> n_SQL_DB_shard_by_account_id
     n_Reconciliation_job --> n_PSP
-    n_PSP -.->|webhook| n_Payment_Svc_x_N_1
-    n_PSP -.->|webhook| n_Payment_Svc_x_N_2
+    n_PSP -.-> |webhook| n_Payment_Svc_xN
     style n_SQL_DB_shard_by_account_id fill:#f9a825,color:#000
 ```
 ```

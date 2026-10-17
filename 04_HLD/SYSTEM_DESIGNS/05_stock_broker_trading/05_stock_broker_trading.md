@@ -322,23 +322,17 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet"]
+    n_OW["Order Service + Wallet"]
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
     n_Pub_Sub["Pub/Sub"]
     n_WebSocket["WebSocket<br/>10 lakh log price poochh rahe<br/>-> push, TV jaisa"]
     n_USERS["USERS"]
-    n_Settlement["Settlement"]
-    n_Wallet_DB["Wallet DB"]
-    n_Portfolio_DB["Portfolio DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Event_Log
+    n_SET["Settlement -> Wallet / Portfolio DB"]
+    n_USER --> n_OW
+    n_OW --> n_Event_Log
     n_Event_Log --> n_Matching_Engine
-    n_Matching_Engine --> n_Settlement
-    n_Settlement --> n_Wallet_DB
-    n_Settlement --> n_Portfolio_DB
+    n_Matching_Engine --> n_SET
     n_Matching_Engine --> n_Pub_Sub
     n_Pub_Sub --> n_WebSocket
     n_WebSocket --> n_USERS

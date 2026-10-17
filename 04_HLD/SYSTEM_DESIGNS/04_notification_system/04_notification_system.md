@@ -139,29 +139,17 @@ flowchart LR
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES"]
-    n_SMS_queue["SMS queue<br/>SMS dheema, sab atke<br/>-> har raaste ki alag line"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio"]
+    n_PUSH["Push line<br/>queue + worker -> FCM / APNs"]
+    n_EMAIL["Email line<br/>queue + worker -> SES"]
+    n_SMSL["SMS line (queue + worker -> Twilio)<br/>SMS dheema, sab atke<br/>-> har raaste ki alag line"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    style n_Push_queue fill:#f9a825,color:#000
-    style n_Email_queue fill:#f9a825,color:#000
-    style n_SMS_queue fill:#f9a825,color:#000
+    n_Notification_Svc --> n_PUSH
+    n_Notification_Svc --> n_EMAIL
+    n_Notification_Svc --> n_SMSL
+    style n_PUSH fill:#f9a825,color:#000
+    style n_EMAIL fill:#f9a825,color:#000
+    style n_SMSL fill:#f9a825,color:#000
 ```
 ```
 DIKKAT     Usi order ki khabar push, email, SMS teeno se. Teeno ek line me; SMS company dheemi hui -> SMS
@@ -184,30 +172,12 @@ flowchart LR
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio"]
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis<br/>worker mara, do email<br/>-> parchi SET NX"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_SMS_worker --> n_Redis
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_Redis
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
@@ -231,30 +201,12 @@ flowchart LR
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio"]
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis (parchi)<br/>parchi lagi, OTP gaya nahi<br/>-> SENDING / SENT"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_SMS_worker --> n_Redis
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_Redis
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
@@ -282,34 +234,14 @@ flowchart LR
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio"]
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis (parchi)"]
     n_DLQ["DLQ<br/>company pe hathoda<br/>-> backoff + jitter, phir DLQ"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_SMS_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-    n_SMS_worker --> n_DLQ
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_Redis
+    n_LINES --> n_DLQ
     style n_DLQ fill:#f9a825,color:#000
 ```
 ```
@@ -334,36 +266,20 @@ flowchart LR
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
+    n_LINES["Push / Email / SMS line + worker"]
     n_SES["SES + SendGrid"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
     n_Twilio["Twilio + SNS<br/>SMS 30 sec atki<br/>-> timeout + fuse"]
     n_Redis["Redis (parchi)"]
     n_DLQ["DLQ"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_SMS_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-    n_SMS_worker --> n_DLQ
-    style n_Twilio fill:#f9a825,color:#000
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_SES
+    n_LINES --> n_Twilio
+    n_LINES --> n_Redis
+    n_LINES --> n_DLQ
     style n_SES fill:#f9a825,color:#000
+    style n_Twilio fill:#f9a825,color:#000
 ```
 ```
 DIKKAT     SMS company abhi bhi dheemi: line alag ho gayi, par har call 30 sec atki. Saare SMS worker
@@ -387,34 +303,14 @@ flowchart LR
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka high / medium / low<br/>OTP offer ke peeche<br/>-> OTP ki alag tez line"]
     n_Notification_Svc["Notification Svc"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES + SendGrid"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio + SNS"]
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis (parchi)"]
     n_DLQ["DLQ"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_SMS_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-    n_SMS_worker --> n_DLQ
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_Redis
+    n_LINES --> n_DLQ
     style n_Kafka fill:#f9a825,color:#000
 ```
 ```
@@ -438,34 +334,14 @@ flowchart LR
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES + SendGrid"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio + SNS"]
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis (parchi + baalti)<br/>sale pe 429<br/>-> saanjhi baalti, token"]
     n_DLQ["DLQ"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_SMS_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-    n_SMS_worker --> n_DLQ
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_Redis
+    n_LINES --> n_DLQ
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
@@ -490,38 +366,17 @@ flowchart LR
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES + SendGrid"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio + SNS"]
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis (parchi + baalti)"]
     n_DLQ["DLQ"]
     n_Webhook_Svc["Webhook Svc<br/>bheja, par mila?<br/>-> webhook + company ka msg id"]
     n_Tracking_DB["Tracking DB"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_SMS_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-    n_SMS_worker --> n_DLQ
-    n_SES --> n_Webhook_Svc
-    n_Twilio --> n_Webhook_Svc
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_Redis
+    n_LINES --> n_DLQ
+    n_LINES --> n_Webhook_Svc
     n_Webhook_Svc --> n_Tracking_DB
     style n_Webhook_Svc fill:#f9a825,color:#000
     style n_Tracking_DB fill:#f9a825,color:#000
@@ -545,50 +400,22 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_Admin["Admin"]
-    n_Campaign_Svc["Campaign Svc<br/>1 crore ko offer<br/>-> 1000 ke tukde"]
-    n_Campaign_DB["Campaign DB"]
+    n_CAMP["Campaign Svc<br/>1 crore ko offer<br/>-> 1000 ke tukde"]
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES + SendGrid"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio + SNS"]
-    n_Redis["Redis (parchi + baalti)"]
-    n_DLQ["DLQ"]
-    n_Webhook_Svc["Webhook Svc"]
-    n_Tracking_DB["Tracking DB"]
-    n_Admin --> n_Campaign_Svc
-    n_Campaign_Svc --> n_Campaign_DB
-    n_Campaign_Svc --> n_Kafka
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
+    n_RDLQ["Redis (parchi + baalti) + DLQ"]
+    n_WH["Webhook Svc + Tracking DB"]
+    n_Admin --> n_CAMP
+    n_CAMP --> n_Kafka
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_SMS_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-    n_SMS_worker --> n_DLQ
-    n_SES --> n_Webhook_Svc
-    n_Twilio --> n_Webhook_Svc
-    n_Webhook_Svc --> n_Tracking_DB
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_RDLQ
+    n_LINES --> n_WH
     style n_Admin fill:#f9a825,color:#000
-    style n_Campaign_Svc fill:#f9a825,color:#000
-    style n_Campaign_DB fill:#f9a825,color:#000
+    style n_CAMP fill:#f9a825,color:#000
 ```
 ```
 DIKKAT     Shaam ko admin ne "Diwali offer sabko" chalaya = 1 crore user. Ek-ek karke bheja -> request ghanton
@@ -613,54 +440,22 @@ AAGE POOCHEGA:
 #### 11 Raat 2 baje offer ka SMS, jabki maine band kiya tha
 ```mermaid
 flowchart LR
-    n_Admin["Admin"]
-    n_Campaign_Svc["Campaign Svc"]
-    n_Campaign_DB["Campaign DB"]
+    n_CAMP["Admin -> Campaign Svc + DB"]
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
-    n_User_pref_DB["User-pref DB<br/>raat 2 baje offer SMS<br/>-> pasand + shaanti"]
-    n_Template_DB["Template DB (saancha)"]
-    n_Push_queue["Push queue"]
-    n_Push_worker["Push worker"]
-    n_FCM_APNs["FCM / APNs"]
-    n_Email_queue["Email queue"]
-    n_Email_worker["Email worker"]
-    n_SES["SES + SendGrid"]
-    n_SMS_queue["SMS queue"]
-    n_SMS_worker["SMS worker"]
-    n_Twilio["Twilio + SNS"]
-    n_Redis["Redis (parchi + baalti)"]
-    n_DLQ["DLQ"]
-    n_Webhook_Svc["Webhook Svc"]
-    n_Tracking_DB["Tracking DB"]
-    n_Admin --> n_Campaign_Svc
-    n_Campaign_Svc --> n_Campaign_DB
-    n_Campaign_Svc --> n_Kafka
+    n_PREF["User-pref DB<br/>raat 2 baje offer SMS<br/>-> pasand + shaanti"]
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
+    n_RDLQ["Redis (parchi + baalti) + DLQ"]
+    n_WH["Webhook Svc + Tracking DB"]
+    n_CAMP --> n_Kafka
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
-    n_Notification_Svc --> n_User_pref_DB
-    n_Notification_Svc --> n_Template_DB
-    n_Notification_Svc --> n_Push_queue
-    n_Notification_Svc --> n_Email_queue
-    n_Notification_Svc --> n_SMS_queue
-    n_Push_queue --> n_Push_worker
-    n_Push_worker --> n_FCM_APNs
-    n_Email_queue --> n_Email_worker
-    n_Email_worker --> n_SES
-    n_SMS_queue --> n_SMS_worker
-    n_SMS_worker --> n_Twilio
-    n_Push_worker --> n_Redis
-    n_Email_worker --> n_Redis
-    n_SMS_worker --> n_Redis
-    n_Push_worker --> n_DLQ
-    n_Email_worker --> n_DLQ
-    n_SMS_worker --> n_DLQ
-    n_SES --> n_Webhook_Svc
-    n_Twilio --> n_Webhook_Svc
-    n_Webhook_Svc --> n_Tracking_DB
-    style n_User_pref_DB fill:#f9a825,color:#000
-    style n_Template_DB fill:#f9a825,color:#000
+    n_Notification_Svc --> n_PREF
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_RDLQ
+    n_LINES --> n_WH
+    style n_PREF fill:#f9a825,color:#000
 ```
 ```
 DIKKAT     Maine "offer SMS band" kiya tha aur raat 10 se subah 8 shaanti lagayi thi. Phir bhi raat 2 baje

@@ -210,22 +210,20 @@ flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis["Redis (seat map)"]
-    n_Read_replica["Read replica"]
+    n_RRR["Redis + Read replica"]
     n_Kafka["Kafka<br/>3000 seat, 2 lakh log<br/>-> waiting room + har show ek line"]
     n_Booking_worker["Booking worker"]
     n_SQL_primary["SQL primary"]
     n_Sweeper_job["Sweeper job"]
     n_USER --> n_App
     n_App --> n_Payment_Svc
-    n_App --> n_Redis
-    n_App --> n_Read_replica
-    n_App -->|sirf badi sale| n_Kafka
+    n_App --> n_RRR
+    n_App --> |sirf badi sale| n_Kafka
     n_Kafka --> n_Booking_worker
     n_Booking_worker --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
     n_App --> n_SQL_primary
-    n_SQL_primary --> n_Read_replica
+    n_SQL_primary --> n_RRR
     style n_Kafka fill:#f9a825,color:#000
     style n_Booking_worker fill:#f9a825,color:#000
 ```
@@ -257,17 +255,15 @@ flowchart LR
     n_Payment_Svc["Payment Svc (bookingId)"]
     n_Redis["Redis Cluster<br/>restart, sab replica pe<br/>-> SET NX lock, pehla banaye"]
     n_Read_replica["Read replica"]
-    n_Kafka["Kafka (sirf badi sale)"]
-    n_Booking_worker["Booking worker"]
+    n_KB["Kafka + Booking worker (badi sale)"]
     n_SQL_primary["SQL primary"]
     n_Sweeper_job["Sweeper job"]
     n_USER --> n_App
     n_App --> n_Payment_Svc
     n_App --> n_Redis
     n_App --> n_Read_replica
-    n_App -->|sirf badi sale| n_Kafka
-    n_Kafka --> n_Booking_worker
-    n_Booking_worker --> n_SQL_primary
+    n_App --> |sirf badi sale| n_KB
+    n_KB --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
     n_App --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
@@ -293,35 +289,23 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB["LB<br/>App machine giri<br/>-> stateless App + health check"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
+    n_App_xN["App x N"]
     n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis_Cluster["Redis Cluster"]
-    n_Read_replica["Read replica"]
-    n_Kafka["Kafka"]
-    n_Booking_worker["Booking worker"]
+    n_RRR["Redis Cluster + Read replica"]
+    n_KB["Kafka + Booking worker (badi sale)"]
     n_SQL_primary["SQL primary"]
     n_Sweeper_job["Sweeper job"]
     n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Payment_Svc
-    n_App_x_N_2 --> n_Payment_Svc
-    n_App_x_N_1 --> n_Redis_Cluster
-    n_App_x_N_2 --> n_Redis_Cluster
-    n_App_x_N_1 --> n_Read_replica
-    n_App_x_N_2 --> n_Read_replica
-    n_App_x_N_1 -->|sirf badi sale| n_Kafka
-    n_App_x_N_2 -->|sirf badi sale| n_Kafka
-    n_Kafka --> n_Booking_worker
-    n_Booking_worker --> n_SQL_primary
+    n_LB --> n_App_xN
+    n_App_xN --> n_Payment_Svc
+    n_App_xN --> n_RRR
+    n_App_xN --> |sirf badi sale| n_KB
+    n_KB --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
-    n_App_x_N_1 --> n_SQL_primary
-    n_App_x_N_2 --> n_SQL_primary
-    n_SQL_primary --> n_Read_replica
+    n_App_xN --> n_SQL_primary
+    n_SQL_primary --> n_RRR
     style n_LB fill:#f9a825,color:#000
-    style n_App_x_N_1 fill:#f9a825,color:#000
-    style n_App_x_N_2 fill:#f9a825,color:#000
+    style n_App_xN fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:

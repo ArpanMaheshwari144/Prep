@@ -285,25 +285,22 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
+    n_EDGE["Route 53 + ALB"]
     n_API_Gateway["API Gateway"]
     n_Redis_Cluster["Redis Cluster"]
     n_Kafka["Kafka<br/>bot har 60 sec phir<br/>-> pattern dekh ke WAF ban"]
     n_Pattern_Svc["Pattern Svc"]
     n_WAF["WAF"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_ALB --> n_API_Gateway
+    n_App_xN["App x N"]
+    n_EDGE --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
+    n_API_Gateway --> n_App_xN
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
-    n_USER --> n_Route_53
-    n_Route_53 --> n_WAF
-    n_WAF --> n_ALB
+    n_USER --> n_EDGE
+    n_EDGE --> n_WAF
+    n_WAF --> n_EDGE
     style n_Kafka fill:#f9a825,color:#000
     style n_Pattern_Svc fill:#f9a825,color:#000
     style n_WAF fill:#f9a825,color:#000
@@ -326,25 +323,22 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
+    n_EDGE["Route 53 + ALB"]
     n_API_Gateway["API Gateway<br/>sab limit me, server gira<br/>-> global cap + load shedding"]
     n_Redis_Cluster["Redis Cluster"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
     n_WAF["WAF"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_ALB --> n_API_Gateway
+    n_App_xN["App x N"]
+    n_EDGE --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
+    n_API_Gateway --> n_App_xN
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
-    n_USER --> n_Route_53
-    n_Route_53 --> n_WAF
-    n_WAF --> n_ALB
+    n_USER --> n_EDGE
+    n_EDGE --> n_WAF
+    n_WAF --> n_EDGE
     style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
@@ -363,25 +357,22 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
+    n_EDGE["Route 53 + ALB"]
     n_API_Gateway["API Gateway<br/>attack me Redis gira, API khuli<br/>-> local counter fallback"]
     n_Redis_Cluster["Redis Cluster"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
     n_WAF["WAF"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_ALB --> n_API_Gateway
+    n_App_xN["App x N"]
+    n_EDGE --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
+    n_API_Gateway --> n_App_xN
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
-    n_USER --> n_Route_53
-    n_Route_53 --> n_WAF
-    n_WAF --> n_ALB
+    n_USER --> n_EDGE
+    n_EDGE --> n_WAF
+    n_WAF --> n_EDGE
     style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
@@ -397,25 +388,22 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
+    n_EDGE["Route 53 + ALB"]
     n_API_Gateway["API Gateway"]
     n_Redis_Cluster["Redis Cluster<br/>ek IP pe 1000 log<br/>-> key = user_id"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
     n_WAF["WAF"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_ALB --> n_API_Gateway
+    n_App_xN["App x N"]
+    n_EDGE --> n_API_Gateway
     n_API_Gateway --> n_Redis_Cluster
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
+    n_API_Gateway --> n_App_xN
     n_Kafka --> n_Pattern_Svc
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
-    n_USER --> n_Route_53
-    n_Route_53 --> n_WAF
-    n_WAF --> n_ALB
+    n_USER --> n_EDGE
+    n_EDGE --> n_WAF
+    n_WAF --> n_EDGE
     style n_Redis_Cluster fill:#f9a825,color:#000
 ```
 ```

@@ -349,30 +349,21 @@ flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
     n_ALB["ALB<br/>akeli App giri, sab band<br/>-> stateless App x N"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
+    n_App_xN["App x N"]
+    n_FAN["Kafka + Fanout workers"]
     n_Redis_inbox["Redis inbox"]
     n_Hot_tweet_cache["Hot-tweet cache"]
     n_Cassandra["Cassandra"]
     n_USER --> n_Route_53
     n_Route_53 --> n_ALB
-    n_ALB --> n_App_x_N_1
-    n_ALB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Hot_tweet_cache
-    n_App_x_N_2 --> n_Hot_tweet_cache
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App_x_N_1 --> n_Redis_inbox
-    n_App_x_N_2 --> n_Redis_inbox
+    n_ALB --> n_App_xN
+    n_App_xN --> n_FAN
+    n_App_xN --> n_Hot_tweet_cache
+    n_App_xN --> n_Cassandra
+    n_FAN --> n_Redis_inbox
+    n_App_xN --> n_Redis_inbox
     style n_ALB fill:#f9a825,color:#000
-    style n_App_x_N_1 fill:#f9a825,color:#000
-    style n_App_x_N_2 fill:#f9a825,color:#000
+    style n_App_xN fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -388,35 +379,26 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB"]
+    n_EDGE["Route 53 + ALB"]
     n_Tweet_Svc["Tweet Svc<br/>padhne ki bheed, likhna dheema<br/>-> alag service"]
     n_Cassandra["Cassandra"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
+    n_FAN["Kafka + Fanout workers"]
+    n_RI["Redis (inbox + hot tweet)"]
     n_Timeline_Svc["Timeline Svc"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_User_Svc["User Svc"]
-    n_Graph_DB["Graph DB"]
-    n_USER --> n_Route_53
-    n_Route_53 --> n_ALB
-    n_ALB --> n_Tweet_Svc
-    n_ALB --> n_Timeline_Svc
-    n_ALB --> n_User_Svc
+    n_UG["User Svc"]
+    n_USER --> n_EDGE
+    n_EDGE --> n_Tweet_Svc
+    n_EDGE --> n_Timeline_Svc
+    n_EDGE --> n_UG
     n_Tweet_Svc --> n_Cassandra
-    n_Tweet_Svc --> n_Kafka
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_Timeline_Svc --> n_Redis_inbox
-    n_Timeline_Svc --> n_Hot_tweet_cache
+    n_Tweet_Svc --> n_FAN
+    n_FAN --> n_RI
+    n_Timeline_Svc --> n_RI
     n_Timeline_Svc --> n_Cassandra
-    n_User_Svc --> n_Graph_DB
-    n_Fanout_workers --> n_Graph_DB
+    n_FAN --> n_UG
     style n_Tweet_Svc fill:#f9a825,color:#000
     style n_Timeline_Svc fill:#f9a825,color:#000
-    style n_User_Svc fill:#f9a825,color:#000
-    style n_Graph_DB fill:#f9a825,color:#000
+    style n_UG fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -435,33 +417,20 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53"]
+    n_EDGE["Route 53 + ALB"]
     n_CDN["CDN<br/>video sabko dheemi, mehngi<br/>-> S3 me, paas se CDN"]
-    n_ALB["ALB"]
-    n_Tweet_Svc["Tweet Svc"]
+    n_SVC["Tweet / Timeline / User Svc + Graph"]
     n_Cassandra["Cassandra"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Timeline_Svc["Timeline Svc"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_User_Svc["User Svc"]
-    n_Graph_DB["Graph DB"]
+    n_FAN["Kafka + Fanout workers"]
+    n_RI["Redis (inbox + hot tweet)"]
     n_S3["S3 media"]
-    n_USER --> n_Route_53
-    n_ALB --> n_Tweet_Svc
-    n_ALB --> n_Timeline_Svc
-    n_ALB --> n_User_Svc
-    n_Tweet_Svc --> n_Cassandra
-    n_Tweet_Svc --> n_Kafka
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_Timeline_Svc --> n_Redis_inbox
-    n_Timeline_Svc --> n_Hot_tweet_cache
-    n_Timeline_Svc --> n_Cassandra
-    n_User_Svc --> n_Graph_DB
-    n_Fanout_workers --> n_Graph_DB
-    n_Route_53 --> n_ALB
+    n_USER --> n_EDGE
+    n_EDGE --> n_SVC
+    n_SVC --> n_Cassandra
+    n_SVC --> n_FAN
+    n_FAN --> n_RI
+    n_SVC --> n_RI
+    n_FAN --> n_SVC
     n_USER --> n_CDN
     n_CDN --> n_S3
     style n_CDN fill:#f9a825,color:#000

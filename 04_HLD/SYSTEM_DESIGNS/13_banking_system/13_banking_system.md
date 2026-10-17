@@ -381,20 +381,16 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_S1["Banking Svc 1"]
-    n_S2["Banking Svc 2"]
+    n_Banking_Svc_xN["Banking Svc x N"]
     n_RR["Read replica"]
     n_DB["SQL DB"]
     n_K["Kafka"]
     n_S3["Archive (S3)<br/>5 saal ek table me<br/>-> mahine ke tukde, purane S3"]
     n_REC["Reconciliation job"]
     n_USER --> n_LB
-    n_LB --> n_S1
-    n_LB --> n_S2
-    n_S1 --> n_RR
-    n_S2 --> n_RR
-    n_S1 --> n_DB
-    n_S2 --> n_DB
+    n_LB --> n_Banking_Svc_xN
+    n_Banking_Svc_xN --> n_RR
+    n_Banking_Svc_xN --> n_DB
     n_DB --> n_K
     n_REC --> n_DB
     n_DB --> n_S3

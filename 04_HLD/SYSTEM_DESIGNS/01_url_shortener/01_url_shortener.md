@@ -216,28 +216,18 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
+    n_App_xN["App x N"]
     n_Counter["Counter"]
     n_Kafka["Kafka<br/>ginti likhi, redirect dheema<br/>-> khabar peeche"]
     n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
     n_DLQ["DLQ"]
-    n_Redis["Redis"]
-    n_DB["DB"]
+    n_RD["Redis + DB"]
     n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
+    n_LB --> n_App_xN
+    n_App_xN --> n_Counter
+    n_App_xN --> n_Kafka
+    n_App_xN --> n_RD
     n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_DB
-    n_App_x_N_2 --> n_DB
     n_Analytics_svc --> n_DLQ
     style n_Kafka fill:#f9a825,color:#000
     style n_Analytics_svc fill:#f9a825,color:#000
@@ -265,29 +255,17 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
+    n_App_xN["App x N"]
     n_Counter["Counter"]
-    n_Kafka["Kafka"]
-    n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
-    n_DLQ["DLQ"]
+    n_ANA["Analytics (Kafka + DLQ)"]
     n_Redis["Redis"]
     n_Cassandra["Cassandra<br/>5 saal me 90 TB<br/>-> code se baanto (ring)"]
     n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Analytics_svc --> n_DLQ
+    n_LB --> n_App_xN
+    n_App_xN --> n_Counter
+    n_App_xN --> n_ANA
+    n_App_xN --> n_Redis
+    n_App_xN --> n_Cassandra
     style n_Cassandra fill:#f9a825,color:#000
 ```
 ```
@@ -315,29 +293,17 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
+    n_App_xN["App x N"]
     n_Counter["Counter"]
-    n_Kafka["Kafka"]
-    n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
-    n_DLQ["DLQ"]
+    n_ANA["Analytics (Kafka + DLQ)"]
     n_Redis["Redis"]
     n_Cassandra["Cassandra<br/>naya link, turant 404<br/>-> 2 me likho, 2 se padho"]
     n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Analytics_svc --> n_DLQ
+    n_LB --> n_App_xN
+    n_App_xN --> n_Counter
+    n_App_xN --> n_ANA
+    n_App_xN --> n_Redis
+    n_App_xN --> n_Cassandra
     style n_Cassandra fill:#f9a825,color:#000
 ```
 ```
@@ -367,38 +333,21 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53<br/>LB hi gira<br/>-> 2 LB + health check"]
-    n_LB_1["LB 1"]
-    n_LB_2["LB 2"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
+    n_LB_xN["LB x N"]
+    n_App_xN["App x N"]
     n_Counter["Counter"]
-    n_Kafka["Kafka"]
-    n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
-    n_DLQ["DLQ"]
+    n_ANA["Analytics (Kafka + DLQ)"]
     n_Redis["Redis"]
     n_Cassandra["Cassandra"]
     n_USER --> n_Route_53
-    n_Route_53 --> n_LB_1
-    n_Route_53 --> n_LB_2
-    n_LB_1 --> n_App_x_N_1
-    n_LB_1 --> n_App_x_N_2
-    n_LB_2 --> n_App_x_N_1
-    n_LB_2 --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Analytics_svc --> n_DLQ
+    n_Route_53 --> n_LB_xN
+    n_LB_xN --> n_App_xN
+    n_App_xN --> n_Counter
+    n_App_xN --> n_ANA
+    n_App_xN --> n_Redis
+    n_App_xN --> n_Cassandra
     style n_Route_53 fill:#f9a825,color:#000
-    style n_LB_1 fill:#f9a825,color:#000
-    style n_LB_2 fill:#f9a825,color:#000
+    style n_LB_xN fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
@@ -416,37 +365,20 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53"]
+    n_EDGE["Route 53 + LB x N"]
     n_API_Gateway["API Gateway<br/>spammer 5,000 link / sec<br/>-> rate limit + WAF"]
-    n_LB_1["LB 1"]
-    n_LB_2["LB 2"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
+    n_App_xN["App x N"]
     n_Counter["Counter"]
-    n_Kafka["Kafka"]
-    n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
-    n_DLQ["DLQ"]
+    n_ANA["Analytics (Kafka + DLQ)"]
     n_Redis["Redis"]
     n_Cassandra["Cassandra"]
-    n_USER --> n_Route_53
-    n_Route_53 --> n_LB_1
-    n_Route_53 --> n_LB_2
-    n_LB_1 --> n_API_Gateway
-    n_LB_2 --> n_API_Gateway
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Analytics_svc --> n_DLQ
+    n_USER --> n_EDGE
+    n_EDGE --> n_API_Gateway
+    n_API_Gateway --> n_App_xN
+    n_App_xN --> n_Counter
+    n_App_xN --> n_ANA
+    n_App_xN --> n_Redis
+    n_App_xN --> n_Cassandra
     style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```

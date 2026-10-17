@@ -240,28 +240,21 @@ flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
-    n_Redis["Redis<br/>har 2 sec haal, DB ghira<br/>-> cache + replica"]
+    n_RC["Redis<br/>har 2 sec haal, DB ghira<br/>-> cache + replica"]
     n_DB["DB (haal)"]
-    n_Read_replica["Read replica"]
     n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
+    n_CHAIN["Kafka -> Worker -> Validator"]
     n_CLIENT --> n_S3
     n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_RC
     n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_Upload_Svc --> n_Kafka
+    n_DB --> n_RC
+    n_Upload_Svc --> n_CHAIN
     n_Sweeper_job --> n_DB
-    n_Sweeper_job --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    style n_Redis fill:#f9a825,color:#000
-    style n_Read_replica fill:#f9a825,color:#000
+    n_Sweeper_job --> n_CHAIN
+    n_CHAIN --> n_DB
+    n_CHAIN --> n_RC
+    style n_RC fill:#f9a825,color:#000
 ```
 ```
 DIKKAT     Shaam tak 10,000 log ka "Meri files" page khula, har 2 sec saari files ka haal
@@ -290,22 +283,18 @@ flowchart LR
     n_DB["DB<br/>1000 file ka folder<br/>-> parent + child id"]
     n_Read_replica["Read replica"]
     n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
+    n_CHAIN["Kafka -> Worker -> Validator"]
     n_CLIENT --> n_S3
     n_CLIENT --> n_Upload_Svc
     n_Upload_Svc --> n_Redis
     n_Upload_Svc --> n_DB
     n_Upload_Svc --> n_Read_replica
     n_DB --> n_Read_replica
-    n_Upload_Svc --> n_Kafka
+    n_Upload_Svc --> n_CHAIN
     n_Sweeper_job --> n_DB
-    n_Sweeper_job --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
+    n_Sweeper_job --> n_CHAIN
+    n_CHAIN --> n_DB
+    n_CHAIN --> n_Redis
     style n_DB fill:#f9a825,color:#000
 ```
 ```
@@ -326,27 +315,21 @@ flowchart LR
     n_S3["S3"]
     n_API_Gateway_LB["API Gateway / LB<br/>(authn: kaun ho)"]
     n_Upload_Svc["Upload Svc<br/>Ravi ne meri file li<br/>-> owner check, 403"]
-    n_Redis["Redis"]
+    n_RC["Redis + Read replica (haal)"]
     n_DB["DB (haal + owner)"]
-    n_Read_replica["Read replica"]
     n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
+    n_CHAIN["Kafka -> Worker -> Validator"]
     n_CLIENT --> n_S3
     n_CLIENT --> n_API_Gateway_LB
     n_API_Gateway_LB --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_RC
     n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_Upload_Svc --> n_Kafka
+    n_DB --> n_RC
+    n_Upload_Svc --> n_CHAIN
     n_Sweeper_job --> n_DB
-    n_Sweeper_job --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
+    n_Sweeper_job --> n_CHAIN
+    n_CHAIN --> n_DB
+    n_CHAIN --> n_RC
     style n_API_Gateway_LB fill:#f9a825,color:#000
     style n_Upload_Svc fill:#f9a825,color:#000
 ```
@@ -374,27 +357,21 @@ flowchart LR
     n_S3["S3<br/>link WhatsApp pe ghooma<br/>-> 5 min signed GET"]
     n_API_Gateway_LB["API Gateway / LB"]
     n_Upload_Svc["Upload Svc<br/>+ owner check"]
-    n_Redis["Redis"]
+    n_RC["Redis + Read replica (haal)"]
     n_DB["DB (haal + owner + s3_key)"]
-    n_Read_replica["Read replica"]
     n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
+    n_CHAIN["Kafka -> Worker -> Validator"]
     n_CLIENT --> n_S3
     n_CLIENT --> n_API_Gateway_LB
     n_API_Gateway_LB --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_RC
     n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_Upload_Svc --> n_Kafka
+    n_DB --> n_RC
+    n_Upload_Svc --> n_CHAIN
     n_Sweeper_job --> n_DB
-    n_Sweeper_job --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
+    n_Sweeper_job --> n_CHAIN
+    n_CHAIN --> n_DB
+    n_CHAIN --> n_RC
     style n_S3 fill:#f9a825,color:#000
 ```
 ```
@@ -417,29 +394,23 @@ AAGE POOCHEGA:
 flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
-    n_API_Gateway_LB["API Gateway / LB"]
-    n_Upload_Svc["Upload Svc<br/>+ owner check"]
-    n_Redis["Redis"]
+    n_GU["Gateway + Upload Svc"]
+    n_RC["Redis + Read replica (haal)"]
     n_DB["DB (haal + owner + s3_key)"]
-    n_Read_replica["Read replica"]
     n_Sweeper_job["Sweeper job"]
     n_Kafka["Kafka"]
     n_Worker["Worker<br/>naam pdf, andar exe<br/>-> magic bytes"]
-    n_Validator["Validator"]
     n_CLIENT --> n_S3
-    n_CLIENT --> n_API_Gateway_LB
-    n_API_Gateway_LB --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_Upload_Svc --> n_Kafka
+    n_CLIENT --> n_GU
+    n_GU --> n_RC
+    n_GU --> n_DB
+    n_DB --> n_RC
+    n_GU --> n_Kafka
     n_Sweeper_job --> n_DB
     n_Sweeper_job --> n_Kafka
     n_Kafka --> n_Worker
-    n_Worker --> n_Validator
     n_Worker --> n_DB
-    n_Worker --> n_Redis
+    n_Worker --> n_RC
     n_Worker --> n_S3
     style n_Worker fill:#f9a825,color:#000
 ```
