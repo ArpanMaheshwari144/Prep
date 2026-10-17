@@ -133,7 +133,8 @@ flowchart LR
 ```
 DIKKAT     Maine A1 chuni, payment me 3 min. 'available' rehne di -> beech me Ravi le gaya. Seedha 'booked'
            kar di -> mera payment fail hua to A1 hamesha ke liye band.
-HAL        HOLD + UMAR: row me 'held, 5 min tak' (held_until). Booking ka UPDATE purana hold khaali maane:
+HAL        HOLD + UMAR: row me 'held', held_until = now + 5 min; SWEEPER job har minute purane hold saaf
+           (sirf safai). Booking ka UPDATE purana hold khaali maane:
            WHERE status = 'available' OR (status = 'held' AND held_until < now())
 NAHI       hold Redis me (SET NX EX 300): hold Redis me + booking DB me = do jagah sach, farak aa sakta.
 ```
@@ -172,7 +173,7 @@ AAGE POOCHEGA:
   "Webhook der se aaya?"           -> 'PAYMENT_PENDING' rakho, hold thoda badhao, ya reconciliation se pakka.
 ```
 
-#### 4 Book koi-koi karta, seat map 1 lakh log dekh rahe
+#### 4 11 baje main seat map dekh raha tha, saath me 1 lakh log, book koi-koi
 ```mermaid
 flowchart LR
     n_USER["USER"]
