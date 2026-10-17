@@ -27,8 +27,8 @@ KAISA CHALE (NFR): feed TEZ (dil) · khabar TAAZI · lakhon user · ek source ba
                    SOCH: "har user feed kholta, khabar gine-chune source se aati -> padhna >> likhna"
 
 NUMBERS (andaaza):
-   10 lakh user x 5 baar / din = 50 lakh padhai / din, din me ~1
-      lakh second -> ~50 / second (subah 10 guna ~500 / second)
+   10 lakh user x 5 baar / din = 50 lakh padhai / din
+      din me ~1 lakh second -> ~50 / second (subah 10 guna ~500 / second)
    1000 source, har 5 min -> ~3 lakh likhai / din -> ~3 / second
    -> padhna >> likhna -> CACHE + READ REPLICA (dil)
    -> likhna peeche chale -> QUEUE
@@ -59,15 +59,11 @@ flowchart TD
 
 #### 1 HAR REQUEST PE DB SE "TAAZI 20"
 ```
-DIKKAT 1   Subah 8 baje 500 log / second app khol rahe. Har ek ke liye DB se "ORDER BY published_at DESC
-           LIMIT 20" chal raha. Aur sabko lagbhag WAHI 20 khabar dikh rahi.
+DIKKAT 1   Subah 8 baje 500 log / second app khol rahe. Har ek ke liye DB se
+           "ORDER BY published_at DESC LIMIT 20" chal raha, aur sabko lagbhag WAHI 20 khabar dikh rahi.
            Ek hi kaam 500 baar / second.
-HAL        Sabko lagbhag wahi taazi 20 khabar dikhti hain. To har baar DB se mat nikaalo: ek baar list bana
-           ke Redis me rakh do, time ke kram se.
-           Nayi khabar aayi -> list me apni jagah daal do. Koi bhi app khole -> list se upar ki 20 de do.
-           100 me se 99 log Redis se hi laut jaate.
-           Redis SORTED SET "feed:latest": har khabar ki id, score = kab chhapi (time).
-           Nayi khabar aayi -> ZADD (apni jagah pe baith jaati). Purani kaato -> top 500 hi rakho.
+HAL        Ek baar list bana ke Redis me rakh do: SORTED SET "feed:latest", id + score = kab chhapi.
+           Nayi khabar aayi -> ZADD (apni jagah baith jaati). Purani kaato -> top 500 hi rakho.
            Arpan ne app khola -> ZREVRANGE feed:latest 0 19 -> 20 id -> khabar ka text alag cache se.
            ~99% log Redis se hi laut jaate, DB tak koi nahi jaata.
 ```
@@ -82,31 +78,28 @@ flowchart TD
     n_Feed_Svc --> n_Redis
     n_Feed_Svc --> n_DB
     n_Fetcher --> n_DB
+    n_Fetcher --> n_Redis
 ```
 ```
 DIKKAT 2   "5 min purani chalegi" bola, par badi khabar (breaking) turant chahiye?
-HAL        Worker khabar aate hi ZADD karta -> asal me turant dikhti. 5 min sirf sabse bura haal.
+HAL        Khabar aate hi ZADD hota -> asal me turant dikhti. 5 min sirf sabse bura haal.
 
 DIKKAT 3   Arpan neeche scroll kare (page 2, 21-40)?
 HAL        ZREVRANGE 20 39, ya cursor (jo aakhri dekhi uske time se pehle ki 20).
 
 DIKKAT 4   Har user ki alag feed kyun nahi banate?
-HAL        Mehngi. Sabki lagbhag same, ek cache kaafi. Pasand wali feed = har category ki
-           alag list, padhte waqt mila do.
+HAL        Mehngi. Sabki lagbhag same, ek cache kaafi. Pasand wali feed = har category ki alag list,
+           padhte waqt mila do.
 ```
 
 #### 2 1000 SOURCE SE KHABAR LAANA DHEEMA
 ```
-DIKKAT 1   Arpan ne app khola aur server us waqt 1000 source se khabar laane gaya. Arpan 20 second ruka.
-HAL        1000 sites se khabar laana dheema hai, to user ke aane pe nahi laate.
-           Peeche ek fetcher apne aap har kuch minute sites se khabar laake Kafka me daalta, worker
-           saaf karke DB aur Redis me rakhte.
-           User hamesha Redis me taiyaar list padhta, use is sab ka intezaar nahi karna padta.
-           Fetcher khabar Kafka me daal ke bhool jaata. Workers apni speed se
-           padhte (apna offset yaad rakhte).
+DIKKAT 1   Ek fetcher 1000 source ek-ek karke laata (har ek ~1 sec) -> ek chakkar ~20 minute.
+           Khabar 20 minute purani, aur fetcher hi DB me likh raha to wo bhi atka.
+HAL        Laana aur likhna alag karo. Kai fetcher ek saath sources se laate aur Kafka me daal ke bhool
+           jaate. Workers apni speed se padhte (apna offset yaad), saaf karke DB + Redis me rakhte.
            1000 source ki khabar ek saath aayi -> Kafka ki line lambi hui, kuch gira nahi.
-           10 partition = 10 worker ek saath kaam.
-           Arpan ko is sab ka pata hi nahi, wo sirf cache padhta.
+           10 partition = 10 worker ek saath. Arpan sirf Redis ki taiyaar list padhta.
 ```
 ```mermaid
 flowchart TD
@@ -133,30 +126,20 @@ HAL        Har source ka apna samay (NDTV har 1 min, chhota blog har 15 min).
            Saath me ETag / Last-Modified -> source bole "kuch naya nahi" to download hi nahi.
 
 DIKKAT 3   Worker ne ek khabar do baar likhi?
-HAL        URL / text ke hash pe UNIQUE -> doosri baar wahi hash aaya to
-           INSERT ... ON CONFLICT DO NOTHING -> skip, koi farak nahi.
+HAL        URL / text ke hash pe UNIQUE -> doosri baar INSERT ... ON CONFLICT DO NOTHING -> skip.
 
 DIKKAT 4   Kafka kyun, SQS kyun nahi?
-HAL        SQS bhi chalta. Kafka isliye ki search index / analytics bhi wahi khabar apne alag group
-           se padh sakein, aur dobara bhi.
+HAL        SQS bhi chalta. Kafka isliye ki search index / analytics bhi wahi khabar apne alag group se
+           padh sakein, aur dobara bhi.
 ```
 
 #### 3 EK HI KHABAR PAANCH SOURCE SE
 ```
-DIKKAT 1   "India ne match jeeta" -> NDTV, TOI, HT, BBC, ESPN sabne likha. Arpan
-           ki feed me wahi khabar 5 baar.
-HAL        Ek hi khabar 5 site pe: title chhote akshar me karke uska hash nikalo, same
-           hash = same khabar, ek hi rakho.
-           Thoda alag likha ho ('India wins' / 'India won') to milte-julte text wala hash (SimHash)
-           paas-paas aata, use bhi same maano.
-           Ye URL pehle aaya? Ek chhota dabba (Bloom filter) jo kam jagah me 'shayad dekha' / 'pakka naya'
-           batata.
-           Same title, alag URL: title chhote akshar + chinh hatao -> hash -> same hash = same khabar.
+DIKKAT 1   "India ne match jeeta" -> NDTV, TOI, HT, BBC, ESPN sabne likha. Arpan ki feed me wahi khabar
+           5 baar (5 alag URL).
+HAL        Same title, alag URL: title chhote akshar + chinh hatao -> hash -> same hash = same khabar.
            Thoda alag likha ("India wins" vs "India won"): SimHash / MinHash -> milte-julte text ke hash
-           paas-paas aate -> "90% same" = duplicate.
-           Ye URL pehle aaya? BLOOM FILTER: ek lambi bit-line + kuch hash.
-             URL ke saare hash wali jagah dekho: koi ek bhi 0 = pakka naya.
-             saare 1 = SHAYAD dekha (kabhi galat "haan" bol sakta, galat "na" kabhi nahi).
+           paas-paas aate -> "90% same" = duplicate. Ek hi rakho.
 ```
 ```mermaid
 flowchart TD
@@ -178,25 +161,27 @@ flowchart TD
     n_Sources --> n_Fetcher
 ```
 ```
-DIKKAT 2   Bloom filter kyun, Redis SET kyun nahi?
+DIKKAT 2   Fetcher wahi URL dobara le aaya (pehle bhi dekha tha)?
+HAL        BLOOM FILTER: ek lambi bit-line + kuch hash. URL ke saare hash wali jagah dekho:
+           koi ek bhi 0 = pakka naya · saare 1 = SHAYAD dekha (galat "haan" ho sakta, galat "na" kabhi nahi).
+
+DIKKAT 3   Bloom filter kyun, Redis SET kyun nahi?
 HAL        Crore URL SET me = bahut RAM. Bloom thodi si memory me. Galat "haan" se kabhi ek nayi
            khabar chhoot sakti, news me chalta.
 
-DIKKAT 3   Bloom me se URL hatana?
+DIKKAT 4   Bloom me se URL hatana?
 HAL        Normal Bloom me nahi hota. Roz naya filter, purana phenko (ya counting Bloom).
 
-DIKKAT 4   5 me se kaunsa source dikhao?
+DIKKAT 5   5 me se kaunsa source dikhao?
 HAL        Jo pehle aaya / bada source. Baaki "aur sources" me link.
 ```
 
 #### 4 EK SOURCE BAND / BAHUT DHEEMA
 ```
-DIKKAT 1   Ek chhota source 30 second me jawab de raha. Fetcher us pe atka -> baaki
-           999 source ki khabar bhi ruki.
-HAL        Har site alag se lao. 2-3 second me jawab nahi to chhod do, thodi baar dobara koshish.
-           Koi site baar-baar fail ho to kuch der usko bulao hi mat (fuse). Ek
-           kharab site baaki 999 ko nahi rokti.
-           Fuse: CLOSED (sab theek) --kai baar fail--> OPEN (us source ko call hi mat karo, turant skip)
+DIKKAT 1   Ek chhota source 30 second me jawab de raha. Fetcher us pe atka -> baaki 999 source ki
+           khabar bhi ruki.
+HAL        Har site alag se lao. 2-3 sec me jawab nahi to chhod do, thodi baar dobara koshish.
+           Baar-baar fail -> FUSE: CLOSED (sab theek) --kai fail--> OPEN (us source ko call hi mat karo)
            --thodi der--> HALF-OPEN (ek test call) --chali--> CLOSED.
            Ek source ka fuse uda, baaki 999 apne raaste chalte rahe.
 ```
@@ -230,13 +215,10 @@ HAL        Kuch din OPEN raha -> alert, list se hatao.
 #### 5 6 MAHINE ME 5 CRORE ROW, KHARCHA BADHTA
 ```
 DIKKAT 1   6 mahine me 5 crore khabar ki row. Disk, backup, kharcha badhta ja raha. Par taazi 20 ke
-           alawa purana koi padhta hi nahi.
-           (Query dheemi NAHI hui: published_at pe index hai.)
-HAL        Log sirf aakhri hafte ki khabar padhte. Table ko mahine ke tukdon me rakho, purane tukde sasti
-           jagah bhej do, jo kabhi nahi chahiye uski umar khatam.
-           Ye purana hatana hai, data baantna (sharding) nahi.
-           Postgres me har mahine ka alag tukda (partition). Mahina purana hua -> tukda table se alag karo
-           (DETACH) -> S3 archive. Jo kabhi nahi chahiye -> tukda DROP (ek pal ka kaam).
+           alawa purana koi padhta hi nahi. (Query dheemi NAHI hui: published_at pe index hai.)
+HAL        Postgres me har mahine ka alag tukda (partition). Mahina purana hua -> tukda table se alag
+           karo (DETACH) -> S3 archive. Jo kabhi nahi chahiye -> tukda DROP (ek pal ka kaam).
+           Ye purana hatana (retention) hai, data baantna (sharding) nahi.
 ```
 ```mermaid
 flowchart TD
@@ -267,20 +249,17 @@ DIKKAT 3   DETACH pe table lock hoga?
 HAL        Normal DETACH chhota lock leta. PG 14+ me DETACH PARTITION ... CONCURRENTLY -> bina roke.
 
 DIKKAT 4   3 saal baad?
-HAL        Wahi: hafta garam, baaki thanda (cold). "Ye retention hai, sharding nahi."
+HAL        Wahi: hafta garam, baaki thanda. "Ye retention hai, sharding nahi."
 ```
 
 #### 6 (SIRF BAHUT BADE SCALE PE) EK DB MACHINE NAHI JHEL RAHI
 ```
-DIKKAT 1   Source 100 guna ho gaye ya log khud content daalne lage
-           -> ek DB machine likhai aur data nahi jhel pa rahi.
-HAL        Hamare number pe ek DB kaafi hai.
-           Zaroorat pade to khabar ki id ke hash se baanto, taaki likhai sab jagah barabar bate. Date se
-           nahi baant-te, warna aaj ki saari likhai ek hi jagah aur wahi garam.
-           Date se baanta -> aaj ki saari likhai aaj wale shard pe -> wo akela garam.
-           hash(article_id) se baanta -> likhai sab shard pe barabar.
-           Keemat: "taazi 20" ke liye har shard se thoda laana padta
-                   (scatter-gather), par wo to Redis se aata hi hai.
+DIKKAT 1   Source 100 guna ho gaye ya log khud content daalne lage -> ek DB machine likhai aur data
+           nahi jhel pa rahi. (Hamare number pe ek DB kaafi hai, ye sirf bahut bade scale pe.)
+HAL        Khabar ki id ke hash se baanto (hash(article_id)) -> likhai sab shard pe barabar.
+           Date se nahi: aaj ki saari likhai aaj wale shard pe -> wo akela garam.
+           Keemat: "taazi 20" ke liye har shard se thoda laana padta (scatter-gather), par wo to Redis
+           se aata hi hai.
 ```
 ```mermaid
 flowchart TD
@@ -313,12 +292,10 @@ HAL        Consistent hashing -> thoda sa data hilta.
 
 #### 7 ARPAN KO SIRF TECH + SPORTS CHAHIYE
 ```
-DIKKAT 1   Arpan ko sirf tech aur sports pasand. Har user ki alag feed banana (10 lakh feed) bahut mehnga.
-HAL        Har user ki alag list banana mehnga. Har category (tech, sports) ki ek list rakho.
-           Arpan ko tech + sports pasand -> dono list se upar ki khabar lo, time se mila do, top 20 dikha do.
-           feed:tech se top 20 + feed:sports se top 20 -> time se mila ke (ya Redis
-           ZUNIONSTORE) -> top 20 dikhao.
-           10 lakh feed ki jagah sirf ~20 category feed.
+DIKKAT 1   Arpan ko sirf tech aur sports pasand. Har user ki alag feed (10 lakh feed) bahut mehngi.
+HAL        Har category ki ek list (feed:tech, feed:sports).
+           Arpan: feed:tech se top 20 + feed:sports se top 20 -> time se mila ke (ya Redis ZUNIONSTORE)
+           -> top 20 dikhao. 10 lakh feed ki jagah sirf ~20 category feed.
 ```
 ```mermaid
 flowchart TD
@@ -350,10 +327,8 @@ HAL        Tab asli personalization -> har user ki ranking service (abhi scope s
 ```
 DIKKAT 1   8 baje sabne app khola. Ek hi Feed service machine ka CPU bhar gaya.
            Jo cache me nahi mila wo seedha primary DB pe gaya, jahan fetcher bhi likh raha -> dono dheeme.
-HAL        Feed service kuch yaad nahi rakhti, kai machine + load balancer.
-           Redis me na mile to DB ki copy se padho, main DB se nahi (wahan khabar likhi ja rahi).
-           Subah 8 baje ki bheed pata hai, to 7:45 tak machine badha do aur Redis bhar do.
-           Cache zyadatar padhai rok leta. Jo bachi wo replica pe -> primary sirf likhne ke liye free.
+HAL        Feed service kuch yaad nahi rakhti -> kai machine + load balancer.
+           Redis me na mile to DB ki copy (replica) se padho, main DB se nahi -> main sirf likhne ke liye.
            (Kafka padhai ki bheed nahi jhelta, wo likhne ke raaste ke liye hai.)
 ```
 ```mermaid
@@ -395,17 +370,12 @@ HAL        Kuch second, news me chalta.
 
 #### 9 ARPAN NE "CRICKET" DHOONDHA
 ```
-DIKKAT 1   Arpan ne search me "cricket" likha -> DB me LIKE '%cricket%' -> 5 crore row
-           ek-ek karke padhi (full scan).
-HAL        Har shabd ke saath likh lo wo kin khabron me aaya, jaise kitaab ke peeche ki index: 'cricket' ->
-           [khabar 12, 45, 90].
-           Ye ek HashMap hi hai: shabd -> list. 'cricket kohli' dhoondha to dono list
-           nikaalo, jo dono me hain wo upar.
-           Ye kaam Elasticsearch karta. Asli data DB me, index kabhi bhi dobara bana sakte.
-           INVERTED INDEX = kitaab ke peeche ki index jaisi: shabd -> kis-kis khabar me hai.
+DIKKAT 1   Arpan ne search me "cricket" likha -> DB me LIKE '%cricket%' -> poori table ek-ek row padhi
+           (full scan).
+HAL        INVERTED INDEX = kitaab ke peeche ki index jaisi (ek HashMap): shabd -> kis-kis khabar me hai.
              "cricket" -> [a12, a45, a90] · "kohli" -> [a45, a77]
-           "cricket kohli" -> dono list (OR = dono jodo, AND = jo dono me hai = a45) -> score se sort.
-           ES se sirf id, khabar ka text DB / cache se.
+           "cricket kohli" -> dono list (OR = dono jodo, AND = jo dono me = a45) -> score se sort.
+           Ye kaam Elasticsearch karta. ES se sirf id, khabar ka text DB / cache se.
 ```
 ```mermaid
 flowchart TD
@@ -448,8 +418,8 @@ DIKKAT 3   Arpan ne galat likha (crikcet)?
 HAL        ES fuzzy search (1-2 akshar ka farak chalta).
 
 DIKKAT 4   Postgres se kaam nahi chalega?
-HAL        Chhote scale pe Postgres full-text (GIN) chalta. ES = ranking, galat
-           spelling, bahut data, DB pe bojh nahi.
+HAL        Chhote scale pe Postgres full-text (GIN) chalta. ES = ranking, galat spelling, bahut data,
+           DB pe bojh nahi.
 ```
 
 ```
@@ -542,8 +512,8 @@ DB:       ARTICLE: id | title | content | sourceId | category | publishedAt | ur
           Postgres: likhai ~3 / second (chhoti), "ORDER BY published_at DESC LIMIT 20" index se,
                     primary + read replica, mahine ke tukde (partition) -> purana archive
           Mongo bhi chal jaata (replica set + TTL). Cassandra tab jab likhai bahut badi ho jaaye;
-          par Cassandra me primary hota hi nahi aur poori table pe "taazi 20" nahi chalta
-          -> isliye yahan nahi.
+          par Cassandra me primary-replica nahi (sab node barabar, leaderless)
+          aur poori table pe "taazi 20" nahi chalta -> isliye yahan nahi.
 ```
 
 ---
