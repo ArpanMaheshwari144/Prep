@@ -79,17 +79,10 @@ flowchart TD
 ```
 DIKKAT 1   Arpan ne order kiya. Order service ne email bheja aur jawab ka intezaar karti rahi.
            Ek din email company band thi -> order hi fail ho gaya. Aur email dobara bhejne wala koi nahi.
-HAL        Order service email ka intezaar nahi karti: 'order hua' ki khabar Kafka me daali
-           aur turant user ko jawab de diya.
-           Notification service peeche se khabar padh ke email bhejti. Email company band ho to bhi order ho
-           jaata, email baad me chala jaata.
-           Ek dikkat: order DB me likha aur Kafka me daalne se pehle service giri to khabar kho jaati.
-           Isliye order aur khabar dono DB me ek saath likho (outbox table), ek relay
-           baad me khabar Kafka bhej deta.
-           Kafka ek diary hai jo disk pe rehti hai. Notification service yaad
-           rakhti hai kahan tak padha (offset).
-           Email band hai -> wo aage nahi badhti. Email wapas aaya
-           -> wahin se shuru. Khabar ~7 din diary me padi rehti hai.
+HAL        Order service "order hua" ki khabar Kafka me daal ke turant user ko jawab de deti.
+           Notification service peeche se padh ke email bhejti. Kafka = disk pe diary, service yaad rakhti
+           kahan tak padha (offset). Email company band -> wo ruki rehti, wapas aayi -> wahin se shuru.
+           Khabar ~7 din diary me padi rehti. Order kabhi email ki wajah se fail nahi.
 ```
 ```mermaid
 flowchart TD
@@ -105,12 +98,12 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Order DB me ban gaya, par Kafka me likhne se PEHLE Order service gir gayi?
-HAL        Khabar gayi hi nahi. Ilaaj OUTBOX: order aur khabar EK hi DB transaction me (outbox table), ek
-           relay baad me outbox se Kafka bheje.
+HAL        Khabar gayi hi nahi. Ilaaj OUTBOX: order aur khabar EK hi DB transaction me (outbox table),
+           ek relay baad me outbox se Kafka bheje.
 
 DIKKAT 3   Notification service ki kai machine hain, Kafka kaise baante?
-HAL        Sab ek team (consumer group) me, har line (partition)
-           ek machine ko. Machine badhao, lines bat jaati hain.
+HAL        Sab ek team (consumer group) me, har line (partition) ek machine ko. Machine badhao, lines bat
+           jaati.
 
 DIKKAT 4   Order service me hi dobara koshish (retry) kyun nahi?
 HAL        Order ki request utni der atki rehti. Aur Order service giri to retry bhi gaya.
@@ -118,13 +111,10 @@ HAL        Order ki request utni der atki rehti. Aur Order service giri to retry
 
 #### 2 TEEN RAASTE, SMS DHEEMA TO PUSH / EMAIL BHI ATKE
 ```
-DIKKAT 1   Push, email, SMS teeno ek hi line me khade the. SMS company dheemi hui ->
-           SMS wale atke, aur unke peeche push aur email bhi khade reh gaye.
-HAL        Push, email, SMS teeno ki alag line aur alag worker.
-           SMS company dheemi hui to sirf SMS ki line lambi hogi, push aur email apni speed se chalte rahenge.
-           Jis raaste pe zyada kaam, sirf uske worker badhao.
-           SMS dheema -> sirf SMS ki line lambi hui. Email worker apni speed se chalte rahe.
-           Worker alag ginti me (email ke 10, SMS ke 3) -> jiski zaroorat ho wahi badhao.
+DIKKAT 1   Push, email, SMS teeno ek hi line me khade the. SMS company dheemi hui -> SMS wale atke, aur
+           unke peeche push aur email bhi khade reh gaye.
+HAL        Teeno ki ALAG line aur ALAG worker. SMS dheema -> sirf SMS ki line lambi, push aur email apni
+           speed se. Worker alag ginti me (email ke 10, SMS ke 3) -> jis raaste pe kaam, wahi badhao.
 ```
 ```mermaid
 flowchart TD
@@ -154,7 +144,7 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Ek ghatna ke liye teeno raaste chahiye, to teen baar banegi?
-HAL        Notification service ek ghatna se teen chhote message banati hai, har line me ek.
+HAL        Notification service ek ghatna se teen chhote message banati, har line me ek.
            Har message ki pehchaan = ghatna ki id + raasta.
 
 DIKKAT 3   Push kis phone pe bhejein?
@@ -165,13 +155,10 @@ HAL        App install hote hi phone ka pata (device token) user ke saath save. 
 ```
 DIKKAT 1   Arpan ne SMS band kiya tha aur raat 10 se subah 8 "mat bhejo" lagaya tha.
            Phir bhi raat 2 baje SMS aaya.
-HAL        Bhejne se pehle dekho Arpan ne kya chuna hai: SMS band kiya? raat 11 se 7 'disturb mat karo'?
-           Phir uski bhasha me message bharo ('Hi {naam}, order {id} aa gaya'). Ye dono cheez cache me,
-           baar-baar DB nahi.
-           Offer wala message subah tak ruke, par OTP aur 'koi aur login kar
-           raha' wala alert raat ko bhi jaaye.
-           Arpan = push chalu, email chalu, SMS band, raat 10-8 shaanti -> sirf push + email, SMS chhodo.
-           Pasand aur saancha har ghatna pe chahiye -> unhe cache me rakho.
+HAL        Bhejne se pehle Arpan ki PASAND dekho: push chalu, email chalu, SMS band, raat 10-8 shaanti
+           -> sirf push + email, SMS chhodo.
+           Phir uski bhasha me SAANCHA bharo ("Hi {naam}, order {id} aa gaya").
+           Pasand aur saancha har ghatna pe chahiye -> cache me, baar-baar DB nahi.
 ```
 ```mermaid
 flowchart TD
@@ -205,7 +192,7 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Shaanti ke waqt me khabar aayi, to phenk doge?
-HAL        Nahi. Offer ko subah tak rok lo. OTP / security wali shaanti me bhi jaati hai.
+HAL        Nahi. Offer ko subah 8 tak rok lo. OTP / "koi aur login kar raha" wala alert shaanti me bhi jaata.
 
 DIKKAT 3   Arpan ne pasand badli, cache purana hai?
 HAL        Pasand badalte hi cache se hatao, aur cache ki umar chhoti rakho.
@@ -213,14 +200,11 @@ HAL        Pasand badalte hi cache se hatao, aur cache ki umar chhoti rakho.
 
 #### 4 JAWAB KHO GAYA, DOBARA BHEJA, USER KO DO EMAIL
 ```
-DIKKAT 1   Worker ne email company ko bheja. Company ne email bhej bhi diya, par uska "ho gaya" wala jawab
-           raaste me kho gaya. Worker ko laga fail hua -> dobara bheja -> Arpan ko DO email.
-HAL        Kafka kabhi ek khabar do baar bhi de deta hai. Isliye worker bhejne se pehle Redis me khabar ki
-           id ke saath parchi lagata: 'SET NX' matlab sirf tab lagao jab pehle se na ho.
-           Parchi pehle se lagi mili = ye khabar pehle aa chuki, skip. Arpan ko do email nahi jaayenge.
-           Ye wahi hai jo usercrud me /pay pe banaya tha: key pehle aayi to dobara kaam nahi.
-           Kafka ek khabar kabhi-kabhi do baar de deta hai. Isliye parchi khabar ki APNI id se lagti hai, jo
-           har baar wahi rehti hai. Har baar naya random id banaya to dohraav kabhi pakda hi nahi jaayega.
+DIKKAT 1   Worker ne Arpan ka email bhej diya, par Kafka ko "padh liya" (offset) bolne se pehle mar gaya.
+           Kafka ne wahi khabar doosre worker ko di -> dobara bheja -> Arpan ko DO email.
+HAL        Bhejne se pehle Redis me khabar ki APNI id se parchi: SET NX (sirf tab lagao jab pehle se na ho).
+           Parchi pehle se mili = ye khabar pehle aa chuki -> skip. (usercrud /pay wala hi tareeka.)
+           Id khabar ki apni, jo har baar wahi rehti. Har baar naya random id = dohraav kabhi pakda nahi jaata.
 ```
 ```mermaid
 flowchart TD
@@ -258,30 +242,28 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Redis hi gira?
-HAL        DB me bhi niyam: (khabar_ki_id, raasta) ek hi baar (UNIQUE). Redis tez raasta, DB pakka.
+HAL        DB me bhi niyam: (khabar_id, raasta) ek hi baar (UNIQUE). Redis tez raasta, DB pakka.
 
-DIKKAT 3   Parchi 24 ghante me mit gayi, aur wahi khabar phir aa gayi?
-HAL        Dobara chali jaayegi. Pakka rokna DB ka UNIQUE niyam karta hai.
+DIKKAT 3   Redis ki parchi 24 ghante me mit gayi, aur wahi khabar phir aa gayi?
+HAL        Redis se nahi rukegi. DB ka UNIQUE (khabar_id, raasta) rokega.
 ```
 
 #### 5 PARCHI LAGA DI, PAR BHEJNA FAIL HO GAYA
 ```
-DIKKAT 1   Arpan ka OTP bhejna hai. Worker-A ne Redis me parchi lagayi "OTP-123: bhej diya",
-           phir SMS company ko call kiya.
-           Call FAIL ho gayi (ya Worker-A beech me hi mar gaya). OTP gaya hi nahi.
-           Kafka ne khabar dobara di, Worker-B aaya, parchi dekhi "bhej diya" -> chhod diya.
-           OTP kabhi nahi gaya, aur system soch raha hai bhej diya. KHABAR KHO GAYI.
-           DIKKAT KI JAD:  parchi ek hi baat bolti thi, "bhej diya". Par asal me
-           Worker-A ne sirf KOSHISH shuru ki thi.
-HAL        Parchi pe do alag baatein likho:
+DIKKAT 1   Arpan ka OTP bhejna hai. Worker-A ne Redis me parchi lagayi "OTP-123: bhej diya", phir SMS
+           company ko call kiya. Call FAIL (ya Worker-A beech me hi mar gaya). OTP gaya hi nahi.
+           Kafka ne khabar dobara di, Worker-B ne parchi dekhi "bhej diya" -> chhod diya. KHABAR KHO GAYI.
+           Jad: parchi ek hi baat bolti thi, par Worker-A ne sirf KOSHISH shuru ki thi.
+HAL        Parchi pe do alag baatein:
              bhejne se PEHLE:      "BHEJ RAHA HOON" (SENDING) + chhoti umar, 60 second
              company ne OK bola:   "BHEJ DIYA" (SENT) + lambi umar, 1 din
            Har haalat me kya hota:
              Worker-A ka call fail, Worker-A zinda -> khud parchi hata deta -> agli koshish chal jaati.
-             Worker-A beech me MAR gaya            -> "BHEJ RAHA HOON" 60 sec me khud mit jaati -> agli koshish.
+             Worker-A beech me MAR gaya            -> "BHEJ RAHA HOON" 60 sec me khud mit jaati
+                                                     -> agli koshish.
              Worker-B ko "BHEJ RAHA HOON" mila     -> koi abhi bhej raha, thoda ruko, phir dekho.
              Worker-B ko "BHEJ DIYA" mila          -> pakka chala gaya -> chhodo.
-           Ek line me: CHHODNA sirf "BHEJ DIYA" pe. "BHEJ RAHA HOON" = adhoora, pata nahi gaya ya nahi.
+           CHHODNA sirf "BHEJ DIYA" pe. "BHEJ RAHA HOON" = adhoora.
 ```
 ```mermaid
 flowchart TD
@@ -319,29 +301,23 @@ flowchart TD
 ```
 ```
 DIKKAT 2   "Fail hua to parchi hata do" itna kaafi kyun nahi?
-HAL        Worker hi mar gaya to hatane wala koi nahi bacha.
-           Isliye "BHEJ RAHA HOON" ki umar chhoti, khud mit jaaye.
+HAL        Worker hi mar gaya to hatane wala koi nahi bacha. Isliye "BHEJ RAHA HOON" ki umar chhoti,
+           khud mit jaaye.
 
-DIKKAT 3   60 second chhote pad gaye (company 70 second me jawab de)?
-HAL        Umar hamesha company ke timeout se lambi rakho (timeout 10 second -> umar 60 second).
+DIKKAT 3   60 second chhote pad gaye (company der se jawab de)?
+HAL        Umar hamesha company ke timeout se lambi rakho (timeout 2-3 sec -> umar 60 sec).
 
 DIKKAT 4   Company ne bhej diya tha, bas jawab aane se pehle worker mara?
-HAL        Tab do baar ja sakta hai. SES / Twilio aisi parchi khud nahi rakhte,
-           to ye chhota risk maana hua hai.
+HAL        Tab do baar ja sakta. SES / Twilio aisi parchi khud nahi rakhte, to ye chhota risk maana hua.
            OTP do baar aana chalega, par na aana nahi chalega.
 ```
 
 #### 6 COMPANY GIR RAHI, HUM TURANT DOBARA MAAR RAHE
 ```
-DIKKAT 1   SMS company pehle se pareshaan hai, aur hum har second dobara bhej ke
-           uspe aur hathoda maar rahe hain.
-HAL        Dobara bhejne me har baar zyada ruko (1, 2, 4, 8 second = BACKOFF) + thoda random (JITTER).
+DIKKAT 1   SMS company pehle se pareshaan, aur hum har second dobara bhej ke uspe aur hathoda maar rahe.
+HAL        Dobara bhejne me har baar zyada ruko: 1, 2, 4, 8 sec (BACKOFF = shuru ka time x 2^koshish)
+           + thoda random (JITTER), taaki sab worker ek saath na lautein.
            Had paar -> DLQ me daalo + alert.
-           Rukne ka time = shuru ka time x 2^koshish + thoda random. Random isliye ki
-           sab worker ek saath na lautein.
-           Kafka ko "padh liya" (offset) KAAM HONE KE BAAD bolo:
-           worker beech me mara to khabar dobara aayegi, khoyegi nahi.
-           Kafka me likhte waqt "saari copies ne le liya tabhi OK" (acks=all).
 ```
 ```mermaid
 flowchart TD
@@ -383,26 +359,24 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Kafka me "10 minute baad chalana" hota hi nahi, to ruk ke dobara kaise?
-HAL        Alag lines banao (retry-1m, retry-10m). Worker message pe likha "kab
-           chalana" dekhe, abhi nahi to ruke.
+HAL        Alag lines banao (retry-1m, retry-10m). Worker message pe likha "kab chalana" dekhe, abhi nahi
+           to ruke.
 
 DIKKAT 3   DLQ me padi khabaron ka kya?
 HAL        Alert + dashboard, aur theek karke wapas main line me daalne ka tool.
 
 DIKKAT 4   Khabar kabhi khoye nahi, kaise pakka?
-HAL        Saari copies ne liya tabhi OK + kaam ke baad offset + parchi + DLQ. Phenkna kabhi nahi.
+HAL        Kafka me likhte waqt "saath chal rahi saari copies ne liya tabhi OK" (acks=all).
+           Kafka ko "padh liya" (offset) KAAM HONE KE BAAD -> worker beech me mara to khabar dobara aayegi.
+           + parchi + DLQ. Phenkna kabhi nahi.
 ```
 
 #### 7 COMPANY DHEEMI, SAARE WORKER 30 SEC ME PHANSE
 ```
 DIKKAT 1   SMS company band nahi hui, bas dheemi ho gayi. Har call 30 second atki.
            Saare worker usi me phans gaye, baaki kaam ruk gaya. Dheemi company band company se bhi buri.
-HAL        Company ko call karte waqt 2-3 second se zyada intezaar nahi (timeout).
-           Baar-baar fail ho rahi hai to us company ko kuch der call karna hi band (fuse uda), aur doosri
-           company se bhejo. Worker atke nahi rehte.
-           Thodi der baad ek test call: chal gayi to pehli wali wapas.
-           Timeout 2 sec: SMS worker company ko call karta, 2 sec me jawab nahi -> chhodo, worker free.
-           Fuse har company ka alag: CLOSED (sab theek) --5 baar fail--> OPEN (call hi mat karo, seedha
+HAL        TIMEOUT 2-3 sec: jawab nahi -> chhodo, worker free.
+           FUSE har company ka alag: CLOSED (sab theek) --5 baar fail--> OPEN (call hi mat karo, seedha
            doosri company) --30 sec baad--> HALF-OPEN (ek test call) --chali--> CLOSED.
            Twilio ka fuse uda -> SNS se jaata. Push / email ke worker pe koi asar nahi (alag line).
 ```
@@ -456,10 +430,9 @@ HAL        Nahi hoti. Android = FCM, iPhone = APNs, alag-alag.
 ```
 DIKKAT 1   Ek hi line me sab. Usi waqt 50,000 offer wale message line me the. Arpan ka OTP unke peeche khada
            raha, 10 minute baad aaya. Tab tak login ka time khatam.
-HAL        OTP ki apni alag line aur apne worker. Offer wale 1 crore message apni line me khade rahein, OTP
-           unke peeche kabhi nahi lagta, turant jaata.
-           Kafka me "ye zaroori hai, pehle bhejo" hota hi nahi -> isliye alag line.
-           Raaste ki line bhi alag: sms-tez / sms-dheemi.
+HAL        OTP ki apni ALAG line aur apne worker (sms-tez / sms-dheemi). Offer wale apni line me khade
+           rahein, OTP unke peeche kabhi nahi. Kafka me "ye zaroori hai, pehle bhejo" hota hi nahi
+           -> isliye alag line.
 ```
 ```mermaid
 flowchart TD
@@ -510,14 +483,11 @@ HAL        OTP ke liye company ka alag account / alag number, offer use kha na s
 #### 9 EK SAATH BAHUT, COMPANY NE 429 DIYA
 ```
 DIKKAT 1   Sale shuru, ek saath laakhon message. SMS company bolti "itna nahi" (429) -> sab fail.
-HAL        Company keh rahi hai 'second me 100 se zyada mat bhejo'. To worker khud apni speed 100 / second
-           pe rakhte (har second 100 token, ek message = ek token).
-           429 aaya to ruk ke dobara, company jitni der bole utni der ruko. Message line me intezaar karte,
-           had ke baad DLQ me, phenke nahi.
-           100 worker, har ek ne poori limit li = 100 guna -> phir 429.
-           Isliye Redis me EK saanjhi baalti, har worker bhejne se pehle usse token le (Lua, ek jhatke me).
-           Limits: FCM ki bhi apni had (number console me dekho) · SES naya account ~14 / second
-                   · Twilio short code ~100 / second.
+HAL        Company ki had (jaise 100 / second) ke hisaab se Redis me EK SAANJHI BAALTI: har second 100
+           token. Har worker bhejne se pehle ek token le (Lua, ek jhatke me). Token nahi -> ruko.
+           429 phir bhi aaya -> company jitni der bole (Retry-After) utni der ruko. Message line me
+           intezaar karte, had ke baad DLQ me, phenke nahi.
+           Had: SES naya account ~14 / second · Twilio short code ~100 / second · FCM ki bhi apni had.
 ```
 ```mermaid
 flowchart TD
@@ -558,24 +528,21 @@ flowchart TD
     n_Email_worker --> n_DLQ
 ```
 ```
-DIKKAT 2   Worker apne aap badh gaye?
-HAL        Baalti saanjhi hai: kitne bhi worker ho, kul speed wahi.
+DIKKAT 2   Har worker apni speed 100 / second pe rakhe, saanjhi baalti kyun?
+HAL        100 worker, har ek ne poori had li = 100 guna -> phir 429. Saanjhi baalti me kitne bhi worker
+           ho (apne aap badh bhi jaayein), kul speed wahi.
 
-DIKKAT 3   Limit hi kam hai (SES 14 / second) aur 1 lakh email bhejne hain?
-HAL        Limit badhwao + kai account / company. Tab tak line dheere-dheere khaali.
+DIKKAT 3   Had hi kam hai (SES 14 / second) aur 1 lakh email bhejne hain?
+HAL        Had badhwao + kai account / company. Tab tak line dheere-dheere khaali.
 ```
 
 #### 10 "BHEJ DIYA" KA MATLAB "MIL GAYA" NAHI
 ```
 DIKKAT 1   SMS company ne message le liya. Par Arpan ke phone tak pahuncha ya nahi, humein pata hi nahi.
-HAL        Company 'bhej diya' bolti hai, par user tak pahuncha ya nahi wo baad me batati hai (webhook:
-           company khud hamein call karti).
-           Isliye har message ke saath company ki message id rakho. Webhook aaya ('mila' / 'fail') to wahi
-           row update karo, pehle check karo ki call sach me company ki hai (signature).
-           Jo message ghanton se 'bheja' pe atka, uska ek baar khud company se haal poochh lo.
+HAL        Company "pahuncha / fail" baad me batati (WEBHOOK: company khud hamein call karti).
            Bhejte waqt company ka message number (SES MessageId / Twilio SID) apne notification ke saath save.
-           Webhook aaya -> us number se row dhoondho -> haalat badlo.
-           Hisaab = Cassandra (likhna bahut, seedhi row).
+           Webhook aaya -> pehle check sach me company ka hai (signature) -> us number se row dhoondho
+           -> haalat badlo. Hisaab = Cassandra (likhna bahut, seedhi row).
 ```
 ```mermaid
 flowchart TD
@@ -628,21 +595,18 @@ DIKKAT 3   Koi nakli webhook bhej de?
 HAL        Company ka hastakshar (HMAC signature) jaancho, warna mana.
 
 DIKKAT 4   Webhook ki jagah baar-baar khud poochte raho?
-HAL        Laakhon message x har kuch second = limit + kharcha. Webhook tabhi aata jab kuch badla.
+HAL        Laakhon message x har kuch second = had + kharcha. Webhook tabhi aata jab kuch badla.
 ```
 
 #### 11 1 CRORE LOGON KO EK SAATH OFFER
 ```
-DIKKAT 1   "Diwali offer sabko" = 1 crore user. Ek-ek karke bheja -> request ghanton atki, OTP bhi
-           peeche, company ki limit tooti.
-HAL        API turant 'shuru ho gaya' bol de, 1 crore ek saath nahi bhejte.
-           Ek job users ko 1000-1000 ke packet me padhe aur har packet Kafka me daale. Worker har user ki
-           pasand dekhe, message bhare, aur dheemi (offer wali) line pe company ki had me bheje.
-           Push ke liye FCM topic: sab subscribed phones ko ek hi call me.
-           "id > aakhri_id, 1000 lao" (cursor), har tukde ke baad aakhri_id campaign row me save
-           -> job gira to wahin se shuru. 10,000 / second ki speed
-              se 1 crore ~17 minute (jaan-boojh ke phailaya).
-           Push me sabko ek hi message -> FCM ka TOPIC: ek call, aage Google sabko pahunchata hai.
+DIKKAT 1   "Diwali offer sabko" = 1 crore user. Ek-ek karke bheja -> request ghanton atki, OTP bhi peeche,
+           company ki had tooti.
+HAL        API turant "shuru ho gaya" bol de. Ek job users ko 1000-1000 ke tukde me padhe
+           ("id > aakhri_id, 1000 lao"), har tukda Kafka me, aakhri_id campaign row me save -> job gira to
+           wahin se. Worker har user ki pasand dekhe, message bhare, dheemi (offer) line pe had me bheje.
+           10,000 / second pe 1 crore ~17 minute (jaan-boojh ke phailaya).
+           Push me sabko ek hi message -> FCM ka TOPIC: ek call, aage Google sabko pahunchata.
 ```
 ```mermaid
 flowchart TD
@@ -701,8 +665,8 @@ DIKKAT 3   Galat offer chala gaya, rokna hai?
 HAL        Campaign row pe "CANCELLED". Worker har tukde se pehle dekhe.
 
 DIKKAT 4   1000 ka tukda hi kyun?
-HAL        1 crore alag khabar = bojh. 1 bahut bada message = ek worker pe atka. 1000 =
-           saath-saath bhi, dobara bhi chhota.
+HAL        1 crore alag khabar = bojh. 1 bahut bada message = ek worker pe atka. 1000 = saath-saath bhi,
+           dobara bhi chhota.
 
 DIKKAT 5   Ek user ke message ka kram ("order hua" ke baad "ship hua")?
 HAL        Line ka chunaav user_id se -> ek user ki saari khabar ek line me, kram se.
@@ -715,7 +679,7 @@ AAKHRI DABBE (sab dikkat ke baad):
   -> 2 company -> user · webhook -> Tracking DB · fail -> DLQ
 
 DB:  Tracking = Cassandra -> likhna bahut, seedhi row, pakki consistency nahi chahiye, aaram se badhta
-     Pasand / saancha = chhota, har ghatna pe padha jaata -> cache (dikkat 3)
+     Pasand / saancha = chhota, har ghatna pe padha jaata -> cache (card 3)
 
 END ME POOCHEGA:
   "10 guna?"              -> Kafka ki lines pehle se zyada · worker badhao · company ki limit pe speed
