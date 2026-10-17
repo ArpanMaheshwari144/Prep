@@ -101,7 +101,10 @@ flowchart TD
 ```
 ```
 DIKKAT 2   5000 stock = 5000 thread?
-HAL        Nahi. Thode thread, har thread kai stock (stock ka hash % threads). Ek stock = hamesha ek thread.
+HAL        Nahi. Maan lo machine pe 8 thread (8 core). Stock ka naam -> number -> % 8 -> thread tay:
+             TCS -> T3 · INFY -> T5 · WIPRO -> T3
+           T3 pe TCS aur WIPRO dono, par TCS ka HAR order hamesha T3 pe hi -> kram pakka, lock nahi.
+           5000 thread banate to zyadatar khaali baithe memory khaate, aur CPU unke beech switch karte thakta.
 
 DIKKAT 3   "DB ka ACID ye rok dega"?
 HAL        Nahi. Matching DB me hai hi nahi, RAM me hai.
