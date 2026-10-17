@@ -13,9 +13,9 @@
 1  Ravi ne baad me save kiya, mera WORLD mita -> OPERATION + baseVersion (text nahi)  App (op bhejo)
 2  Ravi ko mera likha refresh pe hi dikha     -> WEBSOCKET (khula taar, dono taraf)   Conn-Server
 3  11 baje dono ne sabse upar ek saath likha  -> OT (server kram, op khiskao)         Conn-Server (OT)
-4  50 lakh taar, ek server nahi jhelta        -> RING: docId se ek OWNER server       LB + Conn-Servers + CDN
+4  50 lakh taar, ek server nahi jhelta        -> RING: docId se ek OWNER server       LB + Conn-Server (owner)
 5  Ravi sirf padh raha, doosre server pe      -> REDIS PUB/SUB (doc ek channel)       Redis pub/sub
-6  har akshar pe DB write, DB baith gaya      -> REDIS BUFFER + BATCH, ACK = WAIT 1   Redis buffer + Cassandra
+6  3 baje: har akshar pe DB write, DB baitha  -> REDIS BUFFER + BATCH, ACK = WAIT 1   Redis buffer + Cassandra
 7  metro me mera net 1 sec gaya               -> likhna AP, permission CP             SQL permissions
 8  raat ko 2 saal purana doc, 10 lakh op      -> SNAPSHOT + uske baad ke op           Cassandra (+ snapshot)
 
@@ -172,7 +172,7 @@ flowchart LR
     n_CS1 --> n_DB
     n_CS2 --> n_DB
     style n_LB fill:#f9a825,color:#000
-    style n_CDN fill:#f9a825,color:#000
+    style n_CS1 fill:#f9a825,color:#000
 ```
 ```
 DIKKAT     Dopahar tak ~50 lakh WebSocket khule (3-4 crore roz ka ~15%), ek server ~1 lakh hi jhelta.
@@ -229,7 +229,7 @@ AAGE POOCHEGA:
   "Redis pub/sub hi gira?"         -> copy pe (Sentinel); kuch sec live dikhna ruka, likha kuch nahi khoya.
 ```
 
-#### 6 Har akshar pe DB me likha, DB baith gaya
+#### 6 3 baje DB alert: har akshar pe DB me likha, DB baith gaya
 ```mermaid
 flowchart LR
     n_USER["USER A / B"]
@@ -255,9 +255,10 @@ flowchart LR
     style n_CAS fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Ek waqt ~20 lakh log type kar rahe, har ek ~3 akshar / sec -> ~60 lakh DB write / sec -> DB khatam.
+DIKKAT     3 baje DB alert: ~20 lakh log type, har ek ~3 akshar / sec -> ~60 lakh DB write / sec -> DB khatam.
 HAL        REDIS BUFFER + BATCH: badlaav pehle Redis me jama, har 1 second ek saath Cassandra me.
-           Edit log: partition key = docId, andar kram = version (SERVER ka number).
+           ACK tabhi jab op buffer + uski copy me (Redis WAIT 1). Edit log: partition key = docId,
+           andar kram = version (SERVER ka number).
 NAHI       "sahi chahiye to SQL lo": DB data ki shakal se chuno; join nahi, bas bahut jodna -> Cassandra.
 ```
 ```
