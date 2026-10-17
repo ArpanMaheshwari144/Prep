@@ -107,7 +107,7 @@ HAL        6 ka sauda. Mere baaki 4 book me pade rehte, un 4 ka paisa ruka rehta
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> idempotency key"]
+    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> wahi id dobara = naya order nahi<br/>(idempotency key)"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_DB
@@ -128,7 +128,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet<br/>50k the, 30k-30k dono pass<br/>-> check + block EK query"]
+    n_Wallet["Wallet<br/>50k the, 30k-30k dono pass<br/>-> check aur block ek saath<br/>(atomic UPDATE)"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -138,8 +138,8 @@ flowchart LR
 ```
 DIKKAT     Order ek laga, ab paisa? Wallet me 50k. Laptop se 30k, phone se 30k, same second.
            Do server, dono ne 50k dekha, dono pass.
-HAL        Check + block EK query: UPDATE wallet SET blocked = blocked + 30000
-           WHERE user_id = 'Arpan' AND total - blocked >= 30000   (doosre ko 0 row -> reject)
+HAL        check aur block ek saath (ATOMIC UPDATE): UPDATE wallet SET blocked = blocked + 30000 WHERE user_id
+           = 'Arpan' AND total - blocked >= 30000   (doosre ko 0 row -> reject)
 NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
 ```
 ```
@@ -161,7 +161,7 @@ flowchart LR
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
     n_Queue_per_symbol["Queue per symbol"]
-    n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek symbol ek thread"]
+    n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek share ka ek hi baabu<br/>(ek symbol ek thread)"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -192,7 +192,7 @@ flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Queue_per_symbol["Queue per symbol<br/>9:15 sab TCS pe toot pade<br/>-> baanto mat, line me"]
+    n_Queue_per_symbol["Queue per symbol<br/>9:15 sab TCS pe toot pade<br/>-> baanto mat, sab ek line me<br/>(single thread)"]
     n_Matching_Engine["Matching Engine"]
     n_DB["DB"]
     n_USER --> n_Order_Service
@@ -220,7 +220,7 @@ flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Event_Log["Event Log (= wahi line)<br/>server gira, book gayab<br/>-> pehle log, phir replay"]
+    n_Event_Log["Event Log (= wahi line)<br/>server gira, book gayab<br/>-> pehle register me likho, gira to dobara chalao<br/>(event log)"]
     n_Matching_Engine["Matching Engine"]
     n_DB["DB"]
     n_USER --> n_Order_Service
@@ -255,7 +255,7 @@ flowchart LR
     n_Wallet["Wallet"]
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement<br/>paisa kata, Suresh ko nahi<br/>-> ek transaction"]
+    n_Settlement["Settlement<br/>paisa kata, Suresh ko nahi<br/>-> chaaron entry ek saath ya koi nahi<br/>(transaction)"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -268,7 +268,8 @@ flowchart LR
 ```
 DIKKAT     Mera sauda 9:15 pe match hua tha (Suresh se 10 TCS, 30k). Ab paisa-share hilana:
            mera 30k kata, Suresh ko milne se PEHLE crash.
-HAL        Ek transaction: BEGIN Arpan -30k +10 share · Suresh +30k -10 share COMMIT. Crash -> rollback.
+HAL        chaaron ek saath ya koi nahi (TRANSACTION): BEGIN Arpan -30k +10 share · Suresh +30k -10 share
+           COMMIT. Crash -> rollback.
 NAHI       chaar alag UPDATE: beech me gira to aadha likha.
 ```
 ```
@@ -290,7 +291,7 @@ flowchart LR
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
     n_Settlement["Settlement"]
-    n_Wallet_DB["Wallet DB<br/>do DB, share nahi aaye<br/>-> step ka haal, aage badho"]
+    n_Wallet_DB["Wallet DB<br/>do DB, share nahi aaye<br/>-> har kadam likho, aage badho, ulta nahi<br/>(status log)"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -305,8 +306,8 @@ flowchart LR
 ```
 DIKKAT     Interviewer: "paisa Wallet DB me, share Portfolio DB me ho to?" -> ek transaction nahi chalti.
            Mera 30k Wallet DB me kata, Portfolio DB me share daalne se PEHLE crash -> aadha kaam.
-HAL        STATUS LOG: wallet done -> portfolio done. Fail -> retry, aage hi badho (match ke baad ulta nahi).
-           Ghanton fail -> PENDING + alert, ops share daalta.
+HAL        har kadam likho, aage hi badho (STATUS LOG): wallet done -> portfolio done. Fail -> retry, aage hi
+           badho (match ke baad ulta nahi). Ghanton fail -> PENDING + alert, ops share daalta.
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
 ```
 ```
@@ -326,7 +327,7 @@ flowchart LR
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
     n_Pub_Sub["Pub/Sub"]
-    n_WebSocket["WebSocket<br/>10 lakh log price poochh rahe<br/>-> push, TV jaisa"]
+    n_WebSocket["WebSocket<br/>10 lakh log price poochh rahe<br/>-> price badle tab khud bhejo, TV jaisa<br/>(WebSocket)"]
     n_USERS["USERS"]
     n_SET["Settlement -> Wallet / Portfolio DB"]
     n_USER --> n_OW
@@ -341,7 +342,7 @@ flowchart LR
 ```
 ```
 DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
-HAL        WebSocket: connection khula, price badla tabhi push (Redis pub/sub se servers tak).
+HAL        badla tab khud bhejo (WEBSOCKET): taar khula, price badla tabhi push (pub/sub se servers tak).
 NAHI       polling: 10 lakh bekaar sawaal / sec, 99% me price badla hi nahi.
 ```
 ```

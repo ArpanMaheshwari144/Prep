@@ -85,7 +85,7 @@ flowchart LR
 flowchart LR
     n_USER["USER"]
     n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis<br/>sabko wahi 20, DB pe 500 / sec<br/>-> sorted set feed cache"]
+    n_Redis["Redis<br/>sabko wahi 20, DB pe 500 / sec<br/>-> sabki ek feed, Redis me taiyaar<br/>(sorted set)"]
     n_DB["DB"]
     n_Fetcher["Fetcher"]
     n_USER --> n_Feed_Svc
@@ -113,7 +113,7 @@ flowchart LR
     n_Redis["Redis (taazi feed)"]
     n_DB["DB"]
     n_Worker["Worker"]
-    n_Kafka["Kafka<br/>khabar 20 min purani<br/>-> laana aur likhna alag"]
+    n_Kafka["Kafka<br/>khabar 20 min purani<br/>-> laana aur likhna alag, beech me line<br/>(Kafka)"]
     n_Fetcher["Fetcher"]
     n_Sources["Sources"]
     n_USER --> n_Feed_Svc
@@ -148,7 +148,7 @@ flowchart LR
     n_LB["LB"]
     n_Feed_Svc_xN["Feed Svc x N"]
     n_Redis["Redis (taazi feed)"]
-    n_Read_replica["Read replica<br/>result ki subah 40 guna<br/>-> LB + read replica"]
+    n_Read_replica["Read replica<br/>result ki subah 40 guna<br/>-> kai machine, padhai DB ki copy se<br/>(LB + replica)"]
     n_DB["DB"]
     n_KW["Kafka -> Worker"]
     n_SF["Sources -> Fetcher"]
@@ -166,8 +166,8 @@ flowchart LR
 ```
 DIKKAT     8 baje election result: aam 500 / sec ki jagah 20,000 / sec. Ek Feed Svc machine ka CPU bhara,
            cache miss seedha primary DB pe, jahan fetcher bhi likh raha -> dono dheeme.
-HAL        LB + READ REPLICA: Feed Svc kuch yaad nahi rakhti -> kai machine + LB. Redis me na mile to DB ki
-           copy (replica) se padho; main DB sirf likhne ke liye.
+HAL        kai machine + DB ki copy (LB + READ REPLICA): Feed Svc kuch yaad nahi rakhti -> kai machine + LB.
+           Redis me na mile to DB ki copy (replica) se padho; main DB sirf likhne ke liye.
 NAHI       Kafka se bheed sambhalo: Kafka likhne ke raaste ke liye hai, padhai ki bheed nahi jhelta.
 ```
 ```
@@ -185,7 +185,7 @@ flowchart LR
     n_Feed_Svc_xN["Feed Svc x N"]
     n_Redis["Redis (taazi feed)"]
     n_DBR["DB + Read replica"]
-    n_Worker["Worker<br/>ek khabar 5 baar<br/>-> hash + SimHash dedupe"]
+    n_Worker["Worker<br/>ek khabar 5 baar<br/>-> same khabar pehchaano, ek rakho<br/>(hash + SimHash)"]
     n_Kafka["Kafka"]
     n_SF["Sources -> Fetcher"]
     n_USER --> n_LB
@@ -221,7 +221,7 @@ flowchart LR
     n_Read_replica["Read replica"]
     n_DB["DB"]
     n_KW["Kafka -> Worker"]
-    n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> timeout + circuit breaker"]
+    n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> atka source chhodo, fail pe band<br/>(timeout + fuse)"]
     n_USER --> n_LB
     n_LB --> n_Feed_Svc_xN
     n_Feed_Svc_xN --> n_Redis
@@ -248,7 +248,7 @@ flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_Feed_Svc_xN["Feed Svc x N"]
-    n_Redis["Redis<br/>sirf tech + sports<br/>-> category feed"]
+    n_Redis["Redis<br/>sirf tech + sports<br/>-> har category ki ek list, milao<br/>(category feed)"]
     n_Read_replica["Read replica"]
     n_DB["DB"]
     n_KW["Kafka -> Worker"]
@@ -265,8 +265,8 @@ flowchart LR
 ```
 ```
 DIKKAT     Shaam ko mujhe sirf tech aur sports pasand. Har user ki alag feed (10 lakh feed) bahut mehngi.
-HAL        CATEGORY FEED: har category ki ek list (feed:tech, feed:sports). Mere liye dono ke top 20, time se
-           mila ke (ya Redis ZUNIONSTORE) top 20. 10 lakh feed ki jagah sirf ~20 category feed.
+HAL        har category ki ek list (CATEGORY FEED): feed:tech, feed:sports. Mere liye dono ke top 20, time se
+           milao (ya ZUNIONSTORE). 10 lakh feed ki jagah sirf ~20 category feed.
 NAHI       har baar DB se WHERE category IN (tech, sports): har khulne pe DB, cache ka fayda gaya.
 ```
 ```
@@ -281,7 +281,7 @@ flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_Feed_Svc_xN["Feed Svc x N"]
-    n_Elasticsearch["Elasticsearch<br/>cricket = full scan<br/>-> inverted index"]
+    n_Elasticsearch["Elasticsearch<br/>cricket = full scan<br/>-> shabd se khabar ki list<br/>(inverted index)"]
     n_Redis["Redis (feed + category)"]
     n_DBR["DB + Read replica"]
     n_KW["Kafka -> Worker"]
@@ -318,7 +318,7 @@ flowchart LR
     n_Elasticsearch["Elasticsearch"]
     n_Redis["Redis (feed + category)"]
     n_DBR["DB + Read replica"]
-    n_Archive["Archive<br/>2 crore row, kharcha<br/>-> mahine ka partition"]
+    n_Archive["Archive<br/>2 crore row, kharcha<br/>-> har mahina alag, purana S3<br/>(partition + archive)"]
     n_KW["Kafka -> Worker"]
     n_SF["Sources -> Fetcher"]
     n_USER --> n_LF
@@ -335,8 +335,8 @@ flowchart LR
 ```
 DIKKAT     Usi raat DBA ka mail: 6 mahine me ~2 crore khabar ki row, disk / backup ka kharcha badh raha.
            Taazi 20 ke alawa purana koi padhta hi nahi. (Query dheemi NAHI hui: published_at pe index hai.)
-HAL        PARTITION + ARCHIVE: Postgres me har mahine ka alag tukda. Purana -> DETACH -> S3 archive.
-           Jo kabhi nahi chahiye -> tukda DROP (ek pal ka kaam).
+HAL        mahine alag, purana S3 (PARTITION + ARCHIVE): Postgres me har mahine ka alag tukda. Purana ->
+           DETACH -> S3 archive. Jo kabhi nahi chahiye -> tukda DROP (ek pal ka kaam).
 NAHI       "sharding karo": ye purana hatana (retention) hai, data baantna (sharding) nahi.
 ```
 ```
@@ -355,7 +355,7 @@ flowchart LR
     n_LF["LB -> Feed Svc x N"]
     n_RES["Redis + Elasticsearch"]
     n_Read_replica["Read replica"]
-    n_DB["DB<br/>ek machine nahi jhelti<br/>-> article_id hash se shard"]
+    n_DB["DB<br/>ek machine nahi jhelti<br/>-> data tukdon me, alag machine<br/>(shard by article_id)"]
     n_Archive["Archive"]
     n_KW["Kafka -> Worker"]
     n_SF["Sources -> Fetcher"]
@@ -372,7 +372,7 @@ flowchart LR
 ```
 DIKKAT     Mail aage: "source 100 guna ya log khud content daalne lage to ek DB likhai aur data nahi jhelegi."
            (Hamare number pe ek DB kaafi hai, ye sirf bahut bade scale pe.)
-HAL        SHARD (data tukdon me, alag machine) hash(article_id) se -> likhai sab tukdon pe barabar.
+HAL        data tukdon me, alag machine pe (SHARD): hash(article_id) se -> likhai sab tukdon pe barabar.
            Keemat: "taazi 20" ke liye har tukde se thoda (scatter-gather), par wo to Redis se aata hi hai.
 NAHI       date se baanto: aaj ki saari likhai aaj wale shard pe -> wo akela garam.
 ```

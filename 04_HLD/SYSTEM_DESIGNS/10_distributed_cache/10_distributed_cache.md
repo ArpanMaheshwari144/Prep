@@ -105,7 +105,7 @@ HAL        HIT RATIO sabse pehle (achanak gira = kuch toota) + p99 + kitni key n
 flowchart LR
     n_App["App"]
     n_DB["DB"]
-    n_Cache["Cache<br/>64 GB RAM bhar gayi<br/>-> LRU + TTL"]
+    n_Cache["Cache<br/>64 GB RAM bhar gayi<br/>-> sabse purana chhua hua bahar<br/>(LRU + TTL)"]
     n_App --> n_DB
     n_App --> n_Cache
     style n_Cache fill:#f9a825,color:#000
@@ -129,7 +129,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_App["App"]
     n_DB["DB"]
-    n_Cache_client["Cache client<br/>user:42 kis machine pe<br/>-> consistent hashing"]
+    n_Cache_client["Cache client<br/>user:42 kis machine pe<br/>-> key ghadi pe, aage wali machine uski<br/>(consistent hashing)"]
     n_Node_A["Node A (LRU + TTL)"]
     n_Node_B["Node B (LRU + TTL)"]
     n_Node_C["Node C (LRU + TTL)"]
@@ -146,8 +146,8 @@ flowchart LR
 ```
 DIKKAT     Subah 11 tak data 1 TB ho gaya, ek machine me 64 GB -> 16+ machine. "user:42" kis machine pe
            jaaye, aur App ko har baar kaise pata chale?
-HAL        CONSISTENT HASHING: ring (0 .. 2^32) pe machine bhi, key bhi; key ghadi ki disha me chale,
-           PEHLI machine pe rahe. VIRTUAL NODES se bojh barabar; App ki CACHE CLIENT library hisaab karti.
+HAL        gol ghadi pe key aur machine (CONSISTENT HASHING): key ghadi ki disha me chale, PEHLI machine uski.
+           VIRTUAL NODES se bojh barabar; App ki CACHE CLIENT library hisaab karti.
 NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
 ```
 ```
@@ -175,7 +175,7 @@ flowchart LR
     n_DB["DB"]
     n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica<br/>B mari, bojh DB pe<br/>-> copy + quorum failover"]
+    n_Node_B_replica["Node B + replica<br/>B mari, bojh DB pe<br/>-> har machine ki copy, mari to copy aage<br/>(replica)"]
     n_Node_C_replica["Node C + replica"]
     n_App --> n_DB
     n_App --> n_Cache_client
@@ -188,8 +188,8 @@ flowchart LR
 ```
 ```
 DIKKAT     Dopahar machine B mar gayi. Uske hisse ki saari key gayab -> un key ki saari padhai seedha DB pe.
-HAL        REPLICA: har machine ki COPY doosri building me, likhna B pe, copy tak thodi der baad (ASYNC).
-           Baaki B ko ping karti; zyadatar (quorum) bolein "B mari" -> vote se copy naya B, App ko naya pata.
+HAL        har machine ki copy (REPLICA): doosri building me, likhna B pe, copy tak thodi der baad (ASYNC).
+           Baaki B ko ping karti; zyadatar (quorum) bolein "B mari" -> copy naya B, App ko naya pata.
 NAHI       sync copy: har likhai pe copy ke "haan" ka intezaar -> <1 ms gaya.
 ```
 ```
@@ -206,7 +206,7 @@ AAGE POOCHEGA:
 #### 4 Ravi ne naam badla, sabko purana dikh raha
 ```mermaid
 flowchart LR
-    n_App["App<br/>DB naya, cache purana<br/>-> likho DB, cache DELETE"]
+    n_App["App<br/>DB naya, cache purana<br/>-> DB likho, cache ki key mitao<br/>(delete on write)"]
     n_DB["DB"]
     n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
@@ -222,8 +222,8 @@ flowchart LR
 ```
 DIKKAT     Shaam ko Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya, cache me abhi bhi "Ravi"
            -> sabko purana naam dikh raha.
-HAL        DELETE ON WRITE: DB update karo -> phir cache ki key DELETE (update nahi). Agli padhai MISS
-           -> DB se "Ravi K" -> cache me.
+HAL        DB likho, cache mitao (DELETE ON WRITE): DB update karo -> phir cache ki key DELETE (update nahi).
+           Agli padhai MISS -> DB se "Ravi K" -> cache me.
 NAHI       cache UPDATE: "X" phir "Y" likha, cache me pehle Y pahuncha phir X -> galat "X" baith gaya.
 ```
 ```
@@ -240,7 +240,7 @@ AAGE POOCHEGA:
 #### 5 7 baje "home page" key khatam, 1000 log ek saath DB pe
 ```mermaid
 flowchart LR
-    n_App["App<br/>key khatam, 1000 DB pe<br/>-> SET NX EX lock"]
+    n_App["App<br/>key khatam, 1000 DB pe<br/>-> ek DB jaaye, baaki ruk ke cache se<br/>(lock: SET NX EX)"]
     n_DB["DB"]
     n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
@@ -270,7 +270,7 @@ AAGE POOCHEGA:
 #### 6 Raat IPL final, "live:score" key ki machine akeli mar rahi
 ```mermaid
 flowchart LR
-    n_App_L1_local_cache["App + L1 local cache<br/>crore log ek key pe<br/>-> L1 local + copies"]
+    n_App_L1_local_cache["App + L1 local cache<br/>crore log ek key pe<br/>-> garam key har App ke paas bhi<br/>(L1 cache + copies)"]
     n_DB["DB"]
     n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]

@@ -78,7 +78,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     n_USER["USER A / B"]
-    n_App["App<br/>baad wale ne mera mita diya<br/>-> operation bhejo"]
+    n_App["App<br/>baad wale ne mera mita diya<br/>-> poora text nahi, sirf badlaav bhejo<br/>(operation)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_DB
@@ -87,7 +87,7 @@ flowchart LR
 ```
 DIKKAT     Doc me "HELLO". Maine "HELLO WORLD" karke 10:05 pe save kiya, Ravi ne purane "HELLO" pe
            "HELLO THERE" 10:07 pe -> poora text upar likha -> mera "WORLD" gayab (LAST-WRITE-WINS).
-HAL        OPERATION: poora doc nahi, sirf KYA badla: { docId, userId, type, position, char, baseVersion }.
+HAL        sirf badlaav bhejo (OPERATION): { docId, userId, type, position, char, baseVersion }.
            baseVersion = "v7 dekh ke likha"; dono v7 pe bane -> server khiska ke dono lagata, koi nahi mitta.
 NAHI       doc pe lock, ek likhe baaki ruke: saath likhna hi khatam.
 ```
@@ -103,7 +103,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
-    n_CS["Conn-Server<br/>refresh pe hi dikha<br/>-> WebSocket"]
+    n_CS["Conn-Server<br/>refresh pe hi dikha<br/>-> khula taar, server khud bheje<br/>(WebSocket)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_CS
@@ -113,8 +113,8 @@ flowchart LR
 ```
 DIKKAT     Ab op ja raha, par normal HTTP me server khud kuch nahi bhej sakta, sirf jawab deta.
            Ravi ko mera likha tabhi dikha jab usne refresh kiya. Bekaar.
-HAL        WEBSOCKET: pehle HTTP "Upgrade: websocket" -> server "101 Switching Protocols" -> connection
-           khula rehta. Main likhun to turant server tak, server turant Ravi tak.
+HAL        khula taar, dono taraf (WEBSOCKET): pehle HTTP "Upgrade: websocket" -> server "101 Switching
+           Protocols" -> connection khula rehta. Main likhun to turant server tak, server turant Ravi tak.
 NAHI       polling: crore log x har second bekaar sawaal + 1 sec der · SSE: sirf server -> user.
 ```
 ```
@@ -129,7 +129,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
-    n_CS["Conn-Server<br/>dono ne position 0 pe likha<br/>-> OT, server ka kram"]
+    n_CS["Conn-Server<br/>dono ne position 0 pe likha<br/>-> server kram tay kare, op khiskao<br/>(OT)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_CS
@@ -139,7 +139,7 @@ flowchart LR
 ```
 DIKKAT     11 baje meeting, doc "HELLO", dono sabse upar likhne lage. Mera "X" (pos 0) ~200 ms me Ravi tak,
            usse pehle Ravi ka "Y" (pos 0) -> meri screen "YXHELLO", Ravi ki "XYHELLO". Do alag doc.
-HAL        OT (Operational Transformation): doosre ka op aaya to apne op ke hisaab se khiskao.
+HAL        op khiskao, kram server ka (OT = Operational Transformation): doosre ka op apne hisaab se khiskao.
            Tie: server pe pehle mera -> meri screen Y ko 1 pe, Ravi ki X 0 pe hi -> dono ke paas "XYHELLO".
 NAHI       phone ke time se kram: ghadi alag, aur position phir bhi khiskani padti.
 ```
@@ -159,7 +159,7 @@ flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
     n_CDN["CDN (app ki files)"]
-    n_LB["LB<br/>50 lakh taar, ek server nahi<br/>-> docId se ring, owner"]
+    n_LB["LB<br/>50 lakh taar, ek server nahi<br/>-> ek doc ke sab log ek server pe<br/>(ring, owner)"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
     n_DB["DB"]
@@ -176,8 +176,8 @@ flowchart LR
 ```
 DIKKAT     Dopahar tak ~50 lakh WebSocket khule (3-4 crore roz ka ~15%), ek server ~1 lakh hi jhelta.
            Kai server lagaye -> mere doc ke editor alag-alag server pe, to OT kaun kare?
-HAL        RING: alag CONNECTION server ki line. URL me docId -> LB consistent hashing ring se server chunta
-           -> ek doc ke saare editor + OT EK server pe (OWNER). Viewer kisi bhi server pe.
+HAL        ek doc ek server (RING, OWNER): URL me docId -> LB consistent hashing ring se connection server
+           chunta -> ek doc ke saare editor + OT EK server pe (OWNER). Viewer kisi bhi server pe.
 NAHI       hash(docId) % N: N badla to lagbhag har doc ka server badla = sab dobara jude.
 ```
 ```
@@ -200,7 +200,7 @@ flowchart LR
     n_LB["LB (docId se ring)"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
-    n_PS["Redis pub/sub<br/>Ravi doosre server pe<br/>-> doc ek channel"]
+    n_PS["Redis pub/sub<br/>Ravi doosre server pe<br/>-> har doc ka channel, sab server sunein<br/>(pub/sub)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_CDN
@@ -216,8 +216,8 @@ flowchart LR
 ```
 DIKKAT     Lunch ke baad Ravi sirf padh raha (viewer), wo server-2 pe; doc ka owner server-1 jahan main likh
            raha. Maine type kiya -> server-1 ko pata, server-2 ko kaise pata chale?
-HAL        REDIS PUB/SUB: har doc ek channel (doc:123); jis server pe us doc ka koi user, wo SUBSCRIBE karta.
-           Server-1 --publish doc:123--> Redis --> Server-2 --> Ravi. OT owner karta, pub/sub sirf pahunchata.
+HAL        har doc ka channel (REDIS PUB/SUB): doc:123; jis server pe us doc ka koi user, wo SUBSCRIBE kare.
+           Server-1 -> publish -> Redis -> Server-2 -> Ravi. OT owner karta, pub/sub sirf pahunchata.
 NAHI       Kafka: store karta + thoda dheema; live typing dobara padhni nahi, tezi chahiye.
 ```
 ```
@@ -237,7 +237,7 @@ flowchart LR
     n_LB["LB (docId se ring)"]
     n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
-    n_BUF["Redis buffer<br/>har akshar pe DB write<br/>-> jama karo, 1 sec batch"]
+    n_BUF["Redis buffer<br/>har akshar pe DB write<br/>-> har akshar nahi, 1 sec ka jama ek saath<br/>(buffer + batch)"]
     n_CAS["Cassandra edit log"]
     n_USER --> n_App
     n_App --> n_CDN
@@ -251,8 +251,8 @@ flowchart LR
 ```
 ```
 DIKKAT     3 baje DB alert: ~20 lakh log type, har ek ~3 akshar / sec -> ~60 lakh DB write / sec -> DB khatam.
-HAL        REDIS BUFFER + BATCH: op Redis me, har 1 sec ek saath Cassandra me; ACK jab copy me bhi (WAIT 1).
-           Edit log: partition key = docId, andar kram = version (SERVER ka number).
+HAL        jama karo, ek saath likho (REDIS BUFFER + BATCH): op Redis me, har 1 sec ek saath Cassandra me; ACK
+           jab copy me bhi (WAIT 1). Edit log: partition key = docId, andar kram = version (SERVER ka number).
 NAHI       "sahi chahiye to SQL lo": DB data ki shakal se chuno; join nahi, bas bahut jodna -> Cassandra.
 ```
 ```
@@ -275,7 +275,7 @@ flowchart LR
     n_LB["LB (docId se ring)"]
     n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
-    n_SQL["SQL permissions<br/>net gaya, typing ruke?<br/>-> likhna AP, permission CP"]
+    n_SQL["SQL permissions<br/>net gaya, typing ruke?<br/>-> likhna chalta rahe, permission pakki<br/>(AP vs CP)"]
     n_BUF["Redis buffer"]
     n_CAS["Cassandra edit log"]
     n_USER --> n_App
@@ -289,8 +289,8 @@ flowchart LR
 ```
 ```
 DIKKAT     Shaam ko metro me mera network 1 second ke liye gaya. Typing ruk jaaye, ya main likhta rahun?
-HAL        HAR HISSE KA ALAG CAP: likhna = AP, net jaaye to bhi type karo, baad me sab mil ke doc same.
-           Permission = CP (SQL): kisi ka access hataya to turant roko, chahe kuch der system ruke.
+HAL        har hisse ka alag faisla (CAP): likhna = AP, net jaaye to bhi type karo, baad me sab mil ke doc
+           same. Permission = CP (SQL): kisi ka access hataya to turant roko, chahe kuch der system ruke.
 NAHI       "doc sahi chahiye -> CP": CP me net jaate hi typing ruk jaati; yahan sahi = "aakhir me sab same".
 ```
 ```
@@ -311,7 +311,7 @@ flowchart LR
     n_PS["Redis pub/sub"]
     n_SQL["SQL permissions"]
     n_BUF["Redis buffer"]
-    n_CAS["Cassandra edit log + snapshot<br/>purana doc, 10 lakh op<br/>-> photo + baad ke op"]
+    n_CAS["Cassandra edit log + snapshot<br/>purana doc, 10 lakh op<br/>-> photo + uske baad ke badlaav<br/>(snapshot)"]
     n_USER --> n_App
     n_App --> n_LB
     n_LB --> n_Conn_Server_xN
