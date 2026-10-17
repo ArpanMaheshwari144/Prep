@@ -269,7 +269,8 @@ CUE        scoreboard toota, scorer ka register bacha (log pehle, replay)
 
 DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
 HAL        Har order PEHLE log me (number ke saath), PHIR book. Gira -> log #1 se replay, wahi book.
-NAHI       RAM ki chalti copy (replica): do book = ek share do baar bike. Standby sirf log padhta, chalta nahi.
+NAHI       RAM ki chalti copy (replica): do book = ek share do baar bike.
+           Standby sirf log padhta, chalta nahi.
 ```
 ```mermaid
 flowchart TD
