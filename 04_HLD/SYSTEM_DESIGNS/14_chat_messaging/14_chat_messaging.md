@@ -417,8 +417,8 @@ flowchart LR
 ```
 DIKKAT     Maine College Gang me 200 MB shaadi ka video chat server se bheja -> 2 min taar atka,
            server 500 x 200 MB = ~100 GB bheje.
-HAL        PRESIGNED URL (server ka sign kiya 10 min ka paas): app video seedha S3 me daalta. Message me sirf S3 key +
-           thumbnail. Group me ek upload, 500 ko wahi key.
+HAL        PRESIGNED URL (server ka sign kiya 10 min ka paas): app video seedha S3 me daalta.
+           Message me sirf S3 key + thumbnail. Group me ek upload, 500 ko wahi key.
 NAHI       message me URL rakho: 10 min me khatam, kal link mara; KEY rakho.
 ```
 ```
