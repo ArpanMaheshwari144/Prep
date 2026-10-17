@@ -139,14 +139,8 @@ DIKKAT     Subah 9:15, market khula. Maine TCS ke 10 share (30k) ka BUY dabaya. 
            -> do order bane, paisa do baar block.
 WAJAH      D — ek hi request do baar aayi.
 
-OPTION     1. app dobara bheje hi nahi          -> haara: network gaya to mujhe pata hi nahi order
-                                                   laga ya nahi
-           2. server same stock + qty dekh ke rok -> haara: maine sach me do baar 10 TCS liye to?
-                                                   wo bhi ruk jaata
-           3. app ki id, server pe UNIQUE       -> wahi id = wahi order, nayi id = naya order
-HAL        Order screen khulte hi app ek id banata (abc-123), dobara bhejne pe bhi WAHI id. BUY button
-           pehli tap pe band. Server pe id UNIQUE.
-           Pehli baar -> order lagao + jawab save. Doosri baar -> saved jawab wapas, naya order nahi.
+HAL        Order screen khulte hi id (abc-123), dobara bhejne pe WAHI id, BUY button pehli tap pe band.
+           Server pe id UNIQUE: pehli baar order + jawab save, doosri baar saved jawab, naya order nahi.
 ```
 ```mermaid
 flowchart TD
@@ -265,12 +259,8 @@ DIKKAT     Usi 9:15 pe sirf main aur Mohan nahi, poora market TCS pe toot pada: 
            Ek stock = ek thread, TCS baant nahi sakte.
 WAJAH      SCALE — ek hi stock pe bheed.
 
-OPTION     1. TCS ko do thread me baanto        -> haara: do book = ek share do baar bike, kram toota
-           2. bheed ke order phenk do           -> haara: mera order gaya, bharosa gaya
-           3. ek thread, RAM, bina lock + log me line -> lakhon / second nikal leta, bheed line me rukti
-HAL        Baanto mat. Ek thread, RAM me, bina lock -> lakhon order / second nikal leta.
-           Bheed zyada -> log order ko line me rok leta, koi phenka nahi jaata, bas thoda der se match.
-           Badhana stocks ke BEECH: TCS ek thread, INFY doosra.
+HAL        Baanto mat: ek thread, RAM, bina lock -> lakhon / second. Bheed log ki line me rukti, koi
+           phenka nahi. App me ACCEPTED turant, FILLED jab sauda ho. Badhana stocks ke BEECH (TCS, INFY).
 ```
 ```mermaid
 flowchart TD
@@ -288,8 +278,8 @@ flowchart TD
 ```
 ```
 AAGE POOCHEGA:
-  "Order line me pada, mujhe app me kya dikhe?"
-     -> Do status: ACCEPTED turant (order mil gaya), FILLED jab sauda ho jaaye.
+  "TCS ko do thread me baant do?"
+     -> Nahi: do book = ek share do baar bike, kram toota.
 ```
 
 #### 5 Server gira, poori order book gayab
@@ -443,9 +433,8 @@ DIKKAT     Din bhar 10 lakh log (main bhi) har second poochh rahe "TCS ka price?
            jawab aksar wahi purana.
 WAJAH      SCALE — padhne wale bahut, aur sab baar-baar wahi poochh rahe.
 
-OPTION     1. har second poochho (polling)      -> haara: 10 lakh bekaar sawaal / second, server mara
-           2. Kafka se bhejo                    -> haara: Kafka sab store karta, purana price bekaar
-           3. WebSocket + push                  -> price badla tabhi bhejo, sirf dekhne walon ko
+OPTION     1. Kafka se bhejo                    -> haara: Kafka sab store karta, purana price bekaar
+           2. WebSocket + push                  -> price badla tabhi bhejo, sirf dekhne walon ko
 HAL        App ka server se ek connection khula rehta (WebSocket).
            Price badla -> matching Redis pe "price:TCS = 3005" bhejta -> TCS dekhne walon ke server
            apne users ko bhej dete.
