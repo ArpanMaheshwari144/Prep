@@ -139,7 +139,7 @@ DIKKAT     Subah 9:15, market khula. Maine TCS ke 10 share (30k) ka BUY dabaya. 
            -> do order bane, paisa do baar block.
 WAJAH      D — ek hi request do baar aayi.
 
-HAL        Order screen khulte hi id (abc-123), dobara bhejne pe WAHI id, BUY button pehli tap pe band.
+HAL        IDEMPOTENCY KEY: order screen khulte hi id (abc-123), dobara bhejne pe WAHI id, button band.
            Server pe id UNIQUE: pehli baar order + jawab save, doosri baar saved jawab, naya order nahi.
 ```
 ```mermaid
