@@ -116,8 +116,8 @@ HAL        Us stock ke order line me ruk jaate.
 
 #### 2 WALLET ME 50K, 30K-30K KE DO ORDER (DOUBLE SPEND)
 ```
-DIKKAT 1   Ramesh ke wallet me 50k. Ek saath 30k ke DO order.
-           Dono ne 50k dekha, dono pass -> 60k kharch, the 50k.
+DIKKAT 1   Ramesh ke wallet me 50k. Laptop se TCS ka 30k order, usi second phone se INFY ka 30k.
+           Do alag server, dono ne 50k dekha, dono pass -> 60k kharch, the 50k.
 HAL        Order lagte hi paisa BLOCK, check + block EK query me:
              UPDATE wallet SET blocked = blocked + 30000
              WHERE user_id = 'Ramesh' AND total - blocked >= 30000
