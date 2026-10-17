@@ -12,11 +12,11 @@
    KYA HUA                                     ILAAJ                                DABBA JUDA
 1  ek tap, network gaya, do order lag gaye  -> IDEMPOTENCY KEY (wahi id dobara)     Order Service
 2  wallet 50k, 30k-30k dono order pass      -> check + block EK atomic query        Wallet
-3  Suresh ke 10, mujhe aur Mohan dono ko    -> ek symbol ek thread, book RAM me     Matching Engine
+3  Suresh ke 10, mujhe aur Mohan dono ko    -> ek symbol ek thread, book RAM me     Queue + Matching Engine
 4  9:15 sab TCS pe toot pade                -> baanto mat, ek thread kaafi, line    (line / queue)
-5  10:15 server gira, book gayab            -> pehle log, phir book; gira = replay  Event Log
+5  10:15 server gira, book gayab            -> pehle log, phir book; gira = replay  Event Log (= wahi line)
 6  mera 30k kata, Suresh ko mila nahi       -> ek transaction: chaaron ya koi nahi  Settlement
-7  paisa aur share alag DB me               -> har step ka haal, aage badho         Wallet DB + Portfolio DB
+7  interviewer: paisa, share alag DB        -> har step ka haal, aage badho         Wallet DB + Portfolio DB
 8  10 lakh log price poochh rahe            -> push (TV jaisa), WebSocket           Pub/Sub + WebSocket
 
 POORA DESIGN (upar ke dabbe kram se):
@@ -146,9 +146,8 @@ NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
 AAGE POOCHEGA:
   NIYAM: 'blocked' ek number hai: naya order use badhata; sauda (paisa kata), cancel, umar khatam use ghatate.
   "Java synchronized?"             -> sirf ek machine ke andar; yahan do server hain.
-  "SELL pe, laptop + phone?"       -> wahi query share pe:
-       UPDATE portfolio SET blocked_qty = blocked_qty + 10
-       WHERE user_id = 'Arpan' AND stock = 'TCS' AND qty - blocked_qty >= 10
+  "SELL pe, laptop + phone?"       -> UPDATE portfolio SET blocked_qty = blocked_qty + 10
+                                      WHERE user_id = 'Arpan' AND stock = 'TCS' AND qty - blocked_qty >= 10
   "10 me se 6 ka sauda?"           -> 6 ka paisa kata, baaki 4 ka blocked rahe.
   "Order 3 din pada?"              -> day order shaam ko khatam -> block hatao.
   "CANCEL, usi pal match?"         -> cancel bhi usi line me; jo nahi bika uska block hatao.
@@ -221,7 +220,7 @@ flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Event_Log["Event Log<br/>server gira, book gayab<br/>-> pehle log, phir replay"]
+    n_Event_Log["Event Log (= wahi line)<br/>server gira, book gayab<br/>-> pehle log, phir replay"]
     n_Matching_Engine["Matching Engine"]
     n_DB["DB"]
     n_USER --> n_Order_Service
@@ -233,9 +232,9 @@ flowchart LR
 ```
 ```
 DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
-HAL        Har order PEHLE log me (number ke saath), PHIR book. Gira -> log #1 se replay, wahi book.
+HAL        Har order PEHLE log me (number ke saath; log hi wo line hai, Kafka key = stock), PHIR book.
+           Gira -> log #1 se replay, wahi book. STANDBY sirf log padhta, book taiyaar; pehla gire tab chalu.
 NAHI       doosra server saath chalao (replica): do book = ek share do baar bike.
-           Sahi: STANDBY sirf log padhta, book taiyaar; pehla gire tab chalu.
 ```
 ```
 AAGE POOCHEGA:
@@ -282,7 +281,7 @@ AAGE POOCHEGA:
   "Asli me usi pal milte?"         -> nahi, T+1; NSE Clearing karta, ye broker ka apna khaata.
 ```
 
-#### 7 Paisa kat gaya, share aaye hi nahi (do alag DB)
+#### 7 Interviewer: paisa aur share do alag DB me ho to?
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -304,8 +303,8 @@ flowchart LR
     style n_Portfolio_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Paisa Wallet DB me, share Portfolio DB me ho to ek transaction nahi chalti.
-           Mera 30k kata, share daalne se PEHLE crash.
+DIKKAT     Interviewer: "paisa Wallet DB me, share Portfolio DB me ho to?" -> ek transaction nahi chalti.
+           Mera 30k Wallet DB me kata, Portfolio DB me share daalne se PEHLE crash -> aadha kaam.
 HAL        STATUS LOG: wallet done -> portfolio done. Fail -> retry, aage hi badho (match ke baad ulta nahi).
            Ghanton fail -> PENDING + alert, ops share daalta.
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
@@ -345,12 +344,11 @@ flowchart LR
     n_WebSocket --> n_USERS
     style n_Pub_Sub fill:#f9a825,color:#000
     style n_WebSocket fill:#f9a825,color:#000
-    style n_USERS fill:#f9a825,color:#000
 ```
 ```
 DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
 HAL        WebSocket: connection khula, price badla tabhi push (Redis pub/sub se servers tak).
-NAHI       polling: 10 lakh bekaar sawaal / sec · Kafka: sab store karta, purana price bekaar.
+NAHI       polling: 10 lakh bekaar sawaal / sec, 99% me price badla hi nahi.
 ```
 ```
 AAGE POOCHEGA:
@@ -415,7 +413,8 @@ Portfolio / history  -> READ REPLICA (padhne ke liye DB ki copy)
 Matching (book RAM me, yaad rakhta) -> do CHALTI copy nahi (do book = ek share do baar bike);
                      standby log padhta khada rehta, sirf pehla gire tab chalta
                      -> stock ke hisaab se baanto: TCS ek engine pe, INFY doosre pe
-Kafka                -> partition badhao (key = stock)
+Kafka                -> partition pehle se zyada rakho (jaise 64); beech me badhaya to key ki jagah
+                        badalti, ek stock ke order do partition me, kram tootta
 Price                -> WebSocket server badhao
 
 POOCHEGA: "How would you scale this to 10x users?"
