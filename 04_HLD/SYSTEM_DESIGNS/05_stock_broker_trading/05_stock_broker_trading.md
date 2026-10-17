@@ -29,6 +29,29 @@
 
 ---
 
+## KAHANI (ek din, mera ek TCS order, subah se shaam)
+
+```
+1  Maine ek baar dabaya, order do lag gaye
+   CUE: order screen pe id bani, dobara bhejo to wahi id (idempotency key)
+2  Mere paas 50k the, maine 60k ke order laga diye
+   CUE: bank jaise: check aur block ek hi jhatke me (ek atomic query)
+3  Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
+   CUE: TCS ki ek line, ek hi aadmi chalata (ek symbol ek thread)
+4  9:15 baje sab TCS pe toot pade
+   CUE: TCS ki line lambi ho jaaye, par ek hi counter (baanto mat, line me rakho)
+5  Server gira, poori order book gayab
+   CUE: scoreboard toota, scorer ka register bacha (log pehle, replay)
+6  Mera paisa kat gaya, Suresh ko mila hi nahi
+   CUE: chaaron entry ek saath ya koi nahi (ek transaction)
+7  Paisa kat gaya, share aaye hi nahi (do alag DB)
+   CUE: har kadam ka haal likho, aage badho, ulta nahi (step + forward)
+8  10 lakh log ek saath price poochh rahe, server baith gaya
+   CUE: TV ki tarah bhejo, har koi phone na kare (push, WebSocket)
+```
+
+---
+
 ## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
 
 ![Design Stock Exchange](https://assets.bytebytego.com/diagrams/0344-stock-exchange.png)
@@ -341,8 +364,8 @@ AAGE POOCHEGA (wahi WAJAH B):
 CUE        chaaron entry ek saath ya koi nahi (ek transaction)
 >> yaad aa gaya? aage badh. nahi? neeche padh.
 
-DIKKAT     Book wapas bani, mera order Suresh se match hua: 10 TCS, 30k. Ab paisa aur share asal me
-           hilne hain. Mera 30k kata, Suresh ko milne se PEHLE crash. 30k hawa me.
+DIKKAT     Mera sauda to 9:15 pe hi match ho gaya tha: Suresh se 10 TCS, 30k. Match alag cheez hai,
+           paisa aur share hilna alag. Ab wo: mera 30k kata, Suresh ko milne se PEHLE crash. 30k hawa me.
 WAJAH      C — 4 jagah likhna (mera paisa, mere share, Suresh ka paisa, Suresh ke share), beech me gira.
 
 OPTION     1. 4 alag UPDATE, ek ke baad ek    -> haara: 2nd ke baad gira, aadha likha, wapas kaun karega?
@@ -385,8 +408,8 @@ AAGE POOCHEGA (wahi WAJAH C):
 CUE        har kadam ka haal likho, aage badho, ulta nahi (step + forward)
 >> yaad aa gaya? aage badh. nahi? neeche padh.
 
-DIKKAT     Shaam ko team ne bataya: data bahut bada ho gaya, paisa Wallet DB me aur share Portfolio DB me
-           alag kar diye. Agle din mera sauda phir hua. Do DB pe ek transaction nahi chalta.
+DIKKAT     Ek transaction tab chalti jab sab ek DB me ho. Agar paisa Wallet DB me aur share Portfolio DB
+           me alag hon (data bada hone pe aksar hote), to wo chalti hi nahi: do DB.
            Mera 30k kata, share daalne se PEHLE crash -> paisa gaya, share nahi aaye.
 WAJAH      C — wahi aadha likha, bas ab do alag DB me.
 
