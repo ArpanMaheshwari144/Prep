@@ -59,8 +59,10 @@ KAHANI:  Doc me "HELLO" tha. Arpan ne "HELLO WORLD" karke save kiya, usi waqt Ra
          Ravi ka save baad me pahuncha, usne poora text upar likh diya -> Arpan ka "WORLD" gayab
          (jo baad me aaya wo jeeta = LAST-WRITE-WINS).
 
-ILAAJ:   Poora text mat bhejo, sirf kya badla wo bhejo (OPERATION): "position 5 pe ' WORLD' daala".
-         Arpan ka op aur Ravi ka op dono lagao -> dono ka likha bacha.
+ILAAJ:   Poora doc bhej ke save karo to baad wala pehle wale ka likha mita deta.
+         Isliye sirf ye bhejo ki kya badla: 'position 5 pe WORLD daala'. Saath me 'maine doc ka version 7
+         dekh ke likha'.
+         Arpan aur Ravi dono ke badlaav lag jaate, kisi ka likha nahi mitta.
 
 ANDAR KAISE:
          op = { docId, userId, type (insert / delete), position, char, baseVersion }
@@ -79,8 +81,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Normal HTTP me server khud kuch nahi bhej sakta, sirf jawab de
          sakta. To Ravi refresh kare tab Arpan ka likha dikhe? Bekaar.
 
-ILAAJ:   WEBSOCKET: ek connection jo khula rehta aur dono taraf chalta.
-         Arpan usi se type bhejta, aur usi se Ravi ka likha aata.
+ILAAJ:   Har user ka server se ek connection khula rehta (WebSocket). Arpan likhe to turant server tak,
+         aur Ravi ka likha turant Arpan tak.
+         Connection toota aur wapas juda to app bolta 'main version 120 tak tha', server 121 se aage ke
+         saare badlaav bhej deta.
 
 ANDAR KAISE:
          Pehle ek HTTP request "Upgrade: websocket" -> server "101
@@ -105,9 +109,10 @@ KAHANI:  Ek connection server itne connection nahi jhelta, to kai lagaye.
          Arpan ne type kiya -> server-1 ko pata, par server-2 ko
          kaise pata chale? Server ek doosre ko jaante hi nahi.
 
-ILAAJ:   REDIS PUB/SUB: server-1 Arpan ka op Redis pe PUBLISH kare
-         -> jo servers us doc ko sun rahe, sabko pahunch jaata
-         -> server-2 Ravi ko bhej deta.
+ILAAJ:   Arpan server-1 pe, Ravi server-2 pe. Server-1 Arpan ka badlaav Redis pe 'doc:123' channel me daal
+         deta, server-2 us channel ko sun raha hai, to Ravi tak pahuncha deta.
+         Redis ye kahin save nahi karta, sirf aage bhejta. Kuch chhoot gaya to dobara judne pe log se mil
+         jaata.
 
 ANDAR KAISE:
          Har doc ek channel (doc:123). Jis server pe doc:123 ka koi user hai, wo SUBSCRIBE karta.
@@ -157,8 +162,9 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  Crore log type kar rahe, har akshar pe ek DB write -> DB khatam.
 
-ILAAJ:   Op pehle Redis BUFFER me jama, har ~1 sec / 500 op pe ek saath (BATCH) Cassandra me (edit log).
-         Live dikhana to pub/sub se ho hi raha (card 3), DB sirf bachane ke liye.
+ILAAJ:   Har akshar pe DB me likhna mehnga. Live dikhana to Redis se ho hi raha hai.
+         Isliye badlaav pehle Redis me jama karo, har 1 second ek saath Cassandra me likh do. Ek doc ke
+         saare badlaav ek jagah, server ke diye number ke kram me.
 
 ANDAR KAISE:
          Edit log: partition key = docId, uske andar kram = version (SERVER ka number).
@@ -181,7 +187,9 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Arpan ne 2 saal purana doc khola. Server ne pehle op se 10
          lakh op dobara chalaye tab doc bana -> kholne me bahut der.
 
-ILAAJ:   SNAPSHOT: har ~1000 op pe poore doc ki photo save. Kholna = aakhri photo + uske baad ke thode op.
+ILAAJ:   2 saal purana doc kholne pe 10 lakh badlaav shuru se chalana dheema.
+         Isliye har 1000 badlaav pe doc ki photo le lo. Kholte waqt aakhri photo + uske baad ke thode
+         badlaav.
 
 ISKE BAAD KYA TOOTEGA:
   - Photo lete waqt koi type kar raha?
@@ -194,9 +202,9 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  Arpan ka network 1 second ke liye gaya. Typing ruk jaaye, ya wo type karta rahe?
 
-ILAAJ:   Har HISSE ka alag CAP:
-         doc edit = AP: type karte raho, network aaye to bhej do. "Sabka ek doc" OT se aata (convergence).
-         permission = CP: jiska access hataya use TURANT roko -> alag SQL me.
+ILAAJ:   Likhne ke liye: network jaaye to bhi type karte raho, baad me sab mil jaayega aur doc same ho
+         jaayega.
+         Permission ke liye ulta: kisi ka access hataya to turant rokna hai, chahe kuch der system ruke.
 
 ANDAR KAISE:
          "Doc sahi chahiye -> CP" bolna galat: CP me network jaate hi typing ruk jaati.
@@ -278,9 +286,9 @@ flowchart TD
 
 ---
 
-## ════ DETAIL: HAR DIKKAT KI INTERVIEW LINE + TASVEER ════
+## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Card me poori kahani hai. Yahan har dikkat ki ek English line (interview me bolne ke liye) aur us waqt tak ka diagram.
+> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
 
 ---
 
@@ -288,12 +296,6 @@ flowchart TD
 
 ## DIKKAT 1 — dono ne saath save kiya, baad wale ne mita diya
 
-```
-JAWAB:    Poora doc bhej ke save karo to baad wala pehle wale ka likha mita deta.
-          Isliye sirf ye bhejo ki kya badla: 'position 5 pe WORLD daala'. Saath me 'maine doc ka version
-          7 dekh ke likha'.
-          Arpan aur Ravi dono ke badlaav lag jaate, kisi ka likha nahi mitta.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -309,12 +311,6 @@ flowchart TD
 
 ## DIKKAT 2 — Ravi ko Arpan ka likha kab dikhega
 
-```
-JAWAB:    Har user ka server se ek connection khula rehta (WebSocket). Arpan likhe to turant server tak,
-          aur Ravi ka likha turant Arpan tak.
-          Connection toota aur wapas juda to app bolta 'main version 120 tak tha', server 121 se aage ke
-          saare badlaav bhej deta.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -330,12 +326,6 @@ flowchart TD
 
 ## DIKKAT 3 — Arpan server-1 pe, Ravi server-2 pe
 
-```
-JAWAB:    Arpan server-1 pe, Ravi server-2 pe. Server-1 Arpan ka badlaav Redis pe 'doc:123' channel me
-          daal deta, server-2 us channel ko sun raha hai, to Ravi tak pahuncha deta.
-          Redis ye kahin save nahi karta, sirf aage bhejta. Kuch chhoot gaya to dobara judne pe log se
-          mil jaata.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -359,16 +349,6 @@ flowchart TD
 
 ## DIKKAT 4 — dono ne ek saath position 0 pe type kiya
 
-```
-POOCHEGA: "Two people type at the same position at the same time — what happens?"
-          (Do log ek hi jagah ek saath type karein to?)
-
-JAWAB:    Doc 'HELLO'. Arpan ne 0 pe X likha, Ravi ne bhi 0 pe Y. Seedha lagao to dono ki screen pe alag
-          doc.
-          Niyam: same jagah pe dono ne likha to Arpan ka pehle. Ravi ka Y ek aage khisak jaata. Dono ki
-          screen pe 'XYHELLO'.
-          Ye khiskana OT hai. Kisi ka likha nahi khota aur aakhir me sabka doc same.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -392,20 +372,6 @@ flowchart TD
 
 ## DIKKAT 5 — har akshar pe DB me likhna
 
-```
-POOCHEGA: "The database takes too many writes. What do you do?"
-          (DB pe likhai bahut zyada. Kya karoge?)
-
-JAWAB:    Har akshar pe DB me likhna mehnga. Live dikhana to Redis se ho hi raha hai.
-          Isliye badlaav pehle Redis me jama karo, har 1 second ek saath Cassandra me likh do. Ek doc ke
-          saare badlaav ek jagah, server ke diye number ke kram me.
-
-JAWAB:    Redis ki copy thodi der baad pahunchti, to Redis gira to kuch badlaav ja sakte.
-          Isliye Arpan ka app badlaav apne paas rakhta jab tak server 'mil gaya' na bole, aur server
-          'mil gaya' tab hi bolta jab pakka likh liya.
-          Redis gira -> app wahi badlaav (wahi id ke saath) dobara bhejta, server pehle se dekha hua
-          skip kar deta.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -431,11 +397,6 @@ flowchart TD
 
 ## DIKKAT 6 — doc khola, 10 lakh op chalane pade
 
-```
-JAWAB:    2 saal purana doc kholne pe 10 lakh badlaav shuru se chalana dheema.
-          Isliye har 1000 badlaav pe doc ki photo le lo. Kholte waqt aakhri photo + uske baad ke thode
-          badlaav.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -461,15 +422,6 @@ flowchart TD
 
 ## DIKKAT 7 — network ek second gaya, typing rukegi
 
-```
-POOCHEGA: "Consistency or availability — which do you pick?"
-          (Consistency ya availability, kya chunoge?)
-
-JAWAB:    Likhne ke liye: network jaaye to bhi type karte raho, baad me sab mil jaayega aur doc same ho
-          jaayega.
-          Permission ke liye ulta: kisi ka access hataya to turant rokna hai, chahe kuch der system
-          ruke.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]
@@ -498,13 +450,6 @@ flowchart TD
 
 ## DIKKAT 8 — crore WebSocket connection
 
-```
-POOCHEGA: "How do you keep edits in order?"
-          (Badlaav ka kram kaise rakhoge?)
-
-JAWAB:    Kram server tay karta: har badlaav ko doc ka agla number deta, app ki ghadi pe bharosa nahi.
-          Ek doc ke saare badlaav ek hi server pe, wahi ek-ek karke lagata, to kram kabhi nahi bigadta.
-```
 ```mermaid
 flowchart TD
     n_USER_A_B["USER A / B"]

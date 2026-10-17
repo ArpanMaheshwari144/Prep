@@ -63,7 +63,10 @@ KAHANI:  Subah 8 baje 500 log / second app khol rahe. Har ek ke liye DB se
          "ORDER BY published_at DESC LIMIT 20" chal raha. Aur sabko lagbhag WAHI 20 khabar dikh rahi.
          Ek hi kaam 500 baar / second.
 
-ILAAJ:   Feed PEHLE SE BANA ke Redis me rakho, nayi khabar aate hi update. Sab log wahi ek cache padhein.
+ILAAJ:   Sabko lagbhag wahi taazi 20 khabar dikhti hain. To har baar DB se mat nikaalo: ek baar list bana
+         ke Redis me rakh do, time ke kram se.
+         Nayi khabar aayi -> list me apni jagah daal do. Koi bhi app khole -> list se upar ki 20 de do.
+         100 me se 99 log Redis se hi laut jaate.
 
 ANDAR KAISE:
          Redis SORTED SET "feed:latest": har khabar ki id, score = kab chhapi (time).
@@ -84,9 +87,10 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  Arpan ne app khola aur server us waqt 1000 source se khabar laane gaya. Arpan 20 second ruka.
 
-ILAAJ:   LIKHNE aur PADHNE ka raasta ALAG (is design ka dil):
-         likhna: sources -> FETCHER -> KAFKA -> WORKER -> DB + cache update   (peeche, apne aap)
-         padhna: Arpan -> Feed svc -> cache -> nahi mila to DB                (turant)
+ILAAJ:   1000 sites se khabar laana dheema hai, to user ke aane pe nahi laate.
+         Peeche ek fetcher apne aap har kuch minute sites se khabar laake Kafka me daalta, worker saaf
+         karke DB aur Redis me rakhte.
+         User hamesha Redis me taiyaar list padhta, use is sab ka intezaar nahi karna padta.
 
 ANDAR KAISE:
          Fetcher khabar Kafka me daal ke bhool jaata. Workers apni speed se padhte (apna offset yaad rakhte).
@@ -110,7 +114,12 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  "India ne match jeeta" -> NDTV, TOI, HT, BBC, ESPN sabne likha. Arpan ki feed me wahi khabar 5 baar.
 
-ILAAJ:   Worker me teen kaam: SAAF karo (ads / HTML hatao) -> DEDUPE (ek hi khabar ek baar) -> CATEGORY lagao.
+ILAAJ:   Ek hi khabar 5 site pe: title chhote akshar me karke uska hash nikalo, same hash = same khabar,
+         ek hi rakho.
+         Thoda alag likha ho ('India wins' / 'India won') to milte-julte text wala hash (SimHash)
+         paas-paas aata, use bhi same maano.
+         Ye URL pehle aaya? Ek chhota dabba (Bloom filter) jo kam jagah me 'shayad dekha' / 'pakka naya'
+         batata.
 
 ANDAR KAISE:
          Same title, alag URL: title chhote akshar + chinh hatao -> hash -> same hash = same khabar.
@@ -135,8 +144,9 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Ek chhota source 30 second me jawab de raha. Fetcher
          us pe atka -> baaki 999 source ki khabar bhi ruki.
 
-ILAAJ:   Har source alag aur ek saath (parallel). TIMEOUT, dobara koshish, phir chhod do.
-         Har source pe CIRCUIT BREAKER (fuse).
+ILAAJ:   Har site alag se lao. 2-3 second me jawab nahi to chhod do, thodi baar dobara koshish.
+         Koi site baar-baar fail ho to kuch der usko bulao hi mat (fuse). Ek kharab site baaki 999 ko nahi
+         rokti.
 
 ANDAR KAISE:
          Fuse: CLOSED (sab theek) --kai baar fail--> OPEN (us source ko call hi mat karo, turant skip)
@@ -156,8 +166,9 @@ KAHANI:  6 mahine me 5 crore khabar ki row. Disk, backup, kharcha badhta
          ja raha. Par taazi 20 ke alawa purana koi padhta hi nahi.
          (Query dheemi NAHI hui: published_at pe index hai.)
 
-ILAAJ:   RETENTION (purana hatao), sharding nahi: haal ka (7 din) garam rakho.
-         Table mahine ke hisaab se tukdon me (PARTITION), purane tukde S3 / Glacier me, ya row pe TTL.
+ILAAJ:   Log sirf aakhri hafte ki khabar padhte. Table ko mahine ke tukdon me rakho, purane tukde sasti
+         jagah bhej do, jo kabhi nahi chahiye uski umar khatam.
+         Ye purana hatana hai, data baantna (sharding) nahi.
 
 ANDAR KAISE:
          Har mahine ka alag tukda. Mahina purana hua -> tukda table se alag karo (DETACH) -> archive.
@@ -177,9 +188,9 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Source 100 guna ho gaye ya log khud content daalne lage
          -> ek DB machine likhai aur data nahi jhel pa rahi.
 
-ILAAJ:   Pehle IMAANDARI: hamare number (~3 likhai / second, 7
-         din garam) pe ek machine kaafi, shard ki zaroorat nahi.
-         Zaroorat pade to hash(article_id) se shard.
+ILAAJ:   Hamare number pe ek DB kaafi hai.
+         Zaroorat pade to khabar ki id ke hash se baanto, taaki likhai sab jagah barabar bate. Date se
+         nahi baant-te, warna aaj ki saari likhai ek hi jagah aur wahi garam.
 
 ANDAR KAISE:
          Date se baanta -> aaj ki saari likhai aaj wale shard pe -> wo akela garam.
@@ -198,7 +209,9 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  Arpan ko sirf tech aur sports pasand. Har user ki alag feed banana (10 lakh feed) bahut mehnga.
 
-ILAAJ:   Har CATEGORY ki ek feed cache me (feed:tech, feed:sports ...). Arpan ki 2-3 category mila do.
+ILAAJ:   Har user ki alag list banana mehnga. Har category (tech, sports) ki ek list rakho.
+         Arpan ko tech + sports pasand -> dono list se upar ki khabar lo, time se mila do, top 20 dikha
+         do.
 
 ANDAR KAISE:
          feed:tech se top 20 + feed:sports se top 20 -> time
@@ -215,7 +228,9 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  8 baje sabne app khola. Ek hi Feed service machine ka CPU bhar gaya.
          Jo cache me nahi mila wo seedha primary DB pe gaya, jahan fetcher bhi likh raha -> dono dheeme.
 
-ILAAJ:   Kai Feed service machine (stateless) + LB. Cache miss READ REPLICA se padho, primary se nahi.
+ILAAJ:   Feed service kuch yaad nahi rakhti, kai machine + load balancer.
+         Redis me na mile to DB ki copy se padho, main DB se nahi (wahan khabar likhi ja rahi).
+         Subah 8 baje ki bheed pata hai, to 7:45 tak machine badha do aur Redis bhar do.
 
 ANDAR KAISE:
          Cache zyadatar padhai rok leta. Jo bachi wo replica pe -> primary sirf likhne ke liye free.
@@ -233,7 +248,11 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Arpan ne search me "cricket" likha -> DB me LIKE
          '%cricket%' -> 5 crore row ek-ek karke padhi (full scan).
 
-ILAAJ:   Alag SEARCH INDEX (Elasticsearch). Worker khabar save karte waqt index me bhi daale (peeche se).
+ILAAJ:   Har shabd ke saath likh lo wo kin khabron me aaya, jaise kitaab ke peeche ki index: 'cricket' ->
+         [khabar 12, 45, 90].
+         Ye ek HashMap hi hai: shabd -> list. 'cricket kohli' dhoondha to dono list nikaalo, jo dono me
+         hain wo upar.
+         Ye kaam Elasticsearch karta. Asli data DB me, index kabhi bhi dobara bana sakte.
 
 ANDAR KAISE:
          INVERTED INDEX = kitaab ke peeche ki index jaisi: shabd -> kis-kis khabar me hai.
@@ -307,9 +326,9 @@ flowchart TD
 
 ---
 
-## ════ DETAIL: HAR DIKKAT KI INTERVIEW LINE + TASVEER ════
+## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Card me poori kahani hai. Yahan har dikkat ki ek English line (interview me bolne ke liye) aur us waqt tak ka diagram.
+> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
 
 ---
 
@@ -317,12 +336,6 @@ flowchart TD
 
 ## DIKKAT 1 — har request pe DB se taazi 20
 
-```
-JAWAB:    Sabko lagbhag wahi taazi 20 khabar dikhti hain. To har baar DB se mat nikaalo: ek baar list
-          bana ke Redis me rakh do, time ke kram se.
-          Nayi khabar aayi -> list me apni jagah daal do. Koi bhi app khole -> list se upar ki 20 de do.
-          100 me se 99 log Redis se hi laut jaate.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -342,12 +355,6 @@ flowchart TD
 
 ## DIKKAT 2 — 1000 source se khabar laana dheema
 
-```
-JAWAB:    1000 sites se khabar laana dheema hai, to user ke aane pe nahi laate.
-          Peeche ek fetcher apne aap har kuch minute sites se khabar laake Kafka me daalta, worker saaf
-          karke DB aur Redis me rakhte.
-          User hamesha Redis me taiyaar list padhta, use is sab ka intezaar nahi karna padta.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -374,14 +381,6 @@ flowchart TD
 
 ## DIKKAT 3 — ek khabar paanch source se
 
-```
-JAWAB:    Ek hi khabar 5 site pe: title chhote akshar me karke uska hash nikalo, same hash = same
-          khabar, ek hi rakho.
-          Thoda alag likha ho ('India wins' / 'India won') to milte-julte text wala hash (SimHash)
-          paas-paas aata, use bhi same maano.
-          Ye URL pehle aaya? Ek chhota dabba (Bloom filter) jo kam jagah me 'shayad dekha' / 'pakka
-          naya' batata.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -408,14 +407,6 @@ flowchart TD
 
 ## DIKKAT 4 — ek source band / dheema
 
-```
-POOCHEGA: "What if a source is slow or down?"
-          (Koi source dheema / band ho to?)
-
-JAWAB:    Har site alag se lao. 2-3 second me jawab nahi to chhod do, thodi baar dobara koshish.
-          Koi site baar-baar fail ho to kuch der usko bulao hi mat (fuse). Ek kharab site baaki 999 ko
-          nahi rokti.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -442,14 +433,6 @@ flowchart TD
 
 ## DIKKAT 5 — 6 mahine me 5 crore row
 
-```
-POOCHEGA: "Data keeps growing — what happens in 3 years?"
-          (Data badhta ja raha, 3 saal baad?)
-
-JAWAB:    Log sirf aakhri hafte ki khabar padhte. Table ko mahine ke tukdon me rakho, purane tukde sasti
-          jagah bhej do, jo kabhi nahi chahiye uski umar khatam.
-          Ye purana hatana hai, data baantna (sharding) nahi.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -478,11 +461,6 @@ flowchart TD
 
 ## DIKKAT 6 — bahut bade scale pe ek DB machine nahi jhelti
 
-```
-JAWAB:    Hamare number pe ek DB kaafi hai.
-          Zaroorat pade to khabar ki id ke hash se baanto, taaki likhai sab jagah barabar bate. Date se
-          nahi baant-te, warna aaj ki saari likhai ek hi jagah aur wahi garam.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -511,11 +489,6 @@ flowchart TD
 
 ## DIKKAT 7 — Arpan ko sirf tech + sports
 
-```
-JAWAB:    Har user ki alag list banana mehnga. Har category (tech, sports) ki ek list rakho.
-          Arpan ko tech + sports pasand -> dono list se upar ki khabar lo, time se mila do, top 20 dikha
-          do.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -544,11 +517,6 @@ flowchart TD
 
 ## DIKKAT 8 — subah 8 baje sab ek saath
 
-```
-JAWAB:    Feed service kuch yaad nahi rakhti, kai machine + load balancer.
-          Redis me na mile to DB ki copy se padho, main DB se nahi (wahan khabar likhi ja rahi).
-          Subah 8 baje ki bheed pata hai, to 7:45 tak machine badha do aur Redis bhar do.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -584,13 +552,6 @@ flowchart TD
 
 ## DIKKAT 9 — Arpan ne cricket dhoondha
 
-```
-JAWAB:    Har shabd ke saath likh lo wo kin khabron me aaya, jaise kitaab ke peeche ki index: 'cricket'
-          -> [khabar 12, 45, 90].
-          Ye ek HashMap hi hai: shabd -> list. 'cricket kohli' dhoondha to dono list nikaalo, jo dono me
-          hain wo upar.
-          Ye kaam Elasticsearch karta. Asli data DB me, index kabhi bhi dobara bana sakte.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
