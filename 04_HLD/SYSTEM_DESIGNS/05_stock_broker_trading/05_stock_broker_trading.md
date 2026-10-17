@@ -11,7 +11,7 @@
 ```
 1  Maine ek baar dabaya, order do lag gaye
    CUE: order screen pe id bani, dobara bhejo to wahi id (idempotency key)
-2  Mere paas 50k the, maine 60k ke order laga diye
+2  Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
    CUE: bank jaise: check aur block ek hi jhatke me (ek atomic query)
 3  Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
    CUE: TCS ka ek hi baabu; do baabu hote to Suresh ke 10 share do baar bik jaate (ek symbol ek thread)
@@ -154,7 +154,7 @@ AAGE POOCHEGA (wahi WAJAH D):
      -> ~24 ghante, phir saaf.
 ```
 
-#### 2 Mere paas 50k the, maine 60k ke order laga diye
+#### 2 Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
 ```
 CUE        bank jaise: check aur block ek hi jhatke me (ek atomic query)
 
