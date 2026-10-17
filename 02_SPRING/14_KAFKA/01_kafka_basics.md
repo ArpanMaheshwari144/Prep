@@ -183,6 +183,19 @@ group     = ek kaam karne wali team         -> andar baanto, alag group ko poori
  messages are retained, so multiple consumer groups can read the same events, and they can be replayed."
 ```
 
+### 0H. Kafka KHUD down ho gaya to? (haan, ho sakta hai — ilaaj 3 parat me)
+```
+1 BROKER mara   -> 3 broker cluster, har partition ki 3 copy (replication factor 3)
+                   leader mara -> ISR wala follower naya leader (kuch second), data nahi khota
+                   acks=all + min.insync.replicas=2 -> "OK" tabhi jab 2 copy pe likh gaya
+POORA cluster   -> rare, par hota. Producer: OUTBOX — order + event EK hi DB transaction me
+  down             (outbox table), relay Kafka wapas aane pe bhejta. Order chalta rehta, event DER se, khota nahi.
+                   Consumer: bas ruk jaate, offset Kafka me safe, wapas aane pe wahin se.
+SAACH           -> Kafka "kabhi down nahi" NAHI. Fayda = girne pe DER hoti, NUKSAAN (data loss) nahi.
+                   Seedhi call me SMS gira = order gira; Kafka gira = event ruka, order chala (outbox ke saath).
+```
+(acks / ISR poora = 04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka · outbox = wahi file)
+
 ---
 
 ## 1. EK LINE (saar)
