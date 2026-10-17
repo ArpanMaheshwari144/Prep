@@ -32,7 +32,7 @@ KAISA CHALE (NFR): EK seat DO ko na bike (dil) · dekhna tez · badi movie ki bh
 NUMBERS (andaaza): 1 crore user · DO ALAG bojh (ek number mat bolo):
    DEKHNA (shows / seat map) = sab karte -> lakhon padhai -> CACHE + READ REPLICA
    BOOKING = kam log, par ek hi seat pe ek saath + jhatke me aati -> QUEUE
-   data chhota (movies / shows / seats gine-chune) -> SHARDING KI ZAROORAT NAHI (ye bolna)
+   active data chhota (aaj + agle hafte ke show), purane show archive -> SHARDING KI ZAROORAT NAHI
 ```
 ```
 POOCHEGA: "Consistency or availability — which do you pick?"
@@ -68,7 +68,8 @@ flowchart TD
 
 #### 1 ARPAN AUR RAVI NE EK SAATH A1 BOOK KI
 ```
-DIKKAT 1   Arpan ne dekha "A1 khaali", usi pal Ravi ne bhi dekha "A1 khaali". Dono ne Book dabaya.
+DIKKAT 1   Badi movie ki booking 10 baje khuli, hazaaron log ek saath seat map pe. Arpan aur Ravi dono
+           ne 10:00:01 pe "A1 khaali" dekha aur Book dabaya.
            App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
 HAL        Check aur likhna EK query me: "A1 ko booked karo, SIRF agar abhi bhi khaali ho".
              UPDATE seats SET status = 'booked' WHERE seat_id = 'A1' AND status = 'available'
@@ -95,7 +96,7 @@ HAL        FOR UPDATE = do baar DB jaana, lock lamba. Version = haarne wala doba
            gayi to gayi. Conditional UPDATE = ek hi statement, lock sabse chhota.
 
 DIKKAT 4   Do alag log vs ek hi aadmi ka dobara bhejna?
-HAL        Do ALAG log ek seat = atomic UPDATE. EK aadmi ka dobara bhejna = idempotency (Pay pe ek id).
+HAL        Do ALAG log ek seat = atomic UPDATE. EK aadmi ka dobara bhejna = idempotency (bookingId = key).
 ```
 
 #### 2 SEAT CHUNI, AB 3 MIN PAYMENT KAR RAHA
@@ -131,12 +132,13 @@ DIKKAT 4   Ek aadmi ne 10 seat hold karke chhod di?
 HAL        Ek user kitni hold kar sake uski limit + rate limit.
 ```
 
-#### 3 PAYMENT PAGE PE "PAY" DO BAAR DABA
+#### 3 NETWORK GAYA, APP NE PAY DOBARA BHEJA
 ```
-DIKKAT 1   Arpan ne Pay dabaya, page ghooma, phir daba diya -> ek hi booking ke do baar paise kate.
-HAL        App 'Pay' pe ek id banata aur dobara bhejne pe WAHI id bhejta.
-           Server id pehle dekh chuka -> purana jawab, doosri baar paisa nahi katta. (usercrud /pay wala)
-           Id APP banata: server banata to dobara aayi request = nayi id = do baar kata.
+DIKKAT 1   Arpan ne Pay dabaya, UPI app khula, paisa kata. Wapas aate waqt network gaya, BMS app ne jawab
+           na milne pe dobara bheja -> ek hi booking ke do baar paise kate.
+HAL        Ek booking = ek payment: bookingId (B-77) hi idempotency key. Dobara aaya to wahi B-77
+           -> server: "B-77 ka payment ho chuka" -> purana jawab, paisa nahi katta. (usercrud /pay wala)
+           Pay button bhi pehli tap pe band.
 ```
 ```mermaid
 flowchart TD
@@ -161,7 +163,8 @@ HAL        Booking 'PAYMENT_PENDING' rakho, hold thoda badhao, ya reconciliation
 
 #### 4 BOOK KOI-KOI KARTA, SEAT MAP SAB DEKH RAHE
 ```
-DIKKAT 1   Ek show ka seat map 1 lakh log dekh rahe, book shayad 500 karenge.
+DIKKAT 1   Badi movie ke release hafte me city ke saare show ka seat map 1 lakh log dekh rahe (seat dekho,
+           time badlo, phir dekho), book shayad 5000 karenge.
            1 lakh padhai aur nazuk booking dono ek hi DB pe -> booking dheemi.
 HAL        Seat map Redis me "seatmap:show42" -> nahi mila to DB ki copy (replica) se banao -> Redis me
            rakho (~5 sec umar). Koi seat book hui -> "seatmap:show42" DEL -> agli baar taaza banta.
@@ -193,10 +196,11 @@ DIKKAT 3   Ek bade show ki ek hi Redis key pe lakhon padhai?
 HAL        Us key ki kai copy + App ke andar 1-2 sec ka local cache.
 ```
 
-#### 5 BADI MOVIE KA PEHLA DIN, LAKHON LOG EK SHOW PE
+#### 5 BADA CONCERT, LAKHON LOG EK SHOW PE
 ```
-DIKKAT 1   Badi movie, pehla show: 2 lakh log, 3000 seat. Saari bheed seedha DB pe, wahi rows pe ladaai,
-           har koi lock ke intezaar me -> sab dheema. (Aam din me ye nahi hota, hold seedha DB pe.)
+DIKKAT 1   Arijit ka concert, ek hi show: 3000 seat, booking 12 baje khuli, 2 lakh log ek saath. Saari
+           bheed seedha DB pe, wahi rows pe ladaai, har koi lock ke intezaar me -> sab dheema.
+           (Aam din me ye nahi hota, hold seedha DB pe.)
 HAL        WAITING ROOM: darwaze pe ginti (Redis, DECR). Ek waqt me ~3000 log andar, baaki line me.
            Andar wala bina khareede gaya / hold khatam -> line se agla andar.
            Andar walon ki booking Kafka me, key = show_id -> ek show ki line ek worker ek-ek karke.
@@ -342,7 +346,8 @@ AAKHRI DABBE (sab dikkat ke baad):
   Sweeper = purane hold saaf (sirf safai; asli faisla UPDATE ke WHERE me)
 
 DB:  SQL -> sahi hona hi dil: ACID + row lock -> ek seat do ko bikna namumkin
-     (NoSQL "thodi der baad sahi" me do machine alag-alag "khaali" bol sakti) · data chhota -> shard NAHI
+     (seat + booking + payment haal = kai row ek saath badalti -> ek transaction) · active data chhota
+     -> shard NAHI
 
 END ME POOCHEGA:
   "Do log ek seat?"   -> UPDATE ... WHERE status = 'available' -> ek ko 1 row, doosre ko 0 row "ja chuki"

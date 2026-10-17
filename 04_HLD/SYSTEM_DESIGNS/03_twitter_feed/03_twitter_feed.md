@@ -108,8 +108,9 @@ HAL        Padhte waqt follow list se chhaan do, ya peeche se saaf karo. Turant 
 
 #### 2 TWEET BUTTON 3 SEC GHOOMTA RAHA
 ```
-DIKKAT 1   Arpan ne tweet dabaya. Usi request me 200 followers ke inbox likhe ja rahe the
-           -> button 3 second ghoomta raha. Ek din Redis dheema tha -> tweet ban chuka tha, par "fail" dikha.
+DIKKAT 1   Arpan ke 5,000 follower. Tweet dabaya -> usi request me 5,000 inbox likhe ja rahe the.
+           Ek din Redis dheema: har likhna ~10 ms -> 50 second. App ka timeout aaya, "fail" dikha,
+           par tweet DB me ban chuka tha.
 HAL        Tweet DB me save + ek khabar KAFKA me -> user ko turant "ho gaya".
            FANOUT WORKERS peeche se Kafka padh ke inbox bharte. Khabar author_id ki key se -> ek aadmi ke
            tweet ek hi line me, kram se. Kai worker lines baant lete.
@@ -145,7 +146,8 @@ HAL        Fanout ab peeche chal raha hai. Apna tweet seedha apni feed me jod do
 #### 3 BIEBER = 10 CRORE INBOX (CELEBRITY)
 ```
 DIKKAT 1   Bieber ke 10 crore follower. Usne ek tweet kiya -> fanout ko 10 crore inbox me likhna pada.
-           Fanout atak gaya, aur uske peeche baaki sabke tweet bhi atak gaye.
+           Jis Kafka line (partition) me Bieber ka tweet tha, wo ghanton atki; usi line ke baaki logon
+           ke tweet bhi peeche khade reh gaye.
 HAL        HYBRID: 10,000 se kam follower = PUSH (tweet aate hi followers ke inbox me).
            Zyada = PULL: Bieber ke tweet inbox me nahi jaate. Arpan feed khole tab Bieber ke naye tweet
            alag se laao (abhi DB se) aur Arpan ke inbox ke 50 ke saath milao + sort. Chhota kaam.

@@ -32,7 +32,7 @@ KAISA CHALE (NFR): paisa hamesha sahi (strong, kabhi "thodi der baad sahi" nahi)
 NUMBERS (andaaza):
    ~50 lakh user · ~50 lakh order / din, market ~6 ghante (~20,000 second) khulta -> ~250 order / second
    9:15 baje market khulte hi jhatka: 10,000+ order / second
-   price dekhne wale bahut zyada: crore baar / second "price kya hai"
+   price dekhne wale bahut zyada: ~10 lakh log app khula rakhte, har second naya price -> ~10 lakh / second
    -> matching RAM me · price PUSH karo (har user ka baar-baar poochhna nahi)
    -> jo tez chahiye aur thodi der ka hai (order book) = RAM
    -> jo paisa hai aur hamesha ka hai (wallet / ledger) = SQL DB + ACID

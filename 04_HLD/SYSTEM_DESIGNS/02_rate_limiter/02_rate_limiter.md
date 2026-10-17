@@ -105,8 +105,9 @@ HAL        Wo App gira to ginti gayi. App badhe / ghate to bantwara badla, ginti
 
 #### 2 DO REQUEST EK SAATH, DONO GHUS GAYI
 ```
-DIKKAT 1   Ginti 4 pe hai, limit 5. Do request bilkul ek saath aayi.
-           Request A ne padha "4", B ne bhi "4". Dono ne +1 kiya aur "5" likha -> andar 6 ghus gayi.
+DIKKAT 1   Ginti 4 pe hai, limit 5. Bot ne Arpan ke account pe ek hi pal me 20 login parallel bheje,
+           LB ne do App pe baante. App-1 ne Redis se padha "4", App-2 ne bhi "4".
+           Dono ne +1 kiya aur "5" likha -> andar 6 ghus gayi.
 HAL        Redis ek hi line (single thread) me kaam karta: ek command poora hone tak doosra shuru hi
            nahi hota. Isliye INCR ek saath aaye to bhi +1, +1 sahi.
            Token bucket me do kaam ("token bacha?" dekhna + "ek ghatao") -> dono ek LUA script me.
@@ -228,12 +229,13 @@ HAL        Redis ki tarah LB bhi ek hi ho to wahi gira = sab gira. ALB kai zone 
            kaunsa zinda, usi pe bhejta.
 ```
 
-#### 5 EK USER TEEN REGION SE
+#### 5 EK API KEY TEEN REGION SE
 ```
-DIKKAT 1   Limit 100. Arpan ne Bangalore se 50, Berlin se 50, aur US VPN se 50 request bheji.
-           Har region ka apna Redis, har ek ne 50 gina -> kisi ko 100 paar nahi dikha. 150 nikal gayi.
+DIKKAT 1   Limit 100 / minute ek API key pe. Arpan ki script 3 cloud server pe chal rahi: Mumbai, Frankfurt,
+           US. Har server paas wale region pe gaya, har region ka apna Redis, har ek ne 50 gina
+           -> kisi ko 100 paar nahi dikha. 150 nikal gayi.
 HAL        Har user ka ek HOME region (user_id se). Request kahin se aaye, ginti HOME region me hi.
-           Arpan ka home = India. Berlin ka gateway dekhta "iska ghar India" -> India ke Redis tak bhejta.
+           Arpan ka home = India. Frankfurt ka gateway dekhta "iska ghar India" -> India ke Redis tak bhejta.
            Teeno region ki request ek hi ginti me -> 100 pe ruk jaata.
 ```
 ```mermaid

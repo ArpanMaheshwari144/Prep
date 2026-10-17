@@ -39,7 +39,7 @@ KAISA CHALE (NFR): khoye nahi · ek machine gire to chale · lakhon / second (di
 NUMBERS (andaaza):
    10 crore message / din, din me ~1 lakh second -> ~1,200 / second -> bheed me 3-5 guna -> ~5,000 / second
    ~1 KB ek message -> ~100 GB / din · 7 din rakho ~700 GB · 3 copy ~2 TB
-   ~2 TB, ek broker ~1-2 TB -> 3-4 BROKER · har topic abhi 3-6 PARTITION kaafi,
+   3 copy = kam se kam 3 BROKER (har copy alag machine) · har topic abhi 3-6 PARTITION kaafi,
      shuru me 2-4 guna zyada rakho (partition = kitne ek saath padh sakein)
    MQ ka asli number JAGAH hai (Kafka padh ke delete nahi karta, RAKHTA) — log ise sirf "pipe" samajh lete
 ```
@@ -95,12 +95,15 @@ HAL        Kafka khud, ek andar wale topic __consumer_offsets me: (group, topic,
            Offset = kram number (byte nahi). Ek chhoti .index file batati "offset 3 file me kis jagah".
 ```
 
-#### 2 EK MACHINE ME 2 TB AUR 5,000 / SEC NAHI AAYEGA
+#### 2 SALE PE 5,000 / SEC, EK WORKER 500 HI BHEJ PAATA
 ```
-DIKKAT 1   Ek broker (Kafka machine) me 2 TB nahi samaata, aur 5,000 likhai / second bhi akela nahi jhelta.
+DIKKAT 1   Sale ke din "order-events" topic pe 5,000 khabar / second. SMS worker ek second me ~500 hi
+           bhej paata (har SMS ek API call). Topic ek hi line ho to use ek hi worker kram se padhta
+           -> peeche ghanton ki line (lag).
 HAL        Topic ko tukdon (PARTITION) me todo, har tukda alag machine pe:
-             topic "user-signup": P0 -> Broker A · P1 -> Broker B · P2 -> Broker C
-           Jagah bhi bat gayi, likhai bhi. Aur badhe -> aur broker + aur partition.
+             topic "order-events": P0 -> Broker A · P1 -> Broker B · P2 -> Broker C
+           Har tukda alag worker padhe -> 10 tukde = 10 worker = ~5,000 / sec. Likhai aur jagah bhi
+           bat gayi. Aur badhe -> aur partition.
 ```
 ```mermaid
 flowchart TD
@@ -122,12 +125,13 @@ DIKKAT 4   Ek partition garam (ek key ki bahut khabar)?
 HAL        Key ko tukdon me todo (userId#bucket), agar us key pe kram zaroori nahi.
 ```
 
-#### 3 ARPAN KE TEEN EVENT TEEN PARTITION ME (KRAM ULTA)
+#### 3 ARPAN KE DO BADLAAV DO PARTITION ME (KRAM ULTA)
 ```
-DIKKAT 1   Arpan ke teen event: signup P0 me gaya, profile-update P2 me, delete-account P1 me.
-           P1 jaldi padha gaya -> delete pehle hua, signup baad me. Ulta.
+DIKKAT 1   Arpan ne naam "Arpan M" kiya, 1 min baad "Arpan Maheshwari". Pehla event P0 me, doosra P1 me.
+           P0 ka consumer 10 min peeche (lag), P1 wala time pe -> pehle "Arpan Maheshwari" laga, phir
+           "Arpan M" -> galat naam reh gaya.
 HAL        Kafka kram sirf EK partition ke andar deta. Isliye key = Arpan ki userId:
-             partition = hash(userId) % 3 -> hamesha P2 -> signup, update, delete teeno P2 me, kram se.
+             partition = hash(userId) % 3 -> hamesha P2 -> dono badlaav P2 me, kram se.
            Poore topic ka kram = sirf ek partition = speed khatam. Isliye kram sirf key ke andar.
 ```
 ```mermaid
@@ -150,8 +154,9 @@ HAL        Idempotent producer (enable.idempotence): har message ka sequence num
 
 #### 4 EMAIL SERVICE KE 3 INSTANCE, ARPAN KO 3 EMAIL
 ```
-DIKKAT 1   Email service ki 3 machine (C1, C2, C3), teeno poora topic padh rahi. Arpan ka signup teeno ne
-           padha -> Arpan ko 3 welcome email.
+DIKKAT 1   Email service ki 3 machine (C1, C2, C3). Config me group.id = machine ka naam daal diya
+           -> teeno alag team ban gayi, teeno poora topic padh rahi. Arpan ka signup teeno ne padha
+           -> Arpan ko 3 welcome email.
 HAL        Teeno ek CONSUMER GROUP (team) me. Team ke andar har partition sirf EK machine padhti:
              P0 -> C1 · P1 -> C2 · P2 -> C3. Arpan ka event P2 me -> sirf C3 -> ek email.
 ```

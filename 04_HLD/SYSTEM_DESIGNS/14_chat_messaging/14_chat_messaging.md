@@ -180,8 +180,8 @@ HAL        Copy pe switch. Beech me seedha bhejna ruka, par message DB me
            -> push + dobara judne pe pahunchega.
 
 DIKKAT 4   Redis pub-sub se kyun nahi bhejte?
-HAL        Chal sakta, par pub-sub me har server har message sunta (200 server, sab bekaar jaagte).
-           Register se seedha server-7 ko = sirf ek server tak. Aur message DB me, to bharosa wahan se.
+HAL        Chal sakta (har user ka channel, sirf server-7 sunta). Par pub-sub kuch rakhta nahi, aur Redis
+           Cluster me har publish sab node pe ghoomta. Register se seedha server-7, message DB me pakka.
 ```
 
 #### 3 RAVI OFFLINE, MESSAGE KAHAN JAAYE?
@@ -441,7 +441,8 @@ HAL        Product + engineering saath: feature ki keemat batao (10 lakh x tick 
 DIKKAT 1   Arpan ka net dheema. App ne "hi" bheja, jawab nahi aaya (timeout), to dobara bheja. Pehla pahunch
            chuka tha. Ravi ko "hi" do baar dikha.
 HAL        App har message ki apni id (clientMsgId) banata, dobara bhejne pe WAHI id.
-           "Pehle aaya?" + daalna = EK atomic kadam: (chat_id, clientMsgId) UNIQUE, ya Redis SET NX.
+           "Pehle aaya?" + daalna = EK atomic kadam: Cassandra INSERT ... IF NOT EXISTS
+           (LWT), ya Redis SET NX.
            Pehle dekh chuka -> naya message nahi banta. Ravi ko "hi" ek hi baar.
            (Server id banata to har dobara bhejna = nayi id = duplicate.)
 ```
@@ -526,10 +527,11 @@ DIKKAT 4   Do server ki ghadi alag, Snowflake ka kya?
 HAL        Ms ka farak ho sakta. Ek chat ka pakka kram per-chat seq se.
 ```
 
-#### 11 5 MB KA VIDEO BHI ISI RAASTE SE?
+#### 11 200 MB KA VIDEO BHI ISI RAASTE SE?
 ```
-DIKKAT 1   Arpan ne 5 MB video chat server ke raaste se bheja -> connection aur thread atak gaye, baaki
-           message bhi ruke.
+DIKKAT 1   Arpan ne "College Gang" (500) me 200 MB shaadi ka video chat server ke raaste se bheja
+           -> 2 min us connection pe upload, uske peeche Arpan ke baaki message atke; server 500 baar
+           200 MB bheje = ~100 GB ek message ke liye.
 HAL        App file seedha S3 me (PRESIGNED URL: server sign kare PUT + key + 10 min).
            Message me sirf file ka pata, size aur thumbnail (thumbnail app khud banata, kuch KB).
            Group me file ek baar upload, 500 ko wahi pata.

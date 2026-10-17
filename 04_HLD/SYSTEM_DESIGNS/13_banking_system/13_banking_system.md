@@ -138,7 +138,8 @@ DIKKAT 4   Commit ke baad seedha Kafka ko kyun nahi bhej dete?
 HAL        Commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi. Outbox usi transaction me hai,
            kho nahi sakta.
 
-DIKKAT 5   Arpan ke SMS ulte kram me (pehle "credit", phir "debit")?
+DIKKAT 5   Arpan ki salary 50,000 aayi, 1 min baad usne 20,000 rent bheja. SMS ulte aaye: pehle
+           "20,000 kata", phir "50,000 aaya" -> beech wale SMS ka balance galat dikha?
 HAL        Har khaata line ka apna event (upar E-77a, E-77b), Kafka key = account_id:
            Arpan ke saare event ek partition me, kram se. Ravi ke apne partition me.
 
@@ -209,10 +210,11 @@ DIKKAT 3   Key table hamesha badhti rahegi?
 HAL        24-48 ghante baad saaf.
 ```
 
-#### 5 EK ACCOUNT SE DO TRANSFER EK SAATH (DOUBLE SPEND)
+#### 5 AUTO-DEBIT AUR UPI EK SAATH (DOUBLE SPEND)
 ```
-DIKKAT 1   Arpan ke paas 300. Ek saath 200-200 ke do transfer chale.
-           App ne dono baar balance padha (300), dono pass -> dono kate -> Arpan = -100.
+DIKKAT 1   Arpan ke paas 300. 1 tareekh subah 9:00 Netflix ka 200 ka auto-debit chala, usi second Arpan
+           ne phone se UPI pe Ravi ko 200 bheje. Do request, do thread, dono ne balance padha (300)
+           -> dono pass -> dono kate -> Arpan = -100.
 HAL        Hisaab DB ke andar, check + kaatna EK hi query me:
              UPDATE account SET balance = balance - 200 WHERE id = 'Arpan' AND balance >= 200
            UPDATE row pe taala leta -> dono transfer line me lagte.
@@ -238,9 +240,10 @@ DIKKAT 3   Niyam code me kyun nahi?
 HAL        Raaste kai (API / batch / haath se), DB ek. Niyam DB me.
 ```
 
-#### 6 ARPAN -> RAVI AUR RAVI -> ARPAN EK SAATH (DEADLOCK)
+#### 6 ARPAN -> RAVI KI DUKAAN AUR DUKAAN -> ARPAN EK SAATH (DEADLOCK)
 ```
-DIKKAT 1   Arpan ne Ravi ko bheja, usi pal Ravi ne Arpan ko.
+DIKKAT 1   Ravi ki dukaan. Arpan ne dukaan ko 500 bheje, usi second dukaan ke system ne Arpan ke purane
+           order ka 200 refund chalaya (refund batch).
            Txn1 ne Arpan pe taala liya, Ravi ka intezaar · Txn2 ne Ravi pe taala, Arpan ka intezaar
            -> dono hamesha atke (deadlock, MySQL 1213).
 HAL        Hamesha CHHOTI account id pehle lock karo, dono transfer same kram me.
@@ -305,7 +308,8 @@ HAL        OWNER CHECK har request pe: userId JWT se lo (body / URL se nahi, wah
 
 #### 8 SAB BALANCE PRIMARY SE PADH RAHE, TRANSFER DHEEME
 ```
-DIKKAT 1   Lakhon log balance / history dekh rahe, sab primary se. Padhne ki bheed me transfer dheeme.
+DIKKAT 1   Salary day subah 9-10: har koi app khol ke balance + "pichhle 3 mahine" history dekh raha,
+           upar se mahine ka statement job chal raha. Ye bhaari padhai primary pe -> transfer dheeme.
 HAL        Padhna DB ki COPY (read replica) se, likhna (transfer) sirf primary pe.
            Primary ki diary (WAL) copy tak jaati, copy wahi badlaav lagati. Primary sirf likhne ke liye free.
 ```
@@ -330,8 +334,8 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 ```
-DIKKAT 2   Arpan ne 1000 bheje, turant balance dekha -> copy ~200 ms peeche thi, purana 5000 dikha (asal
-           4000). Arpan sochega paisa gaya hi nahi -> dobara bhejega!
+DIKKAT 2   Salary day ki bheed me copy ~5 sec peeche. Arpan ne 1000 bheje, success screen se turant
+           balance khola -> purana 5000 dikha (asal 4000). Arpan sochega paisa gaya hi nahi -> dobara!
 HAL        Jisne abhi paisa bheja uska balance kuch second PRIMARY se (read-your-own-writes):
            Arpan ke ACCOUNT pe last_write_at (Redis, phone pe nahi) -> kuch second tak kisi bhi phone se
            Arpan ka padhna primary se.
@@ -340,10 +344,11 @@ DIKKAT 3   Copy minute bhar peeche?
 HAL        Lag pe alert. Had paar -> us copy ko padhne wali list se hatao.
 ```
 
-#### 9 22 ARAB LINE ME HISTORY KA PAGE 5000
+#### 9 DUKAAN KI 5 LAKH LINE, EXPORT KA PAGE 5000
 ```
-DIKKAT 1   Arpan history ke page 5000 pe: LIMIT 20 OFFSET 100000 -> DB 1,00,020 line PADH ke phenkta,
-           20 deta. Bahut dheema. Beech me nayi line aayi -> sab ek khisak gaya -> ek line dobara dikhi.
+DIKKAT 1   Ravi ki dukaan: roz ~500 UPI, 3 saal = ~5 lakh line. CA ka export tool 20-20 karke page
+           maangta. Page 5000 pe: LIMIT 20 OFFSET 100000 -> DB 1,00,020 line PADH ke phenkta, 20 deta.
+           Bahut dheema. Beech me nayi line aayi -> sab ek khisak gaya -> ek line dobara dikhi.
 HAL        Pichhle page ki aakhri line ka (time, id) yaad rakho, agla page "isse purani 20" (keyset):
              WHERE account_id = ? AND (ts, id) < (:last_ts, :last_id) ORDER BY ts DESC, id DESC LIMIT 20
            Index (account_id, ts DESC, id DESC) se seedha wahan -> page 1 ho ya 5000, ek jaisa tez.
@@ -382,8 +387,8 @@ HAL        (ts, id) ko base64 karke next_cursor.
 #### 10 5 SAAL KA DATA EK HI TABLE ME
 ```
 DIKKAT 1   5 saal ka khaata (~36 arab line) ek table me. Log roz sirf 3 mahine dekhte, par har query /
-           backup arabon line ke saath. Aur bank me DELETE nahi kar sakte (kanoon).
-HAL        Khaata MAHINE ke tukdon (partition) me. Band mahine sasti jagah (S3) bhej do, delete kabhi nahi.
+           backup arabon line ke saath. Aur kanoon (PMLA / RBI) kam se kam 5 saal rakhwata, bank 8-10.
+HAL        Khaata MAHINE ke tukdon (partition) me. Band mahine sasti jagah (S3), had se pehle delete nahi.
 ```
 ```mermaid
 flowchart TD
@@ -429,7 +434,7 @@ AAKHRI DABBE (sab dikkat ke baad):
   -> SQL DB: EK transaction (dono khaata line + dono balance + idempotency key + outbox)
   -> Kafka (commit ke BAAD: SMS / fraud / analytics / statement) · Read replica = balance / history
   Reconciliation (raat ko: snapshot + baad ki line vs balance -> ALERT)
-                           · Archive S3 (band mahine, delete kabhi nahi)
+                           · Archive S3 (band mahine, had se pehle delete nahi)
 
 DB:  SQL -> paisa na khoye na bane: EK transaction (ek DB me SAGA nahi)
      khaata = SACH (sirf jodo, double-entry, mahine ke tukde) · balance = CACHE (jod, usi transaction me)
@@ -483,7 +488,7 @@ KRAM:  sasta pehle, SHARD aakhir me
      cache / index = sirf PADHAI ka ilaaj (har naya index INSERT dheema karta) -> likhai ke liye SHARD
      by account_id: ek account ki KHAATA LINE ek shard pe; do shard ke beech transfer -> SAGA
      · zaroori-nahi wali likhai (statement, SMS) queue pe
-  BADI TABLE (jagah) -> mahine ke tukde + archive (DELETE nahi)
+  BADI TABLE (jagah) -> mahine ke tukde + archive (had se pehle DELETE nahi)
   ✗ "badi transaction chhoti karo" = galat: kaatna + daalna EK transaction me hi
   replica sirf PADHAI baantti, likhai ke liye SHARD · desh / date = bura key (ek garam)
 
@@ -494,7 +499,7 @@ JAWAB:    Copy sirf padhai ka bojh baantti, likhai sab main DB pe hi jaati. Inde
           karta, likhai ulta dheemi.
           Likhai bahut ho to account id se baanto: Arpan ki saari khaata line ek tukde pe. Do tukdon ke
           beech transfer -> SAGA. SMS / statement jaisa kaam line me daal do.
-          Jagah ke liye mahine ke tukde, purane sasti jagah. Delete kabhi nahi.
+          Jagah ke liye mahine ke tukde, purane sasti jagah. Kanoon ki had (5+ saal) se pehle delete nahi.
 POOCHEGA: "How would you scale this to 10x?"      -> pehle jo toote
           (padhai -> replica, jagah -> tukde, likhai -> shard)
 POOCHEGA: "What's the single point of failure?"   -> DB primary (sync copy), Banking Svc (LB + kai machine)
@@ -522,7 +527,8 @@ DB:       ledger_entries (SACH, sirf jodo, mahine ke tukde) · accounts.balance 
 LB · Banking Svc = stateless, idempotency check · SQL DB = EK transaction (khaata + balance + key + outbox)
 Kafka = commit ke BAAD (SMS / fraud / analytics / statement)
 Read replica = balance / history (apna transfer primary se)
-Reconciliation = snapshot + baad ki line vs balance -> ALERT · Archive (S3) = band mahine, delete kabhi nahi
+Reconciliation = snapshot + baad ki line vs balance -> ALERT
+Archive (S3) = band mahine, had se pehle delete nahi
 ```
 ```
 beech me crash        -> ek transaction (@Transactional), ek DB me SAGA nahi
@@ -533,7 +539,7 @@ cache vs sach         -> raat ka RECONCILIATION, khaata jeetega
 minus balance         -> check DB me (WHERE balance >= x / CHECK)
 ulte kram ke transfer -> taala TAY KRAM me (id sort) -> deadlock nahi
 arabon line history   -> CURSOR + index (account_id, ts DESC, id DESC)
-purana data           -> mahine ke TUKDE -> DETACH -> S3, DELETE kabhi nahi
+purana data           -> mahine ke TUKDE -> DETACH -> S3, had se pehle DELETE nahi
 archive ke baad       -> OPENING BALANCE snapshot
 bojh badha            -> replica -> tukde -> (aakhir me) shard
 ```

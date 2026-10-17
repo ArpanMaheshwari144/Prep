@@ -28,6 +28,7 @@ KAISA CHALE (NFR): user ruke nahi (dil) · file khoye nahi · haal
 
 NUMBERS (andaaza):
    1 lakh file / din, din me ~1 lakh second -> ~1-2 upload / second (kam)
+   par deadline wale din (31 March) aakhri ghante me ~100 guna -> ~300 upload / second
    par log haal BAAR-BAAR dekhte -> padhna bahut zyada, likhna kam
    -> haal ke liye CACHE + read replica
    -> badi file ke bytes DB me nahi, S3 me (blob storage)
@@ -61,7 +62,8 @@ flowchart TD
 ```
 DIKKAT 1   Arpan ne report.pdf daali. Server ne Validator ko call kiya, 3 second jawab ka intezaar.
            Arpan 3 second ghoomta screen dekhta raha, aur server ka ek thread bhi 3 second bekaar atka.
-           Hazaar log ek saath -> saare thread atke -> naye upload ke liye thread hi nahi.
+           31 March, deadline ka aakhri ghanta: ~300 upload / second, har ek 3 sec -> ~900 thread atke,
+           Tomcat ke 200 khatam -> naye upload ke liye thread hi nahi.
 HAL        Arpan ko rukwao mat. Upload hote hi tracking id (T-101) + "jaanch ho rahi hai" de do.
            Upload Svc queue me khabar daale {T-101, file kahan hai} aur turant laut aaye.
            Worker queue se uthaye -> Validator ko call -> DB me T-101 = DONE / FAILED.
@@ -220,7 +222,8 @@ HAL        Quarantine bucket (koi download nahi kar sakta), kuch din baad delete
 
 #### 5 SAB HAR 2 SEC HAAL POOCHH RAHE
 ```
-DIKKAT 1   10,000 log upload karke baithe, har ek har 2 sec "T-101 ka haal?" -> 5,000 sawaal / second DB pe.
+DIKKAT 1   Deadline ke din 10,000 log ka "Meri files" page khula, page har 2 sec saari files ka haal
+           refresh karta -> 5,000 sawaal / second DB pe.
            Likhai to 1-2 / second thi, padhai ne DB ko ghera.
 HAL        Haal Redis se do, DB tak mat jaao:
              GET /status/T-101 -> Redis me hai? -> wahin se
@@ -311,7 +314,8 @@ HAL        Nahi. Ek hi call me 1000 signed URL (batch init).
 
 #### 7 RAVI NE ARPAN KA trackingId DAAL KE FILE MAANG LI
 ```
-DIKKAT 1   Ravi ne kahin se Arpan ka T-101 dekh liya, GET /download/T-101 maara
+DIKKAT 1   Arpan ne support chat me screenshot bheja, usme T-101 dikh raha tha. Ravi ne wo dekh ke
+           GET /download/T-101 maara
            -> Arpan ki file Ravi ko mil gayi.
 HAL        "Tum kaun ho?" (AUTHN) = gateway / JWT batata: ye Ravi hai.
            "Is file pe haq hai?" (AUTHZ) = SERVICE me check: T-101 ka owner Arpan, maangne wala Ravi -> 403.

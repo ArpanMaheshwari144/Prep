@@ -249,8 +249,9 @@ HAL        Jitna purana business jhel sake. Profile: minute. Price / stock: seco
 
 #### 5 GARAM KEY KHATAM, 1000 LOG EK SAATH DB PE (STAMPEDE)
 ```
-DIKKAT 1   "home page" ki key ki umar khatam hui. Usi second 1000 log aaye -> cache me nahi mili
-           -> 1000 ek saath DB pe -> DB gira.
+DIKKAT 1   "home page" banana = 20 table ka join, ~1 sec. Key ki umar khatam hui, usi 1 sec me 1000
+           request aayi -> 1000 bhaari join ek saath DB pe -> DB ka CPU 100%, baaki query bhi atki
+           -> DB gira.
 HAL        Sirf PEHLE wale ko DB jaane do, baaki 999 "thoda ruko", phir cache se le lenge.
            Pehla kaun, Redis se:
              SET lock:home 1 NX EX 5   -> jo pehle pahuncha usi ka lock (NX = sirf tab jab koi aur na laga ho)

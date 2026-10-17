@@ -55,13 +55,15 @@ flowchart TD
 
 #### 1 DONO NE SAATH SAVE KIYA, BAAD WALE NE PEHLE KA MITA DIYA
 ```
-DIKKAT 1   Doc me "HELLO" tha. Arpan ne "HELLO WORLD" karke save kiya, usi waqt Ravi ne "HELLO THERE".
-           Ravi ka save baad me pahuncha, usne poora text upar likh diya -> Arpan ka "WORLD" gayab
-           (jo baad me aaya wo jeeta = LAST-WRITE-WINS).
+DIKKAT 1   Doc me "HELLO" tha. Dono ne subah doc khola. Arpan ne "HELLO WORLD" karke 10:05 pe save kiya.
+           Ravi ki screen pe abhi bhi purana "HELLO" tha, usne "HELLO THERE" karke 10:07 pe save kiya
+           -> poora text upar likh diya -> Arpan ka "WORLD" gayab (jo baad me aaya wo jeeta =
+           LAST-WRITE-WINS).
 HAL        Poora doc mat bhejo, sirf ye bhejo ki KYA badla (operation):
              op = { docId, userId, type (insert / delete), position, char, baseVersion }
            baseVersion = "maine doc ka version 7 dekh ke likha". Arpan aur Ravi dono ne v7 dekh ke op
-           banaya -> server ko pata ye do op ek saath bane -> OT khiska ke dono lagata. Kisi ka nahi mitta.
+           banaya -> server ko pata dono ek hi purane version pe bane -> OT khiska ke dono lagata.
+           Kisi ka nahi mitta.
 ```
 ```mermaid
 flowchart TD
@@ -145,7 +147,8 @@ HAL        Kafka store karta + thoda dheema. Live typing ko dobara padhna nahi c
 
 #### 4 DONO NE EK SAATH POSITION 0 PE TYPE KIYA
 ```
-DIKKAT 1   Doc "HELLO". Arpan ne position 0 pe "X" likha, usi pal Ravi ne position 0 pe "Y".
+DIKKAT 1   Doc "HELLO". Meeting me dono ne doc khola, dono sabse upar likhne lage. Net ki der ~200 ms:
+           Arpan ka "X" (position 0) Ravi tak pahunchne se pehle Ravi ne bhi position 0 pe "Y" daba diya.
            Seedha lagaya -> Arpan ki screen "XHELLO" phir Y -> "YXHELLO"; Ravi ki "YHELLO" phir X
            -> "XYHELLO". Do alag doc ban gaye (diverge).
 HAL        OT (Operational Transformation): doosre ka op aane pe usko apne op ke hisaab se khiska do.
@@ -187,7 +190,8 @@ HAL        Kram toot gaya. Isliye ek doc ke saare op EK server pe (docId se chun
 
 #### 5 HAR AKSHAR PE DB ME LIKHNA
 ```
-DIKKAT 1   Crore log type kar rahe, har akshar pe ek DB write -> DB khatam.
+DIKKAT 1   Ek waqt ~20 lakh log type kar rahe, har ek ~3 akshar / sec -> ~60 lakh DB write / sec
+           -> DB khatam.
 HAL        Badlaav pehle Redis me jama karo, har 1 second ek saath (batch) Cassandra me.
            Edit log: partition key = docId, andar kram = version (SERVER ka number).
            Timestamp se kram NAHI: ek hi millisecond pe do op = same key = ek ne doosre ko chupchaap mita
@@ -297,8 +301,8 @@ HAL        Dobara jude to pehle permission check (SQL, CP). Access nahi -> pendi
 
 #### 8 CRORE WEBSOCKET CONNECTION
 ```
-DIKKAT 1   Crore WebSocket connection khule. Ek server ~1 lakh hi jhelta. Kis doc ka user kis server pe
-           jaaye, taaki ek doc ke saare editor ek hi (owner) server pe milein?
+DIKKAT 1   ~50 lakh WebSocket khule (3-4 crore roz me se ek waqt ~15%). Ek server ~1 lakh hi jhelta.
+           Kis doc ka user kis server pe jaaye, taaki ek doc ke saare editor ek hi (owner) server pe milein?
 HAL        Alag CONNECTION server ki line. EDITOR: URL me docId -> LB consistent hashing RING se server
            chunta -> ek doc ke saare editor + uska OT EK server pe (OWNER). Server juda / gira -> sirf uske
            hisse ke doc hilte. VIEWER (sirf dekh raha) kisi bhi server pe, Redis pub/sub se updates.
@@ -390,7 +394,7 @@ flowchart TD
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```
-WebSocket      -> crore connection -> alag CONNECTION LINE + docId se same server
+WebSocket      -> ~50 lakh connection -> alag CONNECTION LINE + docId se same server
 Conn-Server    -> OT kahan? -> docId se baanto (ek doc = ek jagah)
 Redis pub/sub  -> bheed -> copy + aur machine
 DB likhna      -> har akshar? -> buffer + batch, docId se baanto

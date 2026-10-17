@@ -469,10 +469,11 @@ HAL        Doosre region me data thoda peeche-peeche copy hota. Aakhri kuch seco
            Ye maana hua risk hai.
 ```
 
-#### 9 SCRIPT SE RAAT ME 10 LAKH LINK
+#### 9 SPAMMER KI SCRIPT, HAR SECOND 5,000 LINK
 ```
-DIKKAT 1   Ek bande ne script likh di, raat bhar me 10 lakh link bana diye.
-           Counter ke number tez khatam hue, DB me kachra bhar gaya, asli users ke liye dheema.
+DIKKAT 1   Ek spammer ne script chala di: ek hi API key se har second 5,000 link (phishing ke liye).
+           Aam din me poore system pe ~1,000 / sec aate -> likhne wale App + DB pe 5 guna bojh, asli users
+           ka link banana dheema. Upar se Gmail / WhatsApp ne hamara domain "spam" maan liya.
 HAL        Darwaze (API gateway) pe hi rok: har user / IP kitni baar link bana sakta, uski had.
            Login check bhi wahin. Uske bhi aage WAF jo jaane-pehchaane hamle rokta.
            Lamba URL chhota karne se pehle check: virus / dhokhe wali site to nahi, warna hamara chhota

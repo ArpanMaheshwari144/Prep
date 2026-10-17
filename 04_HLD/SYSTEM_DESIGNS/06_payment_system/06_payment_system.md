@@ -1,6 +1,6 @@
 # Payment System (UPI-style)
 
-> User A se User B / merchant ko paisa, bharose ke saath. Misaal: Arpan ne chai wale (merchant) ko Rs. 500 bheje.
+> User A se User B / merchant ko paisa, bharose ke saath. Misaal: Arpan ne kirana dukaan (merchant) ko Rs. 500 bheje.
 > Is design ka dil: **paisa DO BAAR na kate** + **paisa kabhi GUM na ho**. Finance HLD ka core, JP / GS ka favourite.
 
 ```
@@ -122,21 +122,24 @@ flowchart TD
     n_Payment_Svc --> n_DB
 ```
 ```
-DIKKAT 2   Arpan ke account se do payment ek saath, balance sirf 600?
+DIKKAT 2   Arpan ke wallet me 600. Phone se dukaan ko 500 scan kiya, usi second laptop pe Swiggy ka
+           500 ka order usi wallet se. Do alag server, dono ne 600 dekha -> dono kaatenge?
 HAL        Check aur kaatna ek hi query me:
              UPDATE account SET balance = balance - 500 WHERE id = ? AND balance >= 500
            Pehla jeeta (bacha 100), doosre ki 0 row badli = reject.
 ```
 
-#### 2 DO BAAR TAP / APP NE DOBARA BHEJA = 1000 KATE
+#### 2 NETWORK GAYA, APP NE DOBARA BHEJA = 1000 KATE
 ```
-DIKKAT 1   Arpan ne Pay dabaya, app ghoomta raha, usne phir daba diya. Ya network ne khud dobara bheja.
-           Server ko do request mili, dono process -> 1000 kate, dene the 500.
-HAL        IDEMPOTENCY KEY: "Pay" dabate hi app ek random UUID banata (key-555), dobara bhejne pe WAHI.
+DIKKAT 1   Arpan ne Pay dabaya. Server tak pahunchi, 500 kat bhi gaye, par jawab aate waqt metro me
+           network gaya. App ne timeout pe khud DOBARA bheja -> server ko do request, dono process
+           -> 1000 kate, dene the 500.
+HAL        IDEMPOTENCY KEY: payment screen khulte hi app ek random UUID banata (key-555), dobara bhejne
+           pe WAHI. Pay button bhi pehli tap pe band.
            Key ko "dekha?" aur "daal do" EK hi step me: DB me key UNIQUE.
              pehli request: key-555 daali, haal IN_PROGRESS -> kaato + daalo -> haal DONE + jawab save
              doosri request: key-555 pehle se -> saved jawab wapas. Paisa ek hi baar.
-           Arpan ne sach me do alag payment kiye (100 + 100) -> do tap = do alag key -> dono honge.
+           Arpan ne sach me do alag payment kiye (100 + 100) -> do baar payment screen = do key -> dono honge.
 ```
 ```mermaid
 flowchart TD
@@ -273,9 +276,9 @@ DIKKAT 3   Beech ke waqt Arpan ko kya dikhe?
 HAL        "processing", thodi der me SUCCESS ya paisa wapas (eventual).
 ```
 
-#### 6 RBI POOCHHE: YE PAISA KAHAN SE AAYA, KAHAN GAYA?
+#### 6 ARPAN POOCHHE: KAL 2200, AAJ 1200 KAISE?
 ```
-DIKKAT 1   RBI: "Arpan ke ye 500 kahan se aaye, kahan gaye, kab?"
+DIKKAT 1   Arpan ki shikayat: "kal 2200 tha, aaj 1200 kaise?" Support / RBI audit: kahan gaya, kab?
            Balance column sirf aaj ka number batata (Arpan: 1200). Kaise 1200 bana, uska koi record nahi.
 HAL        LEDGER table, USI transaction me jisme paisa hila. Sirf INSERT, kabhi UPDATE / DELETE nahi.
            Double-entry: Arpan -> merchant 500 = "Arpan DEBIT 500" + "merchant CREDIT 500" (jod 0).
@@ -413,8 +416,8 @@ HAL        Replication lag metric pe alert.
 
 #### 9 ~1000 CRORE ROW / SAAL, LIKHAI DHEEMI
 ```
-DIKKAT 1   Kuch sau payment / second x saal = ~1000 crore payment row saal me. Saari likhai ek primary pe
-           -> likhai dheemi.
+DIKKAT 1   ~1000 crore payment row saal me. Table + index RAM me nahi samaate, har likhai pe index disk
+           se padhna -> Diwali ke 3000 / second pe ek primary ki likhai dheemi.
 HAL        Account id ke hisaab se baanto (shard): Arpan ka balance aur uski saari history ek hi shard pe
            -> Arpan se kaatna ek jagah, ek transaction, atomic.
            Account kis shard pe: consistent hashing, ya lookup table (account -> shard, baad me badal sakte).
@@ -469,7 +472,7 @@ DB:  SQL + ACID -> kaatna aur daalna ek saath · ledger double-entry, kabhi badl
      idempotency key -> { haal, jawab }, ~24 ghante
 
 END ME POOCHEGA:
-  "Do baar kata?"   -> Idempotency-Key (Pay TAP pe bani) + unique -> dobara aaya = pehla jawab
+  "Do baar kata?"   -> Idempotency-Key (payment screen pe bani) + unique -> dobara aaya = pehla jawab
   "PSP ne jawab nahi diya?" -> PENDING rakho -> webhook + reconciliation, paisa kabhi gum nahi
   "10x?"            -> Payment Svc machine badhao · read replica · likhai shard by account_id
                        · asli mushkil alag bank / shard ke beech -> SAGA
@@ -530,10 +533,10 @@ POOCHEGA: "What's the single point of failure?"   -> DB primary (sync standby pr
 API:      POST /pay { from, to, amount } + header Idempotency-Key: <UUID>  -> { status, txn_id }
 
 KEY KAB BANTI:
-          key random hai, "Pay" TAP ke pal banti. Naya tap = nayi key.
-          (A) Arpan ne khud do baar tap kiya -> key-555, key-888 -> 100 + 100 = 200 (do payment, sahi)
+          key random hai, payment SCREEN khulte banti. Nayi payment screen = nayi key.
+          (A) Arpan ne do alag payment kiye -> key-555, key-888 -> 100 + 100 = 200 (do payment, sahi)
           (B) ek tap + network ne dobara bheja -> wahi key-555 dobara -> "aa chuki" -> pehla jawab -> 100
-          farak = KAUN dobara bhej raha: Arpan (nayi key, naya payment) · system (wahi key, ek hi baar)
+          farak = KAUN dobara bhej raha: Arpan nayi payment screen se (nayi key, naya payment) · system (wahi key, ek hi baar)
           maqsad do payment rokna NAHI, sirf network ke dobara bhejne ko do baar ginne se rokna
           CHEQUE jaisa: key = cheque number · do cheque = dono cash · ek number do baar = nahi
                         bank amount nahi, NUMBER dekhta

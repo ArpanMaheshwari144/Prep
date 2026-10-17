@@ -153,10 +153,10 @@ HAL        App install hote hi phone ka pata (device token) user ke saath save. 
 
 #### 3 SMS BAND THA, PHIR BHI RAAT 2 BAJE BHEJA
 ```
-DIKKAT 1   Arpan ne SMS band kiya tha aur raat 10 se subah 8 "mat bhejo" lagaya tha.
-           Phir bhi raat 2 baje SMS aaya.
-HAL        Bhejne se pehle Arpan ki PASAND dekho: push chalu, email chalu, SMS band, raat 10-8 shaanti
-           -> sirf push + email, SMS chhodo.
+DIKKAT 1   Arpan ne app me "offer SMS band" kiya tha aur raat 10 se subah 8 shaanti lagayi thi.
+           Phir bhi raat 2 baje "Diwali sale 70% off" ka SMS aaya, aur push se phone baj gaya.
+HAL        Bhejne se pehle Arpan ki PASAND dekho: SMS band -> SMS chhodo. Raat 10-8 shaanti -> us waqt
+           koi ghanti nahi (push / SMS dono nahi).
            Phir uski bhasha me SAANCHA bharo ("Hi {naam}, order {id} aa gaya").
            Pasand aur saancha har ghatna pe chahiye -> cache me, baar-baar DB nahi.
 ```
@@ -485,7 +485,8 @@ HAL        Company ki had (jaise 100 / second) ke hisaab se Redis me EK SAANJHI 
            token. Har worker bhejne se pehle ek token le (Lua, ek jhatke me). Token nahi -> ruko.
            429 phir bhi aaya -> company jitni der bole (Retry-After) utni der ruko. Message line me
            intezaar karte, had ke baad DLQ me, phenke nahi.
-           Had: SES naya account ~14 / second · Twilio short code ~100 / second · FCM ki bhi apni had.
+           Had: SES production me shuru ~14 / second (naya sandbox 1 / second) · Twilio short code
+           ~100 / second · FCM ki bhi apni had.
 ```
 ```mermaid
 flowchart TD

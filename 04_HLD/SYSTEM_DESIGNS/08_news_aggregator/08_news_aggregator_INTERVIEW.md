@@ -29,7 +29,7 @@ KAISA CHALE (NFR): feed TEZ (dil) · khabar TAAZI · lakhon user · ek source ba
 NUMBERS (andaaza):
    10 lakh user x 5 baar / din = 50 lakh padhai / din
       din me ~1 lakh second -> ~50 / second (subah 10 guna ~500 / second)
-   1000 source, har 5 min -> ~3 lakh likhai / din -> ~3 / second
+   1000 source, har 5 min -> ~3 lakh fetch / din, nayi khabar ~1 lakh / din -> ~1 likhai / second
    -> padhna >> likhna -> CACHE + READ REPLICA (dil)
    -> likhna peeche chale -> QUEUE
    -> data badhta jaata -> purana ARCHIVE (bahut bade scale pe SHARD)
@@ -212,9 +212,9 @@ DIKKAT 3   Source hamesha ke liye band ho gaya?
 HAL        Kuch din OPEN raha -> alert, list se hatao.
 ```
 
-#### 5 6 MAHINE ME 5 CRORE ROW, KHARCHA BADHTA
+#### 5 6 MAHINE ME ~2 CRORE ROW, KHARCHA BADHTA
 ```
-DIKKAT 1   6 mahine me 5 crore khabar ki row. Disk, backup, kharcha badhta ja raha. Par taazi 20 ke
+DIKKAT 1   6 mahine me ~2 crore khabar ki row. Disk, backup, kharcha badhta ja raha. Par taazi 20 ke
            alawa purana koi padhta hi nahi. (Query dheemi NAHI hui: published_at pe index hai.)
 HAL        Postgres me har mahine ka alag tukda (partition). Mahina purana hua -> tukda table se alag
            karo (DETACH) -> S3 archive. Jo kabhi nahi chahiye -> tukda DROP (ek pal ka kaam).
@@ -246,7 +246,8 @@ DIKKAT 2   Kisi ne 1 saal purani khabar ka link khola?
 HAL        Archive / S3 se aayegi (dheemi chalegi).
 
 DIKKAT 3   DETACH pe table lock hoga?
-HAL        Normal DETACH chhota lock leta. PG 14+ me DETACH PARTITION ... CONCURRENTLY -> bina roke.
+HAL        Normal DETACH poore table pe ACCESS EXCLUSIVE lock leta (pal bhar, par us pal feed ki padhai
+           bhi rukti). PG 14+ me DETACH PARTITION ... CONCURRENTLY -> padhai / likhai nahi rukti.
 
 DIKKAT 4   3 saal baad?
 HAL        Wahi: hafta garam, baaki thanda. "Ye retention hai, sharding nahi."
@@ -323,10 +324,11 @@ DIKKAT 2   Har user ki pasand ka alag wazan (Arpan ko tech zyada)?
 HAL        Tab asli personalization -> har user ki ranking service (abhi scope se bahar).
 ```
 
-#### 8 SUBAH 8 BAJE SAB EK SAATH
+#### 8 ELECTION RESULT KI SUBAH, 40 GUNA BHEED
 ```
-DIKKAT 1   8 baje sabne app khola. Ek hi Feed service machine ka CPU bhar gaya.
-           Jo cache me nahi mila wo seedha primary DB pe gaya, jahan fetcher bhi likh raha -> dono dheeme.
+DIKKAT 1   Election result ki subah 8 baje: aam 500 / second ki jagah 20,000 / second. Ek hi Feed
+           service machine ka CPU bhar gaya. Jo cache me nahi mila wo seedha primary DB pe, jahan
+           fetcher bhi likh raha -> dono dheeme.
 HAL        Feed service kuch yaad nahi rakhti -> kai machine + load balancer.
            Redis me na mile to DB ki copy (replica) se padho, main DB se nahi -> main sirf likhne ke liye.
            (Kafka padhai ki bheed nahi jhelta, wo likhne ke raaste ke liye hai.)
