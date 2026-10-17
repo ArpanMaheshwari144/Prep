@@ -290,7 +290,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  │ ▸ VALID PALINDROME (FULL, LC-125)
  └──────────────────────────────────────────────────────────────
      mixed chars (letter/digit/space/punct, UPPER+lower). SIRF alnum consider · case IGNORE. helpers: isalnum, tolower (<cctype>).
-     2 pointer left/right, ORDER:   // while(left<=right), right = s.size()-1
+     2 pointer left/right, ORDER:   // while(left<=right) · right=s.size()-1: aakhri index, size nahi
        1. tolower(s[left])==tolower(s[right]) -> match -> left++ right--.
        2. else !isalnum(s[left])  -> left non-alnum -> skip -> left++.
        3. else !isalnum(s[right]) -> right non-alnum -> skip -> right--.
@@ -311,7 +311,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      sirf vowels (a/e/i/o/u, lower+upper) aapas me reverse, baaki char apni jagah.
      chhota helper isVowel(ch). left/right pointer:
-     dono vowel -> swap + left++ right--.  left vowel nahi -> left++.  warna right--.   // while(left<right) · end me return s
+     dono vowel -> swap + left++ right--.  left vowel nahi -> left++.  warna right--.   // left<right: milte hi ruko, beech ka akela char swap nahi · return s
 
 ┌── FAMILY: left/right by-VALUE decision ───────────────────────
 │ KYUN SAATH: sorted-ish / value-based; sum ya area ki VALUE dekh ke decide karo konsa pointer chalana. (koi target-jodi dhoondhna.)
@@ -320,7 +320,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CONTAINER MOST WATER
  └──────────────────────────────────────────────────────────────
-     left/right; area = min(h)*width; CHHOTI height wala pointer andar (bottleneck).   // while(left<right) · barabar height -> right-- (else)
+     left/right; area = min(h)*width; CHHOTI height wala pointer andar (bottleneck).   // left<right: same index pe width 0 · barabar height -> right-- (else)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ TWO SUM II (SORTED)
@@ -346,8 +346,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      SAAR: sorted arr me negatives ka square order ULTA -> sabse BADA square dono CHHOR pe (beech me nahi). 2-ptr, ans PEECHE se bharo. O(n), no sort.
      TEMPLATE: left=0, right=n-1, k=n-1.   // k=n-1: sabse bada square ans ke aakhri slot me · ans(n) pehle se size n (k-- se index pe likho)
         while(left<=right):              // <= : aakhri bacha 1 element bhi daalna hai
-           if(left² <= right²) -> ans[k--]=right², right--
-           else                -> ans[k--]=left²,  left++
+           if(left² <= right²) -> ans[k--]=right², right--   // bada square aakhri khaali slot pe; k-- = likho phir peeche
+           else                -> ans[k--]=left²,  left++   // left wala bada (negative tha), uska square peeche daalo
      FAMILY: fill-from-END (result peeche se bharo).
 
  ┌──────────────────────────────────────────────────────────────
@@ -357,9 +357,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      in-place = naya array NAHI banaya; usi nums1 me answer bhara -> O(1) EXTRA space.
      TEMPLATE: i=m-1, j=n-1, k=m+n-1.   // k=m+n-1: nums1 ka aakhri index (total m+n jagah)
         while(i>=0 && j>=0):                       // ★ && (|| nahi -> -1 index crash)
-           if(nums1[i] < nums2[j]) -> nums1[k--]=nums2[j], j--
-           else                    -> nums1[k--]=nums1[i], i--
-        while(i>=0): nums1[k--]=nums1[i], i--
+           if(nums1[i] < nums2[j]) -> nums1[k--]=nums2[j], j--   // jo bada wahi peeche; barabar pe else (nums1 wala) chalega
+           else                    -> nums1[k--]=nums1[i], i--   // nums1[i] bada ya barabar -> wahi aakhri khaali slot pe
+        while(i>=0): nums1[k--]=nums1[i], i--   // optional: nums1 ke bache pehle se apni jagah pe hi hain
         while(j>=0): nums1[k--]=nums2[j], j--      // nums2[j] NA nums1[j] (nums2 ke bache abhi copy nahi hue, ye loop zaroori)
 
 ┌── FAMILY: PARTITION / swap-in-place ──────────────────────────
@@ -390,12 +390,12 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      SAAR : saare UNIQUE triplets jinka sum==0. SORT -> ek number FIX -> baaki 2 ke liye 2-pointer (sum = -fixed).
      TEMPLATE:
-         sort(begin(nums), end(nums));
-         for(int i=0; i<nums.size(); i++){
+         sort(begin(nums), end(nums));   // sort PEHLE: 2-pointer aur duplicate skip dono sorted pe hi chalte
+         for(int i=0; i<nums.size(); i++){   // har number ko ek baar FIX karo
              if(i>0 && nums[i]==nums[i-1]) continue;              // duplicate FIXED skip (i>0 pehle: i=0 pe nums[i-1] bahar padhta)
              int low=i+1, high=nums.size()-1, sum=-nums[i];   // low=i+1: fixed ke baad wale hi lo, warna wahi element dobara
              while(low<high){   // < : low==high = ek hi element, jodi nahi banti
-                 if(nums[low]+nums[high]==sum){
+                 if(nums[low]+nums[high]==sum){   // jodi mili = fixed ke saath triplet ka sum 0
                      ans.push_back({nums[i],nums[low],nums[high]});
                      while(low<high && nums[low]==nums[low+1]) low++;   // duplicate LOW skip (pehle low<high, warna low+1 bahar)
                      while(low<high && nums[high]==nums[high-1]) high--; // duplicate HIGH skip (pehle low<high, warna high low se neeche khisak jaata)
@@ -423,16 +423,16 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      [A] O(n) space: leftMax[] ek pass AAGE se · rightMax[] ek pass PEECHE se · ans += min(leftMax[i], rightMax[i]) - height[i].
 
      [B] O(1) two-pointer (arrays hata, bas 2 var)  — ★ 24-Sep THEEK KIYA (Arpan ka apna code):
-           left=0, right=n-1;   leftMax=0, rightMax=0;
+           left=0, right=n-1;   leftMax=0, rightMax=0;   // max 0 se: abhi koi deewar dekhi hi nahi
            while (left < right):   // < : milne wali cell sabse unchi deewar, uspe paani nahi
-               if (height[left] <= height[right]):          // ★ faisla ASLI DEEWAR pe
+               if (height[left] <= height[right]):          // chhoti ASLI deewar wali taraf niptao: doosri taraf badi pakki
                    if (leftMax > height[left])  ans += leftMax - height[left];   // chhota -> paani
                    else                         leftMax = height[left];         // bada -> nayi deewar
-                   left++;
+                   left++;   // left ka kaam ho gaya, aage chalo
                else:
-                   if (rightMax > height[right]) ans += rightMax - height[right];
-                   else                          rightMax = height[right];
-                   right--;
+                   if (rightMax > height[right]) ans += rightMax - height[right];   // chhota -> paani (rightMax tak bharega)
+                   else                          rightMax = height[right];   // bada -> nayi deewar
+                   right--;   // right ka kaam ho gaya, andar aao
          kyun SAFE: jis taraf ki DEEWAR chhoti, wahi taraf niptao -- doosri taraf ek badi deewar pakka khadi,
                     to had isi chhoti taraf ke max se tay hoti.
          ★ MILNE KI JAGAH: dono pointer jahan milte, wo cell kabhi process nahi hota. Deewar dekh ke chalne se
@@ -466,8 +466,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      TEMPLATE:
         count = 0
-        for i in 0..n-1:
-            expand(i, i)        // odd
+        for i in 0..n-1:   // har index ko center bana ke dono taraf phailao
+            expand(i, i)        // odd: center ek char (khud bhi palindrome, count hoga)
             expand(i, i+1)      // even · i+1==n bhi theek: while me j<n pehle check
         return count
 
@@ -510,13 +510,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  [track] · [INVALID kab -> shrink] · [ans]
 
  ONE SKELETON (fixed + variable DONO isi pe -- ye poora khel):
-    i = 0, j = 0
+    i = 0, j = 0   // dono 0 se: shuru me window khaali
     while (j < n):                     // EXPAND (j HAMESHA aage). [for(j..) == while(j<n){..;j++} -- SAME]
         arr[j] window me ADD           (tracker update: sum / map / zeros / product)
         while / if  (WINDOW BAD):      // SHRINK (i aage)
-            arr[i] REMOVE (tracker update);  i++
-        ans UPDATE
-        j++
+            arr[i] REMOVE (tracker update);  i++   // remove PEHLE, phir i++ (warna agla element hat jaata)
+        ans UPDATE   // shrink ke BAAD: window ab valid, seedha record
+        j++   // ans ke BAAD j++: warna j-i+1 length galat aati
     -> sirf 2 cheez badalti: (1) inner IF (fixed, ek remove) ya WHILE (variable, jab tak invalid)
                              (2) "WINDOW BAD" kya + kya track. baaki dhaancha har baar SAME.
 
@@ -536,7 +536,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                  mp[s[i]]--; i++;                 // left shrink jab tak repeat khatam
              }
              minLen = max(minLen, j - i + 1);     // valid window length (shrink ke BAAD record, ab window valid)
-             j++;
+             j++;   // record ke BAAD aage badho
          }
          return minLen==INT_MIN ? 0 : minLen;     // khaali string -> INT_MIN reh jaata -> 0
      INVALID = mp[s[j]]>1 (jo abhi add hua wahi repeat). empty-string edge -> INT_MIN -> 0.
@@ -549,9 +549,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      j pe : mp[s[j]]++, maxFreq = max(maxFreq, mp[s[j]]).   // maxFreq update PEHLE, phir windowLen-maxFreq check
      VALID   (windowLen - maxFreq <= k)  -> maxLen = max(maxLen, windowLen).
      INVALID (windowLen - maxFreq > k)   -> left shrink:
-                 mp[s[i]]--;
+                 mp[s[i]]--;   // left wala char window se bahar, uski ginti kam
                  if (mp[s[i]] == 0) mp.erase(s[i]);   // 0 hua to key hatao (DISTINCT gino to zaroori)
-                 i++;
+                 i++;   // ginti kam karne ke BAAD hi left aage
      CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window best-length
         se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
 
@@ -565,10 +565,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              if(nums[j]==0) zeroCount++;          // window me zero add
              while(zeroCount > k){                // INVALID: k se zyada zero (flip nahi kar sakte)
                  if(nums[i]==0) zeroCount--;      // left ka zero nikla to count kam
-                 i++;
+                 i++;   // zero check ke BAAD aage (pehle i++ to galat element dekhta)
              }
              ans = max(ans, j - i + 1);           // UNCONDITIONAL (koi if nahi)
-             j++;
+             j++;   // record ke BAAD aage badho
          }
          return ans==INT_MIN ? 0 : ans;
      CORE LEARNING: ans UNCONDITIONAL update -> if(zeroCount==k) MAT lagao.
@@ -583,9 +583,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      DELTA (SW skeleton pe -- sirf ye badalta):
          mp[nums[j]]++;                              // window me add
          while(mp.size() > 2){                       // INVALID: 2 se zyada distinct (while: ek type poora khatam hone tak kai element hatane padte)
-             mp[nums[i]]--;
+             mp[nums[i]]--;   // left wala fruit window se bahar, uski ginti kam
              if(mp[nums[i]]==0) mp.erase(nums[i]);   // count 0 -> ERASE
-             i++;
+             i++;   // erase check ke BAAD hi left aage
          }
          ans = max(ans, j - i + 1);   // shrink ke BAAD record: window ab <=2 distinct · ans=INT_MIN se, return ans==INT_MIN ? 0 : ans
      CRUX = erase-on-0: count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
@@ -612,18 +612,18 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          int atMost(nums, K){
              int i = 0, j = 0, ans = 0;  map<int,int> mp;   // ans=0: yahan count jod rahe, max nahi (INT_MIN = garbage)
              while(j < nums.size()){
-                 mp[nums[j]]++;
+                 mp[nums[j]]++;   // naya number window me
                  while(mp.size() > K){                     // K se zyada distinct -> shrink
-                     mp[nums[i]]--;
+                     mp[nums[i]]--;   // left wala number bahar, uski ginti kam
                      if(mp[nums[i]] == 0) mp.erase(nums[i]);   // erase: warna 0-count key bhi mp.size() me ginti
-                     i++;
+                     i++;   // erase check ke BAAD hi left aage
                  }
                  ans += j - i + 1;                         // is j pe khatam hone wale valid subarray
-                 j++;
+                 j++;   // count jodne ke BAAD aage badho
              }
              return ans;
          }
-         exactly = atMost(k) - atMost(k-1);
+         exactly = atMost(k) - atMost(k-1);   // <=k me se <=k-1 hatao, sirf exactly k bache
 
      WHY (bucket): atMost(k) = CUMULATIVE dabba = (distinct=1) + (distinct=2) + ... + (distinct=k).
                    atMost(k-1) = wahi bina aakhri layer.  ghata do -> sirf (distinct=k) bacha (baaki cancel).
@@ -666,7 +666,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                  minLen = min(minLen, j - i + 1);   //   record ANDAR (shrink loop ke andar)
                  sum -= nums[i]; i++;               //   left shrink
              }
-             j++;
+             j++;   // shrink loop ke BAHAR: har j pe ek baar aage
          }
          return minLen==INT_MAX ? 0 : minLen;      // koi valid window nahi -> 0
      LONGEST vs SHORTEST (yahi confusion ki JAD -- window BADA chahiye ya CHHOTA):
@@ -701,17 +701,17 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      SAAR : kitne subarray jinka product < k.   (lambai nahi, GINTI chahiye)
 
      TEMPLATE:
-         if (k == 0) return 0;
+         if (k == 0) return 0;   // nums >=1: product kabhi < 0 nahi, koi subarray nahi
          int count = 0, prod = 1;   // prod=1: guna ka shuru 1 (0 rakha to sab 0)
          int i = 0, j = 0;
          while (j < nums.size()) {
              prod *= nums[j];                      // naya element window me
              while (prod >= k && i <= j) {         // zyada ho gaya -> baayi taraf se chhoto (i <= j: k=1 pe khaali window ka prod 1, i bahar bhaagta)
-                 prod /= nums[i];
-                 i++;
+                 prod /= nums[i];   // left wala guna se bahar: divide karo
+                 i++;   // divide ke BAAD hi left aage
              }
              count += j - i + 1;                   // j pe khatam hone wale saare valid subarray
-             j++;
+             j++;   // count ke BAAD aage badho
          }
          return count;
 
@@ -742,7 +742,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
           while (count == 0) {                         // INNER: VALID -> shrink (i++)
               mp[s[i]]++;  if (mp[s[i]] > 0) count++;  i++;   // MIRROR: aana = -- , jaana = ++
           }
-          j++;
+          j++;   // shrink ke BAAD agla char lo
       }
 
  ┌──────────────────────────────────────────────────────────────
@@ -753,11 +753,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          if(mp[s[j]]>0) count--;  mp[s[j]]--; // EXPAND
          while (count == 0) {                 // INNER: VALID -> shrink + SAVE (answer andar)
              len=j-i+1; if(len<minLen){minLen=len; index=i;}   // record PEHLE: abhi [i..j] valid, i++ ke baad shayad nahi
-             mp[s[i]]++; if>0 count++; i++;
+             mp[s[i]]++; if>0 count++; i++;   // wapas ++; >0 hua = t ka zaroori char gaya, count++
          }
-         j++;
+         j++;   // shrink ke BAAD agla char lo
      }
-     return minLen==INT_MAX ? "" : s.substr(index, minLen).
+     return minLen==INT_MAX ? "" : s.substr(index, minLen).   // INT_MAX bacha = koi valid window nahi mila -> khaali string
      DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) se map+count nikla.
 
  ┌──────────────────────────────────────────────────────────────
@@ -796,7 +796,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              while(j-i+1 > p.size()) i++;                          // window ko p-size pe rakho (FIXED)
              if(j-i+1 == p.size())   // == : window poora p-size hua tabhi check (shuru me chhota)
                  if(isAnagram(s.substr(i, j-i+1), p)) ans.push_back(i);  // anagram -> START-index push
-             j++;
+             j++;   // check ke BAAD aage badho
          }
      valid-anagram helper reuse. fixed-window slide + har full-window pe check.
 
@@ -814,7 +814,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              if(j-i+1 == p.size())   // == : window poora p-size hua tabhi check (shuru me chhota)
                  if(isAnagram(s.substr(i,j-i+1), p))
                      return true;                          // <- DELTA: push ki jagah return true
-             j++;
+             j++;   // check ke BAAD aage badho
          }
          return false;                                     // loop-baad: koi na mila
      checkInclusion(s1,s2) = findAnagrams(s2, s1).
@@ -839,7 +839,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          for(int i=0; i<nums.size(); i++){
              if(!dq.empty() && dq.front()==i-k) dq.pop_front();        // 1) front-index window se bahar (==i-k) -> hata (!dq.empty() pehle: khaali deque pe front() crash)
              while(!dq.empty() && nums[dq.back()]<=nums[i]) dq.pop_back(); // 2) chhote bekaar -> pop (<= : barabar wala purana bhi bekaar, naya zyada der tikega)
-             dq.push_back(i);
+             dq.push_back(i);   // value nahi INDEX daalo: expiry check ke liye index chahiye
              if(i>=k-1) ans.push_back(nums[dq.front()]);               // 3) window poora -> front=max (k-1 = pehle poore window ka aakhri index)
          }
      TRAP: deque me INDICES (values nahi -- expiry ke liye index chahiye) · front-expiry ==i-k kaafi (har step check) · record sirf i>=k-1.
@@ -870,10 +870,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      ★ COLD nahi hota (combo-twist) -- library me daalke revise -> next time instant.
 
      TEMPLATE:
-       int Total = accumulate(nums, 0);
+       int Total = accumulate(nums, 0);   // saare cards ka sum: isme se beech ka min ghatayenge
        if (L - k == 0) return Total;              // k==L -> saare cards (window size 0)
        int minSum = minSumK(nums, L-k);           // fixed-window MIN (= max_sum_k, min-version)
-       return Total - minSum;
+       return Total - minSum;   // liye cards ka max = total - na liye (beech) ka min
      minSumK (fixed window, MIN): sum += nums[j]; jab (j-i+1 == size) -> minSum=min(minSum,sum); sum-=nums[i]; i++.   // minSum=INT_MAX se
 
      DRY-RUN [1,2,3,4,5,6,1] k=3: Total=22, win=4 -> [1,2,3,4]=10 · [2,3,4,5]=14 · [3,4,5,6]=18 · [4,5,6,1]=16 -> min=10 -> 22-10=12.
@@ -887,12 +887,12 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         KEY INSIGHT: agar set me sirf last-k elements hain, aur andar duplicate mila -> uska index-farak apne-aap <=k
         -> "|i-j|<=k" alag se check karne ki zaroorat NAHI. bas window ko k-size me rakho.
      TEMPLATE:
-         if (k <= 0) return false;
+         if (k <= 0) return false;   // k=0: |i-j|<=0 matlab same index, jodi ban hi nahi sakti
          unordered_set<int> st;  int i=0, j=0;
          while(j < nums.size()){
              if(st.count(nums[j])) return true;   // window me pehle se hai -> mil gaya (within k)
              if(j - i + 1 > k){ st.erase(nums[i]); i++; }   // window k se badi -> oldest hatao
-             st.insert(nums[j]); j++;
+             st.insert(nums[j]); j++;   // check ke BAAD insert: warna khud se hi match ho jaata
          }
          return false;
      DRY-RUN [1,2,3,1] k=3: 1,2,3 add -> j=3 nums=1 set me hai -> true. | [1,2,3,1,2,3] k=2: har baar window<=2, kabhi dup nahi -> false.
@@ -930,10 +930,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      TEMPLATE:
          for(i=0..n-1){
              if( (mp1.count(s[i]) && mp1[s[i]]!=t[i]) || (mp2.count(t[i]) && mp2[t[i]]!=s[i]) )   // count() pehle: seedha mp1[x] khaali key bana ke galat clash deta
-                 return false;
-             mp1[s[i]]=t[i];  mp2[t[i]]=s[i];
+                 return false;   // kisi bhi taraf clash = mapping 1-to-1 nahi
+             mp1[s[i]]=t[i];  mp2[t[i]]=s[i];   // check ke BAAD dono taraf mapping save
          }
-         return true;
+         return true;   // poora chal gaya bina clash = isomorphic
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ WORD PATTERN
@@ -944,14 +944,14 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
            (2) KEY  : pattern[i] <-> word  (char<->char nahi).
            (3) GUARD: end me pattern.size()==j (word-count) -> warna false ("a","dog cat" galat-true se bache).
      TEMPLATE:
-         stringstream ss(s); string word; int i=0, j=0;
+         stringstream ss(s); string word; int i=0, j=0;   // i = pattern ka index, j = words ki ginti
          while(ss>>word){
              if(i<pattern.size()){   // i<size: words zyada hon to pattern[i] bahar na padhe
                  if( (mp1.count(pattern[i]) && mp1[pattern[i]]!=word) || (mp2.count(word) && mp2[word]!=pattern[i]) )
                      return false;                       // <- ISOMORPHIC ki EXACT clash-line, bas char->word
-                 mp1[pattern[i]]=word; mp2[word]=pattern[i]; i++;
+                 mp1[pattern[i]]=word; mp2[word]=pattern[i]; i++;   // check ke BAAD save, phir agla pattern char
              }
-             j++;
+             j++;   // if ke BAHAR: har word gino, extra word bhi (end check ke liye)
          }
          return pattern.size()==j;   // words ki ginti == pattern ki length, warna false
      EDGE: words ki ginti (j) == pattern.size() honi chahiye (warna "a","dog cat" galat true). end me pattern.size()==j -> true.
@@ -981,7 +981,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
        unordered_map<string, vector<string>> mp;
        for (auto &w : strs) {
-           string key = w;
+           string key = w;   // copy lo: asli word sort hua to group me galat word jaata
            sort(key.begin(), key.end());      // "tea" -> "aet"
            mp[key].push_back(w);              // same key = same group
        }
@@ -1043,13 +1043,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
           -> har element zindagi me 1 hi baar visit -> O(n)  (warna har num se ginti = O(n^2)).
 
      TEMPLATE:
-       unordered_set<int> st(nums.begin(), nums.end());
-       int ans = 0;
+       unordered_set<int> st(nums.begin(), nums.end());   // set: O(1) lookup + duplicate apne aap hat jaate
+       int ans = 0;   // 0 se: khaali array pe koi chain nahi -> 0
        for (auto &num : st) {     // set pe ghoomo (nums pe = duplicate start baar-baar -> O(n^2))
           if (!st.count(num-1)) {                 // chain ka START
              int currNum = num, count = 1;   // count=1: START wala number khud chain me
-             while (st.count(currNum+1)) { currNum++; count++; }
-             ans = max(ans, count);
+             while (st.count(currNum+1)) { currNum++; count++; }   // agla number set me hai tab tak chain lambi karo
+             ans = max(ans, count);   // while ke BAAD: poori chain gin ke record
           }
        }
        return ans;                                // khali array -> 0
@@ -1143,7 +1143,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      = SUBARRAY-SUM-K ka HUBAHU copy, sirf sign badle:
         sum wale me:  complement = curSum - k      (a+b=c -> c-b=a)
         XOR wale me:  complement = curXor ^ k      (a^b=c -> c^b=a)   [4^2=6 to 4^6=2]
-     xorr ^= it;   count += mp[xorr ^ k];   mp[xorr]++;
+     xorr ^= it;   count += mp[xorr ^ k];   mp[xorr]++;   // pehle xorr update, phir lookup, insert sabse BAAD
         mp[0]=1 SEED · complement mila -> count+ · same complement dobara -> count double (sum jaisa).   // mp[0]=1: shuru se hi XOR==k wala subarray bhi gino
 
  ┌──────────────────────────────────────────────────────────────
@@ -1182,7 +1182,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              diff[ it[0] ]     += it[2];               // yahan se shuru
              diff[ it[1] + 1 ] -= it[2];               // yahan ke BAAD khatam (+1: last din bhi inclusive, uske agle din se hatao)
          }
-         vector<int> ans;  int run = 0;
+         vector<int> ans;  int run = 0;   // run=0: chalti-sum abhi khaali
          for (int i = 1; i <= n; i++) { run += diff[i]; ans.push_back(run); }   // 1..n: flights 1-based, diff[0] aur diff[n+1] answer me nahi
 
      DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
@@ -1252,10 +1252,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              for(int i=left; i<=right; i++)  ans.push_back(matrix[top][i]);     top++;   // top row L->R (top++ turant: right col wala loop ye corner dobara na le)
              for(int i=top; i<=bottom; i++)  ans.push_back(matrix[i][right]);   right--; // right col T->B (right-- turant: bottom row wala loop ye corner dobara na le)
              if(top<=bottom){                                                   // GUARD (ek hi row thi to top++ ke baad wahi row ulti dobara chhap jaati)
-                 for(int i=right; i>=left; i--) ans.push_back(matrix[bottom][i]); bottom--; // bottom row R->L
+                 for(int i=right; i>=left; i--) ans.push_back(matrix[bottom][i]); bottom--; // bottom row ulta R->L; bottom-- : ye row ho gayi
              }
              if(left<=right){                                                   // GUARD (ek hi col thi to right-- ke baad wahi col ulti dobara chhap jaati)
-                 for(int i=bottom; i>=top; i--) ans.push_back(matrix[i][left]);   left++;   // left col B->T
+                 for(int i=bottom; i>=top; i--) ans.push_back(matrix[i][left]);   left++;   // left col neeche se upar; left++ : ye col ho gayi
              }
          }
      GUARD — jo loop jis row/col pe chal raha, guard USI ka:
@@ -1296,8 +1296,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      SAAR: = SET-MATRIX-ZEROES wali 2-marker trick, bas MARK ki jagah COUNT.
            rowCount[i], colCount[j]. akela pehchano -> count==1 dono me.
      TEMPLATE:
-         vector<int> rowCount(m,0), colCount(n,0);
-         for i,j: if(grid[i][j]==1){ rowCount[i]++; colCount[j]++; }              // pass-1 COUNT
+         vector<int> rowCount(m,0), colCount(n,0);   // 0 se: abhi kisi row/col me koi server gina nahi
+         for i,j: if(grid[i][j]==1){ rowCount[i]++; colCount[j]++; }              // pass-1: pehle poori ginti, tabhi pass-2 me pata akela hai ya nahi
          for i,j: if(grid[i][j]==1 && (rowCount[i]>1 || colCount[j]>1)) ans++;    // pass-2 CHECK (>1: khud ke alawa koi aur server; || : row ya col koi ek kaafi)
      DRY-RUN [[1,0],[1,1]]:
          pass-1:  rowCount=[1,2]  colCount=[2,1]
@@ -1328,8 +1328,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
     ans[] init (na-mile default: -1 ya n) ; stack<int> st  (INDEX rakho, value nahi)
     for i in arr:                         // prev-wale ke liye loop ULTA (n-1..0)
         while (!st.empty() && cmp(nums[st.top()], nums[i])):   // top ka jawab mil gaya (!st.empty() pehle: khaali stack pe top() crash)
-            ans[st.top()] = <nums[i] / (i - st.top()) / width>;  st.pop()
-        st.push(i)
+            ans[st.top()] = <nums[i] / (i - st.top()) / width>;  st.pop()   // pehle ans likho, phir pop: pop ke baad top() badal jaata
+        st.push(i)   // while ke baad push: curr ab apne jawab ka intezaar kare
     -> sirf 3 cheez badalti: (1) cmp = `>` (smaller dhoondh rahe) ya `<` (greater) [ULTA lagta -- top ko jab curr HARA de]
                              (2) ans me kya: VALUE (next-greater/smaller) · DISTANCE i-top (daily-temp) · WIDTH (histogram)
                              (3) direction: next = aage(0..n) · prev = peeche(n-1..0) · circular = 2n loop, i%n.
@@ -1344,10 +1344,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
            (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
      TEMPLATE:
        vector<int> ans(nums.size(), -1);   // -1 init: jisko daaye bada na mile wo -1 hi rahe
-       stack<int> st;                                       // INDEX stack
-       for (int i = 0; i < nums.size(); i++) {
+       stack<int> st;                                       // INDEX rakho: ans[st.top()] me likhne ko position chahiye
+       for (int i = 0; i < nums.size(); i++) {   // left->right: daaye wala bada aage aayega
           while (!st.empty() && nums[st.top()] < nums[i]) { // top se curr BADA -> top ko answer mila (barabar = bada nahi, isliye sirf <)
-             ans[st.top()] = nums[i];  st.pop();
+             ans[st.top()] = nums[i];  st.pop();   // pehle ans likho, phir pop: pop ke baad top() badal jaata
           }
           st.push(i);   // while ke BAAD push: pehle chhote top nipta, phir curr khud intezaar me
        }                                                    // end tak bache -> koi bada nahi -> -1 (init)
@@ -1387,9 +1387,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
        nS = next-smaller INDEX   init n,   i = 0..n-1,   while h[st.top()] > h[i]   // none -> n (n = right ki bahar deewar, width sahi; > strict: barabar bar stopper nahi)
        pS = prev-smaller INDEX   init -1,  i = n-1..0,   while h[st.top()] > h[i]   // none -> -1 (-1 = left ki bahar deewar, index 0 se pehle)
        int ans = INT_MIN;   // INT_MIN: pehla area bhi max me aaye (height >= 0, to 0 bhi chalega)
-       for (int i = 0; i < n; i++) {
+       for (int i = 0; i < n; i++) {   // har bar pe khade ho: wahi is rectangle ki height
           int width = nS[i] - pS[i] - 1;   // -1: dono stopper khud rectangle me nahi
-          ans = max(ans, heights[i] * width);
+          ans = max(ans, heights[i] * width);   // height = heights[i]: range me ye bar sabse chhota hai
        }
 
      3 JAGAH DHYAAN:
@@ -1493,7 +1493,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
        int next(int price){
           int span = 1;   // 1 se: aaj ka din khud bhi span me ginta
           while(!st.empty() && st.top().first <= price){ span += st.top().second; st.pop(); }   // <= : barabar price wala din bhi span me; !st.empty() pehle warna top() crash
-          st.push({price, span});   return span;
+          st.push({price, span});   return span;   // poora span saath push: aage bada din ise nigle to sab din jode
        }
      DRY-RUN 75 (stack top pe ...60,70,60): 60<=75 span=2 pop · 70<=75 span=4 pop · (bacha) · 80>75 ruk -> span=4, push{75,4}.
      KYUN span-JODO: pop hue chhote din KHUD apne peeche ka span nigal chuke -> unka span add = un sab din bhi cover (dobara peeche nahi jaana).
@@ -1587,19 +1587,19 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      TEMPLATE:
        vector<int> ans(2, -1);                    // size fixed 2 -> ans(2,-1), push_back NAHI
-       int low = 0, high = n - 1;
+       int low = 0, high = n - 1;   // n-1: aakhri valid index, dono sire inclusive
        while (low <= high) {                      // PASS 1 = FIRST (<= : low==high wala akela element bhi check)
           int mid = low + (high - low) / 2;   // (low+high)/2 nahi: bade low+high pe int overflow
           if (nums[mid] == target) { ans[0] = mid; high = mid - 1; }   // mila -> aur LEFT (high=mid-1: mid ans me save, ab usse pehle wala dhoondo)
-          else if (nums[mid] < target) low = mid + 1;
-          else high = mid - 1;
+          else if (nums[mid] < target) low = mid + 1;   // mid chhota: target right me; mid khud nahi, isliye +1
+          else high = mid - 1;   // mid bada: target left me; mid khud nahi, isliye -1
        }
        low = 0, high = n - 1;                     // RESET, warna PASS 2 galat jagah se shuru
        while (low <= high) {                      // PASS 2 = LAST (<= : low==high wala akela element bhi check)
-          int mid = low + (high - low) / 2;
+          int mid = low + (high - low) / 2;   // (low+high)/2 nahi: bade low+high pe int overflow
           if (nums[mid] == target) { ans[1] = mid; low = mid + 1; }    // mila -> aur RIGHT (low=mid+1: mid ans me save, ab usse baad wala dhoondo)
-          else if (nums[mid] < target) low = mid + 1;
-          else high = mid - 1;
+          else if (nums[mid] < target) low = mid + 1;   // mid chhota: target right me; mid khud nahi, isliye +1
+          else high = mid - 1;   // mid bada: target left me; mid khud nahi, isliye -1
        }
        return ans;
 
@@ -1650,9 +1650,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  SHARED SHELL (teeno bilkul same):
       low, high = <RANGE>;   ans = -1;   // ans=-1: koi mid feasible na nikle to -1 hi lautao
       while (low <= high) {   // <= : low==high wala aakhri candidate bhi solve() se test ho
-          mid = low + (high - low) / 2;
+          mid = low + (high - low) / 2;   // (low+high)/2 nahi: bade low+high pe int overflow
           if (solve(mid)) { ans = mid; high = mid - 1; }   // feasible -> chhota try
-          else              low = mid + 1;                  // bada chahiye
+          else              low = mid + 1;                  // feasible nahi: answer mid se bada, mid khud bekaar
       }
       return ans;
    FARAK sirf 2 cheez: (a) RANGE (low, high)   (b) solve(mid) ka FORMULA.
@@ -1683,7 +1683,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      array SORTED nahi, phir bhi BS -- ek comparison (mid vs mid+1) se aadha discard. (peak = neighbours se bada; edges bahar -inf.)
      low=0, high=n-1;   while (low < high):   mid = low+(high-low)/2;   // low<high: high=mid se atke nahi, aur mid+1 hamesha andar
-        nums[mid] < nums[mid+1]        -> CHADHAAI -> peak RIGHT me       -> low = mid+1;
+        nums[mid] < nums[mid+1]        -> CHADHAAI -> peak RIGHT me       -> low = mid+1;   // mid peak nahi (right wala bada), isliye mid+1
         else (nums[mid] > nums[mid+1]) -> DHALAAN  -> peak mid-KHUD ya LEFT -> high = mid;   // mid (NOT mid-1) (dhalaan pe mid khud peak ho sakta, phenk nahi sakte)
      return low;   (low==high pe converge = peak. edges auto.)
      GOTCHA: dhalaan me high = mid (mid-1 NAHI) -- mid khud peak ho sakta. isliye while low<high (mid+1 hamesha in-bounds, no sentinel).
@@ -1694,17 +1694,17 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      SAAR : har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR = O(n); yahan log-n chahiye.)
         idea: single se PEHLE (left-half) pairs (even,odd) pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 (LEFT) se compare.
      TEMPLATE:
-         if(nums.size()==1) return nums[0];            // BASE
-         int low=0, high=n-1;
+         if(nums.size()==1) return nums[0];            // akela element hi single hai, BS ki zarurat nahi
+         int low=0, high=n-1;   // n-1: aakhri valid index, poori array inclusive
          while(low<=high){   // <= : low>high pe hi ruko, tab high single pe hota
-             int mid=low+(high-low)/2;
+             int mid=low+(high-low)/2;   // (low+high)/2 nahi: overflow se bachne ko
              if(mid==0) return nums[mid];              // edge (mid-1 = -1 out-of-bounds; yahan tak aaye to single idx 0 pe)
-             if(mid%2==0){                             // EVEN mid
+             if(mid%2==0){                             // even mid: single se pehle even idx ka saathi AAGE hota
                  if(nums[mid]==nums[mid-1]) high=mid-1; //   single PEECHE (even idx ka saathi peeche = pairing shift ho chuki)
-                 else low=mid+1;                        //   single AAGE
-             } else {                                  // ODD mid
+                 else low=mid+1;                        // saathi peeche nahi = pairing theek, single aage
+             } else {                                  // odd mid: single se pehle odd idx ka saathi PEECHE hota
                  if(nums[mid]!=nums[mid-1]) high=mid-1; //   single PEECHE (odd idx ka saathi peeche nahi = pairing shift ho chuki)
-                 else low=mid+1;                        //   single AAGE
+                 else low=mid+1;                        // saathi peeche mila = pairing theek, single aage
              }
          }
          return nums[high];   // high, low nahi: dono branch mid reject karte, high single pe rukta
@@ -1844,9 +1844,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  │ ▸ DETECT CYCLE
  └──────────────────────────────────────────────────────────────
      FAST/SLOW (Floyd): cycle ho to tez-dheema MILENGE (slow==fast) -> true.
-        Node *slow=head, *fast=head;
+        Node *slow=head, *fast=head;   // dono head se: cycle ho to fast ghoom ke slow ko pakdega
         while (fast && fast->next) { slow=slow->next; fast=fast->next->next; if (slow==fast) return true; }   // check move ke BAAD: dono head se shuru, pehle check karte to turant true
-        return false;
+        return false;   // fast NULL tak pahuncha = list ka end hai, cycle nahi
      no-cycle -> fast NULL pe pahunch ke loop khatam -> false.
 
  ┌──────────────────────────────────────────────────────────────
@@ -1860,10 +1860,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      TEMPLATE:
         int slow=0, fast=0;   // 0 se: value 1..n, koi 0 pe point nahi karta -> 0 cycle ke bahar ka start
         slow=nums[slow]; fast=nums[nums[fast]];   // ★ PEHLE ek kadam chalao — dono 0 pe hi rahe to slow==fast, PHASE-1 loop chalega hi nahi
-        while(slow!=fast){ slow=nums[slow]; fast=nums[nums[fast]]; }   // PHASE-1 meet
+        while(slow!=fast){ slow=nums[slow]; fast=nums[nums[fast]]; }   // PHASE-1: cycle me tez-dheema milne tak chalao
         slow=0;   // sirf slow wapas 0 pe, fast meet point pe hi rahe
         while(slow!=fast){ slow=nums[slow]; fast=nums[fast]; }          // PHASE-2 entry (ab fast bhi 1 kadam, 2 nahi)
-        return slow;
+        return slow;   // phase-2 me jahan mile wahi cycle entry = duplicate
      crux: phase-2 = meet aur 0 se entry-tak distance BARABAR (Floyd) -> 0-reset + 1-1 kadam.
      FAMILY: FAST/SLOW (detect_cycle cousin) — wahi Floyd, array pe.
 
@@ -1874,8 +1874,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      = DETECT CYCLE (03), bas DELTA: true/false nahi, ENTRY chahiye -> PHASE-2.
      = FIND-DUPLICATE (12) ka Node* version: nums[i] ki jagah ->next. SAME phase-2.
      TEMPLATE:
-        slow=head, fast=head;  bool cycle=false;
-        while(fast && fast->next){ slow=slow->next; fast=fast->next->next; if(slow==fast){ cycle=true; break; } }
+        slow=head, fast=head;  bool cycle=false;   // flag: 1 node pe bina cycle bhi slow==fast hota
+        while(fast && fast->next){ slow=slow->next; fast=fast->next->next; if(slow==fast){ cycle=true; break; } }   // break: fast meet point pe hi ruke
         if(!cycle) return NULL;              // no cycle (flag se decide, slow!=fast se nahi: 1 node pe dono head pe barabar)
         slow=head;   // sirf slow head pe, fast meet point pe hi rahe
         while(slow!=fast){ slow=slow->next; fast=fast->next; }   // PHASE-2 entry (dono 1-1 kadam)
@@ -1907,8 +1907,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REMOVE ELEMENTS (delete by val, LC-203)
  └──────────────────────────────────────────────────────────────
-     val wale SAARE node hatao.  if (!head) return null;   prev = null, curr = head;
-     while (curr != null && head != null):
+     val wale SAARE node hatao.  if (!head) return null;   prev = null, curr = head;   // prev=null: head ke peeche koi node nahi
+     while (curr != null && head != null):   // head null = sab node hat gaye, aage kuch nahi
         curr->val==val && prev==null   -> head = head->next          (HEAD / ya sab-node-same)
         curr->val==val && prev!=null   -> prev->next = curr->next     (beech)
         else (no-match)                -> prev = curr   // sirf no-match pe: hata hua node prev nahi ban sakta
@@ -1944,7 +1944,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         if (b) { sum += b->val;  b = b->next; }     (b hai to jodo, b aage)
         tail->next = new Node(sum % 10);  tail = tail->next;   (digit jodo)
         carry = sum / 10;                                      (agle ke liye)
-     return dummy->next
+     return dummy->next   // dummy nakli hai, asli head uske next pe
 
      '|| carry' KYUN: 999 + 1 -> dono list khatam, par carry=1 bacha -> ek aur node (leading 1) chahiye.
 
@@ -1953,8 +1953,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      SAAR : har do adjacent NODE ki jodi swap (values nahi, NODES = pointer rewire). DUMMY-node trick.
      TEMPLATE:
-         if(!head) return nullptr;
-         Node* dummy=new Node(0); dummy->next=head;
+         if(!head) return nullptr;   // khaali list: swap ko kuch nahi
+         Node* dummy=new Node(0); dummy->next=head;   // dummy: head bhi badlega, isliye usse pehle ek node chahiye
          Node* prev=dummy, *first=head;   // prev=dummy: pehli jodi se pehle bhi jodne wala node chahiye
          while(prev->next && first->next){        // jodi (2 node) bache tab tak (pehle prev->next, warna NULL->next)
              Node* second=first->next;
@@ -1964,7 +1964,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              prev->next=second;                   // prev -> 2 (= is jodi ka naya head)
              prev=first;  first=temp;             // ADVANCE (prev=purana first, first=agli jodi ka pehla)
          }
-         return dummy->next;
+         return dummy->next;   // naya head = pehli jodi ka second, wo dummy->next pe
      dummy kyu: jodi reconnect karne ko "jodi se pehle wala" node chahiye; pehli jodi ke pehle kuch nahi -> dummy.
      rewire ORDER + temp-save = crux. har iteration = SIRF EK jodi (aage ki jodi ka kaam mat karo).
 
@@ -2029,15 +2029,15 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
        // PASS 1: clone + next + map
        curr=head; prev=NULL; newHead=NULL;   // pehle head==NULL -> return NULL · mp = unordered_map<Node*,Node*>
        while(curr){
-          Node* temp=new Node(curr->val); mp[curr]=temp;
-          if(newHead==NULL){ newHead=temp; prev=temp; }
-          else { prev->next=temp; prev=temp; }
+          Node* temp=new Node(curr->val); mp[curr]=temp;   // mp old->new: pass-2 me random ka naya node yahin se milega
+          if(newHead==NULL){ newHead=temp; prev=temp; }   // pehla clone = naya head, peeche jodne ko koi nahi
+          else { prev->next=temp; prev=temp; }   // pehle prev->next pe jodo, phir prev aage badhao
           curr=curr->next;
        }
        // PASS 2: random set
-       curr=head; currRand=newHead;
+       curr=head; currRand=newHead;   // dono list shuru se: same position pe saath chalengi
        while(curr){
-          currRand->random = (curr->random==NULL) ? NULL : mp[curr->random];
+          currRand->random = (curr->random==NULL) ? NULL : mp[curr->random];   // random NULL to NULL; warna original target ka naya copy
           curr=curr->next; currRand=currRand->next;   // dono saath aage: copy aur original same position pe rahein
        }
        return newHead;
@@ -2082,8 +2082,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      fields: buckets (Entry* ka array) · cap (slots = 16) · sz (kitne pairs).   // ctor: sz=0, cap=16, buckets.resize(cap) -> sab slot nullptr
 
      TRICK: index = hash<string>{}(key)%cap -> us bucket ki chain me traverse -> key match pe kaam; put me end tak na-mili -> naya node append. (collision = same index -> chain)
-       put(key,val):  int index = hash<string>{}(key) % cap;   Entry* node = new Entry(key,val);
-                      if(buckets[index] == nullptr){ buckets[index] = node; sz++; }
+       put(key,val):  int index = hash<string>{}(key) % cap;   Entry* node = new Entry(key,val);   // % cap: hash bada number, slot 0..cap-1 me laana
+                      if(buckets[index] == nullptr){ buckets[index] = node; sz++; }   // khaali slot: naya node hi chain ka head
                       else{
                          Entry* head = buckets[index];
                          while(head != NULL){
@@ -2094,8 +2094,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                       }
        get(key):      Entry* head = buckets[index];
                       while(head != NULL){ if(head->key == key) return head->value;  head = head->next; }
-                      return -1;
-       remove(key):   Entry* head = buckets[index], *prev = NULL;
+                      return -1;   // poori chain dekh li, key nahi mili
+       remove(key):   Entry* head = buckets[index], *prev = NULL;   // prev=NULL: head ke peeche koi node nahi
                       while(head != NULL){
                          if(head->key == key){ if(prev) prev->next = head->next;  else buckets[index] = head->next;  sz--; }   // prev NULL = HEAD hi hata: tab bucket ka head badlo
                          prev = head;  head = head->next;   // prev = head (prev->next nahi): prev NULL ho to crash
@@ -2169,7 +2169,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      CRUX = 2 DLL helper (yehi asli mechanic, get/put inko call karte):
         removeNode(n): n->prev->next=n->next;  n->next->prev=n->prev;      // beech se nikal, O(1)
         addFront(n):   nxt=head->next;  head->next=n; n->prev=head;        // nxt PEHLE pakdo (TRAP-2)
-                       n->next=nxt; nxt->prev=n;                           // n = MRU
+                       n->next=nxt; nxt->prev=n;                           // n ab head ke turant baad = sabse naya (MRU)
 
      get(key):  mp.count(key)==0 -> -1.  warna: Node* node = mp[key]; removeNode(node); addFront(node); return node->val;   // count se check: mp[key] chup-chaap khaali entry bana deta
      put(k,v):  hai  -> node->val=v  -> removeNode + addFront.   ★ DONO, get() jaisa (neeche TRAP-4) (sirf addFront kiya to node purani jagah bhi juda, wahi evict hota)
@@ -2210,7 +2210,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      TRICK: pichhla running sum NEGATIVE = aage bojh -> PHENK do (sum=0), fresh. bas yahi.
        sum += nums[i];   max_sum = max(max_sum, sum);   if(sum < 0) sum = 0;   // max PEHLE, reset BAAD: warna all-negative [-1] pe 0 aata
-     TRAP: max_sum update RESET se PEHLE + max_sum=INT_MIN start (warna all-negative [-1] miss). // sum=0 se shuru
+     TRAP: max_sum update RESET se PEHLE + max_sum=INT_MIN start (warna all-negative [-1] miss). // sum=0 se: abhi tak kuch joda nahi
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX PRODUCT SUBARRAY (LC-152)
@@ -2252,7 +2252,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      TEMPLATE:
          maxK = maxKadane(nums);   minK = minKadane(nums);   total = sum(nums); // maxK init: cur=maxK=nums[0], loop 1 se (ya cur=0, maxK=INT_MIN)
-         circular = total − minK;
+         circular = total − minK;   // wrap = poora array minus sabse bura (min) beech ka chunk
 
          ★ minK Kadane-MIN se:  cur = min(nums[i], cur+nums[i]);   minK = min(minK, cur).  // init cur=minK=nums[0], loop 1 se (ya cur=0, minK=INT_MAX)
             (prefix-sum se NAHI -- Arpan-10-Sep pakda.)
@@ -2283,19 +2283,19 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
            eg [2,1,-99,3,3]=9 -> wall index-1 pe: LEFT best=3 ([2,1]) + RIGHT best=6 ([3,3]) = 9.
 
      TEMPLATE:
-         maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)
-             ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // Kadane per-index (=05, prefix-sum+reset)
+         maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)   // index 0 pe khatam = sirf nums[0], isliye loop 1 se
+             ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // akela naya shuru karo ya pichhle me judo, jo bada
                 |__ ye jo array RETURN hua  -->  neeche bestLeftPrefix me 'temp' ban jaata
 
-         bestLeftPrefix       (temp = UPAR wale ka RETURN;  base ans[0]=temp[0];   loop i=1..n-1  AAGE)
-             ans[i] = max( ans[i-1] , temp[i] )                            // PREFIX-max (=06)
+         bestLeftPrefix       (temp = UPAR wale ka RETURN;  base ans[0]=temp[0];   loop i=1..n-1  AAGE)   // 0 tak ka best = khud temp[0], isliye loop 1 se
+             ans[i] = max( ans[i-1] , temp[i] )                            // 0..i ka best = pichhla best ya temp[i], jo bada
 
-         maxEndingAtForRight  (base ans[n-1]=nums[n-1];    loop i=n-2..0  PEECHE)
-             ans[i] = max( nums[i] , ans[i+1] + nums[i] )                  // 05 ka MIRROR
+         maxEndingAtForRight  (base ans[n-1]=nums[n-1];    loop i=n-2..0  PEECHE)   // last index pe khatam = sirf wahi; right part peeche se banta
+             ans[i] = max( nums[i] , ans[i+1] + nums[i] )                  // mirror: akela shuru ya agle (i+1) wale me judo, jo bada
                 |__ ye jo array RETURN hua  -->  neeche bestRightPrefix me 'temp' ban jaata
 
-         bestRightPrefix      (temp = UPAR wale ka RETURN;  base ans[n-1]=temp[n-1];  loop i=n-2..0  PEECHE)
-             ans[i] = max( ans[i+1] , temp[i] )                           // SUFFIX-max (=06 ulta)
+         bestRightPrefix      (temp = UPAR wale ka RETURN;  base ans[n-1]=temp[n-1];  loop i=n-2..0  PEECHE)   // last se peeche bharo: ans[i+1] pehle se ready chahiye
+             ans[i] = max( ans[i+1] , temp[i] )                           // i..n-1 ka best = agla best (i+1) ya temp[i], jo bada
 
          maxTwoNonOverlap     (bestLeft=bestLeftPrefix, bestRight=bestRightPrefix;  ans=INT_MIN)   // INT_MIN: sab minus ho to jod bhi minus, 0 se galat
              for i = 0..n-2 :  ans = max( ans , bestLeft[i] + bestRight[i+1] )    // WALL, i+1 = non-overlap (loop n-2 tak: i+1 array ke bahar na jaaye)
@@ -2338,7 +2338,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  │ ▸ SINGLE NUMBER (LC-136)
  └──────────────────────────────────────────────────────────────
      TRICK: har num 2-baar, ek 1-baar -> saare XOR karo -> pairs cut -> jo bacha = answer.
-       XORR = nums[0];  for i=1..n: XORR ^= nums[i];  return XORR.   (O(n)/O(1), koi map nahi)
+       XORR = nums[0];  for i=1..n: XORR ^= nums[i];  return XORR.   (O(n)/O(1), koi map nahi)   // nums[0] se shuru isliye loop 1 se; a^a=0 se pairs kat jaate
      FAMILY (aage isi daabe me aayenge): Missing-Number · Single-Number-II bhi XOR-based.
 ```
 
@@ -2363,13 +2363,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
    Q1b RETURN TYPE = problem kya maangta -> variable ya DIRECT (asli code se):
 
        bool (hai kya/match?)  -- value 1 baar -> DIRECT call, koi variable NAHI:
-           return hasPathSum(root->left, t-val) || hasPathSum(root->right, t-val);   // path-sum
-           return isSame(p->left, q->left) && isSame(p->right, q->right);            // same-tree
+           return hasPathSum(root->left, t-val) || hasPathSum(root->right, t-val);   // || : koi ek side path bana de to kaafi
+           return isSame(p->left, q->left) && isSame(p->right, q->right);            // && : dono side match ho tabhi same tree
 
        TreeNode* (wo node do) -- LCA (variable, dono side check karne):
            TreeNode* left  = lca(root->left, p, q);
            TreeNode* right = lca(root->right, p, q);
-           if(!left) return right;  if(!right) return left;  return root;
+           if(!left) return right;  if(!right) return left;  return root;   // ek side khali -> doosri bhejo; dono mile -> root hi LCA
 
        int (kitna/gehrai)     -- value DOBARA chahiye -> variable ZAROORI:
            int left  = height(root->left);
@@ -2467,7 +2467,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      base : dono null->true · ek null->false · val alag->false.   // null checks PEHLE: warna null->val crash
      comb : CROSS -> compare(p->left, q->right) && compare(p->right, q->left).   CROSS = mirror (yehi ek change).
-     call : isSymmetric(root) = root null?true : compare(root->left, root->right).
+     call : isSymmetric(root) = root null?true : compare(root->left, root->right).   // root khud nahi, uske dono bachche aapas me mirror hone chahiye
 
 ┌── FAMILY: return-ONE + track-ANOTHER (post-order + global) ───
 │ parent ko ek cheez (HEIGHT) chahiye -> wo RETURN; asli ANSWER global/ref me TRACK. recurse-PEHLE zaroori.
@@ -2478,7 +2478,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      = max-depth ka height() helper (maxDia by-REFERENCE), BAS 1 line EXTRA:
         int height(root, int& maxDia):
-            if (!root) return 0;
+            if (!root) return 0;   // null ki height 0: uske neeche koi edge nahi
             left = height(root->left, maxDia);   right = height(root->right, maxDia);
             maxDia = max(maxDia, left + right);   // EXTRA line: is node se guzarne wali diameter = leftH + rightH
             return 1 + max(left, right);          // HEIGHT return (parent ko yeh chahiye)
@@ -2528,14 +2528,14 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      TEMPLATE  (MAP wala, O(n))
 
-         buildTree:  mp[inorder[i]] = i  (ek baar) ;  rootIndex = 0 ;  return solve(0, n-1)
+         buildTree:  mp[inorder[i]] = i  (ek baar) ;  rootIndex = 0 ;  return solve(0, n-1)   // rootIndex 0: preorder ka pehla = root; 0..n-1 = poora inorder
 
          solve(int &rootIndex, l, r):
              if (l > r) return NULL;   // > (>= nahi): l==r pe ek node bacha, wo banana hai
-             pivot = mp[preorder[rootIndex]];   rootIndex++;      // root inorder me kahan
+             pivot = mp[preorder[rootIndex]];   rootIndex++;      // inorder me root kahan; ++ turant: agla preorder elem agla root
              node  = new TreeNode(inorder[pivot]);
              node->left  = solve(l, pivot-1);                     // LEFT pehle (preorder me root ke baad LEFT wale node aate)
-             node->right = solve(pivot+1, r);
+             node->right = solve(pivot+1, r);   // RIGHT baad me: preorder me left ke saare node pehle aate
              return node;
 
      ★ rootIndex by-REFERENCE (&): ek moving pointer SAB calls me shared -> LEFT poora consume hone ke
@@ -2559,12 +2559,12 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      Q: HAR node pe abs(leftH - rightH) <= 1?  true/false.
      trick: alag "balanced?" pass NAHI -> height nikaalte-nikaalte HI check -> O(n) single-pass. maxDepth return = HEIGHT ya -1 (imbalance-flag).
         int maxDepth(root):
-            if (!root) return 0;
+            if (!root) return 0;   // null ki height 0 (balanced hai, -1 nahi)
             left  = maxDepth(root->left);    if (left == -1)  return -1;   // neeche imbalance -> UPAR propagate
-            right = maxDepth(root->right);   if (right == -1) return -1;
+            right = maxDepth(root->right);   if (right == -1) return -1;   // right me imbalance -> turant -1 upar bhejo
             if (abs(left - right) > 1) return -1;                          // IS node pe imbalance
             return 1 + max(left, right);                                   // balanced -> asli HEIGHT
-        isBalanced = (maxDepth(root) != -1).
+        isBalanced = (maxDepth(root) != -1).   // -1 nahi aaya = kahin bhi imbalance nahi
      -1 = SENTINEL: imbalance neeche mila -> UPAR propagate -> ek node bhi galat = poora false.
      TRAP: check HAR node pe (sirf root nahi) -- root balanced par ANDAR imbalanced ho sakta [test-pass != code-sahi].
 
@@ -2577,12 +2577,12 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      idea : wo node jahan p, q ALAG side split ho jaate (ek left, ek right).
         TreeNode* lca(root, p, q):
-            if (!root) return NULL;
+            if (!root) return NULL;   // khaali subtree -> p/q yahan nahi mile
             if (root == p || root == q) return root;    // mil gaya -> UPAR bhejo
             left  = lca(root->left, p, q);
             right = lca(root->right, p, q);
             if (!left)  return right;                    // ek side khali -> doosri return
-            if (!right) return left;
+            if (!right) return left;   // right khali -> dono left me, left wala hi jawab
             return root;                                 // DONO non-null -> yehi split-point = LCA
      mechanic: found-node UPAR bubble; jahan DONO taraf se kuch mila = LCA. (if(!left) return right dono case sambhaalta: left-khali+right-mila, aur dono-khali->NULL.)
 
@@ -2596,7 +2596,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      idea : root-se-LEAF sum == target? value NEECHE carry (target me se ghatao).
      base : null -> false.
      leaf : (!root->left && !root->right) -> return target == root->val.   // leaf pe hi check: beech ke node pe sum mile to path adhoora
-     comb : hasPathSum(left, t-val) || hasPathSum(right, t-val).
+     comb : hasPathSum(left, t-val) || hasPathSum(right, t-val).   // || : koi ek path target bana de to kaafi
      TRAP: LEAF = !root->left && !root->right (ACTUAL bachche), NA "!left && !right" (recursion-result) -> warna non-leaf pe galat match. [test-pass != code-sahi]
 
 ┌── FAMILY: BFS / LEVEL-ORDER (QUEUE -- DFS recursion se ALAG) ──
@@ -2613,13 +2613,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          while (!q.empty()) {
              int sz = q.size();               // SNAPSHOT -- is level ke node (for se PEHLE pakdo)
              vector<int> level;
-             for (int i = 0; i < sz; i++) {
+             for (int i = 0; i < sz; i++) {   // sirf sz baar: isi level ke node, naye push wale nahi
                  node = q.front();  q.pop();
                  level.push_back(node->val);
                  if (node->left)  q.push(node->left);    // bachche -> AGLE level me jaayenge
                  if (node->right) q.push(node->right);
              }
-             ans.push_back(level);
+             ans.push_back(level);   // level poora bhar gaya tab push (for ke bahar)
          }
      TRAP: sz ko for se PEHLE pakdo. loop me bachche push -> q.size() badalta -> warna agle level ke node is level me ghus jaate.
      TEMPLATE: right-side-view (level ka LAST) · level-average · zigzag -- sab isi skeleton pe, bas "level me kya karna" badalta.
@@ -2640,7 +2640,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      = LEVEL-ORDER ka SAME skeleton (queue + sz-SNAPSHOT + inner-loop -> level) + ek levelCounter.
      DELTA (naya = bas ye, inner-loop ke BAAD -- level HAMESHA normal L->R banao):
          if (levelCounter % 2 != 0) reverse(level);   // ODD level -> ULTA (R->L) · levelCounter=0 se: root level seedha
-         levelCounter++;  ans.push_back(level);
+         levelCounter++;  ans.push_back(level);   // reverse check ke BAAD ++: warna root level ulta ho jaata
      even (0,2..) = seedha · odd (1,3..) = reversed.  (alt: deque/front-insert, par reverse simplest.)
 
  ┌──────────────────────────────────────────────────────────────
@@ -2648,11 +2648,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      idea : root se sabse PAAS wale LEAF tak depth. BFS neeche -> PEHLA leaf mila = min depth -> RUK jao (first = shortest).
      TEMPLATE (level-order skeleton + EARLY-STOP):
-         if(!root) return 0;
-         queue<TreeNode*> q; q.push(root);  int depth=0;
+         if(!root) return 0;   // khaali tree ki depth 0 (warna NULL push hota)
+         queue<TreeNode*> q; q.push(root);  int depth=0;   // depth = ab tak poore hue level, shuru me koi nahi
          while(!q.empty()){
              int sz=q.size();   // for se PEHLE pakdo: loop me push se size badalta
-             for(int i=0;i<sz;i++){
+             for(int i=0;i<sz;i++){   // sirf sz baar: isi level ke node
                  auto curr=q.front(); q.pop();
                  if(!curr->left && !curr->right) return depth+1;  // PEHLA leaf -> turant return (aage mat dekho)
                  if(curr->left)  q.push(curr->left);
@@ -2682,11 +2682,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      IDEA : har node ki ek WINDOW (mini, maxi) -> node us range me ho. neeche jaate window TIGHT hoti.
      TEMPLATE:
          solve(root, mini, maxi):
-            null -> true
+            null -> true   // khaali subtree valid BST hai
             (val <= mini || val >= maxi) -> false   // <= aur >=: barabar value bhi galat (BST me duplicate nahi)
             left  = solve(L, mini, val)      // LEFT  jao -> maxi = val (chhota hona)
             right = solve(R, val, maxi)      // RIGHT jao -> mini = val (bada hona)
-            return left && right
+            return left && right   // && : dono subtree valid tabhi poora valid
      CALL : solve(root, LLONG_MIN, LLONG_MAX);   mini/maxi = long long.
      ★ EDGE (24-Sep): INT_MIN/INT_MAX se shuru kiya to node ki value KHUD INT_MIN ya INT_MAX ho
         (LC-98 allow karta) -> strict check (<=, >=) use galat reject kar deta. [2147483647] pe false aata, sahi true.
@@ -2716,7 +2716,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  DECISION-GUIDE (koi graph-Q se pehle -- Trees-guide jaisa; "question dekh ke pehchano"):
    Q1  OUTER-LOOP bahar chahiye? (SABSE bada -- yehi trick)
         kitne group / poora graph / disconnected -> HAAN:
-             for (i : all nodes)  if (!vis[i]) { count++; BFS(i); }         (CC, Islands)
+             for (i : all nodes)  if (!vis[i]) { count++; BFS(i); }         (CC, Islands)   // sirf unvisited pe: wahi naya group shuru karta
         ek source -> target / ek hi component -> NAHI:
              sirf source se EK traversal (koi outer-loop nahi)              (Path-Exists)
 
@@ -2742,14 +2742,14 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
    Q2b  BFS ke ANDAR: PLAIN ya LEVEL-ORDER? (yehi rotting me chhoot gaya tha)
         answer me "reach / connected / count / islands"   -> PLAIN BFS (bas queue, level-count nahi)
         answer me "kitne STEPS / MINUTES / shortest-dist"  -> LEVEL-ORDER (size-snapshot loop):
-             while(!q.empty()) { int sz=q.size(); while(sz--){ ... push nbrs } steps++; }
+             while(!q.empty()) { int sz=q.size(); while(sz--){ ... push nbrs } steps++; }   // sz pehle pakdo; steps++ level ke baad, andar nahi
              ek queue-size snapshot = ek level = ek step.       (rotting-oranges, min-steps-in-grid, word-ladder)
 
  ──────────────────────────────
    Q3  neighbours kaise? (graph ka roop)
         edges diye -> adjacency-list -> adj[node]
         grid diya  -> 2 TRICK (ratta -- islands/rotting/flood-fill sab me; ye apne-aap nahi aate):
-          (a) DIRS-vector:  vector<vector<int>> dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+          (a) DIRS-vector:  vector<vector<int>> dirs = {{1,0},{-1,0},{0,1},{0,-1}};   // neeche, upar, daaye, baaye: 4 padosi
                             for (auto &d : dirs) { int nr=r+d[0], nc=c+d[1]; ... }
           (b) BOUNDS+valid if:  if (nr>=0 && nr<m && nc>=0 && nc<n && grid[nr][nc]==?) { ... }   // bounds PEHLE, grid baad: bahar index pe && pehle hi ruk jaata
               HAR grid-Q me lagti (YEHI trick); '==?' per-Q badalta (islands/rotting =='1').
@@ -2777,7 +2777,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          q.push(src);  vis[src] = true;   // src bhi mark: warna cycle se ghoom ke src dobara push
          while(!q.empty()):
              node = pop
-             if(node == dst) return true
+             if(node == dst) return true   // pop pe check: src==dst wala case bhi pakda jaata
              for(nbr : adj[node])
                  if(!vis[nbr]) { vis[nbr]=true; q.push(nbr); }   // push ke saath hi mark: warna ek node queue me do baar
          return false;                        // queue khali -> koi path nahi
@@ -2805,13 +2805,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
             (a) graph = ADJ-LIST (grid nahi)   (b) BFS use kiya (islands ne DFS kiya tha).
      input = n nodes + edges[] -> pehle ADJ banao (undirected -> DONO taraf):   -- NAYA
          unordered_map<int, vector<int>> adj;
-         for(auto &it : edges){ adj[it[0]].push_back(it[1]); adj[it[1]].push_back(it[0]); }
+         for(auto &it : edges){ adj[it[0]].push_back(it[1]); adj[it[1]].push_back(it[0]); }   // undirected -> dono taraf edge
      TEMPLATE:
-         vector<bool> vis(n,false);   int count=0;
+         vector<bool> vis(n,false);   int count=0;   // sab unvisited, abhi koi group nahi gina
          for(i=0..n-1)                                // outer-loop = har node scan -> DISCONNECTED groups bhi cover
              if(!vis[i]){ count++; bfs(i,adj,vis); }  // har UNVISITED node = naya component
          return count;
-         bfs(i): q.push i + vis[i]=true;
+         bfs(i): q.push i + vis[i]=true;   // start bhi push ke saath mark: warna dobara push hota
                  pop node -> for(auto &it : adj[node]) if(!vis[it]){ vis[it]=true; q.push it; }   // = PATH-EXISTS ka body
      count++ AUR bfs DONO if(!vis[i]) ke ANDAR -- warna har node alag gine (=n galat).
      neighbours = adj[node] (islands me 4-direction tha) -- yahi ek farak, baaki skeleton same.
@@ -2825,10 +2825,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              int dfs(i,j){
                 if(i<0||i>=m||j<0||j>=n||grid[i][j]==0) return 0;   // base: bounds/paani -> 0 (bounds PEHLE: bahar index pe grid padhne se pehle || ruk jaata)
                 grid[i][j]=0;                                        // sink (visited mark)
-                return 1 + dfs(i+1,j)+dfs(i-1,j)+dfs(i,j+1)+dfs(i,j-1);
+                return 1 + dfs(i+1,j)+dfs(i-1,j)+dfs(i,j+1)+dfs(i,j-1);   // 1 = ye cell khud, + chaaron taraf ka area
              }
        (2) outer count++ nahi -> har island ka area le ke MAX:
-             for(i,j) if(grid[i][j]==1) ans = max(ans, dfs(i,j));
+             for(i,j) if(grid[i][j]==1) ans = max(ans, dfs(i,j));   // har island ka area nikaalo, sabse bada rakho
 
      ans=0 se start (area hamesha >=0; koi island nahi -> ans 0). ISLANDS ka void-DFS = yahi, bas return-value ADD hui.
 
@@ -2848,7 +2848,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      BFS (har level = 1 minute):
          while(!q.empty()){
              sz = q.size();   // while se PEHLE pakdo: andar push se size badalta
-             while(sz--){
+             while(sz--){   // sz baar = sirf is minute wale rotten
                  pop(r,c);
                  for(d : dirs){
                      nr=r+d[0], nc=c+d[1];
@@ -2857,7 +2857,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                      }
                  }
              }
-             mins++;
+             mins++;   // poora level = 1 minute (while(sz--) ke bahar)
          }
 
      END:
@@ -2888,7 +2888,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              }
 
          START:
-             for(i=0; i<n; i++)
+             for(i=0; i<n; i++)   // har course check: kai course ek saath start ho sakte
                  if(indegree[i]==0) q.push(i);          // koi prereq nahi -> queue me
 
          BFS:
@@ -2916,7 +2916,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                queue = jo PEHLE ready hua wo pehle  ·  heap = ready me jo CHHOTA wo pehle.
 
          BADLAAV (bas itna):
-             queue<int> q;     ->   priority_queue<int, vector<int>, greater<int>> pq;   (id string -> <string>)
+             queue<int> q;     ->   priority_queue<int, vector<int>, greater<int>> pq;   (id string -> <string>)   // greater<int> = min-heap: sabse chhota top pe
              q.front()         ->   pq.top()
              indegree / adj / ghatana / end-check  SAME.
 
@@ -2964,7 +2964,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                  mp[curr]->neighbors.push_back(mp[it]);                 // (b) JODNA (if ke BAHAR: clone pehle se ho tab bhi ye edge jodni hai)
              }
          }
-         return mp[node];
+         return mp[node];   // start node ka clone = naye graph ka shuru
 
      yaad: (a) if ke ANDAR (sirf naya pe) · (b) if ke BAHAR (har edge pe)
            mp[curr] = A' ,  mp[it] = B'  ->  A' ki list me B'
@@ -3017,7 +3017,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
          bool isBipartite(graph) {
              vector<int> color(m, -1);   // -1 = abhi rang nahi (0 aur 1 asli rang hain)
-             for (int i = 0; i < m; i++)
+             for (int i = 0; i < m; i++)   // har node se: graph toota (disconnected) ho sakta
                  if (color[i] == -1 && BFS(graph, i, color) == false)   // -1 check PEHLE: rang wale node pe BFS dobara nahi chalta
                      return false;                         // ek bhi component fail -> poora false
              return true;
@@ -3064,7 +3064,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              if(wt > dist[node]) continue;                     // STALE skip (sirf > : barabar wala taaza entry hai)
              for(it : adj[node]){              // it.first = nbr node,  it.second = edge weight
                  if(wt + it.second < dist[it.first]){          // RELAX (naya rasta chhota?) (< strict: barabar pe dobara push bekaar, loop ka khatra)
-                     dist[it.first] = wt + it.second;
+                     dist[it.first] = wt + it.second;   // chhota rasta mila -> pehle dist update, phir push
                      pq.push({wt + it.second, it.first});
                  }
              }
@@ -3098,8 +3098,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
             else if(rnk[uy] < rnk[ux]) parent[uy]=ux;     // chhota bade ke neeche
             else { parent[uy]=ux; rnk[ux]++; }   // barabar rank: jodne se ek level badha, isliye ++
 
-     same group? -> find(x) == find(y)
-     components  -> count(i where find(i)==i)
+     same group? -> find(x) == find(y)   // root compare karo, parent nahi (parent beech ka ho sakta)
+     components  -> count(i where find(i)==i)   // sirf root ka parent khud wahi hota
 
      2 opt: path-compression (tree flat) + union-by-rank (chhota bade ke neeche) -> find/unite ~O(1).
 
@@ -3224,7 +3224,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      SAAR : min-heap me har list ka current HEAD. pop chhota -> result me jodo -> uska NEXT push. repeat.
      TEMPLATE:
          struct Compare { bool operator()(ListNode*a, ListNode*b){ return a->val > b->val; } };  // MIN-heap (> likha to MIN: pq ka comparator ulta chalta, chhota top pe)
-         priority_queue<ListNode*, vector<ListNode*>, Compare> pq;
+         priority_queue<ListNode*, vector<ListNode*>, Compare> pq;   // Compare: ListNode* ko khud compare karna nahi aata
          for(l:lists) if(l) pq.push(l);                            // saare heads (NULL skip) (NULL push kiya to ->val pe crash)
          dummy + tail;                                             // merge-2-lists jaisa build · dummy=new ListNode(0); tail=dummy
          while(!pq.empty()){
@@ -3243,7 +3243,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      TEMPLATE (min-heap, k+1 sliding buffer):
        priority_queue<int,vector<int>,greater<int>> pq;              // MIN-heap (min: sorted output me chhota pehle chahiye)
        for (int x : arr) {
-          pq.push(x);
+          pq.push(x);   // pehle daalo, phir size dekho
           if (pq.size() > k+1) { ans.push_back(pq.top()); pq.pop(); } // buffer bhara -> MIN nikaal (k+1 se bada: tab tak sahi MIN buffer me aa chuka)
        }
        while (!pq.empty()) { ans.push_back(pq.top()); pq.pop(); }     // bache = sorted tail
@@ -3279,7 +3279,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
         void addNum(int num){
             if(maxHeap.empty() || maxHeap.top() >= num) maxHeap.push(num);   // pehle empty(): khaali pe top() crash
-            else minHeap.push(num);
+            else minHeap.push(num);   // num maxHeap.top se bada -> badi team (minHeap)
             if(maxHeap.size() < minHeap.size()){ maxHeap.push(minHeap.top()); minHeap.pop(); }  // minHeap bada: extra hamesha maxHeap me, ek wapas bhejo
             else if(maxHeap.size() > minHeap.size()+1){ minHeap.push(maxHeap.top()); maxHeap.pop(); }  // 2 ka farak: odd me bhi maxHeap sirf 1 aage chalta
         }
@@ -3321,7 +3321,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         while(heap.size()>1){ t1=pop; t2=pop; ans+=t1.ch; ans+=t2.ch;  // >1: har round 2 ALAG char chahiye
            if(--t1.cnt) push(t1); if(--t2.cnt) push(t2); }  // -- pehle phir check: 0 bacha to wapas mat daalo
         if(heap.size()==1) return top.cnt>1 ? "" : ans+top.ch;  // akela bacha count>1: do same paas aayenge, impossible
-        return ans;
+        return ans;   // heap khaali: saare char jagah pe lag gaye
 
      VISUAL ( "aaabbb" ):        heap (3,a)(3,b)
         R1: pop a,b -> "ab"   -> (2,a)(2,b)
@@ -3350,11 +3350,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;  // MIN {val,idx} (min: har step sabse chhota uthana)
         for(i) pq.push({a[i], i});                        // pair -> tie pe chhota idx apne-aap pehle
         while(!pq.empty()){
-            int i = pq.top().second; pq.pop();
+            int i = pq.top().second; pq.pop();   // .second = index (first sirf sort ke liye)
             if(vis[i]) continue;                          // pehle hi hat chuka -> chhodo (LAZY delete)
-            ans += a[i];  vis[i] = true;
-            if(i-1 >= 0) vis[i-1] = true;                 // padosi hatao (bounds)
-            if(i+1 <  n) vis[i+1] = true;
+            ans += a[i];  vis[i] = true;   // khud ko bhi hatao, dobara na uthe
+            if(i-1 >= 0) vis[i-1] = true;                 // padosi hatao; >=0: pehle element ka left padosi nahi
+            if(i+1 <  n) vis[i+1] = true;   // < n: aakhri index n-1, uske aage bahar
         }
         return ans;
      O(n log n).  LAZY DELETE = heap se beech ka element nikaal nahi sakte -> vis[] se pop pe skip
@@ -3412,12 +3412,12 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
           MEETING: overlap -> return FALSE           (ruko)    |  end: return TRUE
      TEMPLATE (merge-jaisa hi):
          if (intervals.empty()) return true;   // ★ EDGE (24-Sep): warna intervals[0] pe crash
-         sort(intervals);  ans.push_back(intervals[0]);
-         for(i=1..n){
+         sort(intervals);  ans.push_back(intervals[0]);   // start se sort, pehla interval baseline
+         for(i=1..n){   // 1 se: intervals[0] pehle hi ans me
              if(intervals[i][0] < ans.back()[1]) return false;   // overlap -> attend nahi (< kyunki ek khatam usi pal doosri shuru = chalta)
-             else ans.push_back(intervals[i]);
+             else ans.push_back(intervals[i]);   // push: agla overlap isi ke end se check hoga
          }
-         return true;
+         return true;   // koi overlap nahi mila -> saari attend
      boundary FARAK (crux): Merge touching-MERGE -> `<=`  ·  Meeting touching-OK -> `<`.
      ek pattern (sort+overlap) -> bas (a) overlap pe action (merge vs stop) + (b) boundary (< vs <=) badalta. PROBLEM SAMJHO -> decide.
 
@@ -3427,13 +3427,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      SAAR : intervals pehle se sorted+non-overlap. new insert karo (overlap->merge). SORT nahi -> ek pass, 3 phase.
      KEY : new = "GROWING BOX" -- har overlap use STRETCH karta; sab overlap khatam pe ek baar push.
      TEMPLATE:
-         vector<vector<int>> ans;  int count=0;
+         vector<vector<int>> ans;  int count=0;   // count=0: kitne process hue, doosra loop wahin se chalega
          for(i=0..n){
              if(intervals[i][1] < new[0])       ans.push_back(intervals[i]);   // 1. new se PEHLE khatam -> push (sirf < : chhoota hua merge hoga)
              else if(intervals[i][0] > new[1])  break;                          // 3. new ke AAGE -> BREAK (sorted, aage sab door)
              else { new[0]=min(new[0],intervals[i][0]);                         // 2. OVERLAP -> new ko GROW
-                    new[1]=max(new[1],intervals[i][1]); }
-             count++;                                                           // kitne process hue (break se pehle ruk)
+                    new[1]=max(new[1],intervals[i][1]); }   // end bhi max se: dono me jo aage tak jaaye
+             count++;                                                           // break wala yahan nahi aata -> count se doosra loop use daalega
          }
          ans.push_back(new);                                                   // 4. bada-hua new daalo
          for(i=count..n) ans.push_back(intervals[i]);                          //    phir count se aage baaki
@@ -3450,10 +3450,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      TOOL = ORDERED MAP (map<int,int> = time->delta; keys KHUD sorted -> manual sort NAHI):
          map<int,int> mp;
          for(i=0..n){ mp[start[i]]++;  mp[end[i]]--; }        // shuru +1, khatam -1 (map: same time pe +1 -1 kat ke room reuse)
-         int overlap=0, maxOverlap=0;
+         int overlap=0, maxOverlap=0;   // 0 se: shuru me koi meeting chal nahi rahi
          for(auto &it : mp){                                   // keys sorted -> order me
-             overlap += it.second;
-             if(maxOverlap < overlap) maxOverlap = overlap;
+             overlap += it.second;   // +1/-1 jodo = is pal kitni meeting chal rahi
+             if(maxOverlap < overlap) maxOverlap = overlap;   // peak yaad rakho = rooms
          }
          return maxOverlap;
      DRY-RUN  start=[2,9,6] end=[4,12,10]:
@@ -3513,11 +3513,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ──────────────────────────────────────────────────────────────
  2 FORMS = SAME cheez, alag LIKHAWAT (dono recursion + undo, same output):
     A) INCLUDE/EXCLUDE : 2 explicit call (element liya / nahi-liya). base pe record.
-         solve(i): if(i==n){ record; return; }
+         solve(i): if(i==n){ record; return; }   // i==n: har element pe faisla ho gaya
                    push -> solve(i+1) -> pop;    // liya (pop zaroori: nahi-liya branch me path saaf rahe)
                    solve(i+1);                    // nahi-liya
     B) FOR-LOOP (start-loop): loop se har element pe branch. HAR node pe record.
-         solve(start): record;
+         solve(start): record;   // har node khud ek answer, alag base nahi
                        for(i=start..n){ push(i) -> solve(i+1) -> pop; }  // i+1: peeche wale dobara nahi, combo repeat nahi
  dono me core SAME: CHOOSE -> EXPLORE (recursion) -> UN-CHOOSE (undo/pop). bas shakal alag.
 
@@ -3529,8 +3529,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          void solve(nums, ans, index, temp):
              if(index >= nums.size()){ ans.push_back(temp); return; }   // poora subset ban gaya
              // INCLUDE:
-             temp.push_back(nums[index]);
-             solve(nums, ans, index+1, temp);
+             temp.push_back(nums[index]);   // INCLUDE: le liya
+             solve(nums, ans, index+1, temp);   // index+1: agle element pe faisla
              temp.pop_back();                     // UN-CHOOSE (backtrack) (exclude se PEHLE: warna exclude me bhi element chipka rehta)
              // EXCLUDE:
              solve(nums, ans, index+1, temp);     // element chhod ke aage
@@ -3541,7 +3541,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      ── ALT FORM: START-LOOP (for-loop) ── same cheez, alag likhawat (dono yaad rakho):
          void solve(nums, ans, index, temp):
              ans.push_back(temp);                 // HAR node = ek subset (alag base-case NAHI)
-             for(i = index; i < nums.size(); i++){
+             for(i = index; i < nums.size(); i++){   // index se: peeche wale dobara nahi
                  temp.push_back(nums[i]);          // CHOOSE
                  solve(nums, ans, i+1, temp);      // EXPLORE (i+1 -> agla aage se, peeche dobara nahi)
                  temp.pop_back();                  // UN-CHOOSE (backtrack) (agle i se pehle: wahi jagah agle element ko mile)
@@ -3615,7 +3615,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          void solve(cand, target, ans, start, temp):
              if(target < 0) return;                          // prune (aage koi faida nahi)
              if(target == 0){ ans.push_back(temp); return; } // valid combo
-             for(i = start; i < cand.size(); i++){
+             for(i = start; i < cand.size(); i++){   // start se: peeche wale nahi, combo repeat nahi
                  temp.push_back(cand[i]);                     // CHOOSE
                  solve(cand, target - cand[i], ans, i, temp); // EXPLORE ('i' -> REUSE allowed, i+1 nahi)
                  temp.pop_back();                             // UN-CHOOSE (agla candidate try karne se pehle path saaf)
@@ -3642,16 +3642,16 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      SAAR : grid me `word` adjacent (4-dir) cells se banta hai? har cell EK-BAAR. har cell se DFS, mark→recurse→un-mark.
      TEMPLATE:
          bool solve(board, word, index, i, j, m, n, vis&):          // vis REFERENCE (&) — copy nahi
-             if(i<0||i>=m||j<0||j>=n || vis[i][j] || board[i][j]!=word[index]) return false;  // ★ bounds+VISITED+mismatch = EK check
+             if(i<0||i>=m||j<0||j>=n || vis[i][j] || board[i][j]!=word[index]) return false;  // bounds PEHLE: warna board[i][j] bahar padhta
              vis[i][j]=true; index++;  // mark PEHLE: aage ke raaste me ye cell dobara na aaye
-             if(solve(..i+1,j..) || solve(..i,j+1..) || solve(..i-1,j..) || solve(..i,j-1..)) return true;  // 4-dir || SHORT-CIRCUIT
+             if(solve(..i+1,j..) || solve(..i,j+1..) || solve(..i-1,j..) || solve(..i,j-1..)) return true;  // || : ek raasta mila to baaki call hi nahi
              vis[i][j]=false;                                       // BACKTRACK (un-mark) (doosre raaste ke liye cell wapas free)
              return index==word.size();                             // base: poora word mila · index++ ho chuka: aakhri char match hua tabhi == size
 
          bool exist(board, word):
-             vector<vector<bool>> vis(m, vector<bool>(n,false));    // m x n (m+1 nahi)
-             for(i..m) for(j..n)
-                 if(board[i][j]==word[0])
+             vector<vector<bool>> vis(m, vector<bool>(n,false));    // m x n: har cell ka ek visited (m+1 nahi chahiye)
+             for(i..m) for(j..n)   // har cell se start try karo
+                 if(board[i][j]==word[0])   // pehla char mile tabhi DFS shuru
                      if(solve(board, word, 0, i, j, m, n, vis)) return true;   // ★ EK mila = kaafi
              return false;                                          // ★ SAARE start try, kahin nahi -> tab false
 
@@ -3702,7 +3702,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          void solve(index, digits, mp, temp, ans):
              if (index >= digits.size()) { ans.push_back(temp); return; }   // saare ank ho gaye
              string str = mp[digits[index]];                                // is ank ke akshar
-             for (char c : str) {
+             for (char c : str) {   // is ank ka har akshar ek alag branch
                  temp.push_back(c);                       // choose
                  solve(index+1, digits, mp, temp, ans);   // explore (agla ank)
                  temp.pop_back();                         // un-choose (agle akshar se pehle path saaf)
@@ -3815,8 +3815,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          int solve(int i, string &s, int n, vector<int> &dp){
              if(i == n)      return 1;                 // ★ KRAM: i==n PEHLE (warna s[n] padhta; khatam = ek poora decoding, isliye 1)
              if(s[i] == '0') return 0;                 //    s[i] BAAD me (0 se koi letter shuru nahi, raasta mara)
-             if(dp[i] != -1) return dp[i];
-             int ans = solve(i+1, s, n, dp);           // 1 ank
+             if(dp[i] != -1) return dp[i];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+             int ans = solve(i+1, s, n, dp);           // 1 ank: hamesha valid (0 upar hi kat gaya)
              if(i+1 < n && (s[i]=='1' || (s[i]=='2' && s[i+1]<='6')))   // pehle i+1<n: aakhri char pe aage mat padho
                  ans += solve(i+2, s, n, dp);          // 2 ank (tabhi jab 10..26)
              return dp[i] = ans;
@@ -3838,7 +3838,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              if(i==0) return nums[0];  // sirf pehla ghar bacha: use loot lo
              if(dp[i]!=-1) return dp[i];                          // cache HIT
              int LOOT = nums[i] + solve(nums, i-2, dp);  // i-2: loota to padosi i-1 chhodna padega
-             int SKIP =           solve(nums, i-1, dp);
+             int SKIP =           solve(nums, i-1, dp);   // skip: ghar i chhoda, pichhle ghar tak ka best
              return dp[i] = max(LOOT, SKIP);                      // compute + STORE
          }
          // caller: dp(n,-1); return solve(nums, n-1, dp);        // n-1 = array ka LAST index (0..n-1)
@@ -3892,7 +3892,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          int solve(coins, amount, i, dp):
              if(amount < 0) return INT_MAX;                       // INVALID (INT_MAX: min me apne-aap haar jaata)
              if(i < 0) return amount==0 ? 0 : INT_MAX;            // koi coin nahi bacha (i<0, NA i==0 -- coin[0] usable)
-             if(dp[i][amount]!=-1) return dp[i][amount];
+             if(dp[i][amount]!=-1) return dp[i][amount];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
              int notTake = solve(coins, amount, i-1, dp);         // coin i chhoda -> agla
              int Take = INT_MAX;  // INT_MAX se: na le paaye to min pe asar nahi
              if(solve(coins, amount-coins[i], i, dp) != INT_MAX)  // overflow guard
@@ -3904,7 +3904,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          int solve(coins, amount, dp):
              if(amount < 0) return INT_MAX;  // overshoot: INT_MAX = ye raasta nahi banta
              if(amount == 0) return 0;  // theek ban gaya: aur koi coin nahi chahiye
-             if(dp[amount]!=-1) return dp[amount];
+             if(dp[amount]!=-1) return dp[amount];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
              int Take = INT_MAX;  // INT_MAX: koi coin kaam na aaye to nahi-banta signal
              for(int i=0; i<coins.size(); i++)                              // har coin TRY (choose khud loop me)
                  if(solve(coins, amount-coins[i], dp) != INT_MAX)           // overflow guard
@@ -3939,10 +3939,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          int solve(i, j, dp):
              if(i<0 || j<0) return 0;                       // grid ke bahar -> koi raasta nahi
              if(i==0 && j==0) return 1;                     // start cell
-             if(dp[i][j] != -1) return dp[i][j];
-             int up   = solve(i-1, j, dp);
-             int left = solve(i, j-1, dp);
-             return dp[i][j] = up + left;
+             if(dp[i][j] != -1) return dp[i][j];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+             int up   = solve(i-1, j, dp);   // upar se aaye (robot sirf down chalta)
+             int left = solve(i, j-1, dp);   // left se aaye (robot sirf right chalta)
+             return dp[i][j] = up + left;   // dono taraf ke raaste jodo
          // caller: dp(m, vec(n,-1)); return solve(m-1, n-1, dp);
      climbing-stairs se CONNECT: 1D -> 2D. ways(n-1)+ways(n-2) -> ways(i-1,j)+ways(i,j-1). dp[n] -> dp[i][j].
      2D DP ka pehla: state = (i,j) do coordinate. base do (out-of-grid=0, start=1). memo 2D array.
@@ -3963,8 +3963,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          int solve(i, j, grid, dp): // caller: dp(m+1, vec(n+1,-1)); return solve(m-1, n-1, grid, dp)
              if(i<0 || j<0) return INT_MAX;                 // INVALID (grid ke bahar) -> min ignore karega
              if(i==0 && j==0) return grid[0][0];            // start ki cost
-             if(dp[i][j] != -1) return dp[i][j];
-             int up = solve(i-1, j, ...), left = solve(i, j-1, ...);
+             if(dp[i][j] != -1) return dp[i][j];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+             int up = solve(i-1, j, ...), left = solve(i, j-1, ...);   // sirf upar aur left se aa sakte (right/down chaal)
              return dp[i][j] = grid[i][j] + min(up, left);  // apni cost + upar/left me CHHOTA
 
  ┌──────────────────────────────────────────────────────────────
@@ -3973,8 +3973,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      SAAR : do string me sabse lambi COMMON subsequence ki length. state = (i,j) = s1 index-i-tak, s2 index-j-tak.
      TEMPLATE:
          int solve(i, j, s1, s2, dp):
-             if(i<0 || j<0) return 0;                              // koi string khatam
-             if(dp[i][j] != -1) return dp[i][j];
+             if(i<0 || j<0) return 0;                              // koi string khatam -> common kuch nahi, 0
+             if(dp[i][j] != -1) return dp[i][j];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
              if(s1[i] == s2[j])                                    // char MATCH
                  return dp[i][j] = 1 + solve(i-1, j-1, ...);       //   liya -> DONO se peeche (diagonal)
              return dp[i][j] = max(solve(i-1, j, ...), solve(i, j-1, ...));  // no-match -> ek char chhodo (2 side)
@@ -3990,7 +3990,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          int solve(i, j, w1, w2, dp): // caller: dp(m+1, vec(n+1,-1)); return solve(m-1, n-1, w1, w2, dp)
              if(i<0) return j+1;                          // w1 khatam -> bache w2 ke j+1 char INSERT
              if(j<0) return i+1;                          // w2 khatam -> w1 ke i+1 char DELETE
-             if(dp[i][j] != -1) return dp[i][j];
+             if(dp[i][j] != -1) return dp[i][j];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
              if(w1[i] == w2[j]) return dp[i][j] = solve(i-1, j-1, ...);   // MATCH -> koi op nahi
              return dp[i][j] = 1 + min({ solve(i-1, j-1, ...),   // REPLACE
                                          solve(i-1, j,   ...),   // DELETE (w1 peeche)
@@ -4034,9 +4034,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      TEMPLATE:
          int solve(wt, val, W, i, dp): // caller: dp(n+1, vec(W+1,-1)); return solve(wt, val, W, n-1, dp)
              if(i<0) return 0;                                       // koi item nahi
-             if(dp[i][W] != -1) return dp[i][W];
+             if(dp[i][W] != -1) return dp[i][W];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
              int notTake = solve(wt, val, W, i-1, dp);               // item chhoda
-             int take = 0;
+             int take = 0;   // 0 se: fit na ho to take ka koi value nahi
              if(wt[i] <= W)                                          // fit hota hai tabhi (warna W negative -> dp index crash)
                  take = val[i] + solve(wt, val, W - wt[i], i-1, dp); // liya -> value+ , weight ghata, i-1 (ONCE)
              return dp[i][W] = max(take, notTake);
@@ -4055,16 +4055,16 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              if(W == 0)  return true;              // target ban gaya -> SUCCESS (sabse PEHLE) (upar rakho: neeche wale base W==0 pe galat false dete)
              if(i < 0)   return false;             // numbers khatam, target bacha
              if(i == 0)  return wt[0] == W;        // aakhri number: sirf isse W ban sakta?
-             if(dp[i][W] != -1) return dp[i][W];
+             if(dp[i][W] != -1) return dp[i][W];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
              int notTake = solve(wt, W, i-1, dp);              // number chhoda -> W same
-             int take = 0;
+             int take = 0;   // 0 = false: fit na hua to ye raasta nahi
              if(wt[i] <= W) take = solve(wt, W - wt[i], i-1, dp);  // liya -> W ghata (wt<=W tabhi: warna W negative, dp crash)
              return dp[i][W] = (take || notTake);              // koi ek raasta true -> true
 
          bool knapsack(wt, W):                     // wrapper: dp banao + solve(n-1)
              int n = wt.size();
              vector<vector<int>> dp(n+1, vector<int>(W+1, -1));  // W+1: dp[i][W] tak; -1 = abhi nahi nikala (0 = false asli)
-             return solve(wt, W, n-1, dp);
+             return solve(wt, W, n-1, dp);   // n-1: aakhri index se peeche chalo
 
          bool subsetSum(nums, target):
              return knapsack(nums, target);        // bas knapsack ko hi bula liya
@@ -4093,13 +4093,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      TEMPLATE:
          bool solve(s, index, open, dp):
              if(index == s.size()) return open == 0;                     // base: sab '(' match ho gaye?
-             if(dp[index][open] != -1) return dp[index][open];
-             if(s[index]=='(') return dp[index][open] = solve(s, index+1, open+1, dp);
+             if(dp[index][open] != -1) return dp[index][open];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+             if(s[index]=='(') return dp[index][open] = solve(s, index+1, open+1, dp);   // '(' : ek hi raasta, open badhao
              if(s[index]==')') return dp[index][open] = (open>0) ? solve(s, index+1, open-1, dp) : false;  // open>0: band karne ko koi khula chahiye
              bool a = solve(s, index+1, open+1, dp);                      // '*' as '('
              bool b = (open>0) ? solve(s, index+1, open-1, dp) : false;   // '*' as ')'  (GUARD) (open 0 pe ')' = invalid, dp[-1] crash)
              bool c = solve(s, index+1, open, dp);                        // '*' khaali
-             return dp[index][open] = a || b || c;
+             return dp[index][open] = a || b || c;   // koi ek raasta valid -> true
          // caller: dp(n+1, vec(n+1,-1)); return solve(s, 0, 0, dp);   -- open 0..n (worst = saare '(')
      ★ GUARD : jahan bhi open-1 -> pehle open>0 (warna open<0 -> dp[-1] crash + galat). '*' pe direct return-false MAT (baaki 2 option zinda).
      = COIN-CHANGE ka cousin (choice + memo), DELTA: state me 'open' (balance) + '*' pe 3-branch OR (true/false, min nahi).
@@ -4273,7 +4273,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         NO-overlap (start.end <= end.start, chhoona overlap nahi):  start = end; end++;       // candidate safe, rakho
         OVERLAP (else):  count++;                                        // ek to hatana hi
                          if (start.end > end.end)  start = end;          // chhota-END wale ko rakho (chhota end = aage zyada jagah bachti)
-                         end++;
+                         end++;   // agla candidate dekho
      count = removals.  WHY chhota-end rakho: aage zyada jagah -> zyada fit.  O(n log n).
      ★ EDGE (dry-run se pakda): overlap pe BLINDLY start rakhna GALAT -> [[1,100],[2,3],[3,4]] pe 2 aata (sahi 1).
        end-compare zaroori. (alt: END pe sort karo -> pehla-waala hamesha chhota-end -> ye if-check gayab.)
@@ -4288,10 +4288,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         kyaNegativeHua  = poore circle ka total   -> KABHI reset nahi  -> sirf "possible hai ya nahi"
         meriGaddiKaTank = abhi wale start se tank -> doobe to reset     -> "start kahan hai"
 
-     int index = 0, meriGaddiKaTank = 0, kyaNegativeHua = 0;
+     int index = 0, meriGaddiKaTank = 0, kyaNegativeHua = 0;   // 0 se: pehle pump ko start maano, tank khaali
      for (int i = 0; i < gas.size(); i++) {
-         meriGaddiKaTank += gas[i] - cost[i];
-         kyaNegativeHua  += gas[i] - cost[i];
+         meriGaddiKaTank += gas[i] - cost[i];   // is start se ab tak ka tank
+         kyaNegativeHua  += gas[i] - cost[i];   // poore circle ka total, kabhi reset nahi
          if (meriGaddiKaTank < 0) {          // is start se pump i+1 tak nahi pahunche
              meriGaddiKaTank = 0;            // naya start, khaali tank
              index = i + 1;                  // start AGLE pump pe khiska do (s..i ke beech se shuru karke bhi i paar nahi hota)
