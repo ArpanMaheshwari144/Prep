@@ -202,8 +202,7 @@ flowchart LR
 AAGE POOCHEGA:
   NIYAM: jitna aage roko, utna kam kaam bekaar; aur client ko batao kab aaye.
   "Kaise kaam karta?"              -> gateway sabse aage, har request pe Redis se poochhta: had ke andar ->
-                                      App ko, bahar -> wahin 429. Mana wali request LB / App tak pahunchti hi
-                                      nahi.
+                                      App, bahar -> wahin 429; mana wali LB / App tak pahunchti hi nahi.
   "429 ke saath kya bataoge?"      -> kab dobara aao (Retry-After: 30) + kitni bachi (X-RateLimit-Remaining).
   "Sab theek 30 sec baad aaye?"    -> nayi laher; isliye Retry-After me jitter (jaise 28, 33).
   "Gateway khud gira?"             -> gateway ki bhi 2+ machine, aage LB.
@@ -270,13 +269,11 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: ek user ki ek ginti, ek ghar me; door jaane ka kharcha sirf zaroori endpoint pe.
-  "Kaise kaam karta?"              -> pehle har region ka apna Redis, sabne 50 gina, kisi ko 100 paar nahi
-                                      dikha. Ab ghar user_id se (mera India): Frankfurt ka gateway bhi India
-                                      ke Redis me ginta -> teeno ek ginti, 100 pe ruka.
+  "Kaise kaam karta?"              -> pehle har region ka apna Redis, sabne 50 gina -> 150. Ab ghar user_id se
+                                      (mera India): Frankfurt bhi India ke Redis me gine -> 100 pe ruka.
   "Har request India = 100-200 ms?" -> haan; isliye home region sirf paisa / security wale endpoint pe.
                                       Baaki pe har region apni ginti + har second aapas me milaao (sync).
-  "Apni ginti + sync, kitna zyada?" -> milaane ke beech (~1 sec) har region poori limit de sakta; halki
-                                      limit ke liye chalta.
+  "Apni ginti + sync, kitna zyada?" -> sync ke ~1 sec me har region poori limit de sakta; halki had me chalta.
   "Mera home region hi gira?"      -> Route 53 doosre region, ginti wahan 0 se. Ek minute dheela, chalta hai.
 ```
 
@@ -343,9 +340,8 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: user ki had aur system ki had alag cheez; dono chahiye.
-  "Kaise kaam karta?"              -> gateway pe poore system ki ek had (server 5,000 / sec jhelta); CPU 90%
-                                      paar -> kuch request 503. RATE LIMIT = ek USER ne kitni bheji (429) ·
-                                      LOAD SHEDDING = poora SYSTEM kitna jhel sake (503).
+  "Kaise kaam karta?"              -> gateway pe poore system ki had (5,000 / sec), CPU 90% paar -> kuch 503.
+                                      RATE LIMIT = ek USER ki had (429) · LOAD SHEDDING = SYSTEM ki (503).
   "Kaunsi request chhodoge?"       -> login / payment rakho; recommendation / analytics pehle chhodo.
   "Machine apne aap badhe?"        -> nayi machine me minute lagte, bheed second me; pata ho (12 baje sale)
                                       to pehle se badha do.

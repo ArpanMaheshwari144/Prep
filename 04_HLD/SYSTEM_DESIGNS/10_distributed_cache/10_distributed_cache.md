@@ -115,13 +115,11 @@ AAGE POOCHEGA:
   NIYAM: sabse purana chhua hua pehle jaaye; umar khatam = key bekaar.
   "Kaise kaam karta?"              -> jise sabse LAMBE samay se kisi ne nahi chhua, wo bahar (wahi LRU jo tune
                                       DSA me banaya, 09_DESIGN, LeetCode 146). Saath me har key ki umar (TTL).
-  "LRU andar kaise?"               -> HashMap = key turant · Doubly linked list = kaun kab chhua ki line
-                                      get -> node AAGE (head ke paas) · put -> naya AAGE, RAM bhari -> PEECHE
-                                      (tail ke paas) wala hatao.
+  "LRU andar kaise?"               -> HashMap = key turant · Doubly linked list = kab chhua ki line; get ->
+                                      node AAGE · put -> naya AAGE, RAM bhari -> PEECHE wala hatao.
   "TTL wali key kab hatti?"        -> padhne aaye tab check (lazy) + peeche safai (active).
-  "LRU kyun, LFU kyun nahi?"       -> LRU = "aakhri baar KAB chhua", LFU = "KITNI baar"; LFU me kal ki
-                                      famous key aaj bhi baithi rehti -> ginti waqt ke saath ghatao (decay).
-                                      Default LRU.
+  "LRU kyun, LFU kyun nahi?"       -> LRU = aakhri baar KAB chhua, LFU = KITNI baar; LFU me kal ki famous key
+                                      aaj bhi baithi (ginti decay karo). Default LRU.
   "Redis sach me list rakhta?"     -> nahi, memory bachane ko ANDAAZE wala LRU: kuch random key, sabse purani.
   "RAM bhari, hatana band?"        -> noeviction = naya likhna ERROR; cache ke liye allkeys-lru rakho.
 ```
@@ -159,16 +157,14 @@ AAGE POOCHEGA:
                                       350 -> A (ghoom ke). D = 250 jodi -> sirf 201 .. 250 C se D pe.
   "Ring jaisa kahin dekha?"        -> tera circular array (Next Greater Element II me i % n):
                                       ant pe pahunch ke ghoom ke pehle pe.
-  "% N me kitna hilta?"            -> hash 10, 11, 12, 13, 14: N = 4 -> 2, 3, 0, 1, 2 · N = 5 -> 0, 1, 2, 3, 4
-                                      = ek machine jodi, PAANCHON hili; asal me 4 -> 5 = ~80% key.
-                                      Ring me N kahin nahi. (Interview me dono mila ke mat bolna.)
+  "% N me kitna hilta?"            -> hash 10..14: N=4 -> 2,3,0,1,2 · N=5 -> 0,1,2,3,4: ek machine jodi,
+                                      paanchon hili (~80% key). Ring me N hai hi nahi; dono mila ke mat bolna.
   "Virtual nodes?"                 -> ek machine ring pe 100 jagah baithti -> bojh barabar.
   "Nayi machine, key khaali?"      -> haan, sirf us hisse ki ~K/N key ek baar miss; poora cache nahi.
   "Kaunsi machine zinda, kaise?"   -> cluster ka naksha (topology / config service);
                                       galat machine pe gaya to Redis bolta "MOVED, wahan jao".
-  "Redis Cluster ring use karta?"  -> nahi, 16384 SLOT: CRC16(key) % 16384 -> slot -> machine.
-                                      16384 PAKKA (machine ginti nahi): machine badhe to kuch slot khiskao.
-                                      Kaam ring jaisa.
+  "Redis Cluster ring use karta?"  -> nahi, 16384 SLOT: CRC16(key) % 16384 -> slot -> machine; slot ginti
+                                      pakki, machine badhe to kuch slot khiskao. Kaam ring jaisa.
   "Range se baanto (A-M, N-Z)?"    -> ek range garam ho jaati (sab "a" wale), ek machine pe bojh; isliye hash.
 ```
 
@@ -238,8 +234,7 @@ AAGE POOCHEGA:
   "Delete ke baad purani wapas?"   -> (race) thodi der baad phir delete (double delete), ya version se likho.
   "Ravi ko khud purana dikha?"     -> copy peeche thi (replica lag);
                                       likhne wale ko thodi der primary se padhao (read-your-own-writes).
-  "TTL kitna?"                     -> jitna purana business jhel sake: profile minute, price / stock second ya
-                                      turant delete.
+  "TTL kitna?"                     -> jitna purana jhel sake: profile = minute, price / stock = second.
 ```
 
 #### 5 7 baje "home page" key khatam, 1000 log ek saath DB pe
@@ -261,9 +256,9 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: khaali key pe ek hi DB jaaye; baaki ruke ya purani value le.
-  "Kaise kaam karta?"              -> "home page" = 20 table ka join, ~1 sec. Sirf PEHLA DB jaaye: SET
-                                      lock:home 1 NX EX 5 (NX = koi aur na laga ho tabhi · EX 5 = pehla beech
-                                      me mara to lock khud chhoote). Baaki 999 "thoda ruko", phir cache se.
+  "Kaise kaam karta?"              -> "home page" = 20 table join (~1 sec); sirf PEHLA DB jaaye: SET lock:home
+                                      1 NX EX 5 (NX = koi aur na laga ho · EX 5 = pehla mara to lock khud
+                                      chhoote). Baaki 999 ruk ke cache se.
   "Khatam hi kyun hone do?"        -> umar khatam hone se thoda pehle hi peeche se taaza kar do.
   "Pata tha kab bheed (sale 12 baje, IPL final)?" -> uske pehle hi cache bhar do aur machine badha do.
   "Baaki 999 kitni der rukenge?"   -> 50-100 ms, 2-3 baar; soft-TTL ho (purani value + "taaza karo" nishaan)
@@ -291,14 +286,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: garam key ko faila do: App ke paas chhoti copy, ya alag machine pe copies.
-  "Kaise kaam karta?"              -> har App server ki RAM me 1-2 sec ka cache: 1000 server, har ek 1 sec me
-                                      EK baar Redis se -> Redis pe 1000 / sec, crore nahi. Saath me key ki kai
-                                      copy (score#1 .. #10), koi bhi ek.
+  "Kaise kaam karta?"              -> har App ki RAM me 1-2 sec cache: 1000 server x 1 baar / sec = Redis pe
+                                      1000 / sec, crore nahi. Saath me key ki kai copy (score#1..#10).
   "Consistent hashing nahi bachata?" -> nahi; ek key hamesha ek hi machine pe.
   "Kitni parat?"                   -> L1 (App ki RAM, nano-sec) -> L2 Redis (micro / milli) -> DB (milli-sec).
-  "Garam key pehchanoge kaise?"    -> App me har key ki ginti (sabse pakka) + machine ka metric
-                                      (ops / sec achanak upar); had paar -> copy / L1.
-                                      (redis-cli --hotkeys sirf LFU policy pe chalta, hum LRU pe hain.)
+  "Garam key pehchanoge kaise?"    -> App me har key ki ginti + machine ka metric (ops / sec achanak upar);
+                                      had paar -> copy / L1. (--hotkeys sirf LFU pe, hum LRU pe.)
   "L1 me purana score kitni der?"  -> L1 ki umar jitna (1-2 sec); score ke liye theek, paisa / stock nahi.
   "Garam key pe LIKHNA (like)?"    -> key ke tukde (like#0..#9), kisi ek me likho, padhte waqt sab jodo.
   "Stampede aur hot key me farak?" -> stampede = key KHAALI, sab DB bhaage (lock)

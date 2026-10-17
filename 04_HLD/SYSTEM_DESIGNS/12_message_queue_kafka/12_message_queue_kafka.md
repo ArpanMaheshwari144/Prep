@@ -178,10 +178,8 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: ek team ke andar ek partition = ek machine.
-  "Kaise kaam karta?"              -> pehle group.id = machine ka naam -> teeno alag team, teeno poora topic
-                                      padh rahi. Ab teeno EK group.id: team me har partition sirf EK machine:
-                                      P0-3 -> C1 · P4-6 -> C2 · P7-9 -> C3. Ravi ka order P7 me -> sirf C3 ->
-                                      ek email.
+  "Kaise kaam karta?"              -> pehle group.id = machine ka naam -> teeno alag team. Ab EK group.id:
+                                      P0-3 -> C1 · P4-6 -> C2 · P7-9 -> C3; Ravi P7 -> sirf C3.
   "Consumer badhaane hain?"        -> partition bhi badhao; 10 partition + 12 consumer = 2 khaali baithe.
   "Ek message 5 min ka kaam?"      -> poora partition atka (aage wala atka to peeche sab); dheema kaam alag
                                       topic / worker pool ko do.
@@ -373,10 +371,9 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: jo rakha hai usi se REPLAY; rakhna consumer ki sabse lambi chhutti se lamba.
-  "Kaise kaam karta?"              -> Kafka padh ke delete nahi karta (ye log hai, queue nahi). RETENTION: 7
-                                      din rakhta, phir purani segment file (~1 GB) poori uda deta = sasta.
-                                      COMPACTION: kuch topic me har key ki sirf aakhri khabar (Ravi ki profile
-                                      10 baar badli -> aakhri).
+  "Kaise kaam karta?"              -> Kafka padh ke delete nahi karta (log hai, queue nahi). RETENTION: 7 din,
+                                      phir purani segment file (~1 GB) poori udao = sasta. COMPACTION: har key
+                                      ki sirf aakhri khabar (Ravi ki profile 10 baar badli -> aakhri).
   "Rakhe ka fayda?"                -> REPLAY: naya group shuru se padhe, ya bug theek karke offset peeche.
   "7 din consumer band raha?"      -> data gaya; isliye lag pe alert + retention consumer ki sabse lambi
                                       band-hone ki der se zyada.

@@ -253,13 +253,10 @@ NAHI       "bas rollback kar do": PSP me shayad paisa sach me kat chuka.
 ```
 AAGE POOCHEGA:
   NIYAM: courier jaisa: har parcel ka tracking number; courier wala gira, parcel gum nahi.
-  "Job ko jawab mila to?"          -> hua -> SUCCESS · nahi hua -> dobara (WAHI key se) · pakka fail -> FAILED
-                                      + paisa wapas.
+  "Job ko jawab mila to?"          -> hua = SUCCESS · nahi = dobara (wahi key) · pakka fail = FAILED + refund.
   "Webhook do baar aaya?"          -> PENDING -> SUCCESS sirf ek baar; pehle se SUCCESS -> ignore.
-  "Sirf webhook kaafi?"            -> kho sakta, der se aa sakta, server band tha;
-                                      job wo jaal jo chhoota pakde.
-  "Sirf job kaafi?"                -> der lagti + har PENDING pe baar-baar PSP call (limit / kharcha);
-                                      isliye dono.
+  "Sirf webhook kaafi?"            -> kho / der se aa sakta, server band tha; job wo jaal jo chhoota pakde.
+  "Sirf job kaafi?"                -> der + har PENDING pe baar-baar PSP call (limit / kharcha); isliye dono.
   "Sab theek chal raha, kaise pata?" -> hisaab ka farak, p99, error rate, line ki lambai pe alert
                                       + trace id se ek payment ka poora raasta.
 ```
@@ -329,9 +326,8 @@ AAGE POOCHEGA:
   "3 saal me bahut bada?"          -> mahine ke tukde (partition), purane sasti jagah (S3 Glacier);
                                       archive, kanoon ki had se pehle delete nahi.
   "Ledger crash se bachaata?"      -> nahi, wo hisaab / audit; crash se PENDING + webhook + reconciliation.
-  "Refund kaise?"                  -> purani payment mat chhedo; nayi ulti payment: merchant -500, Arpan +500,
-                                      apni nayi key + purani payment ka number; ledger me 2 nayi line.
-                                      Ek payment pe refund ka jod asli amount se zyada nahi (check karo).
+  "Refund kaise?"                  -> nayi ulti payment (merchant -500, Arpan +500), apni key + purani payment
+                                      ka number, ledger me 2 nayi line. Refund ka jod asli se zyada nahi.
 ```
 
 #### 8 Shaam Diwali, 3000 payment / second, machine baith gayi
@@ -365,12 +361,10 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: machine kuch yaad na rakhe, to koi bhi machine badlo / badhao.
-  "Kaise kaam karta?"              -> saari yaad DB + idempotency store me, kai machine, aage LB. Koi bhi
-                                      machine koi bhi payment le, ek giri baaki chalti. (Pehle: CPU bhara ->
-                                      timeout -> log ghabra ke dobara tap -> aur bojh.)
-  "Safe kaise, galat istemaal?"    -> gateway pe login; Payment Svc me OWNER CHECK: JWT se userId -> "from"
-                                      account ka maalik wahi? nahi -> 403. userId JWT se, body se kabhi nahi.
-                                      Har user ki had, sabse aage WAF.
+  "Kaise kaam karta?"              -> saari yaad DB + idempotency store me, kai machine + LB; koi bhi koi bhi
+                                      payment le. Pehle: CPU bhara -> timeout -> dobara tap -> aur bojh.
+  "Safe kaise, galat istemaal?"    -> gateway pe login; Payment Svc me OWNER CHECK: userId JWT se (body se
+                                      kabhi nahi), "from" ka maalik wahi? nahi -> 403. Aage WAF + had.
   "JWT hi chori?"                  -> JWT ki umar chhoti (~15 min) + refresh token; bade payment pe PIN / OTP.
   "LB ko kaise pata machine mari?" -> har kuch second GET /health, jawab nahi = list se bahar.
 ```
@@ -446,8 +440,7 @@ NAHI       txn_id se baanto: meri payment alag shard pe, balance kahan? · time 
 ```
 AAGE POOCHEGA:
   NIYAM: jo ek transaction me saath chahiye (account + uski history), wo ek shard pe.
-  "Account kis shard pe?"          -> consistent hashing, ya lookup table
-                                      (account -> shard, baad me badal sakte).
+  "Account kis shard pe?"          -> consistent hashing, ya lookup table (account -> shard, baad me badlo).
   "Amazon jaisa merchant garam?"   -> merchant ke kai sub-account, alag shard pe; report me jod do.
   "Do shard ke beech transfer?"    -> SAGA: shard A se kaato, shard B me daalo, fail pe ulta.
                                       Asli mushkil yahi hai, bheed nahi.

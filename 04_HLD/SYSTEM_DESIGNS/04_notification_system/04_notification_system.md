@@ -321,8 +321,7 @@ NAHI       ek line me "zaroori" tag: Kafka me "ye pehle bhejo" hota hi nahi.
 ```
 AAGE POOCHEGA:
   NIYAM: zaroori ko kabhi kisi ke peeche mat khada karo; alag line, alag worker.
-  "Tez line khaali, worker baithe?" -> haan, thoda bekaar; khaali hon to beech wali bhi padh lein
-                                      (ulta kabhi nahi).
+  "Tez line khaali, worker baithe?" -> haan, thoda; khaali ho to beech wali bhi padh le (ulta kabhi nahi).
   "OTP bhi company ki limit me?"   -> OTP ka company me alag account / alag number, offer use kha na sake.
 ```
 
@@ -389,8 +388,7 @@ NAHI       baar-baar khud poochte raho: laakhon message x har kuch second = had 
 AAGE POOCHEGA:
   NIYAM: "bheja" aur "mila" alag haal; company jab bataye, tab badlo.
   "Hisaab kahan?"                  -> Tracking = Cassandra (likhna bahut, seedhi row).
-  "Webhook aaya hi nahi?"          -> kuch ghante baad jo "bhej diya" pe atke, sirf unke liye
-                                      ek baar company se poochho.
+  "Webhook aaya hi nahi?"          -> ghanton "bhej diya" pe atke, sirf unke liye company se ek baar poochho.
   "Koi nakli webhook bhej de?"     -> company ka hastakshar (HMAC signature) jaancho, warna mana.
 ```
 
@@ -465,8 +463,7 @@ NAHI       pasand sirf Campaign Svc me check: order / OTP wali khabar bina check
 ```
 AAGE POOCHEGA:
   NIYAM: user ki pasand bhejne se pehle; zaroori alert pasand / shaanti se upar.
-  "Shaanti me aayi, phenk doge?"   -> nahi; offer subah 8 tak roko. OTP / "koi aur login kar raha"
-                                      shaanti me bhi jaata.
+  "Shaanti me aayi, phenk doge?"   -> nahi; offer subah 8 tak roko. OTP / "koi login kar raha" shaanti me bhi.
   "Pasand badli, cache purana?"    -> pasand badalte hi cache se hatao, aur cache ki umar chhoti.
 ```
 

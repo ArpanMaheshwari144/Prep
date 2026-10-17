@@ -111,15 +111,13 @@ NAHI       thread pool 200 se 2000: jaanch tab bhi 3 sec, bas memory khatam hone
 AAGE POOCHEGA:
   NIYAM: dheema kaam line me, user ke haath sirf T-101; khabar tabhi "padh li" jab DB me haal likh gaya.
   "Khabar dobara mili?"            -> pehle dekho T-101 pehle se DONE? -> skip (idempotent).
-  "Kafka hi kyun?"                 -> 1-2 / sec ke liye SQS / RabbitMQ kaafi; Kafka jab bahut khabar
-                                      ya dobara padhni ho.
+  "Kafka hi kyun?"                 -> itne kam pe SQS / RabbitMQ kaafi; Kafka jab bahut ya dobara padhna.
   "Validator 1 ghanta band?"       -> raat 2 baje, 4,000 file VALIDATING pe; kuch nahi khota: khabar Kafka me,
                                       offset commit DB me DONE likhne ke BAAD.
   "Band ke beech kya karoge?"      -> FUSE (3-5 fail pe call band, thodi der baad ek test call)
                                       + DOOSRI COMPANY (bahar wale ki copy hum nahi chala sakte).
-  "Hamein pata kaise chalega?"     -> health check sirf "zinda" bolta; apne number: queue ki lambai
-                                      · Validator ka time + error rate · 10 min se VALIDATING me atki
-                                      -> alert, user se pehle.
+  "Hamein pata kaise chalega?"     -> health check sirf "zinda" bolta; apne number: queue lambai · Validator
+                                      time + error rate · 10 min se VALIDATING -> alert, user se pehle.
 ```
 
 #### 2 Meri 5 GB video hamare server ke raaste S3 jaa rahi
@@ -187,12 +185,10 @@ NAHI       server ka timeout badha do: wifi gaya to connection hi toota, timeout
 ```
 AAGE POOCHEGA:
   NIYAM: tukda pahuncha to pakka; dobara sirf jo nahi pahuncha.
-  "Kadam kya hain?"                -> 1 "shuru" -> S3 uploadId (U-9)
-                                      · 2 har tukda (1..N), kai ek saath -> ETag
-                                      · 3 complete(U-9, [tukda + rasid]) -> S3 kram se jod ke ek file.
+  "Kadam kya hain?"                -> 1 shuru -> uploadId (U-9) · 2 har tukda (kai saath) -> ETag · 3
+                                      complete(U-9, tukde + rasid) -> S3 kram se jod ke ek file.
   "App band, kal wapas aaya?"      -> server ke paas U-9; S3 se ListParts -> sirf bache bhejo.
-  "Tukda kitna bada?"              -> S3 me kam se kam 5 MB (aakhri chhod ke), max 10,000 tukde
-                                      -> badi file = bada tukda.
+  "Tukda kitna bada?"              -> S3: min 5 MB (aakhri chhod), max 10,000 tukde -> badi file, bada tukda.
 ```
 
 #### 4 App crash, "complete" kabhi aaya hi nahi
@@ -228,10 +224,8 @@ NAHI       sirf S3 lifecycle niyam: din me ek baar chalta aur DB nahi dekhta.
 AAGE POOCHEGA:
   NIYAM: haal likha hai (UPLOADING -> VALIDATING -> DONE / FAILED); jo der se nahi badla, wo atka.
   "S3 lifecycle kis kaam?"         -> purani adhoori uploads ke bytes khud hata deta; DB ka kaam sweeper.
-  "Sweeper do machine pe chala?"   -> ek hi chale (lock / leader), ya dobara daalna safe
-                                      (worker haal dekh ke skip).
-  "Jaanch me fail file ka kya?"    -> quarantine bucket (koi download nahi), kuch din baad delete
-                                      / security team dekhe.
+  "Sweeper do machine pe chala?"   -> ek hi chale (lock / leader), ya dobara daalna safe (haal dekh skip).
+  "Jaanch me fail file ka kya?"    -> quarantine bucket (download band); baad me delete / security dekhe.
 ```
 
 #### 5 Deadline ke din sab har 2 sec haal poochh rahe
@@ -302,8 +296,7 @@ AAGE POOCHEGA:
   NIYAM: parent ka haal = bachchon ka jod.
   "Kaise kaam karta?"              -> folder ka bada id (P-1), har file ka apna chhota id (child). Saare child
                                       DONE = P-1 DONE · koi FAILED = P-1 PARTIAL / FAILED.
-  "Parent ka haal kab badle?"      -> har child DONE / FAILED pe P-1 ka done_count badhao;
-                                      sab ho gaye -> P-1 final.
+  "Parent ka haal kab badle?"      -> har child DONE / FAILED pe P-1 ka done_count +1; sab ho gaye = final.
   "1000 file = 1000 baar /init?"   -> nahi; ek call me 1000 signed URL (batch init).
   "Bahut saari chhoti files?"      -> client zip bana ke bheje, server khol le.
 ```
@@ -345,9 +338,8 @@ AAGE POOCHEGA:
   NIYAM: kaun ho = gateway; is file pe haq = service, har request pe.
   "Id random hai, phir bhi?"       -> id leak ho sakti (log me, link share); asli rok owner check.
   "Admin ko sab dekhna?"           -> owner YA admin role, warna 403.
-  "PR review: owner check kahan?"  -> har handler ki pehli line: file.owner_id == jwt.user_id
-                                      ya admin, warna 403.
-                                      userId JWT se lo, request body se kabhi nahi.
+  "PR review: owner check kahan?"  -> har handler ki pehli line: file.owner_id == jwt.user_id ya admin, warna
+                                      403. userId JWT se, body se kabhi nahi.
 ```
 
 #### 8 Maine S3 ka seedha link WhatsApp pe bhej diya
@@ -385,8 +377,7 @@ NAHI       link me lamba random naam (koi andaza na lagaye): ek baar bahar gaya 
 AAGE POOCHEGA:
   NIYAM: DB me pata (key), link har baar naya aur chhota.
   "5 min me download poora nahi?"  -> umar sirf SHURU karne ki; chalu download beech me nahi katta.
-  "5 min ke andar aage bhej diya?" -> 5 min ka risk maana; zyada sensitive -> CloudFront signed URL
-                                      + IP restriction.
+  "5 min ke andar aage bhej diya?" -> 5 min ka risk maana; zyada sensitive -> CloudFront signed URL + IP had.
 ```
 
 #### 9 Naam report.pdf, andar EXE nikla

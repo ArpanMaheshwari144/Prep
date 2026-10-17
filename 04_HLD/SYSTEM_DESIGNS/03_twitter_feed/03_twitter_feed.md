@@ -160,8 +160,7 @@ AAGE POOCHEGA:
   NIYAM: user sirf save ka intezaar kare; baaki kaam Kafka se peeche, dobara chalne layak.
   "Worker 100 me 60 likh ke gira?" -> Kafka ko "ho gaya" nahi bola -> khabar dobara, phir se likhega.
   "Tweet do baar inbox me?"        -> nahi; sorted set me same tweet_id dobara daalo to ek hi rehta.
-  "Apna tweet apni feed me nahi?"  -> fanout peeche hai; apna tweet seedha apni feed me jodo. Bug nahi,
-                                      aisa hi banate hain.
+  "Apna tweet apni feed me nahi?"  -> fanout peeche hai; apna tweet seedha apni feed me jodo (aisa hi banate).
   "Kai worker kaise?"              -> Kafka ki lines (partition) aapas me baant lete.
 ```
 
@@ -332,9 +331,8 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: data user ke paas; copy thodi peeche chalegi (2 second purani feed chalti).
-  "Kaise kaam karta?"              -> Route 53 paas wale region ka pata deta. Cassandra ek region ka likha
-                                      doosre me thoda baad copy karta; US celebs ke garam tweet India ke cache
-                                      me bhi.
+  "Kaise kaam karta?"              -> Route 53 paas wale region ka pata deta; Cassandra ek region ka likha
+                                      doosre me thoda baad copy. US celebs ke garam tweet India cache me bhi.
   "Fayde kya?"                     -> tez · Europe ka data Europe me (GDPR) · har region ki bheed ka time
                                       alag · ek gira to baaki chalein.
   "Main US ghoomne gaya?"          -> data India me; request India bhejo, ya paas ki copy se (thoda purana).
@@ -368,8 +366,7 @@ flowchart LR
 AAGE POOCHEGA:
   NIYAM: machine kuch yaad nahi rakhti, isliye koi bhi hate ya jude, farak nahi.
   "Kaise kaam karta?"              -> machine kuch yaad nahi rakhti, request kahin bhi. ALB (AWS ka LB) har
-                                      ~10 sec "zinda?": jawab nahi = bahar, theek = wapas. Route 53 isi tarah
-                                      region / ALB ko dekhta.
+                                      ~10 sec "zinda?": chup = bahar, theek = wapas. Route 53 bhi aise.
   "Naya code, saari restart?"      -> ek-ek karke (rolling deploy): nikaalo, naya daalo, jodo; site band nahi.
   "Nayi machine, pehli dheemi?"    -> apna data nahi (sab Redis me), farak kam; ALB use dheere traffic de.
 ```
@@ -402,9 +399,8 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: jiski bheed badhi, sirf wahi badhao; doosre pe asar nahi.
-  "Kaise kaam karta?"              -> Tweet Svc (likhna), Timeline Svc (feed), User Svc, Graph (follow). ALB
-                                      path se: POST /tweet -> Tweet Svc · GET /feed -> Timeline Svc. Har ek ki
-                                      apni machine, LB, autoscale.
+  "Kaise kaam karta?"              -> Tweet Svc (likhna), Timeline (feed), User, Graph (follow); ALB path se:
+                                      POST /tweet -> Tweet · GET /feed -> Timeline. Har ek alag badhe.
   "Feed ki bheed badhi?"           -> sirf Timeline ki machine badhti, Tweet Svc pe asar nahi.
   "Main kisko follow, kahan se?"   -> Graph / User service se, par har baar call nahi; follow list Redis me.
   "Fanout ko 10,000 followers?"    -> Graph store se 1000-1000 ke panne me padh ke inbox likho.

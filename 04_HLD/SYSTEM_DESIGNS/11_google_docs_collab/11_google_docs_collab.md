@@ -324,11 +324,9 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: photo ek version tak; kholna = photo + uske baad ke op.
-  "Kaise kaam karta?"              -> har 1000 badlaav pe doc ki photo (docId, version, poora text) -> S3 /
-                                      Cassandra. Khola -> aakhri photo (v9,99,000) + log ke uske baad wale op
-                                      kram se -> ~1000 op, 10 lakh nahi.
-  "Photo ke waqt koi likh raha?"   -> photo v9,99,000 tak; kholna = wahi photo + v9,99,001 se aage; kuch
-                                      nahi rukta.
+  "Kaise kaam karta?"              -> har 1000 op pe photo (docId, version, text) -> S3 / Cassandra. Khola =
+                                      aakhri photo (v9,99,000) + baad ke ~1000 op, 10 lakh nahi.
+  "Photo ke waqt koi likh raha?"   -> photo v9,99,000 tak; kholna = wahi + v9,99,001 se aage; kuch nahi rukta.
   "Kitni baar photo?"              -> har 1000 op ya har kuch minute, jo pehle ho.
 ```
 

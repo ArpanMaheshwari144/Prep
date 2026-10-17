@@ -202,9 +202,8 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: number ek hi jagah se, thaile me baante jaate; ek thaila kabhi do App ko nahi.
-  "Kaise kaam karta?"              -> Counter service (ZooKeeper / DB ki table) har App ko alag thaila
-                                      (range): App-1 ko 1-1000, App-2 ko 1001-2000. App khud ginta, counter se
-                                      baat sirf thaila khatam pe.
+  "Kaise kaam karta?"              -> Counter (ZooKeeper / DB table) har App ko alag thaila: App-1 = 1-1000,
+                                      App-2 = 1001-2000; App khud ginta, thaila khatam pe hi counter.
   "App-1 400 pe crash, 401-1000?"  -> bekaar gaye, jaan-boojh ke; 3.5 lakh crore me kuch hazaar se farak nahi.
   "Har number bachana ho?"         -> har link pe coordination lagega, range ka fayda khatam.
   "Counter service giri?"          -> App ke paas thaila (1000) bacha, kaam chalta; tab tak doosri copy uthti.
@@ -350,9 +349,8 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: koi dabba akela nahi; aage wala health check se sirf zinda wale pe bheje.
-  "Kaise kaam karta?"              -> Route 53 (AWS ka DNS) har ~30 sec har LB se "zinda ho?"; 3 baar jawab
-                                      nahi -> us LB ka pata (IP) dena band, sab doosre pe. Poora region gaya
-                                      -> doosre region pe.
+  "Kaise kaam karta?"              -> Route 53 (AWS ka DNS) har ~30 sec LB se "zinda?"; 3 baar chup -> us LB
+                                      ka pata dena band, sab doosre pe. Region gaya -> doosra region.
   "Switch turant?"                 -> nahi; phone purana pata ~60 sec yaad (DNS TTL), tab tak purane LB pe.
                                       Isliye cloud me LB khud kai data center me phaila (AWS ALB).
   "Region gaya, naye link?"        -> doosre region me copy peeche-peeche; aakhri kuch second ke kho sakte.

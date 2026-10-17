@@ -111,9 +111,8 @@ AAGE POOCHEGA:
   "4 seat (A1-A4), A4 Ravi le gaya?" -> chaaron EK transaction; badli rows 4 nahi -> ROLLBACK.
   "4 seat me deadlock?"            -> lock seat_id ke kram me: SELECT ... FOR UPDATE ORDER BY seat_id, phir
                                       UPDATE (ya 4 alag UPDATE A1..A4 kram se); ek IN (...) me kram tay nahi.
-  "FOR UPDATE / version kyun nahi?" -> FOR UPDATE = do baar DB jaana, lock lamba
-                                      · version = haarne wala dobara try kare, par seat gayi to gayi
-                                      · conditional UPDATE = ek hi statement, lock sabse chhota.
+  "FOR UPDATE / version kyun nahi?" -> FOR UPDATE = do baar DB, lock lamba · version = haara dobara try (seat
+                                      gayi to gayi) · conditional UPDATE = ek statement, lock sabse chhota.
   "Do log vs ek ka dobara bhejna?" -> do ALAG log ek seat = atomic UPDATE · EK aadmi ka dobara = idempotency
                                       (bookingId = key).
 ```
@@ -165,9 +164,8 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: ek booking = ek payment; wahi id dobara aaye to kaam nahi, purana jawab.
-  "Kaise kaam karta?"              -> key = bookingId (POST /bookings/B-77/pay). Dobara wahi B-77 -> "payment
-                                      ho chuka" -> purana jawab, paisa nahi katta. Pay button bhi pehli tap pe
-                                      band.
+  "Kaise kaam karta?"              -> key = bookingId (POST /bookings/B-77/pay); dobara B-77 -> "ho chuka",
+                                      purana jawab, paisa nahi katta. Pay button bhi pehli tap pe band.
   "Paisa kata, seat UPDATE fail?"  -> (hold khatam ho chuka) refund + mujhe batao; payment aur seat ka faisla
                                       saga jaisa (ek fail to doosra ulta).
   "Webhook der se aaya?"           -> 'PAYMENT_PENDING' rakho, hold thoda badhao, ya reconciliation se pakka.
@@ -196,9 +194,8 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: dekhna copy se, faisla main DB ka UPDATE; map thoda purana dikhe to chalta.
-  "Kaise kaam karta?"              -> "seatmap:show42" Redis me (~5 sec umar), miss -> replica se bana ke
-                                      rakho. Seat book hui -> DEL -> agli baar taaza. Booking hamesha main DB
-                                      pe.
+  "Kaise kaam karta?"              -> "seatmap:show42" Redis me (~5 sec umar), miss -> replica se banao. Seat
+                                      book -> DEL -> agli baar taaza. Booking hamesha main DB pe.
   "A1 bik gayi, map me khaali?"    -> chalta, asli faisla UPDATE karta; turant dikhana ho to WebSocket /
                                       SSE se us show ke dekhne walon ko bhejo.
   "Ek key pe lakhon padhai?"       -> us key ki kai copy + App ke andar 1-2 sec ka local cache.
@@ -238,8 +235,7 @@ NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line 
 AAGE POOCHEGA:
   NIYAM: Kafka sirf badi release pe; ek show = ek line, alag show = alag worker; sach hamesha DB ki seats.
   "Andar wala chala gaya?"         -> bina khareede gaya / hold khatam -> line se agla andar.
-  "Mujhe kya dikhe?"               -> "booking ho rahi hai" -> UPDATE jeeta = pakka · haara = "ye seat gayi,
-                                      doosri chuno".
+  "Mujhe kya dikhe?"               -> "ho rahi hai" -> UPDATE jeeta = pakka · haara = "seat gayi, doosri lo".
   "Ek show itna bada, worker dheema?" -> ek UPDATE ~ms -> ek worker hazaar / second; zyada chahiye -> show ko
                                       hisson (balcony / stall) me baanto.
   "Ginti Redis restart me gayi?"   -> ginti sirf darwaza, sach DB ki seats; restart pe DB se dobara gino.
@@ -273,9 +269,8 @@ flowchart LR
 AAGE POOCHEGA:
   NIYAM: khaali cache pe ek banaye, baaki ruke; jo gir sakta uski copy pehle se taiyaar.
   "Kaise kaam karta?"              -> SET lock:seatmap:42 1 NX EX 5 -> jeeta wo bana ke Redis me daale, baaki
-                                      50-100 ms ruk ke Redis se. 1000 ki jagah 1 request DB pe. (NX = koi aur
-                                      pehle na laga ho tabhi · EX 5 = 5 sec me lock khud hate, banane wala mar
-                                      jaaye to.)
+                                      50-100 ms ruk ke Redis se; 1000 ki jagah 1 DB pe. NX = koi aur pehle na
+                                      laga ho tabhi · EX 5 = 5 sec me lock khud hate (banane wala mara to).
   "Redis gire hi na, kaise?"       -> Redis Cluster: keys 16384 slot me, har master ke paas kuch slot +
                                       apni copy; master gira -> baaki vote karke copy ko master bana dete.
   "SQL primary gira, kitni der?"   -> 30-120 sec (failover: RDS Multi-AZ ~1-2 min, Aurora ~30 sec); app dobara
@@ -310,11 +305,9 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: App kuch yaad nahi rakhta; sab DB me, isliye koi bhi machine sambhaal le.
-  "Kaise kaam karta?"              -> hold DB me, machine ki memory me nahi -> bacha. LB ka health check fail
-                                      -> machine list se bahar; meri agli request doosri machine pe -> wahi
-                                      hold.
-  "Machine giri, payment chal raha?" -> idempotency id app ke paas -> doosri machine pe dobara bhejo, do baar
-                                      nahi katega.
+  "Kaise kaam karta?"              -> hold DB me, machine ki memory me nahi -> bacha. Health check fail ->
+                                      machine bahar; agli request doosri machine pe -> wahi hold.
+  "Machine giri, payment chal raha?" -> id app ke paas -> doosri machine pe dobara bhejo, do baar nahi katega.
   "Health check kya dekhta?"       -> GET /health: zinda + DB / Redis tak pahunch; 2-3 baar fail = bahar.
 ```
 

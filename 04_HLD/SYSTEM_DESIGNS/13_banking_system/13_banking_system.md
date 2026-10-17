@@ -232,10 +232,9 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: farak mile to khaata jeetega, par pehle KYUN.
-  "Kaise kaam karta?"              -> har baar khaata jodo = sach par 10 saal ki 50,000 line = dheema. Isliye
-                                      balance column = uska jod (CACHE), khaata line ke saath EK transaction
-                                      me. Raat ko RECONCILIATION: mera khaata jod = 29,800 (din ki
-                                      sab line), column me 29,800 -> theek.
+  "Kaise kaam karta?"              -> har baar khaata jodo = sach par 50,000 line = dheema; isliye balance
+                                      column = jod (CACHE), khaata line ke saath EK transaction me. Raat
+                                      RECONCILIATION: jod 29,800 = column 29,800 -> theek.
   "Raat ko farak (29,800 vs 30,300)?" -> alert + account rok ke dekho; chupchaap theek MAT karo (bug zinda),
                                       pehle KYUN, phir khaata jeetega.
   "Chal raha hai, kaise pata?"     -> reconciliation + p99 + error rate + queue lag + DB connection pe alert
@@ -297,12 +296,10 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: copy thodi peeche hoti; jisne abhi likha, wo kuch der primary se padhe.
-  "Kaise kaam karta?"              -> padhna DB ki copy se, likhna (transfer) sirf primary pe. Primary ki
-                                      diary (WAL) copy tak jaati, copy wahi badlaav lagati. Primary sirf
-                                      likhne ke liye free.
-  "Copy 5 sec peeche, purana balance?" -> maine 1000 bheje, purana dikha -> sochunga gaya hi nahi -> dobara!
-                                      Read-your-own-writes: mere ACCOUNT pe last_write_at (Redis, phone nahi)
-                                      -> kuch second kisi bhi phone se mera padhna PRIMARY se.
+  "Kaise kaam karta?"              -> padhna DB ki copy se, likhna (transfer) sirf primary pe; primary ki
+                                      diary (WAL) copy tak jaati, copy wahi badlaav lagati.
+  "Copy 5 sec peeche, purana balance?" -> purana dikha -> dobara bhejunga! Read-your-own-writes: mere account
+                                      ka last_write_at (Redis) -> kuch sec PRIMARY se.
   "Copy minute bhar peeche?"       -> lag pe alert; had paar -> us copy ko padhne wali list se hatao.
 ```
 
@@ -331,9 +328,8 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: taala hamesha tay kram me (id sort).
-  "Kaise kaam karta?"              -> Txn1 ne mujh pe taala, Ravi ka intezaar · Txn2 ne Ravi pe, mera intezaar
-                                      -> gol ghera (MySQL 1213). Dono transfer chhoti id pehle lock karein ->
-                                      dono wahi ek maangte, ek ruka, doosra poora.
+  "Kaise kaam karta?"              -> Txn1 ka mujh pe taala + Ravi ka intezaar · Txn2 ulta -> gol ghera (MySQL
+                                      1213). Dono chhoti id pehle lock -> ek ruka, doosra poora.
   "Kram ke bawajood deadlock?"     -> DB ek ko wapas kar deta -> app ruk ke dobara (same idempotency key).
 ```
 
