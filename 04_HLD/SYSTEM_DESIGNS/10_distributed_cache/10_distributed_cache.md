@@ -3,13 +3,6 @@
 > Tez RAM wala key-value store, jo ek machine se bada ho aur ek machine mare to bhi chale. Concept detail = FOUNDATIONS/04_caching.md
 > Is design ka dil: **TEZ (<1 ms)** + **machine mare to bhi chale**. BookMyShow ka ulta: wahan sahi hona dil tha, yahan tezi.
 
-```
-LIBRARY DESK: 10,000 kitaab godaam me (DB = dheema, sab kuch) · top-100 front desk pe (cache = RAM, tez)
-   ek desk pe saari kitaab nahi aati + desk wala beemar pad sakta (machine band)
-   -> kai desk (nodes) + kaunsi kitaab kis desk (sharding) + har
-      desk ka backup banda (replication) = DISTRIBUTED CACHE
-```
-
 ---
 
 ## KAHANI (ek din, mere app ka cache, IPL final wala; har dikkat se design me ek dabba judta)
@@ -133,7 +126,7 @@ AAGE POOCHEGA:
   "RAM bhari, hatana band?"        -> noeviction = naya likhna ERROR; cache ke liye allkeys-lru rakho.
 ```
 
-#### 2 Data 1 TB ho gaya: "user:42" kis machine pe?
+#### 2 Subah 11 tak data 1 TB: "user:42" kis machine pe?
 ```mermaid
 flowchart LR
     n_App["App"]
@@ -153,8 +146,8 @@ flowchart LR
     style n_Node_C fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Data 1 TB ho gaya, ek machine me 64 GB -> 16+ machine. "user:42" kis machine pe jaaye, aur App ko
-           har baar kaise pata chale?
+DIKKAT     Subah 11 tak data 1 TB ho gaya, ek machine me 64 GB -> 16+ machine. "user:42" kis machine pe
+           jaaye, aur App ko har baar kaise pata chale?
 HAL        CONSISTENT HASHING: ring (0 .. 2^32) pe machine bhi, key bhi; key ghadi ki disha me chale,
            PEHLI machine pe rahe. VIRTUAL NODES se bojh barabar; App ki CACHE CLIENT library hisaab karti.
 NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
@@ -249,7 +242,7 @@ AAGE POOCHEGA:
                                       turant delete.
 ```
 
-#### 5 7 baje "home page" key khatam, 1000 log ek saath DB pe (stampede)
+#### 5 7 baje "home page" key khatam, 1000 log ek saath DB pe
 ```mermaid
 flowchart LR
     n_App["App<br/>key khatam, 1000 DB pe<br/>-> SET NX EX lock"]
@@ -279,7 +272,7 @@ AAGE POOCHEGA:
   "Key DB me hai hi nahi?"         -> "nahi hai" ko bhi chhoti umar ke saath cache me, DB tak jaane mat do.
 ```
 
-#### 6 Raat IPL final, "live:score" key ki machine akeli mar rahi (hot key)
+#### 6 Raat IPL final, "live:score" key ki machine akeli mar rahi
 ```mermaid
 flowchart LR
     n_App_L1_local_cache["App + L1 local cache<br/>crore log ek key pe<br/>-> L1 local + copies"]
@@ -383,6 +376,11 @@ KEY BAANTNA:    hash % N -> sab khiskti -> NAHI · CONSISTENT HASHING
                 range -> ek range garam -> NAHI
 
 TRADE-OFF:      tezi vs sahi hona — cache AP ki taraf, "thodi der baad sahi" chalta (CAP)
+
+LIBRARY DESK: 10,000 kitaab godaam me (DB = dheema, sab kuch) · top-100 front desk pe (cache = RAM, tez)
+   ek desk pe saari kitaab nahi aati + desk wala beemar pad sakta (machine band)
+   -> kai desk (nodes) + kaunsi kitaab kis desk (sharding) + har
+      desk ka backup banda (replication) = DISTRIBUTED CACHE
 ```
 
 ---
