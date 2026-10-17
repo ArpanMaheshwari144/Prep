@@ -19,7 +19,7 @@
 6   salary ke baad maine balance khola       -> BALANCE = CACHE, raat RECONCILIATION  Reconciliation job
 7   11 baje sabki salary, ek machine bhari   -> KAI MACHINE + LB, DB sync copy        LB + Banking Svc x N
 8   bheed me sab balance dekh rahe           -> READ REPLICA + read-your-own-writes   Read replica
-9   dukaan ko 500, usi sec dukaan ka refund  -> CHHOTI ID PEHLE LOCK                  (SQL DB: lock kram)
+9   dukaan ko 500, usi sec 200 refund        -> CHHOTI ID PEHLE LOCK                  (SQL DB: lock kram)
 10  CA ka export, page 5000 dheema           -> KEYSET (ts, id) + index               (SQL DB: index)
 11  raat: 5 saal khaata ek table me          -> MAHINE KE TUKDE + S3, snapshot        Archive (S3)
 
@@ -232,9 +232,8 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: farak mile to khaata jeetega, par pehle KYUN.
-  "Kaise kaam karta?"              -> har baar khaata jodo = sach par 50,000 line = dheema; isliye balance
-                                      column = jod (CACHE), khaata line ke saath EK transaction me. Raat
-                                      RECONCILIATION: jod 29,800 = column 29,800 -> theek.
+  "Kaise kaam karta?"              -> khaata jodo = sach par 50,000 line = dheema; balance column = jod
+                                      (CACHE), usi transaction me. Raat RECONCILIATION: jod 29,800 = column.
   "Raat ko farak (29,800 vs 30,300)?" -> alert + account rok ke dekho; chupchaap theek MAT karo (bug zinda),
                                       pehle KYUN, phir khaata jeetega.
   "Chal raha hai, kaise pata?"     -> reconciliation + p99 + error rate + queue lag + DB connection pe alert
@@ -303,7 +302,7 @@ AAGE POOCHEGA:
   "Copy minute bhar peeche?"       -> lag pe alert; had paar -> us copy ko padhne wali list se hatao.
 ```
 
-#### 9 Ravi ki dukaan ko paisa, usi second dukaan se refund (deadlock)
+#### 9 Ravi ki dukaan ko 500, usi second dukaan se 200 refund (deadlock)
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -311,7 +310,7 @@ flowchart LR
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
     n_RR["Read replica"]
-    n_DB["SQL DB<br/>dukaan refund, dono atke<br/>-> taala hamesha ek kram me, chhoti id pehle"]
+    n_DB["SQL DB<br/>500 gaye, 200 refund, dono atke<br/>-> taala hamesha ek kram me, chhoti id pehle<br/>(lock order)"]
     n_K["Kafka"]
     n_REC["Reconciliation job"]
     n_USER --> n_LB

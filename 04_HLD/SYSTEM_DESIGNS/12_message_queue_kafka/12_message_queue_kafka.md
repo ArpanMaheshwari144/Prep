@@ -14,7 +14,7 @@
 3   Ravi ne naam do baar badla, ulta laga  -> KEY = userId (ek partition, kram)     Producer (key)
 4   email ki 3 machine, Ravi ko 3 email    -> CONSUMER GROUP (ek team)              Group email
 5   analytics + dashboard ko bhi chahiye   -> HAR SERVICE KA APNA GROUP             Group analytics, dashboard
-6   dopahar Broker A ki disk mari          -> LEADER + ISR, acks=all                Controller (KRaft)
+6   dopahar Broker A ki disk mari          -> LEADER + ISR, acks=all                Brokers (ISR) + Controller
 7   email bheja, commit se pehle crash     -> PEHLE KAAM PHIR COMMIT + IDEMPOTENT   Redis (eventId)
 8   order DB me bana, Kafka se pehle gira  -> OUTBOX + relay                        Producer + Outbox
 9   shaam ko C2 mara, lag badhta gaya      -> REBALANCE + LAG alert + DLQ           DLQ
@@ -229,6 +229,7 @@ flowchart LR
     n_B --> n_GA
     n_B --> n_GD
     style n_K fill:#f9a825,color:#000
+    style n_B fill:#f9a825,color:#000
 ```
 ```
 DIKKAT     Dopahar Broker A ki disk mari. Har partition ki ek hi copy thi -> P0 ka data hamesha ke liye gaya.
@@ -325,7 +326,7 @@ flowchart LR
     n_K["Controller (KRaft)"]
     n_GE["Group email"]
     n_R["Redis (eventId)"]
-    n_DLQ["DLQ<br/>C2 mara, lag badha<br/>-> mare ka kaam baaki me, peeche ho to alert<br/>(rebalance)"]
+    n_DLQ["DLQ<br/>C2 mara, lag badha<br/>-> mare ka kaam baaki me, kharab khabar alag line<br/>(rebalance + DLQ)"]
     n_GA["Group analytics"]
     n_GD["Group dashboard"]
     n_P --> n_B
@@ -371,9 +372,8 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: jo rakha hai usi se REPLAY; rakhna consumer ki sabse lambi chhutti se lamba.
-  "Kaise kaam karta?"              -> Kafka padh ke delete nahi karta (log hai, queue nahi). RETENTION: 7 din,
-                                      phir purani segment file (~1 GB) poori udao = sasta. COMPACTION: har key
-                                      ki sirf aakhri khabar (Ravi ki profile 10 baar badli -> aakhri).
+  "Kaise kaam karta?"              -> padh ke delete nahi; RETENTION 7 din, phir purani segment (~1 GB)
+                                      poori udao = sasta. COMPACTION: har key ki sirf aakhri khabar.
   "Rakhe ka fayda?"                -> REPLAY: naya group shuru se padhe, ya bug theek karke offset peeche.
   "7 din consumer band raha?"      -> data gaya; isliye lag pe alert + retention consumer ki sabse lambi
                                       band-hone ki der se zyada.

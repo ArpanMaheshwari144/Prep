@@ -104,12 +104,12 @@ flowchart LR
 
 #### 0 SHURU: DB KAUNSA? SQL
 ```
-DIKKAT 1   Ek payment me chaar likhai: Arpan -500, merchant +500, aur khaate (ledger) me 2 line.
-           Ye chaaron ek saath honi chahiye. Teen hui aur chautha reh gaya = hisaab galat.
+DIKKAT 1   Ek payment me paanch likhai: Arpan -500, merchant +500, khaate (ledger) me 2 line, payment ka haal.
+           Ye paanchon ek saath honi chahiye. Chaar hui aur ek reh gaya = hisaab galat.
 HAL        SQL (Postgres / MySQL): kai row EK transaction me, sab ya kuch nahi (ACID).
            Teen table: wallet (account_id, balance) · ledger (sirf jodte) · payment (key, haal).
            Ek payment = BEGIN -> 2 balance UPDATE + 2 ledger INSERT + payment ka haal -> COMMIT.
-           Beech me kuch bhi fail -> ROLLBACK -> chaaron me se ek bhi nahi hua.
+           Beech me kuch bhi fail -> ROLLBACK -> paanchon me se ek bhi nahi hua.
 
 DIKKAT 2   NoSQL kyun nahi?
 HAL        Yahan kai row / table pe ek saath "sab ya kuch nahi" chahiye, aur paisa turant sahi dikhe.
@@ -131,7 +131,7 @@ DIKKAT     Diwali subah maine kirana ko 500 bheje. Mere 500 kate, merchant me da
            500 na mere paas, na merchant ke paas. Gayab.
 HAL        dono ek saath ya koi nahi (TRANSACTION): BEGIN Arpan -= 500 · Merchant += 500 COMMIT. DB pehle
            diary (WAL) me likhta; utha to dekhta: COMMIT ho chuka = poora karo, nahi = ulta. Aadha kabhi nahi.
-NAHI       do alag UPDATE: beech me gira to ek hua, ek nahi.
+NAHI       app me 'pehle kaato, fail pe wapas jodo': server beech me gira to wapas jodna chala hi nahi.
 ```
 ```
 AAGE POOCHEGA:
@@ -154,7 +154,7 @@ DIKKAT     Ab wallet me 600. Phone se dukaan ko 500 scan kiya, usi second laptop
            Do alag server, dono ne 600 dekha -> dono kaatenge?
 HAL        check aur kaatna ek saath (ATOMIC UPDATE):
              UPDATE account SET balance = balance - 500 WHERE id = ? AND balance >= 500
-NAHI       pehle SELECT balance, phir UPDATE: beech me doosra ghus jaata.
+NAHI       Java synchronized Payment Svc me: do machine, lock ek ke andar; doosri phir bhi 600 dekhti.
 ```
 ```
 AAGE POOCHEGA:
@@ -233,7 +233,7 @@ flowchart LR
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
     n_DB["SQL DB"]
-    n_Reconciliation_job["Reconciliation job<br/>call ke baad crash<br/>-> pehle PENDING, PSP batayega, roz milaao<br/>(webhook + reconciliation)"]
+    n_Reconciliation_job["Reconciliation job<br/>call ke baad crash<br/>-> pehle 'pata nahi' likho, PSP khud batayega, roz milaao<br/>(PENDING + webhook + reconciliation)"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store
     n_Payment_Svc --> n_PSP
@@ -416,7 +416,7 @@ flowchart LR
     n_Payment_Svc_xN["Payment Svc x N"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
-    n_SQL_DB_shard_by_account_id["SQL DB shard<br/>1000 crore row, likhai dheemi<br/>-> account se data tukdon me baanto<br/>(shard)"]
+    n_SQL_DB_shard_by_account_id["SQL DB + Ledger shard<br/>1000 crore row, likhai dheemi<br/>-> account se data tukdon me baanto<br/>(shard)"]
     n_Read_replica["Read replica"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_LB_API_Gateway
@@ -476,7 +476,7 @@ flowchart LR
     n_Payment_Svc_x_N_2["Payment Svc 2"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
-    n_SQL_DB_shard_by_account_id["SQL DB shard by account_id"]
+    n_SQL_DB_shard_by_account_id["SQL DB + Ledger (shard by account_id)"]
     n_Read_replica["Read replica"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_LB_API_Gateway

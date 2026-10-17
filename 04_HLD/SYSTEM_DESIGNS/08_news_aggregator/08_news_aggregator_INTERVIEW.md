@@ -130,9 +130,8 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: khabar laana peeche apni speed se; main sirf Redis ki taiyaar list padhta.
-  "Kaise kaam karta?"              -> pehle ek fetcher 1000 source ek-ek laata + DB me likhta = ~20 min. Ab
-                                      kai fetcher -> KAFKA (disk pe diary); workers apni speed se, OFFSET
-                                      (kahan tak padha) yaad. 10 PARTITION (tukde) = 10 worker.
+  "Kaise kaam karta?"              -> pehle ek fetcher 1000 source ek-ek + DB = ~20 min. Ab kai fetcher ->
+                                      KAFKA (disk pe diary); worker apni speed se, OFFSET yaad; 10 partition.
   "Likhna, padhna alag kyun?"      -> khabar laana peeche, user ko hamesha cache se taiyaar feed.
   "1000 ki khabar ek saath aayi?"  -> Kafka ki line lambi hui, kuch gira nahi.
   "Ek source kitni baar dekhe?"    -> har source ka apna samay (NDTV har 1 min, chhota blog har 15 min).

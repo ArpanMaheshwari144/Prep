@@ -16,7 +16,7 @@
 5  DB team: 5 saal me 90 TB                 -> SHARD by code (RING)                 Cassandra
 6  naya link banaya, turant khola, 404      -> QUORUM (2 me likho, 2 se padho)      (Cassandra quorum)
 7  shaam ko LB hi gira                      -> ROUTE 53 + 2 LB (health check)       Route 53 + LB x2
-8  raat ko spammer, 5,000 link / sec        -> RATE LIMIT darwaze pe + WAF          API Gateway
+8  raat ko spammer, 5,000 link / sec        -> RATE LIMIT darwaze pe + WAF          API Gateway + WAF
 
 POORA DESIGN (upar ke dabbe kram se):
    User -> Route 53 -> LB x2 -> API Gateway -> App x N (Counter ka thaila) -> Redis -> Cassandra
@@ -309,7 +309,7 @@ DIKKAT     5 baje maine naya link banaya. Cassandra har link 3 alag machine pe r
            Isi beech mera click C pe gaya -> C bola "ye link mere paas nahi" -> 404.
 HAL        3 me se 2 copy pe pakka (QUORUM = "zyadatar"): likhna "done" jab 2 copy me, padhna bhi 2 copy se.
            Koi bhi 2 uthao (A+C, B+C, A+B), har jodi me A ya B aayegi hi -> khaali haath kabhi nahi.
-NAHI       tez karne ko sirf 1 copy se padho: wo C ho sakti hai -> phir 404.
+NAHI       3 me likho tabhi done, phir 1 se padho: ek copy giri = har naya link fail.
 ```
 ```
 AAGE POOCHEGA:
@@ -330,7 +330,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53<br/>LB hi gira<br/>-> do LB, mara to doosre pe<br/>(health check)"]
-    n_LB_xN["LB x N"]
+    n_LB_xN["LB x 2"]
     n_App_xN["App x N"]
     n_Counter["Counter"]
     n_ANA["Analytics (Kafka + DLQ)"]
@@ -361,7 +361,7 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_EDGE["Route 53 + LB x N"]
+    n_EDGE["Route 53 + LB x 2"]
     n_API_Gateway["API Gateway<br/>spammer 5,000 link / sec<br/>-> darwaze pe had, hamle roko<br/>(rate limit + WAF)"]
     n_App_xN["App x N"]
     n_Counter["Counter"]
@@ -397,7 +397,7 @@ AAGE POOCHEGA:
 ## AAKHRI DABBA + WRAP (ek hi baar)
 
 ```
-User -> Route 53 (kaunsa LB zinda + kaunsa region) -> 2 LB -> API Gateway (rate limit + login)
+User -> Route 53 (kaunsa LB zinda + kaunsa region) -> 2 LB -> WAF -> API Gateway (rate limit + login)
 -> App (stateless) -> Redis (95% click, expiry = link ki expiry)
 -> Cassandra (code se baanta, har tukde ki 3 copy, 2 me likha 2 se padha)
 NAYA LINK: App -> thaile se agla number -> base62 (123456 -> "w7e") -> Redis + Cassandra -> chhota link

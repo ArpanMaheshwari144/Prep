@@ -228,10 +228,12 @@ flowchart LR
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
     style n_Redis_Cluster fill:#f9a825,color:#000
+    style n_Route_53 fill:#f9a825,color:#000
+    style n_ALB fill:#f9a825,color:#000
 ```
 ```
 DIKKAT     Dopahar Redis mar gaya. Saari ginti wahin thi -> kisi ko pata hi nahi kisne kitni bheji.
-HAL        Redis ki copy taiyaar (REPLICA): copy doosri building me; main mara -> copy main (Sentinel).
+HAL        Redis ki copy taiyaar (REPLICA): main mara -> copy main (Cluster khud; akela Redis ho to Sentinel).
            Poora gaya: aam API (feed, search) FAIL-OPEN = jaane do · login / OTP FAIL-CLOSED = roko.
 NAHI       sab fail-open: login khula = koi bina had password guess karta rahega.
 ```
@@ -305,7 +307,7 @@ flowchart LR
 DIKKAT     4 baje bhi wahi bot. 429 sirf bolta "60 second baad aao" -> bot 60 sec baad phir, din bhar, roz.
 HAL        baar-baar ka 429 pakdo, ban karo (KAFKA -> PATTERN -> WAF): "IP ko 10 min me 500+ 429?"
            -> WAF ki block list me kuch der. WAF sabse aage (edge), agli request server tak aati hi nahi.
-NAHI       turant ban: asli user bhi tez click karta, office ke 100 log ek IP (NAT), sale me asli bheed.
+NAHI       turant ban: asli user bhi tez click karta, office ke 1000 log ek IP (NAT), sale me asli bheed.
 ```
 ```
 AAGE POOCHEGA:
@@ -348,7 +350,7 @@ AAGE POOCHEGA:
   "Line (queue) me rok lo?"        -> chhota time (~2 sec); user chala gaya to uska kaam bekaar.
 ```
 
-#### 8 Raat ko attack aaya, usi waqt Redis gira, aam API khuli reh gayi
+#### 8 Raat ko attack, usi waqt poora Redis Cluster gira (copy bhi), aam API khuli
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -406,7 +408,7 @@ DIKKAT     Raat 11 baje office ki night shift: 1000 log ek IP (NAT) ke peeche, e
            1000 block. Ulta, botnet ke paas 1000 IP, har IP se thoda -> kisi IP ki limit nahi tooti.
 HAL        IP nahi, banda gino (KEY = USER_ID): login ke baad (JWT se) rate:<user_id>:<endpoint> -> 1000 log =
            1000 alag ginti. Login se pehle user_id hai hi nahi: rate:<IP>:login (dheeli had) + WAF.
-NAHI       IP ki had badha do (100 se 5,000): office bach gaya, par botnet ko bhi utni hi zyada chhoot.
+NAHI       IP ki had badha do (5 se 500): office bach gaya, par botnet ko bhi utni hi chhoot.
 ```
 ```
 AAGE POOCHEGA:

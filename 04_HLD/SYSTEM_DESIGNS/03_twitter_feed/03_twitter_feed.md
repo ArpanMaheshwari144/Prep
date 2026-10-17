@@ -242,7 +242,7 @@ flowchart LR
     n_App["App"]
     n_Kafka["Kafka"]
     n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox<br/>50 crore inbox, RAM bhari<br/>-> inbox me sirf aakhri 800, sirf zinda log"]
+    n_Redis_inbox["Redis inbox<br/>50 crore inbox, RAM bhari<br/>-> inbox me sirf aakhri 800, sirf zinda log<br/>(trim + soye hue hatao)"]
     n_Hot_tweet_cache["Hot-tweet cache"]
     n_DB["DB"]
     n_USER --> n_App
@@ -259,7 +259,7 @@ DIKKAT     Shaam 5 baje Redis alert: har inbox me saare id, kabhi kaate nahi, so
            -> RAM bhar rahi.
 HAL        inbox chhota rakho (AAKHRI 800, ZREMRANGEBYRANK): purane kaato. 800 = ~60 KB, 50 crore = ~30 TB
            -> sirf jo mahine me aaye (zinda log) unka inbox, baaki hata do.
-NAHI       inbox me poora tweet: ek tweet 200 jagah copy, RAM phategi.
+NAHI       Redis me machine jodte jao: soye 40 crore ka inbox bhi RAM khaata, kharcha badhta, dikkat wahi.
 ```
 ```
 AAGE POOCHEGA:
@@ -293,7 +293,7 @@ flowchart LR
 ```
 DIKKAT     6 baje DB alert: har second ~5,000 naye tweet, 5 saal me ~0.5 PB. Ek DB na itna rakh sakta,
            na itna likh sakta.
-HAL        mere tweet ek jagah (CASSANDRA, user_id se shard): mere tweet ek jagah, andar naya pehle. Famous =
+HAL        mere tweet ek jagah (CASSANDRA, user_id se shard), andar naya pehle. Famous =
            key me user + mahina. Likhna = diary (commit log) ke aakhir + RAM, isliye likhai tez.
 NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; join / transaction chahiye nahi.
 ```
@@ -381,7 +381,7 @@ flowchart LR
     n_FAN["Kafka + Fanout workers"]
     n_RI["Redis (inbox + hot tweet)"]
     n_Timeline_Svc["Timeline Svc"]
-    n_UG["User Svc"]
+    n_UG["User Svc + Graph DB"]
     n_USER --> n_EDGE
     n_EDGE --> n_Tweet_Svc
     n_EDGE --> n_Timeline_Svc

@@ -265,7 +265,7 @@ flowchart LR
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
-    n_LINES["Push / Email / SMS line + worker"]
+    n_LINES["Push / Email / SMS line + worker<br/>(push -> FCM / APNs)"]
     n_SES["SES + SendGrid"]
     n_Twilio["Twilio + SNS<br/>SMS 30 sec atki<br/>-> der lage to chhodo, fail pe call band<br/>(timeout + fuse)"]
     n_Redis["Redis (parchi)"]
@@ -396,7 +396,7 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_Admin["Admin"]
-    n_CAMP["Campaign Svc<br/>1 crore ko offer<br/>-> 1 crore ko 1000-1000 me bhejo<br/>(batch + campaign row)"]
+    n_CAMP["Campaign Svc + DB<br/>1 crore ko offer<br/>-> 1 crore ko 1000-1000 me bhejo<br/>(batch + campaign row)"]
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
@@ -440,7 +440,7 @@ flowchart LR
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
-    n_PREF["User-pref DB<br/>raat 2 baje offer SMS<br/>-> pehle pasand aur raat ki shaanti dekho<br/>(preference)"]
+    n_PREF["User-pref + Template DB<br/>raat 2 baje offer SMS<br/>-> pehle pasand aur raat ki shaanti dekho<br/>(preference)"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_RDLQ["Redis (parchi + baalti) + DLQ"]
     n_WH["Webhook Svc + Tracking DB"]

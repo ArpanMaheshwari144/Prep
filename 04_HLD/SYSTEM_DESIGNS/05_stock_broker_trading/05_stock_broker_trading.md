@@ -136,7 +136,8 @@ flowchart LR
     style n_Wallet fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Order ek laga, ab paisa? Wallet me 50k. Laptop se 30k, phone se 30k, same second.
+DIKKAT     Order ek laga, ab paisa? Wallet me 50k. Laptop se TCS 30k, usi second phone se INFY 30k
+           (do alag order, alag id).
            Do server, dono ne 50k dekha, dono pass.
 HAL        check aur block ek saath (ATOMIC UPDATE): UPDATE wallet SET blocked = blocked + 30000 WHERE user_id
            = 'Arpan' AND total - blocked >= 30000   (doosre ko 0 row -> reject)
@@ -234,7 +235,7 @@ flowchart LR
 DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
 HAL        Har order PEHLE log me (number ke saath; log hi wo line hai, Kafka key = stock), PHIR book.
            Gira -> log #1 se replay, wahi book. STANDBY sirf log padhta, book taiyaar; pehla gire tab chalu.
-NAHI       doosra server saath chalao (replica): do book = ek share do baar bike.
+NAHI       doosra engine saath chalao (active-active): dono match karte = ek sauda do baar settle.
 ```
 ```
 AAGE POOCHEGA:

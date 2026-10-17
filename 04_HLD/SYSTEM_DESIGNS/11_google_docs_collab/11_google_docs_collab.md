@@ -200,7 +200,7 @@ flowchart LR
     n_LB["LB (docId se ring)"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
-    n_PS["Redis pub/sub<br/>Ravi doosre server pe<br/>-> har doc ka channel, sab server sunein<br/>(pub/sub)"]
+    n_PS["Redis pub/sub<br/>Ravi doosre server pe<br/>-> har doc ka channel, jis server pe uska user wo sune<br/>(pub/sub)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_CDN
