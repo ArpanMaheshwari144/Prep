@@ -251,13 +251,13 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: log hi sach hai, book uski photo; do chalti book = do sach = galat.
-  "Number kaun deta?"              -> log / sequencer; Order Svc nahi (uski do machine same number de dein).
-  "Time se kram?"                  -> nahi; do server ki ghadi alag, same ms me do order.
-  "Sirf photo (snapshot) kaafi?"   -> nahi; photo ke baad ke order gaye.
-  "Log me 1 crore, der?"           -> har kuch minute photo; gira -> photo + uske baad ka log.
-  "Seconds me wapas?"              -> standby log padhta, book taiyaar; pehla gire tab chalu.
-  "Crash pe kya bachaoge?"         -> matching = log se replay · paisa = DB rollback / step ka haal.
+  NIYAM: register (log) hi sach hai, scoreboard (book) uski photo. Do chalte scoreboard = do sach = galat.
+  "Number kaun deta?"              -> register wala (log) har order ko #501, #502; Order Service nahi.
+  "Time se kram kyun nahi?"        -> do machine ki ghadi alag, ek second me do order, pehla kaun pata nahi.
+  "Sirf photo kaafi?"              -> nahi; photo ke baad wale order kahin likhe hi nahi, gire to gaye.
+  "Register 1 crore ka, der?"      -> shuru se nahi: aakhri photo + uske baad ke panne.
+  "Seconds me wapas?"              -> doosra scorer saath register padhta, scoreboard taiyaar; pehla gire tab chalu.
+  "Crash pe kya bachaoge?"         -> scoreboard register se wapas; paisa DB me, wahan rollback.
 ```
 
 #### 6 Mera paisa kat gaya, Suresh ko mila hi nahi
