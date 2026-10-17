@@ -76,9 +76,7 @@ flowchart TD
     n_Email_API --> n_USER
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) ORDER EMAIL KE INTEZAAR ME RUKA, EMAIL DOWN = ORDER FAIL
+#### 1 ORDER EMAIL KE INTEZAAR ME RUKA, EMAIL DOWN = ORDER FAIL
 ```
 KAHANI:  Arpan ne order kiya. Order service ne email bheja aur jawab ka intezaar karti rahi.
          Ek din email company band thi -> order hi fail ho gaya. Aur email dobara bhejne wala koi nahi.
@@ -120,9 +118,7 @@ flowchart TD
     n_Email_API --> n_USER
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) TEEN RAASTE, SMS DHEEMA TO PUSH / EMAIL BHI ATKE
+#### 2 TEEN RAASTE, SMS DHEEMA TO PUSH / EMAIL BHI ATKE
 ```
 KAHANI:  Push, email, SMS teeno ek hi line me khade the. SMS company dheemi hui ->
          SMS wale atke, aur unke peeche push aur email bhi khade reh gaye.
@@ -170,9 +166,7 @@ flowchart TD
     n_SMS_worker --> n_Twilio
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) SMS BAND THA, PHIR BHI RAAT 2 BAJE BHEJA
+#### 3 SMS BAND THA, PHIR BHI RAAT 2 BAJE BHEJA
 ```
 KAHANI:  Arpan ne SMS band kiya tha aur raat 10 se subah 8 "mat
          bhejo" lagaya tha. Phir bhi raat 2 baje SMS aaya.
@@ -224,9 +218,7 @@ flowchart TD
     n_SMS_worker --> n_Twilio
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) JAWAB KHO GAYA, DOBARA BHEJA, USER KO DO EMAIL
+#### 4 JAWAB KHO GAYA, DOBARA BHEJA, USER KO DO EMAIL
 ```
 KAHANI:  Worker ne email company ko bheja. Company ne email bhej bhi diya, par uska "ho gaya" wala jawab
          raaste me kho gaya. Worker ko laga fail hua -> dobara bheja -> Arpan ko DO email.
@@ -281,9 +273,7 @@ flowchart TD
     n_Email_worker --> n_Redis
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) PARCHI LAGA DI, PAR BHEJNA FAIL HO GAYA
+#### 5 PARCHI LAGA DI, PAR BHEJNA FAIL HO GAYA
 ```
 KAHANI:  Arpan ka OTP bhejna hai. Worker-A ne Redis me parchi lagayi
          "OTP-123: bhej diya", phir SMS company ko call kiya.
@@ -350,9 +340,7 @@ flowchart TD
     n_Email_worker --> n_Redis
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) COMPANY GIR RAHI, HUM TURANT DOBARA MAAR RAHE
+#### 6 COMPANY GIR RAHI, HUM TURANT DOBARA MAAR RAHE
 ```
 KAHANI:  SMS company pehle se pareshaan hai, aur hum har second
          dobara bhej ke uspe aur hathoda maar rahe hain.
@@ -415,9 +403,7 @@ flowchart TD
     n_Email_worker --> n_DLQ
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) COMPANY DHEEMI, SAARE WORKER 30 SEC ME PHANSE
+#### 7 COMPANY DHEEMI, SAARE WORKER 30 SEC ME PHANSE
 ```
 KAHANI:  SMS company band nahi hui, bas dheemi ho gayi. Har call 30 second atki.
          Saare worker usi me phans gaye, baaki kaam ruk gaya. Dheemi company band company se bhi buri.
@@ -472,9 +458,7 @@ flowchart TD
     n_Email_worker --> n_DLQ
 ```
 
-<a id="d8"></a>
-
-#### [8](#d8) OTP OFFER KE 50,000 MESSAGE KE PEECHE
+#### 8 OTP OFFER KE 50,000 MESSAGE KE PEECHE
 ```
 KAHANI:  Ek hi line me sab. Usi waqt 50,000 offer wale message
          line me the. Arpan ka OTP unke peeche khada raha,
@@ -532,9 +516,7 @@ flowchart TD
     n_Email_worker --> n_DLQ
 ```
 
-<a id="d9"></a>
-
-#### [9](#d9) EK SAATH BAHUT, COMPANY NE 429 DIYA
+#### 9 EK SAATH BAHUT, COMPANY NE 429 DIYA
 ```
 KAHANI:  Sale shuru, ek saath laakhon message. SMS company bolti "itna nahi" (429) -> sab fail.
 
@@ -593,9 +575,7 @@ flowchart TD
     n_Email_worker --> n_DLQ
 ```
 
-<a id="d10"></a>
-
-#### [10](#d10) "BHEJ DIYA" KA MATLAB "MIL GAYA" NAHI
+#### 10 "BHEJ DIYA" KA MATLAB "MIL GAYA" NAHI
 ```
 KAHANI:  SMS company ne message le liya. Par Arpan ke phone tak pahuncha ya nahi, humein pata hi nahi.
 
@@ -660,9 +640,7 @@ flowchart TD
     n_SES_SendGrid --> n_Tracking_DB
 ```
 
-<a id="d11"></a>
-
-#### [11](#d11) 1 CRORE LOGON KO EK SAATH OFFER
+#### 11 1 CRORE LOGON KO EK SAATH OFFER
 ```
 KAHANI:  "Diwali offer sabko" = 1 crore user. Ek-ek karke bheja -> request ghanton atki, OTP bhi peeche,
          company ki limit tooti.

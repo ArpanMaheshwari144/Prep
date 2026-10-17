@@ -111,9 +111,7 @@ flowchart TD
     n_USER_A_B --> n_Chat_Server
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) 2 CRORE CONNECTION KHULI, MEMORY KHATAM
+#### 1 2 CRORE CONNECTION KHULI, MEMORY KHATAM
 ```
 KAHANI:  Har online user ka connection hamesha khula. Ek connection
          ~30 KB -> 1 lakh connection = ~3 GB sirf pakad ke rakhne me.
@@ -149,9 +147,7 @@ flowchart TD
     n_LB --> n_Chat_Server_x_200_2
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) ARPAN SERVER-1 PE, RAVI SERVER-7 PE
+#### 2 ARPAN SERVER-1 PE, RAVI SERVER-7 PE
 ```
 KAHANI:  Ab 200 chat server. Arpan server-1 se juda, Ravi server-7 se.
          Arpan ne "hi" bheja -> server-1 ne apni register dekhi -> usme
@@ -195,9 +191,7 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Redis
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) RAVI OFFLINE, MESSAGE KAHAN JAAYE?
+#### 3 RAVI OFFLINE, MESSAGE KAHAN JAAYE?
 ```
 KAHANI:  Ravi ka phone band, koi connection hi nahi. Galat soch:
          "pehle Ravi ko bhejo, na pahunche to DB me daal do"
@@ -242,9 +236,7 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) ROZ 1.2 TB, 46,000 LIKHAI / SECOND
+#### 4 ROZ 1.2 TB, 46,000 LIKHAI / SECOND
 ```
 KAHANI:  Roz ~1.2 TB message, 46,000 likhai / second. Ek DB machine nahi jhelegi. Kis cheez se baantein?
 
@@ -296,9 +288,7 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) 500 KA GROUP, EK MESSAGE 500 BAAR LIKHEIN?
+#### 5 500 KA GROUP, EK MESSAGE 500 BAAR LIKHEIN?
 ```
 KAHANI:  "College Gang" group me 500 log. Arpan ne ek message
          bheja -> kya 500 logon ke inbox me 500 baar likhein?
@@ -340,9 +330,7 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) KISKE KITNE UNREAD?
+#### 6 KISKE KITNE UNREAD?
 ```
 KAHANI:  500 member. "Kiske kitne unread" ke liye har message x
          har member ka record = 500 x 50 = 25,000 likhai. Bekaar.
@@ -384,9 +372,7 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) DO TICK AUR NEELI TICK: SERVER KO PATA KAISE?
+#### 7 DO TICK AUR NEELI TICK: SERVER KO PATA KAISE?
 ```
 KAHANI:  Ek tick = message server tak pahuncha. Do tick = Ravi ke
          phone ne "mil gaya" bola. Neeli = Ravi ne chat khol ke dekha.
@@ -432,9 +418,7 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 
-<a id="d8"></a>
-
-#### [8](#d8) 10 LAKH KA BROADCAST GROUP: TICK KA KYA?
+#### 8 10 LAKH KA BROADCAST GROUP: TICK KA KYA?
 ```
 KAHANI:  10 lakh ka broadcast group. Har member ka nishaan + tick 500
          pe chalta, 10 lakh pe nahi (har message pe 10 lakh tick).
@@ -476,9 +460,7 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 
-<a id="d9"></a>
-
-#### [9](#d9) ARPAN KA NET DHEEMA, APP NE DOBARA BHEJA, RAVI KO DO BAAR
+#### 9 ARPAN KA NET DHEEMA, APP NE DOBARA BHEJA, RAVI KO DO BAAR
 ```
 KAHANI:  Arpan ka net dheema. App ne "hi" bheja, jawab nahi aaya
          (timeout), to dobara bheja. Pehla pahunch chuka tha.
@@ -525,9 +507,7 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 
-<a id="d10"></a>
-
-#### [10](#d10) KRAM KISKE TIME SE?
+#### 10 KRAM KISKE TIME SE?
 ```
 KAHANI:  Arpan ke phone ki ghadi 5 min aage chal rahi. Uske message
          chat me upar chadh gaye, Ravi ke jawab se pehle dikhne lage.
@@ -577,9 +557,7 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 
-<a id="d11"></a>
-
-#### [11](#d11) 5 MB KA VIDEO BHI ISI RAASTE SE?
+#### 11 5 MB KA VIDEO BHI ISI RAASTE SE?
 ```
 KAHANI:  Arpan ne 5 MB video bheja chat server ke raaste se ->
          connection aur thread atak gaye, baaki message bhi ruke.
@@ -628,9 +606,7 @@ flowchart TD
     n_Cassandra_messages --> n_Cold_storage
 ```
 
-<a id="d12"></a>
-
-#### [12](#d12) ONLINE / LAST-SEEN: SABKO SABKA STATUS
+#### 12 ONLINE / LAST-SEEN: SABKO SABKA STATUS
 ```
 KAHANI:  Har baar koi juda / gaya, uske saare contacts ko batao = crore x 500 = bakwaas.
 

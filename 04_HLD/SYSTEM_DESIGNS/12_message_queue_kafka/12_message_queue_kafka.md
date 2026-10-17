@@ -63,9 +63,7 @@ flowchart TD
     n_Queue --> n_Consumer
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) CONSUMER RESTART HUA, MESSAGE GAYAB
+#### 1 CONSUMER RESTART HUA, MESSAGE GAYAB
 ```
 KAHANI:  Queue machine ki memory me thi, 500 signup message
          pade the. Machine restart -> memory saaf -> 500 gayab.
@@ -99,9 +97,7 @@ flowchart TD
     n_Log --> n_Consumer
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) EK MACHINE ME 2 TB AUR 5,000 / SEC NAHI AAYEGA
+#### 2 EK MACHINE ME 2 TB AUR 5,000 / SEC NAHI AAYEGA
 ```
 KAHANI:  Ek broker (Kafka machine) me 2 TB nahi samaata, aur 5,000 likhai / second bhi akela nahi jhelta.
 
@@ -130,9 +126,7 @@ flowchart TD
     n_Brokers_A_B_C --> n_Consumer
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) ARPAN KE TEEN EVENT TEEN PARTITION ME (KRAM ULTA)
+#### 3 ARPAN KE TEEN EVENT TEEN PARTITION ME (KRAM ULTA)
 ```
 KAHANI:  Arpan ke teen event: signup P0 me gaya, profile-update P2 me, delete-account P1 me.
          P1 jaldi padha gaya -> delete pehle hua, signup baad me. Ulta.
@@ -163,9 +157,7 @@ flowchart TD
     n_Brokers_A_B_C --> n_Consumer
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) EMAIL SERVICE KE 3 INSTANCE, ARPAN KO 3 EMAIL
+#### 4 EMAIL SERVICE KE 3 INSTANCE, ARPAN KO 3 EMAIL
 ```
 KAHANI:  Email service ki 3 machine (C1, C2, C3), teeno poora topic padh
          rahi. Arpan ka signup teeno ne padha -> Arpan ko 3 welcome email.
@@ -193,9 +185,7 @@ flowchart TD
     n_Brokers_A_B_C --> n_Group_email
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) ARPAN KA SIGNUP TEENO SERVICE KO CHAHIYE
+#### 5 ARPAN KA SIGNUP TEENO SERVICE KO CHAHIYE
 ```
 KAHANI:  Arpan ka signup event email service ko bhi chahiye, analytics ko bhi, dashboard ko bhi.
          Card 4 ka group lagaya to ek hi ko milega.
@@ -228,9 +218,7 @@ flowchart TD
     n_Brokers_A_B_C --> n_Group_dashboard
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) BROKER A KI DISK GAYI, DATA GAYA
+#### 6 BROKER A KI DISK GAYI, DATA GAYA
 ```
 KAHANI:  Har partition ki ek hi copy thi. Broker A ki disk mar gayi -> P0 ka saara data hamesha ke liye gaya.
 
@@ -269,9 +257,7 @@ flowchart TD
     n_Brokers_A_B_C --> n_Group_dashboard
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) KAAM HO GAYA PAR COMMIT SE PEHLE CRASH (+ OUTBOX)
+#### 7 KAAM HO GAYA PAR COMMIT SE PEHLE CRASH (+ OUTBOX)
 ```
 KAHANI:  SMS service ne offset 5 padha (Arpan ka order).
          A) SMS bheja -> "padh liya" (commit) bolne se pehle CRASH -> restart pe phir 5 -> Arpan ko 2 SMS.
@@ -326,9 +312,7 @@ flowchart TD
     n_Group_email --> n_Redis
 ```
 
-<a id="d8"></a>
-
-#### [8](#d8) CONSUMER MARA / PEECHE CHAL RAHA
+#### 8 CONSUMER MARA / PEECHE CHAL RAHA
 ```
 KAHANI:  C2 mar gaya -> P1 ko koi padh hi nahi raha, khabar jama ho rahi.
          Ya consumer dheema -> peeche-peeche (lag) badhta ja raha.
@@ -367,9 +351,7 @@ flowchart TD
     n_Group_email --> n_DLQ
 ```
 
-<a id="d9"></a>
-
-#### [9](#d9) 7 DIN RAKHOGE TO DISK BHAREGI
+#### 9 7 DIN RAKHOGE TO DISK BHAREGI
 ```
 KAHANI:  Kafka padh ke delete nahi karta (ye log hai, queue nahi) -> disk bharti ja rahi.
 

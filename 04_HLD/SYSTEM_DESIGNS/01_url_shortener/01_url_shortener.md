@@ -94,9 +94,7 @@ ISKE BAAD KYA TOOTEGA:
          Tab click gin nahi paate aur expiry bhi kaam nahi karti.
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) HAR CLICK DB PE, REDIRECT 200 MS SE TEZ CHAHIYE
+#### 1 HAR CLICK DB PE, REDIRECT 200 MS SE TEZ CHAHIYE
 ```
 KAHANI:  Ek second me 1 lakh click aa rahe hain. Har click DB tak ja raha hai, aur DB disk se padhta hai.
          DB pe bojh badhta gaya, redirect dheema hua. Ek viral link pe to DB hi baith gaya.
@@ -137,9 +135,7 @@ flowchart TD
     n_App --> n_DB
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) EK APP 1 LAKH / SEC NAHI JHELTA, GIRA TO SITE BAND
+#### 2 EK APP 1 LAKH / SEC NAHI JHELTA, GIRA TO SITE BAND
 ```
 KAHANI:  Saari request ek hi App machine pe. Bojh se wo dheema
          hua, aur ek din wahi gir gaya -> poori site band.
@@ -181,9 +177,7 @@ flowchart TD
     n_App_x_N_2 --> n_DB
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) KAI APP, DO APP EK HI CODE BANA DENGE
+#### 3 KAI APP, DO APP EK HI CODE BANA DENGE
 ```
 KAHANI:  Ab App ki 2 machine hain, dono apna-apna counter chala rahi hain.
          App-1 ka counter 5 pe hai, App-2 ka bhi 5 pe. Dono ne naya
@@ -228,9 +222,7 @@ flowchart TD
     n_App_x_N_2 --> n_DB
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) HAR CLICK PE ANALYTICS LIKHNA
+#### 4 HAR CLICK PE ANALYTICS LIKHNA
 ```
 KAHANI:  User ne click kiya. Usi request me hum "click hua" analytics DB me likhne lage, phir redirect kiya.
          Analytics DB dheema tha -> user ko redirect ke liye rukna pada. Yahan har milisecond keemti hai.
@@ -284,9 +276,7 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) 5 SAAL KA ~90 TB EK MACHINE ME NAHI
+#### 5 5 SAAL KA ~90 TB EK MACHINE ME NAHI
 ```
 KAHANI:  10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Itna ek machine me nahi aata.
          Aur wo ek machine mari to saare link gaye.
@@ -349,9 +339,7 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) WRITE KE BEECH EK COPY WALA NODE GIRA
+#### 6 WRITE KE BEECH EK COPY WALA NODE GIRA
 ```
 KAHANI:  User ne link banaya. Cassandra use 3 copy me likh
          raha tha, aur beech me ek copy wali machine gir gayi.
@@ -405,9 +393,7 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) NAYA LINK BANAYA, TURANT CLICK -> 404
+#### 7 NAYA LINK BANAYA, TURANT CLICK -> 404
 ```
 KAHANI:  Tune link banaya. Cassandra har link ko 3 jagah rakhta hai: copy A, copy B, copy C.
          Likhte waqt link A aur B me pahunch gaya, C tak pahunchne me 1-2 second lagte hain.
@@ -463,9 +449,7 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 
-<a id="d8"></a>
-
-#### [8](#d8) LB KHUD GIR GAYA
+#### 8 LB KHUD GIR GAYA
 ```
 KAHANI:  App, Redis, DB sab zinda hain. Par sabko request baantne wala Load Balancer hi mar gaya.
          Ab koi request andar aa hi nahi rahi -> site band.
@@ -521,9 +505,7 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 
-<a id="d9"></a>
-
-#### [9](#d9) SCRIPT SE RAAT ME 10 LAKH LINK
+#### 9 SCRIPT SE RAAT ME 10 LAKH LINK
 ```
 KAHANI:  Ek bande ne script likh di, raat bhar me 10 lakh link bana diye.
          Counter ke number tez khatam hue, DB me kachra bhar gaya, asli users ke liye dheema.

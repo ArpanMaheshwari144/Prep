@@ -53,9 +53,7 @@ flowchart TD
     n_App --> n_DB
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) DONO NE SAATH SAVE KIYA, BAAD WALE NE PEHLE KA MITA DIYA
+#### 1 DONO NE SAATH SAVE KIYA, BAAD WALE NE PEHLE KA MITA DIYA
 ```
 KAHANI:  Doc me "HELLO" tha. Arpan ne "HELLO WORLD" karke save kiya, usi waqt Ravi ne "HELLO THERE".
          Ravi ka save baad me pahuncha, usne poora text upar likh diya -> Arpan ka "WORLD" gayab
@@ -86,9 +84,7 @@ flowchart TD
     n_App --> n_DB
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) RAVI KO ARPAN KA LIKHA KAB DIKHEGA?
+#### 2 RAVI KO ARPAN KA LIKHA KAB DIKHEGA?
 ```
 KAHANI:  Normal HTTP me server khud kuch nahi bhej sakta, sirf jawab de
          sakta. To Ravi refresh kare tab Arpan ka likha dikhe? Bekaar.
@@ -122,9 +118,7 @@ flowchart TD
     n_Conn_Server --> n_DB
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) ARPAN SERVER-1 PE, RAVI SERVER-2 PE
+#### 3 ARPAN SERVER-1 PE, RAVI SERVER-2 PE
 ```
 KAHANI:  Ek connection server itne connection nahi jhelta, to kai lagaye.
          Arpan server-1 se juda, Ravi server-2 se, dono ek hi doc pe.
@@ -167,9 +161,7 @@ flowchart TD
     n_Conn_Server_x_N_2 --> n_DB
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) DONO NE EK SAATH POSITION 0 PE TYPE KIYA
+#### 4 DONO NE EK SAATH POSITION 0 PE TYPE KIYA
 ```
 KAHANI:  Doc "HELLO". Arpan ne position 0 pe "X" likha, usi pal Ravi ne position 0 pe "Y".
          Seedha lagaya -> Arpan ki screen pe "XHELLO" phir Y ->
@@ -214,9 +206,7 @@ flowchart TD
     n_Conn_Server_x_N_2 --> n_DB
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) HAR AKSHAR PE DB ME LIKHNA
+#### 5 HAR AKSHAR PE DB ME LIKHNA
 ```
 KAHANI:  Crore log type kar rahe, har akshar pe ek DB write -> DB khatam.
 
@@ -258,9 +248,7 @@ flowchart TD
     n_Redis_buffer --> n_Cassandra_edit_log
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) DOC KHOLA, 10 LAKH OP SHURU SE CHALANE PADE
+#### 6 DOC KHOLA, 10 LAKH OP SHURU SE CHALANE PADE
 ```
 KAHANI:  Arpan ne 2 saal purana doc khola. Server ne pehle op se 10
          lakh op dobara chalaye tab doc bana -> kholne me bahut der.
@@ -294,9 +282,7 @@ flowchart TD
     n_Redis_buffer --> n_Cassandra_edit_log
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) NETWORK EK SECOND GAYA, TYPING RUKEGI? (CAP)
+#### 7 NETWORK EK SECOND GAYA, TYPING RUKEGI? (CAP)
 ```
 KAHANI:  Arpan ka network 1 second ke liye gaya. Typing ruk jaaye, ya wo type karta rahe?
 
@@ -336,9 +322,7 @@ flowchart TD
     n_Redis_buffer --> n_Cassandra_edit_log
 ```
 
-<a id="d8"></a>
-
-#### [8](#d8) CRORE WEBSOCKET CONNECTION
+#### 8 CRORE WEBSOCKET CONNECTION
 ```
 KAHANI:  Crore connection khule. Ek doc ke 5 editor alag-alag 5 server
          pe bikhre -> har server apna OT chala raha -> kram toota.

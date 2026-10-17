@@ -57,9 +57,7 @@ flowchart TD
     n_Upload_Svc --> n_S3
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) USER 2-3 SEC RUKA, SERVER KA THREAD BHI ATKA
+#### 1 USER 2-3 SEC RUKA, SERVER KA THREAD BHI ATKA
 ```
 KAHANI:  Arpan ne report.pdf daali. Server ne Validator ko call kiya, 3 second jawab ka intezaar.
          Arpan 3 second ghoomta screen dekhta raha, aur server ka ek thread bhi 3 second bekaar atka.
@@ -113,9 +111,7 @@ flowchart TD
     n_Worker --> n_DB
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) 5 GB FILE KE BYTES HAMARE SERVER SE GUZAR RAHE
+#### 2 5 GB FILE KE BYTES HAMARE SERVER SE GUZAR RAHE
 ```
 KAHANI:  Arpan ki 5 GB video: client -> hamara server -> S3. 5 GB do baar network pe chala,
          server ka thread minuton tak atka, aur sirf bytes aage badhane ke liye server badhane pade.
@@ -158,9 +154,7 @@ flowchart TD
     n_Worker --> n_DB
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) 5 GB FILE 90% PE TOOT GAYI
+#### 3 5 GB FILE 90% PE TOOT GAYI
 ```
 KAHANI:  Arpan ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB shuru se? Arpan pagal ho jaayega.
 
@@ -199,9 +193,7 @@ flowchart TD
     n_Worker --> n_DB
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) UPLOAD SHURU HUA, "COMPLETE" KABHI NAHI AAYA (ADHOORI FILE)
+#### 4 UPLOAD SHURU HUA, "COMPLETE" KABHI NAHI AAYA (ADHOORI FILE)
 ```
 KAHANI:  Arpan ne upload shuru kiya, phir app crash. "complete" kabhi nahi aaya.
          Bytes S3 me pade (paisa lag raha), DB me T-101 "VALIDATING" pe atka, aur koi use dhoondhta hi nahi.
@@ -246,9 +238,7 @@ flowchart TD
     n_Sweeper_job --> n_Kafka
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) SAB HAR 2 SEC HAAL POOCHH RAHE
+#### 5 SAB HAR 2 SEC HAAL POOCHH RAHE
 ```
 KAHANI:  10,000 log upload karke baithe, har ek har 2 sec "T-101 ka haal?" -> 5,000 sawaal / second DB pe.
          Likhai to 1-2 / second thi, padhai ne DB ko ghera.
@@ -300,9 +290,7 @@ flowchart TD
     n_Sweeper_job --> n_Kafka
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) FILE NAHI, POORA FOLDER
+#### 6 FILE NAHI, POORA FOLDER
 ```
 KAHANI:  Arpan ne 1000 file ka folder daala. Ek trackingId se 1000 file ka haal kaise?
 
@@ -347,9 +335,7 @@ flowchart TD
     n_Sweeper_job --> n_Kafka
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) RAVI NE ARPAN KA trackingId DAAL KE FILE MAANG LI
+#### 7 RAVI NE ARPAN KA trackingId DAAL KE FILE MAANG LI
 ```
 KAHANI:  Ravi ne kahin se Arpan ka T-101 dekh liya, GET
          /download/T-101 maara -> Arpan ki file Ravi ko mil gayi.
@@ -400,9 +386,7 @@ flowchart TD
     n_Sweeper_job --> n_Kafka
 ```
 
-<a id="d8"></a>
-
-#### [8](#d8) ARPAN NE S3 KA SEEDHA LINK WHATSAPP PE BHEJ DIYA
+#### 8 ARPAN NE S3 KA SEEDHA LINK WHATSAPP PE BHEJ DIYA
 ```
 KAHANI:  Arpan ko S3 ka pakka link diya. Usne dost ko WhatsApp pe bheja, dost ne group me.
          Link hamesha chalta -> file kisi ke bhi haath.
@@ -450,9 +434,7 @@ flowchart TD
     n_Sweeper_job --> n_Kafka
 ```
 
-<a id="d9"></a>
-
-#### [9](#d9) NAAM REPORT.PDF, ANDAR EXE
+#### 9 NAAM REPORT.PDF, ANDAR EXE
 ```
 KAHANI:  Kisi ne virus.exe ka naam badal ke report.pdf kiya aur
          type bhi "application/pdf" bheja. S3 me pahunch bhi gayi.

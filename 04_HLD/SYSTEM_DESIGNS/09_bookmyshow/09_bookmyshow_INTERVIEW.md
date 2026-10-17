@@ -66,9 +66,7 @@ flowchart TD
     n_App --> n_SQL_DB
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) ARPAN AUR RAVI NE EK SAATH A1 BOOK KI
+#### 1 ARPAN AUR RAVI NE EK SAATH A1 BOOK KI
 ```
 KAHANI:  Arpan ne dekha "A1 khaali", usi pal Ravi ne bhi dekha "A1 khaali". Dono ne Book dabaya.
          App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
@@ -104,9 +102,7 @@ flowchart TD
     n_App --> n_SQL_DB
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) SEAT CHUNI, AB 3 MIN PAYMENT KAR RAHA
+#### 2 SEAT CHUNI, AB 3 MIN PAYMENT KAR RAHA
 ```
 KAHANI:  Arpan ne A1 chuni, payment me 3 min lag rahe.
          A1 'available' hi rehne di -> beech me Ravi le gaya.
@@ -145,9 +141,7 @@ flowchart TD
     n_Sweeper_job --> n_SQL_DB
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) PAYMENT PAGE PE "PAY" DO BAAR DABA
+#### 3 PAYMENT PAGE PE "PAY" DO BAAR DABA
 ```
 KAHANI:  Arpan ne Pay dabaya, page ghooma, phir daba diya -> ek hi booking ke do baar paise kate.
 
@@ -179,9 +173,7 @@ flowchart TD
     n_Sweeper_job --> n_SQL_DB
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) BOOK KOI-KOI KARTA, SEAT MAP SAB DEKH RAHE
+#### 4 BOOK KOI-KOI KARTA, SEAT MAP SAB DEKH RAHE
 ```
 KAHANI:  Ek show ka seat map 1 lakh log dekh rahe, book shayad 500 karenge.
          1 lakh padhai aur nazuk booking dono ek hi DB pe -> booking dheemi.
@@ -221,9 +213,7 @@ flowchart TD
     n_SQL_primary --> n_Read_replica
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) BADI MOVIE KA PEHLA DIN, LAKHON LOG EK SHOW PE
+#### 5 BADI MOVIE KA PEHLA DIN, LAKHON LOG EK SHOW PE
 ```
 KAHANI:  Badi movie, pehla show: 5000 log, 3000 seat. Saari bheed seedha DB pe, wahi rows pe ladaai,
          har koi lock ke intezaar me -> sab dheema.
@@ -273,9 +263,7 @@ flowchart TD
     n_SQL_primary --> n_Read_replica
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) REDIS RESTART, SAARA DEKHNA EK SAATH DB PE
+#### 6 REDIS RESTART, SAARA DEKHNA EK SAATH DB PE
 ```
 KAHANI:  Redis restart hua -> cache khaali -> 1 lakh log ka seat map
          dekhna ek saath DB pe -> booking ke UPDATE bhi ruk gaye.
@@ -323,9 +311,7 @@ flowchart TD
     n_SQL_primary --> n_Read_replica
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) EK APP MACHINE GIRI, 500 LOGON KA HOLD
+#### 7 EK APP MACHINE GIRI, 500 LOGON KA HOLD
 ```
 KAHANI:  Ek App machine pe 500 log seat chun rahe the, wo machine gir gayi. Unki held seats ka kya?
 

@@ -79,9 +79,7 @@ ISKE BAAD KYA TOOTEGA:
       -> 6 ka sauda ho gaya, Ramesh ke baaki 4 book me pade rehte (aur un 4 ka paisa ruka rehta).
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) DO ORDER EK HI STOCK PE EK SAATH (RACE)
+#### 1 DO ORDER EK HI STOCK PE EK SAATH (RACE)
 ```
 KAHANI:  Seller ke paas TCS ke sirf 10 share. Ramesh ne BUY 10 maara, usi pal Mohan ne bhi BUY 10.
          Do thread ne ek saath book dekhi, dono ko "10 available" dikha, dono ka sauda kar diya.
@@ -120,9 +118,7 @@ flowchart TD
     n_Matching_Engine --> n_DB
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) WALLET ME 50K, 30K-30K KE DO ORDER (DOUBLE SPEND)
+#### 2 WALLET ME 50K, 30K-30K KE DO ORDER (DOUBLE SPEND)
 ```
 KAHANI:  Ramesh ke wallet me 50,000. Usne ek saath 30,000 ke DO order daal diye.
          Dono order ne wallet dekha, dono ko 50k dikha, dono pass. Dono match -> 60k kharch, the 50k.
@@ -163,9 +159,7 @@ flowchart TD
     n_Matching_Engine --> n_DB
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) SAUDE KE BEECH CRASH (SETTLEMENT)
+#### 3 SAUDE KE BEECH CRASH (SETTLEMENT)
 ```
 KAHANI:  Ramesh ne Suresh se 10 TCS khareede, 30,000 me. Ramesh ka 30k kata, aur Suresh ko milne se
          PEHLE server gir gaya. 30k na Ramesh ke paas, na Suresh ke paas. Hawa me.
@@ -207,9 +201,7 @@ flowchart TD
     n_Settlement --> n_DB
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) PAISA WALLET DB ME, SHARE PORTFOLIO DB ME (ALAG DB)
+#### 4 PAISA WALLET DB ME, SHARE PORTFOLIO DB ME (ALAG DB)
 ```
 KAHANI:  System bada hua: paisa ab Wallet DB me, share Portfolio
          DB me. Do alag DB pe ek transaction nahi chalta.
@@ -258,9 +250,7 @@ flowchart TD
     n_Settlement --> n_Portfolio_DB
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) BUY DO BAAR DABA / NETWORK NE DOBARA BHEJA
+#### 5 BUY DO BAAR DABA / NETWORK NE DOBARA BHEJA
 ```
 KAHANI:  Ramesh ne BUY dabaya, app ghoomta raha, usne phir daba diya. Ya network ne khud dobara bhej diya.
          Server ko do request mili -> do order bane, paisa do baar block.
@@ -302,9 +292,7 @@ flowchart TD
     n_Settlement --> n_Portfolio_DB
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) ORDER BOOK RAM ME, SERVER GIRA = SAB GAYAB
+#### 6 ORDER BOOK RAM ME, SERVER GIRA = SAB GAYAB
 ```
 KAHANI:  10:15 baje matching server gir gaya. TCS ki book me 4,000 order pade the, sab RAM me.
          RAM gayi -> 4,000 order gayab. Logon ka paisa block hai par order ka koi pata nahi.
@@ -351,9 +339,7 @@ flowchart TD
     n_Settlement --> n_Portfolio_DB
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) LAKHON LOG LIVE PRICE DEKH RAHE
+#### 7 LAKHON LOG LIVE PRICE DEKH RAHE
 ```
 KAHANI:  10 lakh log app khol ke baithe. Har app har second poochh raha "TCS ka price kya hai?" (polling).
          10 lakh sawaal har second -> server mar gaya, aur zyadatar baar jawab tha "wahi purana".
@@ -406,9 +392,7 @@ flowchart TD
     n_Settlement --> n_Portfolio_DB
 ```
 
-<a id="d8"></a>
-
-#### [8](#d8) 9:15 BAJE AKELE TCS PE LAKHON ORDER
+#### 8 9:15 BAJE AKELE TCS PE LAKHON ORDER
 ```
 KAHANI:  Market khulte hi akele TCS pe lakhon order aa gaye. Card 1 me niyam tha: ek stock = ek thread.
          To TCS ko do thread me baant bhi nahi sakte.

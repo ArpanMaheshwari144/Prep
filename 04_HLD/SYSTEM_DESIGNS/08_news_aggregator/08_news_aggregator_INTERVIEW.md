@@ -57,9 +57,7 @@ flowchart TD
     n_Fetcher --> n_DB
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) HAR REQUEST PE DB SE "TAAZI 20"
+#### 1 HAR REQUEST PE DB SE "TAAZI 20"
 ```
 KAHANI:  Subah 8 baje 500 log / second app khol rahe. Har ek ke liye DB se
          "ORDER BY published_at DESC LIMIT 20" chal raha. Aur sabko lagbhag WAHI 20 khabar dikh rahi.
@@ -97,9 +95,7 @@ flowchart TD
     n_Fetcher --> n_DB
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) 1000 SOURCE SE KHABAR LAANA DHEEMA
+#### 2 1000 SOURCE SE KHABAR LAANA DHEEMA
 ```
 KAHANI:  Arpan ne app khola aur server us waqt 1000 source se khabar laane gaya. Arpan 20 second ruka.
 
@@ -145,9 +141,7 @@ flowchart TD
     n_Sources --> n_Fetcher
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) EK HI KHABAR PAANCH SOURCE SE
+#### 3 EK HI KHABAR PAANCH SOURCE SE
 ```
 KAHANI:  "India ne match jeeta" -> NDTV, TOI, HT, BBC, ESPN sabne likha. Arpan ki feed me wahi khabar 5 baar.
 
@@ -195,9 +189,7 @@ flowchart TD
     n_Sources --> n_Fetcher
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) EK SOURCE BAND / BAHUT DHEEMA
+#### 4 EK SOURCE BAND / BAHUT DHEEMA
 ```
 KAHANI:  Ek chhota source 30 second me jawab de raha. Fetcher
          us pe atka -> baaki 999 source ki khabar bhi ruki.
@@ -237,9 +229,7 @@ flowchart TD
     n_Sources --> n_Fetcher
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) 6 MAHINE ME 5 CRORE ROW, KHARCHA BADHTA
+#### 5 6 MAHINE ME 5 CRORE ROW, KHARCHA BADHTA
 ```
 KAHANI:  6 mahine me 5 crore khabar ki row. Disk, backup, kharcha badhta
          ja raha. Par taazi 20 ke alawa purana koi padhta hi nahi.
@@ -283,9 +273,7 @@ flowchart TD
     n_Sources --> n_Fetcher
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) (SIRF BAHUT BADE SCALE PE) EK DB MACHINE NAHI JHEL RAHI
+#### 6 (SIRF BAHUT BADE SCALE PE) EK DB MACHINE NAHI JHEL RAHI
 ```
 KAHANI:  Source 100 guna ho gaye ya log khud content daalne lage
          -> ek DB machine likhai aur data nahi jhel pa rahi.
@@ -328,9 +316,7 @@ flowchart TD
     n_Sources --> n_Fetcher
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) ARPAN KO SIRF TECH + SPORTS CHAHIYE
+#### 7 ARPAN KO SIRF TECH + SPORTS CHAHIYE
 ```
 KAHANI:  Arpan ko sirf tech aur sports pasand. Har user ki alag feed banana (10 lakh feed) bahut mehnga.
 
@@ -369,9 +355,7 @@ flowchart TD
     n_Sources --> n_Fetcher
 ```
 
-<a id="d8"></a>
-
-#### [8](#d8) SUBAH 8 BAJE SAB EK SAATH
+#### 8 SUBAH 8 BAJE SAB EK SAATH
 ```
 KAHANI:  8 baje sabne app khola. Ek hi Feed service machine ka CPU bhar gaya.
          Jo cache me nahi mila wo seedha primary DB pe gaya, jahan fetcher bhi likh raha -> dono dheeme.
@@ -419,9 +403,7 @@ flowchart TD
     n_Sources --> n_Fetcher
 ```
 
-<a id="d9"></a>
-
-#### [9](#d9) ARPAN NE "CRICKET" DHOONDHA
+#### 9 ARPAN NE "CRICKET" DHOONDHA
 ```
 KAHANI:  Arpan ne search me "cricket" likha -> DB me LIKE
          '%cricket%' -> 5 crore row ek-ek karke padhi (full scan).

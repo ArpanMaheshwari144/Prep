@@ -90,9 +90,7 @@ ISKE BAAD KYA TOOTEGA:
       -> HIT RATIO sabse pehle (achanak gira = kuch toota) + p99 + kitni key nikaali ja rahi (evictions).
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) RAM BHAR GAYI, KYA HATAYEIN
+#### 1 RAM BHAR GAYI, KYA HATAYEIN
 ```
 KAHANI:  Cache machine ki 64 GB RAM bhar gayi. Nayi key daalni hai, to koi purani nikaalni padegi. Kaunsi?
 
@@ -126,9 +124,7 @@ flowchart TD
     n_App --> n_Cache
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) 1 TB EK MACHINE ME NAHI: "user:42" KIS MACHINE PE?
+#### 2 1 TB EK MACHINE ME NAHI: "user:42" KIS MACHINE PE?
 ```
 KAHANI:  Data 1 TB, ek machine me 64 GB. 16+ machine chahiye. "user:42" kis machine pe jaaye,
          aur App ko har baar kaise pata chale?
@@ -187,9 +183,7 @@ flowchart TD
     n_Cache_client --> n_Node_C
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) MACHINE B MARI, USKI KEY KA BOJH DB PE
+#### 3 MACHINE B MARI, USKI KEY KA BOJH DB PE
 ```
 KAHANI:  Machine B mar gayi. Uske hisse ki saari key gayab. Un key
          ki saari padhai ab seedha DB pe -> DB pe achanak bojh.
@@ -230,9 +224,7 @@ flowchart TD
     n_Cache_client --> n_Node_C_replica
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) DB ME NAYA NAAM, CACHE ME PURANA (STALE)
+#### 4 DB ME NAYA NAAM, CACHE ME PURANA (STALE)
 ```
 KAHANI:  Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya,
          cache me abhi bhi "Ravi". Sabko purana naam dikh raha.
@@ -270,9 +262,7 @@ flowchart TD
     n_Cache_client --> n_Node_C_replica
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) GARAM KEY KHATAM, 1000 LOG EK SAATH DB PE (STAMPEDE)
+#### 5 GARAM KEY KHATAM, 1000 LOG EK SAATH DB PE (STAMPEDE)
 ```
 KAHANI:  "home page" ki key ki umar khatam hui. Usi second 1000 log aaye -> cache me nahi mili
          -> 1000 ek saath DB pe -> DB gira.
@@ -313,9 +303,7 @@ flowchart TD
     n_Cache_client --> n_Node_C_replica
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) EK KEY ITNI POPULAR, USKI MACHINE AKELI MAR RAHI (HOT KEY)
+#### 6 EK KEY ITNI POPULAR, USKI MACHINE AKELI MAR RAHI (HOT KEY)
 ```
 KAHANI:  IPL final, "live:score" key. Crore log ek saath padh
          rahe. Key ek hi machine pe -> wo machine akeli mar rahi.

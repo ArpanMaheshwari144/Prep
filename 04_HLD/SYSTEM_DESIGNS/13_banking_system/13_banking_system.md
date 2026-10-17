@@ -70,9 +70,7 @@ flowchart TD
     n_Banking_Svc --> n_SQL_DB
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) TRANSFER KE BEECH SERVER GIRA: ARPAN -500 HUA, RAVI +500 NAHI
+#### 1 TRANSFER KE BEECH SERVER GIRA: ARPAN -500 HUA, RAVI +500 NAHI
 ```
 KAHANI:  Arpan ne Ravi ko 500 bheje. Arpan ke 500 kat gaye,
          Ravi ke account me daalne se PEHLE server gir gaya.
@@ -106,9 +104,7 @@ flowchart TD
     n_Banking_Svc --> n_SQL_DB
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) KHAATA (LEDGER) KAHAN LIKHO, KAFKA KAB? (GALTI WAPAS wala)
+#### 2 KHAATA (LEDGER) KAHAN LIKHO, KAFKA KAB? (GALTI WAPAS wala)
 ```
 KAHANI:  Do zaroorat:
          (1) RBI poochhta "Arpan ke 500 kahan se aaye, kahan
@@ -158,9 +154,7 @@ flowchart TD
     n_SQL_DB --> n_Kafka
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) BALANCE AATA KAHAN SE? (is design ka asli sawaal)
+#### 3 BALANCE AATA KAHAN SE? (is design ka asli sawaal)
 ```
 KAHANI:  Do raaste:
          (a) balance ek column me rakho: padhna sasta (ek row), par kabhi galat bhi ho sakta.
@@ -197,9 +191,7 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) "SEND" DO BAAR DABA / APP NE DOBARA BHEJA
+#### 4 "SEND" DO BAAR DABA / APP NE DOBARA BHEJA
 ```
 KAHANI:  Arpan ne Send dabaya, app ghooma, phir daba diya. Ya app
          ne khud dobara bheja -> 1000 kat gaye, bhejne the 500.
@@ -233,9 +225,7 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) EK ACCOUNT SE DO TRANSFER EK SAATH
+#### 5 EK ACCOUNT SE DO TRANSFER EK SAATH
 ```
 KAHANI:  Arpan ke paas 300. Ek saath 200-200 ke do transfer
          chale. App ne dono baar balance padha (300), dono pass
@@ -276,9 +266,7 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) SALARY DAY, EK SERVICE BHAR GAYI
+#### 6 SALARY DAY, EK SERVICE BHAR GAYI
 ```
 KAHANI:  1 tareekh, sabki salary aayi, sab ek saath transfer
          kar rahe. Ek hi Banking service machine bhar gayi.
@@ -316,9 +304,7 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) SAB BALANCE PRIMARY SE PADH RAHE, TRANSFER DHEEME
+#### 7 SAB BALANCE PRIMARY SE PADH RAHE, TRANSFER DHEEME
 ```
 KAHANI:  Lakhon log balance / history dekh rahe, sab primary se. Padhne ki bheed me transfer dheeme.
 
@@ -361,9 +347,7 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 
-<a id="d8"></a>
-
-#### [8](#d8) 22 ARAB LINE ME HISTORY KA PAGE 5000
+#### 8 22 ARAB LINE ME HISTORY KA PAGE 5000
 ```
 KAHANI:  Arpan history ke page 5000 pe: LIMIT 20 OFFSET 100000 ->
          DB 1,00,020 line PADH ke phenkta, 20 deta. Bahut dheema.
@@ -407,9 +391,7 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 
-<a id="d9"></a>
-
-#### [9](#d9) 5 SAAL KA DATA EK HI TABLE ME
+#### 9 5 SAAL KA DATA EK HI TABLE ME
 ```
 KAHANI:  5 saal ka khaata ek table me. Log roz sirf 3 mahine
          dekhte, par har query / backup arabon line ke saath.

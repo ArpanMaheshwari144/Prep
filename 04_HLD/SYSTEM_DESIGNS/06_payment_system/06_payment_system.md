@@ -87,9 +87,7 @@ ISKE BAAD KYA TOOTEGA:
          Paise me "thodi der baad sahi" (eventual) nahi chalta.
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) BEECH ME CRASH: ARPAN -500 HUA, MERCHANT +500 NAHI
+#### 1 BEECH ME CRASH: ARPAN -500 HUA, MERCHANT +500 NAHI
 ```
 KAHANI:  Arpan ke 500 kat gaye. Merchant ke account me daalne se PEHLE server gir gaya.
          500 na Arpan ke paas, na merchant ke paas. Gayab.
@@ -121,9 +119,7 @@ flowchart TD
     n_Payment_Svc --> n_DB
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) DO BAAR TAP / APP NE DOBARA BHEJA = 1000 KATE
+#### 2 DO BAAR TAP / APP NE DOBARA BHEJA = 1000 KATE
 ```
 KAHANI:  Arpan ne Pay dabaya, app ghoomta raha, usne phir daba diya. Ya network ne khud dobara bhej diya.
          Server ko do request mili, dono process -> 1000 kate, dene the 500.
@@ -161,9 +157,7 @@ flowchart TD
     n_Payment_Svc --> n_DB
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) ASLI PAISA HAMARA SERVER NAHI HILATA
+#### 3 ASLI PAISA HAMARA SERVER NAHI HILATA
 ```
 KAHANI:  Hamara server sirf "bhejo" kehta hai. Asli paisa bank ke raaste (bank rails) pe hilta.
          Wo bahar ka raasta kabhi dheema, kabhi band.
@@ -200,9 +194,7 @@ flowchart TD
     n_Payment_Svc --> n_DB
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) PSP KO CALL KIYA AUR CRASH: PAISA GAYA YA NAHI?
+#### 4 PSP KO CALL KIYA AUR CRASH: PAISA GAYA YA NAHI?
 ```
 KAHANI:  Server ne PSP ko "500 bhejo" bola aur jawab aane se pehle khud gir gaya.
          Ab pata hi nahi: paisa kat gaya aur jawab kho gaya, ya kata hi nahi. "Bas rollback kar do" galat,
@@ -247,9 +239,7 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) ALAG BANK / ALAG DB: EK TRANSACTION NAHI CHAL SAKTA
+#### 5 ALAG BANK / ALAG DB: EK TRANSACTION NAHI CHAL SAKTA
 ```
 KAHANI:  Arpan ka account Bank A me, merchant ka Bank B me. Do alag system pe ek DB transaction hota hi nahi.
          Bank A se 500 kata, Bank B me daalna fail -> paisa beech me latka.
@@ -288,9 +278,7 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) RBI POOCHHE: YE PAISA KAHAN SE AAYA, KAHAN GAYA?
+#### 6 RBI POOCHHE: YE PAISA KAHAN SE AAYA, KAHAN GAYA?
 ```
 KAHANI:  RBI: "Arpan ke ye 500 kahan se aaye, kahan gaye, kab?"
          Balance column sirf aaj ka number batata (Arpan: 1200). Kaise 1200 bana, uska koi record nahi.
@@ -332,9 +320,7 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) FESTIVAL PE 3000 PAYMENT / SECOND
+#### 7 FESTIVAL PE 3000 PAYMENT / SECOND
 ```
 KAHANI:  Diwali pe 3000 payment / second. Ek hi Payment service machine ka CPU bhar gaya -> timeout ->
          log ghabra ke DOBARA tap kar rahe -> aur bojh. Wo machine giri to sab payment band.
@@ -384,9 +370,7 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
 
-<a id="d8"></a>
-
-#### [8](#d8) MERCHANT KI REPORT NE ASLI PAYMENT ROKE
+#### 8 MERCHANT KI REPORT NE ASLI PAYMENT ROKE
 ```
 KAHANI:  Ek bada merchant dashboard pe "is mahine ki saari payment" report chala raha. Wo bhaari query
          usi DB pe -> DB busy -> Arpan ka 500 ka payment likhne me atak gaya.
@@ -435,9 +419,7 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
 
-<a id="d9"></a>
-
-#### [9](#d9) 50 CRORE ROW, LIKHAI DHEEMI
+#### 9 50 CRORE ROW, LIKHAI DHEEMI
 ```
 KAHANI:  Saal bhar me 50 crore payment row. Saari likhai ek hi primary DB pe -> likhai dheemi.
 

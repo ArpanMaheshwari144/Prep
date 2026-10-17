@@ -76,9 +76,7 @@ flowchart TD
     n_App --> n_DB
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) HAR BAAR APP KHOLNE PE 200 LOGON KA DATA JODNA
+#### 1 HAR BAAR APP KHOLNE PE 200 LOGON KA DATA JODNA
 ```
 KAHANI:  Arpan 200 logon ko follow karta hai. Usne app khola -> App ko 200 logon ke tweet laane pade,
          jodne pade, time se sort karne pade, phir upar ke 50.
@@ -119,9 +117,7 @@ flowchart TD
     n_App --> n_Redis_inbox
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) TWEET BUTTON 3 SEC GHOOMTA RAHA
+#### 2 TWEET BUTTON 3 SEC GHOOMTA RAHA
 ```
 KAHANI:  Arpan ne tweet dabaya. Usi request me 200 followers ke
          inbox likhe ja rahe the -> button 3 second ghoomta raha.
@@ -160,9 +156,7 @@ flowchart TD
     n_App --> n_Redis_inbox
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) BIEBER = 10 CRORE INBOX (CELEBRITY)
+#### 3 BIEBER = 10 CRORE INBOX (CELEBRITY)
 ```
 KAHANI:  Bieber ke 10 crore follower hain. Usne ek tweet kiya -> fanout ko 10 crore inbox me likhna pada.
          Fanout atak gaya, aur uske peeche baaki sabke tweet bhi atak gaye.
@@ -202,9 +196,7 @@ flowchart TD
     n_App --> n_Redis_inbox
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) VIRAT KA TWEET CRORE LOG EK SAATH PADH RAHE
+#### 4 VIRAT KA TWEET CRORE LOG EK SAATH PADH RAHE
 ```
 KAHANI:  Virat pull pe hai, to uska tweet har feed me DB se aata hai.
          Match khatam, Virat ne tweet kiya, crore log ek saath
@@ -248,9 +240,7 @@ flowchart TD
     n_App --> n_Redis_inbox
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) 50 CRORE INBOX, MEMORY PHATEGI
+#### 5 50 CRORE INBOX, MEMORY PHATEGI
 ```
 KAHANI:  Har user ka poora feed Redis (RAM) me rakha -> 50 crore user, RAM bhar jaayegi.
 
@@ -289,9 +279,7 @@ flowchart TD
     n_App --> n_Redis_inbox
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) SAARE TWEET EK DB ME NAHI
+#### 6 SAARE TWEET EK DB ME NAHI
 ```
 KAHANI:  Har second ~5,800 naye tweet, saalon ka data petabytes
          me. Ek DB na itna rakh sakta, na itna likh sakta.
@@ -339,9 +327,7 @@ flowchart TD
     n_App --> n_Redis_inbox
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) INDIA USER, US SE PADH RAHA (200 MS)
+#### 7 INDIA USER, US SE PADH RAHA (200 MS)
 ```
 KAHANI:  Arpan Bangalore me hai, par data US me. Har request US jaati hai -> 200 ms. Paas se hota to 5 ms.
 
@@ -382,9 +368,7 @@ flowchart TD
     n_App --> n_Redis_inbox
 ```
 
-<a id="d8"></a>
-
-#### [8](#d8) EK APP BOX: BOJH BHI, SPOF BHI
+#### 8 EK APP BOX: BOJH BHI, SPOF BHI
 ```
 KAHANI:  Sab kuch ek App machine pe. Laakhon log nahi jhelta, aur wahi gira to sab band (SPOF).
 
@@ -430,9 +414,7 @@ flowchart TD
     n_App_x_N_2 --> n_Redis_inbox
 ```
 
-<a id="d9"></a>
-
-#### [9](#d9) PADHNA AUR LIKHNA EK HI BOX ME
+#### 9 PADHNA AUR LIKHNA EK HI BOX ME
 ```
 KAHANI:  Feed padhne wale laakhon, tweet likhne wale hazaron. Dono ek hi service me.
          Padhne ki bheed ne tweet daalna bhi dheema kar diya.
@@ -484,9 +466,7 @@ flowchart TD
     n_Fanout_workers --> n_Graph_DB
 ```
 
-<a id="d10"></a>
-
-#### [10](#d10) PHOTO / VIDEO BHAARI
+#### 10 PHOTO / VIDEO BHAARI
 ```
 KAHANI:  Photo / video duniya bhar se, har baar hamare server se jaa rahi hain -> dheema bhi, mehnga bhi.
 

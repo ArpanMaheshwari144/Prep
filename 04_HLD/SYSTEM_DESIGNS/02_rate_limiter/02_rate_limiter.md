@@ -64,9 +64,7 @@ flowchart TD
     n_USER --> n_App
 ```
 
-<a id="d1"></a>
-
-#### [1](#d1) TEEN SERVER, GINTI BAT GAYI
+#### 1 TEEN SERVER, GINTI BAT GAYI
 ```
 KAHANI:  Limit hai "ek minute me 5 login". Ab App ki 3 machine hain, LB request baant raha hai.
          Arpan ne 9 baar login try kiya: App-1 pe 3, App-2 pe 4, App-3 pe 2 gayi.
@@ -109,9 +107,7 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
 ```
 
-<a id="d2"></a>
-
-#### [2](#d2) DO REQUEST EK SAATH, DONO GHUS GAYI
+#### 2 DO REQUEST EK SAATH, DONO GHUS GAYI
 ```
 KAHANI:  Ginti 4 pe hai, limit 5. Do request bilkul ek saath aayi.
          Request A ne padha "4". Request B ne bhi padha "4". Dono ne +1 kiya aur "5" likh diya.
@@ -159,9 +155,7 @@ flowchart TD
     n_App_x_N_2 --> n_Redis
 ```
 
-<a id="d3"></a>
-
-#### [3](#d3) REJECT WALI REQUEST BHI ANDAR GHOOM AAYI
+#### 3 REJECT WALI REQUEST BHI ANDAR GHOOM AAYI
 ```
 KAHANI:  Limiter App ke andar tha. Bot ki jo request ko 429 milna tha, wo bhi LB se, App tak,
          sab jagah ghoom ke aayi, aur tab jaake mana hua. Machines ka kaam bekaar gaya.
@@ -203,9 +197,7 @@ flowchart TD
     n_API_Gateway --> n_App_x_N_2
 ```
 
-<a id="d4"></a>
-
-#### [4](#d4) REDIS GIR GAYA
+#### 4 REDIS GIR GAYA
 ```
 KAHANI:  Saari ginti Redis me thi. Redis mar gaya -> ab kisi ko pata hi nahi kisne kitni bheji. Limiter andha.
 
@@ -245,9 +237,7 @@ flowchart TD
     n_API_Gateway --> n_App_x_N_2
 ```
 
-<a id="d5"></a>
-
-#### [5](#d5) EK USER TEEN REGION SE
+#### 5 EK USER TEEN REGION SE
 ```
 KAHANI:  Limit 100. Arpan ne Bangalore se 50, Berlin se 50, aur US VPN se 50 request bheji.
          Har region ka apna Redis, har ek ne 50 gina -> kisi ko 100 paar nahi dikha. Total 150 nikal gayi.
@@ -287,9 +277,7 @@ flowchart TD
     n_API_Gateway --> n_App_x_N_2
 ```
 
-<a id="d6"></a>
-
-#### [6](#d6) BAAR-BAAR MAAR RAHA, 429 SE NAHI RUKTA
+#### 6 BAAR-BAAR MAAR RAHA, 429 SE NAHI RUKTA
 ```
 KAHANI:  429 sirf bolta "60 second baad aao". Bot 60 second baad phir aa jaata, din bhar, roz.
 
@@ -338,9 +326,7 @@ flowchart TD
     n_WAF --> n_ALB
 ```
 
-<a id="d7"></a>
-
-#### [7](#d7) LIMITER SAHI, PHIR BHI SERVER GIRA
+#### 7 LIMITER SAHI, PHIR BHI SERVER GIRA
 ```
 KAHANI:  Har user ki limit 100 / minute, aur server ek second me 5,000 jhel sakta hai.
          Sale shuru hui, 10,000 asli log aaye. Har koi apni
@@ -389,9 +375,7 @@ flowchart TD
     n_WAF --> n_ALB
 ```
 
-<a id="d8"></a>
-
-#### [8](#d8) ATTACK AAYA, USI WAQT LIMITER GAYAB
+#### 8 ATTACK AAYA, USI WAQT LIMITER GAYAB
 ```
 KAHANI:  Attack aaya -> Redis pe 50 guna bojh -> Redis gir gaya -> fail-open -> sab allow.
          Jis waqt limiter sabse zyada chahiye tha, usi waqt gayab.
@@ -434,9 +418,7 @@ flowchart TD
     n_WAF --> n_ALB
 ```
 
-<a id="d9"></a>
-
-#### [9](#d9) IP PE GIN RAHE THE
+#### 9 IP PE GIN RAHE THE
 ```
 KAHANI:  Office ke 1000 log ek hi IP ke peeche (NAT). Ek ne galti ki, IP block, saare 1000 block.
          Ulta, ek botnet ke paas 1000 IP hain, har IP se thoda-thoda -> kisi IP ki limit nahi tooti.
