@@ -1,12 +1,12 @@
 # Notification System
 
-> Event aaye -> sahi CHANNEL -> sahi USER -> sahi TIME, bharose ke saath, scale pe.
-> Is design ka dil: **ek event -> kai channel / kai user (fanout)** + **kabhi khoye nahi, do baar jaaye nahi** + **OTP turant**.
+> Koi ghatna hui (order, OTP, offer) -> sahi user ko, sahi raaste (push / email / SMS) se, sahi waqt pe khabar.
+> Is design ka dil teen cheezein hain: **ek ghatna -> kai raaste, kai log (fanout)** · **khabar kabhi khoye nahi, do baar jaaye nahi** · **OTP turant**.
 
 ```
-Amazon order placed -> Push + Email + SMS + In-app = EK event, KAI channel
-SHAADI-CARD: 1 shaadi -> 500 log, sabko alag raaste se nyota:
-   family = WhatsApp (in-app) · office = email · padosi = card (SMS) · VIP = phone (priority)
+Amazon pe order -> phone pe push + email + SMS + app ke andar = EK ghatna, KAI raaste.
+SHAADI KA CARD: ek shaadi, 500 mehmaan, sabko alag raaste se nyota:
+   ghar wale = WhatsApp · office wale = email · padosi = chhapa card · VIP = phone karke
    notification system = shaadi ka planner
 ```
 
@@ -16,29 +16,32 @@ SHAADI-CARD: 1 shaadi -> 500 log, sabko alag raaste se nyota:
 
 ![How Does a Typical Push Notification System Work?](https://assets.bytebytego.com/diagrams/0042-design-a-notification-push-system.png)
 Source: [How Does a Typical Push Notification System Work?](https://bytebytego.com/guides/how-does-a-typical-push-notification-system-work/)
-(poora naksha: event -> notification service -> queue -> worker -> provider FCM / APNs / SMS)
+(poora naksha: ghatna -> notification service -> queue -> worker -> bhejne wali company FCM / APNs / SMS)
 
 ---
 
-## SHURU — poocho + numbers
+## SHURU: pehle poocho, phir numbers
 
 ```
-POOCHO:  "Sirf delivery pipeline, ya preferences + template bhi?"
-         CHANNEL kaunse? push / email / SMS / in-app · user ko din me kitni? (~5)
-         PRIORITY tiers? (OTP turant, marketing ruk sakti)  <- zaroori: ek queue = OTP 10 min late = asli fail
-         real-time ya thodi der chalegi?
+POOCHO:  "Sirf bhejne ki line banani hai, ya user ki pasand + message ke saanche (template) bhi?"
+         kaunse raaste? push / email / SMS / app ke andar · ek user ko din me kitne? (~5)
+         kya sab barabar zaroori? (OTP turant, offer ruk sakta)  <- ek hi line me sab = OTP 10 minute late = asli fail
+         turant chahiye ya thodi der chalegi?
 
-USE CASE: order placed -> push + email · OTP -> SMS turant · sale offer -> push, ruk sakta
-          scope bahar: analytics dashboard
+MISAAL:  order hua -> push + email · OTP -> SMS turant · sale offer -> push, ruk sakta hai
+         bahar: analytics dashboard
 
-NFR (core 6): FANOUT (1 event -> kai user + channel) · ASYNC (producer ruke na) · RELIABLE (retry + DLQ)
-              SCALE (~100K / sec) · PRIORITY (OTP fast lane) · PREFERENCE (user ki marzi)
+KAISA CHALE (NFR, 6 cheez):
+   ek ghatna kai log / raaste · bhejne wala ruke nahi (async) · khoye nahi (dobara koshish + DLQ)
+   bheed jhele (~1 lakh / second) · OTP ki alag tez line · user ki pasand maano
 
-NUMBERS: 100M user x 5 / din = 500M / din = ~5,800 / sec avg · SALE PEAK 10x = ~58,000 / sec
-         fanout se aur: 58K x 3 channel = ~1.75 lakh / sec Kafka me -> partition + worker PEAK pe, avg pe nahi
-         1 worker ~1000 / sec -> peak pe ~175 worker (channel-wise bata)
-         tracking ~90 TB / saal (Cassandra) · Kafka 7 din retention ~3 TB
-         spiky -> QUEUE (Kafka) · write-heavy tracking -> NoSQL
+NUMBERS (andaaza):
+   10 crore user x 5 / din = 50 crore / din -> din me ~1 lakh second -> ~5,800 har second (aam din)
+   sale ke din 10 guna -> ~58,000 har second
+   har ek 3 raaste se -> ~1.75 lakh / second Kafka me. Machines aam din ke hisaab se nahi, sale ke hisaab se.
+   ek worker ~1000 / second bhejta -> sale pe ~175 worker (raaste ke hisaab se bante)
+   kya gaya kya nahi ka hisaab ~90 TB / saal (Cassandra) · Kafka me 7 din ki khabar ~3 TB
+   bheed jhatke me aati -> beech me line (Kafka) · hisaab me likhna bahut -> NoSQL
 ```
 ```
 POOCHEGA: "What if traffic suddenly spikes 10x?"
@@ -51,14 +54,12 @@ BOL:      "Kafka absorbs the burst and workers drain at their own pace. Sale tim
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-## MOCK CUE — har dikkat ek card
-
-> Har dikkat ek card: KAHANI (kya toota) -> ILAAJ -> ANDAR KAISE (dabba andar se kaise chalta) ->
-> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta: dabba lagaya, ab kya). Number = us dikkat ka poora hissa neeche.
+> Har dikkat ek card: KAHANI (kya hua, kaun, kitna) -> ILAAJ -> ANDAR KAISE (ilaaj kyun kaam karta) ->
+> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta hai: dabba lagaya, ab kya?).
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
-SOLUTION: Order service seedha email API call kare
+Order service khud seedha email bhejne wali company (Email API) ko call kare.
 ```
 ```mermaid
 flowchart TD
@@ -71,194 +72,249 @@ flowchart TD
 
 #### [1](#d1) ORDER EMAIL KE INTEZAAR ME RUKA, EMAIL DOWN = ORDER FAIL
 ```
-KAHANI:  Order svc email bhejne tak ruki. Email service down -> order hi fail. Retry koi nahi.
-ILAAJ:   beech me KAFKA. Order svc event daal ke turant laute. Notification svc peeche se padhe.
+KAHANI:  Arpan ne order kiya. Order service ne email bheja aur jawab ka intezaar karti rahi.
+         Ek din email company band thi -> order hi fail ho gaya. Aur email dobara bhejne wala koi nahi.
+
+ILAAJ:   Beech me KAFKA. Order service bas "order hua" ki khabar Kafka me daale aur turant laute.
+         Notification service peeche se Kafka padh ke email bheje.
+
 ANDAR KAISE:
-         Kafka = disk pe append-only log. Notification svc apni jagah (offset) yaad rakhta.
-         email down -> offset aage nahi badha -> wapas aaya to wahin se. Event ~7 din pada rehta.
+         Kafka ek diary hai jo disk pe rehti hai. Notification service yaad rakhti hai kahan tak padha (offset).
+         Email band hai -> wo aage nahi badhti. Email wapas aaya -> wahin se shuru. Khabar ~7 din diary me padi rehti hai.
+
 ISKE BAAD KYA TOOTEGA:
-  - Kafka me likhne se PEHLE Order svc gira (order DB me ban gaya)?
-      -> notification gaya hi nahi. Ilaaj OUTBOX: order + event EK DB transaction me (outbox table),
-         relay baad me Kafka bheje.
-  - Notification svc ke kai box, Kafka kaise baante?
-      -> sab ek consumer group me, har partition ek box ko. Box badhao = partition bat jaate.
-  - Order svc me hi retry kyun nahi?
-      -> order request utni der atki + Order svc gira = retry bhi gaya.
+  - Order DB me ban gaya, par Kafka me likhne se PEHLE Order service gir gayi?
+      -> khabar gayi hi nahi. Ilaaj OUTBOX: order aur khabar EK hi DB transaction me (outbox table),
+         ek relay baad me outbox se Kafka bheje.
+  - Notification service ki kai machine hain, Kafka kaise baante?
+      -> sab ek team (consumer group) me, har line (partition) ek machine ko. Machine badhao, lines bat jaati hain.
+  - Order service me hi dobara koshish (retry) kyun nahi?
+      -> order ki request utni der atki rehti. Aur Order service giri to retry bhi gaya.
 ```
 
-#### [2](#d2) TEEN CHANNEL, SMS DHEEMA TO PUSH / EMAIL BHI ATKE
+#### [2](#d2) TEEN RAASTE, SMS DHEEMA TO PUSH / EMAIL BHI ATKE
 ```
-KAHANI:  push, email, SMS ek hi line me. SMS dheema hua -> push aur email bhi peeche khade.
-ILAAJ:   har channel ka apna Kafka topic + apne worker. push -> FCM / APNs · email -> SES · SMS -> Twilio.
+KAHANI:  Push, email, SMS teeno ek hi line me khade the. SMS company dheemi hui ->
+         SMS wale atke, aur unke peeche push aur email bhi khade reh gaye.
+
+ILAAJ:   Har raaste ki apni line (Kafka topic) aur apne worker.
+         push -> FCM / APNs · email -> SES · SMS -> Twilio.
+
 ANDAR KAISE:
-         SMS dheema -> sirf sms topic ka lag badha, email workers apni speed se.
-         workers alag ginti me (email 10, sms 3) -> jiski zaroorat wahi badhao.
+         SMS dheema -> sirf SMS ki line lambi hui. Email worker apni speed se chalte rahe.
+         Worker alag ginti me (email ke 10, SMS ke 3) -> jiski zaroorat ho wahi badhao.
+
 ISKE BAAD KYA TOOTEGA:
-  - ek event ko teeno channel chahiye -> teen baar banega?
-      -> Notification svc ek event se teen chhote message, har topic me ek. Key = eventId + channel.
-  - push kis phone pe?
-      -> app install pe device token (FCM / APNs) user ke saath save. Token invalid aaya -> hatao.
+  - Ek ghatna ke liye teeno raaste chahiye, to teen baar banegi?
+      -> Notification service ek ghatna se teen chhote message banati hai, har line me ek.
+         Har message ki pehchaan = ghatna ki id + raasta.
+  - Push kis phone pe bhejein?
+      -> app install hote hi phone ka pata (device token) user ke saath save. Pata bekaar nikla -> hata do.
 ```
 
 #### [3](#d3) SMS BAND THA, PHIR BHI RAAT 2 BAJE BHEJA
 ```
-KAHANI:  user ne SMS band kiya tha. Phir bhi raat 2 baje SMS.
-ILAAJ:   bhejne se pehle: PREFERENCE (kaunsa channel on, quiet hours, unsubscribe) -> TEMPLATE (bhasha) -> channel.
+KAHANI:  Arpan ne SMS band kiya tha aur raat 10 se subah 8 "mat bhejo" lagaya tha. Phir bhi raat 2 baje SMS aaya.
+
+ILAAJ:   Bhejne se pehle teen cheez dekho: user ki PASAND (kaunsa raasta chalu, kab mat bhejo, kya band kiya)
+         -> message ka SAANCHA (template, sahi bhasha me) -> phir raasta.
+
 ANDAR KAISE:
-         user 123 = push ON, email ON, SMS OFF, quiet 10pm-8am -> push + email, SMS skip.
-         pref + template har event pe chahiye -> cache.
+         Arpan = push chalu, email chalu, SMS band, raat 10-8 shaanti -> sirf push + email, SMS chhodo.
+         Pasand aur saancha har ghatna pe chahiye -> unhe cache me rakho.
+
 ISKE BAAD KYA TOOTEGA:
-  - quiet hours me aaya, phenk doge?
-      -> nahi. Marketing subah tak rok (delay / schedule). OTP / security quiet hours me bhi jaata.
-  - user ne pref badla, cache purana?
-      -> update pe cache key DEL + chhota TTL.
+  - Shaanti ke waqt me khabar aayi, to phenk doge?
+      -> nahi. Offer ko subah tak rok lo. OTP / security wali shaanti me bhi jaati hai.
+  - Arpan ne pasand badli, cache purana hai?
+      -> pasand badalte hi cache se hatao, aur cache ki umar chhoti rakho.
 ```
 
-#### [4](#d4) ACK KHO GAYA, RETRY, USER KO DO EMAIL
+#### [4](#d4) JAWAB KHO GAYA, DOBARA BHEJA, USER KO DO EMAIL
 ```
-KAHANI:  provider ne email bhej diya, par uska "ho gaya" raaste me kho gaya -> retry -> user ko DO email.
-ILAAJ:   worker IDEMPOTENT: bhejne se pehle Redis SET eventId NX. "OK" -> bhejo · nil -> pehle ho chuka, skip.
+KAHANI:  Worker ne email company ko bheja. Company ne email bhej bhi diya, par uska "ho gaya" wala jawab
+         raaste me kho gaya. Worker ko laga fail hua -> dobara bheja -> Arpan ko DO email.
+
+ILAAJ:   Bhejne se pehle Redis me ek parchi lagao: "ye khabar le li" (SET khabar_ki_id NX).
+         Parchi lag gayi -> bhejo. Pehle se lagi thi -> koi aur bhej chuka, chhodo.
+
 ANDAR KAISE:
-         Kafka at-least-once -> wahi event dobara aa sakta. Key = event ki APNI id (har retry pe wahi).
-         Har baar naya UUID = dedup kabhi pakdega hi nahi.
+         Kafka ek khabar kabhi-kabhi do baar de deta hai. Isliye parchi khabar ki APNI id se lagti hai,
+         jo har baar wahi rehti hai. Har baar naya random id banaya to dohraav kabhi pakda hi nahi jaayega.
+
 ISKE BAAD KYA TOOTEGA:
   - Redis hi gira?
-      -> DB me UNIQUE(eventId, channel). Redis sirf tez raasta, pakka DB.
-  - 24 ghante baad wahi event phir aaya (key expire)?
-      -> dobara jaayega. Pakka dedup = DB UNIQUE.
+      -> DB me bhi niyam: (khabar_ki_id, raasta) ek hi baar (UNIQUE). Redis tez raasta, DB pakka.
+  - Parchi 24 ghante me mit gayi, aur wahi khabar phir aa gayi?
+      -> dobara chali jaayegi. Pakka rokna DB ka UNIQUE niyam karta hai.
 ```
 
-#### [5](#d5) KEY LAGA DI, PAR PROVIDER CALL FAIL (GALTI WAPAS wala)
+#### [5](#d5) PARCHI LAGA DI, PAR BHEJNA FAIL HO GAYA
 ```
-KAHANI:  SET NX laga diya, phir provider FAIL. Retry aaya, key pehle se -> SKIP. Email gaya hi nahi,
-         system maan raha "bhej diya" -> MESSAGE KHO GAYA.
-ILAAJ:   key ki DO haalat:
-         bhejne se pehle  SET key "sending" NX EX 60   (chhoti expiry)
-         success pe       SET key "sent" EX 86400       (lambi)
-ANDAR KAISE:
-         send fail, worker zinda   -> key turant DELETE -> retry chalega.
-         worker beech me MAR gaya  -> "sending" 60 sec me khud EXPIRE -> retry chalega.
-         retry ko "sending" mila   -> thoda ruko, dobara dekho.
-         SKIP sirf "sent" pe.
+KAHANI:  Arpan ka OTP bhejna hai. Worker-A ne Redis me parchi lagayi "OTP-123: bhej diya", phir SMS company ko call kiya.
+         Call FAIL ho gayi (ya Worker-A beech me hi mar gaya). OTP gaya hi nahi.
+         Kafka ne khabar dobara di, Worker-B aaya, parchi dekhi "bhej diya" -> chhod diya.
+         OTP kabhi nahi gaya, aur system soch raha hai bhej diya. KHABAR KHO GAYI.
+
+DIKKAT KI JAD:  parchi ek hi baat bolti thi, "bhej diya". Par asal me Worker-A ne sirf KOSHISH shuru ki thi.
+
+ILAAJ:   Parchi pe do alag baatein likho:
+           bhejne se PEHLE:      "BHEJ RAHA HOON" (SENDING) + chhoti umar, 60 second
+           company ne OK bola:   "BHEJ DIYA" (SENT) + lambi umar, 1 din
+
+ANDAR KAISE (har haalat me kya hota):
+   Worker-A ka call fail, par Worker-A zinda   -> wo khud parchi hata deta hai -> agli koshish chal jaati hai.
+   Worker-A beech me hi MAR gaya               -> "BHEJ RAHA HOON" 60 second me khud mit jaati hai -> agli koshish chal jaati hai.
+   Worker-B ko "BHEJ RAHA HOON" mila           -> koi abhi bhej raha hai, thoda ruko, phir dekho.
+   Worker-B ko "BHEJ DIYA" mila                -> pakka chala gaya -> chhodo.
+   Ek line me: CHHODNA sirf "BHEJ DIYA" pe. "BHEJ RAHA HOON" = adhoora, pata nahi gaya ya nahi.
+
 ISKE BAAD KYA TOOTEGA:
-  - sirf "fail pe key hata do" kaafi nahi?
-      -> worker hi crash hua to key hatane wala koi nahi. Isliye chhoti expiry.
-  - "sending" 60 sec chhoti pad gayi?
-      -> TTL provider timeout se lambi (timeout 10 sec -> TTL 60).
-  - provider ne bheja par humein jawab nahi aaya?
-      -> do email ho sakte. SES / Twilio idempotency key nahi lete -> chhota risk maana hua.
+  - "Fail hua to parchi hata do" itna kaafi kyun nahi?
+      -> worker hi mar gaya to hatane wala koi nahi bacha. Isliye "BHEJ RAHA HOON" ki umar chhoti, khud mit jaaye.
+  - 60 second chhote pad gaye (company 70 second me jawab de)?
+      -> umar hamesha company ke timeout se lambi rakho (timeout 10 second -> umar 60 second).
+  - Company ne bhej diya tha, bas jawab aane se pehle worker mara?
+      -> tab do baar ja sakta hai. SES / Twilio aisi parchi khud nahi rakhte, to ye chhota risk maana hua hai.
+         OTP do baar aana chalega, par na aana nahi chalega.
 ```
 
-#### [6](#d6) PROVIDER FAIL, HUM TURANT RETRY MAAR RAHE
+#### [6](#d6) COMPANY GIR RAHI, HUM TURANT DOBARA MAAR RAHE
 ```
-KAHANI:  provider gir raha, aur hum har second retry maar ke uspe aur hathoda.
-ILAAJ:   BACKOFF (1s, 2s, 4s, 8s) + JITTER (thoda random). Had paar -> DLQ + alert.
+KAHANI:  SMS company pehle se pareshaan hai, aur hum har second dobara bhej ke uspe aur hathoda maar rahe hain.
+
+ILAAJ:   Dobara bhejne me har baar zyada ruko (1, 2, 4, 8 second = BACKOFF) + thoda random (JITTER).
+         Had paar -> DLQ me daalo + alert.
+
 ANDAR KAISE:
-         wait = base x 2^n + random. Kafka offset kaam ke BAAD commit (crash = dobara, khoya nahi).
-         producer acks=all (sab copies ne liya tabhi "ok").
+         Rukne ka time = shuru ka time x 2^koshish + thoda random. Random isliye ki sab worker ek saath na lautein.
+         Kafka ko "padh liya" (offset) KAAM HONE KE BAAD bolo: worker beech me mara to khabar dobara aayegi, khoyegi nahi.
+         Kafka me likhte waqt "saari copies ne le liya tabhi OK" (acks=all).
+
 ISKE BAAD KYA TOOTEGA:
-  - Kafka me delay hota nahi, retry queue kaise?
-      -> alag topics (retry-1m, retry-10m). Worker message ka "kab chalana" dekhe, abhi nahi to ruke.
-  - DLQ me pade ka kya?
-      -> alert + dashboard, theek karke wapas main topic me daalne ka tool (replay).
-  - message khoye nahi, kaise pakka?
-      -> acks=all + offset baad me commit + idempotent worker + DLQ. Drop kabhi nahi.
+  - Kafka me "10 minute baad chalana" hota hi nahi, to ruk ke dobara kaise?
+      -> alag lines banao (retry-1m, retry-10m). Worker message pe likha "kab chalana" dekhe, abhi nahi to ruke.
+  - DLQ me padi khabaron ka kya?
+      -> alert + dashboard, aur theek karke wapas main line me daalne ka tool.
+  - Khabar kabhi khoye nahi, kaise pakka?
+      -> saari copies ne liya tabhi OK + kaam ke baad offset + parchi + DLQ. Phenkna kabhi nahi.
 ```
 
-#### [7](#d7) PROVIDER DHEEMA, SAARE WORKER 30 SEC ME PHASE
+#### [7](#d7) COMPANY DHEEMI, SAARE WORKER 30 SEC ME PHANSE
 ```
-KAHANI:  provider dheema, har call 30 sec atki -> saare worker phase, system thapp. Dheema provider
-         band provider se bhi BURA.
-ILAAJ:   chhota TIMEOUT + har channel ke DO provider (SES + SendGrid, Twilio + SNS) + CIRCUIT BREAKER.
-ANDAR KAISE:
-         CLOSED --kai fail--> OPEN (call band, backup pe) --~30 sec--> HALF-OPEN (1-2 test call)
-         -> chali to CLOSED, fail to wapas OPEN.
+KAHANI:  SMS company band nahi hui, bas dheemi ho gayi. Har call 30 second atki.
+         Saare worker usi me phans gaye, baaki kaam ruk gaya. Dheemi company band company se bhi buri.
+
+ILAAJ:   Chhota TIMEOUT + har raaste ki DO company (SES + SendGrid, Twilio + SNS) + CIRCUIT BREAKER.
+
+ANDAR KAISE (circuit breaker = ghar ka fuse):
+         sab theek (CLOSED) -> kai baar fail -> fuse uda (OPEN): us company ko call band, doosri company pe bhejo
+         -> ~30 second baad (HALF-OPEN): 1-2 test call -> chali to wapas CLOSED, fail to phir OPEN.
+
 ISKE BAAD KYA TOOTEGA:
-  - dono provider down?
-      -> message queue me ruke (drop nahi), backoff. OTP ke liye alert.
-  - push ka backup?
-      -> nahi hota: FCM = Android, APNs = iOS, alag platform.
+  - Dono company band?
+      -> khabar line me ruki rahe (phenko nahi), backoff se koshish. OTP ke liye alert.
+  - Push ki doosri company?
+      -> nahi hoti. Android = FCM, iPhone = APNs, alag-alag.
 ```
 
-#### [8](#d8) OTP MARKETING KE 50,000 KE PEECHE
+#### [8](#d8) OTP OFFER KE 50,000 MESSAGE KE PEECHE
 ```
-KAHANI:  ek topic me sab. User ka OTP 50,000 marketing message ke peeche khada.
-ILAAJ:   PRIORITY = alag Kafka topic + alag worker: high (OTP) · medium (order) · low (marketing).
+KAHANI:  Ek hi line me sab. Usi waqt 50,000 offer wale message line me the. Arpan ka OTP unke peeche khada raha,
+         10 minute baad aaya. Tab tak login ka time khatam.
+
+ILAAJ:   Zaroorat ke hisaab se alag line (Kafka topic) aur alag worker: tez (OTP) · beech (order) · dheemi (offer).
+
 ANDAR KAISE:
-         Kafka me priority hoti hi nahi -> isliye alag topic. Channel queue bhi sms-high / sms-low.
+         Kafka me "ye zaroori hai, pehle bhejo" hota hi nahi -> isliye alag line.
+         Raaste ki line bhi alag: sms-tez / sms-dheemi.
+
 ISKE BAAD KYA TOOTEGA:
-  - high khaali, low me bheed -> high workers baithe?
-      -> haan, thoda bekaar. Khaali hon to medium bhi padh lein (kabhi ulta nahi).
-  - OTP ka bhi provider limit laga?
-      -> OTP ke liye alag provider account / short code, marketing usse kha na sake.
+  - Tez line khaali, dheemi me bheed -> tez wale worker baithe rahenge?
+      -> haan, thoda bekaar. Khaali hon to beech wali bhi padh lein (par ulta kabhi nahi).
+  - OTP bhi company ki limit me phans gaya?
+      -> OTP ke liye company ka alag account / alag number, offer use kha na sake.
 ```
 
-#### [9](#d9) BURST, PROVIDER NE 429 DIYA
+#### [9](#d9) EK SAATH BAHUT, COMPANY NE 429 DIYA
 ```
-KAHANI:  ek saath bahut message -> provider ne limit pe 429 -> sab fail.
-ILAAJ:   worker KHUD raftaar kam kare (token bucket), provider ki limit ke andar. 429 -> backoff, Retry-After
-         maano. Message queue me ruke, drop nahi. (Yahan fail-open nahi: provider ka darwaza hum nahi kholte.)
+KAHANI:  Sale shuru, ek saath laakhon message. SMS company bolti "itna nahi" (429) -> sab fail.
+
+ILAAJ:   Worker khud apni speed kam kare (token bucket), company ki limit ke andar.
+         429 aaya -> ruko, company jitna bole utna (Retry-After). Message line me ruke, phenko nahi.
+         (Yahan "khol do" wala raasta nahi, company ka darwaza hum nahi khol sakte.)
+
 ANDAR KAISE:
-         100 worker, har ek poori rate le = 100x -> phir 429. Isliye Redis me EK shared bucket,
-         har worker bhejne se pehle token le (Lua, atomic).
-         limits: FCM ~10K / sec · SES naya account ~14 / sec · Twilio short code ~100 / sec.
+         100 worker, har ek ne poori limit li = 100 guna -> phir 429.
+         Isliye Redis me EK saanjhi baalti, har worker bhejne se pehle usse token le (Lua, ek jhatke me).
+         Limits: FCM ~10,000 / second · SES naya account ~14 / second · Twilio short code ~100 / second.
+
 ISKE BAAD KYA TOOTEGA:
-  - workers badhe (autoscale)?
-      -> shared bucket: kitne bhi worker, total rate wahi.
-  - limit hi kam (SES 14 / sec) aur 1 lakh email?
-      -> limit badhwao + kai account / provider. Tab tak queue dheere khaali.
+  - Worker apne aap badh gaye?
+      -> baalti saanjhi hai: kitne bhi worker ho, kul speed wahi.
+  - Limit hi kam hai (SES 14 / second) aur 1 lakh email bhejne hain?
+      -> limit badhwao + kai account / company. Tab tak line dheere-dheere khaali.
 ```
 
-#### [10](#d10) "BHEJ DIYA" != "MIL GAYA"
+#### [10](#d10) "BHEJ DIYA" KA MATLAB "MIL GAYA" NAHI
 ```
-KAHANI:  provider ne le liya. User tak pahuncha ya nahi, pata hi nahi.
-ILAAJ:   provider WEBHOOK (delivered / bounced / failed) -> TRACKING DB. Push me app khud ack bheje.
+KAHANI:  SMS company ne message le liya. Par Arpan ke phone tak pahuncha ya nahi, humein pata hi nahi.
+
+ILAAJ:   Company khud batati hai (WEBHOOK): delivered / bounced / failed -> hamare hisaab (Tracking DB) me likho.
+         Push me app khud "mil gaya" bhejti hai.
+
 ANDAR KAISE:
-         bhejte waqt provider ka message_id (SES MessageId / Twilio SID) apne notificationId ke saath save.
-         webhook aaya -> message_id se row -> status update. Tracking = Cassandra (bahut write, simple row).
+         Bhejte waqt company ka message number (SES MessageId / Twilio SID) apne notification ke saath save.
+         Webhook aaya -> us number se row dhoondho -> haalat badlo. Hisaab = Cassandra (likhna bahut, seedhi row).
+
 ISKE BAAD KYA TOOTEGA:
-  - webhook aaya hi nahi?
-      -> kuch ghante baad "sent" pe atke message ke liye EK baar status API poll (sirf bache hue).
-  - nakli webhook?
-      -> provider ka signature (HMAC) verify, warna reject.
-  - poll hi kyun nahi?
-      -> lakhon message x har kuch sec = limit + kharcha. Webhook tabhi jab kuch badla.
+  - Webhook aaya hi nahi?
+      -> kuch ghante baad jo "bhej diya" pe atke hain, sirf unke liye ek baar company se poochho.
+  - Koi nakli webhook bhej de?
+      -> company ka hastakshar (HMAC signature) jaancho, warna mana.
+  - Webhook ki jagah baar-baar khud poochte raho?
+      -> laakhon message x har kuch second = limit + kharcha. Webhook tabhi aata jab kuch badla.
 ```
 
-#### [11](#d11) 1 CRORE LOGON KO EK SAATH OFFER (CAMPAIGN)
+#### [11](#d11) 1 CRORE LOGON KO EK SAATH OFFER
 ```
-KAHANI:  "Diwali offer sabko" = 1 crore user. Ek-ek bheja to API ghanton atki, OTP bhi peeche, provider limit tooti.
-ILAAJ:   Campaign svc turant 202. BATCH job users ko 1000-1000 ke tukdon me padh ke Kafka me (10,000 message).
-         Workers: pref filter -> template -> LOW lane -> provider ki raftaar se. Key = (campaign_id, user_id).
+KAHANI:  "Diwali offer sabko" = 1 crore user. Ek-ek karke bheja -> request ghanton atki, OTP bhi peeche,
+         company ki limit tooti.
+
+ILAAJ:   Campaign service turant bolti "le liya" (202). Ek BATCH job users ko 1000-1000 ke tukdon me padh ke
+         Kafka me daale (10,000 message). Workers: pasand dekho -> saancha -> DHEEMI line -> company ki speed se.
+         Har message ki pehchaan = (campaign_id, user_id).
+
 ANDAR KAISE:
-         SELECT ... WHERE id > last_id ORDER BY id LIMIT 1000 (cursor, OFFSET nahi). last_id campaign row me save
-         -> job gira to wahin se. 10,000 / sec raftaar = 1 crore ~17 min (jaan-boojh ke phailaya).
-         Push me sabko same message -> FCM TOPIC: EK call, aage Google pahunchata.
+         "id > aakhri_id, 1000 lao" (cursor), har tukde ke baad aakhri_id campaign row me save
+         -> job gira to wahin se shuru. 10,000 / second ki speed se 1 crore ~17 minute (jaan-boojh ke phailaya).
+         Push me sabko ek hi message -> FCM ka TOPIC: ek call, aage Google sabko pahunchata hai.
+
 ISKE BAAD KYA TOOTEGA:
-  - worker 1000 me se 600 bhej ke gira?
-      -> tukda dobara aayega, (campaign_id, user_id) key se pehle ke 600 skip.
-  - galat offer chala gaya, rokna hai?
-      -> campaign row status = CANCELLED. Worker har tukde se pehle dekhe.
+  - Worker 1000 me se 600 bhej ke gira?
+      -> tukda dobara aayega, (campaign_id, user_id) se pehle ke 600 chhoot jaayenge.
+  - Galat offer chala gaya, rokna hai?
+      -> campaign row pe "CANCELLED". Worker har tukde se pehle dekhe.
   - 1000 ka tukda hi kyun?
-      -> 1 crore alag event = bojh. 1 bada message = ek worker pe atka. 1000 = parallel bhi, retry chhota bhi.
-  - ek user ke message ka kram (placed ke baad shipped)?
-      -> partition key = user_id -> ek user ke event ek partition me, kram me.
+      -> 1 crore alag khabar = bojh. 1 bahut bada message = ek worker pe atka. 1000 = saath-saath bhi, dobara bhi chhota.
+  - Ek user ke message ka kram ("order hua" ke baad "ship hua")?
+      -> line ka chunaav user_id se -> ek user ki saari khabar ek line me, kram se.
 ```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
-  Order / Campaign Svc -> Kafka (high / med / low) -> Notification Svc (pref + template, cache)
-  -> push / email / SMS queue -> worker (Redis SET NX · backoff · circuit breaker · throttle)
-  -> 2 provider -> user · webhook -> Tracking DB · fail -> DLQ
+  Order / Campaign Svc -> Kafka (tez / beech / dheemi) -> Notification Svc (pasand + saancha, cache)
+  -> push / email / SMS ki line -> worker (parchi · ruk ke dobara · fuse · speed limit)
+  -> 2 company -> user · webhook -> Tracking DB · fail -> DLQ
 
-DB:  Tracking = Cassandra -> write bahut, simple row, strong consistency nahi chahiye, aaram se scale
-     Pref / Template = chhota, har event pe padha jaata -> cache (dikkat 3)
+DB:  Tracking = Cassandra -> likhna bahut, seedhi row, pakki consistency nahi chahiye, aaram se badhta
+     Pasand / saancha = chhota, har ghatna pe padha jaata -> cache (dikkat 3)
 
 END ME POOCHEGA:
-  "10x?"                   -> Kafka partition pehle se extra · worker badhao · provider ki limit pe throttle
-  "SPOF?"                  -> provider (do provider), Kafka (replication), Redis (DB UNIQUE backup)
-  "Chal raha, kaise pata?" -> webhook delivered / failed · Kafka consumer lag · DLQ size pe alert
-  "Ek user ka order?"      -> partition key = user_id -> 'placed' kabhi 'shipped' ke baad nahi
+  "10 guna?"              -> Kafka ki lines pehle se zyada · worker badhao · company ki limit pe speed
+  "Kahan se gir sakta?"   -> company (do company), Kafka (copies), Redis (DB ka UNIQUE peeche)
+  "Chal raha, kaise pata?" -> webhook se delivered / failed · Kafka me kitna pending · DLQ kitna bhara · alert
+  "Ek user ka kram?"      -> line user_id se -> "order hua" kabhi "ship hua" ke baad nahi
 ```
 
 AAKHRI DABBE ki tasveer:
@@ -312,54 +368,18 @@ flowchart TD
 ```
 
 ---
+## ════ DETAIL: HAR DIKKAT KI INTERVIEW LINE + TASVEER ════
 
-## ════ DETAIL: HAR DIKKAT KA POORA EXPLANATION ════
-
-> Card me koi baat samajh na aaye, to uska poora "kaise / kyun" aur diagram yahan hai.
-
----
-
-## DABBA 0 — sabse simple
-
-```
-SOLUTION: Order service seedha email API call kare
-```
-```mermaid
-flowchart TD
-    n_Order_Svc["Order Svc"]
-    n_Email_API["Email API"]
-    n_USER["USER"]
-    n_Order_Svc --> n_Email_API
-    n_Email_API --> n_USER
-```
+> Card me poori kahani hai. Yahan har dikkat ki ek English line (interview me bolne ke liye) aur us waqt tak ka diagram.
 
 ---
 
 <a id="d1"></a>
 
-## DIKKAT 1 — Order email ke intezaar me ruka, email down = ORDER fail
+## DIKKAT 1 — order email ke intezaar me ruka
 
 ```
-DIKKAT:   Order service email bhejne tak ruki rehti; email service down = order hi fail. Koi retry nahi.
-
-SOLUTION: (1) Beech me QUEUE: Order service event Kafka pe daal ke turant laut jaaye.
-          (2) Email down -> event queue me pada rahega, wapas aane pe nikal jaayega.
-
-NAYA:     Kafka · Notification Svc
-
-KAISE:    Kafka = disk pe append-only log (topic). Order svc event ko end me likh ke laut aata
-          Notification svc apni jagah (offset) yaad rakhta -> wahan se padhta. Email down -> offset aage nahi
-          badha -> wapas aane pe wahin se. Event retention tak (jaise 7 din) pada rehta
-KYUN YE:  Order svc ke andar hi retry kyun nahi -> order request utni der atki + Order svc gira = retry bhi gaya
-          SQS / RabbitMQ bhi chalte; Kafka isliye ki bahut zyada event + replay + partition se ek user ka kram
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "Kafka me event likhne se pehle Order svc gira (order DB me ban gaya)?"
-   -> order bana, notification gaya hi nahi. Ilaaj = outbox: order + event EK DB transaction me, relay
-      baad me Kafka bheje
-  "Notification svc kitne box? Kafka ko kaise baant-te?"
-   -> sab ek consumer group me; har partition ek box ko -> box badhao = partitions bat jaate
+BOL: "The order service publishes an event to Kafka and returns; the notification service consumes it in the background, so a slow or down email provider never fails an order. To avoid losing the event if the service dies between the DB write and Kafka, I use the outbox pattern."
 ```
 ```mermaid
 flowchart TD
@@ -378,27 +398,10 @@ flowchart TD
 
 <a id="d2"></a>
 
-## DIKKAT 2 — teen channel, SMS slow to push / email bhi atke
+## DIKKAT 2 — teen raaste, SMS dheema to sab atke
 
 ```
-DIKKAT:   push, email, SMS teeno ek line me -> SMS slow hua to push aur email bhi atke.
-
-SOLUTION: (1) Notification service FANOUT kare: har channel ki apni queue + apne worker.
-          (2) Push -> FCM / APNs · email -> SES / SendGrid · SMS -> Twilio / SNS.
-
-NAYA:     Push / Email / SMS queue · Push / Email / SMS worker
-BADLA:    Email API -> FCM / SES / Twilio (har channel ka provider)
-
-KAISE:    har channel ka alag Kafka topic (push / email / sms) + apna consumer group (apne workers)
-          SMS dheema -> sirf sms topic ka lag badhta, email workers apni speed se
-          har channel ke workers alag ginti me (email 10, sms 3) -> jiski zaroorat, wahi badhao
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "Ek event ko teen channel chahiye -> teen baar banega?"
-   -> Notification svc ek event se teen chhote message banata, har topic me ek; har ek ki apni key (eventId + channel)
-  "Push token kahan se (kis phone pe bhejein)?"
-   -> app install pe device token (FCM / APNs) user ke saath save; token invalid aaya to hata do
+BOL: "Each channel has its own Kafka topic and its own workers, so a slow SMS provider only grows the SMS backlog while push and email keep flowing, and I scale each channel separately."
 ```
 ```mermaid
 flowchart TD
@@ -431,28 +434,10 @@ flowchart TD
 
 <a id="d3"></a>
 
-## DIKKAT 3 — user ko SMS chahiye hi nahi tha, aur raat 2 baje bhej diya
+## DIKKAT 3 — SMS band tha, phir bhi raat 2 baje
 
 ```
-DIKKAT:   user ne SMS band kar rakha tha, phir bhi bhej diya, aur raat 2 baje.
-
-SOLUTION: Bhejne se pehle Notification service:
-          (1) PREFERENCE dekhe: kaunse channel on, quiet hours, kis topic se unsubscribe.
-          (2) TEMPLATE le: message ka saancha, user ki bhasha me.
-          (3) CHANNEL tay kare.
-          Preference + template har event pe chahiye -> cache.
-
-NAYA:     User-pref DB (user ko kaunsa channel, quiet hours) · Template DB (message ka saancha, {{orderId}} jaisa)
-```
-```
-BOARD PE: user 123 = push ON · email ON · SMS OFF · quiet 10pm-8am
-          template: "Order #{{orderId}} confirmed" (Hindi / English) -> channel: push + email (SMS skip)
-
-AGLA SAWAAL (tere jawab se):
-  "Quiet hours me aaya notification phenk doge?"
-   -> nahi. Marketing -> subah tak rok (delay queue / schedule). OTP / security -> quiet hours me bhi
-  "User ne pref badla, cache purana?"
-   -> pref update pe cache key DEL + chhota TTL
+BOL: "Before sending, the notification service checks the user's preferences, opted-out channels and quiet hours, then fills the template in their language; both are cached. Marketing waits until morning, while OTP and security alerts go through quiet hours."
 ```
 ```mermaid
 flowchart TD
@@ -489,31 +474,10 @@ flowchart TD
 
 <a id="d4"></a>
 
-## DIKKAT 4 — ack kho gaya, retry hua, user ko DO email
+## DIKKAT 4 — jawab kho gaya, user ko do email
 
 ```
-DIKKAT:   provider ne message le liya, par uska "ho gaya" raaste me kho gaya -> retry -> user ko DO email.
-
-SOLUTION: (1) Worker IDEMPOTENT: bhejne se pehle Redis me event ID "set if not exists" (atomic).
-              Naya -> bhejo · pehle se -> skip.
-          (2) Key = event ki APNI ID (har retry pe wahi). Har baar naya UUID = dedup kabhi nahi pakdega.
-          (Wahi race aur wahi ilaaj jo payment idempotency me.)
-
-NAYA:     Redis (idempotency key)
-```
-```
-BOARD PE: SET notification:abc123 sent NX EX 86400
-          "OK" -> naya -> BHEJO · nil -> pehle ho chuka -> SKIP   (SET ... NX "OK" deta; "1" purane SETNX ka jawab)
-
-POOCHEGA: "What if the same event comes twice / the worker retries?"
-BOL:      "Delivery is at-least-once, so the worker is idempotent: it does SET NX on the event id in Redis
-           and skips if the key already exists."
-
-AGLA SAWAAL (tere jawab se):
-  "Redis hi gir gaya, idempotency kaise?"
-   -> DB me UNIQUE(eventId, channel) wali table, Redis sirf tez raasta
-  "24 ghante ke baad wahi event aaya?"
-   -> key expire ho chuki -> dobara bhejega. Kafka retention 7 din (replay ke liye) rehne do; pakka dedup = DB UNIQUE(eventId, channel), Redis key sirf tez raasta
+BOL: "Kafka is at-least-once, so workers are idempotent: before sending they set the event id in Redis with SET NX and skip if it's already there, with a UNIQUE event-and-channel constraint in the DB as the hard guarantee."
 ```
 ```mermaid
 flowchart TD
@@ -554,37 +518,10 @@ flowchart TD
 
 <a id="d5"></a>
 
-## DIKKAT 5 — key laga di, par provider call FAIL
+## DIKKAT 5 — parchi laga di, par bhejna fail
 
 ```
-DIKKAT:   dedup key laga di, phir provider call FAIL. Retry aaya, key pehle se -> skip.
-          Email gaya hi nahi, par system maan raha "bhej diya" = MESSAGE KHO GAYA.
-
-SOLUTION: (Sirf "fail pe key hata do" kaafi nahi: worker hi crash hua to key hatane wala koi nahi.)
-          Key ki DO haalat:
-          (1) Bhejne se pehle "sending" (chhoti expiry). Success pe "sent" (lambi expiry).
-          (2) Worker beech me mara -> "sending" khud mit jaata -> retry chal jaata.
-          (3) Send fail + worker zinda -> key turant hatao.
-          Retry ko "sending" mile -> thoda ruk ke dobara. Skip sirf "sent" pe.
-
-NAYA:     koi dabba nahi
-```
-```
-BOARD PE: SET NX -> "OK" · provider FAIL · retry: SET NX -> nil -> SKIP -> message kho gaya
-          pehle:      SET abc-123 "sending" NX EX 60     (chhoti expiry)
-          success pe: SET abc-123 "sent" EX 86400        (lambi)
-
-POOCHEGA: "You set the idempotency key, but then the send failed. Now what?"
-DHYAAN:   payment me bhi yahi: key lagi, PSP fail -> IN_PROGRESS -> DONE
-BOL:      "I don't want the key to block the retry. I set it as 'sending' with a short TTL, and mark it
-           'sent' only after the provider accepts. If the send fails I delete the key; if the worker dies, the
-           short TTL expires it — either way the retry goes through. I only skip when the key says 'sent'."
-
-AGLA SAWAAL (tere jawab se):
-  "60 sec ki 'sending' chhoti ho gayi (provider 70 sec me jawab de)?"
-   -> TTL provider timeout se lambi rakho (timeout 10 sec -> TTL 60)
-  "Provider ne bheja par humein jawab nahi aaya?"
-   -> phir bhi do email ho sakte. jo provider idempotency key leta ho wahan bhejo; SES / Twilio pe ye nahi -> duplicate ka chhota risk maana hua
+BOL: "I don't want the key to block the retry. I set it as 'sending' with a short TTL, and mark it 'sent' only after the provider accepts. If the send fails I delete the key; if the worker dies, the short TTL expires it — either way the retry goes through. I only skip when the key says 'sent'."
 ```
 ```mermaid
 flowchart TD
@@ -625,32 +562,10 @@ flowchart TD
 
 <a id="d6"></a>
 
-## DIKKAT 6 — provider fail ho raha, hum turant retry maar rahe
+## DIKKAT 6 — company gir rahi, hum turant dobara maar rahe
 
 ```
-DIKKAT:   provider fail ho raha aur hum turant retry maar rahe -> marte hue provider pe aur hathoda.
-
-SOLUTION: (1) Retry ke beech BACKOFF (dugna intezaar) + JITTER (thoda random) -> sab ek saath wapas nahi.
-          (2) Fail -> retry queue -> had paar -> DLQ -> manual review + alert (galat email, invalid phone).
-          (3) Kafka offset kaam ke BAAD commit (crash = event dobara, khoya nahi). Producer acks=all.
-
-NAYA:     DLQ
-```
-```
-BOARD PE: 1s -> 2s -> 4s -> 8s · wait = base x 2^n + random(0..1000ms)
-          main queue -> fail -> retry queue (delayed) -> max retry -> DLQ
-
-POOCHEGA: "How do you make sure no message is lost?"
-BOL:      "Producers write with acks=all to replicated Kafka. Workers commit the offset only after the
-           provider call, so a crash means a redelivery, not a loss — and that's why they're idempotent.
-           Retries back off with jitter, and after max retries the message goes to a DLQ, never dropped."
-
-AGLA SAWAAL (tere jawab se):
-  "Kafka me 'delayed' retry queue kaise banti (Kafka me delay nahi)?"
-   -> alag retry topics (retry-1m, retry-10m). Worker message me 'kab chalana' ka time dekhta, abhi nahi to
-      ruk ke / dobara daal deta
-  "DLQ me pade message ka kya?"
-   -> alert + dashboard, theek karke wapas main topic me daalne ka tool (replay)
+BOL: "Retries use exponential backoff with jitter through separate retry topics, offsets are committed only after processing, the producer uses acks=all, and after max retries the message goes to a DLQ with an alert and a replay tool, so nothing is dropped."
 ```
 ```mermaid
 flowchart TD
@@ -695,32 +610,10 @@ flowchart TD
 
 <a id="d7"></a>
 
-## DIKKAT 7 — provider slow, saare worker uske 30 sec timeout me phase
+## DIKKAT 7 — company dheemi, saare worker phanse
 
 ```
-DIKKAT:   provider slow, har call 30 sec atki -> saare worker phase, system thapp.
-          Slow provider down provider se bhi BURA.
-
-SOLUTION: (1) Har provider call pe CHHOTA timeout.
-          (2) Har channel ke do provider (SMS: Twilio + SNS · email: SES + SendGrid).
-          (3) CIRCUIT BREAKER: kai baar fail -> circuit khula, us provider pe call band, backup pe bhejo.
-              Thodi der baad ek test call; theek to wapas chalu.
-
-BADLA:    email + SMS ka ek provider -> do (SES + SendGrid · Twilio + SNS); push ka backup nahi (FCM = Android, APNs = iOS, alag platform)
-```
-```
-BOARD PE: CLOSED --N fail--> OPEN (call band, backup pe) --thodi der--> HALF-OPEN (ek test call)
-          theek -> CLOSED · fail -> wapas OPEN
-
-POOCHEGA: "What if the provider is slow?"
-BOL:      "Short timeouts, a circuit breaker per provider, and a second provider per channel. When the
-           circuit opens, workers stop calling it and route to the backup instead of hanging."
-
-AGLA SAWAAL (tere jawab se):
-  "Circuit OPEN se HALF-OPEN kab?"
-   -> tay waqt (jaise 30 sec) baad ek-do test call. Chali to CLOSED, fail to phir OPEN
-  "Dono provider down?"
-   -> message queue me ruke (drop nahi), backoff, circuit khulne ka intezaar; OTP ke liye alert
+BOL: "A slow provider is worse than a dead one, so calls have short timeouts, each channel has two providers, and a circuit breaker opens after repeated failures, sends traffic to the backup, and probes the primary again after about thirty seconds."
 ```
 ```mermaid
 flowchart TD
@@ -765,31 +658,10 @@ flowchart TD
 
 <a id="d8"></a>
 
-## DIKKAT 8 — OTP marketing ke 50,000 message ke peeche
+## DIKKAT 8 — OTP offer ke peeche
 
 ```
-DIKKAT:   ek hi topic me sab -> OTP marketing ke 50,000 message ke peeche khada.
-
-SOLUTION: (1) PRIORITY LANES: alag Kafka topic + alag worker pool -> OTP (ms) · order update (sec) ·
-              marketing (minute). Kafka me priority hoti hi nahi, isliye alag topic.
-              (Java PriorityBlockingQueue sirf ek process ke andar, distributed me nahi.)
-          (2) Channel queue bhi priority-wise (SMS high / low), warna OTP SMS phir peeche atkega.
-
-BADLA:    Kafka -> 3 topic (high / medium / low)
-```
-```
-BOARD PE: HIGH OTP / 2FA -> notif-high · MEDIUM order update -> notif-medium · LOW marketing -> notif-low
-          sms-high / sms-low (alag workers)
-
-POOCHEGA: "How do you prioritize urgent work, like OTPs?"
-BOL:      "Separate topics per priority with their own worker pools, so an OTP never waits behind a
-           marketing blast."
-
-AGLA SAWAAL (tere jawab se):
-  "High topic khaali, low me bheed -> high ke workers baithe rahenge?"
-   -> haan, thoda bekaar. Chahe to high workers khaali hon tab medium bhi padhein (par kabhi ulta nahi)
-  "OTP ka bhi provider limit laga?"
-   -> OTP ke liye alag provider account / short code -> marketing usse kha na sake
+BOL: "Kafka has no priorities, so priority is separate topics with their own workers: high for OTP, medium for orders, low for marketing. OTP also gets its own provider account so marketing can't use up its limit."
 ```
 ```mermaid
 flowchart TD
@@ -834,36 +706,10 @@ flowchart TD
 
 <a id="d9"></a>
 
-## DIKKAT 9 — burst gaya, provider ne 429 diya, sab fail
+## DIKKAT 9 — company ne 429 diya
 
 ```
-DIKKAT:   ek saath bahut message, provider ne apni limit pe 429 de diya, sab fail.
-
-SOLUTION: (1) Worker khud raftaar kam kare (token bucket), provider ki limit ke andar.
-          (2) 429 -> backoff + jitter, provider ka Retry-After maano. Message queue me rukta, drop nahi.
-          ★ Yahan fail-open nahi: provider ka darwaza hum nahi khol sakte. (HANDS-ON neeche.)
-
-NAYA:     koi dabba nahi — worker me throttle
-
-KAISE (throttle sab workers me):
-          har worker ne provider ki poori rate li to 100 worker = 100x -> phir 429
-          (1) har worker ko hissa: rate / workers (100 / sec, 10 worker = 10 / sec har ek)
-          (2) ya Redis me EK shared token bucket -> har worker bhejne se pehle token le (Lua, atomic)
-```
-```
-BOARD PE: FCM ~6 lakh / min per project (~10K / sec) · SES ~14 / sec (naye account ka default, badhwa sakte)
-          Twilio short code ~100 / sec, long code ~1 / sec · naive me 1000 me se 700 phenke
-
-POOCHEGA: "The provider returns 429 — you're sending too fast. What now?"
-BOL:      "Workers throttle themselves with a token bucket at the provider's rate. On a 429 they back off
-           with jitter and respect Retry-After; messages wait in the queue and go to a DLQ after max
-           retries, never dropped."
-
-AGLA SAWAAL (tere jawab se):
-  "Workers badhe (autoscale), hissa kaun badlega?"
-   -> isliye shared Redis bucket behtar: kitne bhi worker, total rate wahi
-  "Provider ki limit hi kam hai (SES 14 / sec) aur 1 lakh email?"
-   -> limit badhwao (request) + kai account / provider; tab tak queue dheere khaali
+BOL: "Workers throttle themselves with a token bucket shared in Redis at the provider's rate. On a 429 they back off with jitter and respect Retry-After; messages wait in the queue and go to a DLQ after max retries, never dropped."
 ```
 ```mermaid
 flowchart TD
@@ -908,29 +754,10 @@ flowchart TD
 
 <a id="d10"></a>
 
-## DIKKAT 10 — "bhej diya" ka matlab "mil gaya" nahi
+## DIKKAT 10 — bhej diya ka matlab mil gaya nahi
 
 ```
-DIKKAT:   worker ne bheja = provider ne le liya. User tak pahuncha ya nahi, pata hi nahi.
-
-SOLUTION: (1) Provider WEBHOOK (delivered / failed / bounced) -> TRACKING DB me likho
-              (sent, delivered, opened, clicked, failed).
-          (2) Failed (galat number / bounce) -> retry, doosra channel, ya failed mark.
-          (3) Push me webhook nahi -> app khulne pe app khud ack event bheje.
-
-NAYA:     Tracking DB (har message ka haal: sent / delivered / failed)
-
-KAISE:    bhejte waqt provider jo message_id deta (SES MessageId / Twilio SID) wo Tracking DB me apne
-          notificationId ke saath save -> webhook aaya to message_id se row dhoondh ke status update
-KYUN YE:  status API ko baar-baar poochna (poll) -> lakhon message x har kuch sec = provider limit + kharcha
-          webhook = provider khud batata, sirf jab badla
-```
-```
-AGLA SAWAAL (tere jawab se):
-  "Webhook nakli (koi aur bhej de)?"
-   -> provider ka signature verify (HMAC / SNS signature), warna reject
-  "Webhook aaya hi nahi?"
-   -> kuch ghante baad 'sent' pe atke message ke liye ek baar status API poll (sirf bache hue)
+BOL: "I store the provider's message id with each notification and update the tracking DB from the provider's delivery webhooks, verified by signature. Anything stuck as 'sent' for hours gets a single status poll."
 ```
 ```mermaid
 flowchart TD
@@ -978,45 +805,10 @@ flowchart TD
 
 <a id="d11"></a>
 
-## DIKKAT 11 — 1 crore logon ko ek saath offer (campaign)
+## DIKKAT 11 — 1 crore ko ek saath offer
 
 ```
-DIKKAT:   "Diwali offer sabko" -> 1 crore user. API ek-ek ko bheje to request ghanton atki,
-          Kafka me 1 crore event, provider ki limit tooti, OTP bhi peeche.
-
-SOLUTION: (1) Campaign Svc turant 202 + DB me campaign row (id, kisko, template). Kaam peeche.
-          (2) Batch job users ko 1000-1000 ke tukdon me padhe -> har tukda EK Kafka message
-              (1 crore nahi, 10,000 message). Kai fanout worker parallel.
-          (3) Har worker: opt-out / quiet hours hatao (dikkat 3) -> template -> MARKETING low lane (dikkat 8).
-          (4) Provider ki raftaar se bhejo (dikkat 9): 10,000 / sec ho to 1 crore ~17 min, jaan-boojh ke phailao.
-          (5) Dobara na jaaye: key = (campaign_id, user_id) (dikkat 4). Ginti: campaign ka sent / failed.
-          Push me sabko SAME message -> FCM TOPIC: sab "offers" topic ke subscriber, hum EK call,
-          aage Google pahunchata. SMS / email me topic nahi, wahan batch wala raasta.
-
-NAYA:     Campaign Svc (campaign banaye, turant laute) · Campaign DB (campaign + uska haal) ·
-          Batch job (users tukdon me padh ke Kafka me)
-
-KAISE:    batch job: SELECT user_id ... WHERE segment = 'all' AND id > last_id ORDER BY id LIMIT 1000
-          -> Kafka message {campaign_id, [1000 user_id]} -> last_id aage -> repeat (cursor, OFFSET nahi)
-          job gira -> campaign row me last_id saved -> wahin se aage
-KYUN YE:  1 crore alag event -> Kafka + workers pe bojh, aur ek-ek ki processing mehngi
-          ek bada message (1 crore id) -> ek worker pe atka, fail hua to sab dobara
-          1000 ka tukda = beech ka raasta: parallel bhi, retry chhota bhi
-```
-```
-BOARD PE: 1 crore / 1000 = 10,000 Kafka message · 10,000 / sec raftaar -> ~17 min
-
-POOCHEGA: "How would you send a notification to 10 million users?"
-BOL:      "I'd treat it as a campaign: the API returns right away, a batch job reads users in pages of
-           a thousand and puts each page on Kafka, and fanout workers filter preferences, render the
-           template and send on a low-priority lane at the provider's rate limit. For push I'd use
-           FCM topics so one call reaches every subscriber."
-
-AGLA SAWAAL (tere jawab se):
-  "Campaign beech me rukwana ho (galat offer chala gaya)?"
-   -> campaign row me status = CANCELLED; worker har tukde se pehle status dekhe, cancelled to skip
-  "Ek worker 1000 me se 600 bhej ke gira?"
-   -> tukda dobara aayega (offset commit baad me), (campaign_id, user_id) key se pehle wale 600 skip
+BOL: "The campaign service accepts with a 202, a batch job reads users in chunks of a thousand with a cursor saved after each chunk, and pushes them onto the low-priority topic, throttled to provider limits. The campaign id plus user id is the idempotency key, and a cancel flag is checked before each chunk."
 ```
 ```mermaid
 flowchart TD
@@ -1067,49 +859,43 @@ flowchart TD
 ```
 
 ---
-
-## 10x SCALE — har dabba alag
+## 10 GUNA TRAFFIC — har dabba alag se
 
 ```
-Kafka            -> peak 10x -> partitions pehle se extra · partition by hash(user_id)
-Notification Svc -> pref / template CACHE · box badhao
-channel queue    -> alag queue (ho gaya) + priority lane
-worker           -> peak pe badhao (1 worker ~1000 / sec) · circuit breaker + multi-provider · throttle
-Tracking DB      -> 90 TB / saal -> Cassandra + row pe TTL / purana cold storage
-                    (retention size ghatata · shard load baant-ta — dono alag)
+Kafka            -> sale pe 10 guna -> lines (partition) pehle se zyada · line user_id se
+Notification Svc -> pasand / saancha cache · machine badhao
+raaste ki line   -> alag line (ho gaya) + tez / dheemi line
+worker           -> sale pe badhao (ek worker ~1000 / second) · fuse + do company · speed limit
+Tracking DB      -> 90 TB / saal -> Cassandra + row ki umar, purana sasti jagah (cold storage)
+                    (umar se jagah ghatti hai, baantne se bojh — dono alag cheez)
 
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
 BOL:      "Tracking rows get a TTL and old data moves to cold storage; the live table stays small."
-
-POOCHEGA: "How would you scale this to 10x?"      -> event ka raasta chalo, pehle jo toote
-POOCHEGA: "What's the single point of failure?"   -> provider (multi-provider), Kafka (replication)
-POOCHEGA: "How do you know it's working?"         -> "bheja" nahi — webhook se delivered / failed ·
-                                                     Kafka consumer lag · DLQ size · alert
 ```
 
 ---
 
-## POOCHE TO (deep-dive)
+## POOCHE TO (gehra sawaal aaye tab)
 
 ```
-EVENT:    producer Kafka pe { event: "ORDER_PLACED", userId: 123, orderId: 999 }
+KHABAR:   Kafka pe { event: "ORDER_PLACED", userId: 123, orderId: 999 }
           (andar ke liye REST bhi: POST /notify { userId, type, channel?, payload })
 
-CHANNEL:  Push FCM (Android) / APNs (iOS) · Email SES / SendGrid / Mailgun · SMS Twilio / SNS / MSG91
-          In-app DB + WebSocket · Voice Twilio · Slack webhook
+RAASTE:   Push: FCM (Android) / APNs (iPhone) · Email: SES / SendGrid / Mailgun · SMS: Twilio / SNS / MSG91
+          App ke andar: DB + WebSocket · Phone call: Twilio · Slack webhook
 
-DB:       USER-PREF: user_id -> channels · quiet hours · unsubscribed topics
-          TEMPLATE:  template_id -> format · i18n · variables {{name}} {{orderId}}
-          TRACKING:  sent / delivered / opened / clicked / failed -> Cassandra
-                     (bahut + simple + write-heavy, ACID nahi chahiye, horizontal scale)
+DB:       PASAND:  user_id -> kaunse raaste · shaanti ka waqt · kya band kiya
+          SAANCHA: template_id -> format · bhasha · khaali jagah {{name}} {{orderId}}
+          HISAAB:  bheja / mila / khola / click / fail -> Cassandra (bahut likhna, seedhi row, ACID nahi chahiye)
 
-100K / sec:  ~100 worker · topic "notifications" P0 -> W1 ... P99 -> W100
-             partition by hash(user_id) -> ek user ke event EK partition -> ORDER bana rahe
-             (warna "shipped" pehle, "placed" baad me)
+1 LAKH / SECOND:  ~100 worker · line "notifications" P0 -> W1 ... P99 -> W100
+          line user_id se -> ek user ki saari khabar ek line me -> kram bana rehta
+          (warna "ship hua" pehle aur "order hua" baad me)
 
-WALKTHROUGH:  order -> Order Svc Kafka pe { ORDER_PLACED, 123, 999 } -> Notif Svc uthaye -> pref
-              (push ON, email ON, SMS OFF) -> template bhare -> push + email queue -> worker -> provider
-              -> user -> webhook -> Tracking DB · fail -> retry -> DLQ
+POORA RAASTA EK BAAR:
+          order -> Order Svc Kafka me { ORDER_PLACED, 123, 999 } -> Notification Svc uthaye -> pasand dekhe
+          (push chalu, email chalu, SMS band) -> saancha bhare -> push + email ki line -> worker -> company
+          -> user -> webhook -> Tracking DB · fail -> dobara -> DLQ
 ```
 
 ---
@@ -1117,17 +903,16 @@ WALKTHROUGH:  order -> Order Svc Kafka pe { ORDER_PLACED, 123, 999 } -> Notif Sv
 ## AAKHRI DABBA + WRAP
 
 ```
-Kafka = decouple + spike + priority topic · Notification Svc = pref + template + fanout
-channel queue = apni speed · worker = idempotent (SET NX) + backoff / jitter + circuit breaker + throttle
-DLQ = poison baaki ko na roke · Tracking DB = "bheja" vs "mila"
+Kafka = order se alag + bheed jhele + zaroorat ki alag line · Notification Svc = pasand + saancha + fanout
+raaste ki line = apni speed · worker = parchi (BHEJ RAHA / BHEJ DIYA) + ruk ke dobara + fuse + speed limit
+DLQ = kharab khabar baaki ko na roke · Tracking DB = "bheja" vs "mila"
 ```
 ```
 BOL: "Services publish events to Kafka. The notification service checks preferences, fills the template
-      and fans out to per-channel queues. Workers are idempotent with Redis SET NX, retry with backoff and
-      jitter, throttle to the provider's limit, use a circuit breaker with a backup provider, and send to
-      a DLQ after max retries. OTPs have their own topic. Partitioning by user id keeps per-user order,
+      and fans out to per-channel queues. Workers are idempotent with a sending / sent key in Redis, retry with
+      backoff and jitter, throttle to the provider's limit, use a circuit breaker with a backup provider, and
+      send to a DLQ after max retries. OTPs have their own topic. Partitioning by user id keeps per-user order,
       and provider webhooks update the tracking DB. Next: quiet hours, i18n templates, open / click analytics."
-     (asli duniya: Uber ride notification · Amazon order update · Slack · WhatsApp · bank alert)
 ```
 ```mermaid
 flowchart TD
