@@ -731,6 +731,17 @@ public class UserService {
 ```
 Bytecode-level injection — self-invocation bhi intercept. Rare in production.
 
+### ★ Spring ne AISA kyun banaya? (bug nahi, soch-samajh ke chuna trade-off)
+```
+Spring ke paas 2 raaste the:
+  (a) PROXY: teri class ko CHHUO mat, uske AAGE ek wrapper object khada karo (runtime pe, plain Java)
+  (b) WEAVING (AspectJ): teri class ka BYTECODE hi badal do (special compiler / load-time agent)
+Spring ne (a) chuna: koi special build nahi, koi agent nahi, bas jar chalao -> simple.
+Keemat: proxy sirf BAHAR se aane wali call pakad sakta. Class ke andar `this` = asli object, proxy nahi
+        -> this.save() wrapper ke saamne se jaati hi nahi. Ye "galti" nahi, (a) chunne ka seedha nateeja.
+Chahiye to (b) available hai (mode = ASPECTJ) — par build bhaari, isliye kam use.
+```
+
 ### Related Gotchas
 
 ```java
