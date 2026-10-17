@@ -154,7 +154,6 @@ DIKKAT 1   Email service ki 3 machine (C1, C2, C3), teeno poora topic padh rahi.
            padha -> Arpan ko 3 welcome email.
 HAL        Teeno ek CONSUMER GROUP (team) me. Team ke andar har partition sirf EK machine padhti:
              P0 -> C1 · P1 -> C2 · P2 -> C3. Arpan ka event P2 me -> sirf C3 -> ek email.
-           3 partition + 5 consumer = 2 khaali baithe (partition se zyada consumer bekaar).
 ```
 ```mermaid
 flowchart TD
@@ -166,7 +165,7 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Kaam zyada, consumer badhaane hain?
-HAL        Partition bhi badhao. Consumer > partition = khaali baithe.
+HAL        Partition bhi badhao. 3 partition + 5 consumer = 2 khaali baithe (consumer > partition bekaar).
 
 DIKKAT 3   Ek message 5 min ka kaam, poora partition atka?
 HAL        Haan (aage wala atka to peeche sab atke). Dheema kaam alag topic / worker pool ko do.
@@ -295,7 +294,7 @@ HAL        Outbox + acks=all + kaam ke baad commit + idempotent consumer + DLQ.
 ```
 DIKKAT 1   C2 mar gaya -> P1 ko koi padh hi nahi raha, khabar jama ho rahi.
            Ya consumer dheema -> peeche-peeche (lag) badhta ja raha.
-HAL        Team ki ek machine mari -> uske partition baaki me bat jaate (REBALANCE):
+HAL        REBALANCE: team ki ek machine mari -> uske partition baaki me bat jaate:
              pehle C1->P0, C2->P1, C3->P2 · C2 mara -> C1->P0,P1 · C3->P2
            LAG = partition ka aakhri offset - group ne kahan tak padha -> badhe to alert.
            Koi khabar baar-baar fail -> kuch koshish ke baad DLQ, taaki poora partition na atke.
@@ -503,8 +502,8 @@ RAASTA: producer -> key se partition -> LEADER pe jodo (offset) -> follower copy
 ```
 ```
 JAWAB:    Bhejne wala khabar key ke saath bhejta, key se tukda tay hota, tukde ke andar kram.
-          Har tukde ki copy, leader gira to saath chal rahi copy leader. Zaroori khabar 'saari copy me
-          likh gaya tabhi done'.
+          Har tukde ki copy, leader gira to saath chal rahi copy leader.
+          Zaroori khabar 'saath chal rahi saari copy (ISR) me likh gaya tabhi done'.
           Har service ki apni team, to ek khabar sab tak. Worker kaam ke baad 'padh liya' bolta, id se
           dobara skip, kharab khabar DLQ me. 7 din rakhte, dobara padh sakte.
 ```
@@ -547,17 +546,17 @@ ROUND 1  FIX = false
   e1 DB + Kafka · e2 DB + Kafka · e3 DB, CRASH bhejne se pehle -> event kabhi nahi gaya
   e4 DB, Kafka acks=1 leader memory me "OK", CRASH replica se pehle -> e4 GAYA (producer ko laga bhej diya)
   e5 DB + Kafka
-  consumer: e1 commit(1) SMS · e2 commit(2) CRASH SMS se
-  pehle -> restart 2 ke aage -> e2 CHHOOTA · e5 commit(3) SMS
+  consumer: e1 commit(1) SMS · e2 commit(2) CRASH SMS se pehle -> restart 2 ke aage -> e2 CHHOOTA
+            · e5 commit(3) SMS
   NATEEJA: DB [e1..e5] · Kafka [e1, e2, e5] · SMS [e1, e5] · KHOYE [e2, e3, e4]
 
 ROUND 2  FIX = true
   e1..e5 DB debit + OUTBOX row, ek transaction · e3 CRASH bhejne se pehle -> outbox me pada
   relay (restart ke baad bhi) outbox -> Kafka: e1, e2, e3 pahunche
-  e4 acks=all leader + replica dono pe, TAB "OK" · CRASH
-  leader -> replica naya leader, e4 uske paas · e5 pahuncha
-  consumer: e1 SMS, commit(1) · e2 SMS, CRASH commit se
-  pehle -> e2 PHIR aaya -> eventId dekha -> DUPLICATE chhoda
+  e4 acks=all leader + replica dono pe, TAB "OK" · CRASH leader -> replica naya leader, e4 uske paas
+  e5 pahuncha
+  consumer: e1 SMS, commit(1) · e2 SMS, CRASH commit se pehle -> e2 PHIR aaya -> eventId dekha
+            -> DUPLICATE chhoda
             e3 SMS commit(3) · e4 SMS commit(4) · e5 SMS commit(5)
   NATEEJA: DB [e1..e5] · Kafka [e1..e5] · SMS [e1..e5] · KHOYE []
 ```
@@ -578,7 +577,7 @@ SAGA ≠ ye   saga kaam ULTA karta (refund). Yahan sirf raste me khona rokna.
 
 JAWAB:    Teen jagah se khabar khoti thi, teeno band ki:
           1) Paisa kata aur khabar ek saath DB me (outbox), to bhejne se pehle crash me khabar nahi khoti.
-          2) Kafka me 'saari copy me likh gaya tabhi done'.
+          2) Kafka me 'saath chal rahi saari copy (ISR) me likh gaya tabhi done'.
           3) Worker kaam ke baad 'padh liya' bolta, id se dobara skip, kharab khabar DLQ me.
           Chala ke dekha: bina iske 5 me se 3 khabar kho gayi, iske saath ek bhi nahi.
 ```
