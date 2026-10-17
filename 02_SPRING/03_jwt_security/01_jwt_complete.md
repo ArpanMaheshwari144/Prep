@@ -1162,6 +1162,12 @@ Trap 5: "SECRET code mein hardcode kar du"
 
 Trap 6: "Authorization header bina Bearer prefix bhej de"
          Standard convention break — "Bearer <token>" mandatory
+
+Trap 7: "Signature hai to chori ka token bekaar"
+         NAHI — chor token BINA BADLE use kare to signature sahi, server maan lega
+         Signature sirf BADALNE / NAKLI banane se bachata, CHORI se nahi
+         (session cookie bhi chori ho to yahi hota). Chori se bachao = short exp (15 min)
+         + HTTPS + httpOnly cookie + refresh rotation + refresh DB se delete (revoke)
 ```
 
 ---
