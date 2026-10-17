@@ -68,8 +68,7 @@ SCENE      TCS ka share. Kuch bechna chahte (SELL), kuch khareedna (BUY).
            Match  -> jab top khareedar >= top bechne wala
            Daam   -> jo order pehle se book me tha, uska
            Tie    -> same daam pe jo pehle aaya (chhota number)
-```
-```
+
 DIKKAT 1   Book DB me rakhi to?
 HAL        RAM me rakho. DB = milliseconds har order, RAM = microseconds.
 
