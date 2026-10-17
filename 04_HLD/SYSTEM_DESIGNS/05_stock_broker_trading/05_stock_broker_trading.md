@@ -14,7 +14,7 @@
 2  Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
    CUE: bank jaise: check aur block ek hi jhatke me (ek atomic query)
 3  Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
-   CUE: TCS ka ek hi baabu; do baabu hote to Suresh ke 10 share do baar bik jaate (ek symbol ek thread)
+   CUE: ek symbol ek thread
 4  9:15 baje sab TCS pe toot pade
    CUE: 9:15 ki bheed: baabu mat badhao, sabko token do; ek baabu lakhon / sec nipta leta
         (baanto mat, line me rakho)
@@ -196,7 +196,7 @@ AAGE POOCHEGA (wahi WAJAH A, ya block ka hisaab):
 
 #### 3 Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
 ```
-CUE        TCS ka ek hi baabu; do baabu hote to Suresh ke 10 share do baar bik jaate (ek symbol ek thread)
+CUE        ek symbol ek thread
 
 DIKKAT     Mera order book me pahuncha. Suresh 10 bech raha, usi pal Mohan ne bhi BUY 10.
            Do thread, dono ko "10 hai" dikha -> 20 bik gaye.
