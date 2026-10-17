@@ -85,8 +85,9 @@ KAHANI:  Seller ke paas TCS ke sirf 10 share. Ramesh ne BUY 10 maara, usi pal Mo
          Do thread ne ek saath book dekhi, dono ko "10 available" dikha, dono ka sauda kar diya.
          20 share bik gaye, jabki the sirf 10.
 
-ILAAJ:   Har STOCK ki EK line (queue) aur us line ko EK hi thread chalaye.
-         Order ek ke baad ek match hote, kabhi ek saath nahi. Lock ki zaroorat hi nahi.
+ILAAJ:   TCS ke saare order ek hi line me lagte hain, aur us line ko sirf EK thread chalata hai.
+         Ramesh aur Mohan ne ek saath BUY kiya, to bhi thread pehle Ramesh ka match karega, phir Mohan ka.
+         Do order kabhi ek saath match nahi hote, isliye lock ki zaroorat hi nahi.
 
 ANDAR KAISE:
          TCS ke saare order thread T1 pe, INFY ke T2 pe. Ramesh pehle aaya -> T1 ne 10 de diye.
@@ -110,8 +111,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Ramesh ke wallet me 50,000. Usne ek saath 30,000 ke DO order daal diye.
          Dono order ne wallet dekha, dono ko 50k dikha, dono pass. Dono match -> 60k kharch, the 50k.
 
-ILAAJ:   Order lagte hi paisa BLOCK karo (hotel me check-in pe deposit jaisa).
-         Kharch karne layak paisa = total - blocked.
+ILAAJ:   Ramesh ke paas 50k hai. Order lagte hi uske paise block karo, aur check + block ek hi query me:
+         'bacha paisa 30k se zyada hai to 30k block karo'.
+         Pehle order ne 30k block kiya, ab bacha 20k. Doosre order ke liye 30k nahi bacha -> query ne kuch
+         nahi badla -> order reject.
 
 ANDAR KAISE:
          Pehla order: 30k block -> blocked = 30k, bacha 20k.
@@ -135,8 +138,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Ramesh ne Suresh se 10 TCS khareede, 30,000 me. Ramesh ka 30k kata, aur Suresh ko milne se
          PEHLE server gir gaya. 30k na Ramesh ke paas, na Suresh ke paas. Hawa me.
 
-ILAAJ:   Saare step EK DB transaction me (@Transactional): ya sab hoga, ya kuch nahi.
-         Saath me double-entry LEDGER (khaata jisme har len-den do taraf likha jaata).
+ILAAJ:   Sauda hua to Ramesh se paisa kato aur Suresh ko do, share ulta. Ye sab ek hi transaction me:
+         beech me crash hua to sab wapas, aadha kuch nahi.
+         Khaate (ledger) me do line: Ramesh -30k, Suresh +30k. Saari line ka jod hamesha 0, matlab paisa
+         na bana na gayab hua.
 
 ANDAR KAISE:
          BEGIN
@@ -161,8 +166,11 @@ KAHANI:  System bada hua: paisa ab Wallet DB me, share Portfolio
          Ramesh ka 30k Wallet DB se kata, Portfolio DB me 10 share
          daalne se PEHLE crash. Paisa gaya, share nahi aaye.
 
-ILAAJ:   SAGA: har step apne DB me khud commit. Koi step fail -> pichhle step ka ULTA kaam (paisa wapas).
-         Jaise trip booking: flight book hui, hotel nahi mila -> flight cancel + refund.
+ILAAJ:   Paisa ek DB me, share doosre DB me, to ek transaction dono pe nahi chalta.
+         Ek service (Settlement) step-step chalati aur har step ke baad likh leti kahan tak hua: pehle
+         paisa kata, phir share daale.
+         Share daalna fail hua -> ulta kaam: Ramesh ko paisa wapas. Settlement khud gir gaya to uthke apna
+         likha dekhta aur wahin se aage ya ulta.
 
 ANDAR KAISE:
          Ek Settlement service (orchestrator, sab steps chalane wala) har step ka haal apne DB me likhta:
@@ -187,8 +195,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Ramesh ne BUY dabaya, app ghoomta raha, usne phir daba diya. Ya network ne khud dobara bhej diya.
          Server ko do request mili -> do order bane, paisa do baar block.
 
-ILAAJ:   IDEMPOTENCY KEY: har order ki ek pehchaan. Wahi pehchaan dobara aaye -> naya order nahi,
-         pehle wala jawab wapas.
+ILAAJ:   Ramesh ka app har order ke saath ek id bhejta (abc-123), dobara bhejne pe bhi wahi id.
+         Server ke paas wo id pehle se hai -> naya order nahi, pehle wala jawab wapas. Pehla abhi chal hi
+         raha ho to 'thoda ruko'.
+         Ye wahi hai jo usercrud me /pay pe banaya tha.
 
 ANDAR KAISE:
          App har order pe ek UUID banata (abc-123), dobara bhejne pe bhi WAHI abc-123.
@@ -238,8 +248,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  10 lakh log app khol ke baithe. Har app har second poochh raha "TCS ka price kya hai?" (polling).
          10 lakh sawaal har second -> server mar gaya, aur zyadatar baar jawab tha "wahi purana".
 
-ILAAJ:   WEBSOCKET + PUB/SUB (Redis). App ka connection ek baar khula rehta,
-         price BADLE tab server khud bhej deta. Koi baar-baar nahi poochhta.
+ILAAJ:   Ramesh ka app server se ek connection khula rakhta (WebSocket). TCS ka price badla -> matching
+         engine Redis pe 'TCS = 3005' daalta -> jo server TCS dekhne walon se jude hain, wo apne users ko
+         bhej dete.
+         Price second me 1000 baar badle to sab nahi bhejte, har 100 ms sirf aakhri price.
 
 ANDAR KAISE:
          Har stock ka ek channel (price:TCS). Ramesh TCS dekh raha, wo WebSocket server WS-1 se juda.
@@ -265,9 +277,11 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Market khulte hi akele TCS pe lakhon order aa gaye. Card 1 me niyam tha: ek stock = ek thread.
          To TCS ko do thread me baant bhi nahi sakte.
 
-ILAAJ:   Book ko mat todo (do thread = ek share do baar bike + kram toote).
-         Aage ka LOG bheed ko line me rok ke rakhta (BACKPRESSURE).
-         Koi order phenka nahi jaata, bas thoda der se match.
+ILAAJ:   TCS ki book ko do thread me nahi baant-te, warna ek share do baar bik sakta. Ek hi thread, RAM
+         me, bina lock ke second me lakhon order nikal leta.
+         Bheed zyada to aage ka log order ko line me rok leta, koi phenka nahi jaata, bas thoda der se
+         match.
+         Badhana stocks ke beech: TCS ek thread, INFY doosra.
 
 ANDAR KAISE:
          Ek thread, RAM me, bina lock -> lakhon order / second nikal leta (LMAX exchange ka design yahi).
@@ -326,9 +340,9 @@ flowchart TD
 
 ---
 
-## ════ DETAIL: HAR DIKKAT KI INTERVIEW LINE + TASVEER ════
+## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Card me poori kahani hai. Yahan har dikkat ki ek English line (interview me bolne ke liye) aur us waqt tak ka diagram.
+> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
 
 ---
 
@@ -336,14 +350,6 @@ flowchart TD
 
 ## DIKKAT 1 — do order ek hi stock pe ek saath (race)
 
-```
-POOCHEGA: "Two users order the same stock at the same time — what happens?"
-          (Do log ek hi stock pe ek saath order kare to?)
-
-JAWAB:    TCS ke saare order ek hi line me lagte hain, aur us line ko sirf EK thread chalata hai.
-          Ramesh aur Mohan ne ek saath BUY kiya, to bhi thread pehle Ramesh ka match karega, phir Mohan
-          ka. Do order kabhi ek saath match nahi hote, isliye lock ki zaroorat hi nahi.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -363,12 +369,6 @@ flowchart TD
 
 ## DIKKAT 2 — wallet 50k, 30k-30k ke do order (double spend)
 
-```
-JAWAB:    Ramesh ke paas 50k hai. Order lagte hi uske paise block karo, aur check + block ek hi query
-          me: 'bacha paisa 30k se zyada hai to 30k block karo'.
-          Pehle order ne 30k block kiya, ab bacha 20k. Doosre order ke liye 30k nahi bacha -> query ne
-          kuch nahi badla -> order reject.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -390,12 +390,6 @@ flowchart TD
 
 ## DIKKAT 3 — saude ke beech crash
 
-```
-JAWAB:    Sauda hua to Ramesh se paisa kato aur Suresh ko do, share ulta. Ye sab ek hi transaction me:
-          beech me crash hua to sab wapas, aadha kuch nahi.
-          Khaate (ledger) me do line: Ramesh -30k, Suresh +30k. Saari line ka jod hamesha 0, matlab
-          paisa na bana na gayab hua.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -419,13 +413,6 @@ flowchart TD
 
 ## DIKKAT 4 — paisa Wallet DB me, share Portfolio DB me
 
-```
-JAWAB:    Paisa ek DB me, share doosre DB me, to ek transaction dono pe nahi chalta.
-          Ek service (Settlement) step-step chalati aur har step ke baad likh leti kahan tak hua: pehle
-          paisa kata, phir share daale.
-          Share daalna fail hua -> ulta kaam: Ramesh ko paisa wapas. Settlement khud gir gaya to uthke
-          apna likha dekhta aur wahin se aage ya ulta.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -451,12 +438,6 @@ flowchart TD
 
 ## DIKKAT 5 — BUY do baar daba / network retry
 
-```
-JAWAB:    Ramesh ka app har order ke saath ek id bhejta (abc-123), dobara bhejne pe bhi wahi id.
-          Server ke paas wo id pehle se hai -> naya order nahi, pehle wala jawab wapas. Pehla abhi chal
-          hi raha ho to 'thoda ruko'.
-          Ye wahi hai jo usercrud me /pay pe banaya tha.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -482,23 +463,6 @@ flowchart TD
 
 ## DIKKAT 6 — order book RAM me, crash = sab gayab
 
-```
-POOCHEGA: "How do you keep orders in the right sequence?"
-          (Order ka kram sahi kaise rakhoge?)
-
-JAWAB:    Har order aate hi ek badhta number lagta: Ramesh #501, Mohan #502. Phir order log me likhe
-          jaate.
-          TCS ke saare order log ki ek hi line me, number ke kram se. Time pe bharosa nahi kyunki do
-          machine ki ghadi alag ho sakti, number pakka hai.
-
-POOCHEGA: "What if the server crashes in the middle?"
-          (Server beech me crash ho gaya to?)
-
-JAWAB:    Matching server gira to RAM wali book gayi. Naya server log ko shuru se (ya aakhri photo se)
-          number ke kram me chalata, book bilkul waisi ban jaati.
-          Settlement beech me gira: ek DB me ho to transaction khud wapas. Alag DB ho to Settlement apna
-          likha dekh ke ulta kaam karta.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -524,12 +488,6 @@ flowchart TD
 
 ## DIKKAT 7 — lakhon log live price dekh rahe
 
-```
-JAWAB:    Ramesh ka app server se ek connection khula rakhta (WebSocket). TCS ka price badla -> matching
-          engine Redis pe 'TCS = 3005' daalta -> jo server TCS dekhne walon se jude hain, wo apne users
-          ko bhej dete.
-          Price second me 1000 baar badle to sab nahi bhejte, har 100 ms sirf aakhri price.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -561,13 +519,6 @@ flowchart TD
 
 ## DIKKAT 8 — 9:15 baje akele TCS pe lakhon order
 
-```
-JAWAB:    TCS ki book ko do thread me nahi baant-te, warna ek share do baar bik sakta. Ek hi thread, RAM
-          me, bina lock ke second me lakhon order nikal leta.
-          Bheed zyada to aage ka log order ko line me rok leta, koi phenka nahi jaata, bas thoda der se
-          match.
-          Badhana stocks ke beech: TCS ek thread, INFY doosra.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]

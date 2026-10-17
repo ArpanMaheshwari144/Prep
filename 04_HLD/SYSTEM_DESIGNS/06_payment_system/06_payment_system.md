@@ -92,7 +92,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Arpan ke 500 kat gaye. Merchant ke account me daalne se PEHLE server gir gaya.
          500 na Arpan ke paas, na merchant ke paas. Gayab.
 
-ILAAJ:   Kaatna aur daalna EK DB TRANSACTION me. Ya dono honge, ya koi nahi. Crash -> sab wapas (rollback).
+ILAAJ:   Arpan se 500 kaatna aur merchant ko 500 dena, dono ek hi transaction me: beech me crash hua to
+         dono wapas.
+         Kaatna condition ke saath: 'balance 500 se zyada hai tabhi kaato'. Do payment ek saath aayi to
+         bhi balance minus me nahi jaayega.
 
 ANDAR KAISE:
          BEGIN
@@ -141,9 +144,9 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Hamara server sirf "bhejo" kehta hai. Asli paisa bank ke raaste (bank rails) pe hilta.
          Wo bahar ka raasta kabhi dheema, kabhi band.
 
-ILAAJ:   Bahar ka PSP (Razorpay / Stripe / bank). Har payment
-         ka haal: INITIATED -> PENDING -> SUCCESS / FAILED.
-         PSP dheema -> chhota TIMEOUT + CIRCUIT BREAKER (fuse).
+ILAAJ:   PSP ko 2-3 second se zyada intezaar nahi. Baar-baar fail ho to kuch der usko call band (fuse).
+         Paise me andha dobara nahi bhejte, kyunki ho sakta hai pehli baar paisa kat chuka ho. Payment
+         'PENDING' rakho, baad me pakka karenge.
 
 ANDAR KAISE:
          Fuse teen haal me:
@@ -167,10 +170,10 @@ KAHANI:  Server ne PSP ko "500 bhejo" bola aur jawab aane se pehle khud gir gaya
          Ab pata hi nahi: paisa kat gaya aur jawab kho gaya, ya kata hi nahi. "Bas rollback kar do" galat,
          kyunki PSP me shayad paisa sach me kat chuka.
 
-ILAAJ:   PSP call se PEHLE DB me "PENDING" likho. Phir do raaste se pata karo:
-         (1) WEBHOOK: PSP khud hamein bataata "ho gaya / fail"
-         (2) RECONCILIATION job: atke PENDING ke liye hum PSP se poochte.
-         Kabhi andaaza nahi: pehle LIKHO, phir PAKKA karo.
+ILAAJ:   PSP ko call karne se PEHLE DB me likho 'PENDING'. Phir call.
+         Server gira to bhi DB me likha hai ki ye payment adhoora hai. PSP khud batata hai (webhook) 'ho
+         gaya / fail', aur ek job har kuch minute PENDING wale PSP se poochhti.
+         Paisa hamesha ya to ho gaya, ya wapas, ya check ho raha. Khota kabhi nahi.
 
 ANDAR KAISE:
          Job har kuch minute: PENDING jo 5 min se purane -> PSP se poochho
@@ -195,9 +198,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Arpan ka account Bank A me, merchant ka Bank B me. Do alag system pe ek DB transaction hota hi nahi.
          Bank A se 500 kata, Bank B me daalna fail -> paisa beech me latka.
 
-ILAAJ:   SAGA: har step apne system me khud commit. Koi step fail -> pichhle step ULTE kram me undo
-         (undo ka kaam khud likhna padta).
-         Jaise trip: flight book, hotel book, cab nahi mili -> hotel cancel -> flight cancel.
+ILAAJ:   Arpan Bank A me, merchant Bank B me, ek transaction nahi chalta.
+         Step-step: pehle A se kaato, phir B me daalo, har step ke baad likh lo kahan tak hua. B me daalna
+         fail -> A me paisa wapas.
+         Service beech me giri to uthke apna likha dekhti, wahin se aage ya ulta.
 
 ANDAR KAISE:
          Bank A -500 OK -> Bank B +500 FAIL -> ulta kaam: Bank A +500 wapas.
@@ -253,6 +257,10 @@ ANDAR KAISE:
          "from" account ka owner Arpan hi hai? Nahi -> 403.
 
 ISKE BAAD KYA TOOTEGA:
+  - Safe kaise rakhoge, galat istemaal kaise rokoge?
+      -> Darwaze pe login check. Har payment pe check: 'jis account se paisa kat raha, wo isi user ka
+         hai?' userId JWT se lo, request body se nahi (body me koi bhi kuch likh de).
+         Har user ki had, aur sabse aage WAF.
   - userId request body se le lo?
       -> nahi! Body me koi bhi kisi ka bhi userId likh de
          (spoof). Hamesha JWT se. (PR drill me baar-baar aata.)
@@ -287,8 +295,9 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  Saal bhar me 50 crore payment row. Saari likhai ek hi primary DB pe -> likhai dheemi.
 
-ILAAJ:   SHARD (DB ko tukdon me baanto) account_id se.
-         Naya dard: Arpan shard 1 pe, merchant shard 3 pe -> ek transaction nahi -> wapas SAGA (card 5).
+ILAAJ:   Account id ke hisaab se baanto: Arpan ka balance aur uski saari history ek hi jagah, to Arpan se
+         kaatna ek jagah, ek transaction.
+         Do alag jagah ke account ke beech transfer = step-step + fail pe ulta (upar wala).
 
 ANDAR KAISE:
          Account kis shard pe: consistent hashing, ya lookup table (account -> shard, baad me badal sakte).
@@ -353,9 +362,9 @@ flowchart TD
 
 ---
 
-## ════ DETAIL: HAR DIKKAT KI INTERVIEW LINE + TASVEER ════
+## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Card me poori kahani hai. Yahan har dikkat ki ek English line (interview me bolne ke liye) aur us waqt tak ka diagram.
+> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
 
 ---
 
@@ -363,12 +372,6 @@ flowchart TD
 
 ## DIKKAT 1 — beech me crash: Arpan -500 hua, merchant +500 nahi
 
-```
-JAWAB:    Arpan se 500 kaatna aur merchant ko 500 dena, dono ek hi transaction me: beech me crash hua to
-          dono wapas.
-          Kaatna condition ke saath: 'balance 500 se zyada hai tabhi kaato'. Do payment ek saath aayi to
-          bhi balance minus me nahi jaayega.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -384,28 +387,6 @@ flowchart TD
 
 ## DIKKAT 2 — do baar tap / retry = 1000 kate
 
-```
-POOCHEGA: "What if the same request comes twice / the client retries?"
-          (Wahi request do baar aaye / app dobara bheje to?)
-
-JAWAB:    Arpan ka app 'Pay' dabate hi ek id banata (key-555) aur dobara bhejne pe wahi bhejta.
-          Server key-555 ko DB me unique rakhta, saath me uska jawab. Dobara aayi to wahi purana jawab
-          wapas, paisa doosri baar nahi katta.
-          Ye wahi hai jo usercrud me /pay pe banaya aur 20 request ek saath maar ke dekha tha.
-
-POOCHEGA: "You set the idempotency key, but then the PSP call failed. Now what?"
-          (Key laga di, par PSP call fail ho gayi. Ab?)
-
-JAWAB:    Key pe pehle likho 'chal raha hai' aur chhoti umar. 'Ho gaya' sirf tab jab PSP ne haan bola.
-          PSP fail hua ya server mar gaya -> 'chal raha hai' wali key thodi der me khud hat jaati,
-          dobara koshish ho jaati. Sirf 'ho gaya' wali key dobara rokti hai.
-
-POOCHEGA: "Two users do this at the same time — what happens?"
-          (Do log ek saath (ek balance pe) kare to?)
-
-JAWAB:    Do log ek hi account se ek saath kaatein to condition wala update: 'balance >= amount ho tabhi
-          kaato'. DB ek ko pehle chalata, doosre ke time balance kam ho chuka to doosra fail.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -423,14 +404,6 @@ flowchart TD
 
 ## DIKKAT 3 — asli paisa hamara server nahi hilata
 
-```
-POOCHEGA: "What if the PSP is slow?"
-          (PSP dheema ho to?)
-
-JAWAB:    PSP ko 2-3 second se zyada intezaar nahi. Baar-baar fail ho to kuch der usko call band (fuse).
-          Paise me andha dobara nahi bhejte, kyunki ho sakta hai pehli baar paisa kat chuka ho. Payment
-          'PENDING' rakho, baad me pakka karenge.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -450,22 +423,6 @@ flowchart TD
 
 ## DIKKAT 4 — PSP call ke baad crash: paisa gaya ya nahi
 
-```
-POOCHEGA: "What if the server crashes in the middle?"
-          (Server beech me crash ho gaya to?)
-
-JAWAB:    PSP ko call karne se PEHLE DB me likho 'PENDING'. Phir call.
-          Server gira to bhi DB me likha hai ki ye payment adhoora hai. PSP khud batata hai (webhook)
-          'ho gaya / fail', aur ek job har kuch minute PENDING wale PSP se poochhti.
-          Paisa hamesha ya to ho gaya, ya wapas, ya check ho raha. Khota kabhi nahi.
-
-POOCHEGA: "How do you know the system is working?"
-          (System theek chal raha, kaise pata?)
-
-JAWAB:    Roz PSP aur bank ki list se apna hisaab milao: farak mila to alert.
-          Saath me dekhte raho: payment kitni der me ho rahe, kitne fail, line kitni lambi. Har payment
-          ki ek id jisse uska poora raasta dekh sakein.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -489,12 +446,6 @@ flowchart TD
 
 ## DIKKAT 5 — alag bank / alag DB: ek transaction nahi
 
-```
-JAWAB:    Arpan Bank A me, merchant Bank B me, ek transaction nahi chalta.
-          Step-step: pehle A se kaato, phir B me daalo, har step ke baad likh lo kahan tak hua. B me
-          daalna fail -> A me paisa wapas.
-          Service beech me giri to uthke apna likha dekhti, wahin se aage ya ulta.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -518,13 +469,6 @@ flowchart TD
 
 ## DIKKAT 6 — RBI: paisa kahan se kahan
 
-```
-POOCHEGA: "Data keeps growing — what happens in 3 years?"
-          (Data badhta ja raha, 3 saal baad?)
-
-JAWAB:    Mahine ke hisaab se tukde, purane mahine sasti jagah (S3). Payment ka record delete kabhi
-          nahi, bas door rakh do.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -548,14 +492,6 @@ flowchart TD
 
 ## DIKKAT 7 — festival 3000 / sec
 
-```
-POOCHEGA: "How do you secure it / stop abuse?"
-          (Safe kaise rakhoge / galat istemaal kaise rokoge?)
-
-JAWAB:    Darwaze pe login check. Har payment pe check: 'jis account se paisa kat raha, wo isi user ka
-          hai?' userId JWT se lo, request body se nahi (body me koi bhi kuch likh de).
-          Har user ki had, aur sabse aage WAF.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -587,14 +523,6 @@ flowchart TD
 
 ## DIKKAT 8 — merchant ki report ne asli payment roke
 
-```
-POOCHEGA: "The user paid but still sees the old balance. Why?"
-          (User ne pay kiya par purana balance dikh raha. Kyun?)
-
-JAWAB:    Balance us copy se padha jo abhi peeche thi, payment wahan pahuncha hi nahi tha.
-          Ilaaj: balance aur payment ka haal hamesha main DB (primary) se padho. Copy sirf dashboard /
-          report ke liye.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -628,11 +556,6 @@ flowchart TD
 
 ## DIKKAT 9 — 50 crore row, likhai dheemi
 
-```
-JAWAB:    Account id ke hisaab se baanto: Arpan ka balance aur uski saari history ek hi jagah, to Arpan
-          se kaatna ek jagah, ek transaction.
-          Do alag jagah ke account ke beech transfer = step-step + fail pe ulta (upar wala).
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
