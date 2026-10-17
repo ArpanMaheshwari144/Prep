@@ -153,6 +153,15 @@ HAL        Order ki umar (day order shaam ko khatam) -> khatam hote hi block hat
 DIKKAT 5   Ramesh ne CANCEL kiya, usi pal match ho raha tha?
 HAL        Cancel bhi usi stock ki line me, order ke peeche jaata. Engine kram se dekhta:
            match ho chuka -> "pura ho gaya" · book me pada -> hatao + jo nahi bika uska block hatao.
+
+DIKKAT 6   SELL pe? Ramesh ke paas 10 TCS. Laptop se SELL 10, usi second phone se bhi SELL 10.
+HAL        Wahi tareeka share pe, ek query me:
+             UPDATE portfolio SET blocked_qty = blocked_qty + 10
+             WHERE user_id = 'Ramesh' AND stock = 'TCS' AND qty - blocked_qty >= 10
+           Pehla -> 10 block. Doosra -> 0 row badli -> reject.
+
+DIKKAT 7   MARKET BUY me daam pata hi nahi, kitna block karoge?
+HAL        Aakhri bhav + thoda upar (buffer) block. Sauda hone ke baad jo bacha, wo block hatao.
 ```
 
 #### 3 SAUDE KE BEECH CRASH (SETTLEMENT)
