@@ -10,14 +10,14 @@
 
 ```
    KYA HUA                                     ILAAJ                                DABBA JUDA
-1  report.pdf daali, 3 sec ruka, thread atke -> ASYNC + TRACKING ID (queue, worker)  Kafka + Worker
+1  report.pdf daali, 3 sec ruka, thread atke -> ASYNC + TRACKING ID (queue, worker)  Kafka + Worker + DB
 2  5 GB video hamare server se guzri         -> PRESIGNED URL, bytes seedha S3       S3 (client seedha)
 3  4.5 GB chadhi, wifi gaya                  -> MULTIPART, sirf bache tukde          (S3 multipart)
 4  app crash, "complete" aaya hi nahi        -> SWEEPER job (atki file)              Sweeper job
 5  10,000 log har 2 sec haal poochh rahe     -> CACHE Redis + READ REPLICA           Redis + Read replica
 6  poora folder, 1000 file                   -> PARENT id + CHILD id                 (DB me parent)
-7  Ravi ne mera T-101 daal ke file maangi    -> OWNER CHECK (AUTHZ), 403             Gateway / LB
-8  maine S3 ka link WhatsApp pe bheja        -> SIGNED GET, 5 min ka naya paas       (DB me S3 key)
+7  Ravi ne mera T-101 daal ke file maangi    -> OWNER CHECK (AUTHZ), 403             Gateway + Upload Svc
+8  maine S3 ka link WhatsApp pe bheja        -> SIGNED GET, 5 min ka naya paas       S3 signed GET (s3_key)
 9  naam report.pdf, andar EXE                -> MAGIC BYTES (pehle kuch byte)        Worker + magic bytes
 
 POORA DESIGN (upar ke dabbe kram se):
@@ -98,6 +98,7 @@ flowchart LR
     n_Worker --> n_DB
     style n_Kafka fill:#f9a825,color:#000
     style n_Worker fill:#f9a825,color:#000
+    style n_DB fill:#f9a825,color:#000
 ```
 ```
 DIKKAT     31 March, maine report.pdf daali. Server Validator ke 3 sec jawab tak atka, main bhi screen pe.
@@ -126,7 +127,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3<br/>5 GB server se guzri<br/>-> presigned URL"]
-    n_Upload_Svc["Upload Svc<br/>+ signed URL + T-101"]
+    n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
     n_Kafka["Kafka"]
     n_Worker["Worker"]
@@ -143,8 +144,8 @@ flowchart LR
 ```
 DIKKAT     Report ke baad maine 5 GB video daali: client -> hamara server -> S3. 5 GB do baar network pe,
            thread minuton atka, sirf bytes aage badhane ko server badhane pade.
-HAL        PRESIGNED URL: server sirf 10 min ka paas (signed URL) + T-101 de; bytes seedha S3 me.
-           Phir main "/complete T-101" bolun -> server queue me daale.
+HAL        PRESIGNED URL: server sirf 10 min ka paas (signed URL) + naya id T-102 de; bytes seedha S3 me.
+           Phir main "/complete T-102" bolun -> server queue me daale.
 NAHI       bytes server se guzaro, server badhao: 5 GB do baar network pe, thread atka.
 ```
 ```
@@ -163,7 +164,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3 multipart<br/>90% pe wifi gaya<br/>-> tukdon me, bache hi"]
-    n_Upload_Svc["Upload Svc<br/>+ signed URL + T-101"]
+    n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
     n_Kafka["Kafka"]
     n_Worker["Worker"]
@@ -199,7 +200,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
-    n_Upload_Svc["Upload Svc<br/>+ signed URL + T-101"]
+    n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
     n_Sweeper_job["Sweeper job<br/>complete aaya hi nahi<br/>-> 10 min atki dhoondho"]
     n_Kafka["Kafka"]
@@ -218,7 +219,7 @@ flowchart LR
 ```
 ```
 DIKKAT     Ek aur file chadhte waqt meri app crash. "complete" kabhi nahi aaya: bytes S3 me pade (paisa lag
-           raha), DB me T-101 "UPLOADING" pe atka, koi dhoondhta hi nahi.
+           raha), DB me T-103 "UPLOADING" pe atka, koi dhoondhta hi nahi.
 HAL        SWEEPER job har kuch minute: haal UPLOADING / VALIDATING aur 10 min se nahi badla (jaanch 3 sec ki)
            -> S3 me bytes hain? haan = queue me dobara · nahi = FAILED.
 NAHI       sirf S3 lifecycle niyam: din me ek baar chalta aur DB nahi dekhta.
@@ -238,7 +239,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
-    n_Upload_Svc["Upload Svc<br/>+ signed URL + T-101"]
+    n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_Redis["Redis<br/>har 2 sec haal, DB ghira<br/>-> cache + replica"]
     n_DB["DB (haal)"]
     n_Read_replica["Read replica"]
@@ -284,7 +285,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
-    n_Upload_Svc["Upload Svc<br/>+ signed URL + T-101"]
+    n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_Redis["Redis"]
     n_DB["DB<br/>1000 file ka folder<br/>-> parent + child id"]
     n_Read_replica["Read replica"]
