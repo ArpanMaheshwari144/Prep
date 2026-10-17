@@ -47,8 +47,10 @@ NUMBER SE FAISLA:
 ```
 ```
 POOCHEGA: "Consistency or availability — which do you pick?"
-BOL:      "For the feed and like counts, availability. A feed a couple
-           of seconds old is fine; a feed that doesn't load is not."
+          (Consistency ya availability, kya chunoge?)
+
+JAWAB:    Feed aur like ginti ke liye availability (chalta rahe). Do second purani
+          feed chalegi, khulti hi nahi wo nahi chalegi.
 ```
 
 ---
@@ -380,9 +382,12 @@ flowchart TD
 ## DIKKAT 1 — har baar feed kholne pe 200 logon ka data jodna
 
 ```
-BOL:      "Reads are fifty times writes, so I don't build the feed on every read. I fan out
-           on write: when someone tweets, the tweet id goes into each follower's Redis inbox,
-           and opening the app just reads that inbox and fetches the tweets in one batch."
+JAWAB:    Padhai likhai se 50 guna, isliye har baar feed khole pe feed nahi banata.
+          Likhte waqt baant do (fan-out on write): koi tweet kare to uski id har follower ke Redis inbox
+          me daal do. App khulte hi bas wo inbox padho aur tweets ek saath le aao.
+
+SHABD:    fan-out on write = likhte waqt hi sabke inbox me daal dena · inbox = har
+          user ki taiyaar feed list
 ```
 ```mermaid
 flowchart TD
@@ -406,8 +411,10 @@ flowchart TD
 
 ```
 POOCHEGA: "I just tweeted but don't see it in my own feed. Why?"
-BOL:      "Read-your-own-writes: the author's new tweet is added to
-           their own feed directly, without waiting for fan-out."
+          (Maine abhi tweet kiya par apni feed me nahi dikh raha. Kyun?)
+
+JAWAB:    Fan-out me thoda time lagta. Ilaaj: likhne wale ka apna naya tweet seedha uski apni feed me
+          daal do, fan-out ka intezaar mat karo (read-your-own-writes).
 ```
 ```mermaid
 flowchart TD
@@ -433,10 +440,15 @@ flowchart TD
 
 ```
 POOCHEGA: "What about a celebrity / hot key / hot partition?"
-BOL:      "Sharding by user id is fine for everyone else; the problem is one hot key, and consistent hashing
-           doesn't fix that. For reads I'd replicate that key in the cache across many nodes and add a local
-           cache on each app server, with media on a CDN. For the feed, celebrities use fan-out on read. If
-           writes are hot, like likes, I'd split the key into buckets (tweet123#0..#9) and sum on read."
+          (Celebrity / garam key / garam partition ka kya?)
+
+JAWAB:    Baaki sab ke liye user id se baantna theek hai. Dikkat sirf EK garam key ki hai, aur
+          consistent hashing usme madad nahi karta.
+          Padhai ke liye: us key ki cache me kai copy + har app server me local
+          cache + photo / video CDN se.
+          Feed ke liye: celebrity ka tweet sabke inbox me nahi daalte, padhte waqt
+          alag se laate (fan-out on read).
+          Likhai garam ho (jaise like): key ke tukde (tweet123#0..#9), padhte waqt sab jodo.
 ```
 ```mermaid
 flowchart TD
@@ -462,8 +474,11 @@ flowchart TD
 
 ```
 POOCHEGA: "What if traffic suddenly spikes 10x?"
-BOL:      "Kafka holds the fan-out burst. If I know when it's coming, like an IPL final, I scale out and
-           pre-warm the hot-tweet cache beforehand — autoscaling takes minutes, the spike takes seconds."
+          (Traffic achanak 10 guna ho gaya to?)
+
+JAWAB:    Fan-out ka jhatka Kafka sambhaal leta. Pata ho kab aayega (IPL final), to
+          pehle se machine badhao aur garam tweet ki cache bhar do. Machine apne aap
+          badhne me minute lagte, jhatka second me aata.
 ```
 ```mermaid
 flowchart TD
@@ -491,8 +506,10 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the cache goes down?"
-BOL:      "Redis is a replicated cluster. If it fails, I shed load, let one request
-           rebuild each hot key instead of thousands, and warm inboxes back up gradually."
+          (Cache gir gaya to?)
+
+JAWAB:    Redis ki copy hai. Phir bhi gire to faltu request mana karo (load shedding), har garam key ko
+          sirf EK request DB se bhare, hazaar nahi, aur inbox dheere-dheere wapas bharo.
 ```
 ```mermaid
 flowchart TD
@@ -520,8 +537,11 @@ flowchart TD
 
 ```
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
-BOL:      "Shard by user id so a user's tweets sit together and the profile page is one shard, add time
-           as a sub-key so hot users spread out, and replicate the hottest users' tweets for reads."
+          (DB bahut bada ho gaya / likhai bahut. Kya karoge?)
+
+JAWAB:    User id se baanto: ek user ke saare tweet ek jagah, profile page ek hi
+          tukde se. Saath me time bhi key me, taaki garam user ka data bikhar jaaye.
+          Sabse garam users ke tweet ki padhai ke liye copy.
 ```
 ```mermaid
 flowchart TD
@@ -549,9 +569,11 @@ flowchart TD
 
 ```
 POOCHEGA: "What if a whole region goes down?"
-BOL:      "Route 53 health checks move users to the nearest healthy region.
-           Data is copied there asynchronously, so the feed may be a little
-           stale after failover — we already accepted eventual consistency."
+          (Poora region band ho gaya to?)
+
+JAWAB:    Route 53 user ko paas wale chalte region bhej deta. Data wahan thodi der
+          baad pahunchta (async), to switch ke baad feed thodi purani dikh sakti. Ye
+          hum pehle hi maan chuke (thodi der baad sahi chalega).
 ```
 ```mermaid
 flowchart TD
@@ -578,8 +600,8 @@ flowchart TD
 ## DIKKAT 8 — ek App box: bojh bhi, SPOF bhi
 
 ```
-BOL:      "App servers are stateless behind a load balancer with health checks, Route 53
-           in front, and deploys roll one box at a time so the site never goes down."
+JAWAB:    App server kuch yaad nahi rakhte, aage load balancer health check ke saath, sabse aage Route
+          53. Naya code ek-ek machine pe daalte, to site kabhi band nahi hoti.
 ```
 ```mermaid
 flowchart TD
@@ -616,9 +638,9 @@ flowchart TD
 ## DIKKAT 9 — padhna aur likhna ek hi box me
 
 ```
-BOL:      "I split it into a Tweet service for writes, a Timeline service for reads, and
-           User and Graph services, so each scales on its own: reads are fifty times writes,
-           so the Timeline service gets far more boxes. Follow lists are cached in Redis."
+JAWAB:    Kaam alag service me: likhne ke liye Tweet service, padhne ke liye Timeline service, aur User
+          + Graph (kaun kisko follow) service. Har ek apni zaroorat se badhti: padhai 50 guna, to
+          Timeline service ki machine bahut zyada. Follow list Redis me.
 ```
 ```mermaid
 flowchart TD
@@ -657,8 +679,10 @@ flowchart TD
 ## DIKKAT 10 — photo / video bhaari
 
 ```
-BOL:      "Media lives in S3 and reaches users through a CDN; the tweet stores the CDN URL. Deletes
-           use invalidation or a versioned URL, and private media uses signed URLs that expire."
+JAWAB:    Photo / video S3 me, user tak CDN se. Tweet me CDN ka URL. Delete karna ho to CDN se hatwao ya
+          URL me version badlo. Private media ke liye signed URL jo kuch der me expire ho jaata.
+
+SHABD:    CDN = user ke paas wale server jo file ki copy rakhte · signed URL = kuch der ka paas
 ```
 ```mermaid
 flowchart TD
@@ -739,11 +763,12 @@ Timeline Svc = push + pull milao · Cassandra = saare tweet,
 user_id + time + region · User Svc + Graph DB = follow
 ```
 ```
-BOL:      "On write, the Tweet service saves to Cassandra and puts an event on Kafka; fan-out workers
-           push the tweet id into each normal follower's Redis inbox. On read, the Timeline service
-           takes the inbox, pulls celebrity tweets from a hot-tweet cache, merges, sorts, hydrates
-           and returns the top 50. Hybrid push / pull handles celebrities, Cassandra is sharded by
-           user id and time with geo copies. Next I'd add ML ranking, trending and search."
+JAWAB:    Likhna: Tweet service Cassandra me save kare, khabar Kafka me. Fan-out worker har aam follower
+          ke Redis inbox me tweet id daale.
+          Padhna: Timeline service inbox le, celebrity ke tweet garam-tweet cache se, dono milaye, time
+          se sort, poora data bhare, top 50 de.
+          Celebrity ke liye push + pull dono. Cassandra user id + time se baanta, alag desh me copy.
+          Aage: ML ranking, trending, search.
 ```
 ```mermaid
 flowchart TD

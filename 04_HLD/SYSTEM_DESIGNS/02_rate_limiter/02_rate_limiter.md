@@ -349,9 +349,12 @@ flowchart TD
 ## DIKKAT 1 — teen server, ginti bat gayi
 
 ```
-BOL:      "Each server counting on its own lets a user exceed the limit across servers, so the count lives
-           in one place: Redis. The key is endpoint plus user, I INCR it on every request, and the first
-           request sets a TTL equal to the window, so the key expires and the count resets on its own."
+JAWAB:    Har server apni-apni ginti kare to user server badal-badal ke had paar kar
+          leta. Isliye ginti EK jagah: Redis.
+          Key = endpoint + user. Har request pe INCR (ginti +1). Pehli request pe key ki umar (TTL) =
+          window, to window khatam hote hi key apne aap gayab aur ginti zero.
+
+SHABD:    INCR = Redis me ginti ek badhao · TTL = key ki umar, khatam hote hi key mit jaati
 ```
 ```mermaid
 flowchart TD
@@ -375,8 +378,15 @@ flowchart TD
 
 ```
 POOCHEGA: "Two requests come at the same time — what happens?"
-BOL:      "Redis is single-threaded, so INCR is atomic. For token bucket I use a Lua script, so
-           the check and the decrement run as one unit and there's no read-modify-write race."
+          (Do request bilkul ek saath aayi to?)
+
+JAWAB:    Redis ek hi thread pe chalta, to INCR ek ke baad ek hota (atomic), beech
+          me koi ghus nahi sakta.
+          Token bucket me 'check karo + token ghatao' do kaam hain, isliye dono ek
+          Lua script me -> ek hi kadam me, race nahi.
+
+SHABD:    atomic = beech me koi aur ghus nahi sakta · Lua script = Redis ke andar
+          chalne wala chhota code, poora ek saath chalta
 ```
 ```mermaid
 flowchart TD
@@ -399,9 +409,12 @@ flowchart TD
 ## DIKKAT 3 — reject wali request bhi andar ghoom aayi
 
 ```
-BOL:      "The limiter sits in the API gateway, in front of everything, so a rejected request never
-           reaches the backend. It returns 429 with a Retry-After computed from when the bucket refills,
-           with a little jitter. Rules live in a config store so limits change without a deploy."
+JAWAB:    Limiter API gateway me, sabse aage. Mana hui request backend tak pahunchti hi nahi.
+          Jawab 429, saath me Retry-After (kitni der baad aao), jo bucket bharne ke
+          time se nikalta, thoda random milake.
+          Had ke niyam alag config store me, to had badalne ke liye code deploy nahi karna padta.
+
+SHABD:    429 = 'bahut zyada request, ruk ke aao' · Retry-After = kitne second baad dobara aana
 ```
 ```mermaid
 flowchart TD
@@ -426,8 +439,13 @@ flowchart TD
 
 ```
 POOCHEGA: "What if Redis goes down?"
-BOL:      "Redis has a replica with automatic failover in another zone. If the whole layer is gone
-           I fail open for normal APIs so the site stays up, and fail closed for login and OTP."
+          (Redis gir gaya to?)
+
+JAWAB:    Redis ki copy doosri building (zone) me, gire to copy apne aap le leti.
+          Poora Redis hi chala gaya: aam API ke liye darwaza khula (fail open), taaki site chalti rahe.
+          Login aur OTP pe darwaza band (fail closed), kyunki wahan bina had ke hamla ho sakta.
+
+SHABD:    fail open = limiter band to sabko jaane do · fail closed = limiter band to sabko roko
 ```
 ```mermaid
 flowchart TD
@@ -454,8 +472,11 @@ flowchart TD
 
 ```
 POOCHEGA: "What if a whole region goes down?"
-BOL:      "Route 53 sends the user to another region and the count starts from zero there, so the limit
-           is loose for one window. For a rate limiter that's fine — it's only a minute of counting."
+          (Poora region band ho gaya to?)
+
+JAWAB:    Route 53 user ko doosre region bhej deta. Wahan ginti zero se shuru hoti,
+          to ek window ke liye had thodi dheeli.
+          Rate limiter me ye theek hai, sirf ek minute ki ginti ka mamla hai.
 ```
 ```mermaid
 flowchart TD
@@ -481,9 +502,10 @@ flowchart TD
 ## DIKKAT 6 — baar-baar maar raha, 429 se nahi rukta
 
 ```
-BOL:      "Every 429 goes to Kafka; a pattern service spots IPs that keep getting rejected and
-           pushes them to a WAF blocklist with a TTL, so repeat abusers are stopped at the
-           edge. I don't ban on the first 429 because offices share IPs and real users burst."
+JAWAB:    Har 429 ki khabar Kafka me. Ek service dekhti kaunsa IP baar-baar mana ho raha, aur use WAF ki
+          block list me kuch der ke liye daal deti -> baar-baar wala hamlawar darwaze pe hi ruk jaata.
+          Pehle 429 pe ban nahi karta, kyunki office me sab ek IP se aate aur asli
+          user bhi kabhi jhatke me request bhejte.
 ```
 ```mermaid
 flowchart TD
@@ -517,9 +539,13 @@ flowchart TD
 
 ```
 POOCHEGA: "What if traffic suddenly spikes 10x?"
-BOL:      "A per-user limit doesn't stop a crowd where everyone is under their limit.
-           For that I need a global cap and load shedding based on system health, plus
-           a queue for the burst and pre-scaling when I know the spike is coming."
+          (Traffic achanak 10 guna ho gaya to?)
+
+JAWAB:    Har user ki had us bheed ko nahi rokti jahan har koi apni had ke andar hai.
+          Uske liye: poore system ki ek had (global cap) + system ki sehat dekh ke faltu request mana
+          karna (load shedding) + bheed ke liye queue + pata ho kab aayegi to pehle se machine badhao.
+
+SHABD:    global cap = sab users milake kitni request, uski had
 ```
 ```mermaid
 flowchart TD
@@ -552,9 +578,9 @@ flowchart TD
 ## DIKKAT 8 — attack aaya, usi waqt limiter gayab
 
 ```
-BOL:      "If Redis falls over during an attack, failing open would let everything through,
-           so each node falls back to a local in-memory counter with the global limit
-           divided by the number of nodes. It's approximate, but far better than no limit."
+JAWAB:    Hamle ke beech Redis gir gaya aur darwaza khula chhoda (fail open) to sab andar aa jaayega.
+          Isliye har machine apni memory me ginti karne lagti, had = poori had / machine ki ginti.
+          Bilkul sahi nahi, par had na hone se kahin behtar.
 ```
 ```mermaid
 flowchart TD
@@ -587,9 +613,12 @@ flowchart TD
 ## DIKKAT 9 — IP pe gin rahe the
 
 ```
-BOL:      "For logged-in traffic I limit by user id or API key, not IP, because offices share
-           IPs and botnets spread across thousands. Before login I keep a loose IP limit, rely
-           on the WAF, and add a per-account limit on failed logins with a lockout or CAPTCHA."
+JAWAB:    Login wale user ki had user id ya API key se, IP se nahi. Kyunki office me sab ek IP pe hote,
+          aur botnet hazaaron IP se aata.
+          Login se pehle: IP pe dheeli had + WAF. Aur galat password pe har account
+          ki had, zyada galat to account lock ya CAPTCHA.
+
+SHABD:    botnet = hazaaron hack kiye computer jo milke hamla karte
 ```
 ```mermaid
 flowchart TD
@@ -683,12 +712,13 @@ Redis Cluster = ginti ki ek jagah, 1 ms, ek jhatke me INCR / Lua, copy + shard
 Kafka -> Pattern Svc -> WAF = baar-baar wale ka pakka ban
 ```
 ```
-BOL:      "The limiter sits in the API gateway, in front of everything, so rejected requests never reach
-           the backend. Counts live in Redis with an atomic INCR or a Lua script, keyed by endpoint and
-           user, with a TTL as the window. I use token bucket because real traffic is bursty. Over the
-           limit it's a 429 with Retry-After. Redis is replicated and sharded, fails open for normal
-           APIs and closed for login and OTP. Users stick to a home region, repeat abusers go through
-           Kafka to a WAF ban, and a global cap with load shedding protects against a legit crowd."
+JAWAB:    Limiter API gateway me sabse aage, mana hui request backend tak jaati hi nahi.
+          Ginti Redis me, INCR ya Lua script se ek kadam me, key = endpoint + user, TTL = window. Token
+          bucket isliye ki asli traffic jhatke me aata.
+          Had paar = 429 + Retry-After. Redis ki copy + tukde; aam API pe fail open,
+          login / OTP pe fail closed.
+          User apne ghar wale region pe, baar-baar wale hamlawar Kafka se WAF ban, aur asli bheed se
+          bachane ke liye global cap + load shedding.
 ```
 
 ---
@@ -753,8 +783,9 @@ LIVE:  1..10 | % { curl.exe -s http://localhost:8080/rate-demo; "" }
 EDGE:  fixed window boundary: 999ms pe 5 + 1001ms pe 5 = ~2ms me 10
 PROD:  single node memory -> restart pe reset + har server apna count -> Redis INCR + EXPIRE
        per user / IP -> map<key, counter> · lib: Bucket4j (token bucket) / Redis + Lua
-BOL:      "I built a fixed-window counter in usercrud — five OK, then 429. In production I'd use
-           token bucket (Bucket4j) with a shared Redis counter; Nginx limit_req does it at the edge."
+JAWAB:    usercrud me fixed-window counter khud banaya: 5 request theek, chhathi pe 429.
+          Asli system me token bucket (Bucket4j) + saanjha Redis counter. Nginx ka limit_req ye kaam
+          sabse aage (edge) pe kar deta.
 ```
 
 ---
@@ -805,10 +836,11 @@ if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end
 return c
 ```
 ```
-BOL:      "If Redis is down the limiter fails open so the site stays up, and fails closed on login and
-           OTP. A Redis restart resets counters — acceptable for a limiter, a replica reduces it. INCR
-           and EXPIRE sent separately can leave a key with no TTL after a crash and block a user
-           forever, so I send both in one Lua script. I killed a Docker Redis myself to see all three."
+JAWAB:    Redis band: aam API pe darwaza khula (site chalti rahe), login / OTP pe band.
+          Redis restart = ginti zero, limiter me chalta hai, copy rakhne se kam hota.
+          INCR aur EXPIRE alag-alag bheje aur beech me crash -> key bina umar ke reh gayi -> user
+          hamesha ke liye block. Isliye dono ek Lua script me.
+          Teeno cheez maine Docker Redis khud maar ke dekhi.
 ```
 
 ARCHETYPE F · CONCEPTS: [caching/Redis](../../FOUNDATIONS/04_caching.md) · [load-balancing](../../FOUNDATIONS/03_load_balancing.md) · [SPOF](../../FOUNDATIONS/11_reliability_spof_cloud.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
