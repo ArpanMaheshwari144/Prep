@@ -17,14 +17,14 @@ DESI MISAAL: park me nal. Normal banda 1 bottle bharta, ek pagal banda 10 truck 
 
 ```
    KYA HUA                                     ILAAJ                                DABBA JUDA
-1  password bhoola, 9 login, sab andar      -> Redis me EK ginti (INCR + EXPIRE)    LB + App x2 + Redis
+1  password bhoola, 9 login, sab andar      -> Redis me EK ginti, 60 sec umar       Redis (LB + App x2 pehle se)
 2  bot ke 20 login ek pal me, 6 ghuse       -> ATOMIC: INCR / LUA script            (Redis atomic)
 3  bot ki 429 wali bhi App tak ghoomi       -> LIMITER GATEWAY pe, sabse aage       API Gateway
 4  dopahar Redis gira, limiter andha        -> REPLICA + FAIL-OPEN / FAIL-CLOSED    Redis Cluster + R53 + ALB
 5  meri script 3 region se, 150 nikli       -> HOME REGION me ginti                 (ginti ghar wale Redis me)
 6  bot har 60 sec phir aa jaata             -> KAFKA -> PATTERN -> WAF BAN          Kafka + Pattern Svc + WAF
 7  shaam sale, sab limit me, server gira    -> GLOBAL CAP + LOAD SHEDDING (503)     (gateway pe system ki had)
-8  raat attack, Redis gira, sab allow       -> LOCAL COUNTER FALLBACK               (gateway ki memory)
+8  raat attack, Redis gira, API khuli      -> LOCAL COUNTER FALLBACK               (gateway ki memory)
 9  office ka ek IP, 1000 log block          -> KEY = USER_ID (JWT), IP sirf login   (key badli)
 
 POORA DESIGN (upar ke dabbe kram se):
@@ -122,7 +122,7 @@ flowchart LR
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Redis["Redis<br/>do App, ginti bat gayi<br/>-> ek ginti, INCR + EXPIRE"]
+    n_Redis["Redis<br/>do App, ginti bat gayi<br/>-> ek ginti, 60 sec umar"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2
@@ -133,7 +133,7 @@ flowchart LR
 ```
 DIKKAT     Subah 9 baje password bhool gaya, 9 baar login (limit 5 / min). LB ne baanta: App-1 pe 5, App-2
            pe 4. Har App ne apni ginti dekhi -> kisi ko 5 PAAR nahi dikha, 9 andar.
-HAL        REDIS me EK ginti: key "rate:Arpan:login", har request +1 (INCR). Pehli pe umar 60 sec (EXPIRE)
+HAL        REDIS me EK ginti: key "rate:Arpan:login", har request pe ginti +1. Pehli pe umar 60 sec (EXPIRE)
            -> 60 sec baad key khud mitti, naya minute, ginti 0. Ginti 5 se upar -> 429.
 NAHI       ek user hamesha ek App pe (sticky LB): wo App gira to ginti gayi; App badhe / ghate to phir bati.
 ```
@@ -165,7 +165,7 @@ flowchart LR
 ```
 ```
 DIKKAT     10 baje bot ne mere account pe ek hi pal me 20 login parallel bheje; ginti 4, limit 5.
-           App-1 ne Redis se "4" padha, App-2 ne bhi "4". Dono ne +1 karke "5" likha -> andar 6.
+           App-1 ne Redis se "4" padha (GET), App-2 ne bhi "4"; dono ne +1 karke "5" likha (SET) -> andar 6.
 HAL        ATOMIC: Redis ek hi line (single thread) me, ek command poora hone tak doosra shuru nahi -> INCR
            +1, +1 sahi. Token bucket ke do kaam (dekhna + ghatana) ek LUA script me, beech me koi nahi.
 NAHI       App me padho, +1, phir likho: padhne aur likhne ke beech doosra ghus jaata.
@@ -369,13 +369,13 @@ AAGE POOCHEGA:
   "Line (queue) me rok lo?"        -> chhota time (~2 sec); user chala gaya to uska kaam bekaar.
 ```
 
-#### 8 Raat ko attack aaya, usi waqt Redis gira, sab allow
+#### 8 Raat ko attack aaya, usi waqt Redis gira, aam API khuli reh gayi
 ```mermaid
 flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
     n_ALB["ALB"]
-    n_API_Gateway["API Gateway<br/>attack me Redis gira, sab allow<br/>-> local counter fallback"]
+    n_API_Gateway["API Gateway<br/>attack me Redis gira, API khuli<br/>-> local counter fallback"]
     n_Redis_Cluster["Redis Cluster"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
@@ -395,7 +395,7 @@ flowchart LR
     style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat ko attack -> Redis pe 50 guna bojh -> Redis gira -> fail-open -> sab allow.
+DIKKAT     Raat ko attack -> Redis pe 50 guna bojh -> Redis gira -> aam API fail-open -> wahan bot ko khuli chhoot.
            Jis waqt limiter sabse zyada chahiye tha, usi waqt gayab.
 HAL        LOCAL COUNTER FALLBACK: har server apni memory me gine, had baant ke: 100, 4 server -> har ek 25.
            Bilkul sahi nahi, par bina had se kahin achha. Redis wapas aaya -> phir sabki ek ginti.

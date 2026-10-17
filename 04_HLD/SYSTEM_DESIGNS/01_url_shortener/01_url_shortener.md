@@ -130,11 +130,12 @@ DIKKAT     10 baje maine sale ka chhota link College Gang me daala, viral -> ~1 
            DB (disk) tak. Redirect dheema hua, phir DB hi baith gaya.
 HAL        REDIS CACHE (cache-aside): pehle Redis; mila -> bhejo, nahi -> DB se laao, Redis me rakho, bhejo.
            RAM, 1 ms se kam; ~100 me se 95 click Redis se. Redis me expiry (TTL) = link ki expiry.
-NAHI       DB ki read copy: wo bhi disk se, dheemi · har App apna cache: link badla to kisi pe purana.
+NAHI       DB ki read copy (replica): wo bhi disk se, dheemi; 1 lakh / sec ke liye bahut copies chahiye.
 ```
 ```
 AAGE POOCHEGA:
   NIYAM: garam link RAM me; DB tak sirf wo jo Redis me nahi mila.
+  "Har App apna cache rakhe?"      -> link badla to kisi App pe purana dikhta rahega; Redis sabka ek.
   "Saare 180 arab Redis me?"       -> nahi, sirf garam; bhara to sabse der se na khula nikaalo (LRU).
   "LRU wala baad me khula?"        -> DB se wapas Redis me aa jaayega.
   "Link delete / expire hua?"      -> expiry pe Redis khud hatata; delete pe pehle DB se, phir Redis se.
@@ -356,8 +357,8 @@ NAHI       tez karne ko sirf 1 copy se padho: wo C ho sakti hai -> phir 404.
 AAGE POOCHEGA:
   NIYAM: "2 me likha + 2 se padha" -> dono me ek copy common pakki; jo likha wo khona nahi.
   "Likhte waqt ek copy giri?"      -> 3 me se 2 ne likha tabhi "save"; us beech redirect Redis se.
-  "Giri machine wapas uthi?"       -> har machine pehle apni diary (commit log) me note karti; wo padh ke
-                                      adhoora poora kar leti.
+  "Giri machine wapas uthi?"       -> girne ke beech ki likhai zinda machine ne note rakhi (hinted handoff),
+                                      uthte hi de di; padhte waqt copies me farak mile to theek (read repair).
   "2 ka hi intezaar, 3 ka kyun?"   -> teeno = ek dheemi machine sabko dheema; 2 me ek gire tab bhi likh sakte.
   "2 machine gir gayi?"            -> 2 "haan" nahi -> likhna fail (ya 1 pe, risk ke saath); click Redis se.
   "2 se padhna dheema nahi?"       -> haan, thoda; isliye pehla ilaaj Redis, zyada click wahin se.
