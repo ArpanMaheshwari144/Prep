@@ -371,7 +371,7 @@ AAGE POOCHEGA:
 
 #### 8 10 lakh log ek saath price poochh rahe, server baith gaya
 ```
-CUE        TV ki tarah bhejo, har koi phone na kare (push, WebSocket)
+CUE        Twitter feed jaisa: maango mat, khud aaye (push, WebSocket)
 
 DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
 HAL        WebSocket: connection khula, price badla tabhi push (Redis pub/sub se servers tak).
