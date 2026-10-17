@@ -536,7 +536,8 @@ KEY KAB BANTI:
           key random hai, payment SCREEN khulte banti. Nayi payment screen = nayi key.
           (A) Arpan ne do alag payment kiye -> key-555, key-888 -> 100 + 100 = 200 (do payment, sahi)
           (B) ek tap + network ne dobara bheja -> wahi key-555 dobara -> "aa chuki" -> pehla jawab -> 100
-          farak = KAUN dobara bhej raha: Arpan nayi payment screen se (nayi key, naya payment) · system (wahi key, ek hi baar)
+          farak = KAUN dobara bhej raha: Arpan nayi payment screen se (nayi key, naya payment)
+          · system (wahi key, ek hi baar)
           maqsad do payment rokna NAHI, sirf network ke dobara bhejne ko do baar ginne se rokna
           CHEQUE jaisa: key = cheque number · do cheque = dono cash · ek number do baar = nahi
                         bank amount nahi, NUMBER dekhta
