@@ -14,9 +14,10 @@
 2  Mere paas 50k the, maine 60k ke order laga diye
    CUE: bank jaise: check aur block ek hi jhatke me (ek atomic query)
 3  Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
-   CUE: TCS ki ek line, ek hi aadmi chalata (ek symbol ek thread)
+   CUE: TCS ka ek hi baabu; do baabu hote to Suresh ke 10 share do baar bik jaate (ek symbol ek thread)
 4  9:15 baje sab TCS pe toot pade
-   CUE: TCS ki line lambi ho jaaye, par ek hi counter (baanto mat, line me rakho)
+   CUE: 9:15 ki bheed: baabu mat badhao, sabko token do; ek baabu lakhon / sec nipta leta
+        (baanto mat, line me rakho)
 5  Server gira, poori order book gayab
    CUE: scoreboard toota, scorer ka register bacha (log pehle, replay)
 6  Mera paisa kat gaya, Suresh ko mila hi nahi
@@ -211,7 +212,7 @@ AAGE POOCHEGA (wahi WAJAH A, ya block ka hisaab):
 
 #### 3 Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
 ```
-CUE        TCS ki ek line, ek hi aadmi chalata (ek symbol ek thread)
+CUE        TCS ka ek hi baabu; do baabu hote to Suresh ke 10 share do baar bik jaate (ek symbol ek thread)
 >> yaad aa gaya? aage badh. nahi? neeche padh.
 
 DIKKAT     Paisa block hua, mera order TCS ki book me pahuncha. Suresh 10 TCS bech raha.
@@ -256,7 +257,8 @@ AAGE POOCHEGA (wahi WAJAH A):
 
 #### 4 9:15 baje sab TCS pe toot pade
 ```
-CUE        TCS ki line lambi ho jaaye, par ek hi counter (baanto mat, line me rakho)
+CUE        9:15 ki bheed: baabu mat badhao, sabko token do; ek baabu lakhon / sec nipta leta
+           (baanto mat, line me rakho)
 >> yaad aa gaya? aage badh. nahi? neeche padh.
 
 DIKKAT     Usi 9:15 pe sirf main aur Mohan nahi, poora market TCS pe toot pada: hazaaron order / second.
