@@ -81,8 +81,13 @@ flowchart TD
 KAHANI:  Arpan ne order kiya. Order service ne email bheja aur jawab ka intezaar karti rahi.
          Ek din email company band thi -> order hi fail ho gaya. Aur email dobara bhejne wala koi nahi.
 
-ILAAJ:   Beech me KAFKA. Order service bas "order hua" ki khabar Kafka me daale aur turant laute.
-         Notification service peeche se Kafka padh ke email bheje.
+ILAAJ:   Order service email ka intezaar nahi karti: 'order hua' ki khabar Kafka me daali aur turant user
+         ko jawab de diya.
+         Notification service peeche se khabar padh ke email bhejti. Email company band ho to bhi order ho
+         jaata, email baad me chala jaata.
+         Ek dikkat: order DB me likha aur Kafka me daalne se pehle service giri to khabar kho jaati.
+         Isliye order aur khabar dono DB me ek saath likho (outbox table), ek relay baad me khabar Kafka
+         bhej deta.
 
 ANDAR KAISE:
          Kafka ek diary hai jo disk pe rehti hai. Notification
@@ -106,8 +111,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Push, email, SMS teeno ek hi line me khade the. SMS company dheemi hui ->
          SMS wale atke, aur unke peeche push aur email bhi khade reh gaye.
 
-ILAAJ:   Har raaste ki apni line (Kafka topic) aur apne worker.
-         push -> FCM / APNs · email -> SES · SMS -> Twilio.
+ILAAJ:   Push, email, SMS teeno ki alag line aur alag worker.
+         SMS company dheemi hui to sirf SMS ki line lambi hogi, push aur email apni speed se chalte
+         rahenge.
+         Jis raaste pe zyada kaam, sirf uske worker badhao.
 
 ANDAR KAISE:
          SMS dheema -> sirf SMS ki line lambi hui. Email worker apni speed se chalte rahe.
@@ -126,8 +133,11 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Arpan ne SMS band kiya tha aur raat 10 se subah 8 "mat
          bhejo" lagaya tha. Phir bhi raat 2 baje SMS aaya.
 
-ILAAJ:   Bhejne se pehle teen cheez dekho: user ki PASAND (kaunsa raasta chalu, kab mat bhejo, kya band kiya)
-         -> message ka SAANCHA (template, sahi bhasha me) -> phir raasta.
+ILAAJ:   Bhejne se pehle dekho Arpan ne kya chuna hai: SMS band kiya? raat 11 se 7 'disturb mat karo'?
+         Phir uski bhasha me message bharo ('Hi {naam}, order {id} aa gaya'). Ye dono cheez cache me,
+         baar-baar DB nahi.
+         Offer wala message subah tak ruke, par OTP aur 'koi aur login kar raha' wala alert raat ko bhi
+         jaaye.
 
 ANDAR KAISE:
          Arpan = push chalu, email chalu, SMS band, raat 10-8 shaanti -> sirf push + email, SMS chhodo.
@@ -145,8 +155,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Worker ne email company ko bheja. Company ne email bhej bhi diya, par uska "ho gaya" wala jawab
          raaste me kho gaya. Worker ko laga fail hua -> dobara bheja -> Arpan ko DO email.
 
-ILAAJ:   Bhejne se pehle Redis me ek parchi lagao: "ye khabar le li" (SET khabar_ki_id NX).
-         Parchi lag gayi -> bhejo. Pehle se lagi thi -> koi aur bhej chuka, chhodo.
+ILAAJ:   Kafka kabhi ek khabar do baar bhi de deta hai. Isliye worker bhejne se pehle Redis me khabar ki
+         id ke saath parchi lagata: 'SET NX' matlab sirf tab lagao jab pehle se na ho.
+         Parchi pehle se lagi mili = ye khabar pehle aa chuki, skip. Arpan ko do email nahi jaayenge.
+         Ye wahi hai jo usercrud me /pay pe banaya tha: key pehle aayi to dobara kaam nahi.
 
 ANDAR KAISE:
          Kafka ek khabar kabhi-kabhi do baar de deta hai. Isliye parchi khabar ki APNI id se lagti hai,
@@ -222,12 +234,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  SMS company band nahi hui, bas dheemi ho gayi. Har call 30 second atki.
          Saare worker usi me phans gaye, baaki kaam ruk gaya. Dheemi company band company se bhi buri.
 
-ILAAJ:   Chhota TIMEOUT + har raaste ki DO company (SES + SendGrid, Twilio + SNS) + CIRCUIT BREAKER.
-
-ANDAR KAISE (circuit breaker = ghar ka fuse):
-         sab theek (CLOSED) -> kai baar fail -> fuse uda (OPEN):
-         us company ko call band, doosri company pe bhejo
-         -> ~30 second baad (HALF-OPEN): 1-2 test call -> chali to wapas CLOSED, fail to phir OPEN.
+ILAAJ:   Company ko call karte waqt 2-3 second se zyada intezaar nahi (timeout).
+         Baar-baar fail ho rahi hai to us company ko kuch der call karna hi band (fuse uda), aur doosri
+         company se bhejo. Worker atke nahi rehte.
+         Thodi der baad ek test call: chal gayi to pehli wali wapas.
 
 ISKE BAAD KYA TOOTEGA:
   - Dono company band?
@@ -242,8 +252,8 @@ KAHANI:  Ek hi line me sab. Usi waqt 50,000 offer wale message
          line me the. Arpan ka OTP unke peeche khada raha,
          10 minute baad aaya. Tab tak login ka time khatam.
 
-ILAAJ:   Zaroorat ke hisaab se alag line (Kafka topic) aur alag
-         worker: tez (OTP) · beech (order) · dheemi (offer).
+ILAAJ:   OTP ki apni alag line aur apne worker. Offer wale 1 crore message apni line me khade rahein, OTP
+         unke peeche kabhi nahi lagta, turant jaata.
 
 ANDAR KAISE:
          Kafka me "ye zaroori hai, pehle bhejo" hota hi nahi -> isliye alag line.
@@ -260,9 +270,10 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  Sale shuru, ek saath laakhon message. SMS company bolti "itna nahi" (429) -> sab fail.
 
-ILAAJ:   Worker khud apni speed kam kare (token bucket), company ki limit ke andar.
-         429 aaya -> ruko, company jitna bole utna (Retry-After). Message line me ruke, phenko nahi.
-         (Yahan "khol do" wala raasta nahi, company ka darwaza hum nahi khol sakte.)
+ILAAJ:   Company keh rahi hai 'second me 100 se zyada mat bhejo'. To worker khud apni speed 100 / second
+         pe rakhte (har second 100 token, ek message = ek token).
+         429 aaya to ruk ke dobara, company jitni der bole utni der ruko. Message line me intezaar karte,
+         had ke baad DLQ me, phenke nahi.
 
 ANDAR KAISE:
          100 worker, har ek ne poori limit li = 100 guna -> phir 429.
@@ -280,9 +291,11 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  SMS company ne message le liya. Par Arpan ke phone tak pahuncha ya nahi, humein pata hi nahi.
 
-ILAAJ:   Company khud batati hai (WEBHOOK): delivered / bounced
-         / failed -> hamare hisaab (Tracking DB) me likho.
-         Push me app khud "mil gaya" bhejti hai.
+ILAAJ:   Company 'bhej diya' bolti hai, par user tak pahuncha ya nahi wo baad me batati hai (webhook:
+         company khud hamein call karti).
+         Isliye har message ke saath company ki message id rakho. Webhook aaya ('mila' / 'fail') to wahi
+         row update karo, pehle check karo ki call sach me company ki hai (signature).
+         Jo message ghanton se 'bheja' pe atka, uska ek baar khud company se haal poochh lo.
 
 ANDAR KAISE:
          Bhejte waqt company ka message number (SES MessageId / Twilio SID) apne notification ke saath save.
@@ -303,10 +316,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  "Diwali offer sabko" = 1 crore user. Ek-ek karke bheja -> request ghanton atki, OTP bhi peeche,
          company ki limit tooti.
 
-ILAAJ:   Campaign service turant bolti "le liya" (202). Ek BATCH job users ko 1000-1000 ke tukdon me padh ke
-         Kafka me daale (10,000 message). Workers: pasand dekho
-         -> saancha -> DHEEMI line -> company ki speed se.
-         Har message ki pehchaan = (campaign_id, user_id).
+ILAAJ:   API turant 'shuru ho gaya' bol de, 1 crore ek saath nahi bhejte.
+         Ek job users ko 1000-1000 ke packet me padhe aur har packet Kafka me daale. Worker har user ki
+         pasand dekhe, message bhare, aur dheemi (offer wali) line pe company ki had me bheje.
+         Push ke liye FCM topic: sab subscribed phones ko ek hi call me.
 
 ANDAR KAISE:
          "id > aakhri_id, 1000 lao" (cursor), har tukde ke baad aakhri_id campaign row me save
@@ -393,9 +406,9 @@ flowchart TD
 ```
 
 ---
-## ════ DETAIL: HAR DIKKAT KI INTERVIEW LINE + TASVEER ════
+## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Card me poori kahani hai. Yahan har dikkat ki ek English line (interview me bolne ke liye) aur us waqt tak ka diagram.
+> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
 
 ---
 
@@ -403,15 +416,6 @@ flowchart TD
 
 ## DIKKAT 1 — order email ke intezaar me ruka
 
-```
-JAWAB:    Order service email ka intezaar nahi karti: 'order hua' ki khabar Kafka me daali aur turant
-          user ko jawab de diya.
-          Notification service peeche se khabar padh ke email bhejti. Email company band ho to bhi order
-          ho jaata, email baad me chala jaata.
-          Ek dikkat: order DB me likha aur Kafka me daalne se pehle service giri to khabar kho jaati.
-          Isliye order aur khabar dono DB me ek saath likho (outbox table), ek relay baad me khabar
-          Kafka bhej deta.
-```
 ```mermaid
 flowchart TD
     n_Order_Svc["Order Svc"]
@@ -431,12 +435,6 @@ flowchart TD
 
 ## DIKKAT 2 — teen raaste, SMS dheema to sab atke
 
-```
-JAWAB:    Push, email, SMS teeno ki alag line aur alag worker.
-          SMS company dheemi hui to sirf SMS ki line lambi hogi, push aur email apni speed se chalte
-          rahenge.
-          Jis raaste pe zyada kaam, sirf uske worker badhao.
-```
 ```mermaid
 flowchart TD
     n_Order_Svc["Order Svc"]
@@ -470,13 +468,6 @@ flowchart TD
 
 ## DIKKAT 3 — SMS band tha, phir bhi raat 2 baje
 
-```
-JAWAB:    Bhejne se pehle dekho Arpan ne kya chuna hai: SMS band kiya? raat 11 se 7 'disturb mat karo'?
-          Phir uski bhasha me message bharo ('Hi {naam}, order {id} aa gaya'). Ye dono cheez cache me,
-          baar-baar DB nahi.
-          Offer wala message subah tak ruke, par OTP aur 'koi aur login kar raha' wala alert raat ko bhi
-          jaaye.
-```
 ```mermaid
 flowchart TD
     n_Order_Svc["Order Svc"]
@@ -514,15 +505,6 @@ flowchart TD
 
 ## DIKKAT 4 — jawab kho gaya, user ko do email
 
-```
-POOCHEGA: "What if the same event comes twice / the worker retries?"
-          (Wahi khabar do baar aa gayi / worker ne dobara koshish ki to?)
-
-JAWAB:    Kafka kabhi ek khabar do baar bhi de deta hai. Isliye worker bhejne se pehle Redis me khabar
-          ki id ke saath parchi lagata: 'SET NX' matlab sirf tab lagao jab pehle se na ho.
-          Parchi pehle se lagi mili = ye khabar pehle aa chuki, skip. Arpan ko do email nahi jaayenge.
-          Ye wahi hai jo usercrud me /pay pe banaya tha: key pehle aayi to dobara kaam nahi.
-```
 ```mermaid
 flowchart TD
     n_Order_Svc["Order Svc"]
@@ -564,18 +546,6 @@ flowchart TD
 
 ## DIKKAT 5 — parchi laga di, par bhejna fail
 
-```
-POOCHEGA: "You set the idempotency key, but then the send failed. Now what?"
-          (Parchi (idempotency key) laga di, par bhejna fail ho gaya. Ab?)
-
-JAWAB:    Worker-A ne parchi lagayi, phir SMS bhejna fail ho gaya. Ab parchi lagi hai to dobara koshish
-          bhi skip ho jaayegi, SMS kabhi nahi jaayega.
-          Ilaaj: parchi pe likho 'BHEJ RAHA HOON' aur uski umar sirf 60 second. Company ne SMS le liya
-          tabhi parchi pe 'BHEJ DIYA' likho (1 din).
-          Bhejna fail -> parchi hata do. Worker-A mar gaya -> 60 second me parchi khud mit jaati. Dono
-          me Worker-B dobara bhej deta.
-          Skip sirf tab jab parchi pe 'BHEJ DIYA' likha ho.
-```
 ```mermaid
 flowchart TD
     n_Order_Svc["Order Svc"]
@@ -617,18 +587,6 @@ flowchart TD
 
 ## DIKKAT 6 — company gir rahi, hum turant dobara maar rahe
 
-```
-POOCHEGA: "How do you make sure no message is lost?"
-          (Koi message khoye nahi, kaise pakka karoge?)
-
-JAWAB:    Teen jagah dhyaan:
-          1) Kafka me likhte waqt 'saari copy me likh gaya' tabhi done maano, taaki Kafka ki machine
-          gire to bhi khabar rahe.
-          2) Worker 'padh liya' tab bole jab SMS chala gaya. Beech me mara to khabar dobara aayegi,
-          khoyegi nahi (aur parchi se do baar nahi jaayegi).
-          3) Baar-baar fail ho to ruk-ruk ke koshish, phir bhi na jaaye to alag line (DLQ) me. Phenkte
-          kabhi nahi.
-```
 ```mermaid
 flowchart TD
     n_Order_Svc["Order Svc"]
@@ -674,15 +632,6 @@ flowchart TD
 
 ## DIKKAT 7 — company dheemi, saare worker phanse
 
-```
-POOCHEGA: "What if the provider is slow?"
-          (Bhejne wali company dheemi ho to?)
-
-JAWAB:    Company ko call karte waqt 2-3 second se zyada intezaar nahi (timeout).
-          Baar-baar fail ho rahi hai to us company ko kuch der call karna hi band (fuse uda), aur doosri
-          company se bhejo. Worker atke nahi rehte.
-          Thodi der baad ek test call: chal gayi to pehli wali wapas.
-```
 ```mermaid
 flowchart TD
     n_Order_Svc["Order Svc"]
@@ -728,13 +677,6 @@ flowchart TD
 
 ## DIKKAT 8 — OTP offer ke peeche
 
-```
-POOCHEGA: "How do you prioritize urgent work, like OTPs?"
-          (Zaroori kaam (jaise OTP) pehle kaise?)
-
-JAWAB:    OTP ki apni alag line aur apne worker. Offer wale 1 crore message apni line me khade rahein,
-          OTP unke peeche kabhi nahi lagta, turant jaata.
-```
 ```mermaid
 flowchart TD
     n_Order_Svc["Order Svc"]
@@ -780,15 +722,6 @@ flowchart TD
 
 ## DIKKAT 9 — company ne 429 diya
 
-```
-POOCHEGA: "The provider returns 429 — you're sending too fast. What now?"
-          (Company ne 429 diya, tum bahut tez bhej rahe ho. Ab?)
-
-JAWAB:    Company keh rahi hai 'second me 100 se zyada mat bhejo'. To worker khud apni speed 100 /
-          second pe rakhte (har second 100 token, ek message = ek token).
-          429 aaya to ruk ke dobara, company jitni der bole utni der ruko. Message line me intezaar
-          karte, had ke baad DLQ me, phenke nahi.
-```
 ```mermaid
 flowchart TD
     n_Order_Svc["Order Svc"]
@@ -834,13 +767,6 @@ flowchart TD
 
 ## DIKKAT 10 — bhej diya ka matlab mil gaya nahi
 
-```
-JAWAB:    Company 'bhej diya' bolti hai, par user tak pahuncha ya nahi wo baad me batati hai (webhook:
-          company khud hamein call karti).
-          Isliye har message ke saath company ki message id rakho. Webhook aaya ('mila' / 'fail') to
-          wahi row update karo, pehle check karo ki call sach me company ki hai (signature).
-          Jo message ghanton se 'bheja' pe atka, uska ek baar khud company se haal poochh lo.
-```
 ```mermaid
 flowchart TD
     n_Order_Svc["Order Svc"]
@@ -889,15 +815,6 @@ flowchart TD
 
 ## DIKKAT 11 — 1 crore ko ek saath offer
 
-```
-POOCHEGA: "How would you send a notification to 10 million users?"
-          (1 crore users ko notification kaise bhejoge?)
-
-JAWAB:    API turant 'shuru ho gaya' bol de, 1 crore ek saath nahi bhejte.
-          Ek job users ko 1000-1000 ke packet me padhe aur har packet Kafka me daale. Worker har user ki
-          pasand dekhe, message bhare, aur dheemi (offer wali) line pe company ki had me bheje.
-          Push ke liye FCM topic: sab subscribed phones ko ek hi call me.
-```
 ```mermaid
 flowchart TD
     n_Admin["Admin"]

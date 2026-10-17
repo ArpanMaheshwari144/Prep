@@ -70,8 +70,11 @@ KAHANI:  Limit hai "ek minute me 5 login". Ab App ki 3 machine hain, LB request 
          Arpan ne 9 baar login try kiya: App-1 pe 3, App-2 pe 4, App-3 pe 2 gayi.
          Har App ne apni ginti dekhi: 3, 4, 2 -> kisi ko 5 paar dikha hi nahi. 9 andar ghus gayi.
 
-ILAAJ:   Ginti EK jagah rakho: REDIS. Teeno App wahi ek ginti dekhein.
-         Key ka naam: rate:login:arpan. Usme ginti. Aur key ki umar (TTL) = 60 second.
+ILAAJ:   Har server apni ginti kare to user har baar alag server pe jaake 5 ki had ko 5 x 3 = 15 bana
+         leta.
+         Isliye ginti sab servers ki EK jagah: Redis. Key = 'login:Arpan', har request pe ginti +1.
+         Pehli request pe key ki umar 1 minute rakh do. Minute khatam, key apne aap mit gayi, ginti phir
+         zero se.
 
 ANDAR KAISE:
          Har request pe Redis me +1 (INCR).
@@ -97,8 +100,11 @@ KAHANI:  Ginti 4 pe hai, limit 5. Do request bilkul ek saath aayi.
          Request A ne padha "4". Request B ne bhi padha "4". Dono ne +1 kiya aur "5" likh diya.
          Ginti 5 hi dikhi, par andar 6 request ghus gayi.
 
-ILAAJ:   "Padho, badhao, likho" teeno ek jhatke me hone chahiye, beech me koi na ghuse.
-         Redis ka INCR ye khud karta hai. Kaam me kai step ho (token bucket) to LUA script me daal do.
+ILAAJ:   Redis ek-ek karke kaam karta hai, do kaam ek saath nahi. Isliye do request ek saath aayi to bhi
+         ginti +1, +1 sahi se hoti, koi beech me nahi ghusta.
+         Token bucket me do kaam hain: 'token bacha hai?' dekhna, phir 'ek token ghatao'. Ye dono ek Lua
+         script me daal do, to Redis dono ek hi kadam me karta. Beech me doosri request ghus ke wahi
+         aakhri token nahi le sakti.
 
 ANDAR KAISE:
          Redis ek hi line (single thread) me kaam karta hai:
@@ -128,7 +134,11 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Limiter App ke andar tha. Bot ki jo request ko 429 milna tha, wo bhi LB se, App tak,
          sab jagah ghoom ke aayi, aur tab jaake mana hua. Machines ka kaam bekaar gaya.
 
-ILAAJ:   Limiter ko sabse AAGE rakho: API GATEWAY pe. 429 wahin se, App tak jaaye hi nahi.
+ILAAJ:   Limiter sabse aage, darwaze (API gateway) pe. Jo request mana hui, wo andar ke server tak
+         pahunchti hi nahi.
+         User ko 429 jaata, saath me 'itne second baad aana' (Retry-After), thoda alag-alag time taaki sab
+         ek saath wapas na aayein.
+         Had ke niyam alag jagah (config) likhe hain, to had badalni ho to code dobara daalna nahi padta.
 
 ANDAR KAISE:
          Gateway har request pe Redis se poochta: had ke andar -> aage App ko, bahar -> wahin 429.
@@ -151,9 +161,9 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  Saari ginti Redis me thi. Redis mar gaya -> ab kisi ko pata hi nahi kisne kitni bheji. Limiter andha.
 
-ILAAJ:   Redis ki COPY (replica) doosre data center (AZ) me. Main mara -> copy apne aap main ban jaati.
-         Poora Redis hi gaya -> pehle se tay: aam API khuli
-         (FAIL-OPEN), login / payment / OTP band (FAIL-CLOSED).
+ILAAJ:   Redis ki copy doosri building me hoti, Redis gira to copy uski jagah le leti.
+         Poora Redis hi chala gaya to: aam cheezon (feed, search) ke liye sabko jaane do, site chalti
+         rahe. Login aur OTP pe sabko roko, kyunki wahan bina had ke koi password guess karta rahega.
 
 ANDAR KAISE:
          Likhna sirf main (master) pe hota hai, copy tak thodi der baad pahunchta hai.
@@ -199,8 +209,11 @@ ISKE BAAD KYA TOOTEGA:
 ```
 KAHANI:  429 sirf bolta "60 second baad aao". Bot 60 second baad phir aa jaata, din bhar, roz.
 
-ILAAJ:   Har 429 ki khabar KAFKA me daalo. Ek Pattern service ginti kare.
-         Pakka gunda nikla -> uska IP WAF me daal ke ban.
+ILAAJ:   Jab bhi kisi ko 429 mile, ek khabar Kafka me jaati. Ek service ye khabarein dekhti: koi IP minute
+         me 500 baar mana ho raha hai? To use WAF ki block list me kuch der ke liye daal do, wo darwaze pe
+         hi ruk jaayega.
+         Pehli baar mana hone pe block nahi karte, kyunki office me 100 log ek hi IP se aate hain aur asli
+         user bhi kabhi jaldi-jaldi click karta hai.
 
 ANDAR KAISE:
          Pattern service dekhti: "is IP ko 10 minute me 500 se zyada 429 mile?" -> haan -> WAF ki block list.
@@ -225,9 +238,9 @@ KAHANI:  Har user ki limit 100 / minute, aur server ek second me 5,000 jhel sakt
          limit ke andar tha, par sab mila ke 12,000 / second.
          Server gir gaya. Limiter ne kuch nahi roka, kyunki kisi ek ne galti ki hi nahi.
 
-ILAAJ:   LOAD SHEDDING: system ki sehat dekh ke NAYI request ko
-         seedha 503 do. Jo chal rahi hain, wo poori hone do.
-         Jaise bijli kam ho to kuch mohallon ki kaatte hain, taaki poora grid na gire.
+ILAAJ:   Har user ki had tab kaam nahi aati jab 1 crore log aayein aur har koi apni had ke andar ho.
+         Uske liye: (1) poore system ki ek had, (2) system thakne lage to kuch request seedha mana karo,
+         (3) bheed ko line me rakho, (4) pata ho kab aayegi (sale) to pehle se machine badhao.
 
 ANDAR KAISE:
          Gateway pe poore system ki ek had (global cap) + "CPU 90% paar to nayi mat lo".
@@ -249,7 +262,9 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Attack aaya -> Redis pe 50 guna bojh -> Redis gir gaya -> fail-open -> sab allow.
          Jis waqt limiter sabse zyada chahiye tha, usi waqt gayab.
 
-ILAAJ:   Redis gaya to har machine apni memory me motamoti ginti kare (local fallback).
+ILAAJ:   Hamle ke beech Redis gir gaya. Ab sabko jaane diya to hamla seedha andar.
+         Isliye har server apni memory me ginti karne lage. Had baant do: poori had 100 thi, 4 server
+         hain, to har server 25 tak. Bilkul sahi nahi, par bina had se kahin achha.
 
 ANDAR KAISE:
          Machine ki apni limit = poori limit / machines. 100 ki limit, 10 machine -> har machine 10.
@@ -267,8 +282,10 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Office ke 1000 log ek hi IP ke peeche (NAT). Ek ne galti ki, IP block, saare 1000 block.
          Ulta, ek botnet ke paas 1000 IP hain, har IP se thoda-thoda -> kisi IP ki limit nahi tooti.
 
-ILAAJ:   Login ke baad ginti user_id / API key pe karo, IP pe nahi.
-         Login se pehle IP hi hai -> uspe dheeli limit, aur asli rok WAF / bot pehchaan se.
+ILAAJ:   Login ke baad had user id se lagao, IP se nahi. Kyunki office me sab ek IP pe hote (sab ek saath
+         ruk jaate), aur hamlawar hazaaron IP se aata (IP had se bach jaata).
+         Login se pehle user id hai hi nahi, to IP pe dheeli had + WAF. Aur ek account pe baar-baar galat
+         password -> account lock ya CAPTCHA.
 
 ISKE BAAD KYA TOOTEGA:
   - Login se pehle botnet 1000 IP se password guess kar raha?
@@ -338,9 +355,9 @@ flowchart TD
 ```
 
 ---
-## ════ DETAIL: HAR DIKKAT KI INTERVIEW LINE + TASVEER ════
+## ════ TASVEER: HAR DIKKAT KE BAAD SYSTEM ════
 
-> Card me poori kahani hai. Yahan har dikkat ki ek English line (interview me bolne ke liye) aur us waqt tak ka diagram.
+> Saari baat upar card me hai. Yahan har dikkat ke baad system ki tasveer (diagram).
 
 ---
 
@@ -348,13 +365,6 @@ flowchart TD
 
 ## DIKKAT 1 — teen server, ginti bat gayi
 
-```
-JAWAB:    Har server apni ginti kare to user har baar alag server pe jaake 5 ki had ko 5 x 3 = 15 bana
-          leta.
-          Isliye ginti sab servers ki EK jagah: Redis. Key = 'login:Arpan', har request pe ginti +1.
-          Pehli request pe key ki umar 1 minute rakh do. Minute khatam, key apne aap mit gayi, ginti
-          phir zero se.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -375,16 +385,6 @@ flowchart TD
 
 ## DIKKAT 2 — do request ek saath, dono ghus gayi
 
-```
-POOCHEGA: "Two requests come at the same time — what happens?"
-          (Do request bilkul ek saath aayi to?)
-
-JAWAB:    Redis ek-ek karke kaam karta hai, do kaam ek saath nahi. Isliye do request ek saath aayi to
-          bhi ginti +1, +1 sahi se hoti, koi beech me nahi ghusta.
-          Token bucket me do kaam hain: 'token bacha hai?' dekhna, phir 'ek token ghatao'. Ye dono ek
-          Lua script me daal do, to Redis dono ek hi kadam me karta. Beech me doosri request ghus ke
-          wahi aakhri token nahi le sakti.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -405,14 +405,6 @@ flowchart TD
 
 ## DIKKAT 3 — reject wali request bhi andar ghoom aayi
 
-```
-JAWAB:    Limiter sabse aage, darwaze (API gateway) pe. Jo request mana hui, wo andar ke server tak
-          pahunchti hi nahi.
-          User ko 429 jaata, saath me 'itne second baad aana' (Retry-After), thoda alag-alag time taaki
-          sab ek saath wapas na aayein.
-          Had ke niyam alag jagah (config) likhe hain, to had badalni ho to code dobara daalna nahi
-          padta.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -434,14 +426,6 @@ flowchart TD
 
 ## DIKKAT 4 — Redis gir gaya
 
-```
-POOCHEGA: "What if Redis goes down?"
-          (Redis gir gaya to?)
-
-JAWAB:    Redis ki copy doosri building me hoti, Redis gira to copy uski jagah le leti.
-          Poora Redis hi chala gaya to: aam cheezon (feed, search) ke liye sabko jaane do, site chalti
-          rahe. Login aur OTP pe sabko roko, kyunki wahan bina had ke koi password guess karta rahega.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -465,14 +449,6 @@ flowchart TD
 
 ## DIKKAT 5 — ek user teen region se
 
-```
-POOCHEGA: "What if a whole region goes down?"
-          (Poora region band ho gaya to?)
-
-JAWAB:    Route 53 user ko doosre region bhej deta. Wahan ginti zero se shuru hoti, to us ek minute ke
-          liye user ko thodi zyada request mil jaati hain.
-          Chalta hai, sirf ek minute ki baat hai.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -496,13 +472,6 @@ flowchart TD
 
 ## DIKKAT 6 — baar-baar maar raha, 429 se nahi rukta
 
-```
-JAWAB:    Jab bhi kisi ko 429 mile, ek khabar Kafka me jaati. Ek service ye khabarein dekhti: koi IP
-          minute me 500 baar mana ho raha hai? To use WAF ki block list me kuch der ke liye daal do, wo
-          darwaze pe hi ruk jaayega.
-          Pehli baar mana hone pe block nahi karte, kyunki office me 100 log ek hi IP se aate hain aur
-          asli user bhi kabhi jaldi-jaldi click karta hai.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -533,14 +502,6 @@ flowchart TD
 
 ## DIKKAT 7 — limiter sahi, phir bhi server gira
 
-```
-POOCHEGA: "What if traffic suddenly spikes 10x?"
-          (Traffic achanak 10 guna ho gaya to?)
-
-JAWAB:    Har user ki had tab kaam nahi aati jab 1 crore log aayein aur har koi apni had ke andar ho.
-          Uske liye: (1) poore system ki ek had, (2) system thakne lage to kuch request seedha mana
-          karo, (3) bheed ko line me rakho, (4) pata ho kab aayegi (sale) to pehle se machine badhao.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -571,11 +532,6 @@ flowchart TD
 
 ## DIKKAT 8 — attack aaya, usi waqt limiter gayab
 
-```
-JAWAB:    Hamle ke beech Redis gir gaya. Ab sabko jaane diya to hamla seedha andar.
-          Isliye har server apni memory me ginti karne lage. Had baant do: poori had 100 thi, 4 server
-          hain, to har server 25 tak. Bilkul sahi nahi, par bina had se kahin achha.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -606,12 +562,6 @@ flowchart TD
 
 ## DIKKAT 9 — IP pe gin rahe the
 
-```
-JAWAB:    Login ke baad had user id se lagao, IP se nahi. Kyunki office me sab ek IP pe hote (sab ek
-          saath ruk jaate), aur hamlawar hazaaron IP se aata (IP had se bach jaata).
-          Login se pehle user id hai hi nahi, to IP pe dheeli had + WAF. Aur ek account pe baar-baar
-          galat password -> account lock ya CAPTCHA.
-```
 ```mermaid
 flowchart TD
     n_USER["USER"]
