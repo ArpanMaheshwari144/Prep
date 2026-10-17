@@ -18,7 +18,7 @@ PAANCH CHEEZ JINPE YE ROUND TAY HOTA (source: "ye interview INHI se tay hote hai
 
 ![Read Replica Pattern](https://assets.bytebytego.com/diagrams/0312-read-replica-pattern.png)
 Source: [Read Replica Pattern](https://bytebytego.com/guides/read-replica-pattern/)
-(card 8 — transfer ke baad purana balance = replica peeche; ilaaj: turant wala padhna PRIMARY se)
+(card 8 — transfer ke baad purana balance = replica peeche -> turant wala padhna PRIMARY se)
 
 ---
 
@@ -104,7 +104,7 @@ HAL        Transfer / balance = CP (galat balance dikhane se mana karna behtar).
 ```
 DIKKAT 1   RBI poochhta "Arpan ke 500 kahan se aaye, kahan gaye, kab?" -> har len-den ka pakka khaata
            chahiye.
-HAL        KHAATA (ledger) = DB ki ek TABLE (Kafka nahi), USI transaction me jisme paisa hila.
+HAL        KHAATA (ledger) = DB ki ek TABLE, USI transaction me jisme paisa hila.
            Har transfer ki 2 line: Arpan -500, Ravi +500 (jod 0). Sirf INSERT, kabhi badla nahi.
              BEGIN
                INSERT ledger (Arpan -500), INSERT ledger (Ravi +500)
@@ -123,22 +123,24 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Transfer ke baad SMS, fraud check, statement chahiye. Par SMS service giri to transfer na ruke?
-HAL        OUTBOX = DB ki ek aur table, usi transaction me: INSERT outbox (E-77, sent = false).
+HAL        OUTBOX = DB ki ek aur table, usi transaction me, har khaata line ki ek row:
+             INSERT outbox (E-77a Arpan debit, sent = false), (E-77b Ravi credit, sent = false)
            COMMIT ke BAAD relay har ~1 sec: sent = false -> Kafka (acks=all) -> sent = true.
            (ya CDC / Debezium: DB ki diary padh ke seedha Kafka.)
-           Relay "sent = true" se pehle gira -> E-77 dobara jaata -> SMS service eventId dekh ke skip.
+           Relay "sent = true" se pehle gira -> event dobara jaata -> SMS service eventId dekh ke skip.
 
 DIKKAT 3   Khaata pehle Kafka me likh diya, phir DB transaction wapas hua (Arpan ke paas paisa kam tha)?
-HAL        Kafka me "Arpan -500", asal me kuch hua hi nahi -> khaata jhooth. Isliye khaata DB table me, usi
-           transaction me (rollback = khaata bhi gaya). Kafka sirf commit ke BAAD, outbox se.
+HAL        Kafka me "Arpan -500" chala gaya, asal me kuch hua hi nahi -> khaata jhooth bolega.
+           Kafka aur DB ek transaction me ho hi nahi sakte.
+           DB table me rakha tha to rollback = khaata bhi gaya.
 
 DIKKAT 4   Commit ke baad seedha Kafka ko kyun nahi bhej dete?
 HAL        Commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi. Outbox usi transaction me hai,
            kho nahi sakta.
 
 DIKKAT 5   Arpan ke SMS ulte kram me (pehle "credit", phir "debit")?
-HAL        Ek event har khaata LINE pe: Arpan ka debit (key = Arpan), Ravi ka credit (key = Ravi).
-           Kafka key = account_id -> ek account ke saare event ek partition me, kram se.
+HAL        Har khaata line ka apna event (upar E-77a, E-77b), Kafka key = account_id:
+           Arpan ke saare event ek partition me, kram se. Ravi ke apne partition me.
 
 DIKKAT 6   Outbox table bhar jaayegi?
 HAL        Sent wali rows roz saaf / partition drop.
@@ -287,8 +289,8 @@ flowchart TD
 ```
 DIKKAT 2   Main DB hi gir gaya?
 HAL        Main DB ki SYNC copy doosri building me: har transfer copy me bhi likh ke hi "done".
-           Patroni / RDS Multi-AZ: primary mara -> copy promote -> DB ka pata nayi pe -> ~1-2 min
-           (RDS Multi-AZ ka aam number 60-120 sec). Nayi primary ke paas har pakka transfer.
+           Patroni / RDS Multi-AZ: primary mara -> copy promote -> DB ka pata nayi pe -> ~1-2 min.
+           Nayi primary ke paas har pakka transfer.
 
 DIKKAT 3   Sync = har transfer dheema?
 HAL        Haan, ek network chakkar. Paise me ye keemat theek. Async me aakhri transfer kho sakta.
@@ -382,7 +384,6 @@ HAL        (ts, id) ko base64 karke next_cursor.
 DIKKAT 1   5 saal ka khaata (~36 arab line) ek table me. Log roz sirf 3 mahine dekhte, par har query /
            backup arabon line ke saath. Aur bank me DELETE nahi kar sakte (kanoon).
 HAL        Khaata MAHINE ke tukdon (partition) me. Band mahine sasti jagah (S3) bhej do, delete kabhi nahi.
-           Har mahine ke aakhir ka balance (snapshot) likh ke rakho.
 ```
 ```mermaid
 flowchart TD
@@ -408,7 +409,8 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Purane tukde S3 gaye -> raat ka reconciliation khaata jodega to adhoora -> har account me farak?
-HAL        Jod = snapshot (31-Mar Arpan = 45,000) + uske baad ki line. (Bank statement ke upar "opening
+HAL        Har mahine ke aakhir ka balance (snapshot) likh ke rakho. Jod = snapshot (31-Mar Arpan = 45,000)
+           + uske baad ki line. (Bank statement ke upar "opening
            balance" isi wajah se likha hota.)
 
 DIKKAT 3   RBI ne 2021 ka statement maanga?
@@ -504,8 +506,8 @@ POOCHEGA: "What's the single point of failure?"   -> DB primary (sync copy), Ban
 
 ```
 API:      GET /accounts/{id}/balance · GET /accounts/{id}/transactions?cursor=...&limit=20
-          POST /transfers { from, to, amount } · POST /accounts/{id}/deposit
-          { amount } · POST /accounts/{id}/withdraw { amount }
+          POST /transfers { from, to, amount }
+          POST /accounts/{id}/deposit { amount } · POST /accounts/{id}/withdraw { amount }
           har POST me Idempotency-Key header
 
 DB:       ledger_entries (SACH, sirf jodo, mahine ke tukde) · accounts.balance (CACHE, jod)
@@ -519,7 +521,7 @@ DB:       ledger_entries (SACH, sirf jodo, mahine ke tukde) · accounts.balance 
 ```
 LB · Banking Svc = stateless, idempotency check · SQL DB = EK transaction (khaata + balance + key + outbox)
 Kafka = commit ke BAAD (SMS / fraud / analytics / statement)
-· Read replica = balance / history (apna transfer primary se)
+Read replica = balance / history (apna transfer primary se)
 Reconciliation = snapshot + baad ki line vs balance -> ALERT · Archive (S3) = band mahine, delete kabhi nahi
 ```
 ```
