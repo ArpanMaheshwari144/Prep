@@ -124,7 +124,7 @@ AAGE POOCHEGA:
   "Button pehli tap pe band?"
      -> Haan, aur id order screen khulte banti. Pehli baar order + jawab save, doosri baar saved jawab.
   "Pehli request abhi chal hi rahi, dobara wali aa gayi?"
-     -> Id ka haal IN_PROGRESS -> "thoda ruko" (409). DONE -> saved jawab.
+     -> Dobara process NAHI. Id ka haal IN_PROGRESS -> jawab "thoda ruko" (409). DONE -> saved jawab.
   "Id kitne din rakhoge?"
      -> ~24 ghante, phir saaf.
 ```
@@ -216,8 +216,8 @@ AAGE POOCHEGA:
 CUE        baanto mat: ek thread kaafi (lakhon / sec), bheed line me
 
 DIKKAT     Usi 9:15 pe poora market TCS pe toot pada: hazaaron order / second.
-HAL        Baanto mat: ek thread, RAM, lakhon / sec. Bheed log ki line me rukti;
-           app me ACCEPTED turant, FILLED baad me.
+HAL        Baanto mat. Sab ek line me lago, ek-ek karke; ek thread RAM me lakhon / sec nipta leta.
+           App me ACCEPTED turant (line me lag gaya), FILLED jab sauda ho.
 NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
 ```
 ```mermaid
@@ -247,8 +247,8 @@ CUE        scoreboard toota, scorer ka register bacha (log pehle, replay)
 
 DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
 HAL        Har order PEHLE log me (number ke saath), PHIR book. Gira -> log #1 se replay, wahi book.
-NAHI       RAM ki chalti copy (replica): do book = ek share do baar bike.
-           Standby sirf log padhta, chalta nahi.
+NAHI       doosra server saath chalao (replica): do book = ek share do baar bike.
+           Sahi: STANDBY sirf log padhta, book taiyaar; pehla gire tab chalu.
 ```
 ```mermaid
 flowchart LR
@@ -331,8 +331,8 @@ CUE        har kadam ka haal likho, aage badho, ulta nahi (step + forward)
 
 DIKKAT     Paisa Wallet DB me, share Portfolio DB me ho to ek transaction nahi chalti.
            Mera 30k kata, share daalne se PEHLE crash.
-HAL        Har step ka haal likho (WALLET_DONE -> PORTFOLIO_DONE), fail pe retry, aage hi badho.
-           Match ke baad ulta nahi; ghanton fail -> PENDING + alert, ops share daalta.
+HAL        STATUS LOG: wallet done -> portfolio done. Fail -> retry, aage hi badho (match ke baad ulta nahi).
+           Ghanton fail -> PENDING + alert, ops share daalta.
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
 ```
 ```mermaid
