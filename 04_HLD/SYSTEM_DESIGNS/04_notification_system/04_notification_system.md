@@ -270,7 +270,7 @@ AAGE POOCHEGA:
   "Worker-A ka call fail, zinda?"  -> khud parchi hata deta -> agli koshish chal jaati.
   "Worker-B ko SENDING mila?"      -> koi abhi bhej raha, thoda ruko, phir dekho. SENT mila -> chhodo.
   "Fail pe parchi hata do, kaafi?" -> worker hi mar gaya to hatane wala nahi; isliye SENDING ki umar chhoti.
-  "60 sec chhote pad gaye?"        -> umar company ke timeout se lambi (timeout 2-3 sec -> umar 60 sec).
+  "60 sec chhote pad gaye?"        -> umar company ke call se lambi rakho (call ~2-3 sec, umar 60 sec).
   "Company ne bhej diya, jawab se pehle worker mara?"
                                    -> tab do baar ja sakta; SES / Twilio aisi parchi khud nahi rakhte, chhota
                                       risk maana hua. OTP do baar chalega, na aana nahi.
@@ -366,8 +366,8 @@ flowchart LR
     style n_SES fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Phir SMS company band nahi hui, bas dheemi: har call 30 sec atki. Saare worker usi me phanse,
-           baaki kaam ruka. Dheemi company band company se bhi buri.
+DIKKAT     SMS company abhi bhi dheemi: line alag ho gayi, par har call 30 sec atki. Saare SMS worker
+           usi me phanse, OTP bhi ruka. Dheemi company band company se bhi buri.
 HAL        TIMEOUT 2-3 sec + FUSE (circuit breaker) har company ka alag: 5 baar fail -> OPEN (call mat karo,
            seedha doosri company) -> 30 sec baad HALF-OPEN (ek test call) -> chali to CLOSED.
            Twilio ka fuse uda -> SNS.
@@ -420,7 +420,8 @@ flowchart LR
 ```
 DIKKAT     12 baje sale. Line me 50,000 offer message the, mera OTP unke peeche khada raha, 10 minute baad
            aaya. Tab tak login ka time khatam.
-HAL        ALAG TEZ LINE: OTP ki apni line aur apne worker (sms-tez / sms-dheemi); offer apni line me.
+HAL        ALAG TEZ LINE: Kafka me OTP ki apni line (high), offer dheemi (low), beech wali medium;
+           har line ke apne worker.
 NAHI       ek line me "zaroori" tag: Kafka me "ye pehle bhejo" hota hi nahi.
 ```
 ```
@@ -500,7 +501,7 @@ flowchart LR
     n_Twilio["Twilio + SNS"]
     n_Redis["Redis (parchi + baalti)"]
     n_DLQ["DLQ"]
-    n_Webhook_Svc["Webhook Svc<br/>bheja, par mila?<br/>-> webhook + signature"]
+    n_Webhook_Svc["Webhook Svc<br/>bheja, par mila?<br/>-> webhook + company ka msg id"]
     n_Tracking_DB["Tracking DB"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
@@ -594,7 +595,7 @@ DIKKAT     Shaam ko admin ne "Diwali offer sabko" chalaya = 1 crore user. Ek-ek 
            atki, OTP bhi peeche, company ki had tooti.
 HAL        TUKDE: API turant "shuru ho gaya"; job users 1000-1000 me padhe ("id > aakhri_id, 1000 lao"), har
            tukda Kafka me, aakhri_id campaign row me -> job gira to wahin se. Dheemi (offer) line, had me.
-NAHI       ek request me sab: ghanton atki, OTP peeche, company ki had tooti.
+NAHI       1 crore ko ek bada "sabko bhejo" message: ek worker pe atka, gira to shuru se.
 ```
 ```
 AAGE POOCHEGA:
@@ -666,7 +667,7 @@ DIKKAT     Maine "offer SMS band" kiya tha aur raat 10 se subah 8 shaanti lagayi
            "Diwali sale 70% off" ka SMS aaya, aur push se phone baj gaya.
 HAL        PASAND + SHAANTI: bhejne se pehle pasand: SMS band -> chhodo; 10-8 -> koi ghanti nahi. Phir meri
            bhasha me SAANCHA bharo ("Hi {naam}, order {id} aa gaya"). Pasand + saancha cache me, DB nahi.
-NAHI       pasand har baar DB se: har ghatna pe padhi jaati, cache chahiye.
+NAHI       pasand sirf Campaign Svc me check: order / OTP wali khabar bina check nikal jaati.
 ```
 ```
 AAGE POOCHEGA:
