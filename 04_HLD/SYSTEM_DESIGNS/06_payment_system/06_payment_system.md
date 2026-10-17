@@ -47,8 +47,10 @@ NUMBERS (andaaza):
 ```
 ```
 POOCHEGA: "Consistency or availability — which do you pick?"
-BOL:      "Consistency for money — during a partition I'd rather reject than give a wrong answer.
-           The same system can keep dashboards and reports available and eventually consistent."
+          (Consistency ya availability, kya chunoge?)
+
+JAWAB:    Paise ke liye consistency: network toote to galat jawab dene se mana karna behtar. Usi system
+          me dashboard aur report chalte rahein, thode purane bhi chalega.
 ```
 
 ---
@@ -361,8 +363,8 @@ flowchart TD
 ## DIKKAT 1 — beech me crash: Arpan -500 hua, merchant +500 nahi
 
 ```
-BOL:      "Debit and credit happen in one ACID transaction, so a crash rolls both back, and the debit
-           uses a conditional update so two concurrent payments can never overdraw the balance."
+JAWAB:    Kaatna aur daalna ek ACID transaction me, crash pe dono wapas. Kaatna condition ke saath
+          (balance >= amount), to do payment ek saath bhi balance minus me nahi le ja sakte.
 ```
 ```mermaid
 flowchart TD
@@ -381,16 +383,22 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the same request comes twice / the client retries?"
-BOL:      "Same key, same outcome. The client sends an idempotency key, the server stores the key with its
-           result under a unique constraint, and a retry gets the stored result instead of a second charge."
+          (Wahi request do baar aaye / app dobara bheje to?)
+
+JAWAB:    Wahi key, wahi nateeja. App idempotency key bhejta, server key ko uske jawab ke saath UNIQUE
+          ke neeche rakhta. Dobara aayi to rakha hua jawab milta, doosri baar paisa nahi katta.
 
 POOCHEGA: "You set the idempotency key, but then the PSP call failed. Now what?"
-BOL:      "The key goes in as IN_PROGRESS with a short expiry and becomes DONE only after
-           the PSP confirms, so a failed or crashed attempt doesn't block the retry."
+          (Key laga di, par PSP call fail ho gayi. Ab?)
+
+JAWAB:    Key pehle IN_PROGRESS + chhoti umar, DONE sirf PSP ke 'haan' ke baad. To fail ya crash hui
+          koshish dobara koshish ko nahi rokti.
 
 POOCHEGA: "Two users do this at the same time — what happens?"
-BOL:      "For a shared balance I use a conditional update — UPDATE ...
-           WHERE balance >= amount — so only one of them succeeds."
+          (Do log ek saath (ek balance pe) kare to?)
+
+JAWAB:    Saanjhe balance pe condition wala update: UPDATE ... WHERE balance >=
+          amount. Ek hi jeetega, doosre ki 0 row.
 ```
 ```mermaid
 flowchart TD
@@ -411,8 +419,10 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the PSP is slow?"
-BOL:      "Short timeout and a circuit breaker. For money I don't blindly
-           retry — I keep it PENDING and let reconciliation settle it."
+          (PSP dheema ho to?)
+
+JAWAB:    Chhota timeout aur fuse (circuit breaker). Paise me andha dobara nahi
+          bhejta: PENDING rakho, reconciliation tay karega.
 ```
 ```mermaid
 flowchart TD
@@ -435,13 +445,17 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the server crashes in the middle?"
-BOL:      "I never assume. Every payment is written as PENDING before I call the PSP.
-           The PSP's webhook updates it, and a reconciliation job checks anything still
-           pending. Money is always done, undone, or being checked — never lost."
+          (Server beech me crash ho gaya to?)
+
+JAWAB:    Kabhi andaaza nahi. PSP ko call se PEHLE payment DB me PENDING likha jaata. PSP ka webhook use
+          update karta, aur reconciliation job atke hue PENDING check karta.
+          Paisa hamesha ya to ho gaya, ya wapas, ya check ho raha. Khota kabhi nahi.
 
 POOCHEGA: "How do you know the system is working?"
-BOL:      "Reconciliation against the PSP and bank, plus p99 latency, error rate and
-           queue lag with alerts, and a trace id to follow one payment end to end."
+          (System theek chal raha, kaise pata?)
+
+JAWAB:    PSP aur bank se roz milaan (reconciliation), saath me p99, error rate, line ki lambai pe
+          alert, aur trace id se ek payment ka poora raasta.
 ```
 ```mermaid
 flowchart TD
@@ -467,9 +481,9 @@ flowchart TD
 ## DIKKAT 5 — alag bank / alag DB: ek transaction nahi
 
 ```
-BOL:      "Across banks or databases I use a saga: each step commits locally and a failure runs
-           compensating steps in reverse, with the saga state persisted so a restarted service
-           can continue. I avoid 2PC because it holds locks and blocks if the coordinator dies."
+JAWAB:    Alag bank / alag DB pe saga: har step apna commit, fail pe pichhle step ulte kram me wapas.
+          Saga ka haal DB me, to service dobara uthe to wahin se aage.
+          2PC nahi, kyunki wo lock pakad ke rukta aur coordinator gira to sab atak jaate.
 ```
 ```mermaid
 flowchart TD
@@ -496,8 +510,10 @@ flowchart TD
 
 ```
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
-BOL:      "Partition by month, detach old partitions to cold storage like
-           S3 Glacier. Payment records are archived, never deleted."
+          (Data badhta ja raha, 3 saal baad?)
+
+JAWAB:    Mahine ke hisaab se tukde (partition), purane tukde sasti jagah (S3 Glacier). Payment record
+          archive hote, delete kabhi nahi.
 ```
 ```mermaid
 flowchart TD
@@ -524,8 +540,10 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you secure it / stop abuse?"
-BOL:      "Authentication at the gateway, an ownership check on every
-           payment, rate limiting per user, and a WAF at the edge."
+          (Safe kaise rakhoge / galat istemaal kaise rokoge?)
+
+JAWAB:    Gateway pe login check, har payment pe 'ye account isi ka hai?' (owner check), har user ki had
+          (rate limit), aur sabse aage WAF.
 ```
 ```mermaid
 flowchart TD
@@ -560,8 +578,10 @@ flowchart TD
 
 ```
 POOCHEGA: "The user paid but still sees the old balance. Why?"
-BOL:      "That read came from a lagging replica. Balance and payment status
-           are always read from the primary; replicas only serve dashboards."
+          (User ne pay kiya par purana balance dikh raha. Kyun?)
+
+JAWAB:    Wo padhai peeche chal rahi copy (replica) se aayi. Balance aur payment ka haal hamesha primary
+          se padho, copy sirf dashboard ke liye.
 ```
 ```mermaid
 flowchart TD
@@ -597,8 +617,8 @@ flowchart TD
 ## DIKKAT 9 — 50 crore row, likhai dheemi
 
 ```
-BOL:      "I shard by account id so one account's balance and history live on one
-           shard and debits stay atomic; transfers across shards become a saga."
+JAWAB:    Account id se baanto (shard): ek account ka balance aur history ek hi tukde pe, to kaatna ek
+          jagah atomic. Do tukdon ke beech transfer = saga.
 ```
 ```mermaid
 flowchart TD
@@ -692,11 +712,13 @@ failure      -> PENDING + webhook + RECONCILE  (courier tracking — gum kabhi n
 ledger       -> double-entry, kabhi badla nahi (pen ki diary)
 ```
 ```
-BOL:      "Every payment carries an idempotency key, stored with its result under a unique constraint,
-           so a retry never charges twice. Debit and credit happen in one ACID transaction with a
-           double-entry ledger; across banks or shards I use a saga with compensation. The PSP moves
-           the real money, so I write PENDING first and resolve it through webhooks and a
-           reconciliation job. Next: fraud checks, multi-currency and chargebacks."
+JAWAB:    Har payment ke saath idempotency key, jawab ke saath UNIQUE ke neeche, to
+          dobara bhejne pe do baar nahi katta.
+          Kaatna + daalna ek ACID transaction me, double-entry khaate ke saath. Alag
+          bank / tukde pe saga.
+          Asli paisa PSP hilata, isliye pehle PENDING likho, phir webhook aur
+          reconciliation se pakka karo.
+          Aage: fraud check, kai currency, chargeback.
 ```
 ```mermaid
 flowchart TD
@@ -780,9 +802,10 @@ RACE:        naive containsKey + put = 2 step, GAP -> A "nahi", B "nahi" -> dono
              pehli DUPLICATE "-> PROCESSING" = reserve-then-fill live dikha
 
 PROD:        Redis / DB unique constraint (memory restart pe udti) + key TTL · PROCESSING placeholder
-BOL:      "Naive check-then-put races; putIfAbsent on a ConcurrentHashMap makes check and insert one
-           step, so only one request wins. In production the store is Redis or a DB unique constraint
-           with a TTL. I fired 20 parallel requests: broken version made two orders, atomic made one."
+JAWAB:    Seedha 'pehle dekho, phir daalo' me race hota. ConcurrentHashMap ka putIfAbsent dekhna aur
+          daalna ek hi kadam me karta, to ek hi request jeetti.
+          Asli system me Redis ya DB ka UNIQUE + umar. 20 request ek saath maari:
+          tooti wali ne 2 order banaye, atomic wali ne 1.
 ```
 
 ARCHETYPE C · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [saga/ms-comm](../../FOUNDATIONS/10_ms_communication.md) · saath: [bookmyshow](../09_bookmyshow/09_bookmyshow_INTERVIEW.md) · [stock-broker](../05_stock_broker_trading/05_stock_broker_trading.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

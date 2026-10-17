@@ -46,9 +46,12 @@ NUMBERS (andaaza):
 ```
 ```
 POOCHEGA: "What if traffic suddenly spikes 10x?"
-BOL:      "Kafka absorbs the burst and workers drain at their own pace. Sale time is
-           known, so I scale workers before 12 — autoscaling takes minutes, the spike
-           takes seconds — and cap them at what the DB and providers can take."
+          (Traffic achanak 10 guna ho gaya to?)
+
+JAWAB:    Jhatka Kafka sambhaal leta, worker apni speed se nikaalte. Sale ka time
+          pata hai, to 12 baje se pehle worker badhao, kyunki machine apne aap
+          badhne me minute lagte aur jhatka second me aata.
+          Par worker utne hi jitna DB aur bhejne wali company jhel sake.
 ```
 
 ---
@@ -399,9 +402,12 @@ flowchart TD
 ## DIKKAT 1 — order email ke intezaar me ruka
 
 ```
-BOL:      "The order service publishes an event to Kafka and returns; the notification service consumes
-           it in the background, so a slow or down email provider never fails an order. To avoid losing
-           the event if the service dies between the DB write and Kafka, I use the outbox pattern."
+JAWAB:    Order service khabar Kafka me daal ke turant laut aati. Notification service peeche se padh ke
+          bhejti. Email company dheemi ya band ho to bhi order fail nahi hota.
+          DB me order likha aur Kafka me daalne se pehle service giri to khabar na khoye, isliye outbox:
+          order aur khabar ek hi transaction me.
+
+SHABD:    outbox = DB ki ek table jisme khabar order ke saath hi likhi jaati, baad me Kafka bheji jaati
 ```
 ```mermaid
 flowchart TD
@@ -423,8 +429,9 @@ flowchart TD
 ## DIKKAT 2 — teen raaste, SMS dheema to sab atke
 
 ```
-BOL:      "Each channel has its own Kafka topic and its own workers, so a slow SMS provider only grows
-           the SMS backlog while push and email keep flowing, and I scale each channel separately."
+JAWAB:    Har raaste (push / email / SMS) ka apna Kafka topic aur apne worker. SMS
+          company dheemi hui to sirf SMS ki line lambi hoti, push aur email chalte
+          rehte. Har raaste ke worker alag se badha sakte.
 ```
 ```mermaid
 flowchart TD
@@ -460,9 +467,9 @@ flowchart TD
 ## DIKKAT 3 — SMS band tha, phir bhi raat 2 baje
 
 ```
-BOL:      "Before sending, the notification service checks the user's preferences, opted-out
-           channels and quiet hours, then fills the template in their language; both are cached.
-           Marketing waits until morning, while OTP and security alerts go through quiet hours."
+JAWAB:    Bhejne se pehle notification service user ki pasand dekhti: kaunse raaste band kiye, raat ka
+          shaanti waqt. Phir uski bhasha me saancha (template) bharti. Dono cache me.
+          Offer wala message subah tak rukta, par OTP aur security alert shaanti waqt me bhi jaate.
 ```
 ```mermaid
 flowchart TD
@@ -503,8 +510,12 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the same event comes twice / the worker retries?"
-BOL:      "Delivery is at-least-once, so the worker is idempotent: it does SET
-           NX on the event id in Redis and skips if the key already exists."
+          (Wahi khabar do baar aa gayi / worker ne dobara koshish ki to?)
+
+JAWAB:    Kafka 'kam se kam ek baar' deta, kabhi do baar bhi. Isliye worker dobara-safe (idempotent):
+          khabar ki id Redis me SET NX karta, key pehle se hai to skip.
+
+SHABD:    SET NX = 'sirf tab likho jab key pehle se na ho'
 ```
 ```mermaid
 flowchart TD
@@ -549,9 +560,13 @@ flowchart TD
 
 ```
 POOCHEGA: "You set the idempotency key, but then the send failed. Now what?"
-BOL:      "I don't want the key to block the retry. I set it as 'sending' with a short TTL, and mark it 'sent'
-           only after the provider accepts. If the send fails I delete the key; if the worker dies, the short
-           TTL expires it — either way the retry goes through. I only skip when the key says 'sent'."
+          (Parchi (idempotency key) laga di, par bhejna fail ho gaya. Ab?)
+
+JAWAB:    Parchi aisi na ho ki dobara koshish ko hi rok de. Isliye parchi pe 'BHEJ RAHA HOON' + chhoti
+          umar (60 sec), aur 'BHEJ DIYA' sirf tab jab company ne le liya.
+          Bhejna fail -> parchi hata do. Worker mar gaya -> 60 sec me parchi khud
+          mit jaati. Dono me dobara koshish ho jaati.
+          Skip sirf tab jab parchi pe 'BHEJ DIYA' likha ho.
 ```
 ```mermaid
 flowchart TD
@@ -596,9 +611,14 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you make sure no message is lost?"
-BOL:      "Producers write with acks=all to replicated Kafka. Workers commit the offset only after the
-           provider call, so a crash means a redelivery, not a loss — and that's why they're idempotent.
-           Retries back off with jitter, and after max retries the message goes to a DLQ, never dropped."
+          (Koi message khoye nahi, kaise pakka karoge?)
+
+JAWAB:    Bhejne wale acks=all se Kafka me likhte (saari copy me likha tab 'done').
+          Worker 'padh liya' (offset commit) company ko bhejne ke BAAD bolta. Beech me crash = message
+          dobara aayega, khoyega nahi. Isliye worker dobara-safe hai.
+          Dobara koshish ruk-ruk ke + thoda random. Had ke baad message DLQ me, kabhi phenka nahi jaata.
+
+SHABD:    acks=all = saari copy me likha tab 'done' · DLQ = kharab message ki alag line
 ```
 ```mermaid
 flowchart TD
@@ -647,8 +667,12 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the provider is slow?"
-BOL:      "Short timeouts, a circuit breaker per provider, and a second provider per channel. When
-           the circuit opens, workers stop calling it and route to the backup instead of hanging."
+          (Bhejne wali company dheemi ho to?)
+
+JAWAB:    Chhota timeout, har company pe fuse (circuit breaker), aur har raaste ki doosri company bhi.
+          Fuse uda to worker us company ko call karna band karke doosri ko bhejte, atke nahi rehte.
+
+SHABD:    circuit breaker = fuse: baar-baar fail pe call band, thodi der baad ek test
 ```
 ```mermaid
 flowchart TD
@@ -697,8 +721,10 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you prioritize urgent work, like OTPs?"
-BOL:      "Separate topics per priority with their own worker
-           pools, so an OTP never waits behind a marketing blast."
+          (Zaroori kaam (jaise OTP) pehle kaise?)
+
+JAWAB:    Har zaroorat ka alag topic aur alag worker. OTP kabhi offer wale dher ke
+          peeche khada nahi hota.
 ```
 ```mermaid
 flowchart TD
@@ -747,9 +773,13 @@ flowchart TD
 
 ```
 POOCHEGA: "The provider returns 429 — you're sending too fast. What now?"
-BOL:      "Workers throttle themselves with a token bucket at the provider's rate.
-           On a 429 they back off with jitter and respect Retry-After; messages
-           wait in the queue and go to a DLQ after max retries, never dropped."
+          (Company ne 429 diya, tum bahut tez bhej rahe ho. Ab?)
+
+JAWAB:    Worker khud apni speed company ki had pe rakhte (token bucket). 429 aaya to ruk-ruk ke + thoda
+          random dobara, aur company ka Retry-After maano.
+          Message line me rukte, had ke baad DLQ me, phenke kabhi nahi.
+
+SHABD:    token bucket = har second kuch token milte, ek message = ek token, token khatam to ruko
 ```
 ```mermaid
 flowchart TD
@@ -797,9 +827,11 @@ flowchart TD
 ## DIKKAT 10 — bhej diya ka matlab mil gaya nahi
 
 ```
-BOL:      "I store the provider's message id with each notification and update the
-           tracking DB from the provider's delivery webhooks, verified by signature.
-           Anything stuck as 'sent' for hours gets a single status poll."
+JAWAB:    Har notification ke saath company ki message id rakho. Company 'mila / fail' webhook se batati
+          (signature check karke), usse tracking DB update.
+          Jo ghanton se 'bheja' pe atka hai, uska ek baar company se haal poochh lo.
+
+SHABD:    webhook = company khud hamein call karke batati
 ```
 ```mermaid
 flowchart TD
@@ -851,10 +883,12 @@ flowchart TD
 
 ```
 POOCHEGA: "How would you send a notification to 10 million users?"
-BOL:      "I'd treat it as a campaign: the API returns right away, a batch job reads users in
-           pages of a thousand and puts each page on Kafka, and fanout workers filter
-           preferences, render the template and send on a low-priority lane at the provider's
-           rate limit. For push I'd use FCM topics so one call reaches every subscriber."
+          (1 crore users ko notification kaise bhejoge?)
+
+JAWAB:    Ise campaign maano: API turant laut aaye. Ek batch job users ko 1000-1000
+          ke page me padhe, har page Kafka me daale.
+          Fanout worker pasand dekhe, saancha bhare, aur dheemi line pe company ki had ke andar bheje.
+          Push ke liye FCM topic: ek call se saare subscriber tak.
 ```
 ```mermaid
 flowchart TD
@@ -916,7 +950,9 @@ Tracking DB      -> 90 TB / saal -> Cassandra + row ki umar, purana sasti jagah 
                     (umar se jagah ghatti hai, baantne se bojh — dono alag cheez)
 
 POOCHEGA: "Data keeps growing — what happens in 3 years?"
-BOL:      "Tracking rows get a TTL and old data moves to cold storage; the live table stays small."
+          (Data badhta ja raha, 3 saal baad?)
+
+JAWAB:    Tracking row ki umar (TTL), purana data sasti jagah (cold storage). Chalu table chhoti rehti.
 ```
 
 ---
@@ -955,12 +991,12 @@ raaste ki line = apni speed · worker = parchi (BHEJ RAHA / BHEJ DIYA) + ruk ke 
 DLQ = kharab khabar baaki ko na roke · Tracking DB = "bheja" vs "mila"
 ```
 ```
-BOL:      "Services publish events to Kafka. The notification service checks preferences, fills the
-           template and fans out to per-channel queues. Workers are idempotent with a sending /
-           sent key in Redis, retry with backoff and jitter, throttle to the provider's limit, use
-           a circuit breaker with a backup provider, and send to a DLQ after max retries. OTPs have
-           their own topic. Partitioning by user id keeps per-user order, and provider webhooks
-           update the tracking DB. Next: quiet hours, i18n templates, open / click analytics."
+JAWAB:    Services khabar Kafka me daalti. Notification service pasand dekhti,
+          saancha bharti, aur har raaste ki line me baant deti.
+          Worker dobara-safe (Redis me BHEJ RAHA / BHEJ DIYA parchi), ruk-ruk ke dobara, company ki had
+          me, fuse + doosri company, had ke baad DLQ. OTP ka alag topic.
+          User id se partition = ek user ka kram bana rahe. Company ke webhook se tracking DB.
+          Aage: shaanti waqt, kai bhasha ke saanche, khola / click ki ginti.
 ```
 ```mermaid
 flowchart TD
@@ -1054,7 +1090,8 @@ BACKOFF   429 pe 1s, 2s, 4s · Retry-After aaye to wahi
 JITTER    thoda random farak (simulation me nahi, time poore second me)
 QUEUE     jo abhi nahi ja sakta wo queue me ruke · max try ke baad DLQ, drop nahi
 
-BOL:      "I simulated it: naive retry dropped 700 of 1000, throttle plus backoff delivered all 1000."
+JAWAB:    Chala ke dekha: seedha dobara bhejne pe 1000 me se 700 gaye hi nahi. Had me bhejna + ruk-ruk
+          ke dobara = poore 1000 pahunche.
 ```
 
 ARCHETYPE B (ingest) · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [ms-communication](../../FOUNDATIONS/10_ms_communication.md) · saath: [12 message-queue](../12_message_queue_kafka/12_message_queue_kafka.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)

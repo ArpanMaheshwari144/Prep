@@ -337,8 +337,10 @@ flowchart TD
 
 ```
 POOCHEGA: "Two users order the same stock at the same time — what happens?"
-BOL:      "Orders for one symbol go into one queue handled by one thread, so they're
-           matched one after the other, never in parallel — no lock needed."
+          (Do log ek hi stock pe ek saath order kare to?)
+
+JAWAB:    Ek stock ke saare order ek line me, aur us line ko EK hi thread chalata. Order ek ke baad ek
+          match hote, kabhi ek saath nahi. Lock ki zaroorat hi nahi.
 ```
 ```mermaid
 flowchart TD
@@ -360,8 +362,8 @@ flowchart TD
 ## DIKKAT 2 — wallet 50k, 30k-30k ke do order (double spend)
 
 ```
-BOL:      "When an order is placed I block the money with one atomic update that checks the available
-           balance and increases the blocked amount together; if no row is updated, the order is rejected."
+JAWAB:    Order lagte hi paisa block, EK query me: bacha paisa check bhi aur blocked badhana bhi. Koi
+          row nahi badli = paisa nahi = order reject.
 ```
 ```mermaid
 flowchart TD
@@ -385,8 +387,10 @@ flowchart TD
 ## DIKKAT 3 — saude ke beech crash
 
 ```
-BOL:      "Settlement runs in one database transaction, so a crash rolls everything back, and
-           every trade is written to a double-entry ledger whose entries always sum to zero."
+JAWAB:    Settlement ek DB transaction me: crash hua to sab wapas. Har sauda double-entry khaate
+          (ledger) me: ek taraf kata, ek taraf juda, jod hamesha zero.
+
+SHABD:    double-entry = har len-den do jagah likha: kisi se gaya, kisi ko aaya
 ```
 ```mermaid
 flowchart TD
@@ -412,9 +416,12 @@ flowchart TD
 ## DIKKAT 4 — paisa Wallet DB me, share Portfolio DB me
 
 ```
-BOL:      "Across separate databases I use an orchestrated saga: each step commits locally,
-           the state is persisted, and a failure triggers compensating steps like refunding
-           the wallet. I avoid 2PC because it holds locks and blocks if the coordinator dies."
+JAWAB:    Alag-alag DB pe SAGA, ek service chalati (orchestrator): har step apne DB me commit, haal DB
+          me likha. Koi step fail -> ulta kaam (paisa wapas).
+          2PC nahi, kyunki wo sab DB pe lock pakad ke rukta aur coordinator gira to sab atak jaate.
+
+SHABD:    SAGA = step-step karo, fail pe pichhle ulte karo · 2PC = sab 'ready'
+          bolein tab hi commit, beech me sab ruke
 ```
 ```mermaid
 flowchart TD
@@ -442,8 +449,8 @@ flowchart TD
 ## DIKKAT 5 — BUY do baar daba / network retry
 
 ```
-BOL:      "The client sends an idempotency key with every order; a unique constraint on the key means a retry
-           gets the saved response instead of creating a second order, and an in-progress key returns 409."
+JAWAB:    App har order ke saath ek key bhejta. Key DB me UNIQUE, to dobara aayi request ko pehla jawab
+          milta, doosra order nahi banta. Pehla abhi chal raha ho to 409 ('thoda ruko').
 ```
 ```mermaid
 flowchart TD
@@ -472,12 +479,17 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you keep orders in the right sequence?"
-BOL:      "A sequencer stamps every order with an increasing sequence number and writes it to
-           the log, keyed by symbol so one stock's orders stay in one partition, in order."
+          (Order ka kram sahi kaise rakhoge?)
+
+JAWAB:    Sequencer har order pe badhta number lagata aur log me likhta. Log me key = stock, to ek stock
+          ke saare order ek partition me, kram me.
 
 POOCHEGA: "What if the server crashes in the middle?"
-BOL:      "If the matching engine dies, I rebuild the book by replaying the event log. If settlement
-           dies midway, a single-DB transaction rolls back; across services a saga compensates."
+          (Server beech me crash ho gaya to?)
+
+JAWAB:    Matching engine gira: log shuru se dobara chala ke book wapas bana lo.
+          Settlement beech me gira: ek DB hai to transaction wapas. Alag service
+          hain to saga ulta kaam karta.
 ```
 ```mermaid
 flowchart TD
@@ -505,9 +517,9 @@ flowchart TD
 ## DIKKAT 7 — lakhon log live price dekh rahe
 
 ```
-BOL:      "Clients keep a WebSocket open; the matching engine publishes price changes to
-           Redis pub/sub per symbol, the WebSocket servers subscribed to that symbol
-           push them to users, and I conflate updates to the latest price every 100 ms."
+JAWAB:    App ka WebSocket khula rehta. Matching engine har stock ka naya price Redis pub/sub pe daalta,
+          us stock ko sun rahe WebSocket server apne users ko bhej dete.
+          Price second me 1000 baar badle to sab nahi: har 100 ms sirf aakhri price (conflate).
 ```
 ```mermaid
 flowchart TD
@@ -541,9 +553,11 @@ flowchart TD
 ## DIKKAT 8 — 9:15 baje akele TCS pe lakhon order
 
 ```
-BOL:      "I never split one symbol's book. A single lock-free thread in memory
-           handles hundreds of thousands of orders a second, the log in front
-           gives backpressure, and I scale across symbols, not within one."
+JAWAB:    Ek stock ki book kabhi do me nahi baant-ta. Ek thread, RAM me, bina lock,
+          second me lakhon order nikal leta. Aage ka log bheed ko line me rokta
+          (backpressure). Badhana stocks ke beech, ek stock ke andar nahi.
+
+SHABD:    backpressure = aage wala dheema ho to peeche wale ko line me rok ke rakhna
 ```
 ```mermaid
 flowchart TD
@@ -582,8 +596,12 @@ Kafka                -> partition badhao (key = stock)
 Price                -> WebSocket server badhao
 
 POOCHEGA: "How would you scale this to 10x users?"
-BOL:      "Stateless services scale horizontally behind a load balancer, read-heavy data gets replicas.
-           The matching engine is stateful, so I shard it by symbol — each symbol lives on one engine."
+          (10 guna users ho gaye to kaise badhaoge?)
+
+JAWAB:    Jo service kuch yaad nahi rakhti, uski machine badhao + load balancer.
+          Padhne wale data ki copy (replica).
+          Matching engine book yaad rakhta, uski copy nahi bana sakte. Use stock ke
+          hisaab se baanto: har stock ek engine pe.
 ```
 
 ---
@@ -618,11 +636,11 @@ Matching = ek stock ek thread, book RAM me, stock ke hisaab
 se baanto · Settlement = ek transaction / alag DB = SAGA
 ```
 ```
-BOL:      "Order Service validates and checks the idempotency key, Wallet blocks the money, every order
-           goes into an append-only log with a sequence number, and a single-threaded matching engine
-           per symbol keeps the book in memory. Settlement is one transaction, or a saga across
-           services. Prices go out over WebSocket via pub/sub. The log gives crash recovery and an audit
-           trail. Next: stop-loss, circuit breakers, real-time risk checks, regulatory reporting."
+JAWAB:    Order service check karti + idempotency key, Wallet paisa block karta, har order number ke
+          saath log me, har stock ka ek-thread matching engine book RAM me rakhta.
+          Settlement ek transaction, ya alag service ho to saga. Price WebSocket + pub/sub se. Log se
+          crash ke baad wapasi aur audit dono.
+          Aage: stop-loss, circuit breaker, turant risk check, regulator ki report.
 ```
 ```mermaid
 flowchart TD
