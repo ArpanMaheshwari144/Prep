@@ -259,8 +259,6 @@ HAL        Parchi pe do alag baatein:
              company ne OK bola:   "BHEJ DIYA" (SENT) + lambi umar, 1 din
            Har haalat me kya hota:
              Worker-A ka call fail, Worker-A zinda -> khud parchi hata deta -> agli koshish chal jaati.
-             Worker-A beech me MAR gaya            -> "BHEJ RAHA HOON" 60 sec me khud mit jaati
-                                                     -> agli koshish.
              Worker-B ko "BHEJ RAHA HOON" mila     -> koi abhi bhej raha, thoda ruko, phir dekho.
              Worker-B ko "BHEJ DIYA" mila          -> pakka chala gaya -> chhodo.
            CHHODNA sirf "BHEJ DIYA" pe. "BHEJ RAHA HOON" = adhoora.
