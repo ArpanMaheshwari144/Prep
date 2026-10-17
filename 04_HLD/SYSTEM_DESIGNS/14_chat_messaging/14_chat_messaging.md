@@ -2,7 +2,7 @@
 
 > Arpan ne message bheja -> Ravi tak TURANT, chahe Ravi ne kuch na maanga ho · Ravi offline ho to baad me mile · kuch na khoye.
 > Is design ka dil: **"banda KAHAN juda hai"** (baaki designs me "data kahan rakhein") + **khuli connection**.
-> Ye design ek chhota server aur do browser tab chala ke bana. Jahan aankh se dekha, wahan **★ DEKHA:**
+> Ye design ek chhota server aur do browser tab chala ke bana (21-Sep; demo ka code repo me nahi rakha). Jahan aankh se dekha, wahan **★ DEKHA:**
 
 ```
 JAD KI BAAT — chat baaki har design se KYUN alag:
@@ -120,7 +120,18 @@ KAHANI:  Har online user ka connection hamesha khula. Ek connection
           ne jagah bhar di, chautha "send" server tak pahuncha hi nahi.
 
 ILAAJ:   WEBSOCKET + EVENT LOOP (Netty jaisa): kuch hi thread, lakhon connection. ~200 chat server, aage LB.
-
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+```
+```
 ANDAR KAISE:
          Event loop: OS (epoll) batata "in 5 connection pe data aaya" -> thread sirf unpe kaam karta.
          Baaki 99,995 chup baithe connection ka koi kharcha nahi (sirf thodi memory).
@@ -136,16 +147,6 @@ ISKE BAAD KYA TOOTEGA:
   - LB lambi connection kaise bithata?
       -> connection ek baar kisi server pe baitha, phir wahi rehta. Naya connection = naya chunaav.
 ```
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-```
 
 #### 2 ARPAN SERVER-1 PE, RAVI SERVER-7 PE
 ```
@@ -160,7 +161,21 @@ ILAAJ:   Har server apne jude users ko apni memory me rakhta. Redis me saanjha r
          Arpan ka server Redis se poochhta Ravi kahan hai, server-7 ko message deta, server-7 Ravi ko.
          Register ki entry ki umar hoti, server zinda hai to badhata rehta. Server mara to entry apne aap
          hat jaati.
-
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+```
+```
 ANDAR KAISE:
          Connection (zinda taar) kabhi Redis me nahi ja sakta,
          wo sirf server-7 ki memory me hai. Redis me sirf PATA.
@@ -177,19 +192,6 @@ ISKE BAAD KYA TOOTEGA:
   - Pub-sub se kyun nahi bhejte?
       -> pub-sub bhej ke bhool jaata. Offline wale ka bharosa uspe nahi.
 ```
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-```
 
 #### 3 RAVI OFFLINE, MESSAGE KAHAN JAAYE?
 ```
@@ -200,21 +202,6 @@ KAHANI:  Ravi ka phone band, koi connection hi nahi. Galat soch:
 ILAAJ:   Message pehle DB me likho, phir Ravi ko bhejne ki koshish.
          Ravi offline -> message DB me pada rahega, Ravi ke phone pe push notification.
          Ravi aaya -> app bolta 'aakhri id ke baad ke do', server de deta.
-
-ANDAR KAISE:
-         Ravi wapas aaya: "meri aakhri id 4417, uske BAAD ke do" (nishaan
-                          Ravi ka app rakhta, Kafka offset jaisa).
-         Server 4418 se aage sab bhej deta.
-         Push: login pe phone ka device token (FCM / APNs) save -> Google
-               / Apple ke through phone tak, app band ho tab bhi ghanti.
-
-ISKE BAAD KYA TOOTEGA:
-  - Ravi ke 3 device (phone, laptop, tab)?
-      -> har device ka apna connection + apna nishaan. Message sab pe, ek pe padha to baaki pe bhi neeli.
-  - Push me poora message bhejo?
-      -> chhota preview / "naya message" (privacy). Asli message app khulne pe server se.
-  - Kuch na khoye, poora jawab?
-      -> DB pehle + Kafka ho to acks=all, kaam ke baad offset, message id se dobara-safe, fail -> DLQ.
 ```
 ```mermaid
 flowchart TD
@@ -235,36 +222,31 @@ flowchart TD
     n_Chat_Server_x_200_1 --> n_Push_Google_Apple
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
 ```
+```
+ANDAR KAISE:
+         Ravi wapas aaya: "meri aakhri id 4417, uske BAAD ke do" (nishaan
+                          Ravi ka app rakhta, Kafka offset jaisa).
+         Server 4418 se aage sab bhej deta.
+         Push: login pe phone ka device token (FCM / APNs) save -> Google
+               / Apple ke through phone tak, app band ho tab bhi ghanti.
+
+ISKE BAAD KYA TOOTEGA:
+  - Ravi ke 3 device (phone, laptop, tab)?
+      -> har device ka apna connection + apna nishaan. Message sab pe, ek pe padha to baaki pe bhi neeli.
+  - Push me poora message bhejo?
+      -> chhota preview / "naya message" (privacy). Asli message app khulne pe server se.
+  - Kuch na khoye, poora jawab?
+      -> DB pehle + Kafka ho to acks=all, kaam ke baad offset, message id se dobara-safe, fail -> DLQ.
+```
 
 #### 4 ROZ 1.2 TB, 46,000 LIKHAI / SECOND
 ```
 KAHANI:  Roz ~1.2 TB message, 46,000 likhai / second. Ek DB machine nahi jhelegi. Kis cheez se baantein?
 
-ILAAJ:   Cassandra jaisa DB, chat ke hisaab se baanta. Ek chat ke saare message ek jagah, id ke kram me.
+ILAAJ:   Cassandra jaisa DB, chat ke hisaab se baanta.
+         Ek chat ke saare message ek jagah, seq number ke kram me.
          'Is chat ke aakhri 50' = ek jagah se ek baar padhna. Likhai sab machines pe bat jaati. Purana
          data sasti jagah.
-
-ANDAR KAISE:
-         Padhna hamesha "IS CHAT ke aakhri 50" -> chat_id se ek hi jagah, ek baar padhna:
-           WHERE chat_id = ? AND id < 4417 ORDER BY id DESC LIMIT 50 (keyset, OFFSET nahi).
-         Snowflake 64 bit = [time ms | machine id | us ms me ginti]
-         -> har server khud bana leta, time ke saath badhta.
-         Cassandra likhne me tez: pehle commit log (sirf neeche jodna) + RAM (memtable).
-
-ISKE BAAD KYA TOOTEGA:
-  - Partition user_id se kyun nahi?
-      -> Arpan-Ravi ki ek chat do jagah (Arpan ke bheje Arpan ke paas, Ravi
-         ke Ravi ke) -> "aakhri 50" ke liye do jagah jodo. Group = 500 jagah.
-  - message_id se partition?
-      -> har message alag dabba -> aakhri 50 = 50 jagah se. message_id andar ka kram hai, partition nahi.
-  - Ek bahut active group (ek partition garam)?
-      -> key me random tukda (chat_id + 0..9), padhte waqt jodo. Ya group size / speed pe had.
-  - Ek group ki partition saalon me bahut badi?
-      -> key = (chat_id, mahina) -> size bandha. (Bojh nahi baantta, sirf size.)
-  - 3 saal baad?
-      -> pehle poochho: WhatsApp jaisa (pahunchte hi delete) ya Slack jaisa (sab rakho -> purana sasti jagah).
-  - SQL kyun nahi?
-      -> ek message ek row, kai row ka transaction / rishte chahiye hi nahi. Likhai bahut.
 ```
 ```mermaid
 flowchart TD
@@ -287,6 +269,35 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Cassandra_messages --> n_Cold_storage
 ```
+```
+ANDAR KAISE:
+         Padhna hamesha "IS CHAT ke aakhri 50" -> chat_id se ek hi jagah, ek baar padhna:
+           WHERE chat_id = ? AND seq < 4417 ORDER BY seq DESC LIMIT 50 (keyset, OFFSET nahi).
+         Table: partition = chat_id · andar ka kram = seq (har chat ka +1 number, card 10).
+         message_id = Snowflake 64 bit = [time ms | machine id | us ms me ginti] -> sirf message ki
+         pakki pehchaan (har server khud bana leta). Kram seq se, Snowflake se nahi.
+         (Is file me "aakhri id 4417" = us chat ka seq number.)
+         Cassandra likhne me tez: pehle commit log (sirf neeche jodna) + RAM (memtable).
+
+ISKE BAAD KYA TOOTEGA:
+  - Partition user_id se kyun nahi?
+      -> Arpan-Ravi ki ek chat do jagah (Arpan ke bheje Arpan ke paas, Ravi
+         ke Ravi ke) -> "aakhri 50" ke liye do jagah jodo. Group = 500 jagah.
+  - message_id se partition?
+      -> har message alag dabba -> aakhri 50 = 50 jagah se. andar ka kram seq hai, partition chat_id.
+  - Slack jaisa 3 saal purana message search?
+      -> Cassandra me shabd se search nahi. Har message Kafka se Elasticsearch me bhi (chat_id + text).
+         Search ES me, wo sirf message ki pehchaan deta, poora message Cassandra se.
+         (WhatsApp jaisa end-to-end lock ho to server text padh hi nahi sakta -> search phone pe.)
+  - Ek bahut active group (ek partition garam)?
+      -> key me random tukda (chat_id + 0..9), padhte waqt jodo. Ya group size / speed pe had.
+  - Ek group ki partition saalon me bahut badi?
+      -> key = (chat_id, mahina) -> size bandha. (Bojh nahi baantta, sirf size.)
+  - 3 saal baad?
+      -> pehle poochho: WhatsApp jaisa (pahunchte hi delete) ya Slack jaisa (sab rakho -> purana sasti jagah).
+  - SQL kyun nahi?
+      -> ek message ek row, kai row ka transaction / rishte chahiye hi nahi. Likhai bahut.
+```
 
 #### 5 500 KA GROUP, EK MESSAGE 500 BAAR LIKHEIN?
 ```
@@ -296,7 +307,29 @@ KAHANI:  "College Gang" group me 500 log. Arpan ne ek message
 ILAAJ:   500 logon ke group me message ek hi baar likho, group ki chat ke neeche. Sab wahi padhte.
          Bhejte waqt har server ko ek baar bolo 'ye message, tere paas jude in members ko', har member ko
          alag call nahi.
-
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
+```
+```
 ANDAR KAISE:
          Twitter se ulta kyun: Twitter ki feed 200 logon ka milan + crore follower, har user ki alag.
          Group sabke liye ek jaisa, aur sirf 500 member -> ek copy kaafi.
@@ -308,27 +341,6 @@ ISKE BAAD KYA TOOTEGA:
   - Naya member juda, purane message dikhein?
       -> judne ke waqt ki id se pehle wale nahi (nishaan judne wali id pe), ya group ki setting ke hisaab.
 ```
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Cassandra_messages
-    n_Chat_Server_x_200_2 --> n_Cassandra_messages
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Cassandra_messages --> n_Cold_storage
-```
 
 #### 6 KISKE KITNE UNREAD?
 ```
@@ -338,14 +350,6 @@ KAHANI:  500 member. "Kiske kitne unread" ke liye har message x
 ILAAJ:   Har member ka har chat me ek nishaan: 'Arpan 4417 tak padh chuka'.
          Unread = chat ka aakhri number - Arpan ka nishaan. Har message ka har member ke liye alag record
          nahi.
-
-ANDAR KAISE:
-         Arpan ke unread = group ka aakhri number - Arpan ka nishaan (GHATAO, gino nahi).
-         Nishaan har chat ke apne +1 number (seq, card 10) pe. Snowflake me beech me gap hote, isliye seq.
-
-ISKE BAAD KYA TOOTEGA:
-  - Nishaan kahan rakhoge?
-      -> Cassandra (user_id, chat_id) -> read_upto. Jo baar-baar chahiye wo Redis me.
 ```
 ```mermaid
 flowchart TD
@@ -371,6 +375,15 @@ flowchart TD
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Cassandra_messages --> n_Cold_storage
 ```
+```
+ANDAR KAISE:
+         Arpan ke unread = group ka aakhri number - Arpan ka nishaan (GHATAO, gino nahi).
+         Nishaan har chat ke apne +1 number (seq, card 10) pe. Snowflake me beech me gap hote, isliye seq.
+
+ISKE BAAD KYA TOOTEGA:
+  - Nishaan kahan rakhoge?
+      -> Cassandra (user_id, chat_id) -> read_upto. Jo baar-baar chahiye wo Redis me.
+```
 
 #### 7 DO TICK AUR NEELI TICK: SERVER KO PATA KAISE?
 ```
@@ -380,7 +393,32 @@ KAHANI:  Ek tick = message server tak pahuncha. Do tick = Ravi ke
 
 ILAAJ:   Do nishaan: 'kahan tak mila' aur 'kahan tak padha'. Ravi ne 50 message padhe to ek hi baat bhejta
          'yahan tak padha', Arpan ko ek push aur 50 neeli tick ek saath.
-
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store<br/>delivered_upto / read_upto"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Cassandra_messages
+    n_Chat_Server_x_200_2 --> n_Cassandra_messages
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Cassandra_messages --> n_Cold_storage
+```
+```
 ANDAR KAISE:
          Ravi ne chat kholi, 50 message padhe -> ek hi baat:
          "read_upto 4467" -> Arpan ko EK push -> 50 neeli ek saath.
@@ -393,30 +431,6 @@ ISKE BAAD KYA TOOTEGA:
   - Group me do tick kab?
       -> sab members ka delivered_upto >= message id -> sabse CHHOTA nishaan dekho.
 ```
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Cursor_store["Cursor store<br/>delivered_upto / read_upto"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Cassandra_messages
-    n_Chat_Server_x_200_2 --> n_Cassandra_messages
-    n_Chat_Server_x_200_1 --> n_Cursor_store
-    n_Chat_Server_x_200_2 --> n_Cursor_store
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Cassandra_messages --> n_Cold_storage
-```
 
 #### 8 10 LAKH KA BROADCAST GROUP: TICK KA KYA?
 ```
@@ -425,15 +439,6 @@ KAHANI:  10 lakh ka broadcast group. Har member ka nishaan + tick 500
 
 ILAAJ:   10 lakh member ke group me har message pe 10 lakh tick nahi chal sakte. Isliye group size ki had,
          aur bade channel me tick band, sirf unread ginti.
-
-ANDAR KAISE:
-         Slack channel me sirf channel ka unread (ek nishaan), "kisne padha" nahi.
-
-ISKE BAAD KYA TOOTEGA:
-  - Channel me 10 lakh tak pahunchana kaise?
-      -> fanout workers (Kafka se) members tak. Online ko push, baaki jab judein tab lein.
-  - Ye had kaun tay kare?
-      -> product + engineering saath: feature ki keemat batao (10 lakh x tick = kitni likhai).
 ```
 ```mermaid
 flowchart TD
@@ -458,6 +463,16 @@ flowchart TD
     n_Chat_Server_x_200_1 --> n_Push_Google_Apple
     n_Chat_Server_x_200_2 --> n_Push_Google_Apple
     n_Cassandra_messages --> n_Cold_storage
+```
+```
+ANDAR KAISE:
+         Slack channel me sirf channel ka unread (ek nishaan), "kisne padha" nahi.
+
+ISKE BAAD KYA TOOTEGA:
+  - Channel me 10 lakh tak pahunchana kaise?
+      -> fanout workers (Kafka se) members tak. Online ko push, baaki jab judein tab lein.
+  - Ye had kaun tay kare?
+      -> product + engineering saath: feature ki keemat batao (10 lakh x tick = kitni likhai).
 ```
 
 #### 9 ARPAN KA NET DHEEMA, APP NE DOBARA BHEJA, RAVI KO DO BAAR
@@ -469,16 +484,6 @@ KAHANI:  Arpan ka net dheema. App ne "hi" bheja, jawab nahi aaya
 ILAAJ:   Arpan ka app har message ki apni id banata aur dobara bhejne pe wahi id bhejta.
          Server id pehle dekh chuka -> wahi purana message lautata, naya nahi banata. Ravi ko 'hi' ek hi
          baar dikhta.
-
-ANDAR KAISE:
-         "pehle aaya?" + daalna = EK atomic kadam: (chat_id, clientMsgId) UNIQUE, ya Redis SET NX EX 3600.
-         Server id banata to har dobara bhejna = nayi id = duplicate.
-
-ISKE BAAD KYA TOOTEGA:
-  - Kitni der yaad rakhoge?
-      -> jitni der me koi dobara bhejta (minute-ghante).
-  - Dobara bhejne pe kaunsi id lautegi?
-      -> pehli baar wali server id -> Arpan ke app me ek hi bubble.
 ```
 ```mermaid
 flowchart TD
@@ -506,6 +511,17 @@ flowchart TD
     n_Idempotency_check --> n_Cassandra_messages
     n_Cassandra_messages --> n_Cold_storage
 ```
+```
+ANDAR KAISE:
+         "pehle aaya?" + daalna = EK atomic kadam: (chat_id, clientMsgId) UNIQUE, ya Redis SET NX EX 3600.
+         Server id banata to har dobara bhejna = nayi id = duplicate.
+
+ISKE BAAD KYA TOOTEGA:
+  - Kitni der yaad rakhoge?
+      -> jitni der me koi dobara bhejta (minute-ghante).
+  - Dobara bhejne pe kaunsi id lautegi?
+      -> pehli baar wali server id -> Arpan ke app me ek hi bubble.
+```
 
 #### 10 KRAM KISKE TIME SE?
 ```
@@ -515,7 +531,34 @@ KAHANI:  Arpan ke phone ki ghadi 5 min aage chal rahi. Uske message
 ILAAJ:   Kram server ka diya number tay karta, phone ki ghadi nahi (Arpan ki ghadi 5 min aage ho sakti).
          Ek chat ek jagah, har chat ka +1 number. App ko 15 ke baad 17 mila to samajh jaata 16 chhoot
          gaya, aur maang leta.
-
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Chat_Server_x_200_1["Chat Server 1"]
+    n_Chat_Server_x_200_2["Chat Server 2"]
+    n_Redis["Redis"]
+    n_Cursor_store["Cursor store"]
+    n_Push_Google_Apple["Push (Google / Apple)"]
+    n_Idempotency_check["Idempotency check"]
+    n_Cassandra_messages["Cassandra messages"]
+    n_Cold_storage["Cold storage"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Chat_Server_x_200_1
+    n_LB --> n_Chat_Server_x_200_2
+    n_Chat_Server_x_200_1 --> n_Redis
+    n_Chat_Server_x_200_2 --> n_Redis
+    n_Chat_Server_x_200_1 --> n_Idempotency_check
+    n_Chat_Server_x_200_2 --> n_Idempotency_check
+    n_Chat_Server_x_200_1 --> n_Cursor_store
+    n_Chat_Server_x_200_2 --> n_Cursor_store
+    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
+    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
+    n_Idempotency_check --> n_Cassandra_messages
+    n_Cassandra_messages --> n_Cold_storage
+```
+```
 ANDAR KAISE:
          Seq: Redis INCR seq:chat123 (atomic), ya chat ka maalik server memory me ginta.
          Kafka beech me ho -> key = chatId -> ek chat kram me, alag chat ek saath.
@@ -530,32 +573,6 @@ ISKE BAAD KYA TOOTEGA:
   - Do server ki ghadi alag, snowflake ka kya?
       -> ms ka farak ho sakta. Ek chat ka pakka kram per-chat seq se.
 ```
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Chat_Server_x_200_1["Chat Server 1"]
-    n_Chat_Server_x_200_2["Chat Server 2"]
-    n_Redis["Redis"]
-    n_Cursor_store["Cursor store"]
-    n_Push_Google_Apple["Push (Google / Apple)"]
-    n_Idempotency_check["Idempotency check"]
-    n_Cassandra_messages["Cassandra messages"]
-    n_Cold_storage["Cold storage"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Chat_Server_x_200_1
-    n_LB --> n_Chat_Server_x_200_2
-    n_Chat_Server_x_200_1 --> n_Redis
-    n_Chat_Server_x_200_2 --> n_Redis
-    n_Chat_Server_x_200_1 --> n_Idempotency_check
-    n_Chat_Server_x_200_2 --> n_Idempotency_check
-    n_Chat_Server_x_200_1 --> n_Cursor_store
-    n_Chat_Server_x_200_2 --> n_Cursor_store
-    n_Chat_Server_x_200_1 --> n_Push_Google_Apple
-    n_Chat_Server_x_200_2 --> n_Push_Google_Apple
-    n_Idempotency_check --> n_Cassandra_messages
-    n_Cassandra_messages --> n_Cold_storage
-```
 
 #### 11 5 MB KA VIDEO BHI ISI RAASTE SE?
 ```
@@ -563,19 +580,6 @@ KAHANI:  Arpan ne 5 MB video bheja chat server ke raaste se ->
          connection aur thread atak gaye, baaki message bhi ruke.
 
 ILAAJ:   App file seedha S3 me (PRESIGNED URL). Message me sirf PATA: { type, S3 KEY, size, thumbnail }.
-
-ANDAR KAISE:
-         Server sign kare (PUT, key, 10 min) -> app seedha S3 pe.
-         Thumbnail app khud banata (kuch KB) -> turant dikhe.
-         Group me file ek baar upload, 500 ko wahi pata.
-
-ISKE BAAD KYA TOOTEGA:
-  - Message me kya rakhoge, URL?
-      -> NAHI, S3 KEY. URL 10 min me khatam -> kal link mara. Kholne pe server naya chhota URL banaye.
-  - Wahi video 1000 log forward karein?
-      -> file ka hash -> pehle se hai to wahi file (dedup), naya upload nahi.
-  - End-to-end encryption me thumbnail?
-      -> server dekh nahi sakta. App encrypt karke upload, chaabi message ke saath.
 ```
 ```mermaid
 flowchart TD
@@ -605,6 +609,20 @@ flowchart TD
     n_Idempotency_check --> n_Cassandra_messages
     n_Cassandra_messages --> n_Cold_storage
 ```
+```
+ANDAR KAISE:
+         Server sign kare (PUT, key, 10 min) -> app seedha S3 pe.
+         Thumbnail app khud banata (kuch KB) -> turant dikhe.
+         Group me file ek baar upload, 500 ko wahi pata.
+
+ISKE BAAD KYA TOOTEGA:
+  - Message me kya rakhoge, URL?
+      -> NAHI, S3 KEY. URL 10 min me khatam -> kal link mara. Kholne pe server naya chhota URL banaye.
+  - Wahi video 1000 log forward karein?
+      -> file ka hash -> pehle se hai to wahi file (dedup), naya upload nahi.
+  - End-to-end encryption me thumbnail?
+      -> server dekh nahi sakta. App encrypt karke upload, chaabi message ke saath.
+```
 
 #### 12 ONLINE / LAST-SEEN: SABKO SABKA STATUS
 ```
@@ -613,16 +631,6 @@ KAHANI:  Har baar koi juda / gaya, uske saare contacts ko batao = crore x 500 = 
 ILAAJ:   'Ravi online' Redis me 30 second ki umar ke saath. Ravi ka app har 15 second batata 'hoon', umar
          badh jaati. App band = umar khatam = apne aap offline.
          Sabko har baar batate nahi. Arpan ne Ravi ki chat kholi tabhi Ravi ka status dekhte.
-
-ANDAR KAISE:
-         "offline" ka message bhejna hi nahi padta. Last seen = usi
-         key ka aakhri update. Ravi ne chhupaya hai to mat dikhao.
-
-ISKE BAAD KYA TOOTEGA:
-  - 2 crore / 15 sec = 13 lakh dhadkan / second Redis pe?
-      -> dhadkan chat server tak (connection pe ping). Server apne users ka status BATCH me Redis me daale.
-  - "typing..." live?
-      -> sirf khuli chat ke liye. Typing = chhota event, store nahi, bhej ke bhool jao.
 ```
 ```mermaid
 flowchart TD
@@ -652,17 +660,28 @@ flowchart TD
     n_Idempotency_check --> n_Cassandra_messages
     n_Cassandra_messages --> n_Cold_storage
 ```
+```
+ANDAR KAISE:
+         "offline" ka message bhejna hi nahi padta. Last seen = usi
+         key ka aakhri update. Ravi ne chhupaya hai to mat dikhao.
+
+ISKE BAAD KYA TOOTEGA:
+  - 2 crore / 15 sec = 13 lakh dhadkan / second Redis pe?
+      -> dhadkan chat server tak (connection pe ping). Server apne users ka status BATCH me Redis me daale.
+  - "typing..." live?
+      -> sirf khuli chat ke liye. Typing = chhota event, store nahi, bhej ke bhool jao.
+```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
   User -> LB -> Chat Server (khuli WebSocket + apni register, event loop)
   -> dobara-safe (clientMsgId) -> Cassandra (chat_id partition, pehle LIKHO phir bhejo)
-  -> Redis (kaun kis server pe: umar + dhadkan, pub-sub) -> lene wale ka Chat Server -> lene wala
+  -> Redis (kaun kis server pe: umar + dhadkan) -> lene wale ka Chat Server -> lene wala
   offline -> Push (app band pe ghanti) · dobara judne pe "aakhri id ke baad sab" maango
   Nishaan = delivered_upto / read_upto · media -> S3, message me sirf pata · purana -> sasti jagah
 
-DB:  message = Cassandra (chat_id partition, server ki id time
-     ke saath badhti) -> ek chat ek jagah, kram bana rahe
+DB:  message = Cassandra (partition = chat_id, andar kram = seq; message_id = Snowflake sirf pehchaan)
+     -> ek chat ek jagah, kram bana rahe
      zinda taar (connection) = server ki memory · pakka maal (message) = DB
 
 END ME POOCHEGA:
@@ -746,8 +765,9 @@ DO DUNIYA:  ZINDA TAAR (memory, ek server ki, mar sakti) = register / pen
 
 ```
 LB = connection ko chat server pe bithaye · Chat Server = khuli connection + apni register (pen), event loop
-Redis = kaun kis server (umar + dhadkan) + pub-sub + online status · Push = app band pe ghanti (phone OS se)
-Idempotency = clientMsgId · Cassandra = chat_id / message_id, pehle LIKHO phir bhejo · Cold storage = purana
+Redis = kaun kis server (umar + dhadkan) + online status · Push = app band pe ghanti (phone OS se)
+Idempotency = clientMsgId · Cassandra = chat_id partition, andar seq, pehle LIKHO phir bhejo
+Cold storage = purana
 Cursor store = delivered_upto / read_upto · Blob store = media, message me sirf pata
 ```
 ```

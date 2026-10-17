@@ -63,7 +63,16 @@ ILAAJ:   Poora doc bhej ke save karo to baad wala pehle wale ka likha mita deta.
          Isliye sirf ye bhejo ki kya badla: 'position 5 pe WORLD daala'. Saath me 'maine doc ka version 7
          dekh ke likha'.
          Arpan aur Ravi dono ke badlaav lag jaate, kisi ka likha nahi mitta.
-
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App<br/>operation bhejo, text nahi"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
+```
+```
 ANDAR KAISE:
          op = { docId, userId, type (insert / delete), position, char, baseVersion }
          baseVersion = Arpan ne doc ka kaunsa version dekh ke ye op banaya.
@@ -75,14 +84,6 @@ ISKE BAAD KYA TOOTEGA:
       -> mitana bhi ek op hai. OT dono ko adjust karta: Ravi ka
          akshar sahi jagah khisakta, Arpan sahi "L" mitata (card 4).
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App<br/>operation bhejo, text nahi"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_DB
-```
 
 #### 2 RAVI KO ARPAN KA LIKHA KAB DIKHEGA?
 ```
@@ -93,7 +94,16 @@ ILAAJ:   Har user ka server se ek connection khula rehta (WebSocket). Arpan likh
          aur Ravi ka likha turant Arpan tak.
          Connection toota aur wapas juda to app bolta 'main version 120 tak tha', server 121 se aage ke
          saare badlaav bhej deta.
-
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_Conn_Server["Conn-Server"]
+    n_DB["DB"]
+    n_USER_A_B --> n_Conn_Server
+    n_Conn_Server --> n_DB
+```
+```
 ANDAR KAISE:
          Pehle ek HTTP request "Upgrade: websocket" -> server "101
          Switching Protocols" -> wahi connection khula rehta,
@@ -109,14 +119,6 @@ ISKE BAAD KYA TOOTEGA:
       -> polling = crore log x har second bekaar sawaal + 1 sec
          der. SSE sirf server -> user, yahan dono taraf chahiye.
 ```
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_Conn_Server["Conn-Server"]
-    n_DB["DB"]
-    n_USER_A_B --> n_Conn_Server
-    n_Conn_Server --> n_DB
-```
 
 #### 3 ARPAN SERVER-1 PE, RAVI SERVER-2 PE
 ```
@@ -129,20 +131,8 @@ ILAAJ:   Arpan server-1 pe, Ravi server-2 pe. Server-1 Arpan ka badlaav Redis pe
          deta, server-2 us channel ko sun raha hai, to Ravi tak pahuncha deta.
          Redis ye kahin save nahi karta, sirf aage bhejta. Kuch chhoot gaya to dobara judne pe log se mil
          jaata.
-
-ANDAR KAISE:
-         Har doc ek channel (doc:123). Jis server pe doc:123 ka koi user hai, wo SUBSCRIBE karta.
-         Server-1 --publish doc:123--> Redis --> Server-2 --> Ravi
-         Redis pub/sub kuch STORE nahi karta (bheja aur bhool
-         gaya). Iska kaam sirf turant dikhana, data bachana nahi.
-
-ISKE BAAD KYA TOOTEGA:
-  - Us waqt server-2 restart ho raha tha, sun hi nahi raha?
-      -> pub/sub ka message gaya. Par op log me likha hai: Ravi dobara jude to version bata ke baaki le le.
-  - Redis pub/sub hi gir gaya?
-      -> copy pe switch (Sentinel). Kuch second live dikhna ruka, likha kuch nahi khoya (log me hai).
-  - Kafka kyun nahi?
-      -> Kafka store karta + thoda dheema. Live typing ko dobara padhna nahi chahiye, tezi chahiye.
+         Dhyaan: badlaav ka KRAM aur khiskana (OT) sirf doc ke EK owner server pe hota (card 8).
+         Pub/sub sirf aage pahunchata hai, faisla nahi karta.
 ```
 ```mermaid
 flowchart TD
@@ -160,6 +150,21 @@ flowchart TD
     n_Conn_Server_x_N_1 --> n_DB
     n_Conn_Server_x_N_2 --> n_DB
 ```
+```
+ANDAR KAISE:
+         Har doc ek channel (doc:123). Jis server pe doc:123 ka koi user hai, wo SUBSCRIBE karta.
+         Server-1 --publish doc:123--> Redis --> Server-2 --> Ravi
+         Redis pub/sub kuch STORE nahi karta (bheja aur bhool
+         gaya). Iska kaam sirf turant dikhana, data bachana nahi.
+
+ISKE BAAD KYA TOOTEGA:
+  - Us waqt server-2 restart ho raha tha, sun hi nahi raha?
+      -> pub/sub ka message gaya. Par op log me likha hai: Ravi dobara jude to version bata ke baaki le le.
+  - Redis pub/sub hi gir gaya?
+      -> copy pe switch (Sentinel). Kuch second live dikhna ruka, likha kuch nahi khoya (log me hai).
+  - Kafka kyun nahi?
+      -> Kafka store karta + thoda dheema. Live typing ko dobara padhna nahi chahiye, tezi chahiye.
+```
 
 #### 4 DONO NE EK SAATH POSITION 0 PE TYPE KIYA
 ```
@@ -171,7 +176,24 @@ KAHANI:  Doc "HELLO". Arpan ne position 0 pe "X" likha, usi pal Ravi ne position
 ILAAJ:   OT (Operational Transformation): doosre ka op aane pe usko apne op ke hisaab se khiska do.
          Dono taraf ek hi niyam -> dono ka doc same.
          (CRDT doosra raasta: har akshar ki apni unique id, kisi bhi kram me jodo, nateeja same.)
-
+```
+```mermaid
+flowchart TD
+    n_USER_A_B["USER A / B"]
+    n_LB["LB"]
+    n_Conn_Server_x_N_1["Conn-Server 1<br/>doc:123 ka owner + OT"]
+    n_Conn_Server_x_N_2["Conn-Server 2"]
+    n_Redis_pub_sub["Redis pub/sub"]
+    n_DB["DB"]
+    n_USER_A_B --> n_LB
+    n_LB --> n_Conn_Server_x_N_1
+    n_LB --> n_Conn_Server_x_N_2
+    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
+    n_Conn_Server_x_N_1 --> n_DB
+    n_Conn_Server_x_N_2 --> n_DB
+```
+```
 ANDAR KAISE:
          Niyam (tie-break): same jagah pe dono ne likha to Arpan ka pehle.
          Arpan ki screen: XHELLO. Ravi ka "Y at 0" aaya -> Arpan ka X
@@ -189,22 +211,6 @@ ISKE BAAD KYA TOOTEGA:
   - Ek doc ka OT do server pe chala?
       -> kram toot gaya. Isliye ek doc ke saare op EK server pe (card 8).
 ```
-```mermaid
-flowchart TD
-    n_USER_A_B["USER A / B"]
-    n_LB["LB"]
-    n_Conn_Server_x_N_1["Conn-Server 1<br/>+ OT"]
-    n_Conn_Server_x_N_2["Conn-Server 2<br/>+ OT"]
-    n_Redis_pub_sub["Redis pub/sub"]
-    n_DB["DB"]
-    n_USER_A_B --> n_LB
-    n_LB --> n_Conn_Server_x_N_1
-    n_LB --> n_Conn_Server_x_N_2
-    n_Conn_Server_x_N_1 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_2 --> n_Redis_pub_sub
-    n_Conn_Server_x_N_1 --> n_DB
-    n_Conn_Server_x_N_2 --> n_DB
-```
 
 #### 5 HAR AKSHAR PE DB ME LIKHNA
 ```
@@ -213,21 +219,6 @@ KAHANI:  Crore log type kar rahe, har akshar pe ek DB write -> DB khatam.
 ILAAJ:   Har akshar pe DB me likhna mehnga. Live dikhana to Redis se ho hi raha hai.
          Isliye badlaav pehle Redis me jama karo, har 1 second ek saath Cassandra me likh do. Ek doc ke
          saare badlaav ek jagah, server ke diye number ke kram me.
-
-ANDAR KAISE:
-         Edit log: partition key = docId, uske andar kram = version (SERVER ka number).
-         Timestamp se kram NAHI: ek hi millisecond pe do op = same key = ek
-                                 ne doosre ko chupchaap mita diya, op gaya.
-         Cassandra likhne me tez: pehle commit log (sirf neeche jodna) + RAM (memtable).
-
-ISKE BAAD KYA TOOTEGA:
-  - Arpan ka op Redis buffer me tha, Redis gir gaya -> op gaya?
-      -> Redis ki copy async thi, poora nahi bachati. Ilaaj: Arpan ka
-         app op apne paas rakhe jab tak server "mil gaya" (ACK) na bole,
-         dobara jude to phir bheje (opId ke saath, server ke paas pehle se hai to skip).
-         Server ACK tabhi de jab op pakka likh liya ho.
-  - "Sahi hona chahiye to SQL lo"?
-      -> nahi. DB data ki shakal se chuno: rishte (join) nahi, bas bahut saara jodna -> Cassandra.
 ```
 ```mermaid
 flowchart TD
@@ -247,6 +238,25 @@ flowchart TD
     n_Conn_Server_x_N_2 --> n_Redis_buffer
     n_Redis_buffer --> n_Cassandra_edit_log
 ```
+```
+ANDAR KAISE:
+         Edit log: partition key = docId, uske andar kram = version (SERVER ka number).
+         Timestamp se kram NAHI: ek hi millisecond pe do op = same key = ek
+                                 ne doosre ko chupchaap mita diya, op gaya.
+         Cassandra likhne me tez: pehle commit log (sirf neeche jodna) + RAM (memtable).
+
+ISKE BAAD KYA TOOTEGA:
+  - Arpan ka op Redis buffer me tha, Redis gir gaya -> op gaya?
+      -> Redis ki copy async thi, poora nahi bachati. Ilaaj: Arpan ka
+         app op apne paas rakhe jab tak server "mil gaya" (ACK) na bole,
+         dobara jude to phir bheje (opId ke saath, server ke paas pehle se hai to skip).
+         Server ACK tab deta jab op Redis buffer me + uski copy me likh gaya (Redis WAIT 1, ~1 ms).
+         Cassandra ka 1 second wala batch ACK ke raaste me nahi -> typing turant.
+  - Redis gira, ACK ho chuka tha?
+      -> op copy me bhi likha tha, copy main ban gayi, op bacha. ACK se pehle gira -> app dobara bhejta.
+  - "Sahi hona chahiye to SQL lo"?
+      -> nahi. DB data ki shakal se chuno: rishte (join) nahi, bas bahut saara jodna -> Cassandra.
+```
 
 #### 6 DOC KHOLA, 10 LAKH OP SHURU SE CHALANE PADE
 ```
@@ -254,14 +264,7 @@ KAHANI:  Arpan ne 2 saal purana doc khola. Server ne pehle op se 10
          lakh op dobara chalaye tab doc bana -> kholne me bahut der.
 
 ILAAJ:   2 saal purana doc kholne pe 10 lakh badlaav shuru se chalana dheema.
-         Isliye har 1000 badlaav pe doc ki photo le lo. Kholte waqt aakhri photo + uske baad ke thode
-         badlaav.
-
-ISKE BAAD KYA TOOTEGA:
-  - Photo lete waqt koi type kar raha?
-      -> photo ek version tak (v1000). Kholna = v1000 ki photo + v1001 se aage ke op. Kuch nahi rukta.
-  - Kitni baar photo?
-      -> har 1000 op ya har kuch minute, jo pehle ho.
+         Isliye har 1000 badlaav pe doc ki photo le lo. Kholte waqt aakhri photo + uske baad ke thode badlaav.
 ```
 ```mermaid
 flowchart TD
@@ -281,6 +284,18 @@ flowchart TD
     n_Conn_Server_x_N_2 --> n_Redis_buffer
     n_Redis_buffer --> n_Cassandra_edit_log
 ```
+```
+ANDAR KAISE:
+         Snapshot table: (docId, version 5000, poora text) -> S3 / Cassandra me.
+         Arpan ne doc khola -> aakhri photo (v5000) + edit log se "version > 5000" wale op (thode se)
+         -> unhe kram se lagao -> doc taiyaar. 10 lakh ki jagah ~1000 op.
+
+ISKE BAAD KYA TOOTEGA:
+  - Photo lete waqt koi type kar raha?
+      -> photo ek version tak (v1000). Kholna = v1000 ki photo + v1001 se aage ke op. Kuch nahi rukta.
+  - Kitni baar photo?
+      -> har 1000 op ya har kuch minute, jo pehle ho.
+```
 
 #### 7 NETWORK EK SECOND GAYA, TYPING RUKEGI? (CAP)
 ```
@@ -289,16 +304,6 @@ KAHANI:  Arpan ka network 1 second ke liye gaya. Typing ruk jaaye, ya wo type ka
 ILAAJ:   Likhne ke liye: network jaaye to bhi type karte raho, baad me sab mil jaayega aur doc same ho
          jaayega.
          Permission ke liye ulta: kisi ka access hataya to turant rokna hai, chahe kuch der system ruke.
-
-ANDAR KAISE:
-         "Doc sahi chahiye -> CP" bolna galat: CP me network jaate hi typing ruk jaati.
-         Yahan sahi hona "aakhir me sab same" se aata, typing rok ke nahi.
-
-ISKE BAAD KYA TOOTEGA:
-  - Arpan ne 1 ghanta offline type kiya?
-      -> app ke paas pending op + aakhri version. Wapas aate hi bhejo, server khiska ke lagaye, sab same.
-  - Arpan ka access hata diya, aur wo offline type kar raha tha?
-      -> dobara jude to pehle permission check (SQL, CP). Access nahi -> pending op reject.
 ```
 ```mermaid
 flowchart TD
@@ -321,27 +326,26 @@ flowchart TD
     n_Conn_Server_x_N_2 --> n_SQL_permissions
     n_Redis_buffer --> n_Cassandra_edit_log
 ```
+```
+ANDAR KAISE:
+         "Doc sahi chahiye -> CP" bolna galat: CP me network jaate hi typing ruk jaati.
+         Yahan sahi hona "aakhir me sab same" se aata, typing rok ke nahi.
+
+ISKE BAAD KYA TOOTEGA:
+  - Arpan ne 1 ghanta offline type kiya?
+      -> app ke paas pending op + aakhri version. Wapas aate hi bhejo, server khiska ke lagaye, sab same.
+  - Arpan ka access hata diya, aur wo offline type kar raha tha?
+      -> dobara jude to pehle permission check (SQL, CP). Access nahi -> pending op reject.
+```
 
 #### 8 CRORE WEBSOCKET CONNECTION
 ```
 KAHANI:  Crore connection khule. Ek doc ke 5 editor alag-alag 5 server
          pe bikhre -> har server apna OT chala raha -> kram toota.
 
-ILAAJ:   Alag CONNECTION server ki line. docId se baanto: ek doc ke saare editor + uska OT EK hi server pe.
-
-ANDAR KAISE:
-         URL me docId -> LB consistent hashing RING se server
-         chunta. Server juda / gira -> sirf uske hisse ke doc hilte.
-         (hash(docId) % N NAHI: N badla to lagbhag har doc ka server badla = sab dobara jude.)
-         Ek doc pe ~100 editor tak ek server jhel leta. App ki static files CDN se.
-
-ISKE BAAD KYA TOOTEGA:
-  - Doc wala server gir gaya?
-      -> ring pe agla server le leta. Sab dobara jude, photo + op se doc bana, version bata ke baaki op.
-  - Likhe hue ka kram kaun tay kare?
-      -> SERVER: har op ko doc ka agla version number. App ki ghadi kabhi nahi.
-  - Ek doc pe 1000 log?
-      -> jo sirf dekh rahe (likh nahi rahe) unhe alag rakho, pub/sub se updates.
+ILAAJ:   Alag CONNECTION server ki line. docId se baanto: ek doc ke saare editor + uska OT EK hi server pe
+         (wo us doc ka OWNER). Wahi har op ko version number deta, to kram kabhi do jagah tay nahi hota.
+         Sirf dekhne wale (likh nahi rahe) doosre server pe ho sakte, unhe Redis pub/sub se badlaav.
 ```
 ```mermaid
 flowchart TD
@@ -366,11 +370,26 @@ flowchart TD
     n_Conn_Server_x_N_2 --> n_SQL_permissions
     n_Redis_buffer --> n_Cassandra_edit_log
 ```
+```
+ANDAR KAISE:
+         URL me docId -> LB consistent hashing RING se server
+         chunta. Server juda / gira -> sirf uske hisse ke doc hilte.
+         (hash(docId) % N NAHI: N badla to lagbhag har doc ka server badla = sab dobara jude.)
+         Ek doc pe ~100 editor tak ek server jhel leta. App ki static files CDN se.
+
+ISKE BAAD KYA TOOTEGA:
+  - Doc wala server gir gaya?
+      -> ring pe agla server le leta. Sab dobara jude, photo + op se doc bana, version bata ke baaki op.
+  - Likhe hue ka kram kaun tay kare?
+      -> SERVER: har op ko doc ka agla version number. App ki ghadi kabhi nahi.
+  - Ek doc pe 1000 log?
+      -> jo sirf dekh rahe (likh nahi rahe) unhe alag rakho, pub/sub se updates.
+```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
-  CDN (app ki files) -> LB (docId se same server) -> Conn-Server (WebSocket + OT + buffer)
-  -> Redis pub/sub (doosre Conn-Servers tak) -> unke users ko PUSH
+  CDN (app ki files) -> LB (docId se same server = doc ka owner) -> Conn-Server (WebSocket + OT + version)
+  -> editors ko seedha PUSH · Redis pub/sub sirf un dekhne walon tak jo doosre server pe hain
   -> Redis buffer -> BATCH -> Cassandra op log (docId, version) + snapshot · permission = SQL
 
 DB:  op log = Cassandra (bahut saara jodna; Mongo bhi chalega) · snapshot taaki doc jaldi khule
@@ -445,9 +464,9 @@ DATA:     har badlaav = OPERATION: { docId, userId, opType
 
 EK AKSHAR KA SAFAR:
           1. Arpan ne akshar likha -> op { docId, userId, insert, pos, char, baseVersion }
-          2. WebSocket se Arpan ke Conn-Server tak
-          3. OT: ek saath bane op ke hisaab se khiskao -> lagao
-          4. Redis pub/sub publish -> baaki Conn-Servers -> unke user (Ravi) ko PUSH
+          2. WebSocket se doc ke owner Conn-Server tak (Ravi bhi usi pe)
+          3. OT: ek saath bane op ke hisaab se khiskao -> agla version number -> lagao
+          4. Ravi ko seedha PUSH · doosre server ke dekhne walon ko Redis pub/sub se
           5. Redis buffer -> BATCH -> Cassandra edit log
           6. Ravi ke app ne op liya -> apni taraf khiskaya -> screen update
 

@@ -64,6 +64,12 @@ JAWAB:    Paise me sahi hona pehle. Network toota aur pakka nahi pata balance ky
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 Payment service DB me do kaam kare: Arpan ke 500 ghatao, merchant ke 500 badhao.
+
+PAISA KAHAN HILTA (pehle ye tay, poori file isi pe):
+  Arpan aur merchant dono ka WALLET hamare system me (Paytm / PhonePe wallet jaisa).
+  Wallet se wallet = hamare DB ke andar, ek transaction (card 0, 1, 2, 6, 9).
+  Bahar ka paisa = PSP (Razorpay / bank) se: bank se wallet me daalna (top-up), wallet se bank me
+  nikaalna (payout), ya merchant kisi doosre bank me hai (card 3, 4, 5).
 ```
 ```mermaid
 flowchart TD
@@ -80,6 +86,20 @@ KAHANI:  Ek payment me chaar likhai: Arpan -500, merchant +500, aur khaate (ledg
          Ye chaaron ek saath honi chahiye. Teen hui aur chautha reh gaya = hisaab galat.
 
 ILAAJ:   SQL (Postgres / MySQL): kai row EK transaction me, sab ya kuch nahi (ACID).
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_DB["SQL DB<br/>wallet + ledger + payment"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_DB
+```
+```
+ANDAR KAISE:
+         Teen table: wallet (account_id, balance) · ledger (sirf jodte) · payment (key, haal).
+         Ek payment = BEGIN -> 2 balance UPDATE + 2 ledger INSERT + payment ka haal -> COMMIT.
+         Beech me kuch bhi fail -> ROLLBACK -> chaaron me se ek bhi nahi hua.
 
 ISKE BAAD KYA TOOTEGA:
   - NoSQL kyun nahi?
@@ -96,7 +116,16 @@ ILAAJ:   Arpan se 500 kaatna aur merchant ko 500 dena, dono ek hi transaction me
          dono wapas.
          Kaatna condition ke saath: 'balance 500 se zyada hai tabhi kaato'. Do payment ek saath aayi to
          bhi balance minus me nahi jaayega.
-
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_DB["DB<br/>debit + credit EK transaction"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_DB
+```
+```
 ANDAR KAISE:
          BEGIN
            Arpan -= 500 · Merchant += 500
@@ -110,14 +139,6 @@ ISKE BAAD KYA TOOTEGA:
       -> UPDATE ... SET balance = balance - 500 WHERE id = ? AND balance >= 500
          check aur kaatna ek hi query me -> pehla jeeta (bacha 100), doosre ki 0 row badli = reject.
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc"]
-    n_DB["DB<br/>debit + credit EK transaction"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_DB
-```
 
 #### 2 DO BAAR TAP / APP NE DOBARA BHEJA = 1000 KATE
 ```
@@ -126,25 +147,6 @@ KAHANI:  Arpan ne Pay dabaya, app ghoomta raha, usne phir daba diya. Ya network 
 
 ILAAJ:   IDEMPOTENCY KEY: "Pay" dabate hi app ek random UUID banata (key-555). Dobara bhejne pe WAHI key-555.
          Server: ye key pehle aa chuki -> naya payment nahi, pehle wala jawab wapas.
-
-ANDAR KAISE:
-         Key ko "dekha?" aur "daal do" EK hi step me: DB me key UNIQUE (pakka) + Redis SETNX (tez).
-           pehli request: key-555 daali, haal IN_PROGRESS -> PSP se paisa -> haal DONE + jawab save.
-           doosri request: key-555 pehle se hai -> saved jawab wapas. Paisa ek hi baar.
-         Arpan ne sach me do alag payment kiye (100 + 100) -> do tap = do alag key -> dono honge.
-         Key ~24 ghante rakho.
-
-ISKE BAAD KYA TOOTEGA:
-  - Key app kyun banaye, server kyun nahi?
-      -> dobara bhejta app hai. Server ko pata hi nahi ye wahi request hai. App ki key hi dono ko jodti.
-  - Key lag gayi, PSP call FAIL?
-      -> IN_PROGRESS ki chhoti umar ho / fail pe hata do -> dobara koshish chal sake. Sirf DONE pe skip.
-  - Kaam ke baad key delete kar do?
-      -> nahi. Der se dobara wali request aayi to dobara kat jaayega.
-  - Redis aur DB dono kyun?
-      -> Redis tez, aur chal rahi request turant pakadta. DB UNIQUE pakka hai, Redis gira tab bhi.
-  - Idempotency aur "do log ek balance pe" same cheez?
-      -> nahi. Idempotency = EK user ki dobara request. Do log ek balance pe = atomic query (card 1).
 ```
 ```mermaid
 flowchart TD
@@ -156,16 +158,50 @@ flowchart TD
     n_Payment_Svc --> n_Idempotency_store
     n_Payment_Svc --> n_DB
 ```
+```
+ANDAR KAISE:
+         Key ko "dekha?" aur "daal do" EK hi step me: DB me key UNIQUE (pakka) + Redis SETNX (tez).
+           pehli request: key-555 daali, haal IN_PROGRESS -> paisa kaato + daalo -> haal DONE + jawab save.
+           doosri request: key-555 pehle se hai -> saved jawab wapas. Paisa ek hi baar.
+         Arpan ne sach me do alag payment kiye (100 + 100) -> do tap = do alag key -> dono honge.
+         Key ~24 ghante rakho.
+
+ISKE BAAD KYA TOOTEGA:
+  - Key app kyun banaye, server kyun nahi?
+      -> dobara bhejta app hai. Server ko pata hi nahi ye wahi request hai. App ki key hi dono ko jodti.
+  - Key lag gayi, phir payment FAIL?
+      -> IN_PROGRESS ki chhoti umar ho / fail pe hata do -> dobara koshish chal sake. Sirf DONE pe skip.
+  - Kaam ke baad key delete kar do?
+      -> nahi. Der se dobara wali request aayi to dobara kat jaayega.
+  - Redis aur DB dono kyun?
+      -> Redis tez, aur chal rahi request turant pakadta. DB UNIQUE pakka hai, Redis gira tab bhi.
+  - Idempotency aur "do log ek balance pe" same cheez?
+      -> nahi. Idempotency = EK user ki dobara request. Do log ek balance pe = atomic query (card 1).
+```
 
 #### 3 ASLI PAISA HAMARA SERVER NAHI HILATA
 ```
-KAHANI:  Hamara server sirf "bhejo" kehta hai. Asli paisa bank ke raaste (bank rails) pe hilta.
-         Wo bahar ka raasta kabhi dheema, kabhi band.
+KAHANI:  Arpan apne bank se wallet me 2000 daal raha (top-up). Ya merchant din ka paisa bank me nikaal
+         raha (payout). Ye paisa hamare DB me nahi hilta: hamara server PSP ko sirf "bhejo" kehta,
+         asli paisa bank ke raaste (bank rails) pe hilta. Wo bahar ka raasta kabhi dheema, kabhi band.
 
 ILAAJ:   PSP ko 2-3 second se zyada intezaar nahi. Baar-baar fail ho to kuch der usko call band (fuse).
          Paise me andha dobara nahi bhejte, kyunki ho sakta hai pehli baar paisa kat chuka ho. Payment
          'PENDING' rakho, baad me pakka karenge.
-
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+```
+```
 ANDAR KAISE:
          Fuse teen haal me:
            CLOSED (sab theek, call jao) --5 baar fail--> OPEN (call bhejo hi mat, payment PENDING)
@@ -181,18 +217,6 @@ ISKE BAAD KYA TOOTEGA:
   - PSP fail, turant dobara bhejo?
       -> paise me andha dobara nahi. PENDING rakho, reconciliation tay kare.
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc"]
-    n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP"]
-    n_DB["DB"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_Idempotency_store
-    n_Payment_Svc --> n_PSP
-    n_Payment_Svc --> n_DB
-```
 
 #### 4 PSP KO CALL KIYA AUR CRASH: PAISA GAYA YA NAHI?
 ```
@@ -204,7 +228,24 @@ ILAAJ:   PSP ko call karne se PEHLE DB me likho 'PENDING'. Phir call.
          Server gira to bhi DB me likha hai ki ye payment adhoora hai. PSP khud batata hai (webhook) 'ho
          gaya / fail', aur ek job har kuch minute PENDING wale PSP se poochhti.
          Paisa hamesha ya to ho gaya, ya wapas, ya check ho raha. Khota kabhi nahi.
-
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["DB"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc
+```
+```
 ANDAR KAISE:
          Job har kuch minute: PENDING jo 5 min se purane -> PSP se poochho
            hua -> SUCCESS · nahi hua -> dobara (WAHI key se) · pakka fail -> FAILED + paisa wapas.
@@ -222,22 +263,6 @@ ISKE BAAD KYA TOOTEGA:
   - Kaise pata sab theek chal raha?
       -> hisaab ka farak, p99, error rate, line ki lambai pe alert + trace id se ek payment ka poora raasta.
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc"]
-    n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP"]
-    n_DB["DB"]
-    n_Reconciliation_job["Reconciliation job"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_Idempotency_store
-    n_Payment_Svc --> n_PSP
-    n_Payment_Svc --> n_DB
-    n_Reconciliation_job --> n_DB
-    n_Reconciliation_job --> n_PSP
-    n_PSP -.->|webhook| n_Payment_Svc
-```
 
 #### 5 ALAG BANK / ALAG DB: EK TRANSACTION NAHI CHAL SAKTA
 ```
@@ -248,18 +273,6 @@ ILAAJ:   Arpan Bank A me, merchant Bank B me, ek transaction nahi chalta.
          Step-step: pehle A se kaato, phir B me daalo, har step ke baad likh lo kahan tak hua. B me daalna
          fail -> A me paisa wapas.
          Service beech me giri to uthke apna likha dekhti, wahin se aage ya ulta.
-
-ANDAR KAISE:
-         Bank A -500 OK -> Bank B +500 FAIL -> ulta kaam: Bank A +500 wapas.
-         Saga table me har step ka haal: DEBITED, CREDIT_PENDING, ...
-
-ISKE BAAD KYA TOOTEGA:
-  - 2PC (two phase commit) kyun nahi?
-      -> 2PC me sab "ready" bol ke lock pakad ke rukte. Coordinator gira = sab atke, aur har payment dheema.
-  - Payment service beech me gir gayi?
-      -> uthte hi saga table dekhti, wahin se aage ya ulta.
-  - Beech ke waqt Arpan ko kya dikhe?
-      -> "processing", thodi der me SUCCESS ya paisa wapas (eventual).
 ```
 ```mermaid
 flowchart TD
@@ -277,6 +290,19 @@ flowchart TD
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc
 ```
+```
+ANDAR KAISE:
+         Bank A -500 OK -> Bank B +500 FAIL -> ulta kaam: Bank A +500 wapas.
+         Saga table me har step ka haal: DEBITED, CREDIT_PENDING, ...
+
+ISKE BAAD KYA TOOTEGA:
+  - 2PC (two phase commit) kyun nahi?
+      -> 2PC me sab "ready" bol ke lock pakad ke rukte. Coordinator gira = sab atke, aur har payment dheema.
+  - Payment service beech me gir gayi?
+      -> uthte hi saga table dekhti, wahin se aage ya ulta.
+  - Beech ke waqt Arpan ko kya dikhe?
+      -> "processing", thodi der me SUCCESS ya paisa wapas (eventual).
+```
 
 #### 6 RBI POOCHHE: YE PAISA KAHAN SE AAYA, KAHAN GAYA?
 ```
@@ -285,23 +311,6 @@ KAHANI:  RBI: "Arpan ke ye 500 kahan se aaye, kahan gaye, kab?"
 
 ILAAJ:   LEDGER table, USI transaction me jisme paisa hila. Isme sirf INSERT, kabhi UPDATE / DELETE nahi.
          Double-entry: har len-den ki do line, ek DEBIT ek CREDIT.
-
-ANDAR KAISE:
-         Arpan -> merchant 500: ledger me "Arpan DEBIT 500" +
-         "merchant CREDIT 500". Balance column bhi usi transaction me.
-         Galti ho gayi -> purani line mat mitao, NAYI ulti line likho (pen ki diary, kaat-peet nahi).
-         Raat ko jaancho: ledger ka jod == balance? Farak = alert.
-
-ISKE BAAD KYA TOOTEGA:
-  - Galat entry delete kar do?
-      -> nahi, ulti entry. Audit me dono dikhni chahiye.
-  - Balance + alag audit_log table kyun nahi?
-      -> UPDATE se purana number mit jaata. Aur alag table me ek likha, doosra fail = farak. Ledger hi sach.
-  - 3 saal me ledger bahut bada?
-      -> mahine ke hisaab se tukde (partition), purane tukde
-         sasti jagah (S3 Glacier). Archive, delete kabhi nahi.
-  - Ledger crash se bachaata hai?
-      -> nahi, wo hisaab / audit hai. Crash se bachaate PENDING + webhook + reconciliation (card 4).
 ```
 ```mermaid
 flowchart TD
@@ -319,6 +328,28 @@ flowchart TD
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc
 ```
+```
+ANDAR KAISE:
+         Arpan -> merchant 500: ledger me "Arpan DEBIT 500" +
+         "merchant CREDIT 500". Balance column bhi usi transaction me.
+         Galti ho gayi -> purani line mat mitao, NAYI ulti line likho (pen ki diary, kaat-peet nahi).
+         Raat ko jaancho: ledger ka jod == balance? Farak = alert.
+
+ISKE BAAD KYA TOOTEGA:
+  - Galat entry delete kar do?
+      -> nahi, ulti entry. Audit me dono dikhni chahiye.
+  - Balance + alag audit_log table kyun nahi?
+      -> UPDATE se purana number mit jaata. Aur alag table me ek likha, doosra fail = farak. Ledger hi sach.
+  - 3 saal me ledger bahut bada?
+      -> mahine ke hisaab se tukde (partition), purane tukde
+         sasti jagah (S3 Glacier). Archive, delete kabhi nahi.
+  - Ledger crash se bachaata hai?
+      -> nahi, wo hisaab / audit hai. Crash se bachaate PENDING + webhook + reconciliation (card 4).
+  - Refund kaise?
+      -> purani payment ko chhedo mat. Nayi ulti payment: merchant -500, Arpan +500, apni nayi key,
+         purani payment ka number saath me. Ledger me 2 nayi line. Ek payment pe refund ka jod
+         asli amount se zyada nahi (check karo).
+```
 
 #### 7 FESTIVAL PE 3000 PAYMENT / SECOND
 ```
@@ -327,23 +358,6 @@ KAHANI:  Diwali pe 3000 payment / second. Ek hi Payment service machine ka CPU b
 
 ILAAJ:   Payment service STATELESS (kuch yaad nahi rakhti), kai machine, aage LB / API GATEWAY
          (login check JWT, rate limit, WAF, HTTPS).
-
-ANDAR KAISE:
-         Saari yaad DB aur idempotency store me -> koi bhi
-         machine koi bhi payment le sakti. Ek giri, baaki chalti.
-         Har payment pe OWNER CHECK: JWT se Arpan ka userId ->
-         "from" account ka owner Arpan hi hai? Nahi -> 403.
-
-ISKE BAAD KYA TOOTEGA:
-  - Safe kaise rakhoge, galat istemaal kaise rokoge?
-      -> Darwaze pe login check. Har payment pe check: 'jis account se paisa kat raha, wo isi user ka
-         hai?' userId JWT se lo, request body se nahi (body me koi bhi kuch likh de).
-         Har user ki had, aur sabse aage WAF.
-  - userId request body se le lo?
-      -> nahi! Body me koi bhi kisi ka bhi userId likh de
-         (spoof). Hamesha JWT se. (PR drill me baar-baar aata.)
-  - LB ko kaise pata machine mar gayi?
-      -> LB har kuch second GET /health maarta, jawab nahi = list se bahar.
 ```
 ```mermaid
 flowchart TD
@@ -369,6 +383,24 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc_x_N_1
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
+```
+ANDAR KAISE:
+         Saari yaad DB aur idempotency store me -> koi bhi
+         machine koi bhi payment le sakti. Ek giri, baaki chalti.
+         Har payment pe OWNER CHECK: JWT se Arpan ka userId ->
+         "from" account ka owner Arpan hi hai? Nahi -> 403.
+
+ISKE BAAD KYA TOOTEGA:
+  - Safe kaise rakhoge, galat istemaal kaise rokoge?
+      -> Darwaze pe login check. Har payment pe check: 'jis account se paisa kat raha, wo isi user ka
+         hai?' userId JWT se lo, request body se nahi (body me koi bhi kuch likh de).
+         Har user ki had, aur sabse aage WAF.
+  - userId request body se le lo?
+      -> nahi! Body me koi bhi kisi ka bhi userId likh de
+         (spoof). Hamesha JWT se. (PR drill me baar-baar aata.)
+  - LB ko kaise pata machine mar gayi?
+      -> LB har kuch second GET /health maarta, jawab nahi = list se bahar.
+```
 
 #### 8 MERCHANT KI REPORT NE ASLI PAYMENT ROKE
 ```
@@ -376,21 +408,6 @@ KAHANI:  Ek bada merchant dashboard pe "is mahine ki saari payment" report chala
          usi DB pe -> DB busy -> Arpan ka 500 ka payment likhne me atak gaya.
 
 ILAAJ:   Report READ REPLICA (DB ki padhne wali copy) se. Balance aur payment ka haal hamesha PRIMARY se.
-
-ANDAR KAISE:
-         Primary har badlaav apni diary (WAL) me likhta -> replica wo diary padh ke wahi badlaav lagati.
-         Ye peeche-peeche chalta (async) -> replica 1-2 second purani ho sakti.
-         Report me 1-2 second purana chalta, balance me nahi.
-         Bahut bhaari analytics -> alag warehouse me (CDC se data jaata).
-
-ISKE BAAD KYA TOOTEGA:
-  - Arpan ne pay kiya, use purana balance dikha?
-      -> wo replica se padha gaya jo peeche thi. Isliye balance / haal PRIMARY se hi.
-  - Primary gira?
-      -> SYNC standby (har likhai uspe bhi pakki) ko primary banao (RDS Multi-AZ) -> kuch nahi khota.
-         Async replica ko banaya to aakhri kuch likhai kho sakti.
-  - Replica kitni peeche hai, kaise pata?
-      -> replication lag metric pe alert.
 ```
 ```mermaid
 flowchart TD
@@ -418,6 +435,22 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc_x_N_1
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
+```
+ANDAR KAISE:
+         Primary har badlaav apni diary (WAL) me likhta -> replica wo diary padh ke wahi badlaav lagati.
+         Ye peeche-peeche chalta (async) -> replica 1-2 second purani ho sakti.
+         Report me 1-2 second purana chalta, balance me nahi.
+         Bahut bhaari analytics -> alag warehouse me (CDC se data jaata).
+
+ISKE BAAD KYA TOOTEGA:
+  - Arpan ne pay kiya, use purana balance dikha?
+      -> wo replica se padha gaya jo peeche thi. Isliye balance / haal PRIMARY se hi.
+  - Primary gira?
+      -> SYNC standby (har likhai uspe bhi pakki) ko primary banao (RDS Multi-AZ) -> kuch nahi khota.
+         Async replica ko banaya to aakhri kuch likhai kho sakti.
+  - Replica kitni peeche hai, kaise pata?
+      -> replication lag metric pe alert.
+```
 
 #### 9 50 CRORE ROW, LIKHAI DHEEMI
 ```
@@ -426,19 +459,6 @@ KAHANI:  Saal bhar me 50 crore payment row. Saari likhai ek hi primary DB pe -> 
 ILAAJ:   Account id ke hisaab se baanto: Arpan ka balance aur uski saari history ek hi jagah, to Arpan se
          kaatna ek jagah, ek transaction.
          Do alag jagah ke account ke beech transfer = step-step + fail pe ulta (upar wala).
-
-ANDAR KAISE:
-         Account kis shard pe: consistent hashing, ya lookup table (account -> shard, baad me badal sakte).
-         Arpan ka balance aur uski history ek hi shard pe -> Arpan ka kaatna ek jagah, atomic.
-
-ISKE BAAD KYA TOOTEGA:
-  - txn_id ya time se kyun nahi baanta?
-      -> txn_id: Arpan ki payment alag-alag shard pe bikhri,
-         balance kahan dekhoge? · time: aaj wala shard garam.
-  - Amazon jaisa bada merchant -> uska shard garam?
-      -> merchant ke kai sub-account, alag shard pe; report me jod do.
-  - Do shard ke beech transfer?
-      -> SAGA: shard A se kaato, shard B me daalo, fail pe ulta. Asli mushkil yahi hai, bheed nahi.
 ```
 ```mermaid
 flowchart TD
@@ -466,12 +486,27 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc_x_N_1
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
+```
+ANDAR KAISE:
+         Account kis shard pe: consistent hashing, ya lookup table (account -> shard, baad me badal sakte).
+         Arpan ka balance aur uski history ek hi shard pe -> Arpan ka kaatna ek jagah, atomic.
+
+ISKE BAAD KYA TOOTEGA:
+  - txn_id ya time se kyun nahi baanta?
+      -> txn_id: Arpan ki payment alag-alag shard pe bikhri,
+         balance kahan dekhoge? · time: aaj wala shard garam.
+  - Amazon jaisa bada merchant -> uska shard garam?
+      -> merchant ke kai sub-account, alag shard pe; report me jod do.
+  - Do shard ke beech transfer?
+      -> SAGA: shard A se kaato, shard B me daalo, fail pe ulta. Asli mushkil yahi hai, bheed nahi.
+```
 
 ```
 AAKHRI DABBE (sab dikkat ke baad):
   User -> Gateway (login + rate limit + owner check) -> Payment Svc (stateless, saga)
   -> Idempotency (ek key ek baar, unique) -> SQL DB (ACID: kaato + daalo + ledger, shard by account)
-  -> PSP (asli paisa, pehle PENDING) -> webhook (PSP batata) · Reconciliation job (hum poochhte, jaal)
+  -> PSP (sirf bahar ka paisa: top-up / payout / doosra bank, pehle PENDING)
+  -> webhook (PSP batata) · Reconciliation job (hum poochhte, jaal)
   Read replica = sirf dashboard / report
 
 DB:  SQL + ACID -> kaatna aur daalna ek saath · ledger double-entry, kabhi badla nahi jaata
@@ -570,7 +605,7 @@ SCAM 1992 (ledger kyun itna zaroori):
 ```
 Gateway = login + rate limit + owner check · Payment Svc = stateless, saga · Idempotency = ek key ek baar
 SQL DB = ACID kaato + daalo + ledger, shard by account ·
-PSP = asli paisa, pehle PENDING · webhook = PSP batata
+PSP = bahar ka paisa (top-up / payout), pehle PENDING · webhook = PSP batata
 Reconciliation = hum poochhte, jaal · Read replica = sirf dashboard
 ```
 ```
@@ -583,8 +618,8 @@ ledger       -> double-entry, kabhi badla nahi (pen ki diary)
 JAWAB:    Har payment pe ek id, dobara bheja to pehla jawab, paisa ek hi baar.
           Kaatna + daalna ek transaction me, aur khaate me dono line. Alag bank / alag jagah ho to
           step-step + fail pe ulta.
-          Asli paisa PSP hilata, isliye pehle PENDING likho, phir PSP ke webhook aur roz ke milaan se
-          pakka karo.
+          Wallet se wallet hamare DB me. Bank se aana / bank me jaana PSP karta, isliye wahan pehle
+          PENDING likho, phir PSP ke webhook aur roz ke milaan se pakka karo.
           Aage: fraud check, kai currency, chargeback.
 ```
 ```mermaid

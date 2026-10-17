@@ -69,7 +69,25 @@ ILAAJ:   Jaanch 3 second leti hai, to Arpan ko rukwate nahi. Upload hote hi use 
          chahe T-101 se haal dekh le.
          Worker 'kaam le liya' tabhi bolta jab DB me likh diya, to beech me mara to kaam dobara milega,
          khoyega nahi.
-
+```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_Upload_Svc["Upload Svc"]
+    n_DB["DB"]
+    n_S3["S3"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_S3
+    n_Upload_Svc --> n_Kafka
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+```
+```
 ANDAR KAISE:
          Upload service queue me khabar daale {T-101, file kahan hai} aur turant laut aaye.
          Worker queue se uthaye -> Validator ko call -> DB me T-101 = DONE / FAILED.
@@ -93,23 +111,6 @@ ISKE BAAD KYA TOOTEGA:
          number: queue ki lambai · Validator ka time + error rate
          · 10 min se VALIDATING me atki files -> had paar = alert, user ki shikayat se pehle.
 ```
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_Upload_Svc["Upload Svc"]
-    n_DB["DB"]
-    n_S3["S3"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_S3
-    n_Upload_Svc --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-```
 
 #### 2 5 GB FILE KE BYTES HAMARE SERVER SE GUZAR RAHE
 ```
@@ -120,7 +121,25 @@ ILAAJ:   5 GB file hamare server se hoke jaaye to server ghanto atka rahe. Isliy
          ka 'paas' (signed URL) deta hai, saath me T-101.
          Arpan ka app us paas se file seedha S3 me daal deta, hamare server ke beech se nahi.
          Arpan ke paas AWS ki chaabi kabhi nahi aati, sirf us ek file ka 10 minute ka paas.
-
+```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_DB["DB"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+```
+```
 ANDAR KAISE:
          1  Arpan -> server: "5 GB upload karni hai"
          2  server -> Arpan: signed URL (10 min ka) + T-101
@@ -136,6 +155,16 @@ ISKE BAAD KYA TOOTEGA:
   - Arpan ne "/complete" bola hi nahi (app band)?
       -> S3 khud batata "file aa gayi" (S3 event notification), ya sweeper pakde (card 4).
 ```
+
+#### 3 5 GB FILE 90% PE TOOT GAYI
+```
+KAHANI:  Arpan ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB shuru se? Arpan pagal ho jaayega.
+
+ILAAJ:   File ko 100 tukdon me bhejo. 90 tukde chale gaye aur wifi gaya, to sirf bache 10 dobara bhejo,
+         poori 5 GB nahi.
+         Sab tukde pahunche to S3 khud jod ke ek file bana deta. Upload ki id hamare paas hai, to app band
+         karke kal aaye to bhi wahin se aage.
+```
 ```mermaid
 flowchart TD
     n_CLIENT["CLIENT"]
@@ -153,16 +182,7 @@ flowchart TD
     n_Worker --> n_Validator
     n_Worker --> n_DB
 ```
-
-#### 3 5 GB FILE 90% PE TOOT GAYI
 ```
-KAHANI:  Arpan ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB shuru se? Arpan pagal ho jaayega.
-
-ILAAJ:   File ko 100 tukdon me bhejo. 90 tukde chale gaye aur wifi gaya, to sirf bache 10 dobara bhejo,
-         poori 5 GB nahi.
-         Sab tukde pahunche to S3 khud jod ke ek file bana deta. Upload ki id hamare paas hai, to app band
-         karke kal aaye to bhi wahin se aage.
-
 ANDAR KAISE:
          1  "shuru" -> S3 ek uploadId deta (U-9)
          2  har tukda (1..N) apne signed URL pe, ek saath kai bhi -> S3 har tukde ki rasid (ETag) deta
@@ -175,23 +195,6 @@ ISKE BAAD KYA TOOTEGA:
   - Tukda kitna bada?
       -> S3 me kam se kam 5 MB (aakhri chhod ke), zyada se zyada 10,000 tukde -> badi file = bada tukda.
 ```
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_Upload_Svc["Upload Svc"]
-    n_DB["DB"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-```
 
 #### 4 UPLOAD SHURU HUA, "COMPLETE" KABHI NAHI AAYA (ADHOORI FILE)
 ```
@@ -202,7 +205,28 @@ ILAAJ:   Har file ka haal likha hai: UPLOAD HO RAHI -> JAANCH HO RAHI -> DONE / 
          Ek job har kuch minute dekhti: koi file 10 minute se 'jaanch ho rahi' pe atki hai (jabki jaanch 3
          second ki hai)? To use dobara line me daalo, ya FAILED kar do.
          Aur S3 ka niyam purani adhoori uploads apne aap hata deta.
-
+```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_DB["DB"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Sweeper_job --> n_Kafka
+```
+```
 ANDAR KAISE:
          Sweeper har kuch minute: haal VALIDATING / UPLOADING aur 10 min
                                   se nahi badla (jaanch to 3 sec ki hai)
@@ -217,26 +241,6 @@ ISKE BAAD KYA TOOTEGA:
   - Bas haal likh diya, kaafi?
       -> nahi. Koi us atke haal ko DHOONDHE bhi (sweeper), tabhi kaam ka.
 ```
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_Upload_Svc["Upload Svc"]
-    n_DB["DB"]
-    n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_Sweeper_job --> n_DB
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Sweeper_job --> n_Kafka
-```
 
 #### 5 SAB HAR 2 SEC HAAL POOCHH RAHE
 ```
@@ -248,7 +252,34 @@ ILAAJ:   Log baar-baar 'T-101 ka haal?' poochhte, to haal Redis se do, DB tak ma
          Worker jab haal badle (DONE), Redis me bhi usi waqt badal de, warna Arpan ko purana 'jaanch ho
          rahi' dikhta rahega.
          Poochhna hi band karna ho to server khud Arpan ko bata de jab haal badle (SSE / WebSocket).
-
+```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
+```
+```
 ANDAR KAISE:
          GET /status/T-101 -> Redis me hai? -> wahin se · nahi
          -> replica se padho -> Redis me rakh do (chhoti umar).
@@ -263,6 +294,15 @@ ISKE BAAD KYA TOOTEGA:
   - Redis gira?
       -> sawaal seedha replica pe, dheema par chalta. Poochhne pe rate limit.
 ```
+
+#### 6 FILE NAHI, POORA FOLDER
+```
+KAHANI:  Arpan ne 1000 file ka folder daala. Ek trackingId se 1000 file ka haal kaise?
+
+ILAAJ:   Folder ka ek bada id (P-1), andar har file ka apna chhota id. Sab chhote DONE to P-1 DONE, koi
+         FAILED to P-1 'kuch fail'.
+         1000 file ke liye 1000 baar paas nahi maangte, ek hi baar me saare paas mil jaate.
+```
 ```mermaid
 flowchart TD
     n_CLIENT["CLIENT"]
@@ -289,15 +329,7 @@ flowchart TD
     n_Upload_Svc --> n_Read_replica
     n_Sweeper_job --> n_Kafka
 ```
-
-#### 6 FILE NAHI, POORA FOLDER
 ```
-KAHANI:  Arpan ne 1000 file ka folder daala. Ek trackingId se 1000 file ka haal kaise?
-
-ILAAJ:   Folder ka ek bada id (P-1), andar har file ka apna chhota id. Sab chhote DONE to P-1 DONE, koi
-         FAILED to P-1 'kuch fail'.
-         1000 file ke liye 1000 baar paas nahi maangte, ek hi baar me saare paas mil jaate.
-
 ANDAR KAISE:
          saare child DONE = P-1 DONE · koi FAILED = P-1 PARTIAL / FAILED.
          bahut saari chhoti files -> client zip bana ke bheje, server khol le.
@@ -307,32 +339,6 @@ ISKE BAAD KYA TOOTEGA:
       -> har child DONE / FAILED pe P-1 ka done_count badhao. Sab ho gaye -> P-1 final.
   - 1000 file = 1000 baar "/init"?
       -> ek hi call me 1000 signed URL (batch init).
-```
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_Upload_Svc["Upload Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Read_replica["Read replica"]
-    n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_DB --> n_Read_replica
-    n_Sweeper_job --> n_DB
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Upload_Svc --> n_Read_replica
-    n_Sweeper_job --> n_Kafka
 ```
 
 #### 7 RAVI NE ARPAN KA trackingId DAAL KE FILE MAANG LI
@@ -344,7 +350,36 @@ ILAAJ:   Login darwaze pe hota hai: wo batata ye Ravi hai. Par 'T-101 Ravi ki fi
          jaanta.
          Isliye service me check: T-101 ka maalik Arpan, maangne wala Ravi -> 403. Har haal / download pe
          ye check.
-
+```
+```mermaid
+flowchart TD
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_API_Gateway_LB["API Gateway / LB"]
+    n_Upload_Svc["Upload Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Read_replica["Read replica"]
+    n_Sweeper_job["Sweeper job"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_API_Gateway_LB
+    n_API_Gateway_LB --> n_Upload_Svc
+    n_Upload_Svc --> n_Redis
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_DB --> n_Read_replica
+    n_Sweeper_job --> n_DB
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Upload_Svc --> n_Read_replica
+    n_Sweeper_job --> n_Kafka
+```
+```
 ANDAR KAISE:
          "Tum kaun ho?" (AUTHN) = gateway / JWT batata: ye Ravi hai.
          "Is file pe haq hai?" (AUTHZ) = SERVICE me check: T-101 ka owner Arpan, maangne wala Ravi -> 403.
@@ -357,34 +392,6 @@ ISKE BAAD KYA TOOTEGA:
       -> owner YA admin role, warna 403.
   - (PR review me sabse pehle yahi): request me kisi ki id aayi -> owner check kahan hai?
 ```
-```mermaid
-flowchart TD
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_API_Gateway_LB["API Gateway / LB"]
-    n_Upload_Svc["Upload Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Read_replica["Read replica"]
-    n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_API_Gateway_LB
-    n_API_Gateway_LB --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_DB --> n_Read_replica
-    n_Sweeper_job --> n_DB
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Upload_Svc --> n_Read_replica
-    n_Sweeper_job --> n_Kafka
-```
 
 #### 8 ARPAN NE S3 KA SEEDHA LINK WHATSAPP PE BHEJ DIYA
 ```
@@ -394,16 +401,6 @@ KAHANI:  Arpan ko S3 ka pakka link diya. Usne dost ko WhatsApp pe bheja, dost ne
 ILAAJ:   Download ke liye bhi 5 minute ka paas, aur wo bhi maalik check ke baad hi banta.
          DB me file ka naam (key) rakhte, pakka link nahi. Arpan ne link WhatsApp pe bheja to 5 minute
          baad wo band.
-
-ANDAR KAISE:
-         URL "ghar ki chaabi" nahi, "5 minute ka paas". Har baar maangne pe naya.
-         Group me 1 ghante baad kisi ne khola -> expire -> nahi khula.
-
-ISKE BAAD KYA TOOTEGA:
-  - 5 min me download poora nahi hua (badi file)?
-      -> umar sirf SHURU karne ki. Chalu download beech me nahi katta.
-  - 5 min ke andar aage bhej diya?
-      -> 5 min ka risk maana. Zyada sensitive -> CloudFront signed URL + IP restriction.
 ```
 ```mermaid
 flowchart TD
@@ -432,6 +429,17 @@ flowchart TD
     n_Worker --> n_Redis
     n_Upload_Svc --> n_Read_replica
     n_Sweeper_job --> n_Kafka
+```
+```
+ANDAR KAISE:
+         URL "ghar ki chaabi" nahi, "5 minute ka paas". Har baar maangne pe naya.
+         Group me 1 ghante baad kisi ne khola -> expire -> nahi khula.
+
+ISKE BAAD KYA TOOTEGA:
+  - 5 min me download poora nahi hua (badi file)?
+      -> umar sirf SHURU karne ki. Chalu download beech me nahi katta.
+  - 5 min ke andar aage bhej diya?
+      -> 5 min ka risk maana. Zyada sensitive -> CloudFront signed URL + IP restriction.
 ```
 
 #### 9 NAAM REPORT.PDF, ANDAR EXE
@@ -444,18 +452,6 @@ ILAAJ:   Login darwaze pe, maalik check har maang pe. Chhote time ke paas.
          File ka naam ya type (jo app bhejta) pe bharosa nahi: worker file ke pehle kuch byte padh ke
          dekhta asal me kya hai (PDF '%PDF' se shuru, EXE 'MZ' se).
          Ek user kitni file daal sakta uski had, sabse aage WAF, HTTPS, aur passwords vault me.
-
-ANDAR KAISE:
-         Har type ki file shuru me apni pehchaan likhti: PDF = "%PDF-" · PNG = "\x89PNG" · EXE = "MZ".
-         Worker S3 se sirf pehle kuch byte mangata (range GET, poori 5 GB nahi).
-         Naam .pdf, pehle byte "MZ" -> ye EXE hai -> reject.
-         Client ka bheja kabhi sach mat maano (na naam, na type).
-
-ISKE BAAD KYA TOOTEGA:
-  - Shuru ke byte PDF jaise, par andar virus / JS?
-      -> antivirus scan (ClamAV) worker me, ya S3 malware scanning.
-  - Koi bheed / hamla?
-      -> har user pe rate limit, WAF, HTTPS, secrets vault me.
 ```
 ```mermaid
 flowchart TD
@@ -485,6 +481,19 @@ flowchart TD
     n_Upload_Svc --> n_Read_replica
     n_Sweeper_job --> n_Kafka
     n_Worker --> n_S3
+```
+```
+ANDAR KAISE:
+         Har type ki file shuru me apni pehchaan likhti: PDF = "%PDF-" · PNG = "\x89PNG" · EXE = "MZ".
+         Worker S3 se sirf pehle kuch byte mangata (range GET, poori 5 GB nahi).
+         Naam .pdf, pehle byte "MZ" -> ye EXE hai -> reject.
+         Client ka bheja kabhi sach mat maano (na naam, na type).
+
+ISKE BAAD KYA TOOTEGA:
+  - Shuru ke byte PDF jaise, par andar virus / JS?
+      -> antivirus scan (ClamAV) worker me, ya S3 malware scanning.
+  - Koi bheed / hamla?
+      -> har user pe rate limit, WAF, HTTPS, secrets vault me.
 ```
 
 ```
@@ -555,11 +564,10 @@ adhoori file -> S3 lifecycle + sweeper
 POOCHEGA: "How would you scale this to 10x?"      -> file ka raasta chalo, pehle jo toote
 POOCHEGA: "What's the single point of failure?"   -> Validator (bahar wala): fuse + doosri company
 POOCHEGA: "How do you know it's working?"
+          (Chal raha hai, kaise pata?)
           MISAAL: raat ko Validator DHEEMA, line me 50,000 file atki
           health check "dheema" nahi pakadta (ping ka jawab aa jaata) -> APNA METRIC pakadta:
              line ki lambai · Validator p99 + error rate · VALIDATING me purani files ki ginti
-          (Chal raha hai, kaise pata?)
-
              -> had paar = alert (CloudWatch alarm / PagerDuty), user ke shikayat karne se pehle
           peeche: 3 fail -> fuse (CIRCUIT BREAKER) -> doosri company (bahar wale ki copy hum nahi chala sakte)
 JAWAB:    Health check sirf batata 'zinda hai', 'dheema hai' nahi batata. Isliye apne teen number dekho:
@@ -581,8 +589,7 @@ API:      POST /upload/init { fileName, size }  -> signed S3 URL + trackingId (s
           GET  /download/{trackingId}            -> signed GET URL -> seedha S3
 
 DB:       files: trackingId (KEY) | fileName | ownerId | status | s3_key | createdAt | updatedAt
-          haal: UPLOADING -> VALIDATING -> DONE / FAILED
-          ("kahan tak pahunchi" = gadbad sambhalne ki buniyaad)
+          haal: UPLOADING -> VALIDATING -> DONE / FAILED ("kahan tak pahunchi" = gadbad sambhalne ki buniyaad)
           PostgreSQL: dhoondhna simple par haal ko ACID chahiye
           (bahut bada + sirf key-value -> NoSQL bhi chalta · paisa hota -> hamesha SQL)
 

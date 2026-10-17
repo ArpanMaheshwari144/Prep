@@ -95,7 +95,16 @@ ISKE BAAD KYA TOOTEGA:
 KAHANI:  Cache machine ki 64 GB RAM bhar gayi. Nayi key daalni hai, to koi purani nikaalni padegi. Kaunsi?
 
 ILAAJ:   LRU: jise sabse LAMBE samay se kisi ne nahi chhua, wo bahar. Saath me har key ki umar (TTL).
-
+```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache["Cache<br/>LRU + TTL"]
+    n_App --> n_DB
+    n_App --> n_Cache
+```
+```
 ANDAR KAISE:
          Ye wahi LRU cache hai jo tune DSA me khud banaya (09_DESIGN, LeetCode 146).
          HashMap = key turant dhoondho. Doubly linked list = kaun kab chhua, uski line.
@@ -114,14 +123,6 @@ ISKE BAAD KYA TOOTEGA:
       -> nahi, memory bachane ko ANDAAZE wala LRU: kuch random key uthata, unme sabse purani hata deta.
   - RAM bhari aur hatana band (noeviction)?
       -> naya likhna ERROR dega. Cache ke liye allkeys-lru rakho.
-```
-```mermaid
-flowchart TD
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache["Cache<br/>LRU + TTL"]
-    n_App --> n_DB
-    n_App --> n_Cache
 ```
 
 #### 2 1 TB EK MACHINE ME NAHI: "user:42" KIS MACHINE PE?
@@ -146,7 +147,22 @@ SAHI RAASTA = RING (consistent hashing)   (isme "% N" kahin nahi)
          nayi machine D = 250 jodi:
            sirf 201 .. 250 wali key C se D pe gayi. Baaki sab wahin.
          -> machine judi / gayi = sirf PADOS ki thodi key hilti (~K/N), poori nahi
-
+```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A["Node A"]
+    n_Node_B["Node B"]
+    n_Node_C["Node C"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A
+    n_Cache_client --> n_Node_B
+    n_Cache_client --> n_Node_C
+```
+```
 ANDAR KAISE:
          RING = tera circular array (Next Greater Element II
          me i % n): aakhri ke baad wapas pehle pe aate the,
@@ -168,20 +184,6 @@ ISKE BAAD KYA TOOTEGA:
   - Range se baanto (A-M, N-Z)?
       -> ek range garam ho jaati (sab "a" wale), ek machine pe bojh. Isliye hash.
 ```
-```mermaid
-flowchart TD
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A["Node A"]
-    n_Node_B["Node B"]
-    n_Node_C["Node C"]
-    n_App --> n_DB
-    n_App --> n_Cache_client
-    n_Cache_client --> n_Node_A
-    n_Cache_client --> n_Node_B
-    n_Cache_client --> n_Node_C
-```
 
 #### 3 MACHINE B MARI, USKI KEY KA BOJH DB PE
 ```
@@ -191,7 +193,22 @@ KAHANI:  Machine B mar gayi. Uske hisse ki saari key gayab. Un key
 ILAAJ:   Har machine (B) ki ek copy doosri building me. B jo likhti, wo copy tak bhi jaata.
          B giri -> copy naya B ban jaati, app ko naya pata mil
          jaata. Sirf B ki keys pe asar, baaki machines aaram se.
-
+```
+```mermaid
+flowchart TD
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache_client["Cache client"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
+```
+```
 ANDAR KAISE:
          Likhna primary pe, copy ko thodi der baad pahunchta (ASYNC).
          Baaki machine B ko ping karti rehti. Zyadatar (quorum) bolein "B mari" -> vote se B ki copy primary,
@@ -209,6 +226,14 @@ ISKE BAAD KYA TOOTEGA:
   - Copy se padh sakte?
       -> haan, padhai bat jaati. Par thoda purana mil sakta (lag). Cache me chalta.
 ```
+
+#### 4 DB ME NAYA NAAM, CACHE ME PURANA (STALE)
+```
+KAHANI:  Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya,
+         cache me abhi bhi "Ravi". Sabko purana naam dikh raha.
+
+ILAAJ:   DB update karo -> phir cache ki key DELETE (update nahi). + TTL suraksha jaal.
+```
 ```mermaid
 flowchart TD
     n_App["App"]
@@ -223,14 +248,7 @@ flowchart TD
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
 ```
-
-#### 4 DB ME NAYA NAAM, CACHE ME PURANA (STALE)
 ```
-KAHANI:  Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya,
-         cache me abhi bhi "Ravi". Sabko purana naam dikh raha.
-
-ILAAJ:   DB update karo -> phir cache ki key DELETE (update nahi). + TTL suraksha jaal.
-
 ANDAR KAISE:
          Key delete hui -> agli padhai MISS -> DB se "Ravi K" -> cache me. Ab sab taaza.
          UPDATE kyun nahi: do likhai ulte kram me pahunch sakti.
@@ -247,6 +265,18 @@ ISKE BAAD KYA TOOTEGA:
   - TTL kitna?
       -> jitna purana business jhel sake. Profile: minute. Price / stock: second, ya turant delete.
 ```
+
+#### 5 GARAM KEY KHATAM, 1000 LOG EK SAATH DB PE (STAMPEDE)
+```
+KAHANI:  "home page" ki key ki umar khatam hui. Usi second 1000 log aaye -> cache me nahi mili
+         -> 1000 ek saath DB pe -> DB gira.
+
+ILAAJ:   Sirf PEHLE wale ko DB jaane do. Baaki 999 ko bolo "thoda ruko".
+         Pehla DB se laake cache me rakh dega, phir baaki 999 cache se hi le lenge.
+         DB pe 1000 ki jagah sirf 1 request gayi.
+         Aur umar khatam hone se thoda pehle hi key ko peeche
+         se taaza kar do, khaali hone ka mauka hi na aaye.
+```
 ```mermaid
 flowchart TD
     n_App["App"]
@@ -261,18 +291,7 @@ flowchart TD
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
 ```
-
-#### 5 GARAM KEY KHATAM, 1000 LOG EK SAATH DB PE (STAMPEDE)
 ```
-KAHANI:  "home page" ki key ki umar khatam hui. Usi second 1000 log aaye -> cache me nahi mili
-         -> 1000 ek saath DB pe -> DB gira.
-
-ILAAJ:   Sirf PEHLE wale ko DB jaane do. Baaki 999 ko bolo "thoda ruko".
-         Pehla DB se laake cache me rakh dega, phir baaki 999 cache se hi le lenge.
-         DB pe 1000 ki jagah sirf 1 request gayi.
-         Aur umar khatam hone se thoda pehle hi key ko peeche
-         se taaza kar do, khaali hone ka mauka hi na aaye.
-
 ANDAR KAISE (pehla kaun, Redis se):
          SET lock:home 1 NX EX 5   -> jo pehle pahuncha usi
          ka lock laga (NX = sirf tab jab koi aur na laga ho)
@@ -288,20 +307,6 @@ ISKE BAAD KYA TOOTEGA:
   - Key DB me HAI hi nahi, koi baar-baar wahi maange?
       -> "nahi hai" ko bhi chhoti umar ke saath cache me rakho, DB tak jaane hi mat do.
 ```
-```mermaid
-flowchart TD
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache_client["Cache client"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App --> n_DB
-    n_App --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-```
 
 #### 6 EK KEY ITNI POPULAR, USKI MACHINE AKELI MAR RAHI (HOT KEY)
 ```
@@ -311,22 +316,6 @@ KAHANI:  IPL final, "live:score" key. Crore log ek saath padh
 
 ILAAJ:   (1) L1 LOCAL CACHE: har App server ki apni RAM me 1-2 sec ka chhota cache -> Redis tak jaata hi nahi.
          (2) us key ki kai copy (score#1 .. #10) alag machine pe, padhte waqt koi bhi ek.
-
-ANDAR KAISE:
-         L1 (App ki RAM, nano-sec) -> L2 Redis (micro / milli) -> DB (milli-sec).
-         1000 App server, har ek 1 sec me sirf EK baar Redis se laata -> Redis pe 1000 / sec, crore nahi.
-
-ISKE BAAD KYA TOOTEGA:
-  - Garam key pehchanoge kaise?
-      -> machine ke metric (ek key pe kitne ops / sec), redis-cli
-         --hotkeys, App me ginti. Had paar -> copy / L1.
-  - L1 me purana score kitni der?
-      -> L1 ki umar jitna (1-2 sec). Score ke liye theek, paisa / stock ke liye nahi.
-  - Garam key pe LIKHNA bhi ho (like counter)?
-      -> key ke tukde (like#0..#9), kisi ek me likho, padhte waqt sab jodo.
-  - Stampede aur hot key me farak?
-      -> stampede = key KHAALI, sab DB bhaage (lock). Hot key =
-         key BHARI, ek machine padhai se mar rahi (L1 / copy).
 ```
 ```mermaid
 flowchart TD
@@ -341,6 +330,23 @@ flowchart TD
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
+```
+```
+ANDAR KAISE:
+         L1 (App ki RAM, nano-sec) -> L2 Redis (micro / milli) -> DB (milli-sec).
+         1000 App server, har ek 1 sec me sirf EK baar Redis se laata -> Redis pe 1000 / sec, crore nahi.
+
+ISKE BAAD KYA TOOTEGA:
+  - Garam key pehchanoge kaise?
+      -> App me har key ki ginti (sabse pakka) + machine ka metric (ek machine pe ops / sec achanak upar).
+         Had paar -> copy / L1. (redis-cli --hotkeys sirf LFU policy pe chalta, hum LRU pe hain.)
+  - L1 me purana score kitni der?
+      -> L1 ki umar jitna (1-2 sec). Score ke liye theek, paisa / stock ke liye nahi.
+  - Garam key pe LIKHNA bhi ho (like counter)?
+      -> key ke tukde (like#0..#9), kisi ek me likho, padhte waqt sab jodo.
+  - Stampede aur hot key me farak?
+      -> stampede = key KHAALI, sab DB bhaage (lock). Hot key =
+         key BHARI, ek machine padhai se mar rahi (L1 / copy).
 ```
 
 ```

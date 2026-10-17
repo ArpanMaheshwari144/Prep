@@ -67,7 +67,20 @@ ILAAJ:   Sabko lagbhag wahi taazi 20 khabar dikhti hain. To har baar DB se mat n
          ke Redis me rakh do, time ke kram se.
          Nayi khabar aayi -> list me apni jagah daal do. Koi bhi app khole -> list se upar ki 20 de do.
          100 me se 99 log Redis se hi laut jaate.
-
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Fetcher["Fetcher"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Feed_Svc --> n_DB
+    n_Fetcher --> n_DB
+```
+```
 ANDAR KAISE:
          Redis SORTED SET "feed:latest": har khabar ki id, score = kab chhapi (time).
          Nayi khabar aayi -> ZADD (apni jagah pe baith jaati). Purani kaato -> top 500 hi rakho.
@@ -82,18 +95,6 @@ ISKE BAAD KYA TOOTEGA:
   - Har user ki alag feed kyun nahi banate?
       -> mehngi. Sabki lagbhag same, ek cache kaafi. Pasand wali feed = card 7.
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Fetcher["Fetcher"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
-    n_Fetcher --> n_DB
-```
 
 #### 2 1000 SOURCE SE KHABAR LAANA DHEEMA
 ```
@@ -103,23 +104,6 @@ ILAAJ:   1000 sites se khabar laana dheema hai, to user ke aane pe nahi laate.
          Peeche ek fetcher apne aap har kuch minute sites se khabar laake Kafka me daalta, worker saaf
          karke DB aur Redis me rakhte.
          User hamesha Redis me taiyaar list padhta, use is sab ka intezaar nahi karna padta.
-
-ANDAR KAISE:
-         Fetcher khabar Kafka me daal ke bhool jaata. Workers apni speed se padhte (apna offset yaad rakhte).
-         1000 source ki khabar ek saath aayi -> Kafka ki line lambi hui, kuch gira nahi.
-         10 partition = 10 worker ek saath kaam.
-         Arpan ko is sab ka pata hi nahi, wo sirf cache padhta.
-
-ISKE BAAD KYA TOOTEGA:
-  - Fetcher ek source kitni baar dekhe?
-      -> har source ka apna samay (NDTV har 1 min, chhota blog har 15 min).
-         Saath me ETag / Last-Modified -> source bole "kuch naya nahi" to download hi nahi.
-  - Worker ne ek khabar do baar likhi?
-      -> URL / text ke hash pe unique -> dobara likhna skip (Cassandra
-         me hash hi key -> wahi row dobara, koi farak nahi).
-  - Kafka kyun, SQS kyun nahi?
-      -> SQS bhi chalta. Kafka isliye ki search index / analytics bhi
-         wahi khabar apne alag group se padh sakein, aur dobara bhi.
 ```
 ```mermaid
 flowchart TD
@@ -133,12 +117,30 @@ flowchart TD
     n_Sources["Sources"]
     n_USER --> n_Feed_Svc
     n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
+    n_Feed_Svc --> n_DB
     n_Worker --> n_DB
     n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
+```
+```
+ANDAR KAISE:
+         Fetcher khabar Kafka me daal ke bhool jaata. Workers apni speed se padhte (apna offset yaad rakhte).
+         1000 source ki khabar ek saath aayi -> Kafka ki line lambi hui, kuch gira nahi.
+         10 partition = 10 worker ek saath kaam.
+         Arpan ko is sab ka pata hi nahi, wo sirf cache padhta.
+
+ISKE BAAD KYA TOOTEGA:
+  - Fetcher ek source kitni baar dekhe?
+      -> har source ka apna samay (NDTV har 1 min, chhota blog har 15 min).
+         Saath me ETag / Last-Modified -> source bole "kuch naya nahi" to download hi nahi.
+  - Worker ne ek khabar do baar likhi?
+      -> URL / text ke hash pe UNIQUE -> doosri baar wahi hash aaya to
+         INSERT ... ON CONFLICT DO NOTHING -> skip, koi farak nahi.
+  - Kafka kyun, SQS kyun nahi?
+      -> SQS bhi chalta. Kafka isliye ki search index / analytics bhi
+         wahi khabar apne alag group se padh sakein, aur dobara bhi.
 ```
 
 #### 3 EK HI KHABAR PAANCH SOURCE SE
@@ -151,7 +153,27 @@ ILAAJ:   Ek hi khabar 5 site pe: title chhote akshar me karke uska hash nikalo, 
          paas-paas aata, use bhi same maano.
          Ye URL pehle aaya? Ek chhota dabba (Bloom filter) jo kam jagah me 'shayad dekha' / 'pakka naya'
          batata.
-
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Worker["Worker<br/>clean + dedupe + category"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Feed_Svc --> n_DB
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+```
+```
 ANDAR KAISE:
          Same title, alag URL: title chhote akshar + chinh hatao -> hash -> same hash = same khabar.
          Thoda alag likha ("India wins" vs "India won"): SimHash / MinHash -> milte-julte text ke hash
@@ -169,25 +191,6 @@ ISKE BAAD KYA TOOTEGA:
   - 5 me se kaunsa source dikhao?
       -> jo pehle aaya / bada source. Baaki "aur sources" me link.
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Worker["Worker<br/>clean + dedupe + category"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher"]
-    n_Sources["Sources"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
-```
 
 #### 4 EK SOURCE BAND / BAHUT DHEEMA
 ```
@@ -197,17 +200,6 @@ KAHANI:  Ek chhota source 30 second me jawab de raha. Fetcher
 ILAAJ:   Har site alag se lao. 2-3 second me jawab nahi to chhod do, thodi baar dobara koshish.
          Koi site baar-baar fail ho to kuch der usko bulao hi mat (fuse). Ek kharab site baaki 999 ko nahi
          rokti.
-
-ANDAR KAISE:
-         Fuse: CLOSED (sab theek) --kai baar fail--> OPEN (us source ko call hi mat karo, turant skip)
-         --thodi der--> HALF-OPEN (ek test call) --chali--> CLOSED.
-         Ek source ka fuse uda, baaki 999 apne raaste chalte rahe.
-
-ISKE BAAD KYA TOOTEGA:
-  - Source ne 429 (bahut maang rahe ho) diya?
-      -> us source ka samay badhao + uska Retry-After maano.
-  - Source hamesha ke liye band ho gaya?
-      -> kuch din OPEN raha -> alert, list se hatao.
 ```
 ```mermaid
 flowchart TD
@@ -221,12 +213,24 @@ flowchart TD
     n_Sources["Sources"]
     n_USER --> n_Feed_Svc
     n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
+    n_Feed_Svc --> n_DB
     n_Worker --> n_DB
     n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
+```
+```
+ANDAR KAISE:
+         Fuse: CLOSED (sab theek) --kai baar fail--> OPEN (us source ko call hi mat karo, turant skip)
+         --thodi der--> HALF-OPEN (ek test call) --chali--> CLOSED.
+         Ek source ka fuse uda, baaki 999 apne raaste chalte rahe.
+
+ISKE BAAD KYA TOOTEGA:
+  - Source ne 429 (bahut maang rahe ho) diya?
+      -> us source ka samay badhao + uska Retry-After maano.
+  - Source hamesha ke liye band ho gaya?
+      -> kuch din OPEN raha -> alert, list se hatao.
 ```
 
 #### 5 6 MAHINE ME 5 CRORE ROW, KHARCHA BADHTA
@@ -238,18 +242,6 @@ KAHANI:  6 mahine me 5 crore khabar ki row. Disk, backup, kharcha badhta
 ILAAJ:   Log sirf aakhri hafte ki khabar padhte. Table ko mahine ke tukdon me rakho, purane tukde sasti
          jagah bhej do, jo kabhi nahi chahiye uski umar khatam.
          Ye purana hatana hai, data baantna (sharding) nahi.
-
-ANDAR KAISE:
-         Har mahine ka alag tukda. Mahina purana hua -> tukda table se alag karo (DETACH) -> archive.
-         Mongo / Cassandra me row pe TTL -> umar poori, row khud gayab.
-
-ISKE BAAD KYA TOOTEGA:
-  - Kisi ne 1 saal purani khabar ka link khola?
-      -> archive / S3 se aayegi (dheemi chalegi).
-  - DETACH pe table lock hoga?
-      -> normal DETACH chhota lock leta. PG 14+ me DETACH PARTITION ... CONCURRENTLY -> bina roke.
-  - 3 saal baad?
-      -> wahi: hafta garam, baaki thanda (cold). "Ye retention hai, sharding nahi."
 ```
 ```mermaid
 flowchart TD
@@ -264,13 +256,26 @@ flowchart TD
     n_Sources["Sources"]
     n_USER --> n_Feed_Svc
     n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
+    n_Feed_Svc --> n_DB
     n_DB --> n_Archive
     n_Worker --> n_DB
     n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
+```
+```
+ANDAR KAISE:
+         Postgres me har mahine ka alag tukda (partition). Mahina purana hua -> tukda table se alag
+         karo (DETACH) -> S3 archive. Jo kabhi nahi chahiye -> tukda DROP (ek pal ka kaam).
+
+ISKE BAAD KYA TOOTEGA:
+  - Kisi ne 1 saal purani khabar ka link khola?
+      -> archive / S3 se aayegi (dheemi chalegi).
+  - DETACH pe table lock hoga?
+      -> normal DETACH chhota lock leta. PG 14+ me DETACH PARTITION ... CONCURRENTLY -> bina roke.
+  - 3 saal baad?
+      -> wahi: hafta garam, baaki thanda (cold). "Ye retention hai, sharding nahi."
 ```
 
 #### 6 (SIRF BAHUT BADE SCALE PE) EK DB MACHINE NAHI JHEL RAHI
@@ -281,7 +286,29 @@ KAHANI:  Source 100 guna ho gaye ya log khud content daalne lage
 ILAAJ:   Hamare number pe ek DB kaafi hai.
          Zaroorat pade to khabar ki id ke hash se baanto, taaki likhai sab jagah barabar bate. Date se
          nahi baant-te, warna aaj ki saari likhai ek hi jagah aur wahi garam.
-
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher"]
+    n_Sources["Sources"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Feed_Svc --> n_DB
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher
+```
+```
 ANDAR KAISE:
          Date se baanta -> aaj ki saari likhai aaj wale shard pe -> wo akela garam.
          hash(article_id) se baanta -> likhai sab shard pe barabar.
@@ -294,44 +321,13 @@ ISKE BAAD KYA TOOTEGA:
   - Shard badhaye to data kitna khiske?
       -> consistent hashing -> thoda sa data hilta.
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Archive["Archive"]
-    n_Worker["Worker"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher"]
-    n_Sources["Sources"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
-    n_DB --> n_Archive
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
-```
 
 #### 7 ARPAN KO SIRF TECH + SPORTS CHAHIYE
 ```
 KAHANI:  Arpan ko sirf tech aur sports pasand. Har user ki alag feed banana (10 lakh feed) bahut mehnga.
 
 ILAAJ:   Har user ki alag list banana mehnga. Har category (tech, sports) ki ek list rakho.
-         Arpan ko tech + sports pasand -> dono list se upar ki khabar lo, time se mila do, top 20 dikha
-         do.
-
-ANDAR KAISE:
-         feed:tech se top 20 + feed:sports se top 20 -> time
-         se mila ke (ya Redis ZUNIONSTORE) -> top 20 dikhao.
-         10 lakh feed ki jagah sirf ~20 category feed.
-
-ISKE BAAD KYA TOOTEGA:
-  - Har user ki pasand ka alag wazan (Arpan ko tech zyada)?
-      -> tab asli personalization -> har user ki ranking service (abhi scope se bahar).
+         Arpan ko tech + sports pasand -> dono list se upar ki khabar lo, time se mila do, top 20 dikha do.
 ```
 ```mermaid
 flowchart TD
@@ -346,13 +342,23 @@ flowchart TD
     n_Sources["Sources"]
     n_USER --> n_Feed_Svc
     n_Feed_Svc --> n_Redis
-    n_Redis --> n_DB
+    n_Feed_Svc --> n_DB
     n_DB --> n_Archive
     n_Worker --> n_DB
     n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
+```
+```
+ANDAR KAISE:
+         feed:tech se top 20 + feed:sports se top 20 -> time
+         se mila ke (ya Redis ZUNIONSTORE) -> top 20 dikhao.
+         10 lakh feed ki jagah sirf ~20 category feed.
+
+ISKE BAAD KYA TOOTEGA:
+  - Har user ki pasand ka alag wazan (Arpan ko tech zyada)?
+      -> tab asli personalization -> har user ki ranking service (abhi scope se bahar).
 ```
 
 #### 8 SUBAH 8 BAJE SAB EK SAATH
@@ -363,16 +369,6 @@ KAHANI:  8 baje sabne app khola. Ek hi Feed service machine ka CPU bhar gaya.
 ILAAJ:   Feed service kuch yaad nahi rakhti, kai machine + load balancer.
          Redis me na mile to DB ki copy se padho, main DB se nahi (wahan khabar likhi ja rahi).
          Subah 8 baje ki bheed pata hai, to 7:45 tak machine badha do aur Redis bhar do.
-
-ANDAR KAISE:
-         Cache zyadatar padhai rok leta. Jo bachi wo replica pe -> primary sirf likhne ke liye free.
-         (Kafka padhai ki bheed nahi jhelta, wo likhne ke raaste ke liye hai.)
-
-ISKE BAAD KYA TOOTEGA:
-  - Pata hai 8 baje bheed aati hai?
-      -> 7:45 pe pehle se machine badhao (scheduled scaling) + cache pehle se bhar do.
-  - Replica kitni peeche?
-      -> kuch second, news me chalta.
 ```
 ```mermaid
 flowchart TD
@@ -393,7 +389,8 @@ flowchart TD
     n_LB --> n_Feed_Svc_x_N_2
     n_Feed_Svc_x_N_1 --> n_Redis
     n_Feed_Svc_x_N_2 --> n_Redis
-    n_Redis --> n_Read_replica
+    n_Feed_Svc_x_N_1 --> n_Read_replica
+    n_Feed_Svc_x_N_2 --> n_Read_replica
     n_DB --> n_Read_replica
     n_DB --> n_Archive
     n_Worker --> n_DB
@@ -401,6 +398,17 @@ flowchart TD
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
+```
+```
+ANDAR KAISE:
+         Cache zyadatar padhai rok leta. Jo bachi wo replica pe -> primary sirf likhne ke liye free.
+         (Kafka padhai ki bheed nahi jhelta, wo likhne ke raaste ke liye hai.)
+
+ISKE BAAD KYA TOOTEGA:
+  - Pata hai 8 baje bheed aati hai?
+      -> 7:45 pe pehle se machine badhao (scheduled scaling) + cache pehle se bhar do.
+  - Replica kitni peeche?
+      -> kuch second, news me chalta.
 ```
 
 #### 9 ARPAN NE "CRICKET" DHOONDHA
@@ -413,21 +421,6 @@ ILAAJ:   Har shabd ke saath likh lo wo kin khabron me aaya, jaise kitaab ke peec
          Ye ek HashMap hi hai: shabd -> list. 'cricket kohli' dhoondha to dono list nikaalo, jo dono me
          hain wo upar.
          Ye kaam Elasticsearch karta. Asli data DB me, index kabhi bhi dobara bana sakte.
-
-ANDAR KAISE:
-         INVERTED INDEX = kitaab ke peeche ki index jaisi: shabd -> kis-kis khabar me hai.
-           "cricket" -> [a12, a45, a90] · "kohli" -> [a45, a77]
-         "cricket kohli" -> dono list (OR = dono jodo, AND = jo dono me hai = a45) -> score se sort.
-         ES se sirf id, khabar ka text DB / cache se.
-
-ISKE BAAD KYA TOOTEGA:
-  - ES aur DB me alag-alag data ho gaya?
-      -> DB = sach. ES dobara bana sakte (reindex). ES me likhna fail -> dobara koshish ki line.
-  - Arpan ne galat likha (crikcet)?
-      -> ES fuzzy search (1-2 akshar ka farak chalta).
-  - Postgres se kaam nahi chalega?
-      -> chhote scale pe Postgres full-text (GIN) chalta. ES =
-         ranking, galat spelling, bahut data, DB pe bojh nahi.
 ```
 ```mermaid
 flowchart TD
@@ -451,7 +444,8 @@ flowchart TD
     n_Feed_Svc_x_N_2 --> n_Elasticsearch
     n_Feed_Svc_x_N_1 --> n_Redis
     n_Feed_Svc_x_N_2 --> n_Redis
-    n_Redis --> n_Read_replica
+    n_Feed_Svc_x_N_1 --> n_Read_replica
+    n_Feed_Svc_x_N_2 --> n_Read_replica
     n_DB --> n_Read_replica
     n_DB --> n_Archive
     n_Worker --> n_DB
@@ -460,6 +454,22 @@ flowchart TD
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
     n_Worker --> n_Elasticsearch
+```
+```
+ANDAR KAISE:
+         INVERTED INDEX = kitaab ke peeche ki index jaisi: shabd -> kis-kis khabar me hai.
+           "cricket" -> [a12, a45, a90] · "kohli" -> [a45, a77]
+         "cricket kohli" -> dono list (OR = dono jodo, AND = jo dono me hai = a45) -> score se sort.
+         ES se sirf id, khabar ka text DB / cache se.
+
+ISKE BAAD KYA TOOTEGA:
+  - ES aur DB me alag-alag data ho gaya?
+      -> DB = sach. ES dobara bana sakte (reindex). ES me likhna fail -> dobara koshish ki line.
+  - Arpan ne galat likha (crikcet)?
+      -> ES fuzzy search (1-2 akshar ka farak chalta).
+  - Postgres se kaam nahi chalega?
+      -> chhote scale pe Postgres full-text (GIN) chalta. ES =
+         ranking, galat spelling, bahut data, DB pe bojh nahi.
 ```
 
 ```
@@ -470,8 +480,9 @@ AAKHRI DABBE (sab dikkat ke baad):
   PADHNA: LB -> Feed Svc (kai machine) -> Redis (99%, taazi feed pehle se bani) -> nahi mila to read replica
           search = Elasticsearch · purani khabar = Archive
 
-DB:  NoSQL (Mongo / Cassandra) -> bahut data, seedha, ACID nahi chahiye, "thodi der baad sahi" chalega
-     (paisa hota to hamesha SQL; "data ka swabhav dekho, phir DB") · padhai Redis aage se sambhaalta
+DB:  Postgres (primary + read replica + mahine ke tukde) -> likhai sirf ~3 / second, ek machine kaafi;
+     "taazi 20" index se seedha; padhai Redis aage se sambhaalta
+     (likhai 100 guna ho jaaye tab hi Cassandra jaisa socho, card 6)
 
 END ME POOCHEGA:
   "Likhna aur padhna alag kyun?" -> khabar laana peeche, user ko hamesha cache se taiyaar feed
@@ -505,7 +516,8 @@ flowchart TD
     n_Feed_Svc_x_N_2 --> n_Elasticsearch
     n_Feed_Svc_x_N_1 --> n_Redis
     n_Feed_Svc_x_N_2 --> n_Redis
-    n_Redis --> n_Read_replica
+    n_Feed_Svc_x_N_1 --> n_Read_replica
+    n_Feed_Svc_x_N_2 --> n_Read_replica
     n_DB --> n_Read_replica
     n_DB --> n_Archive
     n_Worker --> n_DB
@@ -547,12 +559,11 @@ API:      GET /feed?page=1&category=tech -> taazi list (page me, neeche scroll; 
 DB:       ARTICLE: id | title | content | sourceId | category | publishedAt | url
           SOURCE:  id | name | rssUrl | lastFetchedAt
           USER_PREFS (optional): userId | categories[] | savedArticles[]
-          NoSQL (Mongo / Cassandra): bahut + seedha + padhai zyada + ACID nahi chahiye
-                                     -> machine jodte jao + schema badal sakte
-          FARAK: khabar -> NoSQL · PAISA / ledger -> HAMESHA SQL + ACID ("data ka swabhav dekho, phir DB")
-          Cassandra ki asli taakat = LIKHNA; padhai Redis aage se sambhaalta
-          "primary + read replica" wala dhaancha = Mongo (replica set);
-          Cassandra me primary hota hi nahi, har node padh-likh leta
+          Postgres: likhai ~3 / second (chhoti), "ORDER BY published_at DESC LIMIT 20" index se,
+                    primary + read replica, mahine ke tukde (partition) -> purana archive
+          Mongo bhi chal jaata (replica set + TTL). Cassandra tab jab likhai bahut badi ho jaaye;
+          par Cassandra me primary hota hi nahi aur poori table pe "taazi 20" nahi chalta
+          -> isliye yahan nahi.
 ```
 
 ---
@@ -593,7 +604,8 @@ flowchart TD
     n_Feed_Svc_x_N_2 --> n_Elasticsearch
     n_Feed_Svc_x_N_1 --> n_Redis
     n_Feed_Svc_x_N_2 --> n_Redis
-    n_Redis --> n_Read_replica
+    n_Feed_Svc_x_N_1 --> n_Read_replica
+    n_Feed_Svc_x_N_2 --> n_Read_replica
     n_DB --> n_Read_replica
     n_DB --> n_Archive
     n_Worker --> n_DB

@@ -85,23 +85,9 @@ KAHANI:  Arpan 200 logon ko follow karta hai. Usne app khola -> App ko 200 logon
 
 ILAAJ:   Log feed padhte zyada hain, tweet kam karte hain (50 baar padhna, 1 baar likhna).
          Isliye feed padhte waqt nahi banate, tweet hote hi bana dete hain: Virat ne tweet kiya to uski
-         tweet id har follower ki Redis list (inbox) me daal do.
-         Arpan ne app khola to bas uski list padho aur un id ke tweet ek saath le aao. Kaam pehle ho
+         tweet id har follower ke Redis inbox (sorted set) me daal do.
+         Arpan ne app khola to bas uska inbox padho aur un id ke tweet ek saath le aao. Kaam pehle ho
          chuka, khulna turant.
-
-ANDAR KAISE:
-         Virat ne tweet kiya -> Fanout service Virat ke har follower
-         ke inbox me us tweet ka number (tweet_id) daalti hai.
-         Arpan ka inbox = [t9, t7, t3, ...]. Sirf number, poora tweet nahi.
-         Tweet ek baar likha jaata hai aur 50 baar padha jaata hai -> mehnat likhte waqt karo, padhna sasta.
-
-ISKE BAAD KYA TOOTEGA:
-  - Inbox me sirf number hai, poora tweet kahan se aayega?
-      -> 50 number ek saath, ek hi chakkar me tweet store / cache se mangao (batch). Ek-ek karke nahi.
-  - Arpan ne kisi ko unfollow kiya, uske tweet inbox me pade hain?
-      -> padhte waqt follow list se chhaan do, ya peeche se saaf karo. Turant poora inbox nahi badalte.
-  - Arpan ne khud tweet kiya, apni feed me nahi dikha?
-      -> fanout peeche chal raha hai. Apna tweet seedha apni feed me jod do. Ye bug nahi, aisa hi banate hain.
 ```
 ```mermaid
 flowchart TD
@@ -116,6 +102,22 @@ flowchart TD
     n_Fanout --> n_Redis_inbox
     n_App --> n_Redis_inbox
 ```
+```
+ANDAR KAISE:
+         Virat ne tweet kiya -> Fanout service Virat ke har follower
+         ke inbox me us tweet ka number (tweet_id) daalti hai.
+         Arpan ka inbox = [t9, t7, t3, ...]. Sirf number, poora tweet nahi.
+         Inbox = Redis SORTED SET: tweet_id, score = tweet ka time. Same id dobara aaye to ek hi rehta.
+         Tweet ek baar likha jaata hai aur 50 baar padha jaata hai -> mehnat likhte waqt karo, padhna sasta.
+
+ISKE BAAD KYA TOOTEGA:
+  - Inbox me sirf number hai, poora tweet kahan se aayega?
+      -> 50 number ek saath, ek hi chakkar me tweet store / cache se mangao (batch). Ek-ek karke nahi.
+  - Arpan ne kisi ko unfollow kiya, uske tweet inbox me pade hain?
+      -> padhte waqt follow list se chhaan do, ya peeche se saaf karo. Turant poora inbox nahi badalte.
+  - Arpan ne khud tweet kiya, apni feed me nahi dikha?
+      -> fanout peeche chal raha hai. Apna tweet seedha apni feed me jod do. Ye bug nahi, aisa hi banate hain.
+```
 
 #### 2 TWEET BUTTON 3 SEC GHOOMTA RAHA
 ```
@@ -125,20 +127,6 @@ KAHANI:  Arpan ne tweet dabaya. Usi request me 200 followers ke
 
 ILAAJ:   Tweet DB me save karo + ek khabar KAFKA me daalo -> user ko turant "ho gaya".
          FANOUT WORKERS peeche se Kafka padh ke inbox bharte rahein.
-
-ANDAR KAISE:
-         Kafka me khabar author ke naam (author_id) ke hisaab se
-         jaati hai -> ek aadmi ke tweet ek hi line me, kram se.
-         Kai worker ye lines aapas me baant lete hain. Worker
-         gira -> khabar Kafka me padi hai, wahin se dobara.
-
-ISKE BAAD KYA TOOTEGA:
-  - Worker 100 me se 60 inbox likh ke gir gaya?
-      -> Kafka ko "ho gaya" nahi bola tha -> khabar dobara aayegi, phir se likhega.
-         Ek tweet do baar inbox me na aaye: inbox ko aisa set rakho jisme ek number ek hi baar aa sake
-         (Redis sorted set: same tweet_id dobara daalo to ek hi rehta, time ke hisaab se sajta).
-  - Kafka kyun, App me peeche ek thread chala do?
-      -> App crash = thread ka kaam gaya. Kafka disk pe hai, dobara padh sakte hain.
 ```
 ```mermaid
 flowchart TD
@@ -155,30 +143,31 @@ flowchart TD
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
 ```
+```
+ANDAR KAISE:
+         Kafka me khabar author ke naam (author_id) ke hisaab se
+         jaati hai -> ek aadmi ke tweet ek hi line me, kram se.
+         Kai worker ye lines aapas me baant lete hain. Worker
+         gira -> khabar Kafka me padi hai, wahin se dobara.
+
+ISKE BAAD KYA TOOTEGA:
+  - Worker 100 me se 60 inbox likh ke gir gaya?
+      -> Kafka ko "ho gaya" nahi bola tha -> khabar dobara aayegi, phir se likhega.
+         Ek tweet do baar inbox me na aaye: inbox ko aisa set rakho jisme ek number ek hi baar aa sake
+         (Redis sorted set: same tweet_id dobara daalo to ek hi rehta, time ke hisaab se sajta).
+  - Kafka kyun, App me peeche ek thread chala do?
+      -> App crash = thread ka kaam gaya. Kafka disk pe hai, dobara padh sakte hain.
+```
 
 #### 3 BIEBER = 10 CRORE INBOX (CELEBRITY)
 ```
 KAHANI:  Bieber ke 10 crore follower hain. Usne ek tweet kiya -> fanout ko 10 crore inbox me likhna pada.
          Fanout atak gaya, aur uske peeche baaki sabke tweet bhi atak gaye.
 
-ILAAJ:   Aam log (jinke kam follower): tweet aate hi followers ki list me daal do (push).
-         Bieber jaise famous: 10 crore list me mat daalo. Jab Arpan feed khole, Bieber ke naye tweet alag
-         se laake uski list me mila do (pull).
+ILAAJ:   Aam log (jinke kam follower): tweet aate hi followers ke inbox me daal do (push).
+         Bieber jaise famous: 10 crore inbox me mat daalo. Jab Arpan feed khole, Bieber ke naye tweet alag
+         se laake uske inbox ke saath mila do (pull).
          Ise HYBRID kehte hain: aam ke liye push, famous ke liye pull.
-
-ANDAR KAISE:
-         10,000 se kam follower = push, zyada = pull.
-         Arpan ki feed: dost Suresh ke tweet inbox se, Virat ke tweet celeb cache se.
-         Milana Timeline service me: inbox ke 50 + 10-20 celebs ke naye tweet -> sort. Chhota kaam.
-
-ISKE BAAD KYA TOOTEGA:
-  - Koi 9,999 aur 10,001 ke beech baar-baar palat raha?
-      -> beech me jagah chhodo: 12,000 se upar gaya to pull, 8,000 se neeche aaye tabhi wapas push.
-  - Celeb ko alag server do, ya user_id pe baantna hi galat hai?
-      -> nahi. Baantna baaki crore logon ke liye theek hai. Dikkat sirf EK bahut garam aadmi ki hai,
-         aur consistent hashing ek garam key ko nahi bachata.
-  - Like ki ginti jaisa garam LIKHNA (ek tweet pe laakhon like)?
-      -> ginti ko 10 tukdon me baant do (tweet123#0 se #9), har like kisi ek tukde me, padhte waqt sab jodo.
 ```
 ```mermaid
 flowchart TD
@@ -195,6 +184,21 @@ flowchart TD
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
 ```
+```
+ANDAR KAISE:
+         10,000 se kam follower = push, zyada = pull.
+         Arpan ki feed: dost Suresh ke tweet inbox se, Virat ke tweet celeb cache se.
+         Milana Timeline service me: inbox ke 50 + 10-20 celebs ke naye tweet -> sort. Chhota kaam.
+
+ISKE BAAD KYA TOOTEGA:
+  - Koi 9,999 aur 10,001 ke beech baar-baar palat raha?
+      -> beech me jagah chhodo: 12,000 se upar gaya to pull, 8,000 se neeche aaye tabhi wapas push.
+  - Celeb ko alag server do, ya user_id pe baantna hi galat hai?
+      -> nahi. Baantna baaki crore logon ke liye theek hai. Dikkat sirf EK bahut garam aadmi ki hai,
+         aur consistent hashing ek garam key ko nahi bachata.
+  - Like ki ginti jaisa garam LIKHNA (ek tweet pe laakhon like)?
+      -> ginti ko 10 tukdon me baant do (tweet123#0 se #9), har like kisi ek tukde me, padhte waqt sab jodo.
+```
 
 #### 4 VIRAT KA TWEET CRORE LOG EK SAATH PADH RAHE
 ```
@@ -204,9 +208,28 @@ KAHANI:  Virat pull pe hai, to uska tweet har feed me DB se aata hai.
 
 ILAAJ:   HOT-TWEET CACHE: celebs ke naye tweet RAM me rakho (~1
          ghanta), sab wahin se padhein. Purane tweet DB se.
-
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_Hot_tweet_cache
+    n_App --> n_DB
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+```
+```
 ANDAR KAISE:
-         Jaise dukaan me bestseller kitaab godown me nahi, counter pe rakhte hain. ~95 me se 95 read cache se.
+         Jaise dukaan me bestseller kitaab godown me nahi, counter pe rakhte hain.
+         ~100 me se 95 read cache se.
          Cache me nahi mila -> sirf EK request DB jaaye (taala), baaki ruk ke wahi jawab le lein.
 
 ISKE BAAD KYA TOOTEGA:
@@ -222,6 +245,14 @@ ISKE BAAD KYA TOOTEGA:
       -> fanout ka toofan Kafka pakad leta hai. Pata ho kab
          aayega -> pehle se machine badhao aur cache garam karo.
 ```
+
+#### 5 50 CRORE INBOX, MEMORY PHATEGI
+```
+KAHANI:  Har user ka poora feed Redis (RAM) me rakha -> 50 crore user, RAM bhar jaayegi.
+
+ILAAJ:   Inbox me SIRF tweet ka number, aur sirf aakhri ~800. Purane kaat do.
+         Jo mahine bhar se nahi aaya, uska inbox hata do.
+```
 ```mermaid
 flowchart TD
     n_USER["USER"]
@@ -239,14 +270,7 @@ flowchart TD
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
 ```
-
-#### 5 50 CRORE INBOX, MEMORY PHATEGI
 ```
-KAHANI:  Har user ka poora feed Redis (RAM) me rakha -> 50 crore user, RAM bhar jaayegi.
-
-ILAAJ:   Inbox me SIRF tweet ka number, aur sirf aakhri ~800. Purane kaat do.
-         Jo mahine bhar se nahi aaya, uska inbox hata do.
-
 ANDAR KAISE:
          Ek number 8 byte, 800 number = ~6.4 KB ek user ka. 50 crore x 6.4 KB = ~3.2 TB -> kai Redis machine.
          Celeb cache chhota hai: ~5 lakh tweet x 500 byte = ~250 MB.
@@ -261,23 +285,6 @@ ISKE BAAD KYA TOOTEGA:
          Phir bhi gira -> kuch request mana karo, har inbox
          ko ek hi request banaye, dheere-dheere wapas bharo.
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_Hot_tweet_cache
-    n_App --> n_DB
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-```
 
 #### 6 SAARE TWEET EK DB ME NAHI
 ```
@@ -288,26 +295,6 @@ ILAAJ:   User id ke hisaab se baanto: Arpan ke saare tweet ek hi jagah, to Arpan
          khul jaati.
          Famous banda ho to uska data ek jagah bahut bhaari: key me time bhi jod do (user + mahina), taaki
          uske tweet alag jagah bat jaayein. Uske tweet padhne ke liye copy bhi.
-
-ANDAR KAISE:
-         Cassandra likhne me tez kyun: naya tweet pehle ek diary (commit log) ke aakhir me jodta hai
-         aur RAM me rakhta hai -> "ho gaya". Kuch purana dhoondh ke badalna nahi padta.
-         RAM bhari -> ek nayi file disk pe. Peeche chhoti files mila ke badi bana leta hai.
-         (user_id + mahina) se tay hota hai kaunsi machine, aur andar tweet time se ulte kram me (naya pehle).
-
-ISKE BAAD KYA TOOTEGA:
-  - MySQL kyun nahi?
-      -> MySQL har naye tweet ke liye pehle sahi jagah dhoondhta hai, phir likhta hai (disk pe idhar-udhar).
-         Itne likhne pe dheema. Aur yahan join / transaction ki zaroorat hi nahi.
-  - Cassandra me padhna dheema kab hota hai?
-      -> ek user ka data kai chhoti files me bikhra ho to sab dekhni padti hain.
-         Peeche files milana (compaction) + "is file me hai
-         ya nahi" ka jaldi check (bloom filter) se kam hota.
-  - tweet_id pe kyun nahi baanta?
-      -> bojh barabar ho jaata, par profile page (ek aadmi ke
-         saare tweet) ke liye saari machine poochni padti.
-  - Cassandra me padhne / likhne ki alag copy hoti hai?
-      -> nahi, koi main copy nahi. Har copy padh bhi sakti, likh bhi. Bolo: "3 copy, 2 me likho, 2 se padho".
 ```
 ```mermaid
 flowchart TD
@@ -326,13 +313,53 @@ flowchart TD
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
 ```
+```
+ANDAR KAISE:
+         Cassandra likhne me tez kyun: naya tweet pehle ek diary (commit log) ke aakhir me jodta hai
+         aur RAM me rakhta hai -> "ho gaya". Kuch purana dhoondh ke badalna nahi padta.
+         RAM bhari -> ek nayi file disk pe. Peeche chhoti files mila ke badi bana leta hai.
+         (user_id + mahina) se tay hota hai kaunsi machine, aur andar tweet time se ulte kram me (naya pehle).
+
+ISKE BAAD KYA TOOTEGA:
+  - MySQL kyun nahi?
+      -> MySQL me har tweet ke saath har index (user_id, time...) bhi disk pe sahi jagah dhoondh ke
+         badalna padta (idhar-udhar likhna). Itne likhne pe dheema.
+         Aur yahan join / transaction ki zaroorat hi nahi.
+  - Cassandra me padhna dheema kab hota hai?
+      -> ek user ka data kai chhoti files me bikhra ho to sab dekhni padti hain.
+         Peeche files milana (compaction) + "is file me hai
+         ya nahi" ka jaldi check (bloom filter) se kam hota.
+  - tweet_id pe kyun nahi baanta?
+      -> bojh barabar ho jaata, par profile page (ek aadmi ke
+         saare tweet) ke liye saari machine poochni padti.
+  - Cassandra me padhne / likhne ki alag copy hoti hai?
+      -> nahi, koi main copy nahi. Har copy padh bhi sakti, likh bhi. Bolo: "3 copy, 2 me likho, 2 se padho".
+```
 
 #### 7 INDIA USER, US SE PADH RAHA (200 MS)
 ```
 KAHANI:  Arpan Bangalore me hai, par data US me. Har request US jaati hai -> 200 ms. Paas se hota to 5 ms.
 
 ILAAJ:   Region-wise rakho (India / Europe / US). User paas wale region se baat kare.
-
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_Hot_tweet_cache
+    n_App --> n_Cassandra
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+```
+```
 ANDAR KAISE:
          Route 53 user ko paas wale region ka pata deta hai.
          Cassandra ek region ka likha hua doosre regions me thoda baad copy kar deta hai.
@@ -350,23 +377,6 @@ ISKE BAAD KYA TOOTEGA:
       -> tweet aksar naya hi banta hai, badalta kam. Takraav
          ho to jiska time baad ka, wo jeeta (last write wins).
 ```
-```mermaid
-flowchart TD
-    n_USER["USER"]
-    n_App["App"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_Cassandra["Cassandra"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_Hot_tweet_cache
-    n_App --> n_Cassandra
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-```
 
 #### 8 EK APP BOX: BOJH BHI, SPOF BHI
 ```
@@ -375,16 +385,6 @@ KAHANI:  Sab kuch ek App machine pe. Laakhon log nahi jhelta, aur wahi gira to s
 ILAAJ:   App server kuch yaad nahi rakhte, koi bhi request kahin bhi jaa sakti. Aage load balancer har
          server se 'zinda ho?' poochhta rehta, mara hua list se bahar.
          Naya code ek-ek server pe daalte, sab ek saath nahi, to site kabhi band nahi hoti.
-
-ANDAR KAISE:
-         ALB har ~10 second har machine se poochta "zinda?" -> jawab nahi = bahar, theek = wapas.
-         Route 53 isi tarah region / ALB ko dekhta hai.
-
-ISKE BAAD KYA TOOTEGA:
-  - Naya code daalna hai, saari machine restart?
-      -> ek-ek karke: ek nikaalo, naya daalo, wapas jodo (rolling deploy). Site kabhi band nahi.
-  - Nayi machine judi, pehli request dheemi?
-      -> machine me apna data nahi (sab Redis me), to farak kam. ALB nayi machine ko dheere-dheere traffic de.
 ```
 ```mermaid
 flowchart TD
@@ -413,6 +413,17 @@ flowchart TD
     n_App_x_N_1 --> n_Redis_inbox
     n_App_x_N_2 --> n_Redis_inbox
 ```
+```
+ANDAR KAISE:
+         ALB har ~10 second har machine se poochta "zinda?" -> jawab nahi = bahar, theek = wapas.
+         Route 53 isi tarah region / ALB ko dekhta hai.
+
+ISKE BAAD KYA TOOTEGA:
+  - Naya code daalna hai, saari machine restart?
+      -> ek-ek karke: ek nikaalo, naya daalo, wapas jodo (rolling deploy). Site kabhi band nahi.
+  - Nayi machine judi, pehli request dheemi?
+      -> machine me apna data nahi (sab Redis me), to farak kam. ALB nayi machine ko dheere-dheere traffic de.
+```
 
 #### 9 PADHNA AUR LIKHNA EK HI BOX ME
 ```
@@ -423,18 +434,6 @@ ILAAJ:   Kaam alag-alag service me: tweet likhne wali, feed padhne wali, user wa
          karta' wali.
          Padhna 50 guna zyada hai, to sirf feed wali service ki machines bahut zyada rakho, baaki kam.
          Follow list Redis me, baar-baar chahiye hoti hai.
-
-ANDAR KAISE:
-         Padhna 50 guna zyada -> Timeline ki machine zyada, Tweet ki kam.
-
-ISKE BAAD KYA TOOTEGA:
-  - Timeline ko "Arpan kisko follow karta" kahan se pata?
-      -> Graph / User service se, par har baar call nahi. Follow list Redis me cache.
-  - Fanout ko 10,000 followers ki list kaise milegi?
-      -> Graph store se 1000-1000 ke panne me padh ke inbox likho.
-  - Graph DB (Neo4j) zaroori hai?
-      -> seedhi follow list ke liye ek table / Cassandra kaafi.
-         Graph DB tab jab "dost ke dost" jaise sawaal hon.
 ```
 ```mermaid
 flowchart TD
@@ -465,6 +464,21 @@ flowchart TD
     n_User_Svc --> n_Graph_DB
     n_Fanout_workers --> n_Graph_DB
 ```
+```
+ANDAR KAISE:
+         Gateway raasta dekh ke bhejta: POST /tweet -> Tweet Svc · GET /feed -> Timeline Svc.
+         Dono ki apni machines, apna LB, apna autoscale. Feed ki bheed badhi -> sirf Timeline ki
+         machine badhti, Tweet Svc pe koi asar nahi.
+
+ISKE BAAD KYA TOOTEGA:
+  - Timeline ko "Arpan kisko follow karta" kahan se pata?
+      -> Graph / User service se, par har baar call nahi. Follow list Redis me cache.
+  - Fanout ko 10,000 followers ki list kaise milegi?
+      -> Graph store se 1000-1000 ke panne me padh ke inbox likho.
+  - Graph DB (Neo4j) zaroori hai?
+      -> seedhi follow list ke liye ek table / Cassandra kaafi.
+         Graph DB tab jab "dost ke dost" jaise sawaal hon.
+```
 
 #### 10 PHOTO / VIDEO BHAARI
 ```
@@ -474,18 +488,6 @@ ILAAJ:   Photo / video S3 me rakho, user tak CDN se pahunche (uske paas wale ser
          sirf uska link.
          Photo delete ki to CDN se bhi hatwao, ya link me version badal do. Private photo ke liye link jo
          kuch minute me band ho jaaye.
-
-ANDAR KAISE:
-         Tweet me photo ka CDN wala link. CDN ke paas hai -> wahin se. Nahi hai -> CDN S3 se laata hai,
-         kuch der rakhta hai, phir sabko wahin se deta hai.
-         CDN sirf photo / video ke raaste pe hai, API ke nahi.
-
-ISKE BAAD KYA TOOTEGA:
-  - Photo delete ki, CDN pe abhi bhi dikh rahi?
-      -> CDN ko "ye hatao" bolo (invalidation), ya link me
-         version daalo (abc_v2.jpg) -> naya link = nayi file.
-  - Private photo CDN se sabko dikh jaayegi?
-      -> link pe hastakshar aur expiry (signed URL): sirf jisko link mila, thodi der ke liye.
 ```
 ```mermaid
 flowchart TD
@@ -520,6 +522,19 @@ flowchart TD
     n_USER --> n_CDN
     n_CDN --> n_S3
 ```
+```
+ANDAR KAISE:
+         Tweet me photo ka CDN wala link. CDN ke paas hai -> wahin se. Nahi hai -> CDN S3 se laata hai,
+         kuch der rakhta hai, phir sabko wahin se deta hai.
+         CDN sirf photo / video ke raaste pe hai, API ke nahi.
+
+ISKE BAAD KYA TOOTEGA:
+  - Photo delete ki, CDN pe abhi bhi dikh rahi?
+      -> CDN ko "ye hatao" bolo (invalidation), ya link me
+         version daalo (abc_v2.jpg) -> naya link = nayi file.
+  - Private photo CDN se sabko dikh jaayegi?
+      -> link pe hastakshar aur expiry (signed URL): sirf jisko link mila, thodi der ke liye.
+```
 
 #### PUSH YA PULL? (end me pakka poochega)
 ```
@@ -538,7 +553,7 @@ AAKHRI DABBE (sab dikkat ke baad):
   FOLLOW: User Svc + Graph DB
 
 DB:  Tweet = Cassandra (bahut zyada, seedha kaam, likhna bahut, user_id + time se baanta)
-     Inbox = har user ki Redis list, sirf number (poora tweet 200 jagah copy kiya to RAM phategi)
+     Inbox = har user ka Redis sorted set, sirf number (poora tweet 200 jagah copy kiya to RAM phategi)
      Graph = Neo4j ya Cassandra (followers / following)
 
 END ME POOCHEGA:
@@ -607,8 +622,8 @@ ASLI TWITTER   = sab ek saath: user_id se baanta + time ke tukde + region copy +
 API:      POST /tweet { content } -> tweetId · GET /feed?limit=50 -> home timeline · GET /user/{id}/tweets
 
 DB:       TWEET  -> Cassandra (bahut zyada, seedha, likhna bahut, user_id se baanta)
-          INBOX  -> har user ki Redis list: naya aage jodo
-          (LPUSH) · padho (LRANGE) · 800 ke baad kaato (LTRIM)
+          INBOX  -> har user ka Redis SORTED SET (score = time): naya jodo (ZADD, same id dobara = ek hi)
+                    padho (ZREVRANGE 0 49) · 800 ke baad kaato (ZREMRANGEBYRANK)
                     sirf number. Poora tweet daala to ek tweet 200 jagah copy, RAM phategi
           GRAPH  -> Neo4j ya Cassandra (followers / following)
 
@@ -631,9 +646,9 @@ Timeline Svc = push + pull milao · Cassandra = saare tweet,
 user_id + time + region · User Svc + Graph DB = follow
 ```
 ```
-JAWAB:    Likhna: tweet Cassandra me save, aur 'naya tweet' Kafka me. Worker aam followers ki Redis list
+JAWAB:    Likhna: tweet Cassandra me save, aur 'naya tweet' Kafka me. Worker aam followers ke Redis inbox
           me tweet id daalte.
-          Padhna: Arpan ki list lo, famous logon ke naye tweet alag cache se lo, dono milao, time se
+          Padhna: Arpan ka inbox lo, famous logon ke naye tweet alag cache se lo, dono milao, time se
           sort, top 50 bhejo.
           Famous ke liye 'padhte waqt laao', baaki ke liye 'pehle se daal do'. Cassandra user id + time
           se baanta, doosre desh me copy.
