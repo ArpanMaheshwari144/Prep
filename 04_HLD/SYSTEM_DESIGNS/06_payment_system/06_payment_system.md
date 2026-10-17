@@ -58,8 +58,8 @@ JAWAB:    Paise me sahi hona pehle. Network toota aur pakka nahi pata balance ky
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-> Har dikkat ek card: KAHANI (kya hua, kaun, kitna) -> ILAAJ -> ANDAR KAISE (ilaaj kyun kaam karta) ->
-> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta hai: dabba lagaya, ab kya?).
+> Har card: DIKKAT 1 (kya toota) -> HAL (kya kiya) -> diagram -> DIKKAT 2, 3 ... (interviewer ke
+> agle sawaal) har ek ke neeche uska HAL. Revise: sirf baayein column padho.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
@@ -82,10 +82,12 @@ flowchart TD
 
 #### 0 DB KAUNSA? SQL
 ```
-KAHANI:  Ek payment me chaar likhai: Arpan -500, merchant +500, aur khaate (ledger) me 2 line.
-         Ye chaaron ek saath honi chahiye. Teen hui aur chautha reh gaya = hisaab galat.
-
-ILAAJ:   SQL (Postgres / MySQL): kai row EK transaction me, sab ya kuch nahi (ACID).
+DIKKAT 1   Ek payment me chaar likhai: Arpan -500, merchant +500, aur khaate (ledger) me 2 line.
+           Ye chaaron ek saath honi chahiye. Teen hui aur chautha reh gaya = hisaab galat.
+HAL        SQL (Postgres / MySQL): kai row EK transaction me, sab ya kuch nahi (ACID).
+           Teen table: wallet (account_id, balance) · ledger (sirf jodte) · payment (key, haal).
+           Ek payment = BEGIN -> 2 balance UPDATE + 2 ledger INSERT + payment ka haal -> COMMIT.
+           Beech me kuch bhi fail -> ROLLBACK -> chaaron me se ek bhi nahi hua.
 ```
 ```mermaid
 flowchart TD
@@ -96,26 +98,25 @@ flowchart TD
     n_Payment_Svc --> n_DB
 ```
 ```
-ANDAR KAISE:
-         Teen table: wallet (account_id, balance) · ledger (sirf jodte) · payment (key, haal).
-         Ek payment = BEGIN -> 2 balance UPDATE + 2 ledger INSERT + payment ka haal -> COMMIT.
-         Beech me kuch bhi fail -> ROLLBACK -> chaaron me se ek bhi nahi hua.
-
-ISKE BAAD KYA TOOTEGA:
-  - NoSQL kyun nahi?
-      -> yahan kai row / table pe ek saath "sab ya kuch nahi" chahiye, aur paisa turant sahi dikhe.
-         Paise me "thodi der baad sahi" (eventual) nahi chalta.
+DIKKAT 2   NoSQL kyun nahi?
+HAL        Yahan kai row / table pe ek saath "sab ya kuch nahi" chahiye, aur paisa turant sahi dikhe.
+           Paise me "thodi der baad sahi" (eventual) nahi chalta.
 ```
 
 #### 1 BEECH ME CRASH: ARPAN -500 HUA, MERCHANT +500 NAHI
 ```
-KAHANI:  Arpan ke 500 kat gaye. Merchant ke account me daalne se PEHLE server gir gaya.
-         500 na Arpan ke paas, na merchant ke paas. Gayab.
-
-ILAAJ:   Arpan se 500 kaatna aur merchant ko 500 dena, dono ek hi transaction me: beech me crash hua to
-         dono wapas.
-         Kaatna condition ke saath: 'balance 500 se zyada hai tabhi kaato'. Do payment ek saath aayi to
-         bhi balance minus me nahi jaayega.
+DIKKAT 1   Arpan ke 500 kat gaye. Merchant ke account me daalne se PEHLE server gir gaya.
+           500 na Arpan ke paas, na merchant ke paas. Gayab.
+HAL        Arpan se 500 kaatna aur merchant ko 500 dena, dono ek hi transaction me:
+           beech me crash hua to dono wapas.
+           Kaatna condition ke saath: 'balance 500 se zyada hai tabhi kaato'. Do payment ek saath aayi to
+           bhi balance minus me nahi jaayega.
+           BEGIN
+             Arpan -= 500 · Merchant += 500
+           COMMIT
+           DB har badlaav pehle apni diary (WAL) me likhta. Gira aur utha -> diary dekhta:
+           COMMIT ho chuka tha to poora karta, nahi hua tha to ulta kar deta. Aadha kabhi nahi bachta.
+           Niyam: saare kate == saare jude, hamesha. Na mile -> turant alert.
 ```
 ```mermaid
 flowchart TD
@@ -126,27 +127,23 @@ flowchart TD
     n_Payment_Svc --> n_DB
 ```
 ```
-ANDAR KAISE:
-         BEGIN
-           Arpan -= 500 · Merchant += 500
-         COMMIT
-         DB har badlaav pehle apni diary (WAL) me likhta. Gira aur utha -> diary dekhta:
-         COMMIT ho chuka tha to poora karta, nahi hua tha to ulta kar deta. Aadha kabhi nahi bachta.
-         Niyam: saare kate == saare jude, hamesha. Na mile -> turant alert.
-
-ISKE BAAD KYA TOOTEGA:
-  - Arpan ke account se do payment ek saath, balance sirf 600?
-      -> UPDATE ... SET balance = balance - 500 WHERE id = ? AND balance >= 500
-         check aur kaatna ek hi query me -> pehla jeeta (bacha 100), doosre ki 0 row badli = reject.
+DIKKAT 2   Arpan ke account se do payment ek saath, balance sirf 600?
+HAL        UPDATE ... SET balance = balance - 500 WHERE id = ? AND balance >= 500 check aur kaatna ek hi
+           query me -> pehla jeeta (bacha 100), doosre ki 0 row badli = reject.
 ```
 
 #### 2 DO BAAR TAP / APP NE DOBARA BHEJA = 1000 KATE
 ```
-KAHANI:  Arpan ne Pay dabaya, app ghoomta raha, usne phir daba diya. Ya network ne khud dobara bhej diya.
-         Server ko do request mili, dono process -> 1000 kate, dene the 500.
-
-ILAAJ:   IDEMPOTENCY KEY: "Pay" dabate hi app ek random UUID banata (key-555). Dobara bhejne pe WAHI key-555.
-         Server: ye key pehle aa chuki -> naya payment nahi, pehle wala jawab wapas.
+DIKKAT 1   Arpan ne Pay dabaya, app ghoomta raha, usne phir daba diya. Ya network ne khud dobara bhej diya.
+           Server ko do request mili, dono process -> 1000 kate, dene the 500.
+HAL        IDEMPOTENCY KEY: "Pay" dabate hi app ek random UUID banata (key-555).
+           Dobara bhejne pe WAHI key-555.
+           Server: ye key pehle aa chuki -> naya payment nahi, pehle wala jawab wapas.
+           Key ko "dekha?" aur "daal do" EK hi step me: DB me key UNIQUE (pakka) + Redis SETNX (tez).
+             pehli request: key-555 daali, haal IN_PROGRESS -> paisa kaato + daalo -> haal DONE + jawab save.
+             doosri request: key-555 pehle se hai -> saved jawab wapas. Paisa ek hi baar.
+           Arpan ne sach me do alag payment kiye (100 + 100) -> do tap = do alag key -> dono honge.
+           Key ~24 ghante rakho.
 ```
 ```mermaid
 flowchart TD
@@ -159,35 +156,36 @@ flowchart TD
     n_Payment_Svc --> n_DB
 ```
 ```
-ANDAR KAISE:
-         Key ko "dekha?" aur "daal do" EK hi step me: DB me key UNIQUE (pakka) + Redis SETNX (tez).
-           pehli request: key-555 daali, haal IN_PROGRESS -> paisa kaato + daalo -> haal DONE + jawab save.
-           doosri request: key-555 pehle se hai -> saved jawab wapas. Paisa ek hi baar.
-         Arpan ne sach me do alag payment kiye (100 + 100) -> do tap = do alag key -> dono honge.
-         Key ~24 ghante rakho.
+DIKKAT 2   Key app kyun banaye, server kyun nahi?
+HAL        Dobara bhejta app hai. Server ko pata hi nahi ye wahi request hai. App ki key hi dono ko jodti.
 
-ISKE BAAD KYA TOOTEGA:
-  - Key app kyun banaye, server kyun nahi?
-      -> dobara bhejta app hai. Server ko pata hi nahi ye wahi request hai. App ki key hi dono ko jodti.
-  - Key lag gayi, phir payment FAIL?
-      -> IN_PROGRESS ki chhoti umar ho / fail pe hata do -> dobara koshish chal sake. Sirf DONE pe skip.
-  - Kaam ke baad key delete kar do?
-      -> nahi. Der se dobara wali request aayi to dobara kat jaayega.
-  - Redis aur DB dono kyun?
-      -> Redis tez, aur chal rahi request turant pakadta. DB UNIQUE pakka hai, Redis gira tab bhi.
-  - Idempotency aur "do log ek balance pe" same cheez?
-      -> nahi. Idempotency = EK user ki dobara request. Do log ek balance pe = atomic query (card 1).
+DIKKAT 3   Key lag gayi, phir payment FAIL?
+HAL        IN_PROGRESS ki chhoti umar ho / fail pe hata do -> dobara koshish chal sake. Sirf DONE pe skip.
+
+DIKKAT 4   Kaam ke baad key delete kar do?
+HAL        Nahi. Der se dobara wali request aayi to dobara kat jaayega.
+
+DIKKAT 5   Redis aur DB dono kyun?
+HAL        Redis tez, aur chal rahi request turant pakadta. DB UNIQUE pakka hai, Redis gira tab bhi.
+
+DIKKAT 6   Idempotency aur "do log ek balance pe" same cheez?
+HAL        Nahi. Idempotency = EK user ki dobara request. Do log ek balance pe = atomic query
+           (balance >= 500 ho tabhi kaato).
 ```
 
 #### 3 ASLI PAISA HAMARA SERVER NAHI HILATA
 ```
-KAHANI:  Arpan apne bank se wallet me 2000 daal raha (top-up). Ya merchant din ka paisa bank me nikaal
-         raha (payout). Ye paisa hamare DB me nahi hilta: hamara server PSP ko sirf "bhejo" kehta,
-         asli paisa bank ke raaste (bank rails) pe hilta. Wo bahar ka raasta kabhi dheema, kabhi band.
-
-ILAAJ:   PSP ko 2-3 second se zyada intezaar nahi. Baar-baar fail ho to kuch der usko call band (fuse).
-         Paise me andha dobara nahi bhejte, kyunki ho sakta hai pehli baar paisa kat chuka ho. Payment
-         'PENDING' rakho, baad me pakka karenge.
+DIKKAT 1   Arpan apne bank se wallet me 2000 daal raha (top-up). Ya merchant din ka paisa bank me nikaal
+           raha (payout). Ye paisa hamare DB me nahi hilta: hamara server PSP ko sirf "bhejo" kehta, asli
+           paisa bank ke raaste (bank rails) pe hilta. Wo bahar ka raasta kabhi dheema, kabhi band.
+HAL        PSP ko 2-3 second se zyada intezaar nahi. Baar-baar fail ho to kuch der usko call band (fuse).
+           Paise me andha dobara nahi bhejte, kyunki ho sakta hai pehli baar paisa kat chuka ho. Payment
+           'PENDING' rakho, baad me pakka karenge.
+           Fuse teen haal me:
+             CLOSED (sab theek, call jao) --5 baar fail--> OPEN (call bhejo hi mat, payment PENDING)
+             --30 sec baad--> HALF-OPEN (ek test call) -> chali to CLOSED, fail to wapas OPEN.
+           Timeout na ho to har thread PSP ke jawab me atka rehta
+           -> saare thread phans gaye -> poora system band.
 ```
 ```mermaid
 flowchart TD
@@ -202,32 +200,31 @@ flowchart TD
     n_Payment_Svc --> n_DB
 ```
 ```
-ANDAR KAISE:
-         Fuse teen haal me:
-           CLOSED (sab theek, call jao) --5 baar fail--> OPEN (call bhejo hi mat, payment PENDING)
-           --30 sec baad--> HALF-OPEN (ek test call) -> chali to CLOSED, fail to wapas OPEN.
-         Timeout na ho to har thread PSP ke jawab me atka rehta
-         -> saare thread phans gaye -> poora system band.
+DIKKAT 2   Timeout hua, Arpan ko kya dikhao?
+HAL        "processing" (PENDING), "fail" NAHI. Paisa shayad kat chuka. Reconciliation job (PSP se
+           baar-baar poochh ke) pakka karegi.
 
-ISKE BAAD KYA TOOTEGA:
-  - Timeout hua, Arpan ko kya dikhao?
-      -> "processing" (PENDING), "fail" NAHI. Paisa shayad kat chuka. Reconciliation (card 4) pakka karegi.
-  - Do PSP rakhoge?
-      -> haan, ek band to doosra. Par EK payment hamesha EK hi PSP pe. Beech me badla = do jagah se kat sakta.
-  - PSP fail, turant dobara bhejo?
-      -> paise me andha dobara nahi. PENDING rakho, reconciliation tay kare.
+DIKKAT 3   Do PSP rakhoge?
+HAL        Haan, ek band to doosra. Par EK payment hamesha EK hi PSP pe. Beech me
+           badla = do jagah se kat sakta.
+
+DIKKAT 4   PSP fail, turant dobara bhejo?
+HAL        Paise me andha dobara nahi. PENDING rakho, reconciliation tay kare.
 ```
 
 #### 4 PSP KO CALL KIYA AUR CRASH: PAISA GAYA YA NAHI?
 ```
-KAHANI:  Server ne PSP ko "500 bhejo" bola aur jawab aane se pehle khud gir gaya.
-         Ab pata hi nahi: paisa kat gaya aur jawab kho gaya, ya kata hi nahi. "Bas rollback kar do" galat,
-         kyunki PSP me shayad paisa sach me kat chuka.
-
-ILAAJ:   PSP ko call karne se PEHLE DB me likho 'PENDING'. Phir call.
-         Server gira to bhi DB me likha hai ki ye payment adhoora hai. PSP khud batata hai (webhook) 'ho
-         gaya / fail', aur ek job har kuch minute PENDING wale PSP se poochhti.
-         Paisa hamesha ya to ho gaya, ya wapas, ya check ho raha. Khota kabhi nahi.
+DIKKAT 1   Server ne PSP ko "500 bhejo" bola aur jawab aane se pehle khud gir gaya.
+           Ab pata hi nahi: paisa kat gaya aur jawab kho gaya, ya kata hi nahi. "Bas rollback kar do" galat,
+           kyunki PSP me shayad paisa sach me kat chuka.
+HAL        PSP ko call karne se PEHLE DB me likho 'PENDING'. Phir call.
+           Server gira to bhi DB me likha hai ki ye payment adhoora hai. PSP khud batata hai (webhook) 'ho
+           gaya / fail', aur ek job har kuch minute PENDING wale PSP se poochhti.
+           Paisa hamesha ya to ho gaya, ya wapas, ya check ho raha. Khota kabhi nahi.
+           Job har kuch minute: PENDING jo 5 min se purane -> PSP se poochho
+             hua -> SUCCESS · nahi hua -> dobara (WAHI key se) · pakka fail -> FAILED + paisa wapas.
+           Roz raat PSP / bank ki poori file se apna hisaab milao.
+           Jaise courier: har parcel ka tracking number. Courier wala gir gaya, parcel gum nahi hota.
 ```
 ```mermaid
 flowchart TD
@@ -246,33 +243,31 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc
 ```
 ```
-ANDAR KAISE:
-         Job har kuch minute: PENDING jo 5 min se purane -> PSP se poochho
-           hua -> SUCCESS · nahi hua -> dobara (WAHI key se) · pakka fail -> FAILED + paisa wapas.
-         Roz raat PSP / bank ki poori file se apna hisaab milao.
-         Jaise courier: har parcel ka tracking number. Courier wala gir gaya, parcel gum nahi hota.
+DIKKAT 2   Webhook do baar aa gaya?
+HAL        PENDING -> SUCCESS sirf ek baar. Pehle se SUCCESS hai aur phir aaya -> ignore.
 
-ISKE BAAD KYA TOOTEGA:
-  - Webhook do baar aa gaya?
-      -> PENDING -> SUCCESS sirf ek baar. Pehle se SUCCESS hai aur phir aaya -> ignore.
-  - Sirf webhook kaafi kyun nahi?
-      -> webhook kho sakta, der se aa sakta, ya us waqt hamara
-         server band tha. Job wo jaal hai jo chhoota pakde.
-  - Sirf job (baar-baar poochhna)?
-      -> der lagti + har PENDING pe baar-baar PSP call (limit / kharcha). Isliye dono.
-  - Kaise pata sab theek chal raha?
-      -> hisaab ka farak, p99, error rate, line ki lambai pe alert + trace id se ek payment ka poora raasta.
+DIKKAT 3   Sirf webhook kaafi kyun nahi?
+HAL        Webhook kho sakta, der se aa sakta, ya us waqt hamara server band tha.
+           Job wo jaal hai jo chhoota pakde.
+
+DIKKAT 4   Sirf job (baar-baar poochhna)?
+HAL        Der lagti + har PENDING pe baar-baar PSP call (limit / kharcha). Isliye dono.
+
+DIKKAT 5   Kaise pata sab theek chal raha?
+HAL        Hisaab ka farak, p99, error rate, line ki lambai pe alert + trace id se ek payment ka poora raasta.
 ```
 
 #### 5 ALAG BANK / ALAG DB: EK TRANSACTION NAHI CHAL SAKTA
 ```
-KAHANI:  Arpan ka account Bank A me, merchant ka Bank B me. Do alag system pe ek DB transaction hota hi nahi.
-         Bank A se 500 kata, Bank B me daalna fail -> paisa beech me latka.
-
-ILAAJ:   Arpan Bank A me, merchant Bank B me, ek transaction nahi chalta.
-         Step-step: pehle A se kaato, phir B me daalo, har step ke baad likh lo kahan tak hua. B me daalna
-         fail -> A me paisa wapas.
-         Service beech me giri to uthke apna likha dekhti, wahin se aage ya ulta.
+DIKKAT 1   Arpan ka account Bank A me, merchant ka Bank B me. Do alag system pe
+           ek DB transaction hota hi nahi.
+           Bank A se 500 kata, Bank B me daalna fail -> paisa beech me latka.
+HAL        Arpan Bank A me, merchant Bank B me, ek transaction nahi chalta.
+           Step-step: pehle A se kaato, phir B me daalo, har step ke baad likh lo kahan tak hua. B me
+           daalna fail -> A me paisa wapas.
+           Service beech me giri to uthke apna likha dekhti, wahin se aage ya ulta.
+           Bank A -500 OK -> Bank B +500 FAIL -> ulta kaam: Bank A +500 wapas.
+           Saga table me har step ka haal: DEBITED, CREDIT_PENDING, ...
 ```
 ```mermaid
 flowchart TD
@@ -291,26 +286,26 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc
 ```
 ```
-ANDAR KAISE:
-         Bank A -500 OK -> Bank B +500 FAIL -> ulta kaam: Bank A +500 wapas.
-         Saga table me har step ka haal: DEBITED, CREDIT_PENDING, ...
+DIKKAT 2   2PC (two phase commit) kyun nahi?
+HAL        2PC me sab "ready" bol ke lock pakad ke rukte. Coordinator gira = sab atke, aur har payment dheema.
 
-ISKE BAAD KYA TOOTEGA:
-  - 2PC (two phase commit) kyun nahi?
-      -> 2PC me sab "ready" bol ke lock pakad ke rukte. Coordinator gira = sab atke, aur har payment dheema.
-  - Payment service beech me gir gayi?
-      -> uthte hi saga table dekhti, wahin se aage ya ulta.
-  - Beech ke waqt Arpan ko kya dikhe?
-      -> "processing", thodi der me SUCCESS ya paisa wapas (eventual).
+DIKKAT 3   Payment service beech me gir gayi?
+HAL        Uthte hi saga table dekhti, wahin se aage ya ulta.
+
+DIKKAT 4   Beech ke waqt Arpan ko kya dikhe?
+HAL        "processing", thodi der me SUCCESS ya paisa wapas (eventual).
 ```
 
 #### 6 RBI POOCHHE: YE PAISA KAHAN SE AAYA, KAHAN GAYA?
 ```
-KAHANI:  RBI: "Arpan ke ye 500 kahan se aaye, kahan gaye, kab?"
-         Balance column sirf aaj ka number batata (Arpan: 1200). Kaise 1200 bana, uska koi record nahi.
-
-ILAAJ:   LEDGER table, USI transaction me jisme paisa hila. Isme sirf INSERT, kabhi UPDATE / DELETE nahi.
-         Double-entry: har len-den ki do line, ek DEBIT ek CREDIT.
+DIKKAT 1   RBI: "Arpan ke ye 500 kahan se aaye, kahan gaye, kab?"
+           Balance column sirf aaj ka number batata (Arpan: 1200). Kaise 1200 bana, uska koi record nahi.
+HAL        LEDGER table, USI transaction me jisme paisa hila. Isme sirf INSERT, kabhi UPDATE / DELETE nahi.
+           Double-entry: har len-den ki do line, ek DEBIT ek CREDIT.
+           Arpan -> merchant 500: ledger me "Arpan DEBIT 500" + "merchant CREDIT 500". Balance
+           column bhi usi transaction me.
+           Galti ho gayi -> purani line mat mitao, NAYI ulti line likho (pen ki diary, kaat-peet nahi).
+           Raat ko jaancho: ledger ka jod == balance? Farak = alert.
 ```
 ```mermaid
 flowchart TD
@@ -329,35 +324,35 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc
 ```
 ```
-ANDAR KAISE:
-         Arpan -> merchant 500: ledger me "Arpan DEBIT 500" +
-         "merchant CREDIT 500". Balance column bhi usi transaction me.
-         Galti ho gayi -> purani line mat mitao, NAYI ulti line likho (pen ki diary, kaat-peet nahi).
-         Raat ko jaancho: ledger ka jod == balance? Farak = alert.
+DIKKAT 2   Galat entry delete kar do?
+HAL        Nahi, ulti entry. Audit me dono dikhni chahiye.
 
-ISKE BAAD KYA TOOTEGA:
-  - Galat entry delete kar do?
-      -> nahi, ulti entry. Audit me dono dikhni chahiye.
-  - Balance + alag audit_log table kyun nahi?
-      -> UPDATE se purana number mit jaata. Aur alag table me ek likha, doosra fail = farak. Ledger hi sach.
-  - 3 saal me ledger bahut bada?
-      -> mahine ke hisaab se tukde (partition), purane tukde
-         sasti jagah (S3 Glacier). Archive, delete kabhi nahi.
-  - Ledger crash se bachaata hai?
-      -> nahi, wo hisaab / audit hai. Crash se bachaate PENDING + webhook + reconciliation (card 4).
-  - Refund kaise?
-      -> purani payment ko chhedo mat. Nayi ulti payment: merchant -500, Arpan +500, apni nayi key,
-         purani payment ka number saath me. Ledger me 2 nayi line. Ek payment pe refund ka jod
-         asli amount se zyada nahi (check karo).
+DIKKAT 3   Balance + alag audit_log table kyun nahi?
+HAL        UPDATE se purana number mit jaata. Aur alag table me ek likha, doosra fail = farak. Ledger hi sach.
+
+DIKKAT 4   3 saal me ledger bahut bada?
+HAL        Mahine ke hisaab se tukde (partition), purane tukde sasti jagah (S3
+           Glacier). Archive, delete kabhi nahi.
+
+DIKKAT 5   Ledger crash se bachaata hai?
+HAL        Nahi, wo hisaab / audit hai. Crash se bachaate PENDING + webhook + reconciliation.
+
+DIKKAT 6   Refund kaise?
+HAL        Purani payment ko chhedo mat. Nayi ulti payment: merchant -500, Arpan +500, apni nayi key, purani
+           payment ka number saath me. Ledger me 2 nayi line. Ek payment pe refund ka jod asli
+           amount se zyada nahi (check karo).
 ```
 
 #### 7 FESTIVAL PE 3000 PAYMENT / SECOND
 ```
-KAHANI:  Diwali pe 3000 payment / second. Ek hi Payment service machine ka CPU bhar gaya -> timeout ->
-         log ghabra ke DOBARA tap kar rahe -> aur bojh. Wo machine giri to sab payment band.
-
-ILAAJ:   Payment service STATELESS (kuch yaad nahi rakhti), kai machine, aage LB / API GATEWAY
-         (login check JWT, rate limit, WAF, HTTPS).
+DIKKAT 1   Diwali pe 3000 payment / second. Ek hi Payment service machine ka CPU bhar gaya -> timeout ->
+           log ghabra ke DOBARA tap kar rahe -> aur bojh. Wo machine giri to sab payment band.
+HAL        Payment service STATELESS (kuch yaad nahi rakhti), kai machine, aage LB / API GATEWAY (login
+           check JWT, rate limit, WAF, HTTPS).
+           Saari yaad DB aur idempotency store me -> koi bhi machine koi bhi payment
+           le sakti. Ek giri, baaki chalti.
+           Har payment pe OWNER CHECK: JWT se Arpan ka userId ->
+           "from" account ka owner Arpan hi hai? Nahi -> 403.
 ```
 ```mermaid
 flowchart TD
@@ -384,30 +379,28 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
 ```
-ANDAR KAISE:
-         Saari yaad DB aur idempotency store me -> koi bhi
-         machine koi bhi payment le sakti. Ek giri, baaki chalti.
-         Har payment pe OWNER CHECK: JWT se Arpan ka userId ->
-         "from" account ka owner Arpan hi hai? Nahi -> 403.
+DIKKAT 2   Safe kaise rakhoge, galat istemaal kaise rokoge?
+HAL        Darwaze pe login check. Har payment pe check: 'jis account se paisa kat raha, wo isi user ka
+           hai?' userId JWT se lo, request body se nahi (body me koi bhi kuch likh de).
+           Har user ki had, aur sabse aage WAF.
 
-ISKE BAAD KYA TOOTEGA:
-  - Safe kaise rakhoge, galat istemaal kaise rokoge?
-      -> Darwaze pe login check. Har payment pe check: 'jis account se paisa kat raha, wo isi user ka
-         hai?' userId JWT se lo, request body se nahi (body me koi bhi kuch likh de).
-         Har user ki had, aur sabse aage WAF.
-  - userId request body se le lo?
-      -> nahi! Body me koi bhi kisi ka bhi userId likh de
-         (spoof). Hamesha JWT se. (PR drill me baar-baar aata.)
-  - LB ko kaise pata machine mar gayi?
-      -> LB har kuch second GET /health maarta, jawab nahi = list se bahar.
+DIKKAT 3   userId request body se le lo?
+HAL        Nahi! Body me koi bhi kisi ka bhi userId likh de (spoof). Hamesha JWT
+           se. (PR drill me baar-baar aata.)
+
+DIKKAT 4   LB ko kaise pata machine mar gayi?
+HAL        LB har kuch second GET /health maarta, jawab nahi = list se bahar.
 ```
 
 #### 8 MERCHANT KI REPORT NE ASLI PAYMENT ROKE
 ```
-KAHANI:  Ek bada merchant dashboard pe "is mahine ki saari payment" report chala raha. Wo bhaari query
-         usi DB pe -> DB busy -> Arpan ka 500 ka payment likhne me atak gaya.
-
-ILAAJ:   Report READ REPLICA (DB ki padhne wali copy) se. Balance aur payment ka haal hamesha PRIMARY se.
+DIKKAT 1   Ek bada merchant dashboard pe "is mahine ki saari payment" report chala raha. Wo bhaari query usi
+           DB pe -> DB busy -> Arpan ka 500 ka payment likhne me atak gaya.
+HAL        Report READ REPLICA (DB ki padhne wali copy) se. Balance aur payment ka haal hamesha PRIMARY se.
+           Primary har badlaav apni diary (WAL) me likhta -> replica wo diary padh ke wahi badlaav lagati.
+           Ye peeche-peeche chalta (async) -> replica 1-2 second purani ho sakti.
+           Report me 1-2 second purana chalta, balance me nahi.
+           Bahut bhaari analytics -> alag warehouse me (CDC se data jaata).
 ```
 ```mermaid
 flowchart TD
@@ -436,29 +429,25 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
 ```
-ANDAR KAISE:
-         Primary har badlaav apni diary (WAL) me likhta -> replica wo diary padh ke wahi badlaav lagati.
-         Ye peeche-peeche chalta (async) -> replica 1-2 second purani ho sakti.
-         Report me 1-2 second purana chalta, balance me nahi.
-         Bahut bhaari analytics -> alag warehouse me (CDC se data jaata).
+DIKKAT 2   Arpan ne pay kiya, use purana balance dikha?
+HAL        Wo replica se padha gaya jo peeche thi. Isliye balance / haal PRIMARY se hi.
 
-ISKE BAAD KYA TOOTEGA:
-  - Arpan ne pay kiya, use purana balance dikha?
-      -> wo replica se padha gaya jo peeche thi. Isliye balance / haal PRIMARY se hi.
-  - Primary gira?
-      -> SYNC standby (har likhai uspe bhi pakki) ko primary banao (RDS Multi-AZ) -> kuch nahi khota.
-         Async replica ko banaya to aakhri kuch likhai kho sakti.
-  - Replica kitni peeche hai, kaise pata?
-      -> replication lag metric pe alert.
+DIKKAT 3   Primary gira?
+HAL        SYNC standby (har likhai uspe bhi pakki) ko primary banao (RDS Multi-AZ) -> kuch nahi khota.
+           Async replica ko banaya to aakhri kuch likhai kho sakti.
+
+DIKKAT 4   Replica kitni peeche hai, kaise pata?
+HAL        Replication lag metric pe alert.
 ```
 
 #### 9 50 CRORE ROW, LIKHAI DHEEMI
 ```
-KAHANI:  Saal bhar me 50 crore payment row. Saari likhai ek hi primary DB pe -> likhai dheemi.
-
-ILAAJ:   Account id ke hisaab se baanto: Arpan ka balance aur uski saari history ek hi jagah, to Arpan se
-         kaatna ek jagah, ek transaction.
-         Do alag jagah ke account ke beech transfer = step-step + fail pe ulta (upar wala).
+DIKKAT 1   Saal bhar me 50 crore payment row. Saari likhai ek hi primary DB pe -> likhai dheemi.
+HAL        Account id ke hisaab se baanto: Arpan ka balance aur uski saari history ek hi jagah, to Arpan se
+           kaatna ek jagah, ek transaction.
+           Do alag jagah ke account ke beech transfer = step-step + fail pe ulta (upar wala).
+           Account kis shard pe: consistent hashing, ya lookup table (account -> shard, baad me badal sakte).
+           Arpan ka balance aur uski history ek hi shard pe -> Arpan ka kaatna ek jagah, atomic.
 ```
 ```mermaid
 flowchart TD
@@ -487,18 +476,15 @@ flowchart TD
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
 ```
 ```
-ANDAR KAISE:
-         Account kis shard pe: consistent hashing, ya lookup table (account -> shard, baad me badal sakte).
-         Arpan ka balance aur uski history ek hi shard pe -> Arpan ka kaatna ek jagah, atomic.
+DIKKAT 2   txn_id ya time se kyun nahi baanta?
+HAL        Txn_id: Arpan ki payment alag-alag shard pe bikhri, balance kahan
+           dekhoge? · time: aaj wala shard garam.
 
-ISKE BAAD KYA TOOTEGA:
-  - txn_id ya time se kyun nahi baanta?
-      -> txn_id: Arpan ki payment alag-alag shard pe bikhri,
-         balance kahan dekhoge? · time: aaj wala shard garam.
-  - Amazon jaisa bada merchant -> uska shard garam?
-      -> merchant ke kai sub-account, alag shard pe; report me jod do.
-  - Do shard ke beech transfer?
-      -> SAGA: shard A se kaato, shard B me daalo, fail pe ulta. Asli mushkil yahi hai, bheed nahi.
+DIKKAT 3   Amazon jaisa bada merchant -> uska shard garam?
+HAL        Merchant ke kai sub-account, alag shard pe; report me jod do.
+
+DIKKAT 4   Do shard ke beech transfer?
+HAL        SAGA: shard A se kaato, shard B me daalo, fail pe ulta. Asli mushkil yahi hai, bheed nahi.
 ```
 
 ```

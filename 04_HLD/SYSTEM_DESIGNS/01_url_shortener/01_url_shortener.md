@@ -47,8 +47,8 @@ KYUN CHAHIYE:  Twitter / SMS me jagah kam · marketing me kis link se kitne aaye
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-> Har dikkat ek card: KAHANI (kya hua, kaun, kitna) -> ILAAJ -> ANDAR KAISE (ilaaj kyun kaam karta) ->
-> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta hai: dabba lagaya, ab kya?).
+> Har card: DIKKAT 1 (kya toota) -> HAL (kya kiya) -> diagram -> DIKKAT 2, 3 ... (interviewer ke
+> agle sawaal) har ek ke neeche uska HAL. Revise: sirf baayein column padho.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
@@ -66,43 +66,46 @@ flowchart TD
 
 #### 0 SHURU: CODE KAISE BANE (dil ka hissa)
 ```
-KAHANI:  User ne diya "https://amazon.in/....../bahut-lamba-link". Use chahiye "bit.ly/w7e".
-         Har link ka code alag hona chahiye, warna do link ek hi jagah khulenge.
+DIKKAT 1   User ne diya "https://amazon.in/....../bahut-lamba-link". Use chahiye "bit.ly/w7e".
+           Har link ka code alag hona chahiye, warna do link ek hi jagah khulenge.
+HAL        Ek ginti (counter) rakho: 1, 2, 3 ... Har naye link ko agla number do, aur us number ko
+           BASE62 me likh do. Wahi code hai.
 
-ILAAJ:   Ek ginti (counter) rakho: 1, 2, 3 ... Har naye link ko agla number do,
-         aur us number ko BASE62 me likh do. Wahi code hai.
+           Base62 = 62 akshar: 0-9 (10) + a-z (26) + A-Z (26).
+           Number ko baar-baar 62 se bhaag do, jo bachta (remainder) wo ek akshar, aakhir me ulta padho.
+           Misaal: 125 = 2 x 62 + 1 -> "21".   100 crore -> "15FTGg" (6 akshar).
+           Counter kabhi dohraata nahi -> code kabhi dohraata nahi. Check karne ki zaroorat hi nahi.
+```
+```
+DIKKAT 2   Counter kyun, lambe link ka MD5 / random code kyun nahi?
+HAL        MD5 / random me do link ka code same aa sakta hai.
+           Har baar DB se poochna padega "ye code pehle se hai?"
+           Counter me ye dikkat hi nahi.
 
-ANDAR KAISE:
-         Base62 = 62 akshar: 0-9 (10) + a-z (26) + A-Z (26).
-         Number ko baar-baar 62 se bhaag do, jo bachta (remainder) wo ek akshar, aakhir me ulta padho.
-         Misaal: 125 = 2 x 62 + 1 -> "21".   100 crore -> "15FTGg" (6 akshar).
-         Counter kabhi dohraata nahi -> code kabhi dohraata nahi. Check karne ki zaroorat hi nahi.
+DIKKAT 3   Counter se code ka andaza nahi lag jaayega? (abc124 ke baad abc125)
+HAL        Haan, ye keemat hai. Chahiye to number ko pehle shuffle
+           / XOR karo, phir base62. Phir bhi unique rahega.
 
-ISKE BAAD KYA TOOTEGA:
-  - Counter kyun, lambe link ka MD5 / random code kyun nahi?
-      -> MD5 / random me do link ka code same aa sakta hai.
-         Har baar DB se poochna padega "ye code pehle se hai?"
-         Counter me ye dikkat hi nahi.
-  - Counter se code ka andaza nahi lag jaayega? (abc124 ke baad abc125)
-      -> haan, ye keemat hai. Chahiye to number ko pehle shuffle
-         / XOR karo, phir base62. Phir bhi unique rahega.
-  - User apna code maange ("bit.ly/arpan")?
-      -> check karo: lambai theek, "admin" / "login" jaisa reserved shabd nahi, pehle se liya hua nahi.
-         Do log ek saath same code maangein -> DB me UNIQUE rule, ek ko 409 (pehle se hai).
-  - Redirect 301 dein ya 302?
-      -> 302. 301 pe browser link yaad kar leta hai, agli baar server tak aata hi nahi.
-         Tab click gin nahi paate aur expiry bhi kaam nahi karti.
+DIKKAT 4   User apna code maange ("bit.ly/arpan")?
+HAL        Check karo: lambai theek, "admin" / "login" jaisa reserved shabd nahi, pehle se liya hua nahi.
+           Do log ek saath same code maangein -> DB me UNIQUE rule, ek ko 409 (pehle se hai).
+
+DIKKAT 5   Redirect 301 dein ya 302?
+HAL        302. 301 pe browser link yaad kar leta hai, agli baar server tak aata hi nahi.
+           Tab click gin nahi paate aur expiry bhi kaam nahi karti.
 ```
 
 #### 1 HAR CLICK DB PE, REDIRECT 200 MS SE TEZ CHAHIYE
 ```
-KAHANI:  Ek second me 1 lakh click aa rahe hain. Har click DB tak ja raha hai, aur DB disk se padhta hai.
-         DB pe bojh badhta gaya, redirect dheema hua. Ek viral link pe to DB hi baith gaya.
-
-ILAAJ:   DB ke aage REDIS (cache). Click aaya -> pehle Redis dekho.
-         Mila -> wahi se bhej do. Nahi mila -> DB se laao, Redis
-         me rakh do, phir bhejo. (Isi ko cache-aside kehte hain.)
-         Redis me link ki expiry (TTL) wahi rakho jo link ki hai.
+DIKKAT 1   Ek second me 1 lakh click aa rahe hain. Har click DB tak ja raha hai, aur DB disk se padhta hai.
+           DB pe bojh badhta gaya, redirect dheema hua. Ek viral link pe to DB hi baith gaya.
+HAL        DB ke aage REDIS (cache). Click aaya -> pehle Redis dekho.
+           Mila -> wahi se bhej do. Nahi mila -> DB se laao, Redis me rakh do, phir bhejo.
+           (Isi ko cache-aside kehte hain.)
+           Redis me link ki expiry (TTL) wahi rakho jo link ki hai.
+           Redis RAM me rakhta hai, ek milisecond se kam me jawab. DB disk se padhta hai, kai milisecond.
+           Log zyadatar wahi link baar-baar kholte hain -> ~100 me se 95 click Redis se hi nikal jaate.
+           DB bach gaya.
 ```
 ```mermaid
 flowchart TD
@@ -115,37 +118,36 @@ flowchart TD
     n_App --> n_DB
 ```
 ```
-ANDAR KAISE:
-         Redis RAM me rakhta hai, ek milisecond se kam me jawab. DB disk se padhta hai, kai milisecond.
-         Log zyadatar wahi link baar-baar kholte hain -> ~100 me se 95 click Redis se hi nikal jaate.
-         DB bach gaya.
+DIKKAT 2   Redis me saare 180 arab link rakhoge?
+HAL        Nahi, sirf jo abhi garam (zyada khul rahe) hain. Jagah bhar gayi to jo link sabse der se nahi
+           khula use nikaalo (LRU). Wo baad me khula to DB se wapas aa jaayega.
 
-ISKE BAAD KYA TOOTEGA:
-  - Redis me saare 180 arab link rakhoge?
-      -> nahi, sirf jo abhi garam (zyada khul rahe) hain. Jagah bhar gayi to jo link sabse der se nahi khula
-         use nikaalo (LRU). Wo baad me khula to DB se wapas aa jaayega.
-  - Link delete / expire ho gaya, par Redis me abhi pada hai?
-      -> expiry pe Redis khud hata deta hai. Delete pe pehle DB se hatao, phir Redis se.
-  - Redis hi gir gaya?
-      -> wo 95% click ek saath DB pe girenge, DB bhi gir sakta
-         hai. Isliye Redis ki bhi copies (cluster + replica).
-         Phir bhi gira to kuch request mana karo (load shedding), aur garam link ko sirf EK request
-         DB se laaye, baaki ruke. "kuch nahi hoga" kabhi mat bolna.
-  - DB ki read copy (replica) kyun nahi, ya har App apna cache rakhe?
-      -> replica bhi disk se padhti hai, dheemi. Har App ka apna cache = sabke paas alag copy,
-         link badla to kisi App pe purana dikhta rahega.
+DIKKAT 3   Link delete / expire ho gaya, par Redis me abhi pada hai?
+HAL        Expiry pe Redis khud hata deta hai. Delete pe pehle DB se hatao, phir Redis se.
+
+DIKKAT 4   Redis hi gir gaya?
+HAL        Wo 95% click ek saath DB pe girenge, DB bhi gir sakta
+           hai. Isliye Redis ki bhi copies (cluster + replica).
+           Phir bhi gira to kuch request mana karo (load shedding), aur garam link ko sirf EK request
+           DB se laaye, baaki ruke. "kuch nahi hoga" kabhi mat bolna.
+
+DIKKAT 5   DB ki read copy (replica) kyun nahi, ya har App apna cache rakhe?
+HAL        Replica bhi disk se padhti hai, dheemi. Har App ka apna cache = sabke paas alag copy, link badla
+           to kisi App pe purana dikhta rahega.
 ```
 
 #### 2 EK APP 1 LAKH / SEC NAHI JHELTA, GIRA TO SITE BAND
 ```
-KAHANI:  Saari request ek hi App machine pe. Bojh se wo dheema
-         hua, aur ek din wahi gir gaya -> poori site band.
-         Ek cheez jiske girne se sab ruk jaaye, use SPOF (single point of failure) kehte hain.
-
-ILAAJ:   Ek ki jagah kai app server, aur koi bhi server user ka kuch yaad nahi rakhta (sab Redis / DB me).
-         Isliye koi bhi request kisi bhi server pe jaa sakti hai.
-         Aage load balancer baitha hai. Wo har kuch second me har server se poochhta 'zinda ho?'. Jo jawab
-         na de ya dheema ho, usko list se hata deta, request baaki servers pe jaati hain.
+DIKKAT 1   Saari request ek hi App machine pe. Bojh se wo dheema hua, aur ek din
+           wahi gir gaya -> poori site band.
+           Ek cheez jiske girne se sab ruk jaaye, use SPOF (single point of failure) kehte hain.
+HAL        Ek ki jagah kai app server, aur koi bhi server user ka kuch yaad nahi rakhta (sab Redis / DB me).
+           Isliye koi bhi request kisi bhi server pe jaa sakti hai.
+           Aage load balancer baitha hai. Wo har kuch second me har server se poochhta 'zinda ho?'. Jo jawab
+           na de ya dheema ho, usko list se hata deta, request baaki servers pe jaati hain.
+           LB request baari-baari bhejta hai (round-robin), ya jiske paas kam kaam hai use (least-conn).
+           Har ~5 second LB har machine se poochta hai "zinda ho?" (GET /health).
+           Jawab nahi aaya -> us machine ko list se hata do. Theek hui -> wapas jod do.
 ```
 ```mermaid
 flowchart TD
@@ -164,30 +166,29 @@ flowchart TD
     n_App_x_N_2 --> n_DB
 ```
 ```
-ANDAR KAISE:
-         LB request baari-baari bhejta hai (round-robin), ya jiske paas kam kaam hai use (least-conn).
-         Har ~5 second LB har machine se poochta hai "zinda ho?" (GET /health).
-         Jawab nahi aaya -> us machine ko list se hata do. Theek hui -> wapas jod do.
+DIKKAT 2   Stateless kyun zaroori hai?
+HAL        Agar user ki baat App-1 ki memory me hai aur agli request App-2 pe
+           gayi, to App-2 ko kuch pata nahi.
+           Sab Redis / DB me ho to koi bhi machine koi bhi request le sakti hai.
 
-ISKE BAAD KYA TOOTEGA:
-  - Stateless kyun zaroori hai?
-      -> agar user ki baat App-1 ki memory me hai aur agli request App-2 pe gayi, to App-2 ko kuch pata nahi.
-         Sab Redis / DB me ho to koi bhi machine koi bhi request le sakti hai.
-  - Ek bahut badi machine le lo (vertical scale)?
-      -> uski bhi ek had hai, aur wo akeli hai -> phir wahi gire to sab band.
-  - Machine mari nahi, bas dheemi hai?
-      -> LB jawab ka time aur galtiyon ki ginti bhi dekhta hai. Least-conn khud usko kam bhejta hai.
+DIKKAT 3   Ek bahut badi machine le lo (vertical scale)?
+HAL        Uski bhi ek had hai, aur wo akeli hai -> phir wahi gire to sab band.
+
+DIKKAT 4   Machine mari nahi, bas dheemi hai?
+HAL        LB jawab ka time aur galtiyon ki ginti bhi dekhta hai. Least-conn khud usko kam bhejta hai.
 ```
 
 #### 3 KAI APP, DO APP EK HI CODE BANA DENGE
 ```
-KAHANI:  Ab App ki 2 machine hain, dono apna-apna counter chala rahi hain.
-         App-1 ka counter 5 pe hai, App-2 ka bhi 5 pe. Dono ne naya
-         link banaya -> dono ka number 6 -> dono ka code same.
-         Do alag link, ek hi code. Ise COLLISION kehte hain.
-
-ILAAJ:   Ek COUNTER service (ZooKeeper ya DB ki ek table) har App ko numbers ka ALAG thaila (range) deti hai.
-         App-1 ko 1 se 1000, App-2 ko 1001 se 2000. Dono ke number kabhi takrayenge hi nahi.
+DIKKAT 1   Ab App ki 2 machine hain, dono apna-apna counter chala rahi hain.
+           App-1 ka counter 5 pe hai, App-2 ka bhi 5 pe. Dono ne naya link banaya -> dono ka
+           number 6 -> dono ka code same.
+           Do alag link, ek hi code. Ise COLLISION kehte hain.
+HAL        Ek COUNTER service (ZooKeeper ya DB ki ek table) har App ko numbers
+           ka ALAG thaila (range) deti hai.
+           App-1 ko 1 se 1000, App-2 ko 1001 se 2000. Dono ke number kabhi takrayenge hi nahi.
+           App apne thaile me se khud ginta rehta hai. Counter service se baat sirf tab, jab thaila khatam ho.
+           Matlab har link pe network call nahi, 1000 link me ek baar.
 ```
 ```mermaid
 flowchart TD
@@ -209,32 +210,32 @@ flowchart TD
     n_App_x_N_2 --> n_DB
 ```
 ```
-ANDAR KAISE:
-         App apne thaile me se khud ginta rehta hai. Counter service se baat sirf tab, jab thaila khatam ho.
-         Matlab har link pe network call nahi, 1000 link me ek baar.
+DIKKAT 2   App-1 number 400 pe crash ho gaya. 401 se 1000 ka kya?
+HAL        Wo bekaar gaye, aur ye jaan-boojh ke maana hai. 3.5 lakh crore code hain,
+           kuch hazaar jaane se farak nahi.
+           Har number bachana ho to har link pe coordination lagega, range ka fayda hi khatam.
 
-ISKE BAAD KYA TOOTEGA:
-  - App-1 number 400 pe crash ho gaya. 401 se 1000 ka kya?
-      -> wo bekaar gaye, aur ye jaan-boojh ke maana hai. 3.5
-         lakh crore code hain, kuch hazaar jaane se farak nahi.
-         Har number bachana ho to har link pe coordination lagega, range ka fayda hi khatam.
-  - Counter service khud gir gayi?
-      -> App ke paas abhi apna thaila (1000 number) bacha hai, kaam chalta rehta hai.
-         Tab tak counter ki doosri copy uth jaati hai.
-  - Redis ka INCR (ek-ek badhao) kyun nahi?
-      -> chal jaata, par har link pe ek call. Range me 1000 link pe ek call.
+DIKKAT 3   Counter service khud gir gayi?
+HAL        App ke paas abhi apna thaila (1000 number) bacha hai, kaam chalta rehta hai.
+           Tab tak counter ki doosri copy uth jaati hai.
+
+DIKKAT 4   Redis ka INCR (ek-ek badhao) kyun nahi?
+HAL        Chal jaata, par har link pe ek call. Range me 1000 link pe ek call.
 ```
 
 #### 4 HAR CLICK PE ANALYTICS LIKHNA
 ```
-KAHANI:  User ne click kiya. Usi request me hum "click hua" analytics DB me likhne lage, phir redirect kiya.
-         Analytics DB dheema tha -> user ko redirect ke liye rukna pada. Yahan har milisecond keemti hai.
-
-ILAAJ:   Redirect turant user ko bhej deta (302), aur saath me 'ek click hua' ki khabar Kafka me daal
-         deta. Click ginne wali service peeche se aaram se padhti.
-         Ek hi click do baar aa jaaye to click id dekh ke doosri baar nahi ginti. Koi khabar baar-baar
-         fail ho to alag line (DLQ) me, taaki baaki atke nahi.
-         Kafka band ho gaya to bhi redirect chalta rahega, bas kuch click ginti me nahi aayenge.
+DIKKAT 1   User ne click kiya. Usi request me hum "click hua" analytics DB me likhne lage, phir redirect kiya.
+           Analytics DB dheema tha -> user ko redirect ke liye rukna pada. Yahan har milisecond keemti hai.
+HAL        Redirect turant user ko bhej deta (302), aur saath me 'ek click hua' ki khabar Kafka me daal
+           deta. Click ginne wali service peeche se aaram se padhti.
+           Ek hi click do baar aa jaaye to click id dekh ke doosri baar nahi ginti. Koi khabar baar-baar
+           fail ho to alag line (DLQ) me, taaki baaki atke nahi.
+           Kafka band ho gaya to bhi redirect chalta rahega, bas kuch click ginti me nahi aayenge.
+           Kafka ek diary jaisa hai: disk pe likha jaata hai, App bas aakhri
+                                     page pe likh ke aage badh jaata hai.
+           Analytics service yaad rakhti hai kahan tak padha (offset). Crash hui to wahin se dobara.
+           Ek kharab khabar DLQ me chali jaati hai, baaki line nahi rukti.
 ```
 ```mermaid
 flowchart TD
@@ -265,29 +266,30 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 ```
-ANDAR KAISE:
-         Kafka ek diary jaisa hai: disk pe likha jaata hai, App bas aakhri
-                                   page pe likh ke aage badh jaata hai.
-         Analytics service yaad rakhti hai kahan tak padha (offset). Crash hui to wahin se dobara.
-         Ek kharab khabar DLQ me chali jaati hai, baaki line nahi rukti.
+DIKKAT 2   App ke andar hi peeche ek thread se likh do?
+HAL        App crash = memory me padi khabarein gayi. Kafka disk pe hai, aur purane
+           click dobara padh bhi sakte hain.
 
-ISKE BAAD KYA TOOTEGA:
-  - App ke andar hi peeche ek thread se likh do?
-      -> App crash = memory me padi khabarein gayi. Kafka disk
-         pe hai, aur purane click dobara padh bhi sakte hain.
-  - Kafka kyun, SQS kyun nahi?
-      -> SQS bhi chal jaata. Kafka isliye ki click bahut zyada hain, aur naya report banana ho to
-         purane click dobara padh sakte hain (replay). SQS padhne ke baad message hata deta hai.
+DIKKAT 3   Kafka kyun, SQS kyun nahi?
+HAL        SQS bhi chal jaata. Kafka isliye ki click bahut zyada hain, aur naya report banana ho to purane
+           click dobara padh sakte hain (replay). SQS padhne ke baad message hata deta hai.
 ```
 
 #### 5 5 SAAL KA ~90 TB EK MACHINE ME NAHI
 ```
-KAHANI:  10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Itna ek machine me nahi aata.
-         Aur wo ek machine mari to saare link gaye.
-
-ILAAJ:   Data ko tukdon me baanto, short code ke hisaab se. 'abc' wala link hamesha ek hi tukde pe, to
-         redirect ko pata hai kahan dhoondhna.
-         Har tukde ki 3 copy, alag-alag building me, taaki ek gire to bhi data rahe.
+DIKKAT 1   10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Itna ek machine me nahi aata.
+           Aur wo ek machine mari to saare link gaye.
+HAL        Data ko tukdon me baanto, short code ke hisaab se. 'abc' wala link hamesha ek hi tukde pe, to
+           redirect ko pata hai kahan dhoondhna.
+           Har tukde ki 3 copy, alag-alag building me, taaki ek gire to bhi data rahe.
+           Click hamesha code ke saath aata hai (GET /abc123).
+           Code se seedha pata chal jaata hai kaunsi machine.
+           RING: ek gol ghadi socho. Machines ghadi pe kahin-kahin baithi hain,
+           har code bhi ghadi pe ek jagah.
+           Code ghadi ki disha me chalta hai, jo pehli machine mile wahi uski.
+           Nayi machine aayi -> sirf uske theek peeche wale codes usko jaate, baaki apni jagah.
+           (Agar "code % machine ki ginti" karte, to 3 se 4
+           machine hote hi lagbhag har code ki jagah badal jaati.)
 ```
 ```mermaid
 flowchart TD
@@ -318,43 +320,38 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 ```
-ANDAR KAISE:
-         Click hamesha code ke saath aata hai (GET /abc123).
-         Code se seedha pata chal jaata hai kaunsi machine.
-         RING: ek gol ghadi socho. Machines ghadi pe kahin-kahin baithi hain, har code bhi ghadi pe ek jagah.
-         Code ghadi ki disha me chalta hai, jo pehli machine mile wahi uski.
-         Nayi machine aayi -> sirf uske theek peeche wale codes usko jaate, baaki apni jagah.
-         (Agar "code % machine ki ginti" karte, to 3 se 4
-         machine hote hi lagbhag har code ki jagah badal jaati.)
+DIKKAT 2   Country ya date ke hisaab se kyun nahi baanta?
+HAL        Ek country / aaj ka din garam ho jaata, ek machine pe saara bojh.
+           Aur code dekh ke pata hi nahi kis country ka -> saari machine poochni padti.
 
-ISKE BAAD KYA TOOTEGA:
-  - Country ya date ke hisaab se kyun nahi baanta?
-      -> ek country / aaj ka din garam ho jaata, ek machine pe saara bojh.
-         Aur code dekh ke pata hi nahi kis country ka -> saari machine poochni padti.
-  - Copies (replica) badha do, likhna bhi tez ho jaayega?
-      -> nahi. Har copy pe likhna to padta hi hai. Likhne ka bojh baantna = SHARD.
-         Copy = bachav + padhne ka bojh.
-  - Ek machine pe zyada code aa gaye?
-      -> har machine ko ghadi pe 100-200 jagah baitha do (virtual nodes) -> bojh barabar bat jaata.
-  - Ek link viral, uski machine garam?
-      -> wo link Redis se hi nikal jaata, machine tak kam aata.
-  - Cassandra kyun, MySQL kyun nahi?
-      -> join / transaction chahiye hi nahi, bas "code se link nikaalo" + 90 TB.
-         Wajah = kaam ka dhaancha + size. "NoSQL zyada powerful" wajah nahi.
-         Chhota maana (~500 GB) to ek MySQL kaafi, shard bhi nahi.
+DIKKAT 3   Copies (replica) badha do, likhna bhi tez ho jaayega?
+HAL        Nahi. Har copy pe likhna to padta hi hai. Likhne ka bojh baantna = SHARD.
+           Copy = bachav + padhne ka bojh.
+
+DIKKAT 4   Ek machine pe zyada code aa gaye?
+HAL        Har machine ko ghadi pe 100-200 jagah baitha do (virtual nodes) -> bojh barabar bat jaata.
+
+DIKKAT 5   Ek link viral, uski machine garam?
+HAL        Wo link Redis se hi nikal jaata, machine tak kam aata.
+
+DIKKAT 6   Cassandra kyun, MySQL kyun nahi?
+HAL        Join / transaction chahiye hi nahi, bas "code se link nikaalo" + 90 TB.
+           Wajah = kaam ka dhaancha + size. "NoSQL zyada powerful" wajah nahi.
+           Chhota maana (~500 GB) to ek MySQL kaafi, shard bhi nahi.
 ```
 
 #### 6 WRITE KE BEECH EK COPY WALA NODE GIRA
 ```
-KAHANI:  User ne link banaya. Cassandra use 3 copy me likh
-         raha tha, aur beech me ek copy wali machine gir gayi.
-         Jo likh diya, wo khona nahi chahiye.
-
-ILAAJ:   DB koi bhi cheez likhne se pehle apni diary (commit log) me note karta, phir data me daalta. Gira
-         aur utha to diary dekh ke poora kar leta.
-         Aur ek link tab hi 'save ho gaya' maana jaata jab 3 me se kam se kam 2 copy ne likh liya. Ek
-         machine giri to baaki do ke paas wo link hai.
-         Us beech redirect waise bhi Redis se chal rahe hain.
+DIKKAT 1   User ne link banaya. Cassandra use 3 copy me likh raha tha, aur beech me
+           ek copy wali machine gir gayi.
+           Jo likh diya, wo khona nahi chahiye.
+HAL        DB koi bhi cheez likhne se pehle apni diary (commit log) me note karta, phir data me daalta. Gira
+           aur utha to diary dekh ke poora kar leta.
+           Aur ek link tab hi 'save ho gaya' maana jaata jab 3 me se kam se kam 2 copy ne likh liya. Ek
+           machine giri to baaki do ke paas wo link hai.
+           Us beech redirect waise bhi Redis se chal rahe hain.
+           Machine wapas uthi -> apni diary padh ke jo adhoora tha wo poora kar leti hai.
+           2 copy me pehle se hai -> ek gire to bhi data bacha.
 ```
 ```mermaid
 flowchart TD
@@ -385,34 +382,34 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 ```
-ANDAR KAISE:
-         Machine wapas uthi -> apni diary padh ke jo adhoora tha wo poora kar leti hai.
-         2 copy me pehle se hai -> ek gire to bhi data bacha.
+DIKKAT 2   2 ka hi intezaar kyun, teeno ka kyun nahi?
+HAL        Teeno ka intezaar = ek dheemi machine sabko dheema kar degi. 2 me ek gire tab bhi likh sakte.
 
-ISKE BAAD KYA TOOTEGA:
-  - 2 ka hi intezaar kyun, teeno ka kyun nahi?
-      -> teeno ka intezaar = ek dheemi machine sabko dheema kar degi. 2 me ek gire tab bhi likh sakte.
-  - 2 machine gir gayi?
-      -> 2 haan nahi milenge -> likhna fail (ya 1 pe likh lo,
-         risk ke saath). Click tab tak Redis se chalte rahenge.
-  - Kafka laga do data bachane ke liye?
-      -> nahi. Ye DB ki apni diary ka kaam hai, extra dabba mat lagao.
+DIKKAT 3   2 machine gir gayi?
+HAL        2 haan nahi milenge -> likhna fail (ya 1 pe likh lo, risk ke saath). Click
+           tab tak Redis se chalte rahenge.
+
+DIKKAT 4   Kafka laga do data bachane ke liye?
+HAL        Nahi. Ye DB ki apni diary ka kaam hai, extra dabba mat lagao.
 ```
 
 #### 7 NAYA LINK BANAYA, TURANT CLICK -> 404
 ```
-KAHANI:  Tune link banaya. Cassandra har link ko 3 jagah rakhta hai: copy A, copy B, copy C.
-         Likhte waqt link A aur B me pahunch gaya, C tak pahunchne me thoda time lagta
-         (aam taur pe milisecond, bheed me second tak).
-         Isi beech tune click kiya, aur request C pe gayi. C bola "ye link mere paas nahi" -> 404.
+DIKKAT 1   Tune link banaya. Cassandra har link ko 3 jagah rakhta hai: copy A, copy B, copy C.
+           Likhte waqt link A aur B me pahunch gaya, C tak pahunchne me thoda time lagta (aam taur pe
+           milisecond, bheed me second tak).
+           Isi beech tune click kiya, aur request C pe gayi. C bola "ye link mere paas nahi" -> 404.
+HAL        Raasta 1 (aasaan wala):
+           Link banate hi Redis me bhi daal do. Click sabse pehle Redis dekhta hai, wahan link mil jaata hai.
+           C tak jaana hi nahi padta.
 
-ILAAJ 1 (aasaan wala):
-         Link banate hi Redis me bhi daal do. Click sabse pehle Redis dekhta hai, wahan link mil jaata hai.
-         C tak jaana hi nahi padta.
-
-ILAAJ 2 (DB ke andar wala):
-         Likhte waqt tabhi "ho gaya" bolo jab link 2 copy me likh jaaye.
-         Padhte waqt bhi 2 copy se poochho.
+           Raasta 2 (DB ke andar wala):
+           Likhte waqt tabhi "ho gaya" bolo jab link 2 copy me likh jaaye.
+           Padhte waqt bhi 2 copy se poochho.
+           Kyun chalta:
+           Link likha A aur B me. Ab padhte waqt koi bhi 2 copy uthao: A+C, B+C ya A+B.
+           Har jodi me A ya B me se ek to aayegi hi, aur usme naya link hai. Khaali haath kabhi nahi lautoge.
+           Isi ko QUORUM kehte hain: "2 me likha + 2 se padha" -> dono me ek copy common pakki.
 ```
 ```mermaid
 flowchart TD
@@ -443,27 +440,24 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 ```
-ANDAR KAISE (ye kaam kyun karta hai):
-         Link likha A aur B me. Ab padhte waqt koi bhi 2 copy uthao: A+C, B+C ya A+B.
-         Har jodi me A ya B me se ek to aayegi hi, aur usme naya link hai. Khaali haath kabhi nahi lautoge.
-         Isi ko QUORUM kehte hain: "2 me likha + 2 se padha" -> dono me ek copy common pakki.
+DIKKAT 2   Tez karne ke liye sirf 1 copy se padh lo?
+HAL        Wo 1 copy C ho sakti hai, jisme abhi link aaya hi nahi -> phir 404.
 
-ISKE BAAD KYA TOOTEGA:
-  - Tez karne ke liye sirf 1 copy se padh lo?
-      -> wo 1 copy C ho sakti hai, jisme abhi link aaya hi nahi -> phir 404.
-  - 2 copy se padhna dheema nahi hoga?
-      -> haan, thoda. Isliye pehla ilaaj Redis hai: zyada click Redis se hi nikal jaate.
-  - Cassandra me koi "main copy" hoti hai?
-      -> nahi. Teeno copy barabar hain, koi bhi likh sakti hai aur koi bhi padh sakti hai.
+DIKKAT 3   2 copy se padhna dheema nahi hoga?
+HAL        Haan, thoda. Isliye pehla ilaaj Redis hai: zyada click Redis se hi nikal jaate.
+
+DIKKAT 4   Cassandra me koi "main copy" hoti hai?
+HAL        Nahi. Teeno copy barabar hain, koi bhi likh sakti hai aur koi bhi padh sakti hai.
 ```
 
 #### 8 LB KHUD GIR GAYA
 ```
-KAHANI:  App, Redis, DB sab zinda hain. Par sabko request baantne wala Load Balancer hi mar gaya.
-         Ab koi request andar aa hi nahi rahi -> site band.
-
-ILAAJ:   Do LB rakho, aur unke aage ROUTE 53 (AWS ka DNS) jo dekhta rahe kaunsa LB zinda hai.
-         Ek mara -> sab request doosre pe. Poora region (shehar ka data center) gaya -> doosre region pe.
+DIKKAT 1   App, Redis, DB sab zinda hain. Par sabko request baantne wala Load Balancer hi mar gaya.
+           Ab koi request andar aa hi nahi rahi -> site band.
+HAL        Do LB rakho, aur unke aage ROUTE 53 (AWS ka DNS) jo dekhta rahe kaunsa LB zinda hai.
+           Ek mara -> sab request doosre pe. Poora region (shehar ka data center) gaya -> doosre region pe.
+           Route 53 har ~30 second har LB se poochta hai "zinda ho?".
+           3 baar jawab nahi -> us LB ka pata (IP) user ko dena band kar deta hai.
 ```
 ```mermaid
 flowchart TD
@@ -500,30 +494,28 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 ```
-ANDAR KAISE:
-         Route 53 har ~30 second har LB se poochta hai "zinda ho?".
-         3 baar jawab nahi -> us LB ka pata (IP) user ko dena band kar deta hai.
+DIKKAT 2   Switch turant ho jaata hai?
+HAL        Nahi. User ka phone purana pata ~60 second yaad rakhta hai (DNS TTL),
+           tab tak kuch log purane LB pe.
+           Isliye cloud me LB khud kai data center me phaila hota hai (AWS ALB).
 
-ISKE BAAD KYA TOOTEGA:
-  - Switch turant ho jaata hai?
-      -> nahi. User ka phone purana pata ~60 second yaad rakhta hai (DNS TTL), tab tak kuch log purane LB pe.
-         Isliye cloud me LB khud kai data center me phaila hota hai (AWS ALB).
-  - Poora region gaya, to naye link ka kya?
-      -> doosre region me data thoda peeche-peeche copy hota
-         hai. Aakhri kuch second ke naye link kho sakte hain.
-         Ye maana hua risk hai.
+DIKKAT 3   Poora region gaya, to naye link ka kya?
+HAL        Doosre region me data thoda peeche-peeche copy hota hai. Aakhri kuch
+           second ke naye link kho sakte hain.
+           Ye maana hua risk hai.
 ```
 
 #### 9 SCRIPT SE RAAT ME 10 LAKH LINK
 ```
-KAHANI:  Ek bande ne script likh di, raat bhar me 10 lakh link bana diye.
-         Counter ke number tez khatam hue, DB me kachra bhar gaya, asli users ke liye dheema.
-
-ILAAJ:   Darwaze (API gateway) pe hi rok: har user / IP kitni baar link bana sakta, uski had. Login check
-         bhi wahin.
-         Uske bhi aage WAF jo jaane-pehchaane hamle rokta.
-         Aur lamba URL chhota karne se pehle check karo ki wo virus / dhokhe wali site to nahi, warna
-         hamara chhota link bura kaam karega.
+DIKKAT 1   Ek bande ne script likh di, raat bhar me 10 lakh link bana diye.
+           Counter ke number tez khatam hue, DB me kachra bhar gaya, asli users ke liye dheema.
+HAL        Darwaze (API gateway) pe hi rok: har user / IP kitni baar link bana sakta,
+           uski had. Login check bhi wahin.
+           Uske bhi aage WAF jo jaane-pehchaane hamle rokta.
+           Aur lamba URL chhota karne se pehle check karo ki wo virus / dhokhe wali site to nahi, warna
+           hamara chhota link bura kaam karega.
+           Ginti ek hi jagah honi chahiye. Har App apni alag gine to banda har App pe limit tak bana lega.
+           Isliye ginti ek shared Redis me (INCR + expiry), sab gateway wahi dekhte hain.
 ```
 ```mermaid
 flowchart TD
@@ -561,15 +553,11 @@ flowchart TD
     n_Analytics_svc --> n_DLQ
 ```
 ```
-ANDAR KAISE:
-         Ginti ek hi jagah honi chahiye. Har App apni alag gine to banda har App pe limit tak bana lega.
-         Isliye ginti ek shared Redis me (INCR + expiry), sab gateway wahi dekhte hain.
+DIKKAT 2   Gateway ki kai machine hain, ginti kahan?
+HAL        Shared Redis me, sab ek hi ginti dekhein. (Poora design = 02_rate_limiter.)
 
-ISKE BAAD KYA TOOTEGA:
-  - Gateway ki kai machine hain, ginti kahan?
-      -> shared Redis me, sab ek hi ginti dekhein. (Poora design = 02_rate_limiter.)
-  - Bot har baar naye IP se aa raha?
-      -> IP pe nahi, API key / user_id pe limit, aur WAF ke bot rules.
+DIKKAT 3   Bot har baar naye IP se aa raha?
+HAL        IP pe nahi, API key / user_id pe limit, aur WAF ke bot rules.
 ```
 
 ```

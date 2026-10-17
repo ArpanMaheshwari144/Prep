@@ -47,8 +47,8 @@ NUMBERS (andaaza):
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-> Har dikkat ek card: KAHANI (kya hua, kaun, kitna) -> ILAAJ -> ANDAR KAISE (ilaaj kyun kaam karta) ->
-> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta hai: dabba lagaya, ab kya?).
+> Har card: DIKKAT 1 (kya toota) -> HAL (kya kiya) -> diagram -> DIKKAT 2, 3 ... (interviewer ke
+> agle sawaal) har ek ke neeche uska HAL. Revise: sirf baayein column padho.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
@@ -65,14 +65,16 @@ flowchart TD
 
 #### 1 CONSUMER RESTART HUA, MESSAGE GAYAB
 ```
-KAHANI:  Queue machine ki memory me thi, 500 signup message
-         pade the. Machine restart -> memory saaf -> 500 gayab.
-         Email service ko pata hi nahi chala ki 500 log aaye the.
-
-ILAAJ:   Message memory me nahi, disk pe ek register me likhte, sirf neeche jodte jaate. Har message ka
-         number (offset).
-         Padhne se message mit-ta nahi. Email service ne 2 tak padha aur restart hui, to 3 se aage padh
-         leti. Chahe to peeche jaake dobara bhi.
+DIKKAT 1   Queue machine ki memory me thi, 500 signup message pade the. Machine
+           restart -> memory saaf -> 500 gayab.
+           Email service ko pata hi nahi chala ki 500 log aaye the.
+HAL        Message memory me nahi, disk pe ek register me likhte, sirf neeche jodte jaate.
+           Har message ka number (offset).
+           Padhne se message mit-ta nahi. Email service ne 2 tak padha aur restart hui, to 3 se aage padh
+           leti. Chahe to peeche jaake dobara bhi.
+           P0: [0][1][2][3][4][5] -> naya hamesha AAKHIR me judta.
+           Email service ne 2 tak padha (offset = 2) -> restart -> "3 se do" -> kuch nahi khoya.
+           Offset = kram number (byte nahi). Ek chhoti .index file batati "offset 3 file me kis jagah".
 ```
 ```mermaid
 flowchart TD
@@ -83,27 +85,23 @@ flowchart TD
     n_Log --> n_Consumer
 ```
 ```
-ANDAR KAISE:
-         P0: [0][1][2][3][4][5] -> naya hamesha AAKHIR me judta.
-         Email service ne 2 tak padha (offset = 2) -> restart -> "3 se do" -> kuch nahi khoya.
-         Offset = kram number (byte nahi). Ek chhoti .index file batati "offset 3 file me kis jagah".
+DIKKAT 2   Disk pe likhna dheema nahi?
+HAL        Sirf aakhir me jodna (sequential) = disk ka sabse tez kaam. Padhna OS ke page cache se, RAM jaisa.
 
-ISKE BAAD KYA TOOTEGA:
-  - Disk pe likhna dheema nahi?
-      -> sirf aakhir me jodna (sequential) = disk ka sabse tez kaam. Padhna OS ke page cache se, RAM jaisa.
-  - DB me queue kyun nahi bana lete?
-      -> DB insert = index + lock = idhar-udhar likhna. Queue
-         me WHERE hota hi nahi, bas "offset X ke baad do".
-  - Offset yaad kaun rakhta?
-      -> Kafka khud, ek andar wale topic __consumer_offsets me: (group, topic, partition) -> offset.
+DIKKAT 3   DB me queue kyun nahi bana lete?
+HAL        DB insert = index + lock = idhar-udhar likhna. Queue me WHERE hota hi
+           nahi, bas "offset X ke baad do".
+
+DIKKAT 4   Offset yaad kaun rakhta?
+HAL        Kafka khud, ek andar wale topic __consumer_offsets me: (group, topic, partition) -> offset.
 ```
 
 #### 2 EK MACHINE ME 2 TB AUR 5,000 / SEC NAHI AAYEGA
 ```
-KAHANI:  Ek broker (Kafka machine) me 2 TB nahi samaata, aur 5,000 likhai / second bhi akela nahi jhelta.
-
-ILAAJ:   Ek topic ko tukdon (partition) me todo, har tukda alag machine pe. Jagah bhi bat gayi, likhai
-         bhi.
+DIKKAT 1   Ek broker (Kafka machine) me 2 TB nahi samaata, aur 5,000 likhai / second bhi akela nahi jhelta.
+HAL        Ek topic ko tukdon (partition) me todo, har tukda alag machine pe. Jagah bhi bat gayi, likhai bhi.
+           topic "user-signup": P0 -> Broker A · P1 -> Broker B · P2 -> Broker C.
+           Bojh teen machine me bat gaya. Aur badhe -> aur broker + aur partition.
 ```
 ```mermaid
 flowchart TD
@@ -114,29 +112,27 @@ flowchart TD
     n_Brokers_A_B_C --> n_Consumer
 ```
 ```
-ANDAR KAISE:
-         topic "user-signup": P0 -> Broker A · P1 -> Broker B · P2 -> Broker C.
-         Bojh teen machine me bat gaya. Aur badhe -> aur broker + aur partition.
+DIKKAT 2   Kitne partition rakhoge?
+HAL        Jitne consumer ek saath chahiye + aage ki badhat (12-30).
+           Baad me badhaye to key ka partition badlega.
 
-ISKE BAAD KYA TOOTEGA:
-  - Kitne partition rakhoge?
-      -> jitne consumer ek saath chahiye + aage ki badhat (12-30).
-         Baad me badhaye to key ka partition badlega (card 3).
-  - Copy (replica) se likhna scale hoga?
-      -> nahi. Copy sirf bachav ke liye. Likhna partition se scale hota.
-  - Ek partition garam (ek key ki bahut khabar)?
-      -> key ko tukdon me todo (userId#bucket), agar us key pe kram zaroori nahi.
+DIKKAT 3   Copy (replica) se likhna scale hoga?
+HAL        Nahi. Copy sirf bachav ke liye. Likhna partition se scale hota.
+
+DIKKAT 4   Ek partition garam (ek key ki bahut khabar)?
+HAL        Key ko tukdon me todo (userId#bucket), agar us key pe kram zaroori nahi.
 ```
 
 #### 3 ARPAN KE TEEN EVENT TEEN PARTITION ME (KRAM ULTA)
 ```
-KAHANI:  Arpan ke teen event: signup P0 me gaya, profile-update P2 me, delete-account P1 me.
-         P1 jaldi padha gaya -> delete pehle hua, signup baad me. Ulta.
-         Kafka kram sirf EK partition ke andar deta, partitions ke beech nahi.
-
-ILAAJ:   Kram sirf ek tukde ke andar milta hai. Isliye Arpan ke saare event ek hi tukde me bhejo (key =
-         Arpan ki id). signup, update, delete kram se rahenge.
-         Poore topic ka kram chahiye to ek hi tukda rakhna padega, phir sab dheema.
+DIKKAT 1   Arpan ke teen event: signup P0 me gaya, profile-update P2 me, delete-account P1 me.
+           P1 jaldi padha gaya -> delete pehle hua, signup baad me. Ulta.
+           Kafka kram sirf EK partition ke andar deta, partitions ke beech nahi.
+HAL        Kram sirf ek tukde ke andar milta hai. Isliye Arpan ke saare event ek hi tukde me bhejo (key =
+           Arpan ki id). signup, update, delete kram se rahenge.
+           Poore topic ka kram chahiye to ek hi tukda rakhna padega, phir sab dheema.
+           partition = hash(Arpan ka userId) % 3 -> hamesha P2 -> signup, update, delete teeno P2 me, kram se.
+           Poore topic ka kram chahiye = sirf ek partition = speed khatam. Isliye kram sirf key ke andar.
 ```
 ```mermaid
 flowchart TD
@@ -147,26 +143,25 @@ flowchart TD
     n_Brokers_A_B_C --> n_Consumer
 ```
 ```
-ANDAR KAISE:
-         partition = hash(Arpan ka userId) % 3 -> hamesha P2 -> signup, update, delete teeno P2 me, kram se.
-         Poore topic ka kram chahiye = sirf ek partition = speed khatam. Isliye kram sirf key ke andar.
+DIKKAT 2   Partition 3 se 6 kiye to Arpan ka partition badla?
+HAL        Haan, % 3 se % 6 hua -> naye event naye partition me,
+           thodi der kram toota. Isliye shuru me hi zyada partition.
 
-ISKE BAAD KYA TOOTEGA:
-  - Partition 3 se 6 kiye to Arpan ka partition badla?
-      -> haan, % 3 se % 6 hua -> naye event naye partition me,
-         thodi der kram toota. Isliye shuru me hi zyada partition.
-  - Producer ka dobara bhejna kram ulta kare (1 fail, 2 gaya, phir 1)?
-      -> idempotent producer (enable.idempotence): har message
-         ka sequence number -> kram + duplicate dono theek.
+DIKKAT 3   Producer ka dobara bhejna kram ulta kare (1 fail, 2 gaya, phir 1)?
+HAL        Idempotent producer (enable.idempotence): har message ka sequence number
+           -> kram + duplicate dono theek.
 ```
 
 #### 4 EMAIL SERVICE KE 3 INSTANCE, ARPAN KO 3 EMAIL
 ```
-KAHANI:  Email service ki 3 machine (C1, C2, C3), teeno poora topic padh
-         rahi. Arpan ka signup teeno ne padha -> Arpan ko 3 welcome email.
-
-ILAAJ:   Email service ki 3 machine ek team (group) me. Team ke andar har tukda sirf ek machine padhti.
-         Arpan ka event jis tukde me hai, use sirf ek machine padhegi, to Arpan ko ek hi email.
+DIKKAT 1   Email service ki 3 machine (C1, C2, C3), teeno poora topic padh rahi. Arpan ka signup teeno ne
+           padha -> Arpan ko 3 welcome email.
+HAL        Email service ki 3 machine ek team (group) me. Team ke andar har tukda sirf ek machine padhti.
+           Arpan ka event jis tukde me hai, use sirf ek machine padhegi, to Arpan ko ek hi email.
+           P0 -> C1 · P1 -> C2 · P2 -> C3. Arpan ka event P2 me -> sirf C3 padhta -> ek email.
+           3 partition + 5 consumer = 2 khaali baithe (partition se zyada consumer bekaar).
+           (RabbitMQ / SQS standard me kai consumer ek line se lete -> kram ki guarantee nahi.
+            SQS FIFO ya ek hi consumer ho to kram milta, par tab speed kam.)
 ```
 ```mermaid
 flowchart TD
@@ -177,27 +172,22 @@ flowchart TD
     n_Brokers_A_B_C --> n_Group_email
 ```
 ```
-ANDAR KAISE:
-         P0 -> C1 · P1 -> C2 · P2 -> C3. Arpan ka event P2 me -> sirf C3 padhta -> ek email.
-         3 partition + 5 consumer = 2 khaali baithe (partition se zyada consumer bekaar).
-         (RabbitMQ / SQS standard me kai consumer ek line se lete -> kram ki guarantee nahi.
-          SQS FIFO ya ek hi consumer ho to kram milta, par tab speed kam.)
+DIKKAT 2   Kaam zyada, consumer badhaane hain?
+HAL        Partition bhi badhao. Consumer > partition = khaali baithe.
 
-ISKE BAAD KYA TOOTEGA:
-  - Kaam zyada, consumer badhaane hain?
-      -> partition bhi badhao. Consumer > partition = khaali baithe.
-  - Ek message 5 min ka kaam, poora partition atka?
-      -> haan (aage wala atka to peeche sab atke). Dheema kaam alag topic / worker pool ko do.
+DIKKAT 3   Ek message 5 min ka kaam, poora partition atka?
+HAL        Haan (aage wala atka to peeche sab atke). Dheema kaam alag topic / worker pool ko do.
 ```
 
 #### 5 ARPAN KA SIGNUP TEENO SERVICE KO CHAHIYE
 ```
-KAHANI:  Arpan ka signup event email service ko bhi chahiye, analytics ko bhi, dashboard ko bhi.
-         Card 4 ka group lagaya to ek hi ko milega.
-
-ILAAJ:   Topic ek hi, par email, analytics, dashboard teeno ki apni-apni team.
-         Ek team ke andar kaam bat-ta hai, alag team ho to har team ko poori khabar milti. Har team apna
-         'kahan tak padha' alag rakhti.
+DIKKAT 1   Arpan ka signup event email service ko bhi chahiye, analytics ko bhi, dashboard ko bhi.
+           Card 4 ka group lagaya to ek hi ko milega.
+HAL        Topic ek hi, par email, analytics, dashboard teeno ki apni-apni team.
+           Ek team ke andar kaam bat-ta hai, alag team ho to har team ko poori khabar milti. Har team apna
+           'kahan tak padha' alag rakhti.
+           email group, analytics group, dashboard group -> teeno ko Arpan ka event milta.
+           Har group ka apna offset. Analytics 1 ghanta peeche hai to email ko koi farak nahi.
 ```
 ```mermaid
 flowchart TD
@@ -212,26 +202,27 @@ flowchart TD
     n_Brokers_A_B_C --> n_Group_dashboard
 ```
 ```
-ANDAR KAISE:
-         email group, analytics group, dashboard group -> teeno ko Arpan ka event milta.
-         Har group ka apna offset. Analytics 1 ghanta peeche hai to email ko koi farak nahi.
+DIKKAT 2   Har service ka alag topic bana do?
+HAL        NAHI. Producer ko ek event teen baar bhejna padega ->
+           "ek message kai service" hi toota. Ye MQ ka dil hai.
 
-ISKE BAAD KYA TOOTEGA:
-  - Har service ka alag topic bana do?
-      -> NAHI. Producer ko ek event teen baar bhejna padega ->
-         "ek message kai service" hi toota. Ye MQ ka dil hai.
-  - Naya group aaj juda, purane 7 din padhega?
-      -> auto.offset.reset = earliest -> shuru se · latest -> sirf ab ke baad ka.
+DIKKAT 3   Naya group aaj juda, purane 7 din padhega?
+HAL        Auto.offset.reset = earliest -> shuru se · latest -> sirf ab ke baad ka.
 ```
 
 #### 6 BROKER A KI DISK GAYI, DATA GAYA
 ```
-KAHANI:  Har partition ki ek hi copy thi. Broker A ki disk mar gayi -> P0 ka saara data hamesha ke liye gaya.
-
-ILAAJ:   Har tukde ka ek leader (likhna-padhna isi pe) aur 2 copy alag machine pe. Leader gira to jo copy
-         poori saath chal rahi thi, wo leader ban jaati.
-         Zaroori khabar ke liye 'saari copy me likh gaya tabhi done', to leader gira to bhi khabar copy pe
-         hai.
+DIKKAT 1   Har partition ki ek hi copy thi. Broker A ki disk mar gayi -> P0 ka
+           saara data hamesha ke liye gaya.
+HAL        Har tukde ka ek leader (likhna-padhna isi pe) aur 2 copy alag machine pe. Leader gira to jo copy
+           poori saath chal rahi thi, wo leader ban jaati.
+           Zaroori khabar ke liye 'saari copy me likh gaya tabhi done', to leader
+           gira to bhi khabar copy pe hai.
+           Producer kitna pakka chahta (acks):
+             acks=0  bhej ke bhaag gaya (kho sakta)
+             acks=1  leader ne likh liya tab "done"
+             acks=all leader + saare ISR follower ne likh liya tab "done"
+           paisa / order = acks=all · click / log = acks=1.
 ```
 ```mermaid
 flowchart TD
@@ -248,33 +239,40 @@ flowchart TD
     n_Brokers_A_B_C --> n_Group_dashboard
 ```
 ```
-ANDAR KAISE:
-         Producer kitna pakka chahta (acks):
-           acks=0  bhej ke bhaag gaya (kho sakta)
-           acks=1  leader ne likh liya tab "done"
-           acks=all leader + saare ISR follower ne likh liya tab "done"
-         paisa / order = acks=all · click / log = acks=1.
+DIKKAT 2   acks=all + min.insync.replicas=2 ka matlab?
+HAL        Leader + kam se kam 1 follower ke paas likha tab "done". Leader mara to bhi data follower pe hai.
 
-ISKE BAAD KYA TOOTEGA:
-  - acks=all + min.insync.replicas=2 ka matlab?
-      -> leader + kam se kam 1 follower ke paas likha tab "done". Leader mara to bhi data follower pe hai.
-  - ISR me sirf leader bacha?
-      -> 2 se kam -> producer ko error (likhna band). Data khone se behtar.
-  - Peeche chal raha follower (ISR se bahar) leader ban gaya?
-      -> uske paas aakhri message nahi -> data gaya. Isliye sirf ISR wala hi leader.
+DIKKAT 3   ISR me sirf leader bacha?
+HAL        2 se kam -> producer ko error (likhna band). Data khone se behtar.
+
+DIKKAT 4   Peeche chal raha follower (ISR se bahar) leader ban gaya?
+HAL        Uske paas aakhri message nahi -> data gaya. Isliye sirf ISR wala hi leader.
 ```
 
 #### 7 KAAM HO GAYA PAR COMMIT SE PEHLE CRASH (+ OUTBOX)
 ```
-KAHANI:  SMS service ne offset 5 padha (Arpan ka order).
-         A) SMS bheja -> "padh liya" (commit) bolne se pehle CRASH -> restart pe phir 5 -> Arpan ko 2 SMS.
-         B) pehle commit kiya -> SMS bhejne se pehle CRASH ->
-         restart 6 se -> event 5 KHO gaya, SMS gaya hi nahi.
-
-ILAAJ:   Pehle KAAM, phir COMMIT (at-least-once: khoyega nahi, kabhi do baar aa sakta)
-         + consumer IDEMPOTENT: eventId Redis me hai? hai = skip.
-         DO alag key: KRAM ke liye userId (partition key) · DEDUP ke liye eventId.
-         userId se dedup kiya to Arpan ka agla sahi event bhi skip ho jaata.
+DIKKAT 1   SMS service ne offset 5 padha (Arpan ka order).
+           A) SMS bheja -> "padh liya" (commit) bolne se pehle CRASH -> restart pe phir 5 -> Arpan ko 2 SMS.
+           B) pehle commit kiya -> SMS bhejne se pehle CRASH ->
+           restart 6 se -> event 5 KHO gaya, SMS gaya hi nahi.
+HAL        Pehle KAAM, phir COMMIT (at-least-once: khoyega nahi, kabhi do baar aa sakta)
+           + consumer IDEMPOTENT: eventId Redis me hai? hai = skip.
+           DO alag key: KRAM ke liye userId (partition key) · DEDUP ke liye eventId.
+           userId se dedup kiya to Arpan ka agla sahi event bhi skip ho jaata.
+           Producer ki taraf = OUTBOX:
+           Order #101 DB me bana, par Kafka ko bhejne se pehle server gira -> event kabhi gaya hi nahi.
+           Ilaaj: order aur outbox ki row EK hi DB transaction me:
+             BEGIN · INSERT orders(101) · INSERT outbox(E-101, sent = false) · COMMIT
+           Relay (alag thread, har 1 sec) sent = false wali row Kafka bheje, ACK aaye to sent = true.
+           Crash kahan hua, teen case:
+             1 COMMIT se pehle         -> DB me kuch nahi, Arpan ko
+               error dikha, wo dobara karega. Kuch bana hi nahi.
+             2 COMMIT ke baad, bhejne se pehle -> outbox me sent =
+               false -> relay uthte hi bhej deta. Late, khoya nahi.
+             3 bhej diya, sent = true likhne se pehle -> relay phir bhejta -> Kafka me 2 copy
+               -> consumer E-101 dekh ke doosri skip -> Arpan ko EK email.
+           Nichod: server kuch yaad nahi rakhta, DB ka sent column yaad rakhta. Shaq ho to dobara bhejo,
+           duplicate ka ilaaj consumer pe.
 ```
 ```mermaid
 flowchart TD
@@ -293,41 +291,29 @@ flowchart TD
     n_Group_email --> n_Redis
 ```
 ```
-ANDAR KAISE (producer ki taraf = OUTBOX):
-         Order #101 DB me bana, par Kafka ko bhejne se pehle server gira -> event kabhi gaya hi nahi.
-         Ilaaj: order aur outbox ki row EK hi DB transaction me:
-           BEGIN · INSERT orders(101) · INSERT outbox(E-101, sent = false) · COMMIT
-         Relay (alag thread, har 1 sec) sent = false wali row Kafka bheje, ACK aaye to sent = true.
-         Crash kahan hua, teen case:
-           1 COMMIT se pehle         -> DB me kuch nahi, Arpan ko
-             error dikha, wo dobara karega. Kuch bana hi nahi.
-           2 COMMIT ke baad, bhejne se pehle -> outbox me sent =
-             false -> relay uthte hi bhej deta. Late, khoya nahi.
-           3 bhej diya, sent = true likhne se pehle -> relay phir bhejta -> Kafka me 2 copy
-             -> consumer E-101 dekh ke doosri skip -> Arpan ko EK email.
-         Nichod: server kuch yaad nahi rakhta, DB ka sent column yaad rakhta. Shaq ho to dobara bhejo,
-         duplicate ka ilaaj consumer pe.
+DIKKAT 2   Exactly-once Kafka me hota hi nahi?
+HAL        Kafka transactions + idempotent producer = Kafka se
+           Kafka tak. Bahar (SMS, DB) ke liye consumer idempotency.
 
-ISKE BAAD KYA TOOTEGA:
-  - Exactly-once Kafka me hota hi nahi?
-      -> Kafka transactions + idempotent producer = Kafka se
-         Kafka tak. Bahar (SMS, DB) ke liye consumer idempotency.
-  - "Event Kafka tak pahuncha hi nahi" pe offset ka jawab do?
-      -> nahi chalta. Offset = consumer ki taraf. Ye producer ki taraf hai -> OUTBOX.
-  - Outbox table badi ho gayi?
-      -> sent wali rows roz saaf / partition drop.
-  - Kuch na khoye, poora jawab?
-      -> acks=all + kaam ke baad commit + idempotent consumer + DLQ.
+DIKKAT 3   "Event Kafka tak pahuncha hi nahi" pe offset ka jawab do?
+HAL        Nahi chalta. Offset = consumer ki taraf. Ye producer ki taraf hai -> OUTBOX.
+
+DIKKAT 4   Outbox table badi ho gayi?
+HAL        Sent wali rows roz saaf / partition drop.
+
+DIKKAT 5   Kuch na khoye, poora jawab?
+HAL        Acks=all + kaam ke baad commit + idempotent consumer + DLQ.
 ```
 
 #### 8 CONSUMER MARA / PEECHE CHAL RAHA
 ```
-KAHANI:  C2 mar gaya -> P1 ko koi padh hi nahi raha, khabar jama ho rahi.
-         Ya consumer dheema -> peeche-peeche (lag) badhta ja raha.
-
-ILAAJ:   Team ki ek machine mari to uske tukde team ki baaki machines me bat jaate.
-         Dekhte raho 'kitna peeche chal rahe' (lag), badhe to alert. Koi khabar baar-baar fail ho to kuch
-         koshish ke baad DLQ me, taaki poora tukda na atke.
+DIKKAT 1   C2 mar gaya -> P1 ko koi padh hi nahi raha, khabar jama ho rahi.
+           Ya consumer dheema -> peeche-peeche (lag) badhta ja raha.
+HAL        Team ki ek machine mari to uske tukde team ki baaki machines me bat jaate.
+           Dekhte raho 'kitna peeche chal rahe' (lag), badhe to alert. Koi khabar baar-baar fail ho to kuch
+           koshish ke baad DLQ me, taaki poora tukda na atke.
+           Pehle: C1->P0, C2->P1, C3->P2 · C2 mara -> C1->P0,P1 · C3->P2.
+           lag = partition ka aakhri offset - group ne kahan tak padha.
 ```
 ```mermaid
 flowchart TD
@@ -348,25 +334,23 @@ flowchart TD
     n_Group_email --> n_DLQ
 ```
 ```
-ANDAR KAISE:
-         Pehle: C1->P0, C2->P1, C3->P2 · C2 mara -> C1->P0,P1 · C3->P2.
-         lag = partition ka aakhri offset - group ne kahan tak padha.
+DIKKAT 2   Rebalance me saare consumer ruk jaate?
+HAL        Purana tareeka (eager) haan. Cooperative rebalance (Kafka 2.4+) -> sirf
+           jinke partition badle wo rukte.
 
-ISKE BAAD KYA TOOTEGA:
-  - Rebalance me saare consumer ruk jaate?
-      -> purana tareeka (eager) haan. Cooperative rebalance
-         (Kafka 2.4+) -> sirf jinke partition badle wo rukte.
-  - Lag badhta ja raha?
-      -> consumer badhao (partition tak), dheema kaam alag, lag pe alert.
+DIKKAT 3   Lag badhta ja raha?
+HAL        Consumer badhao (partition tak), dheema kaam alag, lag pe alert.
 ```
 
 #### 9 7 DIN RAKHOGE TO DISK BHAREGI
 ```
-KAHANI:  Kafka padh ke delete nahi karta (ye log hai, queue nahi) -> disk bharti ja rahi.
-
-ILAAJ:   Kafka padh ke delete nahi karta, 7 din rakhta, phir purani file poori uda deta.
-         Kuch topic me har key ki sirf aakhri khabar rakhte (jaise Arpan ki profile ka aakhri roop).
-         Jo rakha hai usse naya team shuru se padh sakti, ya bug theek karke dobara padh sakte.
+DIKKAT 1   Kafka padh ke delete nahi karta (ye log hai, queue nahi) -> disk bharti ja rahi.
+HAL        Kafka padh ke delete nahi karta, 7 din rakhta, phir purani file poori uda deta.
+           Kuch topic me har key ki sirf aakhri khabar rakhte (jaise Arpan ki profile ka aakhri roop).
+           Jo rakha hai usse naya team shuru se padh sakti, ya bug theek karke dobara padh sakte.
+           Log chhoti-chhoti segment file me (~1 GB). Purani poori file uda do = sasta.
+           Compaction: Arpan ki profile 10 baar badli -> sirf aakhri wali rakho (profile / config jaisa data).
+           Jo rakha hai usse REPLAY: naya group shuru se padhe, ya bug theek karke offset peeche le jao.
 ```
 ```mermaid
 flowchart TD
@@ -387,14 +371,8 @@ flowchart TD
     n_Group_email --> n_DLQ
 ```
 ```
-ANDAR KAISE:
-         Log chhoti-chhoti segment file me (~1 GB). Purani poori file uda do = sasta.
-         Compaction: Arpan ki profile 10 baar badli -> sirf aakhri wali rakho (profile / config jaisa data).
-         Jo rakha hai usse REPLAY: naya group shuru se padhe, ya bug theek karke offset peeche le jao.
-
-ISKE BAAD KYA TOOTEGA:
-  - 7 din me consumer ne padha hi nahi (band tha)?
-      -> data gaya. Isliye lag pe alert + retention consumer ki sabse lambi band-hone ki der se zyada.
+DIKKAT 2   7 din me consumer ne padha hi nahi (band tha)?
+HAL        Data gaya. Isliye lag pe alert + retention consumer ki sabse lambi band-hone ki der se zyada.
 ```
 
 ```

@@ -50,8 +50,8 @@ JAWAB:    Booking me sahi hona pehle: network toota aur pakka nahi pata seat kha
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-> Har dikkat ek card: KAHANI (kya hua, kaun, kitna) -> ILAAJ -> ANDAR KAISE (ilaaj kyun kaam karta) ->
-> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta hai: dabba lagaya, ab kya?).
+> Har card: DIKKAT 1 (kya toota) -> HAL (kya kiya) -> diagram -> DIKKAT 2, 3 ... (interviewer ke
+> agle sawaal) har ek ke neeche uska HAL. Revise: sirf baayein column padho.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
@@ -68,13 +68,16 @@ flowchart TD
 
 #### 1 ARPAN AUR RAVI NE EK SAATH A1 BOOK KI
 ```
-KAHANI:  Arpan ne dekha "A1 khaali", usi pal Ravi ne bhi dekha "A1 khaali". Dono ne Book dabaya.
-         App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
-
-ILAAJ:   Pehle 'khaali hai?' dekho aur phir 'book karo', to beech me Ravi ghus jaata hai.
-         Isliye ek hi query: 'A1 ko booked karo, SIRF agar abhi bhi khaali ho'. DB ek waqt me ek ko hi ye
-         karne deta.
-         Arpan pehle -> A1 booked. Ravi ki query ko A1 khaali nahi mili -> kuch nahi badla -> 'seat ja chuki'.
+DIKKAT 1   Arpan ne dekha "A1 khaali", usi pal Ravi ne bhi dekha "A1 khaali". Dono ne Book dabaya.
+           App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
+HAL        Pehle 'khaali hai?' dekho aur phir 'book karo', to beech me Ravi ghus jaata hai.
+           Isliye ek hi query: 'A1 ko booked karo, SIRF agar abhi bhi khaali ho'. DB ek
+           waqt me ek ko hi ye karne deta.
+           Arpan pehle -> A1 booked. Ravi ki query ko A1 khaali nahi mili -> kuch
+           nahi badla -> 'seat ja chuki'.
+           Arpan aur Ravi ek saath -> DB ne A1 ki row pe pehle Arpan ko lock diya, Ravi ruka.
+           Arpan ka commit -> Ravi ko lock mila, DB ne WHERE dobara dekha -> A1 ab 'available' nahi -> 0 row.
+           Beech me koi ghus hi nahi sakta, kyunki check aur likhna ek hi kadam hai.
 ```
 ```mermaid
 flowchart TD
@@ -85,33 +88,33 @@ flowchart TD
     n_App --> n_SQL_DB
 ```
 ```
-ANDAR KAISE:
-         Arpan aur Ravi ek saath -> DB ne A1 ki row pe pehle Arpan ko lock diya, Ravi ruka.
-         Arpan ka commit -> Ravi ko lock mila, DB ne WHERE dobara dekha -> A1 ab 'available' nahi -> 0 row.
-         Beech me koi ghus hi nahi sakta, kyunki check aur likhna ek hi kadam hai.
+DIKKAT 2   Arpan ne 4 seat chuni (A1-A4), 3 mili, A4 Ravi le gaya?
+HAL        Chaaron EK transaction me: WHERE seat_id IN (A1..A4) AND available ->
+           badli rows 4 nahi -> ROLLBACK.
+           Deadlock na ho isliye seat_id ke kram me lock (A1, A2, A3 ...).
 
-ISKE BAAD KYA TOOTEGA:
-  - Arpan ne 4 seat chuni (A1-A4), 3 mili, A4 Ravi le gaya?
-      -> chaaron EK transaction me: WHERE seat_id IN (A1..A4) AND available -> badli rows 4 nahi -> ROLLBACK.
-         Deadlock na ho isliye seat_id ke kram me lock (A1, A2, A3 ...).
-  - SELECT FOR UPDATE ya version column kyun nahi?
-      -> FOR UPDATE = do baar DB jaana, lock lamba, deadlock ka khatra.
-         Version = haarne wala dobara try kare, par seat gayi to gayi.
-         Conditional UPDATE = ek hi statement, lock sabse chhota.
-  - Do alag log vs ek hi aadmi ka dobara bhejna?
-      -> do ALAG log ek seat = atomic UPDATE (ye card). EK aadmi ka dobara bhejna = idempotency (card 3).
+DIKKAT 3   SELECT FOR UPDATE ya version column kyun nahi?
+HAL        FOR UPDATE = do baar DB jaana, lock lamba, deadlock ka khatra.
+           Version = haarne wala dobara try kare, par seat gayi to gayi.
+           Conditional UPDATE = ek hi statement, lock sabse chhota.
+
+DIKKAT 4   Do alag log vs ek hi aadmi ka dobara bhejna?
+HAL        Do ALAG log ek seat = atomic UPDATE. EK aadmi ka dobara bhejna = idempotency (Pay pe ek id).
 ```
 
 #### 2 SEAT CHUNI, AB 3 MIN PAYMENT KAR RAHA
 ```
-KAHANI:  Arpan ne A1 chuni, payment me 3 min lag rahe.
-         A1 'available' hi rehne di -> beech me Ravi le gaya.
-         A1 seedha 'booked' kar di -> Arpan ka payment fail hua to A1 hamesha ke liye band.
-
-ILAAJ:   Arpan ne A1 chuni to row me likho 'held, 5 minute tak'. SQL khud 5 minute baad hatata nahi,
-         isliye:
-         1) Booking ki query hi purane hold ko khaali maane: 'khaali ho, YA held ho par 5 minute nikal gaye'.
-         2) Ek job har minute purane hold ko wapas khaali kar deti, taaki seat map pe sahi dikhe.
+DIKKAT 1   Arpan ne A1 chuni, payment me 3 min lag rahe.
+           A1 'available' hi rehne di -> beech me Ravi le gaya.
+           A1 seedha 'booked' kar di -> Arpan ka payment fail hua to A1 hamesha ke liye band.
+HAL        Arpan ne A1 chuni to row me likho 'held, 5 minute tak'. SQL khud 5 minute baad hatata nahi, isliye:
+           1) Booking ki query hi purane hold ko khaali maane: 'khaali ho, YA
+           held ho par 5 minute nikal gaye'.
+           2) Ek job har minute purane hold ko wapas khaali kar deti, taaki seat map pe sahi dikhe.
+           SQL me TTL nahi hota -> 5 min baad bhi row me 'held' hi likha rahega. Isliye do kaam:
+           (1) booking ka UPDATE hi purane hold ko khaali maane:     <- sahi hona isi se
+               WHERE status = 'available' OR (status = 'held' AND held_until < now())
+           (2) SWEEPER har minute purane hold ko 'available' kar de  <- sirf safai, seat map saaf dikhe
 ```
 ```mermaid
 flowchart TD
@@ -124,30 +127,26 @@ flowchart TD
     n_Sweeper_job --> n_SQL_DB
 ```
 ```
-ANDAR KAISE:
-         SQL me TTL nahi hota -> 5 min baad bhi row me 'held' hi likha rahega. Isliye do kaam:
-         (1) booking ka UPDATE hi purane hold ko khaali maane:     <- sahi hona isi se
-             WHERE status = 'available' OR (status = 'held' AND held_until < now())
-         (2) SWEEPER har minute purane hold ko 'available' kar de  <- sirf safai, seat map saaf dikhe
+DIKKAT 2   Hold Redis me (SET NX EX 300) kyun nahi?
+HAL        Hold Redis me + booking DB me = do jagah sach -> dono me farak aa sakta. DB
+           me = ek row, ek UPDATE, ek sach.
 
-ISKE BAAD KYA TOOTEGA:
-  - Hold Redis me (SET NX EX 300) kyun nahi?
-      -> hold Redis me + booking DB me = do jagah sach -> dono
-         me farak aa sakta. DB me = ek row, ek UPDATE, ek sach.
-  - Hold khatam hone ke 1 second baad Arpan ka payment aaya?
-      -> confirm pe bhi WHERE status = 'held' AND user = Arpan AND held_until > now()
-         -> 0 row = seat ja chuki -> paisa wapas (refund).
-  - Ek aadmi ne 10 seat hold karke chhod di?
-      -> ek user kitni hold kar sake uski limit + rate limit.
+DIKKAT 3   Hold khatam hone ke 1 second baad Arpan ka payment aaya?
+HAL        Confirm pe bhi WHERE status = 'held' AND user = Arpan AND held_until > now()
+           0 row = seat ja chuki -> paisa wapas (refund).
+
+DIKKAT 4   Ek aadmi ne 10 seat hold karke chhod di?
+HAL        Ek user kitni hold kar sake uski limit + rate limit.
 ```
 
 #### 3 PAYMENT PAGE PE "PAY" DO BAAR DABA
 ```
-KAHANI:  Arpan ne Pay dabaya, page ghooma, phir daba diya -> ek hi booking ke do baar paise kate.
-
-ILAAJ:   Arpan ka app 'Pay' pe ek id banata aur dobara bhejne pe wahi id bhejta.
-         Server id pehle dekh chuka -> purana jawab, doosri baar paisa nahi katta. (usercrud /pay wala hi
-         tareeka.)
+DIKKAT 1   Arpan ne Pay dabaya, page ghooma, phir daba diya -> ek hi booking ke do baar paise kate.
+HAL        Arpan ka app 'Pay' pe ek id banata aur dobara bhejne pe wahi id bhejta.
+           Server id pehle dekh chuka -> purana jawab, doosri baar paisa nahi katta.
+           (usercrud /pay wala hi tareeka.)
+           Key APP banata. Agar server banata to dobara aayi request = nayi request = nayi key = do baar kata.
+           App ki key hi batati "ye wahi purani request hai".
 ```
 ```mermaid
 flowchart TD
@@ -162,27 +161,26 @@ flowchart TD
     n_Sweeper_job --> n_SQL_DB
 ```
 ```
-ANDAR KAISE:
-         Key APP banata. Agar server banata to dobara aayi request = nayi request = nayi key = do baar kata.
-         App ki key hi batati "ye wahi purani request hai".
+DIKKAT 2   Paisa kat gaya, par seat ka UPDATE fail (hold khatam ho chuka)?
+HAL        Paisa wapas (refund) + Arpan ko batao. Payment aur seat ka faisla saga
+           jaisa (ek fail to doosra ulta).
 
-ISKE BAAD KYA TOOTEGA:
-  - Paisa kat gaya, par seat ka UPDATE fail (hold khatam ho chuka)?
-      -> paisa wapas (refund) + Arpan ko batao. Payment aur
-         seat ka faisla saga jaisa (ek fail to doosra ulta).
-  - Payment wale ka jawab (webhook) der se aaya?
-      -> booking 'PAYMENT_PENDING' rakho, hold thoda badhao, ya reconciliation se pakka karo.
+DIKKAT 3   Payment wale ka jawab (webhook) der se aaya?
+HAL        Booking 'PAYMENT_PENDING' rakho, hold thoda badhao, ya reconciliation se pakka karo.
 ```
 
 #### 4 BOOK KOI-KOI KARTA, SEAT MAP SAB DEKH RAHE
 ```
-KAHANI:  Ek show ka seat map 1 lakh log dekh rahe, book shayad 500 karenge.
-         1 lakh padhai aur nazuk booking dono ek hi DB pe -> booking dheemi.
-
-ILAAJ:   Seat map dekhne wale 1 lakh, book karne wale 500. To seat map Redis se aur DB ki copy se do, 5
-         second purana bhi chalega.
-         Booking hamesha main DB pe, kyunki faisla wahi query karti hai. Booking hui to Redis wala map
-         hata do, agli baar naya banega.
+DIKKAT 1   Ek show ka seat map 1 lakh log dekh rahe, book shayad 500 karenge.
+           1 lakh padhai aur nazuk booking dono ek hi DB pe -> booking dheemi.
+HAL        Seat map dekhne wale 1 lakh, book karne wale 500. To seat map Redis se aur DB ki copy se
+           do, 5 second purana bhi chalega.
+           Booking hamesha main DB pe, kyunki faisla wahi query karti hai. Booking hui to Redis wala map
+           hata do, agli baar naya banega.
+           Seat map Redis me "seatmap:show42" -> nahi mila to replica se banao
+           -> Redis me rakho (~5 sec umar).
+           Koi seat book hui -> "seatmap:show42" DEL -> agli baar taaza banta.
+           Map thoda purana dikhe to bhi chalta: asli faisla to booking ke UPDATE me hota hai.
 ```
 ```mermaid
 flowchart TD
@@ -202,29 +200,27 @@ flowchart TD
     n_SQL_primary --> n_Read_replica
 ```
 ```
-ANDAR KAISE:
-         Seat map Redis me "seatmap:show42" -> nahi mila to replica se banao -> Redis me rakho (~5 sec umar).
-         Koi seat book hui -> "seatmap:show42" DEL -> agli baar taaza banta.
-         Map thoda purana dikhe to bhi chalta: asli faisla to booking ke UPDATE me hota hai (card 1).
+DIKKAT 2   A1 book ho gayi, par Arpan ko map me abhi bhi khaali dikh rahi?
+HAL        WebSocket / SSE se us show ke dekhne walon ko turant bhejo. Screen 1-2 sec
+           purani chale, faisla UPDATE ka.
 
-ISKE BAAD KYA TOOTEGA:
-  - A1 book ho gayi, par Arpan ko map me abhi bhi khaali dikh rahi?
-      -> WebSocket / SSE se us show ke dekhne walon ko turant
-         bhejo. Screen 1-2 sec purani chale, faisla UPDATE ka.
-  - Ek bade show ki ek hi Redis key pe lakhon padhai?
-      -> us key ki kai copy + App ke andar 1-2 sec ka local cache.
+DIKKAT 3   Ek bade show ki ek hi Redis key pe lakhon padhai?
+HAL        Us key ki kai copy + App ke andar 1-2 sec ka local cache.
 ```
 
 #### 5 BADI MOVIE KA PEHLA DIN, LAKHON LOG EK SHOW PE
 ```
-KAHANI:  Badi movie, pehla show: 5000 log, 3000 seat. Saari bheed seedha DB pe, wahi rows pe ladaai,
-         har koi lock ke intezaar me -> sab dheema.
-
-ILAAJ:   Ye sirf badi release wale show ke liye. Aam din me hold seedha DB pe hi (card 1-2), turant jawab.
-         Darwaze pe ginti: 3000 seat hain to 3000 log andar, baaki ko turant 'housefull'.
-         Andar walon ki booking 'ho rahi hai' dikhao, pakki tab jab us seat ki query jeete. Har show ki
-         booking ek line me, ek worker ek-ek karke, to ladaai nahi.
-         Pata ho kab release hai to pehle se machine badhao, har user ki had.
+DIKKAT 1   Badi movie, pehla show: 5000 log, 3000 seat. Saari bheed seedha DB pe, wahi rows pe ladaai, har
+           koi lock ke intezaar me -> sab dheema.
+HAL        Ye sirf badi release wale show ke liye. Aam din me hold seedha DB pe hi, turant jawab.
+           Darwaze pe ginti: 3000 seat hain to 3000 log andar, baaki ko turant 'housefull'.
+           Andar walon ki booking 'ho rahi hai' dikhao, pakki tab jab us seat ki query jeete. Har show ki
+           booking ek line me, ek worker ek-ek karke, to ladaai nahi.
+           Pata ho kab release hai to pehle se machine badhao, har user ki had.
+           Kafka me key = show_id -> ek show ki saari booking ek line (partition) me -> ek worker ek-ek karke.
+           Ladaai khatam, kyunki ek show pe ek waqt me ek hi UPDATE. Alag show = alag worker, ek saath.
+           Arpan KHAAS seat (A1) chunta, ginti sirf "kitni bachi" batati -> isliye turant "booked" mat bolo:
+           "booking ho rahi hai" -> worker ka UPDATE jeeta = pakka · haara = "ye seat gayi, doosri chuno".
 ```
 ```mermaid
 flowchart TD
@@ -249,32 +245,32 @@ flowchart TD
     n_SQL_primary --> n_Read_replica
 ```
 ```
-ANDAR KAISE:
-         Kafka me key = show_id -> ek show ki saari booking ek line (partition) me -> ek worker ek-ek karke.
-         Ladaai khatam, kyunki ek show pe ek waqt me ek hi UPDATE. Alag show = alag worker, ek saath.
-         Arpan KHAAS seat (A1) chunta, ginti sirf "kitni bachi" batati -> isliye turant "booked" mat bolo:
-         "booking ho rahi hai" -> worker ka UPDATE jeeta = pakka · haara = "ye seat gayi, doosri chuno".
+DIKKAT 2   Ek show itna bada ki ek worker dheema?
+HAL        Ek UPDATE ~ms -> ek worker hazaar / second. Zyada chahiye -> show ko
+           hisson (balcony / stall) me baanto.
 
-ISKE BAAD KYA TOOTEGA:
-  - Ek show itna bada ki ek worker dheema?
-      -> ek UPDATE ~ms -> ek worker hazaar / second. Zyada
-         chahiye -> show ko hisson (balcony / stall) me baanto.
-  - Darwaze wali ginti Redis restart me gayi?
-      -> ginti sirf darwaza hai, sach DB ki seats. Restart pe DB se gin ke dobara set karo.
-  - Read replica se kaam nahi chalega?
-      -> replica PADHNA sambhaalti. Likhne ki bheed queue sambhaalti.
-  - (bolne me) "BookMyShow aise karta hai"?
-      -> mat bolo. "A common pattern in flash sales" bolo.
+DIKKAT 3   Darwaze wali ginti Redis restart me gayi?
+HAL        Ginti sirf darwaza hai, sach DB ki seats. Restart pe DB se gin ke dobara set karo.
+
+DIKKAT 4   Read replica se kaam nahi chalega?
+HAL        Replica PADHNA sambhaalti. Likhne ki bheed queue sambhaalti.
+
+DIKKAT 5   (bolne me) "BookMyShow aise karta hai"?
+HAL        Mat bolo. "A common pattern in flash sales" bolo.
 ```
 
 #### 6 REDIS RESTART, SAARA DEKHNA EK SAATH DB PE
 ```
-KAHANI:  Redis restart hua -> cache khaali -> 1 lakh log ka seat map
-         dekhna ek saath DB pe -> booking ke UPDATE bhi ruk gaye.
-
-ILAAJ:   Redis ki copy hai. Poora gira to seat map DB ki copy se dikhao, main DB pe kabhi nahi, taaki
-         booking chalti rahe.
-         Ek show ka map 1000 log maangein to sirf pehla bana ke Redis me rakhe, baaki ruk ke wahi le lein.
+DIKKAT 1   Redis restart hua -> cache khaali -> 1 lakh log ka seat map dekhna ek saath DB pe ->
+           booking ke UPDATE bhi ruk gaye.
+HAL        Redis ki copy hai. Poora gira to seat map DB ki copy se dikhao, main DB pe kabhi
+           nahi, taaki booking chalti rahe.
+           Ek show ka map 1000 log maangein to sirf pehla bana ke Redis me rakhe, baaki ruk ke wahi le lein.
+           Redis Cluster: saari keys 16384 hisson (slot) me, har master
+                          ke paas kuch hisse + apni copy (replica).
+           Master gira -> baaki vote karke uski copy ko master bana dete.
+           Lock: SET lock:seatmap:42 1 NX EX 5 -> jo jeeta wo DB se map bana ke Redis me daale, baaki 50-100
+           ms ruk ke Redis se padhein. 1 lakh ki jagah 1 request DB pe.
 ```
 ```mermaid
 flowchart TD
@@ -299,30 +295,26 @@ flowchart TD
     n_SQL_primary --> n_Read_replica
 ```
 ```
-ANDAR KAISE:
-         Redis Cluster: saari keys 16384 hisson (slot) me, har master
-                        ke paas kuch hisse + apni copy (replica).
-         Master gira -> baaki vote karke uski copy ko master bana dete.
-         Lock: SET lock:seatmap:42 1 NX EX 5 -> jo jeeta wo DB se map bana ke Redis me daale,
-         baaki 50-100 ms ruk ke Redis se padhein. 1 lakh ki jagah 1 request DB pe.
+DIKKAT 2   Redis poora gira, dekhna kahan se?
+HAL        Read replica se (zaroorat ho to aur replica), primary pe KABHI nahi.
 
-ISKE BAAD KYA TOOTEGA:
-  - Redis poora gira, dekhna kahan se?
-      -> read replica se (zaroorat ho to aur replica), primary pe KABHI nahi.
-  - SQL primary gira, booking kitni der band?
-      -> 10-30 sec (failover). Us beech dobara koshish (idempotent) / "thodi der me try karein".
-  - Copy ko primary banaya, par aakhri booking copy tak pahunchi hi nahi thi?
-      -> booking DB ke liye SYNC replica (RDS Multi-AZ, har
-         likhai dono jagah pakki) -> pakki booking nahi khoti.
+DIKKAT 3   SQL primary gira, booking kitni der band?
+HAL        10-30 sec (failover). Us beech dobara koshish (idempotent) / "thodi der me try karein".
+
+DIKKAT 4   Copy ko primary banaya, par aakhri booking copy tak pahunchi hi nahi thi?
+HAL        Booking DB ke liye SYNC replica (RDS Multi-AZ, har likhai dono jagah
+           pakki) -> pakki booking nahi khoti.
 ```
 
 #### 7 EK APP MACHINE GIRI, 500 LOGON KA HOLD
 ```
-KAHANI:  Ek App machine pe 500 log seat chun rahe the, wo machine gir gayi. Unki held seats ka kya?
-
-ILAAJ:   Hold DB me likha hai, server ki memory me nahi. To server gira to bhi hold bacha hai.
-         Load balancer us server ko hata deta, Arpan ki agli request doosre server pe, wahi hold dikhta.
-         Payment beech me tha to app wahi id ke saath dobara bhejta, do baar nahi katega.
+DIKKAT 1   Ek App machine pe 500 log seat chun rahe the, wo machine gir gayi. Unki held seats ka kya?
+HAL        Hold DB me likha hai, server ki memory me nahi. To server gira to bhi hold bacha hai.
+           Load balancer us server ko hata deta, Arpan ki agli request doosre server pe, wahi hold dikhta.
+           Payment beech me tha to app wahi id ke saath dobara bhejta, do baar nahi katega.
+           LB ka health check fail -> machine list se bahar. Arpan ki agli request doosri
+           machine pe -> wahi hold dikhega.
+           Ye isliye chala kyunki hold machine ke BAHAR (DB me) rakha tha.
 ```
 ```mermaid
 flowchart TD
@@ -356,16 +348,11 @@ flowchart TD
     n_SQL_primary --> n_Read_replica
 ```
 ```
-ANDAR KAISE:
-         LB ka health check fail -> machine list se bahar. Arpan
-         ki agli request doosri machine pe -> wahi hold dikhega.
-         Ye isliye chala kyunki hold machine ke BAHAR (DB me) rakha tha (card 2 ka faisla).
+DIKKAT 2   Machine giri tab Arpan ka payment chal raha tha?
+HAL        Idempotency key app ke paas -> doosri machine pe dobara bhejo, do baar nahi katega.
 
-ISKE BAAD KYA TOOTEGA:
-  - Machine giri tab Arpan ka payment chal raha tha?
-      -> idempotency key app ke paas -> doosri machine pe dobara bhejo, do baar nahi katega.
-  - Health check kya dekhta?
-      -> GET /health: machine zinda + DB / Redis tak pahunch rahi. 2-3 baar fail = bahar.
+DIKKAT 3   Health check kya dekhta?
+HAL        GET /health: machine zinda + DB / Redis tak pahunch rahi. 2-3 baar fail = bahar.
 ```
 
 ```

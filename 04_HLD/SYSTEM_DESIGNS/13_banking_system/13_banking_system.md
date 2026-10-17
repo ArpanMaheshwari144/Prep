@@ -18,7 +18,7 @@ PAANCH CHEEZ JINPE YE ROUND TAY HOTA (source: "ye interview INHI se tay hote hai
 
 ![Read Replica Pattern](https://assets.bytebytego.com/diagrams/0312-read-replica-pattern.png)
 Source: [Read Replica Pattern](https://bytebytego.com/guides/read-replica-pattern/)
-(dikkat 7 — transfer ke baad purana balance = replica peeche; ilaaj: turant wala padhna PRIMARY se)
+(dikkat 8 — transfer ke baad purana balance = replica peeche; ilaaj: turant wala padhna PRIMARY se)
 
 ---
 
@@ -53,8 +53,8 @@ DATA SE TEEN SAWAAL (jawab dikkat me):
 
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
-> Har dikkat ek card: KAHANI (kya hua, kaun, kitna) -> ILAAJ -> ANDAR KAISE (ilaaj kyun kaam karta) ->
-> ISKE BAAD KYA TOOTEGA (interviewer yahin ghusta hai: dabba lagaya, ab kya?).
+> Har card: DIKKAT 1 (kya toota) -> HAL (kya kiya) -> diagram -> DIKKAT 2, 3 ... (interviewer ke
+> agle sawaal) har ek ke neeche uska HAL. Revise: sirf baayein column padho.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
@@ -71,13 +71,15 @@ flowchart TD
 
 #### 1 TRANSFER KE BEECH SERVER GIRA: ARPAN -500 HUA, RAVI +500 NAHI
 ```
-KAHANI:  Arpan ne Ravi ko 500 bheje. Arpan ke 500 kat gaye,
-         Ravi ke account me daalne se PEHLE server gir gaya.
-         500 na Arpan ke paas, na Ravi ke paas. Gayab.
-
-ILAAJ:   Arpan aur Ravi dono ka account ek hi DB me. To 'Arpan se 500 kaato' aur 'Ravi ko 500 do' ek hi
-         transaction me: beech me crash hua to dono wapas, aadha nahi.
-         Step-step wala tareeka (saga) tab chahiye jab dono alag bank ya alag system me hon.
+DIKKAT 1   Arpan ne Ravi ko 500 bheje. Arpan ke 500 kat gaye,
+           Ravi ke account me daalne se PEHLE server gir gaya.
+           500 na Arpan ke paas, na Ravi ke paas. Gayab.
+HAL        Arpan aur Ravi dono ka account ek hi DB me. To 'Arpan se 500 kaato' aur 'Ravi ko 500 do' ek hi
+           transaction me: beech me crash hua to dono wapas, aadha nahi.
+           Step-step wala tareeka (saga) tab chahiye jab dono alag bank ya alag system me hon.
+           BEGIN; UPDATE Arpan -500; UPDATE Ravi +500; COMMIT;
+           DB har badlaav pehle apni diary (WAL) me likhta. Gira aur utha -> diary dekh ke:
+           COMMIT ho chuka tha to poora karta, nahi hua tha to ulta. Aadha kabhi nahi bachta.
 ```
 ```mermaid
 flowchart TD
@@ -88,35 +90,38 @@ flowchart TD
     n_Banking_Svc --> n_SQL_DB
 ```
 ```
-ANDAR KAISE:
-         BEGIN; UPDATE Arpan -500; UPDATE Ravi +500; COMMIT;
-         DB har badlaav pehle apni diary (WAL) me likhta. Gira aur utha -> diary dekh ke:
-         COMMIT ho chuka tha to poora karta, nahi hua tha to ulta. Aadha kabhi nahi bachta.
+DIKKAT 2   SAGA / queue laga do?
+HAL        Ek DB me NAHI. Kaatna aur daalna alag-alag ho jaate, dikkat khud ban jaati. SAGA
+           sirf alag service / DB / bank pe.
 
-ISKE BAAD KYA TOOTEGA:
-  - SAGA / queue laga do?
-      -> ek DB me NAHI. Kaatna aur daalna alag-alag ho jaate, dikkat
-         khud ban jaati. SAGA sirf alag service / DB / bank pe.
-  - Arpan aur Ravi alag bank me?
-      -> ek transaction nahi ho sakta -> PENDING + SAGA / reconciliation (payment design wala raasta).
-  - CP ya AP?
-      -> transfer / balance = CP (galat balance dikhane se mana karna
-         behtar). SMS / statement / analytics = AP (2 sec late chalta).
+DIKKAT 3   Arpan aur Ravi alag bank me?
+HAL        Ek transaction nahi ho sakta -> PENDING + SAGA / reconciliation (payment design wala raasta).
+
+DIKKAT 4   CP ya AP?
+HAL        Transfer / balance = CP (galat balance dikhane se mana karna behtar). SMS / statement /
+           analytics = AP (2 sec late chalta).
 ```
 
 #### 2 KHAATA (LEDGER) KAHAN LIKHO, KAFKA KAB? (GALTI WAPAS wala)
 ```
-KAHANI:  Do zaroorat:
-         (1) RBI poochhta "Arpan ke 500 kahan se aaye, kahan
-         gaye, kab?" -> har len-den ka pakka khaata chahiye.
-         (2) Transfer ke baad Arpan ko SMS, fraud check, statement
-         -> par SMS service giri to transfer nahi rukna chahiye.
-
-ILAAJ:   KHAATA (ledger) = DB ki ek TABLE (Kafka nahi). Har transfer
-         ki 2 line: Arpan -500, Ravi +500 (jod 0). Sirf INSERT.
-         OUTBOX = DB ki ek aur table, "SMS bhejo" wala event usme.
-         khaata + balance + outbox = EK hi transaction.
-         COMMIT ke BAAD ek relay outbox se event Kafka bhejta -> SMS / fraud / statement.
+DIKKAT 1   Do zaroorat:
+           (1) RBI poochhta "Arpan ke 500 kahan se aaye, kahan gaye, kab?" -> har
+           len-den ka pakka khaata chahiye.
+           (2) Transfer ke baad Arpan ko SMS, fraud check, statement
+           -> par SMS service giri to transfer nahi rukna chahiye.
+HAL        KHAATA (ledger) = DB ki ek TABLE (Kafka nahi). Har transfer ki 2 line: Arpan -500,
+           Ravi +500 (jod 0). Sirf INSERT.
+           OUTBOX = DB ki ek aur table, "SMS bhejo" wala event usme.
+           khaata + balance + outbox = EK hi transaction.
+           COMMIT ke BAAD ek relay outbox se event Kafka bhejta -> SMS / fraud / statement.
+           BEGIN
+             INSERT ledger (Arpan -500), INSERT ledger (Ravi +500)
+             UPDATE balance Arpan, UPDATE balance Ravi
+             INSERT outbox (E-77 "Arpan ne 500 bheje", sent = false)
+           COMMIT
+           Relay har ~1 sec: outbox me sent = false -> Kafka (acks=all) -> sent = true.
+           (ya CDC / Debezium: DB ki diary (WAL) padh ke seedha Kafka.)
+           Relay "sent = true" likhne se pehle gira -> E-77 dobara jaata -> SMS service eventId dekh ke skip.
 ```
 ```mermaid
 flowchart TD
@@ -129,41 +134,35 @@ flowchart TD
     n_SQL_DB --> n_Kafka
 ```
 ```
-ANDAR KAISE:
-         BEGIN
-           INSERT ledger (Arpan -500), INSERT ledger (Ravi +500)
-           UPDATE balance Arpan, UPDATE balance Ravi
-           INSERT outbox (E-77 "Arpan ne 500 bheje", sent = false)
-         COMMIT
-         Relay har ~1 sec: outbox me sent = false -> Kafka (acks=all) -> sent = true.
-         (ya CDC / Debezium: DB ki diary (WAL) padh ke seedha Kafka.)
-         Relay "sent = true" likhne se pehle gira -> E-77 dobara jaata -> SMS service eventId dekh ke skip.
+DIKKAT 2   Khaata pehle Kafka me likh diya, phir DB transaction wapas hua (Arpan ke paas paisa kam tha)?
+HAL        Kafka me likha "Arpan -500", jabki asal me kuch hua hi nahi -> khaata jhooth bolega.
+           ISILIYE khaata DB table me, usi transaction me (rollback hua = khaata bhi gaya).
+           Kafka aur DB ek transaction me ho hi nahi sakte -> Kafka sirf commit ke BAAD, outbox se.
+           BOL pehli line me: "ledger is a table in the same DB transaction;
+                              Kafka only gets the event after commit."
 
-ISKE BAAD KYA TOOTEGA:
-  - Khaata pehle Kafka me likh diya, phir DB transaction wapas hua (Arpan ke paas paisa kam tha)?
-      -> Kafka me likha "Arpan -500", jabki asal me kuch hua hi nahi -> khaata jhooth bolega.
-         ISILIYE khaata DB table me, usi transaction me (rollback hua = khaata bhi gaya).
-         Kafka aur DB ek transaction me ho hi nahi sakte -> Kafka sirf commit ke BAAD, outbox se.
-         BOL pehli line me: "ledger is a table in the same DB transaction;
-                            Kafka only gets the event after commit."
-  - Commit ke baad seedha Kafka ko kyun nahi bhej dete?
-      -> commit aur bhejne ke beech app gira = event gayab, SMS kabhi
-         nahi gaya. Outbox usi transaction me hai, kho nahi sakta.
-  - Arpan ke SMS ulte kram me (pehle "credit", phir "debit")?
-      -> Kafka key = account_id -> ek account ke event ek partition, kram me.
-  - Outbox table bhar jaayegi?
-      -> sent wali rows roz saaf / partition drop.
+DIKKAT 3   Commit ke baad seedha Kafka ko kyun nahi bhej dete?
+HAL        Commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi gaya. Outbox usi
+           transaction me hai, kho nahi sakta.
+
+DIKKAT 4   Arpan ke SMS ulte kram me (pehle "credit", phir "debit")?
+HAL        Kafka key = account_id -> ek account ke event ek partition, kram me.
+
+DIKKAT 5   Outbox table bhar jaayegi?
+HAL        Sent wali rows roz saaf / partition drop.
 ```
 
 #### 3 BALANCE AATA KAHAN SE? (is design ka asli sawaal)
 ```
-KAHANI:  Do raaste:
-         (a) balance ek column me rakho: padhna sasta (ek row), par kabhi galat bhi ho sakta.
-         (b) har baar khaata jodo: hamesha sach, par Arpan ke 10
-         saal purane account ki 50,000 line har baar jodna = dheema.
-
-ILAAJ:   DONO: KHAATA = SACH, balance column = uska jod (cache). Dono EK transaction me badalte.
-         Raat ko RECONCILIATION: khaate ka jod == balance column?
+DIKKAT 1   Do raaste:
+           (a) balance ek column me rakho: padhna sasta (ek row), par kabhi galat bhi ho sakta.
+           (b) har baar khaata jodo: hamesha sach, par Arpan ke 10 saal purane account ki
+           50,000 line har baar jodna = dheema.
+HAL        DONO: KHAATA = SACH, balance column = uska jod (cache). Dono EK transaction me badalte.
+           Raat ko RECONCILIATION: khaate ka jod == balance column?
+           BEGIN; INSERT ledger Arpan -500; INSERT ledger Ravi +500; UPDATE Arpan; UPDATE Ravi; COMMIT;
+           Arpan balance dekhe -> sirf balance column (ek row, tez).
+           Raat ko job: Arpan ka khaata jod = 4,500, column me 4,500 -> theek.
 ```
 ```mermaid
 flowchart TD
@@ -178,29 +177,28 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 ```
-ANDAR KAISE:
-         BEGIN; INSERT ledger Arpan -500; INSERT ledger Ravi +500; UPDATE Arpan; UPDATE Ravi; COMMIT;
-         Arpan balance dekhe -> sirf balance column (ek row, tez).
-         Raat ko job: Arpan ka khaata jod = 4,500, column me 4,500 -> theek.
+DIKKAT 2   Raat ko farak mila (khaata 4,500, column 5,000)?
+HAL        Alert + account rok ke dekho. Chupchaap theek MAT karo: pehle
+           KYUN hua (bug abhi bhi zinda hai). Phir khaata jeetega.
 
-ISKE BAAD KYA TOOTEGA:
-  - Raat ko farak mila (khaata 4,500, column 5,000)?
-      -> alert + account rok ke dekho. Chupchaap theek MAT karo: pehle
-         KYUN hua (bug abhi bhi zinda hai). Phir khaata jeetega.
-  - 22 arab line pe raat ka SUM?
-      -> pichhle mahine ke aakhir ka balance (snapshot) + sirf uske baad ki line (card 9). Poora nahi.
-  - Chal raha hai, kaise pata?
-      -> reconciliation + p99 + error rate + queue lag + DB connection pe alert + har transfer ka trace id.
+DIKKAT 3   22 arab line pe raat ka SUM?
+HAL        Pichhle mahine ke aakhir ka balance (snapshot) + sirf uske baad ki line. Poora nahi.
+
+DIKKAT 4   Chal raha hai, kaise pata?
+HAL        Reconciliation + p99 + error rate + queue lag + DB connection pe alert + har transfer ka trace id.
 ```
 
 #### 4 "SEND" DO BAAR DABA / APP NE DOBARA BHEJA
 ```
-KAHANI:  Arpan ne Send dabaya, app ghooma, phir daba diya. Ya app
-         ne khud dobara bheja -> 1000 kat gaye, bhejne the 500.
-
-ILAAJ:   Arpan ka app har transfer ke saath ek id bhejta, DB me wo id unique.
-         Dobara bheja to wahi id -> pehla jawab, paisa doosri baar nahi katta. Transaction aadha hone se
-         rokta, id do baar hone se.
+DIKKAT 1   Arpan ne Send dabaya, app ghooma, phir daba diya. Ya app ne khud dobara bheja ->
+           1000 kat gaye, bhejne the 500.
+HAL        Arpan ka app har transfer ke saath ek id bhejta, DB me wo id unique.
+           Dobara bheja to wahi id -> pehla jawab, paisa doosri baar nahi katta. Transaction aadha
+           hone se rokta, id do baar hone se.
+           Key pehle aa chuki -> pehla jawab wapas, naya transfer nahi.
+           App me "pehle dekho, phir daalo" = race (dono ne dekha "nahi hai", dono ne daala).
+           UNIQUE insert khud taala jaisa.
+           @Transactional = "aadha nahi hoga". Idempotency = "do baar nahi hoga". Dono chahiye.
 ```
 ```mermaid
 flowchart TD
@@ -215,29 +213,21 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 ```
-ANDAR KAISE:
-         Key pehle aa chuki -> pehla jawab wapas, naya transfer nahi.
-         App me "pehle dekho, phir daalo" = race (dono ne dekha
-         "nahi hai", dono ne daala). UNIQUE insert khud taala jaisa.
-         @Transactional = "aadha nahi hoga". Idempotency = "do baar nahi hoga". Dono chahiye.
+DIKKAT 2   Key wahi, par body alag (500 ki jagah 5000)?
+HAL        Key ke saath request ka hash bhi rakho. Mel nahi = 422, purana jawab nahi.
 
-ISKE BAAD KYA TOOTEGA:
-  - Key wahi, par body alag (500 ki jagah 5000)?
-      -> key ke saath request ka hash bhi rakho. Mel nahi = 422, purana jawab nahi.
-  - Key table hamesha badhti rahegi?
-      -> 24-48 ghante baad saaf.
+DIKKAT 3   Key table hamesha badhti rahegi?
+HAL        24-48 ghante baad saaf.
 ```
 
-#### 5 EK ACCOUNT SE DO TRANSFER EK SAATH
+#### 5 EK ACCOUNT SE DO TRANSFER EK SAATH (DOUBLE SPEND)
 ```
-KAHANI:  Arpan ke paas 300. Ek saath 200-200 ke do transfer
-         chale. App ne dono baar balance padha (300), dono pass
-         -> dono kate -> Arpan = -100.
-
-ILAAJ:   Hisaab DB ke andar karo: 'balance >= 200 ho tabhi 200 kaato', ek hi query me. Do transfer ek
-         saath aaye to DB ek-ek karke chalata, doosre ke time balance kam ho chuka to wo fail.
-         Arpan->Ravi aur Ravi->Arpan ek saath ho to dono ek doosre ka intezaar karte reh jaate (deadlock).
-         Ilaaj: hamesha chhoti account id pehle lock karo, dono same kram me.
+DIKKAT 1   Arpan ke paas 300. Ek saath 200-200 ke do transfer chale.
+           App ne dono baar balance padha (300), dono pass -> dono kate -> Arpan = -100.
+HAL        Hisaab DB ke andar, check + kaatna EK hi query me:
+             UPDATE account SET balance = balance - 200 WHERE id = 'Arpan' AND balance >= 200
+           UPDATE row pe taala leta -> dono transfer line me lagte.
+           Pehla: 300 -> 100. Doosra: 100 >= 200? nahi -> 0 row badli -> reject.
 ```
 ```mermaid
 flowchart TD
@@ -252,33 +242,49 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 ```
-ANDAR KAISE:
-         UPDATE row pe taala leta -> dono transfer line me lagte. Pehla:
-         300 -> 100. Doosra: 100 >= 200? nahi -> 0 row -> reject.
-         Deadlock kaise hota: Arpan->Ravi aur Ravi->Arpan ek saath.
-           Txn1 ne Arpan pe taala, Ravi ka intezaar · Txn2 ne Ravi
-           pe taala, Arpan ka intezaar -> dono atke (MySQL 1213).
-         Kram tay (chhoti id pehle) -> dono pehle wahi ek
-         account maangte -> ek ruka, doosra poora, phir pehla.
+DIKKAT 2   0 row aaya, Arpan ko kya?
+HAL        "insufficient balance" (422) + poora transaction wapas (Ravi ko daalna bhi nahi).
 
-ISKE BAAD KYA TOOTEGA:
-  - 0 row aaya, Arpan ko kya?
-      -> "insufficient balance" (422) + poora transaction wapas (Ravi ko daalna bhi nahi).
-  - Niyam code me kyun nahi?
-      -> raaste kai (API / batch / haath se), DB ek. Niyam DB me.
-  - Kram ke bawajood deadlock?
-      -> DB ek ko wapas kar deta -> app thoda ruk ke dobara (same idempotency key).
+DIKKAT 3   Niyam code me kyun nahi?
+HAL        Raaste kai (API / batch / haath se), DB ek. Niyam DB me.
 ```
 
-#### 6 SALARY DAY, EK SERVICE BHAR GAYI
+#### 6 ARPAN -> RAVI AUR RAVI -> ARPAN EK SAATH (DEADLOCK)
 ```
-KAHANI:  1 tareekh, sabki salary aayi, sab ek saath transfer
-         kar rahe. Ek hi Banking service machine bhar gayi.
-         Wo giri to poora bank band.
+DIKKAT 1   Arpan ne Ravi ko bheja, usi pal Ravi ne Arpan ko.
+           Txn1 ne Arpan pe taala liya, Ravi ka intezaar · Txn2 ne Ravi pe taala, Arpan ka intezaar
+           -> dono hamesha atke (deadlock, MySQL 1213).
+HAL        Hamesha CHHOTI account id pehle lock karo, dono transfer same kram me.
+           Dono pehle wahi ek account maangte -> ek ruka, doosra poora, phir pehla. Gol ghera banta hi nahi.
+```
+```mermaid
+flowchart TD
+    n_USER["USER"]
+    n_Banking_Svc["Banking Svc"]
+    n_SQL_DB["SQL DB<br/>+ idempotency_keys (UNIQUE)"]
+    n_Kafka["Kafka"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Banking_Svc
+    n_Banking_Svc --> n_SQL_DB
+    n_SQL_DB --> n_Kafka
+    n_Reconciliation_job --> n_SQL_DB
+```
+```
+DIKKAT 2   Kram ke bawajood deadlock?
+HAL        DB ek ko wapas kar deta -> app thoda ruk ke dobara (same idempotency key, do baar nahi katega).
+```
 
-ILAAJ:   Service kuch yaad nahi rakhti, kai machine + load balancer, mari hui list se bahar.
-         Main DB ki copy doosri building me, aur har transfer copy me bhi likh ke hi 'done'. Main DB gira
-         to copy main ban jaati, koi pakka transfer nahi khota.
+#### 7 SALARY DAY, EK SERVICE BHAR GAYI
+```
+DIKKAT 1   1 tareekh, sabki salary aayi, sab ek saath transfer kar rahe. Ek hi
+           Banking service machine bhar gayi.
+           Wo giri to poora bank band.
+HAL        Service kuch yaad nahi rakhti, kai machine + load balancer, mari hui list se bahar.
+           Main DB ki copy doosri building me, aur har transfer copy me bhi likh ke hi 'done'. Main DB gira
+           to copy main ban jaati, koi pakka transfer nahi khota.
+           Patroni / RDS Multi-AZ: primary mara -> sync copy promote -> DB ka pata nayi pe -> ~1-2 min (RDS
+           Multi-AZ ka aam number 60-120 sec).
+           SYNC = commit tabhi jab copy ne bhi likh liya -> nayi primary ke paas har pakka transfer.
 ```
 ```mermaid
 flowchart TD
@@ -298,28 +304,22 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 ```
-ANDAR KAISE:
-         Patroni / RDS Multi-AZ: primary mara -> sync copy promote -> DB ka pata nayi pe -> ~1-2 min
-         (RDS Multi-AZ ka aam number 60-120 sec).
-         SYNC = commit tabhi jab copy ne bhi likh liya -> nayi primary ke paas har pakka transfer.
+DIKKAT 2   Sync = har transfer dheema?
+HAL        Haan, ek network chakkar. Paise me ye keemat theek. Async me aakhri transfer kho sakta.
 
-ISKE BAAD KYA TOOTEGA:
-  - Sync = har transfer dheema?
-      -> haan, ek network chakkar. Paise me ye keemat theek. Async me aakhri transfer kho sakta.
-  - Failover ke us 1-2 min me transfer aaya?
-      -> error -> app dobara bheje, same idempotency key -> do baar nahi katega.
-  - Ravi ne apne login se "Arpan ke account se 500 bhejo" bheja (ya Arpan ka balance maanga)?
-      -> OWNER CHECK har request pe: userId JWT se lo (body / URL se nahi, wahan koi kuch bhi likh de).
-         from_account ka maalik yahi user hai? Nahi -> 403. Balance / history pe bhi wahi check.
+DIKKAT 3   Failover ke us 1-2 min me transfer aaya?
+HAL        Error -> app dobara bheje, same idempotency key -> do baar nahi katega.
+
+DIKKAT 4   Ravi ne apne login se "Arpan ke account se 500 bhejo" bheja (ya Arpan ka balance maanga)?
+HAL        OWNER CHECK har request pe: userId JWT se lo (body / URL se nahi, wahan koi kuch bhi likh de).
+           from_account ka maalik yahi user hai? Nahi -> 403. Balance / history pe bhi wahi check.
 ```
 
-#### 7 SAB BALANCE PRIMARY SE PADH RAHE, TRANSFER DHEEME
+#### 8 SAB BALANCE PRIMARY SE PADH RAHE, TRANSFER DHEEME
 ```
-KAHANI:  Lakhon log balance / history dekh rahe, sab primary se. Padhne ki bheed me transfer dheeme.
-
-ILAAJ:   Transfer main DB pe hua, par balance us copy se padha jo abhi peeche thi.
-         Ilaaj: balance main DB se padho, kam se kam us user ke liye jisne abhi paisa bheja (kuch second tak).
-         Copy hi peeche reh gayi ho to wahi 'har transfer copy me bhi likho' wala tareeka.
+DIKKAT 1   Lakhon log balance / history dekh rahe, sab primary se. Padhne ki bheed me transfer dheeme.
+HAL        Padhna DB ki COPY (read replica) se, likhna (transfer) sirf primary pe.
+           Primary ki diary (WAL) copy tak jaati, copy wahi badlaav lagati. Primary sirf likhne ke liye free.
 ```
 ```mermaid
 flowchart TD
@@ -342,29 +342,28 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 ```
-ANDAR KAISE:
-         Replica primary ki diary padh ke chalti, ~200 ms peeche.
-         Arpan ne 1000 bheje, turant balance dekha replica se -> purana 5000 dikha (asal 4000)
-         -> Arpan sochega paisa gaya hi nahi -> dobara bhejega!
-         READ-YOUR-OWN-WRITES: Arpan ke account pe last_write_at (Redis me)
-                               -> kuch second tak Arpan ka padhna primary se.
+DIKKAT 2   Arpan ne 1000 bheje, turant balance dekha -> purana 5000 dikha (asal 4000)?
+HAL        Copy ~200 ms peeche thi. Arpan sochega paisa gaya hi nahi -> dobara bhejega!
+           Ilaaj: jisne abhi paisa bheja uska balance kuch second PRIMARY se (read-your-own-writes).
+           Arpan ke account pe last_write_at (Redis) -> kuch second tak Arpan ka padhna primary se.
 
-ISKE BAAD KYA TOOTEGA:
-  - Arpan ne doosre phone se khola?
-      -> last_write_at account pe rakho (Redis), phone pe nahi.
-  - Replica minute bhar peeche?
-      -> lag pe alert. Had paar -> us replica ko padhne wali list se hatao.
+DIKKAT 3   Arpan ne doosre phone se khola?
+HAL        last_write_at account pe rakho (Redis), phone pe nahi -> kisi bhi phone se primary.
+
+DIKKAT 4   Copy minute bhar peeche?
+HAL        Lag pe alert. Had paar -> us copy ko padhne wali list se hatao.
 ```
 
-#### 8 22 ARAB LINE ME HISTORY KA PAGE 5000
+#### 9 22 ARAB LINE ME HISTORY KA PAGE 5000
 ```
-KAHANI:  Arpan history ke page 5000 pe: LIMIT 20 OFFSET 100000 ->
-         DB 1,00,020 line PADH ke phenkta, 20 deta. Bahut dheema.
-         Beech me nayi line aayi -> sab ek khisak gaya -> ek line dobara dikhi.
-
-ILAAJ:   Page 5000 ke liye DB 1 lakh line padh ke phenkta hai (OFFSET). Uski jagah: pichhle page ki aakhri
-         line ka time + id yaad rakho, agla page 'isse purani 20'.
-         Index se seedha wahan pahunch jaata, page 1 ho ya 5000, ek jaisa tez.
+DIKKAT 1   Arpan history ke page 5000 pe: LIMIT 20 OFFSET 100000 ->
+           DB 1,00,020 line PADH ke phenkta, 20 deta. Bahut dheema.
+           Beech me nayi line aayi -> sab ek khisak gaya -> ek line dobara dikhi.
+HAL        Page 5000 ke liye DB 1 lakh line padh ke phenkta hai (OFFSET). Uski jagah: pichhle page ki aakhri
+           line ka time + id yaad rakho, agla page 'isse purani 20'.
+           Index se seedha wahan pahunch jaata, page 1 ho ya 5000, ek jaisa tez.
+           page 2: ... WHERE account_id = ? AND (ts, id) < (:last_ts, :last_id) ORDER BY ts DESC, id DESC
+           LIMIT 20 index (account_id, ts DESC, id DESC). Page 1 ho ya 5000, kharcha wahi.
 ```
 ```mermaid
 flowchart TD
@@ -387,29 +386,27 @@ flowchart TD
     n_Reconciliation_job --> n_SQL_DB
 ```
 ```
-ANDAR KAISE:
-         page 2: ... WHERE account_id = ? AND (ts, id) <
-         (:last_ts, :last_id) ORDER BY ts DESC, id DESC LIMIT 20
-         index (account_id, ts DESC, id DESC). Page 1 ho ya 5000, kharcha wahi.
+DIKKAT 2   Same ts pe do line, ek chhoot jaaye?
+HAL        Isliye (ts, id) dono. id barabari todti.
 
-ISKE BAAD KYA TOOTEGA:
-  - Same ts pe do line, ek chhoot jaaye?
-      -> isliye (ts, id) dono. id barabari todti.
-  - "Seedha page 500 pe jao"?
-      -> keyset me nahi hota, sirf agla / pichhla. Statement ke liye theek.
-  - Cursor app ko kaise do?
-      -> (ts, id) ko base64 karke next_cursor.
+DIKKAT 3   "Seedha page 500 pe jao"?
+HAL        Keyset me nahi hota, sirf agla / pichhla. Statement ke liye theek.
+
+DIKKAT 4   Cursor app ko kaise do?
+HAL        (ts, id) ko base64 karke next_cursor.
 ```
 
-#### 9 5 SAAL KA DATA EK HI TABLE ME
+#### 10 5 SAAL KA DATA EK HI TABLE ME
 ```
-KAHANI:  5 saal ka khaata ek table me. Log roz sirf 3 mahine
-         dekhte, par har query / backup arabon line ke saath.
-         Aur bank me DELETE nahi kar sakte (kanoon).
-
-ILAAJ:   Khaata mahine ke tukdon me. Band mahine sasti jagah (S3) bhej do, delete kabhi nahi.
-         Har mahine ke aakhir ka balance likh ke rakho, taaki purane tukde chale jaane ke baad bhi milaan
-         sahi ho.
+DIKKAT 1   5 saal ka khaata ek table me. Log roz sirf 3 mahine dekhte, par har query
+           / backup arabon line ke saath.
+           Aur bank me DELETE nahi kar sakte (kanoon).
+HAL        Khaata mahine ke tukdon me. Band mahine sasti jagah (S3) bhej do, delete kabhi nahi.
+           Har mahine ke aakhir ka balance likh ke rakho, taaki purane tukde chale
+           jaane ke baad bhi milaan sahi ho.
+           Purane tukde S3 gaye -> raat ka reconciliation khaata jodega to adhoora -> har account me farak!
+           Ilaaj: jod = snapshot (31-Mar Arpan = 45,000) + uske baad ki line.
+           (bank statement ke upar "opening balance" isi wajah se likha hota.)
 ```
 ```mermaid
 flowchart TD
@@ -434,18 +431,14 @@ flowchart TD
     n_SQL_DB --> n_Archive_S3
 ```
 ```
-ANDAR KAISE:
-         Purane tukde S3 gaye -> raat ka reconciliation khaata jodega to adhoora -> har account me farak!
-         Ilaaj: jod = snapshot (31-Mar Arpan = 45,000) + uske baad ki line.
-         (bank statement ke upar "opening balance" isi wajah se likha hota.)
+DIKKAT 2   RBI ne 2021 ka statement maanga?
+HAL        S3 Parquet pe Athena query, ya us mahine ka tukda wapas laao.
 
-ISKE BAAD KYA TOOTEGA:
-  - RBI ne 2021 ka statement maanga?
-      -> S3 Parquet pe Athena query, ya us mahine ka tukda wapas laao.
-  - Archive file koi badal na de?
-      -> S3 Object Lock (WORM): na delete na badal, saalon tak.
-  - Archive aur sharding ek hi cheez?
-      -> nahi. Archive jagah ghatata, shard likhne ka bojh baantta.
+DIKKAT 3   Archive file koi badal na de?
+HAL        S3 Object Lock (WORM): na delete na badal, saalon tak.
+
+DIKKAT 4   Archive aur sharding ek hi cheez?
+HAL        Nahi. Archive jagah ghatata, shard likhne ka bojh baantta.
 ```
 
 ```
