@@ -121,6 +121,7 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
+  NIYAM: ek id = ek kaam; wahi id dobara aaye to kaam nahi, purana jawab.
   "Button pehli tap pe band?"
      -> Haan, aur id order screen khulte banti. Pehli baar order + jawab save, doosri baar saved jawab.
   "Pehli request abhi chal hi rahi, dobara wali aa gayi?"
@@ -152,6 +153,7 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
+  NIYAM: 'blocked' ek number hai: naya order use badhata; sauda (paisa kata), cancel, umar khatam use ghatate.
   "Java me synchronized?"
      -> Sirf ek machine ke andar; yahan do server hain.
   "SELL pe? Mere paas 10 TCS, laptop aur phone dono se SELL 10."
@@ -197,6 +199,7 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
+  NIYAM: TCS ki book ko ek waqt ek hi haath chhoota; doosra chahiye to line me ruke.
   "Har order pe lock?"
      -> Race Suresh ke 10 share pe hai, order pe nahi; dono BUY apna-apna lock lete, dono ko 10 dikhte.
   "5000 stock = 5000 thread?"
@@ -237,6 +240,7 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
+  NIYAM: ek stock = ek line; badhana stocks ke BEECH, ek stock ke andar kabhi nahi.
   "Badhana kaise?"
      -> Stocks ke BEECH: TCS ek thread, INFY doosra. Ek stock ke andar nahi.
 ```
@@ -267,6 +271,7 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
+  NIYAM: log hi sach hai, book uski photo; do chalti book = do sach = galat.
   "Number kaun deta?"
      -> Log / sequencer (ek stock ki ek line, Kafka offset jaisa). Order Svc nahi, warna uski do
         machine same number de dein. Yahi log audit bhi.
@@ -311,6 +316,7 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
+  NIYAM: paisa ek jagah: chaaron likhai ek transaction me; ledger ka jod hamesha 0.
   "Sab likho, phir 'done' flag?"
      -> Flag se pehle gira to kitna likha pata hi nahi.
   "Ledger?"
@@ -357,6 +363,7 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
+  NIYAM: match ke baad sirf aage; ulta sirf match se pehle.
   "Step-step ki keemat?"
      -> Beech me haal PENDING dikhta (galat number nahi). 2PC jaisa lamba lock nahi.
   "Mera paisa wapas kyun nahi?"
@@ -406,6 +413,7 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
+  NIYAM: price = sirf abhi ka; purana bekaar, isliye store nahi, push.
   "Price second me 1000 baar badla, sab bhejoge?"
      -> Nahi. Har ~100 ms sirf aakhri price, beech wale bekaar.
   "Connection toota, wapas juda?"
