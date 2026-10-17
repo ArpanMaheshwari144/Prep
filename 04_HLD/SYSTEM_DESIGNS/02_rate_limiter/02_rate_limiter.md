@@ -64,12 +64,12 @@ flowchart TD
     n_USER --> n_App
 ```
 
-#### 1 TEEN SERVER, GINTI BAT GAYI
+#### 1 DO SERVER, GINTI BAT GAYI
 ```
 DIKKAT 1   Limit hai "ek minute me 5 login". App ki 2 machine, LB request baant raha.
            Arpan ne 9 baar login try kiya: App-1 pe 5, App-2 pe 4 gayi.
            Har App ne apni ginti dekhi: 5, 4 -> kisi ko 5 PAAR nahi dikha. 9 andar ghus gayi.
-HAL        Ginti sab machines ki EK jagah: Redis. Key = "login:Arpan".
+HAL        Ginti sab machines ki EK jagah: Redis. Key = "rate:Arpan:login".
            Har request pe +1 (INCR). Pehli request pe key ki umar 60 sec (EXPIRE) -> 60 sec baad key khud
            mit jaati -> naya minute, ginti 0. Ginti 5 se upar -> 429.
            (Ye "har minute ka dabba" = fixed window, samajhne ke liye sabse simple.
@@ -316,7 +316,6 @@ DIKKAT 1   Har user ki limit 100 / minute, aur server ek second me 5,000 jhel sa
            Server gir gaya. Limiter ne kuch nahi roka, kyunki kisi ek ne galti ki hi nahi.
 HAL        (1) Gateway pe poore system ki ek had (global cap).
            (2) LOAD SHEDDING: system thakne lage (CPU 90% paar) to kuch request seedha mana (503).
-           (3) Bheed ko chhoti der line me rakho. (4) Sale ka time pata hai to pehle se machine badhao.
              RATE LIMIT    = ek USER ne kitni bheji       -> 429
              LOAD SHEDDING = poora SYSTEM kitna jhel sake  -> 503
 ```
@@ -399,7 +398,7 @@ DIKKAT 1   Office ke 1000 log ek hi IP ke peeche (NAT). Ek ne galti ki, IP block
            Ulta, ek botnet ke paas 1000 IP, har IP se thoda-thoda -> kisi IP ki limit nahi tooti.
 HAL        Login ke baad had user_id pe (JWT se): key = rate:<user_id>:<endpoint>.
            Office ke 1000 log = 1000 alag ginti, ek ki galti se baaki nahi rukte.
-           Login se pehle user_id hai hi nahi: rate:login:<IP> (dheeli had) + WAF.
+           Login se pehle user_id hai hi nahi: rate:<IP>:login (dheeli had) + WAF.
 ```
 ```mermaid
 flowchart TD
@@ -426,7 +425,7 @@ flowchart TD
 ```
 ```
 DIKKAT 2   Login se pehle botnet 1000 IP se password guess kar raha?
-HAL        IP limit bekaar. ACCOUNT pe limit: rate:fail:<username> -> 5 galat password -> thodi der lock /
+HAL        IP limit bekaar. ACCOUNT pe limit: rate:<username>:login_fail -> 5 galat password -> thodi der lock /
            CAPTCHA.
 
 DIKKAT 3   API key chori ho gayi?
@@ -441,7 +440,7 @@ TOKEN BUCKET (yahi chuna):
    aur asli traffic aisa hi hota hai. Redis me sirf 2 number, bharna request aane pe.
 
    REDIS ME KAISE (ek HASH, ek Lua script):
-     key tb:login:Arpan -> tokens = 7, last = 10:00:05        (had 10, bharna 1 token / second)
+     key tb:Arpan:login -> tokens = 7, last = 10:00:05        (had 10, bharna 1 token / second)
      Request aayi 10:00:08 -> 3 second beete x 1 = 3 token bharo -> 7 + 3 = 10 (had 10 se upar nahi)
      -> token >= 1? haan -> 1 ghatao -> tokens = 9, last = 10:00:08 -> ALLOW
      Khaali (tokens 0) -> 429, Retry-After = agla token kab bharega.
@@ -529,7 +528,7 @@ ULTA SAWAAL ("tumhe kisi aur ne 429 diya, ab?"):
    "I respect Retry-After, back off exponentially with jitter, and throttle my own sends."
 
 REDIS KEY:  rate:<user>:<endpoint> -> ginti · umar = window (60 sec) -> umar khatam = reset, safai ka job nahi
-            rate:login:192.168.1.5 -> 4 · rate:signup:user_456 -> 2 · rate:search:apikey_xyz -> 47
+            rate:192.168.1.5:login -> 4 · rate:user_456:signup -> 2 · rate:apikey_xyz:search -> 47
 
 EK LINE:   User -> Route 53 -> ALB -> Gateway limiter -> Redis (token bucket Lua, ek jhatke me)
            -> had ke andar? App | paar? 429 + Retry-After | baar-baar? Kafka -> WAF ban
@@ -571,7 +570,7 @@ Kafka -> Pattern Svc -> WAF = baar-baar wale ka pakka ban
 ```
 JAWAB:    Limiter darwaze (API gateway) pe, mana hui request andar jaati hi nahi.
           Ginti Redis me, sab servers ki ek jagah, ek kadam me (token bucket ki Lua script).
-          Key = kaunsa kaam + kaun user, umar = window.
+          Key = kaun user + kaunsa kaam, umar = window.
           Token bucket isliye ki asli user jhatke me request bhejta. Had paar = 429 + kitni der baad aao.
           Redis ki copy. Redis band: aam cheez khuli, login / OTP band. Baar-baar wale hamlawar ko WAF
           se block, aur badi asli bheed ke liye poore system ki had.
