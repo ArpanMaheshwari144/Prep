@@ -1659,14 +1659,12 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
  ┌── 3 VARIANTS (SHELL wahi upar; sirf RANGE + solve(mid) badlo. farak = greedy-count <= limit?) ──
  │ ▸ KOKO BANANAS (LC-875) -- min eating-speed
- │     RANGE: 1 .. max(piles)          solve(mid): hours = Σ ceil(piles[i]/mid)  <= h ?
+ │     RANGE: 1 .. max(piles)          solve(mid): hours = Σ ceil(piles[i]/mid)  <= h ?   // low=1: 0 pe piles[i]/mid = 0 se divide crash
  │       ceil-TRAP: int/int FLOOR karta -> use (piles[i]+mid-1)/mid. hours = long (overflow).
- │       low=1 se shuru: 0 hua to piles[i]/mid me 0 se divide -> crash
  │
  │ ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity
  │     RANGE: max(weights) .. sum(weights)
- │       solve(mid): day=1,sum=0; for w: if(sum+w>mid){day++;sum=0;} sum+=w;  ->  day <= D ?
- │       day=1 se shuru: aakhri din ka load loop ke baad nahi ginta
+ │       solve(mid): day=1,sum=0; for w: if(sum+w>mid){day++;sum=0;} sum+=w;  ->  day <= D ?   // day=1: aakhri din ka load bhi gino
  │
  │ ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum
  │     RANGE: max(arr) .. sum(arr)     (low=max: bada element akela; high=sum: k=1 pura)
