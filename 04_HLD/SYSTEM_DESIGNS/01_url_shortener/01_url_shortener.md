@@ -249,14 +249,14 @@ flowchart LR
 ```
 DIKKAT     2 baje mujhe ginti chahiye thi kitne click aaye. Usi request me analytics DB me likhne lage,
            phir redirect. Analytics DB dheema -> har user redirect ke liye ruka.
-HAL        KAFKA: redirect turant (302), "ek click hua" ki khabar Kafka me. Analytics svc apni speed se
-           padhti, offset yaad (crash pe wahin se); kharab khabar alag line (DLQ), baaki nahi rukti.
+HAL        KAFKA (disk pe diary, App bas aakhri page pe likh ke aage): redirect turant (302), "ek click hua"
+           ki khabar Kafka me. Analytics svc apni speed se padhti, kahan tak padha yaad (offset), crash pe
+           wahin se; kharab khabar alag line (DLQ), baaki nahi rukti.
 NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein gayi.
 ```
 ```
 AAGE POOCHEGA:
   NIYAM: redirect kisi ka intezaar nahi karta; ginti peeche, apni speed se, disk pe.
-  "Kafka hai kya?"                 -> disk pe diary; App bas aakhri page pe likh ke aage badh jaata.
   "Ek click do baar aaya?"         -> click id se, do baar nahi ginti.
   "Kafka band?"                    -> redirect phir bhi chalta, bas kuch click ginti me nahi aate.
   "SQS kyun nahi?"                 -> chal jaata; Kafka: click bahut + naya report = purane click dobara
@@ -296,14 +296,14 @@ flowchart LR
 ```
 DIKKAT     4 baje DB team: 10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Ek machine me nahi aata,
            aur wo ek machine mari to saare link gaye.
-HAL        SHARD by short code: click code ke saath aata (GET /abc123) -> code se seedha kaunsi machine.
-           Machine RING (gol ghadi) se; har tukde ki 3 copy, alag building me.
+HAL        SHARD (data ko tukdon me baanto) short code se: click code ke saath aata (GET /abc123) -> code
+           se seedha kaunsi machine. RING = ek gol ghadi: machine bhi ghadi pe, code bhi; code ghadi ki
+           disha me chale, jo pehli machine mile wahi uski. Har tukde ki 3 copy, alag building me.
 NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se country pata hi nahi.
 ```
 ```
 AAGE POOCHEGA:
   NIYAM: jis cheez se padhte ho (code), usi se baanto.
-  "Ring kaise?"                    -> machine aur code dono ghadi pe; code ghadi ki disha me, pehli machine.
   "Nayi machine aayi?"             -> sirf uske theek peeche wale code usko; "code % machine" me 3 se 4
                                       hote hi lagbhag har code ki jagah badal jaati.
   "Copy badha do, likhna tez?"     -> nahi, har copy pe likhna padta; likhne ka bojh = SHARD, copy = bachav.
@@ -458,8 +458,9 @@ flowchart LR
 ```
 DIKKAT     Raat ko spammer: ek API key se har second 5,000 link (phishing). Aam din poore system pe ~1,000
            -> 5 guna bojh, asli users dheeme; Gmail / WhatsApp ne hamara domain "spam" maana.
-HAL        RATE LIMIT darwaze (API gateway) pe: har user / IP ki had + login check; uske aage WAF.
-           Chhota karne se pehle lamba URL check: virus / dhokhe wali site to nahi.
+HAL        RATE LIMIT darwaze (API gateway) pe: har user / IP kitni baar bana sakta, uski had + login check.
+           Uske aage WAF (jaane-pehchaane hamle rokne wala). Chhota karne se pehle lamba URL check: virus /
+           dhokhe wali site to nahi, warna hamara chhota link bura kaam karega.
 NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana lega.
 ```
 ```
