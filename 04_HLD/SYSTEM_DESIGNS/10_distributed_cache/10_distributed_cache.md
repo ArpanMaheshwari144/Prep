@@ -361,9 +361,11 @@ flowchart TD
 POOCHEGA: "What happens if a cache node goes down?"
           (Cache ki ek machine gir gayi to?)
 
-JAWAB:    Har machine ki ek copy doosri building me hoti hai. Machine giri to copy uski jagah le leti
-          hai.
-          Aur sirf usi machine ki keys pe asar padta hai, baaki machines aaram se chalti rehti hain.
+JAWAB:    Har machine (B) ki ek copy doosri building me hoti hai. B jo likhti hai, wo copy tak bhi jaata hai.
+          B giri -> baaki machines dekhti hain ki B jawab nahi de rahi, milke faisla karti hain -> B ki copy
+          naya B ban jaati hai, aur app ko naya pata bata diya jaata.
+          Beech ke 10-30 second us hisse ki keys DB se aati hain (thoda dheema), baaki machines pe koi asar nahi.
+          Copy thodi peeche hoti hai, to aakhri kuch likhai kho sakti hai. Cache me chalta, asli data DB me hai.
 ```
 ```mermaid
 flowchart TD
