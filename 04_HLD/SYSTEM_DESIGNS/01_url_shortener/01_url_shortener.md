@@ -403,8 +403,15 @@ flowchart TD
 
 ```
 POOCHEGA: "What if the cache goes down?"
-BOL:      "Redis runs as a replicated cluster. If it still goes down, the DB takes the load,
-           so I shed load and let only one request rebuild a hot key, not a thousand at once."
+          (Cache (Redis) hi gir gaya to?)
+
+JAWAB:    Redis akela nahi chalta, uski copies hain (replicated cluster), ek gire to
+          doosri sambhaal leti hai.
+          Phir bhi poora gir jaaye to saari padhai DB pe aayegi. Tab DB ko bachane
+          ke liye faltu request mana karo (load shedding), aur garam link ko sirf EK
+          request DB se laaye, hazaar ek saath nahi.
+
+SHABD:    load shedding = bheed zyada ho to kuch request seedha mana kar dena, taaki system zinda rahe
 ```
 ```mermaid
 flowchart TD
@@ -424,8 +431,13 @@ flowchart TD
 ## DIKKAT 2 — ek App sab nahi jhelta, gira to site band
 
 ```
-BOL:      "I run several stateless app servers behind a load balancer, so any server can take any request. The
-           load balancer health-checks every few seconds and takes a dead or slow server out of rotation."
+JAWAB:    Kai app server, koi kuch yaad nahi rakhta (stateless), aage load balancer. Isliye koi bhi
+          request kisi bhi server pe ja sakti hai.
+          Load balancer har kuch second me har server ko ping karta (health check). Jo mara ya dheema
+          hai, use list se bahar kar deta.
+
+SHABD:    stateless = server apne andar user ka kuch yaad nahi rakhta, sab DB /
+          Redis me · health check = 'zinda ho?' wala ping
 ```
 ```mermaid
 flowchart TD
@@ -452,9 +464,12 @@ flowchart TD
 
 ```
 POOCHEGA: "That server crashed at 400 — what about the rest of its range?"
-BOL:      "The restarted server asks for a new range, so 401 to 1000 are wasted. I accept that
-           on purpose — 3.5 trillion codes, a few thousand lost is nothing. Making every number
-           crash-proof would need coordination on every request and kill the benefit of ranges."
+          (Server 400 pe crash ho gaya, uski range ke baaki number ka kya?)
+
+JAWAB:    Server uthte hi nayi range maangta hai. 401 se 1000 tak ke number bekaar gaye. Ye jaan-boojh
+          ke maana hai: 3.5 lakh crore code hain, kuch hazaar khona kuch nahi.
+          Har number ko crash se bachane ke liye har request pe sabse poochhna
+          padta, aur range ka poora faayda khatam ho jaata.
 ```
 ```mermaid
 flowchart TD
@@ -483,9 +498,13 @@ flowchart TD
 ## DIKKAT 4 — click ginna redirect ko dheema na kare
 
 ```
-BOL:      "The redirect returns a 302 immediately and puts a click event on Kafka; an analytics service
-           consumes it in the background, de-duplicates by click id, and sends repeated failures to a dead-
-           letter queue. If Kafka is down, the redirect still works and we only lose some analytics."
+JAWAB:    Redirect turant 302 deta hai, aur click ki khabar Kafka me daal deta hai.
+          Analytics service peeche se padhti hai, ek click do baar na gine (click id
+          se dedup), aur baar-baar fail hone wali khabar DLQ me.
+          Kafka band ho to bhi redirect chalta rahega, bas kuch click ginti me nahi aayenge.
+
+SHABD:    302 = 'abhi yahan jao' (har baar hamare paas aata, isliye click gine ja sakte) · DLQ = kharab
+          khabar ki alag line, taaki baaki na atkein
 ```
 ```mermaid
 flowchart TD
@@ -524,8 +543,10 @@ flowchart TD
 
 ```
 POOCHEGA: "The database is too big / takes too many writes. What do you do?"
-BOL:      "I shard by short code, so every redirect goes to exactly one
-           shard, and keep three replicas of each shard in different zones."
+          (DB bahut bada ho gaya / likhai bahut. Kya karoge?)
+
+JAWAB:    Short code se baanto (shard): har redirect seedha ek hi shard pe jaata hai. Har shard ki 3
+          copy, alag-alag building (zone) me.
 ```
 ```mermaid
 flowchart TD
@@ -564,8 +585,14 @@ flowchart TD
 
 ```
 POOCHEGA: "What happens if a DB node goes down mid-write?"
-BOL:      "The DB writes to its commit log before applying, and I ack writes on quorum, so losing
-           one node doesn't lose committed data. Redirects keep working from Redis meanwhile."
+          (Likhte waqt DB ki ek machine gir gayi to?)
+
+JAWAB:    DB pehle apni diary (commit log) me likhta hai, phir data me. Aur likhai tab 'pakki' maani
+          jaati jab zyadatar copies (quorum) haan bolein.
+          Isliye ek machine girne se pakka likha data nahi khota. Us beech redirect
+          Redis se chalte rehte hain.
+
+SHABD:    commit log = DB ki diary, gira to isi se wapas · quorum = zyadatar (3 me se 2)
 ```
 ```mermaid
 flowchart TD
@@ -604,8 +631,11 @@ flowchart TD
 
 ```
 POOCHEGA: "The user created a link but gets 404 / old value. Why?"
-BOL:      "Replication lag. The write path also puts the link in Redis, and
-           with quorum reads and writes the read always sees the latest write."
+          (User ne link banaya, par khola to 404 / purana aaya. Kyun?)
+
+JAWAB:    Copy thodi peeche thi (replication lag), naya link wahan pahuncha hi nahi tha.
+          Ilaaj: link banate waqt Redis me bhi daal do. Aur padhna-likhna dono quorum se (2 copy me
+          likho, 2 se padho) -> padhai hamesha naya wala dekhegi.
 ```
 ```mermaid
 flowchart TD
@@ -644,8 +674,12 @@ flowchart TD
 
 ```
 POOCHEGA: "What if a whole region goes down?"
-BOL:      "Inside a region I'm multi-AZ. If the region dies, Route 53 health checks send users to another
-           region; data is copied there asynchronously, so a few of the newest links may be lost."
+          (Poora region (AWS ka ek shehar) hi band ho gaya to?)
+
+JAWAB:    Region ke andar kai building (multi-AZ) me chalta hai. Poora region gira to Route 53 health
+          check karke users ko doosre region bhej deta.
+          Data doosre region me thodi der baad pahunchta (async), isliye sabse naye
+          kuch link kho sakte hain.
 ```
 ```mermaid
 flowchart TD
@@ -690,8 +724,12 @@ flowchart TD
 
 ```
 POOCHEGA: "How do you stop abuse?"
-BOL:      "Rate limiting per user and IP at the API gateway, auth there too, a WAF at the
-           edge, and I check long URLs against a malware / phishing list before shortening."
+          (Galat istemaal (abuse) kaise rokoge?)
+
+JAWAB:    API gateway pe har user / IP ki had (rate limit), login check bhi wahin. Sabse aage WAF.
+          Aur lamba URL chhota karne se pehle check karo: ye virus / phishing wali list me to nahi.
+
+SHABD:    WAF = darwaze pe guard jo bure request (hamle) rokta
 ```
 ```mermaid
 flowchart TD
@@ -800,11 +838,13 @@ NAYA LINK: LB -> App -> thaile se agla number -> base62 (123456
            -> "w7e") -> Redis + Cassandra -> chhota link wapas
 ```
 ```
-BOL:      "The short code is a counter in base62, with ranges handed to each server so there's no
-           collision. Reads are 100 to 1, so Redis serves most redirects; Cassandra, sharded by short
-           code with three replicas, holds the rest. Redirect is a 302 and click analytics go async
-           through Kafka. Route 53 and two load balancers remove the single points of failure, and the
-           gateway rate-limits abuse. Next I'd add custom aliases, expiry cleanup and geo-distribution."
+JAWAB:    Short code = ek counter, base62 me. Har server ko numbers ki range milti,
+          to do server same code nahi banate.
+          100 me se 1 likhai, baaki padhai -> zyadatar redirect Redis se. Baaki Cassandra se, short code
+          se baanta hua, har tukde ki 3 copy.
+          Redirect 302, click ki ginti peeche Kafka se. Route 53 + do load balancer = koi ek cheez gire
+          to sab na gire. Gateway pe rate limit.
+          Aage: apna naam wala link, purane link ki safai, alag desh me copy.
 ```
 
 ARCHETYPE F (infra/component) · CONCEPTS: [ID-gen](../../FOUNDATIONS/13_distributed_id_snowflake.md) · [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
