@@ -85,7 +85,7 @@ def main(f):
             svg = os.path.join(img, m.group(1) + '.svg')
             h = hashlib.md5(open(svg, 'rb').read()).hexdigest()[:8] if os.path.exists(svg) else '0'
             return f'![{m.group(1)}](img/{m.group(1)}.svg?v={h})'
-        s2 = re.sub(r'!\[(\w+)\]\(img/\.svg(?:\?v=\w+)?\)', ver, s)
+        s2 = re.sub(r'!\[(\w+)\]\(img/\1\.svg(?:\?v=\w+)?\)', ver, s)
         open(f, 'w', encoding='utf-8').write(s2)
         return
     # already converted blocks: ![name](img/name.png) + details + mermaid
