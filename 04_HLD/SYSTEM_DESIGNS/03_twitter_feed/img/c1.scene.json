@@ -1,0 +1,72 @@
+{
+ "title": "Subah app khola: har baar 200 logon ka jod",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: kholte waqt 200 logon ke tweet laao, jodo, sort",
+   "items": [
+    {
+     "box": "Main",
+     "sub": "app khola"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "200 log",
+     "sub": "sabke tweet laao",
+     "cells": [
+      "u1",
+      "u2",
+      "u3",
+      "..",
+      "u200"
+     ],
+     "state": "ooooo"
+    },
+    {
+     "arrow": "jodo + sort"
+    },
+    {
+     "box": "Feed",
+     "sub": "dheemi",
+     "bad": true
+    }
+   ],
+   "result": "har baar dheema"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: tweet hote hi follower ke inbox me id daalo, kholna = bas inbox padho (fanout)",
+   "items": [
+    {
+     "box": "Ravi ka tweet t9"
+    },
+    {
+     "arrow": "turant"
+    },
+    {
+     "box": "Mera inbox",
+     "sub": "pehle se bana",
+     "cells": [
+      "t9",
+      "t8",
+      "t7",
+      ".."
+     ],
+     "state": "yggg"
+    },
+    {
+     "arrow": "app khola"
+    },
+    {
+     "box": "Feed",
+     "sub": "turant",
+     "good": true
+    }
+   ],
+   "result": "ek read",
+   "foot": "unfollow kiya -> padhte waqt follow list se chhaanto"
+  }
+ ]
+}

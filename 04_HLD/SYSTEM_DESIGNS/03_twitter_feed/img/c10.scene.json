@@ -1,0 +1,70 @@
+{
+ "title": "Maine match ki 50 MB video daali, sabko dheemi aur mehngi",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har dekhne wala US server se khinche",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "Delhi"
+      },
+      {
+       "box": "London"
+      },
+      {
+       "box": "Sydney"
+      }
+     ]
+    },
+    {
+     "arrow": "50 MB har baar"
+    },
+    {
+     "box": "Hamara US server",
+     "sub": "bandwidth bill",
+     "bad": true
+    }
+   ],
+   "result": "buffering + bill"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: video S3 me, paas wale CDN se (CDN)",
+   "items": [
+    {
+     "box": "S3",
+     "sub": "asli video"
+    },
+    {
+     "arrow": "ek baar copy"
+    },
+    {
+     "stack": [
+      {
+       "box": "CDN Delhi",
+       "good": true
+      },
+      {
+       "box": "CDN London",
+       "good": true
+      },
+      {
+       "box": "CDN Sydney",
+       "good": true
+      }
+     ]
+    },
+    {
+     "arrow": "paas se"
+    },
+    {
+     "box": "Dekhne wale"
+    }
+   ],
+   "result": "",
+   "foot": "photo hatayi -> CDN se bhi hatao (invalidation); private -> thodi der wala link (signed URL)"
+  }
+ ]
+}

@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Fanout["Fanout<br/>har khulne pe 200 ka jod<br/>-> tweet hote hi har follower ke inbox me tweet_id daalo<br/>inbox = Redis sorted set (score = time), app khola = bas inbox padho (push / fanout)<br/>id se poora tweet -> 50 id ek saath laao (batch)<br/>unfollow kiya -> padhte waqt follow list se chhaanto"]
+    n_Fanout["Fanout<br/>har khulne pe 200 ka jod<br/>-> tweet hote hi har follower ke inbox me tweet_id daalo, app = bas inbox padho (fanout)<br/>unfollow kiya -> padhte waqt follow list se chhaanto"]
     n_Redis_inbox["Redis inbox"]
     n_DB["DB"]
     n_USER --> n_App

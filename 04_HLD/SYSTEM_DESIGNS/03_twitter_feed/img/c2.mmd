@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Kafka["Kafka<br/>5,000 inbox usi request me<br/>-> tweet DB me + khabar Kafka me, user ko turant ho gaya<br/>workers peeche inbox bharein, key = author_id se kram (Kafka + fanout)<br/>DB save, Kafka fail -> outbox / retry<br/>apni hi feed -> apna tweet seedha, baaki peeche<br/>worker 60/100 pe gira -> commit nahi, khabar phir aayegi<br/>wahi 60 dobara -> sorted set me tweet ek hi"]
+    n_Kafka["Kafka<br/>5,000 inbox usi request me<br/>-> tweet DB + khabar Kafka, user ko turant; workers peeche inbox bharein (Kafka + fanout)<br/>DB save, Kafka fail -> outbox / retry<br/>worker beech me gira -> khabar phir, inbox me tweet ek hi"]
     n_Fanout_workers["Fanout workers"]
     n_Redis_inbox["Redis inbox"]
     n_DB["DB"]

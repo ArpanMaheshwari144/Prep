@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
-    n_ALB["ALB<br/>akeli App giri, sab band<br/>-> kai App, LB baante, App kuch yaad nahi rakhta<br/>koi bhi App koi bhi request le (stateless x N)<br/>machine giri -> ~10 sec health check, chup = bahar<br/>naya code -> ek-ek karke badlo (rolling)"]
+    n_ALB["ALB<br/>akeli App giri, sab band<br/>-> kai App, LB baante, App kuch yaad nahi rakhta (stateless x N)<br/>naya code -> ek-ek karke badlo (rolling)"]
     n_App_xN["App x N"]
     n_FAN["Kafka + Fanout workers"]
     n_Redis_inbox["Redis inbox"]

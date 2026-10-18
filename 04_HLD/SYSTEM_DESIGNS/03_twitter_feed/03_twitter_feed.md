@@ -90,7 +90,7 @@ JAWAB:    Feed ke liye: chalta rahe, chahe thoda purana ho.
 Do table: tweets (kisne kya likha) + follows (kaun kisko follow karta).
 Feed = jinko follow karta unke tweet nikaalo, time se sort karo, upar ke 50 do.
 ```
-![cdabba](img/cdabba.svg)
+![cdabba](img/cdabba-948b836f.svg)
 
 
 #### 1 Subah app khola, feed ghoomti rahi (har baar 200 logon ka jod)
@@ -98,7 +98,7 @@ Feed = jinko follow karta unke tweet nikaalo, time se sort karo, upar ke 50 do.
 DIKKAT     Subah 8 baje maine app khola. Main 200 ko follow karta -> 200 logon ke tweet laao, jodo, sort,
            upar ke 50. Har user ke saath, har baar app kholne pe 200 ka jod -> feed dheemi.
 ```
-![c1](img/c1.svg)
+![c1](img/c1-70f5f0e2.svg)
 
 ```
 NAHI       DB pe index / read replica: thoda tez, par har khulne pe 200 ka jod wahi ka wahi.
@@ -119,16 +119,10 @@ AAGE POOCHEGA:
 DIKKAT     9 baje maine tweet kiya (5,000 follower) -> usi request me 5,000 inbox, ~1 ms har -> 5+ sec,
            timeout, "fail" dikha, par tweet DB me ban chuka tha.
 ```
-![c2](img/c2.svg)
+![c2](img/c2-d5b5e3b9.svg)
 
 ```
 NAHI       App me peeche ek thread: App crash = thread ka kaam gaya; Kafka disk pe, dobara padh sakte.
-```
-```
-TASVEER: pehle vs ab
-pehle: tweet -> usi request me 5,000 inbox (~1 ms har) -> 5+ sec -> timeout, "fail" dikha
-ab:    tweet -> DB + Kafka -> turant "ho gaya"
-       Kafka -> fanout workers -> 5,000 inbox peeche se (key = author_id, kram se)
 ```
 ```
 AAGE POOCHEGA:
@@ -148,16 +142,10 @@ AAGE POOCHEGA:
 DIKKAT     11 baje Bieber (10 crore follower) ne tweet kiya -> fanout ko 10 crore inbox. Uski Kafka line
            ghanton atki; usi line ke baaki logon ke tweet bhi peeche khade.
 ```
-![c3](img/c3.svg)
+![c3](img/c3-6532e341.svg)
 
 ```
 NAHI       sabke liye pull: har feed khulna phir 200 ka jod, mehnga.
-```
-```
-TASVEER: push + pull
-Suresh (5,000 follower) tweet -> PUSH -> 5,000 inbox me tweet_id
-Bieber (10 crore)       tweet -> inbox me nahi, sirf uske apne tweet
-main feed khola -> mere inbox ke 50 + Bieber ke naye (PULL) -> milao + time se sort -> feed
 ```
 ```
 AAGE POOCHEGA:
@@ -176,7 +164,7 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar ka match 4:30 pe khatam, Virat ne tweet kiya. Virat pull pe -> har feed me DB se. Crore log
            ek saath app khole -> crore read DB pe -> DB gira.
 ```
-![c4](img/c4.svg)
+![c4](img/c4-713b2b52.svg)
 
 ```
 NAHI       DB ki copies badha do: wo bhi disk se (ms), ek garam hisse ki copies crore read nahi jhelti.
@@ -195,16 +183,10 @@ AAGE POOCHEGA:
 DIKKAT     Shaam 5 baje Redis alert: har inbox me saare id, kabhi kaate nahi, soye users ke bhi
            -> RAM bhar rahi.
 ```
-![c5](img/c5.svg)
+![c5](img/c5-d0179a88.svg)
 
 ```
 NAHI       Redis me machine jodte jao: soye 40 crore ka inbox bhi RAM khaata, kharcha badhta, dikkat wahi.
-```
-```
-TASVEER: inbox chhota
-inbox: [sabse naya ........ 800] | 801 se purane -> kaato (ZREMRANGEBYRANK)
-800 id = ~60 KB  ·  50 crore inbox x 60 KB = ~30 TB
-mahine me aaye (zinda) -> inbox rakho  ·  soye -> hatao, wapas aaye to DB se bana lo
 ```
 ```
 AAGE POOCHEGA:
@@ -222,7 +204,7 @@ AAGE POOCHEGA:
 DIKKAT     6 baje DB alert: har second ~5,000 naye tweet, 5 saal me ~0.5 PB. Ek DB na itna rakh sakta,
            na itna likh sakta.
 ```
-![c6](img/c6.svg)
+![c6](img/c6-bae0f5dc.svg)
 
 ```
 NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; join / transaction chahiye nahi.
@@ -245,7 +227,7 @@ AAGE POOCHEGA:
 DIKKAT     Main Bangalore me, saara data aur App US me. Har feed refresh pe request samundar paar US jaati
            aur aati -> sirf raaste me 300 ms, feed har baar atak ke khulti.
 ```
-![c7](img/c7.svg)
+![c7](img/c7-3d589830.svg)
 
 ```
 AAGE POOCHEGA:
@@ -264,7 +246,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko har region me ek hi App machine thi. India wali machine giri -> India ke saare user ke
            liye feed, tweet sab band, jab tak machine wapas na uthe.
 ```
-![c8](img/c8.svg)
+![c8](img/c8-1dd09b03.svg)
 
 ```
 AAGE POOCHEGA:
@@ -281,7 +263,7 @@ AAGE POOCHEGA:
 DIKKAT     Match ke highlights aaye, crore log feed scroll kar rahe. Wahi App machine tweet likhti bhi thi
            -> padhne ki bheed me mera tweet button 10 sec ghooma, likhna dheema.
 ```
-![c9](img/c9.svg)
+![c9](img/c9-71743a93.svg)
 
 ```
 AAGE POOCHEGA:
@@ -298,7 +280,7 @@ AAGE POOCHEGA:
 DIKKAT     Maine match ki 50 MB video daali. Har dekhne wala use US ke server se khinchta -> door walon
            ko buffering, aur har baar poori video hamare server se, bandwidth ka bill bhaari.
 ```
-![c10](img/c10.svg)
+![c10](img/c10-d49e0aaa.svg)
 
 ```
 AAGE POOCHEGA:
@@ -335,7 +317,7 @@ JAWAB:    Likhna: tweet Cassandra me save, aur 'naya tweet' Kafka me. Worker aam
           se baanta, doosre desh me copy.
           Aage: ML se ranking, trending, search.
 ```
-![c10_2](img/c10_2.svg)
+![c10_2](img/c10_2-30762f37.svg)
 
 
 ---

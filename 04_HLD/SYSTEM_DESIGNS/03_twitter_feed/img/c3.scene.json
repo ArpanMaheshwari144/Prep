@@ -1,0 +1,79 @@
+{
+ "title": "Bieber ka ek tweet = 10 crore inbox, line ghanton atki",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: celeb ka bhi push, 10 crore inbox",
+   "items": [
+    {
+     "box": "Bieber tweet"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Kafka line",
+     "sub": "10 crore kaam",
+     "cells": [
+      "B",
+      "B",
+      "B",
+      "..",
+      "aap"
+     ],
+     "state": "oooor"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Mera tweet",
+     "sub": "line me peeche",
+     "bad": true
+    }
+   ],
+   "result": "ghanton der"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: aam user = push, celeb = pull; feed khulte dono milao (hybrid)",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "Mera inbox (push)",
+       "cells": [
+        "t9",
+        "t7"
+       ],
+       "state": "gg"
+      },
+      {
+       "box": "Celeb cache (pull)",
+       "sub": "Bieber ke naye",
+       "cells": [
+        "b5"
+       ],
+       "state": "y"
+      }
+     ]
+    },
+    {
+     "arrow": "time se milao"
+    },
+    {
+     "box": "Meri feed",
+     "cells": [
+      "t9",
+      "b5",
+      "t7"
+     ],
+     "state": "gyg",
+     "good": true
+    }
+   ],
+   "result": "line khaali",
+   "foot": "celeb ka tweet inbox me nahi jaata; 50 celeb follow -> celeb tweet chhote cache se, pull sasta"
+  }
+ ]
+}

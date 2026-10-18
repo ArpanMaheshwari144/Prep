@@ -4,7 +4,7 @@ flowchart LR
     n_App["App"]
     n_Kafka["Kafka"]
     n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox<br/>50 crore inbox, RAM bhari<br/>-> inbox me sirf aakhri 800 tweet (ZREMRANGEBYRANK), ~60 KB<br/>sirf mahine me aaye zinda log ka inbox, baaki hatao (trim)<br/>soya user lauta -> pull se banao, phir bharo<br/>800 ke aage scroll -> store (DB) se<br/>Redis gira -> copy (replica)<br/>copy bhi gayi -> kuch request mana, dheere bharo"]
+    n_Redis_inbox["Redis inbox<br/>50 crore inbox, RAM bhari<br/>-> inbox me sirf aakhri kuch sau tweet, sirf zinda logon ka (trim)<br/>soya user lauta -> pull se banao<br/>aage scroll -> DB se"]
     n_Hot_tweet_cache["Hot-tweet cache"]
     n_DB["DB"]
     n_USER --> n_App

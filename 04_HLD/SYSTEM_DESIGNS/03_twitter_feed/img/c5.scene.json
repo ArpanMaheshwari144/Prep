@@ -1,0 +1,57 @@
+{
+ "title": "Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har inbox me saare id, soye users ke bhi",
+   "items": [
+    {
+     "box": "Redis",
+     "sub": "50 crore inbox",
+     "cells": [
+      "t1",
+      "t2",
+      "..",
+      "t9000"
+     ],
+     "state": "oooo"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "RAM",
+     "sub": "bhar rahi",
+     "bad": true
+    }
+   ],
+   "result": "RAM khatam"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: sirf aakhri kuch sau, sirf zinda logon ka inbox (trim)",
+   "items": [
+    {
+     "box": "Mera inbox",
+     "sub": "aakhri 800",
+     "cells": [
+      "t9000",
+      "..",
+      "t8201"
+     ],
+     "state": "ggg",
+     "good": true
+    },
+    {
+     "arrow": "purane hatao"
+    },
+    {
+     "box": "Soye user",
+     "sub": "inbox nahi; lauta to pull se banao"
+    }
+   ],
+   "result": "RAM chhoti",
+   "foot": "800 se aage scroll -> DB se"
+  }
+ ]
+}

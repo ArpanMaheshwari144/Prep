@@ -3,7 +3,7 @@ flowchart LR
     n_USER["USER"]
     n_App["App<br/>+ push + pull merge"]
     n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers<br/>Bieber = 10 crore inbox<br/>-> 10,000 se kam follower = push, zyada (celeb) = pull, inbox me nahi<br/>feed khulte celeb ke naye tweet laao, inbox ke saath milao + sort (hybrid)<br/>50 celeb follow -> celeb tweet alag, pull sasta"]
+    n_Fanout_workers["Fanout workers<br/>Bieber = 10 crore inbox<br/>-> aam user = push, celeb = pull: feed khulte celeb ke tweet laao + milao (hybrid)<br/>50 celeb follow -> celeb tweet alag cache se, pull sasta"]
     n_Redis_inbox["Redis inbox"]
     n_DB["DB"]
     n_USER --> n_App

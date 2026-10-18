@@ -1,0 +1,49 @@
+{
+ "title": "Main Bangalore me, data US me, har feed 300 ms",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har request samundar paar",
+   "items": [
+    {
+     "box": "Main (Bangalore)"
+    },
+    {
+     "arrow": "300 ms aana-jaana"
+    },
+    {
+     "box": "US",
+     "sub": "App + data",
+     "bad": true
+    }
+   ],
+   "result": "feed atak ke"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: har region me data ki copy, paas wale region se (multi-region)",
+   "items": [
+    {
+     "box": "Main (Bangalore)"
+    },
+    {
+     "arrow": "Route 53: paas wala"
+    },
+    {
+     "box": "India region",
+     "sub": "data ki copy",
+     "good": true
+    },
+    {
+     "arrow": "copy aati rahe",
+     "dash": true
+    },
+    {
+     "box": "US region"
+    }
+   ],
+   "result": "",
+   "foot": "region gira -> zinda region, feed thodi purani; dono me likha -> baad wala jeete"
+  }
+ ]
+}

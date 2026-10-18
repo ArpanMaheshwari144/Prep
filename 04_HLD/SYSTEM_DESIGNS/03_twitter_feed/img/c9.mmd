@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
-    n_Tweet_Svc["Tweet Svc<br/>padhne ki bheed, likhna dheema<br/>-> likhne (Tweet Svc) aur padhne (Timeline Svc) ki alag service<br/>jahan bheed wahi badhao (alag service)<br/>follow list -> Redis me rakhi, har feed pe chahiye"]
+    n_Tweet_Svc["Tweet Svc<br/>padhne ki bheed, likhna dheema<br/>-> likhne aur padhne ki alag service, jahan bheed wahi badhao (alag service)"]
     n_Cassandra["Cassandra"]
     n_FAN["Kafka + Fanout workers"]
     n_RI["Redis (inbox + hot tweet)"]

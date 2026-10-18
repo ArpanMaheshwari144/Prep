@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
-    n_CDN["CDN<br/>video sabko dheemi, mehngi<br/>-> video S3 me, CDN duniya bhar me copy rakhe<br/>user ko paas wale CDN se, nahi mila to S3 se laaye (CDN)<br/>photo hatayi, CDN pe dikhe -> CDN se hatao (invalidation)<br/>private photo -> thodi der wala link (signed URL)"]
+    n_CDN["CDN<br/>video sabko dheemi, mehngi<br/>-> video S3 me, user ko paas wale CDN se (CDN)<br/>photo hatayi, CDN pe dikhe -> CDN se hatao (invalidation)<br/>private photo -> thodi der wala link (signed URL)"]
     n_SVC["Tweet / Timeline / User Svc + Follow store"]
     n_Cassandra["Cassandra"]
     n_FAN["Kafka + Fanout workers"]

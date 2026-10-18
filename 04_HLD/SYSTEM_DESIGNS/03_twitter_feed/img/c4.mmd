@@ -5,7 +5,7 @@ flowchart LR
     n_Kafka["Kafka"]
     n_Fanout_workers["Fanout workers"]
     n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache<br/>Virat ka tweet, DB gira<br/>-> celeb ke garam tweet ~1 ghanta RAM me, 100 me 95 read wahin se<br/>miss pe sirf EK request DB, baaki ruk ke wahi jawab (hot-tweet cache + lock)<br/>ek key pe bheed -> key ki kai copy + App memory 1-2 sec<br/>Virat ne edit / delete -> cache se key hatao"]
+    n_Hot_tweet_cache["Hot-tweet cache<br/>Virat ka tweet, DB gira<br/>-> celeb ke garam tweet RAM me, miss pe sirf ek DB jaaye (hot-tweet cache + lock)<br/>ek key pe bheed -> key ki kai copy + App memory<br/>Virat ne edit / delete -> cache se key hatao"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_Kafka
