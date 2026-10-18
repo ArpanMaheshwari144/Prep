@@ -107,10 +107,10 @@ NAHI       SAGA / queue laga do: ek DB me kaatna aur daalna alag ho jaate, dikka
 ```
 AAGE POOCHEGA:
   NIYAM: ek DB me ek transaction; SAGA sirf alag service / DB / bank pe.
-  "Arpan aur Ravi alag bank me?"   -> ek transaction nahi ho sakta -> PENDING + SAGA / reconciliation
-                                      (payment design wala raasta).
-  "CP ya AP?"                      -> transfer / balance = CP (galat balance dikhane se mana karna behtar);
-                                      SMS / statement / analytics = AP (2 sec late chalta).
+  "Ravi doosre bank me ho to?" -> PENDING + SAGA: kyunki do bank = do DB, ek transaction ho hi nahi sakta;
+                                  raat ko milaan (reconciliation).
+  "Yahan CP chahiye ya AP?"    -> TRANSFER / BALANCE = CP: kyunki galat balance dikhane se mana karna behtar.
+                                  SMS / statement = AP (2 sec late chalta).
 ```
 
 #### 2 Send dabaya, network gaya, app ne dobara bheja
@@ -133,9 +133,12 @@ NAHI       app me "pehle dekho, phir daalo": dono ne dekha "nahi hai", dono ne d
 ```
 AAGE POOCHEGA:
   NIYAM: @Transactional = "aadha nahi hoga", idempotency = "do baar nahi hoga"; dono chahiye.
-  "UNIQUE se kya mila?"            -> UNIQUE insert khud taala jaisa; doosra insert fail.
-  "Key wahi, body alag (5000)?"    -> key ke saath request ka hash rakho; mel nahi = 422, purana jawab nahi.
-  "Key table hamesha badhegi?"     -> 24-48 ghante baad saaf.
+  "UNIQUE lagane se kya mila?"     -> DB KHUD ROKTA: kyunki do request ek saath aayein to bhi doosra insert
+                                      fail (UNIQUE = taala jaisa).
+  "Key wahi, amount 5000?"         -> BODY KA HASH MILAO: kyunki key ke saath request ka hash rakha; mel nahi
+                                      = 422, purana jawab nahi.
+  "Ye key table to badhti rahegi?" -> 24-48 GHANTE BAAD SAAF: kyunki retry itni der me hi aata, uske baad key
+                                      ka kaam khatam.
 ```
 
 #### 3 9 baje Netflix ka auto-debit aur mera UPI ek saath
@@ -159,8 +162,10 @@ NAHI       Java synchronized: Banking Svc ki kai machine, lock sirf ek ke andar.
 ```
 AAGE POOCHEGA:
   NIYAM: niyam DB me; raaste kai (API / batch / haath se), DB ek.
-  "0 row aaya, mujhe kya?"         -> "insufficient balance" (422) + poora transaction wapas.
-  "Minus balance ka niyam aur kahan?" -> DB me hi: WHERE balance >= x, ya CHECK.
+  "0 row aaya, user ko kya?"  -> 422 INSUFFICIENT BALANCE: kyunki 0 row = shart fail, kuch kata nahi; poora
+                                 transaction wapas.
+  "Ye niyam Java me likh do?" -> DB ME HI (WHERE balance >= x, ya CHECK): kyunki raaste kai (API / batch /
+                                 haath se), DB ek.
 ```
 
 #### 4 Maine poochha: mere 500 kahan gaye, kab?
@@ -183,7 +188,10 @@ NAHI       khaata Kafka me: DB transaction wapas hua (paisa kam tha), Kafka me "
 ```
 AAGE POOCHEGA:
   NIYAM: khaata wahin likho jahan paisa hila, usi transaction me; rollback = khaata bhi gaya.
-  "Kafka + DB ek transaction?"     -> ho hi nahi sakta; isliye khaata DB ki table me.
+  "Khaata Kafka me kyun nahi?" -> EK TRANSACTION HO HI NAHI SAKTA: kyunki Kafka aur DB alag; rollback hua to
+                                  Kafka me jhoothi line bachti.
+  "Galat line, UPDATE kar do?" -> NAHI, ULTI LINE JODO: kyunki khaata sirf INSERT, kabhi badla nahi; galti bhi
+                                  khaate me dikhe.
 ```
 
 #### 5 Salary aayi, Ravi ko rent bheja, SMS service giri
@@ -208,11 +216,14 @@ NAHI       commit ke baad seedha Kafka: commit aur bhejne ke beech app gira = ev
 ```
 AAGE POOCHEGA:
   NIYAM: Kafka sirf commit ke BAAD, outbox se; outbox usi transaction me hai, kho nahi sakta.
-  "SMS ulte (pehle 20,000 kata)?"  -> har khaata line ka apna event, Kafka key = account_id: mere sab event
-                                      ek partition me, kram se; Ravi ke apne partition me.
-  "Relay sent = true se pehle gira?" -> event dobara jaata -> SMS service eventId dekh ke skip.
-  "Relay ke bina?"                 -> CDC / Debezium: DB ki diary padh ke seedha Kafka.
-  "Outbox table bhar jaayegi?"     -> sent wali rows roz saaf / partition drop.
+  "SMS ulte kram me aaye?"           -> KEY = ACCOUNT_ID: kyunki ek account ke sab event ek partition me, kram
+                                        se; Ravi ka apna partition.
+  "Relay sent = true se pehle gira?" -> EVENT DOBARA, SMS SKIP: kyunki relay phir bhejega; SMS service eventId
+                                        dekh ke dobara nahi bhejti.
+  "Relay likhna hi na pade to?"      -> CDC (Debezium): kyunki DB ki diary (WAL) me har commit hai; wahi padh
+                                        ke seedha Kafka.
+  "Outbox table bharti jaayegi?"     -> ROZ SAAF: kyunki sent = true wali rows ka kaam khatam (ya partition
+                                        drop).
 ```
 
 #### 6 Salary ke baad maine balance khola
@@ -232,12 +243,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: farak mile to khaata jeetega, par pehle KYUN.
-  "Kaise kaam karta?"              -> khaata jodo = sach par 50,000 line = dheema; balance column = jod
-                                      (CACHE), usi transaction me. Raat RECONCILIATION: jod 29,800 = column.
-  "Raat ko farak (29,800 vs 30,300)?" -> alert + account rok ke dekho; chupchaap theek MAT karo (bug zinda),
-                                      pehle KYUN, phir khaata jeetega.
-  "Chal raha hai, kaise pata?"     -> reconciliation + p99 + error rate + queue lag + DB connection pe alert
-                                      + har transfer ka trace id.
+  "Kaise kaam karta?"             -> BALANCE = KHAATE KA JOD (cache), usi transaction me: kyunki har baar
+                                     50,000 line jodna dheema. Raat RECONCILIATION: jod 29,800 = column.
+  "Raat farak: 29,800 vs 30,300?" -> ALERT + ACCOUNT ROKO: kyunki chupchaap theek kiya to bug zinda; pehle
+                                     KYUN, phir khaata jeetega.
+  "Sab chal raha, pata kaise?"    -> ALERT: reconciliation + p99 + error rate + queue lag + DB connection, aur
+                                     har transfer ka trace id; kyunki dikkat inhi me pehle dikhti.
 ```
 
 #### 7 11 baje sabki salary aa gayi, ek Banking service bhar gayi
@@ -264,10 +275,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: service kuch yaad nahi rakhti, sach sirf DB me; DB ki copy pakki (sync).
-  "Main DB hi gir gaya?"           -> SYNC copy doosri building me, har transfer copy me bhi likh ke "done".
-                                      Patroni / RDS Multi-AZ: copy promote, DB ka pata nayi pe, ~1-2 min.
-  "Sync = har transfer dheema?"    -> haan, ek network chakkar; paise me theek. Async me aakhri kho sakta.
-  "Failover ke 1-2 min me?"        -> error -> app dobara bheje, same idempotency key -> do baar nahi katega.
+  "Ab main DB hi gir gaya?"     -> SYNC COPY doosri building me: kyunki har transfer copy me likh ke hi
+                                   "done"; Patroni / RDS Multi-AZ copy promote, ~1-2 min.
+  "Sync = har transfer dheema?" -> HAAN, EK NETWORK CHAKKAR: kyunki paise me ye chalega; async me aakhri
+                                   transfer kho sakta.
+  "Un 1-2 min ke transfer?"     -> ERROR -> APP DOBARA, SAME KEY: kyunki idempotency key hai, do baar nahi
+                                   katega.
 ```
 
 #### 8 Salary ki bheed me sab balance dekh rahe, transfer dheeme
@@ -295,11 +308,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: copy thodi peeche hoti; jisne abhi likha, wo kuch der primary se padhe.
-  "Kaise kaam karta?"              -> padhna DB ki copy se, likhna (transfer) sirf primary pe; primary ki
-                                      diary (WAL) copy tak jaati, copy wahi badlaav lagati.
-  "Copy 5 sec peeche, purana balance?" -> purana dikha -> dobara bhejunga! Read-your-own-writes: mere account
-                                      ka last_write_at (Redis) -> kuch sec PRIMARY se.
-  "Copy minute bhar peeche?"       -> lag pe alert; had paar -> us copy ko padhne wali list se hatao.
+  "Kaise kaam karta?"                  -> PADHNA COPY SE, LIKHNA PRIMARY PE: kyunki bheed padhne ki hai;
+                                          primary ki diary (WAL) copy tak jaati, copy wahi badlaav lagati.
+  "Copy 5 sec peeche, purana balance?" -> ABHI LIKHA TO PRIMARY SE (read-your-own-writes): kyunki purana dikha
+                                          to dobara bhejunga; last_write_at (Redis) se kuch sec.
+  "Copy minute bhar peeche?"           -> LAG PE ALERT: kyunki itna purana dikhana galat; had paar -> us copy
+                                          ko padhne wali list se hatao.
 ```
 
 #### 9 Ravi ki dukaan ko 500, usi second dukaan se 200 refund (deadlock)
@@ -327,9 +341,10 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: taala hamesha tay kram me (id sort).
-  "Kaise kaam karta?"              -> Txn1 ka mujh pe taala + Ravi ka intezaar · Txn2 ulta -> gol ghera (MySQL
-                                      1213). Dono chhoti id pehle lock -> ek ruka, doosra poora.
-  "Kram ke bawajood deadlock?"     -> DB ek ko wapas kar deta -> app ruk ke dobara (same idempotency key).
+  "Kaise kaam karta?"          -> GOL GHERA: Txn1 ka mujh pe taala + Ravi ka intezaar, Txn2 ulta (MySQL 1213).
+                                  Dono CHHOTI ID PEHLE lock karein -> ek ruka, doosra poora.
+  "Kram ke baad bhi deadlock?" -> DB EK KO WAPAS KARTA: kyunki DB ghera khud pakadta; app ruk ke dobara, same
+                                  idempotency key.
 ```
 
 #### 10 Shaam ko dukaan ke CA ka export, page 5000 pe atka
@@ -365,9 +380,12 @@ NAHI       saari 5 lakh line ek baar me bhejo: memory bhari, request timeout.
 ```
 AAGE POOCHEGA:
   NIYAM: "kahan tak dekha" yaad rakho, "kitne chhode" nahi.
-  "Same ts pe do line?"            -> isliye (ts, id) dono; id barabari todti.
-  "Seedha page 500 pe jao?"        -> keyset me nahi, sirf agla / pichhla; statement ke liye theek.
-  "Cursor app ko kaise?"           -> (ts, id) ko base64 karke next_cursor.
+  "Ek hi ts pe do line ho to?" -> (ts, id) DONO: kyunki sirf ts pe line chhoot ya dobara aa sakti; id barabari
+                                  todti.
+  "Seedha page 500 pe?"        -> KEYSET ME NAHI: kyunki "kahan tak dekha" yaad hai, "kitne chhode" nahi; sirf
+                                  agla / pichhla, statement ke liye theek.
+  "(ts, id) app ko kaise?"     -> NEXT_CURSOR: (ts, id) ko base64 karke; kyunki app ko andar ka matlab jaanna
+                                  hi nahi.
 ```
 
 #### 11 Raat ko: 5 saal ka khaata ek hi table me
@@ -400,10 +418,12 @@ NAHI       "archive = sharding": archive jagah ghatata, shard likhne ka bojh baa
 ```
 AAGE POOCHEGA:
   NIYAM: jod = mahine ke aakhir ka balance (snapshot) + uske baad ki line; poora kabhi nahi.
-  "Tukde S3 gaye / 22 arab ka SUM?" -> SNAPSHOT: har mahine ke aakhir ka balance likh ke rakho (31-Mar Arpan
-                                      = 45,000) + uske baad ki line; statement ka "opening balance" isiliye.
-  "RBI ne 2021 ka statement maanga?" -> S3 Parquet pe Athena query, ya us mahine ka tukda wapas laao.
-  "Archive file koi badal na de?"  -> S3 Object Lock (WORM): na delete na badal, saalon tak.
+  "S3 gaye, 22 arab ka SUM?"   -> SNAPSHOT: kyunki poora kabhi mat jodo; mahine ke aakhir ka balance (31-Mar
+                                  Arpan = 45,000) + baad ki line = "opening balance".
+  "RBI ko 2021 ka statement?"  -> S3 PE ATHENA QUERY (Parquet): kyunki data wahin pada hai; ya us mahine ka
+                                  tukda wapas laao.
+  "Archive file koi badal de?" -> S3 OBJECT LOCK (WORM): kyunki kanoon ka record hai; na delete na badal,
+                                  saalon tak.
 ```
 
 ---

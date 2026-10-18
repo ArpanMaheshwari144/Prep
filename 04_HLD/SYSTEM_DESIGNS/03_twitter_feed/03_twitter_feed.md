@@ -125,9 +125,10 @@ NAHI       DB pe index / read replica: thoda tez, par har khulne pe 200 ka jod w
 ```
 AAGE POOCHEGA:
   NIYAM: padhna 50 guna zyada -> mehnat likhte waqt, padhna sirf inbox se.
-  "Inbox me sirf number, tweet?"   -> 50 number ek saath, ek chakkar me tweet store / cache se (batch).
-  "Unfollow kiya, tweet pade?"     -> padhte waqt follow list se chhaan do, ya peeche se saaf karo;
-                                      turant poora inbox nahi badalte.
+  "Inbox me sirf tweet_id, poora tweet kahan se?" -> BATCH: 50 id ek chakkar me cache / store se, kyunki ek-ek
+                                                     laana = 50 chakkar.
+  "Aur kisi ko unfollow kar diya to?"             -> PADHTE WAQT CHHAANTO: follow list se filter, peeche
+                                                     safai; kyunki poora inbox turant badalna mehnga.
 ```
 
 #### 2 Maine tweet kiya, button 5 sec ghoomta raha
@@ -158,10 +159,14 @@ NAHI       App me peeche ek thread: App crash = thread ka kaam gaya; Kafka disk 
 ```
 AAGE POOCHEGA:
   NIYAM: user sirf save ka intezaar kare; baaki kaam Kafka se peeche, dobara chalne layak.
-  "Worker 100 me 60 likh ke gira?" -> Kafka ko "ho gaya" nahi bola -> khabar dobara, phir se likhega.
-  "Tweet do baar inbox me?"        -> nahi; sorted set me same tweet_id dobara daalo to ek hi rehta.
-  "Apna tweet apni feed me nahi?"  -> fanout peeche hai; apna tweet seedha apni feed me jodo (aisa hi banate).
-  "Kai worker kaise?"              -> Kafka ki lines (partition) aapas me baant lete.
+  "Fanout me worker 100 me se 60 likh ke gira?" -> DOBARA: Kafka ko 'ho gaya' nahi bola, kyunki commit nahi
+                                                   hua -> khabar phir aayegi.
+  "Phir wahi 60 dobara, tweet do baar dikhega?" -> NAHI, SORTED SET: kyunki same tweet_id dobara daalo to ek
+                                                   hi rehta.
+  "Aur apna hi tweet apni feed me der se?"      -> SEEDHA JODO: kyunki fanout peeche chalta; apna tweet turant
+                                                   apni feed me (aisa hi banate).
+  "Ek worker kam pade to?"                      -> PARTITION: Kafka ki lines worker aapas me baant lete,
+                                                   kyunki ek line ek worker; worker badhao.
 ```
 
 #### 3 Bieber ka ek tweet = 10 crore inbox, line ghanton atki
@@ -191,12 +196,14 @@ NAHI       sabke liye pull: har feed khulna phir 200 ka jod, mehnga.
 ```
 AAGE POOCHEGA:
   NIYAM: aam log push, celeb pull, padhte waqt dono milao.
-  "Push ya pull?"                  -> push: feed turant, celeb pe likhne ka toofan · pull: likhna sasta,
-                                      khulna mehnga -> HYBRID.
-  "9,999 / 10,001 pe palat raha?"  -> beech me jagah: 12,000 upar -> pull, 8,000 neeche tabhi wapas push.
-  "Celeb garam, user_id pe baantna galat?" -> nahi, baaki crore logon ke liye theek; ek garam key ko
-                                      consistent hashing nahi bachata -> uske tweet ka alag RAM cache.
-  "Ek tweet pe laakhon like?"      -> ginti 10 tukde (tweet123#0 se #9), like kisi ek me, padhte waqt jodo.
+  "Push karoge ya pull?"                      -> HYBRID: push me feed turant par celeb pe likhne ka toofan;
+                                                 pull me likhna sasta par khulna mehnga -> dono.
+  "10,000 followers pe hi palat-ta rahega?"   -> BEECH ME JAGAH: 12,000 upar -> pull, 8,000 neeche tabhi wapas
+                                                 push; kyunki ek line pe baar-baar palatta.
+  "Celeb garam, to user_id pe baantna galat?" -> NAHI: baaki crore logon ke liye theek; garam key ko ring nahi
+                                                 bachata -> uske tweet ka alag RAM cache.
+  "Us tweet pe laakhon like aaye?"            -> TUKDE: ginti 10 tukde (tweet123#0 se #9), kyunki ek key = ek
+                                                 machine garam; padhte waqt jodo.
 ```
 
 #### 4 Match khatam, Virat ka tweet, crore log ek saath, DB gira
@@ -228,11 +235,13 @@ NAHI       DB ki copies badha do: wo bhi disk se (ms), ek garam hisse ki copies 
 ```
 AAGE POOCHEGA:
   NIYAM: bestseller kitaab counter pe, godown me nahi: garam tweet RAM me (<1 ms).
-  "Ek tweet ki key, machine garam?" -> us tweet ki 5 copy (tweet:123#1 se #5), read kisi bhi copy se;
-                                      saath me App ki memory me 1-2 second ka chhota cache.
-  "Virat ne edit / delete kiya?"   -> cache se wo key hatao, agla read DB se naya laayega.
-  "IPL final me achanak 10 guna?"  -> toofan Kafka pakad leta; pata ho to pehle machine + cache garam
-  "Celeb cache kitna bada?"        -> chhota: ~5 lakh tweet x 500 byte = ~250 MB.
+  "Ek hi key, to wo machine garam?"        -> COPIES: tweet:123#1 se #5, read kisi bhi copy se, kyunki ek key
+                                              = ek machine; saath me App memory me 1-2 sec cache.
+  "Virat ne tweet edit / delete kar diya?" -> KEY HATAO: cache se delete, kyunki agla read DB se naya laayega.
+  "IPL final me achanak 10 guna?"          -> KAFKA PAKDE: kyunki likhna line me ruk jaata; pata ho to pehle
+                                              machine + cache garam.
+  "Ye celeb cache kitna bada?"             -> CHHOTA: ~5 lakh tweet x 500 byte = ~250 MB, kyunki sirf garam
+                                              tweet.
 ```
 
 #### 5 Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi
@@ -264,11 +273,14 @@ NAHI       Redis me machine jodte jao: soye 40 crore ka inbox bhi RAM khaata, kh
 ```
 AAGE POOCHEGA:
   NIYAM: RAM me sirf number aur sirf zinda log; baaki zaroorat pe DB se bana lo.
-  "Ek entry kitni?"                -> ~60-100 byte (number + score + Redis ka apna kharcha).
-  "Mahino baad wapas aaya?"        -> pehli baar purane tareeke se (pull), phir inbox bharo; ek baar dheema.
-  "800 ke aage scroll?"            -> wahan se DB se lao; bahut kam log itna neeche jaate.
-  "Redis hi gira?"                 -> har feed DB se = bahut mehnga, isliye Redis ki copies. Phir bhi gira
-                                      -> kuch request mana, har inbox ek hi request banaye, dheere bharo.
+  "Ek inbox entry kitni jagah?"             -> ~60-100 BYTE: number + score + Redis ka apna kharcha; isliye
+                                               poora tweet nahi.
+  "Soya user mahino baad aaya, inbox nahi?" -> PULL SE BANAO: pehli baar purane tareeke se, phir inbox bharo;
+                                               ek baar dheema, kyunki RAM sirf zinda ke liye.
+  "800 ke aage scroll kiya?"                -> DB SE: wahan se store se lao, kyunki bahut kam log itna neeche
+                                               jaate.
+  "Redis hi gir gaya?"                      -> COPIES: kyunki har feed DB se = mehnga. Poora gira -> kuch
+                                               request mana, har inbox ek request, dheere bharo.
 ```
 
 #### 6 DB alert: har second 5,000 tweet, 5 saal me 0.5 PB
@@ -300,11 +312,14 @@ NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; joi
 ```
 AAGE POOCHEGA:
   NIYAM: jis cheez se padhte (ek user ka profile), usi se baanto; likhna sirf aakhir me jodna.
-  "Likhna itna tez kaise?"         -> diary ke aakhir + RAM -> "ho gaya"; purana dhoondh ke badalna nahi.
-                                      RAM bhari -> nayi file disk pe, peeche chhoti files mila leta.
-  "Padhna dheema kab?"             -> ek user ka data kai chhoti files me; compaction + bloom filter se kam.
-  "tweet_id pe kyun nahi?"         -> bojh barabar, par profile page ke liye saari machine poochni padti.
-  "Padhne / likhne ki alag copy?"  -> nahi, koi main copy nahi; "3 copy, 2 me likho, 2 se padho".
+  "Cassandra itna tez likhta kaise?"   -> AAKHIR ME JODO: RAM + diary ke aakhir, kyunki purana dhoondh ke
+                                          badalna nahi; RAM bhari -> nayi file, peeche mila leta.
+  "To padhna kab dheema?"              -> KAI CHHOTI FILES: ek user ka data bikhra; compaction + bloom filter
+                                          se kam.
+  "tweet_id pe kyun nahi baanta?"      -> PROFILE PAGE: bojh barabar hota, par ek user ke tweet ke liye saari
+                                          machine poochni padti.
+  "Padhne / likhne ki alag main copy?" -> NAHI, KOI MAIN NAHI: 3 copy, 2 me likho, 2 se padho, kyunki 2 + 2 >
+                                          3 -> naya mil hi jaata (quorum).
 ```
 
 #### 7 Main Bangalore me, data US me, har feed 200 ms
@@ -331,13 +346,16 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: data user ke paas; copy thodi peeche chalegi (2 second purani feed chalti).
-  "Kaise kaam karta?"              -> Route 53 paas wale region ka pata deta; Cassandra ek region ka likha
-                                      doosre me thoda baad copy. US celebs ke garam tweet India cache me bhi.
-  "Fayde kya?"                     -> tez · Europe ka data Europe me (GDPR) · har region ki bheed ka time
-                                      alag · ek gira to baaki chalein.
-  "Main US ghoomne gaya?"          -> data India me; request India bhejo, ya paas ki copy se (thoda purana).
-  "Poora region gira?"             -> Route 53 paas wale zinda region pe; copy peeche -> feed thodi purani.
-  "Do region me ek saath likha?"   -> tweet aksar naya banta; takraav -> jiska time baad ka (last write wins).
+  "Kaise kaam karta?"            -> PAAS WALA REGION: Route 53 paas ka pata deta; Cassandra ek region ka likha
+                                    doosre me thoda baad copy. US celebs ke garam tweet India cache me bhi.
+  "Iske fayde?"                  -> TEZ · Europe ka data Europe me (GDPR) · har region ki bheed ka time alag ·
+                                    ek gira to baaki chalein.
+  "Main US ghoomne gaya to?"     -> GHAR KA DATA: data India me; request India bhejo, ya paas ki copy se
+                                    (thoda purana), kyunki copy peeche chalti.
+  "Poora region hi gira?"        -> ROUTE 53 PALTE: paas wale zinda region pe; copy peeche thi -> feed thodi
+                                    purani.
+  "Do region me ek saath likha?" -> LAST WRITE WINS: tweet aksar naya banta, takraav kam; hua to jiska time
+                                    baad ka.
 ```
 
 #### 8 Raat ko har region me ek hi App machine; India wali giri, India band
@@ -365,10 +383,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: machine kuch yaad nahi rakhti, isliye koi bhi hate ya jude, farak nahi.
-  "Kaise kaam karta?"              -> machine kuch yaad nahi rakhti, request kahin bhi. ALB (AWS ka LB) har
-                                      ~10 sec "zinda?": chup = bahar, theek = wapas. Route 53 bhi aise.
-  "Naya code, saari restart?"      -> ek-ek karke (rolling deploy): nikaalo, naya daalo, jodo; site band nahi.
-  "Nayi machine, pehli dheemi?"    -> apna data nahi (sab Redis me), farak kam; ALB use dheere traffic de.
+  "Kaise kaam karta?"                   -> STATELESS: request kahin bhi. ALB (AWS ka LB) har ~10 sec 'zinda?':
+                                           chup = bahar, theek = wapas. Route 53 bhi aise.
+  "Naya code daalna, saari restart?"    -> EK-EK KARKE: nikaalo, naya daalo, jodo; kyunki baaki machine bheed
+                                           sambhaal leti (rolling deploy).
+  "Nayi machine, pehli request dheemi?" -> FARAK KAM: kyunki apna data nahi (sab Redis me); ALB use dheere
+                                           traffic de.
 ```
 
 #### 9 Highlights ki bheed ne mera tweet daalna dheema kar diya
@@ -399,13 +419,15 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: jiski bheed badhi, sirf wahi badhao; doosre pe asar nahi.
-  "Kaise kaam karta?"              -> Tweet Svc (likhna), Timeline (feed), User, Graph (follow); ALB path se:
-                                      POST /tweet -> Tweet · GET /feed -> Timeline. Har ek alag badhe.
-  "Feed ki bheed badhi?"           -> sirf Timeline ki machine badhti, Tweet Svc pe asar nahi.
-  "Main kisko follow, kahan se?"   -> Graph / User service se, par har baar call nahi; follow list Redis me.
-  "Fanout ko 10,000 followers?"    -> Graph store se 1000-1000 ke panne me padh ke inbox likho.
-  "Graph DB (Neo4j) zaroori?"      -> seedhi follow list ko ek table / Cassandra kaafi; Graph DB tab jab
-                                      "dost ke dost" jaise sawaal hon.
+  "Kaise kaam karta?"             -> ALAG SERVICE: Tweet (likhna), Timeline (feed), User, Graph (follow); ALB
+                                     path se: POST /tweet -> Tweet · GET /feed -> Timeline.
+  "Feed ki bheed badhi to?"       -> SIRF TIMELINE BADHAO: kyunki alag service, Tweet Svc pe asar nahi.
+  "Kisko follow karta, kahan se?" -> GRAPH / USER SVC: par har baar call nahi, follow list Redis me, kyunki
+                                     har feed pe chahiye.
+  "Fanout ko 10,000 followers?"   -> PANNE ME: Graph store se 1000-1000 padh ke inbox likho, kyunki ek baar me
+                                     sab = bhaari.
+  "Graph DB (Neo4j) chahiye?"     -> NAHI: seedhi follow list ko ek table / Cassandra kaafi; Graph DB tab jab
+                                     'dost ke dost' jaise sawaal hon.
 ```
 
 #### 10 Maine match ki video daali, sabko dheemi aur mehngi
@@ -434,11 +456,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: bhaari maal S3 me, user ke paas CDN se; tweet me sirf link.
-  "Kaise kaam karta?"              -> tweet me sirf CDN link. CDN ke paas nahi -> S3 se laata, kuch der
-                                      rakhta, phir sabko wahin se. CDN sirf media ke raaste, API ke nahi.
-  "Photo delete, CDN pe dikh rahi?" -> CDN ko "ye hatao" (invalidation), ya link me version (abc_v2.jpg)
-                                      -> naya link = nayi file.
-  "Private photo sabko dikhegi?"   -> link pe hastakshar + expiry (signed URL): sirf jisko mila, thodi der.
+  "Kaise kaam karta?"                    -> SIRF LINK: tweet me CDN link; CDN ke paas nahi -> S3 se laake kuch
+                                            der rakhta. CDN sirf media ke raaste, API ke nahi.
+  "Photo delete, CDN pe abhi dikh rahi?" -> INVALIDATION: CDN ko 'ye hatao', ya link me version (abc_v2.jpg)
+                                            -> naya link = nayi file.
+  "Private photo sabko dikhegi?"         -> SIGNED URL: link pe hastakshar + expiry, kyunki sirf jisko mila
+                                            wahi, thodi der.
 ```
 
 ---

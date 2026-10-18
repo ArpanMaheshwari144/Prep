@@ -106,15 +106,16 @@ NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke 
 ```
 AAGE POOCHEGA:
   NIYAM: seat ka faisla DB ki ek query karti; jeeta = 1 row, haara = 0 row "seat ja chuki".
-  "Ek saath aaye, DB kya karta?"   -> A1 ki row pe pehle mujhe lock, Ravi ruka. Mera commit -> Ravi ko lock,
-                                      WHERE dobara dekha -> 'available' nahi -> 0 row -> "seat ja chuki".
-  "4 seat (A1-A4), A4 Ravi le gaya?" -> chaaron EK transaction; badli rows 4 nahi -> ROLLBACK.
-  "4 seat me deadlock?"            -> lock seat_id ke kram me: SELECT ... FOR UPDATE ORDER BY seat_id, phir
-                                      UPDATE (ya 4 alag UPDATE A1..A4 kram se); ek IN (...) me kram tay nahi.
-  "FOR UPDATE / version kyun nahi?" -> FOR UPDATE = do baar DB, lock lamba · version = haara dobara try (seat
-                                      gayi to gayi) · conditional UPDATE = ek statement, lock sabse chhota.
-  "Do log vs ek ka dobara bhejna?" -> do ALAG log ek seat = atomic UPDATE · EK aadmi ka dobara = idempotency
-                                      (bookingId = key).
+  "Ek saath aaye, DB kya karta?"    -> ROW LOCK: pehle mujhe, Ravi ruka; mera commit -> Ravi ka WHERE dobara
+                                       -> 'available' nahi -> 0 row, kyunki sach ek ko hi.
+  "4 seat A1-A4, A4 Ravi le gaya?"  -> EK TRANSACTION: chaaron saath; badli rows 4 nahi -> ROLLBACK, kyunki
+                                       aadhi booking kisi kaam ki nahi.
+  "4 seat, do log ulte kram me?"    -> SEAT_ID KE KRAM ME lock: SELECT ... FOR UPDATE ORDER BY seat_id, phir
+                                       UPDATE; ek kram = koi kisi ka intezaar nahi (deadlock).
+  "FOR UPDATE / version kyun nahi?" -> EK STATEMENT, lock sabse chhota: FOR UPDATE = do baar DB, lock lamba ·
+                                       version = haara dobara try, seat gayi to gayi.
+  "Ek ka hi dobara bhejna, wo bhi?" -> NAHI, wo IDEMPOTENCY (bookingId = key), kyunki do log = race (UPDATE
+                                       sambhalta) · ek ka dobara = duplicate.
 ```
 
 #### 2 Maine A1 chuni, payment me 3 minute lag rahe
@@ -140,11 +141,12 @@ NAHI       hold Redis me (SET NX EX 300): hold Redis me + booking DB me = do jag
 ```
 AAGE POOCHEGA:
   NIYAM: hold bhi DB ki usi row me (ek row, ek UPDATE, ek sach); sahi hona WHERE se, safai job se.
-  "SQL me TTL hi nahi?"            -> sahi hona UPDATE ke WHERE se; SWEEPER har minute purane hold 'available'
-                                      kar de = sirf safai, seat map saaf dikhe.
-  "Hold khatam, 1 sec baad pay?"   -> confirm pe bhi: WHERE status = 'held' AND user = Arpan
-                                      AND held_until > now() -> 0 row = seat ja chuki -> paisa wapas (refund).
-  "Ek ne 10 seat hold karke chhodi?" -> ek user kitni hold kar sake uski limit + rate limit.
+  "SQL me TTL hota nahi, hold khatam kaise?" -> WHERE SE, JOB SE NAHI: held_until > now() check; SWEEPER har
+                                                minute purane hold 'available' kare, sirf map saaf dikhe.
+  "Hold khatam, aur 1 sec baad pay aaya?"    -> CONFIRM PE BHI WHERE: status = 'held' AND user = Arpan AND
+                                                held_until > now() -> 0 row = seat gayi -> REFUND.
+  "Koi 10 seat hold karke chhod de?"         -> HAD LAGAO: ek user kitni hold kar sake + rate limit, kyunki
+                                                hold = seat baaki sab ke liye band.
 ```
 
 #### 3 Pay dabaya, network gaya, app ne dobara bheja
@@ -164,11 +166,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: ek booking = ek payment; wahi id dobara aaye to kaam nahi, purana jawab.
-  "Kaise kaam karta?"              -> key = bookingId (POST /bookings/B-77/pay); dobara B-77 -> "ho chuka",
-                                      purana jawab, paisa nahi katta. Pay button bhi pehli tap pe band.
-  "Paisa kata, seat UPDATE fail?"  -> (hold khatam ho chuka) refund + mujhe batao; payment aur seat ka faisla
-                                      saga jaisa (ek fail to doosra ulta).
-  "Webhook der se aaya?"           -> 'PAYMENT_PENDING' rakho, hold thoda badhao, ya reconciliation se pakka.
+  "Kaise kaam karta?"                     -> BOOKINGID = KEY: dobara B-77 aaya -> "ho chuka", purana jawab,
+                                             paisa nahi katta; Pay button pehli tap pe band.
+  "Paisa kat gaya, par seat UPDATE fail?" -> REFUND + mujhe batao, kyunki hold khatam ho chuka; payment aur
+                                             seat saga jaisa (ek fail to doosra ulta).
+  "PSP ka webhook der se aaya?"           -> PENDING rakho ('PAYMENT_PENDING'), hold thoda badhao, kyunki abhi
+                                             pakka nahi pata; roz milao (reconciliation).
 ```
 
 #### 4 11 baje main seat map dekh raha tha, saath me 1 lakh log, book koi-koi
@@ -194,11 +197,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: dekhna copy se, faisla main DB ka UPDATE; map thoda purana dikhe to chalta.
-  "Kaise kaam karta?"              -> "seatmap:show42" Redis me (~5 sec umar), miss -> replica se banao. Seat
-                                      book -> DEL -> agli baar taaza. Booking hamesha main DB pe.
-  "A1 bik gayi, map me khaali?"    -> chalta, asli faisla UPDATE karta; turant dikhana ho to WebSocket /
-                                      SSE se us show ke dekhne walon ko bhejo.
-  "Ek key pe lakhon padhai?"       -> us key ki kai copy + App ke andar 1-2 sec ka local cache.
+  "Kaise kaam karta?"                         -> COPY SE DEKHNA: "seatmap:show42" Redis me (~5 sec umar), miss
+                                                 -> replica se banao; book -> DEL; booking hamesha main DB pe.
+  "A1 bik gayi, par map me khaali dikh rahi?" -> CHALTA, kyunki faisla UPDATE karta, map nahi; turant dikhana
+                                                 ho to WebSocket / SSE se us show ke dekhne walon ko bhejo.
+  "Ek hi key pe lakhon padhai?"               -> KAI COPY + App me 1-2 sec ka local cache, kyunki ek key = ek
+                                                 Redis machine pe saari bheed (hot key).
 ```
 
 #### 5 12 baje Arijit ka concert khula, 2 lakh log ek show pe
@@ -234,13 +238,18 @@ NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line 
 ```
 AAGE POOCHEGA:
   NIYAM: Kafka sirf badi release pe; ek show = ek line, alag show = alag worker; sach hamesha DB ki seats.
-  "Andar wala chala gaya?"         -> bina khareede gaya / hold khatam -> line se agla andar.
-  "Mujhe kya dikhe?"               -> "ho rahi hai" -> UPDATE jeeta = pakka · haara = "seat gayi, doosri lo".
-  "Ek show itna bada, worker dheema?" -> ek UPDATE ~ms -> ek worker hazaar / second; zyada chahiye -> show ko
-                                      hisson (balcony / stall) me baanto.
-  "Ginti Redis restart me gayi?"   -> ginti sirf darwaza, sach DB ki seats; restart pe DB se dobara gino.
-  "Pata hai kab release hai?"      -> pehle se machine badhao, har user ki had (rate limit).
-  "BookMyShow aise karta hai?"     -> (bolne me) mat bolo; "A common pattern in flash sales" bolo.
+  "Andar wala bina khareede chala gaya?"      -> AGLA ANDAR: bina khareede gaya / hold khatam -> line se agla,
+                                                 kyunki line sirf darwaza hai.
+  "Mujhe screen pe kya dikhe?"                -> "HO RAHI HAI": UPDATE jeeta = pakka · haara = "seat gayi,
+                                                 doosri lo", kyunki faisla DB ka.
+  "Ek show itna bada, ek worker dheema nahi?" -> ~MS KA UPDATE: ek worker hazaar / sec; aur chahiye to show ko
+                                                 hisson (balcony / stall) me baanto.
+  "Ginti Redis me thi, Redis restart?"        -> GINTI SIRF DARWAZA, sach DB ki seats; restart pe DB se dobara
+                                                 gino.
+  "Release ka time to pata hai na?"           -> PEHLE SE machine badhao + har user ki had (rate limit),
+                                                 kyunki bheed ka waqt pata = tayyari pehle.
+  "BookMyShow sach me aise karta hai?"        -> MAT BOLO "BMS aise karta"; bolo "A common pattern in flash
+                                                 sales", kyunki unka andar ka pata nahi.
 ```
 
 #### 6 2 baje Redis restart, saara seat map ek saath replica pe
@@ -268,15 +277,16 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: khaali cache pe ek banaye, baaki ruke; jo gir sakta uski copy pehle se taiyaar.
-  "Kaise kaam karta?"              -> SET lock:seatmap:42 1 NX EX 5 -> jeeta wo bana ke Redis me daale, baaki
-                                      50-100 ms ruk ke Redis se; 1000 ki jagah 1 DB pe. NX = koi aur pehle na
-                                      laga ho tabhi · EX 5 = 5 sec me lock khud hate (banane wala mara to).
-  "Redis gire hi na, kaise?"       -> Redis Cluster: keys 16384 slot me, har master ke paas kuch slot +
-                                      apni copy; master gira -> baaki vote karke copy ko master bana dete.
-  "SQL primary gira, kitni der?"   -> 30-120 sec (failover: RDS Multi-AZ ~1-2 min, Aurora ~30 sec); app dobara
-                                      koshish kare (same id, idempotent) / "thodi der me try karein".
-  "Aakhri booking copy tak nahi?"  -> booking DB ke liye SYNC copy (RDS Multi-AZ, har likhai dono jagah pakki)
-                                      -> pakki booking nahi khoti.
+  "Kaise kaam karta?"                         -> EK BANAYE, BAAKI RUKE: SET lock:seatmap:42 1 NX EX 5 -> jeeta
+                                                 bana ke Redis me, baaki 50-100 ms ruk ke Redis se; 1000 ki
+                                                 jagah 1 DB pe. NX = koi aur na laga ho · EX 5 = banane wala
+                                                 mara to lock khud hate.
+  "Redis gire hi na, uska kya?"               -> REDIS CLUSTER: 16384 slot, har master ke kuch slot + copy;
+                                                 master gira -> baaki vote, copy master (khud, Sentinel nahi).
+  "Aur SQL primary gira to kitni der?"        -> 30-120 SEC (failover: RDS Multi-AZ ~1-2 min, Aurora ~30 sec);
+                                                 app same id se dobara koshish, kyunki idempotent hai.
+  "Aakhri booking copy tak pahunchi hi nahi?" -> SYNC COPY: har likhai dono jagah pakki (RDS Multi-AZ), kyunki
+                                                 booking = paisa, khona mana.
 ```
 
 #### 7 Shaam ko main seat chun raha tha, App machine gir gayi
@@ -305,10 +315,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: App kuch yaad nahi rakhta; sab DB me, isliye koi bhi machine sambhaal le.
-  "Kaise kaam karta?"              -> hold DB me, machine ki memory me nahi -> bacha. Health check fail ->
-                                      machine bahar; agli request doosri machine pe -> wahi hold.
-  "Machine giri, payment chal raha?" -> id app ke paas -> doosri machine pe dobara bhejo, do baar nahi katega.
-  "Health check kya dekhta?"       -> GET /health: zinda + DB / Redis tak pahunch; 2-3 baar fail = bahar.
+  "Kaise kaam karta?"                   -> HOLD DB ME, machine ki memory me nahi -> bacha; health check fail
+                                           -> machine bahar, agli request doosri pe -> wahi hold.
+  "Machine giri, payment beech me tha?" -> SAME ID DOBARA: id app ke paas -> doosri machine pe bhejo, kyunki
+                                           idempotent = do baar nahi katega.
+  "Health check dekhta kya hai?"        -> GET /health: zinda + DB / Redis tak pahunch; 2-3 BAAR fail = bahar,
+                                           kyunki ek fail = jhatka bhi ho sakta.
 ```
 
 ---

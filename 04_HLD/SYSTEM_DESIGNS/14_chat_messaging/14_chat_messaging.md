@@ -139,9 +139,12 @@ NAHI       badi machine lo (zyada RAM): thread ka kharcha wahi, bas thodi der ba
 ```
 AAGE POOCHEGA:
   NIYAM: taar kholo, thread mat do; server gira to log ruk-ruk ke judein.
-  "Chat server gira?"              -> log ruk-ruk ke, random waqt pe judein (backoff + jitter); message DB me.
-  "Naya code deploy?"              -> thode-thode server, unke taar dheere hatao (draining).
-  "LB lambi connection?"           -> ek baar baitha to wahi server; naya connection = naya chunaav.
+  "Ek chat server gira, sab wapas?" -> RUK-RUK KE, RANDOM WAQT PE (backoff + jitter): kyunki sab ek saath aaye
+                                       to agla server girega; message DB me, khoya nahi.
+  "Naya code deploy karna ho?"      -> THODE-THODE SERVER (draining): kyunki taar dheere hatao, sab log ek
+                                       saath dobara na judein.
+  "LB lambi connection pe?"         -> EK BAAR BAITHA TO WAHI SERVER: kyunki taar khula rehta; naya connection
+                                       = naya chunaav.
 ```
 
 #### 2 Maine Ravi ko "hi" bheja, server bola Ravi offline
@@ -166,10 +169,14 @@ NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
 ```
 AAGE POOCHEGA:
   NIYAM: Redis me sirf PATA, taar nahi; message DB me pakka, pata galat ho to bhi kuch nahi khota.
-  "Pata galat (Ravi khiska)?"      -> message DB me hai; Ravi naye server pe judte hi le lega.
-  "Redis gira?"                    -> copy pe switch; message DB me, push + dobara judne pe milega.
-  "Redis pub-sub kyun nahi?"       -> chal sakta, par kuch rakhta nahi; Cluster me har publish sab node pe.
-  "Mara server, entry kaise hate?" -> umar (TTL): zinda server dhadkan se badhata, mara to khud hat jaati.
+  "Pata galat nikla, Ravi khiska?"  -> MESSAGE DB ME HAI: kyunki Redis me sirf pata; Ravi naye server pe judte
+                                       hi le lega.
+  "Aur Redis hi gir gaya?"          -> COPY PE SWITCH: kyunki message DB me pakka; push + dobara judne pe
+                                       milega.
+  "Redis pub-sub se kyun nahi?"     -> CHAL SAKTA, PAR KUCH RAKHTA NAHI: kyunki sunne wala na ho to message
+                                       gaya; Cluster me har publish sab node pe.
+  "Mara server, entry kaun hataye?" -> UMAR (TTL): kyunki zinda server dhadkan se umar badhata, mara to entry
+                                       khud hat jaati.
 ```
 
 #### 3 Ravi ka phone band tha, message kahan jaaye
@@ -199,9 +206,12 @@ NAHI       sirf Push bhej do, DB nahi: push sirf ghanti hai, pahunchne ki guaran
 ```
 AAGE POOCHEGA:
   NIYAM: DB pehle, bhejna baad me; jo DB me hai wo kabhi nahi khota.
-  "Ravi ke 3 device?"              -> har device ka apna taar + nishaan; ek pe padha to sab pe neeli.
-  "Push me poora message?"         -> nahi, chhota preview (privacy); asli message app khulne pe.
-  "Kuch na khoye, poora jawab?"    -> DB pehle + Kafka acks=all, kaam ke baad offset, id se dobara-safe, DLQ.
+  "Ravi ke 3 device hain to?"      -> HAR DEVICE KA APNA TAAR + NISHAAN: kyunki har device alag jagah tak
+                                      padhta; ek pe padha to sab pe neeli.
+  "Push me poora message bhej do?" -> NAHI, CHHOTA PREVIEW: kyunki push Google / Apple ke raaste jaata
+                                      (privacy); asli message app khulne pe.
+  "Kuch na khoye, poora jawab?"    -> DB PEHLE + Kafka acks=all, kaam ke baad offset, id se dobara-safe, DLQ:
+                                      kyunki har kadam pe gire to bhi copy bache.
 ```
 
 #### 4 Roz 1.2 TB message, ek DB nahi jhelta
@@ -230,12 +240,16 @@ NAHI       user_id se baanto: ek chat do jagah, group 500 jagah.
 ```
 AAGE POOCHEGA:
   NIYAM: jo saath padha jaata, wo saath rakho: ek chat ek partition.
-  "message_id se partition?"       -> har message alag jagah; aakhri 50 = 50 jagah se.
-  "Purana search (Slack)?"         -> Kafka se Elasticsearch me bhi; ES id deta, message Cassandra se.
-  "Ek group bahut garam?"          -> asli ilaaj group ki speed pe had; (chat_id, ghanta) bas tukda chhota.
-  "Partition saalon me badi?"      -> key (chat_id, mahina) by default; size bandha, bojh nahi baant-ta.
-  "3 saal purana?"                 -> purane mahine sasti jagah (cold storage).
-  "SQL kyun nahi?"                 -> rishte / transaction chahiye hi nahi; likhai bahut.
+  "message_id se partition kyun nahi?" -> AAKHRI 50 = 50 JAGAH SE: kyunki har message alag jagah; jo saath
+                                          padha jaata wo saath nahi raha.
+  "SQL kyun nahi?"                     -> RISHTE / TRANSACTION CHAHIYE HI NAHI: kyunki kaam bas likhai hai,
+                                          bahut saari (46,000 / sec).
+  "Ek group bahut garam ho gaya?"      -> GROUP KI SPEED PE HAD: kyunki ek chat ek partition hi rahega;
+                                          (chat_id, ghanta) se bas tukda chhota.
+  "Saalon me partition badi?"          -> KEY (chat_id, mahina): kyunki size bandh jaata; bojh nahi baant-ta.
+  "3 saal purane message?"             -> SASTI JAGAH (cold storage): kyunki koi kabhi-kabhi hi kholta.
+  "Purana message search (Slack)?"     -> ELASTICSEARCH: kyunki Cassandra sirf chat_id se dhoondhta; Kafka se
+                                          ES me, ES id de, message Cassandra se.
 ```
 
 #### 5 Net dheema, app ne dobara bheja, Ravi ko "hi" do baar
@@ -266,10 +280,11 @@ NAHI       server id banaye: har dobara bhejna = nayi id = duplicate.
 ```
 AAGE POOCHEGA:
   NIYAM: id APP banata, server sirf "pehle dekha?" poochhta.
-  "Ek kadam kaise?"                -> Cassandra INSERT ... IF NOT EXISTS ("pehle nahi hai tabhi daalo", LWT),
-                                      ya Redis SET NX (wahi kaam Redis me).
-  "Kitni der yaad rakhoge?"        -> jitni der me koi dobara bhejta, jaise Redis EX 3600 = 1 ghanta.
-  "Dobara pe kaunsi id lautegi?"   -> pehli baar wali; mere app me ek hi bubble.
+  "Dekhna + daalna ek kadam kaise?" -> IF NOT EXISTS (Cassandra LWT) ya Redis SET NX: kyunki dono ek saath,
+                                       beech me doosra na ghuse.
+  "Id kitni der yaad rakhoge?"      -> JITNI DER ME DOBARA AATA: kyunki retry minute me aata; Redis EX 3600 =
+                                       1 ghanta kaafi.
+  "Dobara aaya, kaunsi id lautegi?" -> PEHLI WALI: kyunki mere app me ek hi bubble rahe.
 ```
 
 #### 6 Meri ghadi 5 min aage, mere message upar chadh gaye
@@ -301,10 +316,14 @@ NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
 ```
 AAGE POOCHEGA:
   NIYAM: kram = server ka +1 number, har chat ka alag.
-  "16 nahi aaya, app kya kare?"    -> 15 ke baad 17 = 16 chhoota; thoda ruko, phir "15 ke baad ke do".
-  "Seq wala Redis restart?"        -> DB se chat ka sabse bada seq padh ke aage.
-  "Kafka beech me?"                -> key = chatId; ek chat ka kram pakka, alag chat ka chahiye nahi.
-  "Snowflake kis kaam?"            -> sirf pakki pehchaan (message_id), kram nahi.
+  "15 ke baad 17 aaya, app kya kare?" -> 16 CHHOOTA: kyunki seq +1 se chalta; thoda ruko, phir server se "15
+                                         ke baad ke do".
+  "Seq wala Redis restart?"           -> DB SE SABSE BADA SEQ: kyunki Cassandra me har message ka seq hai;
+                                         wahan se aage.
+  "Beech me Kafka, kram bigdega?"     -> KEY = CHATID: kyunki ek chat ek partition, kram pakka; alag chat ka
+                                         kram chahiye nahi.
+  "To Snowflake id kis kaam ki?"      -> SIRF PEHCHAAN (message_id): kyunki do server ki ghadi me ms ka farak;
+                                         kram nahi.
 ```
 
 #### 7 College Gang (500) me ek message, 500 baar likhein?
@@ -336,8 +355,10 @@ NAHI       Twitter jaisa har inbox me copy: wahan feed sabki alag + crore follow
 ```
 AAGE POOCHEGA:
   NIYAM: sabke liye ek jaisa = ek copy; har kisi ka alag = alag copy.
-  "300 online ko kaise?"           -> har server ko EK call, 300 alag call nahi.
-  "Naya member, purane message?"   -> judne ke seq se pehle wale nahi (ya group setting).
+  "300 online, kaise bhejoge?"   -> HAR SERVER KO EK CALL: kyunki 300 log kuch hi server pe; 300 alag call
+                                    nahi.
+  "Naya member, purane message?" -> JUDNE KE SEQ SE PEHLE WALE NAHI: kyunki tab wo group me tha hi nahi (ya
+                                    group setting).
 ```
 
 #### 8 Ravi ne 50 padhe: unread aur neeli tick kaise
@@ -370,11 +391,16 @@ NAHI       unread COUNT column badhao-ghatao: har message pe 500 member x 1 UPDA
 ```
 AAGE POOCHEGA:
   NIYAM: nishaan khisakta hai, ginti nahi hoti; unread, tick, offline ke baad lena sab isi se.
-  "Nishaan kahan?"                 -> Cassandra (user_id, chat_id) -> read_upto; baar-baar wala Redis me.
-  "Do tick kaise?"                 -> delivered_upto: Ravi ka phone bolta "kahan tak mila".
-  "'Mil gaya' raaste me kho gaya?" -> agli baar judte hi delivered_upto bhejta, nishaan aage.
-  "Group me do tick kab?"          -> sab members ka delivered_upto >= seq; sabse chhota nishaan dekho.
-  "10 lakh ka broadcast group?"    -> tick band, sirf unread; size ki had (product + engineering).
+  "Nishaan rakhoge kahan?"         -> CASSANDRA (user_id, chat_id) -> read_upto: kyunki har chat ka ek number;
+                                      baar-baar wala Redis me.
+  "Do tick kaise?"                 -> DELIVERED_UPTO: kyunki wahi nishaan, bas "kahan tak mila"; Ravi ka phone
+                                      bhejta.
+  "Wo 'mil gaya' raaste me khoya?" -> AGLI BAAR JUDTE HI: kyunki nishaan sirf aage khisakta; phone
+                                      delivered_upto dobara bhejta.
+  "Group me do tick kab?"          -> SABSE CHHOTA NISHAAN: kyunki sab members ka delivered_upto >= seq
+                                      chahiye.
+  "10 lakh ka broadcast group?"    -> TICK BAND, SIRF UNREAD: kyunki 10 lakh nishaan milana mehnga; size ki
+                                      had (product + engineering).
 ```
 
 #### 9 Shaadi ka 200 MB video chat ke raaste
@@ -407,9 +433,11 @@ NAHI       message me URL rakho: 10 min me khatam, kal link mara; KEY rakho.
 ```
 AAGE POOCHEGA:
   NIYAM: bhaari maal S3 me, message me sirf pata.
-  "Kholne pe link?"                -> server key se naya chhota URL banaye.
-  "Wahi video 1000 forward?"       -> file ka hash; pehle se hai to wahi file (dedup).
-  "E2E me thumbnail?"              -> server dekh nahi sakta; app encrypt kare, chaabi message ke saath.
+  "Kholne pe link kahan se?"      -> SERVER KEY SE NAYA URL: kyunki message me sirf key hai; har baar chhota
+                                     URL banta.
+  "Wahi video 1000 baar forward?" -> FILE KA HASH (dedup): kyunki pehle se hai to wahi file, dobara upload
+                                     nahi.
+  "E2E hai to thumbnail?"         -> APP ENCRYPT KARE: kyunki server dekh nahi sakta; chaabi message ke saath.
 ```
 
 #### 10 Raat ko online / last seen sabko kaise
@@ -441,9 +469,11 @@ NAHI       DB me online column, har dhadkan pe UPDATE: crore log x har 15 sec = 
 ```
 AAGE POOCHEGA:
   NIYAM: status maango tab dekho; khud mitne wali key.
-  "13 lakh dhadkan / sec Redis pe?" -> dhadkan chat server tak; server batch me Redis me daale.
-  "Last seen?"                     -> usi key ka aakhri update; Ravi ne chhupaya to mat dikhao.
-  "typing...?"                     -> sirf khuli chat; chhota event, store nahi.
+  "13 lakh dhadkan / sec Redis pe?" -> CHAT SERVER BATCH KARE: kyunki dhadkan pehle taar se server tak aati;
+                                       server ikattha karke Redis me.
+  "Last seen kaise?"                -> USI KEY KA AAKHRI UPDATE: kyunki aakhri dhadkan ka waqt hi last seen;
+                                       Ravi ne chhupaya to mat dikhao.
+  "Aur 'typing...'?"                -> SIRF KHULI CHAT ME, STORE NAHI: kyunki 2 sec ki khabar; chhota event.
 ```
 
 ---

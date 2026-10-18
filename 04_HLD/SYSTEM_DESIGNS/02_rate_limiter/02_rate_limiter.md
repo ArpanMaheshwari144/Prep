@@ -140,12 +140,13 @@ NAHI       ek user hamesha ek App pe (sticky LB): wo App gira to ginti gayi; App
 ```
 AAGE POOCHEGA:
   NIYAM: ginti sab machines ki ek jagah; key ki umar = window, umar khatam = ginti reset.
-  "Ye kaunsa algo hua?"            -> fixed window (har minute ka dabba), samajhne ko sabse simple;
-                                      asli chuna token bucket, wo bhi isi Redis me.
-  "Aakhri sec 5 + agle ke pehle 5?" -> haan, 2 second me 10: fixed window ki kamzori, kinare pe double.
-                                      Token bucket / sliding window se theek.
-  "Har request Redis tak = time?"  -> Redis RAM me, paas ke data center me ~1 ms. Chalta hai.
-  "DB me ginti kyun nahi?"         -> har request pe DB me likhna; disk + lock = dheema. Redis RAM = tez.
+  "Ye kaunsa algorithm hua?"                -> FIXED WINDOW: har minute ka dabba, samajhne ko simple; asli
+                                               chuna TOKEN BUCKET, wo bhi isi Redis me.
+  "Aakhri sec me 5, agle ke pehle me 5?"    -> KINARE PE DOUBLE: 2 second me 10, fixed window ki kamzori;
+                                               token bucket / sliding window se theek.
+  "Har request Redis tak, time nahi lagta?" -> ~1 MS: kyunki Redis RAM me, paas ke data center me. Chalta hai.
+  "Ginti DB me kyun nahi rakhi?"            -> DISK + LOCK = DHEEMA: kyunki har request pe DB me likhna padta;
+                                               Redis RAM = tez.
 ```
 
 #### 2 Bot ne mere account pe 20 login ek saath bheje, 6 ghus gaye
@@ -173,13 +174,17 @@ NAHI       App me synchronized / lock: sirf ek machine ke andar; do App me race 
 ```
 AAGE POOCHEGA:
   NIYAM: dekhna + badalna ek hi kadam, Redis ke andar; beech me koi request nahi ghus sakti.
-  "EXPIRE har request pe?"         -> umar phir 60 se, key kabhi nahi mitegi; sirf pehli pe (ginti 1).
-  "INCR ke baad, EXPIRE se pehle crash?" -> key bina umar ke, user hamesha block; isliye dono ek Lua me.
-  "Token bucket, Redis me kya?"    -> sirf 2 number: kitne token bache + aakhri baar kab dekha.
-  "10 crore bucket bharne ka job?" -> koi job nahi; request AANE pe: beeta time x speed utne jodo (had tak),
-                                      phir 1 ghatao. Jo aa hi nahi raha, uski key umar se khud mitti.
-  "Lua dheema ya atak gaya?"       -> poora Redis rukega (ek line me); isliye script chhota, koi loop nahi.
-  "Ek line me = dheema nahi?"      -> RAM, ek machine lagbhag lakh command / sec (andaza); zyada -> SHARD.
+  "EXPIRE har request pe lagaoge?"         -> SIRF PEHLI PE (ginti 1): kyunki har baar lagao to umar phir 60
+                                              se, key kabhi nahi mitegi.
+  "INCR ke baad, EXPIRE se pehle crash?"   -> DONO EK LUA ME: kyunki warna key bina umar ke, user hamesha
+                                              block.
+  "Token bucket me Redis me kya rakhoge?"  -> SIRF 2 NUMBER: kitne token bache + aakhri baar kab dekha.
+  "10 crore bucket bharne ka job chalega?" -> KOI JOB NAHI (lazy): request aane pe beeta time x speed jodo
+                                              (had tak), phir 1 ghatao; soyi key umar se mitti.
+  "Lua dheema ho gaya ya atak gaya?"       -> POORA REDIS RUKEGA: kyunki Redis ek line me chalta; isliye
+                                              script chhota, koi loop nahi.
+  "Ek line me chalta, to dheema nahi?"     -> RAM = TEZ: ek machine lagbhag lakh command / sec (andaza); zyada
+                                              chahiye to SHARD.
 ```
 
 #### 3 Bot ki 429 wali request bhi App tak ghoom ke aayi
@@ -201,14 +206,16 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: jitna aage roko, utna kam kaam bekaar; aur client ko batao kab aaye.
-  "Kaise kaam karta?"              -> gateway sabse aage, har request pe Redis se poochhta: had ke andar ->
-                                      App, bahar -> wahin 429; mana wali LB / App tak pahunchti hi nahi.
-  "429 ke saath kya bataoge?"      -> kab dobara aao (Retry-After: 30) + kitni bachi (X-RateLimit-Remaining).
-  "Sab theek 30 sec baad aaye?"    -> nayi laher; isliye Retry-After me jitter (jaise 28, 33).
-  "Gateway khud gira?"             -> gateway ki bhi 2+ machine, aage LB.
-  "Limit bina naya code badalni?"  -> niyam CONFIG me (DB / AWS AppConfig); gateway memory me, har ~30 sec
-                                      naye padh leta (sale me login 5 se 10).
-  "Sirf gateway, ya service bhi?"  -> gateway pe sabke liye ek moti limit, service ke andar apni baarik.
+  "Kaise kaam karta?"                    -> GATEWAY SABSE AAGE: har request pe Redis se poochhe; had ke andar
+                                            -> App, bahar -> wahin 429, LB / App tak pahunchti hi nahi.
+  "429 ke saath client ko kya bataoge?"  -> KAB AAO + KITNI BACHI: Retry-After: 30 + X-RateLimit-Remaining.
+  "Sab theek 30 sec baad saath aaye to?" -> JITTER: kyunki sab ek saath = nayi laher; Retry-After alag-alag
+                                            (28, 33).
+  "Gateway khud gir gaya?"               -> 2+ MACHINE: kyunki koi dabba akela nahi; gateway ke aage LB.
+  "Limit badalni ho, bina naye code ke?" -> CONFIG: niyam DB / AWS AppConfig me; gateway memory me, har ~30
+                                            sec naye padh leta (sale me login 5 se 10).
+  "Sirf gateway pe, ya service me bhi?"  -> DONO: gateway pe sabke liye moti limit, service ke andar apni
+                                            baarik.
 ```
 
 #### 4 Dopahar Redis gira, limiter andha ho gaya
@@ -240,14 +247,16 @@ NAHI       sab fail-open: login khula = koi bina had password guess karta rahega
 ```
 AAGE POOCHEGA:
   NIYAM: faisla pehle se, endpoint ke hisaab se; copy = bachav + padhne ka bojh, shard = likhne ka bojh.
-  "LB / gateway bhi akela?"        -> nahi; Route 53 + ALB (kai zone), Redis jaisa wo bhi akela nahi.
-  "Switch me aakhri ginti khoi?"   -> haan, copy thodi peeche thi. Rate limit me chalta, ye paisa nahi.
-  "Gira nahi, CPU full?"           -> copy se nahi: INCR = LIKHNA, sirf main pe. SHARD (Redis Cluster):
-                                      user ke hisaab se keys 3-4 main me, har ek pe 1/4 bojh.
-  "Fail-open ya closed, kab tay?"  -> PEHLE se, code me, har endpoint ke hisaab se; gire tab time nahi.
-  "Cluster me Lua ki 2 key?"       -> saari key EK machine pe: tag, rate:{Arpan}:min + rate:{Arpan}:day
-                                      -> sirf {} ke andar se machine tay -> dono ek jagah.
-  "Route 53 aur ALB kyun aaye?"    -> ek hi LB = wahi gira sab gira; ALB kai zone me, Route 53 zinda pe bheje.
+  "LB / gateway bhi akela hai kya?"        -> ROUTE 53 + ALB: kyunki ek LB gira to sab gira; ALB kai zone me,
+                                              Route 53 zinda pe bheje.
+  "Copy main bani, aakhri ginti ka kya?"   -> THODI KHOI: kyunki copy thodi peeche thi; rate limit me chalta,
+                                              ye paisa nahi.
+  "Redis gira nahi, bas CPU full hai?"     -> SHARD, COPY NAHI: kyunki INCR = likhna, sirf main pe; Redis
+                                              Cluster me keys 3-4 main me, har ek pe 1/4 bojh.
+  "Fail-open ya closed, kab tay karoge?"   -> PEHLE SE, CODE ME: har endpoint ke hisaab se (feed open, login
+                                              closed); gire tab sochne ka time nahi.
+  "Cluster me Lua ki 2 key, alag machine?" -> HASH TAG {}: rate:{Arpan}:min + rate:{Arpan}:day, sirf {} ke
+                                              andar se machine tay -> dono ek jagah.
 ```
 
 #### 5 Meri script 3 region se chali, 100 ki jagah 150 nikal gayi
@@ -271,12 +280,16 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: ek user ki ek ginti, ek ghar me; door jaane ka kharcha sirf zaroori endpoint pe.
-  "Kaise kaam karta?"              -> pehle har region ka apna Redis, sabne 50 gina -> 150. Ab ghar user_id se
-                                      (mera India): Frankfurt bhi India ke Redis me gine -> 100 pe ruka.
-  "Har request India = 100-200 ms?" -> haan; isliye home region sirf paisa / security wale endpoint pe.
-                                      Baaki pe har region apni ginti + har second aapas me milaao (sync).
-  "Apni ginti + sync, kitna zyada?" -> sync ke ~1 sec me har region poori limit de sakta; halki had me chalta.
-  "Mera home region hi gira?"      -> Route 53 doosre region, ginti wahan 0 se. Ek minute dheela, chalta hai.
+  "Kaise kaam karta?"                     -> HOME REGION: pehle har region apni ginti (50+50+50 = 150); ab
+                                             Frankfurt bhi mere ghar India ke Redis me gine -> 100.
+  "Har request India tak = 100-200 ms?"   -> SIRF ZAROORI PE: kyunki door jaana mehnga; home region sirf paisa
+                                             / security wale endpoint pe.
+  "Baaki endpoint pe phir kya?"           -> APNI GINTI + SYNC: har region khud gine, har second aapas me
+                                             milaao.
+  "Apni ginti + sync, kitna zyada nikla?" -> ~1 SEC KA: kyunki sync tak har region poori limit de sakta; halki
+                                             had me chalta.
+  "Mera home region hi gir gaya?"         -> ROUTE 53 DOOSRA REGION: ginti wahan 0 se; ek minute dheela,
+                                             chalta hai.
 ```
 
 #### 6 Wahi bot har 60 sec baad phir aa jaata, din bhar
@@ -312,9 +325,11 @@ NAHI       turant ban: asli user bhi tez click karta, office ke 1000 log ek IP (
 ```
 AAGE POOCHEGA:
   NIYAM: limit maafi wali; ban sirf pakke gunde pe, pattern dekh ke, aur apne aap hatne wala.
-  "Galat banda ban (office ka IP)?" -> ban ki umar (~24 ghante), apne aap hatta, haath se hatane ka raasta.
-  "Gateway seedha Pattern call?"   -> har request pe ek aur call = gateway dheema; Kafka me daal ke bhool jao.
-  "Kafka peeche reh gaya?"         -> ban kuch minute late lagega; tab tak rate limit to rok hi raha.
+  "Galat banda ban ho gaya, office IP?"  -> BAN KI UMAR: ~24 ghante me apne aap hatta + haath se hatane ka
+                                            raasta; ban maafi wala.
+  "Gateway seedha Pattern ko call kare?" -> KAFKA ME DAALO: kyunki har request pe ek aur call = gateway
+                                            dheema; daal ke bhool jao.
+  "Kafka peeche reh gaya to?"            -> BAN THODA LATE: kuch minute; tab tak rate limit to rok hi raha.
 ```
 
 #### 7 Shaam ki sale, har koi limit me, phir bhi server gira
@@ -342,12 +357,13 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: user ki had aur system ki had alag cheez; dono chahiye.
-  "Kaise kaam karta?"              -> gateway pe poore system ki had (5,000 / sec), CPU 90% paar -> kuch 503.
-                                      RATE LIMIT = ek USER ki had (429) · LOAD SHEDDING = SYSTEM ki (503).
-  "Kaunsi request chhodoge?"       -> login / payment rakho; recommendation / analytics pehle chhodo.
-  "Machine apne aap badhe?"        -> nayi machine me minute lagte, bheed second me; pata ho (12 baje sale)
-                                      to pehle se badha do.
-  "Line (queue) me rok lo?"        -> chhota time (~2 sec); user chala gaya to uska kaam bekaar.
+  "Kaise kaam karta?"                 -> SYSTEM KI HAD: gateway pe poore system ki had (5,000 / sec), CPU 90%
+                                         paar -> kuch 503. User ki had = 429 · system ki = 503.
+  "To kaunsi request chhodoge?"       -> KAM ZAROORI PEHLE: recommendation / analytics chhodo, login / payment
+                                         rakho.
+  "Machine apne aap nahi badh jaati?" -> MINUTE LAGTE: kyunki bheed second me aati; pata ho (12 baje sale) to
+                                         pehle se badha do.
+  "Line (queue) me rok lo request?"   -> CHHOTA TIME (~2 SEC): kyunki user chala gaya to uska kaam bekaar.
 ```
 
 #### 8 Raat ko attack, usi waqt poora Redis Cluster gira (copy bhi), aam API khuli
@@ -375,10 +391,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: thodi galat had, bina had se behtar.
-  "Kaise kaam karta?"              -> har server apni memory me gine, had baant ke: 100, 4 server -> har ek
-                                      25. Redis wapas aaya -> phir sabki ek ginti.
-  "Machine badh gayi, kitna baanto?" -> machines ki ginti config / service discovery se lo, dobara baanto.
-  "Ek user alag-alag machine pe?"  -> har machine 25 = motamoti, exact nahi; attack me "kuch nahi" se behtar.
+  "Kaise kaam karta?"                  -> APNI MEMORY ME GINO: had baant ke, 100 / 4 server = har ek 25; Redis
+                                          wapas aaya -> phir sabki ek ginti.
+  "Machine badh gayi, kitna baantoge?" -> GINTI CONFIG SE: machines ki ginti config / service discovery se lo,
+                                          dobara baanto.
+  "Ek user alag-alag machine pe gaya?" -> MOTAMOTI, EXACT NAHI: har machine 25; thodi galat had, bina had se
+                                          behtar.
 ```
 
 #### 9 Office ki night shift: ek IP block, 1000 log atke
@@ -413,9 +431,10 @@ NAHI       IP ki had badha do (5 se 500): office bach gaya, par botnet ko bhi ut
 ```
 AAGE POOCHEGA:
   NIYAM: had us pehchaan pe jo ek insaan ki ho; IP sirf tab jab aur kuch na ho.
-  "Login se pehle botnet 1000 IP?" -> IP limit bekaar; ACCOUNT pe: rate:<username>:login_fail
-                                      -> 5 galat password -> thodi der lock / CAPTCHA.
-  "API key chori ho gayi?"         -> key pe limit nuksaan seemit karti; key badalne / band karne ka raasta.
+  "Login se pehle, botnet ke 1000 IP?" -> ACCOUNT PE GINO: rate:<username>:login_fail, 5 galat password ->
+                                          thodi der lock / CAPTCHA; IP limit bekaar.
+  "API key hi chori ho gayi?"          -> NUKSAAN SEEMIT: kyunki limit key pe hai; upar se key badalne / band
+                                          karne ka raasta.
 ```
 
 ---

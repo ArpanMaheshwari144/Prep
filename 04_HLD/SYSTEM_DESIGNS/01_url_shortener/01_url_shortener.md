@@ -135,13 +135,18 @@ NAHI       DB ki read copy (replica): wo bhi disk se, dheemi; 1 lakh / sec ke li
 ```
 AAGE POOCHEGA:
   NIYAM: garam link RAM me; DB tak sirf wo jo Redis me nahi mila.
-  "Har App apna cache rakhe?"      -> link badla to kisi App pe purana dikhta rahega; Redis sabka ek.
-  "Saare 180 arab Redis me?"       -> nahi, sirf garam; bhara to sabse der se na khula nikaalo (LRU).
-  "LRU wala baad me khula?"        -> DB se wapas Redis me aa jaayega.
-  "Link delete / expire hua?"      -> expiry pe Redis khud hatata; delete pe pehle DB se, phir Redis se.
-  "Redis hi gira?"                 -> isliye cluster + replica, warna 95% click ek saath DB pe, DB bhi gire.
-  "Phir bhi gira to?"              -> kuch request mana (load shedding), garam link ko EK request DB se
-                                      laaye, baaki ruke. "Kuch nahi hoga" kabhi mat bolna.
+  "Har App apna cache kyun nahi rakhta?"    -> EK SHARED REDIS: kyunki link badla to har App ki apni copy
+                                               purani reh jaati; Redis sabka ek.
+  "Theek, to saare 180 arab link Redis me?" -> SIRF GARAM: kyunki RAM mehngi; bhara to sabse der se na khula
+                                               nikaalo (LRU).
+  "Jo LRU ne nikaala, wo kal phir khula?"   -> DB SE WAPAS: Redis me nahi mila to DB, phir Redis me daal do;
+                                               NIYAM wahi.
+  "Link delete ya expire hua to?"           -> DELETE = PEHLE DB, PHIR REDIS: Redis pehle hataya to beech ka
+                                               click DB se purana bhar dega. Expiry pe Redis khud.
+  "Aur Redis hi gir gaya?"                  -> CLUSTER + REPLICA: kyunki warna 95% click ek saath DB pe, DB
+                                               bhi gira.
+  "Replica bhi gaya to?"                    -> LOAD SHEDDING: kuch request mana, garam link ko EK request DB
+                                               se laaye, baaki ruke. "Kuch nahi hoga" mat bolna.
 ```
 
 #### 2 Usi bheed me ek App machine giri, poori site band
@@ -174,8 +179,10 @@ NAHI       ek bahut badi machine (vertical scale): uski bhi had, aur akeli -> wa
 ```
 AAGE POOCHEGA:
   NIYAM: App kuch yaad nahi rakhta, sab Redis / DB me; tabhi koi bhi machine koi bhi request le.
-  "Stateless kyun zaroori?"        -> baat App-1 ki memory me, agli request App-2 pe -> App-2 ko pata nahi.
-  "Machine mari nahi, dheemi hai?" -> LB jawab ka time + galtiyon ki ginti dekhta; least-conn kam bhejta.
+  "Ek machine giri, baaki kaise sambhaal leti?" -> STATELESS: kyunki App kuch yaad nahi rakhta; baat App-1 ki
+                                                   memory me hoti to App-2 pe agli request ko pata hi nahi.
+  "Machine mari nahi, bas dheemi hai, tab?"     -> LB HEALTH + LEAST-CONN: LB jawab ka time + galtiyan ginta,
+                                                   dheemi ko kam bhejta.
 ```
 
 #### 3 Maine aur Ravi ne link banaya, dono ko ek hi code mila
@@ -202,12 +209,16 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: number ek hi jagah se, thaile me baante jaate; ek thaila kabhi do App ko nahi.
-  "Kaise kaam karta?"              -> Counter (ZooKeeper / DB table) har App ko alag thaila: App-1 = 1-1000,
-                                      App-2 = 1001-2000; App khud ginta, thaila khatam pe hi counter.
-  "App-1 400 pe crash, 401-1000?"  -> bekaar gaye, jaan-boojh ke; 3.5 lakh crore me kuch hazaar se farak nahi.
-  "Har number bachana ho?"         -> har link pe coordination lagega, range ka fayda khatam.
-  "Counter service giri?"          -> App ke paas thaila (1000) bacha, kaam chalta; tab tak doosri copy uthti.
-  "Redis INCR kyun nahi?"          -> chal jaata, par har link pe ek call; range me 1000 link pe ek.
+  "Kaise kaam karta?"                    -> THAILA (range): Counter (ZooKeeper / DB) har App ko alag range,
+                                            App-1 = 1-1000, App-2 = 1001-2000; khatam pe hi counter.
+  "App-1 400 pe crash, 401-1000 ka kya?" -> BEKAAR, JAAN-BOOJH KE: kyunki 3.5 lakh crore code me kuch hazaar
+                                            se farak nahi.
+  "Mujhe har number bachana hai, tab?"   -> HAR LINK PE COORDINATION: kyunki har number pe counter poochho =
+                                            range ka fayda khatam.
+  "Counter service hi gir gayi?"         -> KAAM CHALTA: kyunki App ke haath me thaila (1000) bacha; tab tak
+                                            counter ki doosri copy uthti.
+  "Redis INCR se kyun nahi?"             -> CHAL JAATA, par har link pe ek call; range me 1000 link pe ek
+                                            call.
 ```
 
 #### 4 Maine click ginti chahi, redirect hi dheema ho gaya
@@ -242,10 +253,11 @@ NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein g
 ```
 AAGE POOCHEGA:
   NIYAM: redirect kisi ka intezaar nahi karta; ginti peeche, apni speed se, disk pe.
-  "Ek click do baar aaya?"         -> click id se, do baar nahi ginti.
-  "Kafka band?"                    -> redirect phir bhi chalta, bas kuch click ginti me nahi aate.
-  "SQS kyun nahi?"                 -> chal jaata; Kafka: click bahut + naya report = purane click dobara
-                                      padho (replay). SQS padhne ke baad message hata deta.
+  "Ek click do baar aa gaya to?" -> CLICK ID: kyunki har click ki apni id; wahi id dobara aayi to ginti nahi.
+  "Kafka hi band ho gaya?"       -> REDIRECT CHALTA: kyunki redirect kisi ka intezaar nahi karta; bas kuch
+                                    click ginti me nahi aate.
+  "SQS kyun nahi liya?"          -> REPLAY: SQS bhi chalta, par click bahut + naya report = purane click
+                                    dobara padho; Kafka rakhta, SQS padhte hi hata deta.
 ```
 
 #### 5 DB team boli: 5 saal me 90 TB, ek machine me nahi
@@ -276,13 +288,18 @@ NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se 
 ```
 AAGE POOCHEGA:
   NIYAM: jis cheez se padhte ho (code), usi se baanto.
-  "Nayi machine aayi?"             -> sirf uske theek peeche wale code usko; "code % machine" me 3 se 4
-                                      hote hi lagbhag har code ki jagah badal jaati.
-  "Copy badha do, likhna tez?"     -> nahi, har copy pe likhna padta; likhne ka bojh = SHARD, copy = bachav.
-  "Ek machine pe zyada code?"      -> har machine ghadi pe 100-200 jagah (virtual nodes) -> bojh barabar.
-  "Ek link viral, machine garam?"  -> wo link Redis se hi nikal jaata, machine tak kam aata.
-  "Cassandra kyun, MySQL nahi?"    -> join / transaction nahi, bas code se link + 90 TB; "NoSQL powerful" nahi
-  "Chhota maana (~500 GB)?"        -> ek MySQL kaafi, shard bhi nahi.
+  "Nayi machine judi to kya hota?"        -> SIRF PEECHE WALE CODE KHISKTE (ghadi): kyunki "code % machine" me
+                                             3 se 4 hote hi lagbhag har code ki jagah badalti.
+  "Copy badha do, likhna tez ho jaayega?" -> NAHI, SHARD: kyunki har copy pe likhna padta; likhne ka bojh =
+                                             shard, copy = bachav.
+  "Ek machine pe zyada code aa gaye?"     -> VIRTUAL NODES: kyunki har machine ghadi pe 100-200 jagah, to bojh
+                                             barabar bant-ta.
+  "Ek link viral, uski machine garam?"    -> REDIS SE NIKAL JAATA: kyunki garam link pehle Redis me milta,
+                                             machine tak kam aata.
+  "Cassandra kyun, MySQL kyun nahi?"      -> JOIN / TXN CHAHIYE HI NAHI: bas code se link + 90 TB; "NoSQL
+                                             powerful" wajah nahi.
+  "Agar data chhota hota, ~500 GB?"       -> EK MYSQL KAAFI: kyunki shard tab jab ek machine me na aaye; yahan
+                                             aa jaata.
 ```
 
 #### 6 Maine naya link banaya, turant khola, 404 aaya
@@ -314,15 +331,21 @@ NAHI       3 me likho tabhi done, phir 1 se padho: ek copy giri = har naya link 
 ```
 AAGE POOCHEGA:
   NIYAM: "2 me likha + 2 se padha" -> dono me ek copy common pakki; jo likha wo khona nahi.
-  "Redis ka kya?"                  -> link banate hi Redis me bhi daalo; zyadatar click wahin se.
-  "Likhte waqt ek copy giri?"      -> 3 me se 2 ne likha tabhi "save"; us beech redirect Redis se.
-  "Giri machine wapas uthi?"       -> girne ke beech ki likhai zinda machine ne note rakhi (hinted handoff),
-                                      uthte hi de di; padhte waqt copies me farak mile to theek (read repair).
-  "2 ka hi intezaar, 3 ka kyun?"   -> teeno = ek dheemi machine sabko dheema; 2 me ek gire tab bhi likh sakte.
-  "2 machine gir gayi?"            -> 2 "haan" nahi -> likhna fail (ya 1 pe, risk ke saath); click Redis se.
-  "2 se padhna dheema nahi?"       -> haan, thoda; isliye pehla ilaaj Redis, zyada click wahin se.
-  "Kafka laga do data bachane?"    -> nahi; ye DB ki apni diary ka kaam, extra dabba mat lagao.
-  "Cassandra me main copy?"        -> nahi; teeno copy barabar, koi bhi likh aur padh sakti.
+  "Redis ka kya, wahan to link hai hi nahi?" -> BANATE HI REDIS ME DAALO: kyunki zyadatar click Redis se, 404
+                                                wahin ruk jaata.
+  "Likhte waqt ek copy gir gayi?"            -> 2 ME HUA TO SAVE: kyunki 3 me se 2 = zyadatar (quorum); us
+                                                beech redirect Redis se.
+  "Giri machine wapas uthi, uska data?"      -> HINTED HANDOFF: zinda machine ne beech ki likhai note rakhi,
+                                                uthte hi di; padhte farak mile to theek (read repair).
+  "3 ka intezaar kyun nahi, sirf 2 ka?"      -> EK DHEEMI SAB DHEEMA: kyunki teeno ruko to ek slow machine
+                                                sabko rokti; 2 me ek gire tab bhi likh sakte.
+  "Aur 2 machine gir gayi to?"               -> LIKHNA FAIL: kyunki 2 "haan" nahi mile (ya 1 pe, risk ke
+                                                saath); click phir bhi Redis se.
+  "2 se padhna dheema nahi padta?"           -> HAAN THODA: isliye pehla ilaaj Redis, zyadatar click wahin se,
+                                                DB tak kam.
+  "Data bachane ko Kafka laga dein?"         -> NAHI, DB KI APNI DIARY: kyunki ye DB khud karta; extra dabba
+                                                mat lagao.
+  "Cassandra me main copy kaunsi?"           -> KOI NAHI: teeno copy barabar, koi bhi likh aur padh sakti.
 ```
 
 #### 7 Shaam ko LB hi gir gaya, koi request andar nahi
@@ -349,12 +372,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: koi dabba akela nahi; aage wala health check se sirf zinda wale pe bheje.
-  "Kaise kaam karta?"              -> Route 53 (AWS ka DNS) har ~30 sec LB se "zinda?"; 3 baar chup -> us LB
-                                      ka pata dena band, sab doosre pe. Region gaya -> doosra region.
-  "Switch turant?"                 -> nahi; phone purana pata ~60 sec yaad (DNS TTL), tab tak purane LB pe.
-                                      Isliye cloud me LB khud kai data center me phaila (AWS ALB).
-  "Region gaya, naye link?"        -> doosre region me copy peeche-peeche; aakhri kuch second ke kho sakte.
-                                      Ye maana hua risk hai.
+  "Kaise kaam karta?"            -> HEALTH CHECK: Route 53 (AWS ka DNS) har ~30 sec LB se "zinda?"; 3 baar
+                                    chup -> sab doosre LB pe; region gaya -> doosra region.
+  "Switch turant ho jaata?"      -> NAHI, DNS TTL: phone purana pata ~60 sec yaad rakhta; isliye LB khud kai
+                                    data center me (AWS ALB).
+  "Region gaya, uske naye link?" -> AAKHRI KUCH SECOND KHO SAKTE: kyunki doosre region me copy peeche-peeche;
+                                    ye maana hua risk hai.
 ```
 
 #### 8 Raat ko spammer ki script, har second 5,000 link
@@ -387,9 +410,10 @@ NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana l
 ```
 AAGE POOCHEGA:
   NIYAM: rokna darwaze pe, sabki ek ginti se, us pehchaan pe jo bot badal na sake.
-  "Gateway ki kai machine, ginti?" -> ek shared Redis (INCR + expiry), sab wahi ek ginti dekhein.
-                                      (Poora design = 02_rate_limiter.)
-  "Bot har baar naye IP se?"       -> IP pe nahi, API key / user_id pe limit, aur WAF ke bot rules.
+  "Gateway ki kai machine, ginti ek kaise?" -> SHARED REDIS: INCR + expiry, sab wahi ek ginti dekhein. (Poora
+                                               design = 02_rate_limiter.)
+  "Bot har baar naya IP le aaye to?"        -> API KEY / USER_ID PE: kyunki pehchaan wo jo bot badal na sake;
+                                               upar se WAF ke bot rules.
 ```
 
 ---

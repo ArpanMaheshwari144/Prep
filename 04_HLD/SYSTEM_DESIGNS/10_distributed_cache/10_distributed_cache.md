@@ -115,12 +115,16 @@ AAGE POOCHEGA:
   NIYAM: sabse purana chhua hua pehle jaaye; umar khatam = key bekaar.
   "Ye chalta kaise hai?"                    -> SABSE PURANA CHHUA HUA bahar (LRU), wahi jo tune DSA me banaya
                                                (LC 146); har key ki umar bhi (TTL).
-  "Sabse purana kaun, har baar dhoondhoge?" -> nahi: HASHMAP + DOUBLY LINKED LIST; chhua -> AAGE, RAM bhari ->
-                                               PEECHE wala hatao.
-  "Umar wali key hat-ti kab hai?"           -> PADHTE WAQT check (lazy) + peeche safai (active).
-  "Kitni baar chhua, wo kyun nahi ginte?"   -> wo LFU; kal ki famous key aaj bhi baithi rehti. Default LRU.
-  "Redis sach me poori list rakhta?"        -> nahi, ANDAAZE wala LRU: kuch random key, unme sabse purani.
-  "Aur hatana hi band kar diya to?"         -> NAYA LIKHNA ERROR (noeviction); cache me allkeys-lru rakho.
+  "Sabse purana kaun, har baar dhoondhoge?" -> NAHI: HASHMAP + DOUBLY LINKED LIST; chhua -> AAGE, RAM bhari ->
+                                               PEECHE wala hatao, kyunki dono kaam O(1).
+  "Umar wali key hat-ti kab hai?"           -> PADHTE WAQT check (lazy) + peeche thodi-thodi safai (active),
+                                               kyunki har key pe ghadi lagana mehnga.
+  "Kitni baar chhua, wo kyun nahi ginte?"   -> wo LFU; kal ki famous key aaj bhi baithi rehti, kyunki purani
+                                               ginti nahi ghatti. Default LRU.
+  "Redis sach me poori list rakhta?"        -> NAHI, ANDAAZE wala LRU: kuch random key utha ke unme sabse
+                                               purani, kyunki poori list = har key pe extra memory.
+  "Aur hatana hi band kar diya to?"         -> NAYA LIKHNA ERROR (noeviction), kyunki RAM bhari aur kuch
+                                               hatana mana; cache me allkeys-lru rakho.
 ```
 
 #### 2 Subah 11 tak data 1 TB: "user:42" kis machine pe?
@@ -154,15 +158,20 @@ AAGE POOCHEGA:
   NIYAM: machine jude / jaaye to sirf pados ki ~K/N key hilein (K = saari key, N = machine).
   "Ghadi ka ek misaal do."               -> 0..360: A=100, B=200, C=300; key 150 -> B, 350 -> GHOOM KE A.
                                             D=250 juda -> sirf 201..250 khiske.
-  "Ye ghoomna kahin dekha hai?"          -> TERA CIRCULAR ARRAY: Next Greater Element II me i % n.
-  "Seedha hash % N kyun nahi?"           -> N BADLA TO SAB HILTI: 4 se 5 machine = ~80% key; ring me N nahi.
-  "Ek machine pe zyada key aa gayi?"     -> VIRTUAL NODES: ek machine ring pe 100 jagah, bojh barabar.
-  "Nayi machine aayi, wo to khaali hai?" -> SIRF US HISSE ki ~K/N key ek baar miss, poora cache nahi.
+  "Ye ghoomna kahin dekha hai?"          -> TERA CIRCULAR ARRAY: Next Greater Element II me i % n, wahi aakhri
+                                            ke baad pehla.
+  "Seedha hash % N kyun nahi?"           -> N BADLA TO SAB HILTI: 4 se 5 machine = ~80% key, kyunki har key ka
+                                            % N badal gaya; ring me N nahi.
+  "Ek machine pe zyada key aa gayi?"     -> VIRTUAL NODES: ek machine ring pe 100 jagah, kyunki 3 nishaan =
+                                            bade-chhote tukde, 100 nishaan = barabar.
+  "Nayi machine aayi, wo to khaali hai?" -> SIRF US HISSE ki ~K/N key ek baar miss, kyunki baaki key ki
+                                            machine badli hi nahi.
   "App ko kaise pata kaun zinda?"        -> NAKSHA (config service); galat machine pe gaya to Redis bolta
-                                            "MOVED, wahan jao".
-  "Redis Cluster bhi ring hai?"          -> nahi, 16384 SLOT: CRC16(key) % 16384 -> slot -> machine; machine
-                                            badhe to kuch slot khiskao.
-  "A-M ek pe, N-Z doosre pe kyun nahi?"  -> EK RANGE GARAM ho jaati, ek machine pe bojh; isliye hash.
+                                            "MOVED, wahan jao", kyunki naksha thoda purana ho sakta.
+  "Redis Cluster bhi ring hai?"          -> NAHI, 16384 SLOT: CRC16(key) % 16384 -> slot -> machine; slot
+                                            ki ginti fix rehti, machine badhe to sirf kuch slot khiskao.
+  "A-M ek pe, N-Z doosre pe kyun nahi?"  -> EK RANGE GARAM ho jaati (sab "S" naam), ek machine pe bojh; hash
+                                            se key bikhar jaati.
 ```
 
 #### 3 Dopahar machine B mar gayi, uski key ka bojh DB pe
@@ -192,12 +201,16 @@ NAHI       sync copy: har likhai pe copy ke "haan" ka intezaar -> <1 ms gaya.
 ```
 AAGE POOCHEGA:
   NIYAM: cache me tezi pehle; aakhri kuch likhai kho jaaye to chalta, asli sach DB me.
-  "Copy tak thodi der baad, kuch kho sakta?" -> haan, AAKHRI KUCH LIKHAI; cache me chalta, sach DB me.
-  "B gayi to baaki machines?"                -> SIRF B KI KEY pe asar, baaki aaram se.
-  "Copy ko main banane me kitni der?"        -> ~10-30 SEC; us beech us hisse ki key DB se (thoda dheema).
-  "Network toota, dono khud ko main samjhe?" -> ZYADATAR (quorum) tay kare; akeli padi wo likhna band kare
-                                                (split brain).
-  "Copy baithi hai, usse padh bhi lo?"       -> HAAN, padhai bat-ti; thoda purana mil sakta, cache me chalta.
+  "Copy tak thodi der baad, kuch kho sakta?" -> HAAN, AAKHRI KUCH LIKHAI, kyunki main pehle haan bolta, copy
+                                                baad me; cache me chalta, sach DB me.
+  "B gayi to baaki machines?"                -> SIRF B KI KEY pe asar, kyunki har machine ka apna hissa; baaki
+                                                aaram se.
+  "Copy ko main banane me kitni der?"        -> ~10-30 SEC, kyunki pehle pakka karna ki B sach me mari; us
+                                                beech us hisse ki key DB se (thoda dheema).
+  "Network toota, dono khud ko main samjhe?" -> ZYADATAR (quorum) tay kare; akeli padi wo likhna band kare,
+                                                kyunki do main = do sach (split brain).
+  "Copy baithi hai, usse padh bhi lo?"       -> HAAN, padhai bat-ti; thoda purana mil sakta, kyunki copy
+                                                peeche chalti; cache me chalta.
 ```
 
 #### 4 Ravi ne naam badla, sabko purana dikh raha
@@ -226,13 +239,14 @@ NAHI       cache UPDATE: "X" phir "Y" likha, cache me pehle Y pahuncha phir X ->
 ```
 AAGE POOCHEGA:
   NIYAM: likho DB me, cache se hatao; kuch bhi pahunche, key khaali hi hogi. Umar = suraksha jaal.
-  "DB likha, par delete fail ho gaya?"       -> UMAR (TTL) bachati: utni der hi purana. Pakka chahiye -> DB ke
-                                                badlaav (CDC) se phir delete.
-  "Delete ke baad koi purani wapas daal de?" -> THODI DER BAAD PHIR DELETE (double delete), ya version se
-                                                likho.
-  "Ravi ko apna hi purana naam dikha?"       -> COPY PEECHE thi; likhne wale ko kuch der primary se padhao.
+  "DB likha, par delete fail ho gaya?"       -> UMAR (TTL) bachati: utni der hi purana, phir key khud hategi.
+                                                Pakka chahiye -> DB ke badlaav (CDC) se phir delete.
+  "Delete ke baad koi purani wapas daal de?" -> THODI DER BAAD PHIR DELETE (double delete), kyunki purana
+                                                padhne wala beech me likh gaya; ya version se likho.
+  "Ravi ko apna hi purana naam dikha?"       -> COPY PEECHE thi; likhne wale ko kuch der primary se padhao,
+                                                kyunki apna likha turant dikhna chahiye.
   "Umar kitni rakhoge?"                      -> JITNA PURANA JHEL SAKE: profile = minute, price / stock =
-                                                second.
+                                                second, kyunki galat price = nuksaan.
 ```
 
 #### 5 7 baje "home page" key khatam, 1000 log ek saath DB pe
@@ -257,11 +271,16 @@ AAGE POOCHEGA:
   "Ek hi DB jaaye, hota kaise hai?"             -> PEHLA LOCK LE, wahi join laaye; baaki ruk ke cache se. (SET
                                                    lock:home 1 NX EX 5: NX = koi aur na laga ho · EX 5 = mara
                                                    to khud chhoote)
-  "999 ruke hain, kitni der?"                   -> 50-100 ms. Ya PURANI VALUE de do, DB mat bhejo.
-  "Purani de sakte, to khatam hone hi kyun di?" -> sahi: PEHLE TAAZA karo, umar khatam se thoda pehle.
-  "Sale 12 baje, tumhe pata tha na?"            -> to PEHLE BHAR do cache, machine badha do.
-  "Saari key ek saath khatam ho gayi to?"       -> RANDOM UMAR (60 min +- 5), ek saath nahi girti.
-  "Key DB me thi hi nahi?"                      -> "NAHI HAI" bhi cache karo, chhoti umar.
+  "999 ruke hain, kitni der?"                   -> 50-100 ms. Ya PURANI VALUE de do, DB mat bhejo, kyunki
+                                                   thodi purani home page chalti.
+  "Purani de sakte, to khatam hone hi kyun di?" -> sahi: PEHLE TAAZA karo, umar khatam se thoda pehle, kyunki
+                                                   key khaali hi nahi hogi.
+  "Sale 12 baje, tumhe pata tha na?"            -> to PEHLE BHAR do cache, machine badha do, kyunki bheed ka
+                                                   waqt pata = tayyari pehle.
+  "Saari key ek saath khatam ho gayi to?"       -> RANDOM UMAR (60 min +- 5), kyunki sabki umar same = sab ek
+                                                   saath girti.
+  "Key DB me thi hi nahi?"                      -> "NAHI HAI" bhi cache karo, chhoti umar, kyunki warna har
+                                                   baar DB tak jaata.
 ```
 
 #### 6 Raat IPL final, "live:score" key ki machine akeli mar rahi
@@ -285,12 +304,16 @@ AAGE POOCHEGA:
   NIYAM: garam key ko faila do: App ke paas chhoti copy, ya alag machine pe copies.
   "Ye chalta kaise hai?"                  -> HAR APP KE PAAS 1-2 SEC ki copy: Redis pe 1000 / sec, crore nahi.
                                              Saath me key ki kai copy (score#1..#10).
-  "Consistent hashing se bat nahi jaati?" -> nahi; EK KEY = EK MACHINE, hamesha.
-  "To kitni parat hui?"                   -> L1 (App RAM) -> L2 Redis -> DB; har neeche wali dheemi.
+  "Consistent hashing se bat nahi jaati?" -> NAHI; EK KEY = EK MACHINE, hamesha, kyunki ring key baant-ta, ek
+                                             key ki bheed nahi.
+  "To kitni parat hui?"                   -> L1 (App RAM) -> L2 Redis -> DB; har neeche wali dheemi, isliye
+                                             upar se pehle.
   "Garam key pata kaise chalegi?"         -> APP ME GINTI + machine ka metric achanak upar; had paar -> copy /
                                              L1.
-  "L1 me score kitna purana?"             -> L1 KI UMAR jitna (1-2 sec); score theek, paisa / stock nahi.
-  "Aur us key pe likhna ho (like)?"       -> KEY KE TUKDE (like#0..#9): kisi ek me likho, padhte waqt jodo.
+  "L1 me score kitna purana?"             -> L1 KI UMAR jitna (1-2 sec); score theek, paisa / stock nahi,
+                                             kyunki wahan purana = galat.
+  "Aur us key pe likhna ho (like)?"       -> KEY KE TUKDE (like#0..#9): kisi ek me likho, padhte waqt jodo,
+                                             kyunki likhai bhi 10 jagah bat gayi.
   "Pichhla stampede aur ye, farak?"       -> stampede = key KHAALI (lock) · hot key = key BHARI, ek machine pe
                                              bheed (L1).
 ```

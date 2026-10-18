@@ -136,7 +136,8 @@ NAHI       app me 'pehle kaato, fail pe wapas jodo': server beech me gira to wap
 ```
 AAGE POOCHEGA:
   NIYAM: saare kate == saare jude, hamesha; na mile -> turant alert.
-  "Gira aur utha, DB kya karta?"   -> diary (WAL) dekhta: COMMIT tha to poora, nahi tha to ulta.
+  "Beech me gira, wapas utha, DB kya karta?" -> DIARY (WAL) DEKHTA: COMMIT tha to poora, nahi tha to ulta;
+                                                kyunki paanchon saath ya koi nahi.
 ```
 
 #### 2 Wallet me 600, phone se 500 aur laptop se 500 ek saath
@@ -159,7 +160,8 @@ NAHI       Java synchronized Payment Svc me: do machine, lock ek ke andar; doosr
 ```
 AAGE POOCHEGA:
   NIYAM: "hai?" aur "kaato" ek hi kadam; jo 0 row badle wo reject.
-  "Kaun jeeta?"                    -> pehla (bacha 100); doosre ki 0 row badli = reject.
+  "Dono me se kaun jeeta?" -> PEHLA (bacha 100): kyunki "hai?" aur "kaato" ek kadam; doosre ki 0 row badli =
+                              reject.
 ```
 
 #### 3 Metro me network gaya, app ne dobara bheja, 1000 kate
@@ -184,15 +186,20 @@ NAHI       server key banaye: server ko pata hi nahi ye wahi request hai.
 ```
 AAGE POOCHEGA:
   NIYAM: ek key = ek payment; wahi key dobara aaye to kaam nahi, saved jawab.
-  "Dono request ka kya hua?"       -> pehli: key-555 daali, IN_PROGRESS -> kaato + daalo -> DONE + jawab save
-                                      · doosri: key-555 pehle se -> saved jawab.
-  "Sach me do payment (100 + 100)?" -> do baar payment screen = do key -> dono honge.
-  "Key app kyun banaye?"           -> dobara bhejta app hai; app ki key hi dono request ko jodti.
-  "Key lagi, phir payment FAIL?"   -> sirf PAKKA fail (rollback, paisa hila nahi) pe key hatao;
-                                      PENDING (pata nahi kata ya nahi) pe key rahe, andha dobara nahi.
-  "Kaam ke baad key delete?"       -> nahi; der se dobara aayi to kat jaata. ~24 ghante, phir saaf.
-  "Redis aur DB dono kyun?"        -> Redis SETNX tez, chal rahi request turant pakde; DB UNIQUE pakka.
-  "Idempotency = do log ek balance?" -> nahi; idempotency = EK user ki dobara request; do log = atomic query.
+  "Dono request ka kya hua?"                -> PEHLI: key-555 daali, IN_PROGRESS -> kaato + daalo -> DONE +
+                                               jawab save · DOOSRI: pehle se -> saved jawab.
+  "Sach me do payment chahiye (100 + 100)?" -> DO KEY: kyunki do baar payment screen khuli = do key -> dono
+                                               honge.
+  "Key server kyun nahi banata?"            -> APP BANAYE: kyunki dobara app bhejta; app ki key hi dono
+                                               request ko jodti.
+  "Key lag gayi, phir payment FAIL?"        -> SIRF PAKKA FAIL pe key hatao (paisa hila nahi); PENDING (pata
+                                               nahi kata) pe key rahe, andha dobara nahi.
+  "Kaam ho gaya, key delete kar do?"        -> NAHI, ~24 GHANTE: kyunki der se dobara aayi to kat jaata; phir
+                                               saaf.
+  "Redis aur DB dono kyun?"                 -> REDIS TEZ, DB PAKKA: SETNX chal rahi request turant pakde; DB
+                                               UNIQUE aakhri deewar.
+  "Do log ek balance pe, ye bhi bachata?"   -> NAHI: idempotency = EK user ki dobara request; do log ek saath
+                                               = atomic query (card 2).
 ```
 
 #### 4 Bank se 2000 top-up, PSP dheema
@@ -219,10 +226,12 @@ NAHI       timeout pe "fail" dikha do: paisa shayad kat chuka.
 ```
 AAGE POOCHEGA:
   NIYAM: bahar ka paisa = PSP; jawab pakka na ho to PENDING, "fail" nahi.
-  "Timeout, mujhe kya dikhe?"      -> "processing" (PENDING); reconciliation job PSP se poochh ke pakka kare.
-  "Timeout na lagao to?"           -> har thread PSP me atka -> saare phanse -> system band.
-  "Do PSP rakhoge?"                -> haan, ek band to doosra; par EK payment hamesha EK PSP pe
-                                      (beech me badla = do jagah se kat sakta).
+  "PSP ka timeout aaya, mujhe kya dikhe?" -> PROCESSING (PENDING): kyunki pata nahi kata ya nahi;
+                                             reconciliation job PSP se poochh ke pakka kare.
+  "Timeout lagao hi mat, wait karo?"      -> SAB PHANSE: kyunki har thread PSP me atka -> saare thread khatam
+                                             -> system band.
+  "Ek PSP band hua to?"                   -> DO PSP: ek band to doosra; par EK payment hamesha EK PSP pe,
+                                             kyunki beech me badla = do jagah se kat sakta.
 ```
 
 #### 5 PSP ko call kiya aur server gira: paisa gaya ya nahi?
@@ -253,12 +262,16 @@ NAHI       "bas rollback kar do": PSP me shayad paisa sach me kat chuka.
 ```
 AAGE POOCHEGA:
   NIYAM: courier jaisa: har parcel ka tracking number; courier wala gira, parcel gum nahi.
-  "Job ko jawab mila to?"          -> hua = SUCCESS · nahi = dobara (wahi key) · pakka fail = FAILED + refund.
-  "Webhook do baar aaya?"          -> PENDING -> SUCCESS sirf ek baar; pehle se SUCCESS -> ignore.
-  "Sirf webhook kaafi?"            -> kho / der se aa sakta, server band tha; job wo jaal jo chhoota pakde.
-  "Sirf job kaafi?"                -> der + har PENDING pe baar-baar PSP call (limit / kharcha); isliye dono.
-  "Sab theek chal raha, kaise pata?" -> hisaab ka farak, p99, error rate, line ki lambai pe alert
-                                      + trace id se ek payment ka poora raasta.
+  "Job ne PSP se poochha, jawab mila to?" -> HUA = SUCCESS · NAHI = dobara (WAHI key) · PAKKA FAIL = FAILED +
+                                             refund.
+  "Webhook do baar aa gaya?"              -> SIRF EK BAAR PENDING -> SUCCESS: kyunki pehle se SUCCESS ho to
+                                             ignore.
+  "Webhook aa hi jaata, job kyun?"        -> WEBHOOK KHO SAKTA: der se aaye ya server band tha; job wo jaal jo
+                                             chhoota pakde.
+  "To sirf job chala lo?"                 -> DER + KHARCHA: har PENDING pe baar-baar PSP call (limit); isliye
+                                             DONO.
+  "Sab theek chal raha, kaise pata?"      -> ALERT: hisaab ka farak, p99, error rate, line ki lambai; TRACE ID
+                                             se ek payment ka poora raasta.
 ```
 
 #### 6 Merchant ka account doosre bank me, ek transaction nahi chalta
@@ -289,8 +302,9 @@ NAHI       2PC: sab "ready" bol ke lock pakad ke rukte; coordinator gira = sab a
 ```
 AAGE POOCHEGA:
   NIYAM: har step likha hua; aage nahi badh sake to ulta kaam (compensate).
-  "Service beech me giri?"         -> uthke saga table dekhti, wahin se aage ya ulta.
-  "Beech me mujhe kya dikhe?"      -> "processing", thodi der me SUCCESS ya paisa wapas (eventual).
+  "Saga chalate service beech me giri?" -> SAGA TABLE: kyunki har step likha hua; uthke dekhti, wahin se aage
+                                           ya ulta.
+  "Beech me mujhe kya dikhe?"           -> PROCESSING: thodi der me SUCCESS ya paisa wapas (eventual).
 ```
 
 #### 7 Maine poochha: kal raat 2200 tha, subah 1100 kaise?
@@ -321,13 +335,14 @@ NAHI       balance + alag audit_log table: usme kuch bhi likh sakte, koi niyam n
 ```
 AAGE POOCHEGA:
   NIYAM: ledger hi sach; pen ki diary, kaat-peet nahi, sirf nayi line; jod hamesha 0.
-  "Raat ko kya jaanchoge?"         -> ledger ka jod == balance? farak = alert.
-  "Galat entry delete kar do?"     -> nahi; NAYI ulti line likho, audit me dono dikhein.
-  "3 saal me bahut bada?"          -> mahine ke tukde (partition), purane sasti jagah (S3 Glacier);
-                                      archive, kanoon ki had se pehle delete nahi.
-  "Ledger crash se bachaata?"      -> nahi, wo hisaab / audit; crash se PENDING + webhook + reconciliation.
-  "Refund kaise?"                  -> nayi ulti payment (merchant -500, Arpan +500), apni key + purani payment
-                                      ka number, ledger me 2 nayi line. Refund ka jod asli se zyada nahi.
+  "Raat ko kya jaanchoge?"            -> JOD == BALANCE: kyunki ledger hi sach; farak = alert.
+  "Galat entry dikhi, delete kar do?" -> NAYI ULTI LINE: kyunki pen ki diary; audit me dono dikhein.
+  "To refund bhi aise hi?"            -> NAYI ULTI PAYMENT: merchant -500, Arpan +500, apni key + purani
+                                         payment ka number, ledger me 2 line; jod asli se zyada nahi.
+  "3 saal me ledger bahut bada?"      -> MAHINE KE TUKDE (partition): purane sasti jagah (S3 Glacier); kanoon
+                                         ki had se pehle delete nahi.
+  "Ledger crash se bhi bachaata?"     -> NAHI, wo hisaab / audit: crash se PENDING + webhook + reconciliation
+                                         bachate.
 ```
 
 #### 8 Shaam Diwali, 3000 payment / second, machine baith gayi
@@ -361,12 +376,15 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: machine kuch yaad na rakhe, to koi bhi machine badlo / badhao.
-  "Kaise kaam karta?"              -> saari yaad DB + idempotency store me, kai machine + LB; koi bhi koi bhi
-                                      payment le. Pehle: CPU bhara -> timeout -> dobara tap -> aur bojh.
-  "Safe kaise, galat istemaal?"    -> gateway pe login; Payment Svc me OWNER CHECK: userId JWT se (body se
-                                      kabhi nahi), "from" ka maalik wahi? nahi -> 403. Aage WAF + had.
-  "JWT hi chori?"                  -> JWT ki umar chhoti (~15 min) + refresh token; bade payment pe PIN / OTP.
-  "LB ko kaise pata machine mari?" -> har kuch second GET /health, jawab nahi = list se bahar.
+  "Machine kaise badhaoge?"                  -> KUCH YAAD NAHI (stateless): saari yaad DB + idempotency store
+                                                me, kai machine + LB, koi bhi koi bhi payment le.
+  "Pehle baitha kyun?"                       -> BOJH KA CHAKKAR: CPU bhara -> timeout -> log dobara tap -> aur
+                                                bojh.
+  "Itni machine, galat istemaal kaise roko?" -> OWNER CHECK: userId JWT se (body se kabhi nahi), "from" ka
+                                                maalik wahi? nahi -> 403; gateway pe login, aage WAF + had.
+  "JWT hi chori ho gaya?"                    -> CHHOTI UMAR (~15 min) + refresh token: bade payment pe PIN /
+                                                OTP.
+  "LB ko kaise pata machine mari?"           -> GET /HEALTH har kuch second: jawab nahi = list se bahar.
 ```
 
 #### 9 Merchant ki report ne mera payment rok diya
@@ -401,11 +419,13 @@ NAHI       balance bhi replica se padho: replica peeche, mujhe purana balance di
 ```
 AAGE POOCHEGA:
   NIYAM: paisa / haal = PRIMARY se; report = replica se.
-  "Pay kiya, purana balance dikha?" -> balance / payment ka haal hamesha primary se.
-  "Bahut bhaari analytics?"        -> alag warehouse me (CDC se data jaata).
-  "Primary gira?"                  -> SYNC standby (har likhai uspe bhi pakki) ko primary (RDS Multi-AZ),
-                                      kuch nahi khota; async replica banaya to aakhri kuch likhai kho sakti.
-  "Replica kitni peeche?"          -> replication lag metric pe alert.
+  "Pay kiya, purana balance dikha?"        -> PRIMARY SE: kyunki replica peeche ho sakti; balance / haal
+                                              hamesha primary.
+  "Replica kitni peeche, kaise pata?"      -> REPLICATION LAG metric pe alert.
+  "Bahut bhaari analytics bhi replica pe?" -> ALAG WAREHOUSE: CDC se data jaata, kyunki replica bhi bojh se
+                                              peeche hoti.
+  "Primary gira to?"                       -> SYNC STANDBY primary bane (RDS Multi-AZ): har likhai uspe bhi
+                                              pakki, kuch nahi khota; async pe aakhri likhai kho sakti.
 ```
 
 #### 10 Saal me ~1000 crore row, primary ki likhai dheemi
@@ -440,10 +460,11 @@ NAHI       txn_id se baanto: meri payment alag shard pe, balance kahan? · time 
 ```
 AAGE POOCHEGA:
   NIYAM: jo ek transaction me saath chahiye (account + uski history), wo ek shard pe.
-  "Account kis shard pe?"          -> consistent hashing, ya lookup table (account -> shard, baad me badlo).
-  "Amazon jaisa merchant garam?"   -> merchant ke kai sub-account, alag shard pe; report me jod do.
-  "Do shard ke beech transfer?"    -> SAGA: shard A se kaato, shard B me daalo, fail pe ulta.
-                                      Asli mushkil yahi hai, bheed nahi.
+  "Account kis shard pe, kaise tay?"             -> CONSISTENT HASHING ya LOOKUP TABLE (account -> shard, baad
+                                                    me badal sako).
+  "Amazon jaisa merchant ek shard garam kar de?" -> KAI SUB-ACCOUNT: alag shard pe; report me jod do.
+  "Do shard ke beech transfer?"                  -> SAGA: shard A se kaato, B me daalo, fail pe ulta; kyunki
+                                                    ek transaction ek shard tak. Asli mushkil yahi.
 ```
 
 ---
