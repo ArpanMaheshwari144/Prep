@@ -199,7 +199,7 @@ flowchart LR
     n_Feed_Svc_xN["Feed Svc x N"]
     n_Redis["Redis (taazi feed)"]
     n_DBR["DB + Read replica"]
-    n_Worker["Worker<br/>ek khabar 5 baar<br/>-> same khabar pehchaano, ek rakho<br/>(hash + SimHash)<br/>wahi URL dobara -> koi bit 0 = pakka naya (Bloom filter)<br/>kai worker -> ek saanjha Bloom (Redis)<br/>naya URL, wahi khabar -> title ka hash same"]
+    n_Worker["Worker<br/>ek khabar 5 baar<br/>-> same khabar pehchaano, ek rakho<br/>(hash + SimHash)<br/>wahi URL dobara -> koi bit 0 = pakka naya (Bloom filter)<br/>kai worker -> ek saanjha Bloom (Redis)<br/>naya URL, wahi khabar -> title ka hash same<br/>wins vs won -> 90% same = duplicate"]
     n_Kafka["Kafka"]
     n_SF["Sources -> Fetcher"]
     n_USER --> n_LB

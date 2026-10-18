@@ -394,7 +394,7 @@ flowchart LR
     n_I["Idempotency check"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
-    n_NS["Nishaan<br/>50 padhe, 25,000 likhai<br/>-> 'kahan tak padha' ek number, ginti nahi<br/>(read_upto)<br/>unread -> aakhri seq - nishaan (ghatao)<br/>neeli tick -> ek push read_upto, 50 ek saath neeli<br/>do tick -> kahan tak mila (delivered_upto)"]
+    n_NS["Nishaan<br/>50 padhe, 25,000 likhai<br/>-> 'kahan tak padha' ek number, ginti nahi<br/>(read_upto)<br/>unread -> aakhri seq - nishaan (ghatao)<br/>neeli tick -> ek push read_upto, 50 ek saath neeli<br/>do tick -> kahan tak mila (delivered_upto)<br/>group me do tick -> sabse chhota nishaan"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R

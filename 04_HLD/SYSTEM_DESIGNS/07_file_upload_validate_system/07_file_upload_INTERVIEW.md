@@ -220,7 +220,7 @@ flowchart LR
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
-    n_Sweeper_job["Sweeper job<br/>complete aaya hi nahi<br/>-> atki file dhoondh ke dobara line me / FAILED<br/>(sweeper job)<br/>crash + event chhoota -> UPLOADING atka, bytes S3 me<br/>har kuch min -> 10 min se haal na badla = atka<br/>bytes hain -> khud dobara line me<br/>bytes nahi -> FAILED, user dobara daale"]
+    n_Sweeper_job["Sweeper job<br/>complete aaya hi nahi<br/>-> atki file dhoondh ke dobara line me / FAILED<br/>(sweeper job)<br/>har kuch min -> 10 min se haal na badla = atka<br/>bytes hain -> khud dobara line me<br/>bytes nahi -> FAILED, user dobara daale<br/>do machine pe -> ek hi chale (lock / leader)"]
     n_Kafka["Kafka"]
     n_Worker["Worker"]
     n_Validator["Validator"]

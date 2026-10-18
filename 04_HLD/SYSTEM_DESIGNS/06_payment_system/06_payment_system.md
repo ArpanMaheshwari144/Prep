@@ -264,7 +264,7 @@ flowchart LR
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
     n_DB["SQL DB"]
-    n_Reconciliation_job["Reconciliation job<br/>call ke baad crash<br/>-> pehle 'pata nahi' likho, PSP khud batayega, roz milaao<br/>(PENDING + webhook + reconciliation)<br/>call ke baad crash -> PENDING bacha, PSP bataye (webhook)<br/>webhook do baar -> SUCCESS sirf ek baar<br/>nakli webhook -> signature jaancho + apne PENDING se milao<br/>webhook nahi aaya -> job purane PENDING PSP se poochhe<br/>raat ko -> PSP ki file se poora milaan"]
+    n_Reconciliation_job["Reconciliation job<br/>call ke baad crash<br/>-> pehle 'pata nahi' likho, PSP khud batayega, roz milaao<br/>(PENDING + webhook + reconciliation)<br/>webhook do baar -> SUCCESS sirf ek baar<br/>nakli webhook -> signature jaancho + apne PENDING se milao<br/>webhook nahi aaya -> job purane PENDING PSP se poochhe<br/>raat ko -> PSP ki file se poora milaan"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store
     n_Payment_Svc --> n_PSP
