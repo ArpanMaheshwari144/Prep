@@ -584,7 +584,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          mp[nums[j]]++;                              // window me add
          while(mp.size() > 2){                       // INVALID: 2 se zyada distinct (while: ek type poora khatam hone tak kai element hatane padte)
                                                      // IF bhi chalta (sirf LONGEST): ek aaya ek gaya, size best se bada nahi
-                                                     //   -> len sahi. COUNT / SHORTEST me sirf while. (k=2 wajah NAHI)
+                                                     //   -> len sahi. COUNT / SHORTEST me sirf while.
              mp[nums[i]]--;   // left wala fruit window se bahar, uski ginti kam
              if(mp[nums[i]]==0) mp.erase(nums[i]);   // count 0 -> ERASE
              i++;   // erase check ke BAAD hi left aage

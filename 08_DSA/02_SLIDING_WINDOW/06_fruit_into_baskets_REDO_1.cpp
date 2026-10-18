@@ -35,7 +35,6 @@ int totalFruit(vector<int> &fruits)
         // if bhi chalta (sirf LONGEST me): ek aaya ek gaya -> size wahi, window bas khiskti, len galat nahi badhta.
         //   [1,2,1,3,4]: j=3 -> [2,1,3] (3 type, galat) par size 3 = best 3 -> jawab phir bhi 3.
         // COUNT (count += j-i+1) ya SABSE CHHOTI wale me sirf while -> wahan har step window sahi chahiye.
-        // k = 2 hardcoded hone se nahi, LONGEST maangne se if chalta (kisi bhi k pe).
         while (mp.size() > 2)
         {
             mp[fruits[i]]--;
