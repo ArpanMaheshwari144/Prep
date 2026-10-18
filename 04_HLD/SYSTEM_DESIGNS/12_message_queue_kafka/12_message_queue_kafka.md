@@ -86,7 +86,7 @@ Ek machine, uski memory me ek queue. Producer daale, consumer uthaye.
 DIKKAT     Subah, sale se pehle signup khule. Queue machine ki memory me 500 signup message, machine restart
            -> memory saaf -> 500 gayab. Email service ko pata hi nahi chala ki 500 log aaye.
 ```
-![c1](img/c1-702ce7c7.svg)
+![c1](img/c1-1aaf5d0b.svg)
 
 ```
 NAHI       DB me queue: insert = index + lock = idhar-udhar likhna; queue me WHERE nahi, bas "X ke baad do".
@@ -107,7 +107,7 @@ AAGE POOCHEGA:
 DIKKAT     10 baje sale: "order-events" pe 5,000 khabar / sec. Email worker ~500 / sec hi bhej paata
            (har email ek API call). Topic ek line -> ek hi worker kram se padhe -> ghanton ki line (lag).
 ```
-![c2](img/c2-417ffd8f.svg)
+![c2](img/c2-2db20ea4.svg)
 
 ```
 NAHI       copy (replica) badhao: copy sirf bachav ke liye, padhna bhi leader se hi; padhne wale = partition.
@@ -150,15 +150,8 @@ AAGE POOCHEGA:
 DIKKAT     Sale me email service ki 3 machine lagayi. Teeno ne har message padha, to Ravi ke ek order pe
            3 email gaye -> Ravi pareshan, aur kaam teen guna hua.
 ```
-![c4](img/c4-65390ed4.svg)
+![c4](img/c4-b83de9a0.svg)
 
-```
-TASVEER: ek team, tukde baante
-topic order-events:  P0 P1 P2 P3 | P4 P5 P6 | P7 P8 P9
-group email:         C1          | C2       | C3
-Ravi: hash(userId) % 10 = P7  -> sirf C3 padhta -> ek hi email
-C2 gaya -> P4-6 baaki machines me (rebalance) · 12 machine = 2 khaali (10 hi tukde)
-```
 ```
 AAGE POOCHEGA:
   NIYAM: ek group ke andar ek partition = ek hi machine -> ek khabar team me ek hi baar.

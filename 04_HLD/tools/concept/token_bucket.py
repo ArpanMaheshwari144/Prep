@@ -1,6 +1,6 @@
 """Token bucket (02_rate_limiter SHURU card). Chalao: python token_bucket.py -> out/token_bucket.svg"""
 from _svg import *
-o = start(960, 430, 'Token bucket: had 10 token, har second 1 bharta, request 1 leti')
+o = start(960, 350, 'Token bucket: had 10 token, har second 1 bharta, request 1 leti')
 # bucket (do baar: pehle bhara, phir khaali)
 def bucket(x, filled, cap):
     o.append(f'<path d="M{x},90 L{x+20},300 L{x+140},300 L{x+160},90" fill="none" stroke="#1976d2" stroke-width="3"/>')

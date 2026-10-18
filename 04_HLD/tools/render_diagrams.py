@@ -35,10 +35,10 @@ def fix_size(svg_path):
 
 CONCEPT = os.path.join(HERE, 'concept')
 
-def merge_concept(svg_path, mmd_src, term):
+def merge_concept(svg_path, mmd_src, term, csvg=None):
     """Design SVG ke neeche concept SVG jodo, peele dabbe se dashed teer "kaise?"."""
     d = open(svg_path, encoding='utf-8').read()
-    c = open(os.path.join(CONCEPT, 'out', term + '.svg'), encoding='utf-8').read()
+    c = csvg or open(os.path.join(CONCEPT, 'out', term + '.svg'), encoding='utf-8').read()
     def size(t):
         tag = re.search(r'<svg[^>]*>', t).group(0)
         vb = re.search(r'viewBox="([\d.\-]+) ([\d.\-]+) ([\d.]+) ([\d.]+)"', tag)
@@ -94,7 +94,12 @@ def main(f):
             tmp = os.path.join(img, name + '.svg')
             ok, err = render(src, tmp)
             term = concept_for(f, name) if ok else None
+            scene = os.path.join(img, name + '.scene.json')
             if term: merge_concept(tmp, src, term)
+            elif ok and os.path.exists(scene):   # scene tasveer: PEHLE / AB
+                sys.path.insert(0, HERE); import scene as sc, json
+                merge_concept(tmp, src, None, sc.render(json.load(open(scene, encoding='utf-8'))))
+                term = 'scene'
             print('ok' if ok else 'FAIL', name, ('+ ' + term) if term else '', '' if ok else err)
             if not ok: return m.group(0)
             return save(name, tmp)
