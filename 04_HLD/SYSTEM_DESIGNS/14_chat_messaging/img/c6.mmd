@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_U["USER"]
+    n_LB["LB"]
+    n_CS["Chat Server x200"]
+    n_R["Redis (map)"]
+    n_I["Idempotency check"]
+    n_CA["Cassandra (chat_id)"]
+    n_P["Push (Google / Apple)"]
+    n_SQ["Seq<br/>ghadi 5 min aage, kram ulta<br/>-> har chat ka server pe +1 number (Redis INCR seq:chat123), kram isi se, phone ki ghadi se nahi<br/>Cassandra me andar kram ab seq<br/>(seq)<br/>4415 phir 4417 -> 4416 chhoota, ruk ke maango<br/>Ravi wapas -> meri aakhri seq 4417, 4418 se aage sab"]
+    n_U --> n_LB
+    n_LB --> n_CS
+    n_CS --> n_R
+    n_CS --> n_I
+    n_I --> n_CA
+    n_CS --> n_P
+    n_CS --> n_SQ
+    style n_SQ fill:#f9a825,color:#000

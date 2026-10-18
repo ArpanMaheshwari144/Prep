@@ -1,0 +1,9 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_U["USER"]
+    n_LB["LB"]
+    n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> kuch thread sab connection sambhalein, OS batata kis connection pe data aaya, thread sirf wahan<br/>chup connection = thodi memory · ~200 chat server, aage LB<br/>(event loop, Netty)<br/>wahi connection aage -> wahi server, connection khula hai<br/>chat server gira -> ruk-ruk ke dobara judo (backoff)"]
+    n_U --> n_LB
+    n_LB --> n_CS
+    style n_CS fill:#f9a825,color:#000
+    style n_LB fill:#f9a825,color:#000

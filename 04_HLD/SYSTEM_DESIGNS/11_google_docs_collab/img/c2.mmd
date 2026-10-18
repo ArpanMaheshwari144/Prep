@@ -1,0 +1,10 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER A / B"]
+    n_App["App (op bhejo)"]
+    n_CS["Conn-Server<br/>refresh pe hi dikha<br/>-> pehle HTTP Upgrade: websocket, server 101 Switching Protocols<br/>phir connection khula rehta, dono taraf turant bhejo<br/>(WebSocket)<br/>connection chupchaap mara -> har ~30 sec ping, pong nahi = band<br/>connection toota -> judte hi version bata ke baaki lo"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_CS
+    n_CS --> n_DB
+    style n_CS fill:#f9a825,color:#000

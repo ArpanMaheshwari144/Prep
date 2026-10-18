@@ -1,0 +1,12 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_App["App"]
+    n_Payment_Svc["Payment Svc<br/>network gaya, do baar kata<br/>-> har booking ki ek id (bookingId), pay hamesha usi id se<br/>wahi id dobara aayi = purana jawab wapas, paisa dobara nahi<br/>(idempotency key)<br/>Pay dobara dabaya -> wahi bookingId, paisa ek baar"]
+    n_SQL_DB["SQL DB<br/>+ atomic UPDATE + hold"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_App
+    n_App --> n_Payment_Svc
+    n_App --> n_SQL_DB
+    n_Sweeper_job --> n_SQL_DB
+    style n_Payment_Svc fill:#f9a825,color:#000

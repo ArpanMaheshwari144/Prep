@@ -1,0 +1,15 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_P["Producer (key = userId)"]
+    n_B["Brokers A / B / C"]
+    n_K["Controller (KRaft)<br/>Broker A ki disk gayi<br/>-> har tukde ka LEADER + 2 follower alag machine pe, saath chalti copy = ISR<br/>acks=all: saari ISR ne likha tab producer ko OK<br/>(leader + ISR, acks=all)<br/>copy kam -> likhna band, khone se rukna behtar (min ISR)<br/>A mara -> Controller ISR se B ko leader<br/>peeche wala follower -> leader nahi ban sakta"]
+    n_GE["Group email"]
+    n_GA["Group analytics"]
+    n_GD["Group dashboard"]
+    n_P --> n_B
+    n_B --> n_K
+    n_B --> n_GE
+    n_B --> n_GA
+    n_B --> n_GD
+    style n_K fill:#f9a825,color:#000
+    style n_B fill:#f9a825,color:#000

@@ -1,0 +1,17 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_CLIENT["CLIENT"]
+    n_S3["S3<br/>5 GB server se guzri<br/>-> server sirf 10 min ka signed URL + id (T-102) de, bytes seedha S3 me<br/>phir app /complete T-102 bole, server queue me daale<br/>(presigned URL)<br/>had 5 GB, aaye 50 GB -> S3 khud reject (presigned URL me had)<br/>/complete nahi aaya -> S3 event se queue, client pe bharosa nahi"]
+    n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
+    n_DB["DB (haal)"]
+    n_Kafka["Kafka"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_Kafka
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    style n_S3 fill:#f9a825,color:#000

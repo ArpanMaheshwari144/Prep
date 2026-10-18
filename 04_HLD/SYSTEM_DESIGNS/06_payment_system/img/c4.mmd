@@ -1,0 +1,12 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP<br/>bank ka raasta dheema<br/>-> 2-3 sec me jawab nahi to chhodo: call gayi, jawab nahi = PENDING<br/>5 fail pe call bhejo hi mat: saaf abhi nahi (fail-fast)<br/>(timeout + circuit breaker)<br/>30 sec baad test call -> chali to circuit band"]
+    n_DB["SQL DB"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+    style n_PSP fill:#f9a825,color:#000

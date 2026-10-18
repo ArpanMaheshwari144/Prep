@@ -1,0 +1,7 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_Order_Svc["Order Svc"]
+    n_Email_API["Email API"]
+    n_USER["USER"]
+    n_Order_Svc --> n_Email_API
+    n_Email_API --> n_USER

@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_xN["App x N"]
+    n_Counter["Counter"]
+    n_ANA["Analytics (Kafka + DLQ)"]
+    n_Redis["Redis"]
+    n_Cassandra["Cassandra<br/>naya link, turant 404<br/>-> har link 3 copy (A, B, C): likhna done jab 2 me, padhna bhi 2 se<br/>koi bhi 2 uthao, ek taaza copy aayegi hi (quorum = zyadatar)<br/>C tak nahi -> A+C jodi, A me mila<br/>A aur B giri -> likhna fail, user ko error"]
+    n_USER --> n_LB
+    n_LB --> n_App_xN
+    n_App_xN --> n_Counter
+    n_App_xN --> n_ANA
+    n_App_xN --> n_Redis
+    n_App_xN --> n_Cassandra
+    style n_Cassandra fill:#f9a825,color:#000

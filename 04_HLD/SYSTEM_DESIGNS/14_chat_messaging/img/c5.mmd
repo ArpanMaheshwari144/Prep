@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_U["USER"]
+    n_LB["LB"]
+    n_CS["Chat Server x200"]
+    n_R["Redis (map)"]
+    n_I["Idempotency<br/>net dheema, hi do baar<br/>-> app har message ki apni id (clientMsgId), dobara bhejne pe WAHI<br/>server pe pehle aaya? + daalna ek kadam (atomic): aaya = skip<br/>(idempotency key, clientMsgId)<br/>timeout, app dobara -> wahi id, skip, pehli id lautao<br/>do user ki id same -> jodi pe check (sender_id, clientMsgId)"]
+    n_CA["Cassandra (chat_id)"]
+    n_P["Push (Google / Apple)"]
+    n_U --> n_LB
+    n_LB --> n_CS
+    n_CS --> n_R
+    n_CS --> n_I
+    n_I --> n_CA
+    n_CS --> n_P
+    style n_I fill:#f9a825,color:#000

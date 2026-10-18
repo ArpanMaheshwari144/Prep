@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_S3["S3"]
+    n_U["USER"]
+    n_LB["LB"]
+    n_CS["Chat Server x200 (+ idempotency)"]
+    n_R["Redis (map, seq)"]
+    n_CA["Cassandra (chat_id) + Nishaan"]
+    n_P["Push (Google / Apple)"]
+    n_PR["Presence<br/>online / last seen<br/>-> Arpan online Redis me 30 sec, app har 15 sec dhadkan de, band = umar khatam = offline<br/>status tabhi dekho jab koi meri chat khole<br/>(TTL)<br/>chat khuli -> live badlav (subscribe), baaki pull<br/>app band -> umar khatam = offline, last seen likho"]
+    n_U --> n_S3
+    n_U --> n_LB
+    n_LB --> n_CS
+    n_CS --> n_R
+    n_CS --> n_CA
+    n_CS --> n_P
+    n_CS --> n_PR
+    style n_PR fill:#f9a825,color:#000

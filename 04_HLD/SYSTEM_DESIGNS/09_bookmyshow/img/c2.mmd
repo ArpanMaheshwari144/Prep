@@ -1,0 +1,10 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_App["App"]
+    n_SQL_DB["SQL DB<br/>+ atomic UPDATE"]
+    n_Sweeper_job["Sweeper job<br/>payment me 3 min<br/>-> seat held, held_until = ab + 5 min: umar khatam = khaali maano<br/>Sweeper har minute purane hold saaf karta (sirf safai)<br/>(hold + umar)<br/>booking ka WHERE -> available YA (held aur umar khatam)<br/>umar khatam, phir pay -> confirm pe bhi WHERE, 0 row = refund<br/>koi 10 seat pakad baithe -> had lagao (hold ginti + rate limit)"]
+    n_USER --> n_App
+    n_App --> n_SQL_DB
+    n_Sweeper_job --> n_SQL_DB
+    style n_Sweeper_job fill:#f9a825,color:#000

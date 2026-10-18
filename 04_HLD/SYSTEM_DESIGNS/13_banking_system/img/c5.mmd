@@ -1,0 +1,10 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_SVC["Banking Svc (+ idempotency)"]
+    n_DB["SQL DB (+ ledger, outbox)"]
+    n_K["Kafka<br/>SMS service giri<br/>-> SMS ki khabar outbox table me, usi transaction me (sent=false)<br/>COMMIT ke BAAD relay har ~1 sec: sent=false -> Kafka (acks=all) -> sent=true<br/>(outbox)<br/>SMS service ghanta giri -> khabar Kafka me padi, baad me padhe<br/>relay sent=true se pehle gira -> dobara jaaye, eventId se skip"]
+    n_USER --> n_SVC
+    n_SVC --> n_DB
+    n_DB --> n_K
+    style n_K fill:#f9a825,color:#000

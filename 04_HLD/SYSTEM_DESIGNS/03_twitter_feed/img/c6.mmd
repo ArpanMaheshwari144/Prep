@@ -1,0 +1,17 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_Cassandra["Cassandra<br/>5,000 / sec, 0.5 PB<br/>-> mere saare tweet ek machine pe, andar naya pehle (shard by user_id)<br/>likhna = commit log ke aakhir + RAM, isliye tez (Cassandra)<br/>meri machine giri -> 3 copy, 2 likho 2 padho (quorum)<br/>famous, machine garam -> garam tweet alag RAM cache<br/>famous ke bahut tweet -> key me mahina jodo"]
+    n_USER --> n_App
+    n_App --> n_Kafka
+    n_App --> n_Hot_tweet_cache
+    n_App --> n_Cassandra
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+    style n_Cassandra fill:#f9a825,color:#000

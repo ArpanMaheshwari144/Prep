@@ -1,0 +1,19 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka high / medium / low"]
+    n_Notification_Svc["Notification Svc"]
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
+    n_Redis["Redis (key + bucket)"]
+    n_DLQ["DLQ"]
+    n_Webhook_Svc["Webhook Svc<br/>bheja, par mila?<br/>-> company baad me khud call kare: pahuncha / fail (webhook)<br/>bhejte waqt company ka message number save (SES MessageId / Twilio SID), usi se haal badlo<br/>webhook aaya hi nahi -> company se status poochho<br/>nakli webhook -> signature jaancho"]
+    n_Tracking_DB["Tracking DB"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_Redis
+    n_LINES --> n_DLQ
+    n_LINES --> n_Webhook_Svc
+    n_Webhook_Svc --> n_Tracking_DB
+    style n_Webhook_Svc fill:#f9a825,color:#000
+    style n_Tracking_DB fill:#f9a825,color:#000

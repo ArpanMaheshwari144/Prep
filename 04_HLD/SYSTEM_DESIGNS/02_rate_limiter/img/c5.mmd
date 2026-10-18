@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_Route_53["Route 53"]
+    n_ALB["ALB"]
+    n_API_Gateway["API Gateway"]
+    n_Redis_Cluster["Redis Cluster<br/>3 region, 150 nikli<br/>-> ek user ki ginti uske ghar region ke Redis me<br/>paisa / login ghar tak jaaye, baaki region local gine + sync (home region)<br/>sync ke beech -> ~1 sec dheela, chalta<br/>ghar region gira -> doosra region, ginti 0 se"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_ALB
+    n_ALB --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_x_N_1
+    n_API_Gateway --> n_App_x_N_2
+    style n_Redis_Cluster fill:#f9a825,color:#000

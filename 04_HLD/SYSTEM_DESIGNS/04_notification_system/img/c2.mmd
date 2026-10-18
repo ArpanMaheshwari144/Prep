@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_PUSH["Push line<br/>queue + worker -> FCM / APNs"]
+    n_EMAIL["Email line<br/>queue + worker -> SES"]
+    n_SMSL["SMS line (queue + worker -> Twilio)<br/>SMS dheema, sab atke<br/>-> teeno raaste (push / email / SMS) ki alag line + alag worker<br/>jis raaste pe kaam, wahi worker badhao (alag queue)<br/>SMS dheema / band -> sirf SMS line ruke"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_PUSH
+    n_Notification_Svc --> n_EMAIL
+    n_Notification_Svc --> n_SMSL
+    style n_PUSH fill:#f9a825,color:#000
+    style n_EMAIL fill:#f9a825,color:#000
+    style n_SMSL fill:#f9a825,color:#000

@@ -74,20 +74,6 @@ Order service har order DB me likhe, aur DB me milta-julta SELL dhoondh ke match
 ```
 ![cdabba](img/cdabba.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_DB
-```
-
-</details>
-
 
 #### SHURU: ORDER BOOK KAISE MATCH KARTA
 ```
@@ -120,21 +106,6 @@ DIKKAT     Subah maine TCS ka Buy ek hi baar dabaya. Network gaya, jawab nahi aa
 ```
 ![c1](img/c1.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> order screen khulte ek id bane, dobara bhejne pe WAHI id<br/>server UNIQUE se pakde: wahi id = purana jawab, order dobara nahi<br/>(idempotency key)<br/>pehli abhi chal rahi -> thoda ruko (IN_PROGRESS, 409)<br/>id kab tak yaad -> ~24 ghante, phir saaf"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_DB
-    style n_Order_Service fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 AAGE POOCHEGA:
   NIYAM: ek id = ek kaam: id app banata, server UNIQUE se pakadta; wahi id dobara = purana jawab,
@@ -152,23 +123,6 @@ DIKKAT     Wallet me 50k. Laptop se TCS 30k, usi second phone se INFY 30k (do al
            Do server, dono ne 50k dekha, dono pass.
 ```
 ![c2](img/c2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet<br/>50k the, 30k-30k dono pass<br/>-> check aur block ek hi query me: paisa hai tabhi block, warna 0 row<br/>(atomic UPDATE: SET blocked = blocked + 30k WHERE total - blocked >= 30k)<br/>dono ek saath -> ek jeete, doosra 0 row, reject<br/>order cancel -> block hatao<br/>sauda aadha -> jitna bika utna kata, baaki blocked"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_DB
-    style n_Wallet fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
@@ -191,25 +145,6 @@ DIKKAT     Mera order book me pahuncha. Suresh 10 bech raha, usi pal Mohan ne bh
            Do thread, dono ko "10 hai" dikha -> 20 bik gaye.
 ```
 ![c3](img/c3.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet"]
-    n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek share ke saare order ek line me, ek hi thread chalata (TCS -> T3)<br/>pehle aaya pehle bika, do ko ek saath nahi<br/>(ek symbol ek thread)<br/>main + Mohan ek saath -> pehla le gaya 10, doosre ko 0<br/>thread atka -> sirf TCS rukta, INFY chalta"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Matching_Engine
-    n_Matching_Engine --> n_DB
-    style n_Matching_Engine fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
@@ -236,27 +171,6 @@ DIKKAT     Usi 9:15 pe poora market TCS pe toot pada: hazaaron order / second.
 ```
 ![c4](img/c4.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet"]
-    n_Queue_per_symbol["Queue per symbol<br/>9:15 sab TCS pe toot pade<br/>-> TCS ke saare order ek line, ek-ek karke<br/>ek thread RAM me lakhon / sec nipta leta<br/>(single thread per symbol)<br/>line me lag gaya -> ACCEPTED turant, FILLED sauda pe<br/>line lambi -> der, par khota nahi<br/>badhaye kaise -> stocks ke beech baanto, TCS ke andar nahi"]
-    n_Matching_Engine["Matching Engine"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Queue_per_symbol
-    n_Queue_per_symbol --> n_Matching_Engine
-    n_Matching_Engine --> n_DB
-    style n_Queue_per_symbol fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
 ```
@@ -276,27 +190,6 @@ AAGE POOCHEGA:
 DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
 ```
 ![c5](img/c5.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet"]
-    n_Event_Log["Event Log (= wahi line)<br/>server gira, book gayab<br/>-> har order PEHLE log me number ke saath, PHIR book<br/>gira to log shuru se dobara chalao = wahi book (Kafka key = stock)<br/>(event log + replay)<br/>10:15 server gira -> log shuru se replay, wahi book<br/>replay me der -> standby log padhta, book taiyaar"]
-    n_Matching_Engine["Matching Engine"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Event_Log
-    n_Event_Log --> n_Matching_Engine
-    n_Matching_Engine --> n_DB
-    style n_Event_Log fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       doosra engine saath chalao (active-active): dono match karte = ek sauda do baar settle.
@@ -325,29 +218,6 @@ DIKKAT     10:30, server wapas, log se book bani; ab mera 10:10 wala sauda settl
 ```
 ![c6](img/c6.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet"]
-    n_Event_Log["Event Log"]
-    n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement<br/>paisa kata, Suresh ko nahi<br/>-> BEGIN · Arpan -30k +10 share · Suresh +30k -10 share · COMMIT<br/>COMMIT tak chaaron ya koi nahi, crash = rollback<br/>(transaction)<br/>COMMIT se pehle crash -> rollback, user ko PENDING<br/>rollback ke baad retry -> trade_id UNIQUE, do baar nahi"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Event_Log
-    n_Event_Log --> n_Matching_Engine
-    n_Matching_Engine --> n_Settlement
-    n_Settlement --> n_DB
-    style n_Settlement fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       chaar alag UPDATE: beech me gira to aadha likha.
 ```
@@ -367,32 +237,6 @@ DIKKAT     Dopahar 1 baje INFY 5 share (20k) ka sauda. Paisa Wallet DB me, share
            transaction nahi chalti. 20k kata, Portfolio me share se PEHLE crash.
 ```
 ![c7](img/c7.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet"]
-    n_Event_Log["Event Log"]
-    n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement"]
-    n_Wallet_DB["Wallet DB<br/>do DB, share nahi aaye<br/>-> har kadam ka haal likho: wallet done -> portfolio done<br/>fail pe likhe haal se retry, aage hi badho, match ke baad ulta nahi<br/>(status log)<br/>20k kata, phir crash -> likhe haal se retry, aage hi<br/>retry dobara chala -> trade_id se ho chuka = no-op<br/>match se pehle atka -> sirf tab ulta, block hatao (SAGA)<br/>ghanton fail -> PENDING + alert, ops share daalta"]
-    n_Portfolio_DB["Portfolio DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Event_Log
-    n_Event_Log --> n_Matching_Engine
-    n_Matching_Engine --> n_Settlement
-    n_Settlement --> n_Wallet_DB
-    n_Settlement --> n_Portfolio_DB
-    style n_Wallet_DB fill:#f9a825,color:#000
-    style n_Portfolio_DB fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
@@ -421,32 +265,6 @@ AAGE POOCHEGA:
 DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
 ```
 ![c8](img/c8.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_OW["Order Service + Wallet"]
-    n_Event_Log["Event Log"]
-    n_Matching_Engine["Matching Engine"]
-    n_Pub_Sub["Pub/Sub"]
-    n_WebSocket["WebSocket<br/>10 lakh log price poochh rahe<br/>-> connection khula rehta, price badla tabhi server khud bhejta<br/>user baar-baar nahi poochta<br/>(WebSocket, pub/sub se servers tak)<br/>second me 1000 baar badla -> har ~100 ms aakhri price<br/>connection toota, wapas juda -> abhi ka price alag se do<br/>10 lakh connection -> aur server + LB (ek pe ~lakh)"]
-    n_USERS["USERS"]
-    n_SET["Settlement -> Wallet / Portfolio DB"]
-    n_USER --> n_OW
-    n_OW --> n_Event_Log
-    n_Event_Log --> n_Matching_Engine
-    n_Matching_Engine --> n_SET
-    n_Matching_Engine --> n_Pub_Sub
-    n_Pub_Sub --> n_WebSocket
-    n_WebSocket --> n_USERS
-    style n_Pub_Sub fill:#f9a825,color:#000
-    style n_WebSocket fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       polling: 10 lakh bekaar sawaal / sec, 99% me price badla hi nahi.
@@ -484,36 +302,6 @@ JAWAB:    Order service check karti aur dobara order rokti (id se). Wallet paisa
           Aage: stop-loss, risk check, regulator ki report.
 ```
 ![c8_2](img/c8_2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service"]
-    n_Wallet["Wallet"]
-    n_Event_Log["Event Log"]
-    n_Matching_Engine["Matching Engine"]
-    n_Pub_Sub["Pub/Sub"]
-    n_WebSocket["WebSocket"]
-    n_USERS["USERS"]
-    n_Settlement["Settlement"]
-    n_Wallet_DB["Wallet DB"]
-    n_Portfolio_DB["Portfolio DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_Wallet
-    n_Wallet --> n_Event_Log
-    n_Event_Log --> n_Matching_Engine
-    n_Matching_Engine --> n_Pub_Sub
-    n_Matching_Engine --> n_Settlement
-    n_Pub_Sub --> n_WebSocket
-    n_WebSocket --> n_USERS
-    n_Settlement --> n_Wallet_DB
-    n_Settlement --> n_Portfolio_DB
-```
-
-</details>
 
 
 ---

@@ -71,22 +71,6 @@ Fetcher sources se khabar laaye, DB me daale. Feed service DB se "taazi 20" nika
 ```
 ![cdabba](img/cdabba.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_DB["DB"]
-    n_Fetcher["Fetcher"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_DB
-    n_Fetcher --> n_DB
-```
-
-</details>
-
 
 #### 1 Subah maine app khola, sabko wahi 20 khabar, har baar DB se
 ```
@@ -94,26 +78,6 @@ DIKKAT     Subah 7 baje laakhon log app khol rahe, sabko wahi top 20 khabar. Har
            nikaalte -> DB pe bheed, feed dheemi, kabhi khulti hi nahi.
 ```
 ![c1](img/c1.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis<br/>sabko wahi 20, DB pe 500 / sec<br/>-> sabki ek hi feed, ek baar banao, Redis sorted set me (score = time)<br/>app Redis se top 20 padhe, DB tak nahi<br/>(sorted set)<br/>breaking news -> aate hi ZADD, turant upar<br/>neeche scroll -> agli 20 (cursor)<br/>Redis khaali -> DB se ek hi banaye, baaki ruke (lock)"]
-    n_DB["DB"]
-    n_Fetcher["Fetcher"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_Redis
-    n_Feed_Svc --> n_DB
-    n_Fetcher --> n_DB
-    n_Fetcher --> n_Redis
-    style n_Redis fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 TASVEER: ek list, sab padhein
@@ -139,33 +103,6 @@ DIKKAT     Badi khabar aayi, par meri feed me 20 minute baad dikhi. Ek hi kaam m
 ```
 ![c2](img/c2.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis (taazi feed)"]
-    n_DB["DB"]
-    n_Worker["Worker"]
-    n_Kafka["Kafka<br/>khabar 20 min purani<br/>-> fetcher sirf laaye aur Kafka me daale, worker apni speed se DB me likhe<br/>ek atke to doosra nahi rukta<br/>(Kafka)<br/>1000 ek saath -> line lambi, gira kuch nahi<br/>worker ne do baar likha -> ek hi lage (UNIQUE)"]
-    n_Fetcher["Fetcher"]
-    n_Sources["Sources"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_Redis
-    n_Feed_Svc --> n_DB
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
-    style n_Kafka fill:#f9a825,color:#000
-    style n_Worker fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 AAGE POOCHEGA:
   NIYAM: laana aur padhna alag: laana peeche apni speed se (Kafka, key = source_id); user sirf Redis ki list
@@ -183,33 +120,6 @@ DIKKAT     8 baje election result: aam 500 / sec ki jagah 20,000 / sec. Ek Feed 
            cache miss seedha primary DB pe, jahan fetcher bhi likh raha -> dono dheeme.
 ```
 ![c3](img/c3.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Feed_Svc_xN["Feed Svc x N"]
-    n_Redis["Redis (taazi feed)"]
-    n_Read_replica["Read replica<br/>result ki subah 40 guna<br/>-> Feed Svc kuch yaad nahi rakhti: kai machine + LB<br/>Redis me na mile to DB ki copy (replica) se, main DB sirf likhne ko<br/>(LB + read replica)<br/>7:45, pata tha -> pehle se machine + cache (scheduled scaling)<br/>copy peeche -> kuch second, nuksaan nahi<br/>ek key 20,000/s -> Redis copy + App me 1-2 sec copy"]
-    n_DB["DB"]
-    n_KW["Kafka -> Worker"]
-    n_SF["Sources -> Fetcher"]
-    n_USER --> n_LB
-    n_LB --> n_Feed_Svc_xN
-    n_Feed_Svc_xN --> n_Redis
-    n_Feed_Svc_xN --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_KW --> n_DB
-    n_KW --> n_Redis
-    n_SF --> n_KW
-    style n_LB fill:#f9a825,color:#000
-    style n_Read_replica fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       Kafka se bheed sambhalo: Kafka likhne ke raaste ke liye hai, padhai ki bheed nahi jhelta.
@@ -232,32 +142,6 @@ DIKKAT     Dopahar "India ne match jeeta" 5 source ne chhaapa, thode alag title,
            -> meri feed me wahi khabar 5 baar, baaki khabar neeche dab gayi.
 ```
 ![c4](img/c4.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Feed_Svc_xN["Feed Svc x N"]
-    n_Redis["Redis (taazi feed)"]
-    n_DBR["DB + Read replica"]
-    n_Worker["Worker<br/>ek khabar 5 baar<br/>-> dekha hua URL Bloom filter se pakdo<br/>alag URL pe wahi khabar title ke hash / SimHash se pakdo<br/>(hash + SimHash)<br/>wahi URL dobara -> koi bit 0 = pakka naya (Bloom filter)<br/>kai worker -> ek saanjha Bloom (Redis)<br/>wins vs won -> 90% same = duplicate"]
-    n_Kafka["Kafka"]
-    n_SF["Sources -> Fetcher"]
-    n_USER --> n_LB
-    n_LB --> n_Feed_Svc_xN
-    n_Feed_Svc_xN --> n_Redis
-    n_Feed_Svc_xN --> n_DBR
-    n_Worker --> n_DBR
-    n_Worker --> n_Redis
-    n_Kafka --> n_Worker
-    n_SF --> n_Kafka
-    style n_Worker fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 TASVEER: Bloom filter (bit-line)
@@ -286,32 +170,6 @@ DIKKAT     Dopahar baad ek chhota source 30 sec tak jawab nahi de raha. Sab usi 
 ```
 ![c5](img/c5.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Feed_Svc_xN["Feed Svc x N"]
-    n_Redis["Redis (taazi feed)"]
-    n_Read_replica["Read replica"]
-    n_DB["DB"]
-    n_KW["Kafka -> Worker"]
-    n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> har call 2-3 sec me chhodo, thodi retry (timeout)<br/>baar-baar fail -> us source ko call hi mat karo, thodi der baad ek test call<br/>(timeout + circuit breaker)"]
-    n_USER --> n_LB
-    n_LB --> n_Feed_Svc_xN
-    n_Feed_Svc_xN --> n_Redis
-    n_Feed_Svc_xN --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_KW --> n_DB
-    n_KW --> n_Redis
-    n_Fetcher --> n_KW
-    style n_Fetcher fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 AAGE POOCHEGA:
   NIYAM: ek beemar source baaki ko na roke: had tak intezaar, phir circuit breaker; us source ki
@@ -330,32 +188,6 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko mujhe sirf tech aur sports pasand. Har user ki alag feed (10 lakh feed) bahut mehngi.
 ```
 ![c6](img/c6.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Feed_Svc_xN["Feed Svc x N"]
-    n_Redis["Redis<br/>sirf tech + sports<br/>-> har category ki ek list (feed:tech, feed:sports)<br/>mere liye dono ke top 20 time se milao (ZUNIONSTORE), 10 lakh ki jagah ~20 feed<br/>(category feed)<br/>ek khabar 2 category -> dono list, id se dedupe"]
-    n_Read_replica["Read replica"]
-    n_DB["DB"]
-    n_KW["Kafka -> Worker"]
-    n_SF["Sources -> Fetcher"]
-    n_USER --> n_LB
-    n_LB --> n_Feed_Svc_xN
-    n_Feed_Svc_xN --> n_Redis
-    n_Feed_Svc_xN --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_KW --> n_DB
-    n_KW --> n_Redis
-    n_SF --> n_KW
-    style n_Redis fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       har baar DB se WHERE category IN (tech, sports): har khulne pe DB, cache ka fayda gaya.
@@ -377,33 +209,6 @@ DIKKAT     Raat ko maine "cricket" dhoondha. DB ne har khabar ki poori line padh
 ```
 ![c7](img/c7.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Feed_Svc_xN["Feed Svc x N"]
-    n_Elasticsearch["Elasticsearch<br/>cricket = full scan<br/>-> har shabd ki list: kis-kis khabar me hai (cricket -> a12, a45, a90)<br/>search pe seedha list se id, phir text DB / cache se, poori table nahi<br/>(inverted index)<br/>cricket kohli -> dono list milao, score se sort<br/>crikcet likha -> 1-2 akshar farak chalta (fuzzy)<br/>ES aur DB alag -> DB sach, ES dobara bana lo (reindex)"]
-    n_Redis["Redis (feed + category)"]
-    n_DBR["DB + Read replica"]
-    n_KW["Kafka -> Worker"]
-    n_SF["Sources -> Fetcher"]
-    n_USER --> n_LB
-    n_LB --> n_Feed_Svc_xN
-    n_Feed_Svc_xN --> n_Elasticsearch
-    n_Feed_Svc_xN --> n_Redis
-    n_Feed_Svc_xN --> n_DBR
-    n_KW --> n_DBR
-    n_KW --> n_Redis
-    n_KW --> n_Elasticsearch
-    n_SF --> n_KW
-    style n_Elasticsearch fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 AAGE POOCHEGA:
   NIYAM: ES sirf dhoondhta (id deta), sach DB me; ES gira / galat -> DB se dobara bana lo: khabar kabhi
@@ -422,33 +227,6 @@ DIKKAT     Usi raat DBA ka mail: 6 mahine me ~2 crore khabar ki row, disk / back
            Taazi 20 ke alawa purana koi padhta hi nahi. (Query dheemi NAHI hui: published_at pe index hai.)
 ```
 ![c8](img/c8.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LF["LB -> Feed Svc x N"]
-    n_Elasticsearch["Elasticsearch"]
-    n_Redis["Redis (feed + category)"]
-    n_DBR["DB + Read replica"]
-    n_Archive["Archive<br/>2 crore row, kharcha<br/>-> Postgres me har mahine ka alag tukda<br/>purana DETACH -> S3 archive, jo kabhi nahi chahiye -> tukda DROP<br/>(partition + archive)<br/>1 saal purani khuli -> S3 se, dheemi par chalti"]
-    n_KW["Kafka -> Worker"]
-    n_SF["Sources -> Fetcher"]
-    n_USER --> n_LF
-    n_LF --> n_Elasticsearch
-    n_LF --> n_Redis
-    n_LF --> n_DBR
-    n_DBR --> n_Archive
-    n_KW --> n_DBR
-    n_KW --> n_Redis
-    n_KW --> n_Elasticsearch
-    n_SF --> n_KW
-    style n_Archive fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       "sharding karo": ye purana hatana (retention) hai, data baantna (sharding) nahi.
@@ -471,32 +249,6 @@ DIKKAT     Mail aage: "source 100 guna ya log khud content daalne lage to ek DB 
            (Hamare number pe ek DB kaafi hai, ye sirf bahut bade scale pe.)
 ```
 ![c9](img/c9.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LF["LB -> Feed Svc x N"]
-    n_RES["Redis + Elasticsearch"]
-    n_Read_replica["Read replica"]
-    n_DB["DB<br/>ek machine nahi jhelti<br/>-> hash(article_id) se tukde, har tukda alag machine, likhai barabar<br/>(shard by article_id)<br/>taazi 20 -> Redis, miss pe har tukde se thoda (scatter-gather)<br/>shard badhaya -> sirf naye hisse ka data hile (consistent hashing)<br/>do shard, wahi khabar -> dedupe saanjhe Bloom / Redis se"]
-    n_Archive["Archive"]
-    n_KW["Kafka -> Worker"]
-    n_SF["Sources -> Fetcher"]
-    n_USER --> n_LF
-    n_LF --> n_RES
-    n_LF --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_DB --> n_Archive
-    n_KW --> n_DB
-    n_KW --> n_RES
-    n_SF --> n_KW
-    style n_DB fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       date se baanto: aaj ki saari likhai aaj wale shard pe -> wo akela garam.
@@ -533,45 +285,6 @@ JAWAB:    Khabar laana aur khabar dikhana alag raaste. Peeche fetcher sites se l
           purani khabar sasti jagah, search Elasticsearch pe.
 ```
 ![c9_2](img/c9_2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Feed_Svc_x_N_1["Feed Svc 1"]
-    n_Feed_Svc_x_N_2["Feed Svc 2"]
-    n_Elasticsearch["Elasticsearch"]
-    n_Redis["Redis (feed + category)"]
-    n_Read_replica["Read replica"]
-    n_DB["DB"]
-    n_Archive["Archive"]
-    n_Worker["Worker (saaf + dedupe)"]
-    n_Kafka["Kafka"]
-    n_Fetcher["Fetcher (timeout + circuit breaker)"]
-    n_Sources["Sources"]
-    n_USER --> n_LB
-    n_LB --> n_Feed_Svc_x_N_1
-    n_LB --> n_Feed_Svc_x_N_2
-    n_Feed_Svc_x_N_1 --> n_Elasticsearch
-    n_Feed_Svc_x_N_2 --> n_Elasticsearch
-    n_Feed_Svc_x_N_1 --> n_Redis
-    n_Feed_Svc_x_N_2 --> n_Redis
-    n_Feed_Svc_x_N_1 --> n_Read_replica
-    n_Feed_Svc_x_N_2 --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_DB --> n_Archive
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Worker --> n_Elasticsearch
-    n_Kafka --> n_Worker
-    n_Fetcher --> n_Kafka
-    n_Sources --> n_Fetcher
-```
-
-</details>
 
 
 ---

@@ -1,0 +1,13 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_Feed_Svc["Feed Svc"]
+    n_Redis["Redis<br/>sabko wahi 20, DB pe 500 / sec<br/>-> sabki ek hi feed, ek baar banao, Redis sorted set me (score = time)<br/>app Redis se top 20 padhe, DB tak nahi<br/>(sorted set)<br/>breaking news -> aate hi ZADD, turant upar<br/>neeche scroll -> agli 20 (cursor)<br/>Redis khaali -> DB se ek hi banaye, baaki ruke (lock)"]
+    n_DB["DB"]
+    n_Fetcher["Fetcher"]
+    n_USER --> n_Feed_Svc
+    n_Feed_Svc --> n_Redis
+    n_Feed_Svc --> n_DB
+    n_Fetcher --> n_DB
+    n_Fetcher --> n_Redis
+    style n_Redis fill:#f9a825,color:#000

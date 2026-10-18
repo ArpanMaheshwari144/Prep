@@ -77,20 +77,6 @@ Click aaya -> App DB me code dhoondhta -> asli link pe bhej deta.
 ```
 ![cdabba](img/cdabba.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_DB
-```
-
-</details>
-
 
 #### SHURU: CODE KAISE BANE
 ```
@@ -123,23 +109,6 @@ DIKKAT     10 baje maine sale ka chhota link College Gang me daala, viral -> ~1 
 ```
 ![c1](img/c1.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_Redis["Redis<br/>link viral, DB baitha<br/>-> pehle Redis (RAM, 1 ms) me dekho: mila to bhejo, nahi to DB se laao + Redis me rakho<br/>~100 me 95 click Redis se (Redis cache, cache-aside)<br/>bhar gaya -> der se na khula nikaalo (LRU)<br/>umar khatam -> saath mitte (TTL = link ki expiry)<br/>link badla -> pehle DB, phir Redis se hatao<br/>Redis gira -> uski copy kaam le (replica)<br/>copy bhi gayi -> 1 link ke 1000 click me 1 hi DB tak, baaki uska jawab lein<br/>tab bhi bojh -> kuch click mana, DB bachao (load shedding)"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Redis
-    n_App --> n_DB
-    style n_Redis fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       DB ki read copy (replica): wo bhi disk se, dheemi; 1 lakh / sec ke liye bahut copies chahiye.
 ```
@@ -165,31 +134,6 @@ DIKKAT     11 baje wahi bheed ek hi App machine pe. Wo dheemi hui, phir giri -> 
 ```
 ![c2](img/c2.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB<br/>ek App giri, site band<br/>-> LB request baari-baari baante (round-robin), App kuch yaad nahi rakhta<br/>isliye koi bhi App koi bhi request le (stateless + LB)<br/>dheemi -> kam kaam wali ko (least-conn)<br/>har ~5 sec /health: chup -> list se bahar, theek -> wapas"]
-    n_App_x_N_1["App 1<br/>yaad kuch nahi -> session bahar (Redis / DB)"]
-    n_App_x_N_2["App 2"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_App_x_N_1 --> n_DB
-    n_App_x_N_2 --> n_DB
-    style n_LB fill:#f9a825,color:#000
-    style n_App_x_N_1 fill:#f9a825,color:#000
-    style n_App_x_N_2 fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       ek bahut badi machine (vertical scale): uski bhi had, aur akeli -> wahi giri to sab band.
 ```
@@ -211,32 +155,6 @@ DIKKAT     Dopahar maine aur Ravi ne ek hi pal me link banaya. Request do alag A
            ginti se agla number liya -> dono ko code "g9" mila. Ravi ka link khola to mera sale page khula.
 ```
 ![c3](img/c3.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Counter["Counter<br/>do App, ek hi code<br/>-> Counter ek jagah se 1000-1000 numbers ki range de<br/>App apni range se agla number le, do App ki range kabhi same nahi (range)<br/>range khatam -> agli range, 1000 link pe ek call<br/>App crash -> bachi range bekaar, chalta<br/>Counter gira -> App apni range se chalta, copy (replica) uthti"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_App_x_N_1 --> n_DB
-    n_App_x_N_2 --> n_DB
-    style n_Counter fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 TASVEER: har App ki apni range
@@ -263,33 +181,6 @@ DIKKAT     2 baje mujhe ginti chahiye thi kitne click aaye. Usi request me analy
 ```
 ![c4](img/c4.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_xN["App x N"]
-    n_Counter["Counter"]
-    n_Kafka["Kafka<br/>ginti likhi, redirect dheema<br/>-> 302 turant do, ek click hua Kafka (disk pe log) me daalo<br/>Analytics apni speed se padhe, kahan tak padha yaad (Kafka, offset)<br/>Analytics dheema -> khabar Kafka me padi rahe<br/>Kafka band -> redirect chalta, kuch ginti gayi<br/>wahi click do baar -> click id se ek hi (dedupe)<br/>kharab khabar -> alag line (DLQ), baaki chalti"]
-    n_Analytics_svc["Analytics svc"]
-    n_DLQ["DLQ"]
-    n_RD["Redis + DB"]
-    n_USER --> n_LB
-    n_LB --> n_App_xN
-    n_App_xN --> n_Counter
-    n_App_xN --> n_Kafka
-    n_App_xN --> n_RD
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_DLQ
-    style n_Kafka fill:#f9a825,color:#000
-    style n_Analytics_svc fill:#f9a825,color:#000
-    style n_DLQ fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein gayi.
 ```
@@ -312,29 +203,6 @@ DIKKAT     4 baje DB team: 10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. 
            aur wo ek machine mari to saare link gaye.
 ```
 ![c5](img/c5.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_xN["App x N"]
-    n_Counter["Counter"]
-    n_ANA["Analytics (Kafka + DLQ)"]
-    n_Redis["Redis"]
-    n_Cassandra["Cassandra<br/>5 saal me 90 TB<br/>-> code se tay kaunsi machine: ring = gol ghera, code aage chale, pehli machine uski<br/>har tukda 3 copy (Cassandra shard + ring)<br/>machine mari -> baaki 2 copy se milta<br/>nayi machine -> sirf pados ke code khiskein (ring)"]
-    n_USER --> n_LB
-    n_LB --> n_App_xN
-    n_App_xN --> n_Counter
-    n_App_xN --> n_ANA
-    n_App_xN --> n_Redis
-    n_App_xN --> n_Cassandra
-    style n_Cassandra fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se country pata hi nahi.
@@ -367,29 +235,6 @@ DIKKAT     5 baje maine naya link banaya. Cassandra har link 3 alag machine pe r
 ```
 ![c6](img/c6.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_xN["App x N"]
-    n_Counter["Counter"]
-    n_ANA["Analytics (Kafka + DLQ)"]
-    n_Redis["Redis"]
-    n_Cassandra["Cassandra<br/>naya link, turant 404<br/>-> har link 3 copy (A, B, C): likhna done jab 2 me, padhna bhi 2 se<br/>koi bhi 2 uthao, ek taaza copy aayegi hi (quorum = zyadatar)<br/>C tak nahi -> A+C jodi, A me mila<br/>A aur B giri -> likhna fail, user ko error"]
-    n_USER --> n_LB
-    n_LB --> n_App_xN
-    n_App_xN --> n_Counter
-    n_App_xN --> n_ANA
-    n_App_xN --> n_Redis
-    n_App_xN --> n_Cassandra
-    style n_Cassandra fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       3 me likho tabhi done, phir 1 se padho: ek copy giri = har naya link fail.
 ```
@@ -418,32 +263,6 @@ DIKKAT     Shaam ko akela LB hi gir gaya. App machine sab zinda, par har click L
 ```
 ![c7](img/c7.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Route_53["Route 53<br/>LB hi gira<br/>-> Route 53 har ~30 sec LB se poochhe (health check)<br/>chup LB list se bahar, phone ko zinda LB ka pata (DNS failover)<br/>LB-1 chup -> ~30 sec me sab LB-2 pe"]
-    n_LB_xN["LB x 2<br/>kai zone, har jagah 2+ (ALB)"]
-    n_App_xN["App x N"]
-    n_Counter["Counter"]
-    n_ANA["Analytics (Kafka + DLQ)"]
-    n_Redis["Redis"]
-    n_Cassandra["Cassandra"]
-    n_USER --> n_Route_53
-    n_Route_53 --> n_LB_xN
-    n_LB_xN --> n_App_xN
-    n_App_xN --> n_Counter
-    n_App_xN --> n_ANA
-    n_App_xN --> n_Redis
-    n_App_xN --> n_Cassandra
-    style n_Route_53 fill:#f9a825,color:#000
-    style n_LB_xN fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 AAGE POOCHEGA:
   NIYAM: koi dabba akela nahi; aage wala health check se sirf zinda wale pe bheje. Switch me thoda waqt
@@ -460,31 +279,6 @@ DIKKAT     Raat ko spammer: ek API key se har second 5,000 link (phishing). Aam 
            -> 5 guna bojh, asli users dheeme; Gmail / WhatsApp ne hamara domain "spam" maana.
 ```
 ![c8](img/c8.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_EDGE["Route 53 + LB x 2"]
-    n_API_Gateway["API Gateway<br/>spammer 5,000 link / sec<br/>-> gateway pe har user / IP ki ginti + login, had paar = 429 (rate limit)<br/>aage WAF: pehchaane hamle wahin rok (WAF)<br/>kai gateway -> ginti ek jagah (shared Redis)<br/>had paar -> 429, asli users bache<br/>bot naya IP -> ginti API key pe<br/>chhota karne se pehle -> lamba URL check (virus / dhokha)"]
-    n_App_xN["App x N"]
-    n_Counter["Counter"]
-    n_ANA["Analytics (Kafka + DLQ)"]
-    n_Redis["Redis"]
-    n_Cassandra["Cassandra"]
-    n_USER --> n_EDGE
-    n_EDGE --> n_API_Gateway
-    n_API_Gateway --> n_App_xN
-    n_App_xN --> n_Counter
-    n_App_xN --> n_ANA
-    n_App_xN --> n_Redis
-    n_App_xN --> n_Cassandra
-    style n_API_Gateway fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana lega.
@@ -526,49 +320,6 @@ JAWAB:    Short code = ek badhta number, jise 62 akshar (a-z, A-Z, 0-9) me likha
           Aage: apna naam wala link, purane link hatana, doosre desh me copy.
 ```
 ![c8_2](img/c8_2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_API_Gateway["API Gateway"]
-    n_WAF["WAF"]
-    n_LB_1["LB 1"]
-    n_LB_2["LB 2"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Counter["Counter"]
-    n_Kafka["Kafka"]
-    n_Analytics_svc["Analytics svc"]
-    n_Analytics_DB["Analytics DB"]
-    n_DLQ["DLQ"]
-    n_Redis["Redis"]
-    n_Cassandra["Cassandra"]
-    n_USER --> n_Route_53
-    n_Route_53 --> n_LB_1
-    n_Route_53 --> n_LB_2
-    n_LB_1 --> n_WAF
-    n_LB_2 --> n_WAF
-    n_WAF --> n_API_Gateway
-    n_API_Gateway --> n_App_x_N_1
-    n_API_Gateway --> n_App_x_N_2
-    n_App_x_N_1 --> n_Counter
-    n_App_x_N_2 --> n_Counter
-    n_App_x_N_1 --> n_Kafka
-    n_App_x_N_2 --> n_Kafka
-    n_App_x_N_1 --> n_Redis
-    n_App_x_N_2 --> n_Redis
-    n_Kafka --> n_Analytics_svc
-    n_Analytics_svc --> n_Analytics_DB
-    n_App_x_N_1 --> n_Cassandra
-    n_App_x_N_2 --> n_Cassandra
-    n_Analytics_svc --> n_DLQ
-```
-
-</details>
 
 
 ---

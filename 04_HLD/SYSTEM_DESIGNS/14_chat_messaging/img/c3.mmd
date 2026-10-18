@@ -1,0 +1,15 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_U["USER"]
+    n_LB["LB"]
+    n_CS["Chat Server x200"]
+    n_R["Redis (map)"]
+    n_DB["Message DB<br/>Ravi ka phone band, connection nahi<br/>-> PEHLE DB me likho, phir bhejne ki koshish: server gire to bhi message bacha<br/>(store-then-forward)<br/>Ravi offline -> push ghanti, sirf preview (FCM / APNs)<br/>bhejne se pehle server gira -> DB me pehle se, khota nahi<br/>Ravi wapas -> aakhri mile ke baad sab do"]
+    n_P["Push<br/>app band, khabar kaise<br/>-> Google FCM / Apple APNs phone ko ghanti dete, app band ho tab bhi<br/>(push: FCM / APNs)"]
+    n_U --> n_LB
+    n_LB --> n_CS
+    n_CS --> n_R
+    n_CS --> n_DB
+    n_CS --> n_P
+    style n_DB fill:#f9a825,color:#000
+    style n_P fill:#f9a825,color:#000

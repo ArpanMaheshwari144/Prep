@@ -1,0 +1,13 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka<br/>email band, order fail<br/>-> order + khabar ek DB txn me (outbox), relay Kafka (disk pe log) me daale<br/>order turant, Notification peeche padhe, email wapas aaye tab wahin se (Kafka, async)<br/>Kafka se pehle Svc giri -> outbox row me padi, khoti nahi<br/>email company band -> Kafka me ~7 din padi (offset)<br/>Svc dheemi -> machine badhao (consumer group)<br/>Kafka machine giri -> 3 copy, khabar nahi khoti"]
+    n_Notification_Svc["Notification Svc"]
+    n_Email_API["Email API"]
+    n_USER["USER"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_Email_API
+    n_Email_API --> n_USER
+    style n_Kafka fill:#f9a825,color:#000
+    style n_Notification_Svc fill:#f9a825,color:#000

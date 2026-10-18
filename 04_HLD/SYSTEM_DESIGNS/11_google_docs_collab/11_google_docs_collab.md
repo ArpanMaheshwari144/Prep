@@ -67,20 +67,6 @@ Doc ka poora text DB me. "Save" dabao -> poora text upar likh do (overwrite).
 ```
 ![cdabba](img/cdabba.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER A / B"]
-    n_App["App"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_DB
-```
-
-</details>
-
 
 #### 1 Ravi ne baad me save kiya, mera "WORLD" mit gaya
 ```
@@ -88,21 +74,6 @@ DIKKAT     Doc me "HELLO". Maine "HELLO WORLD" karke 10:05 pe save kiya, Ravi ne
            "HELLO THERE" 10:07 pe -> poora text upar likha -> mera "WORLD" gayab (LAST-WRITE-WINS).
 ```
 ![c1](img/c1.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER A / B"]
-    n_App["App<br/>baad wale ne mera mita diya<br/>-> poora text nahi, sirf ek badlaav bhejo: docId, userId, type, position, char<br/>baseVersion = maine v7 dekh ke likha<br/>(operation)<br/>Ravi bhi v7 pe -> server khiska ke dono lagaye (OT)<br/>mitana bhi op -> khiska ke, akshar sahi jagah"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_DB
-    style n_App fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       doc pe lock, ek likhe baaki ruke: saath likhna hi khatam.
@@ -125,23 +96,6 @@ DIKKAT     Ab op ja raha, par normal HTTP me server khud kuch nahi bhej sakta, s
 ```
 ![c2](img/c2.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_CS["Conn-Server<br/>refresh pe hi dikha<br/>-> pehle HTTP Upgrade: websocket, server 101 Switching Protocols<br/>phir connection khula rehta, dono taraf turant bhejo<br/>(WebSocket)<br/>connection chupchaap mara -> har ~30 sec ping, pong nahi = band<br/>connection toota -> judte hi version bata ke baaki lo"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_CS
-    n_CS --> n_DB
-    style n_CS fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       polling: crore log x har second bekaar sawaal + 1 sec der · SSE: sirf server -> user.
 ```
@@ -161,23 +115,6 @@ DIKKAT     11 baje meeting, doc "HELLO", dono sabse upar likhne lage. Mera "X" (
            usse pehle Ravi ka "Y" (pos 0) -> meri screen "YXHELLO", Ravi ki "XYHELLO". Do alag doc.
 ```
 ![c3](img/c3.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_CS["Conn-Server<br/>dono ne position 0 pe likha<br/>-> kram server tay kare, doosre ka op apne hisaab se khiskao<br/>tie: server pe pehle aaya wo 0, doosra 1 pe -> dono ke paas XYHELLO<br/>(OT = Operational Transformation)"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_CS
-    n_CS --> n_DB
-    style n_CS fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       phone ke time se kram: ghadi alag, aur position phir bhi khiskani padti.
@@ -207,29 +144,6 @@ DIKKAT     Dopahar tak ~50 lakh WebSocket khule (3-4 crore roz ka ~15%), ek serv
 ```
 ![c4](img/c4.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_LB["LB<br/>50 lakh connection, ek server nahi<br/>-> URL me docId, LB ring (consistent hashing) se server chune<br/>ek doc ke saare editor + OT EK server pe, viewer kahin bhi<br/>(ring, owner)<br/>doc do server pe -> do version, isliye ek owner<br/>server juda / gira -> sirf pados ke doc khiskein (ring)<br/>owner gira -> naya owner DB se doc banaye"]
-    n_CS1["Conn-Server 1 (owner + OT)"]
-    n_CS2["Conn-Server 2"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_LB
-    n_LB --> n_CS1
-    n_LB --> n_CS2
-    n_CS1 --> n_DB
-    n_CS2 --> n_DB
-    style n_LB fill:#f9a825,color:#000
-    style n_CS1 fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       hash(docId) % N: N badla to lagbhag har doc ka server badla = sab dobara jude.
 ```
@@ -253,31 +167,6 @@ DIKKAT     Lunch ke baad Ravi sirf padh raha (viewer), wo server-2 pe; doc ka ow
 ```
 ![c5](img/c5.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_LB["LB (docId se ring)"]
-    n_CS1["Conn-Server 1 (owner + OT)"]
-    n_CS2["Conn-Server 2"]
-    n_PS["Redis pub/sub<br/>Ravi doosre server pe<br/>-> har doc ka channel (doc:123), jis server pe uska user wo SUBSCRIBE kare<br/>server-1 publish -> Redis -> server-2 -> Ravi, OT owner hi karta<br/>(pub/sub)<br/>Ravi ka server restart -> channel se gaya, DB se le<br/>pub/sub gira -> copy main bane, khoya nahi (replica)"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_LB
-    n_LB --> n_CS1
-    n_LB --> n_CS2
-    n_CS1 --> n_PS
-    n_CS2 --> n_PS
-    n_CS1 --> n_DB
-    n_CS2 --> n_DB
-    style n_PS fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       Kafka: store karta + thoda dheema; live typing dobara padhni nahi, tezi chahiye.
 ```
@@ -298,30 +187,6 @@ AAGE POOCHEGA:
 DIKKAT     3 baje DB alert: ~20 lakh log type, har ek ~3 akshar / sec -> ~60 lakh DB write / sec -> DB khatam.
 ```
 ![c6](img/c6.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_LB["LB (docId se ring)"]
-    n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
-    n_PS["Redis pub/sub"]
-    n_BUF["Redis buffer<br/>har akshar pe DB write<br/>-> op Redis me jama, har 1 sec ek saath Cassandra me<br/>ACK jab copy me bhi (WAIT 1), edit log: key = docId, kram = version<br/>(buffer + batch)<br/>ACK se pehle Redis gira -> app opId ke saath phir bheje<br/>batch dheema -> typing chalti, buffer badhe to alert"]
-    n_CAS["Cassandra edit log"]
-    n_USER --> n_App
-    n_App --> n_LB
-    n_LB --> n_Conn_Server_xN
-    n_Conn_Server_xN --> n_PS
-    n_Conn_Server_xN --> n_BUF
-    n_BUF --> n_CAS
-    style n_BUF fill:#f9a825,color:#000
-    style n_CAS fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       "sahi chahiye to SQL lo": DB data ki shakal se chuno; join nahi, bas bahut jodna -> Cassandra.
@@ -353,31 +218,6 @@ DIKKAT     Shaam ko metro me mera network 1 second ke liye gaya. Typing ruk jaay
 ```
 ![c7](img/c7.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_LB["LB (docId se ring)"]
-    n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
-    n_PS["Redis pub/sub"]
-    n_SQL["SQL permissions<br/>net gaya, typing ruke?<br/>-> har hisse ka alag faisla: likhna = AP, net jaaye to bhi type, baad me sab same<br/>permission = CP (SQL): access hata to turant roko, chahe kuch der ruke<br/>(CAP: AP vs CP)<br/>net 1 sec gaya -> likhte raho, op pending (AP)<br/>1 ghanta offline -> wapas aate hi bhejo, server khiskaye<br/>offline me access hata -> jude to check, pending reject (CP)"]
-    n_BUF["Redis buffer"]
-    n_CAS["Cassandra edit log"]
-    n_USER --> n_App
-    n_App --> n_LB
-    n_LB --> n_Conn_Server_xN
-    n_Conn_Server_xN --> n_PS
-    n_Conn_Server_xN --> n_BUF
-    n_Conn_Server_xN --> n_SQL
-    n_BUF --> n_CAS
-    style n_SQL fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       "doc sahi chahiye -> CP": CP me net jaate hi typing ruk jaati; yahan sahi = "aakhir me sab same".
 ```
@@ -399,31 +239,6 @@ DIKKAT     Raat ko maine 2 saal purana doc khola. Usme 10 lakh op jama the, serv
            doc bana raha -> doc khulne me minute lag gaye, main khaali screen dekhta raha.
 ```
 ![c8](img/c8.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_LB["LB (docId se ring)"]
-    n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
-    n_PS["Redis pub/sub"]
-    n_SQL["SQL permissions"]
-    n_BUF["Redis buffer"]
-    n_CAS["Cassandra edit log + snapshot<br/>purana doc, 10 lakh op<br/>-> har 1000 op pe background job doc ki photo le (ek version tak)<br/>kholna = aakhri photo + uske baad ke op, shuru se nahi<br/>(snapshot)<br/>photo lete waqt likha -> photo ek version tak, kuch na ruke<br/>purana version maanga -> paas wali photo + baaki op"]
-    n_USER --> n_App
-    n_App --> n_LB
-    n_LB --> n_Conn_Server_xN
-    n_Conn_Server_xN --> n_PS
-    n_Conn_Server_xN --> n_BUF
-    n_Conn_Server_xN --> n_SQL
-    n_BUF --> n_CAS
-    style n_CAS fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 TASVEER: photo + baad ke op
@@ -464,37 +279,6 @@ JAWAB:    Har user doc ke hisaab se ek server se juda (ek doc ke sab editor ek s
           permission turant lage (SQL).
 ```
 ![c8_2](img/c8_2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_CDN["CDN (app ki files)"]
-    n_LB["LB (docId se ring)"]
-    n_CS1["Conn-Server 1 (owner + OT)"]
-    n_CS2["Conn-Server 2"]
-    n_PS["Redis pub/sub"]
-    n_SQL["SQL permissions"]
-    n_BUF["Redis buffer"]
-    n_CAS["Cassandra edit log + snapshot"]
-    n_USER --> n_App
-    n_App --> n_CDN
-    n_App --> n_LB
-    n_LB --> n_CS1
-    n_LB --> n_CS2
-    n_CS1 --> n_PS
-    n_CS2 --> n_PS
-    n_CS1 --> n_BUF
-    n_CS2 --> n_BUF
-    n_CS1 --> n_SQL
-    n_CS2 --> n_SQL
-    n_BUF --> n_CAS
-```
-
-</details>
 
 
 ---

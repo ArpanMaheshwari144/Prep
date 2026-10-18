@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_Order_Service["Order Service<br/>+ idempotency key check"]
+    n_Wallet["Wallet"]
+    n_Event_Log["Event Log"]
+    n_Matching_Engine["Matching Engine"]
+    n_Settlement["Settlement<br/>paisa kata, Suresh ko nahi<br/>-> BEGIN · Arpan -30k +10 share · Suresh +30k -10 share · COMMIT<br/>COMMIT tak chaaron ya koi nahi, crash = rollback<br/>(transaction)<br/>COMMIT se pehle crash -> rollback, user ko PENDING<br/>rollback ke baad retry -> trade_id UNIQUE, do baar nahi"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Event_Log
+    n_Event_Log --> n_Matching_Engine
+    n_Matching_Engine --> n_Settlement
+    n_Settlement --> n_DB
+    style n_Settlement fill:#f9a825,color:#000

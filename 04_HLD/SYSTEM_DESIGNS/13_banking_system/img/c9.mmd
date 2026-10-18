@@ -1,0 +1,20 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_LB["LB"]
+    n_S1["Banking Svc 1"]
+    n_S2["Banking Svc 2"]
+    n_RR["Read replica"]
+    n_DB["SQL DB<br/>500 gaye, 200 refund, dono atke<br/>-> do account pe taala hamesha ek kram me lo (chhoti id pehle), gol ghera ban hi nahi sakta<br/>(lock order)<br/>ulta kram -> gol ghera (deadlock)<br/>kram ke baad bhi phansa -> DB ek ko wapas, app wahi id se"]
+    n_K["Kafka"]
+    n_REC["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_S1
+    n_LB --> n_S2
+    n_S1 --> n_RR
+    n_S2 --> n_RR
+    n_S1 --> n_DB
+    n_S2 --> n_DB
+    n_DB --> n_K
+    n_REC --> n_DB
+    style n_DB fill:#f9a825,color:#000

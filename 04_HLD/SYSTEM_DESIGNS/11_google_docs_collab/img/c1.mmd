@@ -1,0 +1,8 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER A / B"]
+    n_App["App<br/>baad wale ne mera mita diya<br/>-> poora text nahi, sirf ek badlaav bhejo: docId, userId, type, position, char<br/>baseVersion = maine v7 dekh ke likha<br/>(operation)<br/>Ravi bhi v7 pe -> server khiska ke dono lagaye (OT)<br/>mitana bhi op -> khiska ke, akshar sahi jagah"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
+    style n_App fill:#f9a825,color:#000

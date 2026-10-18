@@ -1,0 +1,14 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_App["App"]
+    n_Fanout["Fanout<br/>har khulne pe 200 ka jod<br/>-> tweet hote hi har follower ke inbox me tweet_id daalo<br/>inbox = Redis sorted set (score = time), app khola = bas inbox padho (push / fanout)<br/>id se poora tweet -> 50 id ek saath laao (batch)<br/>unfollow kiya -> padhte waqt follow list se chhaanto"]
+    n_Redis_inbox["Redis inbox"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Fanout
+    n_App --> n_DB
+    n_Fanout --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+    style n_Fanout fill:#f9a825,color:#000
+    style n_Redis_inbox fill:#f9a825,color:#000

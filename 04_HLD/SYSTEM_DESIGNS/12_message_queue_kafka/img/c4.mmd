@@ -1,0 +1,8 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_P["Producer (key = userId)"]
+    n_B["Brokers A / B / C"]
+    n_GE["Group email<br/>3 machine, 3 email<br/>-> teeno machine ek group.id: har tukda group ke EK hi member ko, kaam bat-ta<br/>(consumer group)<br/>group.id = machine naam -> teen alag team, 3 email<br/>machine badhani -> tukde bhi badhao, warna khaali"]
+    n_P --> n_B
+    n_B --> n_GE
+    style n_GE fill:#f9a825,color:#000

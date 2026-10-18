@@ -1,0 +1,21 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_EDGE["Route 53 + ALB"]
+    n_API_Gateway["API Gateway"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Kafka["Kafka<br/>bot har 60 sec phir<br/>-> har 429 Kafka me, Pattern Svc gine: 10 min me 500+ = ban<br/>ban WAF ki list me, WAF sabse aage, request server tak nahi (pattern + WAF)<br/>Kafka peeche -> ban late, rate limit rok hi raha<br/>galat ban (office IP) -> ~24 ghante me khud hate"]
+    n_Pattern_Svc["Pattern Svc"]
+    n_WAF["WAF"]
+    n_App_xN["App x N"]
+    n_EDGE --> n_API_Gateway
+    n_API_Gateway --> n_Redis_Cluster
+    n_API_Gateway --> n_App_xN
+    n_Kafka --> n_Pattern_Svc
+    n_Pattern_Svc --> n_WAF
+    n_API_Gateway --> n_Kafka
+    n_USER --> n_EDGE
+    n_WAF -.->|ban list| n_EDGE
+    style n_Kafka fill:#f9a825,color:#000
+    style n_Pattern_Svc fill:#f9a825,color:#000
+    style n_WAF fill:#f9a825,color:#000

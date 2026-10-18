@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_U["USER"]
+    n_LB["LB"]
+    n_CS["Chat Server x200"]
+    n_R["Redis (map, seq)"]
+    n_I["Idempotency check"]
+    n_CA["Cassandra (chat_id)"]
+    n_P["Push (Google / Apple)"]
+    n_NS["Nishaan<br/>50 padhe, 25,000 likhai<br/>-> har member ka ek number read_upto (kahan tak padha), har message ka record nahi<br/>unread = aakhri seq - read_upto · neeli tick = ek push read_upto 4467, 50 ek saath neeli<br/>(read_upto)<br/>do tick -> kahan tak mila (delivered_upto)<br/>group me do tick -> sabse chhota nishaan"]
+    n_U --> n_LB
+    n_LB --> n_CS
+    n_CS --> n_R
+    n_CS --> n_I
+    n_I --> n_CA
+    n_CS --> n_P
+    n_CS --> n_NS
+    style n_NS fill:#f9a825,color:#000

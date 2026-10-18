@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER A / B"]
+    n_App["App (op bhejo)"]
+    n_LB["LB (docId se ring)"]
+    n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
+    n_PS["Redis pub/sub"]
+    n_SQL["SQL permissions<br/>net gaya, typing ruke?<br/>-> har hisse ka alag faisla: likhna = AP, net jaaye to bhi type, baad me sab same<br/>permission = CP (SQL): access hata to turant roko, chahe kuch der ruke<br/>(CAP: AP vs CP)<br/>net 1 sec gaya -> likhte raho, op pending (AP)<br/>1 ghanta offline -> wapas aate hi bhejo, server khiskaye<br/>offline me access hata -> jude to check, pending reject (CP)"]
+    n_BUF["Redis buffer"]
+    n_CAS["Cassandra edit log"]
+    n_USER --> n_App
+    n_App --> n_LB
+    n_LB --> n_Conn_Server_xN
+    n_Conn_Server_xN --> n_PS
+    n_Conn_Server_xN --> n_BUF
+    n_Conn_Server_xN --> n_SQL
+    n_BUF --> n_CAS
+    style n_SQL fill:#f9a825,color:#000

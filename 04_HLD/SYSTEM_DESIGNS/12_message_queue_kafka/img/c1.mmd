@@ -1,0 +1,8 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_P["Producer"]
+    n_L["Log<br/>restart, 500 message gayab<br/>-> message disk pe sirf aakhir me jude (P0: 0,1,2,3...), padhne se mitta nahi<br/>har message ka number = offset, consumer yaad rakhe kahan tak padha<br/>(log + offset)<br/>restart -> email ne 2 tak padha tha, 3 se aage<br/>dobara padhna -> offset peeche karo (replay)"]
+    n_C["Consumer"]
+    n_P --> n_L
+    n_L --> n_C
+    style n_L fill:#f9a825,color:#000

@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc + SAGA<br/>merchant Bank B me<br/>-> step-step chalo, har step ke baad saga table me haal (DEBITED, CREDIT_PENDING)<br/>koi step fail -> pichhle step ka ulta kaam (compensate)<br/>(saga)<br/>Bank B +500 fail -> wallet me 500 wapas (compensate)<br/>service beech me giri -> saga table se aage ya ulta<br/>ulta kaam bhi fail -> retry + alert, manual queue"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["SQL DB"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc
+    style n_Payment_Svc fill:#f9a825,color:#000

@@ -1,0 +1,8 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> order screen khulte ek id bane, dobara bhejne pe WAHI id<br/>server UNIQUE se pakde: wahi id = purana jawab, order dobara nahi<br/>(idempotency key)<br/>pehli abhi chal rahi -> thoda ruko (IN_PROGRESS, 409)<br/>id kab tak yaad -> ~24 ghante, phir saaf"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_DB
+    style n_Order_Service fill:#f9a825,color:#000

@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Banking_Svc_xN["Banking Svc x N"]
+    n_RR["Read replica"]
+    n_DB["SQL DB"]
+    n_K["Kafka"]
+    n_S3["Archive (S3)<br/>5 saal ek table me<br/>-> khaata mahine ke partition me, band mahina DETACH (table se alag) -> S3, sasta<br/>(partition + archive)<br/>mahina band -> S3 me, 5 saal delete nahi (bank ka niyam)<br/>balance ka jod -> mahine ka snapshot + baad ki line"]
+    n_REC["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_Banking_Svc_xN
+    n_Banking_Svc_xN --> n_RR
+    n_Banking_Svc_xN --> n_DB
+    n_DB --> n_K
+    n_REC --> n_DB
+    n_DB --> n_S3
+    style n_S3 fill:#f9a825,color:#000

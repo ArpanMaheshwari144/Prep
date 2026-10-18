@@ -1,0 +1,23 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_EDGE["Route 53 + ALB"]
+    n_Tweet_Svc["Tweet Svc<br/>padhne ki bheed, likhna dheema<br/>-> likhne (Tweet Svc) aur padhne (Timeline Svc) ki alag service<br/>jahan bheed wahi badhao (alag service)<br/>follow list -> Redis me rakhi, har feed pe chahiye"]
+    n_Cassandra["Cassandra"]
+    n_FAN["Kafka + Fanout workers"]
+    n_RI["Redis (inbox + hot tweet)"]
+    n_Timeline_Svc["Timeline Svc"]
+    n_UG["User Svc + Follow store"]
+    n_USER --> n_EDGE
+    n_EDGE --> n_Tweet_Svc
+    n_EDGE --> n_Timeline_Svc
+    n_EDGE --> n_UG
+    n_Tweet_Svc --> n_Cassandra
+    n_Tweet_Svc --> n_FAN
+    n_FAN --> n_RI
+    n_Timeline_Svc --> n_RI
+    n_Timeline_Svc --> n_Cassandra
+    n_FAN --> n_UG
+    style n_Tweet_Svc fill:#f9a825,color:#000
+    style n_Timeline_Svc fill:#f9a825,color:#000
+    style n_UG fill:#f9a825,color:#000

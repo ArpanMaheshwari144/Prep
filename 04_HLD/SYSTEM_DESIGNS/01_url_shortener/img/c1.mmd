@@ -1,0 +1,10 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_App["App"]
+    n_Redis["Redis<br/>link viral, DB baitha<br/>-> pehle Redis (RAM, 1 ms) me dekho: mila to bhejo, nahi to DB se laao + Redis me rakho<br/>~100 me 95 click Redis se (Redis cache, cache-aside)<br/>bhar gaya -> der se na khula nikaalo (LRU)<br/>umar khatam -> saath mitte (TTL = link ki expiry)<br/>link badla -> pehle DB, phir Redis se hatao<br/>Redis gira -> uski copy kaam le (replica)<br/>copy bhi gayi -> 1 link ke 1000 click me 1 hi DB tak, baaki uska jawab lein<br/>tab bhi bojh -> kuch click mana, DB bachao (load shedding)"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_Redis
+    n_App --> n_DB
+    style n_Redis fill:#f9a825,color:#000

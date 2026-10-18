@@ -1,0 +1,20 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_LB["LB"]
+    n_S1["Banking Svc 1"]
+    n_S2["Banking Svc 2"]
+    n_RR["Read replica<br/>padhai primary pe, transfer dheema<br/>-> primary ki copy (replica) se padhna, likhna sirf primary pe, copy thodi peeche ho sakti<br/>(read replica)<br/>paise ka faisla -> sirf primary pe<br/>abhi bheja, copy peeche -> apna likha primary se padho<br/>copy minute bhar peeche -> lag naapo, alert, list se hatao"]
+    n_DB["SQL DB (+ ledger, outbox)"]
+    n_K["Kafka"]
+    n_REC["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_S1
+    n_LB --> n_S2
+    n_S1 --> n_RR
+    n_S2 --> n_RR
+    n_S1 --> n_DB
+    n_S2 --> n_DB
+    n_DB --> n_K
+    n_REC --> n_DB
+    style n_RR fill:#f9a825,color:#000

@@ -1,0 +1,19 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Feed_Svc_xN["Feed Svc x N"]
+    n_Redis["Redis (taazi feed)"]
+    n_Read_replica["Read replica"]
+    n_DB["DB"]
+    n_KW["Kafka -> Worker"]
+    n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> har call 2-3 sec me chhodo, thodi retry (timeout)<br/>baar-baar fail -> us source ko call hi mat karo, thodi der baad ek test call<br/>(timeout + circuit breaker)"]
+    n_USER --> n_LB
+    n_LB --> n_Feed_Svc_xN
+    n_Feed_Svc_xN --> n_Redis
+    n_Feed_Svc_xN --> n_Read_replica
+    n_DB --> n_Read_replica
+    n_KW --> n_DB
+    n_KW --> n_Redis
+    n_Fetcher --> n_KW
+    style n_Fetcher fill:#f9a825,color:#000

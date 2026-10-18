@@ -1,0 +1,10 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER A / B"]
+    n_App["App (op bhejo)"]
+    n_CS["Conn-Server<br/>dono ne position 0 pe likha<br/>-> kram server tay kare, doosre ka op apne hisaab se khiskao<br/>tie: server pe pehle aaya wo 0, doosra 1 pe -> dono ke paas XYHELLO<br/>(OT = Operational Transformation)"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_CS
+    n_CS --> n_DB
+    style n_CS fill:#f9a825,color:#000

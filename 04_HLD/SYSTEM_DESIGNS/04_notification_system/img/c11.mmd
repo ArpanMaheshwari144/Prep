@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_CAMP["Admin -> Campaign Svc + DB"]
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka high / medium / low"]
+    n_Notification_Svc["Notification Svc"]
+    n_PREF["User-pref + Template DB<br/>raat 2 baje offer SMS<br/>-> pehle pasand dekho: SMS band = chhodo, raat 10-8 koi ghanti nahi<br/>phir meri bhasha me saancha bharo, pasand + saancha cache me (preference + quiet hours)<br/>shaanti me offer -> subah 8 baje bhejo (scheduled_at)<br/>shaanti me OTP / login -> bhejo, zaroori upar<br/>pasand badli -> cache delete + chhoti umar"]
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
+    n_RDLQ["Redis (key + bucket) + DLQ"]
+    n_WH["Webhook Svc + Tracking DB"]
+    n_CAMP --> n_Kafka
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_PREF
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_RDLQ
+    n_LINES --> n_WH
+    style n_PREF fill:#f9a825,color:#000

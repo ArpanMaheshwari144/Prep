@@ -1,0 +1,19 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_OW["Order Service + Wallet"]
+    n_Event_Log["Event Log"]
+    n_Matching_Engine["Matching Engine"]
+    n_Pub_Sub["Pub/Sub"]
+    n_WebSocket["WebSocket<br/>10 lakh log price poochh rahe<br/>-> connection khula rehta, price badla tabhi server khud bhejta<br/>user baar-baar nahi poochta<br/>(WebSocket, pub/sub se servers tak)<br/>second me 1000 baar badla -> har ~100 ms aakhri price<br/>connection toota, wapas juda -> abhi ka price alag se do<br/>10 lakh connection -> aur server + LB (ek pe ~lakh)"]
+    n_USERS["USERS"]
+    n_SET["Settlement -> Wallet / Portfolio DB"]
+    n_USER --> n_OW
+    n_OW --> n_Event_Log
+    n_Event_Log --> n_Matching_Engine
+    n_Matching_Engine --> n_SET
+    n_Matching_Engine --> n_Pub_Sub
+    n_Pub_Sub --> n_WebSocket
+    n_WebSocket --> n_USERS
+    style n_Pub_Sub fill:#f9a825,color:#000
+    style n_WebSocket fill:#f9a825,color:#000

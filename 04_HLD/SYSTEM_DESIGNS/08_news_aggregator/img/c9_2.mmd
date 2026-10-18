@@ -1,0 +1,32 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Feed_Svc_x_N_1["Feed Svc 1"]
+    n_Feed_Svc_x_N_2["Feed Svc 2"]
+    n_Elasticsearch["Elasticsearch"]
+    n_Redis["Redis (feed + category)"]
+    n_Read_replica["Read replica"]
+    n_DB["DB"]
+    n_Archive["Archive"]
+    n_Worker["Worker (saaf + dedupe)"]
+    n_Kafka["Kafka"]
+    n_Fetcher["Fetcher (timeout + circuit breaker)"]
+    n_Sources["Sources"]
+    n_USER --> n_LB
+    n_LB --> n_Feed_Svc_x_N_1
+    n_LB --> n_Feed_Svc_x_N_2
+    n_Feed_Svc_x_N_1 --> n_Elasticsearch
+    n_Feed_Svc_x_N_2 --> n_Elasticsearch
+    n_Feed_Svc_x_N_1 --> n_Redis
+    n_Feed_Svc_x_N_2 --> n_Redis
+    n_Feed_Svc_x_N_1 --> n_Read_replica
+    n_Feed_Svc_x_N_2 --> n_Read_replica
+    n_DB --> n_Read_replica
+    n_DB --> n_Archive
+    n_Worker --> n_DB
+    n_Worker --> n_Redis
+    n_Worker --> n_Elasticsearch
+    n_Kafka --> n_Worker
+    n_Fetcher --> n_Kafka
+    n_Sources --> n_Fetcher

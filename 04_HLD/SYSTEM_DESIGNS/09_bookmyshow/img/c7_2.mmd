@@ -1,0 +1,30 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_LB["LB"]
+    n_App_x_N_1["App 1"]
+    n_App_x_N_2["App 2"]
+    n_Payment_Svc["Payment Svc (bookingId)"]
+    n_Redis_Cluster["Redis Cluster"]
+    n_Read_replica["Read replica"]
+    n_Kafka["Kafka"]
+    n_Booking_worker["Booking worker"]
+    n_SQL_primary["SQL primary"]
+    n_Sweeper_job["Sweeper job"]
+    n_USER --> n_LB
+    n_LB --> n_App_x_N_1
+    n_LB --> n_App_x_N_2
+    n_App_x_N_1 --> n_Payment_Svc
+    n_App_x_N_2 --> n_Payment_Svc
+    n_App_x_N_1 --> n_Redis_Cluster
+    n_App_x_N_2 --> n_Redis_Cluster
+    n_App_x_N_1 --> n_Read_replica
+    n_App_x_N_2 --> n_Read_replica
+    n_App_x_N_1 -->|sirf badi sale| n_Kafka
+    n_App_x_N_2 -->|sirf badi sale| n_Kafka
+    n_Kafka --> n_Booking_worker
+    n_Booking_worker --> n_SQL_primary
+    n_Sweeper_job --> n_SQL_primary
+    n_App_x_N_1 --> n_SQL_primary
+    n_App_x_N_2 --> n_SQL_primary
+    n_SQL_primary --> n_Read_replica

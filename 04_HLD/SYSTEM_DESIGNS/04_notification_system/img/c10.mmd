@@ -1,0 +1,19 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_Admin["Admin"]
+    n_CAMP["Campaign Svc + DB<br/>1 crore ko offer<br/>-> 1000-1000 ke tukde: id > aakhri_id, har tukda Kafka me, dheemi line<br/>aakhri_id campaign row me, job gira to wahin se (batch + campaign row)<br/>worker gira -> wahi batch dobara, bheje hue skip<br/>galat offer chala -> CANCELLED, worker har tukde se pehle dekhe"]
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka high / medium / low"]
+    n_Notification_Svc["Notification Svc"]
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
+    n_RDLQ["Redis (key + bucket) + DLQ"]
+    n_WH["Webhook Svc + Tracking DB"]
+    n_Admin --> n_CAMP
+    n_CAMP --> n_Kafka
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_RDLQ
+    n_LINES --> n_WH
+    style n_Admin fill:#f9a825,color:#000
+    style n_CAMP fill:#f9a825,color:#000

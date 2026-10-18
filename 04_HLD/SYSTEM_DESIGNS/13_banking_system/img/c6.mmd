@@ -1,0 +1,12 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_SVC["Banking Svc (+ idempotency)"]
+    n_DB["SQL DB (+ ledger, outbox)"]
+    n_K["Kafka"]
+    n_REC["Reconciliation job<br/>balance kahan se aaye?<br/>-> khaata hi sach, balance column uska jod (cache), raat ko job dono milaye<br/>(reconciliation)<br/>balance padha -> column se, jodna dheema<br/>raat milaan -> khaate ka jod == column?<br/>farak mila -> alert + account roko, khaata jeete"]
+    n_USER --> n_SVC
+    n_SVC --> n_DB
+    n_DB --> n_K
+    n_REC --> n_DB
+    style n_REC fill:#f9a825,color:#000

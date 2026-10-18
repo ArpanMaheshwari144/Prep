@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_S3["S3<br/>200 MB video<br/>-> app video seedha S3 me daale, 10 min ke paas se (presigned URL)<br/>message me sirf S3 key + thumbnail, group me ek upload, 500 ko wahi key<br/>(presigned URL)<br/>net gaya -> bacha hissa hi dobara (multipart)<br/>Ravi ne khola -> key se naya chhota URL"]
+    n_U["USER"]
+    n_LB["LB"]
+    n_CS["Chat Server x200 (+ idempotency)"]
+    n_R["Redis (map, seq)"]
+    n_CA["Cassandra (chat_id)"]
+    n_P["Push (Google / Apple)"]
+    n_NS["Nishaan store"]
+    n_U --> n_S3
+    n_U --> n_LB
+    n_LB --> n_CS
+    n_CS --> n_R
+    n_CS --> n_CA
+    n_CS --> n_P
+    n_CS --> n_NS
+    style n_S3 fill:#f9a825,color:#000

@@ -1,0 +1,20 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_CLIENT["CLIENT"]
+    n_S3["S3"]
+    n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
+    n_RC["Redis + Read replica<br/>har 2 sec haal, DB ghira<br/>-> GET /status: Redis me? wahin se, nahi -> read replica, phir Redis me rakho<br/>(cache + replica)<br/>worker ne DONE likha -> DB + Redis saath<br/>har 2 sec poochna -> gap badhao 2s, 4s, 8s (backoff)<br/>Redis gira -> replica pe seedha + rate limit"]
+    n_DB["DB (haal)"]
+    n_Sweeper_job["Sweeper job"]
+    n_CHAIN["Kafka -> Worker -> Validator"]
+    n_CLIENT --> n_S3
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_RC
+    n_Upload_Svc --> n_DB
+    n_DB --> n_RC
+    n_Upload_Svc --> n_CHAIN
+    n_Sweeper_job --> n_DB
+    n_Sweeper_job --> n_CHAIN
+    n_CHAIN --> n_DB
+    n_CHAIN --> n_RC
+    style n_RC fill:#f9a825,color:#000

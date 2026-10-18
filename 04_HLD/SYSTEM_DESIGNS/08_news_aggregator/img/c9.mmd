@@ -1,0 +1,19 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_LF["LB -> Feed Svc x N"]
+    n_RES["Redis + Elasticsearch"]
+    n_Read_replica["Read replica"]
+    n_DB["DB<br/>ek machine nahi jhelti<br/>-> hash(article_id) se tukde, har tukda alag machine, likhai barabar<br/>(shard by article_id)<br/>taazi 20 -> Redis, miss pe har tukde se thoda (scatter-gather)<br/>shard badhaya -> sirf naye hisse ka data hile (consistent hashing)<br/>do shard, wahi khabar -> dedupe saanjhe Bloom / Redis se"]
+    n_Archive["Archive"]
+    n_KW["Kafka -> Worker"]
+    n_SF["Sources -> Fetcher"]
+    n_USER --> n_LF
+    n_LF --> n_RES
+    n_LF --> n_Read_replica
+    n_DB --> n_Read_replica
+    n_DB --> n_Archive
+    n_KW --> n_DB
+    n_KW --> n_RES
+    n_SF --> n_KW
+    style n_DB fill:#f9a825,color:#000

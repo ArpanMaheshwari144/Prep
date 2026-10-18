@@ -1,0 +1,8 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_P["Producer<br/>do badlaav do partition me<br/>-> Kafka kram sirf EK partition ke andar deta<br/>hash(userId) % 10 -> Ravi hamesha P7, dono badlaav kram se<br/>(key = userId)<br/>10 se 20 tukde -> key ka tukda badla, kram thoda toota<br/>key nahi di -> koi kram nahi (round-robin)<br/>producer retry -> message do baar nahi (idempotent producer)<br/>ek tukda garam -> key me bucket jodo (hot partition)"]
+    n_B["Brokers A / B / C"]
+    n_C["Consumer"]
+    n_P --> n_B
+    n_B --> n_C
+    style n_P fill:#f9a825,color:#000

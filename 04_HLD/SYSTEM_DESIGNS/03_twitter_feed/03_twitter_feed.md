@@ -92,20 +92,6 @@ Feed = jinko follow karta unke tweet nikaalo, time se sort karo, upar ke 50 do.
 ```
 ![cdabba](img/cdabba.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_DB
-```
-
-</details>
-
 
 #### 1 Subah app khola, feed ghoomti rahi (har baar 200 logon ka jod)
 ```
@@ -113,27 +99,6 @@ DIKKAT     Subah 8 baje maine app khola. Main 200 ko follow karta -> 200 logon k
            upar ke 50. Har user ke saath, har baar app kholne pe 200 ka jod -> feed dheemi.
 ```
 ![c1](img/c1.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_Fanout["Fanout<br/>har khulne pe 200 ka jod<br/>-> tweet hote hi har follower ke inbox me tweet_id daalo<br/>inbox = Redis sorted set (score = time), app khola = bas inbox padho (push / fanout)<br/>id se poora tweet -> 50 id ek saath laao (batch)<br/>unfollow kiya -> padhte waqt follow list se chhaanto"]
-    n_Redis_inbox["Redis inbox"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Fanout
-    n_App --> n_DB
-    n_Fanout --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-    style n_Fanout fill:#f9a825,color:#000
-    style n_Redis_inbox fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       DB pe index / read replica: thoda tez, par har khulne pe 200 ka jod wahi ka wahi.
@@ -155,29 +120,6 @@ DIKKAT     9 baje maine tweet kiya (5,000 follower) -> usi request me 5,000 inbo
            timeout, "fail" dikha, par tweet DB me ban chuka tha.
 ```
 ![c2](img/c2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_Kafka["Kafka<br/>5,000 inbox usi request me<br/>-> tweet DB me + khabar Kafka me, user ko turant ho gaya<br/>workers peeche inbox bharein, key = author_id se kram (Kafka + fanout)<br/>DB save, Kafka fail -> outbox / retry<br/>apni hi feed -> apna tweet seedha, baaki peeche<br/>worker 60/100 pe gira -> commit nahi, khabar phir aayegi<br/>wahi 60 dobara -> sorted set me tweet ek hi"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_DB
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-    style n_Kafka fill:#f9a825,color:#000
-    style n_Fanout_workers fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       App me peeche ek thread: App crash = thread ka kaam gaya; Kafka disk pe, dobara padh sakte.
@@ -208,28 +150,6 @@ DIKKAT     11 baje Bieber (10 crore follower) ne tweet kiya -> fanout ko 10 cror
 ```
 ![c3](img/c3.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App<br/>+ push + pull merge"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers<br/>Bieber = 10 crore inbox<br/>-> 10,000 se kam follower = push, zyada (celeb) = pull, inbox me nahi<br/>feed khulte celeb ke naye tweet laao, inbox ke saath milao + sort (hybrid)<br/>50 celeb follow -> celeb tweet alag, pull sasta"]
-    n_Redis_inbox["Redis inbox"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_DB
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-    style n_Fanout_workers fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       sabke liye pull: har feed khulna phir 200 ka jod, mehnga.
 ```
@@ -258,30 +178,6 @@ DIKKAT     Dopahar ka match 4:30 pe khatam, Virat ne tweet kiya. Virat pull pe -
 ```
 ![c4](img/c4.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache<br/>Virat ka tweet, DB gira<br/>-> celeb ke garam tweet ~1 ghanta RAM me, 100 me 95 read wahin se<br/>miss pe sirf EK request DB, baaki ruk ke wahi jawab (hot-tweet cache + lock)<br/>ek key pe bheed -> key ki kai copy + App memory 1-2 sec<br/>Virat ne edit / delete -> cache se key hatao"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_Hot_tweet_cache
-    n_App --> n_DB
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-    style n_Hot_tweet_cache fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       DB ki copies badha do: wo bhi disk se (ms), ek garam hisse ki copies crore read nahi jhelti.
 ```
@@ -300,30 +196,6 @@ DIKKAT     Shaam 5 baje Redis alert: har inbox me saare id, kabhi kaate nahi, so
            -> RAM bhar rahi.
 ```
 ![c5](img/c5.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox<br/>50 crore inbox, RAM bhari<br/>-> inbox me sirf aakhri 800 tweet (ZREMRANGEBYRANK), ~60 KB<br/>sirf mahine me aaye zinda log ka inbox, baaki hatao (trim)<br/>soya user lauta -> pull se banao, phir bharo<br/>800 ke aage scroll -> store (DB) se<br/>Redis gira -> copy (replica)<br/>copy bhi gayi -> kuch request mana, dheere bharo"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_DB["DB"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_Hot_tweet_cache
-    n_App --> n_DB
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-    style n_Redis_inbox fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       Redis me machine jodte jao: soye 40 crore ka inbox bhi RAM khaata, kharcha badhta, dikkat wahi.
@@ -352,30 +224,6 @@ DIKKAT     6 baje DB alert: har second ~5,000 naye tweet, 5 saal me ~0.5 PB. Ek 
 ```
 ![c6](img/c6.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_Cassandra["Cassandra<br/>5,000 / sec, 0.5 PB<br/>-> mere saare tweet ek machine pe, andar naya pehle (shard by user_id)<br/>likhna = commit log ke aakhir + RAM, isliye tez (Cassandra)<br/>meri machine giri -> 3 copy, 2 likho 2 padho (quorum)<br/>famous, machine garam -> garam tweet alag RAM cache<br/>famous ke bahut tweet -> key me mahina jodo"]
-    n_USER --> n_App
-    n_App --> n_Kafka
-    n_App --> n_Hot_tweet_cache
-    n_App --> n_Cassandra
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-    style n_Cassandra fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; join / transaction chahiye nahi.
 ```
@@ -399,32 +247,6 @@ DIKKAT     Main Bangalore me, saara data aur App US me. Har feed refresh pe requ
 ```
 ![c7](img/c7.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Route_53["Route 53<br/>Bangalore se US, 300 ms<br/>-> har region me data ki copy, user apne paas wale region se padhe<br/>Route 53 paas ka region bataye (multi-region)<br/>US celeb ka tweet -> garam tweet India cache me bhi<br/>poora region gira -> zinda region, feed thodi purani<br/>dono region me likha -> baad wala jeete (last write wins)"]
-    n_App["App"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_Cassandra["Cassandra"]
-    n_USER --> n_Route_53
-    n_Route_53 --> n_App
-    n_App --> n_Kafka
-    n_App --> n_Hot_tweet_cache
-    n_App --> n_Cassandra
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_App --> n_Redis_inbox
-    style n_Route_53 fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 AAGE POOCHEGA:
   NIYAM: data user ke paas wale region me; doosre region ki copy thodi peeche -> region gira to feed thodi
@@ -444,33 +266,6 @@ DIKKAT     Raat ko har region me ek hi App machine thi. India wali machine giri 
 ```
 ![c8](img/c8.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_ALB["ALB<br/>akeli App giri, sab band<br/>-> kai App, LB baante, App kuch yaad nahi rakhta<br/>koi bhi App koi bhi request le (stateless x N)<br/>machine giri -> ~10 sec health check, chup = bahar<br/>naya code -> ek-ek karke badlo (rolling)"]
-    n_App_xN["App x N"]
-    n_FAN["Kafka + Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_Cassandra["Cassandra"]
-    n_USER --> n_Route_53
-    n_Route_53 --> n_ALB
-    n_ALB --> n_App_xN
-    n_App_xN --> n_FAN
-    n_App_xN --> n_Hot_tweet_cache
-    n_App_xN --> n_Cassandra
-    n_FAN --> n_Redis_inbox
-    n_App_xN --> n_Redis_inbox
-    style n_ALB fill:#f9a825,color:#000
-    style n_App_xN fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 AAGE POOCHEGA:
   NIYAM: machine kuch yaad nahi rakhti (sab Redis / DB me) -> koi bhi gire, jude, badle, user ko farak nahi.
@@ -488,36 +283,6 @@ DIKKAT     Match ke highlights aaye, crore log feed scroll kar rahe. Wahi App ma
 ```
 ![c9](img/c9.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_EDGE["Route 53 + ALB"]
-    n_Tweet_Svc["Tweet Svc<br/>padhne ki bheed, likhna dheema<br/>-> likhne (Tweet Svc) aur padhne (Timeline Svc) ki alag service<br/>jahan bheed wahi badhao (alag service)<br/>follow list -> Redis me rakhi, har feed pe chahiye"]
-    n_Cassandra["Cassandra"]
-    n_FAN["Kafka + Fanout workers"]
-    n_RI["Redis (inbox + hot tweet)"]
-    n_Timeline_Svc["Timeline Svc"]
-    n_UG["User Svc + Follow store"]
-    n_USER --> n_EDGE
-    n_EDGE --> n_Tweet_Svc
-    n_EDGE --> n_Timeline_Svc
-    n_EDGE --> n_UG
-    n_Tweet_Svc --> n_Cassandra
-    n_Tweet_Svc --> n_FAN
-    n_FAN --> n_RI
-    n_Timeline_Svc --> n_RI
-    n_Timeline_Svc --> n_Cassandra
-    n_FAN --> n_UG
-    style n_Tweet_Svc fill:#f9a825,color:#000
-    style n_Timeline_Svc fill:#f9a825,color:#000
-    style n_UG fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 AAGE POOCHEGA:
   NIYAM: har kaam alag service -> jiski bheed badhi sirf wahi badhao; ek ka dheema doosre ko nahi rokta.
@@ -534,34 +299,6 @@ DIKKAT     Maine match ki 50 MB video daali. Har dekhne wala use US ke server se
            ko buffering, aur har baar poori video hamare server se, bandwidth ka bill bhaari.
 ```
 ![c10](img/c10.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_EDGE["Route 53 + ALB"]
-    n_CDN["CDN<br/>video sabko dheemi, mehngi<br/>-> video S3 me, CDN duniya bhar me copy rakhe<br/>user ko paas wale CDN se, nahi mila to S3 se laaye (CDN)<br/>photo hatayi, CDN pe dikhe -> CDN se hatao (invalidation)<br/>private photo -> thodi der wala link (signed URL)"]
-    n_SVC["Tweet / Timeline / User Svc + Follow store"]
-    n_Cassandra["Cassandra"]
-    n_FAN["Kafka + Fanout workers"]
-    n_RI["Redis (inbox + hot tweet)"]
-    n_S3["S3 media"]
-    n_USER --> n_EDGE
-    n_EDGE --> n_SVC
-    n_SVC --> n_Cassandra
-    n_SVC --> n_FAN
-    n_FAN --> n_RI
-    n_SVC --> n_RI
-    n_FAN --> n_SVC
-    n_USER --> n_CDN
-    n_CDN --> n_S3
-    style n_CDN fill:#f9a825,color:#000
-    style n_S3 fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 AAGE POOCHEGA:
@@ -599,45 +336,6 @@ JAWAB:    Likhna: tweet Cassandra me save, aur 'naya tweet' Kafka me. Worker aam
           Aage: ML se ranking, trending, search.
 ```
 ![c10_2](img/c10_2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Route_53["Route 53"]
-    n_CDN["CDN"]
-    n_ALB["ALB"]
-    n_Tweet_Svc["Tweet Svc"]
-    n_Cassandra["Cassandra"]
-    n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox"]
-    n_Timeline_Svc["Timeline Svc"]
-    n_Hot_tweet_cache["Hot-tweet cache"]
-    n_User_Svc["User Svc"]
-    n_Follow_store["Follow store"]
-    n_S3["S3 media"]
-    n_USER --> n_Route_53
-    n_ALB --> n_Tweet_Svc
-    n_ALB --> n_Timeline_Svc
-    n_ALB --> n_User_Svc
-    n_Tweet_Svc --> n_Cassandra
-    n_Tweet_Svc --> n_Kafka
-    n_Kafka --> n_Fanout_workers
-    n_Fanout_workers --> n_Redis_inbox
-    n_Timeline_Svc --> n_Redis_inbox
-    n_Timeline_Svc --> n_Hot_tweet_cache
-    n_Timeline_Svc --> n_Cassandra
-    n_User_Svc --> n_Follow_store
-    n_Fanout_workers --> n_Follow_store
-    n_Route_53 --> n_ALB
-    n_USER --> n_CDN
-    n_CDN --> n_S3
-```
-
-</details>
 
 
 ---

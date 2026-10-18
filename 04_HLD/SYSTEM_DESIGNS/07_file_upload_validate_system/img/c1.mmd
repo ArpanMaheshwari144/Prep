@@ -1,0 +1,19 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_CLIENT["CLIENT"]
+    n_Upload_Svc["Upload Svc"]
+    n_DB["DB (haal)"]
+    n_S3["S3"]
+    n_Kafka["Kafka<br/>3 sec ruka, thread atke<br/>-> upload hote hi tracking id (T-101) do, khabar queue me<br/>worker Validator chalaye, DB me DONE / FAILED, user id se haal dekhe<br/>(async + tracking id)<br/>worker beech me mara -> khabar dobara milti (offset baad me)<br/>wahi khabar dobara -> DONE hai to skip (idempotent)<br/>Validator 1 ghanta band -> khabar line me padi, offset aage nahi<br/>us ghante call -> 3-5 fail pe band, phir test call (circuit breaker)"]
+    n_Worker["Worker"]
+    n_Validator["Validator"]
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_DB
+    n_Upload_Svc --> n_S3
+    n_Upload_Svc --> n_Kafka
+    n_Kafka --> n_Worker
+    n_Worker --> n_Validator
+    n_Worker --> n_DB
+    style n_Kafka fill:#f9a825,color:#000
+    style n_Worker fill:#f9a825,color:#000
+    style n_DB fill:#f9a825,color:#000

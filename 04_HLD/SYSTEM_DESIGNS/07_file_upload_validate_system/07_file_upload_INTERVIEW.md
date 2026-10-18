@@ -70,22 +70,6 @@ jaanch wale (Validator) ko call kare (2-3 sec), jawab wapas.
 ```
 ![cdabba](img/cdabba.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_CLIENT["CLIENT"]
-    n_Upload_Svc["Upload Svc"]
-    n_Validator["Validator"]
-    n_S3["S3"]
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_Validator
-    n_Upload_Svc --> n_S3
-```
-
-</details>
-
 
 #### 1 Maine report.pdf daali, 3 second ghoomta screen dekhta raha
 ```
@@ -93,32 +77,6 @@ DIKKAT     31 March, maine report.pdf daali. Server Validator ke 3 sec jawab tak
            Aakhri ghante ~200 upload / sec x 3 sec = ~600 thread atke, Tomcat ke 200 khatam.
 ```
 ![c1](img/c1.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_CLIENT["CLIENT"]
-    n_Upload_Svc["Upload Svc"]
-    n_DB["DB (haal)"]
-    n_S3["S3"]
-    n_Kafka["Kafka<br/>3 sec ruka, thread atke<br/>-> upload hote hi tracking id (T-101) do, khabar queue me<br/>worker Validator chalaye, DB me DONE / FAILED, user id se haal dekhe<br/>(async + tracking id)<br/>worker beech me mara -> khabar dobara milti (offset baad me)<br/>wahi khabar dobara -> DONE hai to skip (idempotent)<br/>Validator 1 ghanta band -> khabar line me padi, offset aage nahi<br/>us ghante call -> 3-5 fail pe band, phir test call (circuit breaker)"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_S3
-    n_Upload_Svc --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    style n_Kafka fill:#f9a825,color:#000
-    style n_Worker fill:#f9a825,color:#000
-    style n_DB fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       thread pool 200 se 2000: jaanch tab bhi 3 sec, bas memory khatam hone tak der.
@@ -143,30 +101,6 @@ DIKKAT     Report ke baad maine 5 GB video daali: client -> hamara server -> S3.
            thread minuton atka, sirf bytes aage badhane ko server badhane pade.
 ```
 ![c2](img/c2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_CLIENT["CLIENT"]
-    n_S3["S3<br/>5 GB server se guzri<br/>-> server sirf 10 min ka signed URL + id (T-102) de, bytes seedha S3 me<br/>phir app /complete T-102 bole, server queue me daale<br/>(presigned URL)<br/>had 5 GB, aaye 50 GB -> S3 khud reject (presigned URL me had)<br/>/complete nahi aaya -> S3 event se queue, client pe bharosa nahi"]
-    n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
-    n_DB["DB (haal)"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    style n_S3 fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       S3 ki access key app me daal do: app se key nikli = poora bucket khula.
@@ -194,30 +128,6 @@ AAGE POOCHEGA:
 DIKKAT     Usi video ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB shuru se?
 ```
 ![c3](img/c3.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_CLIENT["CLIENT"]
-    n_S3["S3 multipart<br/>90% pe wifi gaya<br/>-> file tukdon me, har tukda apne signed URL pe<br/>S3 har tukde ki rasid (ETag) de, pahunche tukde bache rehte<br/>(multipart)<br/>wifi gaya -> sirf bache tukde bhejo, shuru se nahi<br/>COMPLETE kabhi nahi -> kuch din baad S3 hata de (lifecycle abort)"]
-    n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
-    n_DB["DB (haal)"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    style n_S3 fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       server ka timeout badha do: wifi gaya to connection hi toota, timeout kuch nahi bachata.
@@ -247,33 +157,6 @@ DIKKAT     Ek aur file chadhte waqt meri app crash. "complete" nahi aaya, S3 ka 
 ```
 ![c4](img/c4.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
-    n_DB["DB (haal)"]
-    n_Sweeper_job["Sweeper job<br/>complete aaya hi nahi<br/>-> har kuch min: UPLOADING / VALIDATING 10 min se na badla = atka<br/>S3 me bytes? haan = queue me dobara, nahi = FAILED<br/>(sweeper job)<br/>do machine pe -> ek hi chale (lock / leader)"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Kafka
-    n_Sweeper_job --> n_DB
-    n_Sweeper_job --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    style n_Sweeper_job fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       sirf S3 lifecycle niyam: din me ek baar chalta aur DB nahi dekhta.
 ```
@@ -296,33 +179,6 @@ DIKKAT     Shaam tak 10,000 log ka "Meri files" page khula, har 2 sec saari file
            -> 5,000 sawaal / sec DB pe. Likhai 1-2 / sec thi, padhai ne DB ghera.
 ```
 ![c5](img/c5.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
-    n_RC["Redis + Read replica<br/>har 2 sec haal, DB ghira<br/>-> GET /status: Redis me? wahin se, nahi -> read replica, phir Redis me rakho<br/>(cache + replica)<br/>worker ne DONE likha -> DB + Redis saath<br/>har 2 sec poochna -> gap badhao 2s, 4s, 8s (backoff)<br/>Redis gira -> replica pe seedha + rate limit"]
-    n_DB["DB (haal)"]
-    n_Sweeper_job["Sweeper job"]
-    n_CHAIN["Kafka -> Worker -> Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_RC
-    n_Upload_Svc --> n_DB
-    n_DB --> n_RC
-    n_Upload_Svc --> n_CHAIN
-    n_Sweeper_job --> n_DB
-    n_Sweeper_job --> n_CHAIN
-    n_CHAIN --> n_DB
-    n_CHAIN --> n_RC
-    style n_RC fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       DB me index daalo: sawaal tez, par 5,000 / sec phir bhi primary pe.
@@ -348,35 +204,6 @@ DIKKAT     Deadline wale din maine ek file nahi, poora folder daala: 1000 file. 
 ```
 ![c6](img/c6.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
-    n_Redis["Redis"]
-    n_DB["DB<br/>1000 file ka folder<br/>-> folder ka ek bada id, har file ka chhota id jo folder se juda<br/>(parent + child)<br/>ek child aaya -> folder pe ginti +1 (done_count)<br/>koi FAILED -> folder PARTIAL, sirf fail wali dobara"]
-    n_Read_replica["Read replica"]
-    n_Sweeper_job["Sweeper job"]
-    n_CHAIN["Kafka -> Worker -> Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_Upload_Svc --> n_CHAIN
-    n_Sweeper_job --> n_DB
-    n_Sweeper_job --> n_CHAIN
-    n_CHAIN --> n_DB
-    n_CHAIN --> n_Redis
-    style n_DB fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 TASVEER: folder = bachchon ka jod
   P-1 (folder, 1000 file)
@@ -401,36 +228,6 @@ DIKKAT     Maine support chat me screenshot bheja, usme T-101 dikh raha tha. Rav
 ```
 ![c7](img/c7.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_API_Gateway_LB["API Gateway / LB<br/>(authn: kaun ho)"]
-    n_Upload_Svc["Upload Svc<br/>Ravi ne meri file li<br/>-> service me check: file ka owner = maangne wala? nahi to 403, har haal / download<br/>kaun ho (authn) gateway / JWT batata, kiska hai (owner) service<br/>(owner check, 403)<br/>id to random tha -> phir bhi check, id leak hoti<br/>admin maange -> owner ya admin role, warna 403"]
-    n_RC["Redis + Read replica (haal)"]
-    n_DB["DB (haal + owner)"]
-    n_Sweeper_job["Sweeper job"]
-    n_CHAIN["Kafka -> Worker -> Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_API_Gateway_LB
-    n_API_Gateway_LB --> n_Upload_Svc
-    n_Upload_Svc --> n_RC
-    n_Upload_Svc --> n_DB
-    n_DB --> n_RC
-    n_Upload_Svc --> n_CHAIN
-    n_Sweeper_job --> n_DB
-    n_Sweeper_job --> n_CHAIN
-    n_CHAIN --> n_DB
-    n_CHAIN --> n_RC
-    style n_API_Gateway_LB fill:#f9a825,color:#000
-    style n_Upload_Svc fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       gateway pe hi check: use pata hi nahi T-101 kiski hai.
 ```
@@ -452,35 +249,6 @@ DIKKAT     Mujhe S3 ka pakka link mila tha. Maine dost ko WhatsApp pe bheja, dos
 ```
 ![c8](img/c8.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_CLIENT["CLIENT"]
-    n_S3["S3<br/>link WhatsApp pe ghooma<br/>-> DB me sirf S3 key, download pe maalik check, phir 5 min ka naya link<br/>har baar naya, purana khud expire<br/>(signed GET)<br/>link group me gaya -> 1 ghante baad expire, nahi khula"]
-    n_API_Gateway_LB["API Gateway / LB"]
-    n_Upload_Svc["Upload Svc<br/>+ owner check"]
-    n_RC["Redis + Read replica (haal)"]
-    n_DB["DB (haal + owner + s3_key)"]
-    n_Sweeper_job["Sweeper job"]
-    n_CHAIN["Kafka -> Worker -> Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_API_Gateway_LB
-    n_API_Gateway_LB --> n_Upload_Svc
-    n_Upload_Svc --> n_RC
-    n_Upload_Svc --> n_DB
-    n_DB --> n_RC
-    n_Upload_Svc --> n_CHAIN
-    n_Sweeper_job --> n_DB
-    n_Sweeper_job --> n_CHAIN
-    n_CHAIN --> n_DB
-    n_CHAIN --> n_RC
-    style n_S3 fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       link me lamba random naam (koi andaza na lagaye): ek baar bahar gaya to hamesha chalta.
 ```
@@ -501,36 +269,6 @@ DIKKAT     Raat ko kisi ne virus.exe ka naam report.pdf kiya, type "application/
            Naam aur type dono client ne bheje, jo jhooth bol sakta.
 ```
 ![c9](img/c9.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_GU["Gateway + Upload Svc"]
-    n_RC["Redis + Read replica (haal)"]
-    n_DB["DB (haal + owner + s3_key)"]
-    n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker<br/>naam pdf, andar exe<br/>-> naam / type client bhejta (jhooth ho sakta), file ke pehle byte asli type batate<br/>worker S3 se sirf pehle byte padhe (range GET): PDF = %PDF, EXE = MZ<br/>(magic bytes)<br/>naam .pdf, andar EXE -> pehle bytes dekho, reject<br/>andar virus -> virus scan bhi"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_GU
-    n_GU --> n_RC
-    n_GU --> n_DB
-    n_DB --> n_RC
-    n_GU --> n_Kafka
-    n_Sweeper_job --> n_DB
-    n_Sweeper_job --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_DB
-    n_Worker --> n_RC
-    n_Worker --> n_S3
-    style n_Worker fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       type ke liye poori file padho: 5 GB S3 se laana; pehle kuch byte kaafi.
@@ -568,41 +306,6 @@ JAWAB:    Server sirf paas deta, file seedha S3 me (badi ho to tukdon me).
           Aage: fail pe dobara koshish, download ke liye CDN.
 ```
 ![c9_2](img/c9_2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_CLIENT["CLIENT"]
-    n_S3["S3"]
-    n_API_Gateway_LB["API Gateway / LB"]
-    n_Upload_Svc["Upload Svc"]
-    n_Redis["Redis"]
-    n_DB["DB"]
-    n_Read_replica["Read replica"]
-    n_Sweeper_job["Sweeper job"]
-    n_Kafka["Kafka"]
-    n_Worker["Worker"]
-    n_Validator["Validator"]
-    n_CLIENT --> n_S3
-    n_CLIENT --> n_API_Gateway_LB
-    n_API_Gateway_LB --> n_Upload_Svc
-    n_Upload_Svc --> n_Redis
-    n_Upload_Svc --> n_DB
-    n_Upload_Svc --> n_Read_replica
-    n_DB --> n_Read_replica
-    n_Upload_Svc --> n_Kafka
-    n_Sweeper_job --> n_DB
-    n_Sweeper_job --> n_Kafka
-    n_Kafka --> n_Worker
-    n_Worker --> n_Validator
-    n_Worker --> n_DB
-    n_Worker --> n_Redis
-    n_Worker --> n_S3
-```
-
-</details>
 
 
 ---

@@ -1,0 +1,19 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_LB["LB<br/>salary day, ek machine bhari<br/>-> kai Banking Svc machine, LB har request kisi bhi zinda machine ko de<br/>machine kuch yaad nahi rakhti, sach DB me<br/>(LB + stateless)<br/>ek machine giri -> LB list se hataye (health check)<br/>adhoora transfer -> app wahi id se dobara<br/>LB khud akela -> nahi, do zone me do LB"]
+    n_S1["Banking Svc 1"]
+    n_S2["Banking Svc 2"]
+    n_DB["SQL DB (+ ledger, outbox)"]
+    n_K["Kafka"]
+    n_REC["Reconciliation job"]
+    n_USER --> n_LB
+    n_LB --> n_S1
+    n_LB --> n_S2
+    n_S1 --> n_DB
+    n_S2 --> n_DB
+    n_DB --> n_K
+    n_REC --> n_DB
+    style n_LB fill:#f9a825,color:#000
+    style n_S1 fill:#f9a825,color:#000
+    style n_S2 fill:#f9a825,color:#000

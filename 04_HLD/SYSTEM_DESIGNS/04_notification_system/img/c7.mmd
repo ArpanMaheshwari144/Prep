@@ -1,0 +1,14 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka high / medium / low<br/>OTP offer ke peeche<br/>-> Kafka me OTP ki apni tez line (high), offer low, beech wali medium<br/>har line ke apne worker, OTP kabhi offer ke peeche nahi (priority)<br/>OTP line khaali -> uske worker beech wali padhein"]
+    n_Notification_Svc["Notification Svc"]
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
+    n_Redis["Redis (key)"]
+    n_DLQ["DLQ"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_Redis
+    n_LINES --> n_DLQ
+    style n_Kafka fill:#f9a825,color:#000

@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc + SAGA"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["SQL DB + Ledger table<br/>kal 2200, subah 1100 kaise<br/>-> har paisa do line me (DEBIT + CREDIT, jod 0), sirf INSERT, mitao nahi<br/>usi transaction me jisme paisa hila, balance column bhi wahin badle<br/>(ledger, double-entry)<br/>2200 se 1100 kaise -> raat ki line padho, line-line dikhta<br/>galat entry / refund -> mitao nahi, nayi ulti line<br/>raat ka jod != balance -> alert"]
+    n_Reconciliation_job["Reconciliation job"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc
+    style n_DB fill:#f9a825,color:#000

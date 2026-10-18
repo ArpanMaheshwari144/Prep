@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_EDGE["Route 53 + LB x 2"]
+    n_API_Gateway["API Gateway<br/>spammer 5,000 link / sec<br/>-> gateway pe har user / IP ki ginti + login, had paar = 429 (rate limit)<br/>aage WAF: pehchaane hamle wahin rok (WAF)<br/>kai gateway -> ginti ek jagah (shared Redis)<br/>had paar -> 429, asli users bache<br/>bot naya IP -> ginti API key pe<br/>chhota karne se pehle -> lamba URL check (virus / dhokha)"]
+    n_App_xN["App x N"]
+    n_Counter["Counter"]
+    n_ANA["Analytics (Kafka + DLQ)"]
+    n_Redis["Redis"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_EDGE
+    n_EDGE --> n_API_Gateway
+    n_API_Gateway --> n_App_xN
+    n_App_xN --> n_Counter
+    n_App_xN --> n_ANA
+    n_App_xN --> n_Redis
+    n_App_xN --> n_Cassandra
+    style n_API_Gateway fill:#f9a825,color:#000

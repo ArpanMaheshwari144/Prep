@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_Idempotency_store["Idempotency store"]
+    n_PSP["PSP"]
+    n_DB["SQL DB"]
+    n_Reconciliation_job["Reconciliation job<br/>call ke baad crash<br/>-> call se pehle PENDING (pata nahi) likho, PSP baad me khud bataye (webhook)<br/>har kuch min purane PENDING PSP se poochho + raat PSP ki file se milaan<br/>(PENDING + webhook + reconciliation)<br/>webhook do baar -> SUCCESS sirf ek baar<br/>nakli webhook -> signature jaancho + apne PENDING se milao"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_Idempotency_store
+    n_Payment_Svc --> n_PSP
+    n_Payment_Svc --> n_DB
+    n_Reconciliation_job --> n_DB
+    n_Reconciliation_job --> n_PSP
+    n_PSP -.->|webhook| n_Payment_Svc
+    style n_Reconciliation_job fill:#f9a825,color:#000

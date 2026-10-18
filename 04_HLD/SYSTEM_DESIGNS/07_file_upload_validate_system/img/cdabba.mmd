@@ -1,0 +1,9 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_CLIENT["CLIENT"]
+    n_Upload_Svc["Upload Svc"]
+    n_Validator["Validator"]
+    n_S3["S3"]
+    n_CLIENT --> n_Upload_Svc
+    n_Upload_Svc --> n_Validator
+    n_Upload_Svc --> n_S3

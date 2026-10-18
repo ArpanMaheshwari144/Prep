@@ -1,0 +1,19 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Feed_Svc_xN["Feed Svc x N"]
+    n_Redis["Redis<br/>sirf tech + sports<br/>-> har category ki ek list (feed:tech, feed:sports)<br/>mere liye dono ke top 20 time se milao (ZUNIONSTORE), 10 lakh ki jagah ~20 feed<br/>(category feed)<br/>ek khabar 2 category -> dono list, id se dedupe"]
+    n_Read_replica["Read replica"]
+    n_DB["DB"]
+    n_KW["Kafka -> Worker"]
+    n_SF["Sources -> Fetcher"]
+    n_USER --> n_LB
+    n_LB --> n_Feed_Svc_xN
+    n_Feed_Svc_xN --> n_Redis
+    n_Feed_Svc_xN --> n_Read_replica
+    n_DB --> n_Read_replica
+    n_KW --> n_DB
+    n_KW --> n_Redis
+    n_SF --> n_KW
+    style n_Redis fill:#f9a825,color:#000

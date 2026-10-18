@@ -1,0 +1,20 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_LB["LB"]
+    n_Feed_Svc_xN["Feed Svc x N"]
+    n_Elasticsearch["Elasticsearch<br/>cricket = full scan<br/>-> har shabd ki list: kis-kis khabar me hai (cricket -> a12, a45, a90)<br/>search pe seedha list se id, phir text DB / cache se, poori table nahi<br/>(inverted index)<br/>cricket kohli -> dono list milao, score se sort<br/>crikcet likha -> 1-2 akshar farak chalta (fuzzy)<br/>ES aur DB alag -> DB sach, ES dobara bana lo (reindex)"]
+    n_Redis["Redis (feed + category)"]
+    n_DBR["DB + Read replica"]
+    n_KW["Kafka -> Worker"]
+    n_SF["Sources -> Fetcher"]
+    n_USER --> n_LB
+    n_LB --> n_Feed_Svc_xN
+    n_Feed_Svc_xN --> n_Elasticsearch
+    n_Feed_Svc_xN --> n_Redis
+    n_Feed_Svc_xN --> n_DBR
+    n_KW --> n_DBR
+    n_KW --> n_Redis
+    n_KW --> n_Elasticsearch
+    n_SF --> n_KW
+    style n_Elasticsearch fill:#f9a825,color:#000

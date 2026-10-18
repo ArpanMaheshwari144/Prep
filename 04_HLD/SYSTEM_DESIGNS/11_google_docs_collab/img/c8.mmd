@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER A / B"]
+    n_App["App (op bhejo)"]
+    n_LB["LB (docId se ring)"]
+    n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
+    n_PS["Redis pub/sub"]
+    n_SQL["SQL permissions"]
+    n_BUF["Redis buffer"]
+    n_CAS["Cassandra edit log + snapshot<br/>purana doc, 10 lakh op<br/>-> har 1000 op pe background job doc ki photo le (ek version tak)<br/>kholna = aakhri photo + uske baad ke op, shuru se nahi<br/>(snapshot)<br/>photo lete waqt likha -> photo ek version tak, kuch na ruke<br/>purana version maanga -> paas wali photo + baaki op"]
+    n_USER --> n_App
+    n_App --> n_LB
+    n_LB --> n_Conn_Server_xN
+    n_Conn_Server_xN --> n_PS
+    n_Conn_Server_xN --> n_BUF
+    n_Conn_Server_xN --> n_SQL
+    n_BUF --> n_CAS
+    style n_CAS fill:#f9a825,color:#000

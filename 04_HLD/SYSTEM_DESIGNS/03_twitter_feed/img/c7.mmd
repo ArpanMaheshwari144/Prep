@@ -1,0 +1,19 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_Route_53["Route 53<br/>Bangalore se US, 300 ms<br/>-> har region me data ki copy, user apne paas wale region se padhe<br/>Route 53 paas ka region bataye (multi-region)<br/>US celeb ka tweet -> garam tweet India cache me bhi<br/>poora region gira -> zinda region, feed thodi purani<br/>dono region me likha -> baad wala jeete (last write wins)"]
+    n_App["App"]
+    n_Kafka["Kafka"]
+    n_Fanout_workers["Fanout workers"]
+    n_Redis_inbox["Redis inbox"]
+    n_Hot_tweet_cache["Hot-tweet cache"]
+    n_Cassandra["Cassandra"]
+    n_USER --> n_Route_53
+    n_Route_53 --> n_App
+    n_App --> n_Kafka
+    n_App --> n_Hot_tweet_cache
+    n_App --> n_Cassandra
+    n_Kafka --> n_Fanout_workers
+    n_Fanout_workers --> n_Redis_inbox
+    n_App --> n_Redis_inbox
+    style n_Route_53 fill:#f9a825,color:#000

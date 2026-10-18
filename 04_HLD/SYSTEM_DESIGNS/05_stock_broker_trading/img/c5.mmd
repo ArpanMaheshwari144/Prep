@@ -1,0 +1,14 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_Order_Service["Order Service<br/>+ idempotency key check"]
+    n_Wallet["Wallet"]
+    n_Event_Log["Event Log (= wahi line)<br/>server gira, book gayab<br/>-> har order PEHLE log me number ke saath, PHIR book<br/>gira to log shuru se dobara chalao = wahi book (Kafka key = stock)<br/>(event log + replay)<br/>10:15 server gira -> log shuru se replay, wahi book<br/>replay me der -> standby log padhta, book taiyaar"]
+    n_Matching_Engine["Matching Engine"]
+    n_DB["DB"]
+    n_USER --> n_Order_Service
+    n_Order_Service --> n_Wallet
+    n_Wallet --> n_Event_Log
+    n_Event_Log --> n_Matching_Engine
+    n_Matching_Engine --> n_DB
+    style n_Event_Log fill:#f9a825,color:#000

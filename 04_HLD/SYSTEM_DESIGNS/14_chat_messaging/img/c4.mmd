@@ -1,0 +1,14 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_U["USER"]
+    n_LB["LB"]
+    n_CS["Chat Server x200"]
+    n_R["Redis (map)"]
+    n_CA["Cassandra<br/>roz 1.2 TB, ek DB nahi jhelta<br/>-> ek chat ke saare message ek partition me (key = chat_id), andar kram msg_ts<br/>padhna = is chat ke aakhri 50, ek jagah<br/>WHERE chat_id = ? AND msg_ts chhota ? ORDER BY msg_ts DESC LIMIT 50 (keyset)<br/>(Cassandra, shard by chat_id)<br/>ek group garam -> ek partition, speed pe had<br/>partition badi -> key me mahina jodo (chat_id, mahina)"]
+    n_P["Push (Google / Apple)"]
+    n_U --> n_LB
+    n_LB --> n_CS
+    n_CS --> n_R
+    n_CS --> n_CA
+    n_CS --> n_P
+    style n_CA fill:#f9a825,color:#000

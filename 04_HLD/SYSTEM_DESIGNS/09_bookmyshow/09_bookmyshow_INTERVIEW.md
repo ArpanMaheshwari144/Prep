@@ -79,20 +79,6 @@ seats table (seat_id, show_id, status). "Book" dabao -> status = 'booked'.
 ```
 ![cdabba](img/cdabba.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_SQL_DB["SQL DB"]
-    n_USER --> n_App
-    n_App --> n_SQL_DB
-```
-
-</details>
-
 
 #### 1 Maine aur Ravi ne ek hi second me A1 book ki, dono ko mil gayi
 ```
@@ -100,21 +86,6 @@ DIKKAT     10 baje badi movie ki booking khuli. Maine aur Ravi ne 10:00:01 pe "A
            App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
 ```
 ![c1](img/c1.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_SQL_DB["SQL DB<br/>A1 do ko bik gayi<br/>-> khaali hai ya nahi dekhna + book karna EK hi query me<br/>seat khaali ho tabhi UPDATE lage, warna 0 row<br/>(atomic UPDATE)<br/>UPDATE seats SET status=booked WHERE show_id=42 AND seat_id=A1 AND status=available<br/>Ravi usi second -> row lock, uska WHERE 0 row = seat gayi<br/>Ravi ne phir dabaya -> phir 0 row, kuch nahi milta"]
-    n_USER --> n_App
-    n_App --> n_SQL_DB
-    style n_SQL_DB fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke andar.
@@ -141,23 +112,6 @@ DIKKAT     Maine A1 chuni, payment me 3 min. 'available' rehne di -> beech me Ra
            kar di -> mera payment fail hua to A1 hamesha ke liye band.
 ```
 ![c2](img/c2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_SQL_DB["SQL DB<br/>+ atomic UPDATE"]
-    n_Sweeper_job["Sweeper job<br/>payment me 3 min<br/>-> seat held, held_until = ab + 5 min: umar khatam = khaali maano<br/>Sweeper har minute purane hold saaf karta (sirf safai)<br/>(hold + umar)<br/>booking ka WHERE -> available YA (held aur umar khatam)<br/>umar khatam, phir pay -> confirm pe bhi WHERE, 0 row = refund<br/>koi 10 seat pakad baithe -> had lagao (hold ginti + rate limit)"]
-    n_USER --> n_App
-    n_App --> n_SQL_DB
-    n_Sweeper_job --> n_SQL_DB
-    style n_Sweeper_job fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       hold Redis me (SET NX EX 300): hold Redis me + booking DB me = do jagah sach, farak aa sakta.
@@ -186,25 +140,6 @@ DIKKAT     A1 chuni, Pay dabaya, paisa kat gaya, par jawab aate waqt network gay
 ```
 ![c3](img/c3.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_Payment_Svc["Payment Svc<br/>network gaya, do baar kata<br/>-> har booking ki ek id (bookingId), pay hamesha usi id se<br/>wahi id dobara aayi = purana jawab wapas, paisa dobara nahi<br/>(idempotency key)<br/>Pay dobara dabaya -> wahi bookingId, paisa ek baar"]
-    n_SQL_DB["SQL DB<br/>+ atomic UPDATE + hold"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_App
-    n_App --> n_Payment_Svc
-    n_App --> n_SQL_DB
-    n_Sweeper_job --> n_SQL_DB
-    style n_Payment_Svc fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 AAGE POOCHEGA:
   NIYAM: ek booking = ek payment: wahi id dobara = purana jawab; user ko kuch dobara nahi karna, beech ka
@@ -221,31 +156,6 @@ DIKKAT     11 baje release ka show, main seat map dekh raha, saath me 1 lakh log
            par har map seedha main DB se -> DB pe bheed, booking bhi dheemi.
 ```
 ![c4](img/c4.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis["Redis<br/>1 lakh seat map dekh rahe<br/>-> seat map Redis me (~5 sec umar), dekhna wahin se<br/>booking ka faisla sirf main DB ke UPDATE pe<br/>(cache + replica)<br/>Redis me nahi -> replica se banao, Redis me rakho<br/>kisi ne book kiya -> pehle DB, phir Redis se hatao<br/>A1 biki, map me khaali -> chalta, faisla UPDATE ka"]
-    n_Read_replica["Read replica"]
-    n_SQL_primary["SQL primary"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_App
-    n_App --> n_Payment_Svc
-    n_App --> n_Redis
-    n_App --> n_Read_replica
-    n_App --> n_SQL_primary
-    n_Sweeper_job --> n_SQL_primary
-    n_SQL_primary --> n_Read_replica
-    style n_Redis fill:#f9a825,color:#000
-    style n_Read_replica fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 AAGE POOCHEGA:
@@ -265,34 +175,6 @@ DIKKAT     12 baje Arijit ka concert: ek show, 3000 seat, 2 lakh log ek saath. S
            pe, har koi lock ke intezaar me -> sab dheema. (Aam din ye nahi hota, hold seedha DB pe.)
 ```
 ![c5](img/c5.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_Payment_Svc["Payment Svc (bookingId)"]
-    n_RRR["Redis + Read replica"]
-    n_Kafka["Kafka<br/>3000 seat, 2 lakh log<br/>-> darwaze pe ginti (Redis DECR): ~3000 andar, baaki line me<br/>andar walo ki booking Kafka me, key = show_id: ek show ek worker, ek-ek UPDATE<br/>(waiting room)<br/>UPDATE jeeta -> user ko poll / push (bookingId)<br/>seat haar gaya -> seat gayi, doosri lo<br/>andar wala bina liye gaya -> line se agla andar"]
-    n_Booking_worker["Booking worker"]
-    n_SQL_primary["SQL primary"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_App
-    n_App --> n_Payment_Svc
-    n_App --> n_RRR
-    n_App -->|sirf badi sale| n_Kafka
-    n_Kafka --> n_Booking_worker
-    n_Booking_worker --> n_SQL_primary
-    n_Sweeper_job --> n_SQL_primary
-    n_App --> n_SQL_primary
-    n_SQL_primary --> n_RRR
-    style n_Kafka fill:#f9a825,color:#000
-    style n_Booking_worker fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line (queue) sambhaalti.
@@ -323,33 +205,6 @@ DIKKAT     2 baje Redis restart hua, saara seat map khaali. Usi pal hazaaron log
 ```
 ![c6](img/c6.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis["Redis Cluster<br/>restart, sab replica pe<br/>-> key khaali to sirf EK request lock le ke DB se banaye<br/>baaki 50-100 ms ruk ke Redis se padhein<br/>(lock: SET NX EX 5)<br/>lock wala hi mara -> lock khud hate (TTL)<br/>100 ms baad bhi khaali -> 2-3 retry, phir replica se"]
-    n_Read_replica["Read replica"]
-    n_KB["Kafka + Booking worker (badi sale)"]
-    n_SQL_primary["SQL primary"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_App
-    n_App --> n_Payment_Svc
-    n_App --> n_Redis
-    n_App --> n_Read_replica
-    n_App -->|sirf badi sale| n_KB
-    n_KB --> n_SQL_primary
-    n_Sweeper_job --> n_SQL_primary
-    n_App --> n_SQL_primary
-    n_SQL_primary --> n_Read_replica
-    style n_Redis fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 AAGE POOCHEGA:
   NIYAM: khaali cache pe ek hi DB jaaye, baaki ruke; jo gir sakta uski copy pehle se taiyaar. User ko bas
@@ -367,34 +222,6 @@ DIKKAT     Shaam ko main seat chun raha tha. Jis App machine pe tha wo gir gayi,
            -> page band, booking adhoori, kisi ka kuch nahi chal raha.
 ```
 ![c7](img/c7.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB<br/>App machine giri<br/>-> App kuch yaad nahi rakhta (sab DB me), koi bhi machine koi bhi request le<br/>LB har kuch sec /health poochta, fail = list se bahar<br/>(stateless + health check)<br/>machine giri -> hold DB me, agli machine wahi dekhe<br/>payment beech me -> same id dobara, do baar nahi katega (idempotent)"]
-    n_App_xN["App x N"]
-    n_Payment_Svc["Payment Svc (bookingId)"]
-    n_RRR["Redis Cluster + Read replica"]
-    n_KB["Kafka + Booking worker (badi sale)"]
-    n_SQL_primary["SQL primary"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_LB
-    n_LB --> n_App_xN
-    n_App_xN --> n_Payment_Svc
-    n_App_xN --> n_RRR
-    n_App_xN -->|sirf badi sale| n_KB
-    n_KB --> n_SQL_primary
-    n_Sweeper_job --> n_SQL_primary
-    n_App_xN --> n_SQL_primary
-    n_SQL_primary --> n_RRR
-    style n_LB fill:#f9a825,color:#000
-    style n_App_xN fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 AAGE POOCHEGA:
@@ -430,43 +257,6 @@ JAWAB:    Seat map Redis aur copy se, booking main DB pe ek query se ('khaali ho
           SQL kyunki sahi hona sabse zaroori, data chhota to baantna nahi.
 ```
 ![c7_2](img/c7_2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_App_x_N_1["App 1"]
-    n_App_x_N_2["App 2"]
-    n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis_Cluster["Redis Cluster"]
-    n_Read_replica["Read replica"]
-    n_Kafka["Kafka"]
-    n_Booking_worker["Booking worker"]
-    n_SQL_primary["SQL primary"]
-    n_Sweeper_job["Sweeper job"]
-    n_USER --> n_LB
-    n_LB --> n_App_x_N_1
-    n_LB --> n_App_x_N_2
-    n_App_x_N_1 --> n_Payment_Svc
-    n_App_x_N_2 --> n_Payment_Svc
-    n_App_x_N_1 --> n_Redis_Cluster
-    n_App_x_N_2 --> n_Redis_Cluster
-    n_App_x_N_1 --> n_Read_replica
-    n_App_x_N_2 --> n_Read_replica
-    n_App_x_N_1 -->|sirf badi sale| n_Kafka
-    n_App_x_N_2 -->|sirf badi sale| n_Kafka
-    n_Kafka --> n_Booking_worker
-    n_Booking_worker --> n_SQL_primary
-    n_Sweeper_job --> n_SQL_primary
-    n_App_x_N_1 --> n_SQL_primary
-    n_App_x_N_2 --> n_SQL_primary
-    n_SQL_primary --> n_Read_replica
-```
-
-</details>
 
 
 ---

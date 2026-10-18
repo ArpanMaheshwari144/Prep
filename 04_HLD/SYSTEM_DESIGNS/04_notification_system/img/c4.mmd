@@ -1,0 +1,12 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_Order_Svc["Order Svc"]
+    n_Kafka["Kafka"]
+    n_Notification_Svc["Notification Svc"]
+    n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
+    n_Redis["Redis (key)<br/>key lagi, OTP gaya nahi<br/>-> bhejne se pehle SENDING (60 sec umar), company OK pe SENT (1 din)<br/>chhodna sirf SENT pe, SENDING = adhoora (SENDING / SENT)<br/>call hua -> key SENT, koi dobara nahi<br/>call fail, worker zinda -> khud key hatao<br/>worker hi mara -> SENDING ~60 sec me khud mite<br/>B ko SENDING mili -> ruko, chhodna sirf SENT pe"]
+    n_Order_Svc --> n_Kafka
+    n_Kafka --> n_Notification_Svc
+    n_Notification_Svc --> n_LINES
+    n_LINES --> n_Redis
+    style n_Redis fill:#f9a825,color:#000

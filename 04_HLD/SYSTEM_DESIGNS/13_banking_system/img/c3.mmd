@@ -1,0 +1,8 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_SVC["Banking Svc (+ idempotency)"]
+    n_DB["SQL DB<br/>Netflix + UPI, balance -100<br/>-> ek hi UPDATE me check + kaatna, DB row lock leta, dono line me<br/>UPDATE account SET balance = balance - 200 WHERE id = Arpan AND balance >= 200<br/>(atomic UPDATE)<br/>pehla -> 300 se 100<br/>doosra -> 100 >= 200 nahi, 0 row, 422, kuch nahi kata"]
+    n_USER --> n_SVC
+    n_SVC --> n_DB
+    style n_DB fill:#f9a825,color:#000

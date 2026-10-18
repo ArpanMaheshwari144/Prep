@@ -80,41 +80,12 @@ Banking Service (saara niyam / logic) -> SQL DB. Jaan-boojh ke seedha.
 ```
 ![cdabba](img/cdabba.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_SVC["Banking Svc"]
-    n_DB["SQL DB"]
-    n_USER --> n_SVC
-    n_SVC --> n_DB
-```
-
-</details>
-
 #### 1 Maine Ravi ko 500 bheje, beech me server gira
 ```
 DIKKAT     1 tareekh subah 8 baje maine Ravi ko 500 bheje. Mere 500 kate, Ravi ke account me daalne se PEHLE
            server gira. 500 na mere paas, na Ravi ke paas. Gayab.
 ```
 ![c1](img/c1.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_SVC["Banking Svc"]
-    n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono UPDATE ek transaction me: COMMIT tak dono ya koi nahi<br/>(transaction: BEGIN · Arpan -500 · Ravi +500 · COMMIT)<br/>beech me server gira -> DB log (WAL) se: COMMIT hua = poora, nahi = ulta<br/>-500 ke baad koi padhe -> aadha kisi ko nahi dikhta"]
-    n_USER --> n_SVC
-    n_SVC --> n_DB
-    style n_DB fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       SAGA / queue laga do: ek DB me kaatna aur daalna alag ho jaate, dikkat khud ban jaati.
@@ -134,21 +105,6 @@ DIKKAT     8:30 lift me maine Send dabaya, 500 kat bhi gaye, par jawab aate waqt
            pe khud dobara bheja -> 1000 kat gaye, bhejne the 500.
 ```
 ![c2](img/c2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_SVC["Banking Svc<br/>dobara bheja, 1000 kate<br/>-> screen khulte ek id bane, retry pe WAHI id jaaye<br/>server ne id dekhi = pehla jawab wapas, paisa dobara nahi<br/>(idempotency key, DB me UNIQUE)<br/>Send button -> pehli tap pe band<br/>dono ek saath -> DB doosra insert roke (UNIQUE)<br/>wahi id, amount badla -> hash alag, 422"]
-    n_DB["SQL DB"]
-    n_USER --> n_SVC
-    n_SVC --> n_DB
-    style n_SVC fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       app me "pehle dekho, phir daalo": dono ne dekha "nahi hai", dono ne daala (race).
@@ -171,21 +127,6 @@ DIKKAT     Mere paas 300. 9:00 Netflix ka 200 ka auto-debit chala, usi second ma
 ```
 ![c3](img/c3.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_SVC["Banking Svc (+ idempotency)"]
-    n_DB["SQL DB<br/>Netflix + UPI, balance -100<br/>-> ek hi UPDATE me check + kaatna, DB row lock leta, dono line me<br/>UPDATE account SET balance = balance - 200 WHERE id = Arpan AND balance >= 200<br/>(atomic UPDATE)<br/>pehla -> 300 se 100<br/>doosra -> 100 >= 200 nahi, 0 row, 422, kuch nahi kata"]
-    n_USER --> n_SVC
-    n_SVC --> n_DB
-    style n_DB fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       Java synchronized: Banking Svc ki kai machine, lock sirf ek ke andar.
 ```
@@ -204,21 +145,6 @@ DIKKAT     Subah se paisa kai baar hila. Maine support se poochha "mere 500 kaha
            -> har len-den ka pakka khaata chahiye.
 ```
 ![c4](img/c4.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_SVC["Banking Svc (+ idempotency)"]
-    n_DB["SQL DB + ledger<br/>500 kahan gaye?<br/>-> khaata = DB ki table, har transfer usi transaction me 2 line: Arpan -500, Ravi +500<br/>sirf INSERT, kabhi UPDATE nahi: BEGIN · INSERT ledger x2 · UPDATE balance x2 · COMMIT<br/>(ledger)<br/>txn wapas -> khaata bhi wapas, jhoothi line nahi<br/>galat line -> UPDATE nahi, ulti line jodo<br/>support: kab, kisko -> har line me waqt + transfer id"]
-    n_USER --> n_SVC
-    n_SVC --> n_DB
-    style n_DB fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       khaata Kafka me: DB transaction wapas hua (paisa kam tha), Kafka me "Arpan -500" -> khaata jhooth.
@@ -240,23 +166,6 @@ DIKKAT     10 baje salary 50,000 aayi, 1 min baad Ravi ko 20,000 rent bheja. Har
 ```
 ![c5](img/c5.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_SVC["Banking Svc (+ idempotency)"]
-    n_DB["SQL DB (+ ledger, outbox)"]
-    n_K["Kafka<br/>SMS service giri<br/>-> SMS ki khabar outbox table me, usi transaction me (sent=false)<br/>COMMIT ke BAAD relay har ~1 sec: sent=false -> Kafka (acks=all) -> sent=true<br/>(outbox)<br/>SMS service ghanta giri -> khabar Kafka me padi, baad me padhe<br/>relay sent=true se pehle gira -> dobara jaaye, eventId se skip"]
-    n_USER --> n_SVC
-    n_SVC --> n_DB
-    n_DB --> n_K
-    style n_K fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       commit ke baad seedha Kafka: commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi.
 ```
@@ -276,25 +185,6 @@ DIKKAT     Salary aate hi maine balance khola. Har baar 50,000 khaate ki line jo
            ek column me rakha. Par column aur khaata alag ho gaye (bug), to sach kaunsa? Kaun pakdega?
 ```
 ![c6](img/c6.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_SVC["Banking Svc (+ idempotency)"]
-    n_DB["SQL DB (+ ledger, outbox)"]
-    n_K["Kafka"]
-    n_REC["Reconciliation job<br/>balance kahan se aaye?<br/>-> khaata hi sach, balance column uska jod (cache), raat ko job dono milaye<br/>(reconciliation)<br/>balance padha -> column se, jodna dheema<br/>raat milaan -> khaate ka jod == column?<br/>farak mila -> alert + account roko, khaata jeete"]
-    n_USER --> n_SVC
-    n_SVC --> n_DB
-    n_DB --> n_K
-    n_REC --> n_DB
-    style n_REC fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 TASVEER: khaata vs balance
@@ -318,32 +208,6 @@ DIKKAT     11 baje sabki salary aayi, laakhon transfer ek saath. Ek hi Banking S
 ```
 ![c7](img/c7.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB<br/>salary day, ek machine bhari<br/>-> kai Banking Svc machine, LB har request kisi bhi zinda machine ko de<br/>machine kuch yaad nahi rakhti, sach DB me<br/>(LB + stateless)<br/>ek machine giri -> LB list se hataye (health check)<br/>adhoora transfer -> app wahi id se dobara<br/>LB khud akela -> nahi, do zone me do LB"]
-    n_S1["Banking Svc 1"]
-    n_S2["Banking Svc 2"]
-    n_DB["SQL DB (+ ledger, outbox)"]
-    n_K["Kafka"]
-    n_REC["Reconciliation job"]
-    n_USER --> n_LB
-    n_LB --> n_S1
-    n_LB --> n_S2
-    n_S1 --> n_DB
-    n_S2 --> n_DB
-    n_DB --> n_K
-    n_REC --> n_DB
-    style n_LB fill:#f9a825,color:#000
-    style n_S1 fill:#f9a825,color:#000
-    style n_S2 fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 AAGE POOCHEGA:
   NIYAM: service kuch yaad nahi rakhti (jitni lagao); sach DB me, copy sync; gira to app wahi id se dobara.
@@ -361,33 +225,6 @@ DIKKAT     Salary ke baad sab baar-baar balance aur history dekh rahe. Saari pad
            transfer bhi likhe jaate -> padhne ki bheed ne paisa bhejna dheema kar diya.
 ```
 ![c8](img/c8.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_S1["Banking Svc 1"]
-    n_S2["Banking Svc 2"]
-    n_RR["Read replica<br/>padhai primary pe, transfer dheema<br/>-> primary ki copy (replica) se padhna, likhna sirf primary pe, copy thodi peeche ho sakti<br/>(read replica)<br/>paise ka faisla -> sirf primary pe<br/>abhi bheja, copy peeche -> apna likha primary se padho<br/>copy minute bhar peeche -> lag naapo, alert, list se hatao"]
-    n_DB["SQL DB (+ ledger, outbox)"]
-    n_K["Kafka"]
-    n_REC["Reconciliation job"]
-    n_USER --> n_LB
-    n_LB --> n_S1
-    n_LB --> n_S2
-    n_S1 --> n_RR
-    n_S2 --> n_RR
-    n_S1 --> n_DB
-    n_S2 --> n_DB
-    n_DB --> n_K
-    n_REC --> n_DB
-    style n_RR fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 AAGE POOCHEGA:
@@ -407,33 +244,6 @@ DIKKAT     Maine Ravi ki dukaan ko 500 bheje, usi second dukaan ne mujhe 200 ref
            pakda, doosre ne dukaan ka; dono ek doosre ka intezaar -> dono atke (deadlock).
 ```
 ![c9](img/c9.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_S1["Banking Svc 1"]
-    n_S2["Banking Svc 2"]
-    n_RR["Read replica"]
-    n_DB["SQL DB<br/>500 gaye, 200 refund, dono atke<br/>-> do account pe taala hamesha ek kram me lo (chhoti id pehle), gol ghera ban hi nahi sakta<br/>(lock order)<br/>ulta kram -> gol ghera (deadlock)<br/>kram ke baad bhi phansa -> DB ek ko wapas, app wahi id se"]
-    n_K["Kafka"]
-    n_REC["Reconciliation job"]
-    n_USER --> n_LB
-    n_LB --> n_S1
-    n_LB --> n_S2
-    n_S1 --> n_RR
-    n_S2 --> n_RR
-    n_S1 --> n_DB
-    n_S2 --> n_DB
-    n_DB --> n_K
-    n_REC --> n_DB
-    style n_DB fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 TASVEER: gol ghera, phir ek kram
@@ -458,33 +268,6 @@ DIKKAT     Ravi ki dukaan: roz ~500 UPI, 3 saal = ~5 lakh line. CA ka tool 20-20
 ```
 ![c10](img/c10.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_S1["Banking Svc 1"]
-    n_S2["Banking Svc 2"]
-    n_RR["Read replica"]
-    n_DB["SQL DB<br/>page 5000 dheema<br/>-> pichhle page ki aakhri (ts, id) yaad, agla page = usse purani 20, OFFSET nahi<br/>WHERE account_id = ? AND (ts, id) chhota (:last_ts, :last_id)<br/>ORDER BY ts DESC, id DESC LIMIT 20, index (account_id, ts, id) se seedha wahan<br/>page 1 ho ya 5000 -> ek jaisa tez<br/>(keyset)<br/>ek ts pe do line -> id barabari tode<br/>beech me nayi line -> purana page nahi khiskta"]
-    n_K["Kafka"]
-    n_REC["Reconciliation job"]
-    n_USER --> n_LB
-    n_LB --> n_S1
-    n_LB --> n_S2
-    n_S1 --> n_RR
-    n_S2 --> n_RR
-    n_S1 --> n_DB
-    n_S2 --> n_DB
-    n_DB --> n_K
-    n_REC --> n_DB
-    style n_DB fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       saari 5 lakh line ek baar me bhejo: memory bhari, request timeout.
 ```
@@ -504,31 +287,6 @@ DIKKAT     5 saal ka khaata (~36 arab line) ek table me. Log roz sirf 3 mahine d
            arabon line ke saath. Aur kanoon (PMLA / RBI) kam se kam 5 saal rakhwata, bank 8-10.
 ```
 ![c11](img/c11.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_Banking_Svc_xN["Banking Svc x N"]
-    n_RR["Read replica"]
-    n_DB["SQL DB"]
-    n_K["Kafka"]
-    n_S3["Archive (S3)<br/>5 saal ek table me<br/>-> khaata mahine ke partition me, band mahina DETACH (table se alag) -> S3, sasta<br/>(partition + archive)<br/>mahina band -> S3 me, 5 saal delete nahi (bank ka niyam)<br/>balance ka jod -> mahine ka snapshot + baad ki line"]
-    n_REC["Reconciliation job"]
-    n_USER --> n_LB
-    n_LB --> n_Banking_Svc_xN
-    n_Banking_Svc_xN --> n_RR
-    n_Banking_Svc_xN --> n_DB
-    n_DB --> n_K
-    n_REC --> n_DB
-    n_DB --> n_S3
-    style n_S3 fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       "archive = sharding": archive jagah ghatata, shard likhne ka bojh baantta.
@@ -566,34 +324,6 @@ JAWAB:    Ek transfer ka sab kuch (dono khaata line, dono balance, id, SMS wali 
           baad Kafka se.
 ```
 ![c11_2](img/c11_2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_LB["LB"]
-    n_S1["Banking Svc 1"]
-    n_S2["Banking Svc 2"]
-    n_RR["Read replica"]
-    n_DB["SQL DB"]
-    n_K["Kafka"]
-    n_S3["Archive (S3)"]
-    n_REC["Reconciliation job"]
-    n_USER --> n_LB
-    n_LB --> n_S1
-    n_LB --> n_S2
-    n_S1 --> n_RR
-    n_S2 --> n_RR
-    n_S1 --> n_DB
-    n_S2 --> n_DB
-    n_DB --> n_K
-    n_REC --> n_DB
-    n_DB --> n_S3
-```
-
-</details>
 
 ---
 
