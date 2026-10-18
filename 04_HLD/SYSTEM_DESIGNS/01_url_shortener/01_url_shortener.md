@@ -115,7 +115,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Redis["Redis<br/>link viral, DB baitha<br/>-> link Redis se do, nahi to DB<br/>(cache-aside)<br/>nahi mila -> DB se laao, Redis me rakho<br/>bhar gaya -> der se na khula nikaalo (LRU)<br/>umar khatam -> saath mitte (TTL = link ki expiry)<br/>link badla -> pehle DB, phir Redis se hatao<br/>Redis gira -> copy (replica), wo bhi gayi -> ek request DB (load shedding)"]
+    n_Redis["Redis<br/>link viral, DB baitha<br/>-> link Redis se do, nahi to DB<br/>(cache-aside)<br/>nahi mila -> DB se laao, Redis me rakho<br/>bhar gaya -> der se na khula nikaalo (LRU)<br/>umar khatam -> saath mitte (TTL = link ki expiry)<br/>link badla -> pehle DB, phir Redis se hatao<br/>Redis gira -> uski copy kaam le (replica)<br/>copy bhi gayi -> 1 link ke 1000 click me 1 hi DB tak<br/>tab bhi bojh -> kuch click mana, DB bachao (load shedding)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_Redis
@@ -140,7 +140,8 @@ AAGE POOCHEGA:
   link ki umar khatam    -> Redis ki umar (TTL) = link ki expiry: dono saath mitte
   link badla / hataya    -> pehle DB, phir Redis se hatao: ulta = beech ka click purana bhar deta
   Redis hi gira          -> copy (cluster + replica): warna 95% click DB pe, DB phir baitha
-  copy bhi gayi          -> load shedding: garam link ki EK request DB, baaki ruko
+  copy bhi gayi          -> ek link ke 1000 click me sirf 1 DB tak, baaki uska jawab lein;
+                            tab bhi bojh -> kuch click mana, DB bachao (load shedding)
 ```
 
 #### 2 Usi bheed me ek App machine giri, poori site band
