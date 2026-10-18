@@ -90,6 +90,10 @@ JAWAB:    Feed ke liye: chalta rahe, chahe thoda purana ho.
 Do table: tweets (kisne kya likha) + follows (kaun kisko follow karta).
 Feed = jinko follow karta unke tweet nikaalo, time se sort karo, upar ke 50 do.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -98,16 +102,20 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 #### 1 Subah app khola, feed ghoomti rahi (har baar 200 logon ka jod)
 ```
 DIKKAT     Subah 8 baje maine app khola. Main 200 ko follow karta -> 200 logon ke tweet laao, jodo, sort,
            upar ke 50. Har user ke saath, har baar app kholne pe 200 ka jod -> feed dheemi.
 ```
+![c1](img/c1.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -121,12 +129,12 @@ flowchart LR
     n_App --> n_DB
     n_Fanout --> n_Redis_inbox
     n_App --> n_Redis_inbox
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Redis_inbox ~~~ n_pad
     style n_Fanout fill:#f9a825,color:#000
     style n_Redis_inbox fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       DB pe index / read replica: thoda tez, par har khulne pe 200 ka jod wahi ka wahi.
 ```
@@ -146,6 +154,10 @@ AAGE POOCHEGA:
 DIKKAT     9 baje maine tweet kiya (5,000 follower) -> usi request me 5,000 inbox, ~1 ms har -> 5+ sec,
            timeout, "fail" dikha, par tweet DB me ban chuka tha.
 ```
+![c2](img/c2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -161,12 +173,12 @@ flowchart LR
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_Kafka fill:#f9a825,color:#000
     style n_Fanout_workers fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       App me peeche ek thread: App crash = thread ka kaam gaya; Kafka disk pe, dobara padh sakte.
 ```
@@ -194,6 +206,10 @@ AAGE POOCHEGA:
 DIKKAT     11 baje Bieber (10 crore follower) ne tweet kiya -> fanout ko 10 crore inbox. Uski Kafka line
            ghanton atki; usi line ke baaki logon ke tweet bhi peeche khade.
 ```
+![c3](img/c3.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -209,11 +225,11 @@ flowchart LR
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_Fanout_workers fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       sabke liye pull: har feed khulna phir 200 ka jod, mehnga.
 ```
@@ -240,6 +256,10 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar ka match 4:30 pe khatam, Virat ne tweet kiya. Virat pull pe -> har feed me DB se. Crore log
            ek saath app khole -> crore read DB pe -> DB gira.
 ```
+![c4](img/c4.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -257,11 +277,11 @@ flowchart LR
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Hot_tweet_cache ~~~ n_pad
     style n_Hot_tweet_cache fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       DB ki copies badha do: wo bhi disk se (ms), ek garam hisse ki copies crore read nahi jhelti.
 ```
@@ -279,6 +299,10 @@ AAGE POOCHEGA:
 DIKKAT     Shaam 5 baje Redis alert: har inbox me saare id, kabhi kaate nahi, soye users ke bhi
            -> RAM bhar rahi.
 ```
+![c5](img/c5.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -296,11 +320,11 @@ flowchart LR
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Redis_inbox ~~~ n_pad
     style n_Redis_inbox fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       Redis me machine jodte jao: soye 40 crore ka inbox bhi RAM khaata, kharcha badhta, dikkat wahi.
 ```
@@ -326,6 +350,10 @@ AAGE POOCHEGA:
 DIKKAT     6 baje DB alert: har second ~5,000 naye tweet, 5 saal me ~0.5 PB. Ek DB na itna rakh sakta,
            na itna likh sakta.
 ```
+![c6](img/c6.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -343,11 +371,11 @@ flowchart LR
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Cassandra ~~~ n_pad
     style n_Cassandra fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; join / transaction chahiye nahi.
 ```
@@ -369,6 +397,10 @@ AAGE POOCHEGA:
 DIKKAT     Main Bangalore me, saara data aur App US me. Har feed refresh pe request samundar paar US jaati
            aur aati -> sirf raaste me 300 ms, feed har baar atak ke khulti.
 ```
+![c7](img/c7.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -388,11 +420,11 @@ flowchart LR
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Cassandra ~~~ n_pad
     style n_Route_53 fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: data user ke paas wale region me; doosre region ki copy thodi peeche -> region gira to feed thodi
@@ -410,6 +442,10 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko har region me ek hi App machine thi. India wali machine giri -> India ke saare user ke
            liye feed, tweet sab band, jab tak machine wapas na uthe.
 ```
+![c8](img/c8.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -429,12 +465,12 @@ flowchart LR
     n_App_xN --> n_Cassandra
     n_FAN --> n_Redis_inbox
     n_App_xN --> n_Redis_inbox
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Cassandra ~~~ n_pad
     style n_ALB fill:#f9a825,color:#000
     style n_App_xN fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: machine kuch yaad nahi rakhti (sab Redis / DB me) -> koi bhi gire, jude, badle, user ko farak nahi.
@@ -450,6 +486,10 @@ AAGE POOCHEGA:
 DIKKAT     Match ke highlights aaye, crore log feed scroll kar rahe. Wahi App machine tweet likhti bhi thi
            -> padhne ki bheed me mera tweet button 10 sec ghooma, likhna dheema.
 ```
+![c9](img/c9.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -471,13 +511,13 @@ flowchart LR
     n_Timeline_Svc --> n_RI
     n_Timeline_Svc --> n_Cassandra
     n_FAN --> n_UG
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_UG ~~~ n_pad
     style n_Tweet_Svc fill:#f9a825,color:#000
     style n_Timeline_Svc fill:#f9a825,color:#000
     style n_UG fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: har kaam alag service -> jiski bheed badhi sirf wahi badhao; ek ka dheema doosre ko nahi rokta.
@@ -493,6 +533,10 @@ AAGE POOCHEGA:
 DIKKAT     Maine match ki 50 MB video daali. Har dekhne wala use US ke server se khinchta -> door walon
            ko buffering, aur har baar poori video hamare server se, bandwidth ka bill bhaari.
 ```
+![c10](img/c10.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -513,12 +557,12 @@ flowchart LR
     n_FAN --> n_SVC
     n_USER --> n_CDN
     n_CDN --> n_S3
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_S3 ~~~ n_pad
     style n_CDN fill:#f9a825,color:#000
     style n_S3 fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: bhaari maal S3 me, user tak CDN se (paas, sasta); tweet me sirf link -> link badlo = nayi file,
@@ -554,6 +598,10 @@ JAWAB:    Likhna: tweet Cassandra me save, aur 'naya tweet' Kafka me. Worker aam
           se baanta, doosre desh me copy.
           Aage: ML se ranking, trending, search.
 ```
+![c10_2](img/c10_2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -587,10 +635,10 @@ flowchart LR
     n_Route_53 --> n_ALB
     n_USER --> n_CDN
     n_CDN --> n_S3
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_S3 ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 ---
 

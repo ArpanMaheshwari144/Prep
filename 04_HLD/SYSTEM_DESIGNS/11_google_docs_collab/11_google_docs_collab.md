@@ -65,6 +65,10 @@ NUMBERS (andaaza):
 ```
 Doc ka poora text DB me. "Save" dabao -> poora text upar likh do (overwrite).
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -73,16 +77,20 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 #### 1 Ravi ne baad me save kiya, mera "WORLD" mit gaya
 ```
 DIKKAT     Doc me "HELLO". Maine "HELLO WORLD" karke 10:05 pe save kiya, Ravi ne purane "HELLO" pe
            "HELLO THERE" 10:07 pe -> poora text upar likha -> mera "WORLD" gayab (LAST-WRITE-WINS).
 ```
+![c1](img/c1.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -91,11 +99,11 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_App fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       doc pe lock, ek likhe baaki ruke: saath likhna hi khatam.
 ```
@@ -115,6 +123,10 @@ AAGE POOCHEGA:
 DIKKAT     Ab op ja raha, par normal HTTP me server khud kuch nahi bhej sakta, sirf jawab deta.
            Ravi ko mera likha tabhi dikha jab usne refresh kiya. Bekaar.
 ```
+![c2](img/c2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -125,11 +137,11 @@ flowchart LR
     n_USER --> n_App
     n_App --> n_CS
     n_CS --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_CS fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       polling: crore log x har second bekaar sawaal + 1 sec der · SSE: sirf server -> user.
 ```
@@ -148,6 +160,10 @@ AAGE POOCHEGA:
 DIKKAT     11 baje meeting, doc "HELLO", dono sabse upar likhne lage. Mera "X" (pos 0) ~200 ms me Ravi tak,
            usse pehle Ravi ka "Y" (pos 0) -> meri screen "YXHELLO", Ravi ki "XYHELLO". Do alag doc.
 ```
+![c3](img/c3.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -158,11 +174,11 @@ flowchart LR
     n_USER --> n_App
     n_App --> n_CS
     n_CS --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_CS fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       phone ke time se kram: ghadi alag, aur position phir bhi khiskani padti.
 ```
@@ -189,6 +205,10 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar tak ~50 lakh WebSocket khule (3-4 crore roz ka ~15%), ek server ~1 lakh hi jhelta.
            Kai server lagaye -> mere doc ke editor alag-alag server pe, to OT kaun kare?
 ```
+![c4](img/c4.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -204,12 +224,12 @@ flowchart LR
     n_LB --> n_CS2
     n_CS1 --> n_DB
     n_CS2 --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_LB fill:#f9a825,color:#000
     style n_CS1 fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       hash(docId) % N: N badla to lagbhag har doc ka server badla = sab dobara jude.
 ```
@@ -231,6 +251,10 @@ AAGE POOCHEGA:
 DIKKAT     Lunch ke baad Ravi sirf padh raha (viewer), wo server-2 pe; doc ka owner server-1 jahan main likh
            raha. Maine type kiya -> server-1 ko pata, server-2 ko kaise pata chale?
 ```
+![c5](img/c5.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -249,11 +273,11 @@ flowchart LR
     n_CS2 --> n_PS
     n_CS1 --> n_DB
     n_CS2 --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_PS ~~~ n_pad
     style n_PS fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       Kafka: store karta + thoda dheema; live typing dobara padhni nahi, tezi chahiye.
 ```
@@ -273,6 +297,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     3 baje DB alert: ~20 lakh log type, har ek ~3 akshar / sec -> ~60 lakh DB write / sec -> DB khatam.
 ```
+![c6](img/c6.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -289,12 +317,12 @@ flowchart LR
     n_Conn_Server_xN --> n_PS
     n_Conn_Server_xN --> n_BUF
     n_BUF --> n_CAS
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_CAS ~~~ n_pad
     style n_BUF fill:#f9a825,color:#000
     style n_CAS fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       "sahi chahiye to SQL lo": DB data ki shakal se chuno; join nahi, bas bahut jodna -> Cassandra.
 ```
@@ -323,6 +351,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Shaam ko metro me mera network 1 second ke liye gaya. Typing ruk jaaye, ya main likhta rahun?
 ```
+![c7](img/c7.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -341,11 +373,11 @@ flowchart LR
     n_Conn_Server_xN --> n_BUF
     n_Conn_Server_xN --> n_SQL
     n_BUF --> n_CAS
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_SQL ~~~ n_pad
     style n_SQL fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       "doc sahi chahiye -> CP": CP me net jaate hi typing ruk jaati; yahan sahi = "aakhir me sab same".
 ```
@@ -366,6 +398,10 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko maine 2 saal purana doc khola. Usme 10 lakh op jama the, server shuru se ek-ek chala ke
            doc bana raha -> doc khulne me minute lag gaye, main khaali screen dekhta raha.
 ```
+![c8](img/c8.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -384,11 +420,11 @@ flowchart LR
     n_Conn_Server_xN --> n_BUF
     n_Conn_Server_xN --> n_SQL
     n_BUF --> n_CAS
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_CAS ~~~ n_pad
     style n_CAS fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 TASVEER: photo + baad ke op
 op:   v1 .................. v9,99,000 | v9,99,001 ...... v10,00,000
@@ -427,6 +463,10 @@ JAWAB:    Har user doc ke hisaab se ek server se juda (ek doc ke sab editor ek s
           Badlaav jama karke Cassandra me, photo ke saath taaki doc jaldi khule. Likhna kabhi na ruke,
           permission turant lage (SQL).
 ```
+![c8_2](img/c8_2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -452,10 +492,10 @@ flowchart LR
     n_CS1 --> n_SQL
     n_CS2 --> n_SQL
     n_BUF --> n_CAS
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_CAS ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 ---
 

@@ -77,6 +77,10 @@ JAWAB:    Booking me sahi hona pehle: network toota aur pakka nahi pata seat kha
 ```
 seats table (seat_id, show_id, status). "Book" dabao -> status = 'booked'.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -85,16 +89,20 @@ flowchart LR
     n_SQL_DB["SQL DB"]
     n_USER --> n_App
     n_App --> n_SQL_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_SQL_DB ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 #### 1 Maine aur Ravi ne ek hi second me A1 book ki, dono ko mil gayi
 ```
 DIKKAT     10 baje badi movie ki booking khuli. Maine aur Ravi ne 10:00:01 pe "A1 khaali" dekha, Book dabaya.
            App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
 ```
+![c1](img/c1.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -103,11 +111,11 @@ flowchart LR
     n_SQL_DB["SQL DB<br/>A1 do ko bik gayi<br/>-> khaali hai ya nahi dekhna + book karna EK hi query me<br/>seat khaali ho tabhi UPDATE lage, warna 0 row<br/>(atomic UPDATE)<br/>UPDATE seats SET status=booked WHERE show_id=42 AND seat_id=A1 AND status=available<br/>Ravi usi second -> row lock, uska WHERE 0 row = seat gayi<br/>Ravi ne phir dabaya -> phir 0 row, kuch nahi milta"]
     n_USER --> n_App
     n_App --> n_SQL_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_SQL_DB ~~~ n_pad
     style n_SQL_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke andar.
 ```
@@ -132,6 +140,10 @@ AAGE POOCHEGA:
 DIKKAT     Maine A1 chuni, payment me 3 min. 'available' rehne di -> beech me Ravi le gaya. Seedha 'booked'
            kar di -> mera payment fail hua to A1 hamesha ke liye band.
 ```
+![c2](img/c2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -142,11 +154,11 @@ flowchart LR
     n_USER --> n_App
     n_App --> n_SQL_DB
     n_Sweeper_job --> n_SQL_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_SQL_DB ~~~ n_pad
     style n_Sweeper_job fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       hold Redis me (SET NX EX 300): hold Redis me + booking DB me = do jagah sach, farak aa sakta.
 ```
@@ -172,6 +184,10 @@ AAGE POOCHEGA:
 DIKKAT     A1 chuni, Pay dabaya, paisa kat gaya, par jawab aate waqt network gaya. App ne khud dobara bheja
            -> paisa do baar kata, ticket ek.
 ```
+![c3](img/c3.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -184,11 +200,11 @@ flowchart LR
     n_App --> n_Payment_Svc
     n_App --> n_SQL_DB
     n_Sweeper_job --> n_SQL_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Payment_Svc ~~~ n_pad
     style n_Payment_Svc fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: ek booking = ek payment: wahi id dobara = purana jawab; user ko kuch dobara nahi karna, beech ka
@@ -204,6 +220,10 @@ AAGE POOCHEGA:
 DIKKAT     11 baje release ka show, main seat map dekh raha, saath me 1 lakh log. Book koi-koi kar raha,
            par har map seedha main DB se -> DB pe bheed, booking bhi dheemi.
 ```
+![c4](img/c4.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -221,12 +241,12 @@ flowchart LR
     n_App --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Read_replica ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
     style n_Read_replica fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: dekhna copy se (Redis / replica), faisla sirf main DB ka UPDATE: map thoda purana dikhe to chalta,
@@ -244,6 +264,10 @@ AAGE POOCHEGA:
 DIKKAT     12 baje Arijit ka concert: ek show, 3000 seat, 2 lakh log ek saath. Saari bheed DB ki wahi rows
            pe, har koi lock ke intezaar me -> sab dheema. (Aam din ye nahi hota, hold seedha DB pe.)
 ```
+![c5](img/c5.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -264,12 +288,12 @@ flowchart LR
     n_Sweeper_job --> n_SQL_primary
     n_App --> n_SQL_primary
     n_SQL_primary --> n_RRR
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_RRR ~~~ n_pad
     style n_Kafka fill:#f9a825,color:#000
     style n_Booking_worker fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line (queue) sambhaalti.
 ```
@@ -297,6 +321,10 @@ AAGE POOCHEGA:
 DIKKAT     2 baje Redis restart hua, saara seat map khaali. Usi pal hazaaron log ek saath DB / replica pe
            map maangne gaye -> replica baith gayi, map nahi khul raha.
 ```
+![c6](img/c6.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -317,11 +345,11 @@ flowchart LR
     n_Sweeper_job --> n_SQL_primary
     n_App --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: khaali cache pe ek hi DB jaaye, baaki ruke; jo gir sakta uski copy pehle se taiyaar. User ko bas
@@ -338,6 +366,10 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko main seat chun raha tha. Jis App machine pe tha wo gir gayi, aur ek hi machine thi
            -> page band, booking adhoori, kisi ka kuch nahi chal raha.
 ```
+![c7](img/c7.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -358,12 +390,12 @@ flowchart LR
     n_Sweeper_job --> n_SQL_primary
     n_App_xN --> n_SQL_primary
     n_SQL_primary --> n_RRR
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_RRR ~~~ n_pad
     style n_LB fill:#f9a825,color:#000
     style n_App_xN fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: App kuch yaad nahi rakhta, sab DB me: machine giri to agli machine wahi hold dekhti; user same id
@@ -397,6 +429,10 @@ JAWAB:    Seat map Redis aur copy se, booking main DB pe ek query se ('khaali ho
           Release ke din ki bheed: darwaze pe ginti + har show ki ek line. Payment pe id, do baar nahi katega.
           SQL kyunki sahi hona sabse zaroori, data chhota to baantna nahi.
 ```
+![c7_2](img/c7_2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -428,10 +464,10 @@ flowchart LR
     n_App_x_N_1 --> n_SQL_primary
     n_App_x_N_2 --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Read_replica ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 ---
 

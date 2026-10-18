@@ -72,6 +72,10 @@ NUMBERS (andaaza):
 ```
 Order service har order DB me likhe, aur DB me milta-julta SELL dhoondh ke match kare.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -80,10 +84,10 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 #### SHURU: ORDER BOOK KAISE MATCH KARTA
 ```
@@ -114,6 +118,10 @@ AAGE POOCHEGA:
 DIKKAT     Subah maine TCS ka Buy ek hi baar dabaya. Network gaya, jawab nahi aaya, app ne khud dobara bheja
            -> do order lag gaye, paisa do baar block, bhejna tha ek.
 ```
+![c1](img/c1.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -122,11 +130,11 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_Order_Service fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: ek id = ek kaam: id app banata, server UNIQUE se pakadta; wahi id dobara = purana jawab,
@@ -143,6 +151,10 @@ AAGE POOCHEGA:
 DIKKAT     Wallet me 50k. Laptop se TCS 30k, usi second phone se INFY 30k (do alag order, alag id).
            Do server, dono ne 50k dekha, dono pass.
 ```
+![c2](img/c2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -153,11 +165,11 @@ flowchart LR
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
     n_Wallet --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_Wallet fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
 ```
@@ -178,6 +190,10 @@ AAGE POOCHEGA:
 DIKKAT     Mera order book me pahuncha. Suresh 10 bech raha, usi pal Mohan ne bhi BUY 10.
            Do thread, dono ko "10 hai" dikha -> 20 bik gaye.
 ```
+![c3](img/c3.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -190,11 +206,11 @@ flowchart LR
     n_Order_Service --> n_Wallet
     n_Wallet --> n_Matching_Engine
     n_Matching_Engine --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_Matching_Engine fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
 ```
@@ -218,6 +234,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Usi 9:15 pe poora market TCS pe toot pada: hazaaron order / second.
 ```
+![c4](img/c4.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -232,11 +252,11 @@ flowchart LR
     n_Wallet --> n_Queue_per_symbol
     n_Queue_per_symbol --> n_Matching_Engine
     n_Matching_Engine --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_Queue_per_symbol fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
 ```
@@ -255,6 +275,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
 ```
+![c5](img/c5.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -269,11 +293,11 @@ flowchart LR
     n_Wallet --> n_Event_Log
     n_Event_Log --> n_Matching_Engine
     n_Matching_Engine --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_Event_Log fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       doosra engine saath chalao (active-active): dono match karte = ek sauda do baar settle.
 ```
@@ -299,6 +323,10 @@ AAGE POOCHEGA:
 DIKKAT     10:30, server wapas, log se book bani; ab mera 10:10 wala sauda settle hone laga (Suresh se
            10 TCS, 30k): mera 30k kata, Suresh ko milne se PEHLE crash.
 ```
+![c6](img/c6.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -315,11 +343,11 @@ flowchart LR
     n_Event_Log --> n_Matching_Engine
     n_Matching_Engine --> n_Settlement
     n_Settlement --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_Settlement fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       chaar alag UPDATE: beech me gira to aadha likha.
 ```
@@ -338,6 +366,10 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar 1 baje INFY 5 share (20k) ka sauda. Paisa Wallet DB me, share Portfolio DB me -> ek
            transaction nahi chalti. 20k kata, Portfolio me share se PEHLE crash.
 ```
+![c7](img/c7.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -356,12 +388,12 @@ flowchart LR
     n_Matching_Engine --> n_Settlement
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Portfolio_DB ~~~ n_pad
     style n_Wallet_DB fill:#f9a825,color:#000
     style n_Portfolio_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
 ```
@@ -388,6 +420,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
 ```
+![c8](img/c8.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -406,12 +442,12 @@ flowchart LR
     n_Matching_Engine --> n_Pub_Sub
     n_Pub_Sub --> n_WebSocket
     n_WebSocket --> n_USERS
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_SET ~~~ n_pad
     style n_Pub_Sub fill:#f9a825,color:#000
     style n_WebSocket fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       polling: 10 lakh bekaar sawaal / sec, 99% me price badla hi nahi.
 ```
@@ -447,6 +483,10 @@ JAWAB:    Order service check karti aur dobara order rokti (id se). Wallet paisa
           Log se crash ke baad book wapas, aur hisaab ka record bhi.
           Aage: stop-loss, risk check, regulator ki report.
 ```
+![c8_2](img/c8_2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -471,10 +511,10 @@ flowchart LR
     n_WebSocket --> n_USERS
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Portfolio_DB ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 ---
 

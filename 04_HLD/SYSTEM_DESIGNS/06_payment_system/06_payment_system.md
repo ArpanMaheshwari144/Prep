@@ -93,6 +93,10 @@ PAISA KAHAN HILTA (pehle ye tay, poori file isi pe):
   Bahar ka paisa = PSP (Razorpay / bank) se: bank se wallet me daalna (top-up), wallet se bank me
   nikaalna (payout), ya merchant kisi doosre bank me hai.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -101,10 +105,10 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 #### SHURU: DB KAUNSA? SQL
 ```
@@ -134,6 +138,10 @@ AAGE POOCHEGA:
 DIKKAT     Diwali subah maine kirana ko 500 bheje. Mere 500 kate, merchant me daalne se PEHLE server gira.
            500 na mere paas, na merchant ke paas. Gayab.
 ```
+![c1](img/c1.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -142,11 +150,11 @@ flowchart LR
     n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> BEGIN · Arpan -500 · Merchant +500 · COMMIT: dono ya koi nahi<br/>DB pehle log (WAL) me likhta, isliye crash pe bhi aadha nahi<br/>(transaction)<br/>-500 ke baad gira -> COMMIT nahi tha, ulta, 500 wapas (WAL)<br/>COMMIT ke baad gira -> log (WAL) me COMMIT, poora karo"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       app me 'pehle kaato, fail pe wapas jodo': server beech me gira to wapas jodna chala hi nahi.
 ```
@@ -165,6 +173,10 @@ AAGE POOCHEGA:
 DIKKAT     Ab wallet me 600. Phone se dukaan ko 500 scan kiya, usi second laptop pe Swiggy ka 500.
            Do alag server, dono ne 600 dekha -> dono kaatenge?
 ```
+![c2](img/c2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -173,11 +185,11 @@ flowchart LR
     n_DB["SQL DB<br/>600 me 500-500 dono pass<br/>-> ek hi query me check + kaato: paisa nahi to 0 row badli<br/>(atomic UPDATE: SET balance = balance - 500 WHERE id = ? AND balance >= 500)<br/>phone + laptop ek saath -> pehla jeeta, doosre ko 0 row<br/>WHERE check bhool gaye -> aakhri deewar (CHECK balance >= 0)"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       Java synchronized Payment Svc me: do machine, lock ek ke andar; doosri phir bhi 600 dekhti.
 ```
@@ -196,6 +208,10 @@ AAGE POOCHEGA:
 DIKKAT     Metro me (Rahul ne 2000 bheje the) maine Pay dabaya. 500 kat gaye, par jawab aate waqt network
            gaya. App ne timeout pe khud DOBARA bheja -> server ko do request, dono process -> 1000 kate.
 ```
+![c3](img/c3.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -206,11 +222,11 @@ flowchart LR
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store
     n_Payment_Svc --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Idempotency_store ~~~ n_pad
     style n_Idempotency_store fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       server key banaye: server ko pata hi nahi ye wahi request hai.
 ```
@@ -238,6 +254,10 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar maine bank se wallet me 2000 daale (top-up). Ye paisa hamara DB nahi hilata: server PSP
            ko "bhejo" kehta, asli paisa bank rails pe. Wo raasta dheema -> har thread PSP me atka.
 ```
+![c4](img/c4.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -250,11 +270,11 @@ flowchart LR
     n_Payment_Svc --> n_Idempotency_store
     n_Payment_Svc --> n_PSP
     n_Payment_Svc --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_PSP ~~~ n_pad
     style n_PSP fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       timeout pe "fail" dikha do: paisa shayad kat chuka.
 ```
@@ -274,6 +294,10 @@ AAGE POOCHEGA:
 DIKKAT     Usi top-up me server ne PSP ko call kiya aur jawab se pehle gira. Paisa kat gaya aur jawab kho
            gaya, ya kata hi nahi? Pata nahi.
 ```
+![c5](img/c5.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -290,11 +314,11 @@ flowchart LR
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_Reconciliation_job fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       "bas rollback kar do": PSP me shayad paisa sach me kat chuka.
 ```
@@ -325,6 +349,10 @@ AAGE POOCHEGA:
 DIKKAT     Phir maine ek merchant ko 500 bheje, uska account Bank B me. Do system pe ek DB transaction nahi.
            Wallet se 500 kata, Bank B me daalna (PSP payout) fail -> paisa beech me latka.
 ```
+![c6](img/c6.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -341,11 +369,11 @@ flowchart LR
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_Payment_Svc fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       2PC: sab "ready" bol ke lock pakad ke rukte; coordinator gira = sab atke, har payment dheema.
 ```
@@ -365,6 +393,10 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar maine support se poochha "kal raat 2200, subah 1100 kaise?" (RBI audit bhi yahi poochhe).
            Balance column sirf aaj ka number batata, 1100 kaise bana uska record nahi.
 ```
+![c7](img/c7.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -381,11 +413,11 @@ flowchart LR
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       balance + alag audit_log table: usme kuch bhi likh sakte, koi niyam nahi jaanchta.
 ```
@@ -413,6 +445,10 @@ AAGE POOCHEGA:
 DIKKAT     Shaam Diwali, sab ek saath payment kar rahe: 3000 / sec. Saari request ek hi Payment Svc machine pe
            -> CPU bhara, payment dheeme, phir machine giri -> kisi ka payment nahi ja raha.
 ```
+![c8](img/c8.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -437,13 +473,13 @@ flowchart LR
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc_x_N_1
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_LB_API_Gateway fill:#f9a825,color:#000
     style n_Payment_Svc_x_N_1 fill:#f9a825,color:#000
     style n_Payment_Svc_x_N_2 fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: machine kuch yaad na rakhe (yaad DB + idempotency store me), to koi bhi machine badlo / badhao;
@@ -460,6 +496,10 @@ AAGE POOCHEGA:
 DIKKAT     Usi shaam ek bada merchant dashboard pe "is mahine ki saari payment" report chala raha. Bhaari
            query usi DB pe -> DB busy -> mera 500 ka payment likhne me atak gaya.
 ```
+![c9](img/c9.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -480,11 +520,11 @@ flowchart LR
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc_xN
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Read_replica ~~~ n_pad
     style n_Read_replica fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       balance bhi replica se padho: replica peeche, mujhe purana balance dikhta.
 ```
@@ -504,6 +544,10 @@ AAGE POOCHEGA:
 DIKKAT     ~1000 crore payment row saal me. Table + index RAM me nahi samaate, har likhai pe index disk se
            -> Diwali ke 3000 / sec pe ek primary ki likhai dheemi.
 ```
+![c10](img/c10.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -524,11 +568,11 @@ flowchart LR
     n_Reconciliation_job --> n_SQL_DB_shard_by_account_id
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc_xN
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Read_replica ~~~ n_pad
     style n_SQL_DB_shard_by_account_id fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       txn_id se baanto: meri payment alag shard pe, balance kahan? · time se: aaj wala shard garam.
 ```
@@ -565,6 +609,10 @@ JAWAB:    Har payment pe ek id, dobara bheja to pehla jawab, paisa ek hi baar.
           PENDING likho, phir PSP ke webhook aur roz ke milaan se pakka karo.
           Aage: fraud check, kai currency, chargeback.
 ```
+![c10_2](img/c10_2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -591,10 +639,10 @@ flowchart LR
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc_x_N_1
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Read_replica ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 ---
 

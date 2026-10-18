@@ -94,16 +94,20 @@ DO CHEEZ JO DESIGN CHALATI:
 ```
 Ek chat server. Main aur Ravi dono usse jude, message server ke raaste Ravi tak.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_CS["Chat Server"]
     n_USER --> n_CS
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_CS ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 #### SHURU: KHULA CONNECTION (WEBSOCKET) AUR MAP
 ```
@@ -134,6 +138,10 @@ AAGE POOCHEGA:
 DIKKAT     Subah 9 baje 2 crore log jude, sabka connection khula. Ek connection = ek thread (~1 MB)
            -> 1 lakh connection = ~100 GB. Server khatam.
 ```
+![c1](img/c1.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -142,12 +150,12 @@ flowchart LR
     n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> kuch thread sab connection sambhalein, OS batata kis connection pe data aaya, thread sirf wahan<br/>chup connection = thodi memory · ~200 chat server, aage LB<br/>(event loop, Netty)<br/>wahi connection aage -> wahi server, connection khula hai<br/>chat server gira -> ruk-ruk ke dobara judo (backoff)"]
     n_U --> n_LB
     n_LB --> n_CS
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_CS ~~~ n_pad
     style n_CS fill:#f9a825,color:#000
     style n_LB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       badi machine lo (zyada RAM): thread ka kharcha wahi, bas thodi der baad tootega.
 ```
@@ -168,6 +176,10 @@ AAGE POOCHEGA:
 DIKKAT     Main server-1 pe, Ravi server-7 pe. Maine "hi" bheja, server-1 ke map me sirf apne log
            -> bola "Ravi offline", jabki Ravi online tha.
 ```
+![c2](img/c2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -178,11 +190,11 @@ flowchart LR
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_R ~~~ n_pad
     style n_R fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
 ```
@@ -203,6 +215,10 @@ AAGE POOCHEGA:
 DIKKAT     Ravi ka phone band, connection nahi. "Pehle bhejo, na pahunche to DB me daalo" -> beech me server
            gira = message gaya.
 ```
+![c3](img/c3.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -217,12 +233,12 @@ flowchart LR
     n_CS --> n_R
     n_CS --> n_DB
     n_CS --> n_P
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_P ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
     style n_P fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       sirf Push bhej do, DB nahi: push sirf ghanti hai, pahunchne ki guarantee nahi, history bhi nahi.
 ```
@@ -240,6 +256,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Roz ~1.2 TB message, 46,000 likhai / second. Ek DB machine nahi jhelegi. Kis cheez se baantein?
 ```
+![c4](img/c4.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -254,11 +274,11 @@ flowchart LR
     n_CS --> n_R
     n_CS --> n_CA
     n_CS --> n_P
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_CA ~~~ n_pad
     style n_CA fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       user_id se baanto: ek chat do jagah, group 500 jagah.
 ```
@@ -278,6 +298,10 @@ AAGE POOCHEGA:
 DIKKAT     Metro me net dheema. App ne "hi" bheja, timeout aaya, dobara bheja. Pehla pahunch chuka tha
            -> Ravi ko "hi" do baar.
 ```
+![c5](img/c5.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -294,11 +318,11 @@ flowchart LR
     n_CS --> n_I
     n_I --> n_CA
     n_CS --> n_P
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_P ~~~ n_pad
     style n_I fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       server id banaye: har dobara bhejna = nayi id = duplicate.
 ```
@@ -316,6 +340,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Meri phone ki ghadi 5 min aage. Mere message chat me upar chadh gaye, Ravi ke jawab se pehle.
 ```
+![c6](img/c6.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -334,11 +362,11 @@ flowchart LR
     n_I --> n_CA
     n_CS --> n_P
     n_CS --> n_SQ
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_SQ ~~~ n_pad
     style n_SQ fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
 ```
@@ -363,6 +391,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     "College Gang" me 500 log. Maine ek message bheja -> 500 logon ke inbox me 500 baar likhein?
 ```
+![c7](img/c7.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -381,11 +413,11 @@ flowchart LR
     n_I --> n_CA
     n_CS --> n_P
     n_CS --> n_SQ
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_CA ~~~ n_pad
     style n_CA fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       Twitter jaisa har inbox me copy: wahan feed sabki alag + crore follower, group sabka ek.
 ```
@@ -411,6 +443,10 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko Ravi ne chat khol ke 50 message padhe. Har message x har member ka "padha" record
            = 500 x 50 = 25,000 likhai. Bekaar.
 ```
+![c8](img/c8.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -429,11 +465,11 @@ flowchart LR
     n_I --> n_CA
     n_CS --> n_P
     n_CS --> n_NS
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_NS ~~~ n_pad
     style n_NS fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       unread COUNT column badhao-ghatao: har message pe 500 member x 1 UPDATE, phir bhi 25,000 likhai.
 ```
@@ -461,6 +497,10 @@ AAGE POOCHEGA:
 DIKKAT     Maine College Gang me 200 MB shaadi ka video chat server se bheja -> 2 min connection atka,
            server 500 x 200 MB = ~100 GB bheje.
 ```
+![c9](img/c9.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -479,11 +519,11 @@ flowchart LR
     n_CS --> n_CA
     n_CS --> n_P
     n_CS --> n_NS
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_S3 ~~~ n_pad
     style n_S3 fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       message me URL rakho: 10 min me khatam, kal link mara; KEY rakho.
 ```
@@ -502,6 +542,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Raat ko main online aaya, gaya. Har baar mere saare contacts ko batao = crore x 500 message.
 ```
+![c10](img/c10.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -520,11 +564,11 @@ flowchart LR
     n_CS --> n_CA
     n_CS --> n_P
     n_CS --> n_PR
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_PR ~~~ n_pad
     style n_PR fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       DB me online column, har dhadkan pe UPDATE: crore log x har 15 sec = DB baith jaata.
 ```
@@ -561,6 +605,10 @@ JAWAB:    Har user ~200 me se ek server se juda, Redis me likha kaun kahan.
           Tick aur unread = har user ka nishaan, online = umar wali Redis key, video S3 me, message me
           sirf pata.
 ```
+![c10_2](img/c10_2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -585,10 +633,10 @@ flowchart LR
     n_CS --> n_SQ
     n_CS --> n_NS
     n_CS --> n_PR
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_PR ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 ---
 

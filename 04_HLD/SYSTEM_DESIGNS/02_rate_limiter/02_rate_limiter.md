@@ -78,16 +78,20 @@ NUMBERS:  jagah ka hisaab bekaar hai: har user ki ek ginti + expiry, bas.
 ```
 App ki memory me ek ginti. Har request pe ginti + 1. Had paar -> 429.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_USER --> n_App
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_App ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 #### SHURU: TOKEN BUCKET KAISE CHALTA
 ```
@@ -119,6 +123,10 @@ AAGE POOCHEGA:
 DIKKAT     Subah 9 baje password bhool gaya, 9 baar login (limit 5 / min). LB ne baanta: App-1 pe 5, App-2
            pe 4. Har App ne apni ginti dekhi -> kisi ko 5 PAAR nahi dikha, 9 andar.
 ```
+![c1](img/c1.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -132,11 +140,11 @@ flowchart LR
     n_LB --> n_App_x_N_2
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       ek user hamesha ek App pe (sticky LB): wo App gira to ginti gayi; App badhe / ghate to phir bati.
 ```
@@ -156,6 +164,10 @@ AAGE POOCHEGA:
 DIKKAT     10 baje bot ne mere account pe ek hi pal me 20 login parallel bheje; ginti 4, limit 5.
            App-1 ne Redis se "4" padha (GET), App-2 ne bhi "4"; dono ne +1 karke "5" likha (SET) -> andar 6.
 ```
+![c2](img/c2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -169,11 +181,11 @@ flowchart LR
     n_LB --> n_App_x_N_2
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       App me synchronized / lock: sirf ek machine ke andar; do App me race wahi ki wahi.
 ```
@@ -199,6 +211,10 @@ AAGE POOCHEGA:
 DIKKAT     Bot ki saari request App tak pahunchti, wahan ginti hoti, phir 429. Mana hone wali request bhi
            LB, App aur Redis tak ghoomi -> bot ke 10,000 request / sec se App bhar gayi, asli log dheeme.
 ```
+![c3](img/c3.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -213,11 +229,11 @@ flowchart LR
     n_API_Gateway --> n_Redis
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_App_x_N_2 ~~~ n_pad
     style n_API_Gateway fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: jitna aage roko (gateway / edge), utna kam kaam bekaar; client ko batao kab aaye (Retry-After) aur
@@ -234,6 +250,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Dopahar Redis mar gaya. Saari ginti wahin thi -> kisi ko pata hi nahi kisne kitni bheji.
 ```
+![c4](img/c4.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -250,13 +270,13 @@ flowchart LR
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Redis_Cluster ~~~ n_pad
     style n_Redis_Cluster fill:#f9a825,color:#000
     style n_Route_53 fill:#f9a825,color:#000
     style n_ALB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       sab fail-open: login khula = koi bina had password guess karta rahega.
 ```
@@ -284,6 +304,10 @@ AAGE POOCHEGA:
 DIKKAT     Meri script India, US aur Europe teen region se ek saath chali. Har region ka Redis apni alag
            ginti rakhta -> har jagah 50, kisi ki had paar nahi hui, aur 100 ki had pe 150 nikal gayi.
 ```
+![c5](img/c5.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -300,11 +324,11 @@ flowchart LR
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Redis_Cluster ~~~ n_pad
     style n_Redis_Cluster fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: ek user ki ek ginti, ek ghar me (home region); door jaane ka kharcha sirf zaroori endpoint pe
@@ -320,6 +344,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     4 baje bhi wahi bot. 429 sirf bolta "60 second baad aao" -> bot 60 sec baad phir, din bhar, roz.
 ```
+![c6](img/c6.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -339,13 +367,13 @@ flowchart LR
     n_API_Gateway --> n_Kafka
     n_USER --> n_EDGE
     n_WAF -.->|ban list| n_EDGE
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_App_xN ~~~ n_pad
     style n_Kafka fill:#f9a825,color:#000
     style n_Pattern_Svc fill:#f9a825,color:#000
     style n_WAF fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       turant ban: asli user bhi tez click karta, office ke 1000 log ek IP (NAT), sale me asli bheed.
 ```
@@ -366,6 +394,10 @@ AAGE POOCHEGA:
 DIKKAT     Shaam 6 baje sale khuli. Har user apni had ke andar tha, par laakhon user ek saath -> kul request
            server ki taakat se zyada, CPU 100%, sabke liye site band. Per-user had kuch nahi rok paayi.
 ```
+![c7](img/c7.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -385,11 +417,11 @@ flowchart LR
     n_API_Gateway --> n_Kafka
     n_USER --> n_EDGE
     n_WAF -.->|ban list| n_EDGE
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_App_xN ~~~ n_pad
     style n_API_Gateway fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: user ki had aur system ki had alag cheez, dono chahiye: sab user had me hon phir bhi system bhar
@@ -405,6 +437,10 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko attack chal raha tha, usi waqt poora Redis Cluster gira, copy bhi. Ginti kahin nahi ho
            rahi, aam API khuli chhodi thi -> attacker ki saari request bina roke andar, server bhar gaye.
 ```
+![c8](img/c8.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -424,11 +460,11 @@ flowchart LR
     n_API_Gateway --> n_Kafka
     n_USER --> n_EDGE
     n_WAF -.->|ban list| n_EDGE
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_App_xN ~~~ n_pad
     style n_API_Gateway fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: thodi galat had, bina had se behtar: Redis poora gaya to fail-open wale (feed) pe bhi har machine
@@ -446,6 +482,10 @@ AAGE POOCHEGA:
 DIKKAT     Raat 11 baje office ki night shift: 1000 log ek IP (NAT) ke peeche, ek ki galti -> IP block, sab
            1000 block. Ulta, botnet ke paas 1000 IP, har IP se thoda -> kisi IP ki limit nahi tooti.
 ```
+![c9](img/c9.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -465,11 +505,11 @@ flowchart LR
     n_API_Gateway --> n_Kafka
     n_USER --> n_EDGE
     n_WAF -.->|ban list| n_EDGE
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Redis_Cluster ~~~ n_pad
     style n_Redis_Cluster fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       IP ki had badha do (5 se 500): office bach gaya, par botnet ko bhi utni hi chhoot.
 ```
@@ -513,6 +553,10 @@ JAWAB:    Limiter darwaze (API gateway) pe, mana hui request andar jaati hi nahi
           Redis ki copy. Redis poora band: har server apni ginti, login / OTP band.
           Baar-baar wale hamlawar ko WAF se block, aur badi asli bheed ke liye poore system ki had.
 ```
+![c9_2](img/c9_2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -536,10 +580,10 @@ flowchart LR
     n_USER --> n_Route_53
     n_Route_53 --> n_WAF
     n_WAF --> n_ALB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_App_x_N_2 ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 ---
 

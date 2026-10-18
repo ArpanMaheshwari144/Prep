@@ -68,6 +68,10 @@ NUMBERS (andaaza):
 Client file Upload service ko de. Service file S3 me rakhe,
 jaanch wale (Validator) ko call kare (2-3 sec), jawab wapas.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -78,16 +82,20 @@ flowchart LR
     n_CLIENT --> n_Upload_Svc
     n_Upload_Svc --> n_Validator
     n_Upload_Svc --> n_S3
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_S3 ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 #### 1 Maine report.pdf daali, 3 second ghoomta screen dekhta raha
 ```
 DIKKAT     31 March, maine report.pdf daali. Server Validator ke 3 sec jawab tak atka, main bhi screen pe.
            Aakhri ghante ~200 upload / sec x 3 sec = ~600 thread atke, Tomcat ke 200 khatam.
 ```
+![c1](img/c1.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -105,13 +113,13 @@ flowchart LR
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
     n_Worker --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_Kafka fill:#f9a825,color:#000
     style n_Worker fill:#f9a825,color:#000
     style n_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       thread pool 200 se 2000: jaanch tab bhi 3 sec, bas memory khatam hone tak der.
 ```
@@ -134,6 +142,10 @@ AAGE POOCHEGA:
 DIKKAT     Report ke baad maine 5 GB video daali: client -> hamara server -> S3. 5 GB do baar network pe,
            thread minuton atka, sirf bytes aage badhane ko server badhane pade.
 ```
+![c2](img/c2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -151,11 +163,11 @@ flowchart LR
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
     n_Worker --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_S3 ~~~ n_pad
     style n_S3 fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       S3 ki access key app me daal do: app se key nikli = poora bucket khula.
 ```
@@ -181,6 +193,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Usi video ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB shuru se?
 ```
+![c3](img/c3.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -198,11 +214,11 @@ flowchart LR
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
     n_Worker --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_S3 ~~~ n_pad
     style n_S3 fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       server ka timeout badha do: wifi gaya to connection hi toota, timeout kuch nahi bachata.
 ```
@@ -229,6 +245,10 @@ AAGE POOCHEGA:
 DIKKAT     Ek aur file chadhte waqt meri app crash. "complete" nahi aaya, S3 ka event bhi chhoota: bytes S3 me
            pade (paisa lag raha), DB me T-103 "UPLOADING" pe atka, koi dhoondhta hi nahi.
 ```
+![c4](img/c4.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -249,11 +269,11 @@ flowchart LR
     n_Kafka --> n_Worker
     n_Worker --> n_Validator
     n_Worker --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Validator ~~~ n_pad
     style n_Sweeper_job fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       sirf S3 lifecycle niyam: din me ek baar chalta aur DB nahi dekhta.
 ```
@@ -275,6 +295,10 @@ AAGE POOCHEGA:
 DIKKAT     Shaam tak 10,000 log ka "Meri files" page khula, har 2 sec saari files ka haal
            -> 5,000 sawaal / sec DB pe. Likhai 1-2 / sec thi, padhai ne DB ghera.
 ```
+![c5](img/c5.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -295,11 +319,11 @@ flowchart LR
     n_Sweeper_job --> n_CHAIN
     n_CHAIN --> n_DB
     n_CHAIN --> n_RC
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_RC ~~~ n_pad
     style n_RC fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       DB me index daalo: sawaal tez, par 5,000 / sec phir bhi primary pe.
 ```
@@ -322,6 +346,10 @@ AAGE POOCHEGA:
 DIKKAT     Deadline wale din maine ek file nahi, poora folder daala: 1000 file. Har file ka alag trackingId
            -> 1000 id sambhaalna mere bas ka nahi, aur "poora folder ho gaya?" ka koi jawab nahi.
 ```
+![c6](img/c6.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -344,11 +372,11 @@ flowchart LR
     n_Sweeper_job --> n_CHAIN
     n_CHAIN --> n_DB
     n_CHAIN --> n_Redis
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Read_replica ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 TASVEER: folder = bachchon ka jod
   P-1 (folder, 1000 file)
@@ -371,6 +399,10 @@ AAGE POOCHEGA:
 DIKKAT     Maine support chat me screenshot bheja, usme T-101 dikh raha tha. Ravi ne GET /download/T-101
            maara -> meri file Ravi ko mil gayi.
 ```
+![c7](img/c7.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -393,12 +425,12 @@ flowchart LR
     n_Sweeper_job --> n_CHAIN
     n_CHAIN --> n_DB
     n_CHAIN --> n_RC
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_RC ~~~ n_pad
     style n_API_Gateway_LB fill:#f9a825,color:#000
     style n_Upload_Svc fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       gateway pe hi check: use pata hi nahi T-101 kiski hai.
 ```
@@ -418,6 +450,10 @@ AAGE POOCHEGA:
 DIKKAT     Mujhe S3 ka pakka link mila tha. Maine dost ko WhatsApp pe bheja, dost ne group me.
            Link hamesha chalta -> file kisi ke bhi haath.
 ```
+![c8](img/c8.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -440,11 +476,11 @@ flowchart LR
     n_Sweeper_job --> n_CHAIN
     n_CHAIN --> n_DB
     n_CHAIN --> n_RC
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_S3 ~~~ n_pad
     style n_S3 fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       link me lamba random naam (koi andaza na lagaye): ek baar bahar gaya to hamesha chalta.
 ```
@@ -464,6 +500,10 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko kisi ne virus.exe ka naam report.pdf kiya, type "application/pdf" bheja -> S3 me pahunchi.
            Naam aur type dono client ne bheje, jo jhooth bol sakta.
 ```
+![c9](img/c9.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -487,11 +527,11 @@ flowchart LR
     n_Worker --> n_DB
     n_Worker --> n_RC
     n_Worker --> n_S3
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_RC ~~~ n_pad
     style n_Worker fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       type ke liye poori file padho: 5 GB S3 se laana; pehle kuch byte kaafi.
 ```
@@ -527,6 +567,10 @@ JAWAB:    Server sirf paas deta, file seedha S3 me (badi ho to tukdon me).
           chhote paas se safe, S3 niyam + atki file wali job se safai.
           Aage: fail pe dobara koshish, download ke liye CDN.
 ```
+![c9_2](img/c9_2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -556,10 +600,10 @@ flowchart LR
     n_Worker --> n_DB
     n_Worker --> n_Redis
     n_Worker --> n_S3
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Validator ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 ---
 

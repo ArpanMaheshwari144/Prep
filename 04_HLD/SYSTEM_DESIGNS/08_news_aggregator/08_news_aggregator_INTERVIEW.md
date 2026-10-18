@@ -69,6 +69,10 @@ NUMBERS (andaaza):
 ```
 Fetcher sources se khabar laaye, DB me daale. Feed service DB se "taazi 20" nikaal ke de.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -79,16 +83,20 @@ flowchart LR
     n_USER --> n_Feed_Svc
     n_Feed_Svc --> n_DB
     n_Fetcher --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 #### 1 Subah maine app khola, sabko wahi 20 khabar, har baar DB se
 ```
 DIKKAT     Subah 7 baje laakhon log app khol rahe, sabko wahi top 20 khabar. Har khulne pe DB se sort karke
            nikaalte -> DB pe bheed, feed dheemi, kabhi khulti hi nahi.
 ```
+![c1](img/c1.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -102,11 +110,11 @@ flowchart LR
     n_Feed_Svc --> n_DB
     n_Fetcher --> n_DB
     n_Fetcher --> n_Redis
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 TASVEER: ek list, sab padhein
   feed:latest (sorted set, score = kab chhapi):  9:05 a90 | 9:03 a77 | 9:01 a45 | 8:58 a12 | ... (top 500)
@@ -129,6 +137,10 @@ AAGE POOCHEGA:
 DIKKAT     Badi khabar aayi, par meri feed me 20 minute baad dikhi. Ek hi kaam me source se laana aur DB me
            likhna dono, ek dheema source poori line rok deta -> khabar purani.
 ```
+![c2](img/c2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -148,12 +160,12 @@ flowchart LR
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_Kafka fill:#f9a825,color:#000
     style n_Worker fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: laana aur padhna alag: laana peeche apni speed se (Kafka, key = source_id); user sirf Redis ki list
@@ -170,6 +182,10 @@ AAGE POOCHEGA:
 DIKKAT     8 baje election result: aam 500 / sec ki jagah 20,000 / sec. Ek Feed Svc machine ka CPU bhara,
            cache miss seedha primary DB pe, jahan fetcher bhi likh raha -> dono dheeme.
 ```
+![c3](img/c3.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -189,12 +205,12 @@ flowchart LR
     n_KW --> n_DB
     n_KW --> n_Redis
     n_SF --> n_KW
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Read_replica ~~~ n_pad
     style n_LB fill:#f9a825,color:#000
     style n_Read_replica fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       Kafka se bheed sambhalo: Kafka likhne ke raaste ke liye hai, padhai ki bheed nahi jhelta.
 ```
@@ -215,6 +231,10 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar "India ne match jeeta" 5 source ne chhaapa, thode alag title, alag URL. Sab naya maana
            -> meri feed me wahi khabar 5 baar, baaki khabar neeche dab gayi.
 ```
+![c4](img/c4.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -234,11 +254,11 @@ flowchart LR
     n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_SF --> n_Kafka
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DBR ~~~ n_pad
     style n_Worker fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 TASVEER: Bloom filter (bit-line)
   bits:   [0] [0] [1] [0] [1] [0] [0] [1] [0] [0]      (jagah 0..9)
@@ -264,6 +284,10 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar baad ek chhota source 30 sec tak jawab nahi de raha. Sab usi ke intezaar me atke, baaki
            999 source ki khabar bhi nahi aayi -> poori feed ruk gayi.
 ```
+![c5](img/c5.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -283,11 +307,11 @@ flowchart LR
     n_KW --> n_DB
     n_KW --> n_Redis
     n_Fetcher --> n_KW
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Read_replica ~~~ n_pad
     style n_Fetcher fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: ek beemar source baaki ko na roke: had tak intezaar, phir circuit breaker; us source ki
@@ -305,6 +329,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Shaam ko mujhe sirf tech aur sports pasand. Har user ki alag feed (10 lakh feed) bahut mehngi.
 ```
+![c6](img/c6.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -324,11 +352,11 @@ flowchart LR
     n_KW --> n_DB
     n_KW --> n_Redis
     n_SF --> n_KW
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       har baar DB se WHERE category IN (tech, sports): har khulne pe DB, cache ka fayda gaya.
 ```
@@ -347,6 +375,10 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko maine "cricket" dhoondha. DB ne har khabar ki poori line padh ke match kiya, 2 crore row
            -> search bahut dheema, aur DB baaki sab ke liye dheemi.
 ```
+![c7](img/c7.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -367,11 +399,11 @@ flowchart LR
     n_KW --> n_Redis
     n_KW --> n_Elasticsearch
     n_SF --> n_KW
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Elasticsearch ~~~ n_pad
     style n_Elasticsearch fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: ES sirf dhoondhta (id deta), sach DB me; ES gira / galat -> DB se dobara bana lo: khabar kabhi
@@ -389,6 +421,10 @@ AAGE POOCHEGA:
 DIKKAT     Usi raat DBA ka mail: 6 mahine me ~2 crore khabar ki row, disk / backup ka kharcha badh raha.
            Taazi 20 ke alawa purana koi padhta hi nahi. (Query dheemi NAHI hui: published_at pe index hai.)
 ```
+![c8](img/c8.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -409,11 +445,11 @@ flowchart LR
     n_KW --> n_Redis
     n_KW --> n_Elasticsearch
     n_SF --> n_KW
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Archive ~~~ n_pad
     style n_Archive fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       "sharding karo": ye purana hatana (retention) hai, data baantna (sharding) nahi.
 ```
@@ -434,6 +470,10 @@ AAGE POOCHEGA:
 DIKKAT     Mail aage: "source 100 guna ya log khud content daalne lage to ek DB likhai aur data nahi jhelegi."
            (Hamare number pe ek DB kaafi hai, ye sirf bahut bade scale pe.)
 ```
+![c9](img/c9.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -453,11 +493,11 @@ flowchart LR
     n_KW --> n_DB
     n_KW --> n_RES
     n_SF --> n_KW
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Archive ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       date se baanto: aaj ki saari likhai aaj wale shard pe -> wo akela garam.
 ```
@@ -492,6 +532,10 @@ JAWAB:    Khabar laana aur khabar dikhana alag raaste. Peeche fetcher sites se l
           Sabko lagbhag wahi feed, to Redis me pehle se bani, 99% wahin se. Feed service kai machine pe,
           purani khabar sasti jagah, search Elasticsearch pe.
 ```
+![c9_2](img/c9_2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -525,10 +569,10 @@ flowchart LR
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Archive ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 ---
 

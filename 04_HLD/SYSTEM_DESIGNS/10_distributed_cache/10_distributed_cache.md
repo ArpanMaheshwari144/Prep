@@ -68,6 +68,10 @@ NUMBERS (andaaza):
 Ek machine, uski RAM me ek HashMap. get / put O(1).
 App pehle cache se poochhe: mila -> wahi do · nahi mila -> DB se laao -> cache me daalo -> do (CACHE-ASIDE).
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -76,10 +80,10 @@ flowchart LR
     n_Cache["Cache"]
     n_App --> n_DB
     n_App --> n_Cache
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Cache ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 #### SHURU: CACHE-ASIDE
 ```
@@ -110,6 +114,10 @@ AAGE POOCHEGA:
 DIKKAT     Subah se mere app ki keys cache me jud rahi thi. 64 GB RAM bhar gayi, nayi key ke liye jagah nahi.
            Kaunsi purani key nikaalein? Galat nikaali to wahi baar-baar DB se aayegi, app dheema.
 ```
+![c1](img/c1.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -118,11 +126,11 @@ flowchart LR
     n_Cache["Cache<br/>64 GB RAM bhar gayi<br/>-> har key ka chhune ka kram rakho, RAM bhari to sabse der se chhua bahar<br/>har key ki umar bhi: khatam = key bekaar<br/>(LRU + TTL)<br/>user:9 phir padha -> utha ke aage, ab baad me nikle"]
     n_App --> n_DB
     n_App --> n_Cache
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Cache ~~~ n_pad
     style n_Cache fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 TASVEER: LRU = HashMap + list
   AAGE (abhi chhua)  user:7 <-> user:42 <-> home <-> user:9  PEECHE (sabse purana)
@@ -145,6 +153,10 @@ AAGE POOCHEGA:
 DIKKAT     Subah 11 tak data 1 TB ho gaya, ek machine me 64 GB -> 16+ machine. "user:42" kis machine pe
            jaaye, aur App ko har baar kaise pata chale?
 ```
+![c2](img/c2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -159,14 +171,14 @@ flowchart LR
     n_Cache_client --> n_Node_A
     n_Cache_client --> n_Node_B
     n_Cache_client --> n_Node_C
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Node_C ~~~ n_pad
     style n_Cache_client fill:#f9a825,color:#000
     style n_Node_A fill:#f9a825,color:#000
     style n_Node_B fill:#f9a825,color:#000
     style n_Node_C fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
 ```
@@ -192,6 +204,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Dopahar machine B mar gayi. Uske hisse ki saari key gayab -> un key ki saari padhai seedha DB pe.
 ```
+![c3](img/c3.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -206,13 +222,13 @@ flowchart LR
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Node_C_replica ~~~ n_pad
     style n_Node_A_replica fill:#f9a825,color:#000
     style n_Node_B_replica fill:#f9a825,color:#000
     style n_Node_C_replica fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       sync copy: har likhai pe copy ke "haan" ka intezaar -> <1 ms gaya.
 ```
@@ -233,6 +249,10 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya, cache me abhi bhi "Ravi"
            -> sabko purana naam dikh raha.
 ```
+![c4](img/c4.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -247,11 +267,11 @@ flowchart LR
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Node_C_replica ~~~ n_pad
     style n_App fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       cache UPDATE: "X" phir "Y" likha, cache me pehle Y pahuncha phir X -> galat "X" baith gaya.
 ```
@@ -271,6 +291,10 @@ AAGE POOCHEGA:
 DIKKAT     7 baje "home page" key ki umar khatam hui. Usi pal 1000 log aaye, sabko cache me nahi mili,
            sab ek saath DB pe gaye -> DB pe achanak bojh, home page sabke liye dheema.
 ```
+![c5](img/c5.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -285,11 +309,11 @@ flowchart LR
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Node_C_replica ~~~ n_pad
     style n_App fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 TASVEER: ek jaaye, baaki ruke
   7 baje "home" key khatam, 1000 request ek saath
@@ -314,6 +338,10 @@ AAGE POOCHEGA:
 DIKKAT     Raat IPL final, crore log har second "live:score" padh rahe. Ye ek key ek hi cache machine pe,
            baaki machine khaali -> wo akeli machine CPU / network pe bhar gayi, score sabke liye atka.
 ```
+![c6](img/c6.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -328,11 +356,11 @@ flowchart LR
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Node_C_replica ~~~ n_pad
     style n_App_L1_local_cache fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: garam key ko faila do (App ke paas 1-2 sec ki copy, ya key ke tukde): ek key = ek machine, isliye
@@ -365,6 +393,10 @@ JAWAB:    Cache = RAM me rakhi key-value, kai machines me baanti (ring se), har 
           bheed (ek laaye, baaki ruke).
           Bahut garam key: har app server apne paas 1-2 second rakhe.
 ```
+![c6_2](img/c6_2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -379,10 +411,10 @@ flowchart LR
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_Node_C_replica ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 ---
 

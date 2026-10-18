@@ -78,6 +78,10 @@ NUMBERS (andaaza):
 ```
 Ek machine, uski memory me ek queue. Producer daale, consumer uthaye.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -86,16 +90,20 @@ flowchart LR
     n_C["Consumer"]
     n_P --> n_Q
     n_Q --> n_C
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_C ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 #### 1 Subah queue machine restart hui, 500 signup gayab
 ```
 DIKKAT     Subah, sale se pehle signup khule. Queue machine ki memory me 500 signup message, machine restart
            -> memory saaf -> 500 gayab. Email service ko pata hi nahi chala ki 500 log aaye.
 ```
+![c1](img/c1.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -104,11 +112,11 @@ flowchart LR
     n_C["Consumer"]
     n_P --> n_L
     n_L --> n_C
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_C ~~~ n_pad
     style n_L fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       DB me queue: insert = index + lock = idhar-udhar likhna; queue me WHERE nahi, bas "X ke baad do".
 ```
@@ -128,6 +136,10 @@ AAGE POOCHEGA:
 DIKKAT     10 baje sale: "order-events" pe 5,000 khabar / sec. Email worker ~500 / sec hi bhej paata
            (har email ek API call). Topic ek line -> ek hi worker kram se padhe -> ghanton ki line (lag).
 ```
+![c2](img/c2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -136,11 +148,11 @@ flowchart LR
     n_C["Consumer"]
     n_P --> n_B
     n_B --> n_C
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_C ~~~ n_pad
     style n_B fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       copy (replica) badhao: copy sirf bachav ke liye, padhna bhi leader se hi; padhne wale = partition.
 ```
@@ -159,6 +171,10 @@ AAGE POOCHEGA:
 DIKKAT     Ravi ne naam "Ravi K" kiya, 1 min baad "Ravi Kumar". Pehla P0 me, doosra P1 me. P0 ka consumer
            10 min peeche (lag) -> pehle "Ravi Kumar" laga, phir "Ravi K" -> galat naam reh gaya.
 ```
+![c3](img/c3.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -167,11 +183,11 @@ flowchart LR
     n_C["Consumer"]
     n_P --> n_B
     n_B --> n_C
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_C ~~~ n_pad
     style n_P fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       poore topic ka kram: matlab sirf ek partition = speed khatam. Kram sirf key ke andar.
 ```
@@ -193,6 +209,10 @@ AAGE POOCHEGA:
 DIKKAT     Sale me email service ki 3 machine lagayi. Teeno ne har message padha, to Ravi ke ek order pe
            3 email gaye -> Ravi pareshan, aur kaam teen guna hua.
 ```
+![c4](img/c4.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -201,11 +221,11 @@ flowchart LR
     n_GE["Group email<br/>3 machine, 3 email<br/>-> teeno machine ek group.id: har tukda group ke EK hi member ko, kaam bat-ta<br/>(consumer group)<br/>group.id = machine naam -> teen alag team, 3 email<br/>machine badhani -> tukde bhi badhao, warna khaali"]
     n_P --> n_B
     n_B --> n_GE
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_GE ~~~ n_pad
     style n_GE fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 TASVEER: ek team, tukde baante
 topic order-events:  P0 P1 P2 P3 | P4 P5 P6 | P7 P8 P9
@@ -227,6 +247,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Ravi ka order email ko bhi chahiye, analytics ko bhi, dashboard ko bhi. Ek group = sirf ek ko.
 ```
+![c5](img/c5.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -239,12 +263,12 @@ flowchart LR
     n_B --> n_GE
     n_B --> n_GA
     n_B --> n_GD
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_GD ~~~ n_pad
     style n_GA fill:#f9a825,color:#000
     style n_GD fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       har service ka alag topic: producer ek event teen baar bheje -> "ek message kai service" hi toota.
 ```
@@ -264,6 +288,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Dopahar Broker A ki disk mari. Har partition ki ek hi copy thi -> P0 ka data hamesha ke liye gaya.
 ```
+![c6](img/c6.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -278,12 +306,12 @@ flowchart LR
     n_B --> n_GE
     n_B --> n_GA
     n_B --> n_GD
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_K ~~~ n_pad
     style n_K fill:#f9a825,color:#000
     style n_B fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       acks=1 sab jagah: leader ne "OK" bola, copy se pehle gira -> khabar gayi.
 ```
@@ -310,6 +338,10 @@ AAGE POOCHEGA:
 DIKKAT     Email service ne offset 5 padha (Ravi ka order). Email bheja -> "padh liya" (commit) se pehle CRASH
            -> restart pe phir 5 -> Ravi ko 2 email.
 ```
+![c7](img/c7.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -326,11 +358,11 @@ flowchart LR
     n_B --> n_GA
     n_B --> n_GD
     n_GE --> n_R
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_R ~~~ n_pad
     style n_R fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       pehle commit, phir kaam: email se pehle CRASH -> restart 6 se -> event 5 KHO gaya.
 ```
@@ -349,6 +381,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Ravi ka order #101 DB me bana, Kafka bhejne se pehle order server gira -> event gaya hi nahi.
 ```
+![c8](img/c8.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -365,11 +401,11 @@ flowchart LR
     n_B --> n_GA
     n_B --> n_GD
     n_GE --> n_R
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_GD ~~~ n_pad
     style n_P fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 NAHI       "offset bachayega": nahi, offset consumer ki taraf hai; ye producer ki taraf ki dikkat.
 ```
@@ -398,6 +434,10 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko email group ki ek machine C2 mar gayi. Uske tukdon ke message koi nahi padh raha,
            peeche ki line (lag) badhti ja rahi -> logon ko order email ghanton der se.
 ```
+![c9](img/c9.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -416,11 +456,11 @@ flowchart LR
     n_B --> n_GD
     n_GE --> n_R
     n_GE --> n_DLQ
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DLQ ~~~ n_pad
     style n_DLQ fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: koi partition bina padhne wale ke nahi (rebalance), koi kharab khabar poori line na roke (DLQ).
@@ -437,6 +477,10 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko broker ki disk bharti ja rahi: din bhar ke sale ke saare message disk pe pade, koi nahi
            hatata -> disk poori bhari to naye message likhne band, poora order flow ruk jaayega.
 ```
+![c10](img/c10.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -455,11 +499,11 @@ flowchart LR
     n_B --> n_GD
     n_GE --> n_R
     n_GE --> n_DLQ
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_GD ~~~ n_pad
     style n_B fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: jo rakha hai usi se REPLAY; rakhna consumer ki sabse lambi chhutti se lamba.
@@ -491,6 +535,10 @@ JAWAB:    Bhejne wala khabar key ke saath bhejta, key se tukda tay hota, tukde k
           Har service ki apni team, to ek khabar sab tak. Worker kaam ke baad 'padh liya' bolta, id se
           dobara skip, kharab khabar DLQ me. 7 din rakhte, dobara padh sakte.
 ```
+![c10_2](img/c10_2.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -509,10 +557,10 @@ flowchart LR
     n_B --> n_GD
     n_GE --> n_R
     n_GE --> n_DLQ
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_GD ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
+
 
 ---
 

@@ -78,7 +78,7 @@ DATA SE TEEN SAWAAL:
 ```
 Banking Service (saara niyam / logic) -> SQL DB. Jaan-boojh ke seedha.
 ```
-![cdabba](img/cdabba.png)
+![cdabba](img/cdabba.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -90,20 +90,16 @@ flowchart LR
     n_DB["SQL DB"]
     n_USER --> n_SVC
     n_SVC --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
-
 
 #### 1 Maine Ravi ko 500 bheje, beech me server gira
 ```
 DIKKAT     1 tareekh subah 8 baje maine Ravi ko 500 bheje. Mere 500 kate, Ravi ke account me daalne se PEHLE
            server gira. 500 na mere paas, na Ravi ke paas. Gayab.
 ```
-![c1](img/c1.png)
+![c1](img/c1.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -115,10 +111,7 @@ flowchart LR
     n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono UPDATE ek transaction me: COMMIT tak dono ya koi nahi<br/>(transaction: BEGIN · Arpan -500 · Ravi +500 · COMMIT)<br/>beech me server gira -> DB log (WAL) se: COMMIT hua = poora, nahi = ulta<br/>-500 ke baad koi padhe -> aadha kisi ko nahi dikhta"]
     n_USER --> n_SVC
     n_SVC --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
@@ -140,7 +133,7 @@ AAGE POOCHEGA:
 DIKKAT     8:30 lift me maine Send dabaya, 500 kat bhi gaye, par jawab aate waqt network gaya. App ne timeout
            pe khud dobara bheja -> 1000 kat gaye, bhejne the 500.
 ```
-![c2](img/c2.png)
+![c2](img/c2.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -152,10 +145,7 @@ flowchart LR
     n_DB["SQL DB"]
     n_USER --> n_SVC
     n_SVC --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_SVC fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
@@ -179,7 +169,7 @@ AAGE POOCHEGA:
 DIKKAT     Mere paas 300. 9:00 Netflix ka 200 ka auto-debit chala, usi second maine UPI se Ravi ko 200 bheje.
            Do request, do thread, dono ne balance 300 padha -> dono pass -> dono kate -> mera balance -100.
 ```
-![c3](img/c3.png)
+![c3](img/c3.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -191,10 +181,7 @@ flowchart LR
     n_DB["SQL DB<br/>Netflix + UPI, balance -100<br/>-> ek hi UPDATE me check + kaatna, DB row lock leta, dono line me<br/>UPDATE account SET balance = balance - 200 WHERE id = Arpan AND balance >= 200<br/>(atomic UPDATE)<br/>pehla -> 300 se 100<br/>doosra -> 100 >= 200 nahi, 0 row, 422, kuch nahi kata"]
     n_USER --> n_SVC
     n_SVC --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
@@ -216,7 +203,7 @@ AAGE POOCHEGA:
 DIKKAT     Subah se paisa kai baar hila. Maine support se poochha "mere 500 kahan gaye, kab?" (audit bhi yahi)
            -> har len-den ka pakka khaata chahiye.
 ```
-![c4](img/c4.png)
+![c4](img/c4.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -228,10 +215,7 @@ flowchart LR
     n_DB["SQL DB + ledger<br/>500 kahan gaye?<br/>-> khaata = DB ki table, har transfer usi transaction me 2 line: Arpan -500, Ravi +500<br/>sirf INSERT, kabhi UPDATE nahi: BEGIN · INSERT ledger x2 · UPDATE balance x2 · COMMIT<br/>(ledger)<br/>txn wapas -> khaata bhi wapas, jhoothi line nahi<br/>galat line -> UPDATE nahi, ulti line jodo<br/>support: kab, kisko -> har line me waqt + transfer id"]
     n_USER --> n_SVC
     n_SVC --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_DB ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
@@ -254,7 +238,7 @@ AAGE POOCHEGA:
 DIKKAT     10 baje salary 50,000 aayi, 1 min baad Ravi ko 20,000 rent bheja. Har transfer ke baad SMS, fraud,
            statement chahiye. Par SMS service giri hui hai -> transfer na ruke, aur SMS khoye bhi nahi.
 ```
-![c5](img/c5.png)
+![c5](img/c5.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -268,10 +252,7 @@ flowchart LR
     n_USER --> n_SVC
     n_SVC --> n_DB
     n_DB --> n_K
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_K ~~~ n_pad
     style n_K fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
@@ -294,7 +275,7 @@ AAGE POOCHEGA:
 DIKKAT     Salary aate hi maine balance khola. Har baar 50,000 khaate ki line jodna dheema, to balance
            ek column me rakha. Par column aur khaata alag ho gaye (bug), to sach kaunsa? Kaun pakdega?
 ```
-![c6](img/c6.png)
+![c6](img/c6.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -310,10 +291,7 @@ flowchart LR
     n_SVC --> n_DB
     n_DB --> n_K
     n_REC --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_K ~~~ n_pad
     style n_REC fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
@@ -338,7 +316,7 @@ AAGE POOCHEGA:
 DIKKAT     11 baje sabki salary aayi, laakhon transfer ek saath. Ek hi Banking Svc machine thi: CPU bhara,
            transfer dheeme, phir machine giri -> koi bhi paisa nahi bhej pa raha.
 ```
-![c7](img/c7.png)
+![c7](img/c7.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -359,12 +337,9 @@ flowchart LR
     n_S2 --> n_DB
     n_DB --> n_K
     n_REC --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_K ~~~ n_pad
     style n_LB fill:#f9a825,color:#000
     style n_S1 fill:#f9a825,color:#000
     style n_S2 fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
@@ -385,7 +360,7 @@ AAGE POOCHEGA:
 DIKKAT     Salary ke baad sab baar-baar balance aur history dekh rahe. Saari padhai usi ek DB pe, jahan
            transfer bhi likhe jaate -> padhne ki bheed ne paisa bhejna dheema kar diya.
 ```
-![c8](img/c8.png)
+![c8](img/c8.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -409,10 +384,7 @@ flowchart LR
     n_S2 --> n_DB
     n_DB --> n_K
     n_REC --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_RR ~~~ n_pad
     style n_RR fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
@@ -434,7 +406,7 @@ AAGE POOCHEGA:
 DIKKAT     Maine Ravi ki dukaan ko 500 bheje, usi second dukaan ne mujhe 200 refund kiye. Ek ne pehle mera row
            pakda, doosre ne dukaan ka; dono ek doosre ka intezaar -> dono atke (deadlock).
 ```
-![c9](img/c9.png)
+![c9](img/c9.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -458,10 +430,7 @@ flowchart LR
     n_S2 --> n_DB
     n_DB --> n_K
     n_REC --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_K ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
@@ -487,7 +456,7 @@ AAGE POOCHEGA:
 DIKKAT     Ravi ki dukaan: roz ~500 UPI, 3 saal = ~5 lakh line. CA ka tool 20-20 ke page maangta. Page 5000 pe
            LIMIT 20 OFFSET 100000 -> DB 1,00,020 line PADH ke phenkta. Beech me nayi line -> ek line dobara.
 ```
-![c10](img/c10.png)
+![c10](img/c10.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -511,10 +480,7 @@ flowchart LR
     n_S2 --> n_DB
     n_DB --> n_K
     n_REC --> n_DB
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_K ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
@@ -537,7 +503,7 @@ AAGE POOCHEGA:
 DIKKAT     5 saal ka khaata (~36 arab line) ek table me. Log roz sirf 3 mahine dekhte, par har query / backup
            arabon line ke saath. Aur kanoon (PMLA / RBI) kam se kam 5 saal rakhwata, bank 8-10.
 ```
-![c11](img/c11.png)
+![c11](img/c11.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -559,10 +525,7 @@ flowchart LR
     n_DB --> n_K
     n_REC --> n_DB
     n_DB --> n_S3
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_S3 ~~~ n_pad
     style n_S3 fill:#f9a825,color:#000
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
@@ -602,7 +565,7 @@ JAWAB:    Ek transfer ka sab kuch (dono khaata line, dono balance, id, SMS wali 
           Padhai copy se, history 'pichhli line ke baad se', purane mahine sasti jagah, SMS commit ke
           baad Kafka se.
 ```
-![c11_2](img/c11_2.png)
+![c11_2](img/c11_2.svg)
 
 <details><summary>diagram source (mermaid)</summary>
 
@@ -628,13 +591,9 @@ flowchart LR
     n_DB --> n_K
     n_REC --> n_DB
     n_DB --> n_S3
-    n_pad["xxxxxxxxxxxxxxxx"]
-    n_S3 ~~~ n_pad
-    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 </details>
-
 
 ---
 
