@@ -210,7 +210,7 @@ AAGE POOCHEGA:
 DIKKAT     Email service ne offset 5 padha (Ravi ka order). Email bheja -> "padh liya" (commit) se pehle CRASH
            -> restart pe phir 5 -> Ravi ko 2 email.
 ```
-![c7](img/c7-3a42ec81.svg)
+![c7](img/c7-4edcf8aa.svg)
 
 ```
 NAHI       pehle commit, phir kaam: email se pehle CRASH -> restart 6 se -> event 5 KHO gaya.
@@ -230,7 +230,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Ravi ka order #101 DB me bana, Kafka bhejne se pehle order server gira -> event gaya hi nahi.
 ```
-![c8](img/c8-eecc3dc8.svg)
+![c8](img/c8-a3791af2.svg)
 
 ```
 NAHI       "offset bachayega": nahi, offset consumer ki taraf hai; ye producer ki taraf ki dikkat.
@@ -260,7 +260,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko email group ki ek machine C2 mar gayi. Uske tukdon ke message koi nahi padh raha,
            peeche ki line (lag) badhti ja rahi -> logon ko order email ghanton der se.
 ```
-![c9](img/c9-70ebdf39.svg)
+![c9](img/c9-300db24d.svg)
 
 ```
 AAGE POOCHEGA:
@@ -278,7 +278,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko broker ki disk bharti ja rahi: din bhar ke sale ke saare message disk pe pade, koi nahi
            hatata -> disk poori bhari to naye message likhne band, poora order flow ruk jaayega.
 ```
-![c10](img/c10-130ae9fa.svg)
+![c10](img/c10-b5902e53.svg)
 
 ```
 AAGE POOCHEGA:

@@ -119,7 +119,7 @@ AAGE POOCHEGA:
 DIKKAT     9 baje maine tweet kiya (5,000 follower) -> usi request me 5,000 inbox, ~1 ms har -> 5+ sec,
            timeout, "fail" dikha, par tweet DB me ban chuka tha.
 ```
-![c2](img/c2-12e6e4df.svg)
+![c2](img/c2-63fbbb99.svg)
 
 ```
 NAHI       App me peeche ek thread: App crash = thread ka kaam gaya; Kafka disk pe, dobara padh sakte.
@@ -142,7 +142,7 @@ AAGE POOCHEGA:
 DIKKAT     11 baje Bieber (10 crore follower) ne tweet kiya -> fanout ko 10 crore inbox. Uski Kafka line
            ghanton atki; usi line ke baaki logon ke tweet bhi peeche khade.
 ```
-![c3](img/c3-0b3a8542.svg)
+![c3](img/c3-54c2db6f.svg)
 
 ```
 NAHI       sabke liye pull: har feed khulna phir 200 ka jod, mehnga.
@@ -164,7 +164,7 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar ka match 4:30 pe khatam, Virat ne tweet kiya. Virat pull pe -> har feed me DB se. Crore log
            ek saath app khole -> crore read DB pe -> DB gira.
 ```
-![c4](img/c4-b5f1a6a8.svg)
+![c4](img/c4-375ca1c7.svg)
 
 ```
 NAHI       DB ki copies badha do: wo bhi disk se (ms), ek garam hisse ki copies crore read nahi jhelti.
@@ -183,7 +183,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam 5 baje Redis alert: har inbox me saare id, kabhi kaate nahi, soye users ke bhi
            -> RAM bhar rahi.
 ```
-![c5](img/c5-70838172.svg)
+![c5](img/c5-06f16f11.svg)
 
 ```
 NAHI       Redis me machine jodte jao: soye 40 crore ka inbox bhi RAM khaata, kharcha badhta, dikkat wahi.
@@ -204,7 +204,7 @@ AAGE POOCHEGA:
 DIKKAT     6 baje DB alert: har second ~5,000 naye tweet, 5 saal me ~0.5 PB. Ek DB na itna rakh sakta,
            na itna likh sakta.
 ```
-![c6](img/c6-ee9d3db1.svg)
+![c6](img/c6-5e338c2a.svg)
 
 ```
 NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; join / transaction chahiye nahi.
@@ -227,7 +227,7 @@ AAGE POOCHEGA:
 DIKKAT     Main Bangalore me, saara data aur App US me. Har feed refresh pe request samundar paar US jaati
            aur aati -> sirf raaste me 300 ms, feed har baar atak ke khulti.
 ```
-![c7](img/c7-c0f9d8e2.svg)
+![c7](img/c7-920ce87c.svg)
 
 ```
 AAGE POOCHEGA:
@@ -246,7 +246,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko har region me ek hi App machine thi. India wali machine giri -> India ke saare user ke
            liye feed, tweet sab band, jab tak machine wapas na uthe.
 ```
-![c8](img/c8-f70b2a14.svg)
+![c8](img/c8-2cc31239.svg)
 
 ```
 AAGE POOCHEGA:
@@ -263,7 +263,7 @@ AAGE POOCHEGA:
 DIKKAT     Match ke highlights aaye, crore log feed scroll kar rahe. Wahi App machine tweet likhti bhi thi
            -> padhne ki bheed me mera tweet button 10 sec ghooma, likhna dheema.
 ```
-![c9](img/c9-6f34e423.svg)
+![c9](img/c9-5602792b.svg)
 
 ```
 AAGE POOCHEGA:
@@ -280,7 +280,7 @@ AAGE POOCHEGA:
 DIKKAT     Maine match ki 50 MB video daali. Har dekhne wala use US ke server se khinchta -> door walon
            ko buffering, aur har baar poori video hamare server se, bandwidth ka bill bhaari.
 ```
-![c10](img/c10-a9c6d7ca.svg)
+![c10](img/c10-c9cadfd9.svg)
 
 ```
 AAGE POOCHEGA:
@@ -317,7 +317,7 @@ JAWAB:    Likhna: tweet Cassandra me save, aur 'naya tweet' Kafka me. Worker aam
           se baanta, doosre desh me copy.
           Aage: ML se ranking, trending, search.
 ```
-![c10_2](img/c10_2-abf79dc1.svg)
+![c10_2](img/c10_2-9c25b583.svg)
 
 
 ---

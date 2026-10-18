@@ -98,7 +98,7 @@ Order service khud seedha email bhejne wali company (Email API) ko call kare.
 DIKKAT     Diwali subah maine order kiya. Order service email bhej ke jawab ka intezaar karti rahi; email
            company band thi -> order hi fail. Aur email dobara bhejne wala koi nahi.
 ```
-![c1](img/c1-57ecff67.svg)
+![c1](img/c1-a35fea4a.svg)
 
 ```
 NAHI       Order service me hi retry: request utni der atki, aur Order service giri to retry bhi gaya.
@@ -140,7 +140,7 @@ AAGE POOCHEGA:
 DIKKAT     Worker ne mera email bheja, par Kafka ko "padh liya" (offset) bolne se pehle mar gaya. Kafka ne
            wahi khabar doosre worker ko di -> dobara bheja -> mujhe DO email.
 ```
-![c3](img/c3-3e2c09d5.svg)
+![c3](img/c3-6b0e68a1.svg)
 
 ```
 NAHI       har baar naya random id: dohraav kabhi pakda nahi jaata.
@@ -161,7 +161,7 @@ AAGE POOCHEGA:
 DIKKAT     Login ka OTP: Worker-A ne key "bhej diya" lagayi, SMS call FAIL (ya Worker-A mara). Kafka ne
            dobara di, Worker-B ne "bhej diya" dekh ke chhoda -> OTP kho gaya. Koshish ko pakka maan liya.
 ```
-![c4](img/c4-d607371e.svg)
+![c4](img/c4-792368c5.svg)
 
 ```
 NAHI       key hi hata do: worker mara to Kafka dobara deta -> OTP / email do baar (card 3 wapas).
@@ -184,7 +184,7 @@ AAGE POOCHEGA:
 DIKKAT     1 baje SMS company bhar gayi, turant error dene lagi. Hamare 50 worker har error pe TURANT
            dobara bhejte -> company pe har second hazaaron call aur, wo aur bhari, hum aur dobara: chakkar.
 ```
-![c5](img/c5-002cf4f6.svg)
+![c5](img/c5-368ab42a.svg)
 
 ```
 NAHI       retry band, ek fail = chhodo: company 2 sec hili to OTP hamesha ke liye gaya.
@@ -206,7 +206,7 @@ AAGE POOCHEGA:
 DIKKAT     SMS company abhi bhi dheemi: line alag ho gayi, par har call 30 sec atki. Saare SMS worker
            usi me phanse, OTP bhi ruka. Dheemi company band company se bhi buri.
 ```
-![c6](img/c6-072aae13.svg)
+![c6](img/c6-45631a43.svg)
 
 ```
 NAHI       worker badha do: naye worker bhi 30 sec me phanse, dheemi company pe aur bojh.
@@ -228,7 +228,7 @@ AAGE POOCHEGA:
 DIKKAT     12 baje sale. Line me 50,000 offer message the, mera OTP unke peeche khada raha, 10 minute baad
            aaya. Tab tak login ka time khatam.
 ```
-![c7](img/c7-4a396014.svg)
+![c7](img/c7-18044daa.svg)
 
 ```
 NAHI       ek line me "zaroori" tag: Kafka me "ye pehle bhejo" hota hi nahi.
@@ -246,7 +246,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Sale shuru, ek saath laakhon message. SMS company bolti "itna nahi" (429) -> sab fail.
 ```
-![c8](img/c8-26ddd333.svg)
+![c8](img/c8-b9c7a811.svg)
 
 ```
 NAHI       har worker apni speed 100 / sec: 100 worker = 100 guna -> phir 429.
@@ -267,7 +267,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     SMS company ne message le liya. Par mere phone tak pahuncha ya nahi, humein pata hi nahi.
 ```
-![c9](img/c9-50405681.svg)
+![c9](img/c9-a1477ad9.svg)
 
 ```
 NAHI       baar-baar khud poochte raho: laakhon message x har kuch second = had + kharcha.
@@ -287,7 +287,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko admin ne "Diwali offer sabko" chalaya = 1 crore user. Ek-ek karke bheja -> request ghanton
            atki, OTP bhi peeche, company ki had tooti.
 ```
-![c10](img/c10-de42c415.svg)
+![c10](img/c10-42715897.svg)
 
 ```
 NAHI       1 crore ko ek bada "sabko bhejo" message: ek worker pe atka, gira to shuru se.
@@ -307,7 +307,7 @@ AAGE POOCHEGA:
 DIKKAT     Maine "offer SMS band" kiya tha aur raat 10 se subah 8 shaanti lagayi thi. Phir bhi raat 2 baje
            "Diwali sale 70% off" ka SMS aaya, aur push se phone baj gaya.
 ```
-![c11](img/c11-61730098.svg)
+![c11](img/c11-b08d167b.svg)
 
 ```
 NAHI       pasand sirf Campaign Svc me check: order / OTP wali khabar bina check nikal jaati.
@@ -344,7 +344,7 @@ JAWAB:    Services 'kuch hua' ki khabar Kafka me daalti. Notification service us
           Ek user ki khabar ek hi line me, to kram sahi. Company ke webhook se 'mila / fail' update.
           Aage: raat ka shaant time, kai bhasha, khola / click ginti.
 ```
-![c11_2](img/c11_2-3498c8bd.svg)
+![c11_2](img/c11_2-ee668a17.svg)
 
 
 ---

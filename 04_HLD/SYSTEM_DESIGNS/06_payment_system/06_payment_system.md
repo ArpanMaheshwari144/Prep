@@ -272,7 +272,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam Diwali, sab ek saath payment kar rahe: 3000 / sec. Saari request ek hi Payment Svc machine pe
            -> CPU bhara, payment dheeme, phir machine giri -> kisi ka payment nahi ja raha.
 ```
-![c8](img/c8-1b2a8cc8.svg)
+![c8](img/c8-2898db34.svg)
 
 ```
 AAGE POOCHEGA:
@@ -290,7 +290,7 @@ AAGE POOCHEGA:
 DIKKAT     Usi shaam ek bada merchant dashboard pe "is mahine ki saari payment" report chala raha. Bhaari
            query usi DB pe -> DB busy -> mera 500 ka payment likhne me atak gaya.
 ```
-![c9](img/c9-f68b3a53.svg)
+![c9](img/c9-4cdbbc60.svg)
 
 ```
 NAHI       balance bhi replica se padho: replica peeche, mujhe purana balance dikhta.
@@ -311,7 +311,7 @@ AAGE POOCHEGA:
 DIKKAT     ~1000 crore payment row saal me. Table + index RAM me nahi samaate, har likhai pe index disk se
            -> Diwali ke 3000 / sec pe ek primary ki likhai dheemi.
 ```
-![c10](img/c10-d6be54cd.svg)
+![c10](img/c10-4db9bf15.svg)
 
 ```
 NAHI       txn_id se baanto: meri payment alag shard pe, balance kahan? · time se: aaj wala shard garam.
@@ -349,7 +349,7 @@ JAWAB:    Har payment pe ek id, dobara bheja to pehla jawab, paisa ek hi baar.
           PENDING likho, phir PSP ke webhook aur roz ke milaan se pakka karo.
           Aage: fraud check, kai currency, chargeback.
 ```
-![c10_2](img/c10_2-5c062d08.svg)
+![c10_2](img/c10_2-abf50228.svg)
 
 
 ---

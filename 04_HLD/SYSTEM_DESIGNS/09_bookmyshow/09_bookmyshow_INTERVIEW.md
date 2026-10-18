@@ -161,7 +161,7 @@ AAGE POOCHEGA:
 DIKKAT     12 baje Arijit ka concert: ek show, 3000 seat, 2 lakh log ek saath. Saari bheed DB ki wahi rows
            pe, har koi lock ke intezaar me -> sab dheema. (Aam din ye nahi hota, hold seedha DB pe.)
 ```
-![c5](img/c5-37bf40b8.svg)
+![c5](img/c5-285d6088.svg)
 
 ```
 NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line (queue) sambhaalti.
@@ -184,7 +184,7 @@ AAGE POOCHEGA:
 DIKKAT     2 baje Redis restart hua, saara seat map khaali. Usi pal hazaaron log ek saath DB / replica pe
            map maangne gaye -> replica baith gayi, map nahi khul raha.
 ```
-![c6](img/c6-dfd203fd.svg)
+![c6](img/c6-1bb9c1d0.svg)
 
 ```
 AAGE POOCHEGA:
@@ -202,7 +202,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko main seat chun raha tha. Jis App machine pe tha wo gir gayi, aur ek hi machine thi
            -> page band, booking adhoori, kisi ka kuch nahi chal raha.
 ```
-![c7](img/c7-1e2258d4.svg)
+![c7](img/c7-92707634.svg)
 
 ```
 AAGE POOCHEGA:
@@ -237,7 +237,7 @@ JAWAB:    Seat map Redis aur copy se, booking main DB pe ek query se ('khaali ho
           Release ke din ki bheed: darwaze pe ginti + har show ki ek line. Payment pe id, do baar nahi katega.
           SQL kyunki sahi hona sabse zaroori, data chhota to baantna nahi.
 ```
-![c7_2](img/c7_2-eef566df.svg)
+![c7_2](img/c7_2-64f79499.svg)
 
 
 ---

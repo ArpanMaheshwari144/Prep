@@ -95,7 +95,7 @@ AAGE POOCHEGA:
 DIKKAT     Badi khabar aayi, par meri feed me 20 minute baad dikhi. Ek hi kaam me source se laana aur DB me
            likhna dono, ek dheema source poori line rok deta -> khabar purani.
 ```
-![c2](img/c2-0f0a8abb.svg)
+![c2](img/c2-905f7b8d.svg)
 
 ```
 AAGE POOCHEGA:
@@ -113,7 +113,7 @@ AAGE POOCHEGA:
 DIKKAT     8 baje election result: aam 500 / sec ki jagah 20,000 / sec. Ek Feed Svc machine ka CPU bhara,
            cache miss seedha primary DB pe, jahan fetcher bhi likh raha -> dono dheeme.
 ```
-![c3](img/c3-e7421db7.svg)
+![c3](img/c3-bfa01990.svg)
 
 ```
 NAHI       Kafka se bheed sambhalo: Kafka likhne ke raaste ke liye hai, padhai ki bheed nahi jhelta.
@@ -135,7 +135,7 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar "India ne match jeeta" 5 source ne chhaapa, thode alag title, alag URL. Sab naya maana
            -> meri feed me wahi khabar 5 baar, baaki khabar neeche dab gayi.
 ```
-![c4](img/c4-fe5f3f0f.svg)
+![c4](img/c4-3dd057ab.svg)
 
 ```
 AAGE POOCHEGA:
@@ -155,7 +155,7 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar baad ek chhota source 30 sec tak jawab nahi de raha. Sab usi ke intezaar me atke, baaki
            999 source ki khabar bhi nahi aayi -> poori feed ruk gayi.
 ```
-![c5](img/c5-e48361ac.svg)
+![c5](img/c5-59a78165.svg)
 
 ```
 AAGE POOCHEGA:
@@ -174,7 +174,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Shaam ko mujhe sirf tech aur sports pasand. Har user ki alag feed (10 lakh feed) bahut mehngi.
 ```
-![c6](img/c6-dacb29ef.svg)
+![c6](img/c6-f2204b2f.svg)
 
 ```
 NAHI       har baar DB se WHERE category IN (tech, sports): har khulne pe DB, cache ka fayda gaya.
@@ -194,7 +194,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko maine "cricket" dhoondha. DB ne har khabar ki poori line padh ke match kiya, 2 crore row
            -> search bahut dheema, aur DB baaki sab ke liye dheemi.
 ```
-![c7](img/c7-42aa802b.svg)
+![c7](img/c7-9cc92412.svg)
 
 ```
 AAGE POOCHEGA:
@@ -213,7 +213,7 @@ AAGE POOCHEGA:
 DIKKAT     Usi raat DBA ka mail: 6 mahine me ~2 crore khabar ki row, disk / backup ka kharcha badh raha.
            Taazi 20 ke alawa purana koi padhta hi nahi. (Query dheemi NAHI hui: published_at pe index hai.)
 ```
-![c8](img/c8-b2b0fe99.svg)
+![c8](img/c8-84aaa0a7.svg)
 
 ```
 NAHI       "sharding karo": ye purana hatana (retention) hai, data baantna (sharding) nahi.
@@ -235,7 +235,7 @@ AAGE POOCHEGA:
 DIKKAT     Mail aage: "source 100 guna ya log khud content daalne lage to ek DB likhai aur data nahi jhelegi."
            (Hamare number pe ek DB kaafi hai, ye sirf bahut bade scale pe.)
 ```
-![c9](img/c9-f1857fbc.svg)
+![c9](img/c9-c6f3b29a.svg)
 
 ```
 NAHI       date se baanto: aaj ki saari likhai aaj wale shard pe -> wo akela garam.
@@ -271,7 +271,7 @@ JAWAB:    Khabar laana aur khabar dikhana alag raaste. Peeche fetcher sites se l
           Sabko lagbhag wahi feed, to Redis me pehle se bani, 99% wahin se. Feed service kai machine pe,
           purani khabar sasti jagah, search Elasticsearch pe.
 ```
-![c9_2](img/c9_2-18fb9590.svg)
+![c9_2](img/c9_2-edd65c62.svg)
 
 
 ---

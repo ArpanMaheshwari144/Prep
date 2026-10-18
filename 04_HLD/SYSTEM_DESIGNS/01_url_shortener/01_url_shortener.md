@@ -132,7 +132,7 @@ AAGE POOCHEGA:
 DIKKAT     11 baje wahi bheed ek hi App machine pe. Wo dheemi hui, phir giri -> poori site band.
            Ek cheez jiske girne se sab ruk jaaye = SPOF (single point of failure).
 ```
-![c2](img/c2-7268cf2f.svg)
+![c2](img/c2-e922def8.svg)
 
 ```
 NAHI       ek bahut badi machine (vertical scale): uski bhi had, aur akeli -> wahi giri to sab band.
@@ -172,7 +172,7 @@ AAGE POOCHEGA:
 DIKKAT     2 baje mujhe ginti chahiye thi kitne click aaye. Usi request me analytics DB me likhne lage,
            phir redirect. Analytics DB dheema -> har user redirect ke liye ruka.
 ```
-![c4](img/c4-66585f6b.svg)
+![c4](img/c4-55008eea.svg)
 
 ```
 NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein gayi.
@@ -239,7 +239,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko akela LB hi gir gaya. App machine sab zinda, par har click LB pe atka -> koi link
            nahi khula, poori site band. App badhane se kuch nahi hua, darwaza hi band tha.
 ```
-![c7](img/c7-9e2669cd.svg)
+![c7](img/c7-9c1098f6.svg)
 
 ```
 AAGE POOCHEGA:
@@ -256,7 +256,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko spammer: ek API key se har second 5,000 link (phishing). Aam din poore system pe ~1,000
            -> 5 guna bojh, asli users dheeme; Gmail / WhatsApp ne hamara domain "spam" maana.
 ```
-![c8](img/c8-7e450bb2.svg)
+![c8](img/c8-7fdabea3.svg)
 
 ```
 NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana lega.
@@ -297,7 +297,7 @@ JAWAB:    Short code = ek badhta number, jise 62 akshar (a-z, A-Z, 0-9) me likha
           gire to sab na gire. Darwaze pe had.
           Aage: apna naam wala link, purane link hatana, doosre desh me copy.
 ```
-![c8_2](img/c8_2-88eef72a.svg)
+![c8_2](img/c8_2-f3763409.svg)
 
 
 ---

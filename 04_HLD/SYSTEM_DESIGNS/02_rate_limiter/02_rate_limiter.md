@@ -166,7 +166,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Dopahar Redis mar gaya. Saari ginti wahin thi -> kisi ko pata hi nahi kisne kitni bheji.
 ```
-![c4](img/c4-e12b3d9b.svg)
+![c4](img/c4-7e278bc1.svg)
 
 ```
 NAHI       sab fail-open: login khula = koi bina had password guess karta rahega.
@@ -188,7 +188,7 @@ AAGE POOCHEGA:
 DIKKAT     Meri script India, US aur Europe teen region se ek saath chali. Har region ka Redis apni alag
            ginti rakhta -> har jagah 50, kisi ki had paar nahi hui, aur 100 ki had pe 150 nikal gayi.
 ```
-![c5](img/c5-8052406f.svg)
+![c5](img/c5-e66609b2.svg)
 
 ```
 AAGE POOCHEGA:
@@ -205,7 +205,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     4 baje bhi wahi bot. 429 sirf bolta "60 second baad aao" -> bot 60 sec baad phir, din bhar, roz.
 ```
-![c6](img/c6-ccc1f9a3.svg)
+![c6](img/c6-ef376f85.svg)
 
 ```
 NAHI       turant ban: asli user bhi tez click karta, office ke 1000 log ek IP (NAT), sale me asli bheed.
@@ -227,7 +227,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam 6 baje sale khuli. Har user apni had ke andar tha, par laakhon user ek saath -> kul request
            server ki taakat se zyada, CPU 100%, sabke liye site band. Per-user had kuch nahi rok paayi.
 ```
-![c7](img/c7-05cf6e9c.svg)
+![c7](img/c7-ec0b7a3a.svg)
 
 ```
 AAGE POOCHEGA:
@@ -244,7 +244,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko attack chal raha tha, usi waqt poora Redis Cluster gira, copy bhi. Ginti kahin nahi ho
            rahi, aam API khuli chhodi thi -> attacker ki saari request bina roke andar, server bhar gaye.
 ```
-![c8](img/c8-a79b17ff.svg)
+![c8](img/c8-c2f9bb1d.svg)
 
 ```
 AAGE POOCHEGA:
@@ -263,7 +263,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat 11 baje office ki night shift: 1000 log ek IP (NAT) ke peeche, ek ki galti -> IP block, sab
            1000 block. Ulta, botnet ke paas 1000 IP, har IP se thoda -> kisi IP ki limit nahi tooti.
 ```
-![c9](img/c9-9cee361a.svg)
+![c9](img/c9-34afbec0.svg)
 
 ```
 NAHI       IP ki had badha do (5 se 500): office bach gaya, par botnet ko bhi utni hi chhoot.
@@ -301,7 +301,7 @@ JAWAB:    Limiter darwaze (API gateway) pe, mana hui request andar jaati hi nahi
           Redis ki copy. Redis poora band: har server apni ginti, login / OTP band.
           Baar-baar wale hamlawar ko WAF se block, aur badi asli bheed ke liye poore system ki had.
 ```
-![c9_2](img/c9_2-1869ddf8.svg)
+![c9_2](img/c9_2-dc36e0eb.svg)
 
 
 ---

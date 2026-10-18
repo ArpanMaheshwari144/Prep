@@ -164,7 +164,7 @@ AAGE POOCHEGA:
 DIKKAT     10 baje salary 50,000 aayi, 1 min baad Ravi ko 20,000 rent bheja. Har transfer ke baad SMS, fraud,
            statement chahiye. Par SMS service giri hui hai -> transfer na ruke, aur SMS khoye bhi nahi.
 ```
-![c5](img/c5-ee14cf26.svg)
+![c5](img/c5-e6a077bd.svg)
 
 ```
 NAHI       commit ke baad seedha Kafka: commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi.
@@ -200,7 +200,7 @@ AAGE POOCHEGA:
 DIKKAT     11 baje sabki salary aayi, laakhon transfer ek saath. Ek hi Banking Svc machine thi: CPU bhara,
            transfer dheeme, phir machine giri -> koi bhi paisa nahi bhej pa raha.
 ```
-![c7](img/c7-a09c11d9.svg)
+![c7](img/c7-398e351c.svg)
 
 ```
 AAGE POOCHEGA:
@@ -218,7 +218,7 @@ AAGE POOCHEGA:
 DIKKAT     Salary ke baad sab baar-baar balance aur history dekh rahe. Saari padhai usi ek DB pe, jahan
            transfer bhi likhe jaate -> padhne ki bheed ne paisa bhejna dheema kar diya.
 ```
-![c8](img/c8-63022684.svg)
+![c8](img/c8-d857ae7a.svg)
 
 ```
 AAGE POOCHEGA:
@@ -237,7 +237,7 @@ AAGE POOCHEGA:
 DIKKAT     Maine Ravi ki dukaan ko 500 bheje, usi second dukaan ne mujhe 200 refund kiye. Ek ne pehle mera row
            pakda, doosre ne dukaan ka; dono ek doosre ka intezaar -> dono atke (deadlock).
 ```
-![c9](img/c9-8ef7f714.svg)
+![c9](img/c9-aa96135b.svg)
 
 ```
 AAGE POOCHEGA:
@@ -253,7 +253,7 @@ AAGE POOCHEGA:
 DIKKAT     Ravi ki dukaan: roz ~500 UPI, 3 saal = ~5 lakh line. CA ka tool 20-20 ke page maangta. Page 5000 pe
            LIMIT 20 OFFSET 100000 -> DB 1,00,020 line PADH ke phenkta. Beech me nayi line -> ek line dobara.
 ```
-![c10](img/c10-8d5aa9ab.svg)
+![c10](img/c10-2f6db24c.svg)
 
 ```
 NAHI       saari 5 lakh line ek baar me bhejo: memory bhari, request timeout.
@@ -273,7 +273,7 @@ AAGE POOCHEGA:
 DIKKAT     5 saal ka khaata (~36 arab line) ek table me. Log roz sirf 3 mahine dekhte, par har query / backup
            arabon line ke saath. Aur kanoon (PMLA / RBI) kam se kam 5 saal rakhwata, bank 8-10.
 ```
-![c11](img/c11-4ce94bc1.svg)
+![c11](img/c11-8a342f00.svg)
 
 ```
 NAHI       "archive = sharding": archive jagah ghatata, shard likhne ka bojh baantta.

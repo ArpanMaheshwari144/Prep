@@ -8,15 +8,21 @@ import re, subprocess, sys, os
 HERE = os.path.dirname(os.path.abspath(__file__))
 CFG = os.path.join(HERE, 'mermaid_cfg.json')
 
-def render(src, png):
-    tmp = os.path.join(HERE, '_tmp.mmd')
+def render(src, png, wide=1100):
+    """mermaid -> svg. Design LR me {wide} se chauda bane to TB (upar se neeche) me dobara, source nahi badalta."""
     src = '\n'.join(l for l in src.split('\n') if 'n_pad' not in l)
+    tmp = png + '.tmp.mmd'   # har image ki apni temp file (saanjhi file = parallel me gadbad)
     open(tmp, 'w', encoding='utf-8').write(src)
     r = subprocess.run(['npx', '-y', '@mermaid-js/mermaid-cli@11.4.2', '-i', tmp, '-o', png, '-c', CFG,
                         '-b', 'white', '-w', '1100'], capture_output=True, text=True, shell=True)
     os.remove(tmp)
-    if r.returncode == 0: fix_size(png)
-    return r.returncode == 0, r.stderr[-300:]
+    if r.returncode != 0:
+        return False, r.stderr[-300:]
+    vb = re.search(r'viewBox="[\d.\-]+ [\d.\-]+ ([\d.]+)', open(png, encoding='utf-8').read())
+    if vb and float(vb.group(1)) > wide and 'flowchart LR' in src:
+        return render(src.replace('flowchart LR', 'flowchart TB', 1), png, wide)
+    fix_size(png)
+    return True, ''
 
 CAP = 900   # GitHub pe chauda diagram chhota dikhe; click karo to poora
 

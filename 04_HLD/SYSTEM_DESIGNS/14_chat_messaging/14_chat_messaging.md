@@ -210,7 +210,7 @@ AAGE POOCHEGA:
 DIKKAT     Metro me net dheema. App ne "hi" bheja, timeout aaya, dobara bheja. Pehla pahunch chuka tha
            -> Ravi ko "hi" do baar.
 ```
-![c5](img/c5-2f4920ed.svg)
+![c5](img/c5-7f330cb0.svg)
 
 ```
 NAHI       server id banaye: har dobara bhejna = nayi id = duplicate.
@@ -229,7 +229,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Meri phone ki ghadi 5 min aage. Mere message chat me upar chadh gaye, Ravi ke jawab se pehle.
 ```
-![c6](img/c6-46e16764.svg)
+![c6](img/c6-f0618c85.svg)
 
 ```
 NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
@@ -249,7 +249,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     "College Gang" me 500 log. Maine ek message bheja -> 500 logon ke inbox me 500 baar likhein?
 ```
-![c7](img/c7-511aa2a3.svg)
+![c7](img/c7-1df332a6.svg)
 
 ```
 NAHI       Twitter jaisa har inbox me copy: wahan feed sabki alag + crore follower, group sabka ek.
@@ -269,7 +269,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko Ravi ne chat khol ke 50 message padhe. Har message x har member ka "padha" record
            = 500 x 50 = 25,000 likhai. Bekaar.
 ```
-![c8](img/c8-9e594251.svg)
+![c8](img/c8-c60399a1.svg)
 
 ```
 NAHI       unread COUNT column badhao-ghatao: har message pe 500 member x 1 UPDATE, phir bhi 25,000 likhai.
@@ -291,7 +291,7 @@ AAGE POOCHEGA:
 DIKKAT     Maine College Gang me 200 MB shaadi ka video chat server se bheja -> 2 min connection atka,
            server 500 x 200 MB = ~100 GB bheje.
 ```
-![c9](img/c9-8d812127.svg)
+![c9](img/c9-6cbcc3de.svg)
 
 ```
 NAHI       message me URL rakho: 10 min me khatam, kal link mara; KEY rakho.
@@ -311,7 +311,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Raat ko main online aaya, gaya. Har baar mere saare contacts ko batao = crore x 500 message.
 ```
-![c10](img/c10-4d90f2e3.svg)
+![c10](img/c10-641cf492.svg)
 
 ```
 NAHI       DB me online column, har dhadkan pe UPDATE: crore log x har 15 sec = DB baith jaata.

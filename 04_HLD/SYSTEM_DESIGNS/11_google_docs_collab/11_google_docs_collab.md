@@ -134,7 +134,7 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar tak ~50 lakh WebSocket khule (3-4 crore roz ka ~15%), ek server ~1 lakh hi jhelta.
            Kai server lagaye -> mere doc ke editor alag-alag server pe, to OT kaun kare?
 ```
-![c4](img/c4-cb8fa94a.svg)
+![c4](img/c4-1d02fbd8.svg)
 
 ```
 NAHI       hash(docId) % N: N badla to lagbhag har doc ka server badla = sab dobara jude.
@@ -157,7 +157,7 @@ AAGE POOCHEGA:
 DIKKAT     Lunch ke baad Ravi sirf padh raha (viewer), wo server-2 pe; doc ka owner server-1 jahan main likh
            raha. Maine type kiya -> server-1 ko pata, server-2 ko kaise pata chale?
 ```
-![c5](img/c5-cf5f583c.svg)
+![c5](img/c5-bd1aacaf.svg)
 
 ```
 NAHI       Kafka: store karta + thoda dheema; live typing dobara padhni nahi, tezi chahiye.
@@ -178,7 +178,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     3 baje DB alert: ~20 lakh log type, har ek ~3 akshar / sec -> ~60 lakh DB write / sec -> DB khatam.
 ```
-![c6](img/c6-cdc3e697.svg)
+![c6](img/c6-cfbb0f4e.svg)
 
 ```
 NAHI       "sahi chahiye to SQL lo": DB data ki shakal se chuno; join nahi, bas bahut jodna -> Cassandra.
@@ -201,7 +201,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Shaam ko metro me mera network 1 second ke liye gaya. Typing ruk jaaye, ya main likhta rahun?
 ```
-![c7](img/c7-b32e8b8b.svg)
+![c7](img/c7-2f9f3ce6.svg)
 
 ```
 NAHI       "doc sahi chahiye -> CP": CP me net jaate hi typing ruk jaati; yahan sahi = "aakhir me sab same".
@@ -223,7 +223,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko maine 2 saal purana doc khola. Usme 10 lakh op jama the, server shuru se ek-ek chala ke
            doc bana raha -> doc khulne me minute lag gaye, main khaali screen dekhta raha.
 ```
-![c8](img/c8-131acb1e.svg)
+![c8](img/c8-8dd6ffe8.svg)
 
 ```
 AAGE POOCHEGA:
@@ -256,7 +256,7 @@ JAWAB:    Har user doc ke hisaab se ek server se juda (ek doc ke sab editor ek s
           Badlaav jama karke Cassandra me, photo ke saath taaki doc jaldi khule. Likhna kabhi na ruke,
           permission turant lage (SQL).
 ```
-![c8_2](img/c8_2-e20c27a8.svg)
+![c8_2](img/c8_2-a2085e82.svg)
 
 
 ---
