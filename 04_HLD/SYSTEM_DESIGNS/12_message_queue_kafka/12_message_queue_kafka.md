@@ -266,17 +266,13 @@ jo follower peeche reh gaya wo ISR se bahar -> leader nahi ban sakta
 AAGE POOCHEGA:
   NIYAM: "done" tabhi jab ISR copy pe bhi likha (acks=all); naya leader sirf ISR se.
          producer ko OK = khabar bachi; copy kam pad jaaye to likhna band, khona nahi.
-  "acks ke teen option?"              -> 0 · 1 · ALL: kyunki ye batata kitno ne likha tab OK; 0 = bhej ke
-                                         bhaag (kho sakta) · 1 = leader · all = saari ISR.
-  "Kab kaunsa?"                       -> PAISA / ORDER = ALL: kyunki khona mehnga; click / log = acks=1, thoda
-                                         kho jaaye chalega.
-  "min.insync.replicas=2 kya karta?"  -> LEADER + KAM SE KAM 1 COPY: kyunki tabhi done; leader mara to bhi
-                                         data copy pe bacha.
-  "ISR me sirf leader bacha?"         -> LIKHNA BAND (error): kyunki 2 se kam copy pe acks=all mana; khone se
-                                         behtar ruk jaana.
-  "Peeche wala follower leader bane?" -> NAHI, SIRF ISR: kyunki uske paas aakhri message nahi -> data gaya.
-  "Leader kaun tay karta?"            -> CONTROLLER (KRaft): kyunki ek jagah se faisla = naksha pakka, do
-                                         leader nahi (split-brain).
+  SAFAR (ek khabar likhna):
+  producer bheje         -> leader A likhe, B + C copy lein (ISR)
+  "OK" kab?              -> acks=all: saari ISR ne li tab: leader mare to bhi bachi
+                            acks=1 sirf leader (click / log) · acks=0 bhej ke bhaag
+  copy kam pad gayi      -> min.insync=2 -> likhna band: khone se rukna behtar
+  A mara                 -> Controller (KRaft) ISR se B ko leader: ek faisla, do leader nahi
+  peeche wala follower   -> leader nahi ban sakta: aakhri khabar uske paas nahi
 ```
 
 #### 7 Email bheja, "padh liya" bolne se pehle crash

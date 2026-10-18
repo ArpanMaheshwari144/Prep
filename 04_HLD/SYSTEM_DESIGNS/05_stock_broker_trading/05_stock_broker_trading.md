@@ -150,19 +150,15 @@ NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
 AAGE POOCHEGA:
   NIYAM: 'hai?' aur 'block' ek hi UPDATE (DB ke andar), kitni bhi machine ho; 0 row = reject turant dikhao.
          'blocked' badhe naye order se, ghate sauda / cancel / umar khatam se.
-  "Java synchronized laga do?"                     -> EK MACHINE KA TAALA: kyunki laptop aur phone alag server
-                                                      pe gaye, dono ko 50k dikhe.
-  "To SELL pe, laptop + phone se 10-10 TCS?"       -> WAHI EK LINE: UPDATE portfolio SET blocked_qty =
-                                                      blocked_qty + 10 WHERE user_id = 'Arpan' AND stock =
-                                                      'TCS' AND qty - blocked_qty >= 10
-  "10 me se 6 ka hi sauda hua?"                    -> 6 KA PAISA KATA, baaki 4 blocked: kyunki sauda blocked
-                                                      ghatata, bacha order abhi khula.
-  "Order 3 din pada raha?"                         -> DAY ORDER SHAAM KO KHATAM -> block hatao: kyunki umar
-                                                      khatam bhi blocked ghatati.
-  "CANCEL aur usi pal match?"                      -> USI LINE ME CANCEL: kyunki book ek haath chhoota; jo
-                                                      nahi bika sirf uska block hatao.
-  "MARKET BUY me price pata hi nahi, kitna block?" -> AAKHRI BHAV + THODA UPAR: kyunki kam block = paisa kam
-                                                      pade; sauda ke baad bacha hatao.
+  SAFAR (ek order ka paisa):
+  order aaya             -> ek UPDATE: 'hai?' + 'block' ek kadam (total - blocked >= 30k)
+  laptop + phone saath   -> dono DB pe, ek jeete, doosre ko 0 row -> turant reject
+  Java synchronized?     -> nahi: taala ek machine ka, phone doosre server pe
+  SELL                   -> wahi line portfolio pe (qty - blocked_qty >= 10)
+  6 hi bike, 10 me se    -> 6 ka paisa kata, 4 blocked: order abhi khula
+  cancel / umar khatam   -> bacha block hatao: blocked sirf sauda / cancel / umar se ghate
+  cancel + match usi pal -> book ek haath chhoota: jo nahi bika sirf uska block hatao
+  MARKET BUY (bhav nahi) -> aakhri bhav + thoda upar block, sauda ke baad bacha wapas
 ```
 
 #### 3 Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye

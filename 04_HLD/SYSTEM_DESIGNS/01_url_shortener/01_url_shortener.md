@@ -136,18 +136,15 @@ NAHI       DB ki read copy (replica): wo bhi disk se, dheemi; 1 lakh / sec ke li
 AAGE POOCHEGA:
   NIYAM: sach ek hi jagah (DB), Redis sirf garam copy: purani / khoyi ho sakti, isliye DB se wapas bane.
          User ko farak nahi, bas tez. Redis gira -> uski copy, aakhir me kuch request mana (DB bachao).
-  "Har App apna cache kyun nahi rakhta?"    -> EK SHARED REDIS: kyunki link badla to har App ki apni copy
-                                               purani reh jaati; Redis sabka ek.
-  "Theek, to saare 180 arab link Redis me?" -> SIRF GARAM: kyunki RAM mehngi; bhara to sabse der se na khula
-                                               nikaalo (LRU).
-  "Jo LRU ne nikaala, wo kal phir khula?"   -> DB SE WAPAS: Redis me nahi mila to DB, phir Redis me daal do;
-                                               NIYAM wahi.
-  "Link delete ya expire hua to?"           -> DELETE = PEHLE DB, PHIR REDIS: Redis pehle hataya to beech ka
-                                               click DB se purana bhar dega. Expiry pe Redis khud.
-  "Aur Redis hi gir gaya?"                  -> CLUSTER + REPLICA: kyunki warna 95% click ek saath DB pe, DB
-                                               bhi gira.
-  "Replica bhi gaya to?"                    -> LOAD SHEDDING: kuch request mana, garam link ko EK request DB
-                                               se laaye, baaki ruke. "Kuch nahi hoga" mat bolna.
+  SAFAR (ek click, har mod pe kya):
+  click -> Redis me hai?     haan -> 1 ms, khatam
+                             nahi -> DB se laao, Redis me daalo (agli baar tez)
+  Redis bhara                -> der se na khula nikaalo (LRU): sirf garam, 180 arab nahi
+  nikla link kal phir khula  -> wahi "nahi" raasta: DB -> Redis
+  link badla / hata          -> pehle DB, phir Redis hatao: ulta = purana wapas bhar jaata
+  har App apna cache?        -> nahi, ek Redis: App ki apni copy purani reh jaati
+  Redis gira                 -> copy (cluster + replica): warna 95% click DB pe, DB bhi gira
+  copy bhi gayi              -> load shedding: garam link ki EK request DB, baaki ruko
 ```
 
 #### 2 Usi bheed me ek App machine giri, poori site band
