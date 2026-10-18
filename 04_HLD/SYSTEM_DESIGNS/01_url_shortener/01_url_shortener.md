@@ -149,7 +149,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_LB["LB<br/>ek App giri, site band<br/>-> kai App, koi kuch yaad na rakhe<br/>(stateless + LB)<br/>App giri -> /health chup, list se bahar<br/>theek hui -> wapas list me<br/>dheemi -> kam kaam wali ko (least-conn)<br/>galtiyan zyada -> nikaalo (outlier detection)"]
+    n_LB["LB<br/>ek App giri, site band<br/>-> kai App, koi kuch yaad na rakhe<br/>(stateless + LB)<br/>App giri -> /health chup, list se bahar<br/>theek hui -> wapas list me<br/>dheemi -> kam kaam wali ko (least-conn)"]
     n_App_x_N_1["App 1<br/>yaad kuch nahi -> session bahar (Redis / DB)"]
     n_App_x_N_2["App 2"]
     n_Redis["Redis"]
@@ -180,8 +180,7 @@ AAGE POOCHEGA:
   sab theek              -> LB baari-baari (round-robin) kisi bhi App ko; App kuch yaad nahi rakhta
   App-1 giri             -> /health ka jawab nahi -> LB list se hataata, agla click App-2 pe
   App-1 theek hui        -> /health phir haan -> wapas list me
-  App giri nahi, dheemi  -> kam khule connection wali ko bhejo (least-conn); galtiyan zyada ->
-                            nikaalo (outlier detection)
+  App giri nahi, dheemi  -> kam khule connection wali ko bhejo (least-conn)
   yaad App me rakhi      -> App-2 ko pata hi nahi: isliye session bahar (Redis / DB)
 ```
 
