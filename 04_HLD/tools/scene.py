@@ -32,7 +32,7 @@ def subs(it):
 
 def size(it):
     if 'arrow' in it:
-        return max(70, tw(it['arrow'], 13) + 24), 0
+        return max(70, tw(it["arrow"], 13) + 30), 0
     lines = [it['box']] + subs(it)
     w = max([tw(l) for l in lines] + [len(it.get('cells', [])) * CW]) + 28
     if it.get('pointer'):
@@ -125,10 +125,10 @@ def render(spec):
     H = y + 2
     head = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H:.0f}" viewBox="0 0 {W} {H:.0f}" '
             f'font-family="{FONT}">',
-            '<defs><marker id="sa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">'
-            '<path d="M0,0 L10,5 L0,10 z" fill="#444"/></marker>'
-            '<marker id="sr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">'
-            '<path d="M0,0 L10,5 L0,10 z" fill="#d32f2f"/></marker></defs>',
+            '<defs><marker id="sa" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">'
+            '<path d="M0,0 L14,7 L0,14 z" fill="#444"/></marker>'
+            '<marker id="sr" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">'
+            '<path d="M0,0 L14,7 L0,14 z" fill="#d32f2f"/></marker></defs>',
             f'<rect width="{W}" height="{H:.0f}" fill="white"/>']
     return '\n'.join(head + body + ['</svg>'])
 

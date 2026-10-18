@@ -86,7 +86,7 @@ Ek machine, uski memory me ek queue. Producer daale, consumer uthaye.
 DIKKAT     Subah, sale se pehle signup khule. Queue machine ki memory me 500 signup message, machine restart
            -> memory saaf -> 500 gayab. Email service ko pata hi nahi chala ki 500 log aaye.
 ```
-![c1](img/c1-1aaf5d0b.svg)
+![c1](img/c1-760fa488.svg)
 
 ```
 NAHI       DB me queue: insert = index + lock = idhar-udhar likhna; queue me WHERE nahi, bas "X ke baad do".
@@ -107,7 +107,7 @@ AAGE POOCHEGA:
 DIKKAT     10 baje sale: "order-events" pe 5,000 khabar / sec. Email worker ~500 / sec hi bhej paata
            (har email ek API call). Topic ek line -> ek hi worker kram se padhe -> ghanton ki line (lag).
 ```
-![c2](img/c2-2db20ea4.svg)
+![c2](img/c2-a9e5b92a.svg)
 
 ```
 NAHI       copy (replica) badhao: copy sirf bachav ke liye, padhna bhi leader se hi; padhne wale = partition.
@@ -150,7 +150,7 @@ AAGE POOCHEGA:
 DIKKAT     Sale me email service ki 3 machine lagayi. Teeno ne har message padha, to Ravi ke ek order pe
            3 email gaye -> Ravi pareshan, aur kaam teen guna hua.
 ```
-![c4](img/c4-b83de9a0.svg)
+![c4](img/c4-61feb3bb.svg)
 
 ```
 AAGE POOCHEGA:
