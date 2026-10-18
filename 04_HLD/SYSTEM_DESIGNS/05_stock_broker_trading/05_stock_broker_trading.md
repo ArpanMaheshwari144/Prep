@@ -73,7 +73,8 @@ NUMBERS (andaaza):
 Order service har order DB me likhe, aur DB me milta-julta SELL dhoondh ke match kare.
 ```
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Order_Service["Order Service"]
     n_DB["DB"]
@@ -107,9 +108,10 @@ AAGE POOCHEGA:
 
 #### 1 Maine ek baar dabaya, order do lag gaye
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
-    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> wahi id dobara = naya order nahi<br/>(idempotency key)"]
+    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> wahi id dobara = naya order nahi<br/>(idempotency key)<br/>wahi id dobara -> purana jawab, order ek hi<br/>pehli abhi chal rahi -> thoda ruko (IN_PROGRESS, 409)<br/>id kab tak yaad -> ~24 ghante, phir saaf"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_DB
@@ -128,10 +130,11 @@ AAGE POOCHEGA:
 
 #### 2 Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet<br/>50k the, 30k-30k dono pass<br/>-> check aur block ek saath<br/>(atomic UPDATE)"]
+    n_Wallet["Wallet<br/>50k the, 30k-30k dono pass<br/>-> check aur block ek saath<br/>(atomic UPDATE)<br/>dono ek saath -> ek jeete, doosra 0 row, reject<br/>order cancel -> block hatao<br/>sauda aadha -> jitna bika utna kata, baaki blocked"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -159,11 +162,12 @@ AAGE POOCHEGA:
 
 #### 3 Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek share ka ek hi baabu<br/>(ek symbol ek thread)"]
+    n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek share ka ek hi baabu<br/>(ek symbol ek thread)<br/>main + Mohan ek saath -> pehla le gaya 10, doosre ko 0<br/>thread atka -> sirf TCS rukta, INFY chalta (GC pause)"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -195,11 +199,12 @@ AAGE POOCHEGA:
 
 #### 4 9:15 baje sab TCS pe toot pade
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Queue_per_symbol["Queue per symbol<br/>9:15 sab TCS pe toot pade<br/>-> baanto mat, sab ek line me<br/>(single thread)"]
+    n_Queue_per_symbol["Queue per symbol<br/>9:15 sab TCS pe toot pade<br/>-> baanto mat, sab ek line me<br/>(single thread)<br/>line me lag gaya -> ACCEPTED turant, FILLED sauda pe<br/>line lambi -> der, par khota nahi<br/>badhaye kaise -> stocks ke beech baanto, TCS ke andar nahi"]
     n_Matching_Engine["Matching Engine"]
     n_DB["DB"]
     n_USER --> n_Order_Service
@@ -228,11 +233,12 @@ AAGE POOCHEGA:
 
 #### 5 Server gira, poori order book gayab
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Event_Log["Event Log (= wahi line)<br/>server gira, book gayab<br/>-> pehle register me likho, gira to dobara chalao<br/>(event log)"]
+    n_Event_Log["Event Log (= wahi line)<br/>server gira, book gayab<br/>-> pehle register me likho, gira to dobara chalao<br/>(event log)<br/>10:15 server gira -> log #1 se replay, wahi book<br/>replay me der -> standby log padhta, book taiyaar"]
     n_Matching_Engine["Matching Engine"]
     n_DB["DB"]
     n_USER --> n_Order_Service
@@ -267,13 +273,14 @@ AAGE POOCHEGA:
 
 #### 6 Mera paisa kat gaya, Suresh ko mila hi nahi
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement<br/>paisa kata, Suresh ko nahi<br/>-> chaaron entry ek saath ya koi nahi<br/>(transaction)"]
+    n_Settlement["Settlement<br/>paisa kata, Suresh ko nahi<br/>-> chaaron entry ek saath ya koi nahi<br/>(transaction)<br/>COMMIT se pehle crash -> rollback, user ko PENDING<br/>rollback ke baad retry -> trade_id UNIQUE, do baar nahi"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -302,14 +309,15 @@ AAGE POOCHEGA:
 
 #### 7 Dopahar: paisa Wallet DB me, share Portfolio DB me — INFY ka 20k kata, share nahi aaye
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
     n_Settlement["Settlement"]
-    n_Wallet_DB["Wallet DB<br/>do DB, share nahi aaye<br/>-> har kadam likho, aage badho, ulta nahi<br/>(status log)"]
+    n_Wallet_DB["Wallet DB<br/>do DB, share nahi aaye<br/>-> har kadam likho, aage badho, ulta nahi<br/>(status log)<br/>20k kata, phir crash -> likhe haal se retry, aage hi<br/>retry dobara chala -> trade_id se ho chuka = no-op<br/>match se pehle atka -> sirf tab ulta, block hatao (SAGA)<br/>ghanton fail -> PENDING + alert, ops share daalta"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -349,13 +357,14 @@ AAGE POOCHEGA:
 
 #### 8 10 lakh log ek saath price poochh rahe, server baith gaya
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_OW["Order Service + Wallet"]
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
     n_Pub_Sub["Pub/Sub"]
-    n_WebSocket["WebSocket<br/>10 lakh log price poochh rahe<br/>-> price badle tab khud bhejo, TV jaisa<br/>(WebSocket)"]
+    n_WebSocket["WebSocket<br/>10 lakh log price poochh rahe<br/>-> price badle tab khud bhejo, TV jaisa<br/>(WebSocket)<br/>second me 1000 baar badla -> har ~100 ms aakhri price<br/>taar toota, wapas juda -> abhi ka price alag se do<br/>10 lakh taar -> aur server + LB (ek pe ~lakh)<br/>price sab server tak -> pub/sub se"]
     n_USERS["USERS"]
     n_SET["Settlement -> Wallet / Portfolio DB"]
     n_USER --> n_OW
@@ -381,7 +390,8 @@ AAGE POOCHEGA:
   sab theek                 -> price badla, server khud bheje (WebSocket push)
   second me 1000 baar badla -> har ~100 ms aakhri price: purana bekaar
   taar toota, wapas juda    -> abhi ka price alag se do: pub/sub kuch rakhta nahi
-  10 lakh taar              -> ek server ~lakh taar: aur server + LB; pub/sub se sab tak
+  10 lakh taar              -> ek server ~lakh taar: aur server + LB
+  price sab server tak      -> pub/sub se har server ko
 ```
 
 ---
@@ -405,7 +415,8 @@ JAWAB:    Order service check karti aur dobara order rokti (id se). Wallet paisa
           Aage: stop-loss, risk check, regulator ki report.
 ```
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Order_Service["Order Service"]
     n_Wallet["Wallet"]

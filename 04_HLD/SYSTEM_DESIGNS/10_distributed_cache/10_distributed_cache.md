@@ -69,6 +69,7 @@ Ek machine, uski RAM me ek HashMap. get / put O(1).
 App pehle cache se poochhe: mila -> wahi do · nahi mila -> DB se laao -> cache me daalo -> do (CACHE-ASIDE).
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_App["App"]
     n_DB["DB"]
@@ -103,10 +104,11 @@ AAGE POOCHEGA:
 
 #### 1 Subah cache machine ki RAM bhar gayi, kya hatayein
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_App["App"]
     n_DB["DB"]
-    n_Cache["Cache<br/>64 GB RAM bhar gayi<br/>-> sabse purana chhua hua bahar<br/>(LRU + TTL)"]
+    n_Cache["Cache<br/>64 GB RAM bhar gayi<br/>-> sabse purana chhua hua bahar<br/>(LRU + TTL)<br/>RAM bhar gayi -> sabse der se chhua hatao (LRU, LC 146)<br/>user:9 phir padha -> utha ke aage, ab baad me nikle"]
     n_App --> n_DB
     n_App --> n_Cache
     style n_Cache fill:#f9a825,color:#000
@@ -130,10 +132,11 @@ AAGE POOCHEGA:
 
 #### 2 Subah 11 tak data 1 TB: "user:42" kis machine pe?
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_App["App"]
     n_DB["DB"]
-    n_Cache_client["Cache client<br/>user:42 kis machine pe<br/>-> key ghadi pe, aage wali machine uski<br/>(consistent hashing)"]
+    n_Cache_client["Cache client<br/>user:42 kis machine pe<br/>-> key ghadi pe, aage wali machine uski<br/>(consistent hashing)<br/>machine D judi -> sirf pados ki key khiski, baaki hit<br/>machine A giri -> uski key aage wali pe, ek baar miss<br/>A ka bojh B pe double -> har machine 100-200 jagah (virtual nodes)"]
     n_Node_A["Node A (LRU + TTL)"]
     n_Node_B["Node B (LRU + TTL)"]
     n_Node_C["Node C (LRU + TTL)"]
@@ -174,12 +177,13 @@ AAGE POOCHEGA:
 
 #### 3 Dopahar machine B mar gayi, uski key ka bojh DB pe
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_App["App"]
     n_DB["DB"]
     n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica<br/>B mari, bojh DB pe<br/>-> har machine ki copy, mari to copy aage<br/>(replica)"]
+    n_Node_B_replica["Node B + replica<br/>B mari, bojh DB pe<br/>-> har machine ki copy, mari to copy aage<br/>(replica)<br/>B gayi -> sirf B ki key pe asar<br/>copy ko main banana -> ~10-30 sec, us beech B ki key DB se<br/>copy peeche thi -> aakhri likhai kho sakti, sach DB me<br/>network toota, do main -> zyadatar tay kare (quorum, split brain)"]
     n_Node_C_replica["Node C + replica"]
     n_App --> n_DB
     n_App --> n_Cache_client
@@ -210,8 +214,9 @@ AAGE POOCHEGA:
 
 #### 4 Ravi ne naam badla, sabko purana dikh raha
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_App["App<br/>DB naya, cache purana<br/>-> DB likho, cache ki key mitao<br/>(delete on write)"]
+    n_App["App<br/>DB naya, cache purana<br/>-> DB likho, cache ki key mitao<br/>(delete on write)<br/>delete fail -> umar bachati, pakka chahiye to DB diary se (TTL / CDC)<br/>purana beech me wapas -> thodi der baad phir delete (double delete)<br/>Ravi ko apna purana -> likhne wale ko kuch der primary se"]
     n_DB["DB"]
     n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
@@ -244,8 +249,9 @@ AAGE POOCHEGA:
 
 #### 5 7 baje "home page" key khatam, 1000 log ek saath DB pe
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_App["App<br/>key khatam, 1000 DB pe<br/>-> ek DB jaaye, baaki ruk ke cache se<br/>(lock: SET NX EX)"]
+    n_App["App<br/>key khatam, 1000 DB pe<br/>-> ek DB jaaye, baaki ruk ke cache se<br/>(lock: SET NX EX)<br/>999 ruke -> 50-100 ms, ya purani value do<br/>lock wala hi mara -> lock khud khule (EX 5)<br/>saari key ek saath khatam -> umar me random (60 min +- 5)"]
     n_DB["DB"]
     n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
@@ -279,8 +285,9 @@ AAGE POOCHEGA:
 
 #### 6 Raat IPL final, "live:score" key ki machine akeli mar rahi
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_App_L1_local_cache["App + L1 local cache<br/>crore log ek key pe<br/>-> garam key har App ke paas bhi<br/>(L1 cache + copies)"]
+    n_App_L1_local_cache["App + L1 local cache<br/>crore log ek key pe<br/>-> garam key har App ke paas bhi<br/>(L1 cache + copies)<br/>ek machine pe crore -> pehle pakdo (App ginti + metric)<br/>garam pakdi -> App me 1-2 sec copy, ya key ki kai copy<br/>L1 kitna purana -> 1-2 sec, score chalta, paisa nahi"]
     n_DB["DB"]
     n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
@@ -326,6 +333,7 @@ JAWAB:    Cache = RAM me rakhi key-value, kai machines me baanti (ring se), har 
           Bahut garam key: har app server apne paas 1-2 second rakhe.
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_App_L1_local_cache["App + L1 local cache"]
     n_DB["DB"]

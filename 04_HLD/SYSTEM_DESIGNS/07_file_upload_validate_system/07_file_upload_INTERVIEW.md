@@ -69,7 +69,8 @@ Client file Upload service ko de. Service file S3 me rakhe,
 jaanch wale (Validator) ko call kare (2-3 sec), jawab wapas.
 ```
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_CLIENT["CLIENT"]
     n_Upload_Svc["Upload Svc"]
     n_Validator["Validator"]
@@ -81,12 +82,13 @@ flowchart LR
 
 #### 1 Maine report.pdf daali, 3 second ghoomta screen dekhta raha
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_CLIENT["CLIENT"]
     n_Upload_Svc["Upload Svc"]
     n_DB["DB (haal)"]
     n_S3["S3"]
-    n_Kafka["Kafka<br/>3 sec ruka, thread atke<br/>-> turant id do, jaanch peeche<br/>(async + tracking id)"]
+    n_Kafka["Kafka<br/>3 sec ruka, thread atke<br/>-> turant id do, jaanch peeche<br/>(async + tracking id)<br/>worker beech me mara -> khabar dobara milti (offset baad me)<br/>wahi khabar dobara -> DONE hai to skip (idempotent)<br/>Validator do baar chala -> theek, DONE ek hi baar<br/>Validator 1 ghanta band -> khabar line me padi, offset aage nahi<br/>us ghante call -> 3-5 fail pe band, phir test call (fuse)"]
     n_Worker["Worker"]
     n_Validator["Validator"]
     n_CLIENT --> n_Upload_Svc
@@ -123,9 +125,10 @@ AAGE POOCHEGA:
 
 #### 2 Meri 5 GB video hamare server ke raaste S3 jaa rahi
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_CLIENT["CLIENT"]
-    n_S3["S3<br/>5 GB server se guzri<br/>-> file seedha S3 me, server sirf paas de<br/>(presigned URL)"]
+    n_S3["S3<br/>5 GB server se guzri<br/>-> file seedha S3 me, server sirf paas de<br/>(presigned URL)<br/>had 5 GB, aaye 50 GB -> S3 khud reject (content-length-range)<br/>/complete nahi aaya -> S3 event se queue, client pe bharosa nahi"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
     n_Kafka["Kafka"]
@@ -167,9 +170,10 @@ AAGE POOCHEGA:
 
 #### 3 4.5 GB chadh chuki thi, wifi chala gaya
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_CLIENT["CLIENT"]
-    n_S3["S3 multipart<br/>90% pe wifi gaya<br/>-> tukdon me bhejo, toota to bache hi<br/>(multipart)"]
+    n_S3["S3 multipart<br/>90% pe wifi gaya<br/>-> tukdon me bhejo, toota to bache hi<br/>(multipart)<br/>wifi gaya -> sirf bache tukde bhejo, shuru se nahi<br/>app band, kal wapas -> S3 se poocho (ListParts)<br/>COMPLETE kabhi nahi -> kuch din baad S3 hata de (lifecycle abort)"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
     n_Kafka["Kafka"]
@@ -210,12 +214,13 @@ AAGE POOCHEGA:
 
 #### 4 App crash, "complete" kabhi aaya hi nahi
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
-    n_Sweeper_job["Sweeper job<br/>complete aaya hi nahi<br/>-> atki file dhoondh ke dobara line me / FAILED<br/>(sweeper job)"]
+    n_Sweeper_job["Sweeper job<br/>complete aaya hi nahi<br/>-> atki file dhoondh ke dobara line me / FAILED<br/>(sweeper job)<br/>crash + event chhoota -> UPLOADING atka, bytes S3 me<br/>har kuch min -> 10 min se haal na badla = atka<br/>bytes hain -> khud dobara line me<br/>bytes nahi -> FAILED, user dobara daale<br/>do machine pe -> ek chale (lock / leader)"]
     n_Kafka["Kafka"]
     n_Worker["Worker"]
     n_Validator["Validator"]
@@ -252,11 +257,12 @@ AAGE POOCHEGA:
 
 #### 5 Deadline ke din sab har 2 sec haal poochh rahe
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
-    n_RC["Redis + Read replica<br/>har 2 sec haal, DB ghira<br/>-> haal Redis se, nahi to DB ki copy se<br/>(cache + replica)"]
+    n_RC["Redis + Read replica<br/>har 2 sec haal, DB ghira<br/>-> haal Redis se, nahi to DB ki copy se<br/>(cache + replica)<br/>Redis me nahi -> replica se laao, Redis me rakho<br/>replica peeche -> miss pe chhoti umar, ya primary (SET NX)<br/>worker ne DONE likha -> DB + Redis saath<br/>har 2 sec poochna -> gap badhao 2s, 4s, 8s (backoff)<br/>Redis gira -> replica pe seedha + rate limit"]
     n_DB["DB (haal)"]
     n_Sweeper_job["Sweeper job"]
     n_CHAIN["Kafka -> Worker -> Validator"]
@@ -295,12 +301,13 @@ AAGE POOCHEGA:
 
 #### 6 Maine file nahi, poora folder daala (1000 file)
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_Redis["Redis"]
-    n_DB["DB<br/>1000 file ka folder<br/>-> folder ka bada id, har file ka chhota<br/>(parent + child)"]
+    n_DB["DB<br/>1000 file ka folder<br/>-> folder ka bada id, har file ka chhota<br/>(parent + child)<br/>ek child aaya -> folder pe ginti +1 (done_count)<br/>koi FAILED -> folder PARTIAL, sirf fail wali dobara"]
     n_Read_replica["Read replica"]
     n_Sweeper_job["Sweeper job"]
     n_CHAIN["Kafka -> Worker -> Validator"]
@@ -336,11 +343,12 @@ AAGE POOCHEGA:
 
 #### 7 Ravi ne mera trackingId daal ke meri file le li
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_API_Gateway_LB["API Gateway / LB<br/>(authn: kaun ho)"]
-    n_Upload_Svc["Upload Svc<br/>Ravi ne meri file li<br/>-> maalik nahi to mana<br/>(owner check, 403)"]
+    n_Upload_Svc["Upload Svc<br/>Ravi ne meri file li<br/>-> maalik nahi to mana<br/>(owner check, 403)<br/>Ravi ne maanga -> owner main, 403 har request pe<br/>id to random tha -> phir bhi check, id leak hoti<br/>admin maange -> owner ya admin role, warna 403"]
     n_RC["Redis + Read replica (haal)"]
     n_DB["DB (haal + owner)"]
     n_Sweeper_job["Sweeper job"]
@@ -379,9 +387,10 @@ AAGE POOCHEGA:
 
 #### 8 Maine S3 ka seedha link WhatsApp pe bhej diya
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_CLIENT["CLIENT"]
-    n_S3["S3<br/>link WhatsApp pe ghooma<br/>-> har baar 5 min ka naya link<br/>(signed GET)"]
+    n_S3["S3<br/>link WhatsApp pe ghooma<br/>-> har baar 5 min ka naya link<br/>(signed GET)<br/>link group me gaya -> 1 ghante baad expire, nahi khula<br/>5 min me adhoora -> chalu download nahi katta<br/>sensitive file -> IP had bhi (CloudFront signed URL)"]
     n_API_Gateway_LB["API Gateway / LB"]
     n_Upload_Svc["Upload Svc<br/>+ owner check"]
     n_RC["Redis + Read replica (haal)"]
@@ -421,7 +430,8 @@ AAGE POOCHEGA:
 
 #### 9 Naam report.pdf, andar EXE nikla
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_GU["Gateway + Upload Svc"]
@@ -429,7 +439,7 @@ flowchart LR
     n_DB["DB (haal + owner + s3_key)"]
     n_Sweeper_job["Sweeper job"]
     n_Kafka["Kafka"]
-    n_Worker["Worker<br/>naam pdf, andar exe<br/>-> naam nahi, file ke pehle byte dekho<br/>(magic bytes)"]
+    n_Worker["Worker<br/>naam pdf, andar exe<br/>-> naam nahi, file ke pehle byte dekho<br/>(magic bytes)<br/>naam .pdf, shuru MZ -> EXE, reject<br/>shuru PDF, andar virus -> scan bhi (ClamAV / S3 malware)"]
     n_CLIENT --> n_S3
     n_CLIENT --> n_GU
     n_GU --> n_RC
@@ -484,7 +494,8 @@ JAWAB:    Server sirf paas deta, file seedha S3 me (badi ho to tukdon me).
           Aage: fail pe dobara koshish, download ke liye CDN.
 ```
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_API_Gateway_LB["API Gateway / LB"]

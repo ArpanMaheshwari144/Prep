@@ -79,6 +79,7 @@ NUMBERS:  jagah ka hisaab bekaar hai: har user ki ek ginti + expiry, bas.
 App ki memory me ek ginti. Har request pe ginti + 1. Had paar -> 429.
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
@@ -112,12 +113,13 @@ AAGE POOCHEGA:
 
 #### 1 Password bhool gaya, 9 baar login kiya, saari andar chali gayi
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Redis["Redis<br/>do App, ginti bat gayi<br/>-> sabki ek ginti, 60 sec me mite<br/>(Redis + EXPIRE)"]
+    n_Redis["Redis<br/>do App, ginti bat gayi<br/>-> sabki ek ginti, 60 sec me mite<br/>(Redis + EXPIRE)<br/>pehli request -> 60 sec umar, phir khud mite (EXPIRE)<br/>6thi request -> ginti 5 paar, 429<br/>minute ke kinare 5 + 5 -> 2 sec me 10 (fixed window)"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2
@@ -145,12 +147,13 @@ AAGE POOCHEGA:
 
 #### 2 Bot ne mere account pe 20 login ek saath bheje, 6 ghus gaye
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Redis["Redis<br/>do ne 4 padha, 6 ghuse<br/>-> padhna + badhana ek jhatke me<br/>(INCR / Lua)"]
+    n_Redis["Redis<br/>do ne 4 padha, 6 ghuse<br/>-> padhna + badhana ek jhatke me<br/>(INCR / Lua)<br/>INCR ke baad crash -> INCR + EXPIRE ek Lua me<br/>token bucket -> dekhna + ghatana ek Lua me (lazy refill)<br/>Lua dheema -> poora Redis ruke, script chhota rakho"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2
@@ -184,10 +187,11 @@ AAGE POOCHEGA:
 
 #### 3 Bot ki 429 wali request bhi App tak ghoom ke aayi
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_API_Gateway["API Gateway<br/>429 wali bhi andar ghoomi<br/>-> darwaze pe hi roko<br/>(limiter gateway pe)"]
+    n_API_Gateway["API Gateway<br/>429 wali bhi andar ghoomi<br/>-> darwaze pe hi roko<br/>(limiter gateway pe)<br/>had paar -> wahin 429, App tak nahi<br/>429 ke saath -> kab aao + kitni bachi (Retry-After)<br/>sab 30 sec baad saath -> alag-alag waqt do (jitter)<br/>gateway gira -> 2+ machine, aage LB"]
     n_Redis["Redis"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
@@ -212,12 +216,13 @@ AAGE POOCHEGA:
 
 #### 4 Dopahar Redis gira, limiter andha ho gaya
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
     n_ALB["ALB"]
     n_API_Gateway["API Gateway"]
-    n_Redis_Cluster["Redis Cluster<br/>Redis gira, limiter andha<br/>-> copy taiyaar, poora gire to tay niyam<br/>(replica + fail-open)"]
+    n_Redis_Cluster["Redis Cluster<br/>Redis gira, limiter andha<br/>-> copy taiyaar, poora gire to tay niyam<br/>(replica + fail-open)<br/>main mara -> copy main bane, thodi ginti khoi<br/>gira, pata kaise -> chhota timeout ~5 ms, ruko mat<br/>poora Cluster gaya -> feed khula (fail-open), login band (fail-closed)<br/>CPU full -> tukde karo, copy nahi (shard)"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
     n_USER --> n_Route_53
@@ -257,12 +262,13 @@ AAGE POOCHEGA:
 
 #### 5 Meri script 3 region se chali, 100 ki jagah 150 nikal gayi
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
     n_ALB["ALB"]
     n_API_Gateway["API Gateway"]
-    n_Redis_Cluster["Redis Cluster<br/>3 region, 150 nikli<br/>-> ek user ki ginti ek ghar me<br/>(home region)"]
+    n_Redis_Cluster["Redis Cluster<br/>3 region, 150 nikli<br/>-> ek user ki ginti ek ghar me<br/>(home region)<br/>ghar door -> paisa / login ghar tak, baaki local + sync<br/>sync ke beech -> ~1 sec dheela, chalta<br/>ghar region gira -> doosra region, ginti 0 se"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
     n_USER --> n_Route_53
@@ -286,12 +292,13 @@ AAGE POOCHEGA:
 
 #### 6 Wahi bot har 60 sec baad phir aa jaata, din bhar
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
     n_API_Gateway["API Gateway"]
     n_Redis_Cluster["Redis Cluster"]
-    n_Kafka["Kafka<br/>bot har 60 sec phir<br/>-> baar-baar 429 wala IP darwaze pe ban<br/>(pattern + WAF)"]
+    n_Kafka["Kafka<br/>bot har 60 sec phir<br/>-> baar-baar 429 wala IP darwaze pe ban<br/>(pattern + WAF)<br/>har 429 -> Kafka me daal ke bhool jao<br/>10 min me 500+ 429 -> Pattern Svc pakde, WAF ban<br/>Kafka peeche -> ban late, rate limit rok hi raha<br/>galat ban (office IP) -> ~24 ghante me khud hate"]
     n_Pattern_Svc["Pattern Svc"]
     n_WAF["WAF"]
     n_App_xN["App x N"]
@@ -327,10 +334,11 @@ AAGE POOCHEGA:
 
 #### 7 Shaam ki sale, har koi limit me, phir bhi server gira
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
-    n_API_Gateway["API Gateway<br/>sab limit me, server gira<br/>-> poore system ki had, bhari to kuch chhodo<br/>(load shedding)"]
+    n_API_Gateway["API Gateway<br/>sab limit me, server gira<br/>-> poore system ki had, bhari to kuch chhodo<br/>(load shedding)<br/>system bhar gaya -> CPU 90% paar, kuch 503<br/>kya chhodo -> kam zaroori pehle, login / payment bachao"]
     n_Redis_Cluster["Redis Cluster"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
@@ -358,10 +366,11 @@ AAGE POOCHEGA:
 
 #### 8 Raat ko attack, usi waqt poora Redis Cluster gira (copy bhi), aam API khuli
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
-    n_API_Gateway["API Gateway<br/>attack me Redis gira, API khuli<br/>-> Redis gaya to har server apni ginti<br/>(local fallback)"]
+    n_API_Gateway["API Gateway<br/>attack me Redis gira, API khuli<br/>-> Redis gaya to har server apni ginti<br/>(local fallback)<br/>Redis + copy gaye -> har server apni ginti, had baanto (100 / 4)<br/>ek user alag server -> motamoti had, bina had se behtar<br/>server badh gaye -> ginti config se, dobara baanto<br/>Redis wapas -> phir sabki ek ginti"]
     n_Redis_Cluster["Redis Cluster"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
@@ -391,11 +400,12 @@ AAGE POOCHEGA:
 
 #### 9 Office ki night shift: ek IP block, 1000 log atke
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
     n_API_Gateway["API Gateway"]
-    n_Redis_Cluster["Redis Cluster<br/>ek IP pe 1000 log<br/>-> IP nahi, banda gino<br/>(key = user_id)"]
+    n_Redis_Cluster["Redis Cluster<br/>ek IP pe 1000 log<br/>-> IP nahi, banda gino<br/>(key = user_id)<br/>office NAT, ek ki galti -> sirf uski ginti, 999 chalte<br/>login se pehle -> user_id nahi, IP pe dheeli had + WAF"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
     n_WAF["WAF"]
@@ -458,6 +468,7 @@ JAWAB:    Limiter darwaze (API gateway) pe, mana hui request andar jaati hi nahi
           Baar-baar wale hamlawar ko WAF se block, aur badi asli bheed ke liye poore system ki had.
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]

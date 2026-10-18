@@ -78,6 +78,7 @@ JAWAB:    Booking me sahi hona pehle: network toota aur pakka nahi pata seat kha
 seats table (seat_id, show_id, status). "Book" dabao -> status = 'booked'.
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
@@ -88,10 +89,11 @@ flowchart LR
 
 #### 1 Maine aur Ravi ne ek hi second me A1 book ki, dono ko mil gayi
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_SQL_DB["SQL DB<br/>A1 do ko bik gayi<br/>-> khaali ho tabhi book, ek query me<br/>(atomic UPDATE)"]
+    n_SQL_DB["SQL DB<br/>A1 do ko bik gayi<br/>-> khaali ho tabhi book, ek query me<br/>(atomic UPDATE)<br/>Ravi usi second -> row lock, uska WHERE 0 row = seat gayi<br/>Ravi ne phir dabaya -> phir 0 row, kuch nahi milta"]
     n_USER --> n_App
     n_App --> n_SQL_DB
     style n_SQL_DB fill:#f9a825,color:#000
@@ -121,11 +123,12 @@ AAGE POOCHEGA:
 
 #### 2 Maine A1 chuni, payment me 3 minute lag rahe
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_SQL_DB["SQL DB<br/>+ atomic UPDATE"]
-    n_Sweeper_job["Sweeper job<br/>payment me 3 min<br/>-> 5 min ke liye rok lo, phir khud khule<br/>(hold)"]
+    n_Sweeper_job["Sweeper job<br/>payment me 3 min<br/>-> 5 min ke liye rok lo, phir khud khule<br/>(hold)<br/>umar khatam, phir pay -> confirm pe bhi WHERE, 0 row = refund<br/>koi 10 seat pakad baithe -> had lagao (hold ginti + rate limit)"]
     n_USER --> n_App
     n_App --> n_SQL_DB
     n_Sweeper_job --> n_SQL_DB
@@ -158,10 +161,11 @@ AAGE POOCHEGA:
 
 #### 3 Pay dabaya, network gaya, app ne dobara bheja
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Payment_Svc["Payment Svc<br/>network gaya, do baar kata<br/>-> wahi booking dobara = paisa nahi<br/>(idempotency key)"]
+    n_Payment_Svc["Payment Svc<br/>network gaya, do baar kata<br/>-> wahi booking dobara = paisa nahi<br/>(idempotency key)<br/>network gaya, app dobara -> wahi B-77 = ho chuka, paisa nahi katta<br/>Pay dobara dabaya -> wahi bookingId, paisa ek baar"]
     n_SQL_DB["SQL DB<br/>+ atomic UPDATE + hold"]
     n_Sweeper_job["Sweeper job"]
     n_USER --> n_App
@@ -182,11 +186,12 @@ AAGE POOCHEGA:
 
 #### 4 11 baje main seat map dekh raha tha, saath me 1 lakh log, book koi-koi
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis["Redis<br/>1 lakh seat map dekh rahe<br/>-> seat map Redis se, DB ki copy se<br/>(cache + replica)"]
+    n_Redis["Redis<br/>1 lakh seat map dekh rahe<br/>-> seat map Redis se, DB ki copy se<br/>(cache + replica)<br/>Redis me nahi -> replica se banao, Redis me rakho<br/>kisi ne book kiya -> main DB, phir map key hatao (DEL)<br/>A1 biki, map me khaali -> chalta, faisla UPDATE ka<br/>lakh log ek key pe -> kai copy + App me 1-2 sec copy (hot key)"]
     n_Read_replica["Read replica"]
     n_SQL_primary["SQL primary"]
     n_Sweeper_job["Sweeper job"]
@@ -214,12 +219,13 @@ AAGE POOCHEGA:
 
 #### 5 12 baje Arijit ka concert khula, 2 lakh log ek show pe
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
     n_RRR["Redis + Read replica"]
-    n_Kafka["Kafka<br/>3000 seat, 2 lakh log<br/>-> darwaze pe line, andar gine-chune<br/>(waiting room)"]
+    n_Kafka["Kafka<br/>3000 seat, 2 lakh log<br/>-> darwaze pe line, andar gine-chune<br/>(waiting room)<br/>UPDATE jeeta -> user ko poll / push (bookingId)<br/>seat haar gaya -> seat gayi, doosri lo<br/>andar wala bina liye gaya -> line se agla andar<br/>worker dheema -> show ke hisse alag (balcony / stall)<br/>line ginti Redis me, restart -> sach DB ki seats, dobara gino"]
     n_Booking_worker["Booking worker"]
     n_SQL_primary["SQL primary"]
     n_Sweeper_job["Sweeper job"]
@@ -263,11 +269,12 @@ AAGE POOCHEGA:
 
 #### 6 2 baje Redis restart, saara seat map ek saath replica pe
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis["Redis Cluster<br/>restart, sab replica pe<br/>-> ek DB jaaye, baaki ruk ke cache se<br/>(lock: SET NX)"]
+    n_Redis["Redis Cluster<br/>restart, sab replica pe<br/>-> ek DB jaaye, baaki ruk ke cache se<br/>(lock: SET NX)<br/>key khaali, 1000 aaye -> ek lock le ke banaye, baaki 50-100 ms ruke<br/>lock wala hi mara -> lock khud hate (EX 5)<br/>100 ms baad bhi khaali -> 2-3 retry, phir replica se"]
     n_Read_replica["Read replica"]
     n_KB["Kafka + Booking worker (badi sale)"]
     n_SQL_primary["SQL primary"]
@@ -296,9 +303,10 @@ AAGE POOCHEGA:
 
 #### 7 Shaam ko main seat chun raha tha, App machine gir gayi
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_LB["LB<br/>App machine giri<br/>-> kuch yaad na rakhe, mari to bahar<br/>(stateless + health check)"]
+    n_LB["LB<br/>App machine giri<br/>-> kuch yaad na rakhe, mari to bahar<br/>(stateless + health check)<br/>machine giri -> hold DB me, agli machine wahi dekhe<br/>machine bahar kaise -> 2-3 baar fail = bahar (GET /health)<br/>payment beech me -> same id dobara, do baar nahi katega (idempotent)"]
     n_App_xN["App x N"]
     n_Payment_Svc["Payment Svc (bookingId)"]
     n_RRR["Redis Cluster + Read replica"]
@@ -351,6 +359,7 @@ JAWAB:    Seat map Redis aur copy se, booking main DB pe ek query se ('khaali ho
           SQL kyunki sahi hona sabse zaroori, data chhota to baantna nahi.
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]

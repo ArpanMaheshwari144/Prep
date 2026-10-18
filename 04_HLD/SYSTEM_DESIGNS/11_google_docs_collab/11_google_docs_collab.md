@@ -66,6 +66,7 @@ NUMBERS (andaaza):
 Doc ka poora text DB me. "Save" dabao -> poora text upar likh do (overwrite).
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER A / B"]
     n_App["App"]
@@ -76,9 +77,10 @@ flowchart LR
 
 #### 1 Ravi ne baad me save kiya, mera "WORLD" mit gaya
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER A / B"]
-    n_App["App<br/>baad wale ne mera mita diya<br/>-> poora text nahi, sirf badlaav bhejo<br/>(operation)"]
+    n_App["App<br/>baad wale ne mera mita diya<br/>-> poora text nahi, sirf badlaav bhejo<br/>(operation)<br/>Ravi bhi v7 pe -> server khiska ke dono lagaye (OT)<br/>mitana bhi op -> khiska ke, akshar sahi jagah"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_DB
@@ -104,10 +106,11 @@ AAGE POOCHEGA:
 
 #### 2 Ravi ko mera likha refresh karne pe hi dikha
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
-    n_CS["Conn-Server<br/>refresh pe hi dikha<br/>-> khula taar, server khud bheje<br/>(WebSocket)"]
+    n_CS["Conn-Server<br/>refresh pe hi dikha<br/>-> khula taar, server khud bheje<br/>(WebSocket)<br/>taar chupchaap mara -> har ~30 sec ping, pong nahi = band<br/>taar toota -> judte hi version bata ke baaki lo"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_CS
@@ -133,10 +136,11 @@ AAGE POOCHEGA:
 
 #### 3 11 baje meeting me dono ne sabse upar ek saath type kiya
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
-    n_CS["Conn-Server<br/>dono ne position 0 pe likha<br/>-> server kram tay kare, op khiskao<br/>(OT)"]
+    n_CS["Conn-Server<br/>dono ne position 0 pe likha<br/>-> server kram tay kare, op khiskao<br/>(OT)<br/>Ravi ka 200 ms baad -> app pending op khiskaye<br/>dono pos 0 (tie) -> pehle aaya wo 0, doosra 1 pe"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_CS
@@ -170,10 +174,11 @@ AAGE POOCHEGA:
 
 #### 4 50 lakh taar khule, ek connection server nahi jhelta
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
-    n_LB["LB<br/>50 lakh taar, ek server nahi<br/>-> ek doc ke sab log ek server pe<br/>(ring, owner)"]
+    n_LB["LB<br/>50 lakh taar, ek server nahi<br/>-> ek doc ke sab log ek server pe<br/>(ring, owner)<br/>doc do server pe -> do version, isliye ek owner<br/>1000 log -> 100 editor owner pe, 900 viewer kahin bhi<br/>server juda / gira -> sirf pados ke doc khiskein (ring)<br/>owner gira -> naya owner DB se doc banaye"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
     n_DB["DB"]
@@ -208,13 +213,14 @@ AAGE POOCHEGA:
 
 #### 5 Ravi ab sirf padh raha, wo doosre server pe
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
     n_LB["LB (docId se ring)"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
-    n_PS["Redis pub/sub<br/>Ravi doosre server pe<br/>-> har doc ka channel, jis server pe uska user wo sune<br/>(pub/sub)"]
+    n_PS["Redis pub/sub<br/>Ravi doosre server pe<br/>-> har doc ka channel, jis server pe uska user wo sune<br/>(pub/sub)<br/>Ravi ka server restart -> channel se gaya, DB se le<br/>pub/sub gira -> copy main bane, khoya nahi (Sentinel)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_LB
@@ -247,13 +253,14 @@ AAGE POOCHEGA:
 
 #### 6 3 baje DB alert: har akshar pe DB me likha, DB baith gaya
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
     n_LB["LB (docId se ring)"]
     n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
-    n_BUF["Redis buffer<br/>har akshar pe DB write<br/>-> har akshar nahi, 1 sec ka jama ek saath<br/>(buffer + batch)"]
+    n_BUF["Redis buffer<br/>har akshar pe DB write<br/>-> har akshar nahi, 1 sec ka jama ek saath<br/>(buffer + batch)<br/>ACK se pehle Redis gira -> app opId ke saath phir bheje<br/>ACK ke baad gira -> copy main bani, op usme tha<br/>batch dheema -> typing chalti, buffer badhe to alert<br/>batch dobara -> (docId, version) same = ek hi row"]
     n_CAS["Cassandra edit log"]
     n_USER --> n_App
     n_App --> n_LB
@@ -293,13 +300,14 @@ AAGE POOCHEGA:
 
 #### 7 Metro me mera net 1 second gaya, typing rukegi?
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
     n_LB["LB (docId se ring)"]
     n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
-    n_SQL["SQL permissions<br/>net gaya, typing ruke?<br/>-> likhna chalta rahe, permission pakki<br/>(AP vs CP)"]
+    n_SQL["SQL permissions<br/>net gaya, typing ruke?<br/>-> likhna chalta rahe, permission pakki<br/>(AP vs CP)<br/>net 1 sec gaya -> likhte raho, op pending (AP)<br/>1 ghanta offline -> wapas aate hi bhejo, server khiskaye<br/>offline me access hata -> jude to check, pending reject (CP)"]
     n_BUF["Redis buffer"]
     n_CAS["Cassandra edit log"]
     n_USER --> n_App
@@ -331,6 +339,7 @@ AAGE POOCHEGA:
 
 #### 8 Raat ko 2 saal purana doc khola, 10 lakh op shuru se chale
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
@@ -339,7 +348,7 @@ flowchart LR
     n_PS["Redis pub/sub"]
     n_SQL["SQL permissions"]
     n_BUF["Redis buffer"]
-    n_CAS["Cassandra edit log + snapshot<br/>purana doc, 10 lakh op<br/>-> photo + uske baad ke badlaav<br/>(snapshot)"]
+    n_CAS["Cassandra edit log + snapshot<br/>purana doc, 10 lakh op<br/>-> photo + uske baad ke badlaav<br/>(snapshot)<br/>har 1000 op -> background job photo le<br/>photo lete waqt likha -> photo ek version tak, kuch na ruke<br/>purana version maanga -> paas wali photo + baaki op"]
     n_USER --> n_App
     n_App --> n_LB
     n_LB --> n_Conn_Server_xN
@@ -388,6 +397,7 @@ JAWAB:    Har user doc ke hisaab se ek server se juda (ek doc ke sab editor ek s
           permission turant lage (SQL).
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]

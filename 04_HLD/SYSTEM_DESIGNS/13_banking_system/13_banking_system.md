@@ -79,6 +79,7 @@ DATA SE TEEN SAWAAL:
 Banking Service (saara niyam / logic) -> SQL DB. Jaan-boojh ke seedha.
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc"]
@@ -89,10 +90,11 @@ flowchart LR
 
 #### 1 Maine Ravi ko 500 bheje, beech me server gira
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc"]
-    n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono account ek saath ya koi nahi<br/>(transaction)"]
+    n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono account ek saath ya koi nahi<br/>(transaction)<br/>beech me server gira -> COMMIT hua = poora, nahi = ulta (WAL)<br/>-500 ke baad koi padhe -> aadha kisi ko nahi dikhta"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     style n_DB fill:#f9a825,color:#000
@@ -115,9 +117,10 @@ AAGE POOCHEGA:
 
 #### 2 Send dabaya, network gaya, app ne dobara bheja
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_SVC["Banking Svc<br/>dobara bheja, 1000 kate<br/>-> wahi id dobara = paisa dobara nahi<br/>(idempotency key)"]
+    n_SVC["Banking Svc<br/>dobara bheja, 1000 kate<br/>-> wahi id dobara = paisa dobara nahi<br/>(idempotency key)<br/>network gaya, app dobara -> wahi id, pehla jawab wapas<br/>dono ek saath -> DB doosra insert roke (UNIQUE)<br/>wahi id, amount badla -> hash alag, 422"]
     n_DB["SQL DB"]
     n_USER --> n_SVC
     n_SVC --> n_DB
@@ -143,10 +146,11 @@ AAGE POOCHEGA:
 
 #### 3 9 baje Netflix ka auto-debit aur mera UPI ek saath
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc (+ idempotency)"]
-    n_DB["SQL DB<br/>Netflix + UPI, balance -100<br/>-> check aur kaatna ek saath<br/>(atomic UPDATE)"]
+    n_DB["SQL DB<br/>Netflix + UPI, balance -100<br/>-> check aur kaatna ek saath<br/>(atomic UPDATE)<br/>Netflix + UPI ek saath -> row pe taala, dono line me<br/>doosra -> balance kam, 0 row, 422, kuch nahi kata"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     style n_DB fill:#f9a825,color:#000
@@ -170,10 +174,11 @@ AAGE POOCHEGA:
 
 #### 4 Maine poochha: mere 500 kahan gaye, kab?
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc (+ idempotency)"]
-    n_DB["SQL DB + ledger<br/>500 kahan gaye?<br/>-> har transfer ki 2 line khaate me, saath hi<br/>(ledger)"]
+    n_DB["SQL DB + ledger<br/>500 kahan gaye?<br/>-> har transfer ki 2 line khaate me, saath hi<br/>(ledger)<br/>txn wapas -> khaata bhi wapas, jhoothi line nahi<br/>galat line -> UPDATE nahi, ulti line jodo<br/>support: kab, kisko -> har line me waqt + transfer id"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     style n_DB fill:#f9a825,color:#000
@@ -197,11 +202,12 @@ AAGE POOCHEGA:
 
 #### 5 Salary aayi, Ravi ko rent bheja, SMS service giri
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc (+ idempotency)"]
     n_DB["SQL DB (+ ledger, outbox)"]
-    n_K["Kafka<br/>SMS service giri<br/>-> SMS wali khabar bhi DB me, baad me bhejo<br/>(outbox)"]
+    n_K["Kafka<br/>SMS service giri<br/>-> SMS wali khabar bhi DB me, baad me bhejo<br/>(outbox)<br/>SMS service ghanta giri -> khabar Kafka me padi, baad me padhe<br/>relay sent=true se pehle gira -> dobara jaaye, eventId se skip<br/>outbox bhare -> roz saaf"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     n_DB --> n_K
@@ -226,12 +232,13 @@ AAGE POOCHEGA:
 
 #### 6 Salary ke baad maine balance khola
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc (+ idempotency)"]
     n_DB["SQL DB (+ ledger, outbox)"]
     n_K["Kafka"]
-    n_REC["Reconciliation job<br/>balance kahan se aaye?<br/>-> khaata sach, balance uska jod<br/>(reconciliation)"]
+    n_REC["Reconciliation job<br/>balance kahan se aaye?<br/>-> khaata sach, balance uska jod<br/>(reconciliation)<br/>balance padha -> column se (cache), jodna dheema<br/>raat milaan -> khaate ka jod == column?<br/>farak mila -> alert + account roko, khaata jeete"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     n_DB --> n_K
@@ -255,9 +262,10 @@ AAGE POOCHEGA:
 
 #### 7 11 baje sabki salary aa gayi, ek Banking service bhar gayi
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_LB["LB<br/>salary day, ek machine bhari<br/>-> kai machine, aage baantne wala<br/>(LB)"]
+    n_LB["LB<br/>salary day, ek machine bhari<br/>-> kai machine, aage baantne wala<br/>(LB)<br/>ek machine bhari -> machine badhao, LB baante<br/>ek machine giri -> LB list se hataye (health check)<br/>adhoora transfer -> app wahi id se dobara<br/>LB khud akela -> nahi, do zone me do LB"]
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
     n_DB["SQL DB (+ ledger, outbox)"]
@@ -280,18 +288,20 @@ AAGE POOCHEGA:
   SAFAR (salary ki bheed me ek transfer):
   transfer aaya              -> LB koi bhi machine ko de: machine kuch yaad nahi rakhti, sach DB me
   ek machine bhari           -> machine badhao, LB baante
-  ek machine giri            -> LB list se hatata (health check); adhoora transfer: app WAHI id se
+  ek machine giri            -> LB list se hatata (health check)
+  adhoora transfer           -> app WAHI id se dobara
   LB khud akela?             -> nahi: LB bhi do zone me, ek gire to doosra
 ```
 
 #### 8 Salary ki bheed me sab balance dekh rahe, transfer dheeme
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
-    n_RR["Read replica<br/>padhai primary pe, transfer dheema<br/>-> padhna copy se, likhna asli pe<br/>(read replica)"]
+    n_RR["Read replica<br/>padhai primary pe, transfer dheema<br/>-> padhna copy se, likhna asli pe<br/>(read replica)<br/>paise ka faisla -> sirf primary pe, copy peeche ho sakti<br/>abhi bheja, copy peeche -> apna likha primary se padho<br/>copy minute bhar peeche -> lag naapo, alert, list se hatao"]
     n_DB["SQL DB (+ ledger, outbox)"]
     n_K["Kafka"]
     n_REC["Reconciliation job"]
@@ -320,13 +330,14 @@ AAGE POOCHEGA:
 
 #### 9 Ravi ki dukaan ko 500, usi second dukaan se 200 refund (deadlock)
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
     n_RR["Read replica"]
-    n_DB["SQL DB<br/>500 gaye, 200 refund, dono atke<br/>-> taala hamesha ek kram me, chhoti id pehle<br/>(lock order)"]
+    n_DB["SQL DB<br/>500 gaye, 200 refund, dono atke<br/>-> taala hamesha ek kram me, chhoti id pehle<br/>(lock order)<br/>ulta kram -> gol ghera (deadlock)<br/>kram ke baad bhi phansa -> DB ek ko wapas, app wahi id se"]
     n_K["Kafka"]
     n_REC["Reconciliation job"]
     n_USER --> n_LB
@@ -358,13 +369,14 @@ AAGE POOCHEGA:
 
 #### 10 Shaam ko dukaan ke CA ka export, page 5000 pe atka
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
     n_RR["Read replica"]
-    n_DB["SQL DB<br/>page 5000 dheema<br/>-> jahan ruke wahan se aage, ginti nahi<br/>(keyset)"]
+    n_DB["SQL DB<br/>page 5000 dheema<br/>-> jahan ruke wahan se aage, ginti nahi<br/>(keyset)<br/>agla page -> is (ts, id) se purani 20, index se<br/>ek ts pe do line -> id barabari tode<br/>beech me nayi line -> purana page nahi khiskta"]
     n_K["Kafka"]
     n_REC["Reconciliation job"]
     n_USER --> n_LB
@@ -398,6 +410,7 @@ AAGE POOCHEGA:
 
 #### 11 Raat ko: 5 saal ka khaata ek hi table me
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
@@ -405,7 +418,7 @@ flowchart LR
     n_RR["Read replica"]
     n_DB["SQL DB"]
     n_K["Kafka"]
-    n_S3["Archive (S3)<br/>5 saal ek table me<br/>-> har mahina alag, purana S3<br/>(partition)"]
+    n_S3["Archive (S3)<br/>5 saal ek table me<br/>-> har mahina alag, purana S3<br/>(partition)<br/>mahina band -> S3 me, 5 saal delete nahi (PMLA)<br/>balance ka jod -> mahine ka snapshot + baad ki line<br/>purana statement -> S3 pe query (Athena)<br/>file badalne ki koshish -> S3 pe taala (Object Lock)"]
     n_REC["Reconciliation job"]
     n_USER --> n_LB
     n_LB --> n_Banking_Svc_xN
@@ -456,6 +469,7 @@ JAWAB:    Ek transfer ka sab kuch (dono khaata line, dono balance, id, SMS wali 
           baad Kafka se.
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]

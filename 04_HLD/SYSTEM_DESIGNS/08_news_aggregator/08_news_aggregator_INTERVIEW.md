@@ -70,6 +70,7 @@ NUMBERS (andaaza):
 Fetcher sources se khabar laaye, DB me daale. Feed service DB se "taazi 20" nikaal ke de.
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_Feed_Svc["Feed Svc"]
@@ -82,10 +83,11 @@ flowchart LR
 
 #### 1 Subah maine app khola, sabko wahi 20 khabar, har baar DB se
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis<br/>sabko wahi 20, DB pe 500 / sec<br/>-> sabki ek feed, Redis me taiyaar<br/>(sorted set)"]
+    n_Redis["Redis<br/>sabko wahi 20, DB pe 500 / sec<br/>-> sabki ek feed, Redis me taiyaar<br/>(sorted set)<br/>breaking news -> aate hi ZADD, turant upar<br/>neeche scroll -> agli 20 (ZREVRANGE 20 39 / cursor)<br/>Redis khaali -> DB se ek hi banaye, baaki ruke (lock)"]
     n_DB["DB"]
     n_Fetcher["Fetcher"]
     n_USER --> n_Feed_Svc
@@ -114,13 +116,14 @@ AAGE POOCHEGA:
 
 #### 2 Meri feed me khabar 20 minute purani
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_Feed_Svc["Feed Svc"]
     n_Redis["Redis (taazi feed)"]
     n_DB["DB"]
     n_Worker["Worker"]
-    n_Kafka["Kafka<br/>khabar 20 min purani<br/>-> laana aur likhna alag, beech me line<br/>(Kafka)"]
+    n_Kafka["Kafka<br/>khabar 20 min purani<br/>-> laana aur likhna alag, beech me line<br/>(Kafka)<br/>kuch naya nahi -> download hi nahi (ETag)<br/>1000 ek saath -> line lambi, gira kuch nahi<br/>worker ne do baar likha -> ek hi lage (ON CONFLICT)"]
     n_Fetcher["Fetcher"]
     n_Sources["Sources"]
     n_USER --> n_Feed_Svc
@@ -147,12 +150,13 @@ AAGE POOCHEGA:
 
 #### 3 8 baje election result, 40 guna bheed
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_Feed_Svc_xN["Feed Svc x N"]
     n_Redis["Redis (taazi feed)"]
-    n_Read_replica["Read replica<br/>result ki subah 40 guna<br/>-> kai machine, padhai DB ki copy se<br/>(LB + replica)"]
+    n_Read_replica["Read replica<br/>result ki subah 40 guna<br/>-> kai machine, padhai DB ki copy se<br/>(LB + replica)<br/>7:45, pata tha -> pehle se machine + cache (scheduled scaling)<br/>20,000 / sec -> aur machine, koi bhi le (stateless)<br/>copy peeche -> kuch second, nuksaan nahi<br/>ek key 20,000/s -> Redis copy + App me 1-2 sec copy"]
     n_DB["DB"]
     n_KW["Kafka -> Worker"]
     n_SF["Sources -> Fetcher"]
@@ -188,13 +192,14 @@ AAGE POOCHEGA:
 
 #### 4 Dopahar "India ne match jeeta", meri feed me 5 baar
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_Feed_Svc_xN["Feed Svc x N"]
     n_Redis["Redis (taazi feed)"]
     n_DBR["DB + Read replica"]
-    n_Worker["Worker<br/>ek khabar 5 baar<br/>-> same khabar pehchaano, ek rakho<br/>(hash + SimHash)"]
+    n_Worker["Worker<br/>ek khabar 5 baar<br/>-> same khabar pehchaano, ek rakho<br/>(hash + SimHash)<br/>wahi URL dobara -> koi bit 0 = pakka naya (Bloom filter)<br/>kai worker -> ek saanjha Bloom (Redis)<br/>naya URL, wahi khabar -> title ka hash same<br/>wins vs won -> 90% same = duplicate (SimHash)"]
     n_Kafka["Kafka"]
     n_SF["Sources -> Fetcher"]
     n_USER --> n_LB
@@ -229,6 +234,7 @@ AAGE POOCHEGA:
 
 #### 5 Dopahar baad nayi khabar aani ruki: ek chhota source 30 sec atka, baaki 999 bhi ruke
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
@@ -237,7 +243,7 @@ flowchart LR
     n_Read_replica["Read replica"]
     n_DB["DB"]
     n_KW["Kafka -> Worker"]
-    n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> atka source chhodo, fail pe band<br/>(timeout + fuse)"]
+    n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> atka source chhodo, fail pe band<br/>(timeout + fuse)<br/>site atki -> 2-3 sec timeout, thodi retry<br/>baar-baar fail -> us source ko call hi nahi (OPEN)<br/>thodi der baad -> ek test call (HALF-OPEN)<br/>source ne 429 diya -> dheere, Retry-After maano<br/>kuch din OPEN -> alert + list se bahar"]
     n_USER --> n_LB
     n_LB --> n_Feed_Svc_xN
     n_Feed_Svc_xN --> n_Redis
@@ -263,11 +269,12 @@ AAGE POOCHEGA:
 
 #### 6 Shaam ko mujhe sirf tech aur sports chahiye
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_Feed_Svc_xN["Feed Svc x N"]
-    n_Redis["Redis<br/>sirf tech + sports<br/>-> har category ki ek list, milao<br/>(category feed)"]
+    n_Redis["Redis<br/>sirf tech + sports<br/>-> har category ki ek list, milao<br/>(category feed)<br/>ek khabar 2 category -> dono list, id se dedupe<br/>tech zyada pasand -> user ranking, scope se bahar (personalization)"]
     n_Read_replica["Read replica"]
     n_DB["DB"]
     n_KW["Kafka -> Worker"]
@@ -300,11 +307,12 @@ AAGE POOCHEGA:
 
 #### 7 Raat ko maine "cricket" dhoondha, poori table padhi gayi
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_Feed_Svc_xN["Feed Svc x N"]
-    n_Elasticsearch["Elasticsearch<br/>cricket = full scan<br/>-> shabd se khabar ki list<br/>(inverted index)"]
+    n_Elasticsearch["Elasticsearch<br/>cricket = full scan<br/>-> shabd se khabar ki list<br/>(inverted index)<br/>cricket kohli -> dono list milao, score se sort<br/>crikcet likha -> 1-2 akshar farak chalta (fuzzy)<br/>ES aur DB alag -> DB sach, ES dobara bana lo (reindex)"]
     n_Redis["Redis (feed + category)"]
     n_DBR["DB + Read replica"]
     n_KW["Kafka -> Worker"]
@@ -334,13 +342,14 @@ AAGE POOCHEGA:
 
 #### 8 Raat ko DBA ka mail: 6 mahine me ~2 crore row, kharcha badhta ja raha
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LF["LB -> Feed Svc x N"]
     n_Elasticsearch["Elasticsearch"]
     n_Redis["Redis (feed + category)"]
     n_DBR["DB + Read replica"]
-    n_Archive["Archive<br/>2 crore row, kharcha<br/>-> har mahina alag, purana S3<br/>(partition + archive)"]
+    n_Archive["Archive<br/>2 crore row, kharcha<br/>-> har mahina alag, purana S3<br/>(partition + archive)<br/>mahina beeta -> purana tukda S3, ya hatao (DETACH / DROP)<br/>DETACH pe lock -> PG 14+ me kuch nahi rukta (CONCURRENTLY)<br/>1 saal purani khuli -> S3 se, dheemi par chalti"]
     n_KW["Kafka -> Worker"]
     n_SF["Sources -> Fetcher"]
     n_USER --> n_LF
@@ -375,12 +384,13 @@ AAGE POOCHEGA:
 
 #### 9 Mail ka doosra hissa: source 100 guna hue to ek DB machine nahi jhelegi
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LF["LB -> Feed Svc x N"]
     n_RES["Redis + Elasticsearch"]
     n_Read_replica["Read replica"]
-    n_DB["DB<br/>ek machine nahi jhelti<br/>-> data tukdon me, alag machine<br/>(shard by article_id)"]
+    n_DB["DB<br/>ek machine nahi jhelti<br/>-> data tukdon me, alag machine<br/>(shard by article_id)<br/>taazi 20 -> Redis, miss pe har tukde se thoda (scatter-gather)<br/>shard badhaya -> sirf naye hisse ka data hile (consistent hashing)<br/>do shard, wahi khabar -> dedupe saanjhe Bloom / Redis se"]
     n_Archive["Archive"]
     n_KW["Kafka -> Worker"]
     n_SF["Sources -> Fetcher"]
@@ -433,6 +443,7 @@ JAWAB:    Khabar laana aur khabar dikhana alag raaste. Peeche fetcher sites se l
           purani khabar sasti jagah, search Elasticsearch pe.
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]

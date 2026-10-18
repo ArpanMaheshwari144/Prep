@@ -94,7 +94,8 @@ PAISA KAHAN HILTA (pehle ye tay, poori file isi pe):
   nikaalna (payout), ya merchant kisi doosre bank me hai.
 ```
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
     n_DB["DB"]
@@ -127,10 +128,11 @@ AAGE POOCHEGA:
 
 #### 1 Kirana ko 500 bheje, beech me server gira
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
-    n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono ek saath ya koi nahi<br/>(transaction)"]
+    n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono ek saath ya koi nahi<br/>(transaction)<br/>-500 ke baad gira -> COMMIT nahi tha, ulta, 500 wapas (WAL)<br/>COMMIT ke baad gira -> diary me COMMIT, poora karo"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_DB
     style n_DB fill:#f9a825,color:#000
@@ -154,10 +156,11 @@ AAGE POOCHEGA:
 
 #### 2 Wallet me 600, phone se 500 aur laptop se 500 ek saath
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
-    n_DB["SQL DB<br/>600 me 500-500 dono pass<br/>-> check aur kaatna ek saath<br/>(atomic UPDATE)"]
+    n_DB["SQL DB<br/>600 me 500-500 dono pass<br/>-> check aur kaatna ek saath<br/>(atomic UPDATE)<br/>phone + laptop ek saath -> pehla jeeta, doosre ko 0 row<br/>WHERE check bhool gaye -> aakhri deewar (CHECK balance >= 0)"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_DB
     style n_DB fill:#f9a825,color:#000
@@ -181,10 +184,11 @@ AAGE POOCHEGA:
 
 #### 3 Metro me network gaya, app ne dobara bheja, 1000 kate
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
-    n_Idempotency_store["Idempotency store<br/>app ne dobara bheja<br/>-> wahi id dobara = paisa dobara nahi<br/>(idempotency key)"]
+    n_Idempotency_store["Idempotency store<br/>app ne dobara bheja<br/>-> wahi id dobara = paisa dobara nahi<br/>(idempotency key)<br/>network gaya, dobara bheja -> saved jawab, dobara nahi kata<br/>wahi key, amount alag -> request hash se farak (422)<br/>key kab hatao -> pakka fail pe, DONE ~24 ghante"]
     n_DB["SQL DB"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store
@@ -219,11 +223,12 @@ AAGE POOCHEGA:
 
 #### 4 Bank se 2000 top-up, PSP dheema
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
     n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP<br/>bank ka raasta dheema<br/>-> PSP dheema to chhodo, fail pe call band<br/>(timeout + fuse)"]
+    n_PSP["PSP<br/>bank ka raasta dheema<br/>-> PSP dheema to chhodo, fail pe call band<br/>(timeout + fuse)<br/>2-3 sec jawab nahi -> chhodo, PENDING, baad me pata<br/>5 fail -> call jaati hi nahi, saaf abhi nahi (fuse OPEN)<br/>30 sec baad test call -> chali to fuse band"]
     n_DB["SQL DB"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store
@@ -251,13 +256,14 @@ AAGE POOCHEGA:
 
 #### 5 PSP ko call kiya aur server gira: paisa gaya ya nahi?
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
     n_DB["SQL DB"]
-    n_Reconciliation_job["Reconciliation job<br/>call ke baad crash<br/>-> pehle 'pata nahi' likho, PSP khud batayega, roz milaao<br/>(PENDING + webhook + reconciliation)"]
+    n_Reconciliation_job["Reconciliation job<br/>call ke baad crash<br/>-> pehle 'pata nahi' likho, PSP khud batayega, roz milaao<br/>(PENDING + webhook + reconciliation)<br/>call ke baad crash -> PENDING bacha, PSP bataye (webhook)<br/>webhook do baar -> SUCCESS sirf ek baar<br/>webhook nakli -> hastakshar jaancho + apne PENDING se milao<br/>webhook nahi aaya -> job purane PENDING PSP se poochhe<br/>raat ko -> PSP ki file se poora milaan"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store
     n_Payment_Svc --> n_PSP
@@ -291,15 +297,17 @@ AAGE POOCHEGA:
   call ke baad crash     -> PENDING bacha: PSP khud bataye (webhook)
   webhook do baar        -> SUCCESS sirf ek baar, doosra ignore
   webhook nakli          -> hastakshar jaancho (PSP secret) + apne PENDING se milao
-  webhook aaya hi nahi   -> job har kuch min purane PENDING PSP se poochhe; raat PSP file se milaan
+  webhook aaya hi nahi   -> job har kuch min purane PENDING PSP se poochhe
+  raat ko                -> PSP ki file se poora milaan
   job ka jawab           -> hua = SUCCESS · pakka fail = FAILED, kuch wapas nahi (paisa hila nahi)
 ```
 
 #### 6 Merchant ka account doosre bank me, ek transaction nahi chalta
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
-    n_Payment_Svc["Payment Svc + SAGA<br/>merchant Bank B me<br/>-> kadam-kadam, fail pe ulta karo<br/>(saga)"]
+    n_Payment_Svc["Payment Svc + SAGA<br/>merchant Bank B me<br/>-> kadam-kadam, fail pe ulta karo<br/>(saga)<br/>Bank B +500 fail -> wallet me 500 wapas (compensate)<br/>service beech me giri -> saga table se aage ya ulta<br/>ulta kaam bhi fail -> retry + alert, manual queue"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
     n_DB["SQL DB"]
@@ -333,12 +341,13 @@ AAGE POOCHEGA:
 
 #### 7 Maine poochha: kal raat 2200 tha, subah 1100 kaise?
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc + SAGA"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
-    n_DB["SQL DB + Ledger table<br/>kal 2200, subah 1100 kaise<br/>-> har paisa do line me, kabhi mitao nahi<br/>(ledger)"]
+    n_DB["SQL DB + Ledger table<br/>kal 2200, subah 1100 kaise<br/>-> har paisa do line me, kabhi mitao nahi<br/>(ledger)<br/>2200 se 1100 kaise -> raat ki line padho, line-line dikhta<br/>galat entry / refund -> mitao nahi, nayi ulti line<br/>raat ka jod != balance -> alert"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store
@@ -377,10 +386,11 @@ AAGE POOCHEGA:
 
 #### 8 Shaam Diwali, 3000 payment / second, machine baith gayi
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_LB_API_Gateway["LB / API Gateway"]
-    n_Payment_Svc_x_N_1["Payment Svc 1<br/>3000 / sec, CPU bhara<br/>-> kai machine, koi yaad na rakhe<br/>(stateless + LB)"]
+    n_Payment_Svc_x_N_1["Payment Svc 1<br/>3000 / sec, CPU bhara<br/>-> kai machine, koi yaad na rakhe<br/>(stateless + LB)<br/>CPU bhara -> timeout, log dobara tap, machine badhao<br/>machine badhao -> yaad DB + idempotency store me<br/>ek machine mari -> /health chup, LB se bahar"]
     n_Payment_Svc_x_N_2["Payment Svc 2"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
@@ -416,14 +426,15 @@ AAGE POOCHEGA:
 
 #### 9 Merchant ki report ne mera payment rok diya
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_LB_API_Gateway["LB / API Gateway"]
     n_Payment_Svc_xN["Payment Svc x N"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
     n_DB["SQL DB + Ledger"]
-    n_Read_replica["Read replica<br/>report ne DB ghera<br/>-> report copy se, asli DB payment ke liye<br/>(read replica)"]
+    n_Read_replica["Read replica<br/>report ne DB ghera<br/>-> report copy se, asli DB payment ke liye<br/>(read replica)<br/>pay kiya, balance dekha -> primary se, copy 1-2 sec peeche<br/>copy aur peeche -> naapo, alert (replication lag)<br/>report itni bhaari -> alag warehouse (CDC)"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_LB_API_Gateway
     n_LB_API_Gateway --> n_Payment_Svc_xN
@@ -456,13 +467,14 @@ AAGE POOCHEGA:
 
 #### 10 Saal me ~1000 crore row, primary ki likhai dheemi
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_LB_API_Gateway["LB / API Gateway"]
     n_Payment_Svc_xN["Payment Svc x N"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
-    n_SQL_DB_shard_by_account_id["SQL DB + Ledger shard<br/>1000 crore row, likhai dheemi<br/>-> account se data tukdon me baanto<br/>(shard)"]
+    n_SQL_DB_shard_by_account_id["SQL DB + Ledger shard<br/>1000 crore row, likhai dheemi<br/>-> account se data tukdon me baanto<br/>(shard)<br/>ek account bahut bada -> sub-account alag shard<br/>do account alag shard -> A kaato, B daalo, fail pe ulta (saga)<br/>idempotency key -> account_id se usi shard"]
     n_Read_replica["Read replica"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_LB_API_Gateway
@@ -517,7 +529,8 @@ JAWAB:    Har payment pe ek id, dobara bheja to pehla jawab, paisa ek hi baar.
           Aage: fraud check, kai currency, chargeback.
 ```
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+ LR
     n_USER["USER"]
     n_LB_API_Gateway["LB / API Gateway"]
     n_Payment_Svc_x_N_1["Payment Svc 1"]
