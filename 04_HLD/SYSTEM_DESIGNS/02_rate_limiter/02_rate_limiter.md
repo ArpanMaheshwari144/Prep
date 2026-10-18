@@ -106,7 +106,7 @@ AAGE POOCHEGA:
 DIKKAT     Subah 9 baje password bhool gaya, 9 baar login (limit 5 / min). LB ne baanta: App-1 pe 5, App-2
            pe 4. Har App ne apni ginti dekhi -> kisi ko 5 PAAR nahi dikha, 9 andar.
 ```
-![c1](img/c1-3d66f653.svg)
+![c1](img/c1-467c83bf.svg)
 
 ```
 NAHI       ek user hamesha ek App pe (sticky LB): wo App gira to ginti gayi; App badhe / ghate to phir bati.
@@ -127,7 +127,7 @@ AAGE POOCHEGA:
 DIKKAT     10 baje bot ne mere account pe ek hi pal me 20 login parallel bheje; ginti 4, limit 5.
            App-1 ne Redis se "4" padha (GET), App-2 ne bhi "4"; dono ne +1 karke "5" likha (SET) -> andar 6.
 ```
-![c2](img/c2-5ef219a0.svg)
+![c2](img/c2-1e09d4c2.svg)
 
 ```
 NAHI       App me synchronized / lock: sirf ek machine ke andar; do App me race wahi ki wahi.
@@ -148,7 +148,7 @@ AAGE POOCHEGA:
 DIKKAT     Bot ki saari request App tak pahunchti, wahan ginti hoti, phir 429. Mana hone wali request bhi
            LB, App aur Redis tak ghoomi -> bot ke 10,000 request / sec se App bhar gayi, asli log dheeme.
 ```
-![c3](img/c3-15e3b154.svg)
+![c3](img/c3-a1848e8b.svg)
 
 ```
 AAGE POOCHEGA:
@@ -166,7 +166,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Dopahar Redis mar gaya. Saari ginti wahin thi -> kisi ko pata hi nahi kisne kitni bheji.
 ```
-![c4](img/c4-5c86b205.svg)
+![c4](img/c4-20ee668a.svg)
 
 ```
 NAHI       sab fail-open: login khula = koi bina had password guess karta rahega.
@@ -188,7 +188,7 @@ AAGE POOCHEGA:
 DIKKAT     Meri script India, US aur Europe teen region se ek saath chali. Har region ka Redis apni alag
            ginti rakhta -> har jagah 50, kisi ki had paar nahi hui, aur 100 ki had pe 150 nikal gayi.
 ```
-![c5](img/c5-45a788a8.svg)
+![c5](img/c5-540f0923.svg)
 
 ```
 AAGE POOCHEGA:
@@ -205,7 +205,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     4 baje bhi wahi bot. 429 sirf bolta "60 second baad aao" -> bot 60 sec baad phir, din bhar, roz.
 ```
-![c6](img/c6-cd034b4f.svg)
+![c6](img/c6-44fde16b.svg)
 
 ```
 NAHI       turant ban: asli user bhi tez click karta, office ke 1000 log ek IP (NAT), sale me asli bheed.
@@ -227,7 +227,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam 6 baje sale khuli. Har user apni had ke andar tha, par laakhon user ek saath -> kul request
            server ki taakat se zyada, CPU 100%, sabke liye site band. Per-user had kuch nahi rok paayi.
 ```
-![c7](img/c7-d5daef3b.svg)
+![c7](img/c7-3454bc6c.svg)
 
 ```
 AAGE POOCHEGA:
@@ -244,7 +244,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko attack chal raha tha, usi waqt poora Redis Cluster gira, copy bhi. Ginti kahin nahi ho
            rahi, aam API khuli chhodi thi -> attacker ki saari request bina roke andar, server bhar gaye.
 ```
-![c8](img/c8-e4d51221.svg)
+![c8](img/c8-899d85ba.svg)
 
 ```
 AAGE POOCHEGA:
@@ -263,7 +263,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat 11 baje office ki night shift: 1000 log ek IP (NAT) ke peeche, ek ki galti -> IP block, sab
            1000 block. Ulta, botnet ke paas 1000 IP, har IP se thoda -> kisi IP ki limit nahi tooti.
 ```
-![c9](img/c9-36b17c3a.svg)
+![c9](img/c9-e2ae8dc4.svg)
 
 ```
 NAHI       IP ki had badha do (5 se 500): office bach gaya, par botnet ko bhi utni hi chhoot.

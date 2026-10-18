@@ -85,7 +85,7 @@ Banking Service (saara niyam / logic) -> SQL DB. Jaan-boojh ke seedha.
 DIKKAT     1 tareekh subah 8 baje maine Ravi ko 500 bheje. Mere 500 kate, Ravi ke account me daalne se PEHLE
            server gira. 500 na mere paas, na Ravi ke paas. Gayab.
 ```
-![c1](img/c1-00bd648f.svg)
+![c1](img/c1-d9086499.svg)
 
 ```
 NAHI       SAGA / queue laga do: ek DB me kaatna aur daalna alag ho jaate, dikkat khud ban jaati.
@@ -104,7 +104,7 @@ AAGE POOCHEGA:
 DIKKAT     8:30 lift me maine Send dabaya, 500 kat bhi gaye, par jawab aate waqt network gaya. App ne timeout
            pe khud dobara bheja -> 1000 kat gaye, bhejne the 500.
 ```
-![c2](img/c2-9c07c054.svg)
+![c2](img/c2-314546a7.svg)
 
 ```
 NAHI       app me "pehle dekho, phir daalo": dono ne dekha "nahi hai", dono ne daala (race).
@@ -125,7 +125,7 @@ AAGE POOCHEGA:
 DIKKAT     Mere paas 300. 9:00 Netflix ka 200 ka auto-debit chala, usi second maine UPI se Ravi ko 200 bheje.
            Do request, do thread, dono ne balance 300 padha -> dono pass -> dono kate -> mera balance -100.
 ```
-![c3](img/c3-da5f4dc5.svg)
+![c3](img/c3-4ee48a2a.svg)
 
 ```
 NAHI       Java synchronized: Banking Svc ki kai machine, lock sirf ek ke andar.
@@ -144,7 +144,7 @@ AAGE POOCHEGA:
 DIKKAT     Subah se paisa kai baar hila. Maine support se poochha "mere 500 kahan gaye, kab?" (audit bhi yahi)
            -> har len-den ka pakka khaata chahiye.
 ```
-![c4](img/c4-243438b1.svg)
+![c4](img/c4-26705876.svg)
 
 ```
 NAHI       khaata Kafka me: DB transaction wapas hua (paisa kam tha), Kafka me "Arpan -500" -> khaata jhooth.
@@ -164,7 +164,7 @@ AAGE POOCHEGA:
 DIKKAT     10 baje salary 50,000 aayi, 1 min baad Ravi ko 20,000 rent bheja. Har transfer ke baad SMS, fraud,
            statement chahiye. Par SMS service giri hui hai -> transfer na ruke, aur SMS khoye bhi nahi.
 ```
-![c5](img/c5-2d32ad4e.svg)
+![c5](img/c5-248c8117.svg)
 
 ```
 NAHI       commit ke baad seedha Kafka: commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi.
@@ -184,7 +184,7 @@ AAGE POOCHEGA:
 DIKKAT     Salary aate hi maine balance khola. Har baar 50,000 khaate ki line jodna dheema, to balance
            ek column me rakha. Par column aur khaata alag ho gaye (bug), to sach kaunsa? Kaun pakdega?
 ```
-![c6](img/c6-9ba4091c.svg)
+![c6](img/c6-a3955e67.svg)
 
 ```
 AAGE POOCHEGA:
@@ -200,7 +200,7 @@ AAGE POOCHEGA:
 DIKKAT     11 baje sabki salary aayi, laakhon transfer ek saath. Ek hi Banking Svc machine thi: CPU bhara,
            transfer dheeme, phir machine giri -> koi bhi paisa nahi bhej pa raha.
 ```
-![c7](img/c7-ac99d8c2.svg)
+![c7](img/c7-8ffb6438.svg)
 
 ```
 AAGE POOCHEGA:
@@ -218,7 +218,7 @@ AAGE POOCHEGA:
 DIKKAT     Salary ke baad sab baar-baar balance aur history dekh rahe. Saari padhai usi ek DB pe, jahan
            transfer bhi likhe jaate -> padhne ki bheed ne paisa bhejna dheema kar diya.
 ```
-![c8](img/c8-3ad7609a.svg)
+![c8](img/c8-901fdc53.svg)
 
 ```
 AAGE POOCHEGA:
@@ -237,7 +237,7 @@ AAGE POOCHEGA:
 DIKKAT     Maine Ravi ki dukaan ko 500 bheje, usi second dukaan ne mujhe 200 refund kiye. Ek ne pehle mera row
            pakda, doosre ne dukaan ka; dono ek doosre ka intezaar -> dono atke (deadlock).
 ```
-![c9](img/c9-3346b5b8.svg)
+![c9](img/c9-9df998d1.svg)
 
 ```
 AAGE POOCHEGA:
@@ -253,7 +253,7 @@ AAGE POOCHEGA:
 DIKKAT     Ravi ki dukaan: roz ~500 UPI, 3 saal = ~5 lakh line. CA ka tool 20-20 ke page maangta. Page 5000 pe
            LIMIT 20 OFFSET 100000 -> DB 1,00,020 line PADH ke phenkta. Beech me nayi line -> ek line dobara.
 ```
-![c10](img/c10-7626798a.svg)
+![c10](img/c10-ee5a2476.svg)
 
 ```
 NAHI       saari 5 lakh line ek baar me bhejo: memory bhari, request timeout.
@@ -273,7 +273,7 @@ AAGE POOCHEGA:
 DIKKAT     5 saal ka khaata (~36 arab line) ek table me. Log roz sirf 3 mahine dekhte, par har query / backup
            arabon line ke saath. Aur kanoon (PMLA / RBI) kam se kam 5 saal rakhwata, bank 8-10.
 ```
-![c11](img/c11-e1dba4e0.svg)
+![c11](img/c11-233ffe0f.svg)
 
 ```
 NAHI       "archive = sharding": archive jagah ghatata, shard likhne ka bojh baantta.

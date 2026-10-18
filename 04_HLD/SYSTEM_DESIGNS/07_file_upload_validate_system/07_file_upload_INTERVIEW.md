@@ -76,7 +76,7 @@ jaanch wale (Validator) ko call kare (2-3 sec), jawab wapas.
 DIKKAT     31 March, maine report.pdf daali. Server Validator ke 3 sec jawab tak atka, main bhi screen pe.
            Aakhri ghante ~200 upload / sec x 3 sec = ~600 thread atke, Tomcat ke 200 khatam.
 ```
-![c1](img/c1-3496c6eb.svg)
+![c1](img/c1-8b4fa025.svg)
 
 ```
 NAHI       thread pool 200 se 2000: jaanch tab bhi 3 sec, bas memory khatam hone tak der.
@@ -100,7 +100,7 @@ AAGE POOCHEGA:
 DIKKAT     Report ke baad maine 5 GB video daali: client -> hamara server -> S3. 5 GB do baar network pe,
            thread minuton atka, sirf bytes aage badhane ko server badhane pade.
 ```
-![c2](img/c2-22d171d6.svg)
+![c2](img/c2-8a3b63ea.svg)
 
 ```
 NAHI       S3 ki access key app me daal do: app se key nikli = poora bucket khula.
@@ -120,7 +120,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Usi video ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB shuru se?
 ```
-![c3](img/c3-fadfbd2e.svg)
+![c3](img/c3-01c3d2a4.svg)
 
 ```
 NAHI       server ka timeout badha do: wifi gaya to connection hi toota, timeout kuch nahi bachata.
@@ -141,7 +141,7 @@ AAGE POOCHEGA:
 DIKKAT     Ek aur file chadhte waqt meri app crash. "complete" nahi aaya, S3 ka event bhi chhoota: bytes S3 me
            pade (paisa lag raha), DB me T-103 "UPLOADING" pe atka, koi dhoondhta hi nahi.
 ```
-![c4](img/c4-2cdfca6c.svg)
+![c4](img/c4-a6555804.svg)
 
 ```
 NAHI       sirf S3 lifecycle niyam: din me ek baar chalta aur DB nahi dekhta.
@@ -164,7 +164,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam tak 10,000 log ka "Meri files" page khula, har 2 sec saari files ka haal
            -> 5,000 sawaal / sec DB pe. Likhai 1-2 / sec thi, padhai ne DB ghera.
 ```
-![c5](img/c5-e2e1599a.svg)
+![c5](img/c5-9bc6627b.svg)
 
 ```
 NAHI       DB me index daalo: sawaal tez, par 5,000 / sec phir bhi primary pe.
@@ -188,7 +188,7 @@ AAGE POOCHEGA:
 DIKKAT     Deadline wale din maine ek file nahi, poora folder daala: 1000 file. Har file ka alag trackingId
            -> 1000 id sambhaalna mere bas ka nahi, aur "poora folder ho gaya?" ka koi jawab nahi.
 ```
-![c6](img/c6-3da07df4.svg)
+![c6](img/c6-3db04a2e.svg)
 
 ```
 AAGE POOCHEGA:
@@ -205,7 +205,7 @@ AAGE POOCHEGA:
 DIKKAT     Maine support chat me screenshot bheja, usme T-101 dikh raha tha. Ravi ne GET /download/T-101
            maara -> meri file Ravi ko mil gayi.
 ```
-![c7](img/c7-46cd40b4.svg)
+![c7](img/c7-f4cb3f57.svg)
 
 ```
 NAHI       gateway pe hi check: use pata hi nahi T-101 kiski hai.
@@ -226,7 +226,7 @@ AAGE POOCHEGA:
 DIKKAT     Mujhe S3 ka pakka link mila tha. Maine dost ko WhatsApp pe bheja, dost ne group me.
            Link hamesha chalta -> file kisi ke bhi haath.
 ```
-![c8](img/c8-5f9ee831.svg)
+![c8](img/c8-17f04d6f.svg)
 
 ```
 NAHI       link me lamba random naam (koi andaza na lagaye): ek baar bahar gaya to hamesha chalta.
@@ -247,7 +247,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko kisi ne virus.exe ka naam report.pdf kiya, type "application/pdf" bheja -> S3 me pahunchi.
            Naam aur type dono client ne bheje, jo jhooth bol sakta.
 ```
-![c9](img/c9-1fc1e64c.svg)
+![c9](img/c9-5cceff44.svg)
 
 ```
 NAHI       type ke liye poori file padho: 5 GB S3 se laana; pehle kuch byte kaafi.

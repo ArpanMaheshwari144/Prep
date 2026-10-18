@@ -107,7 +107,7 @@ AAGE POOCHEGA:
 DIKKAT     10 baje maine sale ka chhota link College Gang me daala, viral -> ~1 lakh click / sec, har click
            DB (disk) tak. Redirect dheema hua, phir DB hi baith gaya.
 ```
-![c1](img/c1-22e0e48f.svg)
+![c1](img/c1-7dcfcb7e.svg)
 
 ```
 NAHI       DB ki read copy (replica): wo bhi disk se, dheemi; 1 lakh / sec ke liye bahut copies chahiye.
@@ -132,7 +132,7 @@ AAGE POOCHEGA:
 DIKKAT     11 baje wahi bheed ek hi App machine pe. Wo dheemi hui, phir giri -> poori site band.
            Ek cheez jiske girne se sab ruk jaaye = SPOF (single point of failure).
 ```
-![c2](img/c2-45ddc4d3.svg)
+![c2](img/c2-c2b16757.svg)
 
 ```
 NAHI       ek bahut badi machine (vertical scale): uski bhi had, aur akeli -> wahi giri to sab band.
@@ -154,7 +154,7 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar maine aur Ravi ne ek hi pal me link banaya. Request do alag App pe gayi, dono ne apni
            ginti se agla number liya -> dono ko code "g9" mila. Ravi ka link khola to mera sale page khula.
 ```
-![c3](img/c3-ee405005.svg)
+![c3](img/c3-8b13fce6.svg)
 
 ```
 AAGE POOCHEGA:
@@ -172,7 +172,7 @@ AAGE POOCHEGA:
 DIKKAT     2 baje mujhe ginti chahiye thi kitne click aaye. Usi request me analytics DB me likhne lage,
            phir redirect. Analytics DB dheema -> har user redirect ke liye ruka.
 ```
-![c4](img/c4-b87909a7.svg)
+![c4](img/c4-fad55269.svg)
 
 ```
 NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein gayi.
@@ -217,7 +217,7 @@ DIKKAT     5 baje maine naya link banaya. Cassandra har link 3 alag machine pe r
            Link A aur B me pahunch gaya, C tak abhi nahi (aam taur pe ms, bheed me second tak).
            Isi beech mera click C pe gaya -> C bola "ye link mere paas nahi" -> 404.
 ```
-![c6](img/c6-2cafe572.svg)
+![c6](img/c6-d3887544.svg)
 
 ```
 NAHI       3 me likho tabhi done, phir 1 se padho: ek copy giri = har naya link fail.
@@ -239,7 +239,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko akela LB hi gir gaya. App machine sab zinda, par har click LB pe atka -> koi link
            nahi khula, poori site band. App badhane se kuch nahi hua, darwaza hi band tha.
 ```
-![c7](img/c7-66a2cb12.svg)
+![c7](img/c7-2183eb83.svg)
 
 ```
 AAGE POOCHEGA:
@@ -256,7 +256,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko spammer: ek API key se har second 5,000 link (phishing). Aam din poore system pe ~1,000
            -> 5 guna bojh, asli users dheeme; Gmail / WhatsApp ne hamara domain "spam" maana.
 ```
-![c8](img/c8-f1ea86cb.svg)
+![c8](img/c8-f1cdbb22.svg)
 
 ```
 NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana lega.
