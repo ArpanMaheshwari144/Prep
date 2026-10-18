@@ -106,7 +106,8 @@ NAHI       DB me queue: insert = index + lock = idhar-udhar likhna; queue me WHE
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: message mit-ta nahi; har padhne wala sirf apna number (offset) yaad rakhta.
+  NIYAM: message padhne se mit-ta nahi (disk pe log); har padhne wala sirf apna number (offset) yaad rakhta.
+         consumer gira -> wapas aake apne offset se aage; producer ko pata bhi nahi chalta.
   "Disk pe likhna dheema nahi?"   -> SIRF AAKHIR ME JODNA: kyunki sequential likhai disk ka sabse tez kaam;
                                      padhna OS page cache se, RAM jaisa.
   "Offset yaad kaun rakhta?"      -> KAFKA KHUD (__consumer_offsets): kyunki restart pe pata ho kahan se;
@@ -136,7 +137,8 @@ NAHI       copy (replica) badhao: copy sirf bachav ke liye, padhna bhi leader se
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: partition = kitne ek saath padh sakein; aur badhe -> aur partition.
+  NIYAM: partition = kitne ek saath padh sakein (ek partition ek worker); bheed badhe -> aur partition.
+         worker partition se zyada = baaki khaali baithe; lag badhe to pehle partition ginti dekho.
   "Kitne partition rakhoge?"    -> JITNE CONSUMER EK SAATH (abhi 10): kyunki ek partition = ek worker; shuru
                                    me thoda zyada, baad me badhaye to key ka partition badlega.
   "Ek partition garam ho gaya?" -> KEY TODO (userId#bucket): kyunki ek key = ek partition; todna tabhi jab us
@@ -162,7 +164,8 @@ NAHI       poore topic ka kram: matlab sirf ek partition = speed khatam. Kram si
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: jiska kram chahiye wahi key; same key = same partition.
+  NIYAM: kram sirf EK partition ke andar: jiska kram chahiye wahi key (userId); same key = same partition.
+         alag key ka aapas me kram nahi milta, aur chahiye bhi nahi.
   "Partition 10 se 20 kiye?"       -> % 10 SE % 20: kyunki key ka partition badla -> naye event naye
                                       partition, thodi der kram toota; isliye shuru me zyada.
   "Producer retry kram ulta kare?" -> SEQUENCE NUMBER: kyunki 1 fail, 2 gaya, phir 1 = ulta; har message ka
@@ -181,7 +184,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ek team ke andar ek partition = ek machine.
+  NIYAM: ek group ke andar ek partition = ek hi machine -> ek khabar team me ek hi baar.
+         machine gayi -> uska partition baaki ko (rebalance); machine partition se zyada = khaali baithi.
   "Kaise kaam karta?"            -> EK GROUP.ID: pehle group.id = machine ka naam = teen alag team, teeno ne
                                     bheja. Ab ek: P0-3 -> C1 · P4-6 -> C2 · P7-9 -> C3; Ravi P7 -> sirf C3.
   "Consumer aur badhaane hain?"  -> PARTITION BHI BADHAO: kyunki ek partition = ek machine; 10 partition + 12
@@ -215,7 +219,8 @@ NAHI       har service ka alag topic: producer ek event teen baar bheje -> "ek m
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: group ke andar baanto, alag group = sabko; ye MQ ka dil hai.
+  NIYAM: group ke andar baanto, alag group = sabko (har group ka apna offset); ye MQ ka dil hai.
+         nayi service = naya group, producer kuch nahi badalta; ek group peeche ho to doosra nahi rukta.
   "Naya group aaj juda, 7 din purana?" -> AUTO.OFFSET.RESET: kyunki naye group ka offset hai hi nahi; earliest
                                           = shuru se · latest = sirf ab ke baad.
 ```
@@ -245,7 +250,8 @@ NAHI       acks=1 sab jagah: leader ne "OK" bola, copy se pehle gira -> khabar g
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: "done" tabhi jab copy pe bhi likha; naya leader sirf ISR se.
+  NIYAM: "done" tabhi jab ISR copy pe bhi likha (acks=all); naya leader sirf ISR se.
+         producer ko OK = khabar bachi; copy kam pad jaaye to likhna band, khona nahi.
   "acks ke teen option?"              -> 0 · 1 · ALL: kyunki ye batata kitno ne likha tab OK; 0 = bhej ke
                                          bhaag (kho sakta) · 1 = leader · all = saari ISR.
   "Kab kaunsa?"                       -> PAISA / ORDER = ALL: kyunki khona mehnga; click / log = acks=1, thoda
@@ -286,7 +292,8 @@ NAHI       pehle commit, phir kaam: email se pehle CRASH -> restart 6 se -> even
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: khona kabhi nahi; dobara aaye to eventId se pehchano.
+  NIYAM: pehle kaam, phir commit -> khona kabhi nahi, par dobara aa sakta; dobara aaye to eventId se pehchano.
+         pehchaan consumer karta, Kafka nahi; isliye Ravi ko do email nahi jaata.
   "Dedup kis key se?"           -> EVENTID: kyunki userId se dedup kiya to Ravi ka agla sahi event bhi skip.
                                    DO key: kram = userId · dedup = eventId.
   "Kafka me exactly-once nahi?" -> SIRF KAFKA SE KAFKA: kyunki transactions + idempotent producer Kafka ke
@@ -320,7 +327,8 @@ NAHI       "offset bachayega": nahi, offset consumer ki taraf hai; ye producer k
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: server kuch yaad nahi rakhta, DB ka sent column yaad rakhta.
+  NIYAM: server kuch yaad nahi rakhta, DB ka sent column yaad rakhta (order + khabar ek transaction).
+         relay gira -> sent = false wali dobara jaati -> consumer ko dobara mil sakti, eventId se skip.
   "COMMIT se pehle crash?"           -> KUCH NAHI HUA: kyunki transaction poori nahi; DB me na order na
                                         outbox, Ravi ko error, wo dobara karega.
   "COMMIT ke baad, bhejne se pehle?" -> RELAY BHEJEGA: kyunki row sent = false padi hai; uthte hi bhejta.
@@ -355,7 +363,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: koi partition bina padhne wale ke nahi, koi kharab khabar poori line na roke.
+  NIYAM: koi partition bina padhne wale ke nahi (rebalance), koi kharab khabar poori line na roke (DLQ).
+         lag badhe -> alert; kharab khabar alag line me, theek karke baad me dobara.
   "Kaise kaam karta?"           -> REBALANCE: C2 ke P4-6 -> C1 aur C3 me bat gaye. LAG = aakhri offset - group
                                    kahan tak padha; badhe to alert.
   "Ek khabar baar-baar fail?"   -> DLQ: kyunki kram se padhta, ek atki to poora partition atka; kuch koshish
@@ -389,6 +398,7 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: jo rakha hai usi se REPLAY; rakhna consumer ki sabse lambi chhutti se lamba.
+         purani khabar retention se jaati (poora segment); har key ki aakhri hi chahiye to compaction.
   "Kaise kaam karta?"         -> RETENTION 7 DIN: padh ke delete nahi; phir purani segment (~1 GB) poori udao
                                  = sasta. COMPACTION: har key ki sirf aakhri khabar.
   "Rakhne ka fayda kya?"      -> REPLAY: kyunki data pada hai; naya group shuru se padhe, ya bug theek karke

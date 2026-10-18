@@ -124,7 +124,8 @@ NAHI       DB pe index / read replica: thoda tez, par har khulne pe 200 ka jod w
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: padhna 50 guna zyada -> mehnat likhte waqt, padhna sirf inbox se.
+  NIYAM: padhna 50 guna zyada -> mehnat likhte waqt (inbox me tweet_id), app khole to sirf inbox padho;
+         jo inbox me nahi (poora tweet, unfollow) wo padhte waqt jodo / chhaanto.
   "Inbox me sirf tweet_id, poora tweet kahan se?" -> BATCH: 50 id ek chakkar me cache / store se, kyunki ek-ek
                                                      laana = 50 chakkar.
   "Aur kisi ko unfollow kar diya to?"             -> PADHTE WAQT CHHAANTO: follow list se filter, peeche
@@ -158,7 +159,8 @@ NAHI       App me peeche ek thread: App crash = thread ka kaam gaya; Kafka disk 
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: user sirf save ka intezaar kare; baaki kaam Kafka se peeche, dobara chalne layak.
+  NIYAM: user ko 'ho gaya' tab jab tweet DB me save; inbox bharna Kafka se peeche, dobara chale to bhi tweet
+         ek hi baar dikhe (sorted set); apna tweet apni feed me turant.
   "Fanout me worker 100 me se 60 likh ke gira?" -> DOBARA: Kafka ko 'ho gaya' nahi bola, kyunki commit nahi
                                                    hua -> khabar phir aayegi.
   "Phir wahi 60 dobara, tweet do baar dikhega?" -> NAHI, SORTED SET: kyunki same tweet_id dobara daalo to ek
@@ -195,7 +197,8 @@ NAHI       sabke liye pull: har feed khulna phir 200 ka jod, mehnga.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: aam log push, celeb pull, padhte waqt dono milao.
+  NIYAM: likhai ka bojh follower ginti se: aam = push (inbox me), celeb = pull (padhte waqt laao + milao);
+         feed hamesha dono ka mel, user ko farak nahi dikhta.
   "Push karoge ya pull?"                      -> HYBRID: push me feed turant par celeb pe likhne ka toofan;
                                                  pull me likhna sasta par khulna mehnga -> dono.
   "10,000 followers pe hi palat-ta rahega?"   -> BEECH ME JAGAH: 12,000 upar -> pull, 8,000 neeche tabhi wapas
@@ -234,7 +237,7 @@ NAHI       DB ki copies badha do: wo bhi disk se (ms), ek garam hisse ki copies 
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: bestseller kitaab counter pe, godown me nahi: garam tweet RAM me (<1 ms).
+  NIYAM: garam cheez RAM me, DB tak sirf ek request; ek key = ek machine garam -> copies; badla to key hatao.
   "Ek hi key, to wo machine garam?"        -> COPIES: tweet:123#1 se #5, read kisi bhi copy se, kyunki ek key
                                               = ek machine; saath me App memory me 1-2 sec cache.
   "Virat ne tweet edit / delete kar diya?" -> KEY HATAO: cache se delete, kyunki agla read DB se naya laayega.
@@ -272,7 +275,7 @@ NAHI       Redis me machine jodte jao: soye 40 crore ka inbox bhi RAM khaata, kh
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: RAM me sirf number aur sirf zinda log; baaki zaroorat pe DB se bana lo.
+  NIYAM: RAM me sirf id aur sirf zinda log; jo RAM me nahi wo DB se bana lo (ek baar dheema, galat nahi).
   "Ek inbox entry kitni jagah?"             -> ~60-100 BYTE: number + score + Redis ka apna kharcha; isliye
                                                poora tweet nahi.
   "Soya user mahino baad aaya, inbox nahi?" -> PULL SE BANAO: pehli baar purane tareeke se, phir inbox bharo;
@@ -311,7 +314,8 @@ NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; joi
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: jis cheez se padhte (ek user ka profile), usi se baanto; likhna sirf aakhir me jodna.
+  NIYAM: jis cheez se padhte (user_id), usi se baanto; likhna sirf aakhir me jodo (tez); 3 copy, 2 me likho
+         2 se padho -> naya mil hi jaata.
   "Cassandra itna tez likhta kaise?"   -> AAKHIR ME JODO: RAM + diary ke aakhir, kyunki purana dhoondh ke
                                           badalna nahi; RAM bhari -> nayi file, peeche mila leta.
   "To padhna kab dheema?"              -> KAI CHHOTI FILES: ek user ka data bikhra; compaction + bloom filter
@@ -345,7 +349,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: data user ke paas; copy thodi peeche chalegi (2 second purani feed chalti).
+  NIYAM: data user ke paas wale region me; doosre region ki copy thodi peeche -> region gira to feed thodi
+         purani, par chalti.
   "Kaise kaam karta?"            -> PAAS WALA REGION: Route 53 paas ka pata deta; Cassandra ek region ka likha
                                     doosre me thoda baad copy. US celebs ke garam tweet India cache me bhi.
   "Iske fayde?"                  -> TEZ · Europe ka data Europe me (GDPR) · har region ki bheed ka time alag ·
@@ -382,7 +387,7 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: machine kuch yaad nahi rakhti, isliye koi bhi hate ya jude, farak nahi.
+  NIYAM: machine kuch yaad nahi rakhti (sab Redis / DB me) -> koi bhi gire, jude, badle, user ko farak nahi.
   "Kaise kaam karta?"                   -> STATELESS: request kahin bhi. ALB (AWS ka LB) har ~10 sec 'zinda?':
                                            chup = bahar, theek = wapas. Route 53 bhi aise.
   "Naya code daalna, saari restart?"    -> EK-EK KARKE: nikaalo, naya daalo, jodo; kyunki baaki machine bheed
@@ -418,7 +423,7 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: jiski bheed badhi, sirf wahi badhao; doosre pe asar nahi.
+  NIYAM: har kaam alag service -> jiski bheed badhi sirf wahi badhao; ek ka dheema doosre ko nahi rokta.
   "Kaise kaam karta?"             -> ALAG SERVICE: Tweet (likhna), Timeline (feed), User, Graph (follow); ALB
                                      path se: POST /tweet -> Tweet · GET /feed -> Timeline.
   "Feed ki bheed badhi to?"       -> SIRF TIMELINE BADHAO: kyunki alag service, Tweet Svc pe asar nahi.
@@ -455,7 +460,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: bhaari maal S3 me, user ke paas CDN se; tweet me sirf link.
+  NIYAM: bhaari maal S3 me, user tak CDN se (paas, sasta); tweet me sirf link -> link badlo = nayi file,
+         link pe hastakshar = sirf jisko mila wahi dekhe.
   "Kaise kaam karta?"                    -> SIRF LINK: tweet me CDN link; CDN ke paas nahi -> S3 se laake kuch
                                             der rakhta. CDN sirf media ke raaste, API ke nahi.
   "Photo delete, CDN pe abhi dikh rahi?" -> INVALIDATION: CDN ko 'ye hatao', ya link me version (abc_v2.jpg)

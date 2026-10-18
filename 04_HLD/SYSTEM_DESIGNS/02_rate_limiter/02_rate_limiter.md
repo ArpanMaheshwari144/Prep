@@ -139,7 +139,8 @@ NAHI       ek user hamesha ek App pe (sticky LB): wo App gira to ginti gayi; App
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ginti sab machines ki ek jagah; key ki umar = window, umar khatam = ginti reset.
+  NIYAM: ginti sab machines ki ek jagah (Redis); key ki umar = window, umar khatam = ginti reset. Had paar ->
+         user ko 429; ginti App ke paas rahi to App badalte hi had toot jaati.
   "Ye kaunsa algorithm hua?"                -> FIXED WINDOW: har minute ka dabba, samajhne ko simple; asli
                                                chuna TOKEN BUCKET, wo bhi isi Redis me.
   "Aakhri sec me 5, agle ke pehle me 5?"    -> KINARE PE DOUBLE: 2 second me 10, fixed window ki kamzori;
@@ -173,7 +174,8 @@ NAHI       App me synchronized / lock: sirf ek machine ke andar; do App me race 
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: dekhna + badalna ek hi kadam, Redis ke andar; beech me koi request nahi ghus sakti.
+  NIYAM: dekhna + badalna ek hi kadam, Redis ke andar (INCR / Lua); beech me koi request nahi ghus sakti.
+         Do kadam hue to do request ek hi purana number padh ke dono andar.
   "EXPIRE har request pe lagaoge?"         -> SIRF PEHLI PE (ginti 1): kyunki har baar lagao to umar phir 60
                                               se, key kabhi nahi mitegi.
   "INCR ke baad, EXPIRE se pehle crash?"   -> DONO EK LUA ME: kyunki warna key bina umar ke, user hamesha
@@ -205,7 +207,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: jitna aage roko, utna kam kaam bekaar; aur client ko batao kab aaye.
+  NIYAM: jitna aage roko (gateway / edge), utna kam kaam bekaar; client ko batao kab aaye (Retry-After) aur
+         sab ek saath na aayein (jitter). Rokne wala khud bhi akela nahi.
   "Kaise kaam karta?"                    -> GATEWAY SABSE AAGE: har request pe Redis se poochhe; had ke andar
                                             -> App, bahar -> wahin 429, LB / App tak pahunchti hi nahi.
   "429 ke saath client ko kya bataoge?"  -> KAB AAO + KITNI BACHI: Retry-After: 30 + X-RateLimit-Remaining.
@@ -246,7 +249,8 @@ NAHI       sab fail-open: login khula = koi bina had password guess karta rahega
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: faisla pehle se, endpoint ke hisaab se; copy = bachav + padhne ka bojh, shard = likhne ka bojh.
+  NIYAM: Redis gira to kya karna, wo PEHLE se tay, endpoint ke hisaab se (feed khula, login band); copy =
+         bachav + padhne ka bojh, shard = likhne ka bojh. Copy pe switch me thodi ginti khoti, chalta.
   "LB / gateway bhi akela hai kya?"        -> ROUTE 53 + ALB: kyunki ek LB gira to sab gira; ALB kai zone me,
                                               Route 53 zinda pe bheje.
   "Copy main bani, aakhri ginti ka kya?"   -> THODI KHOI: kyunki copy thodi peeche thi; rate limit me chalta,
@@ -279,7 +283,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ek user ki ek ginti, ek ghar me; door jaane ka kharcha sirf zaroori endpoint pe.
+  NIYAM: ek user ki ek ginti, ek ghar me (home region); door jaane ka kharcha sirf zaroori endpoint pe
+         (paisa / login), baaki apni ginti + sync, ~1 sec ki dheel chalti.
   "Kaise kaam karta?"                     -> HOME REGION: pehle har region apni ginti (50+50+50 = 150); ab
                                              Frankfurt bhi mere ghar India ke Redis me gine -> 100.
   "Har request India tak = 100-200 ms?"   -> SIRF ZAROORI PE: kyunki door jaana mehnga; home region sirf paisa
@@ -324,7 +329,8 @@ NAHI       turant ban: asli user bhi tez click karta, office ke 1000 log ek IP (
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: limit maafi wali; ban sirf pakke gunde pe, pattern dekh ke, aur apne aap hatne wala.
+  NIYAM: limit maafi wali (429, phir aao); ban sirf pakke gunde pe, pattern dekh ke (Kafka -> WAF), aur apne
+         aap hatne wala, kyunki galat ban = asli user bahar.
   "Galat banda ban ho gaya, office IP?"  -> BAN KI UMAR: ~24 ghante me apne aap hatta + haath se hatane ka
                                             raasta; ban maafi wala.
   "Gateway seedha Pattern ko call kare?" -> KAFKA ME DAALO: kyunki har request pe ek aur call = gateway
@@ -356,7 +362,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: user ki had aur system ki had alag cheez; dono chahiye.
+  NIYAM: user ki had aur system ki had alag cheez, dono chahiye: sab user had me hon phir bhi system bhar
+         sakta -> kam zaroori pehle chhodo, login / payment bachao.
   "Kaise kaam karta?"                 -> SYSTEM KI HAD: gateway pe poore system ki had (5,000 / sec), CPU 90%
                                          paar -> kuch 503. User ki had = 429 · system ki = 503.
   "To kaunsi request chhodoge?"       -> KAM ZAROORI PEHLE: recommendation / analytics chhodo, login / payment
@@ -390,7 +397,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: thodi galat had, bina had se behtar.
+  NIYAM: thodi galat had, bina had se behtar: Redis poora gaya to har machine apni memory me gine (had /
+         machine ginti); user ko had thodi dheeli dikhe, par attack khula nahi.
   "Kaise kaam karta?"                  -> APNI MEMORY ME GINO: had baant ke, 100 / 4 server = har ek 25; Redis
                                           wapas aaya -> phir sabki ek ginti.
   "Machine badh gayi, kitna baantoge?" -> GINTI CONFIG SE: machines ki ginti config / service discovery se lo,
@@ -430,7 +438,8 @@ NAHI       IP ki had badha do (5 se 500): office bach gaya, par botnet ko bhi ut
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: had us pehchaan pe jo ek insaan ki ho; IP sirf tab jab aur kuch na ho.
+  NIYAM: had us pehchaan pe jo ek insaan ki ho (user_id / username); IP sirf tab jab aur kuch na ho (login se
+         pehle), kyunki ek IP pe 1000 log aur ek botnet ke 1000 IP.
   "Login se pehle, botnet ke 1000 IP?" -> ACCOUNT PE GINO: rate:<username>:login_fail, 5 galat password ->
                                           thodi der lock / CAPTCHA; IP limit bekaar.
   "API key hi chori ho gayi?"          -> NUKSAAN SEEMIT: kyunki limit key pe hai; upar se key badalne / band

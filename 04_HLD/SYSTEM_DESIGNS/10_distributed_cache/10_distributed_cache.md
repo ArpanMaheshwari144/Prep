@@ -112,7 +112,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: sabse purana chhua hua pehle jaaye; umar khatam = key bekaar.
+  NIYAM: RAM bhari to sabse purana chhua pehle jaaye; umar khatam = key bekaar. Hati key = sirf ek miss,
+         App DB se laake wapas rakhta; sach DB me, cache sirf tez copy.
   "Ye chalta kaise hai?"                    -> SABSE PURANA CHHUA HUA bahar (LRU), wahi jo tune DSA me banaya
                                                (LC 146); har key ki umar bhi (TTL).
   "Sabse purana kaun, har baar dhoondhoge?" -> NAHI: HASHMAP + DOUBLY LINKED LIST; chhua -> AAGE, RAM bhari ->
@@ -155,7 +156,8 @@ NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MIS
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: machine jude / jaaye to sirf pados ki ~K/N key hilein (K = saari key, N = machine).
+  NIYAM: machine jude / jaaye to sirf pados ki ~K/N key hilein (K = saari key, N = machine); App ko us
+         hisse ki ek baar miss, baaki sab hit.
   "Ghadi ka ek misaal do."               -> 0..360: A=100, B=200, C=300; key 150 -> B, 350 -> GHOOM KE A.
                                             D=250 juda -> sirf 201..250 khiske.
   "Ye ghoomna kahin dekha hai?"          -> TERA CIRCULAR ARRAY: Next Greater Element II me i % n, wahi aakhri
@@ -200,7 +202,8 @@ NAHI       sync copy: har likhai pe copy ke "haan" ka intezaar -> <1 ms gaya.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: cache me tezi pehle; aakhri kuch likhai kho jaaye to chalta, asli sach DB me.
+  NIYAM: cache me tezi pehle: copy thodi der baad, aakhri likhai kho jaaye to chalta, kyunki sach DB me.
+         Machine giri -> copy main bane, App ko us hisse me thodi der miss.
   "Copy tak thodi der baad, kuch kho sakta?" -> HAAN, AAKHRI KUCH LIKHAI, kyunki main pehle haan bolta, copy
                                                 baad me; cache me chalta, sach DB me.
   "B gayi to baaki machines?"                -> SIRF B KI KEY pe asar, kyunki har machine ka apna hissa; baaki
@@ -238,7 +241,8 @@ NAHI       cache UPDATE: "X" phir "Y" likha, cache me pehle Y pahuncha phir X ->
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: likho DB me, cache se hatao; kuch bhi pahunche, key khaali hi hogi. Umar = suraksha jaal.
+  NIYAM: likho DB me, cache se hatao; kuch bhi pahunche, key khaali hi hogi -> agla padhne wala DB se naya
+         laata. Umar = suraksha jaal: delete chhoota to bhi utni der hi purana.
   "DB likha, par delete fail ho gaya?"       -> UMAR (TTL) bachati: utni der hi purana, phir key khud hategi.
                                                 Pakka chahiye -> DB ke badlaav (CDC) se phir delete.
   "Delete ke baad koi purani wapas daal de?" -> THODI DER BAAD PHIR DELETE (double delete), kyunki purana
@@ -267,7 +271,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: khaali key pe ek hi DB jaaye; baaki ruke ya purani value le.
+  NIYAM: khaali key pe ek hi DB jaaye, baaki ruke ya purani value le; App ko thoda dheema ya thoda purana
+         chalta, DB pe 1000 ek saath kabhi nahi.
   "Ek hi DB jaaye, hota kaise hai?"             -> PEHLA LOCK LE, wahi join laaye; baaki ruk ke cache se. (SET
                                                    lock:home 1 NX EX 5: NX = koi aur na laga ho · EX 5 = mara
                                                    to khud chhoote)
@@ -301,7 +306,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: garam key ko faila do: App ke paas chhoti copy, ya alag machine pe copies.
+  NIYAM: garam key ko faila do (App ke paas 1-2 sec ki copy, ya key ke tukde): ek key = ek machine, isliye
+         bheed baanto; score thoda purana chalta, paisa nahi.
   "Ye chalta kaise hai?"                  -> HAR APP KE PAAS 1-2 SEC ki copy: Redis pe 1000 / sec, crore nahi.
                                              Saath me key ki kai copy (score#1..#10).
   "Consistent hashing se bat nahi jaati?" -> NAHI; EK KEY = EK MACHINE, hamesha, kyunki ring key baant-ta, ek

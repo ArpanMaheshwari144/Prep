@@ -123,7 +123,8 @@ NAHI       Order service me hi retry: request utni der atki, aur Order service g
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: bhejne wala khabar likhe aur aage badhe; khabar disk ki diary me, padhne wala yaad rakhe kahan tak.
+  NIYAM: order kabhi khabar ka intezaar nahi karta: khabar disk ki diary (Kafka) me, padhne wala yaad rakhe
+         kahan tak -> company band ho to bhi khabar padi rehti, wapas aate hi wahin se.
   "Email company 2 din band rahi?"       -> DIARY ME PADI: ~7 din Kafka me, kyunki padhne wala offset yaad
                                             rakhta; order kabhi email se fail nahi.
   "Order bana, Kafka se pehle Svc giri?" -> OUTBOX: order + khabar EK DB transaction me (outbox table), warna
@@ -159,7 +160,7 @@ NAHI       SMS worker badha do: company khud dheemi, line phir bhi ek, push / em
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: har raasta apni speed se; ek ki dheemi chaal doosre pe nahi aati.
+  NIYAM: har raasta (push / email / SMS) apni line, apni speed; ek ka dheema ya band hona doosre pe nahi aata.
   "Ek ghatna, teen message, pehchaan?" -> GHATNA ID + RAASTA: ek ghatna se teen chhote message, har line me
                                           ek; kyunki har raasta alag chalta.
   "Push kis phone pe jaaye?"           -> DEVICE TOKEN: install pe user ke saath save, kyunki phone ka pata
@@ -189,7 +190,8 @@ NAHI       har baar naya random id: dohraav kabhi pakda nahi jaata.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: id khabar ki apni; Redis tez raasta, DB pakka.
+  NIYAM: khabar ki apni pakki id -> dobara aaye to pehchaan ke skip; Redis tez raasta, DB ka UNIQUE aakhri
+         deewar.
   "Redis hi gir gaya, parchi kahan?"                     -> DB ME UNIQUE: (khabar_id, raasta) ek hi baar,
                                                             kyunki Redis sirf tez raasta, pakka DB.
   "Parchi 24 ghante me mit gayi, wahi khabar phir aayi?" -> DB ka UNIQUE rokega: kyunki Redis bhool gaya, DB
@@ -219,7 +221,8 @@ NAHI       parchi hi hata do: worker mara to Kafka dobara deta -> OTP / email do
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: chhodo sirf pakke "bhej diya" pe; adhoori koshish khud mit jaaye.
+  NIYAM: chhodo sirf pakke SENT pe; SENDING = adhoora, chhoti umar se khud mit jaaye -> khabar khoti nahi;
+         kabhi do baar chali jaaye to chalega (OTP do baar > na aana).
   "Worker-A ka call fail, wo zinda?"       -> KHUD HATAO: A parchi hata deta, kyunki koshish adhoori -> agli
                                               koshish chal jaati.
   "Worker-B ko SENDING mila to?"           -> THODA RUKO: koi abhi bhej raha, phir dekho; kyunki chhodna sirf
@@ -256,7 +259,8 @@ NAHI       retry band, ek fail = chhodo: company 2 sec hili to OTP hamesha ke li
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ruk-ruk ke dobara, phenkna kabhi nahi; had ke baad DLQ.
+  NIYAM: fail pe ruk-ruk ke dobara (1, 2, 4 .. + random), khabar phenkna kabhi nahi; had ke baad DLQ + alert,
+         theek karke wapas.
   "Kafka me '10 min baad chalao' hota hai?" -> NAHI, ALAG LINES: retry-1m, retry-10m; worker message pe 'kab
                                                chalana' dekhe, abhi nahi to ruke.
   "Had paar, DLQ me padi khabaron ka kya?"  -> ALERT + TOOL: dashboard pe dikhe, theek karke wapas main line
@@ -295,7 +299,8 @@ NAHI       worker badha do: naye worker bhi 30 sec me phanse, dheemi company pe 
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: dheema = band maano; har company ka apna fuse, apni line.
+  NIYAM: dheema = band maano (2-3 sec timeout); har company ka apna fuse -> uske band hone se baaki raaste
+         chalte, khabar line me rukti, phenki nahi jaati.
   "SMS ka fuse khula, push / email pe asar?" -> NAHI: kyunki har company ka apna fuse aur unke worker alag
                                                 line pe.
   "Dono SMS company band ho gayi?"           -> LINE ME RUKI RAHE: phenko nahi, backoff se koshish, kyunki
@@ -329,7 +334,7 @@ NAHI       ek line me "zaroori" tag: Kafka me "ye pehle bhejo" hota hi nahi.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: zaroori ko kabhi kisi ke peeche mat khada karo; alag line, alag worker.
+  NIYAM: zaroori (OTP) kabhi kisi ke peeche nahi: apni line, apne worker, company me apna account.
   "Tez line khaali, uske worker baithe rahenge?" -> HAAN, THODA: khaali ho to beech wali bhi padh le, ulta
                                                     kabhi nahi; kyunki OTP kabhi kisi ke peeche nahi.
   "OTP bhi company ki limit me phans gaya?"      -> ALAG ACCOUNT: OTP ka company me alag account / alag
@@ -360,7 +365,8 @@ NAHI       har worker apni speed 100 / sec: 100 worker = 100 guna -> phir 429.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: had company ki hai, worker ki nahi; ek baalti sab worker ke liye.
+  NIYAM: had company ki hai, worker ki nahi: sab worker ek baalti se token lein; token nahi = ruko, khabar
+         phenko nahi.
   "Token nahi mila, message ka kya?" -> LINE ME INTEZAAR: had ke baad DLQ, phenke nahi; kyunki baalti bas
                                         speed rokti, khabar nahi.
   "Worker apne aap badh gaye to?"    -> SPEED WAHI: kyunki baalti saanjhi; kitne bhi worker ho, kul 100 / sec.
@@ -399,7 +405,7 @@ NAHI       baar-baar khud poochte raho: laakhon message x har kuch second = had 
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: "bheja" aur "mila" alag haal; company jab bataye, tab badlo.
+  NIYAM: 'bheja' aur 'mila' alag haal; 'mila' tab likho jab company (asli, signed webhook) bataye.
   "Ye 'pahuncha / fail' ka hisaab kahan?" -> CASSANDRA (Tracking): kyunki likhna bahut aur seedhi row, jodna
                                              kuch nahi.
   "Webhook aaya hi nahi to?"              -> EK BAAR POOCHHO: sirf ghanton 'bhej diya' pe atke message ke
@@ -438,7 +444,8 @@ NAHI       1 crore ko ek bada "sabko bhejo" message: ek worker pe atka, gira to 
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: bada kaam chhote tukdon me, har tukde ke baad "kahan tak" likha.
+  NIYAM: bada kaam chhote tukdon me, har tukde ke baad 'kahan tak' likha -> gira to wahin se, galat chala to
+         beech me roko; ek user ko ek hi baar.
   "1 crore kitni der me?"               -> ~17 MINUTE: 10,000 / sec pe, kyunki jaan-boojh ke phailaya (had +
                                            OTP line bachi).
   "Push me sabko ek hi message ho to?"  -> FCM TOPIC: ek call, aage Google sabko pahunchata; kyunki sab ko
@@ -482,7 +489,7 @@ NAHI       pasand sirf Campaign Svc me check: order / OTP wali khabar bina check
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: user ki pasand bhejne se pehle; zaroori alert pasand / shaanti se upar.
+  NIYAM: bhejne se pehle user ki pasand dekho; offer pasand / shaanti ke neeche, zaroori alert (OTP) upar.
   "Shaanti me khabar aayi, phenk doge?" -> NAHI, ROKO: offer subah 8 tak; OTP / 'koi login kar raha' shaanti
                                            me bhi, kyunki zaroori alert upar.
   "Pasand badli, cache purana nikla?"   -> CACHE HATAO: pasand badalte hi delete + cache ki umar chhoti,

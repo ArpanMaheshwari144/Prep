@@ -93,7 +93,8 @@ NAHI       doc pe lock, ek likhe baaki ruke: saath likhna hi khatam.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: text nahi, badlaav bhejo; har badlaav batata wo kis version ko dekh ke bana.
+  NIYAM: text nahi, badlaav (op) bhejo + kis version ko dekh ke bana; server milata, kisi ka likha nahi mitta.
+         user ko lock / intezaar nahi; purane version pe bana op bhi khisak ke lagta.
   "baseVersion kyun bhejte ho?"          -> PATA CHALE KIS KO DEKH KE BANA: kyunki dono v7 pe bane -> server
                                             samjhe saath the, khiska ke dono lagaye.
   "Maine L mitaya, Ravi ne wahin likha?" -> MITANA BHI OP: kyunki delete bhi ek badlaav; OT dono ko adjust,
@@ -123,7 +124,8 @@ NAHI       polling: crore log x har second bekaar sawaal + 1 sec der · SSE: sir
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ek khula taar, dono taraf; toota to version bata ke baaki le lo.
+  NIYAM: ek khula taar dono taraf: server khud bhejta, user refresh nahi karta.
+         taar toota to user likhta rahe; judte hi "main v12 pe tha" bata ke baaki op le lo.
   "Connection beech me toota?"           -> DOBARA JUDO + VERSION BATAO: kyunki op log me sab hai; main v120
                                             tak tha -> server v121 se aage sab.
   "Server ko kaise pata main abhi hoon?" -> PING / PONG har ~30 sec: kyunki taar chupchaap mar sakta; jawab
@@ -151,7 +153,8 @@ NAHI       phone ke time se kram: ghadi alag, aur position phir bhi khiskani pad
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: kram server tay karta (har op ko agla version), aaya op us kram ke hisaab se khiskta; sab same.
+  NIYAM: kram sirf server ka (har op ko agla version), phone ki ghadi kabhi nahi; aaya op us kram se khiskta.
+         nateeja: sabki screen same; mujhe apna likha turant dikhe, baaki ka khisak ke aaye.
   "Khiskana kaun karta?"                -> DONO: kyunki server kram tay karke aaya op khiskata, app apne
                                            pending op ko.
   "Kram kaun tay kare, phone ki ghadi?" -> OWNER SERVER: kyunki har op usi se guzarta, wo agla version deta;
@@ -191,7 +194,8 @@ NAHI       hash(docId) % N: N badla to lagbhag har doc ka server badla = sab dob
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ek doc = ek owner server; editor docId se wahin, viewer kahin bhi.
+  NIYAM: ek doc = ek owner server (OT wahin); editor docId se wahin, viewer kahin bhi.
+         owner gira -> ring agla server deta, editor dobara jude, version bata ke baaki op le; doc nahi khota.
   "Ek doc ka OT do server pe chala?" -> KRAM TOOTA: kyunki do server do alag version dete; isliye docId se ek
                                         hi server.
   "Server juda / gira, kya hila?"    -> SIRF USKE HISSE KE DOC: kyunki ring pe pados ka hissa hi khiskta; wo
@@ -234,7 +238,8 @@ NAHI       Kafka: store karta + thoda dheema; live typing dobara padhni nahi, te
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: pub/sub kuch STORE nahi karta (bheja aur bhool gaya): kaam turant dikhana, bachana op log ka.
+  NIYAM: pub/sub sirf PAHUNCHATA, kuch store nahi (bheja aur bhool gaya): kaam turant dikhana.
+         viewer ka chhoota to version se op log se le lo; bachana op log ka kaam, channel ka nahi.
   "Editors ko bhi pub/sub se?"    -> NAHI, SEEDHA PUSH: kyunki editor owner pe hi hai; pub/sub sirf doosre
                                      server ke viewer ke liye.
   "Server-2 restart ho raha tha?" -> MESSAGE GAYA, PAR LOG ME HAI: kyunki pub/sub store nahi karta; Ravi jude
@@ -273,6 +278,7 @@ NAHI       "sahi chahiye to SQL lo": DB data ki shakal se chuno; join nahi, bas 
 ```
 AAGE POOCHEGA:
   NIYAM: ACK tabhi jab op Redis buffer + uski copy dono me; Cassandra ka batch ACK ke raaste me nahi.
+         user ko turant "saved"; Redis gira to copy se; batch dobara likha = (docId, version) same, ek hi row.
   "Mera op buffer me, Redis gira?" -> APP RAKHE JAB TAK ACK NAHI: kyunki bina ACK = pakka nahi; jude to opId
                                       ke saath phir bhejo, hai to skip.
   "ACK ho chuka, phir Redis gira?" -> COPY MAIN BANI: kyunki ACK se pehle copy me bhi likha (Redis WAIT 1, ~1
@@ -313,7 +319,8 @@ NAHI       "doc sahi chahiye -> CP": CP me net jaate hi typing ruk jaati; yahan 
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: typing kabhi na ruke (AP), access kabhi galat na ho (CP).
+  NIYAM: typing kabhi na ruke (AP): net gaya to likhta rahe, judte hi op bhejo, aakhir me sab same.
+         access kabhi galat na ho (CP): permission hatate hi roko, chahe thodi der ruke.
   "1 ghanta offline type kiya?"        -> PENDING OP + AAKHRI VERSION: kyunki AP; wapas aate hi bhejo, server
                                           khiska ke lagaye, sab same.
   "Access hata, wo offline likh raha?" -> PEHLE PERMISSION (CP): kyunki access galat nahi ho sakta; jude to
@@ -342,7 +349,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: photo ek version tak; kholna = photo + uske baad ke op.
+  NIYAM: photo ek version tak; kholna = photo + uske baad ke op, shuru se kabhi nahi.
+         koi bhi purana version dekhna = us se pehli photo + beech ke op.
   "Kaise kaam karta?"              -> HAR 1000 OP PE PHOTO: (docId, version, text) -> S3 / Cassandra. Khola =
                                       aakhri photo (v9,99,000) + baad ke ~1000 op, 10 lakh nahi.
   "Photo lete waqt koi likh raha?" -> PHOTO EK VERSION TAK: kyunki v9,99,000 tak ki photo, baad ke op alag;

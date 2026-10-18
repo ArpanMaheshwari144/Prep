@@ -134,7 +134,8 @@ NAHI       DB ki read copy (replica): wo bhi disk se, dheemi; 1 lakh / sec ke li
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: garam link RAM me; DB tak sirf wo jo Redis me nahi mila.
+  NIYAM: garam link RAM (Redis) me, DB tak sirf wo jo Redis me na mile; user ko farak nahi, bas tez.
+         Redis gira to saara bojh DB pe -> Redis ki copy, aur aakhir me kuch request mana (DB bachao).
   "Har App apna cache kyun nahi rakhta?"    -> EK SHARED REDIS: kyunki link badla to har App ki apni copy
                                                purani reh jaati; Redis sabka ek.
   "Theek, to saare 180 arab link Redis me?" -> SIRF GARAM: kyunki RAM mehngi; bhara to sabse der se na khula
@@ -178,7 +179,8 @@ NAHI       ek bahut badi machine (vertical scale): uski bhi had, aur akeli -> wa
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: App kuch yaad nahi rakhta, sab Redis / DB me; tabhi koi bhi machine koi bhi request le.
+  NIYAM: App kuch yaad nahi rakhta (sab Redis / DB me), isliye koi bhi machine koi bhi request le; ek giri
+         to LB use list se hataata, user ka agla click doosri machine pe.
   "Ek machine giri, baaki kaise sambhaal leti?" -> STATELESS: kyunki App kuch yaad nahi rakhta; baat App-1 ki
                                                    memory me hoti to App-2 pe agli request ko pata hi nahi.
   "Machine mari nahi, bas dheemi hai, tab?"     -> LB HEALTH + LEAST-CONN: LB jawab ka time + galtiyan ginta,
@@ -208,7 +210,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: number ek hi jagah se, thaile me baante jaate; ek thaila kabhi do App ko nahi.
+  NIYAM: number ek hi jagah se, App ko thaile (range) me; ek thaila kabhi do App ko nahi -> code kabhi same
+         nahi. App gira to bacha thaila bekaar (chalta); counter gira to bhi haath ka thaila chalta.
   "Kaise kaam karta?"                    -> THAILA (range): Counter (ZooKeeper / DB) har App ko alag range,
                                             App-1 = 1-1000, App-2 = 1001-2000; khatam pe hi counter.
   "App-1 400 pe crash, 401-1000 ka kya?" -> BEKAAR, JAAN-BOOJH KE: kyunki 3.5 lakh crore code me kuch hazaar
@@ -252,7 +255,8 @@ NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein g
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: redirect kisi ka intezaar nahi karta; ginti peeche, apni speed se, disk pe.
+  NIYAM: redirect kisi ka intezaar nahi karta; ginti peeche, apni speed se, disk pe (Kafka). Ginti wala
+         dheema / band ho to bhi user ka link khulta, bas ginti thodi der se aati.
   "Ek click do baar aa gaya to?" -> CLICK ID: kyunki har click ki apni id; wahi id dobara aayi to ginti nahi.
   "Kafka hi band ho gaya?"       -> REDIRECT CHALTA: kyunki redirect kisi ka intezaar nahi karta; bas kuch
                                     click ginti me nahi aate.
@@ -287,7 +291,8 @@ NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se 
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: jis cheez se padhte ho (code), usi se baanto.
+  NIYAM: jis cheez se padhte ho (code), usi se baanto -> har click seedha ek machine; machine judi / giri to
+         sirf pados ke code khiskein, aur har tukde ki 3 copy.
   "Nayi machine judi to kya hota?"        -> SIRF PEECHE WALE CODE KHISKTE (ghadi): kyunki "code % machine" me
                                              3 se 4 hote hi lagbhag har code ki jagah badalti.
   "Copy badha do, likhna tez ho jaayega?" -> NAHI, SHARD: kyunki har copy pe likhna padta; likhne ka bojh =
@@ -330,7 +335,8 @@ NAHI       3 me likho tabhi done, phir 1 se padho: ek copy giri = har naya link 
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: "2 me likha + 2 se padha" -> dono me ek copy common pakki; jo likha wo khona nahi.
+  NIYAM: "2 me likha + 2 se padha" -> har jodi me ek taaza copy, isliye banane ke baad 404 nahi; 2 copy na
+         mili to likhna fail (user ko error), par jo "done" bola wo kabhi khona nahi.
   "Redis ka kya, wahan to link hai hi nahi?" -> BANATE HI REDIS ME DAALO: kyunki zyadatar click Redis se, 404
                                                 wahin ruk jaata.
   "Likhte waqt ek copy gir gayi?"            -> 2 ME HUA TO SAVE: kyunki 3 me se 2 = zyadatar (quorum); us
@@ -371,7 +377,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: koi dabba akela nahi; aage wala health check se sirf zinda wale pe bheje.
+  NIYAM: koi dabba akela nahi; aage wala health check se sirf zinda wale pe bheje. Switch me thoda waqt
+         (DNS ~60 sec), us beech kuch request fail -> isliye har jagah 2+ aur kai zone.
   "Kaise kaam karta?"            -> HEALTH CHECK: Route 53 (AWS ka DNS) har ~30 sec LB se "zinda?"; 3 baar
                                     chup -> sab doosre LB pe; region gaya -> doosra region.
   "Switch turant ho jaata?"      -> NAHI, DNS TTL: phone purana pata ~60 sec yaad rakhta; isliye LB khud kai
@@ -409,7 +416,8 @@ NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana l
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: rokna darwaze pe, sabki ek ginti se, us pehchaan pe jo bot badal na sake.
+  NIYAM: rokna darwaze pe, sabki ek ginti se (shared Redis), us pehchaan pe jo bot badal na sake (API key);
+         had paar -> 429, asli users ki speed bachi rahe.
   "Gateway ki kai machine, ginti ek kaise?" -> SHARED REDIS: INCR + expiry, sab wahi ek ginti dekhein. (Poora
                                                design = 02_rate_limiter.)
   "Bot har baar naya IP le aaye to?"        -> API KEY / USER_ID PE: kyunki pehchaan wo jo bot badal na sake;

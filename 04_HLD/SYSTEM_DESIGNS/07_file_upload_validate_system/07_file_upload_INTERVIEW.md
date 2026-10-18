@@ -109,7 +109,8 @@ NAHI       thread pool 200 se 2000: jaanch tab bhi 3 sec, bas memory khatam hone
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: dheema kaam line me, user ke haath sirf T-101; khabar tabhi "padh li" jab DB me haal likh gaya.
+  NIYAM: dheema kaam line me peeche; user ko turant T-101 + haal (VALIDATING), wo kuch dobara nahi bhejta;
+         khabar tabhi "padh li" jab DB me haal likha -> worker / Validator gire to khabar line me bachi.
   "Worker DB likhne se pehle mara?"           -> NAHI KHOTI: offset DB me DONE likhne ke BAAD commit, to
                                                  khabar dobara milti.
   "Dobara mili to file do baar jaanchoge?"    -> PEHLE HAAL DEKHO: T-101 pehle se DONE -> skip (idempotent).
@@ -151,7 +152,8 @@ NAHI       S3 ki access key app me daal do: app se key nikli = poora bucket khul
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: server sirf paas deta, bytes ko haath nahi lagata; paas = EK file, 10 min.
+  NIYAM: server sirf paas deta (EK file, 10 min), bytes seedha app -> S3; server pe bojh nahi, aur paas
+         leak ho bhi to sirf us ek file pe, 10 min tak. Paas khatam -> naya maango.
   "S3 us paas ko maanta kaise hai?"      -> SAME SECRET SE HASH: server (bucket + file naam + 10 min) ko AWS
                                             secret se sign kare; S3 wahi hash bana ke milaye.
   "To AWS chaabi hi user ko de do?"      -> KABHI NAHI: chaabi = poora bucket; paas = sirf ek file, 10 min.
@@ -188,7 +190,8 @@ NAHI       server ka timeout badha do: wifi gaya to connection hi toota, timeout
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: tukda pahuncha to pakka; dobara sirf jo nahi pahuncha.
+  NIYAM: jis tukde ki rasid S3 pe, wo pakka (rasid S3 pe hai, app pe nahi); net gaya / app band -> S3 se
+         poochho, sirf bache tukde dobara. User ko shuru se kuch nahi.
   "Kadam kya hain?"                         -> 1 SHURU -> uploadId (U-9) · 2 HAR TUKDA (kai saath) -> rasid
                                                (ETag) · 3 COMPLETE(U-9, tukde + rasid) -> S3 kram se jod ke ek
                                                file.
@@ -229,7 +232,8 @@ NAHI       sirf S3 lifecycle niyam: din me ek baar chalta aur DB nahi dekhta.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: haal likha hai (UPLOADING -> VALIDATING -> DONE / FAILED); jo der se nahi badla, wo atka.
+  NIYAM: har file ka haal DB me (UPLOADING -> VALIDATING -> DONE / FAILED); der se nahi badla = atka ->
+         sweeper uthata: bytes hain -> khud dobara line me (safe) · nahi -> FAILED, user dobara daale.
   "To S3 lifecycle kis kaam ka?"     -> BYTES KI SAFAI: purane adhoore uploads ke bytes khud hataata; DB ka
                                         haal badalna sweeper ka kaam.
   "Sweeper do machine pe chal gaya?" -> EK HI CHALE (lock / leader), ya chalne do kyunki dobara daalna safe:
@@ -268,7 +272,8 @@ NAHI       DB me index daalo: sawaal tez, par 5,000 / sec phir bhi primary pe.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: haal padhna Redis se, likhna DB + Redis dono me saath; purana bacha to chhoti umar se mitega.
+  NIYAM: sach DB me, Redis sirf tez copy: padhna Redis se, likhna dono me; purana dikhe to chhoti umar se
+         khud theek; Redis gire to DB copy (replica) se, dheema par band nahi.
   "DB me DONE, Redis me VALIDATING dikha?"   -> WORKER DONO LIKHTA: DB ke saath Redis bhi; chhoot gaya to
                                                 chhoti umar (TTL) ke baad naya.
   "Miss pe replica se laaye, wo peeche tha?" -> PURANA REDIS ME baith sakta; worker ka naya haal upar likh
@@ -304,7 +309,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: parent ka haal = bachchon ka jod.
+  NIYAM: folder = bada id, har file ka chhota id; folder ka haal = bachchon ka jod (sab DONE = DONE, koi
+         FAILED = PARTIAL); ek file fail -> sirf wahi dobara, poora folder nahi.
   "Kaise kaam karta?"            -> FOLDER KA BADA ID (P-1), har file ka apna chhota id (child). Saare child
                                     DONE = P-1 DONE · koi FAILED = P-1 PARTIAL / FAILED.
   "P-1 ka haal kab badlega?"     -> HAR CHILD PE GINTI: DONE / FAILED aaya -> done_count +1; sab aa gaye =
@@ -347,7 +353,8 @@ NAHI       gateway pe hi check: use pata hi nahi T-101 kiski hai.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: kaun ho = gateway; is file pe haq = service, har request pe.
+  NIYAM: kaun ho = gateway (JWT); is file pe haq = service, har request pe (owner_id == jwt.user_id);
+         id leak ho jaaye tab bhi file nahi milti (403).
   "Id random hai, phir bhi check?"             -> HAAN, kyunki id LEAK hoti (log, screenshot, link); asli rok
                                                   sirf owner check.
   "Admin ko sab dekhna hai?"                   -> OWNER YA ADMIN ROLE, warna 403.
@@ -388,7 +395,8 @@ NAHI       link me lamba random naam (koi andaza na lagaye): ek baar bahar gaya 
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: DB me pata (key), link har baar naya aur chhota.
+  NIYAM: DB me sirf pata (S3 key), pakka link kabhi bahar nahi; har download pe maalik check -> naya 5 min
+         link. Link aage gaya to bas 5 min tak chalta.
   "5 min me download poora nahi hua?" -> UMAR SIRF SHURU KI: chalu download beech me nahi katta.
   "5 min ke andar hi aage bhej diya?" -> 5 MIN KA RISK MAANA; zyada sensitive -> CloudFront signed URL + IP
                                          had.
@@ -428,7 +436,8 @@ NAHI       type ke liye poori file padho: 5 GB S3 se laana; pehle kuch byte kaaf
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: client ka bheja kuch bhi sach nahi; sach file ke bytes me.
+  NIYAM: client ka bheja (naam, type, size) kuch sach nahi; sach file ke bytes me (pehle kuch byte = type,
+         scan = virus); jaanch pass nahi to file DONE nahi, reject.
   "Type dekhne ko poori 5 GB padhoge?" -> NAHI, PEHLE KUCH BYTE (range GET), kyunki type ka nishaan shuru me
                                           hota.
   "Shuru PDF jaisa, andar virus?"      -> ANTIVIRUS SCAN (ClamAV) worker me, ya S3 malware scanning; magic

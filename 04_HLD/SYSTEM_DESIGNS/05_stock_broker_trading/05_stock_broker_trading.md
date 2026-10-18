@@ -115,7 +115,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ek id = ek kaam; wahi id dobara aaye to kaam nahi, purana jawab.
+  NIYAM: ek id = ek kaam: id app banata, server UNIQUE se pakadta; wahi id dobara = purana jawab,
+         kaam dobara nahi. User ko ek hi order dikhe, app chahe kitni baar bheje.
   "Ek tap pe do order kaise lage?"           -> APP KA RETRY: network gaya, app ne dobara bheja; WAHI id
                                                 (screen khulte bani) -> server pe UNIQUE, purana jawab.
   "Button pehli tap pe band kar do, bas?"    -> NAHI KAAFI: kyunki retry app khud karta, button nahi dabta;
@@ -147,7 +148,8 @@ NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: 'blocked' ek number hai: naya order use badhata; sauda (paisa kata), cancel, umar khatam use ghatate.
+  NIYAM: 'hai?' aur 'block' ek hi UPDATE (DB ke andar), kitni bhi machine ho; 0 row = reject turant dikhao.
+         'blocked' badhe naye order se, ghate sauda / cancel / umar khatam se.
   "Java synchronized laga do?"                     -> EK MACHINE KA TAALA: kyunki laptop aur phone alag server
                                                       pe gaye, dono ko 50k dikhe.
   "To SELL pe, laptop + phone se 10-10 TCS?"       -> WAHI EK LINE: UPDATE portfolio SET blocked_qty =
@@ -188,7 +190,8 @@ NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: TCS ki book ko ek waqt ek hi haath chhoota; doosra chahiye to line me ruke.
+  NIYAM: ek stock ki book ko ek waqt ek hi haath (ek thread): doosra line me ruke, race hi nahi; thread
+         atka to sirf us stock ki line rukti, baaki stock chalte, standby log se taiyaar.
   "Har order pe lock laga do?"      -> RACE SHARE PE HAI: kyunki dono apna-apna order lock karte, dono ko
                                        Suresh ke 10 dikhte.
   "To 5000 stock = 5000 thread?"    -> NAHI, 8 CORE = 8 THREAD: stock % 8 -> ek stock hamesha ek hi thread,
@@ -222,7 +225,8 @@ NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ek stock = ek line; badhana stocks ke BEECH, ek stock ke andar kabhi nahi.
+  NIYAM: ek stock = ek line; badhao stocks ke BEECH, ek stock ke andar kabhi nahi. User ko ACCEPTED
+         turant, FILLED sauda hone pe; line lambi = der, order khota nahi (pehle log).
   "To 9:15 ki bheed me badhaoge kaise?" -> STOCKS KE BEECH: TCS ek thread, INFY doosra; kyunki ek stock ke
                                            andar do haath = wahi race.
 ```
@@ -251,7 +255,8 @@ NAHI       doosra engine saath chalao (active-active): dono match karte = ek sau
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: register (log) hi sach hai, scoreboard (book) uski photo. Do chalte scoreboard = do sach = galat.
+  NIYAM: register (log) hi sach, book uski photo: pehle log, phir book; gira = log se replay, standby
+         chalu. Do board ek saath kabhi nahi (do sach = galat).
   "Order ko kram ka number kaun deta?"           -> REGISTER WALA (log): #501, #502; kyunki ek hi jagah ginti,
                                                     Order Service kai machine pe.
   "Time se kram kyun nahi?"                      -> GHADI ALAG: kyunki do machine ki ghadi alag, ek second me
@@ -292,7 +297,8 @@ NAHI       chaar alag UPDATE: beech me gira to aadha likha.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: paisa ek jagah: chaaron likhai ek transaction me; ledger ka jod hamesha 0.
+  NIYAM: paisa ek DB me: chaaron likhai ek transaction, ya sab ya kuch nahi; ledger jod hamesha 0.
+         Beech ka haal user ko PENDING dikhe, galat number kabhi nahi.
   "Sab likh do, aakhir me done flag?"      -> FLAG SE PEHLE GIRA: kyunki tab pata hi nahi kitna likha; isliye
                                               ek transaction.
   "Ledger me kya likhte?"                  -> 2 LINE: Arpan -30k, Suresh +30k; kyunki jod hamesha 0, galti
@@ -333,7 +339,8 @@ NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: match ke baad sirf aage; ulta sirf match se pehle.
+  NIYAM: match ke baad sauda PAKKA: system hi aage badhaata (retry), user ko kuch dobara nahi karna;
+         beech ka haal user ko PENDING dikhe.
   "Step-step karoge, keemat kya?"              -> BEECH ME PENDING DIKHTA: par 2PC jaisa lamba lock nahi.
   "Beech me gira, mera paisa wapas kyun nahi?" -> SAUDA PAKKA: kyunki Suresh ko 30k mil chuke; match ke baad
                                                   sirf aage, likha haal se retry.
@@ -371,7 +378,8 @@ NAHI       polling: 10 lakh bekaar sawaal / sec, 99% me price badla hi nahi.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: price = sirf abhi ka; purana bekaar, isliye store nahi, push.
+  NIYAM: price = sirf abhi ka: badla tab server khud bheje (push), purana store nahi; wapas juda
+         user = abhi ka price alag se do. Poochhne ki line (polling) hi nahi.
   "Price second me 1000 baar badla, sab bhejoge?" -> HAR ~100 MS AAKHRI PRICE: kyunki purana price bekaar.
   "Connection toota, wapas juda to?"              -> ABHI KA PRICE ALAG SE DO: kyunki pub/sub kuch store nahi
                                                      karta.

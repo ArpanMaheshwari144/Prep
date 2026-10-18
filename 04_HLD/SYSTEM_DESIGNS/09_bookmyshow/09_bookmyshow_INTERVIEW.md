@@ -105,7 +105,8 @@ NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke 
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: seat ka faisla DB ki ek query karti; jeeta = 1 row, haara = 0 row "seat ja chuki".
+  NIYAM: seat ka faisla DB ki EK query (WHERE khaali): jeeta = 1 row; haara = 0 row -> use turant "seat ja
+         chuki, doosri chuno", dobara dabane se kuch nahi milta. Lock App me nahi, DB me.
   "Ek saath aaye, DB kya karta?"    -> ROW LOCK: pehle mujhe, Ravi ruka; mera commit -> Ravi ka WHERE dobara
                                        -> 'available' nahi -> 0 row, kyunki sach ek ko hi.
   "4 seat A1-A4, A4 Ravi le gaya?"  -> EK TRANSACTION: chaaron saath; badli rows 4 nahi -> ROLLBACK, kyunki
@@ -140,7 +141,8 @@ NAHI       hold Redis me (SET NX EX 300): hold Redis me + booking DB me = do jag
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: hold bhi DB ki usi row me (ek row, ek UPDATE, ek sach); sahi hona WHERE se, safai job se.
+  NIYAM: hold = DB ki usi row ka haal (held + umar): mujhe 5 min seat pakki, baaki ko 'held' dikhe; umar
+         khatam ya app gira to sweeper khud chhodta, koi haath se nahi.
   "SQL me TTL hota nahi, hold khatam kaise?" -> WHERE SE, JOB SE NAHI: held_until > now() check; SWEEPER har
                                                 minute purane hold 'available' kare, sirf map saaf dikhe.
   "Hold khatam, aur 1 sec baad pay aaya?"    -> CONFIRM PE BHI WHERE: status = 'held' AND user = Arpan AND
@@ -165,7 +167,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ek booking = ek payment; wahi id dobara aaye to kaam nahi, purana jawab.
+  NIYAM: ek booking = ek payment: wahi id dobara = purana jawab; user ko kuch dobara nahi karna, beech ka
+         haal PENDING dikhe; paisa kata par seat nahi mili = refund.
   "Kaise kaam karta?"                     -> BOOKINGID = KEY: dobara B-77 aaya -> "ho chuka", purana jawab,
                                              paisa nahi katta; Pay button pehli tap pe band.
   "Paisa kat gaya, par seat UPDATE fail?" -> REFUND + mujhe batao, kyunki hold khatam ho chuka; payment aur
@@ -196,7 +199,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: dekhna copy se, faisla main DB ka UPDATE; map thoda purana dikhe to chalta.
+  NIYAM: dekhna copy se (Redis / replica), faisla sirf main DB ka UPDATE: map thoda purana dikhe to chalta,
+         kyunki galat dikhi seat bhi book karte waqt DB pakad leta (0 row).
   "Kaise kaam karta?"                         -> COPY SE DEKHNA: "seatmap:show42" Redis me (~5 sec umar), miss
                                                  -> replica se banao; book -> DEL; booking hamesha main DB pe.
   "A1 bik gayi, par map me khaali dikh rahi?" -> CHALTA, kyunki faisla UPDATE karta, map nahi; turant dikhana
@@ -237,7 +241,8 @@ NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line 
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: Kafka sirf badi release pe; ek show = ek line, alag show = alag worker; sach hamesha DB ki seats.
+  NIYAM: likhne ki bheed ko line me khada karo (waiting room; badi release pe Kafka): user ko apni jagah
+         dikhe; ek show = ek line, sach hamesha DB ki seats.
   "Andar wala bina khareede chala gaya?"      -> AGLA ANDAR: bina khareede gaya / hold khatam -> line se agla,
                                                  kyunki line sirf darwaza hai.
   "Mujhe screen pe kya dikhe?"                -> "HO RAHI HAI": UPDATE jeeta = pakka · haara = "seat gayi,
@@ -276,7 +281,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: khaali cache pe ek banaye, baaki ruke; jo gir sakta uski copy pehle se taiyaar.
+  NIYAM: khaali cache pe ek hi DB jaaye, baaki ruke; jo gir sakta uski copy pehle se taiyaar. User ko bas
+         thoda dheema, galat seat kabhi nahi (faisla DB me).
   "Kaise kaam karta?"                         -> EK BANAYE, BAAKI RUKE: SET lock:seatmap:42 1 NX EX 5 -> jeeta
                                                  bana ke Redis me, baaki 50-100 ms ruk ke Redis se; 1000 ki
                                                  jagah 1 DB pe. NX = koi aur na laga ho · EX 5 = banane wala
@@ -314,7 +320,8 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: App kuch yaad nahi rakhta; sab DB me, isliye koi bhi machine sambhaal le.
+  NIYAM: App kuch yaad nahi rakhta, sab DB me: machine giri to agli machine wahi hold dekhti; user same id
+         se dobara bheje, paisa do baar nahi katta.
   "Kaise kaam karta?"                   -> HOLD DB ME, machine ki memory me nahi -> bacha; health check fail
                                            -> machine bahar, agli request doosri pe -> wahi hold.
   "Machine giri, payment beech me tha?" -> SAME ID DOBARA: id app ke paas -> doosri machine pe bhejo, kyunki
