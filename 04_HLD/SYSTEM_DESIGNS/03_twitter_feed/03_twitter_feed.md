@@ -216,7 +216,7 @@ AAGE POOCHEGA:
   celeb (10 crore) kare  -> inbox me nahi, padhte waqt laao (pull): likhne ka toofan bacha
   feed khuli             -> inbox + follow kiye celebs ke naye tweet milao (hybrid)
   10,000 ke aas-paas     -> 12,000 upar pull, 8,000 neeche tabhi push: line pe baar-baar na palte
-  50 celeb follow kiye   -> celeb ke tweet alag se rakhe, 50 pull bhi sasta (aage card 4)
+  50 celeb follow kiye   -> celeb ke tweet alag se rakhe, 50 pull bhi sasta
 ```
 
 #### 4 Match khatam, Virat ka tweet, crore log ek saath, DB gira
@@ -332,7 +332,7 @@ AAGE POOCHEGA:
   RAM bhar gayi          -> diary ke aakhir jodo, badlo nahi; RAM ki nayi file disk pe: likhai tez
   files bahut ho gayi    -> padhna dheema -> peeche milao (compaction) + bloom filter
   meri machine giri      -> 3 copy, 2 me likho, 2 se padho -> naya mil hi jaata (quorum)
-  famous, machine garam  -> user_id se baantna phir bhi theek; garam tweet alag RAM cache (card 4)
+  famous, machine garam  -> user_id se baantna phir bhi theek; garam tweet alag RAM cache
   famous ke bahut tweet  -> key me mahina jodo (user_id, mahina): ek machine na bhare
 ```
 
