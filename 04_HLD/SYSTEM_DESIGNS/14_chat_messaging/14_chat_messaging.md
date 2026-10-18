@@ -10,8 +10,8 @@
 
 ```
     KYA HUA                                   ILAAJ                                DABBA JUDA
-1   subah 2 crore jude, memory khatam      -> EVENT LOOP, kuch thread lakhon taar  Chat Server x200 + LB
-2   Ravi doosre server pe, "offline" bola  -> REGISTER Redis me (kaun kahan)       Redis
+1   subah 2 crore jude, memory khatam      -> EVENT LOOP, kuch thread, lakhon conn   Chat Server x200 + LB
+2   Ravi doosre server pe, "offline" bola  -> MAP Redis me (kaun kahan)            Redis
 3   Ravi ka phone band                     -> pehle DB, phir bhejo; PUSH           Message DB + Push
 4   roz 1.2 TB message                     -> chat_id se baanto                    Cassandra
 5   net dheema, "hi" do baar               -> IDEMPOTENCY (clientMsgId)            Idempotency check
@@ -72,15 +72,15 @@ NUMBERS (andaaza):
    JAGAH: 400 crore x ~300 byte ~ 1.2 TB / din -> 1 saal ~440 TB (Slack jaisa) · WhatsApp jaisa ~ZERO
 
 TEEN FAISLE:
-   1. CONNECTION ki apni line: 2 crore / ~1 lakh har machine = ~200 CHAT SERVER (sirf taar pakadte)
+   1. CONNECTION ki apni line: 2 crore / ~1 lakh har machine = ~200 CHAT SERVER (sirf connection pakadte)
       -> API / business server se ALAG · event loop (Netty jaisa), "ek connection = ek thread" nahi
    2. JAGAH ek machine ki NAHI (banking ka ulta: wahan 120 /
       sec, yahan 46,000 / sec + 1.2 TB roz)
    3. HISTORY kahan (sawaal 2) se jagah ka dhaancha tay hota — yahan SLACK jaisa
 
 DO CHEEZ JO DESIGN CHALATI:
-   CONNECTION (khuli) = har online user ka taar, isi raaste server user tak pahunchta
-   REGISTER (kaun kis taar ke peeche) = MEMORY me, DB me nahi (taar khud memory me hai)
+   CONNECTION (khuli) = har online user se juda, isi raaste server user tak pahunchta
+   MAP (kaun kis connection pe) = MEMORY me, DB me nahi (connection khud memory me hai)
 ```
 
 ---
@@ -102,28 +102,28 @@ flowchart LR
     n_USER --> n_CS
 ```
 
-#### SHURU: KHULA TAAR (WEBSOCKET) AUR REGISTER
+#### SHURU: KHULA CONNECTION (WEBSOCKET) AUR MAP
 ```
 DIKKAT     Ravi ne kabhi nahi poochha "koi message aaya?", phir bhi mera "hi" uski screen pe turant chahiye.
            HTTP me server sirf jawab deta, khud awaaz nahi laga sakta.
-HAL        Ravi ek baar /connect khole, taar band nahi hota (WEBSOCKET, dono taraf). Server ki register:
-           "Ravi -> uska taar"; "hi" aaya -> register me Ravi ka taar dhoondh ke usi se bhejo.
+HAL        Ravi ek baar /connect khole, connection band nahi hota (WEBSOCKET, dono taraf). Server ka map:
+           "Ravi -> uska connection"; "hi" aaya -> map me Ravi ka connection dhoondh ke usi se bhejo.
 ```
 ```
-TASVEER: taar aur register
-Ravi: GET /connect -> taar khula, band nahi hota (WebSocket)
-register (server ki memory):  Ravi -> taar#7 · Arpan -> taar#3
-main "hi" bheju -> register me Ravi -> taar#7 -> usi taar se turant Ravi ki screen
-taar = data nahi, Ravi tak pahunchne ka RAASTA
+TASVEER: connection aur map
+Ravi: GET /connect -> connection khula, band nahi hota (WebSocket)
+map (server ki memory):  Ravi -> conn-7 · Arpan -> conn-3
+main "hi" bheju -> map me Ravi -> conn-7 -> usi connection se turant Ravi ki screen
+connection = data nahi, Ravi tak pahunchne ka RAASTA
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: user ek baar jude, taar khula rahe: server khud bhej sake; register batata kaun kis taar pe.
-         Taar toota to register se hatao; user dobara jude to naya taar, naya register.
+  NIYAM: user ek baar jude, connection khula rahe: server khud bhej sake; map batata kaun kis connection pe.
+         Connection toota to map se hatao; user dobara jude to naya connection, map me nayi entry.
   SAFAR (mera "hi" Ravi tak):
-  sab theek                -> register me Ravi -> taar#7 -> usi taar se "hi", turant
-  net chupchaap gaya       -> ping / pong (dhadkan); jawab nahi to taar band, register se hatao
-  Ravi wapas juda          -> naya /connect -> naya taar, register me Ravi -> naya taar
+  sab theek                -> map me Ravi -> conn-7 -> usi connection se "hi", turant
+  net chupchaap gaya       -> ping / pong (dhadkan); jawab nahi to connection band, map se hatao
+  Ravi wapas juda          -> naya /connect -> naya connection, map me Ravi -> naya connection
 ```
 
 #### 1 Subah 2 crore log jude, server ki memory khatam
@@ -132,26 +132,26 @@ AAGE POOCHEGA:
 flowchart LR
     n_U["USER"]
     n_LB["LB"]
-    n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> kuch thread, lakhon taar<br/>(event loop)<br/>taar chup -> thodi memory, data aaye tab thread (epoll)<br/>wahi taar aage -> wahi server, taar khula hai<br/>chat server gira -> ruk-ruk ke dobara judo (backoff + jitter)<br/>naya code deploy -> thode-thode server khaali (draining)"]
+    n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> kuch thread, lakhon connection<br/>(event loop)<br/>connection chup -> thodi memory, data aaye tab thread (epoll)<br/>wahi connection aage -> wahi server, connection khula hai<br/>chat server gira -> ruk-ruk ke dobara judo (backoff + jitter)<br/>naya code deploy -> thode-thode server khaali (draining)"]
     n_U --> n_LB
     n_LB --> n_CS
     style n_CS fill:#f9a825,color:#000
     style n_LB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Subah 9 baje 2 crore log app khol ke jude, sabka taar hamesha khula. Ek taar = ek thread (~1 MB)
-           -> 1 lakh taar = ~100 GB. Server khatam.
-HAL        thread sirf jahan data aaya (EVENT LOOP, Netty): OS (epoll) batata "in 5 taar pe data aaya".
-           Chup taar = thodi memory, kuch thread lakhon taar. ~200 chat server (sirf taar), aage LB.
+DIKKAT     Subah 9 baje 2 crore log jude, sabka connection khula. Ek connection = ek thread (~1 MB)
+           -> 1 lakh connection = ~100 GB. Server khatam.
+HAL        thread sirf jahan data aaya (EVENT LOOP, Netty): OS (epoll) batata "in 5 connection pe data aaya".
+           Chup connection = thodi memory, kuch thread. ~200 chat server (sirf connection), aage LB.
 NAHI       badi machine lo (zyada RAM): thread ka kharcha wahi, bas thodi der baad tootega.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: taar kholo, thread mat do; server gira to log ruk-ruk ke judein; bheja hua khota nahi.
-  SAFAR (ek taar, subah se raat):
-  app khula                  -> LB server pe bithata, taar khula (event loop, thread nahi)
-  taar chup                  -> thodi memory; data aaya tabhi thread (epoll batata)
-  wahi taar aage             -> wahi server: taar khula hai, naya connection = naya chunaav
+  NIYAM: connection kholo, thread mat do; server gira to log ruk-ruk ke judein; bheja hua khota nahi.
+  SAFAR (ek connection, subah se raat):
+  app khula                  -> LB server pe bithata, connection khula (event loop, thread nahi)
+  connection chup            -> thodi memory; data aaya tabhi thread (epoll batata)
+  wahi connection aage       -> wahi server: connection khula hai, naya connection = naya chunaav
   chat server gira           -> ruk-ruk ke, random waqt pe dobara judo (backoff + jitter)
                                 bheja hua khota nahi
   naya code deploy           -> thode-thode server khaali (draining): sab ek saath na judein
@@ -164,17 +164,17 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis<br/>Ravi doosre server pe<br/>-> kaun kis server pe, Redis me likho<br/>(register)<br/>server-7 zinda -> dhadkan se umar badhe (TTL)<br/>server-7 mara -> entry khud hati, Ravi offline<br/>Ravi ke kai device -> pata list, har device pe bhejo<br/>Ravi khiska -> naye server pe judte hi milega<br/>Redis gira -> copy pe switch, message khota nahi"]
+    n_R["Redis<br/>Ravi doosre server pe<br/>-> kaun kis server pe, Redis me likho<br/>(map)<br/>server-7 zinda -> dhadkan se umar badhe (TTL)<br/>server-7 mara -> entry khud hati, Ravi offline<br/>Ravi ke kai device -> pata list, har device pe bhejo<br/>Ravi khiska -> naye server pe judte hi milega<br/>Redis gira -> copy pe switch, message khota nahi"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
     style n_R fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Main server-1 pe, Ravi server-7 pe. Maine "hi" bheja, server-1 ki register me sirf apne log
+DIKKAT     Main server-1 pe, Ravi server-7 pe. Maine "hi" bheja, server-1 ke map me sirf apne log
            -> bola "Ravi offline", jabki Ravi online tha.
-HAL        kaun kahan, Redis me (REGISTER): "Ravi -> server-7" + umar (TTL); server zinda = umar badhe, mara =
-           khud hate. Server-1 Redis se poochhta, server-7 ko deta, wo Ravi ko. Redis me sirf PATA, taar nahi.
+HAL        kaun kahan, Redis me (MAP): "Ravi -> server-7" + umar (TTL); server zinda = umar badhe, mara =
+           khud hate. Server-1 Redis se poochhta, server-7 ko deta, wo Ravi ko. Redis me sirf PATA.
 NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
 ```
 ```
@@ -184,7 +184,7 @@ AAGE POOCHEGA:
   Ravi online, server-7 pe   -> Redis se pata "Ravi -> server-7" -> server-7 -> Ravi
   server-7 zinda             -> dhadkan se entry ki umar badhti (TTL)
   server-7 mara              -> umar khatam, entry khud hati -> Ravi offline maana
-  Ravi ke kai device         -> pata ek nahi, list (device -> server): har device ka apna taar, sab pe bhejo
+  Ravi ke kai device         -> pata ek nahi, list (device -> server): har device pe bhejo
   pata galat, Ravi khiska    -> message khota nahi: naye server pe judte hi milega
   Redis hi gira              -> copy pe switch: message khota nahi, judne pe milega
 ```
@@ -196,8 +196,8 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis (register)"]
-    n_DB["Message DB<br/>Ravi ka phone band, taar nahi<br/>-> pehle DB likho, phir bhejo<br/>(store-then-forward)<br/>Ravi offline -> push ghanti, sirf preview (FCM / APNs)<br/>bhejne se pehle server gira -> DB me pehle se, khota nahi<br/>Ravi wapas -> aakhri mile ke baad sab do"]
+    n_R["Redis (map)"]
+    n_DB["Message DB<br/>Ravi ka phone band, connection nahi<br/>-> pehle DB likho, phir bhejo<br/>(store-then-forward)<br/>Ravi offline -> push ghanti, sirf preview (FCM / APNs)<br/>bhejne se pehle server gira -> DB me pehle se, khota nahi<br/>Ravi wapas -> aakhri mile ke baad sab do"]
     n_P["Push<br/>app band, khabar kaise<br/>-> app band ho to bhi ghanti<br/>(push: FCM / APNs)"]
     n_U --> n_LB
     n_LB --> n_CS
@@ -208,7 +208,7 @@ flowchart LR
     style n_P fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Ravi ka phone band, koi taar nahi. "Pehle bhejo, na pahunche to DB me daalo" -> beech me server
+DIKKAT     Ravi ka phone band, connection nahi. "Pehle bhejo, na pahunche to DB me daalo" -> beech me server
            gira = message gaya.
 HAL        PEHLE DB me likho, phir bhejne ki koshish. Ravi offline -> PUSH (Google FCM / Apple APNs) se
            ghanti, app band ho tab bhi. Ravi wapas: "aakhri jo mila, uske baad sab do" -> server baaki deta.
@@ -231,7 +231,7 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis (register)"]
+    n_R["Redis (map)"]
     n_CA["Cassandra<br/>roz 1.2 TB, ek DB nahi jhelta<br/>-> ek chat ek jagah<br/>(shard by chat_id)<br/>chat khuli -> aakhri 50 ek jagah (keyset)<br/>ek group garam -> ek partition, speed pe had<br/>partition badi -> key me mahina jodo (chat_id, mahina)<br/>3 saal purane -> sasti jagah (cold storage)"]
     n_P["Push (Google / Apple)"]
     n_U --> n_LB
@@ -266,7 +266,7 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis (register)"]
+    n_R["Redis (map)"]
     n_I["Idempotency<br/>net dheema, hi do baar<br/>-> wahi id dobara = naya message nahi<br/>(clientMsgId)<br/>timeout, app dobara -> wahi id, skip, pehli id lautao<br/>dono ek saath -> dekhna + daalna ek kadam (LWT / SET NX)<br/>do user ki id same -> jodi pe check (sender_id, clientMsgId)"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
@@ -302,7 +302,7 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis (register)"]
+    n_R["Redis (map)"]
     n_I["Idempotency check"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
@@ -346,7 +346,7 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis (register)"]
+    n_R["Redis (map)"]
     n_I["Idempotency check"]
     n_CA["Cassandra<br/>500 ka group, 500 copy?<br/>-> group me ek copy, sab wahi padhein<br/>(ek copy, fan-out on read)<br/>300 online -> har SERVER ko ek call<br/>offline members -> push, wapas aaye to seq se padhein<br/>naya member -> judne se pehle wale nahi"]
     n_P["Push (Google / Apple)"]
@@ -369,8 +369,8 @@ NAHI       Twitter jaisa har inbox me copy: wahan feed sabki alag + crore follow
 ```
 TASVEER: ek copy, server-wise
 "College Gang" (500): message EK baar -> group chat ke neeche (Cassandra)
-online members kis server pe? -> Redis register: server-3, server-7 ...
-har SERVER ko ek baar: "ye message, in members ko" -> wo apne taar se apne members ko
+online members kis server pe? -> Redis map: server-3, server-7 ...
+har SERVER ko ek baar: "ye message, in members ko" -> wo apne connection se apne members ko
 offline members -> push ghanti; wapas aaye to seq se aage padh lenge
 ```
 ```
@@ -390,7 +390,7 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis (register, seq)"]
+    n_R["Redis (map, seq)"]
     n_I["Idempotency check"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
@@ -438,7 +438,7 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200 (+ idempotency)"]
-    n_R["Redis (register, seq)"]
+    n_R["Redis (map, seq)"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
     n_NS["Nishaan store"]
@@ -452,7 +452,7 @@ flowchart LR
     style n_S3 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Maine College Gang me 200 MB shaadi ka video chat server se bheja -> 2 min taar atka,
+DIKKAT     Maine College Gang me 200 MB shaadi ka video chat server se bheja -> 2 min connection atka,
            server 500 x 200 MB = ~100 GB bheje.
 HAL        video seedha S3 (PRESIGNED URL = 10 min ka paas): app video seedha S3 me daalta. Message me sirf S3
            key + thumbnail. Group me ek upload, 500 ko wahi key.
@@ -477,7 +477,7 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200 (+ idempotency)"]
-    n_R["Redis (register, seq)"]
+    n_R["Redis (map, seq)"]
     n_CA["Cassandra (chat_id) + Nishaan"]
     n_P["Push (Google / Apple)"]
     n_PR["Presence<br/>online / last seen<br/>-> 30 sec me khud mite, app dhadkan de<br/>(TTL)<br/>Ravi ne chat kholi -> tabhi status dekho<br/>chat khuli -> live badlav (subscribe), baaki pull<br/>crore dhadkan -> server ikattha karke (batch)<br/>app band -> umar khatam = offline, last seen likho<br/>last seen chhupaya -> mat dikhao"]
@@ -520,7 +520,7 @@ offline -> Push · wapas jude to "aakhri seq ke baad sab" · nishaan = delivered
 media -> S3, message me sirf pata · online = Presence (TTL) · purana -> sasti jagah
 
 DB:  message = Cassandra (partition chat_id, andar seq; message_id = Snowflake sirf pehchaan)
-     zinda taar (connection) = server ki memory · pakka maal (message) = DB
+     zinda connection = server ki memory · pakka maal (message) = DB
 ```
 ```
 JAWAB:    Har user ~200 me se ek server se juda, Redis me likha kaun kahan.
@@ -536,7 +536,7 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis (register)"]
+    n_R["Redis (map)"]
     n_I["Idempotency check"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
@@ -560,8 +560,8 @@ flowchart LR
 ## 10 GUNA TRAFFIC — har dabba alag se
 
 ```
-Chat Server   -> 2 crore khuli = ~200 machine sirf taar pakadne · event loop, warna thread khatam
-REGISTER      -> memory me, server gira to gaya -> Redis me umar wali entry + dhadkan
+Chat Server   -> 2 crore khuli = ~200 machine sirf connection pakadne · event loop, warna thread khatam
+MAP           -> memory me, server gira to gaya -> Redis me umar wali entry + dhadkan
 DOBARA JUDNA  -> ek server gira = 1 lakh ek saath -> ruk-ruk ke + random (backoff + jitter)
                  · deploy pe draining
 Cassandra     -> chat_id partition · garam group -> speed ki had · purana sasti jagah
@@ -596,17 +596,17 @@ API:      GET /connect (BAND nahi hoti — WebSocket) · POST /messages { chatId
                                      message Cassandra se (card 4).
 "clientMsgId kab tak yaad?"       -> jitni der me dobara aata: retry minute me, 1 ghanta kaafi (card 5).
 
-DO DUNIYA:  ZINDA TAAR (memory, ek server ki, mar sakti) = register
+DO DUNIYA:  ZINDA CONNECTION (memory, ek server ki, mar sakti) = map
             PAKKA MAAL (DB, sab jagah se dikhta) = message
-            taar ko Redis me rakhne ki koshish — ho hi nahi sakta, Redis me sirf PATA
-            ek user -> KAI taar (phone + laptop + tab)
+            connection ko Redis me rakhne ki koshish — ho hi nahi sakta, Redis me sirf PATA
+            ek user -> KAI connection (phone + laptop + tab)
 
 JAD KI BAAT — chat baaki har design se KYUN alag:
    ab tak (url shortener, feed, payment, banking): user ne MAANGA -> server ne diya -> connection BAND
    chat: Arpan ne bheja -> Ravi ne kuch nahi maanga -> phir bhi Ravi tak TURANT
    HTTP me server sirf JAWAB de sakta, khud AWAAZ nahi laga sakta -> do nayi cheez:
    1. CONNECTION KHULI rakhni (WebSocket — ek baar judo, dono taraf baat)
-   2. REGISTER "kaun kis server se juda hai" (200 chat server, Ravi kis se?) -> yahi chat ka DIL
+   2. MAP "kaun kis server se juda hai" (200 chat server, Ravi kis se?) -> yahi chat ka DIL
 ```
 
 ---

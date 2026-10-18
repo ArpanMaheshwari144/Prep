@@ -93,7 +93,7 @@ flowchart LR
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_P["Producer"]
-    n_L["Log<br/>restart, 500 message gayab<br/>-> disk pe register, kahan tak padha yaad<br/>(log + offset)<br/>consumer restart -> Kafka yaad rakhe kahan tak padha (offset)<br/>dobara padhna -> offset peeche karo (replay)"]
+    n_L["Log<br/>restart, 500 message gayab<br/>-> disk pe log, kahan tak padha yaad<br/>(log + offset)<br/>consumer restart -> Kafka yaad rakhe kahan tak padha (offset)<br/>dobara padhna -> offset peeche karo (replay)"]
     n_C["Consumer"]
     n_P --> n_L
     n_L --> n_C
@@ -102,7 +102,7 @@ flowchart LR
 ```
 DIKKAT     Subah, sale se pehle signup khule. Queue machine ki memory me 500 signup message, machine restart
            -> memory saaf -> 500 gayab. Email service ko pata hi nahi chala ki 500 log aaye.
-HAL        disk pe register, padha kahan tak (LOG + OFFSET): sirf aakhir me jodo: P0: [0][1][2][3][4][5].
+HAL        disk pe log, padha kahan tak (LOG + OFFSET): sirf aakhir me jodo: P0: [0][1][2][3][4][5].
            Har message ka number = OFFSET, padhne se mit-ta nahi. Email ne 2 tak padha -> restart -> "3 se".
 NAHI       DB me queue: insert = index + lock = idhar-udhar likhna; queue me WHERE nahi, bas "X ke baad do".
 ```

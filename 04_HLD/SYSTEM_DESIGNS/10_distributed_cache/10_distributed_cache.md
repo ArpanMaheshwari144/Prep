@@ -136,7 +136,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_App["App"]
     n_DB["DB"]
-    n_Cache_client["Cache client<br/>user:42 kis machine pe<br/>-> key ghadi pe, aage wali machine uski<br/>(consistent hashing)<br/>machine D judi -> sirf pados ki key khiski, baaki hit<br/>machine A giri -> uski key aage wali pe, ek baar miss<br/>A ka bojh B pe double -> har machine 100-200 jagah (virtual nodes)"]
+    n_Cache_client["Cache client<br/>user:42 kis machine pe<br/>-> key ring pe, aage wali machine uski<br/>(consistent hashing)<br/>machine D judi -> sirf pados ki key khiski, baaki hit<br/>machine A giri -> uski key aage wali pe, ek baar miss<br/>A ka bojh B pe double -> har machine 100-200 jagah (virtual nodes)"]
     n_Node_A["Node A (LRU + TTL)"]
     n_Node_B["Node B (LRU + TTL)"]
     n_Node_C["Node C (LRU + TTL)"]
@@ -153,12 +153,12 @@ flowchart LR
 ```
 DIKKAT     Subah 11 tak data 1 TB ho gaya, ek machine me 64 GB -> 16+ machine. "user:42" kis machine pe
            jaaye, aur App ko har baar kaise pata chale?
-HAL        gol ghadi pe key aur machine (CONSISTENT HASHING): key ghadi ki disha me chale, PEHLI machine uski.
+HAL        ring (gol ghera) pe key aur machine (CONSISTENT HASHING): key aage chale, PEHLI machine uski.
            VIRTUAL NODES se bojh barabar; App ki CACHE CLIENT library hisaab karti.
 NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
 ```
 ```
-TASVEER: ghadi 0..360, disha me chalo
+TASVEER: ring 0..360 (gol ghera), aage chalo
   0 ------ A=100 ------ B=200 --- D=250 --- C=300 ------ 360 (= 0, wapas A)
   key 150 -> aage pehli machine = B
   key 350 -> aage koi nahi -> ghoom ke A
@@ -169,10 +169,10 @@ AAGE POOCHEGA:
   NIYAM: machine jude / jaaye to sirf pados ki ~K/N key hilein (K = saari key, N = machine), sirf us hisse
          ki ek baar miss; virtual nodes = pados kai machine, bojh ek pe nahi.
   SAFAR (key "user:42" ka ghar, har mod pe kya):
-  user:42, sab theek     -> ghadi pe aage pehli machine uska ghar (TASVEER), aakhir ke baad ghoom ke pehli
+  user:42, sab theek     -> ring pe aage pehli machine uska ghar (TASVEER), aakhir ke baad ghoom ke pehli
   machine D judi         -> sirf pados ki key khiski (201..250 C se D): baaki sab hit
   machine A giri         -> uski key aage wali pe, sirf wahi ek baar miss
-  A ka bojh B pe double? -> har machine ghadi pe 100-200 jagah (virtual nodes): bojh kai pados pe bat-ta
+  A ka bojh B pe double? -> har machine ring pe 100-200 jagah (virtual nodes): bojh kai pados pe bat-ta
 ```
 
 #### 3 Dopahar machine B mar gayi, uski key ka bojh DB pe
@@ -216,7 +216,7 @@ AAGE POOCHEGA:
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_App["App<br/>DB naya, cache purana<br/>-> DB likho, cache ki key mitao<br/>(delete on write)<br/>delete fail -> umar bachati, pakka chahiye to DB diary se (TTL / CDC)<br/>purana beech me wapas -> thodi der baad phir delete (double delete)<br/>Ravi ko apna purana -> likhne wale ko kuch der primary se"]
+    n_App["App<br/>DB naya, cache purana<br/>-> DB likho, cache ki key mitao<br/>(delete on write)<br/>delete fail -> umar bachati, pakka chahiye to DB log se (TTL / CDC)<br/>purana beech me wapas -> thodi der baad phir delete (double delete)<br/>Ravi ko apna purana -> likhne wale ko kuch der primary se"]
     n_DB["DB"]
     n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
@@ -242,7 +242,7 @@ AAGE POOCHEGA:
          laata. Umar = suraksha jaal: delete chhoota to bhi utni der hi purana.
   SAFAR (Ravi ka naya naam, har mod pe kya):
   naam badla, sab theek     -> pehle DB likho, phir cache key hatao: agla padhne wala DB se naya
-  delete fail               -> umar (TTL) bachati: utni der hi purana; pakka -> DB ki diary se delete (CDC)
+  delete fail               -> umar (TTL) bachati: utni der hi purana; pakka -> DB ke log se delete (CDC)
   purana beech me wapas     -> thodi der baad phir delete (double delete), ya version se likho
   Ravi ko apna purana dikha -> copy peeche: likhne wale ko kuch der primary se padhao
 ```
@@ -411,7 +411,7 @@ MACHINE KE ANDAR: HashMap key -> value (O(1)) · LRU = HashMap + DLL · TTL lazy
                   <1 ms -> RAM (disk nahi) · join nahi -> key-value kaafi
 
 KEY BAANTNA:    hash % N -> sab khiskti -> NAHI · CONSISTENT HASHING
-                -> ring + ghadi ki disha + virtual nodes <- YAHI
+                -> ring + aage pehli machine + virtual nodes <- YAHI
                 range -> ek range garam -> NAHI
 
 TRADE-OFF:      tezi vs sahi hona — cache AP ki taraf, "thodi der baad sahi" chalta (CAP)

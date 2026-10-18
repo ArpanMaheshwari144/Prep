@@ -11,7 +11,7 @@
    KYA HUA                                     ILAAJ                                DABBA JUDA
 1  mera sale link viral, DB baith gaya      -> REDIS CACHE (cache-aside)            Redis
 2  usi bheed me ek App giri, site band      -> STATELESS App x N + LOAD BALANCER    LB + App x N
-3  main aur Ravi, dono ko ek hi code        -> COUNTER RANGE (thaila) + base62      Counter
+3  main aur Ravi, dono ko ek hi code        -> COUNTER RANGE + base62               Counter
 4  click ginti likhi, redirect dheema       -> KAFKA, ginti peeche                  Kafka + Analytics + DLQ
 5  DB team: 5 saal me 90 TB                 -> SHARD by code (RING)                 Cassandra
 6  naya link banaya, turant khola, 404      -> QUORUM (2 me likho, 2 se padho)      (Cassandra quorum)
@@ -19,7 +19,7 @@
 8  raat ko spammer, 5,000 link / sec        -> RATE LIMIT darwaze pe + WAF          API Gateway + WAF
 
 POORA DESIGN (upar ke dabbe kram se):
-   User -> Route 53 -> LB x2 -> WAF -> API Gateway -> App x N (Counter ka thaila) -> Redis -> Cassandra
+   User -> Route 53 -> LB x2 -> WAF -> API Gateway -> App x N (Counter se range) -> Redis -> Cassandra
    click ki khabar: App -> Kafka -> Analytics (fail -> DLQ)
 ```
 
@@ -193,7 +193,7 @@ flowchart LR
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Counter["Counter<br/>do App, ek hi code<br/>-> har App ka apna number thaila<br/>(range)<br/>thaila khatam -> agla thaila, 1000 link pe ek call<br/>App crash -> bacha thaila bekaar, chalta<br/>Counter gira -> App ke paas jo range hai wo chalti, copy (replica) counter bane"]
+    n_Counter["Counter<br/>do App, ek hi code<br/>-> har App ki apni number range<br/>(range)<br/>range khatam -> agli range, 1000 link pe ek call<br/>App crash -> bachi range bekaar, chalta<br/>Counter gira -> App ke paas jo range hai wo chalti, copy (replica) counter bane"]
     n_Redis["Redis"]
     n_DB["DB"]
     n_USER --> n_LB
@@ -208,21 +208,21 @@ flowchart LR
     style n_Counter fill:#f9a825,color:#000
 ```
 ```
-TASVEER: har App ka apna thaila
-Counter:  1-1000 -> App-1   ·   1001-2000 -> App-2   ·   agla thaila 2001 se
+TASVEER: har App ki apni range
+Counter:  1-1000 -> App-1   ·   1001-2000 -> App-2   ·   agli range 2001 se
 main  -> App-1 -> number 1     -> code "1"
-Ravi  -> App-2 -> number 1001  -> code "g9"        (thaile alag -> code kabhi same nahi)
-App-1 400 pe gira -> 401-1000 bekaar (chalta) · wapas aaya to naya thaila
+Ravi  -> App-2 -> number 1001  -> code "g9"        (range alag -> code kabhi same nahi)
+App-1 400 pe gira -> 401-1000 bekaar (chalta) · wapas aaya to nayi range
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: number ek hi jagah se, App ko thaile (range) me; ek thaila kabhi do App ko nahi -> code kabhi same
-         nahi. App gira to bacha thaila bekaar (chalta); counter gira to bhi haath ka thaila chalta.
+  NIYAM: number ek hi jagah se, App ko range me; ek range kabhi do App ko nahi -> code kabhi same
+         nahi. App gira to bachi range bekaar (chalta); counter gira to bhi App ki range chalti.
   SAFAR (ek naya code, har mod pe kya):
-  sab theek              -> App-1 ke thaile (1-1000; App-2 ka 1001-2000) se agla number, Counter tak nahi
-  thaila khatam          -> tabhi Counter (ZooKeeper / DB) se agla thaila: 1000 link pe ek call
+  sab theek              -> App-1 ki range (1-1000; App-2 ki 1001-2000) se agla number, Counter tak nahi
+  range khatam           -> tabhi Counter (ZooKeeper / DB) se agli range: 1000 link pe ek call
   App-1 400 pe crash     -> 401-1000 bekaar, jaan-boojh ke: 3.5 lakh crore me kuch hazaar se farak nahi
-  Counter hi gira        -> haath ka thaila chalta rehta, tab tak Counter ki copy uthti
+  Counter hi gira        -> App ki range chalti rehti, tab tak Counter ki copy uthti
 ```
 
 #### 4 Maine click ginti chahi, redirect hi dheema ho gaya
@@ -251,7 +251,7 @@ flowchart LR
 ```
 DIKKAT     2 baje mujhe ginti chahiye thi kitne click aaye. Usi request me analytics DB me likhne lage,
            phir redirect. Analytics DB dheema -> har user redirect ke liye ruka.
-HAL        redirect turant, ginti peeche (KAFKA = disk pe diary): 302 do, "ek click hua" Kafka me daalo.
+HAL        redirect turant, ginti peeche (KAFKA = disk pe log): 302 do, "ek click hua" Kafka me daalo.
            Analytics svc apni speed se padhe, kahan tak padha yaad (offset); kharab khabar alag line (DLQ).
 NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein gayi.
 ```
@@ -291,27 +291,27 @@ flowchart LR
 DIKKAT     4 baje DB team: 10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Ek machine me nahi aata,
            aur wo ek machine mari to saare link gaye.
 HAL        code se data tukdon me baanto (CASSANDRA SHARD): GET /abc123 -> code se seedha machine. RING = gol
-           ghadi, machine + code dono us pe; code aage chale, pehli machine uski. Har tukda 3 copy.
+           ghera, machine + code dono us pe; code aage chale, pehli machine uski. Har tukda 3 copy.
 NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se country pata hi nahi.
 ```
 ```
-TASVEER: ghadi (ring)
+TASVEER: ring (gol ghera)
             M1
-        .        .         code ghadi ki disha me chale, pehli machine uski
+        .        .         code ring pe aage chale, pehli machine uski
       M4          M2       M4 juda (M3 aur M1 ke beech): sirf M3..M4 wale code M4 pe
         .        .         baaki saare code jahan the wahin
             M3
-code % 3 -> code % 4:  lagbhag har code ki machine badli (isliye ghadi)
+code % 3 -> code % 4:  lagbhag har code ki machine badli (isliye ring)
 ```
 ```
 AAGE POOCHEGA:
   NIYAM: jis cheez se padhte ho (code), usi se baanto -> har click seedha ek machine; machine judi / giri to
          sirf pados ke code khiskein, aur har tukde ki 3 copy.
   SAFAR (ek code ka ghar, har mod pe kya):
-  sab theek              -> GET /abc123: code ghadi pe aage chale, pehli machine uski; 3 copy
+  sab theek              -> GET /abc123: code ring pe aage chale, pehli machine uski; 3 copy
   ek machine mari        -> baaki 2 copy se milta: link nahi gaye
   nayi machine judi      -> sirf peeche wale code khiskte; "code % machine" me 3->4 = sab badle
-  ek machine pe zyada    -> har machine ghadi pe 100-200 jagah, bojh barabar (virtual nodes)
+  ek machine pe zyada    -> har machine ring pe 100-200 jagah, bojh barabar (virtual nodes)
 ```
 
 #### 6 Maine naya link banaya, turant khola, 404 aaya
@@ -439,7 +439,7 @@ AAGE POOCHEGA:
 User -> Route 53 (kaunsa LB zinda + kaunsa region) -> 2 LB -> WAF -> API Gateway (rate limit + login)
 -> App (stateless) -> Redis (95% click, expiry = link ki expiry)
 -> Cassandra (code se baanta, har tukde ki 3 copy, 2 me likha 2 se padha)
-NAYA LINK: App -> thaile se agla number -> base62 (123456 -> "w7e") -> Redis + Cassandra -> chhota link
+NAYA LINK: App -> range se agla number -> base62 (123456 -> "w7e") -> Redis + Cassandra -> chhota link
 CLICK:     App -> Redis me mila? -> 302 · nahi -> Cassandra -> Redis me rakho -> 302
            · click ki khabar -> Kafka -> Analytics (fail -> DLQ), redirect ruke bina
 
@@ -545,7 +545,7 @@ KAUNSA DB, KITNE TAK:
 COUNTER KE 3 TAREEKE:
           DB me ek-ek badhao  -> har link pe DB, dheema
           Redis INCR          -> har link pe ek call
-          RANGE (thaila)      -> 1000 link pe ek call   <- YAHI
+          RANGE               -> 1000 link pe ek call   <- YAHI
 
 SHABD BHOOL JAO TO SEEDHI BAAT BOLO (atko mat):
           "MD5" yaad nahi   -> "lambe link ka hash lo, uske pehle 7 akshar"
@@ -556,16 +556,16 @@ SHABD BHOOL JAO TO SEEDHI BAAT BOLO (atko mat):
 
 CARD SE AAYE SAWAAL (safar ke bahar):
   har App apna cache kyun nahi?  -> link badla to har App ki copy purani reh jaati; ek shared Redis
-  Redis INCR se number kyun nahi? -> chal jaata, par har link pe ek call; thaile me 1000 link pe ek
+  Redis INCR se number kyun nahi? -> chal jaata, par har link pe ek call; range me 1000 link pe ek
   SQS kyun nahi, Kafka kyun?      -> SQS padhte hi hata deta; Kafka rakhta, naya report = dobara padho
   copy badha do, likhna tez?      -> nahi: har copy pe likhna padta; likhne ka bojh = shard, copy = bachav
   Cassandra kyun, MySQL kyun nahi? -> join / txn chahiye hi nahi: bas code se link + 90 TB
   data ~500 GB hota to?           -> ek MySQL kaafi: shard tab jab ek machine me na aaye
   3 copy ka intezaar kyun nahi?   -> ek dheemi copy sabko rokti; 2 me ek gire tab bhi likh sakte
   2 se padhna dheema nahi?        -> thoda; isliye pehla ilaaj Redis, DB tak kam
-  data bachane ko Kafka laga dein? -> nahi, DB ki apni diary ye khud karti; extra dabba nahi
+  data bachane ko Kafka laga dein? -> nahi, DB ka apna log ye khud karta; extra dabba nahi
   Cassandra me main copy kaunsi?  -> koi nahi: teeno barabar, koi bhi likh / padh sakti
-  har number bachana ho?         -> har link pe Counter poochho: thaile ka fayda khatam
+  har number bachana ho?         -> har link pe Counter poochho: range ka fayda khatam
   ek link viral, machine garam?  -> pehle Redis me milta, Cassandra tak kam aata
   naya link turant, Redis?       -> banate hi Redis me bhi daala, zyadatar wahin se milta
   5 copy ho to?                  -> likhne + padhne ki ginti > copy (W + R > N): 3 + 3 > 5

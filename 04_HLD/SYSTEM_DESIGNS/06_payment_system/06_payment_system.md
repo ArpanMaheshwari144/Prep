@@ -18,7 +18,7 @@ CHAAR MUSHKIL BAAT (poori file inhi ke ird-gird):
 1   kirana ko 500, beech me server gira     -> EK TRANSACTION (WAL se poora / ulta)   SQL DB
 2   600 me phone se 500, laptop se 500      -> check + kaato EK atomic query         (DB query)
 3   metro me network gaya, app ne dobara    -> IDEMPOTENCY KEY (screen khulte)       Idempotency store
-4   bank se 2000 top-up, PSP dheema         -> timeout = PENDING, fuse = abhi nahi   PSP
+4   bank se 2000 top-up, PSP dheema         -> timeout = PENDING, circuit breaker = abhi nahi   PSP
 5   PSP ko call kiya, jawab se pehle crash  -> PENDING pehle + WEBHOOK + RECONCILE   Reconciliation job
 6   merchant ka account Bank B me           -> SAGA (step-step, fail pe ulta)        Payment Svc + SAGA
 7   "kal raat 2200, subah 1100 kaise?"      -> LEDGER double-entry, sirf INSERT      Ledger table
@@ -132,7 +132,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
-    n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono ek saath ya koi nahi<br/>(transaction)<br/>-500 ke baad gira -> COMMIT nahi tha, ulta, 500 wapas (WAL)<br/>COMMIT ke baad gira -> diary me COMMIT, poora karo"]
+    n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono ek saath ya koi nahi<br/>(transaction)<br/>-500 ke baad gira -> COMMIT nahi tha, ulta, 500 wapas (WAL)<br/>COMMIT ke baad gira -> log (WAL) me COMMIT, poora karo"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_DB
     style n_DB fill:#f9a825,color:#000
@@ -141,17 +141,17 @@ flowchart LR
 DIKKAT     Diwali subah maine kirana ko 500 bheje. Mere 500 kate, merchant me daalne se PEHLE server gira.
            500 na mere paas, na merchant ke paas. Gayab.
 HAL        dono ek saath ya koi nahi (TRANSACTION): BEGIN Arpan -= 500 · Merchant += 500 COMMIT. DB pehle
-           diary (WAL) me likhta; utha to dekhta: COMMIT ho chuka = poora karo, nahi = ulta. Aadha kabhi nahi.
+           log (WAL) me likhta; utha to dekhta: COMMIT ho chuka = poora karo, nahi = ulta. Aadha kabhi nahi.
 NAHI       app me 'pehle kaato, fail pe wapas jodo': server beech me gira to wapas jodna chala hi nahi.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: saare kate == saare jude, ek transaction (aadha kabhi nahi); gira to DB diary (WAL) se poora ya
+  NIYAM: saare kate == saare jude, ek transaction (aadha kabhi nahi); gira to DB log (WAL) se poora ya
          ulta. User ko 'hua' ya 'nahi hua' dikhe, beech ka nahi; hisaab ka farak -> turant alert.
   SAFAR (kirana ke 500):
   sab theek              -> paanchon likhai ek transaction, COMMIT, user ko "hua"
-  -500 ke baad gira      -> utha to diary (WAL) dekhe: COMMIT nahi tha -> ulta, 500 wapas
-  COMMIT ke baad gira    -> diary me COMMIT -> poora karo, kuch nahi khota
+  -500 ke baad gira      -> utha to log (WAL) dekhe: COMMIT nahi tha -> ulta, 500 wapas
+  COMMIT ke baad gira    -> log (WAL) me COMMIT -> poora karo, kuch nahi khota
 ```
 
 #### 2 Wallet me 600, phone se 500 aur laptop se 500 ek saath
@@ -228,7 +228,7 @@ flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
     n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP<br/>bank ka raasta dheema<br/>-> PSP dheema to chhodo, fail pe call band<br/>(timeout + fuse)<br/>2-3 sec jawab nahi -> chhodo, PENDING, baad me pata<br/>5 fail -> call jaati hi nahi, saaf abhi nahi (fuse OPEN)<br/>30 sec baad test call -> chali to fuse band"]
+    n_PSP["PSP<br/>bank ka raasta dheema<br/>-> PSP dheema to chhodo, fail pe call band<br/>(timeout + circuit breaker)<br/>2-3 sec jawab nahi -> chhodo, PENDING, baad me pata<br/>5 fail -> call jaati hi nahi, saaf abhi nahi (circuit OPEN)<br/>30 sec baad test call -> chali to circuit band"]
     n_DB["SQL DB"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store
@@ -240,18 +240,19 @@ flowchart LR
 DIKKAT     Dopahar maine bank se wallet me 2000 daale (top-up). Ye paisa hamara DB nahi hilata: server PSP
            ko "bhejo" kehta, asli paisa bank rails pe. Wo raasta dheema -> har thread PSP me atka.
 HAL        2-3 sec me chhodo (TIMEOUT): call gayi, jawab nahi = PENDING (pata nahi). 5 fail -> OPEN = call
-           gayi hi nahi -> saaf "bank raasta abhi band, baad me" (FUSE, fail-fast); 30 sec baad ek test call.
+           gayi hi nahi -> saaf "bank raasta abhi band, baad me" (CIRCUIT BREAKER, fail-fast);
+           30 sec baad ek test call.
 NAHI       timeout pe "fail" dikha do: paisa shayad kat chuka.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: call GAYI aur jawab nahi = PENDING, 'fail' kabhi nahi; call gayi hi nahi (fuse OPEN) = saaf
+  NIYAM: call GAYI aur jawab nahi = PENDING, 'fail' kabhi nahi; call gayi hi nahi (circuit OPEN) = saaf
          "abhi nahi", paisa hila hi nahi. PSP dheema to jaldi chhodo, warna saare thread atke.
   SAFAR (2000 top-up):
   sab theek              -> PSP ko call, jaldi jawab, SUCCESS
   2-3 sec me jawab nahi  -> chhodo: PENDING (pata nahi kata), baad me pata
-  5 fail                 -> fuse OPEN: call jaati hi nahi -> saaf "abhi nahi", paisa hila nahi
-  30 sec baad test call  -> chali to fuse band, nahi to phir OPEN
+  5 fail                 -> circuit OPEN: call jaati hi nahi -> saaf "abhi nahi", paisa hila nahi
+  30 sec baad test call  -> chali to circuit band, nahi to phir OPEN
 ```
 
 #### 5 PSP ko call kiya aur server gira: paisa gaya ya nahi?
@@ -450,7 +451,7 @@ flowchart LR
 ```
 DIKKAT     Usi shaam ek bada merchant dashboard pe "is mahine ki saari payment" report chala raha. Bhaari
            query usi DB pe -> DB busy -> mera 500 ka payment likhne me atak gaya.
-HAL        report copy se (READ REPLICA): primary sirf payment ke liye. Copy primary ki diary (WAL) padh ke
+HAL        report copy se (READ REPLICA): primary sirf payment ke liye. Copy primary ka log (WAL) padh ke
            peeche chalti (1-2 sec purani): report me chalta, balance me nahi.
 NAHI       balance bhi replica se padho: replica peeche, mujhe purana balance dikhta.
 ```
@@ -565,7 +566,8 @@ Gateway           -> bheed / hamla -> rate limit
 Payment Svc       -> stateless -> machine badhao
 Idempotency       -> do request ek saath -> unique / SETNX
 SQL DB            -> kaatna + daalna ek transaction · padhai -> replica · likhai -> shard by account_id
-PSP               -> dheema = PENDING · band = fuse, "abhi nahi" · jawab nahi -> webhook + reconciliation
+PSP               -> dheema = PENDING · band = circuit breaker, "abhi nahi"
+                     · jawab nahi -> webhook + reconciliation
 Ledger            -> sirf jodo, mahine ke tukde, purana sasti jagah
 ASLI MUSHKIL      -> alag bank / shard ke beech ka len-den, bheed nahi
 

@@ -103,7 +103,7 @@ flowchart LR
 DIKKAT     1 tareekh subah 8 baje maine Ravi ko 500 bheje. Mere 500 kate, Ravi ke account me daalne se PEHLE
            server gira. 500 na mere paas, na Ravi ke paas. Gayab.
 HAL        dono ek saath ya koi nahi (TRANSACTION, ek DB): BEGIN; UPDATE Arpan -500; UPDATE Ravi +500; COMMIT;
-           DB pehle diary (WAL) me likhta; utha to COMMIT hua tha -> poora, nahi -> ulta. Aadha kabhi nahi.
+           DB pehle log (WAL) me likhta; utha to COMMIT hua tha -> poora, nahi -> ulta. Aadha kabhi nahi.
 NAHI       SAGA / queue laga do: ek DB me kaatna aur daalna alag ho jaate, dikkat khud ban jaati.
 ```
 ```
@@ -111,7 +111,7 @@ AAGE POOCHEGA:
   NIYAM: ek DB = ek transaction, aadha kabhi nahi (crash pe DB khud ulta); padhne wale ko aadha nahi dikhta.
   SAFAR (mere 500, Ravi tak):
   BEGIN -> -500 Arpan -> +500 Ravi -> COMMIT -> dono hue ya koi nahi
-  beech me server gira       -> DB diary (WAL) se: COMMIT hua tha = poora, nahi = ulta
+  beech me server gira       -> DB log (WAL) se: COMMIT hua tha = poora, nahi = ulta
   -500 ke baad koi padhe     -> COMMIT se pehle ka hi dikhta: aadha kisi ko nahi dikhta
 ```
 
@@ -321,7 +321,7 @@ AAGE POOCHEGA:
   NIYAM: copy thodi peeche: dikhana copy se, paise ka faisla primary pe; abhi likha to primary se padho.
          failover standby = sync (kuch nahi khota); read replica = async (peeche), alag cheez.
   SAFAR (balance dekhna vs bhejna):
-  balance / history dekhna   -> copy se: bheed padhne ki; primary ki diary (WAL) copy tak
+  balance / history dekhna   -> copy se: bheed padhne ki; primary ka log (WAL) copy tak
   paise ka faisla            -> sirf primary pe: copy peeche ho sakti
   abhi bheja, copy 5 sec peeche -> apna abhi likha primary se padho (last_write_at, Redis)
                                 warna purana dikha to dobara bhejunga
@@ -546,7 +546,7 @@ DB:       ledger_entries (SACH, sirf jodo, mahine ke tukde) · accounts.balance 
 
 "Niyam Java me likh do?"     -> nahi, DB me: raaste kai (API / batch / haath se), DB ek.
 "Khaata Kafka me kyun nahi?" -> Kafka aur DB alag, ek txn nahi; rollback pe Kafka me jhoothi line.
-"Relay likhna hi na pade?"   -> DB ki diary se seedha Kafka (CDC, Debezium).
+"Relay likhna hi na pade?"   -> DB ke log se seedha Kafka (CDC, Debezium).
 "Sync copy = dheema?"        -> haan, ek network chakkar; paise me chalega, async me aakhri transfer khota.
 "Seedha page 500?"           -> keyset me nahi: "kahan tak" yaad, "kitne chhode" nahi; agla / pichhla kaafi.
 "Ravi doosre bank?"          -> do bank = do DB, ek txn nahi: PENDING + SAGA, raat milaan.

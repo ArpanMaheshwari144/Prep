@@ -11,9 +11,9 @@
 ```
    KYA HUA                                       ILAAJ                                DABBA JUDA
 1  Ravi ne baad me save kiya, mera WORLD mita -> OPERATION + baseVersion (text nahi)  App (op bhejo)
-2  Ravi ko mera likha refresh pe hi dikha     -> WEBSOCKET (khula taar, dono taraf)   Conn-Server
+2  Ravi ko mera likha refresh pe hi dikha     -> WEBSOCKET (khula, dono taraf)         Conn-Server
 3  11 baje dono ne sabse upar ek saath likha  -> OT (server kram, op khiskao)         Conn-Server (OT)
-4  50 lakh taar, ek server nahi jhelta        -> RING: docId se ek OWNER server       LB + Conn-Server (owner)
+4  50 lakh connection, ek server na jhele     -> RING: docId se ek OWNER server       LB + Conn-Server (owner)
 5  Ravi sirf padh raha, doosre server pe      -> REDIS PUB/SUB (doc ek channel)       Redis pub/sub
 6  3 baje: har akshar pe DB write, DB baitha  -> REDIS BUFFER + BATCH, ACK = WAIT 1   Redis buffer + Cassandra
 7  metro me mera net 1 sec gaya               -> likhna AP, permission CP             SQL permissions
@@ -110,7 +110,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
-    n_CS["Conn-Server<br/>refresh pe hi dikha<br/>-> khula taar, server khud bheje<br/>(WebSocket)<br/>taar chupchaap mara -> har ~30 sec ping, pong nahi = band<br/>taar toota -> judte hi version bata ke baaki lo"]
+    n_CS["Conn-Server<br/>refresh pe hi dikha<br/>-> khula connection, server khud bheje<br/>(WebSocket)<br/>connection chupchaap mara -> har ~30 sec ping, pong nahi = band<br/>connection toota -> judte hi version bata ke baaki lo"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_CS
@@ -120,18 +120,18 @@ flowchart LR
 ```
 DIKKAT     Ab op ja raha, par normal HTTP me server khud kuch nahi bhej sakta, sirf jawab deta.
            Ravi ko mera likha tabhi dikha jab usne refresh kiya. Bekaar.
-HAL        khula taar, dono taraf (WEBSOCKET): pehle HTTP "Upgrade: websocket" -> server "101 Switching
+HAL        khula connection, dono taraf (WEBSOCKET): pehle HTTP "Upgrade: websocket" -> server "101 Switching
            Protocols" -> connection khula rehta. Main likhun to turant server tak, server turant Ravi tak.
 NAHI       polling: crore log x har second bekaar sawaal + 1 sec der · SSE: sirf server -> user.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ek khula taar dono taraf: server khud bhejta, user refresh nahi karta.
-         taar toota to user likhta rahe; judte hi "main v12 pe tha" bata ke baaki op le lo.
-  SAFAR (mera taar, har mod pe kya):
-  sab theek            -> taar khula -> server khud bhejta, Ravi refresh nahi karta (WebSocket)
-  taar chupchaap mara? -> har ~30 sec ping / pong: jawab nahi = band, jagah khaali
-  taar toota           -> main likhta rahun; judte hi "main v12 pe tha" -> server v13 se aage sab
+  NIYAM: ek khula connection dono taraf: server khud bhejta, user refresh nahi karta.
+         connection toota to user likhta rahe; judte hi "main v12 pe tha" bata ke baaki op le lo.
+  SAFAR (mera connection, har mod pe kya):
+  sab theek            -> connection khula -> server khud bhejta, Ravi refresh nahi karta (WebSocket)
+  connection chupchaap mara? -> har ~30 sec ping / pong: jawab nahi = band, jagah khaali
+  connection toota           -> main likhta rahun; judte hi "main v12 pe tha" -> server v13 se aage sab
 ```
 
 #### 3 11 baje meeting me dono ne sabse upar ek saath type kiya
@@ -172,13 +172,13 @@ AAGE POOCHEGA:
   dono pos 0 (tie)     -> server pe pehle aaya wo 0 pe, doosra 1 pe khiska -> dono ke paas "XYHELLO"
 ```
 
-#### 4 50 lakh taar khule, ek connection server nahi jhelta
+#### 4 50 lakh connection khule, ek connection server nahi jhelta
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
-    n_LB["LB<br/>50 lakh taar, ek server nahi<br/>-> ek doc ke sab log ek server pe<br/>(ring, owner)<br/>doc do server pe -> do version, isliye ek owner<br/>1000 log -> 100 editor owner pe, 900 viewer kahin bhi<br/>server juda / gira -> sirf pados ke doc khiskein (ring)<br/>owner gira -> naya owner DB se doc banaye"]
+    n_LB["LB<br/>50 lakh connection, ek server nahi<br/>-> ek doc ke sab log ek server pe<br/>(ring, owner)<br/>doc do server pe -> do version, isliye ek owner<br/>1000 log -> 100 editor owner pe, 900 viewer kahin bhi<br/>server juda / gira -> sirf pados ke doc khiskein (ring)<br/>owner gira -> naya owner DB se doc banaye"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
     n_DB["DB"]

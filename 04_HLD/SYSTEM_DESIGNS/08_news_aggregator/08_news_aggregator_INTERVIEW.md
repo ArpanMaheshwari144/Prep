@@ -13,14 +13,14 @@
 2  meri feed me khabar 20 min purani          -> KAFKA: laana aur likhna alag          Kafka + Worker
 3  8 baje election result, 40 guna bheed      -> LB + READ REPLICA                     LB + Read replica
 4  dopahar "India ne match jeeta" 5 baar      -> DEDUPE (title hash + SimHash)         (Worker me dedupe)
-5  dopahar baad ek source 30 sec atka         -> TIMEOUT + CIRCUIT BREAKER (fuse)      (Fetcher me fuse)
+5  dopahar baad ek source 30 sec atka         -> TIMEOUT + CIRCUIT BREAKER            (Fetcher me breaker)
 6  shaam ko mujhe sirf tech + sports          -> CATEGORY FEED, padhte waqt milao      (Redis me feed:tech)
 7  raat ko maine "cricket" dhoondha           -> INVERTED INDEX                        Elasticsearch
 8  raat DBA mail: 2 crore row, kharcha        -> mahine ka PARTITION, purana ARCHIVE   Archive (S3)
 9  mail aage: 100 guna, ek DB nahi jhelegi    -> SHARD hash(article_id)                (DB ke tukde)
 
 POORA DESIGN (upar ke dabbe kram se):
-   LIKHNA: Sources -> Fetcher (timeout + fuse) -> Kafka -> Worker (saaf + dedupe + category)
+   LIKHNA: Sources -> Fetcher (timeout + circuit breaker) -> Kafka -> Worker (saaf + dedupe + category)
            -> DB + Redis + ES
    PADHNA: User -> LB -> Feed Svc x N -> Redis (99%) -> nahi mila to Read replica
            search = ES · purana = Archive
@@ -243,7 +243,7 @@ flowchart LR
     n_Read_replica["Read replica"]
     n_DB["DB"]
     n_KW["Kafka -> Worker"]
-    n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> atka source chhodo, fail pe band<br/>(timeout + fuse)<br/>site atki -> 2-3 sec timeout, thodi retry<br/>baar-baar fail -> us source ko call hi nahi (OPEN)<br/>thodi der baad -> ek test call (HALF-OPEN)<br/>source ne 429 diya -> dheere, Retry-After maano<br/>kuch din OPEN -> alert + list se bahar"]
+    n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> atka source chhodo, fail pe band<br/>(timeout + circuit breaker)<br/>site atki -> 2-3 sec timeout, thodi retry<br/>baar-baar fail -> us source ko call hi nahi (OPEN)<br/>thodi der baad -> ek test call (HALF-OPEN)<br/>source ne 429 diya -> dheere, Retry-After maano<br/>kuch din OPEN -> alert + list se bahar"]
     n_USER --> n_LB
     n_LB --> n_Feed_Svc_xN
     n_Feed_Svc_xN --> n_Redis
@@ -256,12 +256,12 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ek beemar source baaki ko na roke: had tak intezaar, phir fuse; us source ki khabar kuch der
-         nahi aati, baaki feed chalti rehti.
+  NIYAM: ek beemar source baaki ko na roke: had tak intezaar, phir circuit breaker; us source ki
+         khabar kuch der nahi aati, baaki feed chalti rehti.
   SAFAR (ek source ki call, har mod pe kya):
   sab theek chala    -> 2-3 sec me jawab -> khabar line me
   site atki          -> 2-3 sec timeout, thodi retry: atka source baaki ko nahi rokta
-  baar-baar fail     -> fuse OPEN: us source ko call hi nahi, baaki apne raaste
+  baar-baar fail     -> breaker OPEN: us source ko call hi nahi, baaki apne raaste
   thodi der baad     -> HALF-OPEN: ek test call, theek to CLOSED
   source ne 429 diya -> dheere: uska samay badhao + Retry-After maano
   kuch din OPEN      -> alert + list se bahar
@@ -427,7 +427,7 @@ AAGE POOCHEGA:
 ## AAKHRI DABBA + WRAP (ek hi baar)
 
 ```
-LIKHNA: Sources -> Fetcher (timeout / dobara / skip + fuse) -> Kafka (bheed sambhaale)
+LIKHNA: Sources -> Fetcher (timeout / dobara / skip + breaker) -> Kafka (bheed sambhaale)
         -> Worker (saaf + dedupe + category) -> DB + Redis + Elasticsearch
 PADHNA: LB -> Feed Svc (kai machine) -> Redis (99%, taazi feed pehle se bani) -> nahi mila to read replica
         search = Elasticsearch · purani khabar = Archive
@@ -456,7 +456,7 @@ flowchart LR
     n_Archive["Archive"]
     n_Worker["Worker (saaf + dedupe)"]
     n_Kafka["Kafka"]
-    n_Fetcher["Fetcher (timeout + fuse)"]
+    n_Fetcher["Fetcher (timeout + circuit breaker)"]
     n_Sources["Sources"]
     n_USER --> n_LB
     n_LB --> n_Feed_Svc_x_N_1
@@ -485,14 +485,14 @@ flowchart LR
 PADHNA: Feed Svc  -> kai machine + LB
         Redis     -> gira? cluster + replica, nahi mila to read replica
         DB        -> READ REPLICA · jagah -> ARCHIVE (+ bahut bade scale pe shard)
-LIKHNA: Fetcher   -> source band / dheema -> timeout + dobara + skip + fuse
+LIKHNA: Fetcher   -> source band / dheema -> timeout + dobara + skip + circuit breaker
         Kafka     -> 1000 ek saath -> line sambhaale, partition badhao
         Worker    -> kai worker ek saath
 AAGE:   pasand wali feed (category cache) · photo CDN · ML ranking · badi khabar turant push
 
 POOCHEGA: "How would you scale this to 10x?"      -> dono raaste alag chalao, pehle jo toote
 POOCHEGA: "What's the single point of failure?"   -> "ek machine giri to sab?" -> uski copy
-                                                     · source band -> fuse + skip
+                                                     · source band -> circuit breaker + skip
 POOCHEGA: "How do you know it's working?"         -> feed p99 ·
           cache hit rate · Kafka lag · source error rate · alert
 ```

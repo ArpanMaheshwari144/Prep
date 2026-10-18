@@ -88,7 +88,7 @@ flowchart LR
     n_Upload_Svc["Upload Svc"]
     n_DB["DB (haal)"]
     n_S3["S3"]
-    n_Kafka["Kafka<br/>3 sec ruka, thread atke<br/>-> turant id do, jaanch peeche<br/>(async + tracking id)<br/>worker beech me mara -> khabar dobara milti (offset baad me)<br/>wahi khabar dobara -> DONE hai to skip (idempotent)<br/>Validator do baar chala -> theek, DONE ek hi baar<br/>Validator 1 ghanta band -> khabar line me padi, offset aage nahi<br/>us ghante call -> 3-5 fail pe band, phir test call (fuse)"]
+    n_Kafka["Kafka<br/>3 sec ruka, thread atke<br/>-> turant id do, jaanch peeche<br/>(async + tracking id)<br/>worker beech me mara -> khabar dobara milti (offset baad me)<br/>wahi khabar dobara -> DONE hai to skip (idempotent)<br/>Validator do baar chala -> theek, DONE ek hi baar<br/>Validator 1 ghanta band -> khabar line me padi, offset aage nahi<br/>us ghante call -> 3-5 fail pe band, phir test call (circuit breaker)"]
     n_Worker["Worker"]
     n_Validator["Validator"]
     n_CLIENT --> n_Upload_Svc
@@ -119,7 +119,7 @@ AAGE POOCHEGA:
   wahi khabar dobara      -> pehle haal dekho: T-101 DONE hai to skip (idempotent)
   Validator do baar chala -> jaanch T-101 pe idempotent: dobara chalna theek, DONE ek hi baar
   Validator 1 ghanta band -> 4,000 khabar line me padi: DONE bina offset aage nahi
-  us ghante call karte?   -> nahi, fuse: 3-5 fail pe band, thodi der baad ek test call
+  us ghante call karte?   -> nahi, circuit breaker: 3-5 fail pe band, thodi der baad ek test call
                              + doosri company (unki copy hum nahi chala sakte)
 ```
 
@@ -537,7 +537,7 @@ Kafka        -> jaanch ki line lambi -> WORKER badhao (line ki lambai dekh ke)
 adhoori file -> S3 lifecycle + sweeper
 
 POOCHEGA: "How would you scale this to 10x?"      -> file ka raasta chalo, pehle jo toote
-POOCHEGA: "What's the single point of failure?"   -> Validator (bahar wala): fuse + doosri company
+POOCHEGA: "What's the single point of failure?"   -> Validator (bahar wala): circuit breaker + doosri company
 POOCHEGA: "How do you know it's working?"
           (Chal raha hai, kaise pata?)
           MISAAL: raat ko Validator DHEEMA, line me ~5,000 file atki -> alert CloudWatch / PagerDuty se.
@@ -545,7 +545,7 @@ JAWAB:    Health check sirf batata 'zinda hai', 'dheema hai' nahi batata. Isliye
           line kitni lambi, jaanch wali company kitni der me jawab de rahi aur kitni baar fail, aur
           kitni files 10 minute se 'jaanch ho rahi' pe atki.
           Had paar = alert, user ke shikayat karne se pehle. Company baar-baar fail ho to us pe call
-          band (fuse) aur doosri company.
+          band (circuit breaker) aur doosri company.
 ```
 
 ---

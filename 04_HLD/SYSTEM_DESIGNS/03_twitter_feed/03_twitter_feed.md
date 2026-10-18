@@ -6,11 +6,11 @@
 > aur **celebrity ka tweet** (10 crore follower).
 
 ```
-RAJA KA RAJYA (poori file isi se yaad rakho):
-   har aadmi ka apna notice board = Redis inbox      · dhindhora peetne wala = Fanout service
-   mahal ka bada register         = tweet store (Cassandra) · likhne wala munshi = Tweet service
-   akhbaar padhne wala            = Timeline service  · kaun kiska chela register = Follow store
-   akhbaar ka truck               = Kafka
+DABBE (poori file me yahi naam):
+   Redis inbox = har user ki taiyaar feed      · Fanout service = naya tweet followers ki feed me daale
+   Tweet store (Cassandra) = saare tweet       · Tweet service = tweet likhe
+   Timeline service = feed padhe               · Follow store = kaun kise follow karta
+   Kafka = tweet service se fanout tak khabar
 ```
 
 ---
@@ -327,7 +327,7 @@ flowchart LR
 DIKKAT     6 baje DB alert: har second ~5,000 naye tweet, 5 saal me ~0.5 PB. Ek DB na itna rakh sakta,
            na itna likh sakta.
 HAL        mere tweet ek jagah (CASSANDRA, user_id se shard), andar naya pehle. Famous =
-           key me user + mahina. Likhna = diary (commit log) ke aakhir + RAM, isliye likhai tez.
+           key me user + mahina. Likhna = commit log ke aakhir + RAM, isliye likhai tez.
 NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; join / transaction chahiye nahi.
 ```
 ```
@@ -336,7 +336,7 @@ AAGE POOCHEGA:
          2 se padho -> naya mil hi jaata.
   SAFAR (ek tweet DB me, har mod pe kya):
   tweet aaya             -> user_id ki machine pe (Cassandra): ek user ke tweet ek jagah
-  RAM bhar gayi          -> diary ke aakhir jodo, badlo nahi; RAM ki nayi file disk pe: likhai tez
+  RAM bhar gayi          -> commit log ke aakhir jodo, badlo nahi; RAM ki nayi file disk pe: likhai tez
   files bahut ho gayi    -> padhna dheema -> peeche milao (compaction) + bloom filter
   meri machine giri      -> 3 copy, 2 me likho, 2 se padho -> naya mil hi jaata (quorum)
   famous, machine garam  -> user_id se baantna phir bhi theek; garam tweet alag RAM cache

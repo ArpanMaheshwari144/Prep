@@ -167,7 +167,7 @@ flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek share ka ek hi baabu<br/>(ek symbol ek thread)<br/>main + Mohan ek saath -> pehla le gaya 10, doosre ko 0<br/>thread atka -> sirf TCS rukta, INFY chalta (GC pause)"]
+    n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek share pe ek hi thread<br/>(ek symbol ek thread)<br/>main + Mohan ek saath -> pehla le gaya 10, doosre ko 0<br/>thread atka -> sirf TCS rukta, INFY chalta (GC pause)"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -238,7 +238,7 @@ flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Event_Log["Event Log (= wahi line)<br/>server gira, book gayab<br/>-> pehle register me likho, gira to dobara chalao<br/>(event log)<br/>10:15 server gira -> log #1 se replay, wahi book<br/>replay me der -> standby log padhta, book taiyaar"]
+    n_Event_Log["Event Log (= wahi line)<br/>server gira, book gayab<br/>-> pehle log me likho, gira to dobara chalao<br/>(event log)<br/>10:15 server gira -> log shuru se replay, wahi book<br/>replay me der -> standby log padhta, book taiyaar"]
     n_Matching_Engine["Matching Engine"]
     n_DB["DB"]
     n_USER --> n_Order_Service
@@ -263,7 +263,7 @@ STANDBY pehle se log padhta, book taiyaar -> pehla gire tab chalu (ek waqt ek hi
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: register (log) hi sach, book uski photo: pehle log, phir book; gira = log se replay, standby
+  NIYAM: log hi sach, book uski photo: pehle log, phir book; gira = log se replay, standby
          chalu. Do board ek saath kabhi nahi (do sach = galat). Dobara = no-op (trade_id).
   SAFAR (ek order, crash tak):
   sab theek               -> pehle log me #501, phir book
@@ -364,7 +364,7 @@ flowchart LR
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
     n_Pub_Sub["Pub/Sub"]
-    n_WebSocket["WebSocket<br/>10 lakh log price poochh rahe<br/>-> price badle tab khud bhejo, TV jaisa<br/>(WebSocket)<br/>second me 1000 baar badla -> har ~100 ms aakhri price<br/>taar toota, wapas juda -> abhi ka price alag se do<br/>10 lakh taar -> aur server + LB (ek pe ~lakh)<br/>price sab server tak -> pub/sub se"]
+    n_WebSocket["WebSocket<br/>10 lakh log price poochh rahe<br/>-> price badle tab khud bhejo, TV jaisa<br/>(WebSocket)<br/>second me 1000 baar badla -> har ~100 ms aakhri price<br/>connection toota, wapas juda -> abhi ka price alag se do<br/>10 lakh connection -> aur server + LB (ek pe ~lakh)<br/>price sab server tak -> pub/sub se"]
     n_USERS["USERS"]
     n_SET["Settlement -> Wallet / Portfolio DB"]
     n_USER --> n_OW
@@ -379,7 +379,8 @@ flowchart LR
 ```
 ```
 DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
-HAL        badla tab khud bhejo (WEBSOCKET): taar khula, price badla tabhi push (pub/sub se servers tak).
+HAL        badla tab khud bhejo (WEBSOCKET): connection khula, price badla tabhi push
+           (pub/sub se servers tak).
 NAHI       polling: 10 lakh bekaar sawaal / sec, 99% me price badla hi nahi.
 ```
 ```
@@ -389,8 +390,8 @@ AAGE POOCHEGA:
   SAFAR (TCS ka price):
   sab theek                 -> price badla, server khud bheje (WebSocket push)
   second me 1000 baar badla -> har ~100 ms aakhri price: purana bekaar
-  taar toota, wapas juda    -> abhi ka price alag se do: pub/sub kuch rakhta nahi
-  10 lakh taar              -> ek server ~lakh taar: aur server + LB
+  connection toota, juda     -> abhi ka price alag se do: pub/sub kuch rakhta nahi
+  10 lakh connection        -> ek server ~lakh connection: aur server + LB
   price sab server tak      -> pub/sub se har server ko
 ```
 
@@ -488,7 +489,7 @@ CARD SE AAYE SAWAAL (safar ke bahar):
 "Har order pe lock laga do?"         -> nahi: race share pe hai, dono apna lock, dono ko 10 dikhe (card 3)
 "5000 stock = 5000 thread?"          -> nahi, 8 core = 8 thread: stock % 8, ek stock ek thread (card 3)
 "Matching DB ke ACID se kyun nahi?"  -> DB har order pe dheema; matching RAM me (card 3)
-"Time se kram kyun nahi?"            -> do machine ki ghadi alag, ek second me do order (card 5)
+"Time se kram kyun nahi?"            -> do machine ka time (clock) alag, ek second me do order (card 5)
 "Sirf book ki photo kaafi?"          -> nahi: photo ke BAAD wale order kahin likhe nahi (card 5)
 "Dono board saath chala do?"         -> nahi: do board = do sach = galat (card 5)
 "Aakhir me done flag laga do?"       -> flag se pehle gira to pata hi nahi kitna likha (card 6)

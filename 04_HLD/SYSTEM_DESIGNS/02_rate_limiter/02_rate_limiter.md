@@ -5,8 +5,8 @@
 > **har request ke saamne baitha hai, isliye ~1 ms** · **ginti saari machines pe EK** · **limiter khud gire to site na gire**.
 
 ```
-DESI MISAAL: park me nal. Normal banda 1 bottle bharta, ek pagal banda 10 truck le aaya -> paani khatam,
-             asli log khaali haath. Niyam lagaya "ek banda din me 5 bottle" = RATE LIMITING.
+SEEDHI BAAT: ek banda had se zyada request bheje to baaki users ke liye server khaali nahi bachta.
+             Niyam lagao "itne se zyada nahi" = RATE LIMITING.
              API pe: ek bot ek second me 10,000 baar login try karta
                      (password guess) -> "ek IP, ek minute, 5".
 ```
@@ -90,11 +90,11 @@ flowchart LR
 ```
 DIKKAT     Har user ki had chahiye, par asli traffic jhatke me aata (10 request ek saath).
            Had bhi pakki rahe, aur jhatka bhi nikle.
-HAL        BAALTI (TOKEN BUCKET): max 10 token, har second 1 bharta, har request 1 leti; khaali -> 429.
+HAL        TOKEN BUCKET: max 10 token, har second 1 bharta, har request 1 leti; khaali -> 429.
            Redis me sirf 2 number; bharne ka koi job nahi, request aane pe hisaab (lazy).
 ```
 ```
-TASVEER: baalti ka hisaab (had 10, 1 token / sec)
+TASVEER: bucket ka hisaab (had 10, 1 token / sec)
   key tb:Arpan:login -> tokens = 7, last = 10:00:05
   request 10:00:08 -> 3 sec beete x 1 = 3 bharo -> 7 + 3 = 10 (had 10 se upar nahi)
   token >= 1? haan -> 1 ghatao -> tokens = 9, last = 10:00:08 -> ALLOW
@@ -102,12 +102,12 @@ TASVEER: baalti ka hisaab (had 10, 1 token / sec)
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: baalti = do number (kitne token, aakhri baar kab); bharna request aane pe hisaab se, koi job nahi.
-         Jhatka baalti jitna nikalta, phir speed se; khaali -> user ko 429 + kab aao.
+  NIYAM: bucket = do number (kitne token, aakhri baar kab); bharna request aane pe hisaab se, koi job nahi.
+         Jhatka bucket jitna nikalta, phir speed se; khaali -> user ko 429 + kab aao.
   SAFAR (Arpan ki ek request, har mod pe kya):
   sab theek              -> tokens 7 -> beeta time jodo -> 1 ghatao -> ALLOW
-  10 request ek saath    -> baalti bhari thi -> 10 nikal gayi (burst): asli traffic aisa hi
-  11vi request           -> baalti khaali -> 429 + Retry-After (agla token kab)
+  10 request ek saath    -> bucket bhara tha -> 10 nikal gayi (burst): asli traffic aisa hi
+  11vi request           -> bucket khaali -> 429 + Retry-After (agla token kab)
   ghanta bhar soya       -> lautne pe hisaab: beeta time x 1, par had 10 se upar nahi
 ```
 
@@ -528,8 +528,8 @@ REDIS KEY:  rate:<user>:<endpoint> -> ginti · umar = window (60 sec) -> umar kh
 EK LINE:   User -> Route 53 -> ALB -> Gateway limiter -> Redis (token bucket Lua, ek jhatke me)
            -> had ke andar? App | paar? 429 + Retry-After | baar-baar? Kafka -> WAF ban
 
-SLIDING WINDOW (bus stand ki misaal):
-   register: "pichhle 1 ghante me 5 se zyada nahi".
+SLIDING WINDOW:
+   niyam: "pichhle 1 ghante me 5 se zyada nahi".
    11:00 pe aaye -> 10:00 ke baad 5 aa chuke -> mana.
    11:10 pe aaye -> ab 10:10 ke baad gino, Ramesh 10:05 wala bahar ho gaya -> 4 -> andar.
    window request aane pe khisakti hai, koi timer / job nahi.

@@ -18,19 +18,19 @@ SHAADI KA CARD: ek shaadi, 500 mehmaan, sabko alag raaste se nyota:
     KYA HUA                                    ILAAJ                                DABBA JUDA
 1   subah order kiya, email company band     -> KAFKA (async), order turant jawab     Kafka + Notification Svc
 2   SMS dheema, push / email bhi atke        -> har raaste ki ALAG LINE + worker      Push / Email / SMS queue
-3   worker mara, mujhe do email              -> PARCHI (SET NX, khabar ki apni id)    Redis
-4   OTP ki parchi lagi, call fail, OTP gayab -> SENDING / SENT (do haal)              (Redis parchi)
+3   worker mara, mujhe do email              -> KEY (SET NX, khabar ki apni id)       Redis
+4   OTP ki key lagi, call fail, OTP gayab   -> SENDING / SENT (do haal)              (Redis key)
 5   SMS company pareshaan, hum hathoda maare -> BACKOFF + JITTER, had ke baad DLQ     DLQ
-6   SMS company dheemi, worker 30 sec phanse -> TIMEOUT + FUSE, doosri company        Twilio + SNS, SendGrid
+6   SMS company dheemi, worker 30 sec phanse -> TIMEOUT + CIRCUIT BREAKER            Twilio + SNS, SendGrid
 7   12 baje sale, OTP 50,000 offer ke peeche -> OTP ki ALAG TEZ LINE                  Kafka high / med / low
-8   sale me laakhon message, company ne 429  -> SAANJHI BAALTI (token bucket)         (Redis baalti)
+8   sale me laakhon message, company ne 429  -> SAANJHA TOKEN BUCKET (Redis)          (Redis bucket)
 9   "bheja", par phone tak pahuncha?         -> WEBHOOK + company ka message id       Webhook + Tracking DB
 10  shaam "Diwali offer sabko", 1 crore      -> 1000 ke TUKDE + campaign row          Campaign Svc + DB
 11  raat 2 baje offer SMS, maine band kiya   -> PASAND + SHAANTI + SAANCHA (cache)    User-pref + Template DB
 
 POORA DESIGN (upar ke dabbe kram se):
    Order / Campaign Svc -> Kafka (tez / beech / dheemi) -> Notification Svc (pasand + saancha)
-   -> push / email / SMS line -> worker (parchi, backoff, fuse, baalti) -> 2 company -> user
+   -> push / email / SMS line -> worker (key, backoff, circuit breaker, bucket) -> 2 company -> user
    webhook -> Tracking DB · fail -> DLQ
 ```
 
@@ -119,21 +119,21 @@ flowchart LR
 ```
 DIKKAT     Diwali subah maine order kiya. Order service email bhej ke jawab ka intezaar karti rahi; email
            company band thi -> order hi fail. Aur email dobara bhejne wala koi nahi.
-HAL        order turant, khabar peeche (KAFKA = disk pe diary): order + khabar ek DB txn (outbox), relay Kafka
+HAL        order turant, khabar peeche (KAFKA = disk pe log): order + khabar ek DB txn (outbox), relay Kafka
            me daale, turant jawab. Notification service peeche se padhe; email band -> wapas aaye to wahin se.
 NAHI       Order service me hi retry: request utni der atki, aur Order service giri to retry bhi gaya.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: order kabhi khabar ka intezaar nahi karta: khabar disk ki diary (Kafka) me, padhne wala yaad rakhe
+  NIYAM: order kabhi khabar ka intezaar nahi karta: khabar disk ke log (Kafka) me, padhne wala yaad rakhe
          kahan tak -> company band ho to bhi khabar padi rehti, wapas aate hi wahin se.
   SAFAR (ek order ki khabar, har mod pe kya):
   order bana             -> order + khabar ek DB txn (outbox), relay Kafka me; turant jawab
   Kafka se pehle Svc giri -> khabar outbox row me padi: relay baad me bhej deta, khoti nahi
-  email company band     -> khabar Kafka diary me ~7 din padi, padhne wala kahan tak yaad (offset)
+  email company band     -> khabar Kafka log me ~7 din padi, padhne wala kahan tak yaad (offset)
   company 2 din baad     -> wahin se aage: order kabhi email se fail nahi
   Notification Svc dheemi -> machine badhao (consumer group): har line ek machine, lines bat jaati
-  Kafka ki machine giri  -> diary ki 3 copy: baaki copy se chalta, khabar nahi khoti
+  Kafka ki machine giri  -> log ki 3 copy: baaki copy se chalta, khabar nahi khoti
 ```
 
 #### 2 SMS company dheemi, mera push aur email bhi atke
@@ -179,7 +179,7 @@ flowchart LR
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis<br/>worker mara, do email<br/>-> pehle parchi, dobara aaye to skip<br/>(SET NX)<br/>wahi dobara aayi -> parchi mili, skip<br/>Redis gira -> DB me ek baar hi lage<br/>parchi 24 ghante me mitti -> DB row rokegi"]
+    n_Redis["Redis<br/>worker mara, do email<br/>-> pehle key, dobara aaye to skip<br/>(SET NX)<br/>wahi dobara aayi -> key mili, skip<br/>Redis gira -> DB me ek baar hi lage<br/>key 24 ghante me mitti -> DB row rokegi"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES
@@ -189,8 +189,8 @@ flowchart LR
 ```
 DIKKAT     Worker ne mera email bheja, par Kafka ko "padh liya" (offset) bolne se pehle mar gaya. Kafka ne
            wahi khabar doosre worker ko di -> dobara bheja -> mujhe DO email.
-HAL        dobara aaye to skip (PARCHI): bhejne se pehle Redis me khabar ki APNI id se parchi (SET NX).
-           Parchi pehle se mili = khabar pehle aa chuki -> skip.
+HAL        dobara aaye to skip (KEY): bhejne se pehle Redis me khabar ki APNI id se key (SET NX).
+           Key pehle se mili = khabar pehle aa chuki -> skip.
 NAHI       har baar naya random id: dohraav kabhi pakda nahi jaata.
 ```
 ```
@@ -198,13 +198,13 @@ AAGE POOCHEGA:
   NIYAM: khabar ki apni pakki id -> dobara aaye to pehchaan ke skip; Redis tez raasta, DB me (khabar_id,
          raasta) ek baar hi lage = aakhri deewar.
   SAFAR (ek khabar, dobara aayi, har mod pe kya):
-  khabar aayi            -> pehle dekho: ye khabar_id + raasta bheja? (Redis parchi, tez)
-  wahi dobara aayi       -> parchi mili -> skip: do email nahi
+  khabar aayi            -> pehle dekho: ye khabar_id + raasta bheja? (Redis key, tez)
+  wahi dobara aayi       -> key mili -> skip: do email nahi
   Redis gira             -> DB me (khabar_id, raasta) ek baar hi lage: pakka wahi rokta
-  parchi 24 ghante me mitti -> DB row nahi bhoolti, phir rokega
+  key 24 ghante me mitti -> DB row nahi bhoolti, phir rokega
 ```
 
-#### 4 Parchi lag gayi, par mera OTP gaya hi nahi
+#### 4 Key lag gayi, par mera OTP gaya hi nahi
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -212,7 +212,7 @@ flowchart LR
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis (parchi)<br/>parchi lagi, OTP gaya nahi<br/>-> bhej raha alag, bhej diya alag<br/>(SENDING / SENT)<br/>call hua -> parchi SENT, koi dobara nahi<br/>jawab se pehle mara -> do baar ja sakta, maana hua risk<br/>call fail, worker zinda -> khud parchi hatao<br/>worker hi mara -> SENDING ~60 sec me khud mite<br/>B ko SENDING mili -> ruko, chhodna sirf SENT pe"]
+    n_Redis["Redis (key)<br/>key lagi, OTP gaya nahi<br/>-> bhej raha alag, bhej diya alag<br/>(SENDING / SENT)<br/>call hua -> key SENT, koi dobara nahi<br/>jawab se pehle mara -> do baar ja sakta, maana hua risk<br/>call fail, worker zinda -> khud key hatao<br/>worker hi mara -> SENDING ~60 sec me khud mite<br/>B ko SENDING mili -> ruko, chhodna sirf SENT pe"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES
@@ -220,15 +220,15 @@ flowchart LR
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Login ka OTP: Worker-A ne parchi "bhej diya" lagayi, SMS call FAIL (ya Worker-A mara). Kafka ne
+DIKKAT     Login ka OTP: Worker-A ne key "bhej diya" lagayi, SMS call FAIL (ya Worker-A mara). Kafka ne
            dobara di, Worker-B ne "bhej diya" dekh ke chhoda -> OTP kho gaya. Koshish ko pakka maan liya.
 HAL        do haal rakho (SENDING / SENT): bhejne se PEHLE "BHEJ RAHA HOON" (SENDING, 60 sec umar), company OK
            pe "BHEJ DIYA" (SENT, 1 din). CHHODNA sirf SENT pe; SENDING = adhoora.
-NAHI       parchi hi hata do: worker mara to Kafka dobara deta -> OTP / email do baar (card 3 wapas).
+NAHI       key hi hata do: worker mara to Kafka dobara deta -> OTP / email do baar (card 3 wapas).
 ```
 ```
 TASVEER: SENDING / SENT
-Worker-A: parchi SENDING (60 sec) -> call FAIL: A khud hataye · A mara: 60 sec me khud mit-ti
+Worker-A: key SENDING (60 sec) -> call FAIL: A khud hataye · A mara: 60 sec me khud mit-ti
 Kafka dobara deta -> Worker-B: SENDING mila -> thoda ruko · kuch nahi -> SENDING lagao, bhejo
 company OK -> SENT (1 din)  ->  koi bhi SENT dekhe -> chhodo
 ```
@@ -236,11 +236,11 @@ company OK -> SENT (1 din)  ->  koi bhi SENT dekhe -> chhodo
 AAGE POOCHEGA:
   NIYAM: chhodo sirf pakke SENT pe; SENDING = adhoora, chhoti umar se khud mit jaaye -> khabar khoti nahi;
          kabhi do baar chali jaaye to chalega (OTP do baar > na aana).
-  SAFAR (ek OTP ki parchi, har mod pe kya):
-  worker ne uthaya       -> parchi SENDING (chhoti umar, ~60 sec) -> company ko call
-  call hua               -> parchi SENT: ab koi dobara nahi bhejega
+  SAFAR (ek OTP ki key, har mod pe kya):
+  worker ne uthaya       -> key SENDING (chhoti umar, ~60 sec) -> company ko call
+  call hua               -> key SENT: ab koi dobara nahi bhejega
   bheja, jawab se pehle mara -> maana hua risk: do baar ja sakta; OTP do baar > na aana
-  call fail, worker zinda -> khud parchi hatao: koshish adhoori, agli chal jaaye
+  call fail, worker zinda -> khud key hatao: koshish adhoori, agli chal jaaye
   worker hi mara         -> hatane wala koi nahi -> SENDING ki umar (60 sec) khatam, khud mit jaati
   Worker-B ko SENDING mili -> thoda ruko, phir dekho: chhodna sirf SENT pe
 ```
@@ -253,7 +253,7 @@ flowchart LR
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis (parchi)"]
+    n_Redis["Redis (key)"]
     n_DLQ["DLQ<br/>company pe hathoda<br/>-> har baar zyada ruko, had paar alag line<br/>(backoff + DLQ)<br/>company ne mana kiya -> ruk-ruk ke dobara (backoff + random)<br/>lamba rukna -> alag lines (retry-1m, retry-10m)<br/>had paar -> DLQ + alert, phenko nahi<br/>DLQ wali khabar -> theek karke wapas line me"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
@@ -295,8 +295,8 @@ flowchart LR
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line + worker<br/>(push -> FCM / APNs)"]
     n_SES["SES + SendGrid"]
-    n_Twilio["Twilio + SNS<br/>SMS 30 sec atki<br/>-> der lage to chhodo, fail pe call band<br/>(timeout + fuse)<br/>jawab nahi -> 2-3 sec pe band maano (timeout)<br/>baar-baar fail -> fuse khula, SNS pe<br/>push / email -> har company ka apna fuse<br/>SNS bhi band -> line me ruke, OTP ka alert"]
-    n_Redis["Redis (parchi)"]
+    n_Twilio["Twilio + SNS<br/>SMS 30 sec atki<br/>-> der lage to chhodo, fail pe call band<br/>(timeout + circuit breaker)<br/>jawab nahi -> 2-3 sec pe band maano (timeout)<br/>baar-baar fail -> circuit breaker khula, SNS pe<br/>push / email -> har company ka apna circuit breaker<br/>SNS bhi band -> line me ruke, OTP ka alert"]
+    n_Redis["Redis (key)"]
     n_DLQ["DLQ"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
@@ -311,25 +311,25 @@ flowchart LR
 ```
 DIKKAT     SMS company abhi bhi dheemi: line alag ho gayi, par har call 30 sec atki. Saare SMS worker
            usi me phanse, OTP bhi ruka. Dheemi company band company se bhi buri.
-HAL        2-3 sec me chhodo, fail pe call band (TIMEOUT + FUSE): har company alag, 5 fail -> OPEN, SNS pe.
-           30 sec baad HALF-OPEN (ek test call) -> chali to CLOSED. FUSE = circuit breaker.
+HAL        2-3 sec me chhodo, fail pe call band (TIMEOUT + CIRCUIT BREAKER): har company alag,
+           5 fail -> OPEN, SNS pe. 30 sec baad HALF-OPEN (ek test call) -> chali to CLOSED.
 NAHI       worker badha do: naye worker bhi 30 sec me phanse, dheemi company pe aur bojh.
 ```
 ```
-TASVEER: fuse (circuit breaker)
+TASVEER: circuit breaker
 CLOSED (call chalti)  -- 5 fail -->  OPEN (call band, SNS pe)
 OPEN  -- 30 sec -->  HALF-OPEN (ek test call)  -- chali --> CLOSED  ·  fail --> OPEN
 har call 2-3 sec me chhodo (timeout), 30 sec phansna nahi
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: dheema = band maano (2-3 sec timeout); har company ka apna fuse -> uske band hone se baaki raaste
-         chalte, khabar line me rukti, phenki nahi jaati.
+  NIYAM: dheema = band maano (2-3 sec timeout); har company ka apna circuit breaker -> uske band hone se
+         baaki raaste chalte, khabar line me rukti, phenki nahi jaati.
   SAFAR (ek SMS, company dheemi, har mod pe kya):
   call bheja             -> 2-3 sec me jawab, khatam
   jawab nahi aaya        -> 2-3 sec pe band maano (timeout): worker phanse nahi
-  baar-baar fail         -> fuse khula: call band, SNS pe; thodi der baad ek test call
-  push / email pe asar?  -> nahi: har company ka apna fuse, worker alag line pe
+  baar-baar fail         -> circuit breaker khula: call band, SNS pe; thodi der baad ek test call
+  push / email pe asar?  -> nahi: har company ka apna circuit breaker, worker alag line pe
   SNS bhi band           -> khabar line me rukti, backoff se koshish, phenko nahi; OTP ka alert
 ```
 
@@ -341,7 +341,7 @@ flowchart LR
     n_Kafka["Kafka high / medium / low<br/>OTP offer ke peeche<br/>-> OTP ki apni tez line<br/>(priority)<br/>order update -> medium line, OTP se peeche<br/>OTP line khaali -> uske worker beech wali padhein"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis (parchi)"]
+    n_Redis["Redis (key)"]
     n_DLQ["DLQ"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
@@ -374,7 +374,7 @@ flowchart LR
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis (parchi + baalti)<br/>sale pe 429<br/>-> company ki had sab worker me baanto<br/>(token bucket)<br/>token nahi mila -> line me intezaar, fail nahi<br/>worker badh gaye -> speed wahi, baalti saanjhi<br/>had kam -> had badhwao + kai account<br/>baalti wala Redis gira -> har worker chhoti local had (fail-closed)"]
+    n_Redis["Redis (key + bucket)<br/>sale pe 429<br/>-> company ki had sab worker me baanto<br/>(token bucket)<br/>token nahi mila -> line me intezaar, fail nahi<br/>worker badh gaye -> speed wahi, bucket saanjha<br/>had kam -> had badhwao + kai account<br/>bucket wala Redis gira -> har worker chhoti local had (fail-closed)"]
     n_DLQ["DLQ"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
@@ -385,20 +385,20 @@ flowchart LR
 ```
 ```
 DIKKAT     Sale shuru, ek saath laakhon message. SMS company bolti "itna nahi" (429) -> sab fail.
-HAL        sab worker ki ek baalti (TOKEN BUCKET, Redis): company ki had 100 / sec = har sec 100 token.
+HAL        sab worker ka ek TOKEN BUCKET (Redis): company ki had 100 / sec = har sec 100 token.
            Har worker pehle token le (Lua, ek jhatke me), nahi -> ruko. 429 phir bhi -> Retry-After tak ruko.
 NAHI       har worker apni speed 100 / sec: 100 worker = 100 guna -> phir 429.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: had company ki hai, worker ki nahi: sab worker ek baalti se token lein; token nahi = ruko, khabar
+  NIYAM: had company ki hai, worker ki nahi: sab worker ek bucket se token lein; token nahi = ruko, khabar
          phenko nahi.
   SAFAR (ek message, company ki had, har mod pe kya):
-  bhejna hai             -> saanjhi baalti se token mila -> bhejo (had company ki, worker ki nahi)
+  bhejna hai             -> saanjhe bucket se token mila -> bhejo (had company ki, worker ki nahi)
   token nahi mila        -> line me intezaar: ye fail nahi, retry ginti nahi badhti
-  worker badh gaye       -> speed wahi: baalti saanjhi, kul 100 / sec
+  worker badh gaye       -> speed wahi: bucket saanjha, kul 100 / sec
   1 lakh email, had kam  -> had badhwao + kai account; tab tak line dheere khaali, warna 429
-  baalti wala Redis gira -> har worker chhoti local had (fail-closed): company ki had paar nahi
+  bucket wala Redis gira -> har worker chhoti local had (fail-closed): company ki had paar nahi
 ```
 
 #### 9 Company ne "bhej diya" bola, par mere phone tak pahuncha?
@@ -409,7 +409,7 @@ flowchart LR
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis (parchi + baalti)"]
+    n_Redis["Redis (key + bucket)"]
     n_DLQ["DLQ"]
     n_Webhook_Svc["Webhook Svc<br/>bheja, par mila?<br/>-> company khud batati pahuncha ya nahi<br/>(webhook + msg id)<br/>webhook aaya hi nahi -> atke ko ek baar poochho (Twilio SID)<br/>nakli webhook -> hastakshar jaancho (HMAC / certificate)"]
     n_Tracking_DB["Tracking DB"]
@@ -449,7 +449,7 @@ flowchart LR
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_RDLQ["Redis (parchi + baalti) + DLQ"]
+    n_RDLQ["Redis (key + bucket) + DLQ"]
     n_WH["Webhook Svc + Tracking DB"]
     n_Admin --> n_CAMP
     n_CAMP --> n_Kafka
@@ -488,7 +488,7 @@ flowchart LR
     n_Notification_Svc["Notification Svc"]
     n_PREF["User-pref + Template DB<br/>raat 2 baje offer SMS<br/>-> pehle pasand aur raat ki shaanti dekho<br/>(preference)<br/>shaanti me offer -> subah 8 baje bhejo (scheduled_at)<br/>shaanti me OTP / login -> bhejo, zaroori upar<br/>pasand badli -> cache delete + chhoti umar"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_RDLQ["Redis (parchi + baalti) + DLQ"]
+    n_RDLQ["Redis (key + bucket) + DLQ"]
     n_WH["Webhook Svc + Tracking DB"]
     n_CAMP --> n_Kafka
     n_Order_Svc --> n_Kafka
@@ -522,7 +522,8 @@ AAGE POOCHEGA:
 
 ```
 Order / Campaign Svc -> Kafka (tez / beech / dheemi) -> Notification Svc (pasand + saancha, cache)
--> push / email / SMS ki line -> worker (parchi BHEJ RAHA / BHEJ DIYA · ruk ke dobara · fuse · speed limit)
+-> push / email / SMS ki line
+-> worker (key BHEJ RAHA / BHEJ DIYA · ruk ke dobara · circuit breaker · speed limit)
 -> 2 company -> user · webhook -> Tracking DB · fail -> DLQ
 
 DB:  Tracking = Cassandra -> likhna bahut, seedhi row, pakki consistency nahi chahiye, aaram se badhta
@@ -531,8 +532,9 @@ DB:  Tracking = Cassandra -> likhna bahut, seedhi row, pakki consistency nahi ch
 ```
 JAWAB:    Services 'kuch hua' ki khabar Kafka me daalti. Notification service user ki pasand dekhti,
           message bharti, aur push / email / SMS ki alag line me daal deti.
-          Worker parchi (BHEJ RAHA / BHEJ DIYA) se do baar nahi bhejte, fail pe ruk-ruk ke dobara,
-          company ki had me, company dheemi to fuse + doosri company, had ke baad DLQ. OTP ki alag line.
+          Worker key (BHEJ RAHA / BHEJ DIYA) se do baar nahi bhejte, fail pe ruk-ruk ke dobara,
+          company ki had me, company dheemi to circuit breaker + doosri company, had ke baad DLQ.
+          OTP ki alag line.
           Ek user ki khabar ek hi line me, to kram sahi. Company ke webhook se 'mila / fail' update.
           Aage: raat ka shaant time, kai bhasha, khola / click ginti.
 ```
@@ -595,7 +597,7 @@ flowchart LR
 Kafka            -> sale pe 10 guna -> lines (partition) pehle se zyada · line user_id se
 Notification Svc -> pasand / saancha cache · machine badhao
 raaste ki line   -> alag line (ho gaya) + tez / dheemi line
-worker           -> sale pe badhao (ek worker ~1000 / second) · fuse + do company · speed limit
+worker           -> sale pe badhao (ek worker ~1000 / second) · circuit breaker + do company · speed limit
 Tracking DB      -> 90 TB / saal -> Cassandra + row ki umar, purana sasti jagah (cold storage)
                     (umar se jagah ghatti hai, baantne se bojh — dono alag cheez)
 
@@ -641,7 +643,8 @@ SAWAAL:   push doosri company se? -> hota nahi: Android = FCM, iPhone = APNs, ph
           (c2) push kis phone pe? -> device token (install pe user ke saath save); bekaar nikla -> hatao
           (c4) SENDING ki umar kitni? -> call (~2-3 sec) se lambi, 60 sec: pehle khatam = do log bhejenge
           (c5) khabar khoye hi nahi? -> saari copy ne li tab OK (acks=all), offset kaam ke BAAD
-          (c6) fuse har process apna ya saanjha? -> har process apna (Resilience4j) ya Redis me saanjha
+          (c6) circuit breaker har process apna ya saanjha? -> har process apna (Resilience4j),
+               ya Redis me saanjha
           (c7) offer OTP ki company had kha jaaye? -> OTP ka alag account / number (had = card 8)
           (c9) hisaab kahan? -> Cassandra (Tracking): likhna bahut, seedhi row, jodna kuch nahi
           (c3) DB me ek baar kaise? -> Cassandra INSERT IF NOT EXISTS (khabar_id, raasta) (LWT)
