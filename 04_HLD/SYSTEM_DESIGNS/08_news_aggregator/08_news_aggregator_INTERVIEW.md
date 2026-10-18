@@ -96,6 +96,12 @@ flowchart LR
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
+TASVEER: ek list, sab padhein
+  feed:latest (sorted set, score = kab chhapi):  9:05 a90 | 9:03 a77 | 9:01 a45 | 8:58 a12 | ... (top 500)
+  nayi khabar 9:06 a91 -> ZADD -> apne time pe, sabse upar
+  10 lakh user app kholein -> sab ZREVRANGE 0 19 -> wahi 20 id -> DB tak koi nahi
+```
+```
 AAGE POOCHEGA:
   NIYAM: sabko ek jaisi feed = ek baar bana ke Redis me (sorted set, time se); har user DB nahi jaata;
          nayi khabar aate hi list me apni jagah, user ko turant dikhti.
@@ -205,6 +211,13 @@ flowchart LR
     n_Kafka --> n_Worker
     n_SF --> n_Kafka
     style n_Worker fill:#f9a825,color:#000
+```
+```
+TASVEER: Bloom filter (bit-line)
+  bits:   [0] [0] [1] [0] [1] [0] [0] [1] [0] [0]      (jagah 0..9)
+  URL-A -> hash = 2, 4, 7 -> teeno 1      -> SHAYAD dekha -> skip
+  URL-B -> hash = 1, 4, 8 -> jagah 1 pe 0 -> PAKKA naya -> laao, jagah 1, 4, 8 = 1
+  galat "naya" kabhi nahi · galat "dekha" kabhi-kabhi (ek nayi khabar chhoot sakti, news me chalta)
 ```
 ```
 AAGE POOCHEGA:

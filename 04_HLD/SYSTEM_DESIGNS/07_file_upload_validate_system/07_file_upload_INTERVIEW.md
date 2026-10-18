@@ -151,6 +151,13 @@ HAL        server sirf paas de (PRESIGNED URL): server sirf 10 min ka paas (sign
 NAHI       S3 ki access key app me daal do: app se key nikli = poora bucket khula.
 ```
 ```
+TASVEER: paas lo, seedha S3
+  1  app -> Upload Svc: "5 GB video daalni"   -> T-102 + 10 min ka paas (signed URL)
+  2  app -> S3 seedha, paas dikha ke          -> 5 GB S3 me; hamare server pe ek byte bhi nahi
+  3  app -> Upload Svc: "/complete T-102"     -> queue -> worker -> jaanch
+  paas = sirf is ek file ka, 10 min; leak ho bhi to bas itna
+```
+```
 AAGE POOCHEGA:
   NIYAM: server sirf paas deta (EK file, 10 min), bytes seedha app -> S3; server pe bojh nahi, aur paas
          leak ho bhi to sirf us ek file pe, 10 min tak. Paas khatam -> naya maango.
@@ -187,6 +194,13 @@ DIKKAT     Usi video ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB s
 HAL        tukdon me bhejo (MULTIPART): file tukdon me, har tukda apne signed URL pe, S3 har tukde ki rasid
            (ETag) deta. Wifi gaya -> 90 tukde pahunch chuke, sirf bache 10 bhejo.
 NAHI       server ka timeout badha do: wifi gaya to connection hi toota, timeout kuch nahi bachata.
+```
+```
+TASVEER: 100 tukde, sirf bache 10
+  5 GB = 100 tukde, uploadId U-9
+  [1] [2] [3] ... [90]  -> har ek ki rasid (ETag) S3 pe      [91] ... [100] nahi pahunche
+  wifi gaya -> wapas aaya -> ListParts U-9 -> sirf 91..100 bhejo
+  COMPLETE(U-9, tukde + rasid) -> S3 kram se jod ke ek file
 ```
 ```
 AAGE POOCHEGA:
@@ -306,6 +320,13 @@ flowchart LR
     n_CHAIN --> n_DB
     n_CHAIN --> n_Redis
     style n_DB fill:#f9a825,color:#000
+```
+```
+TASVEER: folder = bachchon ka jod
+  P-1 (folder, 1000 file)
+    |- C-1 DONE   |- C-2 DONE   ...   |- C-999 DONE   |- C-1000 FAILED
+  har child ka nateeja -> done_count +1 -> 1000/1000 aa gaye -> koi FAILED? haan -> P-1 = PARTIAL
+  dobara sirf C-1000; baaki 999 nahi
 ```
 ```
 AAGE POOCHEGA:

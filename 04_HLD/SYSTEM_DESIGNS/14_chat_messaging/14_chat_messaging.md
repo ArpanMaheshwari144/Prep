@@ -314,6 +314,12 @@ HAL        kram server ka +1 number, phone ki ghadi nahi (SEQ): Redis INCR seq:c
 NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
 ```
 ```
+TASVEER: seq + chhed pakdo
+Redis INCR seq:chat123 -> 4415, 4416, 4417 ...   (har message +1, server deta, ghadi nahi)
+app ko mila 4415, phir 4417  -> 4416 nahi aaya = CHHED -> thoda ruko -> "4415 ke baad ke do"
+Ravi wapas aaya: "meri aakhri 4417" -> server 4418 se aage sab
+```
+```
 AAGE POOCHEGA:
   NIYAM: kram = server ka +1 number (har chat alag), ghadi nahi; ginti me chhed = kuch chhoota, wo maango.
   "15 ke baad 17 aaya, app kya kare?" -> 16 CHHOOTA: kyunki seq +1 se chalta; thoda ruko, phir server se "15
@@ -353,6 +359,13 @@ HAL        Group ka message EK baar, group chat ke neeche. Sab wahi padhte.
 NAHI       Twitter jaisa har inbox me copy: wahan feed sabki alag + crore follower, group sabka ek.
 ```
 ```
+TASVEER: ek copy, server-wise
+"College Gang" (500): message EK baar -> group chat ke neeche (Cassandra)
+online members kis server pe? -> Redis register: server-3, server-7 ...
+har SERVER ko ek baar: "ye message, in members ko" -> wo apne taar se apne members ko
+offline members -> push ghanti; wapas aaye to seq se aage padh lenge
+```
+```
 AAGE POOCHEGA:
   NIYAM: sabke liye ek jaisa = ek copy, har kisi ka alag = alag copy; bhejna server-wise, member-wise nahi.
   "300 online, kaise bhejoge?"   -> HAR SERVER KO EK CALL: kyunki 300 log kuch hi server pe; 300 alag call
@@ -387,6 +400,13 @@ DIKKAT     Shaam ko Ravi ne chat khol ke 50 message padhe. Har message x har mem
 HAL        "kahan tak padha" ek number (NISHAAN): read_upto 4467 ("kahan tak padha"). Unread = aakhri seq -
            nishaan (ghatao, gino nahi). Neeli tick = ek push "read_upto 4467" -> 50 ek saath neeli.
 NAHI       unread COUNT column badhao-ghatao: har message pe 500 member x 1 UPDATE, phir bhi 25,000 likhai.
+```
+```
+TASVEER: ek nishaan, ginti nahi
+chat seq:  ... 4417 4418 ...... 4467 | aage ke message
+Ravi:      read_upto = 4467 (neeli tick tak)   ·   delivered_upto >= read_upto (do tick)
+unread = aakhri seq - 4467   (ghatao, gino nahi)
+Ravi ne 50 padhe -> ek push "read_upto 4467" -> 50 ek saath neeli
 ```
 ```
 AAGE POOCHEGA:

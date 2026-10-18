@@ -173,6 +173,12 @@ HAL        ek jhatke me, beech me koi nahi (ATOMIC): Redis ek line me, ek comman
 NAHI       App me synchronized / lock: sirf ek machine ke andar; do App me race wahi ki wahi.
 ```
 ```
+TASVEER: race vs INCR
+GET + SET:  App-1 GET 4 · App-2 GET 4  -> dono SET 5  -> 6 andar (limit 5)
+INCR:       App-1 INCR -> 5 (andar)    · App-2 INCR -> 6 > 5 -> 429
+Redis ek line me: ek command poora, tab agla -> beech me koi nahi
+```
+```
 AAGE POOCHEGA:
   NIYAM: dekhna + badalna ek hi kadam, Redis ke andar (INCR / Lua); beech me koi request nahi ghus sakti.
          Do kadam hue to do request ek hi purana number padh ke dono andar.
@@ -246,6 +252,13 @@ DIKKAT     Dopahar Redis mar gaya. Saari ginti wahin thi -> kisi ko pata hi nahi
 HAL        Redis ki copy taiyaar (REPLICA): main mara -> copy main (Cluster khud; akela Redis ho to Sentinel).
            Poora gaya: aam API (feed, search) FAIL-OPEN = jaane do · login / OTP FAIL-CLOSED = roko.
 NAHI       sab fail-open: login khula = koi bina had password guess karta rahega.
+```
+```
+TASVEER: Redis gira to
+main mara   -> copy main (Cluster khud) -> thodi ginti khoi, chalta
+poora gaya  -> feed / search : FAIL-OPEN   (jaane do)
+            -> login / OTP   : FAIL-CLOSED (roko)
+ye faisla code me PEHLE se, gire tab sochne ka time nahi
 ```
 ```
 AAGE POOCHEGA:
@@ -435,6 +448,13 @@ DIKKAT     Raat 11 baje office ki night shift: 1000 log ek IP (NAT) ke peeche, e
 HAL        IP nahi, banda gino (KEY = USER_ID): login ke baad (JWT se) rate:<user_id>:<endpoint> -> 1000 log =
            1000 alag ginti. Login se pehle user_id hai hi nahi: rate:<IP>:login (dheeli had) + WAF.
 NAHI       IP ki had badha do (5 se 500): office bach gaya, par botnet ko bhi utni hi chhoot.
+```
+```
+TASVEER: IP vs banda
+office NAT:  1000 log -> 1 IP     -> rate:<IP> = ek ginti -> ek ki galti, 1000 block
+botnet:      1 bot   -> 1000 IP   -> har IP se thoda -> kisi IP ki limit nahi tooti
+user_id:     rate:<user_id>:<endpoint> -> 1000 log = 1000 ginti
+login se pehle user_id nahi -> rate:<IP>:login (dheeli had) + WAF
 ```
 ```
 AAGE POOCHEGA:

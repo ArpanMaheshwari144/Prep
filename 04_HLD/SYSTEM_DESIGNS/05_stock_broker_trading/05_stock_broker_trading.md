@@ -189,6 +189,12 @@ HAL        TCS ke saare order ek line, ek hi thread (TCS -> T3). Pehle main 10, 
 NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
 ```
 ```
+TASVEER: ek stock ek line
+TCS -> T3:  [main BUY 10] -> [Mohan BUY 10]       ek-ek karke, ek haath
+Suresh SELL 10 -> main ko 10 -> Suresh ke 0 bache -> Mohan ko 0
+INFY -> apna thread, TCS ki line se nahi rukta
+```
+```
 AAGE POOCHEGA:
   NIYAM: ek stock ki book ko ek waqt ek hi haath (ek thread): doosra line me ruke, race hi nahi; thread
          atka to sirf us stock ki line rukti, baaki stock chalte, standby log se taiyaar.
@@ -252,6 +258,13 @@ DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> g
 HAL        Har order PEHLE log me (number ke saath; log hi wo line hai, Kafka key = stock), PHIR book.
            Gira -> log #1 se replay, wahi book. STANDBY sirf log padhta, book taiyaar; pehla gire tab chalu.
 NAHI       doosra engine saath chalao (active-active): dono match karte = ek sauda do baar settle.
+```
+```
+TASVEER: log -> book
+order aaya -> log me likho (number ke saath) -> PHIR book me
+10:15 gira -> book (4,000 order, RAM) gayab
+log #1 se replay -> wahi kram -> wahi book
+STANDBY pehle se log padhta, book taiyaar -> pehla gire tab chalu (ek waqt ek hi match kare)
 ```
 ```
 AAGE POOCHEGA:
@@ -336,6 +349,13 @@ DIKKAT     Interviewer: "paisa Wallet DB me, share Portfolio DB me ho to?" -> ek
 HAL        har kadam likho, aage hi badho (STATUS LOG): wallet done -> portfolio done. Fail -> retry, aage hi
            badho (match ke baad ulta nahi). Ghanton fail -> PENDING + alert, ops share daalta.
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
+```
+```
+TASVEER: status log
+mera sauda (30k, 10 TCS):  wallet done -> portfolio ... fail
+retry -> retry -> portfolio done -> SETTLED
+ghanton fail -> app pe PENDING + alert -> ops share daalta
+ulta (paisa wapas) kabhi nahi: match ho chuka
 ```
 ```
 AAGE POOCHEGA:

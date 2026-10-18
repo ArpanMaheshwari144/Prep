@@ -209,6 +209,13 @@ flowchart LR
     style n_Counter fill:#f9a825,color:#000
 ```
 ```
+TASVEER: har App ka apna thaila
+Counter:  1-1000 -> App-1   ·   1001-2000 -> App-2   ·   agla thaila 2001 se
+main  -> App-1 -> number 1     -> code "1"
+Ravi  -> App-2 -> number 1001  -> code "g9"        (thaile alag -> code kabhi same nahi)
+App-1 400 pe gira -> 401-1000 bekaar (chalta) · wapas aaya to naya thaila
+```
+```
 AAGE POOCHEGA:
   NIYAM: number ek hi jagah se, App ko thaile (range) me; ek thaila kabhi do App ko nahi -> code kabhi same
          nahi. App gira to bacha thaila bekaar (chalta); counter gira to bhi haath ka thaila chalta.
@@ -290,6 +297,15 @@ HAL        code se data tukdon me baanto (CASSANDRA SHARD): GET /abc123 -> code 
 NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se country pata hi nahi.
 ```
 ```
+TASVEER: ghadi (ring)
+            M1
+        .        .         code ghadi ki disha me chale, pehli machine uski
+      M4          M2       M4 juda (M3 aur M1 ke beech): sirf M3..M4 wale code M4 pe
+        .        .         baaki saare code jahan the wahin
+            M3
+code % 3 -> code % 4:  lagbhag har code ki machine badli (isliye ghadi)
+```
+```
 AAGE POOCHEGA:
   NIYAM: jis cheez se padhte ho (code), usi se baanto -> har click seedha ek machine; machine judi / giri to
          sirf pados ke code khiskein, aur har tukde ki 3 copy.
@@ -332,6 +348,12 @@ DIKKAT     5 baje maine naya link banaya. Cassandra har link 3 alag machine pe r
 HAL        3 me se 2 copy pe pakka (QUORUM = "zyadatar"): likhna "done" jab 2 copy me, padhna bhi 2 copy se.
            Koi bhi 2 uthao (A+C, B+C, A+B), har jodi me A ya B aayegi hi -> khaali haath kabhi nahi.
 NAHI       3 me likho tabhi done, phir 1 se padho: ek copy giri = har naya link fail.
+```
+```
+TASVEER: 3 copy, 2 + 2
+likhna:  A haan · B haan · C abhi nahi        -> 2 mile = "done"
+padhna:  koi bhi 2 -> A+C · B+C · A+B          -> har jodi me A ya B -> link mila
+pehle:   sirf 1 se padha, wo C nikla           -> 404
 ```
 ```
 AAGE POOCHEGA:

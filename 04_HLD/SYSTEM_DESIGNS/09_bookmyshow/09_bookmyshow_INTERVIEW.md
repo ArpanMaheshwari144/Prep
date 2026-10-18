@@ -104,6 +104,12 @@ HAL        khaali ho tabhi book (ATOMIC UPDATE): check aur likhna EK query me ("
 NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke andar.
 ```
 ```
+TASVEER: ek row, do haath
+  10:00:01  main:  UPDATE ... 'booked' WHERE A1 AND 'available' -> row lock mujhe -> 1 row badli
+  10:00:01  Ravi:  wahi UPDATE -> lock pe ruka -> mera commit -> WHERE dobara: ab 'booked' -> 0 row
+  mujhe: "booked"                 Ravi ko: "seat ja chuki, doosri chuno"
+```
+```
 AAGE POOCHEGA:
   NIYAM: seat ka faisla DB ki EK query (WHERE khaali): jeeta = 1 row; haara = 0 row -> use turant "seat ja
          chuki, doosri chuno", dobara dabane se kuch nahi milta. Lock App me nahi, DB me.
@@ -138,6 +144,13 @@ HAL        5 min rok lo (HOLD + UMAR): row me 'held', held_until = now + 5 min; 
            hold saaf (sirf safai). Booking ka UPDATE purana hold khaali maane: WHERE status = 'available' OR
            (status = 'held' AND held_until < now())
 NAHI       hold Redis me (SET NX EX 300): hold Redis me + booking DB me = do jagah sach, farak aa sakta.
+```
+```
+TASVEER: seat ka safar
+  available --(maine A1 chuni)--> held (Arpan, held_until = abhi + 5 min)
+  held --(5 min ke andar pay)--> booked
+  held --(5 min nikle, pay nahi)--> booking UPDATE use khaali maane · sweeper -> available
+  beech me Ravi ko 'held' dikhe, le nahi sakta
 ```
 ```
 AAGE POOCHEGA:
@@ -238,6 +251,12 @@ DIKKAT     12 baje Arijit ka concert: ek show, 3000 seat, 2 lakh log ek saath. S
 HAL        darwaze pe line (WAITING ROOM): darwaze pe ginti (Redis DECR), ek waqt ~3000 andar, baaki line.
            Andar walo ki booking Kafka me, key = show_id -> ek show ek worker, ek-ek UPDATE -> ladaai khatam.
 NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line (queue) sambhaalti.
+```
+```
+TASVEER: darwaze pe line
+  2 lakh log -> [ darwaza: Redis DECR, ek waqt ~3000 andar ] -> baaki line me, apni jagah dekhte
+  andar wale -> booking Kafka (key = show_id) -> ek worker -> ek-ek UPDATE -> DB
+  koi bina khareede gaya / hold khatam -> line se agla andar
 ```
 ```
 AAGE POOCHEGA:

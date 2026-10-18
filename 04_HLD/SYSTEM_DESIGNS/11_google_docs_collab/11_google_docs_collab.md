@@ -152,6 +152,14 @@ HAL        op khiskao, kram server ka (OT = Operational Transformation): doosre 
 NAHI       phone ke time se kram: ghadi alag, aur position phir bhi khiskani padti.
 ```
 ```
+TASVEER: OT, ek hi pos 0
+doc "HELLO", dono ne v7 dekh ke likha:   main X @0   ·   Ravi Y @0
+server ka kram:  pehle X (mera), phir Y
+meri screen:  "XHELLO" + Y aaya  -> X pehle laga, Y ko 1 pe khiskao -> "XYHELLO"
+Ravi screen:  "YHELLO" + X aaya  -> X server pe pehla, @0 hi rahe   -> "XYHELLO"
+-> dono ke paas "XYHELLO", koi nahi mita
+```
+```
 AAGE POOCHEGA:
   NIYAM: kram sirf server ka (har op ko agla version), phone ki ghadi kabhi nahi; aaya op us kram se khiskta.
          nateeja: sabki screen same; mujhe apna likha turant dikhe, baaki ka khisak ke aaye.
@@ -276,6 +284,13 @@ HAL        jama karo, ek saath likho (REDIS BUFFER + BATCH): op Redis me, har 1 
 NAHI       "sahi chahiye to SQL lo": DB data ki shakal se chuno; join nahi, bas bahut jodna -> Cassandra.
 ```
 ```
+TASVEER: jama karo, ek saath likho
+~20 lakh log x ~3 akshar / sec = ~60 lakh op / sec   (har op DB me = DB baitha)
+op -> Redis buffer (ACK jab copy me bhi, WAIT 1)
+har 1 sec -> ek batch -> Cassandra (partition = docId, andar kram = version)
+-> DB pe har akshar nahi, har second ek dher
+```
+```
 AAGE POOCHEGA:
   NIYAM: ACK tabhi jab op Redis buffer + uski copy dono me; Cassandra ka batch ACK ke raaste me nahi.
          user ko turant "saved"; Redis gira to copy se; batch dobara likha = (docId, version) same, ek hi row.
@@ -346,6 +361,13 @@ flowchart LR
     n_Conn_Server_xN --> n_SQL
     n_BUF --> n_CAS
     style n_CAS fill:#f9a825,color:#000
+```
+```
+TASVEER: photo + baad ke op
+op:   v1 .................. v9,99,000 | v9,99,001 ...... v10,00,000
+      [ photo yahan tak (snapshot) ]   [ sirf ye ~1000 op chalao ]
+kholna = aakhri photo + uske baad ke op   (10 lakh shuru se nahi)
+purana version dekhna = us se pehli photo + beech ke op
 ```
 ```
 AAGE POOCHEGA:

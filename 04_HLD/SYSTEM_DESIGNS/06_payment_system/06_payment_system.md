@@ -186,6 +186,14 @@ HAL        wahi id dobara = paisa nahi (IDEMPOTENCY KEY): screen khulte app id b
 NAHI       server key banaye: server ko pata hi nahi ye wahi request hai.
 ```
 ```
+TASVEER: ek key, do request
+  screen khuli -> app ne key-555 banayi
+  req 1 (key-555) -> store me naya -> IN_PROGRESS -> 500 kaato + daalo -> DONE + jawab save
+  jawab aate waqt network gaya -> app ne khud dobara bheja
+  req 2 (key-555) -> store me pehle se DONE -> saved jawab -> paisa nahi kata
+  kul: 500 kata, 1000 nahi
+```
+```
 AAGE POOCHEGA:
   NIYAM: ek key = ek payment: key app banaye; wahi key dobara = kaam nahi, saved jawab. User ko ek hi
          payment dikhe; nayi payment = nayi screen = nayi key.
@@ -264,6 +272,14 @@ HAL        call se pehle 'pata nahi' likho (PENDING). PSP baad me khud batata "h
 NAHI       "bas rollback kar do": PSP me shayad paisa sach me kat chuka.
 ```
 ```
+TASVEER: pehle likho, phir call
+  1  DB: top-up 2000 = PENDING                 <- PSP call se PEHLE
+  2  PSP ko "2000 bhejo" -> jawab se pehle server gira
+  3  mujhe app pe: PROCESSING (andha dobara nahi)
+  4a PSP khud batata (webhook) -> PENDING -> SUCCESS / FAILED
+  4b webhook kho gaya -> job purane PENDING dekhta -> PSP se poochh ke pakka karta
+```
+```
 AAGE POOCHEGA:
   NIYAM: call se PEHLE 'pata nahi' (PENDING) likho: server gire to bhi tracking number bacha; PSP khud
          bataye (webhook) ya hum poochhe (job). User ko PROCESSING, andha dobara kabhi nahi.
@@ -337,6 +353,14 @@ DIKKAT     Dopahar maine support se poochha "kal raat 2200, subah 1100 kaise?" (
 HAL        har paisa khaate me (LEDGER), USI transaction me jisme paisa hila, sirf INSERT. Double-entry:
            "Arpan DEBIT 500" + "merchant CREDIT 500" (jod 0). Balance column bhi usi transaction me badalta.
 NAHI       balance + alag audit_log table: usme kuch bhi likh sakte, koi niyam nahi jaanchta.
+```
+```
+TASVEER: khaata, har jodi ka jod 0
+  kal raat balance 2200
+  ledger:  Arpan DEBIT 500   ·  kirana   CREDIT 500     (jod 0)
+           Arpan DEBIT ...   ·  ...      CREDIT ...     (jod 0)
+  saari line jodo -> subah 1100 kaise bana, line-line dikhta
+  galti mili -> line mitao nahi, NAYI ULTI LINE jodo
 ```
 ```
 AAGE POOCHEGA:

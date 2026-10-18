@@ -158,6 +158,12 @@ HAL        turant jawab, inbox peeche se (KAFKA + FANOUT WORKERS): tweet DB me +
 NAHI       App me peeche ek thread: App crash = thread ka kaam gaya; Kafka disk pe, dobara padh sakte.
 ```
 ```
+TASVEER: pehle vs ab
+pehle: tweet -> usi request me 5,000 inbox (~1 ms har) -> 5+ sec -> timeout, "fail" dikha
+ab:    tweet -> DB + Kafka -> turant "ho gaya"
+       Kafka -> fanout workers -> 5,000 inbox peeche se (key = author_id, kram se)
+```
+```
 AAGE POOCHEGA:
   NIYAM: user ko 'ho gaya' tab jab tweet DB me save; inbox bharna Kafka se peeche, dobara chale to bhi tweet
          ek hi baar dikhe (sorted set); apna tweet apni feed me turant.
@@ -194,6 +200,12 @@ DIKKAT     11 baje Bieber (10 crore follower) ne tweet kiya -> fanout ko 10 cror
 HAL        aam log push, celeb pull (HYBRID): 10,000 se kam follower = PUSH; zyada = PULL, inbox me nahi.
            Main feed kholun tab Bieber ke naye tweet alag se laao, mere inbox ke 50 ke saath milao + sort.
 NAHI       sabke liye pull: har feed khulna phir 200 ka jod, mehnga.
+```
+```
+TASVEER: push + pull
+Suresh (5,000 follower) tweet -> PUSH -> 5,000 inbox me tweet_id
+Bieber (10 crore)       tweet -> inbox me nahi, sirf uske apne tweet
+main feed khola -> mere inbox ke 50 + Bieber ke naye (PULL) -> milao + time se sort -> feed
 ```
 ```
 AAGE POOCHEGA:
@@ -272,6 +284,12 @@ DIKKAT     Shaam 5 baje Redis alert: har inbox me saare id, kabhi kaate nahi, so
 HAL        inbox chhota rakho (AAKHRI 800, ZREMRANGEBYRANK): purane kaato. 800 = ~60 KB, 50 crore = ~30 TB
            -> sirf jo mahine me aaye (zinda log) unka inbox, baaki hata do.
 NAHI       Redis me machine jodte jao: soye 40 crore ka inbox bhi RAM khaata, kharcha badhta, dikkat wahi.
+```
+```
+TASVEER: inbox chhota
+inbox: [sabse naya ........ 800] | 801 se purane -> kaato (ZREMRANGEBYRANK)
+800 id = ~60 KB  ·  50 crore inbox x 60 KB = ~30 TB
+mahine me aaye (zinda) -> inbox rakho  ·  soye -> hatao, wapas aaye to DB se bana lo
 ```
 ```
 AAGE POOCHEGA:

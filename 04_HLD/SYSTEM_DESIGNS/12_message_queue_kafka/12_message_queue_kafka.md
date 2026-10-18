@@ -183,6 +183,13 @@ flowchart LR
     style n_GE fill:#f9a825,color:#000
 ```
 ```
+TASVEER: ek team, tukde baante
+topic order-events:  P0 P1 P2 P3 | P4 P5 P6 | P7 P8 P9
+group email:         C1          | C2       | C3
+Ravi: hash(userId) % 10 = P7  -> sirf C3 padhta -> ek hi email
+C2 gaya -> P4-6 baaki machines me (rebalance) · 12 machine = 2 khaali (10 hi tukde)
+```
+```
 AAGE POOCHEGA:
   NIYAM: ek group ke andar ek partition = ek hi machine -> ek khabar team me ek hi baar.
          machine gayi -> uska partition baaki ko (rebalance); machine partition se zyada = khaali baithi.
@@ -247,6 +254,13 @@ DIKKAT     Dopahar Broker A ki disk mari. Har partition ki ek hi copy thi -> P0 
 HAL        har tukde ki copy (LEADER + ISR): LEADER + 2 follower alag machine pe; saath chalti copy = ISR.
            Leader gira -> Controller (KRaft) ISR se naya chunta. Zaroori: acks=all (saari ISR ne liya tab OK).
 NAHI       acks=1 sab jagah: leader ne "OK" bola, copy se pehle gira -> khabar gayi.
+```
+```
+TASVEER: leader + copy, acks=all
+P0:  A = LEADER   ·   B = follower   ·   C = follower        saath chalti copy = ISR {A, B, C}
+producer -> A ne likha -> B, C ne bhi liya -> tab "OK" (acks=all)
+A ki disk mari -> Controller (KRaft) ISR se B ko naya leader -> data bacha
+jo follower peeche reh gaya wo ISR se bahar -> leader nahi ban sakta
 ```
 ```
 AAGE POOCHEGA:
@@ -324,6 +338,13 @@ HAL        khabar bhi order ke saath DB me (OUTBOX, usi transaction me): BEGIN �
            outbox(E-101, sent = false) · COMMIT. Relay (alag thread, har 1 sec) sent = false wali row Kafka
            bheje, ACK aaye to sent = true.
 NAHI       "offset bachayega": nahi, offset consumer ki taraf hai; ye producer ki taraf ki dikkat.
+```
+```
+TASVEER: order + khabar ek saath
+BEGIN -> orders(101) + outbox(E-101, sent = false) -> COMMIT      (dono ya koi nahi)
+relay (har 1 sec): sent = false wali row -> Kafka -> ACK -> sent = true
+server COMMIT se pehle gira -> na order, na khabar · baad me gira -> row padi, relay bhej dega
+relay ACK se pehle gira -> khabar dobara jaati -> consumer eventId se skip
 ```
 ```
 AAGE POOCHEGA:

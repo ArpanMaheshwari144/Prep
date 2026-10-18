@@ -220,6 +220,12 @@ HAL        do haal rakho (SENDING / SENT): bhejne se PEHLE "BHEJ RAHA HOON" (SEN
 NAHI       parchi hi hata do: worker mara to Kafka dobara deta -> OTP / email do baar (card 3 wapas).
 ```
 ```
+TASVEER: SENDING / SENT
+Worker-A: parchi SENDING (60 sec) -> SMS call FAIL / A mara -> 60 sec me parchi khud mit-ti
+Kafka dobara deta -> Worker-B: SENDING mila -> thoda ruko · kuch nahi -> SENDING lagao, bhejo
+company OK -> SENT (1 din)  ->  koi bhi SENT dekhe -> chhodo
+```
+```
 AAGE POOCHEGA:
   NIYAM: chhodo sirf pakke SENT pe; SENDING = adhoora, chhoti umar se khud mit jaaye -> khabar khoti nahi;
          kabhi do baar chali jaaye to chalega (OTP do baar > na aana).
@@ -256,6 +262,12 @@ DIKKAT     Usi waqt SMS company pareshaan, aur hum har second dobara bhej ke usp
 HAL        har baar zyada ruko (BACKOFF + JITTER): 1, 2, 4, 8 sec + thoda random (ek saath na lautein).
            Had paar -> DLQ (fail khabaron ki alag line) + alert.
 NAHI       retry band, ek fail = chhodo: company 2 sec hili to OTP hamesha ke liye gaya.
+```
+```
+TASVEER: backoff + jitter
+fail -> 1 s (+random) -> 2 s -> 4 s -> 8 s ... -> had paar -> DLQ + alert
+bina random: saare worker ek saath lautein -> company pe phir ek saath hathoda
+random ke saath: lautna bikhar jaata
 ```
 ```
 AAGE POOCHEGA:
@@ -296,6 +308,12 @@ DIKKAT     SMS company abhi bhi dheemi: line alag ho gayi, par har call 30 sec a
 HAL        2-3 sec me chhodo, fail pe call band (TIMEOUT + FUSE): har company alag, 5 fail -> OPEN, SNS pe.
            30 sec baad HALF-OPEN (ek test call) -> chali to CLOSED. FUSE = circuit breaker.
 NAHI       worker badha do: naye worker bhi 30 sec me phanse, dheemi company pe aur bojh.
+```
+```
+TASVEER: fuse (circuit breaker)
+CLOSED (call chalti)  -- 5 fail -->  OPEN (call band, SNS pe)
+OPEN  -- 30 sec -->  HALF-OPEN (ek test call)  -- chali --> CLOSED  ·  fail --> OPEN
+har call 2-3 sec me chhodo (timeout), 30 sec phansna nahi
 ```
 ```
 AAGE POOCHEGA:

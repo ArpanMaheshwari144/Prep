@@ -111,6 +111,13 @@ flowchart LR
     style n_Cache fill:#f9a825,color:#000
 ```
 ```
+TASVEER: LRU = HashMap + list
+  AAGE (abhi chhua)  user:7 <-> user:42 <-> home <-> user:9  PEECHE (sabse purana)
+  GET user:9  -> mila -> utha ke AAGE:  user:9 <-> user:7 <-> user:42 <-> home
+  RAM bhari, SET user:55 -> PEECHE wala (home) bahar -> user:55 AAGE
+  HashMap: key -> list ka dabba (dhoondhna O(1), hilana O(1))
+```
+```
 AAGE POOCHEGA:
   NIYAM: RAM bhari to sabse purana chhua pehle jaaye; umar khatam = key bekaar. Hati key = sirf ek miss,
          App DB se laake wapas rakhta; sach DB me, cache sirf tez copy.
@@ -153,6 +160,13 @@ DIKKAT     Subah 11 tak data 1 TB ho gaya, ek machine me 64 GB -> 16+ machine. "
 HAL        gol ghadi pe key aur machine (CONSISTENT HASHING): key ghadi ki disha me chale, PEHLI machine uski.
            VIRTUAL NODES se bojh barabar; App ki CACHE CLIENT library hisaab karti.
 NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
+```
+```
+TASVEER: ghadi 0..360, disha me chalo
+  0 ------ A=100 ------ B=200 --- D=250 --- C=300 ------ 360 (= 0, wapas A)
+  key 150 -> aage pehli machine = B
+  key 350 -> aage koi nahi -> ghoom ke A
+  D=250 juda -> sirf 201..250 wali key B se D pe; baaki sab apni jagah
 ```
 ```
 AAGE POOCHEGA:
@@ -268,6 +282,13 @@ flowchart LR
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
     style n_App fill:#f9a825,color:#000
+```
+```
+TASVEER: ek jaaye, baaki ruke
+  7 baje "home" key khatam, 1000 request ek saath
+  req 1:       SET lock:home 1 NX EX 5 -> mila -> DB se join -> cache me home -> lock chhoda
+  req 2..1000: lock nahi mila -> 50-100 ms ruko -> cache se home (ya purani value)
+  DB pe: 1000 ki jagah 1
 ```
 ```
 AAGE POOCHEGA:

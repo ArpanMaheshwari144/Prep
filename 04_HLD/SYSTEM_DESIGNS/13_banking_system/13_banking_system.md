@@ -241,6 +241,12 @@ flowchart LR
     style n_REC fill:#f9a825,color:#000
 ```
 ```
+TASVEER: khaata vs balance
+khaata (sach):  har len-den ki line, sirf INSERT   -> saari line jodo = 29,800
+balance column (cache, usi transaction me badla)  = 29,800   -> mila, theek
+raat farak: jod 29,800 vs column 30,300  -> ALERT + account roko -> pehle KYUN, phir khaata jeete
+```
+```
 AAGE POOCHEGA:
   NIYAM: sach = khaata, balance uska jod (cache); farak = alert + account roko, pehle KYUN, phir khaata jeete.
   "Kaise kaam karta?"             -> BALANCE = KHAATE KA JOD (cache), usi transaction me: kyunki har baar
@@ -337,6 +343,13 @@ flowchart LR
     n_DB --> n_K
     n_REC --> n_DB
     style n_DB fill:#f9a825,color:#000
+```
+```
+TASVEER: gol ghera, phir ek kram
+Txn1 (Arpan -> dukaan 500):        taala Arpan   -> intezaar dukaan
+Txn2 (dukaan -> Arpan 200 refund): taala dukaan  -> intezaar Arpan    = gol ghera (deadlock)
+ilaaj: dono CHHOTI ID PEHLE lock karein -> dono ka pehla taala ek hi row pe
+-> jo baad me aaya wo pehle hi taale pe ruka, doosra poora, phir wo
 ```
 ```
 AAGE POOCHEGA:
