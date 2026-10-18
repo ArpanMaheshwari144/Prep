@@ -102,7 +102,7 @@ flowchart LR
     n_Payment_Svc --> n_DB
 ```
 
-#### 0 SHURU: DB KAUNSA? SQL
+#### SHURU: DB KAUNSA? SQL
 ```
 DIKKAT     Ek payment me paanch likhai: Arpan -500, merchant +500, khaate (ledger) me 2 line, payment ka haal.
            Ye paanchon ek saath honi chahiye. Chaar hui aur ek reh gaya = hisaab galat.
@@ -596,7 +596,7 @@ SCAM 1992 (ledger kyun itna zaroori):
 
 CARD SE AAYE SAWAAL (safar ke bahar):
 "NoSQL kyun nahi?"                  -> kai row / table pe ek saath sab ya kuch nahi, paisa turant sahi;
-                                       "thodi der baad sahi" (eventual) paise me nahi (card 0)
+                                       "thodi der baad sahi" (eventual) paise me nahi (SHURU)
 "Sach me do payment (100 + 100)?"    -> do baar screen khuli = do key -> dono honge (card 3)
 "Key server kyun nahi banata?"       -> dobara app bhejta; app ki key hi dono request jodti (card 3)
 "Redis aur DB dono kyun?"            -> Redis (SETNX) tez pakde, DB UNIQUE aakhri deewar (card 3)

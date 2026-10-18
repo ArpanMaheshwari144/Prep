@@ -81,7 +81,7 @@ flowchart LR
     n_Order_Service --> n_DB
 ```
 
-#### 0 SHURU: ORDER BOOK KAISE MATCH KARTA
+#### SHURU: ORDER BOOK KAISE MATCH KARTA
 ```
 DIKKAT     TCS ka share: kuch bechna chahte (SELL), kuch khareedna (BUY).
            Kiska sauda kisse hoga, aur kis daam pe?
@@ -491,8 +491,8 @@ CARD SE AAYE SAWAAL (safar ke bahar):
 "Crash me paisa ka kya?"             -> paisa DB me, wahan rollback; book log se (card 5)
 "Galti pakdoge kaise?"               -> raat ledger jod hamesha 0: galti turant dikhe (card 6)
 "Paisa ulta kyun nahi?"             -> match ke baad sauda pakka: bechne wale ko 20k mil chuke (card 7)
-"Book DB me rakhi to?"            -> RAM me rakho: DB = milliseconds har order, RAM = microseconds (card 0)
-"RAM me hai, crash -> book gayi?" -> match se PEHLE log me; crash pe log shuru se chalao = wahi book (card 0)
+"Book DB me rakhi to?"            -> RAM me rakho: DB = milliseconds har order, RAM = microseconds (SHURU)
+"RAM me hai, crash -> book gayi?" -> match se PEHLE log me; crash pe log shuru se chalao = wahi book (SHURU)
 ```
 
 ---

@@ -84,7 +84,7 @@ flowchart LR
     n_App --> n_DB
 ```
 
-#### 0 SHURU: CODE KAISE BANE (dil ka hissa)
+#### SHURU: CODE KAISE BANE
 ```
 DIKKAT     Maine diya "https://amazon.in/....../bahut-lamba-link", mujhe chahiye "bit.ly/w7e".
            Har link ka code alag ho, warna do link ek hi jagah khulenge.
@@ -558,9 +558,9 @@ CARD SE AAYE SAWAAL (safar ke bahar):
   ek link viral, machine garam?  -> pehle Redis me milta, Cassandra tak kam aata
   naya link turant, Redis?       -> banate hi Redis me bhi daala, zyadatar wahin se milta
   5 copy ho to?                  -> likhne + padhne ki ginti > copy (W + R > N): 3 + 3 > 5
-  (c0) MD5 / random code?         -> do link ka code same ho sakta, har baar "pehle se hai?"; counter me nahi
-  (c0) counter se code ka andaza? -> haan, keemat; chahiye to pehle shuffle / XOR, phir base62 (unique)
-  (c0) user apna code maange?     -> lambai, reserved (admin) nahi, pehle se nahi; do log same -> UNIQUE, 409
+  (SHURU) MD5 / random code?         -> do link ka code same ho sakta, har baar "pehle se hai?"; counter me na
+  (SHURU) counter se code ka andaza? -> haan, keemat; chahiye to pehle shuffle / XOR, phir base62 (unique)
+  (SHURU) user apna code maange?     -> lambai, reserved (admin) nahi, pehle se nahi; do log -> UNIQUE, 409
 ```
 
 ---

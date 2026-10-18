@@ -101,7 +101,7 @@ flowchart LR
     n_USER --> n_CS
 ```
 
-#### 0 SHURU: KHULA TAAR (WEBSOCKET) AUR REGISTER
+#### SHURU: KHULA TAAR (WEBSOCKET) AUR REGISTER
 ```
 DIKKAT     Ravi ne kabhi nahi poochha "koi message aaya?", phir bhi mera "hi" uski screen pe turant chahiye.
            HTTP me server sirf jawab deta, khud awaaz nahi laga sakta.
@@ -571,8 +571,8 @@ API:      GET /connect (BAND nahi hoti — WebSocket) · POST /messages { chatId
           GET /messages?chatId=&before= (wapas lena + history, cursor)
           POST /chats/{chatId}/read { read_upto } (tick)
 
-(c0) "Polling (har 5 sec poochho)?" -> 100 me 1 kaam ki; WebSocket = ek baar judo, turant.
-(c0) "SSE kyun nahi?"             -> SSE sirf server -> user; chat me dono taraf chahiye.
+(SHURU) "Polling (har 5 sec poochho)?" -> 100 me 1 kaam ki; WebSocket = ek baar judo, turant.
+(SHURU) "SSE kyun nahi?"             -> SSE sirf server -> user; chat me dono taraf chahiye.
 "Redis pub-sub se kyun nahi?"      -> chal sakta, par kuch rakhta nahi: sunne wala na ho to message gaya.
 "message_id se partition kyun nahi?" -> aakhri 50 = 50 jagah se; jo saath padha jaata wo saath nahi.
 "SQL kyun nahi?"                   -> rishte / transaction chahiye nahi; bas bahut likhai (46,000 / sec).

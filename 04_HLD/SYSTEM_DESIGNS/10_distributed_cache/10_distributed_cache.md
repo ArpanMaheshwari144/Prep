@@ -77,7 +77,7 @@ flowchart LR
     n_App --> n_Cache
 ```
 
-#### 0 SHURU: CACHE-ASIDE (cache kaam kaise karta)
+#### SHURU: CACHE-ASIDE
 ```
 DIKKAT     Meri profile DB se padhne me ~10 ms (disk). 10 lakh log / second profile khol rahe
            -> DB ghutno pe.
@@ -364,12 +364,12 @@ POOCHEGA: "How do you know it's working?"         -> HIT RATIO sabse
 
 ```
 SAFAR KE BAHAR WALE SAWAAL:
-(c0) "Likhna write-through / write-back kyun nahi?" -> write-through = DB + cache saath (taaza, likhna
+(SHURU) "Likhna write-through / write-back kyun nahi?" -> write-through = DB + cache saath (taaza, likhna
                                        dheema); write-back = pehle sirf cache, DB baad me (tez, par cache
                                        mara to data gaya -> paise pe kabhi nahi)
-(c0) "Poora cache hi gir gaya?" -> saari padhai DB pe: DB ke aage rate limit / load shedding, warna DB
+(SHURU) "Poora cache hi gir gaya?" -> saari padhai DB pe: DB ke aage rate limit / load shedding, warna DB
                                   bhi gira
-(c0) "Chal raha hai, kaise pata?" -> HIT RATIO pehle (achanak gira = kuch toota) + p99 + evictions
+(SHURU) "Chal raha hai, kaise pata?" -> HIT RATIO pehle (achanak gira = kuch toota) + p99 + evictions
 "LFU kyun nahi (kitni baar chhua)?" -> kal ki famous key aaj bhi baithi rehti, purani ginti nahi ghatti;
                                        default LRU
 "Redis sach me poori LRU list rakhta?" -> nahi, andaaze wala LRU: kuch random key me sabse purani; poori list

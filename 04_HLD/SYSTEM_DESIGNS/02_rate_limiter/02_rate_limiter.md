@@ -85,7 +85,7 @@ flowchart LR
     n_USER --> n_App
 ```
 
-#### 0 SHURU: TOKEN BUCKET KAISE CHALTA (yahi algo chuna)
+#### SHURU: TOKEN BUCKET KAISE CHALTA
 ```
 DIKKAT     Har user ki had chahiye, par asli traffic jhatke me aata (10 request ek saath).
            Had bhi pakki rahe, aur jhatka bhi nikle.
@@ -553,12 +553,12 @@ CARD SE AAYE SAWAAL (safar ke bahar):
   429 ya 503?                   -> user ki had = 429 · system ki had = 503
   API key chori?                -> nuksaan seemit (had key pe), key badlo / band karo
   (c9) 5 galat password?        -> username pe lock nahi, CAPTCHA / der: warna attacker tujhe hi lock kare
-  (c0) fixed window kyun nahi?     -> sasta, par kinare pe double (59th + 61st second)
-  (c0) sliding log?                -> har request ka time, pichhle 60 sec gino: bilkul sahi, par memory bahut
-  (c0) sliding counter?            -> is minute ki + pichhle ka hissa (jaise 70%): 2 number, lagbhag sahi
-  (c0) leaky bucket?               -> line me, fixed speed se nikalti: smooth, par burst nahi nikalne deta
-  (c0) token bucket hi kyun?       -> burst chahiye + memory kam + Redis me 2 number (AWS / Stripe bhi yahi)
-  (c0) do request ek saath hisaab? -> padhna + hisaab + likhna EK Lua (HMGET -> HSET); time ek jagah se
+  (SHURU) fixed window kyun nahi?     -> sasta, par kinare pe double (59th + 61st second)
+  (SHURU) sliding log?                -> har request ka time, pichhle 60 sec gino: sahi, par memory bahut
+  (SHURU) sliding counter?            -> is minute ki + pichhle ka hissa (jaise 70%): 2 number, lagbhag sahi
+  (SHURU) leaky bucket?               -> line me, fixed speed se nikalti: smooth, par burst nahi nikalne deta
+  (SHURU) token bucket hi kyun?       -> burst chahiye + memory kam + Redis me 2 number (AWS / Stripe yahi)
+  (SHURU) do request ek saath hisaab? -> padhna + hisaab + likhna EK Lua (HMGET -> HSET); time ek jagah se
 ```
 
 ---
