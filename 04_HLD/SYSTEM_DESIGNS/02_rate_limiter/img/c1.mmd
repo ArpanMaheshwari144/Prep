@@ -4,7 +4,7 @@ flowchart LR
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Redis["Redis<br/>do App, ginti bat gayi<br/>-> sab App ek Redis key gine (rate:Arpan:login), har request +1<br/>pehli pe 60 sec umar, phir key khud mite, ginti 0 (Redis + EXPIRE)<br/>6thi request -> ginti 5 paar, 429<br/>minute ke kinare 5 + 5 -> 2 sec me 10 (fixed window)"]
+    n_Redis["Redis<br/>do App, ginti bat gayi<br/>-> sab App ek Redis key gine, window khatam to key khud mite (Redis + EXPIRE)<br/>minute ke kinare 5 + 5 -> 2 sec me 10 (fixed window), isliye token bucket"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2

@@ -75,7 +75,7 @@ KYUN CHAHIYE:  Twitter / SMS me jagah kam · marketing me kis link se kitne aaye
 User link deta -> App ek code banata -> DB me (code, lamba link) save.
 Click aaya -> App DB me code dhoondhta -> asli link pe bhej deta.
 ```
-![cdabba](img/cdabba.svg)
+![cdabba](img/cdabba-948b836f.svg)
 
 
 #### SHURU: CODE KAISE BANE
@@ -107,7 +107,7 @@ AAGE POOCHEGA:
 DIKKAT     10 baje maine sale ka chhota link College Gang me daala, viral -> ~1 lakh click / sec, har click
            DB (disk) tak. Redirect dheema hua, phir DB hi baith gaya.
 ```
-![c1](img/c1.svg)
+![c1](img/c1-78f485cb.svg)
 
 ```
 NAHI       DB ki read copy (replica): wo bhi disk se, dheemi; 1 lakh / sec ke liye bahut copies chahiye.
@@ -132,7 +132,7 @@ AAGE POOCHEGA:
 DIKKAT     11 baje wahi bheed ek hi App machine pe. Wo dheemi hui, phir giri -> poori site band.
            Ek cheez jiske girne se sab ruk jaaye = SPOF (single point of failure).
 ```
-![c2](img/c2.svg)
+![c2](img/c2-3b0b9f54.svg)
 
 ```
 NAHI       ek bahut badi machine (vertical scale): uski bhi had, aur akeli -> wahi giri to sab band.
@@ -154,7 +154,7 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar maine aur Ravi ne ek hi pal me link banaya. Request do alag App pe gayi, dono ne apni
            ginti se agla number liya -> dono ko code "g9" mila. Ravi ka link khola to mera sale page khula.
 ```
-![c3](img/c3.svg)
+![c3](img/c3-6d043766.svg)
 
 ```
 TASVEER: har App ki apni range
@@ -179,7 +179,7 @@ AAGE POOCHEGA:
 DIKKAT     2 baje mujhe ginti chahiye thi kitne click aaye. Usi request me analytics DB me likhne lage,
            phir redirect. Analytics DB dheema -> har user redirect ke liye ruka.
 ```
-![c4](img/c4.svg)
+![c4](img/c4-8bb72c1e.svg)
 
 ```
 NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein gayi.
@@ -202,7 +202,7 @@ AAGE POOCHEGA:
 DIKKAT     4 baje DB team: 10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Ek machine me nahi aata,
            aur wo ek machine mari to saare link gaye.
 ```
-![c5](img/c5.svg)
+![c5](img/c5-4b4afd57.svg)
 
 ```
 NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se country pata hi nahi.
@@ -233,7 +233,7 @@ DIKKAT     5 baje maine naya link banaya. Cassandra har link 3 alag machine pe r
            Link A aur B me pahunch gaya, C tak abhi nahi (aam taur pe ms, bheed me second tak).
            Isi beech mera click C pe gaya -> C bola "ye link mere paas nahi" -> 404.
 ```
-![c6](img/c6.svg)
+![c6](img/c6-283f96f1.svg)
 
 ```
 NAHI       3 me likho tabhi done, phir 1 se padho: ek copy giri = har naya link fail.
@@ -261,7 +261,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko akela LB hi gir gaya. App machine sab zinda, par har click LB pe atka -> koi link
            nahi khula, poori site band. App badhane se kuch nahi hua, darwaza hi band tha.
 ```
-![c7](img/c7.svg)
+![c7](img/c7-64ce45a2.svg)
 
 ```
 AAGE POOCHEGA:
@@ -278,7 +278,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko spammer: ek API key se har second 5,000 link (phishing). Aam din poore system pe ~1,000
            -> 5 guna bojh, asli users dheeme; Gmail / WhatsApp ne hamara domain "spam" maana.
 ```
-![c8](img/c8.svg)
+![c8](img/c8-995d0e52.svg)
 
 ```
 NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana lega.
@@ -319,7 +319,7 @@ JAWAB:    Short code = ek badhta number, jise 62 akshar (a-z, A-Z, 0-9) me likha
           gire to sab na gire. Darwaze pe had.
           Aage: apna naam wala link, purane link hatana, doosre desh me copy.
 ```
-![c8_2](img/c8_2.svg)
+![c8_2](img/c8_2-42ba1386.svg)
 
 
 ---

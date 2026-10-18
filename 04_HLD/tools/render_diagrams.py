@@ -78,12 +78,18 @@ def main(f):
     s = open(f, encoding='utf-8').read()
     if '```mermaid' not in s:
         # file naam me hash (c1-<hash>.svg): GitHub ?v= nahi maanta, naya naam = nayi image turant
-        import hashlib, glob
+        import hashlib, glob, shutil
         link = re.compile(r'!\[(\w+)\]\(img/\1(?:-[0-9a-f]{8})?\.svg(?:\?v=\w+)?\)')
         def one(m):
             name = m.group(1)
             mmd = os.path.join(img, name + '.mmd')
-            if not os.path.exists(mmd): return m.group(0)
+            if not os.path.exists(mmd):
+                term = concept_for(f, name)   # sirf concept, design nahi (jaise SHURU card)
+                if not term: return m.group(0)
+                tmp = os.path.join(img, name + '.svg')
+                shutil.copy(os.path.join(CONCEPT, 'out', term + '.svg'), tmp); fix_size(tmp)
+                print('ok', name, '= ' + term)
+                return save(name, tmp)
             src = open(mmd, encoding='utf-8').read()
             tmp = os.path.join(img, name + '.svg')
             ok, err = render(src, tmp)
@@ -91,6 +97,8 @@ def main(f):
             if term: merge_concept(tmp, src, term)
             print('ok' if ok else 'FAIL', name, ('+ ' + term) if term else '', '' if ok else err)
             if not ok: return m.group(0)
+            return save(name, tmp)
+        def save(name, tmp):
             h = hashlib.md5(open(tmp, 'rb').read()).hexdigest()[:8]
             for old in glob.glob(os.path.join(img, name + '-*.svg')):
                 if re.fullmatch(re.escape(name) + r'-[0-9a-f]{8}\.svg', os.path.basename(old)): os.remove(old)

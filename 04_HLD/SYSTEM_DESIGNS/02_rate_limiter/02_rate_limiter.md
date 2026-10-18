@@ -78,7 +78,7 @@ NUMBERS:  jagah ka hisaab bekaar hai: har user ki ek ginti + expiry, bas.
 ```
 App ki memory me ek ginti. Har request pe ginti + 1. Had paar -> 429.
 ```
-![cdabba](img/cdabba.svg)
+![cdabba](img/cdabba-53c27c30.svg)
 
 
 #### SHURU: TOKEN BUCKET KAISE CHALTA
@@ -88,13 +88,8 @@ DIKKAT     Har user ki had chahiye, par asli traffic jhatke me aata (10 request 
 HAL        TOKEN BUCKET: max 10 token, har second 1 bharta, har request 1 leti; khaali -> 429.
            Redis me sirf 2 number; bharne ka koi job nahi, request aane pe hisaab (lazy).
 ```
-```
-TASVEER: bucket ka hisaab (had 10, 1 token / sec)
-  key tb:Arpan:login -> tokens = 7, last = 10:00:05
-  request 10:00:08 -> 3 sec beete x 1 = 3 bharo -> 7 + 3 = 10 (had 10 se upar nahi)
-  token >= 1? haan -> 1 ghatao -> tokens = 9, last = 10:00:08 -> ALLOW
-  khaali (0) -> 429, Retry-After = agla token kab bharega
-```
+![ctoken](img/ctoken-1caa9f72.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: bucket = do number (kitne token, aakhri baar kab); bharna request aane pe hisaab se, koi job nahi.
@@ -111,7 +106,7 @@ AAGE POOCHEGA:
 DIKKAT     Subah 9 baje password bhool gaya, 9 baar login (limit 5 / min). LB ne baanta: App-1 pe 5, App-2
            pe 4. Har App ne apni ginti dekhi -> kisi ko 5 PAAR nahi dikha, 9 andar.
 ```
-![c1](img/c1.svg)
+![c1](img/c1-a49a15f0.svg)
 
 ```
 NAHI       ek user hamesha ek App pe (sticky LB): wo App gira to ginti gayi; App badhe / ghate to phir bati.
@@ -132,7 +127,7 @@ AAGE POOCHEGA:
 DIKKAT     10 baje bot ne mere account pe ek hi pal me 20 login parallel bheje; ginti 4, limit 5.
            App-1 ne Redis se "4" padha (GET), App-2 ne bhi "4"; dono ne +1 karke "5" likha (SET) -> andar 6.
 ```
-![c2](img/c2.svg)
+![c2](img/c2-d713a95a.svg)
 
 ```
 NAHI       App me synchronized / lock: sirf ek machine ke andar; do App me race wahi ki wahi.
@@ -159,7 +154,7 @@ AAGE POOCHEGA:
 DIKKAT     Bot ki saari request App tak pahunchti, wahan ginti hoti, phir 429. Mana hone wali request bhi
            LB, App aur Redis tak ghoomi -> bot ke 10,000 request / sec se App bhar gayi, asli log dheeme.
 ```
-![c3](img/c3.svg)
+![c3](img/c3-2c6d6ca7.svg)
 
 ```
 AAGE POOCHEGA:
@@ -177,7 +172,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Dopahar Redis mar gaya. Saari ginti wahin thi -> kisi ko pata hi nahi kisne kitni bheji.
 ```
-![c4](img/c4.svg)
+![c4](img/c4-f2bbfb88.svg)
 
 ```
 NAHI       sab fail-open: login khula = koi bina had password guess karta rahega.
@@ -206,7 +201,7 @@ AAGE POOCHEGA:
 DIKKAT     Meri script India, US aur Europe teen region se ek saath chali. Har region ka Redis apni alag
            ginti rakhta -> har jagah 50, kisi ki had paar nahi hui, aur 100 ki had pe 150 nikal gayi.
 ```
-![c5](img/c5.svg)
+![c5](img/c5-1f8e86d7.svg)
 
 ```
 AAGE POOCHEGA:
@@ -223,7 +218,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     4 baje bhi wahi bot. 429 sirf bolta "60 second baad aao" -> bot 60 sec baad phir, din bhar, roz.
 ```
-![c6](img/c6.svg)
+![c6](img/c6-bb6fdc31.svg)
 
 ```
 NAHI       turant ban: asli user bhi tez click karta, office ke 1000 log ek IP (NAT), sale me asli bheed.
@@ -245,7 +240,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam 6 baje sale khuli. Har user apni had ke andar tha, par laakhon user ek saath -> kul request
            server ki taakat se zyada, CPU 100%, sabke liye site band. Per-user had kuch nahi rok paayi.
 ```
-![c7](img/c7.svg)
+![c7](img/c7-730680d4.svg)
 
 ```
 AAGE POOCHEGA:
@@ -262,7 +257,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko attack chal raha tha, usi waqt poora Redis Cluster gira, copy bhi. Ginti kahin nahi ho
            rahi, aam API khuli chhodi thi -> attacker ki saari request bina roke andar, server bhar gaye.
 ```
-![c8](img/c8.svg)
+![c8](img/c8-8d5f4ca7.svg)
 
 ```
 AAGE POOCHEGA:
@@ -281,7 +276,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat 11 baje office ki night shift: 1000 log ek IP (NAT) ke peeche, ek ki galti -> IP block, sab
            1000 block. Ulta, botnet ke paas 1000 IP, har IP se thoda -> kisi IP ki limit nahi tooti.
 ```
-![c9](img/c9.svg)
+![c9](img/c9-c2e38475.svg)
 
 ```
 NAHI       IP ki had badha do (5 se 500): office bach gaya, par botnet ko bhi utni hi chhoot.
@@ -326,7 +321,7 @@ JAWAB:    Limiter darwaze (API gateway) pe, mana hui request andar jaati hi nahi
           Redis ki copy. Redis poora band: har server apni ginti, login / OTP band.
           Baar-baar wale hamlawar ko WAF se block, aur badi asli bheed ke liye poore system ki had.
 ```
-![c9_2](img/c9_2.svg)
+![c9_2](img/c9_2-ae88dd5d.svg)
 
 
 ---

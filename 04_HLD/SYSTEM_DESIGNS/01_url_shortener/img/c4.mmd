@@ -4,7 +4,7 @@ flowchart LR
     n_LB["LB"]
     n_App_xN["App x N"]
     n_Counter["Counter"]
-    n_Kafka["Kafka<br/>ginti likhi, redirect dheema<br/>-> 302 turant do, ek click hua Kafka (disk pe log) me daalo<br/>Analytics apni speed se padhe, kahan tak padha yaad (Kafka, offset)<br/>Analytics dheema -> khabar Kafka me padi rahe<br/>Kafka band -> redirect chalta, kuch ginti gayi<br/>wahi click do baar -> click id se ek hi (dedupe)<br/>kharab khabar -> alag line (DLQ), baaki chalti"]
+    n_Kafka["Kafka<br/>ginti likhi, redirect dheema<br/>-> redirect turant, click Kafka me daalo, Analytics apni speed se padhe (Kafka)<br/>wahi click do baar -> click id se ek hi (dedupe)<br/>kharab khabar -> alag line, baaki chalti (DLQ)"]
     n_Analytics_svc["Analytics svc"]
     n_DLQ["DLQ"]
     n_RD["Redis + DB"]

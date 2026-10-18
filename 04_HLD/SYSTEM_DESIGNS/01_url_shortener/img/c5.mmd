@@ -6,7 +6,7 @@ flowchart LR
     n_Counter["Counter"]
     n_ANA["Analytics (Kafka + DLQ)"]
     n_Redis["Redis"]
-    n_Cassandra["Cassandra<br/>5 saal me 90 TB<br/>-> code se tay kaunsi machine: ring = gol ghera, code aage chale, pehli machine uski<br/>har tukda 3 copy (Cassandra shard + ring)<br/>machine mari -> baaki 2 copy se milta<br/>nayi machine -> sirf pados ke code khiskein (ring)"]
+    n_Cassandra["Cassandra<br/>5 saal me 90 TB<br/>-> data kai machine me, code se tay kaunsi machine (shard + ring)<br/>machine mari -> baaki copy se milta<br/>nayi machine -> sirf pados ke code khiskein"]
     n_USER --> n_LB
     n_LB --> n_App_xN
     n_App_xN --> n_Counter

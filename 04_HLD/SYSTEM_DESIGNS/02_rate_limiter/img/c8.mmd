@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
-    n_API_Gateway["API Gateway<br/>attack me Redis gira, API khuli<br/>-> Redis + copy gaye to har server apni memory me gine<br/>had baant do (100 / 4 server), motamoti had (local fallback)<br/>ek user alag server -> motamoti had, bina had se behtar<br/>Redis wapas -> phir sabki ek ginti"]
+    n_API_Gateway["API Gateway<br/>attack me Redis gira, API khuli<br/>-> har server apni memory me gine, had baant do (local fallback)<br/>Redis wapas -> phir sabki ek ginti"]
     n_Redis_Cluster["Redis Cluster"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]

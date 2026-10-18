@@ -4,7 +4,7 @@ flowchart LR
     n_Route_53["Route 53"]
     n_ALB["ALB"]
     n_API_Gateway["API Gateway"]
-    n_Redis_Cluster["Redis Cluster<br/>Redis gira, limiter andha<br/>-> Redis ki copy taiyaar: main mara to copy main (replica, Cluster / Sentinel)<br/>poora gaya: feed khuli (fail-open), login / OTP band (fail-closed)<br/>main mara -> copy main bane, thodi ginti khoi<br/>gira, pata kaise -> chhota timeout ~5 ms, ruko mat<br/>CPU full -> tukde karo, copy nahi (shard)"]
+    n_Redis_Cluster["Redis Cluster<br/>Redis gira, limiter andha<br/>-> copy taiyaar, main mara to copy main (replica)<br/>poora gaya -> feed khuli, login band (fail-open / fail-closed)<br/>CPU full -> tukde karo, copy nahi (shard)"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
     n_USER --> n_Route_53

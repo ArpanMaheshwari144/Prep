@@ -194,7 +194,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Dopahar Broker A ki disk mari. Har partition ki ek hi copy thi -> P0 ka data hamesha ke liye gaya.
 ```
-![c6](img/c6-b1036353.svg)
+![c6](img/c6-d755f232.svg)
 
 ```
 NAHI       acks=1 sab jagah: leader ne "OK" bola, copy se pehle gira -> khabar gayi.

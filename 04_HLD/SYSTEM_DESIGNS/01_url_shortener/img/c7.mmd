@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53<br/>LB hi gira<br/>-> Route 53 har ~30 sec LB se poochhe (health check)<br/>chup LB list se bahar, phone ko zinda LB ka pata (DNS failover)<br/>LB-1 chup -> ~30 sec me sab LB-2 pe"]
+    n_Route_53["Route 53<br/>LB hi gira<br/>-> Route 53 LB se poochhta rahe, chup LB list se bahar (DNS failover)<br/>LB-1 chup -> thodi der me sab LB-2 pe"]
     n_LB_xN["LB x 2<br/>kai zone, har jagah 2+ (ALB)"]
     n_App_xN["App x N"]
     n_Counter["Counter"]
