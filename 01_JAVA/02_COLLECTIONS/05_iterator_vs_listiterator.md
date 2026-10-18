@@ -88,7 +88,7 @@ it.next()  →  pointer aage, S101 return
               └────┴────┴────┴────┘
                          ▲
 
-it.remove() →  abhi jo pointer pe hai (S101) hata do — SAFE
+it.remove() →  aakhri next() ne jo diya (S101) hata do — SAFE
               ┌────┬────┬────┐
               │S100│S102│S103│
               └────┴────┴────┘
