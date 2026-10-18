@@ -193,7 +193,7 @@ flowchart LR
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Counter["Counter<br/>do App, ek hi code<br/>-> har App ka apna number thaila<br/>(range)<br/>thaila khatam -> agla thaila, 1000 link pe ek call<br/>App crash -> bacha thaila bekaar, chalta<br/>Counter gira -> haath ka thaila chalta, copy uthti (replica)"]
+    n_Counter["Counter<br/>do App, ek hi code<br/>-> har App ka apna number thaila<br/>(range)<br/>thaila khatam -> agla thaila, 1000 link pe ek call<br/>App crash -> bacha thaila bekaar, chalta<br/>Counter gira -> App ke paas jo range hai wo chalti, copy (replica) counter bane"]
     n_Redis["Redis"]
     n_DB["DB"]
     n_USER --> n_LB
