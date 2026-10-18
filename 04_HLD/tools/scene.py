@@ -101,7 +101,7 @@ def draw_stack(o, it, x, y, w, h, dark):
     for b in it['stack']:
         bw, bh = size(b)
         draw_box(o, b, x + (w - bw) / 2, cy, bw, bh)
-        mids.append(cy + bh / 2)
+        mids.append(None if b.get('miss') else cy + bh / 2)   # miss = teer nahi pahuncha
         cy += bh + GAP
     return mids
 
@@ -138,11 +138,13 @@ def render(spec):
             my = top + bh / 2
             d = ' stroke-dasharray="7,5"' if it.get('dash') else ''
             x0 = xs[i]
-            for ty in (mids.get(i + 1) or [my]):   # agla stack = har dabbe tak teer
+            for ty in [t for t in (mids.get(i + 1) or [my]) if t is not None]:   # agla stack = har dabbe tak
                 body.append(f'<line x1="{x0+6:.0f}" y1="{my:.0f}" x2="{x0+w-8:.0f}" y2="{ty:.0f}" stroke="#444" '
                             f'stroke-width="2.5"{d} marker-end="url(#sa)"/>')
             if it['arrow']:
-                body.append(f'<text x="{x0+w/2:.0f}" y="{my-10:.0f}" text-anchor="middle" font-size="13" '
+                st = (i + 1) in mids
+                ly, lx = (my + 22, x0 + w / 2 - 14) if st else (my - 10, x0 + w / 2)
+                body.append(f'<text x="{lx:.0f}" y="{ly:.0f}" text-anchor="middle" font-size="13" '
                             f'fill="{dark}">{esc(it["arrow"])}</text>')
         if res:
             if res_side:

@@ -35,7 +35,8 @@
         ""
        ],
        "state": "x",
-       "bad": true
+       "bad": true,
+       "miss": true
       },
       {
        "box": "dashboard",
@@ -44,7 +45,8 @@
         ""
        ],
        "state": "x",
-       "bad": true
+       "bad": true,
+       "miss": true
       }
      ],
      "frame": "ek group: ek message, ek hi ko"

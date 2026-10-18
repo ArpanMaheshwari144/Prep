@@ -166,7 +166,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Ravi ka order email ko bhi chahiye, analytics ko bhi, dashboard ko bhi. Ek group = sirf ek ko.
 ```
-![c5](img/c5-76d4fccd.svg)
+![c5](img/c5-d24ef259.svg)
 
 ```
 NAHI       har service ka alag topic: producer ek event teen baar bheje -> "ek message kai service" hi toota.
