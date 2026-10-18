@@ -5,7 +5,7 @@ flowchart LR
     n_Feed_Svc_xN["Feed Svc x N"]
     n_Redis["Redis (taazi feed)"]
     n_DBR["DB + Read replica"]
-    n_Worker["Worker<br/>ek khabar 5 baar<br/>-> dekha hua URL Bloom filter se pakdo<br/>alag URL pe wahi khabar title ke hash / SimHash se pakdo<br/>(hash + SimHash)<br/>wahi URL dobara -> koi bit 0 = pakka naya (Bloom filter)<br/>kai worker -> ek saanjha Bloom (Redis)<br/>wins vs won -> 90% same = duplicate"]
+    n_Worker["Worker<br/>ek khabar 5 baar<br/>-> dekha URL Bloom filter se, alag URL pe wahi khabar title ke hash se (Bloom + SimHash)<br/>kai worker -> ek saanjha Bloom (Redis)<br/>wins vs won -> zyadatar same = duplicate"]
     n_Kafka["Kafka"]
     n_SF["Sources -> Fetcher"]
     n_USER --> n_LB

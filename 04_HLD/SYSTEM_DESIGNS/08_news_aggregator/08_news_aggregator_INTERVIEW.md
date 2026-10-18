@@ -69,7 +69,7 @@ NUMBERS (andaaza):
 ```
 Fetcher sources se khabar laaye, DB me daale. Feed service DB se "taazi 20" nikaal ke de.
 ```
-![cdabba](img/cdabba.svg)
+![cdabba](img/cdabba-c8cbe51c.svg)
 
 
 #### 1 Subah maine app khola, sabko wahi 20 khabar, har baar DB se
@@ -77,14 +77,8 @@ Fetcher sources se khabar laaye, DB me daale. Feed service DB se "taazi 20" nika
 DIKKAT     Subah 7 baje laakhon log app khol rahe, sabko wahi top 20 khabar. Har khulne pe DB se sort karke
            nikaalte -> DB pe bheed, feed dheemi, kabhi khulti hi nahi.
 ```
-![c1](img/c1.svg)
+![c1](img/c1-e14bbd1b.svg)
 
-```
-TASVEER: ek list, sab padhein
-  feed:latest (sorted set, score = kab chhapi):  9:05 a90 | 9:03 a77 | 9:01 a45 | 8:58 a12 | ... (top 500)
-  nayi khabar 9:06 a91 -> ZADD -> apne time pe, sabse upar
-  10 lakh user app kholein -> sab ZREVRANGE 0 19 -> wahi 20 id -> DB tak koi nahi
-```
 ```
 AAGE POOCHEGA:
   NIYAM: sabko ek jaisi feed = ek baar bana ke Redis me (sorted set, time se); har user DB nahi jaata;
@@ -101,7 +95,7 @@ AAGE POOCHEGA:
 DIKKAT     Badi khabar aayi, par meri feed me 20 minute baad dikhi. Ek hi kaam me source se laana aur DB me
            likhna dono, ek dheema source poori line rok deta -> khabar purani.
 ```
-![c2](img/c2.svg)
+![c2](img/c2-1891fe08.svg)
 
 ```
 AAGE POOCHEGA:
@@ -119,7 +113,7 @@ AAGE POOCHEGA:
 DIKKAT     8 baje election result: aam 500 / sec ki jagah 20,000 / sec. Ek Feed Svc machine ka CPU bhara,
            cache miss seedha primary DB pe, jahan fetcher bhi likh raha -> dono dheeme.
 ```
-![c3](img/c3.svg)
+![c3](img/c3-c55d7874.svg)
 
 ```
 NAHI       Kafka se bheed sambhalo: Kafka likhne ke raaste ke liye hai, padhai ki bheed nahi jhelta.
@@ -141,15 +135,8 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar "India ne match jeeta" 5 source ne chhaapa, thode alag title, alag URL. Sab naya maana
            -> meri feed me wahi khabar 5 baar, baaki khabar neeche dab gayi.
 ```
-![c4](img/c4.svg)
+![c4](img/c4-9add471d.svg)
 
-```
-TASVEER: Bloom filter (bit-line)
-  bits:   [0] [0] [1] [0] [1] [0] [0] [1] [0] [0]      (jagah 0..9)
-  URL-A -> hash = 2, 4, 7 -> teeno 1      -> SHAYAD dekha -> skip
-  URL-B -> hash = 1, 4, 8 -> jagah 1 pe 0 -> PAKKA naya -> laao, jagah 1, 4, 8 = 1
-  galat "naya" kabhi nahi · galat "dekha" kabhi-kabhi (ek nayi khabar chhoot sakti, news me chalta)
-```
 ```
 AAGE POOCHEGA:
   NIYAM: ek khabar ek baar: pehchaan (hash) same = khabar same, URL chahe alag; kabhi ek nayi chhoot jaaye
@@ -168,7 +155,7 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar baad ek chhota source 30 sec tak jawab nahi de raha. Sab usi ke intezaar me atke, baaki
            999 source ki khabar bhi nahi aayi -> poori feed ruk gayi.
 ```
-![c5](img/c5.svg)
+![c5](img/c5-7553db3a.svg)
 
 ```
 AAGE POOCHEGA:
@@ -187,7 +174,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Shaam ko mujhe sirf tech aur sports pasand. Har user ki alag feed (10 lakh feed) bahut mehngi.
 ```
-![c6](img/c6.svg)
+![c6](img/c6-52d2c08b.svg)
 
 ```
 NAHI       har baar DB se WHERE category IN (tech, sports): har khulne pe DB, cache ka fayda gaya.
@@ -207,7 +194,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko maine "cricket" dhoondha. DB ne har khabar ki poori line padh ke match kiya, 2 crore row
            -> search bahut dheema, aur DB baaki sab ke liye dheemi.
 ```
-![c7](img/c7.svg)
+![c7](img/c7-82a9f32e.svg)
 
 ```
 AAGE POOCHEGA:
@@ -226,7 +213,7 @@ AAGE POOCHEGA:
 DIKKAT     Usi raat DBA ka mail: 6 mahine me ~2 crore khabar ki row, disk / backup ka kharcha badh raha.
            Taazi 20 ke alawa purana koi padhta hi nahi. (Query dheemi NAHI hui: published_at pe index hai.)
 ```
-![c8](img/c8.svg)
+![c8](img/c8-6d303965.svg)
 
 ```
 NAHI       "sharding karo": ye purana hatana (retention) hai, data baantna (sharding) nahi.
@@ -248,7 +235,7 @@ AAGE POOCHEGA:
 DIKKAT     Mail aage: "source 100 guna ya log khud content daalne lage to ek DB likhai aur data nahi jhelegi."
            (Hamare number pe ek DB kaafi hai, ye sirf bahut bade scale pe.)
 ```
-![c9](img/c9.svg)
+![c9](img/c9-15840d07.svg)
 
 ```
 NAHI       date se baanto: aaj ki saari likhai aaj wale shard pe -> wo akela garam.
@@ -284,7 +271,7 @@ JAWAB:    Khabar laana aur khabar dikhana alag raaste. Peeche fetcher sites se l
           Sabko lagbhag wahi feed, to Redis me pehle se bani, 99% wahin se. Feed service kai machine pe,
           purani khabar sasti jagah, search Elasticsearch pe.
 ```
-![c9_2](img/c9_2.svg)
+![c9_2](img/c9_2-6c043f01.svg)
 
 
 ---

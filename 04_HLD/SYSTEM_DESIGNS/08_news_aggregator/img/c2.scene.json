@@ -1,0 +1,65 @@
+{
+ "title": "Badi khabar aayi, meri feed me 20 minute baad",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: ek hi kaam me laana bhi aur likhna bhi",
+   "items": [
+    {
+     "box": "Fetcher",
+     "sub": "source se laao + DB likho"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "stack": [
+      {
+       "box": "Source A",
+       "sub": "dheema, atka",
+       "bad": true
+      },
+      {
+       "box": "Source B..Z",
+       "sub": "line me khade"
+      }
+     ]
+    }
+   ],
+   "result": "khabar purani"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: fetcher sirf laaye, Kafka me daale, worker apni speed se likhe (Kafka)",
+   "items": [
+    {
+     "box": "Fetcher",
+     "sub": "sirf laana"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Kafka",
+     "cells": [
+      "k1",
+      "k2",
+      "k3",
+      ".."
+     ],
+     "state": "gggg"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Worker",
+     "sub": "DB me likhe",
+     "good": true
+    }
+   ],
+   "result": "ek atke, baaki chale",
+   "foot": "worker ne do baar likha -> ek hi lage (UNIQUE)"
+  }
+ ]
+}

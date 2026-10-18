@@ -1,0 +1,74 @@
+{
+ "title": "8 baje election result: 500 se 20,000 / sec",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: ek Feed machine, miss seedha main DB pe",
+   "items": [
+    {
+     "box": "20,000 / sec"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Feed Svc",
+     "sub": "CPU bhara",
+     "bad": true
+    },
+    {
+     "arrow": "miss"
+    },
+    {
+     "box": "Main DB",
+     "sub": "fetcher bhi yahin likhe",
+     "bad": true
+    }
+   ],
+   "result": "dono dheeme"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: kai Feed machine + LB, miss pe DB ki copy se (read replica)",
+   "items": [
+    {
+     "box": "20,000 / sec"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "LB"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "stack": [
+      {
+       "box": "Feed 1",
+       "good": true
+      },
+      {
+       "box": "Feed 2",
+       "good": true
+      },
+      {
+       "box": "Feed 3",
+       "good": true
+      }
+     ]
+    },
+    {
+     "arrow": "miss"
+    },
+    {
+     "box": "Replica",
+     "sub": "sirf padhna"
+    }
+   ],
+   "result": "main DB sirf likhe",
+   "foot": "8 baje pata tha -> 7:45 pe pehle se machine + cache garam"
+  }
+ ]
+}

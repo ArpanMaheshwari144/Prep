@@ -4,7 +4,7 @@ flowchart LR
     n_LB["LB"]
     n_Feed_Svc_xN["Feed Svc x N"]
     n_Redis["Redis (taazi feed)"]
-    n_Read_replica["Read replica<br/>result ki subah 40 guna<br/>-> Feed Svc kuch yaad nahi rakhti: kai machine + LB<br/>Redis me na mile to DB ki copy (replica) se, main DB sirf likhne ko<br/>(LB + read replica)<br/>7:45, pata tha -> pehle se machine + cache (scheduled scaling)<br/>copy peeche -> kuch second, nuksaan nahi<br/>ek key 20,000/s -> Redis copy + App me 1-2 sec copy"]
+    n_Read_replica["Read replica<br/>result ki subah 40 guna<br/>-> kai Feed machine + LB, Redis miss pe DB ki copy se (LB + read replica)<br/>pata tha 8 baje -> pehle se machine + cache<br/>ek key pe bheed -> App me 1-2 sec copy"]
     n_DB["DB"]
     n_KW["Kafka -> Worker"]
     n_SF["Sources -> Fetcher"]

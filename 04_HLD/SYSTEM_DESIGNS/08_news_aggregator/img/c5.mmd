@@ -7,7 +7,7 @@ flowchart LR
     n_Read_replica["Read replica"]
     n_DB["DB"]
     n_KW["Kafka -> Worker"]
-    n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> har call 2-3 sec me chhodo, thodi retry (timeout)<br/>baar-baar fail -> us source ko call hi mat karo, thodi der baad ek test call<br/>(timeout + circuit breaker)"]
+    n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> har call thodi der me chhodo, baar-baar fail = us source ko call hi mat karo (timeout + circuit breaker)<br/>thodi der baad -> ek test call"]
     n_USER --> n_LB
     n_LB --> n_Feed_Svc_xN
     n_Feed_Svc_xN --> n_Redis

@@ -1,0 +1,69 @@
+{
+ "title": "Source 100 guna: ek DB machine nahi jhelegi",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: saari likhai ek machine pe",
+   "items": [
+    {
+     "box": "100 guna khabar"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Ek DB",
+     "sub": "disk + likhai full",
+     "bad": true
+    }
+   ],
+   "result": "nahi jhelegi"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: article_id se tukde, har tukda alag machine (shard)",
+   "items": [
+    {
+     "box": "Khabar a91",
+     "sub": "hash(a91) -> shard 2"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "stack": [
+      {
+       "box": "Shard 1",
+       "cells": [
+        "a12",
+        "a45"
+       ],
+       "state": "gg",
+       "miss": true
+      },
+      {
+       "box": "Shard 2",
+       "cells": [
+        "a77",
+        "a91"
+       ],
+       "state": "gy",
+       "good": true
+      },
+      {
+       "box": "Shard 3",
+       "cells": [
+        "a33",
+        "a90"
+       ],
+       "state": "gg",
+       "miss": true
+      }
+     ]
+    }
+   ],
+   "result": "likhai barabar bati",
+   "foot": "taazi 20 Redis se; shard badhaya -> sirf thoda data hile (consistent hashing)"
+  }
+ ]
+}
