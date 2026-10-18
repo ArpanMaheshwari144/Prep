@@ -1,0 +1,68 @@
+{
+ "title": "Dopahar Redis gira, limiter andha",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: ek hi Redis, ginti wahin",
+   "items": [
+    {
+     "box": "Gateway",
+     "sub": "kitni bheji?"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Redis",
+     "sub": "gira",
+     "bad": true
+    }
+   ],
+   "result": "kisi ko pata nahi"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: copy taiyaar; poora gaya to feed khuli, login band",
+   "items": [
+    {
+     "box": "Gateway"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "stack": [
+      {
+       "box": "Redis main",
+       "sub": "gira",
+       "bad": true,
+       "miss": true
+      },
+      {
+       "box": "Redis copy",
+       "sub": "ab main (replica)",
+       "good": true
+      }
+     ]
+    },
+    {
+     "arrow": "dono gaye to"
+    },
+    {
+     "stack": [
+      {
+       "box": "feed",
+       "sub": "khuli (fail-open)"
+      },
+      {
+       "box": "login / OTP",
+       "sub": "band (fail-closed)"
+      }
+     ]
+    }
+   ],
+   "result": "",
+   "foot": "Redis CPU full ho (gira nahi) -> tukde karo (shard), copy se nahi bachega"
+  }
+ ]
+}

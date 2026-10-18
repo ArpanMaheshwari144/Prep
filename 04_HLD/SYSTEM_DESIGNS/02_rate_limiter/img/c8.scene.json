@@ -1,0 +1,73 @@
+{
+ "title": "Raat ko attack, usi waqt poora Redis Cluster gira",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: Redis gaya to API khuli",
+   "items": [
+    {
+     "box": "Attacker"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Gateway",
+     "sub": "ginti kahin nahi"
+    },
+    {
+     "arrow": "sab andar"
+    },
+    {
+     "box": "Server",
+     "sub": "bhar gaye",
+     "bad": true
+    }
+   ],
+   "result": "site band"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: har server apni memory me gine, had baant do (local fallback)",
+   "items": [
+    {
+     "box": "Attacker"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "stack": [
+      {
+       "box": "Gateway 1",
+       "sub": "local had 25",
+       "cells": [
+        "25"
+       ],
+       "state": "g"
+      },
+      {
+       "box": "Gateway 2",
+       "sub": "local had 25",
+       "cells": [
+        "25"
+       ],
+       "state": "g"
+      },
+      {
+       "box": "Gateway 3 + 4",
+       "sub": "25 + 25",
+       "cells": [
+        "50"
+       ],
+       "state": "g"
+      }
+     ],
+     "frame": "had 100 / 4"
+    }
+   ],
+   "result": "motamoti had",
+   "foot": "bina had se behtar; Redis wapas -> phir sabki ek ginti"
+  }
+ ]
+}

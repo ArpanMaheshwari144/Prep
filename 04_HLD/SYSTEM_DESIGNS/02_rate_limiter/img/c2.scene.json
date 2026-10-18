@@ -1,0 +1,70 @@
+{
+ "title": "Bot ne ek pal me 20 login bheje: ginti 4, had 5, andar 6",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: pehle padha, phir likha (GET, phir SET)",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "App-1",
+       "sub": "padha 4, likha 5"
+      },
+      {
+       "box": "App-2",
+       "sub": "padha 4, likha 5"
+      }
+     ]
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Redis",
+     "sub": "ginti 5, andar 6",
+     "cells": [
+      "5"
+     ],
+     "state": "r",
+     "bad": true
+    }
+   ],
+   "result": "6 ghus gaye"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: dekhna + ghatana ek hi kadam me, beech me koi nahi ghusta (Lua)",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "App-1"
+      },
+      {
+       "box": "App-2"
+      }
+     ]
+    },
+    {
+     "arrow": "ek-ek karke"
+    },
+    {
+     "box": "Redis Lua script",
+     "sub": [
+      "tokens dekho, 1 ghatao",
+      "ek hi jhatke me"
+     ],
+     "cells": [
+      "5",
+      "6"
+     ],
+     "state": "gx",
+     "good": true
+    }
+   ],
+   "result": "had pakki",
+   "foot": "ginti badhi aur umar lagane se pehle crash -> dono ek hi Lua me"
+  }
+ ]
+}

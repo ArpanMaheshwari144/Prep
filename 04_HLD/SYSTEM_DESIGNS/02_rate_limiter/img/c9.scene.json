@@ -1,0 +1,55 @@
+{
+ "title": "Night shift: ek IP pe 1000 log, ek ki galti se sab block",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: ginti IP pe",
+   "items": [
+    {
+     "box": "Office IP (NAT)",
+     "sub": "1000 log"
+    },
+    {
+     "arrow": "ek ki galti"
+    },
+    {
+     "box": "IP block",
+     "cells": [
+      "1000"
+     ],
+     "state": "r",
+     "bad": true
+    }
+   ],
+   "result": "1000 atke"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: login ke baad ginti user_id pe (key = user_id)",
+   "items": [
+    {
+     "box": "Office IP (NAT)",
+     "sub": "1000 log"
+    },
+    {
+     "arrow": "JWT se user_id"
+    },
+    {
+     "box": "Redis",
+     "sub": "har banda alag",
+     "cells": [
+      "u1",
+      "u2",
+      "u3",
+      "..",
+      "u1000"
+     ],
+     "state": "rgggg",
+     "good": true
+    }
+   ],
+   "result": "sirf ek ruka",
+   "foot": "login se pehle user_id nahi -> IP pe dheeli had + WAF"
+  }
+ ]
+}
