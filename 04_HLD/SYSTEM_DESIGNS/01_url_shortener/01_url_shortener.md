@@ -76,6 +76,7 @@ User link deta -> App ek code banata -> DB me (code, lamba link) save.
 Click aaya -> App DB me code dhoondhta -> asli link pe bhej deta.
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
@@ -110,6 +111,7 @@ AAGE POOCHEGA:
 
 #### 1 Mera sale wala link viral hua, har click DB pe, DB baith gaya
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
@@ -143,6 +145,7 @@ AAGE POOCHEGA:
 
 #### 2 Usi bheed me ek App machine giri, poori site band
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB<br/>ek App giri, site band<br/>-> kai App, koi kuch yaad na rakhe<br/>(stateless + LB)<br/>App giri -> /health chup, list se bahar<br/>theek hui -> wapas list me<br/>dheemi -> kam kaam wali ko (least-conn)<br/>galtiyan zyada -> nikaalo (outlier detection)"]
@@ -183,6 +186,7 @@ AAGE POOCHEGA:
 
 #### 3 Maine aur Ravi ne link banaya, dono ko ek hi code mila
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
@@ -222,6 +226,7 @@ AAGE POOCHEGA:
 
 #### 4 Maine click ginti chahi, redirect hi dheema ho gaya
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
@@ -264,6 +269,7 @@ AAGE POOCHEGA:
 
 #### 5 DB team boli: 5 saal me 90 TB, ek machine me nahi
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
@@ -309,6 +315,7 @@ AAGE POOCHEGA:
 
 #### 6 Maine naya link banaya, turant khola, 404 aaya
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
@@ -353,6 +360,7 @@ AAGE POOCHEGA:
 
 #### 7 Shaam ko LB hi gir gaya, koi request andar nahi
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53<br/>LB hi gira<br/>-> do LB, mara to doosre pe<br/>(health check)<br/>LB-1 chup -> ~30 sec me sab LB-2 pe<br/>phone purana pata -> ~60 sec fail (DNS TTL)"]
@@ -384,6 +392,7 @@ AAGE POOCHEGA:
 
 #### 8 Raat ko spammer ki script, har second 5,000 link
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + LB x 2"]
@@ -446,6 +455,7 @@ JAWAB:    Short code = ek badhta number, jise 62 akshar (a-z, A-Z, 0-9) me likha
           Aage: apna naam wala link, purane link hatana, doosre desh me copy.
 ```
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
