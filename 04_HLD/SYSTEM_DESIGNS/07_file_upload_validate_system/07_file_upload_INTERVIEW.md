@@ -70,7 +70,7 @@ jaanch wale (Validator) ko call kare (2-3 sec), jawab wapas.
 ```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_CLIENT["CLIENT"]
     n_Upload_Svc["Upload Svc"]
     n_Validator["Validator"]
@@ -83,7 +83,7 @@ jaanch wale (Validator) ko call kare (2-3 sec), jawab wapas.
 #### 1 Maine report.pdf daali, 3 second ghoomta screen dekhta raha
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_CLIENT["CLIENT"]
     n_Upload_Svc["Upload Svc"]
     n_DB["DB (haal)"]
@@ -126,7 +126,7 @@ AAGE POOCHEGA:
 #### 2 Meri 5 GB video hamare server ke raaste S3 jaa rahi
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3<br/>5 GB server se guzri<br/>-> file seedha S3 me, server sirf paas de<br/>(presigned URL)<br/>had 5 GB, aaye 50 GB -> S3 khud reject (content-length-range)<br/>/complete nahi aaya -> S3 event se queue, client pe bharosa nahi"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
@@ -171,7 +171,7 @@ AAGE POOCHEGA:
 #### 3 4.5 GB chadh chuki thi, wifi chala gaya
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3 multipart<br/>90% pe wifi gaya<br/>-> tukdon me bhejo, toota to bache hi<br/>(multipart)<br/>wifi gaya -> sirf bache tukde bhejo, shuru se nahi<br/>app band, kal wapas -> S3 se poocho (ListParts)<br/>COMPLETE kabhi nahi -> kuch din baad S3 hata de (lifecycle abort)"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
@@ -215,7 +215,7 @@ AAGE POOCHEGA:
 #### 4 App crash, "complete" kabhi aaya hi nahi
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
@@ -258,7 +258,7 @@ AAGE POOCHEGA:
 #### 5 Deadline ke din sab har 2 sec haal poochh rahe
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
@@ -302,7 +302,7 @@ AAGE POOCHEGA:
 #### 6 Maine file nahi, poora folder daala (1000 file)
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
@@ -344,7 +344,7 @@ AAGE POOCHEGA:
 #### 7 Ravi ne mera trackingId daal ke meri file le li
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_API_Gateway_LB["API Gateway / LB<br/>(authn: kaun ho)"]
@@ -388,7 +388,7 @@ AAGE POOCHEGA:
 #### 8 Maine S3 ka seedha link WhatsApp pe bhej diya
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3<br/>link WhatsApp pe ghooma<br/>-> har baar 5 min ka naya link<br/>(signed GET)<br/>link group me gaya -> 1 ghante baad expire, nahi khula<br/>5 min me adhoora -> chalu download nahi katta<br/>sensitive file -> IP had bhi (CloudFront signed URL)"]
     n_API_Gateway_LB["API Gateway / LB"]
@@ -431,7 +431,7 @@ AAGE POOCHEGA:
 #### 9 Naam report.pdf, andar EXE nikla
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_GU["Gateway + Upload Svc"]
@@ -495,7 +495,7 @@ JAWAB:    Server sirf paas deta, file seedha S3 me (badi ho to tukdon me).
 ```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_API_Gateway_LB["API Gateway / LB"]

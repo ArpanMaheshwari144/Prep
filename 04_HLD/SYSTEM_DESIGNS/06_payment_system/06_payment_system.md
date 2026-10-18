@@ -95,7 +95,7 @@ PAISA KAHAN HILTA (pehle ye tay, poori file isi pe):
 ```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
     n_DB["DB"]
@@ -129,7 +129,7 @@ AAGE POOCHEGA:
 #### 1 Kirana ko 500 bheje, beech me server gira
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
     n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono ek saath ya koi nahi<br/>(transaction)<br/>-500 ke baad gira -> COMMIT nahi tha, ulta, 500 wapas (WAL)<br/>COMMIT ke baad gira -> diary me COMMIT, poora karo"]
@@ -157,7 +157,7 @@ AAGE POOCHEGA:
 #### 2 Wallet me 600, phone se 500 aur laptop se 500 ek saath
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
     n_DB["SQL DB<br/>600 me 500-500 dono pass<br/>-> check aur kaatna ek saath<br/>(atomic UPDATE)<br/>phone + laptop ek saath -> pehla jeeta, doosre ko 0 row<br/>WHERE check bhool gaye -> aakhri deewar (CHECK balance >= 0)"]
@@ -185,7 +185,7 @@ AAGE POOCHEGA:
 #### 3 Metro me network gaya, app ne dobara bheja, 1000 kate
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
     n_Idempotency_store["Idempotency store<br/>app ne dobara bheja<br/>-> wahi id dobara = paisa dobara nahi<br/>(idempotency key)<br/>network gaya, dobara bheja -> saved jawab, dobara nahi kata<br/>wahi key, amount alag -> request hash se farak (422)<br/>key kab hatao -> pakka fail pe, DONE ~24 ghante"]
@@ -224,7 +224,7 @@ AAGE POOCHEGA:
 #### 4 Bank se 2000 top-up, PSP dheema
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
     n_Idempotency_store["Idempotency store"]
@@ -257,7 +257,7 @@ AAGE POOCHEGA:
 #### 5 PSP ko call kiya aur server gira: paisa gaya ya nahi?
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
     n_Idempotency_store["Idempotency store"]
@@ -305,7 +305,7 @@ AAGE POOCHEGA:
 #### 6 Merchant ka account doosre bank me, ek transaction nahi chalta
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc + SAGA<br/>merchant Bank B me<br/>-> kadam-kadam, fail pe ulta karo<br/>(saga)<br/>Bank B +500 fail -> wallet me 500 wapas (compensate)<br/>service beech me giri -> saga table se aage ya ulta<br/>ulta kaam bhi fail -> retry + alert, manual queue"]
     n_Idempotency_store["Idempotency store"]
@@ -342,7 +342,7 @@ AAGE POOCHEGA:
 #### 7 Maine poochha: kal raat 2200 tha, subah 1100 kaise?
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc + SAGA"]
     n_Idempotency_store["Idempotency store"]
@@ -387,7 +387,7 @@ AAGE POOCHEGA:
 #### 8 Shaam Diwali, 3000 payment / second, machine baith gayi
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_LB_API_Gateway["LB / API Gateway"]
     n_Payment_Svc_x_N_1["Payment Svc 1<br/>3000 / sec, CPU bhara<br/>-> kai machine, koi yaad na rakhe<br/>(stateless + LB)<br/>CPU bhara -> timeout, log dobara tap, machine badhao<br/>machine badhao -> yaad DB + idempotency store me<br/>ek machine mari -> /health chup, LB se bahar"]
@@ -427,7 +427,7 @@ AAGE POOCHEGA:
 #### 9 Merchant ki report ne mera payment rok diya
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_LB_API_Gateway["LB / API Gateway"]
     n_Payment_Svc_xN["Payment Svc x N"]
@@ -468,7 +468,7 @@ AAGE POOCHEGA:
 #### 10 Saal me ~1000 crore row, primary ki likhai dheemi
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_LB_API_Gateway["LB / API Gateway"]
     n_Payment_Svc_xN["Payment Svc x N"]
@@ -530,7 +530,7 @@ JAWAB:    Har payment pe ek id, dobara bheja to pehla jawab, paisa ek hi baar.
 ```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_LB_API_Gateway["LB / API Gateway"]
     n_Payment_Svc_x_N_1["Payment Svc 1"]

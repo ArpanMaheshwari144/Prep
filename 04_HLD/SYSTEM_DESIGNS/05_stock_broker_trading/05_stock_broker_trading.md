@@ -74,7 +74,7 @@ Order service har order DB me likhe, aur DB me milta-julta SELL dhoondh ke match
 ```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service"]
     n_DB["DB"]
@@ -109,7 +109,7 @@ AAGE POOCHEGA:
 #### 1 Maine ek baar dabaya, order do lag gaye
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> wahi id dobara = naya order nahi<br/>(idempotency key)<br/>wahi id dobara -> purana jawab, order ek hi<br/>pehli abhi chal rahi -> thoda ruko (IN_PROGRESS, 409)<br/>id kab tak yaad -> ~24 ghante, phir saaf"]
     n_DB["DB"]
@@ -131,7 +131,7 @@ AAGE POOCHEGA:
 #### 2 Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet<br/>50k the, 30k-30k dono pass<br/>-> check aur block ek saath<br/>(atomic UPDATE)<br/>dono ek saath -> ek jeete, doosra 0 row, reject<br/>order cancel -> block hatao<br/>sauda aadha -> jitna bika utna kata, baaki blocked"]
@@ -163,7 +163,7 @@ AAGE POOCHEGA:
 #### 3 Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
@@ -200,7 +200,7 @@ AAGE POOCHEGA:
 #### 4 9:15 baje sab TCS pe toot pade
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
@@ -234,7 +234,7 @@ AAGE POOCHEGA:
 #### 5 Server gira, poori order book gayab
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
@@ -274,7 +274,7 @@ AAGE POOCHEGA:
 #### 6 Mera paisa kat gaya, Suresh ko mila hi nahi
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
@@ -310,7 +310,7 @@ AAGE POOCHEGA:
 #### 7 Dopahar: paisa Wallet DB me, share Portfolio DB me — INFY ka 20k kata, share nahi aaye
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
@@ -358,7 +358,7 @@ AAGE POOCHEGA:
 #### 8 10 lakh log ek saath price poochh rahe, server baith gaya
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_OW["Order Service + Wallet"]
     n_Event_Log["Event Log"]
@@ -416,7 +416,7 @@ JAWAB:    Order service check karti aur dobara order rokti (id se). Wallet paisa
 ```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
- LR
+flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service"]
     n_Wallet["Wallet"]
