@@ -20,10 +20,12 @@ text(o, 265, 186, '10 request', 14, '#555', True, 'middle')
 text(o, 265, 222, 'ek saath = pass', 14, '#2e7d32', True, 'middle')
 text(o, 265, 240, '(burst)', 14, '#2e7d32', False, 'middle')
 # 11vi
-box(o, 360, 360, 100, 34, '11vi', '#ffebee', '#d32f2f', 15, True)
-arrow(o, 410, 356, 410, 306, '#d32f2f', mark='cr')
-text(o, 470, 383, '-> 429 + kab aao (Retry-After)', 15, '#d32f2f', True)
-panel(o, 600, 100, [('NIYAM', True), ('Redis me sirf 2 number:', False), ('kitne token + aakhri baar kab', False), ('', False),
+box(o, 500, 140, 80, 34, '11vi', '#ffebee', '#d32f2f', 15, True)
+arrow(o, 500, 157, 470, 157, '#d32f2f', mark='cr')
+text(o, 500, 198, '-> 429', 15, '#d32f2f', True)
+text(o, 500, 218, '+ kab aao', 15, '#d32f2f', True)
+text(o, 500, 238, '(Retry-After)', 14, '#d32f2f')
+panel(o, 650, 100, [('NIYAM', True), ('Redis me sirf 2 number:', False), ('kitne token + aakhri baar kab', False), ('', False),
                     ('BHARNA KAB?', True), ('request aane pe hisaab:', False), ('beeta time x 1, had 10 tak', False),
                     ('koi job nahi (lazy)', False), ('', False), ('GHANTA SOYA', True), ('lautne pe bhi max 10', False)])
 save(o, 'token_bucket')

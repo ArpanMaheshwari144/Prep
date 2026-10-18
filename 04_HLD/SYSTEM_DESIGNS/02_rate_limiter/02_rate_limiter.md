@@ -88,7 +88,7 @@ DIKKAT     Har user ki had chahiye, par asli traffic jhatke me aata (10 request 
 HAL        TOKEN BUCKET: max 10 token, har second 1 bharta, har request 1 leti; khaali -> 429.
            Redis me sirf 2 number; bharne ka koi job nahi, request aane pe hisaab (lazy).
 ```
-![ctoken](img/ctoken-1caa9f72.svg)
+![ctoken](img/ctoken-b1f39160.svg)
 
 ```
 AAGE POOCHEGA:
