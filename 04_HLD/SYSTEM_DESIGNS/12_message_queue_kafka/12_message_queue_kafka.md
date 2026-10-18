@@ -72,28 +72,12 @@ NUMBERS (andaaza):
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
+> DIKKAT / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 Ek machine, uski memory me ek queue. Producer daale, consumer uthaye.
 ```
-![cdabba](img/cdabba.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_P["Producer"]
-    n_Q["Queue"]
-    n_C["Consumer"]
-    n_P --> n_Q
-    n_Q --> n_C
-```
-
-</details>
-
 
 #### 1 Subah queue machine restart hui, 500 signup gayab
 ```

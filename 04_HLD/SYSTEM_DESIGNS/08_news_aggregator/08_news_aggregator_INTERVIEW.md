@@ -63,30 +63,12 @@ NUMBERS (andaaza):
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
+> DIKKAT / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 Fetcher sources se khabar laaye, DB me daale. Feed service DB se "taazi 20" nikaal ke de.
 ```
-![cdabba](img/cdabba.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Feed_Svc["Feed Svc"]
-    n_DB["DB"]
-    n_Fetcher["Fetcher"]
-    n_USER --> n_Feed_Svc
-    n_Feed_Svc --> n_DB
-    n_Fetcher --> n_DB
-```
-
-</details>
-
 
 #### 1 Subah maine app khola, sabko wahi 20 khabar, har baar DB se
 ```

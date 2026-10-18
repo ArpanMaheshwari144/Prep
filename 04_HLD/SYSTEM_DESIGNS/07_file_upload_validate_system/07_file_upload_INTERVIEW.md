@@ -61,31 +61,13 @@ NUMBERS (andaaza):
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
+> DIKKAT / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 Client file Upload service ko de. Service file S3 me rakhe,
 jaanch wale (Validator) ko call kare (2-3 sec), jawab wapas.
 ```
-![cdabba](img/cdabba.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_CLIENT["CLIENT"]
-    n_Upload_Svc["Upload Svc"]
-    n_Validator["Validator"]
-    n_S3["S3"]
-    n_CLIENT --> n_Upload_Svc
-    n_Upload_Svc --> n_Validator
-    n_Upload_Svc --> n_S3
-```
-
-</details>
-
 
 #### 1 Maine report.pdf daali, 3 second ghoomta screen dekhta raha
 ```

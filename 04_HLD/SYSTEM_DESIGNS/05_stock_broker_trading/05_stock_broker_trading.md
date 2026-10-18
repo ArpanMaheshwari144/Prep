@@ -66,28 +66,12 @@ NUMBERS (andaaza):
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
+> DIKKAT / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 Order service har order DB me likhe, aur DB me milta-julta SELL dhoondh ke match kare.
 ```
-![cdabba](img/cdabba.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_DB
-```
-
-</details>
-
 
 #### SHURU: ORDER BOOK KAISE MATCH KARTA
 ```

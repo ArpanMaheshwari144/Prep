@@ -84,28 +84,12 @@ JAWAB:    Sale ke time saari khabar pehle Kafka ki line me jaati, to jhatka line
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
+> DIKKAT / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 Order service khud seedha email bhejne wali company (Email API) ko call kare.
 ```
-![cdabba](img/cdabba.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_Order_Svc["Order Svc"]
-    n_Email_API["Email API"]
-    n_USER["USER"]
-    n_Order_Svc --> n_Email_API
-    n_Email_API --> n_USER
-```
-
-</details>
-
 
 #### 1 Maine order kiya, email company band thi, order hi fail
 ```

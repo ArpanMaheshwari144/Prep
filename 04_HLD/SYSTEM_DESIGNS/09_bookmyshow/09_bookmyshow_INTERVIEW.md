@@ -71,28 +71,12 @@ JAWAB:    Booking me sahi hona pehle: network toota aur pakka nahi pata seat kha
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
+> DIKKAT / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 seats table (seat_id, show_id, status). "Book" dabao -> status = 'booked'.
 ```
-![cdabba](img/cdabba.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_App["App"]
-    n_SQL_DB["SQL DB"]
-    n_USER --> n_App
-    n_App --> n_SQL_DB
-```
-
-</details>
-
 
 #### 1 Maine aur Ravi ne ek hi second me A1 book ki, dono ko mil gayi
 ```

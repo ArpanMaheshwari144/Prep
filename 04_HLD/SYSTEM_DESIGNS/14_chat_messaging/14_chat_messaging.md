@@ -88,26 +88,12 @@ DO CHEEZ JO DESIGN CHALATI:
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
+> DIKKAT / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE, EK SERVER DO USER (yahan se shuru, phir "kahan tootega")
 ```
 Ek chat server. Main aur Ravi dono usse jude, message server ke raaste Ravi tak.
 ```
-![cdabba](img/cdabba.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_CS["Chat Server"]
-    n_USER --> n_CS
-```
-
-</details>
-
 
 #### SHURU: KHULA CONNECTION (WEBSOCKET) AUR MAP
 ```
