@@ -164,7 +164,7 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis<br/>Ravi doosre server pe<br/>-> kaun kis server pe, Redis me likho<br/>(map)<br/>server-7 zinda -> dhadkan se umar badhe (TTL)<br/>server-7 mara -> entry khud hati, Ravi offline<br/>Ravi ke kai device -> pata list, har device pe bhejo<br/>Redis gira -> copy pe switch, message khota nahi"]
+    n_R["Redis<br/>Ravi doosre server pe<br/>-> kaun kis server pe, Redis me likho<br/>(map)<br/>server-7 zinda -> dhadkan se umar badhe (TTL)<br/>server-7 mara -> entry khud hati, Ravi offline<br/>Ravi naye server pe juda -> map update, wahin milega<br/>Ravi ke kai device -> pata list, har device pe bhejo<br/>Redis gira -> copy pe switch, message khota nahi"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
