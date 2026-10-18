@@ -71,22 +71,26 @@ def main(f):
     d = os.path.dirname(f); img = os.path.join(d, 'img'); os.makedirs(img, exist_ok=True)
     s = open(f, encoding='utf-8').read()
     if '```mermaid' not in s:
-        for name in re.findall(r'!\[(\w+)\]\(img/\1\.svg(?:\?v=\w+)?\)', s):
+        # file naam me hash (c1-<hash>.svg): GitHub ?v= nahi maanta, naya naam = nayi image turant
+        import hashlib, glob
+        link = re.compile(r'!\[(\w+)\]\(img/\1(?:-[0-9a-f]{8})?\.svg(?:\?v=\w+)?\)')
+        def one(m):
+            name = m.group(1)
             mmd = os.path.join(img, name + '.mmd')
-            if os.path.exists(mmd):
-                src = open(mmd, encoding='utf-8').read()
-                ok, err = render(src, os.path.join(img, name + '.svg'))
-                term = concept_for(f, name) if ok else None
-                if term: merge_concept(os.path.join(img, name + '.svg'), src, term)
-                print('ok' if ok else 'FAIL', name, ('+ ' + term) if term else '', '' if ok else err)
-        # version link me: GitHub purani image cache na dikhaye
-        import hashlib
-        def ver(m):
-            svg = os.path.join(img, m.group(1) + '.svg')
-            h = hashlib.md5(open(svg, 'rb').read()).hexdigest()[:8] if os.path.exists(svg) else '0'
-            return f'![{m.group(1)}](img/{m.group(1)}.svg?v={h})'
-        s2 = re.sub(r'!\[(\w+)\]\(img/\1\.svg(?:\?v=\w+)?\)', ver, s)
-        open(f, 'w', encoding='utf-8').write(s2)
+            if not os.path.exists(mmd): return m.group(0)
+            src = open(mmd, encoding='utf-8').read()
+            tmp = os.path.join(img, name + '.svg')
+            ok, err = render(src, tmp)
+            term = concept_for(f, name) if ok else None
+            if term: merge_concept(tmp, src, term)
+            print('ok' if ok else 'FAIL', name, ('+ ' + term) if term else '', '' if ok else err)
+            if not ok: return m.group(0)
+            h = hashlib.md5(open(tmp, 'rb').read()).hexdigest()[:8]
+            for old in glob.glob(os.path.join(img, name + '-*.svg')):
+                if re.fullmatch(re.escape(name) + r'-[0-9a-f]{8}\.svg', os.path.basename(old)): os.remove(old)
+            os.replace(tmp, os.path.join(img, f'{name}-{h}.svg'))
+            return f'![{name}](img/{name}-{h}.svg)'
+        open(f, 'w', encoding='utf-8').write(link.sub(one, s))
         return
     # already converted blocks: ![name](img/name.png) + details + mermaid
     conv = re.compile(r'!\[(\w+)\]\(img/\1\.svg\)\n\n<details><summary>diagram source \(mermaid\)</summary>\n\n'
