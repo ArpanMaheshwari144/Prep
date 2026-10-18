@@ -98,6 +98,9 @@ flowchart LR
     n_USER["USER"]
     n_Order_Svc --> n_Email_API
     n_Email_API --> n_USER
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_USER ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### 1 Maine order kiya, email company band thi, order hi fail
@@ -117,8 +120,11 @@ flowchart LR
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_Email_API
     n_Email_API --> n_USER
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_USER ~~~ n_pad
     style n_Kafka fill:#f9a825,color:#000
     style n_Notification_Svc fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       Order service me hi retry: request utni der atki, aur Order service giri to retry bhi gaya.
@@ -155,9 +161,12 @@ flowchart LR
     n_Notification_Svc --> n_PUSH
     n_Notification_Svc --> n_EMAIL
     n_Notification_Svc --> n_SMSL
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_SMSL ~~~ n_pad
     style n_PUSH fill:#f9a825,color:#000
     style n_EMAIL fill:#f9a825,color:#000
     style n_SMSL fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       SMS worker badha do: company khud dheemi, line phir bhi ek, push / email phir bhi peeche.
@@ -188,7 +197,10 @@ flowchart LR
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES
     n_LINES --> n_Redis
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       har baar naya random id: dohraav kabhi pakda nahi jaata.
@@ -221,7 +233,10 @@ flowchart LR
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES
     n_LINES --> n_Redis
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       key hi hata do: worker mara to Kafka dobara deta -> OTP / email do baar (card 3 wapas).
@@ -263,7 +278,10 @@ flowchart LR
     n_Notification_Svc --> n_LINES
     n_LINES --> n_Redis
     n_LINES --> n_DLQ
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DLQ ~~~ n_pad
     style n_DLQ fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       retry band, ek fail = chhodo: company 2 sec hili to OTP hamesha ke liye gaya.
@@ -309,8 +327,11 @@ flowchart LR
     n_LINES --> n_Twilio
     n_LINES --> n_Redis
     n_LINES --> n_DLQ
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Twilio ~~~ n_pad
     style n_SES fill:#f9a825,color:#000
     style n_Twilio fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       worker badha do: naye worker bhi 30 sec me phanse, dheemi company pe aur bojh.
@@ -352,7 +373,10 @@ flowchart LR
     n_Notification_Svc --> n_LINES
     n_LINES --> n_Redis
     n_LINES --> n_DLQ
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DLQ ~~~ n_pad
     style n_Kafka fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       ek line me "zaroori" tag: Kafka me "ye pehle bhejo" hota hi nahi.
@@ -384,7 +408,10 @@ flowchart LR
     n_Notification_Svc --> n_LINES
     n_LINES --> n_Redis
     n_LINES --> n_DLQ
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       har worker apni speed 100 / sec: 100 worker = 100 guna -> phir 429.
@@ -423,8 +450,11 @@ flowchart LR
     n_LINES --> n_DLQ
     n_LINES --> n_Webhook_Svc
     n_Webhook_Svc --> n_Tracking_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Tracking_DB ~~~ n_pad
     style n_Webhook_Svc fill:#f9a825,color:#000
     style n_Tracking_DB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       baar-baar khud poochte raho: laakhon message x har kuch second = had + kharcha.
@@ -462,8 +492,11 @@ flowchart LR
     n_Notification_Svc --> n_LINES
     n_LINES --> n_RDLQ
     n_LINES --> n_WH
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_WH ~~~ n_pad
     style n_Admin fill:#f9a825,color:#000
     style n_CAMP fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       1 crore ko ek bada "sabko bhejo" message: ek worker pe atka, gira to shuru se.
@@ -501,7 +534,10 @@ flowchart LR
     n_Notification_Svc --> n_LINES
     n_LINES --> n_RDLQ
     n_LINES --> n_WH
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_PREF ~~~ n_pad
     style n_PREF fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       pasand sirf Campaign Svc me check: order / OTP wali khabar bina check nikal jaati.
@@ -587,6 +623,9 @@ flowchart LR
     n_SES --> n_Webhook_Svc
     n_Twilio --> n_Webhook_Svc
     n_Webhook_Svc --> n_Tracking_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Tracking_DB ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---

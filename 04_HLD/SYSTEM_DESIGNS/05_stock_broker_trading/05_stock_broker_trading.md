@@ -80,6 +80,9 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### SHURU: ORDER BOOK KAISE MATCH KARTA
@@ -115,7 +118,10 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_Order_Service fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -143,7 +149,10 @@ flowchart LR
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
     n_Wallet --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_Wallet fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
@@ -177,7 +186,10 @@ flowchart LR
     n_Order_Service --> n_Wallet
     n_Wallet --> n_Matching_Engine
     n_Matching_Engine --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_Matching_Engine fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
@@ -216,7 +228,10 @@ flowchart LR
     n_Wallet --> n_Queue_per_symbol
     n_Queue_per_symbol --> n_Matching_Engine
     n_Matching_Engine --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_Queue_per_symbol fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
@@ -250,7 +265,10 @@ flowchart LR
     n_Wallet --> n_Event_Log
     n_Event_Log --> n_Matching_Engine
     n_Matching_Engine --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_Event_Log fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       doosra engine saath chalao (active-active): dono match karte = ek sauda do baar settle.
@@ -293,7 +311,10 @@ flowchart LR
     n_Event_Log --> n_Matching_Engine
     n_Matching_Engine --> n_Settlement
     n_Settlement --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_Settlement fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       chaar alag UPDATE: beech me gira to aadha likha.
@@ -331,8 +352,11 @@ flowchart LR
     n_Matching_Engine --> n_Settlement
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Portfolio_DB ~~~ n_pad
     style n_Wallet_DB fill:#f9a825,color:#000
     style n_Portfolio_DB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
@@ -378,8 +402,11 @@ flowchart LR
     n_Matching_Engine --> n_Pub_Sub
     n_Pub_Sub --> n_WebSocket
     n_WebSocket --> n_USERS
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_SET ~~~ n_pad
     style n_Pub_Sub fill:#f9a825,color:#000
     style n_WebSocket fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       polling: 10 lakh bekaar sawaal / sec, 99% me price badla hi nahi.
@@ -440,6 +467,9 @@ flowchart LR
     n_WebSocket --> n_USERS
     n_Settlement --> n_Wallet_DB
     n_Settlement --> n_Portfolio_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Portfolio_DB ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---

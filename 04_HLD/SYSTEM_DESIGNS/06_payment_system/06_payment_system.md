@@ -101,6 +101,9 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### SHURU: DB KAUNSA? SQL
@@ -139,7 +142,10 @@ flowchart LR
     n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> BEGIN · Arpan -500 · Merchant +500 · COMMIT: dono ya koi nahi<br/>DB pehle log (WAL) me likhta, isliye crash pe bhi aadha nahi<br/>(transaction)<br/>-500 ke baad gira -> COMMIT nahi tha, ulta, 500 wapas (WAL)<br/>COMMIT ke baad gira -> log (WAL) me COMMIT, poora karo"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       app me 'pehle kaato, fail pe wapas jodo': server beech me gira to wapas jodna chala hi nahi.
@@ -167,7 +173,10 @@ flowchart LR
     n_DB["SQL DB<br/>600 me 500-500 dono pass<br/>-> ek hi query me check + kaato: paisa nahi to 0 row badli<br/>(atomic UPDATE: SET balance = balance - 500 WHERE id = ? AND balance >= 500)<br/>phone + laptop ek saath -> pehla jeeta, doosre ko 0 row<br/>WHERE check bhool gaye -> aakhri deewar (CHECK balance >= 0)"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       Java synchronized Payment Svc me: do machine, lock ek ke andar; doosri phir bhi 600 dekhti.
@@ -197,7 +206,10 @@ flowchart LR
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store
     n_Payment_Svc --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Idempotency_store ~~~ n_pad
     style n_Idempotency_store fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       server key banaye: server ko pata hi nahi ye wahi request hai.
@@ -238,7 +250,10 @@ flowchart LR
     n_Payment_Svc --> n_Idempotency_store
     n_Payment_Svc --> n_PSP
     n_Payment_Svc --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_PSP ~~~ n_pad
     style n_PSP fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       timeout pe "fail" dikha do: paisa shayad kat chuka.
@@ -275,7 +290,10 @@ flowchart LR
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_Reconciliation_job fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       "bas rollback kar do": PSP me shayad paisa sach me kat chuka.
@@ -323,7 +341,10 @@ flowchart LR
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_Payment_Svc fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       2PC: sab "ready" bol ke lock pakad ke rukte; coordinator gira = sab atke, har payment dheema.
@@ -360,7 +381,10 @@ flowchart LR
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       balance + alag audit_log table: usme kuch bhi likh sakte, koi niyam nahi jaanchta.
@@ -409,9 +433,12 @@ flowchart LR
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc_x_N_1
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_LB_API_Gateway fill:#f9a825,color:#000
     style n_Payment_Svc_x_N_1 fill:#f9a825,color:#000
     style n_Payment_Svc_x_N_2 fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -449,7 +476,10 @@ flowchart LR
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc_xN
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Read_replica ~~~ n_pad
     style n_Read_replica fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       balance bhi replica se padho: replica peeche, mujhe purana balance dikhta.
@@ -490,7 +520,10 @@ flowchart LR
     n_Reconciliation_job --> n_SQL_DB_shard_by_account_id
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc_xN
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Read_replica ~~~ n_pad
     style n_SQL_DB_shard_by_account_id fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       txn_id se baanto: meri payment alag shard pe, balance kahan? · time se: aaj wala shard garam.
@@ -554,6 +587,9 @@ flowchart LR
     n_Reconciliation_job --> n_PSP
     n_PSP -.->|webhook| n_Payment_Svc_x_N_1
     n_PSP -.->|webhook| n_Payment_Svc_x_N_2
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Read_replica ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---

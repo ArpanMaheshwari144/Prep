@@ -86,6 +86,9 @@ flowchart LR
     n_DB["SQL DB"]
     n_USER --> n_SVC
     n_SVC --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### 1 Maine Ravi ko 500 bheje, beech me server gira
@@ -101,7 +104,10 @@ flowchart LR
     n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono UPDATE ek transaction me: COMMIT tak dono ya koi nahi<br/>(transaction: BEGIN · Arpan -500 · Ravi +500 · COMMIT)<br/>beech me server gira -> DB log (WAL) se: COMMIT hua = poora, nahi = ulta<br/>-500 ke baad koi padhe -> aadha kisi ko nahi dikhta"]
     n_USER --> n_SVC
     n_SVC --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       SAGA / queue laga do: ek DB me kaatna aur daalna alag ho jaate, dikkat khud ban jaati.
@@ -128,7 +134,10 @@ flowchart LR
     n_DB["SQL DB"]
     n_USER --> n_SVC
     n_SVC --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_SVC fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       app me "pehle dekho, phir daalo": dono ne dekha "nahi hai", dono ne daala (race).
@@ -187,7 +196,10 @@ flowchart LR
     n_DB["SQL DB + ledger<br/>500 kahan gaye?<br/>-> khaata = DB ki table, har transfer usi transaction me 2 line: Arpan -500, Ravi +500<br/>sirf INSERT, kabhi UPDATE nahi: BEGIN · INSERT ledger x2 · UPDATE balance x2 · COMMIT<br/>(ledger)<br/>txn wapas -> khaata bhi wapas, jhoothi line nahi<br/>galat line -> UPDATE nahi, ulti line jodo<br/>support: kab, kisko -> har line me waqt + transfer id"]
     n_USER --> n_SVC
     n_SVC --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       khaata Kafka me: DB transaction wapas hua (paisa kam tha), Kafka me "Arpan -500" -> khaata jhooth.
@@ -217,7 +229,10 @@ flowchart LR
     n_USER --> n_SVC
     n_SVC --> n_DB
     n_DB --> n_K
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_K ~~~ n_pad
     style n_K fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       commit ke baad seedha Kafka: commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi.
@@ -245,7 +260,10 @@ flowchart LR
     n_SVC --> n_DB
     n_DB --> n_K
     n_REC --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_K ~~~ n_pad
     style n_REC fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 TASVEER: khaata vs balance
@@ -280,9 +298,12 @@ flowchart LR
     n_S2 --> n_DB
     n_DB --> n_K
     n_REC --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_K ~~~ n_pad
     style n_LB fill:#f9a825,color:#000
     style n_S1 fill:#f9a825,color:#000
     style n_S2 fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -316,7 +337,10 @@ flowchart LR
     n_S2 --> n_DB
     n_DB --> n_K
     n_REC --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_RR ~~~ n_pad
     style n_RR fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -351,7 +375,10 @@ flowchart LR
     n_S2 --> n_DB
     n_DB --> n_K
     n_REC --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_K ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 TASVEER: gol ghera, phir ek kram
@@ -394,7 +421,10 @@ flowchart LR
     n_S2 --> n_DB
     n_DB --> n_K
     n_REC --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_K ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       saari 5 lakh line ek baar me bhejo: memory bhari, request timeout.
@@ -432,7 +462,10 @@ flowchart LR
     n_DB --> n_K
     n_REC --> n_DB
     n_DB --> n_S3
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_S3 ~~~ n_pad
     style n_S3 fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       "archive = sharding": archive jagah ghatata, shard likhne ka bojh baantta.
@@ -491,6 +524,9 @@ flowchart LR
     n_DB --> n_K
     n_REC --> n_DB
     n_DB --> n_S3
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_S3 ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---

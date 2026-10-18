@@ -85,6 +85,9 @@ flowchart LR
     n_SQL_DB["SQL DB"]
     n_USER --> n_App
     n_App --> n_SQL_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_SQL_DB ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### 1 Maine aur Ravi ne ek hi second me A1 book ki, dono ko mil gayi
@@ -100,7 +103,10 @@ flowchart LR
     n_SQL_DB["SQL DB<br/>A1 do ko bik gayi<br/>-> khaali hai ya nahi dekhna + book karna EK hi query me<br/>seat khaali ho tabhi UPDATE lage, warna 0 row<br/>(atomic UPDATE)<br/>UPDATE seats SET status=booked WHERE show_id=42 AND seat_id=A1 AND status=available<br/>Ravi usi second -> row lock, uska WHERE 0 row = seat gayi<br/>Ravi ne phir dabaya -> phir 0 row, kuch nahi milta"]
     n_USER --> n_App
     n_App --> n_SQL_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_SQL_DB ~~~ n_pad
     style n_SQL_DB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke andar.
@@ -136,7 +142,10 @@ flowchart LR
     n_USER --> n_App
     n_App --> n_SQL_DB
     n_Sweeper_job --> n_SQL_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_SQL_DB ~~~ n_pad
     style n_Sweeper_job fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       hold Redis me (SET NX EX 300): hold Redis me + booking DB me = do jagah sach, farak aa sakta.
@@ -171,7 +180,10 @@ flowchart LR
     n_App --> n_Payment_Svc
     n_App --> n_SQL_DB
     n_Sweeper_job --> n_SQL_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Payment_Svc ~~~ n_pad
     style n_Payment_Svc fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -201,8 +213,11 @@ flowchart LR
     n_App --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Read_replica ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
     style n_Read_replica fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -241,8 +256,11 @@ flowchart LR
     n_Sweeper_job --> n_SQL_primary
     n_App --> n_SQL_primary
     n_SQL_primary --> n_RRR
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_RRR ~~~ n_pad
     style n_Kafka fill:#f9a825,color:#000
     style n_Booking_worker fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line (queue) sambhaalti.
@@ -287,7 +305,10 @@ flowchart LR
     n_Sweeper_job --> n_SQL_primary
     n_App --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -321,8 +342,11 @@ flowchart LR
     n_Sweeper_job --> n_SQL_primary
     n_App_xN --> n_SQL_primary
     n_SQL_primary --> n_RRR
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_RRR ~~~ n_pad
     style n_LB fill:#f9a825,color:#000
     style n_App_xN fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -388,6 +412,9 @@ flowchart LR
     n_App_x_N_1 --> n_SQL_primary
     n_App_x_N_2 --> n_SQL_primary
     n_SQL_primary --> n_Read_replica
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Read_replica ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---

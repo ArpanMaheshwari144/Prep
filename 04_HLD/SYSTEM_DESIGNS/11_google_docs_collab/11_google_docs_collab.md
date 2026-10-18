@@ -73,6 +73,9 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### 1 Ravi ne baad me save kiya, mera "WORLD" mit gaya
@@ -88,7 +91,10 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_App fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       doc pe lock, ek likhe baaki ruke: saath likhna hi khatam.
@@ -119,7 +125,10 @@ flowchart LR
     n_USER --> n_App
     n_App --> n_CS
     n_CS --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_CS fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       polling: crore log x har second bekaar sawaal + 1 sec der · SSE: sirf server -> user.
@@ -149,7 +158,10 @@ flowchart LR
     n_USER --> n_App
     n_App --> n_CS
     n_CS --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_CS fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       phone ke time se kram: ghadi alag, aur position phir bhi khiskani padti.
@@ -192,8 +204,11 @@ flowchart LR
     n_LB --> n_CS2
     n_CS1 --> n_DB
     n_CS2 --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_LB fill:#f9a825,color:#000
     style n_CS1 fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       hash(docId) % N: N badla to lagbhag har doc ka server badla = sab dobara jude.
@@ -234,7 +249,10 @@ flowchart LR
     n_CS2 --> n_PS
     n_CS1 --> n_DB
     n_CS2 --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_PS ~~~ n_pad
     style n_PS fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       Kafka: store karta + thoda dheema; live typing dobara padhni nahi, tezi chahiye.
@@ -271,8 +289,11 @@ flowchart LR
     n_Conn_Server_xN --> n_PS
     n_Conn_Server_xN --> n_BUF
     n_BUF --> n_CAS
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_CAS ~~~ n_pad
     style n_BUF fill:#f9a825,color:#000
     style n_CAS fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       "sahi chahiye to SQL lo": DB data ki shakal se chuno; join nahi, bas bahut jodna -> Cassandra.
@@ -320,7 +341,10 @@ flowchart LR
     n_Conn_Server_xN --> n_BUF
     n_Conn_Server_xN --> n_SQL
     n_BUF --> n_CAS
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_SQL ~~~ n_pad
     style n_SQL fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       "doc sahi chahiye -> CP": CP me net jaate hi typing ruk jaati; yahan sahi = "aakhir me sab same".
@@ -356,7 +380,10 @@ flowchart LR
     n_Conn_Server_xN --> n_BUF
     n_Conn_Server_xN --> n_SQL
     n_BUF --> n_CAS
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_CAS ~~~ n_pad
     style n_CAS fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 TASVEER: photo + baad ke op
@@ -421,6 +448,9 @@ flowchart LR
     n_CS1 --> n_SQL
     n_CS2 --> n_SQL
     n_BUF --> n_CAS
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_CAS ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---

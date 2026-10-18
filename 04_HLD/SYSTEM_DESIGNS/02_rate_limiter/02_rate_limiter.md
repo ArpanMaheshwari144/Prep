@@ -84,6 +84,9 @@ flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_USER --> n_App
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_App ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### SHURU: TOKEN BUCKET KAISE CHALTA
@@ -129,7 +132,10 @@ flowchart LR
     n_LB --> n_App_x_N_2
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       ek user hamesha ek App pe (sticky LB): wo App gira to ginti gayi; App badhe / ghate to phir bati.
@@ -163,7 +169,10 @@ flowchart LR
     n_LB --> n_App_x_N_2
     n_App_x_N_1 --> n_Redis
     n_App_x_N_2 --> n_Redis
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       App me synchronized / lock: sirf ek machine ke andar; do App me race wahi ki wahi.
@@ -200,7 +209,10 @@ flowchart LR
     n_API_Gateway --> n_Redis
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_App_x_N_2 ~~~ n_pad
     style n_API_Gateway fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -234,9 +246,12 @@ flowchart LR
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis_Cluster ~~~ n_pad
     style n_Redis_Cluster fill:#f9a825,color:#000
     style n_Route_53 fill:#f9a825,color:#000
     style n_ALB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       sab fail-open: login khula = koi bina had password guess karta rahega.
@@ -277,7 +292,10 @@ flowchart LR
     n_API_Gateway --> n_Redis_Cluster
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis_Cluster ~~~ n_pad
     style n_Redis_Cluster fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -313,9 +331,12 @@ flowchart LR
     n_API_Gateway --> n_Kafka
     n_USER --> n_EDGE
     n_WAF -.->|ban list| n_EDGE
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_App_xN ~~~ n_pad
     style n_Kafka fill:#f9a825,color:#000
     style n_Pattern_Svc fill:#f9a825,color:#000
     style n_WAF fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       turant ban: asli user bhi tez click karta, office ke 1000 log ek IP (NAT), sale me asli bheed.
@@ -352,7 +373,10 @@ flowchart LR
     n_API_Gateway --> n_Kafka
     n_USER --> n_EDGE
     n_WAF -.->|ban list| n_EDGE
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_App_xN ~~~ n_pad
     style n_API_Gateway fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -384,7 +408,10 @@ flowchart LR
     n_API_Gateway --> n_Kafka
     n_USER --> n_EDGE
     n_WAF -.->|ban list| n_EDGE
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_App_xN ~~~ n_pad
     style n_API_Gateway fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -422,7 +449,10 @@ flowchart LR
     n_API_Gateway --> n_Kafka
     n_USER --> n_EDGE
     n_WAF -.->|ban list| n_EDGE
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis_Cluster ~~~ n_pad
     style n_Redis_Cluster fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       IP ki had badha do (5 se 500): office bach gaya, par botnet ko bhi utni hi chhoot.
@@ -490,6 +520,9 @@ flowchart LR
     n_USER --> n_Route_53
     n_Route_53 --> n_WAF
     n_WAF --> n_ALB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_App_x_N_2 ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---

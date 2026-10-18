@@ -83,6 +83,9 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### SHURU: CODE KAISE BANE
@@ -124,7 +127,10 @@ flowchart LR
     n_USER --> n_App
     n_App --> n_Redis
     n_App --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       DB ki read copy (replica): wo bhi disk se, dheemi; 1 lakh / sec ke liye bahut copies chahiye.
@@ -165,9 +171,12 @@ flowchart LR
     n_App_x_N_2 --> n_Redis
     n_App_x_N_1 --> n_DB
     n_App_x_N_2 --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_LB fill:#f9a825,color:#000
     style n_App_x_N_1 fill:#f9a825,color:#000
     style n_App_x_N_2 fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       ek bahut badi machine (vertical scale): uski bhi had, aur akeli -> wahi giri to sab band.
@@ -204,7 +213,10 @@ flowchart LR
     n_App_x_N_2 --> n_Redis
     n_App_x_N_1 --> n_DB
     n_App_x_N_2 --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Counter ~~~ n_pad
     style n_Counter fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 TASVEER: har App ki apni range
@@ -247,9 +259,12 @@ flowchart LR
     n_App_xN --> n_RD
     n_Kafka --> n_Analytics_svc
     n_Analytics_svc --> n_DLQ
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DLQ ~~~ n_pad
     style n_Kafka fill:#f9a825,color:#000
     style n_Analytics_svc fill:#f9a825,color:#000
     style n_DLQ fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein gayi.
@@ -288,7 +303,10 @@ flowchart LR
     n_App_xN --> n_ANA
     n_App_xN --> n_Redis
     n_App_xN --> n_Cassandra
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Cassandra ~~~ n_pad
     style n_Cassandra fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se country pata hi nahi.
@@ -335,7 +353,10 @@ flowchart LR
     n_App_xN --> n_ANA
     n_App_xN --> n_Redis
     n_App_xN --> n_Cassandra
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Cassandra ~~~ n_pad
     style n_Cassandra fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       3 me likho tabhi done, phir 1 se padho: ek copy giri = har naya link fail.
@@ -377,8 +398,11 @@ flowchart LR
     n_App_xN --> n_ANA
     n_App_xN --> n_Redis
     n_App_xN --> n_Cassandra
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Cassandra ~~~ n_pad
     style n_Route_53 fill:#f9a825,color:#000
     style n_LB_xN fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -413,7 +437,10 @@ flowchart LR
     n_App_xN --> n_ANA
     n_App_xN --> n_Redis
     n_App_xN --> n_Cassandra
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Cassandra ~~~ n_pad
     style n_API_Gateway fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana lega.
@@ -491,6 +518,9 @@ flowchart LR
     n_App_x_N_1 --> n_Cassandra
     n_App_x_N_2 --> n_Cassandra
     n_Analytics_svc --> n_DLQ
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Cassandra ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---

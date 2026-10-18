@@ -98,6 +98,9 @@ flowchart LR
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### 1 Subah app khola, feed ghoomti rahi (har baar 200 logon ka jod)
@@ -118,8 +121,11 @@ flowchart LR
     n_App --> n_DB
     n_Fanout --> n_Redis_inbox
     n_App --> n_Redis_inbox
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis_inbox ~~~ n_pad
     style n_Fanout fill:#f9a825,color:#000
     style n_Redis_inbox fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       DB pe index / read replica: thoda tez, par har khulne pe 200 ka jod wahi ka wahi.
@@ -155,8 +161,11 @@ flowchart LR
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_Kafka fill:#f9a825,color:#000
     style n_Fanout_workers fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       App me peeche ek thread: App crash = thread ka kaam gaya; Kafka disk pe, dobara padh sakte.
@@ -200,7 +209,10 @@ flowchart LR
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_Fanout_workers fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       sabke liye pull: har feed khulna phir 200 ka jod, mehnga.
@@ -245,7 +257,10 @@ flowchart LR
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Hot_tweet_cache ~~~ n_pad
     style n_Hot_tweet_cache fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       DB ki copies badha do: wo bhi disk se (ms), ek garam hisse ki copies crore read nahi jhelti.
@@ -281,7 +296,10 @@ flowchart LR
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis_inbox ~~~ n_pad
     style n_Redis_inbox fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       Redis me machine jodte jao: soye 40 crore ka inbox bhi RAM khaata, kharcha badhta, dikkat wahi.
@@ -325,7 +343,10 @@ flowchart LR
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Cassandra ~~~ n_pad
     style n_Cassandra fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; join / transaction chahiye nahi.
@@ -363,7 +384,10 @@ flowchart LR
     n_Kafka --> n_Fanout_workers
     n_Fanout_workers --> n_Redis_inbox
     n_App --> n_Redis_inbox
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Cassandra ~~~ n_pad
     style n_Route_53 fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -397,8 +421,11 @@ flowchart LR
     n_App_xN --> n_Cassandra
     n_FAN --> n_Redis_inbox
     n_App_xN --> n_Redis_inbox
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Cassandra ~~~ n_pad
     style n_ALB fill:#f9a825,color:#000
     style n_App_xN fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -432,9 +459,12 @@ flowchart LR
     n_Timeline_Svc --> n_RI
     n_Timeline_Svc --> n_Cassandra
     n_FAN --> n_UG
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_UG ~~~ n_pad
     style n_Tweet_Svc fill:#f9a825,color:#000
     style n_Timeline_Svc fill:#f9a825,color:#000
     style n_UG fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -467,8 +497,11 @@ flowchart LR
     n_FAN --> n_SVC
     n_USER --> n_CDN
     n_CDN --> n_S3
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_S3 ~~~ n_pad
     style n_CDN fill:#f9a825,color:#000
     style n_S3 fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -538,6 +571,9 @@ flowchart LR
     n_Route_53 --> n_ALB
     n_USER --> n_CDN
     n_CDN --> n_S3
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_S3 ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---

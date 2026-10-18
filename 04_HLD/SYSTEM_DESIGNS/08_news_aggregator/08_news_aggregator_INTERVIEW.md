@@ -79,6 +79,9 @@ flowchart LR
     n_USER --> n_Feed_Svc
     n_Feed_Svc --> n_DB
     n_Fetcher --> n_DB
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### 1 Subah maine app khola, sabko wahi 20 khabar, har baar DB se
@@ -95,7 +98,10 @@ flowchart LR
     n_Feed_Svc --> n_DB
     n_Fetcher --> n_DB
     n_Fetcher --> n_Redis
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 TASVEER: ek list, sab padhein
@@ -134,8 +140,11 @@ flowchart LR
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DB ~~~ n_pad
     style n_Kafka fill:#f9a825,color:#000
     style n_Worker fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -172,8 +181,11 @@ flowchart LR
     n_KW --> n_DB
     n_KW --> n_Redis
     n_SF --> n_KW
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Read_replica ~~~ n_pad
     style n_LB fill:#f9a825,color:#000
     style n_Read_replica fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       Kafka se bheed sambhalo: Kafka likhne ke raaste ke liye hai, padhai ki bheed nahi jhelta.
@@ -210,7 +222,10 @@ flowchart LR
     n_Worker --> n_Redis
     n_Kafka --> n_Worker
     n_SF --> n_Kafka
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DBR ~~~ n_pad
     style n_Worker fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 TASVEER: Bloom filter (bit-line)
@@ -252,7 +267,10 @@ flowchart LR
     n_KW --> n_DB
     n_KW --> n_Redis
     n_Fetcher --> n_KW
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Read_replica ~~~ n_pad
     style n_Fetcher fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -290,7 +308,10 @@ flowchart LR
     n_KW --> n_DB
     n_KW --> n_Redis
     n_SF --> n_KW
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Redis ~~~ n_pad
     style n_Redis fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       har baar DB se WHERE category IN (tech, sports): har khulne pe DB, cache ka fayda gaya.
@@ -326,7 +347,10 @@ flowchart LR
     n_KW --> n_Redis
     n_KW --> n_Elasticsearch
     n_SF --> n_KW
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Elasticsearch ~~~ n_pad
     style n_Elasticsearch fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -365,7 +389,10 @@ flowchart LR
     n_KW --> n_Redis
     n_KW --> n_Elasticsearch
     n_SF --> n_KW
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Archive ~~~ n_pad
     style n_Archive fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       "sharding karo": ye purana hatana (retention) hai, data baantna (sharding) nahi.
@@ -406,7 +433,10 @@ flowchart LR
     n_KW --> n_DB
     n_KW --> n_RES
     n_SF --> n_KW
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Archive ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       date se baanto: aaj ki saari likhai aaj wale shard pe -> wo akela garam.
@@ -475,6 +505,9 @@ flowchart LR
     n_Kafka --> n_Worker
     n_Fetcher --> n_Kafka
     n_Sources --> n_Fetcher
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Archive ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---

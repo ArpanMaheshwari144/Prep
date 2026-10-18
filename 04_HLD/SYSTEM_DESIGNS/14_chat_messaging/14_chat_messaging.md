@@ -100,6 +100,9 @@ flowchart LR
     n_USER["USER"]
     n_CS["Chat Server"]
     n_USER --> n_CS
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_CS ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### SHURU: KHULA CONNECTION (WEBSOCKET) AUR MAP
@@ -139,8 +142,11 @@ flowchart LR
     n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> kuch thread sab connection sambhalein, OS batata kis connection pe data aaya, thread sirf wahan<br/>chup connection = thodi memory · ~200 chat server, aage LB<br/>(event loop, Netty)<br/>wahi connection aage -> wahi server, connection khula hai<br/>chat server gira -> ruk-ruk ke dobara judo (backoff)"]
     n_U --> n_LB
     n_LB --> n_CS
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_CS ~~~ n_pad
     style n_CS fill:#f9a825,color:#000
     style n_LB fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       badi machine lo (zyada RAM): thread ka kharcha wahi, bas thodi der baad tootega.
@@ -172,7 +178,10 @@ flowchart LR
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_R ~~~ n_pad
     style n_R fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
@@ -208,8 +217,11 @@ flowchart LR
     n_CS --> n_R
     n_CS --> n_DB
     n_CS --> n_P
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_P ~~~ n_pad
     style n_DB fill:#f9a825,color:#000
     style n_P fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       sirf Push bhej do, DB nahi: push sirf ghanti hai, pahunchne ki guarantee nahi, history bhi nahi.
@@ -242,7 +254,10 @@ flowchart LR
     n_CS --> n_R
     n_CS --> n_CA
     n_CS --> n_P
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_CA ~~~ n_pad
     style n_CA fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       user_id se baanto: ek chat do jagah, group 500 jagah.
@@ -279,7 +294,10 @@ flowchart LR
     n_CS --> n_I
     n_I --> n_CA
     n_CS --> n_P
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_P ~~~ n_pad
     style n_I fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       server id banaye: har dobara bhejna = nayi id = duplicate.
@@ -316,7 +334,10 @@ flowchart LR
     n_I --> n_CA
     n_CS --> n_P
     n_CS --> n_SQ
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_SQ ~~~ n_pad
     style n_SQ fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
@@ -360,7 +381,10 @@ flowchart LR
     n_I --> n_CA
     n_CS --> n_P
     n_CS --> n_SQ
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_CA ~~~ n_pad
     style n_CA fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       Twitter jaisa har inbox me copy: wahan feed sabki alag + crore follower, group sabka ek.
@@ -405,7 +429,10 @@ flowchart LR
     n_I --> n_CA
     n_CS --> n_P
     n_CS --> n_NS
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_NS ~~~ n_pad
     style n_NS fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       unread COUNT column badhao-ghatao: har message pe 500 member x 1 UPDATE, phir bhi 25,000 likhai.
@@ -452,7 +479,10 @@ flowchart LR
     n_CS --> n_CA
     n_CS --> n_P
     n_CS --> n_NS
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_S3 ~~~ n_pad
     style n_S3 fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       message me URL rakho: 10 min me khatam, kal link mara; KEY rakho.
@@ -490,7 +520,10 @@ flowchart LR
     n_CS --> n_CA
     n_CS --> n_P
     n_CS --> n_PR
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_PR ~~~ n_pad
     style n_PR fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       DB me online column, har dhadkan pe UPDATE: crore log x har 15 sec = DB baith jaata.
@@ -552,6 +585,9 @@ flowchart LR
     n_CS --> n_SQ
     n_CS --> n_NS
     n_CS --> n_PR
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_PR ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---

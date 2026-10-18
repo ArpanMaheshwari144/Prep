@@ -86,6 +86,9 @@ flowchart LR
     n_C["Consumer"]
     n_P --> n_Q
     n_Q --> n_C
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_C ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### 1 Subah queue machine restart hui, 500 signup gayab
@@ -101,7 +104,10 @@ flowchart LR
     n_C["Consumer"]
     n_P --> n_L
     n_L --> n_C
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_C ~~~ n_pad
     style n_L fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       DB me queue: insert = index + lock = idhar-udhar likhna; queue me WHERE nahi, bas "X ke baad do".
@@ -130,7 +136,10 @@ flowchart LR
     n_C["Consumer"]
     n_P --> n_B
     n_B --> n_C
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_C ~~~ n_pad
     style n_B fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       copy (replica) badhao: copy sirf bachav ke liye, padhna bhi leader se hi; padhne wale = partition.
@@ -158,7 +167,10 @@ flowchart LR
     n_C["Consumer"]
     n_P --> n_B
     n_B --> n_C
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_C ~~~ n_pad
     style n_P fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       poore topic ka kram: matlab sirf ek partition = speed khatam. Kram sirf key ke andar.
@@ -185,7 +197,10 @@ flowchart LR
     n_GE["Group email<br/>3 machine, 3 email<br/>-> teeno machine ek group.id: har tukda group ke EK hi member ko, kaam bat-ta<br/>(consumer group)<br/>group.id = machine naam -> teen alag team, 3 email<br/>machine badhani -> tukde bhi badhao, warna khaali"]
     n_P --> n_B
     n_B --> n_GE
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_GE ~~~ n_pad
     style n_GE fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 TASVEER: ek team, tukde baante
@@ -220,8 +235,11 @@ flowchart LR
     n_B --> n_GE
     n_B --> n_GA
     n_B --> n_GD
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_GD ~~~ n_pad
     style n_GA fill:#f9a825,color:#000
     style n_GD fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       har service ka alag topic: producer ek event teen baar bheje -> "ek message kai service" hi toota.
@@ -256,8 +274,11 @@ flowchart LR
     n_B --> n_GE
     n_B --> n_GA
     n_B --> n_GD
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_K ~~~ n_pad
     style n_K fill:#f9a825,color:#000
     style n_B fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       acks=1 sab jagah: leader ne "OK" bola, copy se pehle gira -> khabar gayi.
@@ -301,7 +322,10 @@ flowchart LR
     n_B --> n_GA
     n_B --> n_GD
     n_GE --> n_R
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_R ~~~ n_pad
     style n_R fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       pehle commit, phir kaam: email se pehle CRASH -> restart 6 se -> event 5 KHO gaya.
@@ -337,7 +361,10 @@ flowchart LR
     n_B --> n_GA
     n_B --> n_GD
     n_GE --> n_R
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_GD ~~~ n_pad
     style n_P fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       "offset bachayega": nahi, offset consumer ki taraf hai; ye producer ki taraf ki dikkat.
@@ -381,7 +408,10 @@ flowchart LR
     n_B --> n_GD
     n_GE --> n_R
     n_GE --> n_DLQ
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_DLQ ~~~ n_pad
     style n_DLQ fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -413,7 +443,10 @@ flowchart LR
     n_B --> n_GD
     n_GE --> n_R
     n_GE --> n_DLQ
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_GD ~~~ n_pad
     style n_B fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -464,6 +497,9 @@ flowchart LR
     n_B --> n_GD
     n_GE --> n_R
     n_GE --> n_DLQ
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_GD ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---

@@ -76,6 +76,9 @@ flowchart LR
     n_Cache["Cache"]
     n_App --> n_DB
     n_App --> n_Cache
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Cache ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 #### SHURU: CACHE-ASIDE
@@ -111,7 +114,10 @@ flowchart LR
     n_Cache["Cache<br/>64 GB RAM bhar gayi<br/>-> har key ka chhune ka kram rakho, RAM bhari to sabse der se chhua bahar<br/>har key ki umar bhi: khatam = key bekaar<br/>(LRU + TTL)<br/>user:9 phir padha -> utha ke aage, ab baad me nikle"]
     n_App --> n_DB
     n_App --> n_Cache
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Cache ~~~ n_pad
     style n_Cache fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 TASVEER: LRU = HashMap + list
@@ -149,10 +155,13 @@ flowchart LR
     n_Cache_client --> n_Node_A
     n_Cache_client --> n_Node_B
     n_Cache_client --> n_Node_C
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Node_C ~~~ n_pad
     style n_Cache_client fill:#f9a825,color:#000
     style n_Node_A fill:#f9a825,color:#000
     style n_Node_B fill:#f9a825,color:#000
     style n_Node_C fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
@@ -193,9 +202,12 @@ flowchart LR
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Node_C_replica ~~~ n_pad
     style n_Node_A_replica fill:#f9a825,color:#000
     style n_Node_B_replica fill:#f9a825,color:#000
     style n_Node_C_replica fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       sync copy: har likhai pe copy ke "haan" ka intezaar -> <1 ms gaya.
@@ -231,7 +243,10 @@ flowchart LR
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Node_C_replica ~~~ n_pad
     style n_App fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 NAHI       cache UPDATE: "X" phir "Y" likha, cache me pehle Y pahuncha phir X -> galat "X" baith gaya.
@@ -262,7 +277,10 @@ flowchart LR
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Node_C_replica ~~~ n_pad
     style n_App fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 TASVEER: ek jaaye, baaki ruke
@@ -298,7 +316,10 @@ flowchart LR
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Node_C_replica ~~~ n_pad
     style n_App_L1_local_cache fill:#f9a825,color:#000
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 ```
 AAGE POOCHEGA:
@@ -346,6 +367,9 @@ flowchart LR
     n_Cache_client --> n_Node_A_replica
     n_Cache_client --> n_Node_B_replica
     n_Cache_client --> n_Node_C_replica
+    n_pad["xxxxxxxxxxxxxxxx"]
+    n_Node_C_replica ~~~ n_pad
+    style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
 ---
