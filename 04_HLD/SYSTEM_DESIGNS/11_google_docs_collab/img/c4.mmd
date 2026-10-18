@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
-    n_LB["LB<br/>50 lakh connection, ek server nahi<br/>-> URL me docId, LB ring (consistent hashing) se server chune<br/>ek doc ke saare editor + OT EK server pe, viewer kahin bhi<br/>(ring, owner)<br/>doc do server pe -> do version, isliye ek owner<br/>server juda / gira -> sirf pados ke doc khiskein (ring)<br/>owner gira -> naya owner DB se doc banaye"]
+    n_LB["LB<br/>50 lakh connection, ek server nahi<br/>-> docId se ring pe server, ek doc ke saare editor ek server pe (ring, owner)<br/>server juda / gira -> sirf pados ke doc khiskein<br/>owner gira -> naya owner DB se doc banaye"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
     n_DB["DB"]

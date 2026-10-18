@@ -1,0 +1,63 @@
+{
+ "title": "Ravi ne baad me save kiya, mera \"WORLD\" mit gaya",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: save = poora text upar likh do",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "Main 10:05",
+       "sub": "HELLO WORLD"
+      },
+      {
+       "box": "Ravi 10:07",
+       "sub": "HELLO THERE"
+      }
+     ]
+    },
+    {
+     "arrow": "baad wala jeete"
+    },
+    {
+     "box": "Doc",
+     "sub": "HELLO THERE",
+     "cells": [
+      "WORLD"
+     ],
+     "state": "x",
+     "bad": true
+    }
+   ],
+   "result": "mera WORLD gayab"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: poora text nahi, sirf ek badlaav bhejo (operation)",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "Mera op",
+       "sub": "pos 5 pe \" WORLD\", v7 dekh ke"
+      },
+      {
+       "box": "Ravi ka op",
+       "sub": "pos 5 pe \" THERE\", v7 dekh ke"
+      }
+     ]
+    },
+    {
+     "arrow": "server khiska ke"
+    },
+    {
+     "box": "Doc",
+     "sub": "HELLO WORLD THERE",
+     "good": true
+    }
+   ],
+   "result": "dono bache"
+  }
+ ]
+}

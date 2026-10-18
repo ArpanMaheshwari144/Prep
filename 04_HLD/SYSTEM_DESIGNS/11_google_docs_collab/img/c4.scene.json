@@ -1,0 +1,59 @@
+{
+ "title": "50 lakh connection, ek server ~1 lakh hi jhelta",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: mere doc ke editor alag server pe",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "Main -> server-1"
+      },
+      {
+       "box": "Ravi -> server-3"
+      }
+     ]
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "OT kaun kare?",
+     "sub": "do jagah do version",
+     "bad": true
+    }
+   ],
+   "result": "doc toota"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: docId se ring pe server; ek doc ke saare editor ek server pe (owner)",
+   "items": [
+    {
+     "box": "doc:123",
+     "sub": "ring pe server-1"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "stack": [
+      {
+       "box": "server-1",
+       "sub": "doc:123 ka owner, OT yahin",
+       "good": true
+      },
+      {
+       "box": "server-2",
+       "sub": "doosre doc",
+       "miss": true
+      }
+     ]
+    }
+   ],
+   "result": "ek jagah faisla",
+   "foot": "server juda / gira -> sirf pados ke doc khiskein; owner gira -> naya owner DB se doc banaye"
+  }
+ ]
+}

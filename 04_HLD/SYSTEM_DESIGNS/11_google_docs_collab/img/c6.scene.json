@@ -1,0 +1,58 @@
+{
+ "title": "3 baje DB alert: har akshar pe DB write",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har akshar seedha DB",
+   "items": [
+    {
+     "box": "20 lakh log",
+     "sub": "har sec 3 akshar"
+    },
+    {
+     "arrow": "60 lakh write / sec"
+    },
+    {
+     "box": "DB",
+     "sub": "baith gaya",
+     "bad": true
+    }
+   ],
+   "result": "DB khatam"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: op Redis me jama, har second ek saath DB me (buffer + batch)",
+   "items": [
+    {
+     "box": "Ops"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Redis buffer",
+     "cells": [
+      "H",
+      "E",
+      "L",
+      "L",
+      "O"
+     ],
+     "state": "ooooo",
+     "clock": "1 sec"
+    },
+    {
+     "arrow": "ek batch"
+    },
+    {
+     "box": "DB",
+     "sub": "kam likhai",
+     "good": true
+    }
+   ],
+   "result": "",
+   "foot": "ACK tab jab Redis copy me bhi; jama karte Redis gira -> app op dobara bheje"
+  }
+ ]
+}

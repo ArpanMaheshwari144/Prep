@@ -28,7 +28,7 @@ def cw(c):
 
 
 def tw(t, fs=15):
-    return len(t) * fs * 0.52
+    return len(t) * fs * 0.56
 
 
 def subs(it):

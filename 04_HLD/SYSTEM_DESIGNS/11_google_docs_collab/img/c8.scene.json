@@ -1,0 +1,65 @@
+{
+ "title": "2 saal purana doc khola: 10 lakh op shuru se chale",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har baar shuru se saare op",
+   "items": [
+    {
+     "box": "Edit log",
+     "cells": [
+      "op1",
+      "op2",
+      "..",
+      "10L"
+     ],
+     "state": "oooo"
+    },
+    {
+     "arrow": "ek-ek chalao"
+    },
+    {
+     "box": "Doc",
+     "sub": "minuton khaali screen",
+     "bad": true
+    }
+   ],
+   "result": "dheema"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: har 1000 op pe photo; kholna = aakhri photo + baad ke op (snapshot)",
+   "items": [
+    {
+     "box": "Photo",
+     "sub": "v999000 tak",
+     "cells": [
+      "snap"
+     ],
+     "state": "g"
+    },
+    {
+     "arrow": "+"
+    },
+    {
+     "box": "Baad ke op",
+     "cells": [
+      "..",
+      "10L"
+     ],
+     "state": "yy"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Doc",
+     "sub": "turant",
+     "good": true
+    }
+   ],
+   "result": "",
+   "foot": "photo lete waqt bhi likhna chalta (ek version tak); purana version -> paas wali photo + baaki op"
+  }
+ ]
+}

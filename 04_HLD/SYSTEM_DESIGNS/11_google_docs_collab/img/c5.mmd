@@ -5,7 +5,7 @@ flowchart LR
     n_LB["LB (docId se ring)"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
-    n_PS["Redis pub/sub<br/>Ravi doosre server pe<br/>-> har doc ka channel (doc:123), jis server pe uska user wo SUBSCRIBE kare<br/>server-1 publish -> Redis -> server-2 -> Ravi, OT owner hi karta<br/>(pub/sub)<br/>Ravi ka server restart -> channel se gaya, DB se le<br/>pub/sub gira -> copy main bane, khoya nahi (replica)"]
+    n_PS["Redis pub/sub<br/>Ravi doosre server pe<br/>-> har doc ka channel, jis server pe uska user wo sune (pub/sub)<br/>Ravi ka server restart -> DB se baaki le"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_LB
