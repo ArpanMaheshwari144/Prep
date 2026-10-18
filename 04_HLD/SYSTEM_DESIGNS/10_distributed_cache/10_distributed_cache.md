@@ -103,13 +103,6 @@ DIKKAT     Subah se mere app ki keys cache me jud rahi thi. 64 GB RAM bhar gayi,
 ![c1](img/c1-ae0f7abf.svg)
 
 ```
-TASVEER: LRU = HashMap + list
-  AAGE (abhi chhua)  user:7 <-> user:42 <-> home <-> user:9  PEECHE (sabse purana)
-  GET user:9  -> mila -> utha ke AAGE:  user:9 <-> user:7 <-> user:42 <-> home
-  RAM bhari, SET user:55 -> PEECHE wala (home) bahar -> user:55 AAGE
-  HashMap: key -> list ka dabba (dhoondhna O(1), hilana O(1))
-```
-```
 AAGE POOCHEGA:
   NIYAM: RAM bhari to sabse purana chhua pehle jaaye; umar khatam = key bekaar. Hati key = sirf ek miss,
          App DB se laake wapas rakhta; sach DB me, cache sirf tez copy.
@@ -144,7 +137,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Dopahar machine B mar gayi. Uske hisse ki saari key gayab -> un key ki saari padhai seedha DB pe.
 ```
-![c3](img/c3-3603b67c.svg)
+![c3](img/c3-adcf3b45.svg)
 
 ```
 NAHI       sync copy: har likhai pe copy ke "haan" ka intezaar -> <1 ms gaya.
@@ -166,7 +159,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya, cache me abhi bhi "Ravi"
            -> sabko purana naam dikh raha.
 ```
-![c4](img/c4-3d5ea8bf.svg)
+![c4](img/c4-c73d6dbb.svg)
 
 ```
 NAHI       cache UPDATE: "X" phir "Y" likha, cache me pehle Y pahuncha phir X -> galat "X" baith gaya.
@@ -187,15 +180,8 @@ AAGE POOCHEGA:
 DIKKAT     7 baje "home page" key ki umar khatam hui. Usi pal 1000 log aaye, sabko cache me nahi mili,
            sab ek saath DB pe gaye -> DB pe achanak bojh, home page sabke liye dheema.
 ```
-![c5](img/c5-135d5049.svg)
+![c5](img/c5-d9dc6999.svg)
 
-```
-TASVEER: ek jaaye, baaki ruke
-  7 baje "home" key khatam, 1000 request ek saath
-  req 1:       SET lock:home 1 NX EX 5 -> mila -> DB se join -> cache me home -> lock chhoda
-  req 2..1000: lock nahi mila -> 50-100 ms ruko -> cache se home (ya purani value)
-  DB pe: 1000 ki jagah 1
-```
 ```
 AAGE POOCHEGA:
   NIYAM: khaali key pe ek hi DB jaaye, baaki ruke ya purani value le: DB pe 1000 ek saath kabhi nahi.
@@ -213,7 +199,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat IPL final, crore log har second "live:score" padh rahe. Ye ek key ek hi cache machine pe,
            baaki machine khaali -> wo akeli machine CPU / network pe bhar gayi, score sabke liye atka.
 ```
-![c6](img/c6-16ad7e84.svg)
+![c6](img/c6-6b0a85fc.svg)
 
 ```
 AAGE POOCHEGA:

@@ -1,0 +1,74 @@
+{
+ "title": "Ravi ne naam badla, sabko purana dikh raha",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: DB me naya, cache me purana",
+   "items": [
+    {
+     "box": "DB",
+     "cells": [
+      "Ravi K"
+     ],
+     "state": "g"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Cache",
+     "cells": [
+      "Ravi"
+     ],
+     "state": "r",
+     "bad": true
+    },
+    {
+     "arrow": "padhna"
+    },
+    {
+     "box": "Sab log",
+     "sub": "\"Ravi\" dekhte"
+    }
+   ],
+   "result": "purana naam"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: pehle DB update, phir cache ki key DELETE (delete on write)",
+   "items": [
+    {
+     "box": "DB",
+     "sub": "1. naya likho",
+     "cells": [
+      "Ravi K"
+     ],
+     "state": "g"
+    },
+    {
+     "arrow": "2. key hatao"
+    },
+    {
+     "box": "Cache",
+     "cells": [
+      ""
+     ],
+     "state": "e"
+    },
+    {
+     "arrow": "agla padhna"
+    },
+    {
+     "box": "DB se naya, cache me",
+     "cells": [
+      "Ravi K"
+     ],
+     "state": "g",
+     "good": true
+    }
+   ],
+   "result": "",
+   "foot": "delete fail ho gaya -> key ki umar (TTL) khatam hote hi purana khud mite"
+  }
+ ]
+}

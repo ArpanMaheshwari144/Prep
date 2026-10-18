@@ -1,0 +1,65 @@
+{
+ "title": "Dopahar machine B mar gayi, uski key ka bojh DB pe",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har machine akeli, copy nahi",
+   "items": [
+    {
+     "box": "B ki key",
+     "sub": "user:42 ..."
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Machine B",
+     "sub": "mar gayi",
+     "bad": true
+    },
+    {
+     "arrow": "sab miss"
+    },
+    {
+     "box": "DB",
+     "sub": "achanak bojh",
+     "bad": true
+    }
+   ],
+   "result": "DB dheema"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: har machine ki ek copy, B mari to copy B ban jaaye (replica)",
+   "items": [
+    {
+     "box": "B ki key"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "stack": [
+      {
+       "box": "Machine B",
+       "sub": "mari",
+       "bad": true,
+       "miss": true
+      },
+      {
+       "box": "B ki copy",
+       "sub": "ab B",
+       "cells": [
+        "user:42"
+       ],
+       "state": "g",
+       "good": true
+      }
+     ]
+    }
+   ],
+   "result": "DB bacha",
+   "foot": "network toota, do main ban gaye -> zyadatar machines tay karein kaun main (quorum)"
+  }
+ ]
+}
