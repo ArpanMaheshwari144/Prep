@@ -68,21 +68,6 @@ NUMBERS (andaaza):
 Ek machine, uski RAM me ek HashMap. get / put O(1).
 App pehle cache se poochhe: mila -> wahi do · nahi mila -> DB se laao -> cache me daalo -> do (CACHE-ASIDE).
 ```
-![cdabba](img/cdabba.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache["Cache"]
-    n_App --> n_DB
-    n_App --> n_Cache
-```
-
-</details>
 
 
 #### SHURU: CACHE-ASIDE
@@ -116,21 +101,6 @@ DIKKAT     Subah se mere app ki keys cache me jud rahi thi. 64 GB RAM bhar gayi,
 ```
 ![c1](img/c1.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache["Cache<br/>64 GB RAM bhar gayi<br/>-> har key ka chhune ka kram rakho, RAM bhari to sabse der se chhua bahar<br/>har key ki umar bhi: khatam = key bekaar<br/>(LRU + TTL)<br/>user:9 phir padha -> utha ke aage, ab baad me nikle"]
-    n_App --> n_DB
-    n_App --> n_Cache
-    style n_Cache fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 TASVEER: LRU = HashMap + list
   AAGE (abhi chhua)  user:7 <-> user:42 <-> home <-> user:9  PEECHE (sabse purana)
@@ -155,43 +125,12 @@ DIKKAT     Subah 11 tak data 1 TB ho gaya, ek machine me 64 GB -> 16+ machine. "
 ```
 ![c2](img/c2.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache_client["Cache client<br/>user:42 kis machine pe<br/>-> ring (gol ghera) pe key aur machine dono, key aage chale<br/>PEHLI machine uski, App ki cache client library hisaab kare<br/>(consistent hashing)<br/>machine D judi -> sirf pados ki key khiski, baaki hit<br/>machine A giri -> uski key aage wali pe, ek baar miss<br/>A ka bojh B pe double -> har machine 100-200 jagah (virtual nodes)"]
-    n_Node_A["Node A (LRU + TTL)"]
-    n_Node_B["Node B (LRU + TTL)"]
-    n_Node_C["Node C (LRU + TTL)"]
-    n_App --> n_DB
-    n_App --> n_Cache_client
-    n_Cache_client --> n_Node_A
-    n_Cache_client --> n_Node_B
-    n_Cache_client --> n_Node_C
-    style n_Cache_client fill:#f9a825,color:#000
-    style n_Node_A fill:#f9a825,color:#000
-    style n_Node_B fill:#f9a825,color:#000
-    style n_Node_C fill:#f9a825,color:#000
-```
-
-</details>
-
 **CONSISTENT HASHING KAISE:**
 
 ![consistent hashing](img/concept_consistent_hashing.svg)
 
 ```
 NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
-```
-```
-TASVEER: ring 0..360 (gol ghera), aage chalo
-  0 ------ A=100 ------ B=200 --- D=250 --- C=300 ------ 360 (= 0, wapas A)
-  key 150 -> aage pehli machine = B
-  key 350 -> aage koi nahi -> ghoom ke A
-  D=250 juda -> sirf 201..250 wali key C se D pe; baaki sab apni jagah
 ```
 ```
 AAGE POOCHEGA:
@@ -209,29 +148,6 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar machine B mar gayi. Uske hisse ki saari key gayab -> un key ki saari padhai seedha DB pe.
 ```
 ![c3](img/c3.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_App["App"]
-    n_DB["DB"]
-    n_Cache_client["Cache client (ring)"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica<br/>B mari, bojh DB pe<br/>-> har machine ki copy doosri building me, likhna B pe, copy tak thodi der baad<br/>baaki B ko ping karein, zyadatar bolein B mari -> copy naya B, App ko naya pata<br/>(replica, async)<br/>copy ko main banana -> ~10-30 sec, us beech B ki key DB se<br/>copy peeche thi -> aakhri likhai kho sakti, sach DB me<br/>network toota, do main -> zyadatar tay kare (quorum, split brain)"]
-    n_Node_C_replica["Node C + replica"]
-    n_App --> n_DB
-    n_App --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-    style n_Node_A_replica fill:#f9a825,color:#000
-    style n_Node_B_replica fill:#f9a825,color:#000
-    style n_Node_C_replica fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 NAHI       sync copy: har likhai pe copy ke "haan" ka intezaar -> <1 ms gaya.
@@ -255,27 +171,6 @@ DIKKAT     Shaam ko Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya, ca
 ```
 ![c4](img/c4.svg)
 
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_App["App<br/>DB naya, cache purana<br/>-> pehle DB update, phir cache ki key DELETE (update nahi)<br/>agli padhai miss -> DB se naya -> cache me<br/>(delete on write)<br/>delete fail -> TTL khatam hote hi purana khud mite<br/>Ravi ko apna purana -> likhne wale ko kuch der primary se"]
-    n_DB["DB"]
-    n_Cache_client["Cache client (ring)"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App --> n_DB
-    n_App --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-    style n_App fill:#f9a825,color:#000
-```
-
-</details>
-
 ```
 NAHI       cache UPDATE: "X" phir "Y" likha, cache me pehle Y pahuncha phir X -> galat "X" baith gaya.
 ```
@@ -296,27 +191,6 @@ DIKKAT     7 baje "home page" key ki umar khatam hui. Usi pal 1000 log aaye, sab
            sab ek saath DB pe gaye -> DB pe achanak bojh, home page sabke liye dheema.
 ```
 ![c5](img/c5.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_App["App<br/>key khatam, 1000 DB pe<br/>-> pehla request lock le (SET lock:home NX EX 5), wahi DB se laaye<br/>baaki 999 ruk ke cache se padhein<br/>(lock: SET NX EX)<br/>999 ruke -> 50-100 ms, ya purani value do<br/>lock wala hi mara -> lock khud khule (TTL)<br/>saari key ek saath khatam -> umar me random (60 min +- 5)"]
-    n_DB["DB"]
-    n_Cache_client["Cache client (ring)"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App --> n_DB
-    n_App --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-    style n_App fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 TASVEER: ek jaaye, baaki ruke
@@ -343,27 +217,6 @@ DIKKAT     Raat IPL final, crore log har second "live:score" padh rahe. Ye ek ke
            baaki machine khaali -> wo akeli machine CPU / network pe bhar gayi, score sabke liye atka.
 ```
 ![c6](img/c6.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_App_L1_local_cache["App + L1 local cache<br/>crore log ek key pe<br/>-> garam key ki 1-2 sec copy har App ki apni memory me<br/>ya key ke tukde kai machine pe (score:1..10), bheed bant jaaye<br/>(L1 cache + copies)<br/>L1 kitna purana -> 1-2 sec, score chalta, paisa nahi"]
-    n_DB["DB"]
-    n_Cache_client["Cache client (ring)"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App_L1_local_cache --> n_DB
-    n_App_L1_local_cache --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-    style n_App_L1_local_cache fill:#f9a825,color:#000
-```
-
-</details>
 
 ```
 AAGE POOCHEGA:
@@ -398,26 +251,6 @@ JAWAB:    Cache = RAM me rakhi key-value, kai machines me baanti (ring se), har 
           Bahut garam key: har app server apne paas 1-2 second rakhe.
 ```
 ![c6_2](img/c6_2.svg)
-
-<details><summary>diagram source (mermaid)</summary>
-
-```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_App_L1_local_cache["App + L1 local cache"]
-    n_DB["DB"]
-    n_Cache_client["Cache client (ring)"]
-    n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica"]
-    n_Node_C_replica["Node C + replica"]
-    n_App_L1_local_cache --> n_DB
-    n_App_L1_local_cache --> n_Cache_client
-    n_Cache_client --> n_Node_A_replica
-    n_Cache_client --> n_Node_B_replica
-    n_Cache_client --> n_Node_C_replica
-```
-
-</details>
 
 
 ---

@@ -1,0 +1,14 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_App["App<br/>DB naya, cache purana<br/>-> pehle DB update, phir cache ki key DELETE (update nahi)<br/>agli padhai miss -> DB se naya -> cache me<br/>(delete on write)<br/>delete fail -> TTL khatam hote hi purana khud mite<br/>Ravi ko apna purana -> likhne wale ko kuch der primary se"]
+    n_DB["DB"]
+    n_Cache_client["Cache client (ring)"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
+    style n_App fill:#f9a825,color:#000

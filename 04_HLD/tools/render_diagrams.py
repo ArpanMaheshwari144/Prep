@@ -1,7 +1,7 @@
 """HLD design file ke har mermaid diagram ko SVG image banata (mermaid-cli).
 Chalao:  python 04_HLD/tools/render_diagrams.py 04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md
-- Pehli baar: ```mermaid block -> upar image, neeche <details> me source.
-- Baad me: source (details wala mermaid) badlo, phir yahi chalao -> image dobara banti.
+- Source = img/<naam>.mmd (md me sirf ![naam](img/naam.svg)). Diagram badalna: .mmd badlo, phir yahi chalao.
+- Purani file (```mermaid / <details> wali): pehli baar chalane pe source .mmd me chala jaata, md me sirf image.
 - Image commit: git add <folder>/img/*.svg
 """
 import re, subprocess, sys, os
@@ -33,6 +33,13 @@ def fix_size(svg_path):
 def main(f):
     d = os.path.dirname(f); img = os.path.join(d, 'img'); os.makedirs(img, exist_ok=True)
     s = open(f, encoding='utf-8').read()
+    if '```mermaid' not in s:
+        for name in re.findall(r'!\[(\w+)\]\(img/\1\.svg\)', s):
+            mmd = os.path.join(img, name + '.mmd')
+            if os.path.exists(mmd):
+                ok, err = render(open(mmd, encoding='utf-8').read(), os.path.join(img, name + '.svg'))
+                print('ok' if ok else 'FAIL', name, '' if ok else err)
+        return
     # already converted blocks: ![name](img/name.png) + details + mermaid
     conv = re.compile(r'!\[(\w+)\]\(img/\1\.svg\)\n\n<details><summary>diagram source \(mermaid\)</summary>\n\n'
                       r'```mermaid\n(.*?)```\n\n</details>\n', re.S)

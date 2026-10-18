@@ -1,0 +1,14 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_App["App<br/>key khatam, 1000 DB pe<br/>-> pehla request lock le (SET lock:home NX EX 5), wahi DB se laaye<br/>baaki 999 ruk ke cache se padhein<br/>(lock: SET NX EX)<br/>999 ruke -> 50-100 ms, ya purani value do<br/>lock wala hi mara -> lock khud khule (TTL)<br/>saari key ek saath khatam -> umar me random (60 min +- 5)"]
+    n_DB["DB"]
+    n_Cache_client["Cache client (ring)"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App --> n_DB
+    n_App --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
+    style n_App fill:#f9a825,color:#000

@@ -1,0 +1,8 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_App["App"]
+    n_DB["DB"]
+    n_Cache["Cache<br/>64 GB RAM bhar gayi<br/>-> har key ka chhune ka kram rakho, RAM bhari to sabse der se chhua bahar<br/>har key ki umar bhi: khatam = key bekaar<br/>(LRU + TTL)<br/>user:9 phir padha -> utha ke aage, ab baad me nikle"]
+    n_App --> n_DB
+    n_App --> n_Cache
+    style n_Cache fill:#f9a825,color:#000

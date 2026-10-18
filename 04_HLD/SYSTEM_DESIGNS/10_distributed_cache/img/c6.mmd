@@ -1,0 +1,14 @@
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_App_L1_local_cache["App + L1 local cache<br/>crore log ek key pe<br/>-> garam key ki 1-2 sec copy har App ki apni memory me<br/>ya key ke tukde kai machine pe (score:1..10), bheed bant jaaye<br/>(L1 cache + copies)<br/>L1 kitna purana -> 1-2 sec, score chalta, paisa nahi"]
+    n_DB["DB"]
+    n_Cache_client["Cache client (ring)"]
+    n_Node_A_replica["Node A + replica"]
+    n_Node_B_replica["Node B + replica"]
+    n_Node_C_replica["Node C + replica"]
+    n_App_L1_local_cache --> n_DB
+    n_App_L1_local_cache --> n_Cache_client
+    n_Cache_client --> n_Node_A_replica
+    n_Cache_client --> n_Node_B_replica
+    n_Cache_client --> n_Node_C_replica
+    style n_App_L1_local_cache fill:#f9a825,color:#000
