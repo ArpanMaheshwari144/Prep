@@ -15,7 +15,20 @@ def render(src, png):
     r = subprocess.run(['npx', '-y', '@mermaid-js/mermaid-cli@11.4.2', '-i', tmp, '-o', png, '-c', CFG,
                         '-b', 'white', '-w', '1100'], capture_output=True, text=True, shell=True)
     os.remove(tmp)
+    if r.returncode == 0: fix_size(png)
     return r.returncode == 0, r.stderr[-300:]
+
+def fix_size(svg_path):
+    """width="100%" -> viewBox ki asli chaudai / unchai, taaki chhota diagram khinche nahi."""
+    t = open(svg_path, encoding='utf-8').read()
+    m = re.search(r'<svg[^>]*>', t)
+    tag = m.group(0)
+    vb = re.search(r'viewBox="[\d.\-]+ [\d.\-]+ ([\d.]+) ([\d.]+)"', tag)
+    if not vb: return
+    w, h = round(float(vb.group(1))), round(float(vb.group(2)))
+    new = re.sub(r' width="100%"', f' width="{w}" height="{h}"', tag)
+    new = re.sub(r'max-width:\s*[\d.]+px;\s*', '', new)
+    open(svg_path, 'w', encoding='utf-8').write(t.replace(tag, new, 1))
 
 def main(f):
     d = os.path.dirname(f); img = os.path.join(d, 'img'); os.makedirs(img, exist_ok=True)
@@ -47,4 +60,8 @@ def main(f):
     open(f, 'w', encoding='utf-8').write(''.join(out))
 
 if __name__ == '__main__':
-    for f in sys.argv[1:]: main(f)
+    if sys.argv[1:2] == ['--fix-size']:
+        import glob
+        for p in glob.glob(os.path.join(HERE, '..', 'SYSTEM_DESIGNS', '*', 'img', '*.svg')): fix_size(p)
+    else:
+        for f in sys.argv[1:]: main(f)
