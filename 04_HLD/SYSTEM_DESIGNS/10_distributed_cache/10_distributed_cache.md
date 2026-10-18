@@ -124,9 +124,7 @@ AAGE POOCHEGA:
   SAFAR (ek key, RAM bhar gayi, har mod pe kya):
   RAM me jagah, sab theek -> key rakho, umar (TTL) ke saath; padho to RAM se
   RAM bhar gayi           -> sabse der se chhua hatao (LRU): wahi LRU jo LC 146 me
-  har baar dhoondhoge?    -> nahi: hashmap + doubly linked list: chhua -> aage, peeche wala hatao, O(1)
   umar wali key kab hate  -> padhte waqt check (lazy) + peeche thodi safai (active): ghadi mehngi
-  hatana hi band kiya     -> naya likhna error (noeviction); cache me allkeys-lru rakho
 ```
 
 #### 2 Subah 11 tak data 1 TB: "user:42" kis machine pe?
@@ -167,11 +165,12 @@ AAGE POOCHEGA:
   NIYAM: machine jude / jaaye to sirf pados ki ~K/N key hilein (K = saari key, N = machine); App ko us
          hisse ki ek baar miss, baaki sab hit.
   SAFAR (key "user:42" ka ghar, har mod pe kya):
-  key 150, sab theek      -> ghadi 0..360, aage pehli machine: A=100, B=200, C=300 -> B
-  key 350                 -> aage koi nahi -> ghoom ke A (jaise circular array, i % n)
-  D=250 juda              -> sirf 201..250 wali key C se D pe; baaki apni jagah
-  ek machine pe zyada key -> har machine ghadi pe 100-200 jagah (virtual nodes): tukde barabar
-  App ko kaise pata       -> naksha (config service); galat machine -> Redis "MOVED, wahan jao"
+  user:42, sab theek      -> ghadi pe aage pehli machine uska ghar (TASVEER), aakhir ke baad ghoom ke pehli
+  machine D judi          -> sirf pados ki key khiski (201..250 C se D): baaki sab hit
+  machine A giri          -> uski key aage wali pe, sirf wahi ek baar miss
+  A ka bojh B pe double?  -> har machine ghadi pe 100-200 jagah (virtual nodes): bojh kai pados pe bat-ta
+  App ko kaise pata       -> cache client library khud hisaab karti; machine list config service se;
+                             galat machine pe gaya to redirect (MOVED-jaisa)
 ```
 
 #### 3 Dopahar machine B mar gayi, uski key ka bojh DB pe
@@ -275,8 +274,8 @@ AAGE POOCHEGA:
   key zinda, sab theek      -> sab cache se, DB pe kuch nahi
   key khatam, 1000 aaye     -> pehla lock le (SET lock:home NX EX 5), wahi DB se laaye; baaki ruke
   999 ruke                  -> 50-100 ms, ya purani value do: thodi purani home page chalti
+  lock lene wala hi mara    -> lock ki umar (EX 5): khud khule, agla le; 999 hamesha nahi ruke
   saari key ek saath khatam -> umar me random (60 min +- 5): ek saath nahi girti
-  key DB me thi hi nahi     -> "nahi hai" bhi cache karo, chhoti umar: warna har baar DB
 ```
 
 #### 6 Raat IPL final, "live:score" key ki machine akeli mar rahi
@@ -301,8 +300,8 @@ AAGE POOCHEGA:
          bheed baanto; score thoda purana chalta, paisa nahi.
   SAFAR (live:score ki bheed, har mod pe kya):
   aam din, sab theek       -> key ek machine pe, sab Redis se
-  ek machine pe crore      -> har App ke paas 1-2 sec copy (L1), ya key ki kai copy (score#1..#10)
-  garam pata kaise         -> App me ginti + machine ka metric achanak upar -> copy / L1
+  ek machine pe crore      -> pehle pakdo: App me ginti + machine ka metric achanak upar
+  garam pakdi              -> har App ke paas 1-2 sec copy (L1), ya key ki kai copy (score#1..#10)
   L1 me score kitna purana -> 1-2 sec: score chalta, paisa / stock nahi
   us key pe likhna (like)  -> key ke tukde like#0..#9: kisi ek me likho, padhte waqt jodo
 ```
@@ -386,6 +385,10 @@ SAFAR KE BAHAR WALE SAWAAL:
 "Kitni parat hui?" -> L1 (App RAM) -> L2 Redis -> DB; neeche wali dheemi, isliye upar se pehle
 "Stampede aur hot key me farak?" -> stampede = key KHAALI (lock) · hot key = key BHARI, ek machine pe bheed
                                     (L1)
+"Sabse purana har baar dhoondhoge?" (c1) -> nahi: hashmap + doubly linked list, chhua -> aage, peeche wala
+                                           hatao, O(1) (wahi LRU jo LC 146 me)
+"Hatana hi band kar diya to?" (c1) -> naya likhna error (noeviction); cache me allkeys-lru rakho
+"Key DB me thi hi nahi?" (c5) -> "nahi hai" bhi cache karo, chhoti umar: warna har baar DB (penetration)
 
 API:      GET key · PUT key value ttl · DELETE key
           jaan-boojh ke chhoti — query nahi, sirf key se -> index / planner nahi -> isiliye tez

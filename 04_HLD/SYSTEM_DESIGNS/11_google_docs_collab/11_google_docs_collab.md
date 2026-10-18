@@ -98,8 +98,8 @@ AAGE POOCHEGA:
   SAFAR (mera ek op, har mod pe kya):
   sab theek              -> maine likha -> op + baseVersion v7 -> server agla version de ke lagaye, Ravi ko
                             bheje
-  Ravi bhi v7 pe likha   -> server samjhe dono saath bane -> OT se khiska ke dono lagaye, kisi ka nahi mitta
-  maine mitaya, wo wahin -> mitana bhi op: OT dono ko adjust, Ravi ka akshar sahi jagah
+  Ravi bhi v7 pe likha   -> server samjhe dono saath bane -> khiska ke dono lagaye, kisi ka nahi mitta
+  maine mitaya, wo wahin -> mitana bhi op: server dono ko khiska ke lagaye, Ravi ka akshar sahi jagah
 ```
 
 #### 2 Ravi ko mera likha refresh karne pe hi dikha
@@ -128,7 +128,7 @@ AAGE POOCHEGA:
   SAFAR (mera taar, har mod pe kya):
   sab theek            -> taar khula -> server khud bhejta, Ravi refresh nahi karta (WebSocket)
   taar chupchaap mara? -> har ~30 sec ping / pong: jawab nahi = band, jagah khaali
-  taar toota           -> main likhta rahun; judte hi "main v120 pe tha" -> server v121 se aage sab
+  taar toota           -> main likhta rahun; judte hi "main v12 pe tha" -> server v13 se aage sab
 ```
 
 #### 3 11 baje meeting me dono ne sabse upar ek saath type kiya
@@ -165,14 +165,14 @@ AAGE POOCHEGA:
   SAFAR (do log ek saath, har mod pe kya):
   sab theek      -> dono ne upar likha -> owner server kram deta (v8, v9), doosra op khiskata, sab same
   meri screen    -> apna likha turant; Ravi ka khisak ke aata (app apne pending op khiskata)
-  kram ghadi se? -> nahi: phone ki ghadi alag chalti -> sirf server ka version
+  dono pos 0 (tie) -> server pe pehle aaya wo 0 pe, doosra 1 pe khiska -> dono ke paas "XYHELLO"
 ```
 
 #### 4 50 lakh taar khule, ek connection server nahi jhelta
 ```mermaid
 flowchart LR
     n_USER["USER A / B"]
-    n_App["App (op bhejo, files CDN se)"]
+    n_App["App (op bhejo)"]
     n_LB["LB<br/>50 lakh taar, ek server nahi<br/>-> ek doc ke sab log ek server pe<br/>(ring, owner)"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
@@ -200,7 +200,7 @@ AAGE POOCHEGA:
   SAFAR (ek doc ka ghar, har mod pe kya):
   sab theek              -> editor aaya -> docId se ring pe EK owner server: OT ek jagah (do server = do
                             version)
-  1000 log ek doc pe     -> 100 editor owner pe (OT sirf likhne walon ka); 900 viewer kahin bhi, pub/sub se
+  1000 log ek doc pe     -> 100 editor owner pe (OT sirf likhne walon ka); 900 viewer kahin bhi
   server juda / gira     -> ring pe sirf uske pados ke doc khiskte; wo log dobara jude
   owner gira, doc kahan? -> doc server pe nahi, LOG me hai: naya owner log se banaye; app version bata ke
                             baaki le
@@ -210,7 +210,7 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER A / B"]
-    n_App["App (op bhejo, files CDN se)"]
+    n_App["App (op bhejo)"]
     n_LB["LB (docId se ring)"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
@@ -249,7 +249,7 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER A / B"]
-    n_App["App (op bhejo, files CDN se)"]
+    n_App["App (op bhejo)"]
     n_LB["LB (docId se ring)"]
     n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
@@ -287,7 +287,7 @@ AAGE POOCHEGA:
   ACK se pehle Redis gira -> app op rakhe: bina ACK pakka nahi; jude to opId ke saath phir bhejo, hai to
                              skip
   ACK ke baad gira        -> copy main bani: ACK se pehle copy me likh chuke the
-  batch dheema hua        -> typing nahi rukti: batch ACK ke raaste me nahi
+  batch dheema hua        -> typing nahi rukti (batch ACK ke raaste me nahi); buffer badhe -> alert
   batch dobara likha      -> (docId, version) same = ek hi row, kuch double nahi
 ```
 
@@ -295,7 +295,7 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER A / B"]
-    n_App["App (op bhejo, files CDN se)"]
+    n_App["App (op bhejo)"]
     n_LB["LB (docId se ring)"]
     n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
@@ -333,7 +333,7 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER A / B"]
-    n_App["App (op bhejo, files CDN se)"]
+    n_App["App (op bhejo)"]
     n_LB["LB (docId se ring)"]
     n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
@@ -361,9 +361,10 @@ AAGE POOCHEGA:
   NIYAM: photo ek version tak; kholna = photo + uske baad ke op, shuru se kabhi nahi.
          koi bhi purana version dekhna = us se pehli photo + beech ke op.
   SAFAR (purana doc kholna, har mod pe kya):
-  sab theek             -> har 1000 op ya kuch min photo -> doc khola = aakhri photo + baad ke ~1000 op
+  sab theek             -> background job har 1000 op photo leta (user ko nahi dikhta) -> doc khola =
+                           aakhri photo + baad ke ~1000 op
   photo lete waqt likha -> photo ek version tak (v9,99,000), baad ke op alag: kuch nahi rukta
-  photo kam baar li     -> kholte waqt utne zyada op chalane padte
+  purana version dekhna -> us se pehli photo + beech ke op: shuru se kabhi nahi
 ```
 
 ---
@@ -463,6 +464,7 @@ AUR SAWAAL (safar ke mod nahi):
   Cassandra kyun?              -> sirf neeche jodta (commit log + RAM): likhai tez, join nahi; Mongo bhi
                                   chalega
   App ki static files?         -> CDN: JS / CSS sabke liye same, paas se aaye
+  photo kitni baar?            -> kam li to kholte waqt utne zyada op chalane padte (har 1000 op theek)
 ```
 
 ---

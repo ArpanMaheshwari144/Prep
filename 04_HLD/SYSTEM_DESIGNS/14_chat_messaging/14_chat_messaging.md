@@ -138,13 +138,13 @@ NAHI       badi machine lo (zyada RAM): thread ka kharcha wahi, bas thodi der ba
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: taar kholo, thread mat do; server gira to log ruk-ruk ke judein; message DB me, kuch nahi khota.
+  NIYAM: taar kholo, thread mat do; server gira to log ruk-ruk ke judein; bheja hua khota nahi (card 3).
   SAFAR (ek taar, subah se raat):
   app khula                  -> LB server pe bithata, taar khula (event loop, thread nahi)
   taar chup                  -> thodi memory; data aaya tabhi thread (epoll batata)
   wahi taar aage             -> wahi server: taar khula hai, naya connection = naya chunaav
   chat server gira           -> ruk-ruk ke, random waqt pe dobara judo (backoff + jitter)
-                                message DB me hai, kuch nahi khota
+                                bheja hua khota nahi (card 3)
   naya code deploy           -> thode-thode server khaali (draining): sab ek saath na judein
 ```
 
@@ -169,13 +169,14 @@ NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: Redis me sirf PATA (umar ke saath); message DB me pakka, pata galat ya Redis gira, kuch nahi khota.
+  NIYAM: Redis me sirf PATA (umar ke saath); pata galat ya Redis gira, message khota nahi (card 3).
   SAFAR (mera "hi", Ravi tak):
   Ravi online, server-7 pe   -> Redis se pata "Ravi -> server-7" -> server-7 -> Ravi
   server-7 zinda             -> dhadkan se entry ki umar badhti (TTL)
   server-7 mara              -> umar khatam, entry khud hati -> Ravi offline maana
-  pata galat, Ravi khiska    -> message DB me hai: naye server pe judte hi le lega
-  Redis hi gira              -> copy pe switch: message DB me pakka, judne pe milega
+  Ravi phone + laptop dono   -> pata ek nahi, list (device -> server): dono pe bhejo
+  pata galat, Ravi khiska    -> message khota nahi (card 3): naye server pe judte hi milega
+  Redis hi gira              -> copy pe switch: message khota nahi (card 3), judne pe milega
 ```
 
 #### 3 Ravi ka phone band tha, message kahan jaaye
@@ -245,8 +246,6 @@ AAGE POOCHEGA:
   ek group bahut garam       -> ek chat ek partition hi rahega: group ki speed pe had
   saalon me partition badi   -> key (chat_id, mahina): size bandhta, bojh nahi baant-ta
   3 saal purane              -> sasti jagah (cold storage): kabhi-kabhi hi khulte
-  purana message search      -> DB ke baad search index me bhi likho (Elasticsearch):
-                                ES id de, message Cassandra se
 ```
 
 #### 5 Net dheema, app ne dobara bheja, Ravi ko "hi" do baar
@@ -281,7 +280,7 @@ AAGE POOCHEGA:
   pehli baar                 -> app ki id (clientMsgId) -> "pehle aaya?" nahi -> daalo
   timeout, app dobara        -> WAHI id -> "pehle aaya?" haan -> skip, pehli wali id lautao
   dono ek saath pahunche     -> dekhna + daalna ek kadam (Cassandra LWT / Redis SET NX)
-  id kab tak yaad            -> jitni der me dobara aata: retry minute me, 1 ghanta kaafi
+  do user ki id same nikli   -> check jodi pe (sender_id, clientMsgId): alag log = alag message
 ```
 
 #### 6 Meri ghadi 5 min aage, mere message upar chadh gaye
@@ -322,7 +321,7 @@ AAGE POOCHEGA:
   SAFAR (mera message, chat me jagah):
   message aaya               -> server deta +1 number (Redis INCR seq:chat123), ghadi nahi
   meri ghadi 5 min aage      -> farak nahi: kram seq se, phone ke waqt se nahi
-  app ko 15, phir 17         -> 16 chhoota (chhed) -> thoda ruko -> "15 ke baad ke do"
+  app ko 4415, phir 4417     -> 4416 chhoota (chhed) -> thoda ruko -> "4415 ke baad ke do"
   seq wala Redis restart     -> Cassandra me har message ka seq: sabse bade se aage
   Ravi wapas aaya            -> "meri aakhri 4417" -> 4418 se aage sab
 ```
@@ -448,6 +447,7 @@ AAGE POOCHEGA:
   NIYAM: bhaari maal S3 me, message me sirf KEY (URL marta hai); ek upload, sabko wahi key.
   SAFAR (200 MB video):
   bhejna                     -> app seedha S3 me (10 min ka paas, presigned URL)
+  200 MB me net gaya         -> tukdon me (multipart): bacha hissa hi dobara
   message                    -> sirf S3 key + thumbnail; group me ek upload, 500 ko wahi key
   Ravi ne khola              -> key se naya chhota URL (URL marta hai, key nahi)
   wahi video 1000 baar forward -> file ka hash: pehle se hai to wahi file, upload nahi
@@ -485,6 +485,7 @@ AAGE POOCHEGA:
   SAFAR (main online aaya, gaya):
   app khula                  -> Redis "Arpan online" 30 sec; app har 15 sec "hoon"
   Ravi ne meri chat kholi    -> tabhi status dekho: sabko batana nahi
+  chat khuli, main gaya      -> khuli chat = subscribe (live badlav); baaki chat pull
   crore dhadkan / sec        -> chat server ikattha karke Redis me (batch)
   app band                   -> umar khatam = offline; server us waqt last seen alag likhe
   Ravi ne last seen chhupaya -> mat dikhao
@@ -571,6 +572,9 @@ API:      GET /connect (BAND nahi hoti — WebSocket) · POST /messages { chatId
 "10 lakh ka broadcast group?"      -> tick band, sirf unread: 10 lakh nishaan milana mehnga.
 "E2E hai to thumbnail?"            -> app khud encrypt kare, chaabi message ke saath; server dekh nahi sakta.
 "Aur 'typing...'?"                 -> sirf khuli chat me, store nahi: 2 sec ki khabar.
+"Purana message search?"          -> DB ke baad search index me bhi likho (Elasticsearch): ES id de,
+                                     message Cassandra se (card 4).
+"clientMsgId kab tak yaad?"       -> jitni der me dobara aata: retry minute me, 1 ghanta kaafi (card 5).
 
 DO DUNIYA:  ZINDA TAAR (memory, ek server ki, mar sakti) = register
             PAKKA MAAL (DB, sab jagah se dikhta) = message

@@ -25,7 +25,7 @@ RAJA KA RAJYA (poori file isi se yaad rakho):
 4   match khatam, Virat ka tweet, DB gira    -> HOT-TWEET CACHE (RAM)               Hot-tweet cache
 5   Redis alert: 50 crore inbox, RAM bhari   -> AAKHRI 800 + soye hue hatao         (inbox chhota)
 6   5,000 tweet / sec, 0.5 PB                -> CASSANDRA, user_id se baanto        Cassandra
-7   main Bangalore, data US, 200 ms          -> REGION-WISE + Route 53              Route 53
+7   main Bangalore, data US, 300 ms          -> REGION-WISE + Route 53              Route 53
 8   akeli App machine giri, sab band         -> STATELESS App x N + ALB             ALB + App x N
 9   padhne ki bheed, tweet daalna dheema     -> ALAG SERVICE (likhna/padhna)       Tweet/Timeline/User/Follow
 10  maine video daali, sabko dheemi          -> S3 + CDN                            S3 + CDN
@@ -170,6 +170,7 @@ AAGE POOCHEGA:
          ek hi baar dikhe (sorted set); apna tweet apni feed me turant.
   SAFAR (ek tweet daalna, har mod pe kya):
   tweet bheja            -> DB me save -> 'ho gaya'; inbox bharna Kafka se peeche
+  DB save, Kafka fail    -> dono ek saath nahi hote: outbox / retry; dobara aaye to sorted set me ek hi
   apni hi feed           -> apna tweet seedha jodo: fanout peeche, apna turant
   worker 60/100 pe gira  -> Kafka ko 'ho gaya' bola hi nahi (commit nahi): khabar phir aayegi
   wahi 60 dobara likhe   -> tweet ek hi baar: sorted set me same tweet_id ek hi rehta
@@ -215,8 +216,7 @@ AAGE POOCHEGA:
   celeb (10 crore) kare  -> inbox me nahi, padhte waqt laao (pull): likhne ka toofan bacha
   feed khuli             -> inbox + follow kiye celebs ke naye tweet milao (hybrid)
   10,000 ke aas-paas     -> 12,000 upar pull, 8,000 neeche tabhi push: line pe baar-baar na palte
-  celeb tweet garam      -> user_id se baantna theek; garam key ring nahi bachata -> alag RAM cache
-  laakhon like           -> ginti 10 tukde (tweet123#0..#9), padhte waqt jodo: ek key ek machine
+  50 celeb follow kiye   -> unke naye tweet chhote celeb cache se: 50 pull bhi sasta
 ```
 
 #### 4 Match khatam, Virat ka tweet, crore log ek saath, DB gira
@@ -330,16 +330,18 @@ AAGE POOCHEGA:
          2 se padho -> naya mil hi jaata.
   SAFAR (ek tweet DB me, har mod pe kya):
   tweet aaya             -> user_id ki machine pe (Cassandra): ek user ke tweet ek jagah
-  likha itna tez kaise   -> RAM + diary ke aakhir jodo, badlo nahi; RAM bhari -> nayi file
-  baad me padhna         -> kai chhoti files = dheema -> peeche milao (compaction) + bloom filter
-  ek copy giri / peeche  -> 3 copy, 2 me likho, 2 se padho -> naya mil hi jaata (quorum)
+  RAM bhar gayi          -> diary ke aakhir jodo, badlo nahi; RAM ki nayi file disk pe: likhai tez
+  files bahut ho gayi    -> padhna dheema -> peeche milao (compaction) + bloom filter
+  meri machine giri      -> 3 copy, 2 me likho, 2 se padho -> naya mil hi jaata (quorum)
+  famous, machine garam  -> user_id se baantna phir bhi theek; garam tweet alag RAM cache (card 4)
+  famous ke bahut tweet  -> key me mahina jodo (user_id, mahina): ek machine na bhare
 ```
 
-#### 7 Main Bangalore me, data US me, har feed 200 ms
+#### 7 Main Bangalore me, data US me, har feed 300 ms
 ```mermaid
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53<br/>Bangalore se US, 200 ms<br/>-> data user ke paas wale region me<br/>(multi-region)"]
+    n_Route_53["Route 53<br/>Bangalore se US, 300 ms<br/>-> data user ke paas wale region me<br/>(multi-region)"]
     n_App["App"]
     n_Kafka["Kafka"]
     n_Fanout_workers["Fanout workers"]
@@ -361,7 +363,7 @@ AAGE POOCHEGA:
   NIYAM: data user ke paas wale region me; doosre region ki copy thodi peeche -> region gira to feed thodi
          purani, par chalti.
   SAFAR (meri feed, region ke paar, har mod pe kya):
-  feed maangi            -> paas wala region (Route 53 pata deta): 200 ms nahi, tez
+  feed maangi            -> paas wala region (Route 53 pata deta): 300 ms nahi, tez
   data kahan             -> mera India me; doosre region me copy thoda baad (Cassandra)
   US celeb ka tweet      -> garam tweet India cache me bhi
   main US ghooma         -> request India bhejo, ya paas ki copy se (thoda purana)
@@ -397,7 +399,7 @@ AAGE POOCHEGA:
   SAFAR (ek request, har mod pe kya):
   request aayi           -> koi bhi machine (stateless): yaad sab Redis / DB me
   machine giri           -> ALB har ~10 sec 'zinda?': chup = bahar, theek = wapas (Route 53 bhi)
-  naya code daalna       -> ek-ek karke nikaalo, daalo, jodo (rolling): baaki bheed sambhaalti
+  naya code, App band    -> ek-ek karke nikaalo, daalo, jodo (rolling): baaki bheed sambhaalti
   nayi machine judi      -> pehli request dheemi kam: apna data nahi; ALB dheere traffic de
 ```
 
@@ -433,7 +435,7 @@ AAGE POOCHEGA:
   POST /tweet            -> ALB path se Tweet Svc; GET /feed -> Timeline Svc
   feed ki bheed badhi    -> sirf Timeline badhao: Tweet Svc pe asar nahi
   feed ko follow list    -> User / Follow store se, par Redis me rakhi: har feed pe chahiye
-  fanout, 10,000 follower -> Follow store se 1000-1000 padh ke inbox likho: ek baar me bhaari
+  Suresh, 5,000 follower -> Follow store se 1000-1000 padh ke inbox likho: ek baar me bhaari
 ```
 
 #### 10 Maine match ki video daali, sabko dheemi aur mehngi
@@ -464,7 +466,7 @@ AAGE POOCHEGA:
   NIYAM: bhaari maal S3 me, user tak CDN se (paas, sasta); tweet me sirf link -> link badlo = nayi file,
          link pe hastakshar = sirf jisko mila wahi dekhe.
   SAFAR (ek video, har mod pe kya):
-  video daali            -> S3 me; tweet me sirf CDN link
+  video daali            -> seedha S3 (presigned link), App beech me nahi; tweet me sirf CDN link
   koi dekhe              -> CDN paas se; uske paas nahi -> S3 se laake kuch der rakhe
   photo hatayi, CDN pe dikhe -> CDN ko 'hatao' (invalidation), ya link me version -> nayi file
   private photo          -> link pe hastakshar + expiry (signed URL): sirf jisko mila, thodi der
@@ -508,7 +510,7 @@ flowchart LR
     n_Timeline_Svc["Timeline Svc"]
     n_Hot_tweet_cache["Hot-tweet cache"]
     n_User_Svc["User Svc"]
-    n_Graph_DB["Follow store"]
+    n_Follow_store["Follow store"]
     n_S3["S3 media"]
     n_USER --> n_Route_53
     n_ALB --> n_Tweet_Svc
@@ -521,8 +523,8 @@ flowchart LR
     n_Timeline_Svc --> n_Redis_inbox
     n_Timeline_Svc --> n_Hot_tweet_cache
     n_Timeline_Svc --> n_Cassandra
-    n_User_Svc --> n_Graph_DB
-    n_Fanout_workers --> n_Graph_DB
+    n_User_Svc --> n_Follow_store
+    n_Fanout_workers --> n_Follow_store
     n_Route_53 --> n_ALB
     n_USER --> n_CDN
     n_CDN --> n_S3
@@ -565,6 +567,7 @@ SAWAAL:   celeb cache kitna bada? -> chhota: ~5 lakh tweet x 500 byte = ~250 MB,
           API bhi CDN se? -> nahi: CDN sirf media ke raaste
           region ka fayda? -> tez · Europe ka data Europe me (GDPR) · har region ki bheed ka time
           alag · ek gira to baaki chalein
+          (c3) tweet pe laakhon like? -> ginti 10 tukde (tweet123#0..#9), padhte waqt jodo: ek key ek machine
 
 LIKHNA:   Suresh -> Tweet Svc -> Cassandra me save (tweet_id, user_id, content, time)
                              -> Kafka -> Fanout: followers nikaalo, celeb

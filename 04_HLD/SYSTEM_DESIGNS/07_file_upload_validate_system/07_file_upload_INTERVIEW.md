@@ -115,6 +115,7 @@ AAGE POOCHEGA:
   sab theek chala         -> T-101 turant -> worker -> Validator -> DB DONE -> "padh li"
   worker beech me mara    -> khabar dobara milti: offset commit DB likhne ke baad tha
   wahi khabar dobara      -> pehle haal dekho: T-101 DONE hai to skip (idempotent)
+  Validator do baar chala -> jaanch T-101 pe idempotent: dobara chalna theek, DONE ek hi baar
   Validator 1 ghanta band -> 4,000 khabar line me padi: DONE bina offset aage nahi
   us ghante call karte?   -> nahi, fuse: 3-5 fail pe band, thodi der baad ek test call
                              + doosri company (unki copy hum nahi chala sakte)
@@ -159,11 +160,9 @@ AAGE POOCHEGA:
          leak ho bhi to sirf us ek file pe, 10 min tak. Paas khatam -> naya maango.
   SAFAR (5 GB video ka raasta, har mod pe kya):
   sab theek chala      -> paas (EK file, 10 min) -> bytes seedha S3 -> "/complete T-102"
-  S3 paas kaise maane  -> wahi hash khud banaye: server ne AWS secret se sign kiya tha
   had 5 GB, aaye 50 GB -> had paas me: POST content-length-range · PUT me size sign
                           (ek PUT max 5 GB) -> S3 khud reject; S3 event pe size phir
   /complete nahi aaya  -> S3 event ("file aa gayi") se queue: client pe bharosa nahi
-  event bhi chhoota    -> sweeper har kuch min atki file dhoondhe
 ```
 
 #### 3 4.5 GB chadh chuki thi, wifi chala gaya
@@ -206,6 +205,7 @@ AAGE POOCHEGA:
   sab theek chala     -> U-9 -> tukde kai saath, har ek ki rasid (ETag) -> COMPLETE
   wifi gaya           -> 90 ki rasid S3 pe: sirf bache 10 bhejo, shuru se nahi
   app band, kal wapas -> S3 se poocho (ListParts U-9): rasid wahan, app pe nahi
+  COMPLETE kabhi nahi -> adhoore tukde S3 lifecycle kuch din (jaise 7) baad hata deta (abort)
 ```
 
 #### 4 App crash, "complete" kabhi aaya hi nahi
@@ -215,7 +215,7 @@ flowchart LR
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
-    n_Sweeper_job["Sweeper job<br/>complete aaya hi nahi<br/>-> atki file dhoondh ke saaf karo<br/>(sweeper job)"]
+    n_Sweeper_job["Sweeper job<br/>complete aaya hi nahi<br/>-> atki file dhoondh ke dobara line me / FAILED<br/>(sweeper job)"]
     n_Kafka["Kafka"]
     n_Worker["Worker"]
     n_Validator["Validator"]
@@ -286,8 +286,8 @@ AAGE POOCHEGA:
   SAFAR (ek "haal kya hai?" sawaal, har mod pe kya):
   sab theek chala      -> GET /status/T-101 -> Redis se, 1 ms
   Redis me nahi        -> read replica se laao, Redis me rakho
-  replica peeche thi   -> purana Redis me baitha: worker ka naya haal upar likh deta;
-                          pakka chahiye to miss pe primary
+  replica peeche thi   -> purana haal DONE ke baad Redis me baith sakta: miss pe sirf SET NX
+                          + chhoti umar, ya primary se padho
   worker ne DONE likha -> DB + Redis usi waqt; Redis chhoota to umar (TTL) baad naya
   har 2 sec poochna    -> gap badhao (2s, 4s, 8s): haal itni jaldi nahi badalta
   Redis gira           -> replica pe seedha: dheema par chalta; poochne pe rate limit
@@ -329,10 +329,9 @@ AAGE POOCHEGA:
   NIYAM: folder = bada id, har file ka chhota id; folder ka haal = bachchon ka jod (sab DONE = DONE, koi
          FAILED = PARTIAL); ek file fail -> sirf wahi dobara, poora folder nahi.
   SAFAR (folder P-1, 1000 file, har mod pe kya):
-  sab theek chala    -> batch init (1000 URL) -> har file child id -> sab DONE = P-1 DONE
-  ek child aaya      -> DONE / FAILED -> P-1 pe ginti +1 (done_count); sab aa gaye = final
-  do worker saath +1 -> ek UPDATE done_count = done_count + 1: DB ke andar, ginti nahi khoti
-  koi FAILED         -> P-1 PARTIAL: sirf fail wali dobara, poora folder nahi
+  sab theek chala -> batch init (1000 URL) -> har file child id -> sab DONE = P-1 DONE
+  ek child aaya   -> DONE / FAILED -> P-1 pe ginti +1 (done_count); sab aa gaye = final
+  koi FAILED      -> P-1 PARTIAL: sirf fail wali dobara, poora folder nahi
 ```
 
 #### 7 Ravi ne mera trackingId daal ke meri file le li
@@ -558,6 +557,9 @@ DB:       files: trackingId (KEY) | fileName | ownerId | status | s3_key | creat
 DEDUP:    file ka hash (MD5 / SHA) -> pehle se hai to dobara store nahi -> jagah bachi
 
 AUR SAWAAL:
+  "/complete aur S3 event dono chhoote?" -> SWEEPER (card 4): har kuch min atki file dhoondhe.
+  "Do worker saath done_count +1?"  -> EK UPDATE done_count = done_count + 1: DB ke andar, ginti nahi khoti.
+  "S3 paas kaise maanta?"          -> WAHI HASH KHUD BANAYE: server ne AWS secret se sign kiya tha.
   "Is line ke liye Kafka hi kyun?"  -> ZAROORI NAHI: ~300 / sec pe SQS / RabbitMQ kaafi; Kafka jab bahut bheed
                                        ya dobara padhna.
   "Ye sab pata kaise chalega?"      -> APNE NUMBER: queue lambai · Validator time + error · 10 min VALIDATING

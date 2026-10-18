@@ -18,7 +18,7 @@ CHAAR MUSHKIL BAAT (poori file inhi ke ird-gird):
 1   kirana ko 500, beech me server gira     -> EK TRANSACTION (WAL se poora / ulta)   SQL DB
 2   600 me phone se 500, laptop se 500      -> check + kaato EK atomic query         (DB query)
 3   metro me network gaya, app ne dobara    -> IDEMPOTENCY KEY (screen khulte)       Idempotency store
-4   bank se 2000 top-up, PSP dheema         -> TIMEOUT + FUSE, PENDING dikhao        PSP
+4   bank se 2000 top-up, PSP dheema         -> timeout = PENDING, fuse = abhi nahi   PSP
 5   PSP ko call kiya, jawab se pehle crash  -> PENDING pehle + WEBHOOK + RECONCILE   Reconciliation job
 6   merchant ka account Bank B me           -> SAGA (step-step, fail pe ulta)        Payment Svc + SAGA
 7   "kal raat 2200, subah 1100 kaise?"      -> LEDGER double-entry, sirf INSERT      Ledger table
@@ -138,9 +138,9 @@ AAGE POOCHEGA:
   NIYAM: saare kate == saare jude, ek transaction (aadha kabhi nahi); gira to DB diary (WAL) se poora ya
          ulta. User ko 'hua' ya 'nahi hua' dikhe, beech ka nahi; hisaab ka farak -> turant alert.
   SAFAR (kirana ke 500):
-  sab theek              -> paanchon likhai ek transaction, COMMIT, user ko 'hua'
-  beech me gira, utha    -> DB diary (WAL) dekhe: COMMIT tha to poora, nahi to ulta
-  user ko                -> 'hua' ya 'nahi hua', beech ka kabhi nahi
+  sab theek              -> paanchon likhai ek transaction, COMMIT, user ko "hua"
+  -500 ke baad gira      -> utha to diary (WAL) dekhe: COMMIT nahi tha -> ulta, 500 wapas
+  COMMIT ke baad gira    -> diary me COMMIT -> poora karo, kuch nahi khota
 ```
 
 #### 2 Wallet me 600, phone se 500 aur laptop se 500 ek saath
@@ -165,8 +165,9 @@ AAGE POOCHEGA:
   NIYAM: 'hai?' aur 'kaato' ek hi kadam, DB ke andar: kitni bhi machine ho, jeetta ek; 0 row badli =
          reject, user ko turant 'paisa kam' dikhe.
   SAFAR (600 me se 500 + 500):
-  sab theek              -> ek UPDATE: 'hai?' + 'kaato' ek kadam
-  phone + laptop saath   -> pehla jeeta (bacha 100); doosre ki 0 row -> reject, 'paisa kam'
+  sab theek               -> ek UPDATE: check + kaato ek kadam (balance >= 500)
+  phone + laptop ek saath -> pehla jeeta (bacha 100); doosre ki 0 row -> "paisa kam"
+  WHERE check bhool gaye  -> DB CHECK (balance >= 0) pakad leta: aakhri deewar
 ```
 
 #### 3 Metro me network gaya, app ne dobara bheja, 1000 kate
@@ -201,10 +202,10 @@ AAGE POOCHEGA:
   NIYAM: ek key = ek payment: key app banaye; wahi key dobara = kaam nahi, saved jawab. User ko ek hi
          payment dikhe; nayi payment = nayi screen = nayi key.
   SAFAR (ek payment, metro me):
-  sab theek              -> key-555 (screen pe bani): IN_PROGRESS -> kaato + daalo -> DONE + jawab
-  network gaya, dobara   -> wahi key-555 -> saved jawab, dobara nahi kata
-  payment FAIL hua       -> sirf PAKKA fail (paisa hila nahi) pe key hatao; PENDING pe rahe
-  kaam ho gaya           -> key ~24 ghante rakho: der se dobara aayi to kat jaata
+  sab theek                   -> key-555 screen pe bani: IN_PROGRESS -> kaato + daalo -> DONE + jawab
+  network gaya, app ne dobara -> wahi key-555 -> saved jawab, dobara nahi kata
+  wahi key, amount alag       -> request ka hash bhi rakho: farak = 422
+  key kab hatao               -> sirf PAKKA fail (paisa hila nahi); PENDING pe rahe; DONE ~24 ghante
 ```
 
 #### 4 Bank se 2000 top-up, PSP dheema
@@ -234,9 +235,9 @@ AAGE POOCHEGA:
          "abhi nahi", paisa hila hi nahi. PSP dheema to jaldi chhodo, warna saare thread atke.
   SAFAR (2000 top-up):
   sab theek              -> PSP ko call, jaldi jawab, SUCCESS
-  PSP dheema, timeout    -> PROCESSING (PENDING): pata nahi kata; job PSP se poochh ke pakka
-  5 fail, fuse OPEN      -> call jaati hi nahi -> saaf "abhi nahi", paisa hila nahi
-  PSP hi band            -> doosra PSP; par ek payment hamesha ek PSP pe (do jagah se kat sakta)
+  2-3 sec me jawab nahi  -> chhodo: PENDING (pata nahi kata); job poochh ke pakka
+  5 fail                 -> fuse OPEN: call jaati hi nahi -> saaf "abhi nahi", paisa hila nahi
+  30 sec baad test call  -> chali to fuse band, nahi to phir OPEN
 ```
 
 #### 5 PSP ko call kiya aur server gira: paisa gaya ya nahi?
@@ -278,10 +279,11 @@ AAGE POOCHEGA:
          bataye (webhook) ya hum poochhe (job). User ko PROCESSING, andha dobara kabhi nahi.
   SAFAR (call ke beech server gira):
   sab theek              -> call se pehle PENDING likho, PSP ka jawab -> SUCCESS
-  server gira            -> PENDING bacha: PSP khud bataye (webhook) ya job poochhe
-  webhook do baar        -> PENDING -> SUCCESS sirf ek baar, doosra ignore
-  job ka jawab           -> hua = SUCCESS · nahi = dobara (wahi key) · pakka fail = FAILED,
-                            kuch wapas nahi (paisa hila hi nahi)
+  call ke baad crash     -> PENDING bacha: PSP khud bataye (webhook)
+  webhook do baar        -> SUCCESS sirf ek baar, doosra ignore
+  webhook nakli          -> hastakshar jaancho (PSP secret) + apne PENDING se milao
+  webhook aaya hi nahi   -> job har kuch min purane PENDING PSP se poochhe; raat PSP file se milaan
+  job ka jawab           -> hua = SUCCESS · pakka fail = FAILED, kuch wapas nahi (paisa hila nahi)
 ```
 
 #### 6 Merchant ka account doosre bank me, ek transaction nahi chalta
@@ -313,10 +315,11 @@ NAHI       2PC: sab "ready" bol ke lock pakad ke rukte; coordinator gira = sab a
 AAGE POOCHEGA:
   NIYAM: alag system = har step likha (saga table); aage nahi badh sake to ulta kaam (compensate).
          Beech me user ko PROCESSING, phir SUCCESS ya paisa wapas.
-  SAFAR (merchant doosre bank me):
-  sab theek              -> har step saga table me likha, ek-ek aage
-  service beech me giri  -> uthke table dekhe: wahin se aage, ya ulta (compensate)
-  user ko                -> PROCESSING, phir SUCCESS ya paisa wapas (eventual)
+  SAFAR (merchant Bank B me):
+  sab theek              -> wallet -500 (DEBITED) -> Bank B +500, har kadam saga table me
+  Bank B +500 fail       -> ulta kaam: wallet me 500 wapas (compensate)
+  service beech me giri  -> uthke saga table dekhe: wahin se aage ya ulta
+  ulta kaam bhi fail     -> retry + alert, manual queue: paisa beech me na atke
 ```
 
 #### 7 Maine poochha: kal raat 2200 tha, subah 1100 kaise?
@@ -347,9 +350,9 @@ NAHI       balance + alag audit_log table: usme kuch bhi likh sakte, koi niyam n
 ```
 TASVEER: khaata, har jodi ka jod 0
   kal raat balance 2200
-  ledger:  Arpan DEBIT 600   ·  bijli    CREDIT 600     (raat bill, jod 0)
-           Arpan DEBIT 500   ·  kirana   CREDIT 500     (subah, jod 0)
-  2200 - 600 - 500 = 1100 -> subah 1100 kaise bana, line-line dikhta
+  ledger:  Arpan DEBIT 800   ·  bijli    CREDIT 800     (raat, jod 0)
+           Arpan DEBIT 300   ·  recharge CREDIT 300     (raat, jod 0)
+  2200 - 800 - 300 = 1100 -> subah 1100 kaise bana, line-line dikhta
   galti mili -> line mitao nahi, NAYI ULTI LINE jodo
 ```
 ```
@@ -357,11 +360,11 @@ AAGE POOCHEGA:
   NIYAM: ledger hi sach: sirf nayi line, kaat-peet nahi, jod hamesha 0; galti / refund = nayi ulti line.
          Raat jod == balance, farak = alert.
   SAFAR (2200 -> 1100 ka hisaab):
-  sab theek              -> har payment ledger me 2 line (debit + credit), jod 0
-  raat jaanch            -> jod == balance; farak = alert
-  galat entry            -> delete nahi, nayi ulti line: audit me dono dikhein
-  refund                 -> nayi ulti payment (merchant -500, Arpan +500), apni key + purana number
-  3 saal me bada         -> mahine ke tukde (partition), purane S3 Glacier; kanoon se pehle nahi mitao
+  sab theek                -> har payment 2 line (Arpan DEBIT · merchant CREDIT), jod 0, usi transaction
+  2200 se 1100 kaise       -> raat ki line padho: bijli 800, recharge 300 -> line-line dikhta
+  galat entry              -> mitao nahi (sirf INSERT): nayi ulti line, audit me dono
+  refund                   -> nayi ulti payment (merchant -500, Arpan +500), apni key
+  balance column vs khaata -> raat jod == balance; farak = alert
 ```
 
 #### 8 Shaam Diwali, 3000 payment / second, machine baith gayi
@@ -397,11 +400,10 @@ AAGE POOCHEGA:
   NIYAM: machine kuch yaad na rakhe (yaad DB + idempotency store me), to koi bhi machine badlo / badhao;
          kaun hai = JWT se, body se kabhi nahi.
   SAFAR (Diwali 3000 / sec):
-  sab theek              -> request kisi bhi machine pe (LB), userId JWT se, owner check
-  bojh badha             -> CPU bhara -> timeout -> log dobara tap -> aur bojh
-  machine badhao         -> kuch yaad nahi (stateless): yaad DB + idempotency store, kai machine
-  machine mari           -> LB har kuch second poochta (GET /health): jawab nahi = list se bahar
-  JWT chori              -> chhoti umar (~15 min) + refresh; bade payment pe PIN / OTP
+  sab theek              -> LB se kisi bhi machine pe, userId JWT se, owner check
+  CPU bhara              -> timeout -> log dobara tap -> aur bojh: machine badhao
+  machine badhao         -> koi yaad na rakhe: yaad DB + idempotency store, kai machine
+  ek machine mari        -> LB har kuch sec poochta (GET /health): jawab nahi = bahar
 ```
 
 #### 9 Merchant ki report ne mera payment rok diya
@@ -438,11 +440,11 @@ AAGE POOCHEGA:
   NIYAM: paisa / haal = PRIMARY se (replica peeche ho sakti); report = replica / warehouse se. Primary
          gira = sync standby bane, kuch nahi khota.
   SAFAR (meri payment + merchant report):
-  sab theek              -> paisa / haal primary pe, report replica se
-  pay kiya, balance      -> primary se padho: replica peeche ho sakti
-  replica peeche         -> doori naapo (replication lag) -> alert
-  bhaari analytics       -> alag warehouse (CDC): replica bhi bojh se peeche
-  primary gira           -> sync standby bane (RDS Multi-AZ): kuch nahi khota; async pe aakhri kho sakti
+  sab theek                             -> payment primary pe, report copy (replica) se
+  pay kiya, balance dekha               -> primary se: copy 1-2 sec peeche
+  copy aur peeche gayi                  -> kitni peeche naapo (replication lag) -> alert
+  report itni bhaari ki copy bhi baithe -> alag warehouse (CDC)
+  primary gira                          -> sync standby bane (copy nahi, alag): kuch nahi khota
 ```
 
 #### 10 Saal me ~1000 crore row, primary ki likhai dheemi
@@ -479,9 +481,10 @@ AAGE POOCHEGA:
   NIYAM: jo ek transaction me saath chahiye (account + uski history), wo ek shard pe; do shard ke beech
          = saga, ek transaction nahi.
   SAFAR (1000 crore row):
-  sab theek              -> account + uski history ek shard: ek transaction ek shard tak
-  ek merchant bahut bada -> ek shard garam: kai sub-account alag shard pe, report me jodo
-  do shard ke beech      -> saga: A se kaato, B me daalo, fail pe ulta; asli mushkil yahi
+  sab theek                        -> account + uski history ek shard: ek transaction ek shard tak
+  ek account bahut bada (merchant) -> wo shard garam: sub-account alag shard, report me jodo
+  do account alag shard            -> saga: A se kaato, B me daalo, fail pe ulta
+  idempotency key kahan            -> account_id se usi shard: payment ke saath ek transaction
 ```
 
 ---
@@ -596,6 +599,9 @@ CARD SE AAYE SAWAAL (safar ke bahar):
 "Ledger crash se bhi bachaata?"      -> nahi, wo hisaab; crash se PENDING + webhook + job (card 7)
 "Galat istemaal kaise roko?"         -> 'from' ka maalik JWT wala? nahi -> 403; WAF + had (card 8)
 "Account kis shard pe, kaise tay?"   -> ring (consistent hashing) ya naksha (lookup table) (card 10)
+"3 saal me ledger bada?"             -> mahine ke tukde, purane S3 Glacier; kanoon tak rakho (card 7)
+"JWT chori ho gaya?"                 -> chhoti umar (~15 min) + refresh; bade payment pe PIN / OTP (card 8)
+"PSP hi poora band?"                 -> doosra PSP; par ek payment hamesha ek PSP pe (card 4)
 ```
 
 ---

@@ -33,7 +33,7 @@ Source: [CAP Theorem: One of the Most Misunderstood Terms](https://bytebytego.co
 
 ![Pessimistic vs Optimistic Locking](https://assets.bytebytego.com/diagrams/0301-pessimistic-vs-optimistic-locking.png)
 Source: [Pessimistic vs Optimistic Locking](https://bytebytego.com/guides/pessimistic-vs-optimistic-locking/)
-(ek seat do log = SELECT FOR UPDATE (pessimistic) ya version check (optimistic))
+(image ke do tareeke: FOR UPDATE (pessimistic) / version (optimistic); humne atomic UPDATE chuna)
 
 ---
 
@@ -117,7 +117,8 @@ AAGE POOCHEGA:
   A1 dabaya, sab theek     -> UPDATE ... WHERE A1 khaali -> 1 row = meri, pakki
   Ravi usi second          -> DB row lock: main pehle, Ravi ruka -> uska WHERE 0 row, "seat gayi"
   4 seat, A4 gayi          -> ek transaction: badli rows 4 nahi -> ROLLBACK: aadhi booking bekaar
-  4 seat, do log ulta kram -> ek UPDATE ... seat_id IN (A1..A4): lock DB ke kram me, ulta kram nahi
+  4 seat, do log ulta kram -> DB deadlock pakad ke ek ko abort, wo retry; alag UPDATE ho to seat_id
+                              ke kram me bhejo
   mera hi dobara bhejna    -> race nahi, duplicate: bookingId se roko (idempotency)
 ```
 
@@ -258,6 +259,7 @@ AAGE POOCHEGA:
          dikhe; ek show = ek line, sach hamesha DB ki seats.
   SAFAR (12 baje ki line, har mod pe kya):
   2 lakh aaye, sab theek       -> waiting room: apni jagah dikhe, ek-ek andar, UPDATE jeeta = pakka
+  UPDATE jeeta, user ko pata?   -> bookingId se poll ya WebSocket push: line me tha, jawab baad me
   seat haar gaya               -> "seat gayi, doosri lo": faisla DB ka
   andar wala bina liye gaya    -> line se agla andar: line sirf darwaza
   ek worker dheema?            -> ~ms ka UPDATE, hazaar / sec; aur chahiye to show ke hisse (balcony / stall)
@@ -294,9 +296,8 @@ AAGE POOCHEGA:
   Redis zinda, key hai    -> map seedha Redis se, DB tak kuch nahi
   key khaali, 1000 aaye   -> ek lock le ke banaye (SET NX EX 5), baaki 50-100 ms ruk ke Redis se
   lock wala hi mara       -> EX 5 = lock khud hate · NX = koi aur na laga ho
+  100 ms baad bhi khaali  -> 2-3 retry, phir khud replica se padho: user ko bas dheema
   Redis gire hi na        -> har master ki copy (Cluster), master gira -> copy master (khud, Sentinel nahi)
-  SQL primary gira        -> ~30-120 sec failover (Multi-AZ / Aurora); app wahi id se dobara (idempotent)
-  aakhri booking copy pe? -> sync copy: likhai dono jagah pakki (Multi-AZ): booking = paisa
 ```
 
 #### 7 Shaam ko main seat chun raha tha, App machine gir gayi
@@ -419,6 +420,9 @@ SAFAR KE BAHAR WALE SAWAAL:
                                      pata = tayyari pehle
 "BookMyShow sach me aise karta hai?" -> mat bolo "BMS aise karta"; bolo "a common pattern in flash sales":
                                         unka andar ka pata nahi
+"Seat rows pehle se hoti?" (c1) -> haan: har show banate hi uski saari seat rows bani, booking = UPDATE hi
+"SQL primary gira?" (c6) -> ~30-120 sec failover (Multi-AZ / Aurora); app wahi id se dobara (idempotent)
+"Aakhri booking copy pe thi?" (c6) -> sync copy: likhai dono jagah pakki (Multi-AZ), booking = paisa
 
 API:      GET /movies?city=BLR · GET /shows?movieId=X · GET /shows/{id}/seats (available / held / booked)
           POST /bookings { showId, seats } -> seat HOLD (atomic) -> bookingId + umar

@@ -126,11 +126,12 @@ AAGE POOCHEGA:
   NIYAM: order kabhi khabar ka intezaar nahi karta: khabar disk ki diary (Kafka) me, padhne wala yaad rakhe
          kahan tak -> company band ho to bhi khabar padi rehti, wapas aate hi wahin se.
   SAFAR (ek order ki khabar, har mod pe kya):
-  order bana             -> order + khabar EK DB transaction (outbox), relay baad me Kafka bheje
-                            (warna Kafka se pehle Svc giri = khabar gayi hi nahi)
+  order bana             -> 'order hua' Kafka me daalo, turant jawab; khabar peeche
+  Kafka se pehle Svc giri -> khabar gayi hi nahi: order + khabar EK DB txn (outbox), relay bheje
   email company band     -> khabar Kafka diary me ~7 din padi, padhne wala kahan tak yaad (offset)
   company 2 din baad     -> wahin se aage: order kabhi email se fail nahi
-  bheed badhi            -> machine badhao (consumer group): har line ek machine, lines bat jaati
+  Notification Svc dheemi -> machine badhao (consumer group): har line ek machine, lines bat jaati
+  Kafka ki machine giri  -> diary ki 3 copy: baaki copy se chalta, khabar nahi khoti
 ```
 
 #### 2 SMS company dheemi, mera push aur email bhi atke
@@ -164,7 +165,7 @@ AAGE POOCHEGA:
   SAFAR (ek ghatna, teen raaste, har mod pe kya):
   ghatna aayi            -> teen chhote message (ghatna id + raasta), har raasta apni line
   SMS dheema / band      -> sirf SMS ki line rukti: push / email apni speed chalte
-  push kis phone pe      -> device token (install pe user ke saath save); bekaar nikla -> hatao
+  SMS line lambi         -> sirf SMS ke worker badhao: push / email pe asar nahi
 ```
 
 #### 3 Worker mara, mujhe do email aaye
@@ -190,13 +191,13 @@ NAHI       har baar naya random id: dohraav kabhi pakda nahi jaata.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: khabar ki apni pakki id -> dobara aaye to pehchaan ke skip; Redis tez raasta, DB ka UNIQUE aakhri
-         deewar.
+  NIYAM: khabar ki apni pakki id -> dobara aaye to pehchaan ke skip; Redis tez raasta, Cassandra me
+         INSERT IF NOT EXISTS (LWT) aakhri deewar.
   SAFAR (ek khabar, dobara aayi, har mod pe kya):
   khabar aayi            -> pehle dekho: ye khabar_id + raasta bheja? (Redis parchi, tez)
   wahi dobara aayi       -> parchi mili -> skip: do email nahi
-  Redis gira             -> DB ka UNIQUE (khabar_id, raasta) rokta: pakka wahi
-  parchi 24 ghante me mitti, khabar phir -> DB nahi bhoolta, UNIQUE rokega
+  Redis gira             -> Cassandra INSERT IF NOT EXISTS (khabar_id, raasta) (LWT): pakka wahi
+  parchi 24 ghante me mitti -> Cassandra row nahi bhoolti, IF NOT EXISTS phir rokega
 ```
 
 #### 4 Parchi lag gayi, par mera OTP gaya hi nahi
@@ -222,7 +223,7 @@ NAHI       parchi hi hata do: worker mara to Kafka dobara deta -> OTP / email do
 ```
 ```
 TASVEER: SENDING / SENT
-Worker-A: parchi SENDING (60 sec) -> SMS call FAIL / A mara -> 60 sec me parchi khud mit-ti
+Worker-A: parchi SENDING (60 sec) -> call FAIL: A khud hataye · A mara: 60 sec me khud mit-ti
 Kafka dobara deta -> Worker-B: SENDING mila -> thoda ruko · kuch nahi -> SENDING lagao, bhejo
 company OK -> SENT (1 din)  ->  koi bhi SENT dekhe -> chhodo
 ```
@@ -233,11 +234,10 @@ AAGE POOCHEGA:
   SAFAR (ek OTP ki parchi, har mod pe kya):
   worker ne uthaya       -> parchi SENDING (chhoti umar, ~60 sec) -> company ko call
   call hua               -> parchi SENT: ab koi dobara nahi bhejega
-  call fail, worker zinda -> khud parchi hatao: koshish adhoori, agli chal jaaye
-  worker hi mara         -> hatane wala koi nahi -> SENDING ki umar khatam, khud mit jaati
-  Worker-B ko SENDING mili -> thoda ruko, phir dekho: chhodna sirf SENT pe
-  umar kitni             -> call (~2-3 sec) se lambi, 60 sec: pehle khatam = do log bhejenge
   bheja, jawab se pehle mara -> maana hua risk: do baar ja sakta; OTP do baar > na aana
+  call fail, worker zinda -> khud parchi hatao: koshish adhoori, agli chal jaaye
+  worker hi mara         -> hatane wala koi nahi -> SENDING ki umar (60 sec) khatam, khud mit jaati
+  Worker-B ko SENDING mili -> thoda ruko, phir dekho: chhodna sirf SENT pe
 ```
 
 #### 5 SMS company pehle se pareshaan, hum har second dobara maar rahe
@@ -275,10 +275,9 @@ AAGE POOCHEGA:
   SAFAR (ek fail khabar, har mod pe kya):
   bheja                  -> company ne liya, khatam
   company ne mana kiya   -> ruk-ruk ke dobara (1, 2, 4 .. + random): sab ek saath na maarein
-  '10 min baad' kaise    -> alag lines (retry-1m, retry-10m), worker 'kab chalana' dekhe
+  lamba rukna (10 min)   -> alag lines (retry-1m, retry-10m), worker 'kab chalana' dekhe
   had paar               -> alag line me daalo (DLQ) + alert: phenkna kabhi nahi
   DLQ wali khabar        -> dashboard pe dikhe, theek karke main line me wapas
-  khoye hi nahi          -> saari copy ne li tab OK (acks=all), offset kaam ke BAAD: mara to dobara
 ```
 
 #### 6 SMS company band nahi, dheemi: saare worker 30 sec me phanse
@@ -322,9 +321,9 @@ AAGE POOCHEGA:
   SAFAR (ek SMS, company dheemi, har mod pe kya):
   call bheja             -> 2-3 sec me jawab, khatam
   jawab nahi aaya        -> 2-3 sec pe band maano (timeout): worker phanse nahi
-  baar-baar fail         -> SMS company ka fuse khula: call band, thodi der baad ek test call
+  baar-baar fail         -> fuse khula: call band, SNS pe; thodi der baad ek test call
   push / email pe asar?  -> nahi: har company ka apna fuse, worker alag line pe
-  dono SMS company band  -> khabar line me rukti, backoff se koshish, phenko nahi; OTP ka alert
+  SNS bhi band           -> khabar line me rukti, backoff se koshish, phenko nahi; OTP ka alert
 ```
 
 #### 7 12 baje sale shuru, mera OTP 50,000 offer ke peeche
@@ -354,10 +353,9 @@ NAHI       ek line me "zaroori" tag: Kafka me "ye pehle bhejo" hota hi nahi.
 AAGE POOCHEGA:
   NIYAM: zaroori (OTP) kabhi kisi ke peeche nahi: apni line, apne worker, company me apna account.
   SAFAR (mera OTP, sale ki bheed me, har mod pe kya):
-  OTP aaya               -> apni line, apne worker -> turant
-  50,000 offer line me   -> OTP apni line, apne worker: kisi ke peeche nahi
+  OTP aaya, 50,000 offer pehle -> OTP apni high line, apne worker: kisi ke peeche nahi
+  order update (medium)  -> beech wali line: OTP se peeche, offer se aage
   OTP line khaali        -> uske worker beech wali padh lein, ulta kabhi nahi
-  company ki had         -> OTP ka alag account / number: offer uski had na kha sake
 ```
 
 #### 8 Sale me laakhon message ek saath, company ne 429 diya
@@ -391,6 +389,7 @@ AAGE POOCHEGA:
   token nahi mila        -> line me intezaar: ye fail nahi, retry ginti nahi badhti
   worker badh gaye       -> speed wahi: baalti saanjhi, kul 100 / sec
   1 lakh email, had kam  -> had badhwao + kai account; tab tak line dheere khaali, warna 429
+  baalti wala Redis gira -> har worker chhoti local had (fail-closed): company ki had paar nahi
 ```
 
 #### 9 Company ne "bhej diya" bola, par mere phone tak pahuncha?
@@ -425,7 +424,6 @@ AAGE POOCHEGA:
   NIYAM: 'bheja' aur 'mila' alag haal; 'mila' tab likho jab company (asli, signed webhook) bataye.
   SAFAR (ek SMS ka haal, har mod pe kya):
   company ne liya        -> 'bheja' likho; 'mila' tab jab company webhook se bataye
-  hisaab kahan           -> Cassandra (Tracking): likhna bahut, seedhi row, jodna kuch nahi
   webhook aaya hi nahi   -> sirf ghanton atke ko ek baar poochho (Twilio SID se); SES me sirf SNS
   nakli webhook          -> hastakshar jaancho: Twilio HMAC · SES/SNS certificate · SendGrid public key
 ```
@@ -464,7 +462,7 @@ AAGE POOCHEGA:
          beech me roko; ek user ko ek hi baar.
   SAFAR (1 crore ka offer, har mod pe kya):
   campaign shuru         -> 1000-1000 ke tukde, har tukde ke baad 'kahan tak' likho
-  sabko ek hi push       -> FCM topic: ek call, aage Google pahunchata
+  sabko ek hi push       -> FCM topic: ek call; topic me sirf pasand wale (subscription pasand se sync)
   600 bhej ke worker gira -> tukda dobara; (campaign_id, user_id) se pehle ke 600 chhootein
   galat offer chala      -> campaign row pe CANCELLED; worker har tukde se pehle dekhe
 ```
@@ -501,7 +499,7 @@ AAGE POOCHEGA:
   NIYAM: bhejne se pehle user ki pasand dekho; offer pasand / shaanti ke neeche, zaroori alert (OTP) upar.
   SAFAR (ek offer SMS, raat 2 baje, har mod pe kya):
   bhejne se pehle        -> user ki pasand dekho (shaanti ka waqt, kya band)
-  shaanti me offer       -> roko, subah 8 tak; phenko nahi
+  shaanti me offer       -> roko, subah 8 baje bhejo (scheduled_at + job); phenko nahi
   shaanti me OTP / login -> bhejo: zaroori alert pasand se upar
   pasand badli, cache purana -> badalte hi cache delete + chhoti umar: bhejne se pehle sahi chahiye
 ```
@@ -594,7 +592,7 @@ POOCHEGA: "Data keeps growing — what happens in 3 years?"
 JAWAB:    Kis message ka kya hua (bheja / mila / khola), uski row ki umar rakho (jaise 90 din), purani
           rows sasti jagah chali jaayein. Roz wali table chhoti rehti hai.
 
-POOCHEGA: "Kahan se gir sakta?"     -> company (do company), Kafka (copies), Redis (DB ka UNIQUE peeche)
+POOCHEGA: "Kahan se gir sakta?"     -> company (do company), Kafka (copies), Redis (Cassandra LWT peeche)
 POOCHEGA: "Chal raha, kaise pata?"  -> webhook se delivered / failed · Kafka me kitna pending
                                        · DLQ kitna bhara · alert
 ```
@@ -627,6 +625,12 @@ SAWAAL:   push doosri company se? -> hota nahi: Android = FCM, iPhone = APNs, ph
           had kitni? -> company ki: SES shuru ~14 / sec (sandbox 1 / sec) · Twilio short code ~100 / sec
           1 crore kitni der? -> ~17 min (10,000 / sec): jaan-boojh ke phailaya, had + OTP line bachi
           1000 ka tukda kyun? -> 1 crore alag = bojh · 1 bada = ek worker atka · 1000 = saath + dobara chhota
+          (c2) push kis phone pe? -> device token (install pe user ke saath save); bekaar nikla -> hatao
+          (c4) SENDING ki umar kitni? -> call (~2-3 sec) se lambi, 60 sec: pehle khatam = do log bhejenge
+          (c5) khabar khoye hi nahi? -> saari copy ne li tab OK (acks=all), offset kaam ke BAAD
+          (c6) fuse har process apna ya saanjha? -> har process apna (Resilience4j) ya Redis me saanjha
+          (c7) offer OTP ki company had kha jaaye? -> OTP ka alag account / number (had = card 8)
+          (c9) hisaab kahan? -> Cassandra (Tracking): likhna bahut, seedhi row, jodna kuch nahi
 ```
 
 ---

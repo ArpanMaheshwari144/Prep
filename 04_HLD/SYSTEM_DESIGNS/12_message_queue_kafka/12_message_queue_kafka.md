@@ -111,7 +111,6 @@ AAGE POOCHEGA:
   SAFAR (ek signup khabar, har mod pe kya):
   sab theek         -> producer file ke aakhir me jode (log) -> consumer page cache se padhe; khabar mit-ti
                        nahi
-  disk dheemi nahi? -> sirf aakhir me jodna = sequential: disk ka sabse tez kaam
   consumer restart  -> Kafka khud yaad rakhta (__consumer_offsets): (group, topic, partition) -> offset
   dobara padhna hai -> offset peeche karo (replay): khabar padi hai
 ```
@@ -169,6 +168,7 @@ AAGE POOCHEGA:
                          nahi)
   producer retry ulta -> har message ka number: 1 fail, 2 gaya, 1 phir -> theek (idempotent producer)
   10 se 20 tukde      -> % 10 se % 20: key ka tukda badla, thodi der kram toota -> shuru me zyada rakho
+  key di hi nahi      -> round-robin / sticky: koi kram nahi
   ek tukda garam      -> key todo (userId#bucket): sirf jab us key pe kram zaroori nahi
 ```
 
@@ -267,9 +267,8 @@ jo follower peeche reh gaya wo ISR se bahar -> leader nahi ban sakta
 AAGE POOCHEGA:
   NIYAM: "done" tabhi jab ISR copy pe bhi likha (acks=all); naya leader sirf ISR se.
          producer ko OK = khabar bachi; copy kam pad jaaye to likhna band, khona nahi.
-  SAFAR (ek khabar likhna):
-  producer bheje         -> leader A likhe, B + C copy lein (ISR)
-  OK kab?                -> acks=all: saari ISR ne li tab: leader mare to bhi bachi
+  SAFAR (ek khabar likhna, har mod pe kya):
+  sab theek              -> leader A likhe, B + C copy lein (ISR); saari ISR ne li tab OK (acks=all)
   copy kam pad gayi      -> min.insync=2 -> likhna band: khone se rukna behtar
   A mara                 -> Controller (KRaft) ISR se B ko leader: ek faisla, do leader nahi
   peeche wala follower   -> leader nahi ban sakta: aakhri khabar uske paas nahi
@@ -308,6 +307,7 @@ AAGE POOCHEGA:
   sab theek                    -> khabar li -> pehle email bhejo, PHIR commit: khona kabhi nahi
   bheja, commit se pehle crash -> khabar dobara aayegi -> eventId dekho, bhej chuke to skip
   dedup userId se kiya         -> Ravi ka agla sahi event bhi skip -> pehchaan eventId se, kram userId se
+  eventId jaldi mita diya      -> dobara aayi to phir bhejega: umar (TTL) retry window se lambi
 ```
 
 #### 8 Order #101 DB me bana, Kafka bhejne se pehle server gira
@@ -548,6 +548,9 @@ CHHE BAAT (poora design ek-ek line me):
 
 AUR SAWAAL (safar ke mod nahi):
   offset matlab byte?     -> nahi, kram number 0, 1, 2; chhoti .index file batati file me kahan
+  disk pe dheema nahi?    -> nahi: sirf aakhir me jodna = sequential, disk ka sabse tez kaam
+  disk kab khaali?        -> padhne se nahi; sirf retention se (purana segment poora udao, card 10)
+  10 tukde 3 broker pe?   -> barabar baante, kaunsa kahan = naksha Controller ka
   kitne partition?        -> jitne worker ek saath; shuru me thoda zyada (baad me badle to key ka tukda
                              hilta)
   acks ke option?         -> 0 = bhej ke bhaag (kho sakta) · 1 = sirf leader (click / log) · all = saari ISR

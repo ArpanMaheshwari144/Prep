@@ -118,10 +118,10 @@ AAGE POOCHEGA:
   NIYAM: ek id = ek kaam: id app banata, server UNIQUE se pakadta; wahi id dobara = purana jawab,
          kaam dobara nahi. User ko ek hi order dikhe, app chahe kitni baar bheje.
   SAFAR (ek tap ka order):
-  sab theek              -> id screen khulte bani, server UNIQUE pe likhe, order ek
-  network gaya, dobara   -> wahi id -> purana jawab: order ek hi
-  pehla abhi chal raha   -> "thoda ruko" (IN_PROGRESS, 409); ho gaya to saved jawab
-  ek din baad            -> id saaf (~24 ghante): retry minute me hi aata
+  sab theek                -> id screen khulte bani, server UNIQUE pe likhe, order ek
+  wahi id dobara aayi      -> purana jawab: order ek hi
+  wahi id, pehli chal rahi -> "thoda ruko" (IN_PROGRESS, 409); ho gaya to saved jawab
+  id kab tak yaad          -> ~24 ghante, phir saaf: retry minute me hi aata
 ```
 
 #### 2 Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
@@ -148,13 +148,11 @@ AAGE POOCHEGA:
   NIYAM: 'hai?' aur 'block' ek hi UPDATE (DB ke andar), kitni bhi machine ho; 0 row = reject turant dikhao.
          'blocked' badhe naye order se, ghate sauda / cancel / umar khatam se.
   SAFAR (ek order ka paisa):
-  sab theek              -> wallet se block (ek UPDATE: total - blocked >= 30k), book me
-  laptop + phone saath   -> dono DB pe, ek jeete, doosre ko 0 row -> turant reject
-  SELL                   -> wahi line portfolio pe (qty - blocked_qty >= 10)
-  6 hi bike, 10 me se    -> 6 ka paisa kata, 4 blocked: order abhi khula
-  cancel / umar khatam   -> bacha block hatao: blocked sirf sauda / cancel / umar se ghate
-  cancel + match usi pal -> book ek haath chhoota: jo nahi bika sirf uska block hatao
-  MARKET BUY (bhav nahi) -> aakhri bhav + thoda upar block, sauda ke baad bacha wapas
+  sab theek                           -> ek UPDATE: check + block ek saath (total - blocked >= 30k)
+  dono ek saath aaye                  -> ek jeete, doosre ko 0 row -> turant reject
+  block kiya, order cancel            -> block hatao
+  block kiya, sauda aadha             -> jitna bika utna kata, baaki blocked: order abhi khula
+  block kiya, bhav pata nahi (MARKET) -> aakhri bhav + thoda upar block, sauda ke baad bacha wapas
 ```
 
 #### 3 Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
@@ -163,13 +161,11 @@ flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Queue_per_symbol["Queue per symbol"]
     n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek share ka ek hi baabu<br/>(ek symbol ek thread)"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
-    n_Wallet --> n_Queue_per_symbol
-    n_Queue_per_symbol --> n_Matching_Engine
+    n_Wallet --> n_Matching_Engine
     n_Matching_Engine --> n_DB
     style n_Matching_Engine fill:#f9a825,color:#000
 ```
@@ -190,9 +186,9 @@ AAGE POOCHEGA:
   NIYAM: ek stock ki book ko ek waqt ek hi haath (ek thread): doosra line me ruke, race hi nahi; thread
          atka to sirf us stock ki line rukti, baaki stock chalte, standby log se taiyaar.
   SAFAR (Suresh ke 10 share):
-  sab theek              -> TCS ka har order ek hi thread pe, ek-ek match
-  Mohan + main saath     -> pehla le gaya 10, doosra line me -> 0 bacha, reject
-  thread atka (GC pause) -> sirf TCS ki line rukti, baaki stock chalte; standby log se taiyaar
+  sab theek                 -> TCS ka har order ek line, ek thread (T3), ek-ek match
+  main + Mohan ek saath     -> pehla le gaya 10, doosre ko 0
+  ek thread atka (GC pause) -> sirf TCS ki line rukti, INFY apne thread pe chalta
 ```
 
 #### 4 9:15 baje sab TCS pe toot pade
@@ -220,12 +216,12 @@ NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
 ```
 AAGE POOCHEGA:
   NIYAM: ek stock = ek line; badhao stocks ke BEECH, ek stock ke andar kabhi nahi. User ko ACCEPTED
-         turant, FILLED sauda hone pe; line lambi = der, order khota nahi (pehle log).
+         turant, FILLED sauda hone pe; line lambi = der, order khota nahi (line me hai).
   SAFAR (9:15 ki bheed):
-  sab theek              -> TCS order line me, ek thread RAM me lakhon / sec nipta
-  user ko kya dikhe      -> ACCEPTED turant (line me), FILLED sauda hone pe
-  line lambi             -> der, par order khota nahi: pehle log me likha
-  bheed aur badhi        -> stocks ke BEECH baanto (TCS ek thread, INFY doosra), TCS ke andar nahi
+  sab theek                    -> TCS order line me, ek thread RAM me lakhon / sec nipta
+  line me lag gaya             -> app me ACCEPTED turant; FILLED sauda hone pe
+  line lambi                   -> der, par line me hai (khota nahi)
+  baanto mat, to badhaye kaise -> stocks ke BEECH (TCS ek thread, INFY doosra), TCS ke andar nahi
 ```
 
 #### 5 Server gira, poori order book gayab
@@ -262,10 +258,10 @@ AAGE POOCHEGA:
   NIYAM: register (log) hi sach, book uski photo: pehle log, phir book; gira = log se replay, standby
          chalu. Do board ek saath kabhi nahi (do sach = galat).
   SAFAR (ek order, crash tak):
-  sab theek              -> pehle register (log) me #501, phir book: ginti ek jagah
-  10:15 server gira      -> book register se dobara (replay): aakhri photo + uske baad ke panne
-  seconds me chahiye     -> standby register padh ke board taiyaar, pehla gire tab chalu
-  paisa ka kya           -> paisa DB me, wahan rollback; book register se
+  sab theek               -> pehle log me #501, phir book
+  10:15 server gira       -> log #1 se replay (aakhri photo + baad ke panne): wahi book
+  replay me sauda dobara? -> nahi: replay sirf book banata; settle hua sauda trade_id se skip
+  replay me der           -> standby pehle se log padhta, book taiyaar; pehla gire tab chalu
 ```
 
 #### 6 Mera paisa kat gaya, Suresh ko mila hi nahi
@@ -287,7 +283,7 @@ flowchart LR
     style n_Settlement fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     10:30, server wapas, log se book bani; ab mera 9:15 wala sauda settle hone laga (Suresh se
+DIKKAT     10:30, server wapas, log se book bani; ab mera 10:10 wala sauda settle hone laga (Suresh se
            10 TCS, 30k): mera 30k kata, Suresh ko milne se PEHLE crash.
 HAL        chaaron ek saath ya koi nahi (TRANSACTION): BEGIN Arpan -30k +10 share · Suresh +30k -10 share
            COMMIT. Crash -> rollback.
@@ -298,9 +294,9 @@ AAGE POOCHEGA:
   NIYAM: paisa ek DB me: chaaron likhai ek transaction, ya sab ya kuch nahi; ledger jod hamesha 0.
          Beech ka haal user ko PENDING dikhe, galat number kabhi nahi.
   SAFAR (mera 30k ka sauda):
-  sab theek              -> chaaron likhai ek transaction + ledger 2 line (Arpan -30k, Suresh +30k)
-  beech me crash         -> rollback, kuch nahi likha: user ko PENDING, galat number nahi
-  raat jaanch            -> ledger jod hamesha 0: galti turant dikhe
+  sab theek              -> chaaron ek transaction: Arpan -30k +10 · Suresh +30k -10, COMMIT
+  COMMIT se pehle crash  -> rollback, kuch nahi likha: user ko PENDING, galat number nahi
+  rollback ke baad retry -> trade_id UNIQUE: Suresh ko do baar nahi
 ```
 
 #### 7 Dopahar: paisa Wallet DB me, share Portfolio DB me — INFY ka 20k kata, share nahi aaye
@@ -343,9 +339,10 @@ AAGE POOCHEGA:
   NIYAM: match ke baad sauda PAKKA: system hi aage badhaata (retry), user ko kuch dobara nahi karna;
          beech ka haal user ko PENDING dikhe.
   SAFAR (INFY 20k, do DB):
-  sab theek              -> wallet done -> portfolio done, har step ka haal likha
-  wallet kata, crash     -> likhe haal se retry, aage hi: portfolio done tak
-  mera paisa wapas?      -> nahi: match ke baad sauda pakka, bechne wale ko 20k mil chuke
+  sab theek              -> wallet done -> portfolio done, har kadam likha
+  20k kata, phir crash   -> likhe haal se retry, aage hi: portfolio done tak
+  retry dobara chala     -> har kadam trade_id se: ho chuka = no-op, share do baar nahi
+  ulta kyun nahi         -> match ke baad sauda pakka: bechne wale ko 20k mil chuke
   match se pehle atka    -> sirf tab ulta (SAGA): block hatao
   ghanton fail           -> PENDING + alert, ops share daalta
 ```
@@ -381,10 +378,10 @@ AAGE POOCHEGA:
   NIYAM: price = sirf abhi ka: badla tab server khud bheje (push), purana store nahi; wapas juda
          user = abhi ka price alag se do. Poochhne ki line (polling) hi nahi.
   SAFAR (TCS ka price):
-  sab theek              -> price badla, server khud bheje (WebSocket push)
-  second me 1000 baar    -> har ~100 ms aakhri price: purana bekaar
-  connection toota       -> wapas jude to abhi ka price alag se: pub/sub kuch store nahi karta
-  10 lakh log            -> ek server lakh ke aas-paas: aur server + LB
+  sab theek                 -> price badla, server khud bheje (WebSocket push)
+  second me 1000 baar badla -> har ~100 ms aakhri price: purana bekaar
+  taar toota, wapas juda    -> abhi ka price alag se do: pub/sub kuch rakhta nahi
+  10 lakh taar              -> ek server ~lakh taar: aur server + LB; pub/sub se sab tak
 ```
 
 ---
@@ -488,6 +485,11 @@ CARD SE AAYE SAWAAL (safar ke bahar):
 "Asli paisa usi pal Suresh ko?"      -> nahi, T+1 NSE Clearing; ye broker ka apna khaata (card 6)
 "Step-step ki keemat?"               -> beech me PENDING dikhta, par 2PC jaisa lamba lock nahi (card 7)
 "Orchestration ya choreography?"     -> orchestration: paise me saaf dikhe kaunsa step atka (card 7)
+"SELL pe bhi aisa?"                  -> wahi line portfolio pe (qty - blocked_qty >= 10) (card 2)
+"Order ki umar khatam (day order)?"  -> shaam ko block hatao: blocked sirf sauda / cancel / umar se (card 2)
+"Cancel aur match usi pal?"          -> book ek haath: jo nahi bika sirf uska block hatao (card 2)
+"Crash me paisa ka kya?"             -> paisa DB me, wahan rollback; book log se (card 5)
+"Galti pakdoge kaise?"               -> raat ledger jod hamesha 0: galti turant dikhe (card 6)
 ```
 
 ---
