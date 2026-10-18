@@ -78,6 +78,10 @@ DATA SE TEEN SAWAAL:
 ```
 Banking Service (saara niyam / logic) -> SQL DB. Jaan-boojh ke seedha.
 ```
+![cdabba](img/cdabba.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -91,11 +95,17 @@ flowchart LR
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
 
+</details>
+
 #### 1 Maine Ravi ko 500 bheje, beech me server gira
 ```
 DIKKAT     1 tareekh subah 8 baje maine Ravi ko 500 bheje. Mere 500 kate, Ravi ke account me daalne se PEHLE
            server gira. 500 na mere paas, na Ravi ke paas. Gayab.
 ```
+![c1](img/c1.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -109,6 +119,8 @@ flowchart LR
     style n_DB fill:#f9a825,color:#000
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
 ```
 NAHI       SAGA / queue laga do: ek DB me kaatna aur daalna alag ho jaate, dikkat khud ban jaati.
 ```
@@ -126,6 +138,10 @@ AAGE POOCHEGA:
 DIKKAT     8:30 lift me maine Send dabaya, 500 kat bhi gaye, par jawab aate waqt network gaya. App ne timeout
            pe khud dobara bheja -> 1000 kat gaye, bhejne the 500.
 ```
+![c2](img/c2.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -139,6 +155,8 @@ flowchart LR
     style n_SVC fill:#f9a825,color:#000
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
 ```
 NAHI       app me "pehle dekho, phir daalo": dono ne dekha "nahi hai", dono ne daala (race).
 ```
@@ -158,6 +176,10 @@ AAGE POOCHEGA:
 DIKKAT     Mere paas 300. 9:00 Netflix ka 200 ka auto-debit chala, usi second maine UPI se Ravi ko 200 bheje.
            Do request, do thread, dono ne balance 300 padha -> dono pass -> dono kate -> mera balance -100.
 ```
+![c3](img/c3.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -171,6 +193,8 @@ flowchart LR
     style n_DB fill:#f9a825,color:#000
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
 ```
 NAHI       Java synchronized: Banking Svc ki kai machine, lock sirf ek ke andar.
 ```
@@ -188,6 +212,10 @@ AAGE POOCHEGA:
 DIKKAT     Subah se paisa kai baar hila. Maine support se poochha "mere 500 kahan gaye, kab?" (audit bhi yahi)
            -> har len-den ka pakka khaata chahiye.
 ```
+![c4](img/c4.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -201,6 +229,8 @@ flowchart LR
     style n_DB fill:#f9a825,color:#000
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
 ```
 NAHI       khaata Kafka me: DB transaction wapas hua (paisa kam tha), Kafka me "Arpan -500" -> khaata jhooth.
 ```
@@ -219,6 +249,10 @@ AAGE POOCHEGA:
 DIKKAT     10 baje salary 50,000 aayi, 1 min baad Ravi ko 20,000 rent bheja. Har transfer ke baad SMS, fraud,
            statement chahiye. Par SMS service giri hui hai -> transfer na ruke, aur SMS khoye bhi nahi.
 ```
+![c5](img/c5.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -234,6 +268,8 @@ flowchart LR
     style n_K fill:#f9a825,color:#000
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
 ```
 NAHI       commit ke baad seedha Kafka: commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi.
 ```
@@ -252,6 +288,10 @@ AAGE POOCHEGA:
 DIKKAT     Salary aate hi maine balance khola. Har baar 50,000 khaate ki line jodna dheema, to balance
            ek column me rakha. Par column aur khaata alag ho gaye (bug), to sach kaunsa? Kaun pakdega?
 ```
+![c6](img/c6.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -269,6 +309,8 @@ flowchart LR
     style n_REC fill:#f9a825,color:#000
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
 ```
 TASVEER: khaata vs balance
 khaata (sach):  har len-den ki line, sirf INSERT   -> saari line jodo = 30,100
@@ -289,6 +331,10 @@ AAGE POOCHEGA:
 DIKKAT     11 baje sabki salary aayi, laakhon transfer ek saath. Ek hi Banking Svc machine thi: CPU bhara,
            transfer dheeme, phir machine giri -> koi bhi paisa nahi bhej pa raha.
 ```
+![c7](img/c7.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -313,6 +359,8 @@ flowchart LR
     style n_S2 fill:#f9a825,color:#000
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
 ```
 AAGE POOCHEGA:
   NIYAM: service kuch yaad nahi rakhti (jitni lagao); sach DB me, copy sync; gira to app wahi id se dobara.
@@ -329,6 +377,10 @@ AAGE POOCHEGA:
 DIKKAT     Salary ke baad sab baar-baar balance aur history dekh rahe. Saari padhai usi ek DB pe, jahan
            transfer bhi likhe jaate -> padhne ki bheed ne paisa bhejna dheema kar diya.
 ```
+![c8](img/c8.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -354,6 +406,8 @@ flowchart LR
     style n_RR fill:#f9a825,color:#000
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
 ```
 AAGE POOCHEGA:
   NIYAM: copy thodi peeche: dikhana copy se, paise ka faisla primary pe; abhi likha to primary se padho.
@@ -371,6 +425,10 @@ AAGE POOCHEGA:
 DIKKAT     Maine Ravi ki dukaan ko 500 bheje, usi second dukaan ne mujhe 200 refund kiye. Ek ne pehle mera row
            pakda, doosre ne dukaan ka; dono ek doosre ka intezaar -> dono atke (deadlock).
 ```
+![c9](img/c9.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -396,6 +454,8 @@ flowchart LR
     style n_DB fill:#f9a825,color:#000
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
 ```
 TASVEER: gol ghera, phir ek kram
 Txn1 (Arpan -> dukaan 500):        taala Arpan   -> intezaar dukaan
@@ -417,6 +477,10 @@ AAGE POOCHEGA:
 DIKKAT     Ravi ki dukaan: roz ~500 UPI, 3 saal = ~5 lakh line. CA ka tool 20-20 ke page maangta. Page 5000 pe
            LIMIT 20 OFFSET 100000 -> DB 1,00,020 line PADH ke phenkta. Beech me nayi line -> ek line dobara.
 ```
+![c10](img/c10.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -442,6 +506,8 @@ flowchart LR
     style n_DB fill:#f9a825,color:#000
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
 ```
 NAHI       saari 5 lakh line ek baar me bhejo: memory bhari, request timeout.
 ```
@@ -460,6 +526,10 @@ AAGE POOCHEGA:
 DIKKAT     5 saal ka khaata (~36 arab line) ek table me. Log roz sirf 3 mahine dekhte, par har query / backup
            arabon line ke saath. Aur kanoon (PMLA / RBI) kam se kam 5 saal rakhwata, bank 8-10.
 ```
+![c11](img/c11.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -483,6 +553,8 @@ flowchart LR
     style n_S3 fill:#f9a825,color:#000
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
 ```
 NAHI       "archive = sharding": archive jagah ghatata, shard likhne ka bojh baantta.
 ```
@@ -518,6 +590,10 @@ JAWAB:    Ek transfer ka sab kuch (dono khaata line, dono balance, id, SMS wali 
           Padhai copy se, history 'pichhli line ke baad se', purane mahine sasti jagah, SMS commit ke
           baad Kafka se.
 ```
+![c11_2](img/c11_2.png)
+
+<details><summary>diagram source (mermaid)</summary>
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -544,6 +620,8 @@ flowchart LR
     n_S3 ~~~ n_pad
     style n_pad fill:none,stroke:none,color:#ffffff00
 ```
+
+</details>
 
 ---
 
