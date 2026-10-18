@@ -1,0 +1,59 @@
+{
+ "title": "Salary aayi, Ravi ko rent bheja, SMS service giri",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: transfer ke saath hi SMS bhejo",
+   "items": [
+    {
+     "box": "Transfer",
+     "sub": "Ravi ko 20,000"
+    },
+    {
+     "arrow": "SMS bhejo"
+    },
+    {
+     "box": "SMS service",
+     "sub": "giri",
+     "bad": true
+    }
+   ],
+   "result": "transfer ruka ya SMS khoya"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: SMS ki khabar usi transaction me outbox me, relay baad me bheje (outbox)",
+   "items": [
+    {
+     "box": "DB",
+     "sub": [
+      "transfer 20,000",
+      "outbox: SMS (sent=false)"
+     ]
+    },
+    {
+     "arrow": "relay"
+    },
+    {
+     "box": "Kafka",
+     "cells": [
+      "E-1",
+      "E-2",
+      "E-3"
+     ],
+     "state": "ggy"
+    },
+    {
+     "arrow": "jab wapas aaye",
+     "dash": true
+    },
+    {
+     "box": "SMS service",
+     "sub": "baad me padhe",
+     "good": true
+    }
+   ],
+   "result": "na ruka, na khoya"
+  }
+ ]
+}

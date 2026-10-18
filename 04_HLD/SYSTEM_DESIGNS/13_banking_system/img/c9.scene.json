@@ -1,0 +1,54 @@
+{
+ "title": "Dukaan ko 500, usi second dukaan se 200 refund",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: dono ne ulte kram me taala liya",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "Txn1: Arpan -> dukaan",
+       "sub": "Arpan pakda, dukaan ka intezaar"
+      },
+      {
+       "box": "Txn2: dukaan -> Arpan",
+       "sub": "dukaan pakda, Arpan ka intezaar"
+      }
+     ],
+     "frame": "gol ghera"
+    }
+   ],
+   "result": "dono atke (deadlock)"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: taala hamesha ek kram me, chhoti id pehle (lock order)",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "Txn1",
+       "sub": "pehle id 7 (Arpan), phir 9 (dukaan)",
+       "good": true
+      },
+      {
+       "box": "Txn2",
+       "sub": "wahi kram: 7 pe ruka, intezaar"
+      }
+     ]
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "DB",
+     "sub": "Txn1 poora, phir Txn2",
+     "good": true
+    }
+   ],
+   "result": "ghera bana hi nahi",
+   "foot": "phir bhi phansa -> DB ek ko wapas karta, app wahi id se dobara"
+  }
+ ]
+}

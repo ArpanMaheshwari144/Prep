@@ -68,7 +68,7 @@ NUMBERS (andaaza):
 Ek machine, uski RAM me ek HashMap. get / put O(1).
 App pehle cache se poochhe: mila -> wahi do · nahi mila -> DB se laao -> cache me daalo -> do (CACHE-ASIDE).
 ```
-![cdabba](img/cdabba-15898e3e.svg)
+![cdabba](img/cdabba-3c598f45.svg)
 
 
 #### SHURU: CACHE-ASIDE
@@ -100,7 +100,7 @@ AAGE POOCHEGA:
 DIKKAT     Subah se mere app ki keys cache me jud rahi thi. 64 GB RAM bhar gayi, nayi key ke liye jagah nahi.
            Kaunsi purani key nikaalein? Galat nikaali to wahi baar-baar DB se aayegi, app dheema.
 ```
-![c1](img/c1-6bf73d1f.svg)
+![c1](img/c1-ae0f7abf.svg)
 
 ```
 TASVEER: LRU = HashMap + list
@@ -124,7 +124,7 @@ AAGE POOCHEGA:
 DIKKAT     Subah 11 tak data 1 TB ho gaya, ek machine me 64 GB -> 16+ machine. "user:42" kis machine pe
            jaaye, aur App ko har baar kaise pata chale?
 ```
-![c2](img/c2-b723c23e.svg)
+![c2](img/c2-873767e3.svg)
 
 ```
 NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
@@ -144,7 +144,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Dopahar machine B mar gayi. Uske hisse ki saari key gayab -> un key ki saari padhai seedha DB pe.
 ```
-![c3](img/c3-a5c7f195.svg)
+![c3](img/c3-3603b67c.svg)
 
 ```
 NAHI       sync copy: har likhai pe copy ke "haan" ka intezaar -> <1 ms gaya.
@@ -166,7 +166,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya, cache me abhi bhi "Ravi"
            -> sabko purana naam dikh raha.
 ```
-![c4](img/c4-a152decd.svg)
+![c4](img/c4-3d5ea8bf.svg)
 
 ```
 NAHI       cache UPDATE: "X" phir "Y" likha, cache me pehle Y pahuncha phir X -> galat "X" baith gaya.
@@ -187,7 +187,7 @@ AAGE POOCHEGA:
 DIKKAT     7 baje "home page" key ki umar khatam hui. Usi pal 1000 log aaye, sabko cache me nahi mili,
            sab ek saath DB pe gaye -> DB pe achanak bojh, home page sabke liye dheema.
 ```
-![c5](img/c5-7e428b6c.svg)
+![c5](img/c5-135d5049.svg)
 
 ```
 TASVEER: ek jaaye, baaki ruke
@@ -213,7 +213,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat IPL final, crore log har second "live:score" padh rahe. Ye ek key ek hi cache machine pe,
            baaki machine khaali -> wo akeli machine CPU / network pe bhar gayi, score sabke liye atka.
 ```
-![c6](img/c6-e87d41b4.svg)
+![c6](img/c6-16ad7e84.svg)
 
 ```
 AAGE POOCHEGA:
@@ -247,7 +247,7 @@ JAWAB:    Cache = RAM me rakhi key-value, kai machines me baanti (ring se), har 
           bheed (ek laaye, baaki ruke).
           Bahut garam key: har app server apne paas 1-2 second rakhe.
 ```
-![c6_2](img/c6_2-abc40c0c.svg)
+![c6_2](img/c6_2-4533d6f5.svg)
 
 
 ---

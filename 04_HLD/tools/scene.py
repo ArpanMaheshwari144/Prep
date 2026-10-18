@@ -8,7 +8,7 @@ Spec:
           "pointer": [idx, "yahan tak padha (120)"], "clock": "5 min", "bad": true, "good": true}
        | {"arrow": "label", "dash": true}
   state ka har akshar ek khaana: o = naranji (RAM) · g = hara (disk / theek) · y = peela (agla / yahi)
-                                 e = khaali · x = laal cross (roka) · b = neela · d = dhundhla
+                                 e = khaali · x = laal cross (roka) · b = neela · d = dhundhla · r = laal (galat number)
 """
 import json, sys
 from xml.sax.saxutils import escape as esc
@@ -18,8 +18,12 @@ FONT = 'Arial, Helvetica, sans-serif'
 COL = {'pehle': ('#e53935', '#fff5f5', '#c62828'), 'ab': ('#43a047', '#f3f9ee', '#2e7d32')}
 CELL = {'o': ('#ffe0b2', '#ef6c00'), 'g': ('#c8e6c9', '#43a047'), 'y': ('#f9a825', '#333'),
         'e': ('#ffffff', '#bbb'), 'x': ('#ffebee', '#d32f2f'), 'b': ('#e3f2fd', '#1976d2'),
-        'd': ('#eeeeee', '#bbb')}
+        'd': ('#eeeeee', '#bbb'), 'r': ('#ffcdd2', '#d32f2f')}
 CW, CH = 34, 26
+
+
+def cw(c):
+    return max(CW, len(c) * 7 + 12)   # lamba number = chauda khaana
 
 
 def tw(t, fs=15):
@@ -42,7 +46,7 @@ def size(it):
     if 'arrow' in it:
         return max(70, tw(it["arrow"], 13) + 30), 0
     lines = [it['box']] + subs(it)
-    w = max([tw(l) for l in lines] + [len(it.get('cells', [])) * CW]) + 28
+    w = max([tw(l) for l in lines] + [sum(cw(c) for c in it.get('cells', []))]) + 28
     if it.get('pointer'):
         w = max(w, tw(it['pointer'][1], 13) + 20)
     h = 22 + len(lines) * 19 + (CH + 12 if it.get('cells') else 0) + (34 if it.get('pointer') else 0) + 8
@@ -61,21 +65,24 @@ def draw_box(o, it, x, y, w, h):
     cells = it.get('cells', [])
     if cells:
         st = it.get('state', 'g' * len(cells))
-        cx0 = x + (w - len(cells) * CW) / 2
+        cx0 = x + (w - sum(cw(c) for c in cells)) / 2
         cy = ty - 6
+        xs, cx = [], cx0
         for i, c in enumerate(cells):
             k = st[i] if i < len(st) else 'g'
             f, s = CELL[k]
-            cx = cx0 + i * CW
-            o.append(f'<rect x="{cx:.0f}" y="{cy:.0f}" width="{CW-3}" height="{CH}" fill="{f}" stroke="{s}"/>')
-            o.append(f'<text x="{cx+(CW-3)/2:.0f}" y="{cy+18:.0f}" text-anchor="middle" font-size="12">'
+            ww = cw(c)
+            xs.append(cx + (ww - 3) / 2)
+            o.append(f'<rect x="{cx:.0f}" y="{cy:.0f}" width="{ww-3}" height="{CH}" fill="{f}" stroke="{s}"/>')
+            o.append(f'<text x="{cx+(ww-3)/2:.0f}" y="{cy+18:.0f}" text-anchor="middle" font-size="12">'
                      f'{esc(c)}</text>')
             if k == 'x':
-                o.append(f'<path d="M{cx+4:.0f},{cy+4:.0f} L{cx+CW-7:.0f},{cy+CH-4:.0f} M{cx+CW-7:.0f},{cy+4:.0f} '
-                         f'L{cx+4:.0f},{cy+CH-4:.0f}" stroke="#d32f2f" stroke-width="2.5"/>')
+                o.append(f'<path d="M{cx+4:.0f},{cy+4:.0f} L{cx+ww-7:.0f},{cy+CH-4:.0f} M{cx+ww-7:.0f},{cy+4:.0f} '
+                         f'L{cx+4:.0f},{cy+CH-4:.0f}" stroke="#d32f2f" stroke-width="2" stroke-opacity="0.55"/>')
+            cx += ww
         if it.get('pointer'):
             idx, lab = it['pointer']
-            px = cx0 + idx * CW + (CW - 3) / 2
+            px = xs[idx]
             o.append(f'<line x1="{px:.0f}" y1="{cy+CH+26:.0f}" x2="{px:.0f}" y2="{cy+CH+6:.0f}" stroke="#d32f2f" '
                      'stroke-width="2.5" marker-end="url(#sr)"/>')
             o.append(f'<text x="{x+w/2:.0f}" y="{cy+CH+42:.0f}" text-anchor="middle" font-size="13" '
@@ -85,7 +92,7 @@ def draw_box(o, it, x, y, w, h):
         o.append(f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="15" fill="white" stroke="#6a1b9a" stroke-width="2"/>')
         o.append(f'<path d="M{cx:.0f},{cy:.0f} L{cx:.0f},{cy-9:.0f} M{cx:.0f},{cy:.0f} L{cx+7:.0f},{cy:.0f}" '
                  'stroke="#6a1b9a" stroke-width="2"/>')
-        o.append(f'<text x="{cx+20:.0f}" y="{cy+5:.0f}" font-size="13" fill="#6a1b9a" font-weight="bold">'
+        o.append(f'<text x="{cx+18:.0f}" y="{cy-8:.0f}" font-size="13" fill="#6a1b9a" font-weight="bold">'
                  f'{esc(it["clock"])}</text>')
 
 

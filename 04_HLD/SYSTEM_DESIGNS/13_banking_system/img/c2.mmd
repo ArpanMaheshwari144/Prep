@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_SVC["Banking Svc<br/>dobara bheja, 1000 kate<br/>-> screen khulte ek id bane, retry pe WAHI id jaaye<br/>server ne id dekhi = pehla jawab wapas, paisa dobara nahi<br/>(idempotency key, DB me UNIQUE)<br/>Send button -> pehli tap pe band<br/>dono ek saath -> DB doosra insert roke (UNIQUE)<br/>wahi id, amount badla -> hash alag, 422"]
+    n_SVC["Banking Svc<br/>dobara bheja, 1000 kate<br/>-> screen khulte ek id, retry pe wahi id, server pe wahi id = pehla jawab (idempotency key)<br/>dono ek saath -> DB doosra roke (UNIQUE)<br/>wahi id, amount badla -> 422"]
     n_DB["SQL DB"]
     n_USER --> n_SVC
     n_SVC --> n_DB

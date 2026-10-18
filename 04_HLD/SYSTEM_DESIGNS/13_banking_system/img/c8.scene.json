@@ -1,0 +1,59 @@
+{
+ "title": "Salary ke baad sab balance dekh rahe, transfer dheeme",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: padhna aur likhna ek hi DB pe",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "balance / history",
+       "sub": "laakhon padhai"
+      },
+      {
+       "box": "transfer",
+       "sub": "likhai"
+      }
+     ]
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Primary DB",
+     "sub": "dono ka bojh",
+     "bad": true
+    }
+   ],
+   "result": "transfer dheema"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: padhna copy se, likhna sirf primary pe (read replica)",
+   "items": [
+    {
+     "box": "transfer",
+     "sub": "likhai"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Primary DB",
+     "sub": "likhna + paise ka faisla",
+     "good": true
+    },
+    {
+     "arrow": "copy, thodi peeche"
+    },
+    {
+     "box": "Replica",
+     "sub": "balance / history padho"
+    }
+   ],
+   "result": "transfer tez",
+   "foot": "abhi bheja aur turant dekha -> apna likha primary se padho"
+  }
+ ]
+}

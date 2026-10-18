@@ -1,0 +1,53 @@
+{
+ "title": "Salary ke baad maine balance khola: sach kaunsa?",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: balance column aur khaata alag ho gaye (bug)",
+   "items": [
+    {
+     "box": "Khaata ka jod",
+     "cells": [
+      "29,800"
+     ],
+     "state": "g"
+    },
+    {
+     "arrow": "?"
+    },
+    {
+     "box": "Balance column",
+     "cells": [
+      "30,300"
+     ],
+     "state": "r",
+     "bad": true
+    }
+   ],
+   "result": "koi pakde hi nahi"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: khaata hi sach, balance uska jod; raat ko milao (reconciliation)",
+   "items": [
+    {
+     "box": "Raat ka job",
+     "sub": "jod vs column",
+     "clock": "raat"
+    },
+    {
+     "arrow": "farak 500"
+    },
+    {
+     "box": "Alert",
+     "sub": [
+      "account roko",
+      "pehle KYUN, phir khaata jeete"
+     ],
+     "good": true
+    }
+   ],
+   "result": "khaata hi sach"
+  }
+ ]
+}

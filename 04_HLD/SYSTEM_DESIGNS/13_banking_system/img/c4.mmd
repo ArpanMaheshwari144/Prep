@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc (+ idempotency)"]
-    n_DB["SQL DB + ledger<br/>500 kahan gaye?<br/>-> khaata = DB ki table, har transfer usi transaction me 2 line: Arpan -500, Ravi +500<br/>sirf INSERT, kabhi UPDATE nahi: BEGIN · INSERT ledger x2 · UPDATE balance x2 · COMMIT<br/>(ledger)<br/>txn wapas -> khaata bhi wapas, jhoothi line nahi<br/>galat line -> UPDATE nahi, ulti line jodo<br/>support: kab, kisko -> har line me waqt + transfer id"]
+    n_DB["SQL DB + ledger<br/>500 kahan gaye?<br/>-> har transfer ki 2 line khaate me, usi transaction me, sirf jodna (ledger)<br/>galat line -> mitao nahi, ulti line jodo<br/>support -> har line me waqt + transfer id"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     style n_DB fill:#f9a825,color:#000

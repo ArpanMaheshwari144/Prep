@@ -1,0 +1,78 @@
+{
+ "title": "Maine Ravi ko 500 bheje, beech me server gira",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: do alag badlaav, beech me crash",
+   "items": [
+    {
+     "box": "Mera account",
+     "sub": "1000 -> 500",
+     "cells": [
+      "-500"
+     ],
+     "state": "o"
+    },
+    {
+     "arrow": "-500 ho gaya"
+    },
+    {
+     "box": "Server",
+     "sub": "gira",
+     "bad": true
+    },
+    {
+     "arrow": "+500 nahi",
+     "dash": true
+    },
+    {
+     "box": "Ravi",
+     "sub": "0 hi",
+     "cells": [
+      ""
+     ],
+     "state": "x"
+    }
+   ],
+   "result": "500 gayab"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: dono badlaav ek transaction me, ya dono ya koi nahi",
+   "items": [
+    {
+     "box": "Transaction",
+     "sub": [
+      "BEGIN",
+      "Arpan -500",
+      "Ravi +500",
+      "COMMIT"
+     ]
+    },
+    {
+     "arrow": "COMMIT se pehle gira"
+    },
+    {
+     "box": "DB ka log (WAL)",
+     "sub": "COMMIT likha hi nahi",
+     "cells": [
+      "BEGIN",
+      "-500",
+      ""
+     ],
+     "state": "ggx"
+    },
+    {
+     "arrow": "ulta karo"
+    },
+    {
+     "box": "Mera account",
+     "sub": "wapas 1000",
+     "good": true
+    }
+   ],
+   "result": "kuch nahi khoya",
+   "foot": "COMMIT ho gaya tha to log se poora karo; aadha kisi ko kabhi nahi dikhta"
+  }
+ ]
+}

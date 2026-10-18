@@ -1,0 +1,61 @@
+{
+ "title": "Lift me Send dabaya, network gaya, app ne dobara bheja",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har request naya transfer",
+   "items": [
+    {
+     "box": "App",
+     "sub": "Send (koi id nahi)"
+    },
+    {
+     "arrow": "timeout, dobara"
+    },
+    {
+     "box": "Server",
+     "sub": "do transfer",
+     "cells": [
+      "500",
+      "500"
+     ],
+     "state": "oo",
+     "bad": true
+    }
+   ],
+   "result": "1000 kate"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: screen khulte ek id, retry pe wahi id (idempotency key)",
+   "items": [
+    {
+     "box": "App",
+     "sub": "id T-77"
+    },
+    {
+     "arrow": "dobara, wahi T-77"
+    },
+    {
+     "box": "Server",
+     "sub": "T-77 pehle se hai?",
+     "cells": [
+      "T-77",
+      "T-77"
+     ],
+     "state": "gx"
+    },
+    {
+     "arrow": "pehla jawab"
+    },
+    {
+     "box": "Mera account",
+     "sub": "500 hi kate",
+     "good": true
+    }
+   ],
+   "result": "ek baar",
+   "foot": "dono ek saath pahunche -> DB ka UNIQUE doosra insert rok deta"
+  }
+ ]
+}

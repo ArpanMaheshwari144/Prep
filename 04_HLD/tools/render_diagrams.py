@@ -45,6 +45,8 @@ def merge_concept(svg_path, mmd_src, term, csvg=None):
         return tag, [float(x) for x in vb.groups()]
     dtag, (dvx, dvy, w1, h1) = size(d)
     ctag, (_, _, w2, h2) = size(c)
+    k = min(1.0, w2 / w1)   # design chauda ho to usi chaudai pe chhota, warna neeche wali tasveer bahut chhoti dikhti
+    w1, h1, W0, H0 = w1 * k, h1 * k, w1, h1
     W = max(w1, w2); gap = 70; H = h1 + gap + h2
     ox1, ox2 = (W - w1) / 2, (W - w2) / 2
     d2 = d.replace(dtag, re.sub(r' (width|height)="[^"]*"', '', dtag).replace('<svg ', f'<svg x="{ox1:.1f}" y="0" width="{w1:.1f}" height="{h1:.1f}" ', 1), 1)
@@ -52,14 +54,25 @@ def merge_concept(svg_path, mmd_src, term, csvg=None):
     # kai peele ho to wo jiske label me text (<br/>) hai
     ys = re.findall(r'style (\w+) fill:#f9a825', mmd_src)
     node = next((n for n in ys if re.search(n + r'\["[^"]*<br/>', mmd_src)), ys[0])
-    g = re.search(r'id="[^"]*flowchart-' + node + r'-\d+"[^>]*transform="translate\(([\d.\-]+), ([\d.\-]+)\)"><rect[^>]*height="([\d.]+)"', d)
-    nx, ny, nh = float(g.group(1)) - dvx + ox1, float(g.group(2)) - dvy, float(g.group(3))
+    # sab dabbe (beech x, y, chaudai, unchai); teer neeche wale kisi dabbe ke upar se na jaaye
+    boxes = {}
+    for m in re.finditer(r'id="[^"]*flowchart-(\w+)-\d+"[^>]*transform="translate\(([\d.\-]+), ([\d.\-]+)\)"><rect([^>]*)>', d):
+        rw = re.search(r'width="([\d.]+)"', m.group(4)); rh = re.search(r'height="([\d.]+)"', m.group(4))
+        if rw and rh:
+            boxes[m.group(1)] = (float(m.group(2)), float(m.group(3)), float(rw.group(1)), float(rh.group(1)))
+    bx, by, bw, bh = boxes[node]
+    def clear(x):
+        return all(not (oy - oh / 2 > by and ox - ow / 2 - 24 < x < ox + ow / 2 + 24)
+                   for n, (ox, oy, ow, oh) in boxes.items() if n != node)
+    cands = sorted([bx + dx for dx in range(-int(bw / 2) + 16, int(bw / 2) - 15, 8)], key=lambda x: abs(x - bx))
+    ax = next((x for x in cands if clear(x)), bx)
+    nx, ny, nh = (ax - dvx) * k + ox1, (by - dvy) * k, bh * k
     y1, y2 = ny + nh / 2 + 4, h1 + gap - 4
     arrow = (f'<defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto">'
              f'<path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs>'
              f'<line x1="{nx:.1f}" y1="{y1:.1f}" x2="{nx:.1f}" y2="{y2:.1f}" stroke="#f9a825" stroke-width="3" '
              f'stroke-dasharray="8,5" marker-end="url(#kaise)"/>'
-             f'<text x="{nx+10:.1f}" y="{(y1+y2)/2+5:.1f}" font-family="Arial, Helvetica, sans-serif" font-size="16" '
+             f'<text x="{nx+10:.1f}" y="{h1+gap/2+5:.1f}" font-family="Arial, Helvetica, sans-serif" font-size="16" '
              f'font-weight="bold" fill="#e65100">kaise?</text>')
     out = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" viewBox="0 0 {W:.1f} {H:.1f}">'
            f'<rect width="100%" height="100%" fill="white"/>' + d2 + c2 + arrow + '</svg>')

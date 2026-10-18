@@ -1,0 +1,70 @@
+{
+ "title": "Dukaan ke CA ka export, page 5000 pe atka",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: LIMIT 20 OFFSET 100000",
+   "items": [
+    {
+     "box": "CA tool",
+     "sub": "page 5000 do"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "DB",
+     "sub": "1,00,020 line padhe, 1,00,000 phenke",
+     "cells": [
+      "1",
+      "2",
+      "..",
+      "1L",
+      "+20"
+     ],
+     "state": "ddddy",
+     "bad": true
+    }
+   ],
+   "result": "dheema"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: pichhle page ki aakhri line yaad, agla page usse aage (keyset)",
+   "items": [
+    {
+     "box": "CA tool",
+     "sub": "aakhri (ts, id) yaad"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Query",
+     "sub": [
+      "WHERE account_id = ?",
+      "AND (ts, id) < (aakhri ts, id)",
+      "ORDER BY ts DESC, id DESC",
+      "LIMIT 20"
+     ]
+    },
+    {
+     "arrow": "index se"
+    },
+    {
+     "box": "DB",
+     "sub": "sirf 20 padhe",
+     "cells": [
+      "..",
+      "99k",
+      "+20"
+     ],
+     "state": "dgy",
+     "good": true
+    }
+   ],
+   "result": "page 5000 bhi tez",
+   "foot": "beech me nayi line aayi -> purana page nahi khiskta, line dobara nahi"
+  }
+ ]
+}

@@ -1,0 +1,64 @@
+{
+ "title": "Raat ko: 5 saal ka khaata ek hi table me",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: arabon line ek table",
+   "items": [
+    {
+     "box": "Ek table",
+     "sub": "5 saal",
+     "cells": [
+      "2021",
+      "2022",
+      "..",
+      "2026"
+     ],
+     "state": "oooo"
+    },
+    {
+     "arrow": "roz ki query + backup"
+    },
+    {
+     "box": "DB",
+     "sub": "sab line ke saath",
+     "bad": true
+    }
+   ],
+   "result": "dheema + mehnga"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: mahine ke tukde, band mahina S3 pe (partition + archive)",
+   "items": [
+    {
+     "box": "Table",
+     "sub": "sirf haal ke mahine",
+     "cells": [
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct"
+     ],
+     "state": "dggg"
+    },
+    {
+     "arrow": "band mahina"
+    },
+    {
+     "box": "S3 archive",
+     "sub": "sasta, 5+ saal",
+     "cells": [
+      "2021",
+      "..",
+      "Jun"
+     ],
+     "state": "ddd",
+     "good": true
+    }
+   ],
+   "result": "table chhoti",
+   "foot": "5 saal delete nahi (bank ka niyam); balance ka jod -> mahine ka snapshot + baad ki line"
+  }
+ ]
+}

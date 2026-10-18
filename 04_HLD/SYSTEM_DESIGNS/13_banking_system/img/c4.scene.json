@@ -1,0 +1,57 @@
+{
+ "title": "Maine poochha: mere 500 kahan gaye, kab?",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: sirf balance column, purana mit gaya",
+   "items": [
+    {
+     "box": "Balance column",
+     "cells": [
+      "1000"
+     ],
+     "state": "o"
+    },
+    {
+     "arrow": "500 kahan?"
+    },
+    {
+     "box": "Support",
+     "sub": "pata nahi",
+     "bad": true
+    }
+   ],
+   "result": "koi hisaab nahi"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: har transfer ki 2 line khaate me, sirf jodo, kabhi badlo nahi (ledger)",
+   "items": [
+    {
+     "box": "Khaata",
+     "sub": "usi transaction me",
+     "cells": [
+      "-500",
+      "+500",
+      "+50k",
+      "-20k"
+     ],
+     "state": "yggg"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Support",
+     "sub": [
+      "8:00, T-77",
+      "Ravi ko 500"
+     ],
+     "good": true
+    }
+   ],
+   "result": "har paisa dikhe",
+   "foot": "galat line -> mitao nahi, ulti line jodo"
+  }
+ ]
+}
