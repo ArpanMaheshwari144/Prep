@@ -216,7 +216,7 @@ AAGE POOCHEGA:
   celeb (10 crore) kare  -> inbox me nahi, padhte waqt laao (pull): likhne ka toofan bacha
   feed khuli             -> inbox + follow kiye celebs ke naye tweet milao (hybrid)
   10,000 ke aas-paas     -> 12,000 upar pull, 8,000 neeche tabhi push: line pe baar-baar na palte
-  50 celeb follow kiye   -> unke naye tweet chhote celeb cache se: 50 pull bhi sasta
+  50 celeb follow kiye   -> celeb ke tweet alag se rakhe, 50 pull bhi sasta (aage card 4)
 ```
 
 #### 4 Match khatam, Virat ka tweet, crore log ek saath, DB gira
@@ -252,7 +252,6 @@ AAGE POOCHEGA:
   crore log padhein      -> RAM cache se, DB tak sirf ek request
   ek key, machine garam  -> copies tweet:123#1..#5, kisi se padho + App memory 1-2 sec
   Virat ne edit / delete -> cache se key hatao: agla read DB se naya
-  IPL final, 10 guna     -> likhai Kafka line me rukti; pata ho to machine + cache pehle garam
 ```
 
 #### 5 Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi
@@ -364,7 +363,6 @@ AAGE POOCHEGA:
          purani, par chalti.
   SAFAR (meri feed, region ke paar, har mod pe kya):
   feed maangi            -> paas wala region (Route 53 pata deta): 300 ms nahi, tez
-  data kahan             -> mera India me; doosre region me copy thoda baad (Cassandra)
   US celeb ka tweet      -> garam tweet India cache me bhi
   main US ghooma         -> request India bhejo, ya paas ki copy se (thoda purana)
   poora region gira      -> Route 53 zinda region pe palte; copy peeche thi -> feed thodi purani
@@ -541,6 +539,7 @@ celeb ke read  -> celeb cache 95% · garam key ki kai copy + App ka chhota cache
 Cassandra      -> user_id (+ time) se baanta · Bieber ki machine garam -> uska data aur copy
 doosre desh    -> region + garam data har region me copy
 Kafka          -> partition badhao · fanout workers badhao
+IPL final      -> 10 guna: likhai Kafka line me rukti; pata ho to machine + cache pehle garam
 ASLI TWITTER   = sab ek saath: user_id se baanta + time ke tukde + region copy + garam data sab jagah cache
 
 POOCHEGA: "Kahan se gir sakta?"       -> har dabbe pe "ye gira to?"

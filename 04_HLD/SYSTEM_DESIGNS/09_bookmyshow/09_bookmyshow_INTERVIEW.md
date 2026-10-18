@@ -114,12 +114,9 @@ AAGE POOCHEGA:
   NIYAM: seat ka faisla DB ki EK query (WHERE khaali): jeeta = 1 row; haara = 0 row -> use turant "seat ja
          chuki, doosri chuno", dobara dabane se kuch nahi milta. Lock App me nahi, DB me.
   SAFAR (ek seat A1, har mod pe kya):
-  A1 dabaya, sab theek     -> UPDATE ... WHERE A1 khaali -> 1 row = meri, pakki
-  Ravi usi second          -> DB row lock: main pehle, Ravi ruka -> uska WHERE 0 row, "seat gayi"
-  4 seat, A4 gayi          -> ek transaction: badli rows 4 nahi -> ROLLBACK: aadhi booking bekaar
-  4 seat, do log ulta kram -> DB deadlock pakad ke ek ko abort, wo retry; alag UPDATE ho to seat_id
-                              ke kram me bhejo
-  mera hi dobara bhejna    -> race nahi, duplicate: bookingId se roko (idempotency)
+  A1 dabaya, sab theek -> UPDATE ... WHERE A1 khaali -> 1 row = meri, pakki
+  Ravi usi second      -> DB row lock: main pehle, Ravi ruka -> uska WHERE 0 row, "seat gayi"
+  Ravi ne phir dabaya  -> WHERE phir 0 row: dobara dabane se kuch nahi milta
 ```
 
 #### 2 Maine A1 chuni, payment me 3 minute lag rahe
@@ -155,7 +152,6 @@ AAGE POOCHEGA:
          khatam ya app gira to sweeper khud chhodta, koi haath se nahi.
   SAFAR (meri A1 ka hold, har mod pe kya):
   A1 chuni, sab theek      -> usi row me held + umar (5 min) -> pay -> booked
-  SQL me TTL nahi          -> faisla WHERE se (held_until > now()); sweeper har minute map saaf
   umar khatam, phir pay    -> confirm pe bhi WHERE (held + main + umar) -> 0 row = seat gayi -> refund
   koi 10 seat pakad baithe -> had lagao (hold ginti + rate limit): hold = sabke liye band
 ```
@@ -181,8 +177,7 @@ AAGE POOCHEGA:
   SAFAR (ek pay tap, har mod pe kya):
   pay dabaya, sab theek    -> paisa kata -> seat booked -> B-77 DONE
   network gaya, app dobara -> wahi B-77 -> "ho chuka", purana jawab, paisa nahi katta (idempotency)
-  paisa kata, seat fail    -> refund + batao: payment aur seat saga jaisa, ek fail to doosra ulta
-  PSP ka webhook der se    -> PAYMENT_PENDING, hold thoda badhao, roz milao (reconciliation)
+  Pay dobara dabaya        -> double tap: wahi bookingId, paisa ek baar
 ```
 
 #### 4 11 baje main seat map dekh raha tha, saath me 1 lakh log, book koi-koi
@@ -259,7 +254,7 @@ AAGE POOCHEGA:
          dikhe; ek show = ek line, sach hamesha DB ki seats.
   SAFAR (12 baje ki line, har mod pe kya):
   2 lakh aaye, sab theek       -> waiting room: apni jagah dikhe, ek-ek andar, UPDATE jeeta = pakka
-  UPDATE jeeta, user ko pata?   -> bookingId se poll ya WebSocket push: line me tha, jawab baad me
+  UPDATE jeeta, user ko pata?  -> bookingId se poll ya WebSocket push: line me tha, jawab baad me
   seat haar gaya               -> "seat gayi, doosri lo": faisla DB ka
   andar wala bina liye gaya    -> line se agla andar: line sirf darwaza
   ek worker dheema?            -> ~ms ka UPDATE, hazaar / sec; aur chahiye to show ke hisse (balcony / stall)
@@ -293,11 +288,10 @@ AAGE POOCHEGA:
   NIYAM: khaali cache pe ek hi DB jaaye, baaki ruke; jo gir sakta uski copy pehle se taiyaar. User ko bas
          thoda dheema, galat seat kabhi nahi (faisla DB me).
   SAFAR (Redis restart ke baad seat map, har mod pe kya):
-  Redis zinda, key hai    -> map seedha Redis se, DB tak kuch nahi
-  key khaali, 1000 aaye   -> ek lock le ke banaye (SET NX EX 5), baaki 50-100 ms ruk ke Redis se
-  lock wala hi mara       -> EX 5 = lock khud hate · NX = koi aur na laga ho
-  100 ms baad bhi khaali  -> 2-3 retry, phir khud replica se padho: user ko bas dheema
-  Redis gire hi na        -> har master ki copy (Cluster), master gira -> copy master (khud, Sentinel nahi)
+  Redis zinda, key hai   -> map seedha Redis se, DB tak kuch nahi
+  key khaali, 1000 aaye  -> ek lock le ke banaye (SET NX EX 5), baaki 50-100 ms ruk ke Redis se
+  lock wala hi mara      -> EX 5 = lock khud hate · NX = koi aur na laga ho
+  100 ms baad bhi khaali -> 2-3 retry, phir khud replica se padho: user ko bas dheema
 ```
 
 #### 7 Shaam ko main seat chun raha tha, App machine gir gayi
@@ -404,6 +398,7 @@ AAGE:        virtual waiting room · kai DB / shard ho to seat ka faisla usi sha
 
 POOCHEGA: "How would you scale this to 10x?"      -> user ka raasta chalo, pehle jo toote
 POOCHEGA: "What's the single point of failure?"   -> SQL primary (failover), Redis (cluster)
+          Redis gira (c6) -> har master ki copy (Cluster), master gira -> copy master (khud, Sentinel nahi)
 POOCHEGA: "How do you know it's working?"
           -> booking p99 · 0-row ("ja chuki") rate · Kafka lag · kitne hold khatam · alert
 ```
@@ -423,6 +418,11 @@ SAFAR KE BAHAR WALE SAWAAL:
 "Seat rows pehle se hoti?" (c1) -> haan: har show banate hi uski saari seat rows bani, booking = UPDATE hi
 "SQL primary gira?" (c6) -> ~30-120 sec failover (Multi-AZ / Aurora); app wahi id se dobara (idempotent)
 "Aakhri booking copy pe thi?" (c6) -> sync copy: likhai dono jagah pakki (Multi-AZ), booking = paisa
+"4 seat, A4 gayi?" (c1) -> ek transaction: badli rows 4 nahi -> ROLLBACK: aadhi booking bekaar
+"4 seat, do log ulta kram?" (c1) -> DB deadlock pakad ke ek ko abort, wo retry; alag UPDATE ho to seat_id
+                                     ke kram me bhejo
+"Paisa kata, seat fail?" (c3) -> refund + batao: payment aur seat saga jaisa, ek fail to doosra ulta
+"PSP ka webhook der se?" (c3) -> PAYMENT_PENDING, hold thoda badhao, roz milao (reconciliation)
 
 API:      GET /movies?city=BLR · GET /shows?movieId=X · GET /shows/{id}/seats (available / held / booked)
           POST /bookings { showId, seats } -> seat HOLD (atomic) -> bookingId + umar

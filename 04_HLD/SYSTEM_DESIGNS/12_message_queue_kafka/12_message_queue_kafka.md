@@ -111,7 +111,7 @@ AAGE POOCHEGA:
   SAFAR (ek signup khabar, har mod pe kya):
   sab theek         -> producer file ke aakhir me jode (log) -> consumer page cache se padhe; khabar mit-ti
                        nahi
-  consumer restart  -> Kafka khud yaad rakhta (__consumer_offsets): (group, topic, partition) -> offset
+  consumer restart  -> Kafka khud yaad rakhta (__consumer_offsets): kahan tak padha (offset)
   dobara padhna hai -> offset peeche karo (replay): khabar padi hai
 ```
 
@@ -197,7 +197,6 @@ AAGE POOCHEGA:
   sab theek               -> ek group.id: P0-3 -> C1 · P4-6 -> C2 · P7-9 -> C3; Ravi P7 -> sirf C3, ek email
   group.id = machine naam -> teen alag team, teeno ne bheja: 3 email
   machine badhani         -> tukde bhi badhao: 10 tukde + 12 machine = 2 khaali
-  ek khabar 5 min ki      -> poora tukda atka (kram se padhta): dheema kaam alag topic / pool
 ```
 
 #### 5 Ravi ka order analytics aur dashboard ko bhi chahiye
@@ -547,6 +546,7 @@ CHHE BAAT (poora design ek-ek line me):
    6 TRADE-OFF   async + sabko + replay -> Kafka · turant jawab / poora kram -> Kafka NAHI
 
 AUR SAWAAL (safar ke mod nahi):
+  ek khabar 5 min ki?     -> poora tukda atka (kram se padhta): dheema kaam alag topic / pool
   offset matlab byte?     -> nahi, kram number 0, 1, 2; chhoti .index file batati file me kahan
   disk pe dheema nahi?    -> nahi: sirf aakhir me jodna = sequential, disk ka sabse tez kaam
   disk kab khaali?        -> padhne se nahi; sirf retention se (purana segment poora udao, card 10)

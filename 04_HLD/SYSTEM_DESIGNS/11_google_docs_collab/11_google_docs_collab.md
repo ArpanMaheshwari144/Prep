@@ -163,9 +163,9 @@ AAGE POOCHEGA:
   NIYAM: kram sirf server ka (har op ko agla version), phone ki ghadi kabhi nahi; aaya op us kram se khiskta.
          nateeja: sabki screen same; mujhe apna likha turant dikhe, baaki ka khisak ke aaye.
   SAFAR (do log ek saath, har mod pe kya):
-  sab theek      -> dono ne upar likha -> owner server kram deta (v8, v9), doosra op khiskata, sab same
-  meri screen    -> apna likha turant; Ravi ka khisak ke aata (app apne pending op khiskata)
-  dono pos 0 (tie) -> server pe pehle aaya wo 0 pe, doosra 1 pe khiska -> dono ke paas "XYHELLO"
+  sab theek            -> dono ne upar likha -> server kram deta (v8, v9), doosra op khiskata, sab same
+  Ravi ka ~200 ms baad -> mera beech me likha: app apne pending op khiska ke uska lagata
+  dono pos 0 (tie)     -> server pe pehle aaya wo 0 pe, doosra 1 pe khiska -> dono ke paas "XYHELLO"
 ```
 
 #### 4 50 lakh taar khule, ek connection server nahi jhelta
@@ -202,7 +202,7 @@ AAGE POOCHEGA:
                             version)
   1000 log ek doc pe     -> 100 editor owner pe (OT sirf likhne walon ka); 900 viewer kahin bhi
   server juda / gira     -> ring pe sirf uske pados ke doc khiskte; wo log dobara jude
-  owner gira, doc kahan? -> doc server pe nahi, LOG me hai: naya owner log se banaye; app version bata ke
+  owner gira, doc kahan? -> doc server pe nahi, DB me hai: naya owner DB se banaye; app version bata ke
                             baaki le
 ```
 
@@ -236,11 +236,11 @@ NAHI       Kafka: store karta + thoda dheema; live typing dobara padhni nahi, te
 ```
 AAGE POOCHEGA:
   NIYAM: pub/sub sirf PAHUNCHATA, kuch store nahi (bheja aur bhool gaya): kaam turant dikhana.
-         viewer ka chhoota to version se op log se le lo; bachana op log ka kaam, channel ka nahi.
+         viewer ka chhoota to version se DB se le lo; bachana DB ka kaam, channel ka nahi.
   SAFAR (mera op Ravi tak, har mod pe kya):
   sab theek              -> editor same server pe -> seedha push, pub/sub ki zaroorat nahi
   Ravi doosre server pe  -> doc ke channel pe op daalo, uska server sunta (pub/sub)
-  Ravi ka server restart -> op channel se gaya (pub/sub store nahi karta), par log me hai: jude, version
+  Ravi ka server restart -> op channel se gaya (pub/sub store nahi karta), par DB me hai: jude, version
                             bata ke le
   Redis pub/sub gira     -> copy main bane (Sentinel): live kuch sec ruka, khoya kuch nahi
 ```
@@ -361,10 +361,10 @@ AAGE POOCHEGA:
   NIYAM: photo ek version tak; kholna = photo + uske baad ke op, shuru se kabhi nahi.
          koi bhi purana version dekhna = us se pehli photo + beech ke op.
   SAFAR (purana doc kholna, har mod pe kya):
-  sab theek             -> background job har 1000 op photo leta (user ko nahi dikhta) -> doc khola =
-                           aakhri photo + baad ke ~1000 op
-  photo lete waqt likha -> photo ek version tak (v9,99,000), baad ke op alag: kuch nahi rukta
-  purana version dekhna -> us se pehli photo + beech ke op: shuru se kabhi nahi
+  sab theek               -> background job har 1000 op photo leta (user ko nahi dikhta) -> doc khola =
+                             aakhri photo + baad ke ~1000 op
+  photo lete waqt likha   -> photo ek version tak (v9,99,000), baad ke op alag: kuch nahi rukta
+  kal ka v5,00,500 maanga -> v5,00,000 ki photo + 500 op: shuru se nahi
 ```
 
 ---

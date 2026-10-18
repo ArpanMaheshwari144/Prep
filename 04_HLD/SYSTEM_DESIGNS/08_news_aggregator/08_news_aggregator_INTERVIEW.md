@@ -136,14 +136,13 @@ flowchart LR
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: laana aur padhna alag: laana peeche apni speed se (Kafka line); user sirf Redis ki taiyaar list
+  NIYAM: laana aur padhna alag: laana peeche apni speed se (Kafka, key = source_id); user sirf Redis ki list
          padhta -> laane me der / bheed ho tab bhi feed khulti, bas thodi purani.
   SAFAR (ek khabar, source se feed tak, har mod pe kya):
   sab theek chala         -> kai fetcher -> Kafka (10 partition) -> worker -> DB + Redis
-  kis partition me        -> key = source_id: ek source ki khabar ek line, kram bacha
   kuch naya nahi          -> ETag / Last-Modified: "naya nahi" to download hi nahi
   1000 ek saath aaye      -> line lambi, gira kuch nahi: Kafka disk pe, worker apni speed
-  worker ne do baar likha -> hash UNIQUE: ON CONFLICT DO NOTHING -> skip
+  worker ne do baar likha -> ek baar hi lage: ON CONFLICT DO NOTHING -> skip
 ```
 
 #### 3 8 baje election result, 40 guna bheed

@@ -184,7 +184,7 @@ INFY -> apna thread, TCS ki line se nahi rukta
 ```
 AAGE POOCHEGA:
   NIYAM: ek stock ki book ko ek waqt ek hi haath (ek thread): doosra line me ruke, race hi nahi; thread
-         atka to sirf us stock ki line rukti, baaki stock chalte, standby log se taiyaar.
+         atka to sirf us stock ki line rukti, baaki stock chalte, standby taiyaar.
   SAFAR (Suresh ke 10 share):
   sab theek                 -> TCS ka har order ek line, ek thread (T3), ek-ek match
   main + Mohan ek saath     -> pehla le gaya 10, doosre ko 0
@@ -256,11 +256,10 @@ STANDBY pehle se log padhta, book taiyaar -> pehla gire tab chalu (ek waqt ek hi
 ```
 AAGE POOCHEGA:
   NIYAM: register (log) hi sach, book uski photo: pehle log, phir book; gira = log se replay, standby
-         chalu. Do board ek saath kabhi nahi (do sach = galat).
+         chalu. Do board ek saath kabhi nahi (do sach = galat). Dobara = no-op (trade_id).
   SAFAR (ek order, crash tak):
   sab theek               -> pehle log me #501, phir book
   10:15 server gira       -> log #1 se replay (aakhri photo + baad ke panne): wahi book
-  replay me sauda dobara? -> nahi: replay sirf book banata; settle hua sauda trade_id se skip
   replay me der           -> standby pehle se log padhta, book taiyaar; pehla gire tab chalu
 ```
 
@@ -292,7 +291,7 @@ NAHI       chaar alag UPDATE: beech me gira to aadha likha.
 ```
 AAGE POOCHEGA:
   NIYAM: paisa ek DB me: chaaron likhai ek transaction, ya sab ya kuch nahi; ledger jod hamesha 0.
-         Beech ka haal user ko PENDING dikhe, galat number kabhi nahi.
+         Beech ka haal user ko PENDING dikhe, galat number kabhi nahi. Dobara = no-op (trade_id).
   SAFAR (mera 30k ka sauda):
   sab theek              -> chaaron ek transaction: Arpan -30k +10 · Suresh +30k -10, COMMIT
   COMMIT se pehle crash  -> rollback, kuch nahi likha: user ko PENDING, galat number nahi
@@ -337,12 +336,11 @@ ulta (paisa wapas) kabhi nahi: match ho chuka
 ```
 AAGE POOCHEGA:
   NIYAM: match ke baad sauda PAKKA: system hi aage badhaata (retry), user ko kuch dobara nahi karna;
-         beech ka haal user ko PENDING dikhe.
+         beech ka haal user ko PENDING dikhe. Retry dobara chale = no-op (trade_id).
   SAFAR (INFY 20k, do DB):
   sab theek              -> wallet done -> portfolio done, har kadam likha
   20k kata, phir crash   -> likhe haal se retry, aage hi: portfolio done tak
   retry dobara chala     -> har kadam trade_id se: ho chuka = no-op, share do baar nahi
-  ulta kyun nahi         -> match ke baad sauda pakka: bechne wale ko 20k mil chuke
   match se pehle atka    -> sirf tab ulta (SAGA): block hatao
   ghanton fail           -> PENDING + alert, ops share daalta
 ```
@@ -490,6 +488,7 @@ CARD SE AAYE SAWAAL (safar ke bahar):
 "Cancel aur match usi pal?"          -> book ek haath: jo nahi bika sirf uska block hatao (card 2)
 "Crash me paisa ka kya?"             -> paisa DB me, wahan rollback; book log se (card 5)
 "Galti pakdoge kaise?"               -> raat ledger jod hamesha 0: galti turant dikhe (card 6)
+"Paisa ulta kyun nahi?"             -> match ke baad sauda pakka: bechne wale ko 20k mil chuke (card 7)
 ```
 
 ---

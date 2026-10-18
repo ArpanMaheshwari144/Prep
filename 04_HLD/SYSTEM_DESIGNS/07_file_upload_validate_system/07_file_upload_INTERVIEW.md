@@ -49,7 +49,7 @@ KAISA CHALE (NFR): user ruke nahi (dil) · file khoye nahi · haal
 
 NUMBERS (andaaza):
    1 lakh file / din, din me ~1 lakh second -> ~1-2 upload / second (kam)
-   par deadline wale din (31 March) aakhri ghante me ~100 guna -> ~300 upload / second
+   par deadline wale din (31 March) aakhri ghante me ~100 guna -> ~150-200 upload / second
    par log haal BAAR-BAAR dekhte -> padhna bahut zyada, likhna kam
    -> haal ke liye CACHE + read replica
    -> badi file ke bytes DB me nahi, S3 me (blob storage)
@@ -102,7 +102,7 @@ flowchart LR
 ```
 ```
 DIKKAT     31 March, maine report.pdf daali. Server Validator ke 3 sec jawab tak atka, main bhi screen pe.
-           Aakhri ghante ~300 upload / sec x 3 sec = ~900 thread atke, Tomcat ke 200 khatam.
+           Aakhri ghante ~200 upload / sec x 3 sec = ~600 thread atke, Tomcat ke 200 khatam.
 HAL        turant id, jaanch peeche (ASYNC + TRACKING ID): upload hote hi T-101, khabar queue me.
            Worker uthaye -> Validator -> DB me T-101 = DONE / FAILED. Main T-101 se haal dekhun.
 NAHI       thread pool 200 se 2000: jaanch tab bhi 3 sec, bas memory khatam hone tak der.
@@ -457,7 +457,6 @@ AAGE POOCHEGA:
          scan = virus); jaanch pass nahi to file DONE nahi, reject.
   SAFAR (report.pdf ki jaanch, har mod pe kya):
   sab theek chala        -> pehle kuch byte "%PDF-" + scan saaf -> DONE
-  type dekhne 5 GB?      -> nahi, sirf pehle kuch byte (range GET): nishaan shuru me
   naam .pdf, shuru "MZ"  -> EXE -> reject, DONE nahi: naam / type client ka, sach nahi
   shuru PDF, andar virus -> magic bytes sirf type: scan bhi (ClamAV / S3 malware)
 ```
@@ -560,7 +559,7 @@ AUR SAWAAL:
   "/complete aur S3 event dono chhoote?" -> SWEEPER (card 4): har kuch min atki file dhoondhe.
   "Do worker saath done_count +1?"  -> EK UPDATE done_count = done_count + 1: DB ke andar, ginti nahi khoti.
   "S3 paas kaise maanta?"          -> WAHI HASH KHUD BANAYE: server ne AWS secret se sign kiya tha.
-  "Is line ke liye Kafka hi kyun?"  -> ZAROORI NAHI: ~300 / sec pe SQS / RabbitMQ kaafi; Kafka jab bahut bheed
+  "Is line ke liye Kafka hi kyun?"  -> ZAROORI NAHI: ~200 / sec pe SQS / RabbitMQ kaafi; Kafka jab bahut bheed
                                        ya dobara padhna.
   "Ye sab pata kaise chalega?"      -> APNE NUMBER: queue lambai · Validator time + error · 10 min VALIDATING
                                        -> alert (health check sirf "zinda" bolta).

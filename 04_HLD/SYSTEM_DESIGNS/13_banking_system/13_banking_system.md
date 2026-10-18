@@ -106,12 +106,11 @@ NAHI       SAGA / queue laga do: ek DB me kaatna aur daalna alag ho jaate, dikka
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ek DB = ek transaction, aadha kabhi nahi (crash pe DB khud ulta); alag bank / DB = SAGA + PENDING.
+  NIYAM: ek DB = ek transaction, aadha kabhi nahi (crash pe DB khud ulta); padhne wale ko aadha nahi dikhta.
   SAFAR (mere 500, Ravi tak):
   BEGIN -> -500 Arpan -> +500 Ravi -> COMMIT -> dono hue ya koi nahi
   beech me server gira       -> DB diary (WAL) se: COMMIT hua tha = poora, nahi = ulta
   -500 ke baad koi padhe     -> COMMIT se pehle ka hi dikhta: aadha kisi ko nahi dikhta
-  Ravi doosre bank (do DB)   -> do bank = do DB, ek txn nahi: PENDING + SAGA, raat milaan
 ```
 
 #### 2 Send dabaya, network gaya, app ne dobara bheja
@@ -138,7 +137,6 @@ AAGE POOCHEGA:
   SAFAR (ek Send, dobara aaya):
   screen khuli -> id bani    -> Send pe wahi id DB me (UNIQUE): pehli baar = paisa kata
   network gaya, app dobara   -> WAHI id aayi -> pehla jawab wapas, paisa doosri baar nahi
-  button pehli tap pe band   -> kaafi nahi: retry app khud karta (timeout), isliye id phir bhi
   dono ek saath pahunche     -> DB khud rokta: doosra insert fail (UNIQUE = taala)
   wahi id, amount 5000       -> request ka hash mila nahi -> 422, purana jawab nahi
 ```
@@ -223,7 +221,6 @@ AAGE POOCHEGA:
   rent COMMIT                -> usi txn me outbox row; relay ~1 sec me Kafka: SMS pe nahi rukta
   SMS service ghanta giri    -> khabar Kafka me padi rehti: wapas aate hi wahin se padh leti
   relay sent=true se pehle gira -> khabar dobara jaati: SMS service eventId se skip
-  SMS ulte kram me           -> key = account_id: ek account ki khabar ek partition, kram se
   outbox bharti jaaye        -> roz saaf: sent=true ka kaam khatam
 ```
 
@@ -252,7 +249,6 @@ AAGE POOCHEGA:
   NIYAM: sach = khaata, balance uska jod (cache); farak = alert + account roko, pehle KYUN, phir khaata jeete.
   SAFAR (balance khola):
   balance padha              -> column (cache): har baar 50,000 line jodna dheema
-  column kab badla           -> usi txn me jahan khaata line juda: abhi 30,100 = jod 30,100
   raat milaan (reconciliation) -> khaata jod == column? haan = theek
   raat farak: 29,800 vs 30,300 -> alert + account roko: pehle KYUN, phir khaata jeete
 ```
@@ -357,7 +353,6 @@ AAGE POOCHEGA:
   SAFAR (500 dukaan ko, 200 refund usi pal):
   Txn1 akela                 -> taala Arpan, phir dukaan -> ho gaya
   Txn2 usi pal, ulta kram    -> taala dukaan, intezaar Arpan = gol ghera (deadlock)
-  ilaaj                      -> dono chhoti id pehle lock: pehla taala ek hi row, ek ruka
   kram ke baad bhi phansa    -> DB ghera khud pakadta, ek ko wapas: app ruk ke WAHI id se
 ```
 
@@ -399,7 +394,6 @@ AAGE POOCHEGA:
   agla page                  -> "is (ts, id) se purani 20": index se seedha, chhodna nahi
   ek hi ts pe do line        -> (ts, id) dono: id barabari todti, line chhoot / dohraav nahi
   beech me nayi line aayi    -> purana page nahi khiskta: ginti nahi, "kahan tak" yaad
-  (ts, id) app ko kaise      -> band lifafe me (next_cursor, base64): app andar nahi dekhti
 ```
 
 #### 11 Raat ko: 5 saal ka khaata ek hi table me
@@ -541,9 +535,13 @@ DB:       ledger_entries (SACH, sirf jodo, mahine ke tukde) · accounts.balance 
 "Relay likhna hi na pade?"   -> DB ki diary se seedha Kafka (CDC, Debezium).
 "Sync copy = dheema?"        -> haan, ek network chakkar; paise me chalega, async me aakhri transfer khota.
 "Seedha page 500?"           -> keyset me nahi: "kahan tak" yaad, "kitne chhode" nahi; agla / pichhla kaafi.
+"Ravi doosre bank?"          -> do bank = do DB, ek txn nahi: PENDING + SAGA, raat milaan.
+"Send button band, kaafi?"   -> nahi: retry app khud karta (timeout), isliye id phir bhi chahiye.
+"SMS ulte kram me?"          -> Kafka key = account_id: ek account ki khabar ek partition, kram se.
+"(ts, id) app ko kaise?"     -> band lifafe me (next_cursor, base64): app andar nahi dekhti.
 "Id kab tak rakhein?"        -> 24-48 ghante, phir saaf: retry itni der me hi aata (card 2).
 "Main DB hi gira?"           -> sync copy (doosri building) promote, ~1-2 min (Multi-AZ); us beech error
-                               -> app dobara, WAHI id: do baar nahi katta (card 7).
+                               -> app dobara, WAHI id: do baar nahi katta (card 2).
 
 PAANCH CHEEZ JINPE YE ROUND TAY HOTA (source: "ye interview INHI se tay hote hain"):
    IDEMPOTENCY · TRANSACTIONS · QUEUES · RECONCILIATION · AUDIT

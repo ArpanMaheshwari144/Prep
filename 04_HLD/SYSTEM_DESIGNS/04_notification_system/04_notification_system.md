@@ -117,8 +117,8 @@ flowchart LR
 ```
 DIKKAT     Diwali subah maine order kiya. Order service email bhej ke jawab ka intezaar karti rahi; email
            company band thi -> order hi fail. Aur email dobara bhejne wala koi nahi.
-HAL        order turant, khabar peeche (KAFKA = disk pe diary): "order hua" Kafka me daal ke turant jawab.
-           Notification service peeche se padh ke bheje; email band -> wapas aaye to wahin se (offset yaad).
+HAL        order turant, khabar peeche (KAFKA = disk pe diary): order + khabar ek DB txn (outbox), relay Kafka
+           me daale, turant jawab. Notification service peeche se padhe; email band -> wapas aaye to wahin se.
 NAHI       Order service me hi retry: request utni der atki, aur Order service giri to retry bhi gaya.
 ```
 ```
@@ -126,8 +126,8 @@ AAGE POOCHEGA:
   NIYAM: order kabhi khabar ka intezaar nahi karta: khabar disk ki diary (Kafka) me, padhne wala yaad rakhe
          kahan tak -> company band ho to bhi khabar padi rehti, wapas aate hi wahin se.
   SAFAR (ek order ki khabar, har mod pe kya):
-  order bana             -> 'order hua' Kafka me daalo, turant jawab; khabar peeche
-  Kafka se pehle Svc giri -> khabar gayi hi nahi: order + khabar EK DB txn (outbox), relay bheje
+  order bana             -> order + khabar ek DB txn (outbox), relay Kafka me; turant jawab
+  Kafka se pehle Svc giri -> khabar outbox row me padi: relay baad me bhej deta, khoti nahi
   email company band     -> khabar Kafka diary me ~7 din padi, padhne wala kahan tak yaad (offset)
   company 2 din baad     -> wahin se aage: order kabhi email se fail nahi
   Notification Svc dheemi -> machine badhao (consumer group): har line ek machine, lines bat jaati
@@ -191,13 +191,13 @@ NAHI       har baar naya random id: dohraav kabhi pakda nahi jaata.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: khabar ki apni pakki id -> dobara aaye to pehchaan ke skip; Redis tez raasta, Cassandra me
-         INSERT IF NOT EXISTS (LWT) aakhri deewar.
+  NIYAM: khabar ki apni pakki id -> dobara aaye to pehchaan ke skip; Redis tez raasta, DB me (khabar_id,
+         raasta) ek baar hi lage = aakhri deewar.
   SAFAR (ek khabar, dobara aayi, har mod pe kya):
   khabar aayi            -> pehle dekho: ye khabar_id + raasta bheja? (Redis parchi, tez)
   wahi dobara aayi       -> parchi mili -> skip: do email nahi
-  Redis gira             -> Cassandra INSERT IF NOT EXISTS (khabar_id, raasta) (LWT): pakka wahi
-  parchi 24 ghante me mitti -> Cassandra row nahi bhoolti, IF NOT EXISTS phir rokega
+  Redis gira             -> DB me (khabar_id, raasta) ek baar hi lage: pakka wahi rokta
+  parchi 24 ghante me mitti -> DB row nahi bhoolti, phir rokega
 ```
 
 #### 4 Parchi lag gayi, par mera OTP gaya hi nahi
@@ -424,7 +424,8 @@ AAGE POOCHEGA:
   NIYAM: 'bheja' aur 'mila' alag haal; 'mila' tab likho jab company (asli, signed webhook) bataye.
   SAFAR (ek SMS ka haal, har mod pe kya):
   company ne liya        -> 'bheja' likho; 'mila' tab jab company webhook se bataye
-  webhook aaya hi nahi   -> sirf ghanton atke ko ek baar poochho (Twilio SID se); SES me sirf SNS
+  webhook aaya hi nahi   -> sirf ghanton atke ko ek baar poochho (Twilio SID se); SES me poll nahi,
+                            sirf event (SNS / Firehose)
   nakli webhook          -> hastakshar jaancho: Twilio HMAC · SES/SNS certificate · SendGrid public key
 ```
 
@@ -462,7 +463,6 @@ AAGE POOCHEGA:
          beech me roko; ek user ko ek hi baar.
   SAFAR (1 crore ka offer, har mod pe kya):
   campaign shuru         -> 1000-1000 ke tukde, har tukde ke baad 'kahan tak' likho
-  sabko ek hi push       -> FCM topic: ek call; topic me sirf pasand wale (subscription pasand se sync)
   600 bhej ke worker gira -> tukda dobara; (campaign_id, user_id) se pehle ke 600 chhootein
   galat offer chala      -> campaign row pe CANCELLED; worker har tukde se pehle dekhe
 ```
@@ -631,6 +631,8 @@ SAWAAL:   push doosri company se? -> hota nahi: Android = FCM, iPhone = APNs, ph
           (c6) fuse har process apna ya saanjha? -> har process apna (Resilience4j) ya Redis me saanjha
           (c7) offer OTP ki company had kha jaaye? -> OTP ka alag account / number (had = card 8)
           (c9) hisaab kahan? -> Cassandra (Tracking): likhna bahut, seedhi row, jodna kuch nahi
+          (c3) DB me ek baar kaise? -> Cassandra INSERT IF NOT EXISTS (khabar_id, raasta) (LWT)
+          (c10) sabko ek hi push? -> FCM topic: ek call; topic me sirf pasand wale (pasand se sync)
 ```
 
 ---

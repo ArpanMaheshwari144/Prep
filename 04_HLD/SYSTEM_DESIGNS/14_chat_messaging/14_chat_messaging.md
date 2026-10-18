@@ -138,13 +138,13 @@ NAHI       badi machine lo (zyada RAM): thread ka kharcha wahi, bas thodi der ba
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: taar kholo, thread mat do; server gira to log ruk-ruk ke judein; bheja hua khota nahi (card 3).
+  NIYAM: taar kholo, thread mat do; server gira to log ruk-ruk ke judein; bheja hua khota nahi.
   SAFAR (ek taar, subah se raat):
   app khula                  -> LB server pe bithata, taar khula (event loop, thread nahi)
   taar chup                  -> thodi memory; data aaya tabhi thread (epoll batata)
   wahi taar aage             -> wahi server: taar khula hai, naya connection = naya chunaav
   chat server gira           -> ruk-ruk ke, random waqt pe dobara judo (backoff + jitter)
-                                bheja hua khota nahi (card 3)
+                                bheja hua khota nahi
   naya code deploy           -> thode-thode server khaali (draining): sab ek saath na judein
 ```
 
@@ -169,14 +169,14 @@ NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: Redis me sirf PATA (umar ke saath); pata galat ya Redis gira, message khota nahi (card 3).
+  NIYAM: Redis me sirf PATA (umar ke saath); pata galat ya Redis gira, message khota nahi.
   SAFAR (mera "hi", Ravi tak):
   Ravi online, server-7 pe   -> Redis se pata "Ravi -> server-7" -> server-7 -> Ravi
   server-7 zinda             -> dhadkan se entry ki umar badhti (TTL)
   server-7 mara              -> umar khatam, entry khud hati -> Ravi offline maana
-  Ravi phone + laptop dono   -> pata ek nahi, list (device -> server): dono pe bhejo
-  pata galat, Ravi khiska    -> message khota nahi (card 3): naye server pe judte hi milega
-  Redis hi gira              -> copy pe switch: message khota nahi (card 3), judne pe milega
+  Ravi ke kai device         -> pata ek nahi, list (device -> server): har device ka apna taar, sab pe bhejo
+  pata galat, Ravi khiska    -> message khota nahi: naye server pe judte hi milega
+  Redis hi gira              -> copy pe switch: message khota nahi, judne pe milega
 ```
 
 #### 3 Ravi ka phone band tha, message kahan jaaye
@@ -211,7 +211,6 @@ AAGE POOCHEGA:
   Ravi offline               -> push ghanti (FCM / APNs), sirf preview: raasta Google ka
   bhejne se pehle server gira -> DB me pehle se: kuch nahi khota
   Ravi wapas aaya            -> "aakhri jo mila, uske baad sab do" -> server baaki deta
-  Ravi ke 3 device           -> har device ka apna taar, har device apni jagah tak le leta
 ```
 
 #### 4 Roz 1.2 TB message, ek DB nahi jhelta

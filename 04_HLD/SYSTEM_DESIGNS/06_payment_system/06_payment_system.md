@@ -205,7 +205,7 @@ AAGE POOCHEGA:
   sab theek                   -> key-555 screen pe bani: IN_PROGRESS -> kaato + daalo -> DONE + jawab
   network gaya, app ne dobara -> wahi key-555 -> saved jawab, dobara nahi kata
   wahi key, amount alag       -> request ka hash bhi rakho: farak = 422
-  key kab hatao               -> sirf PAKKA fail (paisa hila nahi); PENDING pe rahe; DONE ~24 ghante
+  key kab hatao               -> pakka fail pe hi key hatao (paisa hila nahi); DONE ~24 ghante
 ```
 
 #### 4 Bank se 2000 top-up, PSP dheema
@@ -235,7 +235,7 @@ AAGE POOCHEGA:
          "abhi nahi", paisa hila hi nahi. PSP dheema to jaldi chhodo, warna saare thread atke.
   SAFAR (2000 top-up):
   sab theek              -> PSP ko call, jaldi jawab, SUCCESS
-  2-3 sec me jawab nahi  -> chhodo: PENDING (pata nahi kata); job poochh ke pakka
+  2-3 sec me jawab nahi  -> chhodo: PENDING (pata nahi kata), baad me pata
   5 fail                 -> fuse OPEN: call jaati hi nahi -> saaf "abhi nahi", paisa hila nahi
   30 sec baad test call  -> chali to fuse band, nahi to phir OPEN
 ```
@@ -362,8 +362,7 @@ AAGE POOCHEGA:
   SAFAR (2200 -> 1100 ka hisaab):
   sab theek                -> har payment 2 line (Arpan DEBIT · merchant CREDIT), jod 0, usi transaction
   2200 se 1100 kaise       -> raat ki line padho: bijli 800, recharge 300 -> line-line dikhta
-  galat entry              -> mitao nahi (sirf INSERT): nayi ulti line, audit me dono
-  refund                   -> nayi ulti payment (merchant -500, Arpan +500), apni key
+  galat entry / refund     -> mitao nahi (sirf INSERT): nayi ulti line, audit me dono
   balance column vs khaata -> raat jod == balance; farak = alert
 ```
 
@@ -444,7 +443,6 @@ AAGE POOCHEGA:
   pay kiya, balance dekha               -> primary se: copy 1-2 sec peeche
   copy aur peeche gayi                  -> kitni peeche naapo (replication lag) -> alert
   report itni bhaari ki copy bhi baithe -> alag warehouse (CDC)
-  primary gira                          -> sync standby bane (copy nahi, alag): kuch nahi khota
 ```
 
 #### 10 Saal me ~1000 crore row, primary ki likhai dheemi

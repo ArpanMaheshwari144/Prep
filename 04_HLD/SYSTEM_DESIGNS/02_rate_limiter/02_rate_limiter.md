@@ -182,7 +182,6 @@ AAGE POOCHEGA:
          Do kadam hue to do request ek hi purana number padh ke dono andar.
   SAFAR (20 login ek saath, har mod pe kya):
   sab theek              -> INCR: padhna + badhana ek command, Redis ek line me -> beech me koi nahi
-  GET phir SET kiya      -> dono App ne "4" padha, dono ne "5" likha -> 6 andar (yahi galti)
   INCR ke baad crash     -> INCR + EXPIRE ek Lua me: warna key bina umar, user hamesha block
   token bucket           -> dekhna + ghatana ek Lua me: tokens + aakhri waqt; bharna request pe (lazy)
   Lua dheema / atka      -> poora Redis rukta (ek line me chalta): script chhota, koi loop nahi
@@ -360,7 +359,6 @@ AAGE POOCHEGA:
   sab theek              -> har user had me, system bhi had me -> sab chalta
   system bhar gaya       -> gateway pe system ki had (5,000 / sec), CPU 90% paar -> kuch 503
   kya chhodo             -> kam zaroori pehle (recommendation / analytics), login / payment bachao
-  sale pata thi          -> pehle se machine badhao: khud badhne me minute lagte, bheed second me
 ```
 
 #### 8 Raat ko attack, usi waqt poora Redis Cluster gira (copy bhi), aam API khuli
@@ -437,8 +435,8 @@ AAGE POOCHEGA:
          pehle), kyunki ek IP pe 1000 log aur ek botnet ke 1000 IP.
   SAFAR (login ki request, har mod pe kya):
   sab theek              -> login ke baad JWT se user_id: 1000 log = 1000 alag ginti
+  office NAT, ek ki galti -> key = user_id: sirf uski ginti bhari, baaki 999 chalte
   login se pehle         -> user_id hai hi nahi: IP pe dheeli had + WAF (botnet ke 1000 IP)
-  5 galat password       -> username pe lock nahi, CAPTCHA / der: warna attacker tujhe hi lock kare
 ```
 
 ---
@@ -559,6 +557,7 @@ CARD SE AAYE SAWAAL (safar ke bahar):
   Lua ki 2 key, cluster me?     -> {Arpan} hash tag: rate:{Arpan}:min + :day ek machine pe
   429 ya 503?                   -> user ki had = 429 · system ki had = 503
   API key chori?                -> nuksaan seemit (had key pe), key badlo / band karo
+  (c9) 5 galat password?        -> username pe lock nahi, CAPTCHA / der: warna attacker tujhe hi lock kare
 ```
 
 ---

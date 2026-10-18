@@ -124,7 +124,7 @@ AAGE POOCHEGA:
   SAFAR (ek key, RAM bhar gayi, har mod pe kya):
   RAM me jagah, sab theek -> key rakho, umar (TTL) ke saath; padho to RAM se
   RAM bhar gayi           -> sabse der se chhua hatao (LRU): wahi LRU jo LC 146 me
-  umar wali key kab hate  -> padhte waqt check (lazy) + peeche thodi safai (active): ghadi mehngi
+  user:9 phir padha       -> utha ke aage: ab sabse baad me nikalega (chhua = taaza)
 ```
 
 #### 2 Subah 11 tak data 1 TB: "user:42" kis machine pe?
@@ -162,15 +162,13 @@ TASVEER: ghadi 0..360, disha me chalo
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: machine jude / jaaye to sirf pados ki ~K/N key hilein (K = saari key, N = machine); App ko us
-         hisse ki ek baar miss, baaki sab hit.
+  NIYAM: machine jude / jaaye to sirf pados ki ~K/N key hilein (K = saari key, N = machine), sirf us hisse
+         ki ek baar miss; virtual nodes = pados kai machine, bojh ek pe nahi.
   SAFAR (key "user:42" ka ghar, har mod pe kya):
-  user:42, sab theek      -> ghadi pe aage pehli machine uska ghar (TASVEER), aakhir ke baad ghoom ke pehli
-  machine D judi          -> sirf pados ki key khiski (201..250 C se D): baaki sab hit
-  machine A giri          -> uski key aage wali pe, sirf wahi ek baar miss
-  A ka bojh B pe double?  -> har machine ghadi pe 100-200 jagah (virtual nodes): bojh kai pados pe bat-ta
-  App ko kaise pata       -> cache client library khud hisaab karti; machine list config service se;
-                             galat machine pe gaya to redirect (MOVED-jaisa)
+  user:42, sab theek     -> ghadi pe aage pehli machine uska ghar (TASVEER), aakhir ke baad ghoom ke pehli
+  machine D judi         -> sirf pados ki key khiski (201..250 C se D): baaki sab hit
+  machine A giri         -> uski key aage wali pe, sirf wahi ek baar miss
+  A ka bojh B pe double? -> har machine ghadi pe 100-200 jagah (virtual nodes): bojh kai pados pe bat-ta
 ```
 
 #### 3 Dopahar machine B mar gayi, uski key ka bojh DB pe
@@ -268,8 +266,8 @@ TASVEER: ek jaaye, baaki ruke
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: khaali key pe ek hi DB jaaye, baaki ruke ya purani value le; App ko thoda dheema ya thoda purana
-         chalta, DB pe 1000 ek saath kabhi nahi.
+  NIYAM: khaali key pe ek hi DB jaaye, baaki ruke ya purani value le: DB pe 1000 ek saath kabhi nahi.
+         lock ki umar: lene wala mare to khud khule; App ko bas thoda dheema / purana.
   SAFAR (home page key, har mod pe kya):
   key zinda, sab theek      -> sab cache se, DB pe kuch nahi
   key khatam, 1000 aaye     -> pehla lock le (SET lock:home NX EX 5), wahi DB se laaye; baaki ruke
@@ -303,7 +301,6 @@ AAGE POOCHEGA:
   ek machine pe crore      -> pehle pakdo: App me ginti + machine ka metric achanak upar
   garam pakdi              -> har App ke paas 1-2 sec copy (L1), ya key ki kai copy (score#1..#10)
   L1 me score kitna purana -> 1-2 sec: score chalta, paisa / stock nahi
-  us key pe likhna (like)  -> key ke tukde like#0..#9: kisi ek me likho, padhte waqt jodo
 ```
 
 ---
@@ -389,6 +386,7 @@ SAFAR KE BAHAR WALE SAWAAL:
                                            hatao, O(1) (wahi LRU jo LC 146 me)
 "Hatana hi band kar diya to?" (c1) -> naya likhna error (noeviction); cache me allkeys-lru rakho
 "Key DB me thi hi nahi?" (c5) -> "nahi hai" bhi cache karo, chhoti umar: warna har baar DB (penetration)
+"Us garam key pe likhna (like)?" (c6) -> key ke tukde like#0..#9: kisi ek me likho, padhte waqt jodo
 
 API:      GET key · PUT key value ttl · DELETE key
           jaan-boojh ke chhoti — query nahi, sirf key se -> index / planner nahi -> isiliye tez

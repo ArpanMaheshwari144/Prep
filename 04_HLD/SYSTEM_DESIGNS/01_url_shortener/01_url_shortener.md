@@ -385,7 +385,6 @@ AAGE POOCHEGA:
   sab theek              -> Route 53 phone ko zinda LB ka pata deta, LB aage bhejta
   LB-1 3 baar chup       -> Route 53 har ~30 sec poochta (health check), sab LB-2 pe
   phone purana pata yaad -> ~60 sec fail (DNS TTL): isliye LB khud kai zone (ALB), har jagah 2+
-  poora region gaya      -> Route 53 doosra region; naye link ke aakhri kuch second kho sakte
 ```
 
 #### 8 Raat ko spammer ki script, har second 5,000 link
@@ -505,6 +504,7 @@ Cassandra   -> code se baanto + har tukde ki 3 copy. Koi "main copy" nahi, har c
 Counter     -> ye bhi gir sakta hai -> 2 copy (ek chalu, ek taiyaar).
                Range waise bhi thodi der chala leti hai.
 Kafka       -> partition badhao
+poora region gaya -> Route 53 doosra region; naye link ke aakhri kuch second kho sakte
 
 BAANTNA CODE SE, COUNTRY SE NAHI:
    click hamesha code ke saath aata hai -> code se seedha ek machine
