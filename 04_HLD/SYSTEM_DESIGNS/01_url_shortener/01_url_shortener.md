@@ -115,7 +115,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Redis["Redis<br/>link viral, DB baitha<br/>-> link Redis se do, nahi to DB<br/>(cache-aside)<br/>bhar gaya -> der se na khula nikaalo (LRU)<br/>umar khatam -> saath mitte (TTL = link ki expiry)<br/>Redis gira -> uski copy kaam le (replica)<br/>copy bhi gayi -> kuch click mana, DB bachao (load shedding)"]
+    n_Redis["Redis<br/>link viral, DB baitha<br/>-> link Redis se do, nahi to DB<br/>(cache-aside)<br/>bhar gaya -> der se na khula nikaalo (LRU)<br/>umar khatam -> saath mitte (TTL = link ki expiry)<br/>Redis gira -> uski copy kaam le (replica)<br/>copy bhi gayi -> 1 link ke 1000 click me 1 hi DB tak, baaki uska jawab lein<br/>tab bhi bojh -> kuch click mana, DB bachao (load shedding)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_Redis
