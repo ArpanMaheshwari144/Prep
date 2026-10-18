@@ -67,3 +67,4 @@ bin/
 
 # Java notes book (tracked on purpose)
 !01_JAVA/00_NOTES_BOOK/*.pdf
+__pycache__/

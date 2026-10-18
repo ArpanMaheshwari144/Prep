@@ -85,7 +85,7 @@ seats table (seat_id, show_id, status). "Book" dabao -> status = 'booked'.
 DIKKAT     10 baje badi movie ki booking khuli. Maine aur Ravi ne 10:00:01 pe "A1 khaali" dekha, Book dabaya.
            App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
 ```
-![c1](img/c1-4e0b1452.svg)
+![c1](img/c1-9bcea10d.svg)
 
 ```
 NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke andar.
@@ -105,7 +105,7 @@ AAGE POOCHEGA:
 DIKKAT     Maine A1 chuni, payment me 3 min. 'available' rehne di -> beech me Ravi le gaya. Seedha 'booked'
            kar di -> mera payment fail hua to A1 hamesha ke liye band.
 ```
-![c2](img/c2-a4f2784e.svg)
+![c2](img/c2-5fc0f8c8.svg)
 
 ```
 NAHI       hold Redis me (SET NX EX 300): hold Redis me + booking DB me = do jagah sach, farak aa sakta.
@@ -125,7 +125,7 @@ AAGE POOCHEGA:
 DIKKAT     A1 chuni, Pay dabaya, paisa kat gaya, par jawab aate waqt network gaya. App ne khud dobara bheja
            -> paisa do baar kata, ticket ek.
 ```
-![c3](img/c3-77fcf77b.svg)
+![c3](img/c3-c48b01d3.svg)
 
 ```
 AAGE POOCHEGA:
@@ -142,7 +142,7 @@ AAGE POOCHEGA:
 DIKKAT     11 baje release ka show, main seat map dekh raha, saath me 1 lakh log. Book koi-koi kar raha,
            par har map seedha main DB se -> DB pe bheed, booking bhi dheemi.
 ```
-![c4](img/c4-aec31095.svg)
+![c4](img/c4-7a448058.svg)
 
 ```
 AAGE POOCHEGA:
@@ -161,7 +161,7 @@ AAGE POOCHEGA:
 DIKKAT     12 baje Arijit ka concert: ek show, 3000 seat, 2 lakh log ek saath. Saari bheed DB ki wahi rows
            pe, har koi lock ke intezaar me -> sab dheema. (Aam din ye nahi hota, hold seedha DB pe.)
 ```
-![c5](img/c5-3504adaf.svg)
+![c5](img/c5-37bf40b8.svg)
 
 ```
 NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line (queue) sambhaalti.
@@ -184,7 +184,7 @@ AAGE POOCHEGA:
 DIKKAT     2 baje Redis restart hua, saara seat map khaali. Usi pal hazaaron log ek saath DB / replica pe
            map maangne gaye -> replica baith gayi, map nahi khul raha.
 ```
-![c6](img/c6-914391ca.svg)
+![c6](img/c6-dfd203fd.svg)
 
 ```
 AAGE POOCHEGA:
@@ -202,7 +202,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko main seat chun raha tha. Jis App machine pe tha wo gir gayi, aur ek hi machine thi
            -> page band, booking adhoori, kisi ka kuch nahi chal raha.
 ```
-![c7](img/c7-9141ae64.svg)
+![c7](img/c7-1e2258d4.svg)
 
 ```
 AAGE POOCHEGA:
@@ -237,7 +237,7 @@ JAWAB:    Seat map Redis aur copy se, booking main DB pe ek query se ('khaali ho
           Release ke din ki bheed: darwaze pe ginti + har show ki ek line. Payment pe id, do baar nahi katega.
           SQL kyunki sahi hona sabse zaroori, data chhota to baantna nahi.
 ```
-![c7_2](img/c7_2-2f9f4e07.svg)
+![c7_2](img/c7_2-eef566df.svg)
 
 
 ---

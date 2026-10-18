@@ -18,7 +18,7 @@ def render(src, png):
     if r.returncode == 0: fix_size(png)
     return r.returncode == 0, r.stderr[-300:]
 
-CAP = 720   # GitHub pe chauda diagram chhota dikhe; click karo to poora
+CAP = 900   # GitHub pe chauda diagram chhota dikhe; click karo to poora
 
 def fix_size(svg_path):
     """width = min(viewBox chaudai, CAP), height usi anupaat me; viewBox wahi (poora diagram dikhe)."""
@@ -45,7 +45,7 @@ def merge_concept(svg_path, mmd_src, term, csvg=None):
         return tag, [float(x) for x in vb.groups()]
     dtag, (dvx, dvy, w1, h1) = size(d)
     ctag, (_, _, w2, h2) = size(c)
-    k = min(1.0, w2 / w1)   # design chauda ho to usi chaudai pe chhota, warna neeche wali tasveer bahut chhoti dikhti
+    k = max(0.8, min(1.0, w2 / w1))   # design 0.8 se neeche nahi; design chauda ho to usi chaudai pe chhota, warna neeche wali tasveer bahut chhoti dikhti
     w1, h1, W0, H0 = w1 * k, h1 * k, w1, h1
     W = max(w1, w2); gap = 70; H = h1 + gap + h2
     ox1, ox2 = (W - w1) / 2, (W - w2) / 2
@@ -138,17 +138,18 @@ def merge_concept(svg_path, mmd_src, term, csvg=None):
         return out
 
     ordered = [node] + sorted((n for n in ys if n in boxes and n != node), key=lambda n: -boxes[n][3])
-    path = None
-    for nd in ordered:   # pehle na dabba na line
-        if nd in boxes:
-            path = route(nd, True)
-            if path:
-                break
-    if not path:   # na mile to: dabba kabhi nahi, line sabse kam
-        cands = [(ncross(r), len(r), r) for nd in ordered if nd in boxes for r in all_routes(nd)]
+    path = route(node, True) if node in boxes else None   # card ka apna peela dabba, na dabba na line
+    if not path and node in boxes:   # line sabse kam, par isi dabbe se
+        cands = [(ncross(r), len(r), r) for r in all_routes(node)]
         if cands:
             nc, _, path = min(cands, key=lambda t: (t[0], t[1]))
             print('NOTE: teer', nc, 'line kaatta (dabba nahi)', os.path.basename(svg_path))
+    if not path:   # isi dabbe se kuch nahi -> doosra peela
+        for nd in ordered[1:]:
+            if nd in boxes:
+                path = route(nd, False)
+                if path:
+                    break
     if not path:
         print('WARN: kaise teer ka khaali raasta nahi mila', svg_path)
         a, b, c, e = boxes[node]
@@ -162,10 +163,13 @@ def merge_concept(svg_path, mmd_src, term, csvg=None):
              f'<path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs>'
              f'<polyline points="{poly}" fill="none" stroke="#f9a825" stroke-width="3" '
              f'stroke-dasharray="8,5" marker-end="url(#kaise)"/>'
-             f'<text x="{nx+10:.1f}" y="{h1+gap/2+5:.1f}" font-family="Arial, Helvetica, sans-serif" font-size="16" '
+             f'<text x="{(nx + 10) if nx < W - 90 else (nx - 10):.1f}" text-anchor="{'start' if nx < W - 90 else 'end'}" '
+             f'y="{h1+gap/2+5:.1f}" font-family="Arial, Helvetica, sans-serif" font-size="16" '
              f'font-weight="bold" fill="#e65100">kaise?</text>')
-    out = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" viewBox="0 0 {W:.1f} {H:.1f}">'
-           f'<rect width="100%" height="100%" fill="white"/>' + d2 + c2 + arrow + '</svg>')
+    P = 24   # chaaron taraf margin
+    out = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W+2*P:.0f}" height="{H+2*P:.0f}" '
+           f'viewBox="0 0 {W+2*P:.1f} {H+2*P:.1f}">'
+           f'<rect width="100%" height="100%" fill="white"/><g transform="translate({P},{P})">' + d2 + c2 + arrow + '</g></svg>')
     open(svg_path, 'w', encoding='utf-8').write(out)
     fix_size(svg_path)
 
@@ -220,7 +224,12 @@ def main(f):
                 if re.fullmatch(re.escape(name) + r'-[0-9a-f]{8}\.svg', os.path.basename(old)): os.remove(old)
             os.replace(tmp, os.path.join(img, f'{name}-{h}.svg'))
             return f'![{name}](img/{name}-{h}.svg)'
-        open(f, 'w', encoding='utf-8').write(link.sub(one, s))
+        out = link.sub(one, s)   # pehle saari images, phir file (beech me toota to purani file waisi hi)
+        if len(out) < len(s) * 0.9:
+            raise SystemExit('ROKA: nayi file purani se bahut chhoti ' + f)
+        tmp_md = f + '.tmp'
+        open(tmp_md, 'w', encoding='utf-8').write(out)
+        os.replace(tmp_md, f)
         return
     # already converted blocks: ![name](img/name.png) + details + mermaid
     conv = re.compile(r'!\[(\w+)\]\(img/\1\.svg\)\n\n<details><summary>diagram source \(mermaid\)</summary>\n\n'

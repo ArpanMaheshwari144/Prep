@@ -86,7 +86,7 @@ Ek machine, uski memory me ek queue. Producer daale, consumer uthaye.
 DIKKAT     Subah, sale se pehle signup khule. Queue machine ki memory me 500 signup message, machine restart
            -> memory saaf -> 500 gayab. Email service ko pata hi nahi chala ki 500 log aaye.
 ```
-![c1](img/c1-4306f7c7.svg)
+![c1](img/c1-11618b6e.svg)
 
 ```
 NAHI       DB me queue: insert = index + lock = idhar-udhar likhna; queue me WHERE nahi, bas "X ke baad do".
@@ -107,7 +107,7 @@ AAGE POOCHEGA:
 DIKKAT     10 baje sale: "order-events" pe 5,000 khabar / sec. Email worker ~500 / sec hi bhej paata
            (har email ek API call). Topic ek line -> ek hi worker kram se padhe -> ghanton ki line (lag).
 ```
-![c2](img/c2-46dc7dec.svg)
+![c2](img/c2-513f834c.svg)
 
 ```
 NAHI       copy (replica) badhao: copy sirf bachav ke liye, padhna bhi leader se hi; padhne wale = partition.
@@ -127,7 +127,7 @@ AAGE POOCHEGA:
 DIKKAT     Ravi ne naam "Ravi K" kiya, 1 min baad "Ravi Kumar". Pehla P0 me, doosra P1 me. P0 ka consumer
            10 min peeche (lag) -> pehle "Ravi Kumar" laga, phir "Ravi K" -> galat naam reh gaya.
 ```
-![c3](img/c3-714b6586.svg)
+![c3](img/c3-103eb203.svg)
 
 ```
 NAHI       poore topic ka kram: matlab sirf ek partition = speed khatam. Kram sirf key ke andar.
@@ -150,7 +150,7 @@ AAGE POOCHEGA:
 DIKKAT     Sale me email service ki 3 machine lagayi. Teeno ne har message padha, to Ravi ke ek order pe
            3 email gaye -> Ravi pareshan, aur kaam teen guna hua.
 ```
-![c4](img/c4-cbc5ea07.svg)
+![c4](img/c4-14c8a167.svg)
 
 ```
 AAGE POOCHEGA:
@@ -164,9 +164,11 @@ AAGE POOCHEGA:
 
 #### 5 Ravi ka order analytics aur dashboard ko bhi chahiye
 ```
-DIKKAT     Ravi ka order email ko bhi chahiye, analytics ko bhi, dashboard ko bhi. Ek group = sirf ek ko.
+DIKKAT     Dopahar analytics team boli "humein bhi har order chahiye", dashboard team bhi. Teeno ko ek hi
+           group "email" me jod diya -> Kafka ne tukde teeno me baant diye: har ek ko ~1/3 order mile,
+           Ravi ka order sirf email ko, analytics aur dashboard ko nahi.
 ```
-![c5](img/c5-2a975c1d.svg)
+![c5](img/c5-78f17e7e.svg)
 
 ```
 NAHI       har service ka alag topic: producer ek event teen baar bheje -> "ek message kai service" hi toota.
@@ -187,7 +189,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Dopahar Broker A ki disk mari. Har partition ki ek hi copy thi -> P0 ka data hamesha ke liye gaya.
 ```
-![c6](img/c6-9ce1e6c6.svg)
+![c6](img/c6-ce6926db.svg)
 
 ```
 NAHI       acks=1 sab jagah: leader ne "OK" bola, copy se pehle gira -> khabar gayi.
@@ -208,7 +210,7 @@ AAGE POOCHEGA:
 DIKKAT     Email service ne offset 5 padha (Ravi ka order). Email bheja -> "padh liya" (commit) se pehle CRASH
            -> restart pe phir 5 -> Ravi ko 2 email.
 ```
-![c7](img/c7-86b7059b.svg)
+![c7](img/c7-3a42ec81.svg)
 
 ```
 NAHI       pehle commit, phir kaam: email se pehle CRASH -> restart 6 se -> event 5 KHO gaya.
@@ -228,7 +230,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Ravi ka order #101 DB me bana, Kafka bhejne se pehle order server gira -> event gaya hi nahi.
 ```
-![c8](img/c8-753ebe20.svg)
+![c8](img/c8-eecc3dc8.svg)
 
 ```
 NAHI       "offset bachayega": nahi, offset consumer ki taraf hai; ye producer ki taraf ki dikkat.
@@ -258,7 +260,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko email group ki ek machine C2 mar gayi. Uske tukdon ke message koi nahi padh raha,
            peeche ki line (lag) badhti ja rahi -> logon ko order email ghanton der se.
 ```
-![c9](img/c9-2f2d08ba.svg)
+![c9](img/c9-70ebdf39.svg)
 
 ```
 AAGE POOCHEGA:
@@ -276,7 +278,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko broker ki disk bharti ja rahi: din bhar ke sale ke saare message disk pe pade, koi nahi
            hatata -> disk poori bhari to naye message likhne band, poora order flow ruk jaayega.
 ```
-![c10](img/c10-f8ee9a60.svg)
+![c10](img/c10-130ae9fa.svg)
 
 ```
 AAGE POOCHEGA:
@@ -309,7 +311,7 @@ JAWAB:    Bhejne wala khabar key ke saath bhejta, key se tukda tay hota, tukde k
           Har service ki apni team, to ek khabar sab tak. Worker kaam ke baad 'padh liya' bolta, id se
           dobara skip, kharab khabar DLQ me. 7 din rakhte, dobara padh sakte.
 ```
-![c10_2](img/c10_2-c2681c12.svg)
+![c10_2](img/c10_2-56b5dd98.svg)
 
 
 ---
