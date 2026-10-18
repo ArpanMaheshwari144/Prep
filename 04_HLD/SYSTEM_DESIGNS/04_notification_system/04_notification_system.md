@@ -101,11 +101,15 @@ flowchart LR
 ```
 
 #### 1 Maine order kiya, email company band thi, order hi fail
+```
+DIKKAT     Diwali subah maine order kiya. Order service email bhej ke jawab ka intezaar karti rahi; email
+           company band thi -> order hi fail. Aur email dobara bhejne wala koi nahi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_Order_Svc["Order Svc"]
-    n_Kafka["Kafka<br/>email band, order fail<br/>-> order turant, khabar peeche<br/>(Kafka, async)<br/>Kafka se pehle Svc giri -> outbox row me padi, khoti nahi<br/>email company band -> Kafka me ~7 din padi (offset)<br/>Svc dheemi -> machine badhao (consumer group)<br/>Kafka machine giri -> 3 copy, khabar nahi khoti"]
+    n_Kafka["Kafka<br/>email band, order fail<br/>-> order + khabar ek DB txn me (outbox), relay Kafka (disk pe log) me daale<br/>order turant, Notification peeche padhe, email wapas aaye tab wahin se (Kafka, async)<br/>Kafka se pehle Svc giri -> outbox row me padi, khoti nahi<br/>email company band -> Kafka me ~7 din padi (offset)<br/>Svc dheemi -> machine badhao (consumer group)<br/>Kafka machine giri -> 3 copy, khabar nahi khoti"]
     n_Notification_Svc["Notification Svc"]
     n_Email_API["Email API"]
     n_USER["USER"]
@@ -117,10 +121,6 @@ flowchart LR
     style n_Notification_Svc fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Diwali subah maine order kiya. Order service email bhej ke jawab ka intezaar karti rahi; email
-           company band thi -> order hi fail. Aur email dobara bhejne wala koi nahi.
-HAL        order turant, khabar peeche (KAFKA = disk pe log): order + khabar ek DB txn (outbox), relay Kafka
-           me daale, turant jawab. Notification service peeche se padhe; email band -> wapas aaye to wahin se.
 NAHI       Order service me hi retry: request utni der atki, aur Order service giri to retry bhi gaya.
 ```
 ```
@@ -137,6 +137,10 @@ AAGE POOCHEGA:
 ```
 
 #### 2 SMS company dheemi, mera push aur email bhi atke
+```
+DIKKAT     Usi order ki khabar push, email, SMS teeno se. Teeno ek line me; SMS company dheemi hui -> SMS
+           atke, unke peeche mera push aur email bhi khade.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -145,7 +149,7 @@ flowchart LR
     n_Notification_Svc["Notification Svc"]
     n_PUSH["Push line<br/>queue + worker -> FCM / APNs"]
     n_EMAIL["Email line<br/>queue + worker -> SES"]
-    n_SMSL["SMS line (queue + worker -> Twilio)<br/>SMS dheema, sab atke<br/>-> har raaste ki alag line + worker<br/>SMS dheema / band -> sirf SMS line ruke<br/>SMS line lambi -> sirf SMS worker badhao"]
+    n_SMSL["SMS line (queue + worker -> Twilio)<br/>SMS dheema, sab atke<br/>-> teeno raaste (push / email / SMS) ki alag line + alag worker<br/>jis raaste pe kaam, wahi worker badhao (alag queue)<br/>SMS dheema / band -> sirf SMS line ruke"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_PUSH
@@ -156,10 +160,6 @@ flowchart LR
     style n_SMSL fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Usi order ki khabar push, email, SMS teeno se. Teeno ek line me; SMS company dheemi hui -> SMS
-           atke, unke peeche mera push aur email bhi khade.
-HAL        har raaste ki apni line (ALAG QUEUE): teeno raaste ki alag line aur alag worker. SMS dheema -> sirf
-           SMS ki line lambi. Worker alag ginti me (email ke 10, SMS ke 3) -> jis raaste pe kaam, wahi badhao.
 NAHI       SMS worker badha do: company khud dheemi, line phir bhi ek, push / email phir bhi peeche.
 ```
 ```
@@ -172,6 +172,10 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Worker mara, mujhe do email aaye
+```
+DIKKAT     Worker ne mera email bheja, par Kafka ko "padh liya" (offset) bolne se pehle mar gaya. Kafka ne
+           wahi khabar doosre worker ko di -> dobara bheja -> mujhe DO email.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -179,7 +183,7 @@ flowchart LR
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis<br/>worker mara, do email<br/>-> pehle key, dobara aaye to skip<br/>(SET NX)<br/>Redis gira -> DB me ek baar hi lage<br/>key 24 ghante me mitti -> DB row rokegi"]
+    n_Redis["Redis<br/>worker mara, do email<br/>-> bhejne se pehle Redis me khabar ki APNI id se key (SET NX)<br/>key pehle se mili = khabar aa chuki, skip (idempotency key)<br/>Redis gira -> DB me ek baar hi lage<br/>key 24 ghante me mitti -> DB row rokegi"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES
@@ -187,10 +191,6 @@ flowchart LR
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Worker ne mera email bheja, par Kafka ko "padh liya" (offset) bolne se pehle mar gaya. Kafka ne
-           wahi khabar doosre worker ko di -> dobara bheja -> mujhe DO email.
-HAL        dobara aaye to skip (KEY): bhejne se pehle Redis me khabar ki APNI id se key (SET NX).
-           Key pehle se mili = khabar pehle aa chuki -> skip.
 NAHI       har baar naya random id: dohraav kabhi pakda nahi jaata.
 ```
 ```
@@ -205,6 +205,10 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Key lag gayi, par mera OTP gaya hi nahi
+```
+DIKKAT     Login ka OTP: Worker-A ne key "bhej diya" lagayi, SMS call FAIL (ya Worker-A mara). Kafka ne
+           dobara di, Worker-B ne "bhej diya" dekh ke chhoda -> OTP kho gaya. Koshish ko pakka maan liya.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -212,7 +216,7 @@ flowchart LR
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis (key)<br/>key lagi, OTP gaya nahi<br/>-> bhej raha alag, bhej diya alag<br/>(SENDING / SENT)<br/>call hua -> key SENT, koi dobara nahi<br/>call fail, worker zinda -> khud key hatao<br/>worker hi mara -> SENDING ~60 sec me khud mite<br/>B ko SENDING mili -> ruko, chhodna sirf SENT pe"]
+    n_Redis["Redis (key)<br/>key lagi, OTP gaya nahi<br/>-> bhejne se pehle SENDING (60 sec umar), company OK pe SENT (1 din)<br/>chhodna sirf SENT pe, SENDING = adhoora (SENDING / SENT)<br/>call hua -> key SENT, koi dobara nahi<br/>call fail, worker zinda -> khud key hatao<br/>worker hi mara -> SENDING ~60 sec me khud mite<br/>B ko SENDING mili -> ruko, chhodna sirf SENT pe"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES
@@ -220,10 +224,6 @@ flowchart LR
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Login ka OTP: Worker-A ne key "bhej diya" lagayi, SMS call FAIL (ya Worker-A mara). Kafka ne
-           dobara di, Worker-B ne "bhej diya" dekh ke chhoda -> OTP kho gaya. Koshish ko pakka maan liya.
-HAL        do haal rakho (SENDING / SENT): bhejne se PEHLE "BHEJ RAHA HOON" (SENDING, 60 sec umar), company OK
-           pe "BHEJ DIYA" (SENT, 1 din). CHHODNA sirf SENT pe; SENDING = adhoora.
 NAHI       key hi hata do: worker mara to Kafka dobara deta -> OTP / email do baar (card 3 wapas).
 ```
 ```
@@ -246,6 +246,9 @@ AAGE POOCHEGA:
 ```
 
 #### 5 SMS company pehle se pareshaan, hum har second dobara maar rahe
+```
+DIKKAT     Usi waqt SMS company pareshaan, aur hum har second dobara bhej ke uspe aur hathoda maar rahe.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -254,7 +257,7 @@ flowchart LR
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis (key)"]
-    n_DLQ["DLQ<br/>company pe hathoda<br/>-> har baar zyada ruko, had paar alag line<br/>(backoff + DLQ)<br/>company ne mana kiya -> ruk-ruk ke dobara (backoff + random)<br/>had paar -> DLQ + alert, phenko nahi<br/>DLQ wali khabar -> theek karke wapas line me"]
+    n_DLQ["DLQ<br/>company pe hathoda<br/>-> fail pe 1, 2, 4, 8 sec ruko + thoda random, sab ek saath na lautein<br/>had paar -> fail khabaron ki alag line + alert (backoff + jitter + DLQ)<br/>DLQ wali khabar -> theek karke wapas line me"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES
@@ -263,9 +266,6 @@ flowchart LR
     style n_DLQ fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Usi waqt SMS company pareshaan, aur hum har second dobara bhej ke uspe aur hathoda maar rahe.
-HAL        har baar zyada ruko (BACKOFF + JITTER): 1, 2, 4, 8 sec + thoda random (ek saath na lautein).
-           Had paar -> DLQ (fail khabaron ki alag line) + alert.
 NAHI       retry band, ek fail = chhodo: company 2 sec hili to OTP hamesha ke liye gaya.
 ```
 ```
@@ -287,6 +287,10 @@ AAGE POOCHEGA:
 ```
 
 #### 6 SMS company band nahi, dheemi: saare worker 30 sec me phanse
+```
+DIKKAT     SMS company abhi bhi dheemi: line alag ho gayi, par har call 30 sec atki. Saare SMS worker
+           usi me phanse, OTP bhi ruka. Dheemi company band company se bhi buri.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -295,7 +299,7 @@ flowchart LR
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line + worker<br/>(push -> FCM / APNs)"]
     n_SES["SES + SendGrid"]
-    n_Twilio["Twilio + SNS<br/>SMS 30 sec atki<br/>-> der lage to chhodo, fail pe call band<br/>(timeout + circuit breaker)<br/>baar-baar fail -> circuit breaker khula, SNS pe<br/>push / email -> har company ka apna circuit breaker<br/>SNS bhi band -> line me ruke, OTP ka alert"]
+    n_Twilio["Twilio + SNS<br/>SMS 30 sec atki<br/>-> 2-3 sec me jawab nahi to chhodo (timeout), har company alag<br/>5 fail -> circuit OPEN, SNS pe, 30 sec baad ek test call (circuit breaker)<br/>push / email -> har company ka apna circuit breaker<br/>SNS bhi band -> line me ruke, OTP ka alert"]
     n_Redis["Redis (key)"]
     n_DLQ["DLQ"]
     n_Order_Svc --> n_Kafka
@@ -309,10 +313,6 @@ flowchart LR
     style n_Twilio fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     SMS company abhi bhi dheemi: line alag ho gayi, par har call 30 sec atki. Saare SMS worker
-           usi me phanse, OTP bhi ruka. Dheemi company band company se bhi buri.
-HAL        2-3 sec me chhodo, fail pe call band (TIMEOUT + CIRCUIT BREAKER): har company alag,
-           5 fail -> OPEN, SNS pe. 30 sec baad HALF-OPEN (ek test call) -> chali to CLOSED.
 NAHI       worker badha do: naye worker bhi 30 sec me phanse, dheemi company pe aur bojh.
 ```
 ```
@@ -334,11 +334,15 @@ AAGE POOCHEGA:
 ```
 
 #### 7 12 baje sale shuru, mera OTP 50,000 offer ke peeche
+```
+DIKKAT     12 baje sale. Line me 50,000 offer message the, mera OTP unke peeche khada raha, 10 minute baad
+           aaya. Tab tak login ka time khatam.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_Order_Svc["Order Svc"]
-    n_Kafka["Kafka high / medium / low<br/>OTP offer ke peeche<br/>-> OTP ki apni tez line<br/>(priority)<br/>order update -> medium line, OTP se peeche<br/>OTP line khaali -> uske worker beech wali padhein"]
+    n_Kafka["Kafka high / medium / low<br/>OTP offer ke peeche<br/>-> Kafka me OTP ki apni tez line (high), offer low, beech wali medium<br/>har line ke apne worker, OTP kabhi offer ke peeche nahi (priority)<br/>OTP line khaali -> uske worker beech wali padhein"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis (key)"]
@@ -351,10 +355,6 @@ flowchart LR
     style n_Kafka fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     12 baje sale. Line me 50,000 offer message the, mera OTP unke peeche khada raha, 10 minute baad
-           aaya. Tab tak login ka time khatam.
-HAL        OTP ki apni tez line (PRIORITY): Kafka me OTP ki apni line (high), offer dheemi (low), beech wali
-           medium; har line ke apne worker.
 NAHI       ek line me "zaroori" tag: Kafka me "ye pehle bhejo" hota hi nahi.
 ```
 ```
@@ -367,6 +367,9 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Sale me laakhon message ek saath, company ne 429 diya
+```
+DIKKAT     Sale shuru, ek saath laakhon message. SMS company bolti "itna nahi" (429) -> sab fail.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -374,7 +377,7 @@ flowchart LR
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis (key + bucket)<br/>sale pe 429<br/>-> company ki had sab worker me baanto<br/>(token bucket)<br/>token nahi mila -> line me intezaar, fail nahi<br/>worker badh gaye -> speed wahi, bucket saanjha<br/>bucket wala Redis gira -> har worker chhoti local had (fail-closed)"]
+    n_Redis["Redis (key + bucket)<br/>sale pe 429<br/>-> company ki had 100 / sec = har sec 100 token, sab worker ka ek bucket (Redis)<br/>har worker pehle token le (Lua, ek jhatke me), 429 pe Retry-After tak ruko (token bucket)<br/>token nahi mila -> line me intezaar, fail nahi<br/>worker badh gaye -> speed wahi, bucket saanjha<br/>bucket wala Redis gira -> har worker chhoti local had (fail-closed)"]
     n_DLQ["DLQ"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
@@ -384,9 +387,6 @@ flowchart LR
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Sale shuru, ek saath laakhon message. SMS company bolti "itna nahi" (429) -> sab fail.
-HAL        sab worker ka ek TOKEN BUCKET (Redis): company ki had 100 / sec = har sec 100 token.
-           Har worker pehle token le (Lua, ek jhatke me), nahi -> ruko. 429 phir bhi -> Retry-After tak ruko.
 NAHI       har worker apni speed 100 / sec: 100 worker = 100 guna -> phir 429.
 ```
 ```
@@ -402,6 +402,9 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Company ne "bhej diya" bola, par mere phone tak pahuncha?
+```
+DIKKAT     SMS company ne message le liya. Par mere phone tak pahuncha ya nahi, humein pata hi nahi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -411,7 +414,7 @@ flowchart LR
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis (key + bucket)"]
     n_DLQ["DLQ"]
-    n_Webhook_Svc["Webhook Svc<br/>bheja, par mila?<br/>-> company khud batati pahuncha ya nahi<br/>(webhook + msg id)<br/>webhook aaya hi nahi -> company se status poochho<br/>nakli webhook -> signature jaancho"]
+    n_Webhook_Svc["Webhook Svc<br/>bheja, par mila?<br/>-> company baad me khud call kare: pahuncha / fail (webhook)<br/>bhejte waqt company ka message number save (SES MessageId / Twilio SID), usi se haal badlo<br/>webhook aaya hi nahi -> company se status poochho<br/>nakli webhook -> signature jaancho"]
     n_Tracking_DB["Tracking DB"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
@@ -424,9 +427,6 @@ flowchart LR
     style n_Tracking_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     SMS company ne message le liya. Par mere phone tak pahuncha ya nahi, humein pata hi nahi.
-HAL        company khud batati (WEBHOOK): baad me hamein call karti "pahuncha / fail". Bhejte waqt company
-           ka message number (SES MessageId / Twilio SID) save; webhook aaya -> us number se haal badlo.
 NAHI       baar-baar khud poochte raho: laakhon message x har kuch second = had + kharcha.
 ```
 ```
@@ -440,11 +440,15 @@ AAGE POOCHEGA:
 ```
 
 #### 10 Shaam ko "Diwali offer sabko": 1 crore log
+```
+DIKKAT     Shaam ko admin ne "Diwali offer sabko" chalaya = 1 crore user. Ek-ek karke bheja -> request ghanton
+           atki, OTP bhi peeche, company ki had tooti.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_Admin["Admin"]
-    n_CAMP["Campaign Svc + DB<br/>1 crore ko offer<br/>-> 1 crore ko 1000-1000 me bhejo<br/>(batch + campaign row)<br/>worker gira -> wahi batch dobara, bheje hue skip<br/>galat offer chala -> CANCELLED, worker har tukde se pehle dekhe"]
+    n_CAMP["Campaign Svc + DB<br/>1 crore ko offer<br/>-> 1000-1000 ke tukde: id > aakhri_id, har tukda Kafka me, dheemi line<br/>aakhri_id campaign row me, job gira to wahin se (batch + campaign row)<br/>worker gira -> wahi batch dobara, bheje hue skip<br/>galat offer chala -> CANCELLED, worker har tukde se pehle dekhe"]
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
@@ -462,10 +466,6 @@ flowchart LR
     style n_CAMP fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Shaam ko admin ne "Diwali offer sabko" chalaya = 1 crore user. Ek-ek karke bheja -> request ghanton
-           atki, OTP bhi peeche, company ki had tooti.
-HAL        1000-1000 ke tukde (BATCH): API turant "shuru ho gaya"; job "id > aakhri_id, 1000 lao", har tukda
-           Kafka me, aakhri_id campaign row me -> job gira to wahin se. Dheemi (offer) line, had me.
 NAHI       1 crore ko ek bada "sabko bhejo" message: ek worker pe atka, gira to shuru se.
 ```
 ```
@@ -479,6 +479,10 @@ AAGE POOCHEGA:
 ```
 
 #### 11 Raat 2 baje offer ka SMS, jabki maine band kiya tha
+```
+DIKKAT     Maine "offer SMS band" kiya tha aur raat 10 se subah 8 shaanti lagayi thi. Phir bhi raat 2 baje
+           "Diwali sale 70% off" ka SMS aaya, aur push se phone baj gaya.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -486,7 +490,7 @@ flowchart LR
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
-    n_PREF["User-pref + Template DB<br/>raat 2 baje offer SMS<br/>-> pehle pasand aur raat ki shaanti dekho<br/>(preference)<br/>shaanti me offer -> subah 8 baje bhejo (scheduled_at)<br/>shaanti me OTP / login -> bhejo, zaroori upar<br/>pasand badli -> cache delete + chhoti umar"]
+    n_PREF["User-pref + Template DB<br/>raat 2 baje offer SMS<br/>-> pehle pasand dekho: SMS band = chhodo, raat 10-8 koi ghanti nahi<br/>phir meri bhasha me saancha bharo, pasand + saancha cache me (preference + quiet hours)<br/>shaanti me offer -> subah 8 baje bhejo (scheduled_at)<br/>shaanti me OTP / login -> bhejo, zaroori upar<br/>pasand badli -> cache delete + chhoti umar"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_RDLQ["Redis (key + bucket) + DLQ"]
     n_WH["Webhook Svc + Tracking DB"]
@@ -500,10 +504,6 @@ flowchart LR
     style n_PREF fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Maine "offer SMS band" kiya tha aur raat 10 se subah 8 shaanti lagayi thi. Phir bhi raat 2 baje
-           "Diwali sale 70% off" ka SMS aaya, aur push se phone baj gaya.
-HAL        pehle pasand dekho (PREFERENCE + QUIET HOURS): SMS band -> chhodo; 10-8 -> koi ghanti nahi.
-           Phir meri bhasha me SAANCHA bharo ("Hi {naam}, order {id} aa gaya"). Pasand + saancha cache me.
 NAHI       pasand sirf Campaign Svc me check: order / OTP wali khabar bina check nikal jaati.
 ```
 ```

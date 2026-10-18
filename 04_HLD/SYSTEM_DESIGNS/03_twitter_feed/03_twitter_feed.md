@@ -101,12 +101,16 @@ flowchart LR
 ```
 
 #### 1 Subah app khola, feed ghoomti rahi (har baar 200 logon ka jod)
+```
+DIKKAT     Subah 8 baje maine app khola. Main 200 ko follow karta -> 200 logon ke tweet laao, jodo, sort,
+           upar ke 50. Har user ke saath, har baar app kholne pe 200 ka jod -> feed dheemi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Fanout["Fanout<br/>har khulne pe 200 ka jod<br/>-> tweet hote hi sabki feed me daalo<br/>(push / fanout)<br/>id se poora tweet -> 50 id ek saath laao (batch)<br/>unfollow kiya -> padhte waqt follow list se chhaanto"]
+    n_Fanout["Fanout<br/>har khulne pe 200 ka jod<br/>-> tweet hote hi har follower ke inbox me tweet_id daalo<br/>inbox = Redis sorted set (score = time), app khola = bas inbox padho (push / fanout)<br/>id se poora tweet -> 50 id ek saath laao (batch)<br/>unfollow kiya -> padhte waqt follow list se chhaanto"]
     n_Redis_inbox["Redis inbox"]
     n_DB["DB"]
     n_USER --> n_App
@@ -118,10 +122,6 @@ flowchart LR
     style n_Redis_inbox fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Subah 8 baje maine app khola. Main 200 ko follow karta -> 200 logon ke tweet laao, jodo, sort,
-           upar ke 50. Har user ke saath, har baar app kholne pe 200 ka jod -> feed dheemi.
-HAL        pehle se feed bana do (PUSH / FANOUT): Suresh ne tweet kiya -> har follower ke INBOX me tweet_id.
-           Inbox = Redis SORTED SET (score = time); app khola -> bas inbox padho.
 NAHI       DB pe index / read replica: thoda tez, par har khulne pe 200 ka jod wahi ka wahi.
 ```
 ```
@@ -136,12 +136,16 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Maine tweet kiya, button 5 sec ghoomta raha
+```
+DIKKAT     9 baje maine tweet kiya (5,000 follower) -> usi request me 5,000 inbox, ~1 ms har -> 5+ sec,
+           timeout, "fail" dikha, par tweet DB me ban chuka tha.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Kafka["Kafka<br/>5,000 inbox usi request me<br/>-> turant ho gaya, inbox peeche bharo<br/>(Kafka + fanout)<br/>DB save, Kafka fail -> outbox / retry<br/>apni hi feed -> apna tweet seedha, baaki peeche<br/>worker 60/100 pe gira -> commit nahi, khabar phir aayegi<br/>wahi 60 dobara -> sorted set me tweet ek hi"]
+    n_Kafka["Kafka<br/>5,000 inbox usi request me<br/>-> tweet DB me + khabar Kafka me, user ko turant ho gaya<br/>workers peeche inbox bharein, key = author_id se kram (Kafka + fanout)<br/>DB save, Kafka fail -> outbox / retry<br/>apni hi feed -> apna tweet seedha, baaki peeche<br/>worker 60/100 pe gira -> commit nahi, khabar phir aayegi<br/>wahi 60 dobara -> sorted set me tweet ek hi"]
     n_Fanout_workers["Fanout workers"]
     n_Redis_inbox["Redis inbox"]
     n_DB["DB"]
@@ -155,10 +159,6 @@ flowchart LR
     style n_Fanout_workers fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     9 baje maine tweet kiya (5,000 follower) -> usi request me 5,000 inbox, ~1 ms har -> 5+ sec,
-           timeout, "fail" dikha, par tweet DB me ban chuka tha.
-HAL        turant jawab, inbox peeche se (KAFKA + FANOUT WORKERS): tweet DB me + khabar Kafka me -> turant "ho
-           gaya". Workers peeche inbox bharte; key = author_id -> ek aadmi ke tweet ek line me, kram se.
 NAHI       App me peeche ek thread: App crash = thread ka kaam gaya; Kafka disk pe, dobara padh sakte.
 ```
 ```
@@ -181,13 +181,17 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Bieber ka ek tweet = 10 crore inbox, line ghanton atki
+```
+DIKKAT     11 baje Bieber (10 crore follower) ne tweet kiya -> fanout ko 10 crore inbox. Uski Kafka line
+           ghanton atki; usi line ke baaki logon ke tweet bhi peeche khade.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App<br/>+ push + pull merge"]
     n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers<br/>Bieber = 10 crore inbox<br/>-> celeb ka tweet padhte waqt jodo<br/>(hybrid push + pull)<br/>feed khuli -> inbox + celeb ke naye tweet milao (hybrid)<br/>50 celeb follow -> celeb tweet alag, pull sasta"]
+    n_Fanout_workers["Fanout workers<br/>Bieber = 10 crore inbox<br/>-> 10,000 se kam follower = push, zyada (celeb) = pull, inbox me nahi<br/>feed khulte celeb ke naye tweet laao, inbox ke saath milao + sort (hybrid)<br/>50 celeb follow -> celeb tweet alag, pull sasta"]
     n_Redis_inbox["Redis inbox"]
     n_DB["DB"]
     n_USER --> n_App
@@ -199,10 +203,6 @@ flowchart LR
     style n_Fanout_workers fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     11 baje Bieber (10 crore follower) ne tweet kiya -> fanout ko 10 crore inbox. Uski Kafka line
-           ghanton atki; usi line ke baaki logon ke tweet bhi peeche khade.
-HAL        aam log push, celeb pull (HYBRID): 10,000 se kam follower = PUSH; zyada = PULL, inbox me nahi.
-           Main feed kholun tab Bieber ke naye tweet alag se laao, mere inbox ke 50 ke saath milao + sort.
 NAHI       sabke liye pull: har feed khulna phir 200 ka jod, mehnga.
 ```
 ```
@@ -224,6 +224,10 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Match khatam, Virat ka tweet, crore log ek saath, DB gira
+```
+DIKKAT     Dopahar ka match 4:30 pe khatam, Virat ne tweet kiya. Virat pull pe -> har feed me DB se. Crore log
+           ek saath app khole -> crore read DB pe -> DB gira.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -232,7 +236,7 @@ flowchart LR
     n_Kafka["Kafka"]
     n_Fanout_workers["Fanout workers"]
     n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache<br/>Virat ka tweet, DB gira<br/>-> celeb ke naye tweet RAM me<br/>(hot-tweet cache)<br/>ek key pe bheed -> key ki kai copy + App memory 1-2 sec<br/>Virat ne edit / delete -> cache se key hatao"]
+    n_Hot_tweet_cache["Hot-tweet cache<br/>Virat ka tweet, DB gira<br/>-> celeb ke garam tweet ~1 ghanta RAM me, 100 me 95 read wahin se<br/>miss pe sirf EK request DB, baaki ruk ke wahi jawab (hot-tweet cache + lock)<br/>ek key pe bheed -> key ki kai copy + App memory 1-2 sec<br/>Virat ne edit / delete -> cache se key hatao"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_Kafka
@@ -244,10 +248,6 @@ flowchart LR
     style n_Hot_tweet_cache fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Dopahar ka match 4:30 pe khatam, Virat ne tweet kiya. Virat pull pe -> har feed me DB se. Crore log
-           ek saath app khole -> crore read DB pe -> DB gira.
-HAL        celeb ke garam tweet RAM me (HOT-TWEET CACHE): ~1 ghanta, ~100 me 95 read wahin se; purane DB se.
-           Cache me nahi mila -> sirf EK request DB jaaye (taala), baaki ruk ke wahi jawab lein.
 NAHI       DB ki copies badha do: wo bhi disk se (ms), ek garam hisse ki copies crore read nahi jhelti.
 ```
 ```
@@ -260,6 +260,10 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi
+```
+DIKKAT     Shaam 5 baje Redis alert: har inbox me saare id, kabhi kaate nahi, soye users ke bhi
+           -> RAM bhar rahi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -267,7 +271,7 @@ flowchart LR
     n_App["App"]
     n_Kafka["Kafka"]
     n_Fanout_workers["Fanout workers"]
-    n_Redis_inbox["Redis inbox<br/>50 crore inbox, RAM bhari<br/>-> inbox me sirf aakhri 800, sirf zinda log<br/>(trim + soye hue hatao)<br/>soya user lauta -> pull se banao, phir bharo<br/>800 ke aage scroll -> store (DB) se<br/>Redis gira -> copy (replica)<br/>copy bhi gayi -> kuch request mana, dheere bharo"]
+    n_Redis_inbox["Redis inbox<br/>50 crore inbox, RAM bhari<br/>-> inbox me sirf aakhri 800 tweet (ZREMRANGEBYRANK), ~60 KB<br/>sirf mahine me aaye zinda log ka inbox, baaki hatao (trim)<br/>soya user lauta -> pull se banao, phir bharo<br/>800 ke aage scroll -> store (DB) se<br/>Redis gira -> copy (replica)<br/>copy bhi gayi -> kuch request mana, dheere bharo"]
     n_Hot_tweet_cache["Hot-tweet cache"]
     n_DB["DB"]
     n_USER --> n_App
@@ -280,10 +284,6 @@ flowchart LR
     style n_Redis_inbox fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Shaam 5 baje Redis alert: har inbox me saare id, kabhi kaate nahi, soye users ke bhi
-           -> RAM bhar rahi.
-HAL        inbox chhota rakho (AAKHRI 800, ZREMRANGEBYRANK): purane kaato. 800 = ~60 KB, 50 crore = ~30 TB
-           -> sirf jo mahine me aaye (zinda log) unka inbox, baaki hata do.
 NAHI       Redis me machine jodte jao: soye 40 crore ka inbox bhi RAM khaata, kharcha badhta, dikkat wahi.
 ```
 ```
@@ -304,6 +304,10 @@ AAGE POOCHEGA:
 ```
 
 #### 6 DB alert: har second 5,000 tweet, 5 saal me 0.5 PB
+```
+DIKKAT     6 baje DB alert: har second ~5,000 naye tweet, 5 saal me ~0.5 PB. Ek DB na itna rakh sakta,
+           na itna likh sakta.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -313,7 +317,7 @@ flowchart LR
     n_Fanout_workers["Fanout workers"]
     n_Redis_inbox["Redis inbox"]
     n_Hot_tweet_cache["Hot-tweet cache"]
-    n_Cassandra["Cassandra<br/>5,000 / sec, 0.5 PB<br/>-> mere saare tweet ek machine pe<br/>(shard by user_id)<br/>meri machine giri -> 3 copy, 2 likho 2 padho (quorum)<br/>famous, machine garam -> garam tweet alag RAM cache<br/>famous ke bahut tweet -> key me mahina jodo"]
+    n_Cassandra["Cassandra<br/>5,000 / sec, 0.5 PB<br/>-> mere saare tweet ek machine pe, andar naya pehle (shard by user_id)<br/>likhna = commit log ke aakhir + RAM, isliye tez (Cassandra)<br/>meri machine giri -> 3 copy, 2 likho 2 padho (quorum)<br/>famous, machine garam -> garam tweet alag RAM cache<br/>famous ke bahut tweet -> key me mahina jodo"]
     n_USER --> n_App
     n_App --> n_Kafka
     n_App --> n_Hot_tweet_cache
@@ -324,10 +328,6 @@ flowchart LR
     style n_Cassandra fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     6 baje DB alert: har second ~5,000 naye tweet, 5 saal me ~0.5 PB. Ek DB na itna rakh sakta,
-           na itna likh sakta.
-HAL        mere tweet ek jagah (CASSANDRA, user_id se shard), andar naya pehle. Famous =
-           key me user + mahina. Likhna = commit log ke aakhir + RAM, isliye likhai tez.
 NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; join / transaction chahiye nahi.
 ```
 ```
@@ -348,7 +348,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53<br/>Bangalore se US, 300 ms<br/>-> data user ke paas wale region me<br/>(multi-region)<br/>US celeb ka tweet -> garam tweet India cache me bhi<br/>poora region gira -> zinda region, feed thodi purani<br/>dono region me likha -> baad wala jeete (last write wins)"]
+    n_Route_53["Route 53<br/>Bangalore se US, 300 ms<br/>-> har region me data ki copy, user apne paas wale region se padhe<br/>Route 53 paas ka region bataye (multi-region)<br/>US celeb ka tweet -> garam tweet India cache me bhi<br/>poora region gira -> zinda region, feed thodi purani<br/>dono region me likha -> baad wala jeete (last write wins)"]
     n_App["App"]
     n_Kafka["Kafka"]
     n_Fanout_workers["Fanout workers"]
@@ -383,7 +383,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
-    n_ALB["ALB<br/>akeli App giri, sab band<br/>-> kai App, koi yaad na rakhe<br/>(stateless x N)<br/>machine giri -> ~10 sec health check, chup = bahar<br/>naya code -> ek-ek karke badlo (rolling)"]
+    n_ALB["ALB<br/>akeli App giri, sab band<br/>-> kai App, LB baante, App kuch yaad nahi rakhta<br/>koi bhi App koi bhi request le (stateless x N)<br/>machine giri -> ~10 sec health check, chup = bahar<br/>naya code -> ek-ek karke badlo (rolling)"]
     n_App_xN["App x N"]
     n_FAN["Kafka + Fanout workers"]
     n_Redis_inbox["Redis inbox"]
@@ -416,7 +416,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
-    n_Tweet_Svc["Tweet Svc<br/>padhne ki bheed, likhna dheema<br/>-> likhna, padhna alag, alag badhao<br/>(alag service)<br/>feed ki bheed badhi -> sirf Timeline Svc badhao<br/>follow list -> Redis me rakhi, har feed pe chahiye"]
+    n_Tweet_Svc["Tweet Svc<br/>padhne ki bheed, likhna dheema<br/>-> likhne (Tweet Svc) aur padhne (Timeline Svc) ki alag service<br/>jahan bheed wahi badhao (alag service)<br/>follow list -> Redis me rakhi, har feed pe chahiye"]
     n_Cassandra["Cassandra"]
     n_FAN["Kafka + Fanout workers"]
     n_RI["Redis (inbox + hot tweet)"]
@@ -452,7 +452,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
-    n_CDN["CDN<br/>video sabko dheemi, mehngi<br/>-> video S3 me, user ke paas se do<br/>(CDN)<br/>koi dekhe -> CDN paas se, nahi to S3 se laao<br/>photo hatayi, CDN pe dikhe -> CDN se hatao (invalidation)<br/>private photo -> thodi der wala link (signed URL)"]
+    n_CDN["CDN<br/>video sabko dheemi, mehngi<br/>-> video S3 me, CDN duniya bhar me copy rakhe<br/>user ko paas wale CDN se, nahi mila to S3 se laaye (CDN)<br/>photo hatayi, CDN pe dikhe -> CDN se hatao (invalidation)<br/>private photo -> thodi der wala link (signed URL)"]
     n_SVC["Tweet / Timeline / User Svc + Follow store"]
     n_Cassandra["Cassandra"]
     n_FAN["Kafka + Fanout workers"]

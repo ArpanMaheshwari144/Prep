@@ -112,6 +112,10 @@ AAGE POOCHEGA:
 ```
 
 #### 1 Password bhool gaya, 9 baar login kiya, saari andar chali gayi
+```
+DIKKAT     Subah 9 baje password bhool gaya, 9 baar login (limit 5 / min). LB ne baanta: App-1 pe 5, App-2
+           pe 4. Har App ne apni ginti dekhi -> kisi ko 5 PAAR nahi dikha, 9 andar.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -119,7 +123,7 @@ flowchart LR
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Redis["Redis<br/>do App, ginti bat gayi<br/>-> sabki ek ginti, 60 sec me mite<br/>(Redis + EXPIRE)<br/>pehli request -> 60 sec umar, phir khud mite (EXPIRE)<br/>6thi request -> ginti 5 paar, 429<br/>minute ke kinare 5 + 5 -> 2 sec me 10 (fixed window)"]
+    n_Redis["Redis<br/>do App, ginti bat gayi<br/>-> sab App ek Redis key gine (rate:Arpan:login), har request +1<br/>pehli pe 60 sec umar, phir key khud mite, ginti 0 (Redis + EXPIRE)<br/>6thi request -> ginti 5 paar, 429<br/>minute ke kinare 5 + 5 -> 2 sec me 10 (fixed window)"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2
@@ -128,10 +132,6 @@ flowchart LR
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Subah 9 baje password bhool gaya, 9 baar login (limit 5 / min). LB ne baanta: App-1 pe 5, App-2
-           pe 4. Har App ne apni ginti dekhi -> kisi ko 5 PAAR nahi dikha, 9 andar.
-HAL        sab App ki ek ginti (REDIS): key "rate:Arpan:login", har request pe ginti +1. Pehli pe umar 60 sec
-           (EXPIRE) -> 60 sec baad key khud mitti, naya minute, ginti 0. Ginti 5 se upar -> 429.
 NAHI       ek user hamesha ek App pe (sticky LB): wo App gira to ginti gayi; App badhe / ghate to phir bati.
 ```
 ```
@@ -146,6 +146,10 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Bot ne mere account pe 20 login ek saath bheje, 6 ghus gaye
+```
+DIKKAT     10 baje bot ne mere account pe ek hi pal me 20 login parallel bheje; ginti 4, limit 5.
+           App-1 ne Redis se "4" padha (GET), App-2 ne bhi "4"; dono ne +1 karke "5" likha (SET) -> andar 6.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -153,7 +157,7 @@ flowchart LR
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Redis["Redis<br/>do ne 4 padha, 6 ghuse<br/>-> padhna + badhana ek jhatke me<br/>(INCR / Lua)<br/>INCR ke baad crash -> INCR + EXPIRE ek Lua me<br/>token bucket -> dekhna + ghatana ek Lua me (lazy refill)"]
+    n_Redis["Redis<br/>do ne 4 padha, 6 ghuse<br/>-> padhna + badhana ek hi command me (INCR), beech me koi nahi ghusta<br/>token bucket ka dekhna + ghatana ek Lua script me, refill lazy (atomic)<br/>INCR ke baad crash -> INCR + EXPIRE ek Lua me"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2
@@ -162,10 +166,6 @@ flowchart LR
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     10 baje bot ne mere account pe ek hi pal me 20 login parallel bheje; ginti 4, limit 5.
-           App-1 ne Redis se "4" padha (GET), App-2 ne bhi "4"; dono ne +1 karke "5" likha (SET) -> andar 6.
-HAL        ek jhatke me, beech me koi nahi (ATOMIC): Redis ek line me, ek command poora tab agla -> INCR.
-           Token bucket ke do kaam (dekhna + ghatana) ek LUA script me, beech me koi nahi.
 NAHI       App me synchronized / lock: sirf ek machine ke andar; do App me race wahi ki wahi.
 ```
 ```
@@ -191,7 +191,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_API_Gateway["API Gateway<br/>429 wali bhi andar ghoomi<br/>-> darwaze pe hi roko<br/>(limiter gateway pe)<br/>429 ke saath -> kab aao + kitni bachi (Retry-After)<br/>gateway gira -> 2+ machine, aage LB<br/>sab 30 sec baad saath -> alag-alag waqt do (jitter)"]
+    n_API_Gateway["API Gateway<br/>429 wali bhi andar ghoomi<br/>-> limiter gateway pe: ginti pehle, had paar = wahin 429<br/>App tak request aati hi nahi (limiter gateway pe)<br/>429 ke saath -> kab aao + kitni bachi (Retry-After)<br/>gateway gira -> 2+ machine, aage LB<br/>sab 30 sec baad saath -> alag-alag waqt do (jitter)"]
     n_Redis["Redis"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
@@ -215,6 +215,9 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Dopahar Redis gira, limiter andha ho gaya
+```
+DIKKAT     Dopahar Redis mar gaya. Saari ginti wahin thi -> kisi ko pata hi nahi kisne kitni bheji.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -222,7 +225,7 @@ flowchart LR
     n_Route_53["Route 53"]
     n_ALB["ALB"]
     n_API_Gateway["API Gateway"]
-    n_Redis_Cluster["Redis Cluster<br/>Redis gira, limiter andha<br/>-> copy taiyaar, poora gire to tay niyam<br/>(replica + fail-open)<br/>main mara -> copy main bane, thodi ginti khoi<br/>gira, pata kaise -> chhota timeout ~5 ms, ruko mat<br/>poora Cluster gaya -> feed khula (fail-open), login band (fail-closed)<br/>CPU full -> tukde karo, copy nahi (shard)"]
+    n_Redis_Cluster["Redis Cluster<br/>Redis gira, limiter andha<br/>-> Redis ki copy taiyaar: main mara to copy main (replica, Cluster / Sentinel)<br/>poora gaya: feed khuli (fail-open), login / OTP band (fail-closed)<br/>main mara -> copy main bane, thodi ginti khoi<br/>gira, pata kaise -> chhota timeout ~5 ms, ruko mat<br/>CPU full -> tukde karo, copy nahi (shard)"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
     n_USER --> n_Route_53
@@ -236,9 +239,6 @@ flowchart LR
     style n_ALB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Dopahar Redis mar gaya. Saari ginti wahin thi -> kisi ko pata hi nahi kisne kitni bheji.
-HAL        Redis ki copy taiyaar (REPLICA): main mara -> copy main (Cluster khud; akela Redis ho to Sentinel).
-           Poora gaya: aam API (feed, search) FAIL-OPEN = jaane do · login / OTP FAIL-CLOSED = roko.
 NAHI       sab fail-open: login khula = koi bina had password guess karta rahega.
 ```
 ```
@@ -268,7 +268,7 @@ flowchart LR
     n_Route_53["Route 53"]
     n_ALB["ALB"]
     n_API_Gateway["API Gateway"]
-    n_Redis_Cluster["Redis Cluster<br/>3 region, 150 nikli<br/>-> ek user ki ginti ek ghar me<br/>(home region)<br/>ghar door -> paisa / login ghar tak, baaki local + sync<br/>sync ke beech -> ~1 sec dheela, chalta<br/>ghar region gira -> doosra region, ginti 0 se"]
+    n_Redis_Cluster["Redis Cluster<br/>3 region, 150 nikli<br/>-> ek user ki ginti uske ghar region ke Redis me<br/>paisa / login ghar tak jaaye, baaki region local gine + sync (home region)<br/>sync ke beech -> ~1 sec dheela, chalta<br/>ghar region gira -> doosra region, ginti 0 se"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
     n_USER --> n_Route_53
@@ -291,6 +291,9 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Wahi bot har 60 sec baad phir aa jaata, din bhar
+```
+DIKKAT     4 baje bhi wahi bot. 429 sirf bolta "60 second baad aao" -> bot 60 sec baad phir, din bhar, roz.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -298,7 +301,7 @@ flowchart LR
     n_EDGE["Route 53 + ALB"]
     n_API_Gateway["API Gateway"]
     n_Redis_Cluster["Redis Cluster"]
-    n_Kafka["Kafka<br/>bot har 60 sec phir<br/>-> baar-baar 429 wala IP darwaze pe ban<br/>(pattern + WAF)<br/>10 min me 500+ 429 -> Pattern Svc pakde, WAF ban<br/>Kafka peeche -> ban late, rate limit rok hi raha<br/>galat ban (office IP) -> ~24 ghante me khud hate"]
+    n_Kafka["Kafka<br/>bot har 60 sec phir<br/>-> har 429 Kafka me, Pattern Svc gine: 10 min me 500+ = ban<br/>ban WAF ki list me, WAF sabse aage, request server tak nahi (pattern + WAF)<br/>Kafka peeche -> ban late, rate limit rok hi raha<br/>galat ban (office IP) -> ~24 ghante me khud hate"]
     n_Pattern_Svc["Pattern Svc"]
     n_WAF["WAF"]
     n_App_xN["App x N"]
@@ -315,9 +318,6 @@ flowchart LR
     style n_WAF fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     4 baje bhi wahi bot. 429 sirf bolta "60 second baad aao" -> bot 60 sec baad phir, din bhar, roz.
-HAL        baar-baar ka 429 pakdo, ban karo (KAFKA -> PATTERN -> WAF): "IP ko 10 min me 500+ 429?"
-           -> WAF ki block list me kuch der. WAF sabse aage (edge), agli request server tak aati hi nahi.
 NAHI       turant ban: asli user bhi tez click karta, office ke 1000 log ek IP (NAT), sale me asli bheed.
 ```
 ```
@@ -338,7 +338,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
-    n_API_Gateway["API Gateway<br/>sab limit me, server gira<br/>-> poore system ki had, bhari to kuch chhodo<br/>(load shedding)<br/>system bhar gaya -> CPU 90% paar, kuch 503<br/>kya chhodo -> kam zaroori pehle, login / payment bachao"]
+    n_API_Gateway["API Gateway<br/>sab limit me, server gira<br/>-> poore system ki ek had: CPU 90% paar to kuch request 503<br/>kam zaroori pehle chhodo, login / payment bachao (load shedding)"]
     n_Redis_Cluster["Redis Cluster"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
@@ -370,7 +370,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
-    n_API_Gateway["API Gateway<br/>attack me Redis gira, API khuli<br/>-> Redis gaya to har server apni ginti<br/>(local fallback)<br/>Redis + copy gaye -> har server apni ginti, had baanto (100 / 4)<br/>ek user alag server -> motamoti had, bina had se behtar<br/>Redis wapas -> phir sabki ek ginti"]
+    n_API_Gateway["API Gateway<br/>attack me Redis gira, API khuli<br/>-> Redis + copy gaye to har server apni memory me gine<br/>had baant do (100 / 4 server), motamoti had (local fallback)<br/>ek user alag server -> motamoti had, bina had se behtar<br/>Redis wapas -> phir sabki ek ginti"]
     n_Redis_Cluster["Redis Cluster"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
@@ -399,13 +399,17 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Office ki night shift: ek IP block, 1000 log atke
+```
+DIKKAT     Raat 11 baje office ki night shift: 1000 log ek IP (NAT) ke peeche, ek ki galti -> IP block, sab
+           1000 block. Ulta, botnet ke paas 1000 IP, har IP se thoda -> kisi IP ki limit nahi tooti.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
     n_API_Gateway["API Gateway"]
-    n_Redis_Cluster["Redis Cluster<br/>ek IP pe 1000 log<br/>-> IP nahi, banda gino<br/>(key = user_id)<br/>office NAT, ek ki galti -> sirf uski ginti, 999 chalte<br/>login se pehle -> user_id nahi, IP pe dheeli had + WAF"]
+    n_Redis_Cluster["Redis Cluster<br/>ek IP pe 1000 log<br/>-> login ke baad JWT se user_id: key rate:user_id:endpoint<br/>1000 log ek IP pe = 1000 alag ginti (key = user_id)<br/>office NAT, ek ki galti -> sirf uski ginti, 999 chalte<br/>login se pehle -> user_id nahi, IP pe dheeli had + WAF"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]
     n_WAF["WAF"]
@@ -421,10 +425,6 @@ flowchart LR
     style n_Redis_Cluster fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat 11 baje office ki night shift: 1000 log ek IP (NAT) ke peeche, ek ki galti -> IP block, sab
-           1000 block. Ulta, botnet ke paas 1000 IP, har IP se thoda -> kisi IP ki limit nahi tooti.
-HAL        IP nahi, banda gino (KEY = USER_ID): login ke baad (JWT se) rate:<user_id>:<endpoint> -> 1000 log =
-           1000 alag ginti. Login se pehle user_id hai hi nahi: rate:<IP>:login (dheeli had) + WAF.
 NAHI       IP ki had badha do (5 se 500): office bach gaya, par botnet ko bhi utni hi chhoot.
 ```
 ```

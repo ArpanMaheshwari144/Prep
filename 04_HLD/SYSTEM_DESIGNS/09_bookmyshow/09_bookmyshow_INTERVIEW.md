@@ -88,21 +88,21 @@ flowchart LR
 ```
 
 #### 1 Maine aur Ravi ne ek hi second me A1 book ki, dono ko mil gayi
+```
+DIKKAT     10 baje badi movie ki booking khuli. Maine aur Ravi ne 10:00:01 pe "A1 khaali" dekha, Book dabaya.
+           App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_SQL_DB["SQL DB<br/>A1 do ko bik gayi<br/>-> khaali ho tabhi book, ek query me<br/>(atomic UPDATE)<br/>Ravi usi second -> row lock, uska WHERE 0 row = seat gayi<br/>Ravi ne phir dabaya -> phir 0 row, kuch nahi milta"]
+    n_SQL_DB["SQL DB<br/>A1 do ko bik gayi<br/>-> khaali hai ya nahi dekhna + book karna EK hi query me<br/>seat khaali ho tabhi UPDATE lage, warna 0 row<br/>(atomic UPDATE)<br/>UPDATE seats SET status=booked WHERE show_id=42 AND seat_id=A1 AND status=available<br/>Ravi usi second -> row lock, uska WHERE 0 row = seat gayi<br/>Ravi ne phir dabaya -> phir 0 row, kuch nahi milta"]
     n_USER --> n_App
     n_App --> n_SQL_DB
     style n_SQL_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     10 baje badi movie ki booking khuli. Maine aur Ravi ne 10:00:01 pe "A1 khaali" dekha, Book dabaya.
-           App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
-HAL        khaali ho tabhi book (ATOMIC UPDATE), check + likhna EK query me: UPDATE seats SET status =
-           'booked' WHERE show_id = 42 AND seat_id = 'A1' AND status = 'available'
 NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke andar.
 ```
 ```
@@ -122,24 +122,23 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Maine A1 chuni, payment me 3 minute lag rahe
+```
+DIKKAT     Maine A1 chuni, payment me 3 min. 'available' rehne di -> beech me Ravi le gaya. Seedha 'booked'
+           kar di -> mera payment fail hua to A1 hamesha ke liye band.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_SQL_DB["SQL DB<br/>+ atomic UPDATE"]
-    n_Sweeper_job["Sweeper job<br/>payment me 3 min<br/>-> 5 min ke liye rok lo, phir khud khule<br/>(hold)<br/>umar khatam, phir pay -> confirm pe bhi WHERE, 0 row = refund<br/>koi 10 seat pakad baithe -> had lagao (hold ginti + rate limit)"]
+    n_Sweeper_job["Sweeper job<br/>payment me 3 min<br/>-> seat held, held_until = ab + 5 min: umar khatam = khaali maano<br/>Sweeper har minute purane hold saaf karta (sirf safai)<br/>(hold + umar)<br/>booking ka WHERE -> available YA (held aur umar khatam)<br/>umar khatam, phir pay -> confirm pe bhi WHERE, 0 row = refund<br/>koi 10 seat pakad baithe -> had lagao (hold ginti + rate limit)"]
     n_USER --> n_App
     n_App --> n_SQL_DB
     n_Sweeper_job --> n_SQL_DB
     style n_Sweeper_job fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Maine A1 chuni, payment me 3 min. 'available' rehne di -> beech me Ravi le gaya. Seedha 'booked'
-           kar di -> mera payment fail hua to A1 hamesha ke liye band.
-HAL        5 min rok lo (HOLD + UMAR): row me 'held', held_until = now + 5 min; SWEEPER job har minute purane
-           hold saaf (sirf safai). Booking ka UPDATE purana hold khaali maane: WHERE status = 'available' OR
-           (status = 'held' AND held_until < now())
 NAHI       hold Redis me (SET NX EX 300): hold Redis me + booking DB me = do jagah sach, farak aa sakta.
 ```
 ```
@@ -165,7 +164,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Payment_Svc["Payment Svc<br/>network gaya, do baar kata<br/>-> wahi booking dobara = paisa nahi<br/>(idempotency key)<br/>Pay dobara dabaya -> wahi bookingId, paisa ek baar"]
+    n_Payment_Svc["Payment Svc<br/>network gaya, do baar kata<br/>-> har booking ki ek id (bookingId), pay hamesha usi id se<br/>wahi id dobara aayi = purana jawab wapas, paisa dobara nahi<br/>(idempotency key)<br/>Pay dobara dabaya -> wahi bookingId, paisa ek baar"]
     n_SQL_DB["SQL DB<br/>+ atomic UPDATE + hold"]
     n_Sweeper_job["Sweeper job"]
     n_USER --> n_App
@@ -191,7 +190,7 @@ flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis["Redis<br/>1 lakh seat map dekh rahe<br/>-> seat map Redis se, DB ki copy se<br/>(cache + replica)<br/>Redis me nahi -> replica se banao, Redis me rakho<br/>kisi ne book kiya -> pehle DB, phir Redis se hatao<br/>A1 biki, map me khaali -> chalta, faisla UPDATE ka"]
+    n_Redis["Redis<br/>1 lakh seat map dekh rahe<br/>-> seat map Redis me (~5 sec umar), dekhna wahin se<br/>booking ka faisla sirf main DB ke UPDATE pe<br/>(cache + replica)<br/>Redis me nahi -> replica se banao, Redis me rakho<br/>kisi ne book kiya -> pehle DB, phir Redis se hatao<br/>A1 biki, map me khaali -> chalta, faisla UPDATE ka"]
     n_Read_replica["Read replica"]
     n_SQL_primary["SQL primary"]
     n_Sweeper_job["Sweeper job"]
@@ -218,6 +217,10 @@ AAGE POOCHEGA:
 ```
 
 #### 5 12 baje Arijit ka concert khula, 2 lakh log ek show pe
+```
+DIKKAT     12 baje Arijit ka concert: ek show, 3000 seat, 2 lakh log ek saath. Saari bheed DB ki wahi rows
+           pe, har koi lock ke intezaar me -> sab dheema. (Aam din ye nahi hota, hold seedha DB pe.)
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -225,7 +228,7 @@ flowchart LR
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
     n_RRR["Redis + Read replica"]
-    n_Kafka["Kafka<br/>3000 seat, 2 lakh log<br/>-> darwaze pe line, andar gine-chune<br/>(waiting room)<br/>UPDATE jeeta -> user ko poll / push (bookingId)<br/>seat haar gaya -> seat gayi, doosri lo<br/>andar wala bina liye gaya -> line se agla andar"]
+    n_Kafka["Kafka<br/>3000 seat, 2 lakh log<br/>-> darwaze pe ginti (Redis DECR): ~3000 andar, baaki line me<br/>andar walo ki booking Kafka me, key = show_id: ek show ek worker, ek-ek UPDATE<br/>(waiting room)<br/>UPDATE jeeta -> user ko poll / push (bookingId)<br/>seat haar gaya -> seat gayi, doosri lo<br/>andar wala bina liye gaya -> line se agla andar"]
     n_Booking_worker["Booking worker"]
     n_SQL_primary["SQL primary"]
     n_Sweeper_job["Sweeper job"]
@@ -242,10 +245,6 @@ flowchart LR
     style n_Booking_worker fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     12 baje Arijit ka concert: ek show, 3000 seat, 2 lakh log ek saath. Saari bheed DB ki wahi rows
-           pe, har koi lock ke intezaar me -> sab dheema. (Aam din ye nahi hota, hold seedha DB pe.)
-HAL        darwaze pe line (WAITING ROOM): darwaze pe ginti (Redis DECR), ek waqt ~3000 andar, baaki line.
-           Andar walo ki booking Kafka me, key = show_id -> ek show ek worker, ek-ek UPDATE -> ladaai khatam.
 NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line (queue) sambhaalti.
 ```
 ```
@@ -274,7 +273,7 @@ flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis["Redis Cluster<br/>restart, sab replica pe<br/>-> ek DB jaaye, baaki ruk ke cache se<br/>(lock: SET NX)<br/>key khaali, 1000 aaye -> ek lock le ke banaye, baaki 50-100 ms ruke<br/>lock wala hi mara -> lock khud hate (TTL)<br/>100 ms baad bhi khaali -> 2-3 retry, phir replica se"]
+    n_Redis["Redis Cluster<br/>restart, sab replica pe<br/>-> key khaali to sirf EK request lock le ke DB se banaye<br/>baaki 50-100 ms ruk ke Redis se padhein<br/>(lock: SET NX EX 5)<br/>lock wala hi mara -> lock khud hate (TTL)<br/>100 ms baad bhi khaali -> 2-3 retry, phir replica se"]
     n_Read_replica["Read replica"]
     n_KB["Kafka + Booking worker (badi sale)"]
     n_SQL_primary["SQL primary"]
@@ -306,7 +305,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_LB["LB<br/>App machine giri<br/>-> kuch yaad na rakhe, mari to bahar<br/>(stateless + health check)<br/>machine giri -> hold DB me, agli machine wahi dekhe<br/>payment beech me -> same id dobara, do baar nahi katega (idempotent)"]
+    n_LB["LB<br/>App machine giri<br/>-> App kuch yaad nahi rakhta (sab DB me), koi bhi machine koi bhi request le<br/>LB har kuch sec /health poochta, fail = list se bahar<br/>(stateless + health check)<br/>machine giri -> hold DB me, agli machine wahi dekhe<br/>payment beech me -> same id dobara, do baar nahi katega (idempotent)"]
     n_App_xN["App x N"]
     n_Payment_Svc["Payment Svc (bookingId)"]
     n_RRR["Redis Cluster + Read replica"]

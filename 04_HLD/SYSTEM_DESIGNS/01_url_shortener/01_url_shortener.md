@@ -110,12 +110,16 @@ AAGE POOCHEGA:
 ```
 
 #### 1 Mera sale wala link viral hua, har click DB pe, DB baith gaya
+```
+DIKKAT     10 baje maine sale ka chhota link College Gang me daala, viral -> ~1 lakh click / sec, har click
+           DB (disk) tak. Redirect dheema hua, phir DB hi baith gaya.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Redis["Redis<br/>link viral, DB baitha<br/>-> link Redis se do, nahi to DB<br/>(cache-aside)<br/>bhar gaya -> der se na khula nikaalo (LRU)<br/>umar khatam -> saath mitte (TTL = link ki expiry)<br/>link badla -> pehle DB, phir Redis se hatao<br/>Redis gira -> uski copy kaam le (replica)<br/>copy bhi gayi -> 1 link ke 1000 click me 1 hi DB tak, baaki uska jawab lein<br/>tab bhi bojh -> kuch click mana, DB bachao (load shedding)"]
+    n_Redis["Redis<br/>link viral, DB baitha<br/>-> pehle Redis (RAM, 1 ms) me dekho: mila to bhejo, nahi to DB se laao + Redis me rakho<br/>~100 me 95 click Redis se (Redis cache, cache-aside)<br/>bhar gaya -> der se na khula nikaalo (LRU)<br/>umar khatam -> saath mitte (TTL = link ki expiry)<br/>link badla -> pehle DB, phir Redis se hatao<br/>Redis gira -> uski copy kaam le (replica)<br/>copy bhi gayi -> 1 link ke 1000 click me 1 hi DB tak, baaki uska jawab lein<br/>tab bhi bojh -> kuch click mana, DB bachao (load shedding)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_Redis
@@ -123,10 +127,6 @@ flowchart LR
     style n_Redis fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     10 baje maine sale ka chhota link College Gang me daala, viral -> ~1 lakh click / sec, har click
-           DB (disk) tak. Redirect dheema hua, phir DB hi baith gaya.
-HAL        link Redis se do (REDIS CACHE, cache-aside): mila -> bhejo, nahi -> DB se laao, Redis me rakho.
-           RAM, 1 ms se kam; ~100 me 95 click Redis se. Redis ki umar (TTL) = link ki expiry.
 NAHI       DB ki read copy (replica): wo bhi disk se, dheemi; 1 lakh / sec ke liye bahut copies chahiye.
 ```
 ```
@@ -145,11 +145,15 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Usi bheed me ek App machine giri, poori site band
+```
+DIKKAT     11 baje wahi bheed ek hi App machine pe. Wo dheemi hui, phir giri -> poori site band.
+           Ek cheez jiske girne se sab ruk jaaye = SPOF (single point of failure).
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_LB["LB<br/>ek App giri, site band<br/>-> kai App, koi kuch yaad na rakhe<br/>(stateless + LB)<br/>App giri -> /health chup, list se bahar<br/>dheemi -> kam kaam wali ko (least-conn)"]
+    n_LB["LB<br/>ek App giri, site band<br/>-> LB request baari-baari baante (round-robin), App kuch yaad nahi rakhta<br/>isliye koi bhi App koi bhi request le (stateless + LB)<br/>dheemi -> kam kaam wali ko (least-conn)<br/>har ~5 sec /health: chup -> list se bahar, theek -> wapas"]
     n_App_x_N_1["App 1<br/>yaad kuch nahi -> session bahar (Redis / DB)"]
     n_App_x_N_2["App 2"]
     n_Redis["Redis"]
@@ -166,10 +170,6 @@ flowchart LR
     style n_App_x_N_2 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     11 baje wahi bheed ek hi App machine pe. Wo dheemi hui, phir giri -> poori site band.
-           Ek cheez jiske girne se sab ruk jaaye = SPOF (single point of failure).
-HAL        kai App machine, aage baantne wala (STATELESS + LB): request baari-baari (round-robin) ya kam kaam
-           wale (least-conn). Har ~5 sec GET /health; jawab nahi -> list se bahar, theek hui -> wapas.
 NAHI       ek bahut badi machine (vertical scale): uski bhi had, aur akeli -> wahi giri to sab band.
 ```
 ```
@@ -192,7 +192,7 @@ flowchart LR
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Counter["Counter<br/>do App, ek hi code<br/>-> har App ki apni number range<br/>(range)<br/>range khatam -> agli range, 1000 link pe ek call<br/>App crash -> bachi range bekaar, chalta<br/>Counter gira -> App apni range se chalta, copy (replica) uthti"]
+    n_Counter["Counter<br/>do App, ek hi code<br/>-> Counter ek jagah se 1000-1000 numbers ki range de<br/>App apni range se agla number le, do App ki range kabhi same nahi (range)<br/>range khatam -> agli range, 1000 link pe ek call<br/>App crash -> bachi range bekaar, chalta<br/>Counter gira -> App apni range se chalta, copy (replica) uthti"]
     n_Redis["Redis"]
     n_DB["DB"]
     n_USER --> n_LB
@@ -225,6 +225,10 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Maine click ginti chahi, redirect hi dheema ho gaya
+```
+DIKKAT     2 baje mujhe ginti chahiye thi kitne click aaye. Usi request me analytics DB me likhne lage,
+           phir redirect. Analytics DB dheema -> har user redirect ke liye ruka.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -232,7 +236,7 @@ flowchart LR
     n_LB["LB"]
     n_App_xN["App x N"]
     n_Counter["Counter"]
-    n_Kafka["Kafka<br/>ginti likhi, redirect dheema<br/>-> redirect turant, ginti peeche<br/>(Kafka)<br/>Analytics dheema -> khabar Kafka me padi rahe<br/>Kafka band -> redirect chalta, kuch ginti gayi<br/>wahi click do baar -> click id se ek hi (dedupe)<br/>kharab khabar -> alag line (DLQ), baaki chalti"]
+    n_Kafka["Kafka<br/>ginti likhi, redirect dheema<br/>-> 302 turant do, ek click hua Kafka (disk pe log) me daalo<br/>Analytics apni speed se padhe, kahan tak padha yaad (Kafka, offset)<br/>Analytics dheema -> khabar Kafka me padi rahe<br/>Kafka band -> redirect chalta, kuch ginti gayi<br/>wahi click do baar -> click id se ek hi (dedupe)<br/>kharab khabar -> alag line (DLQ), baaki chalti"]
     n_Analytics_svc["Analytics svc"]
     n_DLQ["DLQ"]
     n_RD["Redis + DB"]
@@ -248,10 +252,6 @@ flowchart LR
     style n_DLQ fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     2 baje mujhe ginti chahiye thi kitne click aaye. Usi request me analytics DB me likhne lage,
-           phir redirect. Analytics DB dheema -> har user redirect ke liye ruka.
-HAL        redirect turant, ginti peeche (KAFKA = disk pe log): 302 do, "ek click hua" Kafka me daalo.
-           Analytics svc apni speed se padhe, kahan tak padha yaad (offset); kharab khabar alag line (DLQ).
 NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein gayi.
 ```
 ```
@@ -268,6 +268,10 @@ AAGE POOCHEGA:
 ```
 
 #### 5 DB team boli: 5 saal me 90 TB, ek machine me nahi
+```
+DIKKAT     4 baje DB team: 10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Ek machine me nahi aata,
+           aur wo ek machine mari to saare link gaye.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -277,7 +281,7 @@ flowchart LR
     n_Counter["Counter"]
     n_ANA["Analytics (Kafka + DLQ)"]
     n_Redis["Redis"]
-    n_Cassandra["Cassandra<br/>5 saal me 90 TB<br/>-> code se tay kaunsi machine<br/>(shard + ring)<br/>machine mari -> baaki 2 copy se milta<br/>nayi machine -> sirf pados ke code khiskein (ring)"]
+    n_Cassandra["Cassandra<br/>5 saal me 90 TB<br/>-> code se tay kaunsi machine: ring = gol ghera, code aage chale, pehli machine uski<br/>har tukda 3 copy (Cassandra shard + ring)<br/>machine mari -> baaki 2 copy se milta<br/>nayi machine -> sirf pados ke code khiskein (ring)"]
     n_USER --> n_LB
     n_LB --> n_App_xN
     n_App_xN --> n_Counter
@@ -287,10 +291,6 @@ flowchart LR
     style n_Cassandra fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     4 baje DB team: 10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Ek machine me nahi aata,
-           aur wo ek machine mari to saare link gaye.
-HAL        code se data tukdon me baanto (CASSANDRA SHARD): GET /abc123 -> code se seedha machine. RING = gol
-           ghera, machine + code dono us pe; code aage chale, pehli machine uski. Har tukda 3 copy.
 NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se country pata hi nahi.
 ```
 ```
@@ -314,6 +314,11 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Maine naya link banaya, turant khola, 404 aaya
+```
+DIKKAT     5 baje maine naya link banaya. Cassandra har link 3 alag machine pe rakhta: copy A, B, C.
+           Link A aur B me pahunch gaya, C tak abhi nahi (aam taur pe ms, bheed me second tak).
+           Isi beech mera click C pe gaya -> C bola "ye link mere paas nahi" -> 404.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -323,7 +328,7 @@ flowchart LR
     n_Counter["Counter"]
     n_ANA["Analytics (Kafka + DLQ)"]
     n_Redis["Redis"]
-    n_Cassandra["Cassandra<br/>naya link, turant 404<br/>-> 3 me se 2 me likho, 2 se padho<br/>(quorum)<br/>C tak nahi -> A+C jodi, A me mila<br/>A aur B giri -> likhna fail, user ko error"]
+    n_Cassandra["Cassandra<br/>naya link, turant 404<br/>-> har link 3 copy (A, B, C): likhna done jab 2 me, padhna bhi 2 se<br/>koi bhi 2 uthao, ek taaza copy aayegi hi (quorum = zyadatar)<br/>C tak nahi -> A+C jodi, A me mila<br/>A aur B giri -> likhna fail, user ko error"]
     n_USER --> n_LB
     n_LB --> n_App_xN
     n_App_xN --> n_Counter
@@ -333,11 +338,6 @@ flowchart LR
     style n_Cassandra fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     5 baje maine naya link banaya. Cassandra har link 3 alag machine pe rakhta: copy A, B, C.
-           Link A aur B me pahunch gaya, C tak abhi nahi (aam taur pe ms, bheed me second tak).
-           Isi beech mera click C pe gaya -> C bola "ye link mere paas nahi" -> 404.
-HAL        3 me se 2 copy pe pakka (QUORUM = "zyadatar"): likhna "done" jab 2 copy me, padhna bhi 2 copy se.
-           Koi bhi 2 uthao (A+C, B+C, A+B), har jodi me A ya B aayegi hi -> khaali haath kabhi nahi.
 NAHI       3 me likho tabhi done, phir 1 se padho: ek copy giri = har naya link fail.
 ```
 ```
@@ -363,7 +363,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53<br/>LB hi gira<br/>-> do LB, mara to doosre pe<br/>(health check)<br/>LB-1 chup -> ~30 sec me sab LB-2 pe"]
+    n_Route_53["Route 53<br/>LB hi gira<br/>-> Route 53 har ~30 sec LB se poochhe (health check)<br/>chup LB list se bahar, phone ko zinda LB ka pata (DNS failover)<br/>LB-1 chup -> ~30 sec me sab LB-2 pe"]
     n_LB_xN["LB x 2<br/>kai zone, har jagah 2+ (ALB)"]
     n_App_xN["App x N"]
     n_Counter["Counter"]
@@ -391,12 +391,16 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Raat ko spammer ki script, har second 5,000 link
+```
+DIKKAT     Raat ko spammer: ek API key se har second 5,000 link (phishing). Aam din poore system pe ~1,000
+           -> 5 guna bojh, asli users dheeme; Gmail / WhatsApp ne hamara domain "spam" maana.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + LB x 2"]
-    n_API_Gateway["API Gateway<br/>spammer 5,000 link / sec<br/>-> darwaze pe had, hamle roko<br/>(rate limit + WAF)<br/>kai gateway -> ginti ek jagah (shared Redis)<br/>had paar -> 429, asli users bache<br/>bot naya IP -> ginti API key pe"]
+    n_API_Gateway["API Gateway<br/>spammer 5,000 link / sec<br/>-> gateway pe har user / IP ki ginti + login, had paar = 429 (rate limit)<br/>aage WAF: pehchaane hamle wahin rok (WAF)<br/>kai gateway -> ginti ek jagah (shared Redis)<br/>had paar -> 429, asli users bache<br/>bot naya IP -> ginti API key pe<br/>chhota karne se pehle -> lamba URL check (virus / dhokha)"]
     n_App_xN["App x N"]
     n_Counter["Counter"]
     n_ANA["Analytics (Kafka + DLQ)"]
@@ -412,10 +416,6 @@ flowchart LR
     style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat ko spammer: ek API key se har second 5,000 link (phishing). Aam din poore system pe ~1,000
-           -> 5 guna bojh, asli users dheeme; Gmail / WhatsApp ne hamara domain "spam" maana.
-HAL        darwaze pe had (RATE LIMIT, gateway pe): har user / IP ki had + login; aage WAF (pehchaane hamle).
-           Chhota karne se pehle lamba URL check: virus / dhokhe ki site to nahi.
 NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana lega.
 ```
 ```

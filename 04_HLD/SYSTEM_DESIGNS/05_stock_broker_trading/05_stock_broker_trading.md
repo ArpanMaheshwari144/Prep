@@ -111,7 +111,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> wahi id dobara = naya order nahi<br/>(idempotency key)<br/>wahi id dobara -> purana jawab, order ek hi<br/>pehli abhi chal rahi -> thoda ruko (IN_PROGRESS, 409)<br/>id kab tak yaad -> ~24 ghante, phir saaf"]
+    n_Order_Service["Order Service<br/>ek tap, do order lag gaye<br/>-> order screen khulte ek id bane, dobara bhejne pe WAHI id<br/>server UNIQUE se pakde: wahi id = purana jawab, order dobara nahi<br/>(idempotency key)<br/>pehli abhi chal rahi -> thoda ruko (IN_PROGRESS, 409)<br/>id kab tak yaad -> ~24 ghante, phir saaf"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_DB
@@ -129,12 +129,16 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
+```
+DIKKAT     Wallet me 50k. Laptop se TCS 30k, usi second phone se INFY 30k (do alag order, alag id).
+           Do server, dono ne 50k dekha, dono pass.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet<br/>50k the, 30k-30k dono pass<br/>-> check aur block ek saath<br/>(atomic UPDATE)<br/>dono ek saath -> ek jeete, doosra 0 row, reject<br/>order cancel -> block hatao<br/>sauda aadha -> jitna bika utna kata, baaki blocked"]
+    n_Wallet["Wallet<br/>50k the, 30k-30k dono pass<br/>-> check aur block ek hi query me: paisa hai tabhi block, warna 0 row<br/>(atomic UPDATE: SET blocked = blocked + 30k WHERE total - blocked >= 30k)<br/>dono ek saath -> ek jeete, doosra 0 row, reject<br/>order cancel -> block hatao<br/>sauda aadha -> jitna bika utna kata, baaki blocked"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -142,10 +146,6 @@ flowchart LR
     style n_Wallet fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Wallet me 50k. Laptop se TCS 30k, usi second phone se INFY 30k (do alag order, alag id).
-           Do server, dono ne 50k dekha, dono pass.
-HAL        check aur block ek saath (ATOMIC UPDATE): UPDATE wallet SET blocked = blocked + 30000 WHERE user_id
-           = 'Arpan' AND total - blocked >= 30000   (doosre ko 0 row -> reject)
 NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
 ```
 ```
@@ -161,13 +161,17 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
+```
+DIKKAT     Mera order book me pahuncha. Suresh 10 bech raha, usi pal Mohan ne bhi BUY 10.
+           Do thread, dono ko "10 hai" dikha -> 20 bik gaye.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek share pe ek hi thread<br/>(ek symbol ek thread)<br/>main + Mohan ek saath -> pehla le gaya 10, doosre ko 0<br/>thread atka -> sirf TCS rukta, INFY chalta"]
+    n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek share ke saare order ek line me, ek hi thread chalata (TCS -> T3)<br/>pehle aaya pehle bika, do ko ek saath nahi<br/>(ek symbol ek thread)<br/>main + Mohan ek saath -> pehla le gaya 10, doosre ko 0<br/>thread atka -> sirf TCS rukta, INFY chalta"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -176,9 +180,6 @@ flowchart LR
     style n_Matching_Engine fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Mera order book me pahuncha. Suresh 10 bech raha, usi pal Mohan ne bhi BUY 10.
-           Do thread, dono ko "10 hai" dikha -> 20 bik gaye.
-HAL        TCS ke saare order ek line, ek hi thread (TCS -> T3). Pehle main 10, phir Mohan ko 0.
 NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
 ```
 ```
@@ -198,13 +199,16 @@ AAGE POOCHEGA:
 ```
 
 #### 4 9:15 baje sab TCS pe toot pade
+```
+DIKKAT     Usi 9:15 pe poora market TCS pe toot pada: hazaaron order / second.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Queue_per_symbol["Queue per symbol<br/>9:15 sab TCS pe toot pade<br/>-> baanto mat, sab ek line me<br/>(single thread)<br/>line me lag gaya -> ACCEPTED turant, FILLED sauda pe<br/>line lambi -> der, par khota nahi<br/>badhaye kaise -> stocks ke beech baanto, TCS ke andar nahi"]
+    n_Queue_per_symbol["Queue per symbol<br/>9:15 sab TCS pe toot pade<br/>-> TCS ke saare order ek line, ek-ek karke<br/>ek thread RAM me lakhon / sec nipta leta<br/>(single thread per symbol)<br/>line me lag gaya -> ACCEPTED turant, FILLED sauda pe<br/>line lambi -> der, par khota nahi<br/>badhaye kaise -> stocks ke beech baanto, TCS ke andar nahi"]
     n_Matching_Engine["Matching Engine"]
     n_DB["DB"]
     n_USER --> n_Order_Service
@@ -215,9 +219,6 @@ flowchart LR
     style n_Queue_per_symbol fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Usi 9:15 pe poora market TCS pe toot pada: hazaaron order / second.
-HAL        Baanto mat. Sab ek line me lago, ek-ek karke; ek thread RAM me lakhon / sec nipta leta.
-           App me ACCEPTED turant (line me lag gaya), FILLED jab sauda ho.
 NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
 ```
 ```
@@ -232,13 +233,16 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Server gira, poori order book gayab
+```
+DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Event_Log["Event Log (= wahi line)<br/>server gira, book gayab<br/>-> pehle log me likho, gira to dobara chalao<br/>(event log)<br/>10:15 server gira -> log shuru se replay, wahi book<br/>replay me der -> standby log padhta, book taiyaar"]
+    n_Event_Log["Event Log (= wahi line)<br/>server gira, book gayab<br/>-> har order PEHLE log me number ke saath, PHIR book<br/>gira to log shuru se dobara chalao = wahi book (Kafka key = stock)<br/>(event log + replay)<br/>10:15 server gira -> log shuru se replay, wahi book<br/>replay me der -> standby log padhta, book taiyaar"]
     n_Matching_Engine["Matching Engine"]
     n_DB["DB"]
     n_USER --> n_Order_Service
@@ -249,9 +253,6 @@ flowchart LR
     style n_Event_Log fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
-HAL        Har order PEHLE log me (number ke saath; log hi wo line hai, Kafka key = stock), PHIR book.
-           Gira -> log #1 se replay, wahi book. STANDBY sirf log padhta, book taiyaar; pehla gire tab chalu.
 NAHI       doosra engine saath chalao (active-active): dono match karte = ek sauda do baar settle.
 ```
 ```
@@ -272,6 +273,10 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Mera paisa kat gaya, Suresh ko mila hi nahi
+```
+DIKKAT     10:30, server wapas, log se book bani; ab mera 10:10 wala sauda settle hone laga (Suresh se
+           10 TCS, 30k): mera 30k kata, Suresh ko milne se PEHLE crash.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -280,7 +285,7 @@ flowchart LR
     n_Wallet["Wallet"]
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement<br/>paisa kata, Suresh ko nahi<br/>-> chaaron entry ek saath ya koi nahi<br/>(transaction)<br/>COMMIT se pehle crash -> rollback, user ko PENDING<br/>rollback ke baad retry -> trade_id UNIQUE, do baar nahi"]
+    n_Settlement["Settlement<br/>paisa kata, Suresh ko nahi<br/>-> BEGIN · Arpan -30k +10 share · Suresh +30k -10 share · COMMIT<br/>COMMIT tak chaaron ya koi nahi, crash = rollback<br/>(transaction)<br/>COMMIT se pehle crash -> rollback, user ko PENDING<br/>rollback ke baad retry -> trade_id UNIQUE, do baar nahi"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -291,10 +296,6 @@ flowchart LR
     style n_Settlement fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     10:30, server wapas, log se book bani; ab mera 10:10 wala sauda settle hone laga (Suresh se
-           10 TCS, 30k): mera 30k kata, Suresh ko milne se PEHLE crash.
-HAL        chaaron ek saath ya koi nahi (TRANSACTION): BEGIN Arpan -30k +10 share · Suresh +30k -10 share
-           COMMIT. Crash -> rollback.
 NAHI       chaar alag UPDATE: beech me gira to aadha likha.
 ```
 ```
@@ -308,6 +309,10 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Dopahar: paisa Wallet DB me, share Portfolio DB me — INFY ka 20k kata, share nahi aaye
+```
+DIKKAT     Dopahar 1 baje INFY 5 share (20k) ka sauda. Paisa Wallet DB me, share Portfolio DB me -> ek
+           transaction nahi chalti. 20k kata, Portfolio me share se PEHLE crash.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -317,7 +322,7 @@ flowchart LR
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
     n_Settlement["Settlement"]
-    n_Wallet_DB["Wallet DB<br/>do DB, share nahi aaye<br/>-> har kadam likho, aage badho, ulta nahi<br/>(status log)<br/>20k kata, phir crash -> likhe haal se retry, aage hi<br/>retry dobara chala -> trade_id se ho chuka = no-op<br/>match se pehle atka -> sirf tab ulta, block hatao (SAGA)<br/>ghanton fail -> PENDING + alert, ops share daalta"]
+    n_Wallet_DB["Wallet DB<br/>do DB, share nahi aaye<br/>-> har kadam ka haal likho: wallet done -> portfolio done<br/>fail pe likhe haal se retry, aage hi badho, match ke baad ulta nahi<br/>(status log)<br/>20k kata, phir crash -> likhe haal se retry, aage hi<br/>retry dobara chala -> trade_id se ho chuka = no-op<br/>match se pehle atka -> sirf tab ulta, block hatao (SAGA)<br/>ghanton fail -> PENDING + alert, ops share daalta"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet
@@ -330,10 +335,6 @@ flowchart LR
     style n_Portfolio_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Dopahar 1 baje INFY 5 share (20k) ka sauda. Paisa Wallet DB me, share Portfolio DB me -> ek
-           transaction nahi chalti. 20k kata, Portfolio me share se PEHLE crash.
-HAL        har kadam likho, aage hi badho (STATUS LOG): wallet done -> portfolio done. Fail -> retry, aage hi
-           badho (match ke baad ulta nahi). Ghanton fail -> PENDING + alert, ops share daalta.
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
 ```
 ```
@@ -356,6 +357,9 @@ AAGE POOCHEGA:
 ```
 
 #### 8 10 lakh log ek saath price poochh rahe, server baith gaya
+```
+DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -364,7 +368,7 @@ flowchart LR
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
     n_Pub_Sub["Pub/Sub"]
-    n_WebSocket["WebSocket<br/>10 lakh log price poochh rahe<br/>-> price badle tab khud bhejo, TV jaisa<br/>(WebSocket)<br/>second me 1000 baar badla -> har ~100 ms aakhri price<br/>connection toota, wapas juda -> abhi ka price alag se do<br/>10 lakh connection -> aur server + LB (ek pe ~lakh)<br/>price sab server tak -> pub/sub se"]
+    n_WebSocket["WebSocket<br/>10 lakh log price poochh rahe<br/>-> connection khula rehta, price badla tabhi server khud bhejta<br/>user baar-baar nahi poochta<br/>(WebSocket, pub/sub se servers tak)<br/>second me 1000 baar badla -> har ~100 ms aakhri price<br/>connection toota, wapas juda -> abhi ka price alag se do<br/>10 lakh connection -> aur server + LB (ek pe ~lakh)"]
     n_USERS["USERS"]
     n_SET["Settlement -> Wallet / Portfolio DB"]
     n_USER --> n_OW
@@ -378,9 +382,6 @@ flowchart LR
     style n_WebSocket fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
-HAL        badla tab khud bhejo (WEBSOCKET): connection khula, price badla tabhi push
-           (pub/sub se servers tak).
 NAHI       polling: 10 lakh bekaar sawaal / sec, 99% me price badla hi nahi.
 ```
 ```

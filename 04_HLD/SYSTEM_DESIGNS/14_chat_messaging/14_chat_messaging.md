@@ -127,22 +127,22 @@ AAGE POOCHEGA:
 ```
 
 #### 1 Subah 2 crore log jude, server ki memory khatam
+```
+DIKKAT     Subah 9 baje 2 crore log jude, sabka connection khula. Ek connection = ek thread (~1 MB)
+           -> 1 lakh connection = ~100 GB. Server khatam.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_U["USER"]
     n_LB["LB"]
-    n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> kuch thread, lakhon connection<br/>(event loop)<br/>wahi connection aage -> wahi server, connection khula hai<br/>chat server gira -> ruk-ruk ke dobara judo (backoff)"]
+    n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> kuch thread sab connection sambhalein, OS batata kis connection pe data aaya, thread sirf wahan<br/>chup connection = thodi memory · ~200 chat server, aage LB<br/>(event loop, Netty)<br/>wahi connection aage -> wahi server, connection khula hai<br/>chat server gira -> ruk-ruk ke dobara judo (backoff)"]
     n_U --> n_LB
     n_LB --> n_CS
     style n_CS fill:#f9a825,color:#000
     style n_LB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Subah 9 baje 2 crore log jude, sabka connection khula. Ek connection = ek thread (~1 MB)
-           -> 1 lakh connection = ~100 GB. Server khatam.
-HAL        thread sirf jahan data aaya (EVENT LOOP, Netty): OS (epoll) batata "in 5 connection pe data aaya".
-           Chup connection = thodi memory, kuch thread. ~200 chat server (sirf connection), aage LB.
 NAHI       badi machine lo (zyada RAM): thread ka kharcha wahi, bas thodi der baad tootega.
 ```
 ```
@@ -158,23 +158,23 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Maine Ravi ko "hi" bheja, server bola Ravi offline
+```
+DIKKAT     Main server-1 pe, Ravi server-7 pe. Maine "hi" bheja, server-1 ke map me sirf apne log
+           -> bola "Ravi offline", jabki Ravi online tha.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis<br/>Ravi doosre server pe<br/>-> kaun kis server pe, Redis me likho<br/>(map)<br/>server-7 mara -> entry khud hati (TTL), Ravi offline<br/>Ravi naye server pe juda -> map update, wahin milega<br/>Ravi ke kai device -> pata list, har device pe bhejo<br/>Redis gira -> copy pe switch, message khota nahi"]
+    n_R["Redis<br/>Ravi doosre server pe<br/>-> Redis me Ravi -> server-7 + umar (TTL), server-1 Redis se poochh ke server-7 ko de<br/>Redis me sirf PATA, connection server pe<br/>(map)<br/>server-7 mara -> entry khud hati (TTL), Ravi offline<br/>Ravi naye server pe juda -> map update, wahin milega<br/>Ravi ke kai device -> pata list, har device pe bhejo<br/>Redis gira -> copy pe switch, message khota nahi"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
     style n_R fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Main server-1 pe, Ravi server-7 pe. Maine "hi" bheja, server-1 ke map me sirf apne log
-           -> bola "Ravi offline", jabki Ravi online tha.
-HAL        kaun kahan, Redis me (MAP): "Ravi -> server-7" + umar (TTL); server zinda = umar badhe, mara =
-           khud hate. Server-1 Redis se poochhta, server-7 ko deta, wo Ravi ko. Redis me sirf PATA.
 NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
 ```
 ```
@@ -190,6 +190,10 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Ravi ka phone band tha, message kahan jaaye
+```
+DIKKAT     Ravi ka phone band, connection nahi. "Pehle bhejo, na pahunche to DB me daalo" -> beech me server
+           gira = message gaya.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -197,8 +201,8 @@ flowchart LR
     n_LB["LB"]
     n_CS["Chat Server x200"]
     n_R["Redis (map)"]
-    n_DB["Message DB<br/>Ravi ka phone band, connection nahi<br/>-> pehle DB likho, phir bhejo<br/>(store-then-forward)<br/>Ravi offline -> push ghanti, sirf preview (FCM / APNs)<br/>bhejne se pehle server gira -> DB me pehle se, khota nahi<br/>Ravi wapas -> aakhri mile ke baad sab do"]
-    n_P["Push<br/>app band, khabar kaise<br/>-> app band ho to bhi ghanti<br/>(push: FCM / APNs)"]
+    n_DB["Message DB<br/>Ravi ka phone band, connection nahi<br/>-> PEHLE DB me likho, phir bhejne ki koshish: server gire to bhi message bacha<br/>(store-then-forward)<br/>Ravi offline -> push ghanti, sirf preview (FCM / APNs)<br/>bhejne se pehle server gira -> DB me pehle se, khota nahi<br/>Ravi wapas -> aakhri mile ke baad sab do"]
+    n_P["Push<br/>app band, khabar kaise<br/>-> Google FCM / Apple APNs phone ko ghanti dete, app band ho tab bhi<br/>(push: FCM / APNs)"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
@@ -208,10 +212,6 @@ flowchart LR
     style n_P fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Ravi ka phone band, connection nahi. "Pehle bhejo, na pahunche to DB me daalo" -> beech me server
-           gira = message gaya.
-HAL        PEHLE DB me likho, phir bhejne ki koshish. Ravi offline -> PUSH (Google FCM / Apple APNs) se
-           ghanti, app band ho tab bhi. Ravi wapas: "aakhri jo mila, uske baad sab do" -> server baaki deta.
 NAHI       sirf Push bhej do, DB nahi: push sirf ghanti hai, pahunchne ki guarantee nahi, history bhi nahi.
 ```
 ```
@@ -225,6 +225,9 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Roz 1.2 TB message, ek DB nahi jhelta
+```
+DIKKAT     Roz ~1.2 TB message, 46,000 likhai / second. Ek DB machine nahi jhelegi. Kis cheez se baantein?
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -232,7 +235,7 @@ flowchart LR
     n_LB["LB"]
     n_CS["Chat Server x200"]
     n_R["Redis (map)"]
-    n_CA["Cassandra<br/>roz 1.2 TB, ek DB nahi jhelta<br/>-> ek chat ek jagah<br/>(shard by chat_id)<br/>chat khuli -> aakhri 50 ek jagah (keyset)<br/>ek group garam -> ek partition, speed pe had<br/>partition badi -> key me mahina jodo (chat_id, mahina)"]
+    n_CA["Cassandra<br/>roz 1.2 TB, ek DB nahi jhelta<br/>-> ek chat ke saare message ek partition me (key = chat_id), andar kram msg_ts<br/>padhna = is chat ke aakhri 50, ek jagah<br/>WHERE chat_id = ? AND msg_ts chhota ? ORDER BY msg_ts DESC LIMIT 50 (keyset)<br/>(Cassandra, shard by chat_id)<br/>ek group garam -> ek partition, speed pe had<br/>partition badi -> key me mahina jodo (chat_id, mahina)"]
     n_P["Push (Google / Apple)"]
     n_U --> n_LB
     n_LB --> n_CS
@@ -242,10 +245,6 @@ flowchart LR
     style n_CA fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Roz ~1.2 TB message, 46,000 likhai / second. Ek DB machine nahi jhelegi. Kis cheez se baantein?
-HAL        ek chat ek jagah (CASSANDRA, partition = chat_id), andar kram = msg_ts (phone ka waqt). Ek chat ke
-           saare message ek jagah. Padhna hamesha "is chat ke aakhri 50" = ek jagah, ek baar:
-             WHERE chat_id = ? AND msg_ts < ? ORDER BY msg_ts DESC LIMIT 50   (keyset, OFFSET nahi)
 NAHI       user_id se baanto: ek chat do jagah, group 500 jagah.
 ```
 ```
@@ -260,6 +259,10 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Net dheema, app ne dobara bheja, Ravi ko "hi" do baar
+```
+DIKKAT     Metro me net dheema. App ne "hi" bheja, timeout aaya, dobara bheja. Pehla pahunch chuka tha
+           -> Ravi ko "hi" do baar.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -267,7 +270,7 @@ flowchart LR
     n_LB["LB"]
     n_CS["Chat Server x200"]
     n_R["Redis (map)"]
-    n_I["Idempotency<br/>net dheema, hi do baar<br/>-> wahi id dobara = naya message nahi<br/>(clientMsgId)<br/>timeout, app dobara -> wahi id, skip, pehli id lautao<br/>dono ek saath -> dekhna + daalna ek kadam (atomic)<br/>do user ki id same -> jodi pe check (sender_id, clientMsgId)"]
+    n_I["Idempotency<br/>net dheema, hi do baar<br/>-> app har message ki apni id (clientMsgId), dobara bhejne pe WAHI<br/>server pe pehle aaya? + daalna ek kadam (atomic): aaya = skip<br/>(idempotency key, clientMsgId)<br/>timeout, app dobara -> wahi id, skip, pehli id lautao<br/>do user ki id same -> jodi pe check (sender_id, clientMsgId)"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
     n_U --> n_LB
@@ -279,10 +282,6 @@ flowchart LR
     style n_I fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Metro me net dheema. App ne "hi" bheja, timeout aaya, dobara bheja. Pehla pahunch chuka tha
-           -> Ravi ko "hi" do baar.
-HAL        wahi id dobara = skip (IDEMPOTENCY): app har message ki apni id (clientMsgId), dobara bhejne pe
-           WAHI. Server pe "pehle aaya?" + daalna EK kadam -> dobara aaya to naya message nahi.
 NAHI       server id banaye: har dobara bhejna = nayi id = duplicate.
 ```
 ```
@@ -296,6 +295,9 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Meri ghadi 5 min aage, mere message upar chadh gaye
+```
+DIKKAT     Meri phone ki ghadi 5 min aage. Mere message chat me upar chadh gaye, Ravi ke jawab se pehle.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -306,7 +308,7 @@ flowchart LR
     n_I["Idempotency check"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
-    n_SQ["Seq<br/>ghadi 5 min aage, kram ulta<br/>-> kram server ka number, ghadi nahi<br/>(seq)<br/>meri ghadi aage -> farak nahi, kram seq se<br/>4415 phir 4417 -> 4416 chhoota, ruk ke maango<br/>Ravi wapas -> aakhri seq ke baad sab"]
+    n_SQ["Seq<br/>ghadi 5 min aage, kram ulta<br/>-> har chat ka server pe +1 number (Redis INCR seq:chat123), kram isi se, phone ki ghadi se nahi<br/>Cassandra me andar kram ab seq<br/>(seq)<br/>4415 phir 4417 -> 4416 chhoota, ruk ke maango<br/>Ravi wapas -> meri aakhri seq 4417, 4418 se aage sab"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
@@ -317,9 +319,6 @@ flowchart LR
     style n_SQ fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Meri phone ki ghadi 5 min aage. Mere message chat me upar chadh gaye, Ravi ke jawab se pehle.
-HAL        kram server ka +1 number, phone ki ghadi nahi (SEQ): Redis INCR seq:chat123 (atomic).
-           Cassandra me andar kram ab seq; Ravi wapas: "meri aakhri seq 4417" -> 4418 se aage sab.
 NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
 ```
 ```
@@ -340,6 +339,9 @@ AAGE POOCHEGA:
 ```
 
 #### 7 College Gang (500) me ek message, 500 baar likhein?
+```
+DIKKAT     "College Gang" me 500 log. Maine ek message bheja -> 500 logon ke inbox me 500 baar likhein?
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -348,7 +350,7 @@ flowchart LR
     n_CS["Chat Server x200"]
     n_R["Redis (map)"]
     n_I["Idempotency check"]
-    n_CA["Cassandra<br/>500 ka group, 500 copy?<br/>-> group me ek copy, sab wahi padhein<br/>(ek copy, fan-out on read)<br/>300 online -> har SERVER ko ek call<br/>offline members -> push, wapas aaye to seq se padhein<br/>naya member -> judne se pehle wale nahi"]
+    n_CA["Cassandra<br/>500 ka group, 500 copy?<br/>-> group ka message EK baar group chat ke neeche, sab wahi padhein<br/>online members ke servers nikaalo, har SERVER ko ek call<br/>(ek copy, fan-out on read)<br/>offline members -> push, wapas aaye to seq se padhein<br/>naya member -> judne se pehle wale nahi"]
     n_P["Push (Google / Apple)"]
     n_SQ["Seq (Redis INCR)"]
     n_U --> n_LB
@@ -361,9 +363,6 @@ flowchart LR
     style n_CA fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     "College Gang" me 500 log. Maine ek message bheja -> 500 logon ke inbox me 500 baar likhein?
-HAL        Group ka message EK baar, group chat ke neeche. Sab wahi padhte.
-           Online members: unke servers nikaalo, har SERVER ko ek baar "ye message, in members ko".
 NAHI       Twitter jaisa har inbox me copy: wahan feed sabki alag + crore follower, group sabka ek.
 ```
 ```
@@ -384,6 +383,10 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Ravi ne 50 padhe: unread aur neeli tick kaise
+```
+DIKKAT     Shaam ko Ravi ne chat khol ke 50 message padhe. Har message x har member ka "padha" record
+           = 500 x 50 = 25,000 likhai. Bekaar.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -394,7 +397,7 @@ flowchart LR
     n_I["Idempotency check"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
-    n_NS["Nishaan<br/>50 padhe, 25,000 likhai<br/>-> 'kahan tak padha' ek number, ginti nahi<br/>(read_upto)<br/>unread -> aakhri seq - nishaan (ghatao)<br/>neeli tick -> ek push read_upto, 50 ek saath neeli<br/>do tick -> kahan tak mila (delivered_upto)<br/>group me do tick -> sabse chhota nishaan"]
+    n_NS["Nishaan<br/>50 padhe, 25,000 likhai<br/>-> har member ka ek number read_upto (kahan tak padha), har message ka record nahi<br/>unread = aakhri seq - read_upto · neeli tick = ek push read_upto 4467, 50 ek saath neeli<br/>(read_upto)<br/>do tick -> kahan tak mila (delivered_upto)<br/>group me do tick -> sabse chhota nishaan"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
@@ -405,10 +408,6 @@ flowchart LR
     style n_NS fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Shaam ko Ravi ne chat khol ke 50 message padhe. Har message x har member ka "padha" record
-           = 500 x 50 = 25,000 likhai. Bekaar.
-HAL        "kahan tak padha" ek number (NISHAAN): read_upto 4467 ("kahan tak padha"). Unread = aakhri seq -
-           nishaan (ghatao, gino nahi). Neeli tick = ek push "read_upto 4467" -> 50 ek saath neeli.
 NAHI       unread COUNT column badhao-ghatao: har message pe 500 member x 1 UPDATE, phir bhi 25,000 likhai.
 ```
 ```
@@ -431,10 +430,14 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Shaadi ka 200 MB video chat ke raaste
+```
+DIKKAT     Maine College Gang me 200 MB shaadi ka video chat server se bheja -> 2 min connection atka,
+           server 500 x 200 MB = ~100 GB bheje.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_S3["S3<br/>200 MB video<br/>-> video seedha S3, message me sirf pata<br/>(presigned URL)<br/>net gaya -> bacha hissa hi dobara (multipart)<br/>message -> sirf S3 key + thumbnail<br/>Ravi ne khola -> key se naya chhota URL"]
+    n_S3["S3<br/>200 MB video<br/>-> app video seedha S3 me daale, 10 min ke paas se (presigned URL)<br/>message me sirf S3 key + thumbnail, group me ek upload, 500 ko wahi key<br/>(presigned URL)<br/>net gaya -> bacha hissa hi dobara (multipart)<br/>Ravi ne khola -> key se naya chhota URL"]
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200 (+ idempotency)"]
@@ -452,10 +455,6 @@ flowchart LR
     style n_S3 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Maine College Gang me 200 MB shaadi ka video chat server se bheja -> 2 min connection atka,
-           server 500 x 200 MB = ~100 GB bheje.
-HAL        video seedha S3 (PRESIGNED URL = 10 min ka paas): app video seedha S3 me daalta. Message me sirf S3
-           key + thumbnail. Group me ek upload, 500 ko wahi key.
 NAHI       message me URL rakho: 10 min me khatam, kal link mara; KEY rakho.
 ```
 ```
@@ -470,6 +469,9 @@ AAGE POOCHEGA:
 ```
 
 #### 10 Raat ko online / last seen sabko kaise
+```
+DIKKAT     Raat ko main online aaya, gaya. Har baar mere saare contacts ko batao = crore x 500 message.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -480,7 +482,7 @@ flowchart LR
     n_R["Redis (map, seq)"]
     n_CA["Cassandra (chat_id) + Nishaan"]
     n_P["Push (Google / Apple)"]
-    n_PR["Presence<br/>online / last seen<br/>-> 30 sec me khud mite, app dhadkan de<br/>(TTL)<br/>Ravi ne chat kholi -> tabhi status dekho<br/>chat khuli -> live badlav (subscribe), baaki pull<br/>app band -> umar khatam = offline, last seen likho"]
+    n_PR["Presence<br/>online / last seen<br/>-> Arpan online Redis me 30 sec, app har 15 sec dhadkan de, band = umar khatam = offline<br/>status tabhi dekho jab koi meri chat khole<br/>(TTL)<br/>chat khuli -> live badlav (subscribe), baaki pull<br/>app band -> umar khatam = offline, last seen likho"]
     n_U --> n_S3
     n_U --> n_LB
     n_LB --> n_CS
@@ -491,9 +493,6 @@ flowchart LR
     style n_PR fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat ko main online aaya, gaya. Har baar mere saare contacts ko batao = crore x 500 message.
-HAL        khud mitne wali entry (TTL): "Arpan online" Redis me 30 sec; app har 15 sec "hoon". Band = umar
-           khatam = offline. Status tabhi dekho jab koi meri chat khole.
 NAHI       DB me online column, har dhadkan pe UPDATE: crore log x har 15 sec = DB baith jaata.
 ```
 ```

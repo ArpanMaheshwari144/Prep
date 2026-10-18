@@ -81,6 +81,10 @@ flowchart LR
 ```
 
 #### 1 Maine report.pdf daali, 3 second ghoomta screen dekhta raha
+```
+DIKKAT     31 March, maine report.pdf daali. Server Validator ke 3 sec jawab tak atka, main bhi screen pe.
+           Aakhri ghante ~200 upload / sec x 3 sec = ~600 thread atke, Tomcat ke 200 khatam.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -88,7 +92,7 @@ flowchart LR
     n_Upload_Svc["Upload Svc"]
     n_DB["DB (haal)"]
     n_S3["S3"]
-    n_Kafka["Kafka<br/>3 sec ruka, thread atke<br/>-> turant id do, jaanch peeche<br/>(async + tracking id)<br/>worker beech me mara -> khabar dobara milti (offset baad me)<br/>wahi khabar dobara -> DONE hai to skip (idempotent)<br/>Validator 1 ghanta band -> khabar line me padi, offset aage nahi<br/>us ghante call -> 3-5 fail pe band, phir test call (circuit breaker)"]
+    n_Kafka["Kafka<br/>3 sec ruka, thread atke<br/>-> upload hote hi tracking id (T-101) do, khabar queue me<br/>worker Validator chalaye, DB me DONE / FAILED, user id se haal dekhe<br/>(async + tracking id)<br/>worker beech me mara -> khabar dobara milti (offset baad me)<br/>wahi khabar dobara -> DONE hai to skip (idempotent)<br/>Validator 1 ghanta band -> khabar line me padi, offset aage nahi<br/>us ghante call -> 3-5 fail pe band, phir test call (circuit breaker)"]
     n_Worker["Worker"]
     n_Validator["Validator"]
     n_CLIENT --> n_Upload_Svc
@@ -103,10 +107,6 @@ flowchart LR
     style n_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     31 March, maine report.pdf daali. Server Validator ke 3 sec jawab tak atka, main bhi screen pe.
-           Aakhri ghante ~200 upload / sec x 3 sec = ~600 thread atke, Tomcat ke 200 khatam.
-HAL        turant id, jaanch peeche (ASYNC + TRACKING ID): upload hote hi T-101, khabar queue me.
-           Worker uthaye -> Validator -> DB me T-101 = DONE / FAILED. Main T-101 se haal dekhun.
 NAHI       thread pool 200 se 2000: jaanch tab bhi 3 sec, bas memory khatam hone tak der.
 ```
 ```
@@ -124,11 +124,15 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Meri 5 GB video hamare server ke raaste S3 jaa rahi
+```
+DIKKAT     Report ke baad maine 5 GB video daali: client -> hamara server -> S3. 5 GB do baar network pe,
+           thread minuton atka, sirf bytes aage badhane ko server badhane pade.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_CLIENT["CLIENT"]
-    n_S3["S3<br/>5 GB server se guzri<br/>-> file seedha S3 me, server sirf paas de<br/>(presigned URL)<br/>had 5 GB, aaye 50 GB -> S3 khud reject (presigned URL me had)<br/>/complete nahi aaya -> S3 event se queue, client pe bharosa nahi"]
+    n_S3["S3<br/>5 GB server se guzri<br/>-> server sirf 10 min ka signed URL + id (T-102) de, bytes seedha S3 me<br/>phir app /complete T-102 bole, server queue me daale<br/>(presigned URL)<br/>had 5 GB, aaye 50 GB -> S3 khud reject (presigned URL me had)<br/>/complete nahi aaya -> S3 event se queue, client pe bharosa nahi"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
     n_Kafka["Kafka"]
@@ -144,10 +148,6 @@ flowchart LR
     style n_S3 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Report ke baad maine 5 GB video daali: client -> hamara server -> S3. 5 GB do baar network pe,
-           thread minuton atka, sirf bytes aage badhane ko server badhane pade.
-HAL        server sirf paas de (PRESIGNED URL): server sirf 10 min ka paas (signed URL) + naya id T-102 de;
-           bytes seedha S3 me. Phir main "/complete T-102" bolun -> server queue me daale.
 NAHI       S3 ki access key app me daal do: app se key nikli = poora bucket khula.
 ```
 ```
@@ -169,11 +169,14 @@ AAGE POOCHEGA:
 ```
 
 #### 3 4.5 GB chadh chuki thi, wifi chala gaya
+```
+DIKKAT     Usi video ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB shuru se?
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_CLIENT["CLIENT"]
-    n_S3["S3 multipart<br/>90% pe wifi gaya<br/>-> tukdon me bhejo, toota to bache hi<br/>(multipart)<br/>wifi gaya -> sirf bache tukde bhejo, shuru se nahi<br/>COMPLETE kabhi nahi -> kuch din baad S3 hata de (lifecycle abort)"]
+    n_S3["S3 multipart<br/>90% pe wifi gaya<br/>-> file tukdon me, har tukda apne signed URL pe<br/>S3 har tukde ki rasid (ETag) de, pahunche tukde bache rehte<br/>(multipart)<br/>wifi gaya -> sirf bache tukde bhejo, shuru se nahi<br/>COMPLETE kabhi nahi -> kuch din baad S3 hata de (lifecycle abort)"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
     n_Kafka["Kafka"]
@@ -189,9 +192,6 @@ flowchart LR
     style n_S3 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Usi video ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB shuru se?
-HAL        tukdon me bhejo (MULTIPART): file tukdon me, har tukda apne signed URL pe, S3 har tukde ki rasid
-           (ETag) deta. Wifi gaya -> 90 tukde pahunch chuke, sirf bache 10 bhejo.
 NAHI       server ka timeout badha do: wifi gaya to connection hi toota, timeout kuch nahi bachata.
 ```
 ```
@@ -213,6 +213,10 @@ AAGE POOCHEGA:
 ```
 
 #### 4 App crash, "complete" kabhi aaya hi nahi
+```
+DIKKAT     Ek aur file chadhte waqt meri app crash. "complete" nahi aaya, S3 ka event bhi chhoota: bytes S3 me
+           pade (paisa lag raha), DB me T-103 "UPLOADING" pe atka, koi dhoondhta hi nahi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -220,7 +224,7 @@ flowchart LR
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
-    n_Sweeper_job["Sweeper job<br/>complete aaya hi nahi<br/>-> atki file dhoondh ke dobara line me / FAILED<br/>(sweeper job)<br/>har kuch min -> 10 min se haal na badla = atka<br/>bytes hain -> khud dobara line me<br/>bytes nahi -> FAILED, user dobara daale<br/>do machine pe -> ek hi chale (lock / leader)"]
+    n_Sweeper_job["Sweeper job<br/>complete aaya hi nahi<br/>-> har kuch min: UPLOADING / VALIDATING 10 min se na badla = atka<br/>S3 me bytes? haan = queue me dobara, nahi = FAILED<br/>(sweeper job)<br/>do machine pe -> ek hi chale (lock / leader)"]
     n_Kafka["Kafka"]
     n_Worker["Worker"]
     n_Validator["Validator"]
@@ -236,10 +240,6 @@ flowchart LR
     style n_Sweeper_job fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Ek aur file chadhte waqt meri app crash. "complete" nahi aaya, S3 ka event bhi chhoota: bytes S3 me
-           pade (paisa lag raha), DB me T-103 "UPLOADING" pe atka, koi dhoondhta hi nahi.
-HAL        atki file dhoondho (SWEEPER job), har kuch minute: haal UPLOADING / VALIDATING aur 10 min se nahi
-           badla (jaanch 3 sec ki) -> S3 me bytes hain? haan = queue me dobara · nahi = FAILED.
 NAHI       sirf S3 lifecycle niyam: din me ek baar chalta aur DB nahi dekhta.
 ```
 ```
@@ -256,13 +256,17 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Deadline ke din sab har 2 sec haal poochh rahe
+```
+DIKKAT     Shaam tak 10,000 log ka "Meri files" page khula, har 2 sec saari files ka haal
+           -> 5,000 sawaal / sec DB pe. Likhai 1-2 / sec thi, padhai ne DB ghera.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
-    n_RC["Redis + Read replica<br/>har 2 sec haal, DB ghira<br/>-> haal Redis se, nahi to DB ki copy se<br/>(cache + replica)<br/>Redis me nahi -> replica se laao, Redis me rakho<br/>worker ne DONE likha -> DB + Redis saath<br/>har 2 sec poochna -> gap badhao 2s, 4s, 8s (backoff)<br/>Redis gira -> replica pe seedha + rate limit"]
+    n_RC["Redis + Read replica<br/>har 2 sec haal, DB ghira<br/>-> GET /status: Redis me? wahin se, nahi -> read replica, phir Redis me rakho<br/>(cache + replica)<br/>worker ne DONE likha -> DB + Redis saath<br/>har 2 sec poochna -> gap badhao 2s, 4s, 8s (backoff)<br/>Redis gira -> replica pe seedha + rate limit"]
     n_DB["DB (haal)"]
     n_Sweeper_job["Sweeper job"]
     n_CHAIN["Kafka -> Worker -> Validator"]
@@ -279,10 +283,6 @@ flowchart LR
     style n_RC fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Shaam tak 10,000 log ka "Meri files" page khula, har 2 sec saari files ka haal
-           -> 5,000 sawaal / sec DB pe. Likhai 1-2 / sec thi, padhai ne DB ghera.
-HAL        haal Redis se (CACHE): GET /status/T-101 -> Redis me? wahin se · nahi -> read replica -> Redis me.
-           Worker haal badle (DONE) to DB ke saath Redis me bhi usi waqt naya haal.
 NAHI       DB me index daalo: sawaal tez, par 5,000 / sec phir bhi primary pe.
 ```
 ```
@@ -307,7 +307,7 @@ flowchart LR
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_Redis["Redis"]
-    n_DB["DB<br/>1000 file ka folder<br/>-> folder ka bada id, har file ka chhota<br/>(parent + child)<br/>ek child aaya -> folder pe ginti +1 (done_count)<br/>koi FAILED -> folder PARTIAL, sirf fail wali dobara"]
+    n_DB["DB<br/>1000 file ka folder<br/>-> folder ka ek bada id, har file ka chhota id jo folder se juda<br/>(parent + child)<br/>ek child aaya -> folder pe ginti +1 (done_count)<br/>koi FAILED -> folder PARTIAL, sirf fail wali dobara"]
     n_Read_replica["Read replica"]
     n_Sweeper_job["Sweeper job"]
     n_CHAIN["Kafka -> Worker -> Validator"]
@@ -342,13 +342,17 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Ravi ne mera trackingId daal ke meri file le li
+```
+DIKKAT     Maine support chat me screenshot bheja, usme T-101 dikh raha tha. Ravi ne GET /download/T-101
+           maara -> meri file Ravi ko mil gayi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_API_Gateway_LB["API Gateway / LB<br/>(authn: kaun ho)"]
-    n_Upload_Svc["Upload Svc<br/>Ravi ne meri file li<br/>-> maalik nahi to mana<br/>(owner check, 403)<br/>Ravi ne maanga -> owner main, 403 har request pe<br/>id to random tha -> phir bhi check, id leak hoti<br/>admin maange -> owner ya admin role, warna 403"]
+    n_Upload_Svc["Upload Svc<br/>Ravi ne meri file li<br/>-> service me check: file ka owner = maangne wala? nahi to 403, har haal / download<br/>kaun ho (authn) gateway / JWT batata, kiska hai (owner) service<br/>(owner check, 403)<br/>id to random tha -> phir bhi check, id leak hoti<br/>admin maange -> owner ya admin role, warna 403"]
     n_RC["Redis + Read replica (haal)"]
     n_DB["DB (haal + owner)"]
     n_Sweeper_job["Sweeper job"]
@@ -368,10 +372,6 @@ flowchart LR
     style n_Upload_Svc fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Maine support chat me screenshot bheja, usme T-101 dikh raha tha. Ravi ne GET /download/T-101
-           maara -> meri file Ravi ko mil gayi.
-HAL        maalik nahi to mana (OWNER CHECK) service me: T-101 ka owner main, maangne wala Ravi -> 403. Har
-           haal / download. "Tum kaun ho?" (AUTHN) = gateway / JWT batata: ye Ravi hai.
 NAHI       gateway pe hi check: use pata hi nahi T-101 kiski hai.
 ```
 ```
@@ -386,11 +386,15 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Maine S3 ka seedha link WhatsApp pe bhej diya
+```
+DIKKAT     Mujhe S3 ka pakka link mila tha. Maine dost ko WhatsApp pe bheja, dost ne group me.
+           Link hamesha chalta -> file kisi ke bhi haath.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_CLIENT["CLIENT"]
-    n_S3["S3<br/>link WhatsApp pe ghooma<br/>-> har baar 5 min ka naya link<br/>(signed GET)<br/>link group me gaya -> 1 ghante baad expire, nahi khula"]
+    n_S3["S3<br/>link WhatsApp pe ghooma<br/>-> DB me sirf S3 key, download pe maalik check, phir 5 min ka naya link<br/>har baar naya, purana khud expire<br/>(signed GET)<br/>link group me gaya -> 1 ghante baad expire, nahi khula"]
     n_API_Gateway_LB["API Gateway / LB"]
     n_Upload_Svc["Upload Svc<br/>+ owner check"]
     n_RC["Redis + Read replica (haal)"]
@@ -411,10 +415,6 @@ flowchart LR
     style n_S3 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Mujhe S3 ka pakka link mila tha. Maine dost ko WhatsApp pe bheja, dost ne group me.
-           Link hamesha chalta -> file kisi ke bhi haath.
-HAL        har baar naya 5 min link (SIGNED GET): DB me sirf S3 key. Download maanga -> maalik check -> 5 min
-           ka naya paas, har baar. Group me 1 ghante baad kisi ne khola -> paas expire -> nahi khula.
 NAHI       link me lamba random naam (koi andaza na lagaye): ek baar bahar gaya to hamesha chalta.
 ```
 ```
@@ -429,6 +429,10 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Naam report.pdf, andar EXE nikla
+```
+DIKKAT     Raat ko kisi ne virus.exe ka naam report.pdf kiya, type "application/pdf" bheja -> S3 me pahunchi.
+           Naam aur type dono client ne bheje, jo jhooth bol sakta.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -439,7 +443,7 @@ flowchart LR
     n_DB["DB (haal + owner + s3_key)"]
     n_Sweeper_job["Sweeper job"]
     n_Kafka["Kafka"]
-    n_Worker["Worker<br/>naam pdf, andar exe<br/>-> naam nahi, file ke pehle byte dekho<br/>(magic bytes)<br/>naam .pdf, andar EXE -> pehle bytes dekho, reject<br/>andar virus -> virus scan bhi"]
+    n_Worker["Worker<br/>naam pdf, andar exe<br/>-> naam / type client bhejta (jhooth ho sakta), file ke pehle byte asli type batate<br/>worker S3 se sirf pehle byte padhe (range GET): PDF = %PDF, EXE = MZ<br/>(magic bytes)<br/>naam .pdf, andar EXE -> pehle bytes dekho, reject<br/>andar virus -> virus scan bhi"]
     n_CLIENT --> n_S3
     n_CLIENT --> n_GU
     n_GU --> n_RC
@@ -455,10 +459,6 @@ flowchart LR
     style n_Worker fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Raat ko kisi ne virus.exe ka naam report.pdf kiya, type "application/pdf" bheja -> S3 me pahunchi.
-           Naam aur type dono client ne bheje, jo jhooth bol sakta.
-HAL        pehle byte batate asli type (MAGIC BYTES): PDF = "%PDF-" · PNG = "\x89PNG" · EXE = "MZ".
-           Worker S3 se sirf pehle kuch byte (range GET). Naam .pdf, shuru "MZ" -> EXE -> reject.
 NAHI       type ke liye poori file padho: 5 GB S3 se laana; pehle kuch byte kaafi.
 ```
 ```

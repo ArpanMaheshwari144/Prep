@@ -89,21 +89,21 @@ flowchart LR
 ```
 
 #### 1 Subah queue machine restart hui, 500 signup gayab
+```
+DIKKAT     Subah, sale se pehle signup khule. Queue machine ki memory me 500 signup message, machine restart
+           -> memory saaf -> 500 gayab. Email service ko pata hi nahi chala ki 500 log aaye.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_P["Producer"]
-    n_L["Log<br/>restart, 500 message gayab<br/>-> disk pe log, kahan tak padha yaad<br/>(log + offset)<br/>dobara padhna -> offset peeche karo (replay)"]
+    n_L["Log<br/>restart, 500 message gayab<br/>-> message disk pe sirf aakhir me jude (P0: 0,1,2,3...), padhne se mitta nahi<br/>har message ka number = offset, consumer yaad rakhe kahan tak padha<br/>(log + offset)<br/>restart -> email ne 2 tak padha tha, 3 se aage<br/>dobara padhna -> offset peeche karo (replay)"]
     n_C["Consumer"]
     n_P --> n_L
     n_L --> n_C
     style n_L fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Subah, sale se pehle signup khule. Queue machine ki memory me 500 signup message, machine restart
-           -> memory saaf -> 500 gayab. Email service ko pata hi nahi chala ki 500 log aaye.
-HAL        disk pe log, padha kahan tak (LOG + OFFSET): sirf aakhir me jodo: P0: [0][1][2][3][4][5].
-           Har message ka number = OFFSET, padhne se mit-ta nahi. Email ne 2 tak padha -> restart -> "3 se".
 NAHI       DB me queue: insert = index + lock = idhar-udhar likhna; queue me WHERE nahi, bas "X ke baad do".
 ```
 ```
@@ -118,21 +118,21 @@ AAGE POOCHEGA:
 ```
 
 #### 2 10 baje sale shuru, 5,000 / sec aaye, ek worker 500 hi bhej paata
+```
+DIKKAT     10 baje sale: "order-events" pe 5,000 khabar / sec. Email worker ~500 / sec hi bhej paata
+           (har email ek API call). Topic ek line -> ek hi worker kram se padhe -> ghanton ki line (lag).
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_P["Producer"]
-    n_B["Brokers A / B / C<br/>5,000 / sec, worker 500<br/>-> topic ke tukde, har tukda alag worker<br/>(partition)<br/>worker 12, tukde 10 -> 2 khaali baithe<br/>lag phir bhi badha -> pehle tukde badhao, worker baad me"]
+    n_B["Brokers A / B / C<br/>5,000 / sec, worker 500<br/>-> topic ke 10 tukde (P0-P9), teen broker pe bate, likhai + jagah bhi bati<br/>har tukda alag worker: 10 tukde = 10 worker = ~5,000 / sec<br/>(partition)<br/>worker 12, tukde 10 -> 2 khaali baithe<br/>lag phir bhi badha -> pehle tukde badhao, worker baad me"]
     n_C["Consumer"]
     n_P --> n_B
     n_B --> n_C
     style n_B fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     10 baje sale: "order-events" pe 5,000 khabar / sec. Email worker ~500 / sec hi bhej paata
-           (har email ek API call). Topic ek line -> ek hi worker kram se padhe -> ghanton ki line (lag).
-HAL        topic ke tukde (PARTITION): topic ke 10 tukde (P0-P9), teen broker A / B / C pe bate; har tukda
-           alag worker -> 10 tukde = 10 worker = ~5,000 / sec. Likhai aur jagah bhi bat gayi.
 NAHI       copy (replica) badhao: copy sirf bachav ke liye, padhna bhi leader se hi; padhne wale = partition.
 ```
 ```
@@ -146,10 +146,14 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Ravi ne naam do baar badla, purana naam reh gaya
+```
+DIKKAT     Ravi ne naam "Ravi K" kiya, 1 min baad "Ravi Kumar". Pehla P0 me, doosra P1 me. P0 ka consumer
+           10 min peeche (lag) -> pehle "Ravi Kumar" laga, phir "Ravi K" -> galat naam reh gaya.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_P["Producer<br/>do badlaav do partition me<br/>-> ek user ki khabar ek hi tukde me<br/>(key = userId)<br/>10 se 20 tukde -> key ka tukda badla, kram thoda toota<br/>key nahi di -> koi kram nahi (round-robin)<br/>producer retry -> message do baar nahi (idempotent producer)<br/>ek tukda garam -> key me bucket jodo (hot partition)"]
+    n_P["Producer<br/>do badlaav do partition me<br/>-> Kafka kram sirf EK partition ke andar deta<br/>hash(userId) % 10 -> Ravi hamesha P7, dono badlaav kram se<br/>(key = userId)<br/>10 se 20 tukde -> key ka tukda badla, kram thoda toota<br/>key nahi di -> koi kram nahi (round-robin)<br/>producer retry -> message do baar nahi (idempotent producer)<br/>ek tukda garam -> key me bucket jodo (hot partition)"]
     n_B["Brokers A / B / C"]
     n_C["Consumer"]
     n_P --> n_B
@@ -157,10 +161,6 @@ flowchart LR
     style n_P fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Ravi ne naam "Ravi K" kiya, 1 min baad "Ravi Kumar". Pehla P0 me, doosra P1 me. P0 ka consumer
-           10 min peeche (lag) -> pehle "Ravi Kumar" laga, phir "Ravi K" -> galat naam reh gaya.
-HAL        ek user ek tukda (KEY = userId): Kafka kram sirf EK partition ke andar deta. hash(userId) % 10 ->
-           hamesha P7 -> dono badlaav P7 me, kram se.
 NAHI       poore topic ka kram: matlab sirf ek partition = speed khatam. Kram sirf key ke andar.
 ```
 ```
@@ -182,7 +182,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_P["Producer (key = userId)"]
     n_B["Brokers A / B / C"]
-    n_GE["Group email<br/>3 machine, 3 email<br/>-> teeno ek team, har tukda ek ko<br/>(consumer group)<br/>group.id = machine naam -> teen alag team, 3 email<br/>machine badhani -> tukde bhi badhao, warna khaali"]
+    n_GE["Group email<br/>3 machine, 3 email<br/>-> teeno machine ek group.id: har tukda group ke EK hi member ko, kaam bat-ta<br/>(consumer group)<br/>group.id = machine naam -> teen alag team, 3 email<br/>machine badhani -> tukde bhi badhao, warna khaali"]
     n_P --> n_B
     n_B --> n_GE
     style n_GE fill:#f9a825,color:#000
@@ -205,13 +205,16 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Ravi ka order analytics aur dashboard ko bhi chahiye
+```
+DIKKAT     Ravi ka order email ko bhi chahiye, analytics ko bhi, dashboard ko bhi. Ek group = sirf ek ko.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_P["Producer (key = userId)"]
     n_B["Brokers A / B / C"]
     n_GE["Group email"]
-    n_GA["Group analytics<br/>teeno service ko chahiye<br/>-> har service ki apni team<br/>(alag group)<br/>nayi service judi -> naya group, producer same<br/>usko purana chahiye -> shuru se padhe ya ab se, uski marzi<br/>ek group peeche -> doosra nahi rukta, offset alag"]
+    n_GA["Group analytics<br/>teeno service ko chahiye<br/>-> topic ek, har service ka apna group: group ke andar kaam bat-ta, alag group ko poori khabar<br/>(alag consumer group)<br/>nayi service judi -> naya group, producer same<br/>usko purana chahiye -> shuru se padhe ya ab se, uski marzi<br/>ek group peeche -> doosra nahi rukta, offset alag"]
     n_GD["Group dashboard"]
     n_P --> n_B
     n_B --> n_GE
@@ -221,9 +224,6 @@ flowchart LR
     style n_GD fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Ravi ka order email ko bhi chahiye, analytics ko bhi, dashboard ko bhi. Ek group = sirf ek ko.
-HAL        har service ki apni team (APNA GROUP): topic ek; email, analytics, dashboard group alag.
-           Team ke andar kaam bat-ta, alag team = poori khabar. Har group ka apna offset.
 NAHI       har service ka alag topic: producer ek event teen baar bheje -> "ek message kai service" hi toota.
 ```
 ```
@@ -239,12 +239,15 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Dopahar Broker A ki disk mar gayi, data gaya
+```
+DIKKAT     Dopahar Broker A ki disk mari. Har partition ki ek hi copy thi -> P0 ka data hamesha ke liye gaya.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_P["Producer (key = userId)"]
     n_B["Brokers A / B / C"]
-    n_K["Controller (KRaft)<br/>Broker A ki disk gayi<br/>-> har tukde ki copy, sab me likha tab OK<br/>(ISR, acks=all)<br/>copy kam -> likhna band, khone se rukna behtar (min ISR)<br/>A mara -> Controller ISR se B ko leader<br/>peeche wala follower -> leader nahi ban sakta"]
+    n_K["Controller (KRaft)<br/>Broker A ki disk gayi<br/>-> har tukde ka LEADER + 2 follower alag machine pe, saath chalti copy = ISR<br/>acks=all: saari ISR ne likha tab producer ko OK<br/>(leader + ISR, acks=all)<br/>copy kam -> likhna band, khone se rukna behtar (min ISR)<br/>A mara -> Controller ISR se B ko leader<br/>peeche wala follower -> leader nahi ban sakta"]
     n_GE["Group email"]
     n_GA["Group analytics"]
     n_GD["Group dashboard"]
@@ -257,9 +260,6 @@ flowchart LR
     style n_B fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Dopahar Broker A ki disk mari. Har partition ki ek hi copy thi -> P0 ka data hamesha ke liye gaya.
-HAL        har tukde ki copy (LEADER + ISR): LEADER + 2 follower alag machine pe; saath chalti copy = ISR.
-           Leader gira -> Controller (KRaft) ISR se naya chunta. Zaroori: acks=all (saari ISR ne liya tab OK).
 NAHI       acks=1 sab jagah: leader ne "OK" bola, copy se pehle gira -> khabar gayi.
 ```
 ```
@@ -281,6 +281,10 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Email bheja, "padh liya" bolne se pehle crash
+```
+DIKKAT     Email service ne offset 5 padha (Ravi ka order). Email bheja -> "padh liya" (commit) se pehle CRASH
+           -> restart pe phir 5 -> Ravi ko 2 email.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -288,7 +292,7 @@ flowchart LR
     n_B["Brokers A / B / C"]
     n_K["Controller (KRaft)"]
     n_GE["Group email"]
-    n_R["Redis<br/>commit se pehle crash<br/>-> pehle kaam phir padh liya, dobara to skip<br/>(eventId)<br/>commit se pehle crash -> dobara aayi, eventId se skip<br/>dedup userId se -> agla sahi event bhi skip, eventId lo<br/>eventId jaldi mitaya -> phir bhejega, umar retry se lambi (TTL)"]
+    n_R["Redis<br/>commit se pehle crash<br/>-> pehle email bhejo, phir commit (at-least-once: khoyega nahi, kabhi do baar)<br/>consumer har eventId Redis me dekhe: hai = skip<br/>(commit baad me + idempotent consumer, eventId)<br/>dedup userId se -> agla sahi event bhi skip, eventId lo<br/>eventId jaldi mitaya -> phir bhejega, umar retry se lambi (TTL)"]
     n_GA["Group analytics"]
     n_GD["Group dashboard"]
     n_P --> n_B
@@ -300,10 +304,6 @@ flowchart LR
     style n_R fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Email service ne offset 5 padha (Ravi ka order). Email bheja -> "padh liya" (commit) se pehle CRASH
-           -> restart pe phir 5 -> Ravi ko 2 email.
-HAL        pehle kaam, phir 'padh liya' (COMMIT) (at-least-once: khoyega nahi, kabhi do baar) + consumer
-           IDEMPOTENT: eventId Redis me hai? hai = skip.
 NAHI       pehle commit, phir kaam: email se pehle CRASH -> restart 6 se -> event 5 KHO gaya.
 ```
 ```
@@ -318,10 +318,13 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Order #101 DB me bana, Kafka bhejne se pehle server gira
+```
+DIKKAT     Ravi ka order #101 DB me bana, Kafka bhejne se pehle order server gira -> event gaya hi nahi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_P["Producer + Outbox<br/>DB me bana, event nahi gaya<br/>-> order ke saath khabar bhi DB me, baad me bhejo<br/>(outbox)<br/>COMMIT se pehle crash -> kuch nahi hua, Ravi dobara kare<br/>COMMIT ke baad crash -> relay baad me bheje, khoya nahi<br/>bheja, sent=true se pehle -> dobara jaaye, consumer eventId se skip"]
+    n_P["Producer + Outbox<br/>DB me bana, event nahi gaya<br/>-> order aur khabar ek transaction: BEGIN · INSERT orders(101) · INSERT outbox(E-101, sent=false) · COMMIT<br/>relay (alag thread, har 1 sec) sent=false row Kafka bheje, ACK pe sent=true<br/>(outbox)<br/>COMMIT se pehle crash -> kuch nahi hua, Ravi dobara kare<br/>COMMIT ke baad crash -> relay baad me bheje, khoya nahi<br/>bheja, sent=true se pehle -> dobara jaaye, consumer eventId se skip"]
     n_B["Brokers A / B / C"]
     n_K["Controller (KRaft)"]
     n_GE["Group email"]
@@ -337,10 +340,6 @@ flowchart LR
     style n_P fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Ravi ka order #101 DB me bana, Kafka bhejne se pehle order server gira -> event gaya hi nahi.
-HAL        khabar bhi order ke saath DB me (OUTBOX, usi transaction me): BEGIN · INSERT orders(101) · INSERT
-           outbox(E-101, sent = false) · COMMIT. Relay (alag thread, har 1 sec) sent = false wali row Kafka
-           bheje, ACK aaye to sent = true.
 NAHI       "offset bachayega": nahi, offset consumer ki taraf hai; ye producer ki taraf ki dikkat.
 ```
 ```
@@ -372,7 +371,7 @@ flowchart LR
     n_K["Controller (KRaft)"]
     n_GE["Group email"]
     n_R["Redis (eventId)"]
-    n_DLQ["DLQ<br/>C2 mara, lag badha<br/>-> mare ka kaam baaki me, kharab khabar alag line<br/>(rebalance + DLQ)<br/>C2 gaya -> uske tukde C1 + C3 me (rebalance)<br/>lag phir badha -> alert, consumer badhao<br/>khabar baar-baar fail -> kuch koshish, phir alag line (DLQ)"]
+    n_DLQ["DLQ<br/>C2 mara, lag badha<br/>-> mare consumer ke tukde baaki ko (rebalance), baar-baar fail khabar alag line (DLQ)<br/>(rebalance + DLQ)<br/>C2 gaya -> uske tukde C1 + C3 me<br/>lag phir badha -> alert, consumer badhao<br/>khabar baar-baar fail -> kuch koshish, phir DLQ, baaki chalti"]
     n_GA["Group analytics"]
     n_GD["Group dashboard"]
     n_P --> n_B
@@ -400,7 +399,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_P["Producer (key + outbox)"]
-    n_B["Brokers A / B / C<br/>disk bharti ja rahi<br/>-> 7 din rakho phir udao<br/>(retention + compaction)<br/>dobara padhna -> offset peeche ya naya group (replay)<br/>consumer 7 din band -> data gaya, retention lambi + lag alert<br/>har key ki aakhri -> sirf aakhri rakho (compaction)"]
+    n_B["Brokers A / B / C<br/>disk bharti ja rahi<br/>-> har message 7 din rakho, phir khud mite (retention)<br/>har key ki sirf aakhri value rakho, purani udao (compaction)<br/>(retention + compaction)<br/>dobara padhna -> offset peeche ya naya group (replay)<br/>consumer 7 din band -> data gaya, retention lambi + lag alert"]
     n_K["Controller (KRaft)"]
     n_GE["Group email"]
     n_R["Redis (eventId)"]

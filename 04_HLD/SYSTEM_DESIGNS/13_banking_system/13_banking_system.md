@@ -145,22 +145,21 @@ AAGE POOCHEGA:
 ```
 
 #### 3 9 baje Netflix ka auto-debit aur mera UPI ek saath
+```
+DIKKAT     Mere paas 300. 9:00 Netflix ka 200 ka auto-debit chala, usi second maine UPI se Ravi ko 200 bheje.
+           Do request, do thread, dono ne balance 300 padha -> dono pass -> dono kate -> mera balance -100.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc (+ idempotency)"]
-    n_DB["SQL DB<br/>Netflix + UPI, balance -100<br/>-> check aur kaatna ek saath<br/>(atomic UPDATE)<br/>Netflix + UPI ek saath -> row lock, dono line me<br/>doosra -> balance kam, 0 row, 422, kuch nahi kata"]
+    n_DB["SQL DB<br/>Netflix + UPI, balance -100<br/>-> ek hi UPDATE me check + kaatna, DB row lock leta, dono line me<br/>UPDATE account SET balance = balance - 200 WHERE id = Arpan AND balance >= 200<br/>(atomic UPDATE)<br/>pehla -> 300 se 100<br/>doosra -> 100 >= 200 nahi, 0 row, 422, kuch nahi kata"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     style n_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Mere paas 300. 9:00 Netflix ka 200 ka auto-debit chala, usi second maine UPI se Ravi ko 200 bheje.
-           Do request, do thread, dono ne balance 300 padha -> dono pass -> dono kate -> mera balance -100.
-HAL        check aur kaatna ek saath (ATOMIC UPDATE):
-             UPDATE account SET balance = balance - 200 WHERE id = 'Arpan' AND balance >= 200
-           Row pe taala -> dono line me. Pehla: 300 -> 100. Doosra: 100 >= 200? nahi -> 0 row -> reject.
 NAHI       Java synchronized: Banking Svc ki kai machine, lock sirf ek ke andar.
 ```
 ```
@@ -173,21 +172,21 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Maine poochha: mere 500 kahan gaye, kab?
+```
+DIKKAT     Subah se paisa kai baar hila. Maine support se poochha "mere 500 kahan gaye, kab?" (audit bhi yahi)
+           -> har len-den ka pakka khaata chahiye.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc (+ idempotency)"]
-    n_DB["SQL DB + ledger<br/>500 kahan gaye?<br/>-> har transfer ki 2 line khaate me, saath hi<br/>(ledger)<br/>txn wapas -> khaata bhi wapas, jhoothi line nahi<br/>galat line -> UPDATE nahi, ulti line jodo<br/>support: kab, kisko -> har line me waqt + transfer id"]
+    n_DB["SQL DB + ledger<br/>500 kahan gaye?<br/>-> khaata = DB ki table, har transfer usi transaction me 2 line: Arpan -500, Ravi +500<br/>sirf INSERT, kabhi UPDATE nahi: BEGIN · INSERT ledger x2 · UPDATE balance x2 · COMMIT<br/>(ledger)<br/>txn wapas -> khaata bhi wapas, jhoothi line nahi<br/>galat line -> UPDATE nahi, ulti line jodo<br/>support: kab, kisko -> har line me waqt + transfer id"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     style n_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Subah se paisa kai baar hila. Maine support se poochha "mere 500 kahan gaye, kab?" (audit bhi yahi)
-           -> har len-den ka pakka khaata chahiye.
-HAL        har transfer khaate me (LEDGER = DB ki table), usi transaction me 2 line: Arpan -500, Ravi +500.
-           Sirf INSERT, kabhi badla nahi: BEGIN · INSERT ledger x2 · UPDATE balance x2 · COMMIT.
 NAHI       khaata Kafka me: DB transaction wapas hua (paisa kam tha), Kafka me "Arpan -500" -> khaata jhooth.
 ```
 ```
@@ -201,23 +200,23 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Salary aayi, Ravi ko rent bheja, SMS service giri
+```
+DIKKAT     10 baje salary 50,000 aayi, 1 min baad Ravi ko 20,000 rent bheja. Har transfer ke baad SMS, fraud,
+           statement chahiye. Par SMS service giri hui hai -> transfer na ruke, aur SMS khoye bhi nahi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc (+ idempotency)"]
     n_DB["SQL DB (+ ledger, outbox)"]
-    n_K["Kafka<br/>SMS service giri<br/>-> SMS wali khabar bhi DB me, baad me bhejo<br/>(outbox)<br/>SMS service ghanta giri -> khabar Kafka me padi, baad me padhe<br/>relay sent=true se pehle gira -> dobara jaaye, eventId se skip"]
+    n_K["Kafka<br/>SMS service giri<br/>-> SMS ki khabar outbox table me, usi transaction me (sent=false)<br/>COMMIT ke BAAD relay har ~1 sec: sent=false -> Kafka (acks=all) -> sent=true<br/>(outbox)<br/>SMS service ghanta giri -> khabar Kafka me padi, baad me padhe<br/>relay sent=true se pehle gira -> dobara jaaye, eventId se skip"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     n_DB --> n_K
     style n_K fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     10 baje salary 50,000 aayi, 1 min baad Ravi ko 20,000 rent bheja. Har transfer ke baad SMS, fraud,
-           statement chahiye. Par SMS service giri hui hai -> transfer na ruke, aur SMS khoye bhi nahi.
-HAL        khabar bhi DB me (OUTBOX = ek aur table), usi transaction me: har khaata line ki row, sent=false.
-           COMMIT ke BAAD relay har ~1 sec: sent=false -> Kafka (acks=all) -> sent=true.
 NAHI       commit ke baad seedha Kafka: commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi.
 ```
 ```
@@ -238,7 +237,7 @@ flowchart LR
     n_SVC["Banking Svc (+ idempotency)"]
     n_DB["SQL DB (+ ledger, outbox)"]
     n_K["Kafka"]
-    n_REC["Reconciliation job<br/>balance kahan se aaye?<br/>-> khaata sach, balance uska jod<br/>(reconciliation)<br/>balance padha -> column se (cache), jodna dheema<br/>raat milaan -> khaate ka jod == column?<br/>farak mila -> alert + account roko, khaata jeete"]
+    n_REC["Reconciliation job<br/>balance kahan se aaye?<br/>-> khaata hi sach, balance column uska jod (cache), raat ko job dono milaye<br/>(reconciliation)<br/>balance padha -> column se, jodna dheema<br/>raat milaan -> khaate ka jod == column?<br/>farak mila -> alert + account roko, khaata jeete"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     n_DB --> n_K
@@ -265,7 +264,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_LB["LB<br/>salary day, ek machine bhari<br/>-> kai machine, aage baantne wala<br/>(LB)<br/>ek machine giri -> LB list se hataye (health check)<br/>adhoora transfer -> app wahi id se dobara<br/>LB khud akela -> nahi, do zone me do LB"]
+    n_LB["LB<br/>salary day, ek machine bhari<br/>-> kai Banking Svc machine, LB har request kisi bhi zinda machine ko de<br/>machine kuch yaad nahi rakhti, sach DB me<br/>(LB + stateless)<br/>ek machine giri -> LB list se hataye (health check)<br/>adhoora transfer -> app wahi id se dobara<br/>LB khud akela -> nahi, do zone me do LB"]
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
     n_DB["SQL DB (+ ledger, outbox)"]
@@ -301,7 +300,7 @@ flowchart LR
     n_LB["LB"]
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
-    n_RR["Read replica<br/>padhai primary pe, transfer dheema<br/>-> padhna copy se, likhna asli pe<br/>(read replica)<br/>paise ka faisla -> sirf primary pe, copy peeche ho sakti<br/>abhi bheja, copy peeche -> apna likha primary se padho<br/>copy minute bhar peeche -> lag naapo, alert, list se hatao"]
+    n_RR["Read replica<br/>padhai primary pe, transfer dheema<br/>-> primary ki copy (replica) se padhna, likhna sirf primary pe, copy thodi peeche ho sakti<br/>(read replica)<br/>paise ka faisla -> sirf primary pe<br/>abhi bheja, copy peeche -> apna likha primary se padho<br/>copy minute bhar peeche -> lag naapo, alert, list se hatao"]
     n_DB["SQL DB (+ ledger, outbox)"]
     n_K["Kafka"]
     n_REC["Reconciliation job"]
@@ -337,7 +336,7 @@ flowchart LR
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
     n_RR["Read replica"]
-    n_DB["SQL DB<br/>500 gaye, 200 refund, dono atke<br/>-> taala hamesha ek kram me, chhoti id pehle<br/>(lock order)<br/>ulta kram -> gol ghera (deadlock)<br/>kram ke baad bhi phansa -> DB ek ko wapas, app wahi id se"]
+    n_DB["SQL DB<br/>500 gaye, 200 refund, dono atke<br/>-> do account pe taala hamesha ek kram me lo (chhoti id pehle), gol ghera ban hi nahi sakta<br/>(lock order)<br/>ulta kram -> gol ghera (deadlock)<br/>kram ke baad bhi phansa -> DB ek ko wapas, app wahi id se"]
     n_K["Kafka"]
     n_REC["Reconciliation job"]
     n_USER --> n_LB
@@ -368,6 +367,10 @@ AAGE POOCHEGA:
 ```
 
 #### 10 Shaam ko dukaan ke CA ka export, page 5000 pe atka
+```
+DIKKAT     Ravi ki dukaan: roz ~500 UPI, 3 saal = ~5 lakh line. CA ka tool 20-20 ke page maangta. Page 5000 pe
+           LIMIT 20 OFFSET 100000 -> DB 1,00,020 line PADH ke phenkta. Beech me nayi line -> ek line dobara.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -376,7 +379,7 @@ flowchart LR
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
     n_RR["Read replica"]
-    n_DB["SQL DB<br/>page 5000 dheema<br/>-> jahan ruke wahan se aage, ginti nahi<br/>(keyset)<br/>agla page -> is (ts, id) se purani 20, index se<br/>ek ts pe do line -> id barabari tode<br/>beech me nayi line -> purana page nahi khiskta"]
+    n_DB["SQL DB<br/>page 5000 dheema<br/>-> pichhle page ki aakhri (ts, id) yaad, agla page = usse purani 20, OFFSET nahi<br/>WHERE account_id = ? AND (ts, id) chhota (:last_ts, :last_id)<br/>ORDER BY ts DESC, id DESC LIMIT 20, index (account_id, ts, id) se seedha wahan<br/>page 1 ho ya 5000 -> ek jaisa tez<br/>(keyset)<br/>ek ts pe do line -> id barabari tode<br/>beech me nayi line -> purana page nahi khiskta"]
     n_K["Kafka"]
     n_REC["Reconciliation job"]
     n_USER --> n_LB
@@ -391,11 +394,6 @@ flowchart LR
     style n_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Ravi ki dukaan: roz ~500 UPI, 3 saal = ~5 lakh line. CA ka tool 20-20 ke page maangta. Page 5000 pe
-           LIMIT 20 OFFSET 100000 -> DB 1,00,020 line PADH ke phenkta. Beech me nayi line -> ek line dobara.
-HAL        aakhri line se aage (KEYSET): pichhle page ki aakhri (ts, id) yaad, agla page "isse purani 20":
-             WHERE account_id = ? AND (ts, id) < (:last_ts, :last_id) ORDER BY ts DESC, id DESC LIMIT 20
-           Index (account_id, ts DESC, id DESC) se seedha wahan -> page 1 ho ya 5000, ek jaisa tez.
 NAHI       saari 5 lakh line ek baar me bhejo: memory bhari, request timeout.
 ```
 ```
@@ -409,6 +407,10 @@ AAGE POOCHEGA:
 ```
 
 #### 11 Raat ko: 5 saal ka khaata ek hi table me
+```
+DIKKAT     5 saal ka khaata (~36 arab line) ek table me. Log roz sirf 3 mahine dekhte, par har query / backup
+           arabon line ke saath. Aur kanoon (PMLA / RBI) kam se kam 5 saal rakhwata, bank 8-10.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -418,7 +420,7 @@ flowchart LR
     n_RR["Read replica"]
     n_DB["SQL DB"]
     n_K["Kafka"]
-    n_S3["Archive (S3)<br/>5 saal ek table me<br/>-> har mahina alag, purana S3<br/>(partition)<br/>mahina band -> S3 me, 5 saal delete nahi (bank ka niyam)<br/>balance ka jod -> mahine ka snapshot + baad ki line"]
+    n_S3["Archive (S3)<br/>5 saal ek table me<br/>-> khaata mahine ke partition me, band mahina DETACH (table se alag) -> S3, sasta<br/>(partition + archive)<br/>mahina band -> S3 me, 5 saal delete nahi (bank ka niyam)<br/>balance ka jod -> mahine ka snapshot + baad ki line"]
     n_REC["Reconciliation job"]
     n_USER --> n_LB
     n_LB --> n_Banking_Svc_xN
@@ -430,10 +432,6 @@ flowchart LR
     style n_S3 fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     5 saal ka khaata (~36 arab line) ek table me. Log roz sirf 3 mahine dekhte, par har query / backup
-           arabon line ke saath. Aur kanoon (PMLA / RBI) kam se kam 5 saal rakhwata, bank 8-10.
-HAL        mahine alag (PARTITION): khaata mahine ke partition me; band mahina DETACH (table se alag) -> S3
-           (sasta). Had (PMLA min 5 saal) se pehle delete nahi.
 NAHI       "archive = sharding": archive jagah ghatata, shard likhne ka bojh baantta.
 ```
 ```
