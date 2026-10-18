@@ -7,7 +7,7 @@ flowchart LR
     n_DB["DB (haal + owner + s3_key)"]
     n_Sweeper_job["Sweeper job"]
     n_Kafka["Kafka"]
-    n_Worker["Worker<br/>naam pdf, andar exe<br/>-> naam / type client bhejta (jhooth ho sakta), file ke pehle byte asli type batate<br/>worker S3 se sirf pehle byte padhe (range GET): PDF = %PDF, EXE = MZ<br/>(magic bytes)<br/>naam .pdf, andar EXE -> pehle bytes dekho, reject<br/>andar virus -> virus scan bhi"]
+    n_Worker["Worker<br/>naam pdf, andar exe<br/>-> naam / type client ka jhooth ho sakta, file ke pehle byte asli type batate (magic bytes)<br/>andar virus -> virus scan bhi"]
     n_CLIENT --> n_S3
     n_CLIENT --> n_GU
     n_GU --> n_RC

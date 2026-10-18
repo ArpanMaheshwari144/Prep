@@ -68,7 +68,7 @@ NUMBERS (andaaza):
 Client file Upload service ko de. Service file S3 me rakhe,
 jaanch wale (Validator) ko call kare (2-3 sec), jawab wapas.
 ```
-![cdabba](img/cdabba.svg)
+![cdabba](img/cdabba-756594ba.svg)
 
 
 #### 1 Maine report.pdf daali, 3 second ghoomta screen dekhta raha
@@ -76,7 +76,7 @@ jaanch wale (Validator) ko call kare (2-3 sec), jawab wapas.
 DIKKAT     31 March, maine report.pdf daali. Server Validator ke 3 sec jawab tak atka, main bhi screen pe.
            Aakhri ghante ~200 upload / sec x 3 sec = ~600 thread atke, Tomcat ke 200 khatam.
 ```
-![c1](img/c1.svg)
+![c1](img/c1-3496c6eb.svg)
 
 ```
 NAHI       thread pool 200 se 2000: jaanch tab bhi 3 sec, bas memory khatam hone tak der.
@@ -100,17 +100,10 @@ AAGE POOCHEGA:
 DIKKAT     Report ke baad maine 5 GB video daali: client -> hamara server -> S3. 5 GB do baar network pe,
            thread minuton atka, sirf bytes aage badhane ko server badhane pade.
 ```
-![c2](img/c2.svg)
+![c2](img/c2-22d171d6.svg)
 
 ```
 NAHI       S3 ki access key app me daal do: app se key nikli = poora bucket khula.
-```
-```
-TASVEER: paas lo, seedha S3
-  1  app -> Upload Svc: "5 GB video daalni"   -> T-102 + 10 min ka paas (signed URL)
-  2  app -> S3 seedha, paas dikha ke          -> 5 GB S3 me; hamare server pe ek byte bhi nahi
-  3  app -> Upload Svc: "/complete T-102"     -> queue -> worker -> jaanch
-  paas = sirf is ek file ka, 10 min; leak ho bhi to bas itna
 ```
 ```
 AAGE POOCHEGA:
@@ -127,17 +120,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Usi video ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB shuru se?
 ```
-![c3](img/c3.svg)
+![c3](img/c3-fadfbd2e.svg)
 
 ```
 NAHI       server ka timeout badha do: wifi gaya to connection hi toota, timeout kuch nahi bachata.
-```
-```
-TASVEER: 100 tukde, sirf bache 10
-  5 GB = 100 tukde, uploadId U-9
-  [1] [2] [3] ... [90]  -> har ek ki rasid (ETag) S3 pe      [91] ... [100] nahi pahunche
-  wifi gaya -> wapas aaya -> ListParts U-9 -> sirf 91..100 bhejo
-  COMPLETE(U-9, tukde + rasid) -> S3 kram se jod ke ek file
 ```
 ```
 AAGE POOCHEGA:
@@ -155,7 +141,7 @@ AAGE POOCHEGA:
 DIKKAT     Ek aur file chadhte waqt meri app crash. "complete" nahi aaya, S3 ka event bhi chhoota: bytes S3 me
            pade (paisa lag raha), DB me T-103 "UPLOADING" pe atka, koi dhoondhta hi nahi.
 ```
-![c4](img/c4.svg)
+![c4](img/c4-2cdfca6c.svg)
 
 ```
 NAHI       sirf S3 lifecycle niyam: din me ek baar chalta aur DB nahi dekhta.
@@ -178,7 +164,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam tak 10,000 log ka "Meri files" page khula, har 2 sec saari files ka haal
            -> 5,000 sawaal / sec DB pe. Likhai 1-2 / sec thi, padhai ne DB ghera.
 ```
-![c5](img/c5.svg)
+![c5](img/c5-e2e1599a.svg)
 
 ```
 NAHI       DB me index daalo: sawaal tez, par 5,000 / sec phir bhi primary pe.
@@ -202,15 +188,8 @@ AAGE POOCHEGA:
 DIKKAT     Deadline wale din maine ek file nahi, poora folder daala: 1000 file. Har file ka alag trackingId
            -> 1000 id sambhaalna mere bas ka nahi, aur "poora folder ho gaya?" ka koi jawab nahi.
 ```
-![c6](img/c6.svg)
+![c6](img/c6-3da07df4.svg)
 
-```
-TASVEER: folder = bachchon ka jod
-  P-1 (folder, 1000 file)
-    |- C-1 DONE   |- C-2 DONE   ...   |- C-999 DONE   |- C-1000 FAILED
-  har child ka nateeja -> done_count +1 -> 1000/1000 aa gaye -> koi FAILED? haan -> P-1 = PARTIAL
-  dobara sirf C-1000; baaki 999 nahi
-```
 ```
 AAGE POOCHEGA:
   NIYAM: folder = bada id, har file ka chhota id; folder ka haal = bachchon ka jod (sab DONE = DONE, koi
@@ -226,7 +205,7 @@ AAGE POOCHEGA:
 DIKKAT     Maine support chat me screenshot bheja, usme T-101 dikh raha tha. Ravi ne GET /download/T-101
            maara -> meri file Ravi ko mil gayi.
 ```
-![c7](img/c7.svg)
+![c7](img/c7-46cd40b4.svg)
 
 ```
 NAHI       gateway pe hi check: use pata hi nahi T-101 kiski hai.
@@ -247,7 +226,7 @@ AAGE POOCHEGA:
 DIKKAT     Mujhe S3 ka pakka link mila tha. Maine dost ko WhatsApp pe bheja, dost ne group me.
            Link hamesha chalta -> file kisi ke bhi haath.
 ```
-![c8](img/c8.svg)
+![c8](img/c8-5f9ee831.svg)
 
 ```
 NAHI       link me lamba random naam (koi andaza na lagaye): ek baar bahar gaya to hamesha chalta.
@@ -268,7 +247,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko kisi ne virus.exe ka naam report.pdf kiya, type "application/pdf" bheja -> S3 me pahunchi.
            Naam aur type dono client ne bheje, jo jhooth bol sakta.
 ```
-![c9](img/c9.svg)
+![c9](img/c9-1fc1e64c.svg)
 
 ```
 NAHI       type ke liye poori file padho: 5 GB S3 se laana; pehle kuch byte kaafi.
@@ -305,7 +284,7 @@ JAWAB:    Server sirf paas deta, file seedha S3 me (badi ho to tukdon me).
           chhote paas se safe, S3 niyam + atki file wali job se safai.
           Aage: fail pe dobara koshish, download ke liye CDN.
 ```
-![c9_2](img/c9_2.svg)
+![c9_2](img/c9_2-d2975a98.svg)
 
 
 ---

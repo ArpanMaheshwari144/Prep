@@ -1,0 +1,52 @@
+{
+ "title": "Deadline ke din 10,000 log har 2 sec haal poochh rahe",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har poochh seedha DB pe",
+   "items": [
+    {
+     "box": "10,000 log",
+     "sub": "har 2 sec"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Primary DB",
+     "sub": "ghira",
+     "bad": true
+    }
+   ],
+   "result": "sab dheema"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: haal Redis se, nahi mila to copy se (cache + replica)",
+   "items": [
+    {
+     "box": "10,000 log"
+    },
+    {
+     "arrow": "GET /status"
+    },
+    {
+     "box": "Redis",
+     "cells": [
+      "T-101: DONE"
+     ],
+     "state": "g"
+    },
+    {
+     "arrow": "miss",
+     "dash": true
+    },
+    {
+     "box": "Replica"
+    }
+   ],
+   "result": "",
+   "foot": "worker ne DONE likha -> DB + Redis saath badlo, warna purana VALIDATING dikhe; poochne ka gap 2s, 4s, 8s"
+  }
+ ]
+}

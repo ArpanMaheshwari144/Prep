@@ -1,0 +1,67 @@
+{
+ "title": "Maine poora folder daala: 1000 file",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har file ka alag id, folder ka koi haal nahi",
+   "items": [
+    {
+     "box": "1000 tracking id",
+     "cells": [
+      "T1",
+      "T2",
+      "..",
+      "T1000"
+     ],
+     "state": "oooo"
+    },
+    {
+     "arrow": "folder ho gaya?"
+    },
+    {
+     "box": "Main",
+     "sub": "1000 id dekhun?",
+     "bad": true
+    }
+   ],
+   "result": "pata nahi"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: folder ka ek id, har file usse judi (parent + child)",
+   "items": [
+    {
+     "box": "Folder F-1",
+     "sub": "done 998 / 1000",
+     "cells": [
+      "998"
+     ],
+     "state": "y"
+    },
+    {
+     "arrow": "har DONE pe +1"
+    },
+    {
+     "box": "Files",
+     "cells": [
+      "T1",
+      "T2",
+      "..",
+      "T999",
+      "T1000"
+     ],
+     "state": "gggrg"
+    },
+    {
+     "arrow": "koi FAILED"
+    },
+    {
+     "box": "PARTIAL",
+     "sub": "sirf fail wali dobara",
+     "good": true
+    }
+   ],
+   "result": ""
+  }
+ ]
+}

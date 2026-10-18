@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_CLIENT["CLIENT"]
-    n_S3["S3<br/>5 GB server se guzri<br/>-> server sirf 10 min ka signed URL + id (T-102) de, bytes seedha S3 me<br/>phir app /complete T-102 bole, server queue me daale<br/>(presigned URL)<br/>had 5 GB, aaye 50 GB -> S3 khud reject (presigned URL me had)<br/>/complete nahi aaya -> S3 event se queue, client pe bharosa nahi"]
+    n_S3["S3<br/>5 GB server se guzri<br/>-> server sirf thodi der ka signed URL de, bytes seedha S3 me (presigned URL)<br/>had se badi file -> S3 khud reject<br/>complete nahi aaya -> S3 event se queue"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
     n_Kafka["Kafka"]

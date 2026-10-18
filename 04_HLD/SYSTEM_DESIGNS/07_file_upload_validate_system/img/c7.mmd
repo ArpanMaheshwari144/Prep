@@ -3,7 +3,7 @@ flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_API_Gateway_LB["API Gateway / LB<br/>(authn: kaun ho)"]
-    n_Upload_Svc["Upload Svc<br/>Ravi ne meri file li<br/>-> service me check: file ka owner = maangne wala? nahi to 403, har haal / download<br/>kaun ho (authn) gateway / JWT batata, kiska hai (owner) service<br/>(owner check, 403)<br/>id to random tha -> phir bhi check, id leak hoti<br/>admin maange -> owner ya admin role, warna 403"]
+    n_Upload_Svc["Upload Svc<br/>Ravi ne meri file li<br/>-> service me check: file ka maalik = maangne wala? nahi to 403 (owner check)<br/>id random thi -> phir bhi check, id leak hoti<br/>admin maange -> admin role, warna 403"]
     n_RC["Redis + Read replica (haal)"]
     n_DB["DB (haal + owner)"]
     n_Sweeper_job["Sweeper job"]

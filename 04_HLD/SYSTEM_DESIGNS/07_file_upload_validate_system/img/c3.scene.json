@@ -1,0 +1,68 @@
+{
+ "title": "4.5 GB chadh chuki thi, wifi chala gaya",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: ek hi lamba upload",
+   "items": [
+    {
+     "box": "Upload",
+     "sub": "4.5 / 5 GB",
+     "cells": [
+      "90%"
+     ],
+     "state": "o"
+    },
+    {
+     "arrow": "wifi gaya"
+    },
+    {
+     "box": "Phir se",
+     "sub": "0 se 5 GB",
+     "cells": [
+      "0%"
+     ],
+     "state": "r",
+     "bad": true
+    }
+   ],
+   "result": "sab bekaar"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: file tukdon me, har tukde ki rasid; pahunche tukde bache (multipart)",
+   "items": [
+    {
+     "box": "S3 multipart",
+     "sub": "100 tukde",
+     "cells": [
+      "1",
+      "2",
+      "..",
+      "90",
+      "91",
+      "..",
+      "100"
+     ],
+     "state": "gggggee"
+    },
+    {
+     "arrow": "wifi wapas"
+    },
+    {
+     "box": "Sirf bache",
+     "sub": "91 - 100 bhejo",
+     "cells": [
+      "91",
+      "..",
+      "100"
+     ],
+     "state": "yyy",
+     "good": true
+    }
+   ],
+   "result": "10 tukde hi",
+   "foot": "COMPLETE kabhi nahi aaya -> kuch din baad S3 khud adhoore tukde hata de"
+  }
+ ]
+}

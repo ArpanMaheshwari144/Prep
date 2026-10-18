@@ -1,0 +1,59 @@
+{
+ "title": "App crash, \"complete\" kabhi aaya hi nahi",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: T-103 UPLOADING pe atka, koi nahi dekhta",
+   "items": [
+    {
+     "box": "S3",
+     "sub": "bytes pade (paisa lag raha)"
+    },
+    {
+     "arrow": "",
+     "dash": true
+    },
+    {
+     "box": "DB",
+     "sub": "T-103",
+     "cells": [
+      "UPLOADING"
+     ],
+     "state": "r",
+     "bad": true,
+     "clock": "hamesha"
+    }
+   ],
+   "result": "atka hi raha"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: har kuch min ek job atke dhoondhe (sweeper)",
+   "items": [
+    {
+     "box": "Sweeper job",
+     "sub": "10 min se na badla?",
+     "clock": "5 min"
+    },
+    {
+     "arrow": "S3 me bytes hain?"
+    },
+    {
+     "stack": [
+      {
+       "box": "haan",
+       "sub": "queue me dobara",
+       "good": true
+      },
+      {
+       "box": "nahi",
+       "sub": "FAILED"
+      }
+     ]
+    }
+   ],
+   "result": "kuch atka nahi",
+   "foot": "do machine pe sweeper -> ek hi chale (lock / leader)"
+  }
+ ]
+}
