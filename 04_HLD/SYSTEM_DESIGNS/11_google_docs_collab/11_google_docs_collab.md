@@ -59,12 +59,28 @@ NUMBERS (andaaza):
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> DIKKAT / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
+> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 Doc ka poora text DB me. "Save" dabao -> poora text upar likh do (overwrite).
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
+```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER A / B"]
+    n_App["App"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
+```
+
+</details>
+
 
 #### 1 Ravi ne baad me save kiya, mera "WORLD" mit gaya
 ```

@@ -83,13 +83,29 @@ JAWAB:    Feed ke liye: chalta rahe, chahe thoda purana ho.
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> DIKKAT / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
+> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 Do table: tweets (kisne kya likha) + follows (kaun kisko follow karta).
 Feed = jinko follow karta unke tweet nikaalo, time se sort karo, upar ke 50 do.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
+```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_App["App"]
+    n_DB["DB"]
+    n_USER --> n_App
+    n_App --> n_DB
+```
+
+</details>
+
 
 #### 1 Subah app khola, feed ghoomti rahi (har baar 200 logon ka jod)
 ```

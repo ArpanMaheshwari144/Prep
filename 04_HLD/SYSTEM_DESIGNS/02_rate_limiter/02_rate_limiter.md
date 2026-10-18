@@ -72,12 +72,26 @@ NUMBERS:  jagah ka hisaab bekaar hai: har user ki ek ginti + expiry, bas.
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> DIKKAT / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
+> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 App ki memory me ek ginti. Har request pe ginti + 1. Had paar -> 429.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
+```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_App["App"]
+    n_USER --> n_App
+```
+
+</details>
+
 
 #### SHURU: TOKEN BUCKET KAISE CHALTA
 ```

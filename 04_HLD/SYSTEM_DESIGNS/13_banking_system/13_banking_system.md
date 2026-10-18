@@ -72,12 +72,28 @@ DATA SE TEEN SAWAAL:
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> DIKKAT / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
+> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
 Banking Service (saara niyam / logic) -> SQL DB. Jaan-boojh ke seedha.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
+```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_SVC["Banking Svc"]
+    n_DB["SQL DB"]
+    n_USER --> n_SVC
+    n_SVC --> n_DB
+```
+
+</details>
+
 #### 1 Maine Ravi ko 500 bheje, beech me server gira
 ```
 DIKKAT     1 tareekh subah 8 baje maine Ravi ko 500 bheje. Mere 500 kate, Ravi ke account me daalne se PEHLE

@@ -81,7 +81,7 @@ JAWAB:    Paise me sahi hona pehle. Network toota aur pakka nahi pata balance ky
 ## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
 
 > Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> DIKKAT / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
+> DIKKAT / HAL / NAHI padho. AAGE POOCHEGA sirf jab interviewer aage kuch poochhe.
 
 #### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
 ```
@@ -93,6 +93,22 @@ PAISA KAHAN HILTA (pehle ye tay, poori file isi pe):
   Bahar ka paisa = PSP (Razorpay / bank) se: bank se wallet me daalna (top-up), wallet se bank me
   nikaalna (payout), ya merchant kisi doosre bank me hai.
 ```
+![cdabba](img/cdabba.svg)
+
+<details><summary>diagram source (mermaid)</summary>
+
+```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
+flowchart LR
+    n_USER["USER"]
+    n_Payment_Svc["Payment Svc"]
+    n_DB["DB"]
+    n_USER --> n_Payment_Svc
+    n_Payment_Svc --> n_DB
+```
+
+</details>
+
 
 #### SHURU: DB KAUNSA? SQL
 ```
