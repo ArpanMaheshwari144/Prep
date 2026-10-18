@@ -85,6 +85,10 @@ flowchart LR
 ```
 
 #### 1 Subah maine app khola, sabko wahi 20 khabar, har baar DB se
+```
+DIKKAT     Subah 7 baje laakhon log app khol rahe, sabko wahi top 20 khabar. Har khulne pe DB se sort karke
+           nikaalte -> DB pe bheed, feed dheemi, kabhi khulti hi nahi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -121,6 +125,10 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Meri feed me khabar 20 minute purani
+```
+DIKKAT     Badi khabar aayi, par meri feed me 20 minute baad dikhi. Ek hi kaam me source se laana aur DB me
+           likhna dono, ek dheema source poori line rok deta -> khabar purani.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -203,6 +211,10 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Dopahar "India ne match jeeta", meri feed me 5 baar
+```
+DIKKAT     Dopahar "India ne match jeeta" 5 source ne chhaapa, thode alag title, alag URL. Sab naya maana
+           -> meri feed me wahi khabar 5 baar, baaki khabar neeche dab gayi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -248,6 +260,10 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Dopahar baad nayi khabar aani ruki: ek chhota source 30 sec atka, baaki 999 bhi ruke
+```
+DIKKAT     Dopahar baad ek chhota source 30 sec tak jawab nahi de raha. Sab usi ke intezaar me atke, baaki
+           999 source ki khabar bhi nahi aayi -> poori feed ruk gayi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -327,6 +343,10 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Raat ko maine "cricket" dhoondha, poori table padhi gayi
+```
+DIKKAT     Raat ko maine "cricket" dhoondha. DB ne har khabar ki poori line padh ke match kiya, 2 crore row
+           -> search bahut dheema, aur DB baaki sab ke liye dheemi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR

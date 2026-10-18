@@ -365,6 +365,10 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Main Bangalore me, data US me, har feed 300 ms
+```
+DIKKAT     Main Bangalore me, saara data aur App US me. Har feed refresh pe request samundar paar US jaati
+           aur aati -> sirf raaste me 300 ms, feed har baar atak ke khulti.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -402,6 +406,10 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Raat ko har region me ek hi App machine; India wali giri, India band
+```
+DIKKAT     Raat ko har region me ek hi App machine thi. India wali machine giri -> India ke saare user ke
+           liye feed, tweet sab band, jab tak machine wapas na uthe.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -438,6 +446,10 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Highlights ki bheed ne mera tweet daalna dheema kar diya
+```
+DIKKAT     Match ke highlights aaye, crore log feed scroll kar rahe. Wahi App machine tweet likhti bhi thi
+           -> padhne ki bheed me mera tweet button 10 sec ghooma, likhna dheema.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -477,6 +489,10 @@ AAGE POOCHEGA:
 ```
 
 #### 10 Maine match ki video daali, sabko dheemi aur mehngi
+```
+DIKKAT     Maine match ki 50 MB video daali. Har dekhne wala use US ke server se khinchta -> door walon
+           ko buffering, aur har baar poori video hamare server se, bandwidth ka bill bhaari.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR

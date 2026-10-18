@@ -195,6 +195,10 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Bot ki 429 wali request bhi App tak ghoom ke aayi
+```
+DIKKAT     Bot ki saari request App tak pahunchti, wahan ginti hoti, phir 429. Mana hone wali request bhi
+           LB, App aur Redis tak ghoomi -> bot ke 10,000 request / sec se App bhar gayi, asli log dheeme.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -276,6 +280,10 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Meri script 3 region se chali, 100 ki jagah 150 nikal gayi
+```
+DIKKAT     Meri script India, US aur Europe teen region se ek saath chali. Har region ka Redis apni alag
+           ginti rakhta -> har jagah 50, kisi ki had paar nahi hui, aur 100 ki had pe 150 nikal gayi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -354,6 +362,10 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Shaam ki sale, har koi limit me, phir bhi server gira
+```
+DIKKAT     Shaam 6 baje sale khuli. Har user apni had ke andar tha, par laakhon user ek saath -> kul request
+           server ki taakat se zyada, CPU 100%, sabke liye site band. Per-user had kuch nahi rok paayi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -389,6 +401,10 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Raat ko attack, usi waqt poora Redis Cluster gira (copy bhi), aam API khuli
+```
+DIKKAT     Raat ko attack chal raha tha, usi waqt poora Redis Cluster gira, copy bhi. Ginti kahin nahi ho
+           rahi, aam API khuli chhodi thi -> attacker ki saari request bina roke andar, server bhar gaye.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR

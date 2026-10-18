@@ -318,6 +318,10 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Maine file nahi, poora folder daala (1000 file)
+```
+DIKKAT     Deadline wale din maine ek file nahi, poora folder daala: 1000 file. Har file ka alag trackingId
+           -> 1000 id sambhaalna mere bas ka nahi, aur "poora folder ho gaya?" ka koi jawab nahi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR

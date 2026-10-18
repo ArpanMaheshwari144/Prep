@@ -409,6 +409,10 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Shaam Diwali, 3000 payment / second, machine baith gayi
+```
+DIKKAT     Shaam Diwali, sab ek saath payment kar rahe: 3000 / sec. Saari request ek hi Payment Svc machine pe
+           -> CPU bhara, payment dheeme, phir machine giri -> kisi ka payment nahi ja raha.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR

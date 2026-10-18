@@ -168,6 +168,10 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Pay dabaya, network gaya, app ne dobara bheja
+```
+DIKKAT     A1 chuni, Pay dabaya, paisa kat gaya, par jawab aate waqt network gaya. App ne khud dobara bheja
+           -> paisa do baar kata, ticket ek.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -196,6 +200,10 @@ AAGE POOCHEGA:
 ```
 
 #### 4 11 baje main seat map dekh raha tha, saath me 1 lakh log, book koi-koi
+```
+DIKKAT     11 baje release ka show, main seat map dekh raha, saath me 1 lakh log. Book koi-koi kar raha,
+           par har map seedha main DB se -> DB pe bheed, booking bhi dheemi.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -285,6 +293,10 @@ AAGE POOCHEGA:
 ```
 
 #### 6 2 baje Redis restart, saara seat map ek saath replica pe
+```
+DIKKAT     2 baje Redis restart hua, saara seat map khaali. Usi pal hazaaron log ek saath DB / replica pe
+           map maangne gaye -> replica baith gayi, map nahi khul raha.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -322,6 +334,10 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Shaam ko main seat chun raha tha, App machine gir gayi
+```
+DIKKAT     Shaam ko main seat chun raha tha. Jis App machine pe tha wo gir gayi, aur ek hi machine thi
+           -> page band, booking adhoori, kisi ka kuch nahi chal raha.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR

@@ -249,8 +249,8 @@ AAGE POOCHEGA:
 
 #### 6 Salary ke baad maine balance khola
 ```
-DIKKAT     Salary aate hi maine balance khola. Har baar 50,000 khaate ki line jodna dheema, to balance ek column
-           me rakha. Par column aur khaata kabhi alag ho gaye (bug), to sach kaunsa? Kaun pakdega?
+DIKKAT     Salary aate hi maine balance khola. Har baar 50,000 khaate ki line jodna dheema, to balance
+           ek column me rakha. Par column aur khaata alag ho gaye (bug), to sach kaunsa? Kaun pakdega?
 ```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
@@ -326,8 +326,8 @@ AAGE POOCHEGA:
 
 #### 8 Salary ki bheed me sab balance dekh rahe, transfer dheeme
 ```
-DIKKAT     Salary ke baad sab baar-baar balance aur history dekh rahe. Saari padhai usi ek DB pe, jahan transfer
-           bhi likhe jaate -> padhne ki bheed ne paisa bhejna dheema kar diya.
+DIKKAT     Salary ke baad sab baar-baar balance aur history dekh rahe. Saari padhai usi ek DB pe, jahan
+           transfer bhi likhe jaate -> padhne ki bheed ne paisa bhejna dheema kar diya.
 ```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%

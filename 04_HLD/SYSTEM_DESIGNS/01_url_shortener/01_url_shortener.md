@@ -194,6 +194,10 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Maine aur Ravi ne link banaya, dono ko ek hi code mila
+```
+DIKKAT     Dopahar maine aur Ravi ne ek hi pal me link banaya. Request do alag App pe gayi, dono ne apni
+           ginti se agla number liya -> dono ko code "g9" mila. Ravi ka link khola to mera sale page khula.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -380,6 +384,10 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Shaam ko LB hi gir gaya, koi request andar nahi
+```
+DIKKAT     Shaam ko akela LB hi gir gaya. App machine sab zinda, par har click LB pe atka -> koi link
+           nahi khula, poori site band. App badhane se kuch nahi hua, darwaza hi band tha.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR

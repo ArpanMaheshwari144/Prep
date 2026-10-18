@@ -110,6 +110,10 @@ AAGE POOCHEGA:
 ```
 
 #### 1 Maine ek baar dabaya, order do lag gaye
+```
+DIKKAT     Subah maine TCS ka Buy ek hi baar dabaya. Network gaya, jawab nahi aaya, app ne khud dobara bheja
+           -> do order lag gaye, paisa do baar block, bhejna tha ek.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR

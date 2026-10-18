@@ -189,6 +189,10 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Email service ki 3 machine, Ravi ko 3 order email
+```
+DIKKAT     Sale me email service ki 3 machine lagayi. Teeno ne har message padha, to Ravi ke ek order pe
+           3 email gaye -> Ravi pareshan, aur kaam teen guna hua.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -390,6 +394,10 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Shaam ko C2 mar gaya, lag badhta ja raha
+```
+DIKKAT     Shaam ko email group ki ek machine C2 mar gayi. Uske tukdon ke message koi nahi padh raha,
+           peeche ki line (lag) badhti ja rahi -> logon ko order email ghanton der se.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -425,6 +433,10 @@ AAGE POOCHEGA:
 ```
 
 #### 10 Raat ko broker ki disk bharti ja rahi
+```
+DIKKAT     Raat ko broker ki disk bharti ja rahi: din bhar ke sale ke saare message disk pe pade, koi nahi
+           hatata -> disk poori bhari to naye message likhne band, poora order flow ruk jaayega.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR

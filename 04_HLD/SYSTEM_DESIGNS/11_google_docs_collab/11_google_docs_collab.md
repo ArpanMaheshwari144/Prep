@@ -362,6 +362,10 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Raat ko 2 saal purana doc khola, 10 lakh op shuru se chale
+```
+DIKKAT     Raat ko maine 2 saal purana doc khola. Usme 10 lakh op jama the, server shuru se ek-ek chala ke
+           doc bana raha -> doc khulne me minute lag gaye, main khaali screen dekhta raha.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR

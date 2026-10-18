@@ -106,6 +106,10 @@ AAGE POOCHEGA:
 ```
 
 #### 1 Subah cache machine ki RAM bhar gayi, kya hatayein
+```
+DIKKAT     Subah se mere app ki keys cache me jud rahi thi. 64 GB RAM bhar gayi, nayi key ke liye jagah nahi.
+           Kaunsi purani key nikaalein? Galat nikaali to wahi baar-baar DB se aayegi, app dheema.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -263,6 +267,10 @@ AAGE POOCHEGA:
 ```
 
 #### 5 7 baje "home page" key khatam, 1000 log ek saath DB pe
+```
+DIKKAT     7 baje "home page" key ki umar khatam hui. Usi pal 1000 log aaye, sabko cache me nahi mili,
+           sab ek saath DB pe gaye -> DB pe achanak bojh, home page sabke liye dheema.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -302,6 +310,10 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Raat IPL final, "live:score" key ki machine akeli mar rahi
+```
+DIKKAT     Raat IPL final, crore log har second "live:score" padh rahe. Ye ek key ek hi cache machine pe,
+           baaki machine khaali -> wo akeli machine CPU / network pe bhar gayi, score sabke liye atka.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
