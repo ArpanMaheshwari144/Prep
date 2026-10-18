@@ -1,0 +1,68 @@
+{
+ "title": "Suresh ke paas 10, mujhe aur Mohan dono ko 10 mil gaye",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: do thread, dono ko \"10 hai\" dikha",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "Thread 1: main",
+       "sub": "10 dikhe, liye"
+      },
+      {
+       "box": "Thread 2: Mohan",
+       "sub": "10 dikhe, liye"
+      }
+     ]
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Suresh ke share",
+     "cells": [
+      "10",
+      "-10"
+     ],
+     "state": "or",
+     "bad": true
+    }
+   ],
+   "result": "20 bik gaye"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: ek share ke saare order ek line, ek hi thread (ek symbol ek thread)",
+   "items": [
+    {
+     "box": "TCS line",
+     "cells": [
+      "main",
+      "Mohan"
+     ],
+     "state": "yd"
+    },
+    {
+     "arrow": "ek thread"
+    },
+    {
+     "stack": [
+      {
+       "box": "main",
+       "sub": "10 mile",
+       "good": true
+      },
+      {
+       "box": "Mohan",
+       "sub": "0 bache, line me"
+      }
+     ]
+    }
+   ],
+   "result": "10 hi bike",
+   "foot": "TCS ka thread atka -> sirf TCS rukta, INFY ka alag thread chalta"
+  }
+ ]
+}

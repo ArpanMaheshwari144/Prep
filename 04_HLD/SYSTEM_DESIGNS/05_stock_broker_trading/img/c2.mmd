@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
-    n_Wallet["Wallet<br/>50k the, 30k-30k dono pass<br/>-> check aur block ek hi query me: paisa hai tabhi block, warna 0 row<br/>(atomic UPDATE: SET blocked = blocked + 30k WHERE total - blocked >= 30k)<br/>dono ek saath -> ek jeete, doosra 0 row, reject<br/>order cancel -> block hatao<br/>sauda aadha -> jitna bika utna kata, baaki blocked"]
+    n_Wallet["Wallet<br/>50k the, 30k-30k dono pass<br/>-> check aur block ek hi query me, paisa hai tabhi block, warna 0 row (atomic UPDATE)<br/>dono ek saath -> ek jeete, doosra reject<br/>order cancel -> block hatao"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet

@@ -1,0 +1,70 @@
+{
+ "title": "10:15 matching server gira, poori order book gayab",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: book sirf RAM me",
+   "items": [
+    {
+     "box": "TCS book (RAM)",
+     "sub": "4,000 order",
+     "cells": [
+      "o1",
+      "o2",
+      "..",
+      "4k"
+     ],
+     "state": "oooo"
+    },
+    {
+     "arrow": "crash"
+    },
+    {
+     "box": "Book",
+     "cells": [
+      "",
+      "",
+      "",
+      ""
+     ],
+     "state": "eeee",
+     "bad": true
+    }
+   ],
+   "result": "4,000 gayab"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: har order pehle log me, phir book; gira to log dobara chalao (replay)",
+   "items": [
+    {
+     "box": "Event log (disk)",
+     "cells": [
+      "1",
+      "2",
+      "..",
+      "4000"
+     ],
+     "state": "gggg"
+    },
+    {
+     "arrow": "replay"
+    },
+    {
+     "box": "Nayi book",
+     "sub": "wahi 4,000",
+     "cells": [
+      "o1",
+      "o2",
+      "..",
+      "4k"
+     ],
+     "state": "gggg",
+     "good": true
+    }
+   ],
+   "result": "wahi book",
+   "foot": "replay me der -> standby pehle se log padhta, book taiyaar"
+  }
+ ]
+}

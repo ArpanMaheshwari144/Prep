@@ -3,7 +3,7 @@ flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Queue_per_symbol["Queue per symbol<br/>9:15 sab TCS pe toot pade<br/>-> TCS ke saare order ek line, ek-ek karke<br/>ek thread RAM me lakhon / sec nipta leta<br/>(single thread per symbol)<br/>line me lag gaya -> ACCEPTED turant, FILLED sauda pe<br/>line lambi -> der, par khota nahi<br/>badhaye kaise -> stocks ke beech baanto, TCS ke andar nahi"]
+    n_Queue_per_symbol["Queue per symbol<br/>9:15 sab TCS pe toot pade<br/>-> TCS ke order ek line, ek thread RAM me tez nipta (single thread per symbol)<br/>line me lag gaya -> ACCEPTED turant, FILLED sauda pe<br/>badhaye kaise -> stocks ke beech baanto"]
     n_Matching_Engine["Matching Engine"]
     n_DB["DB"]
     n_USER --> n_Order_Service

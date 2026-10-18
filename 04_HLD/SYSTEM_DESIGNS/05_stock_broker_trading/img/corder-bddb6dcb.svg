@@ -1,0 +1,34 @@
+<svg width="720" height="260" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 346" font-family="Arial, Helvetica, sans-serif">
+<defs><marker id="sa" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M0,0 L14,7 L0,14 z" fill="#444"/></marker><marker id="sr" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M0,0 L14,7 L0,14 z" fill="#d32f2f"/></marker></defs>
+<rect width="960" height="346" fill="white"/>
+<text x="24" y="34" font-size="21" font-weight="bold">TCS ki order book: kiska sauda kisse, kis daam pe?</text>
+<rect x="20" y="50" width="920" height="276" rx="10" fill="#f3f8fd" stroke="#1976d2" stroke-width="2.5"/>
+<text x="38" y="78" font-size="17" font-weight="bold" fill="#0d47a1">KAISE: bechne wale sasta upar, khareedne wale mehnga upar</text>
+<rect x="40" y="133" width="137" height="106" rx="8" fill="white" stroke="#555" stroke-width="2"/>
+<text x="109" y="159" text-anchor="middle" font-size="15" font-weight="bold">Naya BUY</text>
+<text x="109" y="178" text-anchor="middle" font-size="15">3001 tak dunga</text>
+<rect x="89" y="191" width="37" height="26" fill="#e3f2fd" stroke="#1976d2"/>
+<text x="107" y="209" text-anchor="middle" font-size="12">3001</text>
+<rect x="302" y="94" width="161" height="87" rx="8" fill="white" stroke="#555" stroke-width="2"/>
+<text x="382" y="120" text-anchor="middle" font-size="15" font-weight="bold">SELL (sasta upar)</text>
+<rect x="322" y="133" width="37" height="26" fill="#f9a825" stroke="#333"/>
+<text x="341" y="151" text-anchor="middle" font-size="12">3000</text>
+<rect x="362" y="133" width="37" height="26" fill="#eeeeee" stroke="#bbb"/>
+<text x="381" y="151" text-anchor="middle" font-size="12">3001</text>
+<rect x="402" y="133" width="37" height="26" fill="#eeeeee" stroke="#bbb"/>
+<text x="421" y="151" text-anchor="middle" font-size="12">3005</text>
+<rect x="302" y="191" width="161" height="87" rx="8" fill="white" stroke="#555" stroke-width="2"/>
+<text x="382" y="217" text-anchor="middle" font-size="15" font-weight="bold">BUY (mehnga upar)</text>
+<rect x="342" y="230" width="37" height="26" fill="#eeeeee" stroke="#bbb"/>
+<text x="361" y="248" text-anchor="middle" font-size="12">2999</text>
+<rect x="382" y="230" width="37" height="26" fill="#eeeeee" stroke="#bbb"/>
+<text x="401" y="248" text-anchor="middle" font-size="12">2998</text>
+<rect x="574" y="152" width="239" height="68" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
+<text x="693" y="178" text-anchor="middle" font-size="15" font-weight="bold">Sauda</text>
+<text x="693" y="197" text-anchor="middle" font-size="15">3000 pe (book wale ka daam)</text>
+<line x1="183" y1="186" x2="294" y2="138" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="226" y="208" text-anchor="middle" font-size="13" fill="#0d47a1">top SELL dekho</text>
+<line x1="468" y1="186" x2="566" y2="186" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="518" y="176" text-anchor="middle" font-size="13" fill="#0d47a1">3000 &lt;= 3001</text>
+<text x="38" y="312" font-size="15" fill="#0d47a1">same daam pe jo pehle aaya wo pehle bikta</text>
+</svg>

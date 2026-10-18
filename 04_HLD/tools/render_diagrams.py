@@ -98,10 +98,18 @@ def main(f):
             name = m.group(1)
             mmd = os.path.join(img, name + '.mmd')
             if not os.path.exists(mmd):
-                term = concept_for(f, name)   # sirf concept, design nahi (jaise SHURU card)
-                if not term: return m.group(0)
+                term = concept_for(f, name)   # sirf concept / scene, design nahi (jaise SHURU card)
+                scene = os.path.join(img, name + '.scene.json')
                 tmp = os.path.join(img, name + '.svg')
-                shutil.copy(os.path.join(CONCEPT, 'out', term + '.svg'), tmp); fix_size(tmp)
+                if term:
+                    shutil.copy(os.path.join(CONCEPT, 'out', term + '.svg'), tmp)
+                elif os.path.exists(scene):
+                    sys.path.insert(0, HERE); import scene as sc, json
+                    open(tmp, 'w', encoding='utf-8').write(sc.render(json.load(open(scene, encoding='utf-8'))))
+                    term = 'scene'
+                else:
+                    return m.group(0)
+                fix_size(tmp)
                 print('ok', name, '= ' + term)
                 return save(name, tmp)
             src = open(mmd, encoding='utf-8').read()

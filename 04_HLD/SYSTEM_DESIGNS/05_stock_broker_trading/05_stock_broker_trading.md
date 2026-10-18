@@ -72,7 +72,7 @@ NUMBERS (andaaza):
 ```
 Order service har order DB me likhe, aur DB me milta-julta SELL dhoondh ke match kare.
 ```
-![cdabba](img/cdabba.svg)
+![cdabba](img/cdabba-c0ba35d1.svg)
 
 
 #### SHURU: ORDER BOOK KAISE MATCH KARTA
@@ -82,12 +82,8 @@ DIKKAT     TCS ka share: kuch bechna chahte (SELL), kuch khareedna (BUY).
 HAL        ORDER BOOK, do taraf: bechne wale sasta upar, khareedne wale mehnga upar. Sauda jab top
            khareedar >= top bechne wala; daam pehle se book wale ka; same daam pe jo pehle aaya.
 ```
-```
-TASVEER: TCS ki order book
-  Bechne wale   : sasta upar      3000, 3001, 3005 ...   (min-heap)
-  Khareedne wale: mehnga upar     2999, 2998 ...         (max-heap)
-  naya BUY 3001 -> top SELL 3000 <= 3001 -> sauda 3000 pe (book wale ka daam)
-```
+![corder](img/corder-bddb6dcb.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: sauda tabhi jab top khareedar >= top bechne wala; daam book wale ka, barabar pe pehle wala.
@@ -104,7 +100,7 @@ AAGE POOCHEGA:
 DIKKAT     Subah maine TCS ka Buy ek hi baar dabaya. Network gaya, jawab nahi aaya, app ne khud dobara bheja
            -> do order lag gaye, paisa do baar block, bhejna tha ek.
 ```
-![c1](img/c1.svg)
+![c1](img/c1-83b55ecd.svg)
 
 ```
 AAGE POOCHEGA:
@@ -122,7 +118,7 @@ AAGE POOCHEGA:
 DIKKAT     Wallet me 50k. Laptop se TCS 30k, usi second phone se INFY 30k (do alag order, alag id).
            Do server, dono ne 50k dekha, dono pass.
 ```
-![c2](img/c2.svg)
+![c2](img/c2-537d5db4.svg)
 
 ```
 NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
@@ -144,16 +140,10 @@ AAGE POOCHEGA:
 DIKKAT     Mera order book me pahuncha. Suresh 10 bech raha, usi pal Mohan ne bhi BUY 10.
            Do thread, dono ko "10 hai" dikha -> 20 bik gaye.
 ```
-![c3](img/c3.svg)
+![c3](img/c3-dc4881d0.svg)
 
 ```
 NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
-```
-```
-TASVEER: ek stock ek line
-TCS -> T3:  [main BUY 10] -> [Mohan BUY 10]       ek-ek karke, ek haath
-Suresh SELL 10 -> main ko 10 -> Suresh ke 0 bache -> Mohan ko 0
-INFY -> apna thread, TCS ki line se nahi rukta
 ```
 ```
 AAGE POOCHEGA:
@@ -169,7 +159,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Usi 9:15 pe poora market TCS pe toot pada: hazaaron order / second.
 ```
-![c4](img/c4.svg)
+![c4](img/c4-595e6424.svg)
 
 ```
 NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
@@ -189,17 +179,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
 ```
-![c5](img/c5.svg)
+![c5](img/c5-4e042d55.svg)
 
 ```
 NAHI       doosra engine saath chalao (active-active): dono match karte = ek sauda do baar settle.
-```
-```
-TASVEER: log -> book
-order aaya -> log me likho (number ke saath) -> PHIR book me
-10:15 gira -> book (4,000 order, RAM) gayab
-log #1 se replay -> wahi kram -> wahi book
-STANDBY pehle se log padhta, book taiyaar -> pehla gire tab chalu (ek waqt ek hi match kare)
 ```
 ```
 AAGE POOCHEGA:
@@ -216,7 +199,7 @@ AAGE POOCHEGA:
 DIKKAT     10:30, server wapas, log se book bani; ab mera 10:10 wala sauda settle hone laga (Suresh se
            10 TCS, 30k): mera 30k kata, Suresh ko milne se PEHLE crash.
 ```
-![c6](img/c6.svg)
+![c6](img/c6-f9abecbe.svg)
 
 ```
 NAHI       chaar alag UPDATE: beech me gira to aadha likha.
@@ -236,17 +219,10 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar 1 baje INFY 5 share (20k) ka sauda. Paisa Wallet DB me, share Portfolio DB me -> ek
            transaction nahi chalti. 20k kata, Portfolio me share se PEHLE crash.
 ```
-![c7](img/c7.svg)
+![c7](img/c7-74a68516.svg)
 
 ```
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
-```
-```
-TASVEER: status log
-mera sauda (20k, 5 INFY):  wallet done -> portfolio ... fail
-retry -> retry -> portfolio done -> SETTLED
-ghanton fail -> app pe PENDING + alert -> ops share daalta
-ulta (paisa wapas) kabhi nahi: match ho chuka
 ```
 ```
 AAGE POOCHEGA:
@@ -264,7 +240,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
 ```
-![c8](img/c8.svg)
+![c8](img/c8-fe27ca22.svg)
 
 ```
 NAHI       polling: 10 lakh bekaar sawaal / sec, 99% me price badla hi nahi.
@@ -301,7 +277,7 @@ JAWAB:    Order service check karti aur dobara order rokti (id se). Wallet paisa
           Log se crash ke baad book wapas, aur hisaab ka record bhi.
           Aage: stop-loss, risk check, regulator ki report.
 ```
-![c8_2](img/c8_2.svg)
+![c8_2](img/c8_2-27145c99.svg)
 
 
 ---

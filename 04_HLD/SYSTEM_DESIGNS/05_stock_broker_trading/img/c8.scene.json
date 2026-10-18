@@ -1,0 +1,49 @@
+{
+ "title": "10 lakh log har second \"TCS ka price?\"",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har user har second poochhe",
+   "items": [
+    {
+     "box": "10 lakh user"
+    },
+    {
+     "arrow": "har sec poochho"
+    },
+    {
+     "box": "Server",
+     "sub": "baith gaya",
+     "bad": true
+    }
+   ],
+   "result": "band"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: connection khula, price badla tabhi server bheje (WebSocket + pub/sub)",
+   "items": [
+    {
+     "box": "Price badla",
+     "sub": "TCS 3001"
+    },
+    {
+     "arrow": "pub/sub"
+    },
+    {
+     "box": "WebSocket servers"
+    },
+    {
+     "arrow": "khud bhejo"
+    },
+    {
+     "box": "10 lakh user",
+     "sub": "kuch nahi poochte",
+     "good": true
+    }
+   ],
+   "result": "",
+   "foot": "second me 1000 baar badla -> thodi der me aakhri price; toota, wapas juda -> abhi ka price alag se"
+  }
+ ]
+}

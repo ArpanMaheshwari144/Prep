@@ -1,0 +1,54 @@
+{
+ "title": "TCS ki order book: kiska sauda kisse, kis daam pe?",
+ "rows": [
+  {
+   "tag": "kaise",
+   "label": "KAISE: bechne wale sasta upar, khareedne wale mehnga upar",
+   "items": [
+    {
+     "box": "Naya BUY",
+     "sub": "3001 tak dunga",
+     "cells": [
+      "3001"
+     ],
+     "state": "b"
+    },
+    {
+     "arrow": "top SELL dekho"
+    },
+    {
+     "stack": [
+      {
+       "box": "SELL (sasta upar)",
+       "cells": [
+        "3000",
+        "3001",
+        "3005"
+       ],
+       "state": "ydd"
+      },
+      {
+       "box": "BUY (mehnga upar)",
+       "cells": [
+        "2999",
+        "2998"
+       ],
+       "state": "dd",
+       "miss": true
+      }
+     ]
+    },
+    {
+     "arrow": "3000 <= 3001"
+    },
+    {
+     "box": "Sauda",
+     "sub": "3000 pe (book wale ka daam)",
+     "good": true
+    }
+   ],
+   "result": "",
+   "foot": "same daam pe jo pehle aaya wo pehle bikta"
+  }
+ ]
+}
