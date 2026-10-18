@@ -248,6 +248,10 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Salary ke baad maine balance khola
+```
+DIKKAT     Salary aate hi maine balance khola. Har baar 50,000 khaate ki line jodna dheema, to balance ek column
+           me rakha. Par column aur khaata kabhi alag ho gaye (bug), to sach kaunsa? Kaun pakdega?
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -281,6 +285,10 @@ AAGE POOCHEGA:
 ```
 
 #### 7 11 baje sabki salary aa gayi, ek Banking service bhar gayi
+```
+DIKKAT     11 baje sabki salary aayi, laakhon transfer ek saath. Ek hi Banking Svc machine thi: CPU bhara,
+           transfer dheeme, phir machine giri -> koi bhi paisa nahi bhej pa raha.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -317,6 +325,10 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Salary ki bheed me sab balance dekh rahe, transfer dheeme
+```
+DIKKAT     Salary ke baad sab baar-baar balance aur history dekh rahe. Saari padhai usi ek DB pe, jahan transfer
+           bhi likhe jaate -> padhne ki bheed ne paisa bhejna dheema kar diya.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -355,6 +367,10 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Ravi ki dukaan ko 500, usi second dukaan se 200 refund (deadlock)
+```
+DIKKAT     Maine Ravi ki dukaan ko 500 bheje, usi second dukaan ne mujhe 200 refund kiye. Ek ne pehle mera row
+           pakda, doosre ne dukaan ka; dono ek doosre ka intezaar -> dono atke (deadlock).
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
