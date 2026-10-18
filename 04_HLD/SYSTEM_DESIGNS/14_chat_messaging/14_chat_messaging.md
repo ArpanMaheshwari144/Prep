@@ -186,7 +186,7 @@ flowchart LR
     n_LB["LB"]
     n_CS["Chat Server x200"]
     n_R["Redis (register)"]
-    n_DB["Message DB<br/>Ravi ka phone band, taar nahi<br/>-> pehle DB likho, phir bhejo"]
+    n_DB["Message DB<br/>Ravi ka phone band, taar nahi<br/>-> pehle DB likho, phir bhejo<br/>(store-then-forward)"]
     n_P["Push<br/>app band, khabar kaise<br/>-> app band ho to bhi ghanti<br/>(push: FCM / APNs)"]
     n_U --> n_LB
     n_LB --> n_CS
@@ -340,7 +340,7 @@ flowchart LR
     n_CS["Chat Server x200"]
     n_R["Redis (register)"]
     n_I["Idempotency check"]
-    n_CA["Cassandra<br/>500 ka group, 500 copy?<br/>-> group me ek copy, sab wahi padhein"]
+    n_CA["Cassandra<br/>500 ka group, 500 copy?<br/>-> group me ek copy, sab wahi padhein<br/>(ek copy, fan-out on read)"]
     n_P["Push (Google / Apple)"]
     n_SQ["Seq (Redis INCR)"]
     n_U --> n_LB

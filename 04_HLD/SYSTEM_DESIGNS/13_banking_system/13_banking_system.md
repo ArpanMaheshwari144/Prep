@@ -233,7 +233,7 @@ flowchart LR
     n_SVC["Banking Svc (+ idempotency)"]
     n_DB["SQL DB (+ ledger, outbox)"]
     n_K["Kafka"]
-    n_REC["Reconciliation job<br/>balance kahan se aaye?<br/>-> khaata sach, balance uska jod<br/>(cache)"]
+    n_REC["Reconciliation job<br/>balance kahan se aaye?<br/>-> khaata sach, balance uska jod<br/>(reconciliation)"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     n_DB --> n_K
@@ -242,8 +242,8 @@ flowchart LR
 ```
 ```
 TASVEER: khaata vs balance
-khaata (sach):  har len-den ki line, sirf INSERT   -> saari line jodo = 29,800
-balance column (cache, usi transaction me badla)  = 29,800   -> mila, theek
+khaata (sach):  har len-den ki line, sirf INSERT   -> saari line jodo = 30,100
+balance column (cache, usi transaction me badla)  = 30,100   -> mila, theek
 raat farak: jod 29,800 vs column 30,300  -> ALERT + account roko -> pehle KYUN, phir khaata jeete
 ```
 ```

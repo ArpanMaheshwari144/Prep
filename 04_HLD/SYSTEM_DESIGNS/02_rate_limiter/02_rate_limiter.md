@@ -139,8 +139,8 @@ NAHI       ek user hamesha ek App pe (sticky LB): wo App gira to ginti gayi; App
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: ginti sab machines ki ek jagah (Redis); key ki umar = window, umar khatam = ginti reset. Had paar ->
-         user ko 429; ginti App ke paas rahi to App badalte hi had toot jaati.
+  NIYAM: had tabhi sahi jab ginti EK jagah ho, aur wo har request ke saamne RAM-tez ho (Redis, DB nahi);
+         umar = window. Had paar -> 429; ginti App ke paas rahi to App badalte hi had toot jaati.
   "Ye kaunsa algorithm hua?"                -> FIXED WINDOW: har minute ka dabba, samajhne ko simple; asli
                                                chuna TOKEN BUCKET, wo bhi isi Redis me.
   "Aakhri sec me 5, agle ke pehle me 5?"    -> KINARE PE DOUBLE: 2 second me 10, fixed window ki kamzori;
@@ -328,8 +328,7 @@ flowchart LR
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
     n_USER --> n_EDGE
-    n_EDGE --> n_WAF
-    n_WAF --> n_EDGE
+    n_WAF -.->|ban list| n_EDGE
     style n_Kafka fill:#f9a825,color:#000
     style n_Pattern_Svc fill:#f9a825,color:#000
     style n_WAF fill:#f9a825,color:#000
@@ -369,8 +368,7 @@ flowchart LR
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
     n_USER --> n_EDGE
-    n_EDGE --> n_WAF
-    n_WAF --> n_EDGE
+    n_WAF -.->|ban list| n_EDGE
     style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
@@ -404,14 +402,13 @@ flowchart LR
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
     n_USER --> n_EDGE
-    n_EDGE --> n_WAF
-    n_WAF --> n_EDGE
+    n_WAF -.->|ban list| n_EDGE
     style n_API_Gateway fill:#f9a825,color:#000
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: thodi galat had, bina had se behtar: Redis poora gaya to har machine apni memory me gine (had /
-         machine ginti); user ko had thodi dheeli dikhe, par attack khula nahi.
+  NIYAM: thodi galat had, bina had se behtar: Redis poora gaya to fail-open wale (feed) pe bhi har machine
+         apni memory me gine; login ab bhi fail-closed. User ko had thodi dheeli, attack khula nahi.
   "Kaise kaam karta?"                  -> APNI MEMORY ME GINO: had baant ke, 100 / 4 server = har ek 25; Redis
                                           wapas aaya -> phir sabki ek ginti.
   "Machine badh gayi, kitna baantoge?" -> GINTI CONFIG SE: machines ki ginti config / service discovery se lo,
@@ -438,8 +435,7 @@ flowchart LR
     n_Pattern_Svc --> n_WAF
     n_API_Gateway --> n_Kafka
     n_USER --> n_EDGE
-    n_EDGE --> n_WAF
-    n_WAF --> n_EDGE
+    n_WAF -.->|ban list| n_EDGE
     style n_Redis_Cluster fill:#f9a825,color:#000
 ```
 ```

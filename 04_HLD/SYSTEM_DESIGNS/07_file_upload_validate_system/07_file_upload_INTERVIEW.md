@@ -164,8 +164,8 @@ AAGE POOCHEGA:
   "S3 us paas ko maanta kaise hai?"      -> SAME SECRET SE HASH: server (bucket + file naam + 10 min) ko AWS
                                             secret se sign kare; S3 wahi hash bana ke milaye.
   "To AWS chaabi hi user ko de do?"      -> KABHI NAHI: chaabi = poora bucket; paas = sirf ek file, 10 min.
-  "Had 5 GB thi, kisi ne 50 GB daal di?" -> PRESIGNED POST me had (content-length-range), S3 khud reject. PUT
-                                            me had nahi -> S3 event pe size dekho, badi = delete.
+  "Had 5 GB thi, kisi ne 50 GB daal di?" -> HAD PAAS ME: POST me content-length-range; PUT me size sign karo
+                                            (ek PUT max 5 GB) -> S3 khud reject; upar se S3 event pe size.
   "/complete bola hi nahi?"              -> S3 EVENT ('file aa gayi') se queue me, kyunki client pe bharosa
                                             nahi; wo bhi chhoota to sweeper pakde.
 ```
@@ -238,8 +238,8 @@ flowchart LR
     style n_Sweeper_job fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Ek aur file chadhte waqt meri app crash. "complete" kabhi nahi aaya: bytes S3 me pade (paisa lag
-           raha), DB me T-103 "UPLOADING" pe atka, koi dhoondhta hi nahi.
+DIKKAT     Ek aur file chadhte waqt meri app crash. "complete" nahi aaya, S3 ka event bhi chhoota: bytes S3 me
+           pade (paisa lag raha), DB me T-103 "UPLOADING" pe atka, koi dhoondhta hi nahi.
 HAL        atki file dhoondho (SWEEPER job), har kuch minute: haal UPLOADING / VALIDATING aur 10 min se nahi
            badla (jaanch 3 sec ki) -> S3 me bytes hain? haan = queue me dobara · nahi = FAILED.
 NAHI       sirf S3 lifecycle niyam: din me ek baar chalta aur DB nahi dekhta.

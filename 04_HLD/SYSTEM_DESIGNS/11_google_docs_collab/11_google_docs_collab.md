@@ -177,14 +177,12 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_CDN["CDN (app ki files)"]
+    n_App["App (op bhejo, files CDN se)"]
     n_LB["LB<br/>50 lakh taar, ek server nahi<br/>-> ek doc ke sab log ek server pe<br/>(ring, owner)"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
     n_DB["DB"]
     n_USER --> n_App
-    n_App --> n_CDN
     n_App --> n_LB
     n_LB --> n_CS1
     n_LB --> n_CS2
@@ -219,15 +217,13 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_CDN["CDN (app ki files)"]
+    n_App["App (op bhejo, files CDN se)"]
     n_LB["LB (docId se ring)"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
     n_PS["Redis pub/sub<br/>Ravi doosre server pe<br/>-> har doc ka channel, jis server pe uska user wo sune<br/>(pub/sub)"]
     n_DB["DB"]
     n_USER --> n_App
-    n_App --> n_CDN
     n_App --> n_LB
     n_LB --> n_CS1
     n_LB --> n_CS2
@@ -260,15 +256,13 @@ AAGE POOCHEGA:
 ```mermaid
 flowchart LR
     n_USER["USER A / B"]
-    n_App["App (op bhejo)"]
-    n_CDN["CDN (app ki files)"]
+    n_App["App (op bhejo, files CDN se)"]
     n_LB["LB (docId se ring)"]
     n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
     n_BUF["Redis buffer<br/>har akshar pe DB write<br/>-> har akshar nahi, 1 sec ka jama ek saath<br/>(buffer + batch)"]
     n_CAS["Cassandra edit log"]
     n_USER --> n_App
-    n_App --> n_CDN
     n_App --> n_LB
     n_LB --> n_Conn_Server_xN
     n_Conn_Server_xN --> n_PS

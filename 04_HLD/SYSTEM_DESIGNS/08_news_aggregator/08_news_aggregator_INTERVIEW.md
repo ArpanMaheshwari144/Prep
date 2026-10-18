@@ -234,7 +234,7 @@ AAGE POOCHEGA:
   "5 me se kaunsa source dikhao?"    -> JO PEHLE AAYA / BADA source; baaki "aur sources" me link.
 ```
 
-#### 5 Dopahar baad meri feed ruki: ek chhota source 30 sec atka, baaki 999 bhi ruke
+#### 5 Dopahar baad nayi khabar aani ruki: ek chhota source 30 sec atka, baaki 999 bhi ruke
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -369,12 +369,12 @@ NAHI       "sharding karo": ye purana hatana (retention) hai, data baantna (shar
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: hafta garam (Postgres), baaki thanda (S3); purani khabar khulti, bas dheemi; purana hatana =
+  NIYAM: naya mahina garam (Postgres), purane thande (S3); purani khabar khulti, bas dheemi; purana hatana =
          retention, sharding nahi.
   "1 saal purani khabar khuli?" -> ARCHIVE (S3) SE aayegi: dheemi, par use koi kabhi-kabhi hi kholta.
   "DETACH pe table lock hoga?"  -> NORMAL DETACH = ACCESS EXCLUSIVE poore table pe (pal bhar, feed padhai bhi
                                    rukti); PG 14+ DETACH PARTITION ... CONCURRENTLY -> kuch nahi rukta.
-  "3 saal baad kya?"            -> WAHI NIYAM: hafta garam, baaki thanda; DB utna hi rehta.
+  "3 saal baad kya?"            -> WAHI NIYAM: naya mahina garam, purana thanda; DB utna hi rehta.
 ```
 
 #### 9 Mail ka doosra hissa: source 100 guna hue to ek DB machine nahi jhelegi

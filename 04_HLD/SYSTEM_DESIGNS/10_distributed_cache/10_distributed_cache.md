@@ -166,7 +166,7 @@ TASVEER: ghadi 0..360, disha me chalo
   0 ------ A=100 ------ B=200 --- D=250 --- C=300 ------ 360 (= 0, wapas A)
   key 150 -> aage pehli machine = B
   key 350 -> aage koi nahi -> ghoom ke A
-  D=250 juda -> sirf 201..250 wali key B se D pe; baaki sab apni jagah
+  D=250 juda -> sirf 201..250 wali key C se D pe; baaki sab apni jagah
 ```
 ```
 AAGE POOCHEGA:

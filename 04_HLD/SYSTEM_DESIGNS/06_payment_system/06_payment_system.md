@@ -230,14 +230,14 @@ flowchart LR
 ```
 DIKKAT     Dopahar maine bank se wallet me 2000 daale (top-up). Ye paisa hamara DB nahi hilata: server PSP
            ko "bhejo" kehta, asli paisa bank rails pe. Wo raasta dheema -> har thread PSP me atka.
-HAL        2-3 sec me chhodo, fail pe call band (TIMEOUT + FUSE): 5 baar fail -> OPEN (call mat bhejo, payment
-           PENDING) -> 30 sec baad HALF-OPEN (ek test call) -> chali to CLOSED, fail to wapas OPEN.
+HAL        2-3 sec me chhodo (TIMEOUT): call gayi, jawab nahi = PENDING (pata nahi). 5 fail -> OPEN = call
+           gayi hi nahi -> saaf "bank raasta abhi band, baad me" (FUSE, fail-fast); 30 sec baad ek test call.
 NAHI       timeout pe "fail" dikha do: paisa shayad kat chuka.
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: bahar ka paisa (PSP) ka jawab pakka na ho to PENDING, 'fail' kabhi nahi; PSP dheema to jaldi
-         chhodo (timeout + fuse), warna saare thread atke. Ek payment hamesha ek PSP pe.
+  NIYAM: call GAYI aur jawab nahi = PENDING, 'fail' kabhi nahi; call gayi hi nahi (fuse OPEN) = saaf
+         "abhi nahi", paisa hila hi nahi. PSP dheema to jaldi chhodo, warna saare thread atke.
   "PSP ka timeout aaya, mujhe kya dikhe?" -> PROCESSING (PENDING): kyunki pata nahi kata ya nahi;
                                              reconciliation job PSP se poochh ke pakka kare.
   "Timeout lagao hi mat, wait karo?"      -> SAB PHANSE: kyunki har thread PSP me atka -> saare thread khatam
@@ -283,8 +283,8 @@ TASVEER: pehle likho, phir call
 AAGE POOCHEGA:
   NIYAM: call se PEHLE 'pata nahi' (PENDING) likho: server gire to bhi tracking number bacha; PSP khud
          bataye (webhook) ya hum poochhe (job). User ko PROCESSING, andha dobara kabhi nahi.
-  "Job ne PSP se poochha, jawab mila to?" -> HUA = SUCCESS · NAHI = dobara (WAHI key) · PAKKA FAIL = FAILED +
-                                             refund.
+  "Job ne PSP se poochha, jawab mila to?" -> HUA = SUCCESS · NAHI = dobara (WAHI key) · PAKKA FAIL = FAILED,
+                                             kuch wapas nahi (bank se paisa hila hi nahi).
   "Webhook do baar aa gaya?"              -> SIRF EK BAAR PENDING -> SUCCESS: kyunki pehle se SUCCESS ho to
                                              ignore.
   "Webhook aa hi jaata, job kyun?"        -> WEBHOOK KHO SAKTA: der se aaye ya server band tha; job wo jaal jo
@@ -357,9 +357,9 @@ NAHI       balance + alag audit_log table: usme kuch bhi likh sakte, koi niyam n
 ```
 TASVEER: khaata, har jodi ka jod 0
   kal raat balance 2200
-  ledger:  Arpan DEBIT 500   ·  kirana   CREDIT 500     (jod 0)
-           Arpan DEBIT ...   ·  ...      CREDIT ...     (jod 0)
-  saari line jodo -> subah 1100 kaise bana, line-line dikhta
+  ledger:  Arpan DEBIT 600   ·  bijli    CREDIT 600     (raat bill, jod 0)
+           Arpan DEBIT 500   ·  kirana   CREDIT 500     (subah, jod 0)
+  2200 - 600 - 500 = 1100 -> subah 1100 kaise bana, line-line dikhta
   galti mili -> line mitao nahi, NAYI ULTI LINE jodo
 ```
 ```
@@ -438,7 +438,7 @@ flowchart LR
     n_DB --> n_Read_replica
     n_Reconciliation_job --> n_DB
     n_Reconciliation_job --> n_PSP
-    n_PSP -.-> |webhook| n_Payment_Svc_xN
+    n_PSP -.->|webhook| n_Payment_Svc_xN
     style n_Read_replica fill:#f9a825,color:#000
 ```
 ```
@@ -480,7 +480,7 @@ flowchart LR
     n_SQL_DB_shard_by_account_id --> n_Read_replica
     n_Reconciliation_job --> n_SQL_DB_shard_by_account_id
     n_Reconciliation_job --> n_PSP
-    n_PSP -.-> |webhook| n_Payment_Svc_xN
+    n_PSP -.->|webhook| n_Payment_Svc_xN
     style n_SQL_DB_shard_by_account_id fill:#f9a825,color:#000
 ```
 ```
@@ -559,7 +559,7 @@ Gateway           -> bheed / hamla -> rate limit
 Payment Svc       -> stateless -> machine badhao
 Idempotency       -> do request ek saath -> unique / SETNX
 SQL DB            -> kaatna + daalna ek transaction · padhai -> replica · likhai -> shard by account_id
-PSP               -> dheema / band -> PENDING + fuse · jawab nahi -> webhook + reconciliation
+PSP               -> dheema = PENDING · band = fuse, "abhi nahi" · jawab nahi -> webhook + reconciliation
 Ledger            -> sirf jodo, mahine ke tukde, purana sasti jagah
 ASLI MUSHKIL      -> alag bank / shard ke beech ka len-den, bheed nahi
 

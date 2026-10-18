@@ -14,7 +14,7 @@
 3  Pay ke baad network gaya, app ne dobara    -> IDEMPOTENCY KEY (bookingId)           Payment Svc
 4  11 baje 1 lakh log seat map dekh rahe      -> CACHE + READ REPLICA                  Redis + Read replica
 5  12 baje concert: 3000 seat, 2 lakh log     -> WAITING ROOM + Kafka (sirf badi sale) Kafka + Booking worker
-6  2 baje Redis restart, sab replica pe       -> SET NX lock, pehla hi banaye          Redis Cluster
+6  2 baje Redis restart, sab replica pe       -> SET NX lock, pehla hi banaye          Redis (SET NX + copy)
 7  shaam ko meri App machine giri             -> STATELESS App + LB health check       LB + App x N
 
 POORA DESIGN (upar ke dabbe kram se):
@@ -99,8 +99,8 @@ flowchart LR
 ```
 DIKKAT     10 baje badi movie ki booking khuli. Maine aur Ravi ne 10:00:01 pe "A1 khaali" dekha, Book dabaya.
            App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
-HAL        khaali ho tabhi book (ATOMIC UPDATE): check aur likhna EK query me ("SIRF agar abhi bhi khaali
-           ho"): UPDATE seats SET status = 'booked' WHERE seat_id = 'A1' AND status = 'available'
+HAL        khaali ho tabhi book (ATOMIC UPDATE), check + likhna EK query me: UPDATE seats SET status =
+           'booked' WHERE show_id = 42 AND seat_id = 'A1' AND status = 'available'
 NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke andar.
 ```
 ```
@@ -117,8 +117,8 @@ AAGE POOCHEGA:
                                        -> 'available' nahi -> 0 row, kyunki sach ek ko hi.
   "4 seat A1-A4, A4 Ravi le gaya?"  -> EK TRANSACTION: chaaron saath; badli rows 4 nahi -> ROLLBACK, kyunki
                                        aadhi booking kisi kaam ki nahi.
-  "4 seat, do log ulte kram me?"    -> SEAT_ID KE KRAM ME lock: SELECT ... FOR UPDATE ORDER BY seat_id, phir
-                                       UPDATE; ek kram = koi kisi ka intezaar nahi (deadlock).
+  "4 seat, do log ulte kram me?"    -> EK UPDATE ... seat_id IN (A1..A4) AND 'available': dono ka lock DB ke
+                                       kram me (index), app ka ulta kram beech me aata hi nahi.
   "FOR UPDATE / version kyun nahi?" -> EK STATEMENT, lock sabse chhota: FOR UPDATE = do baar DB, lock lamba ·
                                        version = haara dobara try, seat gayi to gayi.
   "Ek ka hi dobara bhejna, wo bhi?" -> NAHI, wo IDEMPOTENCY (bookingId = key), kyunki do log = race (UPDATE
@@ -236,7 +236,7 @@ flowchart LR
     n_USER --> n_App
     n_App --> n_Payment_Svc
     n_App --> n_RRR
-    n_App --> |sirf badi sale| n_Kafka
+    n_App -->|sirf badi sale| n_Kafka
     n_Kafka --> n_Booking_worker
     n_Booking_worker --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
@@ -291,7 +291,7 @@ flowchart LR
     n_App --> n_Payment_Svc
     n_App --> n_Redis
     n_App --> n_Read_replica
-    n_App --> |sirf badi sale| n_KB
+    n_App -->|sirf badi sale| n_KB
     n_KB --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
     n_App --> n_SQL_primary
@@ -329,7 +329,7 @@ flowchart LR
     n_LB --> n_App_xN
     n_App_xN --> n_Payment_Svc
     n_App_xN --> n_RRR
-    n_App_xN --> |sirf badi sale| n_KB
+    n_App_xN -->|sirf badi sale| n_KB
     n_KB --> n_SQL_primary
     n_Sweeper_job --> n_SQL_primary
     n_App_xN --> n_SQL_primary

@@ -9,7 +9,7 @@
 RAJA KA RAJYA (poori file isi se yaad rakho):
    har aadmi ka apna notice board = Redis inbox      · dhindhora peetne wala = Fanout service
    mahal ka bada register         = tweet store (Cassandra) · likhne wala munshi = Tweet service
-   akhbaar padhne wala            = Timeline service  · kaun kiska chela register = Graph DB
+   akhbaar padhne wala            = Timeline service  · kaun kiska chela register = Follow store
    akhbaar ka truck               = Kafka
 ```
 
@@ -27,13 +27,13 @@ RAJA KA RAJYA (poori file isi se yaad rakho):
 6   5,000 tweet / sec, 0.5 PB                -> CASSANDRA, user_id se baanto        Cassandra
 7   main Bangalore, data US, 200 ms          -> REGION-WISE + Route 53              Route 53
 8   akeli App machine giri, sab band         -> STATELESS App x N + ALB             ALB + App x N
-9   padhne ki bheed, tweet daalna dheema     -> ALAG SERVICE (likhna/padhna)       Tweet/Timeline/User + Graph
+9   padhne ki bheed, tweet daalna dheema     -> ALAG SERVICE (likhna/padhna)       Tweet/Timeline/User/Follow
 10  maine video daali, sabko dheemi          -> S3 + CDN                            S3 + CDN
 
 POORA DESIGN (upar ke dabbe kram se):
    LIKHNA: Route 53 -> ALB -> Tweet Svc -> Cassandra + Kafka -> Fanout workers -> Redis inbox (celeb skip)
    PADHNA: Timeline Svc -> Redis inbox (push) + Hot-tweet cache (celeb pull) -> milao -> top 50
-   follow = User Svc + Graph DB · photo / video = S3 + CDN
+   follow = User Svc + Follow store · photo / video = S3 + CDN
 ```
 
 ---
@@ -424,7 +424,7 @@ flowchart LR
     n_FAN["Kafka + Fanout workers"]
     n_RI["Redis (inbox + hot tweet)"]
     n_Timeline_Svc["Timeline Svc"]
-    n_UG["User Svc + Graph DB"]
+    n_UG["User Svc + Follow store"]
     n_USER --> n_EDGE
     n_EDGE --> n_Tweet_Svc
     n_EDGE --> n_Timeline_Svc
@@ -442,12 +442,12 @@ flowchart LR
 ```
 AAGE POOCHEGA:
   NIYAM: har kaam alag service -> jiski bheed badhi sirf wahi badhao; ek ka dheema doosre ko nahi rokta.
-  "Kaise kaam karta?"             -> ALAG SERVICE: Tweet (likhna), Timeline (feed), User, Graph (follow); ALB
+  "Kaise kaam karta?"             -> ALAG SERVICE: Tweet (likhna), Timeline (feed), User, Follow store; ALB
                                      path se: POST /tweet -> Tweet · GET /feed -> Timeline.
   "Feed ki bheed badhi to?"       -> SIRF TIMELINE BADHAO: kyunki alag service, Tweet Svc pe asar nahi.
   "Kisko follow karta, kahan se?" -> GRAPH / USER SVC: par har baar call nahi, follow list Redis me, kyunki
                                      har feed pe chahiye.
-  "Fanout ko 10,000 followers?"   -> PANNE ME: Graph store se 1000-1000 padh ke inbox likho, kyunki ek baar me
+  "Fanout ko 10,000 followers?"   -> PANNE ME: Follow store se 1000-1000 padh inbox likho, kyunki ek baar me
                                      sab = bhaari.
   "Graph DB (Neo4j) chahiye?"     -> NAHI: seedhi follow list ko ek table / Cassandra kaafi; Graph DB tab jab
                                      'dost ke dost' jaise sawaal hon.
@@ -459,7 +459,7 @@ flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
     n_CDN["CDN<br/>video sabko dheemi, mehngi<br/>-> video S3 me, user ke paas se do<br/>(CDN)"]
-    n_SVC["Tweet / Timeline / User Svc + Graph"]
+    n_SVC["Tweet / Timeline / User Svc + Follow store"]
     n_Cassandra["Cassandra"]
     n_FAN["Kafka + Fanout workers"]
     n_RI["Redis (inbox + hot tweet)"]
@@ -497,11 +497,11 @@ LIKHNA: Route 53 -> ALB -> Tweet Svc -> Cassandra me save -> Kafka -> Fanout wor
         -> aam followers ke Redis inbox me sirf tweet number (aakhri 800 rakho), celeb skip
 PADHNA: Timeline Svc -> Redis inbox (push) + celebs ke tweet celeb cache se (pull)
         -> milao + sort -> number se poora tweet laao -> upar ke 50 · photo / video S3 me, user tak CDN se
-FOLLOW: User Svc + Graph DB
+FOLLOW: User Svc + Follow store
 
 DB:  Tweet = Cassandra (bahut zyada, seedha kaam, likhna bahut, user_id + time se baanta)
      Inbox = har user ka Redis sorted set, sirf number (poora tweet 200 jagah copy kiya to RAM phategi)
-     Graph = Neo4j ya Cassandra (followers / following)
+     Follow store = ek table / Cassandra (followers / following); Neo4j zaroori nahi
 ```
 ```
 JAWAB:    Likhna: tweet Cassandra me save, aur 'naya tweet' Kafka me. Worker aam followers ke Redis inbox
@@ -526,7 +526,7 @@ flowchart LR
     n_Timeline_Svc["Timeline Svc"]
     n_Hot_tweet_cache["Hot-tweet cache"]
     n_User_Svc["User Svc"]
-    n_Graph_DB["Graph DB"]
+    n_Graph_DB["Follow store"]
     n_S3["S3 media"]
     n_USER --> n_Route_53
     n_ALB --> n_Tweet_Svc

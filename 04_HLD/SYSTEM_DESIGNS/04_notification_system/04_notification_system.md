@@ -385,7 +385,7 @@ NAHI       har worker apni speed 100 / sec: 100 worker = 100 guna -> phir 429.
 AAGE POOCHEGA:
   NIYAM: had company ki hai, worker ki nahi: sab worker ek baalti se token lein; token nahi = ruko, khabar
          phenko nahi.
-  "Token nahi mila, message ka kya?" -> LINE ME INTEZAAR: had ke baad DLQ, phenke nahi; kyunki baalti bas
+  "Token nahi mila, message ka kya?" -> LINE ME INTEZAAR: ye fail nahi, retry ginti nahi badhti; baalti bas
                                         speed rokti, khabar nahi.
   "Worker apne aap badh gaye to?"    -> SPEED WAHI: kyunki baalti saanjhi; kitne bhi worker ho, kul 100 / sec.
   "Ye had hoti kitni hai?"           -> COMPANY KI: SES production shuru ~14 / sec (naya sandbox 1 / sec) ·
@@ -426,10 +426,10 @@ AAGE POOCHEGA:
   NIYAM: 'bheja' aur 'mila' alag haal; 'mila' tab likho jab company (asli, signed webhook) bataye.
   "Ye 'pahuncha / fail' ka hisaab kahan?" -> CASSANDRA (Tracking): kyunki likhna bahut aur seedhi row, jodna
                                              kuch nahi.
-  "Webhook aaya hi nahi to?"              -> EK BAAR POOCHHO: sirf ghanton 'bhej diya' pe atke message ke
-                                             liye, kyunki sabko poochna = had + kharcha.
-  "Koi nakli webhook bhej de?"            -> HASTAKSHAR JAANCHO: company ka HMAC signature, kyunki bina iske
-                                             koi bhi 'pahuncha' likh de; galat -> mana.
+  "Webhook aaya hi nahi to?"              -> EK BAAR POOCHHO (Twilio SID se): sirf ghanton atke message,
+                                             kyunki sabko poochna = had. SES me sirf SNS notification.
+  "Koi nakli webhook bhej de?"            -> HASTAKSHAR JAANCHO: Twilio HMAC header, SES/SNS ka certificate,
+                                             SendGrid ka public key; bina iske koi bhi 'pahuncha' likh de.
 ```
 
 #### 10 Shaam ko "Diwali offer sabko": 1 crore log

@@ -12,11 +12,11 @@
    KYA HUA                                     ILAAJ                                DABBA JUDA
 1  ek tap, network gaya, do order lag gaye  -> IDEMPOTENCY KEY (wahi id dobara)     Order Service
 2  wallet 50k, 30k-30k dono order pass      -> check + block EK atomic query        Wallet
-3  Suresh ke 10, mujhe aur Mohan dono ko    -> ek symbol ek thread, book RAM me     Queue + Matching Engine
-4  9:15 sab TCS pe toot pade                -> baanto mat, ek thread kaafi, line    (line / queue)
+3  Suresh ke 10, mujhe aur Mohan dono ko    -> ek symbol ek thread, book RAM me     Matching Engine
+4  9:15 sab TCS pe toot pade                -> baanto mat, ek thread kaafi, line    Queue
 5  10:15 server gira, book gayab            -> pehle log, phir book; gira = replay  Event Log (= wahi line)
 6  mera 30k kata, Suresh ko mila nahi       -> ek transaction: chaaron ya koi nahi  Settlement
-7  interviewer: paisa, share alag DB        -> har step ka haal, aage badho         Wallet DB + Portfolio DB
+7  dopahar INFY 20k kata, share nahi aaye   -> har step ka haal, aage badho         Wallet DB + Portfolio DB
 8  10 lakh log price poochh rahe            -> push (TV jaisa), WebSocket           Pub/Sub + WebSocket
 
 POORA DESIGN (upar ke dabbe kram se):
@@ -179,7 +179,6 @@ flowchart LR
     n_Wallet --> n_Queue_per_symbol
     n_Queue_per_symbol --> n_Matching_Engine
     n_Matching_Engine --> n_DB
-    style n_Queue_per_symbol fill:#f9a825,color:#000
     style n_Matching_Engine fill:#f9a825,color:#000
 ```
 ```
@@ -302,8 +301,8 @@ flowchart LR
     style n_Settlement fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Mera sauda 9:15 pe match hua tha (Suresh se 10 TCS, 30k). Ab paisa-share hilana:
-           mera 30k kata, Suresh ko milne se PEHLE crash.
+DIKKAT     10:30, server wapas, log se book bani; ab mera 9:15 wala sauda settle hone laga (Suresh se
+           10 TCS, 30k): mera 30k kata, Suresh ko milne se PEHLE crash.
 HAL        chaaron ek saath ya koi nahi (TRANSACTION): BEGIN Arpan -30k +10 share · Suresh +30k -10 share
            COMMIT. Crash -> rollback.
 NAHI       chaar alag UPDATE: beech me gira to aadha likha.
@@ -322,7 +321,7 @@ AAGE POOCHEGA:
   "Asli me paisa usi pal Suresh ko?"       -> NAHI, T+1: NSE Clearing karta; ye broker ka apna khaata.
 ```
 
-#### 7 Interviewer: paisa aur share do alag DB me ho to?
+#### 7 Dopahar: paisa Wallet DB me, share Portfolio DB me — INFY ka 20k kata, share nahi aaye
 ```mermaid
 flowchart LR
     n_USER["USER"]
@@ -344,15 +343,15 @@ flowchart LR
     style n_Portfolio_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     Interviewer: "paisa Wallet DB me, share Portfolio DB me ho to?" -> ek transaction nahi chalti.
-           Mera 30k Wallet DB me kata, Portfolio DB me share daalne se PEHLE crash -> aadha kaam.
+DIKKAT     Dopahar 1 baje INFY 5 share (20k) ka sauda. Paisa Wallet DB me, share Portfolio DB me -> ek
+           transaction nahi chalti. 20k kata, Portfolio me share se PEHLE crash.
 HAL        har kadam likho, aage hi badho (STATUS LOG): wallet done -> portfolio done. Fail -> retry, aage hi
            badho (match ke baad ulta nahi). Ghanton fail -> PENDING + alert, ops share daalta.
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
 ```
 ```
 TASVEER: status log
-mera sauda (30k, 10 TCS):  wallet done -> portfolio ... fail
+mera sauda (20k, 5 INFY):  wallet done -> portfolio ... fail
 retry -> retry -> portfolio done -> SETTLED
 ghanton fail -> app pe PENDING + alert -> ops share daalta
 ulta (paisa wapas) kabhi nahi: match ho chuka
@@ -362,8 +361,8 @@ AAGE POOCHEGA:
   NIYAM: match ke baad sauda PAKKA: system hi aage badhaata (retry), user ko kuch dobara nahi karna;
          beech ka haal user ko PENDING dikhe.
   "Step-step karoge, keemat kya?"              -> BEECH ME PENDING DIKHTA: par 2PC jaisa lamba lock nahi.
-  "Beech me gira, mera paisa wapas kyun nahi?" -> SAUDA PAKKA: kyunki Suresh ko 30k mil chuke; match ke baad
-                                                  sirf aage, likha haal se retry.
+  "Beech me gira, mera paisa wapas kyun nahi?" -> SAUDA PAKKA: kyunki bechne wale ko 20k mil chuke; match
+                                                  ke baad sirf aage, likha haal se retry.
   "To SAGA (ulta karna) kabhi nahi?"           -> SIRF MATCH SE PEHLE: block hua par book tak nahi pahuncha ->
                                                   block hatao.
   "Orchestration ya choreography?"             -> ORCHESTRATION: kyunki paise me ek jagah saaf dikhe kaunsa

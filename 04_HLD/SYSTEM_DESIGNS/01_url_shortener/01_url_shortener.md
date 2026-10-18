@@ -19,7 +19,7 @@
 8  raat ko spammer, 5,000 link / sec        -> RATE LIMIT darwaze pe + WAF          API Gateway + WAF
 
 POORA DESIGN (upar ke dabbe kram se):
-   User -> Route 53 -> LB x2 -> API Gateway -> App x N (Counter ka thaila) -> Redis -> Cassandra
+   User -> Route 53 -> LB x2 -> WAF -> API Gateway -> App x N (Counter ka thaila) -> Redis -> Cassandra
    click ki khabar: App -> Kafka -> Analytics (fail -> DLQ)
 ```
 
@@ -134,8 +134,8 @@ NAHI       DB ki read copy (replica): wo bhi disk se, dheemi; 1 lakh / sec ke li
 ```
 ```
 AAGE POOCHEGA:
-  NIYAM: garam link RAM (Redis) me, DB tak sirf wo jo Redis me na mile; user ko farak nahi, bas tez.
-         Redis gira to saara bojh DB pe -> Redis ki copy, aur aakhir me kuch request mana (DB bachao).
+  NIYAM: sach ek hi jagah (DB), Redis sirf garam copy: purani / khoyi ho sakti, isliye DB se wapas bane.
+         User ko farak nahi, bas tez. Redis gira -> uski copy, aakhir me kuch request mana (DB bachao).
   "Har App apna cache kyun nahi rakhta?"    -> EK SHARED REDIS: kyunki link badla to har App ki apni copy
                                                purani reh jaati; Redis sabka ek.
   "Theek, to saare 180 arab link Redis me?" -> SIRF GARAM: kyunki RAM mehngi; bhara to sabse der se na khula
@@ -475,6 +475,7 @@ flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
     n_API_Gateway["API Gateway"]
+    n_WAF["WAF"]
     n_LB_1["LB 1"]
     n_LB_2["LB 2"]
     n_App_x_N_1["App 1"]
@@ -489,8 +490,9 @@ flowchart LR
     n_USER --> n_Route_53
     n_Route_53 --> n_LB_1
     n_Route_53 --> n_LB_2
-    n_LB_1 --> n_API_Gateway
-    n_LB_2 --> n_API_Gateway
+    n_LB_1 --> n_WAF
+    n_LB_2 --> n_WAF
+    n_WAF --> n_API_Gateway
     n_API_Gateway --> n_App_x_N_1
     n_API_Gateway --> n_App_x_N_2
     n_App_x_N_1 --> n_Counter
