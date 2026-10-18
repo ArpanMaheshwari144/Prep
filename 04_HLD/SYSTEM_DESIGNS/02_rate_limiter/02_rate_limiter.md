@@ -119,7 +119,7 @@ flowchart LR
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Redis["Redis<br/>do App, ginti bat gayi<br/>-> sabki ek ginti, 60 sec me mite<br/>(Redis + EXPIRE)<br/>pehli request -> 60 sec umar, phir khud mite (EXPIRE)<br/>6thi request -> ginti 5 paar, 429<br/>minute ke kinare 5 + 5 -> 2 sec me 10 (fixed window)"]
+    n_Redis["Redis<br/>do App, ginti bat gayi<br/>-> sabki ek ginti, 60 sec me mite<br/>(Redis + EXPIRE)<br/>6thi request -> ginti 5 paar, 429<br/>minute ke kinare 5 + 5 -> 2 sec me 10 (fixed window)"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2
@@ -153,7 +153,7 @@ flowchart LR
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Redis["Redis<br/>do ne 4 padha, 6 ghuse<br/>-> padhna + badhana ek jhatke me<br/>(INCR / Lua)<br/>INCR ke baad crash -> INCR + EXPIRE ek Lua me<br/>token bucket -> dekhna + ghatana ek Lua me (lazy refill)<br/>Lua dheema -> poora Redis ruke, script chhota rakho"]
+    n_Redis["Redis<br/>do ne 4 padha, 6 ghuse<br/>-> padhna + badhana ek jhatke me<br/>(INCR / Lua)<br/>INCR ke baad crash -> INCR + EXPIRE ek Lua me<br/>token bucket -> dekhna + ghatana ek Lua me (lazy refill)"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2
@@ -191,7 +191,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB["LB"]
-    n_API_Gateway["API Gateway<br/>429 wali bhi andar ghoomi<br/>-> darwaze pe hi roko<br/>(limiter gateway pe)<br/>had paar -> wahin 429, App tak nahi<br/>429 ke saath -> kab aao + kitni bachi (Retry-After)<br/>sab 30 sec baad saath -> alag-alag waqt do (jitter)<br/>gateway gira -> 2+ machine, aage LB"]
+    n_API_Gateway["API Gateway<br/>429 wali bhi andar ghoomi<br/>-> darwaze pe hi roko<br/>(limiter gateway pe)<br/>429 ke saath -> kab aao + kitni bachi (Retry-After)<br/>gateway gira -> 2+ machine, aage LB"]
     n_Redis["Redis"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
@@ -298,7 +298,7 @@ flowchart LR
     n_EDGE["Route 53 + ALB"]
     n_API_Gateway["API Gateway"]
     n_Redis_Cluster["Redis Cluster"]
-    n_Kafka["Kafka<br/>bot har 60 sec phir<br/>-> baar-baar 429 wala IP darwaze pe ban<br/>(pattern + WAF)<br/>har 429 -> Kafka me daal ke bhool jao<br/>10 min me 500+ 429 -> Pattern Svc pakde, WAF ban<br/>Kafka peeche -> ban late, rate limit rok hi raha<br/>galat ban (office IP) -> ~24 ghante me khud hate"]
+    n_Kafka["Kafka<br/>bot har 60 sec phir<br/>-> baar-baar 429 wala IP darwaze pe ban<br/>(pattern + WAF)<br/>10 min me 500+ 429 -> Pattern Svc pakde, WAF ban<br/>Kafka peeche -> ban late, rate limit rok hi raha<br/>galat ban (office IP) -> ~24 ghante me khud hate"]
     n_Pattern_Svc["Pattern Svc"]
     n_WAF["WAF"]
     n_App_xN["App x N"]
@@ -370,7 +370,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
-    n_API_Gateway["API Gateway<br/>attack me Redis gira, API khuli<br/>-> Redis gaya to har server apni ginti<br/>(local fallback)<br/>Redis + copy gaye -> har server apni ginti, had baanto (100 / 4)<br/>ek user alag server -> motamoti had, bina had se behtar<br/>server badh gaye -> ginti config se, dobara baanto<br/>Redis wapas -> phir sabki ek ginti"]
+    n_API_Gateway["API Gateway<br/>attack me Redis gira, API khuli<br/>-> Redis gaya to har server apni ginti<br/>(local fallback)<br/>Redis + copy gaye -> har server apni ginti, had baanto (100 / 4)<br/>ek user alag server -> motamoti had, bina had se behtar<br/>Redis wapas -> phir sabki ek ginti"]
     n_Redis_Cluster["Redis Cluster"]
     n_Kafka["Kafka"]
     n_Pattern_Svc["Pattern Svc"]

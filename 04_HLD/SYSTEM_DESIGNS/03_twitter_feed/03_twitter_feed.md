@@ -141,7 +141,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Kafka["Kafka<br/>5,000 inbox usi request me<br/>-> turant ho gaya, inbox peeche bharo<br/>(Kafka + fanout)<br/>DB save, Kafka fail -> outbox / retry<br/>apni hi feed -> apna tweet seedha, baaki peeche<br/>worker 60/100 pe gira -> commit nahi, khabar phir aayegi<br/>wahi 60 dobara -> sorted set me tweet ek hi<br/>ek worker kam -> worker badhao, lines bat jaati (partition)"]
+    n_Kafka["Kafka<br/>5,000 inbox usi request me<br/>-> turant ho gaya, inbox peeche bharo<br/>(Kafka + fanout)<br/>DB save, Kafka fail -> outbox / retry<br/>apni hi feed -> apna tweet seedha, baaki peeche<br/>worker 60/100 pe gira -> commit nahi, khabar phir aayegi<br/>wahi 60 dobara -> sorted set me tweet ek hi"]
     n_Fanout_workers["Fanout workers"]
     n_Redis_inbox["Redis inbox"]
     n_DB["DB"]
@@ -187,7 +187,7 @@ flowchart LR
     n_USER["USER"]
     n_App["App<br/>+ push + pull merge"]
     n_Kafka["Kafka"]
-    n_Fanout_workers["Fanout workers<br/>Bieber = 10 crore inbox<br/>-> celeb ka tweet padhte waqt jodo<br/>(hybrid push + pull)<br/>celeb tweet kare -> inbox me nahi, padhte waqt laao (pull)<br/>feed khuli -> inbox + celeb ke naye tweet milao (hybrid)<br/>10,000 ke aas-paas -> 12,000 upar pull, 8,000 neeche push<br/>50 celeb follow -> celeb tweet alag, pull sasta"]
+    n_Fanout_workers["Fanout workers<br/>Bieber = 10 crore inbox<br/>-> celeb ka tweet padhte waqt jodo<br/>(hybrid push + pull)<br/>feed khuli -> inbox + celeb ke naye tweet milao (hybrid)<br/>50 celeb follow -> celeb tweet alag, pull sasta"]
     n_Redis_inbox["Redis inbox"]
     n_DB["DB"]
     n_USER --> n_App
@@ -232,7 +232,7 @@ flowchart LR
     n_Kafka["Kafka"]
     n_Fanout_workers["Fanout workers"]
     n_Redis_inbox["Redis inbox"]
-    n_Hot_tweet_cache["Hot-tweet cache<br/>Virat ka tweet, DB gira<br/>-> celeb ke naye tweet RAM me<br/>(hot-tweet cache)<br/>ek key, machine garam -> key ki 5 copy + App memory 1-2 sec<br/>Virat ne edit / delete -> cache se key hatao"]
+    n_Hot_tweet_cache["Hot-tweet cache<br/>Virat ka tweet, DB gira<br/>-> celeb ke naye tweet RAM me<br/>(hot-tweet cache)<br/>ek key pe bheed -> key ki kai copy + App memory 1-2 sec<br/>Virat ne edit / delete -> cache se key hatao"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_Kafka
@@ -313,7 +313,7 @@ flowchart LR
     n_Fanout_workers["Fanout workers"]
     n_Redis_inbox["Redis inbox"]
     n_Hot_tweet_cache["Hot-tweet cache"]
-    n_Cassandra["Cassandra<br/>5,000 / sec, 0.5 PB<br/>-> mere saare tweet ek machine pe<br/>(shard by user_id)<br/>RAM bhar gayi -> disk pe nayi file, sirf jodo<br/>files bahut -> peeche milao (compaction + bloom filter)<br/>meri machine giri -> 3 copy, 2 likho 2 padho (quorum)<br/>famous, machine garam -> garam tweet alag RAM cache<br/>famous ke bahut tweet -> key me mahina jodo"]
+    n_Cassandra["Cassandra<br/>5,000 / sec, 0.5 PB<br/>-> mere saare tweet ek machine pe<br/>(shard by user_id)<br/>meri machine giri -> 3 copy, 2 likho 2 padho (quorum)<br/>famous, machine garam -> garam tweet alag RAM cache<br/>famous ke bahut tweet -> key me mahina jodo"]
     n_USER --> n_App
     n_App --> n_Kafka
     n_App --> n_Hot_tweet_cache
@@ -348,7 +348,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53<br/>Bangalore se US, 300 ms<br/>-> data user ke paas wale region me<br/>(multi-region)<br/>US celeb ka tweet -> garam tweet India cache me bhi<br/>main US ghooma -> India bhejo, ya paas ki copy<br/>poora region gira -> zinda region, feed thodi purani<br/>dono region me likha -> baad wala jeete (last write wins)"]
+    n_Route_53["Route 53<br/>Bangalore se US, 300 ms<br/>-> data user ke paas wale region me<br/>(multi-region)<br/>US celeb ka tweet -> garam tweet India cache me bhi<br/>poora region gira -> zinda region, feed thodi purani<br/>dono region me likha -> baad wala jeete (last write wins)"]
     n_App["App"]
     n_Kafka["Kafka"]
     n_Fanout_workers["Fanout workers"]
@@ -383,7 +383,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_Route_53["Route 53"]
-    n_ALB["ALB<br/>akeli App giri, sab band<br/>-> kai App, koi yaad na rakhe<br/>(stateless x N)<br/>machine giri -> ~10 sec health check, chup = bahar<br/>naya code -> ek-ek karke badlo (rolling)<br/>nayi machine judi -> dheere traffic do"]
+    n_ALB["ALB<br/>akeli App giri, sab band<br/>-> kai App, koi yaad na rakhe<br/>(stateless x N)<br/>machine giri -> ~10 sec health check, chup = bahar<br/>naya code -> ek-ek karke badlo (rolling)"]
     n_App_xN["App x N"]
     n_FAN["Kafka + Fanout workers"]
     n_Redis_inbox["Redis inbox"]
@@ -416,7 +416,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
-    n_Tweet_Svc["Tweet Svc<br/>padhne ki bheed, likhna dheema<br/>-> likhna, padhna alag, alag badhao<br/>(alag service)<br/>feed ki bheed badhi -> sirf Timeline Svc badhao<br/>follow list -> Redis me rakhi, har feed pe chahiye<br/>5,000 follower -> 1000-1000 padh ke inbox likho"]
+    n_Tweet_Svc["Tweet Svc<br/>padhne ki bheed, likhna dheema<br/>-> likhna, padhna alag, alag badhao<br/>(alag service)<br/>feed ki bheed badhi -> sirf Timeline Svc badhao<br/>follow list -> Redis me rakhi, har feed pe chahiye"]
     n_Cassandra["Cassandra"]
     n_FAN["Kafka + Fanout workers"]
     n_RI["Redis (inbox + hot tweet)"]
@@ -452,7 +452,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + ALB"]
-    n_CDN["CDN<br/>video sabko dheemi, mehngi<br/>-> video S3 me, user ke paas se do<br/>(CDN)<br/>koi dekhe -> CDN paas se, nahi to S3 se laao<br/>photo hatayi, CDN pe dikhe -> CDN se hatao (invalidation)<br/>private photo -> hastakshar + expiry (signed URL)"]
+    n_CDN["CDN<br/>video sabko dheemi, mehngi<br/>-> video S3 me, user ke paas se do<br/>(CDN)<br/>koi dekhe -> CDN paas se, nahi to S3 se laao<br/>photo hatayi, CDN pe dikhe -> CDN se hatao (invalidation)<br/>private photo -> thodi der wala link (signed URL)"]
     n_SVC["Tweet / Timeline / User Svc + Follow store"]
     n_Cassandra["Cassandra"]
     n_FAN["Kafka + Fanout workers"]

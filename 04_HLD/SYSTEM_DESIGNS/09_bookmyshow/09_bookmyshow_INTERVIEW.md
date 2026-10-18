@@ -165,7 +165,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Payment_Svc["Payment Svc<br/>network gaya, do baar kata<br/>-> wahi booking dobara = paisa nahi<br/>(idempotency key)<br/>network gaya, app dobara -> wahi B-77 = ho chuka, paisa nahi katta<br/>Pay dobara dabaya -> wahi bookingId, paisa ek baar"]
+    n_Payment_Svc["Payment Svc<br/>network gaya, do baar kata<br/>-> wahi booking dobara = paisa nahi<br/>(idempotency key)<br/>Pay dobara dabaya -> wahi bookingId, paisa ek baar"]
     n_SQL_DB["SQL DB<br/>+ atomic UPDATE + hold"]
     n_Sweeper_job["Sweeper job"]
     n_USER --> n_App
@@ -191,7 +191,7 @@ flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis["Redis<br/>1 lakh seat map dekh rahe<br/>-> seat map Redis se, DB ki copy se<br/>(cache + replica)<br/>Redis me nahi -> replica se banao, Redis me rakho<br/>kisi ne book kiya -> main DB, phir map key hatao (DEL)<br/>A1 biki, map me khaali -> chalta, faisla UPDATE ka<br/>lakh log ek key pe -> kai copy + App me 1-2 sec copy (hot key)"]
+    n_Redis["Redis<br/>1 lakh seat map dekh rahe<br/>-> seat map Redis se, DB ki copy se<br/>(cache + replica)<br/>Redis me nahi -> replica se banao, Redis me rakho<br/>kisi ne book kiya -> pehle DB, phir Redis se hatao<br/>A1 biki, map me khaali -> chalta, faisla UPDATE ka"]
     n_Read_replica["Read replica"]
     n_SQL_primary["SQL primary"]
     n_Sweeper_job["Sweeper job"]
@@ -225,7 +225,7 @@ flowchart LR
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
     n_RRR["Redis + Read replica"]
-    n_Kafka["Kafka<br/>3000 seat, 2 lakh log<br/>-> darwaze pe line, andar gine-chune<br/>(waiting room)<br/>UPDATE jeeta -> user ko poll / push (bookingId)<br/>seat haar gaya -> seat gayi, doosri lo<br/>andar wala bina liye gaya -> line se agla andar<br/>worker dheema -> show ke hisse alag (balcony / stall)<br/>line ginti Redis me, restart -> sach DB ki seats, dobara gino"]
+    n_Kafka["Kafka<br/>3000 seat, 2 lakh log<br/>-> darwaze pe line, andar gine-chune<br/>(waiting room)<br/>UPDATE jeeta -> user ko poll / push (bookingId)<br/>seat haar gaya -> seat gayi, doosri lo<br/>andar wala bina liye gaya -> line se agla andar"]
     n_Booking_worker["Booking worker"]
     n_SQL_primary["SQL primary"]
     n_Sweeper_job["Sweeper job"]
@@ -274,7 +274,7 @@ flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis["Redis Cluster<br/>restart, sab replica pe<br/>-> ek DB jaaye, baaki ruk ke cache se<br/>(lock: SET NX)<br/>key khaali, 1000 aaye -> ek lock le ke banaye, baaki 50-100 ms ruke<br/>lock wala hi mara -> lock khud hate (EX 5)<br/>100 ms baad bhi khaali -> 2-3 retry, phir replica se"]
+    n_Redis["Redis Cluster<br/>restart, sab replica pe<br/>-> ek DB jaaye, baaki ruk ke cache se<br/>(lock: SET NX)<br/>key khaali, 1000 aaye -> ek lock le ke banaye, baaki 50-100 ms ruke<br/>lock wala hi mara -> lock khud hate (TTL)<br/>100 ms baad bhi khaali -> 2-3 retry, phir replica se"]
     n_Read_replica["Read replica"]
     n_KB["Kafka + Booking worker (badi sale)"]
     n_SQL_primary["SQL primary"]
@@ -306,7 +306,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_LB["LB<br/>App machine giri<br/>-> kuch yaad na rakhe, mari to bahar<br/>(stateless + health check)<br/>machine giri -> hold DB me, agli machine wahi dekhe<br/>machine bahar kaise -> 2-3 baar fail = bahar (GET /health)<br/>payment beech me -> same id dobara, do baar nahi katega (idempotent)"]
+    n_LB["LB<br/>App machine giri<br/>-> kuch yaad na rakhe, mari to bahar<br/>(stateless + health check)<br/>machine giri -> hold DB me, agli machine wahi dekhe<br/>payment beech me -> same id dobara, do baar nahi katega (idempotent)"]
     n_App_xN["App x N"]
     n_Payment_Svc["Payment Svc (bookingId)"]
     n_RRR["Redis Cluster + Read replica"]

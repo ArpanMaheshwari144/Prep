@@ -264,7 +264,7 @@ flowchart LR
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
     n_DB["SQL DB"]
-    n_Reconciliation_job["Reconciliation job<br/>call ke baad crash<br/>-> pehle 'pata nahi' likho, PSP khud batayega, roz milaao<br/>(PENDING + webhook + reconciliation)<br/>call ke baad crash -> PENDING bacha, PSP bataye (webhook)<br/>webhook do baar -> SUCCESS sirf ek baar<br/>webhook nakli -> hastakshar jaancho + apne PENDING se milao<br/>webhook nahi aaya -> job purane PENDING PSP se poochhe<br/>raat ko -> PSP ki file se poora milaan"]
+    n_Reconciliation_job["Reconciliation job<br/>call ke baad crash<br/>-> pehle 'pata nahi' likho, PSP khud batayega, roz milaao<br/>(PENDING + webhook + reconciliation)<br/>call ke baad crash -> PENDING bacha, PSP bataye (webhook)<br/>webhook do baar -> SUCCESS sirf ek baar<br/>webhook nahi aaya -> job purane PENDING PSP se poochhe<br/>raat ko -> PSP ki file se poora milaan"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store
     n_Payment_Svc --> n_PSP
@@ -391,7 +391,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_LB_API_Gateway["LB / API Gateway"]
-    n_Payment_Svc_x_N_1["Payment Svc 1<br/>3000 / sec, CPU bhara<br/>-> kai machine, koi yaad na rakhe<br/>(stateless + LB)<br/>CPU bhara -> timeout, log dobara tap, machine badhao<br/>machine badhao -> yaad DB + idempotency store me<br/>ek machine mari -> /health chup, LB se bahar"]
+    n_Payment_Svc_x_N_1["Payment Svc 1<br/>3000 / sec, CPU bhara<br/>-> kai machine, koi yaad na rakhe<br/>(stateless + LB)<br/>CPU bhara -> aur machine lagao, koi bhi request le<br/>machine badhao -> yaad DB + idempotency store me<br/>ek machine mari -> /health chup, LB se bahar"]
     n_Payment_Svc_x_N_2["Payment Svc 2"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
@@ -435,7 +435,7 @@ flowchart LR
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
     n_DB["SQL DB + Ledger"]
-    n_Read_replica["Read replica<br/>report ne DB ghera<br/>-> report copy se, asli DB payment ke liye<br/>(read replica)<br/>pay kiya, balance dekha -> primary se, copy 1-2 sec peeche<br/>copy aur peeche -> naapo, alert (replication lag)<br/>report itni bhaari -> alag warehouse (CDC)"]
+    n_Read_replica["Read replica<br/>report ne DB ghera<br/>-> report copy se, asli DB payment ke liye<br/>(read replica)<br/>pay kiya, balance dekha -> primary se, copy 1-2 sec peeche<br/>copy aur peeche -> naapo, alert (replication lag)"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_LB_API_Gateway
     n_LB_API_Gateway --> n_Payment_Svc_xN
@@ -475,7 +475,7 @@ flowchart LR
     n_Payment_Svc_xN["Payment Svc x N"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
-    n_SQL_DB_shard_by_account_id["SQL DB + Ledger shard<br/>1000 crore row, likhai dheemi<br/>-> account se data tukdon me baanto<br/>(shard)<br/>ek account bahut bada -> sub-account alag shard<br/>do account alag shard -> A kaato, B daalo, fail pe ulta (saga)<br/>idempotency key -> account_id se usi shard"]
+    n_SQL_DB_shard_by_account_id["SQL DB + Ledger shard<br/>1000 crore row, likhai dheemi<br/>-> account se data tukdon me baanto<br/>(shard)<br/>do account alag shard -> A kaato, B daalo, fail pe ulta (saga)<br/>idempotency key -> account_id se usi shard"]
     n_Read_replica["Read replica"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_LB_API_Gateway

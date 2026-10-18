@@ -132,7 +132,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_U["USER"]
     n_LB["LB"]
-    n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> kuch thread, lakhon connection<br/>(event loop)<br/>connection chup -> thodi memory, data aaye tab thread (epoll)<br/>wahi connection aage -> wahi server, connection khula hai<br/>chat server gira -> ruk-ruk ke dobara judo (backoff + jitter)<br/>naya code deploy -> thode-thode server khaali (draining)"]
+    n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> kuch thread, lakhon connection<br/>(event loop)<br/>wahi connection aage -> wahi server, connection khula hai<br/>chat server gira -> ruk-ruk ke dobara judo (backoff)"]
     n_U --> n_LB
     n_LB --> n_CS
     style n_CS fill:#f9a825,color:#000
@@ -164,7 +164,7 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis<br/>Ravi doosre server pe<br/>-> kaun kis server pe, Redis me likho<br/>(map)<br/>server-7 zinda -> dhadkan se umar badhe (TTL)<br/>server-7 mara -> entry khud hati, Ravi offline<br/>Ravi ke kai device -> pata list, har device pe bhejo<br/>Ravi khiska -> naye server pe judte hi milega<br/>Redis gira -> copy pe switch, message khota nahi"]
+    n_R["Redis<br/>Ravi doosre server pe<br/>-> kaun kis server pe, Redis me likho<br/>(map)<br/>server-7 zinda -> dhadkan se umar badhe (TTL)<br/>server-7 mara -> entry khud hati, Ravi offline<br/>Ravi ke kai device -> pata list, har device pe bhejo<br/>Redis gira -> copy pe switch, message khota nahi"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
@@ -232,7 +232,7 @@ flowchart LR
     n_LB["LB"]
     n_CS["Chat Server x200"]
     n_R["Redis (map)"]
-    n_CA["Cassandra<br/>roz 1.2 TB, ek DB nahi jhelta<br/>-> ek chat ek jagah<br/>(shard by chat_id)<br/>chat khuli -> aakhri 50 ek jagah (keyset)<br/>ek group garam -> ek partition, speed pe had<br/>partition badi -> key me mahina jodo (chat_id, mahina)<br/>3 saal purane -> sasti jagah (cold storage)"]
+    n_CA["Cassandra<br/>roz 1.2 TB, ek DB nahi jhelta<br/>-> ek chat ek jagah<br/>(shard by chat_id)<br/>chat khuli -> aakhri 50 ek jagah (keyset)<br/>ek group garam -> ek partition, speed pe had<br/>partition badi -> key me mahina jodo (chat_id, mahina)"]
     n_P["Push (Google / Apple)"]
     n_U --> n_LB
     n_LB --> n_CS
@@ -267,7 +267,7 @@ flowchart LR
     n_LB["LB"]
     n_CS["Chat Server x200"]
     n_R["Redis (map)"]
-    n_I["Idempotency<br/>net dheema, hi do baar<br/>-> wahi id dobara = naya message nahi<br/>(clientMsgId)<br/>timeout, app dobara -> wahi id, skip, pehli id lautao<br/>dono ek saath -> dekhna + daalna ek kadam (LWT / SET NX)<br/>do user ki id same -> jodi pe check (sender_id, clientMsgId)"]
+    n_I["Idempotency<br/>net dheema, hi do baar<br/>-> wahi id dobara = naya message nahi<br/>(clientMsgId)<br/>timeout, app dobara -> wahi id, skip, pehli id lautao<br/>dono ek saath -> dekhna + daalna ek kadam (atomic)<br/>do user ki id same -> jodi pe check (sender_id, clientMsgId)"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
     n_U --> n_LB
@@ -306,7 +306,7 @@ flowchart LR
     n_I["Idempotency check"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
-    n_SQ["Seq<br/>ghadi 5 min aage, kram ulta<br/>-> kram server ka number, ghadi nahi<br/>(seq)<br/>meri ghadi aage -> farak nahi, kram seq se<br/>4415 phir 4417 -> 4416 chhoota, ruk ke maango<br/>seq Redis restart -> Cassandra ke sabse bade seq se aage<br/>Ravi wapas -> aakhri seq ke baad sab"]
+    n_SQ["Seq<br/>ghadi 5 min aage, kram ulta<br/>-> kram server ka number, ghadi nahi<br/>(seq)<br/>meri ghadi aage -> farak nahi, kram seq se<br/>4415 phir 4417 -> 4416 chhoota, ruk ke maango<br/>Ravi wapas -> aakhri seq ke baad sab"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
@@ -394,7 +394,7 @@ flowchart LR
     n_I["Idempotency check"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
-    n_NS["Nishaan<br/>50 padhe, 25,000 likhai<br/>-> 'kahan tak padha' ek number, ginti nahi<br/>(read_upto)<br/>unread -> aakhri seq - nishaan (ghatao)<br/>neeli tick -> ek push read_upto, 50 ek saath neeli<br/>do tick -> kahan tak mila (delivered_upto)<br/>mila raaste me khoya -> phone dobara bheje, nishaan sirf aage<br/>group me do tick -> sabse chhota nishaan"]
+    n_NS["Nishaan<br/>50 padhe, 25,000 likhai<br/>-> 'kahan tak padha' ek number, ginti nahi<br/>(read_upto)<br/>unread -> aakhri seq - nishaan (ghatao)<br/>neeli tick -> ek push read_upto, 50 ek saath neeli<br/>do tick -> kahan tak mila (delivered_upto)"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R
@@ -434,7 +434,7 @@ AAGE POOCHEGA:
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_S3["S3<br/>200 MB video<br/>-> video seedha S3, message me sirf pata<br/>(presigned URL)<br/>net gaya -> bacha hissa hi dobara (multipart)<br/>message -> sirf S3 key + thumbnail<br/>Ravi ne khola -> key se naya chhota URL<br/>1000 forward -> hash same, upload nahi"]
+    n_S3["S3<br/>200 MB video<br/>-> video seedha S3, message me sirf pata<br/>(presigned URL)<br/>net gaya -> bacha hissa hi dobara (multipart)<br/>message -> sirf S3 key + thumbnail<br/>Ravi ne khola -> key se naya chhota URL"]
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200 (+ idempotency)"]
@@ -480,7 +480,7 @@ flowchart LR
     n_R["Redis (map, seq)"]
     n_CA["Cassandra (chat_id) + Nishaan"]
     n_P["Push (Google / Apple)"]
-    n_PR["Presence<br/>online / last seen<br/>-> 30 sec me khud mite, app dhadkan de<br/>(TTL)<br/>Ravi ne chat kholi -> tabhi status dekho<br/>chat khuli -> live badlav (subscribe), baaki pull<br/>crore dhadkan -> server ikattha karke (batch)<br/>app band -> umar khatam = offline, last seen likho<br/>last seen chhupaya -> mat dikhao"]
+    n_PR["Presence<br/>online / last seen<br/>-> 30 sec me khud mite, app dhadkan de<br/>(TTL)<br/>Ravi ne chat kholi -> tabhi status dekho<br/>chat khuli -> live badlav (subscribe), baaki pull<br/>app band -> umar khatam = offline, last seen likho"]
     n_U --> n_S3
     n_U --> n_LB
     n_LB --> n_CS

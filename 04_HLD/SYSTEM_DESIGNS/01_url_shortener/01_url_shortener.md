@@ -115,7 +115,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Redis["Redis<br/>link viral, DB baitha<br/>-> link Redis se do, nahi to DB<br/>(cache-aside)<br/>bhar gaya -> der se na khula nikaalo (LRU)<br/>umar khatam -> saath mitte (TTL = link ki expiry)<br/>link badla -> pehle DB, phir Redis se hatao<br/>Redis gira -> uski copy kaam le (replica)<br/>copy bhi gayi -> 1 link ke 1000 click me 1 hi DB tak<br/>tab bhi bojh -> kuch click mana, DB bachao (load shedding)"]
+    n_Redis["Redis<br/>link viral, DB baitha<br/>-> link Redis se do, nahi to DB<br/>(cache-aside)<br/>bhar gaya -> der se na khula nikaalo (LRU)<br/>umar khatam -> saath mitte (TTL = link ki expiry)<br/>Redis gira -> uski copy kaam le (replica)<br/>copy bhi gayi -> kuch click mana, DB bachao (load shedding)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_Redis
@@ -149,7 +149,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_LB["LB<br/>ek App giri, site band<br/>-> kai App, koi kuch yaad na rakhe<br/>(stateless + LB)<br/>App giri -> /health chup, list se bahar<br/>theek hui -> wapas list me<br/>dheemi -> kam kaam wali ko (least-conn)"]
+    n_LB["LB<br/>ek App giri, site band<br/>-> kai App, koi kuch yaad na rakhe<br/>(stateless + LB)<br/>App giri -> /health chup, list se bahar<br/>dheemi -> kam kaam wali ko (least-conn)"]
     n_App_x_N_1["App 1<br/>yaad kuch nahi -> session bahar (Redis / DB)"]
     n_App_x_N_2["App 2"]
     n_Redis["Redis"]
@@ -192,7 +192,7 @@ flowchart LR
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Counter["Counter<br/>do App, ek hi code<br/>-> har App ki apni number range<br/>(range)<br/>range khatam -> agli range, 1000 link pe ek call<br/>App crash -> bachi range bekaar, chalta<br/>Counter gira -> App ke paas jo range hai wo chalti, copy (replica) counter bane"]
+    n_Counter["Counter<br/>do App, ek hi code<br/>-> har App ki apni number range<br/>(range)<br/>range khatam -> agli range, 1000 link pe ek call<br/>App crash -> bachi range bekaar, chalta<br/>Counter gira -> App apni range se chalta, copy (replica) uthti"]
     n_Redis["Redis"]
     n_DB["DB"]
     n_USER --> n_LB
@@ -232,7 +232,7 @@ flowchart LR
     n_LB["LB"]
     n_App_xN["App x N"]
     n_Counter["Counter"]
-    n_Kafka["Kafka<br/>ginti likhi, redirect dheema<br/>-> redirect turant, ginti peeche<br/>(Kafka)<br/>Analytics dheema -> khabar Kafka me padi rahe<br/>Kafka band -> redirect chalta, kuch ginti gayi<br/>Analytics: kahan tak padha yaad (offset)<br/>wahi click do baar -> click id se ek hi (dedupe)<br/>kharab khabar -> alag line (DLQ), baaki chalti"]
+    n_Kafka["Kafka<br/>ginti likhi, redirect dheema<br/>-> redirect turant, ginti peeche<br/>(Kafka)<br/>Analytics dheema -> khabar Kafka me padi rahe<br/>Kafka band -> redirect chalta, kuch ginti gayi<br/>wahi click do baar -> click id se ek hi (dedupe)<br/>kharab khabar -> alag line (DLQ), baaki chalti"]
     n_Analytics_svc["Analytics svc"]
     n_DLQ["DLQ"]
     n_RD["Redis + DB"]
@@ -277,7 +277,7 @@ flowchart LR
     n_Counter["Counter"]
     n_ANA["Analytics (Kafka + DLQ)"]
     n_Redis["Redis"]
-    n_Cassandra["Cassandra<br/>5 saal me 90 TB<br/>-> code se tay kaunsi machine<br/>(shard + ring)<br/>machine mari -> baaki 2 copy se milta<br/>nayi machine -> sirf pados ke code khiskein (ring)<br/>ek pe bojh -> har machine 100-200 jagah (virtual nodes)"]
+    n_Cassandra["Cassandra<br/>5 saal me 90 TB<br/>-> code se tay kaunsi machine<br/>(shard + ring)<br/>machine mari -> baaki 2 copy se milta<br/>nayi machine -> sirf pados ke code khiskein (ring)"]
     n_USER --> n_LB
     n_LB --> n_App_xN
     n_App_xN --> n_Counter
@@ -323,7 +323,7 @@ flowchart LR
     n_Counter["Counter"]
     n_ANA["Analytics (Kafka + DLQ)"]
     n_Redis["Redis"]
-    n_Cassandra["Cassandra<br/>naya link, turant 404<br/>-> 3 me se 2 me likho, 2 se padho<br/>(quorum)<br/>C tak nahi -> A+C jodi, A me mila<br/>likhte C giri -> padosi note rakhe (hinted handoff)<br/>A, C me farak -> padhte waqt C theek (read repair)<br/>A aur B giri -> likhna fail, user ko error"]
+    n_Cassandra["Cassandra<br/>naya link, turant 404<br/>-> 3 me se 2 me likho, 2 se padho<br/>(quorum)<br/>C tak nahi -> A+C jodi, A me mila<br/>A aur B giri -> likhna fail, user ko error"]
     n_USER --> n_LB
     n_LB --> n_App_xN
     n_App_xN --> n_Counter
@@ -363,7 +363,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53<br/>LB hi gira<br/>-> do LB, mara to doosre pe<br/>(health check)<br/>LB-1 chup -> ~30 sec me sab LB-2 pe<br/>phone purana pata -> ~60 sec fail (DNS TTL)"]
+    n_Route_53["Route 53<br/>LB hi gira<br/>-> do LB, mara to doosre pe<br/>(health check)<br/>LB-1 chup -> ~30 sec me sab LB-2 pe"]
     n_LB_xN["LB x 2<br/>kai zone, har jagah 2+ (ALB)"]
     n_App_xN["App x N"]
     n_Counter["Counter"]
@@ -396,7 +396,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + LB x 2"]
-    n_API_Gateway["API Gateway<br/>spammer 5,000 link / sec<br/>-> darwaze pe had, hamle roko<br/>(rate limit + WAF)<br/>kai gateway -> ginti ek jagah (shared Redis)<br/>had paar -> 429, asli users bache<br/>bot naya IP -> ginti API key pe<br/>pehchaana hamla -> WAF rok de<br/>phishing link -> pehle check (virus / dhokha)"]
+    n_API_Gateway["API Gateway<br/>spammer 5,000 link / sec<br/>-> darwaze pe had, hamle roko<br/>(rate limit + WAF)<br/>kai gateway -> ginti ek jagah (shared Redis)<br/>had paar -> 429, asli users bache<br/>bot naya IP -> ginti API key pe"]
     n_App_xN["App x N"]
     n_Counter["Counter"]
     n_ANA["Analytics (Kafka + DLQ)"]

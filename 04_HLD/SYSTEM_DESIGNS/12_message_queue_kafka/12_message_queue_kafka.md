@@ -93,7 +93,7 @@ flowchart LR
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_P["Producer"]
-    n_L["Log<br/>restart, 500 message gayab<br/>-> disk pe log, kahan tak padha yaad<br/>(log + offset)<br/>consumer restart -> Kafka yaad rakhe kahan tak padha (offset)<br/>dobara padhna -> offset peeche karo (replay)"]
+    n_L["Log<br/>restart, 500 message gayab<br/>-> disk pe log, kahan tak padha yaad<br/>(log + offset)<br/>dobara padhna -> offset peeche karo (replay)"]
     n_C["Consumer"]
     n_P --> n_L
     n_L --> n_C
@@ -149,7 +149,7 @@ AAGE POOCHEGA:
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_P["Producer<br/>do badlaav do partition me<br/>-> ek user ki khabar ek hi tukde me<br/>(key = userId)<br/>producer retry ulta -> har message ka number (idempotent producer)<br/>10 se 20 tukde -> key ka tukda badla, kram thoda toota<br/>key nahi di -> koi kram nahi (round-robin)<br/>ek tukda garam -> key me bucket jodo (userId + bucket)"]
+    n_P["Producer<br/>do badlaav do partition me<br/>-> ek user ki khabar ek hi tukde me<br/>(key = userId)<br/>10 se 20 tukde -> key ka tukda badla, kram thoda toota<br/>key nahi di -> koi kram nahi (round-robin)"]
     n_B["Brokers A / B / C"]
     n_C["Consumer"]
     n_P --> n_B
@@ -211,7 +211,7 @@ flowchart LR
     n_P["Producer (key = userId)"]
     n_B["Brokers A / B / C"]
     n_GE["Group email"]
-    n_GA["Group analytics<br/>teeno service ko chahiye<br/>-> har service ki apni team<br/>(alag group)<br/>nayi service judi -> naya group, producer same<br/>usko purana chahiye -> shuru se ya ab se (auto.offset.reset)<br/>ek group peeche -> doosra nahi rukta, offset alag"]
+    n_GA["Group analytics<br/>teeno service ko chahiye<br/>-> har service ki apni team<br/>(alag group)<br/>nayi service judi -> naya group, producer same<br/>usko purana chahiye -> shuru se padhe ya ab se, uski marzi<br/>ek group peeche -> doosra nahi rukta, offset alag"]
     n_GD["Group dashboard"]
     n_P --> n_B
     n_B --> n_GE
@@ -244,7 +244,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_P["Producer (key = userId)"]
     n_B["Brokers A / B / C"]
-    n_K["Controller (KRaft)<br/>Broker A ki disk gayi<br/>-> har tukde ki copy, sab me likha tab OK<br/>(ISR, acks=all)<br/>copy kam -> likhna band, khone se rukna behtar (min.insync=2)<br/>A mara -> Controller ISR se B ko leader<br/>peeche wala follower -> leader nahi ban sakta"]
+    n_K["Controller (KRaft)<br/>Broker A ki disk gayi<br/>-> har tukde ki copy, sab me likha tab OK<br/>(ISR, acks=all)<br/>copy kam -> likhna band, khone se rukna behtar (min ISR)<br/>A mara -> Controller ISR se B ko leader<br/>peeche wala follower -> leader nahi ban sakta"]
     n_GE["Group email"]
     n_GA["Group analytics"]
     n_GD["Group dashboard"]
@@ -321,7 +321,7 @@ AAGE POOCHEGA:
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_P["Producer + Outbox<br/>DB me bana, event nahi gaya<br/>-> order ke saath khabar bhi DB me, baad me bhejo<br/>(outbox)<br/>COMMIT se pehle crash -> kuch nahi hua, Ravi dobara kare<br/>COMMIT ke baad crash -> relay baad me bheje, khoya nahi<br/>bheja, sent=true se pehle -> dobara jaaye, consumer E-101 skip<br/>outbox badi -> sent wali roz saaf"]
+    n_P["Producer + Outbox<br/>DB me bana, event nahi gaya<br/>-> order ke saath khabar bhi DB me, baad me bhejo<br/>(outbox)<br/>COMMIT se pehle crash -> kuch nahi hua, Ravi dobara kare<br/>COMMIT ke baad crash -> relay baad me bheje, khoya nahi<br/>bheja, sent=true se pehle -> dobara jaaye, consumer eventId se skip"]
     n_B["Brokers A / B / C"]
     n_K["Controller (KRaft)"]
     n_GE["Group email"]

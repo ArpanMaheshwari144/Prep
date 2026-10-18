@@ -150,7 +150,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc (+ idempotency)"]
-    n_DB["SQL DB<br/>Netflix + UPI, balance -100<br/>-> check aur kaatna ek saath<br/>(atomic UPDATE)<br/>Netflix + UPI ek saath -> row pe taala, dono line me<br/>doosra -> balance kam, 0 row, 422, kuch nahi kata"]
+    n_DB["SQL DB<br/>Netflix + UPI, balance -100<br/>-> check aur kaatna ek saath<br/>(atomic UPDATE)<br/>Netflix + UPI ek saath -> row lock, dono line me<br/>doosra -> balance kam, 0 row, 422, kuch nahi kata"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     style n_DB fill:#f9a825,color:#000
@@ -207,7 +207,7 @@ flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc (+ idempotency)"]
     n_DB["SQL DB (+ ledger, outbox)"]
-    n_K["Kafka<br/>SMS service giri<br/>-> SMS wali khabar bhi DB me, baad me bhejo<br/>(outbox)<br/>SMS service ghanta giri -> khabar Kafka me padi, baad me padhe<br/>relay sent=true se pehle gira -> dobara jaaye, eventId se skip<br/>outbox bhare -> roz saaf"]
+    n_K["Kafka<br/>SMS service giri<br/>-> SMS wali khabar bhi DB me, baad me bhejo<br/>(outbox)<br/>SMS service ghanta giri -> khabar Kafka me padi, baad me padhe<br/>relay sent=true se pehle gira -> dobara jaaye, eventId se skip"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     n_DB --> n_K
@@ -265,7 +265,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_LB["LB<br/>salary day, ek machine bhari<br/>-> kai machine, aage baantne wala<br/>(LB)<br/>ek machine bhari -> machine badhao, LB baante<br/>ek machine giri -> LB list se hataye (health check)<br/>adhoora transfer -> app wahi id se dobara<br/>LB khud akela -> nahi, do zone me do LB"]
+    n_LB["LB<br/>salary day, ek machine bhari<br/>-> kai machine, aage baantne wala<br/>(LB)<br/>ek machine giri -> LB list se hataye (health check)<br/>adhoora transfer -> app wahi id se dobara<br/>LB khud akela -> nahi, do zone me do LB"]
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
     n_DB["SQL DB (+ ledger, outbox)"]
@@ -418,7 +418,7 @@ flowchart LR
     n_RR["Read replica"]
     n_DB["SQL DB"]
     n_K["Kafka"]
-    n_S3["Archive (S3)<br/>5 saal ek table me<br/>-> har mahina alag, purana S3<br/>(partition)<br/>mahina band -> S3 me, 5 saal delete nahi (PMLA)<br/>balance ka jod -> mahine ka snapshot + baad ki line<br/>purana statement -> S3 pe query (Athena)<br/>file badalne ki koshish -> S3 pe taala (Object Lock)"]
+    n_S3["Archive (S3)<br/>5 saal ek table me<br/>-> har mahina alag, purana S3<br/>(partition)<br/>mahina band -> S3 me, 5 saal delete nahi (bank ka niyam)<br/>balance ka jod -> mahine ka snapshot + baad ki line"]
     n_REC["Reconciliation job"]
     n_USER --> n_LB
     n_LB --> n_Banking_Svc_xN

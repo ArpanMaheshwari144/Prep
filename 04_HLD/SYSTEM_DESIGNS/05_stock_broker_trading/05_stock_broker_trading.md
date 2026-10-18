@@ -167,7 +167,7 @@ flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek share pe ek hi thread<br/>(ek symbol ek thread)<br/>main + Mohan ek saath -> pehla le gaya 10, doosre ko 0<br/>thread atka -> sirf TCS rukta, INFY chalta (GC pause)"]
+    n_Matching_Engine["Matching Engine<br/>10 share, do ko bik gaye<br/>-> ek share pe ek hi thread<br/>(ek symbol ek thread)<br/>main + Mohan ek saath -> pehla le gaya 10, doosre ko 0<br/>thread atka -> sirf TCS rukta, INFY chalta"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet

@@ -140,7 +140,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
-    n_CS["Conn-Server<br/>dono ne position 0 pe likha<br/>-> server kram tay kare, op khiskao<br/>(OT)<br/>Ravi ka 200 ms baad -> app pending op khiskaye<br/>dono pos 0 (tie) -> pehle aaya wo 0, doosra 1 pe"]
+    n_CS["Conn-Server<br/>dono ne position 0 pe likha<br/>-> server kram tay kare, op khiskao<br/>(OT)<br/>dono pos 0 (tie) -> pehle aaya wo 0, doosra 1 pe"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_CS
@@ -178,7 +178,7 @@ AAGE POOCHEGA:
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
-    n_LB["LB<br/>50 lakh connection, ek server nahi<br/>-> ek doc ke sab log ek server pe<br/>(ring, owner)<br/>doc do server pe -> do version, isliye ek owner<br/>1000 log -> 100 editor owner pe, 900 viewer kahin bhi<br/>server juda / gira -> sirf pados ke doc khiskein (ring)<br/>owner gira -> naya owner DB se doc banaye"]
+    n_LB["LB<br/>50 lakh connection, ek server nahi<br/>-> ek doc ke sab log ek server pe<br/>(ring, owner)<br/>doc do server pe -> do version, isliye ek owner<br/>server juda / gira -> sirf pados ke doc khiskein (ring)<br/>owner gira -> naya owner DB se doc banaye"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
     n_DB["DB"]
@@ -220,7 +220,7 @@ flowchart LR
     n_LB["LB (docId se ring)"]
     n_CS1["Conn-Server 1 (owner + OT)"]
     n_CS2["Conn-Server 2"]
-    n_PS["Redis pub/sub<br/>Ravi doosre server pe<br/>-> har doc ka channel, jis server pe uska user wo sune<br/>(pub/sub)<br/>Ravi ka server restart -> channel se gaya, DB se le<br/>pub/sub gira -> copy main bane, khoya nahi (Sentinel)"]
+    n_PS["Redis pub/sub<br/>Ravi doosre server pe<br/>-> har doc ka channel, jis server pe uska user wo sune<br/>(pub/sub)<br/>Ravi ka server restart -> channel se gaya, DB se le<br/>pub/sub gira -> copy main bane, khoya nahi (replica)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_LB
@@ -260,7 +260,7 @@ flowchart LR
     n_LB["LB (docId se ring)"]
     n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
-    n_BUF["Redis buffer<br/>har akshar pe DB write<br/>-> har akshar nahi, 1 sec ka jama ek saath<br/>(buffer + batch)<br/>ACK se pehle Redis gira -> app opId ke saath phir bheje<br/>ACK ke baad gira -> copy main bani, op usme tha<br/>batch dheema -> typing chalti, buffer badhe to alert<br/>batch dobara -> (docId, version) same = ek hi row"]
+    n_BUF["Redis buffer<br/>har akshar pe DB write<br/>-> har akshar nahi, 1 sec ka jama ek saath<br/>(buffer + batch)<br/>ACK se pehle Redis gira -> app opId ke saath phir bheje<br/>batch dheema -> typing chalti, buffer badhe to alert"]
     n_CAS["Cassandra edit log"]
     n_USER --> n_App
     n_App --> n_LB

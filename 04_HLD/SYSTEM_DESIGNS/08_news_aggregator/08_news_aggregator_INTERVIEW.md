@@ -87,7 +87,7 @@ flowchart LR
 flowchart LR
     n_USER["USER"]
     n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis<br/>sabko wahi 20, DB pe 500 / sec<br/>-> sabki ek feed, Redis me taiyaar<br/>(sorted set)<br/>breaking news -> aate hi ZADD, turant upar<br/>neeche scroll -> agli 20 (ZREVRANGE 20 39 / cursor)<br/>Redis khaali -> DB se ek hi banaye, baaki ruke (lock)"]
+    n_Redis["Redis<br/>sabko wahi 20, DB pe 500 / sec<br/>-> sabki ek feed, Redis me taiyaar<br/>(sorted set)<br/>breaking news -> aate hi ZADD, turant upar<br/>neeche scroll -> agli 20 (cursor)<br/>Redis khaali -> DB se ek hi banaye, baaki ruke (lock)"]
     n_DB["DB"]
     n_Fetcher["Fetcher"]
     n_USER --> n_Feed_Svc
@@ -123,7 +123,7 @@ flowchart LR
     n_Redis["Redis (taazi feed)"]
     n_DB["DB"]
     n_Worker["Worker"]
-    n_Kafka["Kafka<br/>khabar 20 min purani<br/>-> laana aur likhna alag, beech me line<br/>(Kafka)<br/>kuch naya nahi -> download hi nahi (ETag)<br/>1000 ek saath -> line lambi, gira kuch nahi<br/>worker ne do baar likha -> ek hi lage (ON CONFLICT)"]
+    n_Kafka["Kafka<br/>khabar 20 min purani<br/>-> laana aur likhna alag, beech me line<br/>(Kafka)<br/>1000 ek saath -> line lambi, gira kuch nahi<br/>worker ne do baar likha -> ek hi lage (UNIQUE)"]
     n_Fetcher["Fetcher"]
     n_Sources["Sources"]
     n_USER --> n_Feed_Svc
@@ -199,7 +199,7 @@ flowchart LR
     n_Feed_Svc_xN["Feed Svc x N"]
     n_Redis["Redis (taazi feed)"]
     n_DBR["DB + Read replica"]
-    n_Worker["Worker<br/>ek khabar 5 baar<br/>-> same khabar pehchaano, ek rakho<br/>(hash + SimHash)<br/>wahi URL dobara -> koi bit 0 = pakka naya (Bloom filter)<br/>kai worker -> ek saanjha Bloom (Redis)<br/>naya URL, wahi khabar -> title ka hash same<br/>wins vs won -> 90% same = duplicate (SimHash)"]
+    n_Worker["Worker<br/>ek khabar 5 baar<br/>-> same khabar pehchaano, ek rakho<br/>(hash + SimHash)<br/>wahi URL dobara -> koi bit 0 = pakka naya (Bloom filter)<br/>kai worker -> ek saanjha Bloom (Redis)<br/>naya URL, wahi khabar -> title ka hash same"]
     n_Kafka["Kafka"]
     n_SF["Sources -> Fetcher"]
     n_USER --> n_LB
@@ -243,7 +243,7 @@ flowchart LR
     n_Read_replica["Read replica"]
     n_DB["DB"]
     n_KW["Kafka -> Worker"]
-    n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> atka source chhodo, fail pe band<br/>(timeout + circuit breaker)<br/>site atki -> 2-3 sec timeout, thodi retry<br/>baar-baar fail -> us source ko call hi nahi (OPEN)<br/>thodi der baad -> ek test call (HALF-OPEN)<br/>source ne 429 diya -> dheere, Retry-After maano<br/>kuch din OPEN -> alert + list se bahar"]
+    n_Fetcher["Fetcher<br/>ek source 30 sec atka<br/>-> atka source chhodo, fail pe band<br/>(timeout + circuit breaker)<br/>site atki -> 2-3 sec timeout, thodi retry<br/>baar-baar fail -> us source ko call hi nahi (OPEN)<br/>thodi der baad -> ek test call (HALF-OPEN)"]
     n_USER --> n_LB
     n_LB --> n_Feed_Svc_xN
     n_Feed_Svc_xN --> n_Redis
@@ -274,7 +274,7 @@ flowchart LR
     n_USER["USER"]
     n_LB["LB"]
     n_Feed_Svc_xN["Feed Svc x N"]
-    n_Redis["Redis<br/>sirf tech + sports<br/>-> har category ki ek list, milao<br/>(category feed)<br/>ek khabar 2 category -> dono list, id se dedupe<br/>tech zyada pasand -> user ranking, scope se bahar (personalization)"]
+    n_Redis["Redis<br/>sirf tech + sports<br/>-> har category ki ek list, milao<br/>(category feed)<br/>ek khabar 2 category -> dono list, id se dedupe"]
     n_Read_replica["Read replica"]
     n_DB["DB"]
     n_KW["Kafka -> Worker"]
@@ -349,7 +349,7 @@ flowchart LR
     n_Elasticsearch["Elasticsearch"]
     n_Redis["Redis (feed + category)"]
     n_DBR["DB + Read replica"]
-    n_Archive["Archive<br/>2 crore row, kharcha<br/>-> har mahina alag, purana S3<br/>(partition + archive)<br/>mahina beeta -> purana tukda S3, ya hatao (DETACH / DROP)<br/>DETACH pe lock -> PG 14+ me kuch nahi rukta (CONCURRENTLY)<br/>1 saal purani khuli -> S3 se, dheemi par chalti"]
+    n_Archive["Archive<br/>2 crore row, kharcha<br/>-> har mahina alag, purana S3<br/>(partition + archive)<br/>mahina beeta -> purana tukda S3, ya hatao (partition)<br/>1 saal purani khuli -> S3 se, dheemi par chalti"]
     n_KW["Kafka -> Worker"]
     n_SF["Sources -> Fetcher"]
     n_USER --> n_LF

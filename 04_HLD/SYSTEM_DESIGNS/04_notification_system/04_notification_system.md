@@ -105,7 +105,7 @@ flowchart LR
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_Order_Svc["Order Svc"]
-    n_Kafka["Kafka<br/>email band, order fail<br/>-> order turant, khabar peeche<br/>(Kafka, async)<br/>Kafka se pehle Svc giri -> outbox row me padi, khoti nahi<br/>email company band -> Kafka me ~7 din padi (offset)<br/>company 2 din baad -> wahin se aage<br/>Svc dheemi -> machine badhao (consumer group)<br/>Kafka machine giri -> 3 copy, khabar nahi khoti"]
+    n_Kafka["Kafka<br/>email band, order fail<br/>-> order turant, khabar peeche<br/>(Kafka, async)<br/>Kafka se pehle Svc giri -> outbox row me padi, khoti nahi<br/>email company band -> Kafka me ~7 din padi (offset)<br/>Svc dheemi -> machine badhao (consumer group)<br/>Kafka machine giri -> 3 copy, khabar nahi khoti"]
     n_Notification_Svc["Notification Svc"]
     n_Email_API["Email API"]
     n_USER["USER"]
@@ -179,7 +179,7 @@ flowchart LR
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis<br/>worker mara, do email<br/>-> pehle key, dobara aaye to skip<br/>(SET NX)<br/>wahi dobara aayi -> key mili, skip<br/>Redis gira -> DB me ek baar hi lage<br/>key 24 ghante me mitti -> DB row rokegi"]
+    n_Redis["Redis<br/>worker mara, do email<br/>-> pehle key, dobara aaye to skip<br/>(SET NX)<br/>Redis gira -> DB me ek baar hi lage<br/>key 24 ghante me mitti -> DB row rokegi"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES
@@ -212,7 +212,7 @@ flowchart LR
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis (key)<br/>key lagi, OTP gaya nahi<br/>-> bhej raha alag, bhej diya alag<br/>(SENDING / SENT)<br/>call hua -> key SENT, koi dobara nahi<br/>jawab se pehle mara -> do baar ja sakta, maana hua risk<br/>call fail, worker zinda -> khud key hatao<br/>worker hi mara -> SENDING ~60 sec me khud mite<br/>B ko SENDING mili -> ruko, chhodna sirf SENT pe"]
+    n_Redis["Redis (key)<br/>key lagi, OTP gaya nahi<br/>-> bhej raha alag, bhej diya alag<br/>(SENDING / SENT)<br/>call hua -> key SENT, koi dobara nahi<br/>jawab se pehle mara -> do baar ja sakta, maana hua risk<br/>worker hi mara -> SENDING ~60 sec me khud mite<br/>B ko SENDING mili -> ruko, chhodna sirf SENT pe"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES
@@ -254,7 +254,7 @@ flowchart LR
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis (key)"]
-    n_DLQ["DLQ<br/>company pe hathoda<br/>-> har baar zyada ruko, had paar alag line<br/>(backoff + DLQ)<br/>company ne mana kiya -> ruk-ruk ke dobara (backoff + random)<br/>lamba rukna -> alag lines (retry-1m, retry-10m)<br/>had paar -> DLQ + alert, phenko nahi<br/>DLQ wali khabar -> theek karke wapas line me"]
+    n_DLQ["DLQ<br/>company pe hathoda<br/>-> har baar zyada ruko, had paar alag line<br/>(backoff + DLQ)<br/>company ne mana kiya -> ruk-ruk ke dobara (backoff + random)<br/>had paar -> DLQ + alert, phenko nahi<br/>DLQ wali khabar -> theek karke wapas line me"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES
@@ -295,7 +295,7 @@ flowchart LR
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line + worker<br/>(push -> FCM / APNs)"]
     n_SES["SES + SendGrid"]
-    n_Twilio["Twilio + SNS<br/>SMS 30 sec atki<br/>-> der lage to chhodo, fail pe call band<br/>(timeout + circuit breaker)<br/>jawab nahi -> 2-3 sec pe band maano (timeout)<br/>baar-baar fail -> circuit breaker khula, SNS pe<br/>push / email -> har company ka apna circuit breaker<br/>SNS bhi band -> line me ruke, OTP ka alert"]
+    n_Twilio["Twilio + SNS<br/>SMS 30 sec atki<br/>-> der lage to chhodo, fail pe call band<br/>(timeout + circuit breaker)<br/>baar-baar fail -> circuit breaker khula, SNS pe<br/>push / email -> har company ka apna circuit breaker<br/>SNS bhi band -> line me ruke, OTP ka alert"]
     n_Redis["Redis (key)"]
     n_DLQ["DLQ"]
     n_Order_Svc --> n_Kafka
@@ -374,7 +374,7 @@ flowchart LR
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis (key + bucket)<br/>sale pe 429<br/>-> company ki had sab worker me baanto<br/>(token bucket)<br/>token nahi mila -> line me intezaar, fail nahi<br/>worker badh gaye -> speed wahi, bucket saanjha<br/>had kam -> had badhwao + kai account<br/>bucket wala Redis gira -> har worker chhoti local had (fail-closed)"]
+    n_Redis["Redis (key + bucket)<br/>sale pe 429<br/>-> company ki had sab worker me baanto<br/>(token bucket)<br/>token nahi mila -> line me intezaar, fail nahi<br/>worker badh gaye -> speed wahi, bucket saanjha<br/>bucket wala Redis gira -> har worker chhoti local had (fail-closed)"]
     n_DLQ["DLQ"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
@@ -411,7 +411,7 @@ flowchart LR
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis (key + bucket)"]
     n_DLQ["DLQ"]
-    n_Webhook_Svc["Webhook Svc<br/>bheja, par mila?<br/>-> company khud batati pahuncha ya nahi<br/>(webhook + msg id)<br/>webhook aaya hi nahi -> atke ko ek baar poochho (Twilio SID)<br/>nakli webhook -> hastakshar jaancho (HMAC / certificate)"]
+    n_Webhook_Svc["Webhook Svc<br/>bheja, par mila?<br/>-> company khud batati pahuncha ya nahi<br/>(webhook + msg id)<br/>webhook aaya hi nahi -> company se status poochho<br/>nakli webhook -> signature jaancho"]
     n_Tracking_DB["Tracking DB"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
@@ -444,7 +444,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_Admin["Admin"]
-    n_CAMP["Campaign Svc + DB<br/>1 crore ko offer<br/>-> 1 crore ko 1000-1000 me bhejo<br/>(batch + campaign row)<br/>600 bhej ke worker gira -> tukda dobara, pehle wale skip (campaign_id, user_id)<br/>galat offer chala -> CANCELLED, worker har tukde se pehle dekhe"]
+    n_CAMP["Campaign Svc + DB<br/>1 crore ko offer<br/>-> 1 crore ko 1000-1000 me bhejo<br/>(batch + campaign row)<br/>worker gira -> wahi batch dobara, bheje hue skip<br/>galat offer chala -> CANCELLED, worker har tukde se pehle dekhe"]
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]

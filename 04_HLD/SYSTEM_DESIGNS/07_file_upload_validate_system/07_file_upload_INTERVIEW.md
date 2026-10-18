@@ -88,7 +88,7 @@ flowchart LR
     n_Upload_Svc["Upload Svc"]
     n_DB["DB (haal)"]
     n_S3["S3"]
-    n_Kafka["Kafka<br/>3 sec ruka, thread atke<br/>-> turant id do, jaanch peeche<br/>(async + tracking id)<br/>worker beech me mara -> khabar dobara milti (offset baad me)<br/>wahi khabar dobara -> DONE hai to skip (idempotent)<br/>Validator do baar chala -> theek, DONE ek hi baar<br/>Validator 1 ghanta band -> khabar line me padi, offset aage nahi<br/>us ghante call -> 3-5 fail pe band, phir test call (circuit breaker)"]
+    n_Kafka["Kafka<br/>3 sec ruka, thread atke<br/>-> turant id do, jaanch peeche<br/>(async + tracking id)<br/>worker beech me mara -> khabar dobara milti (offset baad me)<br/>wahi khabar dobara -> DONE hai to skip (idempotent)<br/>Validator 1 ghanta band -> khabar line me padi, offset aage nahi<br/>us ghante call -> 3-5 fail pe band, phir test call (circuit breaker)"]
     n_Worker["Worker"]
     n_Validator["Validator"]
     n_CLIENT --> n_Upload_Svc
@@ -128,7 +128,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_CLIENT["CLIENT"]
-    n_S3["S3<br/>5 GB server se guzri<br/>-> file seedha S3 me, server sirf paas de<br/>(presigned URL)<br/>had 5 GB, aaye 50 GB -> S3 khud reject (content-length-range)<br/>/complete nahi aaya -> S3 event se queue, client pe bharosa nahi"]
+    n_S3["S3<br/>5 GB server se guzri<br/>-> file seedha S3 me, server sirf paas de<br/>(presigned URL)<br/>had 5 GB, aaye 50 GB -> S3 khud reject (presigned URL me had)<br/>/complete nahi aaya -> S3 event se queue, client pe bharosa nahi"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
     n_Kafka["Kafka"]
@@ -173,7 +173,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_CLIENT["CLIENT"]
-    n_S3["S3 multipart<br/>90% pe wifi gaya<br/>-> tukdon me bhejo, toota to bache hi<br/>(multipart)<br/>wifi gaya -> sirf bache tukde bhejo, shuru se nahi<br/>app band, kal wapas -> S3 se poocho (ListParts)<br/>COMPLETE kabhi nahi -> kuch din baad S3 hata de (lifecycle abort)"]
+    n_S3["S3 multipart<br/>90% pe wifi gaya<br/>-> tukdon me bhejo, toota to bache hi<br/>(multipart)<br/>wifi gaya -> sirf bache tukde bhejo, shuru se nahi<br/>COMPLETE kabhi nahi -> kuch din baad S3 hata de (lifecycle abort)"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
     n_Kafka["Kafka"]
@@ -220,7 +220,7 @@ flowchart LR
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
-    n_Sweeper_job["Sweeper job<br/>complete aaya hi nahi<br/>-> atki file dhoondh ke dobara line me / FAILED<br/>(sweeper job)<br/>crash + event chhoota -> UPLOADING atka, bytes S3 me<br/>har kuch min -> 10 min se haal na badla = atka<br/>bytes hain -> khud dobara line me<br/>bytes nahi -> FAILED, user dobara daale<br/>do machine pe -> ek chale (lock / leader)"]
+    n_Sweeper_job["Sweeper job<br/>complete aaya hi nahi<br/>-> atki file dhoondh ke dobara line me / FAILED<br/>(sweeper job)<br/>crash + event chhoota -> UPLOADING atka, bytes S3 me<br/>har kuch min -> 10 min se haal na badla = atka<br/>bytes hain -> khud dobara line me<br/>bytes nahi -> FAILED, user dobara daale"]
     n_Kafka["Kafka"]
     n_Worker["Worker"]
     n_Validator["Validator"]
@@ -262,7 +262,7 @@ flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
-    n_RC["Redis + Read replica<br/>har 2 sec haal, DB ghira<br/>-> haal Redis se, nahi to DB ki copy se<br/>(cache + replica)<br/>Redis me nahi -> replica se laao, Redis me rakho<br/>replica peeche -> miss pe chhoti umar, ya primary (SET NX)<br/>worker ne DONE likha -> DB + Redis saath<br/>har 2 sec poochna -> gap badhao 2s, 4s, 8s (backoff)<br/>Redis gira -> replica pe seedha + rate limit"]
+    n_RC["Redis + Read replica<br/>har 2 sec haal, DB ghira<br/>-> haal Redis se, nahi to DB ki copy se<br/>(cache + replica)<br/>Redis me nahi -> replica se laao, Redis me rakho<br/>worker ne DONE likha -> DB + Redis saath<br/>har 2 sec poochna -> gap badhao 2s, 4s, 8s (backoff)<br/>Redis gira -> replica pe seedha + rate limit"]
     n_DB["DB (haal)"]
     n_Sweeper_job["Sweeper job"]
     n_CHAIN["Kafka -> Worker -> Validator"]
@@ -390,7 +390,7 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_CLIENT["CLIENT"]
-    n_S3["S3<br/>link WhatsApp pe ghooma<br/>-> har baar 5 min ka naya link<br/>(signed GET)<br/>link group me gaya -> 1 ghante baad expire, nahi khula<br/>5 min me adhoora -> chalu download nahi katta<br/>sensitive file -> IP had bhi (CloudFront signed URL)"]
+    n_S3["S3<br/>link WhatsApp pe ghooma<br/>-> har baar 5 min ka naya link<br/>(signed GET)<br/>link group me gaya -> 1 ghante baad expire, nahi khula"]
     n_API_Gateway_LB["API Gateway / LB"]
     n_Upload_Svc["Upload Svc<br/>+ owner check"]
     n_RC["Redis + Read replica (haal)"]
@@ -439,7 +439,7 @@ flowchart LR
     n_DB["DB (haal + owner + s3_key)"]
     n_Sweeper_job["Sweeper job"]
     n_Kafka["Kafka"]
-    n_Worker["Worker<br/>naam pdf, andar exe<br/>-> naam nahi, file ke pehle byte dekho<br/>(magic bytes)<br/>naam .pdf, shuru MZ -> EXE, reject<br/>shuru PDF, andar virus -> scan bhi (ClamAV / S3 malware)"]
+    n_Worker["Worker<br/>naam pdf, andar exe<br/>-> naam nahi, file ke pehle byte dekho<br/>(magic bytes)<br/>naam .pdf, andar EXE -> pehle bytes dekho, reject<br/>andar virus -> virus scan bhi"]
     n_CLIENT --> n_S3
     n_CLIENT --> n_GU
     n_GU --> n_RC
