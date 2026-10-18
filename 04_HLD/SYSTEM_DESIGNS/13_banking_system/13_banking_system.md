@@ -94,16 +94,12 @@ flowchart LR
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc"]
-    n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono account ek saath ya koi nahi<br/>(transaction)<br/>beech me server gira -> COMMIT hua = poora, nahi = ulta (WAL)<br/>-500 ke baad koi padhe -> aadha kisi ko nahi dikhta"]
+    n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono UPDATE ek transaction me: COMMIT tak dono ya koi nahi<br/>(transaction: BEGIN · Arpan -500 · Ravi +500 · COMMIT)<br/>beech me server gira -> DB log (WAL) se: COMMIT hua = poora, nahi = ulta<br/>-500 ke baad koi padhe -> aadha kisi ko nahi dikhta"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     style n_DB fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     1 tareekh subah 8 baje maine Ravi ko 500 bheje. Mere 500 kate, Ravi ke account me daalne se PEHLE
-           server gira. 500 na mere paas, na Ravi ke paas. Gayab.
-HAL        dono ek saath ya koi nahi (TRANSACTION, ek DB): BEGIN; UPDATE Arpan -500; UPDATE Ravi +500; COMMIT;
-           DB pehle log (WAL) me likhta; utha to COMMIT hua tha -> poora, nahi -> ulta. Aadha kabhi nahi.
 NAHI       SAGA / queue laga do: ek DB me kaatna aur daalna alag ho jaate, dikkat khud ban jaati.
 ```
 ```
@@ -120,17 +116,13 @@ AAGE POOCHEGA:
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_SVC["Banking Svc<br/>dobara bheja, 1000 kate<br/>-> wahi id dobara = paisa dobara nahi<br/>(idempotency key)<br/>network gaya, app dobara -> wahi id, pehla jawab wapas<br/>dono ek saath -> DB doosra insert roke (UNIQUE)<br/>wahi id, amount badla -> hash alag, 422"]
+    n_SVC["Banking Svc<br/>dobara bheja, 1000 kate<br/>-> screen khulte ek id bane, retry pe WAHI id jaaye<br/>server ne id dekhi = pehla jawab wapas, paisa dobara nahi<br/>(idempotency key, DB me UNIQUE)<br/>Send button -> pehli tap pe band<br/>dono ek saath -> DB doosra insert roke (UNIQUE)<br/>wahi id, amount badla -> hash alag, 422"]
     n_DB["SQL DB"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     style n_SVC fill:#f9a825,color:#000
 ```
 ```
-DIKKAT     8:30 lift me maine Send dabaya, 500 kat bhi gaye, par jawab aate waqt network gaya. App ne timeout
-           pe khud dobara bheja -> 1000 kat gaye, bhejne the 500.
-HAL        wahi id dobara = paisa nahi (IDEMPOTENCY KEY): screen khulte id bane, dobara WAHI; DB me UNIQUE.
-           Wahi id aayi -> pehla jawab wapas, paisa doosri baar nahi katta. Send button pehli tap pe band.
 NAHI       app me "pehle dekho, phir daalo": dono ne dekha "nahi hai", dono ne daala (race).
 ```
 ```
