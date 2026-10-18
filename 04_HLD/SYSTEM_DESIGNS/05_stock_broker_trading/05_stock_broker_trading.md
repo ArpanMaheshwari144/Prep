@@ -100,7 +100,7 @@ AAGE POOCHEGA:
 DIKKAT     Subah maine TCS ka Buy ek hi baar dabaya. Network gaya, jawab nahi aaya, app ne khud dobara bheja
            -> do order lag gaye, paisa do baar block, bhejna tha ek.
 ```
-![c1](img/c1-0798a2b9.svg)
+![c1](img/c1-bcab388d.svg)
 
 ```
 AAGE POOCHEGA:
@@ -118,7 +118,7 @@ AAGE POOCHEGA:
 DIKKAT     Wallet me 50k. Laptop se TCS 30k, usi second phone se INFY 30k (do alag order, alag id).
            Do server, dono ne 50k dekha, dono pass.
 ```
-![c2](img/c2-629e4e06.svg)
+![c2](img/c2-6c415808.svg)
 
 ```
 NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
@@ -140,7 +140,7 @@ AAGE POOCHEGA:
 DIKKAT     Mera order book me pahuncha. Suresh 10 bech raha, usi pal Mohan ne bhi BUY 10.
            Do thread, dono ko "10 hai" dikha -> 20 bik gaye.
 ```
-![c3](img/c3-c007379d.svg)
+![c3](img/c3-40104bc7.svg)
 
 ```
 NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
@@ -159,7 +159,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Usi 9:15 pe poora market TCS pe toot pada: hazaaron order / second.
 ```
-![c4](img/c4-020dd56f.svg)
+![c4](img/c4-60330233.svg)
 
 ```
 NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
@@ -179,7 +179,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
 ```
-![c5](img/c5-1e4e7744.svg)
+![c5](img/c5-90a6b7b9.svg)
 
 ```
 NAHI       doosra engine saath chalao (active-active): dono match karte = ek sauda do baar settle.
@@ -199,7 +199,7 @@ AAGE POOCHEGA:
 DIKKAT     10:30, server wapas, log se book bani; ab mera 10:10 wala sauda settle hone laga (Suresh se
            10 TCS, 30k): mera 30k kata, Suresh ko milne se PEHLE crash.
 ```
-![c6](img/c6-ab6510f5.svg)
+![c6](img/c6-9470bfc0.svg)
 
 ```
 NAHI       chaar alag UPDATE: beech me gira to aadha likha.
@@ -219,7 +219,7 @@ AAGE POOCHEGA:
 DIKKAT     Dopahar 1 baje INFY 5 share (20k) ka sauda. Paisa Wallet DB me, share Portfolio DB me -> ek
            transaction nahi chalti. 20k kata, Portfolio me share se PEHLE crash.
 ```
-![c7](img/c7-b3abb887.svg)
+![c7](img/c7-96daf525.svg)
 
 ```
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
@@ -240,7 +240,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
 ```
-![c8](img/c8-fffb2e6a.svg)
+![c8](img/c8-b79c65f8.svg)
 
 ```
 NAHI       polling: 10 lakh bekaar sawaal / sec, 99% me price badla hi nahi.

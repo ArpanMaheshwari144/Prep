@@ -55,32 +55,112 @@ def merge_concept(svg_path, mmd_src, term, csvg=None):
     ys = re.findall(r'style (\w+) fill:#f9a825', mmd_src)
     lab = lambda n: (re.search(r'\b' + n + r'\["([^"]*)"', mmd_src) or re.match('()', '')).group(1)
     node = max(ys, key=lambda n: lab(n).count('<br/>'))   # sabse lamba peela = is card ka
-    # sab dabbe (beech x, y, chaudai, unchai); teer neeche wale kisi dabbe ke upar se na jaaye
+    # rukawat: sab dabbe (x1, y1, x2, y2) + sab lines (tukde); teer inme se kisi ke upar se na jaaye
     boxes = {}
     for m in re.finditer(r'id="[^"]*flowchart-(\w+)-\d+"[^>]*transform="translate\(([\d.\-]+), ([\d.\-]+)\)"><rect([^>]*)>', d):
         rw = re.search(r'width="([\d.]+)"', m.group(4)); rh = re.search(r'height="([\d.]+)"', m.group(4))
         if rw and rh:
-            boxes[m.group(1)] = (float(m.group(2)), float(m.group(3)), float(rw.group(1)), float(rh.group(1)))
-    def place(nd):
-        bx, by, bw, bh = boxes[nd]
-        def clear(x):
-            return all(not (oy - oh / 2 > by and ox - ow / 2 - 24 < x < ox + ow / 2 + 24)
-                       for n, (ox, oy, ow, oh) in boxes.items() if n != nd)
-        cands = sorted([bx + dx for dx in range(-int(bw / 2) + 16, int(bw / 2) - 15, 8)], key=lambda x: abs(x - bx))
-        return next((x for x in cands if clear(x)), None)
-    ax = place(node)
-    if ax is None:   # neeche koi dabba raasta roke -> doosra peela (neeche wala) se teer
-        for nd in sorted((n for n in ys if n in boxes and n != node), key=lambda n: -boxes[n][1]):
-            ax = place(nd)
-            if ax is not None:
-                node = nd; break
-    if ax is None: ax = boxes[node][0]
-    bx, by, bw, bh = boxes[node]
-    nx, ny, nh = (ax - dvx) * k + ox1, (by - dvy) * k, bh * k
-    y1, y2 = ny + nh / 2 + 4, h1 + gap - 4
+            cx, cy, w, h = float(m.group(2)), float(m.group(3)), float(rw.group(1)), float(rh.group(1))
+            boxes[m.group(1)] = (cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2)
+    segs = []
+    for m in re.finditer(r'<path d="(M[^"]*)"[^>]*flowchart-link', d):
+        pts = [(float(a), float(b)) for a, b in re.findall(r'([\d.\-]+),([\d.\-]+)', m.group(1))]
+        segs += list(zip(pts, pts[1:]))
+    bottom = dvy + h1 / k   # design ka neeche ka kinara (design ke apne naap me)
+    M = 10
+
+    def hits(p, q, own, lines=True):
+        """seedha (khada / pada) tukda p->q kisi dabbe ya line se takraaye?"""
+        (x1, y1), (x2, y2) = p, q
+        lo_x, hi_x, lo_y, hi_y = min(x1, x2), max(x1, x2), min(y1, y2), max(y1, y2)
+        for n, (a, b, c, e) in boxes.items():
+            if n == own:
+                continue
+            if lo_x < c + M and hi_x > a - M and lo_y < e + M and hi_y > b - M:
+                return True
+        for (sx1, sy1), (sx2, sy2) in (segs if lines else []):
+            if x1 == x2:   # khada
+                if (sx1 - x1) * (sx2 - x1) <= 0 and sx1 != sx2:
+                    yy = sy1 + (sy2 - sy1) * (x1 - sx1) / (sx2 - sx1)
+                    if lo_y + 2 < yy < hi_y:
+                        return True
+            else:          # pada
+                if (sy1 - y1) * (sy2 - y1) <= 0 and sy1 != sy2:
+                    xx = sx1 + (sx2 - sx1) * (y1 - sy1) / (sy2 - sy1)
+                    if lo_x < xx < hi_x:
+                        return True
+        return False
+
+    xmin, xmax = dvx + 12, dvx + W0 - 12   # teer image ke andar hi
+
+    def route(nd, lines):
+        a, b, c, e = boxes[nd]
+        mid = (a + c) / 2
+        # 1) seedha neeche, dabbe ke andar kahin se
+        for x in sorted([a + 16 + i * 8 for i in range(int((c - a - 32) / 8) + 1)], key=lambda x: abs(x - mid)):
+            if not hits((x, e), (x, bottom), nd, lines):
+                return [(x, e), (x, bottom)]
+        # 2) elbow: dabbe ke left / right kinare se bahar, phir neeche
+        ym = (b + e) / 2
+        for dx in range(24, 600, 12):
+            for side, x0 in ((1, c), (-1, a)):
+                x = x0 + side * dx
+                if not xmin < x < xmax:
+                    continue
+                if not hits((x0, ym), (x, ym), nd, lines) and not hits((x, ym), (x, bottom), nd, lines):
+                    return [(x0, ym), (x, ym), (x, bottom)]
+        return None
+
+    def ncross(path):
+        c = 0
+        for p, q in zip(path, path[1:]):
+            for sg in segs:
+                (x1, y1), (x2, y2) = p, q
+                (sx1, sy1), (sx2, sy2) = sg
+                if x1 == x2 and (sx1 - x1) * (sx2 - x1) <= 0 and sx1 != sx2:
+                    yy = sy1 + (sy2 - sy1) * (x1 - sx1) / (sx2 - sx1)
+                    c += min(y1, y2) + 2 < yy < max(y1, y2)
+                elif y1 == y2 and (sy1 - y1) * (sy2 - y1) <= 0 and sy1 != sy2:
+                    xx = sx1 + (sx2 - sx1) * (y1 - sy1) / (sy2 - sy1)
+                    c += min(x1, x2) < xx < max(x1, x2)
+        return c
+
+    def all_routes(nd):
+        a, b, c, e = boxes[nd]
+        ym = (b + e) / 2
+        out = [[(x, e), (x, bottom)] for x in [a + 16 + i * 8 for i in range(int((c - a - 32) / 8) + 1)]
+               if not hits((x, e), (x, bottom), nd, False)]
+        for dx in range(24, 600, 12):
+            for side, x0 in ((1, c), (-1, a)):
+                x = x0 + side * dx
+                if xmin < x < xmax and not hits((x0, ym), (x, ym), nd, False) and not hits((x, ym), (x, bottom), nd, False):
+                    out.append([(x0, ym), (x, ym), (x, bottom)])
+        return out
+
+    ordered = [node] + sorted((n for n in ys if n in boxes and n != node), key=lambda n: -boxes[n][3])
+    path = None
+    for nd in ordered:   # pehle na dabba na line
+        if nd in boxes:
+            path = route(nd, True)
+            if path:
+                break
+    if not path:   # na mile to: dabba kabhi nahi, line sabse kam
+        cands = [(ncross(r), len(r), r) for nd in ordered if nd in boxes for r in all_routes(nd)]
+        if cands:
+            nc, _, path = min(cands, key=lambda t: (t[0], t[1]))
+            print('NOTE: teer', nc, 'line kaatta (dabba nahi)', os.path.basename(svg_path))
+    if not path:
+        print('WARN: kaise teer ka khaali raasta nahi mila', svg_path)
+        a, b, c, e = boxes[node]
+        path = [((a + c) / 2, e), ((a + c) / 2, bottom)]
+    pts = [((x - dvx) * k + ox1, (y - dvy) * k) for x, y in path]
+    pts[0] = (pts[0][0], pts[0][1] + (4 if len(path) == 2 else 0))
+    pts.append((pts[-1][0], h1 + gap - 4))
+    nx = pts[-1][0]
+    poly = ' '.join(f'{x:.1f},{y:.1f}' for x, y in pts)
     arrow = (f'<defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto">'
              f'<path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs>'
-             f'<line x1="{nx:.1f}" y1="{y1:.1f}" x2="{nx:.1f}" y2="{y2:.1f}" stroke="#f9a825" stroke-width="3" '
+             f'<polyline points="{poly}" fill="none" stroke="#f9a825" stroke-width="3" '
              f'stroke-dasharray="8,5" marker-end="url(#kaise)"/>'
              f'<text x="{nx+10:.1f}" y="{h1+gap/2+5:.1f}" font-family="Arial, Helvetica, sans-serif" font-size="16" '
              f'font-weight="bold" fill="#e65100">kaise?</text>')
