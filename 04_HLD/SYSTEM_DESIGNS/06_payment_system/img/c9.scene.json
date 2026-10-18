@@ -1,0 +1,58 @@
+{
+ "title": "Merchant ki bhaari report ne mera payment rok diya",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: report aur payment ek hi DB pe",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "Report",
+       "sub": "mahine bhar ki"
+      },
+      {
+       "box": "Mera 500",
+       "sub": "likhna"
+      }
+     ]
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Primary DB",
+     "sub": "busy",
+     "bad": true
+    }
+   ],
+   "result": "payment atka"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: bhaari report copy pe, primary sirf payment (read replica)",
+   "items": [
+    {
+     "box": "Mera 500"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Primary DB",
+     "sub": "sirf payment",
+     "good": true
+    },
+    {
+     "arrow": "copy, 1-2 sec peeche"
+    },
+    {
+     "box": "Replica",
+     "sub": "report yahan"
+    }
+   ],
+   "result": "payment tez",
+   "foot": "pay karke turant balance dekha -> primary se padho"
+  }
+ ]
+}

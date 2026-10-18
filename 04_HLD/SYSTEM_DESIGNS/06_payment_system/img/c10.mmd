@@ -5,7 +5,7 @@ flowchart LR
     n_Payment_Svc_xN["Payment Svc x N"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
-    n_SQL_DB_shard_by_account_id["SQL DB + Ledger shard<br/>1000 crore row, likhai dheemi<br/>-> account_id se data tukdon me: mera balance + history ek tukde pe<br/>mujhse kaatna ek jagah, ek transaction<br/>(shard by account_id)<br/>do account alag shard -> A kaato, B daalo, fail pe ulta (saga)<br/>idempotency key -> account_id se usi shard"]
+    n_SQL_DB_shard_by_account_id["SQL DB + Ledger shard<br/>1000 crore row, likhai dheemi<br/>-> account_id se tukde, mera balance + history ek tukde pe (shard by account_id)<br/>do account alag shard -> saga<br/>idempotency key -> usi shard"]
     n_Read_replica["Read replica"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_LB_API_Gateway

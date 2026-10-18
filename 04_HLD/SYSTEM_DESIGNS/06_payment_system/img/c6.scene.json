@@ -1,0 +1,59 @@
+{
+ "title": "Merchant Bank B me: wallet se 500 kata, payout fail",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: do system, ek transaction nahi",
+   "items": [
+    {
+     "box": "Mera wallet",
+     "cells": [
+      "-500"
+     ],
+     "state": "o"
+    },
+    {
+     "arrow": "payout"
+    },
+    {
+     "box": "Bank B",
+     "sub": "+500 fail",
+     "cells": [
+      ""
+     ],
+     "state": "x",
+     "bad": true
+    }
+   ],
+   "result": "paisa beech me latka"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: step-step chalo, haal likho, fail pe pichhle ka ulta (saga)",
+   "items": [
+    {
+     "box": "Saga table",
+     "cells": [
+      "DEBITED",
+      "PAYOUT FAIL"
+     ],
+     "state": "gr"
+    },
+    {
+     "arrow": "ulta kaam"
+    },
+    {
+     "box": "Mera wallet",
+     "sub": "500 wapas (compensate)",
+     "cells": [
+      "+500"
+     ],
+     "state": "g",
+     "good": true
+    }
+   ],
+   "result": "hisaab saaf",
+   "foot": "service beech me giri -> saga table se aage ya ulta; ulta bhi fail -> retry + alert"
+  }
+ ]
+}

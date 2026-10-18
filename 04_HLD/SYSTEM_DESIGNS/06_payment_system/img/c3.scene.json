@@ -1,0 +1,60 @@
+{
+ "title": "Metro me network gaya, app ne dobara bheja, 1000 kate",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har request naya payment",
+   "items": [
+    {
+     "box": "App",
+     "sub": "Pay (koi id nahi)"
+    },
+    {
+     "arrow": "timeout, dobara"
+    },
+    {
+     "box": "Server",
+     "cells": [
+      "500",
+      "500"
+     ],
+     "state": "rr",
+     "bad": true
+    }
+   ],
+   "result": "1000 kate"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: screen khulte ek id, retry pe wahi id, DB me UNIQUE (idempotency key)",
+   "items": [
+    {
+     "box": "App",
+     "sub": "id key-555"
+    },
+    {
+     "arrow": "dobara, wahi key"
+    },
+    {
+     "box": "Idempotency store",
+     "sub": "key-555 pehle se",
+     "cells": [
+      "key-555",
+      "key-555"
+     ],
+     "state": "gx"
+    },
+    {
+     "arrow": "saved jawab"
+    },
+    {
+     "box": "Mera wallet",
+     "sub": "500 hi kate",
+     "good": true
+    }
+   ],
+   "result": "ek baar",
+   "foot": "wahi key, amount alag -> request hash se pakdo (422); Pay button pehli tap pe band"
+  }
+ ]
+}

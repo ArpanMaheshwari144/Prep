@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
-    n_DB["SQL DB<br/>600 me 500-500 dono pass<br/>-> ek hi query me check + kaato: paisa nahi to 0 row badli<br/>(atomic UPDATE: SET balance = balance - 500 WHERE id = ? AND balance >= 500)<br/>phone + laptop ek saath -> pehla jeeta, doosre ko 0 row<br/>WHERE check bhool gaye -> aakhri deewar (CHECK balance >= 0)"]
+    n_DB["SQL DB<br/>600 me 500-500 dono pass<br/>-> check aur kaatna ek hi query me, paisa nahi to 0 row (atomic UPDATE)<br/>phone + laptop ek saath -> pehla jeeta, doosre ko 0 row<br/>check bhool gaye -> aakhri deewar (CHECK balance >= 0)"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_DB
     style n_DB fill:#f9a825,color:#000

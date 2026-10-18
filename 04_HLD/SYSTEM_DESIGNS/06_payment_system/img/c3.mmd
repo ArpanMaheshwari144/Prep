@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
-    n_Idempotency_store["Idempotency store<br/>app ne dobara bheja<br/>-> screen khulte app ek id banata (key-555), retry pe WAHI id<br/>DB me key UNIQUE: wahi id = saved jawab, paisa ek baar<br/>(idempotency key)<br/>Pay button -> pehli tap pe band<br/>wahi key, amount alag -> request hash se farak (422)<br/>key kab hatao -> pakka fail pe, DONE ~24 ghante"]
+    n_Idempotency_store["Idempotency store<br/>app ne dobara bheja<br/>-> screen khulte ek id, retry pe wahi id, DB me UNIQUE: wahi id = saved jawab (idempotency key)<br/>wahi key, amount alag -> 422<br/>key kab hatao -> pakka fail pe"]
     n_DB["SQL DB"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store

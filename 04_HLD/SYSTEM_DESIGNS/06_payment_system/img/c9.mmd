@@ -6,7 +6,7 @@ flowchart LR
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
     n_DB["SQL DB + Ledger"]
-    n_Read_replica["Read replica<br/>report ne DB ghera<br/>-> copy primary ka log (WAL) padh ke peeche chalti, 1-2 sec purani<br/>bhaari report copy pe, primary sirf payment ke liye<br/>(read replica)<br/>pay kiya, balance dekha -> primary se, copy 1-2 sec peeche<br/>copy aur peeche -> naapo, alert (replication lag)"]
+    n_Read_replica["Read replica<br/>report ne DB ghera<br/>-> bhaari report copy pe, primary sirf payment (read replica)<br/>pay karke balance dekha -> primary se<br/>copy aur peeche -> naapo, alert"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_LB_API_Gateway
     n_LB_API_Gateway --> n_Payment_Svc_xN
