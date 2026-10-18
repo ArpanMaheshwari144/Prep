@@ -9,7 +9,7 @@
 | PART | andar kya |
 |---|---|
 | [1 NAKSHA + NIYAM](#part1) | [kaunsi file kab](#naksha) · [teen baatein](#teen-baatein) |
-| [2 CROSS-QUESTION](#part2) | [6 sawaal](#chhe-sawaal) · [8 dabbe](#dabbe) · [jawab se pehle 5 sec](#jawab-se-pehle) · [Q1-Q22 ab design file me](#bank) |
+| [2 CROSS-QUESTION](#part2) | [6 sawaal](#chhe-sawaal) · [8 dabbe](#dabbe) · [jawab se pehle 5 sec](#jawab-se-pehle) · [cross-Q: design file me](#bank) |
 | [3 DESIGN KHADA KARNA](#part3) | [teen line](#teen-line) · [6 archetype](#archetype) · [rail (7 step)](#rail) · [block menu](#block-menu) · [drill wali rows + jode](#drill-rows) · [A ya B trade-off](#trade-off) · [14 design ka DIL](#designs) |
 | [4 ATKE TO / ROUND DIN](#part4) | [anjaan design](#anjaan) · [LinkedIn misaal](#linkedin) · [kuch na pata](#na-pata) · [checklist](#checklist) |
 | [5 BOLNA](#part5) | [kaise bolna](#kaise-bolna) · [SHABD](#shabd) |
@@ -21,23 +21,23 @@
 | server / node / DB gira · failover | [REPLICA](#dabba-replica) · [LB](#dabba-lb) |
 | provider slow · timeout · circuit breaker | [CIRCUIT BREAKER](#dabba-cb) |
 | cache gira · stampede · hot key expire | [CACHE](#dabba-cache) |
-| region / data centre gira · multi-AZ | [url shortener](SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) dikkat 5 |
+| region / data centre gira · multi-AZ | [url shortener](SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) 10 GUNA |
 | request do baar · retry · double click · idempotency | [IDEMPOTENCY KEY](#dabba-idem) |
-| key lagi par bhejna fail | [notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) dikkat 4b |
+| key lagi par bhejna fail | [notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) card 4 |
 | do user ek saath · race · ek seat · lock | [DB TRANSACTION](#dabba-txn) · [bookmyshow](#d09) |
 | achanak spike · flash sale · IPL · pre-warm | [QUEUE](#dabba-queue) |
 | 10x users · scale kaise | [rail step 7](#rail) |
 | DB bada · writes zyada · shard key · consistent hashing | [SHARD](#dabba-shard) · [TO9](#to9) |
 | hot key · celebrity · hot partition | [twitter](#d03) · [cache design](#d10) |
 | purana data · stale · replica lag · read-your-own-writes | [REPLICA](#dabba-replica) |
-| order / kram · partition key | [kafka](SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) dikkat 3 · [chat](SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md) dikkat 10 |
+| order / kram · partition key | [kafka](SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) card 3 · [chat](SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md) card 6 |
 | CAP · consistency ya availability · network toota | [TO6](#to6) |
 | event / message kho gaya · offset · DLQ · outbox | [QUEUE](#dabba-queue) |
 | crash beech me · aadha kaam · PENDING · reconciliation · saga | [DB TRANSACTION](#dabba-txn) |
-| 429 · throttle · backoff · jitter | [notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) dikkat 8 |
-| OTP pehle · priority | [notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) dikkat 7 |
+| 429 · throttle · backoff · jitter | [notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) card 8 |
+| OTP pehle · priority | [notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) card 7 |
 | monitoring · alert · pata kaise chale | [FOUNDATIONS/18](FOUNDATIONS/18_monitoring.md) |
-| security · abuse · owner check · WAF | [file upload](SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) dikkat 9 · [FOUNDATIONS/17](FOUNDATIONS/17_waf.md) |
+| security · abuse · owner check · WAF | [file upload](SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) card 7 · card 9 · [FOUNDATIONS/17](FOUNDATIONS/17_waf.md) |
 | data badhta jaaye · retention · archive | [banking](SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) "5 saal purana data" |
 | SPOF · single point of failure | [FOUNDATIONS/11](FOUNDATIONS/11_reliability_spof_cloud.md) |
 | SQL ya NoSQL | [TO1](#to1) |
@@ -124,7 +124,7 @@
 
 ```
    INTERVIEW-DIN / REVISE
-     00_MASTER_SHEET.md    <- YE. KYA bolna: 6 sawaal · CROSS-QUESTION BANK · archetype · rail ·
+     00_MASTER_SHEET.md    <- YE. KYA bolna: 6 sawaal · 8 DABBE · archetype · rail ·
                               blocks · A ya B jode · 14 design ka DIL · KAISE bolna · SHABD
                               (29-Sep: 01_DELIVERY + 02_TRADEOFFS isi me mile)
 
@@ -147,7 +147,7 @@
 ```
    ★ CONFUSION-PROOF NIYAM:
        "kya bolna"         -> ye file
-       "what if X fails?"  -> ye file, CROSS-QUESTION BANK
+       "what if X fails?"  -> 8 DABBE (yahan) + design file ka SAFAR
        "kaise bolna"       -> ye file, KAISE BOLNA + SHABD (aakhir me)
        "A ya B?"           -> ye file, A ya B — TRADE-OFF JODE (section 4 ke baad)
        "ye cheez hai kya?" -> FOUNDATIONS
@@ -219,7 +219,7 @@
 
 ## ★★★ CROSS-QUESTION — jo har design me ghoom ke aate hain
 
-> 4-Oct se Q1-Q22 yahan nahi, har DESIGN FILE me us dikkat ke neeche ("INTERVIEWER AISE POOCHEGA").
+> Cross-question ab har design file me card ke neeche NIYAM + SAFAR, aakhir me POOCHE TO.
 > Roz ek design ka mock -> end me usi file ke sawaal. Yahan bache: 8 dabbe x 4 line + jawab se pehle 5 sec.
 
 <a id="dabbe"></a>
@@ -357,8 +357,7 @@
 ```
 
 
-> Q1-Q22 ka poora jawab (4-Oct se) har DESIGN FILE me, us dikkat ke neeche jahan wo baat hai:
-> "INTERVIEWER AISE POOCHEGA" + "YAHI SAWAAL DOOSRE DESIGN ME BHI" (connect) + "MASTER SHEET SE JODA".
+> Cross-question ab har design file me card ke neeche NIYAM + SAFAR, aakhir me POOCHE TO.
 > Purana bank git history me (commit 9f0fe5d tak).
 
 ---
@@ -621,7 +620,7 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
                       access FIX (key se uthana: timeline/logs/chat). wajah: POOCHNA hai ya sirf UTHANA?
                       keemat: SQL -> sharding ka dard · NoSQL -> join/txn khud sambhalo
    BOL: "The access pattern is a simple key lookup at very high volume, so NoSQL. If we needed
-         multi-table transactions, I'd flip to a relational DB."            (01 · 03 · 07/10 = SQL)
+         multi-table transactions, I'd flip to a relational DB."            (01 · 03 · 07 / 09 · 13 = SQL)
 
 ```
 
@@ -706,7 +705,7 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 <a id="to8"></a>
 
-#### TO8 — VERTICAL vs HORIZ. vertical = badi machine, simple, par CEILING + SPOF · horizontal = zyada machine,
+#### TO8 — VERTICAL vs HORIZONTAL
 
 ```
  8 VERTICAL vs HORIZ. vertical = badi machine, simple, par CEILING + SPOF · horizontal = zyada machine,
@@ -750,7 +749,7 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
                       dono taraf (chat, trading, collab) · SSE = sirf server->client, halka, HTTP pe.
                       keemat: WS -> har connection zinda rakho (memory + sticky LB)
    BOL: "Chat is bidirectional, so WebSocket. If it were only server-to-client updates, SSE
-         would be lighter."                                                  (15 · 12 · 06 · 04)
+         would be lighter."                                                  (14 · 12 · 06 · 04)
 
 ```
 
@@ -1106,7 +1105,7 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 > Rail (section 3), scope kaato, core entities, har box naam + ek "kyun", teen niyam (upar),
 > na-pata-ho 4 line (section 7), checklist (section 8) pehle se is file me hain. Neeche sirf jo baaki tha.
-> Common follow-ups ("scale 10x", "gira to", CAP, race, hot key, data lost, monitoring) = CROSS-QUESTION BANK.
+> Common follow-ups ("scale 10x", "gira to", CAP, race, hot key, data lost, monitoring) = 8 DABBE (section 2) + design file ka SAFAR.
 
 ```
 HLD ALAG KYUN LAGTA: DSA = binary (pattern hai/nahi) · Java = fixed sawaal-jawab · HLD = OPEN game,
