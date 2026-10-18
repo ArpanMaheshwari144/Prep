@@ -1,0 +1,53 @@
+{
+ "title": "Raat ko online / last seen sabko kaise",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har aana-jaana saare contacts ko batao",
+   "items": [
+    {
+     "box": "Main online"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "500 contacts x crore",
+     "bad": true
+    }
+   ],
+   "result": "bahut message"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: online = Redis key + umar, app dhadkan de; dekho tabhi jab chat khule",
+   "items": [
+    {
+     "box": "Meri app",
+     "sub": "har 15 sec dhadkan"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Redis",
+     "cells": [
+      "arpan: online"
+     ],
+     "state": "g",
+     "clock": "30 sec"
+    },
+    {
+     "arrow": "Ravi ne chat kholi"
+    },
+    {
+     "box": "Ravi",
+     "sub": "tabhi dekha",
+     "good": true
+    }
+   ],
+   "result": "",
+   "foot": "app band -> dhadkan band, umar khatam = offline, last seen likho"
+  }
+ ]
+}

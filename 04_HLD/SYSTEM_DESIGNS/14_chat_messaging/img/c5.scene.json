@@ -1,0 +1,63 @@
+{
+ "title": "Net dheema, app ne dobara bheja, Ravi ko \"hi\" do baar",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har bhejna naya message",
+   "items": [
+    {
+     "box": "App",
+     "sub": "hi, timeout, phir hi"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Ravi ki chat",
+     "cells": [
+      "hi",
+      "hi"
+     ],
+     "state": "rr",
+     "bad": true
+    }
+   ],
+   "result": "do baar"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: app har message ki apni id, dobara pe wahi id (clientMsgId)",
+   "items": [
+    {
+     "box": "App",
+     "sub": "id m-9"
+    },
+    {
+     "arrow": "dobara, wahi m-9"
+    },
+    {
+     "box": "Server",
+     "sub": "(main, m-9) aaya?",
+     "cells": [
+      "m-9",
+      "m-9"
+     ],
+     "state": "gx"
+    },
+    {
+     "arrow": "skip"
+    },
+    {
+     "box": "Ravi ki chat",
+     "cells": [
+      "hi"
+     ],
+     "state": "g",
+     "good": true
+    }
+   ],
+   "result": "ek baar",
+   "foot": "do user ki id same ho sakti -> check jodi pe (sender_id, clientMsgId)"
+  }
+ ]
+}

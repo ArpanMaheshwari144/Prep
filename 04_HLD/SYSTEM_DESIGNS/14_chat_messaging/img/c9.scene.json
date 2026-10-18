@@ -1,0 +1,59 @@
+{
+ "title": "Shaadi ka 200 MB video chat ke raaste",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: video chat server se",
+   "items": [
+    {
+     "box": "Mera video",
+     "sub": "200 MB"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Chat server",
+     "sub": "2 min atka",
+     "bad": true
+    },
+    {
+     "arrow": "500 x 200 MB"
+    },
+    {
+     "box": "Group"
+    }
+   ],
+   "result": "100 GB"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: video seedha S3, message me sirf key + thumbnail (presigned URL)",
+   "items": [
+    {
+     "box": "Mera phone"
+    },
+    {
+     "arrow": "ek baar"
+    },
+    {
+     "box": "S3",
+     "cells": [
+      "vid.mp4"
+     ],
+     "state": "g"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Message",
+     "sub": "key + thumbnail",
+     "good": true
+    }
+   ],
+   "result": "",
+   "foot": "net gaya -> bacha hissa hi dobara (multipart); Ravi ne khola -> key se naya chhota link"
+  }
+ ]
+}

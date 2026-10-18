@@ -4,8 +4,8 @@ flowchart LR
     n_LB["LB"]
     n_CS["Chat Server x200"]
     n_R["Redis (map)"]
-    n_DB["Message DB<br/>Ravi ka phone band, connection nahi<br/>-> PEHLE DB me likho, phir bhejne ki koshish: server gire to bhi message bacha<br/>(store-then-forward)<br/>Ravi offline -> push ghanti, sirf preview (FCM / APNs)<br/>bhejne se pehle server gira -> DB me pehle se, khota nahi<br/>Ravi wapas -> aakhri mile ke baad sab do"]
-    n_P["Push<br/>app band, khabar kaise<br/>-> Google FCM / Apple APNs phone ko ghanti dete, app band ho tab bhi<br/>(push: FCM / APNs)"]
+    n_DB["Message DB<br/>Ravi ka phone band<br/>-> pehle DB me likho, phir bhejne ki koshish (store-then-forward)<br/>Ravi offline -> push ghanti (FCM / APNs)<br/>Ravi wapas -> aakhri mile ke baad sab do"]
+    n_P["Push<br/>app band ho tab bhi ghanti (FCM / APNs)"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R

@@ -7,7 +7,7 @@ flowchart LR
     n_R["Redis (map, seq)"]
     n_CA["Cassandra (chat_id) + Nishaan"]
     n_P["Push (Google / Apple)"]
-    n_PR["Presence<br/>online / last seen<br/>-> Arpan online Redis me 30 sec, app har 15 sec dhadkan de, band = umar khatam = offline<br/>status tabhi dekho jab koi meri chat khole<br/>(TTL)<br/>chat khuli -> live badlav (subscribe), baaki pull<br/>app band -> umar khatam = offline, last seen likho"]
+    n_PR["Presence<br/>online / last seen<br/>-> online Redis me thodi umar, app dhadkan de, band = umar khatam = offline (TTL)<br/>status tabhi dekho jab koi meri chat khole<br/>chat khuli -> live badlaav, baaki pull"]
     n_U --> n_S3
     n_U --> n_LB
     n_LB --> n_CS

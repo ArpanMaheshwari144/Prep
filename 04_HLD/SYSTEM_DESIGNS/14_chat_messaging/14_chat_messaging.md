@@ -94,7 +94,7 @@ DO CHEEZ JO DESIGN CHALATI:
 ```
 Ek chat server. Main aur Ravi dono usse jude, message server ke raaste Ravi tak.
 ```
-![cdabba](img/cdabba.svg)
+![cdabba](img/cdabba-5070c233.svg)
 
 
 #### SHURU: KHULA CONNECTION (WEBSOCKET) AUR MAP
@@ -126,7 +126,7 @@ AAGE POOCHEGA:
 DIKKAT     Subah 9 baje 2 crore log jude, sabka connection khula. Ek connection = ek thread (~1 MB)
            -> 1 lakh connection = ~100 GB. Server khatam.
 ```
-![c1](img/c1.svg)
+![c1](img/c1-56c3afc7.svg)
 
 ```
 NAHI       badi machine lo (zyada RAM): thread ka kharcha wahi, bas thodi der baad tootega.
@@ -148,7 +148,7 @@ AAGE POOCHEGA:
 DIKKAT     Main server-1 pe, Ravi server-7 pe. Maine "hi" bheja, server-1 ke map me sirf apne log
            -> bola "Ravi offline", jabki Ravi online tha.
 ```
-![c2](img/c2.svg)
+![c2](img/c2-b48562f0.svg)
 
 ```
 NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
@@ -170,7 +170,7 @@ AAGE POOCHEGA:
 DIKKAT     Ravi ka phone band, connection nahi. "Pehle bhejo, na pahunche to DB me daalo" -> beech me server
            gira = message gaya.
 ```
-![c3](img/c3.svg)
+![c3](img/c3-15df42df.svg)
 
 ```
 NAHI       sirf Push bhej do, DB nahi: push sirf ghanti hai, pahunchne ki guarantee nahi, history bhi nahi.
@@ -189,7 +189,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Roz ~1.2 TB message, 46,000 likhai / second. Ek DB machine nahi jhelegi. Kis cheez se baantein?
 ```
-![c4](img/c4.svg)
+![c4](img/c4-11b2c8c9.svg)
 
 ```
 NAHI       user_id se baanto: ek chat do jagah, group 500 jagah.
@@ -210,7 +210,7 @@ AAGE POOCHEGA:
 DIKKAT     Metro me net dheema. App ne "hi" bheja, timeout aaya, dobara bheja. Pehla pahunch chuka tha
            -> Ravi ko "hi" do baar.
 ```
-![c5](img/c5.svg)
+![c5](img/c5-0379c4ce.svg)
 
 ```
 NAHI       server id banaye: har dobara bhejna = nayi id = duplicate.
@@ -229,16 +229,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Meri phone ki ghadi 5 min aage. Mere message chat me upar chadh gaye, Ravi ke jawab se pehle.
 ```
-![c6](img/c6.svg)
+![c6](img/c6-7c560a64.svg)
 
 ```
 NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
-```
-```
-TASVEER: seq + chhed pakdo
-Redis INCR seq:chat123 -> 4415, 4416, 4417 ...   (har message +1, server deta, ghadi nahi)
-app ko mila 4415, phir 4417  -> 4416 nahi aaya = CHHED -> thoda ruko -> "4415 ke baad ke do"
-Ravi wapas aaya: "meri aakhri 4417" -> server 4418 se aage sab
 ```
 ```
 AAGE POOCHEGA:
@@ -255,17 +249,10 @@ AAGE POOCHEGA:
 ```
 DIKKAT     "College Gang" me 500 log. Maine ek message bheja -> 500 logon ke inbox me 500 baar likhein?
 ```
-![c7](img/c7.svg)
+![c7](img/c7-5303d7f2.svg)
 
 ```
 NAHI       Twitter jaisa har inbox me copy: wahan feed sabki alag + crore follower, group sabka ek.
-```
-```
-TASVEER: ek copy, server-wise
-"College Gang" (500): message EK baar -> group chat ke neeche (Cassandra)
-online members kis server pe? -> Redis map: server-3, server-7 ...
-har SERVER ko ek baar: "ye message, in members ko" -> wo apne connection se apne members ko
-offline members -> push ghanti; wapas aaye to seq se aage padh lenge
 ```
 ```
 AAGE POOCHEGA:
@@ -282,17 +269,10 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko Ravi ne chat khol ke 50 message padhe. Har message x har member ka "padha" record
            = 500 x 50 = 25,000 likhai. Bekaar.
 ```
-![c8](img/c8.svg)
+![c8](img/c8-d8713c6f.svg)
 
 ```
 NAHI       unread COUNT column badhao-ghatao: har message pe 500 member x 1 UPDATE, phir bhi 25,000 likhai.
-```
-```
-TASVEER: ek nishaan, ginti nahi
-chat seq:  ... 4417 4418 ...... 4467 | aage ke message
-Ravi:      read_upto = 4467 (neeli tick tak)   ·   delivered_upto >= read_upto (do tick)
-unread = aakhri seq - 4467   (ghatao, gino nahi)
-Ravi ne 50 padhe -> ek push "read_upto 4467" -> 50 ek saath neeli
 ```
 ```
 AAGE POOCHEGA:
@@ -311,7 +291,7 @@ AAGE POOCHEGA:
 DIKKAT     Maine College Gang me 200 MB shaadi ka video chat server se bheja -> 2 min connection atka,
            server 500 x 200 MB = ~100 GB bheje.
 ```
-![c9](img/c9.svg)
+![c9](img/c9-2e5e4b0d.svg)
 
 ```
 NAHI       message me URL rakho: 10 min me khatam, kal link mara; KEY rakho.
@@ -331,7 +311,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Raat ko main online aaya, gaya. Har baar mere saare contacts ko batao = crore x 500 message.
 ```
-![c10](img/c10.svg)
+![c10](img/c10-88fab127.svg)
 
 ```
 NAHI       DB me online column, har dhadkan pe UPDATE: crore log x har 15 sec = DB baith jaata.
@@ -369,7 +349,7 @@ JAWAB:    Har user ~200 me se ek server se juda, Redis me likha kaun kahan.
           Tick aur unread = har user ka nishaan, online = umar wali Redis key, video S3 me, message me
           sirf pata.
 ```
-![c10_2](img/c10_2.svg)
+![c10_2](img/c10_2-11046132.svg)
 
 
 ---

@@ -1,0 +1,72 @@
+{
+ "title": "Maine Ravi ko \"hi\" bheja, server bola Ravi offline",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har server ke map me sirf apne log",
+   "items": [
+    {
+     "box": "Main",
+     "sub": "server-1"
+    },
+    {
+     "arrow": "Ravi kahan?"
+    },
+    {
+     "box": "server-1 ka map",
+     "cells": [
+      "main",
+      "x",
+      "y"
+     ],
+     "state": "ddd",
+     "bad": true
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "\"Ravi offline\"",
+     "bad": true
+    }
+   ],
+   "result": "galat"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: Redis me pata: Ravi -> server-7 (map)",
+   "items": [
+    {
+     "box": "server-1"
+    },
+    {
+     "arrow": "Ravi kahan?"
+    },
+    {
+     "box": "Redis",
+     "cells": [
+      "Ravi: s-7"
+     ],
+     "state": "y",
+     "clock": "TTL"
+    },
+    {
+     "arrow": "server-7 ko do"
+    },
+    {
+     "box": "server-7"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Ravi",
+     "sub": "\"hi\"",
+     "good": true
+    }
+   ],
+   "result": "",
+   "foot": "server-7 mara -> entry khud hati (TTL), Ravi offline; kai device -> list, har device pe"
+  }
+ ]
+}

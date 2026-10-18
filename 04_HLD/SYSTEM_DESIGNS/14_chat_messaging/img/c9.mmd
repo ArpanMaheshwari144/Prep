@@ -1,6 +1,6 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_S3["S3<br/>200 MB video<br/>-> app video seedha S3 me daale, 10 min ke paas se (presigned URL)<br/>message me sirf S3 key + thumbnail, group me ek upload, 500 ko wahi key<br/>(presigned URL)<br/>net gaya -> bacha hissa hi dobara (multipart)<br/>Ravi ne khola -> key se naya chhota URL"]
+    n_S3["S3<br/>200 MB video<br/>-> app video seedha S3 me, message me sirf key + thumbnail (presigned URL)<br/>net gaya -> bacha hissa hi dobara (multipart)<br/>Ravi ne khola -> key se naya chhota link"]
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200 (+ idempotency)"]

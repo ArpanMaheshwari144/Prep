@@ -1,0 +1,66 @@
+{
+ "title": "College Gang (500) me ek message, 500 baar likhein?",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: har member ke inbox me copy",
+   "items": [
+    {
+     "box": "Mera msg"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "500 inbox",
+     "cells": [
+      "1",
+      "2",
+      "..",
+      "500"
+     ],
+     "state": "rrrr",
+     "bad": true
+    }
+   ],
+   "result": "500 likhai"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: group ka message ek baar, sab wahi padhein; har server ko ek call",
+   "items": [
+    {
+     "box": "Mera msg"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "group_chat",
+     "sub": "ek copy",
+     "cells": [
+      "4467"
+     ],
+     "state": "y"
+    },
+    {
+     "arrow": "online kahan?"
+    },
+    {
+     "stack": [
+      {
+       "box": "server-2",
+       "sub": "120 member"
+      },
+      {
+       "box": "server-5",
+       "sub": "80 member"
+      }
+     ]
+    }
+   ],
+   "result": "1 likhai",
+   "foot": "offline members -> push, wapas aaye to seq se padhein; naya member -> purane nahi"
+  }
+ ]
+}

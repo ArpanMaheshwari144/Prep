@@ -61,12 +61,21 @@ def merge_concept(svg_path, mmd_src, term, csvg=None):
         rw = re.search(r'width="([\d.]+)"', m.group(4)); rh = re.search(r'height="([\d.]+)"', m.group(4))
         if rw and rh:
             boxes[m.group(1)] = (float(m.group(2)), float(m.group(3)), float(rw.group(1)), float(rh.group(1)))
+    def place(nd):
+        bx, by, bw, bh = boxes[nd]
+        def clear(x):
+            return all(not (oy - oh / 2 > by and ox - ow / 2 - 24 < x < ox + ow / 2 + 24)
+                       for n, (ox, oy, ow, oh) in boxes.items() if n != nd)
+        cands = sorted([bx + dx for dx in range(-int(bw / 2) + 16, int(bw / 2) - 15, 8)], key=lambda x: abs(x - bx))
+        return next((x for x in cands if clear(x)), None)
+    ax = place(node)
+    if ax is None:   # neeche koi dabba raasta roke -> doosra peela (neeche wala) se teer
+        for nd in sorted((n for n in ys if n in boxes and n != node), key=lambda n: -boxes[n][1]):
+            ax = place(nd)
+            if ax is not None:
+                node = nd; break
+    if ax is None: ax = boxes[node][0]
     bx, by, bw, bh = boxes[node]
-    def clear(x):
-        return all(not (oy - oh / 2 > by and ox - ow / 2 - 24 < x < ox + ow / 2 + 24)
-                   for n, (ox, oy, ow, oh) in boxes.items() if n != node)
-    cands = sorted([bx + dx for dx in range(-int(bw / 2) + 16, int(bw / 2) - 15, 8)], key=lambda x: abs(x - bx))
-    ax = next((x for x in cands if clear(x)), bx)
     nx, ny, nh = (ax - dvx) * k + ox1, (by - dvy) * k, bh * k
     y1, y2 = ny + nh / 2 + 4, h1 + gap - 4
     arrow = (f'<defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto">'
