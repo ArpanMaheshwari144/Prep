@@ -86,7 +86,7 @@ Ek machine, uski memory me ek queue. Producer daale, consumer uthaye.
 DIKKAT     Subah, sale se pehle signup khule. Queue machine ki memory me 500 signup message, machine restart
            -> memory saaf -> 500 gayab. Email service ko pata hi nahi chala ki 500 log aaye.
 ```
-![c1](img/c1-760fa488.svg)
+![c1](img/c1-6937b714.svg)
 
 ```
 NAHI       DB me queue: insert = index + lock = idhar-udhar likhna; queue me WHERE nahi, bas "X ke baad do".
@@ -107,7 +107,7 @@ AAGE POOCHEGA:
 DIKKAT     10 baje sale: "order-events" pe 5,000 khabar / sec. Email worker ~500 / sec hi bhej paata
            (har email ek API call). Topic ek line -> ek hi worker kram se padhe -> ghanton ki line (lag).
 ```
-![c2](img/c2-a9e5b92a.svg)
+![c2](img/c2-39f68eab.svg)
 
 ```
 NAHI       copy (replica) badhao: copy sirf bachav ke liye, padhna bhi leader se hi; padhne wale = partition.
@@ -150,7 +150,7 @@ AAGE POOCHEGA:
 DIKKAT     Sale me email service ki 3 machine lagayi. Teeno ne har message padha, to Ravi ke ek order pe
            3 email gaye -> Ravi pareshan, aur kaam teen guna hua.
 ```
-![c4](img/c4-61feb3bb.svg)
+![c4](img/c4-62382563.svg)
 
 ```
 AAGE POOCHEGA:
@@ -166,7 +166,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Ravi ka order email ko bhi chahiye, analytics ko bhi, dashboard ko bhi. Ek group = sirf ek ko.
 ```
-![c5](img/c5-593af7b9.svg)
+![c5](img/c5-76d4fccd.svg)
 
 ```
 NAHI       har service ka alag topic: producer ek event teen baar bheje -> "ek message kai service" hi toota.
@@ -208,7 +208,7 @@ AAGE POOCHEGA:
 DIKKAT     Email service ne offset 5 padha (Ravi ka order). Email bheja -> "padh liya" (commit) se pehle CRASH
            -> restart pe phir 5 -> Ravi ko 2 email.
 ```
-![c7](img/c7-7af4833c.svg)
+![c7](img/c7-8dd23f53.svg)
 
 ```
 NAHI       pehle commit, phir kaam: email se pehle CRASH -> restart 6 se -> event 5 KHO gaya.
@@ -228,7 +228,7 @@ AAGE POOCHEGA:
 ```
 DIKKAT     Ravi ka order #101 DB me bana, Kafka bhejne se pehle order server gira -> event gaya hi nahi.
 ```
-![c8](img/c8-8055f8ac.svg)
+![c8](img/c8-ac080fbf.svg)
 
 ```
 NAHI       "offset bachayega": nahi, offset consumer ki taraf hai; ye producer ki taraf ki dikkat.
@@ -258,7 +258,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko email group ki ek machine C2 mar gayi. Uske tukdon ke message koi nahi padh raha,
            peeche ki line (lag) badhti ja rahi -> logon ko order email ghanton der se.
 ```
-![c9](img/c9-9ad486e0.svg)
+![c9](img/c9-8ea3820e.svg)
 
 ```
 AAGE POOCHEGA:
@@ -276,7 +276,7 @@ AAGE POOCHEGA:
 DIKKAT     Raat ko broker ki disk bharti ja rahi: din bhar ke sale ke saare message disk pe pade, koi nahi
            hatata -> disk poori bhari to naye message likhne band, poora order flow ruk jaayega.
 ```
-![c10](img/c10-e026abbb.svg)
+![c10](img/c10-d89f9f0d.svg)
 
 ```
 AAGE POOCHEGA:

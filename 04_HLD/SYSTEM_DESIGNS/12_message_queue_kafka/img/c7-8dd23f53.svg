@@ -7,16 +7,16 @@
 <rect x="40" y="94" width="215" height="68" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="148" y="120" text-anchor="middle" font-size="15" font-weight="bold">Email service</text>
 <text x="148" y="139" text-anchor="middle" font-size="15">offset 5 = Ravi ka order</text>
-<line x1="261" y1="128" x2="345" y2="128" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="304" y="118" text-anchor="middle" font-size="13" fill="#c62828">email gaya</text>
 <rect x="353" y="94" width="83" height="68" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="394" y="120" text-anchor="middle" font-size="15" font-weight="bold">Ravi</text>
 <text x="394" y="139" text-anchor="middle" font-size="15">email 1</text>
-<line x1="441" y1="128" x2="599" y2="128" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="521" y="118" text-anchor="middle" font-size="13" fill="#c62828">commit se pehle crash</text>
 <rect x="607" y="94" width="98" height="68" rx="8" fill="white" stroke="#e53935" stroke-width="2"/>
 <text x="656" y="120" text-anchor="middle" font-size="15" font-weight="bold">Restart</text>
 <text x="656" y="139" text-anchor="middle" font-size="15">phir 5 se</text>
+<line x1="261" y1="128" x2="345" y2="128" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="304" y="118" text-anchor="middle" font-size="13" fill="#c62828">email gaya</text>
+<line x1="441" y1="128" x2="599" y2="128" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="521" y="118" text-anchor="middle" font-size="13" fill="#c62828">commit se pehle crash</text>
 <text x="726" y="136" font-size="22" font-weight="bold" fill="#c62828">Ravi ko 2 email</text>
 <rect x="20" y="200" width="920" height="198" rx="10" fill="#f3f9ee" stroke="#43a047" stroke-width="2.5"/>
 <text x="38" y="228" font-size="17" font-weight="bold" fill="#2e7d32">AB: pehle kaam, phir commit; eventId Redis me dekho (idempotent consumer)</text>
@@ -31,7 +31,6 @@
 <text x="138" y="320" text-anchor="middle" font-size="12">5</text>
 <rect x="156" y="302" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
 <text x="172" y="320" text-anchor="middle" font-size="12">6</text>
-<line x1="210" y1="297" x2="266" y2="297" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <rect x="274" y="244" width="161" height="106" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="354" y="270" text-anchor="middle" font-size="15" font-weight="bold">Redis</text>
 <text x="354" y="289" text-anchor="middle" font-size="15">E-5 pehle se hai?</text>
@@ -44,11 +43,12 @@
 <circle cx="431" cy="248" r="15" fill="white" stroke="#6a1b9a" stroke-width="2"/>
 <path d="M431,248 L431,239 M431,248 L438,248" stroke="#6a1b9a" stroke-width="2"/>
 <text x="451" y="253" font-size="13" fill="#6a1b9a" font-weight="bold">umar</text>
-<line x1="441" y1="297" x2="538" y2="297" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="490" y="287" text-anchor="middle" font-size="13" fill="#2e7d32">haan -&gt; skip</text>
 <rect x="546" y="263" width="83" height="68" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
 <text x="587" y="289" text-anchor="middle" font-size="15" font-weight="bold">Ravi</text>
 <text x="587" y="308" text-anchor="middle" font-size="15">1 email</text>
+<line x1="210" y1="297" x2="266" y2="297" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<line x1="441" y1="297" x2="538" y2="297" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="490" y="287" text-anchor="middle" font-size="13" fill="#2e7d32">haan -&gt; skip</text>
 <text x="648" y="305" font-size="22" font-weight="bold" fill="#2e7d32">ek email</text>
 <text x="38" y="384" font-size="15" fill="#2e7d32">Redis me eventId ki umar retry se lambi; userId se mat pehchano, warna agla sahi order bhi skip</text>
 </svg><defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto"><path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs><line x1="988.6" y1="191.2" x2="988.6" y2="420.0" stroke="#f9a825" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#kaise)"/><text x="998.6" y="310.6" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#e65100">kaise?</text></svg>

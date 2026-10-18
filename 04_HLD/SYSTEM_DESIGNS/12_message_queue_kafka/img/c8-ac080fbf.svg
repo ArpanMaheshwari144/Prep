@@ -7,7 +7,6 @@
 <rect x="40" y="104" width="122" height="68" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="101" y="130" text-anchor="middle" font-size="15" font-weight="bold">Order server</text>
 <text x="101" y="148" text-anchor="middle" font-size="15">#101 likha</text>
-<line x1="168" y1="138" x2="224" y2="138" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <rect x="232" y="94" width="130" height="87" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="297" y="120" text-anchor="middle" font-size="15" font-weight="bold">DB: orders</text>
 <rect x="246" y="133" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
@@ -16,8 +15,6 @@
 <text x="295" y="151" text-anchor="middle" font-size="12">100</text>
 <rect x="314" y="133" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
 <text x="329" y="151" text-anchor="middle" font-size="12">101</text>
-<line x1="368" y1="138" x2="526" y2="138" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="448" y="128" text-anchor="middle" font-size="13" fill="#c62828">bhejne se pehle crash</text>
 <rect x="534" y="94" width="130" height="87" rx="8" fill="white" stroke="#e53935" stroke-width="2"/>
 <text x="599" y="120" text-anchor="middle" font-size="15" font-weight="bold">Kafka</text>
 <rect x="548" y="133" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
@@ -26,19 +23,19 @@
 <text x="597" y="151" text-anchor="middle" font-size="12">100</text>
 <rect x="616" y="133" width="31" height="26" fill="#ffffff" stroke="#bbb"/>
 <text x="631" y="151" text-anchor="middle" font-size="12"></text>
+<line x1="168" y1="138" x2="224" y2="138" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<line x1="368" y1="138" x2="526" y2="138" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="448" y="128" text-anchor="middle" font-size="13" fill="#c62828">bhejne se pehle crash</text>
 <text x="920" y="213" text-anchor="end" font-size="22" font-weight="bold" fill="#c62828">#101 ki khabar gayab</text>
 <rect x="20" y="253" width="920" height="179" rx="10" fill="#f3f9ee" stroke="#43a047" stroke-width="2.5"/>
 <text x="38" y="281" font-size="17" font-weight="bold" fill="#2e7d32">AB: order + khabar ek hi transaction, relay baad me bheje (outbox)</text>
 <rect x="40" y="306" width="137" height="68" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="109" y="332" text-anchor="middle" font-size="15" font-weight="bold">Order server</text>
 <text x="109" y="352" text-anchor="middle" font-size="15">ek transaction</text>
-<line x1="183" y1="340" x2="239" y2="340" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <rect x="247" y="297" width="231" height="87" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="363" y="323" text-anchor="middle" font-size="15" font-weight="bold">DB</text>
 <text x="363" y="342" text-anchor="middle" font-size="15">orders: 101</text>
 <text x="363" y="361" text-anchor="middle" font-size="15">outbox: E-101 (sent=false)</text>
-<line x1="484" y1="340" x2="540" y2="340" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="513" y="330" text-anchor="middle" font-size="13" fill="#2e7d32">relay</text>
 <rect x="548" y="297" width="130" height="87" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
 <text x="613" y="323" text-anchor="middle" font-size="15" font-weight="bold">Kafka</text>
 <rect x="562" y="336" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
@@ -47,6 +44,9 @@
 <text x="612" y="354" text-anchor="middle" font-size="12">100</text>
 <rect x="630" y="336" width="31" height="26" fill="#f9a825" stroke="#333"/>
 <text x="646" y="354" text-anchor="middle" font-size="12">101</text>
+<line x1="183" y1="340" x2="239" y2="340" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<line x1="484" y1="340" x2="540" y2="340" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="513" y="330" text-anchor="middle" font-size="13" fill="#2e7d32">relay</text>
 <text x="698" y="348" font-size="22" font-weight="bold" fill="#2e7d32">khoya nahi</text>
 <text x="38" y="418" font-size="15" fill="#2e7d32">server gira to bhi outbox me row padi; relay uthte hi sent=false wali bhej deta</text>
 </svg><defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto"><path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs><line x1="254.6" y1="248.5" x2="254.6" y2="420.0" stroke="#f9a825" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#kaise)"/><text x="264.6" y="339.2" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#e65100">kaise?</text></svg>

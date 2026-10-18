@@ -17,8 +17,6 @@
 <text x="172" y="170" text-anchor="middle" font-size="12">..</text>
 <rect x="190" y="152" width="31" height="26" fill="#ffe0b2" stroke="#ef6c00"/>
 <text x="206" y="170" text-anchor="middle" font-size="12">500</text>
-<line x1="244" y1="147" x2="307" y2="147" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="277" y="137" text-anchor="middle" font-size="13" fill="#c62828">restart</text>
 <rect x="315" y="94" width="198" height="106" rx="8" fill="white" stroke="#e53935" stroke-width="2"/>
 <text x="414" y="120" text-anchor="middle" font-size="15" font-weight="bold">Queue machine</text>
 <text x="414" y="139" text-anchor="middle" font-size="15">RAM saaf</text>
@@ -32,11 +30,13 @@
 <text x="447" y="170" text-anchor="middle" font-size="12"></text>
 <rect x="465" y="152" width="31" height="26" fill="#ffffff" stroke="#bbb"/>
 <text x="481" y="170" text-anchor="middle" font-size="12"></text>
-<line x1="519" y1="147" x2="575" y2="147" stroke="#444" stroke-width="2.5" stroke-dasharray="7,5" marker-end="url(#sa)"/>
 <rect x="583" y="104" width="129" height="87" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="648" y="130" text-anchor="middle" font-size="15" font-weight="bold">Email service</text>
 <text x="648" y="148" text-anchor="middle" font-size="15">"koi signup</text>
 <text x="648" y="168" text-anchor="middle" font-size="15">aaya hi nahi"</text>
+<line x1="244" y1="147" x2="307" y2="147" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="277" y="137" text-anchor="middle" font-size="13" fill="#c62828">restart</text>
+<line x1="519" y1="147" x2="575" y2="147" stroke="#444" stroke-width="2.5" stroke-dasharray="7,5" marker-end="url(#sa)"/>
 <text x="733" y="155" font-size="22" font-weight="bold" fill="#c62828">500 gayab</text>
 <rect x="20" y="238" width="920" height="266" rx="10" fill="#f3f9ee" stroke="#43a047" stroke-width="2.5"/>
 <text x="38" y="266" font-size="17" font-weight="bold" fill="#2e7d32">AB: disk pe file, message aakhir me judta, padhne se mitta nahi (log)</text>
@@ -53,8 +53,6 @@
 <text x="172" y="375" text-anchor="middle" font-size="12">121</text>
 <rect x="190" y="357" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
 <text x="206" y="375" text-anchor="middle" font-size="12">122</text>
-<line x1="244" y1="352" x2="307" y2="352" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="277" y="342" text-anchor="middle" font-size="13" fill="#2e7d32">restart</text>
 <rect x="315" y="282" width="209" height="140" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
 <text x="420" y="308" text-anchor="middle" font-size="15" font-weight="bold">Kafka broker</text>
 <text x="420" y="327" text-anchor="middle" font-size="15">file wahin ki wahin</text>
@@ -70,11 +68,13 @@
 <text x="486" y="358" text-anchor="middle" font-size="12">122</text>
 <line x1="418" y1="392" x2="418" y2="372" stroke="#d32f2f" stroke-width="2.5" marker-end="url(#sr)"/>
 <text x="420" y="408" text-anchor="middle" font-size="13" fill="#d32f2f" font-weight="bold">email: yahan tak padha (120)</text>
-<line x1="531" y1="352" x2="587" y2="352" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <rect x="595" y="308" width="129" height="87" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="659" y="334" text-anchor="middle" font-size="15" font-weight="bold">Email service</text>
 <text x="659" y="354" text-anchor="middle" font-size="15">121 se aage</text>
 <text x="659" y="372" text-anchor="middle" font-size="15">(offset)</text>
+<line x1="244" y1="352" x2="307" y2="352" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="277" y="342" text-anchor="middle" font-size="13" fill="#2e7d32">restart</text>
+<line x1="531" y1="352" x2="587" y2="352" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <text x="920" y="454" text-anchor="end" font-size="22" font-weight="bold" fill="#2e7d32">kuch nahi khoya</text>
 <text x="38" y="490" font-size="15" fill="#2e7d32">galti hui to padhne ki jagah peeche karo, wahi message phir padho (replay)</text>
 </svg><defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto"><path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs><line x1="475.6" y1="129.4" x2="475.6" y2="199.4" stroke="#f9a825" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#kaise)"/><text x="485.6" y="169.4" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#e65100">kaise?</text></svg>

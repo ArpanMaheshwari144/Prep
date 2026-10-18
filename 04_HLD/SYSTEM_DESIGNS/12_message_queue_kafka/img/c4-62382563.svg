@@ -13,8 +13,6 @@
 <text x="127" y="170" text-anchor="middle" font-size="12">P7</text>
 <rect x="145" y="152" width="31" height="26" fill="#eeeeee" stroke="#bbb"/>
 <text x="161" y="170" text-anchor="middle" font-size="12">P8</text>
-<line x1="222" y1="147" x2="326" y2="147" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="275" y="137" text-anchor="middle" font-size="13" fill="#c62828">teeno padhein</text>
 <rect x="334" y="94" width="153" height="106" rx="8" fill="white" stroke="#e53935" stroke-width="2"/>
 <text x="410" y="120" text-anchor="middle" font-size="15" font-weight="bold">3 machine</text>
 <text x="410" y="139" text-anchor="middle" font-size="15">har ek apni team</text>
@@ -24,10 +22,12 @@
 <text x="409" y="170" text-anchor="middle" font-size="12">C2</text>
 <rect x="427" y="152" width="31" height="26" fill="#ffe0b2" stroke="#ef6c00"/>
 <text x="443" y="170" text-anchor="middle" font-size="12">C3</text>
-<line x1="493" y1="147" x2="549" y2="147" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <rect x="557" y="113" width="83" height="68" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="598" y="139" text-anchor="middle" font-size="15" font-weight="bold">Ravi</text>
 <text x="598" y="158" text-anchor="middle" font-size="15">3 email</text>
+<line x1="222" y1="147" x2="326" y2="147" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="275" y="137" text-anchor="middle" font-size="13" fill="#c62828">teeno padhein</text>
+<line x1="493" y1="147" x2="549" y2="147" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <text x="659" y="155" font-size="22" font-weight="bold" fill="#c62828">3 email</text>
 <rect x="20" y="238" width="920" height="217" rx="10" fill="#f3f9ee" stroke="#43a047" stroke-width="2.5"/>
 <text x="38" y="266" font-size="17" font-weight="bold" fill="#2e7d32">AB: teeno ek team, har tukda team ke ek hi member ko (consumer group)</text>
@@ -41,8 +41,6 @@
 <text x="142" y="377" text-anchor="middle" font-size="12">P7</text>
 <rect x="161" y="359" width="31" height="26" fill="#eeeeee" stroke="#bbb"/>
 <text x="176" y="377" text-anchor="middle" font-size="12">P8</text>
-<line x1="253" y1="344" x2="357" y2="344" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="306" y="334" text-anchor="middle" font-size="13" fill="#2e7d32">P7 sirf C3 ko</text>
 <rect x="365" y="292" width="130" height="106" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
 <text x="430" y="318" text-anchor="middle" font-size="15" font-weight="bold">group email</text>
 <text x="430" y="336" text-anchor="middle" font-size="15">ek team</text>
@@ -52,10 +50,12 @@
 <text x="429" y="368" text-anchor="middle" font-size="12">C2</text>
 <rect x="447" y="350" width="31" height="26" fill="#f9a825" stroke="#333"/>
 <text x="463" y="368" text-anchor="middle" font-size="12">C3</text>
-<line x1="501" y1="344" x2="557" y2="344" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <rect x="565" y="310" width="83" height="68" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="607" y="336" text-anchor="middle" font-size="15" font-weight="bold">Ravi</text>
 <text x="607" y="356" text-anchor="middle" font-size="15">1 email</text>
+<line x1="253" y1="344" x2="357" y2="344" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="306" y="334" text-anchor="middle" font-size="13" fill="#2e7d32">P7 sirf C3 ko</text>
+<line x1="501" y1="344" x2="557" y2="344" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <text x="668" y="352" font-size="22" font-weight="bold" fill="#2e7d32">ek email</text>
 <text x="38" y="441" font-size="15" fill="#2e7d32">C2 gaya -&gt; uske tukde C1 + C3 ko mil jaate (rebalance)</text>
 </svg><defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto"><path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs><line x1="739.7" y1="129.4" x2="739.7" y2="199.4" stroke="#f9a825" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#kaise)"/><text x="749.7" y="169.4" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#e65100">kaise?</text></svg>

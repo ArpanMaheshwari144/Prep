@@ -7,7 +7,6 @@
 <rect x="40" y="113" width="114" height="68" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="97" y="139" text-anchor="middle" font-size="15" font-weight="bold">Producer</text>
 <text x="97" y="158" text-anchor="middle" font-size="15">5,000 / sec</text>
-<line x1="160" y1="147" x2="216" y2="147" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <rect x="224" y="94" width="232" height="106" rx="8" fill="white" stroke="#e53935" stroke-width="2"/>
 <text x="340" y="120" text-anchor="middle" font-size="15" font-weight="bold">Topic: ek line</text>
 <text x="340" y="139" text-anchor="middle" font-size="15">line badhti ja rahi</text>
@@ -23,17 +22,17 @@
 <text x="389" y="170" text-anchor="middle" font-size="12">..</text>
 <rect x="408" y="152" width="31" height="26" fill="#ffe0b2" stroke="#ef6c00"/>
 <text x="423" y="170" text-anchor="middle" font-size="12">4500</text>
-<line x1="462" y1="147" x2="518" y2="147" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <rect x="526" y="113" width="122" height="68" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="587" y="139" text-anchor="middle" font-size="15" font-weight="bold">Email worker</text>
 <text x="587" y="158" text-anchor="middle" font-size="15">500 / sec</text>
+<line x1="160" y1="147" x2="216" y2="147" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<line x1="462" y1="147" x2="518" y2="147" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <text x="667" y="155" font-size="22" font-weight="bold" fill="#c62828">ghanton der (lag)</text>
 <rect x="20" y="238" width="920" height="213" rx="10" fill="#f3f9ee" stroke="#43a047" stroke-width="2.5"/>
 <text x="38" y="266" font-size="17" font-weight="bold" fill="#2e7d32">AB: topic ke 10 tukde, har tukda apna worker (partition)</text>
 <rect x="40" y="292" width="114" height="68" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="97" y="318" text-anchor="middle" font-size="15" font-weight="bold">Producer</text>
 <text x="97" y="336" text-anchor="middle" font-size="15">5,000 / sec</text>
-<line x1="160" y1="326" x2="216" y2="326" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <rect x="224" y="282" width="198" height="87" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="323" y="308" text-anchor="middle" font-size="15" font-weight="bold">Topic: 10 tukde</text>
 <rect x="238" y="321" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
@@ -46,8 +45,6 @@
 <text x="355" y="339" text-anchor="middle" font-size="12">..</text>
 <rect x="374" y="321" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
 <text x="389" y="339" text-anchor="middle" font-size="12">P9</text>
-<line x1="428" y1="326" x2="565" y2="326" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="498" y="316" text-anchor="middle" font-size="13" fill="#2e7d32">1 tukda : 1 worker</text>
 <rect x="573" y="282" width="198" height="87" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
 <text x="672" y="308" text-anchor="middle" font-size="15" font-weight="bold">10 worker</text>
 <rect x="587" y="321" width="31" height="26" fill="#e3f2fd" stroke="#1976d2"/>
@@ -60,6 +57,9 @@
 <text x="705" y="339" text-anchor="middle" font-size="12">..</text>
 <rect x="723" y="321" width="31" height="26" fill="#e3f2fd" stroke="#1976d2"/>
 <text x="739" y="339" text-anchor="middle" font-size="12">W9</text>
+<line x1="160" y1="326" x2="216" y2="326" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<line x1="428" y1="326" x2="565" y2="326" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="498" y="316" text-anchor="middle" font-size="13" fill="#2e7d32">1 tukda : 1 worker</text>
 <text x="920" y="401" text-anchor="end" font-size="22" font-weight="bold" fill="#2e7d32">10 x 500 = 5,000</text>
 <text x="38" y="437" font-size="15" fill="#2e7d32">worker 12, tukde 10 -&gt; 2 worker khaali baithe; bheed badhi to pehle tukde badhao</text>
 </svg><defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto"><path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs><line x1="475.6" y1="111.8" x2="475.6" y2="181.8" stroke="#f9a825" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#kaise)"/><text x="485.6" y="151.8" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#e65100">kaise?</text></svg>

@@ -17,11 +17,11 @@
 <text x="172" y="170" text-anchor="middle" font-size="12">..</text>
 <rect x="190" y="152" width="31" height="26" fill="#ffe0b2" stroke="#ef6c00"/>
 <text x="206" y="170" text-anchor="middle" font-size="12">d30</text>
-<line x1="244" y1="147" x2="321" y2="147" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="283" y="137" text-anchor="middle" font-size="13" fill="#c62828">disk full</text>
 <rect x="329" y="113" width="114" height="68" rx="8" fill="white" stroke="#e53935" stroke-width="2"/>
 <text x="386" y="139" text-anchor="middle" font-size="15" font-weight="bold">Naya order</text>
 <text x="386" y="158" text-anchor="middle" font-size="15">likhna band</text>
+<line x1="244" y1="147" x2="321" y2="147" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="283" y="137" text-anchor="middle" font-size="13" fill="#c62828">disk full</text>
 <text x="463" y="155" font-size="22" font-weight="bold" fill="#c62828">order flow ruka</text>
 <rect x="20" y="238" width="920" height="198" rx="10" fill="#f3f9ee" stroke="#43a047" stroke-width="2.5"/>
 <text x="38" y="266" font-size="17" font-weight="bold" fill="#2e7d32">AB: kuch din rakho, phir purana tukda poora udao (retention)</text>
@@ -42,10 +42,10 @@
 <circle cx="234" cy="286" r="15" fill="white" stroke="#6a1b9a" stroke-width="2"/>
 <path d="M234,286 L234,277 M234,286 L241,286" stroke="#6a1b9a" stroke-width="2"/>
 <text x="254" y="291" font-size="13" fill="#6a1b9a" font-weight="bold">7 din</text>
-<line x1="244" y1="335" x2="300" y2="335" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <rect x="308" y="301" width="122" height="68" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
 <text x="369" y="327" text-anchor="middle" font-size="15" font-weight="bold">Naya order</text>
 <text x="369" y="346" text-anchor="middle" font-size="15">likhna chalu</text>
+<line x1="244" y1="335" x2="300" y2="335" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <text x="450" y="343" font-size="22" font-weight="bold" fill="#2e7d32">disk nahi bharti</text>
 <text x="38" y="422" font-size="15" fill="#2e7d32">consumer 7 din se zyada band -&gt; data gaya; har key ki aakhri value hi chahiye -&gt; compaction</text>
 </svg><defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto"><path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs><line x1="535.3" y1="239.7" x2="535.3" y2="420.0" stroke="#f9a825" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#kaise)"/><text x="545.3" y="334.9" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#e65100">kaise?</text></svg>

@@ -3,7 +3,8 @@ Spec = img/cN.scene.json. render_diagrams.py design ke neeche jodta. Akela chala
     python scene.py <cN.scene.json> <out.svg>
 Spec:
   {"title": "...", "rows": [{"tag": "pehle"|"ab", "label": "...", "items": [...], "result": "...", "foot": "..."}]}
-  item = {"box": "naam", "sub": "line" | ["line", ...], "cells": ["s1", ...], "state": "ooge..",
+  item = {"stack": [box, box, ...], "frame": "ek group"}  (upar-neeche dabbe, pichla teer har dabbe tak)
+       | {"box": "naam", "sub": "line" | ["line", ...], "cells": ["s1", ...], "state": "ooge..",
           "pointer": [idx, "yahan tak padha (120)"], "clock": "5 min", "bad": true, "good": true}
        | {"arrow": "label", "dash": true}
   state ka har akshar ek khaana: o = naranji (RAM) · g = hara (disk / theek) · y = peela (agla / yahi)
@@ -30,7 +31,14 @@ def subs(it):
     return [s] if isinstance(s, str) else s
 
 
+GAP = 10
+
+
 def size(it):
+    if 'stack' in it:   # kai dabbe upar-neeche (teen service, teen machine)
+        ss = [size(b) for b in it['stack']]
+        fr = 24 if it.get('frame') else 0
+        return max(w for w, h in ss) + fr, sum(h for w, h in ss) + GAP * (len(ss) - 1) + (fr + 26 if fr else 0)
     if 'arrow' in it:
         return max(70, tw(it["arrow"], 13) + 30), 0
     lines = [it['box']] + subs(it)
@@ -81,6 +89,23 @@ def draw_box(o, it, x, y, w, h):
                  f'{esc(it["clock"])}</text>')
 
 
+def draw_stack(o, it, x, y, w, h, dark):
+    """stack ke har dabbe ka beech (y) lautao, teer wahan tak."""
+    fr = 24 if it.get('frame') else 0
+    if fr:
+        o.append(f'<rect x="{x:.0f}" y="{y:.0f}" width="{w:.0f}" height="{h:.0f}" rx="10" fill="none" '
+                 f'stroke="{dark}" stroke-width="2" stroke-dasharray="8,5"/>')
+        o.append(f'<text x="{x+w/2:.0f}" y="{y+20:.0f}" text-anchor="middle" font-size="14" font-weight="bold" '
+                 f'fill="{dark}">{esc(it["frame"])}</text>')
+    cy, mids = y + (fr + 14 if fr else 0), []
+    for b in it['stack']:
+        bw, bh = size(b)
+        draw_box(o, b, x + (w - bw) / 2, cy, bw, bh)
+        mids.append(cy + bh / 2)
+        cy += bh + GAP
+    return mids
+
+
 def render(spec):
     y = 50
     body = [f'<text x="24" y="34" font-size="21" font-weight="bold">{esc(spec["title"])}</text>']
@@ -98,18 +123,27 @@ def render(spec):
         body.append(f'<text x="38" y="{y+28}" font-size="17" font-weight="bold" fill="{dark}">'
                     f'{esc(row["label"])}</text>')
         x, top = 40, y + 44
-        for it, (w, h) in zip(row['items'], sizes):
-            if 'arrow' in it:
-                my = top + bh / 2
-                d = ' stroke-dasharray="7,5"' if it.get('dash') else ''
-                body.append(f'<line x1="{x+6:.0f}" y1="{my:.0f}" x2="{x+w-8:.0f}" y2="{my:.0f}" stroke="#444" '
+        xs = []
+        for w, h in sizes:
+            xs.append(x); x += w
+        mids = {}
+        for i, (it, (w, h)) in enumerate(zip(row['items'], sizes)):
+            if 'stack' in it:
+                mids[i] = draw_stack(body, it, xs[i], top + (bh - h) / 2, w, h, dark)
+            elif 'box' in it:
+                draw_box(body, it, xs[i], top + (bh - h) / 2, w, h)
+        for i, (it, (w, h)) in enumerate(zip(row['items'], sizes)):
+            if 'arrow' not in it:
+                continue
+            my = top + bh / 2
+            d = ' stroke-dasharray="7,5"' if it.get('dash') else ''
+            x0 = xs[i]
+            for ty in (mids.get(i + 1) or [my]):   # agla stack = har dabbe tak teer
+                body.append(f'<line x1="{x0+6:.0f}" y1="{my:.0f}" x2="{x0+w-8:.0f}" y2="{ty:.0f}" stroke="#444" '
                             f'stroke-width="2.5"{d} marker-end="url(#sa)"/>')
-                if it['arrow']:
-                    body.append(f'<text x="{x+w/2:.0f}" y="{my-10:.0f}" text-anchor="middle" font-size="13" '
-                                f'fill="{dark}">{esc(it["arrow"])}</text>')
-            else:
-                draw_box(body, it, x, top + (bh - h) / 2, w, h)
-            x += w
+            if it['arrow']:
+                body.append(f'<text x="{x0+w/2:.0f}" y="{my-10:.0f}" text-anchor="middle" font-size="13" '
+                            f'fill="{dark}">{esc(it["arrow"])}</text>')
         if res:
             if res_side:
                 body.append(f'<text x="{x+20:.0f}" y="{top+bh/2+8:.0f}" font-size="22" font-weight="bold" '

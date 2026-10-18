@@ -16,22 +16,45 @@
      "state": "ddy"
     },
     {
-     "arrow": ""
+     "arrow": "101"
     },
     {
-     "box": "Ek group",
-     "sub": [
-      "email + analytics + dashboard",
-      "101 sirf email ko mila"
+     "stack": [
+      {
+       "box": "email",
+       "sub": "101 mila",
+       "cells": [
+        "101"
+       ],
+       "state": "y"
+      },
+      {
+       "box": "analytics",
+       "sub": "kuch nahi",
+       "cells": [
+        ""
+       ],
+       "state": "x",
+       "bad": true
+      },
+      {
+       "box": "dashboard",
+       "sub": "kuch nahi",
+       "cells": [
+        ""
+       ],
+       "state": "x",
+       "bad": true
+      }
      ],
-     "bad": true
+     "frame": "ek group: ek message, ek hi ko"
     }
    ],
-   "result": "2 service khaali haath"
+   "result": "sirf email ko mila"
   },
   {
    "tag": "ab",
-   "label": "AB: har service ka apna group, har group ko poori khabar",
+   "label": "AB: har service ka apna group, har group ko poori khabar (alag consumer group)",
    "items": [
     {
      "box": "Topic",
@@ -44,20 +67,42 @@
      "state": "ddy"
     },
     {
-     "arrow": "teeno ko"
+     "arrow": "101"
     },
     {
-     "box": "3 group, apna-apna offset",
-     "sub": [
-      "email: 101 padha",
-      "analytics: 101 padha",
-      "dashboard: 95 (peeche)"
-     ],
-     "good": true
+     "stack": [
+      {
+       "box": "group email",
+       "sub": "101 mila",
+       "cells": [
+        "101"
+       ],
+       "state": "y",
+       "good": true
+      },
+      {
+       "box": "group analytics",
+       "sub": "101 mila",
+       "cells": [
+        "101"
+       ],
+       "state": "y",
+       "good": true
+      },
+      {
+       "box": "group dashboard",
+       "sub": "95 pe, peeche",
+       "cells": [
+        "95"
+       ],
+       "state": "o",
+       "good": true
+      }
+     ]
     }
    ],
    "result": "teeno ko 101",
-   "foot": "dashboard peeche hai to bhi email nahi rukta; nayi service = naya group, producer same"
+   "foot": "har group apni jagah (offset) yaad rakhe: dashboard peeche to bhi email nahi rukta"
   }
  ]
 }
