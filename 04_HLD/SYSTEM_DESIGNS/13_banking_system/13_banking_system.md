@@ -89,6 +89,10 @@ flowchart LR
 ```
 
 #### 1 Maine Ravi ko 500 bheje, beech me server gira
+```
+DIKKAT     1 tareekh subah 8 baje maine Ravi ko 500 bheje. Mere 500 kate, Ravi ke account me daalne se PEHLE
+           server gira. 500 na mere paas, na Ravi ke paas. Gayab.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
@@ -112,6 +116,10 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Send dabaya, network gaya, app ne dobara bheja
+```
+DIKKAT     8:30 lift me maine Send dabaya, 500 kat bhi gaye, par jawab aate waqt network gaya. App ne timeout
+           pe khud dobara bheja -> 1000 kat gaye, bhejne the 500.
+```
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
