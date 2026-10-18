@@ -507,7 +507,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      · SIZE fix (koi number diya: k-elements ya p.length()) -> IF (ek add, ek remove, size wahi rehta).   [Max-Sum-of-K · Anagram]
      · SIZE condition pe (sum/distinct/repeat/product) -> WHILE (jab tak invalid, ek se zyada nikal sakte).  [baaki sab]
      TRAP -- `k` ka matlab dekh: Max-Sum-size-K me k = SIZE (fix -> IF); Subarray-Product<K me k = product LIMIT (size NAHI -> WHILE). same letter `k`, alag matlab.
-     EXTRA (fruit REDO 18-Oct): variable me bhi IF chal jaata -- SIRF jab LONGEST maanga. ek aaya ek gaya -> size wahi,
+     EXTRA (fruit into baskets): variable me bhi IF chal jaata -- SIRF jab LONGEST maanga. ek aaya ek gaya -> size wahi,
        window bas khiskti; thodi der galat ho sakti par size best se bada nahi -> len sahi ([1,2,1,3,4] k=2 -> 3).
        COUNT (count += j-i+1) / SHORTEST me sirf WHILE (har step window sahi chahiye). k hardcoded hone se nahi.
  [track] · [INVALID kab -> shrink] · [ans]
