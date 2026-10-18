@@ -1,0 +1,68 @@
+{
+ "title": "Mujhe click ginti chahiye thi, redirect hi dheema ho gaya",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: usi request me analytics likho, phir redirect",
+   "items": [
+    {
+     "box": "Click"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Analytics DB",
+     "sub": "dheema, sab ruke",
+     "bad": true
+    },
+    {
+     "arrow": "phir"
+    },
+    {
+     "box": "Redirect",
+     "sub": "late"
+    }
+   ],
+   "result": "har user ruka"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: redirect turant, click Kafka me daalo, Analytics apni speed se padhe",
+   "items": [
+    {
+     "box": "Click"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Redirect (302)",
+     "sub": "turant",
+     "good": true
+    },
+    {
+     "arrow": "saath me"
+    },
+    {
+     "box": "Kafka",
+     "cells": [
+      "c1",
+      "c2",
+      "c3"
+     ],
+     "state": "ggy"
+    },
+    {
+     "arrow": "baad me"
+    },
+    {
+     "box": "Analytics",
+     "sub": "apni speed"
+    }
+   ],
+   "result": "",
+   "foot": "Analytics dheema -> khabar Kafka me padi; wahi click do baar -> click id se ek hi"
+  }
+ ]
+}

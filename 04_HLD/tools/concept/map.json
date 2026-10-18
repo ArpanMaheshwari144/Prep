@@ -3,5 +3,6 @@
   "10_distributed_cache/c2": "consistent_hashing",
   "12_message_queue_kafka/c3": "partition_offset",
   "12_message_queue_kafka/c6": "isr_acks",
-  "02_rate_limiter/ctoken": "token_bucket"
+  "02_rate_limiter/ctoken": "token_bucket",
+  "01_url_shortener/c5": "consistent_hashing"
 }

@@ -1,0 +1,62 @@
+{
+ "title": "Usi bheed me ek App machine giri, poori site band",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: ek hi App machine (SPOF)",
+   "items": [
+    {
+     "box": "Saari bheed"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "App",
+     "sub": "dheemi, phir giri",
+     "bad": true
+    }
+   ],
+   "result": "poori site band"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: kai App, LB baante, App kuch yaad nahi rakhta (stateless + LB)",
+   "items": [
+    {
+     "box": "Saari bheed"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "LB",
+     "sub": "health check"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "stack": [
+      {
+       "box": "App 1",
+       "good": true
+      },
+      {
+       "box": "App 2",
+       "sub": "giri, list se bahar",
+       "bad": true,
+       "miss": true
+      },
+      {
+       "box": "App 3",
+       "good": true
+      }
+     ]
+    }
+   ],
+   "result": "site chalti",
+   "foot": "App kuch yaad nahi rakhta (session Redis / DB me), isliye koi bhi App koi bhi click le"
+  }
+ ]
+}
