@@ -1,12 +1,11 @@
 """Consistent hashing ring (10_distributed_cache card 2). Chalao: python consistent_hashing.py
-Output: 04_HLD/SYSTEM_DESIGNS/10_distributed_cache/img/concept_consistent_hashing.svg
+Output: tools/concept/out/consistent_hashing.svg (render_diagrams.py design ke neeche jodta)
 Ring 0..360 (file ke TASVEER jaisa): A=100, B=200, D=250 (nayi), C=300. user:42 hash = 230.
 """
 import math, os
 W, H, CX, CY, R = 960, 640, 300, 300, 210
 ROT = -70   # ghuma ke dikhao: 250 neeche aaye, wahan jagah
-OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'SYSTEM_DESIGNS', '10_distributed_cache', 'img',
-                   'concept_consistent_hashing.svg')
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out', 'consistent_hashing.svg')
 
 def pt(deg, r=R):
     a = math.radians(deg + ROT)

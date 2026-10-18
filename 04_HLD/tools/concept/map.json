@@ -1,0 +1,4 @@
+{
+  "10_distributed_cache/c1": "lru",
+  "10_distributed_cache/c2": "consistent_hashing"
+}

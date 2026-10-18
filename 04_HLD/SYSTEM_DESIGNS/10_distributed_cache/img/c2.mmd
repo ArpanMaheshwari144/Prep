@@ -2,7 +2,7 @@
 flowchart LR
     n_App["App"]
     n_DB["DB"]
-    n_Cache_client["Cache client<br/>user:42 kis machine pe<br/>-> ring (gol ghera) pe key aur machine dono, key aage chale<br/>PEHLI machine uski, App ki cache client library hisaab kare<br/>(consistent hashing)<br/>machine D judi -> sirf pados ki key khiski, baaki hit<br/>machine A giri -> uski key aage wali pe, ek baar miss<br/>A ka bojh B pe double -> har machine 100-200 jagah (virtual nodes)"]
+    n_Cache_client["Cache client<br/>user:42 kis machine pe<br/>-> machine jude / jaaye to sirf pados ki key hile (consistent hashing)<br/>machine D judi -> sirf pados ki key khiski, baaki hit<br/>A ka bojh B pe double -> har machine 100-200 jagah (virtual nodes)"]
     n_Node_A["Node A (LRU + TTL)"]
     n_Node_B["Node B (LRU + TTL)"]
     n_Node_C["Node C (LRU + TTL)"]

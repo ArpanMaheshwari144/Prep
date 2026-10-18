@@ -4,7 +4,7 @@ flowchart LR
     n_DB["DB"]
     n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]
-    n_Node_B_replica["Node B + replica<br/>B mari, bojh DB pe<br/>-> har machine ki copy doosri building me, likhna B pe, copy tak thodi der baad<br/>baaki B ko ping karein, zyadatar bolein B mari -> copy naya B, App ko naya pata<br/>(replica, async)<br/>copy ko main banana -> ~10-30 sec, us beech B ki key DB se<br/>copy peeche thi -> aakhri likhai kho sakti, sach DB me<br/>network toota, do main -> zyadatar tay kare (quorum, split brain)"]
+    n_Node_B_replica["Node B + replica<br/>B mari, bojh DB pe<br/>-> har machine ki ek copy, B mari to copy B ban jaaye (replica)<br/>network toota, do main -> zyadatar tay kare (quorum)"]
     n_Node_C_replica["Node C + replica"]
     n_App --> n_DB
     n_App --> n_Cache_client

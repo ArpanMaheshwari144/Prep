@@ -126,10 +126,6 @@ DIKKAT     Subah 11 tak data 1 TB ho gaya, ek machine me 64 GB -> 16+ machine. "
 ```
 ![c2](img/c2.svg)
 
-**CONSISTENT HASHING KAISE:**
-
-![consistent hashing](img/concept_consistent_hashing.svg)
-
 ```
 NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
 ```
