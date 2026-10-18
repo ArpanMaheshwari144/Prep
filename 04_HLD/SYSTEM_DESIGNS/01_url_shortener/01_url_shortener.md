@@ -233,9 +233,9 @@ flowchart LR
     n_LB["LB"]
     n_App_xN["App x N"]
     n_Counter["Counter"]
-    n_Kafka["Kafka<br/>ginti likhi, redirect dheema<br/>-> redirect turant, ginti peeche<br/>(Kafka)<br/>Analytics dheema -> khabar Kafka me padi rahe<br/>Kafka band -> redirect chalta, kuch ginti gayi<br/>naya report -> purane click dobara padho (replay)"]
-    n_Analytics_svc["Analytics svc<br/>kahan tak padha yaad (offset)<br/>wahi click do baar -> click id se ek hi (dedupe)"]
-    n_DLQ["DLQ<br/>kharab khabar -> alag line, baaki ginti chalti"]
+    n_Kafka["Kafka<br/>ginti likhi, redirect dheema<br/>-> redirect turant, ginti peeche<br/>(Kafka)<br/>Analytics dheema -> khabar Kafka me padi rahe<br/>Kafka band -> redirect chalta, kuch ginti gayi<br/>naya report -> purane click dobara padho (replay)<br/>Analytics: kahan tak padha yaad (offset)<br/>wahi click do baar -> click id se ek hi (dedupe)<br/>kharab khabar -> alag line (DLQ), baaki chalti"]
+    n_Analytics_svc["Analytics svc"]
+    n_DLQ["DLQ"]
     n_RD["Redis + DB"]
     n_USER --> n_LB
     n_LB --> n_App_xN
