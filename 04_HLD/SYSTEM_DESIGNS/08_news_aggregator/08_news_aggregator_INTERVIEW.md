@@ -105,12 +105,12 @@ TASVEER: ek list, sab padhein
 AAGE POOCHEGA:
   NIYAM: sabko ek jaisi feed = ek baar bana ke Redis me (sorted set, time se); har user DB nahi jaata;
          nayi khabar aate hi list me apni jagah, user ko turant dikhti.
-  "Kaise kaam karta?"             -> pehle har user pe DB "ORDER BY published_at DESC LIMIT 20". Ab Redis
-                                     SORTED SET feed:latest (score = kab chhapi): nayi khabar ZADD, top 500
-                                     rakho; khola -> ZREVRANGE feed:latest 0 19 -> 20 id. ~99% DB tak nahi.
-  "Breaking news turant chahiye?" -> AATE HI ZADD: asal me turant dikhti; "5 min" sirf sabse bura haal.
-  "Neeche scroll kiya (21-40)?"   -> AGLA TUKDA: ZREVRANGE 20 39, ya cursor (aakhri dekhi ke time se pehle ki
-                                     20).
+  SAFAR (ek "feed kholo", har mod pe kya):
+  sab theek chala       -> ZADD feed:latest; khola -> ZREVRANGE 0 19 -> 20 id
+  pehle aisa tha        -> har user pe DB ORDER BY ... LIMIT 20; ab ~99% DB tak nahi
+  list kitni lambi      -> top 500 rakho: RAM chhoti; usse purani chahiye to DB
+  breaking news         -> aate hi ZADD = turant; "5 min" sirf sabse bura haal
+  neeche scroll (21-40) -> ZREVRANGE 20 39, ya cursor (aakhri dekhi ke time se pehle ki 20)
 ```
 
 #### 2 Meri feed me khabar 20 minute purani
@@ -139,19 +139,13 @@ flowchart LR
 AAGE POOCHEGA:
   NIYAM: laana aur padhna alag: laana peeche apni speed se (Kafka line); user sirf Redis ki taiyaar list
          padhta -> laane me der / bheed ho tab bhi feed khulti, bas thodi purani.
-  "Kaise kaam karta?"                    -> pehle 1 fetcher 1000 source ek-ek = ~20 min. Ab kai fetcher ->
-                                            KAFKA (10 partition); worker apni speed se, OFFSET yaad.
-  "Likhna, padhna alag kyun rakha?"      -> USER KABHI NA RUKE: laana peeche apni speed se, user hamesha cache
-                                            ki taiyaar feed padhe.
-  "1000 source ek saath aaye?"           -> LINE LAMBI HUI, kuch gira nahi: Kafka disk pe rakhta, worker apni
-                                            speed se.
-  "Har source kitni baar dekhoge?"       -> APNA-APNA SAMAY: NDTV har 1 min, chhota blog har 15 min.
-  "Kuch naya nahi, phir bhi download?"   -> NAHI, ETag / Last-Modified: source bole "kuch naya nahi" to
-                                            download hi nahi.
-  "Worker ne ek khabar do baar likh di?" -> UNIQUE PE RUKTI: URL / text hash UNIQUE -> INSERT ... ON CONFLICT
-                                            DO NOTHING -> skip.
-  "Kafka kyun, SQS kyun nahi?"           -> SQS BHI CHALTA; Kafka me search / analytics apne group se padhte,
-                                            dobara bhi.
+  SAFAR (ek khabar, source se feed tak, har mod pe kya):
+  sab theek chala         -> kai fetcher -> Kafka (10 partition) -> worker -> DB + Redis
+  pehle aisa tha          -> 1 fetcher, 1000 source ek-ek = ~20 min purani
+  kuch naya nahi          -> ETag / Last-Modified: "naya nahi" to download hi nahi
+  1000 ek saath aaye      -> line lambi, gira kuch nahi: Kafka disk pe, worker apni speed
+  worker ne do baar likha -> hash UNIQUE: ON CONFLICT DO NOTHING -> skip
+  laana dheema hua        -> user phir bhi Redis ki taiyaar feed padhta: kabhi nahi rukta
 ```
 
 #### 3 8 baje election result, 40 guna bheed
@@ -187,8 +181,11 @@ NAHI       Kafka se bheed sambhalo: Kafka likhne ke raaste ke liye hai, padhai k
 AAGE POOCHEGA:
   NIYAM: padhai copy pe, likhai main pe; jo kuch yaad nahi rakhta (Feed Svc) uski machine badhao; copy
          thodi peeche ho to user ko kuch sec purani khabar, nuksaan nahi.
-  "Pata hai 8 baje bheed aati?" -> PEHLE SE BADHAO: 7:45 pe machine (scheduled scaling) + cache pehle bharo.
-  "Replica kitni peeche rehti?" -> KUCH SECOND: news me chalta, kyunki 5 sec purani khabar se nuksaan nahi.
+  SAFAR (8 baje ki bheed, har mod pe kya):
+  sab theek chala -> Feed Svc kai machine + LB; Redis miss -> replica; main DB sirf likhai
+  7:45, pata tha  -> pehle se machine badhao (scheduled scaling) + cache pehle bharo
+  20,000 / sec    -> aur machine: Feed Svc kuch yaad nahi rakhti, koi bhi le
+  copy peeche     -> kuch second: 5 sec purani khabar se nuksaan nahi
 ```
 
 #### 4 Dopahar "India ne match jeeta", meri feed me 5 baar
@@ -223,15 +220,12 @@ TASVEER: Bloom filter (bit-line)
 AAGE POOCHEGA:
   NIYAM: ek khabar ek baar: pehchaan (hash) same = khabar same, URL chahe alag; kabhi ek nayi chhoot jaaye
          to chalta (news), par user ko ek khabar 5 baar nahi.
-  "Kaise kaam karta?"                -> title chhote akshar, chinh hatao -> hash; same hash = same khabar.
-                                        Thoda alag ("India wins" / "won") -> SimHash, "90% same" = duplicate.
-  "Wahi URL fetcher dobara le aaya?" -> BLOOM FILTER: bit-line + kuch hash; URL ki jagahon pe koi 0 = pakka
-                                        naya · saare 1 = SHAYAD dekha (galat "na" kabhi nahi).
-  "Bloom kyun, Redis SET kyun nahi?" -> RAM BACHAO: crore URL = bahut RAM, Bloom thodi memory; galat "haan" se
-                                        kabhi ek nayi khabar chhoot sakti, news me chalta.
-  "Bloom se URL hatana ho?"          -> NORMAL BLOOM ME NAHI: roz naya filter, purana phenko (ya counting
-                                        Bloom).
-  "5 me se kaunsa source dikhao?"    -> JO PEHLE AAYA / BADA source; baaki "aur sources" me link.
+  SAFAR (ek khabar, 5 source se, har mod pe kya):
+  sab theek chala       -> naya URL + naya title-hash -> nayi khabar, feed me ek baar
+  wahi URL dobara aaya  -> Bloom filter: koi bit 0 = pakka naya · sab 1 = shayad dekha
+  naya URL, wahi khabar -> title chhote akshar, chinh hatao -> hash; same hash = same khabar
+  wins vs won           -> hash alag pad jaata: SimHash, 90% same = duplicate
+  5 me se kaunsa        -> jo pehle aaya / bada source; baaki "aur sources" me link
 ```
 
 #### 5 Dopahar baad nayi khabar aani ruki: ek chhota source 30 sec atka, baaki 999 bhi ruke
@@ -259,12 +253,14 @@ flowchart LR
 AAGE POOCHEGA:
   NIYAM: ek beemar source baaki ko na roke: had tak intezaar, phir fuse; us source ki khabar kuch der
          nahi aati, baaki feed chalti rehti.
-  "Kaise kaam karta?"            -> har site 2-3 sec timeout, thodi retry; baar-baar fail -> fuse OPEN, us
-                                    source ko call hi nahi. Baaki 999 apne raaste.
-  "Fuse wapas kab judta?"        -> HALF-OPEN TEST: CLOSED -> (kai fail) OPEN -> (thodi der) ek test call ->
-                                    theek to CLOSED.
-  "Source ne 429 diya?"          -> DHEERE CHALO: us source ka samay badhao + uska Retry-After maano.
-  "Source hamesha ke liye band?" -> ALERT + HATAO: kuch din OPEN raha -> list se bahar.
+  SAFAR (ek source ki call, har mod pe kya):
+  sab theek chala    -> 2-3 sec me jawab -> khabar line me
+  pehle aisa tha     -> 30 sec intezaar: fetcher wahin atka, baaki 999 uske peeche ruke
+  site atki          -> 2-3 sec timeout, thodi retry: atka source baaki ko nahi rokta
+  baar-baar fail     -> fuse OPEN: us source ko call hi nahi, baaki apne raaste
+  thodi der baad     -> HALF-OPEN: ek test call, theek to CLOSED
+  source ne 429 diya -> dheere: uska samay badhao + Retry-After maano
+  kuch din OPEN      -> alert + list se bahar
 ```
 
 #### 6 Shaam ko mujhe sirf tech aur sports chahiye
@@ -298,8 +294,10 @@ NAHI       har baar DB se WHERE category IN (tech, sports): har khulne pe DB, ca
 AAGE POOCHEGA:
   NIYAM: list category ki pehle se (feed:tech), milana padhte waqt; user ki pasand = kaunsi list milaani,
          har user ki alag feed nahi.
-  "Mujhe tech zyada pasand, alag wazan?" -> TAB ASLI PERSONALIZATION: har user ki ranking service, kyunki
-                                            category list sabki same (scope se bahar).
+  SAFAR (meri tech + sports feed, har mod pe kya):
+  sab theek chala   -> khabar category list me; khola -> tech + sports top 20 time se milao
+  10 lakh user      -> 10 lakh feed nahi, ~20 category list: pasand = kaunsi milaani
+  tech zyada pasand -> asli personalization: har user ki ranking (scope se bahar)
 ```
 
 #### 7 Raat ko maine "cricket" dhoondha, poori table padhi gayi
@@ -328,14 +326,13 @@ flowchart LR
 AAGE POOCHEGA:
   NIYAM: ES sirf dhoondhta (id deta), sach DB me; ES gira / galat -> DB se dobara bana lo: khabar kabhi
          nahi khoti, bas us beech search dheemi / band.
-  "Kaise kaam karta?"               -> pehle LIKE '%cricket%' = full scan. INVERTED INDEX = kitaab ke peeche
-                                       ki index: shabd -> kin khabaron me. ES se id, text DB / cache se.
-  "'cricket kohli' kaise?"          -> DONO LIST MILAO: "cricket" -> [a12, a45, a90] · "kohli" -> [a45, a77];
-                                       OR = dono jodo, AND = jo dono me (a45) -> score se sort.
-  "ES aur DB me data alag ho gaya?" -> DB = SACH: ES dobara bana lo (reindex); likhna fail -> retry ki line.
-  "Galat likha (crikcet)?"          -> FUZZY SEARCH (ES): 1-2 akshar ka farak chalta.
-  "Postgres se nahi chalega?"       -> CHHOTE SCALE PE HAAN (full-text, GIN); ES = ranking, galat spelling,
-                                       bahut data, DB pe bojh nahi.
+  SAFAR (ek "cricket" search, har mod pe kya):
+  sab theek chala -> ES (inverted index) se id -> text DB / cache se
+  pehle aisa tha  -> LIKE '%cricket%': % aage = index kaam nahi aata, poori table
+  cricket kohli   -> dono list milao: [a12, a45, a90] · [a45, a77]; AND = a45, OR = sab;
+                     score se sort
+  crikcet likha   -> fuzzy (ES): 1-2 akshar ka farak chalta
+  ES aur DB alag  -> DB sach: ES dobara bana lo (reindex); likhna fail -> retry ki line
 ```
 
 #### 8 Raat ko DBA ka mail: 6 mahine me ~2 crore row, kharcha badhta ja raha
@@ -371,10 +368,13 @@ NAHI       "sharding karo": ye purana hatana (retention) hai, data baantna (shar
 AAGE POOCHEGA:
   NIYAM: naya mahina garam (Postgres), purane thande (S3); purani khabar khulti, bas dheemi; purana hatana =
          retention, sharding nahi.
-  "1 saal purani khabar khuli?" -> ARCHIVE (S3) SE aayegi: dheemi, par use koi kabhi-kabhi hi kholta.
-  "DETACH pe table lock hoga?"  -> NORMAL DETACH = ACCESS EXCLUSIVE poore table pe (pal bhar, feed padhai bhi
-                                   rukti); PG 14+ DETACH PARTITION ... CONCURRENTLY -> kuch nahi rukta.
-  "3 saal baad kya?"            -> WAHI NIYAM: naya mahina garam, purana thanda; DB utna hi rehta.
+  SAFAR (ek khabar ki umar, har mod pe kya):
+  sab theek chala     -> is mahine ke tukde me (partition), index se tez
+  mahina beeta        -> DETACH -> S3; bilkul nahi chahiye -> DROP (pal ka kaam)
+  DETACH pe lock?     -> normal = poore table pe pal bhar (padhai bhi rukti);
+                         PG 14+ DETACH ... CONCURRENTLY -> kuch nahi rukta
+  1 saal purani khuli -> S3 archive se: dheemi, par koi kabhi-kabhi hi kholta
+  3 saal baad         -> wahi: naya mahina garam, purana thanda; DB utna hi
 ```
 
 #### 9 Mail ka doosra hissa: source 100 guna hue to ek DB machine nahi jhelegi
@@ -409,8 +409,10 @@ NAHI       date se baanto: aaj ki saari likhai aaj wale shard pe -> wo akela gar
 AAGE POOCHEGA:
   NIYAM: baantne ki key wo jo bojh barabar baante (article_id ka hash); ek shard garam / mara to sirf
          uska hissa dheema, baaki chalta.
-  "Category se baanto?"               -> SKEW: sports / politics bade, baaki chhote -> bojh barabar nahi.
-  "Shard badhaye, data kitna hilega?" -> THODA SA (consistent hashing): sirf naye shard ke hisse ka.
+  SAFAR (ek nayi khabar, 100 guna scale, har mod pe kya):
+  sab theek chala  -> hash(article_id) se shard: likhai sab tukdon pe barabar
+  taazi 20 chahiye -> Redis se; miss pe har tukde se thoda (scatter-gather)
+  shard badhaya    -> thoda hilta (consistent hashing): sirf naye shard ke hisse ka
 ```
 
 ---
@@ -504,6 +506,18 @@ DB:       ARTICLE: id | title | content | sourceId | category | publishedAt | ur
           Mongo bhi chal jaata (replica set + TTL). Cassandra tab jab likhai bahut badi ho jaaye;
           par Cassandra me primary-replica nahi (sab node barabar, leaderless)
           aur poori table pe "taazi 20" nahi chalta -> isliye yahan nahi.
+
+AUR SAWAAL:
+  "Kafka kyun, SQS kyun nahi?"       -> SQS BHI CHALTA; Kafka me search / analytics apne group se padhte,
+                                        dobara bhi.
+  "Har source kitni baar dekhoge?"   -> APNA-APNA SAMAY: NDTV har 1 min, chhota blog har 15 min.
+  "Bloom kyun, Redis SET kyun nahi?" -> RAM BACHAO: crore URL = bahut RAM; galat "haan" se kabhi ek nayi
+                                        khabar chhoot sakti, news me chalta.
+  "Bloom se URL hatana ho?"          -> NORMAL BLOOM ME NAHI: roz naya filter, purana phenko (ya counting
+                                        Bloom).
+  "Postgres se search nahi chalega?" -> CHHOTE SCALE PE HAAN (full-text, GIN); ES = ranking, galat spelling,
+                                        bahut data, DB pe bojh nahi.
+  "Category se shard karo?"          -> BOJH TIRCHHA (skew): sports / politics bade, baaki chhote.
 ```
 
 ---

@@ -95,12 +95,11 @@ NAHI       doc pe lock, ek likhe baaki ruke: saath likhna hi khatam.
 AAGE POOCHEGA:
   NIYAM: text nahi, badlaav (op) bhejo + kis version ko dekh ke bana; server milata, kisi ka likha nahi mitta.
          user ko lock / intezaar nahi; purane version pe bana op bhi khisak ke lagta.
-  "baseVersion kyun bhejte ho?"          -> PATA CHALE KIS KO DEKH KE BANA: kyunki dono v7 pe bane -> server
-                                            samjhe saath the, khiska ke dono lagaye.
-  "Maine L mitaya, Ravi ne wahin likha?" -> MITANA BHI OP: kyunki delete bhi ek badlaav; OT dono ko adjust,
-                                            Ravi ka akshar sahi jagah.
-  "To abhi ka doc kya hai?"              -> SAARE OP KRAM SE: kyunki doc = op ka jod; pehle se aakhri tak
-                                            lagao.
+  SAFAR (mera ek op, har mod pe kya):
+  sab theek              -> maine likha -> op + baseVersion v7 -> server agla version de ke lagaye, Ravi ko
+                            bheje
+  Ravi bhi v7 pe likha   -> server samjhe dono saath bane -> OT se khiska ke dono lagaye, kisi ka nahi mitta
+  maine mitaya, wo wahin -> mitana bhi op: OT dono ko adjust, Ravi ka akshar sahi jagah
 ```
 
 #### 2 Ravi ko mera likha refresh karne pe hi dikha
@@ -126,10 +125,10 @@ NAHI       polling: crore log x har second bekaar sawaal + 1 sec der · SSE: sir
 AAGE POOCHEGA:
   NIYAM: ek khula taar dono taraf: server khud bhejta, user refresh nahi karta.
          taar toota to user likhta rahe; judte hi "main v12 pe tha" bata ke baaki op le lo.
-  "Connection beech me toota?"           -> DOBARA JUDO + VERSION BATAO: kyunki op log me sab hai; main v120
-                                            tak tha -> server v121 se aage sab.
-  "Server ko kaise pata main abhi hoon?" -> PING / PONG har ~30 sec: kyunki taar chupchaap mar sakta; jawab
-                                            nahi = band, jagah khaali.
+  SAFAR (mera taar, har mod pe kya):
+  sab theek            -> taar khula -> server khud bhejta, Ravi refresh nahi karta (WebSocket)
+  taar chupchaap mara? -> har ~30 sec ping / pong: jawab nahi = band, jagah khaali
+  taar toota           -> main likhta rahun; judte hi "main v120 pe tha" -> server v121 se aage sab
 ```
 
 #### 3 11 baje meeting me dono ne sabse upar ek saath type kiya
@@ -163,14 +162,10 @@ Ravi screen:  "YHELLO" + X aaya  -> X server pe pehla, @0 hi rahe   -> "XYHELLO"
 AAGE POOCHEGA:
   NIYAM: kram sirf server ka (har op ko agla version), phone ki ghadi kabhi nahi; aaya op us kram se khiskta.
          nateeja: sabki screen same; mujhe apna likha turant dikhe, baaki ka khisak ke aaye.
-  "Khiskana kaun karta?"                -> DONO: kyunki server kram tay karke aaya op khiskata, app apne
-                                           pending op ko.
-  "Kram kaun tay kare, phone ki ghadi?" -> OWNER SERVER: kyunki har op usi se guzarta, wo agla version deta;
-                                           ghadiyan alag chalti.
-  "OT kyun, CRDT kyun nahi?"            -> BEECH ME SERVER HAI: kyunki har op ek owner se guzarta, OT wahi
-                                           maangta; Docs bhi OT.
-  "CRDT hota kya hai?"                  -> HAR AKSHAR KI UNIQUE ID: kyunki id se kisi bhi kram me jodo nateeja
-                                           same; server nahi chahiye (offline), keemat: memory.
+  SAFAR (do log ek saath, har mod pe kya):
+  sab theek      -> dono ne upar likha -> owner server kram deta (v8, v9), doosra op khiskata, sab same
+  meri screen    -> apna likha turant; Ravi ka khisak ke aata (app apne pending op khiskata)
+  kram ghadi se? -> nahi: phone ki ghadi alag chalti -> sirf server ka version
 ```
 
 #### 4 50 lakh taar khule, ek connection server nahi jhelta
@@ -202,15 +197,13 @@ NAHI       hash(docId) % N: N badla to lagbhag har doc ka server badla = sab dob
 AAGE POOCHEGA:
   NIYAM: ek doc = ek owner server (OT wahin); editor docId se wahin, viewer kahin bhi.
          owner gira -> ring agla server deta, editor dobara jude, version bata ke baaki op le; doc nahi khota.
-  "Ek doc ka OT do server pe chala?" -> KRAM TOOTA: kyunki do server do alag version dete; isliye docId se ek
-                                        hi server.
-  "Server juda / gira, kya hila?"    -> SIRF USKE HISSE KE DOC: kyunki ring pe pados ka hissa hi khiskta; wo
-                                        log dobara jude.
-  "Gire server ka doc wapas kaise?"  -> PHOTO + OP LOG: kyunki photo + Cassandra ke op + Redis buffer ke bache
-                                        (aakhri ~1 sec); phir app version bata ke baaki le.
-  "Ek doc pe 1000 log?"              -> 100 EDITOR OWNER PE: kyunki OT sirf likhne walon ka; baaki 900 viewer
-                                        kahin bhi, pub/sub se.
-  "App ki static files?"             -> CDN: kyunki JS / CSS sabke liye same, paas se aaye.
+  SAFAR (ek doc ka ghar, har mod pe kya):
+  sab theek              -> editor aaya -> docId se ring pe EK owner server: OT ek jagah (do server = do
+                            version)
+  1000 log ek doc pe     -> 100 editor owner pe (OT sirf likhne walon ka); 900 viewer kahin bhi, pub/sub se
+  server juda / gira     -> ring pe sirf uske pados ke doc khiskte; wo log dobara jude
+  owner gira, doc kahan? -> doc server pe nahi, LOG me hai: naya owner log se banaye; app version bata ke
+                            baaki le
 ```
 
 #### 5 Ravi ab sirf padh raha, wo doosre server pe
@@ -244,12 +237,12 @@ NAHI       Kafka: store karta + thoda dheema; live typing dobara padhni nahi, te
 AAGE POOCHEGA:
   NIYAM: pub/sub sirf PAHUNCHATA, kuch store nahi (bheja aur bhool gaya): kaam turant dikhana.
          viewer ka chhoota to version se op log se le lo; bachana op log ka kaam, channel ka nahi.
-  "Editors ko bhi pub/sub se?"    -> NAHI, SEEDHA PUSH: kyunki editor owner pe hi hai; pub/sub sirf doosre
-                                     server ke viewer ke liye.
-  "Server-2 restart ho raha tha?" -> MESSAGE GAYA, PAR LOG ME HAI: kyunki pub/sub store nahi karta; Ravi jude
-                                     to version bata ke le.
-  "Redis pub/sub hi gira?"        -> COPY MAIN BANE (Sentinel): kyunki likha op log me hai; kuch sec live
-                                     dikhna ruka, khoya kuch nahi.
+  SAFAR (mera op Ravi tak, har mod pe kya):
+  sab theek              -> editor same server pe -> seedha push, pub/sub ki zaroorat nahi
+  Ravi doosre server pe  -> doc ke channel pe op daalo, uska server sunta (pub/sub)
+  Ravi ka server restart -> op channel se gaya (pub/sub store nahi karta), par log me hai: jude, version
+                            bata ke le
+  Redis pub/sub gira     -> copy main bane (Sentinel): live kuch sec ruka, khoya kuch nahi
 ```
 
 #### 6 3 baje DB alert: har akshar pe DB me likha, DB baith gaya
@@ -288,16 +281,14 @@ har 1 sec -> ek batch -> Cassandra (partition = docId, andar kram = version)
 AAGE POOCHEGA:
   NIYAM: ACK tabhi jab op Redis buffer + uski copy dono me; Cassandra ka batch ACK ke raaste me nahi.
          user ko turant "saved"; Redis gira to copy se; batch dobara likha = (docId, version) same, ek hi row.
-  "Mera op buffer me, Redis gira?" -> APP RAKHE JAB TAK ACK NAHI: kyunki bina ACK = pakka nahi; jude to opId
-                                      ke saath phir bhejo, hai to skip.
-  "ACK ho chuka, phir Redis gira?" -> COPY MAIN BANI: kyunki ACK se pehle copy me bhi likha (Redis WAIT 1, ~1
-                                      ms).
-  "1 sec ka batch typing rokega?"  -> NAHI: kyunki Cassandra batch ACK ke raaste me nahi; typing turant.
-  "Kram timestamp se kyun nahi?"   -> SAME MS = SAME KEY: kyunki ek ms pe do op -> ek ne doosre ko chupchaap
-                                      mita diya; isliye version.
-  "Cassandra likhne me tez kyun?"  -> SIRF NEECHE JODTA: kyunki commit log (append) + RAM (memtable), jagah
-                                      dhoondh ke badalna nahi.
-  "Mongo chalega?"                 -> CHALEGA: kyunki kaam bas bahut saara jodna, join nahi.
+  SAFAR (mera op pakka hone tak, har mod pe kya):
+  sab theek               -> op -> Redis buffer + copy (WAIT 1, ~1 ms) -> ACK "saved"; har 1 sec batch
+                             Cassandra me
+  ACK se pehle Redis gira -> app op rakhe: bina ACK pakka nahi; jude to opId ke saath phir bhejo, hai to
+                             skip
+  ACK ke baad gira        -> copy main bani: ACK se pehle copy me likh chuke the
+  batch dheema hua        -> typing nahi rukti: batch ACK ke raaste me nahi
+  batch dobara likha      -> (docId, version) same = ek hi row, kuch double nahi
 ```
 
 #### 7 Metro me mera net 1 second gaya, typing rukegi?
@@ -330,10 +321,12 @@ NAHI       "doc sahi chahiye -> CP": CP me net jaate hi typing ruk jaati; yahan 
 AAGE POOCHEGA:
   NIYAM: typing kabhi na ruke (AP): net gaya to likhta rahe, judte hi op bhejo, aakhir me sab same.
          access kabhi galat na ho (CP): permission hatate hi roko, chahe thodi der ruke.
-  "1 ghanta offline type kiya?"        -> PENDING OP + AAKHRI VERSION: kyunki AP; wapas aate hi bhejo, server
-                                          khiska ke lagaye, sab same.
-  "Access hata, wo offline likh raha?" -> PEHLE PERMISSION (CP): kyunki access galat nahi ho sakta; jude to
-                                          SQL check, nahi -> pending reject.
+  SAFAR (net gaya, har mod pe kya):
+  sab theek              -> net hai -> har op turant server ko
+  net 1 sec gaya         -> likhta raho, op pending (AP): typing kabhi na ruke
+  1 ghanta offline       -> pending op + aakhri version; wapas aate hi bhejo, server khiska ke lagaye, sab
+                            same
+  offline me access hata -> pehle permission (CP): jude to SQL check, nahi -> pending reject
 ```
 
 #### 8 Raat ko 2 saal purana doc khola, 10 lakh op shuru se chale
@@ -367,12 +360,10 @@ purana version dekhna = us se pehli photo + beech ke op
 AAGE POOCHEGA:
   NIYAM: photo ek version tak; kholna = photo + uske baad ke op, shuru se kabhi nahi.
          koi bhi purana version dekhna = us se pehli photo + beech ke op.
-  "Kaise kaam karta?"              -> HAR 1000 OP PE PHOTO: (docId, version, text) -> S3 / Cassandra. Khola =
-                                      aakhri photo (v9,99,000) + baad ke ~1000 op, 10 lakh nahi.
-  "Photo lete waqt koi likh raha?" -> PHOTO EK VERSION TAK: kyunki v9,99,000 tak ki photo, baad ke op alag;
-                                      kuch nahi rukta.
-  "Kitni baar photo?"              -> HAR 1000 OP YA KUCH MINUTE: kyunki jitni der, utne op kholte waqt
-                                      chalane padte; jo pehle ho.
+  SAFAR (purana doc kholna, har mod pe kya):
+  sab theek             -> har 1000 op ya kuch min photo -> doc khola = aakhri photo + baad ke ~1000 op
+  photo lete waqt likha -> photo ek version tak (v9,99,000), baad ke op alag: kuch nahi rukta
+  photo kam baar li     -> kholte waqt utne zyada op chalane padte
 ```
 
 ---
@@ -462,6 +453,16 @@ EK AKSHAR KA SAFAR:
 
 OT vs CRDT: OT = op bhejo, ek saath wale ko KHISKAO, sab same · CRDT
             = har akshar ki unique id, kisi bhi kram me jodo same
+
+AUR SAWAAL (safar ke mod nahi):
+  abhi ka doc kya?             -> saare op kram se, pehle se aakhri tak: doc = op ka jod
+  OT kyun, CRDT nahi?          -> beech me server hai, har op usse guzarta: OT wahi maangta (Docs bhi OT)
+  CRDT hota kya?               -> har akshar ki unique id: kisi bhi kram me jodo same; offline chale, memory
+                                  zyada
+  kram timestamp se kyun nahi? -> ek ms pe do op = same key, ek ne doosra chupchaap mitaya -> version
+  Cassandra kyun?              -> sirf neeche jodta (commit log + RAM): likhai tez, join nahi; Mongo bhi
+                                  chalega
+  App ki static files?         -> CDN: JS / CSS sabke liye same, paas se aaye
 ```
 
 ---

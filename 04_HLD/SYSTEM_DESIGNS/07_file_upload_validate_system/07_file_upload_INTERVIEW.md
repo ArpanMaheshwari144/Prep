@@ -111,17 +111,13 @@ NAHI       thread pool 200 se 2000: jaanch tab bhi 3 sec, bas memory khatam hone
 AAGE POOCHEGA:
   NIYAM: dheema kaam line me peeche; user ko turant T-101 + haal (VALIDATING), wo kuch dobara nahi bhejta;
          khabar tabhi "padh li" jab DB me haal likha -> worker / Validator gire to khabar line me bachi.
-  "Worker DB likhne se pehle mara?"           -> NAHI KHOTI: offset DB me DONE likhne ke BAAD commit, to
-                                                 khabar dobara milti.
-  "Dobara mili to file do baar jaanchoge?"    -> PEHLE HAAL DEKHO: T-101 pehle se DONE -> skip (idempotent).
-  "Is line ke liye Kafka hi kyun?"            -> ZAROORI NAHI: ~300 / sec pe SQS / RabbitMQ kaafi; Kafka jab
-                                                 bahut bheed ya dobara padhna.
-  "Validator 1 ghanta band, 4,000 file atki?" -> KUCH NAHI KHOTA: khabar line me padi; DB me DONE likhe bina
-                                                 offset aage nahi badhta.
-  "Us ghante Validator ko call karte rahoge?" -> FUSE: 3-5 fail pe call band, thodi der baad ek test call +
-                                                 DOOSRI COMPANY (unki copy hum nahi chala sakte).
-  "Ye sab tumhe pata kaise chalega?"          -> APNE NUMBER (health check sirf 'zinda' bolta): queue lambai ·
-                                                 Validator time + error · 10 min VALIDATING -> alert.
+  SAFAR (meri ek file, upload se DONE tak, har mod pe kya):
+  sab theek chala         -> T-101 turant -> worker -> Validator -> DB DONE -> "padh li"
+  worker beech me mara    -> khabar dobara milti: offset commit DB likhne ke baad tha
+  wahi khabar dobara      -> pehle haal dekho: T-101 DONE hai to skip (idempotent)
+  Validator 1 ghanta band -> 4,000 khabar line me padi: DONE bina offset aage nahi
+  us ghante call karte?   -> nahi, fuse: 3-5 fail pe band, thodi der baad ek test call
+                             + doosri company (unki copy hum nahi chala sakte)
 ```
 
 #### 2 Meri 5 GB video hamare server ke raaste S3 jaa rahi
@@ -161,13 +157,13 @@ TASVEER: paas lo, seedha S3
 AAGE POOCHEGA:
   NIYAM: server sirf paas deta (EK file, 10 min), bytes seedha app -> S3; server pe bojh nahi, aur paas
          leak ho bhi to sirf us ek file pe, 10 min tak. Paas khatam -> naya maango.
-  "S3 us paas ko maanta kaise hai?"      -> SAME SECRET SE HASH: server (bucket + file naam + 10 min) ko AWS
-                                            secret se sign kare; S3 wahi hash bana ke milaye.
-  "To AWS chaabi hi user ko de do?"      -> KABHI NAHI: chaabi = poora bucket; paas = sirf ek file, 10 min.
-  "Had 5 GB thi, kisi ne 50 GB daal di?" -> HAD PAAS ME: POST me content-length-range; PUT me size sign karo
-                                            (ek PUT max 5 GB) -> S3 khud reject; upar se S3 event pe size.
-  "/complete bola hi nahi?"              -> S3 EVENT ('file aa gayi') se queue me, kyunki client pe bharosa
-                                            nahi; wo bhi chhoota to sweeper pakde.
+  SAFAR (5 GB video ka raasta, har mod pe kya):
+  sab theek chala      -> paas (EK file, 10 min) -> bytes seedha S3 -> "/complete T-102"
+  S3 paas kaise maane  -> wahi hash khud banaye: server ne AWS secret se sign kiya tha
+  had 5 GB, aaye 50 GB -> had paas me: POST content-length-range · PUT me size sign
+                          (ek PUT max 5 GB) -> S3 khud reject; S3 event pe size phir
+  /complete nahi aaya  -> S3 event ("file aa gayi") se queue: client pe bharosa nahi
+  event bhi chhoota    -> sweeper har kuch min atki file dhoondhe
 ```
 
 #### 3 4.5 GB chadh chuki thi, wifi chala gaya
@@ -206,13 +202,10 @@ TASVEER: 100 tukde, sirf bache 10
 AAGE POOCHEGA:
   NIYAM: jis tukde ki rasid S3 pe, wo pakka (rasid S3 pe hai, app pe nahi); net gaya / app band -> S3 se
          poochho, sirf bache tukde dobara. User ko shuru se kuch nahi.
-  "Kadam kya hain?"                         -> 1 SHURU -> uploadId (U-9) · 2 HAR TUKDA (kai saath) -> rasid
-                                               (ETag) · 3 COMPLETE(U-9, tukde + rasid) -> S3 kram se jod ke ek
-                                               file.
-  "App band, kal wapas aaya, bache kaunse?" -> S3 SE POOCHO (ListParts U-9), kyunki rasid wahan padi; sirf
-                                               bache tukde bhejo.
-  "Tukda kitna bada rakhoge?"               -> S3 KI HAD: tukda min 5 MB (aakhri chhod), max 10,000 tukde ->
-                                               badi file pe tukda bada karo.
+  SAFAR (ek badi file, tukdon me, har mod pe kya):
+  sab theek chala     -> U-9 -> tukde kai saath, har ek ki rasid (ETag) -> COMPLETE
+  wifi gaya           -> 90 ki rasid S3 pe: sirf bache 10 bhejo, shuru se nahi
+  app band, kal wapas -> S3 se poocho (ListParts U-9): rasid wahan, app pe nahi
 ```
 
 #### 4 App crash, "complete" kabhi aaya hi nahi
@@ -248,11 +241,13 @@ NAHI       sirf S3 lifecycle niyam: din me ek baar chalta aur DB nahi dekhta.
 AAGE POOCHEGA:
   NIYAM: har file ka haal DB me (UPLOADING -> VALIDATING -> DONE / FAILED); der se nahi badla = atka ->
          sweeper uthata: bytes hain -> khud dobara line me (safe) · nahi -> FAILED, user dobara daale.
-  "To S3 lifecycle kis kaam ka?"     -> BYTES KI SAFAI: purane adhoore uploads ke bytes khud hataata; DB ka
-                                        haal badalna sweeper ka kaam.
-  "Sweeper do machine pe chal gaya?" -> EK HI CHALE (lock / leader), ya chalne do kyunki dobara daalna safe:
-                                        haal dekh ke skip.
-  "Jaanch me fail hui file ka kya?"  -> QUARANTINE bucket (download band); baad me delete ya security dekhe.
+  SAFAR (atki file T-103, har mod pe kya):
+  sab theek chala       -> "/complete" ya S3 event -> line me -> worker -> DONE
+  crash + event chhoota -> DB me UPLOADING atka, bytes S3 me pade (paisa lag raha)
+  sweeper har kuch min  -> 10 min se haal nahi badla (jaanch 3 sec ki) = atka
+  bytes S3 me hain      -> khud dobara line me: safe, haal dekh ke skip hota
+  bytes nahi            -> FAILED: user dobara daale
+  sweeper do machine pe -> ek chale (lock / leader), ya chalne do: dobara daalna safe
 ```
 
 #### 5 Deadline ke din sab har 2 sec haal poochh rahe
@@ -288,13 +283,14 @@ NAHI       DB me index daalo: sawaal tez, par 5,000 / sec phir bhi primary pe.
 AAGE POOCHEGA:
   NIYAM: sach DB me, Redis sirf tez copy: padhna Redis se, likhna dono me; purana dikhe to chhoti umar se
          khud theek; Redis gire to DB copy (replica) se, dheema par band nahi.
-  "DB me DONE, Redis me VALIDATING dikha?"   -> WORKER DONO LIKHTA: DB ke saath Redis bhi; chhoot gaya to
-                                                chhoti umar (TTL) ke baad naya.
-  "Miss pe replica se laaye, wo peeche tha?" -> PURANA REDIS ME baith sakta; worker ka naya haal upar likh
-                                                deta. Pakka chahiye to miss pe primary.
-  "Main har 2 sec poochun, theek?"           -> GAP BADHAO (2s, 4s, 8s), kyunki haal itni jaldi nahi badalta.
-  "Poochhna hi band karwa do?"               -> SERVER KHUD BHEJE (SSE / WebSocket): haal badla tab hi.
-  "Aur Redis hi gir gaya?"                   -> REPLICA PE SEEDHA: dheema par chalta; poochhne pe rate limit.
+  SAFAR (ek "haal kya hai?" sawaal, har mod pe kya):
+  sab theek chala      -> GET /status/T-101 -> Redis se, 1 ms
+  Redis me nahi        -> read replica se laao, Redis me rakho
+  replica peeche thi   -> purana Redis me baitha: worker ka naya haal upar likh deta;
+                          pakka chahiye to miss pe primary
+  worker ne DONE likha -> DB + Redis usi waqt; Redis chhoota to umar (TTL) baad naya
+  har 2 sec poochna    -> gap badhao (2s, 4s, 8s): haal itni jaldi nahi badalta
+  Redis gira           -> replica pe seedha: dheema par chalta; poochne pe rate limit
 ```
 
 #### 6 Maine file nahi, poora folder daala (1000 file)
@@ -332,12 +328,11 @@ TASVEER: folder = bachchon ka jod
 AAGE POOCHEGA:
   NIYAM: folder = bada id, har file ka chhota id; folder ka haal = bachchon ka jod (sab DONE = DONE, koi
          FAILED = PARTIAL); ek file fail -> sirf wahi dobara, poora folder nahi.
-  "Kaise kaam karta?"            -> FOLDER KA BADA ID (P-1), har file ka apna chhota id (child). Saare child
-                                    DONE = P-1 DONE · koi FAILED = P-1 PARTIAL / FAILED.
-  "P-1 ka haal kab badlega?"     -> HAR CHILD PE GINTI: DONE / FAILED aaya -> done_count +1; sab aa gaye =
-                                    final.
-  "1000 file = 1000 baar /init?" -> EK CALL (batch init): 1000 signed URL saath.
-  "Lakh chhoti files ho to?"     -> ZIP: client ek file bana ke bheje, server khol le.
+  SAFAR (folder P-1, 1000 file, har mod pe kya):
+  sab theek chala    -> batch init (1000 URL) -> har file child id -> sab DONE = P-1 DONE
+  ek child aaya      -> DONE / FAILED -> P-1 pe ginti +1 (done_count); sab aa gaye = final
+  do worker saath +1 -> ek UPDATE done_count = done_count + 1: DB ke andar, ginti nahi khoti
+  koi FAILED         -> P-1 PARTIAL: sirf fail wali dobara, poora folder nahi
 ```
 
 #### 7 Ravi ne mera trackingId daal ke meri file le li
@@ -376,11 +371,11 @@ NAHI       gateway pe hi check: use pata hi nahi T-101 kiski hai.
 AAGE POOCHEGA:
   NIYAM: kaun ho = gateway (JWT); is file pe haq = service, har request pe (owner_id == jwt.user_id);
          id leak ho jaaye tab bhi file nahi milti (403).
-  "Id random hai, phir bhi check?"             -> HAAN, kyunki id LEAK hoti (log, screenshot, link); asli rok
-                                                  sirf owner check.
-  "Admin ko sab dekhna hai?"                   -> OWNER YA ADMIN ROLE, warna 403.
-  "PR review me owner check kahan dhoondhoge?" -> HAR HANDLER KI PEHLI LINE: file.owner_id == jwt.user_id ya
-                                                  admin, warna 403. userId JWT se, body se kabhi nahi.
+  SAFAR (GET /download/T-101 aaya, har mod pe kya):
+  sab theek chala  -> gateway JWT: "ye main hoon" -> service: owner main -> file mili
+  Ravi ne maanga   -> JWT bole Ravi, owner main -> 403 (service me, har request pe)
+  id to random tha -> phir bhi check: id leak hoti (log, screenshot, link)
+  admin maange     -> owner ya admin role, warna 403
 ```
 
 #### 8 Maine S3 ka seedha link WhatsApp pe bhej diya
@@ -418,9 +413,11 @@ NAHI       link me lamba random naam (koi andaza na lagaye): ek baar bahar gaya 
 AAGE POOCHEGA:
   NIYAM: DB me sirf pata (S3 key), pakka link kabhi bahar nahi; har download pe maalik check -> naya 5 min
          link. Link aage gaya to bas 5 min tak chalta.
-  "5 min me download poora nahi hua?" -> UMAR SIRF SHURU KI: chalu download beech me nahi katta.
-  "5 min ke andar hi aage bhej diya?" -> 5 MIN KA RISK MAANA; zyada sensitive -> CloudFront signed URL + IP
-                                         had.
+  SAFAR (dost ko file bhejni, har mod pe kya):
+  sab theek chala     -> download maanga -> maalik check -> naya 5 min link -> file aayi
+  link group me gaya  -> 1 ghante baad khola: expire, nahi khula
+  5 min me adhoora    -> umar sirf shuru ki: chalu download beech me nahi katta
+  5 min ke andar aage -> risk maana; zyada sensitive -> CloudFront signed URL + IP had
 ```
 
 #### 9 Naam report.pdf, andar EXE nikla
@@ -459,11 +456,11 @@ NAHI       type ke liye poori file padho: 5 GB S3 se laana; pehle kuch byte kaaf
 AAGE POOCHEGA:
   NIYAM: client ka bheja (naam, type, size) kuch sach nahi; sach file ke bytes me (pehle kuch byte = type,
          scan = virus); jaanch pass nahi to file DONE nahi, reject.
-  "Type dekhne ko poori 5 GB padhoge?" -> NAHI, PEHLE KUCH BYTE (range GET), kyunki type ka nishaan shuru me
-                                          hota.
-  "Shuru PDF jaisa, andar virus?"      -> ANTIVIRUS SCAN (ClamAV) worker me, ya S3 malware scanning; magic
-                                          bytes sirf type batate.
-  "Koi bheed / hamla kare?"            -> RATE LIMIT har user pe, sabse aage WAF, HTTPS, secrets vault me.
+  SAFAR (report.pdf ki jaanch, har mod pe kya):
+  sab theek chala        -> pehle kuch byte "%PDF-" + scan saaf -> DONE
+  type dekhne 5 GB?      -> nahi, sirf pehle kuch byte (range GET): nishaan shuru me
+  naam .pdf, shuru "MZ"  -> EXE -> reject, DONE nahi: naam / type client ka, sach nahi
+  shuru PDF, andar virus -> magic bytes sirf type: scan bhi (ClamAV / S3 malware)
 ```
 
 ---
@@ -559,6 +556,23 @@ DB:       files: trackingId (KEY) | fileName | ownerId | status | s3_key | creat
           (bahut bada + sirf key-value -> NoSQL bhi chalta · paisa hota -> hamesha SQL)
 
 DEDUP:    file ka hash (MD5 / SHA) -> pehle se hai to dobara store nahi -> jagah bachi
+
+AUR SAWAAL:
+  "Is line ke liye Kafka hi kyun?"  -> ZAROORI NAHI: ~300 / sec pe SQS / RabbitMQ kaafi; Kafka jab bahut bheed
+                                       ya dobara padhna.
+  "Ye sab pata kaise chalega?"      -> APNE NUMBER: queue lambai · Validator time + error · 10 min VALIDATING
+                                       -> alert (health check sirf "zinda" bolta).
+  "AWS chaabi hi app ko de do?"     -> KABHI NAHI: chaabi = poora bucket; paas = sirf ek file, 10 min.
+  "Tukda kitna bada rakhoge?"       -> S3 KI HAD: min 5 MB (aakhri chhod), max 10,000 tukde -> badi file =
+                                       bada tukda.
+  "To S3 lifecycle kis kaam ka?"    -> BYTES KI SAFAI: adhoore uploads ke bytes khud hataata; DB ka haal
+                                       sweeper badle.
+  "Poochhna hi band karwa do?"      -> SERVER KHUD BHEJE (SSE / WebSocket): haal badla tab hi.
+  "Lakh chhoti files ho to?"        -> ZIP: client ek file bana ke bheje, server khol le.
+  "Jaanch me fail hui file ka kya?" -> QUARANTINE bucket (download band); baad me delete ya security dekhe.
+  "PR me owner check kahan?"        -> HAR HANDLER KI PEHLI LINE: file.owner_id == jwt.user_id ya admin, warna
+                                       403; userId JWT se, body se kabhi nahi.
+  "Koi bheed / hamla kare?"         -> RATE LIMIT har user pe, sabse aage WAF, HTTPS, secrets vault me.
 ```
 
 ---
