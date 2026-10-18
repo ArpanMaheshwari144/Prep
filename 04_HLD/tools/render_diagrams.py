@@ -18,16 +18,19 @@ def render(src, png):
     if r.returncode == 0: fix_size(png)
     return r.returncode == 0, r.stderr[-300:]
 
+CAP = 720   # GitHub pe chauda diagram chhota dikhe; click karo to poora
+
 def fix_size(svg_path):
-    """width="100%" -> viewBox ki asli chaudai / unchai, taaki chhota diagram khinche nahi."""
+    """width = min(viewBox chaudai, CAP), height usi anupaat me; viewBox wahi (poora diagram dikhe)."""
     t = open(svg_path, encoding='utf-8').read()
-    m = re.search(r'<svg[^>]*>', t)
-    tag = m.group(0)
+    tag = re.search(r'<svg[^>]*>', t).group(0)
     vb = re.search(r'viewBox="[\d.\-]+ [\d.\-]+ ([\d.]+) ([\d.]+)"', tag)
     if not vb: return
-    w, h = round(float(vb.group(1))), round(float(vb.group(2)))
-    new = re.sub(r' width="100%"', f' width="{w}" height="{h}"', tag)
+    w, h = float(vb.group(1)), float(vb.group(2))
+    k = min(1.0, CAP / w)
+    new = re.sub(r' (width|height)="[^"]*"', '', tag)
     new = re.sub(r'max-width:\s*[\d.]+px;\s*', '', new)
+    new = new.replace('<svg ', f'<svg width="{round(w*k)}" height="{round(h*k)}" ', 1)
     open(svg_path, 'w', encoding='utf-8').write(t.replace(tag, new, 1))
 
 CONCEPT = os.path.join(HERE, 'concept')
@@ -46,7 +49,9 @@ def merge_concept(svg_path, mmd_src, term):
     ox1, ox2 = (W - w1) / 2, (W - w2) / 2
     d2 = d.replace(dtag, re.sub(r' (width|height)="[^"]*"', '', dtag).replace('<svg ', f'<svg x="{ox1:.1f}" y="0" width="{w1:.1f}" height="{h1:.1f}" ', 1), 1)
     c2 = c.replace(ctag, re.sub(r' (width|height)="[^"]*"', '', ctag).replace('<svg ', f'<svg x="{ox2:.1f}" y="{h1+gap:.1f}" width="{w2:.1f}" height="{h2:.1f}" ', 1), 1)
-    node = re.search(r'style (\w+) fill:#f9a825', mmd_src).group(1)
+    # kai peele ho to wo jiske label me text (<br/>) hai
+    ys = re.findall(r'style (\w+) fill:#f9a825', mmd_src)
+    node = next((n for n in ys if re.search(n + r'\["[^"]*<br/>', mmd_src)), ys[0])
     g = re.search(r'id="[^"]*flowchart-' + node + r'-\d+"[^>]*transform="translate\(([\d.\-]+), ([\d.\-]+)\)"><rect[^>]*height="([\d.]+)"', d)
     nx, ny, nh = float(g.group(1)) - dvx + ox1, float(g.group(2)) - dvy, float(g.group(3))
     y1, y2 = ny + nh / 2 + 4, h1 + gap - 4
@@ -59,6 +64,7 @@ def merge_concept(svg_path, mmd_src, term):
     out = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" viewBox="0 0 {W:.1f} {H:.1f}">'
            f'<rect width="100%" height="100%" fill="white"/>' + d2 + c2 + arrow + '</svg>')
     open(svg_path, 'w', encoding='utf-8').write(out)
+    fix_size(svg_path)
 
 def concept_for(md_path, name):
     import json

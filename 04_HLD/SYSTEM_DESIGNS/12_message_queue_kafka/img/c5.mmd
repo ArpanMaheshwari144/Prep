@@ -3,7 +3,7 @@ flowchart LR
     n_P["Producer (key = userId)"]
     n_B["Brokers A / B / C"]
     n_GE["Group email"]
-    n_GA["Group analytics<br/>teeno service ko chahiye<br/>-> topic ek, har service ka apna group: group ke andar kaam bat-ta, alag group ko poori khabar<br/>(alag consumer group)<br/>nayi service judi -> naya group, producer same<br/>usko purana chahiye -> shuru se padhe ya ab se, uski marzi<br/>ek group peeche -> doosra nahi rukta, offset alag"]
+    n_GA["Group analytics<br/>teeno service ko poori khabar chahiye<br/>-> topic ek, har service ka apna group (alag consumer group)<br/>ek group peeche -> doosra nahi rukta, offset alag"]
     n_GD["Group dashboard"]
     n_P --> n_B
     n_B --> n_GE

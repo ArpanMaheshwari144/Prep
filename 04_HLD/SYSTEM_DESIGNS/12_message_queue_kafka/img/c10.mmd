@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_P["Producer (key + outbox)"]
-    n_B["Brokers A / B / C<br/>disk bharti ja rahi<br/>-> har message 7 din rakho, phir khud mite (retention)<br/>har key ki sirf aakhri value rakho, purani udao (compaction)<br/>(retention + compaction)<br/>dobara padhna -> offset peeche ya naya group (replay)<br/>consumer 7 din band -> data gaya, retention lambi + lag alert"]
+    n_B["Brokers A / B / C<br/>disk bharti ja rahi<br/>-> kuch din rakho phir khud mite (retention), har key ki aakhri value (compaction)<br/>consumer itne din band -> data gaya, lag alert"]
     n_K["Controller (KRaft)"]
     n_GE["Group email"]
     n_R["Redis (eventId)"]
