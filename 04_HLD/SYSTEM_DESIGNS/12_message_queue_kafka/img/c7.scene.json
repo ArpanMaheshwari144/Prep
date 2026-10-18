@@ -1,0 +1,72 @@
+{
+ "title": "Email bheja, \"padh liya\" bolne se pehle crash",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: crash ke baad wahi message dobara",
+   "items": [
+    {
+     "box": "Email service",
+     "sub": "offset 5 = Ravi ka order"
+    },
+    {
+     "arrow": "email gaya"
+    },
+    {
+     "box": "Ravi",
+     "sub": "email 1"
+    },
+    {
+     "arrow": "commit se pehle crash"
+    },
+    {
+     "box": "Restart",
+     "sub": "phir 5 se",
+     "bad": true
+    }
+   ],
+   "result": "Ravi ko 2 email"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: pehle kaam, phir commit; eventId Redis me dekho (idempotent consumer)",
+   "items": [
+    {
+     "box": "Kafka",
+     "sub": "5 phir aaya",
+     "cells": [
+      "3",
+      "4",
+      "5",
+      "6"
+     ],
+     "state": "ggyg"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Redis",
+     "sub": "E-5 pehle se hai?",
+     "cells": [
+      "E-3",
+      "E-4",
+      "E-5"
+     ],
+     "state": "ggy",
+     "clock": "umar"
+    },
+    {
+     "arrow": "haan -> skip"
+    },
+    {
+     "box": "Ravi",
+     "sub": "1 email",
+     "good": true
+    }
+   ],
+   "result": "ek email",
+   "foot": "Redis me eventId ki umar retry se lambi; userId se mat pehchano, warna agla sahi order bhi skip"
+  }
+ ]
+}

@@ -1,0 +1,76 @@
+{
+ "title": "Order #101 DB me bana, Kafka bhejne se pehle server gira",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: DB aur Kafka do alag kaam",
+   "items": [
+    {
+     "box": "Order server",
+     "sub": "#101 likha"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "DB: orders",
+     "cells": [
+      "99",
+      "100",
+      "101"
+     ],
+     "state": "ggg"
+    },
+    {
+     "arrow": "bhejne se pehle crash"
+    },
+    {
+     "box": "Kafka",
+     "cells": [
+      "99",
+      "100",
+      ""
+     ],
+     "state": "gge",
+     "bad": true
+    }
+   ],
+   "result": "#101 ki khabar gayab"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: order + khabar ek hi transaction, relay baad me bheje (outbox)",
+   "items": [
+    {
+     "box": "Order server",
+     "sub": "ek transaction"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "DB",
+     "sub": [
+      "orders: 101",
+      "outbox: E-101 (sent=false)"
+     ]
+    },
+    {
+     "arrow": "relay"
+    },
+    {
+     "box": "Kafka",
+     "cells": [
+      "99",
+      "100",
+      "101"
+     ],
+     "state": "ggy",
+     "good": true
+    }
+   ],
+   "result": "khoya nahi",
+   "foot": "server gira to bhi outbox me row padi; relay uthte hi sent=false wali bhej deta"
+  }
+ ]
+}

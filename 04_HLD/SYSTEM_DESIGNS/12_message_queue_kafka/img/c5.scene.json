@@ -1,0 +1,63 @@
+{
+ "title": "Ravi ka order: email, analytics, dashboard teeno ko chahiye",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: teeno service ek hi group me",
+   "items": [
+    {
+     "box": "Topic",
+     "sub": "Ravi ka order 101",
+     "cells": [
+      "99",
+      "100",
+      "101"
+     ],
+     "state": "ddy"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Ek group",
+     "sub": [
+      "email + analytics + dashboard",
+      "101 sirf email ko mila"
+     ],
+     "bad": true
+    }
+   ],
+   "result": "2 service khaali haath"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: har service ka apna group, har group ko poori khabar",
+   "items": [
+    {
+     "box": "Topic",
+     "sub": "Ravi ka order 101",
+     "cells": [
+      "99",
+      "100",
+      "101"
+     ],
+     "state": "ddy"
+    },
+    {
+     "arrow": "teeno ko"
+    },
+    {
+     "box": "3 group, apna-apna offset",
+     "sub": [
+      "email: 101 padha",
+      "analytics: 101 padha",
+      "dashboard: 95 (peeche)"
+     ],
+     "good": true
+    }
+   ],
+   "result": "teeno ko 101",
+   "foot": "dashboard peeche hai to bhi email nahi rukta; nayi service = naya group, producer same"
+  }
+ ]
+}

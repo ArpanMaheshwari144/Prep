@@ -1,0 +1,73 @@
+{
+ "title": "Shaam ko C2 mar gaya, lag badhta ja raha",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: C2 ke tukde kisi ke paas nahi",
+   "items": [
+    {
+     "box": "group email",
+     "cells": [
+      "C1",
+      "C2",
+      "C3"
+     ],
+     "state": "gxg"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "P4 P5 P6",
+     "sub": "koi nahi padh raha",
+     "cells": [
+      "P4",
+      "P5",
+      "P6"
+     ],
+     "state": "ooo",
+     "bad": true
+    }
+   ],
+   "result": "Ravi ka email ghanton baad"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: mare ke tukde baaki ko (rebalance), kharab khabar alag line (DLQ)",
+   "items": [
+    {
+     "box": "group email",
+     "cells": [
+      "C1",
+      "C2",
+      "C3"
+     ],
+     "state": "gxg"
+    },
+    {
+     "arrow": "rebalance"
+    },
+    {
+     "box": "P4 P5 P6",
+     "sub": "P4, P5 -> C1 · P6 -> C3",
+     "cells": [
+      "P4",
+      "P5",
+      "P6"
+     ],
+     "state": "ggg",
+     "good": true
+    },
+    {
+     "arrow": "baar-baar fail"
+    },
+    {
+     "box": "DLQ",
+     "sub": "alag line"
+    }
+   ],
+   "result": "line chalti rahi",
+   "foot": "lag phir bhi badhe -> alert, consumer badhao (tukdon tak)"
+  }
+ ]
+}
