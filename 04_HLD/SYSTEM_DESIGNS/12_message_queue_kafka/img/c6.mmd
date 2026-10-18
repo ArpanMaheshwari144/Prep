@@ -1,8 +1,8 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_P["Producer (key = userId)"]
-    n_B["Brokers A / B / C"]
-    n_K["Controller (KRaft)<br/>Broker A ki disk gayi<br/>-> har tukde ka leader + 2 copy, saari copy likhe tab OK (ISR + acks=all)<br/>A mara -> Controller ISR se B ko leader<br/>copy kam -> likhna band (min ISR)"]
+    n_B["Brokers A / B / C<br/>Broker A ki disk gayi<br/>-> har tukde ka leader + 2 copy, saari copy likhe tab OK (ISR + acks=all)<br/>A mara -> Controller ISR se B ko leader<br/>copy kam -> likhna band (min ISR)"]
+    n_K["Controller (KRaft)"]
     n_GE["Group email"]
     n_GA["Group analytics"]
     n_GD["Group dashboard"]
